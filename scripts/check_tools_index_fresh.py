@@ -1,4 +1,5 @@
 """★ 门禁：`docs/tools-index.md` 必须与 `tools/` 实际内容一致（防索引腐化）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -24,7 +25,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # 事实 58
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # 事实 58
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "docs" / "tools-index.md"
@@ -64,8 +65,10 @@ def actual_tools() -> list[str]:
 def check() -> list[str]:
     """★ 返回问题列表（空 = 过）。★ 实现全部委托 `_check_with`（单一判据源）。"""
     if not INDEX.is_file():
-        return ["★ 没有 %s ⇒ 先跑 `python tools/gen_tools_index.py`"
-                % INDEX.relative_to(ROOT)]
+        return [
+            "★ 没有 %s ⇒ 先跑 `python tools/gen_tools_index.py`"
+            % INDEX.relative_to(ROOT)
+        ]
     return _check_with(INDEX.read_text(encoding="utf-8", errors="replace"))
 
 
@@ -125,8 +128,11 @@ def selftest() -> bool:
 
     #: ① 缺一个脚本
     victim = actual[0]
-    lines = [ln for ln in real_text.splitlines()
-             if not ROW.match(ln.strip()) or ROW.match(ln.strip()).group(1) != victim]
+    lines = [
+        ln
+        for ln in real_text.splitlines()
+        if not ROW.match(ln.strip()) or ROW.match(ln.strip()).group(1) != victim
+    ]
     got = _check_with("\n".join(lines))
     if not any("缺" in g for g in got):
         print("★★ 负例自证失败：索引缺 %s，判据**没**报出来（实得 %r）" % (victim, got))
@@ -136,15 +142,18 @@ def selftest() -> bool:
     fake = real_text + "\n| `probe_this_does_not_exist.py` | 伪造行 |\n"
     got = _check_with(fake)
     if not any("多" in g for g in got):
-        print("★★ 负例自证失败：索引多了一行伪造脚本，判据**没**报出来（实得 %r）" % (got,))
+        print(
+            "★★ 负例自证失败：索引多了一行伪造脚本，判据**没**报出来（实得 %r）"
+            % (got,)
+        )
         return False
 
     #: ③ 描述被改错
     gen = _load_generator()
     now = gen.first_line_of(TOOLS / victim) or NODESC
     tampered = real_text.replace(
-        "| `%s` | %s |" % (victim, now),
-        "| `%s` | ★ 这条描述是伪造的 |" % victim, 1)
+        "| `%s` | %s |" % (victim, now), "| `%s` | ★ 这条描述是伪造的 |" % victim, 1
+    )
     if tampered == real_text:
         print("★★ 负例自证失败：篡改没生效（找不到 %s 的原行）" % victim)
         return False

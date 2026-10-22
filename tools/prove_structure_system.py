@@ -50,7 +50,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "structure-system-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "structure-system-evidence.json"
+)
 
 #: ★ 候选尺寸名（★ `sldlfp` 里的**配置名** —— ★ 试几个，★ 而把错误带回来）
 SIZES = ["ROUND BAR 23", "Round Bar 23", "ROUND BAR 20", "23"]
@@ -65,8 +67,14 @@ def main() -> int:
     doc = None
     try:
         doc = sw_connect.new_document(sw, "part")
-        from scripts.sw_part import (_empty_callout, current_sketch_name, end_sketch,
-                                     sketch_line, start_sketch)
+        from scripts.sw_part import (
+            _empty_callout,
+            current_sketch_name,
+            end_sketch,
+            sketch_line,
+            start_sketch,
+        )
+
         start_sketch(doc, plane_name="Front Plane")
         sketch_line(doc, -40.0, -20.0, 40.0, -20.0)
         sketch_line(doc, 40.0, -20.0, 40.0, 20.0)
@@ -89,7 +97,7 @@ def main() -> int:
                 try:
                     f = get_com_member(fm, "GetFeatureByPosition", i)
                     out.append(str(get_com_member(f, "Name") or ""))
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     out.append("?")
             return out
 
@@ -103,15 +111,26 @@ def main() -> int:
         #: *）。
         try:
             doc.ClearSelection2(True)
-        except Exception:                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         stats = []
         for i in (1, 2):
-            st = ext.SelectByID2("Line%d@%s" % (i, sk), "EXTSKETCHSEGMENT",
-                                 0.0, 0.0, 0.0, True, 0, _empty_callout(), 0)
+            st = ext.SelectByID2(
+                "Line%d@%s" % (i, sk),
+                "EXTSKETCHSEGMENT",
+                0.0,
+                0.0,
+                0.0,
+                True,
+                0,
+                _empty_callout(),
+                0,
+            )
             stats.append(bool(st))
         ev["select_stats"] = stats
-        ev["selected_count"] = int(get_com_member(sm, "GetSelectedObjectCount2", -1) or 0)
+        ev["selected_count"] = int(
+            get_com_member(sm, "GetSelectedObjectCount2", -1) or 0
+        )
 
         #: ② MemberData（★ 0 = Primary_PathSegment）
         mem = ext.CreateStructureSystemMemberData(0)
@@ -133,7 +152,7 @@ def main() -> int:
                         set_com_member(prof, "ProfileSize", cand)
                         size_used = cand
                         break
-                    except Exception as exc:                   # noqa: BLE001
+                    except Exception as exc:  # noqa: BLE001
                         prof_names.append("%s: %s" % (cand, str(exc)[:60]))
                 ev["size_used"] = size_used
                 ev["size_errors"] = prof_names
@@ -156,21 +175,23 @@ def main() -> int:
                     #: `）。
                     try:
                         import sys as _s
+
                         _s.path.insert(0, str(REPO_ROOT / "tools"))
                         from typelib_iids import qi as _qi
+
                         prim = _qi(mem, "IPrimaryMemberPathSegmentFeatureData")
                         ev["qi_ok"] = prim is not None
                         set_ok = bool(get_com_member(prim, "SetPathSegments", segs))
-                    except Exception as exc1:                  # noqa: BLE001
+                    except Exception as exc1:  # noqa: BLE001
                         ev["qi_err"] = "%s: %s" % (type(exc1).__name__, str(exc1)[:120])
                         set_ok = "no-qi: %s" % str(exc1)[:80]
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     set_ok = "%s: %s" % (type(exc).__name__, str(exc)[:120])
             ev["set_path_segments"] = set_ok
             #: ⑤⑥ 建
             try:
-                arr = sw_connect.create_empty_dispatch_variant()   # ⚠ 先占位，下面替换
-            except Exception:                                  # noqa: BLE001
+                arr = sw_connect.create_empty_dispatch_variant()  # ⚠ 先占位，下面替换
+            except Exception:  # noqa: BLE001
                 arr = None
             try:
                 #: ★ 诊断：它到底在不在（★ `'NoneType' object is not callable` 指向"geta
@@ -178,41 +199,52 @@ def main() -> int:
                 try:
                     _raw = getattr(ext, "CreateStructureSystem", "<没这个属性>")
                     ev["css_attr"] = type(_raw).__name__
-                except Exception as _e:                    # noqa: BLE001
+                except Exception as _e:  # noqa: BLE001
                     ev["css_attr"] = "err: %s" % str(_e)[:70]
-                feat = get_com_member(ext, "CreateStructureSystem", [mem],
-                                     sw_connect.create_empty_dispatch_variant())
+                feat = get_com_member(
+                    ext,
+                    "CreateStructureSystem",
+                    [mem],
+                    sw_connect.create_empty_dispatch_variant(),
+                )
                 ev["feature_none"] = feat is None
                 if feat is not None:
                     try:
-                        ev["feature_type"] = str(get_com_member(feat, "GetTypeName2") or "")
-                    except Exception:                          # noqa: BLE001
+                        ev["feature_type"] = str(
+                            get_com_member(feat, "GetTypeName2") or ""
+                        )
+                    except Exception:  # noqa: BLE001
                         ev["feature_type"] = "?"
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["create_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
             after = tree()
             new = [n for n in after if n not in before]
             ev["tree_after"] = len(after)
             ev["new_features"] = new
             ev["verdict"] = "pass" if new else "partial"
-        ev["note"] = ("★ 走事实 358 的官方序列：选线段（EXTSKETCHSEGMENT）⇒ "
-                      "CreateStructureSystemMemberData(0) ⇒ MemberProfile(GB/round-rods/…）⇒ "
-                      "GetSelectedObject6 装 segments ⇒ SetPathSegments ⇒ CreateStructureSystem。"
-                      "★ 判据：★ 特征树**有增量**（★ 不拿 COM 返回值当判据）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 走事实 358 的官方序列：选线段（EXTSKETCHSEGMENT）⇒ "
+            "CreateStructureSystemMemberData(0) ⇒ MemberProfile(GB/round-rods/…）⇒ "
+            "GetSelectedObject6 装 segments ⇒ SetPathSegments ⇒ CreateStructureSystem。"
+            "★ 判据：★ 特征树**有增量**（★ 不拿 COM 返回值当判据）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

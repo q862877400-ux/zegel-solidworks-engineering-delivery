@@ -42,33 +42,38 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH38"]
 
-_CATM = ("Costing category enum value (★ the templates list is the way to discover what exists "
-         "for a category).")
+_CATM = (
+    "Costing category enum value (★ the templates list is the way to discover what exists "
+    "for a category)."
+)
 
 
 SPECS_BATCH38 = [
     ToolSpec(
         name="solidworks_costing_evidence",
         title="Collect the Costing Overview",
-        module="sw_costing", function="collect_costing_evidence_report",
+        module="sw_costing",
+        function="collect_costing_evidence_report",
         inject="cost_manager",
         params=[],
         doc="Return the Costing overview (body count + whether a cost analysis exists). "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_costing_read_analysis",
         title="Read the Whole Cost Analysis",
-        module="sw_costing", function="read_cost_analysis_report",
+        module="sw_costing",
+        function="read_cost_analysis_report",
         inject="cost_manager",
         params=[],
         doc="Read every readable field of the part's cost analysis as a dict. "
-            "★ Use it to discover the valid cost-method names. ★ Read-only.",
+        "★ Use it to discover the valid cost-method names. ★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_costing_body_count",
         title="Count the Costing Bodies",
-        module="sw_costing", function="get_body_count_report",
+        module="sw_costing",
+        function="get_body_count_report",
         inject="cost_manager",
         params=[],
         doc="Return how many bodies Costing sees (★ cost is computed per body). ★ Read-only.",
@@ -76,28 +81,34 @@ SPECS_BATCH38 = [
     ToolSpec(
         name="solidworks_costing_list_bodies",
         title="List the Costing Body Names",
-        module="sw_costing", function="list_cost_bodies_report",
+        module="sw_costing",
+        function="list_cost_bodies_report",
         inject="cost_manager",
         params=[],
         doc="Return the Costing body names (★ feed one to solidworks_costing_read_body). "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_costing_read_body",
         title="Read One Body's Cost Data",
-        module="sw_costing", function="read_cost_body_report",
+        module="sw_costing",
+        function="read_cost_body_report",
         inject="cost_manager",
         params=[
-            Param("body_name", str,
-                  description="A body name from solidworks_costing_list_bodies."),
+            Param(
+                "body_name",
+                str,
+                description="A body name from solidworks_costing_list_bodies.",
+            ),
         ],
         doc="Read one body's cost data. ★ An unknown body name fails with the list of valid "
-            "names. ★ Read-only.",
+        "names. ★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_costing_list_templates",
         title="List the Costing Templates for a Category",
-        module="sw_costing", function="list_costing_templates_report",
+        module="sw_costing",
+        function="list_costing_templates_report",
         inject="cost_manager",
         params=[Param("category", int, default=0, description=_CATM)],
         doc="Return the Costing template names available for a category. ★ Read-only.",
@@ -105,7 +116,8 @@ SPECS_BATCH38 = [
     ToolSpec(
         name="solidworks_costing_default_template",
         title="Get the Default Costing Template of a Category",
-        module="sw_costing", function="get_default_template_report",
+        module="sw_costing",
+        function="get_default_template_report",
         inject="cost_manager",
         params=[Param("category", int, description=_CATM)],
         doc="Return the default Costing template name for a category. ★ Read-only.",
@@ -113,11 +125,15 @@ SPECS_BATCH38 = [
     ToolSpec(
         name="solidworks_costing_method_value",
         title="Get the Value of One Costing Method",
-        module="sw_costing", function="get_costing_method_report",
+        module="sw_costing",
+        function="get_costing_method_report",
         inject="cost_manager",
         params=[
-            Param("method_name", str,
-                  description="A cost-method name (★ see solidworks_costing_read_analysis)."),
+            Param(
+                "method_name",
+                str,
+                description="A cost-method name (★ see solidworks_costing_read_analysis).",
+            ),
         ],
         doc="Return the current value of one cost method. ★ Read-only.",
     ),

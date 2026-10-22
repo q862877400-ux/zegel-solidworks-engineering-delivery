@@ -1,4 +1,5 @@
 """★ 全仓单位普查：列出所有"吃长度/坐标"的工具，并逐个查它**进 COM 前有没有换算**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -7,7 +8,7 @@
 #           t-fix）
 #         ★★ 用户令：★「**要把设计这两个问题的所有工具都修好**」✓ ⇒ ★ **先界定范围** ✓
 # 官方依据: ★ 本仓单位纪律（★ 事实 2）：★ **入参毫米 · COM 侧米** ✓ ⇒ ★ 每个吃长度的函数
-# **必须**在进 COM 前除以 1000 ✓；★ 现场反例：★ `sketch_circle` **零换算** ✗ ⇒ 传 10.5 
+# **必须**在进 COM 前除以 1000 ✓；★ 现场反例：★ `sketch_circle` **零换算** ✗ ⇒ 传 10.5
 # 建出 10.5 米 ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。覆盖: 全文件
 # ★★ 判据：★ 输出一份**可疑清单**（★ 有长度形参 **但源码里没有换算痕迹** ✗）—— ★ 逐个真
@@ -21,15 +22,25 @@ import re
 import sys
 
 ROOT = pathlib.Path(pathlib.Path(__file__).resolve().parents[1])
-for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"), str(ROOT / "tools")):
+for _p in (
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 #: ★ 长度/坐标类的形参名特征（★ 覆盖 mm 后缀、坐标、半径直径、间距深度偏置等 ✓）
-LEN_PARAM = re.compile(r"(_mm$|^x$|^y$|^z$|radius|diameter|depth|spacing|offset|thickness|"
-                       r"height|width|length|pitch|diameter|translate|dist)", re.I)
+LEN_PARAM = re.compile(
+    r"(_mm$|^x$|^y$|^z$|radius|diameter|depth|spacing|offset|thickness|"
+    r"height|width|length|pitch|diameter|translate|dist)",
+    re.I,
+)
 #: ★ 换算痕迹（★ 出现任一 ⇒ 认为它做了 mm→m ✓）
-CONV = re.compile(r"0?\.001|/ *1000\.?0*|\* *0?\.001|_MM\b|mm_to_m|to_meters|MM_PER_M", re.I)
+CONV = re.compile(
+    r"0?\.001|/ *1000\.?0*|\* *0?\.001|_MM\b|mm_to_m|to_meters|MM_PER_M", re.I
+)
 
 #: ★★★★★ 2026-10-10 **补一处盲区（★ 业主点破「为什么还会把错误原封不动地再犯一次」）**：
 #: ★★★ **现场**：★ `solidworks_gear_create_spur` 的形参是 **`spec`**（一个 dict/dataclas
@@ -49,32 +60,44 @@ def _lengthish_from_annotation(fn) -> list:
     """★ 从形参的**注解**展开 dataclass 字段，取出长度名（★ 盲区修法 ①）。"""
     import dataclasses
     import typing
+
     out: list = []
     try:
         hints = typing.get_type_hints(fn)
-    except Exception:                                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return out
     for name, hint in (hints or {}).items():
         if name == "return":
             continue
         #: ★ 直接是 dataclass ⇒ 展开字段
         if dataclasses.is_dataclass(hint):
-            out += [f.name for f in dataclasses.fields(hint)
-                    if LEN_PARAM.search(f.name)]
+            out += [
+                f.name for f in dataclasses.fields(hint) if LEN_PARAM.search(f.name)
+            ]
     return sorted(set(out))
 
 
 def _lengthish_from_body(src: str) -> list:
     """★ 从**函数体**里找 `<obj>.<名字>_mm` 形态的属性访问（★ 盲区修法 ②）。"""
-    return sorted(set(m.group(1) for m in
-                      re.finditer(r"\.([A-Za-z_]\w*(?:_mm|radius|diameter|depth|"
-                                  r"thickness|width|height|length|pitch|spacing|offset))\b",
-                                  src, re.I)))
+    return sorted(
+        set(
+            m.group(1)
+            for m in re.finditer(
+                r"\.([A-Za-z_]\w*(?:_mm|radius|diameter|depth|"
+                r"thickness|width|height|length|pitch|spacing|offset))\b",
+                src,
+                re.I,
+            )
+        )
+    )
 
 
 #: ★★★ 形参名里**像"载荷/规格对象"**的（★ 长度藏在里面）—— ★ 盲区修法 ③
-SPECLIKE_PARAM = re.compile(r"^(spec|specs|params|param|request|payload|args|kwargs|"
-                            r"options|opts|config|settings|data|value|values)$", re.I)
+SPECLIKE_PARAM = re.compile(
+    r"^(spec|specs|params|param|request|payload|args|kwargs|"
+    r"options|opts|config|settings|data|value|values)$",
+    re.I,
+)
 
 
 def _lengthish_from_callees(fn, *, depth: int = 2) -> list:
@@ -87,11 +110,12 @@ def _lengthish_from_callees(fn, *, depth: int = 2) -> list:
     ★ 本函数沿**同模块内的调用**往下找 `depth` 层，★ 收集那些函数的长度形参/属性 ✓
     """
     import inspect as _i
+
     out: list = []
     try:
         mod = _i.getmodule(fn)
         src = _i.getsource(fn)
-    except Exception:                                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return out
     if depth <= 0 or mod is None:
         return out
@@ -103,7 +127,7 @@ def _lengthish_from_callees(fn, *, depth: int = 2) -> list:
         try:
             csig = _i.signature(callee)
             csrc = _i.getsource(callee)
-        except Exception:                                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         #: ★ 被调函数的**形参名**里有长度特征
         out += [p for p in csig.parameters if LEN_PARAM.search(p)]
@@ -127,13 +151,14 @@ def main() -> int:
                 mod0 = __import__(s.module)
                 fn0 = getattr(mod0, s.function)
                 src0 = inspect.getsource(fn0)
-            except Exception:                                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 src0, fn0 = "", None
             lenc = _lengthish_from_annotation(fn0) if fn0 is not None else []
             lenc += [x for x in _lengthish_from_body(src0) if x not in lenc]
             #: ★★ 盲区修法 ③：★ 形参名像「规格对象」⇒ ★ **跟一层调用**看下游吃不吃长度 ✓
-            if (fn0 is not None
-                    and any(SPECLIKE_PARAM.match(p.name) for p in (s.params or []))):
+            if fn0 is not None and any(
+                SPECLIKE_PARAM.match(p.name) for p in (s.params or [])
+            ):
                 lenc += [x for x in _lengthish_from_callees(fn0) if x not in lenc]
         if not lenc:
             no_len += 1
@@ -142,7 +167,7 @@ def main() -> int:
             mod = __import__(s.module)
             fn = getattr(mod, s.function)
             src = inspect.getsource(fn)
-        except Exception as exc:                                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             suspects.append((s.name, lenc, "★ 取源码失败: %s" % str(exc)[:60]))
             continue
         conv = sorted(set(m.group(0) for m in CONV.finditer(src)))
@@ -153,8 +178,10 @@ def main() -> int:
             suspects.append(rec)
 
     print("=" * 100)
-    print("★ 全仓工具总数 = %d · 无长度形参 = %d · **有长度形参** = %d"
-          % (len(rc.all_specs()), no_len, len(suspects) + len(converted)))
+    print(
+        "★ 全仓工具总数 = %d · 无长度形参 = %d · **有长度形参** = %d"
+        % (len(rc.all_specs()), no_len, len(suspects) + len(converted))
+    )
     print("=" * 100)
     print()
     print("★★ 可疑：有长度形参**但源码里看不到换算** ✗ —— 共 %d 个" % len(suspects))

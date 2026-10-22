@@ -1,4 +1,5 @@
 """★ 诊断：`IPartDoc.GetBodies2` 到底怎么调才拿得到实体（★ 它一直读不到）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（一次性诊断）
 # 文件:   tools/diag_getbodies.py
@@ -26,7 +27,7 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 def _show(label, fn):
     try:
         v = fn()
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  %-52s ⇒ ★ 抛 %s: %s" % (label, type(exc).__name__, str(exc)[:60]))
         return None
     if isinstance(v, (list, tuple)):
@@ -38,6 +39,7 @@ def _show(label, fn):
 
 def main() -> int:
     import sw_connect
+
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
@@ -46,25 +48,36 @@ def main() -> int:
     print("建了零件 =", model is not None)
 
     print("\n★ A 组：GetBodies2 的各种形状")
-    _show("get_com_member(model,'GetBodies2') 无实参",
-          lambda: sw_connect.get_com_member(model, "GetBodies2"))
-    _show("get_com_member(model,'GetBodies2',-1,False)",
-          lambda: sw_connect.get_com_member(model, "GetBodies2", -1, False))
-    _show("get_com_member(model,'GetBodies2',0,False)",
-          lambda: sw_connect.get_com_member(model, "GetBodies2", 0, False))
-    _show("model.GetBodies2(-1, False) 直接调",
-          lambda: model.GetBodies2(-1, False))
+    _show(
+        "get_com_member(model,'GetBodies2') 无实参",
+        lambda: sw_connect.get_com_member(model, "GetBodies2"),
+    )
+    _show(
+        "get_com_member(model,'GetBodies2',-1,False)",
+        lambda: sw_connect.get_com_member(model, "GetBodies2", -1, False),
+    )
+    _show(
+        "get_com_member(model,'GetBodies2',0,False)",
+        lambda: sw_connect.get_com_member(model, "GetBodies2", 0, False),
+    )
+    _show("model.GetBodies2(-1, False) 直接调", lambda: model.GetBodies2(-1, False))
 
     print("\n★ B 组：先造一个体（★ 空零件本来就没有体 —— ★ 这可能是「读不到」的真因）")
     import sw_part
+
     ok = sw_part.start_sketch(model, "Front Plane")
     print("   start_sketch:", ok)
     if ok:
-        print("   sketch_rectangle:", sw_part.sketch_rectangle(model, 0.0, 0.0, 40.0, 30.0))
+        print(
+            "   sketch_rectangle:",
+            sw_part.sketch_rectangle(model, 0.0, 0.0, 40.0, 30.0),
+        )
         sw_part.end_sketch(model)
         print("   extrude_boss:", sw_part.extrude_boss(model, "Sketch1", 10.0))
-    _show("造完之后 get_com_member(model,'GetBodies2',-1,False)",
-          lambda: sw_connect.get_com_member(model, "GetBodies2", -1, False))
+    _show(
+        "造完之后 get_com_member(model,'GetBodies2',-1,False)",
+        lambda: sw_connect.get_com_member(model, "GetBodies2", -1, False),
+    )
 
     print("\n★ C 组：回读旁证（★ 判上面谁对）")
     _show("sw.ActiveDoc", lambda: sw.ActiveDoc)

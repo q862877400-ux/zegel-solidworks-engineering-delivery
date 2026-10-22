@@ -36,6 +36,7 @@ r"""@brief 检查器：`get_com_member(<owner>, "X")` 里的 `X` **在不在 `ow
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -46,7 +47,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
-REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+REFLECT = Path(
+    Path(__file__).resolve().parents[1]
+    / "_raw"
+    / "reflect_sldworks"
+    / "iface_sldworks.txt"
+)
 SCAN = [ROOT / "scripts", ROOT / "tools"]
 
 #: ★ **已知的"管理器"根**：变量名 → 接口名。
@@ -92,7 +98,11 @@ def load_interfaces(path: Path) -> dict:
 
 def norm(iface: str) -> str:
     """规范化接口名（反射里是 `FeatureManager`，代码里说 `IFeatureManager`）。"""
-    return iface if iface.startswith("I") and len(iface) > 1 and iface[1].isupper() else "I" + iface
+    return (
+        iface
+        if iface.startswith("I") and len(iface) > 1 and iface[1].isupper()
+        else "I" + iface
+    )
 
 
 def canon_member(name: str) -> str:
@@ -106,7 +116,7 @@ def canon_member(name: str) -> str:
     """
     for pre in ("get_", "set_", "put_"):
         if name.startswith(pre) and len(name) > len(pre):
-            return name[len(pre):]
+            return name[len(pre) :]
     return name
 
 
@@ -160,7 +170,9 @@ def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
         #: *。
         first_pos, first_name = None, None
         for cand in iface_names:
-            mm = re.search(r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b)
+            mm = re.search(
+                r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b
+            )
             if mm and (first_pos is None or mm.start() < first_pos):
                 first_pos, first_name = mm.start(), cand
         if first_name:
@@ -198,7 +210,7 @@ def helper_const_args(tree, iface_names: set) -> dict:
     """
     #: ① 找「辅助函数」：某个形参被当作 `get_com_member(owner, <形参>)` 的成员名
     helpers: dict = {}
-    param_names: dict = {}          #: ★ `(函数名, 序号) → 形参名`（轮 176）
+    param_names: dict = {}  #: ★ `(函数名, 序号) → 形参名`（轮 176）
     for fn in ast.walk(tree):
         if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
@@ -208,9 +220,17 @@ def helper_const_args(tree, iface_names: set) -> dict:
                 if not isinstance(n, ast.Call):
                     continue
                 fname = getattr(n.func, "attr", None) or getattr(n.func, "id", None)
-                if fname not in ("get_com_member", "call_com_member", "safe_get_com_member"):
+                if fname not in (
+                    "get_com_member",
+                    "call_com_member",
+                    "safe_get_com_member",
+                ):
                     continue
-                if len(n.args) >= 2 and isinstance(n.args[1], ast.Name) and n.args[1].id == pname:
+                if (
+                    len(n.args) >= 2
+                    and isinstance(n.args[1], ast.Name)
+                    and n.args[1].id == pname
+                ):
                     helpers.setdefault((fn.name, idx), set())
                     param_names[(fn.name, idx)] = pname
     #: ② 收集调用点
@@ -223,13 +243,19 @@ def helper_const_args(tree, iface_names: set) -> dict:
             callee = getattr(n.func, "id", None) or getattr(n.func, "attr", None)
             if callee != fnname:
                 continue
-            if len(n.args) > idx and isinstance(n.args[idx], ast.Constant) \
-                    and isinstance(n.args[idx].value, str):
+            if (
+                len(n.args) > idx
+                and isinstance(n.args[idx], ast.Constant)
+                and isinstance(n.args[idx].value, str)
+            ):
                 vals.append(n.args[idx].value)
         if vals:
             #: ★ 连**形参名**一起返回（调用处不必再去 AST 里找那个函数对象 ——
             #: 那会踩"循环变量被覆盖"的坑，轮 176 第一次就是这么崩的）
-            out[(fnname, idx)] = {"param": param_names[(fnname, idx)], "consts": sorted(set(vals))}
+            out[(fnname, idx)] = {
+                "param": param_names[(fnname, idx)],
+                "consts": sorted(set(vals)),
+            }
     return out
 
 
@@ -238,8 +264,10 @@ def main() -> int:
         print("  ⚠ 反射不在: %s" % REFLECT)
         return 2
     ifaces = load_interfaces(REFLECT)
-    print("  反射: %d 个接口 · 合计 %d 个成员"
-          % (len(ifaces), sum(len(v["members"]) for v in ifaces.values())))
+    print(
+        "  反射: %d 个接口 · 合计 %d 个成员"
+        % (len(ifaces), sum(len(v["members"]) for v in ifaces.values()))
+    )
 
     #: ★ 成员名 → 出现在哪些接口上（用于"完全不在"判据）
     by_member: dict = {}
@@ -253,7 +281,7 @@ def main() -> int:
     print("  去重后的成员名: %d 个" % len(by_member))
 
     hits = []
-    indirect: list = []      #: ★ 未检查项：成员名是变量的（轮 175）
+    indirect: list = []  #: ★ 未检查项：成员名是变量的（轮 175）
     checked = 0
     for base in SCAN:
         for f in sorted(base.glob("*.py")):
@@ -288,19 +316,30 @@ def main() -> int:
                 """
                 chain = []
                 for fn, pi in fn_scopes:
-                    if fn.lineno <= getattr(node, "lineno", 0) <= (fn.end_lineno or fn.lineno):
+                    if (
+                        fn.lineno
+                        <= getattr(node, "lineno", 0)
+                        <= (fn.end_lineno or fn.lineno)
+                    ):
                         chain.append((fn.lineno, pi))
-                chain.sort(key=lambda x: -x[0])          #: 最内层在前
+                chain.sort(key=lambda x: -x[0])  #: 最内层在前
                 for _ln, pi in chain:
                     if name in pi:
                         return pi[name]
                 return var_iface.get(name)
+
             for n in ast.walk(tree):
                 if not isinstance(n, ast.Assign) or not isinstance(n.value, ast.Call):
                     continue
                 call = n.value
-                fname = getattr(call.func, "attr", None) or getattr(call.func, "id", None)
-                if fname not in ("get_com_member", "call_com_member", "safe_get_com_member"):
+                fname = getattr(call.func, "attr", None) or getattr(
+                    call.func, "id", None
+                )
+                if fname not in (
+                    "get_com_member",
+                    "call_com_member",
+                    "safe_get_com_member",
+                ):
                     continue
                 if len(call.args) < 2 or not isinstance(call.args[1], ast.Constant):
                     continue
@@ -308,7 +347,7 @@ def main() -> int:
                 mem = call.args[1].value
                 owner_iface = None
                 if isinstance(owner, ast.Name):
-                    owner_iface = _lookup(owner.id, n)      #: ★ 沿作用域链（轮 175）
+                    owner_iface = _lookup(owner.id, n)  #: ★ 沿作用域链（轮 175）
                 elif isinstance(owner, ast.Attribute):
                     owner_iface = _lookup(owner.attr, n)
                 #: ★★ 推不出接口 ⇒ **留白**（**不许**落到 `IObject` 兜底 —— 那必然误报）
@@ -322,10 +361,13 @@ def main() -> int:
                 #: 只查裸名会**一律查不到** ⇒ 变量**进不了表** ⇒ 后续全推不出
                 #: （实测后果：`_count` 里的 `fm` 推不出 ⇒ `mold_evidence` 那 4 个计数**
                 #: 漏报**）。
-                #: ★ 我在**查询**那一处做了 `canon_member` 规范化，**却忘了建表这一处** 
+                #: ★ 我在**查询**那一处做了 `canon_member` 规范化，**却忘了建表这一处**
                 #: —— 同一个坑。
                 ret = None
-                for cand in (owner_iface, owner_iface[1:] if owner_iface.startswith("I") else owner_iface):
+                for cand in (
+                    owner_iface,
+                    owner_iface[1:] if owner_iface.startswith("I") else owner_iface,
+                ):
                     d = ifaces.get(cand) or ifaces.get(norm(cand))
                     if not d:
                         continue
@@ -345,7 +387,11 @@ def main() -> int:
                 if not isinstance(n, ast.Call):
                     continue
                 fname = getattr(n.func, "attr", None) or getattr(n.func, "id", None)
-                if fname not in ("get_com_member", "call_com_member", "safe_get_com_member"):
+                if fname not in (
+                    "get_com_member",
+                    "call_com_member",
+                    "safe_get_com_member",
+                ):
                     continue
                 if len(n.args) < 2 or not isinstance(n.args[1], ast.Constant):
                     #: ⚠⚠⚠ **间接成员名**（轮 175 查明的**判据边界**）：`get_com_member(
@@ -357,32 +403,56 @@ def main() -> int:
                     #: ⇒ **登记成"未检查项"**，让读的人知道哪儿没被覆盖（**比默默跳过诚
                     #: 实**）。
                     if len(n.args) >= 2:
-                        indirect.append({"file": f.name, "line": n.lineno,
-                                         "owner": ast.unparse(n.args[0]),
-                                         "arg": ast.unparse(n.args[1])})
+                        indirect.append(
+                            {
+                                "file": f.name,
+                                "line": n.lineno,
+                                "owner": ast.unparse(n.args[0]),
+                                "arg": ast.unparse(n.args[1]),
+                            }
+                        )
                     continue
                 owner, mem = n.args[0], n.args[1].value
                 oiface = None
                 if isinstance(owner, ast.Name):
-                    oiface = _lookup(owner.id, n)           #: ★ 沿作用域链（轮 175）
+                    oiface = _lookup(owner.id, n)  #: ★ 沿作用域链（轮 175）
                 elif isinstance(owner, ast.Attribute):
                     oiface = _lookup(owner.attr, n)
                 #: ★★ 同上：**推不出就别检查**（兜底值会造成假阳性）
                 if not oiface or oiface == "IObject":
                     continue
                 checked += 1
-                owners_of_mem = owners_of(mem, by_member) | owners_of(canon_member(mem), by_member)
+                owners_of_mem = owners_of(mem, by_member) | owners_of(
+                    canon_member(mem), by_member
+                )
                 if owners_of_mem is None:
-                    hits.append({"file": f.name, "line": n.lineno, "owner_iface": oiface,
-                                 "member": mem, "why": "**反射里没有这个成员名**"})
+                    hits.append(
+                        {
+                            "file": f.name,
+                            "line": n.lineno,
+                            "owner_iface": oiface,
+                            "member": mem,
+                            "why": "**反射里没有这个成员名**",
+                        }
+                    )
                     continue
                 #: ★ 强判据：成员存在的**任何一个**接口，是不是 `oiface` 的谱系
-                cands = {oiface, oiface[1:] if oiface.startswith("I") else oiface,
-                         norm(oiface), oiface.lstrip("I")}
+                cands = {
+                    oiface,
+                    oiface[1:] if oiface.startswith("I") else oiface,
+                    norm(oiface),
+                    oiface.lstrip("I"),
+                }
                 if not (owners_of_mem & cands):
-                    hits.append({"file": f.name, "line": n.lineno, "owner_iface": oiface,
-                                 "member": mem,
-                                 "actually_on": sorted(owners_of_mem)[:4]})
+                    hits.append(
+                        {
+                            "file": f.name,
+                            "line": n.lineno,
+                            "owner_iface": oiface,
+                            "member": mem,
+                            "actually_on": sorted(owners_of_mem)[:4],
+                        }
+                    )
 
             #: ★★★ ③ **把辅助函数的调用点常量代进去**（轮 176）——
             #: 形状：`def _count(name): get_com_member(fm, name)` + 调用点 `_count("GetP
@@ -397,11 +467,15 @@ def main() -> int:
                     if not isinstance(hn, ast.Call):
                         continue
                     hf = getattr(hn.func, "attr", None) or getattr(hn.func, "id", None)
-                    if hf not in ("get_com_member", "call_com_member", "safe_get_com_member"):
+                    if hf not in (
+                        "get_com_member",
+                        "call_com_member",
+                        "safe_get_com_member",
+                    ):
                         continue
                     if len(hn.args) < 2 or not isinstance(hn.args[1], ast.Name):
                         continue
-                    if hn.args[1].id != hparam:          #: ★ 用返回的形参名比对
+                    if hn.args[1].id != hparam:  #: ★ 用返回的形参名比对
                         continue
                     howner = hn.args[0]
                     hoif = None
@@ -413,40 +487,85 @@ def main() -> int:
                         continue
                     for cv in consts:
                         checked += 1
-                        own = owners_of(cv, by_member) | owners_of(canon_member(cv), by_member)
+                        own = owners_of(cv, by_member) | owners_of(
+                            canon_member(cv), by_member
+                        )
                         if not own:
-                            hits.append({"file": f.name, "line": hn.lineno, "owner_iface": hoif,
-                                         "member": cv, "via": "%s(%r)" % (hfname, cv),
-                                         "why": "**反射里没有这个成员名**"})
+                            hits.append(
+                                {
+                                    "file": f.name,
+                                    "line": hn.lineno,
+                                    "owner_iface": hoif,
+                                    "member": cv,
+                                    "via": "%s(%r)" % (hfname, cv),
+                                    "why": "**反射里没有这个成员名**",
+                                }
+                            )
                             continue
-                        hc_c = {hoif, hoif[1:] if hoif.startswith("I") else hoif, norm(hoif),
-                                hoif.lstrip("I")}
+                        hc_c = {
+                            hoif,
+                            hoif[1:] if hoif.startswith("I") else hoif,
+                            norm(hoif),
+                            hoif.lstrip("I"),
+                        }
                         if not (own & hc_c):
-                            hits.append({"file": f.name, "line": hn.lineno, "owner_iface": hoif,
-                                         "member": cv, "via": "%s(%r)" % (hfname, cv),
-                                         "actually_on": sorted(own)[:4]})
+                            hits.append(
+                                {
+                                    "file": f.name,
+                                    "line": hn.lineno,
+                                    "owner_iface": hoif,
+                                    "member": cv,
+                                    "via": "%s(%r)" % (hfname, cv),
+                                    "actually_on": sorted(own)[:4],
+                                }
+                            )
 
     print("  ★ 检查过的 `get_com_member(已知对象, 成员)` 调用点: **%d** 个" % checked)
     print("  ⚠ **未检查项**（成员名是**变量**，静态查不了）: **%d** 处" % len(indirect))
     for h in indirect[:8]:
-        print("      %-26s L%-5d get_com_member(%s, **%s**)"
-              % (h["file"], h["line"], h["owner"], h["arg"]))
+        print(
+            "      %-26s L%-5d get_com_member(%s, **%s**)"
+            % (h["file"], h["line"], h["owner"], h["arg"])
+        )
     print("  ★★ 命中（成员**不在**该对象的接口上）: **%d** 处" % len(hits))
     for h in hits[:20]:
-        print("    %-26s L%-5d %-16s . %-26s ⇒ 实际在 %s"
-              % (h["file"], h["line"], h["owner_iface"], h["member"],
-                 h.get("actually_on", h.get("why", ""))))
+        print(
+            "    %-26s L%-5d %-16s . %-26s ⇒ 实际在 %s"
+            % (
+                h["file"],
+                h["line"],
+                h["owner_iface"],
+                h["member"],
+                h.get("actually_on", h.get("why", "")),
+            )
+        )
     if hits:
         print()
         print("  ⚠ 独立复核（前 3 处）：")
         for h in hits[:3]:
-            print("    %s:%d  `%s` 不在 %s 上 ⇒ %s"
-                  % (h["file"], h["line"], h["member"], h["owner_iface"],
-                     h.get("actually_on", h.get("why"))))
-    out = Path(Path(__file__).resolve().parents[1] / "output" / "member-owner-interface.json")
+            print(
+                "    %s:%d  `%s` 不在 %s 上 ⇒ %s"
+                % (
+                    h["file"],
+                    h["line"],
+                    h["member"],
+                    h["owner_iface"],
+                    h.get("actually_on", h.get("why")),
+                )
+            )
+    out = Path(
+        Path(__file__).resolve().parents[1] / "output" / "member-owner-interface.json"
+    )
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"checked": checked, "hits": hits, "unchecked_indirect": indirect}, ensure_ascii=False, indent=2) + "\n",
-                   encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {"checked": checked, "hits": hits, "unchecked_indirect": indirect},
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % out)
     #: ★ 事实 46：检查量为 0 不许 PASS
     if checked == 0:

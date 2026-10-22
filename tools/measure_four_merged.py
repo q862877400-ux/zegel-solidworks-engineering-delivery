@@ -18,7 +18,9 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 PY = re.compile(r"(?m)^\s*(?:async\s+)?def\s+([a-z_]\w*)\s*\(")
 TSF = re.compile(r"(?m)^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_]\w*)\s*\(")
-TSA = re.compile(r"(?m)^\s*(?:export\s+)?(?:const|let)\s+([A-Za-z_]\w*)\s*=\s*(?:async\s*)?\(")
+TSA = re.compile(
+    r"(?m)^\s*(?:export\s+)?(?:const|let)\s+([A-Za-z_]\w*)\s*=\s*(?:async\s*)?\("
+)
 
 SCAN = {
     "Eduardof0nt": (r"C:\swprojects\Eduardof0nt", ["server.py", "sw_client.py"]),
@@ -35,14 +37,27 @@ for name, (root, subs) in SCAN.items():
     files = []
     for s in subs:
         p = r / s
-        files += [p] if p.is_file() else [q for q in p.rglob("*")
-                                          if q.suffix in (".py", ".ts") and "node_modules" not in str(q)
-                                          and ".git" not in str(q) and not q.name.endswith(".d.ts")]
+        files += (
+            [p]
+            if p.is_file()
+            else [
+                q
+                for q in p.rglob("*")
+                if q.suffix in (".py", ".ts")
+                and "node_modules" not in str(q)
+                and ".git" not in str(q)
+                and not q.name.endswith(".d.ts")
+            ]
+        )
     names = set()
     n = 0
     for f in files:
         t = f.read_text(encoding="utf-8", errors="replace")
-        found = PY.findall(t) + TSF.findall(t) + (TSA.findall(t) if f.suffix == ".ts" else [])
+        found = (
+            PY.findall(t)
+            + TSF.findall(t)
+            + (TSA.findall(t) if f.suffix == ".ts" else [])
+        )
         n += len(found)
         names |= set(found)
     raw_all += n
@@ -78,8 +93,10 @@ for k, a, b in (
     ("函数（去重后）", len(uniq_all), len(our_uniq)),
     ("MCP 工具（去重=并集）", tools_uniq, 103),
     ("MCP 工具（原始相加）", tools_raw, 103),
-    ("真机跑过的工具", 92, 103),          #: 只有 Slacker-LLC 声明全工具跑过（92 个）
+    ("真机跑过的工具", 92, 103),  #: 只有 Slacker-LLC 声明全工具跑过（92 个）
 ):
     print("  %-34s %12d %12d" % (k, a, b))
 print("")
-print("  ★ 我们的纯函数层（scripts/sw_*.py）: 原始 %d / 去重 %d" % (sw_raw, len(sw_uniq)))
+print(
+    "  ★ 我们的纯函数层（scripts/sw_*.py）: 原始 %d / 去重 %d" % (sw_raw, len(sw_uniq))
+)

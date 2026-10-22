@@ -22,6 +22,7 @@ r"""参数完整性 —— 以**插件自己的型号行**为准，不看输入�
 # ⚠ 会驱动鼠标键盘。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -203,6 +204,7 @@ def set_front(hwnd: int, tries: int = 5) -> bool:
       否则按键会打进别的窗口，看起来「填了没反应」。
     """
     import win32gui
+
     for _ in range(tries):
         if win32gui.GetForegroundWindow() == hwnd:
             return True
@@ -213,10 +215,19 @@ def set_front(hwnd: int, tries: int = 5) -> bool:
 
 def _clip(text: str) -> bool:
     import subprocess
+
     try:
-        subprocess.run(["powershell", "-NoProfile", "-Command",
-                        "Set-Clipboard -Value '%s'" % text],
-                       check=False, capture_output=True, timeout=20)
+        subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                "Set-Clipboard -Value '%s'" % text,
+            ],
+            check=False,
+            capture_output=True,
+            timeout=20,
+        )
         return True
     except Exception:
         return False
@@ -231,6 +242,7 @@ def _keys(*seq):
     """
     from scripts import sw_gui_input as _gi
     import win32con
+
     for item in seq:
         vk, ctrl = item if isinstance(item, tuple) else (item, False)
         if ctrl:
@@ -245,6 +257,7 @@ VK_DIGIT = {c: 0x30 + i for i, c in enumerate("0123456789")}
 def _tap(vk: int, pause: float = 0.07) -> None:
     """按一下某键 ⇒ 走 `sw_gui_input._press`（**抬起由 `finally` 保证**）。"""
     from scripts import sw_gui_input as _gi
+
     _gi._press(vk, pause=pause)
 
 
@@ -262,6 +275,7 @@ def type_into(hwnd: int, ctl, rect, value: str, log=S.log) -> bool:
       它监听**逐键 KeyPress**，所以 ``CONFIG["input_api"]`` 必须保持 ``type_keys``。
     """
     import sw_gui_input as GI
+
     # ① 先清模态（弹窗在时，下面的点击会打在弹窗上）
     try:
         if L._modal().modal_report(hwnd)["count"]:
@@ -294,6 +308,7 @@ def first_missing_label(win):
     取第一个缺口的标签即可**逐字段自推进**。
     """
     import re
+
     line = model_line(win)
     m = re.search(r"([A-Za-z][A-Za-z0-9_]*)【去填写】", line)
     return m.group(1) if m else None
@@ -322,6 +337,7 @@ def _fmt_value(lo: float, hi: float, step: float | None) -> str:
       · **不截断小数** —— 按 step 决定小数位；step 未知时按下限自身的小数位
     """
     import decimal
+
     v = decimal.Decimal(str(lo))
     if step:
         d = decimal.Decimal(str(step))
@@ -330,7 +346,7 @@ def _fmt_value(lo: float, hi: float, step: float | None) -> str:
         places = max(0, -v.as_tuple().exponent)
     s = ("%%.%df" % places) % v
     if "." in s:
-        s = s.rstrip("0").rstrip(".")      # 去掉无意义的尾随零
+        s = s.rstrip("0").rstrip(".")  # 去掉无意义的尾随零
     if not s or s == "-":
         s = "%g" % lo
     return s
@@ -453,8 +469,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             now_left = before_left
         if now_left >= before_left:
             fails[key] = fails.get(key, 0) + 1
-            log("      「%s」未推进（%d/%d），值=%s"
-                % (key, fails[key], 3, val))
+            log("      「%s」未推进（%d/%d），值=%s" % (key, fails[key], 3, val))
         else:
             fails[key] = 0
     S.cache_drop()
@@ -468,6 +483,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
 def _parse_step(hint):
     """``'[55~500]/1'`` → ``1.0``；``'[0.5~20]/0.001'`` → ``0.001``。无则 None。"""
     import re
+
     if not hint:
         return None
     m = re.search(r"\]\s*/\s*([\d.]+)", hint)
@@ -487,6 +503,7 @@ def _hint_re():
     global HINT_PAT
     if HINT_PAT is None:
         import re
+
         HINT_PAT = re.compile(r"^\[\s*([\d.]+)\s*~\s*([\d.]+)\s*\]\s*/?\s*([\d.]*)$")
     return HINT_PAT
 
@@ -510,6 +527,7 @@ def param_rows(win):
     ⚑ **范围不用记，也不用猜** —— 插件把它印在每一行上。
     """
     import re
+
     out = []
     for c in list(S.controls_cached(win)):
         try:

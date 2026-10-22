@@ -50,16 +50,37 @@ def main() -> int:
     bad1 = []
     for iface, m in CORRECTED:
         e = _exists(iface, m)
-        print("   %s %-18s %s" % ("OK " if e else "✗✗ ", iface + "::" + m, "" if e else "★ 官方也没有这个页！"))
+        print(
+            "   %s %-18s %s"
+            % (
+                "OK " if e else "✗✗ ",
+                iface + "::" + m,
+                "" if e else "★ 官方也没有这个页！",
+            )
+        )
         if not e:
             bad1.append("%s::%s" % (iface, m))
     print()
-    print("★ 原表里的「错名」逐条核（★ 应当**存在** —— 因为错的是**链接指向的接口**，不是成员缺席）：")
+    print(
+        "★ 原表里的「错名」逐条核（★ 应当**存在** —— 因为错的是**链接指向的接口**，不是成员缺席）："
+    )
     for iface, m in WRONG:
         e = _exists(iface, m)
-        print("   %s %-18s %s" % ("    " if not e else "OK ", iface + "::" + m, "（★ 不存在，与死链判断一致）" if not e else ""))
+        print(
+            "   %s %-18s %s"
+            % (
+                "    " if not e else "OK ",
+                iface + "::" + m,
+                "（★ 不存在，与死链判断一致）" if not e else "",
+            )
+        )
     print()
-    print("★★ 结论:", "★ 表里写的真名全部存在 ✓" if not bad1 else ("★★ 有 %d 条真名官方也没有：%s" % (len(bad1), bad1)))
+    print(
+        "★★ 结论:",
+        "★ 表里写的真名全部存在 ✓"
+        if not bad1
+        else ("★★ 有 %d 条真名官方也没有：%s" % (len(bad1), bad1)),
+    )
     return 0
 
 

@@ -25,7 +25,7 @@
 # e0a 3D \u70b9\uff1b
 # **Surfs** = `ISurface` \u6570\u7ec4\uff1b**Direction** = `IMathVector` \u6570\u7ec4\uf
 # f1b
-# **Status** = \u6bcf\u70b9\u7684\u72b6\u6001\u6570\u7ec4\uff08\u2605 \u4ec5 on-surface 
+# **Status** = \u6bcf\u70b9\u7684\u72b6\u6001\u6570\u7ec4\uff08\u2605 \u4ec5 on-surface
 # \u7528\uff09
 #     ```
 #
@@ -48,16 +48,14 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import pythoncom                                                     # noqa: E402
-import win32com.client                                               # noqa: E402
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
+import pythoncom  # noqa: E402
+import win32com.client  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807
-PTS_2D = [-0.02, -0.01, 0.0,
-          0.0, 0.02, 0.0,
-          0.02, -0.01, 0.0]
+PTS_2D = [-0.02, -0.01, 0.0, 0.0, 0.02, 0.0, 0.02, -0.01, 0.0]
 
 
 def _arr(values, vt=pythoncom.VT_R8):
@@ -73,7 +71,7 @@ def _seg_count(doc):
     try:
         sk = C.get_com_member(doc, "GetActiveSketch2")
         return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -81,32 +79,44 @@ def _mk_surface(doc):
     """★ 一张**平面曲面**（★ 供 on-surface 那格用 —— ★ 用**平面区域**，★ 事实 443 那招）。"""
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.05, -0.05, 0.0, 0.05, 0.05, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.05,
+        -0.05,
+        0.0,
+        0.05,
+        0.05,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     sk = names[-1] if names else None
     ext = C.get_com_member(doc, "Extension")
-    for cand in (P._get_sketch_name_candidates(sk) if sk else []):
+    for cand in P._get_sketch_name_candidates(sk) if sk else []:
         try:
             if P._select_by_id(ext, cand, "SKETCH", append=False, mark=1):
                 break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     try:
         C.get_com_member(doc, "InsertPlanarRefSurface")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     from sw_connect import get_com_member as _g
+
     for b in list(_g(doc, "GetBodies2", 1, True) or []):
         for f in list(_g(b, "GetFaces") or []):
             try:
                 return _g(f, "GetSurface")
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return None
 
@@ -146,8 +156,11 @@ def _one(sw, tag, mode):
                 try:
                     mv = C.get_com_member(sw, "GetMathUtility")
                     steps["GetMathUtility"] = "ok" if mv is not None else "None"
-                except Exception as exc:                                  # noqa: BLE001
-                    steps["GetMathUtility"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
+                except Exception as exc:  # noqa: BLE001
+                    steps["GetMathUtility"] = "%s: %s" % (
+                        type(exc).__name__,
+                        str(exc)[:70],
+                    )
                 v = None
                 if mv is not None:
                     #: \u2605\u2605 2026-10-03\uff08\u8f6e 577\uff09\uff1a`CreateVector(
@@ -160,30 +173,47 @@ def _one(sw, tag, mode):
                     for nm in ("CreateVector", "ICreateVector"):
                         try:
                             v = C.call_com_member(mv, nm, _arr([0.0, 0.0, -1.0]))
-                            steps["CreateVector(%s)" % nm] = type(v).__name__ if v is not None else "None"
+                            steps["CreateVector(%s)" % nm] = (
+                                type(v).__name__ if v is not None else "None"
+                            )
                             if v is not None:
                                 break
-                        except Exception as exc:                          # noqa: BLE001
-                            steps["CreateVector(%s)" % nm] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
+                        except Exception as exc:  # noqa: BLE001
+                            steps["CreateVector(%s)" % nm] = "%s: %s" % (
+                                type(exc).__name__,
+                                str(exc)[:70],
+                            )
                 row["steps"] = steps
                 if v is not None:
-                    ret = C.get_com_member(sm, "CreateSpline3",
-                                           _arr([0.0, 0.0, 0.02, 0.02, 0.0, 0.02]),
-                                           _arr([surf], pythoncom.VT_DISPATCH),
-                                           _arr([v, v], pythoncom.VT_DISPATCH),
-                                           False, _byref())
+                    ret = C.get_com_member(
+                        sm,
+                        "CreateSpline3",
+                        _arr([0.0, 0.0, 0.02, 0.02, 0.0, 0.02]),
+                        _arr([surf], pythoncom.VT_DISPATCH),
+                        _arr([v, v], pythoncom.VT_DISPATCH),
+                        False,
+                        _byref(),
+                    )
             elif mode == "2d":
                 #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807\uff1b\u2605 \u51
                 #: 76\u4f59\u53c2\u6570 **null**
-                ret = C.get_com_member(sm, "CreateSpline3",
-                                       _arr(PTS_2D), None, None, False, _byref())
+                ret = C.get_com_member(
+                    sm, "CreateSpline3", _arr(PTS_2D), None, None, False, _byref()
+                )
             else:
                 #: \u2605 \u5bf9\u7167\uff1a\u2605 \u53c2\u6570\u7ed9**\u9519**\uff08\u2
                 #: 605 \u628a 2D \u7684\u5750\u6807\u7ed9\u6210\u4e00\u4e2a\u70b9\uff09
-                ret = C.get_com_member(sm, "CreateSpline3",
-                                       _arr([0.0, 0.0, 0.0]), None, None, False, _byref())
+                ret = C.get_com_member(
+                    sm,
+                    "CreateSpline3",
+                    _arr([0.0, 0.0, 0.0]),
+                    None,
+                    None,
+                    False,
+                    _byref(),
+                )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(doc)
         row["seg_after"] = after
@@ -191,9 +221,9 @@ def _one(sw, tag, mode):
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
             P.end_sketch(doc)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -201,34 +231,71 @@ def _one(sw, tag, mode):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "`CreateSpline3`\uff08\u2605 `CreateSpline2` \u7684**\u7ee7\u4efb\u8005**\uff0c\u2605 \u800c\u5b83\u624d\u662f"
-               "\u201c\u66f2\u9762\u4e0a\u7684\u6837\u6761\u201d\u7684\u6b63\u4e3b\uff09",
-          "official": "CreateSpline2.md \u9010\u5b57\uff1aObsolete. Superseded by CreateSpline3\uff1b"
-                      "CreateSpline3 \u7684 Remarks\uff1a2D\uff08\u81f3\u5c11 6 \u5750\u6807\u3001\u5176\u4f59 null\uff09"
-                      "\u00b7 on-surface\uff08Surfs = ISurface \u6570\u7ec4\u3001Direction = IMathVector \u6570\u7ec4\uff09",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 **2D** \u6837\u6761\uff08\u2605 6 \u5750\u6807 + \u5176\u4f59 null\uff09", "2d"))
-    ev["cases"].append(_one(sw, "\u2605 **\u66f2\u9762\u4e0a\u7684\u6837\u6761**\uff08Surfs + Direction\uff09", "on_surface"))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u53ea\u7ed9**\u4e00\u4e2a\u70b9**\uff08\u2605 \u4e0d\u8db3 6 \u5750\u6807\uff09", "bad"))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "`CreateSpline3`\uff08\u2605 `CreateSpline2` \u7684**\u7ee7\u4efb\u8005**\uff0c\u2605 \u800c\u5b83\u624d\u662f"
+        "\u201c\u66f2\u9762\u4e0a\u7684\u6837\u6761\u201d\u7684\u6b63\u4e3b\uff09",
+        "official": "CreateSpline2.md \u9010\u5b57\uff1aObsolete. Superseded by CreateSpline3\uff1b"
+        "CreateSpline3 \u7684 Remarks\uff1a2D\uff08\u81f3\u5c11 6 \u5750\u6807\u3001\u5176\u4f59 null\uff09"
+        "\u00b7 on-surface\uff08Surfs = ISurface \u6570\u7ec4\u3001Direction = IMathVector \u6570\u7ec4\uff09",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 **2D** \u6837\u6761\uff08\u2605 6 \u5750\u6807 + \u5176\u4f59 null\uff09",
+            "2d",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 **\u66f2\u9762\u4e0a\u7684\u6837\u6761**\uff08Surfs + Direction\uff09",
+            "on_surface",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a\u53ea\u7ed9**\u4e00\u4e2a\u70b9**\uff08\u2605 \u4e0d\u8db3 6 \u5750\u6807\uff09",
+            "bad",
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("spline3_2d_%s_on_surface_%s" % (ev["cases"][0].get("ok"), ev["cases"][1].get("ok")))
+    ev["verdict"] = "spline3_2d_%s_on_surface_%s" % (
+        ev["cases"][0].get("ok"),
+        ev["cases"][1].get("ok"),
+    )
     p = R / "output" / "createspline3-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-46s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s" % (
-            c.get("tag"), c.get("ok"), c.get("seg_before"), c.get("seg_after"),
-            c.get("new_segments"), c.get("returned")))
+        print(
+            "  %-46s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("seg_before"),
+                c.get("seg_after"),
+                c.get("new_segments"),
+                c.get("returned"),
+            )
+        )
         if c.get("surface") is not None:
             print("        surface=%s" % c.get("surface"))
         if c.get("err"):

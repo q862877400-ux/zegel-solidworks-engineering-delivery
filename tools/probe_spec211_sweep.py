@@ -1,4 +1,5 @@
 """★ 探针：`InsertSweepSurface2`（★ **那条从没查过的路 B**）—— ★ 最小实验：先看它的"行为"。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-2 的真机探针）
 # 文件:   tools/probe_spec211_sweep.py
@@ -37,10 +38,13 @@ def main() -> int:
     import sw_connect
     import sw_surface_features as sf
 
-    out = {"official": "IFeatureManager.InsertSweepSurface2",
-           "route": "B", "route_a_status": "已试死（事实 392：CreateFeature 静默回 None）",
-           "route_b_status": "从没试过（事实 237）",
-           "experiment": "最小实验 —— 空零件上直接调，先看「行为」三分"}
+    out = {
+        "official": "IFeatureManager.InsertSweepSurface2",
+        "route": "B",
+        "route_a_status": "已试死（事实 392：CreateFeature 静默回 None）",
+        "route_b_status": "从没试过（事实 237）",
+        "experiment": "最小实验 —— 空零件上直接调，先看「行为」三分",
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -55,27 +59,41 @@ def main() -> int:
     out["report"] = rep
 
     #: ★★ **行为三分**（★ 这三者的下一步完全不同 ✓）
-    if not rep.get("ok") and rep.get("error", "").startswith(("TypeError", "com_error", "AttributeError")):
+    if not rep.get("ok") and rep.get("error", "").startswith(
+        ("TypeError", "com_error", "AttributeError")
+    ):
         verdict = "★ **抛异常** ⇒ ★ 这条路**有反应**（★ 与路 A 的「静默」不同 ✓）"
     elif not rep.get("ok") and rep.get("returned_is_none"):
-        verdict = ("★★ **静默回 `None`** ⇒ ★ 与**事实 392 同族** ✗ ⇒ "
-                   "★ 记下来、★ 别硬试（★ 事实 53）")
+        verdict = (
+            "★★ **静默回 `None`** ⇒ ★ 与**事实 392 同族** ✗ ⇒ "
+            "★ 记下来、★ 别硬试（★ 事实 53）"
+        )
     elif rep.get("ok"):
         verdict = "★★★ **建成了** ⇒ ★ **这是大发现**（★ 那条路走得通 ✓）"
     else:
         verdict = "★ 其它：★ %s" % str(rep.get("error"))[:100]
     out["behavior_verdict"] = verdict
 
-    print("★ 路 B 读数：★ ok=%r · returned_is_none=%r · 特征 %r→%r · 新增 %r"
-          % (rep.get("ok"), rep.get("returned_is_none"), rep.get("feature_count_before"),
-             rep.get("feature_count_after"), rep.get("new_features")))
+    print(
+        "★ 路 B 读数：★ ok=%r · returned_is_none=%r · 特征 %r→%r · 新增 %r"
+        % (
+            rep.get("ok"),
+            rep.get("returned_is_none"),
+            rep.get("feature_count_before"),
+            rep.get("feature_count_after"),
+            rep.get("new_features"),
+        )
+    )
     print("★ 调用前选择计数 = %r" % rep.get("selection_count_before"))
     print("★ error = %s" % str(rep.get("error"))[:170])
     print("★★ **行为三分** ⇒ %s" % verdict)
     print("★ 官方 mark 表（★ 返回值里带） = %r" % rep.get("official_marks"))
 
     p = ROOT / "output" / "spec211-b2-sweep.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

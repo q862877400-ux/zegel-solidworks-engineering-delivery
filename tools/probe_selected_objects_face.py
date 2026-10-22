@@ -30,15 +30,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "selected-objects-face-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "selected-objects-face-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "entries": {}}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -67,7 +76,7 @@ def main() -> int:
                 rec["raw_type"] = type(raw).__name__
                 rec["len"] = len(raw) if hasattr(raw, "__len__") else None
                 rec["sample"] = repr(raw)[:120]
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
             ev["entries"][label] = rec
             return rec.get("len")
@@ -80,45 +89,53 @@ def main() -> int:
         for i in (1, 2, 3):
             rec = {"i": i}
             for label, member, args in (
-                    ("face(-1)", "GetSelectedObjectsFace", (int(i), -1)),
-                    ("face(0)", "GetSelectedObjectsFace", (int(i), 0)),
-                    ("mark", "GetSelectedObjectMark", (int(i),)),
-                    ("obj6(-1)", "GetSelectedObject6", (int(i), -1)),
+                ("face(-1)", "GetSelectedObjectsFace", (int(i), -1)),
+                ("face(0)", "GetSelectedObjectsFace", (int(i), 0)),
+                ("mark", "GetSelectedObjectMark", (int(i),)),
+                ("obj6(-1)", "GetSelectedObject6", (int(i), -1)),
             ):
                 try:
                     v = get_com_member(sm, member, *args)
-                    rec[label] = (v is not None)
-                except Exception as exc:               # noqa: BLE001
+                    rec[label] = v is not None
+                except Exception as exc:  # noqa: BLE001
                     rec[label] = "ERR:" + str(exc)[:40]
             rows.append(rec)
         ev["per_index"] = rows
-        got = {k: sum(1 for r in rows if r.get(k) is True)
-               for k in ("face(-1)", "face(0)", "mark", "obj6(-1)")}
+        got = {
+            k: sum(1 for r in rows if r.get(k) is True)
+            for k in ("face(-1)", "face(0)", "mark", "obj6(-1)")
+        }
         ev["got_counts"] = got
         #: ★ 判据：★ **按序号取面**那一条能不能取到 **2 个**（★ 与 `Count2(-1)` 的 2 一
         #: 致）
         winners = ["face(-1)"] if got.get("face(-1)", 0) >= 2 else []
         ev["entries_that_see_both"] = winners
         ev["verdict"] = "pass" if winners else "partial"
-        ev["note"] = ("★ 按序号取面对象的正确入口 —— 候选来自**出厂类型库**（★ 不猜），"
-                      "★ 且**每个都真的调用**（上一版只读了属性）。"
-                      "★ 判据：`GetSelectedObjectsFace(1..2, -1)` 能不能取到 **2 个面**。")
-        ev["note"] = ("★ 找一个**一次拿到所有选中面**的入口 —— ★ 候选是那几个**复数**方法"
-                      "（★ 名字里就写着复数，★ 而不是「按序号取」）。★ 判据：能一次拿到 2 个。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 按序号取面对象的正确入口 —— 候选来自**出厂类型库**（★ 不猜），"
+            "★ 且**每个都真的调用**（上一版只读了属性）。"
+            "★ 判据：`GetSelectedObjectsFace(1..2, -1)` 能不能取到 **2 个面**。"
+        )
+        ev["note"] = (
+            "★ 找一个**一次拿到所有选中面**的入口 —— ★ 候选是那几个**复数**方法"
+            "（★ 名字里就写着复数，★ 而不是「按序号取」）。★ 判据：能一次拿到 2 个。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

@@ -45,8 +45,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 #: ★ 中文 Windows 上打印 `✓` / `★` 会 `UnicodeEncodeError: 'gbk' codec`（已知事实 58 那
 #: 一族）
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
-except Exception:                                                         # noqa: BLE001
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:  # noqa: BLE001
     pass
 
 PROBE_GLOBS = ("probe_*.py", "prove_*.py")
@@ -78,7 +78,7 @@ def _imported_symbols(tree: ast.AST) -> dict:
     out: dict = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.ImportFrom):
-            if node.module == "scripts":              # `from scripts import sw_part as sp`
+            if node.module == "scripts":  # `from scripts import sw_part as sp`
                 for a in node.names:
                     if a.name in SCRIPT_MODULES:
                         out[a.asname or a.name] = (a.name, None)
@@ -113,7 +113,7 @@ def _calls_in(node: ast.AST, symbols: dict) -> list:
                 found.append((hit[0], hit[1], sub.lineno))
         elif isinstance(fn, ast.Attribute) and isinstance(fn.value, ast.Name):
             hit = symbols.get(fn.value.id)
-            if hit and hit[1] is None:                    # `import sw_x` 形态：取 attr 当函数名
+            if hit and hit[1] is None:  # `import sw_x` 形态：取 attr 当函数名
                 found.append((hit[0], fn.attr, sub.lineno))
     return found
 
@@ -121,6 +121,7 @@ def _calls_in(node: ast.AST, symbols: dict) -> list:
 def tool_map_from_specs() -> dict:
     """⇒ `{(模块, 函数): [工具名, …]}` —— ★ 来自声明式 `all_specs()`（459 条）。"""
     import register_capabilities as rc
+
     out: dict = defaultdict(list)
     for s in rc.all_specs():
         out[(_norm_module(s.module), s.function)].append(s.name)
@@ -170,7 +171,7 @@ def _tool_tokens(tool: str) -> list:
     """★ 工具名 → 词序列（★ 剥掉已知前缀；★ 前缀是本仓命名规则 1 强制要求的 ✓）。"""
     for pre in TOOL_PREFIXES:
         if tool.startswith(pre):
-            return [t for t in tool[len(pre):].split("_") if t]
+            return [t for t in tool[len(pre) :].split("_") if t]
     return [t for t in tool.split("_") if t]
 
 
@@ -178,7 +179,7 @@ def _probe_tokens(stem: str) -> list:
     """★ 探针文件名 → 词序列（★ 剥掉 `probe_` / `prove_` 前缀）。"""
     for pre in ("probe_", "prove_"):
         if stem.startswith(pre):
-            stem = stem[len(pre):]
+            stem = stem[len(pre) :]
     return [t for t in stem.split("_") if t]
 
 
@@ -187,7 +188,7 @@ def _contains_run(hay: list, needle: list) -> bool:
     if not needle or len(needle) > len(hay):
         return False
     n = len(needle)
-    return any(hay[i:i + n] == needle for i in range(len(hay) - n + 1))
+    return any(hay[i : i + n] == needle for i in range(len(hay) - n + 1))
 
 
 def _parse(source: str) -> ast.AST:
@@ -231,9 +232,15 @@ def analyse_probe(probe: str, source: str, impl_by_tool: dict) -> list:
             continue
         for impl in impl_by_tool[tool]:
             if impl in called:
-                hits.append({"probe": probe if "/" in probe else "tools/" + probe,
-                             "tool": tool, "module": impl[0], "function": impl[1],
-                             "line": called[impl]})
+                hits.append(
+                    {
+                        "probe": probe if "/" in probe else "tools/" + probe,
+                        "tool": tool,
+                        "module": impl[0],
+                        "function": impl[1],
+                        "line": called[impl],
+                    }
+                )
     return hits
 
 
@@ -243,9 +250,11 @@ def scan() -> list:
     hits = []
     for pattern in PROBE_GLOBS:
         for path in sorted((ROOT / "tools").glob(pattern)):
-            hits += analyse_probe("tools/" + path.name,
-                                  path.read_text(encoding="utf-8", errors="replace"),
-                                  impl_by_tool)
+            hits += analyse_probe(
+                "tools/" + path.name,
+                path.read_text(encoding="utf-8", errors="replace"),
+                impl_by_tool,
+            )
     return sorted(hits, key=lambda h: (h["probe"], h["tool"]))
 
 
@@ -254,13 +263,15 @@ def load_baseline() -> dict:
         return {"entries": []}
     try:
         return json.loads(BASELINE.read_text(encoding="utf-8"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         raise SystemExit("★ 基线 %s 解析失败：%s" % (BASELINE, exc))
 
 
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser(description="探针复用门禁")
-    ap.add_argument("--report", action="store_true", help="★ 只打印命中的全表（不判基线）")
+    ap.add_argument(
+        "--report", action="store_true", help="★ 只打印命中的全表（不判基线）"
+    )
     args = ap.parse_args(argv[1:])
 
     hits = scan()
@@ -274,8 +285,10 @@ def main(argv: list) -> int:
             by_probe[h["probe"]].append(h)
         for f in sorted(by_probe):
             for h in by_probe[f]:
-                print("  %-58s L%-5d %s.%s  ⇒ 已有工具 %s"
-                      % (h["probe"], h["line"], h["module"], h["function"], h["tool"]))
+                print(
+                    "  %-58s L%-5d %s.%s  ⇒ 已有工具 %s"
+                    % (h["probe"], h["line"], h["module"], h["function"], h["tool"])
+                )
         return 0
 
     base = load_baseline()
@@ -283,7 +296,9 @@ def main(argv: list) -> int:
     for e in entries:
         for f in ("probe", "tool", "module", "function", "reason"):
             if not str(e.get(f) or "").strip():
-                print("★ 基线条目缺字段 `%s`（★ 一个没有理由的豁免等于没写）：%r" % (f, e))
+                print(
+                    "★ 基线条目缺字段 `%s`（★ 一个没有理由的豁免等于没写）：%r" % (f, e)
+                )
                 return 1
     known = {(e["probe"], e["tool"]) for e in entries}
     got = {key(h) for h in uniq}
@@ -294,17 +309,25 @@ def main(argv: list) -> int:
     print("★ 探针复用门禁 —— 命中 %d 条 · 基线认可 %d 条" % (len(got), len(known)))
     if new:
         print()
-        print("  ★★ **新增命中 %d 条** ⇒ ★ 这些是「已有工具的替代品」，请改走工具层：" % len(new))
+        print(
+            "  ★★ **新增命中 %d 条** ⇒ ★ 这些是「已有工具的替代品」，请改走工具层："
+            % len(new)
+        )
         for probe, tool in new:
             h = next(x for x in uniq if key(x) == (probe, tool))
-            print("      %s  L%d  %s.%s  ⇒ 已有工具 %s"
-                  % (probe, h["line"], h["module"], h["function"], tool))
+            print(
+                "      %s  L%d  %s.%s  ⇒ 已有工具 %s"
+                % (probe, h["line"], h["module"], h["function"], tool)
+            )
         print()
         print("  ★ 若该探针**确实不能**改（如探针要验的正是**工具层之下**的那一层），")
         print("    请把它登记进 docs/probe-reuse-baseline.json 并**写明理由**。")
     if stale:
         print()
-        print("  ★ **基线腐坏 %d 条** ⇒ ★ 名单里认了、实际已不存在（★ 名单要跟着改）：" % len(stale))
+        print(
+            "  ★ **基线腐坏 %d 条** ⇒ ★ 名单里认了、实际已不存在（★ 名单要跟着改）："
+            % len(stale)
+        )
         for probe, tool in stale:
             print("      %s  %s" % (probe, tool))
     if not new and not stale:

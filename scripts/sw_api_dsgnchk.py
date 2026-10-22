@@ -38,6 +38,7 @@ r"""SolidWorks dsgnchk 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -57,42 +58,39 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = ["ASSEMBLY", "FAMILIES", "ARITY", "PROPERTIES", "call_index"]
 
-ASSEMBLY = 'dsgnchk'
+ASSEMBLY = "dsgnchk"
 
-FAMILIES: tuple[str, ...] = (    'ISWDesignCheck',
-)
+FAMILIES: tuple[str, ...] = ("ISWDesignCheck",)
 
 #: 全量能力登记表 {族: {能力名: 实参个数}}（排除 by-ref 出参）
 ARITY: dict[str, dict[str, int]] = {
-    'ISWDesignCheck': {
-        'appCallbackFunction': 3,
-        'CheckAgainstExistingFile': 0,
-        'CreateChecksFromSWFile': 1,
-        'ExtractChkFrmSelectedItem': 0,
-        'HelpErrCallback': 4,
-        'RunDesignCheck': 4,
-        'RunDesignCheck2': 5,
-        'RunDesignCheck3': 1,
-        'RunDesignCheck4': 5,
-        'RunDesignCheck5': 5,
-        'SaveSWFilePreviewBitmap': 2,
-        'SetCustomCheckResult': 2,
-        'ShowWebHelp': 4,
-        'StartCheckBuilder': 0,
-        'StartValidator': 0,
-        'ToolbarUpdate': 0,
-        'ToolbarUpdateCheckAgainstExistingFile': 0,
-        'ToolbarUpdateCheckBuilder': 0,
-        'ToolbarUpdateLearnChk': 0,
+    "ISWDesignCheck": {
+        "appCallbackFunction": 3,
+        "CheckAgainstExistingFile": 0,
+        "CreateChecksFromSWFile": 1,
+        "ExtractChkFrmSelectedItem": 0,
+        "HelpErrCallback": 4,
+        "RunDesignCheck": 4,
+        "RunDesignCheck2": 5,
+        "RunDesignCheck3": 1,
+        "RunDesignCheck4": 5,
+        "RunDesignCheck5": 5,
+        "SaveSWFilePreviewBitmap": 2,
+        "SetCustomCheckResult": 2,
+        "ShowWebHelp": 4,
+        "StartCheckBuilder": 0,
+        "StartValidator": 0,
+        "ToolbarUpdate": 0,
+        "ToolbarUpdateCheckAgainstExistingFile": 0,
+        "ToolbarUpdateCheckBuilder": 0,
+        "ToolbarUpdateLearnChk": 0,
     },
 }
 
 #: 属性名（反射里是 get_/set_，**不是方法**；这里只留去掉前缀的名字）
 PROPERTIES: dict[str, tuple[str, ...]] = {
-    'ISWDesignCheck': (
-    ),
+    "ISWDesignCheck": (),
 }
-
 
 
 def _require(obj, what: str = "对象"):
@@ -121,16 +119,19 @@ def call_index(obj, family: str, member: str, *args):
     if sub is None:
         raise KeyError(
             f"本清单没有这个族: {family}（dsgnchk 共 {len(ARITY)} 族）。"
-            f"⚠ 别的程序集请用对应的 call_index。")
+            f"⚠ 别的程序集请用对应的 call_index。"
+        )
     expected = sub.get(member)
     if expected is None:
         raise KeyError(
             f"{family} 上没有名为 {member} 的能力（该族登记 {len(sub)} 项）。"
-            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。")
+            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。"
+        )
     if expected != len(args):
         raise ValueError(
             f"{family}.{member} 官方签名是 {expected} 个实参"
-            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个")
+            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个"
+        )
     _require(obj, f"{family} 对象")
     return get_com_member(obj, member, *args)
 
@@ -152,4 +153,3 @@ def call_index(obj, family: str, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测 SolidWorks 行为（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-

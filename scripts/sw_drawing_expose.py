@@ -9,7 +9,7 @@
 # 经 `scripts/sw_drawing.py`（`spec_from_file_location` 按路径加载 + `globals()` 再导出
 # ）可达。
 #      ★ 依据：`specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md` ——
-# **工程图 13 项里本仓已实现 8 项、却只挂出了 4 项**（且全靠同一个 `solidworks_drawing` 
+# **工程图 13 项里本仓已实现 8 项、却只挂出了 4 项**（且全靠同一个 `solidworks_drawing`
 # 工具）。
 #      ⇒ ★ 本层只做**转接**，★ 一行实现逻辑都不重写（"缝合优先不发明"）。
 #   ② ★ **单位边界**（规则 2）：既有实现的 `x`/`y` 是**米**，而对外一律收**毫米**
@@ -40,8 +40,8 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_drawing as D                                    # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_drawing as D  # noqa: E402
 
 
 def _mm(value) -> float:
@@ -52,25 +52,43 @@ def _mm(value) -> float:
 def _selection_count(model) -> int:
     """★ 回读当前选区计数（★ 判"前置成不成立"要用它；事实 32/496）。"""
     try:
-        return int(C.get_com_member(C.get_com_member(model, "SelectionManager"),
-                                    "GetSelectedObjectCount2", -1) or 0)
-    except Exception:                                                   # noqa: BLE001
+        return int(
+            C.get_com_member(
+                C.get_com_member(model, "SelectionManager"),
+                "GetSelectedObjectCount2",
+                -1,
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
         return 0
 
 
 def _result(op: str, payload: dict, verified_by: str, *, pre_ok=None) -> dict:
     """★ 统一的返回形状（★ 判据要**可回读**，且**前置与能力分开记**）。"""
-    out = {"ok": bool(payload.get("ok", payload.get("view") is not None)) if isinstance(payload, dict)
-          else payload is not None,
-          "op": op, "verified_by": verified_by, "raw": payload}
+    out = {
+        "ok": bool(payload.get("ok", payload.get("view") is not None))
+        if isinstance(payload, dict)
+        else payload is not None,
+        "op": op,
+        "verified_by": verified_by,
+        "raw": payload,
+    }
     if pre_ok is not None:
         out["preconditions_held"] = bool(pre_ok)
         out["ok"] = bool(out["ok"] and pre_ok)
     return out
 
 
-def create_projected_view(drawing_model, part_path: str, *, view_name: str = "*Front",
-                          x_mm: float = 140.0, y_mm: float = 120.0, scale: float = 0.0) -> dict:
+def create_projected_view(
+    drawing_model,
+    part_path: str,
+    *,
+    view_name: str = "*Front",
+    x_mm: float = 140.0,
+    y_mm: float = 120.0,
+    scale: float = 0.0,
+) -> dict:
     """★ 投影/模型视图 —— ★ **走 `add_view`（真机已验证可用）**，不是 `create_standard_views_with_projection`。
 
     ★★ **为什么改走这条**（2026-10-03 真机工具层 e2e 实测）：
@@ -85,15 +103,27 @@ def create_projected_view(drawing_model, part_path: str, *, view_name: str = "*F
     ★ 前置：`part_path` 必须是**已存盘的模型完整路径且含 `.sldprt`/`.sldasm`**（官方 Remarks 逐字）。
     ★ `scale=0.0` 表示不设视图比例（用图纸默认）；`>0` 时按 `1:1/scale` 写 `ScaleRatio`。
     """
-    res = D.add_view(drawing_model, part_path, view_name, _mm(x_mm), _mm(y_mm),
-                     scale=(scale if scale and scale > 0 else None))
-    return _result("create_projected_view", {"ok": res is not None, "view": res},
-                   "返回非 None（★ 底层为 CreateDrawViewFromModelView3，视图名自动本地化）",
-                   pre_ok=bool(part_path and str(part_path).lower().endswith((".sldprt", ".sldasm"))))
+    res = D.add_view(
+        drawing_model,
+        part_path,
+        view_name,
+        _mm(x_mm),
+        _mm(y_mm),
+        scale=(scale if scale and scale > 0 else None),
+    )
+    return _result(
+        "create_projected_view",
+        {"ok": res is not None, "view": res},
+        "返回非 None（★ 底层为 CreateDrawViewFromModelView3，视图名自动本地化）",
+        pre_ok=bool(
+            part_path and str(part_path).lower().endswith((".sldprt", ".sldasm"))
+        ),
+    )
 
 
-def create_three_standard_views(drawing_model, part_path: str, *,
-                                projection: str = "first_angle") -> dict:
+def create_three_standard_views(
+    drawing_model, part_path: str, *, projection: str = "first_angle"
+) -> dict:
     """★ 三视图布局（第一角/第三角）。
 
     ★★ **2026-10-04（接手轮）更正**：本函数原来写着「本机被挡 / 本机 COM 代理没有该成员」
@@ -103,17 +133,30 @@ def create_three_standard_views(drawing_model, part_path: str, *,
       ★ 若仍返回 `blocked`，那**才是**真的取不到该成员，而返回值里会带
       `member_present_but_not_callable` 说明「成员在但不可调用」（★ 事实 386）。
     """
-    res = D.create_standard_views_with_projection(drawing_model, part_path, projection=projection)
-    ok = bool(isinstance(res, dict) and res.get("status") not in ("blocked",)
-              and any((v is not None) for v in (res.get("views") or []))) if isinstance(res, dict) else \
-        res is not None
-    out = _result("create_three_standard_views", res if isinstance(res, dict) else {"value": res},
-                  "返回里有建成视图（★ 真名 Create1stAngleViews2；★ blocked 才是真取不到）")
+    res = D.create_standard_views_with_projection(
+        drawing_model, part_path, projection=projection
+    )
+    ok = (
+        bool(
+            isinstance(res, dict)
+            and res.get("status") not in ("blocked",)
+            and any((v is not None) for v in (res.get("views") or []))
+        )
+        if isinstance(res, dict)
+        else res is not None
+    )
+    out = _result(
+        "create_three_standard_views",
+        res if isinstance(res, dict) else {"value": res},
+        "返回里有建成视图（★ 真名 Create1stAngleViews2；★ blocked 才是真取不到）",
+    )
     out["ok"] = ok
     return out
 
 
-def create_section_view(drawing_model, *, x_mm: float, y_mm: float, label: str = "A") -> dict:
+def create_section_view(
+    drawing_model, *, x_mm: float, y_mm: float, label: str = "A"
+) -> dict:
     """★ 剖面视图（`CreateSectionViewAt5`）—— ★ **调用前必须先选好剖面线**（官方 Remarks 逐字）。
 
     ★ 本函数**不代选**：先回读选区计数并在返回值里给出 `preconditions_held`。
@@ -132,28 +175,56 @@ def create_section_view(drawing_model, *, x_mm: float, y_mm: float, label: str =
     view = res.get("view") if isinstance(res, dict) else res
     extra = {}
     if isinstance(res, dict):
-        extra = {"label_requested": res.get("label_requested"),
-                 "label_status": res.get("label_status"),
-                 "label_ok": res.get("label_ok"),
-                 "label_note": res.get("label_note")}
-    return _result("create_section_view", {"ok": view is not None, "view": view, **extra},
-                   "视图数增量（★ 前置成立才算）", pre_ok=pre > 0)
+        extra = {
+            "label_requested": res.get("label_requested"),
+            "label_status": res.get("label_status"),
+            "label_ok": res.get("label_ok"),
+            "label_note": res.get("label_note"),
+        }
+    return _result(
+        "create_section_view",
+        {"ok": view is not None, "view": view, **extra},
+        "视图数增量（★ 前置成立才算）",
+        pre_ok=pre > 0,
+    )
 
 
-def create_detail_view(drawing_model, *, x_mm: float, y_mm: float, scale: float = 2.0,
-                       style: int = 0, label: str = "", show_type: int = 0,
-                       full_outline: bool = False, jagged_outline: bool = False,
-                       no_outline: bool = False, shape_intensity: int = 0) -> dict:
+def create_detail_view(
+    drawing_model,
+    *,
+    x_mm: float,
+    y_mm: float,
+    scale: float = 2.0,
+    style: int = 0,
+    label: str = "",
+    show_type: int = 0,
+    full_outline: bool = False,
+    jagged_outline: bool = False,
+    no_outline: bool = False,
+    shape_intensity: int = 0,
+) -> dict:
     """★ 局部视图（`CreateDetailViewAt4`，12 参）—— ★ 前置是"图上有局部圆（草图圆）"。
 
     ★ `scale` 是比例分子（分母固定 1.0）⇒ `scale=2` 表示 **2:1**。
     """
-    res = D.add_detail_view(drawing_model, _mm(x_mm), _mm(y_mm), scale, style=style, label=label,
-                            show_type=show_type, full_outline=full_outline,
-                            jagged_outline=jagged_outline, no_outline=no_outline,
-                            shape_intensity=shape_intensity)
-    return _result("create_detail_view", {"ok": res is not None, "view": res},
-                   "视图数增量 + 返回非 None")
+    res = D.add_detail_view(
+        drawing_model,
+        _mm(x_mm),
+        _mm(y_mm),
+        scale,
+        style=style,
+        label=label,
+        show_type=show_type,
+        full_outline=full_outline,
+        jagged_outline=jagged_outline,
+        no_outline=no_outline,
+        shape_intensity=shape_intensity,
+    )
+    return _result(
+        "create_detail_view",
+        {"ok": res is not None, "view": res},
+        "视图数增量 + 返回非 None",
+    )
 
 
 def set_sheet_format(drawing_model, format_path: str) -> dict:
@@ -172,10 +243,18 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
     """
     sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
     if sheet is None:
-        return {"ok": False, "op": "set_sheet_format", "preconditions_held": False,
-                "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）"}
-    out = {"op": "set_sheet_format", "preconditions_held": True, "format_path": str(format_path),
-           "verified_by": "返回 None（= void 成功）且 `GetTemplateName` 回读等于新路径"}
+        return {
+            "ok": False,
+            "op": "set_sheet_format",
+            "preconditions_held": False,
+            "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）",
+        }
+    out = {
+        "op": "set_sheet_format",
+        "preconditions_held": True,
+        "format_path": str(format_path),
+        "verified_by": "返回 None（= void 成功）且 `GetTemplateName` 回读等于新路径",
+    }
     if not format_path:
         out["ok"] = False
         out["err"] = "★ 前置未成立：format_path 为空"
@@ -184,12 +263,14 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
         ret = C.get_com_member(sheet, "SetTemplateName", str(format_path))
         out["ret_repr"] = repr(ret)
         try:
-            out["template_name_readback"] = str(C.get_com_member(sheet, "GetTemplateName") or "")
-        except Exception:                                               # noqa: BLE001
+            out["template_name_readback"] = str(
+                C.get_com_member(sheet, "GetTemplateName") or ""
+            )
+        except Exception:  # noqa: BLE001
             out["template_name_readback"] = None
         try:
             C.get_com_member(drawing_model, "ForceRebuild3", False)
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         #: ★★★★ 2026-10-04（接手轮）**把承诺的两个条件真的算出来**（★ 处置 `JUDGE-C_D_E.
         #: md`
@@ -218,11 +299,13 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
         out["condition_readback_matches"] = readback_matches
         out["ok"] = bool(ret_is_none and readback_matches)
         if not out["ok"]:
-            out["err"] = ("★ 承诺的两个条件没都满足："
-                          "① `SetTemplateName` 回 None = %s；"
-                          "② 回读等于新路径 = %s（want=%r got=%r）"
-                          % (ret_is_none, readback_matches, want, got))
-    except Exception as exc:                                            # noqa: BLE001
+            out["err"] = (
+                "★ 承诺的两个条件没都满足："
+                "① `SetTemplateName` 回 None = %s；"
+                "② 回读等于新路径 = %s（want=%r got=%r）"
+                % (ret_is_none, readback_matches, want, got)
+            )
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     return out
@@ -247,9 +330,9 @@ def _selection_marks(model) -> dict:
                 if mark is not None:
                     out[str(mark)] = out.get(str(mark), 0) + 1
                 _ = m
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
     return out
 
@@ -272,21 +355,30 @@ def _view_by_name(drawing_model, view_name: str):
             vn = None
             try:
                 vn = C.get_com_member(view, "GetName2")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 vn = None
             if not vn:
                 vn = C.get_com_member(view, "Name")
             if str(vn or "") == str(view_name):
                 return view
             view = C.get_com_member(view, "GetNextView")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     return None
 
 
-def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float,
-                      anchor_type: int, start_value: str = "A", template: str = "",
-                      tag_order: int = 1, tag_type: int = 1) -> dict:
+def create_hole_table(
+    drawing_model,
+    *,
+    view_name: str,
+    x_mm: float,
+    y_mm: float,
+    anchor_type: int,
+    start_value: str = "A",
+    template: str = "",
+    tag_order: int = 1,
+    tag_type: int = 1,
+) -> dict:
     """★ 孔表 —— **`IView.InsertHoleTable3`（9 参、未废弃）**。
 
     ★★ **为什么不用 `InsertTableAnnotation`**（★ 2026-10-03 真机工具层 e2e 实测的教训）：
@@ -302,14 +394,22 @@ def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float
     """
     view = _view_by_name(drawing_model, view_name)
     if view is None:
-        return {"ok": False, "op": "create_hole_table", "preconditions_held": False,
-                "err": "★ 前置未成立：按名找不到视图 %r" % view_name,
-                "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+        return {
+            "ok": False,
+            "op": "create_hole_table",
+            "preconditions_held": False,
+            "err": "★ 前置未成立：按名找不到视图 %r" % view_name,
+            "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）",
+        }
     marks = _selection_marks(drawing_model)
     pre = bool(marks.get("1", 0) >= 1 and marks.get("2", 0) >= 1)
-    out = {"op": "create_hole_table", "preconditions_held": pre, "selection_marks": marks,
-           "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
-           "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
+    out = {
+        "op": "create_hole_table",
+        "preconditions_held": pre,
+        "selection_marks": marks,
+        "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
+        "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）",
+    }
     if not pre:
         #: ★★★ 2026-10-03（接手轮）**从"硬失败"改成"告警后仍然尝试"** —— 与 `surface_fil
         #: l` 同一形态。
@@ -329,23 +429,40 @@ def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float
         out["precondition_warning"] = (
             "★ 官方 mark 表要求的 **1（顶点）与 2（孔边与面）** 没同时在选区里 —— "
             "★ 这通常是**事实 503**（`RESOLVERS[inj]` 会清空选区）造成的，"
-            "★ 不一定是调用方没选。★ **仍然尝试调用**，成不成以表增量与返回值为准。")
+            "★ 不一定是调用方没选。★ **仍然尝试调用**，成不成以表增量与返回值为准。"
+        )
     try:
-        tbl = C.get_com_member(view, "InsertHoleTable3", False, _mm(x_mm), _mm(y_mm),
-                               int(anchor_type), str(start_value), str(template),
-                               int(tag_order), int(tag_type),
-                               C.create_empty_dispatch_variant())
+        tbl = C.get_com_member(
+            view,
+            "InsertHoleTable3",
+            False,
+            _mm(x_mm),
+            _mm(y_mm),
+            int(anchor_type),
+            str(start_value),
+            str(template),
+            int(tag_order),
+            int(tag_type),
+            C.create_empty_dispatch_variant(),
+        )
         out["ok"] = tbl is not None
         out["raw_is_none"] = tbl is None
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     return out
 
 
-def create_revision_table(drawing_model, *, x_mm: float, y_mm: float, anchor_type: int,
-                          template: str = "", shape: int = 0,
-                          auto_update_zoom_cells: bool = True) -> dict:
+def create_revision_table(
+    drawing_model,
+    *,
+    x_mm: float,
+    y_mm: float,
+    anchor_type: int,
+    template: str = "",
+    shape: int = 0,
+    auto_update_zoom_cells: bool = True,
+) -> dict:
     """★ 修订表 —— **`ISheet.InsertRevisionTable2`（7 参、未废弃）**。
 
     ★★ 同上：`InsertTableAnnotation` **建不出修订表**（它没有"表类型"这个参数）⇒ 本函数走**真入口**。
@@ -355,17 +472,32 @@ def create_revision_table(drawing_model, *, x_mm: float, y_mm: float, anchor_typ
     """
     sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
     if sheet is None:
-        return {"ok": False, "op": "create_revision_table", "preconditions_held": False,
-                "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）"}
-    out = {"op": "create_revision_table", "preconditions_held": True,
-           "verified_by": "返回非 None + ISheet.RevisionTable 回读"}
+        return {
+            "ok": False,
+            "op": "create_revision_table",
+            "preconditions_held": False,
+            "err": "★ 前置未成立：取不到当前图纸（GetCurrentSheet 回 None）",
+        }
+    out = {
+        "op": "create_revision_table",
+        "preconditions_held": True,
+        "verified_by": "返回非 None + ISheet.RevisionTable 回读",
+    }
     try:
-        tbl = C.get_com_member(sheet, "InsertRevisionTable2", False, _mm(x_mm), _mm(y_mm),
-                               int(anchor_type), str(template), int(shape),
-                               bool(auto_update_zoom_cells))
+        tbl = C.get_com_member(
+            sheet,
+            "InsertRevisionTable2",
+            False,
+            _mm(x_mm),
+            _mm(y_mm),
+            int(anchor_type),
+            str(template),
+            int(shape),
+            bool(auto_update_zoom_cells),
+        )
         out["raw_is_none"] = tbl is None
         out["ok"] = tbl is not None
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     return out
@@ -378,12 +510,21 @@ def insert_center_marks(drawing_model, requirements) -> dict:
     ⇒ ★ 本函数走的是**批量**那条路（`AutoInsertCenterMarks2`），★ **尚未单独真机验证** ⇒ 如实标注。
     """
     res = D.auto_insert_center_marks(drawing_model, requirements)
-    return _result("insert_center_marks", res if isinstance(res, dict) else {"value": res},
-                   "★ 待真机验证（`GetCenterMarkCount2` 增量）—— ⚠ 单点 `InsertCenterMark3` 已实测为阴性")
+    return _result(
+        "insert_center_marks",
+        res if isinstance(res, dict) else {"value": res},
+        "★ 待真机验证（`GetCenterMarkCount2` 增量）—— ⚠ 单点 `InsertCenterMark3` 已实测为阴性",
+    )
 
 
 __all__ = [
-    "create_projected_view", "create_three_standard_views", "create_section_view",
-    "create_detail_view", "set_sheet_format",
-    "add_drawing_note", "create_hole_table", "create_revision_table", "insert_center_marks",
+    "create_projected_view",
+    "create_three_standard_views",
+    "create_section_view",
+    "create_detail_view",
+    "set_sheet_format",
+    "add_drawing_note",
+    "create_hole_table",
+    "create_revision_table",
+    "insert_center_marks",
 ]

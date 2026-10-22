@@ -33,6 +33,7 @@ scratch 存到 `output/` 的**每轮子目录**；收尾**关件不保存** + **
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -58,10 +59,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -86,7 +88,7 @@ def main() -> int:
             raw = sw_connect.safe_get_com_member(mgr, "AddRelation")
             ev["add_relation_repr"] = "%s" % type(raw).__name__
             print("  ① `AddRelation` 取出来是: %s" % type(raw).__name__)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["add_relation_repr"] = "EXC: %s" % str(exc)[:60]
             print("  ① 取 `AddRelation` 抛错: %s" % str(exc)[:80])
 
@@ -100,20 +102,28 @@ def main() -> int:
 
         def cnt():
             try:
-                return int(sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0)
-            except Exception:      # noqa: BLE001
+                return int(
+                    sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0
+                )
+            except Exception:  # noqa: BLE001
                 return -1
 
         #: ② 三种实参形态逐个试，**每次都回读计数**
         import pythoncom
         from win32com.client import VARIANT
+
         forms = [
             ("list[0:2]", lambda: [segs[0], segs[1]]),
             ("tuple(0,1)", lambda: (segs[0], segs[1])),
-            ("VARIANT(VT_ARRAY|VT_DISPATCH)", lambda: VARIANT(
-                pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [segs[0], segs[1]])),
+            (
+                "VARIANT(VT_ARRAY|VT_DISPATCH)",
+                lambda: VARIANT(
+                    pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [segs[0], segs[1]]
+                ),
+            ),
         ]
         from scripts import sketch_relations
+
         for name, make in forms:
             before = cnt()
             rec = {"form": name, "relations_before": before}
@@ -121,41 +131,54 @@ def main() -> int:
                 ents = make()
                 sketch_relations.add_relation(sk, ents, COLINEAR)
                 rec["raised"] = None
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
                 rec["traceback_tail"] = traceback.format_exc().strip().splitlines()[-4:]
             rec["relations_after"] = cnt()
             rec["added"] = rec["relations_after"] == before + 1
             ev["trials"].append(rec)
-            print("  ② %-32s 抛错=%-40s 计数 %s → %s  ⇒ **%s**"
-                  % (name, (rec["raised"] or "无")[:40], rec["relations_before"],
-                     rec["relations_after"], "加上 ✚" if rec["added"] else "没加上"))
+            print(
+                "  ② %-32s 抛错=%-40s 计数 %s → %s  ⇒ **%s**"
+                % (
+                    name,
+                    (rec["raised"] or "无")[:40],
+                    rec["relations_before"],
+                    rec["relations_after"],
+                    "加上 ✚" if rec["added"] else "没加上",
+                )
+            )
             if rec["added"]:
                 print("     ★★ **这个形态可行**")
                 break
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

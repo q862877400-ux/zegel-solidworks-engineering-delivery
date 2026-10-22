@@ -14,6 +14,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 import json
 import re
 import sys
@@ -39,13 +40,21 @@ OUR_BATCHES = {
     "batch18 草图只读": ["count_lines", "count_arcs", "count_segments", "is_3d"],
     "batch19 工程图轻量": ["list_sheets", "get_current_sheet", "list_views"],
     "batch20 自定义属性": ["custom_property_get", "custom_property_list"],
-    "batch21 建草图": ["sketch_start", "sketch_end", "sketch_add_line",
-                     "sketch_add_circle", "sketch_add_rectangle"],
+    "batch21 建草图": [
+        "sketch_start",
+        "sketch_end",
+        "sketch_add_line",
+        "sketch_add_circle",
+        "sketch_add_rectangle",
+    ],
     "batch22 拉伸": ["extrude_boss", "extrude_cut", "extrude_midplane"],
     "batch23 倒角圆角": ["chamfer", "fillet"],
     "batch24 质量属性": ["part_mass_properties"],
-    "batch25 装配只读": ["assembly_list_components", "assembly_list_mates",
-                       "assembly_check_interference"],
+    "batch25 装配只读": [
+        "assembly_list_components",
+        "assembly_list_mates",
+        "assembly_check_interference",
+    ],
 }
 
 print("  四家工具名总数（去重）: %d" % len(all_four))
@@ -67,4 +76,7 @@ for batch, ops in OUR_BATCHES.items():
         print(r)
 print()
 print("  ★ 能「抄到名字」的: **%d / %d**" % (hit, tot))
-print("  ★ **四家根本没有的**: **%d / %d**（%.0f%%）" % (tot - hit, tot, 100.0 * (tot - hit) / tot))
+print(
+    "  ★ **四家根本没有的**: **%d / %d**（%.0f%%）"
+    % (tot - hit, tot, 100.0 * (tot - hit) / tot)
+)

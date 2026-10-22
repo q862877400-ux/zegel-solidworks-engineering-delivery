@@ -31,19 +31,21 @@ REQUIRED_FIELDS = ("id", "claim", "refuted_by", "anchor_quote", "prevention")
 #: ★★ 修法：★ **把 stdout 切成 utf-8**（★ `errors="replace"` ⇒ 再遇到别的编码也不至于整
 #: 条崩）✓
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
-except Exception:                                                         # noqa: BLE001
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:  # noqa: BLE001
     pass
 
 
 def check() -> tuple[bool, str]:
     """★ 判据：① JSON 存在且可解析 · ② 每条齐必需字段 · ③ `anchor_quote` **逐字**命中事实表。"""
     if not PATTERNS.is_file():
-        return False, ("★ `docs/refuted-patterns.json` **不存在** ⇒ 本条闸**没有可读对象**。"
-                       "★ 那不是「通过」，★ 是**没在判**（★ 事实 40）。")
+        return False, (
+            "★ `docs/refuted-patterns.json` **不存在** ⇒ 本条闸**没有可读对象**。"
+            "★ 那不是「通过」，★ 是**没在判**（★ 事实 40）。"
+        )
     try:
         data = json.loads(PATTERNS.read_text(encoding="utf-8"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "★ `refuted-patterns.json` 解析失败：%s" % exc
     rows = data.get("patterns") or []
     if not rows:
@@ -63,10 +65,15 @@ def check() -> tuple[bool, str]:
         if miss_field:
             lines.append("★ 缺必需字段：%s" % ", ".join(miss_field))
         if miss_quote:
-            lines.append("★★ `anchor_quote` **没有逐字命中** `docs/known-facts.md`：%s"
-                         % ", ".join(miss_quote))
+            lines.append(
+                "★★ `anchor_quote` **没有逐字命中** `docs/known-facts.md`：%s"
+                % ", ".join(miss_quote)
+            )
         return False, "\n".join(lines)
-    return True, "★ %d 条 · `anchor_quote` **全部逐字命中** `docs/known-facts.md` ✓" % len(rows)
+    return (
+        True,
+        "★ %d 条 · `anchor_quote` **全部逐字命中** `docs/known-facts.md` ✓" % len(rows),
+    )
 
 
 def main() -> int:

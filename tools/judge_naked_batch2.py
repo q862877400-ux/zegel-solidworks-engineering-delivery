@@ -30,7 +30,9 @@ from pathlib import Path
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(r"" + _ROOT_S + r"")
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "naked-batch2-judgement.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "naked-batch2-judgement.json"
+)
 
 #: ★ 每条：★ 缺口名 ⇒ **功能词**（★ 多给几个，★ 覆盖同义说法）
 CASES: dict[str, list[str]] = {
@@ -53,23 +55,26 @@ def main() -> int:
     funcs: dict[str, list[str]] = {}
     members: set[str] = set()
     for p in sorted((ROOT / "scripts").glob("*.py")):
-        if p.name.startswith("sw_api_"):          #: ★ 排除反射转储（★ 事实 351「出现过≠在用」）
+        if p.name.startswith("sw_api_"):  #: ★ 排除反射转储（★ 事实 351「出现过≠在用」）
             continue
         try:
             src = p.read_text(encoding="utf-8")
             tree = ast.parse(src)
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for n in ast.walk(tree):
             if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 funcs.setdefault(n.name, []).append(p.name)
-        for m in re.finditer(r'(?:get|set|call)_com_member\([^,]+,\s*"([A-Za-z_][A-Za-z0-9_]*)"', src):
+        for m in re.finditer(
+            r'(?:get|set|call)_com_member\([^,]+,\s*"([A-Za-z_][A-Za-z0-9_]*)"', src
+        ):
             members.add(m.group(1))
 
     rows = []
     for gap, keys in CASES.items():
-        hits = sorted({f for f, ps in funcs.items()
-                       if any(k.lower() in f.lower() for k in keys)})
+        hits = sorted(
+            {f for f, ps in funcs.items() if any(k.lower() in f.lower() for k in keys)}
+        )
         mem = sorted({m for m in members if any(k.lower() in m.lower() for k in keys)})
         #: ★ 判据：★ **有函数**且那些函数**确实调了相关 COM 成员** ⇒ "已有"；★ 只有函数
         #: 名像而 COM 为空 ⇒ 存疑
@@ -79,12 +84,14 @@ def main() -> int:
         #:   ⇒ 两层都判"无" ⇒ ★★ **误判成"有原语无工具"**（★ 而它**早就是工具**了）。
         #:   ⇒ 所以还要搜 **枚举常量名**（如 `ENTITY_KINDS`）与 **工具文档串里的取值**。
         enumish: list[str] = []
-        for p2 in list((ROOT / "scripts").glob("*.py")) + list((ROOT / "mcp-server").glob("*.py")):
+        for p2 in list((ROOT / "scripts").glob("*.py")) + list(
+            (ROOT / "mcp-server").glob("*.py")
+        ):
             if p2.name.startswith("sw_api_"):
                 continue
             try:
                 src2 = p2.read_text(encoding="utf-8")
-            except Exception:                                   # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             for m2 in re.finditer(r'"([A-Z_]{3,})"', src2):
                 name2 = m2.group(1)
@@ -93,22 +100,39 @@ def main() -> int:
                 words2 = [w for w in name2.split("_") if w]
                 if any(k.upper() in words2 for k in keys):
                     enumish.append("%s:%s" % (p2.name, name2))
-            for m2 in re.finditer(r'([A-Za-z_]*KINDS[A-Za-z_]*)\s*=\s*\{([^}]{0,400})\}', src2):
+            for m2 in re.finditer(
+                r"([A-Za-z_]*KINDS[A-Za-z_]*)\s*=\s*\{([^}]{0,400})\}", src2
+            ):
                 body2 = m2.group(2)
                 if any(k.upper() in body2.upper() for k in keys):
                     enumish.append("%s:%s" % (p2.name, m2.group(1)))
         enumish = sorted(set(enumish))
-        verdict = ("已有（★ 有实现入口）" if (hits and mem) else
-                   "已有（★ 由**枚举取值/文档串**佐证 —— 第三层）" if enumish else
-                   "★ 需人工核（有入口而同名 COM 成员为空）" if hits else "**真缺**（三层都无）")
-        rows.append({"gap": gap, "funcs": hits[:6], "com_members": mem[:8],
-                     "enum_or_doc": enumish[:6], "verdict": verdict})
+        verdict = (
+            "已有（★ 有实现入口）"
+            if (hits and mem)
+            else "已有（★ 由**枚举取值/文档串**佐证 —— 第三层）"
+            if enumish
+            else "★ 需人工核（有入口而同名 COM 成员为空）"
+            if hits
+            else "**真缺**（三层都无）"
+        )
+        rows.append(
+            {
+                "gap": gap,
+                "funcs": hits[:6],
+                "com_members": mem[:8],
+                "enum_or_doc": enumish[:6],
+                "verdict": verdict,
+            }
+        )
         print("  %-22s ⇒ %s" % (gap, verdict))
         print("      函数: %s" % (", ".join(hits[:5]) or "—"))
         print("      COM : %s" % (", ".join(mem[:5]) or "—"))
         if enumish:
             print("      枚举/文档: %s" % (", ".join(enumish[:4])))
-    OUT.write_text(json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(rows, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
     print("\n  产物: %s" % OUT)
     return 0
 

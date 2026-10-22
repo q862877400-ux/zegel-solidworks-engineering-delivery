@@ -43,7 +43,6 @@ except ImportError:
     from sw_stdio import configure_stdio_utf8 as _configure_stdio_utf8
 
 
-
 _configure_stdio_utf8()
 
 
@@ -105,7 +104,7 @@ def shell_command_text(command: Sequence[str]) -> str:
     for part in command:
         text = str(part)
         if any(char in special_chars for char in text):
-            parts.append('"' + text.replace('"', r'\"') + '"')
+            parts.append('"' + text.replace('"', r"\"") + '"')
         else:
             parts.append(text)
     return " ".join(parts)
@@ -155,21 +154,20 @@ def ensure_com_dependencies(
 
     should_install = allow_install
     if should_install is None:
-        should_install = ask_install_permission(input_func=input_func, output_func=output_func)
+        should_install = ask_install_permission(
+            input_func=input_func, output_func=output_func
+        )
 
     if not should_install:
         command = shell_command_text(pip_install_command())
         raise DependencyInstallDeclined(
-            "当前 Python 环境缺少 SolidWorks COM 依赖。请手动执行：\n"
-            f"{command}"
+            f"当前 Python 环境缺少 SolidWorks COM 依赖。请手动执行：\n{command}"
         )
 
     install_com_dependencies(requirements=tuple(missing))
     still_missing = missing_com_dependencies()
     if still_missing:
-        raise ModuleNotFoundError(
-            "依赖安装后仍无法导入: " + ", ".join(still_missing)
-        )
+        raise ModuleNotFoundError("依赖安装后仍无法导入: " + ", ".join(still_missing))
     return missing
 
 
@@ -209,7 +207,9 @@ def solidworks_installed() -> bool:
     installation = discover_installation("solidworks")
     if installation["registered"]:
         return True
-    return bool(installation["executable"] and os.path.exists(installation["executable"]))
+    return bool(
+        installation["executable"] and os.path.exists(installation["executable"])
+    )
 
 
 def ensure_solidworks_installed() -> None:
@@ -241,9 +241,15 @@ def run_preflight(
 def _parse_args():
     """解析命令行参数。"""
     parser = argparse.ArgumentParser(description="SolidWorks 自动化技能运行前自检。")
-    parser.add_argument("--yes", action="store_true", help="检测到缺失依赖时直接授权安装。")
-    parser.add_argument("--no-install", action="store_true", help="检测到缺失依赖时不自动安装。")
-    parser.add_argument("--no-solidworks-check", action="store_true", help="跳过 SolidWorks 安装检测。")
+    parser.add_argument(
+        "--yes", action="store_true", help="检测到缺失依赖时直接授权安装。"
+    )
+    parser.add_argument(
+        "--no-install", action="store_true", help="检测到缺失依赖时不自动安装。"
+    )
+    parser.add_argument(
+        "--no-solidworks-check", action="store_true", help="跳过 SolidWorks 安装检测。"
+    )
     return parser.parse_args()
 
 

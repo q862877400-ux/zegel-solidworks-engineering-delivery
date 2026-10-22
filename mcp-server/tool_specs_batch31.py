@@ -51,14 +51,16 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH31"]
 
-_SIZE = ("Global element size in MILLIMETRES, as you would pass it to "
-         "solidworks_simulation_create_mesh. ★ The gate compares it against the part's own "
-         "bounding box: an element larger than the part is degenerate and would make "
-         "CreateMesh silently fall back to its default, after which RunAnalysis has no "
-         "solution and Simulation raises a MODAL DIALOG that hangs the COM session.")
+_SIZE = (
+    "Global element size in MILLIMETRES, as you would pass it to "
+    "solidworks_simulation_create_mesh. ★ The gate compares it against the part's own "
+    "bounding box: an element larger than the part is degenerate and would make "
+    "CreateMesh silently fall back to its default, after which RunAnalysis has no "
+    "solution and Simulation raises a MODAL DIALOG that hangs the COM session."
+)
 
 
-def _derive_model(params):                                     # noqa: ARG001
+def _derive_model(params):  # noqa: ARG001
     """★ 把活动文档作为 `model=` 补进实参（闸门要量零件包围盒）。"""
     from scripts.sw_connect import connect_solidworks
 
@@ -72,7 +74,8 @@ SPECS_BATCH31 = [
     ToolSpec(
         name="solidworks_simulation_check_mesh_size",
         title="Check a Mesh Element Size Against the Part Before Meshing",
-        module="sw_simulation", function="check_mesh_size_sane",
+        module="sw_simulation",
+        function="check_mesh_size_sane",
         inject="",
         #: ★★ 规则 2 要求**长度参数带 `_mm` 后缀**，而能力层形参叫 `element_size`
         #:   ⇒ ★ 用 `param_alias` 把两者对上（**这正是它的设计用途**）。
@@ -82,21 +85,23 @@ SPECS_BATCH31 = [
         param_alias={"element_size_mm": "element_size"},
         derived_args=_derive_model,
         params=[
-            Param("element_size_mm", float,
-                  description=_SIZE),
-            Param("memory_budget_gb", float,
-                  description="★ 允许这次求解用掉的内存上限（**GB**）。省略 = 默认"
-                              "「物理内存的一半，且不超过 16 GB」。★ 依据官方 FFEPlus 规则"
-                              "「每 2,000,000 自由度需 1 GB RAM」。"),
+            Param("element_size_mm", float, description=_SIZE),
+            Param(
+                "memory_budget_gb",
+                float,
+                description="★ 允许这次求解用掉的内存上限（**GB**）。省略 = 默认"
+                "「物理内存的一半，且不超过 16 GB」。★ 依据官方 FFEPlus 规则"
+                "「每 2,000,000 自由度需 1 GB RAM」。",
+            ),
         ],
         doc="Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, "
-            "and return `{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, "
-            "est_ram_gb, memory_budget_gb, reason}`. ★ Call this before "
-            "solidworks_simulation_create_mesh. ★★ **判据是双侧的**："
-            "① 单元尺寸**大于零件最大边** ⇒ 网格退化 ⇒ 后续求解会弹模态框挂住会话；"
-            "② 单元尺寸**小得离谱** ⇒ 按包围盒估的求解内存超过 `memory_budget_gb` "
-            "⇒ **会把整机内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；"
-            "★ `ok` 为 false 时**不要建网格、更不要跑求解**。"
-            "★ It does NOT create a mesh and does NOT run the solver.",
+        "and return `{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, "
+        "est_ram_gb, memory_budget_gb, reason}`. ★ Call this before "
+        "solidworks_simulation_create_mesh. ★★ **判据是双侧的**："
+        "① 单元尺寸**大于零件最大边** ⇒ 网格退化 ⇒ 后续求解会弹模态框挂住会话；"
+        "② 单元尺寸**小得离谱** ⇒ 按包围盒估的求解内存超过 `memory_budget_gb` "
+        "⇒ **会把整机内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；"
+        "★ `ok` 为 false 时**不要建网格、更不要跑求解**。"
+        "★ It does NOT create a mesh and does NOT run the solver.",
     ),
 ]

@@ -28,7 +28,7 @@
 #       曲面放样的真名是 **`IModelDoc2.InsertLoftRefSurface2`** ✓
 #
 #   ★★ **代际（★ 铁律 4：以后继版为准）**：
-# · `IModelDoc2.InsertLoftRefSurface` **官方标 Obsolete** ⇒ 被 `…RefSurface2` 取代 ⇒ ★ 
+# · `IModelDoc2.InsertLoftRefSurface` **官方标 Obsolete** ⇒ 被 `…RefSurface2` 取代 ⇒ ★
 # 用 `…2`
 #     · `IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**
 #       （继任者写的是 `IFeatureManager::InsertProtrusionSwept3`）⇒ ★ 见下面"查不到"段
@@ -52,7 +52,7 @@
 # 覆盖:   全文件（★ 逐函数另有来源块）。
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回 Feature 非 None** + 
+# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回 Feature 非 None** +
 # **特征树增量**
 #   （★ 事实 8：COM 返回值单独不可信；★ 规则 6：不静默成功）。
 
@@ -61,9 +61,9 @@ from __future__ import annotations
 import math
 
 try:
-    from .sw_connect import get_com_member, set_com_member          # noqa: F401
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
-    from sw_connect import get_com_member, set_com_member           # noqa: F401
+    from .sw_connect import get_com_member, set_com_member  # noqa: F401
+except ImportError:  # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, set_com_member  # noqa: F401
 
 __all__ = [
     "insert_revolved_ref_surface",
@@ -105,9 +105,13 @@ except ImportError:
     from sw_feature_tree import new_features
 
 
-
-def insert_revolved_ref_surface(model, angle_deg: float, rev_type: int = 0,
-                                reverse_dir: bool = False, angle2_deg: float = 0.0) -> dict:
+def insert_revolved_ref_surface(
+    model,
+    angle_deg: float,
+    rev_type: int = 0,
+    reverse_dir: bool = False,
+    angle2_deg: float = 0.0,
+) -> dict:
     """★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → **IFeature**。
 
     ★★★ 官方原话：「Creates a **revolved reference surface** by revolving a profile around a
@@ -128,29 +132,51 @@ def insert_revolved_ref_surface(model, angle_deg: float, rev_type: int = 0,
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     if int(rev_type) not in REVOLVE_TYPE_MEANINGS:
-        return {"ok": False, "error": "rev_type 不在官方取值表 0..2 内：%r（表：%s）"
-                % (rev_type, REVOLVE_TYPE_MEANINGS)}
+        return {
+            "ok": False,
+            "error": "rev_type 不在官方取值表 0..2 内：%r（表：%s）"
+            % (rev_type, REVOLVE_TYPE_MEANINGS),
+        }
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
-    feat = get_com_member(fm, "InsertRevolvedRefSurface",
-                          math.radians(float(angle_deg)), bool(reverse_dir),
-                          math.radians(float(angle2_deg)), int(rev_type))
+    feat = get_com_member(
+        fm,
+        "InsertRevolvedRefSurface",
+        math.radians(float(angle_deg)),
+        bool(reverse_dir),
+        math.radians(float(angle2_deg)),
+        int(rev_type),
+    )
     after = _tree_names(model)
     added = new_features(before, after)
-    return {"ok": feat is not None and bool(added), "op": "revolved_ref_surface",
-            "returned_is_none": feat is None,
-            "rev_type": int(rev_type), "rev_type_meaning": REVOLVE_TYPE_MEANINGS[int(rev_type)],
-            "asked_deg": angle_deg, "asked2_deg": angle2_deg, "reverse_dir": bool(reverse_dir),
-            "selection_mark": "★ 官方 Remarks **没给** mark —— 本模块不假定",
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "verified_by": "feature_not_none + tree_delta"}
+    return {
+        "ok": feat is not None and bool(added),
+        "op": "revolved_ref_surface",
+        "returned_is_none": feat is None,
+        "rev_type": int(rev_type),
+        "rev_type_meaning": REVOLVE_TYPE_MEANINGS[int(rev_type)],
+        "asked_deg": angle_deg,
+        "asked2_deg": angle2_deg,
+        "reverse_dir": bool(reverse_dir),
+        "selection_mark": "★ 官方 Remarks **没给** mark —— 本模块不假定",
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "verified_by": "feature_not_none + tree_delta",
+    }
 
 
-def insert_lofted_ref_surface(model, closed: bool = False, keep_tangency: bool = True,
-                              force_non_rational: bool = False, tess_tolerance_factor: float = 0.0,
-                              start_matching_type: int = 0, end_matching_type: int = 0) -> dict:
+def insert_lofted_ref_surface(
+    model,
+    closed: bool = False,
+    keep_tangency: bool = True,
+    force_non_rational: bool = False,
+    tess_tolerance_factor: float = 0.0,
+    start_matching_type: int = 0,
+    end_matching_type: int = 0,
+) -> dict:
     """★ **放样曲面**：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参）→ `void`。
 
     ★ 官方原话：「Creates a **loft surface** from the **selected profiles**, centerline, and
@@ -174,16 +200,29 @@ def insert_lofted_ref_surface(model, closed: bool = False, keep_tangency: bool =
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     before = _tree_names(model)
-    get_com_member(model, "InsertLoftRefSurface2",
-                   bool(closed), bool(keep_tangency), bool(force_non_rational),
-                   float(tess_tolerance_factor), int(start_matching_type), int(end_matching_type))
+    get_com_member(
+        model,
+        "InsertLoftRefSurface2",
+        bool(closed),
+        bool(keep_tangency),
+        bool(force_non_rational),
+        float(tess_tolerance_factor),
+        int(start_matching_type),
+        int(end_matching_type),
+    )
     after = _tree_names(model)
     added = new_features(before, after)
-    return {"ok": bool(added), "op": "lofted_ref_surface",
-            "closed": bool(closed), "keep_tangency": bool(keep_tangency),
-            "selection_mark": "profile selections **should be 1**（官方 Remarks 逐字）",
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "verified_by": "tree_delta"}
+    return {
+        "ok": bool(added),
+        "op": "lofted_ref_surface",
+        "closed": bool(closed),
+        "keep_tangency": bool(keep_tangency),
+        "selection_mark": "profile selections **should be 1**（官方 Remarks 逐字）",
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "verified_by": "tree_delta",
+    }
 
 
 # ── ★★ 本轮**不做**的两条，以及为什么（★ 铁律 5：查不到就说查不到）─────────────

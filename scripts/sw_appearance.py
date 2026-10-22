@@ -8,7 +8,7 @@ SolidWorks 的外观 API 在不同版本和对象类型上差异较多，本模�
 # 仓库:   本项目自身
 # 文件:   scripts/sw_appearance.py
 # 定位:   SolidWorks 外观与材质工具。
-# 官方依据: 经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；★ 
+# 官方依据: 经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；★
 #           各成员签名见被调模块的来源块，本文件为上层封装
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -61,7 +61,7 @@ def rgb01(color):
         if not match:
             raise ValueError(f"未知颜色: {color}")
         hex_value = match.group(1)
-        return tuple(int(hex_value[i:i + 2], 16) / 255.0 for i in (0, 2, 4))
+        return tuple(int(hex_value[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
 
     if len(color) != 3:
         raise ValueError("RGB 颜色必须包含 3 个值")
@@ -70,8 +70,15 @@ def rgb01(color):
     return tuple(float(v) for v in color)
 
 
-def material_values(color, ambient=0.35, diffuse=0.75, specular=0.45,
-                    shininess=0.35, transparency=0.0, emission=0.0):
+def material_values(
+    color,
+    ambient=0.35,
+    diffuse=0.75,
+    specular=0.45,
+    shininess=0.35,
+    transparency=0.0,
+    emission=0.0,
+):
     """
     生成 SolidWorks 材质属性数组。
 
@@ -79,7 +86,17 @@ def material_values(color, ambient=0.35, diffuse=0.75, specular=0.45,
         red, green, blue, ambient, diffuse, specular, shininess, transparency, emission
     """
     red, green, blue = rgb01(color)
-    return [red, green, blue, ambient, diffuse, specular, shininess, transparency, emission]
+    return [
+        red,
+        green,
+        blue,
+        ambient,
+        diffuse,
+        specular,
+        shininess,
+        transparency,
+        emission,
+    ]
 
 
 def material_variant(values):

@@ -83,40 +83,40 @@ _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
     from .sw_connect import get_com_member, call_com_member
-except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import get_com_member, call_com_member# type: ignore
+except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
+    from sw_connect import get_com_member, call_com_member  # type: ignore
 
 #: `swGtolIndicatorBorderType_e` —— **取出厂反射**（与 `C:\swapi\enums\` 的同名 md 一致
 #: ）。
 GTOL_INDICATOR_BORDER = {
-    "orientation_plane": 0,     # swGtolIndicatorBorderType_OrientationPlane
-    "intersection_plane": 1,    # swGtolIndicatorBorderType_IntersectionPlane
-    "collection_plane": 2,      # swGtolIndicatorBorderType_CollectionPlane
-    "direction_feature": 3,     # swGtolIndicatorBorderType_DirectionFeature
+    "orientation_plane": 0,  # swGtolIndicatorBorderType_OrientationPlane
+    "intersection_plane": 1,  # swGtolIndicatorBorderType_IntersectionPlane
+    "collection_plane": 2,  # swGtolIndicatorBorderType_CollectionPlane
+    "direction_feature": 3,  # swGtolIndicatorBorderType_DirectionFeature
 }
 
 #: `swGtolGeomCharSymbol_e` —— **取出厂反射**（19 项，值 12..30）。
 #: ⚠ 这份表**不是**「常用几个」，是**枚举的全部成员**（反射里就这 19 个）。
 GTOL_GEOM_SYMBOL = {
-    "none": 12,             # swGcsNONE
-    "symmetry": 13,         # swGcsSYMMETRY
-    "straightness": 14,     # swGcsSTRAIGHT
-    "flatness": 15,         # swGcsFLAT
-    "circularity": 16,      # swGcsROUND
-    "cylindricity": 17,     # swGcsCYL
-    "line_profile": 18,     # swGcsLINEPROF
+    "none": 12,  # swGcsNONE
+    "symmetry": 13,  # swGcsSYMMETRY
+    "straightness": 14,  # swGcsSTRAIGHT
+    "flatness": 15,  # swGcsFLAT
+    "circularity": 16,  # swGcsROUND
+    "cylindricity": 17,  # swGcsCYL
+    "line_profile": 18,  # swGcsLINEPROF
     "surface_profile": 19,  # swGcsSURFPROF
-    "angularity": 20,       # swGcsANG
+    "angularity": 20,  # swGcsANG
     "perpendicularity": 21,  # swGcsPERP
-    "parallelism": 22,      # swGcsPARALLEL
-    "position": 23,         # swGcsPOSITION
-    "concentricity": 24,    # swGcsCONC
+    "parallelism": 22,  # swGcsPARALLEL
+    "position": 23,  # swGcsPOSITION
+    "concentricity": 24,  # swGcsCONC
     "circular_runout": 25,  # swGcsCIRCRUNOUT
-    "total_runout": 26,     # swGcsTOTALRUNOUT
+    "total_runout": 26,  # swGcsTOTALRUNOUT
     "circ_open_runout": 27,  # swGcsCIRCOPENRUNOUT
     "total_open_runout": 28,  # swGcsTOTALOPENRUNOUT
-    "u_button": 29,         # swGcsUBUTTON
-    "square": 30,           # swGcsSQUARE
+    "u_button": 29,  # swGcsUBUTTON
+    "square": 30,  # swGcsSQUARE
 }
 
 #: 官方 `GetFrame` 的 `FrameIndex` 是 **1 基**。
@@ -130,8 +130,11 @@ FIRST_FRAME = 1
 #: **都不在清单里** ⇒ 传它们 `AddIndicator` **必然返回 `False`**（过去会被读成"到不了"）
 #: 。
 GTOL_INDICATOR_ALLOWED_TOL_TYPES = {
-    20: "angularity", 22: "parallelism", 21: "perpendicularity",
-    25: "circular_runout", 13: "symmetry",
+    20: "angularity",
+    22: "parallelism",
+    21: "perpendicularity",
+    25: "circular_runout",
+    13: "symmetry",
 }
 
 
@@ -181,14 +184,15 @@ def _feature_names_snapshot(model):
     """★ 当前文档的特征名列表；★ 取不到 ⇒ `None`（★ 不许当成空列表 —— ★ 那会把"读不到"当"没建"）。"""
     try:
         import sys as _sys
+
         if str(_REPO_SCRIPTS) not in _sys.path:
             _sys.path.insert(0, str(_REPO_SCRIPTS))
-        from sw_part import feature_names                                # noqa: PLC0415
-    except Exception:                                                     # noqa: BLE001
+        from sw_part import feature_names  # noqa: PLC0415
+    except Exception:  # noqa: BLE001
         return None
     try:
         return [str(x) for x in (feature_names(model) or [])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -235,14 +239,14 @@ def ensure_gtol_frame(gtol, frame: int = FIRST_FRAME):
     #: ★★★ 官方 `IGtol.AddFrame` 的 Remarks 原文：
     #: > This method is valid only if this Gtol was created in SOLIDWORKS **2022 or late
     #: r**.
-    #: ⇒ 新建的 Gtol **默认是旧格式** ⇒ **必须先 `ConvertFormat()` 升级到 2022 格式，再 
+    #: ⇒ 新建的 Gtol **默认是旧格式** ⇒ **必须先 `ConvertFormat()` 升级到 2022 格式，再
     #: `AddFrame()`**。
     #:   ⚠ 轮 120 的顺序是 `AddFrame()` **先于** `ConvertFormat()` ⇒ **必然 False**，
     #:     却被记成「2022 格式的帧路径**取不到帧**」⇒ ★ 那是**顺序问题**，不是「到不了」。
     try:
         if get_com_member(gtol, "CanConvertFormat"):
             get_com_member(gtol, "ConvertFormat")
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     have = int(get_com_member(gtol, "GetFrameCount") or 0)
     while have < want:
@@ -259,9 +263,14 @@ def ensure_gtol_frame(gtol, frame: int = FIRST_FRAME):
     return have
 
 
-def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
-                       border_type: int = GTOL_INDICATOR_BORDER["orientation_plane"],
-                       frame: int = FIRST_FRAME):
+def add_gtol_indicator(
+    gtol,
+    *,
+    tol_type,
+    datum: str = "",
+    border_type: int = GTOL_INDICATOR_BORDER["orientation_plane"],
+    frame: int = FIRST_FRAME,
+):
     """给某一帧**加一个公差指示符**（官方 `IGtolFrame.AddIndicator`）。
 
     ★ **为什么用这条而不是 `SetFrameSymbols2`**：官方明写后者
@@ -292,7 +301,7 @@ def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
     #: s 读出）：
     #: `IGtolFrame.AddIndicator` 的 `TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e`
     #:  成员：
-    #: `swGcsANG(20)` · `swGcsPARALLEL(22)` · `swGcsPERP(21)` · `swGcsCIRCRUNOUT(25)` · 
+    #: `swGcsANG(20)` · `swGcsPARALLEL(22)` · `swGcsPERP(21)` · `swGcsCIRCRUNOUT(25)` ·
     #: `swGcsSYMMETRY(13)`。
     #: ⚠ 而 `GTOL_GEOM_SYMBOL` 里另外 14 个（`flatness` / `position` / `straightness` …
     #: ）
@@ -306,7 +315,7 @@ def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
             "那不是「功能不行」，是**取值不对**。"
             % (tol_type, GTOL_INDICATOR_ALLOWED_TOL_TYPES)
         )
-    ensure_gtol_frame(gtol, frame)          # ⚑ 轮 120 加：先保证帧存在
+    ensure_gtol_frame(gtol, frame)  # ⚑ 轮 120 加：先保证帧存在
     frame_obj = get_com_member(gtol, "GetFrame", int(frame))
     if frame_obj is None:
         raise RuntimeError(
@@ -315,8 +324,9 @@ def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
             "⚠ 轮 165 实测：**顺序对**时 `GetFrameCount()` 能到 **2** 且拿到对象 ⇒ "
             "走到这里说明是别的原因（**未查明**）" % frame
         )
-    got = get_com_member(frame_obj, "AddIndicator",
-                         int(border_type), int(tol_type), str(datum or ""))
+    got = get_com_member(
+        frame_obj, "AddIndicator", int(border_type), int(tol_type), str(datum or "")
+    )
     if got is None or not got:
         raise RuntimeError(
             "IGtolFrame.AddIndicator 返回 False（失败）\n"

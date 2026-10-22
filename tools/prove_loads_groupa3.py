@@ -32,7 +32,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "loads-groupa3-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "loads-groupa3-evidence.json"
+)
 #: ★★★ ★ 2026-10-03（轮 414）**第一版用了固定名 `DSH-GA3`**
 #:   ⇒ 真机回 `count: [-1, -1]`（★ 而 `_loads_count` 对 `-1` 的约定是「**取不到**」）。
 #:   ★ 而同轮的**诊断探针**证明：★ `ICWLoadsAndRestraintsManager.Count`
@@ -46,8 +48,13 @@ STUDY = "DSH-GA3_%s" % time.strftime("%H%M%S")
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts import sw_simulation_loads as SL
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study_type": 0}
@@ -66,9 +73,15 @@ def main() -> int:
         ev["steps"]["static_study"] = {"ok": mgr is not None}
 
         targets = [
-            ("distributed_mass", lambda m: SL.apply_distributed_mass_report(m, doc, 1.0, 0)),
+            (
+                "distributed_mass",
+                lambda m: SL.apply_distributed_mass_report(m, doc, 1.0, 0),
+            ),
             ("force", lambda m: SL.apply_force_report(m, doc, 1)),
-            ("remote_load", lambda m: SL.apply_remote_load_report(m, doc, 0, 0, 0.0, 0.0, -100.0)),
+            (
+                "remote_load",
+                lambda m: SL.apply_remote_load_report(m, doc, 0, 0, 0.0, 0.0, -100.0),
+            ),
         ]
         for label, fn in targets:
             try:
@@ -78,33 +91,47 @@ def main() -> int:
                 ev["steps"][label] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")]
-                    if isinstance(rep, dict) else None,
-                    "error": (rep.get("error") or "")[:100] if isinstance(rep, dict) else None}
-            except Exception as exc:                           # noqa: BLE001
+                    if isinstance(rep, dict)
+                    else None,
+                    "error": (rep.get("error") or "")[:100]
+                    if isinstance(rep, dict)
+                    else None,
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"][label] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+                }
         hit = [k for k, v in ev["steps"].items() if isinstance(v, dict) and v.get("ok")]
-        seq = [ev["steps"][k].get("count") for k, _ in targets if ev["steps"][k].get("count")]
+        seq = [
+            ev["steps"][k].get("count")
+            for k, _ in targets
+            if ev["steps"][k].get("count")
+        ]
         ev["successes"] = hit
         ev["sequential_counts"] = seq
         ev["verdict"] = "pass" if len(hit) >= 2 else "partial"
-        ev["note"] = ("★ A 组收尾三条（分布质量 / 力 / 远程载荷）在 **static** 算例上验。"
-                      "★ 判据是回读计数 +1，★ 且看它是否**串成单调序列**。"
-                      "⚠ 若中间有一条失败，★ 后面的只当参考（事实 324/325）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ A 组收尾三条（分布质量 / 力 / 远程载荷）在 **static** 算例上验。"
+            "★ 判据是回读计数 +1，★ 且看它是否**串成单调序列**。"
+            "⚠ 若中间有一条失败，★ 后面的只当参考（事实 324/325）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

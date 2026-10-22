@@ -27,7 +27,6 @@ except ImportError:
     from sw_stdio import configure_stdio_utf8 as _configure_stdio_utf8
 
 
-
 _configure_stdio_utf8()
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -114,7 +113,9 @@ def check_python_syntax():
         path
         for relative in roots
         for path in (ROOT / relative).rglob("*.py")
-        if not {"__pycache__", "node_modules", "target", "ai_team"}.intersection(path.parts)
+        if not {"__pycache__", "node_modules", "target", "ai_team"}.intersection(
+            path.parts
+        )
     )
     for path in targets:
         ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -132,7 +133,8 @@ def check_json_files():
         ROOT / "apps/desktop/cad_workbench/schemas/fea_analysis.schema.json",
         ROOT / "apps/desktop/cad_workbench/schemas/advanced_geometry.schema.json",
         ROOT / "subskills/solidworks-vibecad/schemas/design_plan.schema.json",
-        ROOT / "subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json",
+        ROOT
+        / "subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json",
     ]
     for path in targets:
         json.loads(path.read_text(encoding="utf-8"))
@@ -149,7 +151,9 @@ def main():
     check_skill_frontmatter()
     python_count = check_python_syntax()
     json_count = check_json_files()
-    print(f"验证通过: skill 文件完整，{python_count} 个 Python 文件和 {json_count} 个 JSON Schema 正常。")
+    print(
+        f"验证通过: skill 文件完整，{python_count} 个 Python 文件和 {json_count} 个 JSON Schema 正常。"
+    )
 
 
 if __name__ == "__main__":

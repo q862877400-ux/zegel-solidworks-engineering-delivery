@@ -47,13 +47,18 @@ def main(argv: list) -> int:
     sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
     try:
         import register_capabilities as RC
+
         tools = len(RC.all_specs())
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  [SKIP] 读不到注册表：%s" % str(exc)[:70])
         return 0
 
-    tri = json.loads((W / "output" / "real-gap-triage.json").read_text(encoding="utf-8"))["summary"]
-    caps = json.loads((REPO_ROOT / "capabilities.yaml").read_text(encoding="utf-8"))["capabilities"]
+    tri = json.loads(
+        (W / "output" / "real-gap-triage.json").read_text(encoding="utf-8")
+    )["summary"]
+    caps = json.loads((REPO_ROOT / "capabilities.yaml").read_text(encoding="utf-8"))[
+        "capabilities"
+    ]
     levels = Counter(c.get("level") for c in caps)
     ev = list((W / "output").glob("*evidence*.json"))
     passn = 0
@@ -61,25 +66,43 @@ def main(argv: list) -> int:
         try:
             if json.loads(p.read_text(encoding="utf-8")).get("verdict") == "pass":
                 passn += 1
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    gates = len(json.loads((REPO_ROOT / "docs" / "gate-classification.json")
-                           .read_text(encoding="utf-8"))["classification"])
-    judges = json.loads((REPO_ROOT / "docs" / "judge-registry.json").read_text(encoding="utf-8"))["judges"]
+    gates = len(
+        json.loads(
+            (REPO_ROOT / "docs" / "gate-classification.json").read_text(
+                encoding="utf-8"
+            )
+        )["classification"]
+    )
+    judges = json.loads(
+        (REPO_ROOT / "docs" / "judge-registry.json").read_text(encoding="utf-8")
+    )["judges"]
 
     #: ★ 每项 = （报告里该出现的**粗体数字串**，生成物里的真值）
     #: ★★ 2026-10-03（轮 451）**口径改了**：工具名有**两条声明路**（事实 364）⇒
     #:   ★ 而核对器得同时看 **ToolSpec 数**、**装饰器数**、**总数**三个。
     import re as _re
-    _srv = _re.findall(r"name=\"(solidworks_[A-Za-z0-9_]+)\"",
-                       (REPO_ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8"))
+
+    _srv = _re.findall(
+        r"name=\"(solidworks_[A-Za-z0-9_]+)\"",
+        (REPO_ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8"),
+    )
     checks = [
         ("tools(spec)", str(tools), "**%d**" % tools),
         ("tools(decorator)", str(len(set(_srv))), "**%d**" % len(set(_srv))),
-        ("tools(total)", str(tools + len(set(_srv))), "**%d**" % (tools + len(set(_srv)))),
+        (
+            "tools(total)",
+            str(tools + len(set(_srv))),
+            "**%d**" % (tools + len(set(_srv))),
+        ),
         ("该挂", str(tri["\u8be5\u6302"]), "**%d**" % tri["\u8be5\u6302"]),
         ("已有", str(tri["\u5df2\u6709"]), "**%d**" % tri["\u5df2\u6709"]),
-        ("内部件", str(tri["\u5185\u90e8\u4ef6"]), "**%d**" % tri["\u5185\u90e8\u4ef6"]),
+        (
+            "内部件",
+            str(tri["\u5185\u90e8\u4ef6"]),
+            "**%d**" % tri["\u5185\u90e8\u4ef6"],
+        ),
         ("不做", str(tri["\u4e0d\u505a"]), "**%d**" % tri["\u4e0d\u505a"]),
         ("triage total", str(tri["total"]), "**%d**" % tri["total"]),
         ("caps", str(len(caps)), "**%d**" % len(caps)),
@@ -102,10 +125,24 @@ def main(argv: list) -> int:
         print("\n  判据：★ 报告自称「数字全部来自生成物」⇒ ★ 那句话**得能被机器验**。")
         print("  ★ 修法：把 §〇 表里的数字**按生成物重算一遍**（★ 不是手改那个字串）。")
         return 1
-    print("  [OK] 报告里的 %d 项数字**都出现在生成物的取值里**（★ 逐项相等）" % len(checks))
-    print("       tools=%d · 该挂=%d · 已有=%d · 内部件=%d · 不做=%d · caps=%d · gates=%d · evidence=%d/%d"
-          % (tools, tri["\u8be5\u6302"], tri["\u5df2\u6709"], tri["\u5185\u90e8\u4ef6"], tri["\u4e0d\u505a"],
-             len(caps), gates, passn, len(ev)))
+    print(
+        "  [OK] 报告里的 %d 项数字**都出现在生成物的取值里**（★ 逐项相等）"
+        % len(checks)
+    )
+    print(
+        "       tools=%d · 该挂=%d · 已有=%d · 内部件=%d · 不做=%d · caps=%d · gates=%d · evidence=%d/%d"
+        % (
+            tools,
+            tri["\u8be5\u6302"],
+            tri["\u5df2\u6709"],
+            tri["\u5185\u90e8\u4ef6"],
+            tri["\u4e0d\u505a"],
+            len(caps),
+            gates,
+            passn,
+            len(ev),
+        )
+    )
     return 0
 
 

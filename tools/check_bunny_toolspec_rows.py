@@ -41,16 +41,62 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = Path(Path(__file__).resolve().parents[1])
 
 #: ★ 允许的注入键（★ 与 `mcp-server/register_capabilities.py` 的 RESOLVERS 对齐）
-INJECT_KEYS = {"", "model", "sw_app", "study", "asm_model", "manager", "drawing_model", "sw",
-               "cost_manager", "doc"}
+INJECT_KEYS = {
+    "",
+    "model",
+    "sw_app",
+    "study",
+    "asm_model",
+    "manager",
+    "drawing_model",
+    "sw",
+    "cost_manager",
+    "doc",
+}
 #: ★ 长度词 / 角度词（用于规则 2 的启发式）
-LENGTH_WORDS = ("size", "distance", "radius", "thickness", "length", "depth", "height", "width",
-                "diameter", "offset", "gap", "pitch", "spacing", "tolerance", "thick")
+LENGTH_WORDS = (
+    "size",
+    "distance",
+    "radius",
+    "thickness",
+    "length",
+    "depth",
+    "height",
+    "width",
+    "diameter",
+    "offset",
+    "gap",
+    "pitch",
+    "spacing",
+    "tolerance",
+    "thick",
+)
 ANGLE_WORDS = ("angle", "rotation", "twist")
-COORD_NAMES = {"x", "y", "z", "point", "pt", "coord", "coords", "center", "centre", "origin",
-               "location", "pos"}
-REQUIRED = ("module", "function", "tool_name", "title", "inject", "params", "official_file",
-            "official_signature", "exposable")
+COORD_NAMES = {
+    "x",
+    "y",
+    "z",
+    "point",
+    "pt",
+    "coord",
+    "coords",
+    "center",
+    "centre",
+    "origin",
+    "location",
+    "pos",
+}
+REQUIRED = (
+    "module",
+    "function",
+    "tool_name",
+    "title",
+    "inject",
+    "params",
+    "official_file",
+    "official_signature",
+    "exposable",
+)
 
 
 def _load(path: Path) -> dict:
@@ -78,9 +124,10 @@ def _fn_params(module: str, function: str):
             pos = [a.arg for a in n.args.args]
             kw = [a.arg for a in n.args.kwonlyargs]
             n_def = len(n.args.defaults)
-            req = pos[:len(pos) - n_def] if n_def else list(pos)
-            opt = (pos[len(pos) - n_def:] if n_def else []) + [
-                k for k, d in zip(kw, n.args.kw_defaults) if d is not None]
+            req = pos[: len(pos) - n_def] if n_def else list(pos)
+            opt = (pos[len(pos) - n_def :] if n_def else []) + [
+                k for k, d in zip(kw, n.args.kw_defaults) if d is not None
+            ]
             return req, opt, None
     return None, None, "该模块里没有顶格公开 def %s" % function
 
@@ -115,7 +162,11 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         #: 同一手法：像素不是长度 ⇒ 不该叫 `width`）⇒ ★ 那是**做对了**，第一版却判它"盘
         #: 上没这个形参" ✓
         alias = row.get("param_alias") or {}
-        aliased = {str(k): str(v) for k, v in alias.items()} if isinstance(alias, dict) else {}
+        aliased = (
+            {str(k): str(v) for k, v in alias.items()}
+            if isinstance(alias, dict)
+            else {}
+        )
 
         def _alias_ok(claimed_name: str, real_name: str) -> bool:
             if claimed_name in (real_name, real_name + "_mm", real_name + "_deg"):
@@ -123,15 +174,15 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
             return aliased.get(claimed_name) == real_name
 
         miss = [a for a in req_x if not any(_alias_ok(c, a) for c in claimed)]
-        extra = [a for a in claimed
-                 if not any(_alias_ok(a, r) for r in (req + opt))]
+        extra = [a for a in claimed if not any(_alias_ok(a, r) for r in (req + opt))]
         if miss:
             bad.append("② **必填形参没声明**: %r（盘上必填=%r）" % (miss, req_x))
         if extra:
             bad.append("② **声明了盘上没有的形参**: %r（可选=%r）" % (extra, opt))
+
         #: ★ 顺序也要对（按盘上顺序取子序列，★ 认可 `_mm`/`_deg` 改名后的对应）
         def _real_of(name: str):
-            for r in (req + opt):
+            for r in req + opt:
                 if _alias_ok(name, r):
                     return r
             return None
@@ -139,8 +190,10 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         order = [_real_of(c) for c in claimed]
         order = [x for x in order if x]
         if order and order != [a for a in (req + opt) if a in order and a != injected]:
-            bad.append("② 形参**顺序**与盘上不一致（按盘上序取子序列应为 %r，草稿写 %r）"
-                       % ([a for a in (req + opt) if a in order and a != injected], claimed))
+            bad.append(
+                "② 形参**顺序**与盘上不一致（按盘上序取子序列应为 %r，草稿写 %r）"
+                % ([a for a in (req + opt) if a in order and a != injected], claimed)
+            )
     #: ③ 官方出处存在 + 引文逐字命中
     #: ★★ 例外一：`exposable=False`（判"不做"）时**官方出处可以为空**，但**必须写原因**
     #: （铁律 5）✓
@@ -160,11 +213,16 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         of = str(row.get("official_file") or "")
         p = Path(of) if of else None
         if not of or not p.is_file():
-            bad.append("③ `source_kind=repo_original` 但 `official_file` 不是**存在的仓库文件**: %r"
-                       % of[:80])
-        if "本仓" not in str(row.get("official_remarks_gist") or "") + \
-                str(row.get("reason_if_not") or ""):
-            bad.append("③ `repo_original` 却没说明「真源是本仓哪一段」（★ 铁律 1 要能指认出处）")
+            bad.append(
+                "③ `source_kind=repo_original` 但 `official_file` 不是**存在的仓库文件**: %r"
+                % of[:80]
+            )
+        if "本仓" not in str(row.get("official_remarks_gist") or "") + str(
+            row.get("reason_if_not") or ""
+        ):
+            bad.append(
+                "③ `repo_original` 却没说明「真源是本仓哪一段」（★ 铁律 1 要能指认出处）"
+            )
     else:
         of = str(row.get("official_file") or "")
         if not of:
@@ -179,7 +237,9 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
                 if not sig:
                     bad.append("③ official_signature 为空")
                 elif sig not in text:
-                    bad.append("③ ★ 引文**不是**该文件的逐字子串（疑似编造）: %r" % sig[:90])
+                    bad.append(
+                        "③ ★ 引文**不是**该文件的逐字子串（疑似编造）: %r" % sig[:90]
+                    )
     #: ④ 规则 1
     tn = str(row.get("tool_name") or "")
     if not re.match(r"^solidworks_[a-z0-9_]+$", tn):
@@ -195,12 +255,16 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         low = name.lower()
         if low in COORD_NAMES:
             bad.append("⑥ 参数 %r 是**裸坐标**（规则 3 禁）" % name)
-        if any(w in low for w in LENGTH_WORDS) and not re.search(r"_(mm|m|inch|in)$", low):
+        if any(w in low for w in LENGTH_WORDS) and not re.search(
+            r"_(mm|m|inch|in)$", low
+        ):
             #: ★★ 误伤修正（事实 51 同族）：`axis_tolerance` 这类**无量纲**容差被词表抓
             #: 到
             #:   —— ★ 真产出里 Bunny 的 desc 已写明「无量纲」⇒ ★ 尊重它，不报
             desc_low = str(p.get("desc") or "").lower()
-            if not any(k in desc_low for k in ("无量纲", "dimensionless", "不是长度", "非长度")):
+            if not any(
+                k in desc_low for k in ("无量纲", "dimensionless", "不是长度", "非长度")
+            ):
                 bad.append("⑤ 长度类参数 %r 缺 `_mm` 后缀（规则 2）" % name)
         if any(w in low for w in ANGLE_WORDS) and not low.endswith("_deg"):
             #: ★★ 误伤修正（★ 第二坡真产出）：`lock_rotation` / `rotation_locked` 这类**
@@ -210,26 +274,29 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
             typ = str(p.get("type") or "").lower()
             d2 = str(p.get("desc") or "").lower()
             if typ not in ("bool", "boolean") and not any(
-                    k in d2 for k in ("布尔", "开关", "bool", "flag", "是否")):
+                k in d2 for k in ("布尔", "开关", "bool", "flag", "是否")
+            ):
                 bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
     #: ⑦ 注入键
     #: ★★ 判据**以盘上 `RESOLVERS` 为准**（★ 与 ⑩ 同一原则）—— 第一版用**静态白名单** `I
     #: NJECT_KEYS`
-    #: ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉** 
+    #: ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉**
     #: ✓
     inj = str(row.get("inject") or "")
     keys = _resolver_keys()
     if inj and inj not in keys and inj not in INJECT_KEYS:
         bad.append("⑦ inject=%r 既不在盘上 RESOLVERS 里、也不在静态白名单里" % inj)
     elif inj and req is not None and inj not in (req + (opt or [])):
-        bad.append("⑦ ★ 注入键 %r **不在**目标函数形参表 %r 里（事实 502：注入键字面当关键字传）"
-                   % (inj, req + (opt or [])))
+        bad.append(
+            "⑦ ★ 注入键 %r **不在**目标函数形参表 %r 里（事实 502：注入键字面当关键字传）"
+            % (inj, req + (opt or []))
+        )
     elif inj and req and req[0] != inj:
         bad.append("⑦ ★ 注入键 %r ≠ 目标函数首参 %r（事实 502）" % (inj, req[0]))
     #: ⑧ 查重
     #: ★★★ 2026-10-04 细分（★ 拿真产出校准时发现）：`tool_name` 已在 `all_specs()` 里有*
     #: *两种**含义：
-    #: · ★ **已建**（那条既有工具**就是从同一个 `module`+`function` 来的**）—— ★ 例如批 
+    #: · ★ **已建**（那条既有工具**就是从同一个 `module`+`function` 来的**）—— ★ 例如批
     #: 81 建完
     #:     第一坡之后，24 行 exposable 全落进这一类 ✓
     #:   · ✗ **真撞名**（既有工具来自别的函数 ⇒ 两件不同的事抢同一个名字）✓
@@ -241,11 +308,19 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     if tn in existing_tools:
         if tn in _built_from():
             row["_already_built"] = True
-            bad.append("⑧ ★ 该工具名**已经建过**了（同一 `module`+`function` 已挂出）⇒ "
-                       "**别再建一次**（★ 若你是想加一个**不同**的入口，请改名）")
+            bad.append(
+                "⑧ ★ 该工具名**已经建过**了（同一 `module`+`function` 已挂出）⇒ "
+                "**别再建一次**（★ 若你是想加一个**不同**的入口，请改名）"
+            )
         else:
-            bad.append("⑧ ★ 与既有工具**真撞名**: %s（★ 既有那条来自**别的**函数 ⇒ 必须改名）" % tn)
-    if row.get("exposable") is False and not str(row.get("reason_if_not") or "").strip():
+            bad.append(
+                "⑧ ★ 与既有工具**真撞名**: %s（★ 既有那条来自**别的**函数 ⇒ 必须改名）"
+                % tn
+            )
+    if (
+        row.get("exposable") is False
+        and not str(row.get("reason_if_not") or "").strip()
+    ):
         bad.append("⑧ 判 exposable=False 却**没写原因**（★ 铁律 5：说清为什么）")
     #: ⑨⑩ ★ 三问筛的**自相矛盾检查**
     #: ★★ ⑩ 的关键：`q2_inject_key_available` **以盘上 `RESOLVERS` 为准**，不信行里的自
@@ -258,12 +333,16 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     q1 = row.get("q1_official_page_exists")
     q2c = row.get("q2_first_param_com_object")
     if row.get("exposable") is True and q1 is False and src_kind != "repo_original":
-        bad.append("⑨ ★ 自相矛盾：判可暴露，却自述**官方页不存在**（q1=False）——"
-                   "★ 若它其实是**本仓自研**的纯计算函数，请把 `source_kind` 写成 `repo_original` 并"
-                   "让 `official_file` 指向**仓库文件**（★ 真源）✓")
+        bad.append(
+            "⑨ ★ 自相矛盾：判可暴露，却自述**官方页不存在**（q1=False）——"
+            "★ 若它其实是**本仓自研**的纯计算函数，请把 `source_kind` 写成 `repo_original` 并"
+            "让 `official_file` 指向**仓库文件**（★ 真源）✓"
+        )
     if row.get("exposable") is True and q2c is True and not disk_has_key:
-        bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**"
-                   "（★ 已按盘上 RESOLVERS 复核：键 %r 不在表里）" % inj_key)
+        bad.append(
+            "⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**"
+            "（★ 已按盘上 RESOLVERS 复核：键 %r 不在表里）" % inj_key
+        )
     #: ⑪ ★★ **对象族禁忌（可执行）**：★ `view` 这个注入键给的是 **`IModelView`（模型视图
     #: ）**，
     #: 而 `sw_drawing_view.py` 那些函数的首参**虽然也叫 `view`**，却是 **`IView`（图纸视
@@ -271,9 +350,11 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     #:   ⇒ ★ 注错对象会**静默地"什么都没反应"**（★ 事实 36 那一族，最难查）
     #:   ⇒ ★ 判废，并写明正解是**另加一个按名字取 `IView` 的解析器** ✓
     if inj_key == "view" and str(row.get("module") or "") == "sw_drawing_view":
-        bad.append("⑪ ★★ **对象族禁忌**：`sw_drawing_view` 的首参 `view` 是 **`IView`（图纸视图）**，"
-                   "而 `view` 注入键给的是 **`IModelView`（模型视图）** ⇒ **注错对象**。"
-                   "★ 正解：另加一个按**视图名**取 `IView` 的解析器（本轮未加）⇒ 判废")
+        bad.append(
+            "⑪ ★★ **对象族禁忌**：`sw_drawing_view` 的首参 `view` 是 **`IView`（图纸视图）**，"
+            "而 `view` 注入键给的是 **`IModelView`（模型视图）** ⇒ **注错对象**。"
+            "★ 正解：另加一个按**视图名**取 `IView` 的解析器（本轮未加）⇒ 判废"
+        )
     return bad
 
 
@@ -282,9 +363,10 @@ def _resolver_keys() -> set[str]:
     try:
         sys.path.insert(0, str(ROOT / "mcp-server"))
         sys.path.insert(0, str(ROOT / "scripts"))
-        import register_capabilities as rc                          # noqa: PLC0415
+        import register_capabilities as rc  # noqa: PLC0415
+
         return set(rc.RESOLVERS.keys())
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set(INJECT_KEYS)
 
 
@@ -296,9 +378,10 @@ def _built_from() -> set[str]:
     try:
         sys.path.insert(0, str(ROOT / "mcp-server"))
         sys.path.insert(0, str(ROOT / "scripts"))
-        import register_capabilities as rc                          # noqa: PLC0415
+        import register_capabilities as rc  # noqa: PLC0415
+
         return {s.name for s in rc.all_specs() if getattr(s, "function", "")}
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set()
 
 
@@ -308,21 +391,33 @@ def _existing_tools() -> set[str]:
     try:
         sys.path.insert(0, str(ROOT / "mcp-server"))
         sys.path.insert(0, str(ROOT / "scripts"))
-        import register_capabilities as rc                          # noqa: PLC0415
+        import register_capabilities as rc  # noqa: PLC0415
+
         return {s.name for s in rc.all_specs()}
-    except Exception as exc:                                        # noqa: BLE001
-        print("⚠ all_specs() 取不到（%s）⇒ 退回正则（★ 数量会偏少，查重会漏）" % type(exc).__name__)
-        return {m for p in (ROOT / "mcp-server").glob("tool_specs_batch*.py")
-                for m in re.findall(r'name\s*=\s*"(solidworks_[^"]+)"',
-                                    p.read_text(encoding="utf-8", errors="replace"))}
+    except Exception as exc:  # noqa: BLE001
+        print(
+            "⚠ all_specs() 取不到（%s）⇒ 退回正则（★ 数量会偏少，查重会漏）"
+            % type(exc).__name__
+        )
+        return {
+            m
+            for p in (ROOT / "mcp-server").glob("tool_specs_batch*.py")
+            for m in re.findall(
+                r'name\s*=\s*"(solidworks_[^"]+)"',
+                p.read_text(encoding="utf-8", errors="replace"),
+            )
+        }
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("rows", nargs="?", help="Bunny 交回的 JSON（含 rows）")
     ap.add_argument("--json", default="", help="把逐行结论写成 JSON")
-    ap.add_argument("--selftest", action="store_true",
-                    help="★ 自测：1 正 + 4 反，验证门禁**每条判据真的抓得住**（事实 62）")
+    ap.add_argument(
+        "--selftest",
+        action="store_true",
+        help="★ 自测：1 正 + 4 反，验证门禁**每条判据真的抓得住**（事实 62）",
+    )
     a = ap.parse_args()
     if a.selftest:
         return _selftest()
@@ -339,16 +434,28 @@ def main() -> int:
         ok = not bad
         ok_n += int(ok)
         tag = "%s.%s" % (r.get("module"), r.get("function"))
-        print("%s %-42s %s" % ("[PASS]" if ok else "[FAIL]", tag,
-                               ("⇒ %s" % r.get("tool_name")) if ok else ""))
+        print(
+            "%s %-42s %s"
+            % (
+                "[PASS]" if ok else "[FAIL]",
+                tag,
+                ("⇒ %s" % r.get("tool_name")) if ok else "",
+            )
+        )
         for b in bad:
             print("        ✗ %s" % b)
         results.append({"row": r, "ok": ok, "problems": bad})
     print()
     print("★ 门禁汇总：%d/%d 行通过（★ 判据 8 条，全部从盘上重推）" % (ok_n, len(rows)))
     if a.json:
-        Path(a.json).write_text(json.dumps({"passed": ok_n, "total": len(rows), "results": results},
-                                          ensure_ascii=False, indent=1), encoding="utf-8")
+        Path(a.json).write_text(
+            json.dumps(
+                {"passed": ok_n, "total": len(rows), "results": results},
+                ensure_ascii=False,
+                indent=1,
+            ),
+            encoding="utf-8",
+        )
         print("★ 逐行结论:", a.json)
     return 0 if ok_n == len(rows) else 1
 
@@ -370,12 +477,18 @@ def _selftest() -> int:
                 sig = line.split("`")[1]
                 break
     good = {
-        "module": "sw_assembly_doc", "function": "auto_explode",
+        "module": "sw_assembly_doc",
+        "function": "auto_explode",
         #: ★ 用**不存在的工具名**，免得撞既有 313 个（撞名那条留给反例④去测）
         "tool_name": "solidworks_assembly_selftest_auto_explode",
-        "title": "selftest", "inject": "doc", "params": [],
-        "official_file": str(page), "official_signature": sig,
-        "official_remarks_gist": "", "exposable": True, "reason_if_not": "",
+        "title": "selftest",
+        "inject": "doc",
+        "params": [],
+        "official_file": str(page),
+        "official_signature": sig,
+        "official_remarks_gist": "",
+        "exposable": True,
+        "reason_if_not": "",
         "overlaps_existing": [],
     }
     cases = [("正例（应 PASS）", good, True)]
@@ -383,28 +496,42 @@ def _selftest() -> int:
     c = dict(good, params=[{"name": "bogus", "type": "str", "default": "", "desc": ""}])
     cases.append(("反例①形参不符", c, False))
     #: ★ 反例②：官方引文编造（把签名改一个词）
-    c = dict(good, official_signature=sig.replace("bool", "boolean") if sig else "System.bool X()")
+    c = dict(
+        good,
+        official_signature=sig.replace("bool", "boolean") if sig else "System.bool X()",
+    )
     cases.append(("反例②引文编造", c, False))
     #: ★ 反例③：注入键 ≠ 首参名（★ 事实 502 —— 我在批 79 上真栽过）
     cases.append(("反例③注入键错", dict(good, inject="model"), False))
     #: ★ 反例④：与既有工具撞名
-    cases.append(("反例④撞名", dict(good, tool_name="solidworks_assembly_auto_explode"), False))
+    cases.append(
+        ("反例④撞名", dict(good, tool_name="solidworks_assembly_auto_explode"), False)
+    )
 
     existing = _existing_tools()
     ok_all = True
     for label, row, want_pass in cases:
         bad = check_row(row, existing)
         got_pass = not bad
-        good_enough = (got_pass == want_pass)
+        good_enough = got_pass == want_pass
         ok_all &= good_enough
-        print("%s %-22s 期望 %-5s 实得 %-5s%s"
-              % ("[OK]" if good_enough else "[BAD]", label,
-                 "PASS" if want_pass else "FAIL", "PASS" if got_pass else "FAIL",
-                 "" if got_pass else " ⇒ " + bad[0][:96]))
+        print(
+            "%s %-22s 期望 %-5s 实得 %-5s%s"
+            % (
+                "[OK]" if good_enough else "[BAD]",
+                label,
+                "PASS" if want_pass else "FAIL",
+                "PASS" if got_pass else "FAIL",
+                "" if got_pass else " ⇒ " + bad[0][:96],
+            )
+        )
         if not want_pass and got_pass:
             print("        ✗ 反例竟通过了 ⇒ **这条判据形同虚设**")
     print()
-    print("★ 自测结论：%s（★ 5 例：1 正 + 4 反）" % ("门禁有效 ✓" if ok_all else "★ 门禁有洞 ✗"))
+    print(
+        "★ 自测结论：%s（★ 5 例：1 正 + 4 反）"
+        % ("门禁有效 ✓" if ok_all else "★ 门禁有洞 ✗")
+    )
     return 0 if ok_all else 1
 
 

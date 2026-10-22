@@ -22,7 +22,7 @@ r"""@brief 扫「**数组实参没包 VARIANT**」的调用点（事实 167/183 
 # ── 来源 ──
 # 仓库:   本项目自身
 # 文件:   tools/scan_bare_array_args.py
-# 定位:   给 Spec Kit `105` 把「数组实参没包 VARIANT」这一类**扫出来**（事实 167/183 
+# 定位:   给 Spec Kit `105` 把「数组实参没包 VARIANT」这一类**扫出来**（事实 167/183
 #           的推广）。
 # 官方依据: 事实 167（`AddRelation` 要 `VARIANT(VT_ARRAY|VT_DISPATCH)`）·
 #          事实 123（`CreateSpline2` 要 `VARIANT(VT_ARRAY|VT_R8)`）
@@ -30,6 +30,7 @@ r"""@brief 扫「**数组实参没包 VARIANT**」的调用点（事实 167/183 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -42,8 +43,18 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
 SCAN = [ROOT / "scripts", ROOT / "mcp-server", ROOT / "tools"]
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "bare-array-args.json")
-CALLS = ("get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw")
-REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+CALLS = (
+    "get_com_member",
+    "call_com_member",
+    "safe_get_com_member",
+    "get_com_member_raw",
+)
+REFLECT = Path(
+    Path(__file__).resolve().parents[1]
+    / "_raw"
+    / "reflect_sldworks"
+    / "iface_sldworks.txt"
+)
 
 
 def load_signatures() -> dict:
@@ -84,7 +95,10 @@ def arg_is_object(member: str, index: int) -> bool:
     ⇒ 所以 `index = 实参序号 - 2`。
     """
     for types in SIGS.get(member, []):
-        if 0 <= index < len(types) and types[index].lower() in ("object", "system.object"):
+        if 0 <= index < len(types) and types[index].lower() in (
+            "object",
+            "system.object",
+        ):
             return True
     return False
 
@@ -128,9 +142,17 @@ def main() -> int:
                     #: ★ **签名必须是 `Object`**（否则形状说明不了任何事 —— 轮 185 的 30
                     #:  处假阳性）
                     if kind and member and arg_is_object(member, k - 2):
-                        hits.append({"file": f.name, "line": n.lineno, "arg_index": k,
-                                     "kind": "%s（**官方签名第 %d 参是 Object**）" % (kind, k - 2),
-                                     "member": member, "snippet": ast.unparse(n)[:110]})
+                        hits.append(
+                            {
+                                "file": f.name,
+                                "line": n.lineno,
+                                "arg_index": k,
+                                "kind": "%s（**官方签名第 %d 参是 Object**）"
+                                % (kind, k - 2),
+                                "member": member,
+                                "snippet": ast.unparse(n)[:110],
+                            }
+                        )
                     continue
                     #: ⚠⚠⚠ **2026-10-01（轮 185）加判据② —— 因为判据①太窄**：
                     #: 轮 183 的**真形态**是「实参是**变量**」：
@@ -168,47 +190,77 @@ def main() -> int:
                             #: ⇒ ★ 改成**只列"签名说是 `Object` 的形参"**（锚在官方签名
                             #: 上）。
                             if member and arg_is_object(member, k - 2):
-                                hits.append({"file": f.name, "line": n.lineno, "arg_index": k,
-                                             "member": member,
-                                             "kind": "形参 `%s`（**官方签名第 %d 参是 Object**）"
-                                                     % (a.id, k - 2),
-                                             "snippet": ast.unparse(n)[:110]})
+                                hits.append(
+                                    {
+                                        "file": f.name,
+                                        "line": n.lineno,
+                                        "arg_index": k,
+                                        "member": member,
+                                        "kind": "形参 `%s`（**官方签名第 %d 参是 Object**）"
+                                        % (a.id, k - 2),
+                                        "snippet": ast.unparse(n)[:110],
+                                    }
+                                )
                             continue
                         for asn in ast.walk(tree):
                             if not isinstance(asn, ast.Assign):
                                 continue
-                            if not any(isinstance(t, ast.Name) and t.id == a.id for t in asn.targets):
+                            if not any(
+                                isinstance(t, ast.Name) and t.id == a.id
+                                for t in asn.targets
+                            ):
                                 continue
                             rhs = asn.value
                             k2 = is_bare_array(rhs)
                             if k2 and member and arg_is_object(member, k - 2):
-                                hits.append({"file": f.name, "line": n.lineno, "arg_index": k,
-                                             "kind": "%s（经变量 `%s`）" % (k2, a.id),
-                                             "assign_line": asn.lineno,
-                                             "snippet": ast.unparse(n)[:110]})
+                                hits.append(
+                                    {
+                                        "file": f.name,
+                                        "line": n.lineno,
+                                        "arg_index": k,
+                                        "kind": "%s（经变量 `%s`）" % (k2, a.id),
+                                        "assign_line": asn.lineno,
+                                        "snippet": ast.unparse(n)[:110],
+                                    }
+                                )
                             elif isinstance(rhs, ast.Name):
                                 #: 追一层别名（`p = points` 这种）
                                 for asn2 in ast.walk(tree):
                                     if isinstance(asn2, ast.Assign) and any(
-                                            isinstance(t, ast.Name) and t.id == rhs.id
-                                            for t in asn2.targets):
+                                        isinstance(t, ast.Name) and t.id == rhs.id
+                                        for t in asn2.targets
+                                    ):
                                         k3 = is_bare_array(asn2.value)
                                         if k3:
-                                            hits.append({
-                                                "file": f.name, "line": n.lineno, "arg_index": k,
-                                                "kind": "%s（经 `%s` → `%s`）" % (k3, a.id, rhs.id),
-                                                "assign_line": asn2.lineno,
-                                                "snippet": ast.unparse(n)[:110]})
+                                            hits.append(
+                                                {
+                                                    "file": f.name,
+                                                    "line": n.lineno,
+                                                    "arg_index": k,
+                                                    "kind": "%s（经 `%s` → `%s`）"
+                                                    % (k3, a.id, rhs.id),
+                                                    "assign_line": asn2.lineno,
+                                                    "snippet": ast.unparse(n)[:110],
+                                                }
+                                            )
     print("  ── 扫了 %d 个 `%s` 调用点 ──" % (checked, " / ".join(CALLS)))
     print("  ★★ **含裸数组字面量实参**的: **%d** 处" % len(hits))
     for h in hits[:24]:
-        print("    %-28s L%-5d 第 %d 个实参是 **%s**" % (h["file"], h["line"], h["arg_index"], h["kind"]))
+        print(
+            "    %-28s L%-5d 第 %d 个实参是 **%s**"
+            % (h["file"], h["line"], h["arg_index"], h["kind"])
+        )
         print("        %s" % h["snippet"])
     if not hits:
-        print("    （没有 ⇒ 说明这类写法在本仓库里**已经绝迹**，或**扫描判据没覆盖到**）")
+        print(
+            "    （没有 ⇒ 说明这类写法在本仓库里**已经绝迹**，或**扫描判据没覆盖到**）"
+        )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"checked": checked, "hits": hits}, ensure_ascii=False,
-                              indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps({"checked": checked, "hits": hits}, ensure_ascii=False, indent=2)
+        + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
     if checked == 0:
         print("  ✗ **检查过 0 个** ⇒ 判据没生效（事实 46 的假绿）⇒ 非 0 退出")

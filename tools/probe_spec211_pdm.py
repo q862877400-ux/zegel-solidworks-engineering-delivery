@@ -1,4 +1,5 @@
 """★ 探针：PDM 的真机可达性 —— ★ 判据是**抛不抛 + 拿不拿得到**（★ 铁律 5 的现场）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B7 PDM 的待实测）
 # 文件:   tools/probe_spec211_pdm.py
@@ -8,7 +9,7 @@
 # · ★★★ **`ISldWorks` 下**没有** PDM 入口** ✗ —— 入口在 **`IApplication::PDMDocManager`*
 # * ✓
 #     ★★ 而 `IApplication` **不是** `ISldWorks` ✗（★ 拿它要另找路 ✓）
-# · ★★ **`IPDMDocManager` 只有 3 个成员**：★ `SetCancelOperation` · `SetDocumentStatus` 
+# · ★★ **`IPDMDocManager` 只有 3 个成员**：★ `SetCancelOperation` · `SetDocumentStatus`
 # ·
 # `SetManagedDocument` ✓ —— ★★★ **全是"设置状态"、★ 没有"检入/检出/取版本"这类 PDM 核心
 # 操作** ✗
@@ -44,19 +45,26 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 
 #: ★ 试几种"取 PDM"的形态（★ 官方入口在 `IApplication::PDMDocManager`、★ 而 `sw` 是 `ISl
 #: dWorks` ✗）
-FORMS = ("sw.PDMDocManager（属性）", "sw.GetPDMDocManager()（方法）",
-         "sw.Application.PDMDocManager")
+FORMS = (
+    "sw.PDMDocManager（属性）",
+    "sw.GetPDMDocManager()（方法）",
+    "sw.Application.PDMDocManager",
+)
 
 
 def main() -> int:
     import sw_connect
 
-    out: dict = {"official": ["IApplication.PDMDocManager", "IPDMDocManager"],
-                 "official_members_of_IPDMDocManager": ["SetCancelOperation",
-                                                        "SetDocumentStatus",
-                                                        "SetManagedDocument"],
-                 "step": "待实测：PDM 在本机可不可达",
-                 "runs": []}
+    out: dict = {
+        "official": ["IApplication.PDMDocManager", "IPDMDocManager"],
+        "official_members_of_IPDMDocManager": [
+            "SetCancelOperation",
+            "SetDocumentStatus",
+            "SetManagedDocument",
+        ],
+        "step": "待实测：PDM 在本机可不可达",
+        "runs": [],
+    }
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
@@ -73,12 +81,20 @@ def main() -> int:
                 obj = sw_connect.get_com_member(sw, "GetPDMDocManager")
             else:
                 app = sw_connect.get_com_member(sw, "Application")
-                obj = sw_connect.get_com_member(app, "PDMDocManager") if app is not None else None
-        except Exception as e:                                          # noqa: BLE001
+                obj = (
+                    sw_connect.get_com_member(app, "PDMDocManager")
+                    if app is not None
+                    else None
+                )
+        except Exception as e:  # noqa: BLE001
             exc = e
-        row = {"form": form,
-               "got_object": obj is not None,
-               "exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:170])}
+        row = {
+            "form": form,
+            "got_object": obj is not None,
+            "exception": None
+            if exc is None
+            else "%s: %s" % (type(exc).__name__, str(exc)[:170]),
+        }
         #: ★★ 记 HRESULT（★ 本仓早记过 `0x80040112` = 该产品没许可 ✓）
         if exc is not None:
             s = str(exc)
@@ -86,8 +102,10 @@ def main() -> int:
                 if hx.lower() in s.lower():
                     row["hresult"] = hx
         out["runs"].append(row)
-        print("★ %-28s ⇒ 拿到=%r %s" % (form, obj is not None,
-                                        ("· 抛：" + row["exception"]) if exc else ""))
+        print(
+            "★ %-28s ⇒ 拿到=%r %s"
+            % (form, obj is not None, ("· 抛：" + row["exception"]) if exc else "")
+        )
         if obj is not None and got is None:
             got = obj
 
@@ -98,39 +116,51 @@ def main() -> int:
             try:
                 probe[m] = "可调用（未传实参）"
                 sw_connect.get_com_member(got, m)
-            except Exception as e:                                      # noqa: BLE001
+            except Exception as e:  # noqa: BLE001
                 probe[m] = "%s: %s" % (type(e).__name__, str(e)[:90])
         out["member_probe"] = probe
-        out["verdict"] = ("★★★ **拿到了 PDM 对象**（★ 形态见上 ✓）· ★ 而它的成员只有 3 个、"
-                          "★ 全是「设置状态」✗ ⇒ ★ **那**不是**用户理解的 PDM 功能**（检入检出/版本/库 ✗）"
-                          "⇒ ★★ 与**铁律 5**（查不到就说查不到）一致 ✓")
+        out["verdict"] = (
+            "★★★ **拿到了 PDM 对象**（★ 形态见上 ✓）· ★ 而它的成员只有 3 个、"
+            "★ 全是「设置状态」✗ ⇒ ★ **那**不是**用户理解的 PDM 功能**（检入检出/版本/库 ✗）"
+            "⇒ ★★ 与**铁律 5**（查不到就说查不到）一致 ✓"
+        )
     else:
         hj = [r.get("hresult") for r in out["runs"] if r.get("hresult")]
         if any(h == "0x80040112" for h in hj):
-            out["verdict"] = ("★★★★ **抛 `0x80040112`（COM 类未授权）** ⇒ ★★ **正是本仓早记过的那条**："
-                              "「通常是**该产品没许可**（PDM / Simulation / Routers）」✓ ⇒ "
-                              "★★ **PDM = 独立许可产品、★ 本机未装/未授权** ⇒ ★ **不做（需另装独立许可产品）** ✓")
+            out["verdict"] = (
+                "★★★★ **抛 `0x80040112`（COM 类未授权）** ⇒ ★★ **正是本仓早记过的那条**："
+                "「通常是**该产品没许可**（PDM / Simulation / Routers）」✓ ⇒ "
+                "★★ **PDM = 独立许可产品、★ 本机未装/未授权** ⇒ ★ **不做（需另装独立许可产品）** ✓"
+            )
         else:
-            out["verdict"] = ("★★ **三种取法都没拿到对象**（★ 异常见上 ✓）· ★ 而官方入口在 "
-                              "`IApplication::PDMDocManager`✗ —— ★ **`IApplication` 不是 `ISldWorks`** ✓ ⇒ "
-                              "★★ 结合本仓既有知识（★ `0x80040112` = **该产品没许可** ✓）⇒ "
-                              "★★★ **判「不做（需另装独立许可产品）」** ✓（★ 铁律 5 + 铁律 6 的许可红线 ✓）")
+            out["verdict"] = (
+                "★★ **三种取法都没拿到对象**（★ 异常见上 ✓）· ★ 而官方入口在 "
+                "`IApplication::PDMDocManager`✗ —— ★ **`IApplication` 不是 `ISldWorks`** ✓ ⇒ "
+                "★★ 结合本仓既有知识（★ `0x80040112` = **该产品没许可** ✓）⇒ "
+                "★★★ **判「不做（需另装独立许可产品）」** ✓（★ 铁律 5 + 铁律 6 的许可红线 ✓）"
+            )
     print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec211-b7-pdm.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "spec211-b7-pdm-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "spec211-b7-pdm-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

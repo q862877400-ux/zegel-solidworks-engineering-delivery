@@ -32,8 +32,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "assembly-family-successor-evidence.json"
 
@@ -45,7 +45,7 @@ def _g(o, n, *a):
 def _try(fn, *a):
     try:
         return {"ok": True, "ret": repr(fn(*a))[:90]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
 
 
@@ -61,18 +61,30 @@ def main() -> int:
 
         #: ★ 先放一个零件进去（★ 否则 suppress / 变换都没对象）
         try:
-            part = Path(Path(__file__).resolve().parents[1] / "output" / "probe_assy_part.SLDPRT")
+            part = Path(
+                Path(__file__).resolve().parents[1]
+                / "output"
+                / "probe_assy_part.SLDPRT"
+            )
             pdoc = C.new_document(sw, "part")
             P.start_sketch(pdoc, plane_name="Front Plane")
-            _g(_g(pdoc, "SketchManager"), "CreateCornerRectangle",
-               -0.02, -0.015, 0.0, 0.02, 0.015, 0.0)
+            _g(
+                _g(pdoc, "SketchManager"),
+                "CreateCornerRectangle",
+                -0.02,
+                -0.015,
+                0.0,
+                0.02,
+                0.015,
+                0.0,
+            )
             P.end_sketch(pdoc)
             nm = [n for n in (P.feature_names(pdoc) or []) if n.startswith("草图")]
             P.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 8.0)
             _g(pdoc, "SaveAs3", str(part), 0, 1, None, None)
             _g(sw, "CloseDoc", str(_g(pdoc, "GetTitle") or ""))
             R["造零件"] = str(part.exists())
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             R["造零件出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
             part = None
 
@@ -85,47 +97,58 @@ def main() -> int:
 
         #: ★ 组件（★ 给 SetTransformAndSolve* 用）
         if part is not None and part.exists():
-            R["旧_AddComponent4"] = _try(_g, doc, "AddComponent4",
-                                        str(part), "", 0.0, 0.0, 0.0)
-            R["新_AddComponent5"] = _try(_g, doc, "AddComponent5",
-                                        str(part), 0, "", True, 0.0, 0.0, 0.0, True)
+            R["旧_AddComponent4"] = _try(
+                _g, doc, "AddComponent4", str(part), "", 0.0, 0.0, 0.0
+            )
+            R["新_AddComponent5"] = _try(
+                _g, doc, "AddComponent5", str(part), 0, "", True, 0.0, 0.0, 0.0, True
+            )
             comp = None
             try:
                 comp = _g(doc, "GetActiveComponent")
                 if comp is None:
                     m = _g(doc, "GetComponents", False)
                     comp = m[0] if isinstance(m, (list, tuple)) and m else None
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 comp = None
             R["组件"] = repr(comp)[:80]
             if comp is not None:
                 xf = _try(_g, comp, "GetTotalTransform") if False else None
-                R["旧_SetTransformAndSolve2"] = _try(_g, comp, "SetTransformAndSolve2", None)
-                R["新_SetTransformAndSolve3"] = _try(_g, comp, "SetTransformAndSolve3", None, True)
+                R["旧_SetTransformAndSolve2"] = _try(
+                    _g, comp, "SetTransformAndSolve2", None
+                )
+                R["新_SetTransformAndSolve3"] = _try(
+                    _g, comp, "SetTransformAndSolve3", None, True
+                )
 
         #: ★★ `AddMate5` 的后继是**换范式**：★ 先 `CreateMateData(MateType)`
         R["CreateMateData"] = _try(_g, doc, "CreateMateData", 0)
         md = None
         try:
             md = _g(doc, "CreateMateData", 0)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             md = None
         R["MateData 对象"] = repr(md)[:80]
         R["新_CreateMate"] = _try(_g, doc, "CreateMate", md)
         R["旧_AddMate5_仅试arity"] = _try(_g, doc, "AddMate5")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    new_ok = sorted(k for k, v in R.items()
-                    if k.startswith("新_") and isinstance(v, dict) and v.get("ok"))
+    new_ok = sorted(
+        k
+        for k, v in R.items()
+        if k.startswith("新_") and isinstance(v, dict) and v.get("ok")
+    )
     R["★_新入口能调的"] = "%d 条: %s" % (len(new_ok), ", ".join(x[2:] for x in new_ok))
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

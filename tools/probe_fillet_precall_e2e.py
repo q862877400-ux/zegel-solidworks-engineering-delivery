@@ -26,8 +26,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "fillet-precall-e2e-evidence.json"
 
@@ -41,15 +41,24 @@ def main() -> int:
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     import importlib
+
     rc = importlib.import_module("register_capabilities")
-    spec = next((s for s in rc.all_specs()
-                 if getattr(s, "name", None) == "solidworks_fillet"), None)
+    spec = next(
+        (s for s in rc.all_specs() if getattr(s, "name", None) == "solidworks_fillet"),
+        None,
+    )
     if spec is None:
         R["err"] = "★ 找不到 solidworks_fillet"
-        OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        OUT.write_text(
+            json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        )
         return 0
     R["call_path"] = "module=%s function=%s inject=%s pre_call=%s" % (
-        spec.module, spec.function, spec.inject, getattr(spec.pre_call, "__name__", None))
+        spec.module,
+        spec.function,
+        spec.inject,
+        getattr(spec.pre_call, "__name__", None),
+    )
     R["params"] = [getattr(p, "name", None) for p in (spec.params or [])]
     for sel in ("index:0", "index:4"):
         doc = None
@@ -57,7 +66,16 @@ def main() -> int:
         try:
             doc = C.new_document(sw, "part")
             P.start_sketch(doc, plane_name="Front Plane")
-            _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+            _g(
+                _g(doc, "SketchManager"),
+                "CreateCornerRectangle",
+                -0.04,
+                -0.03,
+                0.0,
+                0.04,
+                0.03,
+                0.0,
+            )
             P.end_sketch(doc)
             names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
             P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
@@ -85,11 +103,12 @@ def main() -> int:
             pre_ok = None
             try:
                 if getattr(spec, "pre_call", None) is not None:
-                    pre_ok = spec.pre_call(pr)          #: ★ 这是本探针要验的那一步
+                    pre_ok = spec.pre_call(pr)  #: ★ 这是本探针要验的那一步
                 row["pre_call_returned"] = pre_ok
                 row["sel_after_precall"] = int(
-                    _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0)
-            except Exception as exc:                                      # noqa: BLE001
+                    _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
+                )
+            except Exception as exc:  # noqa: BLE001
                 row["pre_call_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
             if getattr(spec, "derived_args", None) is not None:
                 kwargs.update(spec.derived_args(pr) or {})
@@ -100,28 +119,45 @@ def main() -> int:
             row["ret_type"] = type(ret).__name__
             row["ret_ok"] = bool(isinstance(ret, dict) and ret.get("ok"))
             if isinstance(ret, dict):
-                row["ret_keys"] = {k: str(v)[:70] for k, v in ret.items()
-                                   if k in ("ok", "ret_name", "ret_type", "new_features", "err",
-                                            "error", "preconditions_held", "selection", "feature_name")}
+                row["ret_keys"] = {
+                    k: str(v)[:70]
+                    for k, v in ret.items()
+                    if k
+                    in (
+                        "ok",
+                        "ret_name",
+                        "ret_type",
+                        "new_features",
+                        "err",
+                        "error",
+                        "preconditions_held",
+                        "selection",
+                        "feature_name",
+                    )
+                }
             else:
                 row["ret_repr"] = str(ret)[:120]
             #: ★ 修：树要在 **CloseDoc 之前**读（★ 上一版读到 0 —— 文档已关）。
             row["tree_after"] = list(P.feature_names(doc) or [])
-            row["new_features"] = [n for n in row["tree_after"] if n not in row["tree_before"]]
+            row["new_features"] = [
+                n for n in row["tree_after"] if n not in row["tree_before"]
+            ]
             row["ok"] = len(row["new_features"]) > 0
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["ok"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         finally:
             try:
                 if doc is not None:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         R["cases"].append(row)
     R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

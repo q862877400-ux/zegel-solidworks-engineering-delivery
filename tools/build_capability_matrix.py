@@ -50,37 +50,55 @@ OUT = REPO / "output" / "operation-object-matrix.json"
 #: ★★ 操作轴（7）—— ★ 官方**不提供**这一轴（官方按接口分），★ 所以是我们补的。
 #:   规则 = 对「族名 + 成员名」做关键词匹配；★ 顺序即优先级（★ 先匹配到的算）。
 OPS: list = [
-    ("建", r"Create|Insert|Add|New|Make|Build|Sketch|Feature(?!Data)|Extrud|Revolv|Loft|Sweep|"
-           r"Fillet|Chamfer|Hole|Rib|Shell|Draft|Pattern|Mirror|Thicken|Wrap|"
-           #: ★★★★ 2026-10-04（轮 99）**补词**（★ 消解"无处可放" · ★ **阈值不动、★ 只加
-           #: 词**）——
-           #:   依据：`output/unplaced-tools-analysis.json` 的**逐条**分析 ——
-           #: ★ 35 个无处可放里 **28 个**是"`OPS` 一条规则都不命中"、★ **19 个**是对象轴
-           #: 同理、
-           #:   ★★ **而"其余（★ 靠顺序截走）"是 0 个** ⇒ **全是缺词、★ 不是顺序问题** ✓
-           #: 加的词**都来自真实工具名**（★ 不是为凑数）：★ `Gear` / `Helix` / `Fastener
-           #: ` /
-           #:   `Costing` / `Delivery` / `Motion` / `Flatten` / `Measure` / `Summary` ✓
-           r"Gear|Helix|Fastener|Flatten|Dome|Bend|"
-           r"Activate|Calibrate|Recalculate"),
-    ("改", r"Edit|Modify|Set|Update|Rebuild|Change|Assign|Apply|Reorder|Suppress|Unsuppress|"
-           r"Replace|Delete|Remove|Clear|Reset|"
-           #: ★ 同上（★ 轮 99 补词）
-           r"Fix|Float|Move|Rotate|Scale|Stretch|Trim|Extend|Offset"),
-    ("组合", r"Assembl|Mate|Compon|Explode|Interfer|Collision|Pattern(?:Component)|"
-             r"AddComponent|Fix|Float"),
-    ("查", r"Get|Read|Query|List|Count|Is[A-Z]|Has[A-Z]|Measure|Mass|Propert|Find|Select|"
-           r"Enumerat|Inspect|Evidence|Report|"
-           #: ★ 同上（★ 轮 99 补词）
-           r"Collect|Summary|Entities|Traceability|Types|Default|Value|Check|Validat"),
-    ("表达", r"Drawing|View|Annotation|Dimension|Note|Balloon|Table|BOM|Sheet|Export|Save|"
-             r"Print|Pdf|Dxf|Stl|Iges|Step|Image|"
-             #: ★ 同上（★ 轮 99 补词）
-             r"Delivery|PackAndGo|Preview|Template"),
-    ("校核", r"Stud|Simulat|Mesh|Analys|Topolog|Result|Load|Restraint|Frequency|Buckl|"
-             r"Thermal|Fatigue|Displace|"
-             #: ★ 同上（★ 轮 99 补词）
-             r"Motion|BoundingBox|CenterOfMass|DFM|Dfm"),
+    (
+        "建",
+        r"Create|Insert|Add|New|Make|Build|Sketch|Feature(?!Data)|Extrud|Revolv|Loft|Sweep|"
+        r"Fillet|Chamfer|Hole|Rib|Shell|Draft|Pattern|Mirror|Thicken|Wrap|"
+        #: ★★★★ 2026-10-04（轮 99）**补词**（★ 消解"无处可放" · ★ **阈值不动、★ 只加
+        #: 词**）——
+        #:   依据：`output/unplaced-tools-analysis.json` 的**逐条**分析 ——
+        #: ★ 35 个无处可放里 **28 个**是"`OPS` 一条规则都不命中"、★ **19 个**是对象轴
+        #: 同理、
+        #:   ★★ **而"其余（★ 靠顺序截走）"是 0 个** ⇒ **全是缺词、★ 不是顺序问题** ✓
+        #: 加的词**都来自真实工具名**（★ 不是为凑数）：★ `Gear` / `Helix` / `Fastener
+        #: ` /
+        #:   `Costing` / `Delivery` / `Motion` / `Flatten` / `Measure` / `Summary` ✓
+        r"Gear|Helix|Fastener|Flatten|Dome|Bend|"
+        r"Activate|Calibrate|Recalculate",
+    ),
+    (
+        "改",
+        r"Edit|Modify|Set|Update|Rebuild|Change|Assign|Apply|Reorder|Suppress|Unsuppress|"
+        r"Replace|Delete|Remove|Clear|Reset|"
+        #: ★ 同上（★ 轮 99 补词）
+        r"Fix|Float|Move|Rotate|Scale|Stretch|Trim|Extend|Offset",
+    ),
+    (
+        "组合",
+        r"Assembl|Mate|Compon|Explode|Interfer|Collision|Pattern(?:Component)|"
+        r"AddComponent|Fix|Float",
+    ),
+    (
+        "查",
+        r"Get|Read|Query|List|Count|Is[A-Z]|Has[A-Z]|Measure|Mass|Propert|Find|Select|"
+        r"Enumerat|Inspect|Evidence|Report|"
+        #: ★ 同上（★ 轮 99 补词）
+        r"Collect|Summary|Entities|Traceability|Types|Default|Value|Check|Validat",
+    ),
+    (
+        "表达",
+        r"Drawing|View|Annotation|Dimension|Note|Balloon|Table|BOM|Sheet|Export|Save|"
+        r"Print|Pdf|Dxf|Stl|Iges|Step|Image|"
+        #: ★ 同上（★ 轮 99 补词）
+        r"Delivery|PackAndGo|Preview|Template",
+    ),
+    (
+        "校核",
+        r"Stud|Simulat|Mesh|Analys|Topolog|Result|Load|Restraint|Frequency|Buckl|"
+        r"Thermal|Fatigue|Displace|"
+        #: ★ 同上（★ 轮 99 补词）
+        r"Motion|BoundingBox|CenterOfMass|DFM|Dfm",
+    ),
     ("参数化", r"Equation|Config|DesignTable|Parameter|Global|Variable|Driven|Family"),
 ]
 
@@ -88,11 +106,17 @@ OPS: list = [
 #: 了 category）
 OBJ_RULES: list = [
     ("草图", r"Sketch"),
-    ("特征", r"Feature|Boss|Cut|Extru|Revolv|Loft|Sweep|Fillet|Chamfer|Hole|Rib|Shell|Draft|"
-             r"Pattern|Mirror|Thicken|Wrap|Dome|Bend"),
+    (
+        "特征",
+        r"Feature|Boss|Cut|Extru|Revolv|Loft|Sweep|Fillet|Chamfer|Hole|Rib|Shell|Draft|"
+        r"Pattern|Mirror|Thicken|Wrap|Dome|Bend",
+    ),
     ("几何体/面/边", r"Body|Face|Edge|Vertex|Loop|Surface|Curve|Point|Mesh"),
     ("装配", r"Assembl|Component|Mate|Explode"),
-    ("工程图", r"Drawing|View|Sheet|Annotation|Dimension|Note|Balloon|Table|Gtol|Datum"),
+    (
+        "工程图",
+        r"Drawing|View|Sheet|Annotation|Dimension|Note|Balloon|Table|Gtol|Datum",
+    ),
     ("钣金", r"SheetMetal|Flange|Bend|Rip|Corner|Jog"),
     ("焊件", r"Weldment|StructuralMember|CutList|Gusset|EndCap"),
     ("模具", r"Mold|PartingLine|PartingSurface|CoreCavity|ShutOff"),
@@ -111,7 +135,10 @@ OBJ_RULES: list = [
     #:   `CenterOfMass` / `BoundingBox` / `Entities`）✓
     #:   ★★★ **判据**：★ 新加的两个对象名**能从工具名反推**（★ 不是为凑数）✓
     ("传动件", r"Gear|Helix|Fastener|Thread|Spring|Belt|Chain|Pulley"),
-    ("体/测量", r"Cent(?:er|re)OfMass|BoundingBox|EntitiesOnBody|MassPropert|Interference"),
+    (
+        "体/测量",
+        r"Cent(?:er|re)OfMass|BoundingBox|EntitiesOnBody|MassPropert|Interference",
+    ),
 ]
 
 
@@ -127,7 +154,10 @@ def load_families() -> dict:
 def load_commands() -> list:
     f = SWAPI / "enums" / "swCommands_e.md"
     t = f.read_text(encoding="utf-8", errors="replace")
-    return [m for m, _ in re.findall(r"^\|\s*(sw[A-Za-z0-9_]+)\s*\|\s*([^|]*?)\s*\|", t, re.M)]
+    return [
+        m
+        for m, _ in re.findall(r"^\|\s*(sw[A-Za-z0-9_]+)\s*\|\s*([^|]*?)\s*\|", t, re.M)
+    ]
 
 
 def our_tools() -> list:
@@ -135,7 +165,10 @@ def our_tools() -> list:
     sys.path.insert(0, str(REPO / "mcp-server"))
     sys.path.insert(0, str(REPO / "scripts"))
     import register_capabilities as rc
-    return sorted(getattr(s, "name", "") for s in rc.all_specs() if getattr(s, "name", None))
+
+    return sorted(
+        getattr(s, "name", "") for s in rc.all_specs() if getattr(s, "name", None)
+    )
 
 
 def classify(text: str, rules: list) -> str:
@@ -210,7 +243,10 @@ def main() -> int:
 
     #: ★★★ 判据③ 双源一致率：★ 命令名 → 有没有对应成员（★ 名字 token 匹配，★ 上界）
     def toks(s: str) -> set:
-        return {w.lower() for w in re.findall(r"[A-Za-z]{3,}", re.sub(r"^swCommands?_?", "", s))}
+        return {
+            w.lower()
+            for w in re.findall(r"[A-Za-z]{3,}", re.sub(r"^swCommands?_?", "", s))
+        }
 
     member_tokens = set()
     for m in all_members:
@@ -232,42 +268,83 @@ def main() -> int:
 
     R = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "矩阵": {"操作轴": ops, "对象轴": objs, "格子总数": total_cells,
-                 "有官方成员的格子": len(filled), "被我们工具覆盖的格子": len(covered_real)},
-        "规模": {"官方接口族": len(fams), "官方成员": len(all_members),
-                 "我们的工具": len(tools), "官方命令(swCommands_e)": len(cmds)},
-        "判据①无处可放率": {"值": round(r1, 2), "分子": len(tool_unplaced), "分母": len(tools),
-                            "判定": band(r1, 10, 20), "阈值": "好≤10% · 可接受≤20%"},
-        "判据②空格率": {"值": round(r2, 2), "分子": total_cells - len(filled), "分母": total_cells,
-                        "判定": band(r2, 60, 80), "阈值": "好≤60% · 可接受≤80%",
-                        "注": "★ 它只当参考 —— 空格多也可能是**缺口多**，★ 判据①才是矩阵好坏的判官"},
-        "判据③双源一致率": {"值": round(r3, 2), "分子": hit, "分母": len(cmds),
-                            "判定": band(r3, 50, 30, higher_better=True),
-                            "阈值": "好≥50% · 可接受≥30%", "注": "★ 按名字 token 匹配 ⇒ **上界**"},
+        "矩阵": {
+            "操作轴": ops,
+            "对象轴": objs,
+            "格子总数": total_cells,
+            "有官方成员的格子": len(filled),
+            "被我们工具覆盖的格子": len(covered_real),
+        },
+        "规模": {
+            "官方接口族": len(fams),
+            "官方成员": len(all_members),
+            "我们的工具": len(tools),
+            "官方命令(swCommands_e)": len(cmds),
+        },
+        "判据①无处可放率": {
+            "值": round(r1, 2),
+            "分子": len(tool_unplaced),
+            "分母": len(tools),
+            "判定": band(r1, 10, 20),
+            "阈值": "好≤10% · 可接受≤20%",
+        },
+        "判据②空格率": {
+            "值": round(r2, 2),
+            "分子": total_cells - len(filled),
+            "分母": total_cells,
+            "判定": band(r2, 60, 80),
+            "阈值": "好≤60% · 可接受≤80%",
+            "注": "★ 它只当参考 —— 空格多也可能是**缺口多**，★ 判据①才是矩阵好坏的判官",
+        },
+        "判据③双源一致率": {
+            "值": round(r3, 2),
+            "分子": hit,
+            "分母": len(cmds),
+            "判定": band(r3, 50, 30, higher_better=True),
+            "阈值": "好≥50% · 可接受≥30%",
+            "注": "★ 按名字 token 匹配 ⇒ **上界**",
+        },
         "无处可放的例子": [x["tool"] for x in tool_unplaced[:24]],
-        "格子占用前 20": sorted(([list(k), len(v)] for k, v in cell_members.items()),
-                                key=lambda x: -x[1])[:20],
+        "格子占用前 20": sorted(
+            ([list(k), len(v)] for k, v in cell_members.items()), key=lambda x: -x[1]
+        )[:20],
         "工具落在的格子前 20": sorted(
-            ([list(k), n] for k, n in Counter(tool_cells.values()).most_common(20))),
+            ([list(k), n] for k, n in Counter(tool_cells.values()).most_common(20))
+        ),
     }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    print("★ 规模：官方 **%d** 族 · **%d** 成员 · 我们 **%d** 工具 · 官方命令 **%d**"
-          % (len(fams), len(all_members), len(tools), len(cmds)))
-    print("★ 矩阵：★ 操作 %d × 对象 %d = **%d** 格 ⇒ 有官方成员的 **%d** 格 · 我们工具覆盖 **%d** 格"
-          % (len(ops), len(objs), total_cells, len(filled), len(covered_real)))
+    print(
+        "★ 规模：官方 **%d** 族 · **%d** 成员 · 我们 **%d** 工具 · 官方命令 **%d**"
+        % (len(fams), len(all_members), len(tools), len(cmds))
+    )
+    print(
+        "★ 矩阵：★ 操作 %d × 对象 %d = **%d** 格 ⇒ 有官方成员的 **%d** 格 · 我们工具覆盖 **%d** 格"
+        % (len(ops), len(objs), total_cells, len(filled), len(covered_real))
+    )
     print()
     print("★★★ 三个预先写死的判据：")
-    print("   ① 无处可放率   = **%.2f%%**（%d/%d）⇒ %s" % (r1, len(tool_unplaced), len(tools),
-                                                          R["判据①无处可放率"]["判定"]))
-    print("   ② 空格率       = **%.2f%%**（%d/%d）⇒ %s（★ 参考项）"
-          % (r2, total_cells - len(filled), total_cells, R["判据②空格率"]["判定"]))
-    print("   ③ 双源一致率   = **%.2f%%**（%d/%d，★ 上界）⇒ %s"
-          % (r3, hit, len(cmds), R["判据③双源一致率"]["判定"]))
+    print(
+        "   ① 无处可放率   = **%.2f%%**（%d/%d）⇒ %s"
+        % (r1, len(tool_unplaced), len(tools), R["判据①无处可放率"]["判定"])
+    )
+    print(
+        "   ② 空格率       = **%.2f%%**（%d/%d）⇒ %s（★ 参考项）"
+        % (r2, total_cells - len(filled), total_cells, R["判据②空格率"]["判定"])
+    )
+    print(
+        "   ③ 双源一致率   = **%.2f%%**（%d/%d，★ 上界）⇒ %s"
+        % (r3, hit, len(cmds), R["判据③双源一致率"]["判定"])
+    )
     print()
     if tool_unplaced:
         print("★ 无处可放的工具（前 24）：")
-        print("   " + ", ".join(x["tool"].replace("solidworks_", "") for x in tool_unplaced[:24]))
+        print(
+            "   "
+            + ", ".join(
+                x["tool"].replace("solidworks_", "") for x in tool_unplaced[:24]
+            )
+        )
         print()
     print("★ 工具最集中的格子（前 12）：")
     for (op, obj), n in Counter(tool_cells.values()).most_common(12):

@@ -1,4 +1,5 @@
 """★ 第 19 轮：全仓最后一遍扫描 —— 判「还剩什么」。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -22,14 +23,28 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 NORM = re.compile(r"(不要|必须|应当|优先|推荐|避免|禁止|正确做法|惯例|判据)")
 MODEL = re.compile(
     r"(草图|几何|约束|倒角|圆角|拉伸|旋转|切除|阵列|孔|螺纹|槽|基准|"
-    r"中心线|轮廓|尺寸|标注|工程图|配合|装配)")
+    r"中心线|轮廓|尺寸|标注|工程图|配合|装配)"
+)
 
 #: ★★ **我自己的产出**（★ 自引不算新知识）
-MINE = ("specs/332-", "specs/315-eval-corpus/", "specs/335-", "specs/336-",
-        "specs/334-", "specs/330-")
+MINE = (
+    "specs/332-",
+    "specs/315-eval-corpus/",
+    "specs/335-",
+    "specs/336-",
+    "specs/334-",
+    "specs/330-",
+)
 #: ★★ **工作产物目录**（★ 不是知识源）
-WORK = ("recon/", "filler-chunks/", "c3-rows/", "verify50/", "api-pre/",
-        "_raw/", "output/")
+WORK = (
+    "recon/",
+    "filler-chunks/",
+    "c3-rows/",
+    "verify50/",
+    "api-pre/",
+    "_raw/",
+    "output/",
+)
 DIRS = ("docs", "references", "subskills", "apps", "examples", "agents")
 
 
@@ -37,8 +52,7 @@ def main() -> int:
     cited = set()
     for f in (ROOT / "specs" / "332-known-facts-triage").glob("*.md"):
         t = f.read_text(encoding="utf-8", errors="replace")
-        for m in re.finditer(r"[\w\u4e00-\u9fff\-/.]+\.(md|py|yaml|ps1|txt|json)",
-                             t):
+        for m in re.finditer(r"[\w\u4e00-\u9fff\-/.]+\.(md|py|yaml|ps1|txt|json)", t):
             cited.add(m.group(0).split("/")[-1])
     rows = []
     for d in DIRS:
@@ -58,9 +72,11 @@ def main() -> int:
                 t = f.read_text(encoding="utf-8", errors="replace")
             except OSError:
                 continue
-            n = sum(1 for ln in t.splitlines()
-                    if 12 < len(ln.strip()) < 240
-                    and NORM.search(ln) and MODEL.search(ln))
+            n = sum(
+                1
+                for ln in t.splitlines()
+                if 12 < len(ln.strip()) < 240 and NORM.search(ln) and MODEL.search(ln)
+            )
             if n >= 3:
                 rows.append((n, rel))
     rows.sort(reverse=True)

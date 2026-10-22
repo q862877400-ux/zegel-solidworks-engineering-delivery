@@ -1,4 +1,5 @@
 """★ 生成 `docs/tools-index.md`：709 个开发工具的**可检索索引**（按 lean 口径）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -25,7 +26,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")   # 事实 58
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # 事实 58
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / "tools"
@@ -126,16 +127,18 @@ def collect() -> list[dict]:
     rows = []
     for p in sorted(TOOLS.glob("*.py")):
         if p.name.startswith("_"):
-            continue          #: ★ `_` 开头是内部件，不进检索面（同 lean 的「管线内部件」口径）
+            continue  #: ★ `_` 开头是内部件，不进检索面（同 lean 的「管线内部件」口径）
         key, label = classify(p.name)
-        rows.append({
-            "name": p.name,
-            "stem": p.stem,
-            "cat": key,
-            "cat_label": label,
-            "desc": first_line_of(p),
-            "size": p.stat().st_size,
-        })
+        rows.append(
+            {
+                "name": p.name,
+                "stem": p.stem,
+                "cat": key,
+                "cat_label": label,
+                "desc": first_line_of(p),
+                "size": p.stat().st_size,
+            }
+        )
     return rows
 
 
@@ -150,13 +153,17 @@ def render(rows: list[dict]) -> str:
     out.append("> ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**")
     out.append("> 重生成：`python tools/gen_tools_index.py`")
     out.append("")
-    out.append("**为什么有这份索引**：`tools/` 有 %d 个脚本，此前没有任何索引 —— "
-               "「你不知道有，所以你没找」是可发现性问题，"
-               "已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。"
-               % len(rows))
+    out.append(
+        "**为什么有这份索引**：`tools/` 有 %d 个脚本，此前没有任何索引 —— "
+        "「你不知道有，所以你没找」是可发现性问题，"
+        "已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。"
+        % len(rows)
+    )
     out.append("")
-    out.append("**怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。"
-               "★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。")
+    out.append(
+        "**怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。"
+        "★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。"
+    )
     out.append("")
     out.append("---")
     out.append("")
@@ -176,7 +183,14 @@ def render(rows: list[dict]) -> str:
     out.append("")
 
     #: ★ 分类明细
-    for key, label, desc in CATEGORIES + [("byround", "按轮次临时", "按轮次/批次命名的临时活（t1_/t4_/w6_/s206_ 等），不是一种长期用途"), ("other", "其他", "未按前缀归类的脚本")]:
+    for key, label, desc in CATEGORIES + [
+        (
+            "byround",
+            "按轮次临时",
+            "按轮次/批次命名的临时活（t1_/t4_/w6_/s206_ 等），不是一种长期用途",
+        ),
+        ("other", "其他", "未按前缀归类的脚本"),
+    ]:
         items = by_cat.get(key)
         if not items:
             continue
@@ -198,7 +212,9 @@ def render(rows: list[dict]) -> str:
     out.append("## 索引自身的债：无文件头说明的脚本（%d 个）" % len(nodesc))
     out.append("")
     if nodesc:
-        out.append("这些脚本没有 docstring 也没有首行注释 ⇒ **索引只能列出名字，说不出用途**。")
+        out.append(
+            "这些脚本没有 docstring 也没有首行注释 ⇒ **索引只能列出名字，说不出用途**。"
+        )
         out.append("补一行注释就能让它们可检索：")
         out.append("")
         for r in nodesc:
@@ -212,10 +228,14 @@ def render(rows: list[dict]) -> str:
     out.append("")
     out.append("| 机制 | 位置 | 作用 |")
     out.append("|---|---|---|")
-    out.append("| 探针复用门禁 | `scripts/check_probe_reuse.py` | 拦住「为已有工具写了替代品」 |")
+    out.append(
+        "| 探针复用门禁 | `scripts/check_probe_reuse.py` | 拦住「为已有工具写了替代品」 |"
+    )
     out.append("| 死路台账 | `docs/dead-ends.md` | 已走死的路，动手前先扫 |")
     out.append("| 已知事实 | `docs/known-facts.md` | 已验证的技术事实 |")
-    out.append("| 假设台账 | `docs/assumption-ledger.md` | 未验证的假设（不得当证据） |")
+    out.append(
+        "| 假设台账 | `docs/assumption-ledger.md` | 未验证的假设（不得当证据） |"
+    )
     out.append("")
     return "\n".join(out) + "\n"
 
@@ -230,10 +250,18 @@ def main() -> int:
     #: ★ 落盘后回读校验（事实 48 定则②）
     again = OUT.read_text(encoding="utf-8")
     n_lines = len(again.splitlines())
-    print("★ 已写 %s（%d 字节 / %d 行）" % (OUT.relative_to(ROOT), len(again.encode('utf-8')), n_lines))
-    print("★ 收录 %d 个工具 · 无说明 %d 个"
-          % (len(rows), len([r for r in rows if not r["desc"]])))
-    for key, label, _d in CATEGORIES + [("byround", "按轮次临时", ""), ("other", "其他", "")]:
+    print(
+        "★ 已写 %s（%d 字节 / %d 行）"
+        % (OUT.relative_to(ROOT), len(again.encode("utf-8")), n_lines)
+    )
+    print(
+        "★ 收录 %d 个工具 · 无说明 %d 个"
+        % (len(rows), len([r for r in rows if not r["desc"]]))
+    )
+    for key, label, _d in CATEGORIES + [
+        ("byround", "按轮次临时", ""),
+        ("other", "其他", ""),
+    ]:
         n = len([r for r in rows if r["cat"] == key])
         if n:
             print("   %-10s %3d" % (label, n))

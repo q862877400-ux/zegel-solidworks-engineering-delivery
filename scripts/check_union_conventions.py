@@ -13,6 +13,7 @@ r"""并入规范门禁 —— 校验 docs/union-conventions.md 定义的五条�
 # 覆盖:   后续同级定义
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -149,16 +150,22 @@ def normalize_generated_text(text: str) -> str:
     #:   · 生成日期：2026-10-10
     #:   · 生成时间：2026-10-10 12:34:56
     text = re.sub(r"(生成日期\s*[:：]\s*)\d{4}-\d{2}-\d{2}", r"\g<1><DATE>", text)
-    text = re.sub(r"(生成时间\s*[:：]\s*)\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}",
-                  r"\g<1><TIMESTAMP>", text)
+    text = re.sub(
+        r"(生成时间\s*[:：]\s*)\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}",
+        r"\g<1><TIMESTAMP>",
+        text,
+    )
     return text
 
 
 def check_docs() -> list[str]:
     """规范与地图必须存在，且地图是生成物；**R8 的等级审计也要在且是最新的**。"""
     bad: list[str] = []
-    for rel in ("docs/union-conventions.md", "docs/union-coverage-matrix.md",
-                "docs/union-level-audit.md"):
+    for rel in (
+        "docs/union-conventions.md",
+        "docs/union-coverage-matrix.md",
+        "docs/union-level-audit.md",
+    ):
         if not (ROOT / rel).is_file():
             bad.append("缺少 %s" % rel)
     mp = ROOT / "docs" / "union-coverage-matrix.md"
@@ -180,35 +187,53 @@ def check_docs() -> list[str]:
         gen = ROOT / "scripts" / "gen_level_audit.py"
         if gen.is_file():
             import importlib.util as _ilu
+
             try:
                 _spec = _ilu.spec_from_file_location("_gen_level_audit", gen)
                 _mod = _ilu.module_from_spec(_spec)
                 _spec.loader.exec_module(_mod)
-                want = _mod.build(json.loads(
-                    (ROOT / "capabilities.yaml").read_text(encoding="utf-8")), sys.modules[__name__])
+                want = _mod.build(
+                    json.loads(
+                        (ROOT / "capabilities.yaml").read_text(encoding="utf-8")
+                    ),
+                    sys.modules[__name__],
+                )
                 #: ★★ 两侧都归一化（★ 生成器写「今天」、盘上那份写「昨天」⇒ 都换成占位）
                 if normalize_generated_text(want) != normalize_generated_text(
-                        audit.read_text(encoding="utf-8")):
-                    bad.append("docs/union-level-audit.md 与最新数据**不一致** —— "
-                               "跑 `python scripts/gen_level_audit.py` 重生成（R8）"
-                               "（★ 已忽略**非数据字段**：生成日期/时间戳）")
+                    audit.read_text(encoding="utf-8")
+                ):
+                    bad.append(
+                        "docs/union-level-audit.md 与最新数据**不一致** —— "
+                        "跑 `python scripts/gen_level_audit.py` 重生成（R8）"
+                        "（★ 已忽略**非数据字段**：生成日期/时间戳）"
+                    )
             except Exception as exc:  # noqa: BLE001 —— 生成器自身坏了要说出来，不能吞
-                bad.append("R8 新鲜度检查无法执行（生成器报错）：%s: %s"
-                           % (type(exc).__name__, exc))
+                bad.append(
+                    "R8 新鲜度检查无法执行（生成器报错）：%s: %s"
+                    % (type(exc).__name__, exc)
+                )
     return bad
 
 
 def check_map_fresh() -> list[str]:
     """地图必须与来源数据同步（防止手改或忘记重生成）。"""
     import subprocess
+
     mp = ROOT / "docs" / "union-coverage-matrix.md"
     gen = ROOT / "tools" / "build_union_map.py"
     if not (mp.is_file() and gen.is_file()):
         return []
     before = mp.read_text(encoding="utf-8")
-    proc = subprocess.run([sys.executable, str(gen)], capture_output=True,
-                          text=True, encoding="utf-8", errors="replace",
-                          timeout=180, cwd=str(ROOT), stdin=subprocess.DEVNULL)
+    proc = subprocess.run(
+        [sys.executable, str(gen)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=180,
+        cwd=str(ROOT),
+        stdin=subprocess.DEVNULL,
+    )
     if proc.returncode != 0:
         return ["build_union_map.py 执行失败: %s" % (proc.stderr or "")[-200:]]
     after = mp.read_text(encoding="utf-8")
@@ -254,8 +279,11 @@ def check_capabilities_schema() -> list[str]:
     # R1：schema_version 必须挂在 2.0（五级枚举与 provenance 必填性挂在它上面）
     sv = data.get("schema_version")
     if sv != SCHEMA_VERSION:
-        bad.append('capabilities.yaml 的 schema_version 不是 "%s"（读到 %r）—— '
-                   "五级枚举与 provenance 必填性挂在 %s 上" % (SCHEMA_VERSION, sv, SCHEMA_VERSION))
+        bad.append(
+            'capabilities.yaml 的 schema_version 不是 "%s"（读到 %r）—— '
+            "五级枚举与 provenance 必填性挂在 %s 上"
+            % (SCHEMA_VERSION, sv, SCHEMA_VERSION)
+        )
 
     # R3：id 全局唯一且是稳定 slug
     seen: set[str] = set()
@@ -281,9 +309,14 @@ def check_capabilities_schema() -> list[str]:
         #   ⚠ `source_evidence` **必须非空** —— 一个没有依据的分类等于没分类。
         src = c.get("source")
         if src not in SOURCES:
-            bad.append("能力 %s 的 source=%r 不在枚举 %s 内" % (cid, src, sorted(SOURCES)))
+            bad.append(
+                "能力 %s 的 source=%r 不在枚举 %s 内" % (cid, src, sorted(SOURCES))
+            )
         if not str(c.get("source_evidence") or "").strip():
-            bad.append("能力 %s 缺 source_evidence（分类必须有依据；没有依据就写 undetermined 并说明）" % cid)
+            bad.append(
+                "能力 %s 缺 source_evidence（分类必须有依据；没有依据就写 undetermined 并说明）"
+                % cid
+            )
         # ⚑ **R13（轮 59 加）：`source` 与 `provenance` 必须**自洽**** ——
         #   `provenance` 非空 ⇒ 该能力**有第三方来源** ⇒ `source` **不能**是 `original`。
         #   ★ 这条是**实测逼出来的**：`mold_tools` 曾同时有
@@ -294,25 +327,34 @@ def check_capabilities_schema() -> list[str]:
         prov = c.get("provenance")
         if src == "original" and prov:
             repos = ", ".join(str(p.get("repo")) for p in prov if isinstance(p, dict))
-            bad.append("能力 %s 的 source='original' 与 provenance（%s）**自相矛盾** —— "
-                       "有第三方来源就不能叫原创（应改 mixed 或 upstream）" % (cid, repos))
+            bad.append(
+                "能力 %s 的 source='original' 与 provenance（%s）**自相矛盾** —— "
+                "有第三方来源就不能叫原创（应改 mixed 或 upstream）" % (cid, repos)
+            )
         # ⚑ **R13b：反向** —— `provenance` 非空却写 `upstream` 也**不一定**对，但**无法
         # 机器判**
         #   （「来源是上游还是四家」需要看 repo 名）⇒ 只在 repo 明确**不是**上游时提示。
         if src == "upstream" and prov:
             for p in prov:
                 if isinstance(p, dict) and "wzyn20051216" not in str(p.get("repo", "")):
-                    bad.append("能力 %s 的 source='upstream' 而 provenance 指向 %s —— "
-                               "「上游」特指 `wzyn20051216/solidworks-automation-skill`，"
-                               "别家来源请用 mixed" % (cid, p.get("repo")))
+                    bad.append(
+                        "能力 %s 的 source='upstream' 而 provenance 指向 %s —— "
+                        "「上游」特指 `wzyn20051216/solidworks-automation-skill`，"
+                        "别家来源请用 mixed" % (cid, p.get("repo"))
+                    )
         entries = c.get("provenance")
         # R6：只有来源派生的 source_verified 强制要 provenance
         if lv == "source_verified" and not entries:
-            bad.append("能力 %s 是 source_verified 却没有 provenance —— 外部来源派生必须有出处" % cid)
+            bad.append(
+                "能力 %s 是 source_verified 却没有 provenance —— 外部来源派生必须有出处"
+                % cid
+            )
         if not entries:
             continue
         if not isinstance(entries, list):
-            bad.append("能力 %s 的 provenance 必须是数组（一条能力可由多个来源并入）" % cid)
+            bad.append(
+                "能力 %s 的 provenance 必须是数组（一条能力可由多个来源并入）" % cid
+            )
             continue
         for i, item in enumerate(entries):
             if not isinstance(item, dict):
@@ -321,15 +363,22 @@ def check_capabilities_schema() -> list[str]:
             repo = str(item.get("repo", ""))
             # R6：repo 是 owner/repo 全名，不写克隆目录名
             if not REPO_FULLNAME.match(repo):
-                bad.append("能力 %s 的 provenance.repo 不是 owner/repo 形式：%r" % (cid, repo))
+                bad.append(
+                    "能力 %s 的 provenance.repo 不是 owner/repo 形式：%r" % (cid, repo)
+                )
             # R6：license 归一化后必须在白名单内
             lic = normalize_license(str(item.get("license", "")))
             if lic not in COPYABLE_LICENSES:
-                bad.append("能力 %s 的 provenance.license 不在白名单：%r" % (cid, item.get("license")))
+                bad.append(
+                    "能力 %s 的 provenance.license 不在白名单：%r"
+                    % (cid, item.get("license"))
+                )
             # R6：upstream_verified 字段必须**存在**（可为空串，表示来源没声明跑过）
             if "upstream_verified" not in item:
-                bad.append("能力 %s 的 provenance 缺 upstream_verified 字段"
-                           "（来源没声明跑过就写空串，但不能没有）" % cid)
+                bad.append(
+                    "能力 %s 的 provenance 缺 upstream_verified 字段"
+                    "（来源没声明跑过就写空串，但不能没有）" % cid
+                )
             # R9：files 为非空数组，路径相对来源仓根
             files = item.get("files")
             if not isinstance(files, list) or not files:
@@ -337,13 +386,20 @@ def check_capabilities_schema() -> list[str]:
             # R9：commit / tag 可省略，出现必须是字符串
             for opt in ("commit", "tag"):
                 if opt in item and not isinstance(item[opt], str):
-                    bad.append("能力 %s 的 provenance.%s 不是字符串：%r" % (cid, opt, item[opt]))
+                    bad.append(
+                        "能力 %s 的 provenance.%s 不是字符串：%r"
+                        % (cid, opt, item[opt])
+                    )
             # R10：angelsix/solidworks-api 的 References/ 是达索财产，只能原样配 SolidDN
             # A 用
             if isinstance(files, list) and repo == ANGELSIX_REPO:
-                if any(str(p).replace("\\", "/").startswith("References/") for p in files):
-                    bad.append("能力 %s 的 provenance 引用了 angelsix 的 References/ —— "
-                               "那是达索财产，只能原样配 SolidDNA 用" % cid)
+                if any(
+                    str(p).replace("\\", "/").startswith("References/") for p in files
+                ):
+                    bad.append(
+                        "能力 %s 的 provenance 引用了 angelsix 的 References/ —— "
+                        "那是达索财产，只能原样配 SolidDNA 用" % cid
+                    )
     return bad
 
 
@@ -361,13 +417,18 @@ def _docstring_lines(src: str) -> set[int]:
     except SyntaxError:
         return out
     for node in ast.walk(tree):
-        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+        if isinstance(
+            node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+        ):
             body = getattr(node, "body", None)
             if not body:
                 continue
             first = body[0]
-            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) \
-                    and isinstance(first.value.value, str):
+            if (
+                isinstance(first, ast.Expr)
+                and isinstance(first.value, ast.Constant)
+                and isinstance(first.value.value, str)
+            ):
                 out.update(range(first.lineno, (first.end_lineno or first.lineno) + 1))
     return out
 
@@ -428,13 +489,17 @@ def check_authorization_source() -> list[str]:
             if n in skip or line.lstrip().startswith("#"):
                 continue
             if AUTHORIZATION_ASSIGN.match(line):
-                bad.append("%s:%d 用 level 推断无人值守授权（真源应是 allowed_modes）: %s"
-                           % (rel, n, line.strip()[:80]))
+                bad.append(
+                    "%s:%d 用 level 推断无人值守授权（真源应是 allowed_modes）: %s"
+                    % (rel, n, line.strip()[:80])
+                )
                 continue
             if n in auth_funcs and LEVEL_IN_LINE.search(line):
-                bad.append("%s:%d 授权函数 %s() 的函数体里按 level 判授权"
-                           "（真源应是 allowed_modes）: %s"
-                           % (rel, n, auth_funcs[n], line.strip()[:80]))
+                bad.append(
+                    "%s:%d 授权函数 %s() 的函数体里按 level 判授权"
+                    "（真源应是 allowed_modes）: %s"
+                    % (rel, n, auth_funcs[n], line.strip()[:80])
+                )
     return bad
 
 
@@ -471,15 +536,21 @@ def check_capabilities_levels() -> list[str]:
         if lv not in LEVELS:
             bad.append("能力 %s 的 level=%r 不在枚举 %s 内" % (cid, lv, sorted(LEVELS)))
         if lv == "verified" and not c.get("evidence"):
-            bad.append("能力 %s 标 verified 但 evidence 为空 —— 「跑过」必须有证据" % cid)
+            bad.append(
+                "能力 %s 标 verified 但 evidence 为空 —— 「跑过」必须有证据" % cid
+            )
         if lv == "verified" and is_cad and not c.get("verified_versions"):
-            bad.append("能力 %s 是 CAD 能力且标 verified，但 verified_versions 为空 —— "
-                       "「跑过」必须有版本证据" % cid)
+            bad.append(
+                "能力 %s 是 CAD 能力且标 verified，但 verified_versions 为空 —— "
+                "「跑过」必须有版本证据" % cid
+            )
         if lv == "not_implemented" and not c.get("limitations"):
             bad.append("能力 %s 标 not_implemented 但没写原因" % cid)
         invalid_modes = modes - VALID_MODES
         if invalid_modes:
-            bad.append("能力 %s 的 allowed_modes 含非法值: %s" % (cid, sorted(invalid_modes)))
+            bad.append(
+                "能力 %s 的 allowed_modes 含非法值: %s" % (cid, sorted(invalid_modes))
+            )
         if "unattended" in modes and lv != "verified":
             bad.append("能力 %s 的 level=%r 却带了无人值守授权 —— R11 禁止" % (cid, lv))
     return bad
@@ -507,8 +578,12 @@ def rule_registry() -> set:
     """
     if not CONVENTIONS_DOC.is_file():
         return set()
-    return {int(m.group(1)) for m in REGISTRY_ROW.finditer(
-        CONVENTIONS_DOC.read_text(encoding="utf-8", errors="replace"))}
+    return {
+        int(m.group(1))
+        for m in REGISTRY_ROW.finditer(
+            CONVENTIONS_DOC.read_text(encoding="utf-8", errors="replace")
+        )
+    }
 
 
 def referenced_rules(titles) -> set:
@@ -522,7 +597,7 @@ def referenced_rules(titles) -> set:
         s = str(t)
         for m in RULE_REF.finditer(s):
             out.add(int(m.group(1)))
-        for m in RULE_RANGE.finditer(s):          #: `R1-R3` ⇒ 展开成 1,2,3
+        for m in RULE_RANGE.finditer(s):  #: `R1-R3` ⇒ 展开成 1,2,3
             out.update(range(int(m.group(1)), int(m.group(2)) + 1))
     return out
 
@@ -574,12 +649,16 @@ def check_rule_registry(titles) -> list:
     bad: list = []
     reg = rule_registry()
     if not reg:
-        bad.append("读不出 R 编号登记表 ⇒ `docs/union-conventions.md` 的「二之补 R 编号登记表」"
-                   "缺失或形态变了（**这不等于没问题**）")
+        bad.append(
+            "读不出 R 编号登记表 ⇒ `docs/union-conventions.md` 的「二之补 R 编号登记表」"
+            "缺失或形态变了（**这不等于没问题**）"
+        )
         return bad
     ref = referenced_rules(titles)
     for n in sorted(ref - reg):
-        bad.append("段名引用了 **R%d**，但登记表里没有它 ⇒ 读代码的人查不到它代表什么" % n)
+        bad.append(
+            "段名引用了 **R%d**，但登记表里没有它 ⇒ 读代码的人查不到它代表什么" % n
+        )
     #: ⚑⚑ **轮 194：覆盖面从「段名」扩到「**执行侧**」** ——
     #: ★ 轮 193 只查段名，而实测「引用 R 编号的文件」有 **17 个**（3 个门禁 + 4 个其它 s
     #: cripts +
@@ -602,22 +681,27 @@ def check_rule_registry(titles) -> list:
     #: 在册** ⇒
     #:     本扩展**当前不报任何东西**（★ 这是"扩了覆盖面而结论不变"，不是"没生效"）。
     for name, refs in sorted(unregistered_refs(RULE_SCAN_GLOB, reg).items()):
-        bad.append("`scripts/%s` 引用了未登记的 %s ⇒ 执行侧引错编号 = **执行错规则**"
-                   % (name, "、".join("R%d" % n for n in refs)))
+        bad.append(
+            "`scripts/%s` 引用了未登记的 %s ⇒ 执行侧引错编号 = **执行错规则**"
+            % (name, "、".join("R%d" % n for n in refs))
+        )
     lo, hi = min(reg), max(reg)
     missing = sorted(set(range(lo, hi + 1)) - reg)
     if missing:
-        bad.append("登记表缺号：%s（登记区间是 R%d–R%d）"
-                   % ("、".join("R%d" % m for m in missing), lo, hi))
+        bad.append(
+            "登记表缺号：%s（登记区间是 R%d–R%d）"
+            % ("、".join("R%d" % m for m in missing), lo, hi)
+        )
     return bad
 
 
 def check_not_doing() -> list:
     """R14：`union-not-doing.json` 的每条都必须有 `subject` / `reason` / `evidence`。"""
     import json
+
     bad: list = []
     if not NOT_DOING_PATH.is_file():
-        return bad                      # 不存在 = 空清单，合法（生成器会提醒）
+        return bad  # 不存在 = 空清单，合法（生成器会提醒）
     try:
         data = json.loads(NOT_DOING_PATH.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
@@ -633,12 +717,16 @@ def check_not_doing() -> list:
         if not subj:
             bad.append("not_doing[%d] 缺 `subject`（不做什么）" % i)
         if not str(item.get("reason") or "").strip():
-            bad.append("not_doing[%d]（%s）缺 `reason` —— 一条没有原因的「不做」"
-                       "等于用一个词掩盖一个缺口" % (i, subj or "?"))
+            bad.append(
+                "not_doing[%d]（%s）缺 `reason` —— 一条没有原因的「不做」"
+                "等于用一个词掩盖一个缺口" % (i, subj or "?")
+            )
         ev = item.get("evidence")
         if not isinstance(ev, list) or not [e for e in ev if str(e).strip()]:
-            bad.append("not_doing[%d]（%s）缺**非空** `evidence` —— "
-                       "凭什么这么判定？没有依据的「不做」比不写更糟" % (i, subj or "?"))
+            bad.append(
+                "not_doing[%d]（%s）缺**非空** `evidence` —— "
+                "凭什么这么判定？没有依据的「不做」比不写更糟" % (i, subj or "?")
+            )
     return bad
 
 
@@ -670,8 +758,10 @@ def main() -> int:
     #:   ⚠⚠ 而且**这一处的教训值得留**：我先用「首行里有没有数字」当"有没有分母"的判据，
     #:   那一段首行里的 `5` **是规则编号、不是分母** ⇒ ★ **`\d` 区分不了这两件事**。
     #:   ⇒ 所以这行汇总要**明写"段"**，不能只丢一个数字。
-    print("并入规范门禁 · **%d** 段检查（%s）"
-          % (len(groups), "、".join(t.split(" · ")[0] for t, _ in groups)))
+    print(
+        "并入规范门禁 · **%d** 段检查（%s）"
+        % (len(groups), "、".join(t.split(" · ")[0] for t, _ in groups))
+    )
     failed = 0
     for title, bad in groups:
         if bad:

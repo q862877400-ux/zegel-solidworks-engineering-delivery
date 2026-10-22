@@ -50,19 +50,27 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 from sw_connect import get_com_member
 
-__all__ = ["SWDOC_PART", "SWDOC_ASSEMBLY", "SWDOC_DRAWING",
-           "require_mass_property_document", "mass_property_object",
-           "mass_properties",
-           #: ★ 规格 211 · B1-1「截面属性」
-           "SECTION_STATUS", "SECTION_INDEX",
-           "section_properties", "section_area_crosscheck",
-           "require_section_document"]
+__all__ = [
+    "SWDOC_PART",
+    "SWDOC_ASSEMBLY",
+    "SWDOC_DRAWING",
+    "require_mass_property_document",
+    "mass_property_object",
+    "mass_properties",
+    #: ★ 规格 211 · B1-1「截面属性」
+    "SECTION_STATUS",
+    "SECTION_INDEX",
+    "section_properties",
+    "section_area_crosscheck",
+    "require_section_document",
+]
 
 #: ★ 单位说明（**实测**，写在一个地方供工具说明引用）：
 #:   `Volume` mm³ · `SurfaceArea` mm² · `CenterOfMass` mm（三分量）
@@ -99,12 +107,15 @@ def require_mass_property_document(model):
         raise ValueError("model 为 None")
     try:
         doc_type = int(get_com_member(model, "GetType"))
-    except Exception as exc:                                    # noqa: BLE001
-        raise RuntimeError("读不到文档类型（GetType 失败）：%s" % str(exc)[:80]) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(
+            "读不到文档类型（GetType 失败）：%s" % str(exc)[:80]
+        ) from exc
     if doc_type == SWDOC_DRAWING:
         raise RuntimeError(
             "当前文档是**工程图**，它没有质量属性（GetType()=3；"
-            "质量属性只有零件(1)与装配(2)有）—— ★ 不要拿工程图的读数当零件用")
+            "质量属性只有零件(1)与装配(2)有）—— ★ 不要拿工程图的读数当零件用"
+        )
     return model
 
 
@@ -119,7 +130,7 @@ def mass_property_object(model):
     """
     if model is None:
         raise ValueError("model 为 None")
-    require_mass_property_document(model)          #: ★★ 先判类型（负例逼出来的）
+    require_mass_property_document(model)  #: ★★ 先判类型（负例逼出来的）
     ext = get_com_member(model, "Extension")
     if ext is None:
         raise RuntimeError("取不到 model.Extension —— 无法读质量属性")
@@ -151,16 +162,17 @@ def mass_property_object(model):
                 if hasattr(alt, "Mass") or hasattr(alt, "Volume"):
                     mp, entry_used = alt, _nm
                     break
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     if mp is None:
         raise RuntimeError(
             "取不到质量属性对象（CreateMassProperty2 / CreateMassProperty 既不像对象、"
-            "调用后也不像对象；★ 判据是它有没有 Mass/Volume）")
+            "调用后也不像对象；★ 判据是它有没有 Mass/Volume）"
+        )
     #: ★ 把**用了哪个入口**记在对象上（★ 供调用方回读时如实报出 —— ★ 不静默）
     try:
-        mp._dsh_entry_used = entry_used                       # noqa: SLF001
-    except Exception:                                          # noqa: BLE001
+        mp._dsh_entry_used = entry_used  # noqa: SLF001
+    except Exception:  # noqa: BLE001
         pass
     return mp
 
@@ -171,13 +183,21 @@ def mass_property_object(model):
 #:   「The format of the returned array (retval) of size 24」+ 逐项下标 ✓
 #: enum-gate: not-enum index
 SECTION_INDEX = {
-    "status": 0, "area": 1,
-    "centroid_x": 2, "centroid_y": 3, "centroid_z": 4,
-    "inertia_xx": 5, "inertia_yy": 6, "inertia_zz": 7,
-    "inertia_xy": 8, "inertia_zx": 9, "inertia_yz": 10,
+    "status": 0,
+    "area": 1,
+    "centroid_x": 2,
+    "centroid_y": 3,
+    "centroid_z": 4,
+    "inertia_xx": 5,
+    "inertia_yy": 6,
+    "inertia_zz": 7,
+    "inertia_xy": 8,
+    "inertia_zx": 9,
+    "inertia_yz": 10,
     "polar_moment": 11,
     "principal_axis_angle": 12,
-    "principal_inertia_lx": 13, "principal_inertia_ly": 14,
+    "principal_inertia_lx": 13,
+    "principal_inertia_ly": 14,
 }
 
 #: ★★ 官方给的 `retval[0]`（status）取值与含义 ✓
@@ -239,7 +259,9 @@ def require_section_document(model):
     return require_mass_property_document(model)
 
 
-def section_properties(model, selection: str = "", selection_kind: str = "FACE") -> dict[str, Any]:
+def section_properties(
+    model, selection: str = "", selection_kind: str = "FACE"
+) -> dict[str, Any]:
     """读**当前选择集**的截面属性（★ 规格 211 · B1-1）。
 
     ★★ 2026-10-07（接手轮 · 规格 216 T-216-07）**加声明式选区入口** ——
@@ -266,12 +288,17 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
       · `retval[0]`（官方定义的 status）★ 且
       · ★★ 面积可与 `IFace2.GetArea()` **交叉验证**（★ 12/12 次完全相同）⇒ 见 `section_area_crosscheck` ✓
     """
-    out = {"ok": False, "side_effect": SECTION_SIDE_EFFECT,
-           #: ★★ 规格 212 · E-1：★ 三个键**必须同时出现**（★ 见 `SECTION_UNIT_ASSUMPTION
-           #: ` 的注释）✓
-           "units_verified": False, "unit_caveat": SECTION_UNIT_CAVEAT,
-           "unit_assumption": SECTION_UNIT_ASSUMPTION,
-           "entry_used": None, "error": ""}
+    out = {
+        "ok": False,
+        "side_effect": SECTION_SIDE_EFFECT,
+        #: ★★ 规格 212 · E-1：★ 三个键**必须同时出现**（★ 见 `SECTION_UNIT_ASSUMPTION
+        #: ` 的注释）✓
+        "units_verified": False,
+        "unit_caveat": SECTION_UNIT_CAVEAT,
+        "unit_assumption": SECTION_UNIT_ASSUMPTION,
+        "entry_used": None,
+        "error": "",
+    }
     try:
         require_section_document(model)
         #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）按声明式选择器**重建**选区，
@@ -280,11 +307,16 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
         #:   ★ 依据：★ 注入解析器**会清空选区**（**事实 503**）⇒ 模型没法先选好 ✗
         if str(selection or "").strip():
             import sw_selection_spec as _SS
+
             try:
-                _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
-            except Exception as exc:                               # noqa: BLE001
-                out["error"] = ("选区未建立：%s: %s（★ 前置未成立、★ 与「求不出截面属性」是两件事）"
-                                % (type(exc).__name__, str(exc)[:140]))
+                _SS.resolve_selection(
+                    model, str(selection), str(selection_kind or "FACE")
+                )
+            except Exception as exc:  # noqa: BLE001
+                out["error"] = (
+                    "选区未建立：%s: %s（★ 前置未成立、★ 与「求不出截面属性」是两件事）"
+                    % (type(exc).__name__, str(exc)[:140])
+                )
                 return out
         ext = get_com_member(model, "Extension")
         if ext is None:
@@ -296,7 +328,7 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
         if raw is not None and not callable(raw):
             try:
                 vals, entry = tuple(raw), "GetSectionProperties2(property)"
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 vals = None
         #: ★ 兜底：若被包成方法 ⇒ 试一次**空实参**（★ 只作兜底，★ 不假装等价）✓
         if vals is None:
@@ -304,7 +336,7 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
                 cand = get_com_member(ext, "GetSectionProperties2", None)
                 if cand is not None:
                     vals, entry = tuple(cand), "GetSectionProperties2(method)"
-            except Exception as exc:                                    # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         if vals is None:
             out["error"] = out["error"] or "两种形态都拿不到结果"
@@ -313,15 +345,19 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
         out["raw_len"] = len(vals)
         st = vals[SECTION_INDEX["status"]] if len(vals) > 0 else None
         out["status"] = st
-        out["status_text"] = SECTION_STATUS.get(int(st) if st is not None else -1, "unknown")
+        out["status_text"] = SECTION_STATUS.get(
+            int(st) if st is not None else -1, "unknown"
+        )
         if len(vals) > 1:
             out["area"] = vals[SECTION_INDEX["area"]]
         if len(vals) > 4:
-            out["centroid"] = [vals[SECTION_INDEX[k]]
-                               for k in ("centroid_x", "centroid_y", "centroid_z")]
+            out["centroid"] = [
+                vals[SECTION_INDEX[k]]
+                for k in ("centroid_x", "centroid_y", "centroid_z")
+            ]
         out["ok"] = (int(st) == 0) if st is not None else False
         return out
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         return out
 
@@ -346,7 +382,7 @@ def section_area_crosscheck(model) -> dict[str, Any]:
         out["get_area"] = float(get_com_member(face, "GetArea"))
         if out["area"] is not None:
             out["agree"] = abs(float(out["area"]) - out["get_area"]) <= 1e-9
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     return out
 
@@ -359,18 +395,18 @@ def mass_properties(model) -> dict[str, Any]:
     """
     mp = mass_property_object(model)
 
-#: dispatch-guard: exempt internal-helper
+    #: dispatch-guard: exempt internal-helper
     def _num(name):
         try:
             return float(get_com_member(mp, name))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None
 
     com = None
     try:
         raw = get_com_member(mp, "CenterOfMass")
         com = [float(x) for x in raw]
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         com = None
 
     return {

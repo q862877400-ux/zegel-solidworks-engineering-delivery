@@ -39,6 +39,7 @@ GetSplines / GetSketchPoints / GetContourEdges …），直接用既快又不会
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -97,11 +98,11 @@ __all__ = [
 #: ⚠ swapi 只列了其中 3 个（`Include/Exclude/AndExplodeOnly`），**值相同**，无冲突。
 #: 反射里还有 `swCrossHatchOnly = 2` · `swSolidHatchOnly = 4`。
 SKETCH_CROSS_HATCH = {
-    "include": 0,               # swCrossHatchInclude（**本模块默认**）
-    "exclude": 1,               # swCrossHatchExclude
-    "only": 2,                  # swCrossHatchOnly
-    "and_explode_only": 3,      # swCrossHatchAndExplodeOnly
-    "solid_hatch_only": 4,      # swSolidHatchOnly
+    "include": 0,  # swCrossHatchInclude（**本模块默认**）
+    "exclude": 1,  # swCrossHatchExclude
+    "only": 2,  # swCrossHatchOnly
+    "and_explode_only": 3,  # swCrossHatchAndExplodeOnly
+    "solid_hatch_only": 4,  # swSolidHatchOnly
 }
 
 #: ISketch 上「按类型分列」的取法 —— 官方给了十余个，比一把抓再过滤更可靠。
@@ -145,9 +146,9 @@ SKETCH_SIMPLE_METHODS: dict[str, int] = {
 #: 刻意**不封装**的成员（附理由，勿当成遗漏）
 SKETCH_UNWRAPPED: dict[str, str] = {
     "GetSplineParams": "返回 SAFEARRAY，官方无文档说明元素顺序；"
-                       "构造/读取规则两套源都查不到",
+    "构造/读取规则两套源都查不到",
     "GetSplineParams2": "返回 SAFEARRAY，官方无文档说明与 1 号重载的差别；"
-                        "构造/读取规则两套源都查不到",
+    "构造/读取规则两套源都查不到",
     "GetSplineParams3": "返回 SAFEARRAY，且带一个语义未注明的 Boolean 参数",
     "GetSplineParams4": "返回 SplineParamData coclass；官方无文档说明与前三个的关系",
     "SetWorkingPlaneOrientation": "12 个 Double，参数语义无文档；照封装等于猜",
@@ -226,8 +227,9 @@ def get_lines(sketch) -> list[Any]:
     ⚠ 这条「12 个 float / 条」是**实测**的，**官方文档没写**返回结构。
     """
     _require(sketch)
-    return as_sequence(get_com_member(sketch, "GetLines2",
-                                      int(SKETCH_CROSS_HATCH["include"])))
+    return as_sequence(
+        get_com_member(sketch, "GetLines2", int(SKETCH_CROSS_HATCH["include"]))
+    )
 
 
 def get_arcs(sketch) -> list[Any]:
@@ -235,7 +237,7 @@ def get_arcs(sketch) -> list[Any]:
 
     ⚑ 2026-10-01（轮 111）：改用**后继** `GetArcs2()`（官方已标 `GetArcs` Obsolete）。
     ⚠ 后继是**零参**，形状与旧的一致（都是 `Object`）。
-    
+
     ⚠⚠ **返回的是「数值数组」，不是「对象列表」** —— 实测（2026-10-01 轮 141，
     `tools/probe_sketch_getter_shapes.py`，真机 SW 2026 SP4.1）：
 
@@ -251,7 +253,7 @@ def get_arcs(sketch) -> list[Any]:
     （元素 `CDispatch`）⇒ ★ **两种形状都有**。★ 规律**候选**（⚠ n=5，当假设不当定则）：
     **曲线类 ⇒ 数值数组；点/实体类 ⇒ 对象列表**。
     ⚠ **要「几个实体」用 `get_sketch_segments(sketch)`**；⚠ 官方文档**没写**这个返回结构。
-"""
+    """
     _require(sketch)
     return as_sequence(get_com_member(sketch, "GetArcs2"))
 
@@ -260,7 +262,7 @@ def get_ellipses(sketch) -> list[Any]:
     """椭圆 / 样条圆。
 
     ⚑ 2026-10-01（轮 111）：改用**后继** `GetEllipses3()`（旧名 `GetEllipses` 已 Obsolete）。
-    
+
     ⚠⚠ **返回的是「数值数组」，不是「对象列表」** —— 实测（2026-10-01 轮 141，
     `tools/probe_sketch_getter_shapes.py`，真机 SW 2026 SP4.1）：
 
@@ -276,7 +278,7 @@ def get_ellipses(sketch) -> list[Any]:
     （元素 `CDispatch`）⇒ ★ **两种形状都有**。★ 规律**候选**（⚠ n=5，当假设不当定则）：
     **曲线类 ⇒ 数值数组；点/实体类 ⇒ 对象列表**。
     ⚠ **要「几个实体」用 `get_sketch_segments(sketch)`**；⚠ 官方文档**没写**这个返回结构。
-"""
+    """
     _require(sketch)
     return as_sequence(get_com_member(sketch, "GetEllipses3"))
 
@@ -306,12 +308,12 @@ def get_sketch_points(sketch) -> list[Any]:
     """草图点。
 
     ⚑ 2026-10-01（轮 111）：改用**后继** `GetSketchPoints2()`（旧名已 Obsolete）。
-    
+
     ✅ **返回的是「对象列表」**（实测 2026-10-01 轮 142，`tools/probe_slot_and_point_shapes.py`，
     真机 SW 2026 SP4.1）：**一条直线**的**两个端点**本身就是草图点 ⇒
     画 **1 / 2** 条直线 ⇒ 返回 **2 / 4** 个元素（**每条线 2 个**），元素类型 **`CDispatch`**。
     ⚠ 与**曲线类**取法（返回数值数组）**不同** ⇒ ★ **两种形状都有**。
-"""
+    """
     _require(sketch)
     return as_sequence(get_com_member(sketch, "GetSketchPoints2"))
 
@@ -357,7 +359,7 @@ def get_sketch_slots(sketch) -> list[Any]:
     真机 SW 2026 SP4.1）：画 **1 / 2** 个槽口 ⇒ 返回 **1 / 2** 个元素，元素类型 **`CDispatch`**。
     ⚠ 注意与**曲线类**取法（`get_lines` / `get_arcs` / `get_ellipses`）**不同** —— 那三条返回
     **数值数组**（每个实体 12 / 16 / 22 个 `float`）⇒ ★ **两种形状都有，不能一概而论**。
-"""
+    """
     _require(sketch)
     return as_sequence(get_com_member(sketch, "GetSketchSlots"))
 
@@ -457,10 +459,12 @@ def collect_sketch_evidence(sketch) -> dict[str, Any]:
         "is_3d": bool(get_com_member(sketch, "Is3D")),
         "automatic_solve": bool(get_com_member(sketch, "GetAutomaticSolve")),
         "detach_segment_on_drag": bool(
-            get_com_member(sketch, "GetDetachSegmentOnDrag")),
+            get_com_member(sketch, "GetDetachSegmentOnDrag")
+        ),
         "has_relation_manager": get_com_member(sketch, "RelationManager") is not None,
         "has_model_to_sketch_transform": (
-            get_com_member(sketch, "ModelToSketchTransform") is not None),
+            get_com_member(sketch, "ModelToSketchTransform") is not None
+        ),
         "element_counts": counts,
     }
 
@@ -517,7 +521,9 @@ def sketch_by_name(model, name: str):
         raise ValueError("model 为 None")
     feature = get_com_member(model, "FeatureByName", str(name))
     if feature is None:
-        raise RuntimeError("找不到名为 %r 的草图特征（用 list 特征或按语言取名字）" % name)
+        raise RuntimeError(
+            "找不到名为 %r 的草图特征（用 list 特征或按语言取名字）" % name
+        )
     sketch = get_com_member(feature, "GetSpecificFeature2")
     if sketch is None:
         raise RuntimeError("%r 不是草图特征（GetSpecificFeature2 回了 None）" % name)
@@ -531,7 +537,8 @@ def _count_by_divisor(sketch, raw_getter, per_element: int, label: str) -> int:
     if n % per_element:
         raise RuntimeError(
             "%s 的返回值长度 %d **不是 %d 的整数倍** —— 官方返回结构可能变了；"
-            "★ 不要圆整，先查 `tools/probe_sketch_getter_shapes.py`" % (label, n, per_element)
+            "★ 不要圆整，先查 `tools/probe_sketch_getter_shapes.py`"
+            % (label, n, per_element)
         )
     return n // per_element
 
@@ -602,7 +609,7 @@ def active_sketch(model):
         if sketch_manager is None:
             return None
         return get_com_member(sketch_manager, "ActiveSketch")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -653,7 +660,7 @@ def resolve_sketch(model, name: str = ""):
     #:   ★ 现改为**相对优先、绝对回退**（与本仓模块级 `try/except` 的写法一致）。
     try:
         from .sw_part import _get_sketch_name_candidates, current_sketch_name
-    except ImportError:                                        # 顶层载入（脚本 / 探针）
+    except ImportError:  # 顶层载入（脚本 / 探针）
         from scripts.sw_part import _get_sketch_name_candidates, current_sketch_name
 
     base = str(name or "").strip() or current_sketch_name(model)
@@ -673,16 +680,19 @@ def resolve_sketch(model, name: str = ""):
     if str(name or "").strip():
         raise RuntimeError(
             "按名找不到草图 %r（试过：%r）—— ★ 非空名字不许回退到「特征树里最后一个草图」"
-            % (name, tried))
-    
+            % (name, tried)
+        )
+
     #: 3 · 从特征树里找**最后一个草图特征**（★ 语言无关的兜底）
     try:
         total = int(get_com_member(model, "GetFeatureCount"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         total = 0
     for i in range(1, total + 1):
         feature = get_com_member(model, "FeatureByPositionReverse", i)
-        fname = str(get_com_member(feature, "Name") or "") if feature is not None else ""
+        fname = (
+            str(get_com_member(feature, "Name") or "") if feature is not None else ""
+        )
         if fname.startswith(("Sketch", "草图")):
             sk = _try(fname)
             if sk is not None:
@@ -745,10 +755,10 @@ def _selected_feature_objects(model) -> list:
     mgr = get_com_member(model, "SelectionManager")
     count = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
     out = []
-    for i in range(1, count + 1):                              # ⚠ 官方 Index **从 1 开始**
+    for i in range(1, count + 1):  # ⚠ 官方 Index **从 1 开始**
         try:
             obj = get_com_member(mgr, "GetSelectedObject6", i, -1)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if obj is not None:
             out.append(obj)
@@ -768,13 +778,14 @@ def feature_visibility(feature) -> dict:
         out["raw"] = raw
         out["state"] = VISIBILITY_STATES.get(raw, "not_in_enum_%d" % raw)
         out["readable"] = True
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return out
 
 
-def set_sketch_blanked(model, selection: str = "__current_selection__", *,
-                       blank: bool = True) -> dict:
+def set_sketch_blanked(
+    model, selection: str = "__current_selection__", *, blank: bool = True
+) -> dict:
     """★ **隐藏 / 显示选中的草图**（★ 官方 `IModelDoc2::BlankSketch` / `UnblankSketch`，**都零参**）。
 
     :param selection: **声明式选择器**（★ 规则 3）：
@@ -788,14 +799,22 @@ def set_sketch_blanked(model, selection: str = "__current_selection__", *,
       ② ★★ **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`）—— ★ 要求**真的变了** ✓
     ⚠ **官方语义是"选中的草图"** —— ★ 本函数**不实现 "hide all"**（★ 那个语义官方没有）✓
     """
-    from sw_part import _empty_callout                                 # noqa: E402
+    from sw_part import _empty_callout  # noqa: E402
+
     out: dict = {
-        "ok": False, "blank": bool(blank),
-        "entry_used": ("IModelDoc2::BlankSketch()" if blank else "IModelDoc2::UnblankSketch()"),
-        "selection": str(selection)[:80], "selection_count": None,
-        "before": [], "after": [], "changed": [], "error": None,
+        "ok": False,
+        "blank": bool(blank),
+        "entry_used": (
+            "IModelDoc2::BlankSketch()" if blank else "IModelDoc2::UnblankSketch()"
+        ),
+        "selection": str(selection)[:80],
+        "selection_count": None,
+        "before": [],
+        "after": [],
+        "changed": [],
+        "error": None,
         "★": "判据 = **选区计数** + **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`）；"
-             "★ 它回 `void`，只能回读；★★ **本工具不实现「hide all」**（官方语义是「选中的草图」）",
+        "★ 它回 `void`，只能回读；★★ **本工具不实现「hide all」**（官方语义是「选中的草图」）",
     }
     if model is None:
         out["error"] = "model 为 None"
@@ -811,31 +830,62 @@ def set_sketch_blanked(model, selection: str = "__current_selection__", *,
                 return out
             ext = get_com_member(model, "Extension")
             for k, name in enumerate(names):
-                get_com_member(ext, "SelectByID2", name, "SKETCH", 0.0, 0.0, 0.0,
-                               bool(k > 0), 0, _empty_callout(), 0)
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    name,
+                    "SKETCH",
+                    0.0,
+                    0.0,
+                    0.0,
+                    bool(k > 0),
+                    0,
+                    _empty_callout(),
+                    0,
+                )
         out["selection_count"] = int(
-            get_com_member(get_com_member(model, "SelectionManager"),
-                           "GetSelectedObjectCount2", -1) or 0)
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
         if out["selection_count"] <= 0:
-            out["error"] = ("选完**回读计数为 0** ⇒ 没有草图在选区里（★ 事实 8）"
-                            "—— ★ 官方示例的前置就是「先在树里选中要隐藏的草图」")
+            out["error"] = (
+                "选完**回读计数为 0** ⇒ 没有草图在选区里（★ 事实 8）"
+                "—— ★ 官方示例的前置就是「先在树里选中要隐藏的草图」"
+            )
             return out
         targets = _selected_feature_objects(model)
-        out["before"] = [{"name": str(get_com_member(f, "Name") or ""),
-                          **feature_visibility(f)} for f in targets]
+        out["before"] = [
+            {"name": str(get_com_member(f, "Name") or ""), **feature_visibility(f)}
+            for f in targets
+        ]
         get_com_member(model, "BlankSketch" if blank else "UnblankSketch")
         after = _selected_feature_objects(model)
-        if not after:                                          # ★ 调用后选区可能被清掉 ⇒ 重新按名字取
+        if not after:  # ★ 调用后选区可能被清掉 ⇒ 重新按名字取
             names = [b["name"] for b in out["before"] if b.get("name")]
             ext = get_com_member(model, "Extension")
             get_com_member(model, "ClearSelection2", True)
             for k, name in enumerate(names):
-                get_com_member(ext, "SelectByID2", name, "SKETCH", 0.0, 0.0, 0.0,
-                               bool(k > 0), 0, _empty_callout(), 0)
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    name,
+                    "SKETCH",
+                    0.0,
+                    0.0,
+                    0.0,
+                    bool(k > 0),
+                    0,
+                    _empty_callout(),
+                    0,
+                )
             after = _selected_feature_objects(model)
-        out["after"] = [{"name": str(get_com_member(f, "Name") or ""),
-                         **feature_visibility(f)} for f in after]
-    except Exception as exc:                                   # noqa: BLE001
+        out["after"] = [
+            {"name": str(get_com_member(f, "Name") or ""), **feature_visibility(f)}
+            for f in after
+        ]
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     #: ★ 判据：**逐条比对前后读数**（★ 名字对上、且 state 真的变了）
@@ -844,15 +894,25 @@ def set_sketch_blanked(model, selection: str = "__current_selection__", *,
     for a in out["after"]:
         b = before.get(a["name"])
         if b and b.get("readable") and a.get("readable") and b["raw"] != a["raw"]:
-            changed.append({"name": a["name"], "raw": [b["raw"], a["raw"]],
-                            "state": [b["state"], a["state"]]})
+            changed.append(
+                {
+                    "name": a["name"],
+                    "raw": [b["raw"], a["raw"]],
+                    "state": [b["state"], a["state"]],
+                }
+            )
     out["changed"] = changed
     want = "hide" if blank else "shown"
     matched = [c for c in changed if c["state"][1] == want]
     out["ok"] = bool(matched)
     if not out["ok"]:
-        out["error"] = ("回读判据未过：**没有任何一条草图的 `Visible` 变成 %r** —— "
-                        "前 %r / 后 %r（★ 它回 `void` ⇒ 只能靠回读；★ 读不到不等于没变）"
-                        % (want, [b.get("state") for b in out["before"]],
-                           [a.get("state") for a in out["after"]]))
+        out["error"] = (
+            "回读判据未过：**没有任何一条草图的 `Visible` 变成 %r** —— "
+            "前 %r / 后 %r（★ 它回 `void` ⇒ 只能靠回读；★ 读不到不等于没变）"
+            % (
+                want,
+                [b.get("state") for b in out["before"]],
+                [a.get("state") for a in out["after"]],
+            )
+        )
     return out

@@ -29,8 +29,12 @@ OUT = REPO / "output" / "pattern-params-capability-recheck.json"
 
 
 def main() -> int:
-    from sw_connect import (connect_solidworks, get_com_member, new_document,
-                            create_empty_dispatch_variant)
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        create_empty_dispatch_variant,
+    )
     import sw_part as P
     from sw_feature_readback import pattern_params
 
@@ -38,23 +42,42 @@ def main() -> int:
     model = new_document(app, "part")
     with P.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        for a, b in (((-0.02, -0.01), (0.02, -0.01)), ((0.02, -0.01), (0.02, 0.01)),
-                     ((0.02, 0.01), (-0.02, 0.01)), ((-0.02, 0.01), (-0.02, -0.01))):
+        for a, b in (
+            ((-0.02, -0.01), (0.02, -0.01)),
+            ((0.02, -0.01), (0.02, 0.01)),
+            ((0.02, 0.01), (-0.02, 0.01)),
+            ((-0.02, 0.01), (-0.02, -0.01)),
+        ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
     P.extrude_boss(model, sk, 10.0)
     #: ★★ 前置：★ 方向 `mark=1` · ★ 实体 `mark=256`（★ 官方示例逐字，★ 上轮验过）✓
     ext = get_com_member(model, "Extension")
     get_com_member(model, "ClearSelection2", True)
-    d1 = bool(get_com_member(ext, "SelectByID2", "", "EDGE", -0.02, 0.0, 0.0, True, 1,
-                             create_empty_dispatch_variant(), 0))
+    d1 = bool(
+        get_com_member(
+            ext,
+            "SelectByID2",
+            "",
+            "EDGE",
+            -0.02,
+            0.0,
+            0.0,
+            True,
+            1,
+            create_empty_dispatch_variant(),
+            0,
+        )
+    )
     bodies = list(get_com_member(model, "GetBodies2", 0, False) or [])
     d2 = bool(bodies[0].Select(True, 256)) if bodies else None
     #: ★ 官方 22 参：★ 2 个实例、★ 间距 **0.02 米**（= 20mm）、★ 第二向 1 个实例 ✓
     P.linear_pattern(model, "", 1.0, 0.0, 0.0, 20.0, 2)
 
     r = pattern_params(model)
+
     def _v(k):
         return r.get(k)
+
     checks = {
         "★ D1TotalInstances = 2": _v("D1TotalInstances") == 2,
         "★ D1Spacing = 0.02（★ 官方：米）": _v("D1Spacing") == 0.02,
@@ -63,14 +86,22 @@ def main() -> int:
         "★ GetSkippedItemCount = 0": _v("GetSkippedItemCount") == 0,
         "★ GetPatternBodyCount = 1（★ 实体阵列）": _v("GetPatternBodyCount") == 1,
     }
-    R = {"★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_pattern_members.py`）",
-         "★_前置": {"方向 mark=1": d1, "实体 mark=256": d2},
-         "★_单位口径": r.get("★_单位口径"),
-         "读取": {k: str(v)[:50] for k, v in r.items()},
-         "★_逐条判据": checks, "★_全过": all(checks.values())}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_pattern_members.py`）",
+        "★_前置": {"方向 mark=1": d1, "实体 mark=256": d2},
+        "★_单位口径": r.get("★_单位口径"),
+        "读取": {k: str(v)[:50] for k, v in r.items()},
+        "★_逐条判据": checks,
+        "★_全过": all(checks.values()),
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ 前置:", d1, d2)
-    print("★ 读取:", json.dumps({k: str(v)[:40] for k, v in r.items()}, ensure_ascii=False)[:340])
+    print(
+        "★ 读取:",
+        json.dumps({k: str(v)[:40] for k, v in r.items()}, ensure_ascii=False)[:340],
+    )
     for k, v in checks.items():
         print("   %-44s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

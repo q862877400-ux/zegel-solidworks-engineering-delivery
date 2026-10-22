@@ -60,14 +60,17 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH22"]
 
-_SKETCH = ("Name of an EXISTING sketch (e.g. \"Sketch1\" / \"草图1\"). ★ Create it first with "
-           "solidworks_sketch_start + solidworks_sketch_add_* + solidworks_sketch_end.")
+_SKETCH = (
+    'Name of an EXISTING sketch (e.g. "Sketch1" / "草图1"). ★ Create it first with '
+    "solidworks_sketch_start + solidworks_sketch_add_* + solidworks_sketch_end."
+)
 
 _DIR = "True = extrude along the sketch normal; False = reverse."
 
@@ -97,15 +100,19 @@ def _m_of_mm(p, declared: str) -> dict:
     """
     from scripts.sw_connect import mm
 
-    return {"depth": mm(float(getattr(p, declared)))} if declared == "depth_mm" else \
-           {"total_depth": mm(float(getattr(p, declared)))}
+    return (
+        {"depth": mm(float(getattr(p, declared)))}
+        if declared == "depth_mm"
+        else {"total_depth": mm(float(getattr(p, declared)))}
+    )
 
 
 SPECS_BATCH22 = [
     ToolSpec(
         name="solidworks_extrude_boss",
         title="Extrude a Boss (add material)",
-        module="sw_part", function="extrude_boss",
+        module="sw_part",
+        function="extrude_boss",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -121,22 +128,31 @@ SPECS_BATCH22 = [
         derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
-            Param("depth_mm", float, description="Extrusion depth in MILLIMETRES (must be > 0). "
-                                                 "★ Converted to the metres that "
-                                                 "IFeatureManager.FeatureExtrusion3 expects — the "
-                                                 "conversion happens here, exactly once."),
+            Param(
+                "depth_mm",
+                float,
+                description="Extrusion depth in MILLIMETRES (must be > 0). "
+                "★ Converted to the metres that "
+                "IFeatureManager.FeatureExtrusion3 expects — the "
+                "conversion happens here, exactly once.",
+            ),
             Param("direction", bool, default=True, description=_DIR),
-            Param("merge", bool, default=True,
-                  description="True = merge the result into the body; False = keep it as a new body."),
+            Param(
+                "merge",
+                bool,
+                default=True,
+                description="True = merge the result into the body; False = keep it as a new body.",
+            ),
         ],
         doc="Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the "
-            "repo that turns a sketch into a solid body. ★ depth_mm is in MILLIMETRES and is "
-            "converted to metres at this boundary.",
+        "repo that turns a sketch into a solid body. ★ depth_mm is in MILLIMETRES and is "
+        "converted to metres at this boundary.",
     ),
     ToolSpec(
         name="solidworks_extrude_cut",
         title="Extrude a Cut (remove material)",
-        module="sw_part", function="extrude_cut",
+        module="sw_part",
+        function="extrude_cut",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** ✓
         #: ★★★★ 2026-10-04（接手轮）**同样补换算**（与 boss / midplane 同一处根因、同一
@@ -145,20 +161,30 @@ SPECS_BATCH22 = [
         derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
-            Param("depth_mm", float, description="Cut depth in MILLIMETRES. ★ 0 means "
-                                                 "**through all** (完全贯穿). ★ Converted to metres "
-                                                 "at this boundary."),
+            Param(
+                "depth_mm",
+                float,
+                description="Cut depth in MILLIMETRES. ★ 0 means "
+                "**through all** (完全贯穿). ★ Converted to metres "
+                "at this boundary.",
+            ),
             Param("direction", bool, default=True, description=_DIR),
-            Param("flip", bool, default=False, description="True = flip the cut direction."),
+            Param(
+                "flip",
+                bool,
+                default=False,
+                description="True = flip the cut direction.",
+            ),
         ],
         doc="Extrude a sketch as a CUT (removes material). ★ depth_mm = 0 means through-all. "
-            "⚠ The correct entry point for a cut is FeatureCut4, not FeatureExtrusion3 with "
-            "flip=True — the capability layer already handles that.",
+        "⚠ The correct entry point for a cut is FeatureCut4, not FeatureExtrusion3 with "
+        "flip=True — the capability layer already handles that.",
     ),
     ToolSpec(
         name="solidworks_extrude_midplane",
         title="Extrude Symmetrically About the Sketch Plane",
-        module="sw_part", function="extrude_midplane",
+        module="sw_part",
+        function="extrude_midplane",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** ✓
         #: ★★★★★ 2026-10-04（接手轮）**换算修正 + 记下我一度回退它的原因**：
@@ -179,12 +205,15 @@ SPECS_BATCH22 = [
         derived_args=lambda p: _m_of_mm(p, "total_depth_mm"),
         params=[
             Param("sketch_name", str, description=_SKETCH),
-            Param("total_depth_mm", float,
-                  description="TOTAL depth in MILLIMETRES — each side gets half "
-                              "(total_depth_mm / 2). ★ Converted to metres at this boundary."),
+            Param(
+                "total_depth_mm",
+                float,
+                description="TOTAL depth in MILLIMETRES — each side gets half "
+                "(total_depth_mm / 2). ★ Converted to metres at this boundary.",
+            ),
         ],
         doc="Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, "
-            "not the per-side depth. ★ The value is in MILLIMETRES and is converted to the metres "
-            "that IFeatureManager.FeatureExtrusion3 expects — the conversion happens here, once.",
+        "not the per-side depth. ★ The value is in MILLIMETRES and is converted to the metres "
+        "that IFeatureManager.FeatureExtrusion3 expects — the conversion happens here, once.",
     ),
 ]

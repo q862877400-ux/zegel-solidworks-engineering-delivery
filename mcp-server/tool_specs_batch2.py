@@ -25,6 +25,7 @@ B/C 两类**各自需要一层基础设施**，那是**独立的工作项**，�
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -53,26 +54,38 @@ SPECS_BATCH2: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_weldment_evidence",
         title="Collect Weldment Evidence",
-        module="sw_weldment", function="weldment_evidence",
+        module="sw_weldment",
+        function="weldment_evidence",
         inject="model",
         params=[
-            Param("create_missing_cut_list", bool, default=False,
-                  description="Create a missing cut list before reading. Side-effecting: "
-                              "leave False for a pure read-back."),
+            Param(
+                "create_missing_cut_list",
+                bool,
+                default=False,
+                description="Create a missing cut list before reading. Side-effecting: "
+                "leave False for a pure read-back.",
+            ),
             #: ★ 新增（★ 与实现同步）：★ 只读回读时是否**顺带刷新**切割清单 ✓
-            Param("update_cut_list_too", bool, default=None,
-                  description="Also refresh the cut list when create_missing_cut_list is used "
-                              "(★ 默认 None = 沿用实现默认)。"),
+            Param(
+                "update_cut_list_too",
+                bool,
+                default=None,
+                description="Also refresh the cut list when create_missing_cut_list is used "
+                "(★ 默认 None = 沿用实现默认)。",
+            ),
         ],
-        doc=("Read back the weldment state: structural members, cut-list folders, and their "
-             "quantity/length/angle/source properties. Read-only when "
-             "create_missing_cut_list is False."),
+        doc=(
+            "Read back the weldment state: structural members, cut-list folders, and their "
+            "quantity/length/angle/source properties. Read-only when "
+            "create_missing_cut_list is False."
+        ),
     ),
     # 签名: def ensure_cut_list(model) -> list[Any]
     ToolSpec(
         name="solidworks_weldment_ensure_cut_list",
         title="Ensure Weldment Cut List",
-        module="sw_weldment", function="ensure_cut_list",
+        module="sw_weldment",
+        function="ensure_cut_list",
         inject="model",
         params=[],
         doc="Create the cut list if it is missing, and return the cut-list folders.",
@@ -81,7 +94,8 @@ SPECS_BATCH2: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_weldment_update_cut_list",
         title="Update Weldment Cut List",
-        module="sw_weldment", function="update_cut_list",
+        module="sw_weldment",
+        function="update_cut_list",
         inject="model",
         params=[],
         doc="Refresh the cut list and return the updated folders.",
@@ -92,35 +106,40 @@ SPECS_BATCH2: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_weldment_create_sub_weld_folder",
         title="Create Sub-weldment Folder",
-        module="sw_weldment", function="create_sub_weld_folder",
+        module="sw_weldment",
+        function="create_sub_weld_folder",
         inject="model",
         omitted_params=("folder",),
         params=[],
         doc="Create a sub-weldment folder in the active weldment part.",
     ),
-
     # ── 钣金（A 类：只收 model）────────────────────────────────────
     # 签名: def sheet_metal_evidence(model) -> dict[str, Any]
     ToolSpec(
         name="solidworks_sheet_metal_evidence",
         title="Collect Sheet Metal Evidence",
-        module="sw_sheet_metal", function="sheet_metal_evidence",
+        module="sw_sheet_metal",
+        function="sheet_metal_evidence",
         inject="model",
         params=[],
         read_only=True,
-        doc=("Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it read back correctly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."),
+        doc=(
+            "Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it read back correctly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."
+        ),
     ),
-
     # ── 曲面（A 类：收 sw_app）─────────────────────────────────────
     # 签名: def collect_surface_evidence(sw_app) -> dict[str, Any]
     ToolSpec(
         name="solidworks_surface_evidence",
         title="Collect Surface Evidence",
-        module="sw_surface", function="collect_surface_evidence",
+        module="sw_surface",
+        function="collect_surface_evidence",
         inject="sw_app",
         params=[],
         read_only=True,
-        doc=("Read back the surface bodies on the active document: counts and types. Read-only."),
+        doc=(
+            "Read back the surface bodies on the active document: counts and types. Read-only."
+        ),
     ),
 ]
 
@@ -132,24 +151,43 @@ SPECS_BATCH2: list[ToolSpec] = [
 CLASSIFICATION: dict[str, dict[str, list[str]]] = {
     "A_直接可暴露": {
         "判据": "只收标量/字符串/bool；宿主对象（model/sw_app/study）靠 inject",
-        "weldment": ["weldment_evidence", "ensure_cut_list", "update_cut_list",
-                     "create_sub_weld_folder"],
+        "weldment": [
+            "weldment_evidence",
+            "ensure_cut_list",
+            "update_cut_list",
+            "create_sub_weld_folder",
+        ],
         "sheet_metal": ["sheet_metal_evidence"],
         "surface": ["collect_surface_evidence"],
-        "topology": ["create_topology_study", "collect_topology_evidence",
-                     "run_topology_study"],
-        "mold": ["insert_parting_line", "insert_shut_off_surface", "mold_draft_analysis",
-                 "mold_evidence"],
+        "topology": [
+            "create_topology_study",
+            "collect_topology_evidence",
+            "run_topology_study",
+        ],
+        "mold": [
+            "insert_parting_line",
+            "insert_shut_off_surface",
+            "mold_draft_analysis",
+            "mold_evidence",
+        ],
     },
     "B_需声明式选择解析": {
         "判据": "入参含**坐标/向量**（point / normal / axis / origin）⇒ 违规则 3",
-        "surface": ["create_planar_surface", "create_cylindrical_surface",
-                    "create_spherical_surface", "create_conical_surface",
-                    "create_toroidal_surface", "create_offset_surface",
-                    "create_extrusion_surface", "create_revolution_surface",
-                    "create_ruled_surface", "create_swept_surface",
-                    "create_bspline_surface", "create_coons_b_surface",
-                    "create_sheet_from_surface"],
+        "surface": [
+            "create_planar_surface",
+            "create_cylindrical_surface",
+            "create_spherical_surface",
+            "create_conical_surface",
+            "create_toroidal_surface",
+            "create_offset_surface",
+            "create_extrusion_surface",
+            "create_revolution_surface",
+            "create_ruled_surface",
+            "create_swept_surface",
+            "create_bspline_surface",
+            "create_coons_b_surface",
+            "create_sheet_from_surface",
+        ],
         "缺的基础设施": (
             "「选择器 → 坐标/向量」解析层。**已有雏形**"
             "（`sw_simulation.select_face_by_selector` 覆盖**面**），"
@@ -159,8 +197,14 @@ CLASSIFICATION: dict[str, dict[str, list[str]]] = {
     },
     "C_需spec展平层": {
         "判据": "入参含 **typed spec dataclass**（BaseFlangeSpec / OneBendSpec / …）",
-        "sheet_metal": ["create_base_flange", "create_one_bend", "create_edge_flange",
-                        "create_draft", "create_gusset", "create_swept_flange"],
+        "sheet_metal": [
+            "create_base_flange",
+            "create_one_bend",
+            "create_edge_flange",
+            "create_draft",
+            "create_gusset",
+            "create_swept_flange",
+        ],
         "缺的基础设施": (
             "把 dataclass 字段**逐个抄**成 MCP 入参（含默认值与单位换算）。"
             "⚠ **不能猜字段** —— 要读 `scripts/sw_sheet_metal.py` 里的 dataclass 定义。"
@@ -170,13 +214,31 @@ CLASSIFICATION: dict[str, dict[str, list[str]]] = {
     },
     "D_不该暴露": {
         "判据": "纯内部读（getter）或需要「取中间对象」的解析；用户不会直呼",
-        "sketch": ["get_sketch_segments", "get_lines", "get_arcs", "get_ellipses",
-                   "get_parabolas", "get_polylines", "get_splines", "get_sketch_points",
-                   "get_user_points", "get_contour_edges", "get_sketch_contours",
-                   "get_sketch_regions", "get_sketch_hatches", "get_sketch_slots",
-                   "get_sketch_pictures", "get_sketch_paths", "get_sketch_block_instances",
-                   "get_relation_manager", "is_3d_sketch", "get_model_to_sketch_transform",
-                   "merge_points", "set_automatic_solve", "as_sequence"],
+        "sketch": [
+            "get_sketch_segments",
+            "get_lines",
+            "get_arcs",
+            "get_ellipses",
+            "get_parabolas",
+            "get_polylines",
+            "get_splines",
+            "get_sketch_points",
+            "get_user_points",
+            "get_contour_edges",
+            "get_sketch_contours",
+            "get_sketch_regions",
+            "get_sketch_hatches",
+            "get_sketch_slots",
+            "get_sketch_pictures",
+            "get_sketch_paths",
+            "get_sketch_block_instances",
+            "get_relation_manager",
+            "is_3d_sketch",
+            "get_model_to_sketch_transform",
+            "merge_points",
+            "set_automatic_solve",
+            "as_sequence",
+        ],
         "理由": (
             "它们是**内部读**或**需要「取 sketch」的解析**。"
             "暴露它们等于把工具的**选择集状态**变成 API（违规则 3 的精神）。"

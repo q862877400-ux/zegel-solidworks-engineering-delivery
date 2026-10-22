@@ -69,14 +69,25 @@ def form_of(iface: str, mem: str):
 
 
 def main() -> int:
-    raw = json.loads((REPO / "output" / "obsolete-dotcall-scan.json").read_text(
-        encoding="utf-8", errors="replace"))
+    raw = json.loads(
+        (REPO / "output" / "obsolete-dotcall-scan.json").read_text(
+            encoding="utf-8", errors="replace"
+        )
+    )
     #: ★★★★ **先把它打出来**（★ 别猜形状 —— ★ 这是我第一版的错）✓
     rows_in = raw.get("全部行") or []
-    print("★ 产物字段：", {k: (type(v).__name__, len(v) if hasattr(v, "__len__") else v)
-                          for k, v in raw.items() if k != "全部行"})
-    print("★ `全部行` = %d 行 · ★ 第一项键 = %s"
-          % (len(rows_in), sorted(rows_in[0].keys()) if rows_in else "—"))
+    print(
+        "★ 产物字段：",
+        {
+            k: (type(v).__name__, len(v) if hasattr(v, "__len__") else v)
+            for k, v in raw.items()
+            if k != "全部行"
+        },
+    )
+    print(
+        "★ `全部行` = %d 行 · ★ 第一项键 = %s"
+        % (len(rows_in), sorted(rows_in[0].keys()) if rows_in else "—")
+    )
 
     out_rows = []
     for r in rows_in:
@@ -98,37 +109,73 @@ def main() -> int:
             cross = None
             if sk and kind and sk[0] and kind != sk[0]:
                 cross = "%s → %s" % (kind, sk[0])
-            out_rows.append({
-                "file": r.get("file"), "line": r.get("line"), "member": mem,
-                "scope": scope, "successor": succ or None,
-                "old_kind": kind, "old_kind_by_signature": by_sig, "obsolete": ob,
-                "succ_kind": (sk[0] if sk else None),
-                "★_跨维": cross, "★_两依据一致": (kind == by_sig)})
+            out_rows.append(
+                {
+                    "file": r.get("file"),
+                    "line": r.get("line"),
+                    "member": mem,
+                    "scope": scope,
+                    "successor": succ or None,
+                    "old_kind": kind,
+                    "old_kind_by_signature": by_sig,
+                    "obsolete": ob,
+                    "succ_kind": (sk[0] if sk else None),
+                    "★_跨维": cross,
+                    "★_两依据一致": (kind == by_sig),
+                }
+            )
 
     cross = [r for r in out_rows if r["★_跨维"]]
     prod = [r for r in cross if "生产" in r["scope"]]
     dis = [r for r in out_rows if not r["★_两依据一致"]]
     print()
     print("★ 能定形态的命中行：%d" % len(out_rows))
-    print("★★ **「方法↔属性」跨维的：%d 行**（★ 其中**生产** %d 行）" % (len(cross), len(prod)))
+    print(
+        "★★ **「方法↔属性」跨维的：%d 行**（★ 其中**生产** %d 行）"
+        % (len(cross), len(prod))
+    )
     for r in cross:
-        print("   ★ [%s] %s:%s  %s  ⇒ 后继 `%s`（%s）"
-              % (r["scope"][:10], str(r["file"]).split("\\")[-1], r["line"],
-                 r["★_跨维"], r["successor"], r["succ_kind"]))
+        print(
+            "   ★ [%s] %s:%s  %s  ⇒ 后继 `%s`（%s）"
+            % (
+                r["scope"][:10],
+                str(r["file"]).split("\\")[-1],
+                r["line"],
+                r["★_跨维"],
+                r["successor"],
+                r["succ_kind"],
+            )
+        )
     print()
-    print("★ 两条依据**不一致**的：%d 行 %s"
-          % (len(dis), "（★ 那要单独看）" if dis else "（★ **全一致** ✓）"))
+    print(
+        "★ 两条依据**不一致**的：%d 行 %s"
+        % (len(dis), "（★ 那要单独看）" if dis else "（★ **全一致** ✓）")
+    )
     for r in dis[:6]:
-        print("   ★ %s  kind=%r 签名判=%r" % (r["member"], r["old_kind"],
-                                              r["old_kind_by_signature"]))
+        print(
+            "   ★ %s  kind=%r 签名判=%r"
+            % (r["member"], r["old_kind"], r["old_kind_by_signature"])
+        )
 
     out = REPO / "output" / "obsolete-form-annotation.json"
-    out.write_text(json.dumps({
-        "★_判据": ("★ 「方法↔属性」= 旧成员与它后继的 **kind 不同**；★ 依据两条："
-                   "① 官方页 front-matter 的 `kind:` ② 签名里的 `{get; set;}`"),
-        "★_不改判据": "★ 本标注**不动** `tools/scan_obsolete_safe.py`（★ 任务书：不改判据）",
-        "rows": out_rows, "★_跨维行数": len(cross), "★_跨维且生产": len(prod),
-        "★_两依据不一致": len(dis)}, ensure_ascii=False, indent=2), encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {
+                "★_判据": (
+                    "★ 「方法↔属性」= 旧成员与它后继的 **kind 不同**；★ 依据两条："
+                    "① 官方页 front-matter 的 `kind:` ② 签名里的 `{get; set;}`"
+                ),
+                "★_不改判据": "★ 本标注**不动** `tools/scan_obsolete_safe.py`（★ 任务书：不改判据）",
+                "rows": out_rows,
+                "★_跨维行数": len(cross),
+                "★_跨维且生产": len(prod),
+                "★_两依据不一致": len(dis),
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print()
     print("★ 已写", out)
     return 0

@@ -9,7 +9,7 @@
 # ★ 触发它的真 bug：`export_to_image` 用了 `out_i4()` 而模块漏了导入 ⇒ 一调就 `NameError
 # `；
 #     ★ 而 `check_python_syntax.py` 只做 `compile()` ⇒ **语法合法、名字没解析** ⇒ 抓不到。
-# ★★ **判据（保守版）**：★ 一个名字若**在整个文件里从未被绑定**（既非导入 / 赋值 / 形参 
+# ★★ **判据（保守版）**：★ 一个名字若**在整个文件里从未被绑定**（既非导入 / 赋值 / 形参
 # /
 # def / class / except-as / match 绑定 / 全局声明），★ 而它**在代码位置被读取** ⇒ **报**
 # 。
@@ -45,8 +45,16 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCAN_DIRS = ("scripts", "mcp-server", "tools")
-BUILTINS = set(dir(builtins)) | {"__file__", "__name__", "__doc__", "__package__",
-                                 "__spec__", "__loader__", "__builtins__", "__debug__"}
+BUILTINS = set(dir(builtins)) | {
+    "__file__",
+    "__name__",
+    "__doc__",
+    "__package__",
+    "__spec__",
+    "__loader__",
+    "__builtins__",
+    "__debug__",
+}
 
 #: ★★ **已登记的损坏模块** —— ★ 这些**每次都打印**（★ 不静默），但**不拦门禁**
 #:   （★ 因为修好它们要**补功能**、不是补导入）。★ 留在名单上就是待办。
@@ -129,16 +137,27 @@ def _skip_reason(tree: ast.Module) -> str | None:
         if isinstance(n, ast.ImportFrom) and any(a.name == "*" for a in n.names):
             return "star-import"
         #: ★ `globals().update(...)`
-        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "update":
+        if (
+            isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Attribute)
+            and n.func.attr == "update"
+        ):
             base = n.func.value
-            if (isinstance(base, ast.Call) and isinstance(base.func, ast.Name)
-                    and base.func.id == "globals"):
+            if (
+                isinstance(base, ast.Call)
+                and isinstance(base.func, ast.Name)
+                and base.func.id == "globals"
+            ):
                 return "globals-update"
         #: ★ `globals()[...] = ...`
         if isinstance(n, ast.Assign):
             for tgt in n.targets:
-                if (isinstance(tgt, ast.Subscript) and isinstance(tgt.value, ast.Call)
-                        and isinstance(tgt.value.func, ast.Name) and tgt.value.func.id == "globals"):
+                if (
+                    isinstance(tgt, ast.Subscript)
+                    and isinstance(tgt.value, ast.Call)
+                    and isinstance(tgt.value.func, ast.Name)
+                    and tgt.value.func.id == "globals"
+                ):
                     return "globals-subscript"
     return None
 
@@ -152,7 +171,7 @@ def skip_reason_for(path: Path) -> str | None:
     """★ 读一个文件 ⇒ 它的跳过原因（`None` = 会正常扫）。★ 供主流程**报告**用。"""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     return _skip_reason(tree)
 
@@ -161,12 +180,12 @@ def scan_file(path: Path) -> list:
     """★ 扫一个文件 ⇒ `[(行号, 所在函数, 名字), …]`（★ 空 = 没发现问题）。"""
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
-    if _skip_reason(tree):                                     #: ★ 有 `import *` / `globals()` 注入 ⇒ 无法判定
+    if _skip_reason(tree):  #: ★ 有 `import *` / `globals()` 注入 ⇒ 无法判定
         return []
-    file_bound = _bound_names(tree)                            #: ★ **整个文件**绑过的名字
-    skip = _annotation_nodes(tree)                             #: ★ 注解里的不算读
+    file_bound = _bound_names(tree)  #: ★ **整个文件**绑过的名字
+    skip = _annotation_nodes(tree)  #: ★ 注解里的不算读
     #: ★ 记录每个 `Name` 所属的最近函数（★ 只为报错时能说出位置）
     owner: dict = {}
     for fn in ast.walk(tree):
@@ -204,8 +223,10 @@ def main(argv: list) -> int:
                 bad.append((str(p.relative_to(REPO_ROOT)), ln, fn, name))
     print("  未定义名门禁 · 扫 **%d** 个文件 · 命中 **%d** 处" % (total, len(bad)))
     if skipped:
-        print("  ★ 跳过 **%d** 个文件（判据无法判定 ⇒ 不静默；★ 跳过不是失败，"
-              "但**必须看得见**）：" % len(skipped))
+        print(
+            "  ★ 跳过 **%d** 个文件（判据无法判定 ⇒ 不静默；★ 跳过不是失败，"
+            "但**必须看得见**）：" % len(skipped)
+        )
         for rel, reason in skipped:
             print("      %-18s %s" % (reason, rel))
     else:
@@ -213,13 +234,23 @@ def main(argv: list) -> int:
     known = [b for b in bad if b[0].replace("\\", "/") in KNOWN_BROKEN]
     fresh = [b for b in bad if b[0].replace("\\", "/") not in KNOWN_BROKEN]
     for f, ln, fn, name in fresh[:40]:
-        print("    %s:%d  在 %s() 里读取了**全文件都没绑定过**的名字 %r" % (f, ln, fn, name))
+        print(
+            "    %s:%d  在 %s() 里读取了**全文件都没绑定过**的名字 %r"
+            % (f, ln, fn, name)
+        )
     for f in sorted({b[0] for b in known}):
         n = len([b for b in known if b[0] == f])
-        print("\n  [WARN] %s（%d 处）\n         已登记损坏：%s" % (f, n, KNOWN_BROKEN[f.replace("\\", "/")]))
+        print(
+            "\n  [WARN] %s（%d 处）\n         已登记损坏：%s"
+            % (f, n, KNOWN_BROKEN[f.replace("\\", "/")])
+        )
     if fresh:
-        print("\n  判据：★ 该名字在**整个文件里从未被绑定**（导入 / 赋值 / 形参 / def / class /")
-        print("        except-as / match / global）★ 而它**在这里被读取** ⇒ **NameError 隐患**。")
+        print(
+            "\n  判据：★ 该名字在**整个文件里从未被绑定**（导入 / 赋值 / 形参 / def / class /"
+        )
+        print(
+            "        except-as / match / global）★ 而它**在这里被读取** ⇒ **NameError 隐患**。"
+        )
         print("  ★★ `compile()` 抓不到（语法合法）—— ★ 而**一调用就炸**")
         print("  （真例：轮 403 `export_to_image` 用了 `out_i4()` 而模块漏了导入）。")
         print("  修法：补导入 / 补定义。★ 而**不要**为了变绿去 `# noqa` 掉它。")

@@ -46,26 +46,37 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from win32com.client import VARIANT as _V                            # noqa: E402
-import pythoncom                                                      # noqa: E402
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from win32com.client import VARIANT as _V  # noqa: E402
+import pythoncom  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_solid(doc):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -73,26 +84,42 @@ def _mk_solid(doc):
 def _mk_surface(doc, plane="Front Plane"):
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
 
 def _one(sw, tag, bodies_kind, feat_scope, auto_select):
-    row = {"tag": tag, "bodies_kind": bodies_kind,
-           "use_feat_scope": feat_scope, "use_auto_select": auto_select, "ok": False}
+    row = {
+        "tag": tag,
+        "bodies_kind": bodies_kind,
+        "use_feat_scope": feat_scope,
+        "use_auto_select": auto_select,
+        "ok": False,
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -100,11 +127,12 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         _mk_surface(doc)
         from sw_connect import get_com_member as _get, out_i4 as _oi4
         from sw_part import _select_com_object as _sel
+
         #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762\uff08\u2605 \u4e8b\u5
         #: b9e 405\uff1a\u8fd9\u79cd\u9009\u6cd5\u56de\u5bf9\u8c61\uff09
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
             faces = list(_get(b, "GetFaces") or [])
@@ -119,7 +147,7 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         elif bodies_kind == "solid":
             bodies = solid_bodies[:1]
         elif bodies_kind == "both":
-            bodies = (surf_bodies[:1] + solid_bodies[:1])
+            bodies = surf_bodies[:1] + solid_bodies[:1]
         else:
             bodies = []
         row["n_solid"] = len(solid_bodies)
@@ -129,20 +157,28 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            ret = C.get_com_member(fm, "InsertCutSurface", False, 0, bool(feat_scope),
-                                   bool(auto_select), bodies, _oi4())
+            ret = C.get_com_member(
+                fm,
+                "InsertCutSurface",
+                False,
+                0,
+                bool(feat_scope),
+                bool(auto_select),
+                bodies,
+                _oi4(),
+            )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 try:
                     row["ret_name"] = str(C.get_com_member(ret, "Name"))
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -150,36 +186,66 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "InsertCutSurface\uff1a**Bodies \u4f20\u771f\u7684\u4f53\u6570\u7ec4**\uff08\u2605 \u800c\u975e\u7a7a\u6570\u7ec4\uff09",
-          "why": "\u5b98\u65b9\uff1a`Bodies` = \u201cArray of specific bodies\u201d\uff1b\u7a7a\u6570\u7ec4 = \u201ccut all bodies\u201d "
-                 "\u21d2 \u672c\u4ed3\u4e00\u76f4\u4f20\u7a7a\u6570\u7ec4\uff0c**\u4ece\u6ca1\u8bd5\u8fc7\u4f20\u771f\u7684\u4f53**",
-          "cases": []}
-    for tag, kind, fs, asel in (("[] \u00b7 scope=F \u00b7 auto=T\uff08\u2605 \u5bf9\u7167\uff09", "empty", False, True),
-                                ("[**\u5b9e\u4f53**] \u00b7 scope=T \u00b7 auto=F", "solid", True, False),
-                                ("[**\u66f2\u9762+\u5b9e\u4f53**] \u00b7 scope=T \u00b7 auto=F", "both", True, False),
-                                ("[\u5b9e\u4f53] \u00b7 scope=F \u00b7 auto=F", "solid", False, False)):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "InsertCutSurface\uff1a**Bodies \u4f20\u771f\u7684\u4f53\u6570\u7ec4**\uff08\u2605 \u800c\u975e\u7a7a\u6570\u7ec4\uff09",
+        "why": "\u5b98\u65b9\uff1a`Bodies` = \u201cArray of specific bodies\u201d\uff1b\u7a7a\u6570\u7ec4 = \u201ccut all bodies\u201d "
+        "\u21d2 \u672c\u4ed3\u4e00\u76f4\u4f20\u7a7a\u6570\u7ec4\uff0c**\u4ece\u6ca1\u8bd5\u8fc7\u4f20\u771f\u7684\u4f53**",
+        "cases": [],
+    }
+    for tag, kind, fs, asel in (
+        (
+            "[] \u00b7 scope=F \u00b7 auto=T\uff08\u2605 \u5bf9\u7167\uff09",
+            "empty",
+            False,
+            True,
+        ),
+        ("[**\u5b9e\u4f53**] \u00b7 scope=T \u00b7 auto=F", "solid", True, False),
+        (
+            "[**\u66f2\u9762+\u5b9e\u4f53**] \u00b7 scope=T \u00b7 auto=F",
+            "both",
+            True,
+            False,
+        ),
+        ("[\u5b9e\u4f53] \u00b7 scope=F \u00b7 auto=F", "solid", False, False),
+    ):
         ev["cases"].append(_one(sw, tag, kind, fs, asel))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["named"] = sum(1 for c in ev["cases"] if c.get("ret_name"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = "real_bodies_works" if ev["passed"] else (
-        "no_feature_but_object_named" if ev["named"] else "all_fail")
+    ev["verdict"] = (
+        "real_bodies_works"
+        if ev["passed"]
+        else ("no_feature_but_object_named" if ev["named"] else "all_fail")
+    )
     p = R / "output" / "cut-surface-real-bodies-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u5efa\u6210 %d \u00b7 \u6709\u540d\u5b57 %d / %d\uff09" % (
-        ev["verdict"], ev["passed"], ev["named"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u5efa\u6210 %d \u00b7 \u6709\u540d\u5b57 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["named"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-36s ok=%-6s \u4f20\u4e86 %s \u4e2a\u4f53 \u00b7 \u56de=%-9s \u540d=%s" % (
-            c.get("tag"), c.get("ok"), c.get("n_bodies_passed"), c.get("returned"), c.get("ret_name")))
+        print(
+            "  %-36s ok=%-6s \u4f20\u4e86 %s \u4e2a\u4f53 \u00b7 \u56de=%-9s \u540d=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("n_bodies_passed"),
+                c.get("returned"),
+                c.get("ret_name"),
+            )
+        )
         print("        new=%s" % (c.get("new"),))
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:130])

@@ -26,6 +26,7 @@ r"""@brief **负例校验**：证明 `scan_bare_array_args.py` 的判据抓得�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -49,8 +50,14 @@ MEMBERS = ("CreateSpline", "CreateSpline2")
 
 def main() -> int:
     rev = "%s^:%s" % (FIX_COMMIT, TARGET)
-    r = subprocess.run(["git", "show", rev], cwd=str(ROOT), capture_output=True,
-                       text=True, encoding="utf-8", errors="replace")
+    r = subprocess.run(
+        ["git", "show", rev],
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     if r.returncode != 0:
         print("  ✗ 取不到负例原文（%s）: %s" % (rev, (r.stderr or "")[:80]))
         return 2
@@ -70,14 +77,19 @@ def main() -> int:
             continue
         #: ★ 判据：官方签名第 0 参是 `Object` ⇒ 该调用点**应当**被扫出来
         obj = S.arg_is_object(member, 0)
-        print("    L%-5d %-56s 签名第 0 参是 Object? **%s**"
-              % (n.lineno, ast.unparse(n)[:56], obj))
+        print(
+            "    L%-5d %-56s 签名第 0 参是 Object? **%s**"
+            % (n.lineno, ast.unparse(n)[:56], obj)
+        )
         if obj:
             hits.append(n.lineno)
 
     print()
     if hits:
-        print("  ✓ **命中 %d 处**（L%s）⇒ 判据**抓得到**目标形态" % (len(hits), ", ".join(map(str, hits))))
+        print(
+            "  ✓ **命中 %d 处**（L%s）⇒ 判据**抓得到**目标形态"
+            % (len(hits), ", ".join(map(str, hits)))
+        )
         print("  ⇒ ★ 因此当前仓库上的「0 处」是**真的干净**，不是「没扫到」")
         return 0
     print("  ✗ **命中 0 处** ⇒ 判据**没生效** ⇒ 「0 处」这个结论**不成立**（事实 62）")

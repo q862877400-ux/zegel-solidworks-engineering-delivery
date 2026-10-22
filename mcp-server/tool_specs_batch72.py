@@ -53,54 +53,81 @@ _BATCH72: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_create_revolved_surface",
         title="Create Revolved Surface",
-        module="sw_surface_ref_ops", function="insert_revolved_ref_surface",
+        module="sw_surface_ref_ops",
+        function="insert_revolved_ref_surface",
         inject="model",
-        param_alias={"angle_deg": "angle_deg", "rev_type": "rev_type",
-                     "reverse_dir": "reverse_dir", "angle2_deg": "angle2_deg"},
+        param_alias={
+            "angle_deg": "angle_deg",
+            "rev_type": "rev_type",
+            "reverse_dir": "reverse_dir",
+            "angle2_deg": "angle2_deg",
+        },
         params=[
-            Param("angle_deg", float, description="旋**角**（**度**；★ 只在边界换算成弧度一次，规则 2）。"
-                                                "★ `rev_type=1`（MidPlane）时它是**全角**。"),
-            Param("rev_type", int, description="官方 `RevType`：0=One direction · 1=MidPlane · "
-                                               "2=Two direction（取其它值本工具会显式拒绝）。"),
+            Param(
+                "angle_deg",
+                float,
+                description="旋**角**（**度**；★ 只在边界换算成弧度一次，规则 2）。"
+                "★ `rev_type=1`（MidPlane）时它是**全角**。",
+            ),
+            Param(
+                "rev_type",
+                int,
+                description="官方 `RevType`：0=One direction · 1=MidPlane · "
+                "2=Two direction（取其它值本工具会显式拒绝）。",
+            ),
             Param("reverse_dir", bool, description="反向（官方 `ReverseDir`）。"),
-            Param("angle2_deg", float, description="第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。"),
+            Param(
+                "angle2_deg",
+                float,
+                description="第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。",
+            ),
         ],
         doc="★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。"
-            "★ 官方逐字「Creates a revolved reference surface by revolving a profile around a "
-            "centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。"
-            "⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using "
-            "`IModelDocExtension::SelectByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。"
-            "★ 官方另注「does not support **3D sketches**」。"
-            "★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。",
+        "★ 官方逐字「Creates a revolved reference surface by revolving a profile around a "
+        "centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。"
+        "⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using "
+        "`IModelDocExtension::SelectByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。"
+        "★ 官方另注「does not support **3D sketches**」。"
+        "★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。",
     ),
     ToolSpec(
         name="solidworks_hole_wizard",
         title="Hole Wizard (Advanced Hole)",
-        module="sw_hole_features", function="create_hole_wizard_at_selection_report",
+        module="sw_hole_features",
+        function="create_hole_wizard_at_selection_report",
         inject="model",
         param_alias={"selection": "selection", "size": "size"},
         params=[
-            Param("selection", str, description="**声明式面选择器**（`+x/-x/+y/-y/+z/-z`）——"
-                                               "★ 规则 3：**不收裸坐标**。★ 工具内部把它解析成面上一点，"
-                                               "再从那里发一条射线取孔位。★ 只对**轴对齐**的实体可靠。"),
-            Param("size", str, description="**规格串**（如 `\"M8\"`）—— ★ 真机实测：空串或纯数字**全回 None**。"),
+            Param(
+                "selection",
+                str,
+                description="**声明式面选择器**（`+x/-x/+y/-y/+z/-z`）——"
+                "★ 规则 3：**不收裸坐标**。★ 工具内部把它解析成面上一点，"
+                "再从那里发一条射线取孔位。★ 只对**轴对齐**的实体可靠。",
+            ),
+            Param(
+                "size",
+                str,
+                description='**规格串**（如 `"M8"`）—— ★ 真机实测：空串或纯数字**全回 None**。',
+            ),
         ],
         doc="★ **孔向导 / 异型孔**：`IFeatureManager.HoleWizard5`（★ 官方 24+ 参，本工具已把前置配好）。"
-            "★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）。"
-            "★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`）选出来；"
-            "② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。",
+        "★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）。"
+        "★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`）选出来；"
+        "② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。",
     ),
     ToolSpec(
         name="solidworks_sketch_fully_defined_status",
         title="Sketch Fully-Defined Status",
-        module="sw_sketch_status", function="get_constrained_status",
+        module="sw_sketch_status",
+        function="get_constrained_status",
         inject="model",
         params=[],
         doc="★ **草图完全定义状态**：`ISketch.GetConstrainedStatus()` → `System.int`（官方零参数、只读）。"
-            "⚠ **前置**：**必须有一个正在编辑的草图**（关掉的草图取不到 `ISketch`）⇒ 没有就**抛**，不静默。"
-            "★ 真机：欠定义矩形回 **2**、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。"
-            "⚠ **官方没给取值表** ⇒ 本工具**如实回原始 int**，★ **不把它解释成「欠定义/完全定义」**"
-            "（★ 铁律 5：查不到就说查不到）。",
+        "⚠ **前置**：**必须有一个正在编辑的草图**（关掉的草图取不到 `ISketch`）⇒ 没有就**抛**，不静默。"
+        "★ 真机：欠定义矩形回 **2**、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。"
+        "⚠ **官方没给取值表** ⇒ 本工具**如实回原始 int**，★ **不把它解释成「欠定义/完全定义」**"
+        "（★ 铁律 5：查不到就说查不到）。",
     ),
 ]
 

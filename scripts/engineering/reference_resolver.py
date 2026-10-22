@@ -1,9 +1,10 @@
 """★ 语义引用 → 稳定选择器（★ 本仓缺的那一层）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/reference_resolver.py
-# 定位:   规格 `specs/334-reference-resolver` —— **本仓缺的那一层**。★★★★★ 触发它的是 
+# 定位:   规格 `specs/334-reference-resolver` —— **本仓缺的那一层**。★★★★★ 触发它的是
 #           2026-10-14 全自动挖掘，`mech-design` 的一篇  自述「**我 30+ 轮踩坑的总答案**
 #           」：  `知识库/10-零件建模/ReferenceResolver语义引用与稳定选择器.md`
 #
@@ -47,8 +48,7 @@ class ResolverError(Exception):
       `REFERENCE_INVALID`    ⇒ ★ 输入本身不合法
     """
 
-    CODES = ("REFERENCE_AMBIGUOUS", "REFERENCE_UNRESOLVED",
-             "REFERENCE_INVALID")
+    CODES = ("REFERENCE_AMBIGUOUS", "REFERENCE_UNRESOLVED", "REFERENCE_INVALID")
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法解析码：%r" % code
@@ -60,6 +60,7 @@ class ResolverError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 # 一、B-Rep 面/边的**几何描述**（★ 纯数据 —— 由调用方从 COM 读出来）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class FaceInfo:
@@ -89,6 +90,7 @@ class EdgeInfo:
 # 二、语义选择器（★ 确定性 —— ★ 不依赖建模方向）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 def _dot(a: tuple, b: tuple) -> float:
     return sum(x * y for x, y in zip(a, b))
 
@@ -101,8 +103,9 @@ def _dist(a: tuple, b: tuple) -> float:
     return math.sqrt(sum((x - y) ** 2 for x, y in zip(a, b)))
 
 
-def top_face(faces: list, *, axis: tuple = (0.0, 1.0, 0.0),
-             min_dot: float = 0.9) -> FaceInfo:
+def top_face(
+    faces: list, *, axis: tuple = (0.0, 1.0, 0.0), min_dot: float = 0.9
+) -> FaceInfo:
     """★★★ **`top_face`** —— ★ 语义选择器（★ 确定性）。
 
     ★★★ 判据（★ 逐字承 `mech-design`）：
@@ -112,13 +115,13 @@ def top_face(faces: list, *, axis: tuple = (0.0, 1.0, 0.0),
       「它用**几何事实**（法向 + 质心位置），
        **而不是「我以为的拉伸方向」** ⇒ ★ **不会被 SolidWorks 的方向怪癖骗到**」
     """
-    cands = [f for f in faces
-             if f.planar and _dot(f.normal, axis) >= min_dot]
+    cands = [f for f in faces if f.planar and _dot(f.normal, axis) >= min_dot]
     if not cands:
         raise ResolverError(
             "REFERENCE_UNRESOLVED",
             "★ 没有平面的法向与 %s 的点积 >= %.2f（★ 共 %d 个面）"
-            % (axis, min_dot, len(faces)))
+            % (axis, min_dot, len(faces)),
+        )
     #: ★★ 取**质心沿轴最大**的那个（★ 不是「第一个」—— ★ 顺序不稳定）
     return max(cands, key=lambda f: _dot(f.centroid, axis))
 
@@ -128,8 +131,7 @@ def faces_by_normal(faces: list, axis: tuple, *, min_dot: float = 0.9) -> list:
     return [f for f in faces if f.planar and _dot(f.normal, axis) >= min_dot]
 
 
-def face_near(faces: list, near: tuple, *,
-              tol_mm: float = PLANE_TOL_MM) -> FaceInfo:
+def face_near(faces: list, near: tuple, *, tol_mm: float = PLANE_TOL_MM) -> FaceInfo:
     """★★ **几何锚点：面**（★ 跨重建稳定的做法 —— ★ 这是核心）。
 
     ★★ 判据（★ 逐字）：
@@ -142,45 +144,45 @@ def face_near(faces: list, near: tuple, *,
         if not f.planar:
             continue
         #: ★ 点到平面距离 = |(near - centroid) · normal|
-        d = abs(_dot(tuple(a - b for a, b in zip(near, f.centroid)),
-                     f.normal))
+        d = abs(_dot(tuple(a - b for a, b in zip(near, f.centroid)), f.normal))
         if d <= tol_mm:
             hits.append((d, f))
     if not hits:
         raise ResolverError(
             "REFERENCE_UNRESOLVED",
-            "★ `near=%s` 不在任何平面 %.4gmm 内" % (near, tol_mm))
+            "★ `near=%s` 不在任何平面 %.4gmm 内" % (near, tol_mm),
+        )
     #: ★★ **多个不同的平面 ⇒ 歧义**（★ 共面的等价 ⇒ 取最近的）
     planes = {f.normal for _, f in hits}
     if len(planes) > 1:
         raise ResolverError(
             "REFERENCE_AMBIGUOUS",
             "★ `near=%s` 落在 **%d 个不同平面**上（★ 法向 %s）"
-            "⇒ ★ **必须由上层消歧，不要猜**"
-            % (near, len(planes), sorted(planes)))
+            "⇒ ★ **必须由上层消歧，不要猜**" % (near, len(planes), sorted(planes)),
+        )
     return min(hits, key=lambda x: x[0])[1]
 
 
-def edge_near(edges: list, near: tuple, *,
-              tol_mm: float = EDGE_TOL_MM) -> EdgeInfo:
+def edge_near(edges: list, near: tuple, *, tol_mm: float = EDGE_TOL_MM) -> EdgeInfo:
     """★★ **几何锚点：边**（★ 跨重建稳定）。
 
     ★★ 判据（★ 逐字）：
       「**容差球内最近中点匹配** —— 必须【**恰好一条**】边中点在
         `_EDGE_TOL` 内。★ 否则 ⇒ `REFERENCE_UNRESOLVED` / `REFERENCE_AMBIGUOUS`」
     """
-    hits = [(d, e) for e in edges
-            if (d := _dist(e.midpoint, near)) <= tol_mm]
+    hits = [(d, e) for e in edges if (d := _dist(e.midpoint, near)) <= tol_mm]
     if not hits:
         raise ResolverError(
             "REFERENCE_UNRESOLVED",
-            "★ `near=%s` 的 %.4gmm 内**没有边的中点**" % (near, tol_mm))
+            "★ `near=%s` 的 %.4gmm 内**没有边的中点**" % (near, tol_mm),
+        )
     if len(hits) > 1:
         raise ResolverError(
             "REFERENCE_AMBIGUOUS",
             "★ `near=%s` 的 %.4gmm 内有 **%d 条边**（★ 索引 %s）"
             "⇒ ★ **必须由上层消歧，不要猜**"
-            % (near, tol_mm, len(hits), sorted(e.index for _, e in hits)))
+            % (near, tol_mm, len(hits), sorted(e.index for _, e in hits)),
+        )
     return hits[0][1]
 
 
@@ -210,14 +212,18 @@ def limitations() -> list:
 
 #: ★★ **六个方向语义**（★ 与 `solidworks_select_face_selector` 的 `+z`/`-z` 对齐）
 DIRECTIONS: dict[str, tuple] = {
-    "+x": (1.0, 0.0, 0.0), "-x": (-1.0, 0.0, 0.0),
-    "+y": (0.0, 1.0, 0.0), "-y": (0.0, -1.0, 0.0),
-    "+z": (0.0, 0.0, 1.0), "-z": (0.0, 0.0, -1.0),
+    "+x": (1.0, 0.0, 0.0),
+    "-x": (-1.0, 0.0, 0.0),
+    "+y": (0.0, 1.0, 0.0),
+    "-y": (0.0, -1.0, 0.0),
+    "+z": (0.0, 0.0, 1.0),
+    "-z": (0.0, 0.0, -1.0),
 }
 
 
-def resolve(selector: str, faces: list, *, edges: list | None = None,
-            near: tuple | None = None) -> dict:
+def resolve(
+    selector: str, faces: list, *, edges: list | None = None, near: tuple | None = None
+) -> dict:
     """★★★ **主入口**：把**语义引用**翻成 **index**。
 
     ★★ 支持的形态：
@@ -231,32 +237,49 @@ def resolve(selector: str, faces: list, *, edges: list | None = None,
     """
     if selector in DIRECTIONS:
         f = top_face(faces, axis=DIRECTIONS[selector])
-        return {"kind": "face", "index": f.index, "selector": selector,
-                "by": "方向语义（法向 + 质心，★ 几何事实）"}
+        return {
+            "kind": "face",
+            "index": f.index,
+            "selector": selector,
+            "by": "方向语义（法向 + 质心，★ 几何事实）",
+        }
     if selector == "top_face":
         f = top_face(faces)
-        return {"kind": "face", "index": f.index, "selector": selector,
-                "by": "top_face（法向 +Y >= 0.9，取质心 Y 最大）"}
+        return {
+            "kind": "face",
+            "index": f.index,
+            "selector": selector,
+            "by": "top_face（法向 +Y >= 0.9，取质心 Y 最大）",
+        }
     if selector.startswith("near:"):
         if near is None:
             body = selector.split(":", 1)[1]
             parts = body.split(",")
             if len(parts) != 3:
                 raise ResolverError(
-                    "REFERENCE_INVALID",
-                    "★ `near:` 要三个数（★ 实得 %r）" % body)
+                    "REFERENCE_INVALID", "★ `near:` 要三个数（★ 实得 %r）" % body
+                )
             near = tuple(float(p) for p in parts)
         if edges:
             e = edge_near(edges, near)
-            return {"kind": "edge", "index": e.index, "selector": selector,
-                    "by": "几何锚点（容差球内**恰好一条**边中点）"}
+            return {
+                "kind": "edge",
+                "index": e.index,
+                "selector": selector,
+                "by": "几何锚点（容差球内**恰好一条**边中点）",
+            }
         f = face_near(faces, near)
-        return {"kind": "face", "index": f.index, "selector": selector,
-                "by": "几何锚点（平面包含匹配）"}
+        return {
+            "kind": "face",
+            "index": f.index,
+            "selector": selector,
+            "by": "几何锚点（平面包含匹配）",
+        }
     raise ResolverError(
         "REFERENCE_INVALID",
         "★ 未知选择器 `%s`（有：%s · top_face · near:<x,y,z>）"
-        % (selector, sorted(DIRECTIONS)))
+        % (selector, sorted(DIRECTIONS)),
+    )
 
 
 def selectors() -> dict:

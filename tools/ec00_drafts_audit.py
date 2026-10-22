@@ -1,4 +1,5 @@
 """★ EC00 残留 ③ 审计 —— 逐份核 `output/ENGINEERING_*.md` 的「来源+许可+可运行验收」三项。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   `output/DSH_DECISIONS.md` **D8**（★ 逐字：「正式 spec 要求**来源 + 许可 + 可运
@@ -50,8 +51,11 @@ CHECKS = {
 
 def audit(path: Path) -> dict:
     text = path.read_text(encoding="utf-8", errors="replace")
-    row: dict = {"file": path.name, "bytes": len(text.encode("utf-8")),
-                 "lines": text.count("\n") + 1}
+    row: dict = {
+        "file": path.name,
+        "bytes": len(text.encode("utf-8")),
+        "lines": text.count("\n") + 1,
+    }
     for key, (pattern, desc) in CHECKS.items():
         hits = re.findall(pattern, text)
         row[key] = {"ok": bool(hits), "hits": len(hits), "desc": desc}
@@ -86,12 +90,16 @@ def main() -> int:
     }
     OUT.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print("★ ENGINEERING_*.md 共 %d 份 · 三项齐 **%d** · 不齐 %d"
-          % (len(rows), len(ok), len(bad)))
+    print(
+        "★ ENGINEERING_*.md 共 %d 份 · 三项齐 **%d** · 不齐 %d"
+        % (len(rows), len(ok), len(bad))
+    )
     for r in rows:
         marks = "".join("✓" if r[k]["ok"] else "✗" for k in CHECKS)
-        print("   %s  %-46s %d 行 · 自称草案=%s"
-              % (marks, r["file"], r["lines"], r["self_declares_draft"]))
+        print(
+            "   %s  %-46s %d 行 · 自称草案=%s"
+            % (marks, r["file"], r["lines"], r["self_declares_draft"])
+        )
     print("   （★ 列序：来源 · 许可 · 可运行验收）")
     print("★ DSH_*.md 共 %d 份 · 三项齐 **%d**" % (len(dsh_rows), len(dsh_ok)))
     for r in dsh_rows:

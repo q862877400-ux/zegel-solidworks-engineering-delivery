@@ -36,7 +36,9 @@ sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "tool-availability-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "tool-availability-evidence.json"
+)
 
 #: ★ 要普查的（★ 名字, 怎么从文档上取到那个对象）
 TARGETS = [
@@ -44,7 +46,7 @@ TARGETS = [
     ("IModelDocExtension", "ext"),
     ("IFeatureManager", "fm"),
     ("ISelectionMgr", "sm"),
-    ("IModelDoc2", None),           # ★ 占位不用
+    ("IModelDoc2", None),  # ★ 占位不用
 ]
 
 
@@ -67,8 +69,9 @@ def main() -> int:
         #: ★ 我们已注册的 function 名（★ 取交集用）
         try:
             import register_capabilities as RC
+
             ours = {s.function for s in RC.all_specs() if getattr(s, "function", None)}
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ours = set()
             ev["registry_err"] = str(exc)[:120]
         ev["registered_functions"] = len(ours)
@@ -77,41 +80,53 @@ def main() -> int:
         for iface, obj in live.items():
             try:
                 names = sorted(interface_members(iface))
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["interfaces"].append({"iface": iface, "err": str(exc)[:100]})
                 continue
             got = probe_members(obj, names)
             miss = sorted(n for n, v in got.items() if v == "missing")
             #: ★ 滤掉属性访问器（★ 它们的"取不到"是应然的）
-            miss_plain = [n for n in miss if not (n.startswith("get_") or n.startswith("set_"))]
+            miss_plain = [
+                n for n in miss if not (n.startswith("get_") or n.startswith("set_"))
+            ]
             all_missing[iface] = miss_plain
-            ev["interfaces"].append({
-                "iface": iface, "probed": len(names), "usable": len(names) - len(miss),
-                "missing_total": len(miss), "missing_plain": len(miss_plain),
-                "missing_plain_names": miss_plain[:24],
-            })
+            ev["interfaces"].append(
+                {
+                    "iface": iface,
+                    "probed": len(names),
+                    "usable": len(names) - len(miss),
+                    "missing_total": len(miss),
+                    "missing_plain": len(miss_plain),
+                    "missing_plain_names": miss_plain[:24],
+                }
+            )
         #: ★★ **交集：★ 我们已注册的 function 里，有哪些取不到**
         hit = sorted({n for iface, ms in all_missing.items() for n in ms if n in ours})
         ev["registered_but_unavailable"] = hit
         ev["probed_total"] = sum(i.get("probed", 0) for i in ev["interfaces"])
         ev["verdict"] = "pass"
-        ev["note"] = ("★ 对几个关键接口普查成员可用性，★ 再与已注册 function 名取交集。"
-                      "★ 判据：★ 先报查了多少；★ 而交集**必须为空或逐个列出**。"
-                      "★ `get_*`/`set_*` 访问器已滤掉（★ 迟到绑定下它们叫 `X`）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 对几个关键接口普查成员可用性，★ 再与已注册 function 名取交集。"
+            "★ 判据：★ 先报查了多少；★ 而交集**必须为空或逐个列出**。"
+            "★ `get_*`/`set_*` 访问器已滤掉（★ 迟到绑定下它们叫 `X`）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1800])
         print("  产物: %s" % OUT)
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

@@ -65,8 +65,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_dispatch_entry_guard as G  # noqa: E402
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
-ROOT = Path(os.environ.get("DSH_DISPATCH_BLINDSPOT_ROOT")
-            or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_DISPATCH_BLINDSPOT_ROOT") or Path(__file__).resolve().parents[1]
+)
 #: ★ 下界（真树实测 · 2026-10-09 · spec 232）—— 只增不减。
 BASELINE_COVERED = 362
 #: 明细打印上限。
@@ -78,7 +79,7 @@ LABELS = {
     "b": "名字别名     from m import f as g 后 g()",
     "c": "点式基名     pkg.m.f()",
     "d": "同文件自限定 m.f() 写在 m.py 里",
-    "e": "getattr 动态 getattr(m, \"f\")()",
+    "e": 'getattr 动态 getattr(m, "f")()',
 }
 
 
@@ -110,7 +111,9 @@ def alias_maps(files):
                     name_alias[al.asname or al.name] = (stem, al.name)
             elif isinstance(node, ast.Import):
                 for al in node.names:
-                    mod_alias[al.asname or al.name.split(".")[-1]] = al.name.split(".")[-1]
+                    mod_alias[al.asname or al.name.split(".")[-1]] = al.name.split(".")[
+                        -1
+                    ]
         out[path] = (mod_alias, name_alias)
     return out
 
@@ -148,24 +151,30 @@ def blindspot_sites(entries, files):
                 elif isinstance(f, ast.Name) and f.id != fn.name:
                     if name_alias.get(f.id, (None, None)) == (stem, fn.name):
                         kind = "b"
-                elif (isinstance(f, ast.Call) and isinstance(f.func, ast.Name)
-                      and f.func.id == "getattr" and len(f.args) >= 2
-                      and isinstance(f.args[1], ast.Constant)
-                      and f.args[1].value == fn.name):
+                elif (
+                    isinstance(f, ast.Call)
+                    and isinstance(f.func, ast.Name)
+                    and f.func.id == "getattr"
+                    and len(f.args) >= 2
+                    and isinstance(f.args[1], ast.Constant)
+                    and f.args[1].value == fn.name
+                ):
                     #: ★ `getattr(m, "f")(...)` ⇒ 外层 `node.func` 是**内层 Call**。
                     #: ★ 收紧：getattr 的**目标**必须确是该模块（名字字面 = stem，
                     #:   或是该 stem 的模块别名）—— 否则重名入口会假阳性。
                     tgt = f.args[0]
-                    ok_tgt = (isinstance(tgt, ast.Name)
-                              and (tgt.id == stem or mod_alias.get(tgt.id) == stem))
+                    ok_tgt = isinstance(tgt, ast.Name) and (
+                        tgt.id == stem or mod_alias.get(tgt.id) == stem
+                    )
                     if ok_tgt:
                         kind = "e"
                 if kind is None:
                     continue
                 counts[kind] += 1
                 if len(samples[kind]) < DETAIL_LIMIT:
-                    samples[kind].append("%s:%d %s::%s"
-                                         % (p.as_posix(), node.lineno, stem, fn.name))
+                    samples[kind].append(
+                        "%s:%d %s::%s" % (p.as_posix(), node.lineno, stem, fn.name)
+                    )
     return counts, samples
 
 
@@ -178,8 +187,10 @@ def main() -> int:
     min_covered = baseline_covered()
 
     print("== 分发口调用点的解析盲区普查（5 种形态，任一非 0 即红）==")
-    print("扫描 `%s/scripts/**/*.py` · 分发口 %d 个 · 已覆盖调用点 %d"
-          % (ROOT.as_posix(), len(entries), covered))
+    print(
+        "扫描 `%s/scripts/**/*.py` · 分发口 %d 个 · 已覆盖调用点 %d"
+        % (ROOT.as_posix(), len(entries), covered)
+    )
     for k in FORMS:
         print("  (%s) %-38s = %d" % (k, LABELS[k], counts[k]))
 
@@ -187,19 +198,37 @@ def main() -> int:
     for k in FORMS:
         if counts[k]:
             for s in samples[k]:
-                violations.append({"kind": "blindspot", "form": k, "where": s,
-                                   "detail": "形态 (%s) 有 %d 处解析器看不见的调用点：%s"
-                                             % (k, counts[k], s)})
+                violations.append(
+                    {
+                        "kind": "blindspot",
+                        "form": k,
+                        "where": s,
+                        "detail": "形态 (%s) 有 %d 处解析器看不见的调用点：%s"
+                        % (k, counts[k], s),
+                    }
+                )
     #: ★ 假绿守卫（事实 46）。
     if not entries or covered == 0:
-        violations.append({"kind": "zero-checked", "form": "-", "where": "-",
-                           "detail": "分发口 %d 个 · 已覆盖调用点 %d（检查量为 0 不许 PASS）"
-                                     % (len(entries), covered)})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "form": "-",
+                "where": "-",
+                "detail": "分发口 %d 个 · 已覆盖调用点 %d（检查量为 0 不许 PASS）"
+                % (len(entries), covered),
+            }
+        )
     #: ★ 只增不减（下界冻结）：减少 = 取点漏了。
     if covered < min_covered:
-        violations.append({"kind": "baseline-shrunk", "form": "-", "where": "-",
-                           "detail": "已覆盖调用点 %d < 下界 %d（只增不减：先查取点）"
-                                     % (covered, min_covered)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "form": "-",
+                "where": "-",
+                "detail": "已覆盖调用点 %d < 下界 %d（只增不减：先查取点）"
+                % (covered, min_covered),
+            }
+        )
 
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
@@ -209,9 +238,17 @@ def main() -> int:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("分发口盲区 · 已覆盖 %d · %s · 盲区合计 %d · 违规 %d · [%s] · exit %d"
-          % (covered, " · ".join("%s %d" % (k, counts[k]) for k in FORMS),
-             total_blind, len(violations), "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "分发口盲区 · 已覆盖 %d · %s · 盲区合计 %d · 违规 %d · [%s] · exit %d"
+        % (
+            covered,
+            " · ".join("%s %d" % (k, counts[k]) for k in FORMS),
+            total_blind,
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

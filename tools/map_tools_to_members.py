@@ -83,12 +83,17 @@ def _strip_comments_and_docstrings(src: str) -> str:
         tree = _ast.parse(src)
         drop: list = []
         for node in _ast.walk(tree):
-            if isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef, _ast.ClassDef,
-                                 _ast.Module)):
+            if isinstance(
+                node,
+                (_ast.FunctionDef, _ast.AsyncFunctionDef, _ast.ClassDef, _ast.Module),
+            ):
                 body = getattr(node, "body", [])
-                if body and isinstance(body[0], _ast.Expr) and \
-                        isinstance(body[0].value, _ast.Constant) and \
-                        isinstance(body[0].value.value, str):
+                if (
+                    body
+                    and isinstance(body[0], _ast.Expr)
+                    and isinstance(body[0].value, _ast.Constant)
+                    and isinstance(body[0].value.value, str)
+                ):
                     drop.append((body[0].lineno, body[0].end_lineno))
         lines = src.splitlines()
         for a, b in drop:
@@ -109,14 +114,14 @@ def _strip_comments_and_docstrings(src: str) -> str:
                     break
             out.append(line[:cut] if cut is not None else line)
         return "\n".join(out)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return src
 
 
 def _func_sources(mod_file: Path) -> dict:
     try:
         src = mod_file.read_text(encoding="utf-8", errors="replace")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
     try:
         tree = ast.parse(src)
@@ -199,13 +204,14 @@ def _global_pool() -> dict:
     #:     ★ 一个 `.py` 可能**只是转发**（★ 本仓有 `sw_drawing` 这种兼容入口）⇒
     #:     ★★★ **凡按"文件 → 函数"建索引的地方，都要处理"转发文件"** ✓
     _BRIDGE_PAT = re.compile(
-        r"_IMPLEMENTATION\s*=\s*\(?(.{0,400}?)\)?\s*\n\s*_SPEC", re.S)
+        r"_IMPLEMENTATION\s*=\s*\(?(.{0,400}?)\)?\s*\n\s*_SPEC", re.S
+    )
     _PYNAME_PAT = re.compile(r'"([A-Za-z_]\w*\.py)"')
     for d in ("scripts", "mcp-server"):
         for f in sorted((REPO / d).glob("*.py")):
             try:
                 txt = f.read_text(encoding="utf-8", errors="replace")
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             if "importlib" not in txt:
                 continue
@@ -239,7 +245,9 @@ _IMPORT_PAT = re.compile(r"^\s*from\s+([A-Za-z_][\w.]*)\s+import\s+(.+)$", re.M)
 #: ⇒ ★ 修法：★ **同时抽 `import X as Y` 与 `from P import M as A`（★ 后者当"模块别名"）*
 #: *，
 #:     ★★ 并在跟图时**把 `A.foo` 解析成 `M.foo`** ✓
-_IMPORT_ALIAS_PAT = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+as\s+([A-Za-z_]\w*))?\s*$", re.M)
+_IMPORT_ALIAS_PAT = re.compile(
+    r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+as\s+([A-Za-z_]\w*))?\s*$", re.M
+)
 
 
 #: ★★ 函数池的键的**副本**（★ 由 `main` 在建池后填）—— ★ 供 `_import_map` 判断"这个名字
@@ -258,7 +266,7 @@ def _import_map(mod_file: Path) -> dict:
     out = {}
     try:
         src = mod_file.read_text(encoding="utf-8", errors="replace")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return out
     for m in _IMPORT_PAT.finditer(src):
         srcmod = m.group(1).split(".")[-1]
@@ -278,7 +286,7 @@ def _import_map(mod_file: Path) -> dict:
                 #: ★★★ 无 `as` 时**要分辨**：★ `from P import M` 里的 `M` 可能是
                 #: ★ **函数**（⇒ 指向 `P`）★ 或 **模块**（⇒ 指向 `M` 自己，★ 用法 `M.foo
                 #: `）
-                #: ⇒ ★★ **用一个可核的判据**：★ **`M` 在函数池里吗**（★ 即 `M.<某函数>` 
+                #: ⇒ ★★ **用一个可核的判据**：★ **`M` 在函数池里吗**（★ 即 `M.<某函数>`
                 #: 存在）✓
                 is_module = any(k.startswith(name + ".") for k in _POOL_KEYS)
                 out[name] = name if is_module else srcmod
@@ -297,6 +305,7 @@ def main() -> int:
     sys.path.insert(0, str(REPO / "mcp-server"))
     sys.path.insert(0, str(REPO / "scripts"))
     import register_capabilities as rc
+
     specs = [s for s in rc.all_specs() if getattr(s, "name", None)]
 
     #: ★ 官方成员集合（★ 用来判"这个成员名是不是官方的"）
@@ -310,7 +319,7 @@ def main() -> int:
     #: _pool` 的说明）
     pool = _global_pool()
     _POOL_KEYS.clear()
-    _POOL_KEYS.update(pool.keys())      #: ★ 供 `_import_map` 判"这个名字是不是模块"
+    _POOL_KEYS.update(pool.keys())  #: ★ 供 `_import_map` 判"这个名字是不是模块"
     imap_cache: dict = {}
     for s in specs:
         mod, fn = getattr(s, "module", "") or "", getattr(s, "function", "") or ""
@@ -319,7 +328,7 @@ def main() -> int:
             imap_cache[mod] = _import_map(REPO / "scripts" / ("%s.py" % mod))
         imap = imap_cache[mod]
         #: ★★ 跟**多层**调用图（★ 事实 507：只看 spec 文档会漏，★ 要落到函数体；
-        #: ★★ 而"落脚"往往在**第二、三层** —— ★ 第一版只跟一层 ⇒ ★ `fillet` / `chamfer` 
+        #: ★★ 而"落脚"往往在**第二、三层** —— ★ 第一版只跟一层 ⇒ ★ `fillet` / `chamfer`
         #: /
         #: `extrude_boss` / `sketch_add_line` 这些**明明调 COM 的**被算成"无引用"（74 条
         #: ）。
@@ -361,8 +370,9 @@ def main() -> int:
                 for alias, srcmod in (imap_cache.get(cur_mod) or {}).items():
                     if srcmod in _PIPE_MODULES or srcmod == alias:
                         continue
-                    for member in re.findall(r"\b%s\.([A-Za-z_]\w*)\s*\(" % re.escape(alias),
-                                             text_cur):
+                    for member in re.findall(
+                        r"\b%s\.([A-Za-z_]\w*)\s*\(" % re.escape(alias), text_cur
+                    ):
                         key = "%s.%s" % (srcmod, member)
                         if key in seen or key not in pool:
                             continue
@@ -376,23 +386,26 @@ def main() -> int:
         members = sorted(set(CALL_PAT.findall(text)))
         #: ★★★ 2026-10-03 修：本仓**两种调用形态都有** ——
         #:   ① `get_com_member(x, "Member", …)`（★ 本仓新写法）
-        #: ② ★★ **点调用** `model.FeatureManager.FeatureFillet(…)`（★ `sw_part.fillet` 
+        #: ② ★★ **点调用** `model.FeatureManager.FeatureFillet(…)`（★ `sw_part.fillet`
         #: 就是这种）
-        #: ★ 第一版**只统计 ①** ⇒ ★ `fillet` / `chamfer` / `sketch_add_line` 等**明明调 
+        #: ★ 第一版**只统计 ①** ⇒ ★ `fillet` / `chamfer` / `sketch_add_line` 等**明明调
         #: COM 的**
         #:   被算成"无引用"（64–74 条）⇒ ★★ **判据漏了一整种调用形态**（★ 与事实 51 同族：
         #:   判据的**分析范围**与代码的**组织单元**不匹配）。
         dotted = sorted({m for m in DOT_PAT.findall(text) if m in official})[:60]
         all_members = sorted(set(members) | set(dotted))
-        rows.append({
-            "tool": s.name,
-            "module": mod, "function": fn,
-            "com_members": all_members,
-            "dot_members": dotted,
-            "official_hits": [m for m in members if m in official],
-            "non_official": [m for m in members if m not in official],
-            "helpers_followed": called[:12],
-        })
+        rows.append(
+            {
+                "tool": s.name,
+                "module": mod,
+                "function": fn,
+                "com_members": all_members,
+                "dot_members": dotted,
+                "official_hits": [m for m in members if m in official],
+                "non_official": [m for m in members if m not in official],
+                "helpers_followed": called[:12],
+            }
+        )
 
     tot_m = sum(len(r["com_members"]) for r in rows)
     with_m = [r for r in rows if r["com_members"]]
@@ -409,21 +422,40 @@ def main() -> int:
     }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
 
-    print("★ 工具 **%d** 条 ⇒ ★★ **有 COM 成员引用的 %d 条（%.1f%%）** · 无的 %d 条"
-          % (len(rows), len(with_m), 100.0 * len(with_m) / max(1, len(rows)), len(rows) - len(with_m)))
-    print("★ 成员引用合计 **%d** 处 · ★ 其中**是官方成员名**的 **%d** 处 · 其余 %d 处（★ 自封装/参数名）"
-          % (tot_m, R["★_官方成员命中"], R["★_非官方/自封装名"]))
+    print(
+        "★ 工具 **%d** 条 ⇒ ★★ **有 COM 成员引用的 %d 条（%.1f%%）** · 无的 %d 条"
+        % (
+            len(rows),
+            len(with_m),
+            100.0 * len(with_m) / max(1, len(rows)),
+            len(rows) - len(with_m),
+        )
+    )
+    print(
+        "★ 成员引用合计 **%d** 处 · ★ 其中**是官方成员名**的 **%d** 处 · 其余 %d 处（★ 自封装/参数名）"
+        % (tot_m, R["★_官方成员命中"], R["★_非官方/自封装名"])
+    )
     print()
     print("★ 样例（前 12 条，★ 看意图 → 实现是否接上了）：")
     print("%-34s %-16s %s" % ("工具", "目标函数", "★ 抽到的 COM 成员"))
     print("-" * 116)
     for r in rows[:12]:
-        print("%-34s %-16s %s" % (r["tool"].replace("solidworks_", "")[:33], r["function"][:15],
-                                  ", ".join(r["com_members"][:4])[:56]))
+        print(
+            "%-34s %-16s %s"
+            % (
+                r["tool"].replace("solidworks_", "")[:33],
+                r["function"][:15],
+                ", ".join(r["com_members"][:4])[:56],
+            )
+        )
     print()
     print("★ 无成员引用的工具（前 16，★ 这些是纯数据/纯读表的）：")
-    print("   " + ", ".join(r["tool"].replace("solidworks_", "")
-                            for r in rows if not r["com_members"])[:400])
+    print(
+        "   "
+        + ", ".join(
+            r["tool"].replace("solidworks_", "") for r in rows if not r["com_members"]
+        )[:400]
+    )
     print()
     print("★ 产出:", OUT, "（%.1f s）" % (time.time() - started))
     return 0

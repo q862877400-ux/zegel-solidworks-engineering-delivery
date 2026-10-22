@@ -41,20 +41,23 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_part as P                                       # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 SW_FM_REF_SURFACE = 62
 
 
 def _sketch_ref(doc, idx):
     """★ 取第 idx 个草图的**引用**（★ 用来赋给 `Profile` / `Path`）。"""
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     if idx < len(names):
         try:
             return C.get_com_member(doc, "FeatureByName", names[idx])
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None
     return None
 
@@ -66,17 +69,31 @@ def _one(sw, tag, *, set_props):
         doc = C.new_document(sw, "part")
         #: \u8f6e\u5ed3\uff1a\u4e0a\u89c6\u9762\u7684\u5706
         P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                         0.0, 0.0, 0.0, 5.0 / 1000.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCircleByRadius",
+            0.0,
+            0.0,
+            0.0,
+            5.0 / 1000.0,
+        )
         P.end_sketch(doc)
         #: \u8def\u5f84\uff1a\u524d\u89c6\u9762\u4ece\u539f\u70b9\u6cbf X
         try:
             C.get_com_member(doc, "ClearSelection2", True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
-                         0.0, 0.0, 0.0, 40.0 / 1000.0, 0.0, 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateLine",
+            0.0,
+            0.0,
+            0.0,
+            40.0 / 1000.0,
+            0.0,
+            0.0,
+        )
         P.end_sketch(doc)
 
         fm = C.get_com_member(doc, "FeatureManager")
@@ -96,26 +113,29 @@ def _one(sw, tag, *, set_props):
                 if r is not None:
                     try:
                         C.set_com_member(data, attr, r)
-                    except Exception as exc:                              # noqa: BLE001
-                        refs[attr + "_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
+                    except Exception as exc:  # noqa: BLE001
+                        refs[attr + "_err"] = "%s: %s" % (
+                            type(exc).__name__,
+                            str(exc)[:70],
+                        )
             row["refs"] = refs
             #: \u2605 \u5e26\u4e0a AutoSelect\uff08\u2605 \u5b83\u5728\u6210\u5458\u8868
             #: \u91cc\uff09
             try:
                 C.set_com_member(data, "AutoSelect", True)
                 row["auto_select"] = True
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 row["auto_select"] = "ERR %s" % str(exc)[:60]
 
         try:
             feat = C.get_com_member(fm, "CreateFeature", data)
             row["create_feature"] = type(feat).__name__ if feat is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["create_feature_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(P.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -123,30 +143,45 @@ def _one(sw, tag, *, set_props):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u8bbe\u4e0a Profile/Path \u5c5e\u6027**\u540e\u518d CreateFeature",
-          "hypothesis": "\u4e0d\u662f\u201c\u65b0\u5efa vs \u6539\u52a8\u201d\uff08\u2605 \u90a3\u6709\u53cd\u4f8b\uff1a\u66f2\u9762-\u62c9\u4f38\u5c31\u662f\u65b0\u5efa\u800c\u6210\uff09\uff0c"
-                        "\u800c\u662f\u300c\u53c2\u6570/\u5c5e\u6027\u6ca1\u7ed9\u5168\u300d",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 \u8bbe Profile/Path \u540e CreateFeature", set_props=True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u4e0d\u8bbe\u5c5e\u6027", set_props=False))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u8bbe\u4e0a Profile/Path \u5c5e\u6027**\u540e\u518d CreateFeature",
+        "hypothesis": "\u4e0d\u662f\u201c\u65b0\u5efa vs \u6539\u52a8\u201d\uff08\u2605 \u90a3\u6709\u53cd\u4f8b\uff1a\u66f2\u9762-\u62c9\u4f38\u5c31\u662f\u65b0\u5efa\u800c\u6210\uff09\uff0c"
+        "\u800c\u662f\u300c\u53c2\u6570/\u5c5e\u6027\u6ca1\u7ed9\u5168\u300d",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(sw, "\u2605 \u8bbe Profile/Path \u540e CreateFeature", set_props=True)
+    )
+    ev["cases"].append(
+        _one(sw, "\u5bf9\u7167\uff1a\u4e0d\u8bbe\u5c5e\u6027", set_props=False)
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "hypothesis_supported" if ev["passed"] else "hypothesis_rejected"
     p = R / "output" / "sweep-set-props-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
         print("  %-32s ok=%-6s data=%s" % (c.get("tag"), c.get("ok"), c.get("data")))
-        print("        refs=%s  CF=%-9s new=%s" % (c.get("refs"), c.get("create_feature"), c.get("new")))
+        print(
+            "        refs=%s  CF=%-9s new=%s"
+            % (c.get("refs"), c.get("create_feature"), c.get("new"))
+        )
         if c.get("create_feature_err"):
             print("        CF_ERR=%s" % str(c["create_feature_err"])[:110])
         if c.get("err"):

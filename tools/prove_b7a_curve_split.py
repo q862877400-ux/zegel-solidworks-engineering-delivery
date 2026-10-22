@@ -37,13 +37,13 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_curve_and_split as M                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_curve_and_split as M  # noqa: E402
 
 #: ★ 中转：COM 实体放这里（★ **不进 JSON**）
 _LAST_ENTITY = []
-import scripts.sw_sketch_primitives as SP                            # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 
 
 def _solid(doc, depth=0.02):
@@ -59,11 +59,14 @@ def _solid(doc, depth=0.02):
             rets.append(repr(r)[:40])
             if r:
                 break
-        except Exception as exc:                                         # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rets.append("%s: %s" % (type(exc).__name__, str(exc)[:60]))
     after = P.feature_names(doc) or []
     added = [n for n in after if n not in before]
-    return any(("凸台" in n) or ("拉伸" in n) for n in added), {"returns": rets, "added": added}
+    return any(("凸台" in n) or ("拉伸" in n) for n in added), {
+        "returns": rets,
+        "added": added,
+    }
 
 
 def _pick_face(doc, idx=0, mark=0):
@@ -77,13 +80,19 @@ def _pick_face(doc, idx=0, mark=0):
             return False, "面不够"
         try:
             C.get_com_member(doc, "ClearSelection2", True)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         ok = bool(P._select_com_object(fs[idx], append=False, mark=int(mark)))
         try:
-            n = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                # noqa: BLE001
+            n = int(
+                C.get_com_member(
+                    C.get_com_member(doc, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             n = -1
         #: ★★ 2026-10-03（轮 481）**不要把 COM 对象放进结果** ——
         #:   ⚠ 我第一版这里写了 `"entity": fs[idx]` ⇒ ★ 最后的 `json.dumps` 报
@@ -95,7 +104,7 @@ def _pick_face(doc, idx=0, mark=0):
         #:   ⇒ ★ 正解：★ 实体走**模块级中转**（`_LAST_ENTITY`），★ **不进 JSON** ✓
         _LAST_ENTITY.append(fs[idx])
         return ok, {"face": idx, "mark": int(mark), "sel": n, "n_faces": len(fs)}
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:70])
 
 
@@ -107,7 +116,7 @@ def _one(sw, zh, fn):
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -115,14 +124,16 @@ def _one(sw, zh, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def _case_curve(doc):
     """★ 通过参考点的曲线：★ **零前置**（★ 只要 3 个点）。"""
-    return M.insert_curve_through_points(doc, [[0.0, 0.0, 0.0], [20.0, 0.0, 0.0], [40.0, 10.0, 0.0]])
+    return M.insert_curve_through_points(
+        doc, [[0.0, 0.0, 0.0], [20.0, 0.0, 0.0], [40.0, 10.0, 0.0]]
+    )
 
 
 def _case_split_project(doc):
@@ -134,9 +145,13 @@ def _case_split_project(doc):
         P.start_sketch(doc)
         SP.sketch_3point_corner_rectangle(doc, -5, -5, 5, -5, 5, 5)
         P.end_sketch(doc)
-    except Exception as exc:                                             # noqa: BLE001
-        return {"ok": False, "op": "split_line_project", "solid": built,
-                "err": "开草图失败：%s" % str(exc)[:110]}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "op": "split_line_project",
+            "solid": built,
+            "err": "开草图失败：%s" % str(exc)[:110],
+        }
     r = M.insert_split_line_project(doc, True, False)
     r["solid"] = built
     r["solid_info"] = info
@@ -177,10 +192,12 @@ def _case_mate(doc):
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B7-a 分割线/曲线/配合参考逐个真机跑（specs/201-toolbar-gaps）",
-          "judge": "特征树叶子名增量（sw_part.feature_names）",
-          "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B7-a 分割线/曲线/配合参考逐个真机跑（specs/201-toolbar-gaps）",
+        "judge": "特征树叶子名增量（sw_part.feature_names）",
+        "items": [],
+    }
     ev["items"].append(_one(sw, "通过参考点的曲线", _case_curve))
     ev["items"].append(_one(sw, "分割线（投影）", _case_split_project))
     ev["items"].append(_one(sw, "分割线（轮廓）", _case_split_sil))
@@ -189,11 +206,21 @@ def main() -> int:
     ev["total"] = len(ev["items"])
     p = R / "output" / "b7a-curve-split-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["total"]))
     for i in ev["items"]:
-        print("  %-16s %-4s %-30s \u65b0\u589e=%s" % (i.get("zh"), i.get("verdict"),
-                                                     i.get("verified_by") or "", i.get("new_features")))
+        print(
+            "  %-16s %-4s %-30s \u65b0\u589e=%s"
+            % (
+                i.get("zh"),
+                i.get("verdict"),
+                i.get("verified_by") or "",
+                i.get("new_features"),
+            )
+        )
         if i.get("err"):
             print("        err=%s" % str(i["err"])[:94])
     print("  \u4ea7\u7269\uff1a%s" % p)

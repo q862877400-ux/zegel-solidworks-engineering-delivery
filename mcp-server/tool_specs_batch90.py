@@ -1,4 +1,5 @@
 """★ 批次 90：Costing **写侧**最后 3 个（批量 / 加价 / 自定义成本）—— ★ C 类勘探后的收尾批。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_costing.py`（`set_lot_size` / `set_markup` / `assign_custom_cost`
@@ -34,39 +35,54 @@ SPECS_BATCH90 = [
     ToolSpec(
         name="solidworks_costing_set_lot_size",
         title="Set the Costing Lot Size (batch quantity)",
-        module="sw_costing", function="set_lot_size",
+        module="sw_costing",
+        function="set_lot_size",
         inject="cost_analysis",
         params=[
-            Param("lot_size", int, description="批量大小（**件数** —— ★ 是计数、不是长度，故不加 `_mm`）。"),
+            Param(
+                "lot_size",
+                int,
+                description="批量大小（**件数** —— ★ 是计数、不是长度，故不加 `_mm`）。",
+            ),
         ],
         doc="设成本分析的**批量大小**。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-            "★ 真源是**本仓** `scripts/sw_costing.py:292-297`，其 docstring 逐字标注"
-            "「⚑ 官方是**属性**（`set_LotSize`），不是方法」⇒ ★ 本工具走**属性写**那条路 ✓。"
-            "★ 注入键 `cost_analysis` 给的是该零件的**成本分析对象**"
-            "（取法 `cost_part` → `GetCostAnalysis`，不是猜的）✓ ⚠ **未在本机实测**（铁律 2）。",
+        "★ 真源是**本仓** `scripts/sw_costing.py:292-297`，其 docstring 逐字标注"
+        "「⚑ 官方是**属性**（`set_LotSize`），不是方法」⇒ ★ 本工具走**属性写**那条路 ✓。"
+        "★ 注入键 `cost_analysis` 给的是该零件的**成本分析对象**"
+        "（取法 `cost_part` → `GetCostAnalysis`，不是猜的）✓ ⚠ **未在本机实测**（铁律 2）。",
     ),
     ToolSpec(
         name="solidworks_costing_set_markup",
         title="Set the Costing Markup (type and percent)",
-        module="sw_costing", function="set_markup",
+        module="sw_costing",
+        function="set_markup",
         inject="cost_analysis",
         params=[
-            Param("markup_type", int, default=None,
-                  description="加价类型（`System.int`）。⚠ **取值两套官方源都查不到** ——"
-                              "★ 本工具**不猜**、原样透传。"),
-            Param("markup_percent", float, default=None,
-                  description="加价百分比（★ 是**比例量**、无量纲 ⇒ 不加 `_mm`/`_deg`）。"),
+            Param(
+                "markup_type",
+                int,
+                default=None,
+                description="加价类型（`System.int`）。⚠ **取值两套官方源都查不到** ——"
+                "★ 本工具**不猜**、原样透传。",
+            ),
+            Param(
+                "markup_percent",
+                float,
+                default=None,
+                description="加价百分比（★ 是**比例量**、无量纲 ⇒ 不加 `_mm`/`_deg`）。",
+            ),
         ],
         doc="设成本分析的**加价**（类型 + 百分比）。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-            "★ 真源是**本仓** `scripts/sw_costing.py:300-...`，其 docstring 逐字标注"
-            "「⚑ `MarkUpType` / `MarkUpPercent` 都是**属性**」且"
-            "「⚠ `MarkUpType` 的取值（按成本/按价格/按数量？）**两套源都查不到**」⇒ ★ 如实照抄，不编 ✓ "
-            "★ 两个参数都有默认值 ⇒ **只传一个也行**（未传的那个走函数默认）✓ ⚠ **未在本机实测**（铁律 2）。",
+        "★ 真源是**本仓** `scripts/sw_costing.py:300-...`，其 docstring 逐字标注"
+        "「⚑ `MarkUpType` / `MarkUpPercent` 都是**属性**」且"
+        "「⚠ `MarkUpType` 的取值（按成本/按价格/按数量？）**两套源都查不到**」⇒ ★ 如实照抄，不编 ✓ "
+        "★ 两个参数都有默认值 ⇒ **只传一个也行**（未传的那个走函数默认）✓ ⚠ **未在本机实测**（铁律 2）。",
     ),
     ToolSpec(
         name="solidworks_costing_assign_custom_cost",
         title="Assign a Custom Cost to One Cost Body",
-        module="sw_costing", function="assign_custom_cost",
+        module="sw_costing",
+        function="assign_custom_cost",
         inject="cost_body",
         #: ★★ `body_name` 由**解析器消费**（`resolve_cost_body` 读它来决定注哪个实体）
         #:   ⇒ ★ `param_alias={名字: None}` —— 即 `tool_registry.py:511-513` 那条机制
@@ -74,17 +90,25 @@ SPECS_BATCH90 = [
         #:   ★ 不这么写就会被 `check_param_binding` 当场抓到（本会话已踩两次）✓
         param_alias={"body_name": None},
         params=[
-            Param("amount", float, description="自定义成本金额（★ 数值；★ 单位随文档 ——"
-                                                "本工具**不换算**，如实透传）。"),
-            Param("body_name", str, default="",
-                  description="★ 成本实体名。**留空**时：清单长度 == 1 就用那一个；"
-                              "0 个或 **>1 个 ⇒ 报错并要求点名**（★ 本工具**不替你猜**）✓"),
+            Param(
+                "amount",
+                float,
+                description="自定义成本金额（★ 数值；★ 单位随文档 ——"
+                "本工具**不换算**，如实透传）。",
+            ),
+            Param(
+                "body_name",
+                str,
+                default="",
+                description="★ 成本实体名。**留空**时：清单长度 == 1 就用那一个；"
+                "0 个或 **>1 个 ⇒ 报错并要求点名**（★ 本工具**不替你猜**）✓",
+            ),
         ],
         doc="给**一个成本实体**指定自定义成本。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-            "★ 真源是**本仓** `scripts/sw_costing.py:439-442`（`_checked(cost_body, "
-            "\"AssignCustomCost\", float(amount))`），其 docstring 逐字标注"
-            "「⚠ 与哪些费用项相加/相抵，**官方无说明**」⇒ ★ 如实照抄，不替官方解释 ✓ "
-            "★ 改完通常要 `solidworks_costing_update_cost_for_all_bodies` 让成本刷新 ✓ "
-            "⚠ **未在本机实测**（铁律 2）。",
+        "★ 真源是**本仓** `scripts/sw_costing.py:439-442`（`_checked(cost_body, "
+        '"AssignCustomCost", float(amount))`），其 docstring 逐字标注'
+        "「⚠ 与哪些费用项相加/相抵，**官方无说明**」⇒ ★ 如实照抄，不替官方解释 ✓ "
+        "★ 改完通常要 `solidworks_costing_update_cost_for_all_bodies` 让成本刷新 ✓ "
+        "⚠ **未在本机实测**（铁律 2）。",
     ),
 ]

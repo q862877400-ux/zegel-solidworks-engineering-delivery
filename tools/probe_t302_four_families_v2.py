@@ -57,6 +57,7 @@ PROFILES = Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles")
 def _counts(model) -> tuple:
     """★ 几何读数：★ (特征数, 实体数)。"""
     from sw_connect import get_com_member
+
     nf = nb = None
     try:
         f = get_com_member(model, "FirstFeature")
@@ -66,11 +67,11 @@ def _counts(model) -> tuple:
             guard += 1
             f = get_com_member(f, "GetNextFeature")
         nf = n
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         nf = None
     try:
         nb = len(list(get_com_member(model, "GetBodies2", 0, False) or []))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         nb = None
     return nf, nb
 
@@ -102,7 +103,7 @@ def _run(label: str, model, call) -> dict:
         r["实体增量"] = db
         r["★_ok"] = bool((df or 0) > 0 or (db or 0) > 0)
         r["★_错误类别"] = "（★ 没报错）"
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         s = "%s: %s" % (type(exc).__name__, str(exc))
         r["异常"] = s[:220]
         r["★_错误类别"] = _err_kind(s)
@@ -111,40 +112,67 @@ def _run(label: str, model, call) -> dict:
 
 
 def main() -> int:
-    from sw_connect import (connect_solidworks, get_com_member, new_document,
-                            create_empty_dispatch_variant)
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        create_empty_dispatch_variant,
+    )
     import sw_part as P
     import sw_sheet_metal as SM
     import sw_weldment as W
 
     app, _ = connect_solidworks(visible=True)
     rows: list = []
-    VARIANT_NONE = create_empty_dispatch_variant()      #: ★ 修 ②：NULL 要包 VARIANT ✓
+    VARIANT_NONE = create_empty_dispatch_variant()  #: ★ 修 ②：NULL 要包 VARIANT ✓
 
     #: ── ① 钣金角撑板：★ `CreateDefinition(swFmSMGusset=118)` + `AccessSelections` ──
     try:
         model = new_document(app, "part")
         with P.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
-            for a, b in (((-0.06, -0.04), (0.06, -0.04)), ((0.06, -0.04), (0.06, 0.04)),
-                         ((0.06, 0.04), (-0.06, 0.04)), ((-0.06, 0.04), (-0.06, -0.04))):
+            for a, b in (
+                ((-0.06, -0.04), (0.06, -0.04)),
+                ((0.06, -0.04), (0.06, 0.04)),
+                ((0.06, 0.04), (-0.06, 0.04)),
+                ((-0.06, 0.04), (-0.06, -0.04)),
+            ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
         P.extrude_boss(model, sk, 2.0)
-        SM.create_base_flange(model, sk, SM.BaseFlangeSpec(thickness=2.0,
-                                                           bend_radius=1.0, depth=20.0))
-        rows.append({"项": "① 钣金基体法兰（★ 前置）", "★_ok": True, "返回": "ok",
-                     "★_错误类别": "（★ 没报错）"})
+        SM.create_base_flange(
+            model, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
+        )
+        rows.append(
+            {
+                "项": "① 钣金基体法兰（★ 前置）",
+                "★_ok": True,
+                "返回": "ok",
+                "★_错误类别": "（★ 没报错）",
+            }
+        )
         fm = get_com_member(model, "FeatureManager")
-        SWFM_SM_GUSSET = 118        #: ★ 来自出厂反射（★ 事实 43：数值要查反射）✓
-        rows.append(_run(
-            "① CreateDefinition(swFmSMGusset=118) + AccessSelections(model, VARIANT_NONE)",
-            model,
-            lambda: get_com_member(
-                get_com_member(fm, "CreateDefinition", SWFM_SM_GUSSET),
-                "AccessSelections", model, VARIANT_NONE)))
-    except Exception as exc:                                              # noqa: BLE001
-        rows.append({"项": "① 钣金角撑板（★ 脚手架失败）", "★_ok": None,
-                     "异常": str(exc)[:200], "★_错误类别": "★ 脚手架"})
+        SWFM_SM_GUSSET = 118  #: ★ 来自出厂反射（★ 事实 43：数值要查反射）✓
+        rows.append(
+            _run(
+                "① CreateDefinition(swFmSMGusset=118) + AccessSelections(model, VARIANT_NONE)",
+                model,
+                lambda: get_com_member(
+                    get_com_member(fm, "CreateDefinition", SWFM_SM_GUSSET),
+                    "AccessSelections",
+                    model,
+                    VARIANT_NONE,
+                ),
+            )
+        )
+    except Exception as exc:  # noqa: BLE001
+        rows.append(
+            {
+                "项": "① 钣金角撑板（★ 脚手架失败）",
+                "★_ok": None,
+                "异常": str(exc)[:200],
+                "★_错误类别": "★ 脚手架",
+            }
+        )
 
     #: ── ② 焊件那三个 ─────────────────────────────────────────────────────
     try:
@@ -160,6 +188,7 @@ def main() -> int:
         #: `from scripts.sw_weldment import create_structural_member_from_sketch`（★ **
         #: 带 `scripts.` 前缀**）✓
         from scripts import sw_weldment as _W
+
         prof = PROFILES / "ansi inch" / "rectangular tube.sldlfp"
         if not prof.is_file():
             raise RuntimeError("型材文件不在：%s" % prof)
@@ -173,11 +202,23 @@ def main() -> int:
         #:   ★★★ **⇒ 而那正是 AGENTS.md 记的那条纪律**：
         #:     「★ **写探针验能力时：按 `ToolSpec` 的契约调，别手调内部实现**」✓
         _W.create_structural_member_from_sketch(model, str(sk), str(prof))
-        rows.append({"项": "② 焊件结构构件（★ 前置 · 用包装版）", "★_ok": True,
-                     "返回": "ok", "★_错误类别": "（★ 没报错）"})
-    except Exception as exc:                                              # noqa: BLE001
-        rows.append({"项": "② 焊件结构构件（★ 前置）", "★_ok": False,
-                     "异常": str(exc)[:200], "★_错误类别": "★ 脚手架"})
+        rows.append(
+            {
+                "项": "② 焊件结构构件（★ 前置 · 用包装版）",
+                "★_ok": True,
+                "返回": "ok",
+                "★_错误类别": "（★ 没报错）",
+            }
+        )
+    except Exception as exc:  # noqa: BLE001
+        rows.append(
+            {
+                "项": "② 焊件结构构件（★ 前置）",
+                "★_ok": False,
+                "异常": str(exc)[:200],
+                "★_错误类别": "★ 脚手架",
+            }
+        )
         model = None
 
     if model is not None:
@@ -185,26 +226,82 @@ def main() -> int:
         #: ★★ 修 ④：★ **显式按官方签名传参**（★ 而不是 0 参调用 —— 那会回 bound method）
         #: ✓
         #: ★★★ 而**是否选对了面**先不管 —— ★ **本探针要判的是"它报哪一类错"** ✓
-        rows.append(_run(
-            "② 顶端盖 InsertEndCapFeature3（★ 10 参）", model,
-            lambda: get_com_member(fm, "InsertEndCapFeature3",
-                                   0.002, True, True, 0.0, 1.0, 0.0, True, 0.0, False, 1)))
-        rows.append(_run(
-            "② 角撑板 InsertGussetFeature3（★ 20 参）", model,
-            lambda: get_com_member(fm, "InsertGussetFeature3",
-                                   0.002, 0, 0, False, 0.002, 0.002, 0.0, 0.0, 0.002, False,
-                                   0.0, 0, False, False, False, 0.0, 0.0, 0.0, False, False)))
-        rows.append(_run(
-            "② 裁剪延伸 InsertWeldmentTrimFeature2（★ 5 参）", model,
-            lambda: get_com_member(fm, "InsertWeldmentTrimFeature2",
-                                   0, 0, 0.0, VARIANT_NONE, VARIANT_NONE)))
+        rows.append(
+            _run(
+                "② 顶端盖 InsertEndCapFeature3（★ 10 参）",
+                model,
+                lambda: get_com_member(
+                    fm,
+                    "InsertEndCapFeature3",
+                    0.002,
+                    True,
+                    True,
+                    0.0,
+                    1.0,
+                    0.0,
+                    True,
+                    0.0,
+                    False,
+                    1,
+                ),
+            )
+        )
+        rows.append(
+            _run(
+                "② 角撑板 InsertGussetFeature3（★ 20 参）",
+                model,
+                lambda: get_com_member(
+                    fm,
+                    "InsertGussetFeature3",
+                    0.002,
+                    0,
+                    0,
+                    False,
+                    0.002,
+                    0.002,
+                    0.0,
+                    0.0,
+                    0.002,
+                    False,
+                    0.0,
+                    0,
+                    False,
+                    False,
+                    False,
+                    0.0,
+                    0.0,
+                    0.0,
+                    False,
+                    False,
+                ),
+            )
+        )
+        rows.append(
+            _run(
+                "② 裁剪延伸 InsertWeldmentTrimFeature2（★ 5 参）",
+                model,
+                lambda: get_com_member(
+                    fm,
+                    "InsertWeldmentTrimFeature2",
+                    0,
+                    0,
+                    0.0,
+                    VARIANT_NONE,
+                    VARIANT_NONE,
+                ),
+            )
+        )
 
-    R = {"★_目的": "T302 第二版：★ 按官方签名逐参试那四个「无 IAccessSelections」族",
-         "★_核心判据": "★ 区分「★ 指针族（0x80010105）」与「★ 我的实参不对（-2147352561）」—— "
-                       "★ 两者**长得像但含义相反**（★ 事实 517）",
-         "★_第一版": "★ 全败在脚手架（★ 见 output/t302-four-families-findings.md）",
-         "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_目的": "T302 第二版：★ 按官方签名逐参试那四个「无 IAccessSelections」族",
+        "★_核心判据": "★ 区分「★ 指针族（0x80010105）」与「★ 我的实参不对（-2147352561）」—— "
+        "★ 两者**长得像但含义相反**（★ 事实 517）",
+        "★_第一版": "★ 全败在脚手架（★ 见 output/t302-four-families-findings.md）",
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
         print("★ %-58s ok=%-6s" % (r["项"], r.get("★_ok")))
         if r.get("★_错误类别"):
@@ -212,9 +309,15 @@ def main() -> int:
         if r.get("异常"):
             print("     异常: %s" % str(r["异常"])[:150])
         if r.get("调用前"):
-            print("     特征 %s→%s · 实体 %s→%s" % (
-                r["调用前"]["特征数"], (r.get("调用后") or {}).get("特征数"),
-                r["调用前"]["实体数"], (r.get("调用后") or {}).get("实体数")))
+            print(
+                "     特征 %s→%s · 实体 %s→%s"
+                % (
+                    r["调用前"]["特征数"],
+                    (r.get("调用后") or {}).get("特征数"),
+                    r["调用前"]["实体数"],
+                    (r.get("调用后") or {}).get("实体数"),
+                )
+            )
     print("★ wrote", OUT)
     return 0
 

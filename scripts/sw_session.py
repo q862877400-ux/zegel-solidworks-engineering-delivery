@@ -5,15 +5,42 @@ SolidWorks 友好会话 API
 “打开/新建/保存/导出/关闭”等常见流程。底层函数仍保留在 sw_connect.py、
 sw_part.py、sw_export.py 等模块中，便于精细控制。
 """
+
 from pathlib import Path
 import os
 
 try:
-    from .sw_connect import close_owned_solidworks, connect_solidworks, get_com_member, new_document, open_document, save_document
-    from .sw_export import export_to_dxf, export_to_iges, export_to_pdf, export_to_stl, export_to_step
+    from .sw_connect import (
+        close_owned_solidworks,
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        open_document,
+        save_document,
+    )
+    from .sw_export import (
+        export_to_dxf,
+        export_to_iges,
+        export_to_pdf,
+        export_to_stl,
+        export_to_step,
+    )
 except ImportError:
-    from sw_connect import close_owned_solidworks, connect_solidworks, get_com_member, new_document, open_document, save_document
-    from sw_export import export_to_dxf, export_to_iges, export_to_pdf, export_to_stl, export_to_step
+    from sw_connect import (
+        close_owned_solidworks,
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        open_document,
+        save_document,
+    )
+    from sw_export import (
+        export_to_dxf,
+        export_to_iges,
+        export_to_pdf,
+        export_to_stl,
+        export_to_step,
+    )
 
 
 EXPORTERS = {
@@ -69,7 +96,9 @@ class SolidWorksSession:
             doc_type: "part"、"assembly"、"drawing" 或常见扩展名。
             template_path: 指定模板路径；None 表示自动查找模板。
         """
-        self.model = new_document(self.sw, doc_type=doc_type, template_path=template_path)
+        self.model = new_document(
+            self.sw, doc_type=doc_type, template_path=template_path
+        )
         return self.model
 
     def new_part(self, template_path=None):
@@ -181,7 +210,10 @@ def session(version=None, wait_seconds=5, visible=True):
 
     参数同 SolidWorksSession。
     """
-    return SolidWorksSession(version=version, wait_seconds=wait_seconds, visible=visible)
+    return SolidWorksSession(
+        version=version, wait_seconds=wait_seconds, visible=visible
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -238,24 +270,34 @@ def undo_report(model, steps: int = 1) -> dict:
         return {"ok": False, "error": "steps 必须 ≥ 1（★ 收到 %r）" % steps}
     try:
         before_names = feature_names(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "stage": "read_before", "error": str(exc)[:120]}
     before = len(before_names)
     try:
         get_com_member(model, "EditUndo2", n)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "call", "steps": n,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "steps": n,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     try:
         after_names = feature_names(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "stage": "read_after", "steps": n, "error": str(exc)[:120]}
     after = len(after_names)
     gone = [x for x in before_names if x not in after_names]
-    return {"ok": after < before, "steps": n, "tree_before": before, "tree_after": after,
-            "removed_features": gone[-4:], "undone": after < before,
-            "★": "它回 void ⇒ 判据是**特征树真的退回了**（★ 规则 6）；"
-                 "★ 官方 1 参 · 反射 arity 1 · `EditUndo` 已 Obsolete"}
+    return {
+        "ok": after < before,
+        "steps": n,
+        "tree_before": before,
+        "tree_after": after,
+        "removed_features": gone[-4:],
+        "undone": after < before,
+        "★": "它回 void ⇒ 判据是**特征树真的退回了**（★ 规则 6）；"
+        "★ 官方 1 参 · 反射 arity 1 · `EditUndo` 已 Obsolete",
+    }
 
 
 # ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**重建**（三档 mode 一条工具）──────
@@ -321,8 +363,11 @@ def needs_rebuild_status(model) -> dict:
     if ext is None:
         raise RuntimeError("IModelDoc2.Extension 为 None ⇒ 读不到重建状态")
     raw = int(get_com_member(ext, "NeedsRebuild2") or 0)
-    return {"raw": raw, "state": NEEDS_REBUILD_STATES.get(raw, "unknown_%d" % raw),
-            "fully_rebuilt": raw == 0}
+    return {
+        "raw": raw,
+        "state": NEEDS_REBUILD_STATES.get(raw, "unknown_%d" % raw),
+        "fully_rebuilt": raw == 0,
+    }
 
 
 def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict:
@@ -344,18 +389,29 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
       ⇒ ★ 对未激活的文档调用**没有意义**（本函数不做「先激活」—— 那是调用方的事）。
     """
     out: dict = {
-        "ok": False, "mode": None, "entry_used": None, "returned": None,
-        "needs_rebuild_before": None, "needs_rebuild_after": None,
-        "state_before": None, "state_after": None,
-        "tree_before": None, "tree_after": None, "bbox_changed": None,
-        "bbox_before": None, "bbox_after": None, "bbox_comparable": None,
-        "top_only_applied": None, "error": None, "note": None,
+        "ok": False,
+        "mode": None,
+        "entry_used": None,
+        "returned": None,
+        "needs_rebuild_before": None,
+        "needs_rebuild_after": None,
+        "state_before": None,
+        "state_after": None,
+        "tree_before": None,
+        "tree_after": None,
+        "bbox_changed": None,
+        "bbox_before": None,
+        "bbox_after": None,
+        "bbox_comparable": None,
+        "top_only_applied": None,
+        "error": None,
+        "note": None,
         "★": "判据用**回读**（NeedsRebuild2 + 特征树 + 包围盒），**不用返回值** —— "
-             "`EditRebuild3` 是**方法**，当属性读会拿到 bound method（恒真）",
+        "`EditRebuild3` 是**方法**，当属性读会拿到 bound method（恒真）",
     }
     key = str(mode or "").strip().lower()
     if key not in REBUILD_MODES:
-        out["error"] = ("未知的 mode %r；合法：%s" % (mode, ", ".join(REBUILD_MODES)))
+        out["error"] = "未知的 mode %r；合法：%s" % (mode, ", ".join(REBUILD_MODES))
         return out
     if model is None:
         out["error"] = "model 为 None"
@@ -374,12 +430,15 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         """
         try:
             from sw_part import get_bounding_box
+
             bb = get_bounding_box(model)
             if not isinstance(bb, dict):
                 return None
-            return (tuple(round(float(v), 6) for v in bb["min"]),
-                    tuple(round(float(v), 6) for v in bb["max"]))
-        except Exception:                                      # noqa: BLE001
+            return (
+                tuple(round(float(v), 6) for v in bb["min"]),
+                tuple(round(float(v), 6) for v in bb["max"]),
+            )
+        except Exception:  # noqa: BLE001
             return None
 
     try:
@@ -387,7 +446,7 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         out["needs_rebuild_before"] = needs_rebuild_status(model)["raw"]
         out["tree_before"] = len(feature_names(model))
         bbox_before = _bbox_key()
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
 
@@ -395,7 +454,7 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         if key == "edit":
             out["entry_used"] = "IModelDoc2::EditRebuild3()"
             out["top_only_applied"] = False
-            out["returned"] = get_com_member(model, "EditRebuild3")        # ★ 真的调它
+            out["returned"] = get_com_member(model, "EditRebuild3")  # ★ 真的调它
         elif key == "force":
             out["entry_used"] = "IModelDoc2::ForceRebuild3(System.bool TopOnly)"
             out["top_only_applied"] = bool(top_only)
@@ -408,7 +467,7 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
             out["entry_used"] = "IModelDocExtension::ForceRebuildAll()"
             out["top_only_applied"] = False
             out["returned"] = get_com_member(ext, "ForceRebuildAll")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
 
@@ -417,29 +476,41 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
         out["state_after"] = needs_rebuild_status(model)["state"]
         out["tree_after"] = len(feature_names(model))
         bbox_after = _bbox_key()
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
 
-    out["bbox_changed"] = (bbox_before is not None and bbox_after is not None
-                           and bbox_before != bbox_after)
+    out["bbox_changed"] = (
+        bbox_before is not None and bbox_after is not None and bbox_before != bbox_after
+    )
     out["bbox_before"] = bbox_before
     out["bbox_after"] = bbox_after
     #: ★★ **`None`（读不到，判据不可用）与 `False`（读了、没变）必须分得开** ——
     #:   否则"读不到"会被当成"没变"（★ 那正是本函数第一版踩的坑）✓
     out["bbox_comparable"] = bbox_before is not None and bbox_after is not None
-    out["ok"] = (out["needs_rebuild_after"] == 0
-                 and out["tree_after"] == out["tree_before"]
-                 and (not out["bbox_changed"] if out["bbox_comparable"] else True))
+    out["ok"] = (
+        out["needs_rebuild_after"] == 0
+        and out["tree_after"] == out["tree_before"]
+        and (not out["bbox_changed"] if out["bbox_comparable"] else True)
+    )
     if not out["ok"]:
-        out["error"] = ("回读判据未过：needs_rebuild_after=%r（要 0）· tree %r→%r（要相等）· "
-                        "bbox_changed=%r（要 False）"
-                        % (out["needs_rebuild_after"], out["tree_before"], out["tree_after"],
-                           out["bbox_changed"]))
+        out["error"] = (
+            "回读判据未过：needs_rebuild_after=%r（要 0）· tree %r→%r（要相等）· "
+            "bbox_changed=%r（要 False）"
+            % (
+                out["needs_rebuild_after"],
+                out["tree_before"],
+                out["tree_after"],
+                out["bbox_changed"],
+            )
+        )
     elif not out["bbox_comparable"]:
-        out["note"] = ("★ 包围盒这一条**判据不可用**（读不到 —— 例如文档里没有实体）⇒ "
-                       "本轮只用「状态归零 + 特征树不变」两条，★ 如实记，**不拿没读到当没变**")
+        out["note"] = (
+            "★ 包围盒这一条**判据不可用**（读不到 —— 例如文档里没有实体）⇒ "
+            "本轮只用「状态归零 + 特征树不变」两条，★ 如实记，**不拿没读到当没变**"
+        )
     return out
+
 
 # ── 会话预检（规格 210 · B5-1/B5-2）─────────────────────────────────────
 # ★★ 来源：外部评审对「SolidWorks 自己写的文件拦不住」的判决 ——
@@ -468,7 +539,7 @@ def _norm_path(value) -> str:
         return ""
     try:
         return os.path.normcase(os.path.normpath(text))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return text.lower()
 
 
@@ -486,11 +557,11 @@ def open_documents(sw) -> dict:
     count = None
     try:
         count = int(get_com_member(sw, "GetDocumentCount") or 0)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         count = None
     try:
         raw = get_com_member(sw, "GetDocuments")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         raw = None
     if raw is None:
         problem = "GetDocuments 返回空 ⇒ ★ 无法确认会话里有哪些文档（★ 按铁律 5 记「查不到」）"
@@ -501,11 +572,11 @@ def open_documents(sw) -> dict:
                 continue
             try:
                 path = get_com_member(item, "GetPathName")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 path = ""
             try:
                 title = get_com_member(item, "GetTitle")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 title = ""
             #: ★★ **未保存标记**用官方成员读（★ 不是从窗口标题抠 `*`）：
             #: `IModelDoc2.GetSaveFlag` 的官方原文 = "Gets whether the document is curre
@@ -515,12 +586,16 @@ def open_documents(sw) -> dict:
             #: 进程是安全的）✓
             try:
                 dirty = bool(get_com_member(item, "GetSaveFlag"))
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 dirty = None
-            documents.append({"path": str(path or ""), "title": str(title or ""), "dirty": dirty})
+            documents.append(
+                {"path": str(path or ""), "title": str(title or ""), "dirty": dirty}
+            )
     if count is not None and documents and count != len(documents):
-        problem = ("★ 回读不一致：GetDocumentCount=%d 而 GetDocuments 给了 %d 个 "
-                   "⇒ 以**较大者**为准并如实报出 ✓" % (count, len(documents)))
+        problem = (
+            "★ 回读不一致：GetDocumentCount=%d 而 GetDocuments 给了 %d 个 "
+            "⇒ 以**较大者**为准并如实报出 ✓" % (count, len(documents))
+        )
     return {
         "count": count,
         "documents": documents,
@@ -533,7 +608,9 @@ def open_documents(sw) -> dict:
     }
 
 
-def classify_open_documents(docs, allowed_paths=(), *, allow_untitled: bool = False) -> tuple:
+def classify_open_documents(
+    docs, allowed_paths=(), *, allow_untitled: bool = False
+) -> tuple:
     """★ 把已打开的文档分成 **(我方的, 非我方的)** —— ★ 判据是路径归一化后是否在允许集里。
 
     :param docs: `open_documents()` 的 `documents`
@@ -542,7 +619,7 @@ def classify_open_documents(docs, allowed_paths=(), *, allow_untitled: bool = Fa
     """
     allowed = {_norm_path(p) for p in (allowed_paths or ()) if str(p or "").strip()}
     ours, foreign = [], []
-    for d in (docs or ()):
+    for d in docs or ():
         path = str((d or {}).get("path") or "")
         if not path:
             (ours if allow_untitled else foreign).append(d)
@@ -559,12 +636,21 @@ def precheck_session(sw, allowed_paths=(), *, allow_untitled: bool = False) -> d
     :returns: `{"documents": …, "ours": …, "foreign": …, "count_matches": …}`（★ 未拒绝时才有返回值）
     """
     snap = open_documents(sw)
-    ours, foreign = classify_open_documents(snap["documents"], allowed_paths,
-                                            allow_untitled=allow_untitled)
+    ours, foreign = classify_open_documents(
+        snap["documents"], allowed_paths, allow_untitled=allow_untitled
+    )
     if foreign:
-        listed = "; ".join(d.get("title") or d.get("path") or "(未命名)" for d in foreign[:5])
+        listed = "; ".join(
+            d.get("title") or d.get("path") or "(未命名)" for d in foreign[:5]
+        )
         raise ForeignDocumentError(
             "★ 会话里有 %d 个**不是我们打开的**文档 ⇒ 拒绝开始（★ 免得写到用户文件上）：%s"
-            % (len(foreign), listed))
-    return {"documents": snap["documents"], "ours": ours, "foreign": foreign,
-            "count_matches": snap["count_matches"], "readback_problem": snap["readback_problem"]}
+            % (len(foreign), listed)
+        )
+    return {
+        "documents": snap["documents"],
+        "ours": ours,
+        "foreign": foreign,
+        "count_matches": snap["count_matches"],
+        "readback_problem": snap["readback_problem"],
+    }

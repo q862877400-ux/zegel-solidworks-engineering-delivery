@@ -43,8 +43,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "linearpattern4-evidence.json"
 
@@ -56,14 +56,14 @@ def _g(o, n, *a):
 def _try(fn, *a):
     try:
         return {"ok": True, "ret": repr(fn(*a))[:90]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
 
 
 def _names(doc) -> list:
     try:
         return [str(x) for x in (P.feature_names(doc) or [])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -95,14 +95,26 @@ def main() -> int:
         R["被阵列特征"] = target
         if target:
             try:
-                _g(_g(doc, "Extension"), "SelectByID2", target, "BODYFEATURE",
-                   0, 0, 0, False, 0, None, 0)
-            except Exception:                                             # noqa: BLE001
+                _g(
+                    _g(doc, "Extension"),
+                    "SelectByID2",
+                    target,
+                    "BODYFEATURE",
+                    0,
+                    0,
+                    0,
+                    False,
+                    0,
+                    None,
+                    0,
+                )
+            except Exception:  # noqa: BLE001
                 pass
         try:
-            R["回读选中数"] = int(_g(_g(doc, "SelectionManager"),
-                                    "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                 # noqa: BLE001
+            R["回读选中数"] = int(
+                _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
+            )
+        except Exception:  # noqa: BLE001
             R["回读选中数"] = -1
         fm = _g(doc, "FeatureManager")
 
@@ -110,14 +122,31 @@ def main() -> int:
         for dname in ("", "D1@凸台-拉伸1@_probe_drawing_part.Part"):
             n0 = len(_names(doc))
             case = {"DName": dname or "（空）"}
-            case["调"] = _try(_g, fm, "FeatureLinearPattern4",
-                              2, 0.03, 1, 0.0,
-                              False, False,
-                              dname, dname,
-                              False, False,
-                              False, False, False, False,
-                              False, False, False, False,
-                              0.0, 0.0)
+            case["调"] = _try(
+                _g,
+                fm,
+                "FeatureLinearPattern4",
+                2,
+                0.03,
+                1,
+                0.0,
+                False,
+                False,
+                dname,
+                dname,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                False,
+                0.0,
+                0.0,
+            )
             n1 = len(_names(doc))
             case["后特征数"] = n1
             case["建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否"
@@ -126,25 +155,41 @@ def main() -> int:
             try:
                 _g(doc, "ClearSelection2", True)
                 if target:
-                    _g(_g(doc, "Extension"), "SelectByID2", target, "BODYFEATURE",
-                       0, 0, 0, False, 0, None, 0)
-            except Exception:                                             # noqa: BLE001
+                    _g(
+                        _g(doc, "Extension"),
+                        "SelectByID2",
+                        target,
+                        "BODYFEATURE",
+                        0,
+                        0,
+                        0,
+                        False,
+                        0,
+                        None,
+                        0,
+                    )
+            except Exception:  # noqa: BLE001
                 pass
     except SystemExit:
         pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     ok = [c for c in R["试法"] if str(c.get("建成", "")).startswith("★ 是")]
-    R["★★_结论"] = ("★ 有建成的一种 ⇒ 新入口可用" if ok
-                    else "★★ 两种都没建成 ⇒ **如实记「前置未打通」**（不硬换）")
+    R["★★_结论"] = (
+        "★ 有建成的一种 ⇒ 新入口可用"
+        if ok
+        else "★★ 两种都没建成 ⇒ **如实记「前置未打通」**（不硬换）"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

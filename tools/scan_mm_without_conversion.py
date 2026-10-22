@@ -1,4 +1,5 @@
 """★ 扫描：哪些工具声明了 `*_mm` 参数**却没有换算**（本缺陷的普查）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/scan_mm_without_conversion.py
@@ -24,7 +25,9 @@ MCP = ROOT / "mcp-server"
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★ 复用 `sw_connect.mm` 的那句 import —— 有它才说明这文件真的会换算
-MM_IMPORT = re.compile(r"from\s+scripts\.sw_connect\s+import[^\n]*\bmm\b|sw_connect\.mm\(")
+MM_IMPORT = re.compile(
+    r"from\s+scripts\.sw_connect\s+import[^\n]*\bmm\b|sw_connect\.mm\("
+)
 
 
 def main() -> int:
@@ -36,19 +39,32 @@ def main() -> int:
             continue
         has_derived = "derived_args" in text
         has_mm_call = bool(MM_IMPORT.search(text))
-        rows.append({"file": p.name, "mm_params": mm_params,
-                     "derived_args": has_derived, "uses_mm": has_mm_call,
-                     "suspect": (not has_derived) and (not has_mm_call)})
+        rows.append(
+            {
+                "file": p.name,
+                "mm_params": mm_params,
+                "derived_args": has_derived,
+                "uses_mm": has_mm_call,
+                "suspect": (not has_derived) and (not has_mm_call),
+            }
+        )
 
     suspects = [r for r in rows if r["suspect"]]
     print("★ 声明了 `*_mm` 的 tool_specs 文件: **%d** 个" % len(rows))
-    print("★★ 其中**既无 derived_args 也无 mm() 调用**（= 疑似不换算）: **%d** 个" % len(suspects))
+    print(
+        "★★ 其中**既无 derived_args 也无 mm() 调用**（= 疑似不换算）: **%d** 个"
+        % len(suspects)
+    )
     print()
     for r in suspects:
         print("  %-28s %s" % (r["file"], ", ".join(r["mm_params"])[:120]))
     print()
-    print("★ 本扫描「不算什么」：① `derived_args`/`mm()` 出现**不等于**那些 `_mm` 都被换算；")
-    print("   ② 反过来，命中只是**候选** —— 有些 `_mm` 参数的能力层本身就吃毫米（★ 例如")
+    print(
+        "★ 本扫描「不算什么」：① `derived_args`/`mm()` 出现**不等于**那些 `_mm` 都被换算；"
+    )
+    print(
+        "   ② 反过来，命中只是**候选** —— 有些 `_mm` 参数的能力层本身就吃毫米（★ 例如"
+    )
     print("      `sw_part.sketch_spline` 内部换算）⇒ ★ **要读那一条声明再判** ✓")
     return 0
 

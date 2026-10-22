@@ -1,4 +1,5 @@
 """★ 门禁：`docs/assumption-ledger.md` 的假设状态必须自洽，且未验证假设不得充当证据。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -24,7 +25,7 @@ import re
 import sys
 import pathlib
 
-sys.stdout.reconfigure(encoding="utf-8")          # 事实 58：管道下 GBK 会崩
+sys.stdout.reconfigure(encoding="utf-8")  # 事实 58：管道下 GBK 会崩
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 LEDGER = ROOT / "docs" / "assumption-ledger.md"
@@ -51,11 +52,22 @@ def parse_ledger(text: str) -> tuple[list[dict], list[str]]:
         if not m:
             #: ★ 只对「像表格行但不是合法行」的报错 —— 表格分隔行/表头不算
             if s.startswith("|") and "AS0" in s and "---" not in s:
-                problems.append("第 %d 行：表格行格式不合（应为 | AS000 | 内容 | 档位 | 状态 | 证据 |）" % lineno)
+                problems.append(
+                    "第 %d 行：表格行格式不合（应为 | AS000 | 内容 | 档位 | 状态 | 证据 |）"
+                    % lineno
+                )
             continue
         aid, body, tier, status, evidence = (g.strip() for g in m.groups())
-        rows.append({"id": aid, "body": body, "tier": tier,
-                     "status": status, "evidence": evidence, "line": lineno})
+        rows.append(
+            {
+                "id": aid,
+                "body": body,
+                "tier": tier,
+                "status": status,
+                "evidence": evidence,
+                "line": lineno,
+            }
+        )
     return rows, problems
 
 
@@ -70,14 +82,17 @@ def validate(rows: list[dict], problems: list[str]) -> list[str]:
         seen.add(aid)
         #: ① 状态必须在封闭词表内
         if status not in STATUSES:
-            out.append("%s：状态 %r 非法（只能取 %s）" % (aid, status, "/".join(STATUSES)))
+            out.append(
+                "%s：状态 %r 非法（只能取 %s）" % (aid, status, "/".join(STATUSES))
+            )
         #: ① 档位必须在封闭词表内
         if tier not in TIERS:
             out.append("%s：档位 %r 非法（只能取 %s）" % (aid, tier, "/".join(TIERS)))
         #: ② confirmed/refuted 必须带证据
         if status in ("confirmed", "refuted") and not _has_evidence(ev):
-            out.append("%s：状态是 %s 但**没有证据**（★ 「已验证」不能是空话）"
-                       % (aid, status))
+            out.append(
+                "%s：状态是 %s 但**没有证据**（★ 「已验证」不能是空话）" % (aid, status)
+            )
     return out
 
 
@@ -115,7 +130,8 @@ def check() -> list[str]:
                     problems.append(
                         "★ 能力 %s 的 evidence 引用了**未验证假设** %s "
                         "—— 未验证的假设不能当证据（★ 本门禁的核心判据）"
-                        % (c.get("id"), aid))
+                        % (c.get("id"), aid)
+                    )
     return problems
 
 
@@ -128,15 +144,21 @@ def selftest() -> bool:
     """
     cases = [
         ("非法状态", "| AS001 | 某假设 | 4-assumption | done | 证据 |", "状态"),
-        ("confirmed 无证据", "| AS002 | 某假设 | 3-measured | confirmed | - |", "没有证据"),
+        (
+            "confirmed 无证据",
+            "| AS002 | 某假设 | 3-measured | confirmed | - |",
+            "没有证据",
+        ),
         ("非法档位", "| AS003 | 某假设 | 9-猜的 | open | - |", "档位"),
     ]
     for name, line, expect in cases:
         rows, probs = parse_ledger(line)
         probs = validate(rows, probs)
         if not any(expect in p for p in probs):
-            print("★★ 负例自证失败：[%s] 没有被抓到（期望含 %r，实得 %r）"
-                  % (name, expect, probs))
+            print(
+                "★★ 负例自证失败：[%s] 没有被抓到（期望含 %r，实得 %r）"
+                % (name, expect, probs)
+            )
             return False
     #: ④ 正例：合规行必须不报
     rows, probs = parse_ledger("| AS900 | 某假设 | 4-assumption | open | - |")

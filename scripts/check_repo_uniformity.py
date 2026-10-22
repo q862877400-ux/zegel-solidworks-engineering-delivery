@@ -19,7 +19,7 @@
 #      https://github.com/ludo-technologies/pyscn
 #      → 用 `pyscn analyze --select clones` 机械执行
 #   ③ 死代码 / 循环依赖 / 分层违规 / 复杂度 —— 同样 **pyscn**
-# ④ 本仓契约 —— `AGENTS.md`（六铁律 + A1–A10）· `docs/union-conventions.md`（五统一 + 
+# ④ 本仓契约 —— `AGENTS.md`（六铁律 + A1–A10）· `docs/union-conventions.md`（五统一 +
 #   R1–R14）
 #      · 来源块（AGENTS.md §十八）· 顶层白名单（AGENTS.md 铁律 3）
 #
@@ -33,6 +33,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -43,6 +44,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -65,8 +68,12 @@ def _tool(name: str) -> list[str] | None:
     """返回调用该工具的命令前缀；不可用则 None。"""
     if shutil.which(name):
         return [name]
-    if subprocess.run([sys.executable, "-m", name, "--version"],
-                      capture_output=True).returncode == 0:
+    if (
+        subprocess.run(
+            [sys.executable, "-m", name, "--version"], capture_output=True
+        ).returncode
+        == 0
+    ):
         return [sys.executable, "-m", name]
     return None
 
@@ -82,10 +89,23 @@ def _ruff_counts() -> tuple[int, dict[str, int], str]:
     cmd = _tool("ruff")
     if cmd is None:
         return -1, {}, "ruff 未安装（pip install ruff）⇒ 无法执行命名/导入体检"
-    p = subprocess.run(cmd + ["check", *SCAN_DIRS, "--select", RUFF_SELECT,
-                              "--output-format=concise", "--no-cache"],
-                       capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", cwd=str(R), stdin=subprocess.DEVNULL)
+    p = subprocess.run(
+        cmd
+        + [
+            "check",
+            *SCAN_DIRS,
+            "--select",
+            RUFF_SELECT,
+            "--output-format=concise",
+            "--no-cache",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(R),
+        stdin=subprocess.DEVNULL,
+    )
     out = (p.stdout or "") + (p.stderr or "")
     per: dict[str, int] = {}
     for m in re.finditer(r"\b([A-Z]{1,4}\d{3})\b", out):
@@ -94,19 +114,64 @@ def _ruff_counts() -> tuple[int, dict[str, int], str]:
     return total, per, ""
 
 
+def _canonical_copy(dst: Path) -> int:
+    """把 `SCAN_DIRS` 下的每个 `.py` 用 `ast.unparse` **规范化**后写到 `dst`；⇒ 文件数。
+
+    ★★ 2026-10-22（判据修正）：pyscn 按**行块**比对 ⇒ 它同时量到了
+    **布局**与**重复**两件事，
+      而只有后者是我们要的。第 17/18 轮实测：
+        · 只格式化 **1 个文件** ⇒ ② 2,491 → 2,502（+11）
+        · 全量格式化 `scripts/` ⇒ ② 2,491 → **2,685（+194）**
+      两次都是**纯布局变化、零语义变化** ⇒ 那是**假阳性** ✗
+    ★ 修法（不是放宽判据）：喂给 pyscn 的是 **AST 还原出来的规范形式**（`ast.unparse`）——
+      注释、空行、引号风格、断行位置都被抹平 ⇒ **量到的只剩「代码像不像」** ✓
+    ★ 实测（2026-10-22）：未格式化树 ⇒ 184 组；**格式化后**树 ⇒ **184 组（完全一致）** ✓
+      ⇒ 这才叫「布局无关」；★ 而且规范化是**幂等**的（规范化两次仍 184）。
+    """
+    n = 0
+    for rel in SCAN_DIRS:
+        for f in (R / rel).rglob("*.py"):
+            s = str(f).replace("\\", "/")
+            if any(h in s for h in EXCLUDE_HINT):
+                continue
+            try:
+                canon = ast.unparse(
+                    ast.parse(f.read_text(encoding="utf-8", errors="replace"))
+                )
+            except (OSError, SyntaxError, ValueError):
+                continue
+            out = dst / f.relative_to(R)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(canon + "\n", encoding="utf-8")
+            n += 1
+    return n
+
+
 def _pyscn_clones() -> tuple[int, dict[str, int], str]:
-    """② 跑 pyscn 克隆检测，返回（克隆组数, 按类型计数, 错误说明）。"""
+    """② 在**规范化副本**上跑 pyscn 克隆检测。
+
+    ⇒（克隆组数, 按类型计数, 错误说明）。"""
     cmd = _tool("pyscn")
     if cmd is None:
         return -1, {}, "pyscn 未安装（pip install pyscn）⇒ 无法执行重复代码体检"
-    p = subprocess.run(cmd + ["analyze", "--select", "clones",
-                              "--json", "--output", "-", *SCAN_DIRS],
-                       capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", cwd=str(R), stdin=subprocess.DEVNULL)
+    with tempfile.TemporaryDirectory(prefix="uni-pyscn-") as td:
+        dst = Path(td)
+        if _canonical_copy(dst) == 0:
+            return -1, {}, "规范化副本为空（SCAN_DIRS 没有 .py？）"
+        p = subprocess.run(
+            cmd
+            + ["analyze", "--select", "clones", "--json", "--output", "-", str(dst)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(R),
+            stdin=subprocess.DEVNULL,
+        )
     raw = p.stdout or ""
     try:
         d = json.JSONDecoder().raw_decode(raw, 0)[0]["clone"]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         bad = (raw or (p.stderr or ""))[:120]
         return -1, {}, f"pyscn 输出无法解析（{bad}）"
     stats = d.get("statistics") or {}
@@ -136,8 +201,11 @@ def _dup_filenames() -> list[str]:
             if any(k in s for k in EXCLUDE_HINT):
                 continue
             seen.setdefault(f.name, []).append(f.relative_to(R).as_posix())
-    return ["{} ⇒ {}".format(n, " · ".join(v)) for n, v in seen.items()
-            if len(v) > 1 and n != "__init__.py"]
+    return [
+        "{} ⇒ {}".format(n, " · ".join(v))
+        for n, v in seen.items()
+        if len(v) > 1 and n != "__init__.py"
+    ]
 
 
 #: ★★ ⑤ 跨文件「同函数体」—— 业主指令的头号关切：「同一个功能多个函数重复实现」。
@@ -151,10 +219,10 @@ _TOKEN = "@@ID@@"
 class _NormNames(ast.NodeTransformer):
     """把 Name / arg 全换成占位符（让「变量名不同、逻辑相同」也归到一组）。"""
 
-    def visit_Name(self, node: ast.Name) -> ast.AST:                      # noqa: N802
+    def visit_Name(self, node: ast.Name) -> ast.AST:  # noqa: N802
         return ast.copy_location(ast.Name(id=_TOKEN, ctx=node.ctx), node)
 
-    def visit_arg(self, node: ast.arg) -> ast.AST:                        # noqa: N802
+    def visit_arg(self, node: ast.arg) -> ast.AST:  # noqa: N802
         node.arg = _TOKEN
         return node
 
@@ -164,16 +232,18 @@ def _body_hash(node: ast.AST) -> str:
     try:
         body = list(getattr(node, "body", []))
         first = body[0] if body else None
-        is_doc = (isinstance(first, ast.Expr)
-                  and isinstance(getattr(first, "value", None), ast.Constant)
-                  and isinstance(first.value.value, str))
+        is_doc = (
+            isinstance(first, ast.Expr)
+            and isinstance(getattr(first, "value", None), ast.Constant)
+            and isinstance(first.value.value, str)
+        )
         if is_doc:
             body = body[1:]
         mod = _NormNames().visit(ast.Module(body=body, type_ignores=[]))
         ast.fix_missing_locations(mod)
         dumped = ast.dump(mod, annotate_fields=False, include_attributes=False)
         return hashlib.sha256(dumped.encode("utf-8")).hexdigest()[:16]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
 
 
@@ -187,7 +257,7 @@ def _dup_functions() -> list[str]:
                 continue
             try:
                 tree = ast.parse(f.read_text(encoding="utf-8", errors="replace"))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             for n in ast.walk(tree):
                 if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -212,7 +282,7 @@ def main() -> int:
 
     # ① ruff
     n1, per1, err1 = _ruff_counts()
-    ceil1 = int(base.get("ruff_total_ceiling", 10 ** 9))
+    ceil1 = int(base.get("ruff_total_ceiling", 10**9))
     if n1 < 0:
         print(f"  [FAIL] ① ruff 命名/导入体检 —— {err1}")
         ok = False
@@ -225,7 +295,7 @@ def main() -> int:
 
     # ② pyscn 克隆
     n2, per2, err2 = _pyscn_clones()
-    ceil2 = int(base.get("clone_groups_ceiling", 10 ** 9))
+    ceil2 = int(base.get("clone_groups_ceiling", 10**9))
     if n2 < 0:
         print(f"  [FAIL] ② pyscn 重复代码体检 —— {err2}")
         ok = False
@@ -236,7 +306,7 @@ def main() -> int:
 
     # ④ 来源块
     n3, _ = _source_blocks()
-    ceil3 = int(base.get("no_source_block_ceiling", 10 ** 9))
+    ceil3 = int(base.get("no_source_block_ceiling", 10**9))
     st = "PASS" if n3 <= ceil3 else "FAIL"
     print(f"  [{st}] ③ 缺来源块（AGENTS.md §十八）= {n3}（上界 {ceil3}）")
     ok = ok and n3 <= ceil3
@@ -253,14 +323,17 @@ def main() -> int:
 
     # ⑤ 跨文件同函数体（★ 业主头号关切：同一个功能多个函数重复实现）
     dfun = _dup_functions()
-    ceil5 = int(base.get("dup_function_groups_ceiling", 10 ** 9))
+    ceil5 = int(base.get("dup_function_groups_ceiling", 10**9))
     raw5 = base.get("dup_function_allow") or []
-    allow5 = {r["functions"] for r in raw5
-              if isinstance(r, dict) and r.get("functions")}
+    allow5 = {
+        r["functions"] for r in raw5 if isinstance(r, dict) and r.get("functions")
+    }
     real5 = [d for d in dfun if d.split(" ⇒ ")[0] not in allow5]
     st = "PASS" if len(real5) <= ceil5 else "FAIL"
-    print(f"  [{st}] ⑤ 跨文件同函数体组 = {len(real5)}"
-          f"（上界 {ceil5} · 豁免 {len(allow5)} 组）")
+    print(
+        f"  [{st}] ⑤ 跨文件同函数体组 = {len(real5)}"
+        f"（上界 {ceil5} · 豁免 {len(allow5)} 组）"
+    )
     if len(real5) > ceil5:
         for d in sorted(real5, key=len)[:10]:
             print(f"        {d[:150]}")

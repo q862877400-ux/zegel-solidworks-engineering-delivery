@@ -23,6 +23,7 @@ r"""@brief 门禁：`docs/harvest-digest.md` 必须与 `tools/gen_harvest_digest
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -50,8 +51,10 @@ def main() -> int:
         print("[FAIL] 缺生成器 %s" % GEN.relative_to(ROOT))
         return 1
     if not TARGET.is_file():
-        print("[FAIL] 缺生成物 %s ⇒ 跑 `python tools/gen_harvest_digest.py`"
-              % TARGET.relative_to(ROOT))
+        print(
+            "[FAIL] 缺生成物 %s ⇒ 跑 `python tools/gen_harvest_digest.py`"
+            % TARGET.relative_to(ROOT)
+        )
         return 1
 
     current = TARGET.read_text(encoding="utf-8")
@@ -67,23 +70,37 @@ def main() -> int:
                 return 1
             fresh = gen.OUT.read_text(encoding="utf-8")
         finally:
-            gen.OUT = original_out        # ⚠ 恢复，绝不指向真文件
+            gen.OUT = original_out  # ⚠ 恢复，绝不指向真文件
 
     if fresh == current:
-        print("交付摘要新鲜度门禁 · %s（%d 字节）"
-              % (TARGET.relative_to(ROOT), len(current.encode("utf-8"))))
+        print(
+            "交付摘要新鲜度门禁 · %s（%d 字节）"
+            % (TARGET.relative_to(ROOT), len(current.encode("utf-8")))
+        )
         print("[PASS] 与生成器输出逐字节相同")
         return 0
 
     print("[FAIL] %s 与生成器输出不一致" % TARGET.relative_to(ROOT))
     cur_lines = current.splitlines()
     frh_lines = fresh.splitlines()
-    diff = next((i for i in range(max(len(cur_lines), len(frh_lines)))
-                 if (cur_lines[i] if i < len(cur_lines) else None)
-                 != (frh_lines[i] if i < len(frh_lines) else None)), 0)
+    diff = next(
+        (
+            i
+            for i in range(max(len(cur_lines), len(frh_lines)))
+            if (cur_lines[i] if i < len(cur_lines) else None)
+            != (frh_lines[i] if i < len(frh_lines) else None)
+        ),
+        0,
+    )
     print("   首个不同在第 %d 行：" % (diff + 1))
-    print("     当前: %s" % (cur_lines[diff][:110] if diff < len(cur_lines) else "（缺行）"))
-    print("     应为: %s" % (frh_lines[diff][:110] if diff < len(frh_lines) else "（多行）"))
+    print(
+        "     当前: %s"
+        % (cur_lines[diff][:110] if diff < len(cur_lines) else "（缺行）")
+    )
+    print(
+        "     应为: %s"
+        % (frh_lines[diff][:110] if diff < len(frh_lines) else "（多行）")
+    )
     print("   ⇒ 修法：`python tools/gen_harvest_digest.py` 后提交该生成物")
     return 1
 

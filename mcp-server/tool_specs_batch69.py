@@ -60,33 +60,71 @@ _BATCH69: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_insert_lofted_ref_surface",
         title="Insert Lofted Reference Surface",
-        module="sw_surface_ref_ops", function="insert_lofted_ref_surface",
+        module="sw_surface_ref_ops",
+        function="insert_lofted_ref_surface",
         inject="model",
-        param_alias={k: k for k in (
-            "closed", "keep_tangency", "force_non_rational",
-            "tess_tolerance_factor", "start_matching_type", "end_matching_type")},
+        param_alias={
+            k: k
+            for k in (
+                "closed",
+                "keep_tangency",
+                "force_non_rational",
+                "tess_tolerance_factor",
+                "start_matching_type",
+                "end_matching_type",
+            )
+        },
         params=[
-            Param("closed", bool, description="闭合放样（★ 官方：True 时**至少要 3 个轮廓**）。",
-                  required=False, default=False),
-            Param("keep_tangency", bool, description="相切时保持相切（★ 布尔是标志）。",
-                  required=False, default=True),
-            Param("force_non_rational", bool, description="强制非有理曲面（★ 布尔是标志）。",
-                  required=False, default=False),
-            Param("tess_tolerance_factor", float, description="带中心线放样时控制中间截面数"
-                                                            "（★ 官方给了默认值 ⇒ 0.0 = 用默认；★ 不是长度）。",
-                  required=False, default=0.0),
-            Param("start_matching_type", int, description="起始轮廓的相切类型"
-                                                         "（★ 官方「see Remarks」，本工具原样透传、不编造取值表）。",
-                  required=False, default=0),
-            Param("end_matching_type", int, description="末端轮廓的相切类型"
-                                                       "（★ 同上，原样透传）。",
-                  required=False, default=0),
+            Param(
+                "closed",
+                bool,
+                description="闭合放样（★ 官方：True 时**至少要 3 个轮廓**）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "keep_tangency",
+                bool,
+                description="相切时保持相切（★ 布尔是标志）。",
+                required=False,
+                default=True,
+            ),
+            Param(
+                "force_non_rational",
+                bool,
+                description="强制非有理曲面（★ 布尔是标志）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "tess_tolerance_factor",
+                float,
+                description="带中心线放样时控制中间截面数"
+                "（★ 官方给了默认值 ⇒ 0.0 = 用默认；★ 不是长度）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "start_matching_type",
+                int,
+                description="起始轮廓的相切类型"
+                "（★ 官方「see Remarks」，本工具原样透传、不编造取值表）。",
+                required=False,
+                default=0,
+            ),
+            Param(
+                "end_matching_type",
+                int,
+                description="末端轮廓的相切类型（★ 同上，原样透传）。",
+                required=False,
+                default=0,
+            ),
         ],
         doc="★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。"
-            "⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」"
-            "⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。"
-            "★ 真机建成：树 7→8，新增 `曲面-放样1`。"
-            "★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。",
+        "⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」"
+        "⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。"
+        "★ 真机建成：树 7→8，新增 `曲面-放样1`。"
+        "★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。",
     ),
 ]
 

@@ -25,6 +25,7 @@ r"""@brief 探针：**哪些 `scripts/sw_*.py` 模块没有任何能力条目提
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -37,12 +38,16 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 #: ⚠ 这些不是"能力模块"：API 名登记表 / COM 辅助 / 纯知识表
 NOT_A_CAPABILITY = re.compile(
-    r"sw_api_|^sw_com_traps|^sw_connect|^sw_automation_knowledge|^sw_preflight")
+    r"sw_api_|^sw_com_traps|^sw_connect|^sw_automation_knowledge|^sw_preflight"
+)
 
 
 def modules() -> list:
-    return sorted(p.stem for p in (ROOT / "scripts").glob("sw_*.py")
-                  if not NOT_A_CAPABILITY.search(p.stem))
+    return sorted(
+        p.stem
+        for p in (ROOT / "scripts").glob("sw_*.py")
+        if not NOT_A_CAPABILITY.search(p.stem)
+    )
 
 
 # ⚠⚠ **2026-10-01 轮 118 的结论：本探针不能当判据，而且它问的问题本身是错的。**
@@ -53,24 +58,31 @@ def modules() -> list:
 #     「模块名没出现」**根本不是缺陷**。
 #   ⚠ 详见 docs/module-capability-coverage.md。**不要把它接进门禁。**
 
+
 def main() -> int:
     caps = (ROOT / "capabilities.yaml").read_text(encoding="utf-8", errors="replace")
     mods = modules()
     print("`scripts/sw_*.py` 里**可能承载能力**的模块：**%d** 个" % len(mods))
-    print("  （已排除 API 名登记表 / COM 辅助 / 知识表 / 预检：%s）"
-          % NOT_A_CAPABILITY.pattern)
+    print(
+        "  （已排除 API 名登记表 / COM 辅助 / 知识表 / 预检：%s）"
+        % NOT_A_CAPABILITY.pattern
+    )
 
     print("⚠⚠ **判据换过一次（轮 118 当场发现）**：")
     print("   第一版判「**模块名**是否出现在 capabilities.yaml 文本里」⇒")
     print("   把 `sw_routing`↔`routing`、`sw_weldment`↔`weldments`、")
-    print("   `sw_topology`↔`topology_optimization` 这些**明明有条目**的模块全报成「没覆盖」")
+    print(
+        "   `sw_topology`↔`topology_optimization` 这些**明明有条目**的模块全报成「没覆盖」"
+    )
     print("   （**假阳性**）—— 因为条目用的是**域标签**，**不写模块文件名**。")
     print("   ⇒ 改用**更具体**的判据：**该模块的公开函数名**有没有被提到。")
     print()
 
     never, sometimes = [], []
     for m in mods:
-        t = (ROOT / "scripts" / (m + ".py")).read_text(encoding="utf-8", errors="replace")
+        t = (ROOT / "scripts" / (m + ".py")).read_text(
+            encoding="utf-8", errors="replace"
+        )
         pub = [f for f in re.findall(r"^def (\w+)\(", t, re.M) if not f.startswith("_")]
         hit = [f for f in pub if re.search(r"\b%s\b" % re.escape(f), caps)]
         (sometimes if hit else never).append(m)
@@ -79,7 +91,9 @@ def main() -> int:
     print()
     print("=== ★ **一个函数名都没被提到**：**%d** 个模块 ===" % len(never))
     for m in never:
-        t = (ROOT / "scripts" / (m + ".py")).read_text(encoding="utf-8", errors="replace")
+        t = (ROOT / "scripts" / (m + ".py")).read_text(
+            encoding="utf-8", errors="replace"
+        )
         pub = [f for f in re.findall(r"^def (\w+)\(", t, re.M) if not f.startswith("_")]
         print("  **%s**（%d 个公开函数，**0 个**被提到）" % (m, len(pub)))
         print("      例: %s" % ", ".join(pub[:5]))

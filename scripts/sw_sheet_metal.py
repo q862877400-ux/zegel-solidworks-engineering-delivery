@@ -1,4 +1,5 @@
 """SolidWorks 原生钣金特征创建与证据回读。"""
+
 from __future__ import annotations
 
 import math
@@ -54,23 +55,23 @@ class BaseFlangeSpec:
       ★ 否则 SW 报「无法添加此圆角，因为指定的半径值将会删除其中一个实体」。
     ★ 证据：`output/_probe278_values.txt` · `output/_probe278_regression.txt`（★ 回归 `status: pass`）。
     """
-# ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（**沿上游与既有模式的写法**发展而来）。
-# 文件:   scripts/sw_sheet_metal.py —— 本文件（**轮 145 的命名迁移**）。
-# 定位:   2026-10-01（轮 145）**只做了一件事**：把那些「**故意要调**」的零参调用
-#         从 `get_com_member(...)` 改成 **`call_com_member(...)`**。
-#         ★★ 起因：审计（`tools/audit_get_com_member_semantics.py`）发现
-#         `get_com_member` 的语义是「**取或调**」—— **对 COM 成员，「取」可能等于「调」**；
-#         而 471 个无实参调用点里有 193 处的成员在反射里**有零参重载**（会真的执行）。
-#         ★ 逐条读过之后确认：**作者大多是故意的**（拿返回值当成败 / 要的就是那个动作），
-#         但**代码里读不出来** ⇒ 本轮用 `call_com_member` **让名字表态**。
-# 官方签名依据: 本次迁移**不改任何 COM 调用**（只是换个名字），
-#         各调用的官方依据在原函数的来源块里。
-# 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入。
-# 覆盖:   全文件 —— ⚠ 本块是**轮 145 迁移这件事**的说明，
-#         它**不替代**本文件里原有的、更精确的逐函数来源块。
-# ─────────────────────────────────────────────────────────────────────
 
+    # ── 来源 ─────────────────────────────────────────────────────────────
+    # 仓库:   本项目自身（**沿上游与既有模式的写法**发展而来）。
+    # 文件:   scripts/sw_sheet_metal.py —— 本文件（**轮 145 的命名迁移**）。
+    # 定位:   2026-10-01（轮 145）**只做了一件事**：把那些「**故意要调**」的零参调用
+    #         从 `get_com_member(...)` 改成 **`call_com_member(...)`**。
+    #         ★★ 起因：审计（`tools/audit_get_com_member_semantics.py`）发现
+    #         `get_com_member` 的语义是「**取或调**」—— **对 COM 成员，「取」可能等于「调」**；
+    #         而 471 个无实参调用点里有 193 处的成员在反射里**有零参重载**（会真的执行）。
+    #         ★ 逐条读过之后确认：**作者大多是故意的**（拿返回值当成败 / 要的就是那个动作），
+    #         但**代码里读不出来** ⇒ 本轮用 `call_com_member` **让名字表态**。
+    # 官方签名依据: 本次迁移**不改任何 COM 调用**（只是换个名字），
+    #         各调用的官方依据在原函数的来源块里。
+    # 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入。
+    # 覆盖:   全文件 —— ⚠ 本块是**轮 145 迁移这件事**的说明，
+    #         它**不替代**本文件里原有的、更精确的逐函数来源块。
+    # ─────────────────────────────────────────────────────────────────────
 
     thickness: float
     bend_radius: float
@@ -111,7 +112,8 @@ class BaseFlangeSpec:
 #: 入口名 → (是否可用, 真机失败原因或成功证据)
 SHEET_METAL_RUNTIME_STATUS = {
     # ✓ 实测可跑
-    "create_base_flange": (True,
+    "create_base_flange": (
+        True,
         "**闭轮廓**真机建成：特征树出现「钣金6 / 基体-法兰1 / 平展型式6」。"
         "⚠ **开放折线（轮廓法兰）真机失败**：`CreateFeature(IBaseFlangeFeatureData) 创建失败`"
         "（2026-10-01 补测，见 probe_gusset_with_bend.py）⇒ **`True` 仅对闭轮廓成立**"
@@ -119,10 +121,13 @@ SHEET_METAL_RUNTIME_STATUS = {
         "★★ **上面那句「开放折线真机失败」已被证伪** —— ★ **开放**折线（★ 3 段 U 形）在"
         "**毫米几何**下**建成了**（★ 278 的维护回归 `status: pass` · ★ 279 探针 `has_base_flange=True`）"
         "⇒ ★★ **当初失败的真因是**草图几何被 `mm()` 缩了 1000 倍**（★ 见规格 277/278），"
-        "★ **不是**「开放轮廓不被支持」⇒ ★ 本条的 `True` **对开放与闭轮廓都成立**"),
-    "sheet_metal_evidence": (True,
+        "★ **不是**「开放轮廓不被支持」⇒ ★ 本条的 `True` **对开放与闭轮廓都成立**",
+    ),
+    "sheet_metal_evidence": (
+        True,
         "真机读回正确：thickness_m=0.002、has_base_flange=True、"
-        "all_solid_bodies_are_sheet_metal=True"),
+        "all_solid_bodies_are_sheet_metal=True",
+    ),
     # ✗ 实测失败（原因是真机报错原文）
     # ⚠⚠ 以下 4 条的**根因层次**已由真机测清（2026-10-01，`probe_featuredata_access.py`
     # ）：
@@ -140,7 +145,8 @@ SHEET_METAL_RUNTIME_STATUS = {
     # **⇒ 仍未查明**：`create_gusset` 在**能**拿到 FeatureData 时为何 `Thickness` 仍设不
     # 上；
     #     以及这 4 个的**正确创建路径**（是否该改用专用 `Insert*` 入口）。**不猜、不硬改。**
-    "create_one_bend": (False,
+    "create_one_bend": (
+        False,
         "⚠ **真因已查明（2026-10-01，有官方依据）**：`swFmOneBend(33)` 是合法枚举成员，"
         "但**不在** `CreateDefinition` 接受的 35 个常量里（官方 `CreateDefinition.md` 的 "
         "Parameters 段）⇒ 返回 None **是应然的**。"
@@ -152,8 +158,10 @@ SHEET_METAL_RUNTIME_STATUS = {
         " ★★★ **定案（2026-10-10 · 规格 281 · 真机逐个测）**：★★ **后端限制** —— "
         "`CreateDefinition(35)` 拿到的 `ISketchedBendFeatureData` **有** `AccessSelections`（`hasattr=True`），"
         "★ 但 `AccessSelections(model, 空 Dispatch)` ⇒ **`-2147417851`（`0x80010105`「服务器出现意外情况」）** "
-        "⇒ ★★ 与事实 47 / 67 / 126 的 `IAccessSelections` 指针族**同族**（★ 与常量 37/117/118 **同一个读数**）"),
-    "create_draft": (True,
+        "⇒ ★★ 与事实 47 / 67 / 126 的 `IAccessSelections` 指针族**同族**（★ 与常量 37/117/118 **同一个读数**）",
+    ),
+    "create_draft": (
+        True,
         "★★ 2026-10-09（规格 239）**创建路径已按官方页改写**：原走 `CreateDefinition(swFmDraft=3)` ——"
         "① `swFmDraft` **不在**任何官方 `CreateDefinition` 宿主页（`IFeatureManager` / `IMotionStudy`）"
         "的 `Type` 清单里（规格 238 已证）；② 真机回 `None`。"
@@ -162,11 +170,12 @@ SHEET_METAL_RUNTIME_STATUS = {
         "`Obsolete. Superseded by IFeatureManager::InsertMultifaceDraft` ⇒ 官方**自己指认**了取代方向）。"
         "★★★ 2026-10-10（规格 283）**真机验证可用** ✓ —— 新特征 **`拔模1`**；"
         "★★ 前提是**两个**选择：**方向项（mark 1 · 一个平面）** + **待拔模面（mark 2）**。"
-        "原记法：`CreateDefinition(3) 返回 None ⇒ 该类型不走 CreateDefinition；正确入口未查明`"),
+        "原记法：`CreateDefinition(3) 返回 None ⇒ 该类型不走 CreateDefinition；正确入口未查明`",
+    ),
     #: ★★★ 283 的**真机读数**（★ 2026-10-10 · SW 34.4.1）：
     #:   ① ★ **只给面**（★ 6 面 × 3 标记 = **18 臂**）⇒ ★ **全失败**，★ 且报文**恒定**：
     #:      ★「**此拔模方向尚未定义。**」⇒ ★ 排除「选错了面 / 选错了标记」。
-    #: ② ★★ **方向项（`Front Plane` · mark 1）+ 待拔模面（mark 2）** ⇒ ★ **选中 2 个 · 
+    #: ② ★★ **方向项（`Front Plane` · mark 1）+ 待拔模面（mark 2）** ⇒ ★ **选中 2 个 ·
     #: 建成 `拔模1`** ✓。
     #:   ⇒ ★★★ **规格 239 的路径改动是对的**，★ 缺的只是**方向项**这一选择。
     #: ★★ **顺带**：★ 这是 282 那条假说（★「特征创建 API 似乎吃不到「边 / 面」类选择」）
@@ -174,7 +183,8 @@ SHEET_METAL_RUNTIME_STATUS = {
     #: —— ★ `InsertMultiFaceDraft` **吃得到面选择** ⇒ ★ **「吃不到」不是普遍现象，是按 A
     #: PI 逐个看的** ✓
     #:   ★ 读数：`output/_probe283_draft.txt` · `output/_probe283_draft_dir.txt`
-    "create_edge_flange": (False,
+    "create_edge_flange": (
+        False,
         "⚠ 属性层**已修**（原设的 `ReverseDirection` **不属于** `IEdgeFlangeFeatureData` —— "
         "跨接口泄漏，已删；报错已从 `Property ... can not be set` 变为 `CreateFeature(37) 创建失败`）"
         "⇒ **剩最后一层：`CreateFeature` 需要选择状态**（官方文档在同类特征上明写"
@@ -197,8 +207,10 @@ SHEET_METAL_RUNTIME_STATUS = {
         "⇒ ★★★ **后端限制**（★ 而官方 `IEdgeFlangeFeatureData` 页**有** `AccessSelections`，"
         "★ `IAccessSelections` / `IAccessSelections2` 两个接口页也在 ⇒ ★ 是**本机**调不动，不是路径错）。"
         "★ **处置**：★ 本条**不再**标「未查明」⇒ ★ 标**后端限制**；★ 且 `create_gusset` / `create_hem` / "
-        "`create_one_bend` **同族嫌疑**（★ 它们也都是 `CreateFeature` + 选择前置）⇒ ★ **未逐个验**（★ 不越界）"),
-    "create_gusset": (False,
+        "`create_one_bend` **同族嫌疑**（★ 它们也都是 `CreateFeature` + 选择前置）⇒ ★ **未逐个验**（★ 不越界）",
+    ),
+    "create_gusset": (
+        False,
         "⚠ 属性层**已修**（**接口用错了**：钣金加强筋的接口是 **`ISMGussetFeatureData`**"
         "（`category: Sheet Metal`，28 属性），原代码用了 **`IGussetFeatureData`**"
         "（`category: Weldments`，19 成员）——**两者共有成员只有 3 个**，"
@@ -206,18 +218,27 @@ SHEET_METAL_RUNTIME_STATUS = {
         "改用 `GussetThickness`/`ProfileHeightDim`/`ProfileLengthDim`/`ProfileAngleDim` 后"
         "**真机读回全部成功**（0.002 / 0.01 / 0.01 / 45.0）；报错已变为 `CreateFeature(118) 创建失败`）"
         "⇒ **最后一层的性质已查明**：官方 `ISMGussetFeatureData` 的 Remarks 明写创建步骤 ——"
-        "「Call `IFeatureManager::CreateDefinition` … **pre-select** …         Two flat faces of a **bend**」⇒ **必须预先选中「一个折弯的两个平面」**。"         "**⚠ 而本模块原本用的 `CreateDefinition`+`CreateFeature` 路线是**现代的**："         "官方的 `InsertSheetMetalGussetFeature3` 已被标注 "         "「**Obsolete. Superseded by CreateDefinition and CreateFeature.**」"         "⇒ **代码路线正确，缺的是「折弯的两个面」这个前置** —— 而测试夹具（平板基体法兰）"         "根本造不出折弯 ⇒ **本轮未定性**（不宣称它能跑，也不宣称它不行）"
+        "「Call `IFeatureManager::CreateDefinition` … **pre-select** …         Two flat faces of a **bend**」⇒ **必须预先选中「一个折弯的两个平面」**。"
+        "**⚠ 而本模块原本用的 `CreateDefinition`+`CreateFeature` 路线是**现代的**："
+        "官方的 `InsertSheetMetalGussetFeature3` 已被标注 "
+        "「**Obsolete. Superseded by CreateDefinition and CreateFeature.**」"
+        "⇒ **代码路线正确，缺的是「折弯的两个面」这个前置** —— 而测试夹具（平板基体法兰）"
+        "根本造不出折弯 ⇒ **本轮未定性**（不宣称它能跑，也不宣称它不行）"
         " ★★★ **定案（2026-10-10 · 规格 281 · 真机逐个测）**：★★ **后端限制** —— "
         "`CreateDefinition(118)` 拿到的 `ISMGussetFeatureData` **有** `AccessSelections`（`hasattr=True`），"
         "★ 但 `AccessSelections(model, 空 Dispatch)` ⇒ **`-2147417851`（`0x80010105`）** "
         "⇒ ★★ 与事实 47 / 67 / 126 **同族** ⇒ ★ **「预选折弯的两个面」这条前置**即使满足了**，"
-        "★ 也**过不了** `AccessSelections` 这一关**（★ 规格 280/281 的真机结论）"),
+        "★ 也**过不了** `AccessSelections` 这一关**（★ 规格 280/281 的真机结论）",
+    ),
     # 未测（需要扫掠路径 + 轮廓两个选择，本轮没造出来）
-    "create_swept_flange": (None, "未在本机实测（需要扫掠路径与轮廓两个选择）"
+    "create_swept_flange": (
+        None,
+        "未在本机实测（需要扫掠路径与轮廓两个选择）"
         " ★★★ **定案（2026-10-10 · 规格 281 · 真机逐个测）**：★★ **后端限制** —— "
         "`CreateDefinition(117)` 拿到的 `ISweptFlangeFeatureData` **有** `AccessSelections`（`hasattr=True`），"
         "★ 但 `AccessSelections(model, 空 Dispatch)` ⇒ **`-2147417851`（`0x80010105`）** "
-        "⇒ ★★ 与事实 47 / 67 / 126 **同族** ⇒ ★ **它同样过不了这一关**（★ 与常量 35/37/118 同一个读数）"),
+        "⇒ ★★ 与事实 47 / 67 / 126 **同族** ⇒ ★ **它同样过不了这一关**（★ 与常量 35/37/118 同一个读数）",
+    ),
     #: ★★★ 2026-10-06（规格 209 · B4-2 · idx 173）：**`create_hem` 真机回 `None`** ——
     #:   ★ 而**成员名/16 参顺序/五个枚举全部逐条对上官方**（★ 不是"抄错"），四步前置照做
     #:   （★ 且**顺序已按官方 `## Remarks` 订正**：先建 CBA、**再**选边），
@@ -232,14 +253,16 @@ SHEET_METAL_RUNTIME_STATUS = {
     #:   ★ **下一步（写清楚，免得后人重走）**：① 找一个**现成的带折弯钣金件**当夹具
     #:     （本机磁盘上没有这种模型 —— 全盘扫过 `.SLDPRT`）；② 或换 `InsertSheetMetalHem`
     #:     （**已 Obsolete** 的前代）；③ 或先做成 `InsertSheetMetalFold` 造出折弯再回来。
-    "create_hem": (False,
+    "create_hem": (
+        False,
         "★ 真机（2026-10-06 · SW 2026 SP4.1 · pywin32）**五种形态全部回 `None`**："
         "边选择（`index:0` / 最长边 `index:4`）× 长度口径（0.01 / 10.0）× 卸料槽（自定义 / 默认）"
         "× 板厚（0.002 箔片 / **2.0 真厚度**）⇒ **本机建不出 hem**。"
         "★ 成员名与 16 参顺序、枚举值**已逐条核对官方无误**；四步前置（CreateCustomBendAllowance → "
         "初始化 → 赋 PCBA → **再**选边）**已按 Remarks 订正顺序后重试**，仍 `None`。"
         "⇒ ★ 正确前置**尚未查明**；见 `tools/probe_spec209_hem_diag.py` 与 "
-        "`tools/probe_spec209_hem_units.py` 的读数（`output/spec209-hem-*.json`）"),
+        "`tools/probe_spec209_hem_units.py` 的读数（`output/spec209-hem-*.json`）",
+    ),
     #: ★★★ **订正（2026-10-10 · 规格 282 · 真机四形态 + 选择类型核查）**：
     #: ★★ **上面那句「尚未查明」可以撤了** —— ★ 用 276 的报错入口（`ISldWorks::GetErrorM
     #: essages`）
@@ -252,7 +275,7 @@ SHEET_METAL_RUNTIME_STATUS = {
     #:     ⇒ ★★ **「选了却说没选」** ⇒ ★ 问题**不在选择登记**。
     #: ★★ **与 `create_edge_flange` 同形但不同因**：★ 两者都是「选择登记了、特征 API 吃
     #: 不到」；
-    #: ★ 但 hem 走 `InsertSheetMetalHem2`（★ **无** `AccessSelections`）· ★ edge_flange 
+    #: ★ 但 hem 走 `InsertSheetMetalHem2`（★ **无** `AccessSelections`）· ★ edge_flange
     #: 卡在 `AccessSelections`。
     #: ★★ **假说（★ 只有 2 个样本 ⇒ 如实标成假说）**：★ 本机的特征创建 API **似乎吃不到
     #: 「边 / 面」类选择**
@@ -271,25 +294,28 @@ SHEET_METAL_RUNTIME_STATUS = {
     #: 当 mark 4
     #:     的对象，`展开1` **照样建出来了** ⇒ ★★ **本表只记这一格的读数**，
     #:     ★ **不据此声称"任意特征都可以"**（★ 那需要另一组实验）✓
-    "create_unfold": (True,
+    "create_unfold": (
+        True,
         "★ 真机（2026-10-06）建成 **`展开1`**：选择契约**逐条回读**为 "
         "`total_count=2 · marks=[1, 4] · mark_set=True`；特征树增量 +1 ✓ "
         "★★ **而且我原先的一条「负例」被证伪**：**不选任何 `mark 4` 对象**（只给固定面 mark 1）"
         "时**照样建出 `展开1`** ⇒ ★★ **`mark 4` 不是必需的** —— 官方示例选折弯是"
         "「照着做」，不是「必需」（★ 本表按读数改口径）✓ "
         "⚠ 先前记录的「没建出来」是**我自己的 bug**：`SetSelectedObjectMark` 第 3 参传了 `-1`"
-        "（官方要 `swSelectionMarkSet`(0)）⇒ mark 静默没设上 ✓"),
+        "（官方要 `swSelectionMarkSet`(0)）⇒ mark 静默没设上 ✓",
+    ),
     #: ★★★ 2026-10-06（规格 209 · B4-4 · idx 155）：**`create_fold` 真机建成了** ——
     #: 拿刚建出的 `展开1` 当**前置特征（mark 0）**，新特征 **`折叠1`**（`output/spec209-
     #: unfold-fold.json`）✓
-    #: ★★ 关键同 unfold（mark 表 [1, 4]），★ 而**前置特征那一步必须在 `ClearSelection2` 
+    #: ★★ 关键同 unfold（mark 表 [1, 4]），★ 而**前置特征那一步必须在 `ClearSelection2`
     #: 之后** ——
     #:     我第一版把它塞在 `call()` 里 ⇒ 会被清选区**清掉**（顺序错、静默失效）✓
-    "create_fold": (True,
+    "create_fold": (
+        True,
         "★ 真机（2026-10-06）建成 **`折叠1`**：`unfold → fold` 一条链（★ 与官方示例同形），"
-        "两条的 `marks_readback` 都是 **[1, 4]**、特征树各 +1 ✓"),
+        "两条的 `marks_readback` 都是 **[1, 4]**、特征树各 +1 ✓",
+    ),
 }
-
 
 
 def _read_k_factor(definition) -> float:
@@ -306,9 +332,10 @@ def _read_k_factor(definition) -> float:
         cba = get_com_member(definition, "GetCustomBendAllowance")
         if cba is not None:
             return float(get_com_member(cba, "KFactor") or 0.0)
-    except Exception:                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0.0
+
 
 def require_verified(entry: str) -> None:
     """**调用前**的守卫：该入口若在本机实测失败/未测，就抛**带原因**的错误。
@@ -319,14 +346,13 @@ def require_verified(entry: str) -> None:
     """
     status = SHEET_METAL_RUNTIME_STATUS.get(entry)
     if status is None:
-        return                       # 表里没有 ⇒ 不阻止（宁放行不误杀）
+        return  # 表里没有 ⇒ 不阻止（宁放行不误杀）
     ok, reason = status
     if ok is True:
         return
     if ok is None:
         raise RuntimeError(
-            "%s **未在本机实测**（%s）—— 先在真机上验证再依赖它。"
-            % (entry, reason)
+            "%s **未在本机实测**（%s）—— 先在真机上验证再依赖它。" % (entry, reason)
         )
     raise RuntimeError(
         "%s **在本机实测失败，已知不可用**（2026-10-01，SW 2026 SP4.1）：%s。"
@@ -419,13 +445,21 @@ def sheet_metal_evidence(model) -> dict[str, Any]:
         if type_name in {"BaseFlange", "SMBaseFlange", "Base-Flange"}:
             definition = get_com_member(feature, "GetDefinition")
             if definition is not None:
-                base_parameters.append({
-                    "name": name,
-                    "thickness_m": float(get_com_member(definition, "Thickness") or 0.0),
-                    "bend_radius_m": float(get_com_member(definition, "BendRadius") or 0.0),
-                    "depth_m": float(get_com_member(definition, "D1EndConditionDistance") or 0.0),
-                    "k_factor": _read_k_factor(definition),
-                })
+                base_parameters.append(
+                    {
+                        "name": name,
+                        "thickness_m": float(
+                            get_com_member(definition, "Thickness") or 0.0
+                        ),
+                        "bend_radius_m": float(
+                            get_com_member(definition, "BendRadius") or 0.0
+                        ),
+                        "depth_m": float(
+                            get_com_member(definition, "D1EndConditionDistance") or 0.0
+                        ),
+                        "k_factor": _read_k_factor(definition),
+                    }
+                )
 
     bodies = tuple(get_com_member(model, "GetBodies2", SW_SOLID_BODY, False) or ())
     body_rows = []
@@ -435,10 +469,12 @@ def sheet_metal_evidence(model) -> dict[str, Any]:
             is_sheet_metal = bool(get_com_member(body, "IsSheetMetal"))
         except Exception:
             pass
-        body_rows.append({
-            "name": str(get_com_member(body, "Name") or ""),
-            "is_sheet_metal": is_sheet_metal,
-        })
+        body_rows.append(
+            {
+                "name": str(get_com_member(body, "Name") or ""),
+                "is_sheet_metal": is_sheet_metal,
+            }
+        )
 
     type_names = [row["type"] for row in feature_rows]
     return {
@@ -448,9 +484,8 @@ def sheet_metal_evidence(model) -> dict[str, Any]:
         "bodies": body_rows,
         "has_sheet_metal_feature": any("SheetMetal" in item for item in type_names),
         "has_base_flange": bool(base_parameters),
-        "all_solid_bodies_are_sheet_metal": bool(body_rows) and all(
-            row["is_sheet_metal"] for row in body_rows
-        ),
+        "all_solid_bodies_are_sheet_metal": bool(body_rows)
+        and all(row["is_sheet_metal"] for row in body_rows),
     }
 
 
@@ -506,6 +541,7 @@ GUSSET_PROFILE_DIMENSIONS = 1
 SW_FM_EDGE_FLANGE = 37
 SW_FM_SWEPT_FLANGE = 117
 SW_FM_SM_GUSSET = 118
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（非开源项目，无第三方许可）
@@ -774,13 +810,16 @@ def create_draft(model, face_ref, spec: DraftFeatureSpec):
     #: ★ `Angle` 官方单位是**弧度**；spec 层是度 ⇒ 边界处转换。
     #: ★ `reverse_direction` ↔ 官方 `FlipDir`（「True to flip the direction of the draft
     #: 」）。
-    feature = get_com_member(manager, "InsertMultiFaceDraft",
-                             float(math.radians(spec.angle)),
-                             bool(spec.reverse_direction),
-                             bool(spec.edge_draft),
-                             int(spec.prop_type),
-                             bool(spec.is_step_draft),
-                             bool(spec.is_body_draft))
+    feature = get_com_member(
+        manager,
+        "InsertMultiFaceDraft",
+        float(math.radians(spec.angle)),
+        bool(spec.reverse_direction),
+        bool(spec.edge_draft),
+        int(spec.prop_type),
+        bool(spec.is_step_draft),
+        bool(spec.is_body_draft),
+    )
     if feature is None:
         raise RuntimeError("InsertMultiFaceDraft 创建失败")
     return feature
@@ -825,7 +864,7 @@ def create_gusset(model, spec: GussetSpec):
         #   ProfileDimensionScheme is set to 1**」⇒ 不设 scheme 就设角度维，
         #   那个属性**可能根本不生效**。⇒ 先设 scheme。
         data.ProfileDimensionScheme = GUSSET_PROFILE_DIMENSIONS
-        data.GussetThickness = float(spec.thickness)          # 原 Thickness（焊件名）
+        data.GussetThickness = float(spec.thickness)  # 原 Thickness（焊件名）
         # ⚠ 官方 Remarks 在 scheme=1 下给了**两种互斥的**标注方案，二选一：
         #   · **两条腿**：`ProfileLengthDim`(d1) + `ProfileHeightDim`(d2)
         #     + **`UseAngleDimForProfile = false`**
@@ -835,11 +874,13 @@ def create_gusset(model, spec: GussetSpec):
         #     （无条件置 true 而 `ProfileAngleDim` 是 0，是**自相矛盾**的标注方案。）
         _has_angle = bool(spec.profile_angle)
         data.UseAngleDimForProfile = _has_angle
-        data.ProfileLengthDim = float(spec.profile_distance_2)   # 原 ProfileDistance2
+        data.ProfileLengthDim = float(spec.profile_distance_2)  # 原 ProfileDistance2
         if _has_angle:
-            data.ProfileAngleDim = float(spec.profile_angle)     # 原 ProfileAngle
+            data.ProfileAngleDim = float(spec.profile_angle)  # 原 ProfileAngle
         else:
-            data.ProfileHeightDim = float(spec.profile_distance_1)  # 原 ProfileDistance1
+            data.ProfileHeightDim = float(
+                spec.profile_distance_1
+            )  # 原 ProfileDistance1
         # 官方 `UseOffset`：「**After setting this property to true, set the offset
         #   distance.** **If a reference point is not set, the offset is applied to an
         #   assumed reference point.**」+ Remarks 第 2 步：「**If you do not pre-select
@@ -868,9 +909,9 @@ def create_gusset(model, spec: GussetSpec):
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SWS_SWEPT_FLANGE_POSITIONS = {
-    "material_inside": 1,     # swSweptFlangePositionType_MaterialInside
-    "material_outside": 2,    # swSweptFlangePositionType_MaterialOutside
-    "bend_outside": 3,        # swSweptFlangePositionType_BendOutside
+    "material_inside": 1,  # swSweptFlangePositionType_MaterialInside
+    "material_outside": 2,  # swSweptFlangePositionType_MaterialOutside
+    "bend_outside": 3,  # swSweptFlangePositionType_BendOutside
 }
 
 
@@ -924,9 +965,7 @@ class SweptFlangeSpec:
         if self.bend_radius < 0:
             raise ValueError("折弯半径不能小于 0")
         if self.flange_position not in SWS_SWEPT_FLANGE_POSITIONS.values():
-            raise ValueError(
-                "flange_position 必须是 SWS_SWEPT_FLANGE_POSITIONS 中的值"
-            )
+            raise ValueError("flange_position 必须是 SWS_SWEPT_FLANGE_POSITIONS 中的值")
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -1026,7 +1065,7 @@ def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec):
 # *16 形参**
 # ★★ `## Remarks` 逐字给了**四步前置**：「1. Call `IFeatureManager::CreateCustomBendAllo
 # wance`…
-# 2. Initialize the CustomBendAllowance object. 3. Assign PCBA… 4. **Select one or more 
+# 2. Initialize the CustomBendAllowance object. 3. Assign PCBA… 4. **Select one or more
 # edges**
 #       in the sheet metal model to which to add the specified hem.」✓
 #   · `C:\swapi\examples\Insert_Sheet_Metal_Hem_Example_VB.md` —— ★★ **调用序**（逐字）：
@@ -1038,7 +1077,7 @@ def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec):
 # · `C:\swapi\enums\swHemTypes_e.md` —— Open=**0** · Closed=**1** · TearDrop=2 · Rolled=
 # 3 · **Double=4**
 #   · `C:\swapi\enums\swHemPositionTypes_e.md` —— Inside=1 · Outside=2
-# · `C:\swapi\enums\swSheetMetalReliefTypes_e.md` —— Rectangular=1 · Tear=2 · Obround=3 
+# · `C:\swapi\enums\swSheetMetalReliefTypes_e.md` —— Rectangular=1 · Tear=2 · Obround=3
 # · None=4 · TearBend=5
 #   · `C:\swapi\enums\swReliefTearTypes_e.md` —— Rip=1 · Extend=2
 # · `C:\swapi\types\IModelDoc2\InsertSheetMetalUnfold.md` —— `void InsertSheetMetalUnfol
@@ -1046,13 +1085,13 @@ def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec):
 # ★★ `## Remarks` 逐字：「**Select the objects for the unfold feature before calling thi
 # s
 #       method.**」（★ **没给 mark** ⇒ 见下面的示例）
-# · ★★★ `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md` —— **Unfold 与 
+# · ★★★ `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md` —— **Unfold 与
 # Fold 共用**这份示例，
 #     而它逐字给出了**调用序与 mark**（★ 这是"官方没给 mark"的唯一出处）：
 #     ```
 #     ClearSelection2 True
 #     SelectByID2("", "FACE", x,y,z, False, **1**, Nothing, 0)          ← 固定面 mark = 1
-# SelectByID2("EdgeBend3", "BODYFEATURE", x,y,z, True, **4**, …)    ← 要展开的折弯 mark 
+# SelectByID2("EdgeBend3", "BODYFEATURE", x,y,z, True, **4**, …)    ← 要展开的折弯 mark
 # = 4
 #     …（多条折弯，每条都 mark 4，Append=True）
 #     swModel.InsertSheetMetalUnfold
@@ -1083,12 +1122,12 @@ HEM_TYPES = {"open": 0, "closed": 1, "teardrop": 2, "rolled": 3, "double": 4}
 #:   ⚠ **未在真机复核** —— 而 `create_hem` 在本机**五种形态全部回 `None`**（事实 34 / 53）
 #: ⇒ ★ 改它**不会回退任何已验证的路径**；★ 若将来真机证明反射有误，**这里就是那处待裁**
 #: 。
-#: ★ 每行补 `# sw<官方成员名>` ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py` 
+#: ★ 每行补 `# sw<官方成员名>` ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py`
 #: 的覆盖面
 #:     （原先无注释 ⇒ 门禁看不见 ⇒ 值错了也没人抓）✓
 HEM_POSITIONS = {
-    "inside": 0,     # swHemPositionTypeInside
-    "outside": 1,    # swHemPositionTypeOutside
+    "inside": 0,  # swHemPositionTypeInside
+    "outside": 1,  # swHemPositionTypeOutside
 }
 #: ★ 官方 `swSheetMetalReliefTypes_e`
 #: enum-gate: enum swSheetMetalReliefTypes_e
@@ -1119,11 +1158,13 @@ def _flat_pattern_count(model) -> "int | None":
     ★ 它是 **unfold / fold 的可回读判据**（裁决书点名）—— ★ 读不到就回 `None`（★ 「读不到」≠「0 个」）✓
     """
     try:
-        folder = get_com_member(get_com_member(model, "FeatureManager"), "GetFlatPatternFolder")
+        folder = get_com_member(
+            get_com_member(model, "FeatureManager"), "GetFlatPatternFolder"
+        )
         if folder is None:
             return None
         return int(get_com_member(folder, "GetFlatPatternCount") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -1138,17 +1179,21 @@ def _bbox_mm(model):
     """★ 包围盒（**毫米**）—— 取不到回 `None`（★ 与"没变"分开）✓"""
     try:
         from sw_part import get_bounding_box
+
         bb = get_bounding_box(model)
         if isinstance(bb, dict):
-            return {"min": [round(float(v), 6) for v in bb["min"]],
-                    "max": [round(float(v), 6) for v in bb["max"]]}
-    except Exception:                                          # noqa: BLE001
+            return {
+                "min": [round(float(v), 6) for v in bb["min"]],
+                "max": [round(float(v), 6) for v in bb["max"]],
+            }
+    except Exception:  # noqa: BLE001
         pass
     return None
 
 
-def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int = 0,
-                                 pre_select_names=()) -> dict:
+def _select_fixed_face_and_bends(
+    model, bend_feature_names, *, face_index: int = 0, pre_select_names=()
+) -> dict:
     """★ 按**官方示例的调用序**选中「固定面（mark 1）+ 若干折弯特征（mark 4）」。
 
     ★★ 两条**本仓实测过的选择纪律**都用上了：
@@ -1158,24 +1203,44 @@ def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int =
     :param pre_select_names: ★ **先于固定面**要选中的特征名（**mark 0**）—— ★ Fold 那一格官方示例
         就是先选已存在的 `Unfold1`；★ 必须在**清完选区之后**选，否则会被 `ClearSelection2` 清掉 ✓
     """
-    import sw_selection_spec as SS                                      # noqa: E402
-    from sw_part import _empty_callout                                  # noqa: E402
+    import sw_selection_spec as SS  # noqa: E402
+    from sw_part import _empty_callout  # noqa: E402
+
     ext = get_com_member(model, "Extension")
-    info = {"fixed_face_index": int(face_index), "bend_feature_names": [str(x) for x in
-                                                                       (bend_feature_names or ())],
-            "pre_select_names": [str(x) for x in (pre_select_names or ())],
-            "face_select_count": None, "mark_set": None, "mark_readback": None,
-            "bends_selected": None, "total_count": None, "errors": []}
+    info = {
+        "fixed_face_index": int(face_index),
+        "bend_feature_names": [str(x) for x in (bend_feature_names or ())],
+        "pre_select_names": [str(x) for x in (pre_select_names or ())],
+        "face_select_count": None,
+        "mark_set": None,
+        "mark_readback": None,
+        "bends_selected": None,
+        "total_count": None,
+        "errors": [],
+    }
     get_com_member(model, "ClearSelection2", True)
     #: ⓪ ★ 先选**前置特征**（mark 0）—— ★ 必须在 ClearSelection2 **之后**
     pre_ok = 0
     for name in info["pre_select_names"]:
         try:
-            got = get_com_member(ext, "SelectByID2", name, "BODYFEATURE", 0.0, 0.0, 0.0,
-                                 True, 0, _empty_callout(), 0)
+            got = get_com_member(
+                ext,
+                "SelectByID2",
+                name,
+                "BODYFEATURE",
+                0.0,
+                0.0,
+                0.0,
+                True,
+                0,
+                _empty_callout(),
+                0,
+            )
             pre_ok += 1 if got else 0
-        except Exception as exc:                                        # noqa: BLE001
-            info["errors"].append("前置特征 %s：%s: %s" % (name, type(exc).__name__, str(exc)[:100]))
+        except Exception as exc:  # noqa: BLE001
+            info["errors"].append(
+                "前置特征 %s：%s: %s" % (name, type(exc).__name__, str(exc)[:100])
+            )
     info["pre_selected"] = pre_ok
     #: ① 固定面：按对象选（事实 32）⇒ 再补 mark 1（Select4 没有 mark 形参）
     try:
@@ -1183,35 +1248,54 @@ def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int =
         if not faces:
             raise RuntimeError("体上没有面")
         if face_index < 0 or face_index >= len(faces):
-            raise RuntimeError("face_index=%d 越界（共 %d 个面）" % (face_index, len(faces)))
+            raise RuntimeError(
+                "face_index=%d 越界（共 %d 个面）" % (face_index, len(faces))
+            )
         SS.select_object(model, faces[face_index])
         mgr = get_com_member(model, "SelectionManager")
-        #: ★★ 第 3 参必须是 `swSelectionMarkSet`(0) —— 传 `-1` 会**静默不生效**（真机回 
+        #: ★★ 第 3 参必须是 `swSelectionMarkSet`(0) —— 传 `-1` 会**静默不生效**（真机回
         #: false，无报错）
-        info["mark_set"] = get_com_member(mgr, "SetSelectedObjectMark", 1,
-                                          int(UNFOLD_MARKS["fixed_face"]),
-                                          int(SELECTION_MARK_ACTION["set"]))
+        info["mark_set"] = get_com_member(
+            mgr,
+            "SetSelectedObjectMark",
+            1,
+            int(UNFOLD_MARKS["fixed_face"]),
+            int(SELECTION_MARK_ACTION["set"]),
+        )
         #: ★ 判据是**回读 mark**，不是那个返回值（★ 事实 8 的同一形态）
         try:
             info["mark_readback"] = int(get_com_member(mgr, "GetSelectedObjectMark", 1))
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             info["errors"].append("回读 mark：%s" % str(exc)[:100])
         info["face_select_count"] = SS.get_selection_count(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         info["errors"].append("固定面：%s: %s" % (type(exc).__name__, str(exc)[:120]))
     #: ② 折弯特征：按名字选（★ 事实 32 —— 按名字选**只对特征成立**）
     ok_bends = 0
     for name in info["bend_feature_names"]:
         try:
-            got = get_com_member(ext, "SelectByID2", name, "BODYFEATURE", 0.0, 0.0, 0.0,
-                                 True, int(UNFOLD_MARKS["bends"]), _empty_callout(), 0)
+            got = get_com_member(
+                ext,
+                "SelectByID2",
+                name,
+                "BODYFEATURE",
+                0.0,
+                0.0,
+                0.0,
+                True,
+                int(UNFOLD_MARKS["bends"]),
+                _empty_callout(),
+                0,
+            )
             ok_bends += 1 if got else 0
-        except Exception as exc:                                        # noqa: BLE001
-            info["errors"].append("折弯 %s：%s: %s" % (name, type(exc).__name__, str(exc)[:100]))
+        except Exception as exc:  # noqa: BLE001
+            info["errors"].append(
+                "折弯 %s：%s: %s" % (name, type(exc).__name__, str(exc)[:100])
+            )
     info["bends_selected"] = ok_bends
     try:
         info["total_count"] = SS.get_selection_count(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         info["errors"].append("回读计数：%s" % str(exc)[:100])
     #: ★★ **逐条回读 mark**（★ 裁决书要求"前置判据用回读 `GetSelectedObjectCount2(-1)`"—
     #: —
@@ -1222,32 +1306,45 @@ def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int =
         for i in range(1, int(info["total_count"] or 0) + 1):
             try:
                 marks.append(int(get_com_member(mgr, "GetSelectedObjectMark", i)))
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 marks.append(None)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         info["errors"].append("回读 mark 列表：%s" % str(exc)[:100])
     info["marks_readback"] = marks
-    info["contract_ok"] = (int(info["total_count"] or 0) == (1 + len(info["bend_feature_names"]))
-                           and marks[:1] == [int(UNFOLD_MARKS["fixed_face"])]
-                           and all(m == int(UNFOLD_MARKS["bends"]) for m in marks[1:]))
+    info["contract_ok"] = (
+        int(info["total_count"] or 0) == (1 + len(info["bend_feature_names"]))
+        and marks[:1] == [int(UNFOLD_MARKS["fixed_face"])]
+        and all(m == int(UNFOLD_MARKS["bends"]) for m in marks[1:])
+    )
     return info
 
 
-def _create_unfold_or_fold(model, entry: str, call, bend_feature_names, face_index: int,
-                           pre_select_names=()) -> dict:
+def _create_unfold_or_fold(
+    model, entry: str, call, bend_feature_names, face_index: int, pre_select_names=()
+) -> dict:
     """★ `unfold` / `fold` 的**共用实现**（两者只差调用的那个零参成员）。
 
     ★★ 判据（规则 6）：① **回读特征树**有没有多出那个特征；② **平展型式个数** `_flat_pattern_count`；
       ③ 特征树/包围盒的**前后读数**都留下来（★ 读不到一律回 `None`，**不当成"没变"**）✓
     """
     out: dict = {
-        "ok": False, "entry": entry, "selection": None, "tree_before": None, "tree_after": None,
-        "new_features": [], "flat_pattern_count_before": None, "flat_pattern_count_after": None,
-        "bbox_before": None, "bbox_after": None, "bbox_comparable": None, "returned": None,
-        "error": None, "note": None,
+        "ok": False,
+        "entry": entry,
+        "selection": None,
+        "tree_before": None,
+        "tree_after": None,
+        "new_features": [],
+        "flat_pattern_count_before": None,
+        "flat_pattern_count_after": None,
+        "bbox_before": None,
+        "bbox_after": None,
+        "bbox_comparable": None,
+        "returned": None,
+        "error": None,
+        "note": None,
         "★": "判据 = **回读特征树增量 + 平展型式个数**；★ mark 表取自官方示例"
-             "（%s）；★ `Select4` 没有 mark 形参 ⇒ 面用 `SetSelectedObjectMark` 补 mark"
-             % str(UNFOLD_MARKS),
+        "（%s）；★ `Select4` 没有 mark 形参 ⇒ 面用 `SetSelectedObjectMark` 补 mark"
+        % str(UNFOLD_MARKS),
     }
     if model is None:
         out["error"] = "model 为 None"
@@ -1257,19 +1354,24 @@ def _create_unfold_or_fold(model, entry: str, call, bend_feature_names, face_ind
         out["tree_before"] = len(names_before)
         out["flat_pattern_count_before"] = _flat_pattern_count(model)
         out["bbox_before"] = _bbox_mm(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
-    out["selection"] = _select_fixed_face_and_bends(model, bend_feature_names,
-                                                    face_index=face_index,
-                                                    pre_select_names=pre_select_names)
+    out["selection"] = _select_fixed_face_and_bends(
+        model,
+        bend_feature_names,
+        face_index=face_index,
+        pre_select_names=pre_select_names,
+    )
     if out["selection"]["total_count"] == 0:
-        out["error"] = ("选完**回读计数为 0** ⇒ 什么都没选中（★ 事实 8：不许信返回值）"
-                        "；selection 里有逐条报错")
+        out["error"] = (
+            "选完**回读计数为 0** ⇒ 什么都没选中（★ 事实 8：不许信返回值）"
+            "；selection 里有逐条报错"
+        )
         return out
     try:
         out["returned"] = call()
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     try:
@@ -1278,15 +1380,19 @@ def _create_unfold_or_fold(model, entry: str, call, bend_feature_names, face_ind
         out["new_features"] = [n for n in names_after if n not in names_before]
         out["flat_pattern_count_after"] = _flat_pattern_count(model)
         out["bbox_after"] = _bbox_mm(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
-    out["bbox_comparable"] = out["bbox_before"] is not None and out["bbox_after"] is not None
+    out["bbox_comparable"] = (
+        out["bbox_before"] is not None and out["bbox_after"] is not None
+    )
     out["ok"] = (out["tree_after"] > out["tree_before"]) and bool(out["new_features"])
     if not out["ok"]:
-        out["error"] = ("回读判据未过：特征树 %r → %r（要**增加**）、新特征 %r —— "
-                        "★ 它回 `void` ⇒ 只能靠回读（规则 6）"
-                        % (out["tree_before"], out["tree_after"], out["new_features"]))
+        out["error"] = (
+            "回读判据未过：特征树 %r → %r（要**增加**）、新特征 %r —— "
+            "★ 它回 `void` ⇒ 只能靠回读（规则 6）"
+            % (out["tree_before"], out["tree_after"], out["new_features"])
+        )
     return out
 
 
@@ -1313,13 +1419,17 @@ def create_unfold(model, bend_feature_names, *, face_index: int = 0) -> dict:
     :returns: 见 :func:`_create_unfold_or_fold`（判据 = 特征树增量 + 平展型式个数 + 逐条 mark）。
     """
     return _create_unfold_or_fold(
-        model, "IModelDoc2::InsertSheetMetalUnfold()",
+        model,
+        "IModelDoc2::InsertSheetMetalUnfold()",
         lambda: get_com_member(model, "InsertSheetMetalUnfold"),
-        _as_name_list(bend_feature_names), face_index)
+        _as_name_list(bend_feature_names),
+        face_index,
+    )
 
 
-def create_fold(model, bend_feature_names, *, face_index: int = 0,
-                unfold_feature_name: str = "") -> dict:
+def create_fold(
+    model, bend_feature_names, *, face_index: int = 0, unfold_feature_name: str = ""
+) -> dict:
     """★ **插入折叠特征**（★ 官方 `IModelDoc2::InsertSheetMetalFold()`，**零参**）。
 
     :param unfold_feature_name: 官方示例在 Fold 之前先选已存在的 `Unfold1`（**mark 0**）
@@ -1329,19 +1439,37 @@ def create_fold(model, bend_feature_names, *, face_index: int = 0,
     """
     pre = [str(unfold_feature_name)] if unfold_feature_name else []
     return _create_unfold_or_fold(
-        model, "IModelDoc2::InsertSheetMetalFold()",
+        model,
+        "IModelDoc2::InsertSheetMetalFold()",
         lambda: get_com_member(model, "InsertSheetMetalFold"),
-        _as_name_list(bend_feature_names), face_index, pre_select_names=pre)
+        _as_name_list(bend_feature_names),
+        face_index,
+        pre_select_names=pre,
+    )
 
 
-def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = "outside",
-               reverse: bool = False, length_mm: float = 0.01, gap_mm: float = 0.01,
-               angle_deg: float = 0.0, radius_mm: float = 0.005, miter_gap_mm: float = 0.0011,
-               use_default_relief: bool = False, relief: str = "obround",
-               relief_tear: str = "rip", use_relief_ratio: bool = True,
-               relief_ratio: float = 1.0, relief_width_mm: float = 0.0,
-               relief_depth_mm: float = 0.0, k_factor: float = 0.5,
-               allow_unverified: bool = False) -> dict:
+def create_hem(
+    model,
+    edge_selector,
+    *,
+    hem_type: str = "open",
+    position: str = "outside",
+    reverse: bool = False,
+    length_mm: float = 0.01,
+    gap_mm: float = 0.01,
+    angle_deg: float = 0.0,
+    radius_mm: float = 0.005,
+    miter_gap_mm: float = 0.0011,
+    use_default_relief: bool = False,
+    relief: str = "obround",
+    relief_tear: str = "rip",
+    use_relief_ratio: bool = True,
+    relief_ratio: float = 1.0,
+    relief_width_mm: float = 0.0,
+    relief_depth_mm: float = 0.0,
+    k_factor: float = 0.5,
+    allow_unverified: bool = False,
+) -> dict:
     """★ **在选中的边上加折边（hem）**（★ 官方 `IFeatureManager::InsertSheetMetalHem2`，**16 形参**）。
 
     ⚠⚠ **本入口在本机实测失败**（`SHEET_METAL_RUNTIME_STATUS["create_hem"]`，★ 五种形态全回 `None`）
@@ -1364,45 +1492,66 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
       → 传 `PCBA` → **先选中要加折边的边** ✓
     """
     if not allow_unverified:
-        require_verified("create_hem")     #: ★ 本机实测失败 ⇒ 调用前抛**带原因**的错误
-    import sw_selection_spec as SS                                      # noqa: E402
-    from sw_part import _empty_callout                                  # noqa: E402
+        require_verified("create_hem")  #: ★ 本机实测失败 ⇒ 调用前抛**带原因**的错误
+    import sw_selection_spec as SS  # noqa: E402
+    from sw_part import _empty_callout  # noqa: E402
+
     out: dict = {
-        "ok": False, "entry_used": "IFeatureManager::InsertSheetMetalHem2(16 形参)",
-        "feature": None, "feature_type": None, "hem_type_readback": None,
-        "tree_before": None, "tree_after": None, "face_count_before": None,
-        "face_count_after": None, "bbox_before": None, "bbox_after": None,
-        "bbox_changed": None, "bbox_comparable": None, "api_args": None, "error": None, "note": None,
+        "ok": False,
+        "entry_used": "IFeatureManager::InsertSheetMetalHem2(16 形参)",
+        "feature": None,
+        "feature_type": None,
+        "hem_type_readback": None,
+        "tree_before": None,
+        "tree_after": None,
+        "face_count_before": None,
+        "face_count_after": None,
+        "bbox_before": None,
+        "bbox_after": None,
+        "bbox_changed": None,
+        "bbox_comparable": None,
+        "api_args": None,
+        "error": None,
+        "note": None,
         "★": "判据 = **特征树 +1** 与（面数变化 或 包围盒变化）；★ 两者都回读；"
-             "★ 它回的 IFeature **不当判据**",
+        "★ 它回的 IFeature **不当判据**",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     ht = str(hem_type).strip().lower()
     if ht not in HEM_TYPES:
-        out["error"] = ("未知的 hem_type %r；合法：%s"
-                        % (hem_type, ", ".join(sorted(HEM_TYPES))))
+        out["error"] = "未知的 hem_type %r；合法：%s" % (
+            hem_type,
+            ", ".join(sorted(HEM_TYPES)),
+        )
         return out
     pos = str(position).strip().lower()
     if pos not in HEM_POSITIONS:
-        out["error"] = ("未知的 position %r；合法：%s"
-                        % (position, ", ".join(sorted(HEM_POSITIONS))))
+        out["error"] = "未知的 position %r；合法：%s" % (
+            position,
+            ", ".join(sorted(HEM_POSITIONS)),
+        )
         return out
     rel = str(relief).strip().lower()
     if rel not in HEM_RELIEFS:
-        out["error"] = ("未知的 relief %r；合法：%s" % (relief, ", ".join(sorted(HEM_RELIEFS))))
+        out["error"] = "未知的 relief %r；合法：%s" % (
+            relief,
+            ", ".join(sorted(HEM_RELIEFS)),
+        )
         return out
     rt = str(relief_tear).strip().lower()
     if rt not in HEM_RELIEF_TEARS:
-        out["error"] = ("未知的 relief_tear %r；合法：%s"
-                        % (relief_tear, ", ".join(sorted(HEM_RELIEF_TEARS))))
+        out["error"] = "未知的 relief_tear %r；合法：%s" % (
+            relief_tear,
+            ", ".join(sorted(HEM_RELIEF_TEARS)),
+        )
         return out
 
     def _face_count():
         try:
             return len(SS.entities_on_body(model, "FACE"))
-        except Exception:                                              # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None
 
     try:
@@ -1410,17 +1559,26 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
         out["tree_before"] = len(names_before)
         out["face_count_before"] = _face_count()
         out["bbox_before"] = _bbox_mm(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["api_args"] = {
-        "Type": HEM_TYPES[ht], "Position": HEM_POSITIONS[pos], "Reverse": bool(reverse),
-        "DLength": float(length_mm), "DGap": float(gap_mm), "DAngle": float(angle_deg),
-        "DRad": float(radius_mm), "DMiterGap": float(miter_gap_mm),
-        "UseDefaultRelief": bool(use_default_relief), "ReliefType": HEM_RELIEFS[rel],
-        "ReliefTearTypes": HEM_RELIEF_TEARS[rt], "UseReliefRatio": bool(use_relief_ratio),
-        "ReliefRatio": float(relief_ratio), "ReliefWidth": float(relief_width_mm),
-        "ReliefDepth": float(relief_depth_mm), "KFactor": float(k_factor),
+        "Type": HEM_TYPES[ht],
+        "Position": HEM_POSITIONS[pos],
+        "Reverse": bool(reverse),
+        "DLength": float(length_mm),
+        "DGap": float(gap_mm),
+        "DAngle": float(angle_deg),
+        "DRad": float(radius_mm),
+        "DMiterGap": float(miter_gap_mm),
+        "UseDefaultRelief": bool(use_default_relief),
+        "ReliefType": HEM_RELIEFS[rel],
+        "ReliefTearTypes": HEM_RELIEF_TEARS[rt],
+        "UseReliefRatio": bool(use_relief_ratio),
+        "ReliefRatio": float(relief_ratio),
+        "ReliefWidth": float(relief_width_mm),
+        "ReliefDepth": float(relief_depth_mm),
+        "KFactor": float(k_factor),
     }
     #: ★★ **顺序照官方 `## Remarks` 逐字的第 1–4 步**：
     #: ① `CreateCustomBendAllowance` → ② 初始化 → ③ 赋给 PCBA → ④ **然后**才「Select one
@@ -1432,42 +1590,62 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
         manager = get_com_member(model, "FeatureManager")
         cba = call_com_member(manager, "CreateCustomBendAllowance")
         if cba is None:
-            out["error"] = "CreateCustomBendAllowance 未返回对象（官方 Remarks 第 1 步）"
+            out["error"] = (
+                "CreateCustomBendAllowance 未返回对象（官方 Remarks 第 1 步）"
+            )
             return out
-        #: ★ `ICustomBendAllowance::Type` 的 Remarks 逐字：「**use this property to set 
+        #: ★ `ICustomBendAllowance::Type` 的 Remarks 逐字：「**use this property to set
         #: the value
         #:   for the type … 若你不把它放在最后设，最后设的那个属性会覆盖掉先前设的类型**」
-        #: ⇒ ★ 本段**先设 KFactor、最后设 Type**（官方示例是反的，但 KFactor 恰好也等于 
+        #: ⇒ ★ 本段**先设 KFactor、最后设 Type**（官方示例是反的，但 KFactor 恰好也等于
         #: 2 ⇒ 巧合）✓
         cba.KFactor = float(k_factor)
         cba.Type = SW_BEND_ALLOWANCE_K_FACTOR
         #: 第 4 步：**此时才选中边**（★ 事实 32：边不能按名字选 ⇒ 走 `Select4` 按对象选
         #: ）
-        sel = (str(edge_selector).strip() or SS.CURRENT_SELECTION)
+        sel = str(edge_selector).strip() or SS.CURRENT_SELECTION
         if sel.startswith("index:"):
             SS.select_entity_by_index(model, "EDGE", int(sel.split(":", 1)[1]))
         elif sel != SS.CURRENT_SELECTION:
-            raise ValueError("非法的边选择器 %r；合法：'index:<n>' 或 '__current_selection__'" % sel)
+            raise ValueError(
+                "非法的边选择器 %r；合法：'index:<n>' 或 '__current_selection__'" % sel
+            )
         out["selection_count_before_call"] = SS.get_selection_count(model)
         if out["selection_count_before_call"] <= 0:
-            out["error"] = ("选完**回读计数为 0** ⇒ 没有边在选区里（★ 事实 8）"
-                            "—— 折边必须先选中边（官方 Remarks 第 4 步）")
+            out["error"] = (
+                "选完**回读计数为 0** ⇒ 没有边在选区里（★ 事实 8）"
+                "—— 折边必须先选中边（官方 Remarks 第 4 步）"
+            )
             return out
         args = out["api_args"]
-        feature = get_com_member(manager, "InsertSheetMetalHem2",
-                                 int(args["Type"]), int(args["Position"]), bool(args["Reverse"]),
-                                 float(args["DLength"]), float(args["DGap"]), float(args["DAngle"]),
-                                 float(args["DRad"]), float(args["DMiterGap"]), cba,
-                                 bool(args["UseDefaultRelief"]), int(args["ReliefType"]),
-                                 int(args["ReliefTearTypes"]), bool(args["UseReliefRatio"]),
-                                 float(args["ReliefRatio"]), float(args["ReliefWidth"]),
-                                 float(args["ReliefDepth"]))
-    except Exception as exc:                                            # noqa: BLE001
+        feature = get_com_member(
+            manager,
+            "InsertSheetMetalHem2",
+            int(args["Type"]),
+            int(args["Position"]),
+            bool(args["Reverse"]),
+            float(args["DLength"]),
+            float(args["DGap"]),
+            float(args["DAngle"]),
+            float(args["DRad"]),
+            float(args["DMiterGap"]),
+            cba,
+            bool(args["UseDefaultRelief"]),
+            int(args["ReliefType"]),
+            int(args["ReliefTearTypes"]),
+            bool(args["UseReliefRatio"]),
+            float(args["ReliefRatio"]),
+            float(args["ReliefWidth"]),
+            float(args["ReliefDepth"]),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
     if feature is None:
-        out["error"] = ("InsertSheetMetalHem2 回 None ⇒ 折边没建出来"
-                        "（★ 官方 Returns 是 IFeature ⇒ None 就是失败）")
+        out["error"] = (
+            "InsertSheetMetalHem2 回 None ⇒ 折边没建出来"
+            "（★ 官方 Returns 是 IFeature ⇒ None 就是失败）"
+        )
         return out
     try:
         out["feature"] = str(get_com_member(feature, "Name") or "")
@@ -1475,27 +1653,41 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
         definition = get_com_member(feature, "GetDefinition")
         if definition is not None:
             out["hem_type_readback"] = int(get_com_member(definition, "Type") or 0)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["note"] = "特征读回部分失败（不影响判据）：%s" % str(exc)[:120]
     try:
         names_after = _feature_names_snapshot(model)
         out["tree_after"] = len(names_after)
         out["face_count_after"] = _face_count()
         out["bbox_after"] = _bbox_mm(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
-    out["bbox_comparable"] = out["bbox_before"] is not None and out["bbox_after"] is not None
-    out["bbox_changed"] = (out["bbox_comparable"]
-                           and out["bbox_before"] != out["bbox_after"])
-    faces_changed = (out["face_count_before"] is not None and out["face_count_after"] is not None
-                     and out["face_count_before"] != out["face_count_after"])
-    out["ok"] = (out["tree_after"] == out["tree_before"] + 1) and (faces_changed
-                                                                  or out["bbox_changed"])
+    out["bbox_comparable"] = (
+        out["bbox_before"] is not None and out["bbox_after"] is not None
+    )
+    out["bbox_changed"] = (
+        out["bbox_comparable"] and out["bbox_before"] != out["bbox_after"]
+    )
+    faces_changed = (
+        out["face_count_before"] is not None
+        and out["face_count_after"] is not None
+        and out["face_count_before"] != out["face_count_after"]
+    )
+    out["ok"] = (out["tree_after"] == out["tree_before"] + 1) and (
+        faces_changed or out["bbox_changed"]
+    )
     if not out["ok"]:
-        out["error"] = ("回读判据未过：特征树 %r → %r（要 +1）· 面数 %r → %r · 包围盒变化 %r"
-                        % (out["tree_before"], out["tree_after"], out["face_count_before"],
-                           out["face_count_after"], out["bbox_changed"]))
+        out["error"] = (
+            "回读判据未过：特征树 %r → %r（要 +1）· 面数 %r → %r · 包围盒变化 %r"
+            % (
+                out["tree_before"],
+                out["tree_after"],
+                out["face_count_before"],
+                out["face_count_after"],
+                out["bbox_changed"],
+            )
+        )
     return out
 
 
@@ -1508,7 +1700,7 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
 #       System.string Config, System.bool OverrideDoc, System.bool ShowPunch,
 #       System.bool ShowProfile, System.bool ShowCenter, System.bool LinkToPart )`
 #     ⇒ ★ **9 参** ✓
-# · ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or 
+# · ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or
 # a
 #     2D sketch containing points**」✗ ⇒ ★★ **前置 = 先选一个面** ✓
 # ★ 我第一版**没选** ⇒ 回 `None` ⇒ ★ 那正是「前置没上」、★ 与「工具建不出来」**长得一样*
@@ -1521,10 +1713,20 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
 # · ★ **工具文件要落盘** —— `Path` 是磁盘路径 ⇒ ★ 落到**仓库内 `output/`**（★ 非用户目录
 #  ✓）
 # ★★ 判据 = **回读**（★ 特征树增量，★ 不看返回值 —— 事实 8）✓
-def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool = False,
-                            rot_angle_deg: float = 0.0, config: str = "", override_doc: bool = False,
-                            show_punch: bool = True, show_profile: bool = True,
-                            show_center: bool = True, link_to_part: bool = True):
+def insert_form_tool_report(
+    model,
+    tool_path,
+    *,
+    face_index: int = 0,
+    flip: bool = False,
+    rot_angle_deg: float = 0.0,
+    config: str = "",
+    override_doc: bool = False,
+    show_punch: bool = True,
+    show_profile: bool = True,
+    show_center: bool = True,
+    link_to_part: bool = True,
+):
     """插入成形工具（`IFeatureManager::InsertFormToolFeature`）—— ★ 判据用回读。
 
     参数:
@@ -1548,24 +1750,29 @@ def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool
     out: dict = {
         "official": "IFeatureManager.InsertFormToolFeature",
         "arity": 9,
-        "note": ("★ 官方 `## Remarks` 逐字要求**先选一个面**（`select either a face or a 2D sketch "
-                 "containing points`）—— ★ 没选时**静默回 `None`**，★ 那与「建不出来」长得一样 ✗"),
+        "note": (
+            "★ 官方 `## Remarks` 逐字要求**先选一个面**（`select either a face or a 2D sketch "
+            "containing points`）—— ★ 没选时**静默回 `None`**，★ 那与「建不出来」长得一样 ✗"
+        ),
         "tool_path": str(tool_path),
         "face_index": int(face_index),
     }
     #: ★ 前置①：★ 工件文件在盘上吗（★ 先查、★ 免得把"文件不在"记成"工具建不出来" ✓）
     from pathlib import Path as _Path
+
     if not _Path(str(tool_path)).is_file():
         out["ok"] = False
-        out["error"] = ("★ 前置①失败：成形工具文件不存在 %r ⇒ ★ 官方 `Path` 参数是**磁盘路径** ✓"
-                        % str(tool_path))
+        out["error"] = (
+            "★ 前置①失败：成形工具文件不存在 %r ⇒ ★ 官方 `Path` 参数是**磁盘路径** ✓"
+            % str(tool_path)
+        )
         return out
     out["tool_file_exists"] = True
 
     #: ★ 前置②：★ 选一个面（★ `append` 默认 `False` ⇒ 正好清空后单选 ✓）
     try:
         SS.select_entity_by_index(model, "FACE", int(face_index))
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "★ 前置②选择失败：%s: %s" % (type(e).__name__, str(e)[:130])
         return out
@@ -1587,7 +1794,7 @@ def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool
         #:     ★ 相对导入棘轮 **35 → 36** 被拦 ✓
         #:   ★★ **第二版**：★ 把 `deg` 加进**模块级**那行 ✓ ⇒ ★ **棘轮过了**，
         #:     而★ **`tests/test_sw_sheet_metal.py` 收集期炸** ✗ ——
-        #: ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'` 
+        #: ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'`
         #: ✓
         #:     ★★ 真因：★ 那个测试只往 `sys.path` 塞 `scripts/`（★ 不是包）⇒
         #:       `sw_sheet_metal` 的**模块级** `from .sw_connect import … deg` 走进
@@ -1603,23 +1810,42 @@ def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool
         #: ★ 取 `FeatureManager` 用本模块既有的写法（★ 逐字：`get_com_member(model, "Fea
         #: tureManager")` ✓）
         _mgr = get_com_member(model, "FeatureManager")
-        feat = get_com_member(_mgr, "InsertFormToolFeature",
-                              str(tool_path), bool(flip), float(deg(rot_angle_deg)),
-                              str(config), bool(override_doc), bool(show_punch),
-                              bool(show_profile), bool(show_center), bool(link_to_part))
-    except Exception as e:                                              # noqa: BLE001
+        feat = get_com_member(
+            _mgr,
+            "InsertFormToolFeature",
+            str(tool_path),
+            bool(flip),
+            float(deg(rot_angle_deg)),
+            str(config),
+            bool(override_doc),
+            bool(show_punch),
+            bool(show_profile),
+            bool(show_center),
+            bool(link_to_part),
+        )
+    except Exception as e:  # noqa: BLE001
         exc = e
     after = _feature_names_snapshot(model)
     added = [n for n in after if n not in before]
-    out.update({"feature_returned_is_none": feat is None, "added": added,
-                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+    out.update(
+        {
+            "feature_returned_is_none": feat is None,
+            "added": added,
+            "call_exception": None
+            if exc is None
+            else "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+        }
+    )
     out["ok"] = bool(added)
     if out["ok"]:
         out["feature"] = str(added[0])
-        out["verdict"] = ("★★★★★ **建成** —— ★ 特征树新增 %r（★ 回读、★ 不是信返回值 ✓）" % added)
+        out["verdict"] = (
+            "★★★★★ **建成** —— ★ 特征树新增 %r（★ 回读、★ 不是信返回值 ✓）" % added
+        )
     else:
-        out["error"] = ("★ 回读判据未过：特征树没有增量（★ 选了面=%r · ★ 文件在=%r）⇒ "
-                        "★ 三处成因逐条排除后再下结论（★ 事实 62：★ 只有负例能证明判据有效）✓"
-                        % (out["selection_count"], out["tool_file_exists"]))
+        out["error"] = (
+            "★ 回读判据未过：特征树没有增量（★ 选了面=%r · ★ 文件在=%r）⇒ "
+            "★ 三处成因逐条排除后再下结论（★ 事实 62：★ 只有负例能证明判据有效）✓"
+            % (out["selection_count"], out["tool_file_exists"])
+        )
     return out
-

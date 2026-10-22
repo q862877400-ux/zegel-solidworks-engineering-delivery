@@ -72,7 +72,7 @@ except ImportError:
     #:   ★ 它那一行是 `from sw_connect import get_com_member, call_com_member`，
     #: **紧接着**就是 `# ── 来源 ──` 那条注释 ⇒ ★★ 我最初批量补名字时把它**追加到了注释
     #: 之后**
-    #: （`…call_com_member# ── 来源 ──, set_com_member`）⇒ **名字掉进注释里、从未生效** 
+    #: （`…call_com_member# ── 来源 ──, set_com_member`）⇒ **名字掉进注释里、从未生效**
     #: ⚠
     #:   ★★ 而那意味着：★ 本模块被**顶层载入**时（脚本 / 探针 / pytest 的 prepend 模式），
     #: `set_view_scale_verified` 里那几处写会 `NameError` —— ★ **只在包内口径下才正常**
@@ -108,252 +108,252 @@ __all__ = [
 # ⚠ 编号变体已折叠到基础名（保留实参最多的那一条）。
 #: arity-reflect: byref=excluded
 VIEW_MEMBER_ARITY: dict[str, int] = {
-    'AlignDrawingView': 1,
-    'AlignHorizontalTo': 1,
-    'AlignVerticalTo': 1,
-    'AlignWithView': 2,
-    'AutoInsertCenterMarks2': 10,
-    'CreateViewArrow': 2,
-    'Crop2': 3,
-    'EnumHiddenComponents': 0,
-    'EnumSectionLines2': 1,
-    'GetAlignment': 0,
-    'GetAnnotationCount': 0,
-    'GetAnnotations': 0,
-    'GetAnnotationsByType': 1,
-    'GetArcCount': 0,
-    'GetArcs': 0,
-    'GetBaseView': 0,
-    'GetBendLineCount': 0,
-    'GetBendLines': 0,
-    'GetBendNoteAttributeString': 1,
-    'GetBendNoteTextFormat': 0,
-    'GetBodiesCount': 0,
-    'GetBomTable': 0,
-    'GetBreakLineCount': 0,
-    'GetBreakLineInfo': 0,
-    'GetBreakLines': 0,
-    'GetBreakOutSectionCount': 0,
-    'GetBreakOutSections': 0,
-    'GetCThreadCount': 0,
-    'GetCThreadQuality': 0,
-    'GetCThreads': 0,
-    'GetCenterLineCount': 0,
-    'GetCenterLineSketch': 0,
-    'GetCenterLines': 0,
-    'GetCenterMarkCount2': 0,
-    'GetCenterMarkInfo': 0,
-    'GetCenterMarks': 0,
-    'GetCorresponding': 1,
-    'GetCorrespondingEntity': 1,
-    'GetDatumOriginCount': 0,
-    'GetDatumOrigins': 0,
-    'GetDatumPoints': 0,
-    'GetDatumPointsCount': 0,
-    'GetDatumTagCount': 0,
-    'GetDatumTags': 0,
-    'GetDatumTargetSymCount': 0,
-    'GetDatumTargetSyms': 0,
-    'GetDependentViewCount': 2,
-    'GetDependentViews': 2,
-    'GetDesignTableExtent': 0,
-    'GetDetail': 0,
-    'GetDetailCircleCount2': 0,
-    'GetDetailCircleInfo': 0,
-    'GetDetailCircleStrings': 0,
-    'GetDetailCircles': 0,
-    'GetDimensionCount': 0,
-    'GetDimensionDisplayInfo': 0,
-    'GetDimensionDisplayInfoSize': 0,
-    'GetDimensionDisplayString5': 0,
-    'GetDimensionIds': 0,
-    'GetDimensionInfo': 0,
-    'GetDimensionString': 0,
-    'GetDisplayData': 0,
-    'GetDisplayDimensionCount': 0,
-    'GetDisplayDimensions': 0,
-    'GetDisplayEdgesInShadedMode': 0,
-    'GetDisplayMode': 0,
-    'GetDisplayTangentEdges': 0,
-    'GetDowelSymbolCount': 0,
-    'GetDowelSymbols': 0,
-    'GetEllipseCount': 0,
-    'GetEllipses': 0,
-    'GetFaceHatchCount': 0,
-    'GetFaceHatches': 0,
-    'GetFacettedHlrDisplay': 0,
-    'GetFirstAnnotation': 0,
-    'GetFirstBlockInstance': 0,
-    'GetFirstCThread': 0,
-    'GetFirstCenterLine': 0,
-    'GetFirstCenterMark': 0,
-    'GetFirstCenterOfMass': 0,
-    'GetFirstCustomSymbol': 0,
-    'GetFirstDatumOrigin': 0,
-    'GetFirstDatumTag': 0,
-    'GetFirstDatumTargetSym': 0,
-    'GetFirstDisplayDimension': 0,
-    'GetFirstDowelSymbol': 0,
-    'GetFirstGTOL': 0,
-    'GetFirstMultiJogLeader': 0,
-    'GetFirstNote': 0,
-    'GetFirstRevisionCloud': 0,
-    'GetFirstSFSymbol': 0,
-    'GetFirstTableAnnotation': 0,
-    'GetFirstWeldBead': 0,
-    'GetFirstWeldSymbol': 0,
-    'GetGTolCount': 0,
-    'GetGTols': 0,
-    'GetHiddenComponents': 0,
-    'GetHiddenEdgeCount': 0,
-    'GetKeepLinkedToBOM': 0,
-    'GetKeepLinkedToBOMName': 0,
-    'GetLineCount2': 1,
-    'GetLines4': 1,
-    'GetMirrorViewOrientation': 0,
-    'GetMultiJogLeaderCount': 0,
-    'GetMultiJogLeaders': 0,
-    'GetName2': 0,
-    'GetNextView': 0,
-    'GetNoteCount': 0,
-    'GetNotes': 0,
-    'GetOrientationName': 0,
-    'GetOutline': 0,
-    'GetParabolaCount': 0,
-    'GetParabolas': 0,
-    'GetPolyLineCount5': 1,
-    'GetPolyLinesAndCurves': 1,
-    'GetPolyLinesAndCurvesCount': 1,
-    'GetPolylines6': 1,
-    'GetProjectionArrow': 0,
-    'GetProjectionLineCount': 0,
-    'GetProjectionLines': 0,
-    'GetReferencedModelName': 0,
-    'GetRelatedTangentEdgeCount': 1,
-    'GetRelatedTangentEdges': 1,
-    'GetRevisionCloudCount': 0,
-    'GetRevisionClouds': 0,
-    'GetSFSymbolCount': 0,
-    'GetSFSymbols': 0,
-    'GetSMBoundaryBoxDisplayData': 0,
-    'GetSection': 0,
-    'GetSectionLineCount': 0,
-    'GetSectionLineInfo': 0,
-    'GetSectionLineStrings': 0,
-    'GetSectionLines': 0,
-    'GetSketch': 0,
-    'GetSketchPictureCount': 0,
-    'GetSketchPictures': 0,
-    'GetSolidHatchCount': 0,
-    'GetSolidHatchInfo': 0,
-    'GetSplineCount': 0,
-    'GetSplines': 0,
-    'GetTableAnnotationCount': 0,
-    'GetTableAnnotations': 0,
-    'GetTemporaryAxes': 0,
-    'GetTemporaryAxesCount': 0,
-    'GetUniqueName': 0,
-    'GetUseParentDisplayMode': 0,
-    'GetUserPoints': 0,
-    'GetUserPointsCount': 0,
-    'GetViewXform': 0,
-    'GetVisible': 0,
-    'GetVisibleComponentCount': 0,
-    'GetVisibleComponents': 0,
-    'GetVisibleDrawingComponents': 0,
-    'GetVisibleEntities': 2,
-    'GetVisibleEntityCount': 2,
-    'GetWeldBeadCount': 0,
-    'GetWeldBeads': 0,
-    'GetWeldSymbolCount': 0,
-    'GetWeldSymbols': 0,
-    'GetWitnessEntitiesCount': 0,
-    'GetWitnessGeomInfo': 0,
-    'GetXform': 0,
-    'HasDesignTable': 0,
-    'ImportAnnotations': 5,
-    'InsertAlternateView': 1,
-    'InsertBendTable': 6,
-    'InsertBomTable6': 12,
-    'InsertBreak3': 6,
-    'InsertCutListPropertyNote': 3,
-    'InsertHoleTable3': 9,
-    'InsertPunchTable': 6,
-    'InsertViewAsBlock': 2,
-    'InsertWeldTable': 8,
-    'InsertWeldmentTable': 6,
-    'IsBroken': 0,
-    'IsCropped': 0,
-    'IsExploded': 0,
-    'IsFlatPatternView': 0,
-    'IsLightweight': 0,
-    'IsModelBreakState': 0,
-    'IsModelLoaded': 0,
-    'IsModelOutOfDate': 0,
-    'IsPerspectiveView': 0,
-    'LoadModel': 0,
-    'MergeBendTags': 2,
-    'ModifyViewArrow': 2,
-    'MoveViewArrow': 4,
-    'RemoveAlignment': 0,
-    'ReplaceViewWithBlock': 1,
-    'ReplaceViewWithSketch': 0,
-    'ResetSketchVisibility': 0,
-    'SelectEntity': 2,
-    'SetBendNoteTextFormat': 1,
-    'SetDisplayMode4': 5,
-    'SetDisplayTangentEdges': 1,
-    'SetKeepLinkedToBOM': 2,
-    'SetLightweightToResolved': 0,
-    'SetMirrorViewOrientation': 2,
-    'SetName2': 1,
-    'SetResolvedToLightweight': 0,
-    'SetViewPosition': 2,
-    'SetVisible': 2,
-    'SetXform': 1,
-    'ShowExploded': 1,
-    'ShowModelBreakState': 2,
-    'UpdateViewDisplayGeometry': 0,
-    'UseDefaultAlignment': 0,
+    "AlignDrawingView": 1,
+    "AlignHorizontalTo": 1,
+    "AlignVerticalTo": 1,
+    "AlignWithView": 2,
+    "AutoInsertCenterMarks2": 10,
+    "CreateViewArrow": 2,
+    "Crop2": 3,
+    "EnumHiddenComponents": 0,
+    "EnumSectionLines2": 1,
+    "GetAlignment": 0,
+    "GetAnnotationCount": 0,
+    "GetAnnotations": 0,
+    "GetAnnotationsByType": 1,
+    "GetArcCount": 0,
+    "GetArcs": 0,
+    "GetBaseView": 0,
+    "GetBendLineCount": 0,
+    "GetBendLines": 0,
+    "GetBendNoteAttributeString": 1,
+    "GetBendNoteTextFormat": 0,
+    "GetBodiesCount": 0,
+    "GetBomTable": 0,
+    "GetBreakLineCount": 0,
+    "GetBreakLineInfo": 0,
+    "GetBreakLines": 0,
+    "GetBreakOutSectionCount": 0,
+    "GetBreakOutSections": 0,
+    "GetCThreadCount": 0,
+    "GetCThreadQuality": 0,
+    "GetCThreads": 0,
+    "GetCenterLineCount": 0,
+    "GetCenterLineSketch": 0,
+    "GetCenterLines": 0,
+    "GetCenterMarkCount2": 0,
+    "GetCenterMarkInfo": 0,
+    "GetCenterMarks": 0,
+    "GetCorresponding": 1,
+    "GetCorrespondingEntity": 1,
+    "GetDatumOriginCount": 0,
+    "GetDatumOrigins": 0,
+    "GetDatumPoints": 0,
+    "GetDatumPointsCount": 0,
+    "GetDatumTagCount": 0,
+    "GetDatumTags": 0,
+    "GetDatumTargetSymCount": 0,
+    "GetDatumTargetSyms": 0,
+    "GetDependentViewCount": 2,
+    "GetDependentViews": 2,
+    "GetDesignTableExtent": 0,
+    "GetDetail": 0,
+    "GetDetailCircleCount2": 0,
+    "GetDetailCircleInfo": 0,
+    "GetDetailCircleStrings": 0,
+    "GetDetailCircles": 0,
+    "GetDimensionCount": 0,
+    "GetDimensionDisplayInfo": 0,
+    "GetDimensionDisplayInfoSize": 0,
+    "GetDimensionDisplayString5": 0,
+    "GetDimensionIds": 0,
+    "GetDimensionInfo": 0,
+    "GetDimensionString": 0,
+    "GetDisplayData": 0,
+    "GetDisplayDimensionCount": 0,
+    "GetDisplayDimensions": 0,
+    "GetDisplayEdgesInShadedMode": 0,
+    "GetDisplayMode": 0,
+    "GetDisplayTangentEdges": 0,
+    "GetDowelSymbolCount": 0,
+    "GetDowelSymbols": 0,
+    "GetEllipseCount": 0,
+    "GetEllipses": 0,
+    "GetFaceHatchCount": 0,
+    "GetFaceHatches": 0,
+    "GetFacettedHlrDisplay": 0,
+    "GetFirstAnnotation": 0,
+    "GetFirstBlockInstance": 0,
+    "GetFirstCThread": 0,
+    "GetFirstCenterLine": 0,
+    "GetFirstCenterMark": 0,
+    "GetFirstCenterOfMass": 0,
+    "GetFirstCustomSymbol": 0,
+    "GetFirstDatumOrigin": 0,
+    "GetFirstDatumTag": 0,
+    "GetFirstDatumTargetSym": 0,
+    "GetFirstDisplayDimension": 0,
+    "GetFirstDowelSymbol": 0,
+    "GetFirstGTOL": 0,
+    "GetFirstMultiJogLeader": 0,
+    "GetFirstNote": 0,
+    "GetFirstRevisionCloud": 0,
+    "GetFirstSFSymbol": 0,
+    "GetFirstTableAnnotation": 0,
+    "GetFirstWeldBead": 0,
+    "GetFirstWeldSymbol": 0,
+    "GetGTolCount": 0,
+    "GetGTols": 0,
+    "GetHiddenComponents": 0,
+    "GetHiddenEdgeCount": 0,
+    "GetKeepLinkedToBOM": 0,
+    "GetKeepLinkedToBOMName": 0,
+    "GetLineCount2": 1,
+    "GetLines4": 1,
+    "GetMirrorViewOrientation": 0,
+    "GetMultiJogLeaderCount": 0,
+    "GetMultiJogLeaders": 0,
+    "GetName2": 0,
+    "GetNextView": 0,
+    "GetNoteCount": 0,
+    "GetNotes": 0,
+    "GetOrientationName": 0,
+    "GetOutline": 0,
+    "GetParabolaCount": 0,
+    "GetParabolas": 0,
+    "GetPolyLineCount5": 1,
+    "GetPolyLinesAndCurves": 1,
+    "GetPolyLinesAndCurvesCount": 1,
+    "GetPolylines6": 1,
+    "GetProjectionArrow": 0,
+    "GetProjectionLineCount": 0,
+    "GetProjectionLines": 0,
+    "GetReferencedModelName": 0,
+    "GetRelatedTangentEdgeCount": 1,
+    "GetRelatedTangentEdges": 1,
+    "GetRevisionCloudCount": 0,
+    "GetRevisionClouds": 0,
+    "GetSFSymbolCount": 0,
+    "GetSFSymbols": 0,
+    "GetSMBoundaryBoxDisplayData": 0,
+    "GetSection": 0,
+    "GetSectionLineCount": 0,
+    "GetSectionLineInfo": 0,
+    "GetSectionLineStrings": 0,
+    "GetSectionLines": 0,
+    "GetSketch": 0,
+    "GetSketchPictureCount": 0,
+    "GetSketchPictures": 0,
+    "GetSolidHatchCount": 0,
+    "GetSolidHatchInfo": 0,
+    "GetSplineCount": 0,
+    "GetSplines": 0,
+    "GetTableAnnotationCount": 0,
+    "GetTableAnnotations": 0,
+    "GetTemporaryAxes": 0,
+    "GetTemporaryAxesCount": 0,
+    "GetUniqueName": 0,
+    "GetUseParentDisplayMode": 0,
+    "GetUserPoints": 0,
+    "GetUserPointsCount": 0,
+    "GetViewXform": 0,
+    "GetVisible": 0,
+    "GetVisibleComponentCount": 0,
+    "GetVisibleComponents": 0,
+    "GetVisibleDrawingComponents": 0,
+    "GetVisibleEntities": 2,
+    "GetVisibleEntityCount": 2,
+    "GetWeldBeadCount": 0,
+    "GetWeldBeads": 0,
+    "GetWeldSymbolCount": 0,
+    "GetWeldSymbols": 0,
+    "GetWitnessEntitiesCount": 0,
+    "GetWitnessGeomInfo": 0,
+    "GetXform": 0,
+    "HasDesignTable": 0,
+    "ImportAnnotations": 5,
+    "InsertAlternateView": 1,
+    "InsertBendTable": 6,
+    "InsertBomTable6": 12,
+    "InsertBreak3": 6,
+    "InsertCutListPropertyNote": 3,
+    "InsertHoleTable3": 9,
+    "InsertPunchTable": 6,
+    "InsertViewAsBlock": 2,
+    "InsertWeldTable": 8,
+    "InsertWeldmentTable": 6,
+    "IsBroken": 0,
+    "IsCropped": 0,
+    "IsExploded": 0,
+    "IsFlatPatternView": 0,
+    "IsLightweight": 0,
+    "IsModelBreakState": 0,
+    "IsModelLoaded": 0,
+    "IsModelOutOfDate": 0,
+    "IsPerspectiveView": 0,
+    "LoadModel": 0,
+    "MergeBendTags": 2,
+    "ModifyViewArrow": 2,
+    "MoveViewArrow": 4,
+    "RemoveAlignment": 0,
+    "ReplaceViewWithBlock": 1,
+    "ReplaceViewWithSketch": 0,
+    "ResetSketchVisibility": 0,
+    "SelectEntity": 2,
+    "SetBendNoteTextFormat": 1,
+    "SetDisplayMode4": 5,
+    "SetDisplayTangentEdges": 1,
+    "SetKeepLinkedToBOM": 2,
+    "SetLightweightToResolved": 0,
+    "SetMirrorViewOrientation": 2,
+    "SetName2": 1,
+    "SetResolvedToLightweight": 0,
+    "SetViewPosition": 2,
+    "SetVisible": 2,
+    "SetXform": 1,
+    "ShowExploded": 1,
+    "ShowModelBreakState": 2,
+    "UpdateViewDisplayGeometry": 0,
+    "UseDefaultAlignment": 0,
 }
 
 #: IView 上的属性名（反射里是 get_/set_，**不是方法**）。
 # ⚑ 它们的实参个数不在上面那张表里 —— 赋值是单参数、读取是零参。
 VIEW_PROPERTY_NAMES: tuple[str, ...] = (
-    'Angle',
-    'Bodies',
-    'BreakLineGap',
-    'CropViewJaggedOutline',
-    'CropViewJaggedShapeIntensity',
-    'CropViewNoOutline',
-    'DisableAutoUpdate',
-    'DisplayState',
-    'EmphasizeOutline',
-    'FlipView',
-    'FocusLocked',
-    'HiddenEdges',
-    'IPosition',
-    'IScaleRatio',
-    'LinkParentConfiguration',
-    'ModelToViewTransform',
-    'Name',
-    'Position',
-    'PositionLocked',
-    'ProjectedDimensions',
-    'ReferencedConfiguration',
-    'ReferencedConfigurationID',
-    'ReferencedDocument',
-    'RootDrawingComponent',
-    'RootDrawingComponent2',
-    'ScaleDecimal',
-    'ScaleHatchPattern',
-    'ScaleRatio',
-    'Sheet',
-    'ShowSheetMetalBendNotes',
-    'SuppressState',
-    'Type',
-    'UseParentScale',
-    'UseSheetScale',
+    "Angle",
+    "Bodies",
+    "BreakLineGap",
+    "CropViewJaggedOutline",
+    "CropViewJaggedShapeIntensity",
+    "CropViewNoOutline",
+    "DisableAutoUpdate",
+    "DisplayState",
+    "EmphasizeOutline",
+    "FlipView",
+    "FocusLocked",
+    "HiddenEdges",
+    "IPosition",
+    "IScaleRatio",
+    "LinkParentConfiguration",
+    "ModelToViewTransform",
+    "Name",
+    "Position",
+    "PositionLocked",
+    "ProjectedDimensions",
+    "ReferencedConfiguration",
+    "ReferencedConfigurationID",
+    "ReferencedDocument",
+    "RootDrawingComponent",
+    "RootDrawingComponent2",
+    "ScaleDecimal",
+    "ScaleHatchPattern",
+    "ScaleRatio",
+    "Sheet",
+    "ShowSheetMetalBendNotes",
+    "SuppressState",
+    "Type",
+    "UseParentScale",
+    "UseSheetScale",
 )
 
 
@@ -438,7 +438,7 @@ def get_view_name(view) -> str:
         got = get_com_member(view, "GetName2")
         if got:
             return str(got)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`**（★ 同上，真机已证 `GetName2` 等
     #: 价）。
@@ -536,7 +536,7 @@ def collect_view_evidence(view) -> dict[str, Any]:
 
 
 # ── 24h 计划 段 6 续（Spec Kit `160`）：**工程图视图读数的包装** ─────────────────────
-# ★★★★ 为什么包一层（★ 第四次同法）：`sw_drawing_view` 的 12 个函数**全部吃一个 `view` 
+# ★★★★ 为什么包一层（★ 第四次同法）：`sw_drawing_view` 的 12 个函数**全部吃一个 `view`
 # 对象**
 # ⇒ ★★ 而工具层的入参只能是 `model`（★ 文档）⇒ ★ **所以要注入 `model` + 内部往下取 view*
 # *。
@@ -561,9 +561,11 @@ def collect_view_evidence(view) -> dict[str, Any]:
 def _iter_views(model):
     """★ 遍历图纸上的视图（★ 取不到就回 `([], 原因)`）。"""
     try:
-        require = getattr(__import__("scripts.sw_drawing_query", fromlist=["x"]), "require_drawing")
-        require(model)                                          #: ★ 非工程图 ⇒ 它自己会抛（★ 不静默）
-    except Exception as exc:                                   # noqa: BLE001
+        require = getattr(
+            __import__("scripts.sw_drawing_query", fromlist=["x"]), "require_drawing"
+        )
+        require(model)  #: ★ 非工程图 ⇒ 它自己会抛（★ 不静默）
+    except Exception as exc:  # noqa: BLE001
         return [], "不是工程图文档：%s" % str(exc)[:160]
     #: ★★★ 2026-10-01（轮 291）：**先向 `sw_drawing_query.list_views` 取名单** ——
     #: 它的 docstring 记着一条**真机实测的陷阱**：空图纸上 `GetFirstView()` 回的是**图纸
@@ -576,30 +578,34 @@ def _iter_views(model):
     #:   ★ 改为相对优先、绝对回退。
     try:
         from .sw_drawing_query import list_views as _list_views
-    except ImportError:                                        # 顶层载入（脚本 / 探针）
+    except ImportError:  # 顶层载入（脚本 / 探针）
         from scripts.sw_drawing_query import list_views as _list_views
     try:
-        _names = [str((_r or {}).get("name") or "") for _r in (_list_views(model) or [])]
-    except Exception as exc:                                   # noqa: BLE001
+        _names = [
+            str((_r or {}).get("name") or "") for _r in (_list_views(model) or [])
+        ]
+    except Exception as exc:  # noqa: BLE001
         return [], "取视图清单失败：%s: %s" % (type(exc).__name__, str(exc)[:160])
     if not _names:
         return [], "图里没有视图（★ 图纸可能是空的）"
     try:
         v = get_first_view(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return [], "取第一个视图失败：%s: %s" % (type(exc).__name__, str(exc)[:160])
     out, seen = [], 0
-    while v is not None and seen < 200:                        #: ★ 上限防死循环
-        out.append(v); seen += 1
+    while v is not None and seen < 200:  #: ★ 上限防死循环
+        out.append(v)
+        seen += 1
         try:
             v = get_next_view(v)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
     _picked = []
     for _o in out:
         try:
-            if str(get_view_name(_o)) in _names: _picked.append(_o)
-        except Exception:                                      # noqa: BLE001
+            if str(get_view_name(_o)) in _names:
+                _picked.append(_o)
+        except Exception:  # noqa: BLE001
             continue
     if not _picked:
         return [], "按名字没对上任何视图（★ 清单里有 %d 个）" % len(_names)
@@ -614,13 +620,16 @@ def list_drawing_views_report(model) -> dict:
     rows = []
     for v in views:
         row = {}
-        for key, fn in (("name", get_view_name), ("scale", get_view_scale),
-                        ("scale_decimal", get_scale_decimal),
-                        ("annotation_count", get_annotation_count),
-                        ("visible_component_count", get_visible_component_count)):
+        for key, fn in (
+            ("name", get_view_name),
+            ("scale", get_view_scale),
+            ("scale_decimal", get_scale_decimal),
+            ("annotation_count", get_annotation_count),
+            ("visible_component_count", get_visible_component_count),
+        ):
             try:
                 row[key] = fn(v)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 row[key] = None
         rows.append(row)
     return {"ok": True, "count": len(rows), "views": rows}
@@ -634,12 +643,14 @@ def _find_view(model, view_name: str):
         try:
             if str(get_view_name(v)) == str(view_name):
                 return v, None
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     names = []
     for v in views:
-        try: names.append(str(get_view_name(v)))
-        except Exception: names.append("?")
+        try:
+            names.append(str(get_view_name(v)))
+        except Exception:
+            names.append("?")
     return None, "没有名为 %r 的视图。★ 合法值：%s" % (view_name, names[:20])
 
 
@@ -649,11 +660,18 @@ def get_view_scale_report(model, view_name: str) -> dict:
     if err:
         return {"ok": False, "error": err}
     try:
-        return {"ok": True, "view_name": str(view_name), "scale": get_view_scale(v),
-                "scale_decimal": get_scale_decimal(v)}
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "view_name": str(view_name),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+        return {
+            "ok": True,
+            "view_name": str(view_name),
+            "scale": get_view_scale(v),
+            "scale_decimal": get_scale_decimal(v),
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "view_name": str(view_name),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
 
 
 def set_view_scale_report(model, view_name: str, scale: float) -> dict:
@@ -675,12 +693,12 @@ def collect_view_evidence_report(model) -> dict:
     for v in views:
         try:
             out.append(collect_view_evidence(v))
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:140])})
     return {"ok": True, "count": len(out), "evidence": out}
 
 
-# ── 24h 计划 段 6 续（Spec Kit `161`）：**比例成员名的更正（`Scale` → `ScaleRatio`）** 
+# ── 24h 计划 段 6 续（Spec Kit `161`）：**比例成员名的更正（`Scale` → `ScaleRatio`）**
 # ────
 # ★★★★★ 2026-10-01（轮 293）**真机抓到三处同类错**（而这是**三源互证**该抓的那种）：
 # · `get_view_scale` / `set_view_scale` 都调 **`Scale`** —— ★ **而 `IView` 上**没有那个
@@ -693,7 +711,7 @@ def collect_view_evidence_report(model) -> dict:
 # `UseParentScale` 同形**」⇒ ★★★ **即：真名 `ScaleRatio` 早就被记下，只是那两个函数没跟
 # 着改**。
 #   · ★★★ **官方（`C:\swapi\types\IView\ScaleRatio.md`）**：
-# 「Gets or sets the scale of the drawing view, **returning the results in ratio format 
+# 「Gets or sets the scale of the drawing view, **returning the results in ratio format
 # (n:n)**」
 #       · **Returns: Array of 2 doubles** · ★「This property and `IView::ScaleDecimal` contain
 #       **the same information**, but use the value in a different way」
@@ -708,7 +726,7 @@ def collect_view_evidence_report(model) -> dict:
 # 文件:   scripts/sw_drawing_view.py —— 本段
 # 定位:   段 6 续：把"视图比例"的成员名从**臆造的 `Scale`** 更正为官方真名 `ScaleRatio
 #           `。
-# 官方依据: `C:\swapi\types\IView\ScaleRatio.md`（★ 真名 + "Array of 2 doubles" + ratio 
+# 官方依据: `C:\swapi\types\IView\ScaleRatio.md`（★ 真名 + "Array of 2 doubles" + ratio
 #           语义）·
 #          ★ 与 `ScaleDecimal` 同族（★ 本文件 docstring 里的那条已存在的更正经）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -835,7 +853,7 @@ def set_view_scale_verified(view, scale: float) -> dict:
     #: ★ ① 读前置
     try:
         uss = get_com_member(view, "UseSheetScale")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         uss = None
         _uss_err = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     else:
@@ -846,7 +864,7 @@ def set_view_scale_verified(view, scale: float) -> dict:
         try:
             set_com_member(view, "UseSheetScale", False)
             uss_cleared = True
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             uss_cleared = False
             _uss_set_err = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         else:
@@ -855,26 +873,43 @@ def set_view_scale_verified(view, scale: float) -> dict:
     before = None
     try:
         before = get_com_view_scale_ratio_raw(view)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         before = None
     #: ★ ④ 赋值（★ 真机验证过的形态）
     try:
         set_com_member(view, "ScaleRatio", (float(scale), 1.0))
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "set", "asked": float(scale),
-                "before": before, "use_sheet_scale_before": uss,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "set",
+            "asked": float(scale),
+            "before": before,
+            "use_sheet_scale_before": uss,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     #: ★ ⑤ 回读
     try:
         after = get_com_view_scale_ratio_raw(view)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "readback", "asked": float(scale),
-                "before": before, "use_sheet_scale_before": uss,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
-    changed = (before is not None and after is not None and tuple(before) != tuple(after))
-    return {"ok": bool(changed), "asked": float(scale), "before": before, "after": after,
-            "use_sheet_scale_before": uss, "use_sheet_scale_cleared": uss_cleared,
-            "use_sheet_scale_read_error": _uss_err, "use_sheet_scale_set_error": _uss_set_err}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "readback",
+            "asked": float(scale),
+            "before": before,
+            "use_sheet_scale_before": uss,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
+    changed = before is not None and after is not None and tuple(before) != tuple(after)
+    return {
+        "ok": bool(changed),
+        "asked": float(scale),
+        "before": before,
+        "after": after,
+        "use_sheet_scale_before": uss,
+        "use_sheet_scale_cleared": uss_cleared,
+        "use_sheet_scale_read_error": _uss_err,
+        "use_sheet_scale_set_error": _uss_set_err,
+    }
 
 
 def get_com_view_scale_ratio_raw(view):

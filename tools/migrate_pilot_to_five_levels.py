@@ -27,7 +27,6 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
-
 from __future__ import annotations
 
 import json
@@ -39,9 +38,13 @@ MANIFEST = REPO / "capabilities.yaml"
 
 # 13 条有运行证据的 pilot：capability_id → evidence 条目（真实测试文件，已实跑确认全绿）
 MIGRATE_TO_VERIFIED: dict[str, list[str]] = {
-    "external_spur_gear_geometry": ["pytest tests/test_cad_reliability.py（外部直齿锥齿轮几何）"],
+    "external_spur_gear_geometry": [
+        "pytest tests/test_cad_reliability.py（外部直齿锥齿轮几何）"
+    ],
     "parameter_updates": ["pytest tests/test_cad_reliability.py（参数更新回读）"],
-    "custom_properties_and_bom": ["pytest tests/test_cad_reliability.py（自定义属性与 BOM）"],
+    "custom_properties_and_bom": [
+        "pytest tests/test_cad_reliability.py（自定义属性与 BOM）"
+    ],
     "pack_and_go": [
         "pytest tests/test_sw_delivery.py",
         "pytest tests/solidworks_week3_delivery_regression.py（Pack and Go 交付）",
@@ -55,15 +58,23 @@ MIGRATE_TO_VERIFIED: dict[str, list[str]] = {
         "pytest tests/test_headless_cad_writer.py",
         "pytest tests/test_mcp_headless_open_format.py（OCP 无头写出）",
     ],
-    "configurations_and_design_tables": ["pytest tests/test_cad_reliability.py（配置与设计表）"],
+    "configurations_and_design_tables": [
+        "pytest tests/test_cad_reliability.py（配置与设计表）"
+    ],
     "sheet_metal": [
         "pytest tests/test_sw_sheet_metal.py",
         "pytest tests/solidworks_sheet_metal_regression.py（钣金）",
     ],
     "weldments": ["pytest tests/test_cad_reliability.py（焊件）"],
-    "simulation_and_fea": ["pytest tests/test_fea_analysis.py（CalculiX / Elmer 求解链）"],
-    "autocad_script_backend": ["pytest tests/test_acad_script_backend.py（AutoCAD 脚本后端）"],
-    "autocad_dotnet_backend": ["pytest tests/test_acad_dotnet_preflight.py（AutoCAD .NET 预检）"],
+    "simulation_and_fea": [
+        "pytest tests/test_fea_analysis.py（CalculiX / Elmer 求解链）"
+    ],
+    "autocad_script_backend": [
+        "pytest tests/test_acad_script_backend.py（AutoCAD 脚本后端）"
+    ],
+    "autocad_dotnet_backend": [
+        "pytest tests/test_acad_dotnet_preflight.py（AutoCAD .NET 预检）"
+    ],
 }
 
 # 6 条无运行证据的 pilot → stitched
@@ -78,7 +89,9 @@ MIGRATE_TO_STITCHED: tuple[str, ...] = (
 
 # 原 8 条 verified 的 evidence（B4 要求每条 verified 都有）
 EXISTING_VERIFIED_EVIDENCE: dict[str, list[str]] = {
-    "requirements_planning": ["pytest tests/test_engineering_orchestrator.py（需求阶段与阶段编目）"],
+    "requirements_planning": [
+        "pytest tests/test_engineering_orchestrator.py（需求阶段与阶段编目）"
+    ],
     "solidworks_addin_host": ["pytest tests/test_cad_reliability.py（加载项宿主状态）"],
     "part_and_features": ["pytest tests/test_cad_reliability.py（零件与特征）"],
     "holes_and_finishing": ["pytest tests/test_sw_hole_features.py（孔特征与修饰）"],
@@ -86,9 +99,13 @@ EXISTING_VERIFIED_EVIDENCE: dict[str, list[str]] = {
         "pytest tests/test_sw_assembly_doc_contract.py",
         "pytest tests/test_sw_assembly_aliases.py（装配与配合）",
     ],
-    "drawing_dimension_insertion": ["pytest tests/test_cad_reliability.py（工程图尺寸插入回读）"],
+    "drawing_dimension_insertion": [
+        "pytest tests/test_cad_reliability.py（工程图尺寸插入回读）"
+    ],
     "export_delivery": ["pytest tests/test_delivery_compare.py（导出交付）"],
-    "geometry_and_delivery_review": ["pytest tests/test_delivery_compare.py（几何与交付复核）"],
+    "geometry_and_delivery_review": [
+        "pytest tests/test_delivery_compare.py（几何与交付复核）"
+    ],
 }
 
 UNATTENDED = "unattended"
@@ -131,8 +148,10 @@ def migrate(payload: dict) -> tuple[dict, list[str]]:
     for item in caps:
         has = UNATTENDED in (item.get("allowed_modes") or [])
         should = item["id"] in original_verified
-        assert has == should, (
-            "不变量破了：%s 的 unattended=%s，应为 %s" % (item["id"], has, should)
+        assert has == should, "不变量破了：%s 的 unattended=%s，应为 %s" % (
+            item["id"],
+            has,
+            should,
         )
 
     payload["schema_version"] = "2.0"
@@ -156,7 +175,9 @@ def main() -> int:
 
     # 迁移「后」按**新判据**算：allowed_modes 含 unattended。
     after_unattended = sorted(
-        i["id"] for i in migrated["capabilities"] if "unattended" in (i.get("allowed_modes") or [])
+        i["id"]
+        for i in migrated["capabilities"]
+        if "unattended" in (i.get("allowed_modes") or [])
     )
 
     print("变更（%d 条）：" % len(log))
@@ -166,7 +187,10 @@ def main() -> int:
     print("无人值守授权集合：")
     print("   迁移前 %d 条  %s" % (len(before_unattended), before_unattended))
     print("   迁移后 %d 条  %s" % (len(after_unattended), after_unattended))
-    print("   ⇒ %s" % ("逐条相同 ✓" if before_unattended == after_unattended else "**不同 ✗**"))
+    print(
+        "   ⇒ %s"
+        % ("逐条相同 ✓" if before_unattended == after_unattended else "**不同 ✗**")
+    )
     print()
 
     if not apply:

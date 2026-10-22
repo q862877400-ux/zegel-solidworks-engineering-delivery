@@ -30,6 +30,7 @@ scratch 文档存到 `output/`（gitignored）；收尾**关件不保存** + **�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -47,6 +48,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-on-drawing.json")
 DIR = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-drawing")
 DRW = Path(Path(__file__).resolve().parents[1] / "output" / "pdf-probe.slddrw")
+
+
 def pdf_pages(path: Path) -> int:
     """数 PDF 里的 `/Type /Page`（**不含 `/Pages`**）—— 只看关键字，不解压流。"""
     blob = path.read_bytes()
@@ -60,10 +63,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_export
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ① 建工程图（需模板）
@@ -71,7 +75,7 @@ def main() -> int:
             doc = sw_connect.new_document(sw, "drawing")
             ev["drawing_created"] = doc is not None
             print("  ① 工程图建出来了: %s" % (doc is not None))
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["drawing_created"] = False
             ev["drawing_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             print("  ① ⚠ **建不出工程图**：%s" % ev["drawing_error"])
@@ -84,12 +88,12 @@ def main() -> int:
         try:
             ev["doc_type"] = int(sw_connect.safe_get_com_member(doc, "GetType"))
             print("     文档类型 = %s（3 = 工程图）" % ev["doc_type"])
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             ev["sheet_count"] = int(len(doc.GetSheetNames() or []))
             print("     图纸数 = %s" % ev["sheet_count"])
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("     ⚠ 读图纸数失败: %s" % str(exc)[:60])
 
         #: ② 保存（官方要求完整路径）
@@ -108,17 +112,23 @@ def main() -> int:
             if pdf.is_file() and pdf.stat().st_size > 0:
                 head = pdf.read_bytes()[:8]
                 pages = pdf_pages(pdf)
-                ev.update(pdf_bytes=pdf.stat().st_size,
-                          pdf_head=head.decode("ascii", "replace"),
-                          pdf_pages=pages)
-                print("  ③ ★★ `pdf` 成功：%d 字节 · 头部 %r · **页数 = %d**"
-                      % (pdf.stat().st_size, head.decode("ascii", "replace"), pages))
+                ev.update(
+                    pdf_bytes=pdf.stat().st_size,
+                    pdf_head=head.decode("ascii", "replace"),
+                    pdf_pages=pages,
+                )
+                print(
+                    "  ③ ★★ `pdf` 成功：%d 字节 · 头部 %r · **页数 = %d**"
+                    % (pdf.stat().st_size, head.decode("ascii", "replace"), pages)
+                )
                 if head.startswith(b"%PDF-"):
                     print("     ⇒ **魔数 `%PDF-`** ✓ 且页数可数 ⇒ **定量证据**")
             else:
-                print("  ③ ⚠ 没抛异常但**文件不在或为空**（照 `export_to_step` 的纪律挡住）")
+                print(
+                    "  ③ ⚠ 没抛异常但**文件不在或为空**（照 `export_to_step` 的纪律挡住）"
+                )
                 ev["pdf_missing_after_success"] = True
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["pdf_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             print("  ③ ✗ `pdf` 失败：%s" % ev["pdf_error"])
 
@@ -131,38 +141,50 @@ def main() -> int:
             if dwg.is_file() and dwg.stat().st_size > 0:
                 head = dwg.read_bytes()[:8]
                 ev.update(dwg_bytes=dwg.stat().st_size, dwg_head_hex=head.hex())
-                kind = "DWG(%s)" % head[:6].decode("ascii", "replace") if head[:2] == b"AC" else "NOT-DWG"
-                print("  ④ ★ `dwg`：%d 字节 · 头部 %r ⇒ **%s**"
-                      % (dwg.stat().st_size, head[:6].decode("ascii", "replace"), kind))
+                kind = (
+                    "DWG(%s)" % head[:6].decode("ascii", "replace")
+                    if head[:2] == b"AC"
+                    else "NOT-DWG"
+                )
+                print(
+                    "  ④ ★ `dwg`：%d 字节 · 头部 %r ⇒ **%s**"
+                    % (dwg.stat().st_size, head[:6].decode("ascii", "replace"), kind)
+                )
                 ev["dwg_kind"] = kind
             else:
                 print("  ④ ⚠ `dwg` 没出文件")
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["dwg_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             print("  ④ ✗ `dwg` 失败：%s" % ev["dwg_error"])
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

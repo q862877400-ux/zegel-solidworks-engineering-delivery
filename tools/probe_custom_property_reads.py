@@ -38,6 +38,7 @@ r"""@brief 探针：**读文件自定义属性**的三条路 —— 以及 pywin
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -51,10 +52,12 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "custom-property-reads.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "custom-property-reads.json"
+)
 
 #: `swCustomInfoType_e`（官方示例 `Get_Custom_Properties_Example_VB` 里逐字列出）
-SW_CUSTOM_INFO_TEXT = 30          #: VT_LPSTR
+SW_CUSTOM_INFO_TEXT = 30  #: VT_LPSTR
 
 PROP_NAME = "DSH_ReadProbe"
 PROP_VALUE = "hello-from-probe"
@@ -63,7 +66,7 @@ PROP_VALUE = "hello-from-probe"
 def _try(fn, *a, **kw):
     try:
         return True, fn(*a, **kw)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:80])
 
 
@@ -85,33 +88,55 @@ def get_mgr_paths(model, sc) -> dict:
     out: dict = {}
     ext = None
     ok, ext = _try(lambda: sc.safe_get_com_member(model, "Extension"))
-    out["model.Extension"] = "拿到对象" if (ok and _is_mgr(ext) or (ok and ext is not None)) else str(ext)
+    out["model.Extension"] = (
+        "拿到对象" if (ok and _is_mgr(ext) or (ok and ext is not None)) else str(ext)
+    )
     if ok and ext is not None:
         #: 形态 A：当**属性**取
         ok2, v = _try(lambda: sc.safe_get_com_member(ext, "CustomPropertyManager"))
         out["A_当属性取 Extension.CustomPropertyManager"] = (
-            "★ 是管理器" if (ok2 and _is_mgr(v))
-            else ("拿到的是 %s（不是管理器）" % type(v).__name__ if ok2 else str(v)[:60]))
+            "★ 是管理器"
+            if (ok2 and _is_mgr(v))
+            else (
+                "拿到的是 %s（不是管理器）" % type(v).__name__ if ok2 else str(v)[:60]
+            )
+        )
         #: 形态 B：取到之后**调用它**（pywin32 可能把它封成方法）
         if ok2 and callable(v) and not _is_mgr(v):
             ok3, v3 = _try(lambda: v(""))
-            out["B_把它当方法调用 CustomPropertyManager(\"\")"] = (
-                "★ 是管理器" if (ok3 and _is_mgr(v3))
-                else ("拿到的是 %s（不是管理器）" % type(v3).__name__ if ok3 else str(v3)[:60]))
+            out['B_把它当方法调用 CustomPropertyManager("")'] = (
+                "★ 是管理器"
+                if (ok3 and _is_mgr(v3))
+                else (
+                    "拿到的是 %s（不是管理器）" % type(v3).__name__
+                    if ok3
+                    else str(v3)[:60]
+                )
+            )
         else:
-            out["B_把它当方法调用 CustomPropertyManager(\"\")"] = "（不可调用或已是管理器）"
+            out['B_把它当方法调用 CustomPropertyManager("")'] = (
+                "（不可调用或已是管理器）"
+            )
         #: 形态 C：直接带配置名当方法调
         ok4, v4 = _try(lambda: sc.safe_get_com_member(ext, "CustomPropertyManager", ""))
-        out["C_直接带配置名调 Extension.CustomPropertyManager(\"\")"] = (
-            "★ 是管理器" if (ok4 and _is_mgr(v4))
-            else ("拿到的是 %s（不是管理器）" % type(v4).__name__ if ok4 else str(v4)[:60]))
+        out['C_直接带配置名调 Extension.CustomPropertyManager("")'] = (
+            "★ 是管理器"
+            if (ok4 and _is_mgr(v4))
+            else (
+                "拿到的是 %s（不是管理器）" % type(v4).__name__ if ok4 else str(v4)[:60]
+            )
+        )
     #: 从 Feature 取（官方示例那条路）
     ok5, feat = _try(lambda: sc.safe_get_com_member(model, "FirstFeature"))
     if ok5 and feat is not None:
         ok6, fm = _try(lambda: sc.safe_get_com_member(feat, "CustomPropertyManager"))
         out["D_Feature.CustomPropertyManager（官方示例那条）"] = (
-            "★ 是管理器" if (ok6 and _is_mgr(fm))
-            else ("拿到的是 %s（不是管理器）" % type(fm).__name__ if ok6 else str(fm)[:60]))
+            "★ 是管理器"
+            if (ok6 and _is_mgr(fm))
+            else (
+                "拿到的是 %s（不是管理器）" % type(fm).__name__ if ok6 else str(fm)[:60]
+            )
+        )
     return out
 
 
@@ -148,15 +173,17 @@ def main() -> int:
     doc = None
     try:
         import sw_connect
-        from scripts.sw_connect import mm as _mm                          # noqa: F401  (确认模块可用)
+        from scripts.sw_connect import mm as _mm  # noqa: F401  (确认模块可用)
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
-        ev["steps"]["part"] = {"title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["part"] = {
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
+        }
 
         ev["steps"]["managers"] = get_mgr_paths(doc, sw_connect)
 
@@ -167,18 +194,22 @@ def main() -> int:
         if ext is not None:
             v = sw_connect.safe_get_com_member(ext, "CustomPropertyManager")
             candidates.append(v)
-            if callable(v):                                    #: ★ 可能被封成方法 ⇒ 调它
+            if callable(v):  #: ★ 可能被封成方法 ⇒ 调它
                 try:
                     candidates.append(v(""))
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
             try:
-                candidates.append(sw_connect.safe_get_com_member(ext, "CustomPropertyManager", ""))
-            except Exception:                                  # noqa: BLE001
+                candidates.append(
+                    sw_connect.safe_get_com_member(ext, "CustomPropertyManager", "")
+                )
+            except Exception:  # noqa: BLE001
                 pass
         feat = sw_connect.safe_get_com_member(doc, "FirstFeature")
         if feat is not None:
-            candidates.append(sw_connect.safe_get_com_member(feat, "CustomPropertyManager"))
+            candidates.append(
+                sw_connect.safe_get_com_member(feat, "CustomPropertyManager")
+            )
         for c in candidates:
             if _is_mgr(c):
                 mgr = c
@@ -188,10 +219,16 @@ def main() -> int:
         ev["steps"]["before_write"] = probe_reads(doc, sw_connect, mgr)
 
         #: ★★ 决定性用例：先写一个，再读回来
-        ok, r = _try(lambda: sw_connect.safe_get_com_member(
-            mgr, "Add3", PROP_NAME, SW_CUSTOM_INFO_TEXT, PROP_VALUE, True))
-        ev["steps"]["write"] = {"ok": ok, "ret": r if ok else r,
-                                "wrote": "%s = %r" % (PROP_NAME, PROP_VALUE)}
+        ok, r = _try(
+            lambda: sw_connect.safe_get_com_member(
+                mgr, "Add3", PROP_NAME, SW_CUSTOM_INFO_TEXT, PROP_VALUE, True
+            )
+        )
+        ev["steps"]["write"] = {
+            "ok": ok,
+            "ret": r if ok else r,
+            "wrote": "%s = %r" % (PROP_NAME, PROP_VALUE),
+        }
         ev["steps"]["after_write"] = probe_reads(doc, sw_connect, mgr)
         got = ev["steps"]["after_write"].get("★ Get(name)（单返回值）")
         ev["steps"]["verdict_readback"] = {
@@ -199,20 +236,20 @@ def main() -> int:
             "read": got,
             "★": "先 Add3 再读回来 —— 读到才说明整条路通",
         }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存（写的是新文档）
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存（写的是新文档）
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 自定义属性读取三条路 ──")
@@ -222,7 +259,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

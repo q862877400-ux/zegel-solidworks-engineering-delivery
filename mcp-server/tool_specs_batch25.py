@@ -60,6 +60,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -71,30 +72,37 @@ SPECS_BATCH25 = [
     ToolSpec(
         name="solidworks_assembly_list_components",
         title="List Assembly Components",
-        module="sw_assembly", function="get_components",
+        module="sw_assembly",
+        function="get_components",
         inject="asm_model",
         params=[
-            Param("top_level_only", bool, default=True,
-                  description="True = only top-level components; False = also descend into "
-                              "sub-assemblies."),
+            Param(
+                "top_level_only",
+                bool,
+                default=True,
+                description="True = only top-level components; False = also descend into "
+                "sub-assemblies.",
+            ),
         ],
         doc="List the components of the ACTIVE assembly: for each one its name, file path, "
-            "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
+        "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
     ),
     ToolSpec(
         name="solidworks_assembly_list_mates",
         title="List Assembly Mates",
-        module="sw_assembly", function="collect_mate_feature_summary",
+        module="sw_assembly",
+        function="collect_mate_feature_summary",
         inject="model",
         params=[],
         doc="List the MateGroup and mate features of the active assembly (name, type, tree depth). "
-            "★ Use it to check that real mates were actually written into the feature tree — "
-            "it does NOT report degrees of freedom.",
+        "★ Use it to check that real mates were actually written into the feature tree — "
+        "it does NOT report degrees of freedom.",
     ),
     ToolSpec(
         name="solidworks_assembly_check_interference",
         title="Check Assembly Interference",
-        module="sw_assembly", function="get_interference_detection",
+        module="sw_assembly",
+        function="get_interference_detection",
         inject="asm_model",
         params=[],
         doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when nothing interferes / warn when something does / blocked when the check itself failed), `interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK failed — do not read it as 'no interference'. ★ Reading only (it runs the detector, it does not change the model).",

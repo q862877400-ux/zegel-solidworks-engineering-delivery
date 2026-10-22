@@ -11,6 +11,7 @@
     ⇒ ★ 只吃 `controls` 一个键 ⇒ ★ 多传 `title` 会 `TypeError` ✗
     ⇒ ★ 本包装**收标量**（`buttons`/`texts`/`title`）· ★ **拼 `controls`** · ★ 再转交 ✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（★ 不是第三方移植）
 # 文件:   `tools/sw_guard.py`（★ `classify_dialog(d: dict) -> dict` —— ★ **分级逻辑的真
@@ -65,6 +66,7 @@ def classify_dialog(buttons: str, texts: str = "", title: str = "") -> dict:
             ctrls.append({"class": "Button", "text": b})
 
     import sw_guard as _G
+
     verdict = _G.classify_dialog({"title": str(title or ""), "controls": ctrls})
 
     #: ★★ **回一份**可判**的结果**（★ 附上「该不该点」的**显式**结论 —— ★ 少一步推断）
@@ -72,9 +74,9 @@ def classify_dialog(buttons: str, texts: str = "", title: str = "") -> dict:
     out: dict[str, Any] = dict(verdict)
     out["buttons_parsed"] = [c["text"] for c in ctrls if c["class"] == "Button"]
     out["texts_parsed"] = [c["text"] for c in ctrls if c["class"] != "Button"]
-    out["should_auto_dismiss"] = (mode == "auto")
+    out["should_auto_dismiss"] = mode == "auto"
     out["must_not_touch"] = mode in ("forbidden", "progress")
-    out["escalate_to_human_or_llm"] = (mode == "needs_llm")
+    out["escalate_to_human_or_llm"] = mode == "needs_llm"
     out["next_tool"] = {
         "auto": "solidworks_gui_close_modals（★ 可放心点）",
         "needs_llm": "★ **不要自动点** —— 把文本交给人/LLM 判",

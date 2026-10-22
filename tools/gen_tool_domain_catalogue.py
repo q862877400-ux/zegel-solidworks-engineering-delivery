@@ -38,12 +38,13 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, _p)
 
 AGENTS_LIMIT = 65536
-OUT_DOMAIN = ROOT / "docs" / "tool-domains.md"          #: ★ 域目录（AGENTS.md 里引用它）
-OUT_FULL = ROOT / "docs" / "mcp-tools.md"               #: ★ 全量索引（433 行）
+OUT_DOMAIN = ROOT / "docs" / "tool-domains.md"  #: ★ 域目录（AGENTS.md 里引用它）
+OUT_FULL = ROOT / "docs" / "mcp-tools.md"  #: ★ 全量索引（433 行）
 
 
 def _specs():
     import register_capabilities as rc
+
     return rc.all_specs()
 
 
@@ -70,19 +71,29 @@ def build() -> tuple[str, str, dict]:
         g[getattr(s, "module", "?")].append(s)
     ordered = sorted(g.items(), key=lambda kv: (-len(kv[1]), kv[0]))
 
-    dom = ["# 工具域目录（★ 由 `tools/gen_tool_domain_catalogue.py` 生成，**不要手改**）", "",
-           "> **为什么有这个文件**：工具数已达 **%d** 个，**不可能**列进 `AGENTS.md`" % len(specs),
-           "> （该文件受 **65536 字节**指令预算限制，本仓已因此把 known-facts 拆到 `docs/`）。",
-           "> ★ 行业口径（MCP 官方 *client best practices* / Anthropic *advanced tool use*）是：",
-           "> **系统提示里只写「类别」，工具定义按需发现** ⇒ 本文件就是那份「类别目录」 ✓",
-           "> ★ 全量索引（每个工具一行）见 [`mcp-tools.md`](mcp-tools.md)。", "",
-           "| 域（`scripts/sw_*.py`） | 工具数 | 代表性能力 |", "|---|---:|---|"]
+    dom = [
+        "# 工具域目录（★ 由 `tools/gen_tool_domain_catalogue.py` 生成，**不要手改**）",
+        "",
+        "> **为什么有这个文件**：工具数已达 **%d** 个，**不可能**列进 `AGENTS.md`"
+        % len(specs),
+        "> （该文件受 **65536 字节**指令预算限制，本仓已因此把 known-facts 拆到 `docs/`）。",
+        "> ★ 行业口径（MCP 官方 *client best practices* / Anthropic *advanced tool use*）是：",
+        "> **系统提示里只写「类别」，工具定义按需发现** ⇒ 本文件就是那份「类别目录」 ✓",
+        "> ★ 全量索引（每个工具一行）见 [`mcp-tools.md`](mcp-tools.md)。",
+        "",
+        "| 域（`scripts/sw_*.py`） | 工具数 | 代表性能力 |",
+        "|---|---:|---|",
+    ]
     dom += [_domain_line(m, v) for m, v in ordered]
     dom += ["", "**合计 %d 个工具 · %d 个域**" % (len(specs), len(ordered)), ""]
 
-    full = ["# MCP 工具全量索引（★ 由 `tools/gen_tool_domain_catalogue.py` 生成，**不要手改**）", "",
-            "> ★ 按**域**分组；每条给：工具名 · 参数 · 注入键 · 一句话。",
-            "> ★ 用途：人/agent **按需查**（★ 不是每轮都读 —— 那正是本文件要避免的事）。", ""]
+    full = [
+        "# MCP 工具全量索引（★ 由 `tools/gen_tool_domain_catalogue.py` 生成，**不要手改**）",
+        "",
+        "> ★ 按**域**分组；每条给：工具名 · 参数 · 注入键 · 一句话。",
+        "> ★ 用途：人/agent **按需查**（★ 不是每轮都读 —— 那正是本文件要避免的事）。",
+        "",
+    ]
     for m, v in ordered:
         full.append("## `%s`（%d 个）" % (m, len(v)))
         full.append("")
@@ -91,13 +102,18 @@ def build() -> tuple[str, str, dict]:
         for s in sorted(v, key=lambda x: x.name):
             ps = ", ".join(p.name for p in (getattr(s, "params", None) or []))
             doc = (getattr(s, "doc", "") or "").strip().split("。")[0][:80]
-            full.append("| `%s` | %s | `%s` | %s |" % (
-                s.name, ps or "—", getattr(s, "inject", "") or "—", doc))
+            full.append(
+                "| `%s` | %s | `%s` | %s |"
+                % (s.name, ps or "—", getattr(s, "inject", "") or "—", doc)
+            )
         full.append("")
-    stats = {"tools": len(specs), "domains": len(ordered),
-             "domain_doc_bytes": len("\n".join(dom).encode("utf-8")),
-             "full_doc_bytes": len("\n".join(full).encode("utf-8")),
-             "agents_limit": AGENTS_LIMIT}
+    stats = {
+        "tools": len(specs),
+        "domains": len(ordered),
+        "domain_doc_bytes": len("\n".join(dom).encode("utf-8")),
+        "full_doc_bytes": len("\n".join(full).encode("utf-8")),
+        "agents_limit": AGENTS_LIMIT,
+    }
     return "\n".join(dom) + "\n", "\n".join(full) + "\n", stats
 
 
@@ -107,15 +123,25 @@ def main() -> int:
     a = ap.parse_args()
     dom, full, st = build()
     print("★ 工具 **%d** 个 · 域 **%d** 个" % (st["tools"], st["domains"]))
-    print("★ 域目录（`docs/tool-domains.md`）: **%d 字节** ⇒ 占 AGENTS.md 预算的 **%.1f%%**"
-          % (st["domain_doc_bytes"], 100.0 * st["domain_doc_bytes"] / st["agents_limit"]))
-    print("★ 全量索引（`docs/mcp-tools.md`）: **%d 字节（%.1f KB）**" % (
-        st["full_doc_bytes"], st["full_doc_bytes"] / 1024))
+    print(
+        "★ 域目录（`docs/tool-domains.md`）: **%d 字节** ⇒ 占 AGENTS.md 预算的 **%.1f%%**"
+        % (st["domain_doc_bytes"], 100.0 * st["domain_doc_bytes"] / st["agents_limit"])
+    )
+    print(
+        "★ 全量索引（`docs/mcp-tools.md`）: **%d 字节（%.1f KB）**"
+        % (st["full_doc_bytes"], st["full_doc_bytes"] / 1024)
+    )
     if a.check:
-        stale = [p.name for p, want in ((OUT_DOMAIN, dom), (OUT_FULL, full))
-               if (not p.is_file()) or p.read_text(encoding="utf-8") != want]
+        stale = [
+            p.name
+            for p, want in ((OUT_DOMAIN, dom), (OUT_FULL, full))
+            if (not p.is_file()) or p.read_text(encoding="utf-8") != want
+        ]
         if stale:
-            print("★ [FAIL] 生成物不新鲜: %r ⇒ 跑 `python tools/gen_tool_domain_catalogue.py`" % stale)
+            print(
+                "★ [FAIL] 生成物不新鲜: %r ⇒ 跑 `python tools/gen_tool_domain_catalogue.py`"
+                % stale
+            )
             return 1
         print("★ [PASS] 两个生成物都是最新的")
         return 0
@@ -124,7 +150,8 @@ def main() -> int:
     print("★ 已写: %s" % OUT_DOMAIN)
     print("★ 已写: %s" % OUT_FULL)
     (ROOT / "output" / "tool-catalogue-stats.json").write_text(
-        json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
+        json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     return 0
 
 

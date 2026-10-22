@@ -37,36 +37,56 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 #: 迁移前**真实存在**的授权推断（2026-10-01 实测的 4 条路径里的 2 条）+ 两种违规形状
 MUST_CATCH = (
-    ('scripts/sw_capability_probe.py:142（迁移前的真实泄漏）',
-     '            "ready_for_unattended_use": manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("level") == "verified" and len(matches) == len(interface_names),'),
-    ('形状①：写死授权变量',
-     '        authorized = item.get("level") == "verified"'),
-    ('形状①：无人值守标志',
-     '    unattended = capabilities[cid]["level"] == CapabilityLevel.VERIFIED'),
+    (
+        "scripts/sw_capability_probe.py:142（迁移前的真实泄漏）",
+        '            "ready_for_unattended_use": manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("level") == "verified" and len(matches) == len(interface_names),',
+    ),
+    ("形状①：写死授权变量", '        authorized = item.get("level") == "verified"'),
+    (
+        "形状①：无人值守标志",
+        '    unattended = capabilities[cid]["level"] == CapabilityLevel.VERIFIED',
+    ),
 )
 
 #: **形状②**：授权函数体内按 level 判授权 —— 即 unattended_allowed() 被改回旧实现
 MUST_CATCH_IN_FUNCTION = (
-    ('形状②：unattended_allowed 被改回旧实现', "unattended_allowed",
-     ['def unattended_allowed(capability_ids, payload=None) -> bool:',
-      '    return all(capability_level(cid, payload) == "verified" for cid in capability_ids)']),
-    ('形状②：另一个授权函数', "ready_for_unattended_use",
-     ['def ready_for_unattended_use(cid):',
-      '    return index[cid].get("level") == "verified"']),
+    (
+        "形状②：unattended_allowed 被改回旧实现",
+        "unattended_allowed",
+        [
+            "def unattended_allowed(capability_ids, payload=None) -> bool:",
+            '    return all(capability_level(cid, payload) == "verified" for cid in capability_ids)',
+        ],
+    ),
+    (
+        "形状②：另一个授权函数",
+        "ready_for_unattended_use",
+        [
+            "def ready_for_unattended_use(cid):",
+            '    return index[cid].get("level") == "verified"',
+        ],
+    ),
 )
 
 #: 修复后**真实存在**的行，以及合法的等级断言 —— 都不该被命中
 MUST_PASS = (
-    ('scripts/sw_capability_probe.py:154（修复后）',
-     '            "ready_for_unattended_use": UNATTENDED_MODE in (manifest_index.get(x, {}).get("allowed_modes") or []) and len(matches) == len(interface_names),'),
-    ('apps/.../engineering_orchestrator.py:383（消费授权结论，合法）',
-     '            if report_item.get("ready_for_unattended_use") is False and level == CapabilityLevel.VERIFIED:'),
-    ('合法的等级断言（测试里常见）',
-     '    assert index["part_and_features"]["level"] == "verified"'),
-    ('合法的 CAD 版本断言',
-     '        if lv == "verified" and is_cad and not c.get("verified_versions"):'),
-    ('R11 校验本身',
-     '        if "unattended" in modes and lv != "verified":'),
+    (
+        "scripts/sw_capability_probe.py:154（修复后）",
+        '            "ready_for_unattended_use": UNATTENDED_MODE in (manifest_index.get(x, {}).get("allowed_modes") or []) and len(matches) == len(interface_names),',
+    ),
+    (
+        "apps/.../engineering_orchestrator.py:383（消费授权结论，合法）",
+        '            if report_item.get("ready_for_unattended_use") is False and level == CapabilityLevel.VERIFIED:',
+    ),
+    (
+        "合法的等级断言（测试里常见）",
+        '    assert index["part_and_features"]["level"] == "verified"',
+    ),
+    (
+        "合法的 CAD 版本断言",
+        '        if lv == "verified" and is_cad and not c.get("verified_versions"):',
+    ),
+    ("R11 校验本身", '        if "unattended" in modes and lv != "verified":'),
 )
 
 
@@ -84,8 +104,9 @@ def main() -> int:
     for label, func, body in MUST_CATCH_IN_FUNCTION:
         src = "\n".join(body) + "\n"
         auth = _authorization_functions(src)
-        hit = any(n in auth and LEVEL_IN_LINE.search(ln)
-                  for n, ln in enumerate(body, 1))
+        hit = any(
+            n in auth and LEVEL_IN_LINE.search(ln) for n, ln in enumerate(body, 1)
+        )
         print("   %s %s" % ("✓ 命中" if hit else "✗ 放过", label))
         if not hit:
             failed += 1
@@ -98,14 +119,24 @@ def main() -> int:
         if hit:
             failed += 1
     # 合法函数体里不该因函数名而误报
-    legal_src = "\n".join([
-        "def unattended_allowed(capability_ids, payload=None) -> bool:",
-        '    return all(UNATTENDED_MODE in (i.get("allowed_modes") or []) for i in items)',
-    ]) + "\n"
+    legal_src = (
+        "\n".join(
+            [
+                "def unattended_allowed(capability_ids, payload=None) -> bool:",
+                '    return all(UNATTENDED_MODE in (i.get("allowed_modes") or []) for i in items)',
+            ]
+        )
+        + "\n"
+    )
     auth = _authorization_functions(legal_src)
     body = legal_src.splitlines()
-    legal_hit = any(n in auth and LEVEL_IN_LINE.search(ln) for n, ln in enumerate(body, 1))
-    print("   %s 修复后的 unattended_allowed（合法）" % ("✗ 误报" if legal_hit else "✓ 放过"))
+    legal_hit = any(
+        n in auth and LEVEL_IN_LINE.search(ln) for n, ln in enumerate(body, 1)
+    )
+    print(
+        "   %s 修复后的 unattended_allowed（合法）"
+        % ("✗ 误报" if legal_hit else "✓ 放过")
+    )
     if legal_hit:
         failed += 1
 

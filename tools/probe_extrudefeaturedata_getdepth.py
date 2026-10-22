@@ -37,6 +37,7 @@ OUT = REPO / "output" / "extrudefeaturedata-getdepth-evidence.json"
 def _extrude_feature(model):
     """★ 找第一个「凸台-拉伸」特征（★ 中文 UI 名含「凸台」，★ 也认 `Boss`）。"""
     from sw_connect import get_com_member
+
     f = get_com_member(model, "FirstFeature")
     while f is not None:
         try:
@@ -44,7 +45,7 @@ def _extrude_feature(model):
             tn = str(get_com_member(f, "GetTypeName2"))
             if "凸台" in nm or "Boss" in tn or "Extrusion" in tn:
                 return f, nm, tn
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         f = get_com_member(f, "GetNextFeature")
     return None, "", ""
@@ -58,10 +59,14 @@ def main() -> int:
     model = new_document(app, "part")
     with P.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                     ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+        for a, b in (
+            ((-0.05, -0.03), (0.05, -0.03)),
+            ((0.05, -0.03), (0.05, 0.03)),
+            ((0.05, 0.03), (-0.05, 0.03)),
+            ((-0.05, 0.03), (-0.05, -0.03)),
+        ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-    P.extrude_boss(model, sk, 20.0)                                   #: ★ **20 毫米** ⇒ 期望 0.02 米
+    P.extrude_boss(model, sk, 20.0)  #: ★ **20 毫米** ⇒ 期望 0.02 米
 
     feat, nm, tn = _extrude_feature(model)
     rows = {"feature": nm, "type": tn}
@@ -71,25 +76,25 @@ def main() -> int:
         #: ★ 官方：`IFeature::GetDefinition` ⇒ `IExtrudeFeatureData2` ✓
         fd = get_com_member(feat, "GetDefinition")
         rows["definition"] = str(fd)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         err = "GetDefinition: %s: %s" % (type(exc).__name__, str(exc)[:100])
     if fd is not None:
         try:
             #: ★★★ 判据：★ 20 毫米 ⇒ **0.02**（米）✓
             got = get_com_member(fd, "GetDepth", True)
             rows["GetDepth(True)"] = got
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             err = "GetDepth: %s: %s" % (type(exc).__name__, str(exc)[:100])
         #: ★★ 再读一个**独立的量**锚定（★ 事实 517 的用法）：★ 端条件
         try:
             rows["GetEndCondition(True)"] = get_com_member(fd, "GetEndCondition", True)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rows["GetEndCondition(True)"] = "err: %s" % str(exc)[:60]
 
     ok = None
     try:
         ok = abs(float(got) - 0.02) < 1e-9
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         ok = None
     #: ★★★★★ **用**独立的量**锚定单位**（★ 事实 517 的用法：★ 只靠"读回来等于所要求的"
     #:   会被两个相反方向的错骗过）⇒ ★ **量实体尺寸**（★ 走完全不同的 COM 路径）✓
@@ -99,11 +104,11 @@ def main() -> int:
         if b is not None:
             bb = get_com_member(b, "GetBodyBox")
             anchor["GetBodyBox"] = list(bb) if bb is not None else None
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         anchor["GetBodyBox"] = "err: %s" % str(exc)[:70]
     try:
         anchor["GetUnits"] = list(get_com_member(model, "GetUnits"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         anchor["GetUnits"] = "err: %s" % str(exc)[:60]
     #: ★★ **判据**：★ 板是 100×60×20 mm ⇒ ★ 若 `GetBodyBox` 给出 0.1/0.06/**0.02**
     #:   ⇒ ★ **它按米报**；★ 若给 100/60/**20** ⇒ ★ **按毫米报** ✓
@@ -112,20 +117,29 @@ def main() -> int:
         box = anchor.get("GetBodyBox")
         if isinstance(box, list) and len(box) >= 6:
             dz = abs(float(box[5]) - float(box[2]))
-            unit_verdict = ("★ `GetBodyBox` 按**米**报" if dz < 0.5
-                            else ("★ `GetBodyBox` 按**毫米**报" if dz > 5 else "★ 判不出"))
-    except Exception:                                                     # noqa: BLE001
+            unit_verdict = (
+                "★ `GetBodyBox` 按**米**报"
+                if dz < 0.5
+                else ("★ `GetBodyBox` 按**毫米**报" if dz > 5 else "★ 判不出")
+            )
+    except Exception:  # noqa: BLE001
         unit_verdict = None
-    R = {"★_判据": "★ 建一个 depth=20mm 的凸台 ⇒ `GetDepth(True)` 读回来是 **20.0**（毫米口径）"
-                   " —— ★ **不是 0.02** ⇒ ★★ 它随**文档单位**",
-         "★_官方依据": "`C:\\swapi\\types\\IExtrudeFeatureData2\\GetDepth.md`："
-                       "`System.double GetDepth( System.bool Forward )` · Returns: Depth of the extrusion"
-                       " —— ★ **官方没写单位**（★ 铁律 5：★ 不许替它假定）",
-         "★_独立锚点": {"读数": anchor, "判定": unit_verdict},
-         "读取": rows, "error": err, "★_ok": ok,
-         "★_结论": "★★ `GetDepth` 回 **20.0**、★ 而实体也是 100×60×**20**（毫米口径）⇒ "
-                   "★★★ **两者同一口径** ⇒ ★ **`GetDepth` 随**文档单位**（本机文档是毫米）** ✓"}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 建一个 depth=20mm 的凸台 ⇒ `GetDepth(True)` 读回来是 **20.0**（毫米口径）"
+        " —— ★ **不是 0.02** ⇒ ★★ 它随**文档单位**",
+        "★_官方依据": "`C:\\swapi\\types\\IExtrudeFeatureData2\\GetDepth.md`："
+        "`System.double GetDepth( System.bool Forward )` · Returns: Depth of the extrusion"
+        " —— ★ **官方没写单位**（★ 铁律 5：★ 不许替它假定）",
+        "★_独立锚点": {"读数": anchor, "判定": unit_verdict},
+        "读取": rows,
+        "error": err,
+        "★_ok": ok,
+        "★_结论": "★★ `GetDepth` 回 **20.0**、★ 而实体也是 100×60×**20**（毫米口径）⇒ "
+        "★★★ **两者同一口径** ⇒ ★ **`GetDepth` 随**文档单位**（本机文档是毫米）** ✓",
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ 特征:", nm, "· 型:", tn)
     print("★ 读数:", json.dumps(rows, ensure_ascii=False, default=str)[:220])
     print("★ 独立锚点:", json.dumps(anchor, ensure_ascii=False, default=str)[:180])

@@ -16,6 +16,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -68,23 +69,23 @@ __all__ = [
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SKETCH_CONSTRAINT_TYPES = {
-    "coincident": 9,         # swConstraintType_COINCIDENT
-    "concentric": 10,        # swConstraintType_CONCENTRIC
-    "coradial": 28,          # swConstraintType_CORADIAL
-    "distance": 1,           # swConstraintType_DISTANCE
-    "horizontal": 4,         # swConstraintType_HORIZONTAL
-    "vertical": 5,           # swConstraintType_VERTICAL
-    "parallel": 7,           # swConstraintType_PARALLEL
-    "perpendicular": 8,      # swConstraintType_PERPENDICULAR
-    "tangent": 6,            # swConstraintType_TANGENT
-    "equal": 14,             # swConstraintType_SAMELENGTH（官方**无** EQUAL 成员）
-    "midpoint": 12,          # swConstraintType_ATMIDDLE（官方**无** MIDPOINT 成员）
-    "intersect": 13,         # swConstraintType_ATINTERSECT
-    "symmetric": 11,         # swConstraintType_SYMMETRIC
-    "angle": 2,              # swConstraintType_ANGLE
-    "fix": 17,               # swConstraintType_FIXED
-    "pierce": 40,            # swConstraintType_ATPIERCE
-    "collinear": 27,         # swConstraintType_COLINEAR
+    "coincident": 9,  # swConstraintType_COINCIDENT
+    "concentric": 10,  # swConstraintType_CONCENTRIC
+    "coradial": 28,  # swConstraintType_CORADIAL
+    "distance": 1,  # swConstraintType_DISTANCE
+    "horizontal": 4,  # swConstraintType_HORIZONTAL
+    "vertical": 5,  # swConstraintType_VERTICAL
+    "parallel": 7,  # swConstraintType_PARALLEL
+    "perpendicular": 8,  # swConstraintType_PERPENDICULAR
+    "tangent": 6,  # swConstraintType_TANGENT
+    "equal": 14,  # swConstraintType_SAMELENGTH（官方**无** EQUAL 成员）
+    "midpoint": 12,  # swConstraintType_ATMIDDLE（官方**无** MIDPOINT 成员）
+    "intersect": 13,  # swConstraintType_ATINTERSECT
+    "symmetric": 11,  # swConstraintType_SYMMETRIC
+    "angle": 2,  # swConstraintType_ANGLE
+    "fix": 17,  # swConstraintType_FIXED
+    "pierce": 40,  # swConstraintType_ATPIERCE
+    "collinear": 27,  # swConstraintType_COLINEAR
 }
 #: ⚠ `block` / `snappoint` **不在本表内** —— ★ 理由（2026-10-08 独立复核后改）：
 #:   官方枚举里**没有**这两个成员，且无法从三源唯一裁决 ⇒ 若留在表里**必须给一个数值**，
@@ -153,15 +154,15 @@ def is_undecided_constraint(name) -> bool:
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SKETCH_SLOT_CREATION_TYPES = {
-    "line": 0,               # swSketchSlotCreationType_line        （★ 2026-10-08 补）
-    "center_line": 1,        # swSketchSlotCreationType_center_line
-    "arc": 2,                # swSketchSlotCreationType_arc
-    "three_point_arc": 3,    # swSketchSlotCreationType_3pointarc
+    "line": 0,  # swSketchSlotCreationType_line        （★ 2026-10-08 补）
+    "center_line": 1,  # swSketchSlotCreationType_center_line
+    "arc": 2,  # swSketchSlotCreationType_arc
+    "three_point_arc": 3,  # swSketchSlotCreationType_3pointarc
 }
 
 SKETCH_SLOT_LENGTH_TYPES = {
-    "center_center": 0,      # swSketchSlotLengthType_CenterCenter
-    "full_length": 1,        # swSketchSlotLengthType_FullLength
+    "center_center": 0,  # swSketchSlotLengthType_CenterCenter
+    "full_length": 1,  # swSketchSlotLengthType_FullLength
 }
 
 #: ★★ 2026-10-08（spec 222）**补全** —— 原表只有 6 项却自称「全量照录」，
@@ -170,21 +171,21 @@ SKETCH_SLOT_LENGTH_TYPES = {
 #:   ⚠ 该缺陷由独立核对 `output/222-verify/w2-37` 与 `w2-13` 系列发现；
 #:     当时既有测试把它断言成「与官方一致」的 6 项 —— **把错的项数当成正确**来钉。
 SKETCH_RELATION_ENTITY_TYPES = {
-    "unknown": 0,            # swSketchRelationEntityType_Unknown     （★ 补）
-    "sub_sketch": 1,         # swSketchRelationEntityType_SubSketch   （★ 补）
-    "point": 2,              # swSketchRelationEntityType_Point       （★ 补）
-    "line": 3,               # swSketchRelationEntityType_Line
-    "arc": 4,                # swSketchRelationEntityType_Arc
-    "ellipse": 5,            # swSketchRelationEntityType_Ellipse
-    "parabola": 6,           # swSketchRelationEntityType_Parabola    （★ 补）
-    "spline": 7,             # swSketchRelationEntityType_Spline      （★ 补）
-    "hatch": 8,              # swSketchRelationEntityType_Hatch
-    "text": 9,               # swSketchRelationEntityType_Text        （★ 补）
-    "plane": 10,             # swSketchRelationEntityType_Plane       （★ 补）
-    "cylinder": 11,          # swSketchRelationEntityType_Cylinder
-    "sphere": 12,            # swSketchRelationEntityType_Sphere      （★ 补）
-    "surface": 13,           # swSketchRelationEntityType_Surface     （★ 补）
-    "dimension": 14,         # swSketchRelationEntityType_Dimension
+    "unknown": 0,  # swSketchRelationEntityType_Unknown     （★ 补）
+    "sub_sketch": 1,  # swSketchRelationEntityType_SubSketch   （★ 补）
+    "point": 2,  # swSketchRelationEntityType_Point       （★ 补）
+    "line": 3,  # swSketchRelationEntityType_Line
+    "arc": 4,  # swSketchRelationEntityType_Arc
+    "ellipse": 5,  # swSketchRelationEntityType_Ellipse
+    "parabola": 6,  # swSketchRelationEntityType_Parabola    （★ 补）
+    "spline": 7,  # swSketchRelationEntityType_Spline      （★ 补）
+    "hatch": 8,  # swSketchRelationEntityType_Hatch
+    "text": 9,  # swSketchRelationEntityType_Text        （★ 补）
+    "plane": 10,  # swSketchRelationEntityType_Plane       （★ 补）
+    "cylinder": 11,  # swSketchRelationEntityType_Cylinder
+    "sphere": 12,  # swSketchRelationEntityType_Sphere      （★ 补）
+    "surface": 13,  # swSketchRelationEntityType_Surface     （★ 补）
+    "dimension": 14,  # swSketchRelationEntityType_Dimension
 }
 
 
@@ -192,7 +193,7 @@ SKETCH_RELATION_ENTITY_TYPES = {
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → ISketchRelationManager 段
-# 定位:   草图几何约束的增删查。官方签名：SketchRelation AddRelation(Object Entities, 
+# 定位:   草图几何约束的增删查。官方签名：SketchRelation AddRelation(Object Entities,
 #           Int32 Type)  ← 2 参Boolean      DeleteRelation(SketchRelation)Boolean      D
 #           eleteAllRelations()Object       GetRelations(Int32)              ← 1 参（实
 #           体索引）Int32        GetRelationsCount(Int32)         ← 1 参Object       Get
@@ -212,6 +213,7 @@ def _dispatch_array(entities):
     """
     import pythoncom
     from win32com.client import VARIANT
+
     if hasattr(entities, "varianttype"):
         return entities
     return VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, list(entities))
@@ -238,8 +240,9 @@ def add_relation(sketch, entities, constraint_type: int):
     #:  ——
     #: 本轮的形态是「**数组实参没包 VARIANT**」，与那两条（`CreateBsplineSurface` /
     #: `AccessSelections`）**不同因同码**，报错本身看不出是哪一种。
-    relation = get_com_member(manager, "AddRelation",
-                              _dispatch_array(entities), int(constraint_type))
+    relation = get_com_member(
+        manager, "AddRelation", _dispatch_array(entities), int(constraint_type)
+    )
     if relation is None:
         raise RuntimeError(
             f"AddRelation({constraint_type}) 未返回约束对象："
@@ -287,7 +290,7 @@ def suppress_relation(relation, suppressed: bool = True):
 # 定位:   样条曲线创建。官方签名（按参数个数从小到大）：SketchSegment CreateSpline(Obj
 #           ect Points)                     ← 1 参SketchSegment CreateSpline2(Object Poi
 #           nts, Boolean Simulate)  ← 2 参Object        CreateSpline3(Object, Object, Ob
-#           ject, Boolean, Object&)              ← 4 参 + 1 个 by-ref 出参SketchSpline  
+#           ject, Boolean, Object&)              ← 4 参 + 1 个 by-ref 出参SketchSpline
 #           CreateEquationSpline(String, Double, Double,              Boolean, Double, D
 #           ouble, Double, Boolean, Boolean)SplineParamData CreateSplineParamData()
 # ⚠ CreateSpline3 末位是 by-ref 出参，迟到绑定下不保证回写；
@@ -345,9 +348,12 @@ def create_spline(sketch_manager, points, simulate: bool = False):
         flat = [float(v) for v in seq]
     if len(flat) < 6:
         raise ValueError(
-            "控制点太少：官方 Remarks 要求**至少两组 X,Y,Z**（6 个数），收到 %d 个" % len(flat))
+            "控制点太少：官方 Remarks 要求**至少两组 X,Y,Z**（6 个数），收到 %d 个"
+            % len(flat)
+        )
     import pythoncom
     import win32com.client
+
     #: ★★★ **必须包 VARIANT(VT_ARRAY | VT_R8)** —— 裸 list/tuple 会**静默返回 None**（轮
     #:  183 实测）
     data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, flat)
@@ -422,11 +428,15 @@ def collect_relation_evidence(sketch, entity_index: int = 0) -> dict[str, Any]:
     relations = list_relations(sketch, entity_index) or []
     rows = []
     for relation in relations:
-        rows.append({
-            "type_id": int(get_com_member(relation, "GetRelationType") or -1),
-            "entities_count": int(get_com_member(relation, "GetEntitiesCount") or 0),
-            "suppressed": bool(get_com_member(relation, "Suppressed")),
-        })
+        rows.append(
+            {
+                "type_id": int(get_com_member(relation, "GetRelationType") or -1),
+                "entities_count": int(
+                    get_com_member(relation, "GetEntitiesCount") or 0
+                ),
+                "suppressed": bool(get_com_member(relation, "Suppressed")),
+            }
+        )
     return {
         "has_relation_manager": True,
         "total_relations": int(
@@ -473,16 +483,14 @@ def add_spline_tangency(spline, x: float, y: float, z: float):
     """给样条加相切控制。"""
     if spline is None:
         raise ValueError("spline 为 None")
-    return get_com_member(spline, "AddTangencyControl",
-                          float(x), float(y), float(z))
+    return get_com_member(spline, "AddTangencyControl", float(x), float(y), float(z))
 
 
 def add_spline_curvature(spline, x: float, y: float, z: float):
     """给样条加曲率控制。"""
     if spline is None:
         raise ValueError("spline is None")
-    return get_com_member(spline, "AddCurvatureControl",
-                          float(x), float(y), float(z))
+    return get_com_member(spline, "AddCurvatureControl", float(x), float(y), float(z))
 
 
 def collect_spline_evidence(spline) -> dict[str, Any]:

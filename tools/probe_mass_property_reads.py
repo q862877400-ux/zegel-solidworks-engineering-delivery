@@ -46,6 +46,7 @@ r"""@brief 探针：**读质量属性** —— 怎么取 `IMassProperty2`、成�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -64,7 +65,7 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-property-reads
 #: ★ 已知体积：40 × 20 × 10 mm = **8000 mm³** = 8e-6 m³
 BOX = {"x1": -20.0, "y1": -10.0, "x2": 20.0, "y2": 10.0, "depth": 10.0}
 EXPECT_VOLUME_MM3 = 8000.0
-EXPECT_AREA_MM2 = 2 * (40 * 20 + 40 * 10 + 20 * 10)      #: = 2800 mm²
+EXPECT_AREA_MM2 = 2 * (40 * 20 + 40 * 10 + 20 * 10)  #: = 2800 mm²
 EXPECT_AREA_M2 = EXPECT_AREA_MM2 / 1e6
 
 
@@ -80,7 +81,7 @@ def _is_mass_prop(obj) -> bool:
 def _try(fn, *a, **kw):
     try:
         return True, fn(*a, **kw)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:80])
 
 
@@ -93,20 +94,26 @@ def probe_getters(model, sc) -> dict:
         for name in ("CreateMassProperty", "CreateMassProperty2"):
             ok, v = _try(lambda n=name: sc.safe_get_com_member(ext, n))
             out["A_%s（当属性取）" % name] = (
-                "★ 是质量属性对象" if (ok and _is_mass_prop(v))
-                else ("拿到的是 %s" % type(v).__name__ if ok else str(v)[:60]))
+                "★ 是质量属性对象"
+                if (ok and _is_mass_prop(v))
+                else ("拿到的是 %s" % type(v).__name__ if ok else str(v)[:60])
+            )
             if ok and callable(v) and not _is_mass_prop(v):
                 ok2, v2 = _try(lambda f=v: f())
                 out["B_%s()（把它当方法调用）" % name] = (
-                    "★ 是质量属性对象" if (ok2 and _is_mass_prop(v2))
-                    else ("拿到的是 %s" % type(v2).__name__ if ok2 else str(v2)[:60]))
+                    "★ 是质量属性对象"
+                    if (ok2 and _is_mass_prop(v2))
+                    else ("拿到的是 %s" % type(v2).__name__ if ok2 else str(v2)[:60])
+                )
     #: 后备：`IModelDoc2.GetMassProperties`（官方返回 12 个 double）
     ok, arr = _try(lambda: sc.safe_get_com_member(model, "GetMassProperties"))
     if ok:
         try:
             vals = [float(x) for x in arr]
             out["C_model.GetMassProperties（12 double 后备）"] = {
-                "len": len(vals), "values": [round(v, 12) for v in vals[:12]]}
+                "len": len(vals),
+                "values": [round(v, 12) for v in vals[:12]],
+            }
         except TypeError:
             out["C_model.GetMassProperties（12 double 后备）"] = {"raw": str(arr)[:120]}
     else:
@@ -142,7 +149,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -152,8 +159,11 @@ def main() -> int:
         sk = sw_part.current_sketch_name(doc)
         sw_part.end_sketch(doc)
         sw_part.extrude_boss(doc, sk, BOX["depth"])
-        ev["steps"]["box"] = {"built": True, "expect_volume_mm3": EXPECT_VOLUME_MM3,
-                              "expect_surface_area_mm2": EXPECT_AREA_MM2}
+        ev["steps"]["box"] = {
+            "built": True,
+            "expect_volume_mm3": EXPECT_VOLUME_MM3,
+            "expect_surface_area_mm2": EXPECT_AREA_MM2,
+        }
 
         ev["steps"]["getters"] = probe_getters(doc, sw_connect)
 
@@ -172,7 +182,7 @@ def main() -> int:
                         if _is_mass_prop(c2):
                             mp = c2
                             break
-                    except Exception:                          # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
         ev["steps"]["mp_obtained"] = mp is not None
         if mp is not None:
@@ -181,33 +191,36 @@ def main() -> int:
             #: ★★ 单位判定（本探针最要紧的一问）
             vol = reads.get("Volume")
             area = reads.get("SurfaceArea")
+
             def _close(a, b, tol=1e-6):
                 try:
                     return abs(float(a) - float(b)) <= tol * max(1.0, abs(float(b)))
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     return False
+
             ev["steps"]["unit_verdict"] = {
-                "volume_raw": vol, "surface_area_raw": area,
+                "volume_raw": vol,
+                "surface_area_raw": area,
                 "volume_matches_mm3": _close(vol, EXPECT_VOLUME_MM3, 1e-6),
                 "volume_matches_m3": _close(vol, EXPECT_VOLUME_MM3 / 1e9, 1e-6),
                 "area_matches_mm2": _close(area, EXPECT_AREA_MM2, 1e-6),
                 "area_matches_m2": _close(area, EXPECT_AREA_M2, 1e-6),
                 "★": "盒 40×20×10 mm ⇒ 体积 8000 mm³ = 8e-6 m³；★ 看哪个命中 ⇒ 这就是单位",
             }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 质量属性探针 ──")
@@ -217,7 +230,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

@@ -31,6 +31,7 @@ r"""@brief 探针：**载荷的「活动状态」**（`ICWLoadsAndRestraints.Sta
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -55,12 +56,12 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_simulation as sim
-        from scripts.sw_simulation import out_i4      #: ★ by-ref 出参包装（既有）
+        from scripts.sw_simulation import out_i4  #: ★ by-ref 出参包装（既有）
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         doc = sw_connect.new_document(sw, "part")
@@ -70,7 +71,9 @@ def main() -> int:
         sw_part.end_sketch(doc)
         sw_part.extrude_boss(doc, sk, 20.0)
         sim.set_material(doc, "AISI 1020")
-        ev["steps"]["material"] = str(sw_connect.safe_get_com_member(doc, "MaterialIdName") or "")
+        ev["steps"]["material"] = str(
+            sw_connect.safe_get_com_member(doc, "MaterialIdName") or ""
+        )
 
         sim.create_static_study(sw, STUDY)
         study = sim.get_study_by_name(sw, STUDY)
@@ -92,12 +95,17 @@ def main() -> int:
             for i in range(count):
                 #: ★★ 官方签名是 **双参**（末位 by-ref）⇒ 必须传 `out_i4()`
                 #:   （照抄 `collect_study_evidence` 的既有写法；传裸 0 会 `类型不匹配`）
-                item = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
-                row = {"index": i, "type": type(item).__name__ if item is not None else None}
+                item = sw_connect.safe_get_com_member(
+                    mgr, "GetLoadsAndRestraints", i, out_i4()
+                )
+                row = {
+                    "index": i,
+                    "type": type(item).__name__ if item is not None else None,
+                }
                 for attr in ("Name", "Type", "State", "EntityCount"):
                     try:
                         row[attr] = sw_connect.safe_get_com_member(item, attr)
-                    except Exception:                          # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         row[attr] = None
                 rows.append(row)
             ev["steps"][tag] = rows
@@ -110,11 +118,18 @@ def main() -> int:
         toggled = []
         for i in range(count):
             try:
-                item = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
+                item = sw_connect.safe_get_com_member(
+                    mgr, "GetLoadsAndRestraints", i, out_i4()
+                )
                 r = sw_connect.call_com_member(item, "SuppressUnSuppress")
                 toggled.append({"index": i, "return": str(r)[:40]})
-            except Exception as exc:                           # noqa: BLE001
-                toggled.append({"index": i, "error": "%s: %s" % (type(exc).__name__, str(exc)[:70])})
+            except Exception as exc:  # noqa: BLE001
+                toggled.append(
+                    {
+                        "index": i,
+                        "error": "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                    }
+                )
         ev["steps"]["SuppressUnSuppress"] = toggled
         print("  [toggle] %s" % json.dumps(toggled, ensure_ascii=False)[:260])
 
@@ -123,15 +138,18 @@ def main() -> int:
         #: 再切一次（★ 确认是"切换"而非单向）
         for i in range(count):
             try:
-                item = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
+                item = sw_connect.safe_get_com_member(
+                    mgr, "GetLoadsAndRestraints", i, out_i4()
+                )
                 sw_connect.call_com_member(item, "SuppressUnSuppress")
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         twice = read_all("state_after_2")
 
         #: ★ 判读：State 有没有变
         def states(rows):
             return [r.get("State") for r in rows]
+
         ev["steps"]["verdict"] = {
             "state_before": states(before),
             "after_1_toggle": states(after),
@@ -140,20 +158,20 @@ def main() -> int:
             "toggle_is_reversible": states(after) != states(twice),
             "★": "★ 若 state 变化 ⇒ `SuppressUnSuppress` 就是那个开关 ⇒ **可用来把载荷设成活动**",
         }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 载荷活动状态探针 ──")
@@ -162,7 +180,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

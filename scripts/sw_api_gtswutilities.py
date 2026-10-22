@@ -38,6 +38,7 @@ r"""SolidWorks gtswutilities 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -57,211 +58,202 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = ["ASSEMBLY", "FAMILIES", "ARITY", "PROPERTIES", "call_index"]
 
-ASSEMBLY = 'gtswutilities'
+ASSEMBLY = "gtswutilities"
 
-FAMILIES: tuple[str, ...] = (    'IBendSequenceDrawing',
-    'ICompareDocument',
-    'ICompareFeature',
-    'ICompareGeometry',
-    'IFeaturePaint',
-    'IFindReplaceAnnotations',
-    'IGeometryAnalysis',
-    'IPowerSelect',
-    'IThicknessAnalysis',
-    'IUtilOptions',
-    'IUtilities',
+FAMILIES: tuple[str, ...] = (
+    "IBendSequenceDrawing",
+    "ICompareDocument",
+    "ICompareFeature",
+    "ICompareGeometry",
+    "IFeaturePaint",
+    "IFindReplaceAnnotations",
+    "IGeometryAnalysis",
+    "IPowerSelect",
+    "IThicknessAnalysis",
+    "IUtilOptions",
+    "IUtilities",
 )
 
 #: 全量能力登记表 {族: {能力名: 实参个数}}（排除 by-ref 出参）
 ARITY: dict[str, dict[str, int]] = {
-    'IBendSequenceDrawing': {
-        'GenerateDrawing': 5,
-        'GetBendListForBody': 1,
-        'Init': 0,
-        'SetDrawingFileNameForBody': 2,
-        'SetResequencedBendListForBody': 1,
+    "IBendSequenceDrawing": {
+        "GenerateDrawing": 5,
+        "GetBendListForBody": 1,
+        "Init": 0,
+        "SetDrawingFileNameForBody": 2,
+        "SetResequencedBendListForBody": 1,
     },
-    'ICompareDocument': {
-        'Close': 0,
-        'CompareDocument': 5,
-        'CompareDocument2': 9,
-        'SaveCompareVolumeResults': 1,
+    "ICompareDocument": {
+        "Close": 0,
+        "CompareDocument": 5,
+        "CompareDocument2": 9,
+        "SaveCompareVolumeResults": 1,
     },
-    'ICompareFeature': {
-        'Close': 0,
-        'CompareFeatures': 4,
-        'CompareFeatures2': 8,
+    "ICompareFeature": {
+        "Close": 0,
+        "CompareFeatures": 4,
+        "CompareFeatures2": 8,
     },
-    'ICompareGeometry': {
-        'Close': 0,
-        'CompareGeometry': 5,
-        'CompareGeometry2': 9,
-        'CompareGeometry3': 9,
-        'SaveCompareVolumeResults': 1,
+    "ICompareGeometry": {
+        "Close": 0,
+        "CompareGeometry": 5,
+        "CompareGeometry2": 9,
+        "CompareGeometry3": 9,
+        "SaveCompareVolumeResults": 1,
     },
-    'IFeaturePaint': {
-        'FeaturePaint': 2,
-        'FeaturePaint2': 3,
+    "IFeaturePaint": {
+        "FeaturePaint": 2,
+        "FeaturePaint2": 3,
     },
-    'IFindReplaceAnnotations': {
-        'Close': 0,
-        'FindNext': 0,
-        'FindPrevious': 0,
-        'InitPMPage': 0,
-        'Replace': 0,
-        'ReplaceAll': 0,
+    "IFindReplaceAnnotations": {
+        "Close": 0,
+        "FindNext": 0,
+        "FindPrevious": 0,
+        "InitPMPage": 0,
+        "Replace": 0,
+        "ReplaceAll": 0,
     },
-    'IGeometryAnalysis': {
-        'Close': 0,
-        'GetDiscontinuousEdgesCount': 0,
-        'GetDiscontinuousFacesCount': 0,
-        'GetKnifeEdgesCount': 1,
-        'GetKnifeVerticesCount': 1,
-        'GetShortEdgesCount': 1,
-        'GetSliverFacesCount': 1,
-        'GetSmallFacesCount': 1,
-        'Init': 0,
-        'SaveReport': 1,
-        'SaveReport2': 3,
-        'ShowResultsDialog': 0,
+    "IGeometryAnalysis": {
+        "Close": 0,
+        "GetDiscontinuousEdgesCount": 0,
+        "GetDiscontinuousFacesCount": 0,
+        "GetKnifeEdgesCount": 1,
+        "GetKnifeVerticesCount": 1,
+        "GetShortEdgesCount": 1,
+        "GetSliverFacesCount": 1,
+        "GetSmallFacesCount": 1,
+        "Init": 0,
+        "SaveReport": 1,
+        "SaveReport2": 3,
+        "ShowResultsDialog": 0,
     },
-    'IPowerSelect': {
-        'Close': 0,
-        'GetAppliedFilters': 0,
-        'GetAppliedFiltersCount': 0,
-        'GetEdgeAngleFilter': 0,
-        'GetEdgeConvexityFilter': 0,
-        'GetFaceColorFilter': 0,
-        'GetFeatureColorFilter': 0,
-        'GetFeatureNameFilter': 0,
-        'GetFeatureTypeFilter': 0,
-        'GetFeatureTypeFilterCount': 0,
-        'GetSelectEntitiesTypes': 0,
-        'GetShowHiddenEntities': 0,
-        'GetSurfaceTypeCount': 0,
-        'GetSurfaceTypeFilter': 0,
-        'Init': 0,
-        'RemoveFilters': 1,
-        'RunPowerSelect': 1,
-        'SelectResults': 0,
-        'SetEdgeAngleFilter': 2,
-        'SetEdgeConvexityFilter': 3,
-        'SetFaceColorFilter': 3,
-        'SetFeatureColorFilter': 3,
-        'SetFeatureNameFilter': 1,
-        'SetFeatureTypeFilter': 1,
-        'SetSelectEntitiesTypes': 1,
-        'SetShowHiddenEntities': 1,
-        'SetSurfaceTypeFilter': 1,
+    "IPowerSelect": {
+        "Close": 0,
+        "GetAppliedFilters": 0,
+        "GetAppliedFiltersCount": 0,
+        "GetEdgeAngleFilter": 0,
+        "GetEdgeConvexityFilter": 0,
+        "GetFaceColorFilter": 0,
+        "GetFeatureColorFilter": 0,
+        "GetFeatureNameFilter": 0,
+        "GetFeatureTypeFilter": 0,
+        "GetFeatureTypeFilterCount": 0,
+        "GetSelectEntitiesTypes": 0,
+        "GetShowHiddenEntities": 0,
+        "GetSurfaceTypeCount": 0,
+        "GetSurfaceTypeFilter": 0,
+        "Init": 0,
+        "RemoveFilters": 1,
+        "RunPowerSelect": 1,
+        "SelectResults": 0,
+        "SetEdgeAngleFilter": 2,
+        "SetEdgeConvexityFilter": 3,
+        "SetFaceColorFilter": 3,
+        "SetFeatureColorFilter": 3,
+        "SetFeatureNameFilter": 1,
+        "SetFeatureTypeFilter": 1,
+        "SetSelectEntitiesTypes": 1,
+        "SetShowHiddenEntities": 1,
+        "SetSurfaceTypeFilter": 1,
     },
-    'IThicknessAnalysis': {
-        'Close': 0,
-        'GetAnalysisDetails': 1,
-        'GetAvgWeightedTckOnAnalArea': 0,
-        'GetAvgWeightedTckOnCritArea': 0,
-        'GetCriticalFeatureNames': 0,
-        'GetCriticalSurfaceArea': 0,
-        'GetIntervalCount': 0,
-        'GetMaxDeviationfromTargetThickness': 0,
-        'GetMaxTckOnAnalArea': 0,
-        'GetMinTckOnAnalArea': 0,
-        'GetNumCriticalFaces': 0,
-        'GetNumCriticalFeatures': 0,
-        'GetThicknessAnalysisBody': 0,
-        'GetTotalSurfaceAreaAnalyzed': 0,
-        'Init': 0,
-        'RunThickAnalysis': 8,
-        'RunThickAnalysis2': 9,
-        'RunThinAnalysis': 6,
-        'RunThinAnalysis2': 7,
-        'SetThicknessAnalysisBody': 1,
+    "IThicknessAnalysis": {
+        "Close": 0,
+        "GetAnalysisDetails": 1,
+        "GetAvgWeightedTckOnAnalArea": 0,
+        "GetAvgWeightedTckOnCritArea": 0,
+        "GetCriticalFeatureNames": 0,
+        "GetCriticalSurfaceArea": 0,
+        "GetIntervalCount": 0,
+        "GetMaxDeviationfromTargetThickness": 0,
+        "GetMaxTckOnAnalArea": 0,
+        "GetMinTckOnAnalArea": 0,
+        "GetNumCriticalFaces": 0,
+        "GetNumCriticalFeatures": 0,
+        "GetThicknessAnalysisBody": 0,
+        "GetTotalSurfaceAreaAnalyzed": 0,
+        "Init": 0,
+        "RunThickAnalysis": 8,
+        "RunThickAnalysis2": 9,
+        "RunThinAnalysis": 6,
+        "RunThinAnalysis2": 7,
+        "SetThicknessAnalysisBody": 1,
     },
-    'IUtilOptions': {
-        'GetAngularTolerance': 0,
-        'GetPositionTolerance': 0,
-        'SetAngularTolerance': 1,
-        'SetPositionTolerance': 1,
+    "IUtilOptions": {
+        "GetAngularTolerance": 0,
+        "GetPositionTolerance": 0,
+        "SetAngularTolerance": 1,
+        "SetPositionTolerance": 1,
     },
-    'IUtilities': {
-        'appCallbackFunction': 3,
-        'GetAutoPartSimplification': 0,
-        'GetOptions': 0,
-        'GetToolInterface': 1,
-        'HelpErrCallback': 4,
-        'OnBendSequence': 0,
-        'OnCompareDocuments': 0,
-        'OnCompareFeatures': 0,
-        'OnCompareGeometry': 0,
-        'OnFeaturePaint': 0,
-        'OnFindFeatures': 0,
-        'OnFindReplaceAnnotation': 0,
-        'OnGeometryAnalysis': 0,
-        'OnPowSelect': 0,
-        'OnReplaceFeatures': 0,
-        'OnReportMgr': 0,
-        'OnSimplify': 0,
-        'OnSuppressFeatures': 0,
-        'OnThicknessAnalysis': 0,
-        'OnUpdateBendSequence': 0,
-        'OnUpdateCompareDocuments': 0,
-        'OnUpdateCompareFeatures': 0,
-        'OnUpdateCompareGeometry': 0,
-        'OnUpdateFeaturePaint': 0,
-        'OnUpdateFindFeatures': 0,
-        'OnUpdateFindReplaceAnnotation': 0,
-        'OnUpdateGeometryAnalysis': 0,
-        'OnUpdatePowerSelect': 0,
-        'OnUpdateReplaceFeatures': 0,
-        'OnUpdateSimplify': 0,
-        'OnUpdateSuppressFeatures': 0,
-        'OnUpdateThicknessAnalysis': 0,
+    "IUtilities": {
+        "appCallbackFunction": 3,
+        "GetAutoPartSimplification": 0,
+        "GetOptions": 0,
+        "GetToolInterface": 1,
+        "HelpErrCallback": 4,
+        "OnBendSequence": 0,
+        "OnCompareDocuments": 0,
+        "OnCompareFeatures": 0,
+        "OnCompareGeometry": 0,
+        "OnFeaturePaint": 0,
+        "OnFindFeatures": 0,
+        "OnFindReplaceAnnotation": 0,
+        "OnGeometryAnalysis": 0,
+        "OnPowSelect": 0,
+        "OnReplaceFeatures": 0,
+        "OnReportMgr": 0,
+        "OnSimplify": 0,
+        "OnSuppressFeatures": 0,
+        "OnThicknessAnalysis": 0,
+        "OnUpdateBendSequence": 0,
+        "OnUpdateCompareDocuments": 0,
+        "OnUpdateCompareFeatures": 0,
+        "OnUpdateCompareGeometry": 0,
+        "OnUpdateFeaturePaint": 0,
+        "OnUpdateFindFeatures": 0,
+        "OnUpdateFindReplaceAnnotation": 0,
+        "OnUpdateGeometryAnalysis": 0,
+        "OnUpdatePowerSelect": 0,
+        "OnUpdateReplaceFeatures": 0,
+        "OnUpdateSimplify": 0,
+        "OnUpdateSuppressFeatures": 0,
+        "OnUpdateThicknessAnalysis": 0,
     },
 }
 
 #: 属性名（反射里是 get_/set_，**不是方法**；这里只留去掉前缀的名字）
 PROPERTIES: dict[str, tuple[str, ...]] = {
-    'IBendSequenceDrawing': (
+    "IBendSequenceDrawing": (),
+    "ICompareDocument": (),
+    "ICompareFeature": (),
+    "ICompareGeometry": (),
+    "IFeaturePaint": (),
+    "IFindReplaceAnnotations": (
+        "AnnotationFilter",
+        "AnnotationFilter",
+        "FindText",
+        "FindText",
+        "ReplaceText",
+        "ReplaceText",
+        "options",
+        "options",
     ),
-    'ICompareDocument': (
-    ),
-    'ICompareFeature': (
-    ),
-    'ICompareGeometry': (
-    ),
-    'IFeaturePaint': (
-    ),
-    'IFindReplaceAnnotations': (
-        'AnnotationFilter',
-        'AnnotationFilter',
-        'FindText',
-        'FindText',
-        'ReplaceText',
-        'ReplaceText',
-        'options',
-        'options',
-    ),
-    'IGeometryAnalysis': (
-    ),
-    'IPowerSelect': (
-    ),
-    'IThicknessAnalysis': (
-    ),
-    'IUtilOptions': (
-    ),
-    'IUtilities': (
-        'BendSequenceDrawing',
-        'CompareDocument',
-        'CompareFeature',
-        'CompareGeometry',
-        'FeaturePaint',
-        'FindReplaceAnnotations',
-        'GeometryAnalysis',
-        'PowerSelect',
-        'ThicknessAnalysis',
-        'options',
+    "IGeometryAnalysis": (),
+    "IPowerSelect": (),
+    "IThicknessAnalysis": (),
+    "IUtilOptions": (),
+    "IUtilities": (
+        "BendSequenceDrawing",
+        "CompareDocument",
+        "CompareFeature",
+        "CompareGeometry",
+        "FeaturePaint",
+        "FindReplaceAnnotations",
+        "GeometryAnalysis",
+        "PowerSelect",
+        "ThicknessAnalysis",
+        "options",
     ),
 }
-
 
 
 def _require(obj, what: str = "对象"):
@@ -290,16 +282,19 @@ def call_index(obj, family: str, member: str, *args):
     if sub is None:
         raise KeyError(
             f"本清单没有这个族: {family}（gtswutilities 共 {len(ARITY)} 族）。"
-            f"⚠ 别的程序集请用对应的 call_index。")
+            f"⚠ 别的程序集请用对应的 call_index。"
+        )
     expected = sub.get(member)
     if expected is None:
         raise KeyError(
             f"{family} 上没有名为 {member} 的能力（该族登记 {len(sub)} 项）。"
-            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。")
+            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。"
+        )
     if expected != len(args):
         raise ValueError(
             f"{family}.{member} 官方签名是 {expected} 个实参"
-            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个")
+            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个"
+        )
     _require(obj, f"{family} 对象")
     return get_com_member(obj, member, *args)
 
@@ -321,4 +316,3 @@ def call_index(obj, family: str, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测 SolidWorks 行为（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-

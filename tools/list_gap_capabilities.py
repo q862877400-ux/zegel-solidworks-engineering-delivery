@@ -1,4 +1,5 @@
 """★ 列出能力清单里**没真正可用**的条目（`not_implemented` / `stitched`）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/list_gap_capabilities.py
@@ -6,7 +7,7 @@
 #           准**：`verified` = 有我们自己的运行证据 · `stitched` = 代码写好但**没真机跑
 #           过** ·`not_implemented` = 没做 ✓（五级枚举见 `docs/union-conventions.md`）
 #         ★★ 教训：本文件第一版我用 `Select-String` 按 `level:\s*X` 找 —— **一条也没找到**，
-# 因为该文件是 **JSON**（`"level": "verified"`，**带引号**）⇒ 按 YAML 形态写判据 = 空转 
+# 因为该文件是 **JSON**（`"level": "verified"`，**带引号**）⇒ 按 YAML 形态写判据 = 空转
 # ✓✗
 # 官方依据: 不适用（本仓声明层）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -29,8 +30,10 @@ def main() -> int:
     caps = data.get("capabilities")
     if not isinstance(caps, list):
         #: ★ 找不到就**如实说**，不猜结构（铁律 5）
-        print("★ `capabilities` 不是 list ⇒ 结构变了，本脚本要看一眼再改（键：%s）"
-              % list(data.keys()))
+        print(
+            "★ `capabilities` 不是 list ⇒ 结构变了，本脚本要看一眼再改（键：%s）"
+            % list(data.keys())
+        )
         return 1
 
     by_level: dict[str, int] = {}
@@ -47,7 +50,9 @@ def main() -> int:
         rows = [c for c in caps if str(c.get("level")) == lv]
         print("★★ `%s`（%d 条）：" % (lv, len(rows)))
         for c in rows:
-            print("    · id=%-42s %s" % (str(c.get("id"))[:42], str(c.get("name"))[:58]))
+            print(
+                "    · id=%-42s %s" % (str(c.get("id"))[:42], str(c.get("name"))[:58])
+            )
         print()
     return 0
 

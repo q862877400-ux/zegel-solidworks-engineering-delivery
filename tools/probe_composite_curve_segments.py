@@ -31,6 +31,7 @@ r"""@brief 探针：**回读着 mark 计数**去选 2 个草图实体，再试 `
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -44,12 +45,16 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-segments.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "composite-curve-segments.json"
+)
+
+
 def count(doc, sw_connect, mark=-1):
     try:
         sel = sw_connect.safe_get_com_member(doc, "SelectionManager")
         return int(sw_connect.safe_get_com_member(sel, "GetSelectedObjectCount2", mark))
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return "EXC:%s" % str(exc)[:30]
 
 
@@ -60,10 +65,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -83,7 +89,7 @@ def main() -> int:
         for i, s in enumerate(segs[:2]):
             try:
                 nm = sw_connect.safe_get_com_member(s, "GetID")
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 nm = None
             names.append(nm)
         ev["segment_ids"] = [str(n) for n in names]
@@ -99,11 +105,15 @@ def main() -> int:
             try:
                 if s.Select4(True, callout):
                     n_ok += 1
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("     ⚠ Select4 异常: %s" % str(exc)[:60])
         c_all = count(doc, sw_connect, -1)
-        print("  ③ 按对象选 2 段 ⇒ 返回真 %d 次 · **回读计数(-1)** = %s" % (n_ok, c_all))
-        ev["trials"].append({"way": "Select4 x2 segments", "returned": n_ok, "count": c_all})
+        print(
+            "  ③ 按对象选 2 段 ⇒ 返回真 %d 次 · **回读计数(-1)** = %s" % (n_ok, c_all)
+        )
+        ev["trials"].append(
+            {"way": "Select4 x2 segments", "returned": n_ok, "count": c_all}
+        )
 
         #: ── 只有计数对了才去调功能（**这一步是本轮的纪律**）──
         if c_all == 2:
@@ -111,12 +121,14 @@ def main() -> int:
                 sw_part.insert_composite_curve(doc)
                 ev["result"] = "success_segments"
                 print("  ★★ **成功**（选 2 个草图实体）")
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["result"] = "false_segments"
                 print("  ✗ 仍失败：%s" % str(exc)[:110])
         else:
             ev["result"] = "premise_not_met"
-            print("  ⚠ 计数 %s ≠ 2 ⇒ **前提没满足，不去调功能**（不当成功能失败）" % c_all)
+            print(
+                "  ⚠ 计数 %s ≠ 2 ⇒ **前提没满足，不去调功能**（不当成功能失败）" % c_all
+            )
 
         #: ── 候选④：`SelectByID2` + **mark=1**（按段名，若名字可用）──
         doc.ClearSelection2(True)
@@ -129,45 +141,59 @@ def main() -> int:
                     if doc.Extension.SelectByID2(nm, typ, 0, 0, 0, True, 1, callout, 0):
                         picked += 1
                         break
-                except Exception:      # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
         c1 = count(doc, sw_connect, 1)
         c_all2 = count(doc, sw_connect, -1)
-        print("  ④ 按段名 + mark=1 ⇒ 命中 %d · **回读计数(1)** = %s · (-1) = %s"
-              % (picked, c1, c_all2))
-        ev["trials"].append({"way": "SelectByID2 name mark=1", "returned": picked,
-                             "count_mark1": c1, "count_all": c_all2})
+        print(
+            "  ④ 按段名 + mark=1 ⇒ 命中 %d · **回读计数(1)** = %s · (-1) = %s"
+            % (picked, c1, c_all2)
+        )
+        ev["trials"].append(
+            {
+                "way": "SelectByID2 name mark=1",
+                "returned": picked,
+                "count_mark1": c1,
+                "count_all": c_all2,
+            }
+        )
         if c_all2 == 2 and ev.get("result") in (None, "premise_not_met"):
             try:
                 sw_part.insert_composite_curve(doc)
                 ev["result"] = "success_by_name"
                 print("  ★★ **成功**（按段名 + mark=1）")
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["result"] = "false_by_name"
                 print("  ✗ 仍失败：%s" % str(exc)[:110])
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

@@ -1,4 +1,5 @@
 """★ 探针：`IDrawingDoc::InsertWeldSymbol` —— ★ 焊接符号（★ 前置链全在本机）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3 焊接符号的真机探针）
 # 文件:   tools/probe_spec211_weldsymbol.py
@@ -52,7 +53,7 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-WORK = ROOT / "output" / "spec211-b3-weldsym"      #: ★ 仓库内产物目录（★ 非用户目录 ✓）
+WORK = ROOT / "output" / "spec211-b3-weldsym"  #: ★ 仓库内产物目录（★ 非用户目录 ✓）
 ANN = Path(r"C:\ProgramData\SolidWorks\SOLIDWORKS 2026\design library\annotations")
 
 
@@ -67,8 +68,10 @@ def main() -> int:
     import sw_connect
     import sw_part
 
-    out: dict = {"official": "IDrawingDoc.InsertWeldSymbol",
-                 "step": "全链：零件→落盘→工程图→三视图→焊接符号"}
+    out: dict = {
+        "official": "IDrawingDoc.InsertWeldSymbol",
+        "step": "全链：零件→落盘→工程图→三视图→焊接符号",
+    }
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
@@ -93,7 +96,7 @@ def main() -> int:
     p1 = WORK / "ws1.sldprt"
     try:
         sw_connect.save_document(part, str(p1))
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["save_error"] = "%s: %s" % (type(e).__name__, str(e)[:120])
     out["part_saved"] = p1.is_file()
     print("★ ① 零件落盘 ⇒ %r" % out["part_saved"])
@@ -108,14 +111,15 @@ def main() -> int:
             #:   （★ 铁律：★ **单源运行** —— 多个进程抢同一 COM 连接会死锁 ✓）
             #:   ⇒ ★ 用**已有连接**建工程图 ✓
             drawing = sw_connect.new_document(sw, "drawing")
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             out["drawing_error"] = "%s: %s" % (type(e).__name__, str(e)[:120])
         if drawing is not None:
             try:
                 import sw_drawing_expose as DE
+
                 DE.create_three_standard_views(drawing, str(p1))
                 views_ok = True
-            except Exception as e:                                      # noqa: BLE001
+            except Exception as e:  # noqa: BLE001
                 out["views_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["drawing_created"] = drawing is not None
     out["views_created"] = views_ok
@@ -128,33 +132,38 @@ def main() -> int:
         try:
             #: ★★★ **不要绕 `GetDrawingDoc`** ✗ —— ★ 工程图文档**本身就是 `IDrawingDoc`*
             #: * ✓
-            #: ★★ 这与上一批 SpeedPak 那次是**同一类错**（★ 我写过 `get_com_member(top, 
+            #: ★★ 这与上一批 SpeedPak 那次是**同一类错**（★ 我写过 `get_com_member(top,
             #: "AssemblyDoc")`
             #:    ⇒ `AttributeError: <unknown>.AssemblyDoc` ✗）⇒ ★★ **推广后的定则**：
             #: ★★★ **`IModelDoc2` 的族接口（`IAssemblyDoc` / `IDrawingDoc` / `IPartDoc`
             #: ）
             #:     就是文档本身** ✗ —— ★ **不需要 `GetXxxDoc` 那一层** ✓
             ret = sw_connect.get_com_member(
-                drawing, "InsertWeldSymbol",
-                "",                      #: Dim1（★ 符号左边文字）
-                str(names[0]),           #: Symbol（★ 符号名 —— 用本机清单里的第一个 ✓）
-                "",                      #: Dim2（★ 符号右边文字）
-                False,                   #: Symmetric
-                False,                   #: FieldWeld
-                False,                   #: ShowOtherSide
-                False,                   #: DashOnTop
-                False,                   #: Peripheral
-                False, "")               #: HasProcess · ProcessValue
-        except Exception as e:                                          # noqa: BLE001
+                drawing,
+                "InsertWeldSymbol",
+                "",  #: Dim1（★ 符号左边文字）
+                str(names[0]),  #: Symbol（★ 符号名 —— 用本机清单里的第一个 ✓）
+                "",  #: Dim2（★ 符号右边文字）
+                False,  #: Symmetric
+                False,  #: FieldWeld
+                False,  #: ShowOtherSide
+                False,  #: DashOnTop
+                False,  #: Peripheral
+                False,
+                "",
+            )  #: HasProcess · ProcessValue
+        except Exception as e:  # noqa: BLE001
             exc = e
     out["returned"] = str(ret)[:80]
-    out["exception"] = None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    out["exception"] = (
+        None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:160])
+    )
 
     #: ④ **判据**（★ 官方回 `void` ⇒ ★ 只能"抛不抛" + ★ 找读回成员 ✓）
     #: ★★★★ **判据要落在「它真正改变的东西」上**（★ 第 38 轮定则 ✓）——
     #: ★ 焊接符号是**视图上的标注** ✗ ⇒ ★ 顶层注释计数取不到（`GetAnnotationCount` 回 No
     #: ne ✗）
-    #: ★★ 正解：★ **`IView::GetWeldSymbolCount` / `GetWeldSymbols`** ✓（★ B0 全扫时见过 
+    #: ★★ 正解：★ **`IView::GetWeldSymbolCount` / `GetWeldSymbols`** ✓（★ B0 全扫时见过
     #: ✓）
     #: ★ 官方逐字：★ `GetWeldSymbolCount` 的 `## Returns` = **Total number of weld symbo
     #: ls
@@ -168,7 +177,7 @@ def main() -> int:
         #: this method returns the current drawing sheet.** ★ The **next** view returned
         #:  by
         #:    `IView::GetNextView` is the **first drawing view** in the current sheet.」✓✓
-        #: ★ 且 `GetViews` 的 `## Returns` 逐字：「**An array of arrays**」+「the first 
+        #: ★ 且 `GetViews` 的 `## Returns` 逐字：「**An array of arrays**」+「the first
         #: view in the
         #:    list being **the sheet itself**」✗
         #:   ⇒ ★★★★ **所以第一个对象是**图纸**、★ 不是视图** ✗ ——
@@ -177,13 +186,13 @@ def main() -> int:
         chain, cur = [], None
         try:
             cur = sw_connect.get_com_member(drawing, "GetFirstView")
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             cur = None
         while cur is not None and len(chain) < 16:
             chain.append(cur)
             try:
                 cur = sw_connect.get_com_member(cur, "GetNextView")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 cur = None
         #: ★★★ **跳过链首那个"图纸"** ✓（★ 官方 Remarks 明写它就是 sheet ✓）
         readback["chain_len"] = len(chain)
@@ -193,47 +202,62 @@ def main() -> int:
         per_view = []
         for i, v in enumerate(views):
             row = {"index": i}
-            for label, member in (("weld_symbol_count", "GetWeldSymbolCount"),
-                                  ("annotation_count", "GetAnnotationCount")):
+            for label, member in (
+                ("weld_symbol_count", "GetWeldSymbolCount"),
+                ("annotation_count", "GetAnnotationCount"),
+            ):
                 try:
                     row[label] = sw_connect.get_com_member(v, member)
-                except Exception:                                       # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     row[label] = None
             try:
                 row["name"] = str(sw_connect.get_com_member(v, "GetName2") or "")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 row["name"] = None
             per_view.append(row)
         readback["per_view"] = per_view
         readback["total_weld_symbols"] = sum(
-            int(r["weld_symbol_count"] or 0) for r in per_view
-            if isinstance(r.get("weld_symbol_count"), int))
+            int(r["weld_symbol_count"] or 0)
+            for r in per_view
+            if isinstance(r.get("weld_symbol_count"), int)
+        )
     out["readback"] = readback
 
     if exc is None:
-        out["verdict"] = ("★★ **调用完成、不抛**（★ 官方该成员回 `void` ⇒ ★ 没有返回值判据 ✓）· "
-                          "★ 读回：%r ⇒ ★ **符号名清单是真前置**、★ 而「到底插进去了没有」要另找判据"
-                          "（★ 第 38 轮定则：★ 判据要落在它真正改变的东西上 —— ★ 符号是标注、★ 不再是特征树 ✓）"
-                          % out["readback"])
+        out["verdict"] = (
+            "★★ **调用完成、不抛**（★ 官方该成员回 `void` ⇒ ★ 没有返回值判据 ✓）· "
+            "★ 读回：%r ⇒ ★ **符号名清单是真前置**、★ 而「到底插进去了没有」要另找判据"
+            "（★ 第 38 轮定则：★ 判据要落在它真正改变的东西上 —— ★ 符号是标注、★ 不再是特征树 ✓）"
+            % out["readback"]
+        )
     else:
-        out["verdict"] = ("★★ **抛**：%s ⇒ ★ 按官方 `## Parameters` 复核 10 个实参位 ✓" % out["exception"])
+        out["verdict"] = (
+            "★★ **抛**：%s ⇒ ★ 按官方 `## Parameters` 复核 10 个实参位 ✓"
+            % out["exception"]
+        )
     print("★★ 调用后 ⇒ 回 %r · 异常 %r" % (out["returned"], out["exception"]))
     print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec211-b3-weldsymbol.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "spec211-b3-weldsymbol-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "spec211-b3-weldsymbol-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

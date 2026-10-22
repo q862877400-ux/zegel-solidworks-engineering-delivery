@@ -43,6 +43,7 @@ previews  = drawing_save_review_previews(drawing_model, out/"previews", views=(.
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -59,16 +60,26 @@ __all__ = [
     "sheets_summary",
     "current_sheet_info",
     "list_views",
-
-    "view_annotations_report"]
+    "view_annotations_report",
+]
 
 #: `swDocumentTypes_e`：零件 1 / 装配 2 / **工程图 3**
 SWDOC_DRAWING = 3
 
 #: `swDwgPaperSizes_e`（★ swapi 与出厂反射**两源一致**，13 个成员）
 PAPER_SIZE_NAMES = {
-    0: "A", 1: "A_vertical", 2: "B", 3: "C", 4: "D", 5: "E",
-    6: "A4", 7: "A4_vertical", 8: "A3", 9: "A2", 10: "A1", 11: "A0",
+    0: "A",
+    1: "A_vertical",
+    2: "B",
+    3: "C",
+    4: "D",
+    5: "E",
+    6: "A4",
+    7: "A4_vertical",
+    8: "A3",
+    9: "A2",
+    10: "A1",
+    11: "A0",
     12: "user_defined",
 }
 
@@ -83,8 +94,10 @@ def require_drawing(model):
         raise ValueError("model 为 None")
     try:
         doc_type = int(get_com_member(model, "GetType"))
-    except Exception as exc:                                    # noqa: BLE001
-        raise RuntimeError("读不到文档类型（GetType 失败）：%s" % str(exc)[:80]) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(
+            "读不到文档类型（GetType 失败）：%s" % str(exc)[:80]
+        ) from exc
     if doc_type != SWDOC_DRAWING:
         raise RuntimeError(
             "当前文档不是工程图（GetType()=%d；swDocPART=1 / swDocASSEMBLY=2 / swDocDRAWING=3）"
@@ -184,23 +197,23 @@ def list_views(model) -> list[dict[str, Any]]:
     views: list[dict[str, Any]] = []
     view = get_com_member(model, "GetFirstView")
     seen = 0
-    while view is not None and seen < 500:                      #: 防御上限，不无限循环
+    while view is not None and seen < 500:  #: 防御上限，不无限循环
         seen += 1
         try:
             vtype = int(get_com_member(view, "Type"))
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             vtype = -1
         try:
             name = str(get_com_member(view, "GetName2"))
-        except Exception:                                       # noqa: BLE001
-            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 
+        except Exception:  # noqa: BLE001
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md`
             #: 首行
             #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
             #: ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型
             #: 视图）
             #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
             name = ""
-        if vtype != SHEET_PSEUDO_VIEW_TYPE:                     #: ★ 跳过"图纸本身"
+        if vtype != SHEET_PSEUDO_VIEW_TYPE:  #: ★ 跳过"图纸本身"
             views.append({"name": name, "type": vtype})
         nxt = get_com_member(view, "GetNextView")
         if nxt is None:
@@ -264,19 +277,19 @@ def view_annotations_report(model) -> dict:
         seen += 1
         try:
             vtype = int(get_com_member(view, "Type"))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             vtype = -1
         try:
             name = str(get_com_member(view, "GetName2"))
-        except Exception:                                       # noqa: BLE001
-            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 
+        except Exception:  # noqa: BLE001
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md`
             #: 首行
             #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
             #: ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型
             #: 视图）
             #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
             name = ""
-        if vtype == SHEET_PSEUDO_VIEW_TYPE:                               #: ★ 跳过"图纸本身"
+        if vtype == SHEET_PSEUDO_VIEW_TYPE:  #: ★ 跳过"图纸本身"
             nxt = get_com_member(view, "GetNextView")
             if nxt is None:
                 break
@@ -286,32 +299,34 @@ def view_annotations_report(model) -> dict:
         #: ★ `GetAnnotationCount()` —— 独立的第一个判据（★ 官方 Remarks 说它给数组定大小
         #: ）
         try:
-            item["annotation_count_by_api"] = int(get_com_member(view, "GetAnnotationCount"))
-        except Exception as exc:                                          # noqa: BLE001
+            item["annotation_count_by_api"] = int(
+                get_com_member(view, "GetAnnotationCount")
+            )
+        except Exception as exc:  # noqa: BLE001
             item["annotation_count_by_api"] = "err: %s" % str(exc)[:50]
         #: ★★ `GetAnnotations()` —— 官方例子用的就是它（★ 直接回数组）
         try:
             arr = get_com_member(view, "GetAnnotations")
             names = []
-            for a in (arr or []):
+            for a in arr or []:
                 try:
                     names.append(str(get_com_member(a, "GetName")))
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     names.append("(无名)")
             item["annotations"] = names
             item["annotation_len"] = len(names)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             item["annotations"] = "err: %s" % str(exc)[:60]
         #: ★ `GetDisplayDimensions()` —— 官方 Remarks 说**用它一次取全部**
         try:
             dims = get_com_member(view, "GetDisplayDimensions")
             item["display_dimension_count"] = len(list(dims or []))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             item["display_dimension_count"] = "err: %s" % str(exc)[:50]
         #: ★ `GetArcCount()` —— 零参 · ★ 非废弃
         try:
             item["arc_count"] = int(get_com_member(view, "GetArcCount"))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             item["arc_count"] = "err: %s" % str(exc)[:50]
         #: ★★★★★★★ 2026-10-04（轮 139）**第二批零参读侧（★ 工程图）** ——
         #: ★ **四个全零参、★ 全非废弃、★ 全非指针**、★ 而它们的 `## Remarks` 都是**同一
@@ -330,30 +345,36 @@ def view_annotations_report(model) -> dict:
         #:       ★★ **⇒ 前置不满足时**静默回 `None`**** ⇒ **⇒ 会误导** ⇒ 不纳入 ✓
         #: ★ **② `GetCenterMarkCount2(out int Size)`** —— `## Remarks` 逐字：★「**Center
         #:  marks
-        #: are now annotations. Previously, center marks were features.** ★ This method 
+        #: are now annotations. Previously, center marks were features.** ★ This method
         #: is
         #:       **only valid for center marks that are features**」⇒
         #:       ★★ **⇒ 它对**新画的**中心标记**不适用****、★ 且**带 `out`**（★ 本仓既有结论：
         #:         带 `out` 的在 pywin32 上到不了）⇒ **不纳入** ✓
-        for _key, _mem in (("bend_line_count", "GetBendLineCount"),
-                           ("cosmetic_thread_count", "GetCThreadCount"),
-                           ("datum_origin_count", "GetDatumOriginCount"),
-                           ("center_line_count", "GetCenterLineCount")):
+        for _key, _mem in (
+            ("bend_line_count", "GetBendLineCount"),
+            ("cosmetic_thread_count", "GetCThreadCount"),
+            ("datum_origin_count", "GetDatumOriginCount"),
+            ("center_line_count", "GetCenterLineCount"),
+        ):
             try:
                 item[_key] = int(get_com_member(view, _mem))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 item[_key] = "err: %s" % str(exc)[:50]
         views.append(item)
         nxt = get_com_member(view, "GetNextView")
         if nxt is None:
             break
         view = nxt
-    return {"view_count": len(views), "views": views,
-            "★_不读": [
-                "GetLineCount（★ 官方标 Obsolete）",
-                "GetBomTable（★ 官方 Remarks：★ 只有 Excel 型 BOM 才有 ⇒ 前置不满足时静默回 None）",
-                "GetCenterMarkCount2（★ 官方 Remarks：★ 只对**作为特征**的中心标记有效、"
-                "★ 且带 `out` ⇒ 在 pywin32 上到不了）"]}
+    return {
+        "view_count": len(views),
+        "views": views,
+        "★_不读": [
+            "GetLineCount（★ 官方标 Obsolete）",
+            "GetBomTable（★ 官方 Remarks：★ 只有 Excel 型 BOM 才有 ⇒ 前置不满足时静默回 None）",
+            "GetCenterMarkCount2（★ 官方 Remarks：★ 只对**作为特征**的中心标记有效、"
+            "★ 且带 `out` ⇒ 在 pywin32 上到不了）",
+        ],
+    }
 
 
 # ── 24h 计划 段 6 续（Spec Kit `164`）：**图纸比例的读与写** ────────────────────────
@@ -389,27 +410,35 @@ def view_annotations_report(model) -> dict:
 def _sheet_by_name(model, sheet_name: str = ""):
     """★ **按名字取图纸对象**（★ 空名字 ⇒ 当前图纸）。★ 回 `(sheet, err)`。"""
     from sw_connect import get_com_member as _get
+
     if model is None:
         return None, "model 为 None"
     try:
         if not sheet_name:
             sh = _get(model, "GetCurrentSheet")
-            return (sh, None) if sh is not None else (None, "当前图纸取不到（★ 文档是工程图吗）")
+            return (
+                (sh, None)
+                if sh is not None
+                else (None, "当前图纸取不到（★ 文档是工程图吗）")
+            )
         try:
             sh = _get(model, "GetSheetByName", str(sheet_name))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             sh = None
         if sh is None:
             #: ★ 退路：遍历 GetSheetNames 找同名（★ 有些版本 GetSheetByName 不稳）
             try:
                 names = list(_get(model, "GetSheetNames") or [])
-            except Exception as exc:                           # noqa: BLE001
-                return None, "取图纸名清单失败：%s: %s" % (type(exc).__name__, str(exc)[:120])
+            except Exception as exc:  # noqa: BLE001
+                return None, "取图纸名清单失败：%s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:120],
+                )
             if str(sheet_name) not in [str(n) for n in names]:
                 return None, "没有名为 %r 的图纸（现有：%s）" % (str(sheet_name), names)
             sh = _get(model, "GetCurrentSheet")
         return (sh, None) if sh is not None else (None, "图纸对象取不到")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return None, "取图纸失败：%s: %s" % (type(exc).__name__, str(exc)[:140])
 
 
@@ -421,36 +450,55 @@ def get_sheet_scale_report(model, sheet_name: str = "") -> dict:
       位置 5/6 是宽高）；★ **本函数只认那两位**，★ 其余原样回在 `properties` 里供核对。
     """
     from sw_connect import get_com_member as _get
+
     sheet, err = _sheet_by_name(model, sheet_name)
     if err:
         return {"ok": False, "error": err}
     try:
         props = list(_get(sheet, "GetProperties") or [])
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "error": "GetProperties 失败：%s: %s" % (type(exc).__name__, str(exc)[:150])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "error": "GetProperties 失败：%s: %s"
+            % (type(exc).__name__, str(exc)[:150]),
+        }
     if len(props) < 5:
-        return {"ok": False, "error": "GetProperties 只回了 %d 个元素（★ 预期 ≥7）" % len(props),
-                "properties": [str(x)[:30] for x in props]}
+        return {
+            "ok": False,
+            "error": "GetProperties 只回了 %d 个元素（★ 预期 ≥7）" % len(props),
+            "properties": [str(x)[:30] for x in props],
+        }
     #: ★★★ 2026-10-01（轮 301）**顺序是真机定的**：传 `SetScale(1, 5)` 而读回
     #: **`5:1`** ⇒ ★★ **`props[3]` 是 Denominator、`props[4]` 是 Numerator**（与字面相反
     #: ）。
     #:   ★ 另一组：传 `SetScale(1, 2)` → 读回 `2:1`。⇒ ★ **两组同向 ⇒ 定序可信**。
     den, num = float(props[3]), float(props[4])
-    return {"ok": True, "sheet_name": str(sheet_name) or "(当前)", "numerator": num, "denominator": den,
-            "ratio_text": "%g:%g" % (num, den),
-            "properties": [str(x)[:30] for x in props],
-            "★": "位置 3/4 是比例的两个数（官方 Remarks 指定 GetProperties 读比例）"}
+    return {
+        "ok": True,
+        "sheet_name": str(sheet_name) or "(当前)",
+        "numerator": num,
+        "denominator": den,
+        "ratio_text": "%g:%g" % (num, den),
+        "properties": [str(x)[:30] for x in props],
+        "★": "位置 3/4 是比例的两个数（官方 Remarks 指定 GetProperties 读比例）",
+    }
 
 
-def set_sheet_scale_report(model, numerator: float, denominator: float,
-                           scale_anno_position: bool = False, scale_anno_text_height: bool = False,
-                           sheet_name: str = "") -> dict:
+def set_sheet_scale_report(
+    model,
+    numerator: float,
+    denominator: float,
+    scale_anno_position: bool = False,
+    scale_anno_text_height: bool = False,
+    sheet_name: str = "",
+) -> dict:
     """★ **设图纸比例并回读**（★ 走 `ISheet.SetScale` —— 官方签名 4 参，★ 回 bool）。
 
     ★ 判据：★ **`SetScale` 回真** · ★ **且回读的 (位置 3, 位置 4) 真的变成了 (numerator, denominator)**。
     ⇒ ★ 两者缺一 ⇒ `ok: False`（★ 规则 6：不静默成功）。
     """
     from sw_connect import get_com_member as _get
+
     sheet, err = _sheet_by_name(model, sheet_name)
     if err:
         return {"ok": False, "error": err}
@@ -459,7 +507,10 @@ def set_sheet_scale_report(model, numerator: float, denominator: float,
     except (TypeError, ValueError) as exc:
         return {"ok": False, "error": "比例两个数必须是数字：%s" % str(exc)[:120]}
     if num <= 0 or den <= 0:
-        return {"ok": False, "error": "比例的两个数都必须 > 0（★ 收到 %r:%r）" % (num, den)}
+        return {
+            "ok": False,
+            "error": "比例的两个数都必须 > 0（★ 收到 %r:%r）" % (num, den),
+        }
     #: ★★★★ 2026-10-01（轮 301）**真机定出的合法值：Numerator 只接受 1**。
     #:   证据（三组，同一个图纸）：
     #:     `SetScale(1, 5)` → 读回 **1:5** ✓；`SetScale(3, 7)` → 读回 **1:7**；
@@ -469,20 +520,45 @@ def set_sheet_scale_report(model, numerator: float, denominator: float,
     #:   ⇒ ★ 本函数**不替它静默**：★★ `numerator != 1` 时**显式拒绝并列合法值****
     #:     （★ 与事实 197「报错要会列合法值」同族）。
     if abs(num - 1.0) > 1e-9:
-        return {"ok": False, "stage": "validate", "asked": [num, den],
-                "error": "本机 `ISheet.SetScale` 的 Numerator **只接受 1**"
-                         "（★ 真机三组：(1,5)→`1:5` · (3,7)→`1:7` · (2,1)→`1:1`）"
-                         "⇒ 图纸比例只能是 **1:n** 形式；"
-                         "★ 合法值：Numerator = 1，Denominator > 0（★ 收到 %r:%r）" % (num, den)}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "asked": [num, den],
+            "error": "本机 `ISheet.SetScale` 的 Numerator **只接受 1**"
+            "（★ 真机三组：(1,5)→`1:5` · (3,7)→`1:7` · (2,1)→`1:1`）"
+            "⇒ 图纸比例只能是 **1:n** 形式；"
+            "★ 合法值：Numerator = 1，Denominator > 0（★ 收到 %r:%r）" % (num, den),
+        }
     before = get_sheet_scale_report(model, sheet_name)
     try:
-        ret = _get(sheet, "SetScale", num, den, bool(scale_anno_position), bool(scale_anno_text_height))
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "set", "asked": [num, den], "before": before,
-                "error": "SetScale 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+        ret = _get(
+            sheet,
+            "SetScale",
+            num,
+            den,
+            bool(scale_anno_position),
+            bool(scale_anno_text_height),
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "set",
+            "asked": [num, den],
+            "before": before,
+            "error": "SetScale 失败：%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     after = get_sheet_scale_report(model, sheet_name)
-    ok_readback = bool(after.get("ok") and abs(after.get("numerator", -1) - num) < 1e-9
-                       and abs(after.get("denominator", -1) - den) < 1e-9)
-    return {"ok": bool(ret) and ok_readback, "asked": [num, den], "set_scale_returned": bool(ret),
-            "before": before, "after": after, "readback_matches": ok_readback,
-            "★": "回读判据 = GetProperties 的位置 3/4 真的变了（★ 规则 6）"}
+    ok_readback = bool(
+        after.get("ok")
+        and abs(after.get("numerator", -1) - num) < 1e-9
+        and abs(after.get("denominator", -1) - den) < 1e-9
+    )
+    return {
+        "ok": bool(ret) and ok_readback,
+        "asked": [num, den],
+        "set_scale_returned": bool(ret),
+        "before": before,
+        "after": after,
+        "readback_matches": ok_readback,
+        "★": "回读判据 = GetProperties 的位置 3/4 真的变了（★ 规则 6）",
+    }

@@ -1,4 +1,5 @@
 """★ 量一量：504 个工具按 **lean-mode 的规则**渲染出来到底多大（★ 并揪出废话最多的）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（DSH lean 工具面体量测量）
 # 文件:   tools/measure_lean_catalog.py
@@ -37,33 +38,60 @@ def first_line(desc) -> str:
     cut = text.split("。")[0].split("\n")[0] if "。" in text or "\n" in text else text
     #: ★ 原实现是 `text.split(/[。\n]/)[0]`（★ 取**两种**分隔符里最先出现的那个 ✓）
     import re
+
     cut = re.split(r"[。\n]", text)[0] or ""
     t = cut.strip()
     return t[:FIRST_LINE_CAP] + "…" if len(t) > FIRST_LINE_CAP else t
 
 
 def main() -> int:
-    proc = subprocess.Popen([PYTHON, str(SERVER)], cwd=str(ROOT),
-                            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                            text=True, encoding="utf-8", errors="replace", bufsize=1)
+    proc = subprocess.Popen(
+        [PYTHON, str(SERVER)],
+        cwd=str(ROOT),
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        bufsize=1,
+    )
     try:
+
         def rpc(o):
             proc.stdin.write(json.dumps(o) + "\n")
             proc.stdin.flush()
             return json.loads(proc.stdout.readline())
 
-        rpc({"jsonrpc": "2.0", "id": 1, "method": "initialize",
-             "params": {"protocolVersion": "2024-11-05", "capabilities": {},
-                        "clientInfo": {"name": "lean-measure", "version": "0"}}})
-        proc.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n")
+        rpc(
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "lean-measure", "version": "0"},
+                },
+            }
+        )
+        proc.stdin.write(
+            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n"
+        )
         proc.stdin.flush()
-        tools = ((rpc({"jsonrpc": "2.0", "id": 2, "method": "tools/list",
-                       "params": {}}).get("result") or {}).get("tools")) or []
+        tools = (
+            (
+                rpc(
+                    {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
+                ).get("result")
+                or {}
+            ).get("tools")
+        ) or []
     finally:
         try:
             proc.kill()
             proc.wait(timeout=10)
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     rows = []
@@ -71,7 +99,14 @@ def main() -> int:
         name = t.get("name", "")
         desc = t.get("description", "")
         fl = first_line(desc)
-        rows.append({"name": name, "desc_chars": len(str(desc)), "first": fl, "first_chars": len(fl)})
+        rows.append(
+            {
+                "name": name,
+                "desc_chars": len(str(desc)),
+                "first": fl,
+                "first_chars": len(fl),
+            }
+        )
 
     catalog = "\n".join("- %s // %s" % (r["name"], r["first"]) for r in rows)
     out = {
@@ -82,37 +117,55 @@ def main() -> int:
         "catalog_kb": round(len(catalog) / 1024.0, 1),
         "catalog_est_tokens": int(len(catalog) / CHARS_PER_TOKEN),
         "first_total_chars": sum(r["first_chars"] for r in rows),
-        "first_avg_chars": round(sum(r["first_chars"] for r in rows) / max(1, len(rows)), 1),
+        "first_avg_chars": round(
+            sum(r["first_chars"] for r in rows) / max(1, len(rows)), 1
+        ),
         "first_at_cap": sum(1 for r in rows if r["first_chars"] >= FIRST_LINE_CAP),
     }
     print("★ 工具数 = %d" % out["tool_count"])
-    print("★★ **描述全文** = %d 字（%.1f KB）—— ★ 这是 lean **不注入**的那部分 ✓"
-          % (out["desc_total_chars"], out["desc_total_kb"]))
-    print("★★★ **lean 目录**（★ 真正每轮注入的）= %d 字（%.1f KB）≈ **%d tokens**"
-          % (out["catalog_chars"], out["catalog_kb"], out["catalog_est_tokens"]))
-    print("     ✦ 首句合计 %d 字 · ★ 平均 %.1f 字/条 · ★ **顶到 120 字上限的 %d 条**"
-          % (out["first_total_chars"], out["first_avg_chars"], out["first_at_cap"]))
+    print(
+        "★★ **描述全文** = %d 字（%.1f KB）—— ★ 这是 lean **不注入**的那部分 ✓"
+        % (out["desc_total_chars"], out["desc_total_kb"])
+    )
+    print(
+        "★★★ **lean 目录**（★ 真正每轮注入的）= %d 字（%.1f KB）≈ **%d tokens**"
+        % (out["catalog_chars"], out["catalog_kb"], out["catalog_est_tokens"])
+    )
+    print(
+        "     ✦ 首句合计 %d 字 · ★ 平均 %.1f 字/条 · ★ **顶到 120 字上限的 %d 条**"
+        % (out["first_total_chars"], out["first_avg_chars"], out["first_at_cap"])
+    )
 
     rows.sort(key=lambda r: -r["first_chars"])
     out["longest"] = rows[:25]
     print("\n★★ **首句最长的 25 条**（★ 这些就是「废话」的落点 ✓）：")
     for r in rows[:25]:
-        print("   %4d 字  %-52s  %s" % (r["first_chars"], r["name"][:52], r["first"][:78]))
+        print(
+            "   %4d 字  %-52s  %s" % (r["first_chars"], r["name"][:52], r["first"][:78])
+        )
     (ROOT / "output" / "lean-catalog-measure.json").write_text(
-        json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    (ROOT / "output" / "lean-catalog-rendered.txt").write_text(catalog + "\n", encoding="utf-8")
-    print("\n★ 证据：output/lean-catalog-measure.json · output/lean-catalog-rendered.txt")
+        json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
+    (ROOT / "output" / "lean-catalog-rendered.txt").write_text(
+        catalog + "\n", encoding="utf-8"
+    )
+    print(
+        "\n★ 证据：output/lean-catalog-measure.json · output/lean-catalog-rendered.txt"
+    )
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "lean-catalog-measure-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "lean-catalog-measure-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常：\n%s" % tb[-1200:])
         raise SystemExit(3)

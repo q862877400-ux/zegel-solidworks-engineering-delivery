@@ -42,12 +42,13 @@
 #   ⚠ 只验了**全局变量方程式**这一种；**维度方程式**与 `delete_equation` **未测**。
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 try:
     from .sw_connect import get_com_member, set_com_member
-except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import get_com_member, set_com_member          # type: ignore, set_com_member
+except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
+    from sw_connect import get_com_member, set_com_member  # type: ignore, set_com_member
 
 #: 官方 `Add2` 的 `Index` 语义：`-1` 表示**追加到末尾**。
 APPEND_AT_END = -1
@@ -64,7 +65,9 @@ def _manager(model):
     return mgr
 
 
-def add_equation(model, equation: str, *, index: int = APPEND_AT_END, solve: bool = True):
+def add_equation(
+    model, equation: str, *, index: int = APPEND_AT_END, solve: bool = True
+):
     """加一条方程式。
 
     ⚠ **走 `Add2`**（`Add` 官方已标 **Obsolete**）。
@@ -115,7 +118,9 @@ def delete_equation(model, index: int):
     mgr = _manager(model)
     got = get_com_member(mgr, "Delete", int(index))
     if got is None or int(got) == -1:
-        raise RuntimeError("IEquationMgr.Delete 返回 -1（失败）—— 下标越界？index=%d" % index)
+        raise RuntimeError(
+            "IEquationMgr.Delete 返回 -1（失败）—— 下标越界？index=%d" % index
+        )
     return int(got)
 
 
@@ -124,13 +129,15 @@ def evaluate_equations(model):
     mgr = _manager(model)
     got = get_com_member(mgr, "EvaluateAll")
     if got is None:
-        raise RuntimeError("IEquationMgr.EvaluateAll() 返回 None ⇒ 无法确认是否求解成功")
+        raise RuntimeError(
+            "IEquationMgr.EvaluateAll() 返回 None ⇒ 无法确认是否求解成功"
+        )
     return int(got)
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自建（**不是**从四家外部 MCP 项目移植）。
-# 依据:   ① 出厂类型库反射 `iface_sldworks.txt`（`GetEquationMgr` / `Add2` / `GetCount` 
+# 依据:   ① 出厂类型库反射 `iface_sldworks.txt`（`GetEquationMgr` / `Add2` / `GetCount`
 # /
 #            `Delete` / `EvaluateAll` 逐条核过）
 # ② `C:\swapi\types\IEquationMgr\*.md`（参数名 + **`Add` 已 Obsolete** + 字符串格式 Rema

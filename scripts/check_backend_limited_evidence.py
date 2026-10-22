@@ -53,14 +53,19 @@ def check(data: dict | None = None) -> list[str]:
     if data is None:
         try:
             data = json.loads(ITEMS.read_text(encoding="utf-8"))
-        except Exception as exc:                                          # noqa: BLE001
-            return ["`docs/backend-limited-items.json` 读不了或不是 JSON：%s" % str(exc)[:120]]
+        except Exception as exc:  # noqa: BLE001
+            return [
+                "`docs/backend-limited-items.json` 读不了或不是 JSON：%s"
+                % str(exc)[:120]
+            ]
     items = data.get("items")
     if not isinstance(items, list):
         return ["`items` 不是列表（★ 名单形状不对）"]
     if not items:
-        return ["★ **名单是空的** —— ★ 而任务书点名的三族**至少有一条**，"
-                "空名单等于\u201c什么都没单列\u201d（★ 与任务书矛盾）"]
+        return [
+            "★ **名单是空的** —— ★ 而任务书点名的三族**至少有一条**，"
+            "空名单等于\u201c什么都没单列\u201d（★ 与任务书矛盾）"
+        ]
     for i, it in enumerate(items):
         tag = "第 %d 条（%s）" % (i + 1, str(it.get("toolbar") or "?")[:24])
         for k in REQUIRED:
@@ -70,7 +75,10 @@ def check(data: dict | None = None) -> list[str]:
         #: 7f16\u53f7**
         facts = it.get("facts")
         if not isinstance(facts, list) or not facts:
-            bad.append("%s **没有 `facts`**（★ 至少指一个事实编号 —— 那才是\u201c写明依据\u201d）" % tag)
+            bad.append(
+                "%s **没有 `facts`**（★ 至少指一个事实编号 —— 那才是\u201c写明依据\u201d）"
+                % tag
+            )
         else:
             for f in facts:
                 if not isinstance(f, int) or f <= 0:
@@ -82,10 +90,12 @@ def check(data: dict | None = None) -> list[str]:
             try:
                 doc = LIMITS_DOC.read_text(encoding="utf-8")
                 if sec not in doc:
-                    bad.append("%s 的 `section` = %r **在 `%s` 里找不到**"
-                               "（★ 依据要能指到**真存在**的小节）"
-                               % (tag, sec, LIMITS_DOC.name))
-            except Exception as exc:                                      # noqa: BLE001
+                    bad.append(
+                        "%s 的 `section` = %r **在 `%s` 里找不到**"
+                        "（★ 依据要能指到**真存在**的小节）"
+                        % (tag, sec, LIMITS_DOC.name)
+                    )
+            except Exception as exc:  # noqa: BLE001
                 bad.append("读不了 `%s`：%s" % (LIMITS_DOC.name, str(exc)[:80]))
     return bad
 
@@ -94,7 +104,7 @@ def main() -> int:
     bad = check()
     try:
         n = len(json.loads(ITEMS.read_text(encoding="utf-8")).get("items") or [])
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         n = -1
     print("★ 「后端到不了」名单的证据门禁（★ 任务书：**写明依据并单列**）")
     print("   名单：`docs/backend-limited-items.json` · **%d** 条" % n)
@@ -105,8 +115,10 @@ def main() -> int:
             print("      %s" % x)
         print()
         return 1
-    print("   [ok] 每条都写明依据（★ `section` 真存在 + 至少一个 `facts` 编号）"
-          "（★ 而这只说明\u201c**依据指得到**\u201d，★ **不证明依据本身成立**）")
+    print(
+        "   [ok] 每条都写明依据（★ `section` 真存在 + 至少一个 `facts` 编号）"
+        "（★ 而这只说明\u201c**依据指得到**\u201d，★ **不证明依据本身成立**）"
+    )
     return 0
 
 

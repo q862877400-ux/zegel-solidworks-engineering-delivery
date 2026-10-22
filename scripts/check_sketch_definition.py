@@ -1,4 +1,5 @@
 """★ 门禁：有草图的语料条目必须写清「草图完全定义」三要素（位置/大小/形状关系）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -38,8 +39,15 @@ CORPUS = ("l1-mainline.yaml", "l2-longtail.yaml", "l3-semantic.yaml")
 REQUIRED = ("origin", "dims", "relations")
 
 #: ★ 哪些条目**不需要**草图定义（★ 它们不建草图）
-NO_SKETCH_MARKERS = ("无草图", "无新草图", "装配体", "工程图", "不建几何",
-                     "不建草图", "操作的是")
+NO_SKETCH_MARKERS = (
+    "无草图",
+    "无新草图",
+    "装配体",
+    "工程图",
+    "不建几何",
+    "不建草图",
+    "操作的是",
+)
 
 
 def _has_sketch(entry: dict) -> bool:
@@ -69,22 +77,25 @@ def check(root: pathlib.Path = ROOT) -> list:
                 if not sd.get(f):
                     problems.append(
                         "★ %s 的 sketch_definition 缺 `%s`"
-                        "（★ 官方：「尺寸和几何关系为两种类型的约束」）"
-                        % (x["id"], f))
+                        "（★ 官方：「尺寸和几何关系为两种类型的约束」）" % (x["id"], f)
+                    )
             #: ★★ **有形状关系就要有「工具自带了什么」** ——
             #:   ★ 否则读者分不清「哪些是工具给的、哪些要我加」（★ 业主批注 1）
             if not sd.get("tool_builtin"):
                 problems.append(
                     "★ %s 没写 `tool_builtin`（★ 工具自带了哪些关系）—— "
                     "★ 业主批注 1：矩形/圆工具**自带**关系，直线工具**不自带**"
-                    % x["id"])
+                    % x["id"]
+                )
             #: ★★ **用了直线/圆弧组合就必须提「平行/垂直/相切」**
             rels = " ".join(sd.get("relations") or [])
             if re.search(r"直线工具", rels) and not re.search(
-                    r"垂直|平行|水平|竖直", rels):
+                r"垂直|平行|水平|竖直", rels
+            ):
                 problems.append(
                     "★★ %s 用了**直线工具**却**没提垂直/平行/水平/竖直** —— "
-                    "★ 直线工具不自带任何关系（★ 业主批注 1）" % x["id"])
+                    "★ 直线工具不自带任何关系（★ 业主批注 1）" % x["id"]
+                )
     return problems
 
 
@@ -94,35 +105,40 @@ def selftest() -> bool:
     ★ 判据：拿**业主批注的那种形态**（只写尺寸、不写关系/原点）当输入 ⇒
       ★ 门禁**必须**报出来。
     """
-    bad = {"id": "TEST-1",
-           "sketch_definition": {
-               "sketch": "L 形轮廓草图（前视基准面）",
-               "origin": "",                      #: ★ 业主批注 2：不定原点
-               "dims": ["100", "100"],
-               "relations": ["★ 直线工具不自带"],   #: ★ 业主批注 1：无垂直/平行
-               "tool_builtin": "",
-               "expected_status": 3}}
+    bad = {
+        "id": "TEST-1",
+        "sketch_definition": {
+            "sketch": "L 形轮廓草图（前视基准面）",
+            "origin": "",  #: ★ 业主批注 2：不定原点
+            "dims": ["100", "100"],
+            "relations": ["★ 直线工具不自带"],  #: ★ 业主批注 1：无垂直/平行
+            "tool_builtin": "",
+            "expected_status": 3,
+        },
+    }
     caught = 0
     if not bad["sketch_definition"]["origin"]:
         caught += 1
     if not bad["sketch_definition"]["tool_builtin"]:
         caught += 1
     rels = " ".join(bad["sketch_definition"]["relations"])
-    if re.search(r"直线工具", rels) and not re.search(
-            r"垂直|平行|水平|竖直", rels):
+    if re.search(r"直线工具", rels) and not re.search(r"垂直|平行|水平|竖直", rels):
         caught += 1
     if caught != 3:
         print("★★ 负例自证失败：只抓到 %d/3" % caught)
         return False
     #: ★ 正例（★ 补全后）⇒ 不该报
-    good = {"id": "TEST-2",
-            "sketch_definition": {
-                "sketch": "L 形轮廓草图",
-                "origin": "左下角↔原点 重合",
-                "dims": ["100", "100"],
-                "relations": ["直线工具不自带", "垂直 × 6", "水平 × 3"],
-                "tool_builtin": "直线工具完全不自带",
-                "expected_status": 3}}
+    good = {
+        "id": "TEST-2",
+        "sketch_definition": {
+            "sketch": "L 形轮廓草图",
+            "origin": "左下角↔原点 重合",
+            "dims": ["100", "100"],
+            "relations": ["直线工具不自带", "垂直 × 6", "水平 × 3"],
+            "tool_builtin": "直线工具完全不自带",
+            "expected_status": 3,
+        },
+    }
     if not _has_sketch(good):
         return True
     if not all(good["sketch_definition"].get(f) for f in REQUIRED):

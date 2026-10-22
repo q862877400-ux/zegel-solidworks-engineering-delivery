@@ -19,6 +19,7 @@ r"""@brief 核 `D:\AI\SW-transfer\test-plan-final.md` 里点名的**路径 / 模
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -29,20 +30,39 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = Path(Path(__file__).resolve().parents[1] / "-transfer" / "test-plan-final.md")
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "test-plan-claim-audit.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "test-plan-claim-audit.json"
+)
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: 路径形态 —— ⚠ **不匹配 `x.py.func`**（那是点调用，不是路径）
-PATH_RE = re.compile(r"`((?:scripts|subskills|tools|examples|docs|tests|mcp-server)/[\w./-]+?)`")
+PATH_RE = re.compile(
+    r"`((?:scripts|subskills|tools|examples|docs|tests|mcp-server)/[\w./-]+?)`"
+)
 #: 点调用形态：`mod.func`
 #: ⚠⚠ **2026-10-01 第一版在这里出了假阳性**：它把 `cnc_strategy.py`（**文件名**）
 #:    也当成 `模块.函数`（`func` = `py`）⇒ 一次报 9 个"未命中"，**全是假的**。
 #:    ⇒ 排除「点后面是文件扩展名」的形态（`py` / `json` / `md` / `txt` / `csv` / `bmp`）。
 #:    ★ 又一次"判据太松"（事实 51 / 185 / 190 / 192 / 193 / 196 / 198 / 200 同族）。
 CALL_RE = re.compile(r"`([a-z][a-z0-9_]*)\.([a-z][a-z0-9_]*)`")
-_FILE_EXT = {"py", "json", "md", "txt", "csv", "bmp", "png", "jpg", "avi", "step", "stl", "dxf"}
+_FILE_EXT = {
+    "py",
+    "json",
+    "md",
+    "txt",
+    "csv",
+    "bmp",
+    "png",
+    "jpg",
+    "avi",
+    "step",
+    "stl",
+    "dxf",
+}
 #: `scripts/mod.py.func` 这种**带路径的点调用**（计划里真这么写）
-CALL_WITH_PATH = re.compile(r"`(?:scripts|subskills|tools)/([a-z][a-z0-9_]*)\.py\.([a-z][a-z0-9_]*)`")
+CALL_WITH_PATH = re.compile(
+    r"`(?:scripts|subskills|tools)/([a-z][a-z0-9_]*)\.py\.([a-z][a-z0-9_]*)`"
+)
 
 
 def _all_defs() -> dict:
@@ -93,7 +113,9 @@ def main() -> int:
         if mod in defs and fn in defs[mod]:
             ok_calls.append("%s.%s" % (mod, fn))
         else:
-            missing_calls.append({"call": "%s.%s" % (mod, fn), "module_known": mod in defs})
+            missing_calls.append(
+                {"call": "%s.%s" % (mod, fn), "module_known": mod in defs}
+            )
 
     print("  ── ① 路径 ──")
     print("     存在 %d · **不存在 %d**" % (len(ok_paths), len(missing_paths)))
@@ -102,12 +124,26 @@ def main() -> int:
     print("  ── ② 点调用 `mod.func` ──")
     print("     命中 %d · **未命中 %d**" % (len(ok_calls), len(missing_calls)))
     for x in missing_calls:
-        print("       ✗ %-46s （模块%s）" % (x["call"], "在" if x["module_known"] else "**也不在**"))
+        print(
+            "       ✗ %-46s （模块%s）"
+            % (x["call"], "在" if x["module_known"] else "**也不在**")
+        )
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"paths_ok": ok_paths, "paths_missing": missing_paths,
-                               "calls_ok": ok_calls, "calls_missing": missing_calls},
-                              ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "paths_ok": ok_paths,
+                "paths_missing": missing_paths,
+                "calls_ok": ok_calls,
+                "calls_missing": missing_calls,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print()
     print("  证据: %s" % OUT)
     if not (ok_paths or ok_calls):

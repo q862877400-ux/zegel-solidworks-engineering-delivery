@@ -42,12 +42,12 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts.sw_simulation import select_face_at                      # noqa: E402
-import prove_split_line_geometry_per_example as G                     # noqa: E402
-import prove_split_line_geometry_controls as K                        # noqa: E402
-import prove_split_line_geometry_isolate as I                         # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts.sw_simulation import select_face_at  # noqa: E402
+import prove_split_line_geometry_per_example as G  # noqa: E402
+import prove_split_line_geometry_controls as K  # noqa: E402
+import prove_split_line_geometry_isolate as I  # noqa: E402
 
 
 def _split_face_boxes(doc):
@@ -60,7 +60,7 @@ def _split_face_boxes(doc):
                     continue
                 box = G._get(f, "GetBox")
                 out.append([round(float(box[i]), 5) for i in range(6)] if box else None)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return out
 
@@ -76,21 +76,28 @@ def _select_for(doc, want_sketch, face_point):
             try:
                 if P._select_by_id(ext, sk[-1], "SKETCH", append=False, mark=4):
                     picked["sketch"] = sk[-1]
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     if face_point is not None:
         try:
-            if select_face_at(doc, face_point[0], face_point[1], face_point[2],
-                              mark=1, append=bool(picked)):
+            if select_face_at(
+                doc,
+                face_point[0],
+                face_point[1],
+                face_point[2],
+                mark=1,
+                append=bool(picked),
+            ):
                 picked["face"] = [round(v, 5) for v in face_point]
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             picked["face_err"] = str(exc)[:100]
     per = {}
     for m in (0, 1, 4):
         try:
-            per[str(m)] = int(G._get(G._get(doc, "SelectionManager"),
-                                     "GetSelectedObjectCount2", m))
-        except Exception:                                                 # noqa: BLE001
+            per[str(m)] = int(
+                G._get(G._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m)
+            )
+        except Exception:  # noqa: BLE001
             per[str(m)] = -1
     return picked, per
 
@@ -121,7 +128,7 @@ def _case(sw, tag, mode):
             x_mid, y_mid = (xmin + xmax) / 2.0, (ymin + ymax) / 2.0
             z_mid = (zmin + zmax) / 2.0
             face_point, d1, d2 = (x_mid, y_mid, min(zmin, zmax)), True, True
-            if mode == "correct_side":        #: ★ 与投影方向**垂直**的侧脸
+            if mode == "correct_side":  #: ★ 与投影方向**垂直**的侧脸
                 face_point = (xmax, y_mid, z_mid)
             elif mode == "correct_noface":
                 face_point = None
@@ -131,17 +138,20 @@ def _case(sw, tag, mode):
         #: ★★ **前置先验明**：该选的没选上 ⇒ 如实标注，不把它读成"能力不成"
         need_face = face_point is not None
         need_sketch = want_sketch
-        ok_pre = (per["1"] == 1 if need_face else per["1"] == 0) and \
-                 (per["4"] >= 1 if need_sketch else per["4"] == 0)
+        ok_pre = (per["1"] == 1 if need_face else per["1"] == 0) and (
+            per["4"] >= 1 if need_sketch else per["4"] == 0
+        )
         row["preconditions_held"] = ok_pre
         res = K._call_and_read(doc, row, d1, d2)
         res["split_face_boxes"] = _split_face_boxes(doc)
         if not ok_pre:
             res["ok"] = False
-            res["note"] = ("\u2605 \u524d\u7f6e\u672a\u6210\u7acb \u21d2 \u672c\u683c\u4e0d\u80fd\u5f53"
-                           "\u201c\u80fd\u529b\u4e0d\u6210\u201d\u7684\u8bc1\u636e")
+            res["note"] = (
+                "\u2605 \u524d\u7f6e\u672a\u6210\u7acb \u21d2 \u672c\u683c\u4e0d\u80fd\u5f53"
+                "\u201c\u80fd\u529b\u4e0d\u6210\u201d\u7684\u8bc1\u636e"
+            )
         return res
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         return row
     finally:
@@ -150,41 +160,64 @@ def _case(sw, tag, mode):
                 t = str(G._get(doc, "GetTitle") or "")
                 if t:
                     G._get(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
 
 CASES = (
-    ("\u2605 M1 \u6b63\u786e\u51e0\u4f55 + \u8fd1\u9762\uff08\u57fa\u51c6\uff09", "correct_near"),
+    (
+        "\u2605 M1 \u6b63\u786e\u51e0\u4f55 + \u8fd1\u9762\uff08\u57fa\u51c6\uff09",
+        "correct_near",
+    ),
     ("\u2605 M2 \u6b63\u786e\u51e0\u4f55 + \u5782\u76f4\u4fa7\u8138", "correct_side"),
     ("\u2605 M3 \u6b63\u786e\u51e0\u4f55 + **\u4e0d\u9009\u9762**", "correct_noface"),
-    ("\u2605 M4 \u6b63\u786e\u51e0\u4f55 + **\u4e0d\u9009\u8349\u56fe**", "correct_nosketch"),
-    ("\u2605 M5 \u4e0a\u4e00\u4f1a\u8bdd\u51e0\u4f55 + +Z \u9762\uff08\u5185\u90e8\u70b9\uff09", "legacy_plus"),
+    (
+        "\u2605 M4 \u6b63\u786e\u51e0\u4f55 + **\u4e0d\u9009\u8349\u56fe**",
+        "correct_nosketch",
+    ),
+    (
+        "\u2605 M5 \u4e0a\u4e00\u4f1a\u8bdd\u51e0\u4f55 + +Z \u9762\uff08\u5185\u90e8\u70b9\uff09",
+        "legacy_plus",
+    ),
     ("\u2605 M6 \u4e0a\u4e00\u4f1a\u8bdd\u51e0\u4f55 + -Z \u9762", "legacy_minus"),
 )
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u6700\u5c0f\u524d\u7f6e\u77e9\u9635**"
-               "\uff08\u6bcf\u4e2a\u524d\u7f6e\u5148\u56de\u8bfb\u3001\u518d\u8c03\u7528\uff09",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u6295\u5f71\u578b\u5206\u5272\u7ebf\uff1a**\u6700\u5c0f\u524d\u7f6e\u77e9\u9635**"
+        "\uff08\u6bcf\u4e2a\u524d\u7f6e\u5148\u56de\u8bfb\u3001\u518d\u8c03\u7528\uff09",
+        "cases": [],
+    }
     for tag, mode in CASES:
         ev["cases"].append(_case(sw, tag, mode))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     p = R / "output" / "split-line-minimal-matrix-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a\u6210 %d / %d" % (ev["passed"], ev["total"]))
     for c in ev["cases"]:
-        print("  %-40s ok=%-6s pre=%-6s new=%-10s face_delta=%-3s loops=%s"
-              % (c.get("tag"), c.get("ok"), c.get("preconditions_held"), c.get("new"),
-                 c.get("face_delta"), c.get("loops_after")))
-        print("        sel=%s split_face_boxes=%s" % (c.get("sel_by_mark"),
-                                                      c.get("split_face_boxes")))
+        print(
+            "  %-40s ok=%-6s pre=%-6s new=%-10s face_delta=%-3s loops=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("preconditions_held"),
+                c.get("new"),
+                c.get("face_delta"),
+                c.get("loops_after"),
+            )
+        )
+        print(
+            "        sel=%s split_face_boxes=%s"
+            % (c.get("sel_by_mark"), c.get("split_face_boxes"))
+        )
         if c.get("note"):
             print("        note=%s" % c["note"])
         if c.get("err"):

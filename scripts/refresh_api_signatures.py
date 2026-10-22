@@ -72,7 +72,7 @@ DEFAULT_ASSEMBLIES = ("sldworks", "cosworks")
 #: PowerShell 反射脚本。⚠ handler 内**只能用纯 .NET API**：
 #: 任何 cmdlet / New-Object 都会触发 PowerShell 模块自动加载 → 重入 handler
 #: → 无限递归（本项目已踩过一次，见 D:\AI\SW\tools\reflect-interop.ps1 的说明）。
-PS_TEMPLATE = r'''
+PS_TEMPLATE = r"""
 param([string]$DllDir, [string]$Assembly, [string]$OutFile)
 $ErrorActionPreference = 'Stop'
 $script:inHandler = $false
@@ -107,7 +107,7 @@ try {
 } finally {
   [System.AppDomain]::CurrentDomain.remove_AssemblyResolve($handler)
 }
-'''
+"""
 
 
 def find_dll_dir(explicit: str | None) -> str:
@@ -126,11 +126,15 @@ def find_dll_dir(explicit: str | None) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="从本机 interop DLL 反射出 API 签名清单（供 arity 审计用）")
+        description="从本机 interop DLL 反射出 API 签名清单（供 arity 审计用）"
+    )
     parser.add_argument("--dll-dir", default=None, help="interop 目录（默认自动探测）")
     parser.add_argument("--out", default=".api-signatures", help="输出目录")
-    parser.add_argument("--assemblies", default=",".join(DEFAULT_ASSEMBLIES),
-                        help="目标程序集名，逗号分隔")
+    parser.add_argument(
+        "--assemblies",
+        default=",".join(DEFAULT_ASSEMBLIES),
+        help="目标程序集名，逗号分隔",
+    )
     args = parser.parse_args()
 
     dll_dir = find_dll_dir(args.dll_dir)
@@ -150,10 +154,24 @@ def main() -> int:
             # `.api-signatures/.api-signatures/iface_*.txt`（本脚本初版就栽在这）。
             out_file_abs = str(out_file.resolve())
             proc = subprocess.run(
-                ["pwsh", "-NoProfile", "-File", str(script),
-                 "-DllDir", dll_dir, "-Assembly", assembly, "-OutFile", out_file_abs],
-                capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=900, cwd=str(out_dir),
+                [
+                    "pwsh",
+                    "-NoProfile",
+                    "-File",
+                    str(script),
+                    "-DllDir",
+                    dll_dir,
+                    "-Assembly",
+                    assembly,
+                    "-OutFile",
+                    out_file_abs,
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=900,
+                cwd=str(out_dir),
             )
             sys.stdout.write(proc.stdout or "")
             if proc.returncode != 0 or not out_file.is_file():
@@ -170,7 +188,9 @@ def main() -> int:
         print("       arity 审计对这几个程序集会不可用。")
         return 1
     print(f"[OK] 全部生成。接下来可跑：")
-    print(f"       python scripts\\audit_call_arity.py <文件> {out_dir.resolve()}/iface_sldworks.txt")
+    print(
+        f"       python scripts\\audit_call_arity.py <文件> {out_dir.resolve()}/iface_sldworks.txt"
+    )
     return 0
 
 

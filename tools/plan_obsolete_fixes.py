@@ -46,18 +46,24 @@ def official_params(member: str) -> dict:
     names = re.findall(r"ByVal\s+(\w+)", t) or re.findall(r"\*\*(\w+)\*\*:", t)
     byref = bool(re.search(r"\bbyref\b|\bByRef\b|\bout\b", t, re.I))
     #: ★★★ 2026-10-03（接手轮）**新加「方法↔属性」的识别** —— ★ 这是**本仓最大的一类**：
-    #: ★ `GetActiveSketch2`（★ 方法）→ `ActiveSketch`（★ **属性**，`Sketch ActiveSketch 
+    #: ★ `GetActiveSketch2`（★ 方法）→ `ActiveSketch`（★ **属性**，`Sketch ActiveSketch
     #: {get;}`）；
     #:   ★ `SystemValue`（★ **属性**）→ `GetSystemValue3`（★ 方法）。
-    #: ★★ 判据：★ 官方签名里出现 **`{get;}` / `{set;}` / `{ get; set; }`** ⇒ **是属性** 
+    #: ★★ 判据：★ 官方签名里出现 **`{get;}` / `{set;}` / `{ get; set; }`** ⇒ **是属性**
     #: ✓
     #:   ★ 为什么必须单独成类：★ 属性**没有形参** ⇒ ★ 用"参数个数"去判会得到 0，
     #: 而**调用形态完全不同**（★ 属性是**取值**、方法是**调用**）⇒ ★ 混在一起会给出错的
     #: 改法。
     is_property = bool(re.search(r"\{\s*(get|set)\s*;", sig, re.I))
-    return {"found": True, "signature": sig, "n_params": len(params),
-            "params": names[:20], "has_byref_or_out": byref, "is_property": is_property,
-            "page": str(hits[0])}
+    return {
+        "found": True,
+        "signature": sig,
+        "n_params": len(params),
+        "params": names[:20],
+        "has_byref_or_out": byref,
+        "is_property": is_property,
+        "page": str(hits[0]),
+    }
 
 
 def arg_count(text: str, member: str) -> int:
@@ -100,9 +106,14 @@ def main() -> int:
         chain, cur = [succ], succ
         for _ in range(3):
             info = official_params(cur)
-            m2 = re.search(r"Superseded by\s*\[\[[^:]+::([^\]]+)\]\]",
-                           (Path(info["page"]).read_text(encoding="utf-8", errors="replace")
-                            if info.get("found") else ""))
+            m2 = re.search(
+                r"Superseded by\s*\[\[[^:]+::([^\]]+)\]\]",
+                (
+                    Path(info["page"]).read_text(encoding="utf-8", errors="replace")
+                    if info.get("found")
+                    else ""
+                ),
+            )
             if m2 and m2.group(1) != cur:
                 cur = m2.group(1)
                 chain.append(cur)
@@ -111,10 +122,14 @@ def main() -> int:
         final = chain[-1]
         finfo = official_params(final)
         cur_info = official_params(r["member"])
-        src = (REPO / r["file"]).read_text(encoding="utf-8", errors="replace").splitlines()
+        src = (
+            (REPO / r["file"])
+            .read_text(encoding="utf-8", errors="replace")
+            .splitlines()
+        )
         #: ★★ 用**调用点附近的多行窗口**（★ 本仓调用大量跨行 ⇒ 只看单行会数成 0）
         i0 = max(0, r["line"] - 1)
-        window = "\n".join(src[i0:i0 + 14])
+        window = "\n".join(src[i0 : i0 + 14])
         n_ours = arg_count(window, r["member"])
         n_succ = finfo.get("n_params", -1)
         #: ★★★ byref 过滤（★ bunny `PATTERNS.md` 结论 3 + 本仓事实 47）：
@@ -129,7 +144,9 @@ def main() -> int:
         #: 括号与实参）
         #:   ★ 用"参数个数"判它会得到 0 vs 0（★ 属性没有形参）⇒ ★ **会误判成"纯改名"** ✓
         succ_is_prop = bool(finfo.get("is_property"))
-        ours_is_call = "(" in (window.split(r["member"], 1)[-1][:2] if r["member"] in window else "")
+        ours_is_call = "(" in (
+            window.split(r["member"], 1)[-1][:2] if r["member"] in window else ""
+        )
         if byref_block:
             kind = "★★★ 不可换（后继含 by-ref，★ 事实 47 会失败）"
         elif succ_is_prop and not ours_is_call:
@@ -144,31 +161,56 @@ def main() -> int:
             kind = "★★ 要改参数"
         else:
             kind = "★ 后继页查不到"
-        plan.append({
-            "member": r["member"], "file": r["file"], "line": r["line"],
-            "chain": chain, "final": final,
-            "ours_args": n_ours,
-            "ours_official_params": cur_info.get("n_params"),
-            "final_params": n_succ,
-            "final_has_byref": finfo.get("has_byref_or_out"),
-            "kind": kind,
-            "ctx": window.strip()[:150],
-        })
+        plan.append(
+            {
+                "member": r["member"],
+                "file": r["file"],
+                "line": r["line"],
+                "chain": chain,
+                "final": final,
+                "ours_args": n_ours,
+                "ours_official_params": cur_info.get("n_params"),
+                "final_params": n_succ,
+                "final_has_byref": finfo.get("has_byref_or_out"),
+                "kind": kind,
+                "ctx": window.strip()[:150],
+            }
+        )
     by_kind: dict = {}
     for p in plan:
         by_kind.setdefault(p["kind"], []).append(p)
-    OUT.write_text(json.dumps({"at": __import__("time").strftime("%Y-%m-%d %H:%M:%S"),
-                               "plan": plan, "by_kind": {k: len(v) for k, v in by_kind.items()}},
-                              ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "at": __import__("time").strftime("%Y-%m-%d %H:%M:%S"),
+                "plan": plan,
+                "by_kind": {k: len(v) for k, v in by_kind.items()},
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
 
     print("★ %d 条命中 ⇒ 逐个核后继签名：" % len(plan))
     print()
-    print("%-24s %-22s %-6s %-8s %-8s %s" % ("成员", "★ 后继链", "我们", "后继", "byref?", "判定"))
+    print(
+        "%-24s %-22s %-6s %-8s %-8s %s"
+        % ("成员", "★ 后继链", "我们", "后继", "byref?", "判定")
+    )
     print("-" * 116)
     for p in plan:
-        print("%-24s %-22s %-6s %-8s %-8s %s"
-              % (p["member"][:23], " → ".join(p["chain"])[:21], p["ours_args"],
-                 p["final_params"], p["final_has_byref"], p["kind"]))
+        print(
+            "%-24s %-22s %-6s %-8s %-8s %s"
+            % (
+                p["member"][:23],
+                " → ".join(p["chain"])[:21],
+                p["ours_args"],
+                p["final_params"],
+                p["final_has_byref"],
+                p["kind"],
+            )
+        )
     print()
     for k, v in by_kind.items():
         print("★ %-22s **%d** 条" % (k, len(v)))

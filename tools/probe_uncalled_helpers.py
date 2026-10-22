@@ -30,6 +30,7 @@ r"""@brief 探针：找「**定义了却从没被调用**」的函数 —— 死
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -42,7 +43,12 @@ sys.path.insert(0, str(ROOT))
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: 要扫的文件（**门禁 / 工具**这两类最该没有死代码）
-PATTERNS = ("scripts/check_*.py", "scripts/audit_*.py", "scripts/gen_*.py", "tools/*.py")
+PATTERNS = (
+    "scripts/check_*.py",
+    "scripts/audit_*.py",
+    "scripts/gen_*.py",
+    "tools/*.py",
+)
 #: 整个仓库里"哪里的出现算被调用"
 SEARCH_DIRS = ("scripts", "mcp-server", "tools", "tests", "subskills")
 #: 入口点 / 框架约定：由别处按名字取，不算死
@@ -54,8 +60,11 @@ def module_defs(path: Path):
         tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
     except SyntaxError:
         return []
-    return [(n.name, n.lineno) for n in tree.body
-            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    return [
+        (n.name, n.lineno)
+        for n in tree.body
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]
 
 
 def find_uncalled(root=None, *, search_dirs=None, patterns=None):

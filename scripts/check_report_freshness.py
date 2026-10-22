@@ -38,6 +38,7 @@ r"""@brief 交付报告数字新鲜度门禁：`harvest-report.md` 声称的「�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,18 +60,26 @@ REPO = Path(__file__).resolve().parents[1]
 #:   > 偏离上游：22 个文件 / +6,162 行 / -27 行 · 16 个 commit · 工作区 clean
 DRIFT_LINE = re.compile(
     r"偏离上游\s*[:：]\s*(\d+)\s*个文件\s*/\s*\+([\d,]+)\s*行\s*/\s*-([\d,]+)\s*行"
-    r"\s*·\s*(\d+)\s*个\s*commit")
+    r"\s*·\s*(\d+)\s*个\s*commit"
+)
 
 REPORT = REPO / "docs" / "harvest-report.md"
 
 
 def _git(args: list) -> str:
     """跑一条 git 命令 ⇒ stdout（失败抛 `RuntimeError`）。"""
-    proc = subprocess.run(["git", "-C", str(REPO), *args],
-                          check=False, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace")
+    proc = subprocess.run(
+        ["git", "-C", str(REPO), *args],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     if proc.returncode != 0:
-        raise RuntimeError("git %s 失败: %s" % (" ".join(args), (proc.stderr or "").strip()[:200]))
+        raise RuntimeError(
+            "git %s 失败: %s" % (" ".join(args), (proc.stderr or "").strip()[:200])
+        )
     return proc.stdout or ""
 
 
@@ -94,15 +103,23 @@ def actual_drift(repo: Path = REPO) -> dict:
     """
     # ① 已跟踪文件的改动（工作树 vs origin）
     shortstat = _git(["-C", str(repo), "diff", "origin/main", "--shortstat"]).strip()
-    m = re.search(r"(\d+)\s+files? changed(?:,\s*(\d+)\s+insertions?\(\+\))?"
-                  r"(?:,\s*(\d+)\s+deletions?\(-\))?", shortstat)
+    m = re.search(
+        r"(\d+)\s+files? changed(?:,\s*(\d+)\s+insertions?\(\+\))?"
+        r"(?:,\s*(\d+)\s+deletions?\(-\))?",
+        shortstat,
+    )
     files = int(m.group(1)) if m else 0
     add = int(m.group(2) or 0) if m else 0
     delete = int(m.group(3) or 0) if m else 0
 
     # ② 未跟踪文件（会被 `git add -A` 收进来 ⇒ 也算「将要提交」）
-    untracked = [ln for ln in _git(["-C", str(repo), "ls-files", "--others",
-                                    "--exclude-standard"]).splitlines() if ln.strip()]
+    untracked = [
+        ln
+        for ln in _git(
+            ["-C", str(repo), "ls-files", "--others", "--exclude-standard"]
+        ).splitlines()
+        if ln.strip()
+    ]
     for rel in untracked:
         p = repo / rel
         if not p.is_file():
@@ -116,11 +133,20 @@ def actual_drift(repo: Path = REPO) -> dict:
     #   用它当 dirty 判据会让 `commits` **永远 +1**，于是**提交后立刻又红一位**
     #   （2026-10-01 轮 56 实测：连踩两次，第一次无条件 +1，第二次用错了判据）。
     #   **⇒ 正解：`git status --porcelain` 非空才算「有东西要提交」。**
-    head_commits = int(_git(["-C", str(repo), "rev-list", "--count", "origin/main..HEAD"]).strip())
+    head_commits = int(
+        _git(["-C", str(repo), "rev-list", "--count", "origin/main..HEAD"]).strip()
+    )
     dirty = bool(_git(["-C", str(repo), "status", "--porcelain"]).strip())
     commits = head_commits + (1 if dirty else 0)
-    return {"files": files, "add": add, "delete": delete, "commits": commits,
-            "untracked": len(untracked), "head_commits": head_commits, "dirty": dirty}
+    return {
+        "files": files,
+        "add": add,
+        "delete": delete,
+        "commits": commits,
+        "untracked": len(untracked),
+        "head_commits": head_commits,
+        "dirty": dirty,
+    }
 
 
 def claimed_drift(report: Path) -> dict | None:
@@ -140,7 +166,9 @@ def claimed_drift(report: Path) -> dict | None:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="交付报告数字新鲜度门禁（harvest-report 的偏离数字）")
+    ap = argparse.ArgumentParser(
+        description="交付报告数字新鲜度门禁（harvest-report 的偏离数字）"
+    )
     ap.add_argument("--repo", default=str(REPO))
     ap.add_argument("--report", default=str(REPORT))
     a = ap.parse_args(argv)
@@ -149,8 +177,10 @@ def main(argv=None) -> int:
     #: ⚑ **首行自带分母**（轮 192）：这道门禁比的是**报告声称** vs **将提交态** 的
     #:   **4 个字段**（文件数 / 新增行 / 删除行 / 提交数）—— 把这句话放在首行，
     #:   读者才知道它到底比了什么（否则首行只有个文件名）。
-    print("交付报告数字新鲜度门禁 · %s（比对 **4** 个字段：文件 / 新增 / 删除 / 提交）"
-          % Path(a.report).name)
+    print(
+        "交付报告数字新鲜度门禁 · %s（比对 **4** 个字段：文件 / 新增 / 删除 / 提交）"
+        % Path(a.report).name
+    )
     report_path = Path(a.report)
     claimed = claimed_drift(report_path)
     if claimed is None:
@@ -164,7 +194,9 @@ def main(argv=None) -> int:
         # 携性）；
         #   ② **报告在、但那行读不出来** ⇒ **那是报告坏了，必须红**。
         if report_path.is_file():
-            print("  [FAIL] 报告**存在**，但读不出「偏离上游：…」那行 ⇒ 报告已损坏或被写坏")
+            print(
+                "  [FAIL] 报告**存在**，但读不出「偏离上游：…」那行 ⇒ 报告已损坏或被写坏"
+            )
             print("  ⚠ 这与「数据源不可用」**不是一回事**：报告在，就该能读出来 ——")
             print("     读不出来说明**它的数字丢了**，而那正是本门禁要守的东西。")
             print("     约定写法见本文件 docstring；修好后本门禁会重新逐项比对。")
@@ -180,11 +212,22 @@ def main(argv=None) -> int:
         print("  （**便携性守卫**：没有 origin 的 clone 上不应无条件红）")
         return 0
 
-    print("  报告声称: %(files)d 文件 / +%(add)d 行 / -%(delete)d 行 · %(commits)d commit" % claimed)
-    print("  将提交态: %(files)d 文件 / +%(add)d 行 / -%(delete)d 行 · %(commits)d commit"
-          % real
-          + ("（含 **%d** 个未跟踪文件）" % real["untracked"] if real.get("untracked") else ""))
-    print("  ⚠ 口径：量的是「`git add -A && git commit` **之后**会变成什么」——那才是报告该写的数")
+    print(
+        "  报告声称: %(files)d 文件 / +%(add)d 行 / -%(delete)d 行 · %(commits)d commit"
+        % claimed
+    )
+    print(
+        "  将提交态: %(files)d 文件 / +%(add)d 行 / -%(delete)d 行 · %(commits)d commit"
+        % real
+        + (
+            "（含 **%d** 个未跟踪文件）" % real["untracked"]
+            if real.get("untracked")
+            else ""
+        )
+    )
+    print(
+        "  ⚠ 口径：量的是「`git add -A && git commit` **之后**会变成什么」——那才是报告该写的数"
+    )
 
     #: ★★★ 2026-10-01（轮 307）**`commits` 给 ±1 容差 —— 因为它**追不上****：
     #:   ★ 本文件 L84 早已写明「commits 按 HEAD 计数 **+1**（本次提交会让它 +1）」，
@@ -199,15 +242,23 @@ def main(argv=None) -> int:
     if _dc > 1:
         bad.append("commits")
     elif _dc == 1:
-        print("  note: commits 差 1（已容差 —— 它量的是「将提交态」，而提交本身会让它 +1）")
+        print(
+            "  note: commits 差 1（已容差 —— 它量的是「将提交态」，而提交本身会让它 +1）"
+        )
     print()
     if bad:
         print("  [FAIL] 对不上的字段: %s" % ", ".join(bad))
         print("  修法：把报告里那行改成下面这行（**然后核对一遍再提交**）：")
         print()
-        print("    > 偏离上游：%s 个文件 / +%s 行 / -%s 行 · %s 个 commit · 工作区 clean"
-              % (real["files"], "{:,}".format(real["add"]),
-                 "{:,}".format(real["delete"]), real["commits"]))
+        print(
+            "    > 偏离上游：%s 个文件 / +%s 行 / -%s 行 · %s 个 commit · 工作区 clean"
+            % (
+                real["files"],
+                "{:,}".format(real["add"]),
+                "{:,}".format(real["delete"]),
+                real["commits"],
+            )
+        )
         print()
         return 1
     print("  [PASS] 四个字段逐项相符")

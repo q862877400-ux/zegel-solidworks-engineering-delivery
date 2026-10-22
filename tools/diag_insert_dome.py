@@ -22,6 +22,7 @@ r"""@brief 诊断：`InsertDome` 到底该怎么调？（轮 143，第 3 次终�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -51,8 +52,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "probes": {}}
     sw = None
@@ -60,10 +63,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         sw_part.start_sketch(doc)
@@ -81,7 +85,7 @@ def main() -> int:
                 v = fn()
                 print("     %-24s ⇒ %r" % (label, v))
                 ev["probes"][label] = str(v)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("     %-24s ⇒ EXC: %s" % (label, str(exc)[:60]))
                 ev["probes"][label] = "EXC: %s" % str(exc)[:60]
         try:
@@ -92,14 +96,16 @@ def main() -> int:
                 f = f.GetNextFeature()
             print("     FirstFeature 走链           ⇒ %r" % (names,))
             ev["probes"]["firstfeature_chain"] = names
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("     FirstFeature 走链           ⇒ EXC: %s" % str(exc)[:60])
 
         #: ── ① 选面（mark=1）────────────────────────────────────
         callout = sw_part._empty_callout()
         doc.Extension.SelectByID2("", "FACE", W / 2, H / 2, D, True, 0, callout, 0)
         doc.ClearSelection2(True)
-        ok = doc.Extension.SelectByID2("", "FACE", W / 2, H / 2, D, False, 1, callout, 0)
+        ok = doc.Extension.SelectByID2(
+            "", "FACE", W / 2, H / 2, D, False, 1, callout, 0
+        )
         print()
         print("  ── ① 选面 mark=1 ⇒ %s ──" % ok)
         ev["probes"]["select_mark1"] = bool(ok)
@@ -107,7 +113,11 @@ def main() -> int:
         #: ── ② `get_com_member` 拿到的是什么 ─────────────────────
         print()
         print("  ── ② 成员解析对照 ──")
-        gm = sw_connect.safe_get_com_member(doc, "InsertDome") if hasattr(sw_connect, "safe_get_com_member") else getattr(doc, "InsertDome", None)
+        gm = (
+            sw_connect.safe_get_com_member(doc, "InsertDome")
+            if hasattr(sw_connect, "safe_get_com_member")
+            else getattr(doc, "InsertDome", None)
+        )
         print("     get_com_member → %r" % (type(gm).__name__,))
         ev["probes"]["get_com_member_type"] = type(gm).__name__
         raw = getattr(doc, "InsertDome", None)
@@ -129,33 +139,39 @@ def main() -> int:
                 r = caller()
                 print("     %-24s ⇒ 返回 %r ✓" % (label, r))
                 ev["probes"]["call_" + label] = "ok: %r" % (r,)
-            except Exception as exc:      # noqa: BLE001
-                print("     %-24s ⇒ %s: %s" % (label, type(exc).__name__, str(exc)[:66]))
+            except Exception as exc:  # noqa: BLE001
+                print(
+                    "     %-24s ⇒ %s: %s" % (label, type(exc).__name__, str(exc)[:66])
+                )
                 ev["probes"]["call_" + label] = "EXC: %s" % str(exc)[:70]
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 诊断出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         print()
         print("   （临时零件已关闭，不保存）")
 
     modals, _win_scanned = modal_dialogs()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return 0
 
 

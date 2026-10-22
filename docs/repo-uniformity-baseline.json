@@ -7,8 +7,8 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 21642,
- "clone_groups_ceiling": 2491,
+ "ruff_total_ceiling": 15328,
+ "clone_groups_ceiling": 2283,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
  "_★待裁决": {
@@ -185,6 +185,18 @@
     21642
    ],
    "why": "cd_calls 改 AST 版（格式鲁棒）+ sw_sweep 实参提成局部变量；顺带消掉一条 137 列超宽注释"
+  },
+  {
+   "at": "2026-10-22m",
+   "from": [
+    21642,
+    2491
+   ],
+   "to": [
+    15328,
+    2283
+   ],
+   "why": "★ ② 判据修正为【布局无关】（喂 pyscn 规范化副本 ast.unparse）；随后全量 ruff format scripts+tools+mcp-server（1,005 文件）⇒ ① 21,642→15,328、② 稳定 2,283（证明布局无关）"
   }
  ],
  "dup_function_groups_ceiling": 101,

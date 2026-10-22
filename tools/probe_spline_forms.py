@@ -34,6 +34,7 @@ r"""@brief 探针：`ISketchManager.CreateSpline` 的**实参形态**（官方�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -61,22 +62,28 @@ def flat(pts):
 def main() -> int:
     import pythoncom
     import win32com.client
+
     ev: dict = {"trials": []}
     sw = None
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         forms = [
             ("① 扁平 list", flat(PTS3)),
             ("② 扁平 tuple", tuple(flat(PTS3))),
-            ("③ VARIANT(VT_ARRAY|VT_R8)", win32com.client.VARIANT(
-                pythoncom.VT_ARRAY | pythoncom.VT_R8, flat(PTS3))),
+            (
+                "③ VARIANT(VT_ARRAY|VT_R8)",
+                win32com.client.VARIANT(
+                    pythoncom.VT_ARRAY | pythoncom.VT_R8, flat(PTS3)
+                ),
+            ),
             ("④ list of tuples（现状对照）", PTS3),
         ]
         for label, data in forms:
@@ -92,7 +99,7 @@ def main() -> int:
                     try:
                         v = sw_connect.safe_get_com_member(sk, "GetSketchSegments")
                         return len(list(v)) if v else 0
-                    except Exception:      # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         return -1
 
                 before = segs()
@@ -100,18 +107,25 @@ def main() -> int:
                     r = sw_connect.call_com_member(skm, "CreateSpline2", data, False)
                     rec["raised"] = None
                     rec["ret"] = type(r).__name__ if r is not None else "None"
-                except Exception as exc:      # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
                     rec["tb"] = traceback.format_exc().strip().splitlines()[-2:]
                 after = segs()
                 rec["before"], rec["after"] = before, after
                 rec["changed"] = after > before >= 0
-                print("  %-30s 段数 %s → %s ⇒ **%s**  %s"
-                      % (label, before, after, "变了 ✚" if rec["changed"] else "没变",
-                         (rec["raised"] or rec.get("ret", ""))[:44]))
+                print(
+                    "  %-30s 段数 %s → %s ⇒ **%s**  %s"
+                    % (
+                        label,
+                        before,
+                        after,
+                        "变了 ✚" if rec["changed"] else "没变",
+                        (rec["raised"] or rec.get("ret", ""))[:44],
+                    )
+                )
                 if rec["changed"]:
                     print("     ★★ **这个形态可行**")
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["outer"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
                 print("  %-30s ⚠ 外层异常: %s" % (label, rec["outer"][:50]))
             ev["trials"].append(rec)
@@ -119,24 +133,28 @@ def main() -> int:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
     return 0
 

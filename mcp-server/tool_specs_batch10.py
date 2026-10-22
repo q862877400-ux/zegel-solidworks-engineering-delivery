@@ -32,6 +32,7 @@ sw_hole_features.list_fastener_table_types    （轮 125，真机 11/11）
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -43,72 +44,103 @@ SPECS_BATCH10 = [
     ToolSpec(
         name="solidworks_part_bounding_box",
         title="Get Part Bounding Box",
-        module="sw_part", function="get_bounding_box",
-        read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
+        module="sw_part",
+        function="get_bounding_box",
+        read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="model",
         doc="Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE and says they 'should not be used for comparison or calculation purposes'; the box may also vary after a rebuild. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an 80x60x50 mm box returns 80/60/50, not 0.08/0.06/0.05).",
         param_alias={},
         params=[
-            Param("body_index", int, default=0, description="Zero-based solid body index."),
-            Param("include_hidden", bool, default=False,
-                  description="Include hidden bodies."),
+            Param(
+                "body_index", int, default=0, description="Zero-based solid body index."
+            ),
+            Param(
+                "include_hidden",
+                bool,
+                default=False,
+                description="Include hidden bodies.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_hole_standards",
         title="List Hole Wizard Standards",
-        module="sw_hole_features", function="list_hole_standards",
-        read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
+        module="sw_hole_features",
+        function="list_hole_standards",
+        read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
         doc="List the Hole Wizard standards available for a hole type "
-            "(official ISldWorks.GetHoleStandardsData + IHoleStandardsData.GetHoleStandards). "
-            "Returns [{id, name}, ...]; the two out parameters are paired positionally. "
-            "⚠ Officially returns null when hole_type_id is 5 (swWzdLegacy).",
+        "(official ISldWorks.GetHoleStandardsData + IHoleStandardsData.GetHoleStandards). "
+        "Returns [{id, name}, ...]; the two out parameters are paired positionally. "
+        "⚠ Officially returns null when hole_type_id is 5 (swWzdLegacy).",
         param_alias={},
         params=[
-            Param("hole_type_id", int, default=0,
-                  description="swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data."),
+            Param(
+                "hole_type_id",
+                int,
+                default=0,
+                description="swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_fastener_types",
         title="List Hole Wizard Fastener Types",
-        module="sw_hole_features", function="list_fastener_types",
-        read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
+        module="sw_hole_features",
+        function="list_fastener_types",
+        read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
         doc="List the fastener types under a Hole Wizard standard. "
-            "Returns [{id, name}, ...]. "
-            "⚠ The names follow the SOLIDWORKS UI language (a Chinese UI returns Chinese names); "
-            "do not assume English. Use an id from this list as fastener_id elsewhere. "
-            "⚠ Internally the IHoleStandardsData object must be primed with GetHoleStandards "
-            "first, otherwise SOLIDWORKS returns False (measured); this function does that.",
+        "Returns [{id, name}, ...]. "
+        "⚠ The names follow the SOLIDWORKS UI language (a Chinese UI returns Chinese names); "
+        "do not assume English. Use an id from this list as fastener_id elsewhere. "
+        "⚠ Internally the IHoleStandardsData object must be primed with GetHoleStandards "
+        "first, otherwise SOLIDWORKS returns False (measured); this function does that.",
         param_alias={},
         params=[
-            Param("standard_name", str, default="",
-                  description="Standard name from solidworks_hole_standards, e.g. 'ANSI Inch'."),
-            Param("hole_type_id", int, default=0,
-                  description="swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data."),
+            Param(
+                "standard_name",
+                str,
+                default="",
+                description="Standard name from solidworks_hole_standards, e.g. 'ANSI Inch'.",
+            ),
+            Param(
+                "hole_type_id",
+                int,
+                default=0,
+                description="swWzdGeneralHoleTypes_e; 5 (swWzdLegacy) yields no data.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_fastener_table_types",
         title="List Hole Wizard Fastener Table Types",
-        module="sw_hole_features", function="list_fastener_table_types",
-        read_only=True,      # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
+        module="sw_hole_features",
+        function="list_fastener_table_types",
+        read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
         doc="List the fastener table type ids for one fastener "
-            "(official IHoleStandardsData.GetFastenerTableTypes). "
-            "⚠ The official second parameter is an Int32 FASTENER ID (from "
-            "solidworks_fastener_types), not a size name - passing a size name raises a "
-            "type-mismatch error. Returns a list of ints.",
+        "(official IHoleStandardsData.GetFastenerTableTypes). "
+        "⚠ The official second parameter is an Int32 FASTENER ID (from "
+        "solidworks_fastener_types), not a size name - passing a size name raises a "
+        "type-mismatch error. Returns a list of ints.",
         param_alias={},
         params=[
-            Param("standard_name", str, default="",
-                  description="Standard name from solidworks_hole_standards."),
-            Param("fastener_id", int, default=0,
-                  description="Fastener id from solidworks_fastener_types."),
-            Param("hole_type_id", int, default=0,
-                  description="swWzdGeneralHoleTypes_e."),
+            Param(
+                "standard_name",
+                str,
+                default="",
+                description="Standard name from solidworks_hole_standards.",
+            ),
+            Param(
+                "fastener_id",
+                int,
+                default=0,
+                description="Fastener id from solidworks_fastener_types.",
+            ),
+            Param(
+                "hole_type_id", int, default=0, description="swWzdGeneralHoleTypes_e."
+            ),
         ],
     ),
 ]

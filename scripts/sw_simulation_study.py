@@ -44,6 +44,7 @@
   `ActivateConfiguration()` 官方反射确认是**零参**方法 —— 加括号传参会 TypeError。
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -100,31 +101,31 @@ __all__ = [
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SWS_ANALYSIS_STUDY_TYPES = {
-    "static": 0,            # swsAnalysisStudyTypeStatic
-    "frequency": 1,         # swsAnalysisStudyTypeFrequency
-    "buckling": 2,          # swsAnalysisStudyTypeBuckling
-    "thermal": 3,           # swsAnalysisStudyTypeThermal
-    "optimization": 4,      # swsAnalysisStudyTypeOptimization
-    "nonlinear": 5,         # swsAnalysisStudyTypeNonlinear
-    "drop_test": 6,         # swsAnalysisStudyTypeDropTest
-    "fatigue": 7,           # swsAnalysisStudyTypeFatigue
-    "dynamic": 8,           # swsAnalysisStudyTypeDynamic
-    "pressure_vessel": 9,   # swsAnalysisStudyTypePressureVessel
+    "static": 0,  # swsAnalysisStudyTypeStatic
+    "frequency": 1,  # swsAnalysisStudyTypeFrequency
+    "buckling": 2,  # swsAnalysisStudyTypeBuckling
+    "thermal": 3,  # swsAnalysisStudyTypeThermal
+    "optimization": 4,  # swsAnalysisStudyTypeOptimization
+    "nonlinear": 5,  # swsAnalysisStudyTypeNonlinear
+    "drop_test": 6,  # swsAnalysisStudyTypeDropTest
+    "fatigue": 7,  # swsAnalysisStudyTypeFatigue
+    "dynamic": 8,  # swsAnalysisStudyTypeDynamic
+    "pressure_vessel": 9,  # swsAnalysisStudyTypePressureVessel
     "topology_static": 13,  # swsAnalysisStudyTypeTopology_Static
     # 10 / 11 / 12 在官方枚举里是 Reserved1~3，刻意不收录
 }
 
 SWS_MESH_TYPES = {
-    "solid": 0,             # swsMeshTypeSolid
-    "mid_surface": 1,       # swsMeshTypeMidSurface
-    "surfaces": 2,          # swsMeshTypeSurfaces
-    "mixed": 3,             # swsMeshTypeMixed
-    "beam": 4,              # swsMeshTypeBeam
+    "solid": 0,  # swsMeshTypeSolid
+    "mid_surface": 1,  # swsMeshTypeMidSurface
+    "surfaces": 2,  # swsMeshTypeSurfaces
+    "mixed": 3,  # swsMeshTypeMixed
+    "beam": 4,  # swsMeshTypeBeam
 }
 
 SWS_RUN_ANALYSIS_ERRORS = {
-    "successful": 0,            # swsRunAnalysisErrorSuccessful
-    "use_high_quality_mesh": 1, # swsRunAnalysisErrorUseHighQualityMesh
+    "successful": 0,  # swsRunAnalysisErrorSuccessful
+    "use_high_quality_mesh": 1,  # swsRunAnalysisErrorUseHighQualityMesh
     "define_rigid_virtual_wall_contact": 2,
     "define_initial_temperature": 3,
     "multiple_loads_use_same_time_curve": 4,
@@ -228,20 +229,33 @@ def _checked(table: dict[str, int], target, member: str, *args):
 # ────────────────────────────────────────────────────────────────────
 def create_study(manager, name: str, study_type: int, config_option: int = 0):
     """建研究。``study_type`` 见 SWS_ANALYSIS_STUDY_TYPES。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "CreateNewStudy",
-                    str(name), int(study_type), int(config_option))
+    return _checked(
+        STUDY_MANAGER_ARITY,
+        manager,
+        "CreateNewStudy",
+        str(name),
+        int(study_type),
+        int(config_option),
+    )
 
 
 def create_study_v2(manager, name: str, study_type: int):
     """建研究（2 参版，不带 ConfigOpt）。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "CreateNewStudy2",
-                    str(name), int(study_type))
+    return _checked(
+        STUDY_MANAGER_ARITY, manager, "CreateNewStudy2", str(name), int(study_type)
+    )
 
 
 def create_study_v3(manager, name: str, study_type: int, config_option: int = 0):
     """建研究（3 参版，与 CreateNewStudy 同形）。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "CreateNewStudy3",
-                    str(name), int(study_type), int(config_option))
+    return _checked(
+        STUDY_MANAGER_ARITY,
+        manager,
+        "CreateNewStudy3",
+        str(name),
+        int(study_type),
+        int(config_option),
+    )
 
 
 def get_study(manager, study_id: int):
@@ -255,25 +269,51 @@ def delete_study(manager, name: str) -> bool:
     return True
 
 
-def duplicate_study(manager, source: str, target: str, config_name: str,
-                    options: int):
+def duplicate_study(manager, source: str, target: str, config_name: str, options: int):
     """复制研究。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "DuplicateStudy",
-                    str(source), str(target), str(config_name), int(options))
+    return _checked(
+        STUDY_MANAGER_ARITY,
+        manager,
+        "DuplicateStudy",
+        str(source),
+        str(target),
+        str(config_name),
+        int(options),
+    )
 
 
 def rename_study(manager, old_name: str, new_name: str) -> int:
     """按名改研究名。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "RenameStudyFromName",
-                    str(old_name), str(new_name))
+    return _checked(
+        STUDY_MANAGER_ARITY,
+        manager,
+        "RenameStudyFromName",
+        str(old_name),
+        str(new_name),
+    )
 
 
-def convert_study(manager, source: str, target_type: int, target_name: str,
-                  options: int, config_name: str, extra: int):
+def convert_study(
+    manager,
+    source: str,
+    target_type: int,
+    target_name: str,
+    options: int,
+    config_name: str,
+    extra: int,
+):
     """转换研究类型。"""
-    return _checked(STUDY_MANAGER_ARITY, manager, "ConvertStudy",
-                    str(source), int(target_type), str(target_name),
-                    int(options), str(config_name), int(extra))
+    return _checked(
+        STUDY_MANAGER_ARITY,
+        manager,
+        "ConvertStudy",
+        str(source),
+        int(target_type),
+        str(target_name),
+        int(options),
+        str(config_name),
+        int(extra),
+    )
 
 
 def set_active_study(manager, study_id: int) -> bool:
@@ -329,8 +369,14 @@ def create_mesh(study, units: int, element_size: float, tolerance: float) -> int
     ⚠ 第 1 参是**单位**（``swsUnit_e``：0=SI、1=English、2=Metric），**不是网格类型**。
     后两参单位是**毫米**且须为正（传 0 得返回码 5 = ``SpecifyPositiveValue``）。
     """
-    return _checked(STUDY_ARITY, study, "CreateMesh",
-                    int(units), float(element_size), float(tolerance))
+    return _checked(
+        STUDY_ARITY,
+        study,
+        "CreateMesh",
+        int(units),
+        float(element_size),
+        float(tolerance),
+    )
 
 
 def create_mesh_for_control(study, control_name: str) -> int:
@@ -391,14 +437,17 @@ def get_results_of(study):
 def export_study(study, *args):
     """导出研究（官方 7 参，参数语义无文档，按位置透传）。"""
     if len(args) != 7:
-        raise ValueError(f"ExportSimulationStudy 官方签名是 7 个实参，给了 {len(args)} 个")
+        raise ValueError(
+            f"ExportSimulationStudy 官方签名是 7 个实参，给了 {len(args)} 个"
+        )
     return _checked(STUDY_ARITY, study, "ExportSimulationStudy", *args)
 
 
 def generate_report(study, template: str, path: str, append: bool = False) -> int:
     """生成研究报告。"""
-    return _checked(STUDY_ARITY, study, "GenerateReport",
-                    str(template), str(path), bool(append))
+    return _checked(
+        STUDY_ARITY, study, "GenerateReport", str(template), str(path), bool(append)
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -418,7 +467,9 @@ def collect_study_evidence(study) -> dict[str, Any]:
         "analysis_type": int(get_com_member(study, "AnalysisType") or -1),
         "mesh_type": int(get_com_member(study, "MeshType") or -1),
         "dynamic_subtype": int(get_com_member(study, "DynamicAnalysisSubType") or -1),
-        "nonlinear_subtype": int(get_com_member(study, "NonlinearAnalysisSubType") or -1),
+        "nonlinear_subtype": int(
+            get_com_member(study, "NonlinearAnalysisSubType") or -1
+        ),
         "off_load": bool(get_com_member(study, "OffLoad")),
         "has_results": get_com_member(study, "Results") is not None,
         "has_mesh": get_com_member(study, "Mesh") is not None,

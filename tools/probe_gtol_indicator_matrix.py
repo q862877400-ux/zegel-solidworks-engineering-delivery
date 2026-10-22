@@ -35,6 +35,7 @@ Datum      : "" 与 "A" 两种（官方：Datum 是"指向 BorderType 的基准�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import itertools
@@ -49,9 +50,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-indicator-matrix.json")
-TOL_TYPES = [20, 22, 21, 25, 13]      #: 官方 Remarks 允许的 5 个
-BORDERS = [0, 1, 2, 3]                #: swGtolIndicatorBorderType_e
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "gtol-indicator-matrix.json"
+)
+TOL_TYPES = [20, 22, 21, 25, 13]  #: 官方 Remarks 允许的 5 个
+BORDERS = [0, 1, 2, 3]  #: swGtolIndicatorBorderType_e
 
 
 def main() -> int:
@@ -60,10 +63,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_gtol
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         found = None
@@ -80,51 +84,75 @@ def main() -> int:
                     f = sw_connect.safe_get_com_member(gtol, "GetFrame", 1)
                     rec["frame"] = "有" if f is not None else "**None**"
                     if f is not None:
-                        r = sw_connect.safe_get_com_member(f, "AddIndicator", border, tol, "")
+                        r = sw_connect.safe_get_com_member(
+                            f, "AddIndicator", border, tol, ""
+                        )
                         rec["ret"] = repr(r)
                         if r:
                             found = rec
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["exc"] = "%s: %s" % (type(exc).__name__, str(exc)[:50])
             ev["trials"].append(rec)
             try:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             if found:
                 break
 
         n_true = sum(1 for r in ev["trials"] if str(r.get("ret")) == "True")
-        print("  试了 **%d** 组（border × tol）· 返回 True 的 **%d** 组" % (len(ev["trials"]), n_true))
+        print(
+            "  试了 **%d** 组（border × tol）· 返回 True 的 **%d** 组"
+            % (len(ev["trials"]), n_true)
+        )
         for r in ev["trials"][:24]:
-            print("    border=%s tol=%-3s 帧=%-6s 返回=%-6s %s"
-                  % (r["border"], r["tol"], r.get("frame", "—"),
-                     str(r.get("ret", r.get("exc", "—")))[:6], r.get("err", "")))
+            print(
+                "    border=%s tol=%-3s 帧=%-6s 返回=%-6s %s"
+                % (
+                    r["border"],
+                    r["tol"],
+                    r.get("frame", "—"),
+                    str(r.get("ret", r.get("exc", "—")))[:6],
+                    r.get("err", ""),
+                )
+            )
         if found:
             print()
-            print("  ★★ **可行组合：border=%s · tol=%s**" % (found["border"], found["tol"]))
+            print(
+                "  ★★ **可行组合：border=%s · tol=%s**"
+                % (found["border"], found["tol"])
+            )
             ev["success"] = {"border": found["border"], "tol": found["tol"]}
         else:
             print()
-            print("  ⚠ **%d 组全不成** ⇒ 如实报，不再换写法（事实 53）" % len(ev["trials"]))
-    except Exception as exc:      # noqa: BLE001
+            print(
+                "  ⚠ **%d 组全不成** ⇒ 如实报，不再换写法（事实 53）"
+                % len(ev["trials"])
+            )
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

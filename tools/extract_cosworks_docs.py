@@ -42,14 +42,26 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-DEFAULT_SRC = Path(Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp" / "cosworks")
+DEFAULT_SRC = Path(
+    Path(__file__).resolve().parents[1]
+    / "AI Solidworks"
+    / "官方文档"
+    / "SWhelp"
+    / "cosworks"
+)
 DEFAULT_OUT = Path(Path(__file__).resolve().parents[1] / "_raw" / "cosworks_pages")
 
 #: JSON 转义还原表。这批页面实测只用 \u003c/\u003e/\u0026/\n 四类。
 _ESCAPES = (
-    ("\\u003c", "<"), ("\\u003e", ">"), ("\\u0026", "&"),
-    ("\\u0027", "'"), ("\\u0022", '"'), ("\\u005c", "\\"),
-    ("\\n", "\n"), ("\\t", "\t"), ("\\r", "\n"),
+    ("\\u003c", "<"),
+    ("\\u003e", ">"),
+    ("\\u0026", "&"),
+    ("\\u0027", "'"),
+    ("\\u0022", '"'),
+    ("\\u005c", "\\"),
+    ("\\n", "\n"),
+    ("\\t", "\t"),
+    ("\\r", "\n"),
 )
 
 _TAG = re.compile(r"(?is)<(script|style)\b.*?</\1>")
@@ -89,8 +101,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="提取 cosworks CHM 页正文")
     parser.add_argument("--src", default=str(DEFAULT_SRC))
     parser.add_argument("--out", default=str(DEFAULT_OUT))
-    parser.add_argument("--min-chars", type=int, default=1500,
-                        help="少于该字符数视为提取失败（用于自检）")
+    parser.add_argument(
+        "--min-chars",
+        type=int,
+        default=1500,
+        help="少于该字符数视为提取失败（用于自检）",
+    )
     args = parser.parse_args()
 
     src, out = Path(args.src), Path(args.out)

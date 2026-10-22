@@ -30,6 +30,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -41,20 +42,26 @@ SPECS_BATCH5 = [
     ToolSpec(
         name="solidworks_current_selection",
         title="Current Selection",
-        module="sw_selection_spec", function="current_selection",
+        module="sw_selection_spec",
+        function="current_selection",
         inject="model",
         read_only=True,
         doc="Read the current selection set (optionally filtered to one selection mark).",
         param_alias={},
         params=[
-            Param("mark", int, default=-1,
-                  description="Selection mark to read; -1 = all marks."),
+            Param(
+                "mark",
+                int,
+                default=-1,
+                description="Selection mark to read; -1 = all marks.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_clear_selection",
         title="Clear Selection",
-        module="sw_selection_spec", function="clear_selection",
+        module="sw_selection_spec",
+        function="clear_selection",
         inject="model",
         doc="Clear the current selection set.",
         param_alias={},
@@ -63,19 +70,25 @@ SPECS_BATCH5 = [
     ToolSpec(
         name="solidworks_set_standard_view",
         title="Set Standard View",
-        module="sw_review", function="set_standard_view",
+        module="sw_review",
+        function="set_standard_view",
         inject="model",
         doc="Switch the model to a named standard view (e.g. isometric, front, top).",
         param_alias={},
         params=[
-            Param("view_name", str, default="isometric",
-                  description="Standard view name; defaults to 'isometric'."),
+            Param(
+                "view_name",
+                str,
+                default="isometric",
+                description="Standard view name; defaults to 'isometric'.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_list_render_materials",
         title="List Render Materials",
-        module="sw_render_material", function="list_render_materials",
+        module="sw_render_material",
+        function="list_render_materials",
         inject="model",
         read_only=True,
         doc="List the render materials available in the active document.",
@@ -85,7 +98,8 @@ SPECS_BATCH5 = [
     ToolSpec(
         name="solidworks_collect_appearance_evidence",
         title="Collect Appearance Evidence",
-        module="sw_render_material", function="collect_appearance_evidence",
+        module="sw_render_material",
+        function="collect_appearance_evidence",
         inject="model",
         read_only=True,
         doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, background, scene",

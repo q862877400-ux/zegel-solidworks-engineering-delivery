@@ -32,6 +32,7 @@
   ★ 齿形错了，回读只能看到「它是个齿轮」⇒ **不能** ⇒ 方法）✓
   ★★ 所以它**不带工具**（★ 工具只暴露**驱动 CAD 的机械能力**）✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（★ 重写 —— ★ 原 `sw_gear.py` 的**离散逼近**被替换）
 # 文件:   scripts/gear_geometry.py
@@ -67,7 +68,20 @@ __all__ = [
 #: ★★★ **标准模数系列**（★ GB/T 1357 **第一系列**）——
 #:   ★★ 机械工程的规矩：★ 算出模数后**必须向上取到标准值**（★ 不是随便用算出来的数）✓
 STANDARD_MODULES_GB_T_1357 = (
-    1.0, 1.25, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0, 16.0, 20.0,
+    1.0,
+    1.25,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    4.0,
+    5.0,
+    6.0,
+    8.0,
+    10.0,
+    12.0,
+    16.0,
+    20.0,
 )
 #: ★★ **标准齿条刀具参数**（★ GB/T 1356 · ★ 全齿高制 · ★ 压力角 20°）：
 #:   · ★ 齿顶高系数 `ha* = 1.0`（★ 齿顶高 = 1.0m）
@@ -167,13 +181,21 @@ def involute_xy_mm(t: float, base_radius_mm: float) -> tuple[float, float]:
     ★ 半径：`r(t) = rb·√(1 + t²)` ⇒ ★ `t = √((r/rb)² − 1)` ✓
     ★★ **这是**共轭齿廓**的唯一正确形状** —— ★ 折线逼近会破坏共轭 ✓
     """
-    return (base_radius_mm * (math.cos(t) + t * math.sin(t)),
-            base_radius_mm * (math.sin(t) - t * math.cos(t)))
+    return (
+        base_radius_mm * (math.cos(t) + t * math.sin(t)),
+        base_radius_mm * (math.sin(t) - t * math.cos(t)),
+    )
 
 
-def trochoid_xy_mm(phi: float, *, pitch_radius_mm: float, dedendum_mm: float,
-                   tool_tip_radius_mm: float, module_mm: float | None = None,
-                   pressure_angle_rad: float | None = None) -> tuple[float, float]:
+def trochoid_xy_mm(
+    phi: float,
+    *,
+    pitch_radius_mm: float,
+    dedendum_mm: float,
+    tool_tip_radius_mm: float,
+    module_mm: float | None = None,
+    pressure_angle_rad: float | None = None,
+) -> tuple[float, float]:
     """★ **摆线齿根过渡**（★ 齿条刀具顶圆角**包络** · ★ 毫米）。
 
     ★★ 这就是**滚齿/插齿实际加工出来**的齿根形状 ⇒ ★ 根应力集中算得准 ✓
@@ -213,31 +235,45 @@ def trochoid_xy_mm(phi: float, *, pitch_radius_mm: float, dedendum_mm: float,
     a = hf - rho
     #: ★★★ `u_c`：★ 刀顶圆角中心相对齿廓的偏移（★ 标准齿条的核心量）
     if module_mm is not None and pressure_angle_rad is not None:
-        u_c = (math.pi * float(module_mm) / 4.0
-               - a * math.tan(float(pressure_angle_rad))
-               - rho / math.cos(float(pressure_angle_rad)))
+        u_c = (
+            math.pi * float(module_mm) / 4.0
+            - a * math.tan(float(pressure_angle_rad))
+            - rho / math.cos(float(pressure_angle_rad))
+        )
     else:
         u_c = 0.0
     v = u_c + r * phi
     den = math.sqrt(a * a + v * v)
-    x = ((r - a) * math.cos(phi) + v * math.sin(phi)
-         + rho * (-a * math.cos(phi) + v * math.sin(phi)) / den)
-    y = ((r - a) * math.sin(phi) - v * math.cos(phi)
-         + rho * (-a * math.sin(phi) - v * math.cos(phi)) / den)
+    x = (
+        (r - a) * math.cos(phi)
+        + v * math.sin(phi)
+        + rho * (-a * math.cos(phi) + v * math.sin(phi)) / den
+    )
+    y = (
+        (r - a) * math.sin(phi)
+        - v * math.cos(phi)
+        + rho * (-a * math.sin(phi) - v * math.cos(phi)) / den
+    )
     return x, y
 
 
-def tool_tip_arc_offset_mm(module_mm: float, pressure_angle_rad: float,
-                           dedendum_mm: float, tool_tip_radius_mm: float) -> float:
+def tool_tip_arc_offset_mm(
+    module_mm: float,
+    pressure_angle_rad: float,
+    dedendum_mm: float,
+    tool_tip_radius_mm: float,
+) -> float:
     """★ **标准齿条的刀顶圆角中心偏移** `u_c`（★ 毫米）。
 
     ★★ 定义：`u_c = π·m/4 − a·tan α − ρ/cos α`，★ 其中 `a = hf − ρ` ✓
     ★★★ **它是标准齿形的一部分** —— ★ 不把它算进去，★ 摆线就接不上渐开线 ✗
     """
     a = float(dedendum_mm) - float(tool_tip_radius_mm)
-    return (math.pi * float(module_mm) / 4.0
-            - a * math.tan(float(pressure_angle_rad))
-            - float(tool_tip_radius_mm) / math.cos(float(pressure_angle_rad)))
+    return (
+        math.pi * float(module_mm) / 4.0
+        - a * math.tan(float(pressure_angle_rad))
+        - float(tool_tip_radius_mm) / math.cos(float(pressure_angle_rad))
+    )
 
 
 def calculate_gear_geometry(spec: GearSpec) -> GearGeometry:
@@ -261,12 +297,12 @@ def calculate_gear_geometry(spec: GearSpec) -> GearGeometry:
         raise ValueError("轴孔直径不能为负数")
 
     alpha = math.radians(alpha_deg)
-    r = module_mm * teeth / 2.0                      #: ★ 分度圆半径 d = mz
-    rb = r * math.cos(alpha)                         #: ★ 基圆 db = d·cosα
-    ra = r + ADDENDUM_COEFF * module_mm              #: ★ 齿顶圆 da = m(z+2)
-    hf = DEDENDUM_COEFF * module_mm                  #: ★ 齿根高 hf = 1.25m
-    rf = r - hf                                      #: ★ 齿根圆 df = m(z−2.5)
-    rho = TOOL_TIP_RADIUS_COEFF * module_mm          #: ★ 刀顶圆角 ρ = 0.38m
+    r = module_mm * teeth / 2.0  #: ★ 分度圆半径 d = mz
+    rb = r * math.cos(alpha)  #: ★ 基圆 db = d·cosα
+    ra = r + ADDENDUM_COEFF * module_mm  #: ★ 齿顶圆 da = m(z+2)
+    hf = DEDENDUM_COEFF * module_mm  #: ★ 齿根高 hf = 1.25m
+    rf = r - hf  #: ★ 齿根圆 df = m(z−2.5)
+    rho = TOOL_TIP_RADIUS_COEFF * module_mm  #: ★ 刀顶圆角 ρ = 0.38m
     if rf <= 0.0:
         raise ValueError("齿根圆半径非正；请增大齿数或调整齿制")
     if bore_mm >= 2.0 * rf:
@@ -291,19 +327,25 @@ def calculate_gear_geometry(spec: GearSpec) -> GearGeometry:
     #: ★★ **重合度 εα**（★ 机械工程的规矩：★ 直齿轮 εα 应 > 1，否则传动不连续）✓
     #:   ★ 与标准齿条啮合（★ 齿条齿顶高 = m）：
     #:     εα = [√(ra²−rb²) + m/sinα − r·sinα] / (π·m·cosα)
-    eps_alpha = ((math.sqrt(max(0.0, ra * ra - rb * rb)) + module_mm / math.sin(alpha)
-                  - r * math.sin(alpha)) / (math.pi * module_mm * math.cos(alpha)))
+    eps_alpha = (
+        math.sqrt(max(0.0, ra * ra - rb * rb))
+        + module_mm / math.sin(alpha)
+        - r * math.sin(alpha)
+    ) / (math.pi * module_mm * math.cos(alpha))
 
     minimum_teeth = int(math.ceil(2.0 / (math.sin(alpha) ** 2)))
     undercut_risk = teeth < minimum_teeth
     warnings: list[str] = []
     if undercut_risk:
         warnings.append(
-            "齿数 %d 小于当前压力角的理论无根切下限 %d，存在根切风险。" % (teeth, minimum_teeth))
+            "齿数 %d 小于当前压力角的理论无根切下限 %d，存在根切风险。"
+            % (teeth, minimum_teeth)
+        )
     if eps_alpha <= 1.0:
         warnings.append(
             "重合度 εα = %.3f ≤ 1.0 ⇒ 传动不连续（★ 啮合会中断）⇒ 应增大齿数或齿顶高。"
-            % eps_alpha)
+            % eps_alpha
+        )
 
     return GearGeometry(
         spec=spec,
@@ -357,8 +399,9 @@ def involute_y_expression(base_radius_mm: float) -> str:
     return "%.9f*(sin(t)-t*cos(t))" % float(base_radius_mm)
 
 
-def involute_flank_expressions(base_radius_mm: float, half_tooth_angle_rad: float,
-                               *, right: bool = True) -> tuple[str, str]:
+def involute_flank_expressions(
+    base_radius_mm: float, half_tooth_angle_rad: float, *, right: bool = True
+) -> tuple[str, str]:
     """★ **一条齿廓（渐开线）的表达式**（★ 真曲线 · ★ 已含相位）。
 
     ★★ **推导**（★ 本仓自证 · ★ 不是抄的）：
@@ -373,22 +416,38 @@ def involute_flank_expressions(base_radius_mm: float, half_tooth_angle_rad: floa
       · ★ **左齿廓** = 右齿廓对 x 轴镜像 ⇒ ★ 相位取 `−P`（★ `u = t + P`）✓
     ★★★ **数值已核**（★ 半径 = `rb√(1+t²)` 逐位吻合、极角 = `P − inv(t)` 逐位吻合）✓
     """
-    rb_m = float(base_radius_mm)            #: ★ **表达式单位是毫米**（★ 真机扫描法裁决）
+    rb_m = float(base_radius_mm)  #: ★ **表达式单位是毫米**（★ 真机扫描法裁决）
     P = float(half_tooth_angle_rad) if right else -float(half_tooth_angle_rad)
     #: ★ 用 `cos(t∓P)` 展开成 `cos t·cos P ± sin t·sin P`（★ 纯 cos/sin/乘/加 —— ★ 已证
     #: 可用）
     cp, sp = math.cos(P), math.sin(P)
-    x = ("%.12f*((cos(t)*%.12f+sin(t)*%.12f)+t*(sin(t)*%.12f-cos(t)*%.12f))"
-         % (rb_m, cp, sp, cp, sp))
-    y = ("%.12f*(t*(cos(t)*%.12f+sin(t)*%.12f)-(sin(t)*%.12f-cos(t)*%.12f))"
-         % (rb_m, cp, sp, cp, sp))
+    x = "%.12f*((cos(t)*%.12f+sin(t)*%.12f)+t*(sin(t)*%.12f-cos(t)*%.12f))" % (
+        rb_m,
+        cp,
+        sp,
+        cp,
+        sp,
+    )
+    y = "%.12f*(t*(cos(t)*%.12f+sin(t)*%.12f)-(sin(t)*%.12f-cos(t)*%.12f))" % (
+        rb_m,
+        cp,
+        sp,
+        cp,
+        sp,
+    )
     return x, y
 
 
-def trochoid_flank_expressions(*, pitch_radius_mm: float, dedendum_mm: float,
-                               tool_tip_radius_mm: float, base_angle_rad: float,
-                               module_mm: float, pressure_angle_rad: float,
-                               right: bool = True) -> tuple[str, str]:
+def trochoid_flank_expressions(
+    *,
+    pitch_radius_mm: float,
+    dedendum_mm: float,
+    tool_tip_radius_mm: float,
+    base_angle_rad: float,
+    module_mm: float,
+    pressure_angle_rad: float,
+    right: bool = True,
+) -> tuple[str, str]:
     """★ **一条齿根过渡（摆线）的表达式**（★ 真曲线 · ★ 已含相位 · ★ 含 `u_c`）。
 
     ★★ **必须传 `module_mm` / `pressure_angle_rad`** —— ★ 它们决定**刀顶圆角中心偏移** `u_c`
@@ -411,30 +470,52 @@ def trochoid_flank_expressions(*, pitch_radius_mm: float, dedendum_mm: float,
     #: ★ `v = u_c + r·t` ⇒ ★ 表达式里写成 `(u_c+r*t)`
     ve = "(%.12f+%.12f*t)" % (u_c, r)
     sq = "%.12f+%s*%s" % (a * a, ve, ve)
-    x = ("%.12f*cos(t+%.12f)+%s*sin(t+%.12f)+%.12f*(-%.12f*cos(t+%.12f)"
-         "+%s*sin(t+%.12f))/sqrt(%s)"
-         % (r - a, P, ve, P, rho, a, P, ve, P, sq))
-    y = ("%.12f*sin(t+%.12f)-%s*cos(t+%.12f)+%.12f*(-%.12f*sin(t+%.12f)"
-         "-%s*cos(t+%.12f))/sqrt(%s)"
-         % (r - a, P, ve, P, rho, a, P, ve, P, sq))
+    x = (
+        "%.12f*cos(t+%.12f)+%s*sin(t+%.12f)+%.12f*(-%.12f*cos(t+%.12f)"
+        "+%s*sin(t+%.12f))/sqrt(%s)" % (r - a, P, ve, P, rho, a, P, ve, P, sq)
+    )
+    y = (
+        "%.12f*sin(t+%.12f)-%s*cos(t+%.12f)+%.12f*(-%.12f*sin(t+%.12f)"
+        "-%s*cos(t+%.12f))/sqrt(%s)" % (r - a, P, ve, P, rho, a, P, ve, P, sq)
+    )
     return x, y
 
 
-def trochoid_x_expression(*, pitch_radius_mm: float, dedendum_mm: float,
-                          tool_tip_radius_mm: float, module_mm: float,
-                          pressure_angle_rad: float) -> str:
+def trochoid_x_expression(
+    *,
+    pitch_radius_mm: float,
+    dedendum_mm: float,
+    tool_tip_radius_mm: float,
+    module_mm: float,
+    pressure_angle_rad: float,
+) -> str:
     """★ 摆线齿根 x(φ) 的表达式（★ 含 `sqrt` + `u_c` 修正 · ★ 单位毫米）。"""
     return trochoid_flank_expressions(
-        pitch_radius_mm=pitch_radius_mm, dedendum_mm=dedendum_mm,
-        tool_tip_radius_mm=tool_tip_radius_mm, module_mm=module_mm,
-        pressure_angle_rad=pressure_angle_rad, base_angle_rad=0.0, right=True)[0]
+        pitch_radius_mm=pitch_radius_mm,
+        dedendum_mm=dedendum_mm,
+        tool_tip_radius_mm=tool_tip_radius_mm,
+        module_mm=module_mm,
+        pressure_angle_rad=pressure_angle_rad,
+        base_angle_rad=0.0,
+        right=True,
+    )[0]
 
 
-def trochoid_y_expression(*, pitch_radius_mm: float, dedendum_mm: float,
-                          tool_tip_radius_mm: float, module_mm: float,
-                          pressure_angle_rad: float) -> str:
+def trochoid_y_expression(
+    *,
+    pitch_radius_mm: float,
+    dedendum_mm: float,
+    tool_tip_radius_mm: float,
+    module_mm: float,
+    pressure_angle_rad: float,
+) -> str:
     """★ 摆线齿根 y(φ) 的表达式（★ 含 `sqrt` + `u_c` 修正 · ★ 单位毫米）。"""
     return trochoid_flank_expressions(
-        pitch_radius_mm=pitch_radius_mm, dedendum_mm=dedendum_mm,
-        tool_tip_radius_mm=tool_tip_radius_mm, module_mm=module_mm,
-        pressure_angle_rad=pressure_angle_rad, base_angle_rad=0.0, right=True)[1]
+        pitch_radius_mm=pitch_radius_mm,
+        dedendum_mm=dedendum_mm,
+        tool_tip_radius_mm=tool_tip_radius_mm,
+        module_mm=module_mm,
+        pressure_angle_rad=pressure_angle_rad,
+        base_angle_rad=0.0,
+        right=True,
+    )[1]

@@ -1,4 +1,5 @@
 """★ 规格 207 · V7-1：核验 349 条记录的覆盖与合法性（SC-1 / SC-5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/verify_union_349.py
@@ -52,14 +53,14 @@ def check(records_dir: Path, workload: Path, *, only_task: str | None = None) ->
         try:
             raw = f.read_text(encoding="utf-8", errors="replace")
             rec = json.loads(raw)
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             bad_json.append("%s（%s）" % (f.name, type(exc).__name__))
             continue
         if len(raw.encode("utf-8")) > MAX_BYTES:
             oversized.append(f.name)
         try:
             i = int(rec.get("index"))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             problems.append("%s：index 不是整数" % f.name)
             continue
         seen[i] = str(rec.get("op"))
@@ -75,16 +76,28 @@ def check(records_dir: Path, workload: Path, *, only_task: str | None = None) ->
     if extra:
         problems.append("多 %d 条（索引不在 1..349）：%s" % (len(extra), extra[:20]))
     if mismatch:
-        problems.append("op 对不上 %d 条（索引 → 期望/实际）：%s"
-                        % (len(mismatch), [(i, want[i], seen[i]) for i in mismatch[:10]]))
+        problems.append(
+            "op 对不上 %d 条（索引 → 期望/实际）：%s"
+            % (len(mismatch), [(i, want[i], seen[i]) for i in mismatch[:10]])
+        )
     if bad_json:
         problems.append("非法 JSON %d 条：%s" % (len(bad_json), bad_json[:10]))
     if oversized:
-        problems.append("超大记录 %d 条（>%d B）：%s" % (len(oversized), MAX_BYTES, oversized[:5]))
+        problems.append(
+            "超大记录 %d 条（>%d B）：%s" % (len(oversized), MAX_BYTES, oversized[:5])
+        )
 
-    return {"ok": not problems, "records": len(seen), "expected": len(want),
-            "missing": missing, "extra": extra, "mismatch": mismatch,
-            "bad_json": bad_json, "oversized": oversized, "problems": problems}
+    return {
+        "ok": not problems,
+        "records": len(seen),
+        "expected": len(want),
+        "missing": missing,
+        "extra": extra,
+        "mismatch": mismatch,
+        "bad_json": bad_json,
+        "oversized": oversized,
+        "problems": problems,
+    }
 
 
 def selftest() -> int:
@@ -94,22 +107,30 @@ def selftest() -> int:
     with tempfile.TemporaryDirectory() as td:
         base = Path(td)
 
-        def write_all(d: Path, skip: int | None = None, extra: bool = False, broken: bool = False):
+        def write_all(
+            d: Path, skip: int | None = None, extra: bool = False, broken: bool = False
+        ):
             d.mkdir(parents=True, exist_ok=True)
             for x in wl["items"]:
                 if skip is not None and int(x["index"]) == skip:
                     continue
-                body = json.dumps({"index": x["index"], "op": x["op"], "verdict": "已有等价物"},
-                                  ensure_ascii=False)
+                body = json.dumps(
+                    {"index": x["index"], "op": x["op"], "verdict": "已有等价物"},
+                    ensure_ascii=False,
+                )
                 if broken and int(x["index"]) == 7:
-                    body = '{"index": 7, "op": "x", "verdict": "a\nb"}'   # 裸换行 ⇒ 非法 JSON
+                    body = '{"index": 7, "op": "x", "verdict": "a\nb"}'  # 裸换行 ⇒ 非法 JSON
                 (d / ("%d.json" % x["index"])).write_text(body, encoding="utf-8")
             if extra:
-                (d / "999.json").write_text('{"index": 999, "op": "ghost"}', encoding="utf-8")
+                (d / "999.json").write_text(
+                    '{"index": 999, "op": "ghost"}', encoding="utf-8"
+                )
 
-        for name, kw in (("负例①：缺一条", {"skip": 5}),
-                         ("负例②：多一条", {"extra": True}),
-                         ("负例③：一条非法 JSON", {"broken": True})):
+        for name, kw in (
+            ("负例①：缺一条", {"skip": 5}),
+            ("负例②：多一条", {"extra": True}),
+            ("负例③：一条非法 JSON", {"broken": True}),
+        ):
             # negproof-exempt: 这一句**不是造负例输入** —— 它只是把负例**目录名**里的全
             # 角「：」
             #   换成「_」（`负例①：缺一条` ⇒ `负例①_缺一条`）。★ 真正的坏输入由**下一行**
@@ -129,7 +150,10 @@ def selftest() -> int:
     print("★ 负例自检（判据 = 「坏输入必须红、好输入必须绿」）：")
     allok = True
     for name, passed, why in cases:
-        print("   %-26s %s  %s" % (name, "PASS" if passed else "**FAIL**", "" if passed else why))
+        print(
+            "   %-26s %s  %s"
+            % (name, "PASS" if passed else "**FAIL**", "" if passed else why)
+        )
         allok = allok and passed
     print("★ 自检结论：%s" % ("全部通过" if allok else "★ 有失败 ⇒ 门禁不可信"))
     return 0 if allok else 1
@@ -146,18 +170,28 @@ def main() -> int:
     #: ★★ tier-aware：本轮产出落在**两个**目录（见 `check` 的 docstring）⇒
     #:   按"一个目录凑 349"判会**误报"缺 76 条"**（★ 我先写错、后改对）✓
     pairs = [
-        (Path(a.records_dir) if a.records_dir else ROOT / "output" / "bunny-records-verify",
-         "verify", 273),
+        (
+            Path(a.records_dir)
+            if a.records_dir
+            else ROOT / "output" / "bunny-records-verify",
+            "verify",
+            273,
+        ),
         (ROOT / "output" / "bunny-records-deep", "deep", 76),
     ]
     allok = True
     for d, task, expect in pairs:
         r = check(d, WORKLOAD, only_task=task)
         print("★ [%s 档] %s" % (task, d))
-        print("   记录数 %d / 期望 %d（workload 里该档条数）" % (r["records"], r["expected"]))
+        print(
+            "   记录数 %d / 期望 %d（workload 里该档条数）"
+            % (r["records"], r["expected"])
+        )
         if r["ok"]:
-            print("   ★★ **通过**：%d/%d、op 集合与 union-gap-v3 一致、全部合法 JSON"
-                  % (r["records"], expect))
+            print(
+                "   ★★ **通过**：%d/%d、op 集合与 union-gap-v3 一致、全部合法 JSON"
+                % (r["records"], expect)
+            )
         else:
             allok = False
             print("   ★★ **不通过**：")

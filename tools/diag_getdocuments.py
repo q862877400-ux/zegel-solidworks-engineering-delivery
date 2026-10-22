@@ -1,4 +1,5 @@
 """★ 诊断：`ISldWorks.GetDocuments` / `GetDocumentCount` 到底怎么调才拿得到值。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（一次性诊断脚本）
 # 文件:   tools/diag_getdocuments.py
@@ -27,7 +28,7 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 def _show(label, fn):
     try:
         v = fn()
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  %-46s ⇒ ★ 抛 %s: %s" % (label, type(exc).__name__, str(exc)[:70]))
         return None
     t = type(v).__name__
@@ -42,6 +43,7 @@ def _show(label, fn):
 
 def main() -> int:
     import sw_connect
+
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     print("连上 =", sw is not None)
     if sw is None:
@@ -53,12 +55,21 @@ def main() -> int:
 
     print("\n★ B 组：先取属性再调（有些成员是 property）")
     _show("getattr(sw,'GetDocuments') 不调用", lambda: getattr(sw, "GetDocuments"))
-    _show("getattr(sw,'GetDocumentCount') 不调用", lambda: getattr(sw, "GetDocumentCount"))
+    _show(
+        "getattr(sw,'GetDocumentCount') 不调用", lambda: getattr(sw, "GetDocumentCount")
+    )
 
     print("\n★ C 组：用本仓的 get_com_member（★ 无实参 ⇒ 先无参调一次）")
     import sw_connect as SC
-    _show("get_com_member(sw,'GetDocumentCount')", lambda: SC.get_com_member(sw, "GetDocumentCount"))
-    _show("get_com_member(sw,'GetDocuments')", lambda: SC.get_com_member(sw, "GetDocuments"))
+
+    _show(
+        "get_com_member(sw,'GetDocumentCount')",
+        lambda: SC.get_com_member(sw, "GetDocumentCount"),
+    )
+    _show(
+        "get_com_member(sw,'GetDocuments')",
+        lambda: SC.get_com_member(sw, "GetDocuments"),
+    )
 
     print("\n★ D 组：枚举回读（★ 独立读数，用来判 A/B/C 谁对）")
     _show("sw.GetFirstDocument()", lambda: sw.GetFirstDocument())
@@ -68,10 +79,13 @@ def main() -> int:
     try:
         sys.path.insert(0, str(ROOT / "tools"))
         from session_verdict import title_documents
+
         td = title_documents()
-        print("  title_documents ⇒ usable=%s · 文档 %s"
-              % (td["usable"], [d["title"] for d in td["documents"]]))
-    except Exception as exc:                                            # noqa: BLE001
+        print(
+            "  title_documents ⇒ usable=%s · 文档 %s"
+            % (td["usable"], [d["title"] for d in td["documents"]])
+        )
+    except Exception as exc:  # noqa: BLE001
         print("  title_documents ⇒ 抛 %s" % type(exc).__name__)
     return 0
 

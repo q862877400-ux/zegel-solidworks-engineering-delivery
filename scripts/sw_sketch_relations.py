@@ -1,4 +1,5 @@
 """★ 草图几何关系**专属工具**：一次把该加的关系加全（★ 与画圆/画线同级）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -22,11 +23,11 @@
 # · ★ `ISketchSegment` 成员表：★ **`GetRelationsCount`** ✓（★ 真判据 ✓）· ★ `GetConstrai
 # nedStatus` ✓
 # ★★ 外部 MIT 项目证据（★ 铁律 1 的合法来源 ✓）：
-# · ★ **Slacker-LLC** `CONTRIBUTING.md:56` 逐字：★「★ **`SketchAddConstraints` silently 
+# · ★ **Slacker-LLC** `CONTRIBUTING.md:56` 逐字：★「★ **`SketchAddConstraints` silently
 # ignores a
-# string it does…**」✓ ⇒ ★ 它**不校验**、失败也照回 `True` ✗（★ 我第 10 轮实测 13/13 全 
+# string it does…**」✓ ⇒ ★ 它**不校验**、失败也照回 `True` ✗（★ 我第 10 轮实测 13/13 全
 # True ✓）
-# · ★ **Slacker-LLC** `README.md:227` 逐字：★「★ **`ISketchRelationManager.AddRelation` 
+# · ★ **Slacker-LLC** `README.md:227` 逐字：★「★ **`ISketchRelationManager.AddRelation`
 # and verifies
 #     via the relation count**」✓ ⇒ ★ **正解入口 + 判据** ✓
 # 许可:   本仓库 MIT。★ 引用的四家均为 MIT（★ 仅作对照，未抄代码 ✓）。
@@ -199,16 +200,19 @@ def _val(obj, *names):
     """
     try:
         from sw_part import get_com_member as _gcm
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         _gcm = None
     for nm in names:
-        for getter in ((lambda n: _gcm(obj, n)) if _gcm else None, (lambda n: getattr(obj, n))):
+        for getter in (
+            (lambda n: _gcm(obj, n)) if _gcm else None,
+            (lambda n: getattr(obj, n)),
+        ):
             if getter is None:
                 continue
             try:
                 v = getter(nm)
                 return v() if callable(v) else v
-            except Exception:                                                      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return None
 
@@ -216,15 +220,16 @@ def _val(obj, *names):
 def _seg_count(model) -> int:
     """★ 草图段数（★ 取不到回 -1 ✓）"""
     from sw_sketch import active_sketch as _active
+
     try:
         sk = _active(model)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sk = None
     if sk is None:
         return -1
     try:
         return len(list(sk.GetSketchSegments or []))
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -237,9 +242,10 @@ def _rel_count(model, seg) -> int | None:
 def _status(model) -> int | None:
     """★ 草图完全定义状态（★ `ISketch::GetConstrainedStatus` ✓；★ 3 = 完全定义 ✓）"""
     from sw_sketch import active_sketch as _active
+
     try:
         sk = _active(model)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sk = None
     if sk is None:
         return None
@@ -288,23 +294,28 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
 
     #: ★ 归一清单
     plan: list[dict[str, Any]] = []
-    for item in (relations or []):
+    for item in relations or []:
         kind, idx = _parse_relation(item)
         plan.append({"raw": item, "type": kind, "indices": idx})
 
     #: ★ 前置：★ 要有活动草图 ✓
     try:
         sk = _active(model)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sk = None
     if sk is None:
-        return {"ok": False, "error": "没有活动草图 ⇒ 先 `sketch_start` ✓",
-                "applied": 0, "total": len(plan), "results": []}
+        return {
+            "ok": False,
+            "error": "没有活动草图 ⇒ 先 `sketch_start` ✓",
+            "applied": 0,
+            "total": len(plan),
+            "results": [],
+        }
 
     segs = []
     try:
         segs = list(sk.GetSketchSegments or [])
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     #: ★★ 防过定义：★ 已完全定义就不再加 ✓
@@ -320,10 +331,16 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     #:     ★★ **在已经过定义（4）的草图上还继续加** ✗ ⇒ **越加越坏** ✓
     #: ★★★ 正确规则：★★ **只有 `status == 2`（欠定义）才允许加关系** ✓ —— ★ 其余全部**拒
     #: 加并说明** ✗
-    _STATUS_NAME = {1: "swUnknownConstraint", 2: "swUnderConstrained",
-                    3: "swFullyConstrained", 4: "swOverConstrained",
-                    5: "swNoSolution", 6: "swInvalidSolution", 7: "swAutosolveOff"}
-    ADDABLE_STATUS = 2                                  #: ★★ **唯一允许加关系的状态** ✓
+    _STATUS_NAME = {
+        1: "swUnknownConstraint",
+        2: "swUnderConstrained",
+        3: "swFullyConstrained",
+        4: "swOverConstrained",
+        5: "swNoSolution",
+        6: "swInvalidSolution",
+        7: "swAutosolveOff",
+    }
+    ADDABLE_STATUS = 2  #: ★★ **唯一允许加关系的状态** ✓
     # State validation is mandatory even when optional post-verification is disabled.
     st0 = _status(model)
     if st0 != ADDABLE_STATUS:
@@ -333,11 +350,17 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
             5: "★ 草图**无解**（`swNoSolution`）⇒ 先修草图 ✗",
             6: "★ 草图**解无效**（`swInvalidSolution`）⇒ 先修草图 ✗",
         }.get(st0, "★ 非欠定义状态 ⇒ 不擅自加 ✗")
-        return {"ok": False, "refused": _STATUS_NAME.get(st0, "status=%r" % (st0,)),
-                "status_before": st0, "addable_status": ADDABLE_STATUS,
-                "error": "草图状态为 **%s（%r）**：%s —— ★ **只有 `status == 2`（欠定义）才允许加关系** ✓"
-                         % (_STATUS_NAME.get(st0, "未知"), st0, why),
-                "applied": 0, "total": len(plan), "results": []}
+        return {
+            "ok": False,
+            "refused": _STATUS_NAME.get(st0, "status=%r" % (st0,)),
+            "status_before": st0,
+            "addable_status": ADDABLE_STATUS,
+            "error": "草图状态为 **%s（%r）**：%s —— ★ **只有 `status == 2`（欠定义）才允许加关系** ✓"
+            % (_STATUS_NAME.get(st0, "未知"), st0, why),
+            "applied": 0,
+            "total": len(plan),
+            "results": [],
+        }
 
     #: ★ 关系管理器（★ 正解入口 ✓ —— Slacker-LLC 逐字：★ `ISketchRelationManager.AddRela
     #: tion` ✓）
@@ -351,20 +374,25 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     #:     ⇒ ★ **一个不存在、一个差前缀** ✗ ⇒ ★ **永远取不到，只好走兜底** ✓；★ 本行修正 ✓
     mgr = None
     _probe = {}
-    for path in ("RelationManager", "GetSketchRelationManager", "SketchRelationManager"):
+    for path in (
+        "RelationManager",
+        "GetSketchRelationManager",
+        "SketchRelationManager",
+    ):
         try:
             from sw_part import get_com_member as _gcm
+
             _g = _gcm(sk, path)
-        except Exception as exc:                                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             _g = None
             _probe[path] = "gcm✗%s: %s" % (type(exc).__name__, str(exc)[:70])
         else:
             _probe[path] = "gcm=%r" % (type(_g),)
         try:
             _a = getattr(sk, path)
-        except Exception as exc:                                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             _a = None
-            _probe[path] = (_probe.get(path, "") + " | attr✗%s" % type(exc).__name__)
+            _probe[path] = _probe.get(path, "") + " | attr✗%s" % type(exc).__name__
         mgr = _g if _g is not None else _a
         if mgr is not None:
             _probe["★ 命中"] = path
@@ -389,24 +417,37 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     uncertain = False
     for rec in plan:
         kind, idx = rec["type"], rec["indices"]
-        entry: dict[str, Any] = {"raw": rec["raw"], "type": kind, "indices": idx,
-                                 "applied": False}
+        entry: dict[str, Any] = {
+            "raw": rec["raw"],
+            "type": kind,
+            "indices": idx,
+            "applied": False,
+        }
         if uncertain:
-            entry.update(execution_state="not_started", effect_status="unknown",
-                         error="A previous relation has uncertain execution; batch stopped.")
+            entry.update(
+                execution_state="not_started",
+                effect_status="unknown",
+                error="A previous relation has uncertain execution; batch stopped.",
+            )
             results.append(entry)
             continue
         if kind is None:
             _alias_hint = ""
             _raw_body = str(rec["raw"] or "").strip()
-            _raw_body = _raw_body[2:] if _raw_body.lower().startswith("sg") else _raw_body
+            _raw_body = (
+                _raw_body[2:] if _raw_body.lower().startswith("sg") else _raw_body
+            )
             _suggest = LEGACY_ALIASES.get(_raw_body.upper())
             if _suggest:
-                _alias_hint = (" ★ 官方对应名为 **%s**（官方枚举里**没有** %s）✓"
-                               % (_suggest, _raw_body))
-            entry["error"] = ("非法关系名 %r ⇒ ★ 官方 `SketchAddConstraints` 会**静默回 True** 而"
-                              "不加任何关系 ✗；★ 合法值：%s%s"
-                              % (rec["raw"], sorted(RELATION_TYPES), _alias_hint))
+                _alias_hint = " ★ 官方对应名为 **%s**（官方枚举里**没有** %s）✓" % (
+                    _suggest,
+                    _raw_body,
+                )
+            entry["error"] = (
+                "非法关系名 %r ⇒ ★ 官方 `SketchAddConstraints` 会**静默回 True** 而"
+                "不加任何关系 ✗；★ 合法值：%s%s"
+                % (rec["raw"], sorted(RELATION_TYPES), _alias_hint)
+            )
             results.append(entry)
             continue
         if len(idx) < 2 or any(i < 0 or i >= len(segs) for i in idx):
@@ -417,27 +458,33 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         #: ★ 选段（★ index:N + Select4 ✓）
         try:
             model.ClearSelection2(True)
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         grabbed = 0
         for k, i in enumerate(idx):
             try:
                 if segs[i].Select4(bool(k > 0), _sp._empty_callout()):
                     grabbed += 1
-            except Exception:                                                      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         entry["selected"] = grabbed
         if grabbed != len(idx):
-            entry.update(execution_state="rejected", effect_status="unknown",
-                         error="Incomplete entity selection; no relation was dispatched.")
+            entry.update(
+                execution_state="rejected",
+                effect_status="unknown",
+                error="Incomplete entity selection; no relation was dispatched.",
+            )
             results.append(entry)
             continue
 
         # A trustworthy pre-state is required before any non-idempotent dispatch.
         before = _rel_count(model, segs[idx[0]])
         if before is None:
-            entry.update(execution_state="rejected", effect_status="unknown",
-                         error="Pre-dispatch relation count unavailable; no mutation attempted.")
+            entry.update(
+                execution_state="rejected",
+                effect_status="unknown",
+                error="Pre-dispatch relation count unavailable; no mutation attempted.",
+            )
             results.append(entry)
             continue
 
@@ -456,10 +503,15 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         if add_relation is not None:
             try:
                 from sketch_relations import _dispatch_array
+
                 payload = _dispatch_array([segs[i] for i in idx])
             except Exception as exc:
-                entry.update(execution_state="rejected", effect_status="unknown",
-                             error="Entity array preparation failed before dispatch: %s" % str(exc)[:110])
+                entry.update(
+                    execution_state="rejected",
+                    effect_status="unknown",
+                    error="Entity array preparation failed before dispatch: %s"
+                    % str(exc)[:110],
+                )
                 results.append(entry)
                 continue
             via = "ISketchRelationManager::AddRelation"
@@ -484,20 +536,27 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         entry["execution_state"] = "uncertain" if uncertain else "returned"
         # A count increase is only count evidence, not complete geometric proof.
         count_increased = isinstance(after, int) and after > before
-        entry["relation_count_status"] = "unknown" if uncertain or not verify else (
-            "pass" if count_increased else "fail")
+        entry["relation_count_status"] = (
+            "unknown"
+            if uncertain or not verify
+            else ("pass" if count_increased else "fail")
+        )
         # Type, entities, geometry and persistence are not independently inspected.
-        entry["effect_status"] = "fail" if verify and not uncertain and not count_increased else "unknown"
+        entry["effect_status"] = (
+            "fail" if verify and not uncertain and not count_increased else "unknown"
+        )
         entry["applied"] = bool(verify and count_increased and not uncertain)
         if not entry["applied"] and "error" not in entry:
-            entry["error"] = ("Relation effect unavailable or not confirmed (%r -> %r); no replay."
-                              % (before, after))
+            entry["error"] = (
+                "Relation effect unavailable or not confirmed (%r -> %r); no replay."
+                % (before, after)
+            )
         if entry["applied"]:
             applied += 1
         results.append(entry)
         try:
             model.ClearSelection2(True)
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     st1 = _status(model) if verify else None
@@ -510,7 +569,9 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         "status_after": st1,
         "over_defined_guard": "★ 已完全定义时**拒加** ✓",
         "criterion": "★★ 每条 ⇒ `ISketchSegment::GetRelationsCount` **+1** ✓（不看返回码 ✗）",
-        "sources": ("★ 官方 Constrain_Sketch 例（逐条加 ✓）· ★ Slacker-LLC："
-                    "`AddRelation` + 关系数回读 ✓"),
+        "sources": (
+            "★ 官方 Constrain_Sketch 例（逐条加 ✓）· ★ Slacker-LLC："
+            "`AddRelation` + 关系数回读 ✓"
+        ),
         "results": results,
     }

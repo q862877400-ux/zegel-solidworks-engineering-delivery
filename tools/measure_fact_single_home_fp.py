@@ -25,7 +25,7 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-import check_fact_single_home as G                                  # noqa: E402
+import check_fact_single_home as G  # noqa: E402
 
 bodies = G.fact_bodies()
 print("★ 家里的事实正文: **%d** 条" % len(bodies))
@@ -37,22 +37,24 @@ if len(bodies) < 10:
 step = max(1, len(bodies) // 10)
 picks = [bodies[i] for i in range(0, min(len(bodies), step * 10), step)][:10]
 
+
 def judge(doc_text: str, monkey=None) -> bool:
     """★ 用门禁的真判据判一份"文档"会不会被报（★ 不碰磁盘，纯函数）。"""
     bodies_norm = [(n, G._norm(b)) for n, b in bodies]
     t = G._norm(doc_text)
     for n, b in bodies_norm:
-        probe = b[20:20 + G.MIN_LEN] if len(b) > 20 + G.MIN_LEN else b[:G.MIN_LEN]
+        probe = b[20 : 20 + G.MIN_LEN] if len(b) > 20 + G.MIN_LEN else b[: G.MIN_LEN]
         if len(probe) >= G.MIN_LEN and probe in t:
             return True
     return False
+
 
 tp = 0
 fp = 0
 rows = []
 #: ★ ① 10 例「真复述」⇒ 应当报（★ 与门禁内部判据**同一实现**：走归一后子串）
 for n, b in picks:
-    doc = "# 别的文档\n\n%s\n" % b                      #: ★ 逐字放进别的文档
+    doc = "# 别的文档\n\n%s\n" % b  #: ★ 逐字放进别的文档
     got = judge(doc)
     tp += 1 if got else 0
     rows.append(("真复述", n, "应当报", got))
@@ -61,7 +63,9 @@ for i, (n, b) in enumerate(picks, 1):
     if i % 3 == 0:
         doc = "# 别的文档\n\n★ 详见事实 **%s**（`docs/known-facts.md`）。\n" % n
     elif i % 3 == 1:
-        doc = "# 别的文档\n\n★ 该结论的依据见事实 **%s** 与 `docs/known-facts.md`。\n" % n
+        doc = (
+            "# 别的文档\n\n★ 该结论的依据见事实 **%s** 与 `docs/known-facts.md`。\n" % n
+        )
     else:
         doc = "# 别的文档\n\n★ 见事实 **%s**（家 = `docs/known-facts.md`）。\n" % n
     got = judge(doc)
@@ -73,8 +77,10 @@ print("★ 结果（20 例）:")
 print("   · ★ 真复述被报（**真阳性**）: **%d / 10**" % tp)
 print("   · ★★ 正当引用被报（**假阳性**）: **%d / 10**" % fp)
 rate = fp / 10.0
-print("   · ⇒ 误报率 **%.0f%%**（★ D-1 阈值: 假阳性 ≤1 ⇒ ★ **%s**）"
-      % (100 * rate, "达标 ✓" if fp <= 1 else "**未达标**"))
+print(
+    "   · ⇒ 误报率 **%.0f%%**（★ D-1 阈值: 假阳性 ≤1 ⇒ ★ **%s**）"
+    % (100 * rate, "达标 ✓" if fp <= 1 else "**未达标**")
+)
 
 L = [
     "# T5-1 的 D-1 合规实测：`check_fact_single_home` 的误报率",
@@ -98,7 +104,8 @@ L = [
     "| ★ 真阳性（真复述被报）| **%d / 10** |" % tp,
     "| ★★ 假阳性（正当引用被报）| **%d / 10** |" % fp,
     "| 误报率 | **%.0f%%** |" % (100 * rate),
-    "| ★ D-1 判定（假阳性 ≤1）| **%s** |" % ("达标 ✓" if fp <= 1 else "未达标 ⇒ 留复核桶"),
+    "| ★ D-1 判定（假阳性 ≤1）| **%s** |"
+    % ("达标 ✓" if fp <= 1 else "未达标 ⇒ 留复核桶"),
     "",
     "## 三 · ★ 本实测的「不算什么」",
     "",

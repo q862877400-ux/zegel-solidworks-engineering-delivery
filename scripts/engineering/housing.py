@@ -1,4 +1,5 @@
 """★ 阶段 7 · 箱体孔系 + 剖分面 + 最终 DoD（规格 322 的 M1~M4）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -8,7 +9,7 @@
 #           ：`assembly.py` 已有 `ToleranceChain`；`sw_hole_features.py` + `prove_hole_p
 #           attern.py` 已有孔系能力；`sw_mold.py` 已有分型/剖分能力；阶段 3 的 `recovery
 #           .py` 已有`ArtifactDigest`/`changed_after_revision`；阶段 4~6 已有三类产品的
-#           规划。★ 而**没有最终 DoD 清单、没有「证据非循环」检查、  没有四层区分、没有 
+#           规划。★ 而**没有最终 DoD 清单、没有「证据非循环」检查、  没有四层区分、没有
 #           9 案例汇总**。
 # 官方依据: ① 外部方案阶段 7 的验收 S7-A / S7-B（逐字）② 外部方案 §5 R7 ④ 逐字：「替换一
 #           份证据为『读取台账并断言 verified』、   移除必需图纸、替换旧版本产物、隐藏一
@@ -38,8 +39,13 @@ DOD_CODES = (PASS, FAIL, MISSING, CIRCULAR, OUT_OF_SCOPE)
 class HousingError(Exception):
     """★ 箱体/DoD 失败（★ 带封闭码）。"""
 
-    CODES = ("no-baseline", "axis-mismatch", "circular-evidence",
-             "missing-gate", "out-of-scope")
+    CODES = (
+        "no-baseline",
+        "axis-mismatch",
+        "circular-evidence",
+        "missing-gate",
+        "out-of-scope",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法箱体拒绝码：%r" % code
@@ -51,6 +57,7 @@ class HousingError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 # 二、共享接口控制关联零件（★ M1 —— ★ FR-001/002/003）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class AxisInterface:
@@ -84,16 +91,19 @@ class HousingModel:
     interfaces: dict = field(default_factory=dict)
 
     def set(self, name: str, value: float, unit: str = "mm") -> AxisInterface:
-        it = AxisInterface(name=name, value=float(value), unit=unit,
-                           dependents=AXIS_DEPENDENTS.get(name, ()))
+        it = AxisInterface(
+            name=name,
+            value=float(value),
+            unit=unit,
+            dependents=AXIS_DEPENDENTS.get(name, ()),
+        )
         self.interfaces[name] = it
         return it
 
     def require_baseline(self) -> None:
         """★★ **必须声明统一基准**（★ FR-001 的判据）。"""
         if not self.baseline:
-            raise HousingError("no-baseline",
-                               "★ 没有声明统一基准 ⇒ 上下箱体无共同依据")
+            raise HousingError("no-baseline", "★ 没有声明统一基准 ⇒ 上下箱体无共同依据")
 
 
 #: ★ 默认轴系（★ 冻结值 —— ★ 由「已确认轴系和轴承接口」给定）
@@ -112,8 +122,9 @@ def default_housing() -> HousingModel:
     return m
 
 
-def propagate_axis(name: str, old: float, new: float,
-                   all_parts: tuple | None = None) -> dict:
+def propagate_axis(
+    name: str, old: float, new: float, all_parts: tuple | None = None
+) -> dict:
     """★★ **轴系接口变更传播**（★ FR-002）。
 
     ★★ 判据（★ 两条都要，★ 与阶段 3 的失效闭包、阶段 5 的接口传播同族）：
@@ -121,20 +132,33 @@ def propagate_axis(name: str, old: float, new: float,
       · **不依赖的可复用**（★ 不是「全都标脏」）
     """
     if old == new:
-        return {"changed": False, "stale": [], "reusable": list(all_parts or ()),
-                "reason": "★ 值没变 ⇒ 无传播"}
+        return {
+            "changed": False,
+            "stale": [],
+            "reusable": list(all_parts or ()),
+            "reason": "★ 值没变 ⇒ 无传播",
+        }
     affected = set(AXIS_DEPENDENTS.get(name, ()))
-    parts = list(all_parts) if all_parts is not None else sorted(
-        {p for v in AXIS_DEPENDENTS.values() for p in v})
-    return {"changed": True, "interface": name, "old": old, "new": new,
-            "stale": [p for p in parts if p in affected],
-            "reusable": [p for p in parts if p not in affected],
-            "ok": bool(affected & set(parts))}
+    parts = (
+        list(all_parts)
+        if all_parts is not None
+        else sorted({p for v in AXIS_DEPENDENTS.values() for p in v})
+    )
+    return {
+        "changed": True,
+        "interface": name,
+        "old": old,
+        "new": new,
+        "stale": [p for p in parts if p in affected],
+        "reusable": [p for p in parts if p not in affected],
+        "ok": bool(affected & set(parts)),
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 三、孔系关系（★ M1 —— ★ FR-003/011）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class BoreRelation:
@@ -149,8 +173,10 @@ class BoreRelation:
 
     @property
     def distance_ok(self) -> bool:
-        return abs(self.center_distance_mm
-                   - self.expected_center_distance_mm) <= self.tolerance_mm
+        return (
+            abs(self.center_distance_mm - self.expected_center_distance_mm)
+            <= self.tolerance_mm
+        )
 
     @property
     def ok(self) -> bool:
@@ -167,10 +193,20 @@ def check_bore_relations(relations: list) -> dict:
       ★ 因为孔系的功能是**中心距与配合**，★ 孔径对了而中心距错了照样装不上。
     """
     bad = [r for r in relations if not r.ok]
-    return {"total": len(relations), "ok": not bad,
-            "bad": [{"axis": r.axis, "distance_ok": r.distance_ok,
-                     "fit": r.fit, "split": r.split} for r in bad],
-            "★": "★ 判据是**孔系关系**（中心距+配合+剖分），★ 不是各孔自身直径"}
+    return {
+        "total": len(relations),
+        "ok": not bad,
+        "bad": [
+            {
+                "axis": r.axis,
+                "distance_ok": r.distance_ok,
+                "fit": r.fit,
+                "split": r.split,
+            }
+            for r in bad
+        ],
+        "★": "★ 判据是**孔系关系**（中心距+配合+剖分），★ 不是各孔自身直径",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -178,8 +214,8 @@ def check_bore_relations(relations: list) -> dict:
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★ 证据种类
-EV_PRODUCT = "product"      #: ★ 产品级（真机/文件/回读）—— **可用**
-EV_LEDGER = "ledger"        #: ★ 台账级（★ `capabilities.yaml` 的 `level`）—— **不可用**
+EV_PRODUCT = "product"  #: ★ 产品级（真机/文件/回读）—— **可用**
+EV_LEDGER = "ledger"  #: ★ 台账级（★ `capabilities.yaml` 的 `level`）—— **不可用**
 EVIDENCE_KINDS = (EV_PRODUCT, EV_LEDGER)
 
 #: ★★ **禁止的循环证据形态**（★ 外部方案 R7 ④ 逐字）
@@ -229,17 +265,20 @@ def evidence_is_noncircular(evidences: list) -> dict:
             continue
         for pat in CIRCULAR_PATTERNS:
             if pat in blob:
-                circular.append({"path": e.path,
-                                 "why": "★ 循环形态：%r" % pat})
+                circular.append({"path": e.path, "why": "★ 循环形态：%r" % pat})
                 break
-    return {"ok": not circular, "total": len(evidences),
-            "circular": circular,
-            "★": "★ 产品级证据必须**外部可核**；★ 台账（自己写的）不算"}
+    return {
+        "ok": not circular,
+        "total": len(evidences),
+        "circular": circular,
+        "★": "★ 产品级证据必须**外部可核**；★ 台账（自己写的）不算",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 五、四层区分（★ M3 —— ★ FR-005/006）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class LayeredVerdict:
@@ -250,25 +289,32 @@ class LayeredVerdict:
       ⇒ ★★ 把四件事压成**一个 bool** 会让「规划出来了」冒充「工程通过了」。
     """
 
-    planned: bool = False            #: ★ 规划成功
-    executed: bool = False           #: ★ 执行成功
+    planned: bool = False  #: ★ 规划成功
+    executed: bool = False  #: ★ 执行成功
     engineering_passed: bool = False  #: ★ 工程通过
-    human_approved: bool = False     #: ★ 人工批准
+    human_approved: bool = False  #: ★ 人工批准
     human_takeovers: list = field(default_factory=list)
 
     @property
     def all_four(self) -> bool:
         """★★ **四层全过**才算真交付（★ 不是"跑完了"）。"""
-        return (self.planned and self.executed and self.engineering_passed
-                and self.human_approved)
+        return (
+            self.planned
+            and self.executed
+            and self.engineering_passed
+            and self.human_approved
+        )
 
     def to_dict(self) -> dict:
-        return {"planned": self.planned, "executed": self.executed,
-                "engineering_passed": self.engineering_passed,
-                "human_approved": self.human_approved,
-                "human_takeovers": list(self.human_takeovers),
-                "all_four": self.all_four,
-                "★": "★ 四层分开报 —— ★ 不许用一个 bool 压过去"}
+        return {
+            "planned": self.planned,
+            "executed": self.executed,
+            "engineering_passed": self.engineering_passed,
+            "human_approved": self.human_approved,
+            "human_takeovers": list(self.human_takeovers),
+            "all_four": self.all_four,
+            "★": "★ 四层分开报 —— ★ 不许用一个 bool 压过去",
+        }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -280,11 +326,21 @@ PRODUCTS = ("vise", "linkage", "housing")
 #: ★★ **每类 3 个参数变体** ⇒ **9 个真机案例**
 VARIANTS = (1, 2, 3)
 #: ★★ **必需的门禁**（★ FR-009：缺一 ⇒ 不完整）
-REQUIRED_GATES = ("py_syntax", "unit_count", "release_check", "corpus_315",
-                  "stage3_recovery", "stage4_corpus")
+REQUIRED_GATES = (
+    "py_syntax",
+    "unit_count",
+    "release_check",
+    "corpus_315",
+    "stage3_recovery",
+    "stage4_corpus",
+)
 #: ★★ **越界声明的形态**（★ FR-010）
-OUT_OF_SCOPE_CLAIMS = ("完整减速器已设计", "整机已设计", "全套已交付",
-                       "通用机构综合已支持")
+OUT_OF_SCOPE_CLAIMS = (
+    "完整减速器已设计",
+    "整机已设计",
+    "全套已交付",
+    "通用机构综合已支持",
+)
 
 
 @dataclass
@@ -360,7 +416,9 @@ class FinalDod:
         out["evidence_ok"] = ev["ok"]
 
         #: ⑥ 无越界声明
-        bad_claims = [c for c in self.claims if any(o in c for o in OUT_OF_SCOPE_CLAIMS)]
+        bad_claims = [
+            c for c in self.claims if any(o in c for o in OUT_OF_SCOPE_CLAIMS)
+        ]
         out["out_of_scope"] = bad_claims
         out["claims_ok"] = not bad_claims
 
@@ -371,12 +429,19 @@ class FinalDod:
         #: ⑧ 人工接管**可见**（★ FR-006）
         takeovers = [c.key for c in self.cases if c.layers.human_takeovers]
         out["human_takeovers"] = takeovers
-        out["takeovers_visible"] = True   #: ★ 我们**如实列出**了
+        out["takeovers_visible"] = True  #: ★ 我们**如实列出**了
 
         out["ok"] = bool(
-            out["cases_ok"] and out["obligations_ok"] and out["failures_ok"]
-            and out["gates_ok"] and out["evidence_ok"] and out["claims_ok"]
-            and out["all_four_ok"])
-        out["★"] = ("★ 六条：9 案例齐 + 9/9 义务 + 0 failed + 门禁齐 + "
-                    "证据非循环 + 无越界声明（★ 且四层分开报）")
+            out["cases_ok"]
+            and out["obligations_ok"]
+            and out["failures_ok"]
+            and out["gates_ok"]
+            and out["evidence_ok"]
+            and out["claims_ok"]
+            and out["all_four_ok"]
+        )
+        out["★"] = (
+            "★ 六条：9 案例齐 + 9/9 义务 + 0 failed + 门禁齐 + "
+            "证据非循环 + 无越界声明（★ 且四层分开报）"
+        )
         return out

@@ -1,4 +1,5 @@
 """★ 批次①·续：把 221 条「该吸收」的事实**按主题聚类**，找出与 L3 相关的。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -60,9 +61,10 @@ def main() -> int:
     print()
     #: ★★ 落盘逐主题清单
     out = ROOT / "output" / "known-facts-topics.json"
-    out.write_text(json.dumps({k: v for k, v in grouped.items()},
-                              ensure_ascii=False, indent=1),
-                   encoding="utf-8")
+    out.write_text(
+        json.dumps({k: v for k, v in grouped.items()}, ensure_ascii=False, indent=1),
+        encoding="utf-8",
+    )
     print("★ ⇒ %s" % out)
     return 0
 

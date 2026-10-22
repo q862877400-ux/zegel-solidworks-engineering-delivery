@@ -48,6 +48,7 @@ r"""@brief 门禁：代码里写的**官方枚举值**，必须与**出厂反射
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -94,7 +95,7 @@ SWAPI_ENUMS = Path(os.environ.get("DSH_SWAPI_ENUMS", r"C:\swapi\enums"))
 #:   的 **10 行**，而**新值全部与反射一致、0 处新冲突**）✓
 CODE_ROW = re.compile(
     r'^\s*"(?P<key>[A-Za-z0-9_]+)"\s*:\s*(?P<value>-?\d+)\s*,\s*#\s*'
-    r'(?P<enum>[A-Za-z_]\w*)?\.?(?P<member>sw\w+)\b.*$'
+    r"(?P<enum>[A-Za-z_]\w*)?\.?(?P<member>sw\w+)\b.*$"
 )
 #: 转储里的一行：`    swFmChamfer = 0`（缩进 4 空格，在 `## <Enum>` 之下）
 #: ★★ 2026-10-09（spec 224 / FR-001）：成员名的字符集从 `sw\w+` **放宽到** `[A-Za-z_]\w*
@@ -111,7 +112,7 @@ CODE_ROW = re.compile(
 #:   ⇒ 旧正则把**整节读成空** ⇒ 门禁对这两条枚举一律回「查不到」✗
 #:   ★（与 223 的「边界外的表静默不报」同族：这次漏在**转储解析**侧。）
 #:   ★★ 实测影响（已先量后改）：成员 **10588 → 10664（+76）**，而
-#: `ok` 175 不变 · 值不符 0 不变 · 查不到 2 不变 · 两源冲突 3 不变 ⇒ **不制造任何新红** 
+#: `ok` 175 不变 · 值不符 0 不变 · 查不到 2 不变 · 两源冲突 3 不变 ⇒ **不制造任何新红**
 #: ✓
 DUMP_ROW = re.compile(r"^\s{2,}(?P<member>[A-Za-z_]\w*)\s*=\s*(?P<value>-?\d+)\s*$")
 DUMP_HEAD = re.compile(r"^##\s+(?P<enum>\w+)\s*$")
@@ -168,11 +169,21 @@ def parse_code() -> list:
     for p in sorted((ROOT / "scripts").rglob("*.py")):
         if "__pycache__" in p.parts:
             continue
-        for i, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        for i, line in enumerate(
+            p.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
             m = CODE_ROW.match(line)
             if m:
-                out.append((p.name, i, m.group("key"), int(m.group("value")),
-                            m.group("member"), m.group("enum")))
+                out.append(
+                    (
+                        p.name,
+                        i,
+                        m.group("key"),
+                        int(m.group("value")),
+                        m.group("member"),
+                        m.group("enum"),
+                    )
+                )
     return out
 
 
@@ -229,7 +240,8 @@ def parse_code() -> list:
 #:     `ok 175` · 查不到 2 · 两源冲突 3 · 覆盖清单 189/101/33/68 **四读数全不变** ✓
 CLAIM = re.compile(
     r"官方|swapi|sws?[A-Z]\w+|反射|转储|CHM|_raw"
-    r"|本机|本地|实测|真机|观测|\.dll|swconst|手册|帮助|文档|摘自|取自")
+    r"|本机|本地|实测|真机|观测|\.dll|swconst|手册|帮助|文档|摘自|取自"
+)
 #: 未覆盖明细的**打印上限**（超出给「另有 N 张未列出」，免得刷屏）。
 INVENTORY_LIMIT = 20
 
@@ -294,7 +306,7 @@ def find_uncovered_claimed_tables() -> list:
             continue
         src = (ROOT / "scripts" / fname).read_text(encoding="utf-8", errors="replace")
         lines = src.splitlines()
-        window = "\n".join(lines[max(0, lo - 15): hi])
+        window = "\n".join(lines[max(0, lo - 15) : hi])
         if CLAIM.search(window):
             out.append((fname, lo, name, n))
     return out
@@ -306,14 +318,15 @@ def find_uncovered_claimed_tables() -> list:
 #: 」的
 #: 模块级整数表共 **409 条**，其中**键就是官方成员名**的只有 **27 条**
 #: （26 条在 `ANNOTATION_TYPE_BITS` + 1 条在 `DIALOG_SUPPRESSORS`）⇒
-#: ★ **「逐行补 `# swXxx`」对 42 张表是错的解法** —— 它们的键是**本地语义键**（`"edge": 
+#: ★ **「逐行补 `# swXxx`」对 42 张表是错的解法** —— 它们的键是**本地语义键**（`"edge":
 #: 1`），
 #: 官方成员名**不在键里**；硬补只能靠人把「本地键 ↔ 官方成员」一一对上，
 #: 成本极高且极易写错（★ 223 抓的「冒官方名」正是这类）。
 #: ⇒ 它们真正的出处是**表级**的：表上方那行注释写着 `#: ★ 官方 swViewEntityType_e`。
 #: ★ 本声明形态就是**把那行注释形式化**，不是发明新概念。
 DISPOSITION = re.compile(
-    r"#:\s*enum-gate:\s*(?P<code>[a-z][a-z-]*)(?:\s+(?P<arg>\S.*?))?\s*$")
+    r"#:\s*enum-gate:\s*(?P<code>[a-z][a-z-]*)(?:\s+(?P<arg>\S.*?))?\s*$"
+)
 #: 封闭词表。**认不出的 code 一律判红** —— 否则声明就是装饰品（223 判过的「空判据」同族
 #: ）。
 DISPOSITION_CODES = ("enum", "member", "not-enum")
@@ -410,35 +423,66 @@ def check_dispositions(dispositions: dict, sets=None) -> list:
     for (fname, lo), (code, arg, line) in sorted(dispositions.items()):
         name = table_names.get((fname, lo), "?")
         if code not in DISPOSITION_CODES:
-            problems.append((fname, line, name,
-                             "认不出的 code %r（词表 %s）" % (code, list(DISPOSITION_CODES))))
+            problems.append(
+                (
+                    fname,
+                    line,
+                    name,
+                    "认不出的 code %r（词表 %s）" % (code, list(DISPOSITION_CODES)),
+                )
+            )
             continue
         if not arg:
             problems.append((fname, line, name, "`%s` 缺参数" % code))
             continue
         if code == "not-enum":
             if arg not in NOT_ENUM_SUBS:
-                problems.append((fname, line, name,
-                                 "`not-enum %s` 的子类不在封闭词表 %s 里"
-                                 % (arg, list(NOT_ENUM_SUBS))))
+                problems.append(
+                    (
+                        fname,
+                        line,
+                        name,
+                        "`not-enum %s` 的子类不在封闭词表 %s 里"
+                        % (arg, list(NOT_ENUM_SUBS)),
+                    )
+                )
             continue
         if code == "member":
             ok = member_page_exists(arg)
             if ok is False:
-                problems.append((fname, line, name,
-                                 "`member %s` 在 %s\\*\\ 下**没有官方页**" % (arg, SWAPI_TYPES)))
+                problems.append(
+                    (
+                        fname,
+                        line,
+                        name,
+                        "`member %s` 在 %s\\*\\ 下**没有官方页**" % (arg, SWAPI_TYPES),
+                    )
+                )
             continue
         #: code == "enum"
         table_sets = sets if sets is not None else enum_value_sets()
         if arg not in table_sets:
-            problems.append((fname, line, name,
-                             "`enum %s` 在出厂反射转储里**解析不到**（枚举名错，或转储解析漏了）" % arg))
+            problems.append(
+                (
+                    fname,
+                    line,
+                    name,
+                    "`enum %s` 在出厂反射转储里**解析不到**（枚举名错，或转储解析漏了）"
+                    % arg,
+                )
+            )
             continue
         bad = sorted({v for v in table_values(fname, lo) if v not in table_sets[arg]})
         if bad:
-            problems.append((fname, line, name,
-                             "`enum %s` 但值 %s 不在该枚举取值集 %s 里"
-                             % (arg, bad, sorted(table_sets[arg]))))
+            problems.append(
+                (
+                    fname,
+                    line,
+                    name,
+                    "`enum %s` 但值 %s 不在该枚举取值集 %s 里"
+                    % (arg, bad, sorted(table_sets[arg])),
+                )
+            )
     return problems
 
 
@@ -491,8 +535,10 @@ def main() -> int:
 
     ref, owner, origin = parse_dumps(DUMPS)
     rows = parse_code()
-    print("枚举值门禁 · 出厂反射转储 **%d** 份：%s" % (len(present),
-          ", ".join(Path(p).name for p in present)))
+    print(
+        "枚举值门禁 · 出厂反射转储 **%d** 份：%s"
+        % (len(present), ", ".join(Path(p).name for p in present))
+    )
     print("  合并后共 **%d** 个成员" % len(ref))
     print("  代码里「值 + 官方成员名」的行：**%d** 条" % len(rows))
 
@@ -503,13 +549,18 @@ def main() -> int:
     for fname, lineno, *_rest in rows:
         covered_by_file.setdefault(fname, []).append(lineno)
     covered_n = sum(
-        1 for fname, lo, hi, _n, _c in tables
-        if any(lo <= x <= hi for x in covered_by_file.get(fname, [])))
+        1
+        for fname, lo, hi, _n, _c in tables
+        if any(lo <= x <= hi for x in covered_by_file.get(fname, []))
+    )
     blind = find_uncovered_claimed_tables()
-    scanned_files = len([p for p in (ROOT / "scripts").rglob("*.py")
-                         if "__pycache__" not in p.parts])
-    print("  覆盖清单 · 扫描 **%d** 个文件 · 模块级整数表 **%d** 张 · 已覆盖 **%d** · 未覆盖 **%d**"
-          % (scanned_files, len(tables), covered_n, len(tables) - covered_n))
+    scanned_files = len(
+        [p for p in (ROOT / "scripts").rglob("*.py") if "__pycache__" not in p.parts]
+    )
+    print(
+        "  覆盖清单 · 扫描 **%d** 个文件 · 模块级整数表 **%d** 张 · 已覆盖 **%d** · 未覆盖 **%d**"
+        % (scanned_files, len(tables), covered_n, len(tables) - covered_n)
+    )
 
     #: ★★ spec 224 / FR-003：把「盲区」拆成**已表态 / 未表态**，并让**未表态判红**。
     #:   ★ 223 的定位是「要的是可见，不是判罪」—— 那个定位在 223 已经**消费完**：
@@ -521,7 +572,10 @@ def main() -> int:
     dispositions = parse_dispositions()
     declared = [t for t in blind if (t[0], t[1]) in dispositions]
     undeclared = [t for t in blind if (t[0], t[1]) not in dispositions]
-    print("  其中**自称官方却无 `# swXxx` 标注**（★ 门禁盲区）：**%d** 张" % len(undeclared))
+    print(
+        "  其中**自称官方却无 `# swXxx` 标注**（★ 门禁盲区）：**%d** 张"
+        % len(undeclared)
+    )
     for fname, lo, name, n in undeclared[:INVENTORY_LIMIT]:
         print("     未覆盖：%s:%d %s（%d 项）" % (fname, lo, name, n))
     if len(undeclared) > INVENTORY_LIMIT:
@@ -529,8 +583,10 @@ def main() -> int:
     print("  表级出处声明（`#: enum-gate: …`）· 已表态 **%d** 张" % len(declared))
     for fname, lo, name, _n in declared[:INVENTORY_LIMIT]:
         code, arg, line = dispositions[(fname, lo)]
-        print("     已表态：%s:%d %s → %s %s（声明在第 %d 行）"
-              % (fname, lo, name, code, arg, line))
+        print(
+            "     已表态：%s:%d %s → %s %s（声明在第 %d 行）"
+            % (fname, lo, name, code, arg, line)
+        )
     if len(declared) > INVENTORY_LIMIT:
         print("     …（另有 %d 张未列出）" % (len(declared) - INVENTORY_LIMIT))
     print()
@@ -544,24 +600,36 @@ def main() -> int:
         bad += 1
         print("[FAIL] **%d 条的值与出厂反射对不上**：" % len(mismatched))
         for fname, lineno, key, value, member, want in mismatched:
-            print("         %s:%d  %r = %d  ✗  反射里 %s = %d"
-                  % (fname, lineno, key, value, member, want))
+            print(
+                "         %s:%d  %r = %d  ✗  反射里 %s = %d"
+                % (fname, lineno, key, value, member, want)
+            )
         print()
         print("  修法：**按反射改值**（铁律 4：冲突/不一致以出厂类型库为准）。")
         print("        ★ 这类错**所有旧门禁都抓不到**（它们只查名字，不查值）——")
         print("          这正是 023 / 024 连着踩的那个缺口。")
     if unknown:
-        print("[INFO] **%d 条在转储里查不到**（铁律 5：不猜，列出待人工核）：" % len(unknown))
+        print(
+            "[INFO] **%d 条在转储里查不到**（铁律 5：不猜，列出待人工核）："
+            % len(unknown)
+        )
         for fname, lineno, key, value, member in unknown[:12]:
-            print("         %s:%d  %r = %d  → %s（转储里没有）" % (fname, lineno, key, value, member))
+            print(
+                "         %s:%d  %r = %d  → %s（转储里没有）"
+                % (fname, lineno, key, value, member)
+            )
         if len(unknown) > 12:
             print("         …（还有 %d 条）" % (len(unknown) - 12))
         print()
     if conflicts:
-        print("[INFO] **%d 处两源冲突**（我们按铁律 4 取了反射的值）：" % len(conflicts))
+        print(
+            "[INFO] **%d 处两源冲突**（我们按铁律 4 取了反射的值）：" % len(conflicts)
+        )
         for fname, lineno, member, rv, sv, en in conflicts:
-            print("         %s:%d  %s —— 反射 %d · swapi 的 md %d（枚举 %s）"
-                  % (fname, lineno, member, rv, sv, en))
+            print(
+                "         %s:%d  %s —— 反射 %d · swapi 的 md %d（枚举 %s）"
+                % (fname, lineno, member, rv, sv, en)
+            )
         print("         ⚠ 冲突**不判失败**（铁律 4 已定：取反射），但要让人看得见。")
         print()
 
@@ -578,24 +646,39 @@ def main() -> int:
     #: ★★ spec 224 / FR-003：**未表态即红**（本轮新增的判罪 —— 见 main() 上方的理由）。
     if undeclared:
         bad += 1
-        print("[FAIL] **%d 张未表态**（自称官方却无 `# swXxx` 覆盖、也无表级出处声明）：" % len(undeclared))
+        print(
+            "[FAIL] **%d 张未表态**（自称官方却无 `# swXxx` 覆盖、也无表级出处声明）："
+            % len(undeclared)
+        )
         for fname, lo, name, n in undeclared[:INVENTORY_LIMIT]:
             print("         %s:%d %s（%d 项）" % (fname, lo, name, n))
         if len(undeclared) > INVENTORY_LIMIT:
-            print("         …（另有 %d 张未列出）" % (len(undeclared) - INVENTORY_LIMIT))
-        print("  修法：在该表**起始行正上方**补一行 `#: enum-gate: <code> <arg>`（spec 224 FR-002）：")
-        print("        · `enum <swXxx_e>`      —— 值是命名官方枚举的取值（门禁校验值集 ⊆ 该枚举）")
-        print("        · `member <MemberName>` —— 值来自该官方成员的页内文档（门禁校验该成员有官方页）")
-        print("        · `not-enum <%s>` —— 不是官方枚举值"
-              % "|".join(NOT_ENUM_SUBS))
+            print(
+                "         …（另有 %d 张未列出）" % (len(undeclared) - INVENTORY_LIMIT)
+            )
+        print(
+            "  修法：在该表**起始行正上方**补一行 `#: enum-gate: <code> <arg>`（spec 224 FR-002）："
+        )
+        print(
+            "        · `enum <swXxx_e>`      —— 值是命名官方枚举的取值（门禁校验值集 ⊆ 该枚举）"
+        )
+        print(
+            "        · `member <MemberName>` —— 值来自该官方成员的页内文档（门禁校验该成员有官方页）"
+        )
+        print("        · `not-enum <%s>` —— 不是官方枚举值" % "|".join(NOT_ENUM_SUBS))
         print()
 
     if bad:
         return 1
-    print("[PASS] **%d** 条有据可查的值**全部与出厂反射一致**"
-          "（另有 %d 条查不到、%d 处两源冲突，均已列出）"
-          % (ok, len(unknown), len(conflicts)))
-    print("[PASS] 表级出处声明 **%d** 张**全部可核**，盲区**未表态 = 0**" % len(dispositions))
+    print(
+        "[PASS] **%d** 条有据可查的值**全部与出厂反射一致**"
+        "（另有 %d 条查不到、%d 处两源冲突，均已列出）"
+        % (ok, len(unknown), len(conflicts))
+    )
+    print(
+        "[PASS] 表级出处声明 **%d** 张**全部可核**，盲区**未表态 = 0**"
+        % len(dispositions)
+    )
     return 0
 
 

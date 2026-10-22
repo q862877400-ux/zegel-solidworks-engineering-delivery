@@ -35,8 +35,14 @@ import sys
 from ctypes import wintypes
 from typing import Any
 
-__all__ = ["list_family_windows", "solidworks_busy", "solidworks_stuck",
-           "solver_processes", "wait_until_idle", "BUSY_BLOCKED_CODE"]
+__all__ = [
+    "list_family_windows",
+    "solidworks_busy",
+    "solidworks_stuck",
+    "solver_processes",
+    "wait_until_idle",
+    "BUSY_BLOCKED_CODE",
+]
 
 #: ★ 调用方据此判"被忙挡住了"（★ 与"调用失败"分开 —— ★ 事实 517：别把两类失败混成一种）
 BUSY_BLOCKED_CODE = "SOLIDWORKS_BUSY"
@@ -52,9 +58,18 @@ BUSY_BLOCKED_CODE = "SOLIDWORKS_BUSY"
 #:     正在跑的正常任务"）⇒ ★★ **必须加反证**：★ **真有求解进程在 ⇒ 是在算**；
 #:     ★ **没有求解进程而有鬼窗 ⇒ 是卡住** ✓（★ 两次真机卡死的现场都是后者：
 #:     子进程 CPU **0.10 s**、`cwbcbfmesh` **不存在**、SW 却在烧 1 核）
-SOLVER_PROCESS_NAMES = ("cwbcbfmesh.exe", "cwmeshproc.exe", "cwanalysisproc.exe",
-                        "star.exe", "dstar.exe", "nstar.exe", "hstar.exe",
-                        "fat.exe", "stres.exe", "ghs3d.exe")
+SOLVER_PROCESS_NAMES = (
+    "cwbcbfmesh.exe",
+    "cwmeshproc.exe",
+    "cwanalysisproc.exe",
+    "star.exe",
+    "dstar.exe",
+    "nstar.exe",
+    "hstar.exe",
+    "fat.exe",
+    "stres.exe",
+    "ghs3d.exe",
+)
 
 #: ★ 忙的判据（★ 与类名无关的"业务判据"）
 _BUSY_CLASSES = ("OperationStatusWindow",)
@@ -62,7 +77,7 @@ _BUSY_TITLE_MARKERS = ("not responding", "无响应", "没有响应")
 
 #: ★ SolidWorks **家族**的 exe 路径特征（★ 照事实 296 的两条；★ 不看类名）
 _FAMILY_PATH_MARKERS = ("solidworks corp", "solidworks shared")
-_FAMILY_EXE_PREFIXES = ("sld", "sw", "cw")          # ★ `cwbcbfmesh` / `cwmeshproc` 也在这族里
+_FAMILY_EXE_PREFIXES = ("sld", "sw", "cw")  # ★ `cwbcbfmesh` / `cwmeshproc` 也在这族里
 #: ★★ **应用本体**的 exe 名 —— ★ 只有它算"SolidWorks 在跑"
 #:   ⚠ ★ 只读实测教训：★ 用"**任意家族窗口**"当在场判据**太宽** ——
 #:     本机当时 `sldBgDwld.exe`（**安装管理器的后台下载器**）就有 5 个窗口
@@ -80,7 +95,7 @@ def _enum_windows() -> list[dict[str, Any]]:
     kernel32 = ctypes.windll.kernel32
     out: list[dict[str, Any]] = []
 
-    proc_query = 0x1000                                # PROCESS_QUERY_LIMITED_INFORMATION
+    proc_query = 0x1000  # PROCESS_QUERY_LIMITED_INFORMATION
     CB = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
 
     def _cb(hwnd, _lparam):
@@ -100,13 +115,21 @@ def _enum_windows() -> list[dict[str, Any]]:
             try:
                 path_buf = ctypes.create_unicode_buffer(1024)
                 size = wintypes.DWORD(len(path_buf))
-                if kernel32.QueryFullProcessImageNameW(h, 0, path_buf, ctypes.byref(size)):
+                if kernel32.QueryFullProcessImageNameW(
+                    h, 0, path_buf, ctypes.byref(size)
+                ):
                     exe = path_buf.value
             finally:
                 kernel32.CloseHandle(h)
         if title or cls_buf.value:
-            out.append({"pid": int(pid.value), "title": title,
-                        "cls": cls_buf.value, "exe": exe})
+            out.append(
+                {
+                    "pid": int(pid.value),
+                    "title": title,
+                    "cls": cls_buf.value,
+                    "exe": exe,
+                }
+            )
         return True
 
     user32.EnumWindows(CB(_cb), 0)
@@ -141,11 +164,18 @@ def solver_processes() -> list[str]:
     k32 = ctypes.windll.kernel32
 
     class PROCESSENTRY32W(ctypes.Structure):
-        _fields_ = [("dwSize", wintypes.DWORD), ("cntUsage", wintypes.DWORD),
-                    ("th32ProcessID", wintypes.DWORD), ("th32DefaultHeapID", ctypes.c_void_p),
-                    ("th32ModuleID", wintypes.DWORD), ("cntThreads", wintypes.DWORD),
-                    ("th32ParentProcessID", wintypes.DWORD), ("pcPriClassBase", ctypes.c_long),
-                    ("dwFlags", wintypes.DWORD), ("szExeFile", wintypes.WCHAR * MAX_PATH)]
+        _fields_ = [
+            ("dwSize", wintypes.DWORD),
+            ("cntUsage", wintypes.DWORD),
+            ("th32ProcessID", wintypes.DWORD),
+            ("th32DefaultHeapID", ctypes.c_void_p),
+            ("th32ModuleID", wintypes.DWORD),
+            ("cntThreads", wintypes.DWORD),
+            ("th32ParentProcessID", wintypes.DWORD),
+            ("pcPriClassBase", ctypes.c_long),
+            ("dwFlags", wintypes.DWORD),
+            ("szExeFile", wintypes.WCHAR * MAX_PATH),
+        ]
 
     names: list[str] = []
     snap = k32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
@@ -158,15 +188,16 @@ def solver_processes() -> list[str]:
         while ok:
             names.append(str(entry.szExeFile).lower())
             ok = k32.Process32NextW(snap, ctypes.byref(entry))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     finally:
         k32.CloseHandle(snap)
     return names
 
 
-def solidworks_stuck(windows: list[dict[str, Any]] | None = None,
-                     processes: list[str] | None = None) -> dict[str, Any]:
+def solidworks_stuck(
+    windows: list[dict[str, Any]] | None = None, processes: list[str] | None = None
+) -> dict[str, Any]:
     """★★★ **"SW 不响应"到底是"真在算"还是"真卡住"** ⇒ `{stuck, busy, reasons, solver_alive}`。
 
     ★★★★ 为什么必须分开（★ 这是本模块存在的第二半理由）：
@@ -186,23 +217,33 @@ def solidworks_stuck(windows: list[dict[str, Any]] | None = None,
     :returns: `{stuck, busy, solver_alive, solver_names, reasons, evidence}`
     """
     b = solidworks_busy(windows)
-    procs = solver_processes() if processes is None else [str(p).lower() for p in processes]
+    procs = (
+        solver_processes() if processes is None else [str(p).lower() for p in processes]
+    )
     alive = sorted({p for p in procs if p in SOLVER_PROCESS_NAMES})
-    out: dict[str, Any] = {"busy": bool(b.get("busy")), "solver_alive": bool(alive),
-                           "solver_names": alive, "stuck": False, "reasons": [],
-                           "evidence": b.get("evidence") or [],
-                           "★": "★ 有内核进程 ⇒ **在算**；★ 不响应且**无**内核进程 ⇒ **卡住**"}
+    out: dict[str, Any] = {
+        "busy": bool(b.get("busy")),
+        "solver_alive": bool(alive),
+        "solver_names": alive,
+        "stuck": False,
+        "reasons": [],
+        "evidence": b.get("evidence") or [],
+        "★": "★ 有内核进程 ⇒ **在算**；★ 不响应且**无**内核进程 ⇒ **卡住**",
+    }
     if not b.get("busy"):
         return out
     if alive:
-        out["reasons"].append("★ 有求解/网格内核进程在跑（%s）⇒ **判定为「真在算」**，"
-                              "★ 不当作卡住（★ 免得误杀正常求解）" % ", ".join(alive))
+        out["reasons"].append(
+            "★ 有求解/网格内核进程在跑（%s）⇒ **判定为「真在算」**，"
+            "★ 不当作卡住（★ 免得误杀正常求解）" % ", ".join(alive)
+        )
         return out
     out["stuck"] = True
     out["reasons"] = list(b.get("reasons") or []) + [
         "★★ SolidWorks 不响应，**且没有任何求解/网格内核进程**（%s 一个都不在）"
         "⇒ **判定为「卡住」**（★ 真机两次现场都是这一种）"
-        % "/".join(SOLVER_PROCESS_NAMES[:4])]
+        % "/".join(SOLVER_PROCESS_NAMES[:4])
+    ]
     return out
 
 
@@ -229,13 +270,23 @@ def solidworks_busy(windows: list[dict[str, Any]] | None = None) -> dict[str, An
         #: 儿窗）
         for w in wins:
             if str(w.get("cls") or "") in _BUSY_CLASSES:
-                stray.append({"pid": w.get("pid"), "cls": w.get("cls"),
-                              "title": str(w.get("title") or "")[:60],
-                              "exe": str(w.get("exe") or "")[:80]})
-        return {"busy": False, "reasons": [], "evidence": [],
-                "app_windows": 0, "windows_scanned": len(wins),
-                "★_孤儿进度窗": stray,
-                "★": "★ SolidWorks 应用本体不在 ⇒ 不判忙（★ 孤儿 `进度` 窗归 Explorer，不作数）"}
+                stray.append(
+                    {
+                        "pid": w.get("pid"),
+                        "cls": w.get("cls"),
+                        "title": str(w.get("title") or "")[:60],
+                        "exe": str(w.get("exe") or "")[:80],
+                    }
+                )
+        return {
+            "busy": False,
+            "reasons": [],
+            "evidence": [],
+            "app_windows": 0,
+            "windows_scanned": len(wins),
+            "★_孤儿进度窗": stray,
+            "★": "★ SolidWorks 应用本体不在 ⇒ 不判忙（★ 孤儿 `进度` 窗归 Explorer，不作数）",
+        }
     for w in wins:
         cls = str(w.get("cls") or "")
         title = str(w.get("title") or "")
@@ -252,35 +303,59 @@ def solidworks_busy(windows: list[dict[str, Any]] | None = None) -> dict[str, An
         #:     那才是**可归属**的信号 ✓
         if cls in _BUSY_CLASSES:
             if _is_family(exe):
-                reasons.append("有**家族进程的进度状态窗**（%s：%r）⇒ SolidWorks 正在跑一项操作"
-                               % (cls, title[:40]))
-                evidence.append({"pid": w.get("pid"), "cls": cls, "title": title[:80],
-                                 "exe": exe.rsplit("\\", 1)[-1]})
+                reasons.append(
+                    "有**家族进程的进度状态窗**（%s：%r）⇒ SolidWorks 正在跑一项操作"
+                    % (cls, title[:40])
+                )
+                evidence.append(
+                    {
+                        "pid": w.get("pid"),
+                        "cls": cls,
+                        "title": title[:80],
+                        "exe": exe.rsplit("\\", 1)[-1],
+                    }
+                )
             else:
-                stray.append({"pid": w.get("pid"), "cls": cls, "title": title[:60],
-                              "exe": exe[:80],
-                              "why": "★ 进度窗**不属 SolidWorks 家族**（多为 shell/残留）⇒ 不作数"})
+                stray.append(
+                    {
+                        "pid": w.get("pid"),
+                        "cls": cls,
+                        "title": title[:60],
+                        "exe": exe[:80],
+                        "why": "★ 进度窗**不属 SolidWorks 家族**（多为 shell/残留）⇒ 不作数",
+                    }
+                )
             continue
         #: ② 不响应鬼窗（★ 主线程被占住时 Windows 挂的那个壳 —— ★ **可归属**的那条主信号
         #: ）
-        if "ghostwindow" in cls.lower() and any(m in low_title for m in _BUSY_TITLE_MARKERS):
+        if "ghostwindow" in cls.lower() and any(
+            m in low_title for m in _BUSY_TITLE_MARKERS
+        ):
             reasons.append("有**不响应鬼窗**（%r）⇒ 主线程被占住" % title[:40])
             evidence.append({"pid": w.get("pid"), "cls": cls, "title": title[:80]})
             continue
         #: ③ ★ 兜底：家族进程 + 标题里明写"不响应"（★ 免得鬼窗类名变了就瞎）
         if _is_family(exe) and any(m in low_title for m in _BUSY_TITLE_MARKERS):
-            reasons.append("家族进程（%s）的窗口标题写着**不响应**：%r"
-                           % (exe.rsplit("\\", 1)[-1], title[:40]))
+            reasons.append(
+                "家族进程（%s）的窗口标题写着**不响应**：%r"
+                % (exe.rsplit("\\", 1)[-1], title[:40])
+            )
             evidence.append({"pid": w.get("pid"), "cls": cls, "title": title[:80]})
-    return {"busy": bool(reasons), "reasons": reasons, "evidence": evidence,
-            "app_windows": len(app_windows), "windows_scanned": len(wins),
-            "★_不可归属的进度窗": stray,
-            "★": "★ 只判**忙**（在算）；★ 弹窗（等你点）由 `tools/sw_guard.py` 的哨兵管；"
-                 "★ **进度窗必须可归属给家族**才作数（★ 否则会栽在 shell 残留窗上）"}
+    return {
+        "busy": bool(reasons),
+        "reasons": reasons,
+        "evidence": evidence,
+        "app_windows": len(app_windows),
+        "windows_scanned": len(wins),
+        "★_不可归属的进度窗": stray,
+        "★": "★ 只判**忙**（在算）；★ 弹窗（等你点）由 `tools/sw_guard.py` 的哨兵管；"
+        "★ **进度窗必须可归属给家族**才作数（★ 否则会栽在 shell 残留窗上）",
+    }
 
 
-def wait_until_idle(timeout: float = 60.0, interval: float = 3.0,
-                    *, sleeper=None) -> dict[str, Any]:
+def wait_until_idle(
+    timeout: float = 60.0, interval: float = 3.0, *, sleeper=None
+) -> dict[str, Any]:
     """★ **等到 SolidWorks 不忙**（或超时）⇒ `{idle, waited, last, attempts}`。
 
     ★ 为什么需要（★ 真机：2026-10-04 第二次试跑）：★ 我们**刚把 SolidWorks 拉起来**的那几秒，
@@ -298,13 +373,21 @@ def wait_until_idle(timeout: float = 60.0, interval: float = 3.0,
         attempts += 1
         last = solidworks_busy()
         if not last.get("busy"):
-            return {"idle": True, "waited": round(_t.time() - t0, 1),
-                    "attempts": attempts, "last": last}
+            return {
+                "idle": True,
+                "waited": round(_t.time() - t0, 1),
+                "attempts": attempts,
+                "last": last,
+            }
         if _t.time() - t0 >= timeout:
-            return {"idle": False, "waited": round(_t.time() - t0, 1),
-                    "attempts": attempts, "last": last,
-                    "reason": "等了 %.0fs 还是忙 ⇒ 停（★ 不无限等）：%s"
-                              % (timeout, "；".join(last.get("reasons") or [])[:200])}
+            return {
+                "idle": False,
+                "waited": round(_t.time() - t0, 1),
+                "attempts": attempts,
+                "last": last,
+                "reason": "等了 %.0fs 还是忙 ⇒ 停（★ 不无限等）：%s"
+                % (timeout, "；".join(last.get("reasons") or [])[:200]),
+            }
         sleep(interval)
 
 

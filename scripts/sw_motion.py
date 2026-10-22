@@ -4,6 +4,7 @@ SolidWorks Motion Study 自动化工具。
 本模块封装 Motion Study 中最容易踩坑的流程：加载专用类型库、创建运动算例、
 创建匀速旋转马达并触发计算。SolidWorks API 使用米作为长度单位；转速参数使用 RPM。
 """
+
 import glob
 import os
 from pathlib import Path
@@ -99,7 +100,11 @@ def motion_member(obj, attr_name, *args):
         return member() if callable(member) else member
     except Exception as exc:
         message = str(exc)
-        if "-2147352573" in message or "找不到成员" in message or "Member not found" in message:
+        if (
+            "-2147352573" in message
+            or "找不到成员" in message
+            or "Member not found" in message
+        ):
             return member
         raise
 
@@ -115,7 +120,9 @@ def get_motion_study_manager(asm_model, load_type_library=True):
         ensure_motion_type_library(raise_on_error=False)
     manager = safe_get_com_member(asm_model.Extension, "GetMotionStudyManager")
     if manager is None:
-        raise RuntimeError("无法获取 MotionStudyManager，请确认当前文档是装配体且 SolidWorks Motion 可用")
+        raise RuntimeError(
+            "无法获取 MotionStudyManager，请确认当前文档是装配体且 SolidWorks Motion 可用"
+        )
     return manager
 
 
@@ -215,7 +222,9 @@ def add_constant_speed_rotary_motor(
     #   收进映射表（**官方断言**，不是人工确证）⇒ 本站点现在是 `checked`。
     # ★ 因此**不需要** `#: cd-site:` 声明（`checked` 是隐式默认，写了反而 `redundant-dec
     # l`）。
-    motor_data = motion_member(motion_study, "CreateDefinition", SW_FM_AEM_ROTATIONAL_MOTOR)
+    motor_data = motion_member(
+        motion_study, "CreateDefinition", SW_FM_AEM_ROTATIONAL_MOTOR
+    )
     if motor_data is None:
         raise RuntimeError("创建旋转马达 FeatureData 失败")
 
@@ -323,13 +332,17 @@ def _collect_motion_features(motion_study):
                         break
                 except Exception:
                     continue
-            features.append({
-                "name": str(motion_member(feature, "Name") or ""),
-                "type_id": int(motion_member(feature, "GetType") or 0),
-                "type_name": str(type_name or ""),
-            })
+            features.append(
+                {
+                    "name": str(motion_member(feature, "Name") or ""),
+                    "type_id": int(motion_member(feature, "GetType") or 0),
+                    "type_name": str(type_name or ""),
+                }
+            )
         except Exception as exc:
-            features.append({"name": "", "type_id": 0, "type_name": "", "error": str(exc)})
+            features.append(
+                {"name": "", "type_id": 0, "type_name": "", "error": str(exc)}
+            )
     return features
 
 
@@ -363,7 +376,9 @@ def collect_motion_study_summary(asm_model):
             results_error = str(exc)
         motion_features = _collect_motion_features(study)
         reported_motor_count = int(motion_member(study, "GetNumOfExternalMotors") or 0)
-        motor_feature_count = sum("motor" in item.get("type_name", "").lower() for item in motion_features)
+        motor_feature_count = sum(
+            "motor" in item.get("type_name", "").lower() for item in motion_features
+        )
         item = {
             "name": str(motion_member(study, "Name") or name),
             "available": True,
@@ -372,7 +387,9 @@ def collect_motion_study_summary(asm_model):
             "motor_count": max(reported_motor_count, motor_feature_count),
             "reported_motor_count": reported_motor_count,
             "motor_feature_count": motor_feature_count,
-            "external_force_count": int(motion_member(study, "GetNumOfExternalForces") or 0),
+            "external_force_count": int(
+                motion_member(study, "GetNumOfExternalForces") or 0
+            ),
             "feature_count": int(motion_member(study, "GetMotionFeaturesCount") or 0),
             "active": bool(motion_member(study, "IsActive")),
             "playing": bool(motion_member(study, "IsPlaying")),
@@ -467,7 +484,13 @@ def validate_motion_study_summary(
             )
         if require_results:
             available = bool(study.get("results_available"))
-            check("results-present", available, f"{name} 没有可读取的计算结果", name, f"{name} 计算结果可读取")
+            check(
+                "results-present",
+                available,
+                f"{name} 没有可读取的计算结果",
+                name,
+                f"{name} 计算结果可读取",
+            )
             check(
                 "results-fresh",
                 available and study.get("results_out_of_date") is False,
@@ -476,10 +499,17 @@ def validate_motion_study_summary(
                 f"{name} 结果存在且未过期",
             )
         if study.get("results_error"):
-            check("results-readable", False, f"{name} 结果读取失败: {study['results_error']}", name)
+            check(
+                "results-readable",
+                False,
+                f"{name} 结果读取失败: {study['results_error']}",
+                name,
+            )
 
     return {
-        "status": "pass" if checks and all(item["passed"] for item in checks) else "fail",
+        "status": "pass"
+        if checks and all(item["passed"] for item in checks)
+        else "fail",
         "checks": checks,
         "issues": issues,
         "matched_studies": [item.get("name") for item in studies],
@@ -559,12 +589,14 @@ def configure_avi_parameter(avi_parameter, **options):
         raise ValueError("avi_parameter 为 None")
     bad = [k for k in options if k not in _AVI_PARAMETER_MEMBERS]
     if bad:
-        raise ValueError("IAVIParameter 没有这些成员：%s（可用：%s）"
-                         % (bad, sorted(_AVI_PARAMETER_MEMBERS)))
+        raise ValueError(
+            "IAVIParameter 没有这些成员：%s（可用：%s）"
+            % (bad, sorted(_AVI_PARAMETER_MEMBERS))
+        )
     applied = {}
     for name, value in options.items():
         setattr(avi_parameter, name, value)
-        applied[name] = getattr(avi_parameter, name)   # ⚑ 回读
+        applied[name] = getattr(avi_parameter, name)  # ⚑ 回读
     return applied
 
 
@@ -579,6 +611,7 @@ def export_motion_study_avi(motion_study, file_path, avi_parameter=None):
     ⇒ 返回 ``{"ok", "returned", "exists", "size_bytes", "path"}``。
     """
     import os
+
     if motion_study is None:
         raise ValueError("motion_study 为 None")
     if not file_path:
@@ -601,11 +634,25 @@ def export_motion_study_avi(motion_study, file_path, avi_parameter=None):
 
 
 #: `IAVIParameter` 的官方成员（**反射核实**；命名照反射，不臆造）。
-_AVI_PARAMETER_MEMBERS = frozenset((
-    "AspectRatio", "BlurLength", "BlurOffset", "EndTime", "FramePerSecond",
-    "ImageSize", "MotionBlur", "OutputType", "PreserveRatio", "RendererType",
-    "SaveEntireAnimation", "ScreenHeight", "ScreenRatio", "ScreenWidth", "StartTime",
-))
+_AVI_PARAMETER_MEMBERS = frozenset(
+    (
+        "AspectRatio",
+        "BlurLength",
+        "BlurOffset",
+        "EndTime",
+        "FramePerSecond",
+        "ImageSize",
+        "MotionBlur",
+        "OutputType",
+        "PreserveRatio",
+        "RendererType",
+        "SaveEntireAnimation",
+        "ScreenHeight",
+        "ScreenRatio",
+        "ScreenWidth",
+        "StartTime",
+    )
+)
 
 
 # ── 24h 计划 段 5 续（Spec Kit `157`）：**显式形参的验证包装** ─────────────────────
@@ -627,24 +674,34 @@ _AVI_PARAMETER_MEMBERS = frozenset((
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def validate_motion_studies_report(asm_model, study_name=None, expected_study_type=None,
-                                   minimum_duration_seconds=None, minimum_motor_count=None,
-                                   require_results=None):
+def validate_motion_studies_report(
+    asm_model,
+    study_name=None,
+    expected_study_type=None,
+    minimum_duration_seconds=None,
+    minimum_motor_count=None,
+    require_results=None,
+):
     """★ **显式形参版的 `validate_motion_studies`**（★ 只传非 None 的那些）。
 
     ★ 返回里带上 **`asked`**（实际传下去的键）⇒ ★ 于是"我到底验了什么"可从结果里读出来。
     """
     req = {}
-    for k, v in (("study_name", study_name),
-                 ("expected_study_type", expected_study_type),
-                 ("minimum_duration_seconds", minimum_duration_seconds),
-                 ("minimum_motor_count", minimum_motor_count),
-                 ("require_results", require_results)):
+    for k, v in (
+        ("study_name", study_name),
+        ("expected_study_type", expected_study_type),
+        ("minimum_duration_seconds", minimum_duration_seconds),
+        ("minimum_motor_count", minimum_motor_count),
+        ("require_results", require_results),
+    ):
         if v is not None:
             req[k] = v
     try:
         r = validate_motion_studies(asm_model, **req)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "asked": sorted(req),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "asked": sorted(req),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     return {"ok": True, "asked": sorted(req), "returned": r}

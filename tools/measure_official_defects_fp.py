@@ -17,18 +17,29 @@ from pathlib import Path
 ROOT = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-import check_official_source_defects as G                            # noqa: E402
+import check_official_source_defects as G  # noqa: E402
 
 ifaces, members, enums = G._real()
 print("★ 本机真名: 接口 %d · 枚举 %d" % (len(ifaces), len(enums)))
 real_ifaces = sorted(ifaces)[:10]
-fake_ifaces = ["ZZZFakeOne", "ZZZFakeTwo", "ZZZFakeThree", "ZZZFakeFour", "ZZZFakeFive",
-               "ZZZFakeSix", "ZZZFakeSeven", "ZZZFakeEight", "ZZZFakeNine", "ZZZFakeTen"]
+fake_ifaces = [
+    "ZZZFakeOne",
+    "ZZZFakeTwo",
+    "ZZZFakeThree",
+    "ZZZFakeFour",
+    "ZZZFakeFive",
+    "ZZZFakeSix",
+    "ZZZFakeSeven",
+    "ZZZFakeEight",
+    "ZZZFakeNine",
+    "ZZZFakeTen",
+]
 
 
 def judge(files: dict) -> int:
     """★ 用门禁的**真判据**在临时目录上判（★ 不碰真仓库）⇒ 返回报出的处数。"""
     import tempfile
+
     with tempfile.TemporaryDirectory() as td:
         d = Path(td) / "scripts"
         d.mkdir()
@@ -46,13 +57,13 @@ tp = fp = tn = fn = 0
 rows = []
 #: ★ ① 10 例「真断链」⇒ 期望报（★ 引用一个**确实不存在**的接口）
 for i, fk in enumerate(fake_ifaces):
-    got = judge({"a%d.py" % i: '# 来源: [[%s::SomeMember]]\n' % fk}) > 0
+    got = judge({"a%d.py" % i: "# 来源: [[%s::SomeMember]]\n" % fk}) > 0
     tp += 1 if got else 0
     fn += 0 if got else 1
     rows.append(("真断链", fk, "应当报", got))
 #: ★ ② 10 例「正当引用」⇒ 期望不报（★ 引用**确实存在**的接口）
 for i, ok in enumerate(real_ifaces):
-    got = judge({"b%d.py" % i: '# 来源: C:\\swapi\\types\\%s\\x.md\n' % ok}) > 0
+    got = judge({"b%d.py" % i: "# 来源: C:\\swapi\\types\\%s\\x.md\n" % ok}) > 0
     fp += 1 if got else 0
     tn += 0 if got else 1
     rows.append(("正当引用", ok, "不该报", got))
@@ -63,8 +74,8 @@ for i, ok in enumerate(real_ifaces):
 #:     ★★ 收窄 `CITATION` 之后本组**应当被报** ⇒ ★ 这就是"收窄有没有效"的判据 ✓
 blind = 0
 for i, fk in enumerate(fake_ifaces):
-    got = judge({"c%d.py" % i: '#: ★ 见 [[%s::SomeMember]]\n' % fk}) > 0
-    blind += 0 if got else 1                    #: ★ 没报 ⇒ 落在盲区里
+    got = judge({"c%d.py" % i: "#: ★ 见 [[%s::SomeMember]]\n" % fk}) > 0
+    blind += 0 if got else 1  #: ★ 没报 ⇒ 落在盲区里
     rows.append(("只带 #: 的真断链", fk, "应当报（收窄后）", got))
 
 print()
@@ -73,8 +84,10 @@ print("   · ★ 真阳性（真断链被报）: **%d / 10**" % tp)
 print("   · ★★ 假阳性（正当引用被报）: **%d / 10**" % fp)
 print("   · ★ 漏报: **%d / 10**" % fn)
 print("   · ⇒ D-1（假阳性 ≤1）: **%s**" % ("达标 ✓" if fp <= 1 else "**未达标**"))
-print("   · ★★★ 盲区（带引文标记的真断链被放过）: **%d / 10**"
-      " ← ★ 这就是引文判据（第 29 轮加的）的代价" % blind)
+print(
+    "   · ★★★ 盲区（带引文标记的真断链被放过）: **%d / 10**"
+    " ← ★ 这就是引文判据（第 29 轮加的）的代价" % blind
+)
 
 L = [
     "# D-1 合规实测（第 2 道门禁）：`check_official_source_defects`",
@@ -96,7 +109,8 @@ L = [
     "| ★ 真阳性（真断链被报）| **%d / 10** |" % tp,
     "| ★★ 假阳性（正当引用被报）| **%d / 10** |" % fp,
     "| ★ 漏报 | **%d / 10** |" % fn,
-    "| ★ D-1 判定（假阳性 ≤1）| **%s** |" % ("达标 ✓" if fp <= 1 else "未达标 ⇒ 留复核桶"),
+    "| ★ D-1 判定（假阳性 ≤1）| **%s** |"
+    % ("达标 ✓" if fp <= 1 else "未达标 ⇒ 留复核桶"),
     "",
     "## 三 · ★ 本实测的「不算什么」",
     "",

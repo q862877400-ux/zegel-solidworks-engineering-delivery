@@ -26,6 +26,7 @@ Python 把**当前目录**放在 `sys.path[0]`。工作区根 `D:\\AI\\SW\\` 里
 # ⚠ 纯静态检查（只列目录与文件名），**不 import 任何东西**。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -48,12 +49,47 @@ IMPORT_RE = re.compile(r"^\s*(?:from|import)\s+([a-zA-Z_][\w]*)", re.M)
 
 #: 标准库与本地模块不算（本仓库自己的包名也不必查）
 SKIP = {
-    "scripts", "tool_registry", "register_capabilities", "typing", "os", "sys",
-    "json", "re", "time", "pathlib", "dataclasses", "enum", "abc", "functools",
-    "collections", "itertools", "contextlib", "traceback", "logging", "math",
-    "subprocess", "tempfile", "shutil", "io", "warnings", "asyncio", "types",
-    "importlib", "inspect", "datetime", "uuid", "hashlib", "base64", "threading",
-    "queue", "copy", "textwrap", "argparse", "glob", "platform", "socket",
+    "scripts",
+    "tool_registry",
+    "register_capabilities",
+    "typing",
+    "os",
+    "sys",
+    "json",
+    "re",
+    "time",
+    "pathlib",
+    "dataclasses",
+    "enum",
+    "abc",
+    "functools",
+    "collections",
+    "itertools",
+    "contextlib",
+    "traceback",
+    "logging",
+    "math",
+    "subprocess",
+    "tempfile",
+    "shutil",
+    "io",
+    "warnings",
+    "asyncio",
+    "types",
+    "importlib",
+    "inspect",
+    "datetime",
+    "uuid",
+    "hashlib",
+    "base64",
+    "threading",
+    "queue",
+    "copy",
+    "textwrap",
+    "argparse",
+    "glob",
+    "platform",
+    "socket",
 }
 
 
@@ -90,13 +126,24 @@ def main() -> int:
         #   （例如被单独拷出去跑）⇒ SKIP（便携性）；
         #   ② **目录在、但 `server.py` 不在** ⇒ **FAIL**（仓库不完整）。
         if not SERVER.parent.is_dir():
-            print("[SKIP] 找不到 `mcp-server/` 目录（%s）—— **这里不是本仓库**" % SERVER.parent)
+            print(
+                "[SKIP] 找不到 `mcp-server/` 目录（%s）—— **这里不是本仓库**"
+                % SERVER.parent
+            )
             print("  （**便携性守卫**：脚本被单独拷出去跑时不应无条件红）")
             return 0
-        print("[FAIL] `mcp-server/` 目录在，但读不到 `%s` ⇒ **仓库不完整**" % SERVER.name)
-        print("  ⚠ 这与「数据源不可用」**不是一回事**：本门禁靠它拿「第三方依赖包清单」，")
-        print("     读不到 ⇒ **一个包都没查** ⇒ 遮蔽问题会**静默漏过**（而那正是本门禁要抓的）。")
-        print("     修法：确认 checkout 完整（`git status` / `git checkout -- mcp-server/`）。")
+        print(
+            "[FAIL] `mcp-server/` 目录在，但读不到 `%s` ⇒ **仓库不完整**" % SERVER.name
+        )
+        print(
+            "  ⚠ 这与「数据源不可用」**不是一回事**：本门禁靠它拿「第三方依赖包清单」，"
+        )
+        print(
+            "     读不到 ⇒ **一个包都没查** ⇒ 遮蔽问题会**静默漏过**（而那正是本门禁要抓的）。"
+        )
+        print(
+            "     修法：确认 checkout 完整（`git status` / `git checkout -- mcp-server/`）。"
+        )
         return 1
     pkgs = third_party_packages(SERVER)
     hits = shadowing(WORKSPACE, pkgs)
@@ -109,10 +156,17 @@ def main() -> int:
     for name, path in hits:
         print("  %-14s ← %s" % (name, path))
     print()
-    print("  后果：以该工作区为 CWD 的 Python 进程里，`import %s` 拿到的是**那个本地文件**，"
-          % hits[0][0])
-    print("        不是真的包 ⇒ 报 `No module named '%s.server'; '%s' is not a package`" % (hits[0][0], hits[0][0]))
-    print("  修法（**不自动做**，由人定）：把那些历史脚本移出工作区根，或改名加前缀（如 `_mcp.py`）。")
+    print(
+        "  后果：以该工作区为 CWD 的 Python 进程里，`import %s` 拿到的是**那个本地文件**，"
+        % hits[0][0]
+    )
+    print(
+        "        不是真的包 ⇒ 报 `No module named '%s.server'; '%s' is not a package`"
+        % (hits[0][0], hits[0][0])
+    )
+    print(
+        "  修法（**不自动做**，由人定）：把那些历史脚本移出工作区根，或改名加前缀（如 `_mcp.py`）。"
+    )
     print("  ⚠ 本工具**不删任何东西** —— 工作区里的脚本是历史产物。")
     return 1
 

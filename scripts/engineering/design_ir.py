@@ -1,4 +1,5 @@
 """★ 阶段 4 · 需求协议 + 方法检索 + 问答契约 + 出站许可（规格 319 的 G1~G4）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -31,8 +32,13 @@ REJECTED_OUT_OF_SCOPE = "REJECTED_OUT_OF_SCOPE"
 REJECTED_UNSUPPORTED = "REJECTED_UNSUPPORTED"
 REJECTED_AMBIGUOUS = "REJECTED_AMBIGUOUS"
 
-IR_CODES = (READY_FOR_REVIEW, WAITING_INPUT, REJECTED_OUT_OF_SCOPE,
-            REJECTED_UNSUPPORTED, REJECTED_AMBIGUOUS)
+IR_CODES = (
+    READY_FOR_REVIEW,
+    WAITING_INPUT,
+    REJECTED_OUT_OF_SCOPE,
+    REJECTED_UNSUPPORTED,
+    REJECTED_AMBIGUOUS,
+)
 
 #: ★★ **只有这一个能进执行**（★ S4-A：「应等待或拒绝却进入执行的次数为 0」）
 EXECUTABLE = (READY_FOR_REVIEW,)
@@ -65,13 +71,14 @@ class DesignIRError(Exception):
 # 二、DesignIR（★ G1 —— ★ 需求与布局协议）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class DesignIR:
     """★ **需求 → 设计意图**的中间表示（★ 人工不写工具序列的**起点**）。"""
 
     requirement: str = ""
-    function: str = ""            #: ★ 功能（如「承载」）
-    interface: str = ""           #: ★ 接口（如「四角孔位」）
+    function: str = ""  #: ★ 功能（如「承载」）
+    interface: str = ""  #: ★ 接口（如「四角孔位」）
     constraints: dict = field(default_factory=dict)
     open_questions: list = field(default_factory=list)
     state: str = WAITING_INPUT
@@ -119,20 +126,60 @@ CRITICAL_HINTS = (
 #:   ⇒ ★ 域表必须覆盖**工具面真的支持的**那些，否则就是**误挡可解需求**（MISBLOCK）。
 SUPPORTED_DOMAINS = (
     #: ══ 建模 ══
-    "板", "轴", "孔", "支架", "法兰", "套", "块", "夹具",
-    "定位", "导向", "箱体", "连杆", "钳",
+    "板",
+    "轴",
+    "孔",
+    "支架",
+    "法兰",
+    "套",
+    "块",
+    "夹具",
+    "定位",
+    "导向",
+    "箱体",
+    "连杆",
+    "钳",
     #: ══ 几何操作 ══
-    "阶梯轴", "键槽", "倒角", "圆角", "抽壳", "圆顶", "筋",
+    "阶梯轴",
+    "键槽",
+    "倒角",
+    "圆角",
+    "抽壳",
+    "圆顶",
+    "筋",
     #: ══ 文档 / 元数据 ══
-    "自定义属性", "属性", "编号", "工程图", "视图", "标注",
+    "自定义属性",
+    "属性",
+    "编号",
+    "工程图",
+    "视图",
+    "标注",
     #: ══ 检查 / 计算 ══
-    "干涉", "质量", "体积", "质量属性", "测量",
+    "干涉",
+    "质量",
+    "体积",
+    "质量属性",
+    "测量",
     #: ══ 参数化 ══
-    "方程", "全局变量", "参数", "配置", "缩放",
+    "方程",
+    "全局变量",
+    "参数",
+    "配置",
+    "缩放",
 )
 #: ★ 明确不支持（★ 能力边界 ⇒ `REJECTED_UNSUPPORTED`）
-UNSUPPORTED_HINTS = ("曲面", "自由曲面", "钣金展开", "焊接变形", "注塑模流",
-                     "多物理场", "疲劳寿命", "齿轮箱整体", "整机", "减速器")
+UNSUPPORTED_HINTS = (
+    "曲面",
+    "自由曲面",
+    "钣金展开",
+    "焊接变形",
+    "注塑模流",
+    "多物理场",
+    "疲劳寿命",
+    "齿轮箱整体",
+    "整机",
+    "减速器",
+)
 #: ★★ **量级荒谬**（★ 对抗语义 ⇒ `REJECTED_AMBIGUOUS`）。
 #:   ★ 依据：本仓是**机械零件**工具，而「直径 1000 米」不是机械零件；
 #:   ★ 且「1000 米 + 0.001mm 精度」相对误差 1e-9 ⇒ ★ **物理上不可实现**。
@@ -155,16 +202,21 @@ def parse_requirement(text: str) -> DesignIR:
     """
     t = (text or "").strip()
     if not t:
-        return DesignIR(requirement="", state=REJECTED_AMBIGUOUS,
-                        notes="★ 需求为空 ⇒ 无法定出要问什么")
+        return DesignIR(
+            requirement="",
+            state=REJECTED_AMBIGUOUS,
+            notes="★ 需求为空 ⇒ 无法定出要问什么",
+        )
     ir = DesignIR(requirement=t)
 
     #: ② 能力边界
     for bad in UNSUPPORTED_HINTS:
         if bad in t:
-            ir.state = REJECTED_UNSUPPORTED if bad in ("曲面", "自由曲面", "多物理场",
-                                                       "疲劳寿命") \
+            ir.state = (
+                REJECTED_UNSUPPORTED
+                if bad in ("曲面", "自由曲面", "多物理场", "疲劳寿命")
                 else REJECTED_OUT_OF_SCOPE
+            )
             ir.notes = "★ 超出已验证能力：%r" % bad
             return ir
     #: ★★ **量级荒谬 / 精度荒谬**（★ 对抗语义 —— ★ L3-055 正是这一类）
@@ -174,8 +226,10 @@ def parse_requirement(text: str) -> DesignIR:
     if big and float(big.group(1)) >= ABSURD_LENGTH_M:
         if tiny and float(tiny.group(1)) <= ABSURD_PRECISION_MM:
             ir.state = REJECTED_AMBIGUOUS
-            ir.notes = ("★ 量级荒谬：%s 米 + 精度 %s mm ⇒ 相对误差 1e-9，"
-                        "★ 不是机械零件" % (big.group(1), tiny.group(1)))
+            ir.notes = (
+                "★ 量级荒谬：%s 米 + 精度 %s mm ⇒ 相对误差 1e-9，"
+                "★ 不是机械零件" % (big.group(1), tiny.group(1))
+            )
             return ir
         ir.state = REJECTED_OUT_OF_SCOPE
         ir.notes = "★ 尺寸 %s 米超出机械零件量级" % big.group(1)
@@ -202,9 +256,17 @@ def parse_requirement(text: str) -> DesignIR:
     #:     干涉靠已有装配、方程是公式）。
     #:   ⇒ ★ 判据：**意图决定要不要几何**（★ 与 `planner.detect_intent` 同口径）。
     from .planner import detect_intent as _di
+
     _intent = _di(t)
-    _needs_geo = _intent in ("plate", "hole_group", "keyway", "stepped_shaft",
-                             "revolve", "shell", "pin")
+    _needs_geo = _intent in (
+        "plate",
+        "hole_group",
+        "keyway",
+        "stepped_shaft",
+        "revolve",
+        "shell",
+        "pin",
+    )
 
     missing = []
     for name, words in CRITICAL_HINTS:
@@ -257,16 +319,27 @@ def _has_extractable_size(t: str) -> bool:
 
 
 def _guess_function(t: str) -> str:
-    for k, v in (("承载", "承载"), ("定位", "定位"), ("夹紧", "夹紧"),
-                 ("传动", "传动"), ("导向", "导向"), ("支撑", "支撑")):
+    for k, v in (
+        ("承载", "承载"),
+        ("定位", "定位"),
+        ("夹紧", "夹紧"),
+        ("传动", "传动"),
+        ("导向", "导向"),
+        ("支撑", "支撑"),
+    ):
         if k in t:
             return v
     return "未指定"
 
 
 def _guess_interface(t: str) -> str:
-    for k, v in (("孔", "孔系"), ("轴", "轴颈"), ("面", "配合面"),
-                 ("槽", "槽口"), ("螺纹", "螺纹副")):
+    for k, v in (
+        ("孔", "孔系"),
+        ("轴", "轴颈"),
+        ("面", "配合面"),
+        ("槽", "槽口"),
+        ("螺纹", "螺纹副"),
+    ):
         if k in t:
             return v
     return "未指定"
@@ -275,6 +348,7 @@ def _guess_interface(t: str) -> str:
 #: ══════════════════════════════════════════════════════════════════════
 # 三、方法检索（★ G2 —— ★ 候选预算 4096 token）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class MethodCandidate:
@@ -286,13 +360,15 @@ class MethodCandidate:
 
 def _est_tokens(method) -> int:
     """★ 估一个方法的**候选描述**要多少 token（★ 粗估：字数 / 1.6）。"""
-    blob = "%s %s %s" % (method.id, method.goal,
-                         " ".join(getattr(method, "steps", ()) or ()))
+    blob = "%s %s %s" % (
+        method.id,
+        method.goal,
+        " ".join(getattr(method, "steps", ()) or ()),
+    )
     return max(1, int(len(blob) / 1.6))
 
 
-def retrieve_methods(ir: DesignIR, *,
-                     budget: int = CANDIDATE_TOKEN_BUDGET) -> dict:
+def retrieve_methods(ir: DesignIR, *, budget: int = CANDIDATE_TOKEN_BUDGET) -> dict:
     """★★ **按 `DesignIR` 找候选方法**（★ G2 —— ★ 每次候选 ≤4096 token）。
 
     ★★ 判据（★ FR-004）：
@@ -303,9 +379,13 @@ def retrieve_methods(ir: DesignIR, *,
     from .compiler import METHOD_LIBRARY
 
     if not ir.executable:
-        return {"candidates": [], "tokens": 0, "truncated": 0,
-                "reason": "★ 状态是 %s ⇒ 不检索（★ 没有可规划的输入）" % ir.state,
-                "budget": budget}
+        return {
+            "candidates": [],
+            "tokens": 0,
+            "truncated": 0,
+            "reason": "★ 状态是 %s ⇒ 不检索（★ 没有可规划的输入）" % ir.state,
+            "budget": budget,
+        }
 
     dom = str(ir.constraints.get("domain") or "")
     scored = []
@@ -332,15 +412,20 @@ def retrieve_methods(ir: DesignIR, *,
             truncated += 1
             continue
         used += tk
-        out.append(MethodCandidate(method_id=mid, score=s, tokens=tk,
-                                   applicable=s > 0))
-    return {"candidates": out, "tokens": used, "truncated": truncated,
-            "budget": budget, "reason": ""}
+        out.append(MethodCandidate(method_id=mid, score=s, tokens=tk, applicable=s > 0))
+    return {
+        "candidates": out,
+        "tokens": used,
+        "truncated": truncated,
+        "budget": budget,
+        "reason": "",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、问答契约（★ G3 —— ★ 最多两批 · 缺项不写 CAD）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class ElicitBatch:
@@ -359,9 +444,9 @@ class Elicitation:
             raise DesignIRError(
                 "batch-exceeded",
                 "★ 已经问了 %d 批（★ 上限 %d）⇒ 不许再问"
-                % (len(self.batches), MAX_ELICIT_BATCHES))
-        b = ElicitBatch(batch_index=len(self.batches) + 1,
-                        questions=list(questions))
+                % (len(self.batches), MAX_ELICIT_BATCHES),
+            )
+        b = ElicitBatch(batch_index=len(self.batches) + 1, questions=list(questions))
         self.batches.append(b)
         return b
 
@@ -390,6 +475,7 @@ class Elicitation:
 #: ══════════════════════════════════════════════════════════════════════
 # 五、出站许可（★ G4 —— ★ 受控客户端）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class OutboundPermit:
@@ -427,8 +513,9 @@ class BudgetHold:
         return True
 
 
-def outbound_permit(*, data_permitted: bool, budget_permitted: bool,
-                    cost_known: bool = True) -> OutboundPermit:
+def outbound_permit(
+    *, data_permitted: bool, budget_permitted: bool, cost_known: bool = True
+) -> OutboundPermit:
     """★★ **能不能发云请求**（★ G4 —— ★ FR-005/006）。
 
     ★★ 判据顺序（★ 最严的在前）：
@@ -441,12 +528,15 @@ def outbound_permit(*, data_permitted: bool, budget_permitted: bool,
     ★★ **为什么数据排第一**：数据外发是**不可撤**的（★ 余额不足只是没跑成）。
     """
     if not data_permitted:
-        return OutboundPermit(False, DATA_NOT_PERMITTED,
-                              "★ 数据未获准外发 ⇒ **出站请求数 = 0**")
+        return OutboundPermit(
+            False, DATA_NOT_PERMITTED, "★ 数据未获准外发 ⇒ **出站请求数 = 0**"
+        )
     if not budget_permitted:
-        return OutboundPermit(False, BUDGET_NOT_PERMITTED,
-                              "★ 余额未获准 ⇒ **出站请求数 = 0**")
+        return OutboundPermit(
+            False, BUDGET_NOT_PERMITTED, "★ 余额未获准 ⇒ **出站请求数 = 0**"
+        )
     if not cost_known:
-        return OutboundPermit(False, COST_UNKNOWN,
-                              "★ 费用未知 ⇒ 不放行、**也不释放预算预占**")
+        return OutboundPermit(
+            False, COST_UNKNOWN, "★ 费用未知 ⇒ 不放行、**也不释放预算预占**"
+        )
     return OutboundPermit(True, detail="★ 数据与余额都获准、费用已知 ⇒ 放行")

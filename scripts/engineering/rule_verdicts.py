@@ -1,4 +1,5 @@
 """★ 阶段 2 · 七档规则评价（规格 317 的 D3）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -9,7 +10,7 @@
 #           (MISSING_INPUT)` / `RuleError(UNIT_MISMATCH)` /`NOT_APPLICABLE` / `INDETERMI
 #           NATE(SOURCE_MISSING)` / `INDETERMINATE(STATUS_UNKNOWN)`）。★ 本模块**扩展**
 #           它（★ 不推倒 —— 既有 4 档继续有效）。
-# 官方依据: ① 外部方案阶段 2 的七档（逐字）② 本仓 `scripts/engineering/rules.py` 的既有 
+# 官方依据: ① 外部方案阶段 2 的七档（逐字）② 本仓 `scripts/engineering/rules.py` 的既有
 #           4 档与 `StandardRef`③ 涉法规/标准结论**必须先用 `ks` 工具核验**（业主常驻纪
 #           律）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -32,14 +33,20 @@ NOT_APPLICABLE = "NOT_APPLICABLE"
 IND_SOURCE_MISSING = "INDETERMINATE(SOURCE_MISSING)"
 IND_STATUS_UNKNOWN = "INDETERMINATE(STATUS_UNKNOWN)"
 
-ALL_VERDICTS = (PASS, FAIL, ERR_MISSING_INPUT, ERR_UNIT_MISMATCH,
-                NOT_APPLICABLE, IND_SOURCE_MISSING, IND_STATUS_UNKNOWN)
+ALL_VERDICTS = (
+    PASS,
+    FAIL,
+    ERR_MISSING_INPUT,
+    ERR_UNIT_MISMATCH,
+    NOT_APPLICABLE,
+    IND_SOURCE_MISSING,
+    IND_STATUS_UNKNOWN,
+)
 
 #: ★★ **放行集 = 只有 PASS**（★ 不变式 J9 —— ★ 别的都不得放行）
 RELEASING = (PASS,)
 #: ★ 「算得出数但不算通过」的那几档（★ 判据顺序把它们排在 PASS 之前）
-NON_RELEASING_DETERMINATE = (FAIL, ERR_MISSING_INPUT, ERR_UNIT_MISMATCH,
-                             NOT_APPLICABLE)
+NON_RELEASING_DETERMINATE = (FAIL, ERR_MISSING_INPUT, ERR_UNIT_MISMATCH, NOT_APPLICABLE)
 #: ★ 「缺依据」的那几档
 INDETERMINATE = (IND_SOURCE_MISSING, IND_STATUS_UNKNOWN)
 
@@ -63,6 +70,7 @@ class RuleOutcome:
 # 二、规则声明（★ 最小形状 —— 够判七档即可）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class RuleSpec:
     """★ 一条规则（★ 判七档所需的全部输入都在这里）。"""
@@ -78,8 +86,9 @@ class RuleSpec:
     effectiveness: str = "effective"
 
 
-def evaluate(spec: RuleSpec, inputs: dict, *, units: dict | None = None,
-             compute=None) -> RuleOutcome:
+def evaluate(
+    spec: RuleSpec, inputs: dict, *, units: dict | None = None, compute=None
+) -> RuleOutcome:
     """★ 七档评价（★ 判据顺序**最严的在前**）。
 
     ★★ 判据顺序（★ 见 data-model §3）—— **④⑤ 必须在 ⑥ 之前**：
@@ -100,9 +109,12 @@ def evaluate(spec: RuleSpec, inputs: dict, *, units: dict | None = None,
     #: ① 缺必填量
     missing = [k for k in (spec.required_inputs or {}) if k not in inputs]
     if missing:
-        return RuleOutcome(ERR_MISSING_INPUT, spec.id,
-                           citation=spec.citation,
-                           detail="★ 缺必填量：%s" % missing)
+        return RuleOutcome(
+            ERR_MISSING_INPUT,
+            spec.id,
+            citation=spec.citation,
+            detail="★ 缺必填量：%s" % missing,
+        )
 
     #: ② 单位不符
     bad_units = []
@@ -111,9 +123,12 @@ def evaluate(spec: RuleSpec, inputs: dict, *, units: dict | None = None,
         if got is not None and want and got != want:
             bad_units.append("%s: 要 %s 得 %s" % (k, want, got))
     if bad_units:
-        return RuleOutcome(ERR_UNIT_MISMATCH, spec.id,
-                           citation=spec.citation,
-                           detail="★ 单位不符：%s" % bad_units)
+        return RuleOutcome(
+            ERR_UNIT_MISMATCH,
+            spec.id,
+            citation=spec.citation,
+            detail="★ 单位不符：%s" % bad_units,
+        )
 
     #: ③ 超适用范围
     out_of = []
@@ -127,35 +142,51 @@ def evaluate(spec: RuleSpec, inputs: dict, *, units: dict | None = None,
         except TypeError:
             pass
     if out_of:
-        return RuleOutcome(NOT_APPLICABLE, spec.id,
-                           citation=spec.citation,
-                           detail="★ 超适用范围：%s" % out_of)
+        return RuleOutcome(
+            NOT_APPLICABLE,
+            spec.id,
+            citation=spec.citation,
+            detail="★ 超适用范围：%s" % out_of,
+        )
 
     #: ④ 缺原文（★ 必须在 PASS 之前）
     if not (spec.citation or "").strip():
-        return RuleOutcome(IND_SOURCE_MISSING, spec.id,
-                           detail="★ 缺依据（citation 为空）⇒ 不得报 PASS")
+        return RuleOutcome(
+            IND_SOURCE_MISSING, spec.id, detail="★ 缺依据（citation 为空）⇒ 不得报 PASS"
+        )
 
     #: ⑤ 效力未知（★ 必须在 PASS 之前）
     if (spec.effectiveness or "").lower() in ("unknown", ""):
-        return RuleOutcome(IND_STATUS_UNKNOWN, spec.id,
-                           citation=spec.citation,
-                           detail="★ 效力未知 ⇒ 不得报 PASS")
+        return RuleOutcome(
+            IND_STATUS_UNKNOWN,
+            spec.id,
+            citation=spec.citation,
+            detail="★ 效力未知 ⇒ 不得报 PASS",
+        )
 
     #: ⑥⑦ 计算
     if compute is None:
         #: ★ 没给计算器 ⇒ 只能到「依据齐、效力明」为止
         #:   ★ 但那**不是**「满足要求」⇒ 按**保守**报 INDETERMINATE
-        return RuleOutcome(IND_STATUS_UNKNOWN, spec.id, citation=spec.citation,
-                           detail="★ 没给计算器 ⇒ 无法判满足与否（★ 保守）")
+        return RuleOutcome(
+            IND_STATUS_UNKNOWN,
+            spec.id,
+            citation=spec.citation,
+            detail="★ 没给计算器 ⇒ 无法判满足与否（★ 保守）",
+        )
     ok = bool(compute(inputs))
-    return RuleOutcome(PASS if ok else FAIL, spec.id, citation=spec.citation,
-                       detail="★ 计算完成：%s" % ("满足" if ok else "不满足"))
+    return RuleOutcome(
+        PASS if ok else FAIL,
+        spec.id,
+        citation=spec.citation,
+        detail="★ 计算完成：%s" % ("满足" if ok else "不满足"),
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 三、批量评价 + 放行判据
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def release_verdict(outcomes: list[RuleOutcome]) -> dict:
     """★ 整批放行判据（★ J9：**只有 PASS 能放行**）。
@@ -170,9 +201,9 @@ def release_verdict(outcomes: list[RuleOutcome]) -> dict:
         "release": not bad,
         "total": len(outcomes),
         "passed": n_pass,
-        "blocking": [{"rule": o.rule_id, "verdict": o.verdict,
-                      "detail": o.detail} for o in bad],
-        "indeterminate": [o.rule_id for o in outcomes
-                          if o.verdict in INDETERMINATE],
+        "blocking": [
+            {"rule": o.rule_id, "verdict": o.verdict, "detail": o.detail} for o in bad
+        ],
+        "indeterminate": [o.rule_id for o in outcomes if o.verdict in INDETERMINATE],
         "★": "★ 只有 PASS 能放行（★ J9）",
     }

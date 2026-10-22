@@ -28,6 +28,7 @@
 ⚠ 只读文件 + AST 解析：不执行任何仓库代码、不连接 SolidWorks
   （见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 import ast
@@ -55,18 +56,25 @@ OUT = REPO / "docs" / "api-map.md"
 
 #: 域 → 对应模块（与 usage-guide.md 同一套人工核对过的映射）
 DOMAIN_OF_MODULE = {
-    "sw_connect.py": "应用与会话", "sw_session.py": "应用与会话",
-    "sw_preflight.py": "应用与会话", "sw_addin_host.py": "应用与会话",
+    "sw_connect.py": "应用与会话",
+    "sw_session.py": "应用与会话",
+    "sw_preflight.py": "应用与会话",
+    "sw_addin_host.py": "应用与会话",
     "sw_macro_guard.py": "应用与会话",
-    "sw_part.py": "零件特征", "sw_gear.py": "零件特征",
+    "sw_part.py": "零件特征",
+    "sw_gear.py": "零件特征",
     "sw_hole_features.py": "孔与螺纹",
-    "sw_sheet_metal.py": "钣金", "sw_weldment.py": "焊件",
-    "sw_surface.py": "曲面", "sw_assembly.py": "装配",
-    "sw_export.py": "质量属性与导出", "sw_delivery.py": "质量属性与导出",
+    "sw_sheet_metal.py": "钣金",
+    "sw_weldment.py": "焊件",
+    "sw_surface.py": "曲面",
+    "sw_assembly.py": "装配",
+    "sw_export.py": "质量属性与导出",
+    "sw_delivery.py": "质量属性与导出",
     "sw_document_data.py": "配置·材料·自定义属性",
     "sw_appearance.py": "配置·材料·自定义属性",
     "sw_simulation.py": "仿真(需许可证)",
-    "sw_review.py": "几何与拓扑", "sw_hole_table.py": "孔与螺纹",
+    "sw_review.py": "几何与拓扑",
+    "sw_hole_table.py": "孔与螺纹",
 }
 
 #: ⚠ 非 SolidWorks COM 的模块。在这些文件里匹配到的成员**很可能是撞名**
@@ -78,10 +86,21 @@ DOMAIN_OF_MODULE = {
 #: 而该文件里根本没有 get_com_member —— 那是 `[.\s]([A-Z]\w+)\s*\(` 匹配到了 OCP 的
 #: `face.Get(0)`。与 docs/signature-audit.md 记录的假阳性同源。
 SUSPECT_MODULE_PATTERNS = (
-    "advanced_geometry", "advanced_surface_ocp", "headless_",
-    "dxf_preview_scene", "dfm_", "fea_", "cad_", "backend_router",
-    "build_smithery_mcpb", "release_check", "validate_", "generate_star_history",
-    "sync_bundled_skill", "check_provenance", "audit_call_arity",
+    "advanced_geometry",
+    "advanced_surface_ocp",
+    "headless_",
+    "dxf_preview_scene",
+    "dfm_",
+    "fea_",
+    "cad_",
+    "backend_router",
+    "build_smithery_mcpb",
+    "release_check",
+    "validate_",
+    "generate_star_history",
+    "sync_bundled_skill",
+    "check_provenance",
+    "audit_call_arity",
 )
 
 
@@ -228,17 +247,26 @@ def main() -> int:
     L.append("# 官方 API 成员 → 本仓库函数 反向索引（api-map）")
     L.append("")
     L.append("> 生成日期：2026-09-29")
-    L.append(f"> 覆盖：本仓库 **{files_scanned}** 个 .py 文件，"
-             f"对撞到 **{len(usage)}** 个官方成员、**{total_calls}** 处调用点。")
-    L.append("> 调用形态分布："
-             + " · ".join(f"{k} {v}" for k, v in sorted(by_shape.items())))
-    L.append("> 反射来源：`D:\\AI\\SW\\_raw\\reflect_sldworks\\iface_sldworks.txt`"
-             "（20,627 成员）+ `iface_cosworks.txt`（cosworks）")
+    L.append(
+        f"> 覆盖：本仓库 **{files_scanned}** 个 .py 文件，"
+        f"对撞到 **{len(usage)}** 个官方成员、**{total_calls}** 处调用点。"
+    )
+    L.append(
+        "> 调用形态分布：" + " · ".join(f"{k} {v}" for k, v in sorted(by_shape.items()))
+    )
+    L.append(
+        "> 反射来源：`D:\\AI\\SW\\_raw\\reflect_sldworks\\iface_sldworks.txt`"
+        "（20,627 成员）+ `iface_cosworks.txt`（cosworks）"
+    )
     L.append(">")
     L.append("> **怎么用这张表**：拿着官方文档里的成员名，在下面 §二 搜，")
-    L.append("> 就能知道本仓库哪个函数能调到它。若搜不到，说明该能力**本仓库尚未实现**。")
+    L.append(
+        "> 就能知道本仓库哪个函数能调到它。若搜不到，说明该能力**本仓库尚未实现**。"
+    )
     L.append(">")
-    L.append("> **本表由 AST 解析 + 反射清单对撞生成，未执行任何仓库代码、未连接 SolidWorks。**")
+    L.append(
+        "> **本表由 AST 解析 + 反射清单对撞生成，未执行任何仓库代码、未连接 SolidWorks。**"
+    )
     L.append("")
     L.append("---")
     L.append("")
@@ -248,8 +276,10 @@ def main() -> int:
     L.append("|---|---|---|")
     for dom in sorted(domain_members, key=lambda d: -len(domain_members[d])):
         mods = sorted({k for k in DOMAIN_OF_MODULE if DOMAIN_OF_MODULE[k] == dom})
-        L.append(f"| {dom} | **{len(domain_members[dom])}** | "
-                 f"{', '.join(f'`{m}`' for m in mods) if mods else '—'} |")
+        L.append(
+            f"| {dom} | **{len(domain_members[dom])}** | "
+            f"{', '.join(f'`{m}`' for m in mods) if mods else '—'} |"
+        )
     L.append("")
     L.append("---")
     L.append("")
@@ -283,14 +313,22 @@ def main() -> int:
         L.append(f"| `{mem}` | {iface_s} | {arity_s} | {sites_txt} |")
 
     L.append("")
-    L.append("> **宿主接口列**只列前 3 个：某些成员（如 `AccessSelections`）"
-             "挂在 80+ 个 `*FeatureData` 接口上，全列出来表格就没法读了。")
-    L.append("> 完整接口清单见 `_raw/` 下的反射清单，或跑 "
-             "`python tools/gen_api_map.py` 时保留的 JSON。")
+    L.append(
+        "> **宿主接口列**只列前 3 个：某些成员（如 `AccessSelections`）"
+        "挂在 80+ 个 `*FeatureData` 接口上，全列出来表格就没法读了。"
+    )
+    L.append(
+        "> 完整接口清单见 `_raw/` 下的反射清单，或跑 "
+        "`python tools/gen_api_map.py` 时保留的 JSON。"
+    )
     L.append(">")
-    L.append("> 表中「参数」列若显示多个数字且带 ⚠，说明该成员名在**多个接口上参数个数不同**")
+    L.append(
+        "> 表中「参数」列若显示多个数字且带 ⚠，说明该成员名在**多个接口上参数个数不同**"
+    )
     L.append("> （如 `RunAnalysis`：既在 `ICwAddincallback` 上，也在 `ICWStudy` 上；")
-    L.append("> `CreateMesh`：在 `ICWStudy` 上是 3 参、在 `ICwAddincallback` 上是 0 参）。")
+    L.append(
+        "> `CreateMesh`：在 `ICWStudy` 上是 3 参、在 `ICwAddincallback` 上是 0 参）。"
+    )
     L.append("> 此时须结合「本仓库调用点」列判断实际调的是哪一个。")
 
     L.append("")
@@ -300,30 +338,49 @@ def main() -> int:
     L.append("")
     L.append("| 情况 | 原因 |")
     L.append("|---|---|")
-    L.append("| 通过 `CreateDefinition` + FeatureData **属性赋值**间接触及的成员 | "
-             "属性名出现在赋值左侧而非调用形态中（如 `data.Thickness = 0.001`）。"
-             "本表只统计「可静态识别形态」的调用，不统计属性赋值。"
-             "这部分由 `scripts/sw_sheet_metal.py` 的 `SURFACE_CREATION_METHODS`、"
-             "`scripts/sw_surface.py` 的 `SURFACE_CREATION_METHODS`、"
-             "`scripts/sw_simulation.py` 的 5 组 `SWS_*` 表**逐条登记**，"
-             "另有各函数来源块列出所用的官方成员名 |")
-    L.append("| Simulation 域 27 个载荷方法 | 反射清单与两套官方文档都没有签名，"
-             "本仓库**刻意不提供**入口（AGENTS.md 铁律 5） |")
-    L.append("| 「其他/未归类」域下的成员 | 来自 `subskills/` 与 `scripts/` 里"
-             "未登记到 DOMAIN_OF_MODULE 的模块（如 advanced_*、fea_*、dfm_* 等），"
-             "它们不属于 14 个功能域的原生 API 面 |")
+    L.append(
+        "| 通过 `CreateDefinition` + FeatureData **属性赋值**间接触及的成员 | "
+        "属性名出现在赋值左侧而非调用形态中（如 `data.Thickness = 0.001`）。"
+        "本表只统计「可静态识别形态」的调用，不统计属性赋值。"
+        "这部分由 `scripts/sw_sheet_metal.py` 的 `SURFACE_CREATION_METHODS`、"
+        "`scripts/sw_surface.py` 的 `SURFACE_CREATION_METHODS`、"
+        "`scripts/sw_simulation.py` 的 5 组 `SWS_*` 表**逐条登记**，"
+        "另有各函数来源块列出所用的官方成员名 |"
+    )
+    L.append(
+        "| Simulation 域 27 个载荷方法 | 反射清单与两套官方文档都没有签名，"
+        "本仓库**刻意不提供**入口（AGENTS.md 铁律 5） |"
+    )
+    L.append(
+        "| 「其他/未归类」域下的成员 | 来自 `subskills/` 与 `scripts/` 里"
+        "未登记到 DOMAIN_OF_MODULE 的模块（如 advanced_*、fea_*、dfm_* 等），"
+        "它们不属于 14 个功能域的原生 API 面 |"
+    )
     L.append("")
-    L.append("> ⚠ 因此本表是**下界**而非全集：它只统计「形态可静态识别」的直接调用。"
-             "完整的签名级核对请看 `docs/signature-audit.md`。")
+    L.append(
+        "> ⚠ 因此本表是**下界**而非全集：它只统计「形态可静态识别」的直接调用。"
+        "完整的签名级核对请看 `docs/signature-audit.md`。"
+    )
 
     OUT.write_text("\n".join(L), encoding="utf-8")
     side = OUT.with_suffix(".json")
-    side.write_text(json.dumps(
-        {"scanned_files": files_scanned, "members": len(usage), "calls": total_calls,
-         "by_shape": by_shape,
-         "member_to_ifaces": {m: members[m][0] for m in sorted(usage)},
-         "member_to_sites": {m: dict(sorted(usage[m].items())) for m in sorted(usage)}},
-        ensure_ascii=False, indent=2), encoding="utf-8")
+    side.write_text(
+        json.dumps(
+            {
+                "scanned_files": files_scanned,
+                "members": len(usage),
+                "calls": total_calls,
+                "by_shape": by_shape,
+                "member_to_ifaces": {m: members[m][0] for m in sorted(usage)},
+                "member_to_sites": {
+                    m: dict(sorted(usage[m].items())) for m in sorted(usage)
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(L)} 行)")
     print(f"  完整接口清单 -> {side.name}")
     print(f"  扫描 .py 文件 {files_scanned} 个")

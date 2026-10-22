@@ -36,6 +36,7 @@ r"""@brief 探针：`InsertCompositeCurve` 到底要选**实体（草图段）**
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -50,7 +51,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 from scripts import sketch_relations  # noqa: E402
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-selection.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "composite-curve-selection.json"
+)
 
 
 def main() -> int:
@@ -59,10 +62,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         def build_two_spline_sketches():
@@ -72,15 +76,22 @@ def main() -> int:
                 sw_part.start_sketch(doc)
                 y = float(i) * 30.0
                 skm = sw_connect.safe_get_com_member(doc, "SketchManager")
-                sketch_relations.create_spline(skm, [
-                    (-20.0, y, 0.0), (-7.0, y + 6.0, 0.0), (7.0, y - 6.0, 0.0), (20.0, y, 0.0)])
+                sketch_relations.create_spline(
+                    skm,
+                    [
+                        (-20.0, y, 0.0),
+                        (-7.0, y + 6.0, 0.0),
+                        (7.0, y - 6.0, 0.0),
+                        (20.0, y, 0.0),
+                    ],
+                )
                 sw_part.end_sketch(doc)
             return doc
 
         def fcount(doc):
             try:
                 return int(sw_connect.safe_get_com_member(doc, "GetFeatureCount"))
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 return -1
 
         def sketch_segments(doc):
@@ -91,13 +102,13 @@ def main() -> int:
                 f = sw_connect.safe_get_com_member(fm, "GetFirstFeature")
                 while f is not None:
                     tn = str(sw_connect.safe_get_com_member(f, "GetTypeName2") or "")
-                    if tn == "ProfileFeature":      #: 草图
+                    if tn == "ProfileFeature":  #: 草图
                         sk = sw_connect.safe_get_com_member(f, "GetSpecificFeature2")
                         segs = sw_connect.safe_get_com_member(sk, "GetSketchSegments")
                         if segs:
                             out.extend(list(segs))
                     f = sw_connect.safe_get_com_member(f, "GetNextFeature")
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev.setdefault("seg_error", str(exc)[:70])
             return out
 
@@ -110,22 +121,29 @@ def main() -> int:
             try:
                 if s.Select4(True, sw_part._empty_callout()):
                     n_sel += 1
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         rec = {"form": "① 选**草图段实体**", "segments": len(segs), "selected": n_sel}
         try:
             r = sw_connect.call_com_member(doc, "InsertCompositeCurve")
             rec["ret"] = repr(r)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         rec["features"] = "%s → %s" % (n0, fcount(doc))
         rec["changed"] = fcount(doc) > n0
-        print("  ① 选**草图段实体**（%d 段 / 选中 %d）⇒ 特征 %s · 返回 %s"
-              % (len(segs), n_sel, rec["features"], rec.get("ret", rec.get("raised", ""))[:30]))
+        print(
+            "  ① 选**草图段实体**（%d 段 / 选中 %d）⇒ 特征 %s · 返回 %s"
+            % (
+                len(segs),
+                n_sel,
+                rec["features"],
+                rec.get("ret", rec.get("raised", ""))[:30],
+            )
+        )
         ev["trials"].append(rec)
         try:
             sw.CloseDoc(str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""))
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② 选**草图特征**（现状）
@@ -134,25 +152,28 @@ def main() -> int:
         n_sel = 0
         for nm in ("草图1", "草图2"):
             try:
-                if sw_connect.call_com_member(doc, "SelectByID2", nm, "SKETCH", 0, 0, 0,
-                                              False, 1, None, 0):
+                if sw_connect.call_com_member(
+                    doc, "SelectByID2", nm, "SKETCH", 0, 0, 0, False, 1, None, 0
+                ):
                     n_sel += 1
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         rec = {"form": "② 选**草图特征**", "selected": n_sel}
         try:
             r = sw_connect.call_com_member(doc, "InsertCompositeCurve")
             rec["ret"] = repr(r)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         rec["features"] = "%s → %s" % (n0, fcount(doc))
         rec["changed"] = fcount(doc) > n0
-        print("  ② 选**草图特征**（选中 %d）⇒ 特征 %s · 返回 %s"
-              % (n_sel, rec["features"], rec.get("ret", rec.get("raised", ""))[:30]))
+        print(
+            "  ② 选**草图特征**（选中 %d）⇒ 特征 %s · 返回 %s"
+            % (n_sel, rec["features"], rec.get("ret", rec.get("raised", ""))[:30])
+        )
         ev["trials"].append(rec)
         try:
             sw.CloseDoc(str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""))
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ③ 对照：都不选
@@ -160,38 +181,44 @@ def main() -> int:
         n0 = fcount(doc)
         try:
             sw_connect.call_com_member(doc, "ClearSelection2", True)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         rec = {"form": "③ 都不选（对照）"}
         try:
             r = sw_connect.call_com_member(doc, "InsertCompositeCurve")
             rec["ret"] = repr(r)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         rec["changed"] = fcount(doc) > n0
-        print("  ③ 都不选（对照）⇒ 返回 %s · 特征变了：%s"
-              % (rec.get("ret", rec.get("raised", ""))[:30], rec["changed"]))
+        print(
+            "  ③ 都不选（对照）⇒ 返回 %s · 特征变了：%s"
+            % (rec.get("ret", rec.get("raised", ""))[:30], rec["changed"])
+        )
         ev["trials"].append(rec)
         try:
             sw.CloseDoc(str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""))
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
     return 0
 

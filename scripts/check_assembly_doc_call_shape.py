@@ -66,7 +66,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑（与 `DSH_ARITY_GATE_ROOT` 同风格）。
-ROOT = Path(os.environ.get("DSH_ASSEMBLY_CALL_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_ASSEMBLY_CALL_ROOT") or Path(__file__).resolve().parents[1]
+)
 #: 反射转储路径覆盖（与 `check_arity_tables_vs_reflection.py` **共用同一个开关**）。
 DUMPS_ENV = "DSH_ARITY_DUMPS"
 #: 被审的包装器名（成员名作为**第二实参**传入的那一族）。
@@ -88,8 +90,12 @@ def _import_byref_helpers():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import audit_byref_args as abr  # noqa: PLC0415
 
-    return (abr.load_full_signatures, abr.BYREF_OK,
-            abr.byref_variables, abr.byref_alias_names)
+    return (
+        abr.load_full_signatures,
+        abr.BYREF_OK,
+        abr.byref_variables,
+        abr.byref_alias_names,
+    )
 
 
 def find_dumps() -> list[Path]:
@@ -117,11 +123,17 @@ def _table_of(node: ast.stmt):
             continue
         tbl = {}
         for k, v in zip(value.keys, value.values):
-            if (isinstance(k, ast.Constant) and isinstance(k.value, str)
-                    and isinstance(v, ast.Constant) and isinstance(v.value, int)):
+            if (
+                isinstance(k, ast.Constant)
+                and isinstance(k.value, str)
+                and isinstance(v, ast.Constant)
+                and isinstance(v.value, int)
+            ):
                 tbl[k.value] = v.value
         return tbl
     return None
+
+
 try:
     from .gate_decl import arity_mode_above as _decl
 except ImportError:
@@ -145,8 +157,12 @@ def find_table():
         for node in tree.body:
             tbl = _table_of(node)
             if tbl is not None:
-                return (tbl, path.relative_to(ROOT).as_posix(), node.lineno,
-                        _decl(lines, node.lineno))
+                return (
+                    tbl,
+                    path.relative_to(ROOT).as_posix(),
+                    node.lineno,
+                    _decl(lines, node.lineno),
+                )
     return None, None, None, None
 
 
@@ -170,9 +186,13 @@ def find_call_sites():
             m = node.args[1]
             if not (isinstance(m, ast.Constant) and isinstance(m.value, str)):
                 continue
-            texts = [(ast.get_source_segment(src, a) or "").strip().replace("\n", " ")
-                     for a in node.args[2:]]
-            out.append((path.relative_to(ROOT).as_posix(), node.lineno, m.value, texts, path))
+            texts = [
+                (ast.get_source_segment(src, a) or "").strip().replace("\n", " ")
+                for a in node.args[2:]
+            ]
+            out.append(
+                (path.relative_to(ROOT).as_posix(), node.lineno, m.value, texts, path)
+            )
     return sorted(out)
 
 
@@ -182,29 +202,49 @@ def main() -> int:
     dumps = find_dumps()
     have_dumps = any(p.is_file() for p in dumps)
 
-    print("== `%s(doc, \"<成员>\", …)` 调用形状 ==" % WRAPPER)
+    print('== `%s(doc, "<成员>", …)` 调用形状 ==' % WRAPPER)
     if tbl is None:
-        print("[FAIL] 找不到登记表 `%s`（在 %s/scripts/**/*.py 里）" % (TABLE_NAME, ROOT))
+        print(
+            "[FAIL] 找不到登记表 `%s`（在 %s/scripts/**/*.py 里）" % (TABLE_NAME, ROOT)
+        )
         print("已核 0 · 违规 1 · [FAIL] 0 · exit 1")
         return 1
-    print("表 %s:%d · %d 条 · 声明 `byref=%s`"
-          % (tbl_file, tbl_line, len(tbl), decl or "**未表态**"))
-    print("扫描调用点 %d 个（成员名为字面量）· 反射转储 %s"
-          % (len(sites), "已加载" if have_dumps else "**缺失（by-ref 一项将标为未核）**"))
+    print(
+        "表 %s:%d · %d 条 · 声明 `byref=%s`"
+        % (tbl_file, tbl_line, len(tbl), decl or "**未表态**")
+    )
+    print(
+        "扫描调用点 %d 个（成员名为字面量）· 反射转储 %s"
+        % (len(sites), "已加载" if have_dumps else "**缺失（by-ref 一项将标为未核）**")
+    )
 
     violations: list[dict] = []
     #: ★ 声明缺失 ⇒ 判失败（「一个事实一个家」：契约必须有家）。
     if decl is None:
-        violations.append({"kind": "undeclared", "file": tbl_file, "line": tbl_line,
-                           "detail": "表起始行正上方缺 `#: arity-reflect: byref=included|excluded`"})
+        violations.append(
+            {
+                "kind": "undeclared",
+                "file": tbl_file,
+                "line": tbl_line,
+                "detail": "表起始行正上方缺 `#: arity-reflect: byref=included|excluded`",
+            }
+        )
     if decl == "excluded":
-        violations.append({"kind": "contract", "file": tbl_file, "line": tbl_line,
-                           "detail": "本门禁按 `included` 口径查；声明写成 `excluded` 即契约冲突"})
+        violations.append(
+            {
+                "kind": "contract",
+                "file": tbl_file,
+                "line": tbl_line,
+                "detail": "本门禁按 `included` 口径查；声明写成 `excluded` 即契约冲突",
+            }
+        )
 
     byref_sites = 0
     unverified = 0
     if have_dumps:
-        load_full_signatures, byref_ok, byref_variables, byref_alias_names = _import_byref_helpers()
+        load_full_signatures, byref_ok, byref_variables, byref_alias_names = (
+            _import_byref_helpers()
+        )
         table = load_full_signatures([str(p) for p in dumps])
     else:
         table, byref_ok, byref_variables, byref_alias_names = {}, None, None, None
@@ -212,13 +252,26 @@ def main() -> int:
     for rel, lineno, member, args, path in sites:
         expected = tbl.get(member)
         if expected is None:
-            violations.append({"kind": "unknown-member", "file": rel, "line": lineno,
-                               "member": member,
-                               "detail": "不在 `%s` 里 ⇒ 运行期必抛 KeyError" % TABLE_NAME})
+            violations.append(
+                {
+                    "kind": "unknown-member",
+                    "file": rel,
+                    "line": lineno,
+                    "member": member,
+                    "detail": "不在 `%s` 里 ⇒ 运行期必抛 KeyError" % TABLE_NAME,
+                }
+            )
             continue
         if expected != len(args):
-            violations.append({"kind": "arity", "file": rel, "line": lineno, "member": member,
-                               "detail": "表值 %d，调用给了 %d 个" % (expected, len(args))})
+            violations.append(
+                {
+                    "kind": "arity",
+                    "file": rel,
+                    "line": lineno,
+                    "member": member,
+                    "detail": "表值 %d，调用给了 %d 个" % (expected, len(args)),
+                }
+            )
             continue
         if not have_dumps:
             unverified += 1
@@ -244,7 +297,9 @@ def main() -> int:
                 if not ptype.strip().endswith("&"):
                     continue
                 actual = args[i]
-                if byref_ok.match(actual) or any(rx.match(actual) for rx in alias_inline):
+                if byref_ok.match(actual) or any(
+                    rx.match(actual) for rx in alias_inline
+                ):
                     continue
                 if actual in byref_vars:
                     continue
@@ -254,9 +309,16 @@ def main() -> int:
                 ok = True
                 break
         if not ok and bad_pos is not None:
-            violations.append({"kind": "bare-byref", "file": rel, "line": lineno, "member": member,
-                               "detail": "第 %d 位形参是 `%s`，实参却是 `%s`"
-                                         % (bad_pos[0], bad_pos[1], bad_pos[2][:40])})
+            violations.append(
+                {
+                    "kind": "bare-byref",
+                    "file": rel,
+                    "line": lineno,
+                    "member": member,
+                    "detail": "第 %d 位形参是 `%s`，实参却是 `%s`"
+                    % (bad_pos[0], bad_pos[1], bad_pos[2][:40]),
+                }
+            )
 
     #: ★ 跨工具口径不一致（**只报不判罪**）。
     cross = []
@@ -264,6 +326,7 @@ def main() -> int:
         try:
             sys.path.insert(0, str(Path(__file__).resolve().parent))
             from audit_byref_args import counted_positions  # noqa: PLC0415
+
             for member, declared in sorted(tbl.items()):
                 variants = table.get(member)
                 if not variants:
@@ -275,28 +338,47 @@ def main() -> int:
         except ImportError:
             pass
 
-    print("含 by-ref 的调用点 %d 个 · 因无反射而未核 by-ref %d 个" % (byref_sites, unverified))
+    print(
+        "含 by-ref 的调用点 %d 个 · 因无反射而未核 by-ref %d 个"
+        % (byref_sites, unverified)
+    )
     if cross:
-        print("⚠ 与 `audit_call_arity.PURE_OUT`（纯出参不传）口径不符 %d 条（**不判罪**，"
-              "见本文件来源块与 spec 228 §四）：" % len(cross))
+        print(
+            "⚠ 与 `audit_call_arity.PURE_OUT`（纯出参不传）口径不符 %d 条（**不判罪**，"
+            "见本文件来源块与 spec 228 §四）：" % len(cross)
+        )
         for member, declared, cnts in cross[:DETAIL_LIMIT]:
             print("   · %-34s 表值 %d / PURE_OUT 口径 %s" % (member, declared, cnts))
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
         for v in violations[:DETAIL_LIMIT]:
-            head = "  [%s] %s:%s %s" % (v["kind"], v["file"], v.get("line", "-"),
-                                        v.get("member", ""))
+            head = "  [%s] %s:%s %s" % (
+                v["kind"],
+                v["file"],
+                v.get("line", "-"),
+                v.get("member", ""),
+            )
             print("%s —— %s" % (head, v["detail"]))
         if len(violations) > DETAIL_LIMIT:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     if not sites:
         print("[FAIL] 检查过的调用点 == 0（事实 46：`检查过 0 个` 不许 PASS）")
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0, "detail": "0 个调用点"})
+        violations.append(
+            {"kind": "zero-checked", "file": "-", "line": 0, "detail": "0 个调用点"}
+        )
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("已核 %d · 含 by-ref %d · 未核 by-ref %d · 违规 %d · [%s] · exit %d"
-          % (len(sites), byref_sites, unverified, len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "已核 %d · 含 by-ref %d · 未核 by-ref %d · 违规 %d · [%s] · exit %d"
+        % (
+            len(sites),
+            byref_sites,
+            unverified,
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

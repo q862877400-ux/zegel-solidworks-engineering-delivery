@@ -83,7 +83,6 @@ except ImportError:
     from sw_stdio import configure_stdio_utf8 as _configure_stdio_utf8
 
 
-
 async def _list_tools() -> set[str]:
     """启动 MCP server 并读取工具列表。"""
     server_params = StdioServerParameters(

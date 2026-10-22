@@ -30,6 +30,7 @@ operation_routes, capabilities}`，**内容是 JSON（YAML 扩展名）** ⇒ �
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -54,8 +55,10 @@ def main() -> int:
     d = json.loads(CAPS.read_text(encoding="utf-8"))
     caps = d.get("capabilities") or []
     n = len(caps)
-    print("capabilities.yaml · schema_version=%s · **capabilities %d 条**"
-          % (d.get("schema_version"), n))
+    print(
+        "capabilities.yaml · schema_version=%s · **capabilities %d 条**"
+        % (d.get("schema_version"), n)
+    )
     print()
 
     no_level, bad_level, no_ev, no_prov, prov_partial = [], [], [], [], []
@@ -92,28 +95,40 @@ def main() -> int:
     show("A4 · `level` 不在五级枚举里的", bad_level, lambda r: "%s → %r" % r)
     show("A4 · `level=verified` 但缺 `evidence` 的", no_ev)
     show("A2 · 缺 `provenance` 的条目", no_prov)
-    show("A2 · 有 `provenance` 但字段不全的",
-         prov_partial, lambda r: "%s → 缺 %r" % r)
+    show("A2 · 有 `provenance` 但字段不全的", prov_partial, lambda r: "%s → 缺 %r" % r)
 
     print("=== 判据结论 ===")
     a2_ok = n - len(no_prov) - len(prov_partial)
-    print("  **A2**（每条带 4 字段 provenance）: %d/%d 满足 ⇒ %s"
-          % (a2_ok, n, "✓ 达标" if a2_ok == n else "**✗ 未达标**"))
+    print(
+        "  **A2**（每条带 4 字段 provenance）: %d/%d 满足 ⇒ %s"
+        % (a2_ok, n, "✓ 达标" if a2_ok == n else "**✗ 未达标**")
+    )
     a4_ok = n - len(no_level) - len(bad_level)
-    print("  **A4**（level 在五级枚举内）: %d/%d 满足 ⇒ %s"
-          % (a4_ok, n, "✓ 达标" if a4_ok == n else "**✗ 未达标**"))
-    print("  **A4 的 verified+evidence**: %d 条 verified 里 %d 条缺 evidence ⇒ %s"
-          % (sum(1 for c in caps if c.get("level") == "verified"), len(no_ev),
-             "✓" if not no_ev else "**✗ 未达标**"))
+    print(
+        "  **A4**（level 在五级枚举内）: %d/%d 满足 ⇒ %s"
+        % (a4_ok, n, "✓ 达标" if a4_ok == n else "**✗ 未达标**")
+    )
+    print(
+        "  **A4 的 verified+evidence**: %d 条 verified 里 %d 条缺 evidence ⇒ %s"
+        % (
+            sum(1 for c in caps if c.get("level") == "verified"),
+            len(no_ev),
+            "✓" if not no_ev else "**✗ 未达标**",
+        )
+    )
     print()
-    print("  ⚠ **A2 的判据是「抽查 10 条，100%% 命中」** —— "
-          "现在只有 %d 条有 provenance ⇒ 抽查必然不达标。" % (n - len(no_prov)))
+    print(
+        "  ⚠ **A2 的判据是「抽查 10 条，100%% 命中」** —— "
+        "现在只有 %d 条有 provenance ⇒ 抽查必然不达标。" % (n - len(no_prov))
+    )
     print()
     print("  ⚠⚠ **但「不达标」的准确说法是「未被分类」，不是「28 条缺 provenance」**：")
     print("     A2 原文是「每个**并入条目**带 provenance」。")
     print("     而本 schema **没有 `source` / `origin` 之类的字段** ⇒")
     print("     **无法区分「并入来的」与「本项目自研的」**")
-    print("     （例：`requirements_planning` 的 backend 是 `local-agent`，显然是自研，")
+    print(
+        "     （例：`requirements_planning` 的 backend 是 `local-agent`，显然是自研，"
+    )
     print("      但文件里没有地方这么说）。")
     print()
     print("  🚫 **本脚本**不**为「让 A2 变绿」而编造 provenance。**")
@@ -123,12 +138,19 @@ def main() -> int:
     print("       再由人逐条确证 `merged` 的来源；**本脚本只报告、不写入**。")
     print()
     print("  ⚠ 本脚本只核 `capabilities.yaml` 的**结构化** provenance；")
-    print("    源码头注释的来源块由 `scripts/check_provenance.py` 单独把关（现 291 块 PASS）。")
+    print(
+        "    源码头注释的来源块由 `scripts/check_provenance.py` 单独把关（现 291 块 PASS）。"
+    )
     print()
     print("  ── 能被**确证**的少数线索（仅供参考，不作判定）──")
-    marked = [c.get("id") for c in caps
-              if any("来源" in s or "并入" in s for s in (c.get("limitations") or []))]
-    print("     `limitations` 里**提到了**「来源 / 并入」字样的条目: %d 条" % len(marked))
+    marked = [
+        c.get("id")
+        for c in caps
+        if any("来源" in s or "并入" in s for s in (c.get("limitations") or []))
+    ]
+    print(
+        "     `limitations` 里**提到了**「来源 / 并入」字样的条目: %d 条" % len(marked)
+    )
     for cid in marked[:10]:
         print("       · %s" % cid)
     print("     ⚠ 这**只是线索** —— 在文本里提过不等于归属已确证。")

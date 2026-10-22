@@ -27,8 +27,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "weldment-feature-kind-evidence.json"
 
@@ -46,12 +46,12 @@ def _walk(doc, limit=40):
         for k, m in (("name", "Name"), ("type", "GetTypeName2")):
             try:
                 row[k] = str(_g(feat, m) or "")
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 row[k] = "<%s>" % type(exc).__name__
         out.append(row)
         try:
             feat = _g(feat, "GetNextFeature")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
     return out
 
@@ -74,31 +74,41 @@ def main() -> int:
         P.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
         P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or [])
-                 if n.startswith("草图") or n.lower().startswith("sketch")]
+        names = [
+            n
+            for n in (P.feature_names(doc) or [])
+            if n.startswith("草图") or n.lower().startswith("sketch")
+        ]
         R["sketch"] = names[-1] if names else "草图1"
         R["tree_before"] = _walk(doc)
         from scripts.sw_weldment import create_structural_member_from_sketch
+
         sm = create_structural_member_from_sketch(
-            doc, sketch_name=R["sketch"], profile_path=_profile())
+            doc, sketch_name=R["sketch"], profile_path=_profile()
+        )
         R["sm_ok"] = bool(isinstance(sm, dict) and sm.get("ok"))
         if isinstance(sm, dict):
             R["sm_keys"] = sorted(sm)
         R["tree_after"] = _walk(doc)
-        R["types_after"] = sorted({t.get("type", "") for t in R["tree_after"] if t.get("type")})
-        R["is_weldment"] = any("weld" in (t.get("type", "") or "").lower()
-                               for t in R["tree_after"])
+        R["types_after"] = sorted(
+            {t.get("type", "") for t in R["tree_after"] if t.get("type")}
+        )
+        R["is_weldment"] = any(
+            "weld" in (t.get("type", "") or "").lower() for t in R["tree_after"]
+        )
         R["bodies"] = len(list(_g(doc, "GetBodies2", 0, True) or []))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

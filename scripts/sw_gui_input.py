@@ -37,6 +37,7 @@ r"""GUI 输入层 —— **配置化的输入方式** + **稳定的控件标注*
 # ⚠ 会驱动键盘；调用方须先确保目标窗口持有键盘焦点。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -90,6 +91,7 @@ def _press(vk: int, pause: float = 0.06) -> None:
     """
     import win32api
     import win32con
+
     win32api.keybd_event(vk, 0, 0, 0)
     try:
         time.sleep(0.03)
@@ -111,6 +113,7 @@ def _hold(mods, vk: int, pause: float = 0.1) -> None:
     """
     import win32api
     import win32con
+
     mods = list(mods)
     held = []
     try:
@@ -135,6 +138,7 @@ def _hold(mods, vk: int, pause: float = 0.1) -> None:
 def _tap_ctrl(vk: int, pause: float = 0.1) -> None:
     """Ctrl + 某键 ⇒ 走 `_hold`（**Ctrl 一定被抬起**）。"""
     import win32con
+
     _hold([win32con.VK_CONTROL], vk, pause)
 
 
@@ -208,6 +212,7 @@ def get_text(ctrl) -> str:
 def clear(ctrl, log=None) -> bool:
     """清空输入框并**回读确认**。返回是否确认为空。"""
     import win32con
+
     for _ in range(3):
         if CONFIG["clear_with"] == "backspace":
             for _ in range(20):
@@ -230,6 +235,7 @@ def clear(ctrl, log=None) -> bool:
 def commit(log=None) -> None:
     """按配置提交（实测该插件**只认 Enter**，Tab 无效）。"""
     import win32con
+
     k = CONFIG["commit_key"]
     if k == "enter":
         _tap(win32con.VK_RETURN, 0.3)
@@ -263,6 +269,7 @@ def type_text(ctrl, text: str, log=None) -> bool:
             _tap(0xBD, pause)
         else:
             import win32api
+
             vk = win32api.VkKeyScan(ch) & 0xFF
             if vk and vk != 0xFF:
                 _tap(vk, pause)

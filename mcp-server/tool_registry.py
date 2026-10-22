@@ -50,6 +50,7 @@ ToolSpec(
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -132,11 +133,11 @@ def _looks_like_coord_component(name: str) -> bool:
     #:   ⇒ ★ 而**无单位**的（`x` · `boundary_z` · `d1_x` · `major_y`）**照旧拦** ✓
     if low.endswith("_mm"):
         return False
-    if re.fullmatch(r"[xyz]\d*", low):            #: x / x1 / y2 / z
+    if re.fullmatch(r"[xyz]\d*", low):  #: x / x1 / y2 / z
         return True
-    if re.fullmatch(r"c[xyz]", low):              #: cx / cy / cz
+    if re.fullmatch(r"c[xyz]", low):  #: cx / cy / cz
         return True
-    if re.search(r"(^|_)[xyz]\d*$", low):         #: major_x / d1_x / minor_y / point_x
+    if re.search(r"(^|_)[xyz]\d*$", low):  #: major_x / d1_x / minor_y / point_x
         return True
     return False
 
@@ -150,8 +151,17 @@ _COORD_COMPONENT_NOTE = ("center", "w", "h")
 #: （`lot_size` 是批量、`h` 可能是句柄）⇒ 收进来只会制造假阳性
 #: （见已知事实 74：按名字判语义的检查在本项目的失败记录）。
 _LEN_WORDS = (
-    "radius", "diameter", "depth", "thickness", "distance",
-    "width", "height", "length", "offset", "spacing", "pitch",
+    "radius",
+    "diameter",
+    "depth",
+    "thickness",
+    "distance",
+    "width",
+    "height",
+    "length",
+    "offset",
+    "spacing",
+    "pitch",
 )
 
 #: ⚑⚑ **规则 2 的显式豁免**：这些参数的**单位不是毫米**，`_mm` 后缀会**说错话**。
@@ -166,21 +176,29 @@ _ANGLE_WORDS = ("angle", "degrees", "draft")
 #: ⚑⚑ **规则 2 的角度那一半的显式豁免**（判据同长度表：值是**交给 SolidWorks 的
 #: 文档默认量**，不是我们换算出的度）。
 _ANGLE_SUFFIX_EXEMPT: dict = {
-    ("solidworks_mold_parting_surface", "angle"):
-        "官方参数 `Angle`；本工具的文档写明「**0.0 = 用文档默认**」⇒ "
-        "是**交给 SolidWorks 的文档默认量** ⇒ 加 `_deg` 反而**说错话**。",
+    (
+        "solidworks_mold_parting_surface",
+        "angle",
+    ): "官方参数 `Angle`；本工具的文档写明「**0.0 = 用文档默认**」⇒ "
+    "是**交给 SolidWorks 的文档默认量** ⇒ 加 `_deg` 反而**说错话**。",
     #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_deg` 会**说错一半**
     #: 。
-    ("solidworks_insert_ref_plane", "first_angle_or_dist"):
-        "官方参数 `FirstConstraintAngleOrDistance` —— ★ **同一个形参**在 `FirstConstraint` 取 "
-        "`Angle(16)` 时是**角度**、取 `Distance(8)` 时是**长度**（官方 Parameters："
-        "\"Angle **or** distance of the first constraint\"）⇒ ★★ **一个名字带不了两种单位后缀**，"
-        "加 `_deg` 会在 Distance 那一档说错话、加 `_mm` 会在 Angle 那一档说错话 ⇒ "
-        "**两边都不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
-    ("solidworks_insert_ref_plane", "second_angle_or_dist"):
-        "同上（`SecondConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
-    ("solidworks_insert_ref_plane", "third_angle_or_dist"):
-        "同上（`ThirdConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
+    (
+        "solidworks_insert_ref_plane",
+        "first_angle_or_dist",
+    ): "官方参数 `FirstConstraintAngleOrDistance` —— ★ **同一个形参**在 `FirstConstraint` 取 "
+    "`Angle(16)` 时是**角度**、取 `Distance(8)` 时是**长度**（官方 Parameters："
+    '"Angle **or** distance of the first constraint"）⇒ ★★ **一个名字带不了两种单位后缀**，'
+    "加 `_deg` 会在 Distance 那一档说错话、加 `_mm` 会在 Angle 那一档说错话 ⇒ "
+    "**两边都不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
+    (
+        "solidworks_insert_ref_plane",
+        "second_angle_or_dist",
+    ): "同上（`SecondConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
+    (
+        "solidworks_insert_ref_plane",
+        "third_angle_or_dist",
+    ): "同上（`ThirdConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
 }
 
 #: ⚑⚑⚑ **规则 2b 的三件套**（★ 2026-10-07 规格 212 · C-4；★ 判据**全确定性**、★ 不猜语义
@@ -208,67 +226,81 @@ _DIMENSIONLESS_CLAIM = re.compile(r"(无量纲|枚举值|布尔|百分比|比值
 #:   **绝不覆盖自动结果**、**输出分开报**、**没有依据的不许进来** ✓
 _UNIT_DESC_EXEMPT: dict = {
     ("solidworks_sheet_metal_insert_miter_flange", "relief_width_mm"):
-        #: ★★ **这一条是"挂起"而不是"豁免"** —— ★ 它的单位**本身就没确证** ✗
-        #: ★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **d
-        #: epth**」⇒
-        #:   ★ **官方这两句自相矛盾** ⇒ ★ 本工具**原样透传、不替官方调和**（铁律 5）✓
-        #:   ★★ 而代码实测（`scripts/sw_sheet_metal.py`）：★ `float(args["ReliefWidth"])`
-        #:   **直接送进 `InsertSheetMetalHem2`**、★ **中途没有 `mm()` 换算** ✗
-        #:   ⇒ ★★★ **所以"名字该不该留 `_mm`"取决于官方吃什么 —— 而官方没说** ✗
-        #:   ★ 已登记为 **`docs/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
-        #:   ★ 传 `1.0` ⇒ **回读几何**：≈1mm ⇒ 名字对；★ ≈1000mm ⇒ 名字说假话）✓
-        #: ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁
-        #: 免** ✓
-        "★ **挂起**（不是豁免）：★ 官方对该形参**未给单位**、★ 且官方 `ReliefWidth`/`ReliefDepth` "
-        "两句自相矛盾 ⇒ ★ 『名字该不该留 `_mm`』**取决于官方吃什么，而官方没说** ✗ "
-        "★ 已登记 `docs/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
+    #: ★★ **这一条是"挂起"而不是"豁免"** —— ★ 它的单位**本身就没确证** ✗
+    #: ★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **d
+    #: epth**」⇒
+    #:   ★ **官方这两句自相矛盾** ⇒ ★ 本工具**原样透传、不替官方调和**（铁律 5）✓
+    #:   ★★ 而代码实测（`scripts/sw_sheet_metal.py`）：★ `float(args["ReliefWidth"])`
+    #:   **直接送进 `InsertSheetMetalHem2`**、★ **中途没有 `mm()` 换算** ✗
+    #:   ⇒ ★★★ **所以"名字该不该留 `_mm`"取决于官方吃什么 —— 而官方没说** ✗
+    #:   ★ 已登记为 **`docs/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
+    #:   ★ 传 `1.0` ⇒ **回读几何**：≈1mm ⇒ 名字对；★ ≈1000mm ⇒ 名字说假话）✓
+    #: ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁
+    #: 免** ✓
+    "★ **挂起**（不是豁免）：★ 官方对该形参**未给单位**、★ 且官方 `ReliefWidth`/`ReliefDepth` "
+    "两句自相矛盾 ⇒ ★ 『名字该不该留 `_mm`』**取决于官方吃什么，而官方没说** ✗ "
+    "★ 已登记 `docs/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
 }
 
 
 #: ⚑⚑ **规则 2 的显式豁免**（★ 原表 —— ★ 2026-10-07 我插 2b 三件套时**误删了这一行** ✗，
 #: 现补回）✓
-_LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
-    ("solidworks_insert_reference_point", "distance_or_percent"):
-        "官方参数 `DDistance_or_Percent` —— ★ **同一个形参**在 "
-        "`NRefPointAlongCurveType` 取 `Distance(0)` 时是**距离**、取 `Percentage(1)` 时是**百分比**"
-        "（官方 Parameters：\"Distance at which … **or** percentage of…\"）⇒ "
-        "★★ **一个名字带不了两种单位后缀**：加 `_mm` 会在 Percentage 那一档说错话 ⇒ "
-        "**不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
-    ("solidworks_mold_core_cavity_split", "thickness"):
-        "官方参数 `Thickness`；本工具的文档写明「0.0 = 用文档默认」⇒ "
-        "它是**交给 SolidWorks 的文档默认量**，不是我们换算出的毫米 ⇒ "
-        "加 `_mm` 反而**说错话**。",
-    ("solidworks_mold_core_cavity_split", "offset"):
-        "同 `thickness`：官方 `Offset`，文档写明「0.0 = 用文档默认」。",
-    ("solidworks_mold_parting_surface", "distance"):
-        "同 `thickness`：官方 `Distance`，文档写明「0.0 = 用文档默认」。",
-    ("solidworks_export_bmp", "pixel_width"):
-        "★ 它**不是长度**，是**像素** —— 官方 `ExportToBMP(FileName, Width, Height)` 的两个尺寸"
-        "单位是像素。⚠ 而门禁按**子串**匹配（`width` ∈ `pixel_width`）⇒ ★ **改名解决不了**，"
-        "只能在这里登记。★ 登记的理由要写清：加 `_mm` 会把「像素」说成「毫米」——**那是说错话**。",
-    ("solidworks_export_bmp", "pixel_height"):
-        "同 `pixel_width`：官方 `ExportToBMP` 的 `Height`，单位是**像素**不是长度。",
+_LEN_SUFFIX_EXEMPT: dict = {  #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
+    (
+        "solidworks_insert_reference_point",
+        "distance_or_percent",
+    ): "官方参数 `DDistance_or_Percent` —— ★ **同一个形参**在 "
+    "`NRefPointAlongCurveType` 取 `Distance(0)` 时是**距离**、取 `Percentage(1)` 时是**百分比**"
+    '（官方 Parameters："Distance at which … **or** percentage of…"）⇒ '
+    "★★ **一个名字带不了两种单位后缀**：加 `_mm` 会在 Percentage 那一档说错话 ⇒ "
+    "**不加，并在返回值里显式声明「官方未给单位、本工具不换算」**。",
+    (
+        "solidworks_mold_core_cavity_split",
+        "thickness",
+    ): "官方参数 `Thickness`；本工具的文档写明「0.0 = 用文档默认」⇒ "
+    "它是**交给 SolidWorks 的文档默认量**，不是我们换算出的毫米 ⇒ "
+    "加 `_mm` 反而**说错话**。",
+    (
+        "solidworks_mold_core_cavity_split",
+        "offset",
+    ): "同 `thickness`：官方 `Offset`，文档写明「0.0 = 用文档默认」。",
+    (
+        "solidworks_mold_parting_surface",
+        "distance",
+    ): "同 `thickness`：官方 `Distance`，文档写明「0.0 = 用文档默认」。",
+    (
+        "solidworks_export_bmp",
+        "pixel_width",
+    ): "★ 它**不是长度**，是**像素** —— 官方 `ExportToBMP(FileName, Width, Height)` 的两个尺寸"
+    "单位是像素。⚠ 而门禁按**子串**匹配（`width` ∈ `pixel_width`）⇒ ★ **改名解决不了**，"
+    "只能在这里登记。★ 登记的理由要写清：加 `_mm` 会把「像素」说成「毫米」——**那是说错话**。",
+    (
+        "solidworks_export_bmp",
+        "pixel_height",
+    ): "同 `pixel_width`：官方 `ExportToBMP` 的 `Height`，单位是**像素**不是长度。",
     ("solidworks_assembly_add_mate_checked", "width_mate_option"):
-        #: ★★★ 2026-10-07（规格 212 · C-3）：★ 这条豁免是**改名撞出来的** ——
-        #: ★ 原名 `width_mate_option_mm`，★ 而它其实是官方 `swMateWidthOptions_e` 的**枚
-        #: 举值**、
-        #:   ★★ **不是长度** ⇒ ★ 规格 212 的"后缀说假话"判据把它揪出来了 ✓
-        #:   ★ 改名成能力层的真名 `width_mate_option` 之后 ⇒ ★★ **门禁又命中它** ——
-        #:   ★ 因为门禁按**子串**匹配、`width` ∈ `_LEN_WORDS`）✗
-        #:   ★★ 正解就是**走豁免通道并写清"为什么它不是毫米"**（★ 门禁提示的第二条路）✓
-        #:   ⚠ ★ 门禁按子串匹配 ⇒ ★ **光改名解决不了**（★ 与 `pixel_width` 那条同一形态）✓
-        "★ **不是长度**，是**枚举值** —— 官方 `swMateWidthOptions_e`（宽度配合选项）。"
-        "官方逐字：valid only if MateTypeFromEnum is swMateWIDTH。★ 门禁命中它只因为"
-        "`width` 是 `_LEN_WORDS` 里的子串 ⇒ 加 `_mm` 会把「枚举」说成「毫米」——**那是说错话**。",
+    #: ★★★ 2026-10-07（规格 212 · C-3）：★ 这条豁免是**改名撞出来的** ——
+    #: ★ 原名 `width_mate_option_mm`，★ 而它其实是官方 `swMateWidthOptions_e` 的**枚
+    #: 举值**、
+    #:   ★★ **不是长度** ⇒ ★ 规格 212 的"后缀说假话"判据把它揪出来了 ✓
+    #:   ★ 改名成能力层的真名 `width_mate_option` 之后 ⇒ ★★ **门禁又命中它** ——
+    #:   ★ 因为门禁按**子串**匹配、`width` ∈ `_LEN_WORDS`）✗
+    #:   ★★ 正解就是**走豁免通道并写清"为什么它不是毫米"**（★ 门禁提示的第二条路）✓
+    #:   ⚠ ★ 门禁按子串匹配 ⇒ ★ **光改名解决不了**（★ 与 `pixel_width` 那条同一形态）✓
+    "★ **不是长度**，是**枚举值** —— 官方 `swMateWidthOptions_e`（宽度配合选项）。"
+    "官方逐字：valid only if MateTypeFromEnum is swMateWIDTH。★ 门禁命中它只因为"
+    "`width` 是 `_LEN_WORDS` 里的子串 ⇒ 加 `_mm` 会把「枚举」说成「毫米」——**那是说错话**。",
     #: ★★ 2026-10-03（轮 470）：它**是角度**（名字里就写着 `_deg`）。门禁命中它只因为
     #:   `_LEN_WORDS` 里有 `spacing`；★ 而**一个参数不可能同时是长度与角度**
     #:   ⇒ 走门禁文档写明的这条通道，**不改它的名字**（改成 `_mm` 反而是说错话）。
-    ("solidworks_sketch_circular_pattern", "pattern_spacing_deg"):
-        "★ 参数**不是长度**（★ 它是**角度**：名字已含 `_deg`，官方 `PatternSpacing` 收弧度、"
-        "本工具在边界收度并换算一次）。★ 门禁命中它只因为 `_LEN_WORDS` 里有 `spacing` —— "
-        "**一个参数不可能同时是长度与角度**。"
-        "★★ 也**不是**「交给 SolidWorks 的**文档默认**量」（那是另一类豁免的形态）—— "
-        "它**是我们自己换算出的度**，只是后缀该是 `_deg` 而非 `_mm`。",
+    (
+        "solidworks_sketch_circular_pattern",
+        "pattern_spacing_deg",
+    ): "★ 参数**不是长度**（★ 它是**角度**：名字已含 `_deg`，官方 `PatternSpacing` 收弧度、"
+    "本工具在边界收度并换算一次）。★ 门禁命中它只因为 `_LEN_WORDS` 里有 `spacing` —— "
+    "**一个参数不可能同时是长度与角度**。"
+    "★★ 也**不是**「交给 SolidWorks 的**文档默认**量」（那是另一类豁免的形态）—— "
+    "它**是我们自己换算出的度**，只是后缀该是 `_deg` 而非 `_mm`。",
     #: ★★★★ 2026-10-04（接手轮 · 规格 205 的批 86）：`sw_view.set_view_frame` 的四个**像
     #: 素**参数。
     #: ★ 该函数的官方读数逐字是「Left position of document window in client area **in pi
@@ -281,27 +313,33 @@ _LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一�
     #: （那会造出一个**不存在的形参**，被 `check_param_binding` 与注册器**双双拒绝、整批
     #:  30 个
     #:     全注册不上**）；★ 正解就是这里：**走豁免通道并写明理由** ✓
-    ("solidworks_view_set_frame", "left_px"):
-        "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
-        "`Left position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
+    (
+        "solidworks_view_set_frame",
+        "left_px",
+    ): "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
+    "`Left position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
     ("solidworks_view_set_frame", "top_px"):
-        #: ⚑⚑ ★ 2026-10-07（规格 212 · A-1）**修自洽性**：★ 原文只写「**同 `left_px`**」
-        #: ⇒
-        #: ★★ 而门禁要求**每条豁免自己点明三类依据之一**（「文档默认」/「不是长度（如像
-        #: 素）」/
-        #: 「同一个形参两种量纲」）✗ —— ★ **理由挂靠别条时，读者（与门禁）都得去翻另一条
-        #: ** ✓
-        #:   ★ 故改成与 `width_px` **同构**的写法（★ 自己点明"不是长度、是像素"）✓
-        #: ⚠ ★ **没有为过门禁说假话** —— ★ 该理由**本来就成立**（官方读数逐字就是像素）
-        #: ，
-        #: ★ 只是**没写全** ✓（★ 这条纪律见 `test_rule2_exemptions_are_explicit_and_reas
-        #: oned` 的 docstring）
-        "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
-        "`Top position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
-    ("solidworks_view_set_frame", "width_px"):
-        "同 `left_px`：官方读数逐字 `Width of the window in pixels` ⇒ 单位是**像素**。",
-    ("solidworks_view_set_frame", "height_px"):
-        "同 `left_px`：官方读数逐字 `Height of the window in pixels` ⇒ 单位是**像素**。",
+    #: ⚑⚑ ★ 2026-10-07（规格 212 · A-1）**修自洽性**：★ 原文只写「**同 `left_px`**」
+    #: ⇒
+    #: ★★ 而门禁要求**每条豁免自己点明三类依据之一**（「文档默认」/「不是长度（如像
+    #: 素）」/
+    #: 「同一个形参两种量纲」）✗ —— ★ **理由挂靠别条时，读者（与门禁）都得去翻另一条
+    #: ** ✓
+    #:   ★ 故改成与 `width_px` **同构**的写法（★ 自己点明"不是长度、是像素"）✓
+    #: ⚠ ★ **没有为过门禁说假话** —— ★ 该理由**本来就成立**（官方读数逐字就是像素）
+    #: ，
+    #: ★ 只是**没写全** ✓（★ 这条纪律见 `test_rule2_exemptions_are_explicit_and_reas
+    #: oned` 的 docstring）
+    "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
+    "`Top position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
+    (
+        "solidworks_view_set_frame",
+        "width_px",
+    ): "同 `left_px`：官方读数逐字 `Width of the window in pixels` ⇒ 单位是**像素**。",
+    (
+        "solidworks_view_set_frame",
+        "height_px",
+    ): "同 `left_px`：官方读数逐字 `Height of the window in pixels` ⇒ 单位是**像素**。",
 }
 
 
@@ -466,7 +504,8 @@ def check_spec(spec: ToolSpec) -> None:
         )
     if not (spec.extra_op or (spec.module and spec.function)):
         raise GateError(
-            "工具 %r 既没给 (module, function) 也没给 extra_op ⇒ 没有可执行体" % spec.name
+            "工具 %r 既没给 (module, function) 也没给 extra_op ⇒ 没有可执行体"
+            % spec.name
         )
     if spec.name.startswith("solidworks_") and not spec.load_automation:
         raise GateError(
@@ -526,8 +565,11 @@ def check_spec(spec: ToolSpec) -> None:
         low = p.name.lower()
         #: ⚠ `bool` **不是长度**（`use_default_radius` / `reverse_thickness` 是**标志**
         #: ）
-        if p.kind is not bool and any(w in low for w in _LEN_WORDS) \
-                and not low.endswith(_LEN_SUFFIX):
+        if (
+            p.kind is not bool
+            and any(w in low for w in _LEN_WORDS)
+            and not low.endswith(_LEN_SUFFIX)
+        ):
             if (spec.name, p.name) not in _LEN_SUFFIX_EXEMPT:
                 raise GateError(
                     "规则 2 违反：工具 %r 的入参 %r 像是**长度**，却不以 %r 结尾 —— "
@@ -537,8 +579,11 @@ def check_spec(spec: ToolSpec) -> None:
                 )
         # ⚑⚑ 规则 2 的**角度那一半**（2026-10-01 轮 135 接上；同 `_LEN_SUFFIX` 一样，
         #    它此前也是**死常量** —— `probe_dead_guards.py` 扫出来的）。
-        if p.kind is not bool and any(w in low for w in _ANGLE_WORDS) \
-                and not low.endswith(_ANGLE_SUFFIX):
+        if (
+            p.kind is not bool
+            and any(w in low for w in _ANGLE_WORDS)
+            and not low.endswith(_ANGLE_SUFFIX)
+        ):
             if (spec.name, p.name) not in _ANGLE_SUFFIX_EXEMPT:
                 raise GateError(
                     "规则 2 违反：工具 %r 的入参 %r 像是**角度**，却不以 %r 结尾 —— "
@@ -625,13 +670,23 @@ def build_input_model(spec: ToolSpec, base: type, response_enum: Any) -> type:
         response_enum,
         Field(default=response_enum.JSON, description="Return format."),
     )
-    return type(model_name, (base,), {"__annotations__": {k: v[0] for k, v in fields.items()},
-                                      **{k: v[1] for k, v in fields.items()}})
+    return type(
+        model_name,
+        (base,),
+        {
+            "__annotations__": {k: v[0] for k, v in fields.items()},
+            **{k: v[1] for k, v in fields.items()},
+        },
+    )
 
 
 #: ★★ B4 的预检开关（★ 规格 210）—— ★ **默认开**；★ `SW_PRECHECK=off` 可关（★ 于是**可回
 #: 退**）✓
-PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not in ("off", "0", "false")
+PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not in (
+    "off",
+    "0",
+    "false",
+)
 
 
 def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> Optional[str]:
@@ -651,23 +706,28 @@ def precheck_payload(spec: "ToolSpec", inject_name: str, host) -> Optional[str]:
         try:
             import scripts.sw_applicability as ap
         except ImportError:
-            import sw_applicability as ap                                  # noqa: PLC0415
+            import sw_applicability as ap  # noqa: PLC0415
         ap.precheck(inject_name, host, tool_name=spec.name)
         return None
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         #: ★ 认得出是"不适用" ⇒ 回**结构化载荷**（★ 这是唯一的"拒绝"路径）✓
         name = type(exc).__name__
         if name == "NotApplicable" and hasattr(exc, "to_dict"):
             import json as _json
+
             return _json.dumps(exc.to_dict(), ensure_ascii=False)
         #: ★ 其余异常（含"没建的检查"）⇒ **放行** —— ★ 保护不许变成路障 ✓
         return None
 
 
-def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[..., str],
-                       resolve_model: Optional[Callable[[], Any]] = None,
-                       resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
-                       inject_as: Optional[str] = None) -> Callable[..., str]:
+def make_tool_function(
+    spec: ToolSpec,
+    input_model: type,
+    run_locked: Callable[..., str],
+    resolve_model: Optional[Callable[[], Any]] = None,
+    resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
+    inject_as: Optional[str] = None,
+) -> Callable[..., str]:
     """生成与 `server.py` 既有工具**同形状**的函数体。
 
     形状（照 `server.py:1077` 的 `cadstudio_write_open_format` 抽取）::
@@ -695,7 +755,8 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
                 if resolver is None:
                     raise RuntimeError(
                         "工具 %r 声明了 inject=%r，但注册时没给对应的解析器"
-                        "（已给的：%r）" % (spec.name, inj, sorted((resolvers or {}).keys()))
+                        "（已给的：%r）"
+                        % (spec.name, inj, sorted((resolvers or {}).keys()))
                     )
                 kwargs[inject_as or inj] = resolver(params)
                 #: ★★ **B4：按声明自动生成的预检** ⇒ ★ 不适用就回**结构化载荷**，★ 不调
@@ -723,8 +784,9 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
             return getattr(mod, spec.function)(**kwargs)
 
-        return run_locked(op, params.response_format,
-                          load_automation=spec.load_automation)
+        return run_locked(
+            op, params.response_format, load_automation=spec.load_automation
+        )
 
     _impl.__name__ = spec.name
     _impl.__doc__ = spec.doc or spec.title
@@ -736,7 +798,9 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
 #: ool, "source": ...}`
 #:   ★ 由 `tools/gen_effect_declarations.py` 从**底层成员动词**机械初判生成；
 #:   ★★ **表缺失或查不到 ⇒ 一律按"未知"处理**（★ 保守方向：绝不因为查不到就当成"无写"）✓
-_EFFECTS_PATH = Path(__file__).resolve().parents[1] / "docs" / "effect-declarations.json"
+_EFFECTS_PATH = (
+    Path(__file__).resolve().parents[1] / "docs" / "effect-declarations.json"
+)
 _EFFECTS_CACHE: Optional[dict] = None
 
 
@@ -745,8 +809,10 @@ def _effects_table() -> dict:
     global _EFFECTS_CACHE
     if _EFFECTS_CACHE is None:
         try:
-            _EFFECTS_CACHE = json.loads(_EFFECTS_PATH.read_text(encoding="utf-8")).get("tools", {})
-        except Exception:                                               # noqa: BLE001
+            _EFFECTS_CACHE = json.loads(_EFFECTS_PATH.read_text(encoding="utf-8")).get(
+                "tools", {}
+            )
+        except Exception:  # noqa: BLE001
             _EFFECTS_CACHE = {}
         if not isinstance(_EFFECTS_CACHE, dict):
             _EFFECTS_CACHE = {}
@@ -771,8 +837,9 @@ def _observed_table() -> dict:
     if _OBSERVED_CACHE is None:
         try:
             _OBSERVED_CACHE = json.loads(
-                _OBSERVED_PATH.read_text(encoding="utf-8")).get("tools", {})
-        except Exception:                                               # noqa: BLE001
+                _OBSERVED_PATH.read_text(encoding="utf-8")
+            ).get("tools", {})
+        except Exception:  # noqa: BLE001
             _OBSERVED_CACHE = {}
         if not isinstance(_OBSERVED_CACHE, dict):
             _OBSERVED_CACHE = {}
@@ -869,10 +936,15 @@ def uniform_safety_fields(specs: list) -> dict:
     return out
 
 
-def register(mcp: Any, specs: list[ToolSpec], base: type, response_enum: Any,
-             run_locked: Callable[..., str],
-             resolve_model: Optional[Callable[[], Any]] = None,
-             resolvers: Optional[dict[str, Callable[[Any], Any]]] = None) -> list[str]:
+def register(
+    mcp: Any,
+    specs: list[ToolSpec],
+    base: type,
+    response_enum: Any,
+    run_locked: Callable[..., str],
+    resolve_model: Optional[Callable[[], Any]] = None,
+    resolvers: Optional[dict[str, Callable[[Any], Any]]] = None,
+) -> list[str]:
     """把声明注册成 MCP 工具。返回**已注册的工具名**（供日志与门禁核对）。
 
     先 `check_specs` 全量校验 —— **有任何问题就整体不注册**（不让半套工具进到运行期）。
@@ -888,7 +960,9 @@ def register(mcp: Any, specs: list[ToolSpec], base: type, response_enum: Any,
 
     problems = check_specs(specs)
     if problems:
-        raise GateError("声明未过门禁，未注册任何工具：\n  - " + "\n  - ".join(problems))
+        raise GateError(
+            "声明未过门禁，未注册任何工具：\n  - " + "\n  - ".join(problems)
+        )
     registered: list[str] = []
     for spec in specs:
         model = build_input_model(spec, base, response_enum)

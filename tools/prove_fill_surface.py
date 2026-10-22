@@ -34,12 +34,19 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "fill-surface-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "fill-surface-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
-    from sw_part import (current_sketch_name, end_sketch, sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_surface_features as SF
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -51,16 +58,23 @@ def main() -> int:
         sketch_corner_rectangle(doc, -20.0, -10.0, 20.0, 10.0)
         sk = current_sketch_name(doc)
         end_sketch(doc)
-        ev["steps"]["doc"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
         r1 = SF.create_extruded_surface_report(doc, 30.0, sk)
-        ev["steps"]["prereq_extruded_surface"] = {"ok": bool(r1.get("ok")),
-                                                  "feature": r1.get("feature_name"),
-                                                  "tree": [r1.get("tree_before"), r1.get("tree_after")]}
+        ev["steps"]["prereq_extruded_surface"] = {
+            "ok": bool(r1.get("ok")),
+            "feature": r1.get("feature_name"),
+            "tree": [r1.get("tree_before"), r1.get("tree_after")],
+        }
         # ② 负例：resolutions 越界 ⇒ 必须被拒
         neg = SF.insert_fill_surface_report(doc, 9)
-        ev["steps"]["negative_bad_resolution"] = {"ok": (not neg.get("ok")),
-                                                  "returned_ok": bool(neg.get("ok")),
-                                                  "error": str(neg.get("error"))[:110]}
+        ev["steps"]["negative_bad_resolution"] = {
+            "ok": (not neg.get("ok")),
+            "returned_ok": bool(neg.get("ok")),
+            "error": str(neg.get("error"))[:110],
+        }
         # ③ 正例
         pos = SF.insert_fill_surface_report(doc, 2)
         ev["steps"]["fill_surface"] = {
@@ -68,23 +82,29 @@ def main() -> int:
             "feature_name": pos.get("feature_name"),
             "points_selected": pos.get("points_selected"),
             "boundary_z": pos.get("boundary_z"),
-            "tree_before": pos.get("tree_before"), "tree_after": pos.get("tree_after"),
-            "resolutions": pos.get("resolutions"), "options": pos.get("options"),
+            "tree_before": pos.get("tree_before"),
+            "tree_after": pos.get("tree_after"),
+            "resolutions": pos.get("resolutions"),
+            "options": pos.get("options"),
             "error": str(pos.get("error"))[:140] if pos.get("error") else None,
         }
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ `filled_surface` 是 objective② 重核后确认的真缺；"
-                      "★ 真机打通的组合：边界边按**中点 + mark=1** 选（`SelectByID2`）⇒ "
-                      "`InsertFillSurface2(2, 1, None, None, None, None)`。"
-                      "★ mark 传 4 会**静默失败**（回 true 而计数 0 —— 事实 8）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ `filled_surface` 是 objective② 重核后确认的真缺；"
+            "★ 真机打通的组合：边界边按**中点 + mark=1** 选（`SelectByID2`）⇒ "
+            "`InsertFillSurface2(2, 1, None, None, None, None)`。"
+            "★ mark 传 4 会**静默失败**（回 true 而计数 0 —— 事实 8）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

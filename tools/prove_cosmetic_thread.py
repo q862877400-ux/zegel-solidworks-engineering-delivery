@@ -44,9 +44,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c
 STD_ANSI_METRIC = 1
@@ -55,38 +55,58 @@ END_THROUGH = 2
 
 def _mk_block_with_hole(doc, hole_dia_m=0.008):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     solid = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             solid = True
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                     0.0, 0.0, 0.0, hole_dia_m / 2.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCircleByRadius",
+        0.0,
+        0.0,
+        0.0,
+        hole_dia_m / 2.0,
+    )
     P.end_sketch(doc)
-    names2 = [n for n in (P.feature_names(doc) or [])
-              if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names2 = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
             P.extrude_cut(doc, cand, 0.0)
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             try:
                 P.extrude_cut(doc, cand, 0.02)
                 break
-            except Exception:                                         # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return solid
 
@@ -99,9 +119,10 @@ def _one(sw, tag, pick):
         row["built"] = _mk_block_with_hole(doc)
         from sw_connect import get_com_member as _g
         from sw_part import _select_com_object as _sel
+
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         picked = 0
         #: \u2605 \u5148\u627e**\u5706\u67f1\u9762**\uff08\u2605 \u5b83\u7684\u8fb9\u5c3
@@ -119,7 +140,7 @@ def _one(sw, tag, pick):
                     if bool(_g(_g(f, "GetSurface"), "IsCylinder")):
                         cyl = f
                         break
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
             break
         row["cyl_face_found"] = cyl is not None
@@ -137,21 +158,30 @@ def _one(sw, tag, pick):
         try:
             #: \u2605 7 \u53c2\uff1aStandard \u00b7 StandardType \u00b7 Size \u00b7 Diam
             #: eter \u00b7 EndType \u00b7 Depth \u00b7 Note
-            ret = _g(fm, "InsertCosmeticThread3", STD_ANSI_METRIC, "", "",
-                     0.008, END_THROUGH, 0.0, "")
+            ret = _g(
+                fm,
+                "InsertCosmeticThread3",
+                STD_ANSI_METRIC,
+                "",
+                "",
+                0.008,
+                END_THROUGH,
+                0.0,
+                "",
+            )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
                         row[k] = str(_g(ret, m))
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"] or row.get("ret_type"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -159,34 +189,60 @@ def _one(sw, tag, pick):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u87ba\u7eb9\u7ebf\uff1a`InsertCosmeticThread3`\uff08\u2605 7 \u53c2 \u00b7 \u672a\u5e9f\u5f03\uff09",
-          "official": "Standard = swCosmeticStandardType_e\uff081 = ANSI Metric\uff09\uff1b"
-                      "EndType = swCosmeticEndConditions_e\uff082 = Through\uff09\uff1b"
-                      "\u679a\u4e3e\u503c\u53d6\u81ea\u53cd\u5c04",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 \u9009**\u5706\u67f1\u9762\u7684\u5706\u8fb9**", "edge"))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u9009**\u5706\u67f1\u9762**\u672c\u8eab", "face"))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a**\u4ec0\u4e48\u90fd\u4e0d\u9009**", "none"))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u87ba\u7eb9\u7ebf\uff1a`InsertCosmeticThread3`\uff08\u2605 7 \u53c2 \u00b7 \u672a\u5e9f\u5f03\uff09",
+        "official": "Standard = swCosmeticStandardType_e\uff081 = ANSI Metric\uff09\uff1b"
+        "EndType = swCosmeticEndConditions_e\uff082 = Through\uff09\uff1b"
+        "\u679a\u4e3e\u503c\u53d6\u81ea\u53cd\u5c04",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(sw, "\u2605 \u9009**\u5706\u67f1\u9762\u7684\u5706\u8fb9**", "edge")
+    )
+    ev["cases"].append(
+        _one(sw, "\u5bf9\u7167\uff1a\u9009**\u5706\u67f1\u9762**\u672c\u8eab", "face")
+    )
+    ev["cases"].append(
+        _one(sw, "\u5bf9\u7167\uff1a**\u4ec0\u4e48\u90fd\u4e0d\u9009**", "none")
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = "cosmetic_thread_works" if ev["cases"][0].get("ok") else "cosmetic_thread_fails"
+    ev["verdict"] = (
+        "cosmetic_thread_works" if ev["cases"][0].get("ok") else "cosmetic_thread_fails"
+    )
     p = R / "output" / "cosmetic-thread-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-32s ok=%-6s built=%s cyl=%s picked=%s" % (
-            c.get("tag"), c.get("ok"), c.get("built"), c.get("cyl_face_found"), c.get("picked")))
-        print("        \u56de=%s \u540d=%s \u578b=%s \u65b0\u589e=%s" % (
-            c.get("returned"), c.get("ret_name"), c.get("ret_type"), c.get("new")))
+        print(
+            "  %-32s ok=%-6s built=%s cyl=%s picked=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("built"),
+                c.get("cyl_face_found"),
+                c.get("picked"),
+            )
+        )
+        print(
+            "        \u56de=%s \u540d=%s \u578b=%s \u65b0\u589e=%s"
+            % (c.get("returned"), c.get("ret_name"), c.get("ret_type"), c.get("new"))
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:140])
     print("  \u4ea7\u7269\uff1a%s" % p)

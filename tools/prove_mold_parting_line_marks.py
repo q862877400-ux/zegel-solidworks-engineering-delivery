@@ -38,7 +38,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-parting-line-marks-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "mold-parting-line-marks-evidence.json"
+)
 MARK_PULL = 1
 MARK_EDGES = 4
 
@@ -46,8 +50,13 @@ MARK_EDGES = 4
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_mold as M
     import sw_surface_features as SF
 
@@ -64,25 +73,40 @@ def main() -> int:
         ext = get_com_member(doc, "Extension")
         callout = sw_connect.create_empty_dispatch_variant()
         sm = get_com_member(doc, "SelectionManager")
-        ev["steps"]["doc"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         def mids():
             out = []
-            for b in (get_com_member(doc, "GetBodies2", -1, True) or []):
-                for e in (get_com_member(b, "GetEdges") or []):
+            for b in get_com_member(doc, "GetBodies2", -1, True) or []:
+                for e in get_com_member(b, "GetEdges") or []:
                     try:
-                        a = [float(x) for x in get_com_member(
-                            get_com_member(e, "GetStartVertex"), "GetPoint")]
-                        c = [float(x) for x in get_com_member(
-                            get_com_member(e, "GetEndVertex"), "GetPoint")]
+                        a = [
+                            float(x)
+                            for x in get_com_member(
+                                get_com_member(e, "GetStartVertex"), "GetPoint"
+                            )
+                        ]
+                        c = [
+                            float(x)
+                            for x in get_com_member(
+                                get_com_member(e, "GetEndVertex"), "GetPoint"
+                            )
+                        ]
                         out.append([(a[i] + c[i]) / 2.0 for i in range(3)])
-                    except Exception:                          # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         continue
             return out
 
         #: ① mark=1 选拔模方向（基准面）
         doc.ClearSelection2(True)
-        ok1 = bool(ext.SelectByID2("前视基准面", "PLANE", 0, 0, 0, False, MARK_PULL, callout, 0))
+        ok1 = bool(
+            ext.SelectByID2(
+                "前视基准面", "PLANE", 0, 0, 0, False, MARK_PULL, callout, 0
+            )
+        )
         #: ② mark=4 按**中点**选边（★ 轮 388 的手法）
         ms = mids()
         zs = sorted({round(m[2], 9) for m in ms})
@@ -91,36 +115,49 @@ def main() -> int:
             ztop = zs[-1]
             for m in ms:
                 if abs(m[2] - ztop) < 1e-9:
-                    if ext.SelectByID2("", "EDGE", m[0], m[1], m[2], True, MARK_EDGES, callout, 0):
+                    if ext.SelectByID2(
+                        "", "EDGE", m[0], m[1], m[2], True, MARK_EDGES, callout, 0
+                    ):
                         picked += 1
             ev["steps"]["boundary_z"] = {"ok": True, "z": ztop, "candidates": len(ms)}
         total = int(get_com_member(sm, "GetSelectedObjectCount2", -1) or 0)
-        ev["steps"]["select_marks"] = {"ok": (ok1 and picked > 0 and total > 1),
-                                       "pull_ok": ok1, "edges_picked": picked,
-                                       "readback": total,
-                                       "note": "★ 回读计数才对（★ 回 true 不算 —— 事实 8）"}
+        ev["steps"]["select_marks"] = {
+            "ok": (ok1 and picked > 0 and total > 1),
+            "pull_ok": ok1,
+            "edges_picked": picked,
+            "readback": total,
+            "note": "★ 回读计数才对（★ 回 true 不算 —— 事实 8）",
+        }
         #: ③ 插分型线
         before = SF.feature_names(doc)
         try:
             name = M.insert_parting_line(doc)
             after = SF.feature_names(doc)
             ev["steps"]["insert_parting_line"] = {
-                "ok": bool(name), "feature_name": str(name)[:60],
-                "new_features": [n for n in after if n not in before][-2:]}
-        except Exception as exc:                               # noqa: BLE001
+                "ok": bool(name),
+                "feature_name": str(name)[:60],
+                "new_features": [n for n in after if n not in before][-2:],
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["insert_parting_line"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 轮 51 判「边线带不了 mark」；★ 本轮用 `SelectByID2` + **边的中点** + mark=4 重试 —— "
-                      "★ 该手法在 `filled_surface`（轮 388）上被证明有效（mark 对 ⇒ 计数对得上）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 轮 51 判「边线带不了 mark」；★ 本轮用 `SelectByID2` + **边的中点** + mark=4 重试 —— "
+            "★ 该手法在 `filled_surface`（轮 388）上被证明有效（mark 对 ⇒ 计数对得上）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1300])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

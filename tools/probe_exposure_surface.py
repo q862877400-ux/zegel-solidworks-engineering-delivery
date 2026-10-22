@@ -21,6 +21,7 @@ r"""@brief 探针：量清「本仓库 MCP 暴露面」的**两个来源**，判
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -38,14 +39,18 @@ SPEC_NAME = re.compile(r"name=\"((?:solidworks|cadstudio)_[\w]+)\"")
 
 
 def main() -> int:
-    srv = (ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8", errors="ignore")
+    srv = (ROOT / "mcp-server" / "server.py").read_text(
+        encoding="utf-8", errors="ignore"
+    )
     deco = sorted(set(DECO.findall(srv)))
     print("① `server.py` 的 `@mcp.tool(name=...)` 装饰器：**%d** 个" % len(deco))
 
     print()
     batch: dict[str, list] = {}
     for p in sorted((ROOT / "mcp-server").glob("tool_specs_*.py")):
-        names = sorted(set(SPEC_NAME.findall(p.read_text(encoding="utf-8", errors="ignore"))))
+        names = sorted(
+            set(SPEC_NAME.findall(p.read_text(encoding="utf-8", errors="ignore")))
+        )
         batch[p.name] = names
         print("② %-30s **%3d** 个工具名" % (p.name, len(names)))
 
@@ -54,20 +59,26 @@ def main() -> int:
     print()
     print("③ 注册表合计（去重）：**%d**" % len(allb))
     print("④ 注册表 ∪ 装饰器：**%d**" % len(union))
-    print("   ⇒ 交集 %d · **只在注册表里（装饰器没有）的 %d**"
-          % (len(set(allb) & set(deco)), len(set(allb) - set(deco))))
+    print(
+        "   ⇒ 交集 %d · **只在注册表里（装饰器没有）的 %d**"
+        % (len(set(allb) & set(deco)), len(set(allb) - set(deco)))
+    )
 
     print()
     print("⑤ 复算：模具域那 3 个「缺口」在**合并后的暴露面**里吗？")
     for k in ("parting_line", "shut_off_surface", "tooling_split"):
         hit = [n for n in union if k in n]
-        print("   %-18s %s" % (k, ("✅ **有**：%s" % hit[:2]) if hit else "❌ 真的没有"))
+        print(
+            "   %-18s %s" % (k, ("✅ **有**：%s" % hit[:2]) if hit else "❌ 真的没有")
+        )
 
     print()
     print("⑥ 仿真/Motion 域的 4 个「缺口」呢？")
     for k in ("motion_study", "run_simulation", "simulation_setup", "simulation_study"):
         hit = [n for n in union if k in n]
-        print("   %-18s %s" % (k, ("✅ **有**：%s" % hit[:2]) if hit else "❌ 真的没有"))
+        print(
+            "   %-18s %s" % (k, ("✅ **有**：%s" % hit[:2]) if hit else "❌ 真的没有")
+        )
     return 0
 
 

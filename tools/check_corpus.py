@@ -1,4 +1,5 @@
 """★ 语料自检门禁（规格 315）：校验 L1/L2/L3 的全部约束。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -17,35 +18,69 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"), str(ROOT / "tools")]
+sys.path[:0] = [
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+]
 
-import yaml                                                             # noqa: E402
+import yaml  # noqa: E402
 
 #: ── 规格常量（★ 改这里就是改规格）──────────────────────────────
 PRODUCT_CLASSES = ("板件", "轴件", "夹具", "平口钳", "连杆", "箱体")
-RESULT_VOCAB = ("READY_FOR_REVIEW", "WAITING_INPUT", "REJECTED_OUT_OF_SCOPE",
-                "REJECTED_UNSUPPORTED", "REJECTED_AMBIGUOUS")
-CATEGORY_PLAN = {"solvable": 24, "missing_input": 12,
-                 "capability_boundary": 12, "adversarial": 12}
+RESULT_VOCAB = (
+    "READY_FOR_REVIEW",
+    "WAITING_INPUT",
+    "REJECTED_OUT_OF_SCOPE",
+    "REJECTED_UNSUPPORTED",
+    "REJECTED_AMBIGUOUS",
+)
+CATEGORY_PLAN = {
+    "solvable": 24,
+    "missing_input": 12,
+    "capability_boundary": 12,
+    "adversarial": 12,
+}
 SPLIT_PLAN = {"dev": 20, "blind": 40}
 DIFFICULTY = ("easy", "medium", "hard")
 
 #: ★ 基础设施组（不是「用户会提的需求」，L2 不要求覆盖）
-INFRA = {"gui", "session", "macro", "automation", "repo", "preflight",
-         "available", "selector", "list", "get", "read", "current", "clear",
-         "activate", "refresh", "build", "api", "undo", "mesh", "set",
-         #: ★★ 2026-10-12（规格 329）：`catalog_*` 那 4 个是**基础设施**
-         #:   —— ★ 它们是**目录检索入口**（★ Q6 L110「规划入口与必要查询工具」），
-         #:   ★ **不是产品任务**（★ 产品任务是"在板上打孔"那种）⇒
-         #:   ★ 语料（L2 长尾）**不该**要求覆盖它们。
-         #:   ⚠ 实测：不加这一条 ⇒ `L2 缺组 ['catalog']` ⇒ 语料门禁红 ✗
-         #:     —— ★ 而"缺组"看起来像"语料漏了"，其实是**我把基础设施当成了产品任务**。
-         "catalog"}
+INFRA = {
+    "gui",
+    "session",
+    "macro",
+    "automation",
+    "repo",
+    "preflight",
+    "available",
+    "selector",
+    "list",
+    "get",
+    "read",
+    "current",
+    "clear",
+    "activate",
+    "refresh",
+    "build",
+    "api",
+    "undo",
+    "mesh",
+    "set",
+    #: ★★ 2026-10-12（规格 329）：`catalog_*` 那 4 个是**基础设施**
+    #:   —— ★ 它们是**目录检索入口**（★ Q6 L110「规划入口与必要查询工具」），
+    #:   ★ **不是产品任务**（★ 产品任务是"在板上打孔"那种）⇒
+    #:   ★ 语料（L2 长尾）**不该**要求覆盖它们。
+    #:   ⚠ 实测：不加这一条 ⇒ `L2 缺组 ['catalog']` ⇒ 语料门禁红 ✗
+    #:     —— ★ 而"缺组"看起来像"语料漏了"，其实是**我把基础设施当成了产品任务**。
+    "catalog",
+}
 
 
 def tool_surface() -> set[str]:
     """★ 真实工具面 —— 门禁的锚点。"""
     import register_capabilities as rc
+
     return {s.name for s in rc.all_specs()}
 
 
@@ -55,7 +90,7 @@ def groups_of(names: set[str]) -> dict[str, list[str]]:
         s = n
         for p in ("solidworks_", "cadstudio_", "mcp__solidworks__"):
             if s.startswith(p):
-                s = s[len(p):]
+                s = s[len(p) :]
                 break
         g[s.split("_")[0]].append(n)
     return dict(g)
@@ -87,7 +122,9 @@ def check(root: pathlib.Path = ROOT) -> list[str]:
         for x in l1:
             i = x.get("id", "?")
             if x.get("product_class") not in PRODUCT_CLASSES:
-                bad.append("L1 %s 的 product_class 非法：%r" % (i, x.get("product_class")))
+                bad.append(
+                    "L1 %s 的 product_class 非法：%r" % (i, x.get("product_class"))
+                )
             if x.get("difficulty") not in DIFFICULTY:
                 bad.append("L1 %s 的 difficulty 非法：%r" % (i, x.get("difficulty")))
             if not x.get("readback"):
@@ -98,7 +135,7 @@ def check(root: pathlib.Path = ROOT) -> list[str]:
             for c in chains:
                 if not c:
                     bad.append("L1 %s 有一条空链" % i)
-                for t in (c or []):
+                for t in c or []:
                     if t not in surf:
                         bad.append("L1 %s 引用了不存在的工具：%s" % (i, t))
             if "needs_owner_judgment" not in x:
@@ -120,13 +157,15 @@ def check(root: pathlib.Path = ROOT) -> list[str]:
         for x in l2:
             i = x.get("id", "?")
             if x.get("target_group") not in task_groups:
-                bad.append("L2 %s 的 target_group 非法：%r" % (i, x.get("target_group")))
+                bad.append(
+                    "L2 %s 的 target_group 非法：%r" % (i, x.get("target_group"))
+                )
             if not x.get("expected_groups"):
                 bad.append("L2 %s 缺 expected_groups" % i)
             if not x.get("readback"):
                 bad.append("L2 %s 缺 readback" % i)
-            for c in (x.get("tools") or []):
-                for t in (c or []):
+            for c in x.get("tools") or []:
+                for t in c or []:
                     if t not in surf:
                         bad.append("L2 %s 引用了不存在的工具：%s" % (i, t))
 
@@ -181,10 +220,10 @@ def selftest() -> bool:
         (t / "corpus").mkdir()
 
         def put(l1, l2, l3) -> None:
-            for n, d in (("l1-mainline", l1), ("l2-longtail", l2),
-                         ("l3-semantic", l3)):
+            for n, d in (("l1-mainline", l1), ("l2-longtail", l2), ("l3-semantic", l3)):
                 (t / "corpus" / ("%s.yaml" % n)).write_text(
-                    yaml.safe_dump(d, allow_unicode=True), encoding="utf-8")
+                    yaml.safe_dump(d, allow_unicode=True), encoding="utf-8"
+                )
 
         def case(name: str, want_problems: bool, l1, l2, l3) -> None:
             """★ 写 → 立刻 check（★ 关键：不攒着）。"""
@@ -195,8 +234,10 @@ def selftest() -> bool:
             if passed:
                 print("  ✓ %s" % name)
             else:
-                print("  ✗ selftest 失败：%s（期望 %s，实得 %d 处）"
-                      % (name, "报错" if want_problems else "通过", got))
+                print(
+                    "  ✗ selftest 失败：%s（期望 %s，实得 %d 处）"
+                    % (name, "报错" if want_problems else "通过", got)
+                )
                 ok = False
 
         def clone(seq: list[dict]) -> list[dict]:

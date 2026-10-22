@@ -28,6 +28,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -39,55 +40,129 @@ SPECS_BATCH9 = [
     ToolSpec(
         name="solidworks_mold_core_cavity_split",
         title="Insert Mold Core/Cavity Split",
-        module="sw_mold", function="insert_core_cavity_solids",
+        module="sw_mold",
+        function="insert_core_cavity_solids",
         inject="model",
         doc="Split the mold into core and cavity solids (this is the tooling split). "
-            "⚠ 0.0 means 'use the document default' for scale/thickness/offset.",
+        "⚠ 0.0 means 'use the document default' for scale/thickness/offset.",
         param_alias={},
         params=[
-            Param("scale", float, default=0.0, description="Scale factor; 0.0 = document default."),
-            Param("thickness", float, default=0.0, description="Wall thickness; 0.0 = document default."),
-            Param("flip", bool, default=False, description="Reverse the split direction."),
-            Param("offset", float, default=0.0, description="Offset; 0.0 = document default."),
+            Param(
+                "scale",
+                float,
+                default=0.0,
+                description="Scale factor; 0.0 = document default.",
+            ),
+            Param(
+                "thickness",
+                float,
+                default=0.0,
+                description="Wall thickness; 0.0 = document default.",
+            ),
+            Param(
+                "flip", bool, default=False, description="Reverse the split direction."
+            ),
+            Param(
+                "offset",
+                float,
+                default=0.0,
+                description="Offset; 0.0 = document default.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_mold_parting_surface",
         title="Insert Mold Parting Surface",
-        module="sw_mold", function="insert_parting_surface",
+        module="sw_mold",
+        function="insert_parting_surface",
         inject="model",
         doc="Insert the mold parting surface.",
         param_alias={},
         params=[
-            Param("surface_type", int, default=0, description="Official surface type enum value."),
-            Param("flip", bool, default=False, description="Reverse the surface direction."),
+            Param(
+                "surface_type",
+                int,
+                default=0,
+                description="Official surface type enum value.",
+            ),
+            Param(
+                "flip",
+                bool,
+                default=False,
+                description="Reverse the surface direction.",
+            ),
             Param("use_trim", bool, default=False, description="Trim the surface."),
-            Param("distance", float, default=0.0, description="Distance parameter; 0.0 = default."),
-            Param("angle", float, default=0.0, description="Angle parameter; 0.0 = default."),
+            Param(
+                "distance",
+                float,
+                default=0.0,
+                description="Distance parameter; 0.0 = default.",
+            ),
+            Param(
+                "angle",
+                float,
+                default=0.0,
+                description="Angle parameter; 0.0 = default.",
+            ),
             Param("option", int, default=0, description="Official option enum value."),
-            Param("tolerance", float, default=0.0, description="Tolerance; 0.0 = default."),
-            Param("alternate", bool, default=False, description="Use the alternate direction."),
+            Param(
+                "tolerance", float, default=0.0, description="Tolerance; 0.0 = default."
+            ),
+            Param(
+                "alternate",
+                bool,
+                default=False,
+                description="Use the alternate direction.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_mold_undercut_detect",
         title="Detect Mold Undercuts",
-        module="sw_mold", function="mold_undercut_detect",
+        module="sw_mold",
+        function="mold_undercut_detect",
         inject="model",
         doc="Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md (ColUndercut/ColBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did not, so the third argument BCoordInput received False — which drops back to 'use the model's own draft direction' and pops the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session.",
         param_alias={},
         params=[
-            Param("col_undercut", int, default=0,
-                  description="COLORREF for the faces invisible from one direction that form an undercut."),
-            Param("col_base", int, default=0,
-                  description="COLORREF for the faces that do not form undercuts."),
-            Param("b_coord_input", bool, default=True,
-                  description="True to use the coordinate input (Dx/Dy/Dz) as the pull direction; "
-                              "false to use the model's already-defined direction (which pops a modal "
-                              "dialog when the model has none)."),
-            Param("dx", float, default=0.0, description="X component of the pull direction."),
-            Param("dy", float, default=0.0, description="Y component of the pull direction."),
-            Param("dz", float, default=1.0, description="Z component of the pull direction."),
+            Param(
+                "col_undercut",
+                int,
+                default=0,
+                description="COLORREF for the faces invisible from one direction that form an undercut.",
+            ),
+            Param(
+                "col_base",
+                int,
+                default=0,
+                description="COLORREF for the faces that do not form undercuts.",
+            ),
+            Param(
+                "b_coord_input",
+                bool,
+                default=True,
+                description="True to use the coordinate input (Dx/Dy/Dz) as the pull direction; "
+                "false to use the model's already-defined direction (which pops a modal "
+                "dialog when the model has none).",
+            ),
+            Param(
+                "dx",
+                float,
+                default=0.0,
+                description="X component of the pull direction.",
+            ),
+            Param(
+                "dy",
+                float,
+                default=0.0,
+                description="Y component of the pull direction.",
+            ),
+            Param(
+                "dz",
+                float,
+                default=1.0,
+                description="Z component of the pull direction.",
+            ),
         ],
     ),
 ]

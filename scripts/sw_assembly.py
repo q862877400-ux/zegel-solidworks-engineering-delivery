@@ -26,10 +26,22 @@ import os
 
 try:
     from .sw_preflight import import_com_dependencies
-    from .sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
+    from .sw_connect import (
+        call_com_member,
+        get_com_member,
+        open_document,
+        safe_get_com_member,
+        set_com_member,
+    )
 except ImportError:
     from sw_preflight import import_com_dependencies
-    from sw_connect import call_com_member, get_com_member, open_document, safe_get_com_member, set_com_member
+    from sw_connect import (
+        call_com_member,
+        get_com_member,
+        open_document,
+        safe_get_com_member,
+        set_com_member,
+    )
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -123,7 +135,7 @@ def _add_component5(asm_model, component_path, config_name, x, y, z):
         return None
     return add_component5(
         component_path,
-        0,              # swAddComponentConfigOptions_e: 使用指定/默认配置
+        0,  # swAddComponentConfigOptions_e: 使用指定/默认配置
         "",
         False,
         config_name or "",
@@ -158,7 +170,9 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
     返回:
         IComponent2 对象
     """
-    component_path = os.path.abspath(os.path.expandvars(os.path.expanduser(str(part_path))))
+    component_path = os.path.abspath(
+        os.path.expandvars(os.path.expanduser(str(part_path)))
+    )
     if not os.path.exists(component_path):
         raise FileNotFoundError(f"组件文件不存在: {component_path}")
 
@@ -206,7 +220,9 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
     if component:
         print(f"已添加组件: {component_path}")
     else:
-        detail = "；".join(errors) if errors else "AddComponent5/AddComponent4 均返回 None"
+        detail = (
+            "；".join(errors) if errors else "AddComponent5/AddComponent4 均返回 None"
+        )
         print(f"添加组件失败: {component_path} ({detail})")
     return component
 
@@ -297,7 +313,9 @@ def get_component_feature_entity(component, aliases, resolve=True):
     return get_assembly_entity(component, feature)
 
 
-def find_largest_cylinder_face(component, min_radius=0.0, max_radius=None, resolve=True):
+def find_largest_cylinder_face(
+    component, min_radius=0.0, max_radius=None, resolve=True
+):
     """
     @brief 查找组件中指定半径范围内面积最大的圆柱面。
     @param component IComponent2 对象。
@@ -565,12 +583,22 @@ def build_transform_data_x(tx, ty, tz, angle_rad=0.0):
     c = math.cos(angle_rad)
     s = math.sin(angle_rad)
     return (
-        1.0, 0.0, 0.0,
-        0.0, c, -s,
-        0.0, s, c,
-        tx, ty, tz,
         1.0,
-        0.0, 0.0, 0.0,
+        0.0,
+        0.0,
+        0.0,
+        c,
+        -s,
+        0.0,
+        s,
+        c,
+        tx,
+        ty,
+        tz,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
     )
 
 
@@ -624,6 +652,7 @@ def iter_feature_tree(model, include_subfeatures=True):
     @param include_subfeatures 是否包含子特征。
     @return 生成器，产出 (feature, depth)。
     """
+
     def walk_subfeatures(parent, depth):
         sub = safe_get_com_member(parent, "GetFirstSubFeature")
         while sub:
@@ -656,15 +685,19 @@ def collect_mate_feature_summary(model):
             or "mate" in str(name).lower()
             or "配合" in str(name)
         ):
-            result.append({
-                "name": name,
-                "type": type_name,
-                "depth": depth,
-            })
+            result.append(
+                {
+                    "name": name,
+                    "type": type_name,
+                    "depth": depth,
+                }
+            )
     return result
 
 
-def add_mate_coincident(asm_model, entity1_name, entity1_type, entity2_name, entity2_type):
+def add_mate_coincident(
+    asm_model, entity1_name, entity1_type, entity2_name, entity2_type
+):
     """
     添加重合配合
 
@@ -686,7 +719,9 @@ def add_mate_concentric(asm_model, face1_name, face2_name):
     return add_mate5_checked(asm_model, SW_MATE_CONCENTRIC, lock_rotation=False)
 
 
-def add_mate_distance(asm_model, entity1_name, entity1_type, entity2_name, entity2_type, distance):
+def add_mate_distance(
+    asm_model, entity1_name, entity1_type, entity2_name, entity2_type, distance
+):
     """
     添加距离配合
 
@@ -721,16 +756,20 @@ def get_components(asm_model, top_level_only=True):
     result = []
     if components:
         for comp in components:
-            result.append({
-                "name": safe_get_com_member(comp, "Name2"),
-                "path": safe_get_com_member(comp, "GetPathName"),
-                "suppressed": safe_get_com_member(comp, "IsSuppressed"),
-                "visible": safe_get_com_member(comp, "Visible"),
-            })
+            result.append(
+                {
+                    "name": safe_get_com_member(comp, "Name2"),
+                    "path": safe_get_com_member(comp, "GetPathName"),
+                    "suppressed": safe_get_com_member(comp, "IsSuppressed"),
+                    "visible": safe_get_com_member(comp, "Visible"),
+                }
+            )
     return result
 
 
-def find_component_by_name(asm_model, keyword, top_level_only=True, case_sensitive=False):
+def find_component_by_name(
+    asm_model, keyword, top_level_only=True, case_sensitive=False
+):
     """
     @brief 按组件名关键字查找 IComponent2 对象。
     @param asm_model 装配体 IModelDoc2/IAssemblyDoc。
@@ -814,7 +853,7 @@ def get_interference_detection(asm_model):
         try:
             _got = call_com_member(interference, "GetInterferences")
             items_all = list(_got) if _got is not None else []
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             items_all = []
         items = []
         for index in range(count):
@@ -826,11 +865,15 @@ def get_interference_detection(asm_model):
                 #: `IGetComponents` / `Ignore` / `IsFastener` / `IsPossibleInterference`
                 #:  / **`Volume`**）。
                 #: ⇒ 改用**官方有的**两个：`Volume` 与 `GetComponentCount()`。
-                items.append({
-                    "index": index,
-                    "volume": safe_get_com_member(item, "Volume"),
-                    "component_count": safe_get_com_member(item, "GetComponentCount"),
-                })
+                items.append(
+                    {
+                        "index": index,
+                        "volume": safe_get_com_member(item, "Volume"),
+                        "component_count": safe_get_com_member(
+                            item, "GetComponentCount"
+                        ),
+                    }
+                )
             except Exception as exc:
                 items.append({"index": index, "error": str(exc)})
         return {
@@ -858,7 +901,7 @@ def get_interference_detection(asm_model):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IMateEntity2 段
-# 定位:   配合实体（mate entity）的只读属性。官方签名（**全部是属性 / 只读查询**）：  
+# 定位:   配合实体（mate entity）的只读属性。官方签名（**全部是属性 / 只读查询**）：
 #           Component2 get_ReferenceComponent()  Int32     get_ReferenceType() / get_Ref
 #           erenceType2()  Int32     GetEntityParamsSize()  Object    get_EntityParams()
 #             Object    get_Reference()  Double    IGetEntityParams(Int32)
@@ -874,7 +917,9 @@ def collect_mate_entity_evidence(mate_entity) -> dict:
     return {
         "reference_type": int(get_com_member(mate_entity, "ReferenceType") or -1),
         "reference_type2": int(get_com_member(mate_entity, "ReferenceType2") or -1),
-        "entity_params_size": int(get_com_member(mate_entity, "GetEntityParamsSize") or 0),
+        "entity_params_size": int(
+            get_com_member(mate_entity, "GetEntityParamsSize") or 0
+        ),
         "has_reference": get_com_member(mate_entity, "Reference") is not None,
         "has_reference_component": (
             get_com_member(mate_entity, "ReferenceComponent") is not None
@@ -921,20 +966,24 @@ def collect_mate_in_place_evidence(mate_in_place) -> dict:
     count = int(get_com_member(mate_in_place, "GetMateEntityCount") or 0)
     entities = []
     for index in range(count):
-        entities.append({
-            #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同 `sw_equation.py` 那处）** —
-            #: —
-            #:   这两行原本是 `get_com_member(...)`（★ **读**）：`MateEntityType` /
-            #: `MateComponentName` 是**索引属性**，`index` 是**下标**，**返回值**是要取
-            #: 的值。
-            #:   ⚠ 同轮我把 98 处「写 COM 属性」批量改名为 `set_com_member` 时按形态匹配
-            #:     ⇒ 把这两处也改了 ⇒ 于是变成"写下标"。
-            #:   ★ 判据：**返回值被使用 ⇒ 读**。
-            "entity_type": int(get_com_member(mate_in_place, "MateEntityType", index) or -1),
-            "component_name": str(
-                get_com_member(mate_in_place, "MateComponentName", index) or ""
-            ),
-        })
+        entities.append(
+            {
+                #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同 `sw_equation.py` 那处）** —
+                #: —
+                #:   这两行原本是 `get_com_member(...)`（★ **读**）：`MateEntityType` /
+                #: `MateComponentName` 是**索引属性**，`index` 是**下标**，**返回值**是要取
+                #: 的值。
+                #:   ⚠ 同轮我把 98 处「写 COM 属性」批量改名为 `set_com_member` 时按形态匹配
+                #:     ⇒ 把这两处也改了 ⇒ 于是变成"写下标"。
+                #:   ★ 判据：**返回值被使用 ⇒ 读**。
+                "entity_type": int(
+                    get_com_member(mate_in_place, "MateEntityType", index) or -1
+                ),
+                "component_name": str(
+                    get_com_member(mate_in_place, "MateComponentName", index) or ""
+                ),
+            }
+        )
     return {
         "component": get_com_member(mate_in_place, "Component") is not None,
         "entity_count": count,

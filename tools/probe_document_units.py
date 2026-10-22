@@ -35,6 +35,7 @@ r"""@brief 探针：**文档的单位设置** —— 它是不是"两次 `units=
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -59,9 +60,18 @@ STUDY = "DSH-UNITS2"
 #: ⚠⚠ **本文件的初版写的是 `{0: "m", 1: "cm", 2: "mm", …}` —— 那是我**凭空编的**，
 #:   把官方的 `swMM = 0` 翻译成了 "m" ⇒ ★ 与另一个错误（常量写成 45）叠加，
 #:   得出"默认单位是米"的**错误结论**（见 known-facts 180 的更正）。
-LINEAR_UNIT_NAMES = {-1: "（未设/取不到）", 0: "swMM", 1: "swCM", 2: "swMETER", 3: "swINCHES",
-                     4: "swFEET", 5: "swFEETINCHES", 6: "swANGSTROM", 8: "swMICRON",
-                     9: "swMIL"}
+LINEAR_UNIT_NAMES = {
+    -1: "（未设/取不到）",
+    0: "swMM",
+    1: "swCM",
+    2: "swMETER",
+    3: "swINCHES",
+    4: "swFEET",
+    5: "swFEETINCHES",
+    6: "swANGSTROM",
+    8: "swMICRON",
+    9: "swMIL",
+}
 
 
 def main() -> int:
@@ -75,7 +85,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ★★★ `swUserPreferenceIntegerValue_e.swUnitsLinear` = **47**
@@ -94,19 +104,28 @@ def main() -> int:
             """读**用户偏好**与**文档单位**两处（★ 两者可能不同）。"""
             out = {"tag": tag}
             for label, call in (
-                ("userpref_linear",
-                 lambda: int(sw.GetUserPreferenceIntegerValue(SW_UNITS_LINEAR))),
-                ("doc_units_via_ext",
-                 lambda: int(sw_connect.safe_get_com_member(
-                     sw_connect.safe_get_com_member(doc, "Extension"),
-                     "GetUserPreferenceInteger", SW_UNITS_LINEAR,
-                     SW_UNITS_LINEAR_OPT) or -1)),
+                (
+                    "userpref_linear",
+                    lambda: int(sw.GetUserPreferenceIntegerValue(SW_UNITS_LINEAR)),
+                ),
+                (
+                    "doc_units_via_ext",
+                    lambda: int(
+                        sw_connect.safe_get_com_member(
+                            sw_connect.safe_get_com_member(doc, "Extension"),
+                            "GetUserPreferenceInteger",
+                            SW_UNITS_LINEAR,
+                            SW_UNITS_LINEAR_OPT,
+                        )
+                        or -1
+                    ),
+                ),
             ):
                 try:
                     v = call()
                     out[label] = v
                     out[label + "_name"] = LINEAR_UNIT_NAMES.get(v, "?")
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     out[label] = "取不到: %s" % str(exc)[:60]
             return out
 
@@ -119,7 +138,10 @@ def main() -> int:
 
         #: ① 建件后的单位
         ev["steps"]["after_new_part"] = read_units("after_new_part")
-        print("  [1] 新建零件后: %s" % json.dumps(ev["steps"]["after_new_part"], ensure_ascii=False)[:220])
+        print(
+            "  [1] 新建零件后: %s"
+            % json.dumps(ev["steps"]["after_new_part"], ensure_ascii=False)[:220]
+        )
 
         #: ② 建研究 + 读默认尺寸（units=-1）
         sim.create_static_study(sw, STUDY)
@@ -131,11 +153,12 @@ def main() -> int:
         #: ③ ★★ 把**文档单位显式设成毫米**，再读一次
         try:
             ext = sw_connect.safe_get_com_member(doc, "Extension")
-            sw_connect.call_com_member(ext, "SetUserPreferenceInteger",
-                                       SW_UNITS_LINEAR, 2)       #: 2 = mm
+            sw_connect.call_com_member(
+                ext, "SetUserPreferenceInteger", SW_UNITS_LINEAR, 2
+            )  #: 2 = mm
             ev["steps"]["set_units_to_mm"] = "已尝试设为 2（mm）"
             print("  [3] 已把文档单位设为 2（mm）")
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["set_units_to_mm"] = "设不上: %s" % str(exc)[:80]
             print("  [3] ⚠ 设单位失败: %s" % str(exc)[:70])
         ev["steps"]["after_set_mm"] = read_units("after_set_mm")
@@ -148,24 +171,27 @@ def main() -> int:
             "size_before": ev["steps"]["size_before"],
             "size_after_set_mm": ev["steps"]["size_after_set_mm"],
             "changed": ev["steps"]["size_before"] != ev["steps"]["size_after_set_mm"],
-            "ratio": (round(ev["steps"]["size_before"][0] / s_after[0], 3)
-                      if s_after[0] else None),
+            "ratio": (
+                round(ev["steps"]["size_before"][0] / s_after[0], 3)
+                if s_after[0]
+                else None
+            ),
             "★": "★★ 若设 mm 后值变为 ~4.93（比值 ≈1000）⇒ **文档单位就是那个源头**（因果确认）",
         }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 文档单位探针 ──")
@@ -174,7 +200,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

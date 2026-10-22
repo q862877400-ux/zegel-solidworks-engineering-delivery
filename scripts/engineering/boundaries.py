@@ -1,4 +1,5 @@
 """★ Q15 · 运行边界：事务边界 / 无人值守门槛 / 回收 / 磁盘 / 公网（规格 326 的 S15~S19）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -54,8 +55,10 @@ def transaction_boundary() -> dict:
         "has_global_transaction": HAS_GLOBAL_TRANSACTION,
         "on_failure": "KEEP_FAILURE_BRANCH",
         "rollback_claim": False,
-        "★": ("★ Q15 L314：「事务边界是『自有副本＋已验证检查点＋提交清单』，"
-              "**不是 COM 撤销栈**」；★ **不冒称原地回滚成功**"),
+        "★": (
+            "★ Q15 L314：「事务边界是『自有副本＋已验证检查点＋提交清单』，"
+            "**不是 COM 撤销栈**」；★ **不冒称原地回滚成功**"
+        ),
     }
 
 
@@ -65,10 +68,10 @@ def transaction_boundary() -> dict:
 
 #: ★★ **无人值守安全承诺的四个门槛**（★ Q15 L317 逐字）
 UNATTENDED_REQUIREMENTS = (
-    "separate_execution_identity",   #: 独立执行身份
-    "business_files_readonly",       #: 原始业务文件对执行进程不可写
-    "no_prompt_based_isolation",     #: ★ **不能靠提示词限制写入**
-    "os_level_isolation",            #: 或等效沙箱
+    "separate_execution_identity",  #: 独立执行身份
+    "business_files_readonly",  #: 原始业务文件对执行进程不可写
+    "no_prompt_based_isolation",  #: ★ **不能靠提示词限制写入**
+    "os_level_isolation",  #: 或等效沙箱
 )
 
 
@@ -105,12 +108,15 @@ class AttendedMode:
         unattended = not missing
         return {
             "mode": "unattended" if unattended else "attended",
-            "met": met, "missing": missing,
+            "met": met,
+            "missing": missing,
             #: ★★ **结构性保证**：不满足 ⇒ **明确不许宣称**
             "unattended_claim": unattended,
-            "★": ("★ Q15 L317：「达不到此门槛，就**只提供有人值守模式**，"
-                  "**不宣称无人值守安全**」"
-                  + ("" if unattended else " ⇒ ★ 当前：**只提供有人值守**")),
+            "★": (
+                "★ Q15 L317：「达不到此门槛，就**只提供有人值守模式**，"
+                "**不宣称无人值守安全**」"
+                + ("" if unattended else " ⇒ ★ 当前：**只提供有人值守**")
+            ),
         }
 
     def to_dict(self) -> dict:
@@ -129,9 +135,11 @@ def current_environment_mode() -> dict:
         os_level_isolation=False,
         prompt_based_isolation_only=True,
     ).evaluate() | {
-        "why": ("★ Q15 L319 逐字：「本轮**不创建账户、不更改注册表或系统策略**」"
-                " ⇒ 独立执行身份与 OS 级隔离**都没做**"
-                " ⇒ ★ **只能宣称有人值守**（★ 不宣称无人值守安全）"),
+        "why": (
+            "★ Q15 L319 逐字：「本轮**不创建账户、不更改注册表或系统策略**」"
+            " ⇒ 独立执行身份与 OS 级隔离**都没做**"
+            " ⇒ ★ **只能宣称有人值守**（★ 不宣称无人值守安全）"
+        ),
     }
 
 
@@ -139,8 +147,10 @@ def current_environment_mode() -> dict:
 # 三、自动回收（★ S17 —— ★ Q15 L315）
 #: ══════════════════════════════════════════════════════════════════════
 
-def can_reclaim(*, owned_by_this_task: bool, has_owner_documents: bool,
-                process_name: str = "") -> dict:
+
+def can_reclaim(
+    *, owned_by_this_task: bool, has_owner_documents: bool, process_name: str = ""
+) -> dict:
     """★★ **能不能自动回收**（★ S17 —— ★ Q15 L315 逐字）。
 
     ★★ Q15 L315 逐字：「**自动回收只能针对可证明由本任务拥有、且没有业主文档的
@@ -154,24 +164,41 @@ def can_reclaim(*, owned_by_this_task: bool, has_owner_documents: bool,
       ★ 任一不满足 ⇒ **停住**（★ 且明确"不杀进程、不点保存提示"）。
     """
     if not owned_by_this_task:
-        return {"reclaim": False, "reason": "★ 无法证明由本任务拥有",
-                "action": "STOP", "kill_process": False, "click_save": False,
-                "★": "★ Q15 L315：「否则**停住，不杀进程、不点保存提示**」"}
+        return {
+            "reclaim": False,
+            "reason": "★ 无法证明由本任务拥有",
+            "action": "STOP",
+            "kill_process": False,
+            "click_save": False,
+            "★": "★ Q15 L315：「否则**停住，不杀进程、不点保存提示**」",
+        }
     if has_owner_documents:
-        return {"reclaim": False, "reason": "★ 该实例里有业主文档",
-                "action": "STOP", "kill_process": False, "click_save": False,
-                "★": "★ Q15 L315：同上"}
-    return {"reclaim": True, "reason": "★ 自有且无业主文档",
-            "action": "RECLAIM", "kill_process": True, "click_save": False,
-            "★": "★ Q15 L315：可回收"}
+        return {
+            "reclaim": False,
+            "reason": "★ 该实例里有业主文档",
+            "action": "STOP",
+            "kill_process": False,
+            "click_save": False,
+            "★": "★ Q15 L315：同上",
+        }
+    return {
+        "reclaim": True,
+        "reason": "★ 自有且无业主文档",
+        "action": "RECLAIM",
+        "kill_process": True,
+        "click_save": False,
+        "★": "★ Q15 L315：可回收",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、磁盘（★ S18 —— ★ Q15 L324）
 #: ══════════════════════════════════════════════════════════════════════
 
-def disk_gate(*, free_bytes: int, needed_bytes: int,
-              safety_factor: float = 1.5) -> dict:
+
+def disk_gate(
+    *, free_bytes: int, needed_bytes: int, safety_factor: float = 1.5
+) -> dict:
     """★★ **磁盘不足就拒绝开始**（★ S18 —— ★ Q15 L324 逐字）。
 
     ★★ Q15 L324 逐字：「**磁盘不足以容纳下一检查点、暂存及保留版本就拒绝开始**；
@@ -181,14 +208,17 @@ def disk_gate(*, free_bytes: int, needed_bytes: int,
     """
     need = int(needed_bytes * safety_factor)
     ok = free_bytes >= need
-    return {"ok": ok, "free_bytes": free_bytes, "needed_bytes": needed_bytes,
-            "with_safety": need,
-            "action": "START" if ok else "REFUSE_START",
-            #: ★★ **结构性保证**：**不自动清删**
-            "auto_delete_evidence": False,
-            "auto_delete_old_cad": False,
-            "★": ("★ Q15 L324：「磁盘不足……就**拒绝开始**；"
-                  "**不自动清删证据或旧 CAD**」")}
+    return {
+        "ok": ok,
+        "free_bytes": free_bytes,
+        "needed_bytes": needed_bytes,
+        "with_safety": need,
+        "action": "START" if ok else "REFUSE_START",
+        #: ★★ **结构性保证**：**不自动清删**
+        "auto_delete_evidence": False,
+        "auto_delete_old_cad": False,
+        "★": ("★ Q15 L324：「磁盘不足……就**拒绝开始**；**不自动清删证据或旧 CAD**」"),
+    }
 
 
 def disk_free(path: str = ".") -> int:
@@ -211,8 +241,9 @@ NETWORK_ALLOWED_ACTORS = ("cloud_client",)
 NETWORK_DENIED_ACTORS = ("execution_process", "cad_session", "solver")
 
 
-def network_gate(actor: str, *, data_classified: bool = False,
-                 budget_checked: bool = False) -> dict:
+def network_gate(
+    actor: str, *, data_classified: bool = False, budget_checked: bool = False
+) -> dict:
     """★★ **网络闸门**（★ S19 —— ★ Q15 L327 逐字）。
 
     ★★ Q15 L327 逐字：「网络、数据密级和预算**在进入云端客户端之前**控制；
@@ -225,28 +256,48 @@ def network_gate(actor: str, *, data_classified: bool = False,
       ```
     """
     if actor in NETWORK_DENIED_ACTORS:
-        return {"allowed": False, "actor": actor, "code": "EXECUTION_NO_NETWORK",
-                "reason": "★★ 执行进程**不访问公网**（★ Q15 L327 逐字）"}
+        return {
+            "allowed": False,
+            "actor": actor,
+            "code": "EXECUTION_NO_NETWORK",
+            "reason": "★★ 执行进程**不访问公网**（★ Q15 L327 逐字）",
+        }
     if actor not in NETWORK_ALLOWED_ACTORS:
-        return {"allowed": False, "actor": actor, "code": "UNKNOWN_ACTOR",
-                "reason": "★ 未知角色"}
+        return {
+            "allowed": False,
+            "actor": actor,
+            "code": "UNKNOWN_ACTOR",
+            "reason": "★ 未知角色",
+        }
     #: ★★ ① 在**进入之前**控制：分级与预算**都要先做**
     if not data_classified:
-        return {"allowed": False, "actor": actor, "code": "NOT_CLASSIFIED",
-                "reason": "★ 数据**未分级** ⇒ 不许进云端客户端（★ Q15 L327）"}
+        return {
+            "allowed": False,
+            "actor": actor,
+            "code": "NOT_CLASSIFIED",
+            "reason": "★ 数据**未分级** ⇒ 不许进云端客户端（★ Q15 L327）",
+        }
     if not budget_checked:
-        return {"allowed": False, "actor": actor, "code": "BUDGET_UNCHECKED",
-                "reason": "★ 预算**未查** ⇒ 不许进云端客户端（★ Q15 L327）"}
-    return {"allowed": True, "actor": actor, "code": "",
-            "reason": "★ 已分级 + 已查预算 ⇒ 放行"}
+        return {
+            "allowed": False,
+            "actor": actor,
+            "code": "BUDGET_UNCHECKED",
+            "reason": "★ 预算**未查** ⇒ 不许进云端客户端（★ Q15 L327）",
+        }
+    return {
+        "allowed": True,
+        "actor": actor,
+        "code": "",
+        "reason": "★ 已分级 + 已查预算 ⇒ 放行",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 六、整体边界报告（★ S15~S19 一起）
 #: ══════════════════════════════════════════════════════════════════════
 
-def boundary_report(*, free_bytes: int | None = None,
-                    needed_bytes: int = 0) -> dict:
+
+def boundary_report(*, free_bytes: int | None = None, needed_bytes: int = 0) -> dict:
     """★ **运行边界总报告**（★ 如实报 —— ★ 不美化）。"""
     out: dict = {
         "transaction": transaction_boundary(),
@@ -260,9 +311,10 @@ def boundary_report(*, free_bytes: int | None = None,
         "write_scope": "output-only",
     }
     if free_bytes is not None:
-        out["disk"] = disk_gate(free_bytes=free_bytes,
-                                needed_bytes=needed_bytes)
-    out["★"] = ("★ 事务边界=自有副本+检查点+清单（★ 不是 COM 撤销栈）· "
-                "★ 无人值守门槛不达标 ⇒ 只提供有人值守 · "
-                "★ 执行进程不访问公网 · ★ 只写 output")
+        out["disk"] = disk_gate(free_bytes=free_bytes, needed_bytes=needed_bytes)
+    out["★"] = (
+        "★ 事务边界=自有副本+检查点+清单（★ 不是 COM 撤销栈）· "
+        "★ 无人值守门槛不达标 ⇒ 只提供有人值守 · "
+        "★ 执行进程不访问公网 · ★ 只写 output"
+    )
     return out

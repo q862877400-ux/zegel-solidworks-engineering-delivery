@@ -10,6 +10,7 @@
   返回值只留一行摘要 ⇒ ★ 永不截断，且**天然可重跑/可续跑**（已完成的那坡不必重做）✓
 ```
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（扇出配套工具，非移植）
 # 文件:   `output/bunny-rows/chunk-*.json`（各路子代理写的产物）·
@@ -33,10 +34,19 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows")
-    ap.add_argument("--extra", action="append", default=[],
-                    help="额外的行文件（如第一坡救回的那份），可多次给")
-    ap.add_argument("--out", default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows-all.json")
+    ap.add_argument(
+        "--dir", default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows"
+    )
+    ap.add_argument(
+        "--extra",
+        action="append",
+        default=[],
+        help="额外的行文件（如第一坡救回的那份），可多次给",
+    )
+    ap.add_argument(
+        "--out",
+        default=Path(__file__).resolve().parents[1] / "output" / "bunny-rows-all.json",
+    )
     a = ap.parse_args()
 
     rows, files = [], []
@@ -45,10 +55,14 @@ def main() -> int:
         for p in sorted(d.glob("chunk-*.json")):
             try:
                 obj = json.loads(p.read_text(encoding="utf-8", errors="replace"))
-            except Exception as exc:                                 # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("⚠ 解析失败（跳过）: %s ⇒ %s" % (p.name, type(exc).__name__))
                 continue
-            got = [r for r in (obj.get("rows") or []) if isinstance(r, dict) and r.get("function")]
+            got = [
+                r
+                for r in (obj.get("rows") or [])
+                if isinstance(r, dict) and r.get("function")
+            ]
             rows += got
             files.append((p.name, len(got)))
     for extra in a.extra:
@@ -57,7 +71,11 @@ def main() -> int:
             print("⚠ extra 不存在:", extra)
             continue
         obj = json.loads(p.read_text(encoding="utf-8", errors="replace"))
-        got = [r for r in (obj.get("rows") or []) if isinstance(r, dict) and r.get("function")]
+        got = [
+            r
+            for r in (obj.get("rows") or [])
+            if isinstance(r, dict) and r.get("function")
+        ]
         rows += got
         files.append((p.name, len(got)))
 
@@ -66,17 +84,26 @@ def main() -> int:
     for r in rows:
         k = (r.get("module"), r.get("function"))
         if k not in best or len(json.dumps(r, ensure_ascii=False)) > len(
-                json.dumps(best[k], ensure_ascii=False)):
+            json.dumps(best[k], ensure_ascii=False)
+        ):
             best[k] = r
     uniq = list(best.values())
 
-    print("★ 读了 %d 份产物文件 · 原始 %d 行 ⇒ 去重后 **%d 行**" % (len(files), len(rows), len(uniq)))
+    print(
+        "★ 读了 %d 份产物文件 · 原始 %d 行 ⇒ 去重后 **%d 行**"
+        % (len(files), len(rows), len(uniq))
+    )
     print("★ 按模块:", dict(Counter(r.get("module") for r in uniq).most_common(16)))
-    print("★ exposable=True: %d · False: %d"
-          % (sum(1 for r in uniq if r.get("exposable") is True),
-             sum(1 for r in uniq if r.get("exposable") is False)))
-    Path(a.out).write_text(json.dumps({"rows": uniq}, ensure_ascii=False, indent=1),
-                           encoding="utf-8")
+    print(
+        "★ exposable=True: %d · False: %d"
+        % (
+            sum(1 for r in uniq if r.get("exposable") is True),
+            sum(1 for r in uniq if r.get("exposable") is False),
+        )
+    )
+    Path(a.out).write_text(
+        json.dumps({"rows": uniq}, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     print("★ 落盘:", a.out)
     return 0
 

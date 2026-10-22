@@ -52,9 +52,11 @@ def _from_andrewbartels1() -> dict[str, str]:
     for f in sorted(base.glob("*.md")):
         text = f.read_text(encoding="utf-8", errors="replace")
         #: ★ 标题形如 `### 1. `name`` 或 `### name`
-        for m in re.finditer(r"^#{2,4}\s*(?:\d+\.\s*)?`?([A-Za-z_][\w]*)`?\s*$", text, re.M):
+        for m in re.finditer(
+            r"^#{2,4}\s*(?:\d+\.\s*)?`?([A-Za-z_][\w]*)`?\s*$", text, re.M
+        ):
             name = m.group(1)
-            tail = text[m.end():m.end() + 600]
+            tail = text[m.end() : m.end() + 600]
             #: ★ 取到下一个标题前的第一段非空文字
             para = []
             for line in tail.splitlines():
@@ -131,15 +133,30 @@ def main() -> int:
             if m:
                 gap_names.append(m.group(1))
     hit = [g for g in gap_names if g in merged]
-    print("  分诊表里的缺口操作: %d · **其中 %d 个能在四家找到描述**（★ 判据依据）"
-          % (len(gap_names), len(hit)))
+    print(
+        "  分诊表里的缺口操作: %d · **其中 %d 个能在四家找到描述**（★ 判据依据）"
+        % (len(gap_names), len(hit))
+    )
 
-    OUT.write_text(json.dumps({"counts": {"andrewbartels1": len(a), "Eduardof0nt": len(e),
-                                          "merged": len(merged), "gap_hit": len(hit)},
-                               "descriptions": merged}, ensure_ascii=False, indent=1) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "counts": {
+                    "andrewbartels1": len(a),
+                    "Eduardof0nt": len(e),
+                    "merged": len(merged),
+                    "gap_hit": len(hit),
+                },
+                "descriptions": merged,
+            },
+            ensure_ascii=False,
+            indent=1,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("  产物: %s" % OUT)
-    for g in hit[:args.show]:
+    for g in hit[: args.show]:
         print("    %-28s %s" % (g, list(merged[g].values())[0][:88]))
     return 0
 

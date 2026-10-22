@@ -32,6 +32,7 @@ r"""@brief 真机证据：**网格 / 求解 / 读数 4 个工具**（24h 段 1.2
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -52,9 +53,12 @@ T_MESH, T_RUN = 180.0, 300.0
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "mesh_solve_readback",
-                "★": "★ 会弹框的三步（网格/求解）**经 run_isolated 在子进程执行**", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "mesh_solve_readback",
+        "★": "★ 会弹框的三步（网格/求解）**经 run_isolated 在子进程执行**",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -70,16 +74,20 @@ def main() -> int:
         bindings = {}
         for spec in b28.SPECS_BATCH28:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "inject": spec.inject}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] for v in bindings.values()),
-                                   "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "inject": spec.inject,
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] for v in bindings.values()),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② 造零件 + 材料 + 研究 + 夹具 + 载荷（★ 这些**不弹框** ⇒ 留在父进程）
@@ -107,12 +115,16 @@ def main() -> int:
         count = int(sw_connect.safe_get_com_member(mgr, "Count") or 0)
         states = []
         for i in range(count):
-            it = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
+            it = sw_connect.safe_get_com_member(
+                mgr, "GetLoadsAndRestraints", i, out_i4()
+            )
             st = sw_connect.safe_get_com_member(it, "State")
             #: ⚠ 不写 `State or -1` —— `State` 的合法值包含 **0**（★ 事实 178 的教训）
             states.append(int(st) if st is not None else -1)
         ev["steps"]["preconditions"] = {
-            "material_id_name": material, "loads_count": count, "load_states": states,
+            "material_id_name": material,
+            "loads_count": count,
+            "load_states": states,
             "ok": bool(material) and count >= 2,
         }
         print("  [前置] 材料=%r Count=%d States=%s" % (material, count, states))
@@ -120,48 +132,85 @@ def main() -> int:
         #: ③ ★★★ 三步**全部经隔离**（★ 这一步是本版的核心改动）
         def iso(fn: str, args: list, kwargs: dict, timeout: float) -> dict:
             t0 = time.time()
-            r = run_isolated("scripts.sw_simulation_worker", fn,
-                             args=args, kwargs=kwargs, timeout=timeout)
+            r = run_isolated(
+                "scripts.sw_simulation_worker",
+                fn,
+                args=args,
+                kwargs=kwargs,
+                timeout=timeout,
+            )
             r["wall_seconds"] = round(time.time() - t0, 1)
             return r
 
         size_r = iso("mesh_size_by_name", [STUDY], {"units": -1}, 120)
         ev["steps"]["mesh_size"] = {**size_r}
-        print("  [1] 网格尺寸(隔离): ok=%s timed_out=%s %s"
-              % (size_r.get("ok"), size_r.get("timed_out"), str(size_r.get("result"))[:90]))
+        print(
+            "  [1] 网格尺寸(隔离): ok=%s timed_out=%s %s"
+            % (
+                size_r.get("ok"),
+                size_r.get("timed_out"),
+                str(size_r.get("result"))[:90],
+            )
+        )
 
-        size = (size_r.get("result") or {}) if isinstance(size_r.get("result"), dict) else {}
-        mesh_r = iso("create_mesh_by_name", [STUDY],
-                     {"units": 0,
-                      #: ⚠ 不写 `x or 默认值` —— **0.0 是合法值**（"让 SolidWorks 自己选
-                      #: "），
-                      #:   `0.0 or 4.9339` 会把它顶掉（★ 事实 178 同族，门禁抓的）。
-                      "element_size": float(_v if (_v := size.get("element_size")) is not None else 4.9339),
-                      "tolerance": float(_w if (_w := size.get("tolerance")) is not None else 0.2467)},
-                     T_MESH)
+        size = (
+            (size_r.get("result") or {})
+            if isinstance(size_r.get("result"), dict)
+            else {}
+        )
+        mesh_r = iso(
+            "create_mesh_by_name",
+            [STUDY],
+            {
+                "units": 0,
+                #: ⚠ 不写 `x or 默认值` —— **0.0 是合法值**（"让 SolidWorks 自己选
+                #: "），
+                #:   `0.0 or 4.9339` 会把它顶掉（★ 事实 178 同族，门禁抓的）。
+                "element_size": float(
+                    _v if (_v := size.get("element_size")) is not None else 4.9339
+                ),
+                "tolerance": float(
+                    _w if (_w := size.get("tolerance")) is not None else 0.2467
+                ),
+            },
+            T_MESH,
+        )
         ev["steps"]["create_mesh"] = {**mesh_r}
-        print("  [2] 建网格(隔离): ok=%s timed_out=%s %s"
-              % (mesh_r.get("ok"), mesh_r.get("timed_out"), str(mesh_r.get("result"))[:110]))
+        print(
+            "  [2] 建网格(隔离): ok=%s timed_out=%s %s"
+            % (
+                mesh_r.get("ok"),
+                mesh_r.get("timed_out"),
+                str(mesh_r.get("result"))[:110],
+            )
+        )
 
         run_r = iso("run_analysis_by_name", [STUDY], {}, T_RUN)
         ev["steps"]["run_analysis"] = {**run_r}
-        print("  [3] 跑求解(隔离): ok=%s timed_out=%s %s"
-              % (run_r.get("ok"), run_r.get("timed_out"), str(run_r.get("result"))[:130]))
+        print(
+            "  [3] 跑求解(隔离): ok=%s timed_out=%s %s"
+            % (run_r.get("ok"), run_r.get("timed_out"), str(run_r.get("result"))[:130])
+        )
 
         #: ④ ★★ 隔离层本身不挂起（★ 本版的核心断言）
         ev["steps"]["no_hang"] = {
-            "ok": all(not ev["steps"][k].get("timed_out")
-                      for k in ("mesh_size", "create_mesh", "run_analysis")),
+            "ok": all(
+                not ev["steps"][k].get("timed_out")
+                for k in ("mesh_size", "create_mesh", "run_analysis")
+            ),
             "★": "★★ 三步都没超时 ⇒ **隔离层没挂起**；若某步 timed_out=True ⇒ "
-                 "前置条件仍不成立（★ 而**那一版会如实记下，而不是挂死会话**）",
+            "前置条件仍不成立（★ 而**那一版会如实记下，而不是挂死会话**）",
         }
         ok = ok and ev["steps"]["no_hang"]["ok"]
 
         #: ⑤ 判据（★ 沿用既有脚本那三条）
-        mesh_res = mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
+        mesh_res = (
+            mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
+        )
         run_res = run_r.get("result") if isinstance(run_r.get("result"), dict) else {}
         ev["steps"]["verdict_judgement"] = {
-            "mesh_ok": bool(mesh_res.get("ok")) and int(mesh_res.get("element_count") or 0) > 0,
+            "mesh_ok": bool(mesh_res.get("ok"))
+            and int(mesh_res.get("element_count") or 0) > 0,
             "element_count": mesh_res.get("element_count"),
             "run_ok": bool(run_res.get("ok")),
             "results_present": run_res.get("results_present"),
@@ -178,21 +227,21 @@ def main() -> int:
             "names": [s.get("name") for s in (evi.get("studies") or [])],
         }
         ok = ok and ev["steps"]["collect_evidence"]["ok"]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -203,7 +252,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

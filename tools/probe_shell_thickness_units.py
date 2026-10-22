@@ -31,6 +31,7 @@ r"""@brief 探针：`IModelDoc2.InsertFeatureShell` 的 **`Thickness` 单位**�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -44,8 +45,10 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "shell-thickness-units.json")
-T1, T2 = 2.0, 4.0                      #: ★ 两个厚度（★ 比值为 2 ⇒ 体积下降之比应 ≈ 2）
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "shell-thickness-units.json"
+)
+T1, T2 = 2.0, 4.0  #: ★ 两个厚度（★ 比值为 2 ⇒ 体积下降之比应 ≈ 2）
 
 
 def _volume_mm3(model) -> float | None:
@@ -58,14 +61,16 @@ def _volume_mm3(model) -> float | None:
         if mp is None:
             return None
         return float(safe_get_com_member(mp, "Volume") or 0.0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "unit_conflict": {"official": "meters", "module_header": "millimetres"},
-                "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "unit_conflict": {"official": "meters", "module_header": "millimetres"},
+        "steps": {},
+    }
     sw = None
     doc = None
     try:
@@ -76,7 +81,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -91,8 +96,7 @@ def main() -> int:
             return _volume_mm3(doc)
 
         v0 = _make_plate()
-        ev["steps"]["plate"] = {"volume_mm3": v0,
-                                "features": FR.feature_names(doc)}
+        ev["steps"]["plate"] = {"volume_mm3": v0, "features": FR.feature_names(doc)}
         print("  [0] 板体积 = %s" % v0)
 
         #: ★ 两个厚度各抽一次壳（★ 每次用一个**新板**，避免上一次的壳影响下一次）
@@ -112,20 +116,31 @@ def main() -> int:
                 select_face_at(x, 0.0, 0.0, 0.0)
                 r = P.shell_report(x, t)
                 va = _volume_mm3(x)
-                runs[str(t)] = {"ok": bool(r.get("ok")),
-                                "present": (r.get("readback") or {}).get("present"),
-                                "volume_before": vb, "volume_after": va,
-                                "drop": (round(vb - va, 3) if (vb and va) else None),
-                                "error": r.get("error")}
-                print("  [t=%.1f] ok=%s present=%s 体积 %s → %s（降 %s）"
-                      % (t, r.get("ok"), (r.get("readback") or {}).get("present"),
-                         vb, va, runs[str(t)]["drop"]))
+                runs[str(t)] = {
+                    "ok": bool(r.get("ok")),
+                    "present": (r.get("readback") or {}).get("present"),
+                    "volume_before": vb,
+                    "volume_after": va,
+                    "drop": (round(vb - va, 3) if (vb and va) else None),
+                    "error": r.get("error"),
+                }
+                print(
+                    "  [t=%.1f] ok=%s present=%s 体积 %s → %s（降 %s）"
+                    % (
+                        t,
+                        r.get("ok"),
+                        (r.get("readback") or {}).get("present"),
+                        vb,
+                        va,
+                        runs[str(t)]["drop"],
+                    )
+                )
             finally:
                 try:
                     ti = str(sw_connect.safe_get_com_member(x, "GetTitle") or "")
                     if ti:
                         sw.CloseDoc(ti)
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
 
         ev["steps"]["runs"] = runs
@@ -133,35 +148,40 @@ def main() -> int:
         d2 = runs.get(str(T2), {}).get("drop")
         ratio = (d2 / d1) if (d1 and d2) else None
         ev["steps"]["verdict"] = {
-            "thicknesses": [T1, T2], "drops": [d1, d2],
+            "thicknesses": [T1, T2],
+            "drops": [d1, d2],
             "drop_ratio": (round(ratio, 3) if ratio else None),
             "expected_ratio": T2 / T1,
-            "★": ("★ 事先规定：若两次**都成功**且**下降之比 ≈ 厚度之比** ⇒ "
-                  "**口径与传入值一致**；★ 再结合「下降是否落在毫米量级」 ⇒ 判它是不是毫米。"
-                  "★ 若官方口径（米）成立，2.0 的壳会**把实体吃光或失败**。"),
+            "★": (
+                "★ 事先规定：若两次**都成功**且**下降之比 ≈ 厚度之比** ⇒ "
+                "**口径与传入值一致**；★ 再结合「下降是否落在毫米量级」 ⇒ 判它是不是毫米。"
+                "★ 若官方口径（米）成立，2.0 的壳会**把实体吃光或失败**。"
+            ),
         }
         print("  ── 判读 ──")
         print("     %s" % json.dumps(ev["steps"]["verdict"], ensure_ascii=False)[:280])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

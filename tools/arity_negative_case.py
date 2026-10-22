@@ -25,6 +25,7 @@ r"""@brief **故意写错**的 arity 负例 —— 给 `scripts/audit_call_arity
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -32,7 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from sw_connect import get_com_member          # noqa: E402
+from sw_connect import get_com_member  # noqa: E402
 
 
 def run(host):
@@ -46,4 +47,4 @@ def run(host):
     # ③ 成员名根本不存在
     get_com_member(host, "TotallyBogusMemberName")
 
-    return None       # ⚠ 本函数**不该被真机调用** —— 只是给静态审计当输入
+    return None  # ⚠ 本函数**不该被真机调用** —— 只是给静态审计当输入

@@ -30,6 +30,7 @@ r"""@brief 真机冒烟：`sw_part.get_bounding_box`（边界框）。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -62,8 +63,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
     checks: list = []
@@ -78,26 +81,41 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         scratch = sw_connect.new_document(sw, "part")
-        chk("新建临时零件（不碰用户文档）", scratch is not None, "ok" if scratch else "建不出来")
+        chk(
+            "新建临时零件（不碰用户文档）",
+            scratch is not None,
+            "ok" if scratch else "建不出来",
+        )
 
         def timed(fn):
             t0 = time.time()
             try:
                 return True, fn(), time.time() - t0
-            except Exception as exc:      # noqa: BLE001
-                return False, "%s: %s" % (type(exc).__name__, str(exc)[:150]), time.time() - t0
+            except Exception as exc:  # noqa: BLE001
+                return (
+                    False,
+                    "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+                    time.time() - t0,
+                )
 
         # ① 造一个已知尺寸的盒子：矩形 (0,0)-(80,60) 拉伸 50
         ok, r, _ = timed(lambda: sw_part.start_sketch(scratch))
         chk("start_sketch（进草图编辑态）", ok, "ok" if ok else r)
-        ok2, r2, _ = timed(lambda: sw_part.sketch_corner_rectangle(scratch, 0.0, 0.0, W_MM, H_MM))
-        chk("sketch_corner_rectangle(0,0 → %.0f,%.0f)" % (W_MM, H_MM), ok2, "ok" if ok2 else r2)
+        ok2, r2, _ = timed(
+            lambda: sw_part.sketch_corner_rectangle(scratch, 0.0, 0.0, W_MM, H_MM)
+        )
+        chk(
+            "sketch_corner_rectangle(0,0 → %.0f,%.0f)" % (W_MM, H_MM),
+            ok2,
+            "ok" if ok2 else r2,
+        )
         ok3, r3, _ = timed(lambda: sw_part.end_sketch(scratch))
         chk("end_sketch", ok3, "ok" if ok3 else r3)
         ok4, r4, _ = timed(lambda: sw_part.extrude_boss(scratch, "草图1", D_MM))
@@ -105,7 +123,11 @@ def main() -> int:
 
         # ② ★ 本冒烟的核心
         okb, box, dtb = timed(lambda: sw_part.get_bounding_box(scratch))
-        chk("★ get_bounding_box 跑通", okb, ("size=%s · %.2fs" % (box.get("size"), dtb)) if okb else box)
+        chk(
+            "★ get_bounding_box 跑通",
+            okb,
+            ("size=%s · %.2fs" % (box.get("size"), dtb)) if okb else box,
+        )
         ev["box"] = box if okb else None
 
         if okb:
@@ -116,22 +138,27 @@ def main() -> int:
             got = sorted(size)
             dev = [abs(a - b) for a, b in zip(got, want)]
             ev["deviation_mm"] = dev
-            chk("★★ size 在 %.0e mm 容差内等于 %.0f×%.0f×%.0f"
+            chk(
+                "★★ size 在 %.0e mm 容差内等于 %.0f×%.0f×%.0f"
                 % (TOL_MM, W_MM, H_MM, D_MM),
                 all(d <= TOL_MM for d in dev),
-                "got=%s want=%s 偏差=%s mm" % ([round(x, 6) for x in got],
-                                               [round(x, 6) for x in want],
-                                               ["%.2e" % d for d in dev]))
+                "got=%s want=%s 偏差=%s mm"
+                % (
+                    [round(x, 6) for x in got],
+                    [round(x, 6) for x in want],
+                    ["%.2e" % d for d in dev],
+                ),
+            )
             # 顺带记：min/max 也报出来
             print("       min=%s" % [round(v, 6) for v in box["min"]])
             print("       max=%s" % [round(v, 6) for v in box["max"]])
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:200]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if scratch is not None and sw is not None:
@@ -139,18 +166,30 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("   ⚠ 收尾关文档失败（请人工确认）：%s" % str(exc)[:90])
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（已知事实 64 的检查）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（已知事实 64 的检查）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
     print("  ⚠ 只证「这一个盒子」；⚠ 官方说该值是**近似值** ⇒ 即使这里偏差为 0，")

@@ -38,9 +38,10 @@ def _body_count(model) -> int:
     """★ 实体数（★ `GetBodies2(swSolidBody=0, False)`）。"""
     try:
         from sw_connect import get_com_member
+
         v = get_com_member(model, "GetBodies2", 0, False)
         return len(list(v)) if v is not None else 0
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -48,17 +49,18 @@ def _active_or_last_sketch(model) -> str:
     """★ 从特征树读**草图真名**（★ 中文 UI 是「草图1」⇒ ★ 不猜）。"""
     try:
         from sw_connect import get_com_member
+
         f = get_com_member(model, "FirstFeature")
         last = ""
         while f is not None:
             try:
                 if "Sketch" in str(get_com_member(f, "GetTypeName2")):
                     last = str(get_com_member(f, "Name"))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             f = get_com_member(f, "GetNextFeature")
         return last
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
 
 
@@ -84,7 +86,7 @@ def main() -> int:
                 n += 1
                 f = get_com_member(f, "GetNextFeature")
             return n
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return -1
 
     def case(tag, *, form, skip_body: bool = False):
@@ -101,57 +103,101 @@ def main() -> int:
             sk = get_com_member(model, "SketchManager")
             #: ★ 用**四条线**拼矩形（★ `CreateCornerRectangle` 在 pywin32 上报
             #:   「非选择性的参数」⇒ ★ 换成本仓常用的 `CreateLine`）✓
-            for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                         ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+            for a, b in (
+                ((-0.05, -0.03), (0.05, -0.03)),
+                ((0.05, -0.03), (0.05, 0.03)),
+                ((0.05, 0.03), (-0.05, 0.03)),
+                ((-0.05, 0.03), (-0.05, -0.03)),
+            ):
                 get_com_member(sk, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
         sk_name = sk_name_raw or sk_name
         probe = {}
         try:
             P.extrude_boss(model, sk_name, 20.0)
             probe["extrude"] = "ok"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             probe["extrude"] = "err: %s" % str(exc)[:80]
         only_one_body = _body_count(model)
         #: ★ 选一条边（★ 真机一贯做法：★ 按**对象**选，★ 事实 32）
-        from sw_selection_spec import resolve_entity                     # noqa: PLC0415
+        from sw_selection_spec import resolve_entity  # noqa: PLC0415
+
         picked = None
         try:
             ent = resolve_entity(model, "index:0", "EDGE")
             picked = bool(ent.Select4(False, P._empty_callout()))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             picked = "err: %s" % str(exc)[:60]
         before = names()
         got = err = None
         try:
             fm = get_com_member(model, "FeatureManager")
             if form == "old_7":
-                got = get_com_member(fm, "FeatureFillet", 195, 2.0, 0, 0, None, None, None)
+                got = get_com_member(
+                    fm, "FeatureFillet", 195, 2.0, 0, 0, None, None, None
+                )
             elif form == "new3_14":
                 #: ★ 官方 14 参逐字对位：★ 旧三参位置不变、★ 新增的都补中性值 ✓
-                got = get_com_member(fm, "FeatureFillet3",
-                                     195, 2.0, 0.0, 0.0, 0, 0, 0,
-                                     None, None, None, None, None, None, None)
-        except Exception as exc:                                          # noqa: BLE001
+                got = get_com_member(
+                    fm,
+                    "FeatureFillet3",
+                    195,
+                    2.0,
+                    0.0,
+                    0.0,
+                    0,
+                    0,
+                    0,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                )
+        except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:130])
         after = names()
-        rows.append({"form": form, "tag": tag, "sketch_name": sk_name,
-                     "extrude": probe["extrude"], "bodies": only_one_body,
-                     "picked": picked, "returned": str(got)[:50], "error": err,
-                     "features_before": before, "features_after": after,
-                     "built": (after > before) if (before >= 0 and after >= 0) else None})
+        rows.append(
+            {
+                "form": form,
+                "tag": tag,
+                "sketch_name": sk_name,
+                "extrude": probe["extrude"],
+                "bodies": only_one_body,
+                "picked": picked,
+                "returned": str(got)[:50],
+                "error": err,
+                "features_before": before,
+                "features_after": after,
+                "built": (after > before) if (before >= 0 and after >= 0) else None,
+            }
+        )
 
     case("★ 旧的 7 参 FeatureFillet（基线）", form="old_7")
     case("★ 新的 14 参 FeatureFillet3", form="new3_14")
 
-    R = {"★_判据": "★ 建成 ⇒ 特征数增加（★ 与 FeatureCutThicken 那次同法）",
-         "★_问题": "★ 官方 `FeatureFillet`/`2` 都废弃、`3` 不废弃 ⇒ 验 `3` 能不能替",
-         "★_环形链真因": "★ `IModelDoc2` 与 `IFeatureManager` 上**两族同名**、★ 跨族跳转成环",
-         "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 建成 ⇒ 特征数增加（★ 与 FeatureCutThicken 那次同法）",
+        "★_问题": "★ 官方 `FeatureFillet`/`2` 都废弃、`3` 不废弃 ⇒ 验 `3` 能不能替",
+        "★_环形链真因": "★ `IModelDoc2` 与 `IFeatureManager` 上**两族同名**、★ 跨族跳转成环",
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
-        print("★ %-30s built=%-5s feats %s→%s picked=%s err=%s" % (
-            r["form"], r["built"], r["features_before"], r["features_after"],
-            str(r["picked"])[:12], (r["error"] or "")[:60]))
+        print(
+            "★ %-30s built=%-5s feats %s→%s picked=%s err=%s"
+            % (
+                r["form"],
+                r["built"],
+                r["features_before"],
+                r["features_after"],
+                str(r["picked"])[:12],
+                (r["error"] or "")[:60],
+            )
+        )
     print("★ wrote", OUT)
     return 0
 

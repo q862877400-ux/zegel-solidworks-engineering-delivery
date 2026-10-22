@@ -38,6 +38,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -53,16 +54,21 @@ from sw_simulation import (
     run_analysis_report,
 )
 
-__all__ = ["mesh_size_by_name", "create_mesh_by_name", "run_analysis_by_name",
-           "mesh_settings_by_name", "configure_mesh_settings_by_name",
-           "create_mesh_safely_by_name"]
+__all__ = [
+    "mesh_size_by_name",
+    "create_mesh_by_name",
+    "run_analysis_by_name",
+    "mesh_settings_by_name",
+    "configure_mesh_settings_by_name",
+    "create_mesh_safely_by_name",
+]
 
 #: ★★ 忙时**先等多久**再看一眼（秒）—— ★ 真机实测：★ 刚把 SolidWorks 拉起来那几秒它自己
 #: 在忙，
-  #: 忙检会把正常调用**全拒**（假警报）⇒ ★ 给一个**有界**的等待 ✓
-  #: ⚠ ★ **别调太大**：★ 每个入口都要等一次 ⇒ ★ 一次链上五个入口就会变成"五分钟"（实测过
-  #: ）✓
-  #: ⚠ ★ 也不许**无界**（★ 事实 526 的纪律）✓
+#: 忙检会把正常调用**全拒**（假警报）⇒ ★ 给一个**有界**的等待 ✓
+#: ⚠ ★ **别调太大**：★ 每个入口都要等一次 ⇒ ★ 一次链上五个入口就会变成"五分钟"（实测过
+#: ）✓
+#: ⚠ ★ 也不许**无界**（★ 事实 526 的纪律）✓
 BUSY_IDLE_WAIT_S = 8.0
 
 
@@ -91,14 +97,18 @@ def _busy_guard(idle_wait_s: float | None = None) -> dict[str, Any] | None:
         if idle.get("idle"):
             return None
         b = idle.get("last") or solidworks_busy()
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         #: ★ 判据自身坏了 ⇒ **不阻断**（★ 与仓内既有纪律一致：判据出错不因此拒服务）
         return None
-    return {"ok": False, "blocked": BUSY_BLOCKED_CODE, "busy_detail": b,
-            "waited_s": idle.get("waited"),
-            "error": "SolidWorks 正忙（★ 等了 %ss）⇒ **不发 COM 调用**"
-                     "（★ 忙时调用会卡在跨进程 COM 里、且不一定救得回来）：%s"
-                     % (idle.get("waited"), "；".join(b.get("reasons") or [])[:300])}
+    return {
+        "ok": False,
+        "blocked": BUSY_BLOCKED_CODE,
+        "busy_detail": b,
+        "waited_s": idle.get("waited"),
+        "error": "SolidWorks 正忙（★ 等了 %ss）⇒ **不发 COM 调用**"
+        "（★ 忙时调用会卡在跨进程 COM 里、且不一定救得回来）：%s"
+        % (idle.get("waited"), "；".join(b.get("reasons") or [])[:300]),
+    }
 
 
 def _study(name: str, *, sw_app=None):
@@ -114,7 +124,9 @@ def _study(name: str, *, sw_app=None):
         raise RuntimeError("连不上 SolidWorks（connect_solidworks 回了 None）")
     study = get_study_by_name(sw_app, name)
     if study is None:
-        raise RuntimeError("找不到研究 %r —— 先建一个（solidworks_simulation_create_study）" % name)
+        raise RuntimeError(
+            "找不到研究 %r —— 先建一个（solidworks_simulation_create_study）" % name
+        )
     return study
 
 
@@ -126,14 +138,19 @@ def mesh_size_by_name(study_name: str, units: int = -1) -> dict[str, Any]:
     return mesh_size_report(_study(study_name), int(units))
 
 
-def create_mesh_by_name(study_name: str, units: int = 0, element_size: float = 0.0,
-                        tolerance: float = 0.0) -> dict[str, Any]:
+def create_mesh_by_name(
+    study_name: str, units: int = 0, element_size: float = 0.0, tolerance: float = 0.0
+) -> dict[str, Any]:
     """按**研究名**建网格（★ 入参可 JSON 化 ⇒ 可隔离执行）。"""
     busy = _busy_guard()
     if busy is not None:
         return busy
-    return create_mesh_report(_study(study_name), units=int(units),
-                              element_size=float(element_size), tolerance=float(tolerance))
+    return create_mesh_report(
+        _study(study_name),
+        units=int(units),
+        element_size=float(element_size),
+        tolerance=float(tolerance),
+    )
 
 
 def run_analysis_by_name(study_name: str) -> dict[str, Any]:
@@ -170,9 +187,13 @@ def configure_mesh_settings_by_name(study_name: str, **settings) -> dict[str, An
     return configure_mesh_settings(_study(study_name), **settings)
 
 
-def create_mesh_safely_by_name(study_name: str, units: int = 0, element_size: float = 0.0,
-                               tolerance: float = 0.0,
-                               memory_budget_gb: float | None = None) -> dict[str, Any]:
+def create_mesh_safely_by_name(
+    study_name: str,
+    units: int = 0,
+    element_size: float = 0.0,
+    tolerance: float = 0.0,
+    memory_budget_gb: float | None = None,
+) -> dict[str, Any]:
     """★★★ **建网格的唯一推荐入口**（★ 隔离可跑；★ 忙检 → 安全档 → 建网格 → 内存闸 → 还原）。
 
     ★ 它把事实 526 的两条根因处置串在一条链上（★ 曲率自适应 + 无界加密 ⇒ 爆内存；
@@ -193,8 +214,13 @@ def create_mesh_safely_by_name(study_name: str, units: int = 0, element_size: fl
         from sw_connect import safe_get_com_member
 
         model = safe_get_com_member(sw_app, "ActiveDoc")
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         model = None
-    return create_mesh_safely(study, model=model, units=int(units),
-                              element_size=float(element_size), tolerance=float(tolerance),
-                              memory_budget_gb=memory_budget_gb)
+    return create_mesh_safely(
+        study,
+        model=model,
+        units=int(units),
+        element_size=float(element_size),
+        tolerance=float(tolerance),
+        memory_budget_gb=memory_budget_gb,
+    )

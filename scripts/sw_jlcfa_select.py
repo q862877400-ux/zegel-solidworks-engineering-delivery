@@ -38,6 +38,7 @@ r"""嘉立创 FA 选型流程：把参数填到 100% 再生成预览。
 # ⚠ 本模块会驱动 GUI 并操作 SolidWorks。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -53,6 +54,7 @@ SHOTS = Path(Path(__file__).resolve().parents[1] / "shots")
 def md5_png(img) -> str:
     """截图指纹 —— 判断「界面到底变了没」的**唯一可靠依据**。"""
     import io
+
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return hashlib.md5(buf.getvalue()).hexdigest()[:12]
@@ -88,14 +90,16 @@ def pick_first(gui) -> None:
     """
     from scripts import sw_gui_input as _gi
     import win32con
-    _gi._hold([win32con.VK_MENU], win32con.VK_DOWN, pause=0.25)   # Alt+↓ 展开
-    _gi._press(win32con.VK_DOWN, pause=0.3)                       # ↓ 到第一项
-    _gi._press(win32con.VK_RETURN, pause=0.35)                    # Enter 确认（一定被抬起）
+
+    _gi._hold([win32con.VK_MENU], win32con.VK_DOWN, pause=0.25)  # Alt+↓ 展开
+    _gi._press(win32con.VK_DOWN, pause=0.3)  # ↓ 到第一项
+    _gi._press(win32con.VK_RETURN, pause=0.35)  # Enter 确认（一定被抬起）
 
 
 def wait_until_changed(gui, probe, max_wait=12.0, step=0.6):
     """等界面变化：反复截**小区域**比哈希，变了就返回，**不用固定 sleep**。"""
     import shot
+
     base = md5_png(probe())
     t0 = time.time()
     while time.time() - t0 < max_wait:
@@ -129,12 +133,14 @@ COMBO_LIST_CLASS = "ComboLBox"
 
 def _sw_pid(hwnd):
     import win32process
+
     return win32process.GetWindowThreadProcessId(hwnd)[1]
 
 
 def combo_list_rect(hwnd):
     """找当前**已展开**的下拉列表矩形。找不到返回 None。"""
     import win32gui
+
     pid = _sw_pid(hwnd)
     found = None
 
@@ -153,6 +159,7 @@ def combo_list_rect(hwnd):
 def select_index(h, w, combo, items, idx):
     """展开下拉并点第 ``idx`` 项（idx 按 combo.texts() 顺序，0 常是占位）。"""
     import sw_jlcfa_steps as S
+
     combo.click_input()
     time.sleep(0.9)
     lb = combo_list_rect(h)
@@ -163,8 +170,10 @@ def select_index(h, w, combo, items, idx):
     row = (lb[3] - lb[1]) / float(n)
     x = (lb[0] + lb[2]) // 2
     y = int(lb[1] + row * (idx + 0.5))
-    S.log("      ComboLBox%s %d项 行高%.1f -> 点第%d项「%s」(%d,%d)"
-          % (lb, n, row, idx, items[idx] if idx < len(items) else "?", x, y))
+    S.log(
+        "      ComboLBox%s %d项 行高%.1f -> 点第%d项「%s」(%d,%d)"
+        % (lb, n, row, idx, items[idx] if idx < len(items) else "?", x, y)
+    )
     S.click(x, y, 0.6)
     return True
 
@@ -181,6 +190,7 @@ def pending_edits(w):
     """
     import sw_jlcfa_locate as L
     import sw_jlcfa_steps as S
+
     allc = S.controls_cached(w)
     cr = S._container_from(allc)
     if cr is None:
@@ -219,6 +229,7 @@ def pending_edits(w):
 def _parse_hint(hint):
     """``'[55~500]/1'`` → ``(55, 500)``；解析不了返回 ``None``。"""
     import re
+
     if not hint:
         return None
     m = re.match(r"\[\s*([\d.]+)\s*[~\-]\s*([\d.]+)", hint)
@@ -245,6 +256,7 @@ def fill_edit(h, w, edit, r, hint, log=None):
     """
     import time as _t
     import sw_jlcfa_steps as S
+
     rg = _parse_hint(hint)
     val = str(int(rg[0])) if rg else "100"
     ok = False
@@ -259,8 +271,10 @@ def fill_edit(h, w, edit, r, hint, log=None):
             continue
     if not ok:
         if log:
-            log("      Edit「%s」设值失败 %s（类型 %s）"
-                % (edit, err, type(edit).__name__))
+            log(
+                "      Edit「%s」设值失败 %s（类型 %s）"
+                % (edit, err, type(edit).__name__)
+            )
         return False
     _t.sleep(0.6)
     # 尽量提交（有焦点才有用；没有也不影响，ValuePattern 已写入）
@@ -270,25 +284,26 @@ def fill_edit(h, w, edit, r, hint, log=None):
     try:
         from scripts import sw_gui_input as _gi
         import win32con
+
         _gi._press(win32con.VK_TAB, pause=0.4)
     except Exception:
         pass
     if log:
-        log("      Edit「%s」= %s（范围 %s，ValuePattern）" % (edit, val,
-                                                        hint or "无"))
+        log("      Edit「%s」= %s（范围 %s，ValuePattern）" % (edit, val, hint or "无"))
     return True
 
 
 def pending_params(w):
     """选型页里还没定的参数下拉。排除只读的「代码」「每页」。"""
-    import sw_jlcfa_steps as S          # ★ 同上：本函数内导入
+    import sw_jlcfa_steps as S  # ★ 同上：本函数内导入
+
     out = []
     for c in S.controls_cached(w):
         try:
             t = (c.window_text() or "").strip()
             if c.element_info.control_type != "ComboBox" or not t:
                 continue
-            if t == "每页":          # 分页，不是选型参数
+            if t == "每页":  # 分页，不是选型参数
                 continue
             items = c.texts()
             cur = c.selected_text().strip()
@@ -311,7 +326,8 @@ def fill_to_100(h, w, max_rounds=12, pick=1):
       由调用方以「建模完成！」为最终判据。
     """
     import sw_jlcfa_locate as L
-    import sw_jlcfa_steps as S          # ★ 本文件的旧版没导入 steps
+    import sw_jlcfa_steps as S  # ★ 本文件的旧版没导入 steps
+
     stall = 0
     for rnd in range(1, max_rounds + 1):
         # ⚑⚑ 每轮**必须丢缓存重连**：填过一轮后界面会重建控件，
@@ -329,10 +345,9 @@ def fill_to_100(h, w, max_rounds=12, pick=1):
             return h, w, 100
         pend = pending_params(w)
         if pend:
-            S.log("  轮%d 进度=%s%% 待填下拉=%s"
-                  % (rnd, before, [p[0] for p in pend]))
+            S.log("  轮%d 进度=%s%% 待填下拉=%s" % (rnd, before, [p[0] for p in pend]))
             name, cb, items, cur = pend[0]
-            S.ensure_front(h)          # 尽力置前，不中止
+            S.ensure_front(h)  # 尽力置前，不中止
             if L._modal().modal_report(h)["count"]:
                 L._modal().close_modals(h, rounds=2)
                 h, w = L.connect()
@@ -342,8 +357,10 @@ def fill_to_100(h, w, max_rounds=12, pick=1):
             S.cache_drop()
             h, w = L.connect()
             after = S.read_state(w)["pct"]
-            S.log("      「%s」%r -> %r  进度 %s%% -> %s%%"
-                  % (name, cur, items[pick], before, after))
+            S.log(
+                "      「%s」%r -> %r  进度 %s%% -> %s%%"
+                % (name, cur, items[pick], before, after)
+            )
             stall = stall + 1 if after == before else 0
             if stall >= 3:
                 S.log("      连 3 次进度不动，停下")
@@ -352,8 +369,7 @@ def fill_to_100(h, w, max_rounds=12, pick=1):
         # 没有待填下拉 → 看有没有空输入框
         eds = pending_edits(w)
         if eds:
-            S.log("  轮%d 进度=%s%% 待填输入框=%s"
-                  % (rnd, before, [e[0] for e in eds]))
+            S.log("  轮%d 进度=%s%% 待填输入框=%s" % (rnd, before, [e[0] for e in eds]))
             name, ctl, r, hint = eds[0]
             S.ensure_front(h)
             if L._modal().modal_report(h)["count"]:
@@ -379,6 +395,7 @@ def fill_to_100(h, w, max_rounds=12, pick=1):
         #   ⇒ 无待填项后**再等一轮**，别急着判失败。
         for _ in range(6):
             import time as _t2
+
             _t2.sleep(1.0)
             S.cache_drop()
             try:

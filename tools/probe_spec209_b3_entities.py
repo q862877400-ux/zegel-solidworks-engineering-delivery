@@ -43,10 +43,14 @@ def main() -> int:
     import sw_selection_spec as SS
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "规格 209 · B3-1（idx 115 edges + 145 faces）—— 判据 = 计数 + 欧拉公式 + 逐条几何",
-          "judge": "回读：三类计数 · V−E+F==2 · 每条的几何字段 · 负例必须大声报",
-          "reports": {}, "negative": {}, "verdict": {}}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "规格 209 · B3-1（idx 115 edges + 145 faces）—— 判据 = 计数 + 欧拉公式 + 逐条几何",
+        "judge": "回读：三类计数 · V−E+F==2 · 每条的几何字段 · 负例必须大声报",
+        "reports": {},
+        "negative": {},
+        "verdict": {},
+    }
     opened = []
 
     def _close(doc):
@@ -54,7 +58,7 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     try:
@@ -69,20 +73,28 @@ def main() -> int:
         for kind in ("FACE", "EDGE", "VERTEX"):
             r = SS.entities_report(doc, kind)
             ev["reports"][kind] = {
-                "ok": r.get("ok"), "count": r.get("count"), "euler": r.get("euler"),
+                "ok": r.get("ok"),
+                "count": r.get("count"),
+                "euler": r.get("euler"),
                 "error": r.get("error"),
                 "sample": (r.get("entities") or [None])[0],
-                "all_have_error": sorted({bool(x.get("error")) for x in (r.get("entities") or [])}),
+                "all_have_error": sorted(
+                    {bool(x.get("error")) for x in (r.get("entities") or [])}
+                ),
             }
-            print("  %-7s count=%-3s euler=%s" % (kind, r.get("count"),
-                                                  json.dumps(r.get("euler"), ensure_ascii=False)))
+            print(
+                "  %-7s count=%-3s euler=%s"
+                % (kind, r.get("count"), json.dumps(r.get("euler"), ensure_ascii=False))
+            )
         #: ③ 边长与面积要**非空**才有说服力（★ 只报计数是不够的）
-        edges = (ev["reports"]["EDGE"].get("sample") or {})
-        faces = (ev["reports"]["FACE"].get("sample") or {})
+        edges = ev["reports"]["EDGE"].get("sample") or {}
+        faces = ev["reports"]["FACE"].get("sample") or {}
         ev["verdict"] = {
-            "counts_match_box": (ev["reports"]["FACE"].get("count") == 6
-                                 and ev["reports"]["EDGE"].get("count") == 12
-                                 and ev["reports"]["VERTEX"].get("count") == 8),
+            "counts_match_box": (
+                ev["reports"]["FACE"].get("count") == 6
+                and ev["reports"]["EDGE"].get("count") == 12
+                and ev["reports"]["VERTEX"].get("count") == 8
+            ),
             "euler_holds": ev["reports"]["FACE"].get("euler", {}).get("holds"),
             "edge_geometry_readable": edges.get("length_mm") is not None,
             "face_area_readable": faces.get("area_mm2") is not None,
@@ -101,25 +113,32 @@ def main() -> int:
             "_": "★ 报告函数回字典 ⇒ 判据看 error 字段（不抛）",
         }
         bad = SS.entities_report(doc, "SPHERE")
-        ev["negative"]["bad_kind"] = {"ok": bad.get("ok"), "error": bad.get("error"),
-                                      "judged_ok": (bad.get("ok") is False
-                                                    and bool(bad.get("error")))}
+        ev["negative"]["bad_kind"] = {
+            "ok": bad.get("ok"),
+            "error": bad.get("error"),
+            "judged_ok": (bad.get("ok") is False and bool(bad.get("error"))),
+        }
         print("  负例 bad_index error=%s" % str(bad_g.get("error"))[:80])
-        print("  负例 bad_kind  ok=%s error=%s" % (bad.get("ok"), str(bad.get("error"))[:60]))
+        print(
+            "  负例 bad_kind  ok=%s error=%s"
+            % (bad.get("ok"), str(bad.get("error"))[:60])
+        )
         _close(doc)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         print("  FATAL %s" % str(exc)[:140])
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

@@ -49,10 +49,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_pattern as SP                                 # noqa: E402
-import scripts.sw_sketch_primitives as SPK                           # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_pattern as SP  # noqa: E402
+import scripts.sw_sketch_primitives as SPK  # noqa: E402
 
 #: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern
 #: `）
@@ -69,7 +69,7 @@ def _geom(model):
             bb = C.get_com_member(bs[0], "GetBodyBox")
             out["box"] = [round(float(x), 3) for x in (bb or [])]
         return out
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"err": "%s: %s" % (type(exc).__name__, str(exc)[:60])}
 
 
@@ -87,17 +87,19 @@ def _pick_seed(model):
                 if P._select_com_object(f, append=False, mark=0):
                     return nm
         return None
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u7ebf\u6027\u9635\u5217\u65b0\u67b6\u6784\uff08CreateDefinition + ILinearPatternFeatureData\uff09\u771f\u673a\u8bd5",
-          "judge": "\u4e09\u5224\u636e\u5e76\u5217\uff1a\u7279\u5f81\u6811\u540d\u589e\u91cf / \u4f53\u6570 / \u5305\u56f4\u76d2",
-          "swFmLPattern": SW_FM_LPATTERN,
-          "steps": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u7ebf\u6027\u9635\u5217\u65b0\u67b6\u6784\uff08CreateDefinition + ILinearPatternFeatureData\uff09\u771f\u673a\u8bd5",
+        "judge": "\u4e09\u5224\u636e\u5e76\u5217\uff1a\u7279\u5f81\u6811\u540d\u589e\u91cf / \u4f53\u6570 / \u5305\u56f4\u76d2",
+        "swFmLPattern": SW_FM_LPATTERN,
+        "steps": [],
+    }
 
     doc = C.new_document(sw, "part")
     try:
@@ -110,10 +112,12 @@ def main() -> int:
             try:
                 P.extrude_boss(doc, cand, 0.02)
                 break
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         after = P.feature_names(doc) or []
-        ev["steps"].append({"step": "solid", "added": [n for n in after if n not in before]})
+        ev["steps"].append(
+            {"step": "solid", "added": [n for n in after if n not in before]}
+        )
         ev["before"] = {"tree": len(after), "geom": _geom(doc)}
 
         #: ② 选种子特征
@@ -124,37 +128,52 @@ def main() -> int:
         data = None
         try:
             data = C.get_com_member(fm, "CreateDefinition", SW_FM_LPATTERN)
-            ev["create_definition"] = {"ok": data is not None, "type": type(data).__name__}
-        except Exception as exc:                                         # noqa: BLE001
-            ev["create_definition"] = {"ok": False,
-                                       "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+            ev["create_definition"] = {
+                "ok": data is not None,
+                "type": type(data).__name__,
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["create_definition"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+            }
 
         #: ④ **装配** —— ★★ **这一步里会走 `AccessSelections`**（★ 关键观察点）
         if data is not None:
             try:
-                r = SP.configure_linear_pattern(data, doc, d1_spacing=0.015,
-                                                d1_total_instances=3)
+                r = SP.configure_linear_pattern(
+                    data, doc, d1_spacing=0.015, d1_total_instances=3
+                )
                 ev["configure"] = {"ok": True, "returned": str(r)[:220]}
-            except Exception as exc:                                     # noqa: BLE001
-                ev["configure"] = {"ok": False,
-                                   "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
-                                   "err_code": getattr(exc, "args", (None,))[0]}
+            except Exception as exc:  # noqa: BLE001
+                ev["configure"] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                    "err_code": getattr(exc, "args", (None,))[0],
+                }
 
             #: ⑤ 建特征
             try:
                 feat = C.get_com_member(fm, "CreateFeature", data)
-                ev["create_feature"] = {"ok": feat is not None,
-                                        "type": type(feat).__name__}
-            except Exception as exc:                                     # noqa: BLE001
-                ev["create_feature"] = {"ok": False,
-                                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+                ev["create_feature"] = {
+                    "ok": feat is not None,
+                    "type": type(feat).__name__,
+                }
+            except Exception as exc:  # noqa: BLE001
+                ev["create_feature"] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                }
 
         after2 = P.feature_names(doc) or []
-        ev["after"] = {"tree": len(after2), "geom": _geom(doc),
-                       "new": [n for n in after2 if n not in after]}
+        ev["after"] = {
+            "tree": len(after2),
+            "geom": _geom(doc),
+            "new": [n for n in after2 if n not in after],
+        }
         ev["geom_changed"] = ev["after"]["geom"] != ev["before"]["geom"]
         ev["verdict"] = "pass" if ev["geom_changed"] else "fail"
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         ev["verdict"] = "fail"
     finally:
@@ -162,18 +181,27 @@ def main() -> int:
             t = str(C.get_com_member(doc, "GetTitle") or "")
             if t:
                 C.get_com_member(sw, "CloseDoc", t)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     p = R / "output" / "linear-pattern-newarch-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u636e\uff1a**%s**" % ev.get("verdict"))
     for k in ("create_definition", "configure", "create_feature"):
         if k in ev:
             print("  %-20s %s" % (k, json.dumps(ev[k], ensure_ascii=False)[:170]))
-    print("  \u51e0\u4f55\u53d8\u4e86\uff1a%s  before=%s after=%s" % (
-        ev.get("geom_changed"), ev.get("before", {}).get("geom"), ev.get("after", {}).get("geom")))
+    print(
+        "  \u51e0\u4f55\u53d8\u4e86\uff1a%s  before=%s after=%s"
+        % (
+            ev.get("geom_changed"),
+            ev.get("before", {}).get("geom"),
+            ev.get("after", {}).get("geom"),
+        )
+    )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

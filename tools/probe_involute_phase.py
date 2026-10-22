@@ -14,6 +14,7 @@
 
 ★ 判据：★ **段数增加**（★ 事实 436）✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_involute_phase.py
@@ -35,15 +36,15 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _seg_count(doc):
     try:
         sk = C.get_com_member(doc, "GetActiveSketch2")
         return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -56,18 +57,31 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
         sm = C.get_com_member(doc, "SketchManager")
         before = _seg_count(doc)
         try:
-            C.get_com_member(sm, "CreateEquationSpline2", xexpr, yexpr, "",
-                             t0, t1, False, 0.0, 0.0, 0.0, True, True)
-        except Exception as exc:                                          # noqa: BLE001
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                xexpr,
+                yexpr,
+                "",
+                t0,
+                t1,
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(doc)
         row["seg"] = [before, after]
         row["ok"] = bool(after >= 0 and before >= 0 and after > before)
         try:
             P.end_sketch(doc)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -75,7 +89,7 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
@@ -85,45 +99,78 @@ RB = 9.396926208
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "★ 带**相位**的渐开线表达式（★ 20 齿共用一个式子的前提）", "cases": []}
-    PSI = math.radians(9.0)          #: ★ 随便一个相位（齿中心角附近）
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "★ 带**相位**的渐开线表达式（★ 20 齿共用一个式子的前提）",
+        "cases": [],
+    }
+    PSI = math.radians(9.0)  #: ★ 随便一个相位（齿中心角附近）
     A, B = math.cos(PSI), math.sin(PSI)
     #: ★ ① 直接相位（三角里带加法）
-    ev["cases"].append(_one(sw, "① 直接相位 cos(t+P)",
-                            "%.9f*(cos(t+%.9f)+t*sin(t+%.9f))" % (RB, PSI, PSI),
-                            "%.9f*(sin(t+%.9f)-t*cos(t+%.9f))" % (RB, PSI, PSI),
-                            "0", "0.6"))
+    ev["cases"].append(
+        _one(
+            sw,
+            "① 直接相位 cos(t+P)",
+            "%.9f*(cos(t+%.9f)+t*sin(t+%.9f))" % (RB, PSI, PSI),
+            "%.9f*(sin(t+%.9f)-t*cos(t+%.9f))" % (RB, PSI, PSI),
+            "0",
+            "0.6",
+        )
+    )
     #: ★ ② 展开相位（只用 cos/sin/乘/加 —— ★ 保证可用）
-    ev["cases"].append(_one(
-        sw, "② 展开相位（★ 只用 cos/sin/乘/加）",
-        "%.9f*(cos(t)*(%.9f+t*%.9f)+sin(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
-        "%.9f*(sin(t)*(%.9f+t*%.9f)-cos(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
-        "0", "0.6"))
+    ev["cases"].append(
+        _one(
+            sw,
+            "② 展开相位（★ 只用 cos/sin/乘/加）",
+            "%.9f*(cos(t)*(%.9f+t*%.9f)+sin(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
+            "%.9f*(sin(t)*(%.9f+t*%.9f)-cos(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
+            "0",
+            "0.6",
+        )
+    )
     #: ★ ③ 对照：无相位（★ 上一轮已证可）
-    ev["cases"].append(_one(sw, "③ 对照：无相位",
-                            "%.9f*(cos(t)+t*sin(t))" % RB,
-                            "%.9f*(sin(t)-t*cos(t))" % RB, "0", "0.6"))
+    ev["cases"].append(
+        _one(
+            sw,
+            "③ 对照：无相位",
+            "%.9f*(cos(t)+t*sin(t))" % RB,
+            "%.9f*(sin(t)-t*cos(t))" % RB,
+            "0",
+            "0.6",
+        )
+    )
     #: ★ ④ 摆线齿根（★ 含 sqrt · ★ 长式子）
     r, hf, rho = 10.0, 1.25, 0.38
     a = hf - rho
-    ev["cases"].append(_one(
-        sw, "④ 摆线齿根（★ 含 sqrt）",
-        "%.9f*cos(t)+%.9f*t*sin(t)+%.9f*(-%.9f*cos(t)+%.9f*t*sin(t))/sqrt(%.9f+%.9f*t*t)"
-        % (r - hf + rho, r, rho, a, r, a * a, r * r),
-        "%.9f*sin(t)-%.9f*t*cos(t)+%.9f*(-%.9f*sin(t)-%.9f*t*cos(t))/sqrt(%.9f+%.9f*t*t)"
-        % (r - hf + rho, r, rho, a, r, a * a, r * r),
-        "0", "0.25"))
+    ev["cases"].append(
+        _one(
+            sw,
+            "④ 摆线齿根（★ 含 sqrt）",
+            "%.9f*cos(t)+%.9f*t*sin(t)+%.9f*(-%.9f*cos(t)+%.9f*t*sin(t))/sqrt(%.9f+%.9f*t*t)"
+            % (r - hf + rho, r, rho, a, r, a * a, r * r),
+            "%.9f*sin(t)-%.9f*t*cos(t)+%.9f*(-%.9f*sin(t)-%.9f*t*cos(t))/sqrt(%.9f+%.9f*t*t)"
+            % (r - hf + rho, r, rho, a, r, a * a, r * r),
+            "0",
+            "0.25",
+        )
+    )
     ev["direct_phase_ok"] = bool(ev["cases"][0].get("ok"))
     ev["expanded_phase_ok"] = bool(ev["cases"][1].get("ok"))
     ev["trochoid_ok"] = bool(ev["cases"][3].get("ok"))
     p = R / "output" / "involute-phase-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  ★★ 直接相位=%s · 展开相位=%s · 摆线齿根=%s"
-          % (ev["direct_phase_ok"], ev["expanded_phase_ok"], ev["trochoid_ok"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  ★★ 直接相位=%s · 展开相位=%s · 摆线齿根=%s"
+        % (ev["direct_phase_ok"], ev["expanded_phase_ok"], ev["trochoid_ok"])
+    )
     for c in ev["cases"]:
-        print("  %-40s ok=%-6s 段 %s" % (c.get("tag", "")[:40], c.get("ok"), c.get("seg")))
+        print(
+            "  %-40s ok=%-6s 段 %s" % (c.get("tag", "")[:40], c.get("ok"), c.get("seg"))
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:140])
     print("  产物：%s" % p)

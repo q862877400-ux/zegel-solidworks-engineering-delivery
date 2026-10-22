@@ -65,7 +65,9 @@ def _configuration_names(model) -> list[str]:
 
 def _resolve_configuration_name(names: Sequence[str], requested: str) -> str | None:
     """@brief 按 SolidWorks 配置名不区分大小写语义返回实际名称。"""
-    matches = [str(name) for name in names if str(name).casefold() == requested.casefold()]
+    matches = [
+        str(name) for name in names if str(name).casefold() == requested.casefold()
+    ]
     if len(matches) > 1:
         raise RuntimeError(f"配置名大小写匹配不唯一: {requested}")
     return matches[0] if matches else None
@@ -90,7 +92,10 @@ def inspect_configurations(model) -> dict[str, Any]:
         "configurations": names,
         "active_configuration": current,
         "review_required": True,
-        "limitations": ["未执行设计表创建/编辑和大型配置族批量变更", "配置间尺寸、属性、抑制状态和几何差异仍需人工复核"],
+        "limitations": [
+            "未执行设计表创建/编辑和大型配置族批量变更",
+            "配置间尺寸、属性、抑制状态和几何差异仍需人工复核",
+        ],
     }
 
 
@@ -112,12 +117,22 @@ def activate_configuration(
 
     before = _active_configuration_name(model)
     api_called = before != name
-    api_return = bool(get_com_member(model, "ShowConfiguration2", name)) if api_called else None
+    api_return = (
+        bool(get_com_member(model, "ShowConfiguration2", name)) if api_called else None
+    )
     after = _active_configuration_name(model)
     readback_verified = after == name
     api_success = readback_verified
-    rebuild_success = bool(call_com_member(model, "EditRebuild3")) if rebuild and readback_verified else readback_verified
-    save_success = bool(save_document(model)) if save and readback_verified and rebuild_success else not save
+    rebuild_success = (
+        bool(call_com_member(model, "EditRebuild3"))
+        if rebuild and readback_verified
+        else readback_verified
+    )
+    save_success = (
+        bool(save_document(model))
+        if save and readback_verified and rebuild_success
+        else not save
+    )
     success = readback_verified and rebuild_success and save_success
     return {
         "success": success,
@@ -168,13 +183,17 @@ def create_configuration(
     if existed and if_exists == "error":
         raise FileExistsError(f"配置已存在: {name}")
 
-    created = None if existed else get_com_member(
-        model,
-        "AddConfiguration3",
-        name,
-        str(comment),
-        str(alternate_name),
-        int(options),
+    created = (
+        None
+        if existed
+        else get_com_member(
+            model,
+            "AddConfiguration3",
+            name,
+            str(comment),
+            str(alternate_name),
+            int(options),
+        )
     )
     if not existed and created is None:
         raise RuntimeError(f"AddConfiguration3 未返回配置对象: {name}")
@@ -195,7 +214,11 @@ def create_configuration(
     else:
         rebuild_success = listed
     active_verified = activation["readback_verified"] if activation else True
-    save_success = bool(save_document(model)) if save and listed and rebuild_success and active_verified else not save
+    save_success = (
+        bool(save_document(model))
+        if save and listed and rebuild_success and active_verified
+        else not save
+    )
     success = listed and rebuild_success and active_verified and save_success
     return {
         "success": success,
@@ -229,18 +252,20 @@ def _document_length_unit_scale(model) -> float:
     """
     try:
         from sw_connect import get_com_member as _g
+
         raw = _g(model, "GetUnits")
         if raw is None:
             return 1000.0
         seq = list(raw)
         #: ★ `swLengthUnit_e`：0=swMM · 1=swCM · 2=swM · 3=swINCHES · 4=swFEET …
         return {0: 1.0, 1: 10.0, 2: 1000.0, 3: 25.4, 4: 304.8}.get(int(seq[0]), 1000.0)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return 1000.0
 
 
-def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
-                        model=None) -> float:
+def _dimension_value_mm(
+    dimension, configuration_name: str | None = None, *, model=None
+) -> float:
     """读取尺寸系统值并转为毫米。
 
     ★★★★ 2026-10-03（接手轮）**换走后继入口 + 处理"返回值是数组"** ——
@@ -285,14 +310,16 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
     try:
         from .sw_connect import create_empty_dispatch_variant as _empty
         from .sw_connect import get_com_member as _g
-    except ImportError:                                                   # pragma: no cover
-        from sw_connect import create_empty_dispatch_variant as _empty     # type: ignore
-        from sw_connect import get_com_member as _g                        # type: ignore
+    except ImportError:  # pragma: no cover
+        from sw_connect import create_empty_dispatch_variant as _empty  # type: ignore
+        from sw_connect import get_com_member as _g  # type: ignore
 
     if configuration_name:
-        raw = _g(dimension, "GetSystemValue3", 3, [configuration_name])   #: ★ swSpecifyConfiguration
+        raw = _g(
+            dimension, "GetSystemValue3", 3, [configuration_name]
+        )  #: ★ swSpecifyConfiguration
     else:
-        raw = _g(dimension, "GetSystemValue3", 1, _empty())               #: ★ swThisConfiguration
+        raw = _g(dimension, "GetSystemValue3", 1, _empty())  #: ★ swThisConfiguration
     #: ★★ 新入口回**数组** ⇒ 取第一个（★ 官方例子也是这么取的：`dimValue_1(0)`）
     if isinstance(raw, (list, tuple)):
         raw = raw[0] if raw else 0.0
@@ -300,7 +327,7 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
     #:   而**本机新建文档的单位是**毫米****（★ 真机实测 `GetUnits() = [0, 1, 8, 2, 0]`，
     #:   ★ 第 1 个 `swLengthUnit_e = 0 = swMM`）✓
     #:   ★★★ **真机证据（`tools/probe_dimension_unit.py`）**：★ 一个**厚 20 mm** 的板，
-    #: ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★ 
+    #: ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★
     #: 不是米** ✓
     #:   ★★★ **而另一份证据**（`output/extrude-depth-unit-evidence.json`）**独立确认**：
     #: ★ `extrude_boss(model, "Sketch1", 20.0)` 建出来的实体 **`size = [100, 60, **20**]
@@ -339,7 +366,9 @@ def update_dimension_mm(
     if dimension is None:
         raise LookupError(f"找不到尺寸: {dimension_name}")
 
-    requested_names = [str(name).strip() for name in (configuration_names or []) if str(name).strip()]
+    requested_names = [
+        str(name).strip() for name in (configuration_names or []) if str(name).strip()
+    ]
     if configuration_mode == "specific" and not requested_names:
         raise ValueError("specific 模式必须提供 configuration_names")
     if configuration_mode == "all":
@@ -358,7 +387,10 @@ def update_dimension_mm(
     #:   ★★ 而 `model` 是**本函数已有**的入参 ⇒ ★ 用它读单位；★ `None` ⇒ 回退旧行为 ✓
     _scale = _document_length_unit_scale(model)
     before = (
-        {name: _dimension_value_mm(dimension, name, model=model) for name in evidence_names}
+        {
+            name: _dimension_value_mm(dimension, name, model=model)
+            for name in evidence_names
+        }
         if evidence_names
         else {"current": _dimension_value_mm(dimension, model=model)}
     )
@@ -380,11 +412,18 @@ def update_dimension_mm(
         else status_code == 0
     )
     after = (
-        {name: _dimension_value_mm(dimension, name, model=model) for name in evidence_names}
+        {
+            name: _dimension_value_mm(dimension, name, model=model)
+            for name in evidence_names
+        }
         if evidence_names
         else {"current": _dimension_value_mm(dimension, model=model)}
     )
-    save_success = bool(save_document(model)) if save and status_code == 0 and rebuild_success else not save
+    save_success = (
+        bool(save_document(model))
+        if save and status_code == 0 and rebuild_success
+        else not save
+    )
     success = status_code == 0 and rebuild_success and save_success
     return {
         "success": success,
@@ -410,14 +449,18 @@ def _property_manager(model, configuration_name: str = ""):
     return manager
 
 
-def read_custom_property(model, name: str, *, configuration_name: str = "") -> dict[str, Any]:
+def read_custom_property(
+    model, name: str, *, configuration_name: str = ""
+) -> dict[str, Any]:
     """读取一个文件级或配置级自定义属性。"""
     manager = _property_manager(model, configuration_name)
     raw_value = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
     resolved_value = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
     was_resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
     is_linked = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
-    status = int(manager.Get6(name, False, raw_value, resolved_value, was_resolved, is_linked))
+    status = int(
+        manager.Get6(name, False, raw_value, resolved_value, was_resolved, is_linked)
+    )
     return {
         "name": name,
         "configuration": configuration_name,
@@ -451,16 +494,24 @@ def set_custom_properties(
             raise ValueError("属性名不能为空")
         value = str(raw_value)
         add_status = int(manager.Add3(name, PROPERTY_TYPES[property_type], value, 2))
-        readback = read_custom_property(model, name, configuration_name=configuration_name)
+        readback = read_custom_property(
+            model, name, configuration_name=configuration_name
+        )
         verified = add_status == 0 and readback["exists"] and readback["raw"] == value
-        results.append({
-            "name": name,
-            "requested": value,
-            "add_status": add_status,
-            "verified": verified,
-            "readback": readback,
-        })
-    save_success = bool(save_document(model)) if save and all(item["verified"] for item in results) else not save
+        results.append(
+            {
+                "name": name,
+                "requested": value,
+                "add_status": add_status,
+                "verified": verified,
+                "readback": readback,
+            }
+        )
+    save_success = (
+        bool(save_document(model))
+        if save and all(item["verified"] for item in results)
+        else not save
+    )
     return {
         "success": all(item["verified"] for item in results) and save_success,
         "configuration": configuration_name,
@@ -503,7 +554,7 @@ def set_custom_properties(
 #   · ⚠ `C:\swapi\types\ISldWorks\GetDocumentDependenciesCount.md` —— ★ 该页逐字写着
 # **「Obsolete. Superseded by `ISldWorks::IGetDocumentDependenciesCount2`」** ⇒ ★★ 本函
 # 数
-# **不去调它**（★ `I` 前缀那族是给进程内 C++ 的指针变体，且我们**本来也不需要预取个数** 
+# **不去调它**（★ `I` 前缀那族是给进程内 C++ 的指针变体，且我们**本来也不需要预取个数**
 # ——
 #     `GetDocumentDependencies2` 一次就回**完整数组**）✓
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -528,12 +579,12 @@ DOCUMENT_DEPENDENCIES_LIMITATIONS = (
     "★ 别把「出现了」当成「生效了」 ✓",
     "★★★ **官方例子与真机读数不一致（本能力实测抓到，★ 照例子写判据会判反）**：官方例子说开了 "
     "`AddReadOnlyInfo` 之后，**非只读**的文档跟的是**空串** "
-    "（逐字 `[ \"Part1\", \"C:\\temp\\Part1.SLDPRT\", \"Read-Only\", \"SubAssem1\", "
-    "\"c:\\temp\\SubAssem1.SLDASM\", \"\" ]`）；"
-    "★ 而**本机实测（2026-10-06，SW 2026 SP4.1）回的是字符串 `\"FALSE\"`** —— "
-    "⇒ ★★ **若按「非空即只读」写判据，会把非只读的文档判成只读**（`bool(\"FALSE\")` 是 `True`）✓ "
-    "⇒ ★ 本函数的 `read_only_flag` 于是**按白名单判**：`\"Read-Only\"` ⇒ `True`；"
-    "`\"\"` / `\"FALSE\"` / `\"0\"` ⇒ `False`；**其余一律 `None`（不猜）** ✓ "
+    '（逐字 `[ "Part1", "C:\\temp\\Part1.SLDPRT", "Read-Only", "SubAssem1", '
+    '"c:\\temp\\SubAssem1.SLDASM", "" ]`）；'
+    '★ 而**本机实测（2026-10-06，SW 2026 SP4.1）回的是字符串 `"FALSE"`** —— '
+    '⇒ ★★ **若按「非空即只读」写判据，会把非只读的文档判成只读**（`bool("FALSE")` 是 `True`）✓ '
+    '⇒ ★ 本函数的 `read_only_flag` 于是**按白名单判**：`"Read-Only"` ⇒ `True`；'
+    '`""` / `"FALSE"` / `"0"` ⇒ `False`；**其余一律 `None`（不猜）** ✓ '
     "★ 原始串**原样**留在 `read_only` 字段里，调用方可以自己核 ✓",
 )
 
@@ -579,20 +630,35 @@ def document_dependencies(
     认不出就 `None`（★ 见 `LIMITATIONS` 第 5 条 —— **照例子写判据会判反**）✓
     """
     out: dict[str, Any] = {
-        "ok": False, "document": str(document), "traverse": bool(traverse),
-        "search": bool(search), "add_read_only_info": bool(add_read_only_info),
-        "count": 0, "entries": [], "raw_len": None, "raw": None,
-        "limitations": list(DOCUMENT_DEPENDENCIES_LIMITATIONS), "error": None,
+        "ok": False,
+        "document": str(document),
+        "traverse": bool(traverse),
+        "search": bool(search),
+        "add_read_only_info": bool(add_read_only_info),
+        "count": 0,
+        "entries": [],
+        "raw_len": None,
+        "raw": None,
+        "limitations": list(DOCUMENT_DEPENDENCIES_LIMITATIONS),
+        "error": None,
         "★": "官方 Returns 逐字：每个文档 **2** 个串（名字 + 全路径）；"
-             "`AddReadOnlyInfo=True` 时**再加 1** 个只读信息串（官方例子里非只读的是**空串**）",
+        "`AddReadOnlyInfo=True` 时**再加 1** 个只读信息串（官方例子里非只读的是**空串**）",
     }
     if not str(document).strip():
-        out["error"] = "document 不能为空（★ 官方 Parameters 只写「Name of the document」，本函数原样透传）"
+        out["error"] = (
+            "document 不能为空（★ 官方 Parameters 只写「Name of the document」，本函数原样透传）"
+        )
         return out
     try:
-        raw = get_com_member(sw_app, "GetDocumentDependencies2", str(document),
-                             bool(traverse), bool(search), bool(add_read_only_info))
-    except Exception as exc:                                   # noqa: BLE001
+        raw = get_com_member(
+            sw_app,
+            "GetDocumentDependencies2",
+            str(document),
+            bool(traverse),
+            bool(search),
+            bool(add_read_only_info),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     items = [str(x) for x in (raw or [])]
@@ -604,21 +670,32 @@ def document_dependencies(
         #: 文档名不对"
         out["ok"] = True
         out["error"] = None
-        out["note"] = ("返回**空数组**：★ 可能是该文档**确实没有依赖**（例如未保存的新零件），"
-                       "★ 也可能是 `document` 这个名字 SW 找不到 ⇒ ★ 本函数**不区分这两种**（如实记）")
+        out["note"] = (
+            "返回**空数组**：★ 可能是该文档**确实没有依赖**（例如未保存的新零件），"
+            "★ 也可能是 `document` 这个名字 SW 找不到 ⇒ ★ 本函数**不区分这两种**（如实记）"
+        )
         return out
     if len(items) % step:
-        out["error"] = ("官方声明的步长是 %d（每个文档 %s），而数组长度 %d **除不尽** ⇒ "
-                        "★ 本函数不硬凑、不猜哪个串是谁的（如实报）"
-                        % (step, "名字+全路径+只读信息" if add_read_only_info else "名字+全路径",
-                           len(items)))
+        out["error"] = (
+            "官方声明的步长是 %d（每个文档 %s），而数组长度 %d **除不尽** ⇒ "
+            "★ 本函数不硬凑、不猜哪个串是谁的（如实报）"
+            % (
+                step,
+                "名字+全路径+只读信息" if add_read_only_info else "名字+全路径",
+                len(items),
+            )
+        )
         return out
     entries = []
     for i in range(0, len(items), step):
-        entry = {"name": items[i], "path": items[i + 1],
-                 "read_only": (items[i + 2] if add_read_only_info else None)}
-        entry["read_only_flag"] = (None if step == 2
-                                   else _read_only_flag(entry["read_only"]))
+        entry = {
+            "name": items[i],
+            "path": items[i + 1],
+            "read_only": (items[i + 2] if add_read_only_info else None),
+        }
+        entry["read_only_flag"] = (
+            None if step == 2 else _read_only_flag(entry["read_only"])
+        )
         entries.append(entry)
     out["entries"] = entries
     out["count"] = len(entries)

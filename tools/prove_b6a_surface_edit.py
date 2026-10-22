@@ -43,11 +43,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_surface_features as SF                        # noqa: E402
-from scripts import sw_surface_edit_ops as M                         # noqa: E402
-import scripts.sw_sketch_primitives as SP                            # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_edit_ops as M  # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 
 
 def _bodies(model):
@@ -55,7 +55,7 @@ def _bodies(model):
     `sw_surface_features._body_count`；★ 我第一版写的 `1`/`0` **是猜的、不对**）。"""
     try:
         return list(C.get_com_member(model, "GetBodies2", -1, True) or [])
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -66,7 +66,7 @@ def _faces(model):
         return []
     try:
         return list(C.get_com_member(bs[0], "GetFaces") or [])
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -77,7 +77,7 @@ def _edges(model):
         return []
     try:
         return list(C.get_com_member(bs[0], "GetEdges") or [])
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -106,7 +106,7 @@ def _one(sw, zh, fn):
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -114,7 +114,7 @@ def _one(sw, zh, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
@@ -131,7 +131,7 @@ def _case_planar(doc):
         try:
             if P._select_sketch_feature_by_name(doc, cand):
                 break
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return M.insert_planar_surface(doc)
 
@@ -169,7 +169,7 @@ def _make_solid(doc):
             r = P.extrude_boss(doc, cand, 0.02)
             if r:
                 return r
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return None
 
@@ -212,10 +212,12 @@ def _case_replace(doc):
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B6-a 曲面特征第一组 5 条逐个真机跑（specs/201-toolbar-gaps）",
-          "judge": "特征树叶子名增量（★ 3/5 的官方返回是 void，返回值单独不可信）",
-          "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B6-a 曲面特征第一组 5 条逐个真机跑（specs/201-toolbar-gaps）",
+        "judge": "特征树叶子名增量（★ 3/5 的官方返回是 void，返回值单独不可信）",
+        "items": [],
+    }
     ev["items"].append(_one(sw, "平面区域", _case_planar))
     ev["items"].append(_one(sw, "等距曲面", _case_offset))
     ev["items"].append(_one(sw, "直纹曲面", _case_ruled))
@@ -228,8 +230,15 @@ def main() -> int:
     p.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["total"]))
     for i in ev["items"]:
-        print("  %-10s %-4s %-28s %s" % (i.get("zh"), i.get("verdict"),
-                                         i.get("verified_by") or "", (i.get("err") or "")[:46]))
+        print(
+            "  %-10s %-4s %-28s %s"
+            % (
+                i.get("zh"),
+                i.get("verdict"),
+                i.get("verified_by") or "",
+                (i.get("err") or "")[:46],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

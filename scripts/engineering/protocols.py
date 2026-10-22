@@ -1,4 +1,5 @@
 """★ Q1/Q5 · 四类声明式协议 + check_ref 解析 + 8 项必设检查（规格 325 的 R1~R5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -7,7 +8,7 @@
 #           五要素）/ R3（`check_ref` 解析）/ R4（8 项必设检查）/R5（改一处 ⇒ 重生成三视
 #           图）/ R8（缺需求先问转字段门禁）/R10（改 YAML 不能获得新能力）。★★ 实测（202
 #           6-10-12）起点：**没有 `decision_id`、没有三态、没有四类协议、没有 `check_ref
-#           ` 解析器、没有禁止 eval 的判据、没有 8 项必设检查、没有任何协议目录**；★ 而 
+#           ` 解析器、没有禁止 eval 的判据、没有 8 项必设检查、没有任何协议目录**；★ 而
 #           `design_ir.WAITING_INPUT` **已有**，且可作 `check_ref` 后端的既有函数**充足*
 #           *（`rule_verdicts.evaluate` / `design_ir.parse_requirement` /`registry.resol
 #           ve_step_name` / `recovery.resume_verdict` /`catalog.retrieve` / `compiler.ME
@@ -36,13 +37,20 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 PROTOCOL_DIR = ROOT / "metadata" / "protocols"
 
 #: ★★ Q1（L28）逐字：「首先抽取**需求**、方案门槛、布局、失败转移**四类协议**」
-REQUIRED_PROTOCOLS = ("requirement", "scheme_gate", "layout",
-                      "failure_transition")
+REQUIRED_PROTOCOLS = ("requirement", "scheme_gate", "layout", "failure_transition")
 
 #: ★★ Q1（L28）逐字：「每条补齐**输入、输出、触发条件、检查函数和失败状态**」
-REQUIRED_FIELDS = ("protocol_id", "version", "entry_check", "inputs_schema",
-                   "outputs_schema", "required_inputs", "checks", "on_failure",
-                   "outputs")
+REQUIRED_FIELDS = (
+    "protocol_id",
+    "version",
+    "entry_check",
+    "inputs_schema",
+    "outputs_schema",
+    "required_inputs",
+    "checks",
+    "on_failure",
+    "outputs",
+)
 
 #: ★★ Q5（L92）逐字给的**8 项必设检查**：
 #:   「必设检查：schema、引用解析、单位与类型、可达状态、禁止条件覆盖、
@@ -51,11 +59,11 @@ REQUIRED_FIELDS = ("protocol_id", "version", "entry_check", "inputs_schema",
 #:     是**测试**层面的，不是协议字段）⇒ ★ 本规格按 **8 项协议检查 + 1 项测试**
 #:     落地，★ 并**逐字标注**这一点（★ 不假装是 8 个）。
 REQUIRED_CHECKS = (
-    "schema",              #: schema 检查
-    "ref_resolution",      #: 引用解析
-    "unit_and_type",       #: 单位与类型
-    "reachable_state",     #: 可达状态
-    "forbidden_covered",   #: 禁止条件覆盖
+    "schema",  #: schema 检查
+    "ref_resolution",  #: 引用解析
+    "unit_and_type",  #: 单位与类型
+    "reachable_state",  #: 可达状态
+    "forbidden_covered",  #: 禁止条件覆盖
     "consumer_compatible",  #: 输出与消费端兼容
     "version_dependency",  #: 版本依赖
     "affected_invalidation",  #: 受影响节点失效
@@ -72,7 +80,7 @@ FORBIDDEN_PATTERNS = (
     r"__import__",
     r"import\s+os\b",
     r"subprocess",
-    r"```python",       #: ★ LLM 生成的代码块
+    r"```python",  #: ★ LLM 生成的代码块
     r"\bshell\s*=",
 )
 
@@ -80,9 +88,15 @@ FORBIDDEN_PATTERNS = (
 class ProtocolError(Exception):
     """★ 协议层失败（★ 带封闭码）。"""
 
-    CODES = ("missing-protocol", "missing-field", "bad-check-ref",
-             "forbidden-code", "unknown-failure-code", "no-implementation",
-             "bad-protocol-id")
+    CODES = (
+        "missing-protocol",
+        "missing-field",
+        "bad-check-ref",
+        "forbidden-code",
+        "unknown-failure-code",
+        "no-implementation",
+        "bad-protocol-id",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法协议拒绝码：%r" % code
@@ -94,6 +108,7 @@ class ProtocolError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 # 一、装载（★ R1/R2）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Protocol:
@@ -121,20 +136,26 @@ class Protocol:
 
     def digest(self) -> str:
         """★ 协议摘要（★ R5 用它判"源数据改了没有"）。"""
-        blob = json.dumps({k: getattr(self, k) for k in REQUIRED_FIELDS},
-                          ensure_ascii=False, sort_keys=True)
+        blob = json.dumps(
+            {k: getattr(self, k) for k in REQUIRED_FIELDS},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
         return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
 
     def to_dict(self) -> dict:
-        return {"protocol_id": self.protocol_id, "version": self.version,
-                "entry_check": self.entry_check,
-                "inputs_schema": self.inputs_schema,
-                "outputs_schema": self.outputs_schema,
-                "required_inputs": list(self.required_inputs),
-                "checks": list(self.checks),
-                "on_failure": dict(self.on_failure),
-                "outputs": list(self.outputs),
-                "source_refs": list(self.source_refs)}
+        return {
+            "protocol_id": self.protocol_id,
+            "version": self.version,
+            "entry_check": self.entry_check,
+            "inputs_schema": self.inputs_schema,
+            "outputs_schema": self.outputs_schema,
+            "required_inputs": list(self.required_inputs),
+            "checks": list(self.checks),
+            "on_failure": dict(self.on_failure),
+            "outputs": list(self.outputs),
+            "source_refs": list(self.source_refs),
+        }
 
 
 #: ★ 2026-10-22 统一化：`_load_yaml` 原与 `catalog._load_simple_yaml` 两份逐字相同，
@@ -161,8 +182,7 @@ def load_protocol(name: str) -> Protocol:
         pass
     miss = pr.missing_fields()
     if miss:
-        raise ProtocolError("missing-field",
-                            "★ %s 缺五要素：%s" % (name, miss))
+        raise ProtocolError("missing-field", "★ %s 缺五要素：%s" % (name, miss))
     return pr
 
 
@@ -196,14 +216,14 @@ CHECK_REGISTRY: dict[str, tuple] = {
     "output_consumer_compatible@1": ("engineering.registry", "bind_params"),
     #: ── layout 协议（★ 逐字承 Q5 的样例）
     "assembly_accessibility@1": ("engineering.assembly", "build_case"),
-    "motion_validation_coverage@1": ("engineering.linkage",
-                                     "continuity_verdict"),
+    "motion_validation_coverage@1": ("engineering.linkage", "continuity_verdict"),
     #: ── failure_transition 协议
-    "same_error_twice_triggers_diagnosis@1": ("engineering.decisions",
-                                              "SameErrorTrigger"),
+    "same_error_twice_triggers_diagnosis@1": (
+        "engineering.decisions",
+        "SameErrorTrigger",
+    ),
     "unknown_effect_no_retry@1": ("engineering.jobs", "JobState"),
-    "empirical_ratio_not_executable@1": ("engineering.rule_verdicts",
-                                         "evaluate"),
+    "empirical_ratio_not_executable@1": ("engineering.rule_verdicts", "evaluate"),
     #: ── 8 项必设检查（★ Q5 L92）自己也要有实现
     "schema@1": ("engineering.protocols", "check_schema"),
     "ref_resolution@1": ("engineering.protocols", "resolve_check_ref"),
@@ -212,8 +232,7 @@ CHECK_REGISTRY: dict[str, tuple] = {
     "forbidden_covered@1": ("engineering.protocols", "check_forbidden"),
     "consumer_compatible@1": ("engineering.catalog", "load_contract"),
     "version_dependency@1": ("engineering.protocols", "check_versions"),
-    "affected_invalidation@1": ("engineering.recovery",
-                               "invalidation_closure"),
+    "affected_invalidation@1": ("engineering.recovery", "invalidation_closure"),
 }
 
 
@@ -226,9 +245,13 @@ class CheckRef:
     reason: str = ""
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "module": self.module,
-                "function": self.function, "resolved": self.resolved,
-                "reason": self.reason}
+        return {
+            "name": self.name,
+            "module": self.module,
+            "function": self.function,
+            "resolved": self.resolved,
+            "reason": self.reason,
+        }
 
 
 def resolve_check_ref(name: str) -> CheckRef:
@@ -245,23 +268,28 @@ def resolve_check_ref(name: str) -> CheckRef:
     #: ★ 去掉 `@版本` 后缀再查（★ 登记表用带版本的键）
     key = name if name in CHECK_REGISTRY else re.sub(r"@\d+$", "@1", name)
     if key not in CHECK_REGISTRY:
-        return CheckRef(name, reason="★ 不在已登记的实现表里（★ 只改 YAML 不得获得新能力）")
+        return CheckRef(
+            name, reason="★ 不在已登记的实现表里（★ 只改 YAML 不得获得新能力）"
+        )
     mod_name, fn_name = CHECK_REGISTRY[key]
     try:
         mod = importlib.import_module(mod_name)
-    except Exception as exc:                                            # noqa: BLE001
-        return CheckRef(name, mod_name, fn_name, False,
-                        "★ 模块 import 不了：%s" % str(exc)[:80])
+    except Exception as exc:  # noqa: BLE001
+        return CheckRef(
+            name, mod_name, fn_name, False, "★ 模块 import 不了：%s" % str(exc)[:80]
+        )
     if not hasattr(mod, fn_name):
-        return CheckRef(name, mod_name, fn_name, False,
-                        "★ 模块里没有 `%s`" % fn_name)
+        return CheckRef(name, mod_name, fn_name, False, "★ 模块里没有 `%s`" % fn_name)
     return CheckRef(name, mod_name, fn_name, True, "")
 
 
 def validate_protocol(pr: Protocol) -> dict:
     """★★ **协议校验**（★ R3/R4/R10）。"""
-    out: dict = {"protocol_id": pr.protocol_id, "version": pr.version,
-                 "digest": pr.digest()}
+    out: dict = {
+        "protocol_id": pr.protocol_id,
+        "version": pr.version,
+        "digest": pr.digest(),
+    }
 
     #: ★ 五要素
     out["missing_fields"] = pr.missing_fields()
@@ -271,8 +299,7 @@ def validate_protocol(pr: Protocol) -> dict:
     #:     （★ 协议里**多出来的键**）⇒ ★ 把 `eval(...)` 塞进 `extra` **检不出来** ✗
     #:     —— ★ 而"塞进多出来的键"正是**绕过检查**最自然的做法。
     #:   ⇒ ★ 判据：**扫整份原始字典**（`to_dict()` ∪ `extra`），★ 不留死角。
-    blob = json.dumps({**pr.to_dict(), **(pr.extra or {})},
-                      ensure_ascii=False)
+    blob = json.dumps({**pr.to_dict(), **(pr.extra or {})}, ensure_ascii=False)
     forbidden = [p for p in FORBIDDEN_PATTERNS if re.search(p, blob)]
     out["forbidden"] = forbidden
 
@@ -285,16 +312,28 @@ def validate_protocol(pr: Protocol) -> dict:
     out["unresolved"] = [r["name"] for r in refs if not r["resolved"]]
 
     #: ★★ **失败状态码必须是封闭码**（★ 与 `design_ir.IR_CODES` 同族）
-    from . import design_ir as DI                                       # noqa: PLC0415
-    known_codes = set(DI.IR_CODES) | {
-        "REVISE_LAYOUT", "UNSUPPORTED_CAPABILITY", "DIAGNOSIS_REQUIRED",
-        "UNKNOWN_EFFECT", "BLOCKED_VERIFICATION", "REJECTED_OUT_OF_SCOPE",
-        "REJECTED_UNSUPPORTED", "WAITING_INPUT"}
-    out["bad_failure_codes"] = sorted(
-        v for v in (pr.on_failure or {}).values() if v not in known_codes)
+    from . import design_ir as DI  # noqa: PLC0415
 
-    out["ok"] = (not out["missing_fields"] and not forbidden
-                 and not out["unresolved"] and not out["bad_failure_codes"])
+    known_codes = set(DI.IR_CODES) | {
+        "REVISE_LAYOUT",
+        "UNSUPPORTED_CAPABILITY",
+        "DIAGNOSIS_REQUIRED",
+        "UNKNOWN_EFFECT",
+        "BLOCKED_VERIFICATION",
+        "REJECTED_OUT_OF_SCOPE",
+        "REJECTED_UNSUPPORTED",
+        "WAITING_INPUT",
+    }
+    out["bad_failure_codes"] = sorted(
+        v for v in (pr.on_failure or {}).values() if v not in known_codes
+    )
+
+    out["ok"] = (
+        not out["missing_fields"]
+        and not forbidden
+        and not out["unresolved"]
+        and not out["bad_failure_codes"]
+    )
     return out
 
 
@@ -303,13 +342,13 @@ def validate_all() -> dict:
     rows = []
     for name in REQUIRED_PROTOCOLS:
         rows.append(validate_protocol(load_protocol(name)))
-    return {"protocols": rows, "n": len(rows),
-            "ok": all(r["ok"] for r in rows)}
+    return {"protocols": rows, "n": len(rows), "ok": all(r["ok"] for r in rows)}
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 三、8 项必设检查（★ R4 —— ★ Q5 L92 逐字）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def check_schema(pr: Protocol | None = None, **_) -> dict:
     """★ 必设检查①：**schema**。"""
@@ -335,8 +374,10 @@ def check_versions(pr: Protocol | None = None, **_) -> dict:
     """★ 必设检查⑦：**版本依赖**（★ 版本必须是正整数）。"""
     if pr is None:
         return {"ok": False, "why": "★ 没有协议"}
-    return {"ok": isinstance(pr.version, int) and pr.version >= 1,
-            "version": pr.version}
+    return {
+        "ok": isinstance(pr.version, int) and pr.version >= 1,
+        "version": pr.version,
+    }
 
 
 def run_required_checks(pr: Protocol | None = None) -> dict:
@@ -349,8 +390,10 @@ def run_required_checks(pr: Protocol | None = None) -> dict:
     """
     results = {
         "schema": check_schema(pr),
-        "ref_resolution": {"ok": bool(pr) and all(
-            resolve_check_ref(c).resolved for c in (pr.checks if pr else []))},
+        "ref_resolution": {
+            "ok": bool(pr)
+            and all(resolve_check_ref(c).resolved for c in (pr.checks if pr else []))
+        },
         "unit_and_type": {"ok": bool(pr) and bool(pr.inputs_schema)},
         "reachable_state": {"ok": bool(pr) and bool(pr.entry_check)},
         "forbidden_covered": check_forbidden(pr),
@@ -358,15 +401,19 @@ def run_required_checks(pr: Protocol | None = None) -> dict:
         "version_dependency": check_versions(pr),
         "affected_invalidation": {"ok": bool(pr) and bool(pr.source_refs)},
     }
-    return {"checks": results, "n": len(results),
-            "ninth_is_test": NINTH_CHECK_IS_TEST,
-            "ok": all(v["ok"] for v in results.values()),
-            "failed": [k for k, v in results.items() if not v["ok"]]}
+    return {
+        "checks": results,
+        "n": len(results),
+        "ninth_is_test": NINTH_CHECK_IS_TEST,
+        "ok": all(v["ok"] for v in results.values()),
+        "failed": [k for k, v in results.items() if not v["ok"]],
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、重生成三视图（★ R5 —— ★ Q5 L90）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def regenerate(pr: Protocol) -> dict:
     """★★ **改一处源数据 ⇒ 重生成文档 / 提示 / 目录**（★ R5 —— ★ Q5 L90 逐字）。
@@ -375,36 +422,61 @@ def regenerate(pr: Protocol) -> dict:
       ★ 这样「改一处」才**真的只改一处**。
     """
     d = pr.to_dict()
-    doc = [
-        "# %s v%d" % (pr.protocol_id, pr.version),
-        "",
-        "触发条件：`%s`" % pr.entry_check,
-        "输入 schema：`%s` → 输出 schema：`%s`"
-        % (pr.inputs_schema, pr.outputs_schema),
-        "",
-        "## 必填输入",
-    ] + ["- `%s`" % x for x in pr.required_inputs] + [
-        "", "## 检查函数",
-    ] + ["- `%s` → `%s`" % (c, resolve_check_ref(c).function or "★ 未解析")
-         for c in pr.checks] + [
-        "", "## 失败状态",
-    ] + ["- `%s` ⇒ `%s`" % (k, v) for k, v in (pr.on_failure or {}).items()]
+    doc = (
+        [
+            "# %s v%d" % (pr.protocol_id, pr.version),
+            "",
+            "触发条件：`%s`" % pr.entry_check,
+            "输入 schema：`%s` → 输出 schema：`%s`"
+            % (pr.inputs_schema, pr.outputs_schema),
+            "",
+            "## 必填输入",
+        ]
+        + ["- `%s`" % x for x in pr.required_inputs]
+        + [
+            "",
+            "## 检查函数",
+        ]
+        + [
+            "- `%s` → `%s`" % (c, resolve_check_ref(c).function or "★ 未解析")
+            for c in pr.checks
+        ]
+        + [
+            "",
+            "## 失败状态",
+        ]
+        + ["- `%s` ⇒ `%s`" % (k, v) for k, v in (pr.on_failure or {}).items()]
+    )
 
     prompt = (
         "★ 你在使用协议 `%s` v%d。\n"
         "★ 必填：%s\n★ 检查：%s\n★ 失败状态：%s\n"
         "★★ 你的输出只是 `Proposal` —— 不得自称 `Validated` 或 `Approved`。\n"
-        % (pr.protocol_id, pr.version, ", ".join(pr.required_inputs),
-           ", ".join(pr.checks),
-           ", ".join("%s=%s" % (k, v) for k, v in (pr.on_failure or {}).items()))
+        % (
+            pr.protocol_id,
+            pr.version,
+            ", ".join(pr.required_inputs),
+            ", ".join(pr.checks),
+            ", ".join("%s=%s" % (k, v) for k, v in (pr.on_failure or {}).items()),
+        )
     )
 
-    catalog = {"protocol_id": pr.protocol_id, "version": pr.version,
-               "inputs": list(pr.required_inputs), "checks": list(pr.checks),
-               "outputs": list(pr.outputs),
-               "entry_check": pr.entry_check, "digest": pr.digest()}
-    return {"document": "\n".join(doc), "prompt": prompt, "catalog": catalog,
-            "digest": pr.digest(), "★": "★ 三样都从**同一份协议**现算"}
+    catalog = {
+        "protocol_id": pr.protocol_id,
+        "version": pr.version,
+        "inputs": list(pr.required_inputs),
+        "checks": list(pr.checks),
+        "outputs": list(pr.outputs),
+        "entry_check": pr.entry_check,
+        "digest": pr.digest(),
+    }
+    return {
+        "document": "\n".join(doc),
+        "prompt": prompt,
+        "catalog": catalog,
+        "digest": pr.digest(),
+        "★": "★ 三样都从**同一份协议**现算",
+    }
 
 
 def regenerate_all() -> dict:
@@ -417,6 +489,7 @@ def regenerate_all() -> dict:
 #: ══════════════════════════════════════════════════════════════════════
 # 五、字段门禁（★ R8 —— ★ Q1 L31）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def field_gate(pr: Protocol, given: dict) -> dict:
     """★★ **字段门禁**（★ R8 —— ★ Q1 L31 逐字）。
@@ -436,10 +509,17 @@ def field_gate(pr: Protocol, given: dict) -> dict:
     forbidden = list(pr.extra.get("forbidden_defaults") or ())
     used_forbidden = [f for f in forbidden if f in given]
     if missing:
-        return {"state": "WAITING_INPUT", "missing": missing,
-                "questions": ["请给出 %s" % m for m in missing],
-                "used_forbidden_defaults": used_forbidden,
-                "ok": False,
-                "★": "★ 缺必填 ⇒ 先问（★ 不用最坏工况顶替）"}
-    return {"state": "READY_FOR_REVIEW", "missing": [],
-            "used_forbidden_defaults": used_forbidden, "ok": True}
+        return {
+            "state": "WAITING_INPUT",
+            "missing": missing,
+            "questions": ["请给出 %s" % m for m in missing],
+            "used_forbidden_defaults": used_forbidden,
+            "ok": False,
+            "★": "★ 缺必填 ⇒ 先问（★ 不用最坏工况顶替）",
+        }
+    return {
+        "state": "READY_FOR_REVIEW",
+        "missing": [],
+        "used_forbidden_defaults": used_forbidden,
+        "ok": True,
+    }

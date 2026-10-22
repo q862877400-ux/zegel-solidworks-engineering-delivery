@@ -31,13 +31,15 @@ from __future__ import annotations
 
 try:
     from .sw_connect import get_com_member
-except ImportError:                                                     # 顶层载入（探针 / 脚本）
+except ImportError:  # 顶层载入（探针 / 脚本）
     from sw_connect import get_com_member
 
 __all__ = ["get_constrained_status", "MEANING_UNKNOWN"]
 
 #: ★ 官方未给取值表 ⇒ 如实标注（铁律 5）
-MEANING_UNKNOWN = "查不到官方取值表（GetConstrainedStatus.md 无 ## Remarks、无枚举链接）"
+MEANING_UNKNOWN = (
+    "查不到官方取值表（GetConstrainedStatus.md 无 ## Remarks、无枚举链接）"
+)
 
 
 def _active_sketch(model):
@@ -55,6 +57,7 @@ def _active_sketch(model):
     ⚠ 官方**要求草图处于打开（编辑）状态** —— ★ 关掉的草图取不到（真机：两个入口都回 `None`）。
     """
     from sw_sketch import active_sketch as _shared_active_sketch
+
     return _shared_active_sketch(model)
 
 
@@ -78,9 +81,16 @@ def get_constrained_status(model, *, raise_on_no_sketch: bool = True) -> dict:
         return {"ok": False, "error": "没有活动草图"}
     value = get_com_member(sk, "GetConstrainedStatus")
     if value is None:
-        return {"ok": False, "op": "constrained_status",
-                "error": "GetConstrainedStatus 回 None"}
-    return {"ok": True, "op": "constrained_status",
-            "status": int(value), "raw": value,
-            "meaning": MEANING_UNKNOWN,
-            "verified_by": "official_signature_returns_int + 真机两状态读数不同（2 vs 3）"}
+        return {
+            "ok": False,
+            "op": "constrained_status",
+            "error": "GetConstrainedStatus 回 None",
+        }
+    return {
+        "ok": True,
+        "op": "constrained_status",
+        "status": int(value),
+        "raw": value,
+        "meaning": MEANING_UNKNOWN,
+        "verified_by": "official_signature_returns_int + 真机两状态读数不同（2 vs 3）",
+    }

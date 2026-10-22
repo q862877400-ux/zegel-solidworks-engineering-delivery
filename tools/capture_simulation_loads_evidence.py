@@ -36,6 +36,7 @@ r"""@brief 真机证据：**仿真载荷 2 个工具**（砌墙 W7 / Spec Kit `1
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -49,7 +50,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-loads-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-loads-evidence.json"
+)
 
 
 class _P:
@@ -63,8 +66,11 @@ class _P:
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "simulation_loads_wiring", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "simulation_loads_wiring",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -84,15 +90,19 @@ def main() -> int:
                 "has_pre_call": spec.pre_call is not None,
                 "has_derived_args": spec.derived_args is not None,
             }
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] and v["has_pre_call"]
-                                            and v["has_derived_args"]
-                                            for v in bindings.values()), "detail": bindings}
+        ev["steps"]["bindings"] = {
+            "ok": all(
+                v["resolved"] and v["has_pre_call"] and v["has_derived_args"]
+                for v in bindings.values()
+            ),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② 造 100×60×20 板（与既有证据脚本同一工况，便于对照）
@@ -102,13 +112,18 @@ def main() -> int:
         sk = sw_part.current_sketch_name(doc)
         sw_part.end_sketch(doc)
         sw_part.extrude_boss(doc, sk, 20.0)
-        sw_part.set_material(doc, "AISI 1020") if hasattr(sw_part, "set_material") else None
+        sw_part.set_material(doc, "AISI 1020") if hasattr(
+            sw_part, "set_material"
+        ) else None
         try:
             sim.set_material(doc, "AISI 1020")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         sim.create_static_study(sw, "DSH-W7")
-        ev["steps"]["part"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["part"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         #: ③ ★★ 走**工具真实路径**：inject(resolve_study) + pre_call(选面) + derived_arg
         #: s(补 model)
@@ -117,21 +132,30 @@ def main() -> int:
             #: ★ 与注册器 L409-432 同一顺序：inject → extra_op → pre_call → derived_args
             kwargs = {}
             for p in spec.params:
-                if p.name in (spec.param_alias or {}) and spec.param_alias[p.name] is None:
+                if (
+                    p.name in (spec.param_alias or {})
+                    and spec.param_alias[p.name] is None
+                ):
                     continue
-                kwargs[(spec.param_alias or {}).get(p.name, p.name)] = getattr(params, p.name)
-            kwargs[spec.inject] = rc.RESOLVERS[spec.inject](params)      #: inject
-            spec.pre_call(params)                                        #: pre_call
-            kwargs.update(spec.derived_args(params) or {})               #: derived_args
+                kwargs[(spec.param_alias or {}).get(p.name, p.name)] = getattr(
+                    params, p.name
+                )
+            kwargs[spec.inject] = rc.RESOLVERS[spec.inject](params)  #: inject
+            spec.pre_call(params)  #: pre_call
+            kwargs.update(spec.derived_args(params) or {})  #: derived_args
             kwargs.update(extra)
-            fn = getattr(__import__("scripts.%s" % spec.module, fromlist=[spec.function]),
-                         spec.function)
+            fn = getattr(
+                __import__("scripts.%s" % spec.module, fromlist=[spec.function]),
+                spec.function,
+            )
             return fn(**kwargs), kwargs
 
         #: 夹具：选底面（z=-0.02，板厚 20 ⇒ 底面在 -0.02 米处）
         n_fix = sim.select_face_at(doc, 0.0, 0.0, -0.02)
-        rst, kw1 = call_via_tool("solidworks_simulation_apply_fixed_restraint",
-                                 _P(study_name="DSH-W7", selection="__current_selection__"))
+        rst, kw1 = call_via_tool(
+            "solidworks_simulation_apply_fixed_restraint",
+            _P(study_name="DSH-W7", selection="__current_selection__"),
+        )
         #: ★★ **必须先清空选区**再选施力面 —— 照既有脚本 `capture_simulation_evidence.py
         #: ` 的
         #:   L145/L148（它用 `ClearSelection2(True)`）。
@@ -142,42 +166,55 @@ def main() -> int:
         sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
         #: 载荷：选顶面（z=0）
         n_frc = sim.select_face_at(doc, 0.0, 0.0, 0.0)
-        frc, kw2 = call_via_tool("solidworks_simulation_apply_normal_force",
-                                 _P(study_name="DSH-W7", selection="__current_selection__",
-                                    magnitude_n=100.0))
+        frc, kw2 = call_via_tool(
+            "solidworks_simulation_apply_normal_force",
+            _P(
+                study_name="DSH-W7",
+                selection="__current_selection__",
+                magnitude_n=100.0,
+            ),
+        )
         ev["steps"]["via_tool_path"] = {
             "ok": (rst is not None and frc is not None),
-            "restraint": str(getattr(rst, "Name", "") or type(rst).__name__) if rst else None,
-            "force": str(getattr(frc, "Name", "") or type(frc).__name__) if frc else None,
+            "restraint": str(getattr(rst, "Name", "") or type(rst).__name__)
+            if rst
+            else None,
+            "force": str(getattr(frc, "Name", "") or type(frc).__name__)
+            if frc
+            else None,
             "injected_keys": {k: type(v).__name__ for k, v in kw1.items()},
             "★": "★ 走的是 inject(resolve_study) + pre_call(选面) + derived_args(补 model) 这条链",
         }
         ok = ok and ev["steps"]["via_tool_path"]["ok"]
 
         #: ④ ★ 判据：选区计数 + LoadsAndRestraintsManager.Count == 2
-        mgr = sim._loads_and_restraints_manager(rc.RESOLVERS["study"](_P(study_name="DSH-W7")))
+        mgr = sim._loads_and_restraints_manager(
+            rc.RESOLVERS["study"](_P(study_name="DSH-W7"))
+        )
         count = int(sw_connect.safe_get_com_member(mgr, "Count") or 0)
         ev["steps"]["judgement"] = {
             "ok": (n_fix == 1 and n_frc == 1 and count == 2),
-            "selected_for_fixture": n_fix, "selected_for_force": n_frc, "loads_count": count,
+            "selected_for_fixture": n_fix,
+            "selected_for_force": n_frc,
+            "loads_count": count,
             "★": "★ 判据沿用既有脚本那条：选区计数 = 1 且 Count = 2",
         }
         ok = ok and ev["steps"]["judgement"]["ok"]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -188,7 +225,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

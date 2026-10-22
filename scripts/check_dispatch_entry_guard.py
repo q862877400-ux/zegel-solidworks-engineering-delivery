@@ -76,7 +76,7 @@
 #  import，不重写）|
 # | `exempt generated-api` | 文件名匹配 `sw_api_*.py`（生成模块）|
 # | `exempt internal-helper` | `def` 名以 `_` 开头（模块私有）|
-# | `exempt module-local` | 该 `def` 名**全仓只此一处**，且它**所有调用点都在本文件内** 
+# | `exempt module-local` | 该 `def` 名**全仓只此一处**，且它**所有调用点都在本文件内**
 # |
 #
 # ★ `exempt *` 的语义是**「已知盲区，登记在案」**，**不是**「已验证安全」——
@@ -108,13 +108,23 @@ sys.stdout.reconfigure(encoding="utf-8")
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
 ROOT = Path(os.environ.get("DSH_DISPATCH_ROOT") or Path(__file__).resolve().parents[1])
 #: 门禁分类登记表路径（`covered <gate-id>` 的承重性依据）。
-CLASSIFICATION = Path(os.environ.get("DSH_DISPATCH_CLASSIFICATION")
-                      or ROOT / "docs" / "gate-classification.json")
+CLASSIFICATION = Path(
+    os.environ.get("DSH_DISPATCH_CLASSIFICATION")
+    or ROOT / "docs" / "gate-classification.json"
+)
 #: : 声明（确定性关联：`def` 上方第一行非空行）。两种头：`covered <gate-id>` / `exempt <
 #: code>`。
-DECL = re.compile(r"^#:\s*dispatch-guard:\s*(?P<head>[A-Za-z_-]+)(?:\s+(?P<rest>\S.*?))?\s*$")
+DECL = re.compile(
+    r"^#:\s*dispatch-guard:\s*(?P<head>[A-Za-z_-]+)(?:\s+(?P<rest>\S.*?))?\s*$"
+)
 #: 封闭词表（`covered` 带参数；`covered-wrappers` 与四个 `exempt` 子码不带）。
-CODES = {"covered", "covered-wrappers", "generated-api", "internal-helper", "module-local"}
+CODES = {
+    "covered",
+    "covered-wrappers",
+    "generated-api",
+    "internal-helper",
+    "module-local",
+}
 #: `exempt <sub>` 的合法子码。
 EXEMPT_CODES = {"generated-api", "internal-helper", "module-local"}
 #: 明细打印上限。
@@ -122,8 +132,8 @@ DETAIL_LIMIT = 30
 #: : ★ 下界（真树实测 · 2026-10-09 · spec 229；★ **spec 233 按去重口径订正**）—— 只增不
 #: 减。
 BASELINE_ENTRIES = 37
-BASELINE_INVISIBLE = 84          # ★ 2026-10-22：85 → 84（见下方「仓库统一化」那条）
-BASELINE_VISIBLE = 1173          # ★ 2026-10-22：1174 → 1173（同上）
+BASELINE_INVISIBLE = 84  # ★ 2026-10-22：85 → 84（见下方「仓库统一化」那条）
+BASELINE_VISIBLE = 1173  # ★ 2026-10-22：1174 → 1173（同上）
 #: :                               ★★ **2026-10-22（仓库统一化 · 待办「同一功能多份实现
 #: 」）：1174 → 1173
 #: :                                  · 85 → 84** —— ★ 把 `_feature_type_name` 的**两份
@@ -134,7 +144,7 @@ BASELINE_VISIBLE = 1173          # ★ 2026-10-22：1174 → 1173（同上）
 #: 入别名）。
 #: :                               ★ **为什么是正当减少**：★ 少掉的那份是**重复实现**，★
 #:  删它是**目的**不是副作用；
-#: :                                 行为不变（`feature_type_name` 同一实现，两模块仍以 
+#: :                                 行为不变（`feature_type_name` 同一实现，两模块仍以
 #: `_feature_type_name` 可见）。
 #: :                               ★ 替代的内容断言：★ `scripts/check_repo_uniformity.py
 #: ` 的**指标⑤**
@@ -169,20 +179,20 @@ BASELINE_VISIBLE = 1173          # ★ 2026-10-22：1174 → 1173（同上）
 #:                               `sw_simulation_loadprops.configure_force` 里 **6 处**把
 #: :                               `get_com_member(force, "<可写属性>", 值)` **当 setter
 #:  用** ✗ ——
-#: :                               ★★ `get_com_member` 的语义是「**取或调**」（★ 有实参 
+#: :                               ★★ `get_com_member` 的语义是「**取或调**」（★ 有实参
 #: ⇒ **一定调用**）；
 #: :                               而 `NormalForceOrTorqueValue` / `PhaseAngle` / `Phase
 #: AngleUnit` /
 #:                               `EquationLinearUnit` / `EquationAngularUnit` /
 #: :                               `EquationCoordinateSystemType` / `IncludeNonUniformDi
 #: stribution2`
-#: :                               是**可写属性**（★ 不是方法）⇒ ★ **抛 `TypeError`** ⇒ 
+#: :                               是**可写属性**（★ 不是方法）⇒ ★ **抛 `TypeError`** ⇒
 #: **属性从来没设上** ✓
 #: :                               ★★★ **真机后果**：★ 求解弹窗报「★ **未定义载荷或规定
 #: 的位移**」
 #: :                               +「固定-刚性零件上的载荷将不处于活动状态」⇒ **求解被
 #: 前置检查拦住** ✓
-#: :                               ★★ **为什么是正当减少**：★ 那 6 处**本就是误用**（把 
+#: :                               ★★ **为什么是正当减少**：★ 那 6 处**本就是误用**（把
 #: getter 当 setter）——
 #: :                               ★ 改成 `set_com_member` 是**修 bug 的目的**，★ 不是副
 #: 作用 ✓
@@ -190,7 +200,7 @@ BASELINE_VISIBLE = 1173          # ★ 2026-10-22：1174 → 1173（同上）
 #: rty_write.py`
 #: :                               （★ AST 断言：★ 「`get_com_member(<可写属性>, …)` **
 #: 带实参**的处数 == 0」+
-#: :                                 ★ 「那三个属性走 `set_com_member`」+ ★ 「`applied` 
+#: :                                 ★ 「那三个属性走 `set_com_member`」+ ★ 「`applied`
 #: 里记了
 #: :                                 `NormalForceOrTorqueValue`」+ ★ 真机证据断言求解成
 #: 功）✓
@@ -214,8 +224,13 @@ def _baseline():
             return (*parts, 0, 0)
         if len(parts) == 5:
             return tuple(parts)
-    return (BASELINE_ENTRIES, BASELINE_INVISIBLE, BASELINE_VISIBLE,
-            BASELINE_RESOLVED, BASELINE_RESOLVED_SITES)
+    return (
+        BASELINE_ENTRIES,
+        BASELINE_INVISIBLE,
+        BASELINE_VISIBLE,
+        BASELINE_RESOLVED,
+        BASELINE_RESOLVED_SITES,
+    )
 
 
 def wrapper_names() -> set[str]:
@@ -313,18 +328,25 @@ def scan(root: Path | None = None):
             params = _params(fn)
             local_literals = set()
             for st in ast.walk(fn):
-                if isinstance(st, ast.Assign) and isinstance(st.value, ast.Constant) \
-                        and isinstance(st.value.value, str):
+                if (
+                    isinstance(st, ast.Assign)
+                    and isinstance(st.value, ast.Constant)
+                    and isinstance(st.value.value, str)
+                ):
                     for tg in st.targets:
                         if isinstance(tg, ast.Name):
                             local_literals.add(tg.id)
             first_entry = None
             for sub in ast.walk(fn):
-                if not (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name)
-                        and sub.func.id in wrappers and len(sub.args) >= 2):
+                if not (
+                    isinstance(sub, ast.Call)
+                    and isinstance(sub.func, ast.Name)
+                    and sub.func.id in wrappers
+                    and len(sub.args) >= 2
+                ):
                     continue
                 if innermost.get(id(sub)) is not fn:
-                    continue                      # ★ 属于更内层的 `def` ⇒ 由它计一次
+                    continue  # ★ 属于更内层的 `def` ⇒ 由它计一次
                 arg = sub.args[1]
                 if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                     visible += 1
@@ -334,7 +356,13 @@ def scan(root: Path | None = None):
                     if arg.id in params:
                         buckets["param"] += 1
                         if first_entry is None or sub.lineno < first_entry[4]:
-                            first_entry = (path, fn, params.index(arg.id), arg.id, sub.lineno)
+                            first_entry = (
+                                path,
+                                fn,
+                                params.index(arg.id),
+                                arg.id,
+                                sub.lineno,
+                            )
                     elif arg.id in local_literals:
                         buckets["local"] += 1
                     else:
@@ -383,8 +411,13 @@ def _entry_sites(entry, files, imap):
             if isinstance(f, ast.Name) and f.id == fn.name:
                 if p == path or imap.get(p, {}).get(fn.name) == stem:
                     out.append((p, node))
-            elif (isinstance(f, ast.Attribute) and f.attr == fn.name
-                  and isinstance(f.value, ast.Name) and f.value.id == stem and p != path):
+            elif (
+                isinstance(f, ast.Attribute)
+                and f.attr == fn.name
+                and isinstance(f.value, ast.Name)
+                and f.value.id == stem
+                and p != path
+            ):
                 out.append((p, node))
     return out
 
@@ -420,9 +453,14 @@ def inner_wrapper_call(fn, pname):
     ★ spec 231 复用本函数 ⇒ 「哪个调用算转发」只有**一处**定义。
     """
     for sub in ast.walk(fn):
-        if (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name)
-                and sub.func.id in wrapper_names() and len(sub.args) >= 2
-                and isinstance(sub.args[1], ast.Name) and sub.args[1].id == pname):
+        if (
+            isinstance(sub, ast.Call)
+            and isinstance(sub.func, ast.Name)
+            and sub.func.id in wrapper_names()
+            and len(sub.args) >= 2
+            and isinstance(sub.args[1], ast.Name)
+            and sub.args[1].id == pname
+        ):
             return sub
     return None
 
@@ -530,23 +568,33 @@ def verify(code: str, arg: str, path: Path, fn, def_files, call_files, gates):
     if code == "":
         return "声明格式不合法（`exempt` 后必须恰好一个子码）：`%s`" % arg
     if code not in CODES:
-        return "未知 code `%s`（封闭词表：covered / covered-wrappers / exempt {%s}）" % (
-            code, "|".join(sorted(EXEMPT_CODES)))
+        return (
+            "未知 code `%s`（封闭词表：covered / covered-wrappers / exempt {%s}）"
+            % (code, "|".join(sorted(EXEMPT_CODES)))
+        )
     if code == "covered":
         if not arg:
             return "`covered` 缺 `<gate-id>`"
         if not gates:
             return None  #: 登记表读不到 ⇒ 不做承重性判罪（缺数据源 ≠ 检查失败）
         if arg not in gates:
-            return "`covered %s` 的门禁**未**在 `docs/gate-classification.json` 登记（承重性）" % arg
+            return (
+                "`covered %s` 的门禁**未**在 `docs/gate-classification.json` 登记（承重性）"
+                % arg
+            )
         return None
     if code == "covered-wrappers":
         if fn.name not in wrapper_names():
-            return "`covered-wrappers` 但 `%s` **不在** `audit_call_arity.WRAPPERS` 里" % fn.name
+            return (
+                "`covered-wrappers` 但 `%s` **不在** `audit_call_arity.WRAPPERS` 里"
+                % fn.name
+            )
         return None
     if code == "generated-api":
         if not path.name.startswith("sw_api_"):
-            return "`exempt generated-api` 但文件名 `%s` 不匹配 `sw_api_*.py`" % path.name
+            return (
+                "`exempt generated-api` 但文件名 `%s` 不匹配 `sw_api_*.py`" % path.name
+            )
         return None
     if code == "internal-helper":
         if not fn.name.startswith("_"):
@@ -555,12 +603,16 @@ def verify(code: str, arg: str, path: Path, fn, def_files, call_files, gates):
     if code == "module-local":
         others = {p for p in def_files.get(fn.name, set()) if p != path}
         if others:
-            return ("`exempt module-local` 但 `%s` 在别的文件里也有定义：%s"
-                    % (fn.name, ", ".join(sorted(p.as_posix() for p in others))[:120]))
+            return "`exempt module-local` 但 `%s` 在别的文件里也有定义：%s" % (
+                fn.name,
+                ", ".join(sorted(p.as_posix() for p in others))[:120],
+            )
         out = {p for p in call_files.get(fn.name, set()) if p != path}
         if out:
-            return ("`exempt module-local` 但 `%s` 被**别的文件**调用：%s"
-                    % (fn.name, ", ".join(sorted(p.as_posix() for p in out))[:120]))
+            return "`exempt module-local` 但 `%s` 被**别的文件**调用：%s" % (
+                fn.name,
+                ", ".join(sorted(p.as_posix() for p in out))[:120],
+            )
         return None
     return None
 
@@ -574,8 +626,10 @@ def bucket_consistency(buckets: dict, nonliteral: int) -> str | None:
     """
     total = sum(buckets.values())
     if total != nonliteral:
-        return ("桶之和 %d != 不可见调用点 %d（口径不自洽：查重复计数）"
-                % (total, nonliteral))
+        return "桶之和 %d != 不可见调用点 %d（口径不自洽：查重复计数）" % (
+            total,
+            nonliteral,
+        )
     return None
 
 
@@ -589,14 +643,21 @@ def main() -> int:
         dist[_cls] = dist.get(_cls, 0) + 1
 
     print("== 分发口（成员名以**形参**转发给 COM 包装器）的守卫覆盖 ==")
-    print("扫描 `%s/scripts/**/*.py` · 已登记门禁 %d 个"
-          % (ROOT.as_posix(), len(gates)))
-    print("调用点：可见（字面量）%d · 不可见 %d（形参转发 %d / 局部变量 %d / 计算式 %d）"
-          % (visible, nonliteral, buckets["param"], buckets["local"], buckets["computed"]))
-    print("★ 解析面（按文件作用域索引调用点）："
-          + " · ".join("%s %d" % (k, dist.get(k, 0))
-                       for k in ("resolved", "partial", "unresolved", "no-callers"))
-          + " · 可解析调用点 %d" % resolved_sites)
+    print(
+        "扫描 `%s/scripts/**/*.py` · 已登记门禁 %d 个" % (ROOT.as_posix(), len(gates))
+    )
+    print(
+        "调用点：可见（字面量）%d · 不可见 %d（形参转发 %d / 局部变量 %d / 计算式 %d）"
+        % (visible, nonliteral, buckets["param"], buckets["local"], buckets["computed"])
+    )
+    print(
+        "★ 解析面（按文件作用域索引调用点）："
+        + " · ".join(
+            "%s %d" % (k, dist.get(k, 0))
+            for k in ("resolved", "partial", "unresolved", "no-callers")
+        )
+        + " · 可解析调用点 %d" % resolved_sites
+    )
 
     violations: list[dict] = []
 
@@ -605,73 +666,151 @@ def main() -> int:
     #: ★ 它正是那条缺陷的判据（「修宽口径本身必须有能红的判据」）。
     bad = bucket_consistency(buckets, nonliteral)
     if bad:
-        violations.append({"kind": "bucket-mismatch", "file": "-", "line": 0,
-                           "detail": bad})
+        violations.append(
+            {"kind": "bucket-mismatch", "file": "-", "line": 0, "detail": bad}
+        )
 
     declared = 0
     for path, fn, _idx, pname, lineno in entries:
         lines = files[path][2]
         decl = declaration_above(lines, fn.lineno)
-        rel = path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else path.as_posix()
+        rel = (
+            path.relative_to(ROOT).as_posix()
+            if path.is_relative_to(ROOT)
+            else path.as_posix()
+        )
         if decl is None:
-            violations.append({"kind": "undeclared", "file": rel, "line": fn.lineno,
-                               "member": fn.name,
-                               "detail": "`def` 正上方缺 `#: dispatch-guard: <code> …`"
-                                         "（形参 `%s` 被转发给 COM 包装器）" % pname})
+            violations.append(
+                {
+                    "kind": "undeclared",
+                    "file": rel,
+                    "line": fn.lineno,
+                    "member": fn.name,
+                    "detail": "`def` 正上方缺 `#: dispatch-guard: <code> …`"
+                    "（形参 `%s` 被转发给 COM 包装器）" % pname,
+                }
+            )
             continue
         code, arg = decl
         declared += 1
         bad = verify(code, arg, path, fn, def_files, call_files, gates)
         if bad:
-            violations.append({"kind": "invalid-claim", "file": rel, "line": fn.lineno,
-                               "member": fn.name, "detail": bad})
+            violations.append(
+                {
+                    "kind": "invalid-claim",
+                    "file": rel,
+                    "line": fn.lineno,
+                    "member": fn.name,
+                    "detail": bad,
+                }
+            )
 
     #: ★ 只增不减（下界冻结）：减少 = 探测器漏了。
     if len(entries) < min_entries:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "分发口 %d < 下界 %d（只增不减：先查探测器）"
-                                     % (len(entries), min_entries)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "分发口 %d < 下界 %d（只增不减：先查探测器）"
+                % (len(entries), min_entries),
+            }
+        )
     if nonliteral < min_invisible:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "不可见调用点 %d < 下界 %d（只增不减）"
-                                     % (nonliteral, min_invisible)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "不可见调用点 %d < 下界 %d（只增不减）"
+                % (nonliteral, min_invisible),
+            }
+        )
     if visible < min_visible:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可见调用点 %d < 下界 %d（只增不减）"
-                                     % (visible, min_visible)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可见调用点 %d < 下界 %d（只增不减）"
+                % (visible, min_visible),
+            }
+        )
     #: ★★ 解析面下界（spec 230）：减少 = **解析器漏了**（不是「问题解决了」）。
     if dist.get("resolved", 0) < min_resolved:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可解析分发口 %d < 下界 %d（只增不减：先查解析器）"
-                                     % (dist.get("resolved", 0), min_resolved)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可解析分发口 %d < 下界 %d（只增不减：先查解析器）"
+                % (dist.get("resolved", 0), min_resolved),
+            }
+        )
     if resolved_sites < min_sites:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可解析调用点 %d < 下界 %d（只增不减：先查解析器）"
-                                     % (resolved_sites, min_sites)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可解析调用点 %d < 下界 %d（只增不减：先查解析器）"
+                % (resolved_sites, min_sites),
+            }
+        )
 
     #: ★ 假绿守卫（事实 46）。
     if not entries:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "检查过的分发口 == 0"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "检查过的分发口 == 0",
+            }
+        )
     #: ★ 解析器失效 ⇒ 假绿：只在**下界非 0**（真树口径）时才判 ——
     #:   合成树（下界 0）里「一个都解析不出」是**合法**的（可能压根没有调用点）。
     if min_sites > 0 and resolved_sites == 0:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "可解析调用点 == 0（解析器失效 ⇒ 不许 PASS）"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "可解析调用点 == 0（解析器失效 ⇒ 不许 PASS）",
+            }
+        )
 
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
         for v in violations[:DETAIL_LIMIT]:
-            print("  [%s] %s:%s %s —— %s"
-                  % (v["kind"], v["file"], v.get("line", "-"), v.get("member", ""), v["detail"]))
+            print(
+                "  [%s] %s:%s %s —— %s"
+                % (
+                    v["kind"],
+                    v["file"],
+                    v.get("line", "-"),
+                    v.get("member", ""),
+                    v["detail"],
+                )
+            )
         if len(violations) > DETAIL_LIMIT:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("分发口 %d · 已表态 %d · 违规 %d · 可见 %d · 不可见 %d · 可解析 %d/%d · [%s] · exit %d"
-          % (len(entries), declared, len(violations), visible, nonliteral,
-             dist.get("resolved", 0), len(entries),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "分发口 %d · 已表态 %d · 违规 %d · 可见 %d · 不可见 %d · 可解析 %d/%d · [%s] · exit %d"
+        % (
+            len(entries),
+            declared,
+            len(violations),
+            visible,
+            nonliteral,
+            dist.get("resolved", 0),
+            len(entries),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

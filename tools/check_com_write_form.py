@@ -78,8 +78,11 @@ def main() -> int:
     if not props:
         print("  [SKIP] 官方源 `C:\\swapi\\types` 不可达 ⇒ 本门禁跳过（便携性守卫）")
         return 0
-    res = {"_": "写 COM 属性却用 get_com_member（★ 它会去“调用”属性 ⇒ TypeError ⇒ 而常被 return True 掩盖）",
-           "property_count": len(props), "hits": []}
+    res = {
+        "_": "写 COM 属性却用 get_com_member（★ 它会去“调用”属性 ⇒ TypeError ⇒ 而常被 return True 掩盖）",
+        "property_count": len(props),
+        "hits": [],
+    }
     scanned = 0
     for sub in ("scripts", "tools", "tests", "mcp-server"):
         d = R / sub
@@ -91,7 +94,7 @@ def main() -> int:
             try:
                 src = p.read_text(encoding="utf-8", errors="replace")
                 tree = ast.parse(src)
-            except Exception:                                     # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             scanned += 1
             #: ★★★ 2026-10-03（轮 470）**判据要与"读 / 写的真实区别"对齐** ——
@@ -133,30 +136,42 @@ def main() -> int:
                 name = a1.value
                 if name.lower() not in props:
                     continue
-                #: ★★ 第二条判据：**返回值被使用 ⇒ 那是"读"（或带参的调用）⇒ 不是"写"** 
+                #: ★★ 第二条判据：**返回值被使用 ⇒ 那是"读"（或带参的调用）⇒ 不是"写"**
                 #: ⇒ 放过
                 if id(n) in ret_used:
                     continue
-                res["hits"].append({
-                    "file": str(p.relative_to(R)).replace("\\", "/"),
-                    "line": n.lineno, "member": name,
-                    "why": "**%s** 在官方源里是 `kind: property` ⇒ 这里在**写**它（★ 返回值被丢掉），"
-                           "而 `get_com_member` 有实参就**调用** ⇒ `TypeError: '...' object is not callable`"
-                           "（★ 且调用方常 `return True` ⇒ 失败被报成成功）" % name})
+                res["hits"].append(
+                    {
+                        "file": str(p.relative_to(R)).replace("\\", "/"),
+                        "line": n.lineno,
+                        "member": name,
+                        "why": "**%s** 在官方源里是 `kind: property` ⇒ 这里在**写**它（★ 返回值被丢掉），"
+                        "而 `get_com_member` 有实参就**调用** ⇒ `TypeError: '...' object is not callable`"
+                        "（★ 且调用方常 `return True` ⇒ 失败被报成成功）" % name,
+                    }
+                )
     res["files_scanned"] = scanned
     res["count"] = len(res["hits"])
     res["hits"].sort(key=lambda x: (x["file"], x["line"]))
-    OUT.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
     print("  扫了 %d 个 .py" % scanned)
     if res["hits"]:
         print()
-        print("  [FAIL] **%d** 处用 `get_com_member` 写了官方源里的**属性**：" % res["count"])
+        print(
+            "  [FAIL] **%d** 处用 `get_com_member` 写了官方源里的**属性**："
+            % res["count"]
+        )
         for h in res["hits"][:40]:
             print("    · %s:%d  `%s`" % (h["file"], h["line"], h["member"]))
         if res["count"] > 40:
             print("    …（共 %d 处，全表见产物）" % res["count"])
         print()
-        print("  修法：把那一处改成 `set_com_member(obj, \"%s\", 值)` ——" % res["hits"][0]["member"])
+        print(
+            '  修法：把那一处改成 `set_com_member(obj, "%s", 值)` ——'
+            % res["hits"][0]["member"]
+        )
         print("        ★ 那是本仓 `sw_connect.set_com_member` 的 docstring 写明的")
         print("          「**唯一被真机验证通过的形态**：属性赋值」。")
         print("        ★ 改完**回读一次**确认值真变了（规则 6：不静默成功）。")

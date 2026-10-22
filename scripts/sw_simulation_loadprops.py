@@ -41,6 +41,7 @@ ICWContactSet / ICWMaterial 的装配封装。
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -118,7 +119,7 @@ def edit_transaction(target, begin_end: tuple[str, str], what: str):
         def __exit__(self_inner, exc_type, exc, tb):
             #: dispatch-arg: dynamic `end` 由 `begin_end` 形参解包而来（EndEdit 成员名由调用方给）
             get_com_member(target, end)
-            return False   # 不吞异常
+            return False  # 不吞异常
 
     return _Tx()
 
@@ -167,7 +168,7 @@ def configure_force(
             applied["Unit"] = int(unit)
         if magnitude is not None:
             #: ★★★★★ 2026-10-10 **修一处真 bug（★ 本仓自己的纪律被违反）**：
-            #: ★ 原来这里写的是 `get_com_member(force, "NormalForceOrTorqueValue", 值)` 
+            #: ★ 原来这里写的是 `get_com_member(force, "NormalForceOrTorqueValue", 值)`
             #: ✗
             #: ★★ 而 `get_com_member` 的语义是「**取或调**」（★ 有实参 ⇒ **一定调用**）—
             #: —
@@ -200,12 +201,14 @@ def configure_force(
             set_com_member(force, "EquationAngularUnit", int(equation_angular_unit))
             applied["EquationAngularUnit"] = int(equation_angular_unit)
         if equation_coordinate_system is not None:
-            set_com_member(force, "EquationCoordinateSystemType",
-                           int(equation_coordinate_system))
+            set_com_member(
+                force, "EquationCoordinateSystemType", int(equation_coordinate_system)
+            )
             applied["EquationCoordinateSystemType"] = int(equation_coordinate_system)
         if include_non_uniform is not None:
-            set_com_member(force, "IncludeNonUniformDistribution2",
-                           bool(include_non_uniform))
+            set_com_member(
+                force, "IncludeNonUniformDistribution2", bool(include_non_uniform)
+            )
             applied["IncludeNonUniformDistribution2"] = bool(include_non_uniform)
     return applied
 
@@ -225,8 +228,9 @@ def configure_force(
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def configure_pressure(pressure, *, reverse_direction: bool | None = None
-                       ) -> dict[str, Any]:
+def configure_pressure(
+    pressure, *, reverse_direction: bool | None = None
+) -> dict[str, Any]:
     """回读（并按反射可写时设置）压力属性。
 
     ⚠ 反射的 ICWPressure 段**没有任何 set_**，故本函数当前**只读不写**；
@@ -244,8 +248,7 @@ def configure_pressure(pressure, *, reverse_direction: bool | None = None
         "coord_system_type": int(get_com_member(pressure, "CoordSystemType") or -1),
         "direction_type": int(get_com_member(pressure, "DirectionType") or -1),
         "phase_angle": float(get_com_member(pressure, "PhaseAngle") or 0.0),
-        "reverse_direction": bool(
-            get_com_member(pressure, "ReverseDirection2")),
+        "reverse_direction": bool(get_com_member(pressure, "ReverseDirection2")),
     }
 
 
@@ -271,7 +274,8 @@ def configure_heat_flux(heat_flux) -> dict[str, Any]:
         "reverse_direction": bool(get_com_member(heat_flux, "ReverseDirection2")),
         "use_time_curve": bool(get_com_member(heat_flux, "UseTimeCurve2")),
         "use_temperature_curve": bool(
-            get_com_member(heat_flux, "UseTemperatureCurve2")),
+            get_com_member(heat_flux, "UseTemperatureCurve2")
+        ),
     }
 
 
@@ -305,7 +309,8 @@ def configure_contact_set(contact_set) -> dict[str, Any]:
         "clearance_value": float(get_com_member(contact_set, "ClearanceValue") or 0.0),
         "clearance_unit": int(get_com_member(contact_set, "ClearanceUnit") or -1),
         "axial_stiffness": float(
-            get_com_member(contact_set, "AxialStiffnessValue") or 0.0),
+            get_com_member(contact_set, "AxialStiffnessValue") or 0.0
+        ),
         "gap_type": int(get_com_member(contact_set, "GapType") or -1),
         "resistance_type": int(get_com_member(contact_set, "ResistanceType") or -1),
         "resistance_unit": int(get_com_member(contact_set, "ResistanceUnit") or -1),
@@ -357,6 +362,7 @@ def collect_load_property_evidence(force) -> dict[str, Any]:
         "phase_angle": float(get_com_member(force, "PhaseAngle") or 0.0),
         "phase_angle_unit": int(get_com_member(force, "PhaseAngleUnit") or -1),
         "equation": str(get_com_member(force, "Equation") or ""),
-        "has_coordinate_system": get_com_member(force, "GetCoordinateSystem") is not None,
+        "has_coordinate_system": get_com_member(force, "GetCoordinateSystem")
+        is not None,
         "has_time_curve": get_com_member(force, "GetTimeCurve") is not None,
     }

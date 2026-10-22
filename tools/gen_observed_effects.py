@@ -1,4 +1,5 @@
 """★ 把存活普查的**实证**落成覆盖层（★ 实证优先于静态 —— 规格 210 · B3/B4）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_observed_effects.py
@@ -30,7 +31,9 @@ OUT = ROOT / "docs" / "effect-observed.json"
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="★ 生成实证覆盖层（规格 210 · B3/B4）")
-    ap.add_argument("--glob", default=str(ROOT / "output" / "spec210-survival-diff-*.json"))
+    ap.add_argument(
+        "--glob", default=str(ROOT / "output" / "spec210-survival-diff-*.json")
+    )
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
 
@@ -40,10 +43,10 @@ def main() -> int:
     for path in sorted(glob.glob(a.glob)):
         try:
             d = json.loads(Path(path).read_text(encoding="utf-8"))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         scanned.append(Path(path).name)
-        for r in (d.get("rows") or []):
+        for r in d.get("rows") or []:
             changed = [c for c in (r.get("changed_classes") or []) if c]
             if not changed:
                 continue
@@ -79,12 +82,16 @@ def main() -> int:
         "tools": tools,
     }
     p = Path(a.out)
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     print("★ 扫了 %d 份普查结果：%s" % (len(scanned), "、".join(scanned) or "（无）"))
     print("★ 覆盖层：**%d** 条（★ 全部是「静态说无写、实证观察到改动」）" % len(tools))
     for name, rec in list(tools.items())[:10]:
-        print("   %-46s 静态=%r ⇒ 实证=%s" % (name, rec["static_writes"], rec["writes"]))
+        print(
+            "   %-46s 静态=%r ⇒ 实证=%s" % (name, rec["static_writes"], rec["writes"])
+        )
     print("★ 产物：%s" % p)
     return 0
 

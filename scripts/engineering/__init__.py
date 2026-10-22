@@ -1,4 +1,5 @@
 """★ EC02 的包初始化（★ 让 `scripts/engineering/` 成为可导入的包）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   `output/ENGINEERING_CONSTRUCTION_PLAN.md` §5 EC02（★ 建议落点 `scripts/enginee

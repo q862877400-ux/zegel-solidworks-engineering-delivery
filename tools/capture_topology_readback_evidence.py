@@ -23,6 +23,7 @@ r"""@brief 真机证据：**拓扑读数与参数 6 个工具**（24h 段 2.2 / 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -36,14 +37,19 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "topology-readback-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "topology-readback-evidence.json"
+)
 STUDY = "DSH-144"
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "topology_readback_and_parameters",
-                "★": "★ 只读数 / 设参数，**不跑求解** ⇒ 无模态框风险", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "topology_readback_and_parameters",
+        "★": "★ 只读数 / 设参数，**不跑求解** ⇒ 无模态框风险",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -56,17 +62,22 @@ def main() -> int:
         bindings = {}
         for spec in b30.SPECS_BATCH30:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "inject": spec.inject,
-                                   "params": [p.name for p in spec.params]}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] for v in bindings.values()),
-                                   "count": len(bindings), "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "inject": spec.inject,
+                "params": [p.name for p in spec.params],
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] for v in bindings.values()),
+            "count": len(bindings),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② 造零件 + 材料（★ 拓扑研究要有材料）+ 拓扑研究
@@ -81,20 +92,24 @@ def main() -> int:
             from scripts import sw_simulation as S
 
             S.set_material(doc, "AISI 1020")
-            sim_material = str(sw_connect.safe_get_com_member(doc, "MaterialIdName") or "")
-        except Exception as exc:                               # noqa: BLE001
+            sim_material = str(
+                sw_connect.safe_get_com_member(doc, "MaterialIdName") or ""
+            )
+        except Exception as exc:  # noqa: BLE001
             sim_material = "赋材料失败: %s" % str(exc)[:80]
         ev["steps"]["material"] = sim_material
 
         created = T.create_topology_study(sw, STUDY)
-        ev["steps"]["create_study"] = {"ok": created is not None,
-                                       "type": type(created).__name__ if created else None}
+        ev["steps"]["create_study"] = {
+            "ok": created is not None,
+            "type": type(created).__name__ if created else None,
+        }
         study = None
         try:
             from scripts.sw_simulation import get_study_by_name
 
             study = get_study_by_name(sw, STUDY)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["get_study"] = "失败: %s" % str(exc)[:90]
         if study is None:
             raise RuntimeError("按名字取不到刚建的拓扑研究（%r）" % STUDY)
@@ -119,26 +134,38 @@ def main() -> int:
             "★": "★ material_mass_plot 需**跑过求解**才非空 —— 本批不跑求解，故不拿它当判据",
         }
         cons = T.topology_constraints_report(study)
-        ev["steps"]["constraints"] = {"ok": isinstance(cons, dict) and "taken_count" in cons,
-                                      "taken_count": cons.get("taken_count"),
-                                      "total": cons.get("total"),
-                                      "kinds": cons.get("kinds")}
+        ev["steps"]["constraints"] = {
+            "ok": isinstance(cons, dict) and "taken_count" in cons,
+            "taken_count": cons.get("taken_count"),
+            "total": cons.get("total"),
+            "kinds": cons.get("kinds"),
+        }
         mrep = T.topology_manager_report(study)
-        ev["steps"]["manager_report"] = {"ok": bool(mrep.get("ok")),
-                                         "object_type": mrep.get("object_type")}
+        ev["steps"]["manager_report"] = {
+            "ok": bool(mrep.get("ok")),
+            "object_type": mrep.get("object_type"),
+        }
         orep = T.topology_options_report(study)
-        ev["steps"]["options_report"] = {"ok": bool(orep.get("ok")),
-                                         "object_type": orep.get("object_type")}
+        ev["steps"]["options_report"] = {
+            "ok": bool(orep.get("ok")),
+            "object_type": orep.get("object_type"),
+        }
 
         #: ④ ★ 两个"设置"（★ 判据 = 无异常 且 取到的 kind 数不减少）
         g = T.set_topology_goal_report(study, goal_type=0, mass_reduce_percent=50.0)
-        ev["steps"]["set_goal"] = {"ok": bool(g.get("ok")), "error": g.get("error"),
-                                   "before_taken": (g.get("before") or {}).get("taken_count"),
-                                   "after_taken": (g.get("after") or {}).get("taken_count")}
+        ev["steps"]["set_goal"] = {
+            "ok": bool(g.get("ok")),
+            "error": g.get("error"),
+            "before_taken": (g.get("before") or {}).get("taken_count"),
+            "after_taken": (g.get("after") or {}).get("taken_count"),
+        }
         io = T.set_topology_iteration_options_report(study)
-        ev["steps"]["set_iteration_options"] = {"ok": bool(io.get("ok")), "error": io.get("error"),
-                                                "before_taken": (io.get("before") or {}).get("taken_count"),
-                                                "after_taken": (io.get("after") or {}).get("taken_count")}
+        ev["steps"]["set_iteration_options"] = {
+            "ok": bool(io.get("ok")),
+            "error": io.get("error"),
+            "before_taken": (io.get("before") or {}).get("taken_count"),
+            "after_taken": (io.get("after") or {}).get("taken_count"),
+        }
 
         #: ⑤ 综合判读
         checks = {
@@ -151,25 +178,28 @@ def main() -> int:
             "set_goal": ev["steps"]["set_goal"]["ok"],
             "set_iteration_options": ev["steps"]["set_iteration_options"]["ok"],
         }
-        ev["steps"]["judgement"] = {"checks": checks, "passed": sum(1 for v in checks.values() if v),
-                                    "of": len(checks),
-                                    "★": "★ 八项全真才 pass；★ material_mass_plot 是核心判据"}
+        ev["steps"]["judgement"] = {
+            "checks": checks,
+            "passed": sum(1 for v in checks.values() if v),
+            "of": len(checks),
+            "★": "★ 八项全真才 pass；★ material_mass_plot 是核心判据",
+        }
         ok = ok and all(checks.values())
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -180,7 +210,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

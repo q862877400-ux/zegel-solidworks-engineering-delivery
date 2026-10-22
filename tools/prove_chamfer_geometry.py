@@ -14,7 +14,7 @@
 #     ③ ★ 原始返回值（★ None / Feature —— ★ 最直接的一条线索）
 #     ```
 #   ⚠ **前置**：★ 先建一个**有实体**的零件（★ 拉伸一个方块）⇒ 再选一条边 ⇒ 再倒角 ✓
-# 官方依据: `IFeatureManager.InsertFeatureChamfer`（★ 8 参）· 本仓 `scripts/sw_part.py` 
+# 官方依据: `IFeatureManager.InsertFeatureChamfer`（★ 8 参）· 本仓 `scripts/sw_part.py`
 #           的 `chamfer`
 #   （★ 实参 `4, 1, distance, angle_rad, 0, 0, 0, 0`）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -38,8 +38,15 @@ OUT = R / "output" / "chamfer-geometry-evidence.json"
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from sw_part import (chamfer, current_sketch_name, end_sketch, extrude_boss,
-                         feature_names, sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        chamfer,
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        feature_names,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from sw_selection_spec import get_selection_count, resolve_selection
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -90,15 +97,25 @@ def main() -> int:
         rec["tree_grew"] = rec["tree_after"] > rec["tree_before"]
         ev["geom_after"] = geom()
         gb, ga = ev["geom_before"], ev["geom_after"]
-        rec["geom_changed"] = {k: [gb.get(k), ga.get(k)]
-                               for k in ("faces", "edges", "volume") if gb.get(k) != ga.get(k)}
+        rec["geom_changed"] = {
+            k: [gb.get(k), ga.get(k)]
+            for k in ("faces", "edges", "volume")
+            if gb.get(k) != ga.get(k)
+        }
         rec["geom_grew"] = bool(rec["geom_changed"])
         ev["chamfer"] = rec
-        ev["verdict"] = "pass" if (rec.get("geom_grew") or rec.get("tree_grew")) else "fail"
-        ev["note"] = ("★ 三条判据并列：① 特征树增量（★ 上一条用过的）· ② **几何**（面/边/体积）· "
-                      "③ 原始返回值。★ 承事实 104：「看到异常就定性」是误判之源 ⇒ "
-                      "**不拿「树没涨」当「没建成」**。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["verdict"] = (
+            "pass" if (rec.get("geom_grew") or rec.get("tree_grew")) else "fail"
+        )
+        ev["note"] = (
+            "★ 三条判据并列：① 特征树增量（★ 上一条用过的）· ② **几何**（面/边/体积）· "
+            "③ 原始返回值。★ 承事实 104：「看到异常就定性」是误判之源 ⇒ "
+            "**不拿「树没涨」当「没建成」**。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1100])
         print("  产物：%s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:

@@ -1,10 +1,11 @@
 """★ 门禁：评审稿里引用的 `L1-/L2-/L3-` 编号必须**真的存在**，且括号里的描述要对得上。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/check_review_ids.py
 # 定位:   规格 `specs/315-eval-corpus` 的**评审稿编号门禁**。★★ 实测（2026-10-12，业主
-#           指出）：`owner-review.md` §5「我明确不确定的 6 条」里，**4 条引错了编号** ✗ 
+#           指出）：`owner-review.md` §5「我明确不确定的 6 条」里，**4 条引错了编号** ✗
 #           ——  · 写 `L3-025`（鼠标外壳），实际 `L3-025` 是「台式平口钳」  · 写 `L3-031`
 #           （梯形螺纹），实际是「给我建一个零件」  · 写 `L3-050`（换个材料），实际是「
 #           安装板 + 机架」  · 写 `L3-060`（好看的），实际是「换另一种材料」★ 而**括号里
@@ -61,7 +62,7 @@ def _keywords(s: str) -> set:
         if len(run) == 2:
             out.add(run)
         else:
-            out |= {run[i:i + 2] for i in range(len(run) - 1)}
+            out |= {run[i : i + 2] for i in range(len(run) - 1)}
     return out
 
 
@@ -120,7 +121,8 @@ def check(path: pathlib.Path = REVIEW) -> list:
         if not _matches(claim, cps[qid]):
             problems.append(
                 "★★ %s 的描述「%s」与它的需求「%s」对不上 ⇒ 编号或描述有一个错了"
-                % (qid, claim, cps[qid]))
+                % (qid, claim, cps[qid])
+            )
     #: ★★ 另一类：**裸编号**（没有括号描述）—— 只核存在性
     for m in re.finditer(r"`(L[123]-\d{3})`", text):
         qid = m.group(1)
@@ -137,8 +139,12 @@ def selftest() -> bool:
     """
     cps = corpus()
     #: ★ 修复前 §5 那 4 条（★ 编号错、描述对）
-    before = [("L3-025", "鼠标外壳"), ("L3-031", "真实梯形螺纹"),
-              ("L3-050", "换个材料"), ("L3-060", "随便做个好看的")]
+    before = [
+        ("L3-025", "鼠标外壳"),
+        ("L3-031", "真实梯形螺纹"),
+        ("L3-050", "换个材料"),
+        ("L3-060", "随便做个好看的"),
+    ]
     caught = 0
     for qid, claim in before:
         if qid not in cps or not _matches(claim, cps[qid]):
@@ -147,10 +153,13 @@ def selftest() -> bool:
         print("★★ 负例自证失败：修复前的 4 条错编号只抓到 %d 条" % caught)
         return False
     #: ★ 修复后（★ 正确编号）⇒ **不该**报
-    after = [("L3-037", "鼠标外壳"), ("L3-046", "真实梯形螺纹"),
-             ("L3-060", "换个材料"), ("L3-053", "随便做个好看的")]
-    bad = [(q, c) for q, c in after
-           if q not in cps or not _matches(c, cps[q])]
+    after = [
+        ("L3-037", "鼠标外壳"),
+        ("L3-046", "真实梯形螺纹"),
+        ("L3-060", "换个材料"),
+        ("L3-053", "随便做个好看的"),
+    ]
+    bad = [(q, c) for q, c in after if q not in cps or not _matches(c, cps[q])]
     if bad:
         print("★★ 负例自证失败：修复后的正确编号被误报 %s" % bad)
         return False

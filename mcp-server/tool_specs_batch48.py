@@ -1,4 +1,3 @@
-
 # ── 24h 计划 段 6 续（Spec Kit `169` 的批次声明）：**扫描** ──────────────────────────
 # ★★★★★ 2026-10-01（轮 315）真机（`output/sweep-evidence.json`）：
 # · ★★ **通过**：`CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature
@@ -71,27 +70,39 @@ SPECS_BATCH48 = [
         param_alias={"profile_sketch": None, "path_sketch": None},
         params=[
             #: ★★ 2026-10-03：这两个参数是**新加的** —— 原 spec 只有 `cut`，
-            #: ★ 于是调用方**没有任何办法**把"轮廓 + 路径"交给它 ⇒ **必然失败**（见上面 
+            #: ★ 于是调用方**没有任何办法**把"轮廓 + 路径"交给它 ⇒ **必然失败**（见上面
             #: `_pre_sweep`）。
-            Param("profile_sketch", str, default="",
-                  description="★ 轮廓草图名（**mark 1**，官方专文逐字）—— 在特征树里的**逐字**名字"),
-            Param("path_sketch", str, default="",
-                  description="★ 路径草图名（**mark 4**）—— ★ 官方硬约束：**路径起点必须落在轮廓所在平面上**"),
-            Param("cut", bool, default=False,
-                  description="True 建**扫描切除**（swFmSweepCut=18）· False 建**扫描凸台**（swFmSweep=17）"),
+            Param(
+                "profile_sketch",
+                str,
+                default="",
+                description="★ 轮廓草图名（**mark 1**，官方专文逐字）—— 在特征树里的**逐字**名字",
+            ),
+            Param(
+                "path_sketch",
+                str,
+                default="",
+                description="★ 路径草图名（**mark 4**）—— ★ 官方硬约束：**路径起点必须落在轮廓所在平面上**",
+            ),
+            Param(
+                "cut",
+                bool,
+                default=False,
+                description="True 建**扫描切除**（swFmSweepCut=18）· False 建**扫描凸台**（swFmSweep=17）",
+            ),
         ],
         doc="★ **用「轮廓 + 路径」建扫描特征** —— 走官方**现代入口** "
-            "`IFeatureManager.CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`"
-            "（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete**）。"
-            "★ 官方专文给的 mark：**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128。"
-            "★★ **`profile_sketch` 与 `path_sketch` 是必填的**：★ 本工具**不预选任何东西**，"
-            "而是由 `pre_call` 在**注入之后**按上表把这两个草图选上并**回读计数**"
-            "（★ 事实 8）。⚠ 早先版本**没有**这两个参数、也没有 `pre_call` ⇒ "
-            "**经工具层必然失败**（真机报 `stage: selection`，证据 `output/explicit-reject-family-evidence.json`）。"
-            "⚠ 官方硬约束：**路径的起点必须落在轮廓所在平面上**（1 方向扫描）—— 真机上违反它就会建不成。"
-            "★★ 判据（事实 242：挑只依赖被测对象的那个）：**特征树多了新特征** **且** "
-            "**类型名 = `Sweep`**。★ 真机证据：建成 `扫描1`（type=`Sweep`）。"
-            "⚠ `AccessSelections` 在本机报 `0x80010105`（事实 47 的后端限制）——★ 而**它非必需**："
-            "真机上它报错时特征仍建成，所以本工具**不拿它当判据**。",
+        "`IFeatureManager.CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`"
+        "（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete**）。"
+        "★ 官方专文给的 mark：**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128。"
+        "★★ **`profile_sketch` 与 `path_sketch` 是必填的**：★ 本工具**不预选任何东西**，"
+        "而是由 `pre_call` 在**注入之后**按上表把这两个草图选上并**回读计数**"
+        "（★ 事实 8）。⚠ 早先版本**没有**这两个参数、也没有 `pre_call` ⇒ "
+        "**经工具层必然失败**（真机报 `stage: selection`，证据 `output/explicit-reject-family-evidence.json`）。"
+        "⚠ 官方硬约束：**路径的起点必须落在轮廓所在平面上**（1 方向扫描）—— 真机上违反它就会建不成。"
+        "★★ 判据（事实 242：挑只依赖被测对象的那个）：**特征树多了新特征** **且** "
+        "**类型名 = `Sweep`**。★ 真机证据：建成 `扫描1`（type=`Sweep`）。"
+        "⚠ `AccessSelections` 在本机报 `0x80010105`（事实 47 的后端限制）——★ 而**它非必需**："
+        "真机上它报错时特征仍建成，所以本工具**不拿它当判据**。",
     ),
 ]

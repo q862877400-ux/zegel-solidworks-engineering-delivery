@@ -1,4 +1,5 @@
 """★ 探针：边界特征（官方 `IFeatureManager::InsertNetBlend`）两个 Type 的建成与回读。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（骨架照 tools/probe_spec211_scale.py 的先例）
@@ -25,9 +26,9 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import sw_connect                                                                  # noqa: E402
-import tool_caller                                                                 # noqa: E402
-from sw_net_blend import _feature_count as _fc                                  # noqa: E402
+import sw_connect  # noqa: E402
+import tool_caller  # noqa: E402
+from sw_net_blend import _feature_count as _fc  # noqa: E402
 
 #: ★ 100 × 60 × 20 mm 板（★ 与既有探针同口径）
 RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 100.0, "y2_mm": 60.0}
@@ -55,26 +56,38 @@ def _build_plate(sw, tool_caller) -> object:
     RECT2 = {"x1_mm": 100.0, "y1_mm": 0.0, "x2_mm": 200.0, "y2_mm": 60.0}
     #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extr
     #: ude 特征**" ✓）
-    #: ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了 
+    #: ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了
     #: ✓）
     #:   ⇒ ★ 改成两轮：★ ① 草图1 + 矩形1 + 拉伸 ② **草图2 + 矩形2 + 拉伸** ✓
-    rounds = ((("solidworks_sketch_start", {}),
-               ("solidworks_sketch_add_rectangle", RECT),
-               ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": DEPTH})),
-              (("solidworks_sketch_start", {}),
-               ("solidworks_sketch_add_rectangle", RECT2),
-               ("solidworks_extrude_boss", {"sketch_name": "Sketch2", "depth_mm": DEPTH,
-                                             #: ★★★ 第 56 轮：★ **关掉"合并结果"** ⇒ ★★ 
-                                             #: **两个体：贴合但不合并** ✓
-                                             #: ★ 依据第 55 轮真机：★ 隔 30 mm ⇒ 有体无"
-                                             #: 缝" ✗；
-                                             #: ★ 贴合但**默认合并** ⇒ 并成一个体（★ 6 
-                                             #: 面 ✗）
-                                             #: ⇒ ★ 官方 `FeatureExtrusion3` 有 **`Merge
-                                             #: `** 形参 ✓
-                                             #: ★ 而本仓 `solidworks_extrude_boss` **就
-                                             #: 暴露了它** ✓
-                                             "merge": False})))
+    rounds = (
+        (
+            ("solidworks_sketch_start", {}),
+            ("solidworks_sketch_add_rectangle", RECT),
+            ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": DEPTH}),
+        ),
+        (
+            ("solidworks_sketch_start", {}),
+            ("solidworks_sketch_add_rectangle", RECT2),
+            (
+                "solidworks_extrude_boss",
+                {
+                    "sketch_name": "Sketch2",
+                    "depth_mm": DEPTH,
+                    #: ★★★ 第 56 轮：★ **关掉"合并结果"** ⇒ ★★
+                    #: **两个体：贴合但不合并** ✓
+                    #: ★ 依据第 55 轮真机：★ 隔 30 mm ⇒ 有体无"
+                    #: 缝" ✗；
+                    #: ★ 贴合但**默认合并** ⇒ 并成一个体（★ 6
+                    #: 面 ✗）
+                    #: ⇒ ★ 官方 `FeatureExtrusion3` 有 **`Merge
+                    #: `** 形参 ✓
+                    #: ★ 而本仓 `solidworks_extrude_boss` **就
+                    #: 暴露了它** ✓
+                    "merge": False,
+                },
+            ),
+        ),
+    )
     for rnd in rounds:
         for step, params in rnd:
             ok, note = tool_caller.call(step, inject_objects=inj, **params)
@@ -96,10 +109,14 @@ def _run_one(sw, tool_caller, net, kind: str, fn_name: str) -> dict:
         #: ★ 第 38 轮真机：★ 两块凸台 = **两个独立的体** ⇒ ★ 0 号体 6 个面 ⇒ ★ 7 号面（i
         #: ndex 6）落在**第二块** ✓
         rep = fn(model, face_index_1=0, face_index_2=6)
-    except Exception as exc:                                                       # noqa: BLE001
-        return {"kind": kind, "function": fn_name, "raised": str(exc)[:220],
-                "feature_count_before": before,
-                "feature_count_after": _fc(model)}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "kind": kind,
+            "function": fn_name,
+            "raised": str(exc)[:220],
+            "feature_count_before": before,
+            "feature_count_after": _fc(model),
+        }
     rep = dict(rep or {})
     rep["kind"] = kind
     rep["function"] = fn_name
@@ -111,7 +128,10 @@ def main() -> int:
     import tool_caller
     import sw_net_blend as net
 
-    out = {"official": "IFeatureManager.InsertNetBlend", "plate_mm": [100.0, 60.0, DEPTH]}
+    out = {
+        "official": "IFeatureManager.InsertNetBlend",
+        "plate_mm": [100.0, 60.0, DEPTH],
+    }
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上 SolidWorks")
@@ -131,34 +151,56 @@ def main() -> int:
     try:
         import sw_selection_spec as _SS
         import sw_part as _sp
-        _faces = list(_SS.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0) or [])
+
+        _faces = list(
+            _SS.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0)
+            or []
+        )
         centres = []
         for _i, _f in enumerate(_faces[:6]):
             _b = list(_sp.get_com_member(_f, "GetBox") or [])
             if len(_b) >= 6:
-                centres.append({"i": _i,
-                                "centre": [round((_b[0] + _b[3]) / 2.0, 4),
-                                           round((_b[1] + _b[4]) / 2.0, 4),
-                                           round((_b[2] + _b[5]) / 2.0, 4)]})
+                centres.append(
+                    {
+                        "i": _i,
+                        "centre": [
+                            round((_b[0] + _b[3]) / 2.0, 4),
+                            round((_b[1] + _b[4]) / 2.0, 4),
+                            round((_b[2] + _b[5]) / 2.0, 4),
+                        ],
+                    }
+                )
         out["face_centres"] = centres
         out["face_count"] = len(_faces)
-        print("★ 面数 = %d · 前几个面心 = %r" % (len(_faces), [c["centre"] for c in centres]))
-    except Exception as _e:                                                       # noqa: BLE001
+        print(
+            "★ 面数 = %d · 前几个面心 = %r"
+            % (len(_faces), [c["centre"] for c in centres])
+        )
+    except Exception as _e:  # noqa: BLE001
         out["face_centres_error"] = str(_e)[:140]
         print("★ 面心诊断失败：%s" % str(_e)[:120])
 
     #: ── ② 真机两档：★ 曲面（Type=2）先跑，★ 凸台（Type=1）再跑 ─────────────
     results = []
-    for kind, fn_name in (("surface", "insert_boundary_surface_report"),
-                          ("boss", "insert_boundary_boss_report")):
+    for kind, fn_name in (
+        ("surface", "insert_boundary_surface_report"),
+        ("boss", "insert_boundary_boss_report"),
+    ):
         r = _run_one(sw, tool_caller, net, kind, fn_name)
         results.append(r)
-        print("★★ [%s] ok=%r · 特征树 %r → %r · feature=%r"
-              % (kind, r.get("ok"), r.get("feature_count_before"),
-                 r.get("feature_count_after"), r.get("feature")))
+        print(
+            "★★ [%s] ok=%r · 特征树 %r → %r · feature=%r"
+            % (
+                kind,
+                r.get("ok"),
+                r.get("feature_count_before"),
+                r.get("feature_count_after"),
+                r.get("feature"),
+            )
+        )
         if r.get("raised"):
             print("   ★ 抛：%s" % r["raised"])
-        for s in (r.get("steps") or []):
+        for s in r.get("steps") or []:
             if s.get("error"):
                 print("   ⚠ 步骤 %s 报：%s" % (s.get("step"), str(s["error"])[:110]))
     out["results"] = results
@@ -167,12 +209,14 @@ def main() -> int:
     try:
         sw.CloseAllDocuments(True)
         out["closed_documents"] = True
-    except Exception as exc:                                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["closed_documents"] = "★ 关文档出错：%s" % str(exc)[:80]
 
     p = ROOT / "output" / "spec220-boundary.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

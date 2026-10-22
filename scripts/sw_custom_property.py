@@ -46,7 +46,7 @@
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   scripts/sw_custom_property.py
 # 定位:   砌墙 W3（Spec Kit `133`）的能力层：读文件自定义属性（**不需要 PDM**）。
-# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Get` / 
+# 官方依据: `IModelDocExtension.CustomPropertyManager` · `ICustomPropertyManager.Get` /
 #           `GetNames` /
 #          `Count` / `GetType2`；官方示例 `C:\\swapi\\examples\\Add_and_Get_Custom_Properties_Example_VB.md`
 #          （那里 `swCustPropMgr.Get(vName)` 被当**单返回值**用，与实测一致）
@@ -55,6 +55,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -73,10 +74,10 @@ __all__ = [
 #: `swCustomInfoType_e`（官方示例 `Get_Custom_Properties_Example_VB` 逐字列出）
 SW_CUSTOM_INFO_TYPES = {
     0: "unknown",
-    3: "number",        #: VT_I4
-    11: "yes_or_no",    #: VT_BOOL
-    30: "text",         #: VT_LPSTR
-    64: "date",         #: VT_FILETIME
+    3: "number",  #: VT_I4
+    11: "yes_or_no",  #: VT_BOOL
+    30: "text",  #: VT_LPSTR
+    64: "date",  #: VT_FILETIME
 }
 
 
@@ -106,7 +107,8 @@ def custom_property_manager(model, config_name: str = ""):
             return alt
         raise RuntimeError(
             "取不到 CustomPropertyManager（当方法调用与当属性取都不像管理器；"
-            "★ 判据是它有没有 Count）")
+            "★ 判据是它有没有 Count）"
+        )
     return mgr
 
 
@@ -144,8 +146,9 @@ def _read_value_via_get6(mgr, name: str) -> str:
       ★★★ **⇒ 可复用判据**：★★★ **"by-ref 出参不通"这个结论要**带包法**才有意义** ——
         ★ **不包 `VT_BYREF` 必然报"类型不匹配"**、★ 而**包了就能用** ✓
     """
-    import pythoncom                                                      # noqa: PLC0415
-    from win32com.client import VARIANT                                   # noqa: PLC0415
+    import pythoncom  # noqa: PLC0415
+    from win32com.client import VARIANT  # noqa: PLC0415
+
     val = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
     resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
     was_resolved = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BOOL, False)
@@ -167,12 +170,12 @@ def custom_property(model, name: str, config_name: str = "") -> dict[str, Any]:
     value = _read_value_via_get6(mgr, name)
     try:
         tcode = int(get_com_member(mgr, "GetType2", str(name)))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         tcode = -1
     editable = None
     try:
         editable = bool(get_com_member(mgr, "IsCustomPropertyEditable", str(name)))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         editable = None
     return {
         "name": str(name),
@@ -202,11 +205,16 @@ def custom_properties(model, config_name: str = "") -> dict[str, Any]:
         value = _read_value_via_get6(mgr, n)
         try:
             tcode = int(get_com_member(mgr, "GetType2", n))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             tcode = -1
-        items.append({"name": n, "value": "" if value is None else str(value),
-                      "type_code": tcode,
-                      "type": SW_CUSTOM_INFO_TYPES.get(tcode, "unknown(%d)" % tcode)})
+        items.append(
+            {
+                "name": n,
+                "value": "" if value is None else str(value),
+                "type_code": tcode,
+                "type": SW_CUSTOM_INFO_TYPES.get(tcode, "unknown(%d)" % tcode),
+            }
+        )
     return {
         "config": str(config_name),
         "count_reported": int(get_com_member(mgr, "Count")),

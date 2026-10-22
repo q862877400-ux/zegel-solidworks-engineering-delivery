@@ -40,12 +40,13 @@
 #     官方 `IModelDocExtension.GetLastFeatureAdded()`。
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 try:
     from .sw_connect import deg, get_com_member, mm
-except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import deg, get_com_member, mm          # type: ignore
+except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
+    from sw_connect import deg, get_com_member, mm  # type: ignore
 
 #: `swHelixDefinedBy_e` 的成员（官方 4 个）。
 #: ⚠⚠ **数值逐条查过两源**（铁律 4）：
@@ -56,16 +57,24 @@ except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
 #:   真值：`HeightAndRevolution = 1` · `HeightAndPitch = 2`。
 #:   这正是铁律 4「不凭记忆写标准值」的**具体实例**，记在这里免得下一个人再犯。
 HELIX_DEFINED_BY = {
-    "pitch_and_revolution": 0,      # swHelixDefinedByPitchAndRevolution
-    "height_and_revolution": 1,     # swHelixDefinedByHeightAndRevolution
-    "height_and_pitch": 2,          # swHelixDefinedByHeightAndPitch
-    "spiral": 3,                    # swHelixDefinedBySpiral
+    "pitch_and_revolution": 0,  # swHelixDefinedByPitchAndRevolution
+    "height_and_revolution": 1,  # swHelixDefinedByHeightAndRevolution
+    "height_and_pitch": 2,  # swHelixDefinedByHeightAndPitch
+    "spiral": 3,  # swHelixDefinedBySpiral
 }
 
 #: 本模块**允许被公开调用**的签名参数名（照官方顺序，一个不差）。
 HELIX_ARGS = (
-    "reversed", "clockwise", "tapered", "outward", "helix_def",
-    "height_mm", "pitch_mm", "revolution", "taper_angle_deg", "start_angle_deg",
+    "reversed",
+    "clockwise",
+    "tapered",
+    "outward",
+    "helix_def",
+    "height_mm",
+    "pitch_mm",
+    "revolution",
+    "taper_angle_deg",
+    "start_angle_deg",
 )
 
 

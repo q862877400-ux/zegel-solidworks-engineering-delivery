@@ -1,5 +1,3 @@
-
-
 # ── 24h 计划 段 6 续（Spec Kit `166`）：**曲面特征族（第一条已真机验证）** ────────────
 # ──
 # ★★★★★ 2026-10-01（轮 308）**本段改写了硬约束⑧的措辞**：
@@ -53,27 +51,34 @@ SW_END_THROUGH_ALL = 1
 def _harden_defaults(depth_m, through: bool):
     """★ **22 个官方参数**（★ 顺序即官方顺序 —— ★ 一处也不能挪）。"""
     return (
-        True,                       # Sd                 单端
-        False,                      # Dir                不反向
-        SW_START_SKETCH_PLANE,      # StartCond
-        0.0,                        # OffsetVal
-        (SW_END_THROUGH_ALL if through else SW_END_BLIND),   # T1
-        SW_END_BLIND,               # T2（★ Sd=True 时无效）
-        depth_m,                    # D1
-        depth_m,                    # D2（★ Sd=True 时无效）
-        False, False,               # Dchk1 / Dchk2
-        False, False,               # Ddir1 / Ddir2
-        0.0, 0.0,                   # Dang1 / Dang2
-        False, False,               # OffsetReverse1 / OffsetReverse2
-        False, False,               # TranslateSurface1 / TranslateSurface2
-        False, False,               # CapEnd1 / CapEnd2
-        False,                      # DeleteOriginalFace
-        True,                       # KnitResult（★ 缝合结果 ⇒ 更接近 UI 的默认）
+        True,  # Sd                 单端
+        False,  # Dir                不反向
+        SW_START_SKETCH_PLANE,  # StartCond
+        0.0,  # OffsetVal
+        (SW_END_THROUGH_ALL if through else SW_END_BLIND),  # T1
+        SW_END_BLIND,  # T2（★ Sd=True 时无效）
+        depth_m,  # D1
+        depth_m,  # D2（★ Sd=True 时无效）
+        False,
+        False,  # Dchk1 / Dchk2
+        False,
+        False,  # Ddir1 / Ddir2
+        0.0,
+        0.0,  # Dang1 / Dang2
+        False,
+        False,  # OffsetReverse1 / OffsetReverse2
+        False,
+        False,  # TranslateSurface1 / TranslateSurface2
+        False,
+        False,  # CapEnd1 / CapEnd2
+        False,  # DeleteOriginalFace
+        True,  # KnitResult（★ 缝合结果 ⇒ 更接近 UI 的默认）
     )
 
 
-def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = "",
-                                   through_all: bool = False) -> dict:
+def create_extruded_surface_report(
+    model, depth_mm: float, sketch_name: str = "", through_all: bool = False
+) -> dict:
     """★ **用已有草图建「曲面-拉伸」特征**（★ 走 `FeatureExtruRefSurface3`，官方 22 参）。
 
     ★ **它回 `void`** ⇒ ★★ 判据**不能是返回值**，只能是「**特征树多了**」（★ 规则 6）。
@@ -90,10 +95,10 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
         if not math.isfinite(d) or d <= 0.0:
             return {"ok": False, "error": "depth_mm 必须 > 0（★ 收到 %r）" % depth_mm}
     else:
-        d = 0.010             #: ★ 贯穿时深度无效，★ 给一个有限值免得 API 抱怨
+        d = 0.010  #: ★ 贯穿时深度无效，★ 给一个有限值免得 API 抱怨
     before_names = feature_names(model)
     before = len(before_names)
-    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 要求的第一步：按 `mark 0` 选中草图** 
+    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 要求的第一步：按 `mark 0` 选中草图**
     #: ——
     #: 处置：★ `tools/probe_surface_scale.py` 真机跑出 **`ok: False` · `new_features: []
     #: `** ⇒
@@ -124,40 +129,69 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
         #:     ★ `extrude_boss` 之所以能建成，★ **正是因为它走的是那个四级回退** ✓
         try:
             from sw_part import _ensure_sketch_selected as _ensure
+
             picked = _ensure(model, str(sketch_name))
             try:
-                sel_count = int(get_com_member(model.SelectionManager,
-                                               "GetSelectedObjectCount2", -1) or 0)
-            except Exception:                                             # noqa: BLE001
+                sel_count = int(
+                    get_com_member(
+                        model.SelectionManager, "GetSelectedObjectCount2", -1
+                    )
+                    or 0
+                )
+            except Exception:  # noqa: BLE001
                 sel_count = None
-            selection_note = ("★ 已走 `sw_part._ensure_sketch_selected`（★ 四级回退）选中 %r；"
-                              "★ 回读选区计数 = %s（★ 事实 8：不信返回值、只看回读）"
-                              % (str(picked), sel_count))
+            selection_note = (
+                "★ 已走 `sw_part._ensure_sketch_selected`（★ 四级回退）选中 %r；"
+                "★ 回读选区计数 = %s（★ 事实 8：不信返回值、只看回读）"
+                % (str(picked), sel_count)
+            )
             if not sel_count:
-                return {"ok": False, "stage": "select", "sketch_name": str(sketch_name),
-                        "picked": str(picked), "selection_count": sel_count,
-                        "error": "★ 四级回退走完仍选不中草图 ⇒ 前置未成立",
-                        "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）"}
-        except Exception as exc:                                          # noqa: BLE001
-            return {"ok": False, "stage": "select", "sketch_name": str(sketch_name),
-                    "error": "★ 选草图抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
-                    "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）"}
-    args = _harden_defaults(d * 0.001, through_all)     #: ★ 毫米 ⇒ 米（★ 唯一的换算处；★ 该假设**待核**，见事实 517）
+                return {
+                    "ok": False,
+                    "stage": "select",
+                    "sketch_name": str(sketch_name),
+                    "picked": str(picked),
+                    "selection_count": sel_count,
+                    "error": "★ 四级回退走完仍选不中草图 ⇒ 前置未成立",
+                    "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）",
+                }
+        except Exception as exc:  # noqa: BLE001
+            return {
+                "ok": False,
+                "stage": "select",
+                "sketch_name": str(sketch_name),
+                "error": "★ 选草图抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
+                "★": "官方 Remarks：要用 `SelectByID2` 选中 Base（★ 草图 mark 0）",
+            }
+    args = _harden_defaults(
+        d * 0.001, through_all
+    )  #: ★ 毫米 ⇒ 米（★ 唯一的换算处；★ 该假设**待核**，见事实 517）
     try:
         fm = get_com_member(model, "FeatureManager")
         get_com_member(fm, "FeatureExtruRefSurface3", *args)
-    except Exception as exc:                                # noqa: BLE001
-        return {"ok": False, "stage": "call", "args_count": len(args),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
-                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 22 个）"}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "args_count": len(args),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+            "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 22 个）",
+        }
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
-    return {"ok": len(after_names) > before, "feature_name": (new[-1] if new else None),
-            "new_features": new, "tree_before": before, "tree_after": len(after_names),
-            "args_count": len(args), "depth_mm": (None if through_all else float(depth_mm)),
-            "through_all": bool(through_all), "sketch_name": str(sketch_name),
-            "selection": selection_note,
-            "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；★ 官方 22 参 · 反射 arity 22"}
+    return {
+        "ok": len(after_names) > before,
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": before,
+        "tree_after": len(after_names),
+        "args_count": len(args),
+        "depth_mm": (None if through_all else float(depth_mm)),
+        "through_all": bool(through_all),
+        "sketch_name": str(sketch_name),
+        "selection": selection_note,
+        "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；★ 官方 22 参 · 反射 arity 22",
+    }
 
 
 # ── 24h 计划 段 6 续（Spec Kit `166` 续）：**缝合曲面（真机打通）** ───────────────────
@@ -197,38 +231,40 @@ def _select_all_surface_faces(model, mark: int = 1) -> int:
     """★ **把所有曲面体的面按对象选中**（★ 回**选中数** —— ★ 事实 8：不信返回值，只信回读计数）。"""
     from sw_connect import get_com_member as _get
     from sw_part import _select_com_object as _sel
+
     try:
         model.ClearSelection2(True)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     n = 0
     try:
         bodies = list(_get(model, "GetBodies2", -1, True) or [])
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         bodies = []
     for b in bodies:
         try:
             faces = list(_get(b, "GetFaces") or [])
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for f in faces:
             try:
                 if _sel(f, append=True, mark=mark):
                     n += 1
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     try:
         return int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return n
 
 
 def _body_count(model) -> int:
     """★ 数**所有** body（★ 曲面体也算 —— `-1 = swAllBodies`）。"""
     from sw_connect import get_com_member as _get
+
     try:
         return len(list(_get(model, "GetBodies2", -1, True) or []))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -240,23 +276,26 @@ def _solid_body_count(model) -> int:
     （★ 参数取自 `swBodyType_e`：`swSolidBody = 0` · `swSheetBody = 1`）。
     """
     from sw_connect import get_com_member as _get
+
     try:
         return len(list(_get(model, "GetBodies2", 0, True) or []))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
 def _surface_body_count(model) -> int:
     """★ 数**曲面体**数（`swSheetBody = 1`）—— ★ 加厚后它该**变少**。"""
     from sw_connect import get_com_member as _get
+
     try:
         return len(list(_get(model, "GetBodies2", 1, True) or []))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
-def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
-                         try_to_form_solid: bool = False) -> dict:
+def knit_surfaces_report(
+    model, knit_tolerance_mm: float = 0.0001, try_to_form_solid: bool = False
+) -> dict:
     """★ **把选中的曲面缝成一张**（★ 走 `InsertSewRefSurface`）。
 
     ★ 官方：★ 选中项要 **mark = 1** · ★ 容差范围 **0.0001 ～ 0.1 mm**（★ 本包装按**毫米**收，
@@ -268,38 +307,66 @@ def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
     try:
         tol = float(knit_tolerance_mm)
     except (TypeError, ValueError) as exc:
-        return {"ok": False, "error": "knit_tolerance_mm 必须是数字：%s" % str(exc)[:100]}
+        return {
+            "ok": False,
+            "error": "knit_tolerance_mm 必须是数字：%s" % str(exc)[:100],
+        }
     if not (0.0001 <= tol <= 0.1):
-        return {"ok": False, "stage": "validate",
-                "error": "knit_tolerance_mm 必须在 **0.0001 ～ 0.1 mm**（★ 官方给的上下限）；收到 %r" % tol}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "knit_tolerance_mm 必须在 **0.0001 ～ 0.1 mm**（★ 官方给的上下限）；收到 %r"
+            % tol,
+        }
     before_names = feature_names(model)
     before_bodies = _body_count(model)
     selected = _select_all_surface_faces(model, mark=1)
     if selected <= 0:
-        return {"ok": False, "stage": "select", "body_before": before_bodies,
-                "error": "没选中任何面（★ 文件里要有曲面体；★ 而曲面体用 GetBodies2(-1) 取）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "body_before": before_bodies,
+            "error": "没选中任何面（★ 文件里要有曲面体；★ 而曲面体用 GetBodies2(-1) 取）",
+        }
     try:
         fm = get_com_member(model, "FeatureManager")
         #: ★ 容差换算：毫米 ⇒ 米（★ 唯一的换算处）
-        get_com_member(fm, "InsertSewRefSurface", False, bool(try_to_form_solid), True,
-                       tol * 0.001, tol * 0.001)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "call", "faces_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        get_com_member(
+            fm,
+            "InsertSewRefSurface",
+            False,
+            bool(try_to_form_solid),
+            True,
+            tol * 0.001,
+            tol * 0.001,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "faces_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
     after_bodies = _body_count(model)
-    return {"ok": bool(new) and after_bodies < before_bodies, "new_features": new,
-            "face_count_selected": selected, "body_before": before_bodies, "body_after": after_bodies,
-            "knit_tolerance_mm": tol,
-            "★": "判据 = **特征树多了新特征** 且 **body 数变少**（★ 规则 6）；★ 官方 mark=1 · 容差 0.0001–0.1 mm"}
+    return {
+        "ok": bool(new) and after_bodies < before_bodies,
+        "new_features": new,
+        "face_count_selected": selected,
+        "body_before": before_bodies,
+        "body_after": after_bodies,
+        "knit_tolerance_mm": tol,
+        "★": "判据 = **特征树多了新特征** 且 **body 数变少**（★ 规则 6）；★ 官方 mark=1 · 容差 0.0001–0.1 mm",
+    }
+
 
 # ── B6 / T610：**加厚（曲面⇒实体）** ─────────────────────────────────────────────
 # ★★★★ 2026-10-03（轮 502）★ 补 `specs/201-toolbar-gaps` 的 **T610**（★ 那条一直空着）。
 #
 # 官方三源（★ 铁律 4）：
 #   · `C:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
-# `Feature FeatureBossThicken(System.double Thickness, System.int Direction, System.int 
+# `Feature FeatureBossThicken(System.double Thickness, System.int Direction, System.int
 # FaceIndex,
 # System.bool FillVolume, System.bool Merge, System.bool UseFeatScope, System.bool UseAu
 # toSelect)`
@@ -316,10 +383,16 @@ def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
 # 记账）。
 
 
-def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
-                           fill_volume: bool = True, merge: bool = True,
-                           use_feat_scope: bool = False,
-                           use_auto_select: bool = True) -> dict:
+def thicken_surface_report(
+    model,
+    thickness_mm: float,
+    *,
+    direction: int = 0,
+    fill_volume: bool = True,
+    merge: bool = True,
+    use_feat_scope: bool = False,
+    use_auto_select: bool = True,
+) -> dict:
     """★ **加厚**：把选中的曲面体加厚成实体（`IFeatureManager.FeatureBossThicken`）。
 
     ★ 官方：`FaceIndex` **「Not used」** ⇒ ★ 本包装**不收面索引**（★ 收了是骗人）。
@@ -382,8 +455,11 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
     except (TypeError, ValueError) as exc:
         return {"ok": False, "error": "thickness_mm 必须是数字：%s" % str(exc)[:100]}
     if not (th > 0.0):
-        return {"ok": False, "stage": "validate",
-                "error": "thickness_mm 必须 > 0（★ 加厚是给曲面一个壁厚）；收到 %r" % th}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "thickness_mm 必须 > 0（★ 加厚是给曲面一个壁厚）；收到 %r" % th,
+        }
     before_names = feature_names(model)
     before_solid = _solid_body_count(model)
     before_surf = _surface_body_count(model)
@@ -400,44 +476,73 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
     #: lect=True`
     #:     时官方会『自动选所有体』）」⇒ ★★★ **那是**把"体在不在"当成了"选没选中"** ✓
     #:   ★★★ **为什么以前没发现**：★ 本函数此前 **11 组 · 两条入口全部 `None`、且不报错**
-    #: （★ docstring 记着「★ 按事实 53 停手」）⇒ **那一停就把"前置是什么"留在猜的阶段** 
+    #: （★ docstring 记着「★ 按事实 53 停手」）⇒ **那一停就把"前置是什么"留在猜的阶段**
     #: ✓
     #:     ★ 而本轮**回原文**（★ 官方 `## Remarks`）⇒ **前置写得很清楚** ✓
     #:   ★★ 修法：★ **复用本仓既有的 `_select_all_surface_faces(model, mark=1)`** ✓
     sel_note = "★ 未代选"
     try:
         n_sel = _select_all_surface_faces(model, mark=1)
-        sel_note = "★ 已按 `mark 1` 选中曲面面（★ 官方 Remarks 要求）；选中数 = %s" % n_sel
+        sel_note = (
+            "★ 已按 `mark 1` 选中曲面面（★ 官方 Remarks 要求）；选中数 = %s" % n_sel
+        )
         if not n_sel:
-            return {"ok": False, "stage": "select", "selection_count": int(n_sel or 0),
-                    "solid_before": before_solid, "surface_before": before_surf,
-                    "error": "★ 按 `mark 1` 选曲面选中数为 0 ⇒ 前置未成立",
-                    "★": "官方 Remarks：The surface must be selected with a mark of 1"}
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "select",
-                "error": "★ 选曲面抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
-                "★": "官方 Remarks：The surface must be selected with a mark of 1"}
+            return {
+                "ok": False,
+                "stage": "select",
+                "selection_count": int(n_sel or 0),
+                "solid_before": before_solid,
+                "surface_before": before_surf,
+                "error": "★ 按 `mark 1` 选曲面选中数为 0 ⇒ 前置未成立",
+                "★": "官方 Remarks：The surface must be selected with a mark of 1",
+            }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "select",
+            "error": "★ 选曲面抛 %s: %s" % (type(exc).__name__, str(exc)[:160]),
+            "★": "官方 Remarks：The surface must be selected with a mark of 1",
+        }
     try:
         fm = get_com_member(model, "FeatureManager")
         #: ★ 调用序照官方签名：Thickness(米) ⇒ Direction ⇒ FaceIndex(★「Not used」⇒ 0)
         #:   ⇒ FillVolume ⇒ Merge ⇒ UseFeatScope ⇒ UseAutoSelect
-        feat = get_com_member(fm, "FeatureBossThicken",
-                              th * 0.001, int(direction), 0,
-                              bool(fill_volume), bool(merge),
-                              bool(use_feat_scope), bool(use_auto_select))
-    except Exception as exc:                                             # noqa: BLE001
-        return {"ok": False, "stage": "call", "thickness_mm": th,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        feat = get_com_member(
+            fm,
+            "FeatureBossThicken",
+            th * 0.001,
+            int(direction),
+            0,
+            bool(fill_volume),
+            bool(merge),
+            bool(use_feat_scope),
+            bool(use_auto_select),
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "thickness_mm": th,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "returned_none": feat is None,
-            "selection": sel_note,
-            "solid_before": before_solid, "solid_after": _solid_body_count(model),
-            "surface_before": before_surf, "surface_after": _surface_body_count(model),
-            "thickness_mm": th, "direction": int(direction),
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方 `FaceIndex` 标注「Not used」故传 0；"
-                 "★ 而**加厚的语义**看实体数/曲面体数的变化"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "returned_none": feat is None,
+        "selection": sel_note,
+        "solid_before": before_solid,
+        "solid_after": _solid_body_count(model),
+        "surface_before": before_surf,
+        "surface_after": _surface_body_count(model),
+        "thickness_mm": th,
+        "direction": int(direction),
+        "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方 `FaceIndex` 标注「Not used」故传 0；"
+        "★ 而**加厚的语义**看实体数/曲面体数的变化",
+    }
+
 
 # ── objective② / 段 6 续：**延伸曲面（`IModelDoc2.InsertExtendSurface`）** ────────────
 # ──
@@ -456,8 +561,9 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
 #   ★ 本条是 `IModelDoc2.InsertExtendSurface`（造**曲面特征**）。
 
 
-def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bool = True,
-                                 end_condition: int = 0) -> dict:
+def insert_extend_surface_report(
+    model, distance_mm: float, *, extend_linear: bool = True, end_condition: int = 0
+) -> dict:
     """★ **延伸曲面**（★ 官方 `IModelDoc2.InsertExtendSurface`，**3 参**，★ 回 `void`）。
 
     :param distance_mm: 延伸距离（**毫米** —— ★ 换算只在本函数做一次）。
@@ -475,31 +581,56 @@ def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bo
     if not math.isfinite(d) or d <= 0.0:
         return {"ok": False, "error": "distance_mm 必须 > 0（★ 收到 %r）" % distance_mm}
     if int(end_condition) not in (0, 1):
-        return {"ok": False, "error": "end_condition 只支持 0（按距离）/ 1（到选定点）：%r" % end_condition}
+        return {
+            "ok": False,
+            "error": "end_condition 只支持 0（按距离）/ 1（到选定点）：%r"
+            % end_condition,
+        }
     #: ★ 官方说 "along the **selected** faces or edges" ⇒ ★ 先按对象选面（★ 声明式）
     selected = _select_all_surface_faces(model, mark=0)
     if selected <= 0:
-        return {"ok": False, "stage": "select", "faces_selected": 0,
-                "error": "没有选中任何曲面面 —— 曲面延伸要求先选中要延伸的面/边",
-                "★": "官方描述：Extends a surface along the **selected** faces or edges"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "faces_selected": 0,
+            "error": "没有选中任何曲面面 —— 曲面延伸要求先选中要延伸的面/边",
+            "★": "官方描述：Extends a surface along the **selected** faces or edges",
+        }
     before_names = feature_names(model)
     before = len(before_names)
     try:
         #: ★ 毫米 ⇒ 米（★ 与同模块 `FeatureExtruRefSurface3` 的做法一致；★ 真机复验这一
         #: 点）
-        get_com_member(model, "InsertExtendSurface",
-                       bool(extend_linear), int(end_condition), d * 0.001)
-    except Exception as exc:                                    # noqa: BLE001
-        return {"ok": False, "stage": "call", "faces_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        get_com_member(
+            model,
+            "InsertExtendSurface",
+            bool(extend_linear),
+            int(end_condition),
+            d * 0.001,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "faces_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
-    return {"ok": len(after_names) > before, "feature_name": (new[-1] if new else None),
-            "new_features": new, "tree_before": before, "tree_after": len(after_names),
-            "faces_selected": selected, "distance_mm": d,
-            "extend_linear": bool(extend_linear), "end_condition": int(end_condition),
-            "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；"
-                 "★ 官方 3 参 · 反射 arity 3 · EndCondition 0=按距离 / 1=到选定点"}
+    return {
+        "ok": len(after_names) > before,
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": before,
+        "tree_after": len(after_names),
+        "faces_selected": selected,
+        "distance_mm": d,
+        "extend_linear": bool(extend_linear),
+        "end_condition": int(end_condition),
+        "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；"
+        "★ 官方 3 参 · 反射 arity 3 · EndCondition 0=按距离 / 1=到选定点",
+    }
+
 
 # ── objective② / 第二个真缺：**填充曲面（`IFeatureManager.InsertFillSurface2`）** ─────
 # ─────
@@ -507,7 +638,7 @@ def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bo
 #   ```
 #   ① SelectByID2("", "EDGE", <边的中点>, False, **mark = 1**, callout, 0)
 #        ⇒ ★ **回 true 且 GetSelectedObjectCount2(-1) = 4**（★ 计数对上 ⇒ 真选中了）✓
-# ② InsertFillSurface2(Resolutions=2, **Options = 1**（swOptimizeSurface）, None, None, 
+# ② InsertFillSurface2(Resolutions=2, **Options = 1**（swOptimizeSurface）, None, None,
 # None, None)
 #        ⇒ ★ **回 Feature（非 None）且特征树多出 `曲面填充1`** ✓
 #   ```
@@ -536,8 +667,13 @@ _SW_OPTIMIZE_SURFACE = 1
 MARK_BOUNDARY = 1
 
 
-def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _SW_OPTIMIZE_SURFACE,
-                               selection: str = "") -> dict:
+def insert_fill_surface_report(
+    model,
+    resolutions: int = 2,
+    *,
+    options: int = _SW_OPTIMIZE_SURFACE,
+    selection: str = "",
+) -> dict:
     """★ **填充曲面**（★ 官方 `IFeatureManager.InsertFillSurface2`，**6 参**，★ 回 `Feature`）。
 
     :param resolutions: 分辨率 **1 / 2 / 3**（★ 越大质量越好，官方原话）。
@@ -557,18 +693,24 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
     except (TypeError, ValueError):
         return {"ok": False, "error": "resolutions 必须是整数（1/2/3）"}
     if res not in (1, 2, 3):
-        return {"ok": False, "error": "resolutions 只支持 1 / 2 / 3（官方 Remarks）：%r" % resolutions}
+        return {
+            "ok": False,
+            "error": "resolutions 只支持 1 / 2 / 3（官方 Remarks）：%r" % resolutions,
+        }
     if not (1 <= int(options) <= 31):
-        return {"ok": False, "error": "options 超出 Bitmask 范围（1..31）：%r" % options}
+        return {
+            "ok": False,
+            "error": "options 超出 Bitmask 范围（1..31）：%r" % options,
+        }
     #: ★ 取全部边 ⇒ 按**起点/终点的中点**算 z ⇒ 选出一圈（★ 坐标单位是**米**，★ 不换算）
     #: ★★★ 2026-10-03（轮 434）**声明式分支** —— ★ 而后半段**两条路共用**：
-    #: ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative = 
+    #: ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative =
     #: True`
     #:     ⇒ ★★ **跳过后面那个"按点选边"的循环**（已经选好了）；
     #:   ★ 否则走**原自动路**（按最高一圈边的 z 挑）——★ **行为不变**。
     _declarative = bool(str(selection or "").strip())
     _selected_readback = 0
-    _fallback_note: dict | None = None      #: ★ 声明式选区拿不到时的回退记录（★ 见下）
+    _fallback_note: dict | None = None  #: ★ 声明式选区拿不到时的回退记录（★ 见下）
     if _declarative:
         #: ★★★ 2026-10-03（轮 435）**不重选** —— 而代价是一条**文档化的契约**。
         #:   ★ 上一版走 `resolve_selection`（★ 它会**重选**），★ 而它走的是
@@ -580,9 +722,15 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         #: ★ 而代价：★ **调用方选边时必须用 `mark = 1`** ⇒ ★★ 已写进工具文档与本函数的 d
         #: ocstring ✓
         try:
-            _selected_readback = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                                    "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                      # noqa: BLE001
+            _selected_readback = int(
+                get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             _selected_readback = 0
         if _selected_readback <= 0:
             #: ★★★★ 2026-10-03（接手轮）**从这里改成"回退"而不是"失败"**。
@@ -605,32 +753,53 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
                 "stage": "selection_readback",
                 "selected": _selected_readback,
                 "★": "选区的**回读计数为 0** ⇒ ★ **回退到自动路**（按最高一圈边选）。"
-                     "★ 原因见事实 503：`RESOLVERS['model']` 会清空选区，"
-                     "★ 所以「调用方预选」经工具层不可能成立。",
+                "★ 原因见事实 503：`RESOLVERS['model']` 会清空选区，"
+                "★ 所以「调用方预选」经工具层不可能成立。",
             }
             _declarative = False
     edges, mids = [], []
     try:
-        for b in (get_com_member(model, "GetBodies2", -1, True) or []):
-            for e in (get_com_member(b, "GetEdges") or []):
+        for b in get_com_member(model, "GetBodies2", -1, True) or []:
+            for e in get_com_member(b, "GetEdges") or []:
                 try:
-                    a = [float(x) for x in get_com_member(
-                        get_com_member(e, "GetStartVertex"), "GetPoint")]
-                    c = [float(x) for x in get_com_member(
-                        get_com_member(e, "GetEndVertex"), "GetPoint")]
+                    a = [
+                        float(x)
+                        for x in get_com_member(
+                            get_com_member(e, "GetStartVertex"), "GetPoint"
+                        )
+                    ]
+                    c = [
+                        float(x)
+                        for x in get_com_member(
+                            get_com_member(e, "GetEndVertex"), "GetPoint"
+                        )
+                    ]
                     edges.append(e)
                     mids.append([(a[i] + c[i]) / 2.0 for i in range(3)])
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "stage": "collect_edges", "error": str(exc)[:140]}
     if not edges:
-        return {"ok": False, "stage": "collect_edges", "error": "模型上没有可选边（★ 填充要一个封闭边界）"}
+        return {
+            "ok": False,
+            "stage": "collect_edges",
+            "error": "模型上没有可选边（★ 填充要一个封闭边界）",
+        }
     z = max(m[2] for m in mids) if not _declarative else None
-    picked = [] if _declarative else [(m, e) for m, e in zip(mids, edges) if abs(m[2] - z) < 1e-9]
+    picked = (
+        []
+        if _declarative
+        else [(m, e) for m, e in zip(mids, edges) if abs(m[2] - z) < 1e-9]
+    )
     if not _declarative and len(picked) < 3:
-        return {"ok": False, "stage": "pick_boundary", "at_z": z,
-                "error": "z=%.6f 上只找到 %d 条边（★ 封闭边界至少要 3 条）" % (z, len(picked))}
+        return {
+            "ok": False,
+            "stage": "pick_boundary",
+            "at_z": z,
+            "error": "z=%.6f 上只找到 %d 条边（★ 封闭边界至少要 3 条）"
+            % (z, len(picked)),
+        }
     #: ★★ **按中点 + mark=1 选中**（★ 官方 Remarks 要的 mark；★ `Select4` 没有 mark 参数
     #:  —— 事实 32）
     callout = _empty_callout()
@@ -643,34 +812,60 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
     if not _declarative:
         try:
             model.ClearSelection2(True)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    for m, _e in ([] if _declarative else picked):
+    for m, _e in [] if _declarative else picked:
         try:
-            ext.SelectByID2("", "EDGE", m[0], m[1], m[2], True, MARK_BOUNDARY, callout, 0)
-        except Exception:                                      # noqa: BLE001
+            ext.SelectByID2(
+                "", "EDGE", m[0], m[1], m[2], True, MARK_BOUNDARY, callout, 0
+            )
+        except Exception:  # noqa: BLE001
             pass
     selected = _selected_readback
     if not _declarative:
         try:
-            selected = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                          "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                      # noqa: BLE001
+            selected = int(
+                get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             selected = 0
     #: ★★ **回读计数为零 ⇒ 选择其实没生效**（★ 事实 8：bool 返回值不可信）⇒ **早退，不假
     #: 装成功**
     if selected <= 0:
-        return {"ok": False, "stage": "select", "points_selected": 0, "boundary_z": z,
-                "error": "SelectByID2 选了 %d 条边而回读计数为 0（★ 事实 8：静默失败）" % len(picked),
-                "★": "检查 mark 是否为 1（★ 传 4 会静默失败）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "points_selected": 0,
+            "boundary_z": z,
+            "error": "SelectByID2 选了 %d 条边而回读计数为 0（★ 事实 8：静默失败）"
+            % len(picked),
+            "★": "检查 mark 是否为 1（★ 传 4 会静默失败）",
+        }
     before_names = feature_names(model)
     before = len(before_names)
     try:
-        feat = get_com_member(get_com_member(model, "FeatureManager"), "InsertFillSurface2",
-                              res, int(options), None, None, None, None)
-    except Exception as exc:                                   # noqa: BLE001
-        _err = {"ok": False, "stage": "call", "points_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        feat = get_com_member(
+            get_com_member(model, "FeatureManager"),
+            "InsertFillSurface2",
+            res,
+            int(options),
+            None,
+            None,
+            None,
+            None,
+        )
+    except Exception as exc:  # noqa: BLE001
+        _err = {
+            "ok": False,
+            "stage": "call",
+            "points_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
         if _fallback_note is not None:
             #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一
             #: 轮）。
@@ -679,13 +874,19 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         return _err
     after_names = feature_names(model)
     new = [n for n in after_names if n not in before_names]
-    _out = {"ok": (feat is not None) and len(after_names) > before,
-            "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": before, "tree_after": len(after_names),
-            "points_selected": selected, "boundary_z": z,
-            "resolutions": res, "options": int(options),
-            "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
-                 "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）"}
+    _out = {
+        "ok": (feat is not None) and len(after_names) > before,
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": before,
+        "tree_after": len(after_names),
+        "points_selected": selected,
+        "boundary_z": z,
+        "resolutions": res,
+        "options": int(options),
+        "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
+        "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）",
+    }
     if _fallback_note is not None:
         #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**
         #: 。
@@ -697,6 +898,7 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
 def _empty_callout():
     """★ 空 `Callout`（`VARIANT(VT_DISPATCH, None)`）—— ★ 事实 33：传 `None` 会报"类型不匹配"。"""
     from sw_connect import create_empty_dispatch_variant
+
     return create_empty_dispatch_variant()
 
 
@@ -730,10 +932,17 @@ def _empty_callout():
 # ★ 判据（★ 规则 6）：★ **特征树多了新特征**。
 
 
-def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: float = 10.0,
-                                flip_pull_dir: bool = False, flip_dir: bool = False,
-                                trim_and_sew: bool = False, angle_deg: float = 0.0,
-                                coord_input: bool = False) -> dict:
+def insert_ruled_surface_report(
+    model,
+    *,
+    surface_type: int = 1,
+    length_mm: float = 10.0,
+    flip_pull_dir: bool = False,
+    flip_dir: bool = False,
+    trim_and_sew: bool = False,
+    angle_deg: float = 0.0,
+    coord_input: bool = False,
+) -> dict:
     """★ **直纹曲面**（`IFeatureManager.InsertRuledSurfaceFromEdge2`）。
 
     ★★ `surface_type` 取值 —— ★ **以出厂类型库为准**（★ 铁律 4；★ 而 md 的参数表与它差 1）：
@@ -763,11 +972,18 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
     try:
         t = int(surface_type)
     except (TypeError, ValueError):
-        return {"ok": False, "stage": "validate", "error": "surface_type 必须是整数（1..5）"}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "surface_type 必须是整数（1..5）",
+        }
     if not (1 <= t <= 5):
-        return {"ok": False, "stage": "validate",
-                "error": "surface_type 必须 **1..5**（★ 出厂类型库口径：1=TangentToSurface … 5=Sweep）；"
-                         "★ 而官方 md 的参数表是 0-based ⇒ ★ 别照它填" }
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "surface_type 必须 **1..5**（★ 出厂类型库口径：1=TangentToSurface … 5=Sweep）；"
+            "★ 而官方 md 的参数表是 0-based ⇒ ★ 别照它填",
+        }
     try:
         ln = float(length_mm)
     except (TypeError, ValueError) as exc:
@@ -776,9 +992,15 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
     try:
         #: ★ 回读选中数（★ 事实 8：不信返回值，只信回读计数）
         try:
-            sel = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                 # noqa: BLE001
+            sel = int(
+                get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             sel = -1
         fm = get_com_member(model, "FeatureManager")
         #: ★ 调用序照官方签名：Type ⇒ Length(米) ⇒ FlipPullDir ⇒ FlipDir ⇒ TrimAndSew
@@ -800,23 +1022,43 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
         #:   ⇒ ★★ **教训：`**Signature**` 行一个字都别省** ——
         #: ★ **反射核 arity**（★ 快、无歧义）、★ **md 核每个参数的名字与语义**（★ 两源分
         #: 工）✓
-        feat = get_com_member(fm, "InsertRuledSurfaceFromEdge2",
-                              t, ln * 0.001, bool(flip_pull_dir), bool(flip_dir),
-                              bool(trim_and_sew),
-                              float(angle_deg) * 3.141592653589793 / 180.0,
-                              bool(coord_input),
-                              0.0, 0.0, 0.0,          # ★ X / Y / Z（★ 只在 CoordInput 为真时才用）
-                              False)                  # ★ BConnectSurface
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "call", "surface_type": t,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        feat = get_com_member(
+            fm,
+            "InsertRuledSurfaceFromEdge2",
+            t,
+            ln * 0.001,
+            bool(flip_pull_dir),
+            bool(flip_dir),
+            bool(trim_and_sew),
+            float(angle_deg) * 3.141592653589793 / 180.0,
+            bool(coord_input),
+            0.0,
+            0.0,
+            0.0,  # ★ X / Y / Z（★ 只在 CoordInput 为真时才用）
+            False,
+        )  # ★ BConnectSurface
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "surface_type": t,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after),
-            "surface_type": t, "length_mm": ln, "selected": sel, "returned_none": feat is None,
-            "★": "判据 = **特征树多了新特征**（规则 6）；"
-                 "★ `surface_type` 用**出厂类型库**口径 1..5（★ md 参数表是 0-based，差 1 —— 铁律 4）"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "surface_type": t,
+        "length_mm": ln,
+        "selected": sel,
+        "returned_none": feat is None,
+        "★": "判据 = **特征树多了新特征**（规则 6）；"
+        "★ `surface_type` 用**出厂类型库**口径 1..5（★ md 参数表是 0-based，差 1 —— 铁律 4）",
+    }
 
 
 # ── ★★ 一类现象的登记处：**「调用通、而静默不干活」** ────────────────────────────
@@ -830,7 +1072,7 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
 #  ★ 完美（`solid=0 · surface=1`） | 回 `None` | **不建** |
 # | 加厚 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 组 | ★ 完美 | 回 `None
 # ` | **不建** |
-# | **直纹曲面** | `InsertRuledSurfaceFromEdge2`（11 参） | 侧棱 4 条 + **水平边 4 条** 
+# | **直纹曲面** | `InsertRuledSurfaceFromEdge2`（11 参） | 侧棱 4 条 + **水平边 4 条**
 # + 负例 | ★ 边**选上了**（`sel=True`） | ★ **回了对象** | **不建** |
 #
 #   ★★ **两者的共同形态**：★ **调用不报错**（★ 或只回 `None`）、★ **而特征树一点都不动**。
@@ -888,7 +1130,9 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
 # ★ 单位：`thickness_mm` 按**毫米**收、★ 在边界换算一次（规则 2）。
 
 
-def insert_offset_surface_report(model, thickness_mm: float, *, reverse: bool = False) -> dict:
+def insert_offset_surface_report(
+    model, thickness_mm: float, *, reverse: bool = False
+) -> dict:
     """★ **等距曲面**（`IModelDoc2.InsertOffsetSurface` —— ★ **旧式方法**）。
 
     ★ 官方：`void InsertOffsetSurface(double Thickness, bool Reverse)`
@@ -904,23 +1148,42 @@ def insert_offset_surface_report(model, thickness_mm: float, *, reverse: bool = 
     except (TypeError, ValueError) as exc:
         return {"ok": False, "error": "thickness_mm 必须是数字：%s" % str(exc)[:100]}
     if not (th > 0.0):
-        return {"ok": False, "stage": "validate", "error": "thickness_mm 必须 > 0；收到 %r" % th}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "thickness_mm 必须 > 0；收到 %r" % th,
+        }
     before = feature_names(model)
     selected = _select_all_surface_faces(model, mark=0)
     if selected <= 0:
-        return {"ok": False, "stage": "select", "faces_selected": 0,
-                "error": "没选中任何曲面面（★ 官方要求**先选择**；★ 文件里要有曲面体）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "faces_selected": 0,
+            "error": "没选中任何曲面面（★ 官方要求**先选择**；★ 文件里要有曲面体）",
+        }
     try:
         get_com_member(model, "InsertOffsetSurface", th * 0.001, bool(reverse))
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "call", "faces_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "faces_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after),
-            "faces_selected": selected, "thickness_mm": th, "reverse": bool(reverse),
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ 走**旧式** `IModelDoc2.InsertOffsetSurface`"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "faces_selected": selected,
+        "thickness_mm": th,
+        "reverse": bool(reverse),
+        "★": "判据 = **特征树多了新特征**（规则 6）；★ 走**旧式** `IModelDoc2.InsertOffsetSurface`",
+    }
 
 
 def insert_planar_ref_surface_report(model, *, sketch_name: str = "") -> dict:
@@ -947,14 +1210,17 @@ def insert_planar_ref_surface_report(model, *, sketch_name: str = "") -> dict:
     before = feature_names(model)
     try:
         from sw_part import _get_sketch_name_candidates as _cands
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         _cands = None
-    names = [n for n in (feature_names(model) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (feature_names(model) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     want = sketch_name or (names[-1] if names else "")
     try:
         model.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     picked = False
     if want:
@@ -962,32 +1228,66 @@ def insert_planar_ref_surface_report(model, *, sketch_name: str = "") -> dict:
         cands = _cands(want) if _cands else (want,)
         for cand in cands:
             try:
-                if get_com_member(ext, "SelectByID2", cand, "SKETCH", False, 0, 0.0, 0.0, 0.0,
-                                  False, 1, None, 0):
+                if get_com_member(
+                    ext,
+                    "SelectByID2",
+                    cand,
+                    "SKETCH",
+                    False,
+                    0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    False,
+                    1,
+                    None,
+                    0,
+                ):
                     picked = True
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     try:
-        sel = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                 "GetSelectedObjectCount2", -1) or 0)
-    except Exception:                                                     # noqa: BLE001
+        sel = int(
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
         sel = -1
     if not picked and sel <= 0:
-        return {"ok": False, "stage": "select", "sketch": want, "selected": sel,
-                "error": "没选中草图（★ 真机：这条方法的 boundary entities 指**草图**，"
-                         "★ 不是曲面体的边 —— 见本函数 docstring）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "sketch": want,
+            "selected": sel,
+            "error": "没选中草图（★ 真机：这条方法的 boundary entities 指**草图**，"
+            "★ 不是曲面体的边 —— 见本函数 docstring）",
+        }
     try:
         ret = get_com_member(model, "InsertPlanarRefSurface")
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "call", "sketch": want, "selected": sel,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "sketch": want,
+            "selected": sel,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after),
-            "sketch": want, "selected": sel, "returned": repr(ret)[:30],
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ **真机：边界实体 = 草图**（轮 517）"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "sketch": want,
+        "selected": sel,
+        "returned": repr(ret)[:30],
+        "★": "判据 = **特征树多了新特征**（规则 6）；★ **真机：边界实体 = 草图**（轮 517）",
+    }
 
 
 def insert_replace_face_report(model) -> dict:
@@ -1014,44 +1314,60 @@ def insert_replace_face_report(model) -> dict:
     before = feature_names(model)
     selected = _select_two_faces_for_replace(model)
     if selected < 2:
-        return {"ok": False, "stage": "select", "faces_selected": selected,
-                "error": "替换面至少要**两张面**（★ 一张实体面 + 一张曲面面）；只选到 %d 张" % selected}
+        return {
+            "ok": False,
+            "stage": "select",
+            "faces_selected": selected,
+            "error": "替换面至少要**两张面**（★ 一张实体面 + 一张曲面面）；只选到 %d 张"
+            % selected,
+        }
     try:
         get_com_member(model, "InsertFeatureReplaceFace")
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "call", "faces_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "faces_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after), "faces_selected": selected,
-            "★": "判据 = **特征树多了新特征**（规则 6）；⚠ 两个 mark 的分工是**推断**（官方只写了"
-                 "「要替换的面 mark 1」）—— ★ 故本包装的选法**待真机确认**"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "faces_selected": selected,
+        "★": "判据 = **特征树多了新特征**（规则 6）；⚠ 两个 mark 的分工是**推断**（官方只写了"
+        "「要替换的面 mark 1」）—— ★ 故本包装的选法**待真机确认**",
+    }
 
 
 def _select_all_surface_edges(model, mark: int = 1) -> int:
     """★ 把**曲面体的边**按对象选中（★ 回**选中数** —— 事实 8：只信回读计数）。"""
     from sw_connect import get_com_member as _get
     from sw_part import _select_com_object as _sel
+
     try:
         model.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     n = 0
     try:
         bodies = list(_get(model, "GetBodies2", 1, True) or [])
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         bodies = []
     for b in bodies:
         try:
             edges = list(_get(b, "GetEdges") or [])
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for e in edges:
             try:
                 if _sel(e, append=True, mark=mark):
                     n += 1
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return n
 
@@ -1066,27 +1382,28 @@ def _select_two_faces_for_replace(model) -> int:
     """
     from sw_connect import get_com_member as _get
     from sw_part import _select_com_object as _sel
+
     try:
         model.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     n = 0
     #: ★ **顺序与 mark 都以真机为准**（轮 517）：曲面体(1) ⇒ mark 1；实体(0) ⇒ mark 2
     for body_type, mark in ((1, 1), (0, 2)):
         try:
             bodies = list(_get(model, "GetBodies2", body_type, True) or [])
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             bodies = []
         for b in bodies[:1]:
             try:
                 faces = list(_get(b, "GetFaces") or [])
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             if faces:
                 try:
                     if _sel(faces[0], append=True, mark=mark):
                         n += 1
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
     return n
 
@@ -1165,9 +1482,15 @@ UNT_FACE_UNTYPES = {0: "swFaceUntrimTypeAutomatic", 1: "swFaceUntrimTypeManual"}
 UNT_EDGE_UNTYPES = {0: "swEdgeUntrimTypeAutomatic", 1: "swEdgeUntrimTypeManual"}
 
 
-def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type: int = 0,
-                          distance_mm: float = 0.0, merge: bool = True,
-                          trim_opposite_side: bool = False) -> dict:
+def untrim_surface_report(
+    model,
+    *,
+    face_untrim_type: int = 0,
+    edge_untrim_type: int = 0,
+    distance_mm: float = 0.0,
+    merge: bool = True,
+    trim_opposite_side: bool = False,
+) -> dict:
     """★ **取消剪裁**（`IFeatureManager::InsertUntrimSurface2`）—— ★ 把被剪掉的面边长回来 ✓
 
     ★★ 官方 `## Remarks` 两条前置（★ 本包装**如实记下**、★ 但**不做静态判据** —— 见上）：
@@ -1175,56 +1498,72 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
     ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
     ★★ **`distance_mm` 的官方单位未给** ⇒ ★ 返回里带 `unit_assumption`（★ 缝合既有约定 ✓）
     """
-    out: dict = {"ok": False, "entry": "IFeatureManager.InsertUntrimSurface2",
-                 "documented_preconditions": [
-                     "★ 官方 `## Remarks` 逐字：「This method is valid only for surface parts.」",
-                     "★ 官方 `## Remarks` 逐字：「requires preselection of the face or edges "
-                     "you want to untrim.」",
-                 ],
-                 "unit_assumption": ("★ 官方 `Distance` **没给单位**（Parameters 只写 "
-                                     "'Distance by which to untrim the surface'）⇒ ★ 本工具"
-                                     "**对外收毫米**、★ 在边界用 `sw_connect.mm()` 换算一次 ✓"),
-                 "side_effects": "★ 会改变面体（★ 非只读）"}
+    out: dict = {
+        "ok": False,
+        "entry": "IFeatureManager.InsertUntrimSurface2",
+        "documented_preconditions": [
+            "★ 官方 `## Remarks` 逐字：「This method is valid only for surface parts.」",
+            "★ 官方 `## Remarks` 逐字：「requires preselection of the face or edges "
+            "you want to untrim.」",
+        ],
+        "unit_assumption": (
+            "★ 官方 `Distance` **没给单位**（Parameters 只写 "
+            "'Distance by which to untrim the surface'）⇒ ★ 本工具"
+            "**对外收毫米**、★ 在边界用 `sw_connect.mm()` 换算一次 ✓"
+        ),
+        "side_effects": "★ 会改变面体（★ 非只读）",
+    }
     if model is None:
         out["error"] = "model 为 None"
         return out
     #: ★ 枚举越界 ⇒ 必然非法（★ 官方定义集合）✓
     if int(face_untrim_type) not in UNT_FACE_UNTYPES:
-        out["error"] = ("face_untrim_type=%r 不在官方 `swFaceUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
-                        % (face_untrim_type, sorted(UNT_FACE_UNTYPES)))
+        out["error"] = (
+            "face_untrim_type=%r 不在官方 `swFaceUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
+            % (face_untrim_type, sorted(UNT_FACE_UNTYPES))
+        )
         return out
     if int(edge_untrim_type) not in UNT_EDGE_UNTYPES:
-        out["error"] = ("edge_untrim_type=%r 不在官方 `swEdgeUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
-                        % (edge_untrim_type, sorted(UNT_EDGE_UNTYPES)))
+        out["error"] = (
+            "edge_untrim_type=%r 不在官方 `swEdgeUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
+            % (edge_untrim_type, sorted(UNT_EDGE_UNTYPES))
+        )
         return out
     #: ★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 如实记、★
     #:  不改语义 ✓
-    out["trim_opposite_side_valid"] = (not bool(merge))
+    out["trim_opposite_side_valid"] = not bool(merge)
     before = feature_names(model)
     try:
         out["doc_type"] = int(get_com_member(model, "GetType"))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         out["doc_type"] = None
     #: ★★ **"选不上"单独记**（★ 与"选了没用"分开 ✓）
     selected = _select_all_surface_faces(model, mark=0)
     out["faces_selected"] = selected
     if selected <= 0:
         out["stage"] = "selection"
-        out["error"] = ("★ 选不到面/边 ⇒ **不调** —— ★ 官方 `## Remarks` 逐字要求"
-                        "「**requires preselection** of the face or edges you want to untrim」✓ "
-                        "★（★ 这是**官方写死**的前置，★ 与 `extend_surface` 那次"
-                        "「不选也许也行」**不同**）✓")
+        out["error"] = (
+            "★ 选不到面/边 ⇒ **不调** —— ★ 官方 `## Remarks` 逐字要求"
+            "「**requires preselection** of the face or edges you want to untrim」✓ "
+            "★（★ 这是**官方写死**的前置，★ 与 `extend_surface` 那次"
+            "「不选也许也行」**不同**）✓"
+        )
         return out
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
         out["error"] = "取不到 FeatureManager"
         return out
     try:
-        feat = get_com_member(fm, "InsertUntrimSurface2",
-                             int(face_untrim_type), int(edge_untrim_type),
-                             float(mm(float(distance_mm))), bool(merge),
-                             bool(trim_opposite_side))
-    except Exception as exc:                                            # noqa: BLE001
+        feat = get_com_member(
+            fm,
+            "InsertUntrimSurface2",
+            int(face_untrim_type),
+            int(edge_untrim_type),
+            float(mm(float(distance_mm))),
+            bool(merge),
+            bool(trim_opposite_side),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         return out
     after = feature_names(model)
@@ -1236,9 +1575,11 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
     #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
     out["ok"] = len(out["new_features"]) > 0
     if not out["ok"]:
-        out["error"] = ("★ 调用没抛、★ 而**特征树没变化** ⇒ ★ 按官方那两条前置复查："
-                        "★ ① 文档是不是**曲面零件**；★ ② **预选**是否被认（★ 见 "
-                        "`documented_preconditions`）✓")
+        out["error"] = (
+            "★ 调用没抛、★ 而**特征树没变化** ⇒ ★ 按官方那两条前置复查："
+            "★ ① 文档是不是**曲面零件**；★ ② **预选**是否被认（★ 见 "
+            "`documented_preconditions`）✓"
+        )
     return out
 
 
@@ -1284,12 +1625,21 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
 SWEEP_MARKS = {"profile": 1, "guide": 2, "path": 4}
 
 
-def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
-                         keep_tangency: bool = True, advanced_smoothing: bool = False,
-                         start_matching: int = 0, end_matching: int = 0,
-                         path_align: int = 0, use_feat_scope: bool = False,
-                         use_auto_select: bool = True, twist_angle_deg: float = 0.0,
-                         merge_smooth_faces: bool = True) -> dict:
+def sweep_surface_report(
+    model,
+    *,
+    propagate: bool = True,
+    twist_ctrl: int = 0,
+    keep_tangency: bool = True,
+    advanced_smoothing: bool = False,
+    start_matching: int = 0,
+    end_matching: int = 0,
+    path_align: int = 0,
+    use_feat_scope: bool = False,
+    use_auto_select: bool = True,
+    twist_angle_deg: float = 0.0,
+    merge_smooth_faces: bool = True,
+) -> dict:
     """★ **扫描曲面**（`IFeatureManager::InsertSweepSurface2`）—— ★ 走的是**路 B** ✓
 
     ★★ **路 A 已试死**（★ 事实 392：`CreateDefinition` + `CreateFeature` 静默回 `None` ✗）⇒
@@ -1298,21 +1648,32 @@ def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
       ★ **`1 = Profile selection`** · ★ **`2 = Guide curve`**（★ 有才给）· ★ **`4 = Sweep path`** ✓
     ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
     """
-    out: dict = {"ok": False, "entry": "IFeatureManager.InsertSweepSurface2",
-                 "route": "B（参数式 + mark 表）—— ★ 路 A（CreateDefinition+CreateFeature）"
-                          "已按事实 392 试死，本包装不走它 ✓",
-                 "official_marks": dict(SWEEP_MARKS),
-                 "selection_contract": ("★ 调之前必须用 `SelectByID2` 按 mark 选："
-                                        "**1 = Profile** · **2 = Guide curve**（有才给）· "
-                                        "**4 = Sweep path** ✓（★ 官方 `## Remarks` 逐字）"),
-                 "path_align_note": ("★ 官方逐字：`PathAlign` 只在 `TwistCtrlOption = "
-                                     "swTwistControlFollowPath` 时可用 —— 0=None · "
-                                     "2=Direction vector · 3=All faces ✓"),
-                 "twist_angle_note": ("★ 官方逐字：`TwistAngle` 只在 `TwistCtrlOption = "
-                                      "swTwistControlConstantTwistAlongPath` 时有意义 ✓"),
-                 "use_auto_select_note": ("★ 官方逐字：`UseAutoSelect = false` 时"
-                                          "「the user **must select the bodies**」✓"),
-                 "side_effects": "★ 会新建曲面体（★ 非只读）"}
+    out: dict = {
+        "ok": False,
+        "entry": "IFeatureManager.InsertSweepSurface2",
+        "route": "B（参数式 + mark 表）—— ★ 路 A（CreateDefinition+CreateFeature）"
+        "已按事实 392 试死，本包装不走它 ✓",
+        "official_marks": dict(SWEEP_MARKS),
+        "selection_contract": (
+            "★ 调之前必须用 `SelectByID2` 按 mark 选："
+            "**1 = Profile** · **2 = Guide curve**（有才给）· "
+            "**4 = Sweep path** ✓（★ 官方 `## Remarks` 逐字）"
+        ),
+        "path_align_note": (
+            "★ 官方逐字：`PathAlign` 只在 `TwistCtrlOption = "
+            "swTwistControlFollowPath` 时可用 —— 0=None · "
+            "2=Direction vector · 3=All faces ✓"
+        ),
+        "twist_angle_note": (
+            "★ 官方逐字：`TwistAngle` 只在 `TwistCtrlOption = "
+            "swTwistControlConstantTwistAlongPath` 时有意义 ✓"
+        ),
+        "use_auto_select_note": (
+            "★ 官方逐字：`UseAutoSelect = false` 时"
+            "「the user **must select the bodies**」✓"
+        ),
+        "side_effects": "★ 会新建曲面体（★ 非只读）",
+    }
     if model is None:
         out["error"] = "model 为 None"
         return out
@@ -1320,8 +1681,9 @@ def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
     #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
     try:
         import sw_selection_spec as SS
+
         out["selection_count_before"] = SS.get_selection_count(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["selection_count_before"] = None
         out["selection_count_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
     fm = get_com_member(model, "FeatureManager")
@@ -1329,13 +1691,22 @@ def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
         out["error"] = "取不到 FeatureManager"
         return out
     try:
-        feat = get_com_member(fm, "InsertSweepSurface2",
-                             bool(propagate), int(twist_ctrl), bool(keep_tangency),
-                             bool(advanced_smoothing), int(start_matching),
-                             int(end_matching), int(path_align), bool(use_feat_scope),
-                             bool(use_auto_select), float(twist_angle_deg),
-                             bool(merge_smooth_faces))
-    except Exception as exc:                                            # noqa: BLE001
+        feat = get_com_member(
+            fm,
+            "InsertSweepSurface2",
+            bool(propagate),
+            int(twist_ctrl),
+            bool(keep_tangency),
+            bool(advanced_smoothing),
+            int(start_matching),
+            int(end_matching),
+            int(path_align),
+            bool(use_feat_scope),
+            bool(use_auto_select),
+            float(twist_angle_deg),
+            bool(merge_smooth_faces),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
         return out
     after = feature_names(model)
@@ -1347,15 +1718,23 @@ def sweep_surface_report(model, *, propagate: bool = True, twist_ctrl: int = 0,
     #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
     out["ok"] = len(out["new_features"]) > 0
     if not out["ok"]:
-        out["error"] = ("★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
-                        "★ 按官方那两条复查：★ ① 轮廓/路径的 **mark 对不对**（1 / 4）★ ② "
-                        "`UseAutoSelect=false` 时**体有没有选** ✓" % out["returned_is_none"])
+        out["error"] = (
+            "★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
+            "★ 按官方那两条复查：★ ① 轮廓/路径的 **mark 对不对**（1 / 4）★ ② "
+            "`UseAutoSelect=false` 时**体有没有选** ✓" % out["returned_is_none"]
+        )
     return out
 
 
-def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True,
-                        split_linear: bool = False, remove_picked: bool = False,
-                        sew: bool = False) -> dict:
+def trim_surface_report(
+    model,
+    *,
+    mutual: bool = True,
+    split_system: bool = True,
+    split_linear: bool = False,
+    remove_picked: bool = False,
+    sew: bool = False,
+) -> dict:
     """★ **剪裁曲面**（`IFeatureManager.PreTrimSurface` + `PostTrimSurface` —— ★ **两段式**）。
 
     ★★ 参数语义（★ **CHM 逐字**；★ 而 swapi 的 md 里那四个**全是 `No description`** ⚠）：
@@ -1377,33 +1756,60 @@ def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True
     before = feature_names(model)
     selected = _select_all_surface_faces(model, mark=0)
     if selected <= 0:
-        return {"ok": False, "stage": "select", "faces_selected": 0,
-                "error": "没选中任何曲面面（★ 剪裁要有**两张**相交曲面：一张被剪、一张作工具）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "faces_selected": 0,
+            "error": "没选中任何曲面面（★ 剪裁要有**两张**相交曲面：一张被剪、一张作工具）",
+        }
     fm = get_com_member(model, "FeatureManager")
     pre = None
     try:
-        pre = get_com_member(fm, "PreTrimSurface", bool(mutual), bool(split_system),
-                             bool(split_linear), bool(remove_picked))
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "PreTrimSurface", "faces_selected": selected,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+        pre = get_com_member(
+            fm,
+            "PreTrimSurface",
+            bool(mutual),
+            bool(split_system),
+            bool(split_linear),
+            bool(remove_picked),
+        )
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "PreTrimSurface",
+            "faces_selected": selected,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     post = None
     try:
         post = get_com_member(fm, "PostTrimSurface", bool(sew))
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "stage": "PostTrimSurface", "faces_selected": selected,
-                "pre_returned": repr(pre)[:40],
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "PostTrimSurface",
+            "faces_selected": selected,
+            "pre_returned": repr(pre)[:40],
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after), "faces_selected": selected,
-            "mutual": bool(mutual), "split_system": bool(split_system),
-            "split_linear": bool(split_linear), "remove_picked": bool(remove_picked),
-            "sew": bool(sew),
-            "pre_returned": repr(pre)[:40], "post_returned": repr(post)[:40],
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ **两段式**：PreTrimSurface(4 布尔) "
-                 "⇒ PostTrimSurface(sew)；★ 参数语义取自 **CHM**（md 里四个参数都是 No description）"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "faces_selected": selected,
+        "mutual": bool(mutual),
+        "split_system": bool(split_system),
+        "split_linear": bool(split_linear),
+        "remove_picked": bool(remove_picked),
+        "sew": bool(sew),
+        "pre_returned": repr(pre)[:40],
+        "post_returned": repr(post)[:40],
+        "★": "判据 = **特征树多了新特征**（规则 6）；★ **两段式**：PreTrimSurface(4 布尔) "
+        "⇒ PostTrimSurface(sew)；★ 参数语义取自 **CHM**（md 里四个参数都是 No description）",
+    }
 
 
 # ── ★ 曲面**切除**（`IFeatureManager.InsertCutSurface`）—— 与"剪裁曲面"是**两件事** ───
@@ -1436,8 +1842,14 @@ def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True
 # ★ 判据（★ 规则 6）：**特征树多了新特征**。
 
 
-def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
-                       use_feat_scope: bool = False, use_auto_select: bool = True) -> dict:
+def cut_surface_report(
+    model,
+    *,
+    flip: bool = False,
+    keep_piece_index: int = 0,
+    use_feat_scope: bool = False,
+    use_auto_select: bool = True,
+) -> dict:
     """★ **曲面切除**（`IFeatureManager.InsertCutSurface`）—— ★ 拿选中的面/基准面**切实体**。
 
     ⚠★ **别与"剪裁曲面"混**：那个是 `PreTrimSurface`/`PostTrimSurface`（剪**曲面**）；
@@ -1456,28 +1868,56 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     picked = {"surface_faces": 0, "plane": None}
     try:
         model.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     picked["surface_faces"] = _select_all_surface_faces(model, mark=0)
     if picked["surface_faces"] <= 0:
         ext = get_com_member(model, "Extension")
-        for plane in ("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane", "\u4e0a\u89c6\u57fa\u51c6\u9762",
-                      "Top Plane", "\u53f3\u89c6\u57fa\u51c6\u9762", "Right Plane"):
+        for plane in (
+            "\u524d\u89c6\u57fa\u51c6\u9762",
+            "Front Plane",
+            "\u4e0a\u89c6\u57fa\u51c6\u9762",
+            "Top Plane",
+            "\u53f3\u89c6\u57fa\u51c6\u9762",
+            "Right Plane",
+        ):
             try:
-                if get_com_member(ext, "SelectByID2", plane, "PLANE", False, 0, 0.0, 0.0, 0.0,
-                                  False, 0, None, 0):
+                if get_com_member(
+                    ext,
+                    "SelectByID2",
+                    plane,
+                    "PLANE",
+                    False,
+                    0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    False,
+                    0,
+                    None,
+                    0,
+                ):
                     picked["plane"] = plane
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     try:
-        sel = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                 "GetSelectedObjectCount2", -1) or 0)
-    except Exception:                                                     # noqa: BLE001
+        sel = int(
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
         sel = -1
     if sel <= 0:
-        return {"ok": False, "stage": "select", "selected": sel, "picked": picked,
-                "error": "没选中任何面或基准面（★ 官方：这条要用 **preselected** surface or plane）"}
+        return {
+            "ok": False,
+            "stage": "select",
+            "selected": sel,
+            "picked": picked,
+            "error": "没选中任何面或基准面（★ 官方：这条要用 **preselected** surface or plane）",
+        }
     fm = get_com_member(model, "FeatureManager")
     ret = None
     #: ★★ 2026-10-03（轮 521）**真机栽在这里、而它正是事实 390 那条定则的用例** ⚠
@@ -1488,7 +1928,7 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     #:     ★ 而**事实 397 那条"不传末尾 out"只适用于末尾只有 `Retval` 的情形**；
     #:     ★ 这里有 **中间那个 `Error`**，★ 它**必须占位** ⇒ ★★ **故要传 7 个** ✓
     #:   ★ 用 **`out_i4()`**（★ **`Error` 是错误码 ⇒ `VT_BYREF|VT_I4`**）与
-    #: **`out_dispatch()`**（★ **`Retval` 是 Feature ⇒ `VT_BYREF|VT_DISPATCH`**）把两个 
+    #: **`out_dispatch()`**（★ **`Retval` 是 Feature ⇒ `VT_BYREF|VT_DISPATCH`**）把两个
     #: out 位置填上。
     #:   ⚠ **我第一版两个都用了 `out_dispatch()`** ⇒ 真机回
     #:     **`类型不匹配`（位置 6）** —— ★★ **而那正好指在第 7 个参数（`Error`）上**：
@@ -1500,8 +1940,9 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     ret_out = None
     try:
         from sw_connect import out_i4 as _oi4
+
         err_out = _oi4()
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     attempts = []
     #: ★★★★ 2026-10-03（轮 522）**真机把 arity 定死了：6 个**（★ 事实 403）⚠
@@ -1511,18 +1952,35 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     #:   ⚠ 我先前试过 **5 参** ⇒ `非选择性的参数`；**7 参** ⇒ `无效的参数数目`；
     #:     ★ 而**只有这 6 参那组回了 `None`（无错）**。
     try:
-        ret = get_com_member(fm, "InsertCutSurface", bool(flip), int(keep_piece_index),
-                             bool(use_feat_scope), bool(use_auto_select), [],
-                             err_out)
+        ret = get_com_member(
+            fm,
+            "InsertCutSurface",
+            bool(flip),
+            int(keep_piece_index),
+            bool(use_feat_scope),
+            bool(use_auto_select),
+            [],
+            err_out,
+        )
         attempts.append("6 \u53c2\uff085 in + Error\uff09")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         attempts.append("6 \u53c2 \u21d2 %s: %s" % (type(exc).__name__, str(exc)[:90]))
     after = feature_names(model)
     new = [n for n in after if n not in before]
-    return {"ok": bool(new), "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after), "selected": sel,
-            "picked": picked, "flip": bool(flip), "keep_piece_index": int(keep_piece_index),
-            "use_feat_scope": bool(use_feat_scope), "use_auto_select": bool(use_auto_select),
-            "attempts": attempts, "returned": repr(ret)[:40],
-            "★": "判据 = **特征树多了新特征**（规则 6）；★ 它是**曲面切除**（切实体），"
-                 "★ 不是「剪裁曲面」（剪曲面）；★ 参数要 **7 个**（5 in + 2 out —— 事实 390）"}
+    return {
+        "ok": bool(new),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "selected": sel,
+        "picked": picked,
+        "flip": bool(flip),
+        "keep_piece_index": int(keep_piece_index),
+        "use_feat_scope": bool(use_feat_scope),
+        "use_auto_select": bool(use_auto_select),
+        "attempts": attempts,
+        "returned": repr(ret)[:40],
+        "★": "判据 = **特征树多了新特征**（规则 6）；★ 它是**曲面切除**（切实体），"
+        "★ 不是「剪裁曲面」（剪曲面）；★ 参数要 **7 个**（5 in + 2 out —— 事实 390）",
+    }

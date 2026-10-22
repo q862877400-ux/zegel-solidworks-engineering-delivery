@@ -40,6 +40,7 @@ r"""@brief **D3 对照实验**：`IMassProperty2.Mass` 的物理单位 —— �
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -53,16 +54,21 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-units-controlled.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "mass-units-controlled.json"
+)
 #: ★ 对照材料（★ 选一个**密度有明确官方值**的；本机材料库的显示名见 `set_material` 的回
 #: 读）
 CANDIDATES = ("AISI 1020", "Plain Carbon Steel", "Alloy Steel", "AISI 304")
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "question": "IMassProperty2.Mass / Density 的物理单位（用已知密度材料对照）",
-                "geometry": "40×20×10 mm 板（体积应 8000 mm³）", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "question": "IMassProperty2.Mass / Density 的物理单位（用已知密度材料对照）",
+        "geometry": "40×20×10 mm 板（体积应 8000 mm³）",
+        "steps": {},
+    }
     sw = None
     doc = None
     try:
@@ -73,7 +79,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         doc = sw_connect.new_document(sw, "part")
@@ -111,7 +117,7 @@ def main() -> int:
                         entry, mp = nm, cand
                         break
                     entry_errs.append("%s ⇒ None" % nm)
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     entry_errs.append("%s ⇒ %s" % (nm, str(exc)[:60]))
             if mp is None:
                 return {"entry_errors": entry_errs, "★": "两个入口都拿不到对象"}
@@ -119,22 +125,30 @@ def main() -> int:
             try:
                 #: ★ 官方 Remarks 要求：改过选择/材料之后要重算（★ 否则读的是缓存）
                 sw_connect.get_com_member(mp, "Recalculate")()
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 recalc_err = "%s: %s" % (type(exc).__name__, str(exc)[:120])
             vol = float(sw_connect.get_com_member(mp, "Volume"))
             den = float(sw_connect.get_com_member(mp, "Density"))
             mass = float(sw_connect.get_com_member(mp, "Mass"))
             com = sw_connect.get_com_member(mp, "CenterOfMass")
-            return {"entry_used": entry, "entry_errors": entry_errs,
-                    "volume": vol, "density": den, "mass": mass,
-                    "center_of_mass": [float(x) for x in (com or [])][:3],
-                    "recalculate_error": recalc_err,
-                    #: ★ 官方关系式 Density = Mass / Volume ⇒ 用读数验它成不成立
-                    "density_from_readings": (mass / vol) if vol else None}
+            return {
+                "entry_used": entry,
+                "entry_errors": entry_errs,
+                "volume": vol,
+                "density": den,
+                "mass": mass,
+                "center_of_mass": [float(x) for x in (com or [])][:3],
+                "recalculate_error": recalc_err,
+                #: ★ 官方关系式 Density = Mass / Volume ⇒ 用读数验它成不成立
+                "density_from_readings": (mass / vol) if vol else None,
+            }
 
         #: ① 赋材料前
         ev["steps"]["before_material"] = _read()
-        print("  [0] 未赋材料: %s" % json.dumps(ev["steps"]["before_material"], ensure_ascii=False)[:170])
+        print(
+            "  [0] 未赋材料: %s"
+            % json.dumps(ev["steps"]["before_material"], ensure_ascii=False)[:170]
+        )
 
         #: ② 逐个试候选材料（★ 回读材料名 ⇒ 确认真的赋上了）
         got = None
@@ -144,53 +158,73 @@ def main() -> int:
                 got = (name, r)
                 print("  [1] set_material(%r) ⇒ %s" % (name, str(r)[:110]))
                 break
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("  [1] set_material(%r) ✗ %s" % (name, str(exc)[:80]))
-        ev["steps"]["material_assignment"] = {"tried": CANDIDATES,
-                                              "used": got[0] if got else None,
-                                              "readback": (str(got[1])[:400] if got else None)}
+        ev["steps"]["material_assignment"] = {
+            "tried": CANDIDATES,
+            "used": got[0] if got else None,
+            "readback": (str(got[1])[:400] if got else None),
+        }
         #: ③ 赋材料后
         ev["steps"]["after_material"] = _read()
-        print("  [2] 赋材料后: %s" % json.dumps(ev["steps"]["after_material"], ensure_ascii=False)[:170])
+        print(
+            "  [2] 赋材料后: %s"
+            % json.dumps(ev["steps"]["after_material"], ensure_ascii=False)[:170]
+        )
 
         #: ④ ★★ 从数里读结论（★ 不预设）
         a = ev["steps"]["after_material"]
         b = ev["steps"]["before_material"]
         ev["steps"]["judgement"] = {
-            "volume_is_mm3": (abs(a["volume"] - 8000.0) < 1.0 or abs(b["volume"] - 8000.0) < 1.0),
-            "density_relation_holds_now": (abs(a["density_from_readings"] - a["density"]) < 1e-3
-                                           if a["density_from_readings"] else None),
-            "density_relation_holds_before": (abs(b["density_from_readings"] - b["density"]) < 1e-3
-                                              if b["density_from_readings"] else None),
-            "density_value_before": b["density"], "density_value_after": a["density"],
-            "★": ("★ 判读：① `Volume≈8000` ⇒ 体积单位 **mm³** 确证；"
-                  "② `Density == Mass/Volume`（官方 Remarks 那条）⇒ 三个读数自洽；"
-                  "③ ★ **`Density` 的读数是多少，就说明它用的是哪个单位制的数值** —— "
-                  "★ 把它与材料库给的 kg/m³ 值比，即可定 `Mass` 的单位。"
-                  "⚠ **本脚本不替你下结论**：把两次数都留着。"),
+            "volume_is_mm3": (
+                abs(a["volume"] - 8000.0) < 1.0 or abs(b["volume"] - 8000.0) < 1.0
+            ),
+            "density_relation_holds_now": (
+                abs(a["density_from_readings"] - a["density"]) < 1e-3
+                if a["density_from_readings"]
+                else None
+            ),
+            "density_relation_holds_before": (
+                abs(b["density_from_readings"] - b["density"]) < 1e-3
+                if b["density_from_readings"]
+                else None
+            ),
+            "density_value_before": b["density"],
+            "density_value_after": a["density"],
+            "★": (
+                "★ 判读：① `Volume≈8000` ⇒ 体积单位 **mm³** 确证；"
+                "② `Density == Mass/Volume`（官方 Remarks 那条）⇒ 三个读数自洽；"
+                "③ ★ **`Density` 的读数是多少，就说明它用的是哪个单位制的数值** —— "
+                "★ 把它与材料库给的 kg/m³ 值比，即可定 `Mass` 的单位。"
+                "⚠ **本脚本不替你下结论**：把两次数都留着。"
+            ),
         }
         print("  ── 判读 ──")
-        print("     %s" % json.dumps(ev["steps"]["judgement"], ensure_ascii=False)[:300])
-    except Exception as exc:                                   # noqa: BLE001
+        print(
+            "     %s" % json.dumps(ev["steps"]["judgement"], ensure_ascii=False)[:300]
+        )
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

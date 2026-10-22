@@ -81,7 +81,9 @@ def _relations(model):
 
 def add_horizontal_dimension(model, x_mm: float, y_mm: float):
     """★ 水平尺寸：`IModelDoc2.AddHorizontalDimension2(X, Y, Z)`（★ X/Y/Z = **尺寸文字的放置点**）。"""
-    return get_com_member(model, "AddHorizontalDimension2", float(x_mm), float(y_mm), 0.0)
+    return get_com_member(
+        model, "AddHorizontalDimension2", float(x_mm), float(y_mm), 0.0
+    )
 
 
 def add_vertical_dimension(model, x_mm: float, y_mm: float):
@@ -113,7 +115,10 @@ def insert_chain_dimensions(model, selection: str = "__current_selection__"):
         for part in sel.split(","):
             part = part.strip()
             if not part.startswith("index:"):
-                raise ValueError("非法的选择器 %r；合法：'__current_selection__' 或 'index:0,index:1'" % part)
+                raise ValueError(
+                    "非法的选择器 %r；合法：'__current_selection__' 或 'index:0,index:1'"
+                    % part
+                )
             i = int(part.split(":", 1)[1])
             if i < 0 or i >= len(segs):
                 raise RuntimeError("草图段下标 %d 越界（共 %d 段）" % (i, len(segs)))
@@ -124,24 +129,38 @@ def insert_chain_dimensions(model, selection: str = "__current_selection__"):
     return get_com_member(ext, "InsertChainDimensions", ents)
 
 
-def fully_define_sketch(model, *, entities_to_fully_define: bool = True,
-                        use_relations: bool = True, relations_to_apply: int = 0,
-                        use_dimensions: bool = True, horizontal_dim_scheme: int = 0,
-                        vertical_dim_scheme: int = 0, horizontal_dim_placement: int = 0,
-                        vertical_dim_placement: int = 0):
+def fully_define_sketch(
+    model,
+    *,
+    entities_to_fully_define: bool = True,
+    use_relations: bool = True,
+    relations_to_apply: int = 0,
+    use_dimensions: bool = True,
+    horizontal_dim_scheme: int = 0,
+    vertical_dim_scheme: int = 0,
+    horizontal_dim_placement: int = 0,
+    vertical_dim_placement: int = 0,
+):
     """★ 完全定义草图：`ISketchManager.FullyDefineSketch(10 参)`。
 
     ⚠ ★ **未核实**（铁律 5）：`relations_to_apply` / `horizontal_dim_scheme` /
       `vertical_dim_scheme` / `*_dim_placement` 的**取值表**在两套离线源里**都没查到**
       ⇒ 本函数默认全 0，★ 调用方若要特定口径得自己给值，★ 而**本模块不假装知道** ✓
     """
-    return get_com_member(_sketch(model) and get_com_member(model, "SketchManager"),
-                          "FullyDefineSketch",
-                          bool(entities_to_fully_define), bool(use_relations),
-                          int(relations_to_apply), bool(use_dimensions),
-                          int(horizontal_dim_scheme), _empty_callout(),
-                          int(vertical_dim_scheme), _empty_callout(),
-                          int(horizontal_dim_placement), int(vertical_dim_placement))
+    return get_com_member(
+        _sketch(model) and get_com_member(model, "SketchManager"),
+        "FullyDefineSketch",
+        bool(entities_to_fully_define),
+        bool(use_relations),
+        int(relations_to_apply),
+        bool(use_dimensions),
+        int(horizontal_dim_scheme),
+        _empty_callout(),
+        int(vertical_dim_scheme),
+        _empty_callout(),
+        int(horizontal_dim_placement),
+        int(vertical_dim_placement),
+    )
 
 
 def count_sketch_relations(model, filter: int = -1) -> int:
@@ -169,7 +188,12 @@ def delete_sketch_relation(model, index: int, *, filter: int = -1) -> bool:
 
 #: ★ B5 批的成员清单（★ 供探针与门禁按名单跑，不遍历）
 B5_MEMBERS = (
-    "add_horizontal_dimension", "add_vertical_dimension", "add_path_length_dimension",
-    "insert_chain_dimensions", "fully_define_sketch",
-    "count_sketch_relations", "delete_all_sketch_relations", "delete_sketch_relation",
+    "add_horizontal_dimension",
+    "add_vertical_dimension",
+    "add_path_length_dimension",
+    "insert_chain_dimensions",
+    "fully_define_sketch",
+    "count_sketch_relations",
+    "delete_all_sketch_relations",
+    "delete_sketch_relation",
 )

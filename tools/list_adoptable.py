@@ -1,4 +1,5 @@
 """★ 规格 207 · V7-3：从 bunny 的 deep 档记录里出**采纳候选清单**（SC-3）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/list_adoptable.py
@@ -32,7 +33,7 @@ def load(records_dir: Path) -> tuple[list[dict], list[str]]:
     for f in sorted(records_dir.glob("*.json")):
         try:
             r = json.loads(f.read_text(encoding="utf-8", errors="replace"))
-        except Exception as exc:                                      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             bad.append("%s（%s）" % (f.name, type(exc).__name__))
             continue
         if not isinstance(r, dict):
@@ -73,10 +74,15 @@ def main() -> int:
             off = r.get("official") or {}
             prop = r.get("proposed") or {}
             member = (off.get("member") if isinstance(off, dict) else "") or "查不到"
-            print("  #%-4s %-26s %-16s" % (r.get("index"), r.get("op"), r.get("domain")))
+            print(
+                "  #%-4s %-26s %-16s" % (r.get("index"), r.get("op"), r.get("domain"))
+            )
             print("        官方成员 : %s" % member)
             if key == "采纳":
-                print("        建议工具 : %s  @ %s" % (prop.get("name"), prop.get("module")))
+                print(
+                    "        建议工具 : %s  @ %s"
+                    % (prop.get("name"), prop.get("module"))
+                )
                 sig = (off.get("signature") if isinstance(off, dict) else "") or ""
                 if sig:
                     print("        签名(逐字): %s" % str(sig)[:110])
@@ -84,17 +90,35 @@ def main() -> int:
                 if risks:
                     print("        风险     : %s" % risks)
 
-    out = {"deep_records": len(recs), "deep_total": deep_total,
-           "recommendation_counts": {k: len(v) for k, v in buckets.items()},
-           "adopt": [{"index": r.get("index"), "op": r.get("op"), "domain": r.get("domain"),
-                      "official_member": (r.get("official") or {}).get("member"),
-                      "official_signature": (r.get("official") or {}).get("signature"),
-                      "proposed": r.get("proposed"), "confidence": r.get("confidence"),
-                      "classifier_was_right": r.get("classifier_was_right")}
-                     for r in buckets.get("采纳", [])],
-           "defer": [{"index": r.get("index"), "op": r.get("op")} for r in buckets.get("缓办", [])],
-           "skip": [{"index": r.get("index"), "op": r.get("op")} for r in buckets.get("不做", [])]}
-    Path(a.json_out).write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    out = {
+        "deep_records": len(recs),
+        "deep_total": deep_total,
+        "recommendation_counts": {k: len(v) for k, v in buckets.items()},
+        "adopt": [
+            {
+                "index": r.get("index"),
+                "op": r.get("op"),
+                "domain": r.get("domain"),
+                "official_member": (r.get("official") or {}).get("member"),
+                "official_signature": (r.get("official") or {}).get("signature"),
+                "proposed": r.get("proposed"),
+                "confidence": r.get("confidence"),
+                "classifier_was_right": r.get("classifier_was_right"),
+            }
+            for r in buckets.get("采纳", [])
+        ],
+        "defer": [
+            {"index": r.get("index"), "op": r.get("op")}
+            for r in buckets.get("缓办", [])
+        ],
+        "skip": [
+            {"index": r.get("index"), "op": r.get("op")}
+            for r in buckets.get("不做", [])
+        ],
+    }
+    Path(a.json_out).write_text(
+        json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     print("\n★ 已写：%s" % a.json_out)
     print("★ 分布：%s" % json.dumps(out["recommendation_counts"], ensure_ascii=False))
     return 0

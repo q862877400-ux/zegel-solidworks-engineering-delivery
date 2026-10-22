@@ -1,4 +1,5 @@
 """★ 容错抽取 bunny 记录（溢出文件的 JSON 坏了 ⇒ 按字段正则捞，不靠整体 json 解析）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/judge_bunny_records.py
@@ -25,8 +26,10 @@ from pathlib import Path
 ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-SPILL = Path(r"C:\Users\Zegel\AppData\Local\Temp\dsh-spill-jWMrNL\session-bf32b25314ff"
-             r"\0d5af33ae392-workflow.txt")
+SPILL = Path(
+    r"C:\Users\Zegel\AppData\Local\Temp\dsh-spill-jWMrNL\session-bf32b25314ff"
+    r"\0d5af33ae392-workflow.txt"
+)
 
 #: ★ 记录边界：`"index": N`（后面紧跟 "op"）
 REC_SPLIT = re.compile(r'"index"\s*:\s*(\d+)\s*,\s*"op"\s*:\s*"([^"]*)"')
@@ -72,15 +75,20 @@ def main() -> int:
         r_raw = field(chunk, "recommendation")
         v, vk = classify(v_raw, VERDICT_RULES)
         r, rk = classify(r_raw, REC_RULES)
-        rows.append({
-            "index": int(m.group(1)), "op": m.group(2),
-            "domain": field(chunk, "domain", 40),
-            "verdict": v, "verdict_head": v_raw[:120],
-            "rec": r, "rec_head": r_raw[:120],
-            "confidence": field(chunk, "confidence", 30),
-            "official_member": field(chunk, "official_member", 70),
-            "risks_head": field(chunk, "risks", 110),
-        })
+        rows.append(
+            {
+                "index": int(m.group(1)),
+                "op": m.group(2),
+                "domain": field(chunk, "domain", 40),
+                "verdict": v,
+                "verdict_head": v_raw[:120],
+                "rec": r,
+                "rec_head": r_raw[:120],
+                "confidence": field(chunk, "confidence", 30),
+                "official_member": field(chunk, "official_member", 70),
+                "risks_head": field(chunk, "risks", 110),
+            }
+        )
 
     worth = [x for x in rows if x["verdict"] == "真缺口" and x["rec"] == "采纳"]
     defer = [x for x in rows if x["verdict"] == "真缺口" and x["rec"] == "缓办"]
@@ -90,8 +98,10 @@ def main() -> int:
     def dump(title, items, cap=60):
         print("\n=== %s（%d 条）===" % (title, len(items)))
         for x in items[:cap]:
-            print("  #%-3s %-26s %-18s %-6s %s" % (x["index"], x["op"], x["domain"],
-                                                   x["rec"], x["official_member"]))
+            print(
+                "  #%-3s %-26s %-18s %-6s %s"
+                % (x["index"], x["op"], x["domain"], x["rec"], x["official_member"])
+            )
 
     dump("★★ 真缺口 × 建议采纳（**值得排活**）", worth)
     dump("真缺口 × 建议缓办", defer, 30)
@@ -99,10 +109,14 @@ def main() -> int:
     dump("②查不到 / 未归类（**请裁判自己读**）", unk, 30)
 
     out = ROOT / "output" / "bunny-round1-judgement-table.json"
-    out.write_text(json.dumps({"rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
+    out.write_text(
+        json.dumps({"rows": rows}, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     print("\n★ 已写：%s" % out)
-    print("★ 合计：采纳 %d · 缓办 %d · 已有等价物 %d · 未归类 %d · 总 %d"
-          % (len(worth), len(defer), len(reject), len(unk), len(rows)))
+    print(
+        "★ 合计：采纳 %d · 缓办 %d · 已有等价物 %d · 未归类 %d · 总 %d"
+        % (len(worth), len(defer), len(reject), len(unk), len(rows))
+    )
     return 0
 
 

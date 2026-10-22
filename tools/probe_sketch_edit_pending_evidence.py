@@ -54,6 +54,7 @@ OUT = REPO / "output" / "sketch-edit-pending-evidence.json"
 def _seg(model) -> object:
     """★ 草图段数（★ **几何读数**，★ 不只认树增量）。"""
     from sw_connect import get_com_member
+
     try:
         sm = get_com_member(model, "SketchManager")
         a = get_com_member(sm, "ActiveSketch")
@@ -63,16 +64,20 @@ def _seg(model) -> object:
         for name in ("GetLineCount2", "GetLineCount"):
             try:
                 return int(get_com_member(sk, name, False))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return None
 
 
 def main() -> int:
-    from sw_connect import (connect_solidworks, get_com_member, new_document,
-                            create_empty_dispatch_variant)
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        create_empty_dispatch_variant,
+    )
     import sw_part as P
     import sw_sketch_edit as SE
 
@@ -100,27 +105,43 @@ def main() -> int:
         sel = sel_after = None
         with P.sketch(model, "Front Plane") as sk2:
             get_com_member(model, "ClearSelection2", True)
-            sel_after = bool(get_com_member(ext, "SelectByID2", "", "EDGE", 0.0, -0.03, 0.0,
-                                           True, 0, create_empty_dispatch_variant(), 0))
+            sel_after = bool(
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    "",
+                    "EDGE",
+                    0.0,
+                    -0.03,
+                    0.0,
+                    True,
+                    0,
+                    create_empty_dispatch_variant(),
+                    0,
+                )
+            )
             #: ★ 回读选区计数（★ 事实 8：★ 不信返回值、★ 只看计数）
             try:
-                cnt = get_com_member(get_com_member(model, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1)
+                cnt = get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
                 r1["草图中选区计数"] = cnt
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 r1["草图中选区计数"] = "err: %s" % str(exc)[:60]
             r1["进草图后再选边"] = sel_after
             r1["调用前段数"] = _seg(model)
             try:
                 rr = SE.convert_entities(model)
                 r1["返回"] = json.dumps(rr, ensure_ascii=False, default=str)[:300]
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 r1["调用异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
             r1["调用后段数"] = _seg(model)
         a, b = r1.get("调用前段数"), r1.get("调用后段数")
         r1["★_判据"] = "★ 草图段数 0 → ≥1（★ 投影出来的线段是真的）"
-        r1["★_ok"] = (a is not None and b is not None and b > (a or 0))
-    except Exception as exc:                                              # noqa: BLE001
+        r1["★_ok"] = a is not None and b is not None and b > (a or 0)
+    except Exception as exc:  # noqa: BLE001
         r1["★_ok"] = None
         r1["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     rows.append(r1)
@@ -140,47 +161,72 @@ def main() -> int:
             #: ★★ 按**官方标记**选中：★ 线段 mark=1 · ★ 中心线 mark=2
             picked = []
             try:
-                picked.append(bool(get_com_member(ln, "Select4", True,
-                                                  create_empty_dispatch_variant())))
-            except Exception as exc:                                      # noqa: BLE001
+                picked.append(
+                    bool(
+                        get_com_member(
+                            ln, "Select4", True, create_empty_dispatch_variant()
+                        )
+                    )
+                )
+            except Exception as exc:  # noqa: BLE001
                 picked.append("err: %s" % str(exc)[:60])
             try:
                 #: ★ `ISketchSegment.Select4(Append, Callout)` 不带 mark ⇒ 用 `SelectByI
                 #: D2` 的 mark 参数
                 ext = get_com_member(model, "Extension")
-                picked.append(bool(get_com_member(
-                    ext, "SelectByID2", "", "SKETCHSEGMENT", 0.0, 0.0, 0.0, True, 2,
-                    create_empty_dispatch_variant(), 0)))
-            except Exception as exc:                                      # noqa: BLE001
+                picked.append(
+                    bool(
+                        get_com_member(
+                            ext,
+                            "SelectByID2",
+                            "",
+                            "SKETCHSEGMENT",
+                            0.0,
+                            0.0,
+                            0.0,
+                            True,
+                            2,
+                            create_empty_dispatch_variant(),
+                            0,
+                        )
+                    )
+                )
+            except Exception as exc:  # noqa: BLE001
                 picked.append("err: %s" % str(exc)[:60])
             r2["选中"] = picked
             r2["调用前段数"] = _seg(model)
             try:
                 rr = SE.sketch_mirror(model)
                 r2["返回"] = str(rr)[:80]
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 r2["调用异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
             r2["调用后段数"] = _seg(model)
         a, b = r2.get("调用前段数"), r2.get("调用后段数")
         r2["★_判据"] = "★ 草图段数 2 → 4（★ 镜像出来的那条是真的）"
-        r2["★_ok"] = (a is not None and b is not None and b > (a or 0))
-    except Exception as exc:                                              # noqa: BLE001
+        r2["★_ok"] = a is not None and b is not None and b > (a or 0)
+    except Exception as exc:  # noqa: BLE001
         r2["★_ok"] = None
         r2["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     rows.append(r2)
 
-    R = {"★_目的": "★ 为 SC-004 第 2 条候选（`sketch_edit_ops`）补**未取证**的两项真机读数",
-         "★_官方依据": {
-             "convert_entities": "ISketchManager.SketchUseEdge3(Chain, InnerLoops) —— "
-                                 "官方 Remarks：投影的是 **selected** edges/loops/faces ⇒ 调用前必须先选中",
-             "sketch_mirror": "官方标记：线段 mark=1 / 中心线 mark=2 —— 标记是**选中时**定的（签名 0 参）",
-         },
-         "★_判据边界": "★ 两条都用**几何读数**（草图段数），★ 不只认树增量（★ SPEC Edge Cases / 事实 486）",
-         "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_目的": "★ 为 SC-004 第 2 条候选（`sketch_edit_ops`）补**未取证**的两项真机读数",
+        "★_官方依据": {
+            "convert_entities": "ISketchManager.SketchUseEdge3(Chain, InnerLoops) —— "
+            "官方 Remarks：投影的是 **selected** edges/loops/faces ⇒ 调用前必须先选中",
+            "sketch_mirror": "官方标记：线段 mark=1 / 中心线 mark=2 —— 标记是**选中时**定的（签名 0 参）",
+        },
+        "★_判据边界": "★ 两条都用**几何读数**（草图段数），★ 不只认树增量（★ SPEC Edge Cases / 事实 486）",
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
-        print("★ %-18s 段数 %s → %s · ok=%s" % (r["项"], r.get("调用前段数"),
-                                                r.get("调用后段数"), r.get("★_ok")))
+        print(
+            "★ %-18s 段数 %s → %s · ok=%s"
+            % (r["项"], r.get("调用前段数"), r.get("调用后段数"), r.get("★_ok"))
+        )
         for k in ("选中边", "选中", "返回", "调用异常", "★_异常"):
             if r.get(k) is not None:
                 print("     %s: %s" % (k, str(r[k])[:110]))

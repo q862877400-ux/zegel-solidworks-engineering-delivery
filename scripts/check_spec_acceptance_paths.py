@@ -41,6 +41,7 @@ ROADMAP §〇 的三条纪律之三写着「**验收必须是可跑的命令** �
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -67,7 +68,9 @@ ACCEPT = re.compile(r"→\s*验收\s*[:：]")
 ABS_SCRIPT = re.compile(r"([A-Za-z]:[\\/][^\s`'\"|）)]*?\.py)")
 
 #: ② 带仓库目录前缀（正/反斜杠都认）
-REPO_SCRIPT = re.compile(r"(?<![\w\\/])((?:%s)[\\/][^\s`'\"|）)]*?\.py)" % "|".join(REPO_DIRS))
+REPO_SCRIPT = re.compile(
+    r"(?<![\w\\/])((?:%s)[\\/][^\s`'\"|）)]*?\.py)" % "|".join(REPO_DIRS)
+)
 
 #: ③ 裸文件名（前后不是路径分隔符）
 BARE_SCRIPT = re.compile(r"(?<![\w\\/.])([A-Za-z_]\w*\.py)")
@@ -98,7 +101,13 @@ def check_line(line: str, repo: Path) -> list:
         except (OSError, ValueError):
             inside = False
         if not inside:
-            out.append(("outside-repo", tok, "**绝对路径且不在仓库根下** ⇒ 只在写它的那台机器上有"))
+            out.append(
+                (
+                    "outside-repo",
+                    tok,
+                    "**绝对路径且不在仓库根下** ⇒ 只在写它的那台机器上有",
+                )
+            )
     rest = ABS_SCRIPT.sub(" ", rest)
 
     # ② 带前缀的：要真的在仓库里
@@ -116,12 +125,15 @@ def check_line(line: str, repo: Path) -> list:
         #     一个都没匹配到 ⇒ 报 `glob-no-match`（**仍然会红**，只是换了原因）。
         if any(ch in tok for ch in "*?["):
             if not any(repo.glob(tok.replace("\\", "/"))):
-                out.append(("glob-no-match", tok,
-                            "带 glob 的仓库内路径，但**一个都没匹配到**"))
+                out.append(
+                    ("glob-no-match", tok, "带 glob 的仓库内路径，但**一个都没匹配到**")
+                )
             continue
         p = repo / tok.replace("\\", "/")
         if not p.is_file():
-            out.append(("missing-in-repo", tok, "带仓库目录前缀，但**仓库里没有这个文件**"))
+            out.append(
+                ("missing-in-repo", tok, "带仓库目录前缀，但**仓库里没有这个文件**")
+            )
 
     # ③ 裸文件名：在仓库里按名搜
     for m in BARE_SCRIPT.finditer(rest):
@@ -135,7 +147,9 @@ def scan(specs_root: Path, repo: Path) -> list:
     """⇒ ``[(file, lineno, line, problems)]``（只收有问题的行）。"""
     hits = []
     for md in sorted(specs_root.rglob("*.md")):
-        for i, line in enumerate(md.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+        for i, line in enumerate(
+            md.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
             if not ACCEPT.search(line):
                 continue
             probs = check_line(line, repo)
@@ -145,7 +159,9 @@ def scan(specs_root: Path, repo: Path) -> list:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="验收命令可跑性门禁（→ 验收: 行点到的脚本须在仓库里）")
+    ap = argparse.ArgumentParser(
+        description="验收命令可跑性门禁（→ 验收: 行点到的脚本须在仓库里）"
+    )
     #: ★★★ 2026-10-17 修正（★ 环境搬迁暴露的 bug）：★ 原默认值**写死** `Path(__file__).r
     #: esolve().parents[1] / "specs"` ✗ ——
     #:   ★ 仓库搬到便携版工作区后，它**扫的是旧副本**、却拿**新仓库根**去判
@@ -153,8 +169,11 @@ def main(argv=None) -> int:
     #:   ★★ 更糟的是：★ 若旧副本被删，它会走 SKIP 分支（exit 0）⇒ **静默不检查任何东西** ✗
     #: ⇒ ★ 改为**从本文件位置推出仓库根**（与 `REPO` 同一口径）✓ —— ★ 便携性守卫仍在（不
     #: 存在则 SKIP）✓
-    ap.add_argument("--specs-root", default=str(REPO / "specs"),
-                    help="specs 目录（默认**本仓库**的 specs；**不存在则 SKIP**）")
+    ap.add_argument(
+        "--specs-root",
+        default=str(REPO / "specs"),
+        help="specs 目录（默认**本仓库**的 specs；**不存在则 SKIP**）",
+    )
     ap.add_argument("--repo", default=str(REPO))
     a = ap.parse_args(argv)
 
@@ -166,14 +185,19 @@ def main(argv=None) -> int:
         print("  （这是**便携性守卫**：别的机器上没有工作区 ⇒ 不应无条件红）")
         return 0
 
-    n_lines = sum(1 for md in specs_root.rglob("*.md")
-                  for ln in md.read_text(encoding="utf-8", errors="replace").splitlines()
-                  if ACCEPT.search(ln))
+    n_lines = sum(
+        1
+        for md in specs_root.rglob("*.md")
+        for ln in md.read_text(encoding="utf-8", errors="replace").splitlines()
+        if ACCEPT.search(ln)
+    )
     hits = scan(specs_root, repo)
 
     #: ⚑ **首行自带分母**（轮 192）：`n_lines` 已经在手边（原先下一行才打印）⇒ 提到首行
     #: 。
-    print("验收命令可跑性门禁 · 扫 %s（**%d** 处 `→ 验收:` 行）" % (specs_root, n_lines))
+    print(
+        "验收命令可跑性门禁 · 扫 %s（**%d** 处 `→ 验收:` 行）" % (specs_root, n_lines)
+    )
     print("  **%d** 处 `→ 验收:` 行；仓库根 = %s" % (n_lines, repo))
     print()
     if hits:
@@ -184,8 +208,10 @@ def main(argv=None) -> int:
             for kind, tok, detail in probs:
                 print("      · [%s] %s —— %s" % (kind, tok, detail))
         print()
-        print("  修法：把脚本按仓库规范收进 `tools/`（来源块 + 只读 + 不连 SolidWorks），"
-              "或把验收命令改写成**仓库内**的等价命令。")
+        print(
+            "  修法：把脚本按仓库规范收进 `tools/`（来源块 + 只读 + 不连 SolidWorks），"
+            "或把验收命令改写成**仓库内**的等价命令。"
+        )
         return 1
     print("  [PASS] 0 行 —— 所有 `→ 验收:` 行点到的脚本都在仓库里")
     return 0

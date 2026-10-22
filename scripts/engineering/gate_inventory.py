@@ -1,4 +1,5 @@
 """★ Q16 · 把门禁分类表扩到四类 + 补环境/责任人（规格 324 的 P1/P2）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -56,22 +57,51 @@ LEGACY_KIND_MAP = {"hard": RELEASE_STATIC, "diagnostic": DIAGNOSTIC}
 #: ★ 为什么③必须：「接进 release 的静态门禁」与「要真机才能跑」**是两件事** ——
 #:   ★ Q16 要的正是**把真机门禁从 release 里拿出去单独编排**。
 HARDWARE_NAME_PAT = re.compile(
-    r"hardware|real_machine|realmachine|sw_guard|\blive\b|真机", re.I)
+    r"hardware|real_machine|realmachine|sw_guard|\blive\b|真机", re.I
+)
 #: ★ 正向措辞（★ 「必须/需要/要在真机上跑」）
-HARDWARE_POSITIVE = ("必须真机", "需要真机", "要在真机", "真机才能", "真机运行",
-                     "requires solidworks", "requires sw")
+HARDWARE_POSITIVE = (
+    "必须真机",
+    "需要真机",
+    "要在真机",
+    "真机才能",
+    "真机运行",
+    "requires solidworks",
+    "requires sw",
+)
 #: ★★ **否定措辞**（★ 提到真机但**不是**真机门禁）
-HARDWARE_NEGATIVE = ("不需要真机", "无需真机", "不用真机", "不跑真机",
-                     "与真机实测互为印证", "真机实测互为印证", "静态")
-HARDWARE_HINTS = ("真机", "COM", "SolidWorks", "sw_guard", "外部求解器",
-                  "calculix", "elmer", "需要 SW")
+HARDWARE_NEGATIVE = (
+    "不需要真机",
+    "无需真机",
+    "不用真机",
+    "不跑真机",
+    "与真机实测互为印证",
+    "真机实测互为印证",
+    "静态",
+)
+HARDWARE_HINTS = (
+    "真机",
+    "COM",
+    "SolidWorks",
+    "sw_guard",
+    "外部求解器",
+    "calculix",
+    "elmer",
+    "需要 SW",
+)
 
 
 class GateInventoryError(Exception):
     """★ 门禁清单失败（★ 带封闭码）。"""
 
-    CODES = ("bad-kind", "missing-field", "bad-legacy", "no-replaced-by",
-             "not-run-mismatch", "missing-file")
+    CODES = (
+        "bad-kind",
+        "missing-field",
+        "bad-legacy",
+        "no-replaced-by",
+        "not-run-mismatch",
+        "missing-file",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法门禁清单拒绝码：%r" % code
@@ -110,20 +140,27 @@ class GateEntry:
     def validate(self) -> None:
         if self.kind and self.kind not in KINDS:
             raise GateInventoryError(
-                "bad-kind", "★ %s 的 kind=%r 不在四类里" % (self.gate, self.kind))
+                "bad-kind", "★ %s 的 kind=%r 不在四类里" % (self.gate, self.kind)
+            )
         miss = self.missing()
         if miss:
-            raise GateInventoryError(
-                "missing-field", "★ %s 缺 %s" % (self.gate, miss))
+            raise GateInventoryError("missing-field", "★ %s 缺 %s" % (self.gate, miss))
         #: ★ P6：`retired` **必须**带替代关系（★ Q16 逐字「不删除，先标明替代关系」）
         if self.kind == RETIRED and not self.replaced_by:
             raise GateInventoryError(
-                "no-replaced-by", "★ %s 是 retired 却没有 `replaced_by`" % self.gate)
+                "no-replaced-by", "★ %s 是 retired 却没有 `replaced_by`" % self.gate
+            )
 
     def to_dict(self) -> dict:
-        d = {"gate": self.gate, "runner": self.runner, "kind": self.kind,
-             "reason": self.reason, "environment": self.environment,
-             "owner": self.owner, "runs_in": self.runs_in}
+        d = {
+            "gate": self.gate,
+            "runner": self.runner,
+            "kind": self.kind,
+            "reason": self.reason,
+            "environment": self.environment,
+            "owner": self.owner,
+            "runs_in": self.runs_in,
+        }
         if self.replaced_by:
             d["replaced_by"] = self.replaced_by
         if self.not_run:
@@ -136,8 +173,8 @@ OWNER_AGENT = "executing-agent"
 OWNER_OWNER = "owner"
 
 #: ★★ **环境**（★ Q16 要「环境」）
-ENV_STATIC = "offline-static"           #: ★ 纯静态（不需要 SW）
-ENV_SW = "solidworks-required"          #: ★ 要真机
+ENV_STATIC = "offline-static"  #: ★ 纯静态（不需要 SW）
+ENV_SW = "solidworks-required"  #: ★ 要真机
 ENV_SOLVER = "external-solver-required"  #: ★ 要外部求解器
 
 
@@ -191,8 +228,11 @@ def migrate_entry(entry: dict) -> GateEntry:
         #: ★★ FR-004：**要真机的不能标成静态**（★ 否则"跳过仍报全过"）
         kind = RELEASE_HARDWARE
     env = ENV_SW if hw else ENV_STATIC
-    if re.search(r"calculix|elmer", "%s %s" % (entry.get("reason", ""),
-                                               entry.get("gate", "")), re.I):
+    if re.search(
+        r"calculix|elmer",
+        "%s %s" % (entry.get("reason", ""), entry.get("gate", "")),
+        re.I,
+    ):
         env = ENV_SOLVER
 
     return GateEntry(
@@ -204,8 +244,8 @@ def migrate_entry(entry: dict) -> GateEntry:
         owner=str(entry.get("owner") or OWNER_AGENT),
         replaced_by=str(entry.get("replaced_by") or ""),
         not_run=bool(entry.get("not_run") or hw),
-        runs_in=str(entry.get("runs_in") or
-                    ("sw_guard" if hw else "release_check")))
+        runs_in=str(entry.get("runs_in") or ("sw_guard" if hw else "release_check")),
+    )
 
 
 def load_classification() -> dict:
@@ -266,14 +306,19 @@ def validate_all(entries: list) -> dict:
     """★★ **整表校验**（★ P1/P2/P6 —— ★ 逐条 `validate()`）。"""
     bad = []
     for r in entries:
-        e = GateEntry(**{k: v for k, v in r.items()
-                         if k in GateEntry.__dataclass_fields__})
+        e = GateEntry(
+            **{k: v for k, v in r.items() if k in GateEntry.__dataclass_fields__}
+        )
         try:
             e.validate()
         except GateInventoryError as exc:
             bad.append({"gate": e.gate, "code": exc.code, "detail": exc.detail})
-    return {"ok": not bad, "n": len(entries), "bad": bad,
-            "counts": kind_counts(entries)}
+    return {
+        "ok": not bad,
+        "n": len(entries),
+        "bad": bad,
+        "counts": kind_counts(entries),
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -321,10 +366,12 @@ def build_inventory() -> dict:
     #:     ⇒ ★ 判据：**应执行 = 有文件 且 未豁免**。
     exempt = {k for k in _load_exemptions()}
     should = set(scripts_checks) - exempt
-    actually = {e.get("gate", "") for e in entries
-                if e.get("runs_in") == "release_check"}
-    not_run = sorted(e.get("gate", "") for e in entries
-                     if e.get("kind") == RELEASE_HARDWARE)
+    actually = {
+        e.get("gate", "") for e in entries if e.get("runs_in") == "release_check"
+    }
+    not_run = sorted(
+        e.get("gate", "") for e in entries if e.get("kind") == RELEASE_HARDWARE
+    )
 
     #: ⚠ 实测（2026-10-12）：第一版判「登记了却没文件」时**只在 `scripts/` 与
     #:   `tools/` 里找** ⇒ ★ 把 `tests/test_inout_array_audit_contract.py`
@@ -337,8 +384,7 @@ def build_inventory() -> dict:
         p = ROOT / name
         if p.is_file():
             return True
-        return ((ROOT / "scripts" / name).is_file()
-                or (ROOT / "tools" / name).is_file())
+        return (ROOT / "scripts" / name).is_file() or (ROOT / "tools" / name).is_file()
 
     return {
         "scripts": {"checks": scripts_checks, "n": len(scripts_checks)},
@@ -353,19 +399,21 @@ def build_inventory() -> dict:
         "should_run_in_release": sorted(should),
         "actually_run_in_release": sorted(actually),
         "should_but_not_declared": sorted(should - declared),
-        "declared_but_no_file": sorted(
-            d for d in declared if not _exists(d)),
+        "declared_but_no_file": sorted(d for d in declared if not _exists(d)),
         #: ★★ **真机门禁单独编排**（★ P4 —— ★ 明确 `NOT_RUN`）
         "not_run": not_run,
         "not_run_n": len(not_run),
-        "★": ("★ `scripts/` 与 `tools/` **两边都扫**；★ 且核对"
-              "「应执行集合」与「实际执行结果」"),
+        "★": (
+            "★ `scripts/` 与 `tools/` **两边都扫**；★ 且核对"
+            "「应执行集合」与「实际执行结果」"
+        ),
     }
 
 
 def write_inventory(path: pathlib.Path | None = None) -> pathlib.Path:
     p = path or INVENTORY
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(build_inventory(), ensure_ascii=False, indent=1),
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(build_inventory(), ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     return p

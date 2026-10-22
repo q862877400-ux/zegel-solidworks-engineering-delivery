@@ -24,8 +24,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "loft-fixed-e2e-evidence.json"
 
@@ -39,11 +39,20 @@ def main() -> int:
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     import register_capabilities as rc
-    spec = next((s for s in rc.all_specs()
-                 if getattr(s, "name", None) == "solidworks_part_loft"), None)
+
+    spec = next(
+        (
+            s
+            for s in rc.all_specs()
+            if getattr(s, "name", None) == "solidworks_part_loft"
+        ),
+        None,
+    )
     if spec is None:
         R["err"] = "★ 找不到 solidworks_part_loft"
-        OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        OUT.write_text(
+            json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        )
         return 0
     R["spec_params"] = [getattr(p, "name", None) for p in (spec.params or [])]
     R["pre_call"] = getattr(getattr(spec, "pre_call", None), "__name__", None)
@@ -65,15 +74,22 @@ def main() -> int:
         R["sketches_found"] = sketches
         if len(sketches) < 2:
             R["skip"] = "★ 只找到 %d 个草图" % len(sketches)
-            OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            OUT.write_text(
+                json.dumps(R, ensure_ascii=False, indent=1, default=str),
+                encoding="utf-8",
+            )
             return 0
         profiles = sketches[:2]
         R["profile_sketches"] = profiles
         try:
             _g(doc, "ClearSelection2", True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-        args = {"profile_sketches": profiles, "closed": False, "use_selected_profiles": True}
+        args = {
+            "profile_sketches": profiles,
+            "closed": False,
+            "use_selected_profiles": True,
+        }
         alias = dict(getattr(spec, "param_alias", None) or {})
         kwargs = {}
         for k, v in args.items():
@@ -92,11 +108,14 @@ def main() -> int:
         try:
             if getattr(spec, "pre_call", None) is not None:
                 R["pre_call_ret"] = spec.pre_call(pr)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             R["pre_call_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
-        R["marks_after_precall"] = {str(m): int(_g(_g(doc, "SelectionManager"),
-                                                   "GetSelectedObjectCount2", m) or 0)
-                                    for m in (1, 2, 4)}
+        R["marks_after_precall"] = {
+            str(m): int(
+                _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0
+            )
+            for m in (1, 2, 4)
+        }
         mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
         ret = getattr(mod, spec.function)(**kwargs)
         R["ret_type"] = type(ret).__name__
@@ -105,17 +124,19 @@ def main() -> int:
             R["ret_ok"] = bool(ret.get("ok"))
         R["features_after"] = list(P.feature_names(doc) or [])
         R["new_features"] = [n for n in R["features_after"] if n not in names]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:250])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     R["built"] = bool(R.get("new_features"))
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

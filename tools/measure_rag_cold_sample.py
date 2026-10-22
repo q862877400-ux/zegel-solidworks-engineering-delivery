@@ -29,7 +29,7 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as rc                                    # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
 
@@ -39,7 +39,7 @@ def tok(text: str) -> list:
     text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", text)
     out = re.findall(r"[a-z0-9]{2,}", text)
     cjk = "".join(ch for ch in text if CJK.match(ch))
-    out += [cjk[i:i + 2] for i in range(len(cjk) - 1)]
+    out += [cjk[i : i + 2] for i in range(len(cjk) - 1)]
     return out
 
 
@@ -48,7 +48,12 @@ def surface():
     for s in rc.all_specs():
         params = " ".join(p.name for p in (getattr(s, "params", None) or []))
         t: list = []
-        for f in (s.name, getattr(s, "title", "") or "", params, getattr(s, "doc", "") or ""):
+        for f in (
+            s.name,
+            getattr(s, "title", "") or "",
+            params,
+            getattr(s, "doc", "") or "",
+        ):
             t += tok(f)
         names.append(s.name)
         docs.append(t)
@@ -78,11 +83,14 @@ def bm25(docs, k1=1.5, b=0.75):
             out.append((s, i))
         out.sort(reverse=True)
         return out
+
     return score
 
 
 def main() -> int:
-    sample = json.loads((ROOT / "output" / "rag-sample.json").read_text(encoding="utf-8"))
+    sample = json.loads(
+        (ROOT / "output" / "rag-sample.json").read_text(encoding="utf-8")
+    )
     recs, strata = sample["records"], sample["strata"]
     stratum_of = {t: k for k, v in strata.items() for t in v}
     qdir = ROOT / "output" / "rag-queries"
@@ -93,8 +101,10 @@ def main() -> int:
             queries[row["tool"]] = row
             if row.get("understood") is False:
                 unclear.append(row["tool"])
-    print("★ 抽样 %d 个工具 · 收到查询 %d 条 · ★ 标「看不懂」的 %d 条"
-          % (len(recs), len(queries), len(unclear)))
+    print(
+        "★ 抽样 %d 个工具 · 收到查询 %d 条 · ★ 标「看不懂」的 %d 条"
+        % (len(recs), len(queries), len(unclear))
+    )
     if not queries:
         print("★ 还没有查询产出 —— 等 49 路回来再跑")
         return 0
@@ -108,13 +118,18 @@ def main() -> int:
             continue
         idx = names.index(tool)
         fam = {}
-        for key, q in (("CN", row.get("cn_query")), ("EN-nat", row.get("en_query")),
-                       ("EN-mech", tool.removeprefix("solidworks_").replace("_", " "))):
+        for key, q in (
+            ("CN", row.get("cn_query")),
+            ("EN-nat", row.get("en_query")),
+            ("EN-mech", tool.removeprefix("solidworks_").replace("_", " ")),
+        ):
             if not q:
                 fam[key] = None
                 continue
             ranked = score(q)
-            fam[key] = next((r + 1 for r, (_s, i) in enumerate(ranked) if i == idx), None)
+            fam[key] = next(
+                (r + 1 for r, (_s, i) in enumerate(ranked) if i == idx), None
+            )
             if key == "CN":
                 fam["_top1_cn"] = names[ranked[0][1]] if ranked else ""
         per.append({"tool": tool, "stratum": stratum_of.get(tool, "?"), **fam})
@@ -122,36 +137,86 @@ def main() -> int:
     print()
     print("| 层 | 数 | CN top-5 | EN-nat top-5 | EN-mech top-5 | 三族全 miss |")
     print("|---|---:|---:|---:|---:|---:|")
-    for st in ("C1_cold_no_cn_doc_small_domain", "C2_cold_thin_doc",
-               "C3_non_api_selfmade", "H_hot_baseline"):
+    for st in (
+        "C1_cold_no_cn_doc_small_domain",
+        "C2_cold_thin_doc",
+        "C3_non_api_selfmade",
+        "H_hot_baseline",
+    ):
         rows = [r for r in per if r["stratum"] == st]
         if not rows:
             continue
+
         def h(k, fam):
             return sum(1 for r in rows if r[fam] and r[fam] <= k)
-        miss = sum(1 for r in rows if all((r[f] is None or r[f] > 10)
-                                          for f in ("CN", "EN-nat", "EN-mech")))
-        print("| %s | %d | %d/%d = %.0f%% | %d/%d = %.0f%% | %d/%d = %.0f%% | **%d** |"
-              % (st.split("_")[0], len(rows), h(5, "CN"), len(rows), 100.0 * h(5, "CN") / len(rows),
-                 h(5, "EN-nat"), len(rows), 100.0 * h(5, "EN-nat") / len(rows),
-                 h(5, "EN-mech"), len(rows), 100.0 * h(5, "EN-mech") / len(rows), miss))
+
+        miss = sum(
+            1
+            for r in rows
+            if all((r[f] is None or r[f] > 10) for f in ("CN", "EN-nat", "EN-mech"))
+        )
+        print(
+            "| %s | %d | %d/%d = %.0f%% | %d/%d = %.0f%% | %d/%d = %.0f%% | **%d** |"
+            % (
+                st.split("_")[0],
+                len(rows),
+                h(5, "CN"),
+                len(rows),
+                100.0 * h(5, "CN") / len(rows),
+                h(5, "EN-nat"),
+                len(rows),
+                100.0 * h(5, "EN-nat") / len(rows),
+                h(5, "EN-mech"),
+                len(rows),
+                100.0 * h(5, "EN-mech") / len(rows),
+                miss,
+            )
+        )
     print()
-    allmiss = [r for r in per if all((r[f] is None or r[f] > 10)
-                                     for f in ("CN", "EN-nat", "EN-mech"))]
-    print("★★ **三族全部掉出 top-10** 的共 **%d / %d** ⇒ ★ 这些是「检索救不回来」的:" % (len(allmiss), len(per)))
+    allmiss = [
+        r
+        for r in per
+        if all((r[f] is None or r[f] > 10) for f in ("CN", "EN-nat", "EN-mech"))
+    ]
+    print(
+        "★★ **三族全部掉出 top-10** 的共 **%d / %d** ⇒ ★ 这些是「检索救不回来」的:"
+        % (len(allmiss), len(per))
+    )
     for r in allmiss:
         print("     [%s] %s" % (r["stratum"].split("_")[0], r["tool"]))
     print()
-    print("★ 同族误选（CN 的 top-1 是它的兄弟）: %d / %d"
-          % (sum(1 for r in per if r.get("_top1_cn")
-                 and r["_top1_cn"] != r["tool"]
-                 and r["_top1_cn"].rsplit("_", 1)[0] == r["tool"].rsplit("_", 1)[0]), len(per)))
-    print("★★ 标「看不懂」的 **%d** 个 ⇒ ★ 这是**描述质量**的直接缺陷（不是检索问题）:" % len(unclear))
+    print(
+        "★ 同族误选（CN 的 top-1 是它的兄弟）: %d / %d"
+        % (
+            sum(
+                1
+                for r in per
+                if r.get("_top1_cn")
+                and r["_top1_cn"] != r["tool"]
+                and r["_top1_cn"].rsplit("_", 1)[0] == r["tool"].rsplit("_", 1)[0]
+            ),
+            len(per),
+        )
+    )
+    print(
+        "★★ 标「看不懂」的 **%d** 个 ⇒ ★ 这是**描述质量**的直接缺陷（不是检索问题）:"
+        % len(unclear)
+    )
     for t in unclear[:20]:
         print("     %s" % t)
     (ROOT / "output" / "rag-cold-result.json").write_text(
-        json.dumps({"n": len(per), "per": per, "all_miss": [r["tool"] for r in allmiss],
-                    "unclear": unclear}, ensure_ascii=False, indent=1), encoding="utf-8")
+        json.dumps(
+            {
+                "n": len(per),
+                "per": per,
+                "all_miss": [r["tool"] for r in allmiss],
+                "unclear": unclear,
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
     print("★ 明细: output/rag-cold-result.json")
     return 0
 

@@ -48,6 +48,7 @@ OUT = REPO / "output" / "swept-flange-evidence.json"
 
 def _counts(model) -> tuple:
     from sw_connect import get_com_member
+
     nf = nb = None
     try:
         f = get_com_member(model, "FirstFeature")
@@ -57,11 +58,11 @@ def _counts(model) -> tuple:
             guard += 1
             f = get_com_member(f, "GetNextFeature")
         nf = n
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         nf = None
     try:
         nb = len(list(get_com_member(model, "GetBodies2", 0, False) or []))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         nb = None
     return nf, nb
 
@@ -70,13 +71,15 @@ def main() -> int:
     from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_part as P
     from scripts import sw_sheet_metal as SM
-    from scripts import sw_weldment as W          # noqa: F401  (★ 包上下文：本仓的导入法)
+    from scripts import sw_weldment as W  # noqa: F401  (★ 包上下文：本仓的导入法)
 
     app, _ = connect_solidworks(visible=True)
-    R: dict = {"★_目的": "验 create_swept_flange（★ sheet_metal_creation 里唯一未取证的一项）",
-               "★_官方依据": "IFeatureManager.InsertSheetMetalSweptFlange（20 参）",
-               "★_判据": "① 特征数增量 ② 实体数增量 ③ 钣金读数 ④ 有没有 0x80010105（★ 含几何读数）",
-               "steps": []}
+    R: dict = {
+        "★_目的": "验 create_swept_flange（★ sheet_metal_creation 里唯一未取证的一项）",
+        "★_官方依据": "IFeatureManager.InsertSheetMetalSweptFlange（20 参）",
+        "★_判据": "① 特征数增量 ② 实体数增量 ③ 钣金读数 ④ 有没有 0x80010105（★ 含几何读数）",
+        "steps": [],
+    }
 
     def rec(tag, **kw):
         R["steps"].append(dict(项=tag, **kw))
@@ -87,15 +90,24 @@ def main() -> int:
         #: ── ① 基体法兰（★ 前置，★ 上一轮已证 ok）──────────────────
         with P.sketch(model, "Front Plane") as sk1:
             sm_ = get_com_member(model, "SketchManager")
-            for a, b in (((-0.06, -0.04), (0.06, -0.04)), ((0.06, -0.04), (0.06, 0.04)),
-                         ((0.06, 0.04), (-0.06, 0.04)), ((-0.06, 0.04), (-0.06, -0.04))):
+            for a, b in (
+                ((-0.06, -0.04), (0.06, -0.04)),
+                ((0.06, -0.04), (0.06, 0.04)),
+                ((0.06, 0.04), (-0.06, 0.04)),
+                ((-0.06, 0.04), (-0.06, -0.04)),
+            ):
                 get_com_member(sm_, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
         b0 = _counts(model)
-        SM.create_base_flange(model, sk1, SM.BaseFlangeSpec(thickness=2.0,
-                                                            bend_radius=1.0, depth=20.0))
+        SM.create_base_flange(
+            model, sk1, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
+        )
         b1 = _counts(model)
-        rec("① 基体法兰（前置）", 特征数=f"{b0[0]}→{b1[0]}", 实体数=f"{b0[1]}→{b1[1]}",
-            ok=(b1[0] or 0) > (b0[0] or 0))
+        rec(
+            "① 基体法兰（前置）",
+            特征数=f"{b0[0]}→{b1[0]}",
+            实体数=f"{b0[1]}→{b1[1]}",
+            ok=(b1[0] or 0) > (b0[0] or 0),
+        )
 
         #: ── ② 造扫掠路径 + 轮廓 ──────────────────────────────────────
         #: ★★★★★★ **修（★ 第一版两处错，★ 全部是事实 517）** —— ★ 能力层的 docstring **
@@ -135,8 +147,11 @@ def main() -> int:
         #:   **关掉之后特征树里的真名不一定还是它** ✓
         #: ⇒ ★ 正解：★ **遍历特征树、取**最后一个草图**的**真名**、★ 再 `FeatureByName`*
         #: * ✓
-        names = [n for n in (P.feature_names(model) or [])
-                 if str(n).startswith("草图") or str(n).lower().startswith("sketch")]
+        names = [
+            n
+            for n in (P.feature_names(model) or [])
+            if str(n).startswith("草图") or str(n).lower().startswith("sketch")
+        ]
         R["草图名们"] = names
         prof_obj = None
         if names:
@@ -152,7 +167,7 @@ def main() -> int:
                 R["体上边数"] = len(edges)
                 path_obj = edges[0] if edges else None
             R["路径对象"] = type(path_obj).__name__ if path_obj is not None else None
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             R["取边"] = "err: %s" % str(exc)[:140]
         rec("② 路径/轮廓", 路径=type(path_obj).__name__, 轮廓=type(prof_obj).__name__)
 
@@ -191,13 +206,21 @@ def main() -> int:
             R["实体增量"] = db
             R["★_ok"] = bool((df or 0) > 0 or (db or 0) > 0)
             R["★_错误类别"] = "（★ 没报错）"
-            rec("③ create_swept_flange", 特征数=f"{b2[0]}→{b3[0]}", 实体数=f"{b2[1]}→{b3[1]}",
-                ok=R["★_ok"])
-        except Exception as exc:                                          # noqa: BLE001
+            rec(
+                "③ create_swept_flange",
+                特征数=f"{b2[0]}→{b3[0]}",
+                实体数=f"{b2[1]}→{b3[1]}",
+                ok=R["★_ok"],
+            )
+        except Exception as exc:  # noqa: BLE001
             s = "%s: %s" % (type(exc).__name__, str(exc))
             R["异常"] = s[:260]
             R["★_ok"] = False
-            if ("0x80010105" in s) or ("-2147417851" in s) or ("服务器出现意外情况" in s):
+            if (
+                ("0x80010105" in s)
+                or ("-2147417851" in s)
+                or ("服务器出现意外情况" in s)
+            ):
                 R["★_错误类别"] = "★ 指针族迹象（0x80010105）"
             elif ("-2147352561" in s) or ("非选择性的参数" in s):
                 R["★_错误类别"] = "★ 我的实参不对（非选择性的参数）"
@@ -210,19 +233,35 @@ def main() -> int:
         #: ── ④ 钣金读数（★ 独立的几何判据）──────────────────────────
         try:
             ev = SM.sheet_metal_evidence(model)
-            R["钣金读数"] = {k: ev.get(k) for k in
-                             ("thickness_m", "has_base_flange",
-                              "all_solid_bodies_are_sheet_metal")} if isinstance(ev, dict) else str(ev)
-            rec("④ 钣金读数", **{k: (R["钣金读数"] or {}).get(k) for k in
-                              ("thickness_m", "has_base_flange")})
-        except Exception as exc:                                          # noqa: BLE001
+            R["钣金读数"] = (
+                {
+                    k: ev.get(k)
+                    for k in (
+                        "thickness_m",
+                        "has_base_flange",
+                        "all_solid_bodies_are_sheet_metal",
+                    )
+                }
+                if isinstance(ev, dict)
+                else str(ev)
+            )
+            rec(
+                "④ 钣金读数",
+                **{
+                    k: (R["钣金读数"] or {}).get(k)
+                    for k in ("thickness_m", "has_base_flange")
+                },
+            )
+        except Exception as exc:  # noqa: BLE001
             R["钣金读数"] = "err: %s" % str(exc)[:150]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["★_脚手架失败"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         R["★_ok"] = None
         rec("★ 脚手架失败", 异常=str(exc)[:150])
 
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ ★_ok =", R.get("★_ok"), "· 类别 =", R.get("★_错误类别"))
     print("★ wrote", OUT)
     return 0

@@ -33,7 +33,9 @@ OUT = REPO / "output" / "contract-spotcheck.json"
 #: ★ 形如 `IFoo.Bar(...)` 或 `IFoo::Bar`
 PAT_QUALIFIED = re.compile(r"\b(I[A-Z][A-Za-z0-9_]+)(?:::|\.)([A-Z][A-Za-z0-9_]+)\s*\(")
 #: ★ 形如 `Bar( System.int X, System.bool Y )`（★ 带 `System.` 的签名行）
-PAT_SIGLINE = re.compile(r"`\s*(?:System\.[A-Za-z0-9_.\[\]]+\s+)?([A-Z][A-Za-z0-9_]+)\s*\(([^)`]{0,400})\)\s*`")
+PAT_SIGLINE = re.compile(
+    r"`\s*(?:System\.[A-Za-z0-9_.\[\]]+\s+)?([A-Z][A-Za-z0-9_]+)\s*\(([^)`]{0,400})\)\s*`"
+)
 
 
 def _n_params(sig: str) -> int:
@@ -50,8 +52,14 @@ def _official(iface: str, member: str):
 
 
 def main() -> int:
-    targets = sorted((REPO / "specs/202-user-coverage-gaps/recon/verify50").glob("vd50-C-*.md"))
-    targets += sorted((REPO / "specs/202-user-coverage-gaps/recon/verify50").glob("vd50-A-sheetmetal.md"))
+    targets = sorted(
+        (REPO / "specs/202-user-coverage-gaps/recon/verify50").glob("vd50-C-*.md")
+    )
+    targets += sorted(
+        (REPO / "specs/202-user-coverage-gaps/recon/verify50").glob(
+            "vd50-A-sheetmetal.md"
+        )
+    )
     #: ★ 去重
     seen_files, files = set(), []
     for f in targets:
@@ -93,7 +101,10 @@ def main() -> int:
     n = 0
     for r in rows:
         if "找不到" in r.get("判定", ""):
-            print("   %-18s %-34s %s" % (r["file"][:17], r["iface"] + "." + r["member"], r["判定"]))
+            print(
+                "   %-18s %-34s %s"
+                % (r["file"][:17], r["iface"] + "." + r["member"], r["判定"])
+            )
             n += 1
             if n >= 12:
                 break

@@ -76,7 +76,9 @@ def _property_value(model, configuration_name: str, names: tuple[str, ...]) -> s
 SW_ALL_CONFIG = 2
 
 
-def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[str, Any]]:
+def collect_assembly_bom(
+    model, *, include_excluded: bool = False
+) -> list[dict[str, Any]]:
     """收集装配体顶层组件并按文件路径和配置汇总数量。"""
     if int(get_com_member(model, "GetType")) != 2:
         raise ValueError("BOM 清单只支持装配体文档")
@@ -89,7 +91,7 @@ def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[
         #:     「**Obsolete. Superseded by [[IComponent2::GetExcludeFromBOM2]] and [[…**」
         #:     ★ 旧的是**属性**（`System.bool ExcludeFromBOM {get; set;}`）
         #:     ★★ 后继 `GetExcludeFromBOM2(Config_opt, Config_names)` 是**方法**（2 参）
-        #: —— ★ `## Parameters` 逐字：「**Config_opt**: Configuration option as defined 
+        #: —— ★ `## Parameters` 逐字：「**Config_opt**: Configuration option as defined
         #: in
         #:        [[swInConfigurationOpts_e]]」
         #: ⇒ ★ 传 `swAllConfiguration = 2`（★ 枚举值本会话已核）· `Config_names` 传 `Non
@@ -114,23 +116,37 @@ def collect_assembly_bom(model, *, include_excluded: bool = False) -> list[dict[
             grouped[key]["quantity"] += 1
             continue
         referenced_model = get_com_member(component, "GetModelDoc2")
-        part_number = _property_value(
-            referenced_model,
-            configuration,
-            ("PartNumber", "Part Number", "零件代号", "零件号"),
-        ) or Path(path).stem or name
+        part_number = (
+            _property_value(
+                referenced_model,
+                configuration,
+                ("PartNumber", "Part Number", "零件代号", "零件号"),
+            )
+            or Path(path).stem
+            or name
+        )
         grouped[key] = {
             "item": 0,
             "part_number": part_number,
-            "description": _property_value(referenced_model, configuration, ("Description", "描述")),
-            "material": _property_value(referenced_model, configuration, ("Material", "材料")),
+            "description": _property_value(
+                referenced_model, configuration, ("Description", "描述")
+            ),
+            "material": _property_value(
+                referenced_model, configuration, ("Material", "材料")
+            ),
             "quantity": 1,
             "file": path,
             "configuration": configuration,
             "component": name,
             "excluded_from_bom": excluded,
         }
-    rows = sorted(grouped.values(), key=lambda row: (row["part_number"].casefold(), row["configuration"].casefold()))
+    rows = sorted(
+        grouped.values(),
+        key=lambda row: (
+            row["part_number"].casefold(),
+            row["configuration"].casefold(),
+        ),
+    )
     for index, row in enumerate(rows, start=1):
         row["item"] = index
     return rows
@@ -151,8 +167,15 @@ def export_assembly_bom_csv(
     before = _file_signature(target)
     rows = collect_assembly_bom(model, include_excluded=include_excluded)
     headers = [
-        "item", "part_number", "description", "material", "quantity",
-        "file", "configuration", "component", "excluded_from_bom",
+        "item",
+        "part_number",
+        "description",
+        "material",
+        "quantity",
+        "file",
+        "configuration",
+        "component",
+        "excluded_from_bom",
     ]
     with target.open("w", newline="", encoding="utf-8-sig") as stream:
         writer = csv.DictWriter(stream, fieldnames=headers)
@@ -170,18 +193,40 @@ def export_assembly_bom_csv(
         "sha256": _sha256(target) if produced else "",
         "produced_this_run": produced,
         "review_required": True,
-        "limitations": ["CSV 为装配组件属性清单，必须与 SolidWorks 原生 BOM 和工程图人工核对"],
+        "limitations": [
+            "CSV 为装配组件属性清单，必须与 SolidWorks 原生 BOM 和工程图人工核对"
+        ],
     }
 
 
-def build_bom_traceability(bom_rows, *, model_path="", drawing_path="", review_path="") -> dict[str, Any]:
+def build_bom_traceability(
+    bom_rows, *, model_path="", drawing_path="", review_path=""
+) -> dict[str, Any]:
     """@brief 建立 BOM、模型、工程图和复核报告之间的可追溯关系。"""
     rows = list(bom_rows or [])
     checks = [
-        {"id": "bom-not-empty", "status": "pass" if rows else "warning", "message": "BOM 包含组件行" if rows else "BOM 为空，需要确认是否为单零件或读取失败"},
-        {"id": "model-reference", "status": "pass" if model_path else "warning", "message": "已关联模型路径" if model_path else "未提供模型路径"},
-        {"id": "drawing-reference", "status": "pass" if drawing_path else "warning", "message": "已关联工程图路径" if drawing_path else "未提供工程图路径"},
-        {"id": "review-reference", "status": "pass" if review_path else "warning", "message": "已关联复核报告" if review_path else "未提供复核报告"},
+        {
+            "id": "bom-not-empty",
+            "status": "pass" if rows else "warning",
+            "message": "BOM 包含组件行"
+            if rows
+            else "BOM 为空，需要确认是否为单零件或读取失败",
+        },
+        {
+            "id": "model-reference",
+            "status": "pass" if model_path else "warning",
+            "message": "已关联模型路径" if model_path else "未提供模型路径",
+        },
+        {
+            "id": "drawing-reference",
+            "status": "pass" if drawing_path else "warning",
+            "message": "已关联工程图路径" if drawing_path else "未提供工程图路径",
+        },
+        {
+            "id": "review-reference",
+            "status": "pass" if review_path else "warning",
+            "message": "已关联复核报告" if review_path else "未提供复核报告",
+        },
     ]
     return {
         "status": "pass" if rows and model_path and drawing_path else "warning",
@@ -191,7 +236,16 @@ def build_bom_traceability(bom_rows, *, model_path="", drawing_path="", review_p
         "model_path": str(model_path or ""),
         "drawing_path": str(drawing_path or ""),
         "review_path": str(review_path or ""),
-        "rows": [{"item": row.get("item"), "part_number": row.get("part_number"), "file": row.get("file"), "configuration": row.get("configuration"), "quantity": row.get("quantity")} for row in rows],
+        "rows": [
+            {
+                "item": row.get("item"),
+                "part_number": row.get("part_number"),
+                "file": row.get("file"),
+                "configuration": row.get("configuration"),
+                "quantity": row.get("quantity"),
+            }
+            for row in rows
+        ],
         "checks": checks,
         "manual_review_required": True,
         "retryable": False,
@@ -210,7 +264,9 @@ def _status_codes(value) -> list[int]:
         return [int(value)]
 
 
-def _collect_new_outputs(target: Path, existing_files: dict[str, tuple[int, int] | None]) -> list[dict[str, Any]]:
+def _collect_new_outputs(
+    target: Path, existing_files: dict[str, tuple[int, int] | None]
+) -> list[dict[str, Any]]:
     """@brief 收集本轮 Pack and Go 实际新写入或覆盖的输出文件。"""
     outputs = []
     for path in sorted(item for item in target.rglob("*") if item.is_file()):
@@ -218,12 +274,14 @@ def _collect_new_outputs(target: Path, existing_files: dict[str, tuple[int, int]
         before = existing_files.get(str(path))
         produced = after is not None and after != before
         if produced:
-            outputs.append({
-                "path": str(path),
-                "size_bytes": after[0],
-                "sha256": _sha256(path),
-                "produced_this_run": True,
-            })
+            outputs.append(
+                {
+                    "path": str(path),
+                    "size_bytes": after[0],
+                    "sha256": _sha256(path),
+                    "produced_this_run": True,
+                }
+            )
     return outputs
 
 
@@ -231,7 +289,7 @@ def _document_dependency_paths(model, source_path: str) -> list[str]:
     """@brief 读取当前文档引用路径，用于校验 Pack and Go 是否漏包。"""
     try:
         #: ★★★★ 2026-10-04（接手轮）**换掉一个官方废弃成员** ——
-        #: 处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步 
+        #: 处置阶段 2 · T1（★ `tools/scan_obsolete_safe.py` 的真命中）★ 逐条流程第 ① 步
         #: ✓
         #:   ★ **官方逐字**（★ `C:\swapi\types\IModelDoc2\GetDependencies2.md`）：
         #:     「**Obsolete. Superseded by `IModelDocExtension::GetDependencies`**.」✓
@@ -249,8 +307,10 @@ def _document_dependency_paths(model, source_path: str) -> list[str]:
         #: （★ 不要 broken refs、★ 不要 imported paths —— ★ 与原来那三个的语义**同一口径
         #: **）✓
         ext = get_com_member(model, "Extension")
-        dependencies = get_com_member(
-            ext, "GetDependencies", False, True, False, False, False) or []
+        dependencies = (
+            get_com_member(ext, "GetDependencies", False, True, False, False, False)
+            or []
+        )
     except Exception:
         return []
     values = list(dependencies)
@@ -279,7 +339,9 @@ def _optional_com_member(obj, name, *args, default=None):
 def _is_external_reference(path: str, source_path: str) -> bool | None:
     """@brief 判断引用是否位于装配体目录树外。"""
     try:
-        Path(path).expanduser().resolve().relative_to(Path(source_path).expanduser().resolve().parent)
+        Path(path).expanduser().resolve().relative_to(
+            Path(source_path).expanduser().resolve().parent
+        )
         return False
     except ValueError:
         return True
@@ -298,7 +360,11 @@ def _toolbox_state(component, referenced_model, path: str) -> tuple[str, str]:
     except (TypeError, ValueError):
         pass
     normalised = str(path).replace("/", "\\").casefold()
-    if "\\toolbox\\" in normalised or "\\solidworks data\\" in normalised or "\\browser\\" in normalised:
+    if (
+        "\\toolbox\\" in normalised
+        or "\\solidworks data\\" in normalised
+        or "\\browser\\" in normalised
+    ):
         return "candidate", "path_heuristic"
     return "unknown", "unavailable"
 
@@ -331,21 +397,36 @@ def _collect_component_audit_records(model, source_path: str) -> list[dict[str, 
     for component in components:
         path = str(_optional_com_member(component, "GetPathName", default="") or "")
         referenced_model = _optional_com_member(component, "GetModelDoc2")
-        toolbox_state, toolbox_evidence = _toolbox_state(component, referenced_model, path)
+        toolbox_state, toolbox_evidence = _toolbox_state(
+            component, referenced_model, path
+        )
         load_state, suppression_code = _suppression_state(component)
-        records.append({
-            "component": str(_optional_com_member(component, "Name2", default="") or Path(path).stem or "virtual"),
-            "path": path,
-            "configuration": str(_optional_com_member(component, "ReferencedConfiguration", default="") or ""),
-            "load_state": load_state,
-            "suppression_code": suppression_code,
-            "is_suppressed": load_state == "suppressed",
-            "is_lightweight": load_state in {"lightweight", "fully_lightweight"},
-            "toolbox_state": toolbox_state,
-            "toolbox_evidence": toolbox_evidence,
-            "external_reference": _is_external_reference(path, source_path) if path else None,
-            "source_exists": Path(path).is_file() if path else False,
-        })
+        records.append(
+            {
+                "component": str(
+                    _optional_com_member(component, "Name2", default="")
+                    or Path(path).stem
+                    or "virtual"
+                ),
+                "path": path,
+                "configuration": str(
+                    _optional_com_member(
+                        component, "ReferencedConfiguration", default=""
+                    )
+                    or ""
+                ),
+                "load_state": load_state,
+                "suppression_code": suppression_code,
+                "is_suppressed": load_state == "suppressed",
+                "is_lightweight": load_state in {"lightweight", "fully_lightweight"},
+                "toolbox_state": toolbox_state,
+                "toolbox_evidence": toolbox_evidence,
+                "external_reference": _is_external_reference(path, source_path)
+                if path
+                else None,
+                "source_exists": Path(path).is_file() if path else False,
+            }
+        )
     return records
 
 
@@ -355,7 +436,10 @@ def _associated_drawing_paths(source_path: str, dependencies: list[str]) -> list
     seen = set()
     for raw_path in [source_path, *dependencies]:
         model_path = Path(raw_path).expanduser()
-        if model_path.suffix.casefold() not in {".sldprt", ".sldasm"} or not model_path.parent.is_dir():
+        if (
+            model_path.suffix.casefold() not in {".sldprt", ".sldasm"}
+            or not model_path.parent.is_dir()
+        ):
             continue
         try:
             matches = [
@@ -388,15 +472,28 @@ def _required_pack_dependency_paths(
     metadata: dict[str, list[dict[str, Any]]] = {}
     for record in component_records:
         if record["path"]:
-            metadata.setdefault(str(Path(record["path"]).resolve()).casefold(), []).append(record)
+            metadata.setdefault(
+                str(Path(record["path"]).resolve()).casefold(), []
+            ).append(record)
     required = []
     seen = set()
     for raw_path in dependencies:
         path = str(Path(raw_path).expanduser().resolve())
         records = metadata.get(path.casefold(), [])
-        if records and not include_suppressed and all(record["is_suppressed"] for record in records):
+        if (
+            records
+            and not include_suppressed
+            and all(record["is_suppressed"] for record in records)
+        ):
             continue
-        if records and not include_toolbox_components and all(record["toolbox_state"] in {"standard", "copied", "candidate"} for record in records):
+        if (
+            records
+            and not include_toolbox_components
+            and all(
+                record["toolbox_state"] in {"standard", "copied", "candidate"}
+                for record in records
+            )
+        ):
             continue
         if path.casefold() not in seen:
             seen.add(path.casefold())
@@ -430,17 +527,27 @@ def build_pack_and_go_audit_matrix(
         include_toolbox_components=include_toolbox_components,
         include_suppressed=include_suppressed,
     )
-    required_keys = {str(Path(path).resolve()).casefold() for path in required_dependencies}
+    required_keys = {
+        str(Path(path).resolve()).casefold() for path in required_dependencies
+    }
     output_by_name: dict[str, list[dict[str, Any]]] = {}
     for output in outputs:
-        output_by_name.setdefault(Path(output["path"]).name.casefold(), []).append(output)
+        output_by_name.setdefault(Path(output["path"]).name.casefold(), []).append(
+            output
+        )
     metadata_by_path: dict[str, list[dict[str, Any]]] = {}
     for record in component_records:
         if record["path"]:
-            metadata_by_path.setdefault(str(Path(record["path"]).resolve()).casefold(), []).append(record)
+            metadata_by_path.setdefault(
+                str(Path(record["path"]).resolve()).casefold(), []
+            ).append(record)
 
     source = str(Path(source_path).expanduser().resolve())
-    candidate_paths = [source, *[str(Path(item).expanduser().resolve()) for item in dependencies], *associated_drawings]
+    candidate_paths = [
+        source,
+        *[str(Path(item).expanduser().resolve()) for item in dependencies],
+        *associated_drawings,
+    ]
     seen = set()
     rows = []
     blocking_codes = []
@@ -460,10 +567,16 @@ def build_pack_and_go_audit_matrix(
             blocking_codes.append("SW_PACK_AUDIT_OUTPUT_NAME_AMBIGUOUS")
         included = len(matches) == 1
         source_exists = Path(path).is_file()
-        configurations = sorted({record["configuration"] for record in records if record["configuration"]})
+        configurations = sorted(
+            {record["configuration"] for record in records if record["configuration"]}
+        )
         load_states = sorted({record["load_state"] for record in records})
         toolbox_states = sorted({record["toolbox_state"] for record in records})
-        external_reference = any(record["external_reference"] is True for record in records) if records else _is_external_reference(path, source)
+        external_reference = (
+            any(record["external_reference"] is True for record in records)
+            if records
+            else _is_external_reference(path, source)
+        )
         if not source_exists:
             blocking_codes.append("SW_PACK_AUDIT_SOURCE_REFERENCE_MISSING")
         if required and not included:
@@ -473,7 +586,9 @@ def build_pack_and_go_audit_matrix(
                 blocking_codes.append("SW_PACK_AUDIT_ASSOCIATED_DRAWING_MISSING")
             elif external_reference:
                 blocking_codes.append("SW_PACK_AUDIT_EXTERNAL_REFERENCE_MISSING")
-            elif any(state in {"standard", "copied", "candidate"} for state in toolbox_states):
+            elif any(
+                state in {"standard", "copied", "candidate"} for state in toolbox_states
+            ):
                 blocking_codes.append("SW_PACK_AUDIT_TOOLBOX_COMPONENT_MISSING")
             elif any(state == "suppressed" for state in load_states):
                 blocking_codes.append("SW_PACK_AUDIT_SUPPRESSED_COMPONENT_MISSING")
@@ -483,53 +598,139 @@ def build_pack_and_go_audit_matrix(
             review_codes.append("SW_PACK_AUDIT_EXTERNAL_REFERENCE_REVIEW_REQUIRED")
         if configurations:
             review_codes.append("SW_PACK_AUDIT_CONFIGURATION_CONTENT_REVIEW_REQUIRED")
-        if any(state in {"lightweight", "fully_lightweight", "suppressed", "internal_id_mismatch"} for state in load_states):
+        if any(
+            state
+            in {
+                "lightweight",
+                "fully_lightweight",
+                "suppressed",
+                "internal_id_mismatch",
+            }
+            for state in load_states
+        ):
             review_codes.append("SW_PACK_AUDIT_COMPONENT_STATE_REVIEW_REQUIRED")
-        if include_toolbox_components and any(state in {"standard", "copied", "candidate", "unknown"} for state in toolbox_states):
+        if include_toolbox_components and any(
+            state in {"standard", "copied", "candidate", "unknown"}
+            for state in toolbox_states
+        ):
             review_codes.append("SW_PACK_AUDIT_TOOLBOX_REVIEW_REQUIRED")
-        rows.append({
-            "source_path": path,
-            "file_name": Path(path).name,
-            "reference_kind": "source" if is_source else "associated_drawing" if is_drawing else "model_dependency",
-            "required": required,
-            "source_exists": source_exists,
-            "included": included,
-            "output_path": matches[0]["path"] if included else None,
-            "produced_this_run": bool(matches[0].get("produced_this_run")) if included else False,
-            "external_reference": external_reference,
-            "configurations": configurations,
-            "load_states": load_states or ["unknown"],
-            "toolbox_states": toolbox_states or ["unknown"],
-        })
+        rows.append(
+            {
+                "source_path": path,
+                "file_name": Path(path).name,
+                "reference_kind": "source"
+                if is_source
+                else "associated_drawing"
+                if is_drawing
+                else "model_dependency",
+                "required": required,
+                "source_exists": source_exists,
+                "included": included,
+                "output_path": matches[0]["path"] if included else None,
+                "produced_this_run": bool(matches[0].get("produced_this_run"))
+                if included
+                else False,
+                "external_reference": external_reference,
+                "configurations": configurations,
+                "load_states": load_states or ["unknown"],
+                "toolbox_states": toolbox_states or ["unknown"],
+            }
+        )
 
     tracked_names = {row["file_name"].casefold() for row in rows}
     for output in outputs:
         if Path(output["path"]).name.casefold() not in tracked_names:
-            rows.append({
-                "source_path": None,
-                "file_name": Path(output["path"]).name,
-                "reference_kind": "untracked_output",
-                "required": False,
-                "source_exists": None,
-                "included": True,
-                "output_path": output["path"],
-                "produced_this_run": bool(output.get("produced_this_run")),
-                "external_reference": None,
-                "configurations": [],
-                "load_states": ["unknown"],
-                "toolbox_states": ["unknown"],
-            })
+            rows.append(
+                {
+                    "source_path": None,
+                    "file_name": Path(output["path"]).name,
+                    "reference_kind": "untracked_output",
+                    "required": False,
+                    "source_exists": None,
+                    "included": True,
+                    "output_path": output["path"],
+                    "produced_this_run": bool(output.get("produced_this_run")),
+                    "external_reference": None,
+                    "configurations": [],
+                    "load_states": ["unknown"],
+                    "toolbox_states": ["unknown"],
+                }
+            )
     blocking_codes = list(dict.fromkeys(blocking_codes))
     review_codes = list(dict.fromkeys(review_codes))
-    status = "blocked" if blocking_codes else "review_required" if review_codes else "pass"
+    status = (
+        "blocked" if blocking_codes else "review_required" if review_codes else "pass"
+    )
     required_rows = [row for row in rows if row["required"]]
     checks = [
-        {"id": "pack-required-files", "status": "pass" if all(row["included"] for row in required_rows) else "fail", "message": f"必需文件 {sum(row['included'] for row in required_rows)}/{len(required_rows)} 已落盘"},
-        {"id": "pack-external-references", "status": "warning" if any(row["external_reference"] for row in rows) else "pass", "message": "外部引用需要人工重开验证" if any(row["external_reference"] for row in rows) else "未发现项目目录外引用"},
-        {"id": "pack-toolbox", "status": "warning" if any("unknown" in row["toolbox_states"] or any(item in {"standard", "copied", "candidate"} for item in row["toolbox_states"]) for row in rows if row["reference_kind"] == "model_dependency") else "pass", "message": "Toolbox 状态已记录；候选或未知项需人工确认"},
-        {"id": "pack-configurations", "status": "warning" if any(row["configurations"] for row in rows) else "pass", "message": "配置引用已记录，配置内容仍需重开验证"},
-        {"id": "pack-component-states", "status": "warning" if any(any(state in {"lightweight", "fully_lightweight", "suppressed", "internal_id_mismatch"} for state in row["load_states"]) for row in rows) else "pass", "message": "压缩、轻化和异常组件状态已纳入矩阵"},
-        {"id": "pack-associated-drawings", "status": "pass" if all(row["included"] for row in rows if row["reference_kind"] == "associated_drawing" and row["required"]) else "fail", "message": "已核对本机存在的同名关联工程图"},
+        {
+            "id": "pack-required-files",
+            "status": "pass"
+            if all(row["included"] for row in required_rows)
+            else "fail",
+            "message": f"必需文件 {sum(row['included'] for row in required_rows)}/{len(required_rows)} 已落盘",
+        },
+        {
+            "id": "pack-external-references",
+            "status": "warning"
+            if any(row["external_reference"] for row in rows)
+            else "pass",
+            "message": "外部引用需要人工重开验证"
+            if any(row["external_reference"] for row in rows)
+            else "未发现项目目录外引用",
+        },
+        {
+            "id": "pack-toolbox",
+            "status": "warning"
+            if any(
+                "unknown" in row["toolbox_states"]
+                or any(
+                    item in {"standard", "copied", "candidate"}
+                    for item in row["toolbox_states"]
+                )
+                for row in rows
+                if row["reference_kind"] == "model_dependency"
+            )
+            else "pass",
+            "message": "Toolbox 状态已记录；候选或未知项需人工确认",
+        },
+        {
+            "id": "pack-configurations",
+            "status": "warning"
+            if any(row["configurations"] for row in rows)
+            else "pass",
+            "message": "配置引用已记录，配置内容仍需重开验证",
+        },
+        {
+            "id": "pack-component-states",
+            "status": "warning"
+            if any(
+                any(
+                    state
+                    in {
+                        "lightweight",
+                        "fully_lightweight",
+                        "suppressed",
+                        "internal_id_mismatch",
+                    }
+                    for state in row["load_states"]
+                )
+                for row in rows
+            )
+            else "pass",
+            "message": "压缩、轻化和异常组件状态已纳入矩阵",
+        },
+        {
+            "id": "pack-associated-drawings",
+            "status": "pass"
+            if all(
+                row["included"]
+                for row in rows
+                if row["reference_kind"] == "associated_drawing" and row["required"]
+            )
+            else "fail",
+            "message": "已核对本机存在的同名关联工程图",
+        },
     ]
     return {
         "schema_version": "1.0",
@@ -541,11 +742,29 @@ def build_pack_and_go_audit_matrix(
             "row_count": len(rows),
             "required_count": len(required_rows),
             "included_required_count": sum(row["included"] for row in required_rows),
-            "external_reference_count": sum(row["external_reference"] is True for row in rows),
-            "toolbox_candidate_count": sum(any(state in {"standard", "copied", "candidate"} for state in row["toolbox_states"]) for row in rows),
-            "configuration_reference_count": sum(len(row["configurations"]) for row in rows),
-            "suppressed_or_lightweight_count": sum(any(state in {"suppressed", "lightweight", "fully_lightweight"} for state in row["load_states"]) for row in rows),
-            "associated_drawing_count": sum(row["reference_kind"] == "associated_drawing" for row in rows),
+            "external_reference_count": sum(
+                row["external_reference"] is True for row in rows
+            ),
+            "toolbox_candidate_count": sum(
+                any(
+                    state in {"standard", "copied", "candidate"}
+                    for state in row["toolbox_states"]
+                )
+                for row in rows
+            ),
+            "configuration_reference_count": sum(
+                len(row["configurations"]) for row in rows
+            ),
+            "suppressed_or_lightweight_count": sum(
+                any(
+                    state in {"suppressed", "lightweight", "fully_lightweight"}
+                    for state in row["load_states"]
+                )
+                for row in rows
+            ),
+            "associated_drawing_count": sum(
+                row["reference_kind"] == "associated_drawing" for row in rows
+            ),
         },
         "blocking_error_codes": blocking_codes,
         "review_codes": review_codes,
@@ -555,7 +774,9 @@ def build_pack_and_go_audit_matrix(
     }
 
 
-def _missing_dependency_paths(dependencies: list[str], outputs: list[dict[str, Any]]) -> list[str]:
+def _missing_dependency_paths(
+    dependencies: list[str], outputs: list[dict[str, Any]]
+) -> list[str]:
     """@brief 按文件名检查原生 Pack and Go 输出是否缺少依赖文件。"""
     produced_names = {Path(item["path"]).name.casefold() for item in outputs}
     missing = []
@@ -570,18 +791,26 @@ def _missing_dependency_paths(dependencies: list[str], outputs: list[dict[str, A
     return missing
 
 
-def _safe_staged_destination(source: Path, sources: list[Path], target: Path, *, flatten: bool) -> Path:
+def _safe_staged_destination(
+    source: Path, sources: list[Path], target: Path, *, flatten: bool
+) -> Path:
     """@brief 计算依赖暂存路径，并阻止写出目标目录。"""
     target_root = target.resolve()
     if flatten:
         relative = Path(source.name)
     else:
         try:
-            common_root = Path(os.path.commonpath([str(item.resolve()) for item in sources]))
+            common_root = Path(
+                os.path.commonpath([str(item.resolve()) for item in sources])
+            )
             relative = source.resolve().relative_to(common_root)
         except (OSError, ValueError):
             # 不同盘符或外部引用没有共同根目录时，使用稳定的外部引用目录。
-            relative = Path("external") / hashlib.sha256(str(source.resolve()).encode("utf-8")).hexdigest()[:12] / source.name
+            relative = (
+                Path("external")
+                / hashlib.sha256(str(source.resolve()).encode("utf-8")).hexdigest()[:12]
+                / source.name
+            )
     destination = (target_root / relative).resolve()
     try:
         destination.relative_to(target_root)
@@ -618,16 +847,22 @@ def _stage_pack_and_go_dependencies(
 
     destinations: dict[str, Path] = {}
     for source in source_paths:
-        destination = _safe_staged_destination(source, source_paths, target, flatten=flatten)
+        destination = _safe_staged_destination(
+            source, source_paths, target, flatten=flatten
+        )
         key = str(destination).casefold()
         previous = destinations.get(key)
         if previous is not None and previous.resolve() != source.resolve():
-            raise RuntimeError(f"Pack and Go 暂存文件重名冲突: {previous.name} <- {previous}, {source}")
+            raise RuntimeError(
+                f"Pack and Go 暂存文件重名冲突: {previous.name} <- {previous}, {source}"
+            )
         destinations[key] = source
 
     staged_files: list[dict[str, Any]] = []
     for key, source in destinations.items():
-        destination = _safe_staged_destination(source, source_paths, target, flatten=flatten)
+        destination = _safe_staged_destination(
+            source, source_paths, target, flatten=flatten
+        )
         destination.parent.mkdir(parents=True, exist_ok=True)
         if source.resolve() == destination.resolve():
             raise RuntimeError(f"Pack and Go 暂存目标不能覆盖源文件: {source}")
@@ -635,40 +870,52 @@ def _stage_pack_and_go_dependencies(
         signature = _file_signature(destination)
         if signature is None or signature[0] <= 0:
             raise RuntimeError(f"Pack and Go 暂存文件为空: {destination}")
-        staged_files.append({
-            "source": str(source),
-            "path": str(destination),
-            "size_bytes": signature[0],
-            "sha256": _sha256(destination),
-            "produced_this_run": str(destination) not in existing_files or existing_files.get(str(destination)) != signature,
-        })
+        staged_files.append(
+            {
+                "source": str(source),
+                "path": str(destination),
+                "size_bytes": signature[0],
+                "sha256": _sha256(destination),
+                "produced_this_run": str(destination) not in existing_files
+                or existing_files.get(str(destination)) != signature,
+            }
+        )
 
     manifest_path = target / "cadstudio-pack-manifest.json"
     if manifest_path.exists() and str(manifest_path) in existing_files:
-        raise FileExistsError(f"Pack and Go 暂存清单已存在，未允许覆盖: {manifest_path}")
+        raise FileExistsError(
+            f"Pack and Go 暂存清单已存在，未允许覆盖: {manifest_path}"
+        )
     manifest = {
         "schemaVersion": "1.0",
         "backend": "staged_dependencies",
         "nativeFormat": "SolidWorks",
         "source": str(Path(source_path).expanduser().resolve()),
-        "dependencies": [str(Path(item).expanduser().resolve()) for item in dependencies],
+        "dependencies": [
+            str(Path(item).expanduser().resolve()) for item in dependencies
+        ],
         "files": staged_files,
         "limitations": [
             "这是基于 SolidWorks GetDependencies2 的本地暂存包，不是原生 IPackAndGo 清单",
             "外部引用、Toolbox、配置和工程图仍需人工在 SolidWorks 中复核",
         ],
     }
-    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     manifest_signature = _file_signature(manifest_path)
     if manifest_signature is None or manifest_signature[0] <= 0:
         raise RuntimeError(f"Pack and Go 暂存清单为空: {manifest_path}")
-    staged_files.append({
-        "path": str(manifest_path),
-        "size_bytes": manifest_signature[0],
-        "sha256": _sha256(manifest_path),
-        "produced_this_run": str(manifest_path) not in existing_files or existing_files.get(str(manifest_path)) != manifest_signature,
-        "kind": "manifest",
-    })
+    staged_files.append(
+        {
+            "path": str(manifest_path),
+            "size_bytes": manifest_signature[0],
+            "sha256": _sha256(manifest_path),
+            "produced_this_run": str(manifest_path) not in existing_files
+            or existing_files.get(str(manifest_path)) != manifest_signature,
+            "kind": "manifest",
+        }
+    )
     return {
         "backend": "staged_dependencies",
         "outputs": staged_files,
@@ -799,7 +1046,8 @@ def _get_pack_and_go(extension):
         errors.append(
             "zero-arg: 返回的不是 COM 对象（★ 类型 %s）—— ★ 多半是 bound method，"
             "即 `get_com_member` 的无参调用失败了，★ 它把**成员本身**回了回来"
-            % (type(package).__name__,))
+            % (type(package).__name__,)
+        )
     except Exception as exc:
         errors.append(f"zero-arg: {exc}")
 
@@ -863,7 +1111,7 @@ def _pywin32_pack_and_go(
     #:   ★★ **后继逐字**（★ `IPackAndGo/SetSaveToName2.md`）：
     #: ★ 签名 `SetSaveToName2(bool Override, string SaveToName)` ⇒ ★★ **同样 2 参、★ 同
     #: 名同型** ✓
-    #: ★★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now 
+    #: ★★★ 而它的 `## Remarks` 逐字：★ 「The difference between this method and the now
     #: obsolete
     #: `IPackAndGo::SetSaveToName` is that this method **supports saving to minimal fold
     #: ers**.
@@ -976,10 +1224,13 @@ def _comtypes_pack_and_go(
 
     _comtypes_module()
     from comtypes.gen import SldWorks
+
     major = _active_solidworks_major()
     progids = [f"SldWorks.Application.{major}"] if major is not None else []
     progids.append("SldWorks.Application")
-    sw, started_here, last_error = _connect_comtypes_solidworks(comtypes.client, progids)
+    sw, started_here, last_error = _connect_comtypes_solidworks(
+        comtypes.client, progids
+    )
     if sw is None:
         raise RuntimeError(f"comtypes 无法创建 SolidWorks 应用: {last_error}")
 
@@ -989,7 +1240,9 @@ def _comtypes_pack_and_go(
         if document_type is None:
             raise ValueError(f"Pack and Go 不支持的文档类型: {source_path}")
         # 强制加载完整模型并覆盖轻量化默认设置，否则 Pack and Go 只会看到顶层文档。
-        open_result = sw.OpenDoc6(str(source_path), document_type, 1 | 16 | 64 | 512, "")
+        open_result = sw.OpenDoc6(
+            str(source_path), document_type, 1 | 16 | 64 | 512, ""
+        )
         try:
             document = _extract_comtypes_model(open_result)
         except RuntimeError:
@@ -997,7 +1250,9 @@ def _comtypes_pack_and_go(
         extension = document.Extension.QueryInterface(SldWorks.IModelDocExtension)
         if document_type == 2:
             try:
-                document.QueryInterface(SldWorks.IAssemblyDoc).ResolveAllLightWeightComponents(True)
+                document.QueryInterface(
+                    SldWorks.IAssemblyDoc
+                ).ResolveAllLightWeightComponents(True)
                 document.ForceRebuild3(False)
             except Exception:
                 pass
@@ -1069,7 +1324,9 @@ def pack_and_go(
         raise ValueError("当前文档必须先保存到磁盘，才能执行 Pack and Go")
     target = Path(os.path.expandvars(str(output_dir))).expanduser().resolve()
     target.mkdir(parents=True, exist_ok=True)
-    existing_files = {str(path): _file_signature(path) for path in target.rglob("*") if path.is_file()}
+    existing_files = {
+        str(path): _file_signature(path) for path in target.rglob("*") if path.is_file()
+    }
     if existing_files and not overwrite:
         raise FileExistsError(f"Pack and Go 目标目录非空，未允许覆盖: {target}")
 
@@ -1126,7 +1383,9 @@ def pack_and_go(
             }
 
     native_outputs = list(result["outputs"])
-    native_missing_dependencies = _missing_dependency_paths(required_dependencies, native_outputs)
+    native_missing_dependencies = _missing_dependency_paths(
+        required_dependencies, native_outputs
+    )
     native_audit = build_pack_and_go_audit_matrix(
         source_path,
         dependencies,
@@ -1146,7 +1405,15 @@ def pack_and_go(
         and not native_audit["blocking_error_codes"]
     )
     staged = None
-    native_status = "pass" if success else "blocked" if (missing_dependencies or native_audit["blocking_error_codes"]) and result["status_codes"] and all(code == 0 for code in result["status_codes"]) else "failed"
+    native_status = (
+        "pass"
+        if success
+        else "blocked"
+        if (missing_dependencies or native_audit["blocking_error_codes"])
+        and result["status_codes"]
+        and all(code == 0 for code in result["status_codes"])
+        else "failed"
+    )
     if success:
         status = "pass"
         stage = "save"
@@ -1154,7 +1421,9 @@ def pack_and_go(
         retryable = False
         manual_review_required = True
         limitations = ["Pack and Go 产物仍需人工抽查外部引用、Toolbox 和工程图"]
-    elif (missing_dependencies or native_audit["blocking_error_codes"]) and fallback_policy == "stage_dependencies":
+    elif (
+        missing_dependencies or native_audit["blocking_error_codes"]
+    ) and fallback_policy == "stage_dependencies":
         try:
             staged = _stage_pack_and_go_dependencies(
                 source_path,
@@ -1192,17 +1461,27 @@ def pack_and_go(
             error_code = "SW_PACK_AND_GO_DEPENDENCY_ENUMERATION_INCOMPLETE"
             retryable = True
             manual_review_required = True
-            limitations = ["SolidWorks 原生 Pack and Go 未枚举全部依赖，暂存回退也未完成"]
-    elif (missing_dependencies or native_audit["blocking_error_codes"]) and result["status_codes"] and all(code == 0 for code in result["status_codes"]):
+            limitations = [
+                "SolidWorks 原生 Pack and Go 未枚举全部依赖，暂存回退也未完成"
+            ]
+    elif (
+        (missing_dependencies or native_audit["blocking_error_codes"])
+        and result["status_codes"]
+        and all(code == 0 for code in result["status_codes"])
+    ):
         # 严格原生策略：保留证据并阻止误交付。
         status = "blocked"
         stage = "review"
         error_code = "SW_PACK_AND_GO_DEPENDENCY_ENUMERATION_INCOMPLETE"
         retryable = True
         manual_review_required = True
-        limitations = ["SolidWorks 原生 Pack and Go 未枚举全部依赖；fallback_policy=blocked，未复制补齐"]
+        limitations = [
+            "SolidWorks 原生 Pack and Go 未枚举全部依赖；fallback_policy=blocked，未复制补齐"
+        ]
     else:
-        if fallback_policy == "stage_dependencies" and (required_dependencies or native_audit["blocking_error_codes"]):
+        if fallback_policy == "stage_dependencies" and (
+            required_dependencies or native_audit["blocking_error_codes"]
+        ):
             try:
                 staged = _stage_pack_and_go_dependencies(
                     source_path,
@@ -1268,7 +1547,9 @@ def pack_and_go(
         "source": source_path,
         "output_dir": str(target),
         "backend": result["backend"],
-        "native_backend": result.get("backend") if staged is None else "solidworks-native",
+        "native_backend": result.get("backend")
+        if staged is None
+        else "solidworks-native",
         "native_status": native_status,
         "document_count": result["document_count"],
         "status_codes": result["status_codes"],

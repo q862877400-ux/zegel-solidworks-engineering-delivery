@@ -33,14 +33,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dimension-edge-pairs-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "dimension-edge-pairs-evidence.json"
+)
 MAX_SUCCESS = 8
 
 
 def main() -> int:
     import sw_connect
-    from sw_part import (add_dimension_report, current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        add_dimension_report,
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from sw_selection_spec import entities_on_body, select_entity_by_index
 
     ev: dict = {"pairs": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -69,37 +79,64 @@ def main() -> int:
                 try:
                     a = select_entity_by_index(doc, "EDGE", i)
                     b = select_entity_by_index(doc, "EDGE", j, append=True)
-                except Exception as exc:                       # noqa: BLE001
-                    ev["pairs"].append({"pair": [i, j], "selected": None,
-                                        "created": False, "err": str(exc)[:80]})
+                except Exception as exc:  # noqa: BLE001
+                    ev["pairs"].append(
+                        {
+                            "pair": [i, j],
+                            "selected": None,
+                            "created": False,
+                            "err": str(exc)[:80],
+                        }
+                    )
                     continue
                 try:
-                    r = add_dimension_report(doc, 30.0, 20.0, selector="__current_selection__")
+                    r = add_dimension_report(
+                        doc, 30.0, 20.0, selector="__current_selection__"
+                    )
                     created = bool(r.get("dimension_created"))
                     if created:
                         n_ok += 1
-                    ev["pairs"].append({"pair": [i, j], "selected": r.get("selected"),
-                                        "created": created,
-                                        "err": (r.get("error") or "")[:70]})
-                except Exception as exc:                       # noqa: BLE001
-                    ev["pairs"].append({"pair": [i, j], "created": False,
-                                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:70])})
+                    ev["pairs"].append(
+                        {
+                            "pair": [i, j],
+                            "selected": r.get("selected"),
+                            "created": created,
+                            "err": (r.get("error") or "")[:70],
+                        }
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    ev["pairs"].append(
+                        {
+                            "pair": [i, j],
+                            "created": False,
+                            "err": "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                        }
+                    )
             if n_ok >= MAX_SUCCESS:
                 break
         ev["successes"] = [p["pair"] for p in ev["pairs"] if p.get("created")]
         ev["tried"] = len(ev["pairs"])
         ev["verdict"] = "pass" if ev["successes"] else "partial"
-        ev["note"] = ("★ 穷举 12 条边的两两组合（★ 事实 53 的正解：把猜测变成一张表），"
-                      "★ 记录**哪一类边对**能让 `AddDimension2` 真的建出尺寸。"
-                      "★ 盒体的 12 条边按 SolidWorks 惯例分组：0-3 / 4-7 是上下两个面环、8-11 是竖边。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        print(json.dumps({k: ev[k] for k in ("edge_count", "tried", "successes", "verdict")},
-                         ensure_ascii=False, indent=1))
+        ev["note"] = (
+            "★ 穷举 12 条边的两两组合（★ 事实 53 的正解：把猜测变成一张表），"
+            "★ 记录**哪一类边对**能让 `AddDimension2` 真的建出尺寸。"
+            "★ 盒体的 12 条边按 SolidWorks 惯例分组：0-3 / 4-7 是上下两个面环、8-11 是竖边。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
+        print(
+            json.dumps(
+                {k: ev[k] for k in ("edge_count", "tried", "successes", "verdict")},
+                ensure_ascii=False,
+                indent=1,
+            )
+        )
         print("  产物: %s" % OUT)
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

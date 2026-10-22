@@ -26,6 +26,7 @@ r"""pywin32 × SolidWorks 的实操坑（外部调研 + 本机反射双重核实
 # ⚠ 本组为静态整理，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -62,23 +63,18 @@ __all__ = [
 DISP_E_TYPEMISMATCH = 0x80020005
 DISP_E_UNKNOWNNAME = 0x80020006
 DISP_E_MEMBERNOTFOUND = 0x80020004
-DISP_E_BADPARAMCOUNT = 0x8002000A      # 参数**太多**
+DISP_E_BADPARAMCOUNT = 0x8002000A  # 参数**太多**
 DISP_E_PARAMNOTOPTIONAL = 0x8002000B  # 参数**太少**
 
 ERROR_CODES: dict[int, str] = {
-    DISP_E_TYPEMISMATCH:
-        "DISP_E_TYPEMISMATCH —— **参数类型对不上**。"
-        "最常见：把普通 int 传给 ByRef Long（[out] 参数）→ 用 byref_long()",
-    DISP_E_UNKNOWNNAME:
-        "DISP_E_UNKNOWNNAME —— 成员名不存在。"
-        "常见：把 .NET 属性名（get_Xxx）当成 COM 名传了",
-    DISP_E_MEMBERNOTFOUND:
-        "DISP_E_MEMBERNOTFOUND —— dispid 有效但默认 dispinterface 不暴露该名。"
-        "〔外部〕典型：GetActiveObject 拿到的 dispatch 上 IModelDoc2.FirstFeature 报此错",
-    DISP_E_BADPARAMCOUNT:
-        "DISP_E_BADPARAMCOUNT —— **参数太多** → 递减重试（见 adaptive_arity）",
-    DISP_E_PARAMNOTOPTIONAL:
-        "DISP_E_PARAMNOTOPTIONAL —— **参数太少** → 递增补齐（见 adaptive_arity）",
+    DISP_E_TYPEMISMATCH: "DISP_E_TYPEMISMATCH —— **参数类型对不上**。"
+    "最常见：把普通 int 传给 ByRef Long（[out] 参数）→ 用 byref_long()",
+    DISP_E_UNKNOWNNAME: "DISP_E_UNKNOWNNAME —— 成员名不存在。"
+    "常见：把 .NET 属性名（get_Xxx）当成 COM 名传了",
+    DISP_E_MEMBERNOTFOUND: "DISP_E_MEMBERNOTFOUND —— dispid 有效但默认 dispinterface 不暴露该名。"
+    "〔外部〕典型：GetActiveObject 拿到的 dispatch 上 IModelDoc2.FirstFeature 报此错",
+    DISP_E_BADPARAMCOUNT: "DISP_E_BADPARAMCOUNT —— **参数太多** → 递减重试（见 adaptive_arity）",
+    DISP_E_PARAMNOTOPTIONAL: "DISP_E_PARAMNOTOPTIONAL —— **参数太少** → 递增补齐（见 adaptive_arity）",
     0x80004005: "E_FAIL —— 通用失败",
     0x80040112: "COM 类未授权 —— 通常是**该产品没许可**（PDM/Simulation/Routers）",
     0x80070057: "E_INVALIDARG —— 参数值非法",
@@ -124,7 +120,7 @@ def _variant(vtype: int, initial: int) -> Any:
         import pythoncom
         import win32com.client
     except ImportError:
-        return int(initial)   # 回退，保住 mock / CI 路径不炸
+        return int(initial)  # 回退，保住 mock / CI 路径不炸
     ctor = getattr(win32com.client, "VARIANT", None)
     if not callable(ctor):
         return int(initial)
@@ -186,12 +182,14 @@ def adaptive_arity(call, base: tuple, low: int = 20, high: int = 30):
     for n in range(min(high, len(base)), low - 1, -1):
         try:
             return call(*base[:n])
-        except Exception as exc:                      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             last = exc
             message = str(exc)
-            if str(DISP_E_BADPARAMCOUNT & 0xFFFFFFFF) in message \
-                    or "-2147352562" in message:
-                continue                               # 太多 → 减
+            if (
+                str(DISP_E_BADPARAMCOUNT & 0xFFFFFFFF) in message
+                or "-2147352562" in message
+            ):
+                continue  # 太多 → 减
             raise
     if last is not None:
         raise last
@@ -246,7 +244,7 @@ def is_swp_macro(data: bytes) -> bool:
 #         · ★★★ 官方 DXF 例子逐字也用它：`swModel.SaveAs4(sPathName, …)` ✓
 #       ⇒ ★★★★ **所以本句是**真的**、★ 但**缺了接口限定****（★ 而缺限定会让它看起来与
 #         `ARITY` 矛盾）⇒ ★ **加上限定即可** ✓
-# ⇒ **正确说法**：★ `IModelDocExtension` 下**只有** `SaveAs` / `SaveAs2` / `SaveAs3`（★ 
+# ⇒ **正确说法**：★ `IModelDocExtension` 下**只有** `SaveAs` / `SaveAs2` / `SaveAs3`（★
 # **无** `SaveAs4`）；
 #       ★★ 而 `IModelDoc2` 下**有** `SaveAs4`（★ 签名逐字
 # `bool SaveAs4(string Name, int Version, int Options, out int Errors, out int Warnings)
@@ -261,7 +259,7 @@ def is_swp_macro(data: bytes) -> bool:
 DEPRECATED_SAVEAS = {
     "IModelDocExtension.SaveAs": "Obsolete → 用 SaveAs3（勿用 SaveAs2，它也 Obsolete）",
     "IModelDocExtension.SaveAs2": "Obsolete → 用 SaveAs3",
-    "IModelDocExtension.SaveAs3": None,   # ← 当前该用的
+    "IModelDocExtension.SaveAs3": None,  # ← 当前该用的
 }
 
 
@@ -393,7 +391,8 @@ DEPRECATED_ENTRIES: dict[tuple[str, str], str] = {
 
 
 def ambiguous_deprecated_members(
-        table: "dict[tuple[str, str], str] | None" = None) -> dict[str, list[str]]:
+    table: "dict[tuple[str, str], str] | None" = None,
+) -> dict[str, list[str]]:
     """★★ 回本表里的**按名歧义**：`{成员名: [不同后继, …]}`（★ 空 = 没有歧义）。
 
     ★★ 为什么必须有它（★ spec 242）：★ 本表的**键**是 `(接口, 成员)`，而
@@ -424,10 +423,13 @@ def deprecated_successor(member: str, interface: str = "") -> str | None:
     """
     if interface:
         return DEPRECATED_ENTRIES.get((interface, member))
-    succs = {succ for (_iface, m), succ in DEPRECATED_ENTRIES.items() if m == member and succ}
+    succs = {
+        succ for (_iface, m), succ in DEPRECATED_ENTRIES.items() if m == member and succ
+    }
     if len(succs) == 1:
         return next(iter(succs))
     return None
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把"扫仓库"的公共纪律提取成函数）
@@ -452,12 +454,14 @@ def iter_real_sources(root: "Path | str | None" = None, pattern: str = "sw_*.py"
 
     base = _P(root) if root else _P(__file__).resolve().parent
     for p in sorted(base.glob(pattern)):
-        if p.name.startswith("sw_api_"):      # ★ 反射转储，不是实现
+        if p.name.startswith("sw_api_"):  # ★ 反射转储，不是实现
             continue
         yield p
 
 
-def find_real_implementations(needle: str, root: "Path | str | None" = None) -> list[str]:
+def find_real_implementations(
+    needle: str, root: "Path | str | None" = None
+) -> list[str]:
     """★ 在**真实现**里找 `needle`，回 `["文件:行号", …]`（★ 转储表已排除）。"""
     import re as _re
 
@@ -468,5 +472,5 @@ def find_real_implementations(needle: str, root: "Path | str | None" = None) -> 
         except (UnicodeDecodeError, OSError):
             continue
         for m in _re.finditer(_re.escape(needle), text):
-            hits.append("%s:%d" % (p.name, text[:m.start()].count(chr(10)) + 1))
+            hits.append("%s:%d" % (p.name, text[: m.start()].count(chr(10)) + 1))
     return hits

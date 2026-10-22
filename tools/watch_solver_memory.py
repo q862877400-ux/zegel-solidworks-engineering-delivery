@@ -47,11 +47,17 @@ SOLVER_NAMES = ("cwbcbfmesh.exe",)
 
 
 class _MemStatus(ctypes.Structure):
-    _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
-                ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
-                ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
-                ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
-                ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+    _fields_ = [
+        ("dwLength", ctypes.c_ulong),
+        ("dwMemoryLoad", ctypes.c_ulong),
+        ("ullTotalPhys", ctypes.c_ulonglong),
+        ("ullAvailPhys", ctypes.c_ulonglong),
+        ("ullTotalPageFile", ctypes.c_ulonglong),
+        ("ullAvailPageFile", ctypes.c_ulonglong),
+        ("ullTotalVirtual", ctypes.c_ulonglong),
+        ("ullAvailVirtual", ctypes.c_ulonglong),
+        ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+    ]
 
 
 def system_memory() -> dict:
@@ -61,9 +67,11 @@ def system_memory() -> dict:
         st.dwLength = ctypes.sizeof(_MemStatus)
         if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(st)):
             return {}
-        return {"total_gb": round(st.ullTotalPhys / 1024 ** 3, 2),
-                "free_gb": round(st.ullAvailPhys / 1024 ** 3, 2)}
-    except Exception:                                          # noqa: BLE001
+        return {
+            "total_gb": round(st.ullTotalPhys / 1024**3, 2),
+            "free_gb": round(st.ullAvailPhys / 1024**3, 2),
+        }
+    except Exception:  # noqa: BLE001
         return {}
 
 
@@ -71,20 +79,33 @@ def solver_processes() -> list[dict]:
     """回仿真求解进程（★ 按 exe 名精确匹配 —— ★ 不按窗口标题猜）。"""
     out: list[dict] = []
     try:
-        ps = ("Get-CimInstance Win32_Process | Where-Object { $_.Name -in @(%s) } | "
-              "Select-Object ProcessId,Name,WorkingSetSize | ConvertTo-Json -Compress"
-              % ",".join("'%s'" % n for n in SOLVER_NAMES))
-        r = subprocess.run(["pwsh", "-NoProfile", "-NonInteractive", "-Command", ps],
-                           capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=30, stdin=subprocess.DEVNULL)
+        ps = (
+            "Get-CimInstance Win32_Process | Where-Object { $_.Name -in @(%s) } | "
+            "Select-Object ProcessId,Name,WorkingSetSize | ConvertTo-Json -Compress"
+            % ",".join("'%s'" % n for n in SOLVER_NAMES)
+        )
+        r = subprocess.run(
+            ["pwsh", "-NoProfile", "-NonInteractive", "-Command", ps],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            stdin=subprocess.DEVNULL,
+        )
         raw = (r.stdout or "").strip()
         if not raw:
             return []
         data = json.loads(raw)
-        for d in (data if isinstance(data, list) else [data]):
-            out.append({"pid": int(d.get("ProcessId") or 0), "name": str(d.get("Name") or ""),
-                        "work_gb": round(float(d.get("WorkingSetSize") or 0) / 1024 ** 3, 2)})
-    except Exception:                                          # noqa: BLE001
+        for d in data if isinstance(data, list) else [data]:
+            out.append(
+                {
+                    "pid": int(d.get("ProcessId") or 0),
+                    "name": str(d.get("Name") or ""),
+                    "work_gb": round(float(d.get("WorkingSetSize") or 0) / 1024**3, 2),
+                }
+            )
+    except Exception:  # noqa: BLE001
         pass
     return out
 
@@ -92,14 +113,20 @@ def solver_processes() -> list[dict]:
 def kill(pid: int, why: str, logf) -> bool:
     """斩一个 PID（★ 只用 `taskkill /PID`，★ 不按名字批量杀）。"""
     try:
-        r = subprocess.run(["taskkill", "/PID", str(pid), "/F"],
-                           capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=30, stdin=subprocess.DEVNULL)
+        r = subprocess.run(
+            ["taskkill", "/PID", str(pid), "/F"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            stdin=subprocess.DEVNULL,
+        )
         ok = r.returncode == 0
         logf({"event": "kill", "pid": pid, "ok": ok, "why": why})
         print("   ⇒ 斩 %d：%s（%s）" % (pid, "成功" if ok else "失败", why))
         return ok
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         logf({"event": "kill_error", "pid": pid, "err": str(exc)[:120]})
         return False
 
@@ -111,14 +138,20 @@ def owned_solidworks_pid() -> int | None:
 
         m = sw_connect.read_owned_instance() or {}
         return int(m.get("pid")) if m.get("pid") else None
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="仿真内存看门狗（★ 只斩求解器；★ 绝不按名字杀 SW）")
-    ap.add_argument("--floor-gb", type=float, default=6.0, help="整机剩余内存低于此值 ⇒ 斩")
-    ap.add_argument("--budget-gb", type=float, default=16.0, help="求解进程工作集高于此值 ⇒ 斩")
+    ap = argparse.ArgumentParser(
+        description="仿真内存看门狗（★ 只斩求解器；★ 绝不按名字杀 SW）"
+    )
+    ap.add_argument(
+        "--floor-gb", type=float, default=6.0, help="整机剩余内存低于此值 ⇒ 斩"
+    )
+    ap.add_argument(
+        "--budget-gb", type=float, default=16.0, help="求解进程工作集高于此值 ⇒ 斩"
+    )
     ap.add_argument("--interval", type=float, default=2.0, help="轮询间隔（秒）")
     ap.add_argument("--seconds", type=float, default=3600.0, help="最长看多久（秒）")
     ap.add_argument("--no-kill", action="store_true", help="★ 只观测、不斩（纯报告）")
@@ -135,19 +168,25 @@ def main() -> int:
     t0 = time.time()
     breach_streak = 0
     kills = 0
-    print("★ 看门狗启动：floor=%.1f GB · budget=%.1f GB · interval=%.1fs · kill=%s"
-          % (a.floor_gb, a.budget_gb, a.interval, not a.no_kill))
+    print(
+        "★ 看门狗启动：floor=%.1f GB · budget=%.1f GB · interval=%.1fs · kill=%s"
+        % (a.floor_gb, a.budget_gb, a.interval, not a.no_kill)
+    )
     while time.time() - t0 < a.seconds:
         mem = system_memory()
         procs = solver_processes()
         rec = {"mem": mem, "solvers": procs}
         over = []
         if mem and mem.get("free_gb", 999) < a.floor_gb:
-            over.append("整机剩余 %.2f GB < floor %.1f GB" % (mem["free_gb"], a.floor_gb))
+            over.append(
+                "整机剩余 %.2f GB < floor %.1f GB" % (mem["free_gb"], a.floor_gb)
+            )
         for p in procs:
             if p["work_gb"] > a.budget_gb:
-                over.append("求解器 pid=%d 工作集 %.2f GB > budget %.1f GB"
-                            % (p["pid"], p["work_gb"], a.budget_gb))
+                over.append(
+                    "求解器 pid=%d 工作集 %.2f GB > budget %.1f GB"
+                    % (p["pid"], p["work_gb"], a.budget_gb)
+                )
         rec["over"] = over
         logf(rec)
         if over:
@@ -163,13 +202,16 @@ def main() -> int:
                 if breach_streak >= 2:
                     pid = owned_solidworks_pid()
                     if pid:
-                        print("   ⇒ 连续越线 ⇒ 收掉**我们自己启动的** SolidWorks pid=%d" % pid)
+                        print(
+                            "   ⇒ 连续越线 ⇒ 收掉**我们自己启动的** SolidWorks pid=%d"
+                            % pid
+                        )
                         kill(pid, "连续越线：防止求解器反复重生", logf)
                         try:
                             import sw_connect
 
                             sw_connect.clear_owned_instance()
-                        except Exception:                      # noqa: BLE001
+                        except Exception:  # noqa: BLE001
                             pass
                     logf({"event": "stop", "reason": "连续越线，看门狗收工"})
                     break

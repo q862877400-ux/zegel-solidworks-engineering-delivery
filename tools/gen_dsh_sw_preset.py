@@ -1,4 +1,5 @@
 """★ 生成并**校验** DSH 新 preset「Lean 模式（SW工程师）」的配置块（★ 只写文件、不 apply）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（DSH 侧配置生成器；★ 用户 2026-10-07 指令）
 # 文件:   tools/gen_dsh_sw_preset.py
@@ -26,7 +27,7 @@
 #     ★ ③ **`lean` 那条一个字节没动** ✓（★ 用户明令：「★ 你可不要直接让所有 lean 模式的
 #        对话都生效啊」✗ ⇒ ★ 必须能证明 lean preset 未被触碰 ✓）
 # 官方依据: `docs/subsystems/mcp.zh.md` 的「配置」节（★ `transport: 'stdio'` ✓）·
-# `docs/config-catalog.zh.md` 的 `@deepseek-ai/dsh-mcp-client` 段（★ `StdioConfig` 字段 
+# `docs/config-catalog.zh.md` 的 `@deepseek-ai/dsh-mcp-client` 段（★ `StdioConfig` 字段
 # ✓）·
 # `docs/glossary.zh.md:20`（★ **setup window**：★ 作用域在 agent 创建时组装 ⇒ ★ **必须新
 # 开会话** ✓）
@@ -43,16 +44,24 @@ import sys
 from pathlib import Path
 
 HOME = Path(os.path.expanduser("~"))
-LEAN_BUNDLE = HOME / ".dsh/profiles/web/node_modules/@local/dsh-lean-mode/cordis.patch.yml"
+LEAN_BUNDLE = (
+    HOME / ".dsh/profiles/web/node_modules/@local/dsh-lean-mode/cordis.patch.yml"
+)
 LIVE_CFG = HOME / ".dsh/profiles/web/cordis.patch.yml"
 DSH_ROOT = Path(r"D:\AI\DSH\deepseek-harness")
-OUT_BLOCK = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml")
-OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-generate.json")
+OUT_BLOCK = Path(
+    Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml"
+)
+OUT_JSON = Path(
+    Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-generate.json"
+)
 
 NEW_PRESET_ID = "sw-engineer"
 NEW_PRESET_NAME = "Lean 模式（SW工程师）"
-NEW_PRESET_DESC = ("★ SW 工程师档：官方标准模式组成 + SolidWorks MCP（504 个工具），"
-                   "★ 呈现走 lean-mode 的浅投影 + 工具目录 ✓")
+NEW_PRESET_DESC = (
+    "★ SW 工程师档：官方标准模式组成 + SolidWorks MCP（504 个工具），"
+    "★ 呈现走 lean-mode 的浅投影 + 工具目录 ✓"
+)
 #: ★★ `order` 取 9（★ `preset-lean` 是 8 ✓）—— ★ 只是个排序位、★ 不与别人撞 ✓
 NEW_ORDER = 9
 
@@ -111,7 +120,11 @@ def _read_bundle_preset_block() -> tuple:
     #: ★ 找 `- insert:` 且**紧接着**是 `preset-lean` 的那一处（★ 插件那条在它上面 ✓）
     start = None
     for i, ln in enumerate(lines):
-        if ln.strip() == "- insert:" and i + 1 < len(lines) and "preset-lean" in lines[i + 1]:
+        if (
+            ln.strip() == "- insert:"
+            and i + 1 < len(lines)
+            and "preset-lean" in lines[i + 1]
+        ):
             start = i
             break
     if start is None:
@@ -137,8 +150,10 @@ def main() -> int:
         ("    - id: preset-lean\n", "    - id: preset-sw-engineer\n"),
         ("        id: lean\n", "        id: %s\n" % NEW_PRESET_ID),
         ("        name: Lean 模式\n", "        name: %s\n" % NEW_PRESET_NAME),
-        ("        description: 工具呈现为「浅而准」形态（lean-mode 插件按此模式生效）。\n",
-         "        description: %s\n" % NEW_PRESET_DESC),
+        (
+            "        description: 工具呈现为「浅而准」形态（lean-mode 插件按此模式生效）。\n",
+            "        description: %s\n" % NEW_PRESET_DESC,
+        ),
         ("        order: 8\n", "        order: %d\n" % NEW_ORDER),
     ]
     for old, new in changes:
@@ -195,19 +210,26 @@ def main() -> int:
     #: ── ★★ 机器校验（★ 三条判据，★ 见来源块）──────────────────────────────
     chk = subprocess.run(
         ["node", "-e", JS_CHECK, str(LIVE_CFG), str(OUT_BLOCK)],
-        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=180)
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=180,
+    )
     print("── js-yaml 校验 ──")
     print((chk.stdout or "").strip())
     if chk.returncode != 0:
         print("✗ 校验没过：%s" % (chk.stderr or "")[-500:])
         return 4
     out["validate_stdout"] = (chk.stdout or "").strip()
-    OUT_JSON.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
     print("★ 证据：%s" % OUT_JSON)
     return 0
 
 
-#: ★ 校验脚本：★ 拼"原配置 + 新块" ⇒ 必须能解析、★ 且新 id 全在、★ 且 **lean 那条没变** 
+#: ★ 校验脚本：★ 拼"原配置 + 新块" ⇒ 必须能解析、★ 且新 id 全在、★ 且 **lean 那条没变**
 #: ✓
 JS_CHECK = r"""
 const fs = require('fs');
@@ -252,12 +274,17 @@ console.log('   ✓✓ 三条判据全过：可解析 · 新 id 齐 · 旧 id �
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-generate-traceback.txt").write_text(tb, encoding="utf-8")
+        Path(
+            Path(__file__).resolve().parents[1]
+            / "output"
+            / "dsh-sw-preset-generate-traceback.txt"
+        ).write_text(tb, encoding="utf-8")
         print("★★ 异常已落盘：\n%s" % tb[-1500:])
         raise SystemExit(3)

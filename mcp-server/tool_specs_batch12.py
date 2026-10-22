@@ -41,6 +41,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -55,57 +56,83 @@ SPECS_BATCH12 = [
     ToolSpec(
         name="solidworks_topology_create_demold_control",
         title="Create Topology Demold Control",
-        module="sw_topology", function="create_demold_control",
+        module="sw_topology",
+        function="create_demold_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a de-mold (manufacturing) control for a topology study. "
-            "The caller must first select the pull-direction face/edge/plane, "
-            "then choose the direction option.",
+        "The caller must first select the pull-direction face/edge/plane, "
+        "then choose the direction option.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("direction", int, default=0,
-                  description="swsTopologyDemoldDirectionOption_e (from the factory reflection dump): "
-                              "0=TwoDirectionMidPlane, 1=PullDirectionOnly, 2=Stamping."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "direction",
+                int,
+                default=0,
+                description="swsTopologyDemoldDirectionOption_e (from the factory reflection dump): "
+                "0=TwoDirectionMidPlane, 1=PullDirectionOnly, 2=Stamping.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_topology_create_stress_constraint",
         title="Create Topology Stress Constraint",
-        module="sw_topology", function="create_stress_constraint",
+        module="sw_topology",
+        function="create_stress_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a stress constraint for a topology study.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("value", float,
-                  description="Constraint value (stress)."),
-            Param("comparator", int, default=0,
-                  description="swsTopologyStudyConstraintComparator_e (from the factory reflection "
-                              "dump): 0=IsLessThan, 1=IsGreaterThan, 2=IsInBetween."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param("value", float, description="Constraint value (stress)."),
+            Param(
+                "comparator",
+                int,
+                default=0,
+                description="swsTopologyStudyConstraintComparator_e (from the factory reflection "
+                "dump): 0=IsLessThan, 1=IsGreaterThan, 2=IsInBetween.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_topology_create_symmetry_control",
         title="Create Topology Symmetry Control",
-        module="sw_topology", function="create_symmetry_control",
+        module="sw_topology",
+        function="create_symmetry_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a symmetry control for a topology study. The caller must first select the "
-            "symmetry plane(s).",
+        "symmetry plane(s).",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("symmetry_type", int, default=0,
-                  description="⚠ Values 0/1/2 come from the OFFICIAL VBA example "
-                              "(`Create_Topology_Study_Example_VBA.txt` uses SelectSymmetryType 0/1/2, "
-                              "commented 'Define topology one-half symmetry control'). "
-                              "The enum NAME was NOT found in the local reflection dump — so do not "
-                              "assume per-value semantics beyond that."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "symmetry_type",
+                int,
+                default=0,
+                description="⚠ Values 0/1/2 come from the OFFICIAL VBA example "
+                "(`Create_Topology_Study_Example_VBA.txt` uses SelectSymmetryType 0/1/2, "
+                "commented 'Define topology one-half symmetry control'). "
+                "The enum NAME was NOT found in the local reflection dump — so do not "
+                "assume per-value semantics beyond that.",
+            ),
         ],
     ),
 ]

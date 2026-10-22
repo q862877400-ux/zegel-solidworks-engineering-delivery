@@ -1,4 +1,5 @@
 """★ 沙盒策略：外部路径**复制进来再用副本**，跑完把结果**拷到配置的输出根目录**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现，铁律 3 的 `scripts/`）
 # 文件:   scripts/sw_sandbox.py
@@ -37,9 +38,7 @@ MODE_PASSTHROUGH = "passthrough"
 #:   ⇒ ★ **模型素材也必须复制进沙盒**（★ 它是**输入**，不是「只读文档」）；
 #: ★ 只有 `C:\swapi` 那种**纯文档**（SolidWorks 永远不会打开它、更不会往旁边写结果）才豁
 #: 免 ✓
-DEFAULT_READONLY_SOURCES = (
-    Path(r"C:\swapi"),
-)
+DEFAULT_READONLY_SOURCES = (Path(r"C:\swapi"),)
 
 
 def mode() -> str:
@@ -78,7 +77,7 @@ def _inside(path, root) -> bool:
         return False
     try:
         return os.path.commonpath([p, r]) == r
-    except ValueError:                                                  # 不同盘符
+    except ValueError:  # 不同盘符
         return False
 
 
@@ -94,18 +93,34 @@ def resolve_input(file_path, *, extra_readonly=()):
     """
     src = Path(str(file_path))
     if mode() != MODE_ENFORCE:
-        return {"path": str(src), "materialized": False, "source": str(src),
-                "why": "★ 模式是 passthrough ⇒ 不复制（★ 默认行为）"}
+        return {
+            "path": str(src),
+            "materialized": False,
+            "source": str(src),
+            "why": "★ 模式是 passthrough ⇒ 不复制（★ 默认行为）",
+        }
     if not src.exists():
-        return {"path": str(src), "materialized": False, "source": str(src),
-                "why": "★ 源不存在 ⇒ 交给上层报错（★ 本函数不假装成功）"}
+        return {
+            "path": str(src),
+            "materialized": False,
+            "source": str(src),
+            "why": "★ 源不存在 ⇒ 交给上层报错（★ 本函数不假装成功）",
+        }
     if _inside(src, sandbox_root()):
-        return {"path": str(src), "materialized": False, "source": str(src),
-                "why": "★ 已在沙盒内 ⇒ 原样用"}
+        return {
+            "path": str(src),
+            "materialized": False,
+            "source": str(src),
+            "why": "★ 已在沙盒内 ⇒ 原样用",
+        }
     for allowed in tuple(DEFAULT_READONLY_SOURCES) + tuple(extra_readonly):
         if _inside(src, allowed):
-            return {"path": str(src), "materialized": False, "source": str(src),
-                    "why": "★ 只读共享来源（%s）⇒ 不复制" % Path(allowed).name}
+            return {
+                "path": str(src),
+                "materialized": False,
+                "source": str(src),
+                "why": "★ 只读共享来源（%s）⇒ 不复制" % Path(allowed).name,
+            }
     dest_dir = sandbox_root() / "inputs"
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / src.name
@@ -116,8 +131,12 @@ def resolve_input(file_path, *, extra_readonly=()):
         n += 1
     if _norm(dest) != _norm(src):
         shutil.copy2(str(src), str(dest))
-    return {"path": str(dest), "materialized": True, "source": str(src),
-            "why": "★★ 沙盒外的输入 ⇒ **已复制进沙盒**再用副本（★ 打开的永远不是原件）"}
+    return {
+        "path": str(dest),
+        "materialized": True,
+        "source": str(src),
+        "why": "★★ 沙盒外的输入 ⇒ **已复制进沙盒**再用副本（★ 打开的永远不是原件）",
+    }
 
 
 def collect_outputs(paths, *, note: str = ""):
@@ -128,7 +147,7 @@ def collect_outputs(paths, *, note: str = ""):
     dest_dir = output_root() / "results"
     dest_dir.mkdir(parents=True, exist_ok=True)
     moved = []
-    for p in (paths or ()):
+    for p in paths or ():
         src = Path(str(p))
         if not src.exists() or not src.is_file():
             continue
@@ -197,7 +216,7 @@ def snapshot_dir(folder) -> dict:
             if p.is_file():
                 st = p.stat()
                 snap[str(p)] = (st.st_size, int(st.st_mtime))
-        except OSError:                                                 # 权限/竞态
+        except OSError:  # 权限/竞态
             continue
     return snap
 
@@ -222,17 +241,19 @@ def tidy_outputs(files, source_doc) -> dict:
     """
     dest_dir = product_output_dir(source_doc)
     moved, skipped = [], []
-    for f in (files or ()):
+    for f in files or ():
         src = Path(str(f))
         if not src.is_file():
-            skipped.append({"path": str(src), "why": "★ 不是文件（已消失或不是常规文件）"})
+            skipped.append(
+                {"path": str(src), "why": "★ 不是文件（已消失或不是常规文件）"}
+            )
             continue
         if _inside(src, dest_dir):
             skipped.append({"path": str(src), "why": "★ 已经在目标子目录里了"})
             continue
         try:
             dest_dir.mkdir(parents=True, exist_ok=True)
-        except OSError as exc:                                          # noqa: BLE001
+        except OSError as exc:  # noqa: BLE001
             skipped.append({"path": str(src), "why": "★ 建不了目标目录：%s" % exc})
             continue
         dest = dest_dir / src.name
@@ -242,7 +263,7 @@ def tidy_outputs(files, source_doc) -> dict:
             n += 1
         try:
             shutil.move(str(src), str(dest))
-        except OSError as exc:                                          # noqa: BLE001
+        except OSError as exc:  # noqa: BLE001
             skipped.append({"path": str(src), "why": "★ 搬不动：%s" % exc})
             continue
         moved.append({"from": str(src), "to": str(dest)})
@@ -258,10 +279,19 @@ def output_report(source_doc, files, *, run_id_value: str = "") -> dict:
     if policy() == POLICY_PRODUCT:
         tidy = tidy_outputs(files, source_doc)
         paths = [m["to"] for m in tidy["moved"]] + [s["path"] for s in tidy["skipped"]]
-        return {"output_dir": tidy["output_dir"], "files": paths,
-                "moved": tidy["moved"], "skipped": tidy["skipped"],
-                "run_id": run_id_value or run_id(), "policy": POLICY_PRODUCT}
-    return {"output_dir": str(output_root()), "files": [str(p) for p in (files or ())],
-            "moved": [], "skipped": [], "run_id": run_id_value or run_id(),
-            "policy": POLICY_SANDBOX}
-
+        return {
+            "output_dir": tidy["output_dir"],
+            "files": paths,
+            "moved": tidy["moved"],
+            "skipped": tidy["skipped"],
+            "run_id": run_id_value or run_id(),
+            "policy": POLICY_PRODUCT,
+        }
+    return {
+        "output_dir": str(output_root()),
+        "files": [str(p) for p in (files or ())],
+        "moved": [],
+        "skipped": [],
+        "run_id": run_id_value or run_id(),
+        "policy": POLICY_SANDBOX,
+    }

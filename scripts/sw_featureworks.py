@@ -46,6 +46,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -130,8 +131,9 @@ def recognize_interactive(featureworks, target: str, option: int) -> bool:
 
     ⚠ ``target``（官方 String）与 ``option``（官方 Int32）的语义官方无文档。
     """
-    return bool(_checked(featureworks, "RecognizeFeatureInteractive",
-                         str(target), int(option)))
+    return bool(
+        _checked(featureworks, "RecognizeFeatureInteractive", str(target), int(option))
+    )
 
 
 def set_advanced_options(featureworks, options: int) -> bool:
@@ -154,8 +156,9 @@ def set_performance_options(featureworks, options: int) -> bool:
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def read_featureworks_state(calls: list[tuple[str, tuple]] | None = None
-                            ) -> dict[str, Any]:
+def read_featureworks_state(
+    calls: list[tuple[str, tuple]] | None = None,
+) -> dict[str, Any]:
     """回读本会话对 FeatureWorks 的调用痕迹。
 
     :param calls: 形如 ``[(成员名, 实参元组), ...]`` 的调用记录。
@@ -168,7 +171,13 @@ def read_featureworks_state(calls: list[tuple[str, tuple]] | None = None
         "call_count": len(recorded),
         "members": [name for name, _ in recorded],
         "has_recognize": any(
-            name in ("CreateFeatures", "RecognizeFeatureAutomatic",
-                     "RecognizeFeatureInteractive") for name, _ in recorded),
+            name
+            in (
+                "CreateFeatures",
+                "RecognizeFeatureAutomatic",
+                "RecognizeFeatureInteractive",
+            )
+            for name, _ in recorded
+        ),
         "callback_members_not_called": list(CALLBACK_MEMBERS),
     }

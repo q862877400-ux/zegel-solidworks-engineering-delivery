@@ -39,23 +39,31 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_part as P                                       # noqa: E402
-from scripts import sw_surface_features as SF                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _build_solid(sw):
     """★ 建一个**实体盒**（★ 直纹曲面要"从一个边"长出来）。"""
     doc = C.new_document(sw, "part")
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return doc
 
@@ -64,13 +72,13 @@ def _pick_edge(doc, idx=0, mark=0):
     """★ **按对象选一条边**（★ 边没有名字 —— 事实 32）⇒ 回来读计数。"""
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     n = 0
     for b in list(C.get_com_member(doc, "GetBodies2", 0, True) or []):
         try:
             edges = list(C.get_com_member(b, "GetEdges") or [])
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if idx < len(edges):
             if P._select_com_object(edges[idx], append=True, mark=mark):
@@ -86,10 +94,12 @@ def _one(sw, tag, *, surface_type, need_edge=True, length_mm=10.0):
         doc = _build_solid(sw)
         row["solid"] = SF._solid_body_count(doc)
         row["sel"] = _pick_edge(doc, 0) if need_edge else 0
-        r = SF.insert_ruled_surface_report(doc, surface_type=surface_type, length_mm=length_mm)
+        r = SF.insert_ruled_surface_report(
+            doc, surface_type=surface_type, length_mm=length_mm
+        )
         row["result"] = {k: v for k, v in r.items() if k != "\u2605"}
         row["ok"] = bool(r.get("ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -97,41 +107,66 @@ def _one(sw, tag, *, surface_type, need_edge=True, length_mm=10.0):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u76f4\u7eb9\u66f2\u9762\uff08InsertRuledSurfaceFromEdge2\uff09\u2014\u2014 B6/T608",
-          "judge": "\u7279\u5f81\u6811\u589e\u91cf\uff08\u89c4\u5219 6\uff09",
-          "two_source_conflict": {
-              "swapi_md_param_table": "Type: 0=Tangent to Surface \u00b7 1=Normal \u00b7 2=Tapered to Vector \u00b7 3=Perpendicular to Vector \u00b7 4=Sweep",
-              "reflection_enum": "swRuledSurfaceType_e: TangentToSurface=1 \u00b7 NormalToSurface=2 \u00b7 TaperedToVector=3 \u00b7 PerpendicularToVector=4 \u00b7 Sweep=5",
-              "rule": "\u94c1\u5f8b 4\uff1a\u51b2\u7a81\u4ee5\u51fa\u5382\u7c7b\u578b\u5e93\u4e3a\u51c6 \u21d2 \u672c\u63a2\u9488\u4e24\u7ec4\u90fd\u8bd5\uff0c\u7528\u771f\u673a\u5b9a",
-          },
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u76f4\u7eb9\u66f2\u9762\uff08InsertRuledSurfaceFromEdge2\uff09\u2014\u2014 B6/T608",
+        "judge": "\u7279\u5f81\u6811\u589e\u91cf\uff08\u89c4\u5219 6\uff09",
+        "two_source_conflict": {
+            "swapi_md_param_table": "Type: 0=Tangent to Surface \u00b7 1=Normal \u00b7 2=Tapered to Vector \u00b7 3=Perpendicular to Vector \u00b7 4=Sweep",
+            "reflection_enum": "swRuledSurfaceType_e: TangentToSurface=1 \u00b7 NormalToSurface=2 \u00b7 TaperedToVector=3 \u00b7 PerpendicularToVector=4 \u00b7 Sweep=5",
+            "rule": "\u94c1\u5f8b 4\uff1a\u51b2\u7a81\u4ee5\u51fa\u5382\u7c7b\u578b\u5e93\u4e3a\u51c6 \u21d2 \u672c\u63a2\u9488\u4e24\u7ec4\u90fd\u8bd5\uff0c\u7528\u771f\u673a\u5b9a",
+        },
+        "cases": [],
+    }
     #: ★ \u2460 \u6309**\u679a\u4e3e\u53e3\u5f84**\uff081 = TangentToSurface\uff09
-    ev["cases"].append(_one(sw, "\u679a\u4e3e\u53e3\u5f84 type=1\uff08\u2605 \u94c1\u5f8b 4 \u7684\u9009\u6cd5\uff09", surface_type=1))
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u679a\u4e3e\u53e3\u5f84 type=1\uff08\u2605 \u94c1\u5f8b 4 \u7684\u9009\u6cd5\uff09",
+            surface_type=1,
+        )
+    )
     #: \u2605 \u2461 \u6309**md \u53c2\u6570\u8868\u53e3\u5f84**\uff080 = Tangent to Sur
     #: face\uff09
-    ev["cases"].append(_one(sw, "\u2605 md \u53e3\u5f84\u90a3\u4e00\u7ec4 type=0", surface_type=0))
+    ev["cases"].append(
+        _one(sw, "\u2605 md \u53e3\u5f84\u90a3\u4e00\u7ec4 type=0", surface_type=0)
+    )
     #: \u2605 \u2462 \u679a\u4e3e\u53e3\u5f84\u7684 5 = Sweep
-    ev["cases"].append(_one(sw, "\u679a\u4e3e\u53e3\u5f84 type=5\uff08Sweep\uff09", surface_type=5))
+    ev["cases"].append(
+        _one(sw, "\u679a\u4e3e\u53e3\u5f84 type=5\uff08Sweep\uff09", surface_type=5)
+    )
     #: \u2605 \u2463 \u8d1f\u4f8b\uff1a\u4e0d\u9009\u8fb9
-    ev["cases"].append(_one(sw, "\u8d1f\u4f8b\uff1a\u4e0d\u9009\u8fb9", surface_type=1, need_edge=False))
+    ev["cases"].append(
+        _one(
+            sw, "\u8d1f\u4f8b\uff1a\u4e0d\u9009\u8fb9", surface_type=1, need_edge=False
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     p = R / "output" / "ruled-surface-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u6210\u4e86 **%d / %d**" % (ev["passed"], ev["total"]))
     for c in ev["cases"]:
-        print("  %-32s ok=%-6s sel=%-3s %s" % (
-            c.get("tag"), c.get("ok"), c.get("sel"),
-            json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:130]))
+        print(
+            "  %-32s ok=%-6s sel=%-3s %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("sel"),
+                json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:130],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

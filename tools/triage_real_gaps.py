@@ -78,10 +78,12 @@ UNRELIABLE_PATTERN = re.compile(r"^create_.*surface$|^create_sheet_from_surface$
 #:     ⇒ ★ 即使把它挂上，**声明也会过不了门禁** ✓
 #:   ★★ 故它不是"该挂"，而是"不做"（★ 而理由是**规则**，不是"我们没功夫"）。
 CANNOT_BE_A_TOOL_WHY: dict[tuple[str, str], str] = {
-    ("sw_simulation", "select_face_at"):
-        "★★ 它的签名是**裸坐标**（`(model, x, y, z)`）⇒ **规则 3 禁止**"
-        "把它做成工具（★ 而 `tool_registry` 的声明门禁**会直接拦住**）。"
-        "★ 它仍是**内部助手**（★ 多处调用）——★ 只是**不能对外暴露**。",
+    (
+        "sw_simulation",
+        "select_face_at",
+    ): "★★ 它的签名是**裸坐标**（`(model, x, y, z)`）⇒ **规则 3 禁止**"
+    "把它做成工具（★ 而 `tool_registry` 的声明门禁**会直接拦住**）。"
+    "★ 它仍是**内部助手**（★ 多处调用）——★ 只是**不能对外暴露**。",
 }
 
 
@@ -89,13 +91,20 @@ KNOWN_DEAD_ENDS: dict[tuple[str, str], str] = {
     ("sw_part", "sketch_spline"): (
         "第 141 轮真机：`CreateSpline2` 返回 None、重绘后仍 0 段、"
         "旧版 `CreateSpline` 在迟到绑定里不存在；后继 `CreateSpline3` 末参是 "
-        "**BYREF `Object&`** ⇒ 事实 47/68 架构限制（pywin32 到不了）"),
+        "**BYREF `Object&`** ⇒ 事实 47/68 架构限制（pywin32 到不了）"
+    ),
 }
 
 #: ★ 不是函数：CamelCase 或这些后缀（类 / 异常 / 数据类）
-NOT_A_FUNCTION_SUFFIXES = ("Error", "Evidence", "Ref", "Data", "Options", "Result", "Info")
-
-
+NOT_A_FUNCTION_SUFFIXES = (
+    "Error",
+    "Evidence",
+    "Ref",
+    "Data",
+    "Options",
+    "Result",
+    "Info",
+)
 
 
 _HAVE_TOOL_CACHE: set | None = None
@@ -170,13 +179,14 @@ def used_by_other_module(module: str, name: str) -> bool:
     #: 贴合代码的组织单元，
     #:     不要按文本匹配）**同族**。
     own = ROOT / "scripts" / (module + ".py")
-    import ast as _ast                                            # noqa: PLC0415
+    import ast as _ast  # noqa: PLC0415
+
     for f in (ROOT / "scripts").glob("*.py"):
         if f == own:
             continue
         try:
             tree = _ast.parse(f.read_text(encoding="utf-8"))
-        except Exception:                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for node in _ast.walk(tree):
             if not isinstance(node, _ast.Call):
@@ -203,7 +213,6 @@ def exposed_by_wrapper(name: str) -> str | None:
     return None
 
 
-
 _EMPTY_STUB_CACHE: dict = {}
 
 
@@ -222,14 +231,20 @@ def is_empty_stub(module: str, name: str) -> str:
         path = ROOT / "scripts" / (module + ".py")
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             tree = None
         if tree is not None:
             for node in tree.body:
                 if isinstance(node, ast.FunctionDef) and node.name == name:
-                    body = [b for b in node.body
-                            if not (isinstance(b, ast.Expr) and isinstance(b.value, ast.Constant)
-                                    and isinstance(b.value.value, str))]     #: ★ 剔掉 docstring
+                    body = [
+                        b
+                        for b in node.body
+                        if not (
+                            isinstance(b, ast.Expr)
+                            and isinstance(b.value, ast.Constant)
+                            and isinstance(b.value.value, str)
+                        )
+                    ]  #: ★ 剔掉 docstring
                     if not body:
                         reason = "函数体只有 docstring（连 `pass` 都没有）"
                     elif all(isinstance(b, ast.Pass) for b in body):
@@ -251,17 +266,23 @@ def is_empty_stub(module: str, name: str) -> str:
 #: ★ **每条都写清依据**（★ 照 `PLUMBING_WHY` 的先例：没依据的不许进来）——
 #:   ★ 而这三条的依据都是**真机/静态可核的**：那个工具的 `function` **调的就是它**。
 ALIASED_BY_TOOL: dict[tuple[str, str], str] = {
-    ("sw_export", "export_to_bmp"):
-        "solidworks_export_bmp（★ 它的 function `export_bmp_report` **调的正是** `export_to_bmp`）",
+    (
+        "sw_export",
+        "export_to_bmp",
+    ): "solidworks_export_bmp（★ 它的 function `export_bmp_report` **调的正是** `export_to_bmp`）",
     #: ★★ 2026-10-03（轮 438）新增 —— ★ 依据已核：
     #: `sw_simulation.create_study_report` **调的正是** `create_static_study`（已读源码
     #: ），
     #:   ★ 而它就是工具 `solidworks_simulation_create_study` 的 function。
-    ("sw_simulation", "create_static_study"):
-        "solidworks_simulation_create_study（★ 它的 function `create_study_report` **调的正是** "
-        "`create_static_study`）",
-    ("sw_export", "export_to_image"):
-        "solidworks_export_image（★ `export_image_report` **调的正是** `export_to_image`）",
+    (
+        "sw_simulation",
+        "create_static_study",
+    ): "solidworks_simulation_create_study（★ 它的 function `create_study_report` **调的正是** "
+    "`create_static_study`）",
+    (
+        "sw_export",
+        "export_to_image",
+    ): "solidworks_export_image（★ `export_image_report` **调的正是** `export_to_image`）",
     #: ★★★ 2026-10-03（轮 437）**本条已删** —— ★ 而那是**结构判据取代穷举表条目**的正确
     #: 闭环：
     #:   ★ `_server_export_functions()` 现已把 `server.py` 侧的 60 个 function 并进名单
@@ -281,9 +302,11 @@ def classify(module: str, name: str) -> tuple[str, str]:
     if (module, name) in KNOWN_DEAD_ENDS:
         return "不做", KNOWN_DEAD_ENDS[(module, name)]
     if module == UNRELIABLE_MODULE and UNRELIABLE_PATTERN.match(name):
-        return "不做", ("事实 40：IModeler.Create*Surface 的返回值**跨次都变**"
-                            "（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ "
-                            "挂出来只会给人「能调」的错觉")
+        return "不做", (
+            "事实 40：IModeler.Create*Surface 的返回值**跨次都变**"
+            "（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ "
+            "挂出来只会给人「能调」的错觉"
+        )
     #: ★★ 2026-10-03（轮 436）**显式别名**：功能已由另一个名字的工具覆盖（★ 而启发式推不
     #: 出来）
     _alias = ALIASED_BY_TOOL.get((module, name))
@@ -311,13 +334,16 @@ def classify(module: str, name: str) -> tuple[str, str]:
     #:   `create_structural_member**_from_sketch**`（已注册）（★ 真例）
     prefixed = exposed_by_prefix(name)
     if prefixed is not None:
-        return "已有", ("功能已由 `%s` 包装暴露（★ **前缀别名**："
-                             "裸函数名是包装名的前缀）" % prefixed)
+        return "已有", (
+            "功能已由 `%s` 包装暴露（★ **前缀别名**："
+            "裸函数名是包装名的前缀）" % prefixed
+        )
     #: ★★ 2026-10-03（轮 432）**跨模块使用 ⇒ 内部件**：
     #:   ★ 别人已经在用它 ⇒ 它是助手，**不是待挂的能力**（★ 真例：`entities_as_array`）
     if used_by_other_module(module, name):
-        return "内部件", ("★ 已被 `scripts/` 下**别的模块引用** ⇒ "
-                                    "它是**内部助手**，不是待挂的能力")
+        return "内部件", (
+            "★ 已被 `scripts/` 下**别的模块引用** ⇒ 它是**内部助手**，不是待挂的能力"
+        )
     return "该挂", ""
 
 
@@ -327,10 +353,13 @@ def _public_defs(module: str) -> list[str]:
         return []
     try:
         tree = ast.parse(p.read_text(encoding="utf-8"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
-    return [n.name for n in tree.body
-            if isinstance(n, ast.FunctionDef) and not n.name.startswith("_")]
+    return [
+        n.name
+        for n in tree.body
+        if isinstance(n, ast.FunctionDef) and not n.name.startswith("_")
+    ]
 
 
 def _server_export_functions() -> set[str]:
@@ -342,12 +371,13 @@ def _server_export_functions() -> set[str]:
     ★★ 而判据是**结构**（★ 找变量名为 `exports` 的 dict 字面量的**键**）——
       ★ 不是再列一张表（★ 否则又变成穷举 —— 事实 53）。
     """
-    import ast as _ast                                            # noqa: PLC0415
+    import ast as _ast  # noqa: PLC0415
+
     path = ROOT / "mcp-server" / "server.py"
     out: set[str] = set()
     try:
         tree = _ast.parse(path.read_text(encoding="utf-8"))
-    except Exception:                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return out
     for node in _ast.walk(tree):
         if not isinstance(node, _ast.Assign):
@@ -374,36 +404,43 @@ def _tool_functions() -> set[str]:
     """
     try:
         sys.path.insert(0, str(ROOT / "mcp-server"))
-        import register_capabilities as _rc                     # noqa: PLC0415
+        import register_capabilities as _rc  # noqa: PLC0415
+
         #: ★★★ 2026-10-03（轮 437）**并上 `server.py` 那半边** ——
         #:   ★ 否则分诊只看得见 ToolSpec，★ 而把 `batch_export_formats` 这类
         #:     （★ 在 `server.py` 侧声明的）当成没有工具 —— ★ 事实 350 记的就是这个盲区。
-        return ({s.function for s in _rc.all_specs() if getattr(s, "function", None)}
-                | _server_export_functions())
-    except Exception:                                           # noqa: BLE001
+        return {
+            s.function for s in _rc.all_specs() if getattr(s, "function", None)
+        } | _server_export_functions()
+    except Exception:  # noqa: BLE001
         #: ★ 兜底：退回扫源码（★ 而那是有漏洞的 —— 所以上面那条才是主路）
         out: set = set()
         for f in (ROOT / "mcp-server").glob("tool_specs*.py"):
             try:
-                out.update(__import__("re").findall(r'function="([A-Za-z_][A-Za-z0-9_]*)"',
-                                                    f.read_text(encoding="utf-8")))
-            except Exception:                                   # noqa: BLE001
+                out.update(
+                    __import__("re").findall(
+                        r'function="([A-Za-z_][A-Za-z0-9_]*)"',
+                        f.read_text(encoding="utf-8"),
+                    )
+                )
+            except Exception:  # noqa: BLE001
                 continue
         return out
+
 
 def _upstream_called() -> set[str]:
     if not UPSTREAM_SERVER.exists():
         return set()
     try:
         src = UPSTREAM_SERVER.read_text(encoding="utf-8")
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set()
     return set(re.findall(r"\b([a-z_][a-z0-9_]{3,})\s*\(", src))
 
 
 def main() -> int:
     sys.path.insert(0, str(ROOT / "tools"))
-    from audit_real_gaps import MODULES                        # noqa: PLC0415
+    from audit_real_gaps import MODULES  # noqa: PLC0415
 
     have_tool = _tool_functions()
     upstream = _upstream_called()
@@ -418,7 +455,7 @@ def main() -> int:
             seen.add((module, name))
             if name in have_tool:
                 continue
-            if name in upstream:                               # ★ 被上游 server.py 调 ⇒ 不算缺口
+            if name in upstream:  # ★ 被上游 server.py 调 ⇒ 不算缺口
                 continue
             kind, why = classify(module, name)
             rows.append({"module": module, "name": name, "kind": kind, "why": why})
@@ -426,16 +463,22 @@ def main() -> int:
     counts: dict[str, int] = {}
     for r in rows:
         counts[r["kind"]] = counts.get(r["kind"], 0) + 1
-    summary = {"total": len(rows), **counts,
-               "★": "四类之和必须 == total（★ 本脚本自检）",
-               "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 "
-                              "—— ★ 两者对「被上游调」的判定略有不同"
-                              "（本脚本用字面量匹配）；★ 本文件的 108 "
-                              "是本轮作业的口径，★ 而两者的模块级分布一致。",
-               "self_check": len(rows) == sum(counts.values())}
+    summary = {
+        "total": len(rows),
+        **counts,
+        "★": "四类之和必须 == total（★ 本脚本自检）",
+        "★口径差异": "本脚本报 108 而 audit_real_gaps 报 101 "
+        "—— ★ 两者对「被上游调」的判定略有不同"
+        "（本脚本用字面量匹配）；★ 本文件的 108 "
+        "是本轮作业的口径，★ 而两者的模块级分布一致。",
+        "self_check": len(rows) == sum(counts.values()),
+    }
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"summary": summary, "rows": rows},
-                              ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps({"summary": summary, "rows": rows}, ensure_ascii=False, indent=1)
+        + "\n",
+        encoding="utf-8",
+    )
 
     print("  === 分诊结果（%d 条）===" % len(rows))
     for k in ("该挂", "已有", "内部件", "不做"):
@@ -443,17 +486,23 @@ def main() -> int:
     print("  自检：四类之和 == total ⇒ %s" % summary["self_check"])
     print("\n  === 该挂的（按模块）===")
     for module in MODULES:
-        names = [r["name"] for r in rows if r["module"] == module and r["kind"] == "该挂"]
+        names = [
+            r["name"] for r in rows if r["module"] == module and r["kind"] == "该挂"
+        ]
         if names:
             print("  %-22s %2d  %s" % (module, len(names), ", ".join(names[:8])))
     print("\n  === 内部件 ===")
     for module in MODULES:
-        names = [r["name"] for r in rows if r["module"] == module and r["kind"] == "内部件"]
+        names = [
+            r["name"] for r in rows if r["module"] == module and r["kind"] == "内部件"
+        ]
         if names:
             print("  %-22s %2d  %s" % (module, len(names), ", ".join(names[:8])))
     print("\n  === 不做 ===")
     for module in MODULES:
-        names = [r["name"] for r in rows if r["module"] == module and r["kind"] == "不做"]
+        names = [
+            r["name"] for r in rows if r["module"] == module and r["kind"] == "不做"
+        ]
         if names:
             print("  %-22s %2d  %s" % (module, len(names), ", ".join(names[:10])))
     print("\n  产物: %s" % OUT)

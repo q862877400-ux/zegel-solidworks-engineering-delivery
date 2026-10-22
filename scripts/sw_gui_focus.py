@@ -28,6 +28,7 @@ r"""GUI 焦点守卫 —— 每个动作之前强制检查并修复输入焦点�
 # ⚠ 本模块只管焦点，不操作 SolidWorks 模型。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -48,8 +49,12 @@ def foreground() -> int:
 
 def focus_state(want: int) -> dict[str, Any]:
     fg = foreground()
-    return {"want": want, "got": fg, "ok": fg == want,
-            "title": win32gui.GetWindowText(fg)[:60] if fg else ""}
+    return {
+        "want": want,
+        "got": fg,
+        "ok": fg == want,
+        "title": win32gui.GetWindowText(fg)[:60] if fg else "",
+    }
 
 
 def ensure_focus(hwnd: int, retries: int = 3, settle: float = 0.3) -> bool:
@@ -75,8 +80,7 @@ def ensure_focus(hwnd: int, retries: int = 3, settle: float = 0.3) -> bool:
             pass
         finally:
             try:
-                win32api.keybd_event(win32con.VK_MENU, 0,
-                                     win32con.KEYEVENTF_KEYUP, 0)
+                win32api.keybd_event(win32con.VK_MENU, 0, win32con.KEYEVENTF_KEYUP, 0)
             except Exception:
                 pass
             time.sleep(settle)
@@ -96,4 +100,5 @@ def assert_focus(hwnd: int, where: str = "") -> None:
         return
     raise RuntimeError(
         "%s 焦点丢失且修复失败：期望 hwnd=%d，实际前台=%d(%r)"
-        % (where or "操作前", st["want"], st["got"], st["title"]))
+        % (where or "操作前", st["want"], st["got"], st["title"])
+    )

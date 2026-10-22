@@ -1,4 +1,5 @@
 """★ EC01 工程设计契约与对象模型 —— **单一权威**的 `EngineeringContract` 与配套对象。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   `output/ENGINEERING_CONSTRUCTION_PLAN.md` **§5 EC01**（★ T01–T08 逐字）
@@ -22,12 +23,26 @@ from dataclasses import dataclass, field
 from typing import Any
 
 __all__ = [
-    "InformationClass", "ContractState", "Resolution", "Rejection",
-    "Quantity", "NormalizedQuantity", "Datum", "LoadCase", "MaterialRef",
-    "ProcessIntent", "ParameterDomain", "VerificationObligation",
-    "Assumption", "ApprovalRef", "EngineeringContract",
-    "normalize_quantity", "REJECTION_CODES", "adapt_design_plan",
-    "LEGACY_FIELDS", "LEGACY_ALWAYS_MISSING",
+    "InformationClass",
+    "ContractState",
+    "Resolution",
+    "Rejection",
+    "Quantity",
+    "NormalizedQuantity",
+    "Datum",
+    "LoadCase",
+    "MaterialRef",
+    "ProcessIntent",
+    "ParameterDomain",
+    "VerificationObligation",
+    "Assumption",
+    "ApprovalRef",
+    "EngineeringContract",
+    "normalize_quantity",
+    "REJECTION_CODES",
+    "adapt_design_plan",
+    "LEGACY_FIELDS",
+    "LEGACY_ALWAYS_MISSING",
 ]
 
 
@@ -35,13 +50,14 @@ __all__ = [
 # 一、★★ 四类信息（★ EC01-T01 · FR-001）
 # ══════════════════════════════════════════════════════════════════════
 
+
 class InformationClass:
     """★ 四类信息（★ 计划 §5 EC01-T01 逐字：「划分已知、假设、待确认、必需缺失四类信息」）。"""
 
-    KNOWN = "known"                              #: ★ 已知（★ 用户给了）
-    ASSUMED = "assumed"                          #: ★ 假设（★ 我们保守填了 —— ★ **必须给依据**）
-    NEEDS_CONFIRMATION = "needs_confirmation"    #: ★ 待确认（★ 问了才知道）
-    REQUIRED_MISSING = "required_missing"        #: ★★ **必需缺失** ⇒ ★ **阻断**
+    KNOWN = "known"  #: ★ 已知（★ 用户给了）
+    ASSUMED = "assumed"  #: ★ 假设（★ 我们保守填了 —— ★ **必须给依据**）
+    NEEDS_CONFIRMATION = "needs_confirmation"  #: ★ 待确认（★ 问了才知道）
+    REQUIRED_MISSING = "required_missing"  #: ★★ **必需缺失** ⇒ ★ **阻断**
 
     ALL = (KNOWN, ASSUMED, NEEDS_CONFIRMATION, REQUIRED_MISSING)
     #: ★★ **阻断类**（★ 非空 ⇒ 不得冻结、不得进 COM）
@@ -61,7 +77,7 @@ class ContractState:
         DRAFT: (NEEDS_CLARIFICATION, FROZEN),
         NEEDS_CLARIFICATION: (DRAFT, FROZEN),
         FROZEN: (SUPERSEDED,),
-        SUPERSEDED: (),                          #: ★ 终态
+        SUPERSEDED: (),  #: ★ 终态
     }
     #: ★★ **只有这个状态能进 COM**（★ FR-004）
     COM_ELIGIBLE = (FROZEN,)
@@ -82,11 +98,11 @@ class Resolution:
 
 #: ★★ 拒绝码（★ **封闭词表** —— ★ 与 EC00 的 `contracts/quantity.md` §二 **同一套**）
 REJECTION_CODES = (
-    "reject-kind-mismatch",        #: ★ 量纲不符
-    "reject-nonfinite",            #: ★ NaN / ±无穷
-    "reject-out-of-domain",        #: ★ 域外
-    "reject-unknown-unit",         #: ★ 未知单位
-    "reject-double-conversion",    #: ★ 重复换算
+    "reject-kind-mismatch",  #: ★ 量纲不符
+    "reject-nonfinite",  #: ★ NaN / ±无穷
+    "reject-out-of-domain",  #: ★ 域外
+    "reject-unknown-unit",  #: ★ 未知单位
+    "reject-double-conversion",  #: ★ 重复换算
 )
 
 
@@ -130,7 +146,7 @@ UNIT_SCALE = {
 #: ★★ **偏置单位**（★ 官方/工程惯例：★ 温度**不能**用乘法 —— ★ 承 EC00 `contracts/quanti
 #: ty.md` §2.3）
 OFFSET_UNITS = {
-    ("temperature", "degC"): ("K", 273.15),      #: ★ value + 273.15
+    ("temperature", "degC"): ("K", 273.15),  #: ★ value + 273.15
 }
 
 
@@ -141,7 +157,7 @@ class Quantity:
     value: float
     unit: str
     quantity_kind: str
-    source: str = "supplied"          #: ★ `supplied` / `legacy_contract_default`
+    source: str = "supplied"  #: ★ `supplied` / `legacy_contract_default`
 
 
 @dataclass(frozen=True)
@@ -154,7 +170,9 @@ class NormalizedQuantity:
     rule_version: str = "ec01-v1"
 
 
-def normalize_quantity(q: Quantity, *, already_normalized: bool = False) -> NormalizedQuantity:
+def normalize_quantity(
+    q: Quantity, *, already_normalized: bool = False
+) -> NormalizedQuantity:
     """★ 规范化（★ 唯一入口 —— ★ 只做**一次**换算）。
 
     ★★★ 拒绝条件（★ 与 EC00 `contracts/quantity.md` §二 **同一套码**）：
@@ -164,8 +182,9 @@ def normalize_quantity(q: Quantity, *, already_normalized: bool = False) -> Norm
       · `reject-double-conversion` —— ★ `NormalizedQuantity` **再次**进入
     """
     if already_normalized:
-        raise Rejection("reject-double-conversion",
-                        "★ 规范化结果**不能**再次作为原始 Quantity 转换")
+        raise Rejection(
+            "reject-double-conversion", "★ 规范化结果**不能**再次作为原始 Quantity 转换"
+        )
     if not isinstance(q.value, (int, float)) or not math.isfinite(q.value):
         raise Rejection("reject-nonfinite", "★ 值不是有限数：%r" % (q.value,))
     kind, unit = q.quantity_kind, q.unit
@@ -184,9 +203,11 @@ def normalize_quantity(q: Quantity, *, already_normalized: bool = False) -> Norm
         known_kinds_of_this_unit = {k for (k, u) in UNIT_SCALE if u == unit}
         known_kinds_of_this_unit |= {k for (k, u) in OFFSET_UNITS if u == unit}
         if known_kinds_of_this_unit and kind not in known_kinds_of_this_unit:
-            raise Rejection("reject-kind-mismatch",
-                            "★ 量纲 %r 与单位 %r 不匹配（★ 该单位属于 %r）"
-                            % (kind, unit, sorted(known_kinds_of_this_unit)))
+            raise Rejection(
+                "reject-kind-mismatch",
+                "★ 量纲 %r 与单位 %r 不匹配（★ 该单位属于 %r）"
+                % (kind, unit, sorted(known_kinds_of_this_unit)),
+            )
         raise Rejection("reject-unknown-unit", "★ 量纲 %s 不认识单位 %r" % (kind, unit))
     scale = UNIT_SCALE[key]
     return NormalizedQuantity(float(q.value) * scale, CANONICAL_UNIT[kind], q)
@@ -195,6 +216,7 @@ def normalize_quantity(q: Quantity, *, already_normalized: bool = False) -> Norm
 # ══════════════════════════════════════════════════════════════════════
 # 三、★★ 其余工程对象（★ FR-002）
 # ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Datum:
@@ -206,8 +228,8 @@ class Datum:
     """
 
     name: str
-    semantic_role: str                                   #: ★ 工程语义（★ 「装配结合面」等）
-    cad_plane_hint: str | None = None                    #: ★ **提示**，★ 不是身份
+    semantic_role: str  #: ★ 工程语义（★ 「装配结合面」等）
+    cad_plane_hint: str | None = None  #: ★ **提示**，★ 不是身份
     #: ★★ 依据（★ 计划 §5 EC01 逐字）：「工程基准不能简单等同任一 CAD 基准面」
     NOT_MERELY_A_CAD_PLANE = True
 
@@ -221,7 +243,7 @@ class LoadCase:
     """★ 工况（★ **缺它不能给强度结论** —— ★ 承计划 §5 EC05-T01）。"""
 
     name: str
-    kind: str                        #: ★ 如 `static` / `fatigue` / `impact` / `thermal`
+    kind: str  #: ★ 如 `static` / `fatigue` / `impact` / `thermal`
     magnitude: NormalizedQuantity | None = None
     #: ★★ **缺失时的处置**（★ FR-003 逐字：「安全等级/工况缺失不能默认「普通」」）
     is_missing: bool = False
@@ -237,7 +259,7 @@ class MaterialRef:
 
     name: str
     standard: str = ""
-    version: str = ""                #: ★★ 材料标准会换版 ⇒ ★ 必须记版本
+    version: str = ""  #: ★★ 材料标准会换版 ⇒ ★ 必须记版本
     properties: dict = field(default_factory=dict)
 
 
@@ -275,7 +297,7 @@ class VerificationObligation:
     id: str
     description: str
     mandatory: bool = True
-    evidence_kind: str = ""          #: ★ 如 `readback` / `calc` / `test`
+    evidence_kind: str = ""  #: ★ 如 `readback` / `calc` / `test`
 
 
 @dataclass
@@ -284,8 +306,8 @@ class Assumption:
 
     field_name: str
     value: Any
-    basis: str                       #: ★★ 依据（★ 不能「我觉得」）
-    conservative: bool = True        #: ★ 可保守假设 / 禁止假设（★ EC01-T07）
+    basis: str  #: ★★ 依据（★ 不能「我觉得」）
+    conservative: bool = True  #: ★ 可保守假设 / 禁止假设（★ EC01-T07）
 
     def is_acceptable(self) -> bool:
         """★★ **只有可保守假设项 + 有依据**才可接受。"""
@@ -305,6 +327,7 @@ class ApprovalRef:
 # 四、★★★ EngineeringContract（★ **单一权威**）
 # ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class EngineeringContract:
     """★★★ **EC01 的单一权威工程契约**（★ 计划 §5 EC01 逐字要求）。
@@ -313,7 +336,7 @@ class EngineeringContract:
     """
 
     contract_id: str
-    intent: str                                     #: ★ 工程意图（★ 一句话）
+    intent: str  #: ★ 工程意图（★ 一句话）
     state: str = ContractState.DRAFT
     #: ★★ 四类信息（★ 逐字段）
     information: dict = field(default_factory=dict)  #: field -> InformationClass
@@ -340,8 +363,9 @@ class EngineeringContract:
 
     def blocking_fields(self) -> list[str]:
         """★★ **必需缺失**的字段（★ 非空 ⇒ ★ 不得冻结、不得进 COM）。"""
-        return sorted(f for f, c in self.information.items()
-                      if c in InformationClass.BLOCKING)
+        return sorted(
+            f for f, c in self.information.items() if c in InformationClass.BLOCKING
+        )
 
     # ── 内容哈希 ────────────────────────────────────────────────────
     def compute_hash(self) -> str:
@@ -353,22 +377,39 @@ class EngineeringContract:
             "contract_id": self.contract_id,
             "intent": self.intent,
             "information": dict(sorted(self.information.items())),
-            "datums": [d.identity() if hasattr(d, "identity") else str(d) for d in self.datums],
+            "datums": [
+                d.identity() if hasattr(d, "identity") else str(d) for d in self.datums
+            ],
             "load_cases": [
-                {"name": lc.name, "kind": lc.kind, "is_missing": lc.is_missing,
-                 "value": (lc.magnitude.value if lc.magnitude else None),
-                 "unit": (lc.magnitude.canonical_unit if lc.magnitude else None)}
-                for lc in self.load_cases],
-            "material": ({"name": self.material.name, "version": self.material.version}
-                         if self.material else None),
+                {
+                    "name": lc.name,
+                    "kind": lc.kind,
+                    "is_missing": lc.is_missing,
+                    "value": (lc.magnitude.value if lc.magnitude else None),
+                    "unit": (lc.magnitude.canonical_unit if lc.magnitude else None),
+                }
+                for lc in self.load_cases
+            ],
+            "material": (
+                {"name": self.material.name, "version": self.material.version}
+                if self.material
+                else None
+            ),
             "process": (self.process.kind if self.process else None),
             "parameter_domains": {
                 k: [v.low, v.high, v.unit, v.allow_negative]
-                for k, v in sorted(self.parameter_domains.items())},
+                for k, v in sorted(self.parameter_domains.items())
+            },
             "obligations": [o.id for o in self.obligations],
             "assumptions": [
-                {"field": a.field_name, "value": str(a.value), "basis": a.basis,
-                 "conservative": a.conservative} for a in self.assumptions],
+                {
+                    "field": a.field_name,
+                    "value": str(a.value),
+                    "basis": a.basis,
+                    "conservative": a.conservative,
+                }
+                for a in self.assumptions
+            ],
             "safety_level": self.safety_level,
         }
         blob = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
@@ -381,8 +422,10 @@ class EngineeringContract:
     def transition(self, target: str) -> None:
         """★ 状态迁移（★ **非法迁移一律拒绝**）。"""
         if not self.may_transition_to(target):
-            raise ValueError("★ 非法状态迁移：%s → %s（★ 允许：%r）"
-                             % (self.state, target, ContractState.TRANSITIONS.get(self.state, ())))
+            raise ValueError(
+                "★ 非法状态迁移：%s → %s（★ 允许：%r）"
+                % (self.state, target, ContractState.TRANSITIONS.get(self.state, ()))
+            )
         self.state = target
 
     def freeze(self) -> str:
@@ -396,7 +439,9 @@ class EngineeringContract:
         #: ★★ 不可接受的假设 ⇒ 拒绝
         bad = [a.field_name for a in self.assumptions if not a.is_acceptable()]
         if bad:
-            raise ValueError("★★ 有不可接受的假设（★ 需「可保守」+「有依据」）：%r" % bad)
+            raise ValueError(
+                "★★ 有不可接受的假设（★ 需「可保守」+「有依据」）：%r" % bad
+            )
         self.state = ContractState.FROZEN
         self.content_hash = self.compute_hash()
         return self.content_hash
@@ -412,9 +457,11 @@ class EngineeringContract:
 
     def approval_is_valid(self, ref: ApprovalRef) -> bool:
         """★★★ **旧批准不能用于新内容**（★ FR-004 · ★ V4 的核心）。"""
-        return (ref.content_hash == self.content_hash
-                and self.content_hash != ""
-                and self.state == ContractState.FROZEN)
+        return (
+            ref.content_hash == self.content_hash
+            and self.content_hash != ""
+            and self.state == ContractState.FROZEN
+        )
 
     def supersede(self) -> None:
         """★ 取代（★ **旧批准随之失效** —— ★ 因为哈希会变）。"""
@@ -431,9 +478,18 @@ class EngineeringContract:
 # ══════════════════════════════════════════════════════════════════════
 
 #: ★★ 旧 `design_plan.schema.json` 的**10 个字段**（★ 逐字，★ 不凭记忆）
-LEGACY_FIELDS = ("plan_version", "source_brief", "part_family", "parameters",
-                 "features", "operation_sequence", "assumptions", "risk_register",
-                 "review_plan", "solidworks_mapping")
+LEGACY_FIELDS = (
+    "plan_version",
+    "source_brief",
+    "part_family",
+    "parameters",
+    "features",
+    "operation_sequence",
+    "assumptions",
+    "risk_register",
+    "review_plan",
+    "solidworks_mapping",
+)
 
 #: ★★★ **旧计划装不下、必须标 `required_missing` 的字段**（★ 不编默认值）
 #:   ★★ 依据（★ 计划 §5 EC01-T05 逐字）：「★ **旧信息不足保留 `unknown`**」
@@ -457,27 +513,38 @@ def adapt_design_plan(legacy: dict, *, contract_id: str = "") -> EngineeringCont
     """
     if not isinstance(legacy, dict):
         raise TypeError("★ `legacy` 必须是 dict（★ 旧 design_plan 的解析结果）")
-    missing_required = [f for f in ("plan_version", "source_brief", "part_family")
-                        if f not in legacy]
+    missing_required = [
+        f for f in ("plan_version", "source_brief", "part_family") if f not in legacy
+    ]
     if missing_required:
         raise ValueError("★★ 不是合法的旧 design_plan（★ 缺 %r）" % missing_required)
 
     c = EngineeringContract(
         contract_id=contract_id or ("LEGACY-%s" % legacy.get("plan_version", "?")),
         #: ★★ `intent` 是**必填** ⇒ ★ 先给旧计划里的 `source_brief`（★ 可能是空串）
-        intent=str(legacy.get("source_brief") or ""))
+        intent=str(legacy.get("source_brief") or ""),
+    )
     c.intent = str(legacy.get("source_brief") or "")
-    c.classify("intent",
-               InformationClass.KNOWN if c.intent else InformationClass.REQUIRED_MISSING)
+    c.classify(
+        "intent",
+        InformationClass.KNOWN if c.intent else InformationClass.REQUIRED_MISSING,
+    )
     c.classify("part_family", InformationClass.KNOWN)
     #: ★★ `part_family` 只是**工艺提示**（★ 不据此定工艺结论）
     if legacy.get("part_family"):
-        c.process = ProcessIntent(kind=str(legacy["part_family"]),
-                                  notes="★ 来自旧计划（仅提示）")
+        c.process = ProcessIntent(
+            kind=str(legacy["part_family"]), notes="★ 来自旧计划（仅提示）"
+        )
     #: ★ `assumptions` → ★ `Assumption`（★ **旧计划没给依据 ⇒ 依据留空** ⇒ 不可接受）
-    for a in (legacy.get("assumptions") or []):
-        c.assumptions.append(Assumption(
-            field_name="legacy_assumption", value=str(a), basis="", conservative=True))
+    for a in legacy.get("assumptions") or []:
+        c.assumptions.append(
+            Assumption(
+                field_name="legacy_assumption",
+                value=str(a),
+                basis="",
+                conservative=True,
+            )
+        )
         c.classify("legacy_assumption", InformationClass.NEEDS_CONFIRMATION)
     #: ★★ `parameters` ⇒ ★ 标待确认（★ 旧计划**没有单位** ⇒ ★ **不造域**）
     if legacy.get("parameters"):

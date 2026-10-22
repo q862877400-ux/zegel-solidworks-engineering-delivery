@@ -1,12 +1,13 @@
 """★ 阶段 2 · 真机变更传播（规格 317 的 D5 真机链）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/change_run.py
 # 定位:   规格 `specs/317-stage2-real-holes` 的 D5（变更传播）的**真机链**。★★ 上一轮
-#           （第 1/2 轮）D5 只做了机制与测试，**没跑真机链**⇒ 本模块补「改尺寸 → 重建 → 
+#           （第 1/2 轮）D5 只做了机制与测试，**没跑真机链**⇒ 本模块补「改尺寸 → 重建 →
 #           出图 → 校验」那一段。
-# 官方依据: ① 本仓 `scripts/engineering/drawing_obligations.py` 的   `ArtifactDigest` / 
+# 官方依据: ① 本仓 `scripts/engineering/drawing_obligations.py` 的   `ArtifactDigest` /
 #           `changed_after_revision` / `propagation_report`② 本仓 `scripts/config_update
 #           _dimension.py` 与   `solidworks_config_update_dimension`（改具名尺寸的入口）
 #           ③ 本仓**事实 71**（`GetPartBox` 回毫米）
@@ -30,6 +31,7 @@ def find_dimension_names(doc) -> dict:
       ★ 猜名字 ⇒ 改不动 ⇒ 而「改不动」与「改了没生效」长得一样。
     """
     import sys
+
     for p in (str(ROOT / "scripts"), str(ROOT / "tools"), str(ROOT)):
         if p not in sys.path:
             sys.path.insert(0, p)
@@ -54,27 +56,27 @@ def find_dimension_names(doc) -> dict:
                         dim = dim() if callable(dim) else dim
                         nm = sw_connect.safe_get_com_member(dim, "FullName")
                         nm = nm() if callable(nm) else nm
-                        val = sw_connect.safe_get_com_member(
-                            dim, "GetSystemValue2", "")
+                        val = sw_connect.safe_get_com_member(dim, "GetSystemValue2", "")
                         val = val() if callable(val) else val
                         if nm:
                             out["dimensions"].append(
-                                {"name": str(nm), "value_m": float(val or 0)})
-                    except Exception:                                      # noqa: BLE001
+                                {"name": str(nm), "value_m": float(val or 0)}
+                            )
+                    except Exception:  # noqa: BLE001
                         pass
                     try:
                         dd = sw_connect.safe_get_com_member(dd, "GetNext3")
                         dd = dd() if callable(dd) else dd
-                    except Exception:                                      # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         break
-            except Exception:                                              # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             try:
                 feat = sw_connect.safe_get_com_member(feat, "GetNextFeature")
                 feat = feat() if callable(feat) else feat
-            except Exception:                                              # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 break
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     return out
 
@@ -85,6 +87,7 @@ def change_plan(old: dict, new: dict) -> list:
     ★ 判据：只列**真的变了**的（★ 没变的不算变更 —— 否则传播报告会假阳性）。
     """
     from .drawing_obligations import ChangeRecord
+
     rows = []
     for k in sorted(set(old) | set(new)):
         a, b = old.get(k), new.get(k)
@@ -93,8 +96,9 @@ def change_plan(old: dict, new: dict) -> list:
     return rows
 
 
-def verify_propagation(before_digests: list, after_digests: list,
-                       changes: list, steps) -> dict:
+def verify_propagation(
+    before_digests: list, after_digests: list, changes: list, steps
+) -> dict:
     """★ 变更传播的总判据（★ SC-010：无旧模型/旧尺寸/旧证据混入）。
 
     ★★ 三条都要：
@@ -116,10 +120,14 @@ def verify_propagation(before_digests: list, after_digests: list,
     }
 
 
-def digest_set(model: pathlib.Path, drawing: pathlib.Path,
-               report: pathlib.Path, *, revision: str) -> list:
+def digest_set(
+    model: pathlib.Path, drawing: pathlib.Path, report: pathlib.Path, *, revision: str
+) -> list:
     """★ 造三类产物的摘要集（★ 判「新旧混入」的输入）。"""
     from . import drawing_obligations as DO
-    return [DO.digest_of(model, kind="model", revision=revision),
-            DO.digest_of(drawing, kind="drawing", revision=revision),
-            DO.digest_of(report, kind="report", revision=revision)]
+
+    return [
+        DO.digest_of(model, kind="model", revision=revision),
+        DO.digest_of(drawing, kind="drawing", revision=revision),
+        DO.digest_of(report, kind="report", revision=revision),
+    ]

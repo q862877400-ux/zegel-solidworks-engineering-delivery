@@ -40,7 +40,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pin-wants-faces-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "pin-wants-faces-evidence.json"
+)
 STUDY = "DSH-PINF_%s" % time.strftime("%H%M%S")
 
 
@@ -48,8 +50,13 @@ def main() -> int:
     import sw_connect
     from sw_connect import safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_selection_spec import entities_as_array
     from scripts import sw_simulation_loads as SL
 
@@ -70,46 +77,67 @@ def main() -> int:
         extrude_boss(doc, sk2, 20.0, merge=False)
 
         bodies = safe_get_com_member(doc, "GetBodies2", 0, True)
-        ev["steps"]["two_bodies"] = {"ok": bool(bodies) and len(list(bodies)) == 2,
-                                     "body_count": len(list(bodies)) if bodies else 0}
+        ev["steps"]["two_bodies"] = {
+            "ok": bool(bodies) and len(list(bodies)) == 2,
+            "body_count": len(list(bodies)) if bodies else 0,
+        }
         sim.create_static_study(sw, STUDY)
         mgr = sim._loads_and_restraints_manager(sim.get_study_by_name(sw, STUDY))
         try:
             f0 = entities_as_array(doc, "FACE", [0], body_index=0)
             f1 = entities_as_array(doc, "FACE", [0], body_index=1)
-            ev["steps"]["entry_check"] = {"ok": len(f0) == 1 and len(f1) == 1 and f0[0] is not f1[0]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["entry_check"] = {"ok": False,
-                                          "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+            ev["steps"]["entry_check"] = {
+                "ok": len(f0) == 1 and len(f1) == 1 and f0[0] is not f1[0]
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["entry_check"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 #: ★ **直接调裸函数**（★ 这是分辨实验，★ 包装还没定型）
-                rep = SL._report(mgr, lambda: SL.add_pin_connector(mgr, f0, f1), "pin_with_faces", doc)
+                rep = SL._report(
+                    mgr,
+                    lambda: SL.add_pin_connector(mgr, f0, f1),
+                    "pin_with_faces",
+                    doc,
+                )
                 ev["steps"]["pin_with_faces"] = {
-                    "ok": bool(rep.get("ok")), "count": [rep.get("count_before"), rep.get("count_after")],
-                    "error": (rep.get("error") or "")[:130]}
-            except Exception as exc:                           # noqa: BLE001
+                    "ok": bool(rep.get("ok")),
+                    "count": [rep.get("count_before"), rep.get("count_after")],
+                    "error": (rep.get("error") or "")[:130],
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["pin_with_faces"] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
-        ev["verdict"] = "pass" if (ev["steps"].get("pin_with_faces") or {}).get("ok") else "partial"
-        ev["note"] = ("★ 分辨实验：★ 销钉连接件要**组件**还是要**面** —— "
-                      "★ 在多体零件上、传**两个体上的面**。★ 成 ⇒ 它要面（装配体不是前提）；"
-                      "★ 不成 ⇒ 装配体才是前提。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
+        ev["verdict"] = (
+            "pass" if (ev["steps"].get("pin_with_faces") or {}).get("ok") else "partial"
+        )
+        ev["note"] = (
+            "★ 分辨实验：★ 销钉连接件要**组件**还是要**面** —— "
+            "★ 在多体零件上、传**两个体上的面**。★ 成 ⇒ 它要面（装配体不是前提）；"
+            "★ 不成 ⇒ 装配体才是前提。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

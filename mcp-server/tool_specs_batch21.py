@@ -52,6 +52,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -59,26 +60,31 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH21"]
 
 #: 每个工具都要说清的那件事（★ 规则 3 的豁免依据 + 单位 + 参照原点）
-_GEOM_NOTE = ("⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented "
-              "exception in rule 3 (a *drawing primitive* has no named entity to select). "
-              "Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. "
-              "★ Start a sketch with solidworks_sketch_start first, and finish with "
-              "solidworks_sketch_end; read back with the solidworks_sketch_count_* tools.")
+_GEOM_NOTE = (
+    "⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented "
+    "exception in rule 3 (a *drawing primitive* has no named entity to select). "
+    "Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. "
+    "★ Start a sketch with solidworks_sketch_start first, and finish with "
+    "solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
+)
 
-_PLANE = ("Plane name, English or Chinese (\"Front Plane\" / \"前视基准面\", \"Top Plane\" / "
-          "\"上视基准面\", \"Right Plane\" / \"右视基准面\").")
+_PLANE = (
+    'Plane name, English or Chinese ("Front Plane" / "前视基准面", "Top Plane" / '
+    '"上视基准面", "Right Plane" / "右视基准面").'
+)
 
 
 def _consumed(*names: str) -> dict:
     """这些入参由 `param_alias` 改名后传给目标函数（**不是**由 `derived_args` 消费）。"""
-    return {n: None for n in ()}          #: 占位：本批用**改名**而非消费，故不标 None
+    return {n: None for n in ()}  #: 占位：本批用**改名**而非消费，故不标 None
 
 
 SPECS_BATCH21 = [
     ToolSpec(
         name="solidworks_sketch_start",
         title="Start a Sketch",
-        module="sw_part", function="start_sketch",
+        module="sw_part",
+        function="start_sketch",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -86,12 +92,13 @@ SPECS_BATCH21 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[Param("plane_name", str, default="Front Plane", description=_PLANE)],
         doc="Enter a new sketch on a reference plane. ★ This is the prerequisite for every "
-            "sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
+        "sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
     ),
     ToolSpec(
         name="solidworks_sketch_end",
         title="End the Sketch",
-        module="sw_part", function="end_sketch",
+        module="sw_part",
+        function="end_sketch",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -99,18 +106,24 @@ SPECS_BATCH21 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Leave the current sketch. ★ The resulting sketch reference is reusable by "
-            "solidworks_extrude_* and other feature tools, so features can be built right after.",
+        "solidworks_extrude_* and other feature tools, so features can be built right after.",
     ),
     ToolSpec(
         name="solidworks_sketch_add_line",
         title="Add a Line to the Sketch",
-        module="sw_part", function="sketch_line",
+        module="sw_part",
+        function="sketch_line",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
-        param_alias={"start_x_mm": "x1", "start_y_mm": "y1", "end_x_mm": "x2", "end_y_mm": "y2"},
+        param_alias={
+            "start_x_mm": "x1",
+            "start_y_mm": "y1",
+            "end_x_mm": "x2",
+            "end_y_mm": "y2",
+        },
         params=[
             Param("start_x_mm", float, description="Start point X, mm."),
             Param("start_y_mm", float, description="Start point Y, mm."),
@@ -122,7 +135,8 @@ SPECS_BATCH21 = [
     ToolSpec(
         name="solidworks_sketch_add_circle",
         title="Add a Circle to the Sketch",
-        module="sw_part", function="sketch_circle",
+        module="sw_part",
+        function="sketch_circle",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -139,7 +153,8 @@ SPECS_BATCH21 = [
     ToolSpec(
         name="solidworks_sketch_add_rectangle",
         title="Add a Rectangle to the Sketch (two opposite corners)",
-        module="sw_part", function="sketch_corner_rectangle",
+        module="sw_part",
+        function="sketch_corner_rectangle",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -153,7 +168,7 @@ SPECS_BATCH21 = [
             Param("y2_mm", float, description="Opposite corner Y, mm."),
         ],
         doc="Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. "
-            "⚠ Not the same as a centre+size rectangle — this tool takes corners, which is "
-            "unambiguous. " + _GEOM_NOTE,
+        "⚠ Not the same as a centre+size rectangle — this tool takes corners, which is "
+        "unambiguous. " + _GEOM_NOTE,
     ),
 ]

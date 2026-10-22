@@ -34,10 +34,22 @@ sys.path.insert(0, str(REPO / "mcp-server"))
 sys.path.insert(0, str(REPO / "scripts"))
 import register_capabilities as RC  # noqa: E402
 
-READ_TOKENS = ("GetSelectedObjectCount2", "SelectionManager", "_selection_marks",
-               "GetSelectedObject6", "GetSelectedObjectCount")
+READ_TOKENS = (
+    "GetSelectedObjectCount2",
+    "SelectionManager",
+    "_selection_marks",
+    "GetSelectedObject6",
+    "GetSelectedObjectCount",
+)
 #: ★ 「要求」的信号词（在同一函数里与选区读同现才算）
-REQUIRE_TOKENS = ("preconditions_held", "前置未成立", "没有选择", "未选择", "请先选", "先选好")
+REQUIRE_TOKENS = (
+    "preconditions_held",
+    "前置未成立",
+    "没有选择",
+    "未选择",
+    "请先选",
+    "先选好",
+)
 
 
 def func_src(mod_name: str, fn_name: str):
@@ -50,7 +62,12 @@ def func_src(mod_name: str, fn_name: str):
         return None
     for n in ast.walk(tree):
         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == fn_name:
-            return ast.get_source_segment(p.read_text(encoding="utf-8", errors="replace"), n) or ""
+            return (
+                ast.get_source_segment(
+                    p.read_text(encoding="utf-8", errors="replace"), n
+                )
+                or ""
+            )
     return None
 
 
@@ -61,8 +78,10 @@ for spec in RC.all_specs():
         continue
     pc = getattr(spec, "pre_call", None)
     if pc is not None:
-        continue                                   #: ★ 有 pre_call 的**安全**，不看
-    src = func_src(getattr(spec, "module", "") or "", getattr(spec, "function", "") or "")
+        continue  #: ★ 有 pre_call 的**安全**，不看
+    src = func_src(
+        getattr(spec, "module", "") or "", getattr(spec, "function", "") or ""
+    )
     if not src:
         continue
     reads = [t for t in READ_TOKENS if t in src]
@@ -74,14 +93,26 @@ for spec in RC.all_specs():
     if not hard:
         for line in src.splitlines():
             if any(t in line for t in READ_TOKENS) and any(
-                    k in line for k in (">= 1", "< 1", "== 0", "!= 0", "not ", "raise")):
+                k in line for k in (">= 1", "< 1", "== 0", "!= 0", "not ", "raise")
+            ):
                 hard = True
                 break
-    rows.append((name, getattr(spec, "module", ""), getattr(spec, "function", ""),
-                 ",".join(reads)[:34], ",".join(requires)[:22], "★硬" if hard else "软(仅报告)"))
+    rows.append(
+        (
+            name,
+            getattr(spec, "module", ""),
+            getattr(spec, "function", ""),
+            ",".join(reads)[:34],
+            ",".join(requires)[:22],
+            "★硬" if hard else "软(仅报告)",
+        )
+    )
 rows.sort(key=lambda r: (r[5] != "★硬", r[0]))
 hard = [r for r in rows if r[5] == "★硬"]
-print("无 pre_call 且读到选区的工具：%d 条（★ 其中判据②命中的 **%d 条**）" % (len(rows), len(hard)))
+print(
+    "无 pre_call 且读到选区的工具：%d 条（★ 其中判据②命中的 **%d 条**）"
+    % (len(rows), len(hard))
+)
 print("%-50s %-22s %s" % ("工具", "读取的成员", "判据"))
 print("-" * 108)
 for r in rows:

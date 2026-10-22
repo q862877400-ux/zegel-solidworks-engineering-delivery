@@ -43,12 +43,14 @@ def main() -> int:
     bb = P.get_bounding_box(model)
     R = {
         "★_判据": "★ docstring 说 `depth` 是毫米 ⇒ 厚应为 **20 mm**；"
-                  "★ 若厚 **20000 mm** ⇒ ★ 函数把毫米当米传了",
+        "★ 若厚 **20000 mm** ⇒ ★ 函数把毫米当米传了",
         "★_调用": "extrude_boss(model, 'Sketch1', **20.0**)",
         "bounding_box": bb,
         "features": P.feature_names(model)[:8],
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print(json.dumps(R, ensure_ascii=False, indent=1, default=str)[:1200])
     print("★ wrote", OUT)
     return 0

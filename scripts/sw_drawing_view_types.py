@@ -42,16 +42,22 @@ from __future__ import annotations
 
 #: ★ 官方 `swDrawingViewTypes_e` 的**逐字数值**（`C:\swapi\enums\swDrawingViewTypes_e.md
 #: `）
-SW_DRAWING_SHEET = 1                       # swDrawingSheet                 = 1  Drawing sheet
-SW_DRAWING_SECTION_VIEW = 2                # swDrawingSectionView           = 2  Section view
-SW_DRAWING_DETAIL_VIEW = 3                 # swDrawingDetailView            = 3  Detail view
-SW_DRAWING_PROJECTED_VIEW = 4              # swDrawingProjectedView         = 4  Projected (unfolded) view
-SW_DRAWING_AUXILIARY_VIEW = 5              # swDrawingAuxiliaryView         = 5  Auxiliary view
-SW_DRAWING_STANDARD_VIEW = 6               # swDrawingStandardView          = 6  Standard view
-SW_DRAWING_NAMED_VIEW = 7                  # swDrawingNamedView             = 7  Named view
-SW_DRAWING_RELATIVE_VIEW = 8               # swDrawingRelativeView          = 8  Relative view to the model
-SW_DRAWING_DETACHED_VIEW = 9               # swDrawingDetachedView          = 9  Detached view
-SW_DRAWING_ALTERNATE_POSITION_VIEW = 10    # swDrawingAlternatePositionView = 10 Alternate position view
+SW_DRAWING_SHEET = 1  # swDrawingSheet                 = 1  Drawing sheet
+SW_DRAWING_SECTION_VIEW = 2  # swDrawingSectionView           = 2  Section view
+SW_DRAWING_DETAIL_VIEW = 3  # swDrawingDetailView            = 3  Detail view
+SW_DRAWING_PROJECTED_VIEW = (
+    4  # swDrawingProjectedView         = 4  Projected (unfolded) view
+)
+SW_DRAWING_AUXILIARY_VIEW = 5  # swDrawingAuxiliaryView         = 5  Auxiliary view
+SW_DRAWING_STANDARD_VIEW = 6  # swDrawingStandardView          = 6  Standard view
+SW_DRAWING_NAMED_VIEW = 7  # swDrawingNamedView             = 7  Named view
+SW_DRAWING_RELATIVE_VIEW = (
+    8  # swDrawingRelativeView          = 8  Relative view to the model
+)
+SW_DRAWING_DETACHED_VIEW = 9  # swDrawingDetachedView          = 9  Detached view
+SW_DRAWING_ALTERNATE_POSITION_VIEW = (
+    10  # swDrawingAlternatePositionView = 10 Alternate position view
+)
 
 #: ★ **本仓定义**（★ 不是官方规定，语义见文件头"限度"段）：
 #:   **自带标签文字**的视图类型 = **剖面视图** + **局部视图**。
@@ -59,8 +65,15 @@ SW_DRAWING_ALTERNATE_POSITION_VIEW = 10    # swDrawingAlternatePositionView = 10
 LABELLED_VIEW_TYPES = frozenset({SW_DRAWING_SECTION_VIEW, SW_DRAWING_DETAIL_VIEW})
 
 __all__ = [
-    "SW_DRAWING_SHEET", "SW_DRAWING_SECTION_VIEW", "SW_DRAWING_DETAIL_VIEW",
-    "SW_DRAWING_PROJECTED_VIEW", "SW_DRAWING_AUXILIARY_VIEW", "SW_DRAWING_STANDARD_VIEW",
-    "SW_DRAWING_NAMED_VIEW", "SW_DRAWING_RELATIVE_VIEW", "SW_DRAWING_DETACHED_VIEW",
-    "SW_DRAWING_ALTERNATE_POSITION_VIEW", "LABELLED_VIEW_TYPES",
+    "SW_DRAWING_SHEET",
+    "SW_DRAWING_SECTION_VIEW",
+    "SW_DRAWING_DETAIL_VIEW",
+    "SW_DRAWING_PROJECTED_VIEW",
+    "SW_DRAWING_AUXILIARY_VIEW",
+    "SW_DRAWING_STANDARD_VIEW",
+    "SW_DRAWING_NAMED_VIEW",
+    "SW_DRAWING_RELATIVE_VIEW",
+    "SW_DRAWING_DETACHED_VIEW",
+    "SW_DRAWING_ALTERNATE_POSITION_VIEW",
+    "LABELLED_VIEW_TYPES",
 ]

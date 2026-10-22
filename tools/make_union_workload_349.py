@@ -1,4 +1,5 @@
 """★ 编全 349 条的工作量清单（tier-aware）：①档只验证，②③档深调。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/make_union_workload_349.py
@@ -25,40 +26,61 @@ VERIFY_TIER = "①已有等价物"
 
 
 def main() -> int:
-    gap = json.loads((ROOT / "output" / "union-gap-v3.json").read_text(encoding="utf-8"))
+    gap = json.loads(
+        (ROOT / "output" / "union-gap-v3.json").read_text(encoding="utf-8")
+    )
     rows = gap.get("rows") or []
     if len(rows) != 349:
         print("★ rows 不是 349（实为 %d）⇒ 先看一眼再改" % len(rows))
         return 1
 
     #: 操作名 → 来源（四家）与许可。★ 多家的都列出，bunny 自己挑最相关的读
-    src = json.loads((ROOT / "tools" / "union-sources.json").read_text(encoding="utf-8"))
+    src = json.loads(
+        (ROOT / "tools" / "union-sources.json").read_text(encoding="utf-8")
+    )
     owners: dict[str, list[dict]] = {}
     for s in src.get("sources") or []:
-        repo = "%s/%s" % (s.get("owner"), s.get("repo")) if s.get("owner") else str(s.get("repo"))
-        for t in (s.get("tools") or []):
+        repo = (
+            "%s/%s" % (s.get("owner"), s.get("repo"))
+            if s.get("owner")
+            else str(s.get("repo"))
+        )
+        for t in s.get("tools") or []:
             nm = str(t.get("name") if isinstance(t, dict) else t)
-            owners.setdefault(nm, []).append({"repo": repo, "license": str(s.get("license"))})
+            owners.setdefault(nm, []).append(
+                {"repo": repo, "license": str(s.get("license"))}
+            )
 
     items = []
     for i, r in enumerate(rows, 1):
         tier = str(r.get("tier") or "")
         op = str(r.get("operation"))
-        items.append({
-            "index": i,
-            "op": op,
-            "domain": r.get("domain"),
-            "task": "verify" if tier == VERIFY_TIER else "deep",
-            "classifier_tier": tier,
-            "classifier_best_cov": r.get("best_cov"),
-            "classifier_top3": r.get("top"),
-            "sources": owners.get(op, []),
-        })
+        items.append(
+            {
+                "index": i,
+                "op": op,
+                "domain": r.get("domain"),
+                "task": "verify" if tier == VERIFY_TIER else "deep",
+                "classifier_tier": tier,
+                "classifier_best_cov": r.get("best_cov"),
+                "classifier_top3": r.get("top"),
+                "sources": owners.get(op, []),
+            }
+        )
 
     out = ROOT / "output" / "union-workload-349.json"
-    out.write_text(json.dumps({"count": len(items),
-                               "note": "一个 bunny 一条；①档 task=verify，②③档 task=deep",
-                               "items": items}, ensure_ascii=False, indent=1), encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {
+                "count": len(items),
+                "note": "一个 bunny 一条；①档 task=verify，②③档 task=deep",
+                "items": items,
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
 
     #: ★ V0-3 自检：条数 + **op 集合与 v3 完全一致**（SC-1 的前半）
     a = [x["op"] for x in items]
@@ -69,7 +91,9 @@ def main() -> int:
     n_deep = sum(1 for x in items if x["task"] == "deep")
     print("★ 条数 == 349 ? %s（实为 %d）" % (ok_count, len(items)))
     print("★ op 集合与 union-gap-v3 完全一致 ? %s" % ok_set)
-    print("★ 任务分布：verify（①档）= **%d** · deep（②③档）= **%d**" % (n_verify, n_deep))
+    print(
+        "★ 任务分布：verify（①档）= **%d** · deep（②③档）= **%d**" % (n_verify, n_deep)
+    )
     print("★ 批次：每批 ≤60 ⇒ **%d 批**" % ((len(items) + 59) // 60))
     print("★ 已写：%s" % out)
     return 0 if (ok_count and ok_set) else 2

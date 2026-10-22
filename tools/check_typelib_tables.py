@@ -43,8 +43,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 DLL_CANDIDATES = (
-    Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.cosworks.dll"),
-    Path(r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.cosworks.dll"),
+    Path(
+        r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.cosworks.dll"
+    ),
+    Path(
+        r"C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.cosworks.dll"
+    ),
 )
 IFACE = "SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager"
 
@@ -65,9 +69,15 @@ def _dump_typelib(dll: Path) -> dict:
     """★ 回 `{成员名: [(形参名, 类型名), …]}`。"""
     out: dict = {}
     try:
-        proc = subprocess.run(["pwsh", "-NoProfile", "-Command", _PS % dll],
-                              check=False, capture_output=True, text=True,
-                              encoding="utf-8", errors="replace", timeout=180)
+        proc = subprocess.run(
+            ["pwsh", "-NoProfile", "-Command", _PS % dll],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+        )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise RuntimeError("pwsh 读元数据失败: %s" % exc) from exc
     for line in (proc.stdout or "").splitlines():
@@ -86,7 +96,9 @@ def _dump_typelib(dll: Path) -> dict:
 def main(argv: list) -> int:
     dll = next((p for p in DLL_CANDIDATES if p.exists()), None)
     if dll is None:
-        print("  [SKIP] 本机找不到 `SolidWorks.Interop.cosworks.dll` ⇒ 无法核对（便携性约定）")
+        print(
+            "  [SKIP] 本机找不到 `SolidWorks.Interop.cosworks.dll` ⇒ 无法核对（便携性约定）"
+        )
         return 0
     print("  核对源：%s" % dll)
     try:
@@ -104,8 +116,11 @@ def main(argv: list) -> int:
     #: ★ 只比 **`Add*`** —— ★ `_ERRORCODE_MEMBERS` 只服务 `Add*`（★ `_check` 只被它们用
     #: ）；
     #:   ★ `Get*` 不在其职责范围内 ⇒ ★ **拿它们去比就是假阳性**。
-    want_err = {n for n, ps in lib.items() if n.startswith("Add")
-                and any(pt.endswith("&") for _, pt in ps)}
+    want_err = {
+        n
+        for n, ps in lib.items()
+        if n.startswith("Add") and any(pt.endswith("&") for _, pt in ps)
+    }
     have_err = set(L._ERRORCODE_MEMBERS)
     for n in sorted(want_err - have_err):
         bad.append(("_ERRORCODE_MEMBERS", "缺", n))
@@ -129,18 +144,32 @@ def main(argv: list) -> int:
             continue
         real = len([1 for _, pt in ps if not pt.endswith("&")])
         if expected != real:
-            bad.append(("OFFICIAL_LOAD_SIGNATURES", "差异", "%s 表=%d 实=%d" % (n, expected, real)))
+            bad.append(
+                (
+                    "OFFICIAL_LOAD_SIGNATURES",
+                    "差异",
+                    "%s 表=%d 实=%d" % (n, expected, real),
+                )
+            )
     if skipped:
         print("  注：%s 不在该接口上（★ 非 `Add*`）⇒ 跳过" % ", ".join(sorted(skipped)))
-    print("  比对三张表（_ERRORCODE_MEMBERS %d · _REFGEOM_MEMBERS %d · OFFICIAL_LOAD_SIGNATURES %d）"
-          % (len(have_err), len(have_ref), len(L.OFFICIAL_LOAD_SIGNATURES)))
+    print(
+        "  比对三张表（_ERRORCODE_MEMBERS %d · _REFGEOM_MEMBERS %d · OFFICIAL_LOAD_SIGNATURES %d）"
+        % (len(have_err), len(have_ref), len(L.OFFICIAL_LOAD_SIGNATURES))
+    )
     if bad:
         print("  不符 **%d** 处：" % len(bad))
         for table, kind, item in bad[:30]:
             print("    %-28s %-12s %s" % (table, kind, item))
-        print("\n  判据：★ 手抄的表要与**出厂类型库**逐条一致（★ 铁律 4：冲突以它为准）。")
-        print("  真例（轮 415）：`_ERRORCODE_MEMBERS` 漏了 `AddTemperature`/`AddRemoteLoad`")
-        print("  ⇒ 它们从不补 `ByRef ErrorCode` ⇒ `DISP_E_PARAMNOTOPTIONAL` ⇒ 两条好能力看着像坏的。")
+        print(
+            "\n  判据：★ 手抄的表要与**出厂类型库**逐条一致（★ 铁律 4：冲突以它为准）。"
+        )
+        print(
+            "  真例（轮 415）：`_ERRORCODE_MEMBERS` 漏了 `AddTemperature`/`AddRemoteLoad`"
+        )
+        print(
+            "  ⇒ 它们从不补 `ByRef ErrorCode` ⇒ `DISP_E_PARAMNOTOPTIONAL` ⇒ 两条好能力看着像坏的。"
+        )
         return 1
     print("  [OK] 三张表与出厂类型库**逐条一致**（0 处不符）")
     return 0

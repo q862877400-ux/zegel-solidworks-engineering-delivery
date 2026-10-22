@@ -38,14 +38,21 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "absolute-criteria-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "absolute-criteria-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import compare_geometry as CG
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -55,13 +62,18 @@ def main() -> int:
     def _verts(model):
         """★ 从**真机几何**取全部顶点坐标（mm）—— ★ 判据的输入必须是实测值，不能硬编码。"""
         pts = []
-        for body in (get_com_member(model, "GetBodies2", 0, False) or []):
-            for f in (get_com_member(body, "GetFaces") or []):
-                for loop in (get_com_member(f, "GetLoops") or []):
-                    for v in (get_com_member(loop, "GetVertices") or []):
+        for body in get_com_member(model, "GetBodies2", 0, False) or []:
+            for f in get_com_member(body, "GetFaces") or []:
+                for loop in get_com_member(f, "GetLoops") or []:
+                    for v in get_com_member(loop, "GetVertices") or []:
                         try:
-                            pts.append([round(float(x), 6) for x in get_com_member(v, "GetPoint")])
-                        except Exception:                      # noqa: BLE001
+                            pts.append(
+                                [
+                                    round(float(x), 6)
+                                    for x in get_com_member(v, "GetPoint")
+                                ]
+                            )
+                        except Exception:  # noqa: BLE001
                             pass
         return pts
 
@@ -75,16 +87,24 @@ def main() -> int:
         extrude_boss(doc, sk, 20.0)
 
         geo = CG.collect_geometry(doc)
-        ev["steps"]["geometry"] = {"ok": bool(geo.get("volume_mm3")), "volume_mm3": geo.get("volume_mm3"),
-                                   "area_mm2": geo.get("area_mm2"), "faces": geo.get("faces")}
+        ev["steps"]["geometry"] = {
+            "ok": bool(geo.get("volume_mm3")),
+            "volume_mm3": geo.get("volume_mm3"),
+            "area_mm2": geo.get("area_mm2"),
+            "faces": geo.get("faces"),
+        }
         #: ★ 判据的**期望值**从几何推出：★ 100×60×20 = 120000 mm³
         ev["steps"]["volume_matches_expected"] = {
             "ok": abs(float(geo.get("volume_mm3") or 0) - 120000.0) < 1.0,
-            "expected": 120000.0, "got": geo.get("volume_mm3"),
+            "expected": 120000.0,
+            "got": geo.get("volume_mm3"),
         }
         verts = _verts(doc)
-        ev["steps"]["vertices_from_real_geometry"] = {"ok": len(verts) >= 8, "count": len(verts),
-                                                      "sample": verts[:3]}
+        ev["steps"]["vertices_from_real_geometry"] = {
+            "ok": len(verts) >= 8,
+            "count": len(verts),
+            "sample": verts[:3],
+        }
         #: ★★ **逐轴定位判据的输入 = 真机上两个顶点的实际坐标差**（★ 不是编的）
         if len(verts) >= 2:
             a, b = verts[0], verts[1]
@@ -99,16 +119,20 @@ def main() -> int:
         neg = CG.check_axis_alignment((0.20, 0.00, 50.0), "axial")
         ev["steps"]["axis_alignment"] = {
             "ok": bool(pos.get("ok") and not neg.get("ok")),
-            "positive": pos, "negative": neg,
+            "positive": pos,
+            "negative": neg,
             "note": "★ 正例横向 0.01/0.02 ≤ 0.05 且轴向 50 > 0.05 ⇒ pass；"
-                    "★ 负例横向 0.20 > 0.05 ⇒ 必须 fail",
+            "★ 负例横向 0.20 > 0.05 ⇒ 必须 fail",
         }
         #: ③ `check_radii` —— ★ R10 正例 · R10.5 负例（★ 容差 0.1）
         rpos = CG.check_radii([10.0, 10.05], 10.0)
         rneg = CG.check_radii([10.5], 10.0)
-        ev["steps"]["radii"] = {"ok": bool(rpos.get("ok") and not rneg.get("ok")),
-                                "positive": rpos, "negative": rneg,
-                                "note": "★ 容差 0.1：10.05 过、10.5 必须不过"}
+        ev["steps"]["radii"] = {
+            "ok": bool(rpos.get("ok") and not rneg.get("ok")),
+            "positive": rpos,
+            "negative": rneg,
+            "note": "★ 容差 0.1：10.05 过、10.5 必须不过",
+        }
         #: ④ `check_same_level` —— ★★ **契约：`z_pairs_mm` 是 `[(z_a, z_b), …]`（**二元
         #: 组**，两端的 z）**，
         #:   ★ 而 `level_mm` 是那条水平面 ⇒ ★ **所有端点都要落在它上面**。
@@ -120,23 +144,30 @@ def main() -> int:
         top = zs[-1] if zs else 20.0
         spos = CG.check_same_level([(top, top), (top, top + 0.03)], top)
         sneg = CG.check_same_level([(top, top + 5.0)], top)
-        ev["steps"]["same_level"] = {"ok": bool(spos.get("ok") and not sneg.get("ok")),
-                                     "positive": spos, "negative": sneg,
-                                     "note": "★ 基准 z 取**真机顶面**（%.3f）；两端 z 都对上即过，"
-                                             "一端差 5.0 必须不过" % top}
+        ev["steps"]["same_level"] = {
+            "ok": bool(spos.get("ok") and not sneg.get("ok")),
+            "positive": spos,
+            "negative": sneg,
+            "note": "★ 基准 z 取**真机顶面**（%.3f）；两端 z 都对上即过，"
+            "一端差 5.0 必须不过" % top,
+        }
 
         #: ★ 判据：★ **四组各自"正例过、负例不过"** 才算 pass（★ 不是只看正例）
         ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if ok else "partial"
-        ev["note"] = ("★ 这是**绝对 mm 判据第一次真机使用**（★ objective④ 的缺口）；"
-                      "★ 判据的输入取自真机几何（顶点坐标 / 顶面 z），★ 期望值由尺寸推出。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 这是**绝对 mm 判据第一次真机使用**（★ objective④ 的缺口）；"
+            "★ 判据的输入取自真机几何（顶点坐标 / 顶面 z），★ 期望值由尺寸推出。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

@@ -35,6 +35,7 @@ scratch 存到 `output/` 的**每轮子目录**（上一轮的文件被 SW 占�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -48,10 +49,14 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "in-context-reference-smoke.json")
-DIR = Path(Path(__file__).resolve().parents[1] / "output" / "in-context-smoke") / time.strftime("%H%M%S")
-COLINEAR = 27          #: swConstraintType_e.swConstraintType_COLINEAR
-EXTERNAL = 3           #: swSketchRelationFilterType_e.swExternal
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "in-context-reference-smoke.json"
+)
+DIR = Path(
+    Path(__file__).resolve().parents[1] / "output" / "in-context-smoke"
+) / time.strftime("%H%M%S")
+COLINEAR = 27  #: swConstraintType_e.swConstraintType_COLINEAR
+EXTERNAL = 3  #: swSketchRelationFilterType_e.swExternal
 
 
 def main() -> int:
@@ -67,17 +72,27 @@ def main() -> int:
     docs: list = []
     try:
         import sw_connect
-        from scripts import sw_part, sw_assembly, sw_assembly_doc, sw_sketch_edit, sketch_relations
+        from scripts import (
+            sw_part,
+            sw_assembly,
+            sw_assembly_doc,
+            sw_sketch_edit,
+            sketch_relations,
+        )
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         DIR.mkdir(parents=True, exist_ok=True)
 
         #: ① 两个零件
         paths = []
-        for name, (w, h, d) in (("plate", (100.0, 60.0, 10.0)), ("rail", (40.0, 40.0, 200.0))):
+        for name, (w, h, d) in (
+            ("plate", (100.0, 60.0, 10.0)),
+            ("rail", (40.0, 40.0, 200.0)),
+        ):
             doc = sw_connect.new_document(sw, "part")
             docs.append(doc)
             sw_part.start_sketch(doc)
@@ -92,15 +107,18 @@ def main() -> int:
         #: ② 装配
         asm = sw_connect.new_document(sw, "assembly")
         docs.append(asm)
-        #: ★★ **`sw_assembly.add_component` 本身就返回 `IComponent2`**（它的 docstring 
+        #: ★★ **`sw_assembly.add_component` 本身就返回 `IComponent2`**（它的 docstring
         #: 明写）
         #: ⇒ 直接用它，**别去 `asm.GetComponents(True)` 再猜返回的是哪个接口族**
         #: （轮 161 就是这么卡住的：那批对象上**没有 `GetBody2`**）。
         c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        c1 = sw_assembly.add_component(asm, paths[1], x=140, y=0, z=0)   #: 挨着但不重叠
+        c1 = sw_assembly.add_component(asm, paths[1], x=140, y=0, z=0)  #: 挨着但不重叠
         comps = [c for c in (c0, c1) if c is not None]
-        chk("装配里 2 个组件（**用 add_component 的返回值**）", len(comps) >= 2,
-            "组件对象 %d 个" % len(comps))
+        chk(
+            "装配里 2 个组件（**用 add_component 的返回值**）",
+            len(comps) >= 2,
+            "组件对象 %d 个" % len(comps),
+        )
         if len(comps) < 2:
             raise RuntimeError("组件不够，无法继续")
 
@@ -112,15 +130,25 @@ def main() -> int:
         #: ③ 进入在上下文编辑
         code = sw_assembly_doc.edit_part_in_context(asm, comps[0])
         ev["edit_part_code"] = code
-        chk("★★ `EditPart2` 返回（原样透出数字，不翻译）", code is not None,
-            "返回码 = %r" % (code,))
+        chk(
+            "★★ `EditPart2` 返回（原样透出数字，不翻译）",
+            code is not None,
+            "返回码 = %r" % (code,),
+        )
         try:
             tgt = sw_connect.safe_get_com_member(asm, "GetEditTarget")
             ev["edit_target"] = "非空" if tgt is not None else "空"
-            chk("★★ **在上下文编辑态已生效**（`GetEditTarget` 非空）", tgt is not None,
-                "GetEditTarget = %s" % ev["edit_target"])
-        except Exception as exc:      # noqa: BLE001
-            chk("读 GetEditTarget", False, "%s: %s" % (type(exc).__name__, str(exc)[:80]))
+            chk(
+                "★★ **在上下文编辑态已生效**（`GetEditTarget` 非空）",
+                tgt is not None,
+                "GetEditTarget = %s" % ev["edit_target"],
+            )
+        except Exception as exc:  # noqa: BLE001
+            chk(
+                "读 GetEditTarget",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:80]),
+            )
 
         #: ④⑤ 投影 + 加共线关系
         #: ⚠⚠⚠ **关键**：进入「在上下文编辑」之后 **`sw.ActiveDoc` 已经变成那个零件** ——
@@ -128,7 +156,7 @@ def main() -> int:
         #: ★ 轮 161 我一直对 `asm` 开草图/投影 ⇒ `convert_entities` 返回 ok
         #:   而**草图里一个实体都没有**（因为它作用在另一个文档上）。
         tgt_doc = sw_connect.safe_get_com_member(sw, "ActiveDoc") or asm
-        ev["active_doc_is_asm"] = (tgt_doc is asm)
+        ev["active_doc_is_asm"] = tgt_doc is asm
         print("     活动文档就是 asm 吗: %s（**应当不是**）" % ev["active_doc_is_asm"])
         sw_part.start_sketch(tgt_doc)
         skm = sw_connect.safe_get_com_member(tgt_doc, "SketchManager")
@@ -166,18 +194,32 @@ def main() -> int:
                     break
             if cand is not None:
                 sel_ok = bool(cand.Select4(False, sw_part._empty_callout()))
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("     ⚠ 选边异常: %s" % str(exc)[:80])
-        chk("★★ 先**选中一条外部边**（`SketchUseEdge3` 的前置条件）", sel_ok,
-
-            "实体数 %d" % (len(bodies) if 'bodies' in dir() else -1))
+        chk(
+            "★★ 先**选中一条外部边**（`SketchUseEdge3` 的前置条件）",
+            sel_ok,
+            "实体数 %d" % (len(bodies) if "bodies" in dir() else -1),
+        )
         try:
             sw_sketch_edit.convert_entities(tgt_doc)
             chk("★ `convert_entities`（**已有实现**，本轮当部件复用）", True, "ok")
-        except Exception as exc:      # noqa: BLE001
-            chk("convert_entities", False, "%s: %s" % (type(exc).__name__, str(exc)[:100]))
-        mgr = sw_connect.safe_get_com_member(sk, "RelationManager") if sk is not None else None
-        before = int(sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0) if mgr else 0
+        except Exception as exc:  # noqa: BLE001
+            chk(
+                "convert_entities",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:100]),
+            )
+        mgr = (
+            sw_connect.safe_get_com_member(sk, "RelationManager")
+            if sk is not None
+            else None
+        )
+        before = (
+            int(sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0)
+            if mgr
+            else 0
+        )
         ev["relations_before"] = before
         try:
             #: ⚠ 用**仓库已验证的**取法（`sw_sketch.get_sketch_segments`）——
@@ -185,20 +227,31 @@ def main() -> int:
             #: ⇒ 报 `TypeError: 'NoneType' object is not callable`（**不是** `add_relati
             #: on` 的错）。
             from scripts import sw_sketch
+
             ents = sw_sketch.get_sketch_segments(sk) if sk is not None else []
             ents = list(ents) if ents else []
             if len(ents) >= 1:
                 sketch_relations.add_relation(sk, ents, COLINEAR)
                 chk("★ `add_relation(COLINEAR=27)`（**已有实现**）", True, "ok")
             else:
-                chk("★ `add_relation` 前提（投影出实体）", False,
-                    "投影后草图实体数 = %d ⇒ **前提没满足**" % len(ents))
-        except Exception as exc:      # noqa: BLE001
+                chk(
+                    "★ `add_relation` 前提（投影出实体）",
+                    False,
+                    "投影后草图实体数 = %d ⇒ **前提没满足**" % len(ents),
+                )
+        except Exception as exc:  # noqa: BLE001
             chk("add_relation", False, "%s: %s" % (type(exc).__name__, str(exc)[:110]))
-        after = int(sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0) if mgr else 0
+        after = (
+            int(sw_connect.safe_get_com_member(mgr, "GetRelationsCount", 0) or 0)
+            if mgr
+            else 0
+        )
         ev["relations_after"] = after
-        chk("★★ 判据①：`GetRelationsCount` **N → N+1**（空操作不变）", after == before + 1,
-            "%d → %d" % (before, after))
+        chk(
+            "★★ 判据①：`GetRelationsCount` **N → N+1**（空操作不变）",
+            after == before + 1,
+            "%d → %d" % (before, after),
+        )
         sw_part.end_sketch(tgt_doc)
 
         #: ⑦ 退出
@@ -208,35 +261,47 @@ def main() -> int:
         #: ⑧ 判据②
         new_refs = sw_assembly_doc.list_external_file_references_count(comps[0])
         ev["refs_after"] = new_refs
-        chk("★★ 判据②：外部参考计数 **0 → ≥1**（空操作不变）", new_refs >= 1,
-            "%s → %s" % (base_refs, new_refs))
-    except Exception as exc:      # noqa: BLE001
+        chk(
+            "★★ 判据②：外部参考计数 **0 → ≥1**（空操作不变）",
+            new_refs >= 1,
+            "%s → %s" % (base_refs, new_refs),
+        )
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:180]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         print("   （已关闭 scratch 文档，不保存）")
 
     import sw_connect as _sc
-    dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    chk("★ 收尾无残留模态框（事实 64）", (not dialogs) and scanned > 0,
-        "扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
+    chk(
+        "★ 收尾无残留模态框（事实 64）",
+        (not dialogs) and scanned > 0,
+        "扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs),
+    )
+
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
     return 0 if ev["verdict"] == "pass" else 1

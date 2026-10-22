@@ -24,6 +24,7 @@ ToolSpec（手抄的参数名 + 注入名） → register_capabilities.RESOLVERS
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -40,7 +41,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "batch10-smoke-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "batch10-smoke-evidence.json"
+)
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -51,8 +56,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
     checks: list = []
@@ -71,16 +78,25 @@ def main() -> int:
         from tool_registry import effective_inject
 
         specs = {s.name: s for s in rc.all_specs()}
-        mine = [specs[n] for n in (
-            "solidworks_part_bounding_box", "solidworks_hole_standards",
-            "solidworks_fastener_types", "solidworks_fastener_table_types")]
-        chk("batch10 的 4 条都在 all_specs() 里", len(mine) == 4,
-            "all_specs() 共 %d 条" % len(specs))
+        mine = [
+            specs[n]
+            for n in (
+                "solidworks_part_bounding_box",
+                "solidworks_hole_standards",
+                "solidworks_fastener_types",
+                "solidworks_fastener_table_types",
+            )
+        ]
+        chk(
+            "batch10 的 4 条都在 all_specs() 里",
+            len(mine) == 4,
+            "all_specs() 共 %d 条" % len(specs),
+        )
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         # ── 造前置：一个有实体的临时零件（给 bbox 用）────────────────
@@ -95,10 +111,13 @@ def main() -> int:
         # ── ★ 走「声明 → 解析器 → 调用」这条路 ───────────────────────
         #: 每条的实参（按声明里的参数名给）
         ARGS = {
-            "solidworks_part_bounding_box": {},                       # 全默认
-            "solidworks_hole_standards": {},                          # 全默认（0 = 沉头孔）
+            "solidworks_part_bounding_box": {},  # 全默认
+            "solidworks_hole_standards": {},  # 全默认（0 = 沉头孔）
             "solidworks_fastener_types": {"standard_name": "ANSI Inch"},
-            "solidworks_fastener_table_types": {"standard_name": "ANSI Inch", "fastener_id": 4},
+            "solidworks_fastener_table_types": {
+                "standard_name": "ANSI Inch",
+                "fastener_id": 4,
+            },
         }
         for spec in mine:
             inj = effective_inject(spec)
@@ -108,7 +127,7 @@ def main() -> int:
                 continue
             # ⚠ 解析器收一个 `_params`（调用方实参）—— 空 dict 即可，
             #   因为本批 4 条的**宿主对象不需要从实参里推**
-            host = resolver({})        # ★ 走**真实**解析器
+            host = resolver({})  # ★ 走**真实**解析器
             mod = importlib.import_module("scripts.%s" % spec.module)
             fn = getattr(mod, spec.function)
             kwargs = dict(ARGS[spec.name])
@@ -125,16 +144,20 @@ def main() -> int:
                 detail = "size=%s · %.2fs" % (out.get("size") if ok else out, dt)
             else:
                 ok = isinstance(out, list) and len(out) > 0
-                detail = "%d 条 · 首项=%s · %.2fs" % (len(out), out[:1] if ok else out, dt)
+                detail = "%d 条 · 首项=%s · %.2fs" % (
+                    len(out),
+                    out[:1] if ok else out,
+                    dt,
+                )
             chk("★ %s（inject=%s）" % (spec.name, inj), ok, detail)
             ev.setdefault("results", {})[spec.name] = detail
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:200]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if scratch is not None and sw is not None:
@@ -142,21 +165,35 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("   ⚠ 收尾关文档失败（请人工确认）：%s" % str(exc)[:90])
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（已知事实 64 的检查）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（已知事实 64 的检查）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
-    print("  ⚠ 只证「声明 → 解析器 → 调用」这条链跑得通；**不证 MCP 协议层**（那要起 server）。")
+    print(
+        "  ⚠ 只证「声明 → 解析器 → 调用」这条链跑得通；**不证 MCP 协议层**（那要起 server）。"
+    )
     return 0 if ev["verdict"] == "pass" else 1
 
 

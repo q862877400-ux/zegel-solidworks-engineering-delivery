@@ -39,7 +39,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-dimension-units-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "pattern-dimension-units-evidence.json"
+)
 # ⚑ 2026-10-03（轮 470）：这里曾有一个 `_bbox_xmax(doc)` ——
 #   ★★ 而它本身**是坏的**：它最后一行写 `return bb, bb`（★ 两个返回值**都是
 #   同一个字典**，而上一行的注释说明本意是“分别取 x 的 min/max”）
@@ -50,8 +54,14 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-dimension-u
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss, linear_pattern,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        linear_pattern,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_part as P
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -72,9 +82,18 @@ def main() -> int:
         sk2 = current_sketch_name(doc, "")
         end_sketch(doc)
         extrude_boss(doc, sk2, 20.0)
-        feats = [str(get_com_member(f, "Name") or "")
-                 for f in (get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(0)
-                           and [] or [])] if False else []
+        feats = (
+            [
+                str(get_com_member(f, "Name") or "")
+                for f in (
+                    get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(0)
+                    and []
+                    or []
+                )
+            ]
+            if False
+            else []
+        )
         #: ★ 直接按名字找那个凸台（★ 中文 UI 下是「凸台-拉伸2」）
         boss = None
         for nm in ("凸台-拉伸2", "Boss-Extrude2", "凸台-拉伸1", "Boss-Extrude1"):
@@ -88,9 +107,11 @@ def main() -> int:
             linear_pattern(doc, boss or "凸台-拉伸2", 1.0, 0.0, 0.0, 0.01, 3)
             bb1 = P.get_bounding_box(doc, body_index=0)
             ev["steps"]["pattern_spacing_0p01"] = {"ok": True, "bbox": bb1}
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["pattern_spacing_0p01"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+            }
 
         #: ── ② AddDimension2 的坐标单位 ───────────────────────────────
         doc2 = sw_connect.new_document(sw, "part")
@@ -104,21 +125,26 @@ def main() -> int:
             ev["steps"]["add_dimension_at_10"] = {
                 "ok": dd is not None,
                 "position": (list(pos)[:3] if pos is not None else None),
-                "note": "★ 传 10.0：回 ≈10 ⇒ 米；回 ≈0.01 ⇒ 毫米"}
-        except Exception as exc:                               # noqa: BLE001
+                "note": "★ 传 10.0：回 ≈10 ⇒ 米；回 ≈0.01 ⇒ 毫米",
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["add_dimension_at_10"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+            }
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
         ev["note"] = "★ 段 3 的 S0：先测单位，再决定包装怎么写。"
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in (doc, doc2):
             if d is not None:

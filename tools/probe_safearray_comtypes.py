@@ -33,6 +33,7 @@ r"""@brief 探针：换 **comtypes 早绑定**后端，`ISafeArrayUtility` 能�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -45,7 +46,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "safearray-comtypes-probe.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "safearray-comtypes-probe.json"
+)
 TLB = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\sldworks.tlb")
 
 
@@ -57,9 +60,17 @@ def main() -> int:
         import win32com.client
 
         def rec(name, ok, detail, extra=None):
-            ev["steps"].append({"step": name, "ok": bool(ok), "detail": str(detail)[:220],
-                                **(extra or {})})
-            print("  %s %-44s %s" % ("✓" if ok else "**✗**", name[:44], str(detail)[:76]))
+            ev["steps"].append(
+                {
+                    "step": name,
+                    "ok": bool(ok),
+                    "detail": str(detail)[:220],
+                    **(extra or {}),
+                }
+            )
+            print(
+                "  %s %-44s %s" % ("✓" if ok else "**✗**", name[:44], str(detail)[:76])
+            )
 
         #: ①b 先用**已有的** pywin32 通道确认实例在线（并拿到 PID 作对照），再走 comtype
         #: s
@@ -67,26 +78,31 @@ def main() -> int:
         pid = None
         try:
             pid = int(base.GetProcessID())
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         rec("① 运行中实例（pywin32 附着）", base is not None, "PID=%s" % pid)
         ev["pid"] = pid
 
         #: ① comtypes **附着**（GetActiveObject 不新建实例）
         sw = cc.GetActiveObject("SldWorks.Application")
-        rec("① comtypes.client.GetActiveObject ⇒ 附着", sw is not None,
-            type(sw).__module__ + "." + type(sw).__name__)
+        rec(
+            "① comtypes.client.GetActiveObject ⇒ 附着",
+            sw is not None,
+            type(sw).__module__ + "." + type(sw).__name__,
+        )
         ev["comtypes_type"] = "%s.%s" % (type(sw).__module__, type(sw).__name__)
         try:
             pid2 = int(sw.GetProcessID())
             #: ⚠ pywin32 那条 `GetProcessID()` 上面返回了 `None` ⇒ **只在两边都有值时才
             #: 比**
-            rec("   ↳ 同一个实例？",
+            rec(
+                "   ↳ 同一个实例？",
                 (pid is None) or (pid2 == pid),
                 "comtypes PID=%s · pywin32 PID=%s ⇒ %s"
-                % (pid2, pid, "同实例" if (pid is None or pid2 == pid) else "**不同**"))
+                % (pid2, pid, "同实例" if (pid is None or pid2 == pid) else "**不同**"),
+            )
             ev["pid_comtypes"] = pid2
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec("   ↳ GetProcessID（comtypes）", False, "%s" % type(exc).__name__[:40])
 
         #: ② 类型库里有 ISafeArrayUtility 吗
@@ -100,11 +116,18 @@ def main() -> int:
         try:
             mod = cc.GetModule(str(TLB))
             iface = getattr(mod, "ISafeArrayUtility", None)
-            rec("② 类型库模块里的 ISafeArrayUtility", iface is not None,
-                "%s（模块 %s）" % (getattr(iface, "__name__", None),
-                                   getattr(mod, "__name__", "?")))
-        except Exception as exc:      # noqa: BLE001
-            rec("② cc.GetModule(sldworks.tlb)", False, "%s: %s" % (type(exc).__name__, str(exc)[:60]))
+            rec(
+                "② 类型库模块里的 ISafeArrayUtility",
+                iface is not None,
+                "%s（模块 %s）"
+                % (getattr(iface, "__name__", None), getattr(mod, "__name__", "?")),
+            )
+        except Exception as exc:  # noqa: BLE001
+            rec(
+                "② cc.GetModule(sldworks.tlb)",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+            )
         ev["iface_found"] = iface is not None
         ev["tlb_module"] = getattr(mod, "__name__", None)
 
@@ -113,9 +136,12 @@ def main() -> int:
         try:
             raw = sw.GetSafeArrayUtility()
             rec("③ ISldWorks.GetSafeArrayUtility()", True, type(raw).__name__)
-        except Exception as exc:      # noqa: BLE001
-            rec("③ ISldWorks.GetSafeArrayUtility()", False,
-                "%s: %s" % (type(exc).__name__, str(exc)[:60]))
+        except Exception as exc:  # noqa: BLE001
+            rec(
+                "③ ISldWorks.GetSafeArrayUtility()",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+            )
         ev["raw_type"] = type(raw).__name__ if raw is not None else None
 
         #: ④ ★★★ 分水岭：QueryInterface
@@ -123,11 +149,17 @@ def main() -> int:
         if raw is not None and iface is not None:
             try:
                 typed = raw.QueryInterface(iface)
-                rec("④ ★★★ QueryInterface(ISafeArrayUtility) ⇒ **成功**", True,
-                    "⇒ 对象**真的实现**该 vtable 接口")
-            except Exception as exc:      # noqa: BLE001
-                rec("④ ★★★ QueryInterface(ISafeArrayUtility) ⇒ 失败", False,
-                    "%s: %s" % (type(exc).__name__, str(exc)[:60]))
+                rec(
+                    "④ ★★★ QueryInterface(ISafeArrayUtility) ⇒ **成功**",
+                    True,
+                    "⇒ 对象**真的实现**该 vtable 接口",
+                )
+            except Exception as exc:  # noqa: BLE001
+                rec(
+                    "④ ★★★ QueryInterface(ISafeArrayUtility) ⇒ 失败",
+                    False,
+                    "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+                )
                 ev["qi_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         else:
             rec("④ QueryInterface", False, "上一步没拿到对象或模块里没有该接口")
@@ -139,7 +171,7 @@ def main() -> int:
         #:   `TypeError: required argument 'Value' missing`。
         #:   ⇒ ★ 正确姿势是**读类型库自己的方法表**（`_methods_`，那才是权威 —— 铁律 4）：
         #:   ```
-        #: PutDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in,out / in / in) ⇒ 
+        #: PutDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in,out / in / in) ⇒
         #: **3 参**
         #: GetDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in / in / **out**) ⇒
         #:  2 参，出参作返回值
@@ -147,31 +179,44 @@ def main() -> int:
         if typed is not None:
             try:
                 from comtypes.automation import VARIANT as CVARIANT
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 import comtypes
+
                 CVARIANT = comtypes.VARIANT
             arr = CVARIANT()
             ok_put = False
             try:
                 ret = typed.PutDouble(arr, 0, 1.5)
                 ok_put = True
-                rec("⑤a PutDouble(arr, 0, 1.5) ⇒ **3 参 + in,out 数组**", True,
-                    "返回 %r · arr.value=%r" % (ret, getattr(arr, "value", arr)))
+                rec(
+                    "⑤a PutDouble(arr, 0, 1.5) ⇒ **3 参 + in,out 数组**",
+                    True,
+                    "返回 %r · arr.value=%r" % (ret, getattr(arr, "value", arr)),
+                )
                 ev["putdouble_ret"] = repr(ret)
                 ev["arr_after_put"] = repr(getattr(arr, "value", arr))
-            except Exception as exc:      # noqa: BLE001
-                rec("⑤a PutDouble(arr, 0, 1.5)", False,
-                    "%s: %s" % (type(exc).__name__, str(exc)[:70]))
+            except Exception as exc:  # noqa: BLE001
+                rec(
+                    "⑤a PutDouble(arr, 0, 1.5)",
+                    False,
+                    "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                )
             if ok_put:
                 #: ★★ **往返**：写进去 1.5 ⇒ 读回来应当还是 1.5（这才叫"能用"）
                 try:
                     got = typed.GetDouble(arr, 0)
-                    rec("⑤b ★★ **往返**：PutDouble 写 1.5 ⇒ GetDouble 读回", 
-                        abs(float(got) - 1.5) < 1e-9, "读回 %r" % (got,))
+                    rec(
+                        "⑤b ★★ **往返**：PutDouble 写 1.5 ⇒ GetDouble 读回",
+                        abs(float(got) - 1.5) < 1e-9,
+                        "读回 %r" % (got,),
+                    )
                     ev["roundtrip"] = repr(got)
-                except Exception as exc:      # noqa: BLE001
-                    rec("⑤b 往返 GetDouble(arr, 0)", False,
-                        "%s: %s" % (type(exc).__name__, str(exc)[:70]))
+                except Exception as exc:  # noqa: BLE001
+                    rec(
+                        "⑤b 往返 GetDouble(arr, 0)",
+                        False,
+                        "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                    )
             #: ⑥ 对照：**我们现在怎么做的**（这条决定"它有没有新增能力"）
             #: ⚠ 第一版这里写错了：直接用了 `sw_connect.call_com_member` 而本函数里没导
             #: 入它。
@@ -179,31 +224,46 @@ def main() -> int:
             try:
                 import pythoncom
                 import win32com.client as wc
+
                 a1 = wc.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, [1.5, 2.5, 3.5])
-                a2 = wc.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [base, base])
-                rec("⑥ 对照：pywin32 原生构造数组（R8 / DISPATCH 两种）", True,
+                a2 = wc.VARIANT(
+                    pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [base, base]
+                )
+                rec(
+                    "⑥ 对照：pywin32 原生构造数组（R8 / DISPATCH 两种）",
+                    True,
                     "VT_ARRAY|VT_R8 ⇒ %s · VT_ARRAY|VT_DISPATCH ⇒ %s"
-                    % (type(a1).__name__, type(a2).__name__))
-                ev["pywin32_native_array"] = "VARIANT(VT_ARRAY|VT_R8|VT_DISPATCH, [...]) 均可构造"
-            except Exception as exc:      # noqa: BLE001
-                rec("⑥ 对照：pywin32 原生数组构造", False,
-                    "%s: %s" % (type(exc).__name__, str(exc)[:60]))
-    except Exception as exc:      # noqa: BLE001
+                    % (type(a1).__name__, type(a2).__name__),
+                )
+                ev["pywin32_native_array"] = (
+                    "VARIANT(VT_ARRAY|VT_R8|VT_DISPATCH, [...]) 均可构造"
+                )
+            except Exception as exc:  # noqa: BLE001
+                rec(
+                    "⑥ 对照：pywin32 原生数组构造",
+                    False,
+                    "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+                )
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
     return 0
 

@@ -1,4 +1,5 @@
 """★ 探针：验 `scripts/` 里**新缝的两个模块函数**（B2 的产出）—— ★ 不是重复验探针内部实现。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 213 · B2 的**模块函数**真机验证）
 # 文件:   tools/probe_spec213_b2_modules.py
@@ -33,7 +34,11 @@ LIB = Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\design library")
 
 def _find_tool():
     """★ 从 Design Library 里挑一个**真实存在**的成形工具文件 ✓"""
-    for name in ("circular emboss.sldftp", "dimple.sldftp", "counter sink emboss.sldftp"):
+    for name in (
+        "circular emboss.sldftp",
+        "dimple.sldftp",
+        "counter sink emboss.sldftp",
+    ):
         for sub in ("forming tools\\embosses", "forming tools", ""):
             p = LIB / sub / name if sub else LIB / name
             if p.is_file():
@@ -46,7 +51,11 @@ def _feature_names(model):
     """★ 取特征树里的名字 —— ★ 直接走模块自己的 `iter_features_recursive`（★ 不绕弯 ✓）。"""
     import sw_connect
     import sw_weldment as W
-    return [str(sw_connect.get_com_member(f, "Name") or "") for f in W.iter_features_recursive(model)]
+
+    return [
+        str(sw_connect.get_com_member(f, "Name") or "")
+        for f in W.iter_features_recursive(model)
+    ]
 
 
 def main() -> int:
@@ -56,8 +65,10 @@ def main() -> int:
     import sw_sheet_metal as SM
     import sw_weldment as W
 
-    out: dict = {"purpose": "★ 验 B2 缝进 scripts/ 的两个模块函数（★ 走模块、不走探针实现）",
-                 "cases": []}
+    out: dict = {
+        "purpose": "★ 验 B2 缝进 scripts/ 的两个模块函数（★ 走模块、不走探针实现）",
+        "cases": [],
+    }
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
@@ -72,19 +83,23 @@ def main() -> int:
         sw_part.sketch_corner_rectangle(model, 0.0, 0.0, 60.0, 40.0)
         sk = sw_part.current_sketch_name(model)
         sw_part.end_sketch(model)
-        sw_part.extrude_boss(model, sk, 20.0)                     #: ★ 有实体才有面可选 ✓
+        sw_part.extrude_boss(model, sk, 20.0)  #: ★ 有实体才有面可选 ✓
         row1["features_before"] = _feature_names(model)
 
         #: ★★ **只调模块函数**（★ 按它自己的契约：`(model, *, face_index=…)` ✓）
         res = W.insert_weld_symbol_report(model, face_index=0, symbol="BUTT")
-        row1["result"] = {k: (v if isinstance(v, (int, bool, str, list, dict)) else str(v)[:60])
-                          for k, v in res.items()}
+        row1["result"] = {
+            k: (v if isinstance(v, (int, bool, str, list, dict)) else str(v)[:60])
+            for k, v in res.items()
+        }
         #: ★ 判据：★ **回读**（★ `GetLineCount > 0` ✓）
         rb = res.get("readback") or {}
-        row1["ok"] = bool(isinstance(rb.get("GetLineCount"), int) and rb["GetLineCount"] > 0)
+        row1["ok"] = bool(
+            isinstance(rb.get("GetLineCount"), int) and rb["GetLineCount"] > 0
+        )
         row1["readback"] = rb
         print("★ ① 焊接符号 ⇒ ok=%r · 回读 %r" % (row1["ok"], rb))
-    except Exception as e:                                          # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         row1["ok"] = False
         row1["exception"] = "%s: %s" % (type(e).__name__, str(e)[:180])
         print("★ ① 焊接符号 ⇒ 抛 %s" % row1["exception"])
@@ -97,7 +112,9 @@ def main() -> int:
     try:
         if tool is None:
             row2["ok"] = False
-            row2["error"] = "★ 前置：Design Library 里没有 *.sldftp ⇒ ★ 本项**判不了**（不是建不出来）"
+            row2["error"] = (
+                "★ 前置：Design Library 里没有 *.sldftp ⇒ ★ 本项**判不了**（不是建不出来）"
+            )
         else:
             model2 = sw_connect.new_document(sw, "part")
             sw_part.start_sketch(model2, "Front Plane")
@@ -107,20 +124,24 @@ def main() -> int:
             #: ★★ 契约逐字：`create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)
             #: ` ✗ ——
             #:   ★ 不是 `(model, sketch, thickness, …)`（★ 且它**不抛、只回 `None`** ✓）
-            spec = SM.BaseFlangeSpec(thickness=float(sw_connect.mm(2.0)),
-                                     bend_radius=float(sw_connect.mm(1.0)),
-                                     depth=float(sw_connect.mm(40.0)))
+            spec = SM.BaseFlangeSpec(
+                thickness=float(sw_connect.mm(2.0)),
+                bend_radius=float(sw_connect.mm(1.0)),
+                depth=float(sw_connect.mm(40.0)),
+            )
             SM.create_base_flange(model2, sk2, spec)
             row2["features_after_flange"] = _feature_names(model2)
 
             res2 = SM.insert_form_tool_report(model2, str(tool), face_index=0)
-            row2["result"] = {k: (v if isinstance(v, (int, bool, str, list, dict)) else str(v)[:60])
-                              for k, v in res2.items()}
+            row2["result"] = {
+                k: (v if isinstance(v, (int, bool, str, list, dict)) else str(v)[:60])
+                for k, v in res2.items()
+            }
             #: ★ 判据：★ **特征树增量**（★ 回读 ✓）
             row2["ok"] = bool(res2.get("added"))
             row2["added"] = res2.get("added")
             print("★ ② 成形工具 ⇒ ok=%r · 新增 %r" % (row2["ok"], res2.get("added")))
-    except Exception as e:                                          # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         row2["ok"] = False
         row2["exception"] = "%s: %s" % (type(e).__name__, str(e)[:180])
         print("★ ② 成形工具 ⇒ 抛 %s" % row2["exception"])
@@ -130,25 +151,32 @@ def main() -> int:
     out["module_functions_verified"] = {"weld_symbol": ok1, "forming_tool": ok2}
     out["verdict"] = (
         "★★★★★ **两个模块函数都在真机上成立** ✓ ⇒ ★★ 声明的 `verified` **在**模块这条路**上复现了** ✓"
-        if (ok1 and ok2) else
-        "★★ **未全过**（weld_symbol=%r · forming_tool=%r）⇒ ★ **如实记、★ 不许把 `stitched` 写成 `verified`** ✓"
-        % (ok1, ok2))
+        if (ok1 and ok2)
+        else "★★ **未全过**（weld_symbol=%r · forming_tool=%r）⇒ ★ **如实记、★ 不许把 `stitched` 写成 `verified`** ✓"
+        % (ok1, ok2)
+    )
     print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec213-b2-modules.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "spec213-b2-modules-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "spec213-b2-modules-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

@@ -39,28 +39,43 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 #: ★ SolidWorks 家族（★ 判据按 exe 文件名，★ 不按窗口类名 —— ★ 与 `tools/sw_guard.py` 同
 #: 源）
-FAMILY = ("sldworks", "sldprocmon", "swcefsubproc", "cwbcbfmesh", "sldsurfacing",
-          "sldworks_fs")
+FAMILY = (
+    "sldworks",
+    "sldprocmon",
+    "swcefsubproc",
+    "cwbcbfmesh",
+    "sldsurfacing",
+    "sldworks_fs",
+)
 
 
 def family_processes() -> list:
     """★ 数 SolidWorks 家族进程（★ 用 WMI，★ 不改任何东西）。"""
     import subprocess
-    ps = ("Get-CimInstance Win32_Process | "
-          "Where-Object { $_.Name -match '^(%s)' } | "
-          "Select-Object ProcessId,Name,ExecutablePath | ConvertTo-Json -Compress"
-          % "|".join(FAMILY))
+
+    ps = (
+        "Get-CimInstance Win32_Process | "
+        "Where-Object { $_.Name -match '^(%s)' } | "
+        "Select-Object ProcessId,Name,ExecutablePath | ConvertTo-Json -Compress"
+        % "|".join(FAMILY)
+    )
     try:
-        r = subprocess.run(["pwsh", "-NoProfile", "-Command", ps],
-                           capture_output=True, text=True, encoding="utf-8",
-                           errors="replace", timeout=60)
+        r = subprocess.run(
+            ["pwsh", "-NoProfile", "-Command", ps],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+        )
         out = (r.stdout or "").strip()
         if not out:
             return []
         import json
+
         d = json.loads(out)
         return d if isinstance(d, list) else [d]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 数进程失败: %s" % str(exc)[:120])
         return []
 
@@ -69,6 +84,7 @@ def open_docs_and_owner() -> dict:
     """★ 连上那个 SW，★ 读它打开的文档与**主人**（★ 只用读接口）。"""
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=15)[0]
         titles = []
         #: ★ `ISldWorks.EnumDocuments2` / `GetDocuments` 都可以；★ 用最保守的那个
@@ -80,9 +96,12 @@ def open_docs_and_owner() -> dict:
                     t = sw_connect.safe_get_com_member(d, "GetTitle")
                 titles.append(str(t or ""))
         return {"ok": True, "docs": titles}
-    except Exception as exc:                                              # noqa: BLE001
-        return {"ok": False, "docs": [], "error": "%s: %s" % (type(exc).__name__,
-                                                              str(exc)[:150])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "docs": [],
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+        }
 
 
 def is_mine(path: str) -> bool:
@@ -93,7 +112,7 @@ def is_mine(path: str) -> bool:
     ★★ 反过来说：★ 任何**本仓之外**的已有路径 ⇒ **不是自己的** ✓
     """
     if not path:
-        return True                                    #: ★ 无路径 = 未存盘的新文档 ✓
+        return True  #: ★ 无路径 = 未存盘的新文档 ✓
     p = path.replace("/", "\\").lower()
     if p.startswith(str(REPO).lower()):
         return True
@@ -104,14 +123,17 @@ def is_mine(path: str) -> bool:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="关掉你自己开的 SolidWorks（★ 保守：宁可不关）")
+    ap = argparse.ArgumentParser(
+        description="关掉你自己开的 SolidWorks（★ 保守：宁可不关）"
+    )
     ap.add_argument("--probe", action="store_true", help="只看（默认行为、零副作用）")
-    ap.add_argument("--close", action="store_true",
-                    help="四条判据全过才 ExitApp（★ 官方 0 参）")
+    ap.add_argument(
+        "--close", action="store_true", help="四条判据全过才 ExitApp（★ 官方 0 参）"
+    )
     a = ap.parse_args()
 
     procs = family_processes()
-    #: ★★★★★★★ **修判据①（★ 第一版写错了）**：★ 第一版数的是**整个家族** ⇒ 实测报「**7 
+    #: ★★★★★★★ **修判据①（★ 第一版写错了）**：★ 第一版数的是**整个家族** ⇒ 实测报「**7
     #: 个**」
     #:   ⇒ ★★ **而其中 6 个是**同一个 SW 的子进程**（`sldProcMon` / `swCefSubProc`×3 /
     #:     `sldsurfacing` / `cwbcbfmesh`）⇒ ★★★ **⇒ 它把子进程当成了第二个会话** ✓
@@ -122,26 +144,34 @@ def main() -> int:
     #: ★★★★★ **⇒ 事实 51：★ 判据要贴合被测对象**（★ 同一个"家族"名单、★ 两个用途要**两种
     #: 数法**）✓
     mains = [p for p in procs if str(p.get("Name", "")).lower().startswith("sldworks")]
-    print("★ SolidWorks 家族进程 %d 个 · ★ 其中 **SLDWORKS.exe 主进程 %d 个**："
-          % (len(procs), len(mains)))
+    print(
+        "★ SolidWorks 家族进程 %d 个 · ★ 其中 **SLDWORKS.exe 主进程 %d 个**："
+        % (len(procs), len(mains))
+    )
     for p in procs:
         print("    PID=%-7s %s" % (p.get("ProcessId"), p.get("Name")))
 
     #: ── 判据 ①：★ 主进程多于一个 ⇒ 拒绝（★ 分不清哪个是我的）──────────────
     if len(mains) > 1:
-        print("★ 判据① **不过**：★ 有 %d 个 SLDWORKS.exe 主进程 ⇒ 分不清哪个是我的 ⇒ **不关**"
-              % len(mains))
+        print(
+            "★ 判据① **不过**：★ 有 %d 个 SLDWORKS.exe 主进程 ⇒ 分不清哪个是我的 ⇒ **不关**"
+            % len(mains)
+        )
         print("⇒ ★ 报出来交给人判（★ 宁可不关，不可误杀）")
         return 0
     if not mains:
         print("★ 没有 SolidWorks 主进程在跑 ⇒ 无需处置 ✓")
         return 0
-    print("★ 判据① 过：★ SLDWORKS.exe 主进程恰好 1 个（★ 那 %d 个是它的子进程）"
-          % (len(procs) - len(mains)))
+    print(
+        "★ 判据① 过：★ SLDWORKS.exe 主进程恰好 1 个（★ 那 %d 个是它的子进程）"
+        % (len(procs) - len(mains))
+    )
 
     info = open_docs_and_owner()
     if not info.get("ok"):
-        print("★ 判据③ **不过**：★ 读不到它打开的文档（%s）⇒ **不关**" % info.get("error"))
+        print(
+            "★ 判据③ **不过**：★ 读不到它打开的文档（%s）⇒ **不关**" % info.get("error")
+        )
         return 0
     docs = info["docs"]
     mine = [d for d in docs if is_mine(d)]
@@ -149,8 +179,10 @@ def main() -> int:
     print("★ 判据② 读到的文档：★ 自己的 %s · **不是自己的 %s**" % (mine, not_mine))
 
     if not_mine:
-        print("★ 判据② **不过**：★ 有 %d 个文档不是本仓产物 ⇒ **那可能是别的会话的** ⇒ **不关**"
-              % len(not_mine))
+        print(
+            "★ 判据② **不过**：★ 有 %d 个文档不是本仓产物 ⇒ **那可能是别的会话的** ⇒ **不关**"
+            % len(not_mine)
+        )
         return 0
     print("★ 判据② 过：★ 打开的文档都是自己的")
 
@@ -162,17 +194,22 @@ def main() -> int:
     print("★ 判据④：★ 调 `ISldWorks.ExitApp`（★ 官方 0 参）")
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=15)[0]
         sw_connect.get_com_member(sw, "ExitApp")
         print("★ 已调 ExitApp ✓")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("★ ExitApp 报错：%s: %s" % (type(exc).__name__, str(exc)[:150]))
         return 1
 
     import time
+
     time.sleep(4)
     left = family_processes()
-    print("★ 复核：★ 剩余家族进程 %d 个 ⇒ %s" % (len(left), "已关闭 ✓" if not left else "仍在"))
+    print(
+        "★ 复核：★ 剩余家族进程 %d 个 ⇒ %s"
+        % (len(left), "已关闭 ✓" if not left else "仍在")
+    )
     return 0
 
 

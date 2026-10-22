@@ -51,11 +51,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
-import win32com.client                                                # noqa: E402
-import pythoncom                                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
+import win32com.client  # noqa: E402
+import pythoncom  # noqa: E402
 
 
 def _empty_callout():
@@ -64,16 +64,27 @@ def _empty_callout():
 
 def _box(doc, size=0.03):
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -size, -size, 0.0, size, size, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -size,
+        -size,
+        0.0,
+        size,
+        size,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, size * 2.0)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -111,7 +122,7 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
                     z = (float(b[2]) + float(b[5])) / 2.0
                     if z > best_z:
                         best_z, best = z, o
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
             if best is not None:
                 ss.select_object(doc, best)
@@ -120,35 +131,41 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
         #: \u2605 \u8bfb\u8349\u56fe\u6bb5\u6570\uff08\u2605 \u524d\uff09
         try:
             act = C.get_com_member(doc, "GetActiveSketch2")
-            segs0 = C.get_com_member(act, "GetSketchSegments") if act is not None else None
+            segs0 = (
+                C.get_com_member(act, "GetSketchSegments") if act is not None else None
+            )
             row["segments_before"] = len(segs0) if segs0 is not None else 0
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             row["segments_before"] = None
         before = list(FR.feature_names(doc) or [])
         try:
             ok = C.get_com_member(sk, "SketchUseEdge3", bool(chain), bool(inner_loops))
             row["returned"] = str(ok)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
             row["returned"] = "ERR"
         try:
             act = C.get_com_member(doc, "GetActiveSketch2")
-            segs1 = C.get_com_member(act, "GetSketchSegments") if act is not None else None
+            segs1 = (
+                C.get_com_member(act, "GetSketchSegments") if act is not None else None
+            )
             row["segments_after"] = len(segs1) if segs1 is not None else 0
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             row["segments_after"] = None
         #: \u2605 \u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u6700\u540e\u4e00\u8
         #: 84c\uff09
         try:
             C.get_com_member(sk, "InsertSketch", True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         after = list(FR.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         grew = (row.get("segments_after") or 0) - (row.get("segments_before") or 0)
         row["segments_grew"] = grew
-        row["ok"] = (row.get("returned") == "True") or grew > 0 or bool(row["new_features"])
-    except Exception as exc:                                              # noqa: BLE001
+        row["ok"] = (
+            (row.get("returned") == "True") or grew > 0 or bool(row["new_features"])
+        )
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     finally:
         if doc is not None:
@@ -156,41 +173,83 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u4fa7\u5f71\u5b9e\u4f53 / `SketchUseEdge3` \u2014\u2014 \u2605 \u6309**\u5df2\u6838\u8fc7\u7684\u5b98\u65b9\u8c03\u7528\u5e8f**",
-          "official": "`ISketchManager\\SketchUseEdge3.md`\uff08**2 \u53c2**\uff09\u00d7 "
-                      "`C:\\swapi\\examples\\"
-                      "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u4fa7\u5f71\u5b9e\u4f53 / `SketchUseEdge3` \u2014\u2014 \u2605 \u6309**\u5df2\u6838\u8fc7\u7684\u5b98\u65b9\u8c03\u7528\u5e8f**",
+        "official": "`ISketchManager\\SketchUseEdge3.md`\uff08**2 \u53c2**\uff09\u00d7 "
+        "`C:\\swapi\\examples\\"
+        "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`",
+        "cases": [],
+    }
     #: \u2605 **\u5b98\u65b9\u4f8b\u5b50\u90a3\u7ec4\u53c2\u6570**\uff08\u2605 `False, T
     #: rue`\uff09\u4e0e\u4e09\u4e2a\u5bf9\u7167
-    ev["cases"].append(_one(sw, "\u2605 **\u5b98\u65b9\u4f8b\u5b50\u53c2\u6570 `(False, True)`**",
-                            chain=False, inner_loops=True, use_selection=True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a`(True, True)`", chain=True, inner_loops=True,
-                            use_selection=True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a`(True, False)`", chain=True, inner_loops=False,
-                            use_selection=True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a**\u4e0d\u9009\u9762**\u5c31\u8c03", chain=False, inner_loops=True,
-                            use_selection=False))
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 **\u5b98\u65b9\u4f8b\u5b50\u53c2\u6570 `(False, True)`**",
+            chain=False,
+            inner_loops=True,
+            use_selection=True,
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a`(True, True)`",
+            chain=True,
+            inner_loops=True,
+            use_selection=True,
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a`(True, False)`",
+            chain=True,
+            inner_loops=False,
+            use_selection=True,
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a**\u4e0d\u9009\u9762**\u5c31\u8c03",
+            chain=False,
+            inner_loops=True,
+            use_selection=False,
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "sketch_use_edge3_%d_of_%d" % (ev["passed"], ev["total"])
     p = R / "output" / "sketch-use-edge3-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a**%s**" % ev["verdict"])
     for c in ev["cases"]:
-        print("  %-40s ok=%-6s \u56de=%-6s \u9009\u4e2d=%s \u6bb5 %s\u2192%s \u7279\u5f81 %s->%s" % (
-            c.get("tag"), c.get("ok"), c.get("returned"), c.get("selected"),
-            c.get("segments_before"), c.get("segments_after"),
-            c.get("before"), (c.get("before") or 0) + len(c.get("new_features") or [])))
+        print(
+            "  %-40s ok=%-6s \u56de=%-6s \u9009\u4e2d=%s \u6bb5 %s\u2192%s \u7279\u5f81 %s->%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("returned"),
+                c.get("selected"),
+                c.get("segments_before"),
+                c.get("segments_after"),
+                c.get("before"),
+                (c.get("before") or 0) + len(c.get("new_features") or []),
+            )
+        )
         if c.get("new_features"):
             print("        \u65b0\u589e=%s" % (c["new_features"],))
         for k in ("call_err", "err"):

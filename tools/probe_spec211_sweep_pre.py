@@ -1,4 +1,5 @@
 """★ 探针：`InsertSweepSurface2` —— ★★ **给它把前置完全对上**：轮廓 mark 1 · 路径 mark 4。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-2 的第二步探针）
 # 文件:   tools/probe_spec211_sweep_pre.py
@@ -40,9 +41,11 @@ def main() -> int:
     import sw_part
     import sw_surface_features as sf
 
-    out: dict = {"official": "IFeatureManager.InsertSweepSurface2",
-                 "purpose": "把前置完全对上，把「试死」与「大发现」分开",
-                 "marks_used": {"profile": 1, "path": 4}}
+    out: dict = {
+        "official": "IFeatureManager.InsertSweepSurface2",
+        "purpose": "把前置完全对上，把「试死」与「大发现」分开",
+        "marks_used": {"profile": 1, "path": 4},
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -74,29 +77,44 @@ def main() -> int:
     ok2 = bool(sw_part._select_by_id(ext, sk2, "SKETCH", append=True, mark=4))
     out["select_results"] = {"profile_mark1": ok1, "path_mark4": ok2}
     import sw_selection_spec as SS
+
     out["selection_count"] = SS.get_selection_count(model)
-    print("★ 选择：★ mark1(profile)=%r · mark4(path)=%r · 选区计数=%r"
-          % (ok1, ok2, out["selection_count"]))
+    print(
+        "★ 选择：★ mark1(profile)=%r · mark4(path)=%r · 选区计数=%r"
+        % (ok1, ok2, out["selection_count"])
+    )
 
     rep = sf.sweep_surface_report(model, use_auto_select=True)
     out["report"] = rep
-    print("★★ 调用后 ⇒ ok=%r · returned_is_none=%r · 特征 %r→%r · 新增 %r"
-          % (rep.get("ok"), rep.get("returned_is_none"), rep.get("feature_count_before"),
-             rep.get("feature_count_after"), rep.get("new_features")))
+    print(
+        "★★ 调用后 ⇒ ok=%r · returned_is_none=%r · 特征 %r→%r · 新增 %r"
+        % (
+            rep.get("ok"),
+            rep.get("returned_is_none"),
+            rep.get("feature_count_before"),
+            rep.get("feature_count_after"),
+            rep.get("new_features"),
+        )
+    )
 
     #: ★★★ **两条路分开**（★ 本探针存在的全部意义 ✓）
     if rep.get("ok"):
         verdict = "★★★★ **建成了** ⇒ ★ **「大发现」**：★ 这条路走得通 ✓（★ 事实 392 那条是路 A ✓）"
     elif rep.get("returned_is_none"):
-        verdict = ("★★★★ **前置全对上、仍静默回 `None`** ⇒ ★★ **这才是真正的「试死」** ✓ "
-                   "⇒ ★★ **从此可与事实 392 并列**（★ 两条路都死 ✓）")
+        verdict = (
+            "★★★★ **前置全对上、仍静默回 `None`** ⇒ ★★ **这才是真正的「试死」** ✓ "
+            "⇒ ★★ **从此可与事实 392 并列**（★ 两条路都死 ✓）"
+        )
     else:
         verdict = "★ 其它：%s" % str(rep.get("error"))[:120]
     out["verdict"] = verdict
     print("★★★ 判定 ⇒ %s" % verdict)
 
     p = ROOT / "output" / "spec211-b2-sweep-pre.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

@@ -30,14 +30,25 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dimension-pattern-retry-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "dimension-pattern-retry-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_feature_readback import feature_names
-    from sw_part import (add_dimension_report, current_sketch_name, end_sketch, extrude_boss,
-                         linear_pattern_report, sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        add_dimension_report,
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        linear_pattern_report,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from sw_selection_spec import select_entity_by_index
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -60,9 +71,12 @@ def main() -> int:
             if sw_connect.safe_get_com_member(doc, "FeatureByName", nm) is not None:
                 boss = nm
                 break
-        ev["steps"]["setup"] = {"ok": True, "boss": boss,
-                                "tree": len(feature_names(doc)),
-                                "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["setup"] = {
+            "ok": True,
+            "boss": boss,
+            "tree": len(feature_names(doc)),
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         #: ★ 正例 ①：加尺寸（★ **先清空选区** —— 那是上一轮的真因）
         try:
@@ -71,35 +85,49 @@ def main() -> int:
             select_entity_by_index(doc, "EDGE", 1, append=True)
             r = add_dimension_report(doc, 30.0, 20.0, selector="__current_selection__")
             ev["steps"]["add_dimension"] = {
-                "ok": bool(r.get("ok")), "selected": r.get("selected"),
-                "dimension_created": r.get("dimension_created"), "error": r.get("error")}
-        except Exception as exc:                               # noqa: BLE001
+                "ok": bool(r.get("ok")),
+                "selected": r.get("selected"),
+                "dimension_created": r.get("dimension_created"),
+                "error": r.get("error"),
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["add_dimension"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
 
         #: ★ 正例 ②：线性阵列（★ 同样先清空选区）
         try:
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
             r2 = linear_pattern_report(doc, boss or "凸台-拉伸2", 10.0, 3)
             ev["steps"]["linear_pattern"] = {
-                "ok": bool(r2.get("ok")), "tree": [r2.get("tree_before"), r2.get("tree_after")],
-                "new_features": r2.get("new_features"), "error": r2.get("error")}
-        except Exception as exc:                               # noqa: BLE001
+                "ok": bool(r2.get("ok")),
+                "tree": [r2.get("tree_before"), r2.get("tree_after")],
+                "new_features": r2.get("new_features"),
+                "error": r2.get("error"),
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["linear_pattern"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 上一轮（400）把这两条判成「未建成」并回退注册；★ 轮 405 的**边对穷举表**"
-                      "显示 `AddDimension2` 其实能建 ⇒ ★★ **真因是上一轮探针选区不干净**"
-                      "（★ 本探针每次选前一律 `ClearSelection2`）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 上一轮（400）把这两条判成「未建成」并回退注册；★ 轮 405 的**边对穷举表**"
+            "显示 `AddDimension2` 其实能建 ⇒ ★★ **真因是上一轮探针选区不干净**"
+            "（★ 本探针每次选前一律 `ClearSelection2`）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

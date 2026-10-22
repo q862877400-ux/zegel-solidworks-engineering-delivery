@@ -1,5 +1,3 @@
-
-
 # ── 24h 计划 段 6 续（Spec Kit `169`）：**扫描（sweep）** ────────────────────────────
 # ★★★★★ 2026-10-01（轮 315）**这是"四家有我们没有"里核实的第二个真缺**：
 #   ★ 全仓 grep `sweep` ⇒ **工具 0 · 函数 0**（★ 与 `loft` 一样）——
@@ -10,7 +8,7 @@
 # > 「SOLIDWORKS 2018 introduces a **new sweep architecture**, making this method **obso
 # lete**.
 #   >  See **Sweep Features and SweepFeatureData Objects**」
-# ⇒ ★★ 现代入口是 **`IFeatureManager.CreateDefinition(swFmSweep)` → `ISweepFeatureData` 
+# ⇒ ★★ 现代入口是 **`IFeatureManager.CreateDefinition(swFmSweep)` → `ISweepFeatureData`
 # → `CreateFeature`**
 # （★ 常量值 **17** —— ★ 反射 `swFmSweep = 17` × 官方 `CreateDefinition.md` 的「swFmSwee
 # p (boss sweep)」两源一致）
@@ -19,7 +17,7 @@
 # 源：`C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeature
 # Data Objects.md`
 #   ```
-# ① 轮廓：★ 草图轮廓 ⇒ **Mark = 1**（闭合草图）· ★ 圆形轮廓 ⇒ **Mark = 4** · ★ 实体轮廓 
+# ① 轮廓：★ 草图轮廓 ⇒ **Mark = 1**（闭合草图）· ★ 圆形轮廓 ⇒ **Mark = 4** · ★ 实体轮廓
 # ⇒ 1 + 2048
 #   ② 路径：★ **Mark = 4**  ← ★ 而「**路径的起点必须落在轮廓所在平面上**」（1 方向扫描）
 #   ③ 引导线 ⇒ Mark = 2（只与草图轮廓配）· ④ 方向向量 ⇒ Mark = 128
@@ -79,14 +77,23 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     sel = {}
     for mark, label in ((1, "profile"), (4, "path"), (2, "guide")):
         try:
-            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                            "GetSelectedObjectCount2", mark))
-        except Exception:                                      # noqa: BLE001
+            sel[label] = int(
+                get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    mark,
+                )
+            )
+        except Exception:  # noqa: BLE001
             sel[label] = -1
     if sel.get("profile", 0) < 1 or sel.get("path", 0) < 1:
-        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
-                "error": "扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**（★ 官方专文给的 mark）；"
-                         "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path"))}
+        return {
+            "ok": False,
+            "stage": "selection",
+            "selected_by_mark": sel,
+            "error": "扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**（★ 官方专文给的 mark）；"
+            "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path")),
+        }
     before = feature_names(model)
     #: ★ 官方调用序：CreateDefinition ⇒ ISweepFeatureData ⇒ CreateFeature
     try:
@@ -96,13 +103,21 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
         cd_const = SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP
         #: cd-site: dynamic 实参是局部变量，定不到哪次生效
         data = get_com_member(fm, "CreateDefinition", cd_const)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "CreateDefinition",
+            "selected_by_mark": sel,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     if data is None:
-        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
-                "error": "CreateDefinition(swFmSweep=%d) 回了 None（★ 与事实 43 的 35 常量表有关？）"
-                         % (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP)}
+        return {
+            "ok": False,
+            "stage": "CreateDefinition",
+            "selected_by_mark": sel,
+            "error": "CreateDefinition(swFmSweep=%d) 回了 None（★ 与事实 43 的 35 常量表有关？）"
+            % (SW_FM_SWEEP_CUT if cut else SW_FM_SWEEP),
+        }
     #: ★ 认领选择（★ `AccessSelections` 是官方要求的第二步）
     #: ★★★ 2026-10-01（轮 315）**第二个参数要传空 Dispatch物件**（★ **事实 33**）——
     #:   传 `None` ⇒ `com_error: (-2147352571, '类型不匹配。', None, **2**)`（★ 位置 2）。
@@ -120,8 +135,9 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     access = None
     try:
         from sw_part import _empty_callout as _ec
+
         access = bool(get_com_member(data, "AccessSelections", model, _ec()))
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
     #: ★★★★★★★ 2026-10-04（轮 129）**在 `CreateFeature` **之前**给数据对象一次机会** ——
     #:   ★ **为什么要有这个钩子**（★ 官方 `## Remarks` 逐字、★ 我上一轮漏读的那句）：
@@ -143,9 +159,14 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
         mutate(data)
     try:
         feat = get_com_member(fm, "CreateFeature", data)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "CreateFeature",
+            "selected_by_mark": sel,
+            "access": access,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     #: ★★★★ 2026-10-03（接手轮）**补上成功路径的 `return`** —— ★★ 由 bunny 的
     #:   `recon/precall-cand/precall-verdict.md` 报出、★ **我复核确认**（M3）。
     #:   ★★ **病灶**：原函数**最后一个语句就是上面那个 `except` 的 `return`**
@@ -164,14 +185,23 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     if feat is not None:
         try:
             tname = str(get_com_member(feat, "GetTypeName2") or "")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             tname = ""
-    return {"ok": bool(new) and (tname == "Sweep"), "stage": "done",
-            "feature_name": (new[-1] if new else None), "new_features": new,
-            "tree_before": len(before), "tree_after": len(after),
-            "type_name": tname, "access": access, "selected_by_mark": sel,
-            "cut": bool(cut),
-            "★": "判据 = **特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象的那个）"}
+    return {
+        "ok": bool(new) and (tname == "Sweep"),
+        "stage": "done",
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "type_name": tname,
+        "access": access,
+        "selected_by_mark": sel,
+        "cut": bool(cut),
+        "★": "判据 = **特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象的那个）",
+    }
+
+
 def create_sweep_surface_report(model) -> dict:
     """★ **曲面扫描**：`CreateDefinition(**swFmRefSurface = 62**)` → `ISweepFeatureData` → `CreateFeature`。
 
@@ -203,43 +233,74 @@ def create_sweep_surface_report(model) -> dict:
     sel = {}
     for mark, label in ((1, "profile"), (4, "path"), (2, "guide")):
         try:
-            sel[label] = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                            "GetSelectedObjectCount2", mark))
-        except Exception:                                      # noqa: BLE001
+            sel[label] = int(
+                get_com_member(
+                    get_com_member(model, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    mark,
+                )
+            )
+        except Exception:  # noqa: BLE001
             sel[label] = -1
     if sel.get("profile", 0) < 1 or sel.get("path", 0) < 1:
-        return {"ok": False, "stage": "selection", "selected_by_mark": sel,
-                "error": "曲面扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**；"
-                         "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path"))}
+        return {
+            "ok": False,
+            "stage": "selection",
+            "selected_by_mark": sel,
+            "error": "曲面扫描要选 **轮廓（mark=1）** 与 **路径（mark=4）**；"
+            "★ 当前 mark1=%r · mark4=%r" % (sel.get("profile"), sel.get("path")),
+        }
     before = feature_names(model)
     try:
         fm = get_com_member(model, "FeatureManager")
         #: cd-site: no-members-used 本站点只调 `AccessSelections` / `CreateFeature`，**不设任何成员**（实测 0 个 `data.X`）⇒ 确实无事可查
         data = get_com_member(fm, "CreateDefinition", SW_FM_REF_SURFACE)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "CreateDefinition",
+            "selected_by_mark": sel,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     if data is None:
-        return {"ok": False, "stage": "CreateDefinition", "selected_by_mark": sel,
-                "error": "CreateDefinition(swFmRefSurface=%d) 回了 None" % SW_FM_REF_SURFACE}
+        return {
+            "ok": False,
+            "stage": "CreateDefinition",
+            "selected_by_mark": sel,
+            "error": "CreateDefinition(swFmRefSurface=%d) 回了 None"
+            % SW_FM_REF_SURFACE,
+        }
     access = None
     try:
         from sw_part import _empty_callout as _ec
+
         access = bool(get_com_member(data, "AccessSelections", model, _ec()))
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         access = "ERR %s: %s" % (type(exc).__name__, str(exc)[:110])
     try:
         feat = get_com_member(fm, "CreateFeature", data)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "CreateFeature", "selected_by_mark": sel, "access": access,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "CreateFeature",
+            "selected_by_mark": sel,
+            "access": access,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
     tname = _feature_type_name(model, new[-1]) if new else None
-    return {"ok": bool(new) and (tname == "Sweep"), "feature_name": (new[-1] if new else None),
-            "new_features": new, "type_name": tname, "tree_before": len(before),
-            "tree_after": len(after), "selected_by_mark": sel, "access_selections": access,
-            "sw_fm_const": SW_FM_REF_SURFACE,
-            "★": "曲面扫描走 CreateDefinition(swFmRefSurface=62) → ISweepFeatureData → CreateFeature"
-                 "（★ 而台账给的 InsertSweepRefSurface* 两个都 Obsolete）；"
-                 "★ 判据 = 特征树多了 **且** 类型名 = `Sweep`（事实 242）"}
+    return {
+        "ok": bool(new) and (tname == "Sweep"),
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "type_name": tname,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "selected_by_mark": sel,
+        "access_selections": access,
+        "sw_fm_const": SW_FM_REF_SURFACE,
+        "★": "曲面扫描走 CreateDefinition(swFmRefSurface=62) → ISweepFeatureData → CreateFeature"
+        "（★ 而台账给的 InsertSweepRefSurface* 两个都 Obsolete）；"
+        "★ 判据 = 特征树多了 **且** 类型名 = `Sweep`（事实 242）",
+    }

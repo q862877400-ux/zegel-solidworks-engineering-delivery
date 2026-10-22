@@ -55,10 +55,15 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH30"]
 
-_STUDY = ("Name of an EXISTING topology study. ⚠ Leave empty to use the FIRST study in the "
-          "document — create one first (solidworks_topology_create_study).")
-_GOAL = ("Topology goal type (swsTopologyGoalType_e). ★ The result is judged by READ-BACK "
-         "(how many constraints/controls are still retrievable), not by a return object.")
+_STUDY = (
+    "Name of an EXISTING topology study. ⚠ Leave empty to use the FIRST study in the "
+    "document — create one first (solidworks_topology_create_study)."
+)
+_GOAL = (
+    "Topology goal type (swsTopologyGoalType_e). ★ The result is judged by READ-BACK "
+    "(how many constraints/controls are still retrievable), not by a return object."
+)
+
 
 def _consumed(*names: str) -> dict:
     """这些入参由解析器消费，**不传给目标函数**（与既有拓扑工具同一约定）。"""
@@ -68,8 +73,10 @@ def _consumed(*names: str) -> dict:
 def _spec(name: str, title: str, function: str, doc: str, params: list) -> ToolSpec:
     """★ 本批的共同骨架（★ 六个工具的宿主对象都是 `study` ⇒ 抽出来只留三处差异）。"""
     return ToolSpec(
-        name=name, title=title,
-        module="sw_topology", function=function,
+        name=name,
+        title=title,
+        module="sw_topology",
+        function=function,
         inject="study",
         param_alias=_consumed("study_name"),
         params=params,
@@ -121,11 +128,17 @@ SPECS_BATCH30 = [
         "retrievable constraints/controls before and after. "
         "★ `ok` means no exception AND the count did not decrease — never the return object. "
         "⚠ Sets parameters only; it does NOT run the solver.",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("goal_type", int, default=0, description=_GOAL),
-         Param("mass_reduce_percent", float, default=0.0,
-               description="Target mass reduction in percent (e.g. 75 means -75%). "
-                           "★ 0.0 is a legitimate value (keep the document default).")],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("goal_type", int, default=0, description=_GOAL),
+            Param(
+                "mass_reduce_percent",
+                float,
+                default=0.0,
+                description="Target mass reduction in percent (e.g. 75 means -75%). "
+                "★ 0.0 is a legitimate value (keep the document default).",
+            ),
+        ],
     ),
     _spec(
         "solidworks_topology_set_iteration_options",

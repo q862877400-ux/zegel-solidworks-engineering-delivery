@@ -28,6 +28,7 @@
 # ⚠ 本门禁为静态检查，未在本机实测 SolidWorks（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -40,17 +41,41 @@ REPO = Path(__file__).resolve().parents[1]
 
 #: 官方 interop 程序集的纯元数据反射清单（AGENTS.md §四.1③）
 REFLECTIONS = [
-    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt"),
-    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"),
-    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_swdocumentmgr.txt"),
-    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_SWRoutingLib.txt"),
-    Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_sldcostingapi.txt"),
+    Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect_sldworks"
+        / "iface_sldworks.txt"
+    ),
+    Path(
+        Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"
+    ),
+    Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_swdocumentmgr.txt"
+    ),
+    Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_SWRoutingLib.txt"
+    ),
+    Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_sldcostingapi.txt"
+    ),
     Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_fworks.txt"),
 ]
 
 #: 本项目自身的常量名（SW_DOC_TYPES 等）不是 API 成员，不必去反射里找
-OWN_CONSTANTS = re.compile(r"^(SW_|ARITY|FAMILIES|PROPERTIES|OVERLOAD_"
-                           r"GETTERS|UNWRAPPED|TRAPS|SELECTION_|SEEN_)")
+OWN_CONSTANTS = re.compile(
+    r"^(SW_|ARITY|FAMILIES|PROPERTIES|OVERLOAD_"
+    r"GETTERS|UNWRAPPED|TRAPS|SELECTION_|SEEN_)"
+)
 
 SIG = re.compile(r"^\S+\s+(\w+)\s*\(")
 #: get_com_member(obj, "X") 与 obj.X() 两种形态
@@ -62,7 +87,8 @@ SIG = re.compile(r"^\S+\s+(\w+)\s*\(")
 #:   ⇒ 修法：把三种**都**认上（它们都是"取/调 COM 成员"的调用点）。
 #:   ⚠ 这是**轮 145 的**修法；若将来再加同义词，**这里要同步**。
 WRAPPER = re.compile(
-    r"(?:\bget_com_member|\bcall_com_member|\bsafe_get_com_member)\s*\(\s*[^,()]+,\s*[\"']([A-Za-z_]\w*)[\"']")
+    r"(?:\bget_com_member|\bcall_com_member|\bsafe_get_com_member)\s*\(\s*[^,()]+,\s*[\"']([A-Za-z_]\w*)[\"']"
+)
 DOTCALL = re.compile(r"[.\s]([A-Za-z_]\w*)\s*\(")
 SKIP_LINE = re.compile(r"^\s*(#|\"\"\"|''')")
 FUNCDEF = re.compile(r"^\s*def\s+")
@@ -96,8 +122,9 @@ def scan() -> list[tuple[str, int, str]]:
     """扫 scripts/ 下所有 .py 的 get_com_member 调用，返回 (文件, 行号, 成员名)。"""
     out = []
     for p in sorted((REPO / "scripts").glob("*.py")):
-        for i, line in enumerate(p.read_text(encoding="utf-8",
-                                            errors="replace").splitlines(), 1):
+        for i, line in enumerate(
+            p.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+        ):
             if SKIP_LINE.match(line):
                 continue
             for mem in WRAPPER.findall(line):
@@ -127,8 +154,20 @@ def scan() -> list[tuple[str, int, str]]:
 # ★ **判据已被证明能响**：`tests/test_direct_member_probe_can_fire.py`（6 条：
 #   2 条正例喂真缺陷形态 ⇒ 必须命中；4 条反例 ⇒ 不许误报）。
 # ══════════════════════════════════════════════════════════════════════
-COM_INFRA = {"QueryInterface", "AddRef", "Release", "GetTypeInfo", "GetIDsOfNames", "Invoke"}
-_WRAP_NAMES = {"get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw"}
+COM_INFRA = {
+    "QueryInterface",
+    "AddRef",
+    "Release",
+    "GetTypeInfo",
+    "GetIDsOfNames",
+    "Invoke",
+}
+_WRAP_NAMES = {
+    "get_com_member",
+    "call_com_member",
+    "safe_get_com_member",
+    "get_com_member_raw",
+}
 
 
 #: ★ 2026-10-22 统一化：本函数与 tools/probe_direct_member_access 里的嵌套 ident
@@ -151,12 +190,19 @@ def find_direct_member_access(path, known):
     except SyntaxError:
         return []
     out = []
-    for fn in [n for n in ast.walk(tree)
-               if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]:
+    for fn in [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]:
         com_objs = set()
         for sub in ast.walk(fn):
-            if (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name)
-                    and sub.func.id in _WRAP_NAMES and sub.args):
+            if (
+                isinstance(sub, ast.Call)
+                and isinstance(sub.func, ast.Name)
+                and sub.func.id in _WRAP_NAMES
+                and sub.args
+            ):
                 o = _base_name(sub.args[0])
                 if o:
                     com_objs.add(o)
@@ -164,9 +210,12 @@ def find_direct_member_access(path, known):
         for _ in range(3):
             grew = False
             for sub in ast.walk(fn):
-                if (isinstance(sub, ast.Assign) and len(sub.targets) == 1
-                        and isinstance(sub.targets[0], ast.Name)
-                        and isinstance(sub.value, (ast.Attribute, ast.Call))):
+                if (
+                    isinstance(sub, ast.Assign)
+                    and len(sub.targets) == 1
+                    and isinstance(sub.targets[0], ast.Name)
+                    and isinstance(sub.value, (ast.Attribute, ast.Call))
+                ):
                     v = sub.value.func if isinstance(sub.value, ast.Call) else sub.value
                     if _base_name(v) in com_objs and sub.targets[0].id not in com_objs:
                         com_objs.add(sub.targets[0].id)
@@ -180,9 +229,15 @@ def find_direct_member_access(path, known):
                 o = _base_name(sub.func.value)
                 name = sub.func.attr
                 if o in com_objs and name not in known and name not in COM_INFRA:
-                    out.append({"file": Path(path).name,
-                                "line": getattr(sub, "lineno", 0),
-                                "fn": fn.name, "obj": o, "name": name})
+                    out.append(
+                        {
+                            "file": Path(path).name,
+                            "line": getattr(sub, "lineno", 0),
+                            "fn": fn.name,
+                            "obj": o,
+                            "name": name,
+                        }
+                    )
     return out
 
 
@@ -192,8 +247,10 @@ def main() -> int:
     if official is None:
         print("[SKIP] 反射清单不在本机，无法校验（这是静默通过，不算通过）")
         return 0
-    print(f"成员名门禁 · 官方成员 {len(official)} 个"
-          f"（{sum(1 for r in REFLECTIONS if r.is_file())} 份反射清单）")
+    print(
+        f"成员名门禁 · 官方成员 {len(official)} 个"
+        f"（{sum(1 for r in REFLECTIONS if r.is_file())} 份反射清单）"
+    )
     rows = scan()
     bad = []
     for fname, lineno, mem in rows:
@@ -213,13 +270,14 @@ def main() -> int:
             if OWN_CONSTANTS.match(h["name"]) or h["name"] in ALLOW_UNKNOWN:
                 continue
             direct.append((h["file"], h["line"], h["name"], h["fn"], h["obj"]))
-    print(f"  直接属性访问命中 {len(direct)} 个"
-          "（只查「已当 COM 对象用过的变量」上的大驼峰成员）")
+    print(
+        f"  直接属性访问命中 {len(direct)} 个"
+        "（只查「已当 COM 对象用过的变量」上的大驼峰成员）"
+    )
     for fname, lineno, mem, fn, obj in direct[:40]:
         print(f"  {fname}:{lineno}  {obj}.{mem}()  ← 函数 {fn}()")
     if not bad and not direct:
-        print("[PASS] 全部成员名都能在官方反射里查到"
-              "（含**直接属性访问**那一类）")
+        print("[PASS] 全部成员名都能在官方反射里查到（含**直接属性访问**那一类）")
         return 0
     bad = bad + [(f, ln, m) for f, ln, m, _fn, _ob in direct]
     print(f"[FAIL] {len(bad)} 个成员名在官方反射里查不到：")
@@ -227,8 +285,10 @@ def main() -> int:
         print(f"  {fname}:{lineno}  {mem}")
     if len(bad) > 40:
         print(f"  …… 另有 {len(bad) - 40} 个")
-    print("\n⚑ 处置：两套官方源都查不到 ⇒ 按铁律 5 写明「查不到」并删除封装，"
-          "\n  不要拿相似名字蒙混；确属本项目自有常量则登记进 ALLOW_UNKNOWN。")
+    print(
+        "\n⚑ 处置：两套官方源都查不到 ⇒ 按铁律 5 写明「查不到」并删除封装，"
+        "\n  不要拿相似名字蒙混；确属本项目自有常量则登记进 ALLOW_UNKNOWN。"
+    )
     return 1
 
 

@@ -44,19 +44,28 @@ SPECS_BATCH62 = [
     ToolSpec(
         name="solidworks_weldment_create_structural_member",
         title="Create a Structural Member",
-        module="sw_weldment", function="create_structural_member_from_sketch",
+        module="sw_weldment",
+        function="create_structural_member_from_sketch",
         inject="model",
         params=[
-            Param("sketch_name", str,
-                  description="**路径草图**的名字（★ 如 `草图1`）—— ★ 结构构件沿它扫出。"),
-            Param("profile_path", str,
-                  description="`.sldlfp` **焊件轮廓**的绝对路径。★ 本机在 "
-                              "`C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\` 下"
-                              "（★ **111 个**，★ 中文 UI 用 `GB\\` 那一支，★ 如 `GB\\square-rods.sldlfp`）。"),
+            Param(
+                "sketch_name",
+                str,
+                description="**路径草图**的名字（★ 如 `草图1`）—— ★ 结构构件沿它扫出。",
+            ),
+            Param(
+                "profile_path",
+                str,
+                description="`.sldlfp` **焊件轮廓**的绝对路径。★ 本机在 "
+                "`C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\` 下"
+                "（★ **111 个**，★ 中文 UI 用 `GB\\` 那一支，★ 如 `GB\\square-rods.sldlfp`）。",
+            ),
         ],
-        doc=("Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment "
-             "profile, and return a READ-BACK report. "
-             "★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 "
-             "`WeldMemberFeat`。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。"),
+        doc=(
+            "Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment "
+            "profile, and return a READ-BACK report. "
+            "★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 "
+            "`WeldMemberFeat`。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。"
+        ),
     ),
 ]

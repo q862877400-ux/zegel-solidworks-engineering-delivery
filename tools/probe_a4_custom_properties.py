@@ -1,7 +1,7 @@
 """★ 真机补 `custom_properties_and_bom` 的运行证据（★ A4 的待补项）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身。
-# 文件:   `scripts/sw_document_data.py::set_custom_properties` / `read_custom_property` 
+# 文件:   `scripts/sw_document_data.py::set_custom_properties` / `read_custom_property`
 # ·
 #         `scripts/sw_connect.py`（`new_document`）
 # 定位:   ★ **为什么另写一个**：★ 轮 55 那个 `tools/probe_a4_runtime_evidence.py` **读
@@ -42,7 +42,7 @@ def main() -> int:
     units = None
     try:
         units = list(get_com_member(model, "GetUnits"))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     wrote = D.set_custom_properties(model, WANT)
@@ -63,27 +63,35 @@ def main() -> int:
     independent = {}
     for k in WANT:
         rr = D.read_custom_property(model, k)
-        independent[k] = {"raw": rr.get("raw"), "exists": rr.get("exists"),
-                          "status": rr.get("status")}
+        independent[k] = {
+            "raw": rr.get("raw"),
+            "exists": rr.get("exists"),
+            "status": rr.get("status"),
+        }
 
-    service_ok = (bool((wrote or {}).get("success")) and len(rows) == len(WANT)
-                  and all(r.get("verified") is True for r in rows))
+    service_ok = (
+        bool((wrote or {}).get("success"))
+        and len(rows) == len(WANT)
+        and all(r.get("verified") is True for r in rows)
+    )
     independent_ok = all(independent[k]["raw"] == v for k, v in WANT.items())
 
     R = {
         "★_判据": "★ 两层独立：★ ① 服务的 `verified` 全 True（★ 它自己的回读）· "
-                  "★ ② **本探针独立再读一次**、★ 逐条等于所写（★ 不借服务的回读）",
+        "★ ② **本探针独立再读一次**、★ 逐条等于所写（★ 不借服务的回读）",
         "GetUnits": units,
         "asked": WANT,
         "service_reported": per_service,
         "service_ok": service_ok,
         "independent_readback": independent,
         "independent_ok": independent_ok,
-        "★_说明": "★★ 轮 55 的旧探针读 `readback.get(\"value\")` ⇒ 那里没有 `value` 键"
-                  "（★ 只有 `raw`）⇒ ★ 它记的 `readback_value: None` 是**探针的错**、"
-                  "★ **不是能力层的错** ✓",
+        "★_说明": '★★ 轮 55 的旧探针读 `readback.get("value")` ⇒ 那里没有 `value` 键'
+        "（★ 只有 `raw`）⇒ ★ 它记的 `readback_value: None` 是**探针的错**、"
+        "★ **不是能力层的错** ✓",
     }
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ service_ok:", service_ok, "· independent_ok:", independent_ok)
     for k, v in per_service.items():
         print("   %s ⇒ verified=%s raw=%r" % (k, v["verified"], v["readback_raw"]))

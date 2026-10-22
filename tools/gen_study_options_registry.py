@@ -35,7 +35,9 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-SRC = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt")
+SRC = Path(
+    Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"
+)
 OUT = Path(Path(__file__).resolve().parents[1] / "_raw" / "study_options_setters.json")
 
 FAMILIES = (
@@ -75,6 +77,7 @@ def main() -> int:
             out[current].append((m.group(1), m.group(2)))
 
     import json
+
     serial = {k: [{"name": n, "type": t} for n, t in v] for k, v in out.items()}
     OUT.write_text(json.dumps(serial, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -82,8 +85,10 @@ def main() -> int:
     for name, items in out.items():
         pairs = [n for n, _ in items if n.endswith("2")]
         base = [n for n, _ in items if not n.endswith("2")]
-        print(f"  {name:<30} setter {len(items):>3}  "
-              f"（X2 形 {len(pairs)} / 基础形 {len(base)}）")
+        print(
+            f"  {name:<30} setter {len(items):>3}  "
+            f"（X2 形 {len(pairs)} / 基础形 {len(base)}）"
+        )
         total += len(items)
     print(f"\n合计 {total} 个 setter -> {OUT}")
     return 0

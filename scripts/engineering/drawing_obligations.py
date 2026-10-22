@@ -1,4 +1,5 @@
 """★ 阶段 2 · 图纸义务 + 变更传播（规格 317 的 D4/D5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -27,12 +28,13 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 # 一、图纸义务（★ D4）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class DrawingObligation:
     """★ 一条图纸义务（★ 覆盖率判据的**计数单位**）。"""
 
     name: str
-    kind: str = "dimension"        #: `dimension` / `note` / `tolerance`
+    kind: str = "dimension"  #: `dimension` / `note` / `tolerance`
     covered: bool = False
     evidence: str = ""
 
@@ -44,14 +46,15 @@ def obligations_from_method(method_id: str) -> list[DrawingObligation]:
       义务清单（★ 那是方法的定义的一部分）。★ 手工列一份会与它**分叉**。
     """
     from .compiler import METHOD_LIBRARY
+
     m = METHOD_LIBRARY.get(method_id)
     if m is None:
         return []
     out = []
-    for o in (getattr(m, "verification_obligations", ()) or ()):
+    for o in getattr(m, "verification_obligations", ()) or ():
         out.append(DrawingObligation(name=str(o), kind="dimension"))
     #: ★ 后置条件也是义务（★ 如「体数 = 1」「厚度回读等于冻结值」）
-    for p in (getattr(m, "postconditions", ()) or ()):
+    for p in getattr(m, "postconditions", ()) or ():
         out.append(DrawingObligation(name=str(p), kind="note"))
     return out
 
@@ -61,7 +64,8 @@ def coverage(obls: list[DrawingObligation]) -> dict:
     n = len(obls)
     c = sum(1 for o in obls if o.covered)
     return {
-        "total": n, "covered": c,
+        "total": n,
+        "covered": c,
         "ratio": (c / n) if n else 0.0,
         "missing": [o.name for o in obls if not o.covered],
         "ok": bool(n) and c == n,
@@ -82,16 +86,18 @@ def mark_covered(obls: list[DrawingObligation], name: str, evidence: str = "") -
 # 二、产物摘要（★ D5 —— ★ 判「新旧混入」的唯一判据）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class ArtifactDigest:
     path: str
     sha256: str
-    kind: str                 #: `model` / `drawing` / `report`
+    kind: str  #: `model` / `drawing` / `report`
     revision: str = ""
 
 
-def digest_of(path: str | pathlib.Path, *, kind: str = "",
-              revision: str = "") -> ArtifactDigest:
+def digest_of(
+    path: str | pathlib.Path, *, kind: str = "", revision: str = ""
+) -> ArtifactDigest:
     """★ 算一个产物的**内容摘要**（★ 判「是不是新版本」的唯一硬判据）。"""
     p = pathlib.Path(str(path))
     if not p.is_file():
@@ -125,8 +131,9 @@ def version_consistent(digests: list[ArtifactDigest]) -> dict:
     }
 
 
-def changed_after_revision(before: list[ArtifactDigest],
-                           after: list[ArtifactDigest]) -> dict:
+def changed_after_revision(
+    before: list[ArtifactDigest], after: list[ArtifactDigest]
+) -> dict:
     """★ 变更后**每个产物都必须变**（★ SC-010：无旧版本混入）。
 
     ★★ 这是 **N2 突变**的判据：让图纸**保留旧版本** ⇒ 它的 sha256 不变 ⇒ 本函数报出。
@@ -136,8 +143,8 @@ def changed_after_revision(before: list[ArtifactDigest],
     stale = [k for k in a if b.get(k) and a[k] == b[k]]
     missing = [k for k in a if not a[k]]
     return {
-        "stale": stale,          #: ★ 没变的（★ 旧版本混入）
-        "missing": missing,      #: ★ 空的（★ 没导出）
+        "stale": stale,  #: ★ 没变的（★ 旧版本混入）
+        "missing": missing,  #: ★ 空的（★ 没导出）
         "ok": not stale and not missing and bool(a),
         "★": "★ 变更后每个产物都必须变（★ 没变 ⇒ 旧版本混入）",
     }
@@ -147,12 +154,13 @@ def changed_after_revision(before: list[ArtifactDigest],
 # 三、变更传播（★ D5 —— ★ 编排）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ChangeRecord:
-    name: str                 #: 改了哪个参数
+    name: str  #: 改了哪个参数
     old: object = None
     new: object = None
-    affected_steps: tuple = ()   #: ★ 受影响的方法步骤（★ 靠 `derive` 里的名字找）
+    affected_steps: tuple = ()  #: ★ 受影响的方法步骤（★ 靠 `derive` 里的名字找）
     propagated: bool = False
 
 
@@ -185,9 +193,16 @@ def propagation_report(steps, changes: list[ChangeRecord]) -> dict:
     rows = []
     for c in changes:
         idx = affected_steps(steps, c.name)
-        rows.append({"name": c.name, "old": str(c.old)[:60], "new": str(c.new)[:60],
-                     "affected": list(idx), "count": len(idx),
-                     "propagated": c.propagated})
+        rows.append(
+            {
+                "name": c.name,
+                "old": str(c.old)[:60],
+                "new": str(c.new)[:60],
+                "affected": list(idx),
+                "count": len(idx),
+                "propagated": c.propagated,
+            }
+        )
     unpropagated = [r["name"] for r in rows if r["count"] and not r["propagated"]]
     #: ★ 影响面 0 ⇒ 变更名没落在任何步骤上（★ 不是"没有影响"，★ 是"判据没对上"）
     unmatched = [r["name"] for r in rows if not r["count"]]

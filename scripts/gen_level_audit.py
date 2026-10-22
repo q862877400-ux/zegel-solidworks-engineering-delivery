@@ -37,6 +37,7 @@ r"""@brief 生成 `docs/union-level-audit.md`（R8 承诺的那份**等级审计
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -54,7 +55,8 @@ OUT = REPO / "docs" / "union-level-audit.md"
 def _load_gate():
     """从既有门禁取 `LEVELS` / `SOURCES` 与两个检查函数（**不重造枚举**）。"""
     spec = importlib.util.spec_from_file_location(
-        "check_union_conventions", REPO / "scripts" / "check_union_conventions.py")
+        "check_union_conventions", REPO / "scripts" / "check_union_conventions.py"
+    )
     mod = importlib.util.module_from_spec(spec)
     sys.modules["check_union_conventions"] = mod
     spec.loader.exec_module(mod)
@@ -75,22 +77,35 @@ def build(manifest: dict, gate) -> str:
     L: list[str] = []
     L.append("# 等级审计（union-level-audit）")
     L.append("")
-    L.append("> ⚠ **本文件是生成物** —— 由 `python scripts/gen_level_audit.py` 产出；"
-             "**不要手改**（改了会被下次生成覆盖）。")
-    L.append("> 生成日期：%s ｜ 数据源：`capabilities.yaml`（`schema_version` = `%s`）"
-             % (date.today().isoformat(), manifest.get("schema_version")))
-    L.append("> ⚑ 本文件是 `scripts/check_union_conventions.py` docstring 里 **R8** 承诺的那一份 —— "
-             "在 2026-10-01（轮 60）之前，**它只有承诺、没有生成器**（详见本脚本 docstring）。")
+    L.append(
+        "> ⚠ **本文件是生成物** —— 由 `python scripts/gen_level_audit.py` 产出；"
+        "**不要手改**（改了会被下次生成覆盖）。"
+    )
+    L.append(
+        "> 生成日期：%s ｜ 数据源：`capabilities.yaml`（`schema_version` = `%s`）"
+        % (date.today().isoformat(), manifest.get("schema_version"))
+    )
+    L.append(
+        "> ⚑ 本文件是 `scripts/check_union_conventions.py` docstring 里 **R8** 承诺的那一份 —— "
+        "在 2026-10-01（轮 60）之前，**它只有承诺、没有生成器**（详见本脚本 docstring）。"
+    )
     L.append("")
     L.append("## 一、总表（逐条可核）")
     L.append("")
     L.append("| # | 能力 id | level | source | 有 evidence | 有 provenance |")
     L.append("|---|---|---|---|---|---|")
     for i, c in enumerate(sorted(caps, key=lambda x: x["id"]), 1):
-        L.append("| %d | `%s` | `%s` | `%s` | %s | %s |"
-                 % (i, c["id"], c["level"], c["source"],
-                    "✓" if c.get("evidence") else "—",
-                    "✓" if c.get("provenance") else "—"))
+        L.append(
+            "| %d | `%s` | `%s` | `%s` | %s | %s |"
+            % (
+                i,
+                c["id"],
+                c["level"],
+                c["source"],
+                "✓" if c.get("evidence") else "—",
+                "✓" if c.get("provenance") else "—",
+            )
+        )
     L.append("")
     L.append("**合计 %d 条**。" % len(caps))
     L.append("")
@@ -125,16 +140,24 @@ def build(manifest: dict, gate) -> str:
     L.append("|---|---|---|")
     for mid in ("topology_optimization", "costing", "animation_export"):
         c = next((x for x in caps if x["id"] == mid), None)
-        L.append("| `%s` | `%s` | `%s` |"
-                 % (mid, c["level"], c["source"]) if c else "| `%s` | **缺** | — |" % mid)
+        L.append(
+            "| `%s` | `%s` | `%s` |" % (mid, c["level"], c["source"])
+            if c
+            else "| `%s` | **缺** | — |" % mid
+        )
     L.append("")
     L.append("## 六、不一致自检（**报告自己带「门禁怎么看」**）")
     L.append("")
     L.append("| 检查 | 问题数 |")
     L.append("|---|---|")
-    L.append("| `check_capabilities_schema()`（R1-R3/R6/R9/R10/**R12**/**R13**） | **%d** |"
-             % len(bad_schema))
-    L.append("| `check_capabilities_levels()`（规则 4 + R5/R7/R11） | **%d** |" % len(bad_levels))
+    L.append(
+        "| `check_capabilities_schema()`（R1-R3/R6/R9/R10/**R12**/**R13**） | **%d** |"
+        % len(bad_schema)
+    )
+    L.append(
+        "| `check_capabilities_levels()`（规则 4 + R5/R7/R11） | **%d** |"
+        % len(bad_levels)
+    )
     L.append("")
     if bad_schema or bad_levels:
         L.append("⚠ **有问题**（逐条）：")
@@ -153,8 +176,10 @@ def main() -> int:
     text = build(manifest, gate)
     OUT.write_text(text, encoding="utf-8")
     caps = manifest["capabilities"]
-    print("  已写 %s（%d 字节 / %d 条能力）"
-          % (OUT.relative_to(REPO), len(text.encode("utf-8")), len(caps)))
+    print(
+        "  已写 %s（%d 字节 / %d 条能力）"
+        % (OUT.relative_to(REPO), len(text.encode("utf-8")), len(caps))
+    )
     print("  level 分布: %s" % dict(Counter(c["level"] for c in caps)))
     print("  source 分布: %s" % dict(Counter(c["source"] for c in caps)))
     return 0

@@ -52,10 +52,15 @@ _BATCH67: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_sketch_move_entities",
         title="Move Sketch Entities",
-        module="sw_sketch_modify_ops", function="sketch_move",
+        module="sw_sketch_modify_ops",
+        function="sketch_move",
         inject="model",
-        param_alias={"start_x_mm": "start_x_mm", "start_y_mm": "start_y_mm",
-                     "end_x_mm": "end_x_mm", "end_y_mm": "end_y_mm"},
+        param_alias={
+            "start_x_mm": "start_x_mm",
+            "start_y_mm": "start_y_mm",
+            "end_x_mm": "end_x_mm",
+            "end_y_mm": "end_y_mm",
+        },
         params=[
             Param("start_x_mm", float, description="起点的 X（毫米）。"),
             Param("start_y_mm", float, description="起点的 Y（毫米）。"),
@@ -63,66 +68,93 @@ _BATCH67: list[ToolSpec] = [
             Param("end_y_mm", float, description="终点的 Y（毫米）。"),
         ],
         doc="★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。"
-            "★ 判据 = `ModelToSketchTransform.ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。",
+        "★ 判据 = `ModelToSketchTransform.ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。",
     ),
     ToolSpec(
         name="solidworks_sketch_rotate_entities",
         title="Rotate Sketch Entities",
-        module="sw_sketch_modify_ops", function="sketch_rotate",
+        module="sw_sketch_modify_ops",
+        function="sketch_rotate",
         inject="model",
-        param_alias={"center_x_mm": "center_x_mm", "center_y_mm": "center_y_mm",
-                     "angle_deg": "angle_deg"},
+        param_alias={
+            "center_x_mm": "center_x_mm",
+            "center_y_mm": "center_y_mm",
+            "angle_deg": "angle_deg",
+        },
         params=[
             Param("center_x_mm", float, description="旋转中心的 X（毫米）。"),
             Param("center_y_mm", float, description="旋转中心的 Y（毫米）。"),
-            Param("angle_deg", float, description="旋转角（**度**；★ 只在边界换算成弧度一次）。"),
+            Param(
+                "angle_deg",
+                float,
+                description="旋转角（**度**；★ 只在边界换算成弧度一次）。",
+            ),
         ],
         doc="★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。"
-            "★ 真机验证：30° ⇒ 3×3 旋转矩阵首行变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。",
+        "★ 真机验证：30° ⇒ 3×3 旋转矩阵首行变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。",
     ),
     ToolSpec(
         name="solidworks_sketch_scale_entities",
         title="Scale Sketch Entities",
-        module="sw_sketch_modify_ops", function="sketch_scale",
+        module="sw_sketch_modify_ops",
+        function="sketch_scale",
         inject="model",
         param_alias={"factor": "factor"},
         params=[
-            Param("factor", float, description="缩放比例（★ 必须 > 0；★ 它**不是长度**，故不带 `_mm`）。"),
+            Param(
+                "factor",
+                float,
+                description="缩放比例（★ 必须 > 0；★ 它**不是长度**，故不带 `_mm`）。",
+            ),
         ],
         doc="★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。"
-            "★ 真机验证：1.5 ⇒ 草图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。",
+        "★ 真机验证：1.5 ⇒ 草图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。",
     ),
     ToolSpec(
         name="solidworks_sketch_stretch_entities",
         title="Stretch Sketch Entities",
-        module="sw_sketch_modify_ops", function="sketch_stretch",
+        module="sw_sketch_modify_ops",
+        function="sketch_stretch",
         inject="model",
-        param_alias={"base_x_mm": "base_x_mm", "base_y_mm": "base_y_mm",
-                     "dest_x_mm": "dest_x_mm", "dest_y_mm": "dest_y_mm",
-                     "keep_relations": "keep_relations"},
+        param_alias={
+            "base_x_mm": "base_x_mm",
+            "base_y_mm": "base_y_mm",
+            "dest_x_mm": "dest_x_mm",
+            "dest_y_mm": "dest_y_mm",
+            "keep_relations": "keep_relations",
+        },
         params=[
             Param("base_x_mm", float, description="基点 X（毫米）。"),
             Param("base_y_mm", float, description="基点 Y（毫米）。"),
             Param("dest_x_mm", float, description="拉伸终点 X（毫米）。"),
             Param("dest_y_mm", float, description="拉伸终点 Y（毫米）。"),
-            Param("keep_relations", bool, description="保留草图几何关系（★ 布尔是**标志**，不是长度）。"),
+            Param(
+                "keep_relations",
+                bool,
+                description="保留草图几何关系（★ 布尔是**标志**，不是长度）。",
+            ),
         ],
         doc="★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。"
-            "⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
+        "⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
     ),
     ToolSpec(
         name="solidworks_sketch_flip_entities",
         title="Flip Sketch Entities",
-        module="sw_sketch_modify_ops", function="sketch_flip",
+        module="sw_sketch_modify_ops",
+        function="sketch_flip",
         inject="model",
         param_alias={"axis_flag": "axis_flag"},
         params=[
-            Param("axis_flag", int, description="轴标志（★ 官方 swapi 与 CHM **都未给取值表** ⇒ "
-                                               "原样透传，语义不下断言）。"),
+            Param(
+                "axis_flag",
+                int,
+                description="轴标志（★ 官方 swapi 与 CHM **都未给取值表** ⇒ "
+                "原样透传，语义不下断言）。",
+            ),
         ],
         doc="★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。"
-            "★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。"
-            "⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。",
+        "★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。"
+        "⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。",
     ),
 ]
 

@@ -38,6 +38,7 @@ r"""SolidWorks swdimxpert 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -57,510 +58,439 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = ["ASSEMBLY", "FAMILIES", "ARITY", "PROPERTIES", "call_index"]
 
-ASSEMBLY = 'swdimxpert'
+ASSEMBLY = "swdimxpert"
 
-FAMILIES: tuple[str, ...] = (    'IDimXpertAngleBetweenCircularDimTol',
-    'IDimXpertAngleBetweenDimTol',
-    'IDimXpertAnnotation',
-    'IDimXpertAutoDimSchemeOption',
-    'IDimXpertBestfitPlaneFeature',
-    'IDimXpertBlockTolerances',
-    'IDimXpertChamferDimTol',
-    'IDimXpertChamferFeature',
-    'IDimXpertCompositeDistanceBetweenDimTol',
-    'IDimXpertCompositeLineProfileTolerance',
-    'IDimXpertCompositePositionTolerance',
-    'IDimXpertCompositeSurfaceProfileTolerance',
-    'IDimXpertCompoundClosedSlot3DFeature',
-    'IDimXpertCompoundHoleFeature',
-    'IDimXpertCompoundNotchFeature',
-    'IDimXpertCompoundWidthFeature',
-    'IDimXpertConcentricityTolerance',
-    'IDimXpertConeFeature',
-    'IDimXpertCounterBoreDimTol',
-    'IDimXpertCounterSinkAngleDimTol',
-    'IDimXpertCounterSinkDiameterDimTol',
-    'IDimXpertCylinderFeature',
-    'IDimXpertDatum',
-    'IDimXpertDepthDimTol',
-    'IDimXpertDiameterDimTol',
-    'IDimXpertDimensionOption',
-    'IDimXpertDimensionTolerance',
-    'IDimXpertDistanceBetweenDimTol',
-    'IDimXpertExtrudeFeature',
-    'IDimXpertFeature',
-    'IDimXpertFilletFeature',
-    'IDimXpertFlatnessTolerance',
-    'IDimXpertGtol',
-    'IDimXpertIntersectCircleFeature',
-    'IDimXpertIntersectLineFeature',
-    'IDimXpertIntersectPlaneFeature',
-    'IDimXpertIntersectPointFeature',
-    'IDimXpertLineProfileTolerance',
-    'IDimXpertOrientationTolerance',
-    'IDimXpertPart',
-    'IDimXpertPatternFeature',
-    'IDimXpertPlaneFeature',
-    'IDimXpertPositionTolerance',
-    'IDimXpertRadiusDimTol',
-    'IDimXpertRefPlaneFeature',
-    'IDimXpertSphereFeature',
-    'IDimXpertStraightnessTolerance',
-    'IDimXpertSurfaceProfileTolerance',
-    'IDimXpertSymmetryTolerance',
-    'IDimXpertTangencyTolerance',
-    'IDimXpertTolerance',
+FAMILIES: tuple[str, ...] = (
+    "IDimXpertAngleBetweenCircularDimTol",
+    "IDimXpertAngleBetweenDimTol",
+    "IDimXpertAnnotation",
+    "IDimXpertAutoDimSchemeOption",
+    "IDimXpertBestfitPlaneFeature",
+    "IDimXpertBlockTolerances",
+    "IDimXpertChamferDimTol",
+    "IDimXpertChamferFeature",
+    "IDimXpertCompositeDistanceBetweenDimTol",
+    "IDimXpertCompositeLineProfileTolerance",
+    "IDimXpertCompositePositionTolerance",
+    "IDimXpertCompositeSurfaceProfileTolerance",
+    "IDimXpertCompoundClosedSlot3DFeature",
+    "IDimXpertCompoundHoleFeature",
+    "IDimXpertCompoundNotchFeature",
+    "IDimXpertCompoundWidthFeature",
+    "IDimXpertConcentricityTolerance",
+    "IDimXpertConeFeature",
+    "IDimXpertCounterBoreDimTol",
+    "IDimXpertCounterSinkAngleDimTol",
+    "IDimXpertCounterSinkDiameterDimTol",
+    "IDimXpertCylinderFeature",
+    "IDimXpertDatum",
+    "IDimXpertDepthDimTol",
+    "IDimXpertDiameterDimTol",
+    "IDimXpertDimensionOption",
+    "IDimXpertDimensionTolerance",
+    "IDimXpertDistanceBetweenDimTol",
+    "IDimXpertExtrudeFeature",
+    "IDimXpertFeature",
+    "IDimXpertFilletFeature",
+    "IDimXpertFlatnessTolerance",
+    "IDimXpertGtol",
+    "IDimXpertIntersectCircleFeature",
+    "IDimXpertIntersectLineFeature",
+    "IDimXpertIntersectPlaneFeature",
+    "IDimXpertIntersectPointFeature",
+    "IDimXpertLineProfileTolerance",
+    "IDimXpertOrientationTolerance",
+    "IDimXpertPart",
+    "IDimXpertPatternFeature",
+    "IDimXpertPlaneFeature",
+    "IDimXpertPositionTolerance",
+    "IDimXpertRadiusDimTol",
+    "IDimXpertRefPlaneFeature",
+    "IDimXpertSphereFeature",
+    "IDimXpertStraightnessTolerance",
+    "IDimXpertSurfaceProfileTolerance",
+    "IDimXpertSymmetryTolerance",
+    "IDimXpertTangencyTolerance",
+    "IDimXpertTolerance",
 )
 
 #: 全量能力登记表 {族: {能力名: 实参个数}}（排除 by-ref 出参）
 ARITY: dict[str, dict[str, int]] = {
-    'IDimXpertAngleBetweenCircularDimTol': {
-        'GetActPlaneVector': 0,
-        'GetNomPlaneVector': 0,
+    "IDimXpertAngleBetweenCircularDimTol": {
+        "GetActPlaneVector": 0,
+        "GetNomPlaneVector": 0,
     },
-    'IDimXpertAngleBetweenDimTol': {
-        'GetDirectionVector': 0,
+    "IDimXpertAngleBetweenDimTol": {
+        "GetDirectionVector": 0,
     },
-    'IDimXpertAnnotation': {
-        'GetAppliedAnnotationCount': 0,
-        'GetAppliedAnnotations': 0,
-        'GetDisplayEntity': 0,
-        'GetModelFeature': 0,
-        'IsFreeState': 0,
-        'IsStatistical': 0,
-        'IsSuppressed': 0,
-        'IsToBeInspected': 0,
+    "IDimXpertAnnotation": {
+        "GetAppliedAnnotationCount": 0,
+        "GetAppliedAnnotations": 0,
+        "GetDisplayEntity": 0,
+        "GetModelFeature": 0,
+        "IsFreeState": 0,
+        "IsStatistical": 0,
+        "IsSuppressed": 0,
+        "IsToBeInspected": 0,
     },
-    'IDimXpertAutoDimSchemeOption': {
+    "IDimXpertAutoDimSchemeOption": {},
+    "IDimXpertBestfitPlaneFeature": {
+        "GetNominalPlane": 0,
+        "GetSubFeatureCount": 0,
+        "GetSubFeatures": 0,
     },
-    'IDimXpertBestfitPlaneFeature': {
-        'GetNominalPlane': 0,
-        'GetSubFeatureCount': 0,
-        'GetSubFeatures': 0,
+    "IDimXpertBlockTolerances": {
+        "GetISO2768PartType": 0,
+        "GetToleranceValues": 0,
     },
-    'IDimXpertBlockTolerances': {
-        'GetISO2768PartType': 0,
-        'GetToleranceValues': 0,
+    "IDimXpertChamferDimTol": {},
+    "IDimXpertChamferFeature": {},
+    "IDimXpertCompositeDistanceBetweenDimTol": {
+        "GetDirectionVector": 0,
+        "GetFeature": 0,
+        "GetIntraFeature": 0,
+        "GetNominalValueIntraFeature": 0,
+        "GetOriginFeature": 0,
+        "GetPlusAndMinusToleranceIntraFeature": 0,
+        "GetUpperAndLowerLimitIntraFeature": 0,
     },
-    'IDimXpertChamferDimTol': {
+    "IDimXpertCompositeLineProfileTolerance": {
+        "GetPlanarZoneVector": 0,
     },
-    'IDimXpertChamferFeature': {
+    "IDimXpertCompositePositionTolerance": {
+        "GetMaxTolerance": 0,
+        "GetMaxToleranceLowerTier": 0,
+        "GetPlanarZoneVector": 0,
+        "GetProjectedZone": 0,
     },
-    'IDimXpertCompositeDistanceBetweenDimTol': {
-        'GetDirectionVector': 0,
-        'GetFeature': 0,
-        'GetIntraFeature': 0,
-        'GetNominalValueIntraFeature': 0,
-        'GetOriginFeature': 0,
-        'GetPlusAndMinusToleranceIntraFeature': 0,
-        'GetUpperAndLowerLimitIntraFeature': 0,
+    "IDimXpertCompositeSurfaceProfileTolerance": {},
+    "IDimXpertCompoundClosedSlot3DFeature": {
+        "GetBottomFeature": 0,
+        "GetEndFeatures": 0,
+        "GetNominalBottomPlane": 0,
+        "GetNominalClosedSlot": 0,
+        "GetNominalTopPlane": 0,
+        "GetPlaneFeatures": 0,
     },
-    'IDimXpertCompositeLineProfileTolerance': {
-        'GetPlanarZoneVector': 0,
+    "IDimXpertCompoundHoleFeature": {
+        "GetBottomFeature": 0,
+        "GetReferenceFeature": 0,
+        "GetSubFeatureCount": 0,
+        "GetSubFeatures": 0,
     },
-    'IDimXpertCompositePositionTolerance': {
-        'GetMaxTolerance': 0,
-        'GetMaxToleranceLowerTier': 0,
-        'GetPlanarZoneVector': 0,
-        'GetProjectedZone': 0,
+    "IDimXpertCompoundNotchFeature": {
+        "GetBottomFeature": 0,
+        "GetEndFeature": 0,
+        "GetNominalBottomPlane": 0,
+        "GetNominalNotch": 0,
+        "GetOpenSideReferenceFeature": 0,
+        "GetPlaneFeatures": 0,
+        "GetTopReferenceFeature": 0,
     },
-    'IDimXpertCompositeSurfaceProfileTolerance': {
+    "IDimXpertCompoundWidthFeature": {
+        "GetNominalCompoundWidth": 0,
+        "GetNominalLongitude": 0,
+        "GetPlaneFeatures": 0,
     },
-    'IDimXpertCompoundClosedSlot3DFeature': {
-        'GetBottomFeature': 0,
-        'GetEndFeatures': 0,
-        'GetNominalBottomPlane': 0,
-        'GetNominalClosedSlot': 0,
-        'GetNominalTopPlane': 0,
-        'GetPlaneFeatures': 0,
+    "IDimXpertConcentricityTolerance": {
+        "GetMaxTolerance": 0,
     },
-    'IDimXpertCompoundHoleFeature': {
-        'GetBottomFeature': 0,
-        'GetReferenceFeature': 0,
-        'GetSubFeatureCount': 0,
-        'GetSubFeatures': 0,
+    "IDimXpertConeFeature": {
+        "GetNominalBottomPlane": 0,
+        "GetNominalCone": 0,
+        "GetNominalTopPlane": 0,
     },
-    'IDimXpertCompoundNotchFeature': {
-        'GetBottomFeature': 0,
-        'GetEndFeature': 0,
-        'GetNominalBottomPlane': 0,
-        'GetNominalNotch': 0,
-        'GetOpenSideReferenceFeature': 0,
-        'GetPlaneFeatures': 0,
-        'GetTopReferenceFeature': 0,
+    "IDimXpertCounterBoreDimTol": {},
+    "IDimXpertCounterSinkAngleDimTol": {},
+    "IDimXpertCounterSinkDiameterDimTol": {},
+    "IDimXpertCylinderFeature": {
+        "GetNominalBottomPlane": 0,
+        "GetNominalCylinder": 0,
+        "GetNominalTopPlane": 0,
+        "GetThread": 0,
     },
-    'IDimXpertCompoundWidthFeature': {
-        'GetNominalCompoundWidth': 0,
-        'GetNominalLongitude': 0,
-        'GetPlaneFeatures': 0,
+    "IDimXpertDatum": {},
+    "IDimXpertDepthDimTol": {
+        "IsThreadDepth": 0,
     },
-    'IDimXpertConcentricityTolerance': {
-        'GetMaxTolerance': 0,
+    "IDimXpertDiameterDimTol": {},
+    "IDimXpertDimensionOption": {},
+    "IDimXpertDimensionTolerance": {
+        "GetNominalValue": 0,
+        "GetPlusAndMinusTolerance": 0,
+        "GetUpperAndLowerLimit": 0,
     },
-    'IDimXpertConeFeature': {
-        'GetNominalBottomPlane': 0,
-        'GetNominalCone': 0,
-        'GetNominalTopPlane': 0,
+    "IDimXpertDistanceBetweenDimTol": {
+        "GetDirectionVector": 0,
+        "GetFeature": 0,
+        "GetOriginFeature": 0,
     },
-    'IDimXpertCounterBoreDimTol': {
+    "IDimXpertExtrudeFeature": {
+        "GetBottomBlends": 0,
+        "GetBottomFeature": 0,
+        "GetReferenceFeature": 0,
+        "GetSubFeatureCount": 0,
+        "GetSubFeatures": 0,
+        "GetTopBlends": 0,
     },
-    'IDimXpertCounterSinkAngleDimTol': {
+    "IDimXpertFeature": {
+        "GetAppliedAnnotationCount": 0,
+        "GetAppliedAnnotations": 0,
+        "GetAppliedFeatureCount": 0,
+        "GetAppliedFeatures": 0,
+        "GetFaceCount": 0,
+        "GetFaces": 0,
+        "GetModelFeature": 0,
+        "IsCombinedAnnotation": 0,
+        "IsSuppressed": 0,
+        "SetCombineAnnotation": 1,
     },
-    'IDimXpertCounterSinkDiameterDimTol': {
+    "IDimXpertFilletFeature": {},
+    "IDimXpertFlatnessTolerance": {
+        "GetPerUnitArea": 0,
     },
-    'IDimXpertCylinderFeature': {
-        'GetNominalBottomPlane': 0,
-        'GetNominalCylinder': 0,
-        'GetNominalTopPlane': 0,
-        'GetThread': 0,
+    "IDimXpertGtol": {},
+    "IDimXpertIntersectCircleFeature": {
+        "GetIntersectFeature": 0,
+        "GetNominalCircle": 0,
+        "GetPlaneFeature": 0,
     },
-    'IDimXpertDatum': {
+    "IDimXpertIntersectLineFeature": {
+        "GetNominalLine": 0,
+        "GetPlaneFeatures": 0,
     },
-    'IDimXpertDepthDimTol': {
-        'IsThreadDepth': 0,
+    "IDimXpertIntersectPlaneFeature": {
+        "GetFeatures": 0,
+        "GetNominalPlane": 0,
     },
-    'IDimXpertDiameterDimTol': {
+    "IDimXpertIntersectPointFeature": {
+        "GetFeatures": 0,
+        "GetNominalPoint": 0,
+        "GetNominalVector": 0,
     },
-    'IDimXpertDimensionOption': {
+    "IDimXpertLineProfileTolerance": {
+        "GetPlanarZoneVector": 0,
     },
-    'IDimXpertDimensionTolerance': {
-        'GetNominalValue': 0,
-        'GetPlusAndMinusTolerance': 0,
-        'GetUpperAndLowerLimit': 0,
+    "IDimXpertOrientationTolerance": {
+        "GetMaxTolerance": 0,
+        "GetPlanarZoneVector": 0,
+        "GetProjectedZone": 0,
+        "IsTangentPlane": 0,
     },
-    'IDimXpertDistanceBetweenDimTol': {
-        'GetDirectionVector': 0,
-        'GetFeature': 0,
-        'GetOriginFeature': 0,
+    "IDimXpertPart": {
+        "AutoDimensionScheme": 1,
+        "DeleteAllTolerances": 0,
+        "GetAnnotation": 1,
+        "GetAnnotationCount": 0,
+        "GetAnnotations": 0,
+        "GetAutoDimSchemeOption": 0,
+        "GetBlockTolerances": 0,
+        "GetDimOption": 0,
+        "GetFeature": 1,
+        "GetFeatureCount": 0,
+        "GetFeatures": 0,
+        "ImportScheme": 2,
+        "InsertAngleDimension": 1,
+        "InsertBasicDimension": 1,
+        "InsertDatum": 1,
+        "InsertGtol": 1,
+        "InsertLocationDimension": 1,
+        "InsertPattern": 3,
+        "InsertSizeDimension": 1,
     },
-    'IDimXpertExtrudeFeature': {
-        'GetBottomBlends': 0,
-        'GetBottomFeature': 0,
-        'GetReferenceFeature': 0,
-        'GetSubFeatureCount': 0,
-        'GetSubFeatures': 0,
-        'GetTopBlends': 0,
+    "IDimXpertPatternFeature": {
+        "GetSubFeatureCount": 0,
+        "GetSubFeatures": 0,
     },
-    'IDimXpertFeature': {
-        'GetAppliedAnnotationCount': 0,
-        'GetAppliedAnnotations': 0,
-        'GetAppliedFeatureCount': 0,
-        'GetAppliedFeatures': 0,
-        'GetFaceCount': 0,
-        'GetFaces': 0,
-        'GetModelFeature': 0,
-        'IsCombinedAnnotation': 0,
-        'IsSuppressed': 0,
-        'SetCombineAnnotation': 1,
+    "IDimXpertPlaneFeature": {
+        "GetNominalPlane": 0,
     },
-    'IDimXpertFilletFeature': {
+    "IDimXpertPositionTolerance": {
+        "GetMaxTolerance": 0,
+        "GetPlanarZoneVector": 0,
+        "GetProjectedZone": 0,
     },
-    'IDimXpertFlatnessTolerance': {
-        'GetPerUnitArea': 0,
+    "IDimXpertRadiusDimTol": {},
+    "IDimXpertRefPlaneFeature": {
+        "GetNominalPlane": 0,
     },
-    'IDimXpertGtol': {
+    "IDimXpertSphereFeature": {
+        "GetNominalSphere": 0,
     },
-    'IDimXpertIntersectCircleFeature': {
-        'GetIntersectFeature': 0,
-        'GetNominalCircle': 0,
-        'GetPlaneFeature': 0,
+    "IDimXpertStraightnessTolerance": {
+        "GetMaxTolerance": 0,
+        "GetPerUnitLength": 0,
+        "GetPlanarZoneVector": 0,
     },
-    'IDimXpertIntersectLineFeature': {
-        'GetNominalLine': 0,
-        'GetPlaneFeatures': 0,
+    "IDimXpertSurfaceProfileTolerance": {},
+    "IDimXpertSymmetryTolerance": {
+        "GetMaxTolerance": 0,
+        "GetZoneDirection": 0,
     },
-    'IDimXpertIntersectPlaneFeature': {
-        'GetFeatures': 0,
-        'GetNominalPlane': 0,
-    },
-    'IDimXpertIntersectPointFeature': {
-        'GetFeatures': 0,
-        'GetNominalPoint': 0,
-        'GetNominalVector': 0,
-    },
-    'IDimXpertLineProfileTolerance': {
-        'GetPlanarZoneVector': 0,
-    },
-    'IDimXpertOrientationTolerance': {
-        'GetMaxTolerance': 0,
-        'GetPlanarZoneVector': 0,
-        'GetProjectedZone': 0,
-        'IsTangentPlane': 0,
-    },
-    'IDimXpertPart': {
-        'AutoDimensionScheme': 1,
-        'DeleteAllTolerances': 0,
-        'GetAnnotation': 1,
-        'GetAnnotationCount': 0,
-        'GetAnnotations': 0,
-        'GetAutoDimSchemeOption': 0,
-        'GetBlockTolerances': 0,
-        'GetDimOption': 0,
-        'GetFeature': 1,
-        'GetFeatureCount': 0,
-        'GetFeatures': 0,
-        'ImportScheme': 2,
-        'InsertAngleDimension': 1,
-        'InsertBasicDimension': 1,
-        'InsertDatum': 1,
-        'InsertGtol': 1,
-        'InsertLocationDimension': 1,
-        'InsertPattern': 3,
-        'InsertSizeDimension': 1,
-    },
-    'IDimXpertPatternFeature': {
-        'GetSubFeatureCount': 0,
-        'GetSubFeatures': 0,
-    },
-    'IDimXpertPlaneFeature': {
-        'GetNominalPlane': 0,
-    },
-    'IDimXpertPositionTolerance': {
-        'GetMaxTolerance': 0,
-        'GetPlanarZoneVector': 0,
-        'GetProjectedZone': 0,
-    },
-    'IDimXpertRadiusDimTol': {
-    },
-    'IDimXpertRefPlaneFeature': {
-        'GetNominalPlane': 0,
-    },
-    'IDimXpertSphereFeature': {
-        'GetNominalSphere': 0,
-    },
-    'IDimXpertStraightnessTolerance': {
-        'GetMaxTolerance': 0,
-        'GetPerUnitLength': 0,
-        'GetPlanarZoneVector': 0,
-    },
-    'IDimXpertSurfaceProfileTolerance': {
-    },
-    'IDimXpertSymmetryTolerance': {
-        'GetMaxTolerance': 0,
-        'GetZoneDirection': 0,
-    },
-    'IDimXpertTangencyTolerance': {
-    },
-    'IDimXpertTolerance': {
-        'GetPrimaryDatumCount': 0,
-        'GetPrimaryDatumModifiers': 0,
-        'GetPrimaryDatums': 0,
-        'GetSecondaryDatumCount': 0,
-        'GetSecondaryDatumModifiers': 0,
-        'GetSecondaryDatums': 0,
-        'GetTertiaryDatumCount': 0,
-        'GetTertiaryDatumModifiers': 0,
-        'GetTertiaryDatums': 0,
+    "IDimXpertTangencyTolerance": {},
+    "IDimXpertTolerance": {
+        "GetPrimaryDatumCount": 0,
+        "GetPrimaryDatumModifiers": 0,
+        "GetPrimaryDatums": 0,
+        "GetSecondaryDatumCount": 0,
+        "GetSecondaryDatumModifiers": 0,
+        "GetSecondaryDatums": 0,
+        "GetTertiaryDatumCount": 0,
+        "GetTertiaryDatumModifiers": 0,
+        "GetTertiaryDatums": 0,
     },
 }
 
 #: 属性名（反射里是 get_/set_，**不是方法**；这里只留去掉前缀的名字）
 PROPERTIES: dict[str, tuple[str, ...]] = {
-    'IDimXpertAngleBetweenCircularDimTol': (
-        'CenterFeature',
-        'OriginFeature',
-        'Supplement',
+    "IDimXpertAngleBetweenCircularDimTol": (
+        "CenterFeature",
+        "OriginFeature",
+        "Supplement",
     ),
-    'IDimXpertAngleBetweenDimTol': (
-        'OriginFeature',
-        'Supplement',
+    "IDimXpertAngleBetweenDimTol": (
+        "OriginFeature",
+        "Supplement",
     ),
-    'IDimXpertAnnotation': (
-        'Feature',
-        'Name',
-        'Type',
+    "IDimXpertAnnotation": (
+        "Feature",
+        "Name",
+        "Type",
     ),
-    'IDimXpertAutoDimSchemeOption': (
-        'FeatureFilters',
-        'FeatureFilters',
-        'PartType',
-        'PartType',
-        'PatternType',
-        'PatternType',
-        'PolarPatternHoleCount',
-        'PolarPatternHoleCount',
-        'ScopeAllFeature',
-        'ScopeAllFeature',
-        'ToleranceType',
-        'ToleranceType',
+    "IDimXpertAutoDimSchemeOption": (
+        "FeatureFilters",
+        "FeatureFilters",
+        "PartType",
+        "PartType",
+        "PatternType",
+        "PatternType",
+        "PolarPatternHoleCount",
+        "PolarPatternHoleCount",
+        "ScopeAllFeature",
+        "ScopeAllFeature",
+        "ToleranceType",
+        "ToleranceType",
     ),
-    'IDimXpertBestfitPlaneFeature': (
+    "IDimXpertBestfitPlaneFeature": (),
+    "IDimXpertBlockTolerances": ("Type",),
+    "IDimXpertChamferDimTol": ("ChamferType",),
+    "IDimXpertChamferFeature": (
+        "Angle",
+        "AngleType",
+        "ChamferType",
+        "Distance1",
+        "Distance2",
     ),
-    'IDimXpertBlockTolerances': (
-        'Type',
+    "IDimXpertCompositeDistanceBetweenDimTol": (
+        "BlockToleranceDecimalPlacesIntraFeature",
+        "DimensionTypeIntraFeature",
+        "LimitsAndFitsCodeIntraFeature",
     ),
-    'IDimXpertChamferDimTol': (
-        'ChamferType',
+    "IDimXpertCompositeLineProfileTolerance": (
+        "OuterToleranceValue",
+        "OuterToleranceValueLowerTier",
+        "PrimaryInLowerTier",
+        "SecondaryInLowerTier",
+        "TertiaryInLowerTier",
+        "ToleranceLowerTier",
     ),
-    'IDimXpertChamferFeature': (
-        'Angle',
-        'AngleType',
-        'ChamferType',
-        'Distance1',
-        'Distance2',
+    "IDimXpertCompositePositionTolerance": (
+        "Modifier",
+        "ModifierLowerTier",
+        "PrimaryInLowerTier",
+        "SecondaryInLowerTier",
+        "TertiaryInLowerTier",
+        "ToleranceLowerTier",
+        "ZoneType",
     ),
-    'IDimXpertCompositeDistanceBetweenDimTol': (
-        'BlockToleranceDecimalPlacesIntraFeature',
-        'DimensionTypeIntraFeature',
-        'LimitsAndFitsCodeIntraFeature',
+    "IDimXpertCompositeSurfaceProfileTolerance": (
+        "OuterToleranceValue",
+        "OuterToleranceValueLowerTier",
+        "PrimaryInLowerTier",
+        "SecondaryInLowerTier",
+        "TertiaryInLowerTier",
+        "ToleranceLowerTier",
     ),
-    'IDimXpertCompositeLineProfileTolerance': (
-        'OuterToleranceValue',
-        'OuterToleranceValueLowerTier',
-        'PrimaryInLowerTier',
-        'SecondaryInLowerTier',
-        'TertiaryInLowerTier',
-        'ToleranceLowerTier',
+    "IDimXpertCompoundClosedSlot3DFeature": ("Blind",),
+    "IDimXpertCompoundHoleFeature": (
+        "Blind",
+        "CompoundHoleType",
     ),
-    'IDimXpertCompositePositionTolerance': (
-        'Modifier',
-        'ModifierLowerTier',
-        'PrimaryInLowerTier',
-        'SecondaryInLowerTier',
-        'TertiaryInLowerTier',
-        'ToleranceLowerTier',
-        'ZoneType',
+    "IDimXpertCompoundNotchFeature": ("Blind",),
+    "IDimXpertCompoundWidthFeature": ("Inner",),
+    "IDimXpertConcentricityTolerance": ("Modifier",),
+    "IDimXpertConeFeature": ("Inner",),
+    "IDimXpertCounterBoreDimTol": ("ReferenceFeature",),
+    "IDimXpertCounterSinkAngleDimTol": ("ReferenceFeature",),
+    "IDimXpertCounterSinkDiameterDimTol": ("ReferenceFeature",),
+    "IDimXpertCylinderFeature": ("Inner",),
+    "IDimXpertDatum": ("Identifier",),
+    "IDimXpertDepthDimTol": ("ReferenceFeature",),
+    "IDimXpertDiameterDimTol": (
+        "EnvelopeRequirement",
+        "IndependencyRequirement",
+        "PatternTreatment",
     ),
-    'IDimXpertCompositeSurfaceProfileTolerance': (
-        'OuterToleranceValue',
-        'OuterToleranceValueLowerTier',
-        'PrimaryInLowerTier',
-        'SecondaryInLowerTier',
-        'TertiaryInLowerTier',
-        'ToleranceLowerTier',
+    "IDimXpertDimensionOption": (
+        "DatumLength",
+        "DatumLength",
+        "DimensionPositionOption",
+        "DimensionPositionOption",
+        "DimensionPositionOption2",
+        "DimensionPositionOption2",
+        "FeatureSelectorOptions",
+        "FeatureSelectorOptions",
+        "TextPosition",
+        "TextPosition",
     ),
-    'IDimXpertCompoundClosedSlot3DFeature': (
-        'Blind',
+    "IDimXpertDimensionTolerance": (
+        "BlockToleranceDecimalPlaces",
+        "DimensionType",
+        "LimitsAndFitsCode",
     ),
-    'IDimXpertCompoundHoleFeature': (
-        'Blind',
-        'CompoundHoleType',
+    "IDimXpertDistanceBetweenDimTol": ("PatternTreatment",),
+    "IDimXpertExtrudeFeature": ("Blind",),
+    "IDimXpertFeature": (
+        "Name",
+        "Type",
     ),
-    'IDimXpertCompoundNotchFeature': (
-        'Blind',
+    "IDimXpertFilletFeature": (
+        "Inner",
+        "Radius",
     ),
-    'IDimXpertCompoundWidthFeature': (
-        'Inner',
+    "IDimXpertFlatnessTolerance": (),
+    "IDimXpertGtol": ("Annotation",),
+    "IDimXpertIntersectCircleFeature": (),
+    "IDimXpertIntersectLineFeature": (),
+    "IDimXpertIntersectPlaneFeature": (),
+    "IDimXpertIntersectPointFeature": (),
+    "IDimXpertLineProfileTolerance": ("OuterToleranceValue",),
+    "IDimXpertOrientationTolerance": (
+        "Modifier",
+        "ZoneType",
     ),
-    'IDimXpertConcentricityTolerance': (
-        'Modifier',
+    "IDimXpertPart": (
+        "ShowToleranceStatus",
+        "ShowToleranceStatus",
     ),
-    'IDimXpertConeFeature': (
-        'Inner',
+    "IDimXpertPatternFeature": ("PatternType",),
+    "IDimXpertPlaneFeature": (),
+    "IDimXpertPositionTolerance": (
+        "Modifier",
+        "ZoneType",
     ),
-    'IDimXpertCounterBoreDimTol': (
-        'ReferenceFeature',
+    "IDimXpertRadiusDimTol": ("PatternTreatment",),
+    "IDimXpertRefPlaneFeature": (),
+    "IDimXpertSphereFeature": ("Inner",),
+    "IDimXpertStraightnessTolerance": (
+        "Modifier",
+        "ZoneType",
     ),
-    'IDimXpertCounterSinkAngleDimTol': (
-        'ReferenceFeature',
-    ),
-    'IDimXpertCounterSinkDiameterDimTol': (
-        'ReferenceFeature',
-    ),
-    'IDimXpertCylinderFeature': (
-        'Inner',
-    ),
-    'IDimXpertDatum': (
-        'Identifier',
-    ),
-    'IDimXpertDepthDimTol': (
-        'ReferenceFeature',
-    ),
-    'IDimXpertDiameterDimTol': (
-        'EnvelopeRequirement',
-        'IndependencyRequirement',
-        'PatternTreatment',
-    ),
-    'IDimXpertDimensionOption': (
-        'DatumLength',
-        'DatumLength',
-        'DimensionPositionOption',
-        'DimensionPositionOption',
-        'DimensionPositionOption2',
-        'DimensionPositionOption2',
-        'FeatureSelectorOptions',
-        'FeatureSelectorOptions',
-        'TextPosition',
-        'TextPosition',
-    ),
-    'IDimXpertDimensionTolerance': (
-        'BlockToleranceDecimalPlaces',
-        'DimensionType',
-        'LimitsAndFitsCode',
-    ),
-    'IDimXpertDistanceBetweenDimTol': (
-        'PatternTreatment',
-    ),
-    'IDimXpertExtrudeFeature': (
-        'Blind',
-    ),
-    'IDimXpertFeature': (
-        'Name',
-        'Type',
-    ),
-    'IDimXpertFilletFeature': (
-        'Inner',
-        'Radius',
-    ),
-    'IDimXpertFlatnessTolerance': (
-    ),
-    'IDimXpertGtol': (
-        'Annotation',
-    ),
-    'IDimXpertIntersectCircleFeature': (
-    ),
-    'IDimXpertIntersectLineFeature': (
-    ),
-    'IDimXpertIntersectPlaneFeature': (
-    ),
-    'IDimXpertIntersectPointFeature': (
-    ),
-    'IDimXpertLineProfileTolerance': (
-        'OuterToleranceValue',
-    ),
-    'IDimXpertOrientationTolerance': (
-        'Modifier',
-        'ZoneType',
-    ),
-    'IDimXpertPart': (
-        'ShowToleranceStatus',
-        'ShowToleranceStatus',
-    ),
-    'IDimXpertPatternFeature': (
-        'PatternType',
-    ),
-    'IDimXpertPlaneFeature': (
-    ),
-    'IDimXpertPositionTolerance': (
-        'Modifier',
-        'ZoneType',
-    ),
-    'IDimXpertRadiusDimTol': (
-        'PatternTreatment',
-    ),
-    'IDimXpertRefPlaneFeature': (
-    ),
-    'IDimXpertSphereFeature': (
-        'Inner',
-    ),
-    'IDimXpertStraightnessTolerance': (
-        'Modifier',
-        'ZoneType',
-    ),
-    'IDimXpertSurfaceProfileTolerance': (
-        'OuterToleranceValue',
-    ),
-    'IDimXpertSymmetryTolerance': (
-        'Modifier',
-    ),
-    'IDimXpertTangencyTolerance': (
-        'OriginFeature',
-    ),
-    'IDimXpertTolerance': (
-        'Tolerance',
-    ),
+    "IDimXpertSurfaceProfileTolerance": ("OuterToleranceValue",),
+    "IDimXpertSymmetryTolerance": ("Modifier",),
+    "IDimXpertTangencyTolerance": ("OriginFeature",),
+    "IDimXpertTolerance": ("Tolerance",),
 }
-
 
 
 def _require(obj, what: str = "对象"):
@@ -589,16 +519,19 @@ def call_index(obj, family: str, member: str, *args):
     if sub is None:
         raise KeyError(
             f"本清单没有这个族: {family}（swdimxpert 共 {len(ARITY)} 族）。"
-            f"⚠ 别的程序集请用对应的 call_index。")
+            f"⚠ 别的程序集请用对应的 call_index。"
+        )
     expected = sub.get(member)
     if expected is None:
         raise KeyError(
             f"{family} 上没有名为 {member} 的能力（该族登记 {len(sub)} 项）。"
-            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。")
+            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。"
+        )
     if expected != len(args):
         raise ValueError(
             f"{family}.{member} 官方签名是 {expected} 个实参"
-            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个")
+            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个"
+        )
     _require(obj, f"{family} 对象")
     return get_com_member(obj, member, *args)
 
@@ -620,4 +553,3 @@ def call_index(obj, family: str, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测 SolidWorks 行为（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-

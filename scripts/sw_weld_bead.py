@@ -1,4 +1,5 @@
 """★ 圆角焊缝（官方 `IFeatureManager::InsertFilletBeadFeature2`，16 参）—— 选实体 + 回读判据。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（选实体沿用 scripts/sw_selection_spec.py；特征计数沿用 sw_net_blend
@@ -7,14 +8,14 @@
 # 定位:   ★ 规格 220（续）第 46 轮 —— 补 **焊件/圆角焊缝**（生成器关键词 `("fillet_bea
 #           d","weld_bead")`）✓
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
-# · 签名 `C:\swapi\types\IFeatureManager\InsertFilletBeadFeature2.md` 第 14 行**逐字 16 
+# · 签名 `C:\swapi\types\IFeatureManager\InsertFilletBeadFeature2.md` 第 14 行**逐字 16
 # 参** ✓
 # · 第 12 行**逐字**：★「…also fills the gap between the **pre-selected part bodies**, i
 # f any.」
 #     ⇒ ★★ **前置 = 预先选中的实体** ✓（★ **不是"面集合"** ✗ —— ★ 台账那句二手概括是错的 ✓）
 #   · 参数语义（★ 逐字抄）：★ `Type1/2` 0=Full length·1=Intermittent·2=Staggered ·
 #     ★ `PenetrationType1/2` 0=Full·1=Partial·2=No penetration · ★ `Flag` 0/1/2/3 ·
-# ★ `EdgeNum1/2` = 各侧**相交边条数** · ★ `DeSelEdge1/2` = 各侧相交边**选中(0)/取消(1) 
+# ★ `EdgeNum1/2` = 各侧**相交边条数** · ★ `DeSelEdge1/2` = 各侧相交边**选中(0)/取消(1)
 # 的数组** ✓
 # · ★★ **v1 已 `Obsolete`**（★ 官方第 12 行逐字「Superseded by …Feature2」）⇒ ★ 只用 **v
 # 2** ✓
@@ -35,10 +36,10 @@ PENETRATION_TYPE = {"full": 0, "partial": 1, "no": 2}
 #: enum-gate: member InsertFilletBeadFeature2
 FLAG = {"one_side": 0, "two_side": 1, "tangent": 2, "two_side_tangent": 3}
 
-_MM = 0.001                                                                        #: ★ 毫米 → 米（事实 2）
+_MM = 0.001  #: ★ 毫米 → 米（事实 2）
 
 
-#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` 
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py`
 #: /
 #:   `sw_net_blend.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
 try:
@@ -59,22 +60,28 @@ def _select_edge_by_index(model, edge_index: int, append: bool) -> dict[str, Any
 
     edges = []
     _bi = 0
-    while _bi <= 32:                                                               #: ★ 遍历所有体（★ 两次拉伸会有多个体 ✓）
+    while _bi <= 32:  #: ★ 遍历所有体（★ 两次拉伸会有多个体 ✓）
         try:
             _b = list(_SS.entities_on_body(model, "EDGE", body_index=_bi) or [])
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
         if not _b:
             break
         edges.extend(_b)
         _bi += 1
     if edge_index < 0 or edge_index >= len(edges):
-        raise RuntimeError("★ 边序号越界：edge_index=%r，共 %d 条边" % (edge_index, len(edges)))
+        raise RuntimeError(
+            "★ 边序号越界：edge_index=%r，共 %d 条边" % (edge_index, len(edges))
+        )
     before = int(model.SelectionManager.GetSelectedObjectCount2(-1))
     ok = edges[edge_index].Select4(bool(append), _sp._empty_callout())
     cnt = int(model.SelectionManager.GetSelectedObjectCount2(-1))
-    return {"ok": bool(cnt > before), "returned": bool(ok), "selection_count": cnt,
-            "edge_count": len(edges)}
+    return {
+        "ok": bool(cnt > before),
+        "returned": bool(ok),
+        "selection_count": cnt,
+        "edge_count": len(edges),
+    }
 
 
 def insert_fillet_bead_report(
@@ -105,7 +112,7 @@ def insert_fillet_bead_report(
     steps: list[dict[str, Any]] = []
     try:
         model.ClearSelection2(True)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     before = _feature_count(model)
 
@@ -125,20 +132,27 @@ def insert_fillet_bead_report(
         #: `<bound method GetBodies2 of <COMObject …>>` ✓）⇒ ★ **要调用它**（★ `get_com_
         #: member`
         #:   是给**属性**用的 ✗ —— ★ 我用错了 ⇒ 上一跑 `body_count = 0` ✗）✓
-        bodies = list(model.GetBodies2(0, False) or [])                            #: ★ 0 = swSolidBody ✓
-    except Exception as exc:                                                       # noqa: BLE001
+        bodies = list(model.GetBodies2(0, False) or [])  #: ★ 0 = swSolidBody ✓
+    except Exception as exc:  # noqa: BLE001
         steps.append({"step": "get_bodies", "error": str(exc)[:140]})
         try:
-            bodies = list(_sp2.get_com_member(model, "GetBodies2") or [])          #: ★ 兜底：属性形态
-        except Exception:                                                          # noqa: BLE001
+            bodies = list(
+                _sp2.get_com_member(model, "GetBodies2") or []
+            )  #: ★ 兜底：属性形态
+        except Exception:  # noqa: BLE001
             bodies = []
     for _i, _bd in enumerate(bodies[:2]):
         try:
-            _bd.Select4(bool(_i == 1), _sp._empty_callout())                        #: ★ 第二个 append ✓
-        except Exception as exc:                                                   # noqa: BLE001
+            _bd.Select4(bool(_i == 1), _sp._empty_callout())  #: ★ 第二个 append ✓
+        except Exception as exc:  # noqa: BLE001
             steps.append({"step": "preselect_body_%d" % _i, "error": str(exc)[:140]})
-    steps.append({"step": "preselect_bodies", "body_count": len(bodies),
-                  "selection_count": int(model.SelectionManager.GetSelectedObjectCount2(-1))})
+    steps.append(
+        {
+            "step": "preselect_bodies",
+            "body_count": len(bodies),
+            "selection_count": int(model.SelectionManager.GetSelectedObjectCount2(-1)),
+        }
+    )
 
     s1 = _select_edge_by_index(model, edge_index_1, False)
     steps.append({"step": "select_edge_1", **s1})
@@ -146,30 +160,42 @@ def insert_fillet_bead_report(
     steps.append({"step": "select_edge_2", **s2})
     #: ★★ 守卫改成**相对判据**（★ 体已占用选区 ⇒ 不能用绝对值 2 去卡 ✗）
     if not (s1.get("ok") and s2.get("ok")):
-        return {"ok": False, "error": "★ 选边没成（判据是该步自己的回读增量，不是绝对计数）",
-                "selection_counts": [s1.get("selection_count"), s2.get("selection_count")],
-                "feature_count_before": before, "steps": steps}
+        return {
+            "ok": False,
+            "error": "★ 选边没成（判据是该步自己的回读增量，不是绝对计数）",
+            "selection_counts": [s1.get("selection_count"), s2.get("selection_count")],
+            "feature_count_before": before,
+            "steps": steps,
+        }
 
     fm = model.FeatureManager
     feat = fm.InsertFilletBeadFeature2(
-        int(bead_type_1),                                              #: ★ Type1（0/1/2 ✓）
-        float(size_mm) * _MM,                                          #: ★ Size1（米 ✓）
-        float(length_mm) * _MM,                                        #: ★ Length1
-        int(penetration_type_1),                                       #: ★ PenetrationType1（0/1/2 ✓）
-        float(penetration_value_1) * _MM,                              #: ★ PenetrationValue1
-        float(pitch_mm) * _MM,                                         #: ★ Pitch
-        int(bead_type_2),                                              #: ★ Type2
-        float(size_mm) * _MM,                                          #: ★ Size2
-        float(length_mm) * _MM,                                        #: ★ Length2
-        int(penetration_type_2),                                       #: ★ PenetrationType2
-        float(penetration_value_2) * _MM,                              #: ★ PenetrationValue2
-        int(flag),                                                     #: ★ Flag（0/1/2/3 ✓）
-        1, (0,),                                                       #: ★ EdgeNum1 + DeSelEdge1（数组 ✓）
-        1, (0,),                                                       #: ★ EdgeNum2 + DeSelEdge2（数组 ✓）
+        int(bead_type_1),  #: ★ Type1（0/1/2 ✓）
+        float(size_mm) * _MM,  #: ★ Size1（米 ✓）
+        float(length_mm) * _MM,  #: ★ Length1
+        int(penetration_type_1),  #: ★ PenetrationType1（0/1/2 ✓）
+        float(penetration_value_1) * _MM,  #: ★ PenetrationValue1
+        float(pitch_mm) * _MM,  #: ★ Pitch
+        int(bead_type_2),  #: ★ Type2
+        float(size_mm) * _MM,  #: ★ Size2
+        float(length_mm) * _MM,  #: ★ Length2
+        int(penetration_type_2),  #: ★ PenetrationType2
+        float(penetration_value_2) * _MM,  #: ★ PenetrationValue2
+        int(flag),  #: ★ Flag（0/1/2/3 ✓）
+        1,
+        (0,),  #: ★ EdgeNum1 + DeSelEdge1（数组 ✓）
+        1,
+        (0,),  #: ★ EdgeNum2 + DeSelEdge2（数组 ✓）
     )
     after = _feature_count(model)
-    steps.append({"step": "InsertFilletBeadFeature2", "returned": feat is not None,
-                  "before": before, "after": after})
+    steps.append(
+        {
+            "step": "InsertFilletBeadFeature2",
+            "returned": feat is not None,
+            "before": before,
+            "after": after,
+        }
+    )
 
     return {
         #: ★★ 判据**只留回读**（★ 事实 8）—— ★ 返回值 `None` **不代表失败** ✓（★ 边界特

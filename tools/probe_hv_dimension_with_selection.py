@@ -44,9 +44,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_sketch_with_line(doc):
@@ -62,7 +62,7 @@ def _segments_and_points(doc):
     segs, pts = [], []
     try:
         sk = C.get_com_member(doc, "GetActiveSketch2")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sk = None
     if sk is None:
         return segs, pts
@@ -74,9 +74,9 @@ def _segments_and_points(doc):
                     v = C.get_com_member(s, m)
                     if v is not None:
                         pts.append(v)
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return segs, pts
 
@@ -91,8 +91,11 @@ def _dim_count(doc):
       ⚠ ★ 这与上一轮（事实 418）那条教训**同一条**：★ **不要手搓、用本仓现成的**。
     """
     try:
-        names = [n for n in (FR.feature_names(doc) or [])
-                 if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        names = [
+            n
+            for n in (FR.feature_names(doc) or [])
+            if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+        ]
         if not names:
             return -1
         feat = None
@@ -101,7 +104,7 @@ def _dim_count(doc):
                 feat = C.get_com_member(doc, "FeatureByName", cand)
                 if feat is not None:
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if feat is None:
             return -1
@@ -111,10 +114,10 @@ def _dim_count(doc):
             n += 1
             try:
                 dd = C.get_com_member(dd, "GetNext2")
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 break
         return n
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -128,9 +131,10 @@ def _one(sw, tag, kind):
         row["n_segs"] = len(segs)
         row["n_pts"] = len(pts)
         from sw_part import _select_com_object as _sel
+
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         picked = 0
         if kind == "seg":
@@ -147,18 +151,18 @@ def _one(sw, tag, kind):
         try:
             ret = C.get_com_member(doc, "AddHorizontalDimension2", 0.0, 0.0, 0.0)
             row["h_returned"] = type(ret).__name__ if ret is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["h_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         after_h = _dim_count(doc)
         row["dim_after_h"] = after_h
         try:
             ret2 = C.get_com_member(doc, "AddVerticalDimension2", 0.0, 0.0, 0.0)
             row["v_returned"] = type(ret2).__name__ if ret2 is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["v_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         row["dim_after_v"] = _dim_count(doc)
         row["ok"] = bool((after_h > before) or (row["dim_after_v"] > before))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -166,35 +170,57 @@ def _one(sw, tag, kind):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u6c34\u5e73/\u7ad6\u76f4\u5c3a\u5bf8\uff1a**\u9009\u4e2d\u5b9e\u4f53\u540e**\u518d\u8bd5\uff08\u2605 \u4e8b\u5b9e 421 \u7684\u4e0b\u4e00\u6b65\uff09",
-          "why": "\u4e8b\u5b9e 421\uff1a\u90a3\u5f39\u7684\u662f**\u6570\u503c\u8f93\u5165\u6846**\u3001`hung=false` \u21d2 "
-                 "\u5b83\u662f\u201c\u7f3a\u524d\u7f6e\u201d\u3001\u800c\u4e0d\u662f\u201c\u6302\u201d",
-          "cases": []}
-    for tag, kind in (("\u2605 \u9009**\u4e00\u6761\u7ebf\u6bb5**", "seg"),
-                      ("\u2605 \u9009**\u4e24\u4e2a\u7aef\u70b9**", "two_points"),
-                      ("\u5bf9\u7167\uff1a**\u4e0d\u9009**", "none")):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u6c34\u5e73/\u7ad6\u76f4\u5c3a\u5bf8\uff1a**\u9009\u4e2d\u5b9e\u4f53\u540e**\u518d\u8bd5\uff08\u2605 \u4e8b\u5b9e 421 \u7684\u4e0b\u4e00\u6b65\uff09",
+        "why": "\u4e8b\u5b9e 421\uff1a\u90a3\u5f39\u7684\u662f**\u6570\u503c\u8f93\u5165\u6846**\u3001`hung=false` \u21d2 "
+        "\u5b83\u662f\u201c\u7f3a\u524d\u7f6e\u201d\u3001\u800c\u4e0d\u662f\u201c\u6302\u201d",
+        "cases": [],
+    }
+    for tag, kind in (
+        ("\u2605 \u9009**\u4e00\u6761\u7ebf\u6bb5**", "seg"),
+        ("\u2605 \u9009**\u4e24\u4e2a\u7aef\u70b9**", "two_points"),
+        ("\u5bf9\u7167\uff1a**\u4e0d\u9009**", "none"),
+    ):
         ev["cases"].append(_one(sw, tag, kind))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "hv_dimension_works" if ev["passed"] else "still_no_dimension"
     p = R / "output" / "hv-dimension-with-selection-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-26s ok=%-6s \u6bb5=%s \u70b9=%s picked=%s" % (
-            c.get("tag"), c.get("ok"), c.get("n_segs"), c.get("n_pts"), c.get("picked")))
-        print("        \u5c3a\u5bf8 %s \u2192 H:%s \u2192 V:%s" % (
-            c.get("dim_before"), c.get("dim_after_h"), c.get("dim_after_v")))
-        print("        H\u56de=%s V\u56de=%s" % (c.get("h_returned"), c.get("v_returned")))
+        print(
+            "  %-26s ok=%-6s \u6bb5=%s \u70b9=%s picked=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("n_segs"),
+                c.get("n_pts"),
+                c.get("picked"),
+            )
+        )
+        print(
+            "        \u5c3a\u5bf8 %s \u2192 H:%s \u2192 V:%s"
+            % (c.get("dim_before"), c.get("dim_after_h"), c.get("dim_after_v"))
+        )
+        print(
+            "        H\u56de=%s V\u56de=%s" % (c.get("h_returned"), c.get("v_returned"))
+        )
         for k in ("h_err", "v_err", "err"):
             if c.get(k):
                 print("        %s=%s" % (k, str(c[k])[:120]))

@@ -30,8 +30,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "feature-edit-e2e-evidence.json"
 
@@ -44,14 +44,14 @@ def _try(fn, *a):
     try:
         r = fn(*a)
         return {"ok": True, "ret": repr(r)[:80]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:170])}
 
 
 def _names(doc) -> list:
     try:
         return [str(x) for x in (P.feature_names(doc) or [])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -63,38 +63,57 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.02, -0.015, 0.0, 0.02, 0.015, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.02,
+            -0.015,
+            0.0,
+            0.02,
+            0.015,
+            0.0,
+        )
         P.end_sketch(doc)
         nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
         before = _names(doc)
         R["★_删除前特征"] = before
-        target = next((n for n in before if ("拉伸" in n or "Extrude" in n or "凸台" in n)), None)
+        target = next(
+            (n for n in before if ("拉伸" in n or "Extrude" in n or "凸台" in n)), None
+        )
         R["目标"] = target
 
         #: ★ 正例
         R["feature_delete"] = _try(P.feature_delete, doc, target)
         after = _names(doc)
         R["★_删除后特征"] = after
-        R["★_它消失了吗"] = ("★ 是（%r 已不在）" % target) if target not in after else "★★ 否（还在）"
+        R["★_它消失了吗"] = (
+            ("★ 是（%r 已不在）" % target) if target not in after else "★★ 否（还在）"
+        )
 
         #: ★★ 负例（★ 事实 62）
         R["负例_不存在的特征"] = _try(P.feature_delete, doc, "这个特征不存在_xyz")
-        R["★_负例抛错了吗"] = "★ 是 ✓" if not R["负例_不存在的特征"].get("ok") else "★★ 否（守卫没生效）"
-    except Exception as exc:                                              # noqa: BLE001
+        R["★_负例抛错了吗"] = (
+            "★ 是 ✓" if not R["负例_不存在的特征"].get("ok") else "★★ 否（守卫没生效）"
+        )
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    R["★★_结论"] = ("★ PASS —— 特征被删掉了、★ 且负例被守卫拒绝"
-                    if str(R.get("★_它消失了吗", "")).startswith("★ 是")
-                    and str(R.get("★_负例抛错了吗", "")).startswith("★ 是")
-                    else "★★ 需人工看")
+    R["★★_结论"] = (
+        "★ PASS —— 特征被删掉了、★ 且负例被守卫拒绝"
+        if str(R.get("★_它消失了吗", "")).startswith("★ 是")
+        and str(R.get("★_负例抛错了吗", "")).startswith("★ 是")
+        else "★★ 需人工看"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

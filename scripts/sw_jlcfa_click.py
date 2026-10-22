@@ -26,6 +26,7 @@ r"""DPI 自适应点击 —— 换显示器/改缩放都不失效。
 # ⚠ 本模块只管「怎么点」，不管「点什么」。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -109,8 +110,11 @@ def verify_click_landed(ctrl, before: str, tries: int = 3) -> bool:
         click_control(ctrl)
         time.sleep(0.5)
         try:
-            after = ctrl.selected_text() if hasattr(ctrl, "selected_text") \
+            after = (
+                ctrl.selected_text()
+                if hasattr(ctrl, "selected_text")
                 else ctrl.window_text()
+            )
         except Exception:
             after = None
         if after and after != before:

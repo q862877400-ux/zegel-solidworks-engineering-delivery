@@ -56,88 +56,173 @@ _BATCH68: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_insert_planar_surface",
         title="Insert Planar Surface",
-        module="sw_surface_edit_ops", function="insert_planar_surface",
+        module="sw_surface_edit_ops",
+        function="insert_planar_surface",
         inject="model",
         param_alias={},
         params=[],
         doc="★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。"
-            "★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。"
-            "★ 真机：树 6→7，新增 `曲面-基准面1`。",
+        "★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。"
+        "★ 真机：树 6→7，新增 `曲面-基准面1`。",
     ),
     ToolSpec(
         name="solidworks_insert_offset_surface",
         title="Insert Offset Surface",
-        module="sw_surface_edit_ops", function="insert_offset_surface",
+        module="sw_surface_edit_ops",
+        function="insert_offset_surface",
         inject="model",
         param_alias={"thickness_mm": "thickness_mm", "reverse": "reverse"},
         params=[
             Param("thickness_mm", float, description="与参考面的距离（毫米）。"),
-            Param("reverse", bool, description="反向偏移（★ 布尔是标志，不是长度）。",
-                  required=False, default=False),
+            Param(
+                "reverse",
+                bool,
+                description="反向偏移（★ 布尔是标志，不是长度）。",
+                required=False,
+                default=False,
+            ),
         ],
         doc="★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。"
-            "★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
+        "★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
     ),
     ToolSpec(
         name="solidworks_insert_ruled_surface",
         title="Insert Ruled Surface",
-        module="sw_surface_edit_ops", function="insert_ruled_surface",
+        module="sw_surface_edit_ops",
+        function="insert_ruled_surface",
         inject="model",
-        param_alias={k: k for k in (
-            "ruled_type", "length_mm", "flip_pull_dir", "flip_dir", "trim_and_sew",
-            "angle_deg", "coord_input", "x_mm", "y_mm", "z_mm", "b_connect_surface")},
+        param_alias={
+            k: k
+            for k in (
+                "ruled_type",
+                "length_mm",
+                "flip_pull_dir",
+                "flip_dir",
+                "trim_and_sew",
+                "angle_deg",
+                "coord_input",
+                "x_mm",
+                "y_mm",
+                "z_mm",
+                "b_connect_surface",
+            )
+        },
         params=[
-            Param("ruled_type", int, description="官方 `Type`：0=Tangent to Surface · 1=Normal to Surface · "
-                                                "2=Tapered to Vector · 3=Perpendicular to Vector · 4=Sweep。"),
-            Param("length_mm", float, description="距离（毫米；★ 官方说只对 Tangent/Tapered/Perpendicular 有效）。",
-                  required=False, default=0.0),
-            Param("flip_pull_dir", bool, description="翻转拉伸方向（★ 官方说只对 Normal/Tapered 有效）。",
-                  required=False, default=False),
-            Param("flip_dir", bool, description="翻转方向（★ 官方说只对 Perpendicular 有效）。",
-                  required=False, default=False),
-            Param("trim_and_sew", bool, description="裁剪并缝合（★ 布尔是标志）。",
-                  required=False, default=True),
-            Param("angle_deg", float, description="角度（度；★ 官方说只对 Tapered to Vector 有效）。",
-                  required=False, default=0.0),
-            Param("coord_input", bool, description="启用坐标输入（★ 官方说只对 Sweep 有效）。",
-                  required=False, default=False),
-            Param("x_mm", float, description="X 坐标（毫米）。", required=False, default=0.0),
-            Param("y_mm", float, description="Y 坐标（毫米）。", required=False, default=0.0),
-            Param("z_mm", float, description="Z 坐标（毫米）。", required=False, default=0.0),
-            Param("b_connect_surface", bool, description="移除连接曲面（★ 布尔是标志）。",
-                  required=False, default=False),
+            Param(
+                "ruled_type",
+                int,
+                description="官方 `Type`：0=Tangent to Surface · 1=Normal to Surface · "
+                "2=Tapered to Vector · 3=Perpendicular to Vector · 4=Sweep。",
+            ),
+            Param(
+                "length_mm",
+                float,
+                description="距离（毫米；★ 官方说只对 Tangent/Tapered/Perpendicular 有效）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "flip_pull_dir",
+                bool,
+                description="翻转拉伸方向（★ 官方说只对 Normal/Tapered 有效）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "flip_dir",
+                bool,
+                description="翻转方向（★ 官方说只对 Perpendicular 有效）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "trim_and_sew",
+                bool,
+                description="裁剪并缝合（★ 布尔是标志）。",
+                required=False,
+                default=True,
+            ),
+            Param(
+                "angle_deg",
+                float,
+                description="角度（度；★ 官方说只对 Tapered to Vector 有效）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "coord_input",
+                bool,
+                description="启用坐标输入（★ 官方说只对 Sweep 有效）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "x_mm",
+                float,
+                description="X 坐标（毫米）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "y_mm",
+                float,
+                description="Y 坐标（毫米）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "z_mm",
+                float,
+                description="Z 坐标（毫米）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "b_connect_surface",
+                bool,
+                description="移除连接曲面（★ 布尔是标志）。",
+                required=False,
+                default=False,
+            ),
         ],
         doc="★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。"
-            "⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default "
-            "face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。"
-            "★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4）。",
+        "⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default "
+        "face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。"
+        "★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4）。",
     ),
     ToolSpec(
         name="solidworks_insert_delete_face",
         title="Insert Delete Face",
-        module="sw_surface_edit_ops", function="insert_delete_face",
+        module="sw_surface_edit_ops",
+        function="insert_delete_face",
         inject="model",
         param_alias={"option": "option"},
         params=[
-            Param("option", int, description="`swFaceDeleteOption_e`：0=Default · 1=Patch · 2=Fill · "
-                                            "3=FillWithTangent（★ 默认 0）。",
-                  required=False, default=0),
+            Param(
+                "option",
+                int,
+                description="`swFaceDeleteOption_e`：0=Default · 1=Patch · 2=Fill · "
+                "3=FillWithTangent（★ 默认 0）。",
+                required=False,
+                default=0,
+            ),
         ],
         doc="★ 删除面：**`IModelDocExtension.InsertDeleteFace(Option)`**（回 `bool`）。"
-            "⚠ ★ 入口在 **Extension** 上；★ `IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。"
-            "★ 真机（`option=0`）：树 7→8，新增 `删除面1`。"
-            "⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。",
+        "⚠ ★ 入口在 **Extension** 上；★ `IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。"
+        "★ 真机（`option=0`）：树 7→8，新增 `删除面1`。"
+        "⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。",
     ),
     ToolSpec(
         name="solidworks_insert_replace_face",
         title="Insert Replace Face",
-        module="sw_surface_edit_ops", function="insert_replace_face",
+        module="sw_surface_edit_ops",
+        function="insert_replace_face",
         inject="model",
         param_alias={},
         params=[],
         doc="★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。"
-            "⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。"
-            "★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实体**的面，不是曲面体的面）。",
+        "⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。"
+        "★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实体**的面，不是曲面体的面）。",
     ),
 ]
 

@@ -38,6 +38,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -48,16 +49,21 @@ SPECS_BATCH15 = [
     ToolSpec(
         name="solidworks_build_review_report",
         title="Build Review Report",
-        module="sw_review", function="build_review_report",
+        module="sw_review",
+        function="build_review_report",
         inject="model",
         doc="Build structured review-report data (exports preview images and writes a report "
-            "into output_dir). ⚠ The optional `views` / `expected_outputs` list parameters are "
-            "NOT exposed in this tool — see the batch header for why.",
+        "into output_dir). ⚠ The optional `views` / `expected_outputs` list parameters are "
+        "NOT exposed in this tool — see the batch header for why.",
         params=[
-            Param("output_dir", str,
-                  description="Directory for preview images and the report."),
-            Param("basename", str, default="review",
-                  description="Output filename prefix."),
+            Param(
+                "output_dir",
+                str,
+                description="Directory for preview images and the report.",
+            ),
+            Param(
+                "basename", str, default="review", description="Output filename prefix."
+            ),
         ],
     ),
 ]

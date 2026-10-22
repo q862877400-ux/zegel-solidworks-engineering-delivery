@@ -42,11 +42,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_sketch as SK                                  # noqa: E402
-import scripts.sw_sketch_primitives as SP                            # noqa: E402
-from scripts import sw_sketch_modify_ops as M                        # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_sketch as SK  # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
+from scripts import sw_sketch_modify_ops as M  # noqa: E402
 
 
 def _transform(doc):
@@ -88,7 +88,7 @@ def _transform(doc):
         if len(vals) < 12:
             return None
         return {"n": len(vals), "rot3x3": vals[:9], "trans": vals[9:12]}
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -112,15 +112,17 @@ def _bbox(doc):
         flats = SK.get_lines(sk) or []
         xs, ys = [], []
         for i in range(0, len(flats) - 11, 12):
-            seg = flats[i:i + 12]
+            seg = flats[i : i + 12]
             xs.extend([float(seg[6]), float(seg[9])])
             ys.extend([float(seg[7]), float(seg[10])])
         if not xs:
             return None
-        return {"x": [round(min(xs), 4), round(max(xs), 4)],
-                "y": [round(min(ys), 4), round(max(ys), 4)],
-                "n_lines": len(flats) // 12}
-    except Exception:                                                # noqa: BLE001
+        return {
+            "x": [round(min(xs), 4), round(max(xs), 4)],
+            "y": [round(min(ys), 4), round(max(ys), 4)],
+            "n_lines": len(flats) // 12,
+        }
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -133,7 +135,11 @@ def _changed(b, a):
 
 def _one(sw, zh, fn):
     """★ 走 B1 现成的骨架：**每个用例一个新文档** ⇒ 互不污染、失败也不拖累。"""
-    row = {"zh": zh, "verdict": "不能", "op": fn.__name__ if hasattr(fn, "__name__") else zh}
+    row = {
+        "zh": zh,
+        "verdict": "不能",
+        "op": fn.__name__ if hasattr(fn, "__name__") else zh,
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -156,10 +162,17 @@ def _one(sw, zh, fn):
         P.end_sketch(doc)
         ch_bbox = _changed(bbox_before, bbox_after)
         ch_tf = _changed(tf_before, tf_after)
-        row.update({"ret": r if isinstance(r, (dict, bool, type(None))) else str(type(r)),
-                    "bbox_before": bbox_before, "bbox_after": bbox_after,
-                    "tf_before": tf_before, "tf_after": tf_after,
-                    "bbox_changed": ch_bbox, "transform_changed": ch_tf})
+        row.update(
+            {
+                "ret": r if isinstance(r, (dict, bool, type(None))) else str(type(r)),
+                "bbox_before": bbox_before,
+                "bbox_after": bbox_after,
+                "tf_before": tf_before,
+                "tf_after": tf_after,
+                "bbox_changed": ch_bbox,
+                "transform_changed": ch_tf,
+            }
+        )
         #: ★★ 判据分级（★ 说清"凭什么说能"）：
         #: · 量到了前后 **且变了**（bbox 或 变换）⇒ `geometry_changed` / `transform_chan
         #: ged`
@@ -175,30 +188,41 @@ def _one(sw, zh, fn):
             row["verified_by"] = "no_exception"
         row["ok"] = bool(ch_bbox or ch_tf)
         row["verdict"] = "能" if row["ok"] else "不能"
-    except Exception as exc:                                         # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     finally:
         if doc is not None:
             try:
-                t = str(C.safe_get_com_member(doc, "GetTitle") or "") \
-                    if hasattr(C, "safe_get_com_member") else ""
+                t = (
+                    str(C.safe_get_com_member(doc, "GetTitle") or "")
+                    if hasattr(C, "safe_get_com_member")
+                    else ""
+                )
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                        # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B4 批：草图编辑·移动族 5 条逐个真机跑（specs/201-toolbar-gaps）",
-          "judge": "草图点包围盒的前后变化（★ 因为 4/5 的官方返回是 void）",
-          "items": []}
-    ev["items"].append(_one(sw, "移动实体", lambda d: M.sketch_move(d, 0.0, 0.0, 5.0, 5.0)))
-    ev["items"].append(_one(sw, "旋转实体", lambda d: M.sketch_rotate(d, 0.0, 0.0, 30.0)))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B4 批：草图编辑·移动族 5 条逐个真机跑（specs/201-toolbar-gaps）",
+        "judge": "草图点包围盒的前后变化（★ 因为 4/5 的官方返回是 void）",
+        "items": [],
+    }
+    ev["items"].append(
+        _one(sw, "移动实体", lambda d: M.sketch_move(d, 0.0, 0.0, 5.0, 5.0))
+    )
+    ev["items"].append(
+        _one(sw, "旋转实体", lambda d: M.sketch_rotate(d, 0.0, 0.0, 30.0))
+    )
     ev["items"].append(_one(sw, "缩放实体比例", lambda d: M.sketch_scale(d, 1.5)))
-    ev["items"].append(_one(sw, "伸展实体", lambda d: M.sketch_stretch(d, 0.0, 0.0, 3.0, 3.0, True)))
+    ev["items"].append(
+        _one(sw, "伸展实体", lambda d: M.sketch_stretch(d, 0.0, 0.0, 3.0, 3.0, True))
+    )
     ev["items"].append(_one(sw, "镜像（同族附带）", lambda d: M.sketch_flip(d, 1)))
     ev["passed"] = sum(1 for i in ev["items"] if i.get("ok"))
     ev["total"] = len(ev["items"])
@@ -207,8 +231,15 @@ def main() -> int:
     p.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["total"]))
     for i in ev["items"]:
-        print("  %-18s %-4s %-18s %s" % (i.get("zh"), i.get("verdict"),
-                                         i.get("verified_by") or "", (i.get("err") or "")[:52]))
+        print(
+            "  %-18s %-4s %-18s %s"
+            % (
+                i.get("zh"),
+                i.get("verdict"),
+                i.get("verified_by") or "",
+                (i.get("err") or "")[:52],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

@@ -24,14 +24,23 @@ stratum_of = {t: k for k, v in sample["strata"].items() for t in v}
 ordered = sorted(recs)
 OUT = ROOT / "output" / "rag-queries"
 OUT.mkdir(parents=True, exist_ok=True)
-N = 2                                     #: ★ 每份 2 个工具
-chunks = [ordered[i:i + N] for i in range(0, len(ordered), N)]
+N = 2  #: ★ 每份 2 个工具
+chunks = [ordered[i : i + N] for i in range(0, len(ordered), N)]
 print("★ 共 %d 个工具 ⇒ 切 %d 份（每份 %d 个）" % (len(ordered), len(chunks), N))
 for i, chunk in enumerate(chunks):
-    payload = [{"tool": t, "stratum": stratum_of.get(t, "?"),
-                "title": recs[t]["title"], "doc": recs[t]["doc"],
-                "params": recs[t]["params"], "module": recs[t]["module"]} for t in chunk]
+    payload = [
+        {
+            "tool": t,
+            "stratum": stratum_of.get(t, "?"),
+            "title": recs[t]["title"],
+            "doc": recs[t]["doc"],
+            "params": recs[t]["params"],
+            "module": recs[t]["module"],
+        }
+        for t in chunk
+    ]
     (OUT / ("in-%02d.json" % i)).write_text(
-        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
 print("★ 切片写在 %s/in-XX.json（共 %d 个）" % (OUT, len(chunks)))
 print("★ 最后一份：", chunks[-1])

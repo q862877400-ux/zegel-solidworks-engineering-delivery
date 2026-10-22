@@ -1,4 +1,5 @@
 """★ 边界凸台/边界曲面（官方 `IFeatureManager::InsertNetBlend`）的报告式包装。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（照官方签名自建；官方依据见下）
 # 文件:   `specs/219-user-coverage-100/` 的 **T-219-04**
@@ -44,7 +45,12 @@ BLEND_TYPE = {"base": 0, "boss": 1, "surface": 2, "cut": 3}
 
 #: ★ 官方 `SetNetBlendDirectionData` 的 `InfluenceType` 枚举（官方逐字）
 #: enum-gate: member SetNetBlendDirectionData
-INFLUENCE_TYPE = {"global": 0, "to_next_curve": 1, "to_next_sharp": 2, "to_next_edge": 3}
+INFLUENCE_TYPE = {
+    "global": 0,
+    "to_next_curve": 1,
+    "to_next_sharp": 2,
+    "to_next_edge": 3,
+}
 
 #: ★ 毫米 → 米（本仓事实 2：COM 侧是米，工具面对用户是毫米）
 _MM = 1.0 / 1000.0
@@ -64,7 +70,7 @@ def _select_face_by_index(model, face_index: int, append: bool):
     #: ★ `body.GetFaces` 报逐字「**没有这个成员**」✗ ⇒ ★ 迟到绑定的成员要走 `get_com_mem
     #: ber` ✓
     import sw_selection_spec as _SS
-    import sw_part                                                                  # 同目录模块
+    import sw_part  # 同目录模块
 
     #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=
     #: 0`）✓
@@ -76,23 +82,27 @@ def _select_face_by_index(model, face_index: int, append: bool):
     #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
     faces = []
     _bi = 0
-    while _bi <= 32:                                                               #: ★ 兜底，防死循环
+    while _bi <= 32:  #: ★ 兜底，防死循环
         try:
             _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
         if not _b:
             break
         faces.extend(_b)
         _bi += 1
     if not faces or face_index < 0 or face_index >= len(faces):
-        raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面"
-                           % (face_index, len(faces) if faces else 0))
+        raise RuntimeError(
+            "面序号越界：face_index=%r，本体共 %d 个面"
+            % (face_index, len(faces) if faces else 0)
+        )
     face = faces[face_index]
     box = list(sw_part.get_com_member(face, "GetBox") or [])
     if len(box) < 6:
-        raise RuntimeError("★ 取面上失败：`IFace2.GetBox()` 回了 %r（★ 这是前置未成立，"
-                           "★ 与「边界特征建不出来」是两件事）" % (box,))
+        raise RuntimeError(
+            "★ 取面上失败：`IFace2.GetBox()` 回了 %r（★ 这是前置未成立，"
+            "★ 与「边界特征建不出来」是两件事）" % (box,)
+        )
     cx = (box[0] + box[3]) / 2.0
     cy = (box[1] + box[4]) / 2.0
     cz = (box[2] + box[5]) / 2.0
@@ -103,9 +113,10 @@ def _select_face_by_index(model, face_index: int, append: bool):
     #: ★ 且「传 **mark=0** 时 `InsertDome` 报 **0x8002000F**」⇒ ★ 这类特征要的是 **mark=
     #: 1** ✓
     #:   ★ 真机读数（第 5 轮）：mark=0 时第 1 次选面回读计数 **0** ✗（第 2 次 1）
-    ok = model.Extension.SelectByID2("", "FACE", cx, cy, cz, bool(append), 0,
-                                     sw_part._empty_callout(), 1)
-    cnt = model.SelectionManager.GetSelectedObjectCount2(-1)                         # ★ 事实 8：布尔不可信
+    ok = model.Extension.SelectByID2(
+        "", "FACE", cx, cy, cz, bool(append), 0, sw_part._empty_callout(), 1
+    )
+    cnt = model.SelectionManager.GetSelectedObjectCount2(-1)  # ★ 事实 8：布尔不可信
     return {"ok": bool(ok), "selection_count": cnt, "point": [cx, cy, cz]}
 
 
@@ -116,7 +127,7 @@ def insert_net_blend_report(
     face_index_2: int = 1,
     blend_type: int = 1,
     n_curves_dir1: int = 1,
-    n_curves_dir2: int = 2,   #: ★ 官方示例逐字 `InsertNetBlend 1, 2, 0, …`
+    n_curves_dir2: int = 2,  #: ★ 官方示例逐字 `InsertNetBlend 1, 2, 0, …`
     influence_type: int = 0,
     trim_curves: bool = False,
     blend_closed: bool = False,
@@ -132,12 +143,16 @@ def insert_net_blend_report(
     ⚠ ★ **本包装尚未真机验证**（★ 台账标 `stitched`）✓
     """
     if blend_type not in (0, 1, 2, 3):
-        raise ValueError("blend_type 只接受 0/1/2/3（官方 Type：0=Base·1=Boss·2=Surface·3=Cut）")
+        raise ValueError(
+            "blend_type 只接受 0/1/2/3（官方 Type：0=Base·1=Boss·2=Surface·3=Cut）"
+        )
     if influence_type not in (0, 1, 2, 3):
-        raise ValueError("influence_type 只接受 0/1/2/3（官方：0=Global·1=To Next Curve·"
-                         "2=To Next Sharp·3=To Next Edge）")
+        raise ValueError(
+            "influence_type 只接受 0/1/2/3（官方：0=Global·1=To Next Curve·"
+            "2=To Next Sharp·3=To Next Edge）"
+        )
 
-    before = _feature_count(model)                                                 # ★ 回读基线
+    before = _feature_count(model)  # ★ 回读基线
     steps = []
 
     #: ① 清选区（★ 官方示例第一句）
@@ -149,8 +164,10 @@ def insert_net_blend_report(
     s2 = select_face_with_fallback(model, face_index_2, True, s1["selection_count"])
     steps.append({"step": "select_face_2", **s2})
     if s1["selection_count"] != 1 or s2["selection_count"] != 2:
-        raise RuntimeError("★ 选面没落到 2 个（★ 判据是回读计数，不是 SelectByID2 的 bool）"
-                           "：第 1 次=%r 第 2 次=%r" % (s1["selection_count"], s2["selection_count"]))
+        raise RuntimeError(
+            "★ 选面没落到 2 个（★ 判据是回读计数，不是 SelectByID2 的 bool）"
+            "：第 1 次=%r 第 2 次=%r" % (s1["selection_count"], s2["selection_count"])
+        )
 
     fm = model.FeatureManager
 
@@ -159,17 +176,21 @@ def insert_net_blend_report(
         fm.SetNetBlendCurveData(0, 0, 0, 0, 1, True)
         fm.SetNetBlendCurveData(0, 1, 0, math.radians(float(tangency_deg)), 1, True)
         steps.append({"step": "SetNetBlendCurveData", "tangency_deg": tangency_deg})
-    except Exception as exc:                                                         # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         steps.append({"step": "SetNetBlendCurveData", "error": str(exc)})
 
     #: ④ 方向数据（★ `SplitSurfaces` 官方标 Not used ⇒ 传 False ✓）
     try:
-        fm.SetNetBlendDirectionData(0, int(influence_type), 1 if trim_curves else 0,
-                                   bool(blend_closed), False)
-        fm.SetNetBlendDirectionData(1, int(influence_type), 1 if trim_curves else 0,
-                                   bool(blend_closed), False)
-        steps.append({"step": "SetNetBlendDirectionData", "influence_type": influence_type})
-    except Exception as exc:                                                         # noqa: BLE001
+        fm.SetNetBlendDirectionData(
+            0, int(influence_type), 1 if trim_curves else 0, bool(blend_closed), False
+        )
+        fm.SetNetBlendDirectionData(
+            1, int(influence_type), 1 if trim_curves else 0, bool(blend_closed), False
+        )
+        steps.append(
+            {"step": "SetNetBlendDirectionData", "influence_type": influence_type}
+        )
+    except Exception as exc:  # noqa: BLE001
         steps.append({"step": "SetNetBlendDirectionData", "error": str(exc)})
 
     #: ⑤ 建特征 —— ★ 20 个实参**按官方顺序**（★ 别照抄示例的字面值，逐位对上）
@@ -180,15 +201,38 @@ def insert_net_blend_report(
     #: UseSharedThickness, CapEnds, EndThickness, AutoFillet, FilletRadius, ForceNonRati
     #: onal
     feat = fm.InsertNetBlend(
-        int(blend_type), int(n_curves_dir1), int(n_curves_dir2), False, 0.0001,
-        True, bool(merge_body), False, False, False,
-        float(thickness1_mm) * _MM, float(thickness2_mm) * _MM, False, 0,
-        False, False, 0.0, False, 0.0, False,
+        int(blend_type),
+        int(n_curves_dir1),
+        int(n_curves_dir2),
+        False,
+        0.0001,
+        True,
+        bool(merge_body),
+        False,
+        False,
+        False,
+        float(thickness1_mm) * _MM,
+        float(thickness2_mm) * _MM,
+        False,
+        0,
+        False,
+        False,
+        0.0,
+        False,
+        0.0,
+        False,
     )
     after = _feature_count(model)
     name = getattr(feat, "Name", None) if feat is not None else None
-    steps.append({"step": "InsertNetBlend", "returned": feat is not None, "feature": name,
-                  "before": before, "after": after})
+    steps.append(
+        {
+            "step": "InsertNetBlend",
+            "returned": feat is not None,
+            "feature": name,
+            "before": before,
+            "after": after,
+        }
+    )
 
     return {
         #: ★★★ 2026-10-07（规格 220 续 · 第 40 轮）★ **判据只留回读** ——
@@ -196,7 +240,7 @@ def insert_net_blend_report(
         #: ★ `InsertNetBlend` 的**返回值是 `None`** ✗ ⇒ ★ 原来的 `feat is not None` 把它
         #: **误判为失败** ✗
         #:   ⇒ ★★ 这正是**事实 8**：★ **返回值/bool 不可信，只有回读的计数才算数** ✓
-        "ok": after > before,                                                        # ★ 回读判据（事实 8）
+        "ok": after > before,  # ★ 回读判据（事实 8）
         "blend_type": int(blend_type),
         "blend_type_name": {v: k for k, v in BLEND_TYPE.items()}.get(int(blend_type)),
         "feature": name,
@@ -205,7 +249,7 @@ def insert_net_blend_report(
         "steps": steps,
         "official": "IFeatureManager::InsertNetBlend",
         "units": "★ 入参按毫米/度；COM 侧米/弧度（本仓事实 2）",
-        #: ★★★ 2026-10-07（规格 220 续 · 第 41 轮）★ **等级按真机证据提上来**（★ 红线⑥ 
+        #: ★★★ 2026-10-07（规格 220 续 · 第 41 轮）★ **等级按真机证据提上来**（★ 红线⑥
         #: 的正面用例）✓
         #: ★ 真机逐字（`tools/probe_spec220_boundary.py`）：★ **18.54 s** · ★ **0 弹窗**
         #:  · ★
@@ -213,8 +257,9 @@ def insert_net_blend_report(
         #: ** ✓
         #:   ⇒ ★ 两档**都在真机上建成**（★ 判据 = 特征树回读增量 ✓ 事实 8）✓
         "verification": "verified —— ★ 真机两档 ok=True（特征树 22→23 ×2 · 18.54 s · 0 弹窗）"
-                        "（★ 规格 220 续 第 41 轮；判据 = 特征树回读增量，事实 8）",
+        "（★ 规格 220 续 第 41 轮；判据 = 特征树回读增量，事实 8）",
     }
+
 
 def insert_boundary_boss_report(
     model,
@@ -229,9 +274,15 @@ def insert_boundary_boss_report(
 ) -> dict:
     """★ 边界**凸台**（官方 `InsertNetBlend`，`Type=1 Boss`）—— ★ 显式签名（★ 门禁要 function 形态）✓"""
     return insert_net_blend_report(
-        model, face_index_1=face_index_1, face_index_2=face_index_2, blend_type=1,
-        influence_type=influence_type, trim_curves=trim_curves, blend_closed=blend_closed,
-        tangency_deg=tangency_deg, merge_body=merge_body,
+        model,
+        face_index_1=face_index_1,
+        face_index_2=face_index_2,
+        blend_type=1,
+        influence_type=influence_type,
+        trim_curves=trim_curves,
+        blend_closed=blend_closed,
+        tangency_deg=tangency_deg,
+        merge_body=merge_body,
     )
 
 
@@ -248,12 +299,19 @@ def insert_boundary_surface_report(
 ) -> dict:
     """★ 边界**曲面**（官方 `InsertNetBlend`，`Type=2 Surface`）—— ★ 显式签名 ✓"""
     return insert_net_blend_report(
-        model, face_index_1=face_index_1, face_index_2=face_index_2, blend_type=2,
-        influence_type=influence_type, trim_curves=trim_curves, blend_closed=blend_closed,
-        tangency_deg=tangency_deg, merge_body=merge_body,
+        model,
+        face_index_1=face_index_1,
+        face_index_2=face_index_2,
+        blend_type=2,
+        influence_type=influence_type,
+        trim_curves=trim_curves,
+        blend_closed=blend_closed,
+        tangency_deg=tangency_deg,
+        merge_body=merge_body,
     )
 
-#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` 
+
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py`
 #: /
 #:   `sw_weld_bead.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
 try:
@@ -261,8 +319,10 @@ try:
 except ImportError:
     from sw_feature_tree import feature_count as _feature_count
 
-def select_face_with_fallback(model, face_index: int, append: bool,
-                              before_count: int) -> dict:
+
+def select_face_with_fallback(
+    model, face_index: int, append: bool, before_count: int
+) -> dict:
     """★ 选一个面 —— ★ 先用**盒中心**；★ 若**回读计数没增加**就**换点重试**（★ 处置实测到的现象）。
 
     ★★ 依据（真机读数，规格 220 T-220-01 第 5–7 轮）：★ **0 号面按盒中心选不上**
@@ -284,17 +344,19 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
     faces = []
     _bi = 0
-    while _bi <= 32:                                                               #: ★ 兜底，防死循环
+    while _bi <= 32:  #: ★ 兜底，防死循环
         try:
             _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
         if not _b:
             break
         faces.extend(_b)
         _bi += 1
     if face_index < 0 or face_index >= len(faces):
-        raise RuntimeError("面序号越界：face_index=%r，本体共 %d 个面" % (face_index, len(faces)))
+        raise RuntimeError(
+            "面序号越界：face_index=%r，本体共 %d 个面" % (face_index, len(faces))
+        )
     face = faces[face_index]
     box = list(_sp.get_com_member(face, "GetBox") or [])
     if len(box) < 6:
@@ -305,11 +367,19 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     #: ★ 换点用的偏移（单位**米**；★ 0.5 mm = 5e-4 m）—— ★ 只动一点点，仍在该面附近
     tries = [(0.0, 0.0, 0.0)]
     for d in (0.0005, -0.0005):
-        tries += [(d, 0.0, 0.0), (0.0, d, 0.0), (0.0, 0.0, d),
-                  (-d, 0.0, 0.0), (0.0, -d, 0.0), (0.0, 0.0, -d)]
+        tries += [
+            (d, 0.0, 0.0),
+            (0.0, d, 0.0),
+            (0.0, 0.0, d),
+            (-d, 0.0, 0.0),
+            (0.0, -d, 0.0),
+            (0.0, 0.0, -d),
+        ]
     attempts = []
-    for (dx, dy, dz) in tries:
-        model.ClearSelection2(True) if False else None       #: ★ 不清（append 语义由调用方定）
+    for dx, dy, dz in tries:
+        model.ClearSelection2(
+            True
+        ) if False else None  #: ★ 不清（append 语义由调用方定）
         #: ★★★ 2026-10-07（规格 220 T-220-01 第 9 轮**真机定案**）★ 选面改用
         #: `IEntity.Select4(Append, Callout)` ✓ —— ★ 实测（`tools/probe_spec220_append_a
         #: rms.py`）：
@@ -319,10 +389,25 @@ def select_face_with_fallback(model, face_index: int, append: bool,
         #:   ⇒ ★ 两个问题一次全解 ✓（★ 这也正是本仓**事实 32**记的"按对象选"那条路）
         ok = face.Select4(bool(append), _sp._empty_callout())
         cnt = int(model.SelectionManager.GetSelectedObjectCount2(-1))
-        attempts.append({"d": [round(dx, 6), round(dy, 6), round(dz, 6)],
-                         "ok": bool(ok), "count": cnt})
+        attempts.append(
+            {
+                "d": [round(dx, 6), round(dy, 6), round(dz, 6)],
+                "ok": bool(ok),
+                "count": cnt,
+            }
+        )
         if cnt > before_count:
-            return {"ok": True, "selection_count": cnt, "point": [cx + dx, cy + dy, cz + dz],
-                    "attempts": attempts, "tries_used": len(attempts)}
-    return {"ok": False, "selection_count": attempts[-1]["count"],
-            "point": [cx, cy, cz], "attempts": attempts, "tries_used": len(attempts)}
+            return {
+                "ok": True,
+                "selection_count": cnt,
+                "point": [cx + dx, cy + dy, cz + dz],
+                "attempts": attempts,
+                "tries_used": len(attempts),
+            }
+    return {
+        "ok": False,
+        "selection_count": attempts[-1]["count"],
+        "point": [cx, cy, cz],
+        "attempts": attempts,
+        "tries_used": len(attempts),
+    }

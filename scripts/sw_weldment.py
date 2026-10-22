@@ -1,4 +1,5 @@
 """SolidWorks 原生焊件结构构件与切割清单封装。"""
+
 from __future__ import annotations
 
 import csv
@@ -11,14 +12,26 @@ from typing import Any, Iterable
 #:   ★★ 注释**放在 `try:` 之外** —— 因为 `scripts/check_relative_imports.py` 的判据是
 #:     「相对导入必须**紧跟** `try:`」⇒ ★ 夹在导入之间会把连续块打断、被算成"无兜底" ✗ ✓
 try:
-    from .sw_connect import (get_com_member, call_com_member, save_document,
-                             set_com_member, mm, create_empty_dispatch_variant)
+    from .sw_connect import (
+        get_com_member,
+        call_com_member,
+        save_document,
+        set_com_member,
+        mm,
+        create_empty_dispatch_variant,
+    )
     from .sw_document_data import set_custom_properties
     from .sw_part import _ensure_sketch_selected
     from .sw_preflight import import_com_dependencies
 except ImportError:
-    from sw_connect import (get_com_member, call_com_member, save_document,
-                            set_com_member, mm, create_empty_dispatch_variant)
+    from sw_connect import (
+        get_com_member,
+        call_com_member,
+        save_document,
+        set_com_member,
+        mm,
+        create_empty_dispatch_variant,
+    )
     from sw_document_data import set_custom_properties
     from sw_part import _ensure_sketch_selected
     from sw_preflight import import_com_dependencies
@@ -61,8 +74,8 @@ SW_SOLID_BODY = 0
 #   若后续无对应封装，可连同说明一并删除。
 # ⚠ 本组为静态反射结果，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-SW_FM_PROFILE_FEATURE = 65      # swFmProfileFeature
-SW_FM_WELD_MEMBER_FEAT = 72    # swFmWeldMemberFeat
+SW_FM_PROFILE_FEATURE = 65  # swFmProfileFeature
+SW_FM_WELD_MEMBER_FEAT = 72  # swFmWeldMemberFeat
 SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -75,7 +88,7 @@ SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter
 # 覆盖:   `create_profile_center_mate`
 # ⚠ 本常量为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-SW_MATE_PROFILE_CENTER = 24     # swMatePROFILECENTER
+SW_MATE_PROFILE_CENTER = 24  # swMatePROFILECENTER
 CORE_CUT_LIST_PROPERTY_NAMES = {
     "length",
     "长度",
@@ -109,22 +122,22 @@ CORE_CUT_LIST_PROPERTY_NAMES = {
 
 def _as_tuple(value) -> tuple:
     """@brief 把 COM 单对象、SAFEARRAY 或空值规范为元组。"""
-# ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（**沿上游与既有模式的写法**发展而来）。
-# 文件:   scripts/sw_weldment.py —— 本文件（**轮 145 的命名迁移**）。
-# 定位:   2026-10-01（轮 145）**只做了一件事**：把那些「**故意要调**」的零参调用
-#         从 `get_com_member(...)` 改成 **`call_com_member(...)`**。
-#         ★★ 起因：审计（`tools/audit_get_com_member_semantics.py`）发现
-#         `get_com_member` 的语义是「**取或调**」—— **对 COM 成员，「取」可能等于「调」**；
-#         而 471 个无实参调用点里有 193 处的成员在反射里**有零参重载**（会真的执行）。
-#         ★ 逐条读过之后确认：**作者大多是故意的**（拿返回值当成败 / 要的就是那个动作），
-#         但**代码里读不出来** ⇒ 本轮用 `call_com_member` **让名字表态**。
-# 官方签名依据: 本次迁移**不改任何 COM 调用**（只是换个名字），
-#         各调用的官方依据在原函数的来源块里。
-# 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入。
-# 覆盖:   全文件 —— ⚠ 本块是**轮 145 迁移这件事**的说明，
-#         它**不替代**本文件里原有的、更精确的逐函数来源块。
-# ─────────────────────────────────────────────────────────────────────
+    # ── 来源 ─────────────────────────────────────────────────────────────
+    # 仓库:   本项目自身（**沿上游与既有模式的写法**发展而来）。
+    # 文件:   scripts/sw_weldment.py —— 本文件（**轮 145 的命名迁移**）。
+    # 定位:   2026-10-01（轮 145）**只做了一件事**：把那些「**故意要调**」的零参调用
+    #         从 `get_com_member(...)` 改成 **`call_com_member(...)`**。
+    #         ★★ 起因：审计（`tools/audit_get_com_member_semantics.py`）发现
+    #         `get_com_member` 的语义是「**取或调**」—— **对 COM 成员，「取」可能等于「调」**；
+    #         而 471 个无实参调用点里有 193 处的成员在反射里**有零参重载**（会真的执行）。
+    #         ★ 逐条读过之后确认：**作者大多是故意的**（拿返回值当成败 / 要的就是那个动作），
+    #         但**代码里读不出来** ⇒ 本轮用 `call_com_member` **让名字表态**。
+    # 官方签名依据: 本次迁移**不改任何 COM 调用**（只是换个名字），
+    #         各调用的官方依据在原函数的来源块里。
+    # 许可:   本仓库 MIT（上游部分见 `THIRD-PARTY-NOTICES.md`）。无第三方代码引入。
+    # 覆盖:   全文件 —— ⚠ 本块是**轮 145 迁移这件事**的说明，
+    #         它**不替代**本文件里原有的、更精确的逐函数来源块。
+    # ─────────────────────────────────────────────────────────────────────
 
     if value is None:
         return ()
@@ -174,8 +187,9 @@ def _active_configuration_name(model) -> str:
 WELDMENT_TRIM_MARKS = {"body_to_trim": 1, "trim_boundary": 2}
 
 
-def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
-                                gap_mm: float = 0.0) -> dict:
+def insert_weldment_trim_report(
+    model, *, end_cond: int = 0, options: int = 0, gap_mm: float = 0.0
+) -> dict:
     """★ **裁剪/延伸焊件**（`IFeatureManager::InsertWeldmentTrimFeature2`）—— ★ 参数式 ✓
 
     ★★★ **前置由选择契约承载**（★ 官方 `## Remarks`）：★ 调之前**必须**用 `SelectByID2` 按 mark 选：
@@ -183,35 +197,51 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
     ★ 判据：★ **特征树多了新特征**（★ 回读 —— ★ 不看返回值 ✓）✓
     ★★ **`gap_mm` 的官方单位未给** ⇒ ★ 返回里带 `unit_assumption`（★ 缝合既有约定 ✓）
     """
-    out: dict = {"ok": False, "entry": "IFeatureManager.InsertWeldmentTrimFeature2",
-                 "official_marks": dict(WELDMENT_TRIM_MARKS),
-                 "selection_contract": ("★ 调之前必须用 `SelectByID2` 按 mark 选："
-                                        "**1 = Body or bodies to trim** · "
-                                        "**2 = Trimming boundaries (body or face)** ✓"
-                                        "（★ 官方 `## Remarks` 逐字）"),
-                 "options_note": ("★ 官方逐字：`Options` 是 `swWeldmentTrimExtendOptionType_e` 的"
-                                  "**Logical sum**（★ 按位或叠 ✓）"),
-                 "end_cond_note": ("★ 官方逐字：`EndCond` 取 "
-                                   "`swSolidworksWeldmentEndCondOptions_e` ✓"),
-                 "unit_assumption": ("★ 官方 `GapValue` **没给单位**（Parameters 只写 "
-                                     "'Length to trim'）⇒ ★ 本工具**对外收毫米**、★ 在边界用 "
-                                     "`sw_connect.mm()` 换算一次 ✓"),
-                 "side_effects": "★ 会改变/新建焊件体（★ 非只读）"}
+    out: dict = {
+        "ok": False,
+        "entry": "IFeatureManager.InsertWeldmentTrimFeature2",
+        "official_marks": dict(WELDMENT_TRIM_MARKS),
+        "selection_contract": (
+            "★ 调之前必须用 `SelectByID2` 按 mark 选："
+            "**1 = Body or bodies to trim** · "
+            "**2 = Trimming boundaries (body or face)** ✓"
+            "（★ 官方 `## Remarks` 逐字）"
+        ),
+        "options_note": (
+            "★ 官方逐字：`Options` 是 `swWeldmentTrimExtendOptionType_e` 的"
+            "**Logical sum**（★ 按位或叠 ✓）"
+        ),
+        "end_cond_note": (
+            "★ 官方逐字：`EndCond` 取 `swSolidworksWeldmentEndCondOptions_e` ✓"
+        ),
+        "unit_assumption": (
+            "★ 官方 `GapValue` **没给单位**（Parameters 只写 "
+            "'Length to trim'）⇒ ★ 本工具**对外收毫米**、★ 在边界用 "
+            "`sw_connect.mm()` 换算一次 ✓"
+        ),
+        "side_effects": "★ 会改变/新建焊件体（★ 非只读）",
+    }
     if model is None:
         out["error"] = "model 为 None"
         return out
+
     #: ★★ 用**本文件已有**的遍历取特征名 —— ★ 不新引导入（★ 那会撞相对导入棘轮 ✓）
     def _fnames():
         try:
-            return [str(get_com_member(f, "Name") or "") for f in iter_features_recursive(model)]
-        except Exception:                                               # noqa: BLE001
+            return [
+                str(get_com_member(f, "Name") or "")
+                for f in iter_features_recursive(model)
+            ]
+        except Exception:  # noqa: BLE001
             return []
+
     before = _fnames()
     #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
     try:
         import sw_selection_spec as SS
+
         out["selection_count_before"] = SS.get_selection_count(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["selection_count_before"] = None
         out["selection_count_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
     fm = get_com_member(model, "FeatureManager")
@@ -219,17 +249,22 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
         out["error"] = "取不到 FeatureManager"
         return out
     try:
-        feat = get_com_member(fm, "InsertWeldmentTrimFeature2",
-                             int(end_cond), int(options), float(mm(float(gap_mm))),
-                             #: ★★ 两个 `object` 数组形参**必须传空 VARIANT**（★ 事实 12
-                             #: /33）——
-                             #:   ★ 实测：★ 传 Python `None` **调不通**；★ 传
-                             #:   `VARIANT(VT_DISPATCH, None)` ⇒ **调用完成、回对象** ✓
-                             #: ★（`sw_connect.create_empty_dispatch_variant()` 就是它 ✓
-                             #: ）
-                             create_empty_dispatch_variant(),
-                             create_empty_dispatch_variant())
-    except Exception as exc:                                            # noqa: BLE001
+        feat = get_com_member(
+            fm,
+            "InsertWeldmentTrimFeature2",
+            int(end_cond),
+            int(options),
+            float(mm(float(gap_mm))),
+            #: ★★ 两个 `object` 数组形参**必须传空 VARIANT**（★ 事实 12
+            #: /33）——
+            #:   ★ 实测：★ 传 Python `None` **调不通**；★ 传
+            #:   `VARIANT(VT_DISPATCH, None)` ⇒ **调用完成、回对象** ✓
+            #: ★（`sw_connect.create_empty_dispatch_variant()` 就是它 ✓
+            #: ）
+            create_empty_dispatch_variant(),
+            create_empty_dispatch_variant(),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
         return out
     after = _fnames()
@@ -241,10 +276,12 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
     #: ★★ **真判据**：★ 特征树多了新特征 ✓（★ 回读，★ 不看返回值 ✓）
     out["ok"] = len(out["new_features"]) > 0
     if not out["ok"]:
-        out["error"] = ("★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
-                        "★ 按官方 `## Remarks` 复查：★ **mark 1/2 有没有都选上**"
-                        "（★ 1 = Body to trim · 2 = Trimming boundaries）✓"
-                        % out["returned_is_none"])
+        out["error"] = (
+            "★ 调用没抛、★ **而特征树没变化**（★ `returned_is_none=%r`）⇒ "
+            "★ 按官方 `## Remarks` 复查：★ **mark 1/2 有没有都选上**"
+            "（★ 1 = Body to trim · 2 = Trimming boundaries）✓"
+            % out["returned_is_none"]
+        )
     return out
 
 
@@ -293,7 +330,7 @@ def create_weldment_profile(
         "size_bytes": target.stat().st_size,
         "properties": dict(properties or {}),
         "★": "★ 契约：★ **成功回 `ok=True`；失败**抛异常**（`RuntimeError` / `ValueError`）** —— "
-             "★ 两者并存；★ `size_bytes` 是**产物本身**的大小（★ 已排除 `~$` 锁文件）",
+        "★ 两者并存；★ `size_bytes` 是**产物本身**的大小（★ 已排除 `~$` 锁文件）",
     }
 
 
@@ -315,7 +352,9 @@ def create_structural_member(
     manager = get_com_member(model, "FeatureManager")
     existing_types = {
         str(get_com_member(feature, "GetTypeName2") or "")
-        for feature in _iter_feature_chain(get_com_member(model, "FirstFeature"), "GetNextFeature")
+        for feature in _iter_feature_chain(
+            get_com_member(model, "FirstFeature"), "GetNextFeature"
+        )
     }
     if "WeldmentFeature" not in existing_types:
         model.ClearSelection2(True)
@@ -384,7 +423,9 @@ def ensure_cut_list(model) -> list[Any]:
     existing_by_name = {}
     for feature in iter_features_recursive(model):
         if str(get_com_member(feature, "GetTypeName2") or "") == "CutListFolder":
-            existing_by_name.setdefault(str(get_com_member(feature, "Name") or ""), feature)
+            existing_by_name.setdefault(
+                str(get_com_member(feature, "Name") or ""), feature
+            )
     existing = list(existing_by_name.values())
     if existing:
         return existing
@@ -418,7 +459,9 @@ def ensure_cut_list(model) -> list[Any]:
                 body_array,
             )
         if feature is None:
-            raise RuntimeError(f"InsertWeldmentCutList2 创建失败: length_key={length_key}")
+            raise RuntimeError(
+                f"InsertWeldmentCutList2 创建失败: length_key={length_key}"
+            )
         created.append(feature)
     if not bool(call_com_member(model, "EditRebuild3")):
         raise RuntimeError("切割清单创建后的模型重建失败")
@@ -438,6 +481,7 @@ def _iter_feature_chain(first_feature, next_member: str):
 
 def iter_features_recursive(model):
     """@brief 深度遍历焊件文件夹中的 CutListFolder 等子特征。"""
+
     def walk(feature):
         yield feature
         try:
@@ -447,7 +491,9 @@ def iter_features_recursive(model):
         for child in _iter_feature_chain(first_child, "GetNextSubFeature"):
             yield from walk(child)
 
-    for root in _iter_feature_chain(get_com_member(model, "FirstFeature"), "GetNextFeature"):
+    for root in _iter_feature_chain(
+        get_com_member(model, "FirstFeature"), "GetNextFeature"
+    ):
         yield from walk(root)
 
 
@@ -468,12 +514,16 @@ def _read_property(manager, name: str) -> dict[str, Any]:
     }
 
 
-def read_property_manager(manager, *, core_only: bool = True) -> dict[str, dict[str, Any]]:
+def read_property_manager(
+    manager, *, core_only: bool = True
+) -> dict[str, dict[str, Any]]:
     """@brief 枚举属性管理器中的制造属性，默认排除模板标题栏噪声。"""
     names = _as_tuple(get_com_member(manager, "GetNames"))
     if core_only:
         names = tuple(
-            name for name in names if str(name).strip().casefold() in CORE_CUT_LIST_PROPERTY_NAMES
+            name
+            for name in names
+            if str(name).strip().casefold() in CORE_CUT_LIST_PROPERTY_NAMES
         )
     return {str(name): _read_property(manager, str(name)) for name in names}
 
@@ -523,7 +573,7 @@ def _cut_list_folders(model) -> list:
                 continue
             out.append(str(get_com_member(feature, "Name") or ""))
         return out
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -548,17 +598,21 @@ def _read_cut_list_folders(model) -> list:
         seen_names.add(feature_name)
         body_folder = get_com_member(feature, "GetSpecificFeature2")
         manager = get_com_member(feature, "CustomPropertyManager")
-        folders.append({
-            "name": feature_name,
-            "type": type_name,
-            "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0) if body_folder else 0,
-            #: ★★★ **关键区别**：★ 这里**没有** `UpdateCutList` ⇒ ★ `update_ok` 如实记 `
-            #: None`
-            #:   （★ 而**不是** `False` —— ★ 因为"没做"与"做了但失败"是两件事）✓
-            "update_ok": None,
-            "update_attempted": False,
-            "properties": read_property_manager(manager) if manager else {},
-        })
+        folders.append(
+            {
+                "name": feature_name,
+                "type": type_name,
+                "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0)
+                if body_folder
+                else 0,
+                #: ★★★ **关键区别**：★ 这里**没有** `UpdateCutList` ⇒ ★ `update_ok` 如实记 `
+                #: None`
+                #:   （★ 而**不是** `False` —— ★ 因为"没做"与"做了但失败"是两件事）✓
+                "update_ok": None,
+                "update_attempted": False,
+                "properties": read_property_manager(manager) if manager else {},
+            }
+        )
     return folders
 
 
@@ -575,20 +629,32 @@ def update_cut_list(model) -> list[dict[str, Any]]:
             continue
         seen_names.add(feature_name)
         body_folder = get_com_member(feature, "GetSpecificFeature2")
-        update_ok = bool(call_com_member(body_folder, "UpdateCutList")) if body_folder else False
+        update_ok = (
+            bool(call_com_member(body_folder, "UpdateCutList"))
+            if body_folder
+            else False
+        )
         manager = get_com_member(feature, "CustomPropertyManager")
-        folders.append({
-            "name": feature_name,
-            "type": type_name,
-            "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0) if body_folder else 0,
-            "update_ok": update_ok,
-            "properties": read_property_manager(manager) if manager else {},
-        })
+        folders.append(
+            {
+                "name": feature_name,
+                "type": type_name,
+                "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0)
+                if body_folder
+                else 0,
+                "update_ok": update_ok,
+                "properties": read_property_manager(manager) if manager else {},
+            }
+        )
     return folders
 
 
-def weldment_evidence(model, *, create_missing_cut_list: bool = False,
-                      update_cut_list_too: bool | None = None) -> dict[str, Any]:
+def weldment_evidence(
+    model,
+    *,
+    create_missing_cut_list: bool = False,
+    update_cut_list_too: bool | None = None,
+) -> dict[str, Any]:
     """@brief 回读结构构件、实体数量和 SW2024+ 配置切割清单项目。
 
     ★★★★ 2026-10-04（接手轮）**修掉「标注为只读、实际会改模型」** ——
@@ -616,7 +682,11 @@ def weldment_evidence(model, *, create_missing_cut_list: bool = False,
     #: ★★★★ 默认：★ **只有"建了缺失清单"时才顺带更新** ——
     #:   而**纯回读路径（`create_missing_cut_list=False`）不再写模型** ✓
     #:   （★ 旧代码是**无条件**调 `update_cut_list` ⇒ ★ 那是本条病灶）
-    do_update = bool(create_missing_cut_list) if update_cut_list_too is None else bool(update_cut_list_too)
+    do_update = (
+        bool(create_missing_cut_list)
+        if update_cut_list_too is None
+        else bool(update_cut_list_too)
+    )
     if do_update:
         folders = update_cut_list(model)
     else:
@@ -633,7 +703,9 @@ def weldment_evidence(model, *, create_missing_cut_list: bool = False,
         if key not in seen_features:
             seen_features.add(key)
             features.append(row)
-    configuration = get_com_member(get_com_member(model, "ConfigurationManager"), "ActiveConfiguration")
+    configuration = get_com_member(
+        get_com_member(model, "ConfigurationManager"), "ActiveConfiguration"
+    )
     cut_list_items = []
     try:
         items = _as_tuple(get_com_member(configuration, "GetCutListItems"))
@@ -641,10 +713,12 @@ def weldment_evidence(model, *, create_missing_cut_list: bool = False,
         items = ()
     for index, item in enumerate(items, start=1):
         manager = get_com_member(item, "CustomPropertyManager")
-        cut_list_items.append({
-            "index": index,
-            "properties": read_property_manager(manager) if manager else {},
-        })
+        cut_list_items.append(
+            {
+                "index": index,
+                "properties": read_property_manager(manager) if manager else {},
+            }
+        )
 
     bodies = _as_tuple(get_com_member(model, "GetBodies2", SW_SOLID_BODY, False))
     feature_types = [item["type"] for item in features]
@@ -656,7 +730,9 @@ def weldment_evidence(model, *, create_missing_cut_list: bool = False,
         "cut_list_folders": folders,
         "cut_list_items": cut_list_items,
         "has_weldment_feature": "WeldmentFeature" in feature_types,
-        "has_structural_member": any(item in {"StructuralMember", "WeldMemberFeat"} for item in feature_types),
+        "has_structural_member": any(
+            item in {"StructuralMember", "WeldMemberFeat"} for item in feature_types
+        ),
     }
 
 
@@ -665,7 +741,9 @@ def export_cut_list_csv(evidence: dict[str, Any], output_path: str | Path) -> Pa
     target = Path(output_path).expanduser().resolve()
     target.parent.mkdir(parents=True, exist_ok=True)
     rows = evidence.get("cut_list_folders") or evidence.get("cut_list_items") or []
-    property_names = sorted({name for row in rows for name in row.get("properties", {})})
+    property_names = sorted(
+        {name for row in rows for name in row.get("properties", {})}
+    )
     columns = ["index", "name", "body_count", *property_names]
     with target.open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns)
@@ -816,7 +894,7 @@ def configure_member_profile(
 # ions` **不同因**）；
 # ★ ② `EntitiesToMate` 试了**三条实体路**（★ 随便两个面 / 两个圆柱面 / 另一对圆柱面）⇒ ★
 #  **全回 None**；
-# ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★ 
+# ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★
 # 与 263 同族）。
 # ★ ④ 「预选 + Mark 1」那条臂 ⇒ ★ **选中 0 个**（★ 装配里选面**没选上**）⇒ ★★ **该臂不成
 # 立**（★ 不拿它当证据）。
@@ -857,7 +935,8 @@ def create_profile_center_mate(
     mate_data = call_assembly_doc(model, "CreateMateData", SW_MATE_PROFILE_CENTER)
     if mate_data is None:
         raise RuntimeError(
-            f"IAssemblyDoc.CreateMateData({SW_MATE_PROFILE_CENTER}) 未返回配合数据对象")
+            f"IAssemblyDoc.CreateMateData({SW_MATE_PROFILE_CENTER}) 未返回配合数据对象"
+        )
 
     set_com_member(mate_data, "EntitiesToMate", entities)
     set_com_member(mate_data, "MateAlignment", int(mate_alignment))
@@ -929,7 +1008,9 @@ def configure_split_member(
 #   需按该版本官方文档调整。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool = False):
+def create_cut_list(
+    model, sort_options=None, *, collect_identical_bodies: bool = False
+):
     """插入切割清单（零件/型材下料表）。
 
     ⚠⚠ **本函数在当前后端（pywin32 迟到绑定）上跑不通**（2026-10-01 轮 95 真机实测）：
@@ -944,8 +1025,9 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
     ⚠ 本函数**未验证可用**（从没跑通过）—— **不要**据此认为切割清单功能已就绪。
     """
     if sort_options is not None:
-        set_com_member(sort_options, "CollectIdenticalBodies",
-                       bool(collect_identical_bodies))
+        set_com_member(
+            sort_options, "CollectIdenticalBodies", bool(collect_identical_bodies)
+        )
     manager = get_com_member(model, "FeatureManager")
     # ⚑ **判空再调**：`get_com_member` 取不到时返回 `None`，
     # 直接 `member(*args)` 会抛「'NoneType' object is not callable」——**看不出是成员取不
@@ -977,12 +1059,12 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
     fname = None
     try:
         fname = str(get_com_member(feature, "Name") or "")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         fname = None
     folders = None
     try:
         folders = _cut_list_folders(model)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         folders = None
     return {
         #: ★★ 判据 = **回对象非 None**（对象类）**且** **拿到了特征名**（读数类）⇒ ★ 跨
@@ -994,14 +1076,14 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
         "feature_name": fname,
         "cut_list_folders": folders,
         "verified_by": "★ `InsertWeldmentCutList2` 回特征 **and** 该特征有名字"
-                       "（★ doc 承诺「回切割清单文件夹当证据」⇒ 现在回 dict）",
+        "（★ doc 承诺「回切割清单文件夹当证据」⇒ 现在回 dict）",
     }
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IFeatureManager 段
-# 定位:   焊接文件夹（子装配层级）插入。官方签名：Feature InsertSubWeldFolder2(Object 
+# 定位:   焊接文件夹（子装配层级）插入。官方签名：Feature InsertSubWeldFolder2(Object
 #           Folder)   ← 1 参Feature InsertSubWeldFolder()                ← 0 参（无参旧
 #           版）
 #         本函数走 2 参版以支持指定父文件夹；不传 folder 时传 None。
@@ -1016,6 +1098,7 @@ def create_sub_weld_folder(model, folder=None):
     if feature is None:
         raise RuntimeError("InsertSubWeldFolder2 未返回特征")
     return feature
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -1045,7 +1128,9 @@ def create_sub_weld_folder(model, folder=None):
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def create_structural_member_from_sketch(model, sketch_name: str, profile_path, **kwargs):
+def create_structural_member_from_sketch(
+    model, sketch_name: str, profile_path, **kwargs
+):
     """★ **用一段草图路径 + 一个焊件轮廓**建结构构件，并**用特征树回读**。
 
     ★ 这是**段 2 的第一步封装**：★ 它把"**取线段 → 建构件 → 回读**"封在一起，
@@ -1079,8 +1164,10 @@ def create_structural_member_from_sketch(model, sketch_name: str, profile_path, 
         "feature": str(safe_get_com_member(made, "Name") or ""),
         "segments": len(segments),
         "new_type_names": sorted(after - before),
-        "note": ("★ 判据是**特征树**（★ 不是计数）：★ `new_type_names` 应含 "
-                 "`WeldmentFeature` 与 `WeldMemberFeat`"),
+        "note": (
+            "★ 判据是**特征树**（★ 不是计数）：★ `new_type_names` 应含 "
+            "`WeldmentFeature` 与 `WeldMemberFeat`"
+        ),
     }
 
 
@@ -1100,9 +1187,17 @@ def create_structural_member_from_sketch(model, sketch_name: str, profile_path, 
 # ★★ 符号名来自 `…\english\gtol.sym` 的**短名**（`BUTT` / `FILL` / `PLUG` …）；
 #   ★ 前几个名字**可能抛**（★ 探针实测）⇒ ★ 由调用方给 `symbol`、★ 并把实际用的名字回报 ✓
 # ★★ 前置 = 「在**零件**上选一个面 / 边 / 草图段」（★ 官方示例的 Preconditions 逐字）✓
-def insert_weld_symbol_report(model, *, face_index: int = 0, top: bool = False, left: str = "Left",
-                              symbol: str = "BUTT", right: str = "Right",
-                              stagger: str = "Stagger", contour: int = 0):
+def insert_weld_symbol_report(
+    model,
+    *,
+    face_index: int = 0,
+    top: bool = False,
+    left: str = "Left",
+    symbol: str = "BUTT",
+    right: str = "Right",
+    stagger: str = "Stagger",
+    contour: int = 0,
+):
     """插入焊接符号（`IModelDoc2::InsertWeldSymbol3` + `IWeldSymbol::SetText`）—— ★ 判据用回读。
 
     参数:
@@ -1123,46 +1218,63 @@ def insert_weld_symbol_report(model, *, face_index: int = 0, top: bool = False, 
 
     out: dict = {
         "official": "IModelDoc2.InsertWeldSymbol3",
-        "note": ("★ 真入口是 `InsertWeldSymbol3()`（**零参**）—— ★★ 不是 "
-                 "`IDrawingDoc::InsertWeldSymbol`（10 参那条**静默无效**）✓"),
+        "note": (
+            "★ 真入口是 `InsertWeldSymbol3()`（**零参**）—— ★★ 不是 "
+            "`IDrawingDoc::InsertWeldSymbol`（10 参那条**静默无效**）✓"
+        ),
         "face_index": int(face_index),
         "symbol_requested": symbol,
     }
     #: ★ 前置：★ 选一个面（★ `append` 默认 `False` ⇒ 正好清空后单选 ✓）
     try:
         SS.select_entity_by_index(model, "FACE", int(face_index))
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "★ 前置选择失败：%s: %s" % (type(e).__name__, str(e)[:130])
         return out
     out["selection_count"] = SS.get_selection_count(model)
     if not out["selection_count"]:
         out["ok"] = False
-        out["error"] = "★ 前置选择无效：选区计数 = 0（★ 那与「符号建不出来」是两件事 —— 事实 8）"
+        out["error"] = (
+            "★ 前置选择无效：选区计数 = 0（★ 那与「符号建不出来」是两件事 —— 事实 8）"
+        )
         return out
 
     #: ★ ① 建符号（★ **零参** ✓）
     ws_obj = None
     try:
         ws_obj = get_com_member(model, "InsertWeldSymbol3")
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
-        out["error"] = "★ `InsertWeldSymbol3()` 抛：%s: %s" % (type(e).__name__, str(e)[:130])
+        out["error"] = "★ `InsertWeldSymbol3()` 抛：%s: %s" % (
+            type(e).__name__,
+            str(e)[:130],
+        )
         return out
     out["symbol_object_created"] = ws_obj is not None
     if ws_obj is None:
         out["ok"] = False
-        out["error"] = ("★ `InsertWeldSymbol3()` 回 `None` ⇒ ★ 前置仍未满足"
-                        "（★ 官方 Preconditions 逐字：「select a face, edge, or sketch segment」）")
+        out["error"] = (
+            "★ `InsertWeldSymbol3()` 回 `None` ⇒ ★ 前置仍未满足"
+            "（★ 官方 Preconditions 逐字：「select a face, edge, or sketch segment」）"
+        )
         return out
 
     #: ★ ② `SetText`（★ 6 参逐位：★ Top · Left · Symbol · Right · Stagger · Contour ✓）
     set_ret = None
     set_exc = None
     try:
-        set_ret = get_com_member(ws_obj, "SetText", bool(top), str(left), str(symbol),
-                                 str(right), str(stagger), int(contour))
-    except Exception as e:                                              # noqa: BLE001
+        set_ret = get_com_member(
+            ws_obj,
+            "SetText",
+            bool(top),
+            str(left),
+            str(symbol),
+            str(right),
+            str(stagger),
+            int(contour),
+        )
+    except Exception as e:  # noqa: BLE001
         set_exc = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["set_text_returned"] = str(set_ret)
     out["set_text_exception"] = set_exc
@@ -1172,21 +1284,26 @@ def insert_weld_symbol_report(model, *, face_index: int = 0, top: bool = False, 
     for m in ("GetLineCount", "GetTextCount", "IsAttached"):
         try:
             rb[m] = get_com_member(ws_obj, m)
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             rb[m] = None
-    out["readback"] = {k: (v if isinstance(v, (int, bool)) else str(v)[:40]) for k, v in rb.items()}
+    out["readback"] = {
+        k: (v if isinstance(v, (int, bool)) else str(v)[:40]) for k, v in rb.items()
+    }
 
     lines = rb.get("GetLineCount")
     texts = rb.get("GetTextCount")
     attached = rb.get("IsAttached")
     out["ok"] = bool(isinstance(lines, int) and lines > 0)
     if out["ok"]:
-        out["verdict"] = ("★★★★★ **建成** —— ★ `GetLineCount = %r` · ★ `GetTextCount = %r` · "
-                          "★ `IsAttached = %r`（★ 回读、★ 不是信返回值 ✓）"
-                          % (lines, texts, attached))
+        out["verdict"] = (
+            "★★★★★ **建成** —— ★ `GetLineCount = %r` · ★ `GetTextCount = %r` · "
+            "★ `IsAttached = %r`（★ 回读、★ 不是信返回值 ✓）" % (lines, texts, attached)
+        )
     else:
-        out["error"] = ("★ 回读判据未过：`GetLineCount = %r` ⇒ ★ 符号名 **%r** 可能不在 "
-                        "`gtol.sym` 的短名表里（★ 探针实测：前几个名字会抛）—— "
-                        "★ 换一个短名重试；★ `SetText` 的返回值**证明不了任何事**（事实 8）✓"
-                        % (lines, symbol))
+        out["error"] = (
+            "★ 回读判据未过：`GetLineCount = %r` ⇒ ★ 符号名 **%r** 可能不在 "
+            "`gtol.sym` 的短名表里（★ 探针实测：前几个名字会抛）—— "
+            "★ 换一个短名重试；★ `SetText` 的返回值**证明不了任何事**（事实 8）✓"
+            % (lines, symbol)
+        )
     return out

@@ -29,6 +29,7 @@ if checked == 0:
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -58,16 +59,22 @@ def _default_raw() -> str:
     if not m:
         return "?"
     raw = m.group(1).strip()
-    inner = re.search(r"""["']([^"']+)["']""", raw)      # 取引号里的真路径
+    inner = re.search(r"""["']([^"']+)["']""", raw)  # 取引号里的真路径
     if inner:
         return inner.group(1)
-    return raw              # 兜底：不是字面量就原样传（可能是别的表达式）
+    return raw  # 兜底：不是字面量就原样传（可能是别的表达式）
 
 
 def _run(args: list) -> tuple:
-    p = subprocess.run([sys.executable, str(GATE)] + args, capture_output=True, text=True,
-                       encoding="utf-8", errors="replace", cwd=str(REPO),
-                       stdin=subprocess.DEVNULL)
+    p = subprocess.run(
+        [sys.executable, str(GATE)] + args,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(REPO),
+        stdin=subprocess.DEVNULL,
+    )
     return p.returncode, (p.stdout or "")
 
 
@@ -88,8 +95,10 @@ def main() -> int:
     empty = Path(tempfile.mkdtemp()) / "emptyrepo"
     empty.mkdir()
     rc2, out2 = _run(["--repo", str(empty), "--raw", _default_raw()])
-    print("     反射文件行: %s" % next((l.strip() for l in out2.splitlines() if "反射文件" in l),
-                                        "（无）")[:96])
+    print(
+        "     反射文件行: %s"
+        % next((l.strip() for l in out2.splitlines() if "反射文件" in l), "（无）")[:96]
+    )
     for l in out2.splitlines():
         if "SKIP" in l or "[FAIL]" in l or "跑不了" in l:
             print("     %s" % l.strip()[:96])

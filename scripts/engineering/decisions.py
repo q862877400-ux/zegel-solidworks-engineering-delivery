@@ -1,4 +1,5 @@
 """★ Q1 · 决策追责 + 三态晋升 + 同错两次诊断（规格 325 的 R6/R7/R9）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -59,9 +60,15 @@ STEP_AUTHORITY = {
 class DecisionError(Exception):
     """★ 决策层失败（★ 带封闭码）。"""
 
-    CODES = ("bad-state", "bad-proposer", "illegal-transition",
-             "not-authorized", "missing-field", "already-decided",
-             "hidden-cot")
+    CODES = (
+        "bad-state",
+        "bad-proposer",
+        "illegal-transition",
+        "not-authorized",
+        "missing-field",
+        "already-decided",
+        "hidden-cot",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法决策拒绝码：%r" % code
@@ -75,8 +82,13 @@ class DecisionError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★★ Q1 L24 逐字要的**五要素**
-REQUIRED_DECISION_FIELDS = ("input_version", "alternatives",
-                            "visible_rationale", "basis", "affected_nodes")
+REQUIRED_DECISION_FIELDS = (
+    "input_version",
+    "alternatives",
+    "visible_rationale",
+    "basis",
+    "affected_nodes",
+)
 
 
 @dataclass
@@ -123,35 +135,52 @@ class Decision:
             #:   ★ 判据：**收进来就拒**（★ 不是"建议别写"）
             raise DecisionError(
                 "hidden-cot",
-                "★★ 不许记录隐藏思维链（★ Q1 L24 逐字：「无需记录模型隐藏思维链」）")
+                "★★ 不许记录隐藏思维链（★ Q1 L24 逐字：「无需记录模型隐藏思维链」）",
+            )
 
     def to_dict(self) -> dict:
-        return {"decision_id": self.decision_id, "state": self.state,
-                "proposer": self.proposer,
-                "input_version": self.input_version,
-                "alternatives": list(self.alternatives),
-                "visible_rationale": self.visible_rationale,
-                "basis": list(self.basis),
-                "affected_nodes": list(self.affected_nodes),
-                "★": "★ 只记**可见理由**，★ 不记隐藏思维链"}
+        return {
+            "decision_id": self.decision_id,
+            "state": self.state,
+            "proposer": self.proposer,
+            "input_version": self.input_version,
+            "alternatives": list(self.alternatives),
+            "visible_rationale": self.visible_rationale,
+            "basis": list(self.basis),
+            "affected_nodes": list(self.affected_nodes),
+            "★": "★ 只记**可见理由**，★ 不记隐藏思维链",
+        }
 
 
-def make_decision(*, proposer: str, input_version: str, alternatives: list,
-                  visible_rationale: str, basis: list,
-                  affected_nodes: list) -> Decision:
+def make_decision(
+    *,
+    proposer: str,
+    input_version: str,
+    alternatives: list,
+    visible_rationale: str,
+    basis: list,
+    affected_nodes: list,
+) -> Decision:
     """★ 造一个**起始态为 `Proposal`** 的决策（★ R6）。
 
     ★★ 判据：**起始态永远是 `Proposal`** —— ★ 无论谁提的
       （★ Q1 L22 逐字：「LLM 输出**都是** `Proposal`」）。
     """
     d = Decision(
-        proposer=proposer, input_version=input_version,
-        alternatives=list(alternatives), visible_rationale=visible_rationale,
-        basis=list(basis), affected_nodes=list(affected_nodes))
+        proposer=proposer,
+        input_version=input_version,
+        alternatives=list(alternatives),
+        visible_rationale=visible_rationale,
+        basis=list(basis),
+        affected_nodes=list(affected_nodes),
+    )
     d.validate()
     #: ★★ `decision_id` = **五要素的摘要**（★ 可复核、不可伪造）
-    blob = json.dumps({k: getattr(d, k) for k in REQUIRED_DECISION_FIELDS},
-                      ensure_ascii=False, sort_keys=True)
+    blob = json.dumps(
+        {k: getattr(d, k) for k in REQUIRED_DECISION_FIELDS},
+        ensure_ascii=False,
+        sort_keys=True,
+    )
     d.decision_id = "dec-" + hashlib.sha256(blob.encode("utf-8")).hexdigest()[:12]
     return d
 
@@ -159,6 +188,7 @@ def make_decision(*, proposer: str, input_version: str, alternatives: list,
 #: ══════════════════════════════════════════════════════════════════════
 # 三、晋升（★ R7 —— ★ 三态闸门）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Promotion:
@@ -170,12 +200,19 @@ class Promotion:
     detail: str = ""
 
     def to_dict(self) -> dict:
-        return {"ok": self.ok, "from": self.from_state, "to": self.to_state,
-                "by": self.by, "code": self.code, "detail": self.detail}
+        return {
+            "ok": self.ok,
+            "from": self.from_state,
+            "to": self.to_state,
+            "by": self.by,
+            "code": self.code,
+            "detail": self.detail,
+        }
 
 
-def promote(d: Decision, to_state: str, *, by: str,
-            code_verdict: dict | None = None) -> Promotion:
+def promote(
+    d: Decision, to_state: str, *, by: str, code_verdict: dict | None = None
+) -> Promotion:
     """★★ **晋升闸门**（★ R7 —— ★ Q1 L22 逐字）。
 
     ★★ 判据（★ 四条，★ 最严的在前）：
@@ -190,28 +227,51 @@ def promote(d: Decision, to_state: str, *, by: str,
       ```
     """
     if to_state not in STATES:
-        return Promotion(False, d.state, to_state, by, "bad-state",
-                         "★ 未知目标态：%r" % to_state)
+        return Promotion(
+            False, d.state, to_state, by, "bad-state", "★ 未知目标态：%r" % to_state
+        )
     if to_state not in TRANSITIONS.get(d.state, ()):
-        return Promotion(False, d.state, to_state, by, "illegal-transition",
-                         "★★ %s → %s 不在允许的迁移里（★ 不能跳级）"
-                         % (d.state, to_state))
+        return Promotion(
+            False,
+            d.state,
+            to_state,
+            by,
+            "illegal-transition",
+            "★★ %s → %s 不在允许的迁移里（★ 不能跳级）" % (d.state, to_state),
+        )
     allowed = STEP_AUTHORITY.get((d.state, to_state), ())
     if by not in allowed:
         return Promotion(
-            False, d.state, to_state, by, "not-authorized",
+            False,
+            d.state,
+            to_state,
+            by,
+            "not-authorized",
             "★★ %s → %s 只能由 %s 做，而你是 %r"
             "（★ Q1 L22：「LLM 输出都是 Proposal，不能自行晋升」）"
-            % (d.state, to_state, list(allowed), by))
+            % (d.state, to_state, list(allowed), by),
+        )
     if to_state == VALIDATED:
         #: ★★ ④ **必须带代码裁决**，且**必须是 PASS**
         if not code_verdict:
-            return Promotion(False, d.state, to_state, by, "not-authorized",
-                             "★★ 进 `Validated` 必须带**代码裁决结果**")
+            return Promotion(
+                False,
+                d.state,
+                to_state,
+                by,
+                "not-authorized",
+                "★★ 进 `Validated` 必须带**代码裁决结果**",
+            )
         v = str(code_verdict.get("verdict") or code_verdict.get("status") or "")
         if v.upper() not in ("PASS", "OK", "TRUE"):
-            return Promotion(False, d.state, to_state, by, "not-authorized",
-                             "★ 代码裁决不是 PASS（★ 是 %r）" % v)
+            return Promotion(
+                False,
+                d.state,
+                to_state,
+                by,
+                "not-authorized",
+                "★ 代码裁决不是 PASS（★ 是 %r）" % v,
+            )
     d.state = to_state
     return Promotion(True, d.state, to_state, by, "", "★ 晋升成功")
 
@@ -241,26 +301,38 @@ class SameErrorTrigger:
         n = int(self.counts.get(error_code, 0)) + 1
         self.counts[error_code] = n
         triggered = n >= self.threshold
-        return {"error_code": error_code, "count": n,
-                "triggered": triggered,
-                "action": "DIAGNOSIS_REQUIRED" if triggered else "continue",
-                #: ★★ **显式写"不判根因"** —— ★ 让这件事**看得见**
-                "root_cause": None,
-                "★": ("★ 只**触发诊断**；★ **不判根因**"
-                       "（★ Q1 L32 逐字：「不转成「一定是方法选错」的根因判定」）")}
+        return {
+            "error_code": error_code,
+            "count": n,
+            "triggered": triggered,
+            "action": "DIAGNOSIS_REQUIRED" if triggered else "continue",
+            #: ★★ **显式写"不判根因"** —— ★ 让这件事**看得见**
+            "root_cause": None,
+            "★": (
+                "★ 只**触发诊断**；★ **不判根因**"
+                "（★ Q1 L32 逐字：「不转成「一定是方法选错」的根因判定」）"
+            ),
+        }
 
     def to_dict(self) -> dict:
         #: ★★ **结构性保证**：`to_dict()` 里**没有** `root_cause` 这个键
-        return {"threshold": self.threshold, "counts": dict(self.counts),
-                "★": "★ 本对象**不产出根因**（★ 字段根本不存在）"}
+        return {
+            "threshold": self.threshold,
+            "counts": dict(self.counts),
+            "★": "★ 本对象**不产出根因**（★ 字段根本不存在）",
+        }
 
 
-def check_same_error(observations: list, *,
-                     threshold: int = SAME_ERROR_THRESHOLD) -> dict:
+def check_same_error(
+    observations: list, *, threshold: int = SAME_ERROR_THRESHOLD
+) -> dict:
     """★ 由一串观察**算**触发（★ 便于测试）。"""
     t = SameErrorTrigger(threshold=threshold)
     last: dict = {}
     for code in observations:
         last = t.observe(code)
-    return {"last": last, "counts": t.counts,
-            "triggered": [c for c, n in t.counts.items() if n >= threshold]}
+    return {
+        "last": last,
+        "counts": t.counts,
+        "triggered": [c for c, n in t.counts.items() if n >= threshold],
+    }

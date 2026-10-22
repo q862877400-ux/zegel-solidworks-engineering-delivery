@@ -27,6 +27,7 @@ r"""@brief 真机证据：**读文件自定义属性 2 个工具**（砌墙 W3 /
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -40,7 +41,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "custom-property-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "custom-property-evidence.json"
+)
 
 #: `swCustomInfoType_e.swCustomInfoText` = 30（VT_LPSTR）—— 官方示例逐字列出
 SW_CUSTOM_INFO_TEXT = 30
@@ -49,8 +52,11 @@ PROP_VALUE = "evidence-value-133"
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "custom_property_read", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "custom_property_read",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -70,10 +76,12 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
-        ev["steps"]["part"] = {"title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["part"] = {
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
+        }
 
         #: ② ★★ 决定性用例：先写一个（只为造出已知状态），再读回来
         mgr = cp.custom_property_manager(doc)
@@ -82,9 +90,17 @@ def main() -> int:
         after = cp.custom_property_count(doc)
         one = cp.custom_property(doc, PROP_NAME)
         ev["steps"]["readback"] = {
-            "ok": one.get("value") == PROP_VALUE and one.get("type") == "text" and after >= before,
-            "count_before": before, "count_after": after,
-            "got": one, "wrote": {"name": PROP_NAME, "value": PROP_VALUE, "type_code": SW_CUSTOM_INFO_TEXT},
+            "ok": one.get("value") == PROP_VALUE
+            and one.get("type") == "text"
+            and after >= before,
+            "count_before": before,
+            "count_after": after,
+            "got": one,
+            "wrote": {
+                "name": PROP_NAME,
+                "value": PROP_VALUE,
+                "type_code": SW_CUSTOM_INFO_TEXT,
+            },
             "★": "先 Add3 再读回来 —— 读到才说明整条路通（本批补的正是「能写不能读」）",
         }
         ok = ok and ev["steps"]["readback"]["ok"]
@@ -94,7 +110,8 @@ def main() -> int:
         names = [p["name"] for p in allp["properties"]]
         ev["steps"]["list_all"] = {
             "ok": allp["count_read"] == allp["count_reported"] and PROP_NAME in names,
-            "count_reported": allp["count_reported"], "count_read": allp["count_read"],
+            "count_reported": allp["count_reported"],
+            "count_read": allp["count_read"],
             "wrote_visible": PROP_NAME in names,
             "sample_names": names[:8],
         }
@@ -109,33 +126,39 @@ def main() -> int:
                 "★": "官方 Get 对不存在的名字回空串 ⇒ 不抛异常是对的（不是静默失败，是原义如此）",
             }
             ok = ok and ev["steps"]["negative_missing_name"]["ok"]
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["negative_missing_name"] = {"ok": False, "raised": str(exc)[:80],
-                                                    "★": "★ 抛了异常 —— 与官方 Get 的形态不符"}
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["negative_missing_name"] = {
+                "ok": False,
+                "raised": str(exc)[:80],
+                "★": "★ 抛了异常 —— 与官方 Get 的形态不符",
+            }
             ok = False
 
         #: ⑤ 负例 B：空属性名 ⇒ 必须 ValueError
         try:
             cp.custom_property(doc, "   ")
-            ev["steps"]["negative_empty_name"] = {"ok": False, "★": "空名字**没有抛错**"}
+            ev["steps"]["negative_empty_name"] = {
+                "ok": False,
+                "★": "空名字**没有抛错**",
+            }
             ok = False
-        except ValueError as exc:                              # noqa: BLE001
+        except ValueError as exc:  # noqa: BLE001
             ev["steps"]["negative_empty_name"] = {"ok": True, "msg": str(exc)[:70]}
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -146,7 +169,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

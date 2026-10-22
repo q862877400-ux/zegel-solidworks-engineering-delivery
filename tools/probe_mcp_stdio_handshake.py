@@ -1,4 +1,5 @@
 """★ 探针：对我们自己的 MCP 服务器做一次**真 JSON-RPC 握手**（★ 不连 SolidWorks）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 213 之后的「把工具挂进 DSH」前置验证）
 # 文件:   tools/probe_mcp_stdio_handshake.py
@@ -34,13 +35,13 @@ from pathlib import Path
 #: 族）✓
 #:   ★★ 判据（★ 加这一行之前/之后的**同一条命令**）：
 #:     · `python tools/probe_mcp_stdio_handshake.py` ⇒ ★ **崩在打印上**
-#: · `$env:PYTHONIOENCODING='utf-8'` 后再跑 ⇒ ★ **`tools/list ⇒ 504` 且判定「可以挂」** 
+#: · `$env:PYTHONIOENCODING='utf-8'` 后再跑 ⇒ ★ **`tools/list ⇒ 504` 且判定「可以挂」**
 #: ✓
 #: ⇒ ★ 与 `scripts/check_refuted_patterns.py` / `scripts/check_relative_imports.py` 的既
 #: 有修法**逐字同型** ✓
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
-except Exception:                                                         # noqa: BLE001
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:  # noqa: BLE001
     pass
 
 ROOT = Path(Path(__file__).resolve().parents[1])
@@ -78,8 +79,12 @@ def _rpc(proc, obj, timeout=90):
 
 
 def main() -> int:
-    out: dict = {"purpose": "★ 改 DSH 配置前的**前置闸**：我们的 MCP 能不能起、有几个工具",
-                 "python": PYTHON, "server": str(SERVER), "expected_tools": EXPECTED_TOOLS}
+    out: dict = {
+        "purpose": "★ 改 DSH 配置前的**前置闸**：我们的 MCP 能不能起、有几个工具",
+        "python": PYTHON,
+        "server": str(SERVER),
+        "expected_tools": EXPECTED_TOOLS,
+    }
     if not SERVER.is_file():
         print("★ 服务器文件不存在：%s" % SERVER)
         return 2
@@ -88,37 +93,57 @@ def main() -> int:
     proc = subprocess.Popen(
         [PYTHON, str(SERVER)],
         cwd=str(ROOT),
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        text=True, encoding="utf-8", errors="replace", bufsize=1,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        bufsize=1,
     )
     try:
         #: ── ① initialize ──────────────────────────────────────────────────
         try:
-            r1 = _rpc(proc, {"jsonrpc": "2.0", "id": 1, "method": "initialize",
-                             "params": {"protocolVersion": "2024-11-05",
-                                        "capabilities": {},
-                                        "clientInfo": {"name": "dsh-preflight", "version": "0"}}})
+            r1 = _rpc(
+                proc,
+                {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {},
+                        "clientInfo": {"name": "dsh-preflight", "version": "0"},
+                    },
+                },
+            )
             out["initialize_ok"] = "result" in r1
             si = (r1.get("result") or {}).get("serverInfo") or {}
             out["server_info"] = si
             print("★ ① initialize ⇒ ok=%r · serverInfo=%r" % (out["initialize_ok"], si))
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             out["initialize_ok"] = False
             out["initialize_error"] = "%s: %s" % (type(e).__name__, str(e)[:200])
             print("★ ① initialize ⇒ ✗ %s" % out["initialize_error"])
             return 3
 
         #: ★ 协议要求：initialize 之后发 `notifications/initialized` ✓
-        proc.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n")
+        proc.stdin.write(
+            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n"
+        )
         proc.stdin.flush()
 
         #: ── ② tools/list ──────────────────────────────────────────────────
-        r2 = _rpc(proc, {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
+        r2 = _rpc(
+            proc, {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
+        )
         tools = ((r2.get("result") or {}).get("tools")) or []
         names = [t.get("name", "") for t in tools]
         out["tool_count"] = len(names)
         out["sample"] = names[:5]
-        out["unknown_prefix"] = [n for n in names if not n.startswith(KNOWN_PREFIXES)][:8]
+        out["unknown_prefix"] = [n for n in names if not n.startswith(KNOWN_PREFIXES)][
+            :8
+        ]
         by_prefix: dict = {}
         for n in names:
             for pre in KNOWN_PREFIXES:
@@ -126,8 +151,10 @@ def main() -> int:
                     by_prefix[pre] = by_prefix.get(pre, 0) + 1
                     break
         out["by_prefix"] = by_prefix
-        print("★ ② tools/list ⇒ **%d** 个工具（★ 期望 %d = 459 声明式 + 45 装饰器）"
-              % (len(names), EXPECTED_TOOLS))
+        print(
+            "★ ② tools/list ⇒ **%d** 个工具（★ 期望 %d = 459 声明式 + 45 装饰器）"
+            % (len(names), EXPECTED_TOOLS)
+        )
         print("     ★ 按前缀分：%r" % by_prefix)
         print("     样例 ⇒ %r" % names[:5])
 
@@ -141,12 +168,15 @@ def main() -> int:
         out["verdict"] = (
             "★★★★★ **可以挂** —— ★ 服务器起得来 · ★ **%d 个工具**（★ 与 459+45 对账一致 ✓）· "
             "★ 命名前缀全部已知 ✓ ⇒ ★★ 改 DSH 配置**不会**卡住宿主 boot ✓" % len(names)
-            if ok else
-            "★★ **不要挂**：★ 判据 %r ⇒ ★ 先查清楚再动 DSH 配置（★ 卡 boot 是硬事故）✗"
-            % out["verdicts"])
+            if ok
+            else "★★ **不要挂**：★ 判据 %r ⇒ ★ 先查清楚再动 DSH 配置（★ 卡 boot 是硬事故）✗"
+            % out["verdicts"]
+        )
         print("★★★ 判定 ⇒ %s" % out["verdict"])
         p = ROOT / "output" / "mcp-stdio-handshake.json"
-        p.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        p.write_text(
+            json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print("★ 证据：%s" % p)
         return 0 if ok else 1
     finally:
@@ -154,12 +184,12 @@ def main() -> int:
         try:
             proc.kill()
             proc.wait(timeout=10)
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         err = ""
         try:
             err = (proc.stderr.read() or "")[-800:]
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if err.strip():
             print("── 服务器 stderr（末 800 字）──\n%s" % err)
@@ -167,12 +197,15 @@ def main() -> int:
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "mcp-stdio-handshake-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "mcp-stdio-handshake-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

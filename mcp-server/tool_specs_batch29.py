@@ -62,13 +62,19 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH29"]
 
-_STUDY = ("Name of an EXISTING simulation study (e.g. \"Study 1\" / \"算例 1\"). "
-          "⚠ Leave empty to use the FIRST study in the document.")
-_SEL = ("Declarative face/entity selection the load applies to: '__current_selection__' "
-        "or 'index:<n>' (the n-th face on the body, 0-based). ★ The faces are assembled into "
-        "the official DispArray by the capability layer, so the selection is made before the call.")
-_PTYPE = ("Pressure type: swsPressureType_e (0 = normal to each face, 1 = use reference "
-          "geometry). ★ The result is judged by read-back, not by a return object.")
+_STUDY = (
+    'Name of an EXISTING simulation study (e.g. "Study 1" / "算例 1"). '
+    "⚠ Leave empty to use the FIRST study in the document."
+)
+_SEL = (
+    "Declarative face/entity selection the load applies to: '__current_selection__' "
+    "or 'index:<n>' (the n-th face on the body, 0-based). ★ The faces are assembled into "
+    "the official DispArray by the capability layer, so the selection is made before the call."
+)
+_PTYPE = (
+    "Pressure type: swsPressureType_e (0 = normal to each face, 1 = use reference "
+    "geometry). ★ The result is judged by read-back, not by a return object."
+)
 
 
 def _consumed(*names: str) -> dict:
@@ -93,7 +99,7 @@ def _select_face(params):
     return resolve_selection(_model(), params.selection, "FACE")
 
 
-def _derive_model(params):                                     # noqa: ARG001
+def _derive_model(params):  # noqa: ARG001
     """★ 把活动文档作为 `model=` 补进实参（能力层靠它把选区装成官方 `DispArray`）。"""
     return {"model": _model()}
 
@@ -101,8 +107,10 @@ def _derive_model(params):                                     # noqa: ARG001
 def _spec(name: str, title: str, function: str, doc: str, params: list) -> ToolSpec:
     """★ 四个载荷的**共同骨架**（★ 抽出来是为了让四处差异只剩 `name` / `function` / `doc`）。"""
     return ToolSpec(
-        name=name, title=title,
-        module="sw_simulation_loads", function=function,
+        name=name,
+        title=title,
+        module="sw_simulation_loads",
+        function=function,
         inject="manager",
         param_alias=_consumed("study_name", "selection"),
         pre_call=_select_face,
@@ -122,9 +130,11 @@ SPECS_BATCH29 = [
         "★ `ok` means the load/restraint count went up by exactly one — the criterion is "
         "read-back, never the return value. "
         "⚠ Requires the Simulation add-in; the first call loads it automatically.",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL),
-         Param("pressure_type", int, default=0, description=_PTYPE)],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+            Param("pressure_type", int, default=0, description=_PTYPE),
+        ],
     ),
     _spec(
         "solidworks_simulation_apply_torque",
@@ -134,8 +144,10 @@ SPECS_BATCH29 = [
         "static study and return a READ-BACK report (`count_before` / `count_after`). "
         "★ The result is judged by read-back, not by a return object. "
         "⚠ Requires the Simulation add-in.",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
         "solidworks_simulation_apply_gravity",
@@ -144,8 +156,10 @@ SPECS_BATCH29 = [
         "Apply a GRAVITY load to the selected entity of a static study and return a READ-BACK "
         "report. ⚠ The official parameter is a SINGLE entity (DispEntity), so only the FIRST "
         "entity of the selection is used. ★ Judged by read-back, not by a return object.",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
         "solidworks_simulation_apply_centrifugal_force",
@@ -154,7 +168,9 @@ SPECS_BATCH29 = [
         "Apply a CENTRIFUGAL FORCE to the selected entity of a static study and return a "
         "READ-BACK report. ⚠ The official parameter is a SINGLE entity, so only the FIRST "
         "entity of the selection is used. ★ Judged by read-back, not by a return object.",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
 ]

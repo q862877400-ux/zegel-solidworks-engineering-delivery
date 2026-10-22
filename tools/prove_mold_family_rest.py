@@ -14,7 +14,7 @@
 #   · `InsertMoldShutOffSurface()` —— **零参**
 # · `InsertMoldCoreCavitySolids(double Dist1, double Dist2, bool Setback, double Angle)`
 #  **4 参**
-# · 枚举两源一致：`swPartingSurfaceMoldParmTangent = 0` · `Normal = 1` · `Perpendicular 
+# · 枚举两源一致：`swPartingSurfaceMoldParmTangent = 0` · `Normal = 1` · `Perpendicular
 # = 4`；
 #     `swPartingSurfaceSharp = 1` · `Smooth = 2`
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -40,17 +40,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-family-rest-evidence.json")
-PARM_TANGENT = 0            # swPartingSurfaceMoldParmTangent
-SMOOTH_SHARP = 1            # swPartingSurfaceSharp
-MM = 0.001                  # 该族长度参数单位是米 ⇒ 毫米 * MM
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "mold-family-rest-evidence.json"
+)
+PARM_TANGENT = 0  # swPartingSurfaceMoldParmTangent
+SMOOTH_SHARP = 1  # swPartingSurfaceSharp
+MM = 0.001  # 该族长度参数单位是米 ⇒ 毫米 * MM
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_mold as M
     import sw_surface_features as SF
 
@@ -66,31 +73,47 @@ def main() -> int:
         extrude_boss(doc, sk, 25.0)
         ext = get_com_member(doc, "Extension")
         callout = sw_connect.create_empty_dispatch_variant()
-        ev["steps"]["doc"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         # ① 前置：分型线（★ mark=1 方向 + mark=4 按中点选边）
         doc.ClearSelection2(True)
         ext.SelectByID2("前视基准面", "PLANE", 0, 0, 0, False, 1, callout, 0)
         ms = []
-        for b in (get_com_member(doc, "GetBodies2", -1, True) or []):
-            for e in (get_com_member(b, "GetEdges") or []):
+        for b in get_com_member(doc, "GetBodies2", -1, True) or []:
+            for e in get_com_member(b, "GetEdges") or []:
                 try:
-                    a = [float(x) for x in get_com_member(
-                        get_com_member(e, "GetStartVertex"), "GetPoint")]
-                    c = [float(x) for x in get_com_member(
-                        get_com_member(e, "GetEndVertex"), "GetPoint")]
+                    a = [
+                        float(x)
+                        for x in get_com_member(
+                            get_com_member(e, "GetStartVertex"), "GetPoint"
+                        )
+                    ]
+                    c = [
+                        float(x)
+                        for x in get_com_member(
+                            get_com_member(e, "GetEndVertex"), "GetPoint"
+                        )
+                    ]
                     ms.append([(a[i] + c[i]) / 2.0 for i in range(3)])
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
         ztop = max(m[2] for m in ms) if ms else None
         for m in ms:
             if ztop is not None and abs(m[2] - ztop) < 1e-9:
                 ext.SelectByID2("", "EDGE", m[0], m[1], m[2], True, 4, callout, 0)
         try:
-            ev["steps"]["prereq_parting_line"] = {"ok": True, "feature": str(M.insert_parting_line(doc))[:40]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["prereq_parting_line"] = {"ok": False,
-                                                  "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
+            ev["steps"]["prereq_parting_line"] = {
+                "ok": True,
+                "feature": str(M.insert_parting_line(doc))[:40],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["prereq_parting_line"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:90]),
+            }
 
         def step(label, fn):
             before = SF.feature_names(doc)
@@ -98,37 +121,65 @@ def main() -> int:
                 r = fn()
                 after = SF.feature_names(doc)
                 new = [n for n in after if n not in before]
-                ev["steps"][label] = {"ok": bool(new), "returned": (r is not None),
-                                      "new_features": new[-2:],
-                                      "tree": [len(before), len(after)]}
-            except Exception as exc:                           # noqa: BLE001
-                ev["steps"][label] = {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])}
+                ev["steps"][label] = {
+                    "ok": bool(new),
+                    "returned": (r is not None),
+                    "new_features": new[-2:],
+                    "tree": [len(before), len(after)],
+                }
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"][label] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+                }
 
         # ② 分型面（★ 8 参；有分型线 ⇒ 不必再选方向/边）
         #: ★★ 按**我们自己的签名**调（★ 实测发现它与官方参数名**不一致** —— 事实 307）
-        step("parting_surface", lambda: M.insert_parting_surface(
-            doc, surface_type=PARM_TANGENT, flip=False, use_trim=False,
-            distance=10.0 * MM, angle=0.0, option=SMOOTH_SHARP, tolerance=0.0, alternate=True))
+        step(
+            "parting_surface",
+            lambda: M.insert_parting_surface(
+                doc,
+                surface_type=PARM_TANGENT,
+                flip=False,
+                use_trim=False,
+                distance=10.0 * MM,
+                angle=0.0,
+                option=SMOOTH_SHARP,
+                tolerance=0.0,
+                alternate=True,
+            ),
+        )
         # ③ 关断面（★ 零参）
         step("shut_off_surface", lambda: M.insert_shut_off_surface(doc))
         # ④ 型芯型腔（★ 4 参）
-        step("core_cavity_solids", lambda: M.insert_core_cavity_solids(
-            doc, scale=30.0 * MM, thickness=30.0 * MM, flip=False, offset=0.0))
+        step(
+            "core_cavity_solids",
+            lambda: M.insert_core_cavity_solids(
+                doc, scale=30.0 * MM, thickness=30.0 * MM, flip=False, offset=0.0
+            ),
+        )
         # ⑤ 回读
         try:
-            ev["steps"]["evidence_readback"] = {"ok": True, "evidence": M.mold_evidence(doc)}
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["evidence_readback"] = {
+                "ok": True,
+                "evidence": M.mold_evidence(doc),
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["evidence_readback"] = {"ok": False, "err": str(exc)[:90]}
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 承接事实 306（分型线已通）⇒ 一次验另三个；★ 判据是每步**特征树 diff**（规则 6）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 承接事实 306（分型线已通）⇒ 一次验另三个；★ 判据是每步**特征树 diff**（规则 6）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

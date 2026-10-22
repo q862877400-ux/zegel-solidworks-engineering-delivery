@@ -21,6 +21,7 @@ r"""扫描外部 MCP 项目，产出去重后的「并集来源清单」。
 #   不归一会得出「并集 515 个工具、每家独有 ~90 个」的假象（其实大量是同一件事）。
 #   归一后：381 个不同操作，其中约 100 个 ≥2 家有（真重叠）、~281 个只有一家有。
 """
+
 from __future__ import annotations
 
 import json
@@ -73,31 +74,51 @@ SOURCES = [
 #: 工具注册的四种写法（按项目而异，全都要认）
 PATTERNS = (
     r'@mcp\.tool\([^)]*?name\s*=\s*["\']([a-z][\w]*)["\']',
-    r'@mcp\.tool\([^)]*\)\s*\n\s*(?:async\s+)?def\s+([a-z]\w+)',
+    r"@mcp\.tool\([^)]*\)\s*\n\s*(?:async\s+)?def\s+([a-z]\w+)",
     r'@tool\(\s*["\']([a-z][\w]*)["\']',
     r'\{\s*name:\s*["\']([a-z][\w]*)["\']',
 )
 
 #: 语义归一同义词表（避免把同一操作数成两个）
 SYNONYMS = {
-    "note": "annotation", "annotations": "annotation", "text_note": "annotation",
-    "round": "fillet", "corner_round": "fillet",
-    "hole_wizard": "hole", "simple_hole": "hole",
-    "boss_extrude": "extrude", "extrusion": "extrude", "cut_extrude": "extrude_cut",
-    "screenshot": "screenshot", "capture": "screenshot",
-    "suppress_feature": "suppress", "set_feature_suppression": "suppress",
-    "reference_plane": "ref_plane", "create_plane": "ref_plane",
-    "reference_axis": "ref_axis", "create_axis": "ref_axis",
-    "centerlines": "centerline", "center_marks": "center_mark",
-    "bom_table": "bom", "flatten": "flat_pattern",
-    "structural_member": "structural_member", "weldment": "structural_member",
-    "mass_properties": "mass_props", "material_properties": "mass_props",
+    "note": "annotation",
+    "annotations": "annotation",
+    "text_note": "annotation",
+    "round": "fillet",
+    "corner_round": "fillet",
+    "hole_wizard": "hole",
+    "simple_hole": "hole",
+    "boss_extrude": "extrude",
+    "extrusion": "extrude",
+    "cut_extrude": "extrude_cut",
+    "screenshot": "screenshot",
+    "capture": "screenshot",
+    "suppress_feature": "suppress",
+    "set_feature_suppression": "suppress",
+    "reference_plane": "ref_plane",
+    "create_plane": "ref_plane",
+    "reference_axis": "ref_axis",
+    "create_axis": "ref_axis",
+    "centerlines": "centerline",
+    "center_marks": "center_mark",
+    "bom_table": "bom",
+    "flatten": "flat_pattern",
+    "structural_member": "structural_member",
+    "weldment": "structural_member",
+    "mass_properties": "mass_props",
+    "material_properties": "mass_props",
     "bounding_box": "bbox",
-    "custom_properties": "custom_prop", "custom_property": "custom_prop",
-    "global_variables": "global_var", "global_variable": "global_var",
-    "equations": "equation", "dimensions": "dimension",
-    "geometric_tolerance": "gdt", "datum_feature": "gdt", "surface_finish": "gdt",
-    "check_interference": "interference", "exploded_view": "explode",
+    "custom_properties": "custom_prop",
+    "custom_property": "custom_prop",
+    "global_variables": "global_var",
+    "global_variable": "global_var",
+    "equations": "equation",
+    "dimensions": "dimension",
+    "geometric_tolerance": "gdt",
+    "datum_feature": "gdt",
+    "surface_finish": "gdt",
+    "check_interference": "interference",
+    "exploded_view": "explode",
 }
 
 #: 域分类（正则，**按序首个命中者生效**）
@@ -107,23 +128,53 @@ SYNONYMS = {
 #:   ⇒ 结果「模具」域显示 0 个，而来源明明有 3 个。
 DOMAINS = (
     # ── ① 最具体：专属名词，先抢 ──────────────────────────────
-    ("advanced",  r"topolog|dfm|machinab|costing|_cost\b|\bpdm\b|vault|routing|\bpipe\b|harness|electrical|toolbox|dimxpert|toleranc|_gdt_|datum|surface_finish"),
-    ("mold",      r"mold|parting|shut_off|tooling_split|core_cavity"),
-    ("weldment",  r"weld|structural_member|gusset|end_cap"),
+    (
+        "advanced",
+        r"topolog|dfm|machinab|costing|_cost\b|\bpdm\b|vault|routing|\bpipe\b|harness|electrical|toolbox|dimxpert|toleranc|_gdt_|datum|surface_finish",
+    ),
+    ("mold", r"mold|parting|shut_off|tooling_split|core_cavity"),
+    ("weldment", r"weld|structural_member|gusset|end_cap"),
     ("sheetmetal", r"sheet_?metal|flange|unfold|_fold\b|jog|hem\b|flat_pattern|bend"),
-    ("simulation", r"simulat|_study|thermal|buckling|fatigue|_drop\b|static_study|motion|cosworks|\bfea\b"),
-    ("surface",   r"surface|knit|thicken|delete_face|filled|_loft\b|boundary_boss"),
-    ("macro",     r"macro|vba|record|_script|batch|_run_code"),
-    ("appearance", r"material|appearance|_color|config|display_state|background|render|photoview"),
-    ("drawing",   r"drawing|_view\b|views|annot|balloon|\bbom\b|centerline|center_mark|revision_table|hole_table|section_view|_sheet\b|sheets"),
-    ("assembly",  r"component|_mate|assembl|interference|explode|assembly_tree"),
-    ("sketch",    r"sketch|_line\b|circle|_arc\b|rectang|polygon|spline|ellipse|slot|trim|offset|convert_ent|construction|3d_sketch|_spline"),
-    ("param",     r"dimension|relation|constraint|equation|global_var|design_table|driving|link_|_scale\b"),
-    ("refgeom",   r"ref_plane|ref_axis|reference_plane|reference_axis|_plane\b|_axis\b|refgeom|reference_point"),
+    (
+        "simulation",
+        r"simulat|_study|thermal|buckling|fatigue|_drop\b|static_study|motion|cosworks|\bfea\b",
+    ),
+    ("surface", r"surface|knit|thicken|delete_face|filled|_loft\b|boundary_boss"),
+    ("macro", r"macro|vba|record|_script|batch|_run_code"),
+    (
+        "appearance",
+        r"material|appearance|_color|config|display_state|background|render|photoview",
+    ),
+    (
+        "drawing",
+        r"drawing|_view\b|views|annot|balloon|\bbom\b|centerline|center_mark|revision_table|hole_table|section_view|_sheet\b|sheets",
+    ),
+    ("assembly", r"component|_mate|assembl|interference|explode|assembly_tree"),
+    (
+        "sketch",
+        r"sketch|_line\b|circle|_arc\b|rectang|polygon|spline|ellipse|slot|trim|offset|convert_ent|construction|3d_sketch|_spline",
+    ),
+    (
+        "param",
+        r"dimension|relation|constraint|equation|global_var|design_table|driving|link_|_scale\b",
+    ),
+    (
+        "refgeom",
+        r"ref_plane|ref_axis|reference_plane|reference_axis|_plane\b|_axis\b|refgeom|reference_point",
+    ),
     # ── ② 笼统域放后面 ────────────────────────────────────────
-    ("inspect",   r"screenshot|mass_prop|bbox|bounding|measure|check_|analyze|inspect|geometry|view_orient|zoom|display_mode|sensor|\bstatus\b"),
-    ("feature",   r"extrude|revolve|fillet|chamfer|shell|draft|_rib\b|dome|wrap|intersect|pattern|mirror|hole|sweep|loft|combine|split|_scale|helix|body"),
-    ("session",   r"document|_file|open|close|save|new_|export|import|connect|rebuild|template|\bpart\b|\bmodel\b"),
+    (
+        "inspect",
+        r"screenshot|mass_prop|bbox|bounding|measure|check_|analyze|inspect|geometry|view_orient|zoom|display_mode|sensor|\bstatus\b",
+    ),
+    (
+        "feature",
+        r"extrude|revolve|fillet|chamfer|shell|draft|_rib\b|dome|wrap|intersect|pattern|mirror|hole|sweep|loft|combine|split|_scale|helix|body",
+    ),
+    (
+        "session",
+        r"document|_file|open|close|save|new_|export|import|connect|rebuild|template|\bpart\b|\bmodel\b",
+    ),
 )
 
 
@@ -133,7 +184,9 @@ def _normalize(tool: str) -> str:
     s = re.sub(r"^(sw_|solidworks_|cadstudio_|automation_|vba_|macro_)", "", s)
     if s in SYNONYMS:
         return SYNONYMS[s]
-    s2 = re.sub(r"^(create_|add_|insert_|set_|get_|list_|draw_|start_|make_|build_)", "", s)
+    s2 = re.sub(
+        r"^(create_|add_|insert_|set_|get_|list_|draw_|start_|make_|build_)", "", s
+    )
     return SYNONYMS.get(s2, s2 or s)
 
 
@@ -153,8 +206,19 @@ def scan(path: str) -> list[str]:
     for f in root.rglob("*"):
         if not f.is_file() or f.suffix not in (".py", ".ts", ".cs"):
             continue
-        if any(x in str(f) for x in (".venv", "node_modules", "site-packages",
-                                     ".git", "__pycache__", "dist", "build", ".ci")):
+        if any(
+            x in str(f)
+            for x in (
+                ".venv",
+                "node_modules",
+                "site-packages",
+                ".git",
+                "__pycache__",
+                "dist",
+                "build",
+                ".ci",
+            )
+        ):
             continue
         try:
             text = f.read_text(encoding="utf-8", errors="ignore")
@@ -177,7 +241,10 @@ def _license_of(src: dict) -> str:
         head = f.read_text(encoding="utf-8", errors="ignore")[:600]
         if "Apache License" in head:
             return "Apache-2.0"
-        if "MIT License" in head or "Permission is hereby granted, free of charge" in head:
+        if (
+            "MIT License" in head
+            or "Permission is hereby granted, free of charge" in head
+        ):
             return "MIT"
         if "GNU General Public" in head:
             return "GPL" + ("-3.0" if "Version 3" in head else "")
@@ -192,17 +259,19 @@ def main() -> int:
         by_domain: dict[str, list[str]] = {}
         for op in ops:
             by_domain.setdefault(_domain(op), []).append(op)
-        payload["sources"].append({
-            "repo": src["repo"],
-            "license": _license_of(src),
-            "declared_verified": src["verified"],
-            "note": src["note"],
-            "tool_count": len(tools),
-            "operation_count": len(ops),
-            "tools": tools,
-            "operations": ops,
-            "domains": {k: sorted(v) for k, v in sorted(by_domain.items())},
-        })
+        payload["sources"].append(
+            {
+                "repo": src["repo"],
+                "license": _license_of(src),
+                "declared_verified": src["verified"],
+                "note": src["note"],
+                "tool_count": len(tools),
+                "operation_count": len(ops),
+                "tools": tools,
+                "operations": ops,
+                "domains": {k: sorted(v) for k, v in sorted(by_domain.items())},
+            }
+        )
         print("  %-38s 工具 %3d → 操作 %3d" % (src["repo"], len(tools), len(ops)))
 
     union: set[str] = set()

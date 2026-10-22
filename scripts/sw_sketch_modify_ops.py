@@ -68,9 +68,9 @@ from pathlib import Path as _Path
 _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
-    from .sw_connect import get_com_member, set_com_member          # noqa: F401
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
-    from sw_connect import get_com_member, set_com_member           # noqa: F401
+    from .sw_connect import get_com_member, set_com_member  # noqa: F401
+except ImportError:  # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, set_com_member  # noqa: F401
 
 __all__ = [
     "sketch_move",
@@ -134,26 +134,27 @@ def _sketch_bbox_mm(model):
     """
     try:
         import sys as _sys
+
         if str(_REPO_SCRIPTS) not in _sys.path:
             _sys.path.insert(0, str(_REPO_SCRIPTS))
-        from sw_sketch import get_arcs, get_lines                        # noqa: PLC0415
-    except Exception:                                                     # noqa: BLE001
+        from sw_sketch import get_arcs, get_lines  # noqa: PLC0415
+    except Exception:  # noqa: BLE001
         return None
     xs, ys = [], []
     try:
         #: ★ `get_lines` 每 12 个 float 一条线（★ 见 `sw_sketch.ELEMS_PER_LINE`）
         for i in range(0, len(get_lines(model) or []) - 11, 12):
-            row = get_lines(model)[i:i + 12]
+            row = get_lines(model)[i : i + 12]
             xs += [float(row[0]), float(row[3])]
             ys += [float(row[1]), float(row[4])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     try:
         for i in range(0, len(get_arcs(model) or []) - 15, 16):
-            row = get_arcs(model)[i:i + 16]
+            row = get_arcs(model)[i : i + 16]
             xs += [float(row[0])]
             ys += [float(row[1])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     if not xs or not ys:
         return None
@@ -170,10 +171,11 @@ def _sketch_transform_translation(model):
     """
     try:
         import sys as _sys
+
         if str(_REPO_SCRIPTS) not in _sys.path:
             _sys.path.insert(0, str(_REPO_SCRIPTS))
-        from sw_sketch import get_model_to_sketch_transform            # noqa: PLC0415
-    except Exception:                                                     # noqa: BLE001
+        from sw_sketch import get_model_to_sketch_transform  # noqa: PLC0415
+    except Exception:  # noqa: BLE001
         return None
     try:
         data = get_model_to_sketch_transform(model)
@@ -183,7 +185,7 @@ def _sketch_transform_translation(model):
         if len(seq) < 12:
             return None
         return [float(seq[9]), float(seq[10]), float(seq[11])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -213,17 +215,22 @@ def _geom_evidence(model, before_bbox, before_tf) -> dict:
         ok = bool(bbox_moved) or bool(tf_moved)
     return {
         "ok": ok,
-        "bbox_before_mm": before_bbox, "bbox_after_mm": after_bbox,
+        "bbox_before_mm": before_bbox,
+        "bbox_after_mm": after_bbox,
         "bbox_moved": bbox_moved,
-        "transform_before": before_tf, "transform_after": after_tf,
+        "transform_before": before_tf,
+        "transform_after": after_tf,
         "transform_translation_moved": tf_moved,
-        "verified_by": ("★ 草图段端点 bbox 变化 **或** ModelToSketchTransform.ArrayData "
-                        "平移分量变化（★ doc 承诺的两个判据；★ 取不到时 ok 为 None，不报成功）"),
+        "verified_by": (
+            "★ 草图段端点 bbox 变化 **或** ModelToSketchTransform.ArrayData "
+            "平移分量变化（★ doc 承诺的两个判据；★ 取不到时 ok 为 None，不报成功）"
+        ),
     }
 
 
-def sketch_move(model, start_x_mm: float, start_y_mm: float,
-                end_x_mm: float, end_y_mm: float) -> dict:
+def sketch_move(
+    model, start_x_mm: float, start_y_mm: float, end_x_mm: float, end_y_mm: float
+) -> dict:
     """★ 移动实体：`IModelDoc2.SketchModifyTranslate(StartX, StartY, EndX, EndY)`（回 `void`）。
 
     ⚠ `void` ⇒ ★ **没有返回值可判** ⇒ 本函数**回读活动草图名**作为"调用没炸"的旁证，
@@ -234,35 +241,53 @@ def sketch_move(model, start_x_mm: float, start_y_mm: float,
     before = _active_sketch_name(model)
     before_bbox = _sketch_bbox_mm(model)
     before_tf = _sketch_transform_translation(model)
-    get_com_member(model, "SketchModifyTranslate",
-                   float(start_x_mm) / 1000.0, float(start_y_mm) / 1000.0,
-                   float(end_x_mm) / 1000.0, float(end_y_mm) / 1000.0)
-    out = {"op": "move",
-           "sketch_before": before, "sketch_after": _active_sketch_name(model),
-           "asked_mm": [start_x_mm, start_y_mm, end_x_mm, end_y_mm]}
+    get_com_member(
+        model,
+        "SketchModifyTranslate",
+        float(start_x_mm) / 1000.0,
+        float(start_y_mm) / 1000.0,
+        float(end_x_mm) / 1000.0,
+        float(end_y_mm) / 1000.0,
+    )
+    out = {
+        "op": "move",
+        "sketch_before": before,
+        "sketch_after": _active_sketch_name(model),
+        "asked_mm": [start_x_mm, start_y_mm, end_x_mm, end_y_mm],
+    }
     #: ★★★★ 2026-10-04（接手轮）**改成 doc 承诺的判据**（★ 原来是 `"ok": True` + `no_exc
     #: eption`）✓
     out.update(_geom_evidence(model, before_bbox, before_tf))
     return out
 
 
-def sketch_rotate(model, center_x_mm: float, center_y_mm: float, angle_deg: float) -> dict:
+def sketch_rotate(
+    model, center_x_mm: float, center_y_mm: float, angle_deg: float
+) -> dict:
     """★ 旋转实体：`IModelDoc2.SketchModifyRotate(CenterX, CenterY, Angle)`（回 `void`）。
 
     ★ 角度**只在本工具边界换算一次**（规则 2：`_deg` 入参 ⇒ 弧度交 COM）。
     """
     _require_model(model)
     import math
+
     before = _active_sketch_name(model)
     before_bbox = _sketch_bbox_mm(model)
     before_tf = _sketch_transform_translation(model)
-    get_com_member(model, "SketchModifyRotate",
-                   float(center_x_mm) / 1000.0, float(center_y_mm) / 1000.0,
-                   math.radians(float(angle_deg)))
-    out = {"op": "rotate",
-           "sketch_before": before, "sketch_after": _active_sketch_name(model),
-           "asked_deg": angle_deg}
-    out.update(_geom_evidence(model, before_bbox, before_tf))       #: ★ doc 承诺的判据
+    get_com_member(
+        model,
+        "SketchModifyRotate",
+        float(center_x_mm) / 1000.0,
+        float(center_y_mm) / 1000.0,
+        math.radians(float(angle_deg)),
+    )
+    out = {
+        "op": "rotate",
+        "sketch_before": before,
+        "sketch_after": _active_sketch_name(model),
+        "asked_deg": angle_deg,
+    }
+    out.update(_geom_evidence(model, before_bbox, before_tf))  #: ★ doc 承诺的判据
     return out
 
 
@@ -285,13 +310,21 @@ def sketch_scale(model, factor: float) -> dict:
     geom = _geom_evidence(model, before_bbox, before_tf)
     out.update(geom)
     out["ok"] = bool(bool(r) and geom["ok"] is True)
-    out["verified_by"] = ("★ `SketchModifyScale` 回非假 **且** " + str(geom["verified_by"]))
+    out["verified_by"] = "★ `SketchModifyScale` 回非假 **且** " + str(
+        geom["verified_by"]
+    )
     return out
 
 
-def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
-                   dest_x_mm: float, dest_y_mm: float,
-                   keep_relations: bool = True, select_all: bool = True) -> dict:
+def sketch_stretch(
+    model,
+    base_x_mm: float,
+    base_y_mm: float,
+    dest_x_mm: float,
+    dest_y_mm: float,
+    keep_relations: bool = True,
+    select_all: bool = True,
+) -> dict:
     """★ 伸展实体：`IModelDocExtension.Stretch(KeepRelations, BaseX, BaseY, DestX, DestY)`（回 `void`）。
 
     ⚠ ★ **入口在 `IModelDocExtension` 上**（不是 `IModelDoc2`）⇒ 先取 `model.Extension` ✓
@@ -316,16 +349,26 @@ def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
     before = _active_sketch_name(model)
     before_bbox = _sketch_bbox_mm(model)
     before_tf = _sketch_transform_translation(model)
-    get_com_member(ext, "Stretch", bool(keep_relations),
-                   float(base_x_mm) / 1000.0, float(base_y_mm) / 1000.0,
-                   float(dest_x_mm) / 1000.0, float(dest_y_mm) / 1000.0)
-    out = {"op": "stretch",
-           #: ★ 2026-10-07：把"选了多少段"**带进报告** —— ★ 它同时是**前置成立与否**的读
-           #: 数 ✓
-           "selected_count": selected, "select_all": bool(select_all),
-           "sketch_before": before, "sketch_after": _active_sketch_name(model),
-           "keep_relations": bool(keep_relations)}
-    out.update(_geom_evidence(model, before_bbox, before_tf))       #: ★ doc 承诺的判据
+    get_com_member(
+        ext,
+        "Stretch",
+        bool(keep_relations),
+        float(base_x_mm) / 1000.0,
+        float(base_y_mm) / 1000.0,
+        float(dest_x_mm) / 1000.0,
+        float(dest_y_mm) / 1000.0,
+    )
+    out = {
+        "op": "stretch",
+        #: ★ 2026-10-07：把"选了多少段"**带进报告** —— ★ 它同时是**前置成立与否**的读
+        #: 数 ✓
+        "selected_count": selected,
+        "select_all": bool(select_all),
+        "sketch_before": before,
+        "sketch_after": _active_sketch_name(model),
+        "keep_relations": bool(keep_relations),
+    }
+    out.update(_geom_evidence(model, before_bbox, before_tf))  #: ★ doc 承诺的判据
     return out
 
 
@@ -340,11 +383,14 @@ def sketch_flip(model, axis_flag: int) -> dict:
     before_bbox = _sketch_bbox_mm(model)
     before_tf = _sketch_transform_translation(model)
     get_com_member(model, "SketchModifyFlip", int(axis_flag))
-    out = {"op": "flip",
-           "sketch_before": before, "sketch_after": _active_sketch_name(model),
-           "axis_flag": int(axis_flag),
-           "axis_flag_semantics": "官方 swapi 与 CHM 均未给取值表 —— 原样透传"}
-    out.update(_geom_evidence(model, before_bbox, before_tf))       #: ★ doc 承诺的判据
+    out = {
+        "op": "flip",
+        "sketch_before": before,
+        "sketch_after": _active_sketch_name(model),
+        "axis_flag": int(axis_flag),
+        "axis_flag_semantics": "官方 swapi 与 CHM 均未给取值表 —— 原样透传",
+    }
+    out.update(_geom_evidence(model, before_bbox, before_tf))  #: ★ doc 承诺的判据
     return out
 
 
@@ -365,9 +411,12 @@ def select_active_sketch_segments(model, indices=None) -> int:
     import sw_selection_spec as _SS
     from sw_connect import get_com_member as _get
     from sw_sketch import active_sketch
+
     sketch = active_sketch(model)
     if sketch is None:
-        raise RuntimeError("★ 没有活动草图 ⇒ ★ 先开一张草图的编辑态（★ 与「伸展不出效果」是两件事）")
+        raise RuntimeError(
+            "★ 没有活动草图 ⇒ ★ 先开一张草图的编辑态（★ 与「伸展不出效果」是两件事）"
+        )
     segs = list(_get(sketch, "GetSketchSegments") or [])
     if not segs:
         raise RuntimeError("★ 活动草图里没有段（`GetSketchSegments()` 回了空）")
@@ -391,9 +440,10 @@ def _active_sketch_name(model):
     """
     try:
         from sw_sketch import active_sketch as _active_sketch
+
         sk = _active_sketch(model)
         if sk is None:
             return None
         return str(get_com_member(sk, "Name") or "") or None
-    except Exception:                                               # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None

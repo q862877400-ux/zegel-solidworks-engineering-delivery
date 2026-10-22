@@ -34,6 +34,7 @@ r"""@brief 可调用性普查：22 个「暴露候选」孤立能力，**真机�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import inspect
@@ -48,7 +49,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "orphan-callability-census.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "orphan-callability-census.json"
+)
 
 #: 只查这批（`012`/`013` 已确认它们是最便宜的暴露候选）
 CANDIDATES = [
@@ -77,16 +80,21 @@ def main() -> int:
     sw = None
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         model = sw_connect.safe_get_com_member(sw, "ActiveDoc")
-        print("  活动文档: %s" % (sw_connect.safe_get_com_member(model, "GetTitle") if model else "**无**"))
+        print(
+            "  活动文档: %s"
+            % (sw_connect.safe_get_com_member(model, "GetTitle") if model else "**无**")
+        )
         print()
 
         import importlib
+
         for mod_name, fn_name in CANDIDATES:
             entry = {"module": mod_name, "function": fn_name}
             try:
@@ -94,7 +102,7 @@ def main() -> int:
                 fn = getattr(mod, fn_name)
                 sig = inspect.signature(fn)
                 params = list(sig.parameters)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 entry.update(result="error_other", detail="导入失败: %s" % exc)
                 rows.append(entry)
                 continue
@@ -103,7 +111,9 @@ def main() -> int:
             args = []
             if params and params[0] == "model":
                 if model is None:
-                    entry.update(result="needs_doc", detail="首参是 model，但没有活动文档")
+                    entry.update(
+                        result="needs_doc", detail="首参是 model，但没有活动文档"
+                    )
                     rows.append(entry)
                     print("   ⏭  %-46s needs_doc" % fn_name)
                     continue
@@ -112,14 +122,21 @@ def main() -> int:
             t0 = time.time()
             try:
                 r = fn(*args)
-                entry.update(result="ok", ms=round((time.time() - t0) * 1000),
-                             return_type=type(r).__name__,
-                             size=(len(r) if hasattr(r, "__len__") else None))
+                entry.update(
+                    result="ok",
+                    ms=round((time.time() - t0) * 1000),
+                    return_type=type(r).__name__,
+                    size=(len(r) if hasattr(r, "__len__") else None),
+                )
                 print("   ✓ %-46s ok（%s）" % (fn_name, type(r).__name__))
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 first = str(exc).splitlines()[0][:120]
-                entry.update(result="raised", ms=round((time.time() - t0) * 1000),
-                             exc_type=type(exc).__name__, detail=first)
+                entry.update(
+                    result="raised",
+                    ms=round((time.time() - t0) * 1000),
+                    exc_type=type(exc).__name__,
+                    detail=first,
+                )
                 # ⚠ 把 `needs selection / requires …` 一类**前置条件**与**真异常**分开记
                 # ，
                 #   但**不自动判定**是缺陷（由人看）
@@ -127,13 +144,13 @@ def main() -> int:
             rows.append(entry)
 
             # ⚠ 兜底：本工具**绝不**在文档上留下改动（只调，不改）
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  整体失败: %s: %s" % (type(exc).__name__, exc))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     ok = [r for r in rows if r["result"] == "ok"]
@@ -142,20 +159,42 @@ def main() -> int:
     other = [r for r in rows if r["result"] == "error_other"]
     print()
     print("  ── 普查 %d 个候选 ──" % len(rows))
-    print("     ok %d · **raised %d** · needs_doc %d · other %d"
-          % (len(ok), len(raised), len(nd), len(other)))
+    print(
+        "     ok %d · **raised %d** · needs_doc %d · other %d"
+        % (len(ok), len(raised), len(nd), len(other))
+    )
     if raised:
         print("     raised 明细（**待人工判是否缺陷**）：")
         for r in raised:
-            print("       %-44s %s: %s" % (r["function"], r.get("exc_type"), r.get("detail", "")[:56]))
+            print(
+                "       %-44s %s: %s"
+                % (r["function"], r.get("exc_type"), r.get("detail", "")[:56])
+            )
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"started": time.strftime("%Y-%m-%d %H:%M:%S"), "rows": rows,
-                               "summary": {"total": len(rows), "ok": len(ok), "raised": len(raised),
-                                           "needs_doc": len(nd), "other": len(other)}},
-                              ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "started": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "rows": rows,
+                "summary": {
+                    "total": len(rows),
+                    "ok": len(ok),
+                    "raised": len(raised),
+                    "needs_doc": len(nd),
+                    "other": len(other),
+                },
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
-    print("  ⚠ 本普查**不下「可用」结论**：`ok` 只说明这次没抛异常，**不代表结果正确**。")
+    print(
+        "  ⚠ 本普查**不下「可用」结论**：`ok` 只说明这次没抛异常，**不代表结果正确**。"
+    )
     return 0
 
 

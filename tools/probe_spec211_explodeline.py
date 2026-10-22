@@ -1,4 +1,5 @@
 """★ 探针：`ISketchManager::InsertExplodeLineSketch` —— ★ 爆炸直线（★ 零参）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B6 爆炸直线的真机探针）
 # 文件:   tools/probe_spec211_explodeline.py
@@ -6,7 +7,7 @@
 # 官方依据（★ 三样逐字读过，★ 并**按第 ④ 样**读全）：
 #   · ★★ `C:\swapi\types\ISketchManager\InsertExplodeLineSketch.md`
 #     `System.bool InsertExplodeLineSketch()` ⇒ ★ **零参** ✓
-# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false 
+# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false
 # if not ✓
 #     ★★ 六份官方示例（VB.NET ×2 · VBA ×2 · C# ×2）—— ★ 而**示例名本身就说清用法**：
 #       「Insert Explode Line Sketch and **Route Line**」· ★「…and **Jog Line**」
@@ -52,8 +53,10 @@ def main() -> int:
     import sw_assembly_doc as AD
     import sw_surface_features as SF
 
-    out: dict = {"official": "ISketchManager.InsertExplodeLineSketch",
-                 "step": "全链：零件→保存→装配→爆炸→爆炸直线"}
+    out: dict = {
+        "official": "ISketchManager.InsertExplodeLineSketch",
+        "step": "全链：零件→保存→装配→爆炸→爆炸直线",
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -74,7 +77,7 @@ def main() -> int:
     try:
         sw_connect.save_document(part, str(p1))
         saved = p1.is_file()
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         save_err = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["part_saved"] = saved
     out["part_path"] = str(p1)
@@ -91,7 +94,7 @@ def main() -> int:
         try:
             sw_assembly.add_component(asm, str(p1), 0.0, 0.0, 0.0)
             comp_ok = True
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             comp_err = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["component_added"] = comp_ok
     out["component_error"] = comp_err
@@ -102,7 +105,7 @@ def main() -> int:
     if comp_ok:
         try:
             explode_ok = bool(AD.create_exploded_view(asm))
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             out["explode_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["exploded_view_created"] = explode_ok
     print("★ ③ 爆炸视图 ⇒ %r" % explode_ok)
@@ -118,8 +121,9 @@ def main() -> int:
     if asm is not None:
         try:
             before_active = sw_connect.get_com_member(
-                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch")
-        except Exception:                                               # noqa: BLE001
+                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch"
+            )
+        except Exception:  # noqa: BLE001
             before_active = None
     out["active_sketch_before"] = before_active is not None
     before = SF.feature_names(asm) if asm is not None else []
@@ -130,7 +134,7 @@ def main() -> int:
             sm = sw_connect.get_com_member(asm, "SketchManager")
             out["sketch_manager_ok"] = sm is not None
             ret = sw_connect.get_com_member(sm, "InsertExplodeLineSketch")
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             exc = e
             out["sketch_manager_ok"] = out.get("sketch_manager_ok", False)
     after = SF.feature_names(asm) if asm is not None else []
@@ -139,46 +143,70 @@ def main() -> int:
     if asm is not None:
         try:
             after_active = sw_connect.get_com_member(
-                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch")
-        except Exception:                                               # noqa: BLE001
+                sw_connect.get_com_member(asm, "SketchManager"), "ActiveSketch"
+            )
+        except Exception:  # noqa: BLE001
             after_active = None
     out["active_sketch_after"] = after_active is not None
     out["sketch_side_changed"] = (before_active is None) != (after_active is None)
-    out.update({"new_features": added, "returned": str(ret),
-                "exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+    out.update(
+        {
+            "new_features": added,
+            "returned": str(ret),
+            "exception": None
+            if exc is None
+            else "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+        }
+    )
     #: ★★ 判据优先级：★ ① 特征新增 ⇒ 建成 · ★② **草图侧变化** ⇒ 建成（★ inserted 的等价
     #: 物 ✓）
     if added or out.get("sketch_side_changed"):
-        out["verdict"] = ("★★★★★ **建成** —— ★ 特征新增 %r · ★★ 草图侧变化 %r"
-                          "（★ ActiveSketch %r → %r ⇒ ★ 正是官方 Returns 里那个 inserted ✓）"
-                          % (added, out.get("sketch_side_changed"),
-                             out.get("active_sketch_before"), out.get("active_sketch_after")))
+        out["verdict"] = (
+            "★★★★★ **建成** —— ★ 特征新增 %r · ★★ 草图侧变化 %r"
+            "（★ ActiveSketch %r → %r ⇒ ★ 正是官方 Returns 里那个 inserted ✓）"
+            % (
+                added,
+                out.get("sketch_side_changed"),
+                out.get("active_sketch_before"),
+                out.get("active_sketch_after"),
+            )
+        )
     elif exc is not None:
         out["verdict"] = "★★ **抛**：%s" % out["exception"]
     elif ret:
-        out["verdict"] = ("★★ 回 `True` 而**树没变化** ⇒ ★ 可能「插入了但没落特征」（★ 官方 Returns 逐字："
-                          "inserted **or closed** ✓）⇒ ★ 需另找判据（★ 不看返回值 ✓）")
+        out["verdict"] = (
+            "★★ 回 `True` 而**树没变化** ⇒ ★ 可能「插入了但没落特征」（★ 官方 Returns 逐字："
+            "inserted **or closed** ✓）⇒ ★ 需另找判据（★ 不看返回值 ✓）"
+        )
     else:
-        out["verdict"] = ("★★ **不建**（★ 回 %r）⇒ ★ **还不算试死** —— ★ 前置复核："
-                          "★ 零件落盘=%r · 装配加件=%r · 爆炸视图=%r（★ 定则：「读到静默」≠「判定试死」✓）"
-                          % (ret, saved, comp_ok, explode_ok))
+        out["verdict"] = (
+            "★★ **不建**（★ 回 %r）⇒ ★ **还不算试死** —— ★ 前置复核："
+            "★ 零件落盘=%r · 装配加件=%r · 爆炸视图=%r（★ 定则：「读到静默」≠「判定试死」✓）"
+            % (ret, saved, comp_ok, explode_ok)
+        )
     print("★★ 调用后 ⇒ 新增 %r · 回 %r" % (added, ret))
     print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec211-b6-explodeline.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "spec211-b6-explodeline-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "spec211-b6-explodeline-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

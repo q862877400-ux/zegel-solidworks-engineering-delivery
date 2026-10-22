@@ -35,6 +35,7 @@ r"""@brief 决定性实验：**把载荷 `State` 设成"另一侧"，再跑 `Run
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -52,7 +53,7 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "load-state-active.j
 STUDY = "DSH-Active"
 
 
-TOGGLE = [True]          #: ★ `--no-toggle` 时置 False（对照组：不切 State 就跑）
+TOGGLE = [True]  #: ★ `--no-toggle` 时置 False（对照组：不切 State 就跑）
 
 
 def main() -> int:
@@ -67,7 +68,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         doc = sw_connect.new_document(sw, "part")
@@ -92,8 +93,10 @@ def main() -> int:
         def states() -> list:
             out = []
             for i in range(count):
-                it = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
-                #: ⚠⚠ **不能写 `State or -1`** —— `State` 的合法值包含 **0**，`0 or -1` 
+                it = sw_connect.safe_get_com_member(
+                    mgr, "GetLoadsAndRestraints", i, out_i4()
+                )
+                #: ⚠⚠ **不能写 `State or -1`** —— `State` 的合法值包含 **0**，`0 or -1`
                 #: 会得到 -1
                 #:   （★ 本文件的初版就是这么写的，于是把"State=0"读成了"-1" ——
                 #: 门禁 `check_env_pitfalls` 的"③ falsy-zero"当场抓到，见 known-facts 17
@@ -109,18 +112,25 @@ def main() -> int:
         #: ★★ 把每个载荷切到"另一侧"（★ 对照组 `--no-toggle` 时**跳过这一步**）
         if TOGGLE[0]:
             for i in range(count):
-                it = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
+                it = sw_connect.safe_get_com_member(
+                    mgr, "GetLoadsAndRestraints", i, out_i4()
+                )
                 sw_connect.call_com_member(it, "SuppressUnSuppress")
         ev["steps"]["state_after_toggle"] = states()
         print("  [2] 切一次后 State = %s" % ev["steps"]["state_after_toggle"])
 
         #: ★ 建网格（既有脚本证明这一步本身不弹框）
         size, tol = sim.default_element_size_and_tolerance(study, -1)
-        mc = sim.create_mesh(study, units=0, element_size=float(size), tolerance=float(tol))
+        mc = sim.create_mesh(
+            study, units=0, element_size=float(size), tolerance=float(tol)
+        )
         mesh = sw_connect.safe_get_com_member(study, "Mesh")
         elements = int(sw_connect.safe_get_com_member(mesh, "ElementCount") or 0)
-        ev["steps"]["mesh"] = {"CreateMesh": mc, "element_count": elements,
-                               "ok": elements > 0}
+        ev["steps"]["mesh"] = {
+            "CreateMesh": mc,
+            "element_count": elements,
+            "ok": elements > 0,
+        }
         print("  [3] 网格 CreateMesh=%r 单元=%d" % (mc, elements))
 
         #: ★★★★★ **决定性一步**：跑分析。★ 若 State=1 是活动侧 ⇒ **不应弹框**
@@ -132,43 +142,56 @@ def main() -> int:
         names = None
         if results is not None:
             try:
-                plots = int(sw_connect.safe_get_com_member(results, "GetPlotCount") or 0)
-            except Exception:                                  # noqa: BLE001
+                plots = int(
+                    sw_connect.safe_get_com_member(results, "GetPlotCount") or 0
+                )
+            except Exception:  # noqa: BLE001
                 plots = None
             try:
-                names = [str(x) for x in (sw_connect.safe_get_com_member(results, "GetPlotNames") or ())]
-            except Exception:                                  # noqa: BLE001
+                names = [
+                    str(x)
+                    for x in (
+                        sw_connect.safe_get_com_member(results, "GetPlotNames") or ()
+                    )
+                ]
+            except Exception:  # noqa: BLE001
                 names = None
         ev["steps"]["run_analysis"] = {
             "ok": results is not None and bool(plots),
-            "return_code": rc, "return_is_trustworthy": False,
+            "return_code": rc,
+            "return_is_trustworthy": False,
             "results_present": results is not None,
-            "plot_count": plots, "plot_names": names,
+            "plot_count": plots,
+            "plot_names": names,
             "seconds": round(time.time() - t0, 1),
             "★": "★★ 若这里**没弹框且 results 非空** ⇒ `State=1` 就是「活动」侧 ⇒ **代码正解成立**",
         }
-        print("  [5] ★★ 跑完了！Results=%s 图数=%s 用时=%.1fs"
-              % (results is not None, plots, ev["steps"]["run_analysis"]["seconds"]))
+        print(
+            "  [5] ★★ 跑完了！Results=%s 图数=%s 用时=%.1fs"
+            % (results is not None, plots, ev["steps"]["run_analysis"]["seconds"])
+        )
         print("       图名 = %s" % names)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         print("  ⚠ error: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

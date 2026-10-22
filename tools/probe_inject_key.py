@@ -27,7 +27,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC                                        # noqa: E402
+import register_capabilities as RC  # noqa: E402
 
 OUT = REPO / "output" / "inject-key-evidence.json"
 
@@ -36,8 +36,10 @@ def main() -> int:
     started = time.time()
     row: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     specs = {getattr(s, "name", None): s for s in RC.all_specs()}
-    for tool, args in (("solidworks_hole_standards", {"hole_type_id": 0}),
-                       ("solidworks_costing_evidence", {})):
+    for tool, args in (
+        ("solidworks_hole_standards", {"hole_type_id": 0}),
+        ("solidworks_costing_evidence", {}),
+    ):
         r: dict = {"tool": tool}
         spec = specs.get(tool)
         if spec is None:
@@ -77,16 +79,18 @@ def main() -> int:
                     r["ok"] = False
                     r["err"] = "TypeError: %s" % str(exc)[:220]
                     r["verdict"] = "★ **注入键真的不符** ⇒ 这条工具经工具层调不通"
-                except Exception as exc:                                  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     r["ok"] = False
                     r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
                     r["verdict"] = "★ 不是注入键问题（另有原因）"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             r["ok"] = False
             r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         row["cases"].append(r)
     row["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

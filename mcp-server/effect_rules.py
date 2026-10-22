@@ -1,4 +1,5 @@
 """★ 效应声明的**动词规则**（规格 210 · B1）：把底层成员名判成「改哪几类状态」。—— 一处实现，两处用。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（声明层的判据）
 # 文件:   mcp-server/effect_rules.py
@@ -24,35 +25,111 @@ from pathlib import Path
 from typing import Optional
 
 #: ★ 七类状态（★ 顺序固定，便于比对与显示）✓
-STATE_CLASSES = ("document", "filesystem", "selection", "active_doc", "edit_mode", "view", "rebuild")
+STATE_CLASSES = (
+    "document",
+    "filesystem",
+    "selection",
+    "active_doc",
+    "edit_mode",
+    "view",
+    "rebuild",
+)
 
 #: ★★ **判写的动词** —— ★ 保守表：宁可把读判成写，不许反过来 ✓
-WRITE_VERBS = frozenset((
-    "create", "insert", "add", "set", "delete", "remove", "modify", "edit", "update",
-    "save", "export", "open", "close", "activate", "rebuild", "select", "unselect",
-    "clear", "reset", "apply", "run", "start", "stop", "load", "import", "move", "copy",
-    "rotate", "scale", "mirror", "pattern", "extrude", "revolve", "cut", "fillet", "chamfer",
-))
+WRITE_VERBS = frozenset(
+    (
+        "create",
+        "insert",
+        "add",
+        "set",
+        "delete",
+        "remove",
+        "modify",
+        "edit",
+        "update",
+        "save",
+        "export",
+        "open",
+        "close",
+        "activate",
+        "rebuild",
+        "select",
+        "unselect",
+        "clear",
+        "reset",
+        "apply",
+        "run",
+        "start",
+        "stop",
+        "load",
+        "import",
+        "move",
+        "copy",
+        "rotate",
+        "scale",
+        "mirror",
+        "pattern",
+        "extrude",
+        "revolve",
+        "cut",
+        "fillet",
+        "chamfer",
+    )
+)
 
 #: ★ **判读的动词**（★ 只在**没有任何写动词**时才用于确认「读」）✓
-READ_VERBS = frozenset((
-    "get", "is", "has", "count", "list", "read", "query", "find", "show", "report",
-    "check", "available", "name", "enum", "describe", "evaluate", "compute", "measure",
-))
+READ_VERBS = frozenset(
+    (
+        "get",
+        "is",
+        "has",
+        "count",
+        "list",
+        "read",
+        "query",
+        "find",
+        "show",
+        "report",
+        "check",
+        "available",
+        "name",
+        "enum",
+        "describe",
+        "evaluate",
+        "compute",
+        "measure",
+    )
+)
 
 #: ★ 动词 → 状态类别（★ 命不中的写动词归 `document`，并**记下来**供复核）✓
 VERB_TO_CLASSES = {
-    "select": ("selection",), "unselect": ("selection",), "clear": ("selection",),
-    "activate": ("active_doc",), "open": ("active_doc", "filesystem"),
+    "select": ("selection",),
+    "unselect": ("selection",),
+    "clear": ("selection",),
+    "activate": ("active_doc",),
+    "open": ("active_doc", "filesystem"),
     "close": ("active_doc",),
-    "save": ("filesystem",), "export": ("filesystem",), "import": ("filesystem",),
+    "save": ("filesystem",),
+    "export": ("filesystem",),
+    "import": ("filesystem",),
     "load": ("filesystem",),
-    "edit": ("edit_mode",), "modify": ("edit_mode",),
-    "rebuild": ("rebuild",), "update": ("rebuild",), "reset": ("rebuild",),
+    "edit": ("edit_mode",),
+    "modify": ("edit_mode",),
+    "rebuild": ("rebuild",),
+    "update": ("rebuild",),
+    "reset": ("rebuild",),
 }
 
 #: ★ **破坏性**动词（★ 与「写」分开：删除 / 覆盖保存 / 清空 / 卸载）✓
-DESTRUCTIVE_VERBS = ("delete", "remove", "clear", "saveas", "overwrite", "purge", "unload")
+DESTRUCTIVE_VERBS = (
+    "delete",
+    "remove",
+    "clear",
+    "saveas",
+    "overwrite",
+    "purge",
+    "unload",
+)
 
 
 def first_verb(member: str) -> str:
@@ -114,11 +191,14 @@ def classify_members(members, kinds=()) -> dict:
         "unclassified": sorted(set(unclassified)),
     }
 
+
 #: ★★ 官方**成员种类索引**（规格 210 · B1-7）：成员名 ⇒ `{"kind": property|method, "sett
 #: able": bool}`。
 #:   ★ 由 `tools/gen_member_kind_index.py` 从官方类型库派生（★ 缓存、不入库）；
 #:   ★★ **读不到索引 ⇒ 只有动词这一路**（★ 保守：判不出的仍判未知，绝不因此宣称只读）✓
-_KIND_INDEX_PATH = Path(__file__).resolve().parents[1] / ".api-signatures" / "member-kinds.json"
+_KIND_INDEX_PATH = (
+    Path(__file__).resolve().parents[1] / ".api-signatures" / "member-kinds.json"
+)
 _KIND_CACHE: Optional[dict] = None
 
 
@@ -128,9 +208,11 @@ def load_kind_index() -> dict:
     if _KIND_CACHE is None:
         try:
             import json as _json
-            _KIND_CACHE = _json.loads(
-                _KIND_INDEX_PATH.read_text(encoding="utf-8")).get("members", {})
-        except Exception:                                               # noqa: BLE001
+
+            _KIND_CACHE = _json.loads(_KIND_INDEX_PATH.read_text(encoding="utf-8")).get(
+                "members", {}
+            )
+        except Exception:  # noqa: BLE001
             _KIND_CACHE = {}
         if not isinstance(_KIND_CACHE, dict):
             _KIND_CACHE = {}
@@ -156,11 +238,12 @@ def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
         return None
     if rec.get("kind") == "property":
         if rec.get("settable") is True:
-            return "write"                      # ★ `{get; set;}` ⇒ 可写 ✓
+            return "write"  # ★ `{get; set;}` ⇒ 可写 ✓
         if rec.get("settable") is False:
-            return "read"                       # ★ `{get;}` ⇒ 只读 ✓
-        return None                             # ★ 属性但签名没标 ⇒ 判不出
-    return None                                 # ★ 方法 ⇒ 官方无读写标记 ⇒ 判不出 ✓
+            return "read"  # ★ `{get;}` ⇒ 只读 ✓
+        return None  # ★ 属性但签名没标 ⇒ 判不出
+    return None  # ★ 方法 ⇒ 官方无读写标记 ⇒ 判不出 ✓
+
 
 #: ★★★ **`requires` 的机械初推规则**（★ 规格 210 · B3 的「分组基数」）。
 #:   ★★ 起因（真机读数）：★ `nonempty` 组抽样 20 里，★ 剩余的失败**全部**是
@@ -170,7 +253,7 @@ def classify_member(member: str, kinds: Optional[dict] = None) -> Optional[str]:
 #:   ★★ 为什么值得机械推：★ 评审说「耗时随**不同前置的数量**增长，不随工具数增长」——
 #:     ★ 而 `requires` 的种类数就是那个「不同前置的数量」 ✓
 INJECT_REQUIRES = {
-    "": "none",                       # ★ 不需要宿主对象（★ 如纯静态查询）✓
+    "": "none",  # ★ 不需要宿主对象（★ 如纯静态查询）✓
     "model": "part",
     "doc": "part",
     "asm_model": "assembly",
@@ -202,6 +285,7 @@ def derive_requires(inject: str) -> str:
         return INJECT_REQUIRES[key]
     return "host:" + (key or "unknown")
 
+
 #: ★★★ **`doc_type` 的机械初推规则**（★ 规格 210 · B3 的第二次拆解产物）。
 #:   ★★ 起因（真机）：★ 存活普查里 **7 条 `drawing_*`** 报
 #:     `当前文档不是工程图（GetType()=1；swDocPART=1 / swDocASSEMBLY=2 …）` ✗
@@ -212,7 +296,10 @@ def derive_requires(inject: str) -> str:
 #:     ★ 而 B4 的预检也能**提前**报 `wrong_doc_type`（★ 而不是等工具内部抛）✓
 #:   ★⚠ 限度：★ 只认**文本里出现的那几种说法**；★ 认不出 ⇒ `None`（★ 不许瞎猜）✓
 _DOC_TYPE_MARKERS = (
-    ("drawing", ("不是工程图", "swDocDRAWING", "swDocDRAWING", "GetType()=3", "GetType() = 3")),
+    (
+        "drawing",
+        ("不是工程图", "swDocDRAWING", "swDocDRAWING", "GetType()=3", "GetType() = 3"),
+    ),
     ("assembly", ("不是装配体", "swDocASSEMBLY", "GetType()=2", "GetType() = 2")),
     ("part", ("不是零件", "swDocPART", "GetType()=1", "GetType() = 1")),
 )
@@ -229,6 +316,7 @@ def derive_doc_type(source: str) -> Optional[str]:
             return kind
     return None
 
+
 #: ★★★ **`needs` 的机械初推规则**（★ 规格 210 · B3 的第三次拆解产物）。
 #:   ★★ 起因（真机）：★ 存活普查里那几条 `sketch_*` 报
 #:     `没有活动草图` / `不在草图编辑态`，★ 而 `part_bounding_box` 报 `零件里可能没有实体` ✗
@@ -239,8 +327,16 @@ def derive_doc_type(source: str) -> Optional[str]:
 #:   ★★ 为什么值得推：★ 推出来之后，★ 普查就能**先把状态推到位**再调它们 ✓
 #:   ★⚠ 限度：★ 只认**文本里出现的说法**；★ 认不出 ⇒ **空元组**（★ 不许瞎猜）✓
 _NEEDS_MARKERS = (
-    ("edit:sketch", ("没有活动草图", "不在草图编辑态", "ActiveSketch", "GetActiveSketch",
-                     "ActiveSketch 为 None")),
+    (
+        "edit:sketch",
+        (
+            "没有活动草图",
+            "不在草图编辑态",
+            "ActiveSketch",
+            "GetActiveSketch",
+            "ActiveSketch 为 None",
+        ),
+    ),
     ("body", ("没有实体", "零件里可能没有实体", "GetBodies2(0", "GetBodies2(-1")),
     ("selection", ("__current_selection__", "必须已选中", "没有选中")),
 )
@@ -254,4 +350,3 @@ def derive_needs(source: str) -> tuple:
         if any(m in text for m in marks):
             out.append(token)
     return tuple(out)
-

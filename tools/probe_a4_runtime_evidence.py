@@ -49,9 +49,14 @@ def main() -> int:
     app, _active = connect_solidworks(visible=True)
     rec("connect", ok=bool(app), revision=str(getattr(app, "RevisionNumber", "") or ""))
     if not app:
-        OUT.write_text(json.dumps({"verdict": "fail", "reason": "连不上 SolidWorks",
-                                   "steps": steps}, ensure_ascii=False, indent=1),
-                       encoding="utf-8")
+        OUT.write_text(
+            json.dumps(
+                {"verdict": "fail", "reason": "连不上 SolidWorks", "steps": steps},
+                ensure_ascii=False,
+                indent=1,
+            ),
+            encoding="utf-8",
+        )
         print("★ 连不上 ⇒ 已记 fail")
         return 1
 
@@ -59,9 +64,14 @@ def main() -> int:
     model = new_document(app, "part")
     rec("new_document", ok=bool(model))
     if not model:
-        OUT.write_text(json.dumps({"verdict": "fail", "reason": "建不出零件",
-                                   "steps": steps}, ensure_ascii=False, indent=1),
-                       encoding="utf-8")
+        OUT.write_text(
+            json.dumps(
+                {"verdict": "fail", "reason": "建不出零件", "steps": steps},
+                ensure_ascii=False,
+                indent=1,
+            ),
+            encoding="utf-8",
+        )
         return 1
     P.sketch(model, "Front Plane")
     P.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
@@ -73,14 +83,22 @@ def main() -> int:
     #: ★★★ 2026-10-04：★ **先把候选名字探明**（★ 上一版直接猜 `D1@草图1` ⇒ `LookupError`
     #:  崩了）——
     #:   ★ 所以这里**逐个试 + 每次都 try/except**，★ 并把**每一次尝试**都记进证据 ✓
-    candidates = list(CANDIDATE_DIMS) + ["D1@草图2", "D2@草图2", "D3@草图1", "D4@草图1",
-                                         "D1@Boss-Extrude1", "D1@凸台-拉伸1"]
+    candidates = list(CANDIDATE_DIMS) + [
+        "D1@草图2",
+        "D2@草图2",
+        "D3@草图1",
+        "D4@草图1",
+        "D1@Boss-Extrude1",
+        "D1@凸台-拉伸1",
+    ]
     para = {"ok": False, "reason": "候选尺寸名都读不到", "tried": []}
     for target in candidates:
         try:
             res = D.update_dimension_mm(model, target, 35.0, rebuild=True)
-        except Exception as exc:                                          # noqa: BLE001
-            para["tried"].append("%s ⇒ %s: %s" % (target, type(exc).__name__, str(exc)[:60]))
+        except Exception as exc:  # noqa: BLE001
+            para["tried"].append(
+                "%s ⇒ %s: %s" % (target, type(exc).__name__, str(exc)[:60])
+            )
             continue
         got = None
         if isinstance(res, dict):
@@ -92,14 +110,24 @@ def main() -> int:
                 got = am.get("current") or next((v for v in am.values()), None)
             else:
                 got = am
-        para["tried"].append("%s ⇒ success=%s after=%s"
-                             % (target, (res or {}).get("success"), got))
-        para.update({"dimension": target, "asked_mm": 35.0, "readback": got,
-                     "set_status": (res or {}).get("set_status"),
-                     "write_return": str(res)[:240]})
+        para["tried"].append(
+            "%s ⇒ success=%s after=%s" % (target, (res or {}).get("success"), got)
+        )
+        para.update(
+            {
+                "dimension": target,
+                "asked_mm": 35.0,
+                "readback": got,
+                "set_status": (res or {}).get("set_status"),
+                "write_return": str(res)[:240],
+            }
+        )
         try:
-            para["ok"] = bool((res or {}).get("success")) and got is not None \
+            para["ok"] = (
+                bool((res or {}).get("success"))
+                and got is not None
                 and abs(float(got) - 35.0) < 1e-6
+            )
         except (TypeError, ValueError):
             para["ok"] = False
         if para["ok"]:
@@ -119,15 +147,29 @@ def main() -> int:
     for r in rows:
         rb = r.get("readback")
         val = rb.get("value") if isinstance(rb, dict) else rb
-        per[r.get("name")] = {"requested": r.get("requested"), "verified": r.get("verified"),
-                              "add_status": r.get("add_status"), "readback_value": val}
+        per[r.get("name")] = {
+            "requested": r.get("requested"),
+            "verified": r.get("verified"),
+            "add_status": r.get("add_status"),
+            "readback_value": val,
+        }
     cp = {
-        "ok": bool((wrote or {}).get("success")) and len(rows) == len(want)
-              and all(r.get("verified") is True and str(r.get("readback", {}).get("value")
-                      if isinstance(r.get("readback"), dict) else r.get("readback"))
-                      == want.get(r.get("name")) for r in rows),
-        "asked": want, "per_property": per,
-        "n_asked": len(want), "n_returned": len(rows),
+        "ok": bool((wrote or {}).get("success"))
+        and len(rows) == len(want)
+        and all(
+            r.get("verified") is True
+            and str(
+                r.get("readback", {}).get("value")
+                if isinstance(r.get("readback"), dict)
+                else r.get("readback")
+            )
+            == want.get(r.get("name"))
+            for r in rows
+        ),
+        "asked": want,
+        "per_property": per,
+        "n_asked": len(want),
+        "n_returned": len(rows),
         "write_return_success": (wrote or {}).get("success"),
     }
     rec("custom_properties", **cp)
@@ -142,8 +184,14 @@ def main() -> int:
     }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
     print("★ verdict:", verdict)
-    print("★ parameter_updates:", para.get("ok"), "·", para.get("dimension"),
-          "·", para.get("readback"))
+    print(
+        "★ parameter_updates:",
+        para.get("ok"),
+        "·",
+        para.get("dimension"),
+        "·",
+        para.get("readback"),
+    )
     print("★ custom_properties:", cp.get("ok"), "· mismatch:", cp.get("mismatch"))
     print("★ wrote", OUT)
     return 0

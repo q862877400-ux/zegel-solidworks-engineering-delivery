@@ -1,4 +1,5 @@
 """★ 门禁：`known-facts.md` 的每一条事实都要有处置（吸收 / 放过 + 理由）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -19,14 +20,17 @@ import json
 import pathlib
 import sys
 
-sys.path[:0] = [str(pathlib.Path(__file__).resolve().parents[1]),
-                str(pathlib.Path(__file__).resolve().parents[1] / "tools")]
+sys.path[:0] = [
+    str(pathlib.Path(__file__).resolve().parents[1]),
+    str(pathlib.Path(__file__).resolve().parents[1] / "tools"),
+]
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 
 def _load():
     """★ 复用 `tools/triage_known_facts.py` 的分类（★ 单一源）。"""
-    import importlib.util                                              # noqa: PLC0415
+    import importlib.util  # noqa: PLC0415
+
     p = ROOT / "tools" / "triage_known_facts.py"
     spec = importlib.util.spec_from_file_location("triage_under_test", p)
     m = importlib.util.module_from_spec(spec)
@@ -45,8 +49,9 @@ def check() -> list:
     for n in sorted(facts, key=int):
         verdict, why = m.classify(n, facts[n]["body"])
         if verdict == "复核":
-            problems.append("★ 事实 %s **未判定**（★ 分类器说需人工复核，"
-                            "而人工表里没有它）" % n)
+            problems.append(
+                "★ 事实 %s **未判定**（★ 分类器说需人工复核，而人工表里没有它）" % n
+            )
         elif not why:
             problems.append("★ 事实 %s 的处置**没有理由**" % n)
         elif verdict not in ("吸收", "放过"):
@@ -72,10 +77,12 @@ def selftest() -> bool:
     #: ★★ 而 `check()` 遇到「复核」必须**报问题**（★ 这才是门禁的行为）
     real_classify = m.classify
     try:
-        m.classify = lambda n, b: (("复核", "★ 负例") if n == "99998"
-                                   else real_classify(n, b))
-        facts = json.loads((ROOT / "output" / "known-facts-index.json")
-                           .read_text(encoding="utf-8"))["facts"]
+        m.classify = lambda n, b: (
+            ("复核", "★ 负例") if n == "99998" else real_classify(n, b)
+        )
+        facts = json.loads(
+            (ROOT / "output" / "known-facts-index.json").read_text(encoding="utf-8")
+        )["facts"]
         facts["99998"] = {"n": 99998, "line": 0, "body": "用直线工具画草图"}
         problems = []
         for n in sorted(facts, key=int):

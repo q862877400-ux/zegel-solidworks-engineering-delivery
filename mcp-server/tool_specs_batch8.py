@@ -33,6 +33,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -44,7 +45,8 @@ SPECS_BATCH8 = [
     ToolSpec(
         name="solidworks_collect_model_summary",
         title="Collect Model Summary",
-        module="sw_review", function="collect_model_summary",
+        module="sw_review",
+        function="collect_model_summary",
         inject="model",
         read_only=True,
         doc="Summarise the model: title, type, feature tree (name + type), save path.",
@@ -54,7 +56,8 @@ SPECS_BATCH8 = [
     ToolSpec(
         name="solidworks_get_costing_manager",
         title="Get Costing Manager",
-        module="sw_costing", function="get_costing_manager",
+        module="sw_costing",
+        function="get_costing_manager",
         inject="model",
         read_only=True,
         doc="Get the SOLIDWORKS Costing manager object for the active document.",
@@ -64,7 +67,8 @@ SPECS_BATCH8 = [
     ToolSpec(
         name="solidworks_list_simulation_study_options",
         title="List Simulation Study Options",
-        module="sw_simulation_study_options", function="list_setter_summary",
+        module="sw_simulation_study_options",
+        function="list_setter_summary",
         read_only=True,
         doc="List the simulation study option setters available (no document needed).",
         param_alias={},

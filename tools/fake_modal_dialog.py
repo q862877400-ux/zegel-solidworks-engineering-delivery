@@ -26,6 +26,7 @@ python tests/test_modal_dialogs_can_fire.py  # 测试会自己起/杀它
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -37,9 +38,20 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 u = ctypes.windll.user32
 u.CreateWindowExW.restype = w.HWND
-u.CreateWindowExW.argtypes = [w.DWORD, w.LPCWSTR, w.LPCWSTR, w.DWORD,
-                              ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int,
-                              w.HWND, w.HMENU, w.HINSTANCE, w.LPVOID]
+u.CreateWindowExW.argtypes = [
+    w.DWORD,
+    w.LPCWSTR,
+    w.LPCWSTR,
+    w.DWORD,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_int,
+    w.HWND,
+    w.HMENU,
+    w.HINSTANCE,
+    w.LPVOID,
+]
 
 #: 预定义对话框类（官方常量 `WC_DIALOG` 就是字符串 "#32770"）。
 DIALOG_CLASS = "#32770"
@@ -48,19 +60,37 @@ DIALOG_CLASS = "#32770"
 #:    后者是 `0x00000000`）⇒ 结果窗口**可见**（实测 `visible=1`）⇒ 对照不成立。
 #: ⇒ 只用 `WS_POPUP`。
 WS_POPUP = 0x80000000
-WS_VISIBLE = 0x10000000          #: 本夹具**故意不置**它
+WS_VISIBLE = 0x10000000  #: 本夹具**故意不置**它
 STYLE = WS_POPUP
 
 
 def main() -> int:
-    hwnd = u.CreateWindowExW(0, DIALOG_CLASS, "MCP 假模态框（测试夹具）", STYLE,
-                             0, 0, 320, 200, None, None, None, None)
+    hwnd = u.CreateWindowExW(
+        0,
+        DIALOG_CLASS,
+        "MCP 假模态框（测试夹具）",
+        STYLE,
+        0,
+        0,
+        320,
+        200,
+        None,
+        None,
+        None,
+        None,
+    )
     if not hwnd:
         print("FAIL: CreateWindowExW 建不出 #32770（err=%d）" % ctypes.get_last_error())
         return 1
-    print("PID=%d HWND=%d class=%s visible=%d"
-          % (ctypes.windll.kernel32.GetCurrentProcessId(), hwnd, DIALOG_CLASS,
-             u.IsWindowVisible(hwnd)))
+    print(
+        "PID=%d HWND=%d class=%s visible=%d"
+        % (
+            ctypes.windll.kernel32.GetCurrentProcessId(),
+            hwnd,
+            DIALOG_CLASS,
+            u.IsWindowVisible(hwnd),
+        )
+    )
     sys.stdout.flush()
     #: 停住等人来抓（测试会 kill 掉本进程）
     msg = w.MSG()

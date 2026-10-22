@@ -33,6 +33,7 @@ r"""@brief 小实验：**子进程能否安全地连到**同一个** SolidWorks 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -72,8 +73,8 @@ def _revision() -> tuple[bool, str]:
 
     try:
         app = w.GetActiveObject("SldWorks.Application")
-        return True, str(app.RevisionNumber)   #: ★ 属性，不加括号
-    except Exception as exc:                                   # noqa: BLE001
+        return True, str(app.RevisionNumber)  #: ★ 属性，不加括号
+    except Exception as exc:  # noqa: BLE001
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:100])
 
 
@@ -90,29 +91,44 @@ def main() -> int:
 
     #: ① ★ 子进程能不能连
     t0 = time.time()
-    r1 = subprocess.run([sys.executable, str(child_file)], capture_output=True, text=True,
-                        encoding="utf-8", errors="replace", timeout=60)
+    r1 = subprocess.run(
+        [sys.executable, str(child_file)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=60,
+    )
     ev["steps"]["child_connect"] = {
         "ok": "CHILD_OK" in (r1.stdout or ""),
         "stdout": (r1.stdout or "").strip()[:200],
         "stderr": (r1.stderr or "").strip()[:200],
         "seconds": round(time.time() - t0, 1),
     }
-    print("  [1] 子进程连接: %s" % json.dumps(ev["steps"]["child_connect"], ensure_ascii=False)[:200])
+    print(
+        "  [1] 子进程连接: %s"
+        % json.dumps(ev["steps"]["child_connect"], ensure_ascii=False)[:200]
+    )
 
     #: ② ★ 子进程连过之后，主进程还能用吗
     ok1, rev1 = _revision()
     ev["steps"]["main_after_child"] = {
-        "ok": ok1, "revision": rev1,
+        "ok": ok1,
+        "revision": rev1,
         "still_usable": bool(ok1 and rev0),
     }
     print("  [2] 主进程（子进程连过之后）: ok=%s rev=%s" % (ok1, rev1))
 
     #: ③ ★★ 子进程**卡住**时，主进程受不受影响（★ 这是方案的核心）
     print("  [3] ★ 起一个**故意卡住**的子进程，看主进程是否被阻塞…")
-    p = subprocess.Popen([sys.executable, str(child_file), "--hang"],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                         text=True, encoding="utf-8", errors="replace")
+    p = subprocess.Popen(
+        [sys.executable, str(child_file), "--hang"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     #: 等它先连上（读一行输出）
     line = ""
     deadline = time.time() + 30
@@ -127,13 +143,23 @@ def main() -> int:
     ok2, rev2 = _revision()
     dt = round(time.time() - t1, 2)
     ev["steps"]["main_while_child_hung"] = {
-        "ok": ok2, "revision": rev2, "seconds": dt,
+        "ok": ok2,
+        "revision": rev2,
+        "seconds": dt,
         "blocked": dt > 5.0,
         "★": "★★ 若 ok 且 dt 很小 ⇒ **子进程卡住**不影响主进程** ⇒ 进程隔离方案成立",
     }
-    print("  [4] ★★ 子进程卡住时主进程: ok=%s rev=%s 用时=%ss ⇒ %s"
-          % (ok2, rev2, dt, "**没被阻塞**" if not ev["steps"]["main_while_child_hung"]["blocked"]
-             else "**被阻塞了**"))
+    print(
+        "  [4] ★★ 子进程卡住时主进程: ok=%s rev=%s 用时=%ss ⇒ %s"
+        % (
+            ok2,
+            rev2,
+            dt,
+            "**没被阻塞**"
+            if not ev["steps"]["main_while_child_hung"]["blocked"]
+            else "**被阻塞了**",
+        )
+    )
 
     #: 收尾：杀掉卡住的子进程（★ 这正是方案的机制）
     try:
@@ -141,7 +167,7 @@ def main() -> int:
         p.wait(timeout=10)
         ev["steps"]["kill_child"] = {"ok": True, "★": "★ 子进程可被 kill ⇒ 挂起可弃"}
         print("  [5] 卡住的子进程已 kill ✓")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["steps"]["kill_child"] = {"ok": False, "err": str(exc)[:80]}
 
     #: 杀完之后主进程还能用吗
@@ -152,12 +178,15 @@ def main() -> int:
     #: ★ 判读
     ev["steps"]["verdict"] = {
         "child_can_connect": ev["steps"]["child_connect"]["ok"],
-        "main_unaffected_by_hung_child": ok2 and not ev["steps"]["main_while_child_hung"]["blocked"],
+        "main_unaffected_by_hung_child": ok2
+        and not ev["steps"]["main_while_child_hung"]["blocked"],
         "child_killable": ev["steps"]["kill_child"]["ok"],
         "★": "★ 三条都为真 ⇒ **进程隔离方案成立**（子进程能连、卡住不阻塞主进程、可被杀）",
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  ── 判读 ──")
     print("     %s" % json.dumps(ev["steps"]["verdict"], ensure_ascii=False)[:280])
     print("  证据: %s" % OUT)

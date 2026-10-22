@@ -1,4 +1,5 @@
 """★ 把 Python 源码里「中文散文中的 ASCII 双引号」批量换成「」（★ 事实 48 的自动修法）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/fix_cjk_quotes.py
@@ -29,8 +30,8 @@ CJK = r"\u4e00-\u9fff\u3000-\u303f\uff00-\uffef"
 #:      而本仓的散文**几乎每行都以 `★` 开头** ⇒ 那一整类形态全被漏掉；
 #:   ② 装饰类里没有**空白** ⇒ `★★ **"…"**` 这种"星号 + 空格 + 引号"的形态也漏 ✓
 #:   ⇒ ★ 现在：**"非 ASCII 字符"就算邻接**（★ 判据简单且够用），★ 装饰类含**空白** ✓
-NON_ASCII = r"\x00-\x7f"          #: ★ 这是**字符类的内容**（不是完整的类）—— 用时写成 `[^…]`
-DECO = r"\*`_\s"                  #: ★ 同上：**内容**，不是完整的类（⚠ 一版写成 `[…]` ⇒ 又造出嵌套类）
+NON_ASCII = r"\x00-\x7f"  #: ★ 这是**字符类的内容**（不是完整的类）—— 用时写成 `[^…]`
+DECO = r"\*`_\s"  #: ★ 同上：**内容**，不是完整的类（⚠ 一版写成 `[…]` ⇒ 又造出嵌套类）
 #: ★ 一条"非 ASCII 散文里的引号对"：左边有非 ASCII（可隔着装饰符），右边有非 ASCII（可隔
 #: 着装饰符）——
 #: ★★ 用**捕获组**而不是定宽 lookbehind（Python 的 lookbehind 必须定宽，`*` 这种量词放不
@@ -43,8 +44,15 @@ DECO = r"\*`_\s"                  #: ★ 同上：**内容**，不是完整的�
 #: ` ✓
 #:   ⇒ ★ 这也解释了为什么前两次"改完仍是 0 处"：**正则静默变形、一处也匹配不上** ✓
 PAIR = re.compile(
-    r"([^" + NON_ASCII + r"])([" + DECO + r"]*)\"([^\"\n]{1,80}?)\"([" + DECO + r"]*)(?=[^"
-    + NON_ASCII + r"])"
+    r"([^"
+    + NON_ASCII
+    + r"])(["
+    + DECO
+    + r"]*)\"([^\"\n]{1,80}?)\"(["
+    + DECO
+    + r"]*)(?=[^"
+    + NON_ASCII
+    + r"])"
 )
 
 
@@ -54,6 +62,7 @@ def _string_constants(text: str):
     ★★ 用途：★ 做"**只改分隔符、不改内容**"的**语义护栏** ✓
     """
     import ast
+
     try:
         tree = ast.parse(text)
     except SyntaxError:
@@ -103,19 +112,25 @@ def fix_text(src: str) -> tuple[str, int]:
         if not cnt:
             out_lines.append(ln)
             continue
-        trial = "".join(out_lines) + cand + "".join(src.splitlines(keepends=True)[idx + 1:])
+        trial = (
+            "".join(out_lines)
+            + cand
+            + "".join(src.splitlines(keepends=True)[idx + 1 :])
+        )
         if _string_constants(trial) == before:
             out_lines.append(cand)
             changed += cnt
         else:
-            out_lines.append(ln)          # ★ 这一行会改坏语义 ⇒ **原样保留** ✓
+            out_lines.append(ln)  # ★ 这一行会改坏语义 ⇒ **原样保留** ✓
     return "".join(out_lines), changed
 
 
 def main(argv=None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if not args:
-        print("用法: python tools/fix_cjk_quotes.py <文件…>   # ★ 就地改；先跑 --dry 只看")
+        print(
+            "用法: python tools/fix_cjk_quotes.py <文件…>   # ★ 就地改；先跑 --dry 只看"
+        )
         return 2
     dry = "--dry" in args
     files = [a for a in args if not a.startswith("--")]
@@ -126,8 +141,10 @@ def main(argv=None) -> int:
         new, n = fix_text(src)
         ok_before = _parses(src)
         ok_after = _parses(new)
-        print("%-58s 改 %2d 处 · 语法 %s → %s"
-              % (f, n, "OK" if ok_before else "FAIL", "OK" if ok_after else "FAIL"))
+        print(
+            "%-58s 改 %2d 处 · 语法 %s → %s"
+            % (f, n, "OK" if ok_before else "FAIL", "OK" if ok_after else "FAIL")
+        )
         if n and not dry:
             if not ok_after:
                 print("   ★★ 改完语法仍不过 ⇒ **不写盘**（★ 免得把好文件改坏）")

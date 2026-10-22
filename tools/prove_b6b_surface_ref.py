@@ -38,10 +38,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_surface_ref_ops as M                          # noqa: E402
-import scripts.sw_sketch_primitives as SP                            # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_ref_ops as M  # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 
 
 def _mk_sketch(doc, plane, pts):
@@ -64,7 +64,7 @@ def _mk_sketch(doc, plane, pts):
     ref = None
     try:
         ref = P._capture_sketch_ref(doc, source="b6b-probe")
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         ref = None
     P.end_sketch(doc)
     return ref
@@ -95,7 +95,7 @@ def _select_sketch_contour(doc, name, mark):
         if ref is None:
             return False
         return bool(P._select_sketch_ref(doc, ref, mark=int(mark)))
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return False
 
 
@@ -108,7 +108,7 @@ def _one(sw, zh, fn):
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -116,7 +116,7 @@ def _one(sw, zh, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
@@ -135,14 +135,22 @@ def _case_revolve(doc):
     #:     > **Signature**: `SketchSegment CreateCenterLine(X1, Y1, Z1, …)`
     #:     ⇒ ★ **它回的就是那条中心线的 `SketchSegment`** ⇒ 捕获它 ⇒ **只选它** ✓
     #:   ★ 而顺序照 `sw_part.revolve_boss` 那条真机判据（★ 轮 360）：**先轴、后轮廓**。
-    axis_seg = C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCenterLine",
-                                0.0, 0.0, 0.0, 30.0, 0.0, 0.0)
+    axis_seg = C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCenterLine",
+        0.0,
+        0.0,
+        0.0,
+        30.0,
+        0.0,
+        0.0,
+    )
     #: ★★★ **轮廓 ref 也在草图还开着时捕获**（★ 轮 475 的教训：
     #:   `_capture_sketch_ref` 只从"活动草图"取，★ 退草图后再拿就是 `None`）
     prof_ref = None
     try:
         prof_ref = P._capture_sketch_ref(doc, source="b6b-revolve")
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         prof_ref = None
     P.end_sketch(doc)
 
@@ -151,7 +159,7 @@ def _case_revolve(doc):
     try:
         if axis_seg is not None:
             axis_ok = bool(P._select_any_object((axis_seg,), append=False, mark=4))
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         axis_ok = False
 
     #: ★ **② 后轮廓**：优先用捕到的 `contours`（★ 判据：`轮廓 = ref.contours`），
@@ -159,8 +167,11 @@ def _case_revolve(doc):
     prof_route = None
     prof_ok = False
     if prof_ref is not None:
-        for objs, tag in ((prof_ref.contours, "contours"), (prof_ref.sketch, "sketch"),
-                          (prof_ref.feature, "feature")):
+        for objs, tag in (
+            (prof_ref.contours, "contours"),
+            (prof_ref.sketch, "sketch"),
+            (prof_ref.feature, "feature"),
+        ):
             if objs and P._select_any_object(objs, append=True, mark=1):
                 prof_route, prof_ok = tag, True
                 break
@@ -169,26 +180,38 @@ def _case_revolve(doc):
         prof_route, prof_ok = "ensure_sketch_selected(草图特征)", True
 
     try:
-        sel_n = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1) or 0)
-    except Exception:                                                    # noqa: BLE001
+        sel_n = int(
+            C.get_com_member(
+                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
         sel_n = -1
     r = M.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
     r["axis_captured"] = axis_seg is not None
     r["axis_selected_ok"] = axis_ok
     r["profile_route"] = prof_route
-    r["n_contours_in_ref"] = len(getattr(prof_ref, "contours", ()) or ()) if prof_ref else -1
+    r["n_contours_in_ref"] = (
+        len(getattr(prof_ref, "contours", ()) or ()) if prof_ref else -1
+    )
     r["selection_count_before_call"] = sel_n
     return r
 
 
 def _case_loft(doc):
     """★ 放样曲面：**两个**草图（不同基准面）⇒ 按 **mark=1** 各选一次 ⇒ 调。"""
-    refs = [r for r in (_mk_sketch(doc, "Front Plane", (-20, -10, 20, -10, 20, 10)),
-                        _mk_sketch(doc, "Top Plane", (-10, -8, 10, -8, 10, 8))) if r is not None]
+    refs = [
+        r
+        for r in (
+            _mk_sketch(doc, "Front Plane", (-20, -10, 20, -10, 20, 10)),
+            _mk_sketch(doc, "Top Plane", (-10, -8, 10, -8, 10, 8)),
+        )
+        if r is not None
+    ]
     try:
         C.get_com_member(doc, "ClearSelection2", True)
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     #: ★ 两个轮廓，★★ **mark = 1**（官方 Remarks 逐字：
     #:   "The mark for: **profile selections should be 1**"）
@@ -217,14 +240,26 @@ def _case_loft(doc):
     for ref in refs:
         if picked == 0:
             #: ★ 保底：helper 没选上 ⇒ 第一个也按引用选（★ 与旧行为一致）
-            for objs in (ref.contours, ref.feature, ref.sketch, ref.regions, ref.segments):
+            for objs in (
+                ref.contours,
+                ref.feature,
+                ref.sketch,
+                ref.regions,
+                ref.segments,
+            ):
                 if P._select_any_object(objs, append=False, mark=1):
                     picked += 1
                     break
             continue
         if picked == 1:
             #: ★★ 第二个**只能按引用追加**（★ `_select_sketch_ref` 会清选区）
-            for objs in (ref.contours, ref.feature, ref.sketch, ref.regions, ref.segments):
+            for objs in (
+                ref.contours,
+                ref.feature,
+                ref.sketch,
+                ref.regions,
+                ref.segments,
+            ):
                 if P._select_any_object(objs, append=True, mark=1):
                     picked += 1
                     break
@@ -233,10 +268,12 @@ def _case_loft(doc):
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B6-b 曲面特征第二组 2 条逐个真机跑（specs/201-toolbar-gaps）",
-          "judge": "特征树叶子名增量（sw_part.feature_names）",
-          "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B6-b 曲面特征第二组 2 条逐个真机跑（specs/201-toolbar-gaps）",
+        "judge": "特征树叶子名增量（sw_part.feature_names）",
+        "items": [],
+    }
     ev["items"].append(_one(sw, "旋转曲面", _case_revolve))
     ev["items"].append(_one(sw, "放样曲面", _case_loft))
     ev["passed"] = sum(1 for i in ev["items"] if i.get("verdict") == "能")
@@ -247,9 +284,15 @@ def main() -> int:
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["total"]))
     for i in ev["items"]:
         tb, ta = i.get("tree_before"), i.get("tree_after")
-        extra = ("  \u6811 %d\u2192%d %s" % (len(tb), len(ta), i.get("new_features"))) if tb and ta else ""
-        print("  %-8s %-4s %-28s%s" % (i.get("zh"), i.get("verdict"),
-                                       i.get("verified_by") or "", extra))
+        extra = (
+            ("  \u6811 %d\u2192%d %s" % (len(tb), len(ta), i.get("new_features")))
+            if tb and ta
+            else ""
+        )
+        print(
+            "  %-8s %-4s %-28s%s"
+            % (i.get("zh"), i.get("verdict"), i.get("verified_by") or "", extra)
+        )
         if i.get("err"):
             print("        err=%s" % str(i["err"])[:90])
     print("  \u4ea7\u7269\uff1a%s" % p)

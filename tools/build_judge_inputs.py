@@ -30,17 +30,20 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as rc                                    # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 SEED = 20261004
 PER_JUDGE = 5
 D = ROOT / "output" / "pick-test"
-answers = {a["index"]: a for a in json.loads((D / "_answers.json").read_text(encoding="utf-8"))}
+answers = {
+    a["index"]: a for a in json.loads((D / "_answers.json").read_text(encoding="utf-8"))
+}
 
 #: ★ 工具名 → 真实说明（★ 裁判要看的就是它）
 by_name = {s.name: s for s in rc.all_specs()}
 #: ★ 上游 server.py 的工具（★ 不在 all_specs 里 ⇒ 说明取不到，要如实标出来）
-upstream_known = {"mcp__solidworks__"}          # 前缀而已
+upstream_known = {"mcp__solidworks__"}  # 前缀而已
+
 
 def mcp_to_plain(n: str) -> str:
     """★ 子代理报的是 `mcp__solidworks__solidworks_xxx`（★ DSH 的命名是
@@ -69,22 +72,35 @@ for f in sorted(D.glob("pick-*.json")):
             if c not in seen:
                 seen.add(c)
                 uniq.append(c)
-        picks.append({"index": i, "task": answers[i]["task"], "stratum": answers[i]["stratum"],
-                      "expected_tool": answers[i]["expected_tool"],
-                      "sees": r.get("sees_solidworks_tools"),
-                      "visible_sample": r.get("visible_sample") or [],
-                      "none": bool(r.get("none_possible")) or not uniq,
-                      "candidates": uniq})
+        picks.append(
+            {
+                "index": i,
+                "task": answers[i]["task"],
+                "stratum": answers[i]["stratum"],
+                "expected_tool": answers[i]["expected_tool"],
+                "sees": r.get("sees_solidworks_tools"),
+                "visible_sample": r.get("visible_sample") or [],
+                "none": bool(r.get("none_possible")) or not uniq,
+                "candidates": uniq,
+            }
+        )
 
 print("★ 收到 %d 组挑工具结果" % len(picks))
 print("   · ★ 自报看不见清单的: %d" % sum(1 for p in picks if p["sees"] is False))
-print("   · ★ 自报清单可见但报的名字**不在本仓工具里**的: %d"
-      % sum(1 for p in picks if p["sees"] and p["candidates"]
-            and all(c not in by_name for c in p["candidates"])))
+print(
+    "   · ★ 自报清单可见但报的名字**不在本仓工具里**的: %d"
+    % sum(
+        1
+        for p in picks
+        if p["sees"]
+        and p["candidates"]
+        and all(c not in by_name for c in p["candidates"])
+    )
+)
 print("   · ★ 选了 NONE（认为没有工具能做）的: %d" % sum(1 for p in picks if p["none"]))
 
 rng = random.Random(SEED)
-groups = [picks[i:i + PER_JUDGE] for i in range(0, len(picks), PER_JUDGE)]
+groups = [picks[i : i + PER_JUDGE] for i in range(0, len(picks), PER_JUDGE)]
 made = 0
 for gi, g in enumerate(groups):
     payload = []
@@ -93,15 +109,32 @@ for gi, g in enumerate(groups):
         items = []
         for c in p["candidates"]:
             s = by_name.get(c)
-            items.append({"tool": c,
-                          "title": (getattr(s, "title", "") or "") if s else "(上游工具，说明取不到)",
-                          "description": (getattr(s, "doc", "") or "")[:500] if s else "(上游工具，说明取不到)"})
-        rng.shuffle(items)                                  #: ★ 随机序 ⇒ 去位置偏倚
-        payload.append({"index": p["index"], "task": p["task"],
-                        "candidates_are_none": p["none"], "candidates": items})
+            items.append(
+                {
+                    "tool": c,
+                    "title": (getattr(s, "title", "") or "")
+                    if s
+                    else "(上游工具，说明取不到)",
+                    "description": (getattr(s, "doc", "") or "")[:500]
+                    if s
+                    else "(上游工具，说明取不到)",
+                }
+            )
+        rng.shuffle(items)  #: ★ 随机序 ⇒ 去位置偏倚
+        payload.append(
+            {
+                "index": p["index"],
+                "task": p["task"],
+                "candidates_are_none": p["none"],
+                "candidates": items,
+            }
+        )
     (D / ("judge-in-%02d.json" % gi)).write_text(
-        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8"
+    )
     made += 1
-(D / "_judge_index.json").write_text(json.dumps(picks, ensure_ascii=False, indent=1), encoding="utf-8")
+(D / "_judge_index.json").write_text(
+    json.dumps(picks, ensure_ascii=False, indent=1), encoding="utf-8"
+)
 print("★ 写出 %d 个裁判输入（每个 %d 组）" % (made, PER_JUDGE))
 print("★ 对账表: _judge_index.json")

@@ -32,6 +32,7 @@ r"""@brief 探针：**从 model 取「草图对象」的三条路**，以及关�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -51,8 +52,12 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "sketch-object-route
 def _name_of(sw_connect, obj):
     """尽力取对象的 Name；取不到就回 None（不编）。"""
     try:
-        return str(sw_connect.safe_get_com_member(obj, "Name")) if obj is not None else None
-    except Exception:                                          # noqa: BLE001
+        return (
+            str(sw_connect.safe_get_com_member(obj, "Name"))
+            if obj is not None
+            else None
+        )
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -64,13 +69,13 @@ def probe(doc, sw_connect, sketch_name: str) -> dict:
     try:
         a = sw_connect.safe_get_com_member(doc, "GetActiveSketch2")
         out["A_GetActiveSketch2"] = _name_of(sw_connect, a)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["A_GetActiveSketch2"] = "EXC:%s" % str(exc)[:40]
     #: B · SketchManager.ActiveSketch
     try:
         b = sw_connect.safe_get_com_member(skm, "ActiveSketch")
         out["B_ActiveSketch"] = _name_of(sw_connect, b)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["B_ActiveSketch"] = "EXC:%s" % str(exc)[:40]
     #: C · 按特征名取
     try:
@@ -79,9 +84,11 @@ def probe(doc, sw_connect, sketch_name: str) -> dict:
             out["C_FeatureByName"] = None
         else:
             sk = sw_connect.safe_get_com_member(feat, "GetSpecificFeature2")
-            out["C_FeatureByName"] = _name_of(sw_connect, sk) or "(取到对象但 Name 读不到)"
+            out["C_FeatureByName"] = (
+                _name_of(sw_connect, sk) or "(取到对象但 Name 读不到)"
+            )
             out["C_got_object"] = sk is not None
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["C_FeatureByName"] = "EXC:%s" % str(exc)[:40]
     return out
 
@@ -97,7 +104,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -105,45 +112,62 @@ def main() -> int:
         sw_part.start_sketch(doc)
         sw_part.sketch_line(doc, -20.0, 0.0, 20.0, 0.0)
         sw_part.sketch_circle(doc, 0.0, 20.0, 5.0)
-        ev["steps"].append({"tag": "草图打开中（画了线+圆）",
-                            "sketch_name": sw_part.current_sketch_name(doc),
-                            **probe(doc, sw_connect, sw_part.current_sketch_name(doc))})
+        ev["steps"].append(
+            {
+                "tag": "草图打开中（画了线+圆）",
+                "sketch_name": sw_part.current_sketch_name(doc),
+                **probe(doc, sw_connect, sw_part.current_sketch_name(doc)),
+            }
+        )
         name = sw_part.current_sketch_name(doc)
         sw_part.end_sketch(doc)
-        ev["steps"].append({"tag": "草图已关闭（★ 关键读点）",
-                            "sketch_name": name, **probe(doc, sw_connect, name)})
+        ev["steps"].append(
+            {
+                "tag": "草图已关闭（★ 关键读点）",
+                "sketch_name": name,
+                **probe(doc, sw_connect, name),
+            }
+        )
 
         #: 再开一个草图，看"重开"时的读数（多草图场景）
         sw_part.start_sketch(doc)
         sw_part.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
         n2 = sw_part.current_sketch_name(doc)
-        ev["steps"].append({"tag": "第二个草图打开中", "sketch_name": n2,
-                            **probe(doc, sw_connect, n2)})
+        ev["steps"].append(
+            {"tag": "第二个草图打开中", "sketch_name": n2, **probe(doc, sw_connect, n2)}
+        )
         sw_part.end_sketch(doc)
-        ev["steps"].append({"tag": "第二个草图已关闭", "sketch_name": n2,
-                            **probe(doc, sw_connect, n2)})
+        ev["steps"].append(
+            {"tag": "第二个草图已关闭", "sketch_name": n2, **probe(doc, sw_connect, n2)}
+        )
         ev["sketch_names"] = [name, n2]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 三条路对照（★ 重点看「草图已关闭」那两行）──")
     for s in ev["steps"]:
-        print("     %-24s A(GetActiveSketch2)=%-14s B(ActiveSketch)=%-14s C(按名)=%s"
-              % (s["tag"], s.get("A_GetActiveSketch2"), s.get("B_ActiveSketch"),
-                 s.get("C_FeatureByName")))
+        print(
+            "     %-24s A(GetActiveSketch2)=%-14s B(ActiveSketch)=%-14s C(按名)=%s"
+            % (
+                s["tag"],
+                s.get("A_GetActiveSketch2"),
+                s.get("B_ActiveSketch"),
+                s.get("C_FeatureByName"),
+            )
+        )
     print()
     closed = [s for s in ev["steps"] if "已关闭" in s["tag"]]
     if closed:
@@ -154,11 +178,15 @@ def main() -> int:
         print("     A GetActiveSketch2 : %s" % ("能" if a_ok else "**不能**"))
         print("     B ActiveSketch     : %s" % ("能" if b_ok else "**不能**"))
         print("     C 按名取           : %s" % ("能" if c_ok else "**不能**"))
-        print("  ⇒ 包装层应选：%s" % ("C（按名取）" if (c_ok and not a_ok and not b_ok)
-                                     else "见上面读数"))
+        print(
+            "  ⇒ 包装层应选：%s"
+            % ("C（按名取）" if (c_ok and not a_ok and not b_ok) else "见上面读数")
+        )
         ev["usable_after_close"] = {"A": a_ok, "B": b_ok, "C": c_ok}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

@@ -26,6 +26,7 @@ objective ③ 要求「**跑该阶段验收命令确认真绿**」。★ 轮 179
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -37,7 +38,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "verified-acceptance-run.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "verified-acceptance-run.json"
+)
 #: ⚠⚠⚠ **2026-10-01（轮 180）：本仓库的验收脚本有**三种**输出格式**（实测）：
 #: ```
 #:   ① `── 8/8 · verdict: pass ──`              （多数冒烟）
@@ -51,8 +54,8 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "verified-acceptance
 #:   而不是与我**记得的**形态对齐。★ 且**两个证据都要看**（verdict 文本 + exit code）。
 VERDICT = re.compile(
     #: ⚠ `(?m)` **必须放在最前**（放中间会报 `global flags not at the start`）
-    r"(?m)(?:──\s*(\d+)\s*/\s*(\d+)\s*(?:项通过)?\s*·\s*verdict:\s*(\w+)\s*──"   #: ①②
-    r"|^\s*verdict:\s*(\w+)\s*$)"                                                  #: ③
+    r"(?m)(?:──\s*(\d+)\s*/\s*(\d+)\s*(?:项通过)?\s*·\s*verdict:\s*(\w+)\s*──"  #: ①②
+    r"|^\s*verdict:\s*(\w+)\s*$)"  #: ③
 )
 #: ★ 由 capabilities.yaml 抽出来的那 31 条（本轮固定快照 ⇒ 可复跑、可比对）
 CMDS = [
@@ -99,8 +102,15 @@ def main() -> int:
             print("  %-48s **文件不在**" % rel)
             continue
         try:
-            r = subprocess.run([sys.executable, str(p)], cwd=str(ROOT), capture_output=True,
-                               text=True, encoding="utf-8", errors="replace", timeout=900)
+            r = subprocess.run(
+                [sys.executable, str(p)],
+                cwd=str(ROOT),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=900,
+            )
             out = (r.stdout or "") + (r.stderr or "")
         except subprocess.TimeoutExpired:
             rows.append({"cmd": rel, "status": "TIMEOUT"})
@@ -111,26 +121,35 @@ def main() -> int:
             pass
         if m is None:
             verdict, npass, ntot = None, None, None
-        elif m.group(3):                      #: ①② 形态：带 N/M
+        elif m.group(3):  #: ①② 形态：带 N/M
             npass, ntot, verdict = int(m.group(1)), int(m.group(2)), m.group(3)
-        else:                                 #: ③ 形态：只有 verdict
+        else:  #: ③ 形态：只有 verdict
             npass, ntot, verdict = None, None, m.group(4)
         rec = {
-            "cmd": rel, "exit": r.returncode,
-            "verdict": verdict, "passed": npass, "total": ntot,
+            "cmd": rel,
+            "exit": r.returncode,
+            "verdict": verdict,
+            "passed": npass,
+            "total": ntot,
         }
         rows.append(rec)
-        print("  %-48s %s/%s · verdict=%-4s · exit=%s"
-              % (rel, rec["passed"], rec["total"], rec["verdict"], r.returncode))
+        print(
+            "  %-48s %s/%s · verdict=%-4s · exit=%s"
+            % (rel, rec["passed"], rec["total"], rec["verdict"], r.returncode)
+        )
 
     n_pass = sum(1 for r in rows if r.get("verdict") == "pass")
     n_fail = sum(1 for r in rows if r.get("verdict") == "fail")
-    n_none = sum(1 for r in rows if r.get("verdict") is None and r.get("status") != "MISSING")
+    n_none = sum(
+        1 for r in rows if r.get("verdict") is None and r.get("status") != "MISSING"
+    )
     n_missing = sum(1 for r in rows if r.get("status") in ("MISSING", "TIMEOUT"))
     print()
     print("  ── 汇总 ──")
-    print("   pass **%d** · fail **%d** · 无 verdict **%d** · 文件不在/超时 **%d** · 共 %d"
-          % (n_pass, n_fail, n_none, n_missing, len(rows)))
+    print(
+        "   pass **%d** · fail **%d** · 无 verdict **%d** · 文件不在/超时 **%d** · 共 %d"
+        % (n_pass, n_fail, n_none, n_missing, len(rows))
+    )
     print()
     print("   ★ 需要分辨原因的 fail：")
     for r in rows:
@@ -144,15 +163,28 @@ def main() -> int:
 
     try:
         import sw_connect
+
         f, d_, s = sw_connect.settle_residual_dialogs(settle_seconds=1.0)
         print()
         print("   收尾兜底：发现 %d · 点掉 %d · 扫了 %d" % (f, d_, s))
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("   收尾兜底失败: %s" % str(exc)[:60])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"rows": rows, "pass": n_pass, "fail": n_fail,
-                               "no_verdict": n_none, "missing": n_missing},
-                              ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "rows": rows,
+                "pass": n_pass,
+                "fail": n_fail,
+                "no_verdict": n_none,
+                "missing": n_missing,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("  证据: %s" % OUT)
     return 0
 

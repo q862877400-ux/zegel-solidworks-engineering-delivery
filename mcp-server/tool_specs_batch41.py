@@ -45,8 +45,10 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH41"]
 
 _STD = "Toolbox standard name (★ see solidworks_toolbox_list_standards)."
-_SPEC = ("A SpurGearSpec as a dict: module_mm / teeth / face_width_mm / bore_diameter_mm / "
-         "pressure_angle_deg / helix_angle_deg (★ lengths carry _mm, angles carry _deg).")
+_SPEC = (
+    "A SpurGearSpec as a dict: module_mm / teeth / face_width_mm / bore_diameter_mm / "
+    "pressure_angle_deg / helix_angle_deg (★ lengths carry _mm, angles carry _deg)."
+)
 
 
 SPECS_BATCH41 = [
@@ -65,26 +67,41 @@ SPECS_BATCH41 = [
     ToolSpec(
         name="solidworks_toolbox_list_standards",
         title="List the Toolbox Standards",
-        module="sw_toolbox_index", function="list_standards",
+        module="sw_toolbox_index",
+        function="list_standards",
         inject=None,
-        params=[Param("index", dict, default=None,
-                      description="A pre-loaded index (omit to load the local one).")],
+        params=[
+            Param(
+                "index",
+                dict,
+                default=None,
+                description="A pre-loaded index (omit to load the local one).",
+            )
+        ],
         doc="List the Toolbox standards available in the local index. ★ Pure data — no "
-            "SolidWorks call.",
+        "SolidWorks call.",
     ),
     ToolSpec(
         name="solidworks_toolbox_load_index",
         title="Load the Toolbox Index",
-        module="sw_toolbox_index", function="load_index",
+        module="sw_toolbox_index",
+        function="load_index",
         inject=None,
-        params=[Param("path", str, default=None,
-                      description="Index path (omit for the default local index).")],
+        params=[
+            Param(
+                "path",
+                str,
+                default=None,
+                description="Index path (omit for the default local index).",
+            )
+        ],
         doc="Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call.",
     ),
     ToolSpec(
         name="solidworks_toolbox_search",
         title="Search the Toolbox Index",
-        module="sw_toolbox_index", function="search",
+        module="sw_toolbox_index",
+        function="search",
         inject=None,
         params=[
             Param("keyword", str, description="Search keyword."),
@@ -96,51 +113,67 @@ SPECS_BATCH41 = [
     ToolSpec(
         name="solidworks_toolbox_part_path",
         title="Get a Toolbox Part's File Path",
-        module="sw_toolbox_index", function="part_path",
+        module="sw_toolbox_index",
+        function="part_path",
         inject=None,
         params=[
             Param("standard", str, description=_STD),
-            Param("part_name", str,
-                  description="Part name inside that standard (★ see the search tool)."),
-            Param("index", dict, default=None, description="A pre-loaded index (optional)."),
+            Param(
+                "part_name",
+                str,
+                description="Part name inside that standard (★ see the search tool).",
+            ),
+            Param(
+                "index",
+                dict,
+                default=None,
+                description="A pre-loaded index (optional).",
+            ),
         ],
         doc="Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. "
-            "★ An unknown name fails with what is available instead of returning nothing.",
+        "★ An unknown name fails with what is available instead of returning nothing.",
     ),
     #: ── 草图编辑（★ 空条目 `sketch_chamfer` / `sketch_edit_ops` 的填实）──
     ToolSpec(
         name="solidworks_sketch_create_chamfer",
         title="Create a Sketch Chamfer",
-        module="sw_sketch_edit", function="create_sketch_chamfer",
+        module="sw_sketch_edit",
+        function="create_sketch_chamfer",
         inject="model",
         params=[
-            Param("chamfer_type", int, default=0, description="Chamfer type enum value."),
+            Param(
+                "chamfer_type", int, default=0, description="Chamfer type enum value."
+            ),
             Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
         ],
         doc="Create a chamfer on the selected sketch entities. ★ Needs entities selected first "
-            "(★ rule 3: select declaratively, do not pass coordinates). "
-            "⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the "
-            "sketch one — the layer reports what actually happened.",
+        "(★ rule 3: select declaratively, do not pass coordinates). "
+        "⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the "
+        "sketch one — the layer reports what actually happened.",
     ),
     ToolSpec(
         name="solidworks_sketch_mirror",
         title="Mirror the Selected Sketch Entities",
-        module="sw_sketch_edit", function="sketch_mirror",
+        module="sw_sketch_edit",
+        function="sketch_mirror",
         inject="model",
         params=[],
         doc="Mirror the selected sketch entities about the selected centerline. "
-            "★ The criterion is that the sketch entity count changes.",
+        "★ The criterion is that the sketch entity count changes.",
     ),
     ToolSpec(
         name="solidworks_sketch_convert_entities",
         title="Convert Entities into the Active Sketch",
-        module="sw_sketch_edit", function="convert_entities",
+        module="sw_sketch_edit",
+        function="convert_entities",
         inject="model",
         params=[
             Param("chain", bool, default=True, description="Select the whole chain."),
-            Param("inner_loops", bool, default=False, description="Include inner loops."),
+            Param(
+                "inner_loops", bool, default=False, description="Include inner loops."
+            ),
         ],
         doc="Convert the selected model edges into the active sketch. ★ The criterion is that the "
-            "sketch entity count changes.",
+        "sketch entity count changes.",
     ),
 ]

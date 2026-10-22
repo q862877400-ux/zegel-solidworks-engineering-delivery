@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[1]
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as rc                                    # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 CJK = re.compile(r"[\u4e00-\u9fff]")
 
@@ -59,7 +59,7 @@ def tok(text: str) -> list[str]:
     out += re.findall(r"[a-z0-9]{2,}", text)
     #: ★ CJK 二元组（**不**再加单字）
     cjk = "".join(ch for ch in text if CJK.match(ch))
-    out += [cjk[i:i + 2] for i in range(len(cjk) - 1)]
+    out += [cjk[i : i + 2] for i in range(len(cjk) - 1)]
     return out
 
 
@@ -69,9 +69,13 @@ def build_docs():
     for s in rc.all_specs():
         params = " ".join(p.name for p in (getattr(s, "params", None) or []))
         toks: list[str] = []
-        for field in (s.name, getattr(s, "title", "") or "", params,
-                      getattr(s, "doc", "") or ""):
-            toks += tok(field)                      #: ★ 逐字段 → 不跨界
+        for field in (
+            s.name,
+            getattr(s, "title", "") or "",
+            params,
+            getattr(s, "doc", "") or "",
+        ):
+            toks += tok(field)  #: ★ 逐字段 → 不跨界
         docs.append(toks)
         names.append(s.name)
     return names, docs
@@ -100,6 +104,7 @@ def bm25(docs, k1=1.5, b=0.75):
             out.append((s, i))
         out.sort(reverse=True)
         return out
+
     return score
 
 
@@ -141,18 +146,32 @@ def main() -> int:
         for k in ks:
             if rank and rank <= k:
                 hit[k] += 1
-        rows.append({"query": q, "want": want, "rank": rank,
-                     "top5": [names[i] for _s, i in ranked[:5]]})
-        print("  %-24s 期望 %-46s rank=%s" % (q[:22], want.removeprefix("solidworks_"), rank))
+        rows.append(
+            {
+                "query": q,
+                "want": want,
+                "rank": rank,
+                "top5": [names[i] for _s, i in ranked[:5]],
+            }
+        )
+        print(
+            "  %-24s 期望 %-46s rank=%s"
+            % (q[:22], want.removeprefix("solidworks_"), rank)
+        )
     n = len(QUERIES)
     print()
     print("★ 命中率（离线 BM25，433 个工具，%d 条真实查询）:" % n)
     for k in ks:
         print("     top-%-3d **%2d/%d = %5.1f%%**" % (k, hit[k], n, 100.0 * hit[k] / n))
     out = ROOT / "output" / "tool-rag-feasibility.json"
-    out.write_text(json.dumps({"n": n, "hits": {str(k): hit[k] for k in ks},
-                               "queries": rows}, ensure_ascii=False, indent=1),
-                   encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {"n": n, "hits": {str(k): hit[k] for k in ks}, "queries": rows},
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
     print("★ 明细已写:", out)
     return 0
 

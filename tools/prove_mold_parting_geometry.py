@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_mold_parting_geometry.py
-# 定位:   ★ 2026-10-02（轮 384）objective③：`mold_parting_geometry` 是 12 条 stitched 
+# 定位:   ★ 2026-10-02（轮 384）objective③：`mold_parting_geometry` 是 12 条 stitched
 #           里**唯一可挖的**
 #   （★ 其余 10 条在 `docs/dead-ends.md` 上、`weldment_cut_list` 是环境缺件）。
 #   ★ 而既有探针 `verify_mold_evidence_smoke.py` **只覆盖只读那一半**，
@@ -36,14 +36,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-parting-geometry-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "mold-parting-geometry-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_mold as M
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -62,7 +71,10 @@ def main() -> int:
         sk = current_sketch_name(doc)
         end_sketch(doc)
         extrude_boss(doc, sk, 25.0)
-        ev["steps"]["doc"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
         before = counts(doc)
         ev["steps"]["counts_before"] = {"ok": True, "counts": before}
 
@@ -71,11 +83,15 @@ def main() -> int:
         doc.ClearSelection2(True)
         try:
             M.insert_parting_line(doc)
-            ev["steps"]["negative_unprepared"] = {"ok": False,
-                                                  "note": "**未选参考却成功了** ⇒ 判据①恒真、该判据无效"}
-        except Exception as exc:                                # noqa: BLE001
-            ev["steps"]["negative_unprepared"] = {"ok": True,
-                                                  "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
+            ev["steps"]["negative_unprepared"] = {
+                "ok": False,
+                "note": "**未选参考却成功了** ⇒ 判据①恒真、该判据无效",
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["negative_unprepared"] = {
+                "ok": True,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:90]),
+            }
 
         #: ③ **准备**：★ ★★★★ 官方 Remarks 明写**两件都要带 mark 选**（★ 铁律 4 查到的原
         #: 话）：
@@ -91,57 +107,88 @@ def main() -> int:
         picked = False
         for plane in ("Front Plane", "前视基准面", "Top Plane", "上视基准面"):
             if get_com_member(doc, "Extension").SelectByID2(
-                    plane, "PLANE", 0, 0, 0, False, 1,
-                    sw_connect.create_empty_dispatch_variant(), 0):
+                plane,
+                "PLANE",
+                0,
+                0,
+                0,
+                False,
+                1,
+                sw_connect.create_empty_dispatch_variant(),
+                0,
+            ):
                 picked = True
-                ev["steps"]["select_pull_direction"] = {"ok": True, "plane": plane, "mark": 1}
+                ev["steps"]["select_pull_direction"] = {
+                    "ok": True,
+                    "plane": plane,
+                    "mark": 1,
+                }
                 break
         if not picked:
-            ev["steps"]["select_pull_direction"] = {"ok": False, "note": "四个候选面名都没选中"}
+            ev["steps"]["select_pull_direction"] = {
+                "ok": False,
+                "note": "四个候选面名都没选中",
+            }
         #: ★ mark=4 ⇒ **分型线边线**：★ 取体上所有边（★ 简单件上"最外一圈"就是全部边）
         edges = []
-        for body in (get_com_member(doc, "GetBodies2", 0, False) or []):
+        for body in get_com_member(doc, "GetBodies2", 0, False) or []:
             edges.extend(get_com_member(body, "GetEdges") or [])
         n_sel = 0
         for e in edges:
             try:
                 if e.Select4(True, sw_connect.create_empty_dispatch_variant(), 4):
                     n_sel += 1
-            except TypeError:                                   #: ★ 有些重载没有 mark 参数
+            except TypeError:  #: ★ 有些重载没有 mark 参数
                 try:
                     if e.Select4(True, sw_connect.create_empty_dispatch_variant()):
                         n_sel += 1
-                except Exception:                               # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
-        ev["steps"]["select_parting_edges"] = {"ok": n_sel > 0, "selected": n_sel,
-                                               "of": len(edges), "mark": 4}
+        ev["steps"]["select_parting_edges"] = {
+            "ok": n_sel > 0,
+            "selected": n_sel,
+            "of": len(edges),
+            "mark": 4,
+        }
 
         #: ④ 插入分型线 ⇒ ★ 回读计数（★ 定量判据）
         try:
             name = M.insert_parting_line(doc)
-            ev["steps"]["insert_parting_line"] = {"ok": bool(name), "feature_name": str(name)[:60]}
-        except Exception as exc:                                # noqa: BLE001
-            ev["steps"]["insert_parting_line"] = {"ok": False,
-                                                  "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])}
+            ev["steps"]["insert_parting_line"] = {
+                "ok": bool(name),
+                "feature_name": str(name)[:60],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["insert_parting_line"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+            }
         after = counts(doc)
         ev["steps"]["counts_after"] = {"ok": True, "counts": after}
         n_before = int((before or {}).get("parting_lines") or 0)
         n_after = int((after or {}).get("parting_lines") or 0)
-        ev["steps"]["count_increased"] = {"ok": n_after > n_before,
-                                          "before": n_before, "after": n_after,
-                                          "note": "★ 判据：parting_lines 计数必须**真的增加**（★ 定量）"}
+        ev["steps"]["count_increased"] = {
+            "ok": n_after > n_before,
+            "before": n_before,
+            "after": n_after,
+            "note": "★ 判据：parting_lines 计数必须**真的增加**（★ 定量）",
+        }
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 本探针补 `mold_parting_geometry` 的**写入那半**（★ 既有冒烟只覆盖只读）；"
-                      "★ 关键在**先按契约选拔模方向参考** —— 未选时官方返回 None（★ 已用反证验到）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 本探针补 `mold_parting_geometry` 的**写入那半**（★ 既有冒烟只覆盖只读）；"
+            "★ 关键在**先按契约选拔模方向参考** —— 未选时官方返回 None（★ 已用反证验到）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

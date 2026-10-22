@@ -1,4 +1,5 @@
 """★ 把指纹标定结果落成**可提交的记录**（规格 210 · B2 的收口产物）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_fingerprint_calibration.py
@@ -54,8 +55,12 @@ def main() -> int:
         "## 第 0 格 · 读数只读（★ 先验「量具本身不改状态」）",
         "",
         "★ 连读三次、**只比第 2 与第 3 次**（★ 第 1 次当「加热」，★ 因为刚建好的零件还在自己稳）：",
-        "**%s**" % ("完全相等 ✓ —— 读数**没有副作用**" if s0.get("equal")
-                    else "★ 不相等 ✗ —— 读数里有东西会自己变"),
+        "**%s**"
+        % (
+            "完全相等 ✓ —— 读数**没有副作用**"
+            if s0.get("equal")
+            else "★ 不相等 ✗ —— 读数里有东西会自己变"
+        ),
         "",
         "★ 读不到的类：%s" % (", ".join(sorted(s0.get("missing") or {})) or "（无）"),
         "",
@@ -68,7 +73,8 @@ def main() -> int:
             "**`%s`** ⇒ `%s`" % (cls, v["verdict"]),
             "",
             "· 结论：%s" % VERDICT_NOTE.get(v["verdict"], "?"),
-            "· 写操作：`%s`（返回体说成功：%s）" % (v.get("writer") or "（无）", v.get("writer_ok")),
+            "· 写操作：`%s`（返回体说成功：%s）"
+            % (v.get("writer") or "（无）", v.get("writer_ok")),
             "· 读数：前 `%r` ⇒ 后 `%r`" % (v.get("before"), v.get("after")),
         ]
         why = v.get("why")
@@ -83,7 +89,11 @@ def main() -> int:
         "",
         "★★ **收口判据的满足情况**：★ 有灵敏度证据的 **%d** 类；★ 明确记「不可见 / 读数待修 / 没试」的 **%d** 类；"
         "★ 两者相加 = **%d**，★ 与九类相等则**每一类都有结论** ✓"
-        % (counts.get("sensitive", 0), sum(n for k, n in counts.items() if k != "sensitive"), len(classes)),
+        % (
+            counts.get("sensitive", 0),
+            sum(n for k, n in counts.items() if k != "sensitive"),
+            len(classes),
+        ),
         "",
         "## ⚠ 本记录的限度（★ 不许当成「九类全都敏感」）",
         "",

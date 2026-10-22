@@ -23,6 +23,7 @@ r"""@brief 真机冒烟：`sw_export.export_to_image`（png/jpg）—— 读**�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -42,7 +43,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "png-smoke-evidence.json")
 PNG = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view.png")
 JPG = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view.jpg")
-BMPW = Path(Path(__file__).resolve().parents[1] / "output" / "smoke-view-window.bmp")   #: 轮 146 那个"窗口尺寸"的 BMP
+BMPW = Path(
+    Path(__file__).resolve().parents[1] / "output" / "smoke-view-window.bmp"
+)  #: 轮 146 那个"窗口尺寸"的 BMP
 W, H, D = 100.0, 60.0, 20.0
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 
@@ -72,8 +75,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
     checks: list = []
@@ -88,10 +93,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_export, sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         sw_part.start_sketch(doc)
@@ -109,16 +115,27 @@ def main() -> int:
         try:
             sw_export.export_to_image(doc, PNG)
             chk("export_to_image(.png) 未抛异常", True, "ok")
-        except Exception as exc:      # noqa: BLE001
-            chk("export_to_image(.png)", False, "%s: %s" % (type(exc).__name__, str(exc)[:110]))
+        except Exception as exc:  # noqa: BLE001
+            chk(
+                "export_to_image(.png)",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+            )
         if PNG.exists():
             size = PNG.stat().st_size
             dims = png_size(PNG)
             ev["png"] = {"bytes": size, "size": dims}
             chk("★ PNG 文件存在且非空", size > 0, "%d 字节" % size)
-            chk("★ PNG **魔数**（89 50 4E 47…）与 `IHDR`", dims is not None, "IHDR 尺寸 %s" % (dims,))
-            chk("★★ PNG 尺寸是**正数**（Read back from IHDR）",
-                bool(dims) and dims[0] > 0 and dims[1] > 0, "%s" % (dims,))
+            chk(
+                "★ PNG **魔数**（89 50 4E 47…）与 `IHDR`",
+                dims is not None,
+                "IHDR 尺寸 %s" % (dims,),
+            )
+            chk(
+                "★★ PNG 尺寸是**正数**（Read back from IHDR）",
+                bool(dims) and dims[0] > 0 and dims[1] > 0,
+                "%s" % (dims,),
+            )
         else:
             chk("PNG 生成", False, "文件不存在")
 
@@ -127,10 +144,13 @@ def main() -> int:
             sw_export.export_to_image(doc, JPG)
             ok = JPG.exists() and JPG.read_bytes()[:3] == b"\xff\xd8\xff"
             ev["jpg"] = {"bytes": JPG.stat().st_size if JPG.exists() else 0}
-            chk("★★ JPG 生成且**魔数** FF D8 FF", ok,
-                "%d 字节" % ev["jpg"]["bytes"])
-        except Exception as exc:      # noqa: BLE001
-            chk("export_to_image(.jpg)", False, "%s: %s" % (type(exc).__name__, str(exc)[:110]))
+            chk("★★ JPG 生成且**魔数** FF D8 FF", ok, "%d 字节" % ev["jpg"]["bytes"])
+        except Exception as exc:  # noqa: BLE001
+            chk(
+                "export_to_image(.jpg)",
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+            )
 
         #: ③ 交叉核对：SaveAs3 没有尺寸入参 ⇒ 应与"窗口尺寸"一致（轮 146 量过）
         try:
@@ -149,17 +169,20 @@ def main() -> int:
             #: ⚠ **但我没有验证这个解释** ⇒ 按事实 82/142 的教训：
             #:   **不把没验证的假设写成判据**。⇒ 改成"两者都是**合理的正尺寸**"，
             #:   并把差值**如实记为「未查明」**。
-            chk("★ 两个尺寸都是**合理的正数**（宽高 > 0）",
+            chk(
+                "★ 两个尺寸都是**合理的正数**（宽高 > 0）",
                 bool(bw and pn) and min(*bw, *pn) > 0,
                 "BMP(0,0)=%s vs PNG=%s —— ⚠ 宽度差 %s（**未查明**：疑为「窗口 vs 绘图区」）"
-                % (bw, pn, abs(pn[0] - bw[0]) if (bw and pn) else "?"))
+                % (bw, pn, abs(pn[0] - bw[0]) if (bw and pn) else "?"),
+            )
             if bw and pn:
                 ev["cross_check_note"] = (
                     "⚠ **未查明**：`SaveBMP(0,0)` 与 `SaveAs3` 的宽度不同"
                     "（%s vs %s），高度一致（%s）。**最可能**的解释是前者按**窗口**、"
                     "后者按**绘图区**，但**本轮没有验证**（事实 82/142 的教训："
-                    "不把没验证的假设写成判据）。" % (bw, pn, bw[1]))
-        except Exception as exc:      # noqa: BLE001
+                    "不把没验证的假设写成判据）。" % (bw, pn, bw[1])
+                )
+        except Exception as exc:  # noqa: BLE001
             chk("交叉核对", False, "%s: %s" % (type(exc).__name__, str(exc)[:100]))
 
         #: ④ 扩展名守卫
@@ -168,15 +191,15 @@ def main() -> int:
             chk("★ 扩展名不在名单 ⇒ 应当拒绝", False, "**没有拒绝**")
         except ValueError:
             chk("★ 扩展名不在名单 ⇒ 明确拒绝", True, "ValueError")
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             chk("★ 扩展名不在名单 ⇒ 明确拒绝", False, "抛的是 %s" % type(exc).__name__)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:180]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
@@ -184,18 +207,30 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("   ⚠ 收尾关文档失败（请人工确认）：%s" % str(exc)[:90])
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（事实 64）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（事实 64）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
     print("  ⚠ 只证「格式合法 + 尺寸合理」；**不证画面内容**。")

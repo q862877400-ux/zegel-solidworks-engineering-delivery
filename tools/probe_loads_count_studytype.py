@@ -26,15 +26,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "loads-count-studytype-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "loads-count-studytype-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"cases": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -56,39 +65,52 @@ def main() -> int:
                 case["manager"] = type(mgr).__name__
                 try:
                     case["count_via_get"] = repr(get_com_member(mgr, "Count"))
-                except Exception as exc:                       # noqa: BLE001
-                    case["count_via_get_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
+                except Exception as exc:  # noqa: BLE001
+                    case["count_via_get_err"] = "%s: %s" % (
+                        type(exc).__name__,
+                        str(exc)[:130],
+                    )
                 try:
                     case["count_via_attr"] = repr(mgr.Count)
-                except Exception as exc:                       # noqa: BLE001
-                    case["count_via_attr_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
+                except Exception as exc:  # noqa: BLE001
+                    case["count_via_attr_err"] = "%s: %s" % (
+                        type(exc).__name__,
+                        str(exc)[:130],
+                    )
                 #: ★ 也试一下"取载荷对象"那条路（`GetLoadsAndRestraints`？）—— ★ 只试名
                 #: 字，不猜语义
                 for attr in ("GetLoadsAndRestraints", "GetLoadCount"):
                     try:
                         case["%s" % attr] = repr(get_com_member(mgr, attr))[:70]
-                    except Exception as exc:                   # noqa: BLE001
-                        case["%s_err" % attr] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
-            except Exception as exc:                           # noqa: BLE001
+                    except Exception as exc:  # noqa: BLE001
+                        case["%s_err" % attr] = "%s: %s" % (
+                            type(exc).__name__,
+                            str(exc)[:80],
+                        )
+            except Exception as exc:  # noqa: BLE001
                 case["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
             ev["cases"][label] = case
         ev["verdict"] = "pass" if ev["cases"] else "partial"
-        ev["note"] = ("★ 只问一件事：★ `ICWLoadsAndRestraintsManager.Count` 在**静力**与**热**算例上"
-                      "分别是什么（★ 原始取值/报错）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 只问一件事：★ `ICWLoadsAndRestraintsManager.Count` 在**静力**与**热**算例上"
+            "分别是什么（★ 原始取值/报错）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s" % OUT)
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

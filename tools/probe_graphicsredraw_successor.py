@@ -40,8 +40,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "graphicsredraw-successor-evidence.json"
 
@@ -58,7 +58,16 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         P.end_sketch(doc)
         names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
@@ -68,7 +77,7 @@ def main() -> int:
             r0 = _g(doc, "GraphicsRedraw2")
             R["old_GraphicsRedraw2"] = "★ 能调（ret=%r）" % (r0,)
             R["old_ok"] = True
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             R["old_GraphicsRedraw2"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             R["old_ok"] = False
 
@@ -78,7 +87,7 @@ def main() -> int:
             view = _g(doc, "ActiveView")
             R["ActiveView"] = "★ %r" % (view,)
             R["get_view_ok"] = view is not None
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             R["ActiveView"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             R["get_view_ok"] = False
 
@@ -88,30 +97,40 @@ def main() -> int:
                 r1 = _g(view, "GraphicsRedraw", None)
                 R["GraphicsRedraw_None"] = "★ 能调（ret=%r）" % (r1,)
                 R["none_ok"] = True
-            except Exception as exc:                                      # noqa: BLE001
-                R["GraphicsRedraw_None"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+            except Exception as exc:  # noqa: BLE001
+                R["GraphicsRedraw_None"] = "%s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:160],
+                )
                 R["none_ok"] = False
             #: ★ ③ `GraphicsRedraw([0,0,w,h])`（★ 官方例子的 `rect` 用法）
             try:
                 r2 = _g(view, "GraphicsRedraw", [0, 0, 800, 600])
                 R["GraphicsRedraw_rect"] = "★ 能调（ret=%r）" % (r2,)
                 R["rect_ok"] = True
-            except Exception as exc:                                      # noqa: BLE001
-                R["GraphicsRedraw_rect"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+            except Exception as exc:  # noqa: BLE001
+                R["GraphicsRedraw_rect"] = "%s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:160],
+                )
                 R["rect_ok"] = False
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    R["verdict"] = ("★ PASS —— `ActiveView.GraphicsRedraw(None)` 与 `(rect)` 都能调 ⇒ **可以换**"
-                    if R.get("get_view_ok") and R.get("none_ok") and R.get("rect_ok")
-                    else "★★ FAIL —— 至少一条不通 ⇒ **如实记「不可换，保留现状」**")
+    R["verdict"] = (
+        "★ PASS —— `ActiveView.GraphicsRedraw(None)` 与 `(rect)` 都能调 ⇒ **可以换**"
+        if R.get("get_view_ok") and R.get("none_ok") and R.get("rect_ok")
+        else "★★ FAIL —— 至少一条不通 ⇒ **如实记「不可换，保留现状」**"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

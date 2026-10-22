@@ -44,14 +44,25 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 try:
-    from .sw_connect import call_com_member, create_empty_dispatch_variant, get_com_member, out_i4
+    from .sw_connect import (
+        call_com_member,
+        create_empty_dispatch_variant,
+        get_com_member,
+        out_i4,
+    )
 except ImportError:
-    from sw_connect import call_com_member, create_empty_dispatch_variant, get_com_member, out_i4
+    from sw_connect import (
+        call_com_member,
+        create_empty_dispatch_variant,
+        get_com_member,
+        out_i4,
+    )
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -89,61 +100,61 @@ __all__ = [
 #: enum-gate: not-enum arity
 #: arity-reflect: byref=included
 ASSEMBLY_DOC_ARITY: dict[str, int] = {
-    'ActivateGroundPlane': 2,
-    'AddComponent5': 8,
-    'AddComponentConfiguration': 4,
-    'AddComponents3': 3,
-    'AddConcentricMateWithTolerance': 5,
-    'AddDistanceMate': 8,
-    'AddMate5': 15,
-    'AddPLMComponent': 5,
-    'AddPipePenetration': 0,
-    'AddPipingFitting': 3,
-    'AddSmartComponent': 4,
-    'AddToFeatureScope': 1,
-    'AssemblyPartToggle': 0,
-    'AutoAngleAxis': 1,
-    'AutoExplode': 0,
-    'AutoMateRepair': 2,
-    'CollectAllSupportiveMates': 0,
-    'CompConfigProperties6': 8,
-    'ComponentReload2': 3,
-    'CopyWithMates2': 8,
-    'CreateExplodedView': 0,
-    'CreateMate': 1,
-    'CreateMateData': 1,
-    'CreateSmartComponent': 6,
-    'CreateSpeedPak': 1,
-    'DeleteSelections': 1,
-    'DissolveComponentPattern': 0,
-    'DissolveSubAssembly': 0,
-    'Dummy1': 0,
-    'EditAssembly': 0,
-    'EditConcentricMate': 5,
-    'EditDistanceMate': 8,
-    'EditExplodeParameters': 0,
-    'EditMate4': 16,
-    'EditPart2': 3,
-    'EditRebuild': 0,
-    'ExitIsolate': 0,
-    'FeatureByName': 1,
-    'FeatureExtrusion': 0,
-    'FileDeriveComponentPart': 0,
-    'FixComponent': 0,
-    'ForceRebuild2': 1,
-    'ForceUpdateElectricalData': 1,
-    'GetActiveGroundPlane': 2,
-    'GetAdvancedSelection': 0,
-    'GetBox': 1,
-    'GetComponentByID': 1,
-    'GetComponentByName': 1,
-    'GetComponentCount': 1,
-    'GetComponents': 1,
-    'GetDragOperator': 0,
-    'GetDroppedAtEntity': 0,
-    'GetEditTarget': 0,
-    'GetEditTargetComponent': 0,
-    'GetExplodedViewConfigurationName': 1,
+    "ActivateGroundPlane": 2,
+    "AddComponent5": 8,
+    "AddComponentConfiguration": 4,
+    "AddComponents3": 3,
+    "AddConcentricMateWithTolerance": 5,
+    "AddDistanceMate": 8,
+    "AddMate5": 15,
+    "AddPLMComponent": 5,
+    "AddPipePenetration": 0,
+    "AddPipingFitting": 3,
+    "AddSmartComponent": 4,
+    "AddToFeatureScope": 1,
+    "AssemblyPartToggle": 0,
+    "AutoAngleAxis": 1,
+    "AutoExplode": 0,
+    "AutoMateRepair": 2,
+    "CollectAllSupportiveMates": 0,
+    "CompConfigProperties6": 8,
+    "ComponentReload2": 3,
+    "CopyWithMates2": 8,
+    "CreateExplodedView": 0,
+    "CreateMate": 1,
+    "CreateMateData": 1,
+    "CreateSmartComponent": 6,
+    "CreateSpeedPak": 1,
+    "DeleteSelections": 1,
+    "DissolveComponentPattern": 0,
+    "DissolveSubAssembly": 0,
+    "Dummy1": 0,
+    "EditAssembly": 0,
+    "EditConcentricMate": 5,
+    "EditDistanceMate": 8,
+    "EditExplodeParameters": 0,
+    "EditMate4": 16,
+    "EditPart2": 3,
+    "EditRebuild": 0,
+    "ExitIsolate": 0,
+    "FeatureByName": 1,
+    "FeatureExtrusion": 0,
+    "FileDeriveComponentPart": 0,
+    "FixComponent": 0,
+    "ForceRebuild2": 1,
+    "ForceUpdateElectricalData": 1,
+    "GetActiveGroundPlane": 2,
+    "GetAdvancedSelection": 0,
+    "GetBox": 1,
+    "GetComponentByID": 1,
+    "GetComponentByName": 1,
+    "GetComponentCount": 1,
+    "GetComponents": 1,
+    "GetDragOperator": 0,
+    "GetDroppedAtEntity": 0,
+    "GetEditTarget": 0,
+    "GetEditTargetComponent": 0,
+    "GetExplodedViewConfigurationName": 1,
     #: ★★★ 2026-10-07（规格 213 · B2b）：★ **补登记** —— ★ 本仓**真机撞过**这一条 ✗：
     #: ★ 我为"爆炸直线"的前置复核写了 `call_assembly_doc(doc, "GetExplodedViewCount", 0)
     #: ` ✗ ——
@@ -153,97 +164,97 @@ ASSEMBLY_DOC_ARITY: dict[str, int] = {
     #: ★ 官方 `swapi` 与反射**两源一致**：★ `System.int GetExplodedViewCount()` ⇒ **零参
     #: ** ✓
     #:     （★ 反射逐字：`Int32 GetExplodedViewCount()` ✓）⇒ ★ **登记为 0** ✓
-    'GetExplodedViewCount': 0,
-    'GetExplodedViewCount2': 1,
-    'GetExplodedViewNames2': 1,
-    'GetFeatureScope': 1,
-    'GetFeatureScopeCount': 1,
-    'GetFirstMember': 0,
-    'GetLargeDesignReviewState': 0,
-    'GetLightWeightComponentCount': 0,
-    'GetPhysicalSimulationComponents': 7,
-    'GetRouteManager': 0,
-    'GetSelectedMember': 0,
-    'GetSimulation': 0,
-    'GetUnloadedComponentNames': 4,
-    'GetVisibleComponentsInView': 0,
-    'GetVisibleComponentsInViewCount': 0,
-    'HasUnloadedComponents': 0,
-    'HideComponent': 0,
-    'InsertCavity4': 6,
-    'InsertDerivedPattern': 0,
-    'InsertEnvelope': 5,
-    'InsertImportedComponent': 5,
-    'InsertJoin2': 2,
-    'InsertLoadReference': 1,
-    'InsertNewAssembly': 1,
-    'InsertNewPart2': 2,
-    'InsertNewVirtualAssembly': 1,
-    'InsertNewVirtualPart': 2,
-    'InsertWeld2': 9,
-    'IsComponentTreeValid': 0,
-    'IsRouteAssembly': 0,
-    'Isolate': 0,
-    'LightweightAllResolved': 0,
-    'MakeAssemblyFromSelectedComponents': 1,
-    'MakeIndependent': 1,
-    'MakeLightWeight': 0,
-    'MirrorComponents3': 14,
-    'OpenCompFile': 0,
-    'RemoveFromFeatureScope': 1,
-    'ReorderComponents': 3,
-    'ReorganizeComponents': 2,
-    'ReplaceComponents2': 5,
-    'ReplacePLMComponents': 5,
-    'ResolveAllLightWeightComponents': 1,
-    'ResolveAllLightweight': 0,
-    'ResolveOutOfDateLightWeightComponents': 0,
-    'RotateComponent': 0,
-    'RotateComponentAxis': 0,
-    'SaveIsolate': 1,
-    'SelectComponentsBySize': 1,
-    'SelectiveOpen': 2,
-    'SetComponentState': 5,
-    'SetComponentSuppression': 1,
-    'SetComponentTransparent': 1,
-    'SetComponentVisibility': 3,
-    'SetDroppedFileConfigName': 1,
-    'SetDroppedFileFeatureName': 1,
-    'SetDroppedFileName': 1,
-    'SetForceResetConfigName': 1,
-    'SetIsolateVisibility': 1,
-    'SetSpeedPakConfigurations': 2,
-    'SetSpeedPakToParent': 0,
-    'ShowComponent': 0,
-    'ShowExploded2': 2,
-    'TemporaryFixGroup': 0,
-    'TemporaryFixGroupExit': 0,
-    'ToolsCheckInterference2': 5,
-    'TranslateComponent': 0,
-    'UnfixComponent': 0,
-    'UngroupComponents': 0,
-    'UpdateBox': 0,
-    'UpdateFeatureScope': 0,
-    'UpdateSpeedPak': 0,
-    'UpdateToolboxComponent': 1,
-    'UseSpeedPak': 0,
-    'ViewCollapseAssembly': 0,
-    'ViewExplodeAssembly': 0,
-    'ViewFeatureManagerByDependencies': 0,
-    'ViewFeatureManagerByFeatures': 0,
-    'ViewFeatureManagerFeatureDetail': 1,
+    "GetExplodedViewCount": 0,
+    "GetExplodedViewCount2": 1,
+    "GetExplodedViewNames2": 1,
+    "GetFeatureScope": 1,
+    "GetFeatureScopeCount": 1,
+    "GetFirstMember": 0,
+    "GetLargeDesignReviewState": 0,
+    "GetLightWeightComponentCount": 0,
+    "GetPhysicalSimulationComponents": 7,
+    "GetRouteManager": 0,
+    "GetSelectedMember": 0,
+    "GetSimulation": 0,
+    "GetUnloadedComponentNames": 4,
+    "GetVisibleComponentsInView": 0,
+    "GetVisibleComponentsInViewCount": 0,
+    "HasUnloadedComponents": 0,
+    "HideComponent": 0,
+    "InsertCavity4": 6,
+    "InsertDerivedPattern": 0,
+    "InsertEnvelope": 5,
+    "InsertImportedComponent": 5,
+    "InsertJoin2": 2,
+    "InsertLoadReference": 1,
+    "InsertNewAssembly": 1,
+    "InsertNewPart2": 2,
+    "InsertNewVirtualAssembly": 1,
+    "InsertNewVirtualPart": 2,
+    "InsertWeld2": 9,
+    "IsComponentTreeValid": 0,
+    "IsRouteAssembly": 0,
+    "Isolate": 0,
+    "LightweightAllResolved": 0,
+    "MakeAssemblyFromSelectedComponents": 1,
+    "MakeIndependent": 1,
+    "MakeLightWeight": 0,
+    "MirrorComponents3": 14,
+    "OpenCompFile": 0,
+    "RemoveFromFeatureScope": 1,
+    "ReorderComponents": 3,
+    "ReorganizeComponents": 2,
+    "ReplaceComponents2": 5,
+    "ReplacePLMComponents": 5,
+    "ResolveAllLightWeightComponents": 1,
+    "ResolveAllLightweight": 0,
+    "ResolveOutOfDateLightWeightComponents": 0,
+    "RotateComponent": 0,
+    "RotateComponentAxis": 0,
+    "SaveIsolate": 1,
+    "SelectComponentsBySize": 1,
+    "SelectiveOpen": 2,
+    "SetComponentState": 5,
+    "SetComponentSuppression": 1,
+    "SetComponentTransparent": 1,
+    "SetComponentVisibility": 3,
+    "SetDroppedFileConfigName": 1,
+    "SetDroppedFileFeatureName": 1,
+    "SetDroppedFileName": 1,
+    "SetForceResetConfigName": 1,
+    "SetIsolateVisibility": 1,
+    "SetSpeedPakConfigurations": 2,
+    "SetSpeedPakToParent": 0,
+    "ShowComponent": 0,
+    "ShowExploded2": 2,
+    "TemporaryFixGroup": 0,
+    "TemporaryFixGroupExit": 0,
+    "ToolsCheckInterference2": 5,
+    "TranslateComponent": 0,
+    "UnfixComponent": 0,
+    "UngroupComponents": 0,
+    "UpdateBox": 0,
+    "UpdateFeatureScope": 0,
+    "UpdateSpeedPak": 0,
+    "UpdateToolboxComponent": 1,
+    "UseSpeedPak": 0,
+    "ViewCollapseAssembly": 0,
+    "ViewExplodeAssembly": 0,
+    "ViewFeatureManagerByDependencies": 0,
+    "ViewFeatureManagerByFeatures": 0,
+    "ViewFeatureManagerFeatureDetail": 1,
 }
 
 #: IAssemblyDoc 上的属性名（反射里是 get_/set_，**不是方法**）
 ASSEMBLY_DOC_PROPERTIES: tuple[str, ...] = (
-    'ClearanceVerificationManager',
-    'EnableAssemblyRebuild',
-    'EnablePresentation',
-    'InterferenceDetectionManager',
-    'IsSupportedMatesAvailable',
-    'LargeDesignReviewTransparencyLevel',
-    'LargeDesignReviewTransparencyLevelDynamic',
-    'LargeDesignReviewTransparencyLevelEnabled',
+    "ClearanceVerificationManager",
+    "EnableAssemblyRebuild",
+    "EnablePresentation",
+    "InterferenceDetectionManager",
+    "IsSupportedMatesAvailable",
+    "LargeDesignReviewTransparencyLevel",
+    "LargeDesignReviewTransparencyLevelDynamic",
+    "LargeDesignReviewTransparencyLevelEnabled",
 )
 
 
@@ -379,8 +390,7 @@ def suppress_mate(doc, component_name: str) -> bool:
     ⚠ 初稿写的 ``SuppressMate2(int)`` 在 IAssemblyDoc 上**不存在** ——
     凭印象写的，已改正。
     """
-    return bool(call_assembly_doc(doc, "SetComponentSuppression",
-                                  str(component_name)))
+    return bool(call_assembly_doc(doc, "SetComponentSuppression", str(component_name)))
 
 
 def move_component(doc) -> int:
@@ -404,8 +414,7 @@ def hide_component(doc, hidden: bool = True) -> int:
     ⚠ 官方是**零参**的 ``HideComponent()`` / ``ShowComponent()``，
     **不是** ``HideComponent2(Int32, Boolean)``（后者在 IAssemblyDoc 上不存在）。
     """
-    return int(call_assembly_doc(
-        doc, "HideComponent" if hidden else "ShowComponent"))
+    return int(call_assembly_doc(doc, "HideComponent" if hidden else "ShowComponent"))
 
 
 def dissolve_assembly(doc, component_name: str = "") -> int:
@@ -428,16 +437,22 @@ def dissolve_assembly(doc, component_name: str = "") -> int:
     """
     if str(component_name or "").strip():
         from sw_assembly import _select_by_id
+
         ext = get_com_member(doc, "Extension")
         if ext is None:
             raise RuntimeError("取不到 doc.Extension ⇒ ★ 选不了组件（★ 前置未成立）")
         _select_by_id(ext, str(component_name), "COMPONENT", append=False, mark=0)
-        got = int(get_com_member(get_com_member(doc, "SelectionManager"),
-                                "GetSelectedObjectCount2", -1) or 0)
+        got = int(
+            get_com_member(
+                get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
         if got <= 0:
             raise RuntimeError(
                 "★ 选组件未成立：按名字 %r 选之后**计数仍为 0** ⇒ ★ 这是**前置未成立**"
-                "（★ 与「解散不了」是两件事）" % str(component_name))
+                "（★ 与「解散不了」是两件事）" % str(component_name)
+            )
     return int(call_assembly_doc(doc, "DissolveSubAssembly"))
 
 
@@ -462,9 +477,11 @@ def collect_assembly_doc_evidence(doc, configuration: str = "") -> dict[str, Any
     return {
         "title": str(get_com_member(doc, "GetTitle") or ""),
         "component_count": int(
-            call_assembly_doc(doc, "GetComponentCount", str(configuration))),
+            call_assembly_doc(doc, "GetComponentCount", str(configuration))
+        ),
         "lightweight_count": int(
-            call_assembly_doc(doc, "GetLightWeightComponentCount")),
+            call_assembly_doc(doc, "GetLightWeightComponentCount")
+        ),
         "tree_valid": bool(call_assembly_doc(doc, "IsComponentTreeValid")),
         "has_unloaded": bool(call_assembly_doc(doc, "HasUnloadedComponents")),
     }
@@ -512,9 +529,11 @@ def edit_part_in_context(asm_model, component, *, silent=True, allow_read_only=T
     if not ok:
         raise RuntimeError(
             "IComponent2.Select2 返回 False ⇒ 组件没被选中，EditPart2 会静默无效"
-            "（⚠ 判「选上没有」**一律回读**，见已知事实 94）")
-    code = call_com_member(asm_model, "EditPart2",
-                           bool(silent), bool(allow_read_only), out_i4())
+            "（⚠ 判「选上没有」**一律回读**，见已知事实 94）"
+        )
+    code = call_com_member(
+        asm_model, "EditPart2", bool(silent), bool(allow_read_only), out_i4()
+    )
     return int(code) if isinstance(code, int) else code
 
 
@@ -546,8 +565,12 @@ def list_external_file_references_count(component, *, include_hidden=False):
     try:
         return int(call_com_member(component, "ListExternalFileReferencesCount") or 0)
     except TypeError:
-        return int(call_com_member(component, "ListExternalFileReferencesCount",
-                                   bool(include_hidden)) or 0)
+        return int(
+            call_com_member(
+                component, "ListExternalFileReferencesCount", bool(include_hidden)
+            )
+            or 0
+        )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -572,7 +595,7 @@ def list_external_file_references_count(component, *, include_hidden=False):
 # 官方依据: 见上「文件」逐页；★ 语义以官方页为准（本段只做薄包装，不解释语义）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   本段以下 9 个函数（自 `create_exploded_view` 至 `edit_explode_parameters`）
-# ⚠ 未查证（如实标）：`.swb`/VSTA 与 VBA 在 `ModuleName` 语义上的差别（`RunMacro2` 那页 
+# ⚠ 未查证（如实标）：`.swb`/VSTA 与 VBA 在 `ModuleName` 语义上的差别（`RunMacro2` 那页
 # Remarks 为空）；
 # 以及 `GetExplodedViewConfigurationName` 那 1 个实参的**确切含义** —— 官方页只写 Parame
 # ters，未给语义。
@@ -615,7 +638,9 @@ def show_exploded(doc, show_it: bool, explode_view_name: str) -> bool:
     :param show_it: True = 按爆炸态显示；False = 按收拢态显示（官方页逐字）。
     :param explode_view_name: 爆炸视图名（★ 名字从 :func:`get_exploded_view_names` 取）。
     """
-    return bool(call_assembly_doc(doc, "ShowExploded2", bool(show_it), str(explode_view_name)))
+    return bool(
+        call_assembly_doc(doc, "ShowExploded2", bool(show_it), str(explode_view_name))
+    )
 
 
 def get_exploded_view_names(doc, configuration_name: str) -> list[str]:
@@ -637,7 +662,9 @@ def get_exploded_view_names(doc, configuration_name: str) -> list[str]:
 
 def get_exploded_view_count(doc, configuration_name: str) -> int:
     """数指定配置下的爆炸视图个数（官方 `GetExplodedViewCount2`，**1 参**，回 `System.int`）。"""
-    return int(call_assembly_doc(doc, "GetExplodedViewCount2", str(configuration_name)) or 0)
+    return int(
+        call_assembly_doc(doc, "GetExplodedViewCount2", str(configuration_name)) or 0
+    )
 
 
 def get_exploded_view_configuration_name(doc, arg) -> str:
@@ -662,7 +689,7 @@ def edit_explode_parameters(doc):
 # ★★ 官方依据（`swapi` 逐字）：
 #   · `C:\swapi\types\ISketchManager\InsertExplodeLineSketch.md` ⇒
 #     `System.bool InsertExplodeLineSketch()` ⇒ ★★ **零参** ✓
-# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false 
+# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false
 # if not ✓
 #   · ★★ **入口在 `ISketchManager` 上、不在装配文档上** ✗ ——
 #     ★ 所以要先 `get_com_member(doc, "SketchManager")` 再调 ✓
@@ -684,22 +711,29 @@ def insert_explode_line_sketch_report(doc):
     out: dict = {
         "official": "ISketchManager.InsertExplodeLineSketch",
         "arity": 0,
-        "note": ("★ 入口在 **`ISketchManager`** 上（★ 不是 `IAssemblyDoc` ✗）⇒ 先取 "
-                 "`SketchManager` 再调 ✓ · ★ 官方 `## Returns` 逐字说的是"
-                 "「**inserted or closed**」⇒ ★★ **那个 bool 分辨不了这两件事** ✓"),
+        "note": (
+            "★ 入口在 **`ISketchManager`** 上（★ 不是 `IAssemblyDoc` ✗）⇒ 先取 "
+            "`SketchManager` 再调 ✓ · ★ 官方 `## Returns` 逐字说的是"
+            "「**inserted or closed**」⇒ ★★ **那个 bool 分辨不了这两件事** ✓"
+        ),
     }
     #: ★ 前置①：★ 取 `ISketchManager`
     sm = None
     try:
         sm = get_com_member(doc, "SketchManager")
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
-        out["error"] = "★ 前置①失败：取 `SketchManager` 抛 %s: %s" % (type(e).__name__, str(e)[:120])
+        out["error"] = "★ 前置①失败：取 `SketchManager` 抛 %s: %s" % (
+            type(e).__name__,
+            str(e)[:120],
+        )
         return out
     out["sketch_manager_ok"] = sm is not None
     if sm is None:
         out["ok"] = False
-        out["error"] = "★ 前置①失败：`SketchManager` 取不到（★ 与「建不出来」是两件事 ✓）"
+        out["error"] = (
+            "★ 前置①失败：`SketchManager` 取不到（★ 与「建不出来」是两件事 ✓）"
+        )
         return out
 
     #: ★ 前置②：★ 爆炸状态（★ 回读、★ 不猜 ✓）
@@ -711,8 +745,10 @@ def insert_explode_line_sketch_report(doc):
     #:   ★★★ 真机表现：★ `explode_view_count = None` ✗ —— ★ 我一度读成"取不到"，
     #:     ★★ **而那是"我传错参数个数"** ✓（★ 与本规格反复吃的那类坑同型 ✓）
     try:
-        out["explode_view_count"] = int(call_assembly_doc(doc, "GetExplodedViewCount") or 0)
-    except Exception as e:                                              # noqa: BLE001
+        out["explode_view_count"] = int(
+            call_assembly_doc(doc, "GetExplodedViewCount") or 0
+        )
+    except Exception as e:  # noqa: BLE001
         out["explode_view_count"] = None
         out["explode_view_error"] = "%s: %s" % (type(e).__name__, str(e)[:100])
 
@@ -722,7 +758,7 @@ def insert_explode_line_sketch_report(doc):
     #: 逐字是
     #:     「`prev.startswith("try:")`」⇒ ★ **紧跟 `try:` 的那一行才算"有兜底"** ✓
     #:     ★★ 它**也扫函数内**的导入 ⇒ ★ 这样写**既不新增欠账、也不新起一层** ✓
-    #: （★ 本批已在这条上撞过两次：★ 一次函数内裸写、★ 一次在 `try:` 与导入行之间插注释 
+    #: （★ 本批已在这条上撞过两次：★ 一次函数内裸写、★ 一次在 `try:` 与导入行之间插注释
     #: ✗）
     try:
         from .sw_feature_readback import feature_names
@@ -738,7 +774,7 @@ def insert_explode_line_sketch_report(doc):
     active_before = None
     try:
         active_before = get_com_member(sm, "ActiveSketch")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         active_before = None
     before = feature_names(doc)
     ret = None
@@ -746,7 +782,7 @@ def insert_explode_line_sketch_report(doc):
     try:
         #: ★★ **零参** ✓
         ret = get_com_member(sm, "InsertExplodeLineSketch")
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         exc = e
     after = feature_names(doc)
     added = [n for n in after if n not in before]
@@ -754,30 +790,44 @@ def insert_explode_line_sketch_report(doc):
     active_after = None
     try:
         active_after = get_com_member(sm, "ActiveSketch")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         active_after = None
 
     #: ★★ 判据①：**侧变化**（★ 与原探针一致 ✓）—— ★ 只看"现在有"是不够的 ✗
-    side_changed = (bool(active_before is None) != bool(active_after is None))
-    out.update({"returned": str(ret), "added": added,
-                "active_sketch_before": active_before is not None,
-                "active_sketch_after": active_after is not None,
-                "active_sketch_present": active_after is not None,
-                "active_sketch_side_changed": side_changed,
-                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])})
+    side_changed = bool(active_before is None) != bool(active_after is None)
+    out.update(
+        {
+            "returned": str(ret),
+            "added": added,
+            "active_sketch_before": active_before is not None,
+            "active_sketch_after": active_after is not None,
+            "active_sketch_present": active_after is not None,
+            "active_sketch_side_changed": side_changed,
+            "call_exception": None
+            if exc is None
+            else "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+        }
+    )
     #: ★★ 判据：★ **回读**（★ 不是那个 bool ✓）—— ★ 两条腿：特征树增量 **或** 草图侧变化
     #:  ✓
     out["ok"] = bool(added) or side_changed
     if out["ok"]:
-        out["verdict"] = ("★★★★★ **建成** —— ★ 特征树新增 %r · ★★ **`ActiveSketch` 侧变化 %r → %r**"
-                          "（★ 回读、★ 不是信那个 bool ✓；★ 判据是**变化**、★ 不是「现在有」 ✓）"
-                          % (added, out["active_sketch_before"], out["active_sketch_after"]))
+        out["verdict"] = (
+            "★★★★★ **建成** —— ★ 特征树新增 %r · ★★ **`ActiveSketch` 侧变化 %r → %r**"
+            "（★ 回读、★ 不是信那个 bool ✓；★ 判据是**变化**、★ 不是「现在有」 ✓）"
+            % (added, out["active_sketch_before"], out["active_sketch_after"])
+        )
     else:
-        out["error"] = ("★ 回读判据未过：特征树无增量、★ 且草图侧**没变化**（%r → %r）⇒ "
-                        "★ 先复核**前置②**（★ 爆炸视图数 = %r；★ 官方要求装配处于爆炸状态 ✓）—— "
-                        "★ 「读到静默」≠「判定试死」（定则 ✓）"
-                        % (out.get("active_sketch_before"), out.get("active_sketch_after"),
-                           out.get("explode_view_count")))
+        out["error"] = (
+            "★ 回读判据未过：特征树无增量、★ 且草图侧**没变化**（%r → %r）⇒ "
+            "★ 先复核**前置②**（★ 爆炸视图数 = %r；★ 官方要求装配处于爆炸状态 ✓）—— "
+            "★ 「读到静默」≠「判定试死」（定则 ✓）"
+            % (
+                out.get("active_sketch_before"),
+                out.get("active_sketch_after"),
+                out.get("explode_view_count"),
+            )
+        )
     return out
 
 
@@ -793,8 +843,13 @@ def insert_explode_line_sketch_report(doc):
 #     ★ 本函数**必须**回读 `IsSpeedPak` 才算数 ✓
 #   ★★ 前置：★ **选中的子装配** —— ★ 用官方示例的调用序
 #     `SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, mark, callout, 0)` ✓
-def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str | None = None,
-                           component_index: int = 0):
+def create_speedpak_report(
+    doc,
+    *,
+    speedpak_type: int = 1,
+    component_name: str | None = None,
+    component_index: int = 0,
+):
     """创建 SpeedPak（官方 `IAssemblyDoc.CreateSpeedPak(int)`）—— ★ 判据用 `IsSpeedPak` 回读。
 
     参数:
@@ -811,8 +866,10 @@ def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str |
         "arity": 1,
         "speedpak_type": int(speedpak_type),
         "speedpak_type_enum": {"1": "Mated", "2": "Graphics"},
-        "note": ("★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒ "
-                 "★ 必须回读 `IComponent2::IsSpeedPak` 才算数 ✓"),
+        "note": (
+            "★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒ "
+            "★ 必须回读 `IComponent2::IsSpeedPak` 才算数 ✓"
+        ),
     }
     #: ★ 前置①：★ 取组件列表（★ 官方示例要按**组件名**选 ✓）
     comps = []
@@ -820,14 +877,19 @@ def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str |
         #: ★ 官方示例的调用序是 `IComponent2.Select4` 按**对象**选；
         #:   ★ 这里先用 `GetComponents` 取列表以**解析名字** ✓
         comps = list(get_com_member(doc, "GetComponents", False) or [])
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
-        out["error"] = "★ 前置①失败：`GetComponents` 抛 %s: %s" % (type(e).__name__, str(e)[:120])
+        out["error"] = "★ 前置①失败：`GetComponents` 抛 %s: %s" % (
+            type(e).__name__,
+            str(e)[:120],
+        )
         return out
     out["component_count"] = len(comps)
     if not comps:
         out["ok"] = False
-        out["error"] = "★ 前置①失败：装配里**没有组件** ⇒ ★ 无对象可做 SpeedPak（★ 与「建不出来」两件事 ✓）"
+        out["error"] = (
+            "★ 前置①失败：装配里**没有组件** ⇒ ★ 无对象可做 SpeedPak（★ 与「建不出来」两件事 ✓）"
+        )
         return out
     target = comps[min(int(component_index), len(comps) - 1)]
 
@@ -835,7 +897,7 @@ def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str |
     is_sp_before = None
     try:
         is_sp_before = bool(get_com_member(target, "IsSpeedPak"))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         is_sp_before = None
     out["is_speedpak_before"] = is_sp_before
 
@@ -848,30 +910,48 @@ def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str |
                 if name:
                     out["component_name_accessor"] = _acc
                     break
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 name = None
     out["component_name"] = str(name) if name else None
     if not name:
         out["ok"] = False
-        out["error"] = "★ 前置③失败：解析不出组件名（★ `Name2`/`GetName2`/`Name` 三个都取不到 ✓）"
+        out["error"] = (
+            "★ 前置③失败：解析不出组件名（★ `Name2`/`GetName2`/`Name` 三个都取不到 ✓）"
+        )
         return out
 
     #: ★ 前置④：★ 按官方示例的调用序选中（★ `SelectByID2(<名>, "COMPONENT", …)` ✓）
     sel_ok = False
     try:
         ext = get_com_member(doc, "Extension")
-        get_com_member(ext, "SelectByID2", str(name), "COMPONENT", 0.0, 0.0, 0.0,
-                       False, 0, create_empty_dispatch_variant(), 0)
+        get_com_member(
+            ext,
+            "SelectByID2",
+            str(name),
+            "COMPONENT",
+            0.0,
+            0.0,
+            0.0,
+            False,
+            0,
+            create_empty_dispatch_variant(),
+            0,
+        )
         #: ★★ 回读（★ 不信返回值 —— 事实 8 ✓）
-        sel_ok = bool(get_com_member(get_com_member(doc, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1))
-    except Exception as e:                                              # noqa: BLE001
+        sel_ok = bool(
+            get_com_member(
+                get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+        )
+    except Exception as e:  # noqa: BLE001
         out["select_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["selected"] = sel_ok
     if not sel_ok:
         out["ok"] = False
-        out["error"] = ("★ 前置④失败：`SelectByID2(%r, \"COMPONENT\", …)` 没选中 ⇒ "
-                        "★ 那与「建不出来」是两件事（★ 官方前置 = **选中的子装配** ✓）" % name)
+        out["error"] = (
+            '★ 前置④失败：`SelectByID2(%r, "COMPONENT", …)` 没选中 ⇒ '
+            "★ 那与「建不出来」是两件事（★ 官方前置 = **选中的子装配** ✓）" % name
+        )
         return out
 
     #: ★ 调（★ **1 参** ✓）
@@ -879,27 +959,41 @@ def create_speedpak_report(doc, *, speedpak_type: int = 1, component_name: str |
     exc = None
     try:
         ret = call_assembly_doc(doc, "CreateSpeedPak", int(speedpak_type))
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         exc = e
     out["returned"] = str(ret)
-    out["call_exception"] = None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    out["call_exception"] = (
+        None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])
+    )
 
     #: ★★ 判据：★ **回读 `IsSpeedPak`**（★ 不看返回值 —— 事实 8 ✓）
     is_sp_after = None
     try:
         is_sp_after = bool(get_com_member(target, "IsSpeedPak"))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         is_sp_after = None
     out["is_speedpak_after"] = is_sp_after
     out["ok"] = bool(is_sp_after is True and is_sp_before is not True)
     if out["ok"]:
-        out["verdict"] = ("★★★★★ **建成** —— ★ `IsSpeedPak` **%r → %r**（★ 回读、★ 不是信返回值 ✓）"
-                          % (is_sp_before, is_sp_after))
+        out["verdict"] = (
+            "★★★★★ **建成** —— ★ `IsSpeedPak` **%r → %r**（★ 回读、★ 不是信返回值 ✓）"
+            % (is_sp_before, is_sp_after)
+        )
     elif is_sp_after is True and is_sp_before is True:
-        out["error"] = ("★ 回读判据未过：**本来就开着**（%r → %r）⇒ ★ 「这次建成了」与"
-                        "「它一直是开的」要分开记 ✗" % (is_sp_before, is_sp_after))
+        out["error"] = (
+            "★ 回读判据未过：**本来就开着**（%r → %r）⇒ ★ 「这次建成了」与"
+            "「它一直是开的」要分开记 ✗" % (is_sp_before, is_sp_after)
+        )
     else:
-        out["error"] = ("★ 回读判据未过：`IsSpeedPak` 仍 %r（★ 回 %r）⇒ ★ **还不算试死** —— "
-                        "★ 前置复核：★ 组件 %r · ★ 选中=%r · ★ 初始=%r（定则：「读到静默」≠「判定试死」✓）"
-                        % (is_sp_after, out["returned"], out["component_name"], sel_ok, is_sp_before))
+        out["error"] = (
+            "★ 回读判据未过：`IsSpeedPak` 仍 %r（★ 回 %r）⇒ ★ **还不算试死** —— "
+            "★ 前置复核：★ 组件 %r · ★ 选中=%r · ★ 初始=%r（定则：「读到静默」≠「判定试死」✓）"
+            % (
+                is_sp_after,
+                out["returned"],
+                out["component_name"],
+                sel_ok,
+                is_sp_before,
+            )
+        )
     return out

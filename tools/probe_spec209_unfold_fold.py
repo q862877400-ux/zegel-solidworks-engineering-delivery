@@ -42,10 +42,14 @@ def main() -> int:
     import sw_sheet_metal as SM
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "规格 209 · B2-1 unfold + B4-4 fold（★ 官方示例就是同一条链）",
-          "judge": "回读：特征树增量 + 新特征名 + 平展型式个数 + 逐条 mark",
-          "unfold": {}, "fold": {}, "negative": {}}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "规格 209 · B2-1 unfold + B4-4 fold（★ 官方示例就是同一条链）",
+        "judge": "回读：特征树增量 + 新特征名 + 平展型式个数 + 逐条 mark",
+        "unfold": {},
+        "fold": {},
+        "negative": {},
+    }
     opened = []
 
     def _close(doc):
@@ -53,7 +57,7 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     def _plate():
@@ -62,11 +66,15 @@ def main() -> int:
         with P.sketch(doc, "Front Plane") as sk:
             P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
         #: ★ 真厚度 2 mm（文档单位 = 毫米 —— 见 probe_spec209_hem_units.py 的定案）
-        SM.create_base_flange(doc, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=50.0))
+        SM.create_base_flange(
+            doc, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=50.0)
+        )
         return doc
 
     def _names(doc):
-        return [str(safe_get_com_member(f, "Name") or "") for f in SM.iter_features(doc)]
+        return [
+            str(safe_get_com_member(f, "Name") or "") for f in SM.iter_features(doc)
+        ]
 
     #: ── 正例：unfold → fold ────────────────────────────────────────────────────────
     try:
@@ -74,28 +82,52 @@ def main() -> int:
         ev["base_feature_names"] = _names(doc)
         r1 = SM.create_unfold(doc, ["基体-法兰1"], face_index=0)
         ev["unfold"] = {
-            "ok": r1.get("ok"), "new_features": r1.get("new_features"),
+            "ok": r1.get("ok"),
+            "new_features": r1.get("new_features"),
             "tree": [r1.get("tree_before"), r1.get("tree_after")],
             "selection": r1.get("selection"),
-            "flat_pattern_count": [r1.get("flat_pattern_count_before"),
-                                   r1.get("flat_pattern_count_after")],
-            "error": r1.get("error"), "feature_names_after": _names(doc)}
-        print("  unfold ok=%s new=%r marks=%r" % (r1.get("ok"), r1.get("new_features"),
-                                                  (r1.get("selection") or {}).get("marks_readback")))
+            "flat_pattern_count": [
+                r1.get("flat_pattern_count_before"),
+                r1.get("flat_pattern_count_after"),
+            ],
+            "error": r1.get("error"),
+            "feature_names_after": _names(doc),
+        }
+        print(
+            "  unfold ok=%s new=%r marks=%r"
+            % (
+                r1.get("ok"),
+                r1.get("new_features"),
+                (r1.get("selection") or {}).get("marks_readback"),
+            )
+        )
         unfolded = (r1.get("new_features") or [None])[0]
         if unfolded:
-            r2 = SM.create_fold(doc, ["基体-法兰1"], face_index=0, unfold_feature_name=unfolded)
+            r2 = SM.create_fold(
+                doc, ["基体-法兰1"], face_index=0, unfold_feature_name=unfolded
+            )
             ev["fold"] = {
-                "ok": r2.get("ok"), "new_features": r2.get("new_features"),
+                "ok": r2.get("ok"),
+                "new_features": r2.get("new_features"),
                 "tree": [r2.get("tree_before"), r2.get("tree_after")],
                 "selection": r2.get("selection"),
-                "flat_pattern_count": [r2.get("flat_pattern_count_before"),
-                                       r2.get("flat_pattern_count_after")],
-                "error": r2.get("error"), "feature_names_after": _names(doc)}
-            print("  fold   ok=%s new=%r marks=%r" % (r2.get("ok"), r2.get("new_features"),
-                                                      (r2.get("selection") or {}).get("marks_readback")))
+                "flat_pattern_count": [
+                    r2.get("flat_pattern_count_before"),
+                    r2.get("flat_pattern_count_after"),
+                ],
+                "error": r2.get("error"),
+                "feature_names_after": _names(doc),
+            }
+            print(
+                "  fold   ok=%s new=%r marks=%r"
+                % (
+                    r2.get("ok"),
+                    r2.get("new_features"),
+                    (r2.get("selection") or {}).get("marks_readback"),
+                )
+            )
         _close(doc)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["unfold"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
         print("  unfold/fold FATAL %s" % str(exc)[:140])
 
@@ -103,27 +135,35 @@ def main() -> int:
     try:
         doc2 = _plate()
         r3 = SM.create_unfold(doc2, [], face_index=0)
-        ev["negative"] = {"ok": r3.get("ok"), "new_features": r3.get("new_features"),
-                          "tree": [r3.get("tree_before"), r3.get("tree_after")],
-                          "flat_pattern_count": [r3.get("flat_pattern_count_before"),
-                                                 r3.get("flat_pattern_count_after")],
-                          "selection": r3.get("selection"), "error": r3.get("error"),
-                          "_": "★ 负例判据 = **必须判「没建出来」**（★ 它回 void，只能回读）"}
+        ev["negative"] = {
+            "ok": r3.get("ok"),
+            "new_features": r3.get("new_features"),
+            "tree": [r3.get("tree_before"), r3.get("tree_after")],
+            "flat_pattern_count": [
+                r3.get("flat_pattern_count_before"),
+                r3.get("flat_pattern_count_after"),
+            ],
+            "selection": r3.get("selection"),
+            "error": r3.get("error"),
+            "_": "★ 负例判据 = **必须判「没建出来」**（★ 它回 void，只能回读）",
+        }
         _close(doc2)
         print("  负例 ok=%s new=%r" % (r3.get("ok"), r3.get("new_features")))
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["negative"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
         print("  负例 FATAL %s" % str(exc)[:140])
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

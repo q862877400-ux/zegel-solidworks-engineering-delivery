@@ -43,9 +43,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_part as P                                       # noqa: E402
-from scripts import sw_surface_features as SF                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _one(sw, tag, fn):
@@ -56,7 +56,7 @@ def _one(sw, tag, fn):
         r = fn(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
         row["ok"] = bool((r or {}).get("ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -64,7 +64,7 @@ def _one(sw, tag, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
@@ -73,14 +73,22 @@ def _case_fill(doc):
     """★ 对照：**填充曲面**（★ 本仓记着它 PASS 过）——
     ★ 前置：先建一张曲面 + 选出它那一圈边（★ 官方 Remarks：边界边用 **mark=1**）。"""
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
                 break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return SF.insert_fill_surface_report(doc, 2)
 
@@ -89,37 +97,63 @@ def _case_extend(doc):
     """★ 第二个对照：**延伸曲面**（★ 本仓也记着 PASS 过）——
     ★ 前置：先建一张曲面。"""
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
             if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
                 break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return SF.insert_extend_surface_report(doc, 5.0)
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u5bf9\u7167\uff1a\u672c\u4ed3**\u6210\u529f\u8fc7**\u7684\u66f2\u9762\u7279\u5f81\u8fd8\u5efa\u5f97\u6210\u5417",
-          "why": "\u6d41\u7a0b/\u9009\u533a/\u524d\u7f6e\u90fd\u4e00\u6837\uff0c\u552f\u4e00\u5dee\u7684\u662f\u201c\u7279\u5f81\u7c7b\u578b\u672c\u8eab\u201d "
-                 "\u21d2 \u5148\u95ee\uff1a\u4e00\u4e2a\u672c\u4ed3\u6210\u529f\u8fc7\u7684\u66f2\u9762\u7279\u5f81\u73b0\u5728\u8fd8\u6210\u5417\uff1f",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u586b\u5145\u66f2\u9762", _case_fill))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u5ef6\u4f38\u66f2\u9762", _case_extend))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u5bf9\u7167\uff1a\u672c\u4ed3**\u6210\u529f\u8fc7**\u7684\u66f2\u9762\u7279\u5f81\u8fd8\u5efa\u5f97\u6210\u5417",
+        "why": "\u6d41\u7a0b/\u9009\u533a/\u524d\u7f6e\u90fd\u4e00\u6837\uff0c\u552f\u4e00\u5dee\u7684\u662f\u201c\u7279\u5f81\u7c7b\u578b\u672c\u8eab\u201d "
+        "\u21d2 \u5148\u95ee\uff1a\u4e00\u4e2a\u672c\u4ed3\u6210\u529f\u8fc7\u7684\u66f2\u9762\u7279\u5f81\u73b0\u5728\u8fd8\u6210\u5417\uff1f",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(sw, "\u5bf9\u7167\uff1a\u586b\u5145\u66f2\u9762", _case_fill)
+    )
+    ev["cases"].append(
+        _one(sw, "\u5bf9\u7167\uff1a\u5ef6\u4f38\u66f2\u9762", _case_extend)
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "control_alive" if ev["passed"] else "control_also_dead"
     p = R / "output" / "surface-control-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-24s ok=%-6s %s" % (c.get("tag"), c.get("ok"),
-                                      json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:150]))
+        print(
+            "  %-24s ok=%-6s %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:150],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

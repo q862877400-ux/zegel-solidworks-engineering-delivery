@@ -1,5 +1,3 @@
-
-
 # ── 24h 计划 段 6 续（Spec Kit `173`）：**文档单位** ────────────────────────────────
 # ★★★★★ 2026-10-01（轮 339）**这是"四家有我们没有"里核实的真缺之四（最后一条）**：
 #   ★ 全仓 grep `units` ⇒ ★ **工具 0**（★ 唯一的命中是 `sw_review._unit_vector` ——
@@ -28,7 +26,7 @@
 # 定位:   24h 段 6 续：文档单位（★ 补「四家有我们没有」的最后一条真缺）。
 # 官方签名依据: `C:\swapi\types\IModelDoc2\GetUnits.md`（0 参 · ★ Remarks 给了 5 元组格
 # 式）·
-# `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 
+# `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11
 # 项）·
 #   `C:\swapi\enums\swUserPreferenceIntegerValue_e.md`（`swUnitsLinear` 等）·
 #   ★ 反射 `scripts/sw_api_sldworks.py`（`GetUnits: 0` · `SetUnits: 5`）
@@ -40,13 +38,27 @@ from sw_connect import get_com_member
 
 #: ★ `swLengthUnit_e`（★ 官方枚举文本给的名字与数值；★ 数值以官方类型表为准）
 LENGTH_UNIT_NAMES = {
-    0: "swMM", 1: "swCM", 2: "swMETER", 3: "swINCHES", 4: "swFEET", 5: "swFEETINCHES",
-    6: "swANGSTROM", 7: "swNANOMETER", 8: "swMICRON", 9: "swMIL", 10: "swUIN",
+    0: "swMM",
+    1: "swCM",
+    2: "swMETER",
+    3: "swINCHES",
+    4: "swFEET",
+    5: "swFEETINCHES",
+    6: "swANGSTROM",
+    7: "swNANOMETER",
+    8: "swMICRON",
+    9: "swMIL",
+    10: "swUIN",
 }
 
 #: ★ 官方 Remarks 给的 5 元组字段名（★ 顺序就是数组顺序）
-UNIT_TUPLE_FIELDS = ("LengthUnit", "FractionBase", "FractionValue",
-                     "SignificantDigits", "RoundToFraction")
+UNIT_TUPLE_FIELDS = (
+    "LengthUnit",
+    "FractionBase",
+    "FractionValue",
+    "SignificantDigits",
+    "RoundToFraction",
+)
 
 
 def _flatten_units(raw):
@@ -74,7 +86,7 @@ def read_units_report(model) -> dict:
     raw = None
     try:
         raw = get_com_member(model, "GetUnits")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["units_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
     seq = _flatten_units(raw)
@@ -84,7 +96,7 @@ def read_units_report(model) -> dict:
         out["tuple_named"] = dict(zip(UNIT_TUPLE_FIELDS, seq))
         out["length_unit"] = seq[0]
         out["length_unit_name"] = LENGTH_UNIT_NAMES.get(seq[0], "?")
-        out["is_mm"] = (seq[0] == 0)
+        out["is_mm"] = seq[0] == 0
     #: ★★ 第二源：用户偏好 `swUnitsLinear`（★ 与上面应给同一答案）
     #: ★★★ 2026-10-01（轮 339）**对照源在 `ISldWorks` 上，不在 `IModelDocExtension` 上**
     #:  ——
@@ -109,9 +121,9 @@ def read_units_report(model) -> dict:
                 if pref is not None:
                     out["pref_linear_via"] = "IModelDocExtension"
                     break
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pref = None
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pref = None
     try:
         app = None
@@ -121,7 +133,7 @@ def read_units_report(model) -> dict:
                 app = get_com_member(model, getter)
                 if app is not None:
                     break
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if app is None:
             #: ★ 兜底：★ `IModelDoc2.GetSldWorks` 在迟到绑定下拿不到 ⇒ 直接连正在跑的那
@@ -129,10 +141,11 @@ def read_units_report(model) -> dict:
             #:   ★ 本仓库是**单源运行**（事实 24：多个进程抢同一 COM 连接会死锁）
             #:   ⇒ ★ `Dispatch("SldWorks.Application")` 拿到的是**同一个**实例，安全。
             try:
-                import win32com.client as _w                              # noqa: PLC0415
+                import win32com.client as _w  # noqa: PLC0415
+
                 app = _w.Dispatch("SldWorks.Application")
                 out["app_via"] = "Dispatch"
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["app_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
         else:
             out["app_via"] = "IModelDoc2.GetSldWorks"
@@ -152,16 +165,18 @@ def read_units_report(model) -> dict:
             if pref_sys is not None and pref is None:
                 out["pref_linear_via"] = "ISldWorks"
                 pref = pref_sys
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["pref_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
     out["pref_linear"] = pref
     out["pref_linear_system_default"] = pref_sys
     #: ★ 注意：这是**文档级**与**系统默认**的关系，**不是**两个源互证 ⇒ 允许不同。
     if pref_sys is not None and seq:
-        out["doc_matches_system_default"] = (int(pref_sys) == int(seq[0]))
-    out["★"] = ("★ 主源：`IModelDoc2.GetUnits()`（0 参 · 官方 Remarks：5 个 short = "
-                "[LengthUnit, FractionBase, FractionValue, SignificantDigits, RoundToFraction]）；"
-                "★ 对照源：`ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` —— "
-                "★ **系统默认**（★ 与文档级**允许不同**，★ **不是互证**）；"
-                "★ 期望 `LengthUnit == 0`（`swMM`）—— ★ 因为本仓库建模一律按毫米")
+        out["doc_matches_system_default"] = int(pref_sys) == int(seq[0])
+    out["★"] = (
+        "★ 主源：`IModelDoc2.GetUnits()`（0 参 · 官方 Remarks：5 个 short = "
+        "[LengthUnit, FractionBase, FractionValue, SignificantDigits, RoundToFraction]）；"
+        "★ 对照源：`ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` —— "
+        "★ **系统默认**（★ 与文档级**允许不同**，★ **不是互证**）；"
+        "★ 期望 `LengthUnit == 0`（`swMM`）—— ★ 因为本仓库建模一律按毫米"
+    )
     return out

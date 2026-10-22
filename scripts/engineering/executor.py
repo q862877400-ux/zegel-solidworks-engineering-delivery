@@ -1,4 +1,5 @@
 """★ 阶段 1 · 执行器 + 执行意图记录 + COM 写调用计数器（规格 316 的 C6）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -28,6 +29,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 #: ══════════════════════════════════════════════════════════════════════
 # 一、COM 写调用计数器（★ SC-009 的**唯一判据来源**）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 class ComWriteCounter:
     """★ 在 COM 边界上数**写调用**（★ 事实 8：返回值不可信，只能计数/回读）。
@@ -68,7 +70,8 @@ class ComWriteCounter:
         if self._n != 0:
             raise AssertionError(
                 "★ 负例「%s」本应 **0 次 COM 写调用**，实测 **%d 次**：%s"
-                % (why, self._n, self._log[:5]))
+                % (why, self._n, self._log[:5])
+            )
 
 
 #: ★ 全局单例（★ 与 `sw_connect` 的钩子共享）
@@ -79,16 +82,17 @@ COUNTER = ComWriteCounter()
 # 二、执行意图记录（★ C6）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ExecutionRecord:
     step: str
     tool: str
     params: dict = field(default_factory=dict)
-    intent_at: str = ""          #: ★ 写 COM **之前**落盘
+    intent_at: str = ""  #: ★ 写 COM **之前**落盘
     result: str = ""
-    com_write_count: int = 0     #: ★ 该步触达 COM 写调用的次数
-    effect: str = ""             #: ★ 工具声明的效应（★ 计数的**权威**依据）
-    member_writes: int = 0       #: ★ 成员级钩子看到的次数（★ 辅助证据）
+    com_write_count: int = 0  #: ★ 该步触达 COM 写调用的次数
+    effect: str = ""  #: ★ 工具声明的效应（★ 计数的**权威**依据）
+    member_writes: int = 0  #: ★ 成员级钩子看到的次数（★ 辅助证据）
     error: str = ""
 
 
@@ -100,10 +104,18 @@ def _now() -> str:
 # 三、执行（★ 走 `solidworks_*` 全名 —— ★ FR-012 禁绕内部函数）
 #: ══════════════════════════════════════════════════════════════════════
 
-def execute_plan(plan, reg: dict, *, host: dict | None = None,
-                 owned: AUTH.OwnedDocuments | None = None, doc=None,
-                 write_paths: tuple = (), log_dir: pathlib.Path | None = None,
-                 dry_run: bool = False) -> dict:
+
+def execute_plan(
+    plan,
+    reg: dict,
+    *,
+    host: dict | None = None,
+    owned: AUTH.OwnedDocuments | None = None,
+    doc=None,
+    write_paths: tuple = (),
+    log_dir: pathlib.Path | None = None,
+    dry_run: bool = False,
+) -> dict:
     """★ 执行一条**已编译**的计划。
 
     ★★ 纪律（★ 每条都有判据）：
@@ -116,31 +128,44 @@ def execute_plan(plan, reg: dict, *, host: dict | None = None,
     :returns: `{ok, code, records, com_write_total, plan_method}`
     """
     #: ① 授权（★ 不过就**立刻返回**，不碰 COM）
-    verdict = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc,
-                                  write_paths=write_paths)
+    verdict = AUTH.authorize_plan(
+        plan, reg, owned=owned, doc=doc, write_paths=write_paths
+    )
     if not verdict.ok:
-        return {"ok": False, "code": verdict.code, "detail": verdict.detail,
-                "records": [], "com_write_total": COUNTER.count(),
-                "plan_method": getattr(plan, "method_id", "")}
+        return {
+            "ok": False,
+            "code": verdict.code,
+            "detail": verdict.detail,
+            "records": [],
+            "com_write_total": COUNTER.count(),
+            "plan_method": getattr(plan, "method_id", ""),
+        }
 
     if dry_run:
-        return {"ok": True, "code": "", "detail": "★ dry_run：只授权未执行",
-                "records": [], "com_write_total": COUNTER.count(),
-                "plan_method": getattr(plan, "method_id", "")}
+        return {
+            "ok": True,
+            "code": "",
+            "detail": "★ dry_run：只授权未执行",
+            "records": [],
+            "com_write_total": COUNTER.count(),
+            "plan_method": getattr(plan, "method_id", ""),
+        }
 
     #: ★ 执行器懒加载（★ 无真机时也能 import 本模块 —— 契约测试要）
     import sys
+
     for p in (str(ROOT / "tools"), str(ROOT / "scripts"), str(ROOT)):
         if p not in sys.path:
             sys.path.insert(0, p)
-    import tool_caller                                                    # noqa: E402
+    import tool_caller  # noqa: E402
 
     #: ★★ 把计数器接到 COM 边界上（★ `sw_connect` 是**唯一**的取/调入口）
     #:   ⇒ 之后所有写调用都会经 `COUNTER.bump`（★ 未 arm 时空操作）
     try:
-        import sw_connect                                                 # noqa: E402
+        import sw_connect  # noqa: E402
+
         sw_connect.set_com_write_hook(COUNTER.bump)
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     records: list[ExecutionRecord] = []
@@ -153,9 +178,18 @@ def execute_plan(plan, reg: dict, *, host: dict | None = None,
         #: ② 写 COM **之前**落盘意图
         rec.intent_at = _now()
         with intent_log.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({"at": rec.intent_at, "step": rec.step,
-                                "tool": rec.tool, "params": rec.params},
-                               ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "at": rec.intent_at,
+                        "step": rec.step,
+                        "tool": rec.tool,
+                        "params": rec.params,
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
         #: ③ 计数
         #: ★★ 2026-10-12 **改判据**（★ 阶段 1 真机验收抓到的真缺陷）：
         #:   ★ 原实现只在 `sw_connect.get_com_member` 上挂钩子 ——
@@ -188,7 +222,7 @@ def execute_plan(plan, reg: dict, *, host: dict | None = None,
             rec.result = str(out)[:400]
             if not ok:
                 rec.error = rec.result
-        except Exception as exc:                                           # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec.error = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         finally:
             COUNTER.disarm()
@@ -196,7 +230,7 @@ def execute_plan(plan, reg: dict, *, host: dict | None = None,
         #:   · 工具声明 `write` ⇒ **计 1 次写**（★ 无论钩子看没看见）
         #:   · 工具声明 `read`  ⇒ 只信钩子（★ 真写了说明声明错了）
         member_writes = COUNTER.count() - member_before
-        eff = (reg.get(st.tool).effect if reg.get(st.tool) else "unknown")
+        eff = reg.get(st.tool).effect if reg.get(st.tool) else "unknown"
         if eff == "write":
             rec.com_write_count = max(1, member_writes)
         else:
@@ -207,15 +241,28 @@ def execute_plan(plan, reg: dict, *, host: dict | None = None,
         if rec.error:
             break
 
-    return {"ok": not any(r.error for r in records), "code": "",
-            "detail": "", "records": records,
-            "com_write_total": COUNTER.count(),
-            "plan_method": getattr(plan, "method_id", "")}
+    return {
+        "ok": not any(r.error for r in records),
+        "code": "",
+        "detail": "",
+        "records": records,
+        "com_write_total": COUNTER.count(),
+        "plan_method": getattr(plan, "method_id", ""),
+    }
 
 
 def records_to_dicts(records: list[ExecutionRecord]) -> list[dict]:
-    return [{"step": r.step, "tool": r.tool, "params": r.params,
-             "intent_at": r.intent_at, "result": r.result,
-             "com_write_count": r.com_write_count, "effect": r.effect,
-             "member_writes": r.member_writes, "error": r.error}
-            for r in records]
+    return [
+        {
+            "step": r.step,
+            "tool": r.tool,
+            "params": r.params,
+            "intent_at": r.intent_at,
+            "result": r.result,
+            "com_write_count": r.com_write_count,
+            "effect": r.effect,
+            "member_writes": r.member_writes,
+            "error": r.error,
+        }
+        for r in records
+    ]

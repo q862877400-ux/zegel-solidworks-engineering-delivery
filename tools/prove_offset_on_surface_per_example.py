@@ -14,17 +14,17 @@
 #          ★ a) 要**测地线**偏移请用 `GeodesicSketchOffset`（★ 另一个方法）；
 #          ★ b) 「Before…call `SelectByID2` for **each edge** to offset and set
 #                **Append to true** and **Mark …**」；
-# ★ c) 「After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D 
+# ★ c) 「After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D
 # sketch」
 #     ② **`## Examples` 给了三个**（C# / VB.NET / VBA）—— ★ **本机都有**：
 #        `C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`
 #     ③ ★ **而那个例子的调用序是关键**（★ 而签名与 Remarks 都给不出"两遍选边"）：
 #        ```
 #        'Select the edges
-# SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74   \u2190 \u2605 
+# SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74   \u2190 \u2605
 # \u7b2c\u4e00\u904d mark=0
 #        ClearSelection2 True                                        \u2190 \u2605 \u6e05\u6389
-# SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74   \u2190 \u2605 
+# SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74   \u2190 \u2605
 # \u7b2c\u4e8c\u904d mark=1
 #        'Create a 3D sketch
 # SketchOffsetOnSurface(0.01, False, True, False)            \u2190 \u2605 **\u8c03\u752
@@ -52,11 +52,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
-import win32com.client                                                # noqa: E402
-import pythoncom                                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
+import win32com.client  # noqa: E402
+import pythoncom  # noqa: E402
 
 
 def _empty_callout():
@@ -65,16 +65,27 @@ def _empty_callout():
 
 def _box(doc, size=0.03):
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -size, -size, 0.0, size, size, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -size,
+        -size,
+        0.0,
+        size,
+        size,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, size * 2.0)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -95,7 +106,7 @@ def _select_edges_by_object(doc, indices, mark=1):
     ext = C.get_com_member(doc, "Extension")
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     counts = []
     for k, i in enumerate(indices):
@@ -109,15 +120,29 @@ def _select_edges_by_object(doc, indices, mark=1):
     marked = []
     for i in range(1, n + 1):
         try:
-            marked.append(bool(C.get_com_member(mgr, "SetSelectedObjectMark", i, int(mark), -1)))
-        except Exception as exc:                                          # noqa: BLE001
+            marked.append(
+                bool(C.get_com_member(mgr, "SetSelectedObjectMark", i, int(mark), -1))
+            )
+        except Exception as exc:  # noqa: BLE001
             marked.append(str(exc)[:40])
-    return {"n_edges_on_body": len(objs), "counts": counts, "selected": n, "marked": marked}
+    return {
+        "n_edges_on_body": len(objs),
+        "counts": counts,
+        "selected": n,
+        "marked": marked,
+    }
 
 
 def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch):
-    row = {"tag": tag, "offset": offset, "reverse": reverse, "usefront": usefront,
-           "make_construct": makeconstruct, "insert_sketch": do_insert_sketch, "ok": False}
+    row = {
+        "tag": tag,
+        "offset": offset,
+        "reverse": reverse,
+        "usefront": usefront,
+        "make_construct": makeconstruct,
+        "insert_sketch": do_insert_sketch,
+        "ok": False,
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -134,10 +159,16 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         before = list(FR.feature_names(doc) or [])
         row["before"] = len(before)
         try:
-            ok = C.get_com_member(ext, "SketchOffsetOnSurface",
-                                  float(offset), bool(reverse), bool(usefront), bool(makeconstruct))
+            ok = C.get_com_member(
+                ext,
+                "SketchOffsetOnSurface",
+                float(offset),
+                bool(reverse),
+                bool(usefront),
+                bool(makeconstruct),
+            )
             row["returned"] = str(ok)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
             row["returned"] = "ERR"
         #: \u2605 **\u7b2c 5 \u6b65**\uff1a\u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u
@@ -147,8 +178,11 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
                 sk = C.get_com_member(doc, "SketchManager")
                 C.get_com_member(sk, "InsertSketch", True)
                 row["insert_sketch"] = True
-            except Exception as exc:                                      # noqa: BLE001
-                row["insert_sketch_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
+            except Exception as exc:  # noqa: BLE001
+                row["insert_sketch_err"] = "%s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:80],
+                )
         after = list(FR.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         #: ★★★ 2026-10-03（轮 612）**补上规则 6 的完整回读**：
@@ -160,25 +194,31 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
                 continue
             info = {"name": nm}
             try:
-                info["is_3d"] = bool(C.get_com_member(doc, "SketchIs3D")) if False else None
-            except Exception:                                             # noqa: BLE001
+                info["is_3d"] = (
+                    bool(C.get_com_member(doc, "SketchIs3D")) if False else None
+                )
+            except Exception:  # noqa: BLE001
                 pass
             try:
                 sk = C.get_com_member(doc, "GetActiveSketch2")
                 if sk is None:
                     feat = None
-                    for f in (C.get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(0),):
+                    for f in (
+                        C.get_com_member(doc, "FeatureManager").GetFeatureTreeRootItem2(
+                            0
+                        ),
+                    ):
                         pass
                 else:
                     info["active"] = True
                     info["is_3d"] = bool(C.get_com_member(sk, "Is3D"))
                     segs = C.get_com_member(sk, "GetSketchSegments")
                     info["segments"] = len(segs) if segs is not None else 0
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 info["read_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
             row.setdefault("sketches", []).append(info)
         row["ok"] = bool(row["new_features"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     finally:
         if doc is not None:
@@ -186,42 +226,81 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u66f2\u9762\u4e0a\u504f\u79fb\u2014\u2014 \u2605 \u4e25\u683c\u6309\u5b98\u65b9 VB \u4f8b\u5b50\u7684**\u8c03\u7528\u5e8f**\u91cd\u8bd5",
-          "official": "`IModelDocExtension\\SketchOffsetOnSurface.md`\uff08**`## Remarks` \u4e09\u6761** + "
-                      "**`## Examples` \u4e09\u4e2a**\uff09\u00d7 `C:\\swapi\\examples\\"
-                      "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u66f2\u9762\u4e0a\u504f\u79fb\u2014\u2014 \u2605 \u4e25\u683c\u6309\u5b98\u65b9 VB \u4f8b\u5b50\u7684**\u8c03\u7528\u5e8f**\u91cd\u8bd5",
+        "official": "`IModelDocExtension\\SketchOffsetOnSurface.md`\uff08**`## Remarks` \u4e09\u6761** + "
+        "**`## Examples` \u4e09\u4e2a**\uff09\u00d7 `C:\\swapi\\examples\\"
+        "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`",
+        "cases": [],
+    }
     #: \u2605 \u4e09\u683c\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 \u5b98\u65b9\u53c2\u6570
     #: \u4e0d\u6536\u5c3e \u00b7 \u53cd\u5411
-    ev["cases"].append(_one(sw, "\u2605 \u5b98\u65b9\u53c2\u6570 + **\u6536\u5c3e InsertSketch**",
-                            offset=0.01, reverse=False, usefront=True,
-                            makeconstruct=False, do_insert_sketch=True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 **\u4e0d\u6536\u5c3e**",
-                            offset=0.01, reverse=False, usefront=True,
-                            makeconstruct=False, do_insert_sketch=False))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a\u53cd\u5411 **Reverse=True**",
-                            offset=0.01, reverse=True, usefront=True,
-                            makeconstruct=False, do_insert_sketch=True))
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 \u5b98\u65b9\u53c2\u6570 + **\u6536\u5c3e InsertSketch**",
+            offset=0.01,
+            reverse=False,
+            usefront=True,
+            makeconstruct=False,
+            do_insert_sketch=True,
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 **\u4e0d\u6536\u5c3e**",
+            offset=0.01,
+            reverse=False,
+            usefront=True,
+            makeconstruct=False,
+            do_insert_sketch=False,
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a\u53cd\u5411 **Reverse=True**",
+            offset=0.01,
+            reverse=True,
+            usefront=True,
+            makeconstruct=False,
+            do_insert_sketch=True,
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = "offset_on_surface_per_example_%d_of_%d" % (ev["passed"], ev["total"])
+    ev["verdict"] = "offset_on_surface_per_example_%d_of_%d" % (
+        ev["passed"],
+        ev["total"],
+    )
     p = R / "output" / "offset-on-surface-per-example-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a**%s**" % ev["verdict"])
     for c in ev["cases"]:
-        print("  %-44s ok=%-6s \u56de=%-6s \u9009\u4e2d=%s \u7279\u5f81 %s -> %s" % (
-            c.get("tag"), c.get("ok"), c.get("returned"),
-            (c.get("sel") or {}).get("selected"), c.get("before"),
-            (c.get("before") or 0) + len(c.get("new_features") or [])))
+        print(
+            "  %-44s ok=%-6s \u56de=%-6s \u9009\u4e2d=%s \u7279\u5f81 %s -> %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("returned"),
+                (c.get("sel") or {}).get("selected"),
+                c.get("before"),
+                (c.get("before") or 0) + len(c.get("new_features") or []),
+            )
+        )
         if c.get("new_features"):
             print("        \u65b0\u589e=%s" % (c["new_features"],))
         for k in ("call_err", "insert_sketch_err", "err"):

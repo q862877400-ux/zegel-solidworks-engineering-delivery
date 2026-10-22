@@ -19,6 +19,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -78,16 +79,27 @@ def main() -> int:
 
     print("")
     print("  ★ 官方 %d 个成员里：" % len(mem))
-    print("     **下界（出现在带调用的行里）: %d 个（%.2f%%）**" % (len(lo), 100.0 * len(lo) / len(mem)))
-    print("     上界（名字在任何真机脚本里出现过）: %d 个（%.2f%%）" % (len(hi), 100.0 * len(hi) / len(mem)))
+    print(
+        "     **下界（出现在带调用的行里）: %d 个（%.2f%%）**"
+        % (len(lo), 100.0 * len(lo) / len(mem))
+    )
+    print(
+        "     上界（名字在任何真机脚本里出现过）: %d 个（%.2f%%）"
+        % (len(hi), 100.0 * len(hi) / len(mem))
+    )
     print("")
     print("  贡献最大的脚本（下界口径）：")
     for n, c in sorted(per_file, key=lambda x: -x[1])[:10]:
         if c:
             print("    %-46s %4d" % (n, c))
-    OUT.write_text(json.dumps(
-        {"official_members": len(mem), "low": sorted(lo), "high": sorted(hi)}, ensure_ascii=False, indent=2),
-        encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {"official_members": len(mem), "low": sorted(lo), "high": sorted(hi)},
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print("")
     print("  产物:", OUT)
     return 0

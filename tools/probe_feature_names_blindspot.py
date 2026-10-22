@@ -43,24 +43,35 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_solid(doc):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -68,19 +79,30 @@ def _mk_solid(doc):
 def _mk_surface(doc, plane="Front Plane"):
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -90,31 +112,31 @@ def _dump_chain(model, use_safe=True):
     rows = []
     try:
         feat = C.get_com_member(model, "FirstFeature")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return [{"err": "%s: %s" % (type(exc).__name__, str(exc)[:100])}]
     i = 0
     while feat is not None and i < 200:
         row = {"i": i}
         try:
             row["name"] = str(C.get_com_member(feat, "Name") or "")
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["name"] = "ERR %s" % str(exc)[:50]
         try:
             row["type"] = str(C.get_com_member(feat, "GetTypeName2") or "")
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["type"] = "ERR %s" % str(exc)[:50]
         try:
             row["is_real"] = bool(FR._is_real_feature(feat))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["is_real"] = "ERR %s" % str(exc)[:50]
         try:
             row["in_container"] = str(row.get("name")) in FR._CONTAINER_NODES
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             row["in_container"] = None
         rows.append(row)
         try:
             feat = C.get_com_member(feat, "GetNextFeature")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
         i += 1
     return rows
@@ -122,9 +144,11 @@ def _dump_chain(model, use_safe=True):
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "FirstFeature \u5168\u94fe dump \u2014\u2014 \u4e3a\u4ec0\u4e48 feature_names \u770b\u4e0d\u89c1 SurfCut",
-          "steps": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "FirstFeature \u5168\u94fe dump \u2014\u2014 \u4e3a\u4ec0\u4e48 feature_names \u770b\u4e0d\u89c1 SurfCut",
+        "steps": [],
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -136,10 +160,11 @@ def main() -> int:
         #: 8
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         from sw_connect import get_com_member as _get, out_i4 as _oi4
         from sw_part import _select_com_object as _sel
+
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
             faces = list(_get(b, "GetFaces") or [])
             if faces:
@@ -148,23 +173,26 @@ def main() -> int:
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            ret = C.get_com_member(fm, "InsertCutSurface", False, 0, False, True, [], _oi4())
-        except Exception as exc:                                          # noqa: BLE001
+            ret = C.get_com_member(
+                fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
+            )
+        except Exception as exc:  # noqa: BLE001
             ev["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         ev["returned"] = {
             "type": type(ret).__name__ if ret is not None else "None",
-            "Name": None, "GetTypeName2": None,
+            "Name": None,
+            "GetTypeName2": None,
         }
         if ret is not None:
             for k in ("Name", "GetTypeName2"):
                 try:
                     ev["returned"][k] = str(C.get_com_member(ret, k))
-                except Exception as exc:                                  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     ev["returned"][k] = "ERR %s" % str(exc)[:60]
         ev["chain_after"] = _dump_chain(doc)
         ev["names_after"] = list(FR.feature_names(doc) or [])
         ev["ok"] = bool(ev["returned"].get("Name"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -172,18 +200,38 @@ def main() -> int:
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "feature-names-blindspot-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u8c03\u7528\u524d \u94fe\u4e0a %d \u8282\u70b9 \u00b7 feature_names %d \u4e2a" % (len(ev.get("chain_before") or []), len(ev.get("names_before") or [])))
-    print("  \u8fd4\u56de\uff1a%s" % json.dumps(ev.get("returned"), ensure_ascii=False)[:140])
-    print("  \u8c03\u7528\u540e \u94fe\u4e0a %d \u8282\u70b9 \u00b7 feature_names %d \u4e2a" % (len(ev.get("chain_after") or []), len(ev.get("names_after") or [])))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u8c03\u7528\u524d \u94fe\u4e0a %d \u8282\u70b9 \u00b7 feature_names %d \u4e2a"
+        % (len(ev.get("chain_before") or []), len(ev.get("names_before") or []))
+    )
+    print(
+        "  \u8fd4\u56de\uff1a%s"
+        % json.dumps(ev.get("returned"), ensure_ascii=False)[:140]
+    )
+    print(
+        "  \u8c03\u7528\u540e \u94fe\u4e0a %d \u8282\u70b9 \u00b7 feature_names %d \u4e2a"
+        % (len(ev.get("chain_after") or []), len(ev.get("names_after") or []))
+    )
     print("  \u2605 \u8c03\u7528\u540e\u7684\u94fe\uff1a")
-    for r in (ev.get("chain_after") or []):
-        print("     %-3s %-26s %-14s is_real=%-6s container=%s" % (
-            r.get("i"), str(r.get("name"))[:26], str(r.get("type"))[:14], r.get("is_real"), r.get("in_container")))
+    for r in ev.get("chain_after") or []:
+        print(
+            "     %-3s %-26s %-14s is_real=%-6s container=%s"
+            % (
+                r.get("i"),
+                str(r.get("name"))[:26],
+                str(r.get("type"))[:14],
+                r.get("is_real"),
+                r.get("in_container"),
+            )
+        )
     print("  \u2605 feature_names\uff1a%s" % (ev.get("names_after"),))
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0

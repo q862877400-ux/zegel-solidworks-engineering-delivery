@@ -49,6 +49,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -83,22 +84,27 @@ SPECS_BATCH17 = [
     ToolSpec(
         name="solidworks_circular_pattern",
         title="Create Circular Pattern",
-        module="sw_part", function="circular_pattern",
+        module="sw_part",
+        function="circular_pattern",
         inject="model",
         param_alias=dict(_consumed("angle_deg")),
         derived_args=_radians_of_deg,
         params=[
-            Param("feature_name", str,
-                  description="Name of the feature to pattern."),
-            Param("axis_name", str,
-                  description="Name of the axis to revolve around."),
-            Param("angle_deg", float,
-                  description="Total pattern angle in DEGREES (rule 2). Converted to radians "
-                              "exactly once at this boundary via sw_connect.deg()."),
-            Param("count", int,
-                  description="Number of pattern instances."),
-            Param("equal_spacing", bool, default=True,
-                  description="Space the instances equally."),
+            Param("feature_name", str, description="Name of the feature to pattern."),
+            Param("axis_name", str, description="Name of the axis to revolve around."),
+            Param(
+                "angle_deg",
+                float,
+                description="Total pattern angle in DEGREES (rule 2). Converted to radians "
+                "exactly once at this boundary via sw_connect.deg().",
+            ),
+            Param("count", int, description="Number of pattern instances."),
+            Param(
+                "equal_spacing",
+                bool,
+                default=True,
+                description="Space the instances equally.",
+            ),
         ],
         doc="Create a circular pattern about an axis.",
     ),
@@ -106,7 +112,8 @@ SPECS_BATCH17 = [
     ToolSpec(
         name="solidworks_revolve_boss",
         title="Create Revolve Boss",
-        module="sw_part", function="revolve_boss",
+        module="sw_part",
+        function="revolve_boss",
         inject="model",
         param_alias=dict(_consumed("angle_deg", "axis_sketch_name")),
         derived_args=lambda p: dict(
@@ -115,15 +122,21 @@ SPECS_BATCH17 = [
             axis_sketch_name=(str(p.axis_sketch_name) or None),
         ),
         params=[
-            Param("sketch_name", str,
-                  description="Profile sketch NAME."),
-            Param("angle_deg", float,
-                  description="Revolve angle in DEGREES (rule 2). Converted to radians exactly "
-                              "once at this boundary via sw_connect.deg()."),
-            Param("axis_sketch_name", str, default="",
-                  description="Axis sketch name; omit (\"\") to use the function default (None)."),
+            Param("sketch_name", str, description="Profile sketch NAME."),
+            Param(
+                "angle_deg",
+                float,
+                description="Revolve angle in DEGREES (rule 2). Converted to radians exactly "
+                "once at this boundary via sw_connect.deg().",
+            ),
+            Param(
+                "axis_sketch_name",
+                str,
+                default="",
+                description='Axis sketch name; omit ("") to use the function default (None).',
+            ),
         ],
         doc="Revolve a profile sketch into a boss feature. ⚠ This call is routed through a "
-            "closed-source COM backend — see docs/known-facts.md.",
+        "closed-source COM backend — see docs/known-facts.md.",
     ),
 ]

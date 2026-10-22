@@ -1,4 +1,5 @@
 """★ 探针：B3 余下两项的**参数式入口** —— ★ 角撑板（`InsertGussetFeature3`）· 圆角焊缝（`…Feature3`）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-2/B3-3 的真机探针）
 # 文件:   tools/probe_spec211_weld_misc.py
@@ -46,21 +47,27 @@ def _behaviour(feat, before, after, exc) -> str:
         return "★ **抛**：%s: %s" % (type(exc).__name__, str(exc)[:110])
     if len(after) > len(before):
         return "★★★★★ **建成**（★ 新增 %r）⇒ ★ **参数式翻案** ✓" % [
-            n for n in after if n not in before]
+            n for n in after if n not in before
+        ]
     if feat is None:
         return "★★ **静默回 `None`** ⇒ ★ **还不算试死**（★ 前置没上 ✓）"
     return "★★ 回对象（`%r`）而**特征树没变** ⇒ ★ 还不算试死（★ 前置没上 ✓）" % (
-        getattr(feat, "Name", None),)
+        getattr(feat, "Name", None),
+    )
 
 
 def main() -> int:
     import sw_connect
     import sw_weldment as W
 
-    out: dict = {"official": ["IFeatureManager.InsertGussetFeature3",
-                              "IFeatureManager.InsertFilletBeadFeature3"],
-                 "purpose": "试两项的**参数式入口**（★ 事实 47 那条用的是属性式 SM 接口 ✓）",
-                 "step": "第一步：只查行为"}
+    out: dict = {
+        "official": [
+            "IFeatureManager.InsertGussetFeature3",
+            "IFeatureManager.InsertFilletBeadFeature3",
+        ],
+        "purpose": "试两项的**参数式入口**（★ 事实 47 那条用的是属性式 SM 接口 ✓）",
+        "step": "第一步：只查行为",
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -74,7 +81,7 @@ def main() -> int:
     exc = None
     feat = None
     try:
-        #: ★ 按签名**逐位**给：★ Depth · DirType · LocType · BIsProfile · ProfileD1..D4 
+        #: ★ 按签名**逐位**给：★ Depth · DirType · LocType · BIsProfile · ProfileD1..D4
         #: ·
         #: ProfileAngle · BOffset · DProfileOffset · CrvIndex · BReverseDir · BReverseFa
         #: ce ·
@@ -82,26 +89,41 @@ def main() -> int:
         #: er ·
         #:   BNeedChamferInGusset ✓（★ 20 位 ✓）
         feat = sw_connect.get_com_member(
-            fm, "InsertGussetFeature3",
-            float(sw_connect.mm(6.0)),   # Depth（厚度 6mm ⇒ 边界换算 ✓）
-            0,                            # DirType
-            0,                            # LocType
-            False,                        # BIsProfile ⇒ **三角形轮廓**（★ 不让它找多边形 ✓）
-            0.0, 0.0, 0.0, 0.0, 0.0,      # ProfileD1..D4 + ProfileAngle
-            False, 0.0,                   # BOffset · DProfileOffset
-            0,                            # CrvIndex
-            False, False,                 # BReverseDir · BReverseFace
-            False,                        # BUseLenDim
-            0.0, 0.0, 0.0,                # ProfileD5 · ProfileD6 · ProfileChamferAngle
-            False, False)                 # BUseLenDimForChamfer · BNeedChamferInGusset
-    except Exception as e:                                              # noqa: BLE001
+            fm,
+            "InsertGussetFeature3",
+            float(sw_connect.mm(6.0)),  # Depth（厚度 6mm ⇒ 边界换算 ✓）
+            0,  # DirType
+            0,  # LocType
+            False,  # BIsProfile ⇒ **三角形轮廓**（★ 不让它找多边形 ✓）
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,  # ProfileD1..D4 + ProfileAngle
+            False,
+            0.0,  # BOffset · DProfileOffset
+            0,  # CrvIndex
+            False,
+            False,  # BReverseDir · BReverseFace
+            False,  # BUseLenDim
+            0.0,
+            0.0,
+            0.0,  # ProfileD5 · ProfileD6 · ProfileChamferAngle
+            False,
+            False,
+        )  # BUseLenDimForChamfer · BNeedChamferInGusset
+    except Exception as e:  # noqa: BLE001
         exc = e
     after = W.feature_names(model)
     out["gusset_param_form"] = {
         "returned_name": getattr(feat, "Name", None) if feat is not None else None,
         "delta": [n for n in after if n not in before],
-        "behaviour": _behaviour(feat, before, after, exc)}
-    print("★ A 角撑板（InsertGussetFeature3 参数式）⇒ %s" % out["gusset_param_form"]["behaviour"])
+        "behaviour": _behaviour(feat, before, after, exc),
+    }
+    print(
+        "★ A 角撑板（InsertGussetFeature3 参数式）⇒ %s"
+        % out["gusset_param_form"]["behaviour"]
+    )
 
     #: ══ B · 圆角焊缝（★ `InsertFilletBeadFeature3`，18 参、两数组 ✓）══════
     model2 = sw_connect.new_document(sw, "part")
@@ -112,25 +134,45 @@ def main() -> int:
     try:
         empty = sw_connect.create_empty_dispatch_variant()
         feat2 = sw_connect.get_com_member(
-            fm2, "InsertFilletBeadFeature3",
-            0, float(sw_connect.mm(5.0)), 0.0,      # Type1 · Size1 · Length1
-            0, 0.0, 0.0,                             # PenetrationType1 · PenetrationValue1 · Pitch
-            0, 0.0, 0.0,                             # Type2 · Size2 · Length2
-            0, 0.0,                                  # PenetrationType2 · PenetrationValue2
-            0, 0, empty, 0, empty,                   # Flag · EdgeNum1 · DeSelEdge1 · EdgeNum2 · DeSelEdge2
-            empty, empty)                            # FaceSet1 · FaceSet2
-    except Exception as e:                                              # noqa: BLE001
+            fm2,
+            "InsertFilletBeadFeature3",
+            0,
+            float(sw_connect.mm(5.0)),
+            0.0,  # Type1 · Size1 · Length1
+            0,
+            0.0,
+            0.0,  # PenetrationType1 · PenetrationValue1 · Pitch
+            0,
+            0.0,
+            0.0,  # Type2 · Size2 · Length2
+            0,
+            0.0,  # PenetrationType2 · PenetrationValue2
+            0,
+            0,
+            empty,
+            0,
+            empty,  # Flag · EdgeNum1 · DeSelEdge1 · EdgeNum2 · DeSelEdge2
+            empty,
+            empty,
+        )  # FaceSet1 · FaceSet2
+    except Exception as e:  # noqa: BLE001
         exc2 = e
     after2 = W.feature_names(model2)
     out["fillet_bead_param_form"] = {
         "returned_name": getattr(feat2, "Name", None) if feat2 is not None else None,
         "delta": [n for n in after2 if n not in before2],
-        "behaviour": _behaviour(feat2, before2, after2, exc2)}
-    print("★ B 圆角焊缝（InsertFilletBeadFeature3 参数式 18 参）⇒ %s"
-          % out["fillet_bead_param_form"]["behaviour"])
+        "behaviour": _behaviour(feat2, before2, after2, exc2),
+    }
+    print(
+        "★ B 圆角焊缝（InsertFilletBeadFeature3 参数式 18 参）⇒ %s"
+        % out["fillet_bead_param_form"]["behaviour"]
+    )
 
     p = ROOT / "output" / "spec211-b3-weld-misc.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

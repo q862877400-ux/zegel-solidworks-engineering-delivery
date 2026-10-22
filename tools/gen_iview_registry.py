@@ -34,6 +34,7 @@
 
 ⚠ 只读本地反射 dump，不联网、不触碰任何 COM（AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 import json
@@ -92,8 +93,13 @@ def main() -> int:
         elif name.startswith(("get_", "set_")):
             props.append(name)
         else:
-            methods.append({"name": name, "ret": ret, "arity": len(
-                [a for a in args.split(",") if a.strip()])})
+            methods.append(
+                {
+                    "name": name,
+                    "ret": ret,
+                    "arity": len([a for a in args.split(",") if a.strip()]),
+                }
+            )
 
     # 归约：编号变体折叠到基础名，保留**信息量更大的那一条**（实参最多者）
     reduced: dict[str, dict] = {}
@@ -109,7 +115,8 @@ def main() -> int:
         "internal_dispatch": len(internal),
         "properties": len(props),
         "methods": len(methods),
-        "numbered_variants": len(methods) - len({re.sub(r'\d+$', '', i['name']) for i in methods}),
+        "numbered_variants": len(methods)
+        - len({re.sub(r"\d+$", "", i["name"]) for i in methods}),
         "distinct_capabilities": len(reduced),
         "members": sorted(reduced.values(), key=lambda i: i["name"]),
     }

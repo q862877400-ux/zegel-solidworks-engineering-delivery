@@ -45,48 +45,70 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_multi_body(doc):
     """★ 一个**多体**实体件（★ 焊件/切割清单要有体）。"""
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     ok = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             ok = True
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     #: \u2605 \u7b2c\u4e8c\u4e2a\u4e0d\u76f8\u4ea4\u7684\u4f53\uff08\u2605 \u591a\u4f53\
     #: uff09
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     0.05, 0.05, 0.0, 0.07, 0.07, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        0.05,
+        0.05,
+        0.0,
+        0.07,
+        0.07,
+        0.0,
+    )
     P.end_sketch(doc)
-    names2 = [n for n in (P.feature_names(doc) or [])
-              if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names2 = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
             P.extrude_boss(doc, cand, 0.02, merge=False)
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             try:
                 P.extrude_boss(doc, cand, 0.02)
                 break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return ok
 
@@ -117,9 +139,9 @@ def _one(sw, tag, kind):
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
                         row[k] = str(C.get_com_member(ret, m))
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
             s = str(exc)
             for tok in ("0x80010105", "0x80028CA0", "0x80004005"):
@@ -135,7 +157,7 @@ def _one(sw, tag, kind):
             row["class"] = "returned_object"
         else:
             row["class"] = "silent_none"
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         row["class"] = "raised"
     finally:
@@ -144,36 +166,62 @@ def _one(sw, tag, kind):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u7ed3\u6784\u7cfb\u7edf\uff08\u710a\u4ef6\uff09\u90a3\u4e00\u65cf\uff1a`InsertWeldmentCutList2` \u7684**\u771f\u5b9e\u5f62\u6001**",
-          "static": "\u4e24\u6e90\u90fd\u6709\u5b83\uff08swapi md + CHM\uff09\uff1b\u7c7b\u578b\u5e93\uff1aCutList2 arity=2\uff081 in `Bodies`\uff09\u00b7 CutList arity=1\uff080 in\uff09\uff1b"
-                    "`IWeldmentCutListFolder` \u7c7b\u578b\u5e93\u91cc\u67e5\u4e0d\u5230",
-          "cases": []}
-    for tag, kind in (("\u2460 InsertWeldmentCutList2([])", "cutlist2"),
-                      ("\u2461 InsertWeldmentCutList()\uff08\u2605 \u65e7\u7248\uff09", "cutlist_old"),
-                      ("\u2462 InsertWeldmentFeature()", "feature")):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u7ed3\u6784\u7cfb\u7edf\uff08\u710a\u4ef6\uff09\u90a3\u4e00\u65cf\uff1a`InsertWeldmentCutList2` \u7684**\u771f\u5b9e\u5f62\u6001**",
+        "static": "\u4e24\u6e90\u90fd\u6709\u5b83\uff08swapi md + CHM\uff09\uff1b\u7c7b\u578b\u5e93\uff1aCutList2 arity=2\uff081 in `Bodies`\uff09\u00b7 CutList arity=1\uff080 in\uff09\uff1b"
+        "`IWeldmentCutListFolder` \u7c7b\u578b\u5e93\u91cc\u67e5\u4e0d\u5230",
+        "cases": [],
+    }
+    for tag, kind in (
+        ("\u2460 InsertWeldmentCutList2([])", "cutlist2"),
+        (
+            "\u2461 InsertWeldmentCutList()\uff08\u2605 \u65e7\u7248\uff09",
+            "cutlist_old",
+        ),
+        ("\u2462 InsertWeldmentFeature()", "feature"),
+    ):
         ev["cases"].append(_one(sw, tag, kind))
     ev["classes"] = sorted({c.get("class") for c in ev["cases"] if c.get("class")})
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("all_raised" if ev["classes"] == ["raised"]
-                     else ("all_silent_none" if ev["classes"] == ["silent_none"]
-                           else "mixed:" + ",".join(ev["classes"])))
+    ev["verdict"] = (
+        "all_raised"
+        if ev["classes"] == ["raised"]
+        else (
+            "all_silent_none"
+            if ev["classes"] == ["silent_none"]
+            else "mixed:" + ",".join(ev["classes"])
+        )
+    )
     p = R / "output" / "weldment-cutlist-recheck-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5f62\u6001\uff1a**%s**\uff08%s\uff09" % (ev["verdict"], ev["classes"]))
     for c in ev["cases"]:
-        print("  %-36s \u4f53=%s \u56de=%-9s \u540d=%s \u578b=%s" % (
-            c.get("tag"), c.get("n_bodies"), c.get("returned"), c.get("ret_name"), c.get("ret_type")))
-        print("        \u5206\u7c7b=**%s** new=%s \u9519\u7801=%s" % (
-            c.get("class"), c.get("new"), c.get("error_code")))
+        print(
+            "  %-36s \u4f53=%s \u56de=%-9s \u540d=%s \u578b=%s"
+            % (
+                c.get("tag"),
+                c.get("n_bodies"),
+                c.get("returned"),
+                c.get("ret_name"),
+                c.get("ret_type"),
+            )
+        )
+        print(
+            "        \u5206\u7c7b=**%s** new=%s \u9519\u7801=%s"
+            % (c.get("class"), c.get("new"), c.get("error_code"))
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:150])
     print("  \u4ea7\u7269\uff1a%s" % p)

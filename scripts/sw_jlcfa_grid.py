@@ -27,6 +27,7 @@ r"""按**截图网格**定位卡片 —— UIA 对滚动内容给虚拟坐标，
 # ⚠ 只做定位；点击由调用方发起。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -163,15 +164,20 @@ def locate_card(hwnd: int, win, name: str, log=S.log):
     x0, y0, x1, y1 = cells[i]
     cx = cr.left + (x0 + x1) // 2
     cy = cr.top + (y0 + y1) // 2
-    log("      「%s」= 第%d格 pane(%d,%d,%d,%d) -> 屏幕(%d,%d)"
-        % (name, i, x0, y0, x1, y1, cx, cy))
+    log(
+        "      「%s」= 第%d格 pane(%d,%d,%d,%d) -> 屏幕(%d,%d)"
+        % (name, i, x0, y0, x1, y1, cx, cy)
+    )
     return cx, cy
 
 
 def _capture(hwnd: int, win):
     """PrintWindow 抓窗口自身并裁到插件容器（不受遮挡）。"""
     import importlib.util
-    spec = importlib.util.spec_from_file_location("shot", Path(__file__).resolve().parents[1] / "shot.py")
+
+    spec = importlib.util.spec_from_file_location(
+        "shot", Path(__file__).resolve().parents[1] / "shot.py"
+    )
     sh = importlib.util.module_from_spec(spec)
     sys.modules["shot"] = sh
     spec.loader.exec_module(sh)

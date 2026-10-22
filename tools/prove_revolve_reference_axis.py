@@ -51,7 +51,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "revolve-reference-axis-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "revolve-reference-axis-evidence.json"
+)
 
 
 def _callout():
@@ -73,7 +77,7 @@ def _vol(sw_connect, model):
 
     try:
         props = mass_properties(model) or {}
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     v = props.get("volume")
     return float(v) * 1e9 if v else None
@@ -81,8 +85,13 @@ def _vol(sw_connect, model):
 
 def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
     from sw_connect import get_com_member
-    from sw_part import (start_sketch, sketch_corner_rectangle, current_sketch_name,
-                         end_sketch, sketch_line)
+    from sw_part import (
+        start_sketch,
+        sketch_corner_rectangle,
+        current_sketch_name,
+        end_sketch,
+        sketch_line,
+    )
 
     doc = sw_connect.new_document(sw, "part")
     out: dict = {"axis_x_mm": axis_x_mm}
@@ -102,12 +111,15 @@ def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
 
         #: ③ **选中那条线** ⇒ `InsertAxis2(True)` 建**参考轴**
         from sw_part import _select_com_object
+
         doc.ClearSelection2(True)
-        steps["select_line"] = bool(seg is not None and _select_com_object(seg, append=True, mark=0))
+        steps["select_line"] = bool(
+            seg is not None and _select_com_object(seg, append=True, mark=0)
+        )
         try:
             axis_feat = get_com_member(doc, "InsertAxis2", True)
             steps["insert_axis"] = axis_feat is not None
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             axis_feat, steps["insert_axis"] = None, False
             steps["insert_axis_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         #: ④ 找那个参考轴的名字（★ 遍历特征树里 `RefAxis` 类）
@@ -121,7 +133,7 @@ def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
                     axis_name = nm
                     break
                 feat = get_com_member(feat, "GetNextFeature")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         out["axis_name"] = axis_name
 
@@ -129,34 +141,79 @@ def _one_run(sw, sw_connect, axis_x_mm: float) -> dict:
         doc.ClearSelection2(True)
         ext = get_com_member(doc, "Extension")
         try:
-            steps["sel_axis"] = bool(get_com_member(ext, "SelectByID2", axis_name, "AXIS",
-                                                    0, 0, 0, False, 0,
-                                                    _callout(), 0))
-        except Exception as exc:                               # noqa: BLE001
+            steps["sel_axis"] = bool(
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    axis_name,
+                    "AXIS",
+                    0,
+                    0,
+                    0,
+                    False,
+                    0,
+                    _callout(),
+                    0,
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
             steps["sel_axis"] = False
             steps["sel_axis_err"] = str(exc)[:100]
         try:
-            steps["sel_profile"] = bool(get_com_member(ext, "SelectByID2", profile, "SKETCH",
-                                                       0, 0, 0, True, 0,
-                                                       _callout(), 0))
-        except Exception as exc:                               # noqa: BLE001
+            steps["sel_profile"] = bool(
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    profile,
+                    "SKETCH",
+                    0,
+                    0,
+                    0,
+                    True,
+                    0,
+                    _callout(),
+                    0,
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
             steps["sel_profile"] = False
             steps["sel_profile_err"] = str(exc)[:100]
 
         #: ⑥ 直接调 `FeatureRevolve2`（★ 绕开我们包装器里"选草图线段"那条路）
         try:
             feat = get_com_member(doc, "FeatureManager")
-            fm = get_com_member(feat, "FeatureRevolve2", True, True, False, False, False, False,
-                                0, 0, 6.283185307179586, 0, False, False, 0.0, 0.0, 0, 0, 0,
-                                True, True, True)
+            fm = get_com_member(
+                feat,
+                "FeatureRevolve2",
+                True,
+                True,
+                False,
+                False,
+                False,
+                False,
+                0,
+                0,
+                6.283185307179586,
+                0,
+                False,
+                False,
+                0.0,
+                0.0,
+                0,
+                0,
+                0,
+                True,
+                True,
+                True,
+            )
             out["feature_created"] = feat is not None
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["feature_created"] = False
             out["feature_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         out["volume_mm3"] = _vol(sw_connect, doc)
         out["steps"] = steps
     finally:
-        if not _one_run.keep:                                  # type: ignore[attr-defined]
+        if not _one_run.keep:  # type: ignore[attr-defined]
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
@@ -173,7 +230,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep", action="store_true")
     args = ap.parse_args()
-    _one_run.keep = args.keep                                  # type: ignore[attr-defined]
+    _one_run.keep = args.keep  # type: ignore[attr-defined]
 
     import sw_connect
 
@@ -190,17 +247,24 @@ def main() -> int:
         v1 = ev["steps"]["refaxis_at_x30"].get("volume_mm3")
         if v0 and v1:
             ev["volumes_mm3"] = {"x0": v0, "x30": v1}
-            ev["steps"]["volumes_differ"] = {"ok": max(v0, v1) / min(v0, v1) > 1.5,
-                                             "ratio": round(max(v0, v1) / min(v0, v1), 3)}
-        ev["verdict"] = "pass" if all(
-            isinstance(v, dict) and v.get("ok") for v in ev["steps"].values()) else "partial"
+            ev["steps"]["volumes_differ"] = {
+                "ok": max(v0, v1) / min(v0, v1) > 1.5,
+                "ratio": round(max(v0, v1) / min(v0, v1), 3),
+            }
+        ev["verdict"] = (
+            "pass"
+            if all(isinstance(v, dict) and v.get("ok") for v in ev["steps"].values())
+            else "partial"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1800])
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

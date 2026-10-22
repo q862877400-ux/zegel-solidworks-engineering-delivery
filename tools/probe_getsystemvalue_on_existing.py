@@ -42,8 +42,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant  # noqa: E402
 
 OUT = REPO / "output" / "getsystemvalue-on-existing-evidence.json"
 
@@ -55,7 +55,7 @@ def _g(o, n, *a):
 def _try(fn, *a):
     try:
         return {"ok": True, "ret": repr(fn(*a))[:100]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
 
 
@@ -70,7 +70,7 @@ def _find_dimension(doc):
     feat = None
     try:
         feat = _g(doc, "FirstFeature")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None, "拿不到 FirstFeature"
     hops = 0
     while feat is not None and hops < 60:
@@ -78,7 +78,7 @@ def _find_dimension(doc):
         dd = None
         try:
             dd = _g(feat, "GetFirstDisplayDimension")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             dd = None
         while dd is not None:
             try:
@@ -87,18 +87,18 @@ def _find_dimension(doc):
                     nm = ""
                     try:
                         nm = str(_g(dim, "FullName") or "")
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         nm = ""
                     return dim, nm
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             try:
                 dd = _g(feat, "GetNextDisplayDimension", dd) if False else None
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 dd = None
         try:
             feat = _g(feat, "GetNextFeature")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             feat = None
     return None, "遍历 %d 个特征没找到 display dimension" % hops
 
@@ -126,30 +126,36 @@ def main() -> int:
                 case["找尺寸"] = note
                 case["尺寸对象"] = repr(dim)[:80]
                 if dim is not None:
-                    case["旧_GetSystemValue2(空名)"] = _try(_g, dim, "GetSystemValue2", "")
+                    case["旧_GetSystemValue2(空名)"] = _try(
+                        _g, dim, "GetSystemValue2", ""
+                    )
                     case["旧_SystemValue"] = _try(_g, dim, "SystemValue")
                     case["新_GetSystemValue3(1, 空VARIANT)"] = _try(
-                        _g, dim, "GetSystemValue3", 1, create_empty_dispatch_variant())
+                        _g, dim, "GetSystemValue3", 1, create_empty_dispatch_variant()
+                    )
                     case["新_GetSystemValue3(2, 空VARIANT)"] = _try(
-                        _g, dim, "GetSystemValue3", 2, create_empty_dispatch_variant())
+                        _g, dim, "GetSystemValue3", 2, create_empty_dispatch_variant()
+                    )
                     R["cases"].append(case)
                     break
                 R["cases"].append(case)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 case["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
                 R["cases"].append(case)
             finally:
                 try:
                     if doc is not None:
                         _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     got = [c for c in R["cases"] if c.get("尺寸对象", "None") not in ("None", "")]
     R["★_挖到尺寸的文档数"] = len(got)
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

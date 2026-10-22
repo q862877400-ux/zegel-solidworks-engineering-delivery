@@ -27,6 +27,7 @@
 ⚠ 本工具为静态文本比对，不导入任何 CAD 模块、不连接 SolidWorks、
   不执行任何 COM 调用（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -76,14 +77,14 @@ REQUIRED_FIELDS = ("仓库", "文件", "定位", "未在本机实测")
 
 #: 允许没有来源块的「非实质新增行」
 ALLOWED_NO_SOURCE = re.compile(
-    r"^\s*$"                       # 空行
-    r"|^\s*#"                      # 纯注释（但块外的注释不算覆盖）
+    r"^\s*$"  # 空行
+    r"|^\s*#"  # 纯注释（但块外的注释不算覆盖）
     r"|^\s*from\s+__future__\s+import"
     r"|^\s*(import|from)\s+"
     r"|^\s*(try|except|else|elif|finally)\b.*:"
-    r"|^\s*\)+\s*$"                 # 闭合括号
-    r"|^\s*if\s+__name__\s*=="     # 标准入口惯用法
-    r"|^\s*_[A-Za-z0-9_]+\(\)\s*$"   # 入口里调用本文件私有辅助（如 _enable_utf8_stdout）
+    r"|^\s*\)+\s*$"  # 闭合括号
+    r"|^\s*if\s+__name__\s*=="  # 标准入口惯用法
+    r"|^\s*_[A-Za-z0-9_]+\(\)\s*$"  # 入口里调用本文件私有辅助（如 _enable_utf8_stdout）
     r"|^\s*raise\s+SystemExit\("
 )
 
@@ -172,15 +173,23 @@ def _module_docstring_lines(text: str) -> set[int]:
     """
     lines = text.splitlines()
     first = 0
-    while first < len(lines) and (not lines[first].strip() or lines[first].lstrip().startswith("#")):
+    while first < len(lines) and (
+        not lines[first].strip() or lines[first].lstrip().startswith("#")
+    ):
         first += 1
     if first >= len(lines):
         return set()
     head = lines[first].lstrip()
     # 允许字符串前缀 r / u / b / f 及其组合（r""" 最常见）
-    if not re.match(r'''^[rubfRUBF]{0,2}("""|''' + r"'''" + r'''|"""|''' + r"'''" + r''')''', head):
+    if not re.match(
+        r'''^[rubfRUBF]{0,2}("""|''' + r"'''" + r'''|"""|''' + r"'''" + r""")""", head
+    ):
         return set()
-    quote = head[:3] if head[:3] in ('"""', "'''") else head[head.index('"') if '"' in head else head.index("'"):][:3]
+    quote = (
+        head[:3]
+        if head[:3] in ('"""', "'''")
+        else head[head.index('"') if '"' in head else head.index("'") :][:3]
+    )
     end = first
     closed = lines[first].lstrip().count(quote) >= 2
     while not closed and end + 1 < len(lines):
@@ -198,7 +207,9 @@ WHOLE_FILE_MARK = re.compile(r"覆盖\s*[:：]\s*全文件|scope\s*[:：]\s*whol
 #: 来源块内出现该标记时，其覆盖范围延伸到**下一个来源块为止**的全部同级定义。
 #: 用途：形如「下列 N 个薄封装逐一对应签名表」的成组声明——逐个贴块是噪声，
 #:       但也不能因此默认放行，所以要求作者显式写出作用域。
-GROUP_MARK = re.compile(r"覆盖\s*[:：]\s*后续同级定义|scope\s*[:：]\s*following-siblings")
+GROUP_MARK = re.compile(
+    r"覆盖\s*[:：]\s*后续同级定义|scope\s*[:：]\s*following-siblings"
+)
 
 
 def _extend_to_code(lines: list[str], block_end: int, whole_file: bool = False) -> int:
@@ -237,7 +248,10 @@ def _extend_to_code(lines: list[str], block_end: int, whole_file: bool = False) 
                 depth <= 0
                 and j > i
                 and indent <= base_indent
-                and (stripped.startswith(("def ", "class ", "@")) or BLOCK_OPEN.match(raw))
+                and (
+                    stripped.startswith(("def ", "class ", "@"))
+                    or BLOCK_OPEN.match(raw)
+                )
                 and not lines[j - 1].strip()
             ):
                 break
@@ -304,9 +318,7 @@ def check_file(path: str, whole_file: bool = False) -> tuple[list[dict], list[di
         added = _added_lines(path)
     blocks = _source_blocks(text)
     docstring_lines = _module_docstring_lines(text)
-    has_valid_block = any(
-        all(k in f for k in REQUIRED_FIELDS) for _, _, f in blocks
-    )
+    has_valid_block = any(all(k in f for k in REQUIRED_FIELDS) for _, _, f in blocks)
     # 测试自产样板（fixture / 加载器 / _main）与测试函数：
     #   前者没有外部出处；后者只要文件里有合规来源块，其断言取值即由该块声明。
     internal = _def_ranges(text, lambda s: bool(INTERNAL_FIXTURE.match(s)))
@@ -316,12 +328,15 @@ def check_file(path: str, whole_file: bool = False) -> tuple[list[dict], list[di
         # 自产的测试装置，没有外部出处。仅在 tests/ 下豁免 —— 生产代码里的
         # 私有函数仍必须有来源块。
         if "/tests/" in f"/{path}":
-            internal |= _def_ranges(
-                text, lambda s: s.startswith(("def _", "class _"))
-            )
+            internal |= _def_ranges(text, lambda s: s.startswith(("def _", "class _")))
 
     incomplete = [
-        {"path": path, "start": s, "end": e, "missing": [k for k in REQUIRED_FIELDS if k not in f]}
+        {
+            "path": path,
+            "start": s,
+            "end": e,
+            "missing": [k for k in REQUIRED_FIELDS if k not in f],
+        }
         for s, e, f in blocks
         if any(k not in f for k in REQUIRED_FIELDS)
     ]
@@ -334,15 +349,15 @@ def check_file(path: str, whole_file: bool = False) -> tuple[list[dict], list[di
     violations: list[dict] = []
     for lineno, content in added.items():
         if any(s <= lineno <= e for s, e, _ in blocks):
-            continue                                   # 已被来源块覆盖
+            continue  # 已被来源块覆盖
         if lineno in docstring_lines:
-            continue                                   # 模块 docstring 是散文
+            continue  # 模块 docstring 是散文
         if lineno in internal:
-            continue                                   # 测试自产样板 / test_ 函数
+            continue  # 测试自产样板 / test_ 函数
         if ALLOWED_NO_SOURCE.match(content):
-            continue                                   # 非实质行
+            continue  # 非实质行
         if INTERNAL_FIXTURE.match(content.strip()):
-            continue                                   # 样板定义行本身
+            continue  # 样板定义行本身
         violations.append({"path": path, "line": lineno, "text": content.rstrip()})
     return violations, valid
 
@@ -364,9 +379,7 @@ def main() -> int:
 
     # 去重并保持稳定顺序
     seen: set[str] = set()
-    all_changed = [
-        p for p in changed + untracked if not (p in seen or seen.add(p))
-    ]
+    all_changed = [p for p in changed + untracked if not (p in seen or seen.add(p))]
 
     py_files = [p for p in all_changed if p.endswith(".py")]
     # 未跟踪文件相对上游是「整文件新增」，须把所有行都当作新增行来查
@@ -379,14 +392,24 @@ def main() -> int:
         all_blocks.extend(b)
 
     if args.index:
-        print(json.dumps(
-            {"anchor": ANCHOR, "py_files": py_files,
-             "source_blocks": all_blocks, "violations": all_violations},
-            ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {
+                    "anchor": ANCHOR,
+                    "py_files": py_files,
+                    "source_blocks": all_blocks,
+                    "violations": all_violations,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
         return 0
 
-    print(f"来源门禁 · 锚点 {ANCHOR} · 受检 .py 文件 {len(py_files)} 个"
-          f"（其中未跟踪 {len([p for p in py_files if p in untracked_set])} 个）")
+    print(
+        f"来源门禁 · 锚点 {ANCHOR} · 受检 .py 文件 {len(py_files)} 个"
+        f"（其中未跟踪 {len([p for p in py_files if p in untracked_set])} 个）"
+    )
     print(f"合规来源块 {len(all_blocks)} 个")
     if all_violations:
         print(f"\n[FAIL] {len(all_violations)} 行新增代码没有可追溯的出处：\n")
@@ -398,7 +421,9 @@ def main() -> int:
         print("          ① 常量/导入夹在来源块与目标 def 之间 ⇒ 延伸止于常量")
         print("             ⇒ 把常量挪到**来源块之前**；")
         print("          ② 一个来源块后面有多个 def/常量 ⇒ 默认只覆盖第一个")
-        print("             ⇒ 在该块里加**裸的** `# 覆盖: 后续同级定义`（或 `# 覆盖: 全文件`）。")
+        print(
+            "             ⇒ 在该块里加**裸的** `# 覆盖: 后续同级定义`（或 `# 覆盖: 全文件`）。"
+        )
         print("             ⚠ 那行**不要**加 markdown 粗体 —— 正则匹配不到 `**`。")
         print("        逐行核对就用本命令的输出（它已列出未覆盖的具体行）。")
         print("\n修法：在该段代码上方加 AGENTS.md §四 4.3 规定的来源块，")

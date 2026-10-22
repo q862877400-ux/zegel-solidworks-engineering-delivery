@@ -1,4 +1,5 @@
 """★ 探针：`IModelDocExtension::GetSectionProperties2` 的建状态 / 正例 / 官方必然失败负例 / 副作用。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B1-1 的真机探针）
 # 文件:   tools/probe_spec211_section_properties.py
@@ -44,10 +45,11 @@ EXPECT_AREA = 100.0 * 60.0
 def _sel_count(sw, model) -> int:
     """★ 选区计数（★ 回读，事实 8：`GetSelectedObjectCount2(-1)`）✓"""
     import sw_connect
+
     try:
         sm = sw_connect.get_com_member(model, "SelectionManager")
         return int(sw_connect.get_com_member(sm, "GetSelectedObjectCount2", -1))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -84,15 +86,25 @@ def main() -> int:
     print("★ Extension =", "有" if ext is not None else "None")
 
     #: ② 选中一个面（★ 声明式选择器：`index:0` + `FACE`）✓
-    ok, note = tool_caller.call("solidworks_select_by_selector", inject_objects=inj,
-                                selector="index:0", kind="FACE", body_index=0)
+    ok, note = tool_caller.call(
+        "solidworks_select_by_selector",
+        inject_objects=inj,
+        selector="index:0",
+        kind="FACE",
+        body_index=0,
+    )
     print("★ 选一个面 ok=%s ⇒ %s" % (ok, str(note)[:80]))
     before = _sel_count(sw, model)
     print("★ 选完之后的选区计数（回读）= %r" % before)
 
     #: ③ 正例：★ 按官方「选了平行面 ⇒ 可传**空数组**」✓
     import sw_connect as sc
-    empty = sc.create_empty_dispatch_variant() if hasattr(sc, "create_empty_dispatch_variant") else None
+
+    empty = (
+        sc.create_empty_dispatch_variant()
+        if hasattr(sc, "create_empty_dispatch_variant")
+        else None
+    )
     result = {"call": "GetSectionProperties2(empty)", "before_sel": before}
     try:
         ret = sw_connect.get_com_member(ext, "GetSectionProperties2", empty)
@@ -104,7 +116,7 @@ def main() -> int:
                 try:
                     vals = _f(ret)
                     break
-                except Exception:                                       # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
         result["ret_len"] = len(vals) if vals else None
         if vals:
@@ -112,16 +124,18 @@ def main() -> int:
             result["area"] = vals[1] if len(vals) > 1 else None
             result["centroid"] = vals[2:5]
         result["ok"] = True
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         result["ok"] = False
         result["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
     after = _sel_count(sw, model)
     result["after_sel"] = after
-    result["sel_cleared"] = (after == 0)
-    print("★ 正例（空数组 + 已选平行面）⇒ status=%r area=%r 选区 %r→%r（★ 官方说它会**清空**选区）"
-          % (result.get("status"), result.get("area"), before, after))
+    result["sel_cleared"] = after == 0
+    print(
+        "★ 正例（空数组 + 已选平行面）⇒ status=%r area=%r 选区 %r→%r（★ 官方说它会**清空**选区）"
+        % (result.get("status"), result.get("area"), before, after)
+    )
 
-    #: ④ ★★ **官方写死的负例**：把**已在选择集里**的对象传进 `Sections` ⇒ status **必然 
+    #: ④ ★★ **官方写死的负例**：把**已在选择集里**的对象传进 `Sections` ⇒ status **必然
     #: = 1** ✓
     neg = {"call": "GetSectionProperties2(already-selected)"}
     try:
@@ -131,27 +145,41 @@ def main() -> int:
         obj = sw_connect.get_com_member(sm, "GetSelectedObject6", 1, -1)
         neg["obj"] = "有" if obj is not None else "None"
         #: ★ 重新选一次（★ 上一步的清空副作用会把它清掉）⇒ ★ 制造"已在选择集里"的条件 ✓
-        tool_caller.call("solidworks_select_by_selector", inject_objects=inj,
-                         selector="index:0", kind="FACE", body_index=0)
+        tool_caller.call(
+            "solidworks_select_by_selector",
+            inject_objects=inj,
+            selector="index:0",
+            kind="FACE",
+            body_index=0,
+        )
         ret2 = sw_connect.get_com_member(ext, "GetSectionProperties2", obj)
         neg["ret_type"] = type(ret2).__name__
         vals2 = None
         if ret2 is not None:
             try:
                 vals2 = tuple(ret2)
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 vals2 = None
         neg["status"] = vals2[0] if vals2 else None
         neg["ok"] = True
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         neg["ok"] = False
         neg["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
-    print("★ 负例（已在选择集里）⇒ status=%r（★ 官方说**必然 = 1**）" % neg.get("status"))
+    print(
+        "★ 负例（已在选择集里）⇒ status=%r（★ 官方说**必然 = 1**）" % neg.get("status")
+    )
 
-    out = {"official": "IModelDocExtension.GetSectionProperties2",
-           "expect_area_mm2": EXPECT_AREA, "positive": result, "negative": neg}
+    out = {
+        "official": "IModelDocExtension.GetSectionProperties2",
+        "expect_area_mm2": EXPECT_AREA,
+        "positive": result,
+        "negative": neg,
+    }
     p = ROOT / "output" / "spec211-b1-section-properties.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

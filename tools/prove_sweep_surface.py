@@ -41,19 +41,21 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_sweep as S                                    # noqa: E402
-import scripts.sw_sketch_primitives as SPK                           # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_sweep as S  # noqa: E402
+import scripts.sw_sketch_primitives as SPK  # noqa: E402
 
 
 def _mark(obj, mark):
     """★ 按**对象**选并打 mark（★ 事实 32：实体没名字）⇒ 回来读计数。"""
     try:
         C.get_com_member(obj, "Select4", False, P._empty_callout())
-        sel = C.get_com_member(C.get_com_member(_SW[0], "SelectionManager"), "GetSelectedObjectCount2", -1)
+        sel = C.get_com_member(
+            C.get_com_member(_SW[0], "SelectionManager"), "GetSelectedObjectCount2", -1
+        )
         return True
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return False
 
 
@@ -63,11 +65,13 @@ _SW = [None]
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u66f2\u9762\u626b\u63cf\uff1aCreateDefinition(swFmRefSurface=62) \u771f\u673a\u8bd5",
-          "judge": "\u7279\u5f81\u6811\u589e\u91cf **\u4e14** \u7c7b\u578b\u540d = Sweep\uff08\u4e8b\u5b9e 242\uff09",
-          "classify": "auto",
-          "steps": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u66f2\u9762\u626b\u63cf\uff1aCreateDefinition(swFmRefSurface=62) \u771f\u673a\u8bd5",
+        "judge": "\u7279\u5f81\u6811\u589e\u91cf **\u4e14** \u7c7b\u578b\u540d = Sweep\uff08\u4e8b\u5b9e 242\uff09",
+        "classify": "auto",
+        "steps": [],
+    }
     doc = C.new_document(sw, "part")
     try:
         #: ① 轮廓：在**上视基准面**（XY · **Z=0**）画一个**圆**（★ 扫描最标准的轮廓）
@@ -79,8 +83,14 @@ def main() -> int:
         #:   ★★ 而★ 轮廓在上视面（Z=0）⇒ ★ **路径的起点必须 Z=0** ⇒
         #:     路径画在**前视面**（XZ · Y=0）上、**从 (0,0) 沿 X** ⇒ 起点 (0,0,0) 的 Z=0 ✓
         P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                         0.0, 0.0, 0.0, 5.0 / 1000.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCircleByRadius",
+            0.0,
+            0.0,
+            0.0,
+            5.0 / 1000.0,
+        )
         P.end_sketch(doc)
         ev["steps"].append({"step": "profile_sketch", "tree": P.feature_names(doc)})
 
@@ -94,16 +104,30 @@ def main() -> int:
         for _lbl in ("path_sketch",):
             try:
                 C.get_com_member(doc, "ClearSelection2", True)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         try:
-            ev["sel_before_path_sketch"] = int(C.get_com_member(
-                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                # noqa: BLE001
+            ev["sel_before_path_sketch"] = int(
+                C.get_com_member(
+                    C.get_com_member(doc, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             ev["sel_before_path_sketch"] = None
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
-                         0.0, 0.0, 0.0, 40.0, 0.0, 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateLine",
+            0.0,
+            0.0,
+            0.0,
+            40.0,
+            0.0,
+            0.0,
+        )
         P.end_sketch(doc)
         ev["steps"].append({"step": "path_sketch", "tree": P.feature_names(doc)})
 
@@ -128,51 +152,76 @@ def main() -> int:
         #:     **草图轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128
         ext = C.get_com_member(doc, "Extension")
         picked = {}
-        for cand, mark, label in (("\u8349\u56fe1", 1, "profile"), ("\u8349\u56fe2", 4, "path")):
+        for cand, mark, label in (
+            ("\u8349\u56fe1", 1, "profile"),
+            ("\u8349\u56fe2", 4, "path"),
+        ):
             for name in P._get_sketch_name_candidates(cand):
                 try:
-                    ok = P._select_by_id(ext, name, "SKETCH",
-                                         append=bool(picked), mark=mark)
-                except Exception:                                        # noqa: BLE001
+                    ok = P._select_by_id(
+                        ext, name, "SKETCH", append=bool(picked), mark=mark
+                    )
+                except Exception:  # noqa: BLE001
                     ok = False
                 if ok:
                     picked[label] = name
                     break
         ev["picked"] = picked
         try:
-            sel = C.get_com_member(C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1)
+            sel = C.get_com_member(
+                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
             ev["sel_total"] = int(sel or 0)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             ev["sel_total"] = None
         #: ★ 逐 mark 回读（★ 那才是判据 —— 事实 8）
         per = {}
         for m in (1, 4):
             try:
-                per[m] = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                              "GetSelectedObjectCount2", m))
-            except Exception:                                            # noqa: BLE001
+                per[m] = int(
+                    C.get_com_member(
+                        C.get_com_member(doc, "SelectionManager"),
+                        "GetSelectedObjectCount2",
+                        m,
+                    )
+                )
+            except Exception:  # noqa: BLE001
                 per[m] = -1
         ev["sel_by_mark"] = per
 
         #: ④ 调本仓的曲面扫描
         ev["result"] = S.create_sweep_surface_report(doc)
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             t = str(C.get_com_member(doc, "GetTitle") or "")
             if t:
                 C.get_com_member(sw, "CloseDoc", t)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     p = R / "output" / "sweep-surface-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     r = ev.get("result") or {}
     print("  \u5224\u636e\uff1a**%s**" % ("\u6210" if r.get("ok") else "\u4e0d\u6210"))
-    print("  \u9009\u533a\uff1a%s  \u9010mark\uff1a%s" % (ev.get("picked"), ev.get("sel_by_mark")))
-    for k in ("stage", "error", "feature_name", "new_features", "type_name", "access_selections", "sw_fm_const"):
+    print(
+        "  \u9009\u533a\uff1a%s  \u9010mark\uff1a%s"
+        % (ev.get("picked"), ev.get("sel_by_mark"))
+    )
+    for k in (
+        "stage",
+        "error",
+        "feature_name",
+        "new_features",
+        "type_name",
+        "access_selections",
+        "sw_fm_const",
+    ):
         if r.get(k) is not None:
             print("  %-20s %s" % (k, str(r[k])[:150]))
     if ev.get("err"):

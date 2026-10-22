@@ -47,34 +47,49 @@ SPECS_BATCH43 = [
     ToolSpec(
         name="solidworks_drawing_view_scale",
         title="Get a Drawing View's Scale (by name)",
-        module="sw_drawing_view", function="get_view_scale_report",
+        module="sw_drawing_view",
+        function="get_view_scale_report",
         inject="model",
-        params=[Param("view_name", str,
-                      description="A view name (★ see solidworks_drawing_list_views).")],
+        params=[
+            Param(
+                "view_name",
+                str,
+                description="A view name (★ see solidworks_drawing_list_views).",
+            )
+        ],
         doc="Get one view's scale by name. ★ An unknown name fails with the list of valid names. "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_drawing_view_set_scale",
         title="Set a Drawing View's Scale (read-back verified)",
-        module="sw_drawing_view", function="set_view_scale_report",
+        module="sw_drawing_view",
+        function="set_view_scale_report",
         inject="model",
         params=[
-            Param("view_name", str,
-                  description="A view name (★ see solidworks_drawing_list_views)."),
-            Param("scale", float, description="The new view scale (★ not a length, not an angle)."),
+            Param(
+                "view_name",
+                str,
+                description="A view name (★ see solidworks_drawing_list_views).",
+            ),
+            Param(
+                "scale",
+                float,
+                description="The new view scale (★ not a length, not an angle).",
+            ),
         ],
         doc="Set one view's scale and return before/after. ★ The criterion is that the READ-BACK "
-            "scale actually changed (rule 6 — never a silent success). "
-            "⚠ Does NOT save the document.",
+        "scale actually changed (rule 6 — never a silent success). "
+        "⚠ Does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_drawing_collect_view_evidence",
         title="Collect Every Drawing View's Evidence",
-        module="sw_drawing_view", function="collect_view_evidence_report",
+        module="sw_drawing_view",
+        function="collect_view_evidence_report",
         inject="model",
         params=[],
         doc="Collect the capability layer's per-view evidence for every view on the drawing. "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
 ]

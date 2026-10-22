@@ -37,10 +37,22 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ CHM 正文树（★ 官方原文，★ 全的）—— ★ 可用 `DSL_SWHELP` 覆盖
-SWHELP = Path(os.environ.get("DSL_SWHELP", Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp"))
+SWHELP = Path(
+    os.environ.get(
+        "DSL_SWHELP",
+        Path(__file__).resolve().parents[1] / "AI Solidworks" / "官方文档" / "SWhelp",
+    )
+)
 #: ★ 我们解出来的文本（★ 不全 —— ★ 见事实 355）
-RAW = Path(os.environ.get(
-    "DSL_RAW", str(Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1])) / "_raw")))
+RAW = Path(
+    os.environ.get(
+        "DSL_RAW",
+        str(
+            Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1]))
+            / "_raw"
+        ),
+    )
+)
 
 #: ★ 只收这几类后缀 —— ★★ **`.htm` 必须在列**（★ 官方示例就在它里面）
 PAGE_SUFFIXES = (".html", ".htm")
@@ -52,10 +64,18 @@ def search_names(needle: str, limit: int = 25) -> int:
     print("  ① 按文件名搜 %r" % needle)
     found = 0
     if SWHELP.is_dir():
-        hits = [p for p in SWHELP.rglob("*") if p.is_file()
-                and low in p.name.lower() and p.suffix.lower() in PAGE_SUFFIXES]
+        hits = [
+            p
+            for p in SWHELP.rglob("*")
+            if p.is_file()
+            and low in p.name.lower()
+            and p.suffix.lower() in PAGE_SUFFIXES
+        ]
         ex = [p for p in hits if "_Example" in p.name]
-        print("     CHM 正文树：命中 **%d** 个页（★ 其中**示例页 %d** 个）" % (len(hits), len(ex)))
+        print(
+            "     CHM 正文树：命中 **%d** 个页（★ 其中**示例页 %d** 个）"
+            % (len(hits), len(ex))
+        )
         for p in hits[:limit]:
             print("       %-58s %d" % (p.name, p.stat().st_size))
         found += len(hits)
@@ -88,7 +108,7 @@ def search_content(needle: str, limit: int = 12) -> int:
                 continue
             try:
                 t = p.read_text(encoding="utf-8", errors="replace")
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             if rx.search(t):
                 n += 1
@@ -109,16 +129,23 @@ def main(argv: list) -> int:
         return 2
     needle = args[0]
     print("  ★ 三源检索 —— ★ 判据：**三处都报**（★ 因为「哪一处没有」本身是信息）")
-    print("  ★★ 事实 355 的两个陷阱：① 示例在 `.htm`（★ 不在 `.html`）· ② `_raw` 只覆盖约 0.36%")
+    print(
+        "  ★★ 事实 355 的两个陷阱：① 示例在 `.htm`（★ 不在 `.html`）· ② `_raw` 只覆盖约 0.36%"
+    )
     print()
     found = search_content(needle) if mode_grep else search_names(needle)
     print()
     if found == 0:
         print("  ⚠★ **三处都没有** —— ★ 而按铁律 5，★ 现在可以说的是：")
         print("       「**这两套源里查不到**」—— ★★ 而**不是**「官方 API 里没有」")
-        print("       （★ 因为 `_raw` 只覆盖约 0.36%；★ 而 CHM 树也**未必全** —— ★ 见事实 355）")
+        print(
+            "       （★ 因为 `_raw` 只覆盖约 0.36%；★ 而 CHM 树也**未必全** —— ★ 见事实 355）"
+        )
     else:
-        print("  ✓ 命中 %d 处 —— ★ 而**报的时候要写清是哪一处**（★ 三处的可信度不同）" % found)
+        print(
+            "  ✓ 命中 %d 处 —— ★ 而**报的时候要写清是哪一处**（★ 三处的可信度不同）"
+            % found
+        )
     return 0
 
 

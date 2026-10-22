@@ -1,4 +1,5 @@
 """把超宽**注释行**按显示宽度折行（用 tokenize 精确定位，不碰代码与字符串）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/wrap_long_comments.py
@@ -32,7 +33,12 @@ LIMIT = 88
 
 #: ★★ 出现这些标记的注释**一律不折**（会被门禁/工具按行解析）
 SKIP_MARKERS = (
-    "# noqa", "# type:", "# pragma:", "# isort:", "# fmt:", "# pyright:",
+    "# noqa",
+    "# type:",
+    "# pragma:",
+    "# isort:",
+    "# fmt:",
+    "# pyright:",
 )
 
 #: ★★★ **通用规则：形如 `#: <name>:` 的注释一律不折。**
@@ -85,13 +91,13 @@ def wrap_file(path: pathlib.Path, write: bool) -> tuple[int, str]:
         raw = lines[row - 1]
         indent_len = len(raw) - len(raw.lstrip())
         if tok.start[1] != indent_len:
-            continue                      # ★ 行尾注释 ⇒ 整行不是注释 ⇒ 跳过（不改）
+            continue  # ★ 行尾注释 ⇒ 整行不是注释 ⇒ 跳过（不改）
         if width(raw) <= LIMIT:
             continue
         if any(m in raw for m in SKIP_MARKERS):
             continue
         if DIRECTIVE.match(raw.lstrip()):
-            continue                      # ★ 机器可读指令 ⇒ 不折
+            continue  # ★ 机器可读指令 ⇒ 不折
         targets[row] = raw
 
     if not targets:
@@ -107,7 +113,7 @@ def wrap_file(path: pathlib.Path, write: bool) -> tuple[int, str]:
         indent = raw[: len(raw) - len(raw.lstrip())]
         stripped = raw.lstrip()
         lead = "#:" if stripped.startswith("#:") else "#"
-        body = stripped[len(lead):].lstrip()
+        body = stripped[len(lead) :].lstrip()
         cont = indent + lead + " "
         budget = LIMIT - len(cont)
         parts = split_width(body, budget)
@@ -125,7 +131,11 @@ def wrap_file(path: pathlib.Path, write: bool) -> tuple[int, str]:
 
 def main() -> int:
     write = "--write" in sys.argv
-    roots = [a for a in sys.argv[1:] if not a.startswith("--")] or ["scripts", "tools", "mcp-server"]
+    roots = [a for a in sys.argv[1:] if not a.startswith("--")] or [
+        "scripts",
+        "tools",
+        "mcp-server",
+    ]
     total = 0
     files = 0
     errs: list[str] = []
@@ -140,7 +150,9 @@ def main() -> int:
             if n:
                 total += n
                 files += 1
-    print(f"  ★ {'已折行' if write else '（dry-run）'} 文件 {files} 个 · 折行 {total} 处")
+    print(
+        f"  ★ {'已折行' if write else '（dry-run）'} 文件 {files} 个 · 折行 {total} 处"
+    )
     for e in errs[:5]:
         print("    ✗ " + e)
     if not write:

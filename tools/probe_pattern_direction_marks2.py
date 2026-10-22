@@ -4,7 +4,7 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_pattern_direction_marks2.py
 # 定位:   ★ 2026-10-03（轮 406）承 `probe_pattern_direction_marks.py`：
-# ★★ 那一版已证实 **mark 机制对特征有效**（`SelectByID2(名, "BODYFEATURE", …, mark=4)` 
+# ★★ 那一版已证实 **mark 机制对特征有效**（`SelectByID2(名, "BODYFEATURE", …, mark=4)`
 # 回 True），
 #      ★ 而**方向边没选上**（`SelectByID2("", "EDGE", 0, -0.015, 0, …, mark=1)` 回 False）——
 # ★ 真因是我给的坐标**没落在边上**（★ 正是**事实 32** 警告的：实体没有名字 ⇒ 要按点选）
@@ -33,12 +33,17 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-direction-marks2-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "pattern-direction-marks2-evidence.json"
+)
 
 
 def _midpoint(edge) -> list:
     """★ 一条边的**中点**（★ 用官方 `GetStartVertex` / `GetEndVertex` → `GetPoint`，单位**米**）。"""
     from sw_connect import safe_get_com_member
+
     a = safe_get_com_member(edge, "GetStartVertex")
     b = safe_get_com_member(edge, "GetEndVertex")
     if a is None or b is None:
@@ -54,8 +59,14 @@ def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
     from sw_feature_readback import feature_names
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss, linear_pattern_report,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        linear_pattern_report,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from sw_selection_spec import entities_on_body
 
     ev: dict = {"edge_trials": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -85,56 +96,78 @@ def main() -> int:
         edges = entities_on_body(doc, "EDGE")
 
         def sel(name, kind, x, y, z, mark):
-            return get_com_member(ext, "SelectByID2", str(name), str(kind),
-                                  float(x), float(y), float(z), False,
-                                  int(mark), empty, 0)
+            return get_com_member(
+                ext,
+                "SelectByID2",
+                str(name),
+                str(kind),
+                float(x),
+                float(y),
+                float(z),
+                False,
+                int(mark),
+                empty,
+                0,
+            )
 
         chosen = None
         for i, e in enumerate(edges):
             try:
                 mp = _midpoint(e)
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["edge_trials"].append({"edge": i, "mid": None, "err": str(exc)[:60]})
                 continue
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 ok = bool(sel("", "EDGE", mp[0], mp[1], mp[2], 1))
-            except Exception as exc:                           # noqa: BLE001
-                ev["edge_trials"].append({"edge": i, "mid": mp, "selected": False,
-                                          "err": str(exc)[:60]})
+            except Exception as exc:  # noqa: BLE001
+                ev["edge_trials"].append(
+                    {"edge": i, "mid": mp, "selected": False, "err": str(exc)[:60]}
+                )
                 continue
-            ev["edge_trials"].append({"edge": i, "mid": [round(v, 4) for v in mp],
-                                      "selected": ok})
+            ev["edge_trials"].append(
+                {"edge": i, "mid": [round(v, 4) for v in mp], "selected": ok}
+            )
             if ok and chosen is None:
                 chosen = i
-                break                                          #: ★ 选上一条就够了
+                break  #: ★ 选上一条就够了
         ev["chosen_edge"] = chosen
 
         if chosen is not None:
             #: ★ 保留方向选区（mark=1），再加上要阵列的特征（mark=4）
             try:
                 sel(boss or "凸台-拉伸2", "BODYFEATURE", 0.0, 0.0, 0.0, 4)
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["feature_select_err"] = str(exc)[:100]
             try:
                 r = linear_pattern_report(doc, boss or "凸台-拉伸2", 10.0, 3)
-                ev["linear_pattern"] = {"ok": bool(r.get("ok")),
-                                        "tree": [r.get("tree_before"), r.get("tree_after")],
-                                        "new_features": r.get("new_features"),
-                                        "error": r.get("error")}
-            except Exception as exc:                           # noqa: BLE001
-                ev["linear_pattern"] = {"ok": False,
-                                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
-        ev["verdict"] = "pass" if (ev.get("linear_pattern") or {}).get("ok") else "partial"
-        ev["note"] = ("★ 穷举每条边的中点去试 `SelectByID2(…, mark=1)`（事实 32：实体没有名字 ⇒ 按点选）。"
-                      "★ 判据是**特征树真的长了**。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+                ev["linear_pattern"] = {
+                    "ok": bool(r.get("ok")),
+                    "tree": [r.get("tree_before"), r.get("tree_after")],
+                    "new_features": r.get("new_features"),
+                    "error": r.get("error"),
+                }
+            except Exception as exc:  # noqa: BLE001
+                ev["linear_pattern"] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+                }
+        ev["verdict"] = (
+            "pass" if (ev.get("linear_pattern") or {}).get("ok") else "partial"
+        )
+        ev["note"] = (
+            "★ 穷举每条边的中点去试 `SelectByID2(…, mark=1)`（事实 32：实体没有名字 ⇒ 按点选）。"
+            "★ 判据是**特征树真的长了**。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

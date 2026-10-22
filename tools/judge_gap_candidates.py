@@ -49,9 +49,14 @@ DESC_PATH = REPO_ROOT / "docs" / "operation-descriptions.json"
 TRIAGE = REPO_ROOT / "docs" / "union-gap-triage.md"
 OUT = REPO_ROOT / "docs" / "union-gap-batch-judgement.md"
 
+
 #: ★ 词法归一：★ 把 `snake_case` 的名字切词（★ 判"名字撞不撞"用词集，★ 不用整串）
 def _words(name: str) -> set[str]:
-    return {w for w in re.split(r"[_\W]+", name.lower()) if w and w not in ("sw", "sws", "solidworks")}
+    return {
+        w
+        for w in re.split(r"[_\W]+", name.lower())
+        if w and w not in ("sw", "sws", "solidworks")
+    }
 
 
 def _our_names() -> list[str]:
@@ -83,48 +88,81 @@ def main() -> int:
     args = ap.parse_args()
 
     if not DESC_PATH.is_file():
-        print("  **缺 %s** ⇒ 先跑 tools/extract_operation_descriptions.py" % DESC_PATH.name)
+        print(
+            "  **缺 %s** ⇒ 先跑 tools/extract_operation_descriptions.py"
+            % DESC_PATH.name
+        )
         return 1
     descs = json.loads(DESC_PATH.read_text(encoding="utf-8"))["descriptions"]
     ours = _our_names()
 
     rows = []
     for op in _gap_ops():
-        if op not in descs:                      #: ★ 判据①：没描述 ⇒ 不猜，跳过
+        if op not in descs:  #: ★ 判据①：没描述 ⇒ 不猜，跳过
             continue
         text = " ".join(descs[op].values())
         #: ★ 判据②：实现扫描（★ 已排除反射转储）—— ★ 用操作名转驼峰去试
         camel = "".join(w.capitalize() for w in op.split("_"))
-        hits = TRAPS.find_real_implementations(camel) or TRAPS.find_real_implementations(op)
+        hits = TRAPS.find_real_implementations(
+            camel
+        ) or TRAPS.find_real_implementations(op)
         #: ★ 判据③：名字词集是否被我们某个名字包含
         need = _words(op)
         named = [n for n in ours if need and need <= _words(n)]
         verdict = "真缺候选" if (not hits and not named) else "有候选"
-        rows.append({"op": op, "desc": text[:160], "impl_hits": hits[:2],
-                     "name_hits": named[:2], "verdict": verdict})
+        rows.append(
+            {
+                "op": op,
+                "desc": text[:160],
+                "impl_hits": hits[:2],
+                "name_hits": named[:2],
+                "verdict": verdict,
+            }
+        )
 
     real = [r for r in rows if r["verdict"] == "真缺候选"]
     print("  有描述可判: **%d** 条" % len(rows))
     print("  其中「真缺候选」（★ 无实现 + 名字不撞）: **%d**" % len(real))
     print("  「有候选」: **%d**" % (len(rows) - len(real)))
     print()
-    for r in rows[:args.show]:
-        print("  %-26s %-10s %s" % (r["op"], r["verdict"],
-                                    (r["impl_hits"] or r["name_hits"] or [r["desc"][:52]])[0]))
+    for r in rows[: args.show]:
+        print(
+            "  %-26s %-10s %s"
+            % (
+                r["op"],
+                r["verdict"],
+                (r["impl_hits"] or r["name_hits"] or [r["desc"][:52]])[0],
+            )
+        )
 
-    body = ["# 缺口操作的批量判定（★ 由 `tools/judge_gap_candidates.py` 生成）", "",
-            "> ⚠ **限度**：\"名字不撞\"**不是**\"能力不在\" —— 我们的实现可能叫完全不同的名字。",
-            "> ★ 本表**只用于挑候选**；★ **不产出\"我们缺 N 个能力\"这种数**（§10.3 更正掉的读法）。", "",
-            "## 统计", "",
-            "| 口径 | 数 |", "|---|---|",
-            "| 有描述可判 | %d |" % len(rows),
-            "| **真缺候选**（无实现 + 名字不撞） | **%d** |" % len(real),
-            "| 有候选 | %d |" % (len(rows) - len(real)), "",
-            "## 真缺候选（★ 逐条带四家描述，★ 供人工核）", "",
-            "| 操作 | 四家怎么说 | 我们有无实现 |", "|---|---|---|"]
+    body = [
+        "# 缺口操作的批量判定（★ 由 `tools/judge_gap_candidates.py` 生成）",
+        "",
+        '> ⚠ **限度**："名字不撞"**不是**"能力不在" —— 我们的实现可能叫完全不同的名字。',
+        '> ★ 本表**只用于挑候选**；★ **不产出"我们缺 N 个能力"这种数**（§10.3 更正掉的读法）。',
+        "",
+        "## 统计",
+        "",
+        "| 口径 | 数 |",
+        "|---|---|",
+        "| 有描述可判 | %d |" % len(rows),
+        "| **真缺候选**（无实现 + 名字不撞） | **%d** |" % len(real),
+        "| 有候选 | %d |" % (len(rows) - len(real)),
+        "",
+        "## 真缺候选（★ 逐条带四家描述，★ 供人工核）",
+        "",
+        "| 操作 | 四家怎么说 | 我们有无实现 |",
+        "|---|---|---|",
+    ]
     for r in real:
-        body.append("| `%s` | %s | %s |" % (r["op"], r["desc"][:120].replace("|", "/"),
-                                            "无" if not r["impl_hits"] else r["impl_hits"][0]))
+        body.append(
+            "| `%s` | %s | %s |"
+            % (
+                r["op"],
+                r["desc"][:120].replace("|", "/"),
+                "无" if not r["impl_hits"] else r["impl_hits"][0],
+            )
+        )
     OUT.write_text("\n".join(body) + "\n", encoding="utf-8")
     print()
     print("  产物: %s" % OUT)

@@ -29,6 +29,7 @@ r"""@brief 探针：`iter_studies` 与 `create_static_study` 的**真实形状**
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -42,7 +43,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-study-shapes.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-study-shapes.json"
+)
 
 
 def main() -> int:
@@ -56,7 +59,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 造一个零件（研究必须建在文档上）
@@ -72,16 +75,21 @@ def main() -> int:
         ev["steps"]["create_return"] = {
             "type": type(ret).__name__,
             "len": len(ret) if hasattr(ret, "__len__") else None,
-            "items": [type(x).__name__ for x in ret] if hasattr(ret, "__iter__") else None,
+            "items": [type(x).__name__ for x in ret]
+            if hasattr(ret, "__iter__")
+            else None,
             "★": "★ 期望 (study, entry_name, error_code)",
         }
         if isinstance(ret, tuple) and len(ret) == 3:
             study, entry_name, error_code = ret
-            ev["steps"]["create_return"].update({
-                "entry_name": entry_name, "error_code": error_code,
-                "study_is_none": study is None,
-                "study_type": type(study).__name__ if study is not None else None,
-            })
+            ev["steps"]["create_return"].update(
+                {
+                    "entry_name": entry_name,
+                    "error_code": error_code,
+                    "study_is_none": study is None,
+                    "study_type": type(study).__name__ if study is not None else None,
+                }
+            )
 
         #: ② iter_studies 每次 yield 什么
         got = []
@@ -94,7 +102,7 @@ def main() -> int:
                         v = sw_connect.safe_get_com_member(s, attr)
                         if v is not None:
                             item["name_via_%s" % attr] = str(v)[:60]
-                    except Exception:                          # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
                 if not any(k.startswith("name_via_") for k in item):
                     item["name_via_*"] = "★ **取不到名字** ⇒ 若是 COM 对象则不可直接挂"
@@ -102,37 +110,42 @@ def main() -> int:
                 got.append(item)
                 if i >= 5:
                     break
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             got = [{"error": "%s: %s" % (type(exc).__name__, str(exc)[:90])}]
-        ev["steps"]["iter_studies"] = {"n": len(got), "items": got,
-                                      "★": "★ 看 json_able 与 name_via_*：对象 ⇒ 得包一层"}
+        ev["steps"]["iter_studies"] = {
+            "n": len(got),
+            "items": got,
+            "★": "★ 看 json_able 与 name_via_*：对象 ⇒ 得包一层",
+        }
 
         #: ③ get_study_by_name：存在 / 不存在
         for label, nm in (("existing", "DSH-141"), ("missing", "NoSuchStudy_XYZ")):
             try:
                 s = sim.get_study_by_name(sw, nm)
                 ev["steps"]["get_study_%s" % label] = {
-                    "returns_none": s is None, "type": type(s).__name__ if s is not None else None,
+                    "returns_none": s is None,
+                    "type": type(s).__name__ if s is not None else None,
                 }
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["get_study_%s" % label] = {
-                    "raised": type(exc).__name__, "msg": str(exc)[:90],
+                    "raised": type(exc).__name__,
+                    "msg": str(exc)[:90],
                     "★": "★ 抛错 ⇒ 负例断言用『必须报错』",
                 }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── 仿真研究形状探针 ──")
@@ -142,7 +155,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

@@ -1,4 +1,5 @@
 """★ 门禁：语料里的**列表字段**不许出现**嵌套列表**（★ 数据形状门禁）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -30,13 +31,27 @@ CORPUS = ("l1-mainline.yaml", "l2-longtail.yaml", "l3-semantic.yaml")
 #:     ⇒ ★ **嵌套是**有意的** —— ★ 每条链是一组工具**。
 #:   ⇒ ★★ **判据：只列「元素语义上就是一句话」的字段** ——
 #:     ★ 而 `tools` **不是**（★ 它是链的列表）。
-LIST_FIELDS = ("readback", "steps_cn", "relations", "dims",
-               "expected_groups", "forbidden_groups", "decision_tiers",
-               "auto_decision_rules", "delivery_gates", "trust_tiers",
-               "directional_criterion", "known_facts_absorbed",
-               "harvest_global", "evidence_rule", "after_cut_rule",
-               "assembly_rules", "real_cut_rule", "done_criterion",
-               "visual_acceptance")
+LIST_FIELDS = (
+    "readback",
+    "steps_cn",
+    "relations",
+    "dims",
+    "expected_groups",
+    "forbidden_groups",
+    "decision_tiers",
+    "auto_decision_rules",
+    "delivery_gates",
+    "trust_tiers",
+    "directional_criterion",
+    "known_facts_absorbed",
+    "harvest_global",
+    "evidence_rule",
+    "after_cut_rule",
+    "assembly_rules",
+    "real_cut_rule",
+    "done_criterion",
+    "visual_acceptance",
+)
 
 #: ★★ **允许嵌套的字段**（★ 语义就是「列表的列表」）
 NESTED_OK = ("tools",)
@@ -59,7 +74,8 @@ def check(root: pathlib.Path = ROOT) -> list:
                         problems.append(
                             "★ %s 的 `%s[%d]` 是**嵌套 %s** ⇒ ★ "
                             "读起来会是 `[[...]]`（★ 而 YAML 合法、门禁也过）"
-                            % (x["id"], f, i, type(el).__name__))
+                            % (x["id"], f, i, type(el).__name__)
+                        )
     return problems
 
 

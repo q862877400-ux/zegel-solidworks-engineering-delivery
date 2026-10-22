@@ -1,4 +1,5 @@
 """★ Q9 + Q11 · v1 难度上界 + DoD 状态 + 止损关口 + Plan B（规格 326 的 S6~S14）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -9,7 +10,7 @@
 #           4（叶子方法可增长）。★★ 实测（2026-10-12）起点：**没有 v1 上界的判据、没有不
 #           承诺清单、没有 `DELIVERED`、没有人工接管计数、没有止损关口、没有三次停补丁、
 #           没有 Plan B、没有盲题转回、没有叶子方法增长**。
-# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q9（L176-199）逐字：L180-182 
+# 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q9（L176-199）逐字：L180-182
 #           的四条上界；L185 的不承诺清单；L195「**人工接管的任务要单独  计数，不能计作
 #           自主完成**」；L197「`READY_FOR_REVIEW` 表示自动流程  完成待审核；**`DELIVERE
 #           D` 还需可信人工批准**」Q11（L201-212）逐字：L203「**两个投入止损关口**」；L2
@@ -33,8 +34,14 @@ SCOPE_FILE = ROOT / "metadata" / "scope-v1.json"
 class ScopeError(Exception):
     """★ 范围/关口失败（★ 带封闭码）。"""
 
-    CODES = ("over-scope", "not-promised", "missing-approval", "no-scope-file",
-             "patch-limit", "stale-blind")
+    CODES = (
+        "over-scope",
+        "not-promised",
+        "missing-approval",
+        "no-scope-file",
+        "patch-limit",
+        "stale-blind",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法范围拒绝码：%r" % code
@@ -47,16 +54,22 @@ class ScopeError(Exception):
 # 一、v1 难度上界（★ S6 —— ★ Q9 L180-182）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 def load_scope() -> dict:
     if not SCOPE_FILE.is_file():
         raise ScopeError("no-scope-file", "★ 没有 %s" % SCOPE_FILE)
     return json.loads(SCOPE_FILE.read_text(encoding="utf-8"))
 
 
-def check_scope(*, self_made_parts: int = 0, assembly_instances: int = 0,
-                assembly_levels: int = 0, driven_dof: int = 0,
-                method_level_nodes: int = 0,
-                scope: dict | None = None) -> dict:
+def check_scope(
+    *,
+    self_made_parts: int = 0,
+    assembly_instances: int = 0,
+    assembly_levels: int = 0,
+    driven_dof: int = 0,
+    method_level_nodes: int = 0,
+    scope: dict | None = None,
+) -> dict:
     """★★ **v1 上界判定**（★ S6 —— ★ Q9 L180-182 逐字）。
 
     ★★ 判据：**任何一条超界 ⇒ 拒**（★ 五条都要查）：
@@ -67,16 +80,24 @@ def check_scope(*, self_made_parts: int = 0, assembly_instances: int = 0,
       ⇒ ★ 本函数**只看方法级节点**，★ 不收"API 调用次数"。
     """
     sc = (scope or load_scope())["limits"]
-    got = {"max_self_made_parts": self_made_parts,
-           "max_assembly_instances": assembly_instances,
-           "max_assembly_levels": assembly_levels,
-           "max_driven_dof": driven_dof,
-           "max_method_level_nodes": method_level_nodes}
-    over = {k: {"got": got[k], "limit": sc[k]}
-            for k in sc if k in got and got[k] > sc[k]}
-    return {"ok": not over, "limits": sc, "got": got, "over": over,
-            "code": "" if not over else "over-scope",
-            "★": "★ 五条上界全查（★ 不按底层 API 次数衡量）"}
+    got = {
+        "max_self_made_parts": self_made_parts,
+        "max_assembly_instances": assembly_instances,
+        "max_assembly_levels": assembly_levels,
+        "max_driven_dof": driven_dof,
+        "max_method_level_nodes": method_level_nodes,
+    }
+    over = {
+        k: {"got": got[k], "limit": sc[k]} for k in sc if k in got and got[k] > sc[k]
+    }
+    return {
+        "ok": not over,
+        "limits": sc,
+        "got": got,
+        "over": over,
+        "code": "" if not over else "over-scope",
+        "★": "★ 五条上界全查（★ 不按底层 API 次数衡量）",
+    }
 
 
 def check_not_promised(feature: str, scope: dict | None = None) -> dict:
@@ -86,12 +107,16 @@ def check_not_promised(feature: str, scope: dict | None = None) -> dict:
     """
     sc = scope or load_scope()
     bad = sc.get("not_promised") or {}
-    hit = [k for k, v in bad.items()
-           if k == feature or feature in str(v) or k in feature]
-    return {"ok": not hit, "hit": hit,
-            "detail": {k: bad[k] for k in hit},
-            "code": "" if not hit else "not-promised",
-            "★": "★ Q9 L185 逐字：这五类**不进入自主承诺**"}
+    hit = [
+        k for k, v in bad.items() if k == feature or feature in str(v) or k in feature
+    ]
+    return {
+        "ok": not hit,
+        "hit": hit,
+        "detail": {k: bad[k] for k in hit},
+        "code": "" if not hit else "not-promised",
+        "★": "★ Q9 L185 逐字：这五类**不进入自主承诺**",
+    }
 
 
 #: ══ S8 `DELIVERED` 需人工批准（★ Q9 L197 逐字）═══════════════════════
@@ -119,19 +144,27 @@ def delivery_state(*, auto_done: bool, approved_by: str = "") -> dict:
     ★★ **LLM 自报批准不算**（★ 与 Q8 同口径 —— ★ 要**通道**，不是字符串）。
     """
     if not auto_done:
-        return {"state": "", "delivered": False,
-                "reason": "★ 自动流程还没完成"}
+        return {"state": "", "delivered": False, "reason": "★ 自动流程还没完成"}
     if approved_by not in TRUSTED_APPROVERS:
-        return {"state": READY_FOR_REVIEW, "delivered": False,
-                "reason": ("★★ `DELIVERED` 还需**可信人工批准**；"
-                           "拿到的是 %r ⇒ 停在 `READY_FOR_REVIEW`"
-                           % approved_by),
-                "code": "missing-approval"}
-    return {"state": DELIVERED, "delivered": True,
-            "reason": "★ 可信人工批准 ⇒ `DELIVERED`", "code": ""}
+        return {
+            "state": READY_FOR_REVIEW,
+            "delivered": False,
+            "reason": (
+                "★★ `DELIVERED` 还需**可信人工批准**；"
+                "拿到的是 %r ⇒ 停在 `READY_FOR_REVIEW`" % approved_by
+            ),
+            "code": "missing-approval",
+        }
+    return {
+        "state": DELIVERED,
+        "delivered": True,
+        "reason": "★ 可信人工批准 ⇒ `DELIVERED`",
+        "code": "",
+    }
 
 
 #: ══ S9 人工接管单独计数（★ Q9 L195 逐字）════════════════════════════
+
 
 @dataclass
 class TakeoverLedger:
@@ -145,25 +178,32 @@ class TakeoverLedger:
     autonomous: int = 0
     taken_over: list = field(default_factory=list)
 
-    def record(self, task_id: str, *, hand_built: bool = False,
-               script_patched: bool = False) -> None:
+    def record(
+        self, task_id: str, *, hand_built: bool = False, script_patched: bool = False
+    ) -> None:
         """★ 记一次**人工接管**（★ 两种形态：手工补建 / 改脚本救火）。"""
-        self.taken_over.append({"task_id": task_id,
-                                "hand_built": hand_built,
-                                "script_patched": script_patched})
+        self.taken_over.append(
+            {
+                "task_id": task_id,
+                "hand_built": hand_built,
+                "script_patched": script_patched,
+            }
+        )
 
     def to_dict(self) -> dict:
-        return {"autonomous": self.autonomous,
-                "taken_over": len(self.taken_over),
-                "taken_over_ids": [t["task_id"] for t in self.taken_over],
-                "hand_built": sum(1 for t in self.taken_over if t["hand_built"]),
-                "script_patched": sum(1 for t in self.taken_over
-                                      if t["script_patched"]),
-                #: ★★ **结构性保证**：自主数**不含**接管数
-                "★": ("★ 人工接管**单独计数**（★ Q9 L195：「不能计作自主完成」）"
-                      " ⇒ 自主 %d ≠ 总数 %d"
-                      % (self.autonomous,
-                         self.autonomous + len(self.taken_over)))}
+        return {
+            "autonomous": self.autonomous,
+            "taken_over": len(self.taken_over),
+            "taken_over_ids": [t["task_id"] for t in self.taken_over],
+            "hand_built": sum(1 for t in self.taken_over if t["hand_built"]),
+            "script_patched": sum(1 for t in self.taken_over if t["script_patched"]),
+            #: ★★ **结构性保证**：自主数**不含**接管数
+            "★": (
+                "★ 人工接管**单独计数**（★ Q9 L195：「不能计作自主完成」）"
+                " ⇒ 自主 %d ≠ 总数 %d"
+                % (self.autonomous, self.autonomous + len(self.taken_over))
+            ),
+        }
 
     @property
     def total(self) -> int:
@@ -196,36 +236,44 @@ STAGE4_REQUIRED_ROUNDS = 2
 def stage2_gate(*, passes: int, budget_exceeded: bool = False) -> dict:
     """★ **阶段 2 执行关口**（★ S10 —— ★ Q11 L205 逐字）。"""
     stop = (passes < STAGE2_REQUIRED_PASSES) or budget_exceeded
-    return {"gate": GATE_STAGE2, "stop": stop,
-            "passes": passes, "required": STAGE2_REQUIRED_PASSES,
-            "budget_exceeded": budget_exceeded,
-            "action": "STOP_EXPANDING_AUTONOMY" if stop else "continue",
-            "★": "★ Q11 L205：「无法……稳定通过**三次**独立启动验证 ⇒ 停止扩大自主规划投入」"}
+    return {
+        "gate": GATE_STAGE2,
+        "stop": stop,
+        "passes": passes,
+        "required": STAGE2_REQUIRED_PASSES,
+        "budget_exceeded": budget_exceeded,
+        "action": "STOP_EXPANDING_AUTONOMY" if stop else "continue",
+        "★": "★ Q11 L205：「无法……稳定通过**三次**独立启动验证 ⇒ 停止扩大自主规划投入」",
+    }
 
 
-def stage4_gate(*, attributed_rounds: int, meets_threshold: bool,
-                misreleased: int = 0) -> dict:
+def stage4_gate(
+    *, attributed_rounds: int, meets_threshold: bool, misreleased: int = 0
+) -> dict:
     """★ **阶段 4 规划关口**（★ S10 —— ★ Q11 L206 逐字）。"""
-    stop = ((attributed_rounds >= STAGE4_REQUIRED_ROUNDS
-             and not meets_threshold) or misreleased > 0)
-    return {"gate": GATE_STAGE4, "stop": stop,
-            "attributed_rounds": attributed_rounds,
-            "required": STAGE4_REQUIRED_ROUNDS,
-            "meets_threshold": meets_threshold, "misreleased": misreleased,
-            "action": "PAUSE_AUTONOMOUS_RELEASE" if stop else "continue",
-            "★": "★ Q11 L206：「两轮有明确归因的改进后仍达不到冻结门槛 ⇒ 暂停自主放行」"}
+    stop = (
+        attributed_rounds >= STAGE4_REQUIRED_ROUNDS and not meets_threshold
+    ) or misreleased > 0
+    return {
+        "gate": GATE_STAGE4,
+        "stop": stop,
+        "attributed_rounds": attributed_rounds,
+        "required": STAGE4_REQUIRED_ROUNDS,
+        "meets_threshold": meets_threshold,
+        "misreleased": misreleased,
+        "action": "PAUSE_AUTONOMOUS_RELEASE" if stop else "continue",
+        "★": "★ Q11 L206：「两轮有明确归因的改进后仍达不到冻结门槛 ⇒ 暂停自主放行」",
+    }
 
 
-def check_stop_gates(*, stage2: dict | None = None,
-                     stage4: dict | None = None) -> dict:
+def check_stop_gates(*, stage2: dict | None = None, stage4: dict | None = None) -> dict:
     """★ 两个关口**一起判**（★ S10）。"""
     rows = []
     if stage2 is not None:
         rows.append(stage2_gate(**stage2))
     if stage4 is not None:
         rows.append(stage4_gate(**stage4))
-    return {"gates": rows, "any_stop": any(r["stop"] for r in rows),
-            "n": len(rows)}
+    return {"gates": rows, "any_stop": any(r["stop"] for r in rows), "n": len(rows)}
 
 
 #: ══ S11 三次失败停补丁（★ Q11 L208 逐字）════════════════════════════
@@ -251,23 +299,36 @@ class HypothesisTracker:
         self.attempts[hypothesis] = n
         if succeeded:
             #: ★ 成功 ⇒ 计数器归零（★ 判据是"**连续**三次"）
-            return {"hypothesis": hypothesis, "consecutive_failures": 0,
-                    "stop_patching": False, "action": "continue"}
+            return {
+                "hypothesis": hypothesis,
+                "consecutive_failures": 0,
+                "stop_patching": False,
+                "action": "continue",
+            }
         stop = n >= self.limit
-        return {"hypothesis": hypothesis, "consecutive_failures": n,
-                "stop_patching": stop,
-                "action": ("RECHECK_CONTRACT_OR_ARCHITECTURE" if stop
-                           else "continue"),
-                "★": ("★ Q11 L208：「同一假设连续三次修复失败 ⇒ 停止补丁式尝试，"
-                      "**重新检查契约或架构**」" if stop else "")}
+        return {
+            "hypothesis": hypothesis,
+            "consecutive_failures": n,
+            "stop_patching": stop,
+            "action": ("RECHECK_CONTRACT_OR_ARCHITECTURE" if stop else "continue"),
+            "★": (
+                "★ Q11 L208：「同一假设连续三次修复失败 ⇒ 停止补丁式尝试，"
+                "**重新检查契约或架构**」"
+                if stop
+                else ""
+            ),
+        }
 
     def to_dict(self) -> dict:
-        return {"limit": self.limit, "attempts": dict(self.attempts),
-                "over_limit": [h for h, n in self.attempts.items()
-                               if n >= self.limit]}
+        return {
+            "limit": self.limit,
+            "attempts": dict(self.attempts),
+            "over_limit": [h for h, n in self.attempts.items() if n >= self.limit],
+        }
 
 
 #: ══ S12 Plan B（★ Q11 L210 逐字）════════════════════════════════════
+
 
 @dataclass
 class PlanB:
@@ -286,17 +347,23 @@ class PlanB:
     def route(self, *, human_did: list) -> dict:
         """★ 判 Plan B **能不能启动**（★ 人工那两件必须做完）。"""
         missing = [h for h in self.human_confirms if h not in human_did]
-        return {"ready": not missing, "missing_human": missing,
-                "system_will_do": list(self.system_does),
-                "★": "★ Q11 L210：「人工确认 DesignIR／选择方法，系统负责确定性编译、执行、变更、出图和验证」"}
+        return {
+            "ready": not missing,
+            "missing_human": missing,
+            "system_will_do": list(self.system_does),
+            "★": "★ Q11 L210：「人工确认 DesignIR／选择方法，系统负责确定性编译、执行、变更、出图和验证」",
+        }
 
     def to_dict(self) -> dict:
-        return {"human_confirms": list(self.human_confirms),
-                "system_does": list(self.system_does),
-                "★": "★ 已验证的参数化产品族可成为**受限服务**，不必丢弃前序成果"}
+        return {
+            "human_confirms": list(self.human_confirms),
+            "system_does": list(self.system_does),
+            "★": "★ 已验证的参数化产品族可成为**受限服务**，不必丢弃前序成果",
+        }
 
 
 #: ══ S13 盲题转回开发集（★ Q11 L206 逐字）════════════════════════════
+
 
 @dataclass
 class BlindSet:
@@ -315,18 +382,27 @@ class BlindSet:
             return {"moved": False, "reason": "★ %s 不在盲测集里" % case_id}
         self.blind.remove(case_id)
         self.dev.append(case_id)
-        return {"moved": True, "case_id": case_id,
-                "now_in": "dev",
-                "★": ("★ Q11 L206：「已看过的失败盲题**转回开发集**，"
-                      "不能继续把原题称为盲测」")}
+        return {
+            "moved": True,
+            "case_id": case_id,
+            "now_in": "dev",
+            "★": (
+                "★ Q11 L206：「已看过的失败盲题**转回开发集**，不能继续把原题称为盲测」"
+            ),
+        }
 
     def to_dict(self) -> dict:
-        return {"dev": list(self.dev), "blind": list(self.blind),
-                "dev_n": len(self.dev), "blind_n": len(self.blind),
-                "★": "★ 看过的题**不在盲测集里**（★ 结构性保证）"}
+        return {
+            "dev": list(self.dev),
+            "blind": list(self.blind),
+            "dev_n": len(self.dev),
+            "blind_n": len(self.blind),
+            "★": "★ 看过的题**不在盲测集里**（★ 结构性保证）",
+        }
 
 
 #: ══ S14 叶子方法可增长（★ Q11 L212 逐字）════════════════════════════
+
 
 def method_growth_policy() -> dict:
     """★★ **允许叶子方法持续增长**（★ S14 —— ★ Q11 L212 逐字）。
@@ -346,16 +422,28 @@ def method_growth_policy() -> dict:
         "allowed": True,
         "requirements": ("contract", "composable", "verifiable"),
         "forbidden": ("infinite_product_recipes",),
-        "★": ("★ Q11 L212：「允许**有契约、可组合、可验证**的叶子方法持续增长」"
-              "（★ 排除「无限堆产品配方」★ 但**不排除一切方法增长**）"),
+        "★": (
+            "★ Q11 L212：「允许**有契约、可组合、可验证**的叶子方法持续增长」"
+            "（★ 排除「无限堆产品配方」★ 但**不排除一切方法增长**）"
+        ),
     }
 
 
-def admit_leaf_method(*, has_contract: bool, composable: bool,
-                      verifiable: bool) -> dict:
+def admit_leaf_method(
+    *, has_contract: bool, composable: bool, verifiable: bool
+) -> dict:
     """★ 准入一个叶子方法（★ S14 的三条门槛）。"""
-    miss = [k for k, v in (("contract", has_contract),
-                           ("composable", composable),
-                           ("verifiable", verifiable)) if not v]
-    return {"admitted": not miss, "missing": miss,
-            "★": "★ 三条门槛缺一不可（★ 但**不因为「方法多了」就拒绝**）"}
+    miss = [
+        k
+        for k, v in (
+            ("contract", has_contract),
+            ("composable", composable),
+            ("verifiable", verifiable),
+        )
+        if not v
+    ]
+    return {
+        "admitted": not miss,
+        "missing": miss,
+        "★": "★ 三条门槛缺一不可（★ 但**不因为「方法多了」就拒绝**）",
+    }

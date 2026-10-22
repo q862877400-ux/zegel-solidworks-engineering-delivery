@@ -28,29 +28,48 @@ OUT = REPO / "output" / "mm-meter-scan.json"
 #: ★ 换算形态
 PAT = re.compile(r"(\*\s*1000\.?0?|\/\s*1000\.?0?|\*\s*0\.001|\/\s*0\.001)")
 #: ★★ "我知道自己在换单位"的标记（★ 命中就降级为"已声明"）
-DECLARED = ("毫米", "米", "mm", "MM", "in meters", "单位", "文档单位", "GetUnits",
-            "swLengthUnit", "scale", "换算")
+DECLARED = (
+    "毫米",
+    "米",
+    "mm",
+    "MM",
+    "in meters",
+    "单位",
+    "文档单位",
+    "GetUnits",
+    "swLengthUnit",
+    "scale",
+    "换算",
+)
 
 
 def _code_only(text: str) -> str:
     """★ 剥注释与 docstring（★ 事实 513）。"""
     try:
-        toks = [t for t in tokenize.generate_tokens(io.StringIO(text).readline)
-                if t.type != tokenize.COMMENT]
+        toks = [
+            t
+            for t in tokenize.generate_tokens(io.StringIO(text).readline)
+            if t.type != tokenize.COMMENT
+        ]
         s = tokenize.untokenize(toks)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         s = text
     try:
         tree = ast.parse(s)
         for n in ast.walk(tree):
-            if isinstance(n, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            if isinstance(
+                n, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+            ):
                 b = getattr(n, "body", None) or []
-                if b and isinstance(b[0], ast.Expr) and isinstance(
-                        getattr(b[0], "value", None), ast.Constant) and isinstance(
-                        b[0].value.value, str):
+                if (
+                    b
+                    and isinstance(b[0], ast.Expr)
+                    and isinstance(getattr(b[0], "value", None), ast.Constant)
+                    and isinstance(b[0].value.value, str)
+                ):
                     b[0].value.value = ""
         s = ast.unparse(tree)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return s
 
@@ -64,12 +83,14 @@ def main() -> int:
             for i, line in enumerate(code.splitlines(), 1):
                 if not PAT.search(line):
                     continue
-                rows.append({
-                    "file": str(f.relative_to(REPO)).replace("\\", "/"),
-                    "line": i,
-                    "code": line.strip()[:120],
-                    "has_declaration": any(k in line for k in DECLARED),
-                })
+                rows.append(
+                    {
+                        "file": str(f.relative_to(REPO)).replace("\\", "/"),
+                        "line": i,
+                        "code": line.strip()[:120],
+                        "has_declaration": any(k in line for k in DECLARED),
+                    }
+                )
     undeclared = [r for r in rows if not r["has_declaration"]]
     byfile: dict = {}
     for r in rows:
@@ -78,11 +99,16 @@ def main() -> int:
         "★_判据": "★ 找 `*1000` / `/1000` / `*0.001`；★ 标记「同行没写单位依据」的为**待判**",
         "★_合计": len(rows),
         "★★_同行无单位声明": len(undeclared),
-        "按文件": {k: len(v) for k, v in sorted(byfile.items(), key=lambda x: -len(x[1]))[:20]},
+        "按文件": {
+            k: len(v) for k, v in sorted(byfile.items(), key=lambda x: -len(x[1]))[:20]
+        },
         "待判明细": undeclared[:60],
     }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
-    print("★ 命中 %d 处换算 · ★★ 其中**同行没写单位依据**的 %d 处" % (len(rows), len(undeclared)))
+    print(
+        "★ 命中 %d 处换算 · ★★ 其中**同行没写单位依据**的 %d 处"
+        % (len(rows), len(undeclared))
+    )
     print()
     print("★ 按文件（前 12）:")
     for k, v in list(R["按文件"].items())[:12]:

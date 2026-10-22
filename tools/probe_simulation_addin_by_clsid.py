@@ -37,6 +37,7 @@ r"""@brief 纯读探针：用 **CLSID 的 `{GUID}`** 取 Simulation 加载项对
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -49,7 +50,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-addin-by-clsid.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-addin-by-clsid.json"
+)
 #: 实测从注册表读出（只读）：`SldWorks.Simulation` 的 CLSID
 CLSID = "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}"
 
@@ -57,20 +60,23 @@ CLSID = "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}"
 def main() -> int:
     ev: dict = {"clsid": CLSID}
     import sw_connect
-    sw = sw_connect.connect_solidworks(wait_seconds=10)[0]     #: 复用已有实例，不新建
+
+    sw = sw_connect.connect_solidworks(wait_seconds=10)[0]  #: 复用已有实例，不新建
     try:
         sw.CommandInProgress = True
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
-    for label, key in (("① CLSID 的 {GUID}", CLSID),
-                       ("② 对照：ProgID `SldWorks.Simulation`", "SldWorks.Simulation")):
+    for label, key in (
+        ("① CLSID 的 {GUID}", CLSID),
+        ("② 对照：ProgID `SldWorks.Simulation`", "SldWorks.Simulation"),
+    ):
         try:
             got = sw_connect.safe_get_com_member(sw, "GetAddInObject", key)
             kind = None if got is None else type(got).__name__
             ev[label] = kind
             print("  %-38s ⇒ **%s**" % (label, "None" if got is None else kind))
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev[label] = "EXC:%s:%s" % (type(exc).__name__, str(exc)[:120])
             print("  %-38s ⇒ %s" % (label, ev[label]))
 
@@ -80,7 +86,9 @@ def main() -> int:
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

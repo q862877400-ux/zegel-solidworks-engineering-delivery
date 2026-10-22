@@ -30,7 +30,12 @@ def main() -> int:
             break
     if rows is None:
         for k, v in d.items():
-            if isinstance(v, list) and v and isinstance(v[0], dict) and "member" in str(v[0]):
+            if (
+                isinstance(v, list)
+                and v
+                and isinstance(v[0], dict)
+                and "member" in str(v[0])
+            ):
                 rows = v
                 print("★ 用键:", k)
                 break

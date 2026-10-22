@@ -1,4 +1,5 @@
 """★ 阶段 1 · 公共授权（规格 316 的 C5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -9,7 +10,7 @@
 #           返回 TOOL_NOT_ADMITTED · 路径和文档越权分别返回    PATH_OUTSIDE_WORKSPACE、D
 #           OCUMENT_NOT_OWNED · **这些负例的 COM 写调用数全部为 0**」
 # 官方依据: 不适用（本仓自研治理层）。★ 路径纪律依据：本仓 AGENTS.md 铁律 3（结构白名单
-#           ）+ 「只写 output」★ 文档身份纪律依据：AGENTS.md §十九（回收自己开的资源 · 
+#           ）+ 「只写 output」★ 文档身份纪律依据：AGENTS.md §十九（回收自己开的资源 ·
 #           不删用户数据）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
@@ -29,8 +30,13 @@ DOCUMENT_NOT_OWNED = "DOCUMENT_NOT_OWNED"
 EFFECT_UNKNOWN = "EFFECT_UNKNOWN"
 PLAN_NOT_COMPILED = "PLAN_NOT_COMPILED"
 
-AUTH_CODES = (TOOL_NOT_ADMITTED, PATH_OUTSIDE_WORKSPACE, DOCUMENT_NOT_OWNED,
-              EFFECT_UNKNOWN, PLAN_NOT_COMPILED)
+AUTH_CODES = (
+    TOOL_NOT_ADMITTED,
+    PATH_OUTSIDE_WORKSPACE,
+    DOCUMENT_NOT_OWNED,
+    EFFECT_UNKNOWN,
+    PLAN_NOT_COMPILED,
+)
 
 
 @dataclass(frozen=True)
@@ -58,11 +64,13 @@ def _resolve_no_symlink(p: pathlib.Path) -> pathlib.Path:
     """
     try:
         return p.resolve(strict=False)
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return p.absolute()
 
 
-def check_path(path: str | pathlib.Path, *, root: pathlib.Path | None = None) -> AuthorizationVerdict:
+def check_path(
+    path: str | pathlib.Path, *, root: pathlib.Path | None = None
+) -> AuthorizationVerdict:
     """★ 判一个写盘路径是否在**工作区内**（★ FR-006）。"""
     base = (root or workspace_root()).resolve()
     p = _resolve_no_symlink(pathlib.Path(str(path)))
@@ -71,8 +79,10 @@ def check_path(path: str | pathlib.Path, *, root: pathlib.Path | None = None) ->
         return AuthorizationVerdict(True)
     except ValueError:
         return AuthorizationVerdict(
-            False, PATH_OUTSIDE_WORKSPACE,
-            "★ %s 不在工作区 %s 内（★ 解析后：%s）" % (path, base, p))
+            False,
+            PATH_OUTSIDE_WORKSPACE,
+            "★ %s 不在工作区 %s 内（★ 解析后：%s）" % (path, base, p),
+        )
 
 
 #: ══ 三、文档身份（★ 只操作**本任务创建**的文档）══════════════════════
@@ -98,7 +108,7 @@ class OwnedDocuments:
         try:
             t = doc.GetTitle
             return str(t() if callable(t) else t)
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return ""
 
     def check(self, doc) -> AuthorizationVerdict:
@@ -106,9 +116,11 @@ class OwnedDocuments:
             return AuthorizationVerdict(False, DOCUMENT_NOT_OWNED, "★ 文档为 None")
         if not self.is_owned(doc):
             return AuthorizationVerdict(
-                False, DOCUMENT_NOT_OWNED,
+                False,
+                DOCUMENT_NOT_OWNED,
                 "★ %r 不在本任务创建的文档清单里（★ 不碰别人的文档）"
-                % self.title_of(doc))
+                % self.title_of(doc),
+            )
         return AuthorizationVerdict(True)
 
 
@@ -118,21 +130,32 @@ def check_tool(canonical_name: str, reg: dict) -> AuthorizationVerdict:
     d = reg.get(canonical_name)
     if d is None:
         return AuthorizationVerdict(
-            False, TOOL_NOT_ADMITTED, "★ %s 不在目录里" % canonical_name)
+            False, TOOL_NOT_ADMITTED, "★ %s 不在目录里" % canonical_name
+        )
     if d.effect == "unknown":
         return AuthorizationVerdict(
-            False, EFFECT_UNKNOWN,
-            "★ %s 效应未知（★ I5：未知副作用不得自动执行）" % canonical_name)
+            False,
+            EFFECT_UNKNOWN,
+            "★ %s 效应未知（★ I5：未知副作用不得自动执行）" % canonical_name,
+        )
     if not d.admitted:
         return AuthorizationVerdict(
-            False, TOOL_NOT_ADMITTED,
-            "★ %s 未准入：%s" % (canonical_name, d.reject_reason))
+            False,
+            TOOL_NOT_ADMITTED,
+            "★ %s 未准入：%s" % (canonical_name, d.reject_reason),
+        )
     return AuthorizationVerdict(True)
 
 
 #: ══ 五、计划级授权（★ 一次把整条链查完）══════════════════════════════
-def authorize_plan(plan, reg: dict, *, owned: OwnedDocuments | None = None,
-                   doc=None, write_paths: tuple = ()) -> AuthorizationVerdict:
+def authorize_plan(
+    plan,
+    reg: dict,
+    *,
+    owned: OwnedDocuments | None = None,
+    doc=None,
+    write_paths: tuple = (),
+) -> AuthorizationVerdict:
     """★ 整计划授权（★ 任一项不过 ⇒ **整计划拒绝**，★ 不执行前半段）。
 
     ★★ 顺序（★ 便宜的检查在前 —— 但**每一项都要过**）：
@@ -148,9 +171,11 @@ def authorize_plan(plan, reg: dict, *, owned: OwnedDocuments | None = None,
     for st in steps:
         if not getattr(st, "tool", ""):
             return AuthorizationVerdict(
-                False, PLAN_NOT_COMPILED,
+                False,
+                PLAN_NOT_COMPILED,
                 "★ 步骤 %r 的 `tool` 为空 ⇒ 计划没经 `resolve_plan`（★ 防绕过）"
-                % getattr(st, "step", "?"))
+                % getattr(st, "step", "?"),
+            )
 
     #: ② 工具准入
     for st in steps:

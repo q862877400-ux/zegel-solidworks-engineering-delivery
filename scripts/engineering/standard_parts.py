@@ -1,4 +1,5 @@
 """★ 把 `mech-design` 的 **22 个标准件数据表**接成可查服务。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -86,12 +87,14 @@ def available() -> dict:
         name = f.stem
         try:
             with f.open(encoding="utf-8", errors="replace") as fh:
-                n = max(0, sum(1 for _ in fh) - 1)   #: ★ 减表头
+                n = max(0, sum(1 for _ in fh) - 1)  #: ★ 减表头
         except OSError:
             n = -1
-        out[name] = {"rows": n,
-                     "desc": TABLES.get(name, "★ 未登记语义"),
-                     "source": str(f)}
+        out[name] = {
+            "rows": n,
+            "desc": TABLES.get(name, "★ 未登记语义"),
+            "source": str(f),
+        }
     return out
 
 
@@ -99,9 +102,11 @@ def rows(table: str) -> list:
     """★ 读一张表的**全部行**（★ 返回 `list[dict]`）。"""
     p = TABLES_DIR / ("%s.csv" % table)
     if not p.is_file():
-        raise TableError("unknown-table",
-                         "★ 没有 `%s`（有：%s）" % (table, sorted(
-                             f.stem for f in TABLES_DIR.glob("*.csv"))))
+        raise TableError(
+            "unknown-table",
+            "★ 没有 `%s`（有：%s）"
+            % (table, sorted(f.stem for f in TABLES_DIR.glob("*.csv"))),
+        )
     with p.open(encoding="utf-8", errors="replace", newline="") as fh:
         rdr = csv.DictReader(fh)
         data = [dict(r) for r in rdr]
@@ -151,10 +156,13 @@ def tap_drill(size: str, *, hard: bool = False) -> dict:
     if not hits:
         raise TableError("unknown-table", "★ 底孔表里没有 `%s`" % size)
     row = hits[0]
-    return {"size": row.get("Size"), "soft_mm": row.get("Soft"),
-            "hard_mm": row.get("Hard"),
-            "picked": row.get("Hard" if hard else "Soft"),
-            "★": "★ 表里两列**都回**；★ 哪列对应哪种材料**表里没写** ⇒ 不替它解释"}
+    return {
+        "size": row.get("Size"),
+        "soft_mm": row.get("Soft"),
+        "hard_mm": row.get("Hard"),
+        "picked": row.get("Hard" if hard else "Soft"),
+        "★": "★ 表里两列**都回**；★ 哪列对应哪种材料**表里没写** ⇒ 不替它解释",
+    }
 
 
 def clearance_hole(size: str, *, fit: str = "normal") -> dict:
@@ -169,11 +177,17 @@ def clearance_hole(size: str, *, fit: str = "normal") -> dict:
     if not hits:
         raise TableError("unknown-table", "★ 通孔表里没有 `%s`" % size)
     row = hits[0]
-    key = {"close": "Close", "normal": "Normal",
-           "loose": "Loose"}.get(fit.lower(), "Normal")
-    return {"size": row.get("Size"), "close_mm": row.get("Close"),
-            "normal_mm": row.get("Normal"), "loose_mm": row.get("Loose"),
-            "picked": row.get(key), "fit": fit}
+    key = {"close": "Close", "normal": "Normal", "loose": "Loose"}.get(
+        fit.lower(), "Normal"
+    )
+    return {
+        "size": row.get("Size"),
+        "close_mm": row.get("Close"),
+        "normal_mm": row.get("Normal"),
+        "loose_mm": row.get("Loose"),
+        "picked": row.get(key),
+        "fit": fit,
+    }
 
 
 def oring(size: str) -> list:
@@ -196,6 +210,6 @@ def report() -> dict:
         "tables": len(av),
         "rows_total": total,
         "★": "★ 全部来自 `mech-design`（★ 业主早装好的）—— "
-             "★ 而本仓 `manufacturing_rules.yaml` 只有 5 个规格",
+        "★ 而本仓 `manufacturing_rules.yaml` 只有 5 个规格",
         "detail": av,
     }

@@ -10,6 +10,7 @@
 
 ★ 走 `sw_guard`（★ 弹窗护栏 + 硬超时）✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_equation_units.py
@@ -31,10 +32,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
-RB_MM = 9.396926208          #: ★ 基圆半径（★ 毫米）
+RB_MM = 9.396926208  #: ★ 基圆半径（★ 毫米）
 #: ★★ 解析真值：★ 渐开线 t=0.5 处的点（★ 毫米）
 T = 0.5
 X_MM = RB_MM * (math.cos(T) + T * math.sin(T))
@@ -58,23 +59,23 @@ def _seg_endpoints(doc):
         for getter in ("GetSketchPoints2", "GetSketchPoints"):
             try:
                 pts = list(C.get_com_member(sk, getter) or [])
-            except Exception:                                              # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             for pt in pts:
                 try:
                     arr = list(pt)
                     if len(arr) >= 2:
                         out.append([float(arr[0]), float(arr[1])])
-                except Exception:                                          # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     try:
                         x = float(C.get_com_member(pt, "X"))
                         y = float(C.get_com_member(pt, "Y"))
                         out.append([x, y])
-                    except Exception:                                      # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
             if out:
                 break
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return out
 
@@ -93,7 +94,7 @@ def _equation_readback(doc):
         cand = list(segs)
         try:
             cand += list(C.get_com_member(sk, "GetSketchSplines") or [])
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for obj in cand:
             for args in ((), (0,)):
@@ -103,10 +104,11 @@ def _equation_readback(doc):
                     if isinstance(got, (list, tuple)):
                         res["params"] = [str(x)[:80] for x in got]
                     return res
-                except Exception as exc:                                   # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     res.setdefault("errors", []).append(
-                        "%s(%s)" % (type(exc).__name__, str(exc)[:60]))
-    except Exception as exc:                                               # noqa: BLE001
+                        "%s(%s)" % (type(exc).__name__, str(exc)[:60])
+                    )
+    except Exception as exc:  # noqa: BLE001
         res["errors"] = ["%s: %s" % (type(exc).__name__, str(exc)[:80])]
     return res
 
@@ -128,12 +130,22 @@ def _one(sw, tag, expr_scale, t0, t1):
         sm = C.get_com_member(doc, "SketchManager")
         rb_e = RB_MM / expr_scale
         try:
-            C.get_com_member(sm, "CreateEquationSpline2",
-                             "%.12f*(cos(t)+t*sin(t))" % rb_e,
-                             "%.12f*(sin(t)-t*cos(t))" % rb_e,
-                             "", "0", str(t1),
-                             False, 0.0, 0.0, 0.0, True, True)
-        except Exception as exc:                                           # noqa: BLE001
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                "%.12f*(cos(t)+t*sin(t))" % rb_e,
+                "%.12f*(sin(t)-t*cos(t))" % rb_e,
+                "",
+                "0",
+                str(t1),
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         pts = _seg_endpoints(doc)
         row["n_points"] = len(pts)
@@ -148,9 +160,9 @@ def _one(sw, tag, expr_scale, t0, t1):
             row["readback_radius"] = math.hypot(best[0], best[1])
         try:
             P.end_sketch(doc)
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -158,19 +170,23 @@ def _one(sw, tag, expr_scale, t0, t1):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                              # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "★ 方程式曲线的**单位**：★ 表达式里的 rb 该用米还是毫米",
-          "analytic_mm": {"t": T, "x": X_MM, "y": Y_MM, "radius": R_MM},
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "★ 方程式曲线的**单位**：★ 表达式里的 rb 该用米还是毫米",
+        "analytic_mm": {"t": T, "x": X_MM, "y": Y_MM, "radius": R_MM},
+        "cases": [],
+    }
     #: ★ ① 表达式用**毫米**（★ 若 SolidWorks 吃米 ⇒ 曲线会是 9.4 米）
-    ev["cases"].append(_one(sw, "① 表达式给毫米（rb=9.3969）", 1000.0, "0", "%.12f" % T))
+    ev["cases"].append(
+        _one(sw, "① 表达式给毫米（rb=9.3969）", 1000.0, "0", "%.12f" % T)
+    )
     #: ★ ② 表达式用**米**（★ 若 SolidWorks 吃米 ⇒ 曲线半径 9.4 mm）
     ev["cases"].append(_one(sw, "② 表达式给米（rb=0.0093969）", 1.0, "0", "%.12f" % T))
 
@@ -193,13 +209,26 @@ def main() -> int:
     ev["expected_millimetres"] = R_MM
     p = R / "output" / "equation-units-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  ★★ 解析（毫米）：t=%.2f ⇒ (%.6f, %.6f) · R=%.6f" % (T, X_MM, Y_MM, R_MM))
     print("  ★★ 期望（米）：R=%.9f" % (R_MM / 1000.0))
     print("  ★★★ 裁决：**%s**" % verdict)
     for c in ev["cases"]:
-        print("  %-36s 点数=%-4s 回读半径=%.9f"
-              % (c.get("tag", "")[:36], c.get("n_points"), (c.get("readback_radius") if c.get("readback_radius") is not None else -1)))
+        print(
+            "  %-36s 点数=%-4s 回读半径=%.9f"
+            % (
+                c.get("tag", "")[:36],
+                c.get("n_points"),
+                (
+                    c.get("readback_radius")
+                    if c.get("readback_radius") is not None
+                    else -1
+                ),
+            )
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:140])
     print("  产物：%s" % p)

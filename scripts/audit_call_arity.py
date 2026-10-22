@@ -21,6 +21,7 @@
 #   故本工具选择跳过 Starred 实参：宁可漏报也不误报。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -143,7 +144,9 @@ def call_sites(path):
         if name not in WRAPPERS or len(node.args) < 2:
             continue
         member_node = node.args[1]
-        if not (isinstance(member_node, ast.Constant) and isinstance(member_node.value, str)):
+        if not (
+            isinstance(member_node, ast.Constant) and isinstance(member_node.value, str)
+        ):
             continue
         if any(isinstance(a, ast.Starred) for a in node.args[2:]):
             rows.append((node.lineno, name, member_node.value, None))
@@ -180,7 +183,6 @@ def direct_call_sites(path, table):
         else:
             rows.append((node.lineno, "direct", member, len(node.args)))
     return sorted(rows)
-
 
 
 # ⚑⚑ **2026-10-01（轮 130）：`comtypes` 早绑定的调用点，本工具判不了 —— 单独归类，不算「
@@ -222,18 +224,23 @@ def direct_call_sites(path, table):
 #   ★★ **代价（如实记）**：★ 同一文件里**同名成员有多处**时，键会**覆盖** ⇒
 #     ★ 所以配一条**回读断言**：★ 每条登记的成员必须**真的在目标文件里**（★ 见 `audit()`）。
 COMTYPES_CALL_SITES: dict[tuple[str, str], str] = {
-    ("sw_delivery.py", "IGetDocumentNames"):
-        "`package.IGetDocumentNames(document_count)` —— 走 **comtypes 早绑定**"
-        "（`_comtypes_document_names()`，由 `comtypes.client.GetModule` 得到）。"
-        "注释写明：「comtypes 会自动分配 [out] 数组，只需传入 Count」。"
-        "官方 arity = 2（`Int32&` + `Object&`）⇒ 在 **pywin32** 上要传 2，"
-        "在 **comtypes** 上只传入参即正确。**不是缺陷。**",
-    ("sw_delivery.py", "OpenDoc6"):
-        "`sw.OpenDoc6(path, type, options, empty)` —— 同样是 **comtypes 早绑定**"
-        "（`sw` 由 `comtypes` 创建）。官方 arity = 6（含两个 `[out] long`）⇒ "
-        "comtypes 代理自行分配出参。**不是缺陷。**"
-        "⚠ 另：本仓库另有纪律「不经 pywin32 的 OpenDoc6 打开零件」，本条只在 Pack and Go 路径使用。",
+    (
+        "sw_delivery.py",
+        "IGetDocumentNames",
+    ): "`package.IGetDocumentNames(document_count)` —— 走 **comtypes 早绑定**"
+    "（`_comtypes_document_names()`，由 `comtypes.client.GetModule` 得到）。"
+    "注释写明：「comtypes 会自动分配 [out] 数组，只需传入 Count」。"
+    "官方 arity = 2（`Int32&` + `Object&`）⇒ 在 **pywin32** 上要传 2，"
+    "在 **comtypes** 上只传入参即正确。**不是缺陷。**",
+    (
+        "sw_delivery.py",
+        "OpenDoc6",
+    ): "`sw.OpenDoc6(path, type, options, empty)` —— 同样是 **comtypes 早绑定**"
+    "（`sw` 由 `comtypes` 创建）。官方 arity = 6（含两个 `[out] long`）⇒ "
+    "comtypes 代理自行分配出参。**不是缺陷。**"
+    "⚠ 另：本仓库另有纪律「不经 pywin32 的 OpenDoc6 打开零件」，本条只在 Pack and Go 路径使用。",
 }
+
 
 def audit(target, signature_paths):
     """返回 (通过, 存疑, 查不到, 动态) 四组，供 CLI 与测试共用。
@@ -270,6 +277,7 @@ def audit(target, signature_paths):
 def _stem(path) -> str:
     """取文件名（用于 `COMTYPES_CALL_SITES` 的键）。"""
     from pathlib import Path as _P
+
     return _P(str(path)).name
 
 
@@ -280,9 +288,11 @@ def main() -> int:
     #   **⇒ COM 调用分散在两处，门禁必须两处都覆盖。**
     if "--all" in sys.argv:
         import glob as _glob
+
         _root = Path.cwd()
-        targets = (sorted(_glob.glob(str(_root / "scripts" / "*.py")))
-                   + sorted(_glob.glob(str(_root / "tools" / "*.py"))))
+        targets = sorted(_glob.glob(str(_root / "scripts" / "*.py"))) + sorted(
+            _glob.glob(str(_root / "tools" / "*.py"))
+        )
         sigs = [a for a in sys.argv[1:] if a != "--all"]
         if not sigs:
             print("用法: python scripts/audit_call_arity.py --all <iface_*.txt> [...]")
@@ -292,8 +302,10 @@ def main() -> int:
             _ok, _doubt, _missing, _dyn, _com = audit(_t, sigs)
             # ⚠ `ok` 是**列表**不是计数（第一版写成 `%d` ⇒ TypeError）
             if _doubt or _missing:
-                print("%s\n  pass=%d doubt=%d missing=%d"
-                      % (_t, len(_ok), len(_doubt), len(_missing)))
+                print(
+                    "%s\n  pass=%d doubt=%d missing=%d"
+                    % (_t, len(_ok), len(_doubt), len(_missing))
+                )
                 for row in (_doubt + _missing)[:6]:
                     print("    %s" % (row,))
                 bad_total += len(_doubt) + len(_missing)

@@ -23,6 +23,7 @@ r"""@brief 验收命令：`animation_export` 的真机端到端 —— **导出�
 # ⚠ 连真机；**只用自己新建的文档**；收尾恢复 CommandInProgress 并关自己的文档。
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -68,7 +69,7 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "motion-avi-evidence
 # ⚠ 全部调用照**项目既有封装**的官方签名（铁律 4，先核实再写）：
 #   `sw_part.sketch(model, plane)` · `sw_part.sketch_circle(model, cx, cy, radius)` ·
 #   `sw_part.extrude_boss(model, sketch_name, depth)` ·
-# `sw_connect.save_document(model, path)` · `sw_assembly.add_component(asm, path, x, y, 
+# `sw_connect.save_document(model, path)` · `sw_assembly.add_component(asm, path, x, y,
 # z, sw=)`
 # ⚠ 反射核实过的签名：`IAssemblyDoc::AddComponent5(String, Int32, String, Boolean, Strin
 # g,
@@ -105,7 +106,11 @@ def main() -> int:
     sw, _m, _meta = connect_solidworks(wait_seconds=20, return_metadata=True)
     sw.CommandInProgress = True
     opened = []
-    ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "verdict": "unknown", "steps": {}}
+    ev: dict = {
+        "started": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "verdict": "unknown",
+        "steps": {},
+    }
     try:
         # ① 圆柱零件（半径 20mm / 高 100mm）
         # ⚠ 所有调用都照**项目既有封装的官方签名**（铁律 4）：
@@ -133,12 +138,18 @@ def main() -> int:
         #:  那条链）✗
         #:   ⇒ ★ 修法：★ 用 **`with`** + ★ **毫米数**（★ 与规格 216 的探针同一写法）✓
         with sw_part.sketch(part, "Front Plane") as sk:
-            step("sw_part.sketch_circle(0, 0, r=20) [毫米]",
-                 lambda: sw_part.sketch_circle(part, 0.0, 0.0, 20.0))
-        step("sw_part.extrude_boss(part, sk, 40) [毫米]",
-             lambda: sw_part.extrude_boss(part, sk, 40.0))
-        step("save_document(part, %s)" % os.path.basename(part_path),
-             lambda: save_document(part, part_path))
+            step(
+                "sw_part.sketch_circle(0, 0, r=20) [毫米]",
+                lambda: sw_part.sketch_circle(part, 0.0, 0.0, 20.0),
+            )
+        step(
+            "sw_part.extrude_boss(part, sk, 40) [毫米]",
+            lambda: sw_part.extrude_boss(part, sk, 40.0),
+        )
+        step(
+            "save_document(part, %s)" % os.path.basename(part_path),
+            lambda: save_document(part, part_path),
+        )
 
         # ② 装配体 + 两次插入（用项目既有封装，不自己拼 AddComponent5）
         print()
@@ -147,16 +158,22 @@ def main() -> int:
         atitle = get_com_member(asm, "GetTitle")
         opened.append(atitle)
         ev["steps"]["assembly"] = {"title": str(atitle)}
-        c1 = step("sw_assembly.add_component(第 1 个, x=0)",
-                  lambda: sw_assembly.add_component(asm, part_path, x=0.0, sw=sw))
-        c2 = step("sw_assembly.add_component(第 2 个, x=0.06)",
-                  lambda: sw_assembly.add_component(asm, part_path, x=0.06, sw=sw))
+        c1 = step(
+            "sw_assembly.add_component(第 1 个, x=0)",
+            lambda: sw_assembly.add_component(asm, part_path, x=0.0, sw=sw),
+        )
+        c2 = step(
+            "sw_assembly.add_component(第 2 个, x=0.06)",
+            lambda: sw_assembly.add_component(asm, part_path, x=0.06, sw=sw),
+        )
 
         # ③ Motion
         print()
         print("=== ③ Motion 类型库 + manager + 算例 ===")
         step("ensure_motion_type_library()", lambda: M.ensure_motion_type_library())
-        mgr = step("get_motion_study_manager(asm)", lambda: M.get_motion_study_manager(asm))
+        mgr = step(
+            "get_motion_study_manager(asm)", lambda: M.get_motion_study_manager(asm)
+        )
         if mgr is None:
             ev["verdict"] = "fail: 拿不到 MotionStudyManager"
             return 2
@@ -182,13 +199,20 @@ def main() -> int:
         # ⇒ 本脚本用**能生效的 2（PhysicalSimulation）**（此前一直用默认的 1，**从没试过
         #  2**）。
         print()
-        print("=== ③b ★ 用 PhysicalSimulation(2) 类型的算例（1/2 是实测能生效的两个）===")
-        study2 = step("create_motion_study(asm, study_type=2)",
-                      lambda: M.create_motion_study(asm, name="MCP_AVI_PhysSim",
-                                                    duration=4.0, study_type=2))
+        print(
+            "=== ③b ★ 用 PhysicalSimulation(2) 类型的算例（1/2 是实测能生效的两个）==="
+        )
+        study2 = step(
+            "create_motion_study(asm, study_type=2)",
+            lambda: M.create_motion_study(
+                asm, name="MCP_AVI_PhysSim", duration=4.0, study_type=2
+            ),
+        )
         if study2 is not None:
-            back = step("study2.StudyType（回读，应 2）",
-                        lambda: M.motion_member(study2, "StudyType"))
+            back = step(
+                "study2.StudyType（回读，应 2）",
+                lambda: M.motion_member(study2, "StudyType"),
+            )
             study = study2
             ev["steps"]["study_type"] = 2
             ev["steps"]["study_type_readback"] = back
@@ -198,18 +222,25 @@ def main() -> int:
         print("=== ④ 加匀速旋转马达（两个组件各取一个圆柱面）===")
         motor = None
         if c1 is not None and c2 is not None:
-            motor = step("add_constant_speed_rotary_motor_by_cylinders(...)",
-                         lambda: M.add_constant_speed_rotary_motor_by_cylinders(
-                             study, c1, c2, rpm=60.0))
+            motor = step(
+                "add_constant_speed_rotary_motor_by_cylinders(...)",
+                lambda: M.add_constant_speed_rotary_motor_by_cylinders(
+                    study, c1, c2, rpm=60.0
+                ),
+            )
         ev["steps"]["motor"] = {"ok": motor is not None}
 
         # ⑤ Calculate
         print()
         print("=== ⑤ Calculate ===")
-        step("calculate_and_play(study, play=False)",
-             lambda: M.calculate_and_play(study, play=False))
-        step("collect_motion_study_summary(asm)",
-             lambda: M.collect_motion_study_summary(asm))
+        step(
+            "calculate_and_play(study, play=False)",
+            lambda: M.calculate_and_play(study, play=False),
+        )
+        step(
+            "collect_motion_study_summary(asm)",
+            lambda: M.collect_motion_study_summary(asm),
+        )
 
         # ⑥ 导出（**判据看文件，不看返回值**）
         print()
@@ -222,30 +253,53 @@ def main() -> int:
         #   ⇒ **先按「有马达」挑出真正有动画的那个算例**，再导（否则导的是空算例）。
         target = study
         print("   ── 先挑出「有马达」的算例 ──")
-        summary = step("collect_motion_study_summary(asm)",
-                       lambda: M.collect_motion_study_summary(asm))
+        summary = step(
+            "collect_motion_study_summary(asm)",
+            lambda: M.collect_motion_study_summary(asm),
+        )
         if summary:
-            with_motor = [s for s in summary.get("studies", [])
-                          if (s.get("motor_count") or 0) > 0
-                          or (s.get("motion_feature_count") or 0) > 0]
+            with_motor = [
+                s
+                for s in summary.get("studies", [])
+                if (s.get("motor_count") or 0) > 0
+                or (s.get("motion_feature_count") or 0) > 0
+            ]
             if with_motor:
                 name = with_motor[-1]["name"]
-                print("   ⇒ 挑中: %r（motor_count=%s · features=%s）"
-                      % (name, with_motor[-1].get("motor_count"),
-                         [f.get("name") for f in with_motor[-1].get("motion_features") or []]))
-                target = step("mgr.GetMotionStudy(%r)" % name,
-                              lambda: M.motion_member(mgr, "GetMotionStudy", name)) or study
-                step("mgr.ActivateMotionStudy(%r)" % name,
-                     lambda: M.motion_member(mgr, "ActivateMotionStudy", name))
+                print(
+                    "   ⇒ 挑中: %r（motor_count=%s · features=%s）"
+                    % (
+                        name,
+                        with_motor[-1].get("motor_count"),
+                        [
+                            f.get("name")
+                            for f in with_motor[-1].get("motion_features") or []
+                        ],
+                    )
+                )
+                target = (
+                    step(
+                        "mgr.GetMotionStudy(%r)" % name,
+                        lambda: M.motion_member(mgr, "GetMotionStudy", name),
+                    )
+                    or study
+                )
+                step(
+                    "mgr.ActivateMotionStudy(%r)" % name,
+                    lambda: M.motion_member(mgr, "ActivateMotionStudy", name),
+                )
                 ev["steps"]["target_study"] = name
             else:
                 print("   ⚠ 没有任何算例含马达 ⇒ 仍用 create_motion_study 返回的那个")
 
         param = step("create_avi_parameter(mgr)", lambda: M.create_avi_parameter(mgr))
         if param is not None:
-            step("configure(FramePerSecond=10, SaveEntireAnimation=True)",
-                 lambda: M.configure_avi_parameter(param, FramePerSecond=10.0,
-                                                   SaveEntireAnimation=True))
+            step(
+                "configure(FramePerSecond=10, SaveEntireAnimation=True)",
+                lambda: M.configure_avi_parameter(
+                    param, FramePerSecond=10.0, SaveEntireAnimation=True
+                ),
+            )
         out = os.path.join(tempfile.gettempdir(), "mcp_avi_e2e.avi")
 
         # ⚠ 第 4 次尝试（事实 53：同一处连修 ≥3 次要回退 ⇒ **这是最后一次**）。
@@ -254,23 +308,36 @@ def main() -> int:
         #   ② **先真的 Play 一遍**（让渲染管线跑起来，而不只是算完）。
         print("   ── 补两个前提：保存装配体 + Play 一遍 ──")
         asm_path = os.path.join(tempfile.gettempdir(), "mcp_avi_asm.SLDASM")
-        step("save_document(asm, %s)" % os.path.basename(asm_path),
-             lambda: save_document(asm, asm_path))
-        step("calculate_and_play(target, play=True)",
-             lambda: M.calculate_and_play(target, play=True))
+        step(
+            "save_document(asm, %s)" % os.path.basename(asm_path),
+            lambda: save_document(asm, asm_path),
+        )
+        step(
+            "calculate_and_play(target, play=True)",
+            lambda: M.calculate_and_play(target, play=True),
+        )
 
         if os.path.isfile(out):
             os.remove(out)
-        res = step("export_motion_study_avi(target, out, param)",
-                   lambda: M.export_motion_study_avi(target, out, param))
+        res = step(
+            "export_motion_study_avi(target, out, param)",
+            lambda: M.export_motion_study_avi(target, out, param),
+        )
         ev["steps"]["export"] = res or {}
         if res:
             print()
-            print("   ★ 文件存在=%s · 大小=%s 字节 · 官方返回=%r"
-                  % (res["exists"], res["size_bytes"], res["returned"]))
-            ev["verdict"] = "pass" if res["ok"] else (
-                "fail: 导出未产生非零文件（exists=%s size=%s returned=%r）"
-                % (res["exists"], res["size_bytes"], res["returned"]))
+            print(
+                "   ★ 文件存在=%s · 大小=%s 字节 · 官方返回=%r"
+                % (res["exists"], res["size_bytes"], res["returned"])
+            )
+            ev["verdict"] = (
+                "pass"
+                if res["ok"]
+                else (
+                    "fail: 导出未产生非零文件（exists=%s size=%s returned=%r）"
+                    % (res["exists"], res["size_bytes"], res["returned"])
+                )
+            )
         else:
             ev["verdict"] = "fail: export 抛异常"
         return 0 if ev["verdict"] == "pass" else 1
@@ -281,7 +348,9 @@ def main() -> int:
     if STEP_ERRORS:
         ev["step_errors"] = dict(STEP_ERRORS)
         OUT.parent.mkdir(parents=True, exist_ok=True)
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         for t in reversed(opened):
             try:
                 if t:

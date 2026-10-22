@@ -13,7 +13,7 @@
 # `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalE
 # nds,
 #      out object Status)` ⇒ **5 参** ·
-# ★★ Remarks 逐字：★ 「To create a **2D spline**… ★ **All other parameters with null or 
+# ★★ Remarks 逐字：★ 「To create a **2D spline**… ★ **All other parameters with null or
 # Nothing.**」✓
 #   ★★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图段数 +1**（★ 而那正是本仓既有的判据）✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -38,20 +38,26 @@ def _seg_count(model) -> int:
     """★ 现成的段数读法（★ 与 `sw_part` 同一路）。"""
     try:
         from sw_connect import get_com_member
+
         sk = get_com_member(model, "SketchManager")
         act = get_com_member(sk, "ActiveSketch")
         if act is None:
             return -1
         raw = get_com_member(act, "GetSketchSegments")
         return len(list(raw)) if raw is not None else 0
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
 def main() -> int:
     import sw_part as P
-    from sw_connect import (connect_solidworks, get_com_member, new_document,
-                            out_dispatch, create_empty_dispatch_variant)
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        out_dispatch,
+        create_empty_dispatch_variant,
+    )
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
@@ -62,42 +68,72 @@ def main() -> int:
         P.sketch(model, "Front Plane")
         before = _seg_count(model)
         sk = get_com_member(model, "SketchManager")
-        pts = [0.0, 0.0, 0.0, 0.05, 0.03, 0.0, 0.10, 0.0, 0.0]   #: 三点、单位**米**
+        pts = [0.0, 0.0, 0.0, 0.05, 0.03, 0.0, 0.10, 0.0, 0.0]  #: 三点、单位**米**
         from win32com.client import VARIANT
         import pythoncom
+
         data = VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, pts)
         got = err = None
         try:
             if form == "v3_out_dispatch":
                 #: ★ 官方 Remarks：2D 样条 ⇒ **其余参数一律 null/Nothing** ✓
-                got = get_com_member(sk, "CreateSpline3", data, None, None, False, out_dispatch())
+                got = get_com_member(
+                    sk, "CreateSpline3", data, None, None, False, out_dispatch()
+                )
             elif form == "v3_empty_dispatch":
-                got = get_com_member(sk, "CreateSpline3", data, None, None, False,
-                                     create_empty_dispatch_variant())
+                got = get_com_member(
+                    sk,
+                    "CreateSpline3",
+                    data,
+                    None,
+                    None,
+                    False,
+                    create_empty_dispatch_variant(),
+                )
             elif form == "v3_plain_none":
                 got = get_com_member(sk, "CreateSpline3", data, None, None, False, None)
             elif form == "v2_baseline":
                 got = get_com_member(sk, "CreateSpline2", data, False)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(model)
         P.end_sketch(model)
-        rows.append({"form": form, "tag": tag, "returned": str(got)[:70],
-                     "error": err, "seg_before": before, "seg_after": after,
-                     "built": (after > before) if (before >= 0 and after >= 0) else None})
+        rows.append(
+            {
+                "form": form,
+                "tag": tag,
+                "returned": str(got)[:70],
+                "error": err,
+                "seg_before": before,
+                "seg_after": after,
+                "built": (after > before) if (before >= 0 and after >= 0) else None,
+            }
+        )
 
     case("★ CreateSpline3 + out_dispatch()", form="v3_out_dispatch")
     case("★ CreateSpline3 + 空 Dispatch", form="v3_empty_dispatch")
     case("★ CreateSpline3 + None", form="v3_plain_none")
     case("★ 基线：CreateSpline2（旧的）", form="v2_baseline")
 
-    R = {"★_判据": "★ 建成 ⇒ 草图段数 +1（★ 本仓既有的判据）",
-         "★_问题": "★ `sw_part.py` 的 docstring 说「后继末参是 BYREF Object&、pywin32 到不了」⇒ 本探针验它",
-         "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 建成 ⇒ 草图段数 +1（★ 本仓既有的判据）",
+        "★_问题": "★ `sw_part.py` 的 docstring 说「后继末参是 BYREF Object&、pywin32 到不了」⇒ 本探针验它",
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
-        print("★ %-34s built=%-5s seg %s→%s err=%s" % (
-            r["form"], r["built"], r["seg_before"], r["seg_after"], (r["error"] or "")[:80]))
+        print(
+            "★ %-34s built=%-5s seg %s→%s err=%s"
+            % (
+                r["form"],
+                r["built"],
+                r["seg_before"],
+                r["seg_after"],
+                (r["error"] or "")[:80],
+            )
+        )
     print("★ wrote", OUT)
     return 0
 

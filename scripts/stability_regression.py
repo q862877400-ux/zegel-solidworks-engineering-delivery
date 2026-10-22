@@ -74,7 +74,9 @@ def run_regression(iterations: int = 20) -> dict[str, object]:
         harness.close()
         harness.cancelled = False
     return {
-        "status": "pass" if len(set(process_ids)) == iterations and harness.process is None else "fail",
+        "status": "pass"
+        if len(set(process_ids)) == iterations and harness.process is None
+        else "fail",
         "iterations": iterations,
         "unique_processes": len(set(process_ids)),
         "orphan_process": harness.process is not None,

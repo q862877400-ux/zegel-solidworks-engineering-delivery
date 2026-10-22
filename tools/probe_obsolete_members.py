@@ -23,6 +23,7 @@ r"""@brief 探针：我们**调用**的 COM 成员里，有几个官方已标 **
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -65,7 +66,7 @@ def main() -> int:
 
     called = called_members()
     idx = doc_index()
-    print("代码里 `get_com_member(..., \"成员\")` 调到的成员：**%d** 个" % len(called))
+    print('代码里 `get_com_member(..., "成员")` 调到的成员：**%d** 个' % len(called))
     print("官方文档索引里的成员名：**%d** 个" % len(idx))
     print()
 

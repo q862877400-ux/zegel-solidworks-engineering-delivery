@@ -46,8 +46,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u88c1\u51b3\u8005\uff09
 SLOT_TYPE = {
@@ -64,13 +64,16 @@ def _seg_count(doc):
         if sk is None:
             return -1
         return len(list(C.get_com_member(sk, "GetSketchSegments") or []))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
 def _one(sw, name, creation_type):
-    row = {"tag": "\u69fd\u53e3\u00b7%s\uff08type=%d\uff09" % (name, creation_type),
-           "creation_type": creation_type, "ok": False}
+    row = {
+        "tag": "\u69fd\u53e3\u00b7%s\uff08type=%d\uff09" % (name, creation_type),
+        "creation_type": creation_type,
+        "ok": False,
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -84,13 +87,26 @@ def _one(sw, name, creation_type):
             #: Center) \u00b7 Width \u00b7
             #: P1 \u00b7 P2 \u00b7 P3 \u00b7 CenterArcDirection(=1 CCW) \u00b7 AddDimens
             #: ion(=True)
-            ret = C.get_com_member(sm, "CreateSketchSlot", int(creation_type), 0, 0.004,
-                                   -0.02, 0.0, 0.0,
-                                   0.02, 0.0, 0.0,
-                                   0.0, 0.012, 0.0,
-                                   1, True)
+            ret = C.get_com_member(
+                sm,
+                "CreateSketchSlot",
+                int(creation_type),
+                0,
+                0.004,
+                -0.02,
+                0.0,
+                0.0,
+                0.02,
+                0.0,
+                0.0,
+                0.0,
+                0.012,
+                0.0,
+                1,
+                True,
+            )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(doc)
         row["seg_after"] = after
@@ -98,9 +114,9 @@ def _one(sw, name, creation_type):
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
         try:
             P.end_sketch(doc)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -108,32 +124,51 @@ def _one(sw, name, creation_type):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u69fd\u53e3\u56db\u79cd\uff1a`ISketchManager.CreateSketchSlot` + `swSketchSlotCreationType_e`",
-          "official": "CreateSketchSlot \u7b7e\u540d 14 \u53c2\uff1b\u679a\u4e3e\u503c\u53d6\u81ea**\u53cd\u5c04**"
-                      "\uff08line=0 / center_line=1 / arc=2 / 3pointarc=3\uff09",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u69fd\u53e3\u56db\u79cd\uff1a`ISketchManager.CreateSketchSlot` + `swSketchSlotCreationType_e`",
+        "official": "CreateSketchSlot \u7b7e\u540d 14 \u53c2\uff1b\u679a\u4e3e\u503c\u53d6\u81ea**\u53cd\u5c04**"
+        "\uff08line=0 / center_line=1 / arc=2 / 3pointarc=3\uff09",
+        "cases": [],
+    }
     for name, v in SLOT_TYPE.items():
         ev["cases"].append(_one(sw, name, v))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("slot_all_four_work" if ev["passed"] == ev["total"]
-                     else ("slot_partial_%d" % ev["passed"]))
+    ev["verdict"] = (
+        "slot_all_four_work"
+        if ev["passed"] == ev["total"]
+        else ("slot_partial_%d" % ev["passed"])
+    )
     p = R / "output" / "sketch-slot-four-types-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-30s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s" % (
-            c.get("tag"), c.get("ok"), c.get("seg_before"), c.get("seg_after"),
-            c.get("new_segments"), c.get("returned")))
+        print(
+            "  %-30s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("seg_before"),
+                c.get("seg_after"),
+                c.get("new_segments"),
+                c.get("returned"),
+            )
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:140])
     print("  \u4ea7\u7269\uff1a%s" % p)

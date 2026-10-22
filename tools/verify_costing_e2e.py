@@ -26,6 +26,7 @@ r"""@brief 验收命令：`costing` 的端到端真机闭环（**A9 的可跑工
 # ⚠ 连真机；**只用自己新建的文档**；收尾恢复 CommandInProgress 并关自己的文档。
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -80,7 +81,7 @@ def main() -> int:
     title = None
     evidence: dict = {
         "started": time.strftime("%Y-%m-%d %H:%M:%S"),
-        #: ★★ 2026-10-07（接手轮 · 规格 216）：★ 原来是 `str(meta.get("revision", ""))` 
+        #: ★★ 2026-10-07（接手轮 · 规格 216）：★ 原来是 `str(meta.get("revision", ""))`
         #: ——
         #: ★ 两处都不稳：① `connect_solidworks` 的 metadata **当时根本没有 `revision` 键
         #: **
@@ -98,7 +99,10 @@ def main() -> int:
         sk = sw_part.sketch(model, "Front Plane")
         sw_part.sketch_corner_rectangle(model, -0.05, -0.03, 0.05, 0.03)
         sw_part.extrude_boss(model, sk, 0.02)
-        evidence["steps"]["build_part"] = {"title": str(title), "size_mm": [100, 60, 20]}
+        evidence["steps"]["build_part"] = {
+            "title": str(title),
+            "size_mm": [100, 60, 20],
+        }
 
         # ① 入口（**唯一正解**）
         mgr = sw_costing.get_costing_manager(model)
@@ -112,20 +116,33 @@ def main() -> int:
         for cat in (0, 1):
             tpl[str(cat)] = {
                 "count": sw_costing._checked(mgr, "GetTemplateCount", cat),
-                "pathnames": [str(p) for p in (sw_costing._checked(mgr, "GetTemplatePathnames", cat) or ())],
+                "pathnames": [
+                    str(p)
+                    for p in (
+                        sw_costing._checked(mgr, "GetTemplatePathnames", cat) or ()
+                    )
+                ],
             }
         evidence["steps"]["templates"] = tpl
 
         # ③ 默认值（材质 / 材质类 / 加工方式）
         defaults = sw_costing.get_costing_defaults(mgr)
         evidence["steps"]["defaults"] = {
-            "template_name_0": str(get_com_member(defaults, "GetTemplateName", 0) or ""),
-            "material_name_0": str(get_com_member(defaults, "GetMaterialName", 0) or ""),
-            "material_class_0": str(get_com_member(defaults, "GetMaterialClass", 0) or ""),
-            "manufacturing_method_0": int(sw_costing._num(defaults, "GetManufacturingMethod", -1, 0)),
+            "template_name_0": str(
+                get_com_member(defaults, "GetTemplateName", 0) or ""
+            ),
+            "material_name_0": str(
+                get_com_member(defaults, "GetMaterialName", 0) or ""
+            ),
+            "material_class_0": str(
+                get_com_member(defaults, "GetMaterialClass", 0) or ""
+            ),
+            "manufacturing_method_0": int(
+                sw_costing._num(defaults, "GetManufacturingMethod", -1, 0)
+            ),
         }
 
-        # ④ 部分 + 成本（⚠ 判据是 GetCostAnalysis 非 None，**不看** CreateCostAnalysis 
+        # ④ 部分 + 成本（⚠ 判据是 GetCostAnalysis 非 None，**不看** CreateCostAnalysis
         # 的返回）
         part = sw_costing.get_costing_model(mgr)
         evidence["steps"]["bodies"] = {
@@ -146,18 +163,24 @@ def main() -> int:
         total = float(costs.get("total_to_manufacture") or 0.0)
         ct = costs.get("costing_type")
         ok = total > 0 and ct is not None and ct >= 0
-        evidence["verdict"] = "pass" if ok else (
-            "fail: total_to_manufacture=%.6f, costing_type=%r" % (total, ct))
+        evidence["verdict"] = (
+            "pass"
+            if ok
+            else ("fail: total_to_manufacture=%.6f, costing_type=%r" % (total, ct))
+        )
         evidence["assertions"] = {
             "total_to_manufacture_gt_0": total > 0,
             "costing_type_is_a_real_value": ct is not None and ct >= 0,
-            "template_is_a_costing_template": ".sldct" in str(costs.get("template", "")),
+            "template_is_a_costing_template": ".sldct"
+            in str(costs.get("template", "")),
         }
         return 0 if ok else 1
     finally:
         evidence["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
         OUT.parent.mkdir(parents=True, exist_ok=True)
-        OUT.write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         try:
             if title:
                 sw.CloseDoc(title)

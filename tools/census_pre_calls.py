@@ -30,15 +30,20 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
 import register_capabilities as RC  # noqa: E402
 
 #: 回读的"信号词"（★ 事实 8 的纪律：只信回读计数；`resolve_selection` 内建回读+报错）
-READ_TOKENS = ("GetSelectedObjectCount", "resolve_selection", "SelectionManager",
-               "_selection_marks", "GetSelectedObject6")
+READ_TOKENS = (
+    "GetSelectedObjectCount",
+    "resolve_selection",
+    "SelectionManager",
+    "_selection_marks",
+    "GetSelectedObject6",
+)
 
 
 def _module_funcs(path: Path):
     try:
         src = path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(src)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
     out = {}
     for n in ast.walk(tree):
@@ -51,7 +56,7 @@ def gather(pc, depth: int = 3) -> str:
     """★ 递归收集 `pre_call` 及其在本模块内**被调用函数**的源码（跟调用图）。"""
     try:
         seed = inspect.getsource(pc)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
     mod = sys.modules.get(getattr(pc, "__module__", "") or "")
     fpath = Path(getattr(mod, "__file__", "") or "")
@@ -78,13 +83,19 @@ for s in RC.all_specs():
         continue
     text = gather(pc)
     reads = [t for t in READ_TOKENS if t in text]
-    row = (getattr(s, "name", "?"), getattr(pc, "__name__", "?"),
-           "★回读:" + ",".join(sorted(set(reads)))[:44] if reads else "★★ 没回读")
+    row = (
+        getattr(s, "name", "?"),
+        getattr(pc, "__name__", "?"),
+        "★回读:" + ",".join(sorted(set(reads)))[:44] if reads else "★★ 没回读",
+    )
     rows.append(row)
     if not reads:
         nocl.append(row)
 
-print("★ 有 `pre_call` 的工具：**%d** 个（总 %d）—— ★ 本版**跟了调用图**" % (len(rows), len(RC.all_specs())))
+print(
+    "★ 有 `pre_call` 的工具：**%d** 个（总 %d）—— ★ 本版**跟了调用图**"
+    % (len(rows), len(RC.all_specs()))
+)
 print("★ **没回读的**：%d 个" % len(nocl))
 for r in nocl:
     print("   %-52s %s" % (r[0].replace("solidworks_", "")[:51], r[1]))

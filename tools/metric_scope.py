@@ -1,4 +1,5 @@
 """★ 指标的「口径」注册表 —— 口径必须落成可复现代码，不能只写在散文里。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/metric_scope.py
@@ -31,17 +32,17 @@ class MetricScope:
       · 定则三「稳定性没验」⇒ 有 **`ordering`** 字段，且 `stable_topk()` 把顺序钉死。
     """
 
-    key: str                    #: 指标标识（进 JSON 用）
-    question: str               #: ★ 它回答的问题（一句话）
-    unit: str                   #: 计数单位（任务 / 工具 / 行 …）
-    denominator: str            #: ★ 分母**是什么、多少**
-    normalization: str          #: ★ 归一化层级（★ 支线 C1 的教训：层级差 4.5 个百分点）
-    counts_as_hit: str          #: ★ 什么算命中
-    not_counted: tuple           #: ★★ **什么不算命中**（判据的否定面）
-    ordering: str               #: ★ 排序/取值的确定性保证
-    corpus: str                 #: 语料/目录的来源与版本
-    known_limits: tuple = ()    #: ★ 如实声明的边界
-    not_comparable_with: tuple = ()   #: ★★ **不能与哪些数并排比较**（★ 我犯过的错）
+    key: str  #: 指标标识（进 JSON 用）
+    question: str  #: ★ 它回答的问题（一句话）
+    unit: str  #: 计数单位（任务 / 工具 / 行 …）
+    denominator: str  #: ★ 分母**是什么、多少**
+    normalization: str  #: ★ 归一化层级（★ 支线 C1 的教训：层级差 4.5 个百分点）
+    counts_as_hit: str  #: ★ 什么算命中
+    not_counted: tuple  #: ★★ **什么不算命中**（判据的否定面）
+    ordering: str  #: ★ 排序/取值的确定性保证
+    corpus: str  #: 语料/目录的来源与版本
+    known_limits: tuple = ()  #: ★ 如实声明的边界
+    not_comparable_with: tuple = ()  #: ★★ **不能与哪些数并排比较**（★ 我犯过的错）
 
     def __post_init__(self) -> None:
         """★★ 缺了「不算什么」或「顺序」的口径**不许存在** —— 这是负例可证的门禁式约束。
@@ -71,7 +72,8 @@ class MetricScope:
             "   分母   : %s" % self.denominator,
             "   归一化 : %s" % self.normalization,
             "   算命中 : %s" % self.counts_as_hit,
-            "   ★不算  : %s" % ("；".join(self.not_counted) or "（未声明 —— 这本身是缺陷）"),
+            "   ★不算  : %s"
+            % ("；".join(self.not_counted) or "（未声明 —— 这本身是缺陷）"),
             "   顺序   : %s" % self.ordering,
             "   语料   : %s" % self.corpus,
         ]
@@ -174,7 +176,9 @@ SCOPES: tuple = (
             "★ 复刻基于**他人调研抽出的公式**（该公式已用其真实 trace 的 score 反算校验）",
             "★ 字段贡献用 `name` 时我去掉了 `solidworks_` 统一前缀 ⇒ ★ 若有偏，是**偏向 lens**（给了它更干净的名字）",
         ),
-        not_comparable_with=("★ `bm25_topk` 只在同语料同题面上可比（本表已同语料同题面）",),
+        not_comparable_with=(
+            "★ `bm25_topk` 只在同语料同题面上可比（本表已同语料同题面）",
+        ),
     ),
     MetricScope(
         key="model_pick_correct",
@@ -220,7 +224,7 @@ SCOPES: tuple = (
         ),
         ordering="按 (-gain, tool_name) 排序 —— ★ 同分用名字码点升序钉死",
         corpus="别名取自 `c5-gap-handcheck.json`（另一个对话的手核，只读复用）里 `op` 与 `keys` —— "
-               "★ 那些词来自**四家外部开源项目各自的工具名**，不是本仓编的",
+        "★ 那些词来自**四家外部开源项目各自的工具名**，不是本仓编的",
         known_limits=(
             "★ 缓解证据仅到「四个独立团队都这么命名 ⇒ 是该领域自然用词的弱到中等证据」",
             "★ 本批未做中文别名（无真实中文语料）",
@@ -301,8 +305,11 @@ def stable_topk(rows, k: int = 10, key=None, name=None) -> list:
 
 def dump(path: Path | None = None) -> dict:
     """★ 导出全部口径（供 `output/metric-scope-report.json`）。"""
-    d = {"coverage_note": COVERAGE_NOTE, "n_scopes": len(SCOPES),
-         "scopes": [s.as_dict() for s in SCOPES]}
+    d = {
+        "coverage_note": COVERAGE_NOTE,
+        "n_scopes": len(SCOPES),
+        "scopes": [s.as_dict() for s in SCOPES],
+    }
     if path:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -322,7 +329,10 @@ def main() -> int:
     miss_ord = [s.key for s in SCOPES if not s.ordering]
     print("   · 「不算什么」缺失的: %s" % (miss_not or "**无** ✓"))
     print("   · 排序声明缺失的  : %s" % (miss_ord or "**无** ✓"))
-    print("   · 声明了「不可比」的: %d / %d 条" % (sum(1 for s in SCOPES if s.not_comparable_with), len(SCOPES)))
+    print(
+        "   · 声明了「不可比」的: %d / %d 条"
+        % (sum(1 for s in SCOPES if s.not_comparable_with), len(SCOPES))
+    )
     out = ROOT / "output" / "metric-scope-report.json"
     dump(out)
     print("★ 已导出: %s" % out)

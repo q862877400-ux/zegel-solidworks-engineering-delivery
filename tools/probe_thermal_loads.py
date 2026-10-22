@@ -38,15 +38,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "thermal-loads-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "thermal-loads-evidence.json"
+)
 STUDY = "DSH-THERMAL"
 
 
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
+
     #: ★★ 必须以 **`scripts.<mod>`** 加载 —— 包装内部用的是**相对导入**
     #: （`from .sw_simulation import _selected_dispatch_array`）；★ 而我第一版写成了**顶
     #: 层导入**
@@ -71,9 +79,11 @@ def main() -> int:
             stud = sim.get_study_by_name(sw, STUDY)
             mgr = sim._loads_and_restraints_manager(stud)
             ev["steps"]["thermal_study"] = {"ok": mgr is not None, "study_type": 3}
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["thermal_study"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+            }
             mgr = None
 
         #: ★ 直接按包装的签名调：`(manager, model[, 额外 int])`
@@ -94,24 +104,34 @@ def main() -> int:
                     ev["steps"][label] = {
                         "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                         "count": [rep.get("count_before"), rep.get("count_after")]
-                        if isinstance(rep, dict) else None,
-                        "error": (rep.get("error") or "")[:90] if isinstance(rep, dict) else None}
-                except Exception as exc:                       # noqa: BLE001
+                        if isinstance(rep, dict)
+                        else None,
+                        "error": (rep.get("error") or "")[:90]
+                        if isinstance(rep, dict)
+                        else None,
+                    }
+                except Exception as exc:  # noqa: BLE001
                     ev["steps"][label] = {
-                        "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                        "ok": False,
+                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+                    }
 
         hit = [k for k, v in ev["steps"].items() if isinstance(v, dict) and v.get("ok")]
         ev["verdict"] = "pass" if len(hit) >= 2 else "partial"
-        ev["note"] = ("★ 官方六条 VB 声明**逐字抄自 CHM** ⇒ 六条同形且与 `AddElasticConnector` 一致 ⇒ "
-                      "★ 形态没错。★ 本探针把**算例类型**变成变量：**thermal（3）**。")
+        ev["note"] = (
+            "★ 官方六条 VB 声明**逐字抄自 CHM** ⇒ 六条同形且与 `AddElasticConnector` 一致 ⇒ "
+            "★ 形态没错。★ 本探针把**算例类型**变成变量：**thermal（3）**。"
+        )
         ev["successes"] = hit
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1700])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

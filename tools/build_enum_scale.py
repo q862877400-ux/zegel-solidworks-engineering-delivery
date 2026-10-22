@@ -34,18 +34,30 @@ KIND_PATTERNS = [
     ("特征种类", r"^swFeatureNameID_e$"),
     ("草图图元种类", r"^swSketchSegments?_e$|^swSketchPoint|^swSketchConstraint"),
     ("孔/槽种类", r"swWzdGeneralHoleTypes|swWzdHoleStandards|swHole"),
-    ("标注/注释种类", r"swAnnotationType|swDisplayDimension|swDimensionType|swNote|swBalloon"),
-    ("视图种类", r"swDrawingViewTypes|swViewType|swDetViewStyle|swBreakLineStyle|swSectionView"),
+    (
+        "标注/注释种类",
+        r"swAnnotationType|swDisplayDimension|swDimensionType|swNote|swBalloon",
+    ),
+    (
+        "视图种类",
+        r"swDrawingViewTypes|swViewType|swDetViewStyle|swBreakLineStyle|swSectionView",
+    ),
     ("阵列/镜像种类", r"swPattern|swMirror"),
     ("圆角/倒角种类", r"swFillet|swChamfer|swSimpleFillet"),
     ("装配配合种类", r"swMateType|swMateAlign|swMateEntityType|swAddMateError"),
     ("几何实体种类", r"swSelectType|swBodyType|swSurfaceType|swCurveType|swTopology"),
     ("导出/交付种类", r"swExport|swSaveAs|swFileSave|swPDF|swDXF|swSTL"),
-    ("仿真/校核种类", r"swsStudy|swsMesh|swsUnit|swsResult|swsLoad|swsRestraint|swsTopology"),
+    (
+        "仿真/校核种类",
+        r"swsStudy|swsMesh|swsUnit|swsResult|swsLoad|swsRestraint|swsTopology",
+    ),
     ("钣金种类", r"swSheetMetal|swBend|swFlange|swRip|swCorner"),
     ("焊件种类", r"swWeldment|swStructuralMember|swCutList|swGusset|swEndCap"),
     ("模具种类", r"swMold|swPartingLine|swPartingSurface|swCoreCavity|swShutOff"),
-    ("材料/属性种类", r"swMaterial|swCustomInfo|swConfiguration|swEquation|swDesignTable"),
+    (
+        "材料/属性种类",
+        r"swMaterial|swCustomInfo|swConfiguration|swEquation|swDesignTable",
+    ),
     ("错误/状态（★ 非种类轴）", r"swError|swWarning|swStatus|swResult\b|swReturn"),
 ]
 
@@ -56,14 +68,17 @@ def main() -> int:
     for f in sorted(E.glob("*.md")):
         try:
             head = f.read_text(encoding="utf-8", errors="replace").split("\n## ", 1)[0]
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         m = re.search(r"enum_member_count:\s*(\d+)", head)
         if not m:
             continue
         desc = ""
-        dm = re.search(r"^# .*?\n\n## Description\n(.*?)(?=\n## )", f.read_text(
-            encoding="utf-8", errors="replace"), re.S | re.M)
+        dm = re.search(
+            r"^# .*?\n\n## Description\n(.*?)(?=\n## )",
+            f.read_text(encoding="utf-8", errors="replace"),
+            re.S | re.M,
+        )
         if dm:
             desc = dm.group(1).strip().splitlines()[0][:120]
         rows.append({"enum": f.stem, "members": int(m.group(1)), "desc": desc})
@@ -84,21 +99,33 @@ def main() -> int:
     for b in buckets.values():
         b["top"] = [n for _, n in sorted(b["top"], reverse=True)[:6]]
 
-    OUT.write_text(json.dumps({
-        "at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "enums_with_count": len(rows),
-        "total_enum_members": total,
-        "buckets": buckets,
-        "all": sorted(rows, key=lambda r: -r["members"]),
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "enums_with_count": len(rows),
+                "total_enum_members": total,
+                "buckets": buckets,
+                "all": sorted(rows, key=lambda r: -r["members"]),
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
 
-    print("★ 官方枚举：**%d** 个带 `enum_member_count` ⇒ 成员合计 **%d**" % (len(rows), total))
+    print(
+        "★ 官方枚举：**%d** 个带 `enum_member_count` ⇒ 成员合计 **%d**"
+        % (len(rows), total)
+    )
     print()
     print("%-26s %-8s %-8s %s" % ("★ 种类轴（归类）", "枚举数", "成员数", "最大的几个"))
     print("-" * 118)
     for tag, b in sorted(buckets.items(), key=lambda kv: -kv[1]["members"]):
-        print("%-26s %-8d %-8d %s" % (tag[:25], b["enums"], b["members"],
-                                      ", ".join(b["top"])[:58]))
+        print(
+            "%-26s %-8d %-8d %s"
+            % (tag[:25], b["enums"], b["members"], ", ".join(b["top"])[:58])
+        )
     print()
     print("★ 单枚举最大的 12 个（★ 这些才是「一种东西有几种」的直接读数）：")
     for r in sorted(rows, key=lambda r: -r["members"])[:12]:

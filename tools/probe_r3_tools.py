@@ -11,7 +11,7 @@
 #       ★ 其官方页**无 `## Remarks`** ⇒ ★ 前置**查不到**（★ 队友如实报 `None`）
 #     · 闭合角 `IModelDoc2.InsertSheetMetalClosedCorner`（**零参·回 `void`**）
 #       ★ 官方页**同样无 `## Remarks`** ⇒ ★ 判据只能是**树增量 + 面数增量 + 体积增量**三合一
-# · 顶端盖 `InsertEndCapFeature3`（10 参）★ 官方：「select one or more **end faces**」· 
+# · 顶端盖 `InsertEndCapFeature3`（10 参）★ 官方：「select one or more **end faces**」·
 # **没给 mark**
 # · 角撑板 `InsertGussetFeature3`（20 参）★ 官方：「**two faces** … with a **Mark of 1**
 # 」
@@ -31,9 +31,9 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC                                        # noqa: E402
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+import register_capabilities as RC  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "r3-tools-evidence.json"
 
@@ -71,12 +71,13 @@ def _call(tool: str, args: dict) -> dict:
         if k not in want:
             continue
         if k in alias and alias[k] is None:
-            continue                     #: ★ 由解析器消费，不进目标函数
+            continue  #: ★ 由解析器消费，不进目标函数
         kwargs[alias.get(k, k)] = v
     inj = spec.inject
     if inj not in RC.RESOLVERS:
         return {"ok": False, "err": "★ 注入名 %r 不在 RESOLVERS" % inj}
     kwargs[inj] = RC.RESOLVERS[inj](None)
+
     #: ★★★ **2026-10-03（接手轮）补的第二处**：注册器在调目标函数前还会跑
     #:   `pre_call(params)`（副作用）与 **`derived_args(params)`（补实参）**
     #:   （`tool_registry.py:510-523` 逐字）。★ 我上一版**两样都没跑** ⇒
@@ -85,7 +86,7 @@ def _call(tool: str, args: dict) -> dict:
     #:   ⇒ ★ **又一条好工具被我记成坏的**（★ 实测：`create_base_flange` 等 4 条钣金工具，
     #:     其 `spec` 形参正是由 `derived_args` 供给的 —— `derived_args` 补 kwargs 的规则还含
     #:     「**不得覆盖已直传的参数名**」，这里照抄）。
-    class _P:                                    #: ★ 形参对象：注册器的 `derived_args(params)` 收的就是它
+    class _P:  #: ★ 形参对象：注册器的 `derived_args(params)` 收的就是它
         pass
 
     _params = _P()
@@ -96,21 +97,29 @@ def _call(tool: str, args: dict) -> dict:
         try:
             spec.pre_call(_params)
             out_note.append("pre_call 已跑")
-        except Exception as exc:                                      # noqa: BLE001
-            out_note.append("pre_call 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90]))
+        except Exception as exc:  # noqa: BLE001
+            out_note.append(
+                "pre_call 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90])
+            )
     if getattr(spec, "derived_args", None) is not None:
         try:
             _extra = spec.derived_args(_params) or {}
             _clash = set(_extra) & set(kwargs)
             if _clash:
-                out_note.append("derived_args 想覆盖 %s（★ 契约不允许）" % sorted(_clash))
+                out_note.append(
+                    "derived_args 想覆盖 %s（★ 契约不允许）" % sorted(_clash)
+                )
             kwargs.update({k: v for k, v in _extra.items() if k not in _clash})
             out_note.append("derived_args 补了 %s" % sorted(_extra))
-        except Exception as exc:                                      # noqa: BLE001
-            out_note.append("derived_args 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90]))
-    out: dict = {"call_path": "module=%s function=%s inject=%s params=%s"
-                              % (spec.module, spec.function, inj, sorted(kwargs)),
-                 "notes": list(out_note)}
+        except Exception as exc:  # noqa: BLE001
+            out_note.append(
+                "derived_args 抛错 %s: %s" % (type(exc).__name__, str(exc)[:90])
+            )
+    out: dict = {
+        "call_path": "module=%s function=%s inject=%s params=%s"
+        % (spec.module, spec.function, inj, sorted(kwargs)),
+        "notes": list(out_note),
+    }
     try:
         ret = fn(**kwargs)
         if isinstance(ret, dict):
@@ -118,15 +127,29 @@ def _call(tool: str, args: dict) -> dict:
             #:   ★ 把 `selection_marks`（工具**自己读到的选区**）丢掉了 ⇒
             #: 前置判 False 时**看不出它读到了几个、什么 mark**（★ 白名单会把诊断字段吃
             #: 掉）。
-            out["ret_all"] = {k: (str(v)[:200] if not isinstance(v, (int, float, bool, type(None), list, dict))
-                                  else v) for k, v in ret.items()}
-            for k in ("ok", "preconditions_held", "ret_name", "ret_type", "ret_is_none",
-                      "new_features", "error", "err"):
+            out["ret_all"] = {
+                k: (
+                    str(v)[:200]
+                    if not isinstance(v, (int, float, bool, type(None), list, dict))
+                    else v
+                )
+                for k, v in ret.items()
+            }
+            for k in (
+                "ok",
+                "preconditions_held",
+                "ret_name",
+                "ret_type",
+                "ret_is_none",
+                "new_features",
+                "error",
+                "err",
+            ):
                 if k in ret:
                     out[k] = ret[k]
         out["ret_ok"] = out.get("ok")
         out["ok"] = bool(out.get("ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:260])
     return out
@@ -137,13 +160,13 @@ def _state(doc) -> dict:
     st: dict = {}
     try:
         st["features"] = list(P.feature_names(doc) or [])
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         st["features"] = None
     try:
         bodies = list(_g(doc, "GetBodies2", 0, True) or [])
         st["body_count"] = len(bodies)
         st["face_count"] = sum(len(list(_g(b, "GetFaces") or [])) for b in bodies)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return st
 
@@ -151,7 +174,9 @@ def _state(doc) -> dict:
 def _delta(before: dict, after: dict) -> dict:
     d: dict = {}
     if before.get("features") is not None and after.get("features") is not None:
-        d["new_features"] = [n for n in after["features"] if n not in before["features"]]
+        d["new_features"] = [
+            n for n in after["features"] if n not in before["features"]
+        ]
     if "face_count" in before and "face_count" in after:
         d["face_delta"] = after["face_count"] - before["face_count"]
     return d
@@ -165,11 +190,22 @@ def _l_shape_sketch(doc):
       ★ 换成**闭合矩形**（官方文档里最明确的那个形态）先把"有没有钣金件"这件事确定下来。
     """
     P.start_sketch(doc, plane_name="Front Plane")
-    _g(_g(doc, "SketchManager"), "CreateCornerRectangle",
-       -0.05, -0.03, 0.0, 0.05, 0.03, 0.0)
+    _g(
+        _g(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.05,
+        -0.03,
+        0.0,
+        0.05,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("草图") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("草图") or n.lower().startswith("sketch")
+    ]
     return names[-1] if names else "草图1"
 
 
@@ -177,8 +213,11 @@ def _line_sketch(doc):
     P.start_sketch(doc, plane_name="Front Plane")
     _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("草图") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("草图") or n.lower().startswith("sketch")
+    ]
     return names[-1] if names else "草图1"
 
 
@@ -208,17 +247,21 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
       并把实选到的数量如实回报 —— ★ 选不上就报**前置未成立**，不硬调。
     """
     import scripts.sw_part as _SP
+
     out = {"requested": count, "mark": mark, "selected": 0, "errs": []}
     try:
         _g(doc, "ClearSelection2", True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
+
     def _count(m: int) -> int:
         #: ★★ **事实 8**：`Select4` / `SelectByID2` 的**布尔返回值不可信**，
         #:   ★ **只有回读计数算数**（本仓实测：12 次全 false 而计数 12）。
         try:
-            return int(_g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0)
-        except Exception:                                                 # noqa: BLE001
+            return int(
+                _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0
+            )
+        except Exception:  # noqa: BLE001
             return -1
 
     picked = 0
@@ -234,7 +277,7 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
                 #: ）。
                 if _count(mark) > picked:
                     picked = _count(mark)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["errs"].append("%s: %s" % (type(exc).__name__, str(exc)[:60]))
         if picked >= count:
             break
@@ -253,25 +296,68 @@ def main() -> int:
     row["profile_path"] = prof
 
     plan = [
-        ("solidworks_sheet_metal_insert_miter_flange", "base_flange",
-         {"use_default_radius": True, "global_radius_mm": 0.0, "rip_gap_mm": 0.0,
-          "use_default_relief": True, "use_relief_ratio": False, "relief_ratio": 0.0,
-          "relief_width_mm": 0.0, "relief_depth_mm": 0.0, "relief_type": 1,
-          "trim_side_bends": False, "flange_pos": 1, "offset_dist1_mm": 0.0,
-          "offset_dist2_mm": 0.0}),
+        (
+            "solidworks_sheet_metal_insert_miter_flange",
+            "base_flange",
+            {
+                "use_default_radius": True,
+                "global_radius_mm": 0.0,
+                "rip_gap_mm": 0.0,
+                "use_default_relief": True,
+                "use_relief_ratio": False,
+                "relief_ratio": 0.0,
+                "relief_width_mm": 0.0,
+                "relief_depth_mm": 0.0,
+                "relief_type": 1,
+                "trim_side_bends": False,
+                "flange_pos": 1,
+                "offset_dist1_mm": 0.0,
+                "offset_dist2_mm": 0.0,
+            },
+        ),
         ("solidworks_sheet_metal_insert_closed_corner", "base_flange", {}),
-        ("solidworks_weldment_insert_end_cap", "structural",
-         {"depth_mm": 5.0, "is_given_offset": False, "is_chamfer": False, "offset_value_mm": 0.0,
-          "wall_ratio": 0.0, "chamfer_value_mm": 0.0, "is_corner_treatment": False,
-          "depth_offset_mm": 0.0, "is_reverse": False, "is_end_cap_inward": 0}),
-        ("solidworks_weldment_gusset_create", "structural",
-         {"depth_mm": 5.0, "dir_type": 1, "loc_type": 1, "is_profile": False,
-          "profile_d1_mm": 0.0, "profile_d2_mm": 0.0, "profile_d3_mm": 0.0,
-          "profile_angle_deg": 45.0, "profile_d4_mm": 0.0, "offset_reference_plane": False,
-          "d_profile_offset_mm": 0.0, "crv_index": 0, "reverse_dir": False,
-          "reverse_face": False, "use_len_dim": False, "profile_d5_mm": 0.0,
-          "profile_d6_mm": 0.0, "profile_chamfer_angle_deg": 45.0,
-          "use_len_dim_for_chamfer": False, "need_chamfer_in_gusset": False}),
+        (
+            "solidworks_weldment_insert_end_cap",
+            "structural",
+            {
+                "depth_mm": 5.0,
+                "is_given_offset": False,
+                "is_chamfer": False,
+                "offset_value_mm": 0.0,
+                "wall_ratio": 0.0,
+                "chamfer_value_mm": 0.0,
+                "is_corner_treatment": False,
+                "depth_offset_mm": 0.0,
+                "is_reverse": False,
+                "is_end_cap_inward": 0,
+            },
+        ),
+        (
+            "solidworks_weldment_gusset_create",
+            "structural",
+            {
+                "depth_mm": 5.0,
+                "dir_type": 1,
+                "loc_type": 1,
+                "is_profile": False,
+                "profile_d1_mm": 0.0,
+                "profile_d2_mm": 0.0,
+                "profile_d3_mm": 0.0,
+                "profile_angle_deg": 45.0,
+                "profile_d4_mm": 0.0,
+                "offset_reference_plane": False,
+                "d_profile_offset_mm": 0.0,
+                "crv_index": 0,
+                "reverse_dir": False,
+                "reverse_face": False,
+                "use_len_dim": False,
+                "profile_d5_mm": 0.0,
+                "profile_d6_mm": 0.0,
+                "profile_chamfer_angle_deg": 45.0,
+                "use_len_dim_for_chamfer": False,
+                "need_chamfer_in_gusset": False,
+            },
+        ),
     ]
 
     for tool, setup, args in plan:
@@ -282,50 +368,69 @@ def main() -> int:
             if setup == "base_flange":
                 sk = _l_shape_sketch(doc)
                 r["sketch"] = sk
-                r["setup_call"] = _call("solidworks_sheet_metal_create_base_flange",
-                                        {"sketch_name": sk, "thickness_mm": 1.0,
-                                         "bend_radius_mm": 1.0, "depth_mm": 30.0,
-                                         "k_factor": 0.42, "relief_ratio": 0.5,
-                                         "reverse_direction": False,
-                                         "reverse_thickness": False})
-                r["is_sheet_metal"] = bool((_call("solidworks_sheet_metal_evidence", {}) or {}).get("ok"))
+                r["setup_call"] = _call(
+                    "solidworks_sheet_metal_create_base_flange",
+                    {
+                        "sketch_name": sk,
+                        "thickness_mm": 1.0,
+                        "bend_radius_mm": 1.0,
+                        "depth_mm": 30.0,
+                        "k_factor": 0.42,
+                        "relief_ratio": 0.5,
+                        "reverse_direction": False,
+                        "reverse_thickness": False,
+                    },
+                )
+                r["is_sheet_metal"] = bool(
+                    (_call("solidworks_sheet_metal_evidence", {}) or {}).get("ok")
+                )
             elif setup == "structural":
                 sk = _line_sketch(doc)
                 r["sketch"] = sk
                 r["profile"] = prof
                 if prof:
-                    r["setup_call"] = _call("solidworks_weldment_create_structural_member",
-                                            {"sketch_name": sk, "profile_path": prof})
+                    r["setup_call"] = _call(
+                        "solidworks_weldment_create_structural_member",
+                        {"sketch_name": sk, "profile_path": prof},
+                    )
                 else:
                     r["setup_call"] = {"ok": False, "err": "★ 找不到 .sldlfp 焊件轮廓"}
             #: ★★ 2026-10-03（接手轮）：**官方前置是"先选面"** ⇒ 调工具前按 mark 选好
             #: （★ 端盖 mark=0 选 1 个端面 · 角撑板 mark=1 选 2 个面），并把实选数如实记
             #: 下。
-            _need = {"solidworks_weldment_insert_end_cap": (1, 0),
-                     "solidworks_weldment_gusset_create": (2, 1)}.get(tool)
+            _need = {
+                "solidworks_weldment_insert_end_cap": (1, 0),
+                "solidworks_weldment_gusset_create": (2, 1),
+            }.get(tool)
             if _need:
                 r["face_pick"] = _pick_faces(doc, _need[0], _need[1])
             before = _state(doc)
             r["call"] = _call(tool, args)
             after = _state(doc)
             r["delta"] = _delta(before, after)
-            r["ok"] = bool(r["call"].get("ok") or (r["delta"].get("new_features") or []))
-            r["judged_by"] = ("工具返回 ok **或** 树增量"
-                              "（★ 闭合角那条**没有「返回非 None」这条判据** ⇒ 树/面/体积三合一）")
-        except Exception as exc:                                          # noqa: BLE001
+            r["ok"] = bool(
+                r["call"].get("ok") or (r["delta"].get("new_features") or [])
+            )
+            r["judged_by"] = (
+                "工具返回 ok **或** 树增量"
+                "（★ 闭合角那条**没有「返回非 None」这条判据** ⇒ 树/面/体积三合一）"
+            )
+        except Exception as exc:  # noqa: BLE001
             r["ok"] = False
             r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:260])
         finally:
             try:
                 if doc is not None:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         row["cases"].append(r)
     row["passed"] = sum(1 for r in row["cases"] if r.get("ok"))
     row["total"] = len(row["cases"])
     row["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

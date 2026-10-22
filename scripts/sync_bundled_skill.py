@@ -66,7 +66,10 @@ def _validate_target(root: Path, target: Path) -> None:
 def _is_runtime_file(path: Path, source_root: Path) -> bool:
     """@brief 排除缓存、构建产物和字节码，只保留可发布源文件。"""
     relative = path.relative_to(source_root)
-    return not any(part in SKIPPED_DIRECTORIES for part in relative.parts) and path.suffix.casefold() not in SKIPPED_SUFFIXES
+    return (
+        not any(part in SKIPPED_DIRECTORIES for part in relative.parts)
+        and path.suffix.casefold() not in SKIPPED_SUFFIXES
+    )
 
 
 def collect_runtime_files(root: Path) -> dict[Path, Path]:
@@ -87,7 +90,9 @@ def collect_runtime_files(root: Path) -> dict[Path, Path]:
     return files
 
 
-def sync_bundled_skill(root: Path = ROOT, target: Path = BUNDLED_SKILL) -> dict[str, object]:
+def sync_bundled_skill(
+    root: Path = ROOT, target: Path = BUNDLED_SKILL
+) -> dict[str, object]:
     """@brief 同步运行时文件并清理目标中已无源文件的陈旧副本。"""
     root = root.resolve()
     target = target.resolve()
@@ -106,7 +111,9 @@ def sync_bundled_skill(root: Path = ROOT, target: Path = BUNDLED_SKILL) -> dict[
         if relative_path not in expected:
             bundled_file.unlink()
             pruned.append(relative_path.as_posix())
-    for directory in sorted((path for path in target.rglob("*") if path.is_dir()), reverse=True):
+    for directory in sorted(
+        (path for path in target.rglob("*") if path.is_dir()), reverse=True
+    ):
         try:
             directory.rmdir()
         except OSError:

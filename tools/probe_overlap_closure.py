@@ -17,6 +17,7 @@
 
 ★ 判据：★ ① 点数回到 4（★ 无孤立点）· ★ ② 拉伸返回非 None · ★ ③ 体积 ≈ 解析 ✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_overlap_closure.py
@@ -39,13 +40,16 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _main() -> int:
-    rep = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-           "_": "★ 相邻真曲线轻微交叠 ⇒ 轮廓闭合（★ 10×10 mm 方块）", "cases": []}
+    rep = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "★ 相邻真曲线轻微交叠 ⇒ 轮廓闭合（★ 10×10 mm 方块）",
+        "cases": [],
+    }
     sw, _ = C.connect_solidworks(wait_seconds=30)
 
     def run(tag, draw):
@@ -57,9 +61,13 @@ def _main() -> int:
             draw(doc)
             try:
                 sk = C.get_com_member(doc, "GetActiveSketch2")
-                row["segments"] = len(list(C.get_com_member(sk, "GetSketchSegments") or []))
-                row["points"] = len(list(C.get_com_member(sk, "GetSketchPoints2") or []))
-            except Exception:                                             # noqa: BLE001
+                row["segments"] = len(
+                    list(C.get_com_member(sk, "GetSketchSegments") or [])
+                )
+                row["points"] = len(
+                    list(C.get_com_member(sk, "GetSketchPoints2") or [])
+                )
+            except Exception:  # noqa: BLE001
                 pass
             try:
                 P.end_sketch(doc)
@@ -67,16 +75,18 @@ def _main() -> int:
                 row["extrude_ok"] = f is not None
                 if f is not None:
                     try:
-                        mp = C.get_com_member(C.get_com_member(doc, "Extension"),
-                                              "CreateMassProperty")
+                        mp = C.get_com_member(
+                            C.get_com_member(doc, "Extension"), "CreateMassProperty"
+                        )
                         row["volume_mm3"] = round(
-                            float(C.get_com_member(mp, "Volume")) * 1e9, 4)
-                    except Exception:                                     # noqa: BLE001
+                            float(C.get_com_member(mp, "Volume")) * 1e9, 4
+                        )
+                    except Exception:  # noqa: BLE001
                         pass
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 row["extrude_ok"] = False
                 row["extrude_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         finally:
             if doc is not None:
@@ -84,7 +94,7 @@ def _main() -> int:
                     t = str(C.get_com_member(doc, "GetTitle") or "")
                     if t:
                         C.get_com_member(sw, "CloseDoc", t)
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
         return row
 
@@ -101,33 +111,97 @@ def _main() -> int:
         def draw(doc):
             sm = C.get_com_member(doc, "SketchManager")
             #: 底边（★ 显式 y=f(x) ⇒ X 给 ""）
-            C.get_com_member(sm, "CreateEquationSpline2", "", "0.0", "", lo, hi,
-                             False, 0.0, 0.0, 0.0, True, True)
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                "",
+                "0.0",
+                "",
+                lo,
+                hi,
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
             #: 右边（★ 参数式 x=0.01, y=t）
-            C.get_com_member(sm, "CreateEquationSpline2", "0.01", "t", "", lo, hi,
-                             False, 0.0, 0.0, 0.0, True, True)
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                "0.01",
+                "t",
+                "",
+                lo,
+                hi,
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
             #: 顶边
-            C.get_com_member(sm, "CreateEquationSpline2", "", "0.01", "", lo, hi,
-                             False, 0.0, 0.0, 0.0, True, True)
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                "",
+                "0.01",
+                "",
+                lo,
+                hi,
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
             #: 左边（★ 参数式 x=0, y=t）
-            C.get_com_member(sm, "CreateEquationSpline2", "0.0", "t", "", lo, hi,
-                             False, 0.0, 0.0, 0.0, True, True)
+            C.get_com_member(
+                sm,
+                "CreateEquationSpline2",
+                "0.0",
+                "t",
+                "",
+                lo,
+                hi,
+                False,
+                0.0,
+                0.0,
+                0.0,
+                True,
+                True,
+            )
+
         return draw
 
-    for tag, delta in (("① 交叠 0（★ 端点相接）", 0.0),
-                       ("② 交叠 0.05 mm", 0.00005),
-                       ("③ 交叠 0.2 mm", 0.0002),
-                       ("④ 交叠 1 mm", 0.001)):
+    for tag, delta in (
+        ("① 交叠 0（★ 端点相接）", 0.0),
+        ("② 交叠 0.05 mm", 0.00005),
+        ("③ 交叠 0.2 mm", 0.0002),
+        ("④ 交叠 1 mm", 0.001),
+    ):
         rep["cases"].append(run(tag, mk(delta)))
 
     p = R / "output" / "_probe_overlap_closure.json"
-    p.write_text(json.dumps(rep, ensure_ascii=False, indent=1, default=str) + "\n",
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(rep, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     for c in rep["cases"]:
-        print("  ★ %-26s 段=%-3s 点=%-3s 拉伸=%-6s 体积=%s %s"
-              % (c.get("tag"), c.get("segments"), c.get("points"),
-                 c.get("extrude_ok"), c.get("volume_mm3"),
-                 (c.get("extrude_err") or c.get("error") or "")[:64]))
+        print(
+            "  ★ %-26s 段=%-3s 点=%-3s 拉伸=%-6s 体积=%s %s"
+            % (
+                c.get("tag"),
+                c.get("segments"),
+                c.get("points"),
+                c.get("extrude_ok"),
+                c.get("volume_mm3"),
+                (c.get("extrude_err") or c.get("error") or "")[:64],
+            )
+        )
     print("  产物：%s" % p)
     return 0
 
@@ -135,9 +209,10 @@ def _main() -> int:
 def main() -> int:
     try:
         return _main()
-    except BaseException:                                                 # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         (R / "output" / "_probe_overlap_tb.txt").write_text(
-            _tb.format_exc(), encoding="utf-8")
+            _tb.format_exc(), encoding="utf-8"
+        )
         raise
 
 

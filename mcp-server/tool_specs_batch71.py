@@ -9,13 +9,13 @@
 #
 # ====================  ================================================  ==========  ==
 # ======
-# 工具栏原文             官方成员                                          真机        
+# 工具栏原文             官方成员                                          真机
 # 登记
 # ====================  ================================================  ==========  ==
 # ======
-# 通过参考点的曲线        `InsertCurveFileBegin/Point/End`（三步式）         ✅         
+# 通过参考点的曲线        `InsertCurveFileBegin/Point/End`（三步式）         ✅
 #   ✅
-# 配合参考               `InsertMateReference2`（**12 参**）               ✅           
+# 配合参考               `InsertMateReference2`（**12 参**）               ✅
 # ✗（见下）
 # 分割线（投影）          `InsertSplitLineProject`                         ✅（★ 已更正
 # ）  ✗
@@ -66,19 +66,24 @@ _BATCH71: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_insert_curve_through_points",
         title="Insert Curve Through Points",
-        module="sw_curve_and_split", function="insert_curve_through_points",
+        module="sw_curve_and_split",
+        function="insert_curve_through_points",
         inject="model",
         param_alias={"points_mm": "points_mm"},
         params=[
-            Param("points_mm", list, description="点的列表，每项 `[x, y, z]`（**毫米**，至少 2 个）。"
-                                               "★ 官方 X/Y/Z 只说 \"value for the point\"、**没给单位** ⇒ "
-                                               "本工具按 SolidWorks API 惯例当作**米**、在边界换算一次"
-                                               "（规则 2），★ 并把该假设写进返回值。"),
+            Param(
+                "points_mm",
+                list,
+                description="点的列表，每项 `[x, y, z]`（**毫米**，至少 2 个）。"
+                '★ 官方 X/Y/Z 只说 "value for the point"、**没给单位** ⇒ '
+                "本工具按 SolidWorks API 惯例当作**米**、在边界换算一次"
+                "（规则 2），★ 并把该假设写进返回值。",
+            ),
         ],
         doc="★ 通过参考点的曲线：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → "
-            "`InsertCurveFileEnd()`（★ **三步式**，★ 别只调中间那个）。"
-            "★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。"
-            "★ 判据 = `Point`/`End` 的返回值 **且** 特征树增量。",
+        "`InsertCurveFileEnd()`（★ **三步式**，★ 别只调中间那个）。"
+        "★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。"
+        "★ 判据 = `Point`/`End` 的返回值 **且** 特征树增量。",
     ),
 ]
 

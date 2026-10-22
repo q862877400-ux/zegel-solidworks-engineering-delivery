@@ -52,7 +52,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
-ROOT = Path(os.environ.get("DSH_DISPATCH_BYREF_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_DISPATCH_BYREF_ROOT") or Path(__file__).resolve().parents[1]
+)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -134,7 +136,7 @@ def com_args(entry, call_file: Path, call, slots, srcs, table=None):
             #: 一字未变）。
             #: ★★ **为什么**：★ 那 3 处的 `slots` 是 `[('*args', None)]` 而 **`com = 1`*
             #: *
-            #: ⇒ ★ **`env.get("*args")` 不是空的**（★ 有 1 个元素）⇒ ★ `if not starred` 
+            #: ⇒ ★ **`env.get("*args")` 不是空的**（★ 有 1 个元素）⇒ ★ `if not starred`
             #: **不成立**
             #:   ⇒ ★ 那个早返回**从未触发**。
             #:   ★★★ **新认识（留给下一轮）**：★ 判据条件不该是「`*args` **为空**」，
@@ -161,7 +163,7 @@ def judge(member: str, com: list[str], table, byref_vars: set[str], alias_inline
         return "unknown"
     cands = [v for v in variants if len(counted_positions(v[1])) == len(com)]
     if not cands:
-        #: ★★★ spec 271 的**判别规则**（★ 在 268 的窄规则上加一层，★ 分开了 `starargs` 
+        #: ★★★ spec 271 的**判别规则**（★ 在 268 的窄规则上加一层，★ 分开了 `starargs`
         #: 与 `real-gap`）。
         #:   ★★ **为什么还要再加一层**：★ 271 量出那两类在 AST 上**完全同形** ——
         #:   ★ `_checked(route_manager, "CreateFlattenRoute", *args)` 与
@@ -190,9 +192,12 @@ def judge(member: str, com: list[str], table, byref_vars: set[str], alias_inline
         #:     与**本段里的「spec 267 的教训」** ⇒ ★ **改这段前先跑它** ✓
         if len(com) == 1 and min(len(counted_positions(v[1])) for v in variants) >= 2:
             missing_all_byref = all(
-                all(p.strip().endswith("&")
-                    for _i, p in counted_positions(v[1])[len(com):])
-                for v in variants)
+                all(
+                    p.strip().endswith("&")
+                    for _i, p in counted_positions(v[1])[len(com) :]
+                )
+                for v in variants
+            )
             if not missing_all_byref:
                 return "starred"
         return "arity"
@@ -262,8 +267,10 @@ def main() -> int:
                 continue
             if cp not in byref_cache:
                 byref_cache[cp] = byref_variables(cp)
-                alias_cache[cp] = [re.compile(r"^\s*%s\s*\(" % re.escape(a))
-                                   for a in sorted(byref_alias_names(cp))]
+                alias_cache[cp] = [
+                    re.compile(r"^\s*%s\s*\(" % re.escape(a))
+                    for a in sorted(byref_alias_names(cp))
+                ]
             res = judge(member, com, table, byref_cache[cp], alias_cache[cp])
             if res == "unknown":
                 unknown += 1
@@ -283,36 +290,70 @@ def main() -> int:
             hit += 1
             if isinstance(res, tuple):
                 _, pos, ptype, actual, sig_name = res
-                rel = cp.relative_to(ROOT).as_posix() if cp.is_relative_to(ROOT) else cp.as_posix()
-                violations.append({
-                    "file": rel, "line": call.lineno, "member": member,
-                    "position": pos, "type": ptype, "actual": actual,
-                    "entry": "%s::%s" % (entry[0].name, entry[1].name),
-                    "signature": sig_name,
-                })
+                rel = (
+                    cp.relative_to(ROOT).as_posix()
+                    if cp.is_relative_to(ROOT)
+                    else cp.as_posix()
+                )
+                violations.append(
+                    {
+                        "file": rel,
+                        "line": call.lineno,
+                        "member": member,
+                        "position": pos,
+                        "type": ptype,
+                        "actual": actual,
+                        "entry": "%s::%s" % (entry[0].name, entry[1].name),
+                        "signature": sig_name,
+                    }
+                )
         if hit:
             judged_entries += 1
 
     print("== 分发口调用点的标量 by-ref 占位（spec 231）==")
-    print("扫描 `%s/scripts/**/*.py` · 反射转储 %d 份 · 成员 %d 个"
-          % (ROOT.as_posix(), len(dumps), len(table)))
-    print("可一级转发入口 %d · 其中已核 by-ref 的 %d 个 · 已核调用点 %d"
-          % (n_entries, judged_entries, judged_sites))
-    print("（非字面量调用点 %d · 成员名查不到 %d · arity 不符 %d · 形参未绑定 %d —— 只计数、不判罪）"
-          % (nonliteral, unknown, arity, unbound))
+    print(
+        "扫描 `%s/scripts/**/*.py` · 反射转储 %d 份 · 成员 %d 个"
+        % (ROOT.as_posix(), len(dumps), len(table))
+    )
+    print(
+        "可一级转发入口 %d · 其中已核 by-ref 的 %d 个 · 已核调用点 %d"
+        % (n_entries, judged_entries, judged_sites)
+    )
+    print(
+        "（非字面量调用点 %d · 成员名查不到 %d · arity 不符 %d · 形参未绑定 %d —— 只计数、不判罪）"
+        % (nonliteral, unknown, arity, unbound)
+    )
 
     if judged_entries < min_entries:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可核分发口 %d < 下界 %d（只增不减：先查解析器/取点）"
-                                     % (judged_entries, min_entries)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可核分发口 %d < 下界 %d（只增不减：先查解析器/取点）"
+                % (judged_entries, min_entries),
+            }
+        )
     if judged_sites < min_sites:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "已核调用点 %d < 下界 %d（只增不减：先查解析器/取点）"
-                                     % (judged_sites, min_sites)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "已核调用点 %d < 下界 %d（只增不减：先查解析器/取点）"
+                % (judged_sites, min_sites),
+            }
+        )
     #: ★ 假绿守卫（事实 46）：下界非 0 而核了 0 个 ⇒ 不许 PASS。
     if min_sites > 0 and judged_sites == 0:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "已核调用点 == 0（解析器/取点失效 ⇒ 不许 PASS）"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "已核调用点 == 0（解析器/取点失效 ⇒ 不许 PASS）",
+            }
+        )
 
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
@@ -320,17 +361,36 @@ def main() -> int:
             if v.get("kind"):
                 print("  [%s] %s —— %s" % (v["kind"], v.get("file", "-"), v["detail"]))
             else:
-                print("  [bare-byref] %s:%d %s <- %s 第 %d 位应为 %s，实参是 `%s`"
-                      % (v["file"], v["line"], v["member"], v["entry"],
-                         v["position"], v["type"], v["actual"][:40]))
+                print(
+                    "  [bare-byref] %s:%d %s <- %s 第 %d 位应为 %s，实参是 `%s`"
+                    % (
+                        v["file"],
+                        v["line"],
+                        v["member"],
+                        v["entry"],
+                        v["position"],
+                        v["type"],
+                        v["actual"][:40],
+                    )
+                )
         if len(violations) > DETAIL_LIMIT:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("分发口 by-ref · 可核分发口 %d · 已核调用点 %d · 查不到 %d · arity 不符 %d · "
-          "形参未绑定 %d · 违规 %d · [%s] · exit %d"
-          % (judged_entries, judged_sites, unknown, arity, unbound, len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "分发口 by-ref · 可核分发口 %d · 已核调用点 %d · 查不到 %d · arity 不符 %d · "
+        "形参未绑定 %d · 违规 %d · [%s] · exit %d"
+        % (
+            judged_entries,
+            judged_sites,
+            unknown,
+            arity,
+            unbound,
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

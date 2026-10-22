@@ -1,4 +1,5 @@
 """★ 探针：只读判别"两选面"的 Append 语义（SelectByID2 臂 与 Select4 臂）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -21,8 +22,8 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import sw_connect                                                                  # noqa: E402
-import tool_caller                                                                 # noqa: E402
+import sw_connect  # noqa: E402
+import tool_caller  # noqa: E402
 
 RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 100.0, "y2_mm": 60.0}
 
@@ -30,18 +31,29 @@ RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 100.0, "y2_mm": 60.0}
 def _centres(model):
     import sw_part as _sp
     import sw_selection_spec as _SS
+
     faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
     out = []
     for i, f in enumerate(faces):
         b = list(_sp.get_com_member(f, "GetBox") or [])
         if len(b) >= 6:
-            out.append({"i": i, "face": f,
-                        "c": ((b[0] + b[3]) / 2.0, (b[1] + b[4]) / 2.0, (b[2] + b[5]) / 2.0)})
+            out.append(
+                {
+                    "i": i,
+                    "face": f,
+                    "c": (
+                        (b[0] + b[3]) / 2.0,
+                        (b[1] + b[4]) / 2.0,
+                        (b[2] + b[5]) / 2.0,
+                    ),
+                }
+            )
     return out
 
 
 def main() -> int:
     import sw_part as _sp
+
     out = {}
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -49,9 +61,11 @@ def main() -> int:
         return 2
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
-    for step, params in (("solidworks_sketch_start", {}),
-                         ("solidworks_sketch_add_rectangle", RECT),
-                         ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 20.0})):
+    for step, params in (
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", RECT),
+        ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 20.0}),
+    ):
         ok, note = tool_caller.call(step, inject_objects=inj, **params)
         if not ok:
             print("★ 建板没成：%s" % step)
@@ -69,16 +83,24 @@ def main() -> int:
 
     #: ── A 臂：SelectByID2 的两步（先 False 再 True）───────────────────────
     model.ClearSelection2(True)
-    ext.SelectByID2("", "FACE", A["c"][0], A["c"][1], A["c"][2], False, 0, _sp._empty_callout(), 0)
+    ext.SelectByID2(
+        "", "FACE", A["c"][0], A["c"][1], A["c"][2], False, 0, _sp._empty_callout(), 0
+    )
     res["A1_select_A_AppendFalse"] = cnt()
-    ext.SelectByID2("", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0)
+    ext.SelectByID2(
+        "", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0
+    )
     res["A2_then_B_AppendTrue"] = cnt()
 
     #: ── A' 臂：两步都用 Append=True ───────────────────────────────────────
     model.ClearSelection2(True)
-    ext.SelectByID2("", "FACE", A["c"][0], A["c"][1], A["c"][2], True, 0, _sp._empty_callout(), 0)
+    ext.SelectByID2(
+        "", "FACE", A["c"][0], A["c"][1], A["c"][2], True, 0, _sp._empty_callout(), 0
+    )
     res["A3_A_AppendTrue"] = cnt()
-    ext.SelectByID2("", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0)
+    ext.SelectByID2(
+        "", "FACE", B["c"][0], B["c"][1], B["c"][2], True, 0, _sp._empty_callout(), 0
+    )
     res["A4_B_AppendTrue"] = cnt()
 
     #: ── B 臂：走实体对象 IEntity.Select4(Append, Callout) ────────────────
@@ -88,7 +110,7 @@ def main() -> int:
         res["B1_Select4_A_AppendFalse"] = [bool(r1), cnt()]
         r2 = B["face"].Select4(True, _sp._empty_callout())
         res["B2_Select4_B_AppendTrue"] = [bool(r2), cnt()]
-    except Exception as exc:                                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         res["B_arm_error"] = str(exc)[:160]
 
     for k, v in res.items():
@@ -96,11 +118,14 @@ def main() -> int:
     out["steps"] = res
     out["centres"] = [A["c"], B["c"]]
     p = ROOT / "output" / "spec220-append-arms.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     try:
         sw.CloseAllDocuments(True)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

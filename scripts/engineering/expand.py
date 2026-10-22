@@ -1,9 +1,10 @@
 """★ 阶段 2 · 子方法展开 + 共享基准（规格 317 的 D1/D2）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/expand.py
-# 定位:   规格 `specs/317-stage2-real-holes` 的 D1（子方法展开）/ D2（共享基准）。★★ 
+# 定位:   规格 `specs/317-stage2-real-holes` 的 D1（子方法展开）/ D2（共享基准）。★★
 #           实测（2026-10-12）缺口：阶段 1 的 `resolve_step_name` 对`hole_group`（那是**
 #           另一个方法 id**）给的是 `sub-method-not-expanded`⇒ ★ 而外部方案阶段 2 要求「
 #           **子方法展开**」把它变成具体工具序列。
@@ -27,9 +28,9 @@ class ExpandError(Exception):
     """★ 展开失败（★ 带封闭码 —— 与 `RegistryError` 同族）。"""
 
     CODES = (
-        "unknown-method",        #: ★ 方法 id 不在 METHOD_LIBRARY 里
-        "depth-exceeded",        #: ★ 超展开深度（★ 可能循环）
-        "empty-method",          #: ★ 方法没有步骤
+        "unknown-method",  #: ★ 方法 id 不在 METHOD_LIBRARY 里
+        "depth-exceeded",  #: ★ 超展开深度（★ 可能循环）
+        "empty-method",  #: ★ 方法没有步骤
         "unresolved-after-expand",  #: ★ 展开后仍有解析不到的步骤
     )
 
@@ -44,20 +45,21 @@ class ExpandError(Exception):
 # 一、共享基准（★ D2）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class DatumSpec:
     """★ 一个**具名基准**（★ 多步共用 —— ★ 改一处，引用它的步骤全改）。"""
 
     name: str
-    role: str = "primary"          #: `primary` / `secondary`
-    source_step: str = ""          #: ★ 哪个步骤建立它
+    role: str = "primary"  #: `primary` / `secondary`
+    source_step: str = ""  #: ★ 哪个步骤建立它
 
 
 def datum_index(steps) -> dict[str, list[int]]:
     """★ 基准名 → **引用它的步骤下标**（★ J5 的判据工具）。"""
     idx: dict[str, list[int]] = {}
     for i, st in enumerate(steps):
-        for d in (getattr(st, "datums", ()) or ()):
+        for d in getattr(st, "datums", ()) or ():
             idx.setdefault(d, []).append(i)
     return idx
 
@@ -85,6 +87,7 @@ def rename_datum(steps, old: str, new: str) -> tuple:
 # 二、子方法展开（★ D1）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass(frozen=True)
 class ExpandedPlan:
     method_id: str
@@ -95,10 +98,13 @@ class ExpandedPlan:
 
 def _methods() -> dict:
     from .compiler import METHOD_LIBRARY
+
     return METHOD_LIBRARY
 
 
-def expand_plan(plan, reg: dict | None = None, *, max_depth: int = MAX_DEPTH) -> ExpandedPlan:
+def expand_plan(
+    plan, reg: dict | None = None, *, max_depth: int = MAX_DEPTH
+) -> ExpandedPlan:
     """★ 把计划里**方法 id 形式的步骤**展开成工具序列（★ D1）。
 
     ★★ 展开规则（★ 唯一一条，不搞启发式 —— ★ 事实 53）：
@@ -120,7 +126,8 @@ def expand_plan(plan, reg: dict | None = None, *, max_depth: int = MAX_DEPTH) ->
         if depth > max_depth:
             raise ExpandError(
                 "depth-exceeded",
-                "★ 展开深度超过 %d ⇒ 可能有**循环引用**（★ 不静默）" % max_depth)
+                "★ 展开深度超过 %d ⇒ 可能有**循环引用**（★ 不静默）" % max_depth,
+            )
         out: list = []
         for st in steps:
             name = getattr(st, "step", "")
@@ -129,15 +136,19 @@ def expand_plan(plan, reg: dict | None = None, *, max_depth: int = MAX_DEPTH) ->
                 sub = getattr(m, "steps", ()) or ()
                 if not sub:
                     raise ExpandError("empty-method", "★ 方法 %r 没有步骤" % name)
-                trace.append({"depth": depth, "expanded": name,
-                              "into": list(sub),
-                              "inherited_params": sorted(st.params)})
+                trace.append(
+                    {
+                        "depth": depth,
+                        "expanded": name,
+                        "into": list(sub),
+                        "inherited_params": sorted(st.params),
+                    }
+                )
                 #: ★ J3：子步骤继承父 `params`
                 inherited = dict(st.params)
                 kids = []
                 for s in sub:
-                    kw = dict(step=s, params=dict(inherited), derive=st.derive,
-                              tool="")
+                    kw = dict(step=s, params=dict(inherited), derive=st.derive, tool="")
                     try:
                         kids.append(R.PlanStep(datums=st.datums, **kw))
                     except TypeError:
@@ -153,16 +164,20 @@ def expand_plan(plan, reg: dict | None = None, *, max_depth: int = MAX_DEPTH) ->
     left = [s.step for s in steps if getattr(s, "step", "") in methods]
     if left:
         raise ExpandError(
-            "unresolved-after-expand",
-            "★ 展开后仍有方法 id 残留：%s" % left)
+            "unresolved-after-expand", "★ 展开后仍有方法 id 残留：%s" % left
+        )
 
     #: ★ 顺手解析工具名（★ 解析不到 ⇒ 抛 —— ★ 不静默）
     resolved = []
     for s in steps:
         cn = R.resolve_step_name(s.step, reg)
-        resolved.append(R.PlanStep(step=s.step, params=dict(s.params),
-                                   derive=s.derive, tool=cn))
+        resolved.append(
+            R.PlanStep(step=s.step, params=dict(s.params), derive=s.derive, tool=cn)
+        )
 
-    return ExpandedPlan(method_id=getattr(plan, "method_id", ""),
-                        steps=tuple(resolved), expand_trace=tuple(trace),
-                        device_class=getattr(plan, "device_class", ""))
+    return ExpandedPlan(
+        method_id=getattr(plan, "method_id", ""),
+        steps=tuple(resolved),
+        expand_trace=tuple(trace),
+        device_class=getattr(plan, "device_class", ""),
+    )

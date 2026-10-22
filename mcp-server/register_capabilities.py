@@ -30,6 +30,7 @@
 #   「每个工具的 input schema 可构造」两件事在 `tests/test_server_wiring.py` 里静态验。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -139,6 +140,7 @@ def resolve_cost_manager(_params: Any):
       （★ 真机实测：报的是「没找到研究」）。
     """
     from scripts.sw_costing import get_costing_manager
+
     return get_costing_manager(resolve_model(_params))
 
 
@@ -165,30 +167,40 @@ def resolve_results(params: Any):
     :raises RuntimeError: 研究上取不到 `Results`（★ 不返回 None 让下游崩在别处）
     """
     from scripts.sw_connect import get_com_member
+
     study = resolve_study(params)
     try:
         res = get_com_member(study, "Results")
-    except Exception as exc:                                        # noqa: BLE001
-        raise RuntimeError("研究上取不到 `Results`（%s: %s）—— ★ 先跑一次求解再读结果"
-                           % (type(exc).__name__, str(exc)[:120]))
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(
+            "研究上取不到 `Results`（%s: %s）—— ★ 先跑一次求解再读结果"
+            % (type(exc).__name__, str(exc)[:120])
+        )
     if res is None:
-        raise RuntimeError("研究上 `Results` 为 None —— ★ 该研究**还没算出结果**"
-                           "（先 `solidworks_simulation_run_analysis`）")
+        raise RuntimeError(
+            "研究上 `Results` 为 None —— ★ 该研究**还没算出结果**"
+            "（先 `solidworks_simulation_run_analysis`）"
+        )
     return res
 
 
 def resolve_mesh(params: Any):
     """注入**研究的 `Mesh` 对象**（`ICWStudy.Mesh`）—— ★ 供首参名叫 `mesh` 的那批函数。"""
     from scripts.sw_connect import get_com_member
+
     study = resolve_study(params)
     try:
         mesh = get_com_member(study, "Mesh")
-    except Exception as exc:                                        # noqa: BLE001
-        raise RuntimeError("研究上取不到 `Mesh`（%s: %s）—— ★ 先建网格"
-                           % (type(exc).__name__, str(exc)[:120]))
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(
+            "研究上取不到 `Mesh`（%s: %s）—— ★ 先建网格"
+            % (type(exc).__name__, str(exc)[:120])
+        )
     if mesh is None:
-        raise RuntimeError("研究上 `Mesh` 为 None —— ★ 该研究**还没建网格**"
-                           "（用 `solidworks_simulation_create_mesh_safely`）")
+        raise RuntimeError(
+            "研究上 `Mesh` 为 None —— ★ 该研究**还没建网格**"
+            "（用 `solidworks_simulation_create_mesh_safely`）"
+        )
     return mesh
 
 
@@ -198,6 +210,7 @@ def resolve_view(params: Any):
     :raises RuntimeError: 活动视图取不到（★ 不返回 None 让下游崩在别处）
     """
     from scripts.sw_view import get_active_view
+
     return get_active_view(resolve_model(params))
 
 
@@ -211,7 +224,7 @@ def resolve_view(params: Any):
 # ver/` 里 **0 处**）✗
 #   ⇒ ★ 那条测试自己写着两条路：「**要么接上、要么删掉并说明**」⇒ ★ **本处走第二条** ✓
 # ⚠ **为什么不是"接上"**（★ 那本来才更该做）：接上 = 把那 25 个函数挂成工具 ⇒
-# ★ 那是**覆盖规格**的活，★★ 而它要**真机证据三件套**（`ToolSpec` + `capabilities.yaml` 
+# ★ 那是**覆盖规格**的活，★★ 而它要**真机证据三件套**（`ToolSpec` + `capabilities.yaml`
 # +
 #   `output/*-evidence.json`）⇒ ★ **与规格 214 的硬约束「零真机」直接冲突** ✗
 # ★★ **所以记在这里、不丢掉**：要接上时，照下面 `resolve_selection_manager` 的形状写一个
@@ -220,7 +233,7 @@ def resolve_view(params: Any):
 # ★ 候选函数（`scripts/sw_sketch.py` 里首参为 `sketch`、当前未挂的）：`get_lines` · `get
 # _arcs` ·
 #   `get_ellipses` · `get_sketch_points` · `get_user_points` · `get_sketch_contours` ·
-# `get_sketch_regions` · `get_relation_manager` · `get_model_to_sketch_transform` …（共 
+# `get_sketch_regions` · `get_relation_manager` · `get_model_to_sketch_transform` …（共
 # 25 个）✓
 
 
@@ -230,10 +243,13 @@ def resolve_selection_manager(params: Any):
     ★ `IModelDoc2.SelectionManager` 是**文档自己的**选择管理器 ⇒ ★ **语义唯一**（不需要猜）✓
     """
     from scripts.sw_connect import get_com_member
+
     model = resolve_model(params)
     mgr = get_com_member(model, "SelectionManager")
     if mgr is None:
-        raise RuntimeError("文档上取不到 `SelectionManager` ⇒ `selection` 注入键无法解析")
+        raise RuntimeError(
+            "文档上取不到 `SelectionManager` ⇒ `selection` 注入键无法解析"
+        )
     return mgr
 
 
@@ -247,6 +263,7 @@ def resolve_cost_part(params: Any):
       ⇒ ★★ **`cost_part` 就是 `cost_manager` 取出来的那个「成本模型」对象** ✓
     """
     from scripts.sw_costing import get_costing_model
+
     return get_costing_model(resolve_cost_manager(params))
 
 
@@ -257,10 +274,13 @@ def resolve_cost_analysis(params: Any):
     ⚠ ★ **零件上还没有成本分析就没有** ⇒ **响亮报错**并说清先做什么 ✓
     """
     from scripts.sw_costing import get_cost_analysis
+
     analysis = get_cost_analysis(resolve_cost_part(params))
     if analysis is None:
-        raise RuntimeError("该零件上**还没有成本分析** ⇒ `cost_analysis` 注入键无法解析。"
-                           "★ 请先建一个成本分析（`sw_costing.create_cost_analysis`）")
+        raise RuntimeError(
+            "该零件上**还没有成本分析** ⇒ `cost_analysis` 注入键无法解析。"
+            "★ 请先建一个成本分析（`sw_costing.create_cost_analysis`）"
+        )
     return analysis
 
 
@@ -272,33 +292,41 @@ def resolve_cost_body(params: Any):
       ② 没传：清单长度 **== 1** ⇒ 就那一个；**0** 或 **>1** ⇒ ★ 报错并列出可用的名字 ✓
     """
     from scripts.sw_costing import get_bodies
+
     name = str(getattr(params, "body_name", "") or "").strip()
     bodies = list(get_bodies(resolve_cost_part(params)) or [])
     if not bodies:
-        raise RuntimeError("该零件的成本模型上**没有成本实体** ⇒ `cost_body` 注入键无法解析")
+        raise RuntimeError(
+            "该零件的成本模型上**没有成本实体** ⇒ `cost_body` 注入键无法解析"
+        )
     if name:
         for b in bodies:
             try:
                 got = str(sw_get_member_name(b))
-            except Exception:                                        # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 got = ""
             if got == name:
                 return b
-        raise RuntimeError("没有名为 %r 的成本实体；现有：%r"
-                           % (name, [sw_get_member_name(b) for b in bodies][:10]))
+        raise RuntimeError(
+            "没有名为 %r 的成本实体；现有：%r"
+            % (name, [sw_get_member_name(b) for b in bodies][:10])
+        )
     if len(bodies) > 1:
-        raise RuntimeError("该零件有 **%d 个**成本实体 ⇒ ★ **本解析器不替你猜**，"
-                           "请显式传 `body_name`（现有：%r）"
-                           % (len(bodies), [sw_get_member_name(b) for b in bodies][:10]))
+        raise RuntimeError(
+            "该零件有 **%d 个**成本实体 ⇒ ★ **本解析器不替你猜**，"
+            "请显式传 `body_name`（现有：%r）"
+            % (len(bodies), [sw_get_member_name(b) for b in bodies][:10])
+        )
     return bodies[0]
 
 
 def sw_get_member_name(obj: Any) -> str:
     """★ 小助手：取成本实体的名字（官方 `GetName`）—— ★ 取不到就回空串（不抛）。"""
     from scripts.sw_connect import get_com_member
+
     try:
         return str(get_com_member(obj, "GetName") or "")
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
 
 
@@ -311,29 +339,41 @@ def resolve_motion_study(params: Any):
          （★ 0 ⇒ 先 `solidworks_motion_create_study`；★ >1 ⇒ 请补 `motion_study_name`）✓
     """
     from scripts.sw_motion import get_motion_study_manager, motion_member
+
     name = str(getattr(params, "motion_study_name", "") or "").strip()
     #: ★ 注：本解析器需要**装配体**（运动算例挂在装配上）⇒ 用 `asm_model` 那条口子取文档
     model = resolve_model(params)
     mgr = get_motion_study_manager(model)
     if mgr is None:
-        raise RuntimeError("取不到 `MotionStudyManager` ⇒ ★ 先确认 Motion 加载项可用"
-                           "（`solidworks_motion_ensure_type_library`）")
+        raise RuntimeError(
+            "取不到 `MotionStudyManager` ⇒ ★ 先确认 Motion 加载项可用"
+            "（`solidworks_motion_ensure_type_library`）"
+        )
     if name:
         study = motion_member(mgr, "GetMotionStudy", name)
         if study is None:
             names = motion_member(mgr, "GetMotionStudyNames") or []
-            raise RuntimeError("没有名为 %r 的运动算例；现有：%r" % (name, list(names)[:10]))
+            raise RuntimeError(
+                "没有名为 %r 的运动算例；现有：%r" % (name, list(names)[:10])
+            )
         return study
     count = int(motion_member(mgr, "GetMotionStudyCount") or 0)
     if count == 0:
-        raise RuntimeError("该装配上**没有运动算例** ⇒ `motion_study` 注入键无法解析。"
-                           "★ 请先 `solidworks_motion_create_study`")
+        raise RuntimeError(
+            "该装配上**没有运动算例** ⇒ `motion_study` 注入键无法解析。"
+            "★ 请先 `solidworks_motion_create_study`"
+        )
     if count > 1:
         names = motion_member(mgr, "GetMotionStudyNames") or []
-        raise RuntimeError("该装配上有 **%d 个**运动算例 ⇒ ★ **本解析器不替你猜用哪一个**，"
-                           "请显式传 `motion_study_name`（现有：%r）" % (count, list(names)[:10]))
-    return motion_member(mgr, "GetMotionStudy", str(list(motion_member(
-        mgr, "GetMotionStudyNames") or [])[0]))
+        raise RuntimeError(
+            "该装配上有 **%d 个**运动算例 ⇒ ★ **本解析器不替你猜用哪一个**，"
+            "请显式传 `motion_study_name`（现有：%r）" % (count, list(names)[:10])
+        )
+    return motion_member(
+        mgr,
+        "GetMotionStudy",
+        str(list(motion_member(mgr, "GetMotionStudyNames") or [])[0]),
+    )
 
 
 def resolve_costing_defaults(params: Any):
@@ -342,6 +382,7 @@ def resolve_costing_defaults(params: Any):
     ★ 由 `cost_manager` 取（复用 `resolve_cost_manager`，它已处理「本机有没有 Costing 加载项」）✓
     """
     from scripts.sw_costing import get_costing_defaults
+
     return get_costing_defaults(resolve_cost_manager(params))
 
 
@@ -353,6 +394,7 @@ def resolve_selected_component(params: Any):
     """
     from scripts.sw_selection import get_selected_component
     from scripts.sw_connect import get_com_member
+
     model = resolve_model(params)
     #: ★★★ 2026-10-04（接手轮 · **真机探针**发现并修）：这里原先把 **`model`** 当 `selec
     #: tion` 传进去
@@ -363,7 +405,9 @@ def resolve_selected_component(params: Any):
     #:  同一步）
     sel = get_com_member(model, "SelectionManager")
     if sel is None:
-        raise RuntimeError("文档上取不到 `SelectionManager` ⇒ `component` 注入键无法解析")
+        raise RuntimeError(
+            "文档上取不到 `SelectionManager` ⇒ `component` 注入键无法解析"
+        )
     #: ★★★ 2026-10-04（真机探针）：`ISelectionMgr` 的 **Index 是 1 基** ——
     #: 实测（`output/selectionmgr-member-probe.json`）：`GetSelectedObjectCount2(-1)` 回
     #:  **1**、
@@ -372,8 +416,10 @@ def resolve_selected_component(params: Any):
     #:   ⇒ ★★ 取「第一个选中的东西」要用 **1** 而不是 0（★ 我原先传 0 ⇒ 静默拿到 `None`）✓
     comp = get_selected_component(sel, 1)
     if comp is None:
-        raise RuntimeError("当前**没有选中的组件** ⇒ `component` 注入键无法解析。"
-                           "★ 请先在装配里选中一个组件（★ 本键**不替你猜**该用哪一个）")
+        raise RuntimeError(
+            "当前**没有选中的组件** ⇒ `component` 注入键无法解析。"
+            "★ 请先在装配里选中一个组件（★ 本键**不替你猜**该用哪一个）"
+        )
     return comp
 
 
@@ -392,6 +438,7 @@ def resolve_study_options(params: Any):
       ★ 代价为零 —— 现有用 `options` 键的两个工具（`set_option` / `set_options`）**都声明了 `family`** ✓
     """
     from scripts.sw_simulation_study_options import study_options_of
+
     family = str(getattr(params, "family", "") or "").strip()
     if not family:
         raise RuntimeError(
@@ -399,7 +446,8 @@ def resolve_study_options(params: Any):
             "★ 这**不能靠猜**：不同族（静态/频率/屈曲）是**不同的对象**，注错了表现为"
             "「什么都没发生」（事实 36 那一族）。"
             "★ 正解二选一：① 把 `family` 声明成工具参数（既有两个工具就是这么做的）；"
-            "② 若目标函数**自己**硬编码了族，就别用 `options` 键 —— ★ 本解析器**不替它猜**")
+            "② 若目标函数**自己**硬编码了族，就别用 `options` 键 —— ★ 本解析器**不替它猜**"
+        )
     study = resolve_study(params)
     opts = study_options_of(study, family)
     if opts is None:
@@ -411,7 +459,7 @@ RESOLVERS: dict[str, Any] = {
     "model": resolve_model,
     "sw_app": resolve_sw_app,
     "study": resolve_study,
-    #: ★ 轮 237（砌墙 W6 / Spec Kit `139`）：**注入名只能是这张表的键**（见 known-facts 
+    #: ★ 轮 237（砌墙 W6 / Spec Kit `139`）：**注入名只能是这张表的键**（见 known-facts
     #: 169）
     #: —— 而 `scripts/sw_assembly.py` 里有一批函数的首参叫 **`asm_model`**（不是 `model`
     #: ）。
@@ -457,14 +505,14 @@ RESOLVERS: dict[str, Any] = {
     #: , …)`
     #:     一律用 `doc`），★ 而 `RESOLVERS` 里**只有 `model` / `asm_model`，没有 `doc`** ⇒
     #:   ★★★ 我第一版写 `inject="asm_model"` ⇒ `check_param_binding` **当场报**：
-    #: 「`inject='asm_model'` **不在函数的形参表里**（形参：['doc']）—— ★ `register()` 
+    #: 「`inject='asm_model'` **不在函数的形参表里**（形参：['doc']）—— ★ `register()`
     #: 不传
     #:      `inject_as` ⇒ **注入键字面上等于 inject 的值** ⇒ 调用时必
     #: `TypeError: unexpected keyword argument 'asm_model'`」（★ 事实 502/169 的同一回事
     #: ）✓
     #:   ⇒ ★ 按那张表**自己的设计意图**加这一行（"注入名各不相同 ⇒ 加一行正是它的用途"），
     #:     ★ **而不是去改包装的形参名**（那会让 `sw_assembly_doc.py` 内部风格分裂）✓
-    #: ★ 装配/零件文档都是 `IModelDoc2` ⇒ **复用 `resolve_model`**，与上面 `asm_model` 
+    #: ★ 装配/零件文档都是 `IModelDoc2` ⇒ **复用 `resolve_model`**，与上面 `asm_model`
     #: 同一手法 ✓
     "doc": resolve_model,
     #: ★★★★★ 2026-10-04（接手轮 · 规格 205 的批 80）：**`sldworks`** ——
@@ -539,7 +587,7 @@ RESOLVERS: dict[str, Any] = {
     #:   ⚠ 两者**没有**就先**响亮报错**（★ 不猜、不静默失败）✓
     #: ★★★ 2026-10-07（接手轮 · 规格 214 T-214-03）：**`"sketch"` 这一行已删** ——
     #:   ★ 判据 `tests/test_registry_wiring.py::test_no_unused_resolver`（**防"多"**）：
-    #: ★★ 它 2026-10-04 加进来，**却始终没有任何 spec 用**（`inject="sketch"` 实测 **0 
+    #: ★★ 它 2026-10-04 加进来，**却始终没有任何 spec 用**（`inject="sketch"` 实测 **0
     #: 处**）✗
     #:   ⇒ ★ 该测试给的两条路（**接上 / 删掉并说明**）里，本处走第二条 ——
     #: ★★ 理由：**接上要真机三件套**，与规格 214 的「零真机」冲突 ⇒ ★ 它属于**覆盖规格**
@@ -555,7 +603,7 @@ RESOLVERS: dict[str, Any] = {
     #:  里
     #: 逐字把 `_costing_chain(cost_manager)` 取出的对象喂给 `get_body_count(cost_part)`
     #: ）✓
-    #: · `motion_study` ⇒ **运动算例**（★ 按 `motion_study_name` 取；未传时**只在算例数 
+    #: · `motion_study` ⇒ **运动算例**（★ 按 `motion_study_name` 取；未传时**只在算例数
     #: == 1**
     #:       才给，0 或 >1 都**响亮报错** ⇒ 不猜）✓ —— ★ AVI 导出是三个**护城河域**之一 ✓
     #: ⚠ 其余 C 类组（`win`/`hwnd`/`ctrl`/`obj`/`target`/`route_manager`/`sketch` 的图纸
@@ -570,7 +618,7 @@ RESOLVERS: dict[str, Any] = {
     #:     而 `cost_analysis`(3) + `cost_body`(2) 这 **5 个**仍可加键 ⇒ 组内**真新 3 个** ✓
     #:     · `cost_analysis` ⇒ `cost_part` → `GetCostAnalysis`（★ 同一条链，不是猜的）✓
     #:     · `cost_body` ⇒ 按 `body_name` 在 `get_bodies(cost_part)` 清单里找；
-    #: **没传名时只在清单长度 == 1** 才给，0 或 >1 都**响亮报错**（★ 与 `motion_study` 
+    #: **没传名时只在清单长度 == 1** 才给，0 或 >1 都**响亮报错**（★ 与 `motion_study`
     #: 同手法）✓
     "cost_analysis": resolve_cost_analysis,
     "cost_body": resolve_cost_body,
@@ -582,11 +630,11 @@ BATCH_MODULES = (
     "tool_specs_batch2",
     "tool_specs_batch3",
     "tool_specs_batch4",
-    "tool_specs_batch5",   # 轮 90：孤立能力暴露的第一步（只读/视图/选择）
-    "tool_specs_batch6",   # 轮 93：孤立能力暴露的第二步（无参选择器 / BOM）
-    "tool_specs_batch7",   # 轮 96：孤立能力暴露的第三步（预览准备 / 场景刷新）
-    "tool_specs_batch8",   # 轮 97：**换池子** —— 从未暴露且「只被测试调用」的那批取
-    "tool_specs_batch9",   # 轮 98：模具域「已实现 + 有测试 + 未暴露」的 3 个
+    "tool_specs_batch5",  # 轮 90：孤立能力暴露的第一步（只读/视图/选择）
+    "tool_specs_batch6",  # 轮 93：孤立能力暴露的第二步（无参选择器 / BOM）
+    "tool_specs_batch7",  # 轮 96：孤立能力暴露的第三步（预览准备 / 场景刷新）
+    "tool_specs_batch8",  # 轮 97：**换池子** —— 从未暴露且「只被测试调用」的那批取
+    "tool_specs_batch9",  # 轮 98：模具域「已实现 + 有测试 + 未暴露」的 3 个
     "tool_specs_batch10",  # 轮 128：把轮 123~127 **查证并真机跑过**的 4 个高层入口接出去
     #: 轮 204（Spec Kit `123`）：★ **候选先变成「可复现的全量清单」再选** ——
     #: `probe_unexposed_functions.py` 此前只印前 30（302 里 87% 看不见）⇒ 本轮先给它加结
@@ -787,20 +835,20 @@ BATCH_MODULES = (
     #: ★ 24h 段 6 续（Spec Kit `173`）：**文档单位**
     #:   —— ★ 补「四家有我们没有」的**最后一条**真缺。
     "tool_specs_batch52",
-    "tool_specs_batch53",   # 轮 397：选择底座（真缺口批量挂柜台·段 1）
-    "tool_specs_batch54",   # 轮 398：草图图元（段 2）
-    "tool_specs_batch55",   # 轮 399：零件读/自动标注（段 3）
-    "tool_specs_batch57",   # 轮 401：孔族（段 4）
-    "tool_specs_batch58",   # 轮 402：仿真简单载荷 6 条（段 5）
-    "tool_specs_batch59",   # 轮 403：导出（图片 + 钣金展开 DXF）（段 6）
-    "tool_specs_batch56",   # 轮 405：恢复 add_dimension（穷举表证实能建）
-    "tool_specs_batch60",   # 轮 414：A 组收尾（分布质量 + 力）
-    "tool_specs_batch61",   # 轮 425：B 组第一条（刚性连接件）
-    "tool_specs_batch62",   # 轮 428：焊件族第一条（结构构件）
-    "tool_specs_batch63",   # 轮 452：按声明式选择器选面
-    "tool_specs_batch64",   # 轮 459：连接件族第三条（link · 两个顶点）
-    "tool_specs_batch65",   # 轮 464：B1 批草图图元（3点矩形/平行四边形/切线弧/3点圆弧/部分椭圆/抛物线/圆锥/周边圆）
-    "tool_specs_batch66",   # 轮 465：B3 批草图编辑 6 个（剪裁/延伸/等距/圆角/线性阵列/圆周阵列）
+    "tool_specs_batch53",  # 轮 397：选择底座（真缺口批量挂柜台·段 1）
+    "tool_specs_batch54",  # 轮 398：草图图元（段 2）
+    "tool_specs_batch55",  # 轮 399：零件读/自动标注（段 3）
+    "tool_specs_batch57",  # 轮 401：孔族（段 4）
+    "tool_specs_batch58",  # 轮 402：仿真简单载荷 6 条（段 5）
+    "tool_specs_batch59",  # 轮 403：导出（图片 + 钣金展开 DXF）（段 6）
+    "tool_specs_batch56",  # 轮 405：恢复 add_dimension（穷举表证实能建）
+    "tool_specs_batch60",  # 轮 414：A 组收尾（分布质量 + 力）
+    "tool_specs_batch61",  # 轮 425：B 组第一条（刚性连接件）
+    "tool_specs_batch62",  # 轮 428：焊件族第一条（结构构件）
+    "tool_specs_batch63",  # 轮 452：按声明式选择器选面
+    "tool_specs_batch64",  # 轮 459：连接件族第三条（link · 两个顶点）
+    "tool_specs_batch65",  # 轮 464：B1 批草图图元（3点矩形/平行四边形/切线弧/3点圆弧/部分椭圆/抛物线/圆锥/周边圆）
+    "tool_specs_batch66",  # 轮 465：B3 批草图编辑 6 个（剪裁/延伸/等距/圆角/线性阵列/圆周阵列）
     #: ★ 2026-10-03（轮 472）：B4 批草图编辑·移动族 5 个（移动/旋转/缩放/伸展/镜像）。
     #:   ★ 真机 **5/5**（`output/b4-sketch-modify-evidence.json`）。
     #:   ★★ 判据**按操作分**：改坐标系的（移动/旋转/镜像）看
@@ -880,7 +928,7 @@ BATCH_MODULES = (
     #: ★ 待下一轮用工具层 e2e 探针补读数，★ **在那之前不许把它们的 level 写成 verified**
     #: 。
     "tool_specs_batch74",
-    #: ★ 2026-10-03（接手轮）· **R6+**：把「**已真机证明、代码却只在 `tools/prove_*.py` 
+    #: ★ 2026-10-03（接手轮）· **R6+**：把「**已真机证明、代码却只在 `tools/prove_*.py`
     #: 里**」的直入法挂成工具。
     #: ★ 判据逐字来自 `recon/scan-S2b-ledger-vs-tools.md` 的 **A 表**（台账有、`mcp_tool
     #: s` 无挂 —— 41 条），
@@ -896,7 +944,7 @@ BATCH_MODULES = (
     #:   ★ 任务书阶段 5 逐字「建能力 → **挂 ToolSpec** → 真机验证」⇒
     #:   ★★ 我在轮 95–102 补了 6 个**回读能力**、★ 做了建能力与真机验证、
     #:     ★★★ **却没挂 ToolSpec** ⇒ 真机查（★ `output/_check_readback_toolspecs.py`）：
-    #: ★ **6 个全部「没有」** · ★★ **与 `feature_readback` 相关的 ToolSpec 一个都没有** 
+    #: ★ **6 个全部「没有」** · ★★ **与 `feature_readback` 相关的 ToolSpec 一个都没有**
     #: ✓
     #:   ★★★★ **⇒ 那 6 个能力**只在 Python 层可用、★ MCP 层调不到**** ✓
     #:   ★★★★★ **判据**：★★★ **「建成了能力」与「能力能被调」是两件事** ——
@@ -1008,7 +1056,7 @@ BATCH_MODULES = (
     #:   · `solidworks_drawing_create_three_standard_views` —— ★ **三视图布局**
     #: （★ 这一条有历史：`capabilities.yaml` 曾把它记成 `blocked / DRAWING_PROJECTION_AP
     #: I_UNAVAILABLE`，
-    #: 而 2026-10-04 查明真因是**成员名拼错** —— 官方真名 `Create1stAngleViews2`（`1st` 
+    #: 而 2026-10-04 查明真因是**成员名拼错** —— 官方真名 `Create1stAngleViews2`（`1st`
     #: 非 `First`）
     #:     ⇒ 已在 `drawing_workflow.py` 修正；★ 本工具挂的是**修好之后**的入口）✓
     #: · `solidworks_costing_defaults` —— Costing 默认值读数（★ Costing 是本仓三个**护城
@@ -1052,14 +1100,14 @@ BATCH_MODULES = (
     #:   ★ 第六坡 29 路（24 路回、48 行、17 行判可暴露）⇒ ★ **真新 17 个** ✓
     #: · `sw_selection` **8** —— 选择族：挂起选择清单 / 设对象 mark / 开关选择 / 开关轮
     #: 廓选择 /
-    #: 坐标系列元素判定 / 是否在编辑目标内 / 收集选择证据 / 取消选择（★ 走 `selection` 
+    #: 坐标系列元素判定 / 是否在编辑目标内 / 收集选择证据 / 取消选择（★ 走 `selection`
     #: 注入键）✓
     #: · `sw_costing` **3** —— 设默认批量 / 默认材料 / 默认制造方法（★ **护城河域** + `d
     #: efaults` 键）✓
     #:   · `sw_sketch` **2** —— 关系管理器 / 模型到草图变换（★ 走 `sketch` 键）✓
     #:   · `sw_assembly` **3** + `sw_assembly_doc` **1** —— 取组件特征 / 取特征实体 /
     #:     施加组件变换 / 外部参考计数 ✓
-    #: ⚠ ★ **留给复核的一点**：`get_component_feature` / `get_component_feature_entity` 
+    #: ⚠ ★ **留给复核的一点**：`get_component_feature` / `get_component_feature_entity`
     #: 与
     #: `get_relation_manager` / `get_model_to_sketch_transform` 的**返回可能是 COM 对象*
     #: *
@@ -1127,7 +1175,7 @@ BATCH_MODULES = (
     #: · **idx 235 + 236 重建** ⇒ ★ 裁决书强制「**合并成一条工具**（三档 mode），**不建
     #: 两条**」✓
     #:   · **idx 79 构造几何** ⇒ ★ 落 `sw_sketch_edit_ops`，**复用**已有的声明式选段包装 ✓
-    #: · **idx 97 显示状态** ⇒ 读 + 激活两条（★ 读侧落 `sw_render_material` —— 事实 286 
+    #: · **idx 97 显示状态** ⇒ 读 + 激活两条（★ 读侧落 `sw_render_material` —— 事实 286
     #: 已真机 PASS）✓
     #: · **idx 244 引用文档** ⇒ ★ 补 `solidworks_pack_and_go` 一直枚举却不暴露的**读侧**
     #:  ✓
@@ -1245,7 +1293,7 @@ BATCH_MODULES = (
     #:  ✓
     #:   ★ 计数：448 → **454**
     "tool_specs_batch100",
-    #: ★★ 规格 213 · B3（前半）—— B 类 5 项里的 **`weld_symbol`** 与 **`forming_tool`** 
+    #: ★★ 规格 213 · B3（前半）—— B 类 5 项里的 **`weld_symbol`** 与 **`forming_tool`**
     #: ✓
     #:   ★ B 类的两步：★ **B2 先把探针里已证实的调用序缝进模块**（已完成 ✓）·
     #:     本批 **把模块函数挂成 ToolSpec** ✓
@@ -1333,7 +1381,7 @@ BATCH_MODULES = (
     "tool_specs_batch108",
     #: ★★ EC00 **T017**（`specs/302-ec00-trustworthy-tool-base/`）—— 草图关系**正式注册*
     #: *。
-    #: ★★★ **实测缺口**（2026-10-10）：`scripts/sw_sketch_relations.py` **有实现但 0 个 
+    #: ★★★ **实测缺口**（2026-10-10）：`scripts/sw_sketch_relations.py` **有实现但 0 个
     #: ToolSpec**
     #:     ⇒ ★ 它**不可被 MCP 调用**（★ 从「用户可发现、可调用」口径看**等于不存在**）。
     #: ★★ 官方依据已逐字核：`AddRelation( object Entities, int RelationType )`（**2 参**
@@ -1373,6 +1421,7 @@ BATCH_MODULES = (
     "tool_specs_batch116",
 )
 
+
 def all_specs() -> list:
     """汇总全部批次的声明（**逐批导入**，缺一个模块就响亮报错）。"""
     specs: list = []
@@ -1385,9 +1434,11 @@ def all_specs() -> list:
         derived = None
         if "batch" in mod_name:
             derived = getattr(
-                mod, "SPECS_%s" % mod_name.rsplit("batch", 1)[1].upper(), None)
+                mod, "SPECS_%s" % mod_name.rsplit("batch", 1)[1].upper(), None
+            )
         batch = derived or next(
-            (getattr(mod, n) for n in dir(mod) if n.startswith("SPECS_")), None)
+            (getattr(mod, n) for n in dir(mod) if n.startswith("SPECS_")), None
+        )
         if batch is None:
             raise RuntimeError("模块 %s 里找不到任何 SPECS_* 列表" % mod_name)
         specs.extend(batch)
@@ -1401,5 +1452,4 @@ def register_capabilities(mcp, base, response_enum, run_locked) -> list[str]:
     （由 `tool_registry.register` 保证；这里只是把它接上。）
     """
     specs = all_specs()
-    return register(mcp, specs, base, response_enum, run_locked,
-                    resolvers=RESOLVERS)
+    return register(mcp, specs, base, response_enum, run_locked, resolvers=RESOLVERS)

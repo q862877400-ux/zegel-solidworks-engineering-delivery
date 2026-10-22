@@ -74,7 +74,11 @@ def _process_is_running(process_id: int) -> bool:
 
 def probe_addin_host(assembly_path: str | Path | None = None) -> dict[str, Any]:
     """@brief 返回构建产物、注册层级、进程内连接和阻塞原因。"""
-    assembly = Path(assembly_path).expanduser().resolve() if assembly_path else DEFAULT_ASSEMBLY.resolve()
+    assembly = (
+        Path(assembly_path).expanduser().resolve()
+        if assembly_path
+        else DEFAULT_ASSEMBLY.resolve()
+    )
     if platform.system() != "Windows":
         return {
             "status": "unavailable",
@@ -92,8 +96,12 @@ def probe_addin_host(assembly_path: str | Path | None = None) -> dict[str, Any]:
     machine_com = _registry_key_exists(winreg.HKEY_LOCAL_MACHINE, clsid_path)
     machine_discovery = _registry_key_exists(winreg.HKEY_LOCAL_MACHINE, addin_path)
     startup_enabled = _registry_key_exists(winreg.HKEY_CURRENT_USER, startup_path)
-    current_user_type_library = _registry_key_exists(winreg.HKEY_CURRENT_USER, type_library_path)
-    machine_type_library = _registry_key_exists(winreg.HKEY_LOCAL_MACHINE, type_library_path)
+    current_user_type_library = _registry_key_exists(
+        winreg.HKEY_CURRENT_USER, type_library_path
+    )
+    machine_type_library = _registry_key_exists(
+        winreg.HKEY_LOCAL_MACHINE, type_library_path
+    )
     type_library = assembly.with_suffix(".tlb")
     diagnostic_path, diagnostics, diagnostic_error = _read_diagnostics()
     connected = bool(diagnostics and diagnostics.get("status") == "connected")
@@ -114,27 +122,55 @@ def probe_addin_host(assembly_path: str | Path | None = None) -> dict[str, Any]:
 
     blockers: list[dict[str, str]] = []
     if not assembly.is_file():
-        blockers.append({"code": "ASSEMBLY_MISSING", "message": "先构建 net48 x64 Add-in 程序集。"})
+        blockers.append(
+            {"code": "ASSEMBLY_MISSING", "message": "先构建 net48 x64 Add-in 程序集。"}
+        )
     if not type_library.is_file():
-        blockers.append({"code": "TYPE_LIBRARY_MISSING", "message": "缺少与 Add-in 同目录的 COM 类型库。"})
+        blockers.append(
+            {
+                "code": "TYPE_LIBRARY_MISSING",
+                "message": "缺少与 Add-in 同目录的 COM 类型库。",
+            }
+        )
     if not current_user_type_library and not machine_type_library:
-        blockers.append({
-            "code": "TYPE_LIBRARY_REGISTRATION_MISSING",
-            "message": "使用 64 位 RegAsm /tlb 注册类型库，否则 SolidWorks 可能只装入 DLL 而不实例化 ISwAddin。",
-        })
+        blockers.append(
+            {
+                "code": "TYPE_LIBRARY_REGISTRATION_MISSING",
+                "message": "使用 64 位 RegAsm /tlb 注册类型库，否则 SolidWorks 可能只装入 DLL 而不实例化 ISwAddin。",
+            }
+        )
     if not machine_discovery:
-        blockers.append({
-            "code": "HKLM_ADDIN_REGISTRATION_MISSING",
-            "message": "SolidWorks 进程内发现需要提升权限执行 Machine 注册；当前用户 COM 注册只用于激活冒烟测试。",
-        })
+        blockers.append(
+            {
+                "code": "HKLM_ADDIN_REGISTRATION_MISSING",
+                "message": "SolidWorks 进程内发现需要提升权限执行 Machine 注册；当前用户 COM 注册只用于激活冒烟测试。",
+            }
+        )
     if machine_discovery and not connected:
-        blockers.append({"code": "ADDIN_NOT_CONNECTED", "message": "注册存在，但诊断未显示 ConnectToSW 已连接。"})
+        blockers.append(
+            {
+                "code": "ADDIN_NOT_CONNECTED",
+                "message": "注册存在，但诊断未显示 ConnectToSW 已连接。",
+            }
+        )
     if connected and not in_process_host:
-        blockers.append({"code": "DIAGNOSTIC_NOT_IN_PROCESS", "message": "诊断并非由仍在运行的 SLDWORKS.exe 进程写出，不能作为 Add-in 真机证据。"})
+        blockers.append(
+            {
+                "code": "DIAGNOSTIC_NOT_IN_PROCESS",
+                "message": "诊断并非由仍在运行的 SLDWORKS.exe 进程写出，不能作为 Add-in 真机证据。",
+            }
+        )
     if connected and not ui_ready:
-        blockers.append({"code": "ADDIN_UI_NOT_READY", "message": "Add-in 已进入连接流程，但回调或 UI 子系统未全部就绪。"})
+        blockers.append(
+            {
+                "code": "ADDIN_UI_NOT_READY",
+                "message": "Add-in 已进入连接流程，但回调或 UI 子系统未全部就绪。",
+            }
+        )
     if diagnostic_error:
-        blockers.append({"code": "DIAGNOSTIC_JSON_INVALID", "message": diagnostic_error})
+        blockers.append(
+            {"code": "DIAGNOSTIC_JSON_INVALID", "message": diagnostic_error}
+        )
 
     return {
         "status": "ready" if ui_ready and not blockers else "blocked",

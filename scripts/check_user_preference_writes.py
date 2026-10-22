@@ -82,11 +82,18 @@ def _guard_spans(tree: ast.AST) -> set[tuple[int, int]]:
     for n in ast.walk(tree):
         if not isinstance(n, ast.With):
             continue
-        names = {_call_name(item.context_expr) for item in n.items
-                 if isinstance(item.context_expr, ast.Call)}
+        names = {
+            _call_name(item.context_expr)
+            for item in n.items
+            if isinstance(item.context_expr, ast.Call)
+        }
         if names & set(GUARD_NAMES):
             lo = min(getattr(b, "lineno", 0) for b in n.body) if n.body else n.lineno
-            hi = max(getattr(b, "end_lineno", lo) or lo for b in n.body) if n.body else lo
+            hi = (
+                max(getattr(b, "end_lineno", lo) or lo for b in n.body)
+                if n.body
+                else lo
+            )
             spans.add((lo, hi))
     return spans
 
@@ -108,11 +115,14 @@ def load_exemptions() -> tuple[dict, list[str]]:
         return {}, []
     try:
         data = json.loads(EXEMPTIONS.read_text(encoding="utf-8"))
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {}, ["★ 豁免名单不是合法 JSON：%s" % exc]
     bad = []
     for item in data.get("exemptions") or []:
-        if not str(item.get("reason") or "").strip() or not str(item.get("evidence") or "").strip():
+        if (
+            not str(item.get("reason") or "").strip()
+            or not str(item.get("evidence") or "").strip()
+        ):
             bad.append("★ 豁免条目缺 reason/evidence：%r" % (item.get("file"),))
     return data, bad
 
@@ -127,8 +137,10 @@ def scan_one(rel: str, src: str, exempt_files: set[str] | None = None) -> list[d
     """
     if exempt_files is None:
         exemptions, _ = load_exemptions()
-        exempt_files = {str(e.get("file") or "").replace("\\", "/")
-                        for e in (exemptions.get("exemptions") or [])}
+        exempt_files = {
+            str(e.get("file") or "").replace("\\", "/")
+            for e in (exemptions.get("exemptions") or [])
+        }
     try:
         tree = ast.parse(src)
     except SyntaxError:
@@ -137,32 +149,46 @@ def scan_one(rel: str, src: str, exempt_files: set[str] | None = None) -> list[d
     lines = src.splitlines()
     spans = _guard_spans(tree)
     for n in ast.walk(tree):
-        if not isinstance(n, ast.Call) or not _call_name(n).startswith("SetUserPreference"):
+        if not isinstance(n, ast.Call) or not _call_name(n).startswith(
+            "SetUserPreference"
+        ):
             continue
         line = getattr(n, "lineno", 0)
         if _is_guarded(n, spans):
             continue
         fn = _enclosing_function(tree, line)
-        body = lines[fn.lineno - 1: (getattr(fn, "end_lineno", fn.lineno) or fn.lineno)] if fn else lines
+        body = (
+            lines[fn.lineno - 1 : (getattr(fn, "end_lineno", fn.lineno) or fn.lineno)]
+            if fn
+            else lines
+        )
         marker = MARKER.search("\n".join(body))
         if marker and marker.group(1).strip():
             continue
         if rel in exempt_files:
             continue
-        violations.append({
-            "file": rel, "line": line, "func": _call_name(n),
-            "enclosing": fn.name if fn else "<模块级>",
-            "why": ("★ 既不在 `preference_guard` 的 with 里、所在函数也没有带理由的"
-                    " `preference-guard:` 标记、也不在豁免名单里"),
-        })
+        violations.append(
+            {
+                "file": rel,
+                "line": line,
+                "func": _call_name(n),
+                "enclosing": fn.name if fn else "<模块级>",
+                "why": (
+                    "★ 既不在 `preference_guard` 的 with 里、所在函数也没有带理由的"
+                    " `preference-guard:` 标记、也不在豁免名单里"
+                ),
+            }
+        )
     return violations
 
 
 def scan() -> tuple[list[dict], list[str], int]:
     """扫全仓，回 `(违规, 无效豁免, 看过的文件数)`。"""
     exemptions, bad_exempt = load_exemptions()
-    exempt_files = {str(e.get("file") or "").replace("\\", "/")
-                    for e in (exemptions.get("exemptions") or [])}
+    exempt_files = {
+        str(e.get("file") or "").replace("\\", "/")
+        for e in (exemptions.get("exemptions") or [])
+    }
     violations: list[dict] = []
     seen = 0
     for root in SCAN_ROOTS:
@@ -186,21 +212,31 @@ def scan() -> tuple[list[dict], list[str], int]:
 def main() -> int:
     violations, bad_exempt, seen = scan()
     exemptions, _ = load_exemptions()
-    print("★ 用户偏好写入门禁（★ 事实 525）—— 判据：每一处 `SetUserPreference*` 必须可还原")
+    print(
+        "★ 用户偏好写入门禁（★ 事实 525）—— 判据：每一处 `SetUserPreference*` 必须可还原"
+    )
     print("   扫了 %d 个 .py（★ 扫描根：%s）" % (seen, " ".join(SCAN_ROOTS)))
-    print("   豁免名单：%d 条（%s）" % (len(exemptions.get("exemptions") or []), EXEMPTIONS.name))
+    print(
+        "   豁免名单：%d 条（%s）"
+        % (len(exemptions.get("exemptions") or []), EXEMPTIONS.name)
+    )
     for e in exemptions.get("exemptions") or []:
         print("      · %s ⇒ %s" % (e.get("file"), str(e.get("reason"))[:70]))
     for b in bad_exempt:
         print("   [BAD] %s" % b)
     for v in violations:
-        print("   [HIT] %s:%d  %s（在 %s 里）" % (v["file"], v["line"], v["func"], v["enclosing"]))
+        print(
+            "   [HIT] %s:%d  %s（在 %s 里）"
+            % (v["file"], v["line"], v["func"], v["enclosing"])
+        )
         print("         %s" % v["why"])
     if violations or bad_exempt:
-        print("\n[FAIL] ★ 有 %d 处不可还原的偏好写入 / %d 条无效豁免 —— "
-              "★ 正解：① 用 `with preference_guard(...)`；② 或把「设」与「还原」成对写好"
-              "并在函数里留 `preference-guard: <理由>`；③ 或进豁免名单（带 reason + evidence）"
-              % (len(violations), len(bad_exempt)))
+        print(
+            "\n[FAIL] ★ 有 %d 处不可还原的偏好写入 / %d 条无效豁免 —— "
+            "★ 正解：① 用 `with preference_guard(...)`；② 或把「设」与「还原」成对写好"
+            "并在函数里留 `preference-guard: <理由>`；③ 或进豁免名单（带 reason + evidence）"
+            % (len(violations), len(bad_exempt))
+        )
         return 1
     print("\n[PASS] 每一处 `SetUserPreference*` 都是可还原的（或已带理由豁免）")
     return 0

@@ -13,7 +13,7 @@
 # ★ **看有没有两种解析器**（`json.loads` / `yaml.safe_load` / `ast.literal_eval` / `toml
 # lib`）。
 #   ⚠ **判据要保守**（★ 本仓一贯：宁可漏，不要噪音）：
-# ★ 只报**同一文件被≥2 种解析器读**的 ⇒ ★★ 而那**不是**"一定错"，★ 而是"**值得看一眼**" 
+# ★ 只报**同一文件被≥2 种解析器读**的 ⇒ ★★ 而那**不是**"一定错"，★ 而是"**值得看一眼**"
 # ✓
 # 官方依据: 不适用（本仓自有的分析）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -41,19 +41,27 @@ PARSERS = (
     ("literal_eval", re.compile(r"ast\.literal_eval\(")),
 )
 #: ★ 关心的文件（★ 本仓的数据文件）
-TARGETS = ("capabilities.yaml", "gate-classification.json", "judge-registry.json",
-           "union-sources.json")
+TARGETS = (
+    "capabilities.yaml",
+    "gate-classification.json",
+    "judge-registry.json",
+    "union-sources.json",
+)
 
 
 def main(argv: list) -> int:
-    files = [p for d in ("scripts", "tools", "mcp-server") for p in (REPO_ROOT / d).glob("*.py")]
+    files = [
+        p
+        for d in ("scripts", "tools", "mcp-server")
+        for p in (REPO_ROOT / d).glob("*.py")
+    ]
     print("  扫了 **%d** 个 .py（★ 先报数量 —— 事实 357）" % len(files))
     #: ★ 每个文件：★ 谁读了它、用什么解析器
     readers: dict = defaultdict(set)
     for f in files:
         try:
             t = f.read_text(encoding="utf-8")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for target in TARGETS:
             if target not in t:
@@ -74,8 +82,12 @@ def main(argv: list) -> int:
             bad += 1
     print()
     if bad:
-        print("  ⚠★ **%d 个文件被两种以上解析器读** —— ★★ 而那**不是「一定错」**，" % bad)
-        print("       ★ 而是「**值得看一眼**」：★ 若那两种解析器**容忍度不同**（★ 如尾随逗号 / 注释），")
+        print(
+            "  ⚠★ **%d 个文件被两种以上解析器读** —— ★★ 而那**不是「一定错」**，" % bad
+        )
+        print(
+            "       ★ 而是「**值得看一眼**」：★ 若那两种解析器**容忍度不同**（★ 如尾随逗号 / 注释），"
+        )
         print("       ★★ 就会重演**事实 370** 那个坑（★ 一边读得了、另一边读不到）✓")
         return 0
     print("  ✓ 没有「同一文件被两种解析器读」的情形（★ 按本判据）")

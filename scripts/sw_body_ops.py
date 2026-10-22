@@ -36,7 +36,7 @@
 # `
 #   · `C:\swapi\types\ISelectData\Mark.md` —— `System.int Mark {get; set;}`
 #   · `C:\swapi\enums\swBodyType_e.md` —— `swAllBodies = -1` · `swSolidBody = 0`
-# · ★★ **官方示例 `examples\Move_Bodies_Example_VB.md` 给了"调用序"**（★ 签名与 Remarks 
+# · ★★ **官方示例 `examples\Move_Bodies_Example_VB.md` 给了"调用序"**（★ 签名与 Remarks
 # 都给不出）：
 #     ```
 #     ① swModel.ClearSelection2 True
@@ -86,8 +86,16 @@ for _p in (_HERE.parent, _HERE.parent.parent):
 
 from sw_connect import deg, get_com_member, set_com_member  # noqa: E402
 
-__all__ = ["AXIS_INDEX", "BODY_MARKS", "BODY_TYPES", "ROTATION_AXIS_FINDING", "ROTATION_AXIS_MAP",
-           "UNIT_FINDINGS", "move_copy_body", "body_state"]
+__all__ = [
+    "AXIS_INDEX",
+    "BODY_MARKS",
+    "BODY_TYPES",
+    "ROTATION_AXIS_FINDING",
+    "ROTATION_AXIS_MAP",
+    "UNIT_FINDINGS",
+    "move_copy_body",
+    "body_state",
+]
 
 #: ★★ **旋转角"影射到哪根轴"的实测结论**（★ 官方页只给参数名、**没给语义**；
 #:   ★ 由探针 `T5b` 用"只给一个角、看**哪一轴的跨度不变**"的三格互证定出来）
@@ -124,8 +132,9 @@ ROTATION_AXIS_FINDING = (
 )
 
 
-def _api_rotation_radians(angle_x_deg: float, angle_y_deg: float,
-                          angle_z_deg: float) -> list:
+def _api_rotation_radians(
+    angle_x_deg: float, angle_y_deg: float, angle_z_deg: float
+) -> list:
     """★ 把「绕 X / 绕 Y / 绕 Z」翻译成 `InsertMoveCopyBody2` **实际吃的位置**（弧度）。
 
     ★ 依据 = :data:`ROTATION_AXIS_MAP`（真机实测的 X↔Z 互换）—— ★ **单源**，不在别处再抄一份 ✓
@@ -135,6 +144,7 @@ def _api_rotation_radians(angle_x_deg: float, angle_y_deg: float,
     for axis, slot in ROTATION_AXIS_MAP.items():
         api[slot] = deg(want[axis])
     return api
+
 
 #: ★★ 本能力的**单位实测结论**（★ 随返回值一起回给调用方 —— ★ 不写成注释让人漏读）
 UNIT_FINDINGS = (
@@ -154,9 +164,9 @@ UNIT_FINDINGS = (
 #: enum-gate: member InsertMoveCopyBody2
 BODY_MARKS = {
     "body_or_surface": 1,
-    "rotation_reference": 2,          # Rotation edge / vertex / coordinate system
-    "translation_reference": 4,       # Translation edge / vertex / coordinate system
-    "translation_vertex": 8,          # Translation vertex
+    "rotation_reference": 2,  # Rotation edge / vertex / coordinate system
+    "translation_reference": 4,  # Translation edge / vertex / coordinate system
+    "translation_vertex": 8,  # Translation vertex
 }
 
 #: ★ 官方 `swBodyType_e`（本模块只用到两个）
@@ -181,21 +191,26 @@ def body_state(model, *, kind: str = "all", body_index: int = 0) -> dict:
     out = {"body_count": None, "bbox_mm": None, "bbox_comparable": False}
     try:
         out["body_count"] = len(_bodies(model, kind))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         out["body_count"] = None
     try:
         from sw_part import get_bounding_box
+
         bb = get_bounding_box(model, body_index=body_index)
         if isinstance(bb, dict):
-            out["bbox_mm"] = {"min": [round(float(v), 6) for v in bb["min"]],
-                              "max": [round(float(v), 6) for v in bb["max"]]}
+            out["bbox_mm"] = {
+                "min": [round(float(v), 6) for v in bb["min"]],
+                "max": [round(float(v), 6) for v in bb["max"]],
+            }
             out["bbox_comparable"] = True
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         out["bbox_mm"] = None
     return out
 
 
-def _select_bodies(model, selection: str, *, mark: int = BODY_MARKS["body_or_surface"]) -> dict:
+def _select_bodies(
+    model, selection: str, *, mark: int = BODY_MARKS["body_or_surface"]
+) -> dict:
     """★ 按**官方示例的调用序**选中实体并**设 mark**（★ 事实 8：判据是**回读计数**）。
 
     ★ 官方示例逐字：`Set swSelData = swSelMgr.CreateSelectData` ⇒ `swSelData.Mark = 1`
@@ -218,10 +233,12 @@ def _select_bodies(model, selection: str, *, mark: int = BODY_MARKS["body_or_sur
             raise ValueError("实体下标 %d 越界（共 %d 个实体）" % (idx, len(allb)))
         picked = [allb[idx]]
     else:
-        raise ValueError("非法的实体选择器 %r；合法形式：'all' 或 'index:<n>'" % selection)
+        raise ValueError(
+            "非法的实体选择器 %r；合法形式：'all' 或 'index:<n>'" % selection
+        )
     if not picked:
         raise RuntimeError("文档里没有实体可选中（先建几何）")
-    get_com_member(model, "ClearSelection2", True)             # ★ 官方示例第 ① 步
+    get_com_member(model, "ClearSelection2", True)  # ★ 官方示例第 ① 步
     mgr = get_com_member(model, "SelectionManager")
     data = get_com_member(mgr, "CreateSelectData")
     if data is None:
@@ -233,14 +250,23 @@ def _select_bodies(model, selection: str, *, mark: int = BODY_MARKS["body_or_sur
     return {"count": count, "requested": len(picked), "selected_bodies": len(picked)}
 
 
-def move_copy_body(model, selection: str = "all", *,
-                   translate_x_mm: float = 0.0, translate_y_mm: float = 0.0,
-                   translate_z_mm: float = 0.0, translate_dist_mm: float = 0.0,
-                   rotate_point_x_mm: float = 0.0, rotate_point_y_mm: float = 0.0,
-                   rotate_point_z_mm: float = 0.0,
-                   rotate_angle_x_deg: float = 0.0, rotate_angle_y_deg: float = 0.0,
-                   rotate_angle_z_deg: float = 0.0,
-                   copy: bool = False, num_copies: int = 1) -> dict:
+def move_copy_body(
+    model,
+    selection: str = "all",
+    *,
+    translate_x_mm: float = 0.0,
+    translate_y_mm: float = 0.0,
+    translate_z_mm: float = 0.0,
+    translate_dist_mm: float = 0.0,
+    rotate_point_x_mm: float = 0.0,
+    rotate_point_y_mm: float = 0.0,
+    rotate_point_z_mm: float = 0.0,
+    rotate_angle_x_deg: float = 0.0,
+    rotate_angle_y_deg: float = 0.0,
+    rotate_angle_z_deg: float = 0.0,
+    copy: bool = False,
+    num_copies: int = 1,
+) -> dict:
     """★ **移动或复制实体**（★ 官方 `IFeatureManager::InsertMoveCopyBody2`，**12 参**）。
 
     :param selection: 声明式选择器（★ 规则 3：不收坐标）—— `"all"` 或 `"index:<n>"`。
@@ -261,14 +287,24 @@ def move_copy_body(model, selection: str = "all", *,
       ⇒ ★ 本函数**检测到两者都给**时，在返回值里置 `both_given=True` 并**写明**（★ 不静默）✓
     """
     out: dict = {
-        "ok": False, "entry_used": "IFeatureManager::InsertMoveCopyBody2(12 参)",
-        "returned": None, "mark_used": BODY_MARKS["body_or_surface"], "selection": str(selection),
-        "both_given": None, "before": None, "after": None, "moved": None, "copied": None,
-        "copy": bool(copy), "num_copies": int(num_copies), "error": None, "note": None,
+        "ok": False,
+        "entry_used": "IFeatureManager::InsertMoveCopyBody2(12 参)",
+        "returned": None,
+        "mark_used": BODY_MARKS["body_or_surface"],
+        "selection": str(selection),
+        "both_given": None,
+        "before": None,
+        "after": None,
+        "moved": None,
+        "copied": None,
+        "copy": bool(copy),
+        "num_copies": int(num_copies),
+        "error": None,
+        "note": None,
         "unit_findings": list(UNIT_FINDINGS),
         "rotation_axis_finding": ROTATION_AXIS_FINDING,
         "★": "判据是**回读**（包围盒变 / 实体个数变），★ 不是它回的 IFeature 指针；"
-             "★ mark 设在 ISelectData 上（官方示例的调用序）",
+        "★ mark 设在 ISelectData 上（官方示例的调用序）",
     }
     if model is None:
         out["error"] = "model 为 None"
@@ -278,30 +314,40 @@ def move_copy_body(model, selection: str = "all", *,
         return out
     t = [float(translate_x_mm), float(translate_y_mm), float(translate_z_mm)]
     rp = [float(rotate_point_x_mm), float(rotate_point_y_mm), float(rotate_point_z_mm)]
-    ra = [float(rotate_angle_x_deg), float(rotate_angle_y_deg), float(rotate_angle_z_deg)]
-    has_translation = any(abs(v) > 0.0 for v in t) or abs(float(translate_dist_mm)) > 0.0
+    ra = [
+        float(rotate_angle_x_deg),
+        float(rotate_angle_y_deg),
+        float(rotate_angle_z_deg),
+    ]
+    has_translation = (
+        any(abs(v) > 0.0 for v in t) or abs(float(translate_dist_mm)) > 0.0
+    )
     has_rotation = any(abs(v) > 0.0 for v in ra)
     out["both_given"] = bool(has_translation and has_rotation)
     if out["both_given"]:
-        out["note"] = ("★★ 平移与旋转**同时给了** —— 官方 `## Remarks` 逐字：「Translation and "
-                       "rotation **cannot both be applied** by a single move/copy body feature. "
-                       "If you specify both translation and rotation parameters, **only the "
-                       "rotation parameters are applied**.」⇒ ★ 本次**只会应用旋转**（官方行为，"
-                       "本函数如实带出，★ 不替你改参数）")
+        out["note"] = (
+            "★★ 平移与旋转**同时给了** —— 官方 `## Remarks` 逐字：「Translation and "
+            "rotation **cannot both be applied** by a single move/copy body feature. "
+            "If you specify both translation and rotation parameters, **only the "
+            "rotation parameters are applied**.」⇒ ★ 本次**只会应用旋转**（官方行为，"
+            "本函数如实带出，★ 不替你改参数）"
+        )
     try:
         out["before"] = body_state(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     try:
         sel = _select_bodies(model, selection)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "选实体失败：%s: %s" % (type(exc).__name__, str(exc)[:180])
         return out
     out["selection_count"] = sel["count"]
     if sel["count"] <= 0:
-        out["error"] = ("选完**回读计数为 0** ⇒ 没有实体在选区里（★ 事实 8：不许信 Select2 的返回值）"
-                        "—— 前缀 ① `ClearSelection2` 是否把别的选择也清了？")
+        out["error"] = (
+            "选完**回读计数为 0** ⇒ 没有实体在选区里（★ 事实 8：不许信 Select2 的返回值）"
+            "—— 前缀 ① `ClearSelection2` 是否把别的选择也清了？"
+        )
         return out
     try:
         fm = get_com_member(model, "FeatureManager")
@@ -309,32 +355,50 @@ def move_copy_body(model, selection: str = "all", *,
         out["api_rotation_radians"] = api_angles
         out["rotation_axis_map"] = dict(ROTATION_AXIS_MAP)
         out["returned"] = get_com_member(
-            fm, "InsertMoveCopyBody2",
-            t[0], t[1], t[2], float(translate_dist_mm),
-            rp[0], rp[1], rp[2],
-            api_angles[0], api_angles[1], api_angles[2],
-            bool(copy), int(num_copies))
-    except Exception as exc:                                   # noqa: BLE001
+            fm,
+            "InsertMoveCopyBody2",
+            t[0],
+            t[1],
+            t[2],
+            float(translate_dist_mm),
+            rp[0],
+            rp[1],
+            rp[2],
+            api_angles[0],
+            api_angles[1],
+            api_angles[2],
+            bool(copy),
+            int(num_copies),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
     try:
         out["after"] = body_state(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     b, a = out["before"], out["after"]
-    out["moved"] = (b["bbox_comparable"] and a["bbox_comparable"]
-                    and b["bbox_mm"] != a["bbox_mm"])
-    out["copied"] = (b["body_count"] is not None and a["body_count"] is not None
-                     and a["body_count"] > b["body_count"])
+    out["moved"] = (
+        b["bbox_comparable"] and a["bbox_comparable"] and b["bbox_mm"] != a["bbox_mm"]
+    )
+    out["copied"] = (
+        b["body_count"] is not None
+        and a["body_count"] is not None
+        and a["body_count"] > b["body_count"]
+    )
     if copy:
         out["ok"] = bool(out["copied"])
         if not out["ok"]:
-            out["error"] = ("回读判据未过（**复制**档要**实体个数增加**）：%r → %r"
-                            % (b["body_count"], a["body_count"]))
+            out["error"] = "回读判据未过（**复制**档要**实体个数增加**）：%r → %r" % (
+                b["body_count"],
+                a["body_count"],
+            )
     else:
         out["ok"] = bool(out["moved"]) or out["both_given"]
         if not out["ok"]:
-            out["error"] = ("回读判据未过（**移动**档要**包围盒变化**）：%r → %r（★ 读不到包围盒时"
-                            "**不得当「没变」**）" % (b["bbox_mm"], a["bbox_mm"]))
+            out["error"] = (
+                "回读判据未过（**移动**档要**包围盒变化**）：%r → %r（★ 读不到包围盒时"
+                "**不得当「没变」**）" % (b["bbox_mm"], a["bbox_mm"])
+            )
     return out

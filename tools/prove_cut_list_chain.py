@@ -41,18 +41,32 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "cut-list-chain-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "cut-list-chain-evidence.json"
+)
 CSV = Path(Path(__file__).resolve().parents[1] / "output" / "cut-list-chain.csv")
-PROFILE = Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles\GB\square-rods.sldlfp")
+PROFILE = Path(
+    r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles\GB\square-rods.sldlfp"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import safe_get_com_member
-    from scripts.sw_part import current_sketch_name, end_sketch, sketch_line, start_sketch
-    from scripts.sw_weldment import (create_structural_member_from_sketch, ensure_cut_list,
-                                     export_cut_list_csv, set_cut_list_properties,
-                                     update_cut_list, weldment_evidence)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        sketch_line,
+        start_sketch,
+    )
+    from scripts.sw_weldment import (
+        create_structural_member_from_sketch,
+        ensure_cut_list,
+        export_cut_list_csv,
+        set_cut_list_properties,
+        update_cut_list,
+        weldment_evidence,
+    )
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -65,75 +79,107 @@ def main() -> int:
         end_sketch(doc)
         #: ★ ① 先建构件（★ 轮 428 已验的链）
         rep = create_structural_member_from_sketch(doc, sk, str(PROFILE))
-        ev["steps"]["structural_member"] = {"ok": bool(rep.get("ok")),
-                                            "feature": rep.get("feature"),
-                                            "new_type_names": rep.get("new_type_names")}
+        ev["steps"]["structural_member"] = {
+            "ok": bool(rep.get("ok")),
+            "feature": rep.get("feature"),
+            "new_type_names": rep.get("new_type_names"),
+        }
         #: ★ ② 看切割清单文件夹（★ 不建）
         ev1 = weldment_evidence(doc)
-        ev["steps"]["evidence_before"] = {"ok": True,
-                                          "cut_list_folders": str(ev1.get("cut_list_folders"))[:200],
-                                          "keys": sorted(ev1.keys())[:12]}
+        ev["steps"]["evidence_before"] = {
+            "ok": True,
+            "cut_list_folders": str(ev1.get("cut_list_folders"))[:200],
+            "keys": sorted(ev1.keys())[:12],
+        }
         #: ★ ③ 建切割清单（若没有）
         try:
             cl = ensure_cut_list(doc)
-            ev["steps"]["ensure_cut_list"] = {"ok": cl is not None,
-                                              "returned": json.dumps(cl, ensure_ascii=False,
-                                                                     default=str)[:200]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["ensure_cut_list"] = {"ok": False,
-                                              "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+            ev["steps"]["ensure_cut_list"] = {
+                "ok": cl is not None,
+                "returned": json.dumps(cl, ensure_ascii=False, default=str)[:200],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["ensure_cut_list"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+            }
         #: ★ ④ 写属性
         try:
-            props = set_cut_list_properties(doc, {"Description": "DSH \u65b9\u7ba1", "Material": "Q235"})
+            props = set_cut_list_properties(
+                doc, {"Description": "DSH \u65b9\u7ba1", "Material": "Q235"}
+            )
             ev["steps"]["set_cut_list_properties"] = {
-                "ok": bool(props), "returned": json.dumps(props, ensure_ascii=False, default=str)[:200]}
-        except Exception as exc:                               # noqa: BLE001
+                "ok": bool(props),
+                "returned": json.dumps(props, ensure_ascii=False, default=str)[:200],
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["set_cut_list_properties"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:150])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+            }
         #: ★ ⑤ 刷新
         try:
             up = update_cut_list(doc)
-            ev["steps"]["update_cut_list"] = {"ok": up is not None,
-                                             "returned": json.dumps(up, ensure_ascii=False,
-                                                                    default=str)[:200]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["update_cut_list"] = {"ok": False,
-                                              "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+            ev["steps"]["update_cut_list"] = {
+                "ok": up is not None,
+                "returned": json.dumps(up, ensure_ascii=False, default=str)[:200],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["update_cut_list"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+            }
         #: ★ ⑥ 证据 + 导出 CSV（★ 判据是**文件**）
         ev2 = weldment_evidence(doc)
-        ev["steps"]["evidence_after"] = {"ok": True,
-                                         "cut_list_folders": str(ev2.get("cut_list_folders"))[:300]}
+        ev["steps"]["evidence_after"] = {
+            "ok": True,
+            "cut_list_folders": str(ev2.get("cut_list_folders"))[:300],
+        }
         try:
             if CSV.exists():
                 CSV.unlink()
             p = export_cut_list_csv(ev2, str(CSV))
-            ev["steps"]["export_csv"] = {"ok": CSV.is_file() and CSV.stat().st_size > 0,
-                                         "path": str(p) if p else None,
-                                         "bytes": CSV.stat().st_size if CSV.is_file() else 0}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["export_csv"] = {"ok": False,
-                                         "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
-        ok_cl = bool((ev["steps"].get("evidence_after") or {}).get("cut_list_folders")
-                     and "[]" not in str((ev["steps"].get("evidence_after") or {}).get("cut_list_folders")))
+            ev["steps"]["export_csv"] = {
+                "ok": CSV.is_file() and CSV.stat().st_size > 0,
+                "path": str(p) if p else None,
+                "bytes": CSV.stat().st_size if CSV.is_file() else 0,
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["export_csv"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+            }
+        ok_cl = bool(
+            (ev["steps"].get("evidence_after") or {}).get("cut_list_folders")
+            and "[]"
+            not in str(
+                (ev["steps"].get("evidence_after") or {}).get("cut_list_folders")
+            )
+        )
         ok_csv = bool((ev["steps"].get("export_csv") or {}).get("ok"))
         ev["verdict"] = "pass" if (ok_cl and ok_csv) else "partial"
-        ev["note"] = ("★ 在**真有结构构件**的文档上走完切割清单那条链 —— "
-                      "★ 而它的**旧卡点前提**（「**建不出结构构件**」）**已在轮 428 失效**。"
-                      "★ 判据：① 切割清单文件夹非空 ② 导出 CSV 文件存在且非空。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 在**真有结构构件**的文档上走完切割清单那条链 —— "
+            "★ 而它的**旧卡点前提**（「**建不出结构构件**」）**已在轮 428 失效**。"
+            "★ 判据：① 切割清单文件夹非空 ② 导出 CSV 文件存在且非空。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1800])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

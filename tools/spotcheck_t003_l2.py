@@ -30,9 +30,20 @@ from pathlib import Path
 
 REPO = Path(Path(__file__).resolve().parents[1])
 SWAPI = Path(r"C:\swapi\types")
-L2 = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "bunny-L2-official-member-calls.md"
-SRC = (REPO / "subskills" / "solidworks-engineering-drawing" / "scripts"
-       / "drawing_workflow.py")
+L2 = (
+    REPO
+    / "specs"
+    / "202-user-coverage-gaps"
+    / "recon"
+    / "bunny-L2-official-member-calls.md"
+)
+SRC = (
+    REPO
+    / "subskills"
+    / "solidworks-engineering-drawing"
+    / "scripts"
+    / "drawing_workflow.py"
+)
 OUT = REPO / "output" / "t003-spotcheck-l2.json"
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -54,7 +65,7 @@ def claimed_names(text: str) -> list:
         cells = [c.strip() for c in s.strip("|").split("|")]
         if len(cells) < 4:
             continue
-        if not re.match(r"^\d+$", cells[0]):          #: ★ 只要数据行（# 列是数字）
+        if not re.match(r"^\d+$", cells[0]):  #: ★ 只要数据行（# 列是数字）
             continue
         rows += 1
         for m in re.finditer(r"`([^`]+)`", cells[3]):
@@ -69,14 +80,21 @@ def claimed_names(text: str) -> list:
 def main() -> int:
     text = L2.read_text(encoding="utf-8", errors="replace")
     rows, names = claimed_names(text)
-    R = {"★_目的": "T003 抽查 · recon/bunny-L2-official-member-calls.md",
-         "★_声称": "函数总数 83 / 有成员的 67 / 去重成员名 143",
-         "★_解析到的数据行": rows, "★_解析到的成员名数": len(names),
-         "★_判据": "① 每个成员名在 C:/swapi/types 里有没有页 ② 顺带核它的代码断言",
-         "成员": {}, "没找到": [], "代码断言": {}}
+    R = {
+        "★_目的": "T003 抽查 · recon/bunny-L2-official-member-calls.md",
+        "★_声称": "函数总数 83 / 有成员的 67 / 去重成员名 143",
+        "★_解析到的数据行": rows,
+        "★_解析到的成员名数": len(names),
+        "★_判据": "① 每个成员名在 C:/swapi/types 里有没有页 ② 顺带核它的代码断言",
+        "成员": {},
+        "没找到": [],
+        "代码断言": {},
+    }
 
-    print("★ 对照表数据行 %d 行 · ★ 解析到**去重成员名 %d 个**（★ L2 自称 143）"
-          % (rows, len(names)))
+    print(
+        "★ 对照表数据行 %d 行 · ★ 解析到**去重成员名 %d 个**（★ L2 自称 143）"
+        % (rows, len(names))
+    )
     print("=" * 78)
     print("★ 判据①：逐个去 C:/swapi/types 查有没有一页")
     for n in sorted(names):
@@ -86,7 +104,9 @@ def main() -> int:
         if not found:
             R["没找到"].append(n)
     ok = len(names) - len(R["没找到"])
-    print("   ★ 找到 **%d / %d** ⇒ 没找到 **%d** 个" % (ok, len(names), len(R["没找到"])))
+    print(
+        "   ★ 找到 **%d / %d** ⇒ 没找到 **%d** 个" % (ok, len(names), len(R["没找到"]))
+    )
     if R["没找到"]:
         print("   ★★ 没找到（★ 编造嫌疑 / ★ 或名字属于**枚举/常量**不是成员）：")
         for n in R["没找到"]:
@@ -99,22 +119,30 @@ def main() -> int:
     has_any_import = bool(re.search(r"^\s*from typing import .*\bAny\b", src, re.M))
     has_future = "from __future__ import annotations" in src
     uses_any = bool(re.search(r"\bdict\[str,\s*Any\]", src))
-    R["代码断言"] = {"用到 dict[str, Any]": uses_any,
-                 "有 from typing import Any": has_any_import,
-                 "有 from __future__ import annotations": has_future,
-                 "文件顶部 60 行的 import": [l.strip() for l in head.splitlines()
-                                        if l.strip().startswith(("import ", "from "))][:8]}
+    R["代码断言"] = {
+        "用到 dict[str, Any]": uses_any,
+        "有 from typing import Any": has_any_import,
+        "有 from __future__ import annotations": has_future,
+        "文件顶部 60 行的 import": [
+            l.strip()
+            for l in head.splitlines()
+            if l.strip().startswith(("import ", "from "))
+        ][:8],
+    }
     print("   ★ 用到 `dict[str, Any]`：%s" % uses_any)
     print("   ★ 有 `from typing import Any`：**%s**" % has_any_import)
     print("   ★ 有 `from __future__ import annotations`：%s" % has_future)
     print("   ★ 顶部 import：%s" % R["代码断言"]["文件顶部 60 行的 import"])
     R["代码断言"]["L2 的说法成立"] = bool(uses_any and not has_any_import)
 
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("=" * 78)
-    print("★ 汇总：★ 成员名 %d/%d 在官方源找到 · ★「Any 未导入」这条断言 %s"
-          % (ok, len(names),
-             "成立" if R["代码断言"]["L2 的说法成立"] else "**不成立**"))
+    print(
+        "★ 汇总：★ 成员名 %d/%d 在官方源找到 · ★「Any 未导入」这条断言 %s"
+        % (ok, len(names), "成立" if R["代码断言"]["L2 的说法成立"] else "**不成立**")
+    )
     print("★ wrote", OUT)
     return 0
 

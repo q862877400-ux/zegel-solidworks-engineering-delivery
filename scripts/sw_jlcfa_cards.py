@@ -42,6 +42,7 @@ r"""嘉立创 FA 结果卡定位 —— **不依赖列数、不依赖宽度**。
 # ⚠ 本模块只做定位；点击由调用方发起。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -63,12 +64,33 @@ warnings.filterwarnings("ignore")
 
 #: 结构名/导航名 —— 不是分类卡，收集时要排除
 SKIP_NAMES = {
-    "swCaption", "SearchBox", "swCmdMgr", "swMenu", "工作区", "任务窗格",
-    "EM Frame", "header", "taskPaneConfig", "expandCollapse", "pin",
-    "swInnerFrame", "Task Pane Tabs Wnd", "设置", "返回", "首页",
-    "全部商品分类", "搜索", "同步数据", "有更新", "联系我们", "去官网",
-    "个人中心", "数据同步进度(7010/8234)", "BottomOfMainOffForm3",
-    "SubCategoryOffForm", "TopCategoryOffForm",
+    "swCaption",
+    "SearchBox",
+    "swCmdMgr",
+    "swMenu",
+    "工作区",
+    "任务窗格",
+    "EM Frame",
+    "header",
+    "taskPaneConfig",
+    "expandCollapse",
+    "pin",
+    "swInnerFrame",
+    "Task Pane Tabs Wnd",
+    "设置",
+    "返回",
+    "首页",
+    "全部商品分类",
+    "搜索",
+    "同步数据",
+    "有更新",
+    "联系我们",
+    "去官网",
+    "个人中心",
+    "数据同步进度(7010/8234)",
+    "BottomOfMainOffForm3",
+    "SubCategoryOffForm",
+    "TopCategoryOffForm",
 }
 
 #: 卡片文字标签前缀（实测格式「代码：HGH20HAZ0C」）
@@ -91,7 +113,7 @@ def code_labels(win) -> list[tuple[int, int, str, Any]]:
             continue
         if not t.startswith(CODE_PREFIX) or not L._overlaps(r, cr):
             continue
-        out.append((r.top, r.left, t[len(CODE_PREFIX):].strip(), r))
+        out.append((r.top, r.left, t[len(CODE_PREFIX) :].strip(), r))
     out.sort()
     return out
 
@@ -162,12 +184,14 @@ def _drag(x1, y1, x2, y2, steps: int = 12) -> None:
     import time
     import win32api
     import win32con
+
     win32api.SetCursorPos((int(x1), int(y1)))
     time.sleep(0.12)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
     for i in range(1, steps + 1):
-        win32api.SetCursorPos((int(x1 + (x2 - x1) * i / steps),
-                              int(y1 + (y2 - y1) * i / steps)))
+        win32api.SetCursorPos(
+            (int(x1 + (x2 - x1) * i / steps), int(y1 + (y2 - y1) * i / steps))
+        )
         time.sleep(0.03)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     time.sleep(0.6)
@@ -182,9 +206,22 @@ def category_cards(win, allc=None) -> list[tuple[str, Any]]:
     cr = L.container_rect(win)
     if cr is None:
         return []
-    SKIP = {"swCaption", "SearchBox", "swCmdMgr", "swMenu", "任务窗格",
-            "EM Frame", "header", "taskPaneConfig", "expandCollapse", "pin",
-            "swInnerFrame", "Task Pane Tabs Wnd", "工作区", "设置"}
+    SKIP = {
+        "swCaption",
+        "SearchBox",
+        "swCmdMgr",
+        "swMenu",
+        "任务窗格",
+        "EM Frame",
+        "header",
+        "taskPaneConfig",
+        "expandCollapse",
+        "pin",
+        "swInnerFrame",
+        "Task Pane Tabs Wnd",
+        "工作区",
+        "设置",
+    }
     out = []
     seen = set()
     for c in L._controls(win):
@@ -219,5 +256,7 @@ if __name__ == "__main__":
     vis = visible_codes(w)
     print("视口内的卡 %d 张: %s" % (len(vis), [c for c, _, _ in vis[:6]]))
     allc = code_labels(w)
-    print("全部代码标签 %d 个（视口外也读得到）: %s"
-          % (len(allc), [c for _, _, c, _ in allc[:6]]))
+    print(
+        "全部代码标签 %d 个（视口外也读得到）: %s"
+        % (len(allc), [c for _, _, c, _ in allc[:6]])
+    )

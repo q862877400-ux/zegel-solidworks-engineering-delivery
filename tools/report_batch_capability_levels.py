@@ -6,7 +6,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/report_batch_capability_levels.py
-# 定位:   SC-008：报"某批工具**背后的能力**里有多少条是 `verified`"（★ 规格 205 §7.2 
+# 定位:   SC-008：报"某批工具**背后的能力**里有多少条是 `verified`"（★ 规格 205 §7.2
 #           要求）。
 # 官方依据: 不适用（本仓工具，不调 COM）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -31,11 +31,16 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--names", nargs="*", default=[], help="本批工具名；省略则按批次文件数")
+    ap.add_argument(
+        "--names", nargs="*", default=[], help="本批工具名；省略则按批次文件数"
+    )
     ap.add_argument("--modules", nargs="*", default=[])
     a = ap.parse_args()
     import register_capabilities as rc
-    caps = json.loads((ROOT / "capabilities.yaml").read_text(encoding="utf-8"))["capabilities"]
+
+    caps = json.loads((ROOT / "capabilities.yaml").read_text(encoding="utf-8"))[
+        "capabilities"
+    ]
     specs = {s.name: s for s in rc.all_specs()}
 
     if not a.modules:
@@ -59,8 +64,10 @@ def main() -> int:
     levels = Counter(v["level"] for v in hit.values())
     print("★ 相关能力条目 **%d** 条 · level 分布: %s" % (len(hit), dict(levels)))
     ver = sum(1 for v in hit.values() if v["level"] == "verified")
-    print("★★ SC-008：其中 **verified %d 条** / 共 %d 条（%.0f%%）"
-          % (ver, len(hit), 100.0 * ver / max(1, len(hit))))
+    print(
+        "★★ SC-008：其中 **verified %d 条** / 共 %d 条（%.0f%%）"
+        % (ver, len(hit), 100.0 * ver / max(1, len(hit)))
+    )
     for cid, v in sorted(hit.items()):
         mark = "★" if v["level"] == "verified" else " "
         print("   %s %-34s %s" % (mark, cid, v["level"]))

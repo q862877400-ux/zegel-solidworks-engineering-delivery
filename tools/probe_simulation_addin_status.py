@@ -35,6 +35,7 @@ RuntimeError: GetAddInObject('SldWorks.Simulation') 返回 None：
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -48,8 +49,15 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-addin-status.json")
-REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-addin-status.json"
+)
+REFLECT = Path(
+    Path(__file__).resolve().parents[1]
+    / "_raw"
+    / "reflect_sldworks"
+    / "iface_sldworks.txt"
+)
 
 
 def show_reflection():
@@ -70,34 +78,44 @@ def main() -> int:
     print()
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ① 加载前
         def probe():
             try:
-                return sw_connect.safe_get_com_member(sw, "GetAddInObject", "SldWorks.Simulation")
-            except Exception as exc:      # noqa: BLE001
+                return sw_connect.safe_get_com_member(
+                    sw, "GetAddInObject", "SldWorks.Simulation"
+                )
+            except Exception as exc:  # noqa: BLE001
                 return "EXC:%s" % type(exc).__name__
 
         before = probe()
         ev["before"] = type(before).__name__ if before is not None else None
-        print("  ① 加载**前** `GetAddInObject('SldWorks.Simulation')` ⇒ **%s**"
-              % ("None" if before is None else type(before).__name__))
+        print(
+            "  ① 加载**前** `GetAddInObject('SldWorks.Simulation')` ⇒ **%s**"
+            % ("None" if before is None else type(before).__name__)
+        )
 
         #: ② 试 LoadAddIn（多个候选名 —— ⚠ 都试一遍，看哪个返回 True）
-        cands = ["SldWorks.Simulation", "SolidWorks Simulation",
-                 "Simulation", "COSMOSWorks", "SldWorks.SimulationAddin"]
+        cands = [
+            "SldWorks.Simulation",
+            "SolidWorks Simulation",
+            "Simulation",
+            "COSMOSWorks",
+            "SldWorks.SimulationAddin",
+        ]
         results = {}
         for cand in cands:
             try:
                 r = sw_connect.safe_get_com_member(sw, "LoadAddIn", cand)
                 results[cand] = repr(r)
                 print("  ② `LoadAddIn(%r)` ⇒ **%r**" % (cand, r))
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 results[cand] = "EXC:%s" % type(exc).__name__
                 print("  ② `LoadAddIn(%r)` ⇒ %s" % (cand, type(exc).__name__))
         ev["load_addin"] = results
@@ -105,26 +123,35 @@ def main() -> int:
         #: ③ 加载后再看
         after = probe()
         ev["after"] = type(after).__name__ if after is not None else None
-        print("  ③ 加载**后** ⇒ **%s**" % ("None" if after is None else type(after).__name__))
-        ev["conclusion"] = ("① 类：加载项**能被加载**（可修）" if after is not None
-                            else "② 类：仍取不到 ⇒ 更可能是**许可/安装**问题（环境性）")
+        print(
+            "  ③ 加载**后** ⇒ **%s**"
+            % ("None" if after is None else type(after).__name__)
+        )
+        ev["conclusion"] = (
+            "① 类：加载项**能被加载**（可修）"
+            if after is not None
+            else "② 类：仍取不到 ⇒ 更可能是**许可/安装**问题（环境性）"
+        )
         print("  ⇒ 结论：%s" % ev["conclusion"])
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
-            if 'sw' in dir() and sw is not None:
+            if "sw" in dir() and sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

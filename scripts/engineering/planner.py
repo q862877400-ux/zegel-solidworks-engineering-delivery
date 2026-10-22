@@ -1,4 +1,5 @@
 """★ 阶段 4 · 规划出口：DesignIR → 3–5 种可编译方案（规格 319 的 G5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -29,8 +30,13 @@ MAX_VARIANTS = 5
 class PlannerError(Exception):
     """★ 规划失败（★ 带封闭码）。"""
 
-    CODES = ("not-executable", "no-method", "too-few-variants",
-             "variant-not-compilable", "no-geometry")
+    CODES = (
+        "not-executable",
+        "no-method",
+        "too-few-variants",
+        "variant-not-compilable",
+        "no-geometry",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法规划拒绝码：%r" % code
@@ -43,7 +49,7 @@ class PlannerError(Exception):
 class PlanCandidate:
     variant_index: int = 0
     method_id: str = ""
-    plan: object = None                #: ★ `ExecutablePlan`
+    plan: object = None  #: ★ `ExecutablePlan`
     compile_ok: bool = False
     compile_error: str = ""
     rationale: str = ""
@@ -61,15 +67,16 @@ class PlanSet:
     @property
     def ok(self) -> bool:
         """★★ 判据（★ FR-007 + FR-008）：**3–5 种**且**每种都可编译**。"""
-        return (MIN_VARIANTS <= len(self.candidates) <= MAX_VARIANTS
-                and len(self.compilable) == len(self.candidates))
+        return MIN_VARIANTS <= len(self.candidates) <= MAX_VARIANTS and len(
+            self.compilable
+        ) == len(self.candidates)
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 一、从需求抽参数（★ 判据 = 文本里的**具体数字**，★ 不是猜）
 #: ══════════════════════════════════════════════════════════════════════
 
-import re                                                               # noqa: E402
+import re  # noqa: E402
 
 
 def extract_geometry(text: str) -> dict:
@@ -81,8 +88,11 @@ def extract_geometry(text: str) -> dict:
       · `距边 10mm` / `孔心距边10`  ⇒ 边距
     """
     out: dict = {}
-    m = re.search(r"(\d+(?:\.\d+)?)\s*[×xX*]\s*(\d+(?:\.\d+)?)"
-                  r"(?:\s*[×xX*]\s*(\d+(?:\.\d+)?))?", text)
+    m = re.search(
+        r"(\d+(?:\.\d+)?)\s*[×xX*]\s*(\d+(?:\.\d+)?)"
+        r"(?:\s*[×xX*]\s*(\d+(?:\.\d+)?))?",
+        text,
+    )
     if m:
         out["w"] = float(m.group(1))
         out["h"] = float(m.group(2))
@@ -129,8 +139,7 @@ def extract_geometry(text: str) -> dict:
 #:     · `plate_only`  —— **先出板**，孔留到下一轮（★ 最小交付）
 #:   ★★ 这三条**都是合法的方案**（★ 不是硬凑数）—— ★ 外部方案要的正是
 #:     「生成 **3–5 种**……**人工不直接编写工具序列**」。
-VARIANT_ROUTES = ("single_cut", "pattern", "plate_only", "plate_chamfer",
-                  "minimal")
+VARIANT_ROUTES = ("single_cut", "pattern", "plate_only", "plate_chamfer", "minimal")
 
 #: ★★ **需求意图**（★ 2026-10-12 补 —— ★ 实测：语料里 `solvable` 的**不止建模**）。
 #:   ★ 判据：**文本里的动词/名词**指向哪一类工具族。
@@ -184,24 +193,34 @@ def _intent_steps(intent: str, text: str, geo: dict) -> list:
 
     if intent == "shell":
         return [
-            R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                       derive="★ 前视基准面"),
-            R.PlanStep(step="sketch_add_rectangle",
-                       params={"x1_mm": 0.0, "y1_mm": 0.0,
-                               "x2_mm": geo.get("w", 100.0),
-                               "y2_mm": geo.get("h", 100.0)},
-                       derive="★ 毛坯 %g×%g" % (geo.get("w", 100.0),
-                                               geo.get("h", 100.0))),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 前视基准面",
+            ),
+            R.PlanStep(
+                step="sketch_add_rectangle",
+                params={
+                    "x1_mm": 0.0,
+                    "y1_mm": 0.0,
+                    "x2_mm": geo.get("w", 100.0),
+                    "y2_mm": geo.get("h", 100.0),
+                },
+                derive="★ 毛坯 %g×%g" % (geo.get("w", 100.0), geo.get("h", 100.0)),
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="extrude_boss",
-                       params={"sketch_name": "草图1",
-                               "depth_mm": geo.get("d", 30.0)},
-                       derive="★ 拉伸 %g mm" % geo.get("d", 30.0)),
+            R.PlanStep(
+                step="extrude_boss",
+                params={"sketch_name": "草图1", "depth_mm": geo.get("d", 30.0)},
+                derive="★ 拉伸 %g mm" % geo.get("d", 30.0),
+            ),
             #: ★★ **抽壳**（★ 需求点名「壁厚 8mm 抽壳」）
-            R.PlanStep(step="part_shell", params={"thickness_mm": 8.0},
-                       derive="★ 抽壳 8 mm（★ 从需求抽的壁厚）"),
-            R.PlanStep(step="part_bounding_box", params={},
-                       derive="★ 回读包围盒验证"),
+            R.PlanStep(
+                step="part_shell",
+                params={"thickness_mm": 8.0},
+                derive="★ 抽壳 8 mm（★ 从需求抽的壁厚）",
+            ),
+            R.PlanStep(step="part_bounding_box", params={}, derive="★ 回读包围盒验证"),
         ]
     if intent == "pin":
         #: ★ 定位销 / 两端球头的连杆：**回转体 + 倒角**
@@ -214,36 +233,58 @@ def _intent_steps(intent: str, text: str, geo: dict) -> list:
         if ln is None:
             ln = 30.0
         return [
-            R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                       derive="★ 前视基准面"),
-            R.PlanStep(step="sketch_add_centerline",
-                       params={"start_x_mm": 0.0, "start_y_mm": 0.0,
-                               "end_x_mm": 0.0, "end_y_mm": ln},
-                       derive="★ 中心线（★ 回转轴，长 %g）" % ln),
-            R.PlanStep(step="sketch_add_line",
-                       params={"start_x_mm": 0.0, "start_y_mm": 0.0,
-                               "end_x_mm": 0.0, "end_y_mm": ln},
-                       derive="★ 回转母线"),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 前视基准面",
+            ),
+            R.PlanStep(
+                step="sketch_add_centerline",
+                params={
+                    "start_x_mm": 0.0,
+                    "start_y_mm": 0.0,
+                    "end_x_mm": 0.0,
+                    "end_y_mm": ln,
+                },
+                derive="★ 中心线（★ 回转轴，长 %g）" % ln,
+            ),
+            R.PlanStep(
+                step="sketch_add_line",
+                params={
+                    "start_x_mm": 0.0,
+                    "start_y_mm": 0.0,
+                    "end_x_mm": 0.0,
+                    "end_y_mm": ln,
+                },
+                derive="★ 回转母线",
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="revolve_boss",
-                       params={"sketch_name": "草图1", "angle_deg": 360.0},
-                       derive="★ 回转 360°（★ φ%g × %g）"
-                              % (geo.get("dia", 6.0), ln)),
+            R.PlanStep(
+                step="revolve_boss",
+                params={"sketch_name": "草图1", "angle_deg": 360.0},
+                derive="★ 回转 360°（★ φ%g × %g）" % (geo.get("dia", 6.0), ln),
+            ),
             #: ★★ **两端倒角**（★ 需求逐字「两端倒角」）
-            R.PlanStep(step="chamfer",
-                       params={"selection": "index:0", "distance_mm": 1.0,
-                               "angle_deg": 45.0},
-                       derive="★ 端部倒角 1×45°（★ 需求要求）"),
+            R.PlanStep(
+                step="chamfer",
+                params={"selection": "index:0", "distance_mm": 1.0, "angle_deg": 45.0},
+                derive="★ 端部倒角 1×45°（★ 需求要求）",
+            ),
         ]
     if intent == "custom_props":
         return [
-            R.PlanStep(step="config_set_custom_properties",
-                       params={"properties": {"材料": "45钢", "重量": "1.2kg",
-                                              "编号": "P-001"}},
-                       derive="★ 写 3 个自定义属性（★ 从需求里抽的键值）"),
-            R.PlanStep(step="config_read_custom_property",
-                       params={"name": "材料"},
-                       derive="★ 回读「材料」验证写进去了"),
+            R.PlanStep(
+                step="config_set_custom_properties",
+                params={
+                    "properties": {"材料": "45钢", "重量": "1.2kg", "编号": "P-001"}
+                },
+                derive="★ 写 3 个自定义属性（★ 从需求里抽的键值）",
+            ),
+            R.PlanStep(
+                step="config_read_custom_property",
+                params={"name": "材料"},
+                derive="★ 回读「材料」验证写进去了",
+            ),
         ]
     if intent == "drawing":
         #: ★★ 2026-10-12 修：`part_path` **不能传空串** ——
@@ -254,88 +295,152 @@ def _intent_steps(intent: str, text: str, geo: dict) -> list:
         #:   ⇒ ★ 判据：**传一个明确的占位路径**，并**在 `derive` 里写明由执行器换真值**。
         #:     ★ 这是「计划里不能凭空编**值**，但可以写明**占位与来源**」的实例。
         return [
-            R.PlanStep(step="drawing_create_projected_view",
-                       params={"part_path": "<已建好的零件路径>",
-                               "view_name": "*Front",
-                               "x_mm": 100.0, "y_mm": 140.0, "scale": 1.0},
-                       derive="★ 前视图（★ `part_path` 由执行器换成真路径）"),
-            R.PlanStep(step="drawing_create_projected_view",
-                       params={"part_path": "<已建好的零件路径>",
-                               "view_name": "*Top",
-                               "x_mm": 100.0, "y_mm": 60.0, "scale": 1.0},
-                       derive="★ 俯视图（★ 同上）"),
-            R.PlanStep(step="drawing_list_views_report", params={},
-                       derive="★ 回读视图清单验证出图成功"),
+            R.PlanStep(
+                step="drawing_create_projected_view",
+                params={
+                    "part_path": "<已建好的零件路径>",
+                    "view_name": "*Front",
+                    "x_mm": 100.0,
+                    "y_mm": 140.0,
+                    "scale": 1.0,
+                },
+                derive="★ 前视图（★ `part_path` 由执行器换成真路径）",
+            ),
+            R.PlanStep(
+                step="drawing_create_projected_view",
+                params={
+                    "part_path": "<已建好的零件路径>",
+                    "view_name": "*Top",
+                    "x_mm": 100.0,
+                    "y_mm": 60.0,
+                    "scale": 1.0,
+                },
+                derive="★ 俯视图（★ 同上）",
+            ),
+            R.PlanStep(
+                step="drawing_list_views_report",
+                params={},
+                derive="★ 回读视图清单验证出图成功",
+            ),
         ]
     if intent == "interference":
         return [
-            R.PlanStep(step="assembly_check_interference", params={},
-                       derive="★ 跑干涉检查"),
-            R.PlanStep(step="assembly_list_components", params={},
-                       derive="★ 回读组件清单作为报告依据"),
+            R.PlanStep(
+                step="assembly_check_interference", params={}, derive="★ 跑干涉检查"
+            ),
+            R.PlanStep(
+                step="assembly_list_components",
+                params={},
+                derive="★ 回读组件清单作为报告依据",
+            ),
         ]
     if intent == "mass_props":
         return [
-            R.PlanStep(step="part_mass_properties", params={},
-                       derive="★ 读质量属性（体积/质量/质心）"),
-            R.PlanStep(step="part_bounding_box", params={},
-                       derive="★ 读包围盒交叉验证"),
+            R.PlanStep(
+                step="part_mass_properties",
+                params={},
+                derive="★ 读质量属性（体积/质量/质心）",
+            ),
+            R.PlanStep(
+                step="part_bounding_box", params={}, derive="★ 读包围盒交叉验证"
+            ),
         ]
     if intent == "equation":
         return [
-            R.PlanStep(step="equation_add",
-                       params={"equation": '"D2@草图1" = 2 * "D1@草图1"'},
-                       derive="★ 加全局方程 D2 = 2 * D1"),
-            R.PlanStep(step="equation_list", params={},
-                       derive="★ 回读方程清单验证"),
+            R.PlanStep(
+                step="equation_add",
+                params={"equation": '"D2@草图1" = 2 * "D1@草图1"'},
+                derive="★ 加全局方程 D2 = 2 * D1",
+            ),
+            R.PlanStep(step="equation_list", params={}, derive="★ 回读方程清单验证"),
         ]
     if intent == "scale":
         return [
-            R.PlanStep(step="scale_feature",
-                       params={"x_factor": 2.0, "y_factor": 2.0, "z_factor": 2.0,
-                               "uniform": True, "scale_type": 1},
-                       derive="★ 等比放大 2 倍"),
-            R.PlanStep(step="part_mass_properties", params={},
-                       derive="★ 读回体积（★ 期望 8 倍）"),
+            R.PlanStep(
+                step="scale_feature",
+                params={
+                    "x_factor": 2.0,
+                    "y_factor": 2.0,
+                    "z_factor": 2.0,
+                    "uniform": True,
+                    "scale_type": 1,
+                },
+                derive="★ 等比放大 2 倍",
+            ),
+            R.PlanStep(
+                step="part_mass_properties",
+                params={},
+                derive="★ 读回体积（★ 期望 8 倍）",
+            ),
         ]
     if intent == "keyway":
         return [
-            R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                       derive="★ 前视基准面"),
-            R.PlanStep(step="sketch_add_circle",
-                       params={"center_x_mm": 0.0, "center_y_mm": 0.0,
-                               "radius_mm": dia / 2.0},
-                       derive="★ φ%g 圆柱轮廓" % dia),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 前视基准面",
+            ),
+            R.PlanStep(
+                step="sketch_add_circle",
+                params={"center_x_mm": 0.0, "center_y_mm": 0.0, "radius_mm": dia / 2.0},
+                derive="★ φ%g 圆柱轮廓" % dia,
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="extrude_boss",
-                       params={"sketch_name": "草图1", "depth_mm": h},
-                       derive="★ 拉伸 %g mm" % h),
-            R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                       derive="★ 键槽草图（★ 6×3）"),
-            R.PlanStep(step="sketch_add_rectangle",
-                       params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 6.0, "y2_mm": 3.0},
-                       derive="★ 键槽 6×3（★ 从需求抽的）"),
+            R.PlanStep(
+                step="extrude_boss",
+                params={"sketch_name": "草图1", "depth_mm": h},
+                derive="★ 拉伸 %g mm" % h,
+            ),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 键槽草图（★ 6×3）",
+            ),
+            R.PlanStep(
+                step="sketch_add_rectangle",
+                params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 6.0, "y2_mm": 3.0},
+                derive="★ 键槽 6×3（★ 从需求抽的）",
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="extrude_cut",
-                       params={"sketch_name": "草图2", "depth_mm": 0.0},
-                       derive="★ 切键槽"),
+            R.PlanStep(
+                step="extrude_cut",
+                params={"sketch_name": "草图2", "depth_mm": 0.0},
+                derive="★ 切键槽",
+            ),
         ]
     if intent in ("stepped_shaft", "revolve"):
         return [
-            R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                       derive="★ 前视基准面"),
-            R.PlanStep(step="sketch_add_line",
-                       params={"start_x_mm": 0.0, "start_y_mm": 0.0,
-                               "end_x_mm": 0.0, "end_y_mm": h},
-                       derive="★ 中心线位置的回转母线"),
-            R.PlanStep(step="sketch_add_centerline",
-                       params={"start_x_mm": 0.0, "start_y_mm": 0.0,
-                               "end_x_mm": 0.0, "end_y_mm": h},
-                       derive="★ 中心线（★ 回转轴）"),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 前视基准面",
+            ),
+            R.PlanStep(
+                step="sketch_add_line",
+                params={
+                    "start_x_mm": 0.0,
+                    "start_y_mm": 0.0,
+                    "end_x_mm": 0.0,
+                    "end_y_mm": h,
+                },
+                derive="★ 中心线位置的回转母线",
+            ),
+            R.PlanStep(
+                step="sketch_add_centerline",
+                params={
+                    "start_x_mm": 0.0,
+                    "start_y_mm": 0.0,
+                    "end_x_mm": 0.0,
+                    "end_y_mm": h,
+                },
+                derive="★ 中心线（★ 回转轴）",
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="revolve_boss",
-                       params={"sketch_name": "草图1", "angle_deg": 360.0},
-                       derive="★ 回转 360°（★ φ%g × %g）" % (dia, h)),
+            R.PlanStep(
+                step="revolve_boss",
+                params={"sketch_name": "草图1", "angle_deg": 360.0},
+                derive="★ 回转 360°（★ φ%g × %g）" % (dia, h),
+            ),
         ]
     #: ★ 默认：板 + 孔（★ 见 `_steps_for`）
     return []
@@ -357,29 +462,50 @@ def _variant_plans(ir: DI.DesignIR, geo: dict, methods: list) -> list:
     base_steps = _intent_steps(intent, ir.requirement, geo)
     if base_steps:
         #: ★ 变体 1：按需求原样
-        out.append(PlanCandidate(
-            variant_index=1, method_id="%s/basic" % primary,
-            plan=R.ExecutablePlan(method_id="%s/basic" % primary,
-                                  steps=tuple(base_steps)),
-            rationale="★ 方案 1：意图 `%s` 的最小实现" % intent))
+        out.append(
+            PlanCandidate(
+                variant_index=1,
+                method_id="%s/basic" % primary,
+                plan=R.ExecutablePlan(
+                    method_id="%s/basic" % primary, steps=tuple(base_steps)
+                ),
+                rationale="★ 方案 1：意图 `%s` 的最小实现" % intent,
+            )
+        )
         #: ★ 变体 2：**加一步回读验证**（★ 更稳 —— ★ 与方案 1 真的不同）
         verify = R.PlanStep(
-            step="part_bounding_box", params={},
-            derive="★ 回读包围盒作为独立证据（★ 方案 2 的差别在这里）")
-        out.append(PlanCandidate(
-            variant_index=2, method_id="%s/with_readback" % primary,
-            plan=R.ExecutablePlan(method_id="%s/with_readback" % primary,
-                                  steps=tuple(base_steps + [verify])),
-            rationale="★ 方案 2：意图 `%s` + **独立回读验证**" % intent))
+            step="part_bounding_box",
+            params={},
+            derive="★ 回读包围盒作为独立证据（★ 方案 2 的差别在这里）",
+        )
+        out.append(
+            PlanCandidate(
+                variant_index=2,
+                method_id="%s/with_readback" % primary,
+                plan=R.ExecutablePlan(
+                    method_id="%s/with_readback" % primary,
+                    steps=tuple(base_steps + [verify]),
+                ),
+                rationale="★ 方案 2：意图 `%s` + **独立回读验证**" % intent,
+            )
+        )
         #: ★ 变体 3：**先读后写**（★ 读侧在前 —— ★ 与 1/2 的差别在**顺序**）
         read_first = R.PlanStep(
-            step="part_bounding_box", params={},
-            derive="★ 先读现状（★ 方案 3 的差别在这里）")
-        out.append(PlanCandidate(
-            variant_index=3, method_id="%s/read_first" % primary,
-            plan=R.ExecutablePlan(method_id="%s/read_first" % primary,
-                                  steps=tuple([read_first] + base_steps)),
-            rationale="★ 方案 3：**先读现状再动手**（★ 便于比对前后）"))
+            step="part_bounding_box",
+            params={},
+            derive="★ 先读现状（★ 方案 3 的差别在这里）",
+        )
+        out.append(
+            PlanCandidate(
+                variant_index=3,
+                method_id="%s/read_first" % primary,
+                plan=R.ExecutablePlan(
+                    method_id="%s/read_first" % primary,
+                    steps=tuple([read_first] + base_steps),
+                ),
+                rationale="★ 方案 3：**先读现状再动手**（★ 便于比对前后）",
+            )
+        )
         return out[:MAX_VARIANTS]
 
     #: ★ 建模意图：按**工艺路线**分（★ 见 `VARIANT_ROUTES`）
@@ -387,19 +513,24 @@ def _variant_plans(ir: DI.DesignIR, geo: dict, methods: list) -> list:
         steps = _steps_for(primary, geo, ir, route=route)
         if not steps:
             continue
-        out.append(PlanCandidate(
-            variant_index=i, method_id=primary,
-            plan=R.ExecutablePlan(method_id="%s/%s" % (primary, route),
-                                  steps=tuple(steps)),
-            rationale="★ 方案 %d：路线 `%s`（★ 主方法 `%s`）"
-                      % (i, route, primary)))
+        out.append(
+            PlanCandidate(
+                variant_index=i,
+                method_id=primary,
+                plan=R.ExecutablePlan(
+                    method_id="%s/%s" % (primary, route), steps=tuple(steps)
+                ),
+                rationale="★ 方案 %d：路线 `%s`（★ 主方法 `%s`）" % (i, route, primary),
+            )
+        )
         if len(out) >= MAX_VARIANTS:
             break
     return out
 
 
-def _steps_for(method_id: str, geo: dict, ir: DI.DesignIR,
-               route: str = "single_cut") -> list:
+def _steps_for(
+    method_id: str, geo: dict, ir: DI.DesignIR, route: str = "single_cut"
+) -> list:
     """★★ **把方法展开成带参数的工具步骤**（★ 人工不写 —— ★ 这是本函数的意义）。"""
     w = geo.get("w", 100.0)
     h = geo.get("h", 60.0)
@@ -409,77 +540,123 @@ def _steps_for(method_id: str, geo: dict, ir: DI.DesignIR,
     n = int(geo.get("count") or 0)
 
     base = [
-        R.PlanStep(step="sketch_start", params={"plane_name": "Front Plane"},
-                   derive="★ 前视基准面（★ 板主平面）"),
-        R.PlanStep(step="sketch_add_rectangle",
-                   params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": w, "y2_mm": h},
-                   derive="★ 板 %g×%g（★ 受 x2_mm/y2_mm 影响）" % (w, h)),
+        R.PlanStep(
+            step="sketch_start",
+            params={"plane_name": "Front Plane"},
+            derive="★ 前视基准面（★ 板主平面）",
+        ),
+        R.PlanStep(
+            step="sketch_add_rectangle",
+            params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": w, "y2_mm": h},
+            derive="★ 板 %g×%g（★ 受 x2_mm/y2_mm 影响）" % (w, h),
+        ),
         R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-        R.PlanStep(step="extrude_boss",
-                   params={"sketch_name": "草图1", "depth_mm": d},
-                   derive="★ 拉伸 %g mm" % d),
+        R.PlanStep(
+            step="extrude_boss",
+            params={"sketch_name": "草图1", "depth_mm": d},
+            derive="★ 拉伸 %g mm" % d,
+        ),
     ]
     #: ★★ **按路线分叉**（★ 三条路线真的不同 —— ★ 见 `VARIANT_ROUTES` 的说明）
     if route in ("plate_only", "minimal"):
         #: ★ 只出板（★ 最小交付 —— ★ 孔留到下一轮）
         return base
     if route == "plate_chamfer":
-        base.append(R.PlanStep(
-            step="chamfer", params={"selection": "index:0", "distance_mm": 2.0},
-            derive="★ 倒角后置（★ 避免早期拓扑依赖）"))
+        base.append(
+            R.PlanStep(
+                step="chamfer",
+                params={"selection": "index:0", "distance_mm": 2.0},
+                derive="★ 倒角后置（★ 避免早期拓扑依赖）",
+            )
+        )
         return base
     if n == 0:
         #: ★ 无孔 ⇒ 走倒角那条
-        base.append(R.PlanStep(
-            step="chamfer", params={"selection": "index:0", "distance_mm": 2.0},
-            derive="★ 倒角后置"))
+        base.append(
+            R.PlanStep(
+                step="chamfer",
+                params={"selection": "index:0", "distance_mm": 2.0},
+                derive="★ 倒角后置",
+            )
+        )
         return base
 
     #: ★ 孔位由边距算（★ 不手写）
     positions = []
     if n >= 4:
-        positions = [(edge, edge), (w - edge, edge),
-                     (edge, h - edge), (w - edge, h - edge)][:n]
+        positions = [
+            (edge, edge),
+            (w - edge, edge),
+            (edge, h - edge),
+            (w - edge, h - edge),
+        ][:n]
     else:
         for i in range(n):
-            positions.append((edge + i * (w - 2 * edge) / max(1, n - 1 or 1),
-                              h / 2.0))
+            positions.append((edge + i * (w - 2 * edge) / max(1, n - 1 or 1), h / 2.0))
 
     if route == "pattern":
         #: ★★ **一个孔 + 阵列**（★ 改参数只改一处 —— ★ 外部方案点名的那条优点）
         hx, hy = positions[0]
-        base.append(R.PlanStep(
-            step="sketch_start", params={"plane_name": "Front Plane"},
-            derive="★ 首孔草图（★ 孔位 %g,%g）" % (hx, hy)))
-        base.append(R.PlanStep(
-            step="sketch_add_circle",
-            params={"center_x_mm": hx, "center_y_mm": hy, "radius_mm": dia / 2.0},
-            derive="★ 首孔 φ%g @ (%g,%g)" % (dia, hx, hy)))
+        base.append(
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 首孔草图（★ 孔位 %g,%g）" % (hx, hy),
+            )
+        )
+        base.append(
+            R.PlanStep(
+                step="sketch_add_circle",
+                params={"center_x_mm": hx, "center_y_mm": hy, "radius_mm": dia / 2.0},
+                derive="★ 首孔 φ%g @ (%g,%g)" % (dia, hx, hy),
+            )
+        )
         base.append(R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"))
-        base.append(R.PlanStep(
-            step="extrude_cut", params={"sketch_name": "草图2", "depth_mm": 0.0},
-            derive="★ 贯穿切"))
-        base.append(R.PlanStep(
-            step="circular_pattern",
-            params={"feature_name": "切除-拉伸1", "axis_name": "基准轴1",
-                    "angle_deg": 360.0, "count": n},
-            derive="★ 圆周阵列 %d 个（★ 改 count 一处即可）" % n))
+        base.append(
+            R.PlanStep(
+                step="extrude_cut",
+                params={"sketch_name": "草图2", "depth_mm": 0.0},
+                derive="★ 贯穿切",
+            )
+        )
+        base.append(
+            R.PlanStep(
+                step="circular_pattern",
+                params={
+                    "feature_name": "切除-拉伸1",
+                    "axis_name": "基准轴1",
+                    "angle_deg": 360.0,
+                    "count": n,
+                },
+                derive="★ 圆周阵列 %d 个（★ 改 count 一处即可）" % n,
+            )
+        )
         return base
 
     #: ★ 默认 `single_cut`：逐孔「画圆 + 切除」
     for i, (hx, hy) in enumerate(positions, 1):
-        base.append(R.PlanStep(
-            step="sketch_start", params={"plane_name": "Front Plane"},
-            derive="★ 孔 %d 草图（★ 孔位 %g,%g 受 center_x_mm 影响）" % (i, hx, hy)))
-        base.append(R.PlanStep(
-            step="sketch_add_circle",
-            params={"center_x_mm": hx, "center_y_mm": hy, "radius_mm": dia / 2.0},
-            derive="★ 孔 %d：φ%g @ (%g,%g)" % (i, dia, hx, hy)))
+        base.append(
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 孔 %d 草图（★ 孔位 %g,%g 受 center_x_mm 影响）" % (i, hx, hy),
+            )
+        )
+        base.append(
+            R.PlanStep(
+                step="sketch_add_circle",
+                params={"center_x_mm": hx, "center_y_mm": hy, "radius_mm": dia / 2.0},
+                derive="★ 孔 %d：φ%g @ (%g,%g)" % (i, dia, hx, hy),
+            )
+        )
         base.append(R.PlanStep(step="sketch_end", params={}, derive="★ 退出孔草图"))
-        base.append(R.PlanStep(
-            step="extrude_cut", params={"sketch_name": "草图%d" % (i + 1),
-                                        "depth_mm": 0.0},
-            derive="★ 贯穿切（★ 0 = through all）"))
+        base.append(
+            R.PlanStep(
+                step="extrude_cut",
+                params={"sketch_name": "草图%d" % (i + 1), "depth_mm": 0.0},
+                derive="★ 贯穿切（★ 0 = through all）",
+            )
+        )
     return base
 
 
@@ -500,7 +677,8 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
         raise PlannerError(
             "not-executable",
             "★ 需求状态是 %s ⇒ **不得规划**（★ 关键误放闸门）：%s"
-            % (ir.state, ir.notes))
+            % (ir.state, ir.notes),
+        )
 
     geo = extract_geometry(text)
     #: ★★ **只有建模意图才要求几何** ——
@@ -509,8 +687,15 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
     #:     **全被 `no-geometry` 挡掉** ✗ —— ★ 而那些需求**本来就不需要几何**。
     #:   ★ 判据：**意图决定要不要几何**（★ 不是所有需求都要尺寸）。
     intent = detect_intent(text)
-    needs_geo = intent in ("plate", "hole_group", "keyway",
-                           "stepped_shaft", "revolve", "shell", "pin")
+    needs_geo = intent in (
+        "plate",
+        "hole_group",
+        "keyway",
+        "stepped_shaft",
+        "revolve",
+        "shell",
+        "pin",
+    )
     if needs_geo and ("w" not in geo or "h" not in geo):
         #: ★ 轴类只要直径 + 长度
         if intent in ("stepped_shaft", "revolve") and "dia" in geo:
@@ -519,7 +704,8 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
             raise PlannerError(
                 "no-geometry",
                 "★ 意图 `%s` 需要几何，而抽不到（★ 不凭空编）—— 抽到的：%s"
-                % (intent, geo))
+                % (intent, geo),
+            )
 
     reg = reg if reg is not None else R.build_registry()
     #: ★★ **非建模意图不检索方法** ——
@@ -536,8 +722,14 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
     #:   ⇒ ★ 判据：**`_intent_steps` 有专属序列的意图，就不查方法库**。
     _has_dedicated = bool(_intent_steps(intent, text, geo))
     is_modeling = (not _has_dedicated) and intent in (
-        "plate", "hole_group", "keyway", "stepped_shaft", "revolve",
-        "shell", "pin")
+        "plate",
+        "hole_group",
+        "keyway",
+        "stepped_shaft",
+        "revolve",
+        "shell",
+        "pin",
+    )
     if is_modeling:
         ret = DI.retrieve_methods(ir)
         cands = [c for c in ret["candidates"] if c.applicable]
@@ -551,10 +743,11 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
         #: ★ 试编译（★ 名字解析 + 参数绑定 + 子方法展开）
         try:
             from . import expand as EX
+
             resolved = EX.expand_plan(pc.plan, reg)
             pc.plan = resolved
             pc.compile_ok = True
-        except Exception as exc:                                           # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             pc.compile_ok = False
             pc.compile_error = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         ps.candidates.append(pc)
@@ -562,7 +755,8 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
     if len(ps.candidates) < MIN_VARIANTS:
         raise PlannerError(
             "too-few-variants",
-            "★ 只产出 %d 种方案（★ 下限 %d）" % (len(ps.candidates), MIN_VARIANTS))
+            "★ 只产出 %d 种方案（★ 下限 %d）" % (len(ps.candidates), MIN_VARIANTS),
+        )
     return ps
 
 

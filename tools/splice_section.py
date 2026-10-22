@@ -1,4 +1,5 @@
 """★ 把一段 .md 文本拼接进目标文件（★ 结构性绕开"长中文串 + 引号嵌套"这个反复踩的坑）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/splice_section.py
@@ -63,9 +64,11 @@ def main() -> int:
             out.append(lines[i])
             i += 1
         txt = "\n".join(out) + "\n"
-    txt = txt.replace("- **B2 指纹与灵敏度**：⚪ 未开始（★ 下一步）",
-                      "- **B2 指纹与灵敏度**：🟡 **半程**（指纹模块已交付 · "
-                      "`selection`/`edit_mode` 已验 sensitive；★ 其余 `untested`）")
+    txt = txt.replace(
+        "- **B2 指纹与灵敏度**：⚪ 未开始（★ 下一步）",
+        "- **B2 指纹与灵敏度**：🟡 **半程**（指纹模块已交付 · "
+        "`selection`/`edit_mode` 已验 sensitive；★ 其余 `untested`）",
+    )
     t.write_text(txt, encoding="utf-8")
     print("tasks 已更新:", "B2-1" in txt)
     return 0

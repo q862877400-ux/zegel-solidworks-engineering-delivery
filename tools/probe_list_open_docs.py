@@ -1,4 +1,5 @@
 """★ 只读探针：列出会话里打开的文档，★ **不关、不改、不建任何东西**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B6 的**处置前置**）
 # 文件:   tools/probe_list_open_docs.py
@@ -19,7 +20,7 @@
 #  may have
 # been opened as file references**, for example, from an assembly or drawing. ★ You migh
 # t want to
-# use the `IModelDoc::Visible` property to determine if a particular document **has its 
+# use the `IModelDoc::Visible` property to determine if a particular document **has its
 # own window**
 #      and is visible to the user.」✓✓
 #   ⇒ ★★★ **所以"引用文档"会出现在列表里、★ 而没有自己的窗口** ✓
@@ -42,15 +43,18 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 def main() -> int:
     import sw_connect
 
-    out: dict = {"kind": "READ-ONLY", "closes_anything": False,
-                 "official": ["ISldWorks.GetDocuments", "ISldWorks.EnumDocuments2"]}
+    out: dict = {
+        "kind": "READ-ONLY",
+        "closes_anything": False,
+        "official": ["ISldWorks.GetDocuments", "ISldWorks.EnumDocuments2"],
+    }
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
         return 2
     try:
         docs = sw_connect.get_com_member(sw, "GetDocuments") or []
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         print("★ GetDocuments 失败：%s" % str(e)[:120])
         return 3
 
@@ -63,40 +67,56 @@ def main() -> int:
         for label, member in (("path", "GetPathName"), ("title", "GetTitle")):
             try:
                 row[label] = str(sw_connect.get_com_member(d, member) or "")
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 row[label] = None
         #: ★★ 官方 Remarks 给的判据：★ **有没有自己的窗口** ✓
         try:
             row["visible"] = bool(sw_connect.get_com_member(d, "Visible"))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             row["visible"] = None
         #: ★ 已保存？
         try:
             row["saved"] = bool(sw_connect.get_com_member(d, "GetSaveFlag"))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             try:
                 row["saved"] = bool(sw_connect.get_com_member(d, "SaveFlag"))
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 row["saved"] = None
-        row["is_ours_by_path"] = bool(row.get("path") and ours in str(row["path"]).lower())
+        row["is_ours_by_path"] = bool(
+            row.get("path") and ours in str(row["path"]).lower()
+        )
         rows.append(row)
-        print("★ path=%r · title=%r · visible=%r · saved=%r · ★ 路径属我方=%r"
-              % (row.get("path"), row.get("title"), row.get("visible"), row.get("saved"),
-                 row["is_ours_by_path"]))
+        print(
+            "★ path=%r · title=%r · visible=%r · saved=%r · ★ 路径属我方=%r"
+            % (
+                row.get("path"),
+                row.get("title"),
+                row.get("visible"),
+                row.get("saved"),
+                row["is_ours_by_path"],
+            )
+        )
 
     out["docs"] = rows
     out["count"] = len(rows)
     out["invisible"] = [r for r in rows if r.get("visible") is False]
     out["unsaved"] = [r for r in rows if r.get("saved") is False]
     out["ours"] = [r for r in rows if r["is_ours_by_path"]]
-    print("★★ 合计 %d 个 · ★ 无窗口（引用文档）%d 个 · ★ 未保存 %d 个 · ★ 路径属我方 %d 个"
-          % (len(rows), len(out["invisible"]), len(out["unsaved"]), len(out["ours"])))
+    print(
+        "★★ 合计 %d 个 · ★ 无窗口（引用文档）%d 个 · ★ 未保存 %d 个 · ★ 路径属我方 %d 个"
+        % (len(rows), len(out["invisible"]), len(out["unsaved"]), len(out["ours"]))
+    )
     for r in out["unsaved"]:
-        print("★★★ 未保存那一条 ⇒ path=%r · title=%r · visible=%r · 属我方=%r"
-              % (r.get("path"), r.get("title"), r.get("visible"), r["is_ours_by_path"]))
+        print(
+            "★★★ 未保存那一条 ⇒ path=%r · title=%r · visible=%r · 属我方=%r"
+            % (r.get("path"), r.get("title"), r.get("visible"), r["is_ours_by_path"])
+        )
 
     p = ROOT / "output" / "spec211-b6-open-docs.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

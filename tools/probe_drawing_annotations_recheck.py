@@ -30,11 +30,16 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUT = ROOT / "output" / "drawing-annotations-capability-recheck.json"
 ev: dict = {
-    "★_判据": ("加 N 条注释 ⇒ `GetAnnotationCount()` ≥ N · ★ 且 `GetAnnotations()` 数组长度与它一致"
-               "（★ **两个独立读数**）"),
-    "★_官方例子的调用序": ("`GetFirstView` ⇒ ★ **'First drawing view is the sheet'** ⇒ `GetNextView` ⇒ "
-                          "`GetAnnotations` ⇒ `For Each` ⇒ `GetName`"),
-    "steps": []}
+    "★_判据": (
+        "加 N 条注释 ⇒ `GetAnnotationCount()` ≥ N · ★ 且 `GetAnnotations()` 数组长度与它一致"
+        "（★ **两个独立读数**）"
+    ),
+    "★_官方例子的调用序": (
+        "`GetFirstView` ⇒ ★ **'First drawing view is the sheet'** ⇒ `GetNextView` ⇒ "
+        "`GetAnnotations` ⇒ `For Each` ⇒ `GetName`"
+    ),
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -42,7 +47,7 @@ def step(name: str, **kw) -> None:
     ev["steps"].append(dict(name=name, **kw))
     try:
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
-    except OSError:                                                       # pragma: no cover
+    except OSError:  # pragma: no cover
         pass
     print("★ %-28s %s" % (name, json.dumps(kw, ensure_ascii=False)[:230]))
 
@@ -73,7 +78,7 @@ def main() -> int:
     #:     ★★ 同族：★ 本仓既有纪律「**一次只证伪一个假设**」—— ★ 那是**增量**方向；
     #:       而这是**反过来**：★ **别让一个失败的试验回头毁掉已成立的结论** ✓
 
-    #: ★★★★ 2026-10-04（轮 136）**先让零件存盘** —— ★ 实测：★ 不存盘则 `GetPathName()` 
+    #: ★★★★ 2026-10-04（轮 136）**先让零件存盘** —— ★ 实测：★ 不存盘则 `GetPathName()`
     #: 是
     #: **空串** ⇒ ★★ **⇒ `create_three_standard_views` 插不了视图**（★ 它要 `part_path`
     #: ）⇒
@@ -83,13 +88,14 @@ def main() -> int:
     try:
         import tempfile
         from sw_connect import save_document
+
         dst = str(Path(tempfile.gettempdir()) / "dsh_probe_drawing_annot_source.SLDPRT")
         saved["path"] = dst
         #: ★ `save_document` 在 **`sw_connect`**、★ **不在 `sw_part`** ——
         #: ★★ **⇒ 可复用判据**：★ **先问它在哪个模块**（★ 别猜 —— ★ 本会话已因此错过多次
         #: ）✓
         saved["returned"] = str(save_document(part, dst))[:140]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         saved["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     step("save_part", **saved)
 
@@ -115,19 +121,29 @@ def main() -> int:
         part_path = str(get_com_member(part, "GetPathName") or "")
         made["part_path"] = part_path
         import sw_drawing_expose as E0
+
         if not part_path:
             made["error"] = "★ 零件还没存盘 ⇒ 没有路径 ⇒ 插不了视图（★ 如实记）"
         else:
             #: ★ 第 ① 条（★ 已知能通）：`create_projected_view` ✓
             made["tried"].append("create_projected_view")
-            made["projected"] = str(E0.create_projected_view(
-                drw, part_path, view_name="*Front", x_mm=140.0, y_mm=120.0,
-                scale=0.0))[:170]
+            made["projected"] = str(
+                E0.create_projected_view(
+                    drw,
+                    part_path,
+                    view_name="*Front",
+                    x_mm=140.0,
+                    y_mm=120.0,
+                    scale=0.0,
+                )
+            )[:170]
             #: ★ 第 ② 条（★ 实测 blocked）：仍然试一次，★ **以便把"blocked"这件事记进证
             #: 据** ✓
             made["tried"].append("create_three_standard_views")
-            made["three_std"] = str(E0.create_three_standard_views(drw, part_path))[:150]
-    except Exception as exc:                                              # noqa: BLE001
+            made["three_std"] = str(E0.create_three_standard_views(drw, part_path))[
+                :150
+            ]
+    except Exception as exc:  # noqa: BLE001
         made["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     step("insert_views", **made)
 
@@ -139,17 +155,25 @@ def main() -> int:
     wrote = {"error": None}
     try:
         import sw_drawing_expose as E
+
         f = getattr(E, "add_drawing_note", None)
         wrote["has_add_note"] = callable(f)
         if callable(f):
-            wrote["returned"] = str(f(drw, x_mm=50.0, y_mm=50.0, text="★ 探针注释"))[:130]
-    except Exception as exc:                                              # noqa: BLE001
+            wrote["returned"] = str(f(drw, x_mm=50.0, y_mm=50.0, text="★ 探针注释"))[
+                :130
+            ]
+    except Exception as exc:  # noqa: BLE001
         wrote["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     step("add_note", **wrote)
 
     import sw_drawing_query as Q
+
     rep = Q.view_annotations_report(drw)
-    step("view_annotations_report", view_count=rep.get("view_count"), views=rep.get("views"))
+    step(
+        "view_annotations_report",
+        view_count=rep.get("view_count"),
+        views=rep.get("views"),
+    )
 
     #: ★★★ **两条独立读数**（★ 官方 Remarks 说 count 给数组定大小 ⇒ 一致才可信）✓
     bad = []
@@ -159,8 +183,11 @@ def main() -> int:
         if isinstance(c, int) and isinstance(n, int) and c != n:
             bad.append({"view": v.get("name"), "count_api": c, "array_len": n})
     ev["★_两读数不一致的视图"] = bad
-    ev["★_结论"] = ("★ **建成并读回**（★ 视图 %d 个）" % rep.get("view_count", 0)
-                    if rep.get("view_count") else "★ **视图 0 个** ⇒ ★ 如实标")
+    ev["★_结论"] = (
+        "★ **建成并读回**（★ 视图 %d 个）" % rep.get("view_count", 0)
+        if rep.get("view_count")
+        else "★ **视图 0 个** ⇒ ★ 如实标"
+    )
     step("VERDICT", verdict=ev["★_结论"], mismatches=len(bad))
 
     #: ★★★★★★★ **非零场景的试探** —— ★ 放在**最后**（★ 它可能失败、★ 别污染前面的结论）✓
@@ -173,10 +200,20 @@ def main() -> int:
     thr = {"error": None}
     try:
         import sw_feature_entry_ops as FE
-        thr["returned"] = str(FE.insert_cosmetic_thread(
-            part, standard=1, standard_type="", size="",
-            diameter_mm=8.0, end_type=2, depth_mm=0.0, note=""))[:190]
-    except Exception as exc:                                              # noqa: BLE001
+
+        thr["returned"] = str(
+            FE.insert_cosmetic_thread(
+                part,
+                standard=1,
+                standard_type="",
+                size="",
+                diameter_mm=8.0,
+                end_type=2,
+                depth_mm=0.0,
+                note="",
+            )
+        )[:190]
+    except Exception as exc:  # noqa: BLE001
         thr["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     step("insert_cosmetic_thread(末步试探)", **thr)
 
@@ -190,7 +227,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                          # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

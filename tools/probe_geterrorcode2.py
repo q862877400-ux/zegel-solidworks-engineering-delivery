@@ -32,8 +32,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "geterrorcode2-evidence.json"
 
@@ -45,7 +45,7 @@ def _g(o, n, *a):
 def _try(fn, *a):
     try:
         return {"ok": True, "ret": repr(fn(*a))[:100]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:190])}
 
 
@@ -57,7 +57,16 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.02, -0.015, 0.0, 0.02, 0.015, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.02,
+            -0.015,
+            0.0,
+            0.02,
+            0.015,
+            0.0,
+        )
         P.end_sketch(doc)
         nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
@@ -72,7 +81,7 @@ def main() -> int:
                     feat = f
                     break
                 f = _g(f, "GetNextFeature")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         R["取到特征"] = repr(feat)[:60] if feat is not None else "None"
         if feat is None:
@@ -86,31 +95,45 @@ def main() -> int:
         try:
             out = C.out_i4()
             R["新_GetErrorCode2(out_i4)"] = _try(_g, feat, "GetErrorCode2", out)
-        except Exception as exc:                                          # noqa: BLE001
-            R["新_GetErrorCode2(out_i4)"] = {"ok": False, "err": "out_i4 建不出来: %s" % str(exc)[:90]}
+        except Exception as exc:  # noqa: BLE001
+            R["新_GetErrorCode2(out_i4)"] = {
+                "ok": False,
+                "err": "out_i4 建不出来: %s" % str(exc)[:90],
+            }
         #: ★ 直接取成员（★ 看它是不是 bound method —— ★ 事实：`get_com_member` 失败时会
         #: 原样回成员）
         try:
             v = _g(feat, "GetErrorCode2")
             R["★_GetErrorCode2_取到的类型"] = "%s · 是成员本身=%s" % (
-                type(v).__name__, not hasattr(v, "_oleobj_"))
-        except Exception as exc:                                          # noqa: BLE001
+                type(v).__name__,
+                not hasattr(v, "_oleobj_"),
+            )
+        except Exception as exc:  # noqa: BLE001
             R["★_GetErrorCode2_取到的类型"] = "取不到: %s" % str(exc)[:90]
     except SystemExit:
         pass
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    new_ok = [k for k, v in R.items() if k.startswith("新_") and isinstance(v, dict) and v.get("ok")]
-    R["★★_结论"] = ("★ 新入口**能调**（%s）⇒ 可换" % new_ok if new_ok
-                    else "★★ 新入口**三种形态全不通** ⇒ ★ **记「后端到不了」并保留旧的** ✓")
+    new_ok = [
+        k
+        for k, v in R.items()
+        if k.startswith("新_") and isinstance(v, dict) and v.get("ok")
+    ]
+    R["★★_结论"] = (
+        "★ 新入口**能调**（%s）⇒ 可换" % new_ok
+        if new_ok
+        else "★★ 新入口**三种形态全不通** ⇒ ★ **记「后端到不了」并保留旧的** ✓"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

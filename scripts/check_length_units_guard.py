@@ -37,6 +37,7 @@ r"""★ 单位纪律**门禁**：有长度形参的工具，进 COM 前**必须*
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -71,11 +72,20 @@ BASELINE_LENGTHISH = 96
 def _run_audit() -> str:
     """★ 跑审计器，拿它的 stdout（★ 用**显式解释器**，★ 与 release_check 同法）。"""
     import os
+
     proc = subprocess.run(
-        [os.environ.get("PYTHON", sys.executable),
-         str(ROOT / "scripts" / "audit_length_units.py")],
-        check=False, capture_output=True, text=True, encoding="utf-8",
-        errors="replace", timeout=300, cwd=str(ROOT), stdin=subprocess.DEVNULL,
+        [
+            os.environ.get("PYTHON", sys.executable),
+            str(ROOT / "scripts" / "audit_length_units.py"),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=300,
+        cwd=str(ROOT),
+        stdin=subprocess.DEVNULL,
     )
     return (proc.stdout or "") + (proc.stderr or "")
 
@@ -83,7 +93,7 @@ def _run_audit() -> str:
 def main() -> int:
     try:
         out = _run_audit()
-    except Exception as exc:                                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("[FAIL] 审计器**跑不起来**：%s: %s" % (type(exc).__name__, exc))
         return 1
 
@@ -95,7 +105,11 @@ def main() -> int:
         print("[FAIL] 审计器输出**无法解析**（★ 拿不到计数 ⇒ 不许当通过）")
         print(out[-1200:])
         return 1
-    n_len, n_sus, n_conv = int(m_len.group(1)), int(m_sus.group(1)), int(m_conv.group(1))
+    n_len, n_sus, n_conv = (
+        int(m_len.group(1)),
+        int(m_sus.group(1)),
+        int(m_conv.group(1)),
+    )
 
     print("== 单位纪律门禁 ==")
     print("有长度形参 %d · 可疑（无换算）%d · 已换算 %d" % (n_len, n_sus, n_conv))
@@ -104,11 +118,15 @@ def main() -> int:
 
     #: ★★ ② 只增不减
     if n_conv < BASELINE_CONVERTED:
-        problems.append("已换算数 %d < 下界 %d（★ 只增不减：先查是不是有人**删了换算**）"
-                        % (n_conv, BASELINE_CONVERTED))
+        problems.append(
+            "已换算数 %d < 下界 %d（★ 只增不减：先查是不是有人**删了换算**）"
+            % (n_conv, BASELINE_CONVERTED)
+        )
     if n_len < BASELINE_LENGTHISH:
-        problems.append("有长度形参数 %d < 下界 %d（★ 审计器**又瞎了**？—— ★ 那正是被点破的病）"
-                        % (n_len, BASELINE_LENGTHISH))
+        problems.append(
+            "有长度形参数 %d < 下界 %d（★ 审计器**又瞎了**？—— ★ 那正是被点破的病）"
+            % (n_len, BASELINE_LENGTHISH)
+        )
 
     #: ★★★ ③ **「长度藏在 spec 里」那一族必须在视野里**（★ 回归守卫）
     #: ★ 依据：★ `create_external_spur_gear_report(model, spec, …)` 的形参是 `spec`（dic
@@ -120,12 +138,17 @@ def main() -> int:
     #:       ★ 只要 `_lengthish_from_callees` 在，★ 形参叫 `spec` 的族就**不会被整族跳过** ✓
     #:   ★ 判据：★ 审计器源码里必须有 `_lengthish_from_callees` 与 `SPECLIKE_PARAM` ✓
     audit_src = (ROOT / "scripts" / "audit_length_units.py").read_text(
-        encoding="utf-8", errors="replace")
+        encoding="utf-8", errors="replace"
+    )
     if "_lengthish_from_callees" not in audit_src:
-        problems.append("★★★ 审计器**没有「跟一层调用」的机制** ⇒ "
-                        "★ 形参叫 `spec` 的族会被**整族跳过** —— ★ 业主点破的病复发")
+        problems.append(
+            "★★★ 审计器**没有「跟一层调用」的机制** ⇒ "
+            "★ 形参叫 `spec` 的族会被**整族跳过** —— ★ 业主点破的病复发"
+        )
     if "SPECLIKE_PARAM" not in audit_src:
-        problems.append("★★★ 审计器**没有「像规格对象的形参名」那个判据** ⇒ ★ 盲区回来了")
+        problems.append(
+            "★★★ 审计器**没有「像规格对象的形参名」那个判据** ⇒ ★ 盲区回来了"
+        )
 
     if problems:
         #: ⚠ 编码：★ 中文 Windows 控制台是 GBK ⇒ 直接 print 会把 `⇒` 打成

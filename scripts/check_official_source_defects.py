@@ -1,4 +1,5 @@
 """★ 门禁：拦住「照官方源里的**错拼标识符**写代码」（★ 输入是另一个对话已核验的 964 条缺陷）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + 另一个对话的 B2 扫描产物（只读复用）
 # 文件:   scripts/check_official_source_defects.py
@@ -23,12 +24,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEFECTS = ROOT / "specs" / "203-bunny-sideline-batches" / "recon" / "b2-defects.json"
 SCAN_DIRS = ("scripts", "mcp-server", "tools")
-SKIP_FILES = {Path(__file__).name,
-              #: ★★ 这两个是**诊断/测量工具** —— ★ 它们的**职责就是指名坏引用**，
-              #: 所以它们不是「引用了不存在的官方页」（★ 事实 528 家族：**提及 ≠ 使用**
-              #: ）✓
-              "judge_two_boundary_cases.py",
-              "measure_official_defects_fp.py"}
+SKIP_FILES = {
+    Path(__file__).name,
+    #: ★★ 这两个是**诊断/测量工具** —— ★ 它们的**职责就是指名坏引用**，
+    #: 所以它们不是「引用了不存在的官方页」（★ 事实 528 家族：**提及 ≠ 使用**
+    #: ）✓
+    "judge_two_boundary_cases.py",
+    "measure_official_defects_fp.py",
+}
 
 #: ★ 只从这两种缺陷里取"错拼名"：
 #:   · `spelling` —— 同一页里同一接口两种拼法（★ 错的那个一定不是真名）
@@ -59,12 +62,22 @@ def load_bad_names() -> tuple:
             continue
         if r.get("type") not in USABLE_TYPES:
             continue
-        text = "%s\n%s\n%s" % (r.get("quote_a") or "", r.get("quote_b") or "", r.get("why") or "")
+        text = "%s\n%s\n%s" % (
+            r.get("quote_a") or "",
+            r.get("quote_b") or "",
+            r.get("why") or "",
+        )
         for iface, member in LINK.findall(text):
             if iface in real:
-                continue                 #: ★ 真名 ⇒ 不是错拼
-            bad.setdefault(iface, {"member": member, "why": (r.get("why") or "")[:120],
-                                   "type": r.get("type")})
+                continue  #: ★ 真名 ⇒ 不是错拼
+            bad.setdefault(
+                iface,
+                {
+                    "member": member,
+                    "why": (r.get("why") or "")[:120],
+                    "type": r.get("type"),
+                },
+            )
     return bad, real
 
 
@@ -83,7 +96,9 @@ LINK_REF = re.compile(r"\[\[([A-Za-z0-9_]+)::([A-Za-z0-9_]+)\]\]")
 #: ★★ 必须带 `.md` 结尾（我第一版把它写成可选 ⇒ 匹到了 `C:\\swapi\\enums\\swUserPreferen
 #: ce`
 #:   这种**前缀**，把真页 `swUserPreferenceIntegerValue.md` 误报成不存在）✓
-PATH_REF = re.compile(r"[Cc]:\\swapi\\(types|enums)\\([A-Za-z0-9_]+)(?:\\([A-Za-z0-9_]+)\.md)")
+PATH_REF = re.compile(
+    r"[Cc]:\\swapi\\(types|enums)\\([A-Za-z0-9_]+)(?:\\([A-Za-z0-9_]+)\.md)"
+)
 #: ★ 归一：去 `Method`/`Property`/`Function` 后缀、忽略大小写（★ 与另一对话 §1.1 的判据
 #: 同款）
 SUFFIX = re.compile(r"(Method|Property|Function)$", re.I)
@@ -108,13 +123,16 @@ PLACEHOLDER = {"Iface", "Member", "Attribute", "X", "Interface", "MemberName"}
 
 def _real() -> tuple:
     td, ed = Path(r"C:\swapi\types"), Path(r"C:\swapi\enums")
-    ifaces = {p.name.lower() for p in td.iterdir() if p.is_dir()} if td.is_dir() else set()
+    ifaces = (
+        {p.name.lower() for p in td.iterdir() if p.is_dir()} if td.is_dir() else set()
+    )
     members: dict = {}
     if td.is_dir():
         for d in td.iterdir():
             if d.is_dir():
-                members[d.name.lower()] = {SUFFIX.sub("", p.stem).lower()
-                                           for p in d.glob("*.md")}
+                members[d.name.lower()] = {
+                    SUFFIX.sub("", p.stem).lower() for p in d.glob("*.md")
+                }
     enums = {p.stem.lower() for p in ed.glob("*.md")} if ed.is_dir() else set()
     return ifaces, members, enums
 
@@ -131,7 +149,7 @@ def scan(_bad=None) -> list:
             _lines = text.splitlines()
             for m in LINK_REF.finditer(text):
                 iface, member = m.group(1), m.group(2)
-                ln = text[:m.start()].count("\n") + 1
+                ln = text[: m.start()].count("\n") + 1
                 #: ★★★ 引文语境 ⇒ **不报**（事实 544 判出的第 ③ 类）：
                 #:   那时坏的链接是【官方的】，我们**正是在登记那条官方缺陷**（铁律 5）✓
                 if ln - 1 < len(_lines) and CITATION.search(_lines[ln - 1]):
@@ -140,30 +158,56 @@ def scan(_bad=None) -> list:
                 if iface in PLACEHOLDER or member in PLACEHOLDER:
                     continue
                 if iface.lower() not in ifaces:
-                    hits.append((str(f.relative_to(ROOT)), ln, "[[%s::%s]]" % (iface, member),
-                                 "接口 `%s` 在 C:\\swapi\\types 下不存在" % iface))
+                    hits.append(
+                        (
+                            str(f.relative_to(ROOT)),
+                            ln,
+                            "[[%s::%s]]" % (iface, member),
+                            "接口 `%s` 在 C:\\swapi\\types 下不存在" % iface,
+                        )
+                    )
                 elif member.lower() not in members.get(iface.lower(), set()):
-                    if member.lower() not in {SUFFIX.sub("", x) for x in members.get(iface.lower(), set())}:
-                        hits.append((str(f.relative_to(ROOT)), ln, "[[%s::%s]]" % (iface, member),
-                                     "成员 `%s` 不在接口 `%s` 下" % (member, iface)))
+                    if member.lower() not in {
+                        SUFFIX.sub("", x) for x in members.get(iface.lower(), set())
+                    }:
+                        hits.append(
+                            (
+                                str(f.relative_to(ROOT)),
+                                ln,
+                                "[[%s::%s]]" % (iface, member),
+                                "成员 `%s` 不在接口 `%s` 下" % (member, iface),
+                            )
+                        )
             for m in PATH_REF.finditer(text):
                 kind, name = m.group(1), m.group(2)
-                ln = text[:m.start()].count("\n") + 1
+                ln = text[: m.start()].count("\n") + 1
                 pool = ifaces if kind == "types" else enums
                 if name.lower() not in pool:
-                    hits.append((str(f.relative_to(ROOT)), ln, m.group(0)[:60],
-                                 "引用的官方页不存在（%s/%s）" % (kind, name)))
+                    hits.append(
+                        (
+                            str(f.relative_to(ROOT)),
+                            ln,
+                            m.group(0)[:60],
+                            "引用的官方页不存在（%s/%s）" % (kind, name),
+                        )
+                    )
     return hits
 
 
 #: ★★ 例外表（★ 每条**必须带理由**；★ 未列入的一律报）——
 #:   ★ 这些是**判据的边界**，不是"为了让门禁变绿"：写清理由后可见、可复核 ✓
 EXCEPTIONS = (
-    ("mcp-server/tool_specs_batch74.py", "IInsertMidSurface",
-     "★ 待复核：`I` 前缀是官方的**进程内指针变体**命名法（见已知事实 47 那一族），"
-     "本判据只归一 `Method/Property/Function` 后缀，**未归一 `I` 前缀** ⇒ 疑误报，需人判"),
-    ("tools/build_obsolete_index.py", "Iface",
-     "★ 误报：`[[Iface::Member]]` 是函数 docstring 里的**模板占位**（不是真引用）"),
+    (
+        "mcp-server/tool_specs_batch74.py",
+        "IInsertMidSurface",
+        "★ 待复核：`I` 前缀是官方的**进程内指针变体**命名法（见已知事实 47 那一族），"
+        "本判据只归一 `Method/Property/Function` 后缀，**未归一 `I` 前缀** ⇒ 疑误报，需人判",
+    ),
+    (
+        "tools/build_obsolete_index.py",
+        "Iface",
+        "★ 误报：`[[Iface::Member]]` 是函数 docstring 里的**模板占位**（不是真引用）",
+    ),
 )
 
 
@@ -175,8 +219,10 @@ def main() -> int:
         return 0
     bad, real = load_bad_names()
     print("  ★ 本机真名集合: %d（接口目录 + 枚举页）" % len(real))
-    print("  ★ 已核验缺陷里抽出的**错拼候选名**: %d 个（★ 只作参照，不作判据 —— 见 docstring）"
-          % len(bad))
+    print(
+        "  ★ 已核验缺陷里抽出的**错拼候选名**: %d 个（★ 只作参照，不作判据 —— 见 docstring）"
+        % len(bad)
+    )
     hits = scan()
     print()
     for rel, line, ref, why in hits:
@@ -184,18 +230,31 @@ def main() -> int:
         print("         %s" % why)
     print()
     print("  ★ 不算什么（★ 判据的否定面）：")
-    print("     · ★ 注释/字符串里**提及**错拼名**不算**使用（本门禁只认标识符形状的独立出现）")
-    print("     · ★ `other`(164) / `undefined_item`(24) / `number_mismatch`(10) **不取** ——")
+    print(
+        "     · ★ 注释/字符串里**提及**错拼名**不算**使用（本门禁只认标识符形状的独立出现）"
+    )
+    print(
+        "     · ★ `other`(164) / `undefined_item`(24) / `number_mismatch`(10) **不取** ——"
+    )
     print("       它们是散文级缺陷，无法机械判成「写码时用错」")
     print("     · ★ `verified=False` 的 6 条**不取**")
     print()
     if hits:
-        print("  [REPORT] **%d** 处引用了**不存在的官方页**（★ 本题材已知的真断链已修 5 处）" % len(hits))
+        print(
+            "  [REPORT] **%d** 处引用了**不存在的官方页**（★ 本题材已知的真断链已修 5 处）"
+            % len(hits)
+        )
         print("  ★★ 本门禁**暂只报告、不拦（exit 0）** —— 理由：")
-        print("     · 判据边界还有 2 处待人判（见文件级例外说明：`IInsertMidSurface` 的 `I` 前缀变体、")
+        print(
+            "     · 判据边界还有 2 处待人判（见文件级例外说明：`IInsertMidSurface` 的 `I` 前缀变体、"
+        )
         print("       `[[Iface::Member]]` 模板占位）；")
-        print("     · 按 D-1（新建门禁误报率 ≤5%，未达标者留待复核桶）⇒ **达标前不接进 release_check** ✓")
-        print("  ★ 接进 release_check 的前置：把上列 hits 逐条判完（真断链则修，边界则进例外表）✓")
+        print(
+            "     · 按 D-1（新建门禁误报率 ≤5%，未达标者留待复核桶）⇒ **达标前不接进 release_check** ✓"
+        )
+        print(
+            "  ★ 接进 release_check 的前置：把上列 hits 逐条判完（真断链则修，边界则进例外表）✓"
+        )
         return 0
     print("[PASS] 0 处引用了不存在的官方页（★ 扫描面：%s）" % "/".join(SCAN_DIRS))
     return 0

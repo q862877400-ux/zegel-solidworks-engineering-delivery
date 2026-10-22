@@ -58,6 +58,7 @@ if result["timed_out"]:
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -73,7 +74,7 @@ __all__ = ["run_isolated", "ISOLATED_MARKER", "kill_tree"]
 ISOLATED_MARKER = "__isolated__"
 
 #: 子进程里跑的蹦床代码：把模块/函数/参数/关键字显式传进去，结果以 JSON 从 stdout 回。
-_CHILD = r'''
+_CHILD = r"""
 import json, sys, traceback
 
 def _main() -> int:
@@ -103,7 +104,7 @@ def _main() -> int:
     return 0
 
 raise SystemExit(_main())
-'''
+"""
 
 
 def _kill_tree(pid: int, *, timeout: float = 20.0) -> dict[str, Any]:
@@ -124,25 +125,48 @@ def _kill_tree(pid: int, *, timeout: float = 20.0) -> dict[str, Any]:
 
     t0 = _t.time()
     try:
-        p = _sp.run(["taskkill", "/PID", str(int(pid)), "/F", "/T"],
-                    capture_output=True, text=True, encoding="utf-8", errors="replace",
-                    timeout=timeout, stdin=_sp.DEVNULL)
-        return {"ok": p.returncode == 0, "returncode": p.returncode,
-                "seconds": round(_t.time() - t0, 2),
-                "stdout": (p.stdout or "").strip()[:200],
-                "error": None if p.returncode == 0 else (p.stderr or p.stdout or "").strip()[:200]}
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "returncode": None, "seconds": round(_t.time() - t0, 2),
-                "stdout": "", "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+        p = _sp.run(
+            ["taskkill", "/PID", str(int(pid)), "/F", "/T"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            stdin=_sp.DEVNULL,
+        )
+        return {
+            "ok": p.returncode == 0,
+            "returncode": p.returncode,
+            "seconds": round(_t.time() - t0, 2),
+            "stdout": (p.stdout or "").strip()[:200],
+            "error": None
+            if p.returncode == 0
+            else (p.stderr or p.stdout or "").strip()[:200],
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "returncode": None,
+            "seconds": round(_t.time() - t0, 2),
+            "stdout": "",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
 
 
 #: ★ 公开别名（★ 看门狗/调用方也可以用同一条"杀整棵树"的路）
 kill_tree = _kill_tree
 
 
-def run_isolated(module: str, function: str, *, args: list | None = None,
-                 kwargs: dict | None = None, timeout: float = 180.0,
-                 drain_timeout: float = 10.0, python: str | None = None) -> dict[str, Any]:
+def run_isolated(
+    module: str,
+    function: str,
+    *,
+    args: list | None = None,
+    kwargs: dict | None = None,
+    timeout: float = 180.0,
+    drain_timeout: float = 10.0,
+    python: str | None = None,
+) -> dict[str, Any]:
     """在**可被杀的子进程**里调用 `scripts.<module>.<function>`。
 
     :param module: **点分模块路径**，如 `"scripts.sw_simulation"`（★ 见下例）。
@@ -163,59 +187,101 @@ def run_isolated(module: str, function: str, *, args: list | None = None,
          ⇒ ★ 现在：杀掉之后**最多等 `drain_timeout` 秒**收残余输出，
          ★★ 无论收没收到**都返回**，并把 `drained=False` / `child_alive=True` **如实报出来** ✓
     """
-    req = {"module": module, "function": function,
-           "args": list(args or []), "kwargs": dict(kwargs or {})}
+    req = {
+        "module": module,
+        "function": function,
+        "args": list(args or []),
+        "kwargs": dict(kwargs or {}),
+    }
     root = Path(__file__).resolve().parents[1]
     env_paths = [str(root), str(root / "scripts"), str(root / "mcp-server")]
     import os
 
     env = dict(os.environ)
-    env["PYTHONPATH"] = os.pathsep.join(env_paths + [env.get("PYTHONPATH", "")]).strip(os.pathsep)
+    env["PYTHONPATH"] = os.pathsep.join(env_paths + [env.get("PYTHONPATH", "")]).strip(
+        os.pathsep
+    )
     env["PYTHONIOENCODING"] = "utf-8"
 
     t0 = time.time()
     try:
         proc = subprocess.Popen(
             [python or sys.executable, "-c", _CHILD],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            text=True, encoding="utf-8", errors="replace", env=env, cwd=str(root),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=env,
+            cwd=str(root),
         )
     except OSError as exc:
-        return {"ok": False, "result": None, ISOLATED_MARKER: True, "timed_out": False,
-                "seconds": round(time.time() - t0, 1),
-                "error": "子进程**起不来**（OSError）：%s" % (str(exc)[:200],)}
+        return {
+            "ok": False,
+            "result": None,
+            ISOLATED_MARKER: True,
+            "timed_out": False,
+            "seconds": round(time.time() - t0, 1),
+            "error": "子进程**起不来**（OSError）：%s" % (str(exc)[:200],),
+        }
     try:
         try:
-            out, err = proc.communicate(input=json.dumps(req, ensure_ascii=False),
-                                        timeout=timeout)
+            out, err = proc.communicate(
+                input=json.dumps(req, ensure_ascii=False), timeout=timeout
+            )
         except subprocess.TimeoutExpired:
-            kill = _kill_tree(proc.pid)                        #: ★ ① 杀**整棵树**（实测有效的那条路）
+            kill = _kill_tree(proc.pid)  #: ★ ① 杀**整棵树**（实测有效的那条路）
             drained, alive = True, False
             try:
-                out, err = proc.communicate(timeout=drain_timeout)   #: ★ ② **有界**收尾
+                out, err = proc.communicate(timeout=drain_timeout)  #: ★ ② **有界**收尾
             except subprocess.TimeoutExpired:
                 #: ★★ 收不干净也**必须返回**（★ 原来就是在这里无限等下去的）
                 out, err, drained = "", "", False
                 alive = proc.poll() is None
-            return {"ok": False, "result": None, ISOLATED_MARKER: True, "timed_out": True,
-                    "seconds": round(time.time() - t0, 1),
-                    "child_killed": bool(kill.get("ok")), "kill": kill,
-                    "drained": drained, "child_alive": alive,
-                    "error": ("隔离执行超时（%.0fs）—— ★ 已用 `taskkill /T /F` 杀子进程"
-                              "（child_killed=%s · 用时 %ss）；★ 会话完好。"
-                              "若这是已知会弹模态框/会算很久的调用，说明前置不成立"
-                              % (timeout, kill.get("ok"), kill.get("seconds")))}
+            return {
+                "ok": False,
+                "result": None,
+                ISOLATED_MARKER: True,
+                "timed_out": True,
+                "seconds": round(time.time() - t0, 1),
+                "child_killed": bool(kill.get("ok")),
+                "kill": kill,
+                "drained": drained,
+                "child_alive": alive,
+                "error": (
+                    "隔离执行超时（%.0fs）—— ★ 已用 `taskkill /T /F` 杀子进程"
+                    "（child_killed=%s · 用时 %ss）；★ 会话完好。"
+                    "若这是已知会弹模态框/会算很久的调用，说明前置不成立"
+                    % (timeout, kill.get("ok"), kill.get("seconds"))
+                ),
+            }
     finally:
         if proc.poll() is None:
-            _kill_tree(proc.pid)                              #: ★ 兜底：任何异常路径都不留活子进程
+            _kill_tree(proc.pid)  #: ★ 兜底：任何异常路径都不留活子进程
     dt = round(time.time() - t0, 1)
     out = out or ""
     if "@@DSH_ISOLATED@@" not in out:
-        return {"ok": False, "result": None, ISOLATED_MARKER: True, "timed_out": False,
-                "seconds": dt, "child_killed": False, "drained": True, "child_alive": False,
-                "error": "子进程没有回结果（★ 可能崩在导入阶段）：stdout=%r stderr=%r"
-                         % (out[-300:], (err or "")[-300:])}
+        return {
+            "ok": False,
+            "result": None,
+            ISOLATED_MARKER: True,
+            "timed_out": False,
+            "seconds": dt,
+            "child_killed": False,
+            "drained": True,
+            "child_alive": False,
+            "error": "子进程没有回结果（★ 可能崩在导入阶段）：stdout=%r stderr=%r"
+            % (out[-300:], (err or "")[-300:]),
+        }
     payload = json.loads(out.split("@@DSH_ISOLATED@@", 1)[1])
-    payload.update({"timed_out": False, "seconds": dt, "drained": True, "child_alive": False,
-                    "child_returncode": proc.returncode})
+    payload.update(
+        {
+            "timed_out": False,
+            "seconds": dt,
+            "drained": True,
+            "child_alive": False,
+            "child_returncode": proc.returncode,
+        }
+    )
     return payload

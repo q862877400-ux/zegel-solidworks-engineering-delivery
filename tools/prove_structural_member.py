@@ -4,7 +4,7 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_structural_member.py
 # 定位:   ★ 2026-10-03（轮 428）`plan-200r-v3` **段 2（焊件族）**；★ 承段 1 的收口。
-# ★★ **而本轮先做了一件侦察**（★ 按 AGENTS.md 的顺序：dead-ends → limitations → facts → 
+# ★★ **而本轮先做了一件侦察**（★ 按 AGENTS.md 的顺序：dead-ends → limitations → facts →
 # 动手）：
 #     ★ 而 `capabilities.yaml` 的 `weldment_cut_list` 条目**早就写明**了卡点：
 #       「**2026-10-02（轮 364）真因查明：本机没装「焊件轮廓库」（Weldment Profiles）** ⇒
@@ -44,13 +44,18 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "structural-member-evidence.json")
-PROFILE = Path(r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles\GB\square-rods.sldlfp")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "structural-member-evidence.json"
+)
+PROFILE = Path(
+    r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles\GB\square-rods.sldlfp"
+)
 
 
 def _type_names(model) -> set:
     """★ 特征树里全部特征的**类型名**（★ 判据用）—— ★ 照 `sw_weldment` 里既有的遍历写法。"""
     from sw_connect import get_com_member, safe_get_com_member
+
     names, feature, guard = set(), safe_get_com_member(model, "FirstFeature"), 0
     while feature is not None and guard < 500:
         names.add(str(safe_get_com_member(feature, "GetTypeName2") or ""))
@@ -62,12 +67,21 @@ def _type_names(model) -> set:
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from scripts.sw_part import current_sketch_name, end_sketch, sketch_line, start_sketch
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        sketch_line,
+        start_sketch,
+    )
     from scripts.sw_sketch import get_sketch_segments
     from scripts.sw_weldment import create_structural_member_from_sketch
 
-    ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "profile": str(PROFILE), "profile_exists": PROFILE.is_file()}
+    ev: dict = {
+        "steps": {},
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "profile": str(PROFILE),
+        "profile_exists": PROFILE.is_file(),
+    }
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -85,11 +99,16 @@ def main() -> int:
             feature = get_com_member(doc, "FeatureByName", sk)
             sketch = get_com_member(feature, "GetSpecificFeature2")
             segs = list(get_sketch_segments(sketch))
-            ev["steps"]["entry_check"] = {"ok": len(segs) >= 1, "segment_count": len(segs),
-                                          "first_type": type(segs[0]).__name__ if segs else None}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["entry_check"] = {"ok": False,
-                                          "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+            ev["steps"]["entry_check"] = {
+                "ok": len(segs) >= 1,
+                "segment_count": len(segs),
+                "first_type": type(segs[0]).__name__ if segs else None,
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["entry_check"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+            }
         before = _type_names(doc)
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
@@ -99,31 +118,44 @@ def main() -> int:
                     "feature": str(rep2.get("feature"))[:60],
                     "segments": rep2.get("segments"),
                     "new_type_names": rep2.get("new_type_names"),
-                    "note": "★ 判据：★ 特征树里**多了**新类型名（如 `WeldmentFeature`）"}
-            except Exception as exc:                           # noqa: BLE001
+                    "note": "★ 判据：★ 特征树里**多了**新类型名（如 `WeldmentFeature`）",
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["structural_member"] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:150])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+                }
         else:
-            ev["steps"]["structural_member"] = {"ok": False, "skipped": "★ 入口没验过 ⇒ 不施加"}
+            ev["steps"]["structural_member"] = {
+                "ok": False,
+                "skipped": "★ 入口没验过 ⇒ 不施加",
+            }
         v = ev["steps"].get("structural_member") or {}
-        ev["verdict"] = "pass" if (v.get("ok") and v.get("new_type_names")) else "partial"
-        ev["note"] = ("★ 结构构件（焊件族）—— ★ 判据是**特征树**（★ 不是 `Count`）。"
-                      "★ 前置：★ 本机的**焊件轮廓库**在（★ 111 个 `.sldlfp`，★ 用 GB 的方管）—— "
-                      "★ 而那**推翻了** `capabilities.yaml` 里轮 364 那条「本机没装轮廓库」。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["verdict"] = (
+            "pass" if (v.get("ok") and v.get("new_type_names")) else "partial"
+        )
+        ev["note"] = (
+            "★ 结构构件（焊件族）—— ★ 判据是**特征树**（★ 不是 `Count`）。"
+            "★ 前置：★ 本机的**焊件轮廓库**在（★ 111 个 `.sldlfp`，★ 用 GB 的方管）—— "
+            "★ 而那**推翻了** `capabilities.yaml` 里轮 364 那条「本机没装轮廓库」。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

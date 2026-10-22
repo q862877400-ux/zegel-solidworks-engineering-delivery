@@ -42,36 +42,225 @@ EXAMPLES = Path(r"C:\swapi\examples")
 
 #: 14 个功能域 -> 命中该域的关键词。顺序即匹配优先级，���靠前越具体。
 DOMAIN_KEYWORDS: list[tuple[str, list[str]]] = [
-    ("孔与螺纹", ["holewizard", "hole", "thread", "tap", "countersink", "cskhole",
-              "weldmenthole", "straightpipe", "cosmeticthread"]),
-    ("钣金", ["sheetmetal", "sheet_metal", "hem", "flange", "bend", "gusset",
-            "louver", "bead", "draft", "ruleline", "wrangle"]),
-    ("焊件", ["structure_system", "structuremember", "weldment", "weldbead",
-            "weld", "cutlist", "profile"]),
-    ("曲面", ["surface", "loft", "sweep", "knit", "trim", "refill", "radiate",
-            "lofted", "offset"]),
-    ("工程图", ["drawing", "sheet", "view", "annotation", "dimension", "bomtable",
-              "balloon", "sectionview", "detailview", "titleblock", "drawview",
-              "insertmodelannotations", "tableannotation", "hightlight"]),
-    ("装配", ["assembly", "component", "mate", "explode", "mirror", "sketchblock",
-            "insertcomponent", "fixcomponent", "lightweight"]),
-    ("零件特征", ["extrusion", "revolve", "fillet", "chamfer", "pattern", "rib",
-              "shell", "draft", "mirror", "straighten", "boundary", "delete",
-              "directedit", "boss", "loft", "swept", "knit", "thicken"]),
-    ("草图", ["sketch", "constraint", "dimension", "spline", "slot", "arc",
-            "circle", "rectangle", "polygon", "offsetentity"]),
-    ("几何与拓扑", ["body", "face", "edge", "vertex", "loop", "curve", "surface",
-               "boundingbox", "midsurface", "topology", "closestpt", "measure"]),
-    ("质量属性与导出", ["masspropert", "export", "step", "iges", "stl", "dxf",
-                   "pdf", "3d_pdf", "packandgo", "saveas", "print", "convert"]),
-    ("配置·材料·自定义属性", ["configuration", "designtable", "custompropert",
-                     "material", "render", "displaystate", "appearance", "config"]),
-    ("应用与会话", ["opensave", "template", "macro", "preference", "userpref",
-                "addin", "application", "document", "isvisible", "activate"]),
-    ("仿真(需许可证)", ["simulation", "study", "cosworks", "cw", "load", "restraint",
-                  "fixture", "mesh", "stress", "displacement", "fatigue"]),
-    ("路由/Composer/PDM", ["routing", "composer", "pdm", "vault", "costing",
-                    "toolbox", "sustainability", "checkin", "checkout"]),
+    (
+        "孔与螺纹",
+        [
+            "holewizard",
+            "hole",
+            "thread",
+            "tap",
+            "countersink",
+            "cskhole",
+            "weldmenthole",
+            "straightpipe",
+            "cosmeticthread",
+        ],
+    ),
+    (
+        "钣金",
+        [
+            "sheetmetal",
+            "sheet_metal",
+            "hem",
+            "flange",
+            "bend",
+            "gusset",
+            "louver",
+            "bead",
+            "draft",
+            "ruleline",
+            "wrangle",
+        ],
+    ),
+    (
+        "焊件",
+        [
+            "structure_system",
+            "structuremember",
+            "weldment",
+            "weldbead",
+            "weld",
+            "cutlist",
+            "profile",
+        ],
+    ),
+    (
+        "曲面",
+        [
+            "surface",
+            "loft",
+            "sweep",
+            "knit",
+            "trim",
+            "refill",
+            "radiate",
+            "lofted",
+            "offset",
+        ],
+    ),
+    (
+        "工程图",
+        [
+            "drawing",
+            "sheet",
+            "view",
+            "annotation",
+            "dimension",
+            "bomtable",
+            "balloon",
+            "sectionview",
+            "detailview",
+            "titleblock",
+            "drawview",
+            "insertmodelannotations",
+            "tableannotation",
+            "hightlight",
+        ],
+    ),
+    (
+        "装配",
+        [
+            "assembly",
+            "component",
+            "mate",
+            "explode",
+            "mirror",
+            "sketchblock",
+            "insertcomponent",
+            "fixcomponent",
+            "lightweight",
+        ],
+    ),
+    (
+        "零件特征",
+        [
+            "extrusion",
+            "revolve",
+            "fillet",
+            "chamfer",
+            "pattern",
+            "rib",
+            "shell",
+            "draft",
+            "mirror",
+            "straighten",
+            "boundary",
+            "delete",
+            "directedit",
+            "boss",
+            "loft",
+            "swept",
+            "knit",
+            "thicken",
+        ],
+    ),
+    (
+        "草图",
+        [
+            "sketch",
+            "constraint",
+            "dimension",
+            "spline",
+            "slot",
+            "arc",
+            "circle",
+            "rectangle",
+            "polygon",
+            "offsetentity",
+        ],
+    ),
+    (
+        "几何与拓扑",
+        [
+            "body",
+            "face",
+            "edge",
+            "vertex",
+            "loop",
+            "curve",
+            "surface",
+            "boundingbox",
+            "midsurface",
+            "topology",
+            "closestpt",
+            "measure",
+        ],
+    ),
+    (
+        "质量属性与导出",
+        [
+            "masspropert",
+            "export",
+            "step",
+            "iges",
+            "stl",
+            "dxf",
+            "pdf",
+            "3d_pdf",
+            "packandgo",
+            "saveas",
+            "print",
+            "convert",
+        ],
+    ),
+    (
+        "配置·材料·自定义属性",
+        [
+            "configuration",
+            "designtable",
+            "custompropert",
+            "material",
+            "render",
+            "displaystate",
+            "appearance",
+            "config",
+        ],
+    ),
+    (
+        "应用与会话",
+        [
+            "opensave",
+            "template",
+            "macro",
+            "preference",
+            "userpref",
+            "addin",
+            "application",
+            "document",
+            "isvisible",
+            "activate",
+        ],
+    ),
+    (
+        "仿真(需许可证)",
+        [
+            "simulation",
+            "study",
+            "cosworks",
+            "cw",
+            "load",
+            "restraint",
+            "fixture",
+            "mesh",
+            "stress",
+            "displacement",
+            "fatigue",
+        ],
+    ),
+    (
+        "路由/Composer/PDM",
+        [
+            "routing",
+            "composer",
+            "pdm",
+            "vault",
+            "costing",
+            "toolbox",
+            "sustainability",
+            "checkin",
+            "checkout",
+        ],
+    ),
 ]
 
 #: 落到多个域时的归属提示（同一示例可服务多个域，此处只记首个命中域）
@@ -102,8 +291,12 @@ def main() -> int:
         by_domain[domain].append(f"{stem} [{lang}]")
         langs[lang] += 1
 
-    out_txt = Path(Path(__file__).resolve().parents[1] / "_raw" / "examples_by_domain.txt")
-    out_json = Path(Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json")
+    out_txt = Path(
+        Path(__file__).resolve().parents[1] / "_raw" / "examples_by_domain.txt"
+    )
+    out_json = Path(
+        Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json"
+    )
 
     lines = [
         f"# 官方示例按域归类（共 {len(files)} 个）",
@@ -135,13 +328,22 @@ def main() -> int:
     out_txt.write_text("\n".join(lines), encoding="utf-8")
     out_json.write_text(
         json.dumps(
-            {"total": len(files), "languages": dict(langs),
-             "by_domain": {k: v for k, v in sorted(by_domain.items())}},
-            ensure_ascii=False, indent=2),
-        encoding="utf-8")
+            {
+                "total": len(files),
+                "languages": dict(langs),
+                "by_domain": {k: v for k, v in sorted(by_domain.items())},
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
     print(f"示例总数 {len(files)} -> {out_txt}")
-    print("语言分布: " + ", ".join(f"{k}={v}" for k, v in sorted(langs.items(), key=lambda kv: -kv[1])))
+    print(
+        "语言分布: "
+        + ", ".join(f"{k}={v}" for k, v in sorted(langs.items(), key=lambda kv: -kv[1]))
+    )
     print("各域示例数:")
     for domain, _ in DOMAIN_KEYWORDS:
         print(f"  {domain:<24} {len(by_domain.get(domain, []))}")

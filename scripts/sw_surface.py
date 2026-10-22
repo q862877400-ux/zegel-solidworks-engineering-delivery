@@ -58,6 +58,7 @@
 本模块不做任何单位换算，原样透传，由调用方以 SI 米制为准——
 按 AGENTS.md 铁律 5「查不到就说查不到」，此处不猜。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -129,8 +130,14 @@ SURFACE_CREATION_METHODS = {
     "CreateSphericalSurface": ("Object", ("Object", "Double")),
     "CreateSphericalSurface2": ("Object", ("Object", "Object", "Object", "Double")),
     "CreateConicalSurface": ("Object", ("Object", "Object", "Double", "Double")),
-    "CreateConicalSurface2": ("Object", ("Object", "Object", "Object", "Double", "Double")),
-    "CreateToroidalSurface": ("Object", ("Object", "Object", "Object", "Double", "Double")),
+    "CreateConicalSurface2": (
+        "Object",
+        ("Object", "Object", "Object", "Double", "Double"),
+    ),
+    "CreateToroidalSurface": (
+        "Object",
+        ("Object", "Object", "Object", "Double", "Double"),
+    ),
     "CreateOffsetSurface": ("Object", ("Object", "Double")),
     "CreateExtrusionSurface": ("Object", ("Object", "Object")),
     "CreateRevolutionSurface": ("Object", ("Object", "Object", "Object", "Object")),
@@ -141,15 +148,45 @@ SURFACE_CREATION_METHODS = {
     "CreateSheetFromSurface": ("Object", ("Object", "Object")),
     "CreateLoftSurface": (
         "Object",
-        ("Object", "Boolean", "Boolean", "Object", "Int32", "Int32", "Object",
-         "Object", "Object", "Object", "Boolean", "Boolean", "Object",
-         "Object", "Int32", "Int32", "Int32", "Int32"),
+        (
+            "Object",
+            "Boolean",
+            "Boolean",
+            "Object",
+            "Int32",
+            "Int32",
+            "Object",
+            "Object",
+            "Object",
+            "Object",
+            "Boolean",
+            "Boolean",
+            "Object",
+            "Object",
+            "Int32",
+            "Int32",
+            "Int32",
+            "Int32",
+        ),
     ),
     "CreateRuledSurfaceFromEdge": (
         "Int32",
-        ("ModelDoc2", "Object", "Int32", "Double", "Boolean", "Boolean",
-         "Boolean", "Double", "Boolean", "Double", "Double", "Double",
-         "Boolean", "Object&"),
+        (
+            "ModelDoc2",
+            "Object",
+            "Int32",
+            "Double",
+            "Boolean",
+            "Boolean",
+            "Boolean",
+            "Double",
+            "Boolean",
+            "Double",
+            "Double",
+            "Double",
+            "Boolean",
+            "Object&",
+        ),
     ),
 }
 
@@ -191,23 +228,27 @@ def get_modeler(sw_app):
 #     例：`CreateCylindricalSurface` 在名单里，但用 `origin=[0,0,0]` 调时返回 `None`，
 #     而 `CreateSphericalSurface` 用同样风格的参数返回非 `None`。
 #     **⇒ 判据只能是「返回非 None」，不能是「在可取名单里」。**
-IMODELER_RUNTIME_AVAILABLE = frozenset({
-    "CreateCylindricalSurface",
-    "CreateSphericalSurface",
-    "CreateConicalSurface",
-    "CreateToroidalSurface",
-    "CreateArc",
-})
+IMODELER_RUNTIME_AVAILABLE = frozenset(
+    {
+        "CreateCylindricalSurface",
+        "CreateSphericalSurface",
+        "CreateConicalSurface",
+        "CreateToroidalSurface",
+        "CreateArc",
+    }
+)
 
 #: 2026-10-01 真机实测**取不到**（`getattr` 得 `None` ⇒ 调用会报含混的
 #  `'NoneType' object is not callable`）。**这一条是确定的**：成员不可达。
-IMODELER_RUNTIME_UNAVAILABLE = frozenset({
-    "CreatePlanarSurface",
-    "CreateLine",
-    "CreatePoint",
-    "CreateBodyFromSurf",
-    "CreateBsplineSurface",
-})
+IMODELER_RUNTIME_UNAVAILABLE = frozenset(
+    {
+        "CreatePlanarSurface",
+        "CreateLine",
+        "CreatePoint",
+        "CreateBodyFromSurf",
+        "CreateBsplineSurface",
+    }
+)
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -256,8 +297,7 @@ def _invoke(modeler, method: str, *args):
     expected = len(SURFACE_CREATION_METHODS[method][1])
     if len(args) != expected:
         raise TypeError(
-            f"{method} 官方签名为 {expected} 个参数，"
-            f"实际传入 {len(args)} 个"
+            f"{method} 官方签名为 {expected} 个参数，实际传入 {len(args)} 个"
         )
     surface = get_com_member(modeler, method, *args)
     # ⚠⚠ **返回 None = 什么都没建出来** ⇒ **抛带原因的错，不把 None 交给调用方**。
@@ -364,8 +404,12 @@ def create_conical_surface(sw_app, origin, axis, half_angle, radius):
     """由原点 + 轴 + 半角 + 半径创建圆锥面。``(Object, Object, Double, Double)``"""
     require_runtime_available("CreateConicalSurface")
     return _invoke(
-        get_modeler(sw_app), "CreateConicalSurface",
-        origin, axis, float(half_angle), float(radius),
+        get_modeler(sw_app),
+        "CreateConicalSurface",
+        origin,
+        axis,
+        float(half_angle),
+        float(radius),
     )
 
 
@@ -373,8 +417,13 @@ def create_toroidal_surface(sw_app, origin, axis, center, major_radius, minor_ra
     """创建圆环面。``(Object, Object, Object, Double, Double)``"""
     require_runtime_available("CreateToroidalSurface")
     return _invoke(
-        get_modeler(sw_app), "CreateToroidalSurface",
-        origin, axis, center, float(major_radius), float(minor_radius),
+        get_modeler(sw_app),
+        "CreateToroidalSurface",
+        origin,
+        axis,
+        center,
+        float(major_radius),
+        float(minor_radius),
     )
 
 
@@ -401,7 +450,9 @@ def create_revolution_surface(sw_app, profile, axis, origin, angle):
 def create_ruled_surface(sw_app, curve_a, curve_b, continuity):
     """由两条曲线 + 连续性创建直纹面。``(Object, Object, Object)``"""
     require_runtime_available("CreateRuledSurface")
-    return _invoke(get_modeler(sw_app), "CreateRuledSurface", curve_a, curve_b, continuity)
+    return _invoke(
+        get_modeler(sw_app), "CreateRuledSurface", curve_a, curve_b, continuity
+    )
 
 
 def create_swept_surface(sw_app, profile, path):
@@ -414,8 +465,12 @@ def create_bspline_surface(sw_app, control_points, weights, knots, degree):
     """由控制点 / 权重 / 节点 / 次数创建 B 样条曲面。``(Object, Object, Object, Object)``"""
     require_runtime_available("CreateBsplineSurface")
     return _invoke(
-        get_modeler(sw_app), "CreateBsplineSurface",
-        control_points, weights, knots, degree,
+        get_modeler(sw_app),
+        "CreateBsplineSurface",
+        control_points,
+        weights,
+        knots,
+        degree,
     )
 
 
@@ -423,8 +478,13 @@ def create_coons_b_surface(sw_app, curve_v, curve_u, curve_v2, curve_u2, closed)
     """由四条边界曲线创建 Coons B 样条面。``(Curve, Curve, Curve, Curve, Boolean)``"""
     require_runtime_available("CreateCoonsBSurface")
     return _invoke(
-        get_modeler(sw_app), "CreateCoonsBSurface",
-        curve_v, curve_u, curve_v2, curve_u2, bool(closed),
+        get_modeler(sw_app),
+        "CreateCoonsBSurface",
+        curve_v,
+        curve_u,
+        curve_v2,
+        curve_u2,
+        bool(closed),
     )
 
 

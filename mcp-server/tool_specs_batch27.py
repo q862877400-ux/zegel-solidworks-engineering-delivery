@@ -53,22 +53,26 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH27"]
 
-_NAME = ("Name of the study to create. ⚠ The capability layer does NOT check duplicates — "
-         "if a study with this name already exists, SolidWorks decides what happens (that "
-         "behaviour is not verified here, so re-read with solidworks_simulation_list_studies).")
+_NAME = (
+    "Name of the study to create. ⚠ The capability layer does NOT check duplicates — "
+    "if a study with this name already exists, SolidWorks decides what happens (that "
+    "behaviour is not verified here, so re-read with solidworks_simulation_list_studies)."
+)
 
 
 SPECS_BATCH27 = [
     ToolSpec(
         name="solidworks_simulation_create_study",
         title="Create a Static Simulation Study",
-        module="sw_simulation", function="create_study_report",
+        module="sw_simulation",
+        function="create_study_report",
         inject="sw_app",
         #: ★★ `study_name` → `name`：能力层形参叫 `name`（不带前缀），对外名带域前缀
         #:   ⇒ **必须靠 `param_alias` 改名**。
@@ -83,28 +87,30 @@ SPECS_BATCH27 = [
             Param("study_name", str, description=_NAME),
         ],
         doc="Create a STATIC simulation study and return a JSON-able report: "
-            "`{ok, requested_name, study_name, entry_name, error_code}`. "
-            "★★ Read `entry_name`: it names the entry point that actually succeeded "
-            "(CreateNewStudy3 / 2 / 1), so an EMPTY value means the study was NOT created — "
-            "this is the only evidence of whether a fallback path was used. "
-            "⚠ Only static studies are supported (other study types are not verified). "
-            "⚠ Requires the Simulation add-in; it is loaded automatically on first use.",
+        "`{ok, requested_name, study_name, entry_name, error_code}`. "
+        "★★ Read `entry_name`: it names the entry point that actually succeeded "
+        "(CreateNewStudy3 / 2 / 1), so an EMPTY value means the study was NOT created — "
+        "this is the only evidence of whether a fallback path was used. "
+        "⚠ Only static studies are supported (other study types are not verified). "
+        "⚠ Requires the Simulation add-in; it is loaded automatically on first use.",
     ),
     ToolSpec(
         name="solidworks_simulation_list_studies",
         title="List Simulation Studies",
-        module="sw_simulation", function="list_studies",
+        module="sw_simulation",
+        function="list_studies",
         inject="sw_app",
         params=[],
         doc="List every simulation study in the active document as "
-            "`[{index, name}, …]`. ★ Returns names only, never COM objects. "
-            "★ A study whose name cannot be read is still listed with an empty name — "
-            "it is not skipped, so an empty list really means 'no studies'.",
+        "`[{index, name}, …]`. ★ Returns names only, never COM objects. "
+        "★ A study whose name cannot be read is still listed with an empty name — "
+        "it is not skipped, so an empty list really means 'no studies'.",
     ),
     ToolSpec(
         name="solidworks_simulation_find_study",
         title="Find a Simulation Study by Name",
-        module="sw_simulation", function="find_study",
+        module="sw_simulation",
+        function="find_study",
         inject="sw_app",
         #: ★★ 同上的改名（能力层形参是 `name`）—— ★ 门禁 `check_param_binding` 现在会盯
         #: 住这一类。
@@ -113,8 +119,8 @@ SPECS_BATCH27 = [
             Param("study_name", str, description="Exact study name to look for."),
         ],
         doc="Look up a simulation study by name and return `{found, requested_name, study_name}`. "
-            "★★ The capability layer returns None when the name does not exist (it does not "
-            "raise), so this tool exposes an explicit `found` flag instead — never read a "
-            "missing study as present.",
+        "★★ The capability layer returns None when the name does not exist (it does not "
+        "raise), so this tool exposes an explicit `found` flag instead — never read a "
+        "missing study as present.",
     ),
 ]

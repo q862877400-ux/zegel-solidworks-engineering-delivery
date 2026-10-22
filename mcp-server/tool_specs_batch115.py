@@ -1,4 +1,5 @@
 """★ Q6 · 把目录检索层暴露成 MCP 工具（规格 329 · Q6 L110 逐字）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -30,48 +31,79 @@ SPECS_115 = [
     ToolSpec(
         name="solidworks_catalog_domains",
         title="List Task Domains and Facets",
-        module="engineering.catalog", function="catalog_domains",
+        module="engineering.catalog",
+        function="catalog_domains",
         read_only=True,
         params=[],
     ),
     ToolSpec(
         name="solidworks_catalog_retrieve",
         title="Retrieve Tool Cards by Faceted Search",
-        module="engineering.catalog", function="catalog_retrieve",
+        module="engineering.catalog",
+        function="catalog_retrieve",
         read_only=True,
         params=[
-            Param("query", str, default="",
-                  description="自然语言查询（中文或英文）。"),
-            Param("domain", str, default="",
-                  description="按任务域过滤（见 cadstudio_catalog_domains）。"),
-            Param("doc_state", str, default="",
-                  description="按文档状态过滤（precondition 标签值）。"),
-            Param("backend", str, default="",
-                  description="按后端可达性过滤（com_pywin32/file_io/…）。"),
-            Param("capability", str, default="",
-                  description="按能力范围过滤（availability 标签值）。"),
-            Param("budget", int, default=4096,
-                  description="候选 token 上限；默认 4096（Q6 L98）。"),
+            Param("query", str, default="", description="自然语言查询（中文或英文）。"),
+            Param(
+                "domain",
+                str,
+                default="",
+                description="按任务域过滤（见 cadstudio_catalog_domains）。",
+            ),
+            Param(
+                "doc_state",
+                str,
+                default="",
+                description="按文档状态过滤（precondition 标签值）。",
+            ),
+            Param(
+                "backend",
+                str,
+                default="",
+                description="按后端可达性过滤（com_pywin32/file_io/…）。",
+            ),
+            Param(
+                "capability",
+                str,
+                default="",
+                description="按能力范围过滤（availability 标签值）。",
+            ),
+            Param(
+                "budget",
+                int,
+                default=4096,
+                description="候选 token 上限；默认 4096（Q6 L98）。",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_catalog_contract",
         title="Load One Tool's Full Contract",
-        module="engineering.catalog", function="catalog_contract",
+        module="engineering.catalog",
+        function="catalog_contract",
         read_only=True,
         params=[
-            Param("tool_name", str, default="",
-                  description="规范工具名，如 solidworks_extrude_boss。"),
+            Param(
+                "tool_name",
+                str,
+                default="",
+                description="规范工具名，如 solidworks_extrude_boss。",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_catalog_exposure",
         title="Show MCP Exposure for a Mode",
-        module="engineering.catalog", function="catalog_exposure",
+        module="engineering.catalog",
+        function="catalog_exposure",
         read_only=True,
         params=[
-            Param("mode", str, default="compat",
-                  description="autonomous（只规划入口+必要查询）或 compat（全部）。"),
+            Param(
+                "mode",
+                str,
+                default="compat",
+                description="autonomous（只规划入口+必要查询）或 compat（全部）。",
+            ),
         ],
     ),
 ]

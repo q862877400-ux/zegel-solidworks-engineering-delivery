@@ -54,6 +54,7 @@ r"""@brief **真缺口审计（⚠ 提示性，不是判据）**：能力层公�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -67,8 +68,18 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★ 受检模块（★ 需要时往这里加）
-MODULES = ("sw_part", "sw_simulation", "sw_simulation_loads", "sw_topology", "sw_hole_features",
-           "sw_weldment", "sw_document_data", "sw_export", "sw_selection_spec", "sw_surface")
+MODULES = (
+    "sw_part",
+    "sw_simulation",
+    "sw_simulation_loads",
+    "sw_topology",
+    "sw_hole_features",
+    "sw_weldment",
+    "sw_document_data",
+    "sw_export",
+    "sw_selection_spec",
+    "sw_surface",
+)
 
 
 def main() -> int:
@@ -78,44 +89,73 @@ def main() -> int:
     for spec in rc.all_specs():
         ours.setdefault(spec.module, set()).add(spec.function)
 
-    server = (ROOT / "mcp-server" / "server.py")
-    srv_text = server.read_text(encoding="utf-8", errors="replace") if server.is_file() else ""
+    server = ROOT / "mcp-server" / "server.py"
+    srv_text = (
+        server.read_text(encoding="utf-8", errors="replace") if server.is_file() else ""
+    )
     #: ★ 第 ② 层：server.py 里**被调用的**能力层函数名
     srv_called = set(re.findall(r"\b([a-z_][a-z0-9_]{2,})\s*\(", srv_text))
 
     #: ★ 第 ③ 层：能力层内部的**上层包装**（谁在别处被调用）
     all_text = "\n".join(
         f.read_text(encoding="utf-8", errors="replace")
-        for f in list((ROOT / "scripts").glob("*.py")) + list((ROOT / "mcp-server").glob("*.py"))
-        + list((ROOT / "tools").glob("*.py")))
+        for f in list((ROOT / "scripts").glob("*.py"))
+        + list((ROOT / "mcp-server").glob("*.py"))
+        + list((ROOT / "tools").glob("*.py"))
+    )
 
     print("真缺口审计 · 三层口径（① 我们的工具 ② 上游 server.py ③ 上层包装只提示）")
-    print("  %-22s %5s %6s %7s %8s  %s" % ("模块", "公开", "有工具", "上游调", "真缺口", "被上层包装的（提示）"))
+    print(
+        "  %-22s %5s %6s %7s %8s  %s"
+        % ("模块", "公开", "有工具", "上游调", "真缺口", "被上层包装的（提示）")
+    )
     tot = {"pub": 0, "ours": 0, "srv": 0, "real": 0}
     detail: dict[str, list] = {}
     for m in MODULES:
         try:
             mod = __import__("scripts.%s" % m, fromlist=["x"])
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("  %-22s ⚠ 导不进: %s" % (m, str(exc)[:44]))
             continue
-        pub = [n for n in dir(mod)
-               if not n.startswith("_") and callable(getattr(mod, n))
-               and getattr(getattr(mod, n), "__module__", "").endswith(m)]
+        pub = [
+            n
+            for n in dir(mod)
+            if not n.startswith("_")
+            and callable(getattr(mod, n))
+            and getattr(getattr(mod, n), "__module__", "").endswith(m)
+        ]
         have = ours.get(m, set())
         by_srv = {n for n in pub if n in srv_called}
         real = [n for n in pub if n not in have and n not in by_srv]
         #: ★ 第 ③ 层：真缺口里，有多少**在别处被调用**（⇒ 多半已被上层包装）
-        wrapped = [n for n in real if len(re.findall(r"\b%s\s*\(" % re.escape(n), all_text)) > 1]
-        tot["pub"] += len(pub); tot["ours"] += len(have & set(pub))
-        tot["srv"] += len(by_srv); tot["real"] += len(real)
+        wrapped = [
+            n
+            for n in real
+            if len(re.findall(r"\b%s\s*\(" % re.escape(n), all_text)) > 1
+        ]
+        tot["pub"] += len(pub)
+        tot["ours"] += len(have & set(pub))
+        tot["srv"] += len(by_srv)
+        tot["real"] += len(real)
         detail[m] = real
-        print("  %-22s %5d %6d %7d %8d  %s"
-              % (m, len(pub), len(have & set(pub)), len(by_srv), len(real),
-                 (", ".join(wrapped[:4]) + ("…" if len(wrapped) > 4 else "")) if wrapped else "—"))
+        print(
+            "  %-22s %5d %6d %7d %8d  %s"
+            % (
+                m,
+                len(pub),
+                len(have & set(pub)),
+                len(by_srv),
+                len(real),
+                (", ".join(wrapped[:4]) + ("…" if len(wrapped) > 4 else ""))
+                if wrapped
+                else "—",
+            )
+        )
     print()
-    print("  合计：公开 %d · 有我们工具 %d · 被上游调 %d ⇒ ★ **真缺口 %d**"
-          % (tot["pub"], tot["ours"], tot["srv"], tot["real"]))
+    print(
+        "  合计：公开 %d · 有我们工具 %d · 被上游调 %d ⇒ ★ **真缺口 %d**"
+        % (tot["pub"], tot["ours"], tot["srv"], tot["real"])
+    )
     print()
     print("  ★ 真缺口逐条（★ 挂不挂要看规则 3 / 是否需要新注入键 —— 本脚本不判那个）：")
     for m, names in detail.items():

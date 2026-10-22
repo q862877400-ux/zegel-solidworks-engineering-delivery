@@ -10,7 +10,7 @@
 # `Type` 常量域。`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager
 # `
 #         的表 ⇒ 判成 `unmapped`。**「宿主没被表达」= 一个数里混了两种东西**（spec 237 同族）。
-# 官方依据: ① `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的 `## Parameters`   
+# 官方依据: ① `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的 `## Parameters`
 #           （35 条，括注是**散文标签**）② `C:\swapi\types\IMotionStudy\CreateDefinition
 #           .md` 的 `## Parameters`   （11 条，括注是 **`[[接口]]` 逐条点名**）★ 读取器*
 #           *全部 import** `check_interface_member_ownership`，不重写。
@@ -71,7 +71,7 @@
 # 的
 # 站点数）都只允许**增**：减少 = 取点或读取器漏了。
 # ★★ `no-host` 的下界是**本码不空转**的守卫：真树 1（`swFmMateProfileCenter`）——
-# `swFmDraft` 那个站点由 spec 239 改走官方入口 `IFeatureManager::InsertMultiFaceDraft` 
+# `swFmDraft` 那个站点由 spec 239 改走官方入口 `IFeatureManager::InsertMultiFaceDraft`
 # 后
 #    **正当消失** ⇒ 237/238 的 `sites` 下界随之 10 → 9（**已记录在案**）；
 #    ★★ spec 240：`swFmMateProfileCenter` 那个站点也改走官方入口
@@ -109,20 +109,22 @@ DUMPS_ENV = os.environ.get("DSH_CD_HOST_DUMPS", "")
 #: 明细打印上限。
 DETAIL_LIMIT = 25
 #: ★ `unsupported-path` 的声明形态（封闭词表：只有 `alt`）。
-CREATE_ENTRY = re.compile(r"^#:\s*create-entry:\s*(?P<head>[a-z-]+)(?:\s+(?P<rest>\S.*?))?\s*$")
+CREATE_ENTRY = re.compile(
+    r"^#:\s*create-entry:\s*(?P<head>[a-z-]+)(?:\s+(?P<rest>\S.*?))?\s*$"
+)
 CREATE_ENTRY_CODES = ("alt",)
 #: `#:` 声明行的形状（向上连续扫描声明块用）。
 DECL_LINE = re.compile(r"^#:")
 #: ★ 下界（真树实测 · 2026-10-09 · spec 238 / 239）—— 只增不减。
 #: ⚠ **刻意写成独立常量而不是一张整数表**：整数表会进
 #: `check_enum_values_vs_reflection` 的盲区清单、要额外表态（spec 237 当场踩过）。
-BASELINE_SITES = 8             # `CreateDefinition` 站点总数（★ spec 239：10 → 9 ——
+BASELINE_SITES = 8  # `CreateDefinition` 站点总数（★ spec 239：10 → 9 ——
 #:                              `sw_sheet_metal.create_draft` 改走官方入口后该站点**正当消失**；
 #:                              ★ spec 240：9 → **8** —— `sw_weldment.create_profile_center_mate`
 #:                              改走官方入口 `IAssemblyDoc::CreateMateData` + `CreateMate` 后，
 #:                              它唯一的 `CreateDefinition` 站点**正当消失**）
-BASELINE_NAMED = 1             # 常量被官方**逐条点名**接口的站点数
-BASELINE_NO_HOST = 0           # ★ 常量**无**任何官方宿主页收录的站点数（本码的靶子数）
+BASELINE_NAMED = 1  # 常量被官方**逐条点名**接口的站点数
+BASELINE_NO_HOST = 0  # ★ 常量**无**任何官方宿主页收录的站点数（本码的靶子数）
 #:                             ★ spec 239：真树 1（`swFmMateProfileCenter`）；spec 240 改走官方入口后
 #:                              真树 **0** —— ★★ 注意：**下界降到 0 ≠ 本码空转**：
 #:                              ① `unsupported-path` 的**触发条件是「站点存在 + 无宿主 + 未表态」**，
@@ -140,8 +142,11 @@ def _baseline() -> dict:
         parts = [int(x) for x in spec.split(",")]
         if len(parts) == 3:
             return dict(zip(("sites", "named", "no-host"), parts))
-    return {"sites": BASELINE_SITES, "named": BASELINE_NAMED,
-            "no-host": BASELINE_NO_HOST}
+    return {
+        "sites": BASELINE_SITES,
+        "named": BASELINE_NAMED,
+        "no-host": BASELINE_NO_HOST,
+    }
 
 
 def _cimo():
@@ -152,7 +157,9 @@ def _cimo():
     if TYPES_ENV:
         cimo.TYPES = Path(TYPES_ENV)
         cimo.CD_DOC = cimo.TYPES / "IFeatureManager" / "CreateDefinition.md"
-        cimo.CD_DOCS = {h: cimo.TYPES / h / "CreateDefinition.md" for h in cimo.CD_HOSTS}
+        cimo.CD_DOCS = {
+            h: cimo.TYPES / h / "CreateDefinition.md" for h in cimo.CD_HOSTS
+        }
     if DUMPS_ENV:
         cimo.RAW = Path(DUMPS_ENV)
     return cimo
@@ -193,9 +200,11 @@ def judge_unsupported(block: list, const: str, member_exists, member_obsolete):
             decl = m
             break
     if decl is None:
-        return ("常量 `%s` **没有任何官方 `CreateDefinition` 宿主页收录** ⇒ 代码走了"
-                "**官方不支持**的路径 ⇒ 请在调用行上方声明 `#: create-entry: alt "
-                "<官方成员名|unknown> <理由>`" % const)
+        return (
+            "常量 `%s` **没有任何官方 `CreateDefinition` 宿主页收录** ⇒ 代码走了"
+            "**官方不支持**的路径 ⇒ 请在调用行上方声明 `#: create-entry: alt "
+            "<官方成员名|unknown> <理由>`" % const
+        )
     head = decl.group("head")
     if head not in CREATE_ENTRY_CODES:
         return "未知 code `%s`（封闭词表：%s）" % (head, " / ".join(CREATE_ENTRY_CODES))
@@ -206,21 +215,30 @@ def judge_unsupported(block: list, const: str, member_exists, member_obsolete):
     if not reason:
         return "`alt` 缺理由（只写了替代入口）"
     if entry == "unknown":
-        return None                       # ★ 有界逃生门：已**表态**「官方替代入口尚未查明」
+        return None  # ★ 有界逃生门：已**表态**「官方替代入口尚未查明」
     if not member_exists(entry):
-        return ("`alt %s` —— 官方文档树里**查不到**该成员页 ⇒ 自证失败"
-                "（不许写一个官方没有的入口）" % entry)
+        return (
+            "`alt %s` —— 官方文档树里**查不到**该成员页 ⇒ 自证失败"
+            "（不许写一个官方没有的入口）" % entry
+        )
     if member_obsolete(entry):
-        return ("`alt %s` —— 该成员页带 **`Obsolete`** 标注 ⇒ 自证失败："
-                "★ 官方用 `Obsolete. Superseded by X` 表达「该换 X 了」⇒ "
-                "换回已废弃的前代入口 = 没解决问题" % entry)
+        return (
+            "`alt %s` —— 该成员页带 **`Obsolete`** 标注 ⇒ 自证失败："
+            "★ 官方用 `Obsolete. Superseded by X` 表达「该换 X 了」⇒ "
+            "换回已废弃的前代入口 = 没解决问题" % entry
+        )
     return None
 
 
 def make_unsupported_judge(blocks: dict, types_dir: Path):
     """⇒ `(site) -> 违规说明|None`。把「读声明块 + 查官方页」绑定进去，判罪仍在 `judge_unsupported`。"""
+
     def _exists(name: str) -> bool:
-        return bool(list(types_dir.glob("*/%s.md" % name))) if types_dir.is_dir() else False
+        return (
+            bool(list(types_dir.glob("*/%s.md" % name)))
+            if types_dir.is_dir()
+            else False
+        )
 
     def _obsolete(name: str) -> bool:
         for p in sorted(types_dir.glob("*/%s.md" % name)):
@@ -233,14 +251,16 @@ def make_unsupported_judge(blocks: dict, types_dir: Path):
 
     def _judge(site: dict):
         key = (site["path"].name, site["line"])
-        return judge_unsupported(blocks.get(key, []), site.get("const") or "",
-                                 _exists, _obsolete)
+        return judge_unsupported(
+            blocks.get(key, []), site.get("const") or "", _exists, _obsolete
+        )
 
     return _judge
 
 
-def judge_sites(sites: list, pages: dict, owned: dict, mapped: dict, members_of,
-                unsupported=None) -> tuple:
+def judge_sites(
+    sites: list, pages: dict, owned: dict, mapped: dict, members_of, unsupported=None
+) -> tuple:
     """⇒ ``(violations, gaps, named_sites, no_host)``。**所有判罪集中在这一处**（spec 235 的纪律）。
 
     ★ 抽成纯函数是为了让 `host-mismatch` / `ambiguous-host` 这两个码**有靶子**：
@@ -264,47 +284,78 @@ def judge_sites(sites: list, pages: dict, owned: dict, mapped: dict, members_of,
                 #:   （事实 46 同族：缺数据源 ≠ 检查失败）⇒ 只登记，不拦发布。
                 vals = sorted(set(pages[const].values()))
                 if len(vals) == 1 and members_of(vals[0]):
-                    violations.append({"kind": "should-map", "file": s["path"].name,
-                                       "line": s["line"],
-                                       "detail": "常量 `%s` 被官方宿主页 `%s` **逐条点名**为 `%s` "
-                                                 "⇒ 必须映射，**不许**用 `unmapped` 逃避"
-                                                 % (const, " / ".join(sorted(pages[const])),
-                                                    vals[0])})
+                    violations.append(
+                        {
+                            "kind": "should-map",
+                            "file": s["path"].name,
+                            "line": s["line"],
+                            "detail": "常量 `%s` 被官方宿主页 `%s` **逐条点名**为 `%s` "
+                            "⇒ 必须映射，**不许**用 `unmapped` 逃避"
+                            % (const, " / ".join(sorted(pages[const])), vals[0]),
+                        }
+                    )
                 else:
-                    gaps.append("`%s`（%s:%d）官方点名 `%s` 但**接口文档缺失** ⇒ 缺数据源"
-                                % (const, s["path"].name, s["line"], " / ".join(vals)))
+                    gaps.append(
+                        "`%s`（%s:%d）官方点名 `%s` 但**接口文档缺失** ⇒ 缺数据源"
+                        % (const, s["path"].name, s["line"], " / ".join(vals))
+                    )
             elif hosts:
-                violations.append({"kind": "should-map", "file": s["path"].name,
-                                   "line": s["line"],
-                                   "detail": "常量 `%s` **在官方宿主页 `%s` 的 `Type` 清单里** ⇒ "
-                                             "必须补进映射表，**不许**用 `unmapped` 逃避"
-                                             % (const, " / ".join(hosts))})
+                violations.append(
+                    {
+                        "kind": "should-map",
+                        "file": s["path"].name,
+                        "line": s["line"],
+                        "detail": "常量 `%s` **在官方宿主页 `%s` 的 `Type` 清单里** ⇒ "
+                        "必须补进映射表，**不许**用 `unmapped` 逃避"
+                        % (const, " / ".join(hosts)),
+                    }
+                )
             else:
                 #: ★ spec 239：常量**没有任何**官方宿主页收录 ⇒ 代码走了官方不支持的路径
                 #: 。
                 no_host += 1
                 bad = unsupported(s) if unsupported else None
                 if bad:
-                    violations.append({"kind": "unsupported-path", "file": s["path"].name,
-                                       "line": s["line"], "detail": bad})
+                    violations.append(
+                        {
+                            "kind": "unsupported-path",
+                            "file": s["path"].name,
+                            "line": s["line"],
+                            "detail": bad,
+                        }
+                    )
             continue
         if const in pages:
             named_sites += 1
             vals = sorted(set(pages[const].values()))
             if len(vals) > 1:
-                violations.append({"kind": "ambiguous-host", "file": s["path"].name,
-                                   "line": s["line"],
-                                   "detail": "常量 `%s` 在多个宿主页被点名成**不同**接口：%s ⇒ 不猜"
-                                             % (const, " / ".join("%s=%s" % kv for kv in
-                                                                  sorted(pages[const].items())))})
+                violations.append(
+                    {
+                        "kind": "ambiguous-host",
+                        "file": s["path"].name,
+                        "line": s["line"],
+                        "detail": "常量 `%s` 在多个宿主页被点名成**不同**接口：%s ⇒ 不猜"
+                        % (
+                            const,
+                            " / ".join(
+                                "%s=%s" % kv for kv in sorted(pages[const].items())
+                            ),
+                        ),
+                    }
+                )
                 continue
             got = mapped.get(const)
             if got != vals[0]:
-                violations.append({"kind": "host-mismatch", "file": s["path"].name,
-                                   "line": s["line"],
-                                   "detail": "常量 `%s` 官方点名 `%s`，而映射表给的是 `%s` ⇒ "
-                                             "**官方断言不得被人工表/文本匹配覆盖**"
-                                             % (const, vals[0], got or "（无）")})
+                violations.append(
+                    {
+                        "kind": "host-mismatch",
+                        "file": s["path"].name,
+                        "line": s["line"],
+                        "detail": "常量 `%s` 官方点名 `%s`，而映射表给的是 `%s` ⇒ "
+                        "**官方断言不得被人工表/文本匹配覆盖**"
+                        % (const, vals[0], got or "（无）"),
+                    }
+                )
     return violations, gaps, named_sites, no_host
 
 
@@ -315,8 +366,8 @@ def main() -> int:
         print("站点 0 · [SKIP] · exit 0")
         return 0
 
-    pages = cimo.host_pages()          # {常量: {宿主: 官方点名的接口}}
-    owned = cimo.host_consts()         # {常量: [收录它的宿主页]}
+    pages = cimo.host_pages()  # {常量: {宿主: 官方点名的接口}}
+    owned = cimo.host_consts()  # {常量: [收录它的宿主页]}
     paths = sorted((ROOT / "scripts").glob("*.py"))
     sites = cimo.scan_sites(paths)
     mapped, _amb, _unm = cimo.build_map()
@@ -330,34 +381,57 @@ def main() -> int:
             continue
         try:
             blocks[key] = declaration_block(
-                s["path"].read_text(encoding="utf-8").splitlines(), s["line"])
+                s["path"].read_text(encoding="utf-8").splitlines(), s["line"]
+            )
         except OSError:
             blocks[key] = []
     unsupported = make_unsupported_judge(blocks, cimo.TYPES)
 
     violations, gaps, named_sites, no_host = judge_sites(
-        sites, pages, owned, mapped, cimo.members_of, unsupported)
+        sites, pages, owned, mapped, cimo.members_of, unsupported
+    )
 
     #: ★ 只增不减（下界冻结）。
     facts = {"sites": len(sites), "named": named_sites, "no-host": no_host}
     for key in ("sites", "named", "no-host"):
         if facts[key] < minb.get(key, 0):
-            violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                               "detail": "%s %d < 下界 %d（只增不减：先查取点/读取器）"
-                                         % (key, facts[key], minb.get(key, 0))})
+            violations.append(
+                {
+                    "kind": "baseline-shrunk",
+                    "file": "-",
+                    "line": 0,
+                    "detail": "%s %d < 下界 %d（只增不减：先查取点/读取器）"
+                    % (key, facts[key], minb.get(key, 0)),
+                }
+            )
     #: ★ 假绿守卫（事实 46）。
     if not sites:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "`CreateDefinition` 站点 == 0"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "`CreateDefinition` 站点 == 0",
+            }
+        )
     elif named_sites == 0:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "被官方**逐条点名**接口的站点 == 0 ⇒ 官方点名这条判据空转"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "被官方**逐条点名**接口的站点 == 0 ⇒ 官方点名这条判据空转",
+            }
+        )
 
     print("== `CreateDefinition` 站点的**宿主域** ==")
-    print("官方宿主页 %d 个：%s" % (len(cimo.CD_DOCS),
-                                   " / ".join(sorted(cimo.CD_DOCS))))
-    print("扫描 `%s/scripts/*.py` · 站点 %d · 常量被官方点名 %d · 收录常量 %d · 无宿主常量站点 %d"
-          % (ROOT.as_posix(), len(sites), named_sites, len(owned), no_host))
+    print(
+        "官方宿主页 %d 个：%s" % (len(cimo.CD_DOCS), " / ".join(sorted(cimo.CD_DOCS)))
+    )
+    print(
+        "扫描 `%s/scripts/*.py` · 站点 %d · 常量被官方点名 %d · 收录常量 %d · 无宿主常量站点 %d"
+        % (ROOT.as_posix(), len(sites), named_sites, len(owned), no_host)
+    )
     for g in gaps[:DETAIL_LIMIT]:
         print("  [SKIP] %s" % g)
 
@@ -369,9 +443,17 @@ def main() -> int:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("站点 %d · 点名 %d · 无宿主 %d · 违规 %d · [%s] · exit %d"
-          % (len(sites), named_sites, no_host, len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "站点 %d · 点名 %d · 无宿主 %d · 违规 %d · [%s] · exit %d"
+        % (
+            len(sites),
+            named_sites,
+            no_host,
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

@@ -8,7 +8,7 @@
 #   ★★★ **所以本轮的维度是**换成员代 + 看返回值****（★ 而不是再调参数）：
 #     ```
 #     ★ 对照：`circular_pattern`（**能用**）用的是
-# `model.FeatureManager.FeatureCircularPattern4(count, angle_rad, False, "None", False, 
+# `model.FeatureManager.FeatureCircularPattern4(count, angle_rad, False, "None", False,
 # eq, False)`
 #        ⇒ ★ **直接属性调用 + 7 参**
 #     ★★ 而 `linear_pattern` 用的是 `FeatureLinearPattern3`（★ **10 参**）
@@ -47,15 +47,25 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "linear-pattern-generations-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "linear-pattern-generations-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts.sw_feature_readback import feature_names
-    from scripts.sw_part import (_select_by_id, current_sketch_name, end_sketch,
-                                 extrude_boss, sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        _select_by_id,
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "trials": []}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -78,7 +88,7 @@ def main() -> int:
                 if bodies:
                     bb = get_com_member(bodies[0], "GetBodyBox")
                     out["box"] = [round(float(x), 6) for x in bb] if bb else None
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["err"] = str(exc)[:70]
             return out
 
@@ -88,9 +98,24 @@ def main() -> int:
 
         #: ★ 逐代试（★ 选区**逐字照搬** `circular_pattern` 的形态）
         trials = [
-            ("FeatureLinearPattern3", 3,
-             lambda: get_com_member(get_com_member(doc, "FeatureManager"), "FeatureLinearPattern3",
-                                    3, 0.025, 1, 0.0, False, False, "", "", False, False)),
+            (
+                "FeatureLinearPattern3",
+                3,
+                lambda: get_com_member(
+                    get_com_member(doc, "FeatureManager"),
+                    "FeatureLinearPattern3",
+                    3,
+                    0.025,
+                    1,
+                    0.0,
+                    False,
+                    False,
+                    "",
+                    "",
+                    False,
+                    False,
+                ),
+            ),
             #: ★★★ 2026-10-03（轮 454）**换一代而不是再调参数** ——
             #:   ★ 从出厂程序集读到的 **arity 表**：
             #:     `FeatureLinearPattern` 8 · `2` 9 · **`3` 10**（★ 我用对了）·
@@ -99,24 +124,65 @@ def main() -> int:
             #: 号）
             #: ★★★ 而本次**按 20 参填满**（★ 前 10 个同名，后 10 个取"不偏移、按数量控制
             #: 、不从质心" 的常规值）✓
-            ("FeatureLinearPattern4", 3,
-             lambda: get_com_member(get_com_member(doc, "FeatureManager"), "FeatureLinearPattern4",
-                                    3, 0.025, 1, 0.0, False, False, "", "", False, False,
-                                    False, False, True, True, False, False, False, False, 0.0, 0.0)),
-            ("FeatureLinearPattern5", 3,
-             lambda: get_com_member(get_com_member(doc, "FeatureManager"), "FeatureLinearPattern5",
-                                    3, 0.025, 1, 0.0, False, False, "", "", False, False)),
+            (
+                "FeatureLinearPattern4",
+                3,
+                lambda: get_com_member(
+                    get_com_member(doc, "FeatureManager"),
+                    "FeatureLinearPattern4",
+                    3,
+                    0.025,
+                    1,
+                    0.0,
+                    False,
+                    False,
+                    "",
+                    "",
+                    False,
+                    False,
+                    False,
+                    False,
+                    True,
+                    True,
+                    False,
+                    False,
+                    False,
+                    False,
+                    0.0,
+                    0.0,
+                ),
+            ),
+            (
+                "FeatureLinearPattern5",
+                3,
+                lambda: get_com_member(
+                    get_com_member(doc, "FeatureManager"),
+                    "FeatureLinearPattern5",
+                    3,
+                    0.025,
+                    1,
+                    0.0,
+                    False,
+                    False,
+                    "",
+                    "",
+                    False,
+                    False,
+                ),
+            ),
         ]
         for label, _n, call in trials:
             rec: dict = {"trial": label}
             try:
                 doc.ClearSelection2(True)
-                sel = _select_by_id(get_com_member(doc, "Extension"), feat, "BODYFEATURE", mark=4)
+                sel = _select_by_id(
+                    get_com_member(doc, "Extension"), feat, "BODYFEATURE", mark=4
+                )
                 rec["selected"] = bool(sel)
                 r = call()
                 rec["raw_type"] = type(r).__name__
                 rec["raw_is_none"] = r is None
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
             after = list(feature_names(doc))
             rec["tree_before_after"] = [ev["before_tree"], len(after)]
@@ -126,22 +192,27 @@ def main() -> int:
             ev["trials"].append(rec)
         ev["any_geom_changed"] = any(t.get("geom_changed") for t in ev["trials"])
         ev["verdict"] = "pass" if ev["any_geom_changed"] else "fail"
-        ev["note"] = ("★ 三代逐个试，★ 选区逐字照搬 circular_pattern（★ 而它**能用**）。"
-                      "★ 判据：★ **原始返回值** + 特征树 + ★★ **几何**（★ 阵列必须改变包围盒）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 三代逐个试，★ 选区逐字照搬 circular_pattern（★ 而它**能用**）。"
+            "★ 判据：★ **原始返回值** + 特征树 + ★★ **几何**（★ 阵列必须改变包围盒）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

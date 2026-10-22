@@ -32,7 +32,7 @@
 # |---|---|---|
 # | `sites`     | 上游 `def` 在本仓**有** AST 调用点，且每个调用点都传**字面量**成员名 |
 #  无调用点 ⇒ 红；任一调用点非字面量 ⇒ 红；候选值官方查不到 ⇒ 红 |
-# | `tool-only` | 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 
+# | `tool-only` | 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的
 # `function="…"` | 有 AST 调用点 ⇒ 红；无 ToolSpec 引用 ⇒ 红 |
 # | `orphan`    | 上游**既无** AST 调用点、**也无** ToolSpec 引用（未被调用） | 任一非空
 #  ⇒ 红 |
@@ -70,7 +70,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
-ROOT = Path(os.environ.get("DSH_DISPATCH_UPSTREAM_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_DISPATCH_UPSTREAM_ROOT") or Path(__file__).resolve().parents[1]
+)
 #: 本门禁自己的官方源开关（未设 ⇒ 回落到 234 的 `DSH_DISPATCH_ARG_*`）。
 UP_DUMPS = os.environ.get("DSH_DISPATCH_UPSTREAM_DUMPS", "")
 UP_SWAPI = os.environ.get("DSH_DISPATCH_UPSTREAM_SWAPI", "")
@@ -81,9 +83,9 @@ SITE_DIRS = ("scripts", "mcp-server")
 #: 明细打印上限。
 DETAIL_LIMIT = 25
 #: ★ 下界（真树实测 · 2026-10-09 · spec 236）—— 只增不减。
-BASELINE_DECLS = 3          # `upstream` 声明数
-BASELINE_SITES = 10         # 上游调用点总数（`sites` 桶）
-BASELINE_VALUES = 5         # 字面量候选值 distinct
+BASELINE_DECLS = 3  # `upstream` 声明数
+BASELINE_SITES = 10  # 上游调用点总数（`sites` 桶）
+BASELINE_VALUES = 5  # 字面量候选值 distinct
 
 
 def _baseline() -> tuple[int, int, int]:
@@ -128,8 +130,11 @@ def upstream_call_sites(name: str):
                 if not isinstance(call, ast.Call):
                     continue
                 f = call.func
-                nm = (f.id if isinstance(f, ast.Name)
-                      else (f.attr if isinstance(f, ast.Attribute) else None))
+                nm = (
+                    f.id
+                    if isinstance(f, ast.Name)
+                    else (f.attr if isinstance(f, ast.Attribute) else None)
+                )
                 if nm == name:
                     out.append((p, call, tree))
     return out
@@ -148,7 +153,7 @@ def toolspec_refs(name: str):
         except OSError:
             continue
         for m in pat.finditer(txt):
-            out.append((p, txt[:m.start()].count("\n") + 1))
+            out.append((p, txt[: m.start()].count("\n") + 1))
     return out
 
 
@@ -195,21 +200,29 @@ def judge(tokens, encl, facts, uncovered):
     #: ★ 上游 `def` 就是**包围 `def` 本身**（声明的 caller 名必须等于它）——
     #:   所以这里同时是「名字对不对」与「def 存不存在」两个判定，不需要另做按名查找。
     if encl is None or encl.name != caller:
-        bad.append("`upstream %s` 与实际的包围 `def`（`%s`）不符"
-                   % (caller, encl.name if encl is not None else "?"))
+        bad.append(
+            "`upstream %s` 与实际的包围 `def`（`%s`）不符"
+            % (caller, encl.name if encl is not None else "?")
+        )
         return bad
     n_sites, n_trefs = facts["n_sites"], facts["n_trefs"]
     expected = "sites" if n_sites else ("tool-only" if n_trefs else "orphan")
     if mode != expected:
-        bad.append("桶声明 `%s` 与**事实** `%s` 不符（上游 AST 调用点 %d · ToolSpec 引用 %d）"
-                   % (mode, expected, n_sites, n_trefs))
+        bad.append(
+            "桶声明 `%s` 与**事实** `%s` 不符（上游 AST 调用点 %d · ToolSpec 引用 %d）"
+            % (mode, expected, n_sites, n_trefs)
+        )
         return bad
     if mode == "sites":
         for rel, lineno, why in facts["nonliteral"]:
-            bad.append("上游调用点 %s:%d 的成员名实参**非字面量**（%s）⇒ 该点须另行表态"
-                       % (rel, lineno, why))
+            bad.append(
+                "上游调用点 %s:%d 的成员名实参**非字面量**（%s）⇒ 该点须另行表态"
+                % (rel, lineno, why)
+            )
         if uncovered:
-            bad.append("上游调用点的候选值在官方两源**查不到**：%s" % ", ".join(uncovered[:8]))
+            bad.append(
+                "上游调用点的候选值在官方两源**查不到**：%s" % ", ".join(uncovered[:8])
+            )
     return bad
 
 
@@ -227,6 +240,7 @@ def main() -> int:
         #:   现直接用共享实现 scripts/gate_decl.decl_parts_above，
         #:   正则用前向门禁已定义的那一份（cdfag.DECL）
         from gate_decl import decl_parts_above as _decl_parts
+
         decl = _decl_parts(files[path][2], lineno, cdfag.DECL)
         if decl is None or decl[0] != "upstream":
             continue
@@ -236,9 +250,16 @@ def main() -> int:
     min_decls, min_sites, min_values = _baseline()
 
     print("== 分发口 `upstream` 声明的**上游覆盖** ==")
-    print("扫描 `%s/{%s}/**/*.py` · `upstream` 声明 %d 个 · 官方成员名 %d 个（%s）"
-          % (ROOT.as_posix(), ",".join(SITE_DIRS), len(decls), len(official),
-             " · ".join(notes) or "无数据源"))
+    print(
+        "扫描 `%s/{%s}/**/*.py` · `upstream` 声明 %d 个 · 官方成员名 %d 个（%s）"
+        % (
+            ROOT.as_posix(),
+            ",".join(SITE_DIRS),
+            len(decls),
+            len(official),
+            " · ".join(notes) or "无数据源",
+        )
+    )
 
     #: ★ 数据源全缺 ⇒ SKIP（缺数据源 ≠ 检查失败）。
     if not official and decls:
@@ -253,7 +274,12 @@ def main() -> int:
     for rel, path, encl, arg, lineno, tokens in decls:
         caller = tokens[0] if tokens else ""
         pname = arg.id if isinstance(arg, ast.Name) else None
-        facts = {"n_sites": 0, "n_trefs": len(toolspec_refs(caller)), "nonliteral": [], "values": set()}
+        facts = {
+            "n_sites": 0,
+            "n_trefs": len(toolspec_refs(caller)),
+            "nonliteral": [],
+            "values": set(),
+        }
         if encl is not None and pname:
             facts.update(collect_facts(encl, cdeg._params(encl), pname))
         uncovered = sorted(v for v in facts["values"] if v not in official)
@@ -266,25 +292,47 @@ def main() -> int:
 
     #: ★ 只增不减（下界冻结）。
     if len(decls) < min_decls:
-        violations.append({"file": "-", "line": 0,
-                           "detail": "`upstream` 声明 %d < 下界 %d（只增不减：先查取点）"
-                                     % (len(decls), min_decls)})
+        violations.append(
+            {
+                "file": "-",
+                "line": 0,
+                "detail": "`upstream` 声明 %d < 下界 %d（只增不减：先查取点）"
+                % (len(decls), min_decls),
+            }
+        )
     if n_up_sites < min_sites:
-        violations.append({"file": "-", "line": 0,
-                           "detail": "上游调用点 %d < 下界 %d（只增不减：先查取点）"
-                                     % (n_up_sites, min_sites)})
+        violations.append(
+            {
+                "file": "-",
+                "line": 0,
+                "detail": "上游调用点 %d < 下界 %d（只增不减：先查取点）"
+                % (n_up_sites, min_sites),
+            }
+        )
     if len(all_values) < min_values:
-        violations.append({"file": "-", "line": 0,
-                           "detail": "字面量候选值 distinct %d < 下界 %d（只增不减）"
-                                     % (len(all_values), min_values)})
+        violations.append(
+            {
+                "file": "-",
+                "line": 0,
+                "detail": "字面量候选值 distinct %d < 下界 %d（只增不减）"
+                % (len(all_values), min_values),
+            }
+        )
     #: ★ 假绿守卫（事实 46）。
     if not decls:
-        violations.append({"file": "-", "line": 0,
-                           "detail": "检查过的 `upstream` 声明 == 0"})
+        violations.append(
+            {"file": "-", "line": 0, "detail": "检查过的 `upstream` 声明 == 0"}
+        )
 
-    print("upstream 声明 %d · 上游调用点 %d · 字面量候选值 distinct %d · 桶 %s"
-          % (len(decls), n_up_sites, len(all_values),
-             " / ".join("%s %d" % (m, buckets[m]) for m in MODES)))
+    print(
+        "upstream 声明 %d · 上游调用点 %d · 字面量候选值 distinct %d · 桶 %s"
+        % (
+            len(decls),
+            n_up_sites,
+            len(all_values),
+            " / ".join("%s %d" % (m, buckets[m]) for m in MODES),
+        )
+    )
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
         for v in violations[:DETAIL_LIMIT]:
@@ -293,9 +341,17 @@ def main() -> int:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("upstream 声明 %d · 上游调用点 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
-          % (len(decls), n_up_sites, len(all_values), len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "upstream 声明 %d · 上游调用点 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
+        % (
+            len(decls),
+            n_up_sites,
+            len(all_values),
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

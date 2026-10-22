@@ -82,8 +82,14 @@ def snapshot(pid: int | None = None) -> list[dict]:
             return True
         if _class(h) != "#32770":
             return True
-        out.append({"hwnd": int(h), "pid": int(p.value), "title": _text(h)[:120],
-                    "controls": _children(h)})
+        out.append(
+            {
+                "hwnd": int(h),
+                "pid": int(p.value),
+                "title": _text(h)[:120],
+                "controls": _children(h),
+            }
+        )
         return True
 
     _EnumWindows(_PROC(_cb), 0)
@@ -113,12 +119,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--interval", type=float, default=1.5, help="轮询间隔秒")
     ap.add_argument("--seconds", type=float, default=0.0, help="跑多久（0 = 一直跑）")
-    ap.add_argument("--all-reminders", action="store_true", help="连「非本进程」的弹窗也报")
+    ap.add_argument(
+        "--all-reminders", action="store_true", help="连「非本进程」的弹窗也报"
+    )
     args = ap.parse_args()
 
     pid = _sw_pid()
-    print("[watch] 启动 · SLDWORKS pid=%s · 间隔 %.1fs · **发现新弹窗即报信（不点）**"
-          % (pid, args.interval), flush=True)
+    print(
+        "[watch] 启动 · SLDWORKS pid=%s · 间隔 %.1fs · **发现新弹窗即报信（不点）**"
+        % (pid, args.interval),
+        flush=True,
+    )
     seen: set[tuple] = set()
     #: ★ 首轮把**已存在**的弹窗也报出来（★ 否则"启动前就有的"会被漏掉）
     deadline = (time.time() + args.seconds) if args.seconds > 0 else None
@@ -126,7 +137,7 @@ def main() -> int:
     while True:
         try:
             items = snapshot(None if args.all_reminders else pid)
-        except Exception as exc:                                # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("[watch] 枚举异常：%s" % str(exc)[:120], flush=True)
             items = []
         for d in items:
@@ -137,12 +148,17 @@ def main() -> int:
             stamp = datetime.now().strftime("%H:%M:%S")
             tag = "首轮已有" if first else "**新弹窗**"
             print("=" * 68, flush=True)
-            print("[watch %s] %s ⇒ PID=%s HWND=%s" % (stamp, tag, d["pid"], d["hwnd"]), flush=True)
+            print(
+                "[watch %s] %s ⇒ PID=%s HWND=%s" % (stamp, tag, d["pid"], d["hwnd"]),
+                flush=True,
+            )
             print("[watch] 标题：%s" % d["title"], flush=True)
             for c in d["controls"]:
                 print("[watch]   %-12s %s" % (c["class"], c["text"]), flush=True)
-            print("[watch] ⇒ **请研判根因**（什么触发了它），决定点掉并改代码防复发。",
-                  flush=True)
+            print(
+                "[watch] ⇒ **请研判根因**（什么触发了它），决定点掉并改代码防复发。",
+                flush=True,
+            )
             print("=" * 68, flush=True)
         first = False
         if deadline is not None and time.time() >= deadline:

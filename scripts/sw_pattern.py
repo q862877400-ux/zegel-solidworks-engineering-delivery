@@ -44,6 +44,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -100,21 +101,21 @@ __all__ = [
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SWS_PATTERN_END_CONDITIONS = {
-    "spacing_and_instances": 0,   # swPatternEndCondition_SpacingAndInstances
-    "up_to_reference": 1,         # swPatternEndCondition_UpToReference
+    "spacing_and_instances": 0,  # swPatternEndCondition_SpacingAndInstances
+    "up_to_reference": 1,  # swPatternEndCondition_UpToReference
 }
 
 #: ★ 官方 `swPatternElementSelection_e` **全量 3 项**（spec 223 订正）。
 SWS_PATTERN_ELEMENT_SELECTION = {
-    "error": 0,            # swErrorInPatternElementSelection
-    "feature_faces": 1,    # swFeatureFaces
-    "bodies": 2,           # swBodiesToPattern
+    "error": 0,  # swErrorInPatternElementSelection
+    "feature_faces": 1,  # swFeatureFaces
+    "bodies": 2,  # swBodiesToPattern
 }
 
 #: ★ 官方 `swFeaturesToPatternType_e` **全量 2 项**（spec 223 订正）。
 SWS_FEATURES_TO_PATTERN = {
     "selected_features": 0,  # swFeaturesToPatternSelectedFeatures
-    "create_seed_cut": 1,    # swFeaturesToPatternCreateSeedCut
+    "create_seed_cut": 1,  # swFeaturesToPatternCreateSeedCut
 }
 
 #: 两个 FeatureData 共有的「方法型」成员的实参个数
@@ -274,15 +275,17 @@ def configure_linear_pattern(
             set_com_member(data, "D1EndSeedReference", d1_end_seed_reference)
             applied["D1EndSeedReference"] = d1_end_seed_reference
         if d1_end_use_seed_reference is not None:
-            set_com_member(data, "D1EndUseSeedReference",
-                           bool(d1_end_use_seed_reference))
+            set_com_member(
+                data, "D1EndUseSeedReference", bool(d1_end_use_seed_reference)
+            )
             applied["D1EndUseSeedReference"] = bool(d1_end_use_seed_reference)
         if d1_end_ref_offset is not None:
             set_com_member(data, "D1EndRefOffset", float(d1_end_ref_offset))
             applied["D1EndRefOffset"] = float(d1_end_ref_offset)
         if d1_end_ref_reverse_offset is not None:
-            set_com_member(data, "D1EndRefReverseOffset",
-                           bool(d1_end_ref_reverse_offset))
+            set_com_member(
+                data, "D1EndRefReverseOffset", bool(d1_end_ref_reverse_offset)
+            )
             applied["D1EndRefReverseOffset"] = bool(d1_end_ref_reverse_offset)
         if d2_axis is not None:
             set_com_member(data, "D2Axis", d2_axis)
@@ -418,7 +421,8 @@ def read_pattern_element(data) -> dict[str, Any]:
         "body_pattern": bool(get_com_member(data, "BodyPattern")),
         "vary_sketch": bool(get_com_member(data, "VarySketch")),
         "propagate_visual_property": bool(
-            get_com_member(data, "PropagateVisualProperty")),
+            get_com_member(data, "PropagateVisualProperty")
+        ),
         "feature_scope": bool(get_com_member(data, "FeatureScope")),
     }
 
@@ -505,29 +509,41 @@ def insert_local_curve_driven_pattern_report(
     out: dict[str, Any] = {
         "official": "IFeatureManager.FeatureLocalCurveDrivenPattern",
         "arity": 13,
-        "official_marks": {"1": "Components to pattern",
-                           "2": "Curve, edge, sketch, or sketch entity for Direction 1"},
-        "obsolete_warning": ("★★★ 官方页第一行逐字 **`Obsolete`** ✗，并指向 `CreateFeature` + "
-                             "`ILocalCurvePatternFeatureData`（**属性式**、★ 那条带 `AccessSelections` ✗）"
-                             "⇒ ★★ 本项只到 `stitched` ✓"),
-        "note": ("★★ 本函数是**参数式**那条；★ 本模块里的 `configure_curve_driven_pattern` 是"
-                 "**属性式**那条（走 `AccessSelections` ✗）—— ★ **两者不是同一件事** ✓"),
+        "official_marks": {
+            "1": "Components to pattern",
+            "2": "Curve, edge, sketch, or sketch entity for Direction 1",
+        },
+        "obsolete_warning": (
+            "★★★ 官方页第一行逐字 **`Obsolete`** ✗，并指向 `CreateFeature` + "
+            "`ILocalCurvePatternFeatureData`（**属性式**、★ 那条带 `AccessSelections` ✗）"
+            "⇒ ★★ 本项只到 `stitched` ✓"
+        ),
+        "note": (
+            "★★ 本函数是**参数式**那条；★ 本模块里的 `configure_curve_driven_pattern` 是"
+            "**属性式**那条（走 `AccessSelections` ✗）—— ★ **两者不是同一件事** ✓"
+        ),
     }
     #: ★ 前置①：★ mark 1 = 要阵列的体/特征（★ 官方 mark 表逐字 ✓）
     if not seed_feature:
         out["ok"] = False
-        out["error"] = "★ 前置①缺参：`seed_feature`（★ 官方 mark **1** = Components to pattern ✓）"
+        out["error"] = (
+            "★ 前置①缺参：`seed_feature`（★ 官方 mark **1** = Components to pattern ✓）"
+        )
         return out
     #: ★ 前置②：★ mark 2 = 方向 1 的曲线（★ 官方 mark 表逐字 ✓）
     if not curve_sketch:
         out["ok"] = False
-        out["error"] = "★ 前置②缺参：`curve_sketch`（★ 官方 mark **2** = Curve/edge/sketch for Direction 1 ✓）"
+        out["error"] = (
+            "★ 前置②缺参：`curve_sketch`（★ 官方 mark **2** = Curve/edge/sketch for Direction 1 ✓）"
+        )
         return out
     try:
         ext = get_com_member(model, "Extension")
-        ok1 = bool(_select_by_id(ext, str(seed_feature), "BODYFEATURE", append=False, mark=1))
+        ok1 = bool(
+            _select_by_id(ext, str(seed_feature), "BODYFEATURE", append=False, mark=1)
+        )
         ok2 = bool(_select_by_id(ext, str(curve_sketch), "SKETCH", append=True, mark=2))
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "★ 前置选择抛：%s: %s" % (type(e).__name__, str(e)[:130])
         return out
@@ -551,24 +567,44 @@ def insert_local_curve_driven_pattern_report(
             from sw_connect import mm
         fm = get_com_member(model, "FeatureManager")
         feat = get_com_member(
-            fm, "FeatureLocalCurveDrivenPattern",
-            bool(flip_dir1), int(num1), bool(equal_spacing1), float(mm(spacing1_mm)),
-            int(reference_point), int(curve_method), int(align_method),
-            bool(direction2), bool(flip_dir2), int(num2), bool(equal_spacing2),
-            float(mm(spacing2_mm)), bool(pattern_seed_only))
-    except Exception as e:                                              # noqa: BLE001
+            fm,
+            "FeatureLocalCurveDrivenPattern",
+            bool(flip_dir1),
+            int(num1),
+            bool(equal_spacing1),
+            float(mm(spacing1_mm)),
+            int(reference_point),
+            int(curve_method),
+            int(align_method),
+            bool(direction2),
+            bool(flip_dir2),
+            int(num2),
+            bool(equal_spacing2),
+            float(mm(spacing2_mm)),
+            bool(pattern_seed_only),
+        )
+    except Exception as e:  # noqa: BLE001
         exc = e
     after = feature_names(model)
     added = [n for n in after if n not in before]
-    out.update({"returned_is_none": feat is None, "added": added,
-                "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+    out.update(
+        {
+            "returned_is_none": feat is None,
+            "added": added,
+            "call_exception": None
+            if exc is None
+            else "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+        }
+    )
     out["ok"] = bool(added)
     if out["ok"]:
         out["feature"] = str(added[0])
         out["verdict"] = "★★★★ **建成** —— ★ 特征树新增 %r（★ 回读 ✓）" % added
     else:
-        out["error"] = ("★ 回读判据未过：特征树没有增量（★ mark1=%r · mark2=%r）⇒ "
-                        "★ **还不算试死** —— ★ 但要先复核**那两处前置**（定则：「读到静默」≠「判定试死」✓）；"
-                        "★★ 本项按官方 `Obsolete` 与真机读数，★ 如实登记为 `stitched` ✓"
-                        % (ok1, ok2))
+        out["error"] = (
+            "★ 回读判据未过：特征树没有增量（★ mark1=%r · mark2=%r）⇒ "
+            "★ **还不算试死** —— ★ 但要先复核**那两处前置**（定则：「读到静默」≠「判定试死」✓）；"
+            "★★ 本项按官方 `Obsolete` 与真机读数，★ 如实登记为 `stitched` ✓"
+            % (ok1, ok2)
+        )
     return out

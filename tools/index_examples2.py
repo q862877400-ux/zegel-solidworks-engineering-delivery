@@ -41,7 +41,9 @@ for _s in (sys.stdout, sys.stderr):
 
 EXAMPLES = Path(r"C:\swapi\examples")
 OUT_TXT = Path(Path(__file__).resolve().parents[1] / "_raw" / "examples_by_domain.txt")
-OUT_JSON = Path(Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json")
+OUT_JSON = Path(
+    Path(__file__).resolve().parents[1] / "_raw" / "example_domain_index.json"
+)
 
 # ── 「类型 → 域」映射 ──────────────────────────────────────────────────
 # 来源：C:\swapi 的 14 域入口类型清单（sw_know.py domain <域>），
@@ -55,7 +57,9 @@ def _register(domain: str, names: str) -> None:
         TYPE_DOMAIN.setdefault(n, domain)
 
 
-_register("应用与会话", """
+_register(
+    "应用与会话",
+    """
     SldWorks ISldWorks IModelDoc IModelDoc2 IModelDocExtension ISelectionMgr
     IEnumModelViews ISldWorksApp ISldWorksEvents ICommandManagerEvent
     IPropertyManagerPage IPropertyManagerPage2 IPropertyManagerPageHandler
@@ -64,14 +68,20 @@ _register("应用与会话", """
     IPropertyManagerPageHandler8 IPropertyManagerPageHandler9
     ITaskpaneHandler ITaskpaneHandler2 ICommandGroup ICommandGroupButton
     IMenuItem IModelDocEvents IAppEvents IActiveXControlHandler
-""")
-_register("草图", """
+""",
+)
+_register(
+    "草图",
+    """
     ISketchManager ISketch ISketchSegment ISketchLine ISketchArc ISketchSlot
     ISketchSpline ISketchPoint ISketchRelation ISketchRelationManager
     ISketchContour ISketchHatch ISketchText ISketchPatternFeatureData
     ISketchSegments ISketchPoints ISketchEquations ISketchFillet
-""")
-_register("零件特征", """
+""",
+)
+_register(
+    "零件特征",
+    """
     IFeatureManager IFeature ISimpleFilletFeatureData2 IChamferFeatureData2
     ILinearPatternFeatureData ICircularPatternFeatureData
     IMirrorPatternFeatureData IShellFeatureData IRevolveFeatureData2
@@ -81,37 +91,52 @@ _register("零件特征", """
     ICompositeCurveFeatureData2 ITrimSheetFeatureData2 IDirectEditFeatureData
     IDirectEditPointFeatureData IRefineFeatureData IBossFeatureData
     IDeleteBodyFeatureData2 IFlatPatternFeatureData
-""")
-_register("孔与螺纹", """
+""",
+)
+_register(
+    "孔与螺纹",
+    """
     IWizardHoleFeatureData2 IAdvancedHoleFeatureData ISimpleHoleFeatureData2
     IHoleSeriesFeatureData2 IHoleStandardsData IHoleTable
     IAdvancedHoleElementData IStraightTapElementData ITaperedTapElementData
     IThreadFeatureData ICosmeticThreadFeatureData IHoleFeatureData
-""")
-_register("钣金", """
+""",
+)
+_register(
+    "钣金",
+    """
     ISheetMetalFeatureData ISheetMetalFolder IBaseFlangeFeatureData
     IEdgeFlangeFeatureData IOneBendFeatureData ISketchedBendFeatureData
     IHemFeatureData IMiterFlangeFeatureData ISweptFlangeFeatureData
     IGussetFeatureData ISMGussetFeatureData IDraftFeatureData2
     ILoftedBendsFeatureData ISurfaceCutFeatureData IRibFeatureData2
     IFormingFeatureData IBendFeatureData IConvertToRefSurfaceFeatureData
-""")
-_register("焊件", """
+""",
+)
+_register(
+    "焊件",
+    """
     IStructureSystemFolder IStructureSystemMemberFeatureData
     IStructureSystemMemberProfile IStructureSystemSplitMember
     IProfileCenterMateFeatureData IWeldmentCutListFeature ICutListItem
     ICutListSortOptions IWeldBead IWeldmentBeadFeatureData
     ICosmeticWeldBeadFeatureData IWeldSymbol IWeldmentTrimExtendFeatureData
     IProfileGroupFolder IStructureSystem ITrimSheetFeatureData2
-""")
-_register("曲面", """
+""",
+)
+_register(
+    "曲面",
+    """
     ISurface ISurfaceTrimFeatureData ISurfaceExtendFeatureData
     ISurfaceKnitFeatureData ISurfaceFlattenFeatureData
     ISurfaceOffsetFeatureData ISurfaceCutFeatureData ISurfaceRadiateFeatureData
     IFillSurfaceFeatureData ISurfacePlanarFeatureData ISurfRevolveFeatureData
     ISurfaceParameterizationData IShutOffSurfaceFeatureData IModeler
-""")
-_register("装配", """
+""",
+)
+_register(
+    "装配",
+    """
     IAssemblyDoc IComponent2 IEnumComponents2 IMate2 IMateEntity2
     IMateFeatureData IMateInPlace IMateReference IExplodeStep IPartExplodeStep
     IMirrorComponentFeatureData ICoincidentMateFeatureData
@@ -119,8 +144,11 @@ _register("装配", """
     IAngleMateFeatureData IParallelMateFeatureData IPerturbMateFeatureData
     IInsertComponentFeatureData IFixComponentFeatureData2
     ISketchBlockFeatureData ILightweightComponentFeatureData2
-""")
-_register("工程图", """
+""",
+)
+_register(
+    "工程图",
+    """
     IDrawingDoc IView IView3D ISheet IDimension IDisplayDimension IAnnotation
     IAnnotationView ITableAnnotation IModelView IModelViewManager
     ISectionViewData IGeneralTableAnnotation IBomTableAnnotation
@@ -128,44 +156,74 @@ _register("工程图", """
     IRevisionTableAnnotation IDimensionTolerance IMultiJogLeader
     IDrawingComponent ITableAnnotationCategory IDisplayedDimension
     ISectionView ISheetLocation IViewPort ILeaders ILeader
-""")
-_register("几何与拓扑", """
+""",
+)
+_register(
+    "几何与拓扑",
+    """
     IBody2 IFace2 IEdge IVertex ICurve ISurface ILoop2 IEnumBodies2
     IBoundingBoxFeatureData IBoundaryBossFeatureData ICenterOfMass
     IMidSurface3 IEdgePoint IMeasure IClosestPoint IPoint IPoint2 ILine
     ICircle IEllipse IParabola IHyperbola ISpline2 ITrimmedCurve
-""")
-_register("质量属性与导出", """
+""",
+)
+_register(
+    "质量属性与导出",
+    """
     IMassProperty2 IMassPropertyOverrideOptions ICenterOfMass
     ISaveAsOptions ISaveAsInfo IPackAndGo IPackAndGoGetData
     IMassProperty IExportStepData IExportStandaloneGeometryData
-""")
-_register("配置·材料·自定义属性", """
+""",
+)
+_register(
+    "配置·材料·自定义属性",
+    """
     IConfiguration IConfigurationManager ICustomPropertyManager IDesignTable
     IMaterialVisualPropertiesData IRenderMaterial ITextAndCustomProperty
     IDisplayState IDisplayStateBlock IComponentDisplayStateData
     IDerivedProperty IParameter IEquationMgr IMaterial IAppearanceStep
-""")
-_register("仿真(需许可证)", """
+""",
+)
+_register(
+    "仿真(需许可证)",
+    """
     ICWModelDoc ICWResults ICWStudyManager ICWStudy ICosmosWorks
     ICWLoadsAndRestraintsManager ICWMesh CWMesh ICWSolidManager ICWMaterial
     CWModelDoc CWStudy CWStudyManager ICwAddincallback
-""")
-_register("路由/Composer/PDM", """
+""",
+)
+_register(
+    "路由/Composer/PDM",
+    """
     IComposerIComponent IComposerDoc IRouteManager IRouteSegment
     IRouteAssemblyCosting ICostingManager ISustainabilityManager
-""")
+""",
+)
 
 #: 加载项 UI 开发：官方没有独立功能域，但上游有 sw_addin_host.py，单独归一类
 UI_HOST_KEYWORDS = (
-    "activex", "taskpane", "task_pane", "context-sensitive", "menuitem",
-    "commandgroup", "propertymanagerpage", "add-in", "addin", "handler",
-    "progressbar", "statusbar", "modeless", "callbacks", "icon",
+    "activex",
+    "taskpane",
+    "task_pane",
+    "context-sensitive",
+    "menuitem",
+    "commandgroup",
+    "propertymanagerpage",
+    "add-in",
+    "addin",
+    "handler",
+    "progressbar",
+    "statusbar",
+    "modeless",
+    "callbacks",
+    "icon",
 )
 
 #: 类型声明抽取
 _RE_VB = re.compile(r"\bAs\s+SldWorks\.\s*(\w+)", re.I)
-_RE_CS_DECL = re.compile(r"^\s*(?:public|private|internal|static|readonly|\s)*SldWorks\.\s*(\w+)\s+\w+", re.M)
+_RE_CS_DECL = re.compile(
+    r"^\s*(?:public|private|internal|static|readonly|\s)*SldWorks\.\s*(\w+)\s+\w+", re.M
+)
 _RE_NEW = re.compile(r"\bNew\s+SldWorks\.\s*(\w+)", re.I)
 _RE_I = re.compile(r"\bSldWorks\.I(\w+)\b")
 
@@ -185,16 +243,46 @@ def types_in(text: str) -> set[str]:
 #: 「应用与会话」——首版就是这样，1,188/2,839 全落进一个域。
 #: 剔除后只用**域特有类型**投票。
 BOILERPLATE = {
-    "SldWorks", "ISldWorks", "ModelDoc", "IModelDoc", "ModelDoc2", "IModelDoc2",
-    "ModelDocExtension", "IModelDocExtension", "SelectionMgr", "ISelectionMgr",
-    "EnumModelViews", "IEnumModelViews", "MathUtility", "IMathUtility",
-    "IModelDocEvents", "IAppEvents", "ISldWorksEvents", "IModelDocExtensionEvents",
-    "IAssemblyDocEvents", "IPartDocEvents", "IDrawingDocEvents",
-    "IModelerEvents", "IAttribute", "IAttributeDef", "IPartDoc",
-    "IAssemblyDoc", "IDrawingDoc", "IComponent2", "IConfiguration",
-    "MathPoint", "MathVector", "MathTransform", "IMathPoint", "IMathVector",
-    "IMathTransform", "IMeasure", "IMeasurement", "ICommandManager",
-    "ICommandManagerEvent", "IModelDocExtensionPersistReferenced",
+    "SldWorks",
+    "ISldWorks",
+    "ModelDoc",
+    "IModelDoc",
+    "ModelDoc2",
+    "IModelDoc2",
+    "ModelDocExtension",
+    "IModelDocExtension",
+    "SelectionMgr",
+    "ISelectionMgr",
+    "EnumModelViews",
+    "IEnumModelViews",
+    "MathUtility",
+    "IMathUtility",
+    "IModelDocEvents",
+    "IAppEvents",
+    "ISldWorksEvents",
+    "IModelDocExtensionEvents",
+    "IAssemblyDocEvents",
+    "IPartDocEvents",
+    "IDrawingDocEvents",
+    "IModelerEvents",
+    "IAttribute",
+    "IAttributeDef",
+    "IPartDoc",
+    "IAssemblyDoc",
+    "IDrawingDoc",
+    "IComponent2",
+    "IConfiguration",
+    "MathPoint",
+    "MathVector",
+    "MathTransform",
+    "IMathPoint",
+    "IMathVector",
+    "IMathTransform",
+    "IMeasure",
+    "IMeasurement",
+    "ICommandManager",
+    "ICommandManagerEvent",
+    "IModelDocExtensionPersistReferenced",
 }
 
 
@@ -214,8 +302,16 @@ def build_member_index() -> dict[str, set[str]]:
     idx: dict[str, set[str]] = defaultdict(set)
     iface = None
     sig = re.compile(r"^\s+(\S+)\s+(\w+)\((.*)\)\s*$")
-    for raw in Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt") \
-            .read_text(encoding="utf-8", errors="replace").splitlines():
+    for raw in (
+        Path(
+            Path(__file__).resolve().parents[1]
+            / "_raw"
+            / "reflect_sldworks"
+            / "iface_sldworks.txt"
+        )
+        .read_text(encoding="utf-8", errors="replace")
+        .splitlines()
+    ):
         h = re.match(r"^##\s+(\w+)\s*$", raw)
         if h:
             iface = h.group(1)
@@ -241,7 +337,7 @@ def domain_of(types: set[str], stem: str) -> str:
     votes: dict[str, int] = defaultdict(int)
     for t in types:
         if t in BOILERPLATE:
-            continue                      # 样板类型不参与投票
+            continue  # 样板类型不参与投票
         d = TYPE_DOMAIN.get(t)
         if d:
             votes[d] += 1
@@ -292,17 +388,34 @@ def main() -> int:
             dom = domain_of(types_in(text), stem)
             dom_weight[dom] = 0
         for d, w in dom_weight.items():
-            by_domain[d].append({
-                "file": p.name,
-                "lang": lang,
-                "weight": w,
-                "types": sorted(dom_members[d])[:10],
-            })
+            by_domain[d].append(
+                {
+                    "file": p.name,
+                    "lang": lang,
+                    "weight": w,
+                    "types": sorted(dom_members[d])[:10],
+                }
+            )
 
     total = len(files)
-    order = ["应用与会话", "草图", "零件特征", "孔与螺纹", "钣金", "焊件", "曲面",
-             "装配", "工程图", "几何与拓扑", "质量属性与导出", "配置·材料·自定义属性",
-             "仿真(需许可证)", "路由/Composer/PDM", "加载项/UI 开发", "未分类"]
+    order = [
+        "应用与会话",
+        "草图",
+        "零件特征",
+        "孔与螺纹",
+        "钣金",
+        "焊件",
+        "曲面",
+        "装配",
+        "工程图",
+        "几何与拓扑",
+        "质量属性与导出",
+        "配置·材料·自定义属性",
+        "仿真(需许可证)",
+        "路由/Composer/PDM",
+        "加载项/UI 开发",
+        "未分类",
+    ]
 
     lines = [
         "# 官方示例按域归类（依据代码实际用到的类型，非标题猜测）",
@@ -328,25 +441,40 @@ def main() -> int:
         # 权重 0 = 只靠文件名/类型兜底归的域，可信度低，单列出来
         strong = [it for it in items if it["weight"] > 0]
         weak = [it for it in items if it["weight"] == 0]
-        lines.append(f"\n## {d}（{len(items)} 个；其中按成员调用判定 {len(strong)} 个）")
+        lines.append(
+            f"\n## {d}（{len(items)} 个；其中按成员调用判定 {len(strong)} 个）"
+        )
         lines.append("### 强相关（示例确实调用了本域 API 成员，按命中数排序）")
         for it in strong:
             tp = ",".join(it["types"][:6])
-            lines.append(f"  [{it['weight']:>2}] [{it['lang']:<6}] {it['file'][:-3]}" + (f"   ← {tp}" if tp else ""))
+            lines.append(
+                f"  [{it['weight']:>2}] [{it['lang']:<6}] {it['file'][:-3]}"
+                + (f"   ← {tp}" if tp else "")
+            )
         if weak:
-            lines.append(f"### 弱相关（仅按名称/类型兜底归类，共 {len(weak)} 个，可信度低）")
+            lines.append(
+                f"### 弱相关（仅按名称/类型兜底归类，共 {len(weak)} 个，可信度低）"
+            )
             for it in weak[:15]:
                 lines.append(f"       [{it['lang']:<6}] {it['file'][:-3]}")
             if len(weak) > 15:
                 lines.append(f"       ... 其余 {len(weak) - 15} 个见 JSON 索引")
 
     OUT_TXT.write_text("\n".join(lines), encoding="utf-8")
-    OUT_JSON.write_text(json.dumps(
-        {"total": total, "languages": dict(langs), "by_domain": by_domain},
-        ensure_ascii=False, indent=2), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(
+            {"total": total, "languages": dict(langs), "by_domain": by_domain},
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
     print(f"示例总数 {total} -> {OUT_TXT}")
-    print("语言: " + ", ".join(f"{k}={v}" for k, v in sorted(langs.items(), key=lambda kv: -kv[1])))
+    print(
+        "语言: "
+        + ", ".join(f"{k}={v}" for k, v in sorted(langs.items(), key=lambda kv: -kv[1]))
+    )
     print("各域示例数:")
     for d in order:
         print(f"  {d:<24} {len(by_domain.get(d, []))}")

@@ -52,38 +52,61 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 SW_SEL_FACES = 2
-SW_WZD_HOLE = 2                 #: \u2605 \u53cd\u5c04\uff1a`swWzdHole = 2`
-SW_END_THROUGH_ALL = 1          #: \u2605 \u53cd\u5c04\uff1a`swEndCondThroughAll = 1`
-SW_END_BLIND = 0                #: \u2605 \u53cd\u5c04\uff1a`swEndCondBlind = 0`
-ANSI_METRIC = 1                 #: \u2605 \u672c\u4ed3 list_hole_standards\uff1a`{1: 'ANSI Metric'}`
+SW_WZD_HOLE = 2  #: \u2605 \u53cd\u5c04\uff1a`swWzdHole = 2`
+SW_END_THROUGH_ALL = 1  #: \u2605 \u53cd\u5c04\uff1a`swEndCondThroughAll = 1`
+SW_END_BLIND = 0  #: \u2605 \u53cd\u5c04\uff1a`swEndCondBlind = 0`
+ANSI_METRIC = 1  #: \u2605 \u672c\u4ed3 list_hole_standards\uff1a`{1: 'ANSI Metric'}`
 
 
 def _plate(doc, t=0.02):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.04,
+        -0.03,
+        0.0,
+        0.04,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, t)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
 
 def _ray(doc, x=0.0, y=0.0, z=0.05, vec=(0.0, 0.0, -1.0), r=1e-4, mark=0, append=False):
     ext = C.get_com_member(doc, "Extension")
-    return C.get_com_member(ext, "SelectByRay", float(x), float(y), float(z),
-                            float(vec[0]), float(vec[1]), float(vec[2]),
-                            float(r), int(SW_SEL_FACES), bool(append), int(mark), 0)
+    return C.get_com_member(
+        ext,
+        "SelectByRay",
+        float(x),
+        float(y),
+        float(z),
+        float(vec[0]),
+        float(vec[1]),
+        float(vec[2]),
+        float(r),
+        int(SW_SEL_FACES),
+        bool(append),
+        int(mark),
+        0,
+    )
 
 
 def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
@@ -95,40 +118,51 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
         if do_ray:
             try:
                 row["ray"] = str(_ray(doc, 0.0, 0.0))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 row["ray"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         before = list(FR.feature_names(doc) or [])
         row["before"] = len(before)
         fm = C.get_com_member(doc, "FeatureManager")
         args = (
-            SW_WZD_HOLE,            # GenericHoleType
-            ANSI_METRIC,            # StandardIndex
-            int(fastener),          # FastenerTypeIndex（★ **合法值**）
-            ssize,                  # SSize
-            int(end_type),          # EndType
-            0.008,                  # Diameter (m) = 8 mm
-            0.02,                   # Depth (m) = 20 mm
-            0.0,                    # Length
-            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   # Value1..12
-            "",                     # ThreadClass
-            False,                  # RevDir (\u2605 \u5b98\u65b9\uff1a\u6750\u6599\u5728\u4e00\u4fa7\u65f6\u4e3a False)
-            True,                   # FeatureScope
-            False,                  # AutoSelect
-            False,                  # AssemblyFeatureScope
-            False,                  # AutoSelectComponents
-            False,                  # PropagateFeatureToParts
+            SW_WZD_HOLE,  # GenericHoleType
+            ANSI_METRIC,  # StandardIndex
+            int(fastener),  # FastenerTypeIndex（★ **合法值**）
+            ssize,  # SSize
+            int(end_type),  # EndType
+            0.008,  # Diameter (m) = 8 mm
+            0.02,  # Depth (m) = 20 mm
+            0.0,  # Length
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,  # Value1..12
+            "",  # ThreadClass
+            False,  # RevDir (\u2605 \u5b98\u65b9\uff1a\u6750\u6599\u5728\u4e00\u4fa7\u65f6\u4e3a False)
+            True,  # FeatureScope
+            False,  # AutoSelect
+            False,  # AssemblyFeatureScope
+            False,  # AutoSelectComponents
+            False,  # PropagateFeatureToParts
         )
         row["n_args"] = len(args)
         ret = None
         try:
             ret = C.get_com_member(fm, "HoleWizard5", *args)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         after = list(FR.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new_features"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -136,39 +170,101 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u9ad8\u7ea7\u5b54\uff1a`SelectByRay` \u5b9a\u4f4d + `HoleWizard5`\uff08**27 \u53c2**\uff09",
-          "official": "HoleWizard5 27 \u53c2\uff1bRemarks\uff1a\u5b54\u4f4d\u7528 `SelectByRay`\u3001`Mark = 0`\uff1b"
-                      "`RevDir` \u5728\u6750\u6599\u4e00\u4fa7\u65f6\u4e3a False",
-          "enums": {"swWzdHole": SW_WZD_HOLE, "swEndCondThroughAll": SW_END_THROUGH_ALL,
-                    "swEndCondBlind": SW_END_BLIND, "swSelFACES": SW_SEL_FACES,
-                    "ANSI_METRIC": ANSI_METRIC},
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 SSize='' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, ''))
-    ev["cases"].append(_one(sw, "\u2605 SSize='8' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, '8'))
-    ev["cases"].append(_one(sw, "\u2605 SSize='M8' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, 'M8'))
-    ev["cases"].append(_one(sw, "\u2605 SSize='0.008' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, '0.008'))
-    ev["cases"].append(_one(sw, "\u2605 SSize='M8x1.25' \u00b7 \u87ba\u9489\u95f4\u9699(40)", SW_END_THROUGH_ALL, True, 40, 'M8x1.25'))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u9ad8\u7ea7\u5b54\uff1a`SelectByRay` \u5b9a\u4f4d + `HoleWizard5`\uff08**27 \u53c2**\uff09",
+        "official": "HoleWizard5 27 \u53c2\uff1bRemarks\uff1a\u5b54\u4f4d\u7528 `SelectByRay`\u3001`Mark = 0`\uff1b"
+        "`RevDir` \u5728\u6750\u6599\u4e00\u4fa7\u65f6\u4e3a False",
+        "enums": {
+            "swWzdHole": SW_WZD_HOLE,
+            "swEndCondThroughAll": SW_END_THROUGH_ALL,
+            "swEndCondBlind": SW_END_BLIND,
+            "swSelFACES": SW_SEL_FACES,
+            "ANSI_METRIC": ANSI_METRIC,
+        },
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 SSize='' \u00b7 \u87ba\u9489\u95f4\u9699(40)",
+            SW_END_THROUGH_ALL,
+            True,
+            40,
+            "",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 SSize='8' \u00b7 \u87ba\u9489\u95f4\u9699(40)",
+            SW_END_THROUGH_ALL,
+            True,
+            40,
+            "8",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 SSize='M8' \u00b7 \u87ba\u9489\u95f4\u9699(40)",
+            SW_END_THROUGH_ALL,
+            True,
+            40,
+            "M8",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 SSize='0.008' \u00b7 \u87ba\u9489\u95f4\u9699(40)",
+            SW_END_THROUGH_ALL,
+            True,
+            40,
+            "0.008",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 SSize='M8x1.25' \u00b7 \u87ba\u9489\u95f4\u9699(40)",
+            SW_END_THROUGH_ALL,
+            True,
+            40,
+            "M8x1.25",
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "hole_wizard5_%d_of_%d" % (ev["passed"], ev["total"])
     p = R / "output" / "hole-wizard5-build-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a**%s**" % ev["verdict"])
     for c in ev["cases"]:
-        print("  %-46s ok=%-6s \u7279\u5f81 %s \u2192 %s" % (
-            c.get("tag"), c.get("ok"), c.get("before"),
-            (c.get("before") or 0) + len(c.get("new_features") or [])))
-        print("        \u5c04\u7ebf=%s n_args=%s \u56de=%s \u65b0\u589e=%s" % (
-            c.get("ray"), c.get("n_args"), c.get("returned"), c.get("new_features")))
+        print(
+            "  %-46s ok=%-6s \u7279\u5f81 %s \u2192 %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("before"),
+                (c.get("before") or 0) + len(c.get("new_features") or []),
+            )
+        )
+        print(
+            "        \u5c04\u7ebf=%s n_args=%s \u56de=%s \u65b0\u589e=%s"
+            % (c.get("ray"), c.get("n_args"), c.get("returned"), c.get("new_features"))
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:150])
     print("  \u4ea7\u7269\uff1a%s" % p)

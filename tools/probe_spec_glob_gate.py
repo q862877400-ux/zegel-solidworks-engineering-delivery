@@ -17,6 +17,7 @@ r"""@brief 负例：`check_spec_acceptance_paths` 对 glob 的处理必须**两�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import shutil
@@ -32,14 +33,18 @@ REPO = Path(r"" + _ROOT_S + r"")
 GATE = REPO / "scripts" / "check_spec_acceptance_paths.py"
 sys.stdout.reconfigure(encoding="utf-8")
 
-ARROW = "\u2192 \u9a8c\u6536:"          # → 验收:
+ARROW = "\u2192 \u9a8c\u6536:"  # → 验收:
 
 
 def _run(specs_root: Path) -> tuple:
     p = subprocess.run(
         [sys.executable, str(GATE), "--specs-root", str(specs_root)],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
-        cwd=str(REPO), stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(REPO),
+        stdin=subprocess.DEVNULL,
     )
     return p.returncode, (p.stdout or "")
 
@@ -48,7 +53,8 @@ def _case(label: str, acceptance: str) -> int:
     root = Path(tempfile.mkdtemp()) / "specs" / "999-probe"
     root.mkdir(parents=True)
     (root / "tasks.md").write_text(
-        "# probe\n\n`%s` `%s`\n" % (ARROW, acceptance), encoding="utf-8")
+        "# probe\n\n`%s` `%s`\n" % (ARROW, acceptance), encoding="utf-8"
+    )
     rc, out = _run(root.parent)
     print("  %-46s ⇒ exit=%d" % (label, rc))
     for l in out.splitlines():
@@ -60,8 +66,12 @@ def _case(label: str, acceptance: str) -> int:
 
 def main() -> int:
     print("══ `check_spec_acceptance_paths` 的 glob 处理（正例 / 负例）══")
-    rc_ok = _case("正例 glob 能匹配", r"Select-String scripts\check_*.py -Pattern 'SKIP'")
-    rc_bad = _case("负例 glob 一个都匹配不到", r"Select-String scripts\nonexistent_*.py -Pattern x")
+    rc_ok = _case(
+        "正例 glob 能匹配", r"Select-String scripts\check_*.py -Pattern 'SKIP'"
+    )
+    rc_bad = _case(
+        "负例 glob 一个都匹配不到", r"Select-String scripts\nonexistent_*.py -Pattern x"
+    )
     rc_lit = _case("负例 字面文件不存在", r"Select-String scripts\nope.py -Pattern x")
 
     print()

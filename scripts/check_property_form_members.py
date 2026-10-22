@@ -59,7 +59,7 @@ REFLECTIONS = sorted((ROOT / "_raw").rglob("iface_sldworks.txt"))
 #:       ⇒ ★★★ **那才是"把属性当方法叫"** ✓
 #: ⚠ 第一版只按「反射里有没有裸名」判 ⇒ ★ 实测**命中几百处**（`GetBodies2` / `GetTypeNam
 #: e2` …）
-#: 全是**合法方法** ⇒ ★★ 那不是门禁、是噪音 ⇒ ★ 加这一源收敛到 **1 条**（★ 而正是那条真 
+#: 全是**合法方法** ⇒ ★★ 那不是门禁、是噪音 ⇒ ★ 加这一源收敛到 **1 条**（★ 而正是那条真
 #: bug）✓
 SWAPI_TYPES = Path(r"C:\swapi\types")
 
@@ -68,10 +68,25 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 #: 名字位置的字面量会传给这些函数（★ 后四个与前一道闸同名，但本道**在所有扫描根**上都查
 #: ）
 NAME_ARG_FUNCS = {
-    "getattr", "hasattr", "setattr", "delattr",
-    "get_com_member", "get_com_member_raw", "call_com_member", "safe_get_com_member",
+    "getattr",
+    "hasattr",
+    "setattr",
+    "delattr",
+    "get_com_member",
+    "get_com_member_raw",
+    "call_com_member",
+    "safe_get_com_member",
 }
-SCAN_ROOTS = ("scripts", "mcp-server", "subskills", "tools", "tests", "apps", "dotnet", "examples")
+SCAN_ROOTS = (
+    "scripts",
+    "mcp-server",
+    "subskills",
+    "tools",
+    "tests",
+    "apps",
+    "dotnet",
+    "examples",
+)
 #: ★ 签名行里第一列的那个标识符（与 `check_member_names.py` 同口径）
 SIG = re.compile(r"^\s*(?:[\w\.\[\]<>,\s]+?\s+)?([A-Za-z_]\w*)\s*\(")
 
@@ -98,7 +113,7 @@ def _strip_prefix(name: str) -> tuple[str, str] | None:
     m = _PREFIX_RE.match(name)
     if not m or m.end() >= len(name):
         return None
-    rest = name[m.end():]
+    rest = name[m.end() :]
     if not _MEMBER_RE.match(rest):
         return None
     return m.group(1).lower(), rest
@@ -152,13 +167,16 @@ def classify(no_reflection_ok: bool = False) -> dict[str, set[str]]:
                 get_seen.add(stripped[1])
             else:
                 set_seen.add(stripped[1])
-    return {"get_only": get_seen - plain - set_seen,
-            "set_only": set_seen - plain - get_seen,
-            "plain": plain}
+    return {
+        "get_only": get_seen - plain - set_seen,
+        "set_only": set_seen - plain - get_seen,
+        "plain": plain,
+    }
 
 
-def is_property_form(literal: str, cls: dict[str, set[str]],
-                     pages: dict[str, set[str]]) -> str | None:
+def is_property_form(
+    literal: str, cls: dict[str, set[str]], pages: dict[str, set[str]]
+) -> str | None:
     """★ **本门禁的判据**：这个字面量是不是「把官方属性当方法叫」？
 
     :returns: 命中的**官方属性名**；不是 ⇒ `None`。
@@ -182,7 +200,7 @@ def is_property_form(literal: str, cls: dict[str, set[str]],
         return None
     if "property" not in pages.get(base, set()):
         return None
-    if literal in pages:                     # ★ 官方**有这一页** ⇒ 它是官方方法 ⇒ 合法
+    if literal in pages:  # ★ 官方**有这一页** ⇒ 它是官方方法 ⇒ 合法
         return None
     return base
 
@@ -197,7 +215,11 @@ def _string_args(tree: ast.AST) -> list[tuple[int, str, str]]:
         if not isinstance(node, ast.Call):
             continue
         fn = node.func
-        name = fn.id if isinstance(fn, ast.Name) else (fn.attr if isinstance(fn, ast.Attribute) else None)
+        name = (
+            fn.id
+            if isinstance(fn, ast.Name)
+            else (fn.attr if isinstance(fn, ast.Attribute) else None)
+        )
         if name not in NAME_ARG_FUNCS:
             continue
         for arg in node.args:
@@ -218,7 +240,11 @@ def scan() -> tuple[list[dict], int]:
             continue
         for p in sorted(base.rglob("*.py")):
             #: ★ 跳过自己的测试（★ 它的正例**故意**造这种形态）
-            if p.name.startswith("test_") or ".venv" in p.parts or "node_modules" in p.parts:
+            if (
+                p.name.startswith("test_")
+                or ".venv" in p.parts
+                or "node_modules" in p.parts
+            ):
                 continue
             #: ★★ 跳过**内嵌快照**（`apps/workbench-ui/src-tauri/resources/skill/**`）——
             #: ★ 它是 `scripts/sync_bundled_skill.py` 的**生成物**（在 `.gitignore` 里）
@@ -235,40 +261,65 @@ def scan() -> tuple[list[dict], int]:
             for lineno, fn, lit in _string_args(tree):
                 base_name = is_property_form(lit, cls, pages)
                 if base_name:
-                    hits.append({
-                        "file": str(p.relative_to(ROOT)).replace("\\", "/"),
-                        "line": lineno, "func": fn, "literal": lit,
-                        "official": base_name,
-                    })
+                    hits.append(
+                        {
+                            "file": str(p.relative_to(ROOT)).replace("\\", "/"),
+                            "line": lineno,
+                            "func": fn,
+                            "literal": lit,
+                            "official": base_name,
+                        }
+                    )
     return hits, seen
 
 
 def main() -> int:
     if not any(r.is_file() for r in REFLECTIONS):
-        print("★ SKIP：本机读不到出厂反射清单（%s）—— 判据**没有真源** ⇒ 不报假绿"
-              % (REFLECTIONS[0].parent if REFLECTIONS else "?"))
+        print(
+            "★ SKIP：本机读不到出厂反射清单（%s）—— 判据**没有真源** ⇒ 不报假绿"
+            % (REFLECTIONS[0].parent if REFLECTIONS else "?")
+        )
         return 0
     if not SWAPI_TYPES.is_dir():
-        print("★ SKIP：本机读不到官方结构化镜像（%s）—— 判据的**收敛器**不在 ⇒ 不报假绿"
-              % SWAPI_TYPES)
+        print(
+            "★ SKIP：本机读不到官方结构化镜像（%s）—— 判据的**收敛器**不在 ⇒ 不报假绿"
+            % SWAPI_TYPES
+        )
         return 0
     cls = classify()
     pages = official_pages()
     print("★ 属性形门禁（★ 事实 520）—— 两个官方源的读数：")
-    print("   反射：`get_X()` 独有 %d 个 · `set_X()` 独有 %d 个 · 裸名 %d 个"
-          % (len(cls["get_only"]), len(cls["set_only"]), len(cls["plain"])))
-    print("   官方 md：%d 个成员页（★ 其中 `kind: property` 的 %d 个）"
-          % (len(pages), sum(1 for v in pages.values() if "property" in v)))
+    print(
+        "   反射：`get_X()` 独有 %d 个 · `set_X()` 独有 %d 个 · 裸名 %d 个"
+        % (len(cls["get_only"]), len(cls["set_only"]), len(cls["plain"]))
+    )
+    print(
+        "   官方 md：%d 个成员页（★ 其中 `kind: property` 的 %d 个）"
+        % (len(pages), sum(1 for v in pages.values() if "property" in v))
+    )
     hits, seen = scan()
-    print("   扫了 %d 个 .py（★ 扫描根：%s；★ 已跳过内嵌快照）· ★ 命中：%d 处"
-          % (seen, " ".join(SCAN_ROOTS), len(hits)))
+    print(
+        "   扫了 %d 个 .py（★ 扫描根：%s；★ 已跳过内嵌快照）· ★ 命中：%d 处"
+        % (seen, " ".join(SCAN_ROOTS), len(hits))
+    )
     for h in hits:
-        print("   [HIT] %s:%d  %s(…, %r)  ⇒ ★ 官方那个成员是**属性** `%s`"
-              "（★ 且官方**没有** %r 这一页）"
-              % (h["file"], h["line"], h["func"], h["literal"], h["official"], h["literal"]))
+        print(
+            "   [HIT] %s:%d  %s(…, %r)  ⇒ ★ 官方那个成员是**属性** `%s`"
+            "（★ 且官方**没有** %r 这一页）"
+            % (
+                h["file"],
+                h["line"],
+                h["func"],
+                h["literal"],
+                h["official"],
+                h["literal"],
+            )
+        )
     if hits:
-        print("\n[FAIL] ★ 把官方属性当方法叫 ⇒ 反射里没有这个名字 ⇒ `getattr` **抛 AttributeError**；"
-              "★ 改成官方那个属性名（去掉 `get_`/`set_` 前缀）")
+        print(
+            "\n[FAIL] ★ 把官方属性当方法叫 ⇒ 反射里没有这个名字 ⇒ `getattr` **抛 AttributeError**；"
+            "★ 改成官方那个属性名（去掉 `get_`/`set_` 前缀）"
+        )
         return 1
     print("\n[PASS] 没有把官方属性写成 `get_X`/`set_X` 去调")
     return 0

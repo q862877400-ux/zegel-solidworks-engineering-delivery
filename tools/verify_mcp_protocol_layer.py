@@ -23,6 +23,7 @@ r"""@brief 真机探针：**MCP 协议层** —— 起 server，发 `tools/list`
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -38,7 +39,9 @@ sys.path.insert(0, str(ROOT / "mcp-server"))
 sys.stdout.reconfigure(encoding="utf-8")
 
 SERVER = ROOT / "mcp-server" / "server.py"
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mcp-protocol-layer-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "mcp-protocol-layer-evidence.json"
+)
 
 #: `047` 新接出去的 4 条
 BATCH10 = (
@@ -50,8 +53,13 @@ BATCH10 = (
 
 
 def rpc(method: str, params: dict, req_id: int) -> str:
-    return json.dumps({"jsonrpc": "2.0", "id": req_id, "method": method,
-                       "params": params}, ensure_ascii=False) + "\n"
+    return (
+        json.dumps(
+            {"jsonrpc": "2.0", "id": req_id, "method": method, "params": params},
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
 
 
 def main() -> int:
@@ -73,20 +81,36 @@ def main() -> int:
         # ⚠ 事实 58：一定要给 encoding，否则中文 Windows 上父进程用 GBK 解 UTF-8 会炸
         proc = subprocess.Popen(
             [env_py, str(SERVER)],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            text=True, encoding="utf-8", errors="replace", cwd=str(ROOT / "mcp-server"),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(ROOT / "mcp-server"),
         )
-        chk("★ 起 server（stdio，**一次工具都不调** ⇒ 不碰 COM）", proc.poll() is None,
-            "pid=%s" % proc.pid)
+        chk(
+            "★ 起 server（stdio，**一次工具都不调** ⇒ 不碰 COM）",
+            proc.poll() is None,
+            "pid=%s" % proc.pid,
+        )
 
         # ① initialize
-        proc.stdin.write(rpc("initialize", {
-            "protocolVersion": "2025-06-18",
-            "capabilities": {},
-            "clientInfo": {"name": "dsh-probe", "version": "1"},
-        }, 1))
+        proc.stdin.write(
+            rpc(
+                "initialize",
+                {
+                    "protocolVersion": "2025-06-18",
+                    "capabilities": {},
+                    "clientInfo": {"name": "dsh-probe", "version": "1"},
+                },
+                1,
+            )
+        )
         proc.stdin.flush()
-        proc.stdin.write(json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n")
+        proc.stdin.write(
+            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n"
+        )
         proc.stdin.flush()
 
         # ② tools/list
@@ -102,21 +126,27 @@ def main() -> int:
                 break
             try:
                 msg = json.loads(line)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             if msg.get("id") == 2 and "result" in msg:
                 tools = msg["result"].get("tools") or []
                 break
-        chk("★ `tools/list` 拿到响应", tools is not None,
-            ("%d 个工具" % len(tools)) if tools is not None else "没读到 id=2 的响应")
+        chk(
+            "★ `tools/list` 拿到响应",
+            tools is not None,
+            ("%d 个工具" % len(tools)) if tools is not None else "没读到 id=2 的响应",
+        )
         if tools is None:
             return 1
 
         names = [t.get("name") for t in tools]
         ev["tool_count"] = len(names)
         found = [n for n in BATCH10 if n in names]
-        chk("★★ batch10 的 4 条**都在协议层可见**", len(found) == 4,
-            "找到 %d/4：%s" % (len(found), found))
+        chk(
+            "★★ batch10 的 4 条**都在协议层可见**",
+            len(found) == 4,
+            "找到 %d/4：%s" % (len(found), found),
+        )
         ev["batch10_found"] = found
 
         # ③ 逐条核对 inputSchema
@@ -125,9 +155,10 @@ def main() -> int:
             spec = None
             try:
                 import importlib
+
                 mod = importlib.import_module("tool_specs_batch10")
                 spec = next(s for s in mod.SPECS_BATCH10 if s.name == n)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             if spec is None or n not in by_name:
                 chk("schema · %s" % n, False, "声明或工具缺失")
@@ -140,49 +171,61 @@ def main() -> int:
             #   ⇒ 判据要**顺着 `$ref` 走进去**。
             schema = by_name[n].get("inputSchema") or {}
             top = schema.get("properties") or {}
-            ref = ((top.get("params") or {}).get("$ref") or "")
+            ref = (top.get("params") or {}).get("$ref") or ""
             model_name = ref.rsplit("/", 1)[-1]
-            inner = (((schema.get("$defs") or {}).get(model_name) or {}).get("properties") or {})
+            inner = ((schema.get("$defs") or {}).get(model_name) or {}).get(
+                "properties"
+            ) or {}
             declared = {p.name for p in spec.params}
             #: ⚑ 框架会**统一补**一个 `response_format`（`json`/`markdown`）—— 声明里没
             #: 有它
             extra = set(inner) - declared
             missing = declared - set(inner)
-            chk("★ schema 参数逐条对上（顺 `$ref` 走进去） · %s" % n,
+            chk(
+                "★ schema 参数逐条对上（顺 `$ref` 走进去） · %s" % n,
                 not missing and not extra - {"response_format"},
                 "声明=%s 协议(内层)=%s 缺=%s 多=%s"
-                % (sorted(declared), sorted(inner), sorted(missing), sorted(extra)))
+                % (sorted(declared), sorted(inner), sorted(missing), sorted(extra)),
+            )
             #: 顺带记下"框架统一补了 response_format"这件事
             if "response_format" in inner:
                 ev.setdefault("framework_added", set())
-                ev["framework_added"] = sorted(set(ev.get("framework_added") or []) |
-                                               {"response_format"})
-    except Exception as exc:      # noqa: BLE001
+                ev["framework_added"] = sorted(
+                    set(ev.get("framework_added") or []) | {"response_format"}
+                )
+    except Exception as exc:  # noqa: BLE001
         chk("整体探针", False, "%s: %s" % (type(exc).__name__, str(exc)[:200]))
     finally:
         if proc is not None:
             try:
                 proc.stdin.close()
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             try:
                 proc.terminate()
                 proc.wait(timeout=10)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 try:
                     proc.kill()
-                except Exception:      # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
             print("   （已终止 server 进程 pid=%s）" % proc.pid)
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
-    print("  ⚠ 只证「工具被正确登记与描述」；**没有真调过一次工具** ⇒ 不证调用路径（那需要 COM）。")
+    print(
+        "  ⚠ 只证「工具被正确登记与描述」；**没有真调过一次工具** ⇒ 不证调用路径（那需要 COM）。"
+    )
     return 0 if ev["verdict"] == "pass" else 1
 
 

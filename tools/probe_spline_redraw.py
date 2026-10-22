@@ -23,6 +23,7 @@ r"""@brief 探针：样条到底是"没建成"还是"建成了但没重绘"？�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import array
@@ -39,7 +40,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "spline-redraw-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "spline-redraw-evidence.json"
+)
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -50,13 +55,15 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def count(sw_sketch, sk):
     try:
         segs = sw_sketch.get_sketch_segments(sk)
         return len(segs) if isinstance(segs, list) else -1
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return "EXC:%s" % str(exc)[:40]
 
 
@@ -71,10 +78,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         d = sw_connect.new_document(sw, "part")
@@ -87,7 +95,7 @@ def main() -> int:
         try:
             r2 = skm.CreateSpline2(arr, False)
             t2 = type(r2).__name__
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             t2 = "EXC: %s: %s" % (type(exc).__name__, str(exc)[:70])
         n_a = count(sw_sketch, sk)
         print("  ① CreateSpline2         返回=%-12s ⇒ 段数 = %s" % (t2, n_a))
@@ -111,7 +119,7 @@ def main() -> int:
                 break
             if redrawn == "—":
                 redrawn = "（两个重绘方法都没有）"
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             redrawn = "EXC: %s: %s" % (type(exc).__name__, str(exc)[:60])
         n_b = count(sw_sketch, sk)
         print("  ② 重绘（%s）后           ⇒ 段数 = %s" % (redrawn, n_b))
@@ -124,14 +132,16 @@ def main() -> int:
             try:
                 r1 = f1(arr)
                 t1 = type(r1).__name__
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 t1 = "EXC: %s: %s" % (type(exc).__name__, str(exc)[:70])
         n_c = count(sw_sketch, sk)
         print("  ③ CreateSpline          返回=%-12s ⇒ 段数 = %s" % (t1, n_c))
 
-        ev["cases"] = {"create_spline2": {"return": t2, "segments": n_a},
-                       "after_redraw": {"method": redrawn, "segments": n_b},
-                       "create_spline": {"return": t1, "segments": n_c}}
+        ev["cases"] = {
+            "create_spline2": {"return": t2, "segments": n_a},
+            "after_redraw": {"method": redrawn, "segments": n_b},
+            "create_spline": {"return": t1, "segments": n_c},
+        }
 
         #: 对照：直线（证明流程没问题）
         d2 = sw_connect.new_document(sw, "part")
@@ -139,34 +149,42 @@ def main() -> int:
         sw_part.start_sketch(d2)
         sw_part.sketch_line(d2, -10.0, 0.0, 10.0, 0.0)
         sk2 = sw_connect.safe_get_com_member(
-            sw_connect.safe_get_com_member(d2, "SketchManager"), "ActiveSketch")
-        print("  ④ 对照·直线                            ⇒ 段数 = %s" % count(sw_sketch, sk2))
+            sw_connect.safe_get_com_member(d2, "SketchManager"), "ActiveSketch"
+        )
+        print(
+            "  ④ 对照·直线                            ⇒ 段数 = %s"
+            % count(sw_sketch, sk2)
+        )
         ev["cases"]["control_line"] = count(sw_sketch, sk2)
         sw_part.end_sketch(d2)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         print("   （已关闭 %d 个临时零件，均不保存）" % len(docs))
 
     modals, _win_scanned = modal_dialogs()
     print()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return 0
 
 

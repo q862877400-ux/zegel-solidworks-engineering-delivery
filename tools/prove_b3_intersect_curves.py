@@ -39,9 +39,12 @@ def main() -> int:
     import sw_sketch_edit_ops as E
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B3 批的交叉曲线：补官方前置（3D 草图 + 两个相交面）后单独验",
-          "judge": "3D 草图段数增量", "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B3 批的交叉曲线：补官方前置（3D 草图 + 两个相交面）后单独验",
+        "judge": "3D 草图段数增量",
+        "items": [],
+    }
     doc = None
     try:
         doc = sw_connect.new_document(sw, "part")
@@ -70,6 +73,7 @@ def main() -> int:
         #: \u2463 **\u6309\u5bf9\u8c61**\u9009\u4e24\u4e2a\u9762\uff08\u4e8b\u5b9e 32\uf
         #: f1a\u9762\u6309\u540d\u5b57\u9009\u4e0d\u4e2d\uff09
         import sw_selection_spec as SS
+
         c1 = SS.select_entity_by_index(doc, "FACE", 0)
         c2 = SS.select_entity_by_index(doc, "FACE", 1, append=True)
         ev["sel"] = [c1, c2]
@@ -84,9 +88,14 @@ def main() -> int:
         ev["err"] = "%s: %s" % (type(e).__name__, str(e)[:200])
         ev["verdict"] = "fail"
     finally:
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:900])
-        print("  \u4ea7\u7269\uff1a%s \u21d2 %s" % (OUT, str(ev.get("verdict")).upper()))
+        print(
+            "  \u4ea7\u7269\uff1a%s \u21d2 %s" % (OUT, str(ev.get("verdict")).upper())
+        )
         try:
             sw.CommandInProgress = False
         except Exception:

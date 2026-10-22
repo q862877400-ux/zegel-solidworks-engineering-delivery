@@ -34,6 +34,7 @@ r"""模态弹窗检测与处置 —— 本项目 GUI 自动化的**前置断言*
 # ⚠ 本模块只做检测与关窗，不操作 SolidWorks 模型。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -44,8 +45,13 @@ import win32con
 import win32gui
 import win32process
 
-__all__ = ["find_modals", "modal_report", "assert_no_modal", "close_modals",
-           "screen_png"]
+__all__ = [
+    "find_modals",
+    "modal_report",
+    "assert_no_modal",
+    "close_modals",
+    "screen_png",
+]
 
 _DIALOG_CLASSES = ("#32770",)
 
@@ -69,8 +75,15 @@ def find_modals(main_hwnd: int) -> list[dict[str, Any]]:
         cls = win32gui.GetClassName(h)
         if cls not in _DIALOG_CLASSES and not win32gui.GetWindow(h, 4):
             return
-        out.append({"hwnd": h, "title": win32gui.GetWindowText(h), "cls": cls,
-                    "rect": r, "owner": win32gui.GetWindow(h, 4)})
+        out.append(
+            {
+                "hwnd": h,
+                "title": win32gui.GetWindowText(h),
+                "cls": cls,
+                "rect": r,
+                "owner": win32gui.GetWindow(h, 4),
+            }
+        )
 
     win32gui.EnumWindows(cb, None)
     return out
@@ -89,7 +102,8 @@ def assert_no_modal(main_hwnd: int, where: str = "") -> None:
         raise RuntimeError(
             "%s 有模态弹窗挡着（hwnd=%d cls=%s rect=%s）—— "
             "输入会全部发给主窗口而插件收不到；先 close_modals()"
-            % (where or "操作前", d["hwnd"], d["cls"], d["rect"]))
+            % (where or "操作前", d["hwnd"], d["cls"], d["rect"])
+        )
 
 
 def close_modals(main_hwnd: int, rounds: int = 5) -> int:
@@ -129,7 +143,7 @@ def close_modals(main_hwnd: int, rounds: int = 5) -> int:
             except Exception:
                 pass
             time.sleep(0.3)
-        win32gui.PostMessage(dh, win32con.WM_COMMAND, 1, 0)     # IDOK
+        win32gui.PostMessage(dh, win32con.WM_COMMAND, 1, 0)  # IDOK
         time.sleep(0.5)
         for vk in (win32con.VK_RETURN, win32con.VK_ESCAPE):
             # ⚠ 走原语 ⇒ 中途异常也不会把 Enter/Esc 留在按下态
@@ -142,6 +156,7 @@ def close_modals(main_hwnd: int, rounds: int = 5) -> int:
 def screen_png(path: str) -> Any:
     """★ 取证一律用**整屏**；PrintWindow 会丢掉客户区外的浮窗。"""
     from PIL import ImageGrab
+
     img = ImageGrab.grab()
     img.save(path)
     return img

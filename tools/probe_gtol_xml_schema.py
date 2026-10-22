@@ -27,6 +27,7 @@ r"""@brief 探针：拿官方 `ISldWorks.GetGtolFrameXMLSchema()`，看它要求
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -40,7 +41,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-xml-schema.json")
-SAVE = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-frame-xml-schema.txt")
+SAVE = Path(
+    Path(__file__).resolve().parents[1] / "output" / "gtol-frame-xml-schema.txt"
+)
 
 
 def main() -> int:
@@ -50,10 +53,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_gtol
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ① 拿 schema（官方产物）
@@ -65,18 +69,26 @@ def main() -> int:
                     schema = s
                     ev["schema_from"] = cand
                     break
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("  %s 抛错: %s" % (cand, str(exc)[:60]))
         ev["schema_len"] = len(schema) if schema else 0
-        print("  ① schema 长度 = **%s**（来源 %s）" % (ev["schema_len"], ev.get("schema_from")))
+        print(
+            "  ① schema 长度 = **%s**（来源 %s）"
+            % (ev["schema_len"], ev.get("schema_from"))
+        )
         if schema:
             SAVE.parent.mkdir(parents=True, exist_ok=True)
             SAVE.write_text(schema, encoding="utf-8")
             print("     已存: %s" % SAVE)
             #: ★ 从 schema 里抽结构要素（不猜）
             import re
-            els = sorted(set(re.findall(r"<(?:xs:)?element[^>]*name=\"([^\"]+)\"", schema)))
-            attrs = sorted(set(re.findall(r"<(?:xs:)?attribute[^>]*name=\"([^\"]+)\"", schema)))
+
+            els = sorted(
+                set(re.findall(r"<(?:xs:)?element[^>]*name=\"([^\"]+)\"", schema))
+            )
+            attrs = sorted(
+                set(re.findall(r"<(?:xs:)?attribute[^>]*name=\"([^\"]+)\"", schema))
+            )
             ev["schema_elements"] = els
             ev["schema_attributes"] = attrs
             print("     元素 (%d): %s" % (len(els), els[:14]))
@@ -103,35 +115,49 @@ def main() -> int:
                     xml = "<%s/>" % tag
                     try:
                         r = sw_connect.safe_get_com_member(frame, "SetSymbolXml", xml)
-                        print("     `SetSymbolXml(<%s/>)` [%s] ⇒ **%r**" % (tag, label, r))
-                        ev.setdefault("set_xml_trials", []).append({"xml": xml, "ret": repr(r)})
-                    except Exception as exc:      # noqa: BLE001
-                        print("     `SetSymbolXml(<%s/>)` [%s] 抛错: %s" % (tag, label, str(exc)[:50]))
+                        print(
+                            "     `SetSymbolXml(<%s/>)` [%s] ⇒ **%r**" % (tag, label, r)
+                        )
                         ev.setdefault("set_xml_trials", []).append(
-                            {"xml": xml, "exc": "%s: %s" % (type(exc).__name__, str(exc)[:60])})
-    except Exception as exc:      # noqa: BLE001
+                            {"xml": xml, "ret": repr(r)}
+                        )
+                    except Exception as exc:  # noqa: BLE001
+                        print(
+                            "     `SetSymbolXml(<%s/>)` [%s] 抛错: %s"
+                            % (tag, label, str(exc)[:50])
+                        )
+                        ev.setdefault("set_xml_trials", []).append(
+                            {
+                                "xml": xml,
+                                "exc": "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+                            }
+                        )
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "dismissed": dismissed, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

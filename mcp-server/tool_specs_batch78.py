@@ -2,6 +2,7 @@
 
 （★ 目标：★ **别人部署本项目之后，拿到的是安全那条路**，而不是要自己知道该设哪些旋钮）
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其源码里）
 # 文件:   `scripts/sw_simulation.py` 的 `create_mesh_safely` / `static_solver_type_repor
@@ -38,14 +39,18 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH78"]
 
 #: ★ 与既有多批同形：`study_name` 由解析器消费（不传给目标函数），空名 = 取第一个研究
-_STUDY = ("Name of an EXISTING simulation study (e.g. \"Study 1\" / \"算例 1\"). "
-          "Leave empty to use the FIRST study.")
-_UNITS = ("swsUnit_e: 0=SI (metre) / 1=English / 2=Metric (MILLIMETRE). "
-          "★ Measured in this repo: `units=2` returns MILLIMETRE-scale values while "
-          "`units=0/-1` return values 1000x larger — the VALUE and the UNITS must match.")
+_STUDY = (
+    'Name of an EXISTING simulation study (e.g. "Study 1" / "算例 1"). '
+    "Leave empty to use the FIRST study."
+)
+_UNITS = (
+    "swsUnit_e: 0=SI (metre) / 1=English / 2=Metric (MILLIMETRE). "
+    "★ Measured in this repo: `units=2` returns MILLIMETRE-scale values while "
+    "`units=0/-1` return values 1000x larger — the VALUE and the UNITS must match."
+)
 
 
-def _derive_model(params):                                     # noqa: ARG001
+def _derive_model(params):  # noqa: ARG001
     """★ 把活动文档作为 `model=` 补进实参。
 
     ★★ **为什么必须有它**（★ 2026-10-04 真机踩出来的）：★ 量预算前置闸要的是**零件文档**
@@ -57,7 +62,9 @@ def _derive_model(params):                                     # noqa: ARG001
 
     _sw, model, _meta = connect_solidworks(wait_seconds=20, return_metadata=True)
     if model is None:
-        raise RuntimeError("没有活动文档 —— 请先打开一个零件（★ 量预算闸要读它的包围盒）")
+        raise RuntimeError(
+            "没有活动文档 —— 请先打开一个零件（★ 量预算闸要读它的包围盒）"
+        )
     return {"model": model}
 
 
@@ -65,54 +72,71 @@ SPECS_BATCH78 = [
     ToolSpec(
         name="solidworks_simulation_create_mesh_safely",
         title="Create the Mesh the SAFE Way (budget gate + safety profile + restore)",
-        module="sw_simulation", function="create_mesh_safely",
+        module="sw_simulation",
+        function="create_mesh_safely",
         inject="study",
-        param_alias={"study_name": None, "element_size_mm": "element_size",
-                     "tolerance_mm": "tolerance"},
+        param_alias={
+            "study_name": None,
+            "element_size_mm": "element_size",
+            "tolerance_mm": "tolerance",
+        },
         params=[
             Param("study_name", str, default="", description=_STUDY),
             Param("units", int, default=2, description=_UNITS),
-            Param("element_size_mm", float, default=0.0,
-                  description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose). "
-                              "★ Pair it with `units=2`; measured: 4.93 mm gave 6541 elements."),
-            Param("tolerance_mm", float, default=0.0,
-                  description="Mesh tolerance in MILLIMETRES (0.0 = document default)."),
-            Param("memory_budget_gb", float, default=None,
-                  description="Refuse to build the mesh if the ESTIMATED solve memory exceeds this "
-                              "many GB. Omit for the document default."),
+            Param(
+                "element_size_mm",
+                float,
+                default=0.0,
+                description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose). "
+                "★ Pair it with `units=2`; measured: 4.93 mm gave 6541 elements.",
+            ),
+            Param(
+                "tolerance_mm",
+                float,
+                default=0.0,
+                description="Mesh tolerance in MILLIMETRES (0.0 = document default).",
+            ),
+            Param(
+                "memory_budget_gb",
+                float,
+                default=None,
+                description="Refuse to build the mesh if the ESTIMATED solve memory exceeds this "
+                "many GB. Omit for the document default.",
+            ),
         ],
         derived_args=_derive_model,
         doc="**THE RECOMMENDED WAY to mesh a study.** One call does seven things, all measured: "
-            "① element-size sanity gate (two-sided: too big = degenerate, too small = memory blow-up) "
-            "→ ② **mesh safety profile** (`Quality=Draft` + `MesherType=Standard`, i.e. turns OFF the "
-            "curvature-based mesher that refines without a lower bound) → ③ build the mesh → "
-            "④ read the REAL `ElementCount`/`NodeCount` → ⑤ **pre-solve memory gate** "
-            "→ ⑥ **restore the study's mesh settings** → ⑦ return an evidence-ready report. "
-            "★★ Measured on a real machine (100x60x20 mm plate): the factory settings gave "
-            "11301 nodes, the safety profile gave **1492 nodes (7.6x fewer)** and meshed in 0.3-0.8 s. "
-            "⚠ The estimate uses the official **FFEPlus** rule (1 GB per 2,000,000 DOF); "
-            "if the study solves with a direct solver that rule does not apply — check "
-            "`solidworks_simulation_solver_type`. "
-            "★★ Read `blocked` when `ok` is false: it says WHICH gate refused "
-            "(`MESH_SIZE_UNSANE` / `MESH_SAFETY_APPLY_FAILED` / `MESH_FAILED` / `SOLVE_MEMORY_BUDGET`).",
+        "① element-size sanity gate (two-sided: too big = degenerate, too small = memory blow-up) "
+        "→ ② **mesh safety profile** (`Quality=Draft` + `MesherType=Standard`, i.e. turns OFF the "
+        "curvature-based mesher that refines without a lower bound) → ③ build the mesh → "
+        "④ read the REAL `ElementCount`/`NodeCount` → ⑤ **pre-solve memory gate** "
+        "→ ⑥ **restore the study's mesh settings** → ⑦ return an evidence-ready report. "
+        "★★ Measured on a real machine (100x60x20 mm plate): the factory settings gave "
+        "11301 nodes, the safety profile gave **1492 nodes (7.6x fewer)** and meshed in 0.3-0.8 s. "
+        "⚠ The estimate uses the official **FFEPlus** rule (1 GB per 2,000,000 DOF); "
+        "if the study solves with a direct solver that rule does not apply — check "
+        "`solidworks_simulation_solver_type`. "
+        "★★ Read `blocked` when `ok` is false: it says WHICH gate refused "
+        "(`MESH_SIZE_UNSANE` / `MESH_SAFETY_APPLY_FAILED` / `MESH_FAILED` / `SOLVE_MEMORY_BUDGET`).",
     ),
     ToolSpec(
         name="solidworks_simulation_solver_type",
         title="Read Which Solver the Study Uses (so the memory rule is not over-applied)",
-        module="sw_simulation", function="static_solver_type_report",
+        module="sw_simulation",
+        function="static_solver_type_report",
         inject="study",
         param_alias={"study_name": None},
         params=[
             Param("study_name", str, default="", description=_STUDY),
         ],
         doc="Return `{ok, value, name, reason}` for `ICWStaticStudyOptions.SolverType` "
-            "(`swsSolverType_e`: automatic 0 / direct_sparse 1 / ffeplus 2 / casi 5 / abaqus 6 / "
-            "intel 7 / intel_cluster 8). "
-            "★★ **Why it matters**: the repo's solve-memory estimate uses the official **FFEPlus** "
-            "rule (\"1 GB per 2,000,000 degrees of freedom\"), and that rule is FFEPlus-specific. "
-            "Measured here: `SolverType` read back as `automatic (0)` while the solver actually "
-            "chosen at solve time was **Intel Direct Sparse** — a direct solver, for which this "
-            "repo has NO official memory rule. "
-            "⚠ When the read fails, `ok` is false with a reason — it never guesses a default.",
+        "(`swsSolverType_e`: automatic 0 / direct_sparse 1 / ffeplus 2 / casi 5 / abaqus 6 / "
+        "intel 7 / intel_cluster 8). "
+        "★★ **Why it matters**: the repo's solve-memory estimate uses the official **FFEPlus** "
+        'rule ("1 GB per 2,000,000 degrees of freedom"), and that rule is FFEPlus-specific. '
+        "Measured here: `SolverType` read back as `automatic (0)` while the solver actually "
+        "chosen at solve time was **Intel Direct Sparse** — a direct solver, for which this "
+        "repo has NO official memory rule. "
+        "⚠ When the read fails, `ok` is false with a reason — it never guesses a default.",
     ),
 ]

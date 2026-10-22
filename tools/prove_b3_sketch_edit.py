@@ -41,9 +41,12 @@ def main() -> int:
     import sw_sketch_edit_ops as E
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B3 批：草图编辑 7 个逐个真机试（specs/201-toolbar-gaps）",
-          "judge": "计数增量 / 几何增量（按操作分）", "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B3 批：草图编辑 7 个逐个真机试（specs/201-toolbar-gaps）",
+        "judge": "计数增量 / 几何增量（按操作分）",
+        "items": [],
+    }
 
     def fresh():
         d = sw_connect.new_document(sw, "part")
@@ -74,8 +77,13 @@ def main() -> int:
             n0, l0 = nseg(doc), seg_len_sum(doc)
             r = act(doc)
             n1, l1 = nseg(doc), seg_len_sum(doc)
-            row.update({"seg": [n0, n1], "len": [l0, l1],
-                        "ret": (str(r)[:24] if r is not None else "None")})
+            row.update(
+                {
+                    "seg": [n0, n1],
+                    "len": [l0, l1],
+                    "ret": (str(r)[:24] if r is not None else "None"),
+                }
+            )
             if judge == "count_up":
                 row["built"] = n1 > n0
             elif judge == "count_change":
@@ -98,9 +106,16 @@ def main() -> int:
         if note:
             row["note"] = note
         ev["items"].append(row)
-        print("  %-16s %-3s  段 %s\u2192%s  %s" % (
-            zh, row["verdict"], (row.get("seg") or [None])[0], (row.get("seg") or [None, None])[1],
-            str(row.get("err") or "")[:58]))
+        print(
+            "  %-16s %-3s  段 %s\u2192%s  %s"
+            % (
+                zh,
+                row["verdict"],
+                (row.get("seg") or [None])[0],
+                (row.get("seg") or [None, None])[1],
+                str(row.get("err") or "")[:58],
+            )
+        )
         return row
 
     #: \u2460 \u526a\u88c1\uff08\u2605 \u5224\u636e = \u6bb5\u6570**\u53d8\u5316**\uff09
@@ -108,52 +123,87 @@ def main() -> int:
     def s_trim(d):
         P.sketch_line(d, -30.0, 0.0, 30.0, 0.0)
         P.sketch_circle(d, 0.0, 0.0, 10.0)
-    run("剪裁-最近", s_trim, lambda d: E.sketch_trim(d, "index:0", option="closest"), "count_change")
+
+    run(
+        "剪裁-最近",
+        s_trim,
+        lambda d: E.sketch_trim(d, "index:0", option="closest"),
+        "count_change",
+    )
 
     #: \u2461 \u5ef6\u4f38\uff08\u2605 \u5224\u636e = \u51e0\u4f55\u53d8 \u2014\u2014 \u
     #: 6bb5\u6570\u4e0d\u53d8\uff09
     def s_ext(d):
         P.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
         P.sketch_line(d, 25.0, 0.0, 40.0, 0.0)
+
     run("延伸实体", s_ext, lambda d: E.sketch_extend(d, "index:0"), "geom_change")
 
     #: \u2462 \u7b49\u8ddd\uff08\u2605 \u5224\u636e = \u6bb5\u6570\u6da8\uff09
     def s_off(d):
         P.sketch_corner_rectangle(d, -20.0, -15.0, 20.0, 15.0)
+
     run("等距实体", s_off, lambda d: E.sketch_offset(d, "index:0", 5.0), "count_up")
 
     #: \u2463 \u5706\u89d2\uff08\u2605 \u4e24\u6761\u76f8\u4ea4\u7ebf\uff09
     def s_fil(d):
         P.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
         P.sketch_line(d, 0.0, 0.0, 0.0, 20.0)
-    run("绘制圆角", s_fil, lambda d: E.sketch_fillet(d, "index:0,index:1", 5.0), "count_change")
+
+    run(
+        "绘制圆角",
+        s_fil,
+        lambda d: E.sketch_fillet(d, "index:0,index:1", 5.0),
+        "count_change",
+    )
 
     #: \u2464 \u7ebf\u6027\u9635\u5217
     def s_lp(d):
         P.sketch_circle(d, -20.0, 0.0, 4.0)
-    run("线性草图阵列", s_lp,
-        lambda d: E.sketch_linear_pattern(d, "index:0", num_x=3, num_y=1, spacing_x_mm=15.0),
-        "count_up")
+
+    run(
+        "线性草图阵列",
+        s_lp,
+        lambda d: E.sketch_linear_pattern(
+            d, "index:0", num_x=3, num_y=1, spacing_x_mm=15.0
+        ),
+        "count_up",
+    )
 
     #: \u2465 \u5706\u5468\u9635\u5217
     def s_cp(d):
         P.sketch_circle(d, 15.0, 0.0, 3.0)
-    run("圆周草图阵列", s_cp,
-        lambda d: E.sketch_circular_pattern(d, "index:0", arc_radius_mm=15.0,
-                                            arc_angle_deg=360.0, pattern_num=4),
-        "count_up")
+
+    run(
+        "圆周草图阵列",
+        s_cp,
+        lambda d: E.sketch_circular_pattern(
+            d, "index:0", arc_radius_mm=15.0, arc_angle_deg=360.0, pattern_num=4
+        ),
+        "count_up",
+    )
 
     #: \u2466 \u4ea4\u53c9\u66f2\u7ebf\uff08\u2605 \u524d\u7f6e\u4e0d\u6ee1\u8db3\uff1a\
     #: u5b98\u65b9\u8981 3D \u8349\u56fe + \u4e24\u4e2a\u76f8\u4ea4\u9762\uff09
-    run("交叉曲线", lambda d: P.sketch_circle(d, 0.0, 0.0, 10.0),
-        lambda d: E.sketch_intersect_curves(d), "count_change",
-        note="★ 官方前置：3D 草图 + 两个相交面；本探针只有 2D 草图 ⇒ 失败不构成能力结论")
+    run(
+        "交叉曲线",
+        lambda d: P.sketch_circle(d, 0.0, 0.0, 10.0),
+        lambda d: E.sketch_intersect_curves(d),
+        "count_change",
+        note="★ 官方前置：3D 草图 + 两个相交面；本探针只有 2D 草图 ⇒ 失败不构成能力结论",
+    )
 
     ok = sum(1 for i in ev["items"] if i["verdict"] == "能")
     ev["can"], ev["total"] = ok, len(ev["items"])
     ev["verdict"] = "pass" if ok == ev["total"] else "partial"
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u2500\u2500 **\u80fd %d / \u5171 %d** \u21d2 %s" % (ok, ev["total"], str(ev["verdict"]).upper()))
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u2500\u2500 **\u80fd %d / \u5171 %d** \u21d2 %s"
+        % (ok, ev["total"], str(ev["verdict"]).upper())
+    )
     print("  \u4ea7\u7269\uff1a%s" % OUT)
     try:
         sw.CommandInProgress = False

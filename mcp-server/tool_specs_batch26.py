@@ -68,21 +68,26 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH26"]
 
-_STUDY = ("Name of an EXISTING simulation study (e.g. \"Study 1\" / \"算例 1\"). "
-          "⚠ Leave empty to use the FIRST study in the document — ★ **建算例请用 "
-          "`solidworks_simulation_create_study`**（★ 它早就有了）。"
-          "⚠★ 2026-10-03（轮 438）**更正**：本行原先写着「solidworks_* has no create-study tool yet」"
-          "—— ★★ **那是假的**，而那句假信息**会误导用户以为得手动建算例**。")
-_SEL = ("Declarative FACE selection for the entities the load/restraint applies to: "
-        "'__current_selection__' or 'index:<n>' (the n-th face on the body, 0-based). "
-        "★ The capability layer writes these into the official DispArray, so the selection "
-        "MUST be made before the call — that is what this argument drives.")
+_STUDY = (
+    'Name of an EXISTING simulation study (e.g. "Study 1" / "算例 1"). '
+    "⚠ Leave empty to use the FIRST study in the document — ★ **建算例请用 "
+    "`solidworks_simulation_create_study`**（★ 它早就有了）。"
+    "⚠★ 2026-10-03（轮 438）**更正**：本行原先写着「solidworks_* has no create-study tool yet」"
+    "—— ★★ **那是假的**，而那句假信息**会误导用户以为得手动建算例**。"
+)
+_SEL = (
+    "Declarative FACE selection for the entities the load/restraint applies to: "
+    "'__current_selection__' or 'index:<n>' (the n-th face on the body, 0-based). "
+    "★ The capability layer writes these into the official DispArray, so the selection "
+    "MUST be made before the call — that is what this argument drives."
+)
 
 
 def _consumed(*names: str) -> dict:
@@ -111,7 +116,7 @@ def _select_face(params):
     return resolve_selection(_model(), params.selection, "FACE")
 
 
-def _derive_model(params):                                     # noqa: ARG001
+def _derive_model(params):  # noqa: ARG001
     """★ 把活动文档作为 `model=` 补进实参。
 
     ⚠ 能力层的 docstring 明写：「**给了它才会把选区实体装成官方要求的 `DispArray`**；
@@ -128,7 +133,8 @@ SPECS_BATCH26 = [
     ToolSpec(
         name="solidworks_simulation_apply_fixed_restraint",
         title="Apply a Fixed Restraint (Fixture) to the Selected Faces",
-        module="sw_simulation", function="apply_fixed_restraint",
+        module="sw_simulation",
+        function="apply_fixed_restraint",
         inject="study",
         param_alias=_consumed("study_name", "selection"),
         pre_call=_select_face,
@@ -138,14 +144,15 @@ SPECS_BATCH26 = [
             Param("selection", str, description=_SEL),
         ],
         doc="Apply a FIXED restraint (fixture) to the selected face(s) of a static study and "
-            "return the ICWRestraint. ★ The faces come from `selection` (declarative) because the "
-            "capability layer assembles them into the official DispArray. "
-            "⚠ Requires the Simulation add-in; the first call loads it automatically.",
+        "return the ICWRestraint. ★ The faces come from `selection` (declarative) because the "
+        "capability layer assembles them into the official DispArray. "
+        "⚠ Requires the Simulation add-in; the first call loads it automatically.",
     ),
     ToolSpec(
         name="solidworks_simulation_apply_normal_force",
         title="Apply a Normal Force to the Selected Faces",
-        module="sw_simulation", function="apply_normal_force",
+        module="sw_simulation",
+        function="apply_normal_force",
         inject="study",
         #: ★★ `magnitude_n` → `magnitude`：能力层形参叫 `magnitude`（不带 `_n`），对外名
         #: 带单位后缀
@@ -154,17 +161,24 @@ SPECS_BATCH26 = [
         #: （`TypeError: apply_normal_force() got an unexpected keyword argument 'magnit
         #: ude_n'`）
         #:   —— ★ 若证据只直调能力层，这个 bug **永远不会暴露**（能力层本身是对的）。
-        param_alias={**_consumed("study_name", "selection"), "magnitude_n": "magnitude"},
+        param_alias={
+            **_consumed("study_name", "selection"),
+            "magnitude_n": "magnitude",
+        },
         pre_call=_select_face,
         derived_args=_derive_model,
         params=[
             Param("study_name", str, default="", description=_STUDY),
             Param("selection", str, description=_SEL),
-            Param("magnitude_n", float, description="Force magnitude in NEWTONS (the capability "
-                                                    "layer uses force unit 0 = n_or_nm)."),
+            Param(
+                "magnitude_n",
+                float,
+                description="Force magnitude in NEWTONS (the capability "
+                "layer uses force unit 0 = n_or_nm).",
+            ),
         ],
         doc="Apply a NORMAL force to the selected face(s) of a static study and return the "
-            "ICWForce. ★ The faces come from `selection` (declarative). "
-            "⚠ The magnitude is in NEWTONS — it is not converted.",
+        "ICWForce. ★ The faces come from `selection` (declarative). "
+        "⚠ The magnitude is in NEWTONS — it is not converted.",
     ),
 ]

@@ -36,8 +36,12 @@ def main() -> int:
     model = new_document(app, "part")
     with P.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                     ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+        for a, b in (
+            ((-0.05, -0.03), (0.05, -0.03)),
+            ((0.05, -0.03), (0.05, 0.03)),
+            ((0.05, 0.03), (-0.05, 0.03)),
+            ((-0.05, 0.03), (-0.05, -0.03)),
+        ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
     P.extrude_boss(model, sk, 20.0)
 
@@ -57,16 +61,26 @@ def main() -> int:
         "★ 反向深度 = 0.0（★ 单向拉伸）": rev.get("GetDepth") == 0.0,
         "★ 拔模角 = 0.0（★ 官方：弧度）": fwd.get("GetDraftAngle") == 0.0,
         "★ 轮廓数 = 0（★ 整草图、未选轮廓）": r.get("GetContoursCount") == 0,
-        "★ ReverseDirection = True（★ 与 direction=True 一致）": r.get("ReverseDirection") is True,
+        "★ ReverseDirection = True（★ 与 direction=True 一致）": r.get(
+            "ReverseDirection"
+        )
+        is True,
         "★ BothDirections = False（★ 单向）": r.get("BothDirections") is False,
     }
-    R = {"★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_extrude_members.py` 的逐条读数）",
-         "★_单位口径": r.get("★_单位口径"),
-         "读取": {k: str(v)[:60] for k, v in r.items()},
-         "★_逐条判据": checks,
-         "★_全过": all(checks.values())}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    print("★ 读取:", json.dumps({k: str(v)[:50] for k, v in r.items()}, ensure_ascii=False)[:320])
+    R = {
+        "★_判据": "★ 逐个成员对官方 `## Returns`（★ 见 `output/_read_extrude_members.py` 的逐条读数）",
+        "★_单位口径": r.get("★_单位口径"),
+        "读取": {k: str(v)[:60] for k, v in r.items()},
+        "★_逐条判据": checks,
+        "★_全过": all(checks.values()),
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
+    print(
+        "★ 读取:",
+        json.dumps({k: str(v)[:50] for k, v in r.items()}, ensure_ascii=False)[:320],
+    )
     for k, v in checks.items():
         print("   %-38s %s" % (k, "✓" if v else "**✗**"))
     print("★ 全过 =", all(checks.values()))

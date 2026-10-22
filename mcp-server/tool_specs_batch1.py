@@ -33,6 +33,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -60,86 +61,132 @@ SPECS_BATCH1: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_topology_create_study",
         title="Create SOLIDWORKS Topology Study",
-        module="sw_topology", function="create_topology_study",
+        module="sw_topology",
+        function="create_topology_study",
         inject="sw_app",
         # ⚠ MCP 表面用 `study_name` 比 `name` 清楚；目标函数形参叫 `name`
         #   ⇒ 用 `param_alias` 显式映射（**别名也是显式的**，不靠猜）。
         param_alias={"study_name": "name"},
         params=[
-            Param("study_name", str, default="Topology Study 1",
-                  description="Study name; a study with the same name is deleted first."),
-            Param("mesh_type", int, default=0,
-                  description="swsMeshType: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam."),
+            Param(
+                "study_name",
+                str,
+                default="Topology Study 1",
+                description="Study name; a study with the same name is deleted first.",
+            ),
+            Param(
+                "mesh_type",
+                int,
+                default=0,
+                description="swsMeshType: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam.",
+            ),
             #: ★ 新增（★ 与实现同步）：★ 同名研究是否先删掉重建 ✓
-            Param("delete_existing", bool, default=True,
-                  description="Delete an existing study with the same name before creating "
-                              "(★ 与实现默认值一致 = True)。"),
+            Param(
+                "delete_existing",
+                bool,
+                default=True,
+                description="Delete an existing study with the same name before creating "
+                "(★ 与实现默认值一致 = True)。",
+            ),
         ],
-        doc=("Create a topology optimization study (analysis type 13) on the ACTIVE part. "
-             "Topology optimization works on ONE single-body part at a time (official limit). "
-             "Returns which entry point was used (CreateNewStudy3, or a fallback)."),
+        doc=(
+            "Create a topology optimization study (analysis type 13) on the ACTIVE part. "
+            "Topology optimization works on ONE single-body part at a time (official limit). "
+            "Returns which entry point was used (CreateNewStudy3, or a fallback)."
+        ),
     ),
     # 签名: def collect_topology_evidence(sw_app) -> dict[str, Any]
     ToolSpec(
         name="solidworks_topology_evidence",
         title="Collect SOLIDWORKS Topology Evidence",
-        module="sw_topology", function="collect_topology_evidence",
+        module="sw_topology",
+        function="collect_topology_evidence",
         inject="sw_app",
         params=[],
         read_only=True,
-        doc=("Read back the topology studies on the active document: names, analysis types, "
-             "and which constraints/controls exist. Read-only."),
+        doc=(
+            "Read back the topology studies on the active document: names, analysis types, "
+            "and which constraints/controls exist. Read-only."
+        ),
     ),
     # 签名: def run_topology_study(study, *, units=0, element_size=0.0, tolerance=0.0)
-    # ⚠ element_size / tolerance 单位是**毫米**（真机实测，见 sw_simulation.create_mesh 
+    # ⚠ element_size / tolerance 单位是**毫米**（真机实测，见 sw_simulation.create_mesh
     # 来源块）
     ToolSpec(
         name="solidworks_topology_run",
         title="Run SOLIDWORKS Topology Study",
-        module="sw_topology", function="run_topology_study",
+        module="sw_topology",
+        function="run_topology_study",
         inject="study",
         # `study_name` 由**解析器**消费（不进目标函数）⇒ alias 映射到 None 表示「不传」
-        param_alias={"study_name": None,
-                     "element_size_mm": "element_size",
-                     "tolerance_mm": "tolerance"},
+        param_alias={
+            "study_name": None,
+            "element_size_mm": "element_size",
+            "tolerance_mm": "tolerance",
+        },
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("units", int, default=0,
-                  description="swsUnit_e: 0=SI, 1=English, 2=Metric. "
-                              "Must be a VALID value (-1 is rejected by the API)."),
-            Param("element_size_mm", float, default=0.0,
-                  description="Global element size in MILLIMETRES, must be > 0. "
-                              "Use solidworks_simulation_default_mesh_size for the official value."),
-            Param("tolerance_mm", float, default=0.0,
-                  description="Mesh tolerance in MILLIMETRES, must be > 0. "
-                              "Official default is 5% of the element size."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "units",
+                int,
+                default=0,
+                description="swsUnit_e: 0=SI, 1=English, 2=Metric. "
+                "Must be a VALID value (-1 is rejected by the API).",
+            ),
+            Param(
+                "element_size_mm",
+                float,
+                default=0.0,
+                description="Global element size in MILLIMETRES, must be > 0. "
+                "Use solidworks_simulation_default_mesh_size for the official value.",
+            ),
+            Param(
+                "tolerance_mm",
+                float,
+                default=0.0,
+                description="Mesh tolerance in MILLIMETRES, must be > 0. "
+                "Official default is 5% of the element size.",
+            ),
         ],
-        doc=("Mesh and solve the topology study and report whether results exist. "
-             "A zero RunAnalysis return code does NOT mean success - judge by study results."),
+        doc=(
+            "Mesh and solve the topology study and report whether results exist. "
+            "A zero RunAnalysis return code does NOT mean success - judge by study results."
+        ),
     ),
-
     # ── 模具（本轮并入的新域）───────────────────────────────────────
     # 签名: def insert_parting_line(model, *, draft_analysis: bool = True)
     ToolSpec(
         name="solidworks_mold_parting_line",
         title="Insert Mold Parting Line",
-        module="sw_mold", function="insert_parting_line",
+        module="sw_mold",
+        function="insert_parting_line",
         inject="model",
         params=[
-            Param("draft_analysis", bool, default=True,
-                  description="The official single parameter. Its exact meaning is UNVERIFIED; "
-                              "kept True to match the reference usage."),
+            Param(
+                "draft_analysis",
+                bool,
+                default=True,
+                description="The official single parameter. Its exact meaning is UNVERIFIED; "
+                "kept True to match the reference usage.",
+            ),
         ],
-        doc=("Insert a mold parting line. Select the draft-direction reference first "
-             "(edge/plane/axis); without it the call inserts nothing."),
+        doc=(
+            "Insert a mold parting line. Select the draft-direction reference first "
+            "(edge/plane/axis); without it the call inserts nothing."
+        ),
     ),
     # 签名: def insert_shut_off_surface(model)
     ToolSpec(
         name="solidworks_mold_shut_off_surface",
         title="Insert Mold Shut-off Surface",
-        module="sw_mold", function="insert_shut_off_surface",
+        module="sw_mold",
+        function="insert_shut_off_surface",
         inject="model",
         params=[],
         doc="Auto-create shut-off surfaces over holes for mold separation. Zero parameters.",
@@ -149,49 +196,62 @@ SPECS_BATCH1: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_mold_draft_analysis",
         title="Run Mold Draft Analysis",
-        module="sw_mold", function="mold_draft_analysis",
+        module="sw_mold",
+        function="mold_draft_analysis",
         inject="model",
         # ⚠ `colors` 是官方第 3 参（COM `Object`），**故意不暴露** ——
         #   它在 MCP 表面无法表达。**显式声明省略**，否则与「手抄漏了」无法区分。
         omitted_params=("colors",),
         params=[
             Param("draft_angle_deg", float, description="Draft angle in DEGREES."),
-            Param("analysis_type", int, default=0,
-                  description="Official arg 2 (Int32). Its meaning is UNVERIFIED."),
-            Param("option", int, default=0,
-                  description="Official arg 4 (Int32). Its meaning is UNVERIFIED."),
+            Param(
+                "analysis_type",
+                int,
+                default=0,
+                description="Official arg 2 (Int32). Its meaning is UNVERIFIED.",
+            ),
+            Param(
+                "option",
+                int,
+                default=0,
+                description="Official arg 4 (Int32). Its meaning is UNVERIFIED.",
+            ),
         ],
-        doc=("Run mold draft analysis. Returns the official return code as-is: that code has "
-             "NO published enum, so this tool does NOT judge success from it."),
+        doc=(
+            "Run mold draft analysis. Returns the official return code as-is: that code has "
+            "NO published enum, so this tool does NOT judge success from it."
+        ),
     ),
     # 签名: def mold_evidence(model) -> dict
     ToolSpec(
         name="solidworks_mold_evidence",
         title="Collect Mold Evidence",
-        module="sw_mold", function="mold_evidence",
+        module="sw_mold",
+        function="mold_evidence",
         inject="model",
         params=[],
         read_only=True,
-        doc=("★ **当前这条在真机上**读不到东西**、★ 如实说明** —— "
-             "处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）："
-             "★ 原 doc 逐字写「Read back the mold state of the active part: parting-line/surface "
-             "and cavity/core surface counts, parting type, core-cavity split. **Read-only.**」"
-             "⇒ ★★ 而**能力层自己的 docstring 逐字**写着"
-             "「⚠ **本函数当前仍从旧位置读** ⇒ ★ **它在真机上只会返回全 `None`**」"
-             "（★ `scripts/sw_mold.py::mold_evidence`）⇒ ★★★ **两处说法相反** ✓ "
-             "★★ **真因（★ 轮 172 真机 + 反射复核）**：★ 那些计数**不在 `IFeatureManager` / "
-             "`IModelDoc2` 上**（★ 实测全 `AttributeError: <unknown>.X`），★ 而在 "
-             "**`I*FeatureData`** 上（★ `GetPartingLinesCount` ⇒ `IPartingLineFeatureData` · "
-             "`PartingType` ⇒ `IPartingSurfaceFeatureData` · `CoreCavitySplit` ⇒ "
-             "`IPartingLineFeatureData` —— ★ 事实 36 那一族：**成员在别的接口上**）✓ "
-             "★★★ **⇒ 要真读到，必须先拿到对应的 `I*FeatureData`**（★ 从**已存在的**分型线/分型面"
-             "特征上取）⇒ ★ **前提是零件上**已经有那些特征**；★ 空零件上**本来就取不到**"
-             "（★ **两者表象相同、别混**）✓ "
-             "★★★★ **∴ 现在**：★ `read_only=True` 仍然成立（★ 它确实不改模型）· "
-             "★★ 但**读到的计数会全是 `None`** ⇒ ★ 请按返回值里的 **`readable`** 字段判"
-             "（★ `false` = 本机读不到、★ **不是**「没有分型」）✓"),
+        doc=(
+            "★ **当前这条在真机上**读不到东西**、★ 如实说明** —— "
+            "处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）："
+            "★ 原 doc 逐字写「Read back the mold state of the active part: parting-line/surface "
+            "and cavity/core surface counts, parting type, core-cavity split. **Read-only.**」"
+            "⇒ ★★ 而**能力层自己的 docstring 逐字**写着"
+            "「⚠ **本函数当前仍从旧位置读** ⇒ ★ **它在真机上只会返回全 `None`**」"
+            "（★ `scripts/sw_mold.py::mold_evidence`）⇒ ★★★ **两处说法相反** ✓ "
+            "★★ **真因（★ 轮 172 真机 + 反射复核）**：★ 那些计数**不在 `IFeatureManager` / "
+            "`IModelDoc2` 上**（★ 实测全 `AttributeError: <unknown>.X`），★ 而在 "
+            "**`I*FeatureData`** 上（★ `GetPartingLinesCount` ⇒ `IPartingLineFeatureData` · "
+            "`PartingType` ⇒ `IPartingSurfaceFeatureData` · `CoreCavitySplit` ⇒ "
+            "`IPartingLineFeatureData` —— ★ 事实 36 那一族：**成员在别的接口上**）✓ "
+            "★★★ **⇒ 要真读到，必须先拿到对应的 `I*FeatureData`**（★ 从**已存在的**分型线/分型面"
+            "特征上取）⇒ ★ **前提是零件上**已经有那些特征**；★ 空零件上**本来就取不到**"
+            "（★ **两者表象相同、别混**）✓ "
+            "★★★★ **∴ 现在**：★ `read_only=True` 仍然成立（★ 它确实不改模型）· "
+            "★★ 但**读到的计数会全是 `None`** ⇒ ★ 请按返回值里的 **`readable`** 字段判"
+            "（★ `false` = 本机读不到、★ **不是**「没有分型」）✓"
+        ),
     ),
-
     # ── 仿真：材料（真机修好的那条路）───────────────────────────────
     # 签名: def set_material(model, material_name: str, database: str = SWS_MATERIAL_DAT
     # ABASE) -> str
@@ -199,17 +259,27 @@ SPECS_BATCH1: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_simulation_set_material",
         title="Set Part Material",
-        module="sw_simulation", function="set_material",
+        module="sw_simulation",
+        function="set_material",
         inject="model",
         params=[
-            Param("material_name", str,
-                  description='Material name inside the library, e.g. "AISI 1020". '
-                              '"Plain Carbon Steel" is NOT in that library.'),
-            Param("database", str, default="SOLIDWORKS Materials",
-                  description="Library DISPLAY name (NOT the .sldmat file name)."),
+            Param(
+                "material_name",
+                str,
+                description='Material name inside the library, e.g. "AISI 1020". '
+                '"Plain Carbon Steel" is NOT in that library.',
+            ),
+            Param(
+                "database",
+                str,
+                default="SOLIDWORKS Materials",
+                description="Library DISPLAY name (NOT the .sldmat file name).",
+            ),
         ],
-        doc=("Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. "
-             "An empty string means it did NOT take effect (the API itself returns void)."),
+        doc=(
+            "Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. "
+            "An empty string means it did NOT take effect (the API itself returns void)."
+        ),
     ),
 ]
 
@@ -237,7 +307,11 @@ def _study(params):
 
     sw_app = _sw_app(params)
     name = getattr(params, "study_name", "") or ""
-    study = get_study_by_name(sw_app, name) if name else next(iter(iter_studies(sw_app)), None)
+    study = (
+        get_study_by_name(sw_app, name)
+        if name
+        else next(iter(iter_studies(sw_app)), None)
+    )
     if study is None:
         raise RuntimeError("没找到研究（study_name=%r）" % name)
     return study

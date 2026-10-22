@@ -58,6 +58,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -94,18 +95,21 @@ def _select_edge(params):
     return resolve_selection(_model(), params.selection, "EDGE")
 
 
-_SEL = ("Declarative EDGE selection: '__current_selection__' (use whatever is already selected) "
-        "or 'index:<n>' (the n-th edge on the body, 0-based). ⚠ Chamfer/fillet act on the "
-        "CURRENT SELECTION — there is no edge-object parameter — so this argument is what "
-        "decides which edge is modified.")
-_ALIAS_SEL = lambda: dict(_consumed("selection"))                 # noqa: E731
+_SEL = (
+    "Declarative EDGE selection: '__current_selection__' (use whatever is already selected) "
+    "or 'index:<n>' (the n-th edge on the body, 0-based). ⚠ Chamfer/fillet act on the "
+    "CURRENT SELECTION — there is no edge-object parameter — so this argument is what "
+    "decides which edge is modified."
+)
+_ALIAS_SEL = lambda: dict(_consumed("selection"))  # noqa: E731
 
 
 SPECS_BATCH23 = [
     ToolSpec(
         name="solidworks_chamfer",
         title="Chamfer the Selected Edge(s)",
-        module="sw_part", function="chamfer",
+        module="sw_part",
+        function="chamfer",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -116,17 +120,22 @@ SPECS_BATCH23 = [
         params=[
             Param("selection", str, description=_SEL),
             Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
-            Param("angle_deg", float, default=45.0,
-                  description="Chamfer angle in DEGREES (used because the capability layer "
-                              "requests swChamferAngleDistance)."),
+            Param(
+                "angle_deg",
+                float,
+                default=45.0,
+                description="Chamfer angle in DEGREES (used because the capability layer "
+                "requests swChamferAngleDistance).",
+            ),
         ],
         doc="Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), "
-            "because the API takes no edge object — it acts on the current selection.",
+        "because the API takes no edge object — it acts on the current selection.",
     ),
     ToolSpec(
         name="solidworks_fillet",
         title="Round (Fillet) the Selected Edge(s)",
-        module="sw_part", function="fillet",
+        module="sw_part",
+        function="fillet",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -139,8 +148,8 @@ SPECS_BATCH23 = [
             Param("radius_mm", float, description="Fillet radius in MILLIMETRES."),
         ],
         doc="Round the selected edge(s) with the given radius. ★ The edge comes from `selection` "
-            "(declarative) — the capability layer passes edges=None, i.e. it acts on the "
-            "current selection.",
+        "(declarative) — the capability layer passes edges=None, i.e. it acts on the "
+        "current selection.",
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**补「改 × 特征」格** ——
     #: ★ 那一格是本仓**密度最低**的：★ 官方 **275** 个成员、★ 我们原有 **2** 个工具（**0
@@ -157,34 +166,42 @@ SPECS_BATCH23 = [
     ToolSpec(
         name="solidworks_feature_suppress",
         title="Suppress a Feature",
-        module="sw_part", function="feature_suppress",
+        module="sw_part",
+        function="feature_suppress",
         inject="model",
         param_alias={"feature_name": "feature_name"},
         params=[
-            Param("feature_name", str,
-                  description="Feature name as it appears in the FeatureManager tree "
-                              "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
-                              "name (unlike edges/faces — known fact 32)."),
+            Param(
+                "feature_name",
+                str,
+                description="Feature name as it appears in the FeatureManager tree "
+                "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
+                "name (unlike edges/faces — known fact 32).",
+            ),
         ],
         doc="Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` "
-            "(0 params). ★ It acts on the CURRENT SELECTION, so the capability layer selects "
-            "the named feature first and REFUSES to call when the selection read-back is 0 "
-            "(an empty selection would silently do nothing).",
+        "(0 params). ★ It acts on the CURRENT SELECTION, so the capability layer selects "
+        "the named feature first and REFUSES to call when the selection read-back is 0 "
+        "(an empty selection would silently do nothing).",
     ),
     ToolSpec(
         name="solidworks_feature_unsuppress",
         title="Unsuppress a Feature",
-        module="sw_part", function="feature_unsuppress",
+        module="sw_part",
+        function="feature_unsuppress",
         inject="model",
         param_alias={"feature_name": "feature_name"},
         params=[
-            Param("feature_name", str,
-                  description="Feature name as it appears in the FeatureManager tree "
-                              "(Chinese UI: e.g. 「凸台-拉伸1」)."),
+            Param(
+                "feature_name",
+                str,
+                description="Feature name as it appears in the FeatureManager tree "
+                "(Chinese UI: e.g. 「凸台-拉伸1」).",
+            ),
         ],
         doc="Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` "
-            "(0 params). ★ Same selection contract and same refusal guard as "
-            "`solidworks_feature_suppress`.",
+        "(0 params). ★ Same selection contract and same refusal guard as "
+        "`solidworks_feature_suppress`.",
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**继续补「改 × 特征」格** ——
     #:   ★ 与上两条**同族**：★ `EditDelete()` 也是**文档级**、★ **作用在当前选择上** ✓
@@ -202,19 +219,23 @@ SPECS_BATCH23 = [
     ToolSpec(
         name="solidworks_feature_delete",
         title="Delete a Feature",
-        module="sw_part", function="feature_delete",
+        module="sw_part",
+        function="feature_delete",
         inject="model",
         param_alias={"feature_name": "feature_name"},
         params=[
-            Param("feature_name", str,
-                  description="Feature name as it appears in the FeatureManager tree "
-                              "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
-                              "name (unlike edges/faces — known fact 32)."),
+            Param(
+                "feature_name",
+                str,
+                description="Feature name as it appears in the FeatureManager tree "
+                "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
+                "name (unlike edges/faces — known fact 32).",
+            ),
         ],
         doc="Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). "
-            "★ It acts on the CURRENT SELECTION, so the capability layer selects the named "
-            "feature first and REFUSES to call when the selection read-back is 0. "
-            "★ The official return is `void`, so success is observed as the feature "
-            "disappearing from the tree.",
+        "★ It acts on the CURRENT SELECTION, so the capability layer selects the named "
+        "feature first and REFUSES to call when the selection read-back is 0. "
+        "★ The official return is `void`, so success is observed as the feature "
+        "disappearing from the tree.",
     ),
 ]

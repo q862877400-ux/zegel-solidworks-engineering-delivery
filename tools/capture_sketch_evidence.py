@@ -31,6 +31,7 @@ r"""@brief 真机证据：**草图只读族 4 个工具**（砌墙 W1 / Spec Kit
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -56,8 +57,11 @@ class _P:
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"), "capability": "sketch_query",
-                "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "sketch_query",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -65,16 +69,23 @@ def main() -> int:
         import sw_connect
         from scripts import sw_part
         import tool_specs_batch18 as b18
-        from scripts.sw_sketch import count_arcs, count_lines, count_segments, is_3d_sketch
+        from scripts.sw_sketch import (
+            count_arcs,
+            count_lines,
+            count_segments,
+            is_3d_sketch,
+        )
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
-        ev["steps"]["part"] = {"ok": True,
-                               "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["part"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         #: 建一个已知草图：1 条线 + 1 个圆，然后**关掉**（★ 关键：关掉之后才验）
         sw_part.start_sketch(doc)
@@ -86,9 +97,10 @@ def main() -> int:
 
         #: ★ 走工具真实路径：_sketch_args 把 sketch_name 解析成 sketch 对象
         args_named = b18._sketch_args(_P(name))
-        args_blank = b18._sketch_args(_P(""))          #: 留空 ⇒ 用 current_sketch_name 兜底
+        args_blank = b18._sketch_args(_P(""))  #: 留空 ⇒ 用 current_sketch_name 兜底
         ev["steps"]["resolve"] = {
-            "ok": args_named.get("sketch") is not None and args_blank.get("sketch") is not None,
+            "ok": args_named.get("sketch") is not None
+            and args_blank.get("sketch") is not None,
             "by_name_on_closed_sketch": args_named.get("sketch") is not None,
             "by_blank_on_closed_sketch": args_blank.get("sketch") is not None,
             "★ 说明": "草图已关闭仍可取到 ⇒ 与探针结论一致（GetActiveSketch2/ActiveSketch 此时为 None）",
@@ -96,8 +108,12 @@ def main() -> int:
         sk = args_named["sketch"]
 
         #: 四个读数
-        got = {"count_lines": int(count_lines(sk)), "count_arcs": int(count_arcs(sk)),
-               "count_segments": int(count_segments(sk)), "is_3d": bool(is_3d_sketch(sk))}
+        got = {
+            "count_lines": int(count_lines(sk)),
+            "count_arcs": int(count_arcs(sk)),
+            "count_segments": int(count_segments(sk)),
+            "is_3d": bool(is_3d_sketch(sk)),
+        }
         #: ⚠⚠ 2026-10-01 轮 222：`count_arcs` 的期望**一开始写成 0 是错的** ——
         #: 我画的是「1 条线 + 1 个圆」，而**一个圆在 SolidWorks 底层几何里就是一段弧（整
         #: 圆）**
@@ -112,35 +128,45 @@ def main() -> int:
         #: ★ 负例：不存在的草图名 ⇒ 必须抛错
         try:
             b18._sketch_args(_P("不存在的草图_XYZ"))
-            ev["steps"]["negative_bad_name"] = {"ok": False, "★": "**没有抛错** —— 选不中却静默通过"}
+            ev["steps"]["negative_bad_name"] = {
+                "ok": False,
+                "★": "**没有抛错** —— 选不中却静默通过",
+            }
             ok = False
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["negative_bad_name"] = {"ok": True, "raised": type(exc).__name__,
-                                               "msg": str(exc)[:90]}
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["negative_bad_name"] = {
+                "ok": True,
+                "raised": type(exc).__name__,
+                "msg": str(exc)[:90],
+            }
 
         #: ★ 负例：底层薄函数的除数校验（形状变了要报错，不圆整）
         from scripts.sw_sketch import _count_by_divisor
+
         try:
             _count_by_divisor(None, lambda _s: [0.0] * 13, 12, "fake")
-            ev["steps"]["negative_divisor"] = {"ok": False, "★": "**13 不是 12 的整数倍却没抛错**"}
+            ev["steps"]["negative_divisor"] = {
+                "ok": False,
+                "★": "**13 不是 12 的整数倍却没抛错**",
+            }
             ok = False
-        except RuntimeError as exc:                            # noqa: BLE001
+        except RuntimeError as exc:  # noqa: BLE001
             ev["steps"]["negative_divisor"] = {"ok": True, "msg": str(exc)[:80]}
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -151,7 +177,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

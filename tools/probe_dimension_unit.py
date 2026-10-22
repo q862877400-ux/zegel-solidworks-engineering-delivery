@@ -35,9 +35,10 @@ def _units_of(model):
     """★ 文档单位（★ `IModelDoc2.GetUnits()` ⇒ 5 个 short，★ 第 1 个是 `swLengthUnit_e`）。"""
     try:
         from sw_connect import get_com_member
+
         raw = get_com_member(model, "GetUnits")
         return list(raw) if raw is not None else None
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return "error: %s" % str(exc)[:60]
 
 
@@ -55,7 +56,7 @@ def main() -> int:
         for n in names:
             try:
                 dim = model.Parameter(n)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["tries"].append("%s ⇒ Parameter 抛 %s" % (n, type(exc).__name__))
                 continue
             if dim is None:
@@ -64,20 +65,23 @@ def main() -> int:
             raw2 = None
             try:
                 raw2 = get_com_member(dim, "GetSystemValue2", "")
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 raw2 = "抛 %s" % type(exc).__name__
             raw3 = None
             try:
                 from sw_connect import create_empty_dispatch_variant as _e
+
                 raw3 = get_com_member(dim, "GetSystemValue3", 1, _e())
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 raw3 = "抛 %s" % type(exc).__name__
-            rec["tries"].append({
-                "name": n,
-                "GetSystemValue2_原始": str(raw2)[:60],
-                "GetSystemValue3_原始": str(raw3)[:60],
-                "★_本仓 _dimension_value_mm 会回": str(D._dimension_value_mm(dim)),
-            })
+            rec["tries"].append(
+                {
+                    "name": n,
+                    "GetSystemValue2_原始": str(raw2)[:60],
+                    "GetSystemValue3_原始": str(raw3)[:60],
+                    "★_本仓 _dimension_value_mm 会回": str(D._dimension_value_mm(dim)),
+                }
+            )
         rows.append(rec)
 
     #: ① 新建一个 20 mm 拉伸的零件（★ 与上一轮同一工况）
@@ -93,16 +97,25 @@ def main() -> int:
         old = app.OpenDoc6(str(OLD_DOC), 1, 0, "", 0, 0)
         if old:
             probe(old, "★ 旧文档 _probe_drawing_part.SLDPRT（D1 原本回 0.01）")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         rows.append({"tag": "★ 旧文档打不开", "error": str(exc)[:120]})
 
     R = {
         "★_判据": "★ 同一个尺寸：`GetSystemValue3` 的**原始值** vs 文档 **`GetUnits()`** —— "
-                  "★ 若原始值≈0.02 且单位是米 ⇒ `×1000` 对；若原始值≈20 且单位是毫米 ⇒ `×1000` 错",
-        "★_swLengthUnit_e": {"0": "swMM", "1": "swCM", "2": "swM", "3": "swINCHES",
-                             "4": "swFEET", "5": "swFEETINCHES", "6": "swANGSTROM",
-                             "7": "swNANOMETER", "8": "swMICRON", "9": "swMIL",
-                             "10": "swUINCH"},
+        "★ 若原始值≈0.02 且单位是米 ⇒ `×1000` 对；若原始值≈20 且单位是毫米 ⇒ `×1000` 错",
+        "★_swLengthUnit_e": {
+            "0": "swMM",
+            "1": "swCM",
+            "2": "swM",
+            "3": "swINCHES",
+            "4": "swFEET",
+            "5": "swFEETINCHES",
+            "6": "swANGSTROM",
+            "7": "swNANOMETER",
+            "8": "swMICRON",
+            "9": "swMIL",
+            "10": "swUINCH",
+        },
         "rows": rows,
     }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -110,7 +123,9 @@ def main() -> int:
         print("★ %s" % r.get("tag"))
         print("     GetUnits:", r.get("units_GetUnits"))
         for t in r.get("tries", []):
-            print("     ", t if isinstance(t, str) else json.dumps(t, ensure_ascii=False))
+            print(
+                "     ", t if isinstance(t, str) else json.dumps(t, ensure_ascii=False)
+            )
     print("★ wrote", OUT)
     return 0
 

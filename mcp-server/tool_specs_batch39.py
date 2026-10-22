@@ -52,21 +52,31 @@ SPECS_BATCH39 = [
     ToolSpec(
         name="solidworks_equation_add",
         title="Add a Global Equation (read-back verified)",
-        module="sw_equation", function="add_equation",
+        module="sw_equation",
+        function="add_equation",
         inject="model",
         params=[
-            Param("equation", str,
-                  description="The equation text, e.g. '\"D2@Sketch1\" = 2 * \"D1@Sketch1\"'."),
+            Param(
+                "equation",
+                str,
+                description='The equation text, e.g. \'"D2@Sketch1" = 2 * "D1@Sketch1"\'.',
+            ),
             Param("index", int, default=-1, description="-1 = append at the end."),
-            Param("solve", bool, default=True, description="Solve the equations after adding."),
+            Param(
+                "solve",
+                bool,
+                default=True,
+                description="Solve the equations after adding.",
+            ),
         ],
         doc="Add a global equation. ★ Verify by reading the equations back (the criterion the "
-            "existing smoke uses). ⚠ Does NOT save the document.",
+        "existing smoke uses). ⚠ Does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_equation_list",
         title="List the Global Equations (and their values)",
-        module="sw_equation", function="list_equations",
+        module="sw_equation",
+        function="list_equations",
         inject="model",
         params=[],
         doc="Return the document's global equations as a list. ★ Read-only.",
@@ -74,7 +84,8 @@ SPECS_BATCH39 = [
     ToolSpec(
         name="solidworks_equation_evaluate",
         title="Evaluate (Solve) the Global Equations",
-        module="sw_equation", function="evaluate_equations",
+        module="sw_equation",
+        function="evaluate_equations",
         inject="model",
         params=[],
         doc="Solve the global equations and return the result. ⚠ Does NOT save the document.",
@@ -82,35 +93,52 @@ SPECS_BATCH39 = [
     ToolSpec(
         name="solidworks_equation_delete",
         title="Delete a Global Equation by Index",
-        module="sw_equation", function="delete_equation",
+        module="sw_equation",
+        function="delete_equation",
         inject="model",
-        params=[Param("index", int, description="Zero-based equation index (★ see the list tool).")],
+        params=[
+            Param(
+                "index",
+                int,
+                description="Zero-based equation index (★ see the list tool).",
+            )
+        ],
         doc="Delete one global equation by index. ⚠ Does NOT save the document.",
     ),
     #: ── 螺旋（★ 空条目 `helix_and_spiral` 的填实）───────────────────────
     ToolSpec(
         name="solidworks_helix_insert",
         title="Insert a Helix / Spiral",
-        module="sw_helix", function="insert_helix",
+        module="sw_helix",
+        function="insert_helix",
         inject="model",
         params=[
             Param("height_mm", float, description="Helix height in MILLIMETRES."),
-            Param("pitch_mm", float, default=0.0,
-                  description="Pitch in MILLIMETRES. ⚠ 0.0 = leave it to the document default."),
-            Param("revolution", float, default=0.0,
-                  description="Number of revolutions (★ not a length, not an angle). "
-                              "⚠ 0.0 = leave it to the document default."),
+            Param(
+                "pitch_mm",
+                float,
+                default=0.0,
+                description="Pitch in MILLIMETRES. ⚠ 0.0 = leave it to the document default.",
+            ),
+            Param(
+                "revolution",
+                float,
+                default=0.0,
+                description="Number of revolutions (★ not a length, not an angle). "
+                "⚠ 0.0 = leave it to the document default.",
+            ),
         ],
         doc="Insert a helix/spiral. ★ Needs the document state the official API requires "
-            "(a circular sketch to revolve about) — the capability layer reports it if not.",
+        "(a circular sketch to revolve about) — the capability layer reports it if not.",
     ),
     #: ── 形位公差（★ 空条目 `gtol_insert` 的填实）────────────────────────
     ToolSpec(
         name="solidworks_gtol_insert",
         title="Insert a GTol Annotation (gets the object back)",
-        module="sw_gtol", function="insert_gtol",
+        module="sw_gtol",
+        function="insert_gtol",
         inject="model",
         params=[],
-        doc='Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an object and the feature tree changes. ⚠ Does NOT save the document.',
+        doc="Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an object and the feature tree changes. ⚠ Does NOT save the document.",
     ),
 ]

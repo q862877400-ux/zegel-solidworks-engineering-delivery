@@ -1,4 +1,5 @@
 """★ 探针：`InsertSweepSurface2` 的**两个未试变体** —— ★ 带引导线（mark 2）· 闭合路径。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-2 的收口探针）
 # 文件:   tools/probe_spec211_sweep_variants.py
@@ -44,7 +45,9 @@ def _classify(rep: dict) -> str:
     if rep.get("ok"):
         return "★★★★ **建成** ⇒ ★ 该形态**可做** ✓"
     if rep.get("returned_is_none"):
-        return "★★★★ **静默回 `None`**（★ 前置已完全对上）⇒ ★★ **这才是真正的「试死」** ✓"
+        return (
+            "★★★★ **静默回 `None`**（★ 前置已完全对上）⇒ ★★ **这才是真正的「试死」** ✓"
+        )
     err = str(rep.get("error") or "")
     if err.startswith(("TypeError", "com_error", "AttributeError", "RuntimeError")):
         return "★★ **抛异常** ⇒ ★ 该形态被拒（★ 错误：%s）" % err[:90]
@@ -53,6 +56,7 @@ def _classify(rep: dict) -> str:
 
 def _new_part(sw):
     import sw_connect
+
     return sw_connect.new_document(sw, "part")
 
 
@@ -62,9 +66,12 @@ def main() -> int:
     import sw_surface_features as sf
     import sw_selection_spec as SS
 
-    out: dict = {"official": "IFeatureManager.InsertSweepSurface2",
-                 "purpose": "试掉两个未试变体（★ 因为 limitations 明写「不许推广」✓）",
-                 "marks": {"profile": 1, "guide": 2, "path": 4}, "variants": {}}
+    out: dict = {
+        "official": "IFeatureManager.InsertSweepSurface2",
+        "purpose": "试掉两个未试变体（★ 因为 limitations 明写「不许推广」✓）",
+        "marks": {"profile": 1, "guide": 2, "path": 4},
+        "variants": {},
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -97,10 +104,19 @@ def main() -> int:
         "selection_before_guide": sel_before_guide,
         "selection_after": SS.get_selection_count(model),
         "features_delta": [n for n in sf.feature_names(model) if n not in before],
-        "report": {k: rep_a.get(k) for k in ("ok", "returned_is_none", "new_features",
-                                             "feature_count_before", "feature_count_after",
-                                             "error")},
-        "verdict": _classify(rep_a)}
+        "report": {
+            k: rep_a.get(k)
+            for k in (
+                "ok",
+                "returned_is_none",
+                "new_features",
+                "feature_count_before",
+                "feature_count_after",
+                "error",
+            )
+        },
+        "verdict": _classify(rep_a),
+    }
     print("★ 变体 A（带引导线 mark 1/4/2）⇒ %s" % _classify(rep_a))
     print("   新增特征 = %r" % out["variants"]["A_with_guide"]["features_delta"])
 
@@ -124,15 +140,27 @@ def main() -> int:
         "sketches": {"profile": b_p, "path": b_path},
         "selection_count": SS.get_selection_count(model2),
         "features_delta": [n for n in sf.feature_names(model2) if n not in before2],
-        "report": {k: rep_b.get(k) for k in ("ok", "returned_is_none", "new_features",
-                                             "feature_count_before", "feature_count_after",
-                                             "error")},
-        "verdict": _classify(rep_b)}
+        "report": {
+            k: rep_b.get(k)
+            for k in (
+                "ok",
+                "returned_is_none",
+                "new_features",
+                "feature_count_before",
+                "feature_count_after",
+                "error",
+            )
+        },
+        "verdict": _classify(rep_b),
+    }
     print("★ 变体 B（闭合路径 mark 1/4）⇒ %s" % _classify(rep_b))
     print("   新增特征 = %r" % out["variants"]["B_closed_path"]["features_delta"])
 
     p = ROOT / "output" / "spec211-b2-sweep-variants.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

@@ -19,6 +19,7 @@ r"""@brief 探针：`sw_part.sketch_spline` 到底建没建成？（轮 141 里 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -34,7 +35,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "spline-creation-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "spline-creation-evidence.json"
+)
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -45,8 +50,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": {}}
     sw = None
@@ -54,14 +61,16 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 打印 `sketch_spline` 的源码（先把"它到底调了什么"看清楚）
         import inspect
+
         print("  `sketch_spline` 的实现：")
         for l in inspect.getsource(sw_part.sketch_spline).splitlines()[:24]:
             print("    %s" % l[:100])
@@ -69,8 +78,12 @@ def main() -> int:
 
         for label, fn in (
             ("对照·直线", lambda d: sw_part.sketch_line(d, -10.0, 0.0, 10.0, 0.0)),
-            ("样条(4 点)", lambda d: sw_part.sketch_spline(
-                d, [(-20.0, 0.0), (-7.0, 8.0), (7.0, -8.0), (20.0, 0.0)])),
+            (
+                "样条(4 点)",
+                lambda d: sw_part.sketch_spline(
+                    d, [(-20.0, 0.0), (-7.0, 8.0), (7.0, -8.0), (20.0, 0.0)]
+                ),
+            ),
         ):
             d = sw_connect.new_document(sw, "part")
             docs.append(d)
@@ -78,25 +91,29 @@ def main() -> int:
             try:
                 ret = fn(d)
                 rtxt = type(ret).__name__
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ret, rtxt = None, "EXC: %s: %s" % (type(exc).__name__, str(exc)[:90])
             skm = sw_connect.safe_get_com_member(d, "SketchManager")
             sk = sw_connect.safe_get_com_member(skm, "ActiveSketch")
             try:
                 segs = sw_sketch.get_sketch_segments(sk)
                 n = len(segs) if isinstance(segs, list) else -1
-                types = [type(x).__name__ for x in segs] if isinstance(segs, list) else []
-            except Exception as exc:      # noqa: BLE001
+                types = (
+                    [type(x).__name__ for x in segs] if isinstance(segs, list) else []
+                )
+            except Exception as exc:  # noqa: BLE001
                 n, types = -1, ["EXC:%s" % str(exc)[:50]]
-            print("  %-12s 返回值=%-16s ⇒ `get_sketch_segments` = %d %s"
-                  % (label, rtxt, n, types[:3]))
+            print(
+                "  %-12s 返回值=%-16s ⇒ `get_sketch_segments` = %d %s"
+                % (label, rtxt, n, types[:3])
+            )
             ev["cases"][label] = {"return": rtxt, "segments": n, "seg_types": types}
             #: 顺带试 `get_splines`
             try:
                 sp = sw_sketch.get_splines(sk)
                 spn = len(sp) if isinstance(sp, list) else -1
                 spt = type(sp[0]).__name__ if isinstance(sp, list) and sp else "—"
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 spn, spt = -2, "EXC:%s" % str(exc)[:50]
             print("               `get_splines` = %s（元素类型 %s）" % (spn, spt))
             ev["cases"][label]["splines"] = spn
@@ -105,29 +122,33 @@ def main() -> int:
             if t:
                 sw.CloseDoc(t)
             docs.remove(d)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
     modals, _win_scanned = modal_dialogs()
     print()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return 0
 
 

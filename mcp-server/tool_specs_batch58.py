@@ -64,68 +64,106 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 from tool_registry import Param
+
 #: ★★ 复用 batch29 的骨架（`_spec` 里 `module="sw_simulation_loads"`、`inject="manager"`
 #: 、
 #:   `pre_call=_select_face`、`derived_args=_derive_model` 一整套都在里面）。
 from tool_specs_batch29 import _SEL, _STUDY, _spec
 
-_READBACK = ("★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
-             "⚠ 需要 Simulation 加载项（首次调用会自动加载）。")
-_THERMAL = ("⚠★ **本载荷要求算例是「热算例」**（`study_type=3`）—— ★ 在**静力算例**上"
-            "实测**不涨计数**（★ 真机对照：轮 408）。建算例请用 "
-            "`create_static_study(sw, name, study_type=3)`。")
+_READBACK = (
+    "★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
+    "⚠ 需要 Simulation 加载项（首次调用会自动加载）。"
+)
+_THERMAL = (
+    "⚠★ **本载荷要求算例是「热算例」**（`study_type=3`）—— ★ 在**静力算例**上"
+    "实测**不涨计数**（★ 真机对照：轮 408）。建算例请用 "
+    "`create_static_study(sw, name, study_type=3)`。"
+)
 
 SPECS_BATCH58 = [
     _spec(
-        "solidworks_simulation_apply_convection", "Apply a Convection Load",
+        "solidworks_simulation_apply_convection",
+        "Apply a Convection Load",
         "apply_convection_report",
         "Apply a **CONVECTION** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK + " " + _THERMAL,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        + _READBACK
+        + " "
+        + _THERMAL,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_heat_flux", "Apply a Heat Flux Load",
+        "solidworks_simulation_apply_heat_flux",
+        "Apply a Heat Flux Load",
         "apply_heat_flux_report",
         "Apply a **HEAT FLUX** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK + " " + _THERMAL,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        + _READBACK
+        + " "
+        + _THERMAL,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_heat_power", "Apply a Heat Power Load",
+        "solidworks_simulation_apply_heat_power",
+        "Apply a Heat Power Load",
         "apply_heat_power_report",
         "Apply a **HEAT POWER** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK + " " + _THERMAL,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        + _READBACK
+        + " "
+        + _THERMAL,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_radiation", "Apply a Radiation Load",
+        "solidworks_simulation_apply_radiation",
+        "Apply a Radiation Load",
         "apply_radiation_report",
         "Apply a **RADIATION** load to the selected face(s) and return a READ-BACK report. "
         "★ `radiation_type` 是官方的种类枚举（★ 默认 0）。"
-        + _READBACK + " " + _THERMAL,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL),
-         Param("radiation_type", int, default=0, description="官方 `AddRadiation` 的种类枚举（默认 0）")],
+        + _READBACK
+        + " "
+        + _THERMAL,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+            Param(
+                "radiation_type",
+                int,
+                default=0,
+                description="官方 `AddRadiation` 的种类枚举（默认 0）",
+            ),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_elastic_connector", "Add an Elastic Connector",
+        "solidworks_simulation_apply_elastic_connector",
+        "Add an Elastic Connector",
         "apply_elastic_connector_report",
         "Add an **ELASTIC CONNECTOR** between the selected face(s) and return a READ-BACK report. "
         + _READBACK
         + " ⚠★ **与上面 4 条相反：本载荷在「静力算例」下成、在「热算例」下不成**"
-          "（★ 真机对照：轮 408）⇒ ★ 建算例时请用默认的 `static`。",
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        "（★ 真机对照：轮 408）⇒ ★ 建算例时请用默认的 `static`。",
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_temperature", "Apply a Temperature Load",
+        "solidworks_simulation_apply_temperature",
+        "Apply a Temperature Load",
         "apply_temperature_report",
         "Apply a **TEMPERATURE** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK + " " + _THERMAL,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL)],
+        + _READBACK
+        + " "
+        + _THERMAL,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+        ],
     ),
 ]

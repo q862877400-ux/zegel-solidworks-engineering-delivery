@@ -30,6 +30,7 @@ r"""@brief 审计：`tools/` 下探针里「**负例输入**」是否**自证**�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -41,18 +42,20 @@ TOOLS = ROOT / "tools"
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: 「负例输入」的文件名特征
-NEG_NAME = re.compile(r"(bad|broken|tamper|invalid|wrong|corrupt|no_?table|missing)", re.I)
+NEG_NAME = re.compile(
+    r"(bad|broken|tamper|invalid|wrong|corrupt|no_?table|missing)", re.I
+)
 #: 变换调用
 TRANSFORM = re.compile(r"\bre\.sub\(|\.replace\(|\bre\.subn\(")
 #: 「自证」的证据：比对不等 / 打印字节数或长度 / 打印前后
 SELF_PROOF = re.compile(
-    r"!=\s*\w+|\w+\s*!=\s*\w+"          # 比对不等
-    r"|len\([^)]*\)\s*-\s*len\("        # 前后长度差
-    r"|->\s*%d|%d\s*->\s*%d"            # 「A -> B 字节」
-    r"|assert\s+.*!="                   # 断言
+    r"!=\s*\w+|\w+\s*!=\s*\w+"  # 比对不等
+    r"|len\([^)]*\)\s*-\s*len\("  # 前后长度差
+    r"|->\s*%d|%d\s*->\s*%d"  # 「A -> B 字节」
+    r"|assert\s+.*!="  # 断言
 )
 
-WINDOW = 10          # 在「变换」前后多少行内找自证
+WINDOW = 10  # 在「变换」前后多少行内找自证
 
 #: ★★ **显式豁免**：必须是**带非空理由**的标记 `negproof-exempt: <理由>` ✓
 #: 起因（2026-10-07 接手轮实测）：本道闸对 `tools/verify_union_349.py:112` 报了**假阳性*
@@ -67,6 +70,8 @@ WINDOW = 10          # 在「变换」前后多少行内找自证
 #:   ★ 同型先例 —— `preference-guard:` 标记（`check_user_preference_writes`）·
 #:   `MANUAL_MAP` 的「**没有依据的不许进来**」✓ ⇒ ★ **理由为空 ⇒ 不生效** ✓
 EXEMPT = re.compile(r"negproof-exempt:\s*(\S[^\n]*)")
+
+
 #: ⚠ 豁免标记必须**紧贴那一句变换**：★ 只在**紧邻变换的那一段连续注释块**里找 ✓
 #: ★ 为什么是「连续注释块」而不是「上面 N 行」：★ 理由常常要写**好几行**（本项目就这样）
 #: ，
@@ -90,13 +95,15 @@ def scan(path: Path) -> list:
         if not TRANSFORM.search(line):
             continue
         # 这个变换是否服务于一个「负例输入」？
-        window = lines[max(0, i - 4): i + WINDOW]
+        window = lines[max(0, i - 4) : i + WINDOW]
         blob = "\n".join(window)
         if not NEG_NAME.search(blob):
             continue
         proved = bool(SELF_PROOF.search(blob))
         m = EXEMPT.search(_comment_block_above(lines, i))
-        out.append((i + 1, line.strip()[:74], proved, m.group(1).strip() if m else None))
+        out.append(
+            (i + 1, line.strip()[:74], proved, m.group(1).strip() if m else None)
+        )
     return out
 
 
@@ -106,10 +113,15 @@ def main() -> int:
     #: ⚑ **首行必须自带分母**（轮 192）：读者（与人写的 review 脚本）**只看首行** ——
     #:   本项目实测过一次：因为只看首行，我把"分母在第二行"误判成"这道门禁没分母"。
     print("负例输入自证审计 · 扫 %s（**%d** 个 .py）" % (TOOLS, len(files)))
-    print("  判据：凡「用变换造负例输入」的地方，必须在前后 %d 行内**自证变换生效**" % WINDOW)
+    print(
+        "  判据：凡「用变换造负例输入」的地方，必须在前后 %d 行内**自证变换生效**"
+        % WINDOW
+    )
     print("  （比对不等 / 打印前后字节数 / 断言）")
-    print("  ★ 另：紧贴变换的**连续注释块**里写 `negproof-exempt: <理由>` 可**显式豁免**"
-          "（★ 理由为空 ⇒ 不生效）")
+    print(
+        "  ★ 另：紧贴变换的**连续注释块**里写 `negproof-exempt: <理由>` 可**显式豁免**"
+        "（★ 理由为空 ⇒ 不生效）"
+    )
     print()
     for f in files:
         hits = scan(f)
@@ -130,17 +142,29 @@ def main() -> int:
     print()
     if bad:
         print("[FAIL] **%d/%d** 处「造负例输入」的变换**没有自证**：" % (bad, total))
-        print("  ⚠ 变换可能**根本没生效** ⇒ 那个负例输入**等于真输入** ⇒ **用例空转却显示通过**")
+        print(
+            "  ⚠ 变换可能**根本没生效** ⇒ 那个负例输入**等于真输入** ⇒ **用例空转却显示通过**"
+        )
         print("     （2026-10-01 轮 84 就是这么撞见的：删表的正则没匹配上）")
         print("  修法：在变换后加一句**自证** ——")
-        print("        `assert new != old` 或 `print('坏输入: %d -> %d 字节' % (len(old), len(new)))`")
-        print("  ★ 或者：若该变换**根本不参与造负例输入** ⇒ 在它（或上面 2 行内）写一句")
-        print("        `# negproof-exempt: <为什么它不是造负例输入>`（★ **理由不能为空**）")
+        print(
+            "        `assert new != old` 或 `print('坏输入: %d -> %d 字节' % (len(old), len(new)))`"
+        )
+        print(
+            "  ★ 或者：若该变换**根本不参与造负例输入** ⇒ 在它（或上面 2 行内）写一句"
+        )
+        print(
+            "        `# negproof-exempt: <为什么它不是造负例输入>`（★ **理由不能为空**）"
+        )
         return 1
-    print("[PASS] %d 处「造负例输入」的变换**全部自证**（比对/字节数/断言）"
-          "%s" % (total, "，另 %d 处走带理由的显式豁免" % exempt if exempt else ""))
+    print(
+        "[PASS] %d 处「造负例输入」的变换**全部自证**（比对/字节数/断言）"
+        "%s" % (total, "，另 %d 处走带理由的显式豁免" % exempt if exempt else "")
+    )
     print("  ⚠ **覆盖面声明**：本审计只判「**变换没生效**」这一类（类型 1）；")
-    print("     类型 2/3/4（坏的理由不对 / 负例与正例同结果 / 断言打在恒定字段）**需要语义判断，未判**。")
+    print(
+        "     类型 2/3/4（坏的理由不对 / 负例与正例同结果 / 断言打在恒定字段）**需要语义判断，未判**。"
+    )
     return 0
 
 

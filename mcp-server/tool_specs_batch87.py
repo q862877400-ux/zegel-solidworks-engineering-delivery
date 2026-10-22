@@ -1,4 +1,5 @@
 """★ 批次 87：由 Bunny 扇出产出、**经门禁**（`tools/check_bunny_toolspec_rows.py`）过滤后的 ToolSpec 声明。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   sw_costing · sw_selection
@@ -21,16 +22,17 @@ SPECS_BATCH87 = [
     ToolSpec(
         name="solidworks_selection_clear_colors",
         title="Clear All Selection Colors (ISelectionMgr.ClearSelectionColors)",
-        module="sw_selection", function="clear_selection_colors",
+        module="sw_selection",
+        function="clear_selection_colors",
         inject="selection",
-        params=[
-        ],
+        params=[],
         doc="★ 官方签名（逐字，来自 ClearSelectionColors.md）：`void ClearSelectionColors()`。官方页正文只有一句描述逐字「Cleans all of selection color settings.」；★ 该页**没有 `## Remarks` 段**（`## See Also` 里逐字两条：`[[ISelectionMgr Interface]]` · `[[ISelectionMgr Members]]` · `[[ISelectionMgr::SelectionColor Property]]` ⇒ ★ 官方自己把它和 `SelectionColor` 属性配成一对）。★ CHM VB6 页 `SldWorks~SelectionMgr~ClearSelectionColors",
     ),
     ToolSpec(
         name="solidworks_costing_set_default_template",
         title="Set the Default Costing Template of a Category",
-        module="sw_costing", function="set_default_template",
+        module="sw_costing",
+        function="set_default_template",
         inject="defaults",
         params=[
             Param("category", int, default=0, description=""),

@@ -25,6 +25,7 @@ r"""@brief 证伪实验：证明**一次性**模态框检查**真的会漏**，�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -39,9 +40,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "modal-polling-catches.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "modal-polling-catches.json"
+)
 
-TRIGGER = '''import sys
+TRIGGER = """import sys
 sys.path.insert(0, r"{root}")
 sys.path.insert(0, r"{root}\\scripts")
 import sw_connect
@@ -61,11 +64,12 @@ try:
         sw.CloseDoc(t)
 except Exception:
     pass
-'''
+"""
 
 
 def main() -> int:
     import sw_connect
+
     ev: dict = {}
     script = Path(Path(__file__).resolve().parents[1] / "output" / "_trigger_poll.py")
     script.parent.mkdir(parents=True, exist_ok=True)
@@ -75,9 +79,11 @@ def main() -> int:
     sw_connect.dismiss_residual_dialogs(sw, settle_seconds=0.3)
 
     log = Path(Path(__file__).resolve().parents[1] / "output" / "_trigger_poll.log")
-    proc = subprocess.Popen([sys.executable, "-u", str(script)],
-                            stdout=log.open("w", encoding="utf-8"),
-                            stderr=subprocess.STDOUT)
+    proc = subprocess.Popen(
+        [sys.executable, "-u", str(script)],
+        stdout=log.open("w", encoding="utf-8"),
+        stderr=subprocess.STDOUT,
+    )
     print("  ① 后台触发 PID=%d（会阻塞）" % proc.pid)
 
     #: ② **一次性**查 —— ⚠⚠ **只查一次**，而且**紧接触发之后**（不等）
@@ -87,7 +93,10 @@ def main() -> int:
     d_once, w_once = sw_connect.residual_dialogs(settle_seconds=0.0)
     ev["one_shot_count"] = len(d_once)
     ev["one_shot_windows"] = w_once
-    print("  ② **只查一次**（紧接触发）⇒ **%d** 个框（扫了 %d 个窗口）" % (len(d_once), w_once))
+    print(
+        "  ② **只查一次**（紧接触发）⇒ **%d** 个框（扫了 %d 个窗口）"
+        % (len(d_once), w_once)
+    )
 
     #: ③ **轮询**查（改之后的默认）—— 也必须**制造一个只看一眼**的对照
     t0 = time.time()
@@ -112,22 +121,32 @@ def main() -> int:
 
     tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-4:]
     ev["trigger_log_tail"] = tail
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── 触发进程输出 ──")
     for l in tail:
         print("    %s" % l[:96])
     print()
     #: ★ 判据：**一次性**必须**漏**（0），而**轮询**必须**抓到**（≥1）
-    blind_missed = (ev["one_shot_count"] == 0)
-    polling_caught = (len(d2) >= 1)
+    blind_missed = ev["one_shot_count"] == 0
+    polling_caught = len(d2) >= 1
     ev["blind_missed"] = blind_missed
     ev["polling_caught"] = polling_caught
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("  ★ 一次性漏掉: %s · 轮询抓到: %s ⇒ %s"
-          % (blind_missed, polling_caught,
-             "**盲区已证实，且轮询修掉了它**" if (blind_missed and polling_caught)
-             else "⚠ 本实验**没造出盲区**（不是「修好了」）—— 如实报"))
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(
+        "  ★ 一次性漏掉: %s · 轮询抓到: %s ⇒ %s"
+        % (
+            blind_missed,
+            polling_caught,
+            "**盲区已证实，且轮询修掉了它**"
+            if (blind_missed and polling_caught)
+            else "⚠ 本实验**没造出盲区**（不是「修好了」）—— 如实报",
+        )
+    )
     print("  证据: %s" % OUT)
     return 0 if (blind_missed and polling_caught) else 1
 

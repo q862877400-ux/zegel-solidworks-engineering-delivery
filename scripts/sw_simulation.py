@@ -81,7 +81,6 @@ except ImportError:
         out_i4,
         safe_get_com_member,
         set_com_member,
-
     )
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -137,15 +136,22 @@ SIMULATION_ADDIN_PROGID = "SldWorks.Simulation"
 #: Simulation 加载项 DLL 的**完整路径** —— `LoadAddIn` 要的是这个（官方文档：
 #: "Fully qualified file name of the add-in"）。路径来自只读注册表的 `InprocServer32`。
 SIMULATION_ADDIN_DLL = Path(
-    r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\Simulation\cosworks.dll")
+    r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\Simulation\cosworks.dll"
+)
 
 #: 官方 `swLoadAddinError_e`（读 `C:\swapi\enums\swLoadAddinError_e.md`）——
 #: ★ 有它才能**把"许可错"和"文件没找到"分开**（7 vs 3）。
 #: ⚠ 旧代码把 `LoadAddIn` 的 `3` 读成了"可能是许可问题"，**那是错的**。
 LOAD_ADDIN_CODES = {
-    0: "swSuccess", 1: "swAddinNotLoaded", 2: "swAddinAlreadyLoaded", 3: "swFileNotFound",
-    4: "swAddinsDisabled", 5: "swLoadConflict", 6: "swRegistrationError",
-    7: "swLicenseError", -1: "swUnknownError",
+    0: "swSuccess",
+    1: "swAddinNotLoaded",
+    2: "swAddinAlreadyLoaded",
+    3: "swFileNotFound",
+    4: "swAddinsDisabled",
+    5: "swLoadConflict",
+    6: "swRegistrationError",
+    7: "swLicenseError",
+    -1: "swUnknownError",
 }
 
 
@@ -158,50 +164,50 @@ LOAD_ADDIN_CODES = {
 # ⚠ 本表为静态反射结果，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SWS_RESTRAINT_TYPES = {
-    "fixed": 0,                # swsRestraintTypeFixed
-    "immovable": 1,            # swsRestraintTypeImmovable
-    "symmetric": 2,            # swsRestraintTypeSymmetric
-    "roller": 3,               # swsRestraintTypeRoller
-    "hinge": 4,                # swsRestraintTypeHinge
-    "reference_geometry": 5,   # swsRestraintTypeReferenceGeometry
-    "flat_face": 6,            # swsRestraintTypeFlatFace
-    "cylindrical_faces": 7,    # swsRestraintTypeCylindricalFaces
-    "spherical_surface": 8,    # swsRestraintTypeSphericalSurface
-    "cyclic_symmetry": 9,      # swsRestraintTypeCyclicSymmetry
+    "fixed": 0,  # swsRestraintTypeFixed
+    "immovable": 1,  # swsRestraintTypeImmovable
+    "symmetric": 2,  # swsRestraintTypeSymmetric
+    "roller": 3,  # swsRestraintTypeRoller
+    "hinge": 4,  # swsRestraintTypeHinge
+    "reference_geometry": 5,  # swsRestraintTypeReferenceGeometry
+    "flat_face": 6,  # swsRestraintTypeFlatFace
+    "cylindrical_faces": 7,  # swsRestraintTypeCylindricalFaces
+    "spherical_surface": 8,  # swsRestraintTypeSphericalSurface
+    "cyclic_symmetry": 9,  # swsRestraintTypeCyclicSymmetry
 }
 
 SWS_FORCE_TYPES = {
-    "force_or_moment": 0,      # swsForceTypeForceOrMoment
-    "normal": 1,               # swsForceTypeNormal
-    "torque": 2,               # swsForceTypeTorque
+    "force_or_moment": 0,  # swsForceTypeForceOrMoment
+    "normal": 1,  # swsForceTypeNormal
+    "torque": 2,  # swsForceTypeTorque
 }
 
 SWS_FORCE_UNITS = {
-    "n_or_nm": 0,              # swsForceUnitNOrNm
-    "lb_or_lbin": 1,           # swsForceUnitlbOrlbin
-    "kgf_or_kgfcm": 2,         # swsForceUnitkgfOrkgfcm
+    "n_or_nm": 0,  # swsForceUnitNOrNm
+    "lb_or_lbin": 1,  # swsForceUnitlbOrlbin
+    "kgf_or_kgfcm": 2,  # swsForceUnitkgfOrkgfcm
 }
 
 SWS_MESH_TYPES = {
-    "solid": 0,                # swsMeshTypeSolid
-    "mid_surface": 1,          # swsMeshTypeMidSurface
-    "surfaces": 2,             # swsMeshTypeSurfaces
-    "mixed": 3,                # swsMeshTypeMixed
-    "beam": 4,                 # swsMeshTypeBeam
+    "solid": 0,  # swsMeshTypeSolid
+    "mid_surface": 1,  # swsMeshTypeMidSurface
+    "surfaces": 2,  # swsMeshTypeSurfaces
+    "mixed": 3,  # swsMeshTypeMixed
+    "beam": 4,  # swsMeshTypeBeam
 }
 
 SWS_ANALYSIS_STUDY_TYPES = {
-    "static": 0,               # swsAnalysisStudyTypeStatic
-    "frequency": 1,            # swsAnalysisStudyTypeFrequency
-    "buckling": 2,             # swsAnalysisStudyTypeBuckling
-    "thermal": 3,              # swsAnalysisStudyTypeThermal
-    "optimization": 4,         # swsAnalysisStudyTypeOptimization
-    "nonlinear": 5,            # swsAnalysisStudyTypeNonlinear
-    "drop_test": 6,            # swsAnalysisStudyTypeDropTest
-    "fatigue": 7,              # swsAnalysisStudyTypeFatigue
-    "dynamic": 8,              # swsAnalysisStudyTypeDynamic
-    "pressure_vessel": 9,      # swsAnalysisStudyTypePressureVessel
-    "topology_static": 13,     # swsAnalysisStudyTypeTopology_Static
+    "static": 0,  # swsAnalysisStudyTypeStatic
+    "frequency": 1,  # swsAnalysisStudyTypeFrequency
+    "buckling": 2,  # swsAnalysisStudyTypeBuckling
+    "thermal": 3,  # swsAnalysisStudyTypeThermal
+    "optimization": 4,  # swsAnalysisStudyTypeOptimization
+    "nonlinear": 5,  # swsAnalysisStudyTypeNonlinear
+    "drop_test": 6,  # swsAnalysisStudyTypeDropTest
+    "fatigue": 7,  # swsAnalysisStudyTypeFatigue
+    "dynamic": 8,  # swsAnalysisStudyTypeDynamic
+    "pressure_vessel": 9,  # swsAnalysisStudyTypePressureVessel
+    "topology_static": 13,  # swsAnalysisStudyTypeTopology_Static
     # 10/11/12 为 swsAnalysisStudyTypeReserved1..3，官方标为保留值，此处不收录。
 }
 
@@ -210,7 +216,7 @@ SWS_ANALYSIS_STUDY_TYPES = {
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
 # 定位:   Simulation 入口链的逐跳签名：ICwAddincallback : CosmosWorks get_CosmosWorks(
-#           )   ← 属性ICosmosWorks     : CWModelDoc get_ActiveDoc()      ← 属性         
+#           )   ← 属性ICosmosWorks     : CWModelDoc get_ActiveDoc()      ← 属性
 #                    : String     get_VersionNumber() ← 属性ICWModelDoc      : CWStudyMa
 #           nager get_StudyManager() ← 属性
 # 查证:   对上述 4 个接口逐个 GetMembers() 后人工筛出上列 5 个成员。
@@ -254,7 +260,8 @@ def ensure_simulation_addin(sw_app):
     if not dll.is_file():
         raise RuntimeError(
             "Simulation 加载项取不到，且找不到它的 DLL（%s）⇒ "
-            "**路径不对**，不是许可问题（许可错会是 7）" % dll)
+            "**路径不对**，不是许可问题（许可错会是 7）" % dll
+        )
     rc = get_com_member(sw_app, "LoadAddIn", str(dll))
     #: ② 装完再取
     addin = get_com_member(sw_app, "GetAddInObject", SIMULATION_ADDIN_PROGID)
@@ -262,7 +269,8 @@ def ensure_simulation_addin(sw_app):
         raise RuntimeError(
             "LoadAddIn(%s) ⇒ %s（%s），之后 GetAddInObject 仍为 None ⇒ "
             "见 swLoadAddinError_e：0=成功·2=已加载·3=文件没找到·4=被禁用·7=**许可错**"
-            % (dll, rc, LOAD_ADDIN_CODES.get(rc, "不在枚举里")))
+            % (dll, rc, LOAD_ADDIN_CODES.get(rc, "不在枚举里"))
+        )
     return addin
 
 
@@ -289,9 +297,7 @@ def get_cw_document(sw_app):
     cosmos = get_cosmosworks(sw_app)
     document = get_com_member(cosmos, "ActiveDoc")
     if document is None:
-        raise RuntimeError(
-            "CosmosWorks.ActiveDoc 为 None：Simulation 中没有活动文档"
-        )
+        raise RuntimeError("CosmosWorks.ActiveDoc 为 None：Simulation 中没有活动文档")
     return document
 
 
@@ -310,7 +316,7 @@ def get_study_manager(sw_app):
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
 # 定位:   ICWStudyManager.CreateNewStudy3 的官方签名（共 4 个参数）：  CWStudy CreateN
-#           ewStudy3( String Name,                          Int32 StudyType,            
+#           ewStudy3( String Name,                          Int32 StudyType,
 #                         Int32 MeshType,                          Int32& ErrorCode )另
 #           有降级入口 CreateNewStudy2(String, Int32, Int32&) 与CreateNewStudy(String, I
 #           nt32, Int32&) —— 两者少一个 MeshType，本模块只在 CreateNewStudy3 不可用时按
@@ -359,7 +365,12 @@ def create_static_study(
             #   本函数初稿误按 3 参调用，是被 D:\AI\SW\tools\audit_call_arity.py
             #   的自动 arity 比对抓出来的（它报「同名成员存在但 arity 全对不上」）。
             study = get_com_member(
-                manager, "CreateNewStudy", str(name), int(study_type), int(mesh_type), out_i4()
+                manager,
+                "CreateNewStudy",
+                str(name),
+                int(study_type),
+                int(mesh_type),
+                out_i4(),
             )
             entry_name = "CreateNewStudy" if study is not None else ""
 
@@ -473,7 +484,7 @@ def _selected_dispatch_array(model, expected: int | None = None):
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
 # 定位:   ICWLoadsAndRestraintsManager.AddRestraint 的官方签名（共 4 个参数）：  CWRes
 #           traint AddRestraint( Int32   RestraintType,                            Objec
-#           t  Entities,                            Object  <第 3 参语义未查证>,        
+#           t  Entities,                            Object  <第 3 参语义未查证>,
 #                               Int32&  ErrorCode )返回的 CWRestraint 上有 set_Restraint
 #           Type(Int32) 可事后改类型。
 # 查证:   sw_know.py 对 cosworks 无收录（其镜像只含 12 个程序集），
@@ -521,12 +532,18 @@ def _require_nonempty_selection(model, *, what: str) -> int:
             "载荷/夹具**建成也无效**，求解时会弹「未定义载荷或规定的位移」并失败。"
             "★ 改法：用 `face_selector`（如 `-z` / `+z` / `+x` …）或先确认那个坐标点"
             "**落在面上**（真机实测：`(0,0,0)` 在实体内部 ⇒ 计数 0；`(0,0,-0.02)` 在面上 ⇒ 计数 1）"
-            % what)
+            % what
+        )
     return n
 
 
-def apply_fixed_restraint(study, *, model=None, face_selector: str | None = None,
-                          restraint_type: int = SWS_RESTRAINT_TYPES["fixed"]):
+def apply_fixed_restraint(
+    study,
+    *,
+    model=None,
+    face_selector: str | None = None,
+    restraint_type: int = SWS_RESTRAINT_TYPES["fixed"],
+):
     """施加夹具，返回 ICWRestraint 对象。
 
     ★ 实体选择有**三条**合法的路（★ 推荐第 1 条 —— 它**不带坐标**）：
@@ -539,22 +556,31 @@ def apply_fixed_restraint(study, *, model=None, face_selector: str | None = None
     """
     if face_selector is not None:
         if model is None:
-            raise ValueError("给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）")
+            raise ValueError(
+                "给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）"
+            )
         _n = select_face_by_selector(model, str(face_selector))
     if model is not None:
         _require_nonempty_selection(model, what="AddRestraint")
     manager = _loads_and_restraints_manager(study)
     entities = _selected_dispatch_array(model) if model is not None else None
     restraint = get_com_member(
-        manager, "AddRestraint", int(restraint_type), entities,
-        create_empty_dispatch_variant(), out_i4(),
+        manager,
+        "AddRestraint",
+        int(restraint_type),
+        entities,
+        create_empty_dispatch_variant(),
+        out_i4(),
     )
     if restraint is None:
         raise RuntimeError(
             f"AddRestraint({restraint_type}) 未返回对象："
-            + ("未传 model ⇒ 无法把选区实体装成 DispArray" if model is None
-               else f"选区里只有 {len(entities or [])} 个实体；"
-                    "常见原因为选区为空，或该实体类型不支持所选夹具类型")
+            + (
+                "未传 model ⇒ 无法把选区实体装成 DispArray"
+                if model is None
+                else f"选区里只有 {len(entities or [])} 个实体；"
+                "常见原因为选区为空，或该实体类型不支持所选夹具类型"
+            )
         )
     return restraint
 
@@ -563,7 +589,7 @@ def apply_fixed_restraint(study, *, model=None, face_selector: str | None = None
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
 # 定位:   ICWLoadsAndRestraintsManager.AddForce 的官方签名（共 4 个参数）：  CWForce A
-#           ddForce( Int32  ForceType,                    Object Entities,              
+#           ddForce( Int32  ForceType,                    Object Entities,
 #                 Object <第 3 参语义未查证>,                    Int32& ErrorCode )⚠ **
 #           力的大小不在 AddForce 的参数里**。大小要在返回的 CWForce 上用 set_NormalForc
 #           eOrTorqueValue(Double) 回填 —— 该 setter 已在ICWForce 的反射清单中核到。
@@ -599,7 +625,9 @@ def apply_normal_force(
         raise ValueError("力的大小不能为 0")
     if face_selector is not None:
         if model is None:
-            raise ValueError("给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）")
+            raise ValueError(
+                "给了 `face_selector` 就必须同时给 `model`（要用来解析面上的点）"
+            )
         _n = select_face_by_selector(model, str(face_selector))
     if model is not None:
         _require_nonempty_selection(model, what="AddForce")
@@ -607,8 +635,12 @@ def apply_normal_force(
     manager = _loads_and_restraints_manager(study)
     entities = _selected_dispatch_array(model) if model is not None else None
     force = get_com_member(
-        manager, "AddForce", int(force_type), entities,
-        create_empty_dispatch_variant(), out_i4(),
+        manager,
+        "AddForce",
+        int(force_type),
+        entities,
+        create_empty_dispatch_variant(),
+        out_i4(),
     )
     if force is None:
         raise RuntimeError(
@@ -651,12 +683,12 @@ SWSU_METRIC = 2
 # 文件:   `lang\english\api\cworksapivb6.chm` 的
 #         `CosmosWorksLib~CWStudy~CreateMesh.html`（解包到 `C:\cworks_vb6`）
 # 定位:   ``ICWStudy.CreateMesh`` 的**官方参数名与顺序**：  Public Function CreateMesh
-#           ( _      ByVal NUnits As Long, _          ' ← 第 1 参 = 单位（swsUnit_e）   
+#           ( _      ByVal NUnits As Long, _          ' ← 第 1 参 = 单位（swsUnit_e）
 #              ByVal DElementSize As Double, _  ' ← 第 2 参 = 单元尺寸      ByVal DToler
 #           ance As Double _     ' ← 第 3 参 = 容差  ) As Long
 # 枚举:   ``swsUnit_e`` = SI 0 / English 1 / Metric 2
 #         （同源页 `CosmosWorksLib~swsUnit_e.html`）
-# ⚠⚠ **本函数此前把第 2、3 参写反了**（旧签名 `create_mesh(study, mesh_type, tolerance, 
+# ⚠⚠ **本函数此前把第 2、3 参写反了**（旧签名 `create_mesh(study, mesh_type, tolerance,
 # size)`
 #   把 tolerance 传在第 2 位、size 第 3 位）。2026-10-01 真机实测（SW 2026 SP4.1）：
 #         CreateMesh(0, 4.9339, 0.2467)   → 返回 0，**7,219 个单元**（100×60×20 mm 板，✓ 正常）
@@ -675,8 +707,9 @@ SWSU_METRIC = 2
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数整体（自本行至函数结束）
 # ────────────────────────────────────────────────────────────────────
-def create_mesh(study, *, units: int = SWSU_SI, element_size: float = 0.0,
-                tolerance: float = 0.0):
+def create_mesh(
+    study, *, units: int = SWSU_SI, element_size: float = 0.0, tolerance: float = 0.0
+):
     """在研究上生成网格，返回官方返回码（0 = ``swsStudyMeshSucceeded``）。
 
     ⚠ **参数单位是「毫米」**（与文档长度单位一致），且**顺序是**
@@ -692,8 +725,9 @@ def create_mesh(study, *, units: int = SWSU_SI, element_size: float = 0.0,
     :returns: 官方返回码。0 = 成功；5 = 尺寸/容差非正。
     """
     return int(
-        get_com_member(study, "CreateMesh", int(units),
-                       float(element_size), float(tolerance))
+        get_com_member(
+            study, "CreateMesh", int(units), float(element_size), float(tolerance)
+        )
         or 0
     )
 
@@ -701,7 +735,7 @@ def create_mesh(study, *, units: int = SWSU_SI, element_size: float = 0.0,
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 Simulation VB6 类型库 CHM（同 `create_mesh` 的来源块）
 # 文件:   `CosmosWorksLib~CWMesh~GetDefaultElementSizeAndTolerance.html`
-# 定位:   ``Public Sub GetDefaultElementSizeAndTolerance( _  ByVal NUnits As Long, _  
+# 定位:   ``Public Sub GetDefaultElementSizeAndTolerance( _  ByVal NUnits As Long, _
 #               ' 与 CreateMesh 的第 1 参同义  ByRef DElementSize As Double, _  ByRef DT
 #           olerance As Double _ )``
 # ⚠ 真机实测（2026-10-01）：传 ``NUnits=-1`` 返回**毫米级**（4.9339 / 0.2467）；
@@ -733,12 +767,13 @@ def default_element_size_and_tolerance(study, units: int = -1) -> tuple[float, f
     import pythoncom
     from win32com.client import VARIANT
 
-    mesh = get_com_member(study, "Mesh")          # ← 设置成员在 ICWMesh 上
+    mesh = get_com_member(study, "Mesh")  # ← 设置成员在 ICWMesh 上
     v_size = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_R8, 0.0)
     v_tol = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_R8, 0.0)
     try:
-        get_com_member(mesh, "GetDefaultElementSizeAndTolerance",
-                       int(units), v_size, v_tol)
+        get_com_member(
+            mesh, "GetDefaultElementSizeAndTolerance", int(units), v_size, v_tol
+        )
     except Exception:
         return 0.0, 0.0
     return float(v_size.value), float(v_tol.value)
@@ -780,8 +815,9 @@ SWS_MATERIAL_DATABASE = "SOLIDWORKS Materials"
 # ⚠ 本函数的成功路径**已在本机实测**（见 `docs/A9-solve-attempts.md` §二之三），
 #   但**失败分支**（库名/材料名拼错）未逐一实测。
 # ────────────────────────────────────────────────────────────────────
-def set_material(model, material_name: str,
-                 database: str = SWS_MATERIAL_DATABASE) -> str:
+def set_material(
+    model, material_name: str, database: str = SWS_MATERIAL_DATABASE
+) -> str:
     """给零件赋材料，**返回回读到的材料名**（空串 = 没赋上）。
 
     ★★★ **spec 261 换路由后的语义变化（★ 真机实测）**：本函数原先回读**废弃的** ``MaterialIdName``，
@@ -817,9 +853,10 @@ def _read_material_id_name(model) -> str:
     try:
         import pythoncom
         from win32com.client import VARIANT
+
         db = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_BSTR, "")
         return str(get_com_member(model, "GetMaterialPropertyName2", "", db) or "")
-    except Exception:                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
 
 
@@ -841,8 +878,9 @@ def _read_material_id_name(model) -> str:
 # ⚠ 已在本机实测（上面两组计数即证据）；但**只测了平面**，
 #   曲面/圆柱面用点定位的行为未实测。
 # ────────────────────────────────────────────────────────────────────
-def select_face_at(model, x: float, y: float, z: float, *, mark: int = 0,
-                   append: bool = False) -> int:
+def select_face_at(
+    model, x: float, y: float, z: float, *, mark: int = 0, append: bool = False
+) -> int:
     """按**面上的一个点**（米）选面，返回**回读到的选区计数**。
 
     ⚠ ``SelectByID2`` 的返回值不可信（AGENTS.md 已知事实 8）⇒ 本函数返回计数。
@@ -852,9 +890,21 @@ def select_face_at(model, x: float, y: float, z: float, *, mark: int = 0,
     :returns: ``ISelectionManager.GetSelectedObjectCount2(-1)`` 的回读值。
     """
     from .sw_part import _empty_callout
+
     ext = get_com_member(model, "Extension")
-    get_com_member(ext, "SelectByID2", "", "FACE", float(x), float(y), float(z),
-                   bool(append), int(mark), _empty_callout(), 0)
+    get_com_member(
+        ext,
+        "SelectByID2",
+        "",
+        "FACE",
+        float(x),
+        float(y),
+        float(z),
+        bool(append),
+        int(mark),
+        _empty_callout(),
+        0,
+    )
     sm = get_com_member(model, "SelectionManager")
     return int(get_com_member(sm, "GetSelectedObjectCount2", -1) or 0)
 
@@ -899,7 +949,7 @@ def resolve_face_selector(model, selector: str):
     key = str(selector).strip().lower()
     if key not in FACE_SELECTORS:
         return None
-    bodies = get_com_member(model, "GetBodies2", 0, True)   # 0 = swSolidBody
+    bodies = get_com_member(model, "GetBodies2", 0, True)  # 0 = swSolidBody
     if not bodies:
         return None
     try:
@@ -931,8 +981,9 @@ def resolve_face_selector(model, selector: str):
 # 覆盖:   本函数整体（自本行至函数结束）
 # ⚠ **未在本机实测**（组合层没跑过；两个被组合的函数各自已实测）—— 铁律 2
 # ────────────────────────────────────────────────────────────────────
-def select_face_by_selector_report(model, selection: str, *, mark: int = 0,
-                                   append: bool = False) -> dict:
+def select_face_by_selector_report(
+    model, selection: str, *, mark: int = 0, append: bool = False
+) -> dict:
     """★ 按**声明式选择器**选一个面，回**可 JSON 化**的报告。
 
     ★★ 为什么它**能**当工具而旁边两条不能（**规则 3** 的判断）：
@@ -948,21 +999,40 @@ def select_face_by_selector_report(model, selection: str, *, mark: int = 0,
     :returns: `{ok, selection, count, ...}`，判据是**回读计数**（★ 不是返回值）。
     """
     try:
-        n = int(select_face_by_selector(model, str(selection), mark=int(mark), append=bool(append)))
+        n = int(
+            select_face_by_selector(
+                model, str(selection), mark=int(mark), append=bool(append)
+            )
+        )
     except ValueError as exc:
-        return {"ok": False, "selection": str(selection), "stage": "resolve",
-                "error": str(exc)[:200], "legal": list(FACE_SELECTORS)}
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "selection": str(selection), "stage": "select",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:160])}
-    return {"ok": n == 1, "selection": str(selection), "count": n,
-            "mark": int(mark), "append": bool(append),
-            "★": "★ 判据是**回读计数 == 1**（★ 而不是返回值）；"
-                 "★★ 而 `append=False` **不会清掉上一次** ⇒ 需要时自己先 `ClearSelection2`。"}
+        return {
+            "ok": False,
+            "selection": str(selection),
+            "stage": "resolve",
+            "error": str(exc)[:200],
+            "legal": list(FACE_SELECTORS),
+        }
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "selection": str(selection),
+            "stage": "select",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:160]),
+        }
+    return {
+        "ok": n == 1,
+        "selection": str(selection),
+        "count": n,
+        "mark": int(mark),
+        "append": bool(append),
+        "★": "★ 判据是**回读计数 == 1**（★ 而不是返回值）；"
+        "★★ 而 `append=False` **不会清掉上一次** ⇒ 需要时自己先 `ClearSelection2`。",
+    }
 
 
-def select_face_by_selector(model, selection: str, *, mark: int = 0,
-                            append: bool = False) -> int:
+def select_face_by_selector(
+    model, selection: str, *, mark: int = 0, append: bool = False
+) -> int:
     """按**声明式选择器**选面，返回**回读到的选区计数**（0 = 没选中）。
 
     :param selection: 见 :data:`FACE_SELECTORS`。
@@ -972,10 +1042,10 @@ def select_face_by_selector(model, selection: str, *, mark: int = 0,
     point = resolve_face_selector(model, selection)
     if point is None:
         raise ValueError(
-            "非法或无法解析的面选择器 %r；合法值：%r" % (selection, list(FACE_SELECTORS))
+            "非法或无法解析的面选择器 %r；合法值：%r"
+            % (selection, list(FACE_SELECTORS))
         )
     return select_face_at(model, point[0], point[1], point[2], mark=mark, append=append)
-
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -1005,9 +1075,9 @@ def run_analysis(study):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect\iface_cosworks.txt
-# 定位:   证据回读只使用已核实的**属性**成员，避免触碰未查证的方法：  ICWStudy        
-#                       : Name / MeshType / AnalysisType /                              
-#             ConfigurationName（均为属性）  ICWStudyManager             : StudyCount / 
+# 定位:   证据回读只使用已核实的**属性**成员，避免触碰未查证的方法：  ICWStudy
+#                       : Name / MeshType / AnalysisType /
+#             ConfigurationName（均为属性）  ICWStudyManager             : StudyCount /
 #           ActiveStudy（属性）  ICWLoadsAndRestraintsManager: Count（属性）  ICWLoadsAn
 #           dRestraints       : Name / EntityCount / Type / State（属性）方法侧只用一个
 #           ：GetLoadsAndRestraints(Int32 Index, Int32& ErrCode)，共 2 参。
@@ -1042,38 +1112,51 @@ def collect_study_evidence(sw_app) -> dict[str, Any]:
                 # —— 共 2 个参数，末位为 by-ref 出参。故此处必须传两个实参。
                 total = int(get_com_member(lrm, "Count") or 0)
                 for position in range(total):
-                    entry = get_com_member(lrm, "GetLoadsAndRestraints", position, out_i4())
+                    entry = get_com_member(
+                        lrm, "GetLoadsAndRestraints", position, out_i4()
+                    )
                     if entry is None:
                         continue
-                    entities.append({
-                        "name": str(get_com_member(entry, "Name") or ""),
-                        "type": int(get_com_member(entry, "Type") or -1),
-                        "state": int(get_com_member(entry, "State") or -1),
-                        "entity_count": int(get_com_member(entry, "EntityCount") or 0),
-                    })
-            studies.append({
-                "index": index,
-                "name": str(get_com_member(study, "Name") or ""),
-                "analysis_type": int(get_com_member(study, "AnalysisType") or -1),
-                "mesh_type": int(get_com_member(study, "MeshType") or -1),
-                "configuration": str(get_com_member(study, "ConfigurationName") or ""),
-                "is_active": index == active_index,
-                "loads_and_restraints": entities,
-            })
+                    entities.append(
+                        {
+                            "name": str(get_com_member(entry, "Name") or ""),
+                            "type": int(get_com_member(entry, "Type") or -1),
+                            "state": int(get_com_member(entry, "State") or -1),
+                            "entity_count": int(
+                                get_com_member(entry, "EntityCount") or 0
+                            ),
+                        }
+                    )
+            studies.append(
+                {
+                    "index": index,
+                    "name": str(get_com_member(study, "Name") or ""),
+                    "analysis_type": int(get_com_member(study, "AnalysisType") or -1),
+                    "mesh_type": int(get_com_member(study, "MeshType") or -1),
+                    "configuration": str(
+                        get_com_member(study, "ConfigurationName") or ""
+                    ),
+                    "is_active": index == active_index,
+                    "loads_and_restraints": entities,
+                }
+            )
 
     return {
         "cosmos_version": str(get_com_member(cosmos, "VersionNumber") or ""),
         "has_active_document": document is not None,
         "study_count": len(studies),
         "active_study_index": (
-            int(get_com_member(manager, "ActiveStudy") or -1) if manager is not None else -1
+            int(get_com_member(manager, "ActiveStudy") or -1)
+            if manager is not None
+            else -1
         ),
         "studies": studies,
     }
 
+
 # ── Spec Kit `141`（24h 计划 段 1.1）：仿真研究族的**可 JSON 化**包装 ──────────────
 # ★ 为什么要有这三个薄函数（而不是直接挂既有四个）：
-# ① `create_static_study` 回**三元组** `(study, entry_name, error_code)` —— 而 `study` 
+# ① `create_static_study` 回**三元组** `(study, entry_name, error_code)` —— 而 `study`
 # 是
 #      **COM 对象** ⇒ MCP **回不了对象**；★ 而 `entry_name` 是「**是否走了降级入口**」的
 #      **唯一证据**（其 docstring 明写）⇒ ★ 必须把它翻出来。
@@ -1097,7 +1180,7 @@ def create_study_report(sw_app, name: str) -> dict[str, Any]:
     if study is not None:
         try:
             actual = str(get_com_member(study, "Name") or "")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             actual = ""
     return {
         "ok": study is not None,
@@ -1121,7 +1204,7 @@ def list_studies(sw_app) -> list[dict[str, Any]]:
         name = ""
         try:
             name = str(get_com_member(study, "Name") or "")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             name = ""
         out.append({"index": int(index), "name": name})
     return out
@@ -1138,12 +1221,17 @@ def find_study(sw_app, name: str) -> dict[str, Any]:
     if study is not None:
         try:
             actual = str(get_com_member(study, "Name") or "")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             actual = ""
-    return {"found": study is not None, "requested_name": str(name), "study_name": actual}
+    return {
+        "found": study is not None,
+        "requested_name": str(name),
+        "study_name": actual,
+    }
+
 
 # ── 24h 计划 段 1.2（Spec Kit `142`）：网格 / 求解的**回读优先**报告 ─────────────
-# ★★★ 为什么这三个也要包（本项目的**铁律**，写在 `tools/capture_simulation_evidence.py` 
+# ★★★ 为什么这三个也要包（本项目的**铁律**，写在 `tools/capture_simulation_evidence.py`
 # 里）：
 #   「**COM 返回值凡不能自证，一律以回读为判据**（本项目已累计四处「返回码撒谎」）」
 #   · `create_mesh` / `run_analysis` **都只回一个 int 返回码** ⇒ ★ **不能自证**
@@ -1163,8 +1251,9 @@ def mesh_size_report(study, units: int = -1) -> dict[str, Any]:
     return {"element_size": float(size), "tolerance": float(tol), "units": int(units)}
 
 
-def create_mesh_report(study, units: int = 0, element_size: float = 0.0,
-                       tolerance: float = 0.0) -> dict[str, Any]:
+def create_mesh_report(
+    study, units: int = 0, element_size: float = 0.0, tolerance: float = 0.0
+) -> dict[str, Any]:
     """**建网格**并回**回读报告**。
 
     :returns: `{ok, return_code, return_is_trustworthy, element_count}`
@@ -1173,12 +1262,14 @@ def create_mesh_report(study, units: int = 0, element_size: float = 0.0,
         `ElementCount` 为一个（小的）正整数」。
         ★ `return_is_trustworthy` **恒为 False**：本项目的铁律是**回读优先**。
     """
-    return_code = create_mesh(study, units=units, element_size=element_size, tolerance=tolerance)
+    return_code = create_mesh(
+        study, units=units, element_size=element_size, tolerance=tolerance
+    )
     element_count = 0
     try:
         mesh = get_com_member(study, "Mesh")
         element_count = int(get_com_member(mesh, "ElementCount") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         element_count = 0
     return {
         "ok": element_count > 0,
@@ -1201,18 +1292,20 @@ def run_analysis_report(study) -> dict[str, Any]:
     results = None
     try:
         results = get_com_member(study, "Results")
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         results = None
     plot_count = None
     plot_names = None
     if results is not None:
         try:
             plot_count = int(get_com_member(results, "GetPlotCount") or 0)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             plot_count = None
         try:
-            plot_names = [str(x) for x in (get_com_member(results, "GetPlotNames") or ())]
-        except Exception:                                      # noqa: BLE001
+            plot_names = [
+                str(x) for x in (get_com_member(results, "GetPlotNames") or ())
+            ]
+        except Exception:  # noqa: BLE001
             plot_names = None
     return {
         "ok": results is not None and bool(plot_count),
@@ -1223,6 +1316,7 @@ def run_analysis_report(study) -> dict[str, Any]:
         "plot_names": plot_names,
         "★": "ok 由 results_present + plot_count 决定，**不看返回码**",
     }
+
 
 # ── 24h 计划 段 5「修地基」（Spec Kit `145`）：**网格参数生效判据** ─────────────────
 # ★★★★★ 为什么加它（2026-10-01 轮 248，把"跑求解必挂"的链条**掐断在网格这一步**）：
@@ -1268,7 +1362,7 @@ def run_analysis_report(study) -> dict[str, Any]:
 # 【一】官方内存规则（★ 逐字取自本机解包的 Simulation 手册）
 # 文件: C:\cworks_manual\c_Analysis_Solvers.htm · C:\cworks_manual\IDC_HELP_PRESTATIC_OP
 # TIONS.htm
-# 逐字: 「FFEPlus (iterative) … For every 2,000,000 degrees of freedom, you need 1GB of 
+# 逐字: 「FFEPlus (iterative) … For every 2,000,000 degrees of freedom, you need 1GB of
 # RAM.」
 #   ⇒ ★ 故 DOF_PER_GB = 2_000_000（★ 这是**官方给的那条换算**，不是我们拍的）✓
 #
@@ -1303,22 +1397,25 @@ def default_solve_memory_budget_gb() -> float:
         import ctypes
 
         class _MemStatus(ctypes.Structure):
-            _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
-                        ("ullTotalPhys", ctypes.c_ulonglong),
-                        ("ullAvailPhys", ctypes.c_ulonglong),
-                        ("ullTotalPageFile", ctypes.c_ulonglong),
-                        ("ullAvailPageFile", ctypes.c_ulonglong),
-                        ("ullTotalVirtual", ctypes.c_ulonglong),
-                        ("ullAvailVirtual", ctypes.c_ulonglong),
-                        ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
 
         st = _MemStatus()
         st.dwLength = ctypes.sizeof(_MemStatus)
         if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(st)):
             return DEFAULT_MEMORY_BUDGET_GB
-        total_gb = float(st.ullTotalPhys) / (1024.0 ** 3)
+        total_gb = float(st.ullTotalPhys) / (1024.0**3)
         return max(1.0, min(total_gb / 2.0, DEFAULT_MEMORY_BUDGET_GB))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return DEFAULT_MEMORY_BUDGET_GB
 
 
@@ -1341,24 +1438,38 @@ def mesh_settings_report(study) -> dict[str, Any]:
     if mesh is None:
         return {"ok": False, "reason": "study 上取不到 Mesh 对象"}
     out: dict[str, Any] = {"ok": True}
-    for name in ("Quality", "MesherType", "ElementSize", "MinElementSize", "MaxElementSize",
-                 "ElementSizeFactorForEachLoop", "MinElementsInCircle", "NumberOfLoops",
-                 "AutomaticLooping2", "ElementCount", "NodeCount"):
+    for name in (
+        "Quality",
+        "MesherType",
+        "ElementSize",
+        "MinElementSize",
+        "MaxElementSize",
+        "ElementSizeFactorForEachLoop",
+        "MinElementsInCircle",
+        "NumberOfLoops",
+        "AutomaticLooping2",
+        "ElementCount",
+        "NodeCount",
+    ):
         try:
             out[name] = get_com_member(mesh, name)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out[name] = "err: %s" % (str(exc)[:60],)
     return out
 
 
-def configure_mesh_settings(study, *, quality: int | None = None,
-                            mesher_type: int | None = None,
-                            min_element_size: float | None = None,
-                            max_element_size: float | None = None,
-                            element_size_factor_for_each_loop: float | None = None,
-                            min_elements_in_circle: int | None = None,
-                            number_of_loops: int | None = None,
-                            automatic_looping: bool | None = None) -> dict[str, Any]:
+def configure_mesh_settings(
+    study,
+    *,
+    quality: int | None = None,
+    mesher_type: int | None = None,
+    min_element_size: float | None = None,
+    max_element_size: float | None = None,
+    element_size_factor_for_each_loop: float | None = None,
+    min_elements_in_circle: int | None = None,
+    number_of_loops: int | None = None,
+    automatic_looping: bool | None = None,
+) -> dict[str, Any]:
     """★ **建网格之前**设那一组"决定规模"的网格设置 —— ★ 每一项都**回读核对**。
 
     ★★★ 为什么要有它（★ 2026-10-04 · 官方给的两条机制）：
@@ -1380,12 +1491,20 @@ def configure_mesh_settings(study, *, quality: int | None = None,
     """
     mesh = get_com_member(study, "Mesh")
     if mesh is None:
-        return {"ok": False, "reason": "study 上取不到 Mesh 对象", "changed": [], "readback": {}}
+        return {
+            "ok": False,
+            "reason": "study 上取不到 Mesh 对象",
+            "changed": [],
+            "readback": {},
+        }
     wanted = {
-        "Quality": quality, "MesherType": mesher_type,
-        "MinElementSize": min_element_size, "MaxElementSize": max_element_size,
+        "Quality": quality,
+        "MesherType": mesher_type,
+        "MinElementSize": min_element_size,
+        "MaxElementSize": max_element_size,
         "ElementSizeFactorForEachLoop": element_size_factor_for_each_loop,
-        "MinElementsInCircle": min_elements_in_circle, "NumberOfLoops": number_of_loops,
+        "MinElementsInCircle": min_elements_in_circle,
+        "NumberOfLoops": number_of_loops,
         "AutomaticLooping2": automatic_looping,
     }
     changed, readback, failed, before = [], {}, [], {}
@@ -1394,28 +1513,40 @@ def configure_mesh_settings(study, *, quality: int | None = None,
             continue
         try:
             before[name] = get_com_member(mesh, name)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             before[name] = None
         try:
             set_com_member(mesh, name, value)
-        except Exception as exc:                               # noqa: BLE001
-            failed.append({"name": name, "value": value,
-                           "error": "%s: %s" % (type(exc).__name__, str(exc)[:100])})
+        except Exception as exc:  # noqa: BLE001
+            failed.append(
+                {
+                    "name": name,
+                    "value": value,
+                    "error": "%s: %s" % (type(exc).__name__, str(exc)[:100]),
+                }
+            )
             continue
         try:
             readback[name] = get_com_member(mesh, name)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             readback[name] = "err: %s" % (str(exc)[:60],)
         if readback.get(name) != before.get(name):
-            changed.append({"name": name, "before": before.get(name), "after": readback.get(name)})
+            changed.append(
+                {"name": name, "before": before.get(name), "after": readback.get(name)}
+            )
     return {
         "ok": not failed,
-        "changed": changed, "readback": readback, "failed": failed, "before": before,
-        "★_代价": ("★ `Quality=Draft(0)` ⇒ 线性单元（无中间节点）：★ 官方逐字"
-                   "「for a quick evaluation … where bending effects are small」"
-                   "⇒ **弯曲为主的问题别用 draft**；★ 换机器或换求解器更合适 ✓"),
+        "changed": changed,
+        "readback": readback,
+        "failed": failed,
+        "before": before,
+        "★_代价": (
+            "★ `Quality=Draft(0)` ⇒ 线性单元（无中间节点）：★ 官方逐字"
+            "「for a quick evaluation … where bending effects are small」"
+            "⇒ **弯曲为主的问题别用 draft**；★ 换机器或换求解器更合适 ✓"
+        ),
         "★_依据": "官方 `c_meshing_options.htm` · `c_Element_Size_in_Curvature_Based_Mesher.htm` · "
-                  "枚举 `swsMeshQuality_e` / `swsMesherType_e`（本机官方类型库）",
+        "枚举 `swsMeshQuality_e` / `swsMesherType_e`（本机官方类型库）",
     }
 
 
@@ -1440,8 +1571,12 @@ MESH_SAFETY_MESHER_STANDARD = 0
 MESH_SAFETY_KNOBS = ("Quality", "MesherType")
 
 
-def mesh_safety_apply(study, *, quality: int = MESH_SAFETY_QUALITY_DRAFT,
-                      mesher_type: int = MESH_SAFETY_MESHER_STANDARD) -> dict[str, Any]:
+def mesh_safety_apply(
+    study,
+    *,
+    quality: int = MESH_SAFETY_QUALITY_DRAFT,
+    mesher_type: int = MESH_SAFETY_MESHER_STANDARD,
+) -> dict[str, Any]:
     """★★ **建网格之前**把网格设置降到"安全档"，并回一个**可还原的凭据**。
 
     ★★★ 为什么（★ 事实 526 · 官方给的两条机制）：★ 出厂默认是**曲率自适应 + 加密下界 0**
@@ -1457,8 +1592,13 @@ def mesh_safety_apply(study, *, quality: int = MESH_SAFETY_QUALITY_DRAFT,
     """
     before = mesh_settings_report(study)
     if not before.get("ok"):
-        return {"ok": False, "reason": before.get("reason") or "读不到 Mesh 对象",
-                "before": before, "applied": None, "changed": []}
+        return {
+            "ok": False,
+            "reason": before.get("reason") or "读不到 Mesh 对象",
+            "before": before,
+            "applied": None,
+            "changed": [],
+        }
     knobs: dict[str, Any] = {}
     if quality is not None:
         knobs["quality"] = int(quality)
@@ -1486,7 +1626,11 @@ def mesh_safety_restore(study, token: dict[str, Any] | None) -> dict[str, Any]:
       ★ 写回后**逐项读回校验**并给 `match` ⇒ ★ 不把"设了"当成"还原了" ✓
     """
     if not token:
-        return {"ok": False, "reason": "没有 token ⇒ 不猜该还原成什么（★ 不写）", "restored": []}
+        return {
+            "ok": False,
+            "reason": "没有 token ⇒ 不猜该还原成什么（★ 不写）",
+            "restored": [],
+        }
     knobs: dict[str, Any] = {}
     mapping = {"Quality": "quality", "MesherType": "mesher_type"}
     skipped: list[dict[str, Any]] = []
@@ -1497,19 +1641,34 @@ def mesh_safety_restore(study, token: dict[str, Any] | None) -> dict[str, Any]:
             continue
         knobs[arg] = int(old)
     if not knobs:
-        return {"ok": False, "reason": "token 里所有原值都读不到 ⇒ 一个字都不写",
-                "restored": [], "skipped": skipped}
+        return {
+            "ok": False,
+            "reason": "token 里所有原值都读不到 ⇒ 一个字都不写",
+            "restored": [],
+            "skipped": skipped,
+        }
     back = configure_mesh_settings(study, **knobs)
-    return {"ok": bool(back.get("ok")), "restored": back.get("changed") or [],
-            "readback": back.get("readback") or {}, "failed": back.get("failed") or [],
-            "skipped": skipped}
+    return {
+        "ok": bool(back.get("ok")),
+        "restored": back.get("changed") or [],
+        "readback": back.get("readback") or {},
+        "failed": back.get("failed") or [],
+        "skipped": skipped,
+    }
 
 
-def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float = 0.0,
-                       tolerance: float = 0.0, memory_budget_gb: float | None = None,
-                       quality: int = MESH_SAFETY_QUALITY_DRAFT,
-                       mesher_type: int = MESH_SAFETY_MESHER_STANDARD,
-                       keep_profile: bool = False) -> dict[str, Any]:
+def create_mesh_safely(
+    study,
+    *,
+    model=None,
+    units: int = 0,
+    element_size: float = 0.0,
+    tolerance: float = 0.0,
+    memory_budget_gb: float | None = None,
+    quality: int = MESH_SAFETY_QUALITY_DRAFT,
+    mesher_type: int = MESH_SAFETY_MESHER_STANDARD,
+    keep_profile: bool = False,
+) -> dict[str, Any]:
     """★★★★★ **建网格的唯一推荐入口** —— 一次调用把"别把机器算爆 / 别把会话卡死"整套做完。
 
     ★★★ 它按顺序做**七件事**（★ 每一步都留读数，★ 任一步不成立就**停下并如实说为什么**）：
@@ -1534,38 +1693,57 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
     :param keep_profile: ★ `True` ⇒ **保留**安全档（★ 调用方明确要"以后都这样"时才用）。
     :returns: ``{ok, blocked?, size_gate, safety, mesh, node_count, preflight, restored, ★_结论}``
     """
-    out: dict[str, Any] = {"ok": False, "units": int(units), "element_size": float(element_size),
-                           "tolerance": float(tolerance),
-                           "★": "建网格的唯一推荐入口（①量闸 ②安全档 ③建网格 ④真读数 ⑤内存闸 ⑥还原）"}
+    out: dict[str, Any] = {
+        "ok": False,
+        "units": int(units),
+        "element_size": float(element_size),
+        "tolerance": float(tolerance),
+        "★": "建网格的唯一推荐入口（①量闸 ②安全档 ③建网格 ④真读数 ⑤内存闸 ⑥还原）",
+    }
     #: ① 量预算前置闸（★ **必须用零件文档** —— ★ 传 study 会让它静默失效，见 docstring）
     if model is None:
-        size_gate: dict[str, Any] = {"ok": None, "skipped": True,
-                                     "reason": "★ 调用方没给 `model` ⇒ **这一闸跳过**"
-                                               "（★ 如实记，不假装判过；★ 后面的求解前内存闸仍在）"}
+        size_gate: dict[str, Any] = {
+            "ok": None,
+            "skipped": True,
+            "reason": "★ 调用方没给 `model` ⇒ **这一闸跳过**"
+            "（★ 如实记，不假装判过；★ 后面的求解前内存闸仍在）",
+        }
     else:
-        size_gate = check_mesh_size_sane(model, float(element_size),
-                                        memory_budget_gb=memory_budget_gb)
+        size_gate = check_mesh_size_sane(
+            model, float(element_size), memory_budget_gb=memory_budget_gb
+        )
     out["size_gate"] = size_gate
     if size_gate.get("ok") is False:
         out["blocked"] = "MESH_SIZE_UNSANE"
-        out["reason"] = "量预算前置闸不放行 ⇒ **不建网格**：%s" % size_gate.get("reason")
+        out["reason"] = "量预算前置闸不放行 ⇒ **不建网格**：%s" % size_gate.get(
+            "reason"
+        )
         return out
     #: ② 安全档（★ 记原值，供 ⑥ 还原）
     safety = mesh_safety_apply(study, quality=quality, mesher_type=mesher_type)
     out["safety"] = safety
     if not safety.get("ok"):
         out["blocked"] = "MESH_SAFETY_APPLY_FAILED"
-        out["reason"] = "网格安全档没设上 ⇒ **不建网格**（★ 不拿无界加密去赌）：%r" % (safety.get("failed"),)
+        out["reason"] = "网格安全档没设上 ⇒ **不建网格**（★ 不拿无界加密去赌）：%r" % (
+            safety.get("failed"),
+        )
         return out
     try:
         #: ③ 建网格
         try:
-            mesh = create_mesh_report(study, units=int(units), element_size=float(element_size),
-                                      tolerance=float(tolerance))
-        except Exception as exc:                               # noqa: BLE001
+            mesh = create_mesh_report(
+                study,
+                units=int(units),
+                element_size=float(element_size),
+                tolerance=float(tolerance),
+            )
+        except Exception as exc:  # noqa: BLE001
             #: ★ 能力层抛错 ⇒ **如实记**（★ 不吞、也不让"还原"被跳过 —— 见 finally）
-            mesh = {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
-                    "★": "★ 建网格那一步抛了异常（★ 如实记，★ 不吞）"}
+            mesh = {
+                "ok": False,
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                "★": "★ 建网格那一步抛了异常（★ 如实记，★ 不吞）",
+            }
             out["mesh_exception"] = mesh["error"]
         out["mesh"] = mesh
         #: ④ 真实读数（★ `NodeCount` 是 DOF 的第一性来源）
@@ -1575,26 +1753,42 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
         out["node_count"] = node_count
         out["element_count"] = int(mesh.get("element_count") or 0)
         #: ⑤ 求解前内存闸
-        pre = solve_memory_preflight(out["element_count"], node_count=node_count,
-                                     memory_budget_gb=memory_budget_gb)
+        pre = solve_memory_preflight(
+            out["element_count"],
+            node_count=node_count,
+            memory_budget_gb=memory_budget_gb,
+        )
         out["preflight"] = pre
         out["ok"] = bool(mesh.get("ok")) and bool(pre.get("ok"))
         if not pre.get("ok"):
             out["blocked"] = "SOLVE_MEMORY_BUDGET"
-            out["reason"] = ("网格建成了，但**求解前内存闸不放行** ⇒ 别跑求解：%s"
-                             % pre.get("reason"))
+            out["reason"] = (
+                "网格建成了，但**求解前内存闸不放行** ⇒ 别跑求解：%s"
+                % pre.get("reason")
+            )
         elif not mesh.get("ok"):
             out["blocked"] = "MESH_FAILED"
-            out["reason"] = "网格没建成：%r" % (mesh.get("error") or mesh.get("return_code"),)
-        out["★_结论"] = ("★ 网格读数：单元 %s · 节点 %s ⇒ 估求解内存 %.4g GB（预算 %.1f GB）"
-                         % (out["element_count"], node_count,
-                            pre.get("est_ram_gb") or 0.0, pre.get("memory_budget_gb") or 0.0))
+            out["reason"] = "网格没建成：%r" % (
+                mesh.get("error") or mesh.get("return_code"),
+            )
+        out["★_结论"] = (
+            "★ 网格读数：单元 %s · 节点 %s ⇒ 估求解内存 %.4g GB（预算 %.1f GB）"
+            % (
+                out["element_count"],
+                node_count,
+                pre.get("est_ram_gb") or 0.0,
+                pre.get("memory_budget_gb") or 0.0,
+            )
+        )
     finally:
         #: ⑥ 还原（★ `finally` ⇒ **连建网格抛异常也还** —— ★ 与事实 525 同纪律）
         if not keep_profile:
             out["restored"] = mesh_safety_restore(study, safety.get("token"))
         else:
-            out["restored"] = {"ok": True, "★": "keep_profile=True ⇒ 按调用方要求**保留**安全档"}
+            out["restored"] = {
+                "ok": True,
+                "★": "keep_profile=True ⇒ 按调用方要求**保留**安全档",
+            }
     return out
 
 
@@ -1604,8 +1798,13 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
 #:    INTEL=7 · INTELCluster=8）✓
 #: enum-gate: enum swsSolverType_e
 SWS_SOLVER_TYPES = {
-    "automatic": 0, "direct_sparse": 1, "ffeplus": 2, "casi": 5,
-    "abaqus": 6, "intel": 7, "intel_cluster": 8,
+    "automatic": 0,
+    "direct_sparse": 1,
+    "ffeplus": 2,
+    "casi": 5,
+    "abaqus": 6,
+    "intel": 7,
+    "intel_cluster": 8,
 }
 _SOLVER_NAME_BY_VALUE = {v: k for k, v in SWS_SOLVER_TYPES.items()}
 
@@ -1631,26 +1830,40 @@ def static_solver_type_report(study) -> dict[str, Any]:
 
     try:
         options = study_options_of(study, "ICWStaticStudyOptions")
-    except Exception as exc:                                   # noqa: BLE001
-        out["reason"] = "取不到 ICWStaticStudyOptions：%s: %s" % (type(exc).__name__, str(exc)[:120])
+    except Exception as exc:  # noqa: BLE001
+        out["reason"] = "取不到 ICWStaticStudyOptions：%s: %s" % (
+            type(exc).__name__,
+            str(exc)[:120],
+        )
         return out
     if options is None:
         out["reason"] = "ICWStaticStudyOptions 为 None（该研究可能不是静力族）"
         return out
     try:
         value = get_com_member(options, "SolverType")
-    except Exception as exc:                                   # noqa: BLE001
-        out["reason"] = ("读 SolverType 失败（★ 它在本仓只以 **setter** 记过、getter 未验证）："
-                         "%s: %s" % (type(exc).__name__, str(exc)[:100]))
+    except Exception as exc:  # noqa: BLE001
+        out["reason"] = (
+            "读 SolverType 失败（★ 它在本仓只以 **setter** 记过、getter 未验证）："
+            "%s: %s" % (type(exc).__name__, str(exc)[:100])
+        )
         return out
-    out.update({"ok": True, "value": value,
-                "name": _SOLVER_NAME_BY_VALUE.get(value, "unknown(%r)" % (value,))})
+    out.update(
+        {
+            "ok": True,
+            "value": value,
+            "name": _SOLVER_NAME_BY_VALUE.get(value, "unknown(%r)" % (value,)),
+        }
+    )
     return out
 
 
-def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
-                           memory_budget_gb: float | None = None,
-                           solver_name: str | None = None) -> dict[str, Any]:
+def solve_memory_preflight(
+    element_count: int,
+    *,
+    node_count: int | None = None,
+    memory_budget_gb: float | None = None,
+    solver_name: str | None = None,
+) -> dict[str, Any]:
     """★ **建完网格、跑求解之前**再判一次 —— ★★ 有 `NodeCount` 时用**真节点数**算，最准。
 
     ★★★ 为什么要有**第二道**（第一道是 `check_mesh_size_sane`）：
@@ -1671,9 +1884,13 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
     """
     n = int(element_count or 0)
     nodes = int(node_count) if node_count else 0
-    out: dict[str, Any] = {"element_count": n, "node_count": nodes or None, "ok": True,
-                           "reason": "",
-                           "★": "跑求解前的第二道闸（★ 优先用**真节点数**；★ DOF≈3×节点数）"}
+    out: dict[str, Any] = {
+        "element_count": n,
+        "node_count": nodes or None,
+        "ok": True,
+        "reason": "",
+        "★": "跑求解前的第二道闸（★ 优先用**真节点数**；★ DOF≈3×节点数）",
+    }
     if nodes > 0:
         est_dof = nodes * DOF_PER_NODE
         basis = "3 × 节点数（★ 第一性原理：每节点 3 个平动自由度）"
@@ -1681,15 +1898,28 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
         est_dof = n * DOF_PER_ELEMENT
         basis = "4.2 × 单元数（★ 事实 293 实测标定）"
     else:
-        out.update({"ok": False,
-                    "reason": "element_count 与 node_count 都不是正整数（%r / %r）⇒ 网格没建成"
-                              % (element_count, node_count)})
+        out.update(
+            {
+                "ok": False,
+                "reason": "element_count 与 node_count 都不是正整数（%r / %r）⇒ 网格没建成"
+                % (element_count, node_count),
+            }
+        )
         return out
     est_ram_gb = est_dof / DOF_PER_GB
-    budget = (float(memory_budget_gb) if memory_budget_gb is not None
-              else default_solve_memory_budget_gb())
-    out.update({"est_dof": est_dof, "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
-                "★_算式": basis + " · RAM ≈ DOF / 2,000,000 GB（★ 官方 FFEPlus 规则）"})
+    budget = (
+        float(memory_budget_gb)
+        if memory_budget_gb is not None
+        else default_solve_memory_budget_gb()
+    )
+    out.update(
+        {
+            "est_dof": est_dof,
+            "est_ram_gb": est_ram_gb,
+            "memory_budget_gb": budget,
+            "★_算式": basis + " · RAM ≈ DOF / 2,000,000 GB（★ 官方 FFEPlus 规则）",
+        }
+    )
     #: ★★★★ 2026-10-04 **把那条换算是"哪把尺子"说清楚**（★ 我自己刚留下的漏洞）：
     #:   · ★ 它**逐字出自 FFEPlus 那一页**（`c_Analysis_Solvers.htm`）✓
     #:   · ★★ 而真机那次**成功**的求解，求解器写的是 **`Intel Direct Sparse`** ⇒
@@ -1706,40 +1936,56 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
     _is_direct = any(tok in _s for tok in ("direct", "intel", "sparse"))
     _is_ffe = ("ffe" in _s) or ("plus" in _s)
     if not _s:
-        out["★_适用性"] = ("⚠ ★ 求解器**未告知** ⇒ 这条换算的适用性未定（★ 它出自 **FFEPlus** 官方页；"
-                           "★ 直接法如 `Intel Direct Sparse` 的内存在本仓**无官方规则**）")
+        out["★_适用性"] = (
+            "⚠ ★ 求解器**未告知** ⇒ 这条换算的适用性未定（★ 它出自 **FFEPlus** 官方页；"
+            "★ 直接法如 `Intel Direct Sparse` 的内存在本仓**无官方规则**）"
+        )
     elif "automatic" in _s or _s == "0":
         #: ★★ 真机实测（2026-10-04）：`SolverType = 0 (automatic)` **而求解器自己**选的
         #: 是
         #: `Intel Direct Sparse`（进度窗逐字）⇒ ★ 对 `automatic` 这条 FFEPlus 尺子**更不
         #: 适用** ✓
-        out["★_适用性"] = ("⚠⚠ 求解器 = `Automatic` ⇒ ★ **由 SolidWorks 自选** —— ★ 真机实测它选的是 "
-                           "**`Intel Direct Sparse`**（★ 直接法）⇒ ★ **别用 FFEPlus 的换算**"
-                           "（★ 想确定用哪个，就在进度窗上看 `类型:` 那一行）✓")
+        out["★_适用性"] = (
+            "⚠⚠ 求解器 = `Automatic` ⇒ ★ **由 SolidWorks 自选** —— ★ 真机实测它选的是 "
+            "**`Intel Direct Sparse`**（★ 直接法）⇒ ★ **别用 FFEPlus 的换算**"
+            "（★ 想确定用哪个，就在进度窗上看 `类型:` 那一行）✓"
+        )
     elif _is_ffe:
-        out["★_适用性"] = "★ 求解器 = `%s` ⇒ **这条换算正适用**（★ 它就是 FFEPlus 的规则）✓" % (solver_name,)
+        out["★_适用性"] = (
+            "★ 求解器 = `%s` ⇒ **这条换算正适用**（★ 它就是 FFEPlus 的规则）✓"
+            % (solver_name,)
+        )
     elif _is_direct:
-        out["★_适用性"] = ("⚠⚠ 求解器 = `%s`（**直接法**）⇒ ★ **别拿 FFEPlus 的换算当同一把尺子** —— "
-                           "★ 直接法的内存随**带宽/填充**走、与自由度**不成那条比例**，"
-                           "而本仓**没有**直接法的官方换算（★ 铁律 5）⇒ ★ 本条只能当**下界参考** ✓"
-                           % (solver_name,))
+        out["★_适用性"] = (
+            "⚠⚠ 求解器 = `%s`（**直接法**）⇒ ★ **别拿 FFEPlus 的换算当同一把尺子** —— "
+            "★ 直接法的内存随**带宽/填充**走、与自由度**不成那条比例**，"
+            "而本仓**没有**直接法的官方换算（★ 铁律 5）⇒ ★ 本条只能当**下界参考** ✓"
+            % (solver_name,)
+        )
     else:
-        out["★_适用性"] = ("⚠ 求解器 = `%s` ⇒ ★ 该换算出自 **FFEPlus**、对本求解器**适用性未查证** ✓"
-                           % (solver_name,))
+        out["★_适用性"] = (
+            "⚠ 求解器 = `%s` ⇒ ★ 该换算出自 **FFEPlus**、对本求解器**适用性未查证** ✓"
+            % (solver_name,)
+        )
     if est_ram_gb > budget:
-        out.update({
-            "ok": False,
-            "reason": ("%s ⇒ 估 %.3g 自由度 ⇒ 预估求解内存 **%.2f GB** > 预算 %.1f GB"
-                       "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
-                       " ⇒ **别跑** —— 官方向导：内存不够会走 out-of-core、"
-                       "「the solution progress can be extremely slow」"
-                       % (basis, est_dof, est_ram_gb, budget)),
-        })
+        out.update(
+            {
+                "ok": False,
+                "reason": (
+                    "%s ⇒ 估 %.3g 自由度 ⇒ 预估求解内存 **%.2f GB** > 预算 %.1f GB"
+                    "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
+                    " ⇒ **别跑** —— 官方向导：内存不够会走 out-of-core、"
+                    "「the solution progress can be extremely slow」"
+                    % (basis, est_dof, est_ram_gb, budget)
+                ),
+            }
+        )
     return out
 
 
-def check_mesh_size_sane(model, element_size: float, *,
-                         memory_budget_gb: float | None = None) -> dict[str, Any]:
+def check_mesh_size_sane(
+    model, element_size: float, *, memory_budget_gb: float | None = None
+) -> dict[str, Any]:
     """★ **建网格之前**判一次：给定的单元尺寸对**这个零件**是否合理 —— ★★ **两侧都判**。
 
     ★★★ 这是把"跑求解必挂 / 把机器打爆"**掐断在源头**的那道闸。
@@ -1769,11 +2015,17 @@ def check_mesh_size_sane(model, element_size: float, *,
         memory_budget_gb, reason}`` —— ★ **`ok=False` 时调用方应当停下**
         （不要建网格、更不要跑求解）。
     """
-    out: dict[str, Any] = {"element_size": float(element_size), "max_dim": None,
-                           "ok": True, "reason": "",
-                           "★": "建网格前的**双侧**合理性判据（★ 太大=网格退化；★ 太小=内存打爆）"}
+    out: dict[str, Any] = {
+        "element_size": float(element_size),
+        "max_dim": None,
+        "ok": True,
+        "reason": "",
+        "★": "建网格前的**双侧**合理性判据（★ 太大=网格退化；★ 太小=内存打爆）",
+    }
     if not (float(element_size) > 0.0):
-        out.update({"ok": False, "reason": "element_size 不是正数（%r）" % element_size})
+        out.update(
+            {"ok": False, "reason": "element_size 不是正数（%r）" % element_size}
+        )
         return out
     try:
         size = None
@@ -1782,21 +2034,27 @@ def check_mesh_size_sane(model, element_size: float, *,
 
             bb = sw_part.get_bounding_box(model)
             size = (bb or {}).get("size")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             size = None
         if not size:
-            out.update({"reason": "量不到零件包围盒 ⇒ **只记不判**（★ 不因为没有参照就误报）"})
+            out.update(
+                {"reason": "量不到零件包围盒 ⇒ **只记不判**（★ 不因为没有参照就误报）"}
+            )
             return out
         max_dim = max(float(x) for x in size)
         out["max_dim"] = max_dim
         #: ★ 判据 ①（原有）：太大 ⇒ 网格退化
         if float(element_size) > max_dim:
-            out.update({
-                "ok": False,
-                "reason": ("单元尺寸 %.4f 大于零件最大边 %.4f ⇒ **网格必然退化**"
-                           "（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）"
-                           % (float(element_size), max_dim)),
-            })
+            out.update(
+                {
+                    "ok": False,
+                    "reason": (
+                        "单元尺寸 %.4f 大于零件最大边 %.4f ⇒ **网格必然退化**"
+                        "（CreateMesh 会静默退回默认值，随后 RunAnalysis 无解 ⇒ 弹模态框 ⇒ 挂住会话）"
+                        % (float(element_size), max_dim)
+                    ),
+                }
+            )
             return out
         #: ★ 判据 ②（★ 新）：太小 ⇒ 单元数爆炸 ⇒ 求解吃光内存
         volume = 1.0
@@ -1808,24 +2066,47 @@ def check_mesh_size_sane(model, element_size: float, *,
         est_elements = volume / (float(element_size) ** 3)
         est_dof = est_elements * DOF_PER_ELEMENT
         est_ram_gb = est_dof / DOF_PER_GB
-        budget = (float(memory_budget_gb) if memory_budget_gb is not None
-                  else default_solve_memory_budget_gb())
-        out.update({"volume_mm3": round(volume, 4),
-                    "est_elements": est_elements, "est_dof": est_dof,
-                    "est_ram_gb": est_ram_gb, "memory_budget_gb": budget,
-                    "★_公式": "单元数≈包围盒体积/单元尺寸³ · DOF≈4.2×单元数（事实 293 实测）· "
-                              "RAM≈DOF/2,000,000 GB（官方 FFEPlus 规则）"})
+        budget = (
+            float(memory_budget_gb)
+            if memory_budget_gb is not None
+            else default_solve_memory_budget_gb()
+        )
+        out.update(
+            {
+                "volume_mm3": round(volume, 4),
+                "est_elements": est_elements,
+                "est_dof": est_dof,
+                "est_ram_gb": est_ram_gb,
+                "memory_budget_gb": budget,
+                "★_公式": "单元数≈包围盒体积/单元尺寸³ · DOF≈4.2×单元数（事实 293 实测）· "
+                "RAM≈DOF/2,000,000 GB（官方 FFEPlus 规则）",
+            }
+        )
         if est_ram_gb > budget:
-            out.update({
-                "ok": False,
-                "reason": ("单元尺寸 %.6f 太小 ⇒ 按包围盒估 **%.3g 个单元 / %.3g 自由度**"
-                           " ⇒ 预估求解内存 **%.1f GB** > 预算 %.1f GB"
-                           "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
-                           " ⇒ **会把内存吃光 / 走 out-of-core 而极慢**"
-                           % (float(element_size), est_elements, est_dof, est_ram_gb, budget)),
-            })
+            out.update(
+                {
+                    "ok": False,
+                    "reason": (
+                        "单元尺寸 %.6f 太小 ⇒ 按包围盒估 **%.3g 个单元 / %.3g 自由度**"
+                        " ⇒ 预估求解内存 **%.1f GB** > 预算 %.1f GB"
+                        "（★ 官方规则：每 2,000,000 自由度需 1 GB RAM）"
+                        " ⇒ **会把内存吃光 / 走 out-of-core 而极慢**"
+                        % (
+                            float(element_size),
+                            est_elements,
+                            est_dof,
+                            est_ram_gb,
+                            budget,
+                        )
+                    ),
+                }
+            )
         return out
-    except Exception as exc:                                   # noqa: BLE001
-        out.update({"reason": "判据自身出错（★ 不因此阻断）：%s: %s"
-                              % (type(exc).__name__, str(exc)[:120])})
+    except Exception as exc:  # noqa: BLE001
+        out.update(
+            {
+                "reason": "判据自身出错（★ 不因此阻断）：%s: %s"
+                % (type(exc).__name__, str(exc)[:120])
+            }
+        )
         return out

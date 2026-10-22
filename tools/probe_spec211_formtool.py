@@ -1,4 +1,5 @@
 """★ 探针：`InsertFormToolFeature` —— ★ 成形工具（★ 前置链**全在本机**）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B7 成形工具的真机探针）
 # 文件:   tools/probe_spec211_formtool.py
@@ -52,8 +53,12 @@ LIB = Path(r"C:\ProgramData\SolidWorks\SOLIDWORKS 2026\design library")
 
 def _find_tool() -> tuple:
     """★ 从 Design Library 里挑一个**真实存在**的成形工具文件 ✓"""
-    for name in ("circular emboss.sldftp", "dimple.sldftp",
-                 "counter sink emboss.sldftp", "counter sink emboss2.sldftp"):
+    for name in (
+        "circular emboss.sldftp",
+        "dimple.sldftp",
+        "counter sink emboss.sldftp",
+        "counter sink emboss2.sldftp",
+    ):
         for sub in ("forming tools", "forming tools\\embosses", ""):
             p = LIB / sub / name if sub else LIB / name
             if p.is_file():
@@ -64,6 +69,7 @@ def _find_tool() -> tuple:
 
 def _fnames(model):
     import sw_surface_features as SF
+
     return SF.feature_names(model)
 
 
@@ -71,8 +77,10 @@ def main() -> int:
     import sw_connect
     import sw_part
 
-    out: dict = {"official": "IFeatureManager.InsertFormToolFeature",
-                 "step": "第一步：查行为（★ 前置链全在本机 ✓）"}
+    out: dict = {
+        "official": "IFeatureManager.InsertFormToolFeature",
+        "step": "第一步：查行为（★ 前置链全在本机 ✓）",
+    }
 
     tool, how = _find_tool()
     out["tool_path"] = str(tool) if tool else None
@@ -93,6 +101,7 @@ def main() -> int:
 
         #: ★ 前置：★ **钣金件**（★ 仓里 `create_base_flange` 真机已验 ✓）
         import sw_sheet_metal as SM
+
         #: ★★★ 按**契约**调（★ AGENTS.md：「按 `ToolSpec` 的契约调，别手调内部实现」✓）—
         #: —
         #:   ★ 签名是 `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗
@@ -110,17 +119,23 @@ def main() -> int:
         sw_part.end_sketch(model)
         flange = None
         try:
-            spec = SM.BaseFlangeSpec(thickness=float(sw_connect.mm(2.0)),
-                                     bend_radius=float(sw_connect.mm(1.0)),
-                                     depth=float(sw_connect.mm(40.0)))
+            spec = SM.BaseFlangeSpec(
+                thickness=float(sw_connect.mm(2.0)),
+                bend_radius=float(sw_connect.mm(1.0)),
+                depth=float(sw_connect.mm(40.0)),
+            )
             flange = SM.create_base_flange(model, sk, spec)
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             out["flange_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
         after_flange = _fnames(model)
-        out["flange_created"] = bool([n for n in after_flange if n not in before]) or bool(flange)
+        out["flange_created"] = bool(
+            [n for n in after_flange if n not in before]
+        ) or bool(flange)
         out["features_after_flange"] = after_flange
-        print("★ 钣金前置 ⇒ %r · 特征 %r → %r"
-              % (out["flange_created"], len(before), len(after_flange)))
+        print(
+            "★ 钣金前置 ⇒ %r · 特征 %r → %r"
+            % (out["flange_created"], len(before), len(after_flange))
+        )
 
         #: ★ 调（★ 9 参逐位：★ Path · Flip · RotAngle · Config · OverrideDoc ·
         #:    ShowPunch · ShowProfile · ShowCenter · LinkToPart ✓）
@@ -130,13 +145,14 @@ def main() -> int:
         #: （★ 我第一版没选 ⇒ 回 None ⇒ ★ 那正是「前置没上」✓ —— ★ 判定文字也这么写的 ✓
         #: ）
         import sw_selection_spec as SS
+
         face_ok = False
         face_err = None
         try:
             #: ★ 选索引 0 的面（★ `append` 默认 `False` ⇒ 正好清空后单选一面 ✓）
             SS.select_entity_by_index(model, "FACE", 0)
             face_ok = SS.get_selection_count(model) > 0
-        except Exception as e:                                          # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             face_err = "%s: %s" % (type(e).__name__, str(e)[:120])
         out["face_selected"] = face_ok
         out["face_error"] = face_err
@@ -149,39 +165,67 @@ def main() -> int:
             feat = sw_connect.get_com_member(
                 sw_connect.get_com_member(model, "FeatureManager"),
                 "InsertFormToolFeature",
-                str(tool), False, 0.0, "", False, False, False, False, False)
-        except Exception as e:                                          # noqa: BLE001
+                str(tool),
+                False,
+                0.0,
+                "",
+                False,
+                False,
+                False,
+                False,
+                False,
+            )
+        except Exception as e:  # noqa: BLE001
             exc = e
         added = [n for n in _fnames(model) if n not in b2]
-        out.update({"new_features": added, "returned_is_none": feat is None,
-                    "returned_name": getattr(feat, "Name", None) if feat is not None else None,
-                    "exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
+        out.update(
+            {
+                "new_features": added,
+                "returned_is_none": feat is None,
+                "returned_name": getattr(feat, "Name", None)
+                if feat is not None
+                else None,
+                "exception": None
+                if exc is None
+                else "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+            }
+        )
         if added:
-            out["verdict"] = "★★★★★ **建成**（★ 新增 %r）⇒ ★ 成形工具**走得通** ✓" % added
+            out["verdict"] = (
+                "★★★★★ **建成**（★ 新增 %r）⇒ ★ 成形工具**走得通** ✓" % added
+            )
         elif exc is not None:
             out["verdict"] = "★★ **抛**：%s" % out["exception"]
         else:
-            out["verdict"] = ("★★ **不建**（★ 回 %r）⇒ ★ **还不算试死** —— "
-                              "★ 前置复核：★ 钣金件=%r · 工具文件=%r"
-                              "（★ 定则：「读到静默」≠「判定试死」✓）"
-                              % (out["returned_name"], out["flange_created"], bool(tool)))
+            out["verdict"] = (
+                "★★ **不建**（★ 回 %r）⇒ ★ **还不算试死** —— "
+                "★ 前置复核：★ 钣金件=%r · 工具文件=%r"
+                "（★ 定则：「读到静默」≠「判定试死」✓）"
+                % (out["returned_name"], out["flange_created"], bool(tool))
+            )
         print("★★ 调用后 ⇒ 新增 %r · 回 %r" % (added, out["returned_name"]))
         print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec211-b7-formtool.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        (ROOT / "output" / "spec211-b7-formtool-traceback.txt").write_text(tb, encoding="utf-8")
+        (ROOT / "output" / "spec211-b7-formtool-traceback.txt").write_text(
+            tb, encoding="utf-8"
+        )
         print("★★ 异常已落盘：\n%s" % tb[-1200:])
         raise SystemExit(3)

@@ -63,7 +63,10 @@ def compare_snapshots(
         else:
             status = "unchanged"
         rows.append({"path": path, "status": status, "before": before, "after": after})
-    counts = {status: sum(row["status"] == status for row in rows) for status in ("added", "removed", "changed", "unchanged")}
+    counts = {
+        status: sum(row["status"] == status for row in rows)
+        for status in ("added", "removed", "changed", "unchanged")
+    }
     return {"schemaVersion": "1.0", "counts": counts, "items": rows}
 
 
@@ -86,7 +89,9 @@ def build_regeneration_request(
         "projectId": project_id,
         "sourceJobId": source_job_id,
         "failedStage": failed_stage,
-        "capabilitySnapshot": sorted(set(str(item) for item in capabilities if str(item).strip())),
+        "capabilitySnapshot": sorted(
+            set(str(item) for item in capabilities if str(item).strip())
+        ),
         "assumptions": list(assumptions or []),
         "changedInputs": list(changed_inputs or []),
         "policy": {

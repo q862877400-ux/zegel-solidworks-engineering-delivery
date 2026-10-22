@@ -60,26 +60,39 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 #: **全部在 `tools/session_verdict.py`** —— ★ 本仓反复吃过的亏就是"同一套判定两处各写一
 #: 份" ✓
 #:   ★ 下面这几个薄壳**只为兼容既有调用点**保留，★ 逻辑一律走共用实现 ✓
-from session_verdict import (OURS as _OURS, parse_title_documents,   # noqa: E402
-                             session_verdict as _session_verdict)
+from session_verdict import (
+    OURS as _OURS,
+    parse_title_documents,  # noqa: E402
+    session_verdict as _session_verdict,
+)
 
 
 def _sw_processes() -> list[tuple[int, str, bool]]:
     """⇒ `[(pid, 主窗口标题, 是否响应)]`（★ 用 PowerShell 取，避免额外依赖）。"""
-    ps = ("Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
-          "ForEach-Object { \"$($_.Id)`t$($_.Responding)`t$($_.MainWindowTitle)\" }")
+    ps = (
+        "Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
+        'ForEach-Object { "$($_.Id)`t$($_.Responding)`t$($_.MainWindowTitle)" }'
+    )
     try:
-        proc = subprocess.run(["pwsh", "-NoProfile", "-Command", ps],
-                              check=False, capture_output=True, text=True,
-                              encoding="utf-8", errors="replace", timeout=60,
-                              stdin=subprocess.DEVNULL)
+        proc = subprocess.run(
+            ["pwsh", "-NoProfile", "-Command", ps],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=60,
+            stdin=subprocess.DEVNULL,
+        )
     except (subprocess.TimeoutExpired, OSError):
         return []
     out = []
     for line in (proc.stdout or "").splitlines():
         parts = line.split("\t")
         if len(parts) >= 3 and parts[0].strip().isdigit():
-            out.append((int(parts[0]), parts[2].strip(), parts[1].strip().lower() == "true"))
+            out.append(
+                (int(parts[0]), parts[2].strip(), parts[1].strip().lower() == "true")
+            )
     return out
 
 
@@ -104,15 +117,23 @@ def _probe(timeout_s: int = 20) -> dict:
     """★ 试连一次（★ 在**子进程**里跑 ⇒ 卡住也不会拖死本进程）。"""
     code = (
         "import sys;sys.stdout.reconfigure(encoding='utf-8');"
-        "sys.path[:0]=[r'%s',r'%s'];" % (REPO_ROOT, REPO_ROOT / "scripts") +
-        "import sw_connect;"
+        "sys.path[:0]=[r'%s',r'%s'];"
+        % (REPO_ROOT, REPO_ROOT / "scripts")
+        + "import sw_connect;"
         "sw=sw_connect.connect_solidworks(wait_seconds=8)[0];"
         "print('CONNECT_OK' if sw is not None else 'CONNECT_NONE')"
     )
     try:
-        proc = subprocess.run([sys.executable, "-c", code], check=False, capture_output=True,
-                              text=True, encoding="utf-8", errors="replace",
-                              timeout=timeout_s, stdin=subprocess.DEVNULL)
+        proc = subprocess.run(
+            [sys.executable, "-c", code],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_s,
+            stdin=subprocess.DEVNULL,
+        )
     except subprocess.TimeoutExpired:
         return {"ok": False, "why": "★ 探测在 %d s 内未返回 ⇒ 会话卡死" % timeout_s}
     text = (proc.stdout or "") + (proc.stderr or "")
@@ -125,8 +146,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--probe", action="store_true", help="只探（默认行为）")
     ap.add_argument("--restart", action="store_true", help="探不通且文档安全时重启")
-    ap.add_argument("--close", action="store_true",
-                    help="★ **只关**（★ 不重连）—— 纪律：跨轮不许留 SolidWorks")
+    ap.add_argument(
+        "--close",
+        action="store_true",
+        help="★ **只关**（★ 不重连）—— 纪律：跨轮不许留 SolidWorks",
+    )
     ap.add_argument("--force", action="store_true", help="忽略文档判定")
     args = ap.parse_args()
 
@@ -136,8 +160,10 @@ def main() -> int:
         docs = _open_docs(title)
         mine, others = _our_own_docs(docs)
         print("    PID=%s responding=%s" % (pid, resp))
-        print("      打开文档=%s ⇒ 自己的 %s · **不是自己的 %s**"
-              % (docs or "<无>", mine or "[]", others or "[]"))
+        print(
+            "      打开文档=%s ⇒ 自己的 %s · **不是自己的 %s**"
+            % (docs or "<无>", mine or "[]", others or "[]")
+        )
 
     r = _probe()
     print("  探测: %s（%s）" % ("✓ 通" if r["ok"] else "✗ 不通", r["why"]))
@@ -149,7 +175,7 @@ def main() -> int:
     #: ★★「★ **同一轮里还有后续真机步骤时可以留着它；跨轮不许留** —— **收尾链跑完就关**
     #: 」✓
     #:   ★★★ **为什么不能复用 `--restart`**（★ 值记，★ 我实测出来的）：
-    #: ★ `--restart` 是 `Stop-Process` **之后重连** ⇒ ★★ **⇒ 而重连会把它**又拉起来**** 
+    #: ★ `--restart` 是 `Stop-Process` **之后重连** ⇒ ★★ **⇒ 而重连会把它**又拉起来****
     #: ✗
     #:     ★ 实测：★ 我手工 kill 了整族 9 个进程（★ 合计 **28539 MB**）⇒ ★★ **几秒后
     #:       `SLDWORKS` 又回来了、★ 而 PID 全是新的** ⇒ ★★★ **⇒ 真凶是
@@ -182,10 +208,16 @@ def main() -> int:
         ) % str(REPO_ROOT / "scripts")
         print("  ⇒ 只关**我们启动过**的那一个（按 PID 标记；证不出归属就不动）：")
         try:
-            rr = subprocess.run([sys.executable, "-c", code], check=False,
-                                capture_output=True, text=True, encoding="utf-8",
-                                errors="replace", timeout=180,
-                                stdin=subprocess.DEVNULL)
+            rr = subprocess.run(
+                [sys.executable, "-c", code],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=180,
+                stdin=subprocess.DEVNULL,
+            )
         except subprocess.TimeoutExpired:
             print("     ✗ 超时 ⇒ **不关**（宁可留着，也不误杀）")
             return 3
@@ -207,7 +239,9 @@ def main() -> int:
         print("  ⇒ ★ 会话健康，不需要处置。")
         return 0
     if not args.restart:
-        print("  ⇒ ★ 要重启请加 `--restart`（★ 本脚本会先判定打开的文档是不是自己的）。")
+        print(
+            "  ⇒ ★ 要重启请加 `--restart`（★ 本脚本会先判定打开的文档是不是自己的）。"
+        )
         print("     ★ **用完要关**（★ 跨轮不许留）请加 `--close`。")
         return 1
 
@@ -218,22 +252,46 @@ def main() -> int:
         all_others += others
     if all_others and not args.force:
         print("  ✗ **拒绝重启**：有**不是本会话**的文档开着：%s" % all_others)
-        print("     ★ 依据：只回收**自己开的**资源；动用户的文档要人工决定（★ 或加 `--force`）。")
+        print(
+            "     ★ 依据：只回收**自己开的**资源；动用户的文档要人工决定（★ 或加 `--force`）。"
+        )
         return 2
 
     print("  ⇒ 重启（先清残留 python，再结束 SW，再重连）…")
-    subprocess.run(["pwsh", "-NoProfile", "-Command",
-                    "Get-CimInstance Win32_Process -Filter \"Name LIKE 'python%'\" | "
-                    "Where-Object { $_.CommandLine -match 'sw_connect|probe|create_mesh' } | "
-                    "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }"],
-                   check=False, capture_output=True, text=True, encoding="utf-8",
-                   errors="replace", timeout=90, stdin=subprocess.DEVNULL)
+    subprocess.run(
+        [
+            "pwsh",
+            "-NoProfile",
+            "-Command",
+            "Get-CimInstance Win32_Process -Filter \"Name LIKE 'python%'\" | "
+            "Where-Object { $_.CommandLine -match 'sw_connect|probe|create_mesh' } | "
+            "ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=90,
+        stdin=subprocess.DEVNULL,
+    )
     time.sleep(2)
-    subprocess.run(["pwsh", "-NoProfile", "-Command",
-                    "Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
-                    "Stop-Process -Force -ErrorAction SilentlyContinue"],
-                   check=False, capture_output=True, text=True, encoding="utf-8",
-                   errors="replace", timeout=90, stdin=subprocess.DEVNULL)
+    subprocess.run(
+        [
+            "pwsh",
+            "-NoProfile",
+            "-Command",
+            "Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
+            "Stop-Process -Force -ErrorAction SilentlyContinue",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=90,
+        stdin=subprocess.DEVNULL,
+    )
     time.sleep(8)
     r2 = _probe(timeout_s=90)
     print("  重启后探测: %s（%s）" % ("✓ 通" if r2["ok"] else "✗ 不通", r2["why"]))

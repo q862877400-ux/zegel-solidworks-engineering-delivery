@@ -46,9 +46,9 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
-from scripts.sw_connect import out_i4                                     # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts.sw_connect import out_i4  # noqa: E402
 
 OUT = REPO / "output" / "render-material-family-evidence.json"
 
@@ -62,7 +62,7 @@ def _try(fn, *a, **kw):
     try:
         r = fn(*a, **kw)
         return {"ok": True, "ret": repr(r)[:110]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:170])}
 
 
@@ -70,7 +70,7 @@ def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    swAllDisplayState = 2                                                  #: ★ 官方枚举
+    swAllDisplayState = 2  #: ★ 官方枚举
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -87,46 +87,71 @@ def main() -> int:
         mat_obj = None
         try:
             mat_obj = _g(ext, "CreateRenderMaterial", 0)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             mat_obj = None
         R["材质对象"] = repr(mat_obj)[:80]
         from scripts.sw_connect import create_empty_dispatch_variant as _empty
+
         blank = _empty()
 
         #: ★★★ 旧入口（★ 四条）
         R["旧_GetRenderMaterialsCount"] = _try(_g, ext, "GetRenderMaterialsCount")
         R["旧_GetRenderMaterials"] = _try(_g, ext, "GetRenderMaterials")
-        R["旧_AddRenderMaterial"] = _try(_g, ext, "AddRenderMaterial", mat_obj, out_i4())
+        R["旧_AddRenderMaterial"] = _try(
+            _g, ext, "AddRenderMaterial", mat_obj, out_i4()
+        )
         R["旧_DeleteRenderMaterial"] = _try(_g, ext, "DeleteRenderMaterial", 0, False)
 
         #: ★★★ 新入口（★ 四条，★ 按官方例子；★ 空参数用空 VARIANT —— 事实 33）
-        R["新_GetRenderMaterialsCount2"] = _try(_g, ext, "GetRenderMaterialsCount2",
-                                               swAllDisplayState, blank)
-        R["新_GetRenderMaterials2"] = _try(_g, ext, "GetRenderMaterials2",
-                                           swAllDisplayState, blank)
+        R["新_GetRenderMaterialsCount2"] = _try(
+            _g, ext, "GetRenderMaterialsCount2", swAllDisplayState, blank
+        )
+        R["新_GetRenderMaterials2"] = _try(
+            _g, ext, "GetRenderMaterials2", swAllDisplayState, blank
+        )
         R["新_AddDisplayStateSpecificRenderMaterial"] = _try(
-            _g, ext, "AddDisplayStateSpecificRenderMaterial",
-            mat_obj, swAllDisplayState, blank, out_i4(), out_i4())
+            _g,
+            ext,
+            "AddDisplayStateSpecificRenderMaterial",
+            mat_obj,
+            swAllDisplayState,
+            blank,
+            out_i4(),
+            out_i4(),
+        )
         R["新_DeleteDisplayStateSpecificRenderMaterial"] = _try(
-            _g, ext, "DeleteDisplayStateSpecificRenderMaterial", blank, blank)
-    except Exception as exc:                                              # noqa: BLE001
+            _g, ext, "DeleteDisplayStateSpecificRenderMaterial", blank, blank
+        )
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
-    old_ok = sum(1 for k, v in R.items() if k.startswith("旧_") and isinstance(v, dict) and v.get("ok"))
-    new_ok = sum(1 for k, v in R.items() if k.startswith("新_") and isinstance(v, dict) and v.get("ok"))
+    old_ok = sum(
+        1
+        for k, v in R.items()
+        if k.startswith("旧_") and isinstance(v, dict) and v.get("ok")
+    )
+    new_ok = sum(
+        1
+        for k, v in R.items()
+        if k.startswith("新_") and isinstance(v, dict) and v.get("ok")
+    )
     R["★_旧入口能调数"] = "%d/4" % old_ok
     R["★_新入口能调数"] = "%d/4" % new_ok
-    R["verdict"] = ("★ 新旧都能调 ⇒ **可以换**（★ 换掉废弃入口）"
-                    if old_ok >= 3 and new_ok >= 3 else
-                    "★★ 需逐条看 —— 至少一边有不可调的（★ 如实记，★ 不硬换）")
+    R["verdict"] = (
+        "★ 新旧都能调 ⇒ **可以换**（★ 换掉废弃入口）"
+        if old_ok >= 3 and new_ok >= 3
+        else "★★ 需逐条看 —— 至少一边有不可调的（★ 如实记，★ 不硬换）"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

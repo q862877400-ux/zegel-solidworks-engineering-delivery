@@ -1,4 +1,5 @@
 """★ 关掉**我方**打开的文档（★ 一个都不碰别人的；★ 有非我方的就停手交人）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/close_our_docs.py
@@ -36,6 +37,7 @@ MAX_ROUNDS = 8
 def _is_ours(doc) -> bool:
     """★ 是不是**我方**的文档 —— ★ 名字命中约定，★ 或**路径在沙盒里**（★ 我们只在沙盒里开）✓"""
     from session_verdict import OURS
+
     if OURS.search(str((doc or {}).get("title") or "")):
         return True
     path = str((doc or {}).get("path") or "")
@@ -54,13 +56,16 @@ def _all_open_documents(sw) -> list:
         except ImportError:
             from scripts.sw_session import open_documents
         snap = open_documents(sw)
-        docs = [{"title": d.get("title") or "", "path": d.get("path") or ""}
-                for d in (snap.get("documents") or [])]
+        docs = [
+            {"title": d.get("title") or "", "path": d.get("path") or ""}
+            for d in (snap.get("documents") or [])
+        ]
         if docs:
             return docs
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     from session_verdict import title_documents
+
     return [{"title": d["title"], "path": ""} for d in title_documents()["documents"]]
 
 
@@ -68,21 +73,38 @@ def close_our_documents(connect=None) -> dict:
     """★ 关掉**我方**的打开文档 —— ★ 有非我方文档就**整体拒绝**（不碰任何一个）✓"""
     if connect is None:
         import sw_connect
+
         sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     else:
         sw = connect
     if sw is None:
-        return {"closed": [], "kept": [], "refused": True, "rounds": 0, "why": "★ 连不上 ⇒ 不动手"}
+        return {
+            "closed": [],
+            "kept": [],
+            "refused": True,
+            "rounds": 0,
+            "why": "★ 连不上 ⇒ 不动手",
+        }
 
     docs = _all_open_documents(sw)
     if not docs:
-        return {"closed": [], "kept": [], "refused": False, "rounds": 0, "why": "★ 没有打开文档"}
+        return {
+            "closed": [],
+            "kept": [],
+            "refused": False,
+            "rounds": 0,
+            "why": "★ 没有打开文档",
+        }
     others = [d["title"] or d["path"] for d in docs if not _is_ours(d)]
     if others:
         #: ★★ 别人的一个都不碰 —— ★ 连我方的也不关（★ 免得在混着的时候动会话）✓
-        return {"closed": [], "kept": [d["title"] or d["path"] for d in docs],
-                "refused": True, "rounds": 0,
-                "why": "★★ 有**非我方**文档 %s ⇒ 不碰任何文档（★ 交给人处置）" % others}
+        return {
+            "closed": [],
+            "kept": [d["title"] or d["path"] for d in docs],
+            "refused": True,
+            "rounds": 0,
+            "why": "★★ 有**非我方**文档 %s ⇒ 不碰任何文档（★ 交给人处置）" % others,
+        }
 
     closed, rounds = [], 0
     while rounds < MAX_ROUNDS:
@@ -90,23 +112,34 @@ def close_our_documents(connect=None) -> dict:
         current = _all_open_documents(sw)
         mine = [d for d in current if _is_ours(d)]
         if [d for d in current if not _is_ours(d)]:
-            return {"closed": sorted(set(closed)),
-                    "kept": [d["title"] or d["path"] for d in current if not _is_ours(d)],
-                    "refused": True, "rounds": rounds,
-                    "why": "★★ 关的过程中见到**非我方**文档 ⇒ 停手（★ 一个都不碰）"}
+            return {
+                "closed": sorted(set(closed)),
+                "kept": [d["title"] or d["path"] for d in current if not _is_ours(d)],
+                "refused": True,
+                "rounds": rounds,
+                "why": "★★ 关的过程中见到**非我方**文档 ⇒ 停手（★ 一个都不碰）",
+            }
         if not mine:
             break
         for d in mine:
             title = str(d.get("title") or "")
             path = str(d.get("path") or "")
             name = title or (Path(path).name if path else "")
-            cands = [c for c in (name, title, Path(path).name if path else "",
-                                 Path(path).stem if path else "") if c]
+            cands = [
+                c
+                for c in (
+                    name,
+                    title,
+                    Path(path).name if path else "",
+                    Path(path).stem if path else "",
+                )
+                if c
+            ]
             for cand in cands:
                 for suffix in ("", ".SLDPRT", ".SLDASM", ".SLDDRW"):
                     try:
                         sw.CloseDoc(cand + suffix)
-                    except Exception:                                   # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
             if name:
                 closed.append(name)
@@ -116,18 +149,23 @@ def close_our_documents(connect=None) -> dict:
             if m is not None:
                 try:
                     m.SketchManager.InsertSketch(True)
-                except Exception:                                       # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 t = str(getattr(m, "GetTitle", lambda: "")() or "")
                 if t:
                     try:
                         sw.CloseDoc(t)
-                    except Exception:                                   # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    return {"closed": sorted(set(closed)), "kept": [], "refused": False,
-            "rounds": rounds, "why": ""}
+    return {
+        "closed": sorted(set(closed)),
+        "kept": [],
+        "refused": False,
+        "rounds": rounds,
+        "why": "",
+    }
 
 
 def main() -> int:

@@ -39,6 +39,7 @@ r"""@brief 环境坑静态检查：`subprocess` 缺 `encoding=` / `Path("<盘符
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import io
@@ -56,7 +57,7 @@ from pathlib import Path
 #: d2'`**
 #:   ⇒ ★★ **门禁自己崩掉**（★ 实测：`scripts/check_env_pitfalls.py:366` 那行；
 #:     连带 `scripts/release_check.py:1192` 报「环境陷阱门禁未通过」；
-#: 再连带 `tests/test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` 
+#: 再连带 `tests/test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate`
 #: 失败）。
 #:   ★ 这是 **known-facts 58** 那一族的**第四个实例** —— 前三个分别在：
 #:     ① 测试里的 `subprocess.run` 缺 `encoding=`；② 本仓 11 处同类；
@@ -81,7 +82,9 @@ DRIVE_ONLY = re.compile(r"""Path\(\s*['"]([A-Za-z]):['"]\s*\)""")
 #: 而 `scripts/cad_installation.py` 里写的是 `root = Path(drive)`（`drive` 是循环变量）
 #: ⇒ **负例测试当场证明门禁抓不到真 bug**（「一个存在但没人用的守卫与没有守卫等价」）。
 #: **⇒ 补一条轻量数据流：先找被绑定成 `"X:"` 的变量名，再找 `Path(<那个变量>)`。**
-DRIVE_LITERAL_ASSIGN = re.compile(r"""(?:for\s+(\w+)\s+in\s*\(|(\w+)\s*=\s*)[^)\n]*['"]([A-Za-z]):['"]""")
+DRIVE_LITERAL_ASSIGN = re.compile(
+    r"""(?:for\s+(\w+)\s+in\s*\(|(\w+)\s*=\s*)[^)\n]*['"]([A-Za-z]):['"]"""
+)
 PATH_OF_VAR = re.compile(r"""Path\(\s*(\w+)\s*\)""")
 
 #: 「这个常量看起来就是盘根名」的白名单（例如 `EXPECTED_DRIVE = "D:"` 是合法的中间量）
@@ -97,7 +100,7 @@ def strip_comments_and_strings(source: str) -> str:
     try:
         tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
     except (tokenize.TokenError, IndentationError, SyntaxError):
-        return source                      # 语法有问题时退回原文（由别的门禁报语法）
+        return source  # 语法有问题时退回原文（由别的门禁报语法）
     drop = {tokenize.COMMENT, tokenize.STRING}
     out, last = [], (1, 0)
     lines = source.splitlines(keepends=True)
@@ -136,7 +139,7 @@ def balanced_call(text: str, start: int) -> str:
         elif ch == ")":
             depth -= 1
             if depth == 0:
-                return text[i:j + 1]
+                return text[i : j + 1]
         j += 1
     return text[i:]
 
@@ -149,7 +152,12 @@ def find_missing_encoding(path: Path) -> list:
     for m in SUBPROCESS_CALL.finditer(clean):
         seg = balanced_call(clean, m.start())
         if "text=True" in seg and "encoding=" not in seg:
-            out.append((clean[:m.start()].count("\n") + 1, seg.strip().replace("\n", " ")[:110]))
+            out.append(
+                (
+                    clean[: m.start()].count("\n") + 1,
+                    seg.strip().replace("\n", " ")[:110],
+                )
+            )
     return out
 
 
@@ -178,12 +186,12 @@ def find_drive_only_root(path: Path) -> list:
     lines = src.splitlines()
     out = []
     for m in DRIVE_ONLY.finditer(clean):
-        ln = clean[:m.start()].count("\n") + 1
+        ln = clean[: m.start()].count("\n") + 1
         out.append((ln, lines[ln - 1].strip()[:110] if ln - 1 < len(lines) else ""))
     for m in PATH_OF_VAR.finditer(clean):
         if m.group(1) not in drive_vars:
             continue
-        ln = clean[:m.start()].count("\n") + 1
+        ln = clean[: m.start()].count("\n") + 1
         out.append((ln, lines[ln - 1].strip()[:110] if ln - 1 < len(lines) else ""))
     seen, uniq = set(), []
     for ln, raw in sorted(out):
@@ -245,7 +253,9 @@ def _strip_comments_only(text: str) -> str:
                 for ln in range(r1, r2 + 1):
                     line_start = sum(len(x) + 1 for x in text.splitlines()[: ln - 1])
                     a = line_start + (c1 if ln == r1 else 0)
-                    b = line_start + (c2 if ln == r2 else len(text.splitlines()[ln - 1]))
+                    b = line_start + (
+                        c2 if ln == r2 else len(text.splitlines()[ln - 1])
+                    )
                     for i in range(a, min(b, len(out))):
                         if out[i] != "\n":
                             out[i] = " "
@@ -308,8 +318,9 @@ def _vk_kind(call):
         return None
     if isinstance(flags, ast.Constant) and flags.value == 0:
         return "down"
-    if ((isinstance(flags, ast.Attribute) and flags.attr == "KEYEVENTF_KEYUP")
-            or (isinstance(flags, ast.Name) and flags.id == "KEYEVENTF_KEYUP")):
+    if (isinstance(flags, ast.Attribute) and flags.attr == "KEYEVENTF_KEYUP") or (
+        isinstance(flags, ast.Name) and flags.id == "KEYEVENTF_KEYUP"
+    ):
         return "up"
     return None
 
@@ -332,7 +343,9 @@ def find_unguarded_keypress(path):
         pushes, fin_ups, uses_safe = [], 0, False
         for node in ast.walk(fn):
             if isinstance(node, ast.Call):
-                name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
+                name = getattr(node.func, "attr", None) or getattr(
+                    node.func, "id", None
+                )
                 if name in SAFE_PRIMITIVES:
                     uses_safe = True
                 if name == KEYBD_EVENT and _vk_kind(node) == "down":
@@ -340,7 +353,9 @@ def find_unguarded_keypress(path):
             if isinstance(node, ast.Try):
                 for sub in ast.walk(ast.Module(body=node.finalbody, type_ignores=[])):
                     if isinstance(sub, ast.Call):
-                        nm = getattr(sub.func, "attr", None) or getattr(sub.func, "id", None)
+                        nm = getattr(sub.func, "attr", None) or getattr(
+                            sub.func, "id", None
+                        )
                         if nm == KEYBD_EVENT and _vk_kind(sub) == "up":
                             fin_ups += 1
         if pushes and not uses_safe and fin_ups < len(pushes):
@@ -360,7 +375,9 @@ def find_get_com_member_default(path: Path) -> list:
       失败了再把成员本身返回" ⇒ ★ 属性和方法**都能读**（★ 真机实测：`GetDocumentCount` 是**属性**）✓
     """
     hits = []
-    for ln, line in enumerate(path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+    for ln, line in enumerate(
+        path.read_text(encoding="utf-8", errors="replace").splitlines(), 1
+    ):
         if "get_com_member(" not in line or "default=" not in line:
             continue
         #: ★ 按**括号配对**切出整段调用（★ 事实 58 的教训：不能按第一个 `)` 截）✓
@@ -375,7 +392,10 @@ def find_get_com_member_default(path: Path) -> list:
 
 def main(argv=None) -> int:
     import argparse
-    ap = argparse.ArgumentParser(description="环境坑静态检查（subprocess 编码 / Path 盘根）")
+
+    ap = argparse.ArgumentParser(
+        description="环境坑静态检查（subprocess 编码 / Path 盘根）"
+    )
     ap.add_argument("--root", default=str(ROOT))
     a = ap.parse_args(argv)
     root = Path(a.root)
@@ -389,8 +409,12 @@ def main(argv=None) -> int:
 
     #: 检查③ 专用的文件集（**排除 `tests/`**，理由见 `FALSY_ZERO_DIRS` 的注释）
     files_for_falsy_zero = [
-        f for d in FALSY_ZERO_DIRS for f in [(root / d)] if f.is_dir()
-        for f in sorted(f.rglob("*.py")) if ".git" not in f.parts
+        f
+        for d in FALSY_ZERO_DIRS
+        for f in [(root / d)]
+        if f.is_dir()
+        for f in sorted(f.rglob("*.py"))
+        if ".git" not in f.parts
     ]
 
     enc_bad, drv_bad, gcm_bad = [], [], []
@@ -404,7 +428,9 @@ def main(argv=None) -> int:
 
     print("环境坑静态检查 · 扫 %d 个 .py" % len(files))
     print()
-    print("⑤ `get_com_member(...)` 里误传 `default=`（★ 会被当位置实参 ⇒ **读出全是 None 而不报错**）")
+    print(
+        "⑤ `get_com_member(...)` 里误传 `default=`（★ 会被当位置实参 ⇒ **读出全是 None 而不报错**）"
+    )
     if gcm_bad:
         print("   [FAIL] %d 处：" % len(gcm_bad))
         for f, ln, seg in gcm_bad[:20]:
@@ -412,7 +438,9 @@ def main(argv=None) -> int:
     else:
         print("   [PASS] 0 处")
     print()
-    print("① `subprocess` 用 `text=True` 但缺 `encoding=`（**中文 Windows 上会炸**，事实 58）")
+    print(
+        "① `subprocess` 用 `text=True` 但缺 `encoding=`（**中文 Windows 上会炸**，事实 58）"
+    )
     if enc_bad:
         print("   [FAIL] %d 处：" % len(enc_bad))
         for f, ln, seg in enc_bad[:20]:
@@ -420,7 +448,7 @@ def main(argv=None) -> int:
     else:
         print("   [PASS] 0 处")
     print()
-    print("② `Path(\"<盘符>:\")` 当盘根用（**缺反斜杠 ⇒ 该盘上永远找不到**，事实 59）")
+    print('② `Path("<盘符>:")` 当盘根用（**缺反斜杠 ⇒ 该盘上永远找不到**，事实 59）')
     if drv_bad:
         print("   [FAIL] %d 处：" % len(drv_bad))
         for f, ln, raw in drv_bad[:20]:
@@ -439,7 +467,7 @@ def main(argv=None) -> int:
             if "%s:%s" % (rel.as_posix(), member) not in baseline:
                 fz_new.append((rel, ln, member, default))
     fz_now = {"%s:%s" % (r.as_posix(), m) for r, _, m, _ in fz_all}
-    fz_fixed = sorted(baseline - fz_now)      # 基线里已不存在 ⇒ 该删（防基线自己腐坏）
+    fz_fixed = sorted(baseline - fz_now)  # 基线里已不存在 ⇒ 该删（防基线自己腐坏）
     print()
     print("③ `x or <默认值>` 吞掉合法 `0`（**默认值 ≠ falsy 值**才有害，事实 61 同族）")
     print("   存量 **%d** 处（基线记账）· **新增 %d** 处" % (len(fz_all), len(fz_new)))
@@ -450,8 +478,10 @@ def main(argv=None) -> int:
     else:
         print("   [PASS] 无新增")
     if fz_fixed:
-        print("   ⚠ 基线里 %d 条**已不存在**（修好了？）⇒ 请从 %s 删掉："
-              % (len(fz_fixed), FALSY_ZERO_BASELINE.name))
+        print(
+            "   ⚠ 基线里 %d 条**已不存在**（修好了？）⇒ 请从 %s 删掉："
+            % (len(fz_fixed), FALSY_ZERO_BASELINE.name)
+        )
         for k in fz_fixed[:10]:
             print("     %s" % k)
     print()
@@ -461,22 +491,30 @@ def main(argv=None) -> int:
         for ln, fn in find_unguarded_keypress(f):
             kp_bad.append((f.relative_to(root), ln, fn))
     print()
-    print("④ `keybd_event` 按下后**没有 `finally` 保证抬起**"
-          "（卡住 Ctrl/Alt/Enter ⇒ **忽然全选 / 忽然回车**）")
+    print(
+        "④ `keybd_event` 按下后**没有 `finally` 保证抬起**"
+        "（卡住 Ctrl/Alt/Enter ⇒ **忽然全选 / 忽然回车**）"
+    )
     if kp_bad:
         print("   [FAIL] %d 个函数：" % len(kp_bad))
         for rel, ln, fn in kp_bad[:20]:
             print("     %s:%d  %s()" % (rel, ln, fn))
     else:
-        print("   [PASS] 0 个（全部走 `sw_gui_input._press` / `_hold` 或自带 `finally`）")
+        print(
+            "   [PASS] 0 个（全部走 `sw_gui_input._press` / `_hold` 或自带 `finally`）"
+        )
     print()
     if enc_bad or drv_bad or fz_new or kp_bad:
-        print("环境坑门禁未通过：%d 项（%d + %d + %d + %d 处）"
-              % (4, len(enc_bad), len(drv_bad), len(fz_new), len(kp_bad)))
-        print("  修法：① 补 `encoding=\"utf-8\", errors=\"replace\"`；"
-              "② 写 `Path(\"D:/\")`（或 `r\"D:\\\\\"`）而不是 `Path(\"D:\")`；"
-              "③ 数值取值**只有 `None` 才回落**（`v if v is not None else d`），"
-              "**不要**写 `x or -1`。")
+        print(
+            "环境坑门禁未通过：%d 项（%d + %d + %d + %d 处）"
+            % (4, len(enc_bad), len(drv_bad), len(fz_new), len(kp_bad))
+        )
+        print(
+            '  修法：① 补 `encoding="utf-8", errors="replace"`；'
+            '② 写 `Path("D:/")`（或 `r"D:\\\\"`）而不是 `Path("D:")`；'
+            "③ 数值取值**只有 `None` 才回落**（`v if v is not None else d`），"
+            "**不要**写 `x or -1`。"
+        )
         return 1
     if fz_fixed:
         # ⚠ 基线腐坏**不算硬失败**（不阻塞发布），但必须喊出来。

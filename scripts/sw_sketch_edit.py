@@ -48,6 +48,7 @@
 #   **没有本机运行证据**（未在真机上做过草图倒角/镜像）⇒ **不得标 `verified`**。
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path as _Path
@@ -58,27 +59,32 @@ _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
     from .sw_connect import get_com_member, mm
-except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
-    from sw_connect import get_com_member, mm          # type: ignore
+except ImportError:  # pragma: no cover - 直接以 scripts/ 为根导入时
+    from sw_connect import get_com_member, mm  # type: ignore
 
 #: `swSketchChamferType_e` —— ★ **取出厂反射的值**（与 `C:\swapi` 的 md 在
 #: `DistanceDistance` 上冲突：md 写 -1、反射写 1 ⇒ 按铁律 4 用反射）。
 SKETCH_CHAMFER_TYPE = {
-    "distance_angle": 0,        # swSketchChamfer_DistanceAngle
-    "distance_distance": 1,     # swSketchChamfer_DistanceDistance（⚠ md 写 -1，反射写 1，采用 1）
-    "distance_equal": 2,        # swSketchChamfer_DistanceEqual
+    "distance_angle": 0,  # swSketchChamfer_DistanceAngle
+    "distance_distance": 1,  # swSketchChamfer_DistanceDistance（⚠ md 写 -1，反射写 1，采用 1）
+    "distance_equal": 2,  # swSketchChamfer_DistanceEqual
 }
 
 #: 官方 `SketchMirror` 的**选中标记**（不是参数，是选实体时的 mark）。
 #: enum-gate: member SketchMirror
 SKETCH_MIRROR_MARK = {
-    "segment": 1,       # 要镜像的是草图线段
-    "centerline": 2,    # 要镜像的是中心线
+    "segment": 1,  # 要镜像的是草图线段
+    "centerline": 2,  # 要镜像的是中心线
 }
 
 
-def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["distance_angle"],
-                          distance_mm: float, angle_or_distance: float = 0.0):
+def create_sketch_chamfer(
+    model,
+    *,
+    chamfer_type: int = SKETCH_CHAMFER_TYPE["distance_angle"],
+    distance_mm: float,
+    angle_or_distance: float = 0.0,
+):
     """在**已选中的两条草图实体**之间做倒角。
 
     ⚠ **调用前置条件**：官方写明「creates a chamfer **between two selected sketch entities**」
@@ -125,17 +131,24 @@ def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["dis
         try:
             sk = get_com_member(model, "GetActiveSketch2")
             if sk is None:
-                sk = get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")
+                sk = get_com_member(
+                    get_com_member(model, "SketchManager"), "ActiveSketch"
+                )
             segs = get_com_member(sk, "GetSketchSegments") if sk is not None else None
             return len(list(segs)) if segs else 0
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return -1
 
     before = _seg_count()
     try:
-        seg = get_com_member(skm, "CreateChamfer",
-                             int(chamfer_type), mm(float(distance_mm)), float(angle_or_distance))
-    except Exception as exc:      # noqa: BLE001
+        seg = get_com_member(
+            skm,
+            "CreateChamfer",
+            int(chamfer_type),
+            mm(float(distance_mm)),
+            float(angle_or_distance),
+        )
+    except Exception as exc:  # noqa: BLE001
         #: ★ **建成但拿不到返回对象** ⇒ 不算失败（回读线段数确认）
         if _seg_count() > before >= 0:
             return None
@@ -147,7 +160,7 @@ def create_sketch_chamfer(model, *, chamfer_type: int = SKETCH_CHAMFER_TYPE["dis
         ) from exc
     if seg is None:
         if _seg_count() > before >= 0:
-            return None      #: 同上：建成了，只是没有返回对象
+            return None  #: 同上：建成了，只是没有返回对象
         raise RuntimeError(
             "ISketchManager.CreateChamfer 返回 None 且**线段数没变**（%s → %s）⇒ 没建成。"
             "★ 实测：**只有 `distance_equal`(2) 能成**；官方前置是**选中两条草图实体**。"
@@ -181,24 +194,25 @@ def _active_sketch_segment_count(model):
     sketch = None
     try:
         sketch = get_com_member(get_com_member(model, "SketchManager"), "ActiveSketch")
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sketch = None
     if sketch is None:
-        return None                                                       #: ★ 取不到 ⇒ None（★ 不许当成 0）✓
+        return None  #: ★ 取不到 ⇒ None（★ 不许当成 0）✓
     try:
         import sys as _sys
+
         if str(_REPO_SCRIPTS) not in _sys.path:
             _sys.path.insert(0, str(_REPO_SCRIPTS))
-        from sw_sketch import get_arcs, get_lines                        # noqa: PLC0415
-    except Exception:                                                     # noqa: BLE001
+        from sw_sketch import get_arcs, get_lines  # noqa: PLC0415
+    except Exception:  # noqa: BLE001
         return None
     try:
         n_lines = len(get_lines(sketch) or []) // 12
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         n_lines = None
     try:
         n_arcs = len(get_arcs(sketch) or []) // 16
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         n_arcs = None
     if n_lines is None and n_arcs is None:
         return None
@@ -336,7 +350,7 @@ def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
         "new_segments": delta,
         "official_return": got,
         "verified_by": "★ `SketchUseEdge3` 回非假 **and** 草图实体计数变化"
-                       "（★ doc 承诺的判据；★ 取不到时不算通过）",
+        "（★ doc 承诺的判据；★ 取不到时不算通过）",
     }
 
 

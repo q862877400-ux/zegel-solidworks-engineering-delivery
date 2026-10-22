@@ -36,15 +36,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "selection-by-marks-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "selection-by-marks-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -63,40 +70,52 @@ def main() -> int:
         c1 = sim.select_face_at(doc, 0.0, 0.0, 0.0, mark=1)
         c2 = sim.select_face_at(doc, 0.0, 0.0, 0.02, append=True, mark=2)
         ev["selects"] = [c1, c2]
-        ev["count2"] = {("mark%s" % m): repr(safe_get_com_member(sm, "GetSelectedObjectCount2", m))
-                        for m in (-1, 0, 1, 2)}
+        ev["count2"] = {
+            ("mark%s" % m): repr(safe_get_com_member(sm, "GetSelectedObjectCount2", m))
+            for m in (-1, 0, 1, 2)
+        }
         #: ★ **逐个桶各取 1 个**
         per = {}
         for mark in (1, 2):
             try:
                 obj = get_com_member(sm, "GetSelectedObject6", 1, int(mark))
-                per["mark%d" % mark] = {"got": obj is not None,
-                                        "id": id(obj) if obj is not None else None}
-            except Exception as exc:                           # noqa: BLE001
-                per["mark%d" % mark] = {"got": False,
-                                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
+                per["mark%d" % mark] = {
+                    "got": obj is not None,
+                    "id": id(obj) if obj is not None else None,
+                }
+            except Exception as exc:  # noqa: BLE001
+                per["mark%d" % mark] = {
+                    "got": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:90]),
+                }
         ev["per_mark"] = per
         both = all(v.get("got") for v in per.values())
-        distinct = len({v.get("id") for v in per.values() if v.get("id") is not None}) == 2
+        distinct = (
+            len({v.get("id") for v in per.values() if v.get("id") is not None}) == 2
+        )
         ev["judge_by_marks_usable"] = bool(both and distinct)
         ev["verdict"] = "pass" if ev["judge_by_marks_usable"] else "partial"
-        ev["note"] = ("★ 验「**分桶取数**」这条修法：★ 两次选择用不同 mark（1 与 2），"
-                      "★ 而**逐个桶各取 1 个**（`GetSelectedObject6(1, mark)`）—— "
-                      "★ 判据：**拿到两个不同的对象**。★ 验过了才准改共享助手。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 验「**分桶取数**」这条修法：★ 两次选择用不同 mark（1 与 2），"
+            "★ 而**逐个桶各取 1 个**（`GetSelectedObject6(1, mark)`）—— "
+            "★ 判据：**拿到两个不同的对象**。★ 验过了才准改共享助手。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1200])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

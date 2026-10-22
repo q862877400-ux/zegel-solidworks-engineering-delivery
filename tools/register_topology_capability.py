@@ -11,6 +11,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -55,8 +56,12 @@ def main() -> int:
         print("  · %s 已存在，未改动" % ENTRY["id"])
         return 0
     caps.append(ENTRY)
-    MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("  ✓ 已登记 %s（level=%s）⇒ 共 %d 条" % (ENTRY["id"], ENTRY["level"], len(caps)))
+    MANIFEST.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(
+        "  ✓ 已登记 %s（level=%s）⇒ 共 %d 条" % (ENTRY["id"], ENTRY["level"], len(caps))
+    )
     return 0
 
 

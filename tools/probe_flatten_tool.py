@@ -23,10 +23,10 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC                                        # noqa: E402
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
-from scripts import sw_surface_features as SF                             # noqa: E402
+import register_capabilities as RC  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 OUT = REPO / "output" / "flatten-tool-evidence.json"
 TOOL = "solidworks_flatten_surface"
@@ -40,17 +40,20 @@ def _mk_surface(doc):
     """★ 造一张曲面体（★ 与 `prove_flatten_with_anchor.py::_mk_surface` 同一手法，**照抄**）。"""
     try:
         _g(doc, "ClearSelection2", True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Front Plane")
     _g(_g(doc, "SketchManager"), "CreateLine", -0.03, 0.0, 0.0, 0.03, 0.0, 0.0)
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("草图") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("草图") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "草图1", "草图1", "Sketch1"):
         try:
             return SF.create_extruded_surface_report(doc, 40.0, sketch_name=cand)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return {}
 
@@ -69,7 +72,11 @@ def main() -> int:
             row["ok"] = False
             row["err"] = "★ 工具没注册"
         else:
-            args = {"accuracy_factor": 4, "should_use_tears": False, "body_type": "surface"}
+            args = {
+                "accuracy_factor": 4,
+                "should_use_tears": False,
+                "body_type": "surface",
+            }
             #: ★★ **按 ToolSpec 的契约调**（复刻 `tool_registry.make_tool_function` 的三
             #: 步）
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
@@ -81,27 +88,42 @@ def main() -> int:
                     kwargs[k] = v
             kwargs[spec.inject] = RC.RESOLVERS[spec.inject](None)
             row["call_path"] = "module=%s function=%s inject=%s params=%s" % (
-                spec.module, spec.function, spec.inject, sorted(kwargs))
+                spec.module,
+                spec.function,
+                spec.inject,
+                sorted(kwargs),
+            )
             ret = fn(**kwargs)
             row["ret_type"] = type(ret).__name__
             if isinstance(ret, dict):
-                for k in ("ok", "preconditions_held", "ret_name", "ret_type", "ret_is_none",
-                          "new_features", "body_count", "anchor_selected", "error"):
+                for k in (
+                    "ok",
+                    "preconditions_held",
+                    "ret_name",
+                    "ret_type",
+                    "ret_is_none",
+                    "new_features",
+                    "body_count",
+                    "anchor_selected",
+                    "error",
+                ):
                     if k in ret:
                         row[k] = ret[k]
                 row["ret_ok"] = ret.get("ok")
             row["ok"] = bool(row.get("ret_ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["ok"] = False
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     row["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(row, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

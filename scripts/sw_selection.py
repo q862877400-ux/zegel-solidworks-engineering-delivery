@@ -58,7 +58,11 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member, set_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, set_com_member# ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
+    from sw_connect import (
+        get_com_member,
+        call_com_member,
+        set_com_member,
+    )  # ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_selection.py —— 本文件自身
 # 定位:   模块导出清单与签名表。
@@ -246,18 +250,21 @@ def get_selected_component(selection, index: int, secondary: int = 0):
     ★ 保留一次**回退**到 3：★ 老版本 SolidWorks 上 4 可能不存在；★ 但**先试后继**（铁律 4 的顺序）✓
     """
     try:
-        return _checked(selection, "GetSelectedObjectsComponent4",
-                        int(index), int(secondary))
-    except Exception:                                                 # noqa: BLE001
+        return _checked(
+            selection, "GetSelectedObjectsComponent4", int(index), int(secondary)
+        )
+    except Exception:  # noqa: BLE001
         #: ★ 回退路径：★ 只在"后继不可用"时走（老版本）⇒ ★ 拿到的对象语义相同 ✓
-        return _checked(selection, "GetSelectedObjectsComponent3",
-                        int(index), int(secondary))
+        return _checked(
+            selection, "GetSelectedObjectsComponent3", int(index), int(secondary)
+        )
 
 
 def get_selected_view(selection, index: int, secondary: int = 0):
     """取选中项作为工程图视图（View）。"""
-    return _checked(selection, "GetSelectedObjectsDrawingView2",
-                    int(index), int(secondary))
+    return _checked(
+        selection, "GetSelectedObjectsDrawingView2", int(index), int(secondary)
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -281,14 +288,18 @@ def get_selection_point(selection, index: int, secondary: int = 0):
 
 def get_selection_point_in_sketch_space(selection, index: int, secondary: int = 0):
     """取选区在草图空间的坐标点。"""
-    return _checked(selection, "GetSelectionPointInSketchSpace2",
-                    int(index), int(secondary))
+    return _checked(
+        selection, "GetSelectionPointInSketchSpace2", int(index), int(secondary)
+    )
 
 
 def set_selection_point(selection, index: int, x: float, y: float, z: float) -> bool:
     """设置选区坐标。"""
-    return bool(_checked(selection, "SetSelectionPoint",
-                         int(index), float(x), float(y), float(z)))
+    return bool(
+        _checked(
+            selection, "SetSelectionPoint", int(index), float(x), float(y), float(z)
+        )
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -377,8 +388,9 @@ def get_selected_object_mark(selection, index: int) -> int:
 
 def set_selected_object_mark(selection, index: int, mark: int, value: int) -> bool:
     """设置某选中项的标记。"""
-    return bool(_checked(selection, "SetSelectedObjectMark",
-                         int(index), int(mark), int(value)))
+    return bool(
+        _checked(selection, "SetSelectedObjectMark", int(index), int(mark), int(value))
+    )
 
 
 def set_enable_selection(selection, enabled: bool) -> bool:
@@ -399,14 +411,12 @@ def set_enable_contour_selection(selection, enabled: bool) -> bool:
 
 def is_coord_sys_element_selected(selection, kind: int, index: int) -> bool:
     """判断是否选中了坐标系元素。"""
-    return bool(_checked(selection, "IsCoordSysElementSelected",
-                         int(kind), int(index)))
+    return bool(_checked(selection, "IsCoordSysElementSelected", int(kind), int(index)))
 
 
 def is_in_edit_target(selection, index: int, secondary: int = 0) -> bool:
     """判断某项是否处于编辑目标中。"""
-    return bool(_checked(selection, "IsInEditTarget2",
-                         int(index), int(secondary)))
+    return bool(_checked(selection, "IsInEditTarget2", int(index), int(secondary)))
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -427,5 +437,6 @@ def collect_selection_evidence(selection) -> dict[str, Any]:
         "type_histogram": {str(t): types.count(t) for t in sorted(set(types))},
         "enable_selection": bool(get_com_member(selection, "EnableSelection")),
         "enable_contour_selection": bool(
-            get_com_member(selection, "EnableContourSelection")),
+            get_com_member(selection, "EnableContourSelection")
+        ),
     }

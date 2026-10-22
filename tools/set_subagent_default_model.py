@@ -1,8 +1,9 @@
 """★ 把子代理的默认模型改成 bunny（写活配置 `profiles/web/cordis.patch.yml`，先备份）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   DSH 用户配置（不是 SW 仓库）
 # 文件:   C:\Users\Zegel\.dsh\profiles\web\cordis.patch.yml
-# 定位:   ★ 业主指令：「把默认模型直接改掉」（★ 起因：我两次用 `workflow` 的 `agent()` 
+# 定位:   ★ 业主指令：「把默认模型直接改掉」（★ 起因：我两次用 `workflow` 的 `agent()`
 # 派活**没传
 #           `model`** ⇒ **默认继承我自己的模型（DeepSeek）** ⇒ 烧掉当天约 50% 花费）✓✗
 #         ★★ 机制（**逐字读出来的，不是猜的**）：
@@ -72,7 +73,7 @@ def main() -> int:
                     toolname = m.group(2)
                 m2 = re.search(r"^(\s*)provider:\s*", s)
                 if m2 and indent is None:
-                    indent = m2.group(1)          #: ★ 用同块 `provider:` 的缩进
+                    indent = m2.group(1)  #: ★ 用同块 `provider:` 的缩进
                 if re.search(r"^\s*modelSelectionSettings:", s) and indent is not None:
                     #: ★ 紧跟在 modelSelectionSettings 之后插入 agentOptions
                     out.append("%sagentOptions:\n" % indent)
@@ -98,7 +99,7 @@ def main() -> int:
     for k, s in enumerate(back, 1):
         if re.match(r"^\s*- id: tool-subagent\s*$", s):
             print("   L%d 起：" % k)
-            for t in back[k - 1:k + 10]:
+            for t in back[k - 1 : k + 10]:
                 print("      " + t)
     return 0
 

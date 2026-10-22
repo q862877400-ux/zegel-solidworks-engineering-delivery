@@ -1,4 +1,5 @@
 """★ Q13 · 规则取证服务：公式与依据分开（规格 327 的 T5~T9）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -41,8 +42,14 @@ FRESHNESS_DAYS = 30
 class RuleError(Exception):
     """★ 规则层失败（★ 带封闭码）。"""
 
-    CODES = ("missing-field", "bad-verdict", "summary-only-source",
-             "stale-authority", "no-implementation", "not-applicable")
+    CODES = (
+        "missing-field",
+        "bad-verdict",
+        "summary-only-source",
+        "stale-authority",
+        "no-implementation",
+        "not-applicable",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法规则拒绝码：%r" % code
@@ -56,8 +63,14 @@ class RuleError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★★ Q13 L239-243 逐字给的字段
-REQUEST_FIELDS = ("rule_id", "rule_version", "inputs", "application_context",
-                  "required_standard_editions", "evidence_bundle_ref")
+REQUEST_FIELDS = (
+    "rule_id",
+    "rule_version",
+    "inputs",
+    "application_context",
+    "required_standard_editions",
+    "evidence_bundle_ref",
+)
 
 
 @dataclass
@@ -71,7 +84,7 @@ class RuleRequest:
 
     rule_id: str = ""
     rule_version: int = 0
-    inputs: list = field(default_factory=list)          #: [{name,value,unit,source}]
+    inputs: list = field(default_factory=list)  #: [{name,value,unit,source}]
     application_context: dict = field(default_factory=dict)
     required_standard_editions: list = field(default_factory=list)
     evidence_bundle_ref: str = ""
@@ -95,7 +108,8 @@ class RuleRequest:
                     raise RuleError(
                         "missing-field",
                         "★ 输入 %r 缺 `%s`（★ Q13 L240：「带单位、来源」）"
-                        % (x.get("name"), k))
+                        % (x.get("name"), k),
+                    )
 
     def to_dict(self) -> dict:
         return {f: getattr(self, f) for f in REQUEST_FIELDS}
@@ -106,9 +120,16 @@ class RuleRequest:
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★★ Q13 L245-251 逐字给的字段
-RESULT_FIELDS = ("verdict", "outputs", "checked_preconditions",
-                 "failed_obligations", "citations", "authority_status",
-                 "missing_evidence", "rule_code_digest")
+RESULT_FIELDS = (
+    "verdict",
+    "outputs",
+    "checked_preconditions",
+    "failed_obligations",
+    "citations",
+    "authority_status",
+    "missing_evidence",
+    "rule_code_digest",
+)
 
 
 @dataclass
@@ -148,10 +169,10 @@ class RuleResult:
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★★ **效力来源的种类**（★ Q13 L255 逐字）
-SRC_OFFICIAL = "official_status_record"    #: ★ 官方状态记录 —— **可用**
-SRC_SUMMARY = "retrieval_summary"          #: ★ 检索引擎生成的摘要 —— **不可单独用**
-SRC_CONTRACT = "contract_specified"        #: ★ 合同指定
-SRC_CACHED = "offline_cache"               #: ★ 离线缓存（★ 按快照日期用）
+SRC_OFFICIAL = "official_status_record"  #: ★ 官方状态记录 —— **可用**
+SRC_SUMMARY = "retrieval_summary"  #: ★ 检索引擎生成的摘要 —— **不可单独用**
+SRC_CONTRACT = "contract_specified"  #: ★ 合同指定
+SRC_CACHED = "offline_cache"  #: ★ 离线缓存（★ 按快照日期用）
 AUTHORITY_SOURCES = (SRC_OFFICIAL, SRC_SUMMARY, SRC_CONTRACT, SRC_CACHED)
 
 
@@ -169,22 +190,35 @@ def check_authority(authority_status: dict) -> dict:
     """
     src = str(authority_status.get("source") or "")
     if src not in AUTHORITY_SOURCES:
-        return {"ok": False, "code": "summary-only-source",
-                "verdict": INDETERMINATE,
-                "reason": "★ 未知效力来源：%r" % src}
+        return {
+            "ok": False,
+            "code": "summary-only-source",
+            "verdict": INDETERMINATE,
+            "reason": "★ 未知效力来源：%r" % src,
+        }
     if src == SRC_SUMMARY:
-        return {"ok": False, "code": "summary-only-source",
-                "verdict": INDETERMINATE,
-                "reason": ("★★ **只引检索引擎生成的摘要** ⇒ `INDETERMINATE`"
-                           "（★ Q13 L255 逐字：「效力来源不可只引用检索引擎生成的摘要」）")}
-    return {"ok": True, "code": "", "verdict": PASS, "source": src,
-            "reason": "★ 有官方状态记录／合同指定 ⇒ 可用"}
+        return {
+            "ok": False,
+            "code": "summary-only-source",
+            "verdict": INDETERMINATE,
+            "reason": (
+                "★★ **只引检索引擎生成的摘要** ⇒ `INDETERMINATE`"
+                "（★ Q13 L255 逐字：「效力来源不可只引用检索引擎生成的摘要」）"
+            ),
+        }
+    return {
+        "ok": True,
+        "code": "",
+        "verdict": PASS,
+        "source": src,
+        "reason": "★ 有官方状态记录／合同指定 ⇒ 可用",
+    }
 
 
 #: ══ T9 新鲜度（★ Q13 L257 逐字）══════════════════════════════════════
 
-def check_freshness(checked_on: str, *, today: str,
-                    days: int = FRESHNESS_DAYS) -> dict:
+
+def check_freshness(checked_on: str, *, today: str, days: int = FRESHNESS_DAYS) -> dict:
     """★★ **30 天新鲜度政策**（★ T9 —— ★ Q13 L257 逐字）。
 
     ★★ Q13 L257 逐字：「本期效力核查采用**交付日前 30 天内**的官方状态记录
@@ -193,56 +227,76 @@ def check_freshness(checked_on: str, *, today: str,
 
     ★★ 判据：`(today - checked_on).days > 30` ⇒ **stale**。
     """
-    import datetime as _dt                                              # noqa: PLC0415
+    import datetime as _dt  # noqa: PLC0415
 
     def _parse(s: str):
         for fmt in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"):
             try:
-                return _dt.datetime.strptime(s[:len(fmt) + 2].strip(), fmt)
+                return _dt.datetime.strptime(s[: len(fmt) + 2].strip(), fmt)
             except ValueError:
                 continue
         return None
 
     a, b = _parse(checked_on), _parse(today)
     if a is None or b is None:
-        return {"ok": False, "stale": True, "code": "stale-authority",
-                "reason": "★ 日期解析不了：%r / %r" % (checked_on, today)}
+        return {
+            "ok": False,
+            "stale": True,
+            "code": "stale-authority",
+            "reason": "★ 日期解析不了：%r / %r" % (checked_on, today),
+        }
     age = (b - a).days
     stale = age > days
-    return {"ok": not stale, "stale": stale, "age_days": age, "limit": days,
-            "code": "stale-authority" if stale else "",
-            "reason": ("★ 效力记录 %d 天前（> %d）⇒ **stale**" % (age, days)
-                       if stale else "★ 在 %d 天内 ⇒ 新鲜" % days),
-            "★": "★ Q13 L257：30 天新鲜度政策（★ 离线缓存按快照日期用，不宣称核对到今天）"}
+    return {
+        "ok": not stale,
+        "stale": stale,
+        "age_days": age,
+        "limit": days,
+        "code": "stale-authority" if stale else "",
+        "reason": (
+            "★ 效力记录 %d 天前（> %d）⇒ **stale**" % (age, days)
+            if stale
+            else "★ 在 %d 天内 ⇒ 新鲜" % days
+        ),
+        "★": "★ Q13 L257：30 天新鲜度政策（★ 离线缓存按快照日期用，不宣称核对到今天）",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、裁决（★ T7 —— ★ Q13 L235）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 def rule_code_digest(module: str, function: str) -> str:
     """★ 规则**实现**的摘要（★ Q13 L251 逐字要的 `rule_code_digest`）。"""
-    import importlib                                                    # noqa: PLC0415
+    import importlib  # noqa: PLC0415
+
     try:
         mod = importlib.import_module(module)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
     fn = getattr(mod, function, None)
     if fn is None:
         return ""
     src = ""
     try:
-        import inspect                                                  # noqa: PLC0415
+        import inspect  # noqa: PLC0415
+
         src = inspect.getsource(fn)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         src = function
     return hashlib.sha256(src.encode("utf-8")).hexdigest()[:16]
 
 
-def evaluate_rule(req: RuleRequest, *, formula_ok: bool,
-                  applicability_ok: bool,
-                  authority_status: dict | None = None,
-                  checked_on: str = "", today: str = "") -> RuleResult:
+def evaluate_rule(
+    req: RuleRequest,
+    *,
+    formula_ok: bool,
+    applicability_ok: bool,
+    authority_status: dict | None = None,
+    checked_on: str = "",
+    today: str = "",
+) -> RuleResult:
     """★★ **规则裁决**（★ T7 —— ★ Q13 L235 逐字）。
 
     ★★ Q13 L235 逐字：「**一个公式能运行，不表示它对当前材料、工况和
@@ -265,32 +319,41 @@ def evaluate_rule(req: RuleRequest, *, formula_ok: bool,
     #: ② 效力来源
     a = check_authority(auth)
     if not a["ok"]:
-        return RuleResult(verdict=INDETERMINATE,
-                          missing_evidence=["authority_status:"
-                                            + str(a.get("code"))],
-                          authority_status=auth,
-                          rule_code_digest=rule_code_digest(
-                              "engineering.rule_service", "evaluate_rule"),
-                          applicability={"ok": applicability_ok})
+        return RuleResult(
+            verdict=INDETERMINATE,
+            missing_evidence=["authority_status:" + str(a.get("code"))],
+            authority_status=auth,
+            rule_code_digest=rule_code_digest(
+                "engineering.rule_service", "evaluate_rule"
+            ),
+            applicability={"ok": applicability_ok},
+        )
 
     #: ③ 新鲜度
     if checked_on and today:
         f = check_freshness(checked_on, today=today)
         if f["stale"]:
-            return RuleResult(verdict=INDETERMINATE,
-                              missing_evidence=["authority_status:stale"],
-                              authority_status=auth | {"freshness": f},
-                              rule_code_digest=rule_code_digest(
-                                  "engineering.rule_service", "evaluate_rule"),
-                              applicability={"ok": applicability_ok})
+            return RuleResult(
+                verdict=INDETERMINATE,
+                missing_evidence=["authority_status:stale"],
+                authority_status=auth | {"freshness": f},
+                rule_code_digest=rule_code_digest(
+                    "engineering.rule_service", "evaluate_rule"
+                ),
+                applicability={"ok": applicability_ok},
+            )
 
     #: ④ 公式
     if not formula_ok:
-        return RuleResult(verdict=FAIL, failed_obligations=["formula"],
-                          authority_status=auth,
-                          rule_code_digest=rule_code_digest(
-                              "engineering.rule_service", "evaluate_rule"),
-                          applicability={"ok": applicability_ok})
+        return RuleResult(
+            verdict=FAIL,
+            failed_obligations=["formula"],
+            authority_status=auth,
+            rule_code_digest=rule_code_digest(
+                "engineering.rule_service", "evaluate_rule"
+            ),
+            applicability={"ok": applicability_ok},
+        )
 
     #: ⑤ ★★ **能运行 ≠ 适用**
     if not applicability_ok:
@@ -300,13 +363,21 @@ def evaluate_rule(req: RuleRequest, *, formula_ok: bool,
             failed_obligations=["applicability"],
             authority_status=auth,
             rule_code_digest=rule_code_digest(
-                "engineering.rule_service", "evaluate_rule"),
-            applicability={"ok": False,
-                           "reason": ("★★ 公式**能运行**，但**对当前材料/工况/"
-                                      "标准版本不适用** ⇒ `NOT_APPLICABLE`"
-                                      "（★ Q13 L235 逐字）")})
+                "engineering.rule_service", "evaluate_rule"
+            ),
+            applicability={
+                "ok": False,
+                "reason": (
+                    "★★ 公式**能运行**，但**对当前材料/工况/"
+                    "标准版本不适用** ⇒ `NOT_APPLICABLE`"
+                    "（★ Q13 L235 逐字）"
+                ),
+            },
+        )
 
-    return RuleResult(verdict=PASS, authority_status=auth,
-                      rule_code_digest=rule_code_digest(
-                          "engineering.rule_service", "evaluate_rule"),
-                      applicability={"ok": True})
+    return RuleResult(
+        verdict=PASS,
+        authority_status=auth,
+        rule_code_digest=rule_code_digest("engineering.rule_service", "evaluate_rule"),
+        applicability={"ok": True},
+    )

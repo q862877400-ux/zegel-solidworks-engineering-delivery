@@ -18,11 +18,11 @@
 #   功能                    官方入口（★ 非废弃）                ★ 本批逐条核到的「前置」
 # ======================  ==============================  ==============================
 # ============
-# 斜接法兰                `IFeatureManager.                  ★ **官方页无 `## Remarks` 
+# 斜接法兰                `IFeatureManager.                  ★ **官方页无 `## Remarks`
 # 段**
 #                            InsertSheetMetalMiterFlange`（14）  ⇒ ★ 前置**查不到**（铁律 5）★
 #                                                                  只回读选区计数，不编前置
-# 闭合角                  `IModelDoc2.                       ★ **官方页无 `## Remarks` 
+# 闭合角                  `IModelDoc2.                       ★ **官方页无 `## Remarks`
 # 段** ⇒ 同上
 #                            InsertSheetMetalClosedCorner()`（0）
 # 焊件顶端盖              `IFeatureManager.                  ★「Before calling this meth
@@ -144,12 +144,12 @@
 
 from __future__ import annotations
 
-try:                                                                # 包内载入（mcp-server 走这条）
+try:  # 包内载入（mcp-server 走这条）
     from .sw_connect import create_empty_dispatch_variant, deg, get_com_member, mm
     from .sw_feature_readback import feature_names as _tree_names
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
+except ImportError:  # 顶层载入（脚本 / 探针）
     from sw_connect import create_empty_dispatch_variant, deg, get_com_member, mm  # noqa: F401
-    from sw_feature_readback import feature_names as _tree_names                   # noqa: F401
+    from sw_feature_readback import feature_names as _tree_names  # noqa: F401
 
 __all__ = [
     "insert_sheet_metal_miter_flange",
@@ -163,57 +163,66 @@ __all__ = [
 # ── 官方枚举（★ 逐字数值，来源写在每组后面的注释里）──────────────────────────────
 #: `swSheetMetalReliefTypes_e`（`C:\swapi\enums\swSheetMetalReliefTypes_e.md`，5 个成员
 #: ）
-SW_RELIEF_RECTANGULAR = 1      # swSheetMetalReliefRectangular = 1
-SW_RELIEF_TEAR = 2            # swSheetMetalReliefTear        = 2
-SW_RELIEF_OBROUND = 3         # swSheetMetalReliefObround     = 3
-SW_RELIEF_NONE = 4            # swSheetMetalReliefNone        = 4
-SW_RELIEF_TEAR_BEND = 5       # swSheetMetalReliefTearBend    = 5
+SW_RELIEF_RECTANGULAR = 1  # swSheetMetalReliefRectangular = 1
+SW_RELIEF_TEAR = 2  # swSheetMetalReliefTear        = 2
+SW_RELIEF_OBROUND = 3  # swSheetMetalReliefObround     = 3
+SW_RELIEF_NONE = 4  # swSheetMetalReliefNone        = 4
+SW_RELIEF_TEAR_BEND = 5  # swSheetMetalReliefTearBend    = 5
 
 #: `swFlangePositionTypes_e`（`C:\swapi\enums\swFlangePositionTypes_e.md`，6 个成员）
-SW_FLANGE_MATERIAL_INSIDE = 1      # swFlangePositionTypeMaterialInside  = 1
-SW_FLANGE_MATERIAL_OUTSIDE = 2     # swFlangePositionTypeMaterialOutside = 2
-SW_FLANGE_BEND_OUTSIDE = 3         # swFlangePositionTypeBendOutside     = 3
-SW_FLANGE_BEND_CENTER_LINE = 4     # swFlangePositionTypeBendCenterLine  = 4
-SW_FLANGE_BEND_SHARP = 5           # swFlangePositionTypeBendSharp       = 5（"Bend from virtual sharp"）
-SW_FLANGE_BEND_TANGENT = 6         # swFlangePositionTypeBendTangent     = 6（⚠ 官方注明对
-                                    #   "Up To Edge And Merge" 长度终止条件无效）
+SW_FLANGE_MATERIAL_INSIDE = 1  # swFlangePositionTypeMaterialInside  = 1
+SW_FLANGE_MATERIAL_OUTSIDE = 2  # swFlangePositionTypeMaterialOutside = 2
+SW_FLANGE_BEND_OUTSIDE = 3  # swFlangePositionTypeBendOutside     = 3
+SW_FLANGE_BEND_CENTER_LINE = 4  # swFlangePositionTypeBendCenterLine  = 4
+SW_FLANGE_BEND_SHARP = (
+    5  # swFlangePositionTypeBendSharp       = 5（"Bend from virtual sharp"）
+)
+SW_FLANGE_BEND_TANGENT = 6  # swFlangePositionTypeBendTangent     = 6（⚠ 官方注明对
+#   "Up To Edge And Merge" 长度终止条件无效）
 
-#: `swEndCapThicknessDirection_e`（`C:\swapi\enums\swEndCapThicknessDirection_e.md`，3 
+#: `swEndCapThicknessDirection_e`（`C:\swapi\enums\swEndCapThicknessDirection_e.md`，3
 #: 个成员）
-SW_END_CAP_OUTWARD = 0         # swExtendOutward = 0
-SW_END_CAP_INWARD = 1          # swExtendInward  = 1
-SW_END_CAP_SPECIFY_INSET = 2   # swSpecifyInset  = 2 ★ 官方 `DepthOffset` 逐字「valid only if
-                                # BIsEndCapInward **= 2**」⇒ ★★ 与官方例子传的 `2` 对得
-                                # 上 ✓
+SW_END_CAP_OUTWARD = 0  # swExtendOutward = 0
+SW_END_CAP_INWARD = 1  # swExtendInward  = 1
+SW_END_CAP_SPECIFY_INSET = (
+    2  # swSpecifyInset  = 2 ★ 官方 `DepthOffset` 逐字「valid only if
+)
+# BIsEndCapInward **= 2**」⇒ ★★ 与官方例子传的 `2` 对得
+# 上 ✓
 
 #: `swGussetThicknessType_e`（`C:\swapi\enums\swGussetThicknessType_e.md`，3 个成员）
-SW_GUSSET_THICKNESS_INNER = 0       # swGussetThicknessInner      = 0
-SW_GUSSET_THICKNESS_BOTH_SIDES = 1  # swGussetThicknessBothSides = 1（★ 官方例子用的就是它）
-SW_GUSSET_THICKNESS_OUTER = 2       # swGussetThicknessOuter      = 2
+SW_GUSSET_THICKNESS_INNER = 0  # swGussetThicknessInner      = 0
+SW_GUSSET_THICKNESS_BOTH_SIDES = (
+    1  # swGussetThicknessBothSides = 1（★ 官方例子用的就是它）
+)
+SW_GUSSET_THICKNESS_OUTER = 2  # swGussetThicknessOuter      = 2
 
 #: `swGussetProfileLocationType_e`（`C:\swapi\enums\swGussetProfileLocationType_e.md`，3
 #:  个成员）
-SW_GUSSET_PROFILE_START = 0     # swGussetProfileLocationStart  = 0
-SW_GUSSET_PROFILE_CENTER = 1    # swGussetProfileLocationCenter = 1（★ 官方例子用的就是它）
-SW_GUSSET_PROFILE_END = 2       # swGussetProfileLocationEnd    = 2
+SW_GUSSET_PROFILE_START = 0  # swGussetProfileLocationStart  = 0
+SW_GUSSET_PROFILE_CENTER = (
+    1  # swGussetProfileLocationCenter = 1（★ 官方例子用的就是它）
+)
+SW_GUSSET_PROFILE_END = 2  # swGussetProfileLocationEnd    = 2
 
 
 #: ★ 本模块覆盖到的 5 项 ⇒ 官方入口（★ 与 `tools/audit_gap_implementations.py` 对齐用）
 SHEET_METAL_WELD_ENTRY_STATUS = {
     "钣金/斜接法兰": "IFeatureManager.InsertSheetMetalMiterFlange（14 参）"
-                    "★ 废弃的是同名那份 IModelDoc2 版（11 参 · 回 void）",
+    "★ 废弃的是同名那份 IModelDoc2 版（11 参 · 回 void）",
     "钣金/闭合角": "IModelDoc2.InsertSheetMetalClosedCorner（零参 · 回 void）",
     "焊件/顶端盖": "IFeatureManager.InsertEndCapFeature3（10 参）"
-                  "★ 废弃的是 InsertEndCapFeature（6 参）；★ InsertEndCapFeature2 是并列入口、不在链上",
+    "★ 废弃的是 InsertEndCapFeature（6 参）；★ InsertEndCapFeature2 是并列入口、不在链上",
     "焊件/角撑板": "IFeatureManager.InsertGussetFeature3（20 参 · 焊件 IGussetFeatureData）"
-                  "★ 废弃的是 InsertGussetFeature（15 参）；★ 官方**断链**，中间代无 Obsolete 标注",
+    "★ 废弃的是 InsertGussetFeature（15 参）；★ 官方**断链**，中间代无 Obsolete 标注",
     "曲面/中面": "IFeatureManager.InsertMidSurface（4 参）"
-                 "★ 废弃的是 IModelDoc2.InsertMidSurfaceExt / IInsertMidSurfaceExt；"
-                 "★★ 后者点名的后继 IFeatureManager::IInsertMidSurface **官方没写**（查不到）",
+    "★ 废弃的是 IModelDoc2.InsertMidSurfaceExt / IInsertMidSurfaceExt；"
+    "★★ 后者点名的后继 IFeatureManager::IInsertMidSurface **官方没写**（查不到）",
 }
 
 
 # ── 判据用的小工具（★ 读不到就回 None，★ 不静默成 0 / 不猜）──────────────────────
+
 
 def _tree(model) -> list[str] | None:
     """★ 特征名清单（★ 委托本仓已验证的 `sw_feature_readback.feature_names`）。
@@ -225,7 +234,7 @@ def _tree(model) -> list[str] | None:
     """
     try:
         return [str(x) for x in (_tree_names(model) or [])]
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -237,18 +246,17 @@ except ImportError:
     from sw_feature_tree import new_features
 
 
-
 def _body_face_count(model) -> int | None:
     """★ 实体体的**面数合计** —— ★ 独立于特征树的第二判据（★ 闭合角唯一可用的那一类）。"""
     try:
         bodies = list(get_com_member(model, "GetBodies2", 0, True) or [])
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     total = 0
     for b in bodies:
         try:
             total += len(list(get_com_member(b, "GetFaces") or []))
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return total
 
@@ -263,7 +271,7 @@ def _surface_body_count(model) -> int | None:
         try:
             #: dispatch-arg: probe 试名探测：`GetSurfaceBodies`/`GetSurfaceBodyCount` 两源均查不到，按序试
             value = get_com_member(model, member)
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         try:
             return len(list(value or []))
@@ -283,11 +291,11 @@ def _volume_mm3(model) -> float | None:
     """
     try:
         from .sw_mass_property import mass_properties
-    except ImportError:                                             # pragma: no cover
+    except ImportError:  # pragma: no cover
         from sw_mass_property import mass_properties
     try:
         value = mass_properties(model).get("volume")
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     try:
         return None if value is None else float(value)
@@ -317,7 +325,7 @@ def _selection_marks(model) -> dict | None:
     """
     try:
         sm = get_com_member(model, "SelectionManager")
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     if sm is None:
         return None
@@ -325,11 +333,11 @@ def _selection_marks(model) -> dict | None:
     for mark in (0, 1, 2, 4):
         try:
             out[str(mark)] = int(get_com_member(sm, "GetSelectedObjectCount2", mark))
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             out[str(mark)] = -1
     try:
         out["all"] = int(get_com_member(sm, "GetSelectedObjectCount2", -1))
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         out["all"] = -1
     return out
 
@@ -337,7 +345,7 @@ def _selection_marks(model) -> dict | None:
 def _feature_name(feature) -> str | None:
     try:
         value = get_com_member(feature, "Name")
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     return None if value is None else str(value)
 
@@ -353,7 +361,7 @@ def _read_definition(feature, members, scale_mm: bool = True):
     out, unreadable = {}, []
     try:
         definition = get_com_member(feature, "GetDefinition")
-    except Exception as exc:                                         # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {}, ["GetDefinition: %s" % str(exc)[:80]]
     if definition is None:
         return {}, ["GetDefinition 回 None"]
@@ -361,7 +369,7 @@ def _read_definition(feature, members, scale_mm: bool = True):
         try:
             #: dispatch-arg: dynamic `members` 是形参：`(成员名, 系数)` 列表由调用方给
             raw = get_com_member(definition, name)
-        except Exception as exc:                                     # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             unreadable.append("%s(%s)" % (name, str(exc)[:60]))
             continue
         if raw is None:
@@ -379,20 +387,24 @@ def _read_definition(feature, members, scale_mm: bool = True):
 
 # ── ① 钣金/斜接法兰（★ 走 IFeatureManager 那份，★ 别走 IModelDoc2 那份废弃的）────────
 
-def insert_sheet_metal_miter_flange(model, *,
-                                    use_default_radius: bool = True,
-                                    global_radius_mm: float = 0.0,
-                                    rip_gap_mm: float = 0.0,
-                                    use_default_relief: bool = True,
-                                    use_relief_ratio: bool = False,
-                                    relief_ratio: float = 0.0,
-                                    relief_width_mm: float = 0.0,
-                                    relief_depth_mm: float = 0.0,
-                                    relief_type: int = SW_RELIEF_RECTANGULAR,
-                                    trim_side_bends: bool = False,
-                                    flange_pos: int = SW_FLANGE_MATERIAL_INSIDE,
-                                    offset_dist1_mm: float = 0.0,
-                                    offset_dist2_mm: float = 0.0) -> dict:
+
+def insert_sheet_metal_miter_flange(
+    model,
+    *,
+    use_default_radius: bool = True,
+    global_radius_mm: float = 0.0,
+    rip_gap_mm: float = 0.0,
+    use_default_relief: bool = True,
+    use_relief_ratio: bool = False,
+    relief_ratio: float = 0.0,
+    relief_width_mm: float = 0.0,
+    relief_depth_mm: float = 0.0,
+    relief_type: int = SW_RELIEF_RECTANGULAR,
+    trim_side_bends: bool = False,
+    flange_pos: int = SW_FLANGE_MATERIAL_INSIDE,
+    offset_dist1_mm: float = 0.0,
+    offset_dist2_mm: float = 0.0,
+) -> dict:
     """★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。
 
     :param use_default_radius: 官方逐字「True to use **default bend radius**, false to use GlobalRadius」。
@@ -427,23 +439,31 @@ def insert_sheet_metal_miter_flange(model, *,
       （★ **不是** `False` —— ★ 官方没说要什么，★ 判"没备好"是本模块自己加的）。
     """
     if model is None:
-        return {"ok": False, "op": "insert_sheet_metal_miter_flange", "error": "model 为 None"}
+        return {
+            "ok": False,
+            "op": "insert_sheet_metal_miter_flange",
+            "error": "model 为 None",
+        }
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
-        return {"ok": False, "op": "insert_sheet_metal_miter_flange",
-                "error": "取不到 FeatureManager"}
+        return {
+            "ok": False,
+            "op": "insert_sheet_metal_miter_flange",
+            "error": "取不到 FeatureManager",
+        }
     before = _tree(model)
     before_faces = _body_face_count(model)
     #: ★ 空 Dispatch（= 官方 PCBA 那一列的 **NULL** 分支）★ 见上文逐字理由
     null_dispatch = create_empty_dispatch_variant()
     feature = get_com_member(
-        fm, "InsertSheetMetalMiterFlange",
+        fm,
+        "InsertSheetMetalMiterFlange",
         bool(use_default_radius),
         mm(float(global_radius_mm)),
         mm(float(rip_gap_mm)),
         bool(use_default_relief),
         bool(use_relief_ratio),
-        float(relief_ratio),                 #: ★ 比例量，不换算
+        float(relief_ratio),  #: ★ 比例量，不换算
         mm(float(relief_width_mm)),
         mm(float(relief_depth_mm)),
         int(relief_type),
@@ -451,7 +471,7 @@ def insert_sheet_metal_miter_flange(model, *,
         int(flange_pos),
         mm(float(offset_dist1_mm)),
         mm(float(offset_dist2_mm)),
-        null_dispatch,                        #: ← 第 14 位，★ 对象形参（NULL 语义）
+        null_dispatch,  #: ← 第 14 位，★ 对象形参（NULL 语义）
     )
     after = _tree(model)
     after_faces = _body_face_count(model)
@@ -469,27 +489,31 @@ def insert_sheet_metal_miter_flange(model, *,
     return {
         "ok": bool(added) and feature is not None and bool(face_delta_here),
         "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
-                       "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
+        "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_sheet_metal_miter_flange",
         "entry_point": "IFeatureManager.InsertSheetMetalMiterFlange（★ 14 参 · 非废弃）",
         "obsolete_note": "★ 同名的 IModelDoc2.InsertSheetMetalMiterFlange（11 参 · 回 void）"
-                         "**已 Obsolete** ⇒ 本模块**不调**它",
+        "**已 Obsolete** ⇒ 本模块**不调**它",
         "returned_is_none": feature is None,
         "returned_name": _feature_name(feature),
-        "tree_before": before, "tree_after": after, "new_features": added,
-        "face_count_before": before_faces, "face_count_after": after_faces,
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "face_count_before": before_faces,
+        "face_count_after": after_faces,
         "face_count_delta": _numeric_delta(before_faces, after_faces),
         "pcba_passed": "★ 空 Dispatch（= 官方 PCBA 那一列的 NULL 分支）⇒ 用父折弯的折弯补偿",
         "unit_assumption": "★ 官方未给单位；按 SolidWorks 惯例当**米**、对外收毫米、边界换算一次",
         "selection_marks": _selection_marks(model),
         "preconditions_held": None,
         "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 本模块**不编前置**"
-                             "（铁律 5）；★ 只回读选区计数，★ `preconditions_held` 如实报 None",
+        "（铁律 5）；★ 只回读选区计数，★ `preconditions_held` 如实报 None",
         "verified_by": "feature tree delta + IFeature non-None + solid face-count delta",
     }
 
 
 # ── ② 钣金/闭合角（★ 官方零参、回 void ⇒ 判据只能靠树/几何增量）──────────────────
+
 
 def insert_sheet_metal_closed_corner(model) -> dict:
     """★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ 零参）。
@@ -509,7 +533,11 @@ def insert_sheet_metal_closed_corner(model) -> dict:
       ⇒ ★ 本模块**只走直入法**，★ **不碰**那族（★ 这也正好符合本批「直入法」的定位）。
     """
     if model is None:
-        return {"ok": False, "op": "insert_sheet_metal_closed_corner", "error": "model 为 None"}
+        return {
+            "ok": False,
+            "op": "insert_sheet_metal_closed_corner",
+            "error": "model 为 None",
+        }
     before = _tree(model)
     before_faces = _body_face_count(model)
     before_vol = _volume_mm3(model)
@@ -539,7 +567,7 @@ def insert_sheet_metal_closed_corner(model) -> dict:
     #: 若只看到"某一项变了"就报 `ok`，★ 那么**调用了一个什么都没干的 entry point 也可能
     #: 报成功**
     #:     （★ 例如选区恰好让某个计数抖动）⇒ ★★ **那正是"不静默成功"要防的** ✓
-    #: ★★★★ **改成 `and` 的理由（可核）**：★ 一个真的建成的闭合角**必然同时**满足两件事 
+    #: ★★★★ **改成 `and` 的理由（可核）**：★ 一个真的建成的闭合角**必然同时**满足两件事
     #: ——
     #:     ① **特征树多一个特征**（★ 它是特征，不是几何操作）；② **至少一个几何量变**
     #: （★ 闭合角会改面 ⇒ 面数或体积至少一个动）⇒ ★ 所以 `bool(added) and (面变 or 体积
@@ -556,41 +584,50 @@ def insert_sheet_metal_closed_corner(model) -> dict:
         "op": "insert_sheet_metal_closed_corner",
         "entry_point": "IModelDoc2.InsertSheetMetalClosedCorner（★ 零参 · **回 void**）",
         "returns_void": True,
-        "returned_is_none": None,          # ★ 官方回 void ⇒ ★ 这个字段**无意义**，如实置 None
-        "tree_before": before, "tree_after": after, "new_features": added,
-        "face_count_before": before_faces, "face_count_after": after_faces,
+        "returned_is_none": None,  # ★ 官方回 void ⇒ ★ 这个字段**无意义**，如实置 None
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "face_count_before": before_faces,
+        "face_count_after": after_faces,
         "face_count_delta": face_delta,
-        "volume_mm3_before": before_vol, "volume_mm3_after": after_vol,
+        "volume_mm3_before": before_vol,
+        "volume_mm3_after": after_vol,
         "volume_mm3_delta": vol_delta,
         "selection_marks": _selection_marks(model),
         "preconditions_held": None,
         "precondition_note": "★★ **官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ 不编前置（铁律 5）",
         "pointer_family_note": "★ IClosedCornerFeatureData.IAccessSelections 已 Obsolete → IAccessSelections2；"
-                               "★ ★ 而该族是**进程内指针接口**，★ 本仓 pywin32 后端到不了（事实 47）⇒ 本模块不碰",
+        "★ ★ 而该族是**进程内指针接口**，★ 本仓 pywin32 后端到不了（事实 47）⇒ 本模块不碰",
         #: ★★★ 判据分层（★ 2026-10-04 修正）—— ★ **跨种类用 `and`、同种类用 `or`** ✓
         "judgement_layers": {
             "cross_kind": "★ 特征树增量 **and** 几何量变动（★ 两者**都**必须满足）",
             "same_kind": "★ 面数变动 **or** 体积变动（★ 同一**种类**的两个量，任一即可）",
             "why": "★ 官方回 void ⇒ 没有返回值可判 ⇒ ★ 若用 `or`，"
-                   "**一个什么都没干的调用也可能报成功**（★ 违反规则 6）",
+            "**一个什么都没干的调用也可能报成功**（★ 违反规则 6）",
         },
         "verified_by": "★ 特征树增量 **and**（面数增量 **or** 体积增量）"
-                       "（★ 官方回 void ⇒ ★ 没有「返回非 None」这条判据）",
+        "（★ 官方回 void ⇒ ★ 没有「返回非 None」这条判据）",
     }
 
 
 # ── ③ 焊件/顶端盖（★ InsertEndCapFeature3，★ 前置逐字 = 先选端面）────────────────
 
-def insert_weldment_end_cap(model, depth_mm: float, *,
-                            is_given_offset: bool = False,
-                            is_chamfer: bool = False,
-                            offset_value_mm: float = 0.0,
-                            wall_thickness_ratio: float = 0.0,
-                            chamfer_value_mm: float = 0.0,
-                            is_corner_treatment: bool = False,
-                            depth_offset_mm: float = 0.0,
-                            is_reverse: bool = False,
-                            is_end_cap_inward: int = SW_END_CAP_OUTWARD) -> dict:
+
+def insert_weldment_end_cap(
+    model,
+    depth_mm: float,
+    *,
+    is_given_offset: bool = False,
+    is_chamfer: bool = False,
+    offset_value_mm: float = 0.0,
+    wall_thickness_ratio: float = 0.0,
+    chamfer_value_mm: float = 0.0,
+    is_corner_treatment: bool = False,
+    depth_offset_mm: float = 0.0,
+    is_reverse: bool = False,
+    is_end_cap_inward: int = SW_END_CAP_OUTWARD,
+) -> dict:
     """★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。
 
     :param depth_mm: 顶端盖厚度（**毫米**）。
@@ -624,16 +661,21 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
         return {"ok": False, "op": "insert_weldment_end_cap", "error": "model 为 None"}
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
-        return {"ok": False, "op": "insert_weldment_end_cap", "error": "取不到 FeatureManager"}
+        return {
+            "ok": False,
+            "op": "insert_weldment_end_cap",
+            "error": "取不到 FeatureManager",
+        }
     before = _tree(model)
     marks = _selection_marks(model)
     feature = get_com_member(
-        fm, "InsertEndCapFeature3",
+        fm,
+        "InsertEndCapFeature3",
         mm(float(depth_mm)),
         bool(is_given_offset),
         bool(is_chamfer),
         mm(float(offset_value_mm)),
-        float(wall_thickness_ratio),     #: ★ 比例量，不换算
+        float(wall_thickness_ratio),  #: ★ 比例量，不换算
         mm(float(chamfer_value_mm)),
         bool(is_corner_treatment),
         mm(float(depth_offset_mm)),
@@ -646,72 +688,82 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
     #: 米）
     definition, unreadable = ({}, [])
     if feature is not None:
-        definition, unreadable = _read_definition(feature, [
-            ("Thickness", 1000.0),
-            ("OffsetDistance", 1000.0),
-            ("ChamferDistance", 1000.0),
-            ("DepthDistance", 1000.0),
-            ("ThicknessRatioForOffset", None),
-            ("IsEndCapInward", None),
-            ("UseChamferCorners", None),
-            ("UseCornerTreatment", None),
-            ("UseReverse", None),
-            ("UseThicknessRatioForOffset", None),
-        ])
+        definition, unreadable = _read_definition(
+            feature,
+            [
+                ("Thickness", 1000.0),
+                ("OffsetDistance", 1000.0),
+                ("ChamferDistance", 1000.0),
+                ("DepthDistance", 1000.0),
+                ("ThicknessRatioForOffset", None),
+                ("IsEndCapInward", None),
+                ("UseChamferCorners", None),
+                ("UseCornerTreatment", None),
+                ("UseReverse", None),
+                ("UseThicknessRatioForOffset", None),
+            ],
+        )
     total_selected = (marks or {}).get("all", -1)
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`**（★ E5-4 · 与另两处
     #: 同源同错）——
-    #: ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` 
+    #: ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）`
     #: ✓
     #:   ★★ 本处**早已算了** `face_count_delta`（★ 就在返回值里）、★ **只是没进 `ok`** ✓
     face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
         "ok": bool(added) and feature is not None and bool(face_delta_here),
         "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量"
-                       "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
+        "（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_weldment_end_cap",
         "entry_point": "IFeatureManager.InsertEndCapFeature3（★ 10 参 · 非废弃）",
         "obsolete_note": "★ InsertEndCapFeature（6 参）**已 Obsolete** → 后继 3；"
-                         "★ ★ InsertEndCapFeature2（7 参 · 末位 System.object Faces）是**并列**入口、"
-                         "**不在**这条链上（★ 官方页无 Obsolete 句）",
+        "★ ★ InsertEndCapFeature2（7 参 · 末位 System.object Faces）是**并列**入口、"
+        "**不在**这条链上（★ 官方页无 Obsolete 句）",
         "returned_is_none": feature is None,
         "returned_name": _feature_name(feature),
         "definition_readback_mm": definition,
         "definition_unreadable": unreadable,
-        "tree_before": before, "tree_after": after, "new_features": added,
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
         "selection_marks": marks,
         "preconditions_held": bool(total_selected >= 1),
         "precondition_note": "★ 官方逐字：'Before calling this method, **select one or more end "
-                             "faces** of a structural member in the graphics area.'"
-                             "★ ★ 官方**没给 mark**，★ 官方例子用的是 mark=**0**",
+        "faces** of a structural member in the graphics area.'"
+        "★ ★ 官方**没给 mark**，★ 官方例子用的是 mark=**0**",
         "unit_assumption": "★ 官方未给单位；按米收、对外收毫米、边界换算一次"
-                           "（★ 官方例子读回时自己 `* 1000#` 才成 mm ⇒ 官方回的确实是米）",
+        "（★ 官方例子读回时自己 `* 1000#` 才成 mm ⇒ 官方回的确实是米）",
         "verified_by": "feature tree delta + IFeature non-None + GetDefinition() 属性回读",
     }
 
 
 # ── ④ 焊件/角撑板（★ InsertGussetFeature3，★ 前置逐字 = 两个面 + mark=1）───────────
 
-def insert_weldment_gusset(model, depth_mm: float, *,
-                           dir_type: int = SW_GUSSET_THICKNESS_BOTH_SIDES,
-                           loc_type: int = SW_GUSSET_PROFILE_CENTER,
-                           is_profile: bool = False,
-                           profile_d1_mm: float = 0.0,
-                           profile_d2_mm: float = 0.0,
-                           profile_d3_mm: float = 0.0,
-                           profile_angle_deg: float = 45.0,
-                           profile_d4_mm: float = 0.0,
-                           offset_reference_plane: bool = False,
-                           d_profile_offset_mm: float = 0.0,
-                           crv_index: int = 0,
-                           reverse_dir: bool = False,
-                           reverse_face: bool = False,
-                           use_len_dim: bool = False,
-                           profile_d5_mm: float = 0.0,
-                           profile_d6_mm: float = 0.0,
-                           profile_chamfer_angle_deg: float = 45.0,
-                           use_len_dim_for_chamfer: bool = False,
-                           need_chamfer_in_gusset: bool = False) -> dict:
+
+def insert_weldment_gusset(
+    model,
+    depth_mm: float,
+    *,
+    dir_type: int = SW_GUSSET_THICKNESS_BOTH_SIDES,
+    loc_type: int = SW_GUSSET_PROFILE_CENTER,
+    is_profile: bool = False,
+    profile_d1_mm: float = 0.0,
+    profile_d2_mm: float = 0.0,
+    profile_d3_mm: float = 0.0,
+    profile_angle_deg: float = 45.0,
+    profile_d4_mm: float = 0.0,
+    offset_reference_plane: bool = False,
+    d_profile_offset_mm: float = 0.0,
+    crv_index: int = 0,
+    reverse_dir: bool = False,
+    reverse_face: bool = False,
+    use_len_dim: bool = False,
+    profile_d5_mm: float = 0.0,
+    profile_d6_mm: float = 0.0,
+    profile_chamfer_angle_deg: float = 45.0,
+    use_len_dim_for_chamfer: bool = False,
+    need_chamfer_in_gusset: bool = False,
+) -> dict:
     """★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。
 
     :param depth_mm: 角撑板厚度（**毫米**）。
@@ -758,20 +810,27 @@ def insert_weldment_gusset(model, depth_mm: float, *,
         return {"ok": False, "op": "insert_weldment_gusset", "error": "model 为 None"}
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
-        return {"ok": False, "op": "insert_weldment_gusset", "error": "取不到 FeatureManager"}
+        return {
+            "ok": False,
+            "op": "insert_weldment_gusset",
+            "error": "取不到 FeatureManager",
+        }
     before = _tree(model)
     before_faces = _body_face_count(model)
     marks = _selection_marks(model)
     feature = get_com_member(
-        fm, "InsertGussetFeature3",
+        fm,
+        "InsertGussetFeature3",
         mm(float(depth_mm)),
-        int(dir_type),                        #: ★ 官方 System.short，本仓按 int 透传（已声明）
-        int(loc_type),                        #: ★ 同上
+        int(dir_type),  #: ★ 官方 System.short，本仓按 int 透传（已声明）
+        int(loc_type),  #: ★ 同上
         bool(is_profile),
         mm(float(profile_d1_mm)),
         mm(float(profile_d2_mm)),
         mm(float(profile_d3_mm)),
-        deg(float(profile_angle_deg)),        #: ★ 官方吃**弧度**（例子 0.78539816339745 = 45°）
+        deg(
+            float(profile_angle_deg)
+        ),  #: ★ 官方吃**弧度**（例子 0.78539816339745 = 45°）
         mm(float(profile_d4_mm)),
         bool(offset_reference_plane),
         mm(float(d_profile_offset_mm)),
@@ -781,7 +840,7 @@ def insert_weldment_gusset(model, depth_mm: float, *,
         bool(use_len_dim),
         mm(float(profile_d5_mm)),
         mm(float(profile_d6_mm)),
-        deg(float(profile_chamfer_angle_deg)),#: ★ 同上，弧度
+        deg(float(profile_chamfer_angle_deg)),  #: ★ 同上，弧度
         bool(use_len_dim_for_chamfer),
         bool(need_chamfer_in_gusset),
     )
@@ -800,43 +859,51 @@ def insert_weldment_gusset(model, depth_mm: float, *,
     #:     ★★ 四个**都必须成立**（★ doc 写的是"三个都要"+ 两条附加 ⇒ ★ **一路 `and`**）✓
     face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
-        "ok": (bool(added) and feature is not None and bool(face_delta_here)
-               and int(mark1) > 0),
+        "ok": (
+            bool(added)
+            and feature is not None
+            and bool(face_delta_here)
+            and int(mark1) > 0
+        ),
         "verified_by": "★ 特征树增量 **and** 返回对象非 None **and** 实体面数增量 **and** "
-                       "mark-1 选区计数 > 0（★ doc 承诺的判据；★ 跨种类 ⇒ `and`）",
+        "mark-1 选区计数 > 0（★ doc 承诺的判据；★ 跨种类 ⇒ `and`）",
         "op": "insert_weldment_gusset",
         "entry_point": "IFeatureManager.InsertGussetFeature3（★ 20 参 · 非废弃 · **焊件**）",
         "obsolete_note": "★ InsertGussetFeature（15 参）**已 Obsolete** → 后继 **3**；"
-                         "★ ★ 官方**断链**：InsertGussetFeature2 的页**没有** Obsolete 句 ⇒ "
-                         "★ 第 1 代直接指向第 3 代，★ 中间那代的废弃状态**官方没写**",
+        "★ ★ 官方**断链**：InsertGussetFeature2 的页**没有** Obsolete 句 ⇒ "
+        "★ 第 1 代直接指向第 3 代，★ 中间那代的废弃状态**官方没写**",
         "interface_family": "★ 焊件 IGussetFeatureData（14 属性 / 4 方法）"
-                            "—— ★ **不是**钣金 ISMGussetFeatureData（28 属性 / 2 方法）"
-                            "⇒ ★ 用错时连读都读不到（已知事实 36）",
+        "—— ★ **不是**钣金 ISMGussetFeatureData（28 属性 / 2 方法）"
+        "⇒ ★ 用错时连读都读不到（已知事实 36）",
         "returned_is_none": feature is None,
         "returned_name": _feature_name(feature),
-        "tree_before": before, "tree_after": after, "new_features": added,
-        "face_count_before": before_faces, "face_count_after": after_faces,
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "face_count_before": before_faces,
+        "face_count_after": after_faces,
         "face_count_delta": _numeric_delta(before_faces, after_faces),
         "selection_marks": marks,
         "selection_mark_1_count": mark1,
         "preconditions_held": bool(mark1 >= 2),
         "precondition_note": "★ 官方逐字：'…must call SelectByID2 to select **two faces** that are "
-                             "the supporting legs of this gusset **with a Mark of 1**'"
-                             "★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ 本模块照抄这个组合",
+        "the supporting legs of this gusset **with a Mark of 1**'"
+        "★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ 本模块照抄这个组合",
         "short_param_note": "★ DirType / LocType 官方类型是 System.short；★ pywin32 迟到绑定传 "
-                            "VT_I4 ⇒ 本模块按 int 透传并**声明这一点**（不假装类型已对上）",
+        "VT_I4 ⇒ 本模块按 int 透传并**声明这一点**（不假装类型已对上）",
         "unit_assumption": "★ 距离按米收、对外毫米（官方例子 0.005/0.025/0.0125 即 5/25/12.5 mm）；"
-                           "★ 角度官方吃**弧度**（例子 0.78539816339745 = π/4 = 45°）⇒ 对外收度、边界换算一次",
+        "★ 角度官方吃**弧度**（例子 0.78539816339745 = π/4 = 45°）⇒ 对外收度、边界换算一次",
         "verified_by": "feature tree delta + IFeature non-None + solid face-count delta"
-                       " + mark-1 选区计数",
+        " + mark-1 选区计数",
     }
 
 
 # ── ⑤ 曲面/中面（★ 前两位是对象形参 ⇒ 工具层 Param 表达不了 ⇒ 只在能力层）─────────
 
-def insert_mid_surface(model, body, part_doc, *,
-                       placement: float = 0.0,
-                       knit_flag: bool = False) -> dict:
+
+def insert_mid_surface(
+    model, body, part_doc, *, placement: float = 0.0, knit_flag: bool = False
+) -> dict:
     """★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。
 
     :param body: 官方 `Body2 PBodyIn` —— ★ **对象形参**（`IBody2` 实例）。
@@ -865,23 +932,34 @@ def insert_mid_surface(model, body, part_doc, *,
     if model is None:
         return {"ok": False, "op": "insert_mid_surface", "error": "model 为 None"}
     if body is None:
-        return {"ok": False, "op": "insert_mid_surface",
-                "error": "body 为 None —— ★ 官方 PBodyIn 是对象形参，★ 取不到 body 就没有调用序",
-                "no_tool_spec_reason": "★ Param 表达不了 Body2 / ModelDoc2 两个对象形参"}
+        return {
+            "ok": False,
+            "op": "insert_mid_surface",
+            "error": "body 为 None —— ★ 官方 PBodyIn 是对象形参，★ 取不到 body 就没有调用序",
+            "no_tool_spec_reason": "★ Param 表达不了 Body2 / ModelDoc2 两个对象形参",
+        }
     if part_doc is None:
-        return {"ok": False, "op": "insert_mid_surface",
-                "error": "part_doc 为 None —— ★ 官方 PPartDocIn 是对象形参（**组件的模型文档**）",
-                "no_tool_spec_reason": "★ Param 表达不了 Body2 / ModelDoc2 两个对象形参"}
+        return {
+            "ok": False,
+            "op": "insert_mid_surface",
+            "error": "part_doc 为 None —— ★ 官方 PPartDocIn 是对象形参（**组件的模型文档**）",
+            "no_tool_spec_reason": "★ Param 表达不了 Body2 / ModelDoc2 两个对象形参",
+        }
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
-        return {"ok": False, "op": "insert_mid_surface", "error": "取不到 FeatureManager"}
+        return {
+            "ok": False,
+            "op": "insert_mid_surface",
+            "error": "取不到 FeatureManager",
+        }
     before = _tree(model)
     before_sb = _surface_body_count(model)
     result = get_com_member(
-        fm, "InsertMidSurface",
-        body,                   #: ★ 位置 1：Body2 PBodyIn（对象）
-        part_doc,               #: ★ 位置 2：ModelDoc2 PPartDocIn（对象）
-        float(placement),       #: ★ 官方未给单位/量纲 ⇒ 原样透传
+        fm,
+        "InsertMidSurface",
+        body,  #: ★ 位置 1：Body2 PBodyIn（对象）
+        part_doc,  #: ★ 位置 2：ModelDoc2 PPartDocIn（对象）
+        float(placement),  #: ★ 官方未给单位/量纲 ⇒ 原样透传
         bool(knit_flag),
     )
     after = _tree(model)
@@ -893,22 +971,24 @@ def insert_mid_surface(model, body, part_doc, *,
         "op": "insert_mid_surface",
         "entry_point": "IFeatureManager.InsertMidSurface（★ 4 参 · 非废弃）",
         "obsolete_note": "★ IModelDoc2.InsertMidSurfaceExt（2 参）与 IModelDoc2.IInsertMidSurfaceExt"
-                         "（2 参）**都 Obsolete**；★ ★ 后者点名的后继 "
-                         "**`IFeatureManager::IInsertMidSurface` 官方没写**（全库只有 3 个 "
-                         "`*MidSurface*` 页）⇒ ★ **链断、无后继签名可抄** ⇒ ★ 不拿非 `I` 前缀那份顶替",
+        "（2 参）**都 Obsolete**；★ ★ 后者点名的后继 "
+        "**`IFeatureManager::IInsertMidSurface` 官方没写**（全库只有 3 个 "
+        "`*MidSurface*` 页）⇒ ★ **链断、无后继签名可抄** ⇒ ★ 不拿非 `I` 前缀那份顶替",
         "returned_is_none": result is None,
-        "tree_before": before, "tree_after": after, "new_features": added,
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
         "surface_body_count_before": before_sb,
         "surface_body_count_after": after_sb,
         "surface_body_count_delta": sb_delta,
         "preconditions_held": bool(body is not None and part_doc is not None),
         "precondition_note": "★ 官方逐字：'The **pPartDocIn** parameter is the **component's model "
-                             "document** … and the **pBody** parameter is the **body of that component**'"
-                             " ⇒ ★ part_doc 必须是**零件**文档、★ 不是装配文档 / 当前活动文档",
+        "document** … and the **pBody** parameter is the **body of that component**'"
+        " ⇒ ★ part_doc 必须是**零件**文档、★ 不是装配文档 / 当前活动文档",
         "no_tool_spec_reason": "★★ Param 只能表达 str/float/int/bool ⇒ **Body2 / ModelDoc2 两个对象形参"
-                               "表达不了** ⇒ 能力层写、工具层不建 ToolSpec",
+        "表达不了** ⇒ 能力层写、工具层不建 ToolSpec",
         "unit_assumption": "★ `placement` 官方只说 'the placement position'、**既没给单位也没给量纲**"
-                           " ⇒ 原样透传、**不换算**（铁律 5）",
+        " ⇒ 原样透传、**不换算**（铁律 5）",
         "verified_by": "surface-body-count delta + returned object non-None + feature tree delta",
     }
 
@@ -947,8 +1027,9 @@ def insert_mid_surface(model, body, part_doc, *,
 #      ★ 判据永远是**"这条直入路本身能不能走"**，★ 不是"接口上有没有那个指针方法"。
 
 
-def create_midsurface(model, *, body_index: int = 0, placement: float = 0.0,
-                      knit: bool = False) -> dict:
+def create_midsurface(
+    model, *, body_index: int = 0, placement: float = 0.0, knit: bool = False
+) -> dict:
     """★ **曲面中面（按体号给的入口）** —— 把 `insert_mid_surface` 那两个**对象形参**解析成可声明的入参。"""
     # ── 来源 ─────────────────────────────────────────────────────────
     # 仓库:   本项目自身（**转接层** —— 实现仍在同文件的 `insert_mid_surface`，本函数不
@@ -988,27 +1069,44 @@ def create_midsurface(model, *, body_index: int = 0, placement: float = 0.0,
         return {"ok": False, "op": "create_midsurface", "error": "model 为 None"}
     try:
         bodies = list(get_com_member(model, "GetBodies2", 0, False) or [])
-    except Exception as exc:                                            # noqa: BLE001
-        return {"ok": False, "op": "create_midsurface", "route": "GetBodies2(0, False)",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
-    out = {"op": "create_midsurface", "route": "GetBodies2(0, False)",
-           "body_count": len(bodies), "body_index": int(body_index),
-           "verified_by": "曲面体数增量 + 返回对象非 None + 树增量（★ 由 insert_mid_surface 回读）"}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "op": "create_midsurface",
+            "route": "GetBodies2(0, False)",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
+    out = {
+        "op": "create_midsurface",
+        "route": "GetBodies2(0, False)",
+        "body_count": len(bodies),
+        "body_index": int(body_index),
+        "verified_by": "曲面体数增量 + 返回对象非 None + 树增量（★ 由 insert_mid_surface 回读）",
+    }
     if not bodies:
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = ("★ 前置未成立：`GetBodies2(0, False)` 回空 ⇒ ★ 活动文档可能**不是零件**，"
-                        "或该零件没有实体体")
+        out["error"] = (
+            "★ 前置未成立：`GetBodies2(0, False)` 回空 ⇒ ★ 活动文档可能**不是零件**，"
+            "或该零件没有实体体"
+        )
         return out
     if not (0 <= int(body_index) < len(bodies)):
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = ("★ 前置未成立：body_index=%d 越界（该文档有 %d 个体）"
-                        % (body_index, len(bodies)))
+        out["error"] = "★ 前置未成立：body_index=%d 越界（该文档有 %d 个体）" % (
+            body_index,
+            len(bodies),
+        )
         return out
     out["preconditions_held"] = True
-    res = insert_mid_surface(model, bodies[int(body_index)], model,
-                             placement=float(placement), knit_flag=bool(knit))
+    res = insert_mid_surface(
+        model,
+        bodies[int(body_index)],
+        model,
+        placement=float(placement),
+        knit_flag=bool(knit),
+    )
     out["ok"] = bool(res.get("ok")) if isinstance(res, dict) else bool(res)
     out["inner"] = res
     return out

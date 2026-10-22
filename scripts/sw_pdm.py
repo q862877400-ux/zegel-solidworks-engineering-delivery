@@ -47,6 +47,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -169,21 +170,39 @@ def add_custom_property(pdm_document, name: str, info_type, value: str) -> bool:
     :param info_type: ``SwDmCustomInfoType`` 枚举值 —— 反射只给类型名不给取值，
         故**必须由调用方提供**，本模块不设默认。
     """
-    return bool(_checked(DOCUMENT_ARITY, pdm_document, "AddCustomProperty",
-                         str(name), info_type, str(value)))
+    return bool(
+        _checked(
+            DOCUMENT_ARITY,
+            pdm_document,
+            "AddCustomProperty",
+            str(name),
+            info_type,
+            str(value),
+        )
+    )
 
 
-def add_invisible_custom_property(pdm_document, name: str, info_type,
-                                  value: str) -> bool:
+def add_invisible_custom_property(
+    pdm_document, name: str, info_type, value: str
+) -> bool:
     """加不可见自定义属性。"""
-    return bool(_checked(DOCUMENT_ARITY, pdm_document, "AddInvisibleCustomProperty",
-                         str(name), info_type, str(value)))
+    return bool(
+        _checked(
+            DOCUMENT_ARITY,
+            pdm_document,
+            "AddInvisibleCustomProperty",
+            str(name),
+            info_type,
+            str(value),
+        )
+    )
 
 
 def delete_custom_property(pdm_document, name: str) -> bool:
     """删自定义属性。"""
-    return bool(_checked(DOCUMENT_ARITY, pdm_document, "DeleteCustomProperty",
-                         str(name)))
+    return bool(
+        _checked(DOCUMENT_ARITY, pdm_document, "DeleteCustomProperty", str(name))
+    )
 
 
 def get_all_external_references(pdm_document, search_option):
@@ -191,8 +210,9 @@ def get_all_external_references(pdm_document, search_option):
 
     :param search_option: ``SwDMSearchOption`` 枚举值 —— 同上，需调用方提供。
     """
-    return _checked(DOCUMENT_ARITY, pdm_document, "GetAllExternalReferences",
-                    search_option)
+    return _checked(
+        DOCUMENT_ARITY, pdm_document, "GetAllExternalReferences", search_option
+    )
 
 
 def close_document(pdm_document) -> bool:
@@ -222,7 +242,8 @@ def get_custom_property_names_and_values(pdm_document) -> dict[str, Any]:
         "last_saved_date": str(get_com_member(pdm_document, "LastSavedDate") or ""),
         "creation_date": str(get_com_member(pdm_document, "CreationDate") or ""),
         "has_legacy_custom_properties": bool(
-            get_com_member(pdm_document, "HasLegacyCustomProperties")),
+            get_com_member(pdm_document, "HasLegacyCustomProperties")
+        ),
     }
 
 
@@ -285,7 +306,9 @@ def collect_pdm_evidence(pdm_document) -> dict[str, Any]:
     """回读 PDM 文档状态。"""
     evidence = get_custom_property_names_and_values(pdm_document)
     evidence["has_configuration_manager"] = (
-        get_configuration_manager(pdm_document) is not None)
+        get_configuration_manager(pdm_document) is not None
+    )
     evidence["three_d_experience_type"] = int(
-        get_com_member(pdm_document, "Get3DExperienceType") or -1)
+        get_com_member(pdm_document, "Get3DExperienceType") or -1
+    )
     return evidence

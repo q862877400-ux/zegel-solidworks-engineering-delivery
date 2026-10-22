@@ -60,9 +60,9 @@ from __future__ import annotations
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
 #:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
 try:
-    from sw_connect import mm as _mm          # noqa: F401
-except Exception:                             # noqa: BLE001
-    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+    from sw_connect import mm as _mm  # noqa: F401
+except Exception:  # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0  # noqa: E731
 
 
 try:
@@ -122,10 +122,18 @@ def insert_parting_line(model, *, draft_analysis: bool = True):
 # 许可:   本仓库 MIT。
 # 覆盖:   本函数整体（自本行至函数结束）
 # ─────────────────────────────────────────────────────────────────────────
-def insert_parting_surface(model, *, surface_type: int = 0, flip: bool = False,
-                           use_trim: bool = False, distance: float = 0.0,
-                           angle: float = 0.0, option: int = 0,
-                           tolerance: float = 0.0, alternate: bool = False):
+def insert_parting_surface(
+    model,
+    *,
+    surface_type: int = 0,
+    flip: bool = False,
+    use_trim: bool = False,
+    distance: float = 0.0,
+    angle: float = 0.0,
+    option: int = 0,
+    tolerance: float = 0.0,
+    alternate: bool = False,
+):
     """插入**分型面**（8 参，全部照官方签名位置）。
 
     ⚠ **8 个参数里只有 3 个的语义可推断**（`distance`/`angle`/`tolerance`
@@ -138,15 +146,16 @@ def insert_parting_surface(model, *, surface_type: int = 0, flip: bool = False,
     fm = get_com_member(model, "FeatureManager")
     # 位置严格照官方：Int32, Boolean, Boolean, Double, Double, Int32, Double, Boolean
     feat = get_com_member(
-        fm, "InsertMoldPartingSurface",
-        int(surface_type),      # 1 Int32 未查证
-        bool(flip),             # 2 Boolean 未查证
-        bool(use_trim),         # 3 Boolean 未查证
-        _mm(distance),          # 4 Double（★ 单位修复：探针逐字 `distance=10.0 * MM`）
-        float(angle),           # 5 Double
-        int(option),            # 6 Int32 未查证
-        _mm(tolerance),         # 7 Double（★ 同上）
-        bool(alternate),        # 8 Boolean 未查证
+        fm,
+        "InsertMoldPartingSurface",
+        int(surface_type),  # 1 Int32 未查证
+        bool(flip),  # 2 Boolean 未查证
+        bool(use_trim),  # 3 Boolean 未查证
+        _mm(distance),  # 4 Double（★ 单位修复：探针逐字 `distance=10.0 * MM`）
+        float(angle),  # 5 Double
+        int(option),  # 6 Int32 未查证
+        _mm(tolerance),  # 7 Double（★ 同上）
+        bool(alternate),  # 8 Boolean 未查证
     )
     if feat is None:
         raise RuntimeError(
@@ -172,8 +181,14 @@ def insert_shut_off_surface(model):
     return get_com_member(feat, "Name")
 
 
-def insert_core_cavity_solids(model, *, scale: float = 0.0, thickness: float = 0.0,
-                              flip: bool = False, offset: float = 0.0):
+def insert_core_cavity_solids(
+    model,
+    *,
+    scale: float = 0.0,
+    thickness: float = 0.0,
+    flip: bool = False,
+    offset: float = 0.0,
+):
     """由**分型面**切出型芯与型腔实体（4 参）。
 
     ⚠ 4 个参数的**语义全部未查证**（反射只给类型 Double, Double, Boolean, Double）。
@@ -183,8 +198,14 @@ def insert_core_cavity_solids(model, *, scale: float = 0.0, thickness: float = 0
     :raises RuntimeError: 返回 None（常见原因：未建分型面）。
     """
     fm = get_com_member(model, "FeatureManager")
-    feat = get_com_member(fm, "InsertMoldCoreCavitySolids",
-                          float(scale), float(thickness), bool(flip), float(offset))
+    feat = get_com_member(
+        fm,
+        "InsertMoldCoreCavitySolids",
+        float(scale),
+        float(thickness),
+        bool(flip),
+        float(offset),
+    )
     if feat is None:
         raise RuntimeError(
             "InsertMoldCoreCavitySolids 返回 None —— 常见原因：未先建分型面"
@@ -192,8 +213,14 @@ def insert_core_cavity_solids(model, *, scale: float = 0.0, thickness: float = 0
     return get_com_member(feat, "Name")
 
 
-def mold_draft_analysis(model, *, draft_angle_deg: float, analysis_type: int = 0,
-                        colors=None, option: int = 0):
+def mold_draft_analysis(
+    model,
+    *,
+    draft_angle_deg: float,
+    analysis_type: int = 0,
+    colors=None,
+    option: int = 0,
+):
     """**拔模分析**（4 参）。官方 `IModelDoc2.MoldDraftAnalysis`，**返回 `Void`**。
 
     :param draft_angle_deg: **参考拔模角**（官方 `Angle`，度；官方未写单位，按"拔模角"惯例按度）。
@@ -227,13 +254,26 @@ def mold_draft_analysis(model, *, draft_angle_deg: float, analysis_type: int = 0
     #: 体时
     #: 官方会弹「此拔模方向尚未定义。」⇒ **调用方必须配 `settle_residual_dialogs` 兜底**
     #: 。
-    return get_com_member(model, "MoldDraftAnalysis",
-                          float(draft_angle_deg), int(analysis_type), colors, int(option))
+    return get_com_member(
+        model,
+        "MoldDraftAnalysis",
+        float(draft_angle_deg),
+        int(analysis_type),
+        colors,
+        int(option),
+    )
 
 
-def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
-                         b_coord_input: bool = True, dx: float = 0.0,
-                         dy: float = 0.0, dz: float = 1.0):
+def mold_undercut_detect(
+    model,
+    *,
+    col_undercut: int = 0,
+    col_base: int = 0,
+    b_coord_input: bool = True,
+    dx: float = 0.0,
+    dy: float = 0.0,
+    dz: float = 1.0,
+):
     """**底切检测**（官方 `IFeatureManager.MoldUndercutDetect`，6 参，返回 `Void`）。
 
     ★★ **2026-10-01（轮 167）按官方 md 的参数名与语义**（旧版参数名与官方**全不对应**）：
@@ -279,16 +319,24 @@ def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
     #:   ★★★ **新增那 3 个颜色的取值，官方**没给默认值**** ⇒
     #:     ★ **本项目的工程选择**：★ **沿用调用方给的两个颜色**
     #:     （★ `ColUndercut2` 用 `col_undercut`、★ `ColOccluded` 用 `col_base`、
-    #: ★ `ColStraddle` 用 `col_base`）—— ⚠ **这是工程选择，不是官方默认**，★ 已在此写明 
+    #: ★ `ColStraddle` 用 `col_base`）—— ⚠ **这是工程选择，不是官方默认**，★ 已在此写明
     #: ✓
     #:   ★★★ 真机证据（`tools/probe_deps_bom_undercut.py` ·
     #:     `output/deps-bom-undercut-evidence.json`）：★ 旧 6 参**能调**（回 `None`）·
     #:     ★★ 新 9 参**能调**（回 `None`）⇒ ★★ **可换** ✓
-    return get_com_member(fm, "MoldUndercutDetect2",
-                          int(col_undercut), int(col_undercut), int(col_base), int(col_base),
-                          int(col_base), bool(b_coord_input),
-                          float(dx), float(dy), float(dz))
-
+    return get_com_member(
+        fm,
+        "MoldUndercutDetect2",
+        int(col_undercut),
+        int(col_undercut),
+        int(col_base),
+        int(col_base),
+        int(col_base),
+        bool(b_coord_input),
+        float(dx),
+        float(dy),
+        float(dz),
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -297,7 +345,7 @@ def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
 # 定位:   只读证据采集：把模具族的**只读入口**回读出来，供 capabilities 与人工核对。
 # 命名与形状照 scripts/sw_weldment.py::weldment_evidence 的既有模式（铁律 1 第三类来源）
 # 。
-# 官方签名依据: GetPartingLinesCount / GetPartingSurfacesCount / GetCavitySurfacesCount 
+# 官方签名依据: GetPartingLinesCount / GetPartingSurfacesCount / GetCavitySurfacesCount
 # /
 #         GetCoreSurfacesCount / get_PartingType / get_CoreCavitySplit
 # 许可:   本仓库 MIT。
@@ -344,13 +392,14 @@ def mold_evidence(model) -> dict:
     """
     fm = get_com_member(model, "FeatureManager")
 
-#: dispatch-guard: exempt internal-helper
+    #: dispatch-guard: exempt internal-helper
     def _count(name: str):
         try:
             return get_com_member(fm, name)
         except Exception:
             return None
-#: dispatch-guard: exempt internal-helper
+
+    #: dispatch-guard: exempt internal-helper
 
     def _prop(name: str):
         try:
@@ -379,7 +428,9 @@ def mold_evidence(model) -> dict:
     #:     ⇒ ★ `readable: False` ✓
     #:   ★★★ **注意它说的是什么**：★ `False` = 「**按当前读法在这台机器上读不到**」·
     #:     ★★ **不是**「这个零件没有分型」（★ 后者要靠 `I*FeatureData` 那条未实现的路）✓
-    _all_none = all(v is None for v in _counts.values()) and _pt is None and _ccs is None
+    _all_none = (
+        all(v is None for v in _counts.values()) and _pt is None and _ccs is None
+    )
     return {
         "counts": _counts,
         # 这两个是零件级属性；用 set_com_member 的读侧配对是 get_com_member（已知事实 4
@@ -388,10 +439,12 @@ def mold_evidence(model) -> dict:
         "core_cavity_split": _ccs,
         #: ★ **真相在这**：★ `False` ⇒ **本次读数不作数**（★ 别当成"没有分型"）✓
         "readable": (not _all_none),
-        "readable_note": ("★ 全部为 `None` ⇒ ★ **本机按当前读法读不到**"
-                          "（★ 真因：那些计数**不在 `IFeatureManager`/`IModelDoc2` 上**，"
-                          "★ 而在 `I*FeatureData` 上 —— ★ 见本函数 docstring）· "
-                          "★★ **这不等于「该零件没有分型」** ✓"
-                          if _all_none else
-                          "★ 至少读到一项 ⇒ 本次读数可用 ✓"),
+        "readable_note": (
+            "★ 全部为 `None` ⇒ ★ **本机按当前读法读不到**"
+            "（★ 真因：那些计数**不在 `IFeatureManager`/`IModelDoc2` 上**，"
+            "★ 而在 `I*FeatureData` 上 —— ★ 见本函数 docstring）· "
+            "★★ **这不等于「该零件没有分型」** ✓"
+            if _all_none
+            else "★ 至少读到一项 ⇒ 本次读数可用 ✓"
+        ),
     }

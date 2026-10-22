@@ -41,16 +41,19 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH34"]
 
-_SEL = ("Declarative selection, e.g. \"index:0\" or \"__current_selection__\". "
-        "★ The hole's position comes from what this selects — **no coordinates are passed**.")
-_PLANE = "Sketch plane name (English or Chinese, e.g. \"Front Plane\" / \"前视基准面\")."
+_SEL = (
+    'Declarative selection, e.g. "index:0" or "__current_selection__". '
+    "★ The hole's position comes from what this selects — **no coordinates are passed**."
+)
+_PLANE = 'Sketch plane name (English or Chinese, e.g. "Front Plane" / "前视基准面").'
 
 
 SPECS_BATCH34 = [
     ToolSpec(
         name="solidworks_hole_through_by_selection",
         title="Create a Through Hole at a Declaratively Selected Point",
-        module="sw_hole_features", function="create_through_hole_at_selection_report",
+        module="sw_hole_features",
+        function="create_through_hole_at_selection_report",
         inject="model",
         params=[
             Param("selection", str, description=_SEL),
@@ -59,13 +62,14 @@ SPECS_BATCH34 = [
             Param("name", str, default="通孔", description="Feature name."),
         ],
         doc="Create a fully-through circular hole whose position comes from a declarative "
-            "selection (★ rule 3: no coordinates in the tool signature). Returns the read-back "
-            "evidence plus the point that was actually used.",
+        "selection (★ rule 3: no coordinates in the tool signature). Returns the read-back "
+        "evidence plus the point that was actually used.",
     ),
     ToolSpec(
         name="solidworks_hole_blind_by_selection",
         title="Create a Blind Hole at a Declaratively Selected Point",
-        module="sw_hole_features", function="create_blind_hole_at_selection_report",
+        module="sw_hole_features",
+        function="create_blind_hole_at_selection_report",
         inject="model",
         params=[
             Param("selection", str, description=_SEL),
@@ -75,19 +79,31 @@ SPECS_BATCH34 = [
             Param("name", str, default="盲孔", description="Feature name."),
         ],
         doc="Create a blind circular hole at a declaratively selected point (★ rule 3). "
-            "Returns the read-back evidence plus the point used.",
+        "Returns the read-back evidence plus the point used.",
     ),
     ToolSpec(
         name="solidworks_hole_counterbore_by_selection",
         title="Create a Counterbore Hole at a Declaratively Selected Point",
-        module="sw_hole_features", function="create_counterbore_hole_at_selection_report",
+        module="sw_hole_features",
+        function="create_counterbore_hole_at_selection_report",
         inject="model",
         params=[
             Param("selection", str, description=_SEL),
-            Param("hole_diameter_mm", float, description="Main hole diameter in MILLIMETRES."),
-            Param("counterbore_diameter_mm", float,
-                  description="Counterbore diameter in MILLIMETRES."),
-            Param("counterbore_depth_mm", float, description="Counterbore depth in MILLIMETRES."),
+            Param(
+                "hole_diameter_mm",
+                float,
+                description="Main hole diameter in MILLIMETRES.",
+            ),
+            Param(
+                "counterbore_diameter_mm",
+                float,
+                description="Counterbore diameter in MILLIMETRES.",
+            ),
+            Param(
+                "counterbore_depth_mm",
+                float,
+                description="Counterbore depth in MILLIMETRES.",
+            ),
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="沉头孔", description="Feature name."),
         ],
@@ -96,15 +112,27 @@ SPECS_BATCH34 = [
     ToolSpec(
         name="solidworks_hole_countersink_by_selection",
         title="Create a Countersink Hole at a Declaratively Selected Point",
-        module="sw_hole_features", function="create_countersink_hole_at_selection_report",
+        module="sw_hole_features",
+        function="create_countersink_hole_at_selection_report",
         inject="model",
         params=[
             Param("selection", str, description=_SEL),
-            Param("hole_diameter_mm", float, description="Main hole diameter in MILLIMETRES."),
-            Param("countersink_diameter_mm", float,
-                  description="Countersink diameter in MILLIMETRES."),
-            Param("included_angle_deg", float, default=90.0,
-                  description="Countersink included angle in DEGREES (★ rule 2: _deg)."),
+            Param(
+                "hole_diameter_mm",
+                float,
+                description="Main hole diameter in MILLIMETRES.",
+            ),
+            Param(
+                "countersink_diameter_mm",
+                float,
+                description="Countersink diameter in MILLIMETRES.",
+            ),
+            Param(
+                "included_angle_deg",
+                float,
+                default=90.0,
+                description="Countersink included angle in DEGREES (★ rule 2: _deg).",
+            ),
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="锥沉孔", description="Feature name."),
         ],
@@ -113,18 +141,31 @@ SPECS_BATCH34 = [
     ToolSpec(
         name="solidworks_slot_semicircular_by_selection",
         title="Create a Semicircular-End Slot Between Two Declaratively Selected Points",
-        module="sw_hole_features", function="create_semicircular_slot_at_selection_report",
+        module="sw_hole_features",
+        function="create_semicircular_slot_at_selection_report",
         inject="model",
         params=[
-            Param("start_selection", str, description="Declarative selection for the START point. " + _SEL),
-            Param("end_selection", str, description="Declarative selection for the END point. " + _SEL),
+            Param(
+                "start_selection",
+                str,
+                description="Declarative selection for the START point. " + _SEL,
+            ),
+            Param(
+                "end_selection",
+                str,
+                description="Declarative selection for the END point. " + _SEL,
+            ),
             Param("width_mm", float, description="Slot width in MILLIMETRES."),
-            Param("depth_mm", float, default=0.0,
-                  description="Slot depth in MILLIMETRES. ⚠ 0.0 = through."),
+            Param(
+                "depth_mm",
+                float,
+                default=0.0,
+                description="Slot depth in MILLIMETRES. ⚠ 0.0 = through.",
+            ),
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="半圆端槽", description="Feature name."),
         ],
         doc="Create a semicircular-end slot spanning two declaratively selected points "
-            "(★ rule 3: **both** endpoints come from selections, not coordinates).",
+        "(★ rule 3: **both** endpoints come from selections, not coordinates).",
     ),
 ]

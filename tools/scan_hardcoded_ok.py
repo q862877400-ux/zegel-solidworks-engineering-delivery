@@ -35,17 +35,29 @@ REPO = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 OUT = REPO / "output" / "hardcoded-ok-scan.json"
 #: ★ 取样类调用的名字（★ 有它才说明"前后比过"）
-SAMPLERS = ("_tree(", "_body_face_count(", "_volume_mm3(", "_delta(", "_new_features(",
-            "before", "after", "_sample", "_count(", "snapshot")
+SAMPLERS = (
+    "_tree(",
+    "_body_face_count(",
+    "_volume_mm3(",
+    "_delta(",
+    "_new_features(",
+    "before",
+    "after",
+    "_sample",
+    "_count(",
+    "snapshot",
+)
 #: ★ 判据类局部名（★ 算了但可能没进 ok）
-JUDGE_HINT = re.compile(r"\b(\w*(?:ok|added|delta|changed|passed|exists|created)\w*)\s*=")
+JUDGE_HINT = re.compile(
+    r"\b(\w*(?:ok|added|delta|changed|passed|exists|created)\w*)\s*="
+)
 
 
 def _scan_file(path: Path) -> list:
     try:
         src = path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(src)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
     out = []
     for node in ast.walk(tree):
@@ -76,21 +88,26 @@ def _scan_file(path: Path) -> list:
                 else:
                     used = re.findall(r"\b(\w+)\b", ast.unparse(v))
                     miss = {j for j in judge_vars if j not in used}
-                    if miss and ("bool" in ast.unparse(v) or "and" in ast.unparse(v)
-                                 or " or " in ast.unparse(v)):
+                    if miss and (
+                        "bool" in ast.unparse(v)
+                        or "and" in ast.unparse(v)
+                        or " or " in ast.unparse(v)
+                    ):
                         hard.append("候选未用判据: %s" % ", ".join(sorted(miss)[:3]))
         if not hard:
             continue
         sampled = [s for s in SAMPLERS if s in seg]
-        out.append({
-            "file": str(path.relative_to(REPO)).replace("\\", "/"),
-            "function": node.name,
-            "line": node.lineno,
-            "ok_forms": hard[:4],
-            "sampled": bool(sampled),
-            "samplers": sampled[:4],
-            "judge_vars": sorted(judge_vars)[:6],
-        })
+        out.append(
+            {
+                "file": str(path.relative_to(REPO)).replace("\\", "/"),
+                "function": node.name,
+                "line": node.lineno,
+                "ok_forms": hard[:4],
+                "sampled": bool(sampled),
+                "samplers": sampled[:4],
+                "judge_vars": sorted(judge_vars)[:6],
+            }
+        )
     return out
 
 
@@ -105,8 +122,8 @@ def main() -> int:
     risky = [r for r in rows if not r["sampled"]]
     maybe = [r for r in rows if r["sampled"]]
     R = {
-        "★_判据": "★ 找 `\"ok\"` 是字面量 / 或没用到判据变量的函数；"
-                  "★★ 再按『函数里有没有 before/after 取样』分成两档",
+        "★_判据": '★ 找 `"ok"` 是字面量 / 或没用到判据变量的函数；'
+        "★★ 再按『函数里有没有 before/after 取样』分成两档",
         "★_合计": len(rows),
         "★★_最可疑（无任何取样）": len(risky),
         "★_有取样（可能已验过）": len(maybe),
@@ -122,7 +139,10 @@ def main() -> int:
     print("%-52s %-34s %s" % ("文件", "函数", "ok 形态"))
     print("-" * 116)
     for r in risky[:24]:
-        print("%-52s %-34s %s" % (r["file"][-51:], r["function"][:33], str(r["ok_forms"])[:44]))
+        print(
+            "%-52s %-34s %s"
+            % (r["file"][-51:], r["function"][:33], str(r["ok_forms"])[:44])
+        )
     print()
     print("wrote", OUT)
     return 0

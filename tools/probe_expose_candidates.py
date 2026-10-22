@@ -25,6 +25,7 @@ r"""@brief 换口径找暴露候选：**「未暴露 + 被生产代码调用」*
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import importlib
@@ -40,7 +41,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 
 DEF = re.compile(r"^def ([a-z_]\w*)\(", re.M)
-INTERNAL = re.compile(r"(_to_|_from_|^parse|^normalize|^empty|^variant|^callout|^pump|^_|^get_com|^coerce|^make_empty|^try_|^is_|^has_)")
+INTERNAL = re.compile(
+    r"(_to_|_from_|^parse|^normalize|^empty|^variant|^callout|^pump|^_|^get_com|^coerce|^make_empty|^try_|^is_|^has_)"
+)
 
 
 def main() -> int:
@@ -49,10 +52,16 @@ def main() -> int:
         for fn in DEF.findall(p.read_text(encoding="utf-8", errors="ignore")):
             funcs.setdefault(fn, p.name)
 
-    srv = (ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8", errors="ignore")
+    srv = (ROOT / "mcp-server" / "server.py").read_text(
+        encoding="utf-8", errors="ignore"
+    )
     exposed = {f for _, f in re.findall(r'"(\w+)":\s*[A-Za-z_]\w*\.(\w+)\s*,', srv)}
     for p in (ROOT / "mcp-server").glob("tool_specs_*.py"):
-        exposed |= set(re.findall(r'function="([\w]+)"', p.read_text(encoding="utf-8", errors="ignore")))
+        exposed |= set(
+            re.findall(
+                r'function="([\w]+)"', p.read_text(encoding="utf-8", errors="ignore")
+            )
+        )
 
     called: set = set()
     for d in ("scripts", "subskills", "examples", "mcp-server"):
@@ -73,7 +82,7 @@ def main() -> int:
         try:
             fn = getattr(importlib.import_module("scripts.%s" % mod[:-3]), f)
             sig = inspect.signature(fn)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         ps = list(sig.parameters.values())
         if ps and ps[0].name != "model":
@@ -86,8 +95,10 @@ def main() -> int:
     for mod, f, s in rows:
         by_mod[mod].append((f, s))
 
-    print("=== 「未暴露 + 被生产代码调用 + 签名兼容」的候选：**%d** 个，跨 %d 个模块 ==="
-          % (len(rows), len(by_mod)))
+    print(
+        "=== 「未暴露 + 被生产代码调用 + 签名兼容」的候选：**%d** 个，跨 %d 个模块 ==="
+        % (len(rows), len(by_mod))
+    )
     print("（⚠ 这个池子比「孤立」更可能真的能跑 —— 有调用者 = 有人用过）")
     print()
     for mod in sorted(by_mod, key=lambda m: -len(by_mod[m]))[:10]:

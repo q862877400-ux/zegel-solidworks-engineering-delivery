@@ -41,6 +41,7 @@ r"""带自检的分步执行器 —— 每步有判据，失败自动留证并�
 # ⚠ 本模块会驱动鼠标键盘。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -105,9 +106,15 @@ def read_state(w) -> dict[str, Any]:
     ⇒ 现在**取一次控件列表**，容器和三类特征都从这同一份里算。
     ⇒ 控件**对象**有 TTL 缓存，属性（text/rect）每次重读，避免用过期坐标。
     """
-    st: dict[str, Any] = {"container": None, "codes": [], "combos": {},
-                          "buttons": {}, "pct": None, "categories": [],
-                          "visible": set()}
+    st: dict[str, Any] = {
+        "container": None,
+        "codes": [],
+        "combos": {},
+        "buttons": {},
+        "pct": None,
+        "categories": [],
+        "visible": set(),
+    }
     allc = controls_cached(w)
     if not allc:
         return st
@@ -134,7 +141,9 @@ def read_state(w) -> dict[str, Any]:
             # ⚑ 同名多控件（实测「返回」有 5 个）：**取面积最小的**当可点元素，
             #    其余是容器/图标，不作为判定依据。
             prev = st["buttons"].get(t)
-            if prev is None or (r.width() * r.height()) < (prev[2] - prev[0]) * (prev[3] - prev[1]):
+            if prev is None or (r.width() * r.height()) < (prev[2] - prev[0]) * (
+                prev[3] - prev[1]
+            ):
                 st["buttons"][t] = (r.left, r.top, r.right, r.bottom)
         if ct in ("Button", "Pane", "Text", "Edit", "ComboBox"):
             try:
@@ -145,9 +154,10 @@ def read_state(w) -> dict[str, Any]:
                 st["visible"].add(t)
         names.append(t)
         if t.startswith(C.CODE_PREFIX):
-            st["codes"].append(t[len(C.CODE_PREFIX):].strip())
-        elif (80 <= r.width() <= 220 and 80 <= r.height() <= 220
-              and t not in C.SKIP_NAMES):
+            st["codes"].append(t[len(C.CODE_PREFIX) :].strip())
+        elif (
+            80 <= r.width() <= 220 and 80 <= r.height() <= 220 and t not in C.SKIP_NAMES
+        ):
             # ⚑ 只收**近似正方形的卡片**（实测分类卡 100x100）。
             #   早前的宽过滤（w>=40,h>=20）把整页文字都算成「分类卡」，
             #   导致 counts 在任何页面都是几十，判据失去区分力。
@@ -197,7 +207,10 @@ def evidence(tag: str, h: int, w, st: dict, note: str = "") -> Path:
     p = EVID / ("%02d_%s.png" % (STEP[0], tag))
     try:
         import importlib.util
-        spec = importlib.util.spec_from_file_location("shot", Path(__file__).resolve().parents[1] / "shot.py")
+
+        spec = importlib.util.spec_from_file_location(
+            "shot", Path(__file__).resolve().parents[1] / "shot.py"
+        )
         sh = importlib.util.module_from_spec(spec)
         sys.modules["shot"] = sh
         spec.loader.exec_module(sh)
@@ -206,15 +219,27 @@ def evidence(tag: str, h: int, w, st: dict, note: str = "") -> Path:
         p = EVID / ("%02d_%s_CAPTURE_FAIL.txt" % (STEP[0], tag))
         p.write_text("截图失败: %s" % exc, encoding="utf-8")
     j = EVID / ("%02d_%s.json" % (STEP[0], tag))
-    j.write_text(json.dumps(
-        {"tag": tag, "note": note, "kind": page_kind(st),
-         "state": {"pct": st["pct"], "n_codes": len(st["codes"]),
-                   "codes": st["codes"][:8],
-                   "combos": dict(list(st["combos"].items())[:10]),
-                   "buttons": list(st["buttons"])[:10],
-                   "n_categories": len(st["categories"]),
-                   "categories": st["categories"][:12]}},
-        ensure_ascii=False, indent=1), encoding="utf-8")
+    j.write_text(
+        json.dumps(
+            {
+                "tag": tag,
+                "note": note,
+                "kind": page_kind(st),
+                "state": {
+                    "pct": st["pct"],
+                    "n_codes": len(st["codes"]),
+                    "codes": st["codes"][:8],
+                    "combos": dict(list(st["combos"].items())[:10]),
+                    "buttons": list(st["buttons"])[:10],
+                    "n_categories": len(st["categories"]),
+                    "categories": st["categories"][:12],
+                },
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
     log("   📎 留证 -> %s + %s" % (p.name, j.name))
     return p
 
@@ -224,11 +249,16 @@ class StepFailed(RuntimeError):
 
 
 # ── 分步执行 ────────────────────────────────────────────────────────
-def run_step(name: str, act: Callable[[int, Any], None] | None,
-             expect: str, h: int, w,
-             timeout: float = 40.0,
-             heal: Callable[[int, Any], None] | None = None,
-             tries: int = 2) -> tuple[int, Any]:
+def run_step(
+    name: str,
+    act: Callable[[int, Any], None] | None,
+    expect: str,
+    h: int,
+    w,
+    timeout: float = 40.0,
+    heal: Callable[[int, Any], None] | None = None,
+    tries: int = 2,
+) -> tuple[int, Any]:
     """执行一步并**自证**。判据 = 页面类型变成 ``expect``。
 
     act(h, w) -> None   —— 实际动作（点击/滚动）
@@ -244,15 +274,16 @@ def run_step(name: str, act: Callable[[int, Any], None] | None,
         t0 = time.time()
         while time.time() - t0 < timeout:
             time.sleep(0.6)
-            cache_drop()                    # ★ 界面可能已变，重新遍历
+            cache_drop()  # ★ 界面可能已变，重新遍历
             try:
                 h2, w2 = L.connect()
             except Exception:
                 continue
             st = read_state(w2)
             if page_kind(st) == expect:
-                log("   ✓ %s（第%d次，%.1fs）→ %s"
-                    % (name, t, time.time() - t0, expect))
+                log(
+                    "   ✓ %s（第%d次，%.1fs）→ %s" % (name, t, time.time() - t0, expect)
+                )
                 return h2, w2
         st = read_state(w)
         got = page_kind(st)
@@ -263,8 +294,7 @@ def run_step(name: str, act: Callable[[int, Any], None] | None,
             except Exception:
                 log("   补救异常:\n%s" % traceback.format_exc()[-300:])
     st = read_state(w)
-    evidence(name + "_FAIL", h, w, st,
-             note="判据=%s 实到=%s" % (expect, page_kind(st)))
+    evidence(name + "_FAIL", h, w, st, note="判据=%s 实到=%s" % (expect, page_kind(st)))
     raise StepFailed("%s 失败：判据 %s，实到 %s" % (name, expect, page_kind(st)))
 
 
@@ -286,14 +316,17 @@ def click(x: int, y: int, pause: float = 0.5) -> None:
 # ⇒ 缓存**控件对象列表**，只重读 text/rect（0.03s 级）⇒ 快约 100 倍。
 # ⚠ 缓存对象**不缓存属性** —— 坐标/文字每次重读，避免用过期矩形点空。
 _CACHE: dict[str, Any] = {"win": None, "allc": None, "t": 0.0}
-CACHE_TTL = 25.0     # 秒；超过就重新遍历
+CACHE_TTL = 25.0  # 秒；超过就重新遍历
 
 
 def controls_cached(w) -> list:
     """拿控件对象列表（带 TTL 缓存）。属性仍每次重读。"""
     now = time.time()
-    if _CACHE["win"] is w and _CACHE["allc"] is not None \
-            and now - _CACHE["t"] < CACHE_TTL:
+    if (
+        _CACHE["win"] is w
+        and _CACHE["allc"] is not None
+        and now - _CACHE["t"] < CACHE_TTL
+    ):
         return _CACHE["allc"]
     allc = L._controls(w)
     _CACHE.update({"win": w, "allc": allc, "t": now})
@@ -319,6 +352,7 @@ def ensure_front(h: int) -> bool:
       责任交给**动作之后的页面判据**（那才是可靠证据）。
     """
     import win32gui
+
     try:
         if win32gui.GetForegroundWindow() == h:
             return True

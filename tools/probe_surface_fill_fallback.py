@@ -6,7 +6,7 @@
 #           明式分支**
 #   恰恰只回读选区 ⇒ ★ 上一版**只要传 `selection` 就必失败**。
 #   ★ 本轮把它改成「拿不到就**回退**到自动路」，★ 本探针验的就是这条回退。
-# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark 
+# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark
 # 1**）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -24,8 +24,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "surface-fill-fallback-evidence.json"
 
@@ -60,9 +60,11 @@ def main() -> int:
     #: `_selected_readback`（★ 实测：第二例回读 > 0 ⇒ 回退不触发 ⇒ 拿到一圈**错的**边界
     #: ）。
     #:   ⇒ ★ **清掉再调**，才是经工具层时真正会发生的样子。
-    for label, sel, do_clear in (("selection 为空（自动路）", "", False),
-                                 ("selection 非空 + 残余选择未清（对照）", "index:0", False),
-                                 ("★ selection 非空 + 先清选区（= 工具层条件）", "index:0", True)):
+    for label, sel, do_clear in (
+        ("selection 为空（自动路）", "", False),
+        ("selection 非空 + 残余选择未清（对照）", "index:0", False),
+        ("★ selection 非空 + 先清选区（= 工具层条件）", "index:0", True),
+    ):
         doc = None
         row: dict = {"case": label, "selection": sel}
         try:
@@ -73,29 +75,40 @@ def main() -> int:
                 _g(doc, "ClearSelection2", True)
                 row["cleared_before_call"] = True
                 row["sel_readback_after_clear"] = int(
-                    _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0)
+                    _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
+                )
             from scripts.sw_surface_features import insert_fill_surface_report
+
             ret = insert_fill_surface_report(doc, 2, options=1, selection=sel)
             row["ok"] = bool(isinstance(ret, dict) and ret.get("ok"))
             if isinstance(ret, dict):
-                for k in ("stage", "points_selected", "new_features",
-                          "fallback_from_declarative", "tree_before", "tree_after",
-                          "error", "stage"):
+                for k in (
+                    "stage",
+                    "points_selected",
+                    "new_features",
+                    "fallback_from_declarative",
+                    "tree_before",
+                    "tree_after",
+                    "error",
+                    "stage",
+                ):
                     if k in ret:
                         row[k] = ret[k]
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["ok"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         finally:
             try:
                 if doc is not None:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         R["cases"].append(row)
     R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

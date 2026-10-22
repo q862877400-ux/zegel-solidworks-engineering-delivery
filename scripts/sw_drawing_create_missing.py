@@ -94,12 +94,12 @@
 
 from __future__ import annotations
 
-try:                                                                # 包内载入（mcp-server 走这条）
+try:  # 包内载入（mcp-server 走这条）
     from .sw_connect import get_com_member, mm, set_com_member
     from .sw_drawing_view_types import SW_DRAWING_AUXILIARY_VIEW
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
-    from sw_connect import get_com_member, mm, set_com_member        # noqa: F401
-    from sw_drawing_view_types import SW_DRAWING_AUXILIARY_VIEW     # noqa: F401
+except ImportError:  # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, mm, set_com_member  # noqa: F401
+    from sw_drawing_view_types import SW_DRAWING_AUXILIARY_VIEW  # noqa: F401
 
 __all__ = [
     "insert_break_lines",
@@ -122,42 +122,44 @@ __all__ = [
 
 # ── 官方枚举（★ 逐字数值，来源写在每个常量后面的注释里）──────────────────────────
 #: `swBreakLineOrientation_e`（`C:\swapi\enums\swBreakLineOrientation_e.md`，2 个成员）
-SW_BREAK_LINE_HORIZONTAL = 1        # swBreakLineHorizontal = 1
-SW_BREAK_LINE_VERTICAL = 2          # swBreakLineVertical   = 2
+SW_BREAK_LINE_HORIZONTAL = 1  # swBreakLineHorizontal = 1
+SW_BREAK_LINE_VERTICAL = 2  # swBreakLineVertical   = 2
 
 #: `swBreakLineStyle_e`（`C:\swapi\enums\swBreakLineStyle_e.md`，5 个成员）
-SW_BREAK_LINE_STRAIGHT = 1          # swBreakLine_Straight     = 1
-SW_BREAK_LINE_ZIGZAG = 2            # swBreakLine_ZigZag       = 2
-SW_BREAK_LINE_CURVE = 3             # swBreakLine_Curve        = 3
-SW_BREAK_LINE_SMALL_ZIGZAG = 4      # swBreakLine_SmallZigZag  = 4
-SW_BREAK_LINE_JAGGED = 5            # swBreakLine_Jagged       = 5
+SW_BREAK_LINE_STRAIGHT = 1  # swBreakLine_Straight     = 1
+SW_BREAK_LINE_ZIGZAG = 2  # swBreakLine_ZigZag       = 2
+SW_BREAK_LINE_CURVE = 3  # swBreakLine_Curve        = 3
+SW_BREAK_LINE_SMALL_ZIGZAG = 4  # swBreakLine_SmallZigZag  = 4
+SW_BREAK_LINE_JAGGED = 5  # swBreakLine_Jagged       = 5
 
 #: `swLeaderStyle_e` 里与表面粗糙度符号相关的成员（`C:\swapi\enums\swLeaderStyle_e.md`）
-SW_LEADER_NO_LEADER = 0             # swNO_LEADER  = 0  ← ★ Official Remarks 拿它做判据的那个 0
-SW_LEADER_STRAIGHT = 1              # swSTRAIGHT   = 1  ← 官方示例用的就是它
+SW_LEADER_NO_LEADER = 0  # swNO_LEADER  = 0  ← ★ Official Remarks 拿它做判据的那个 0
+SW_LEADER_STRAIGHT = 1  # swSTRAIGHT   = 1  ← 官方示例用的就是它
 
 #: `swSFSymType_e`（`C:\swapi\enums\swSFSymType_e.md`，10 个成员）—— 只列本模块用得到的
-SW_SF_BASIC = 0                     # swSFBasic = 0（官方示例第一个实参就是它）
+SW_SF_BASIC = 0  # swSFBasic = 0（官方示例第一个实参就是它）
 
 #: `swAnnotationType_e`（`C:\swapi\enums\swAnnotationType_e.md`，19 个成员）
 #: ★ 这两个**不是**判据本身（判据用 IView 的 Get*SFCymbolCount / GetDatumTagCount），
 #: ★ 而是给调用方一个「按型取注解」的旁路（`IView.GetAnnotationsByType(Type)`，1 参）。
-SW_ANNOTATION_DATUM_TAG = 2         # swDatumTag  = 2
-SW_ANNOTATION_SF_SYMBOL = 7         # swSFSymbol  = 7
+SW_ANNOTATION_DATUM_TAG = 2  # swDatumTag  = 2
+SW_ANNOTATION_SF_SYMBOL = 7  # swSFSymbol  = 7
 
 #: ★ 气泡选项用到的 6 个枚举（★ 逐个核过官方页，★ 不写魔数）：
-SW_BALLOON_LAYOUT_SQUARE = 1        # swDetailingBalloonLayout_Square          = 1
-                                   #   （`C:\swapi\enums\swBalloonLayoutType_e.md`）
-SW_BALLOON_STYLE_CIRCULAR = 1       # swBS_Circular                              = 1
-                                   #   （`C:\swapi\enums\swBalloonStyle_e.md`）
-SW_BALLOON_FIT_5_CHARS = 5          # swBF_5Chars                                = 5
-                                   #   （`C:\swapi\enums\swBalloonFit_e.md`）
-SW_BALLOON_TEXT_ITEM_NUMBER = 1     # swBalloonTextItemNumber                    = 1
-                                   #   （`C:\swapi\enums\swBalloonTextContent_e.md`）
-SW_BALLOON_ITEMS_DONT_CHANGE = 1    # swBalloonItemNumbers_DoNotChangeItemNumbers = 0x1 or 1
-                                   #   （`C:\swapi\enums\swBalloonItemNumbersOrder_e.md`）
-SW_EDIT_BALLOON_RESEQUENCE = 1      # swEditBalloonOption_Resequence            = 1
-                                   #   （`C:\swapi\enums\swEditBalloonOption_e.md`）
+SW_BALLOON_LAYOUT_SQUARE = 1  # swDetailingBalloonLayout_Square          = 1
+#   （`C:\swapi\enums\swBalloonLayoutType_e.md`）
+SW_BALLOON_STYLE_CIRCULAR = 1  # swBS_Circular                              = 1
+#   （`C:\swapi\enums\swBalloonStyle_e.md`）
+SW_BALLOON_FIT_5_CHARS = 5  # swBF_5Chars                                = 5
+#   （`C:\swapi\enums\swBalloonFit_e.md`）
+SW_BALLOON_TEXT_ITEM_NUMBER = 1  # swBalloonTextItemNumber                    = 1
+#   （`C:\swapi\enums\swBalloonTextContent_e.md`）
+SW_BALLOON_ITEMS_DONT_CHANGE = (
+    1  # swBalloonItemNumbers_DoNotChangeItemNumbers = 0x1 or 1
+)
+#   （`C:\swapi\enums\swBalloonItemNumbersOrder_e.md`）
+SW_EDIT_BALLOON_RESEQUENCE = 1  # swEditBalloonOption_Resequence            = 1
+#   （`C:\swapi\enums\swEditBalloonOption_e.md`）
 
 #: ★ `swDrawingViewTypes_e` 里「这不是一个视图、而是图纸本身」的那个取值。
 #: ★ 与 `sw_drawing_query.SHEET_PSEUDO_VIEW_TYPE` 同一个事实、同一份官方页
@@ -193,7 +195,7 @@ def _read(obj, member):
         return None
     try:
         return get_com_member(obj, member)
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -226,7 +228,7 @@ def _iter_views(model) -> list:
     views: list = []
     view = first
     seen = 0
-    while view is not None and seen < 500:                           #: 防御上限，不无限循环
+    while view is not None and seen < 500:  #: 防御上限，不无限循环
         seen += 1
         if _view_type(view) != SHEET_PSEUDO_VIEW_TYPE:
             views.append(view)
@@ -268,12 +270,14 @@ def _find_view(model, view_name: str):
     for v in views:
         if _view_name(v) == str(view_name):
             return v, None
-    for v in views:                                                  # 大小写不敏感再比一次
+    for v in views:  # 大小写不敏感再比一次
         name = _view_name(v)
         if name is not None and name.lower() == str(view_name).lower():
             return v, None
     return None, "当前图纸上没有名为 %r 的视图；现有的是 %s" % (
-        str(view_name), _view_names(model))
+        str(view_name),
+        _view_names(model),
+    )
 
 
 def _sum_over_views(model, member: str) -> int | None:
@@ -307,7 +311,7 @@ def _selection_count(model) -> int | None:
         return None
     try:
         return int(get_com_member(sm, "GetSelectedObjectCount2", -1))
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -337,19 +341,24 @@ def _break_state(view) -> dict:
     broken = _read(view, "IsBroken")
     try:
         broken = None if broken is None else bool(broken)
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         broken = None
     return {"break_count": len(lines), "is_broken": broken}
 
 
 # ── ① 断裂视图 ────────────────────────────────────────────────────────────────
 
-def insert_break_lines(model, view_name: str,
-                       position1_mm: float, position2_mm: float,
-                       orientation: int = SW_BREAK_LINE_VERTICAL,
-                       style: int = SW_BREAK_LINE_JAGGED,
-                       shape_intensity: int = 2,
-                       break_sketch_blocks: bool = True) -> dict:
+
+def insert_break_lines(
+    model,
+    view_name: str,
+    position1_mm: float,
+    position2_mm: float,
+    orientation: int = SW_BREAK_LINE_VERTICAL,
+    style: int = SW_BREAK_LINE_JAGGED,
+    shape_intensity: int = 2,
+    break_sketch_blocks: bool = True,
+) -> dict:
     """★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`（★ **零选区前置**）。
 
     :param view_name: **当前图纸上**的视图名（如 `"Drawing View1"` / `"视图1"`）。
@@ -381,24 +390,41 @@ def insert_break_lines(model, view_name: str,
     if model is None:
         return {"ok": False, "op": "insert_break_lines", "error": "model 为 None"}
     if orientation not in (SW_BREAK_LINE_HORIZONTAL, SW_BREAK_LINE_VERTICAL):
-        return {"ok": False, "op": "insert_break_lines",
-                "error": "orientation 只能是 1(Horizontal) / 2(Vertical)，收到 %r" % (orientation,)}
-    if style not in (SW_BREAK_LINE_STRAIGHT, SW_BREAK_LINE_ZIGZAG, SW_BREAK_LINE_CURVE,
-                     SW_BREAK_LINE_SMALL_ZIGZAG, SW_BREAK_LINE_JAGGED):
-        return {"ok": False, "op": "insert_break_lines",
-                "error": "style 只能是 swBreakLineStyle_e 的 1/2/3/4/5，收到 %r" % (style,)}
+        return {
+            "ok": False,
+            "op": "insert_break_lines",
+            "error": "orientation 只能是 1(Horizontal) / 2(Vertical)，收到 %r"
+            % (orientation,),
+        }
+    if style not in (
+        SW_BREAK_LINE_STRAIGHT,
+        SW_BREAK_LINE_ZIGZAG,
+        SW_BREAK_LINE_CURVE,
+        SW_BREAK_LINE_SMALL_ZIGZAG,
+        SW_BREAK_LINE_JAGGED,
+    ):
+        return {
+            "ok": False,
+            "op": "insert_break_lines",
+            "error": "style 只能是 swBreakLineStyle_e 的 1/2/3/4/5，收到 %r" % (style,),
+        }
 
     view, err = _find_view(model, view_name)
     if view is None:
-        return {"ok": False, "op": "insert_break_lines", "error": err,
-                "preconditions_held": False,
-                "available_views": _view_names(model)}
+        return {
+            "ok": False,
+            "op": "insert_break_lines",
+            "error": err,
+            "preconditions_held": False,
+            "available_views": _view_names(model),
+        }
 
     before = _break_state(view)
     brk = get_com_member(
-        view, "InsertBreak3",
+        view,
+        "InsertBreak3",
         int(orientation),
-        mm(float(position1_mm)),                       #: ★ 官方没说单位 ⇒ 按米（示例佐证）
+        mm(float(position1_mm)),  #: ★ 官方没说单位 ⇒ 按米（示例佐证）
         mm(float(position2_mm)),
         int(style),
         int(shape_intensity),
@@ -421,7 +447,9 @@ def insert_break_lines(model, view_name: str,
         "break_state_before": before,
         "break_state_after": after,
         "break_count_delta": delta,
-        "positions_are_on_axis": ("Y" if orientation == SW_BREAK_LINE_HORIZONTAL else "X"),
+        "positions_are_on_axis": (
+            "Y" if orientation == SW_BREAK_LINE_HORIZONTAL else "X"
+        ),
         "position1_mm": float(position1_mm),
         "position2_mm": float(position2_mm),
         "preconditions_held": True,
@@ -443,12 +471,18 @@ def insert_break_lines(model, view_name: str,
 
 # ── ② 辅助视图 ────────────────────────────────────────────────────────────────
 
-def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
-                          z_mm: float = 0.0,
-                          label: str = "",
-                          not_aligned: bool = True,
-                          show_arrow: bool = True,
-                          flip: bool = False) -> dict:
+
+def create_auxiliary_view(
+    model,
+    x_mm: float,
+    y_mm: float,
+    *,
+    z_mm: float = 0.0,
+    label: str = "",
+    not_aligned: bool = True,
+    show_arrow: bool = True,
+    flip: bool = False,
+) -> dict:
     """★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)` → 新视图对象。
 
     :param x_mm / y_mm / z_mm: 辅助视图的落位（**毫米**；★ 官方**没给单位**，本模块按米收、
@@ -490,28 +524,54 @@ def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
     if str(view_name or "").strip():
         ext = get_com_member(model, "Extension")
         if ext is None:
-            return {"ok": False, "op": "auto_insert_balloons",
-                    "error": "取不到 model.Extension ⇒ ★ 选不了视图（★ 前置未成立）"}
+            return {
+                "ok": False,
+                "op": "auto_insert_balloons",
+                "error": "取不到 model.Extension ⇒ ★ 选不了视图（★ 前置未成立）",
+            }
         import sw_part as _sp
+
         try:
-            ext.SelectByID2(str(view_name), "DRAWINGVIEW", 0, 0, 0, False, 0,
-                            _sp._empty_callout(), 0)
-        except Exception as exc:                                       # noqa: BLE001
-            return {"ok": False, "op": "auto_insert_balloons", "view_name": str(view_name),
-                    "error": "按视图名选失败：%s: %s（★ 前置未成立、★ 与「气泡进不了图纸」是两件事）"
-                             % (type(exc).__name__, str(exc)[:120])}
+            ext.SelectByID2(
+                str(view_name),
+                "DRAWINGVIEW",
+                0,
+                0,
+                0,
+                False,
+                0,
+                _sp._empty_callout(),
+                0,
+            )
+        except Exception as exc:  # noqa: BLE001
+            return {
+                "ok": False,
+                "op": "auto_insert_balloons",
+                "view_name": str(view_name),
+                "error": "按视图名选失败：%s: %s（★ 前置未成立、★ 与「气泡进不了图纸」是两件事）"
+                % (type(exc).__name__, str(exc)[:120]),
+            }
     sel = _selection_count(model)
 
     aux = get_com_member(
-        model, "CreateAuxiliaryViewAt2",
-        mm(float(x_mm)), mm(float(y_mm)), mm(float(z_mm)),
-        bool(not_aligned), str(label), bool(show_arrow), bool(flip),
+        model,
+        "CreateAuxiliaryViewAt2",
+        mm(float(x_mm)),
+        mm(float(y_mm)),
+        mm(float(z_mm)),
+        bool(not_aligned),
+        str(label),
+        bool(show_arrow),
+        bool(flip),
     )
 
     after_views = _iter_views(model)
     after_count = None if after_views is None else len(after_views)
-    new_names = ([] if before_names is None or after_views is None
-                 else [_view_name(v) for v in after_views if _view_name(v) not in before_names])
+    new_names = (
+        []
+        if before_names is None or after_views is None
+        else [_view_name(v) for v in after_views if _view_name(v) not in before_names]
+    )
     new_type = _view_type(aux) if aux is not None else None
     delta = _numeric_delta(before_count, after_count)
     return {
@@ -546,19 +606,25 @@ def create_auxiliary_view(model, x_mm: float, y_mm: float, *,
 
 # ── ③ 表面粗糙度符号 ──────────────────────────────────────────────────────────
 
-def insert_surface_finish_symbol(model, *,
-                                 sym_type: int = SW_SF_BASIC,
-                                 leader_type: int = SW_LEADER_STRAIGHT,
-                                 x_mm: float = 0.0, y_mm: float = 0.0, z_mm: float = 0.0,
-                                 lay_symbol: int = 0,
-                                 arrow_type: int = 0,
-                                 mach_allowance: str = "",
-                                 other_vals: str = "",
-                                 prod_method: str = "",
-                                 sample_len: str = "",
-                                 max_roughness: str = "",
-                                 min_roughness: str = "",
-                                 roughness_spacing: str = "") -> dict:
+
+def insert_surface_finish_symbol(
+    model,
+    *,
+    sym_type: int = SW_SF_BASIC,
+    leader_type: int = SW_LEADER_STRAIGHT,
+    x_mm: float = 0.0,
+    y_mm: float = 0.0,
+    z_mm: float = 0.0,
+    lay_symbol: int = 0,
+    arrow_type: int = 0,
+    mach_allowance: str = "",
+    other_vals: str = "",
+    prod_method: str = "",
+    sample_len: str = "",
+    max_roughness: str = "",
+    min_roughness: str = "",
+    roughness_spacing: str = "",
+) -> dict:
     """★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)` → `SFSymbol`。
 
     :param sym_type: `swSFSymType_e`（**0=Basic · 1=JIS_Machining_Req · 2=Dont_Machine**
@@ -590,11 +656,18 @@ def insert_surface_finish_symbol(model, *,
       —— ★ 不是「返回非 None」。
     """
     if model is None:
-        return {"ok": False, "op": "insert_surface_finish_symbol", "error": "model 为 None"}
+        return {
+            "ok": False,
+            "op": "insert_surface_finish_symbol",
+            "error": "model 为 None",
+        }
     #: ★★ 官方 Remarks 的那个判据，在此**落成代码**（★ 只有这一处决定位置参数用不用）
     location_applied = int(leader_type) != SW_LEADER_NO_LEADER
-    loc_x, loc_y, loc_z = ((mm(float(x_mm)), mm(float(y_mm)), mm(float(z_mm)))
-                           if location_applied else (0.0, 0.0, 0.0))
+    loc_x, loc_y, loc_z = (
+        (mm(float(x_mm)), mm(float(y_mm)), mm(float(z_mm)))
+        if location_applied
+        else (0.0, 0.0, 0.0)
+    )
 
     sel = _selection_count(model)
     before = _sum_over_views(model, "GetSFSymbolCount")
@@ -603,21 +676,34 @@ def insert_surface_finish_symbol(model, *,
     #:   ⇒ ★ 取法照本仓 15 个模块的同一写法（★ `sw_costing.py` / `sw_ref_geometry.py` 等）
     ext = _read(model, "Extension")
     if ext is None:
-        return {"ok": False, "op": "insert_surface_finish_symbol",
-                "error": "取不到 model.Extension —— ★ InsertSurfaceFinishSymbol3 挂在 "
-                         "IModelDocExtension 上，★ 不是 IModelDoc2",
-                "preconditions_held": bool(sel and sel >= 1),
-                "selection_count": sel,
-                "precondition_note": "★ 官方摘要逐字：'based on the **last selection**'",
-                "verified_by": "★ 没跑到调用那一步 ⇒ 无判据"}
+        return {
+            "ok": False,
+            "op": "insert_surface_finish_symbol",
+            "error": "取不到 model.Extension —— ★ InsertSurfaceFinishSymbol3 挂在 "
+            "IModelDocExtension 上，★ 不是 IModelDoc2",
+            "preconditions_held": bool(sel and sel >= 1),
+            "selection_count": sel,
+            "precondition_note": "★ 官方摘要逐字：'based on the **last selection**'",
+            "verified_by": "★ 没跑到调用那一步 ⇒ 无判据",
+        }
 
     sfs = get_com_member(
-        ext, "InsertSurfaceFinishSymbol3",
-        int(sym_type), int(leader_type),
-        loc_x, loc_y, loc_z,
-        int(lay_symbol), int(arrow_type),
-        str(mach_allowance), str(other_vals), str(prod_method), str(sample_len),
-        str(max_roughness), str(min_roughness), str(roughness_spacing),
+        ext,
+        "InsertSurfaceFinishSymbol3",
+        int(sym_type),
+        int(leader_type),
+        loc_x,
+        loc_y,
+        loc_z,
+        int(lay_symbol),
+        int(arrow_type),
+        str(mach_allowance),
+        str(other_vals),
+        str(prod_method),
+        str(sample_len),
+        str(max_roughness),
+        str(min_roughness),
+        str(roughness_spacing),
     )
 
     after = _sum_over_views(model, "GetSFSymbolCount")
@@ -632,9 +718,9 @@ def insert_surface_finish_symbol(model, *,
         "sym_type": int(sym_type),
         "leader_type": int(leader_type),
         "location_applied": location_applied,
-        "ignored_location_mm": None if location_applied else {"x": float(x_mm),
-                                                              "y": float(y_mm),
-                                                              "z": float(z_mm)},
+        "ignored_location_mm": None
+        if location_applied
+        else {"x": float(x_mm), "y": float(y_mm), "z": float(z_mm)},
         "selection_count": sel,
         "preconditions_held": bool(sel and sel >= 1),
         "precondition_note": (
@@ -645,14 +731,17 @@ def insert_surface_finish_symbol(model, *,
             "The SOLIDWORKS Design software uses the location parameters for this method only "
             "if the surface finish symbol has a leader leaderType != swNO_LEADER."
         ),
-        "annotation_type_hint": ("swSFSymbol = 7（C:\\swapi\\enums\\swAnnotationType_e.md）"
-                                 "⇒ 也可用 IView.GetAnnotationsByType(7) 复核"),
+        "annotation_type_hint": (
+            "swSFSymbol = 7（C:\\swapi\\enums\\swAnnotationType_e.md）"
+            "⇒ 也可用 IView.GetAnnotationsByType(7) 复核"
+        ),
         "string_params_note": "★ 官方那 7 个文本参数**全是 System.string 且官方页没给格式** ⇒ 原样透传、不校验",
         "verified_by": "sum(IView.GetSFSymbolCount) delta",
     }
 
 
 # ── ④ 基准符号 ────────────────────────────────────────────────────────────────
+
 
 def insert_datum_tag(model) -> dict:
     """★ **基准符号（datum tag）**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **零参**）。
@@ -691,31 +780,37 @@ def insert_datum_tag(model) -> dict:
             "（官方示例用 SelectByID2 选 EDGE）；★ 官方**零参数** ⇒ 落点完全由选区决定"
         ),
         "entry_point_note": "★ 入口是 IModelDoc2.InsertDatumTag2（零参），**不是** IModelDocExtension",
-        "annotation_type_hint": ("swDatumTag = 2（C:\\swapi\\enums\\swAnnotationType_e.md）"
-                                 "⇒ 也可用 IView.GetAnnotationsByType(2) 复核"),
+        "annotation_type_hint": (
+            "swDatumTag = 2（C:\\swapi\\enums\\swAnnotationType_e.md）"
+            "⇒ 也可用 IView.GetAnnotationsByType(2) 复核"
+        ),
         "verified_by": "sum(IView.GetDatumTagCount) delta",
     }
 
 
 # ── ⑤ 气泡序号（BOM 气泡）─────────────────────────────────────────────────────
 
-def auto_insert_balloons(model, *,
-                         layout: int = SW_BALLOON_LAYOUT_SQUARE,
-                         style: int = SW_BALLOON_STYLE_CIRCULAR,
-                         size: int = SW_BALLOON_FIT_5_CHARS,
-                         upper_text_content: int = SW_BALLOON_TEXT_ITEM_NUMBER,
-                         upper_text: str = "",
-                         layername: str = "-None-",
-                         item_number_start: int = 1,
-                         item_number_increment: int = 1,
-                         item_order: int = SW_BALLOON_ITEMS_DONT_CHANGE,
-                         edit_balloons: bool = True,
-                         edit_balloon_option: int = SW_EDIT_BALLOON_RESEQUENCE,
-                         reverse_direction: bool = False,
-                         ignore_multiple: bool = True,
-                         insert_magnetic_line: bool = True,
-                         leader_attachment_to_faces: bool = True,
-                         view_name: str = "") -> dict:
+
+def auto_insert_balloons(
+    model,
+    *,
+    layout: int = SW_BALLOON_LAYOUT_SQUARE,
+    style: int = SW_BALLOON_STYLE_CIRCULAR,
+    size: int = SW_BALLOON_FIT_5_CHARS,
+    upper_text_content: int = SW_BALLOON_TEXT_ITEM_NUMBER,
+    upper_text: str = "",
+    layername: str = "-None-",
+    item_number_start: int = 1,
+    item_number_increment: int = 1,
+    item_order: int = SW_BALLOON_ITEMS_DONT_CHANGE,
+    edit_balloons: bool = True,
+    edit_balloon_option: int = SW_EDIT_BALLOON_RESEQUENCE,
+    reverse_direction: bool = False,
+    ignore_multiple: bool = True,
+    insert_magnetic_line: bool = True,
+    leader_attachment_to_faces: bool = True,
+    view_name: str = "",
+) -> dict:
     """★ **气泡序号（BOM 气泡）**：`IDrawingDoc.AutoBalloon5(AutoBalloonOptions)` → **Array of INotes**。
 
     ★★★ **官方 `## Remarks` 给的是**四步**，★ 本模块**严格照那四步走**（逐字转述）：
@@ -757,16 +852,19 @@ def auto_insert_balloons(model, *,
     sel = _selection_count(model)
     before = _sum_over_views(model, "GetNoteCount")
 
-    #: ★ 官方第 2 步：★ **零参**造选项对象（★ 反射 dump `'CreateAutoBalloonOptions': 0` 
+    #: ★ 官方第 2 步：★ **零参**造选项对象（★ 反射 dump `'CreateAutoBalloonOptions': 0`
     #: ✓）
     opts = get_com_member(model, "CreateAutoBalloonOptions")
     if opts is None:
-        return {"ok": False, "op": "auto_insert_balloons",
-                "error": "CreateAutoBalloonOptions() 回 None ⇒ 拿不到 IAutoBalloonOptions 对象",
-                "preconditions_held": bool(sel and sel >= 1),
-                "selection_count": sel,
-                "precondition_note": "★ 官方第 1 步：先选中一个或多个视图 / 图纸",
-                "verified_by": "★ 没跑到调用那一步 ⇒ 无判据"}
+        return {
+            "ok": False,
+            "op": "auto_insert_balloons",
+            "error": "CreateAutoBalloonOptions() 回 None ⇒ 拿不到 IAutoBalloonOptions 对象",
+            "preconditions_held": bool(sel and sel >= 1),
+            "selection_count": sel,
+            "precondition_note": "★ 官方第 1 步：先选中一个或多个视图 / 图纸",
+            "verified_by": "★ 没跑到调用那一步 ⇒ 无判据",
+        }
 
     #: ★ 官方第 3 步：★ 设属性。★ **逐条写、写失败不吞**（★ 名字进 failures）
     wanted = {
@@ -790,7 +888,7 @@ def auto_insert_balloons(model, *,
     for key, value in wanted.items():
         try:
             set_com_member(opts, key, value)
-        except Exception as exc:                                    # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             failures.append("%s(%s)" % (key, str(exc)[:60]))
 
     #: ★ 官方第 4 步：★ 把对象塞进 `BalloonOptions`
@@ -810,8 +908,10 @@ def auto_insert_balloons(model, *,
         #:   ★ 而返回的数组长度**照旧回报**（`balloon_note_count` / `returned_is_none`），
         #:   只是**不当判据** ✓ —— ★ 这正是裁决书要的那个「**真机定案**」的落点 ✓
         "ok": (delta is not None and delta > 0),
-        "criterion": ("★ **纯回读**：`sum(IView::GetNoteCount)` 的**增量 > 0**"
-                      "（★ 不用 `AutoBalloon5` 返回的数组当判据）"),
+        "criterion": (
+            "★ **纯回读**：`sum(IView::GetNoteCount)` 的**增量 > 0**"
+            "（★ 不用 `AutoBalloon5` 返回的数组当判据）"
+        ),
         "op": "auto_insert_balloons",
         "returned_is_none": notes is None,
         "balloon_note_count": len(balloon_notes),
@@ -838,7 +938,7 @@ def auto_insert_balloons(model, *,
             "★ **不声称**它们是 SolidWorks 的出厂默认"
         ),
         "verified_by": "★ **sum(IView.GetNoteCount) 的增量 > 0**（纯回读）；"
-                       "★ 返回的数组长度只**回报**、**不当判据**",
+        "★ 返回的数组长度只**回报**、**不当判据**",
     }
 
 
@@ -985,17 +1085,25 @@ def _annotation_mask(types) -> int:
         if key not in ANNOTATION_TYPE_BITS:
             raise ValueError(
                 "未知的标注类型 %r；合法的是官方 swInsertAnnotation_e 的 26 个成员：%s"
-                % (name, ", ".join(sorted(ANNOTATION_TYPE_BITS))))
+                % (name, ", ".join(sorted(ANNOTATION_TYPE_BITS)))
+            )
         mask |= ANNOTATION_TYPE_BITS[key]
     return mask
 
 
-def insert_model_annotations(model, view_name: str = "", *, source: str = "entire_model",
-                             types="", all_views: bool = False, duplicate_dims: bool = False,
-                             hidden_feature_dims: bool = False,
-                             use_placement_in_sketch: bool = False,
-                             insert_all_annotations: bool = False,
-                             insert_all_reference_geometry: bool = False) -> dict:
+def insert_model_annotations(
+    model,
+    view_name: str = "",
+    *,
+    source: str = "entire_model",
+    types="",
+    all_views: bool = False,
+    duplicate_dims: bool = False,
+    hidden_feature_dims: bool = False,
+    use_placement_in_sketch: bool = False,
+    insert_all_annotations: bool = False,
+    insert_all_reference_geometry: bool = False,
+) -> dict:
     """★ **把模型标注插进工程图视图**（官方 `IDrawingDoc::InsertModelAnnotations4`，**8 参**）。
 
     :param view_name: 要操作的视图名（★ 留空 = 用**第一个**视图 —— 本模块的 `_iter_views`）。
@@ -1018,44 +1126,63 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
     ★★ **调用序照官方示例**：**先选中视图**（`SelectByID2`，类型 `DRAWINGVIEW`）⇒
       **再 `ActivateView`**（★ 这一步签名里看不出来）⇒ `ClearSelection2` ⇒ 调它 ✓
     """
-    from sw_connect import get_com_member                               # noqa: E402
+    from sw_connect import get_com_member  # noqa: E402
+
     out: dict = {
-        "ok": False, "entry_used": "IDrawingDoc::InsertModelAnnotations4(8 参)",
-        "view": None, "source": str(source), "mask": None, "types_used": None,
-        "annotation_count_before": None, "annotation_count_after": None,
-        "annotation_delta": None, "returned_count": None, "selected_count": None,
-        "error": None, "note": None,
+        "ok": False,
+        "entry_used": "IDrawingDoc::InsertModelAnnotations4(8 参)",
+        "view": None,
+        "source": str(source),
+        "mask": None,
+        "types_used": None,
+        "annotation_count_before": None,
+        "annotation_count_after": None,
+        "annotation_delta": None,
+        "returned_count": None,
+        "selected_count": None,
+        "error": None,
+        "note": None,
         "★": "判据 = **`IView::GetAnnotationCount()` 的前后回读**（★ 本模块既有 `_sum_over_views`）；"
-             "★ 它回的是 **COM 标注对象数组** ⇒ **过不了 JSON 边界**，故**不当唯一判据**",
+        "★ 它回的是 **COM 标注对象数组** ⇒ **过不了 JSON 边界**，故**不当唯一判据**",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     src = str(source).strip().lower()
     if src not in MODEL_ITEM_SOURCES:
-        out["error"] = ("未知的 source %r；合法：%s"
-                        % (source, ", ".join(sorted(MODEL_ITEM_SOURCES))))
+        out["error"] = "未知的 source %r；合法：%s" % (
+            source,
+            ", ".join(sorted(MODEL_ITEM_SOURCES)),
+        )
         return out
     try:
         out["mask"] = _annotation_mask(types)
     except ValueError as exc:
         out["error"] = str(exc)[:300]
         return out
-    if not insert_all_annotations and not insert_all_reference_geometry and out["mask"] == 0:
-        out["error"] = ("`types` 是空的、而两个 `insert_all_*` 也都是 False ⇒ ★ 官方逐字："
-                        "`Types` **只在** `InsertAllAnnotations` 与 `InsertAllReferenceGeometry` "
-                        "都是 False 时**才有意义** ⇒ 那样等于**什么都没让它插**。"
-                        "★ 本函数**不猜你要什么**，如实拒绝 ✓")
+    if (
+        not insert_all_annotations
+        and not insert_all_reference_geometry
+        and out["mask"] == 0
+    ):
+        out["error"] = (
+            "`types` 是空的、而两个 `insert_all_*` 也都是 False ⇒ ★ 官方逐字："
+            "`Types` **只在** `InsertAllAnnotations` 与 `InsertAllReferenceGeometry` "
+            "都是 False 时**才有意义** ⇒ 那样等于**什么都没让它插**。"
+            "★ 本函数**不猜你要什么**，如实拒绝 ✓"
+        )
         return out
     try:
         views = _iter_views(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "取视图失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     if not views:
-        out["error"] = ("这张工程图里**一个视图都没有** ⇒ 官方摘要逐字是"
-                        "「into this drawing document's **currently selected drawing view**」"
-                        "⇒ 没有视图就没有可操作的对象 ✓")
+        out["error"] = (
+            "这张工程图里**一个视图都没有** ⇒ 官方摘要逐字是"
+            "「into this drawing document's **currently selected drawing view**」"
+            "⇒ 没有视图就没有可操作的对象 ✓"
+        )
         return out
     if str(view_name or "").strip():
         #: ⚠ ★ 我第一版写的是 `target = _find_view(...)` —— ★★ 而它回的是 **`(view, erro
@@ -1075,12 +1202,24 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
         out["error"] = "取不到视图名（★ 后面的 SelectByID2 / ActivateView 都要名字）"
         return out
     try:
-        from sw_part import _empty_callout                              # noqa: E402
+        from sw_part import _empty_callout  # noqa: E402
+
         ext = get_com_member(model, "Extension")
         #: ★★ 官方示例的**调用序**：先选中视图、**再激活**、再清选区
         get_com_member(model, "ClearSelection2", True)
-        get_com_member(ext, "SelectByID2", out["view"], "DRAWINGVIEW", 0.0, 0.0, 0.0,
-                       False, 0, _empty_callout(), 0)
+        get_com_member(
+            ext,
+            "SelectByID2",
+            out["view"],
+            "DRAWINGVIEW",
+            0.0,
+            0.0,
+            0.0,
+            False,
+            0,
+            _empty_callout(),
+            0,
+        )
         out["selected_count"] = _selection_count(model)
         get_com_member(model, "ActivateView", out["view"])
         #: ★★ **选区去留取决于 `AllViews`**（★ 这条是读官方示例读出来的，不是猜的）：
@@ -1090,30 +1229,45 @@ def insert_model_annotations(model, view_name: str = "", *, source: str = "entir
         #:   `InsertModelAnnotations4` **回一个空数组**（★ 一个指不出真因的现象）✓
         if all_views:
             get_com_member(model, "ClearSelection2", True)
-        returned = get_com_member(model, "InsertModelAnnotations4",
-                                  int(MODEL_ITEM_SOURCES[src]), int(out["mask"]),
-                                  bool(all_views), bool(duplicate_dims),
-                                  bool(hidden_feature_dims), bool(use_placement_in_sketch),
-                                  bool(insert_all_annotations),
-                                  bool(insert_all_reference_geometry))
-    except Exception as exc:                                            # noqa: BLE001
+        returned = get_com_member(
+            model,
+            "InsertModelAnnotations4",
+            int(MODEL_ITEM_SOURCES[src]),
+            int(out["mask"]),
+            bool(all_views),
+            bool(duplicate_dims),
+            bool(hidden_feature_dims),
+            bool(use_placement_in_sketch),
+            bool(insert_all_annotations),
+            bool(insert_all_reference_geometry),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
     out["returned_count"] = len(list(returned)) if returned is not None else 0
     try:
         out["annotation_count_after"] = _sum_over_views(model, "GetAnnotationCount")
-        out["annotation_delta"] = _numeric_delta(out["annotation_count_before"],
-                                         out["annotation_count_after"])
-    except Exception as exc:                                            # noqa: BLE001
+        out["annotation_delta"] = _numeric_delta(
+            out["annotation_count_before"], out["annotation_count_after"]
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s" % str(exc)[:150]
         return out
     out["ok"] = bool(out["annotation_delta"] and out["annotation_delta"] > 0)
     if not out["ok"]:
-        out["error"] = ("回读判据未过：视图标注数 %r → %r（差 %r）· 官方回的数组长度 %r —— "
-                        "★ 如实判「没插进去」（★ 不拿返回值冒充）"
-                        % (out["annotation_count_before"], out["annotation_count_after"],
-                           out["annotation_delta"], out["returned_count"]))
-    out["types_used"] = sorted(k for k, v in ANNOTATION_TYPE_BITS.items() if v & out["mask"])
+        out["error"] = (
+            "回读判据未过：视图标注数 %r → %r（差 %r）· 官方回的数组长度 %r —— "
+            "★ 如实判「没插进去」（★ 不拿返回值冒充）"
+            % (
+                out["annotation_count_before"],
+                out["annotation_count_after"],
+                out["annotation_delta"],
+                out["returned_count"],
+            )
+        )
+    out["types_used"] = sorted(
+        k for k, v in ANNOTATION_TYPE_BITS.items() if v & out["mask"]
+    )
     return out
 
 
@@ -1178,8 +1332,9 @@ VIEW_ENTITY_TYPES = {
 }
 
 
-def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge",
-                        entity_index: int = 0) -> dict:
+def insert_center_lines(
+    model, view_name: str = "", *, entity_type: str = "edge", entity_index: int = 0
+) -> dict:
     """★ **在工程图视图里插中心线**（官方 `IDrawingDoc::InsertCenterLine2`，**零参**）。
 
     :param view_name: 视图名（★ 留空 = 当前图纸第一个视图）。
@@ -1196,31 +1351,44 @@ def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge"
     ★★ **「静默无效」那件事怎么定案**：★ 选区计数为 0（前置没备成）时，本函数**在调它之前就报错**；
       ★ 只有**确实选到了实体**、调完仍 **Δ=0**，才是「**选了也没用**」的证据 ⇒ ★ **两者必须分开** ✓
     """
-    from sw_connect import get_com_member                               # noqa: E402
+    from sw_connect import get_com_member  # noqa: E402
+
     out: dict = {
-        "ok": False, "entry_used": "IDrawingDoc::InsertCenterLine2()",
-        "view": None, "entity_type": str(entity_type), "entity_index": int(entity_index),
-        "visible_count": None, "selection_count": None, "centerline_count_before": None,
-        "centerline_count_after": None, "centerline_delta": None, "returned_is_none": None,
-        "error": None, "note": None,
+        "ok": False,
+        "entry_used": "IDrawingDoc::InsertCenterLine2()",
+        "view": None,
+        "entity_type": str(entity_type),
+        "entity_index": int(entity_index),
+        "visible_count": None,
+        "selection_count": None,
+        "centerline_count_before": None,
+        "centerline_count_after": None,
+        "centerline_delta": None,
+        "returned_is_none": None,
+        "error": None,
+        "note": None,
         "★": "判据 = **选区计数** + **`IView::GetCenterLineCount()` 的前后回读**；"
-             "★ 它回的 `ICenterLine` **不当判据**；★★ 选区 0 与「选了仍 Δ=0」**必须分开**",
+        "★ 它回的 `ICenterLine` **不当判据**；★★ 选区 0 与「选了仍 Δ=0」**必须分开**",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     et = str(entity_type).strip().lower()
     if et not in VIEW_ENTITY_TYPES:
-        out["error"] = ("未知的 entity_type %r；合法：%s"
-                        % (entity_type, ", ".join(sorted(VIEW_ENTITY_TYPES))))
+        out["error"] = "未知的 entity_type %r；合法：%s" % (
+            entity_type,
+            ", ".join(sorted(VIEW_ENTITY_TYPES)),
+        )
         return out
     try:
         views = _iter_views(model)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "取视图失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     if not views:
-        out["error"] = "这张工程图里一个视图都没有 ⇒ 没有可选的实体（★ 官方语义是在**视图里**选）"
+        out["error"] = (
+            "这张工程图里一个视图都没有 ⇒ 没有可选的实体（★ 官方语义是在**视图里**选）"
+        )
         return out
     if str(view_name or "").strip():
         target, why = _find_view(model, str(view_name).strip())
@@ -1232,8 +1400,9 @@ def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge"
     out["view"] = _view_name(target)
     out["centerline_count_before"] = _sum_over_views(model, "GetCenterLineCount")
     try:
-        from sw_part import _empty_callout                              # noqa: E402
-        from sw_connect import create_empty_dispatch_variant            # noqa: E402
+        from sw_part import _empty_callout  # noqa: E402
+        from sw_connect import create_empty_dispatch_variant  # noqa: E402
+
         #: ★★ **`LpViewComponent` 传裸 `None` 会 `类型不匹配`**（`com_error` -2147352571
         #: ）——
         #: ★ 这正是**已知事实 33**：「`SelectByID2` / `Select4` 的 `Callout` 参数**必须*
@@ -1245,44 +1414,64 @@ def insert_center_lines(model, view_name: str = "", *, entity_type: str = "edge"
         #: ⚠ 我第一次就是传的 `None` ⇒ 四种实体类型**全部**报"类型不匹配" —— ★ **那看着
         #: 像"读不到"，
         #:     实际是我传错了**（★ 与事实 33 记的坑一模一样）✓
-        ents = _as_list(get_com_member(target, "GetVisibleEntities2",
-                                       create_empty_dispatch_variant(),
-                                       int(VIEW_ENTITY_TYPES[et])))
+        ents = _as_list(
+            get_com_member(
+                target,
+                "GetVisibleEntities2",
+                create_empty_dispatch_variant(),
+                int(VIEW_ENTITY_TYPES[et]),
+            )
+        )
         out["visible_count"] = len(ents)
         if not ents:
-            out["error"] = ("视图里**没有可见的 %s**（`GetVisibleEntities2` 回 0 个）⇒ ★ 前置不成立，"
-                            "**不调** `InsertCenterLine2`（★ 那样只会得到静默空结果）" % et)
+            out["error"] = (
+                "视图里**没有可见的 %s**（`GetVisibleEntities2` 回 0 个）⇒ ★ 前置不成立，"
+                "**不调** `InsertCenterLine2`（★ 那样只会得到静默空结果）" % et
+            )
             return out
         if entity_index < 0 or entity_index >= len(ents):
-            out["error"] = ("entity_index=%d 越界（视图里可见的 %s 共 %d 个）"
-                            % (entity_index, et, len(ents)))
+            out["error"] = "entity_index=%d 越界（视图里可见的 %s 共 %d 个）" % (
+                entity_index,
+                et,
+                len(ents),
+            )
             return out
         get_com_member(model, "ClearSelection2", True)
         get_com_member(ents[entity_index], "Select4", False, _empty_callout())
         out["selection_count"] = _selection_count(model)
         if out["selection_count"] <= 0:
-            out["error"] = ("**选中后回读计数为 0** ⇒ 那个实体没被选上（★ 事实 8：不许信 `Select4` 的返回值）"
-                            "—— ★ 此时**不能**把后续的静默结果当成「能力无效」的证据")
+            out["error"] = (
+                "**选中后回读计数为 0** ⇒ 那个实体没被选上（★ 事实 8：不许信 `Select4` 的返回值）"
+                "—— ★ 此时**不能**把后续的静默结果当成「能力无效」的证据"
+            )
             return out
         cl = get_com_member(model, "InsertCenterLine2")
         out["returned_is_none"] = cl is None
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
     try:
         out["centerline_count_after"] = _sum_over_views(model, "GetCenterLineCount")
-        out["centerline_delta"] = _numeric_delta(out["centerline_count_before"],
-                                        out["centerline_count_after"])
-    except Exception as exc:                                            # noqa: BLE001
+        out["centerline_delta"] = _numeric_delta(
+            out["centerline_count_before"], out["centerline_count_after"]
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s" % str(exc)[:150]
         return out
     out["ok"] = bool(out["centerline_delta"] and out["centerline_delta"] > 0)
     if not out["ok"]:
-        out["error"] = ("回读判据未过：**选中了 %d 个实体**（`%s` #%d）之后，视图中心线数仍 "
-                        "**%r → %r**（差 %r）· 它回的 `ICenterLine` 是 %s —— "
-                        "★ 这是「**选了也没用**」的证据（★ 与「选不上」分开记）"
-                        % (out["selection_count"], et, entity_index,
-                           out["centerline_count_before"], out["centerline_count_after"],
-                           out["centerline_delta"],
-                           "None" if out["returned_is_none"] else "非 None"))
+        out["error"] = (
+            "回读判据未过：**选中了 %d 个实体**（`%s` #%d）之后，视图中心线数仍 "
+            "**%r → %r**（差 %r）· 它回的 `ICenterLine` 是 %s —— "
+            "★ 这是「**选了也没用**」的证据（★ 与「选不上」分开记）"
+            % (
+                out["selection_count"],
+                et,
+                entity_index,
+                out["centerline_count_before"],
+                out["centerline_count_after"],
+                out["centerline_delta"],
+                "None" if out["returned_is_none"] else "非 None",
+            )
+        )
     return out

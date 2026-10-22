@@ -42,7 +42,7 @@ def _fn_node(path: Path, name: str):
     try:
         src = path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(src)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None, "", ""
     for n in ast.walk(tree):
         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name:
@@ -59,14 +59,22 @@ def classify(fn_node) -> list:
         v = n.value
         if isinstance(v, ast.Dict):
             kinds.append("dict")
-        elif isinstance(v, ast.Name) and v.id.lower() in ("out", "result", "report", "res", "payload"):
+        elif isinstance(v, ast.Name) and v.id.lower() in (
+            "out",
+            "result",
+            "report",
+            "res",
+            "payload",
+        ):
             kinds.append("dict")
         elif isinstance(v, ast.Call):
             f = v.func
             fname = getattr(f, "attr", None) or getattr(f, "id", None) or ""
-            kinds.append("dict" if fname.startswith(("_result", "_out", "_report")) else "bare")
+            kinds.append(
+                "dict" if fname.startswith(("_result", "_out", "_report")) else "bare"
+            )
         elif isinstance(v, ast.Name):
-            kinds.append("dict")                     #: 变量名兜底（多半是攒好的 dict）
+            kinds.append("dict")  #: 变量名兜底（多半是攒好的 dict）
         else:
             kinds.append("bare")
     return kinds
@@ -89,7 +97,11 @@ for spec in RC.all_specs():
         #: ★ 取第一条裸 return 的原文，当依据
         snip = ""
         for n in ast.walk(node):
-            if isinstance(n, ast.Return) and n.value is not None and not isinstance(n.value, ast.Dict):
+            if (
+                isinstance(n, ast.Return)
+                and n.value is not None
+                and not isinstance(n.value, ast.Dict)
+            ):
                 if isinstance(n.value, ast.Call):
                     attr = getattr(n.value.func, "attr", None) or ""
                     if not attr.startswith(("_result", "_out", "_report")):
@@ -101,5 +113,12 @@ print("★ 目标函数里有**裸 return（非 dict）**的工具：**%d** 个"
 print("%-48s %-34s %-10s %s" % ("工具", "函数", "裸/总", "第一条裸 return 原文"))
 print("-" * 132)
 for r in sorted(rows):
-    print("%-48s %-34s %-10s %s" % (r[0].replace("solidworks_", "")[:47], r[1][:33],
-                                    "%d/%d" % (r[2], r[3]), r[4]))
+    print(
+        "%-48s %-34s %-10s %s"
+        % (
+            r[0].replace("solidworks_", "")[:47],
+            r[1][:33],
+            "%d/%d" % (r[2], r[3]),
+            r[4],
+        )
+    )

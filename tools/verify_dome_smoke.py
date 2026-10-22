@@ -25,6 +25,7 @@ r"""@brief 真机冒烟：`sw_part.insert_dome` —— ★★ **定量**验证 +
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -41,8 +42,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "dome-smoke-evidence.json")
-W, H, D = 100.0, 60.0, 20.0      #: 板 100×60×20（毫米）
-DOME_H = 8.0                      #: 圆顶高度（毫米）
+W, H, D = 100.0, 60.0, 20.0  #: 板 100×60×20（毫米）
+DOME_H = 8.0  #: 圆顶高度（毫米）
 
 
 def modal_dialogs() -> tuple:
@@ -55,8 +56,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def feature_names(model) -> list:
     """特征树里的特征名。
 
@@ -78,7 +81,7 @@ def feature_names(model) -> list:
             f = model.FeatureByPositionReverse(i)
             if f is not None:
                 names.append(str(f.Name))
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return names
 
@@ -97,10 +100,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         chk("新建临时零件（不碰用户文档）", doc is not None, "ok")
@@ -112,8 +116,11 @@ def main() -> int:
         sw_part.extrude_boss(doc, "草图1", D)
         box0 = sw_part.get_bounding_box(doc)
         size0 = sorted(round(float(v), 4) for v in box0["size"])
-        chk("造出 %.0f×%.0f×%.0f 的板" % (W, H, D), size0 == sorted([W, H, D]),
-            "size = %s" % size0)
+        chk(
+            "造出 %.0f×%.0f×%.0f 的板" % (W, H, D),
+            size0 == sorted([W, H, D]),
+            "size = %s" % size0,
+        )
         n_before = len(feature_names(doc))
         ev["size_before"] = size0
         ev["features_before"] = n_before
@@ -132,26 +139,42 @@ def main() -> int:
             #: 官方 C# 示例也是先 mark=0 选一次、清选、再 **mark=1** 选一次。
             #: ⚠ 传 mark=0 时 `InsertDome` 报 **`0x8002000F` 非选择性的参数** ——
             #: 那个错误**看不出是 mark 的问题**（与事实 33 同一类坑）。
-            doc.Extension.SelectByID2("", "FACE", W / 2.0, H / 2.0, D, True, 0, callout, 0)
+            doc.Extension.SelectByID2(
+                "", "FACE", W / 2.0, H / 2.0, D, True, 0, callout, 0
+            )
             doc.ClearSelection2(True)
-            ok_sel = bool(doc.Extension.SelectByID2(
-                "", "FACE", W / 2.0, H / 2.0, D, False, 1, callout, 0))
-        except Exception as exc:      # noqa: BLE001
+            ok_sel = bool(
+                doc.Extension.SelectByID2(
+                    "", "FACE", W / 2.0, H / 2.0, D, False, 1, callout, 0
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
             chk("选顶面", False, "EXC: %s" % str(exc)[:80])
-        chk("★★ 按面上的点 + **mark=1** 选中顶面（官方 Remarks 要求）", ok_sel,
-            "SelectByID2 返回 %s" % ok_sel)
+        chk(
+            "★★ 按面上的点 + **mark=1** 选中顶面（官方 Remarks 要求）",
+            ok_sel,
+            "SelectByID2 返回 %s" % ok_sel,
+        )
 
         #: ③ 加圆顶（**void** 返回 ⇒ 只能靠别的证据）
         try:
             sw_part.insert_dome(doc, DOME_H)
-            chk("insert_dome(%.0f) 未抛异常" % DOME_H, True, "（⚠ 这**什么也证明不了** —— void 返回）")
-        except Exception as exc:      # noqa: BLE001
-            chk("insert_dome(%.0f)" % DOME_H, False, "%s: %s" % (type(exc).__name__, str(exc)[:90]))
+            chk(
+                "insert_dome(%.0f) 未抛异常" % DOME_H,
+                True,
+                "（⚠ 这**什么也证明不了** —— void 返回）",
+            )
+        except Exception as exc:  # noqa: BLE001
+            chk(
+                "insert_dome(%.0f)" % DOME_H,
+                False,
+                "%s: %s" % (type(exc).__name__, str(exc)[:90]),
+            )
 
         #: ④ **证据 A：边界框增长**
         try:
             doc.ForceRebuild3(False)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         box1 = sw_part.get_bounding_box(doc)
         size1 = sorted(round(float(v), 4) for v in box1["size"])
@@ -167,16 +190,23 @@ def main() -> int:
         #: 在 `max` 里排不上号（最大是 X 的 100，没变）⇒ 判据报 ✗ 而几何明明变了。
         #: ⇒ 改成**逐分量**比较（排好序逐个对）。
         changed = [round(b - a, 4) for a, b in zip(size0, size1) if abs(b - a) > 0.01]
-        chk("★★ **证据 A-1**：加圆顶后**边界框逐分量变了**", bool(changed),
-            "size %s → %s ⇒ 变化的分量 %s" % (size0, size1, changed))
+        chk(
+            "★★ **证据 A-1**：加圆顶后**边界框逐分量变了**",
+            bool(changed),
+            "size %s → %s ⇒ 变化的分量 %s" % (size0, size1, changed),
+        )
         ev["growth_explanation_pending"] = (
             "⚠ 我传的 Height=%.0f，而 Z 方向实测增长 %.4f —— **两者不等**。"
             "可能原因：`Height` 的语义不是「面容顶面到顶点的距离」（圆顶是曲面，"
             "其包围盒高度与参数不是同一件事）；或该参数在别处生效。**未查明。**"
-            % (DOME_H, grew))
-        chk("⚑ **证据 A-2**：增长量 = %.4f（传的是 %.0f，**不等** ⇒ 语义待查，见限度）"
-            % (grew, DOME_H), True,
-            "**如实记为未查明**，不当成通过也不当成失败")
+            % (DOME_H, grew)
+        )
+        chk(
+            "⚑ **证据 A-2**：增长量 = %.4f（传的是 %.0f，**不等** ⇒ 语义待查，见限度）"
+            % (grew, DOME_H),
+            True,
+            "**如实记为未查明**，不当成通过也不当成失败",
+        )
 
         #: ④b ★★★ **证据 A2：官方示例那条路 —— 读回 `IDomeFeatureData2.Height`**
         #: 官方 C# 示例：
@@ -187,66 +217,79 @@ def main() -> int:
         #:   比"边界框长了一点"强得多（已知事实 40 那一族：**void 返回要靠别的东西**）。
         h_read = None
         try:
-            doc.Extension.SelectByID2("Dome1", "BODYFEATURE", 0, 0, 0, False, 0,
-                                      sw_part._empty_callout(), 0)
+            doc.Extension.SelectByID2(
+                "Dome1", "BODYFEATURE", 0, 0, 0, False, 0, sw_part._empty_callout(), 0
+            )
             sel = doc.SelectionManager
             feat = sel.GetSelectedObject6(1, -1)
             if feat is not None:
                 data = feat.GetDefinition()
                 if data is not None:
                     try:
-                        data.AccessSelections(doc, None)      # ⚠ 事实 47：BYREF 可能不行
+                        data.AccessSelections(doc, None)  # ⚠ 事实 47：BYREF 可能不行
                         ev["access_selections"] = "ok"
-                    except Exception as exc:      # noqa: BLE001
+                    except Exception as exc:  # noqa: BLE001
                         ev["access_selections"] = "EXC: %s" % str(exc)[:70]
                     h_read = float(data.Height)
                     ev["dome_height_read_back_m"] = h_read
                     try:
                         ev["dome_elliptical"] = bool(data.Elliptical)
-                    except Exception:      # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["height_read_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
         if h_read is None:
             #: ⚑⚑ 按本仓库既有的做法（`get_fastener_table` / `CreateChamfer` 那两条）：
             #: **到不了的路径如实标成「到不了」+ 写明依据**，而**不是**记成红。
             #: ⚠ 它**不算通过**，也不算失败 —— 它是一条**已查明的不可达**。
-            chk("⚑ **证据 A2（不可达，如实标记）**：`IDomeFeatureData2` 的读回",
+            chk(
+                "⚑ **证据 A2（不可达，如实标记）**：`IDomeFeatureData2` 的读回",
                 True,
                 "拿不到：%s ⇒ 标为**不可达**（官方示例写 `data.AccessSelections(...)`，"
                 "而那族 `AccessSelections` 在 pywin32 迟到绑定下到不了 —— 事实 47/68）"
-                % (ev.get("height_read_error") or ev.get("access_selections") or "—")[:70])
+                % (ev.get("height_read_error") or ev.get("access_selections") or "—")[
+                    :70
+                ],
+            )
         else:
             #: ⚠ 官方文档说 Height 是**米** ⇒ 若真如此，写 8 mm 应读回 0.008
             as_mm = h_read * 1000.0
-            chk("★★★ **证据 A2**：读回高度 = %s ⇒ %s"
-                % (h_read, "**毫米**（与文档的「meters」矛盾）"
-                   if abs(as_mm - DOME_H) < 0.5 else "（与写入的 %.0f 不符）" % DOME_H),
+            chk(
+                "★★★ **证据 A2**：读回高度 = %s ⇒ %s"
+                % (
+                    h_read,
+                    "**毫米**（与文档的「meters」矛盾）"
+                    if abs(as_mm - DOME_H) < 0.5
+                    else "（与写入的 %.0f 不符）" % DOME_H,
+                ),
                 abs(as_mm - DOME_H) < 0.5 or abs(h_read - DOME_H) < 0.5,
-                "写 %.0f ⇒ 读 %.6f（×1000 = %.3f）" % (DOME_H, h_read, as_mm))
+                "写 %.0f ⇒ 读 %.6f（×1000 = %.3f）" % (DOME_H, h_read, as_mm),
+            )
 
         #: ⑤ **证据 B：特征树**
         names = feature_names(doc)
         #: ★ `FeatureByPositionReverse` 从**新到旧** ⇒ 新增的在**最前面**。
-        new_feats = names[:max(0, len(names) - n_before)]
+        new_feats = names[: max(0, len(names) - n_before)]
         ev["features_after"] = len(names)
         ev["new_features"] = new_feats
         #: ⚠ 第三版试过"取列表最前面几个当新增" ⇒ 得到 `['凸台-拉伸1']`（**是那个拉伸**
         #: ，
         #: 不是圆顶）⇒ ★ **顺序语义我还没查清** ⇒ 换成**不依赖顺序**的判据：
         #: **树的条数变多了**（这足以证明"多了一个东西"）。
-        chk("★★ **证据 B**：特征树**条数变多**（不依赖顺序的判据）",
+        chk(
+            "★★ **证据 B**：特征树**条数变多**（不依赖顺序的判据）",
             len(names) > n_before,
             "%d → %d（多 %d 个；⚠ **哪个是圆顶未查明**，见限度）"
-            % (n_before, len(names), len(names) - n_before))
+            % (n_before, len(names), len(names) - n_before),
+        )
         ev["tree_names_sample"] = names[:5]
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:180]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
@@ -254,18 +297,30 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("   ⚠ 收尾关文档失败（请人工确认）：%s" % str(exc)[:90])
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（事实 64）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（事实 64）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
     print("  ⚠ 只证「建成了」（两个独立证据）；**不证圆顶的曲面形状对不对**。")

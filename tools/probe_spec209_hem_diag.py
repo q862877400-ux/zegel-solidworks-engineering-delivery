@@ -42,8 +42,12 @@ def main() -> int:
     import sw_selection_spec as SS
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "_": "hem 回 None 的诊断（H1 选错边 / H2 单位 / H3 卸料槽）",
-          "edges": [], "variants": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "hem 回 None 的诊断（H1 选错边 / H2 单位 / H3 卸料槽）",
+        "edges": [],
+        "variants": [],
+    }
     opened = []
 
     def _close(doc):
@@ -51,7 +55,7 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     def _new_plate():
@@ -59,8 +63,9 @@ def main() -> int:
         opened.append(doc)
         with P.sketch(doc, "Front Plane") as sk:
             P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
-        SM.create_base_flange(doc, sk, SM.BaseFlangeSpec(thickness=0.002, bend_radius=0.001,
-                                                         depth=0.05))
+        SM.create_base_flange(
+            doc, sk, SM.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
+        )
         return doc
 
     def _edge_points(edge):
@@ -70,9 +75,11 @@ def main() -> int:
             for member in ("GetStartVertex", "GetEndVertex"):
                 v = get_com_member(edge, member)
                 p = get_com_member(v, "GetPoint") if v is not None else None
-                pts.append(None if p is None else [round(float(x), 6) for x in list(p)[:3]])
+                pts.append(
+                    None if p is None else [round(float(x), 6) for x in list(p)[:3]]
+                )
             return pts
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return [None, None]
 
     def _edges(doc):
@@ -90,7 +97,7 @@ def main() -> int:
                 if p0 and p1:
                     ln = round(sum((p1[k] - p0[k]) ** 2 for k in range(3)) ** 0.5, 6)
                 rows.append({"index": i, "length": ln, "start": p0, "end": p1})
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rows.append({"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:120])})
         return rows
 
@@ -101,40 +108,79 @@ def main() -> int:
         lens = [r["length"] for r in ev["edges"] if r.get("length") is not None]
         ev["edge_count"] = len(ev["edges"])
         ev["edge_lengths"] = sorted(set(lens))
-        ev["longest_index"] = (max(range(len(lens)), key=lambda i: lens[i]) if lens else None)
+        ev["longest_index"] = (
+            max(range(len(lens)), key=lambda i: lens[i]) if lens else None
+        )
         #: ★ 注意：`lens` 只含读到的那些 ⇒ 用**行号**反查真实 index（不假设它等于位置）
         if lens:
-            best = max((r for r in ev["edges"] if r.get("length") is not None),
-                       key=lambda r: r["length"])
+            best = max(
+                (r for r in ev["edges"] if r.get("length") is not None),
+                key=lambda r: r["length"],
+            )
             ev["longest_index"] = best["index"]
         _close(d0)
-        print("  E0 边 %d 条 · 长度集合 %r ⇒ 最长那条的 index=%s"
-              % (ev["edge_count"], ev["edge_lengths"], ev["longest_index"]))
-    except Exception as exc:                                   # noqa: BLE001
+        print(
+            "  E0 边 %d 条 · 长度集合 %r ⇒ 最长那条的 index=%s"
+            % (ev["edge_count"], ev["edge_lengths"], ev["longest_index"])
+        )
+    except Exception as exc:  # noqa: BLE001
         ev["edges"] = [{"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:160])}]
         print("  E0 FATAL %s" % str(exc)[:140])
         ev["longest_index"] = None
 
     #: ── 四个变体（★ 每个都各开一张新零件）────────────────────────────────────────────
     variants = [
-        ("V1_最长边_官方参数",
-         dict(edge_selector="index:%s" % ev["longest_index"], length_m=0.01, gap_m=0.01,
-              radius_m=0.005, miter_gap_m=0.0011)),
-        ("V2_最长边_毫米口径",   #: H2：长度参数整体 ×1000
-         dict(edge_selector="index:%s" % ev["longest_index"], length_m=10.0, gap_m=10.0,
-              radius_m=5.0, miter_gap_m=1.1)),
-        ("V3_最长边_默认卸料槽",  #: H3
-         dict(edge_selector="index:%s" % ev["longest_index"], length_m=0.01, gap_m=0.01,
-              radius_m=0.005, miter_gap_m=0.0011, use_default_relief=True)),
-        ("V4_index0_复现原始失败",  #: 对照组：确认 index:0 确实不行
-         dict(edge_selector="index:0", length_m=0.01, gap_m=0.01, radius_m=0.005,
-              miter_gap_m=0.0011)),
+        (
+            "V1_最长边_官方参数",
+            dict(
+                edge_selector="index:%s" % ev["longest_index"],
+                length_m=0.01,
+                gap_m=0.01,
+                radius_m=0.005,
+                miter_gap_m=0.0011,
+            ),
+        ),
+        (
+            "V2_最长边_毫米口径",  #: H2：长度参数整体 ×1000
+            dict(
+                edge_selector="index:%s" % ev["longest_index"],
+                length_m=10.0,
+                gap_m=10.0,
+                radius_m=5.0,
+                miter_gap_m=1.1,
+            ),
+        ),
+        (
+            "V3_最长边_默认卸料槽",  #: H3
+            dict(
+                edge_selector="index:%s" % ev["longest_index"],
+                length_m=0.01,
+                gap_m=0.01,
+                radius_m=0.005,
+                miter_gap_m=0.0011,
+                use_default_relief=True,
+            ),
+        ),
+        (
+            "V4_index0_复现原始失败",  #: 对照组：确认 index:0 确实不行
+            dict(
+                edge_selector="index:0",
+                length_m=0.01,
+                gap_m=0.01,
+                radius_m=0.005,
+                miter_gap_m=0.0011,
+            ),
+        ),
     ]
     hem_feature = None
     if ev.get("longest_index") is None:
-        ev["variants"] = [{"skipped": "★ `longest_index` 读不出来 ⇒ **三个以它为前提的变体不跑**"
-                                      "（★ 不拿 None 去拼 'index:None'）"}]
-    for label, kwargs in (variants if ev.get("longest_index") is not None else []):
+        ev["variants"] = [
+            {
+                "skipped": "★ `longest_index` 读不出来 ⇒ **三个以它为前提的变体不跑**"
+                "（★ 不拿 None 去拼 'index:None'）"
+            }
+        ]
+    for label, kwargs in variants if ev.get("longest_index") is not None else []:
         row = {"variant": label, "kwargs": {k: v for k, v in kwargs.items()}}
         try:
             doc = _new_plate()
@@ -145,21 +191,30 @@ def main() -> int:
                 row["selected_edge"] = idx
                 row["selection_count"] = SS.get_selection_count(doc)
             r = SM.create_hem(doc, **kwargs)
-            row.update({
-                "ok": r.get("ok"), "feature": r.get("feature"),
-                "feature_type": r.get("feature_type"),
-                "hem_type_readback": r.get("hem_type_readback"),
-                "tree": [r.get("tree_before"), r.get("tree_after")],
-                "face_count": [r.get("face_count_before"), r.get("face_count_after")],
-                "bbox_changed": r.get("bbox_changed"), "error": r.get("error"),
-            })
+            row.update(
+                {
+                    "ok": r.get("ok"),
+                    "feature": r.get("feature"),
+                    "feature_type": r.get("feature_type"),
+                    "hem_type_readback": r.get("hem_type_readback"),
+                    "tree": [r.get("tree_before"), r.get("tree_after")],
+                    "face_count": [
+                        r.get("face_count_before"),
+                        r.get("face_count_after"),
+                    ],
+                    "bbox_changed": r.get("bbox_changed"),
+                    "error": r.get("error"),
+                }
+            )
             if r.get("feature"):
-                hem_feature = (r.get("feature"), doc)          #: ★ 留着给 unfold 用
+                hem_feature = (r.get("feature"), doc)  #: ★ 留着给 unfold 用
             else:
                 _close(doc)
-            print("  %-22s ok=%-5s feature=%r err=%s"
-                  % (label, r.get("ok"), r.get("feature"), str(r.get("error"))[:80]))
-        except Exception as exc:                               # noqa: BLE001
+            print(
+                "  %-22s ok=%-5s feature=%r err=%s"
+                % (label, r.get("ok"), r.get("feature"), str(r.get("error"))[:80])
+            )
+        except Exception as exc:  # noqa: BLE001
             row["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
             print("  %-22s FATAL %s" % (label, str(exc)[:100]))
         ev["variants"].append(row)
@@ -171,30 +226,46 @@ def main() -> int:
         try:
             r = SM.create_unfold(doc, [name], face_index=0)
             ev["unfold_with_hem"] = {
-                "hem_feature_used": name, "ok": r.get("ok"),
-                "selection": r.get("selection"), "tree": [r.get("tree_before"), r.get("tree_after")],
+                "hem_feature_used": name,
+                "ok": r.get("ok"),
+                "selection": r.get("selection"),
+                "tree": [r.get("tree_before"), r.get("tree_after")],
                 "new_features": r.get("new_features"),
-                "flat_pattern_count": [r.get("flat_pattern_count_before"),
-                                       r.get("flat_pattern_count_after")],
-                "error": r.get("error")}
-            print("  UNFOLD ok=%s new=%r mark=%r（回读）"
-                  % (r.get("ok"), r.get("new_features"),
-                     (r.get("selection") or {}).get("mark_readback")))
-        except Exception as exc:                               # noqa: BLE001
-            ev["unfold_with_hem"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
+                "flat_pattern_count": [
+                    r.get("flat_pattern_count_before"),
+                    r.get("flat_pattern_count_after"),
+                ],
+                "error": r.get("error"),
+            }
+            print(
+                "  UNFOLD ok=%s new=%r mark=%r（回读）"
+                % (
+                    r.get("ok"),
+                    r.get("new_features"),
+                    (r.get("selection") or {}).get("mark_readback"),
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
+            ev["unfold_with_hem"] = {
+                "fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])
+            }
             print("  UNFOLD FATAL %s" % str(exc)[:120])
     else:
-        ev["unfold_with_hem"] = {"skipped": "★ 四个变体**都没建出 hem** ⇒ 没有折弯可当 unfold 的前置（如实记）"}
+        ev["unfold_with_hem"] = {
+            "skipped": "★ 四个变体**都没建出 hem** ⇒ 没有折弯可当 unfold 的前置（如实记）"
+        }
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

@@ -21,6 +21,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import html
@@ -55,7 +56,9 @@ def main() -> int:
         t = text_of(p, 3000)
         #: 标题般的第一句（示例页开头就是「Xxx Example (C#)」）
         m = re.search(r"([A-Z][^.\n]{10,120}Example[^.\n]{0,20})", t)
-        ex_titles.append((p.name, (m.group(1).strip() if m else p.stem).replace("  ", " ")))
+        ex_titles.append(
+            (p.name, (m.group(1).strip() if m else p.stem).replace("  ", " "))
+        )
     print("  已抽取标题: %d 条" % len(ex_titles))
 
     judged = []
@@ -73,11 +76,15 @@ def main() -> int:
                             break
                 except Exception:
                     pass
-        judged.append({
-            "iface": iface,
-            "examples": [ti for _n, ti in hits[:3]],
-            "verdict": "★ 有官方示例 ⇒ 有真实用法" if hits else "无示例 ⇒ 疑为数据/查询接口",
-        })
+        judged.append(
+            {
+                "iface": iface,
+                "examples": [ti for _n, ti in hits[:3]],
+                "verdict": "★ 有官方示例 ⇒ 有真实用法"
+                if hits
+                else "无示例 ⇒ 疑为数据/查询接口",
+            }
+        )
 
     OUT.write_text(json.dumps(judged, ensure_ascii=False, indent=2), encoding="utf-8")
     with_ex = [j for j in judged if j["examples"]]
@@ -86,7 +93,10 @@ def main() -> int:
     for j in with_ex:
         print("    %-46s %s" % (j["iface"], j["examples"][0][:70]))
     print("")
-    print("  ── 没有官方示例的 **%d 个**（多数应是数据/查询接口）──" % (len(judged) - len(with_ex)))
+    print(
+        "  ── 没有官方示例的 **%d 个**（多数应是数据/查询接口）──"
+        % (len(judged) - len(with_ex))
+    )
     print("    " + ", ".join(j["iface"] for j in judged if not j["examples"])[:900])
     print("")
     print("  产物:", OUT)

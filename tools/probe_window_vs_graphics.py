@@ -33,6 +33,7 @@ r"""@brief 探针：`SaveBMP(0,0)` 与 `SaveAs3` 的宽度差，是不是「窗�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -104,8 +105,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "rounds": []}
     sw = None
@@ -115,10 +118,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_export, sw_part
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         sw_part.start_sketch(doc)
@@ -132,7 +136,10 @@ def main() -> int:
             print("  ⚠ 没找到 SolidWorks 的可见顶层窗口")
             return 1
         hwnd, cls, title, ww, wh = max(wins, key=lambda x: x[3] * x[4])
-        print("  SolidWorks 主窗口: class=%s 标题=%r 尺寸=%dx%d" % (cls, title[:40], ww, wh))
+        print(
+            "  SolidWorks 主窗口: class=%s 标题=%r 尺寸=%dx%d"
+            % (cls, title[:40], ww, wh)
+        )
         ev["window"] = {"class": cls, "title": title[:60], "w": ww, "h": wh}
 
         u = ctypes.windll.user32
@@ -150,11 +157,18 @@ def main() -> int:
             p = png_size(PNG)
             rr = w.RECT()
             u.GetWindowRect(hwnd, ctypes.byref(rr))
-            row = {"tag": tag, "win_w": rr.right - rr.left, "win_h": rr.bottom - rr.top,
-                   "bmp": b, "png": p}
+            row = {
+                "tag": tag,
+                "win_w": rr.right - rr.left,
+                "win_h": rr.bottom - rr.top,
+                "bmp": b,
+                "png": p,
+            }
             ev["rounds"].append(row)
-            print("     %-14s 窗口 %dx%d · BMP(0,0)=%s · PNG=%s"
-                  % (tag, row["win_w"], row["win_h"], b, p))
+            print(
+                "     %-14s 窗口 %dx%d · BMP(0,0)=%s · PNG=%s"
+                % (tag, row["win_w"], row["win_h"], b, p)
+            )
             return row
 
         print()
@@ -171,9 +185,15 @@ def main() -> int:
         #: ③ 复原
         print()
         print("  ── ③ 复原窗口 ──")
-        u.SetWindowPos(hwnd, 0, orig_rect[0], orig_rect[1],
-                       orig_rect[2] - orig_rect[0], orig_rect[3] - orig_rect[1],
-                       0x0004 | 0x0010)
+        u.SetWindowPos(
+            hwnd,
+            0,
+            orig_rect[0],
+            orig_rect[1],
+            orig_rect[2] - orig_rect[0],
+            orig_rect[3] - orig_rect[1],
+            0x0004 | 0x0010,
+        )
         time.sleep(1.0)
         c = measure("复原后")
 
@@ -183,35 +203,49 @@ def main() -> int:
         dwin = b["win_w"] - a["win_w"]
         dbmp = (b["bmp"][0] - a["bmp"][0]) if (a["bmp"] and b["bmp"]) else None
         dpng = (b["png"][0] - a["png"][0]) if (a["png"] and b["png"]) else None
-        print("     窗口宽变化 %+d · BMP 宽变化 %s · PNG 宽变化 %s"
-              % (dwin, dbmp, dpng))
+        print(
+            "     窗口宽变化 %+d · BMP 宽变化 %s · PNG 宽变化 %s" % (dwin, dbmp, dpng)
+        )
         ev["deltas"] = {"window": dwin, "bmp": dbmp, "png": dpng}
         #: ① BMP(0,0) 是否 == 窗口宽？
-        print("     ① BMP(0,0).宽 == 窗口宽?  %s（%s vs %s）"
-              % (a["bmp"] and a["bmp"][0] == a["win_w"], a["bmp"][0] if a["bmp"] else "?",
-                 a["win_w"]))
+        print(
+            "     ① BMP(0,0).宽 == 窗口宽?  %s（%s vs %s）"
+            % (
+                a["bmp"] and a["bmp"][0] == a["win_w"],
+                a["bmp"][0] if a["bmp"] else "?",
+                a["win_w"],
+            )
+        )
         #: ② BMP 的变化量是否 == 窗口的变化量？
         print("     ② BMP 宽的变化量 == 窗口的变化量?  %s" % (dbmp == dwin))
         #: ③ PNG 是否不随窗口变化（若按**绘图区**且绘图区跟着窗口变，则它也应变化）
         print("     ③ PNG 宽是否也变了?  %s（变化 %s）" % (dpng not in (None, 0), dpng))
         print()
-        print("     ⚠ **只报关系，不下'一定是绘图区'的结论** —— "
-              "本探针量的是「跟不跟着窗口走」。")
-    except Exception as exc:      # noqa: BLE001
+        print(
+            "     ⚠ **只报关系，不下'一定是绘图区'的结论** —— "
+            "本探针量的是「跟不跟着窗口走」。"
+        )
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:180]))
     finally:
         try:
             u = ctypes.windll.user32
             if hwnd and orig_rect:
-                u.SetWindowPos(hwnd, 0, orig_rect[0], orig_rect[1],
-                               orig_rect[2] - orig_rect[0], orig_rect[3] - orig_rect[1],
-                               0x0004 | 0x0010)
-        except Exception:      # noqa: BLE001
+                u.SetWindowPos(
+                    hwnd,
+                    0,
+                    orig_rect[0],
+                    orig_rect[1],
+                    orig_rect[2] - orig_rect[0],
+                    orig_rect[3] - orig_rect[1],
+                    0x0004 | 0x0010,
+                )
+        except Exception:  # noqa: BLE001
             pass
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
@@ -219,15 +253,19 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     modals, _win_scanned = modal_dialogs()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("   证据: %s" % OUT)
     return 0
 

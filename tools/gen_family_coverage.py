@@ -38,6 +38,7 @@
 ⚠ 只读文件 + AST/文本解析：不执行仓库代码、不连接 SolidWorks
   （见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 import ast
@@ -63,56 +64,170 @@ SWAPI = Path(r"C:\swapi\types")
 #: C:\swapi 未收录的 4 个程序集的反射清单（域 13 / 14 用）
 #: 来源：AGENTS.md §四.1③ —— 对官方 interop 程序集的纯元数据反射
 REFLECT = {
-    "cosworks": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"),
-    "SWRoutingLib": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_SWRoutingLib.txt"),
-    "sldcostingapi": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_sldcostingapi.txt"),
-    "swdocumentmgr": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_swdocumentmgr.txt"),
-    "fworks": Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_fworks.txt"),
+    "cosworks": Path(
+        Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_cosworks.txt"
+    ),
+    "SWRoutingLib": Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_SWRoutingLib.txt"
+    ),
+    "sldcostingapi": Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_sldcostingapi.txt"
+    ),
+    "swdocumentmgr": Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect"
+        / "iface_swdocumentmgr.txt"
+    ),
+    "fworks": Path(
+        Path(__file__).resolve().parents[1] / "_raw" / "reflect" / "iface_fworks.txt"
+    ),
 }
 OUT_MD = REPO / "docs" / "family-coverage.md"
 OUT_JSON = REPO / "docs" / "family-coverage.json"
 
 #: 14 域 -> 入口接口族（与 capability-matrix.md §一同源，照抄 sw_know domain 输出）
 DOMAIN_FAMILIES: dict[str, list[str]] = {
-    "应用与会话": ["ISldWorks", "IModelDoc2", "IModelDocExtension", "ISelectionMgr", "IEnumModelViews"],
-    "草图": ["ISketchManager", "ISketch", "ISketchSegment", "ISketchLine", "ISketchArc",
-             "ISketchSlot", "ISketchSpline", "ISketchPoint", "ISketchRelation",
-             "ISketchRelationManager", "ISketchContour", "ISketchHatch", "ISketchText",
-             "ISketchPatternFeatureData"],
-    "零件特征": ["IFeatureManager", "IFeature", "ISimpleFilletFeatureData2",
-             "IChamferFeatureData2", "ILinearPatternFeatureData", "ICircularPatternFeatureData",
-             "IMirrorPatternFeatureData", "IShellFeatureData", "IRevolveFeatureData2",
-             "ISweepFeatureData", "ILoftFeatureData", "IRibFeatureData2",
-             "IChainPatternFeatureData", "ICurveDrivenPatternFeatureData"],
-    "孔与螺纹": ["IWizardHoleFeatureData2", "IAdvancedHoleFeatureData", "ISimpleHoleFeatureData2",
-             "IHoleSeriesFeatureData2", "IHoleStandardsData", "IHoleTable",
-             "IAdvancedHoleElementData", "IStraightTapElementData", "ITaperedTapElementData",
-             "IThreadFeatureData", "ICosmeticThreadFeatureData"],
-    "钣金": ["ISheetMetalFeatureData", "ISheetMetalFolder", "IBaseFlangeFeatureData",
-           "IEdgeFlangeFeatureData", "IOneBendFeatureData", "ISketchedBendFeatureData",
-           "IHemFeatureData", "IMiterFlangeFeatureData", "ISweptFlangeFeatureData",
-           "IGussetFeatureData", "ISMGussetFeatureData", "IDraftFeatureData2",
-           "ILoftedBendsFeatureData",],
-    "焊件": ["IStructureSystemFolder", "IStructureSystemMemberFeatureData",
-           "IStructureSystemMemberProfile", "IStructureSystemSplitMember",
-           "IProfileCenterMateFeatureData", "IWeldmentCutListFeature", "ICutListItem",
-           "ICutListSortOptions", "IWeldBead", "IWeldmentBeadFeatureData",
-           "ICosmeticWeldBeadFeatureData", "IWeldSymbol", "IWeldmentTrimExtendFeatureData",
-           "IProfileGroupFolder"],
-    "曲面": ["ISurface", "ISurfaceTrimFeatureData", "ISurfaceExtendFeatureData",
-           "ISurfaceKnitFeatureData", "ISurfaceFlattenFeatureData", "ISurfaceOffsetFeatureData",
- "ISurfaceRadiateFeatureData", "IFillSurfaceFeatureData",
-           "ISurfacePlanarFeatureData", "ISurfRevolveFeatureData", "IShutOffSurfaceFeatureData"],
-    "装配": ["IAssemblyDoc", "IComponent2", "IEnumComponents2", "IMate2", "IMateEntity2",
-           "IMateFeatureData", "IMateInPlace", "IMateReference", "IExplodeStep",
-           "IPartExplodeStep", "IMirrorComponentFeatureData", "ICoincidentMateFeatureData",
-           "IConcentricMateFeatureData", "IDistanceMateFeatureData"],
-    "工程图": ["IDrawingDoc", "IView", "IView3D", "ISheet", "IDimension", "IDisplayDimension",
-             "IAnnotation", "IAnnotationView", "ITableAnnotation", "IModelView",
-             "IModelViewManager", "ISectionViewData", "IGeneralTableAnnotation",
-             "IBomTableAnnotation", "IHoleTableAnnotation", "IWeldmentCutListAnnotation",
-             "IBendTableAnnotation", "IRevisionTableAnnotation", 
-             "IMultiJogLeader", "IDrawingComponent"],
+    "应用与会话": [
+        "ISldWorks",
+        "IModelDoc2",
+        "IModelDocExtension",
+        "ISelectionMgr",
+        "IEnumModelViews",
+    ],
+    "草图": [
+        "ISketchManager",
+        "ISketch",
+        "ISketchSegment",
+        "ISketchLine",
+        "ISketchArc",
+        "ISketchSlot",
+        "ISketchSpline",
+        "ISketchPoint",
+        "ISketchRelation",
+        "ISketchRelationManager",
+        "ISketchContour",
+        "ISketchHatch",
+        "ISketchText",
+        "ISketchPatternFeatureData",
+    ],
+    "零件特征": [
+        "IFeatureManager",
+        "IFeature",
+        "ISimpleFilletFeatureData2",
+        "IChamferFeatureData2",
+        "ILinearPatternFeatureData",
+        "ICircularPatternFeatureData",
+        "IMirrorPatternFeatureData",
+        "IShellFeatureData",
+        "IRevolveFeatureData2",
+        "ISweepFeatureData",
+        "ILoftFeatureData",
+        "IRibFeatureData2",
+        "IChainPatternFeatureData",
+        "ICurveDrivenPatternFeatureData",
+    ],
+    "孔与螺纹": [
+        "IWizardHoleFeatureData2",
+        "IAdvancedHoleFeatureData",
+        "ISimpleHoleFeatureData2",
+        "IHoleSeriesFeatureData2",
+        "IHoleStandardsData",
+        "IHoleTable",
+        "IAdvancedHoleElementData",
+        "IStraightTapElementData",
+        "ITaperedTapElementData",
+        "IThreadFeatureData",
+        "ICosmeticThreadFeatureData",
+    ],
+    "钣金": [
+        "ISheetMetalFeatureData",
+        "ISheetMetalFolder",
+        "IBaseFlangeFeatureData",
+        "IEdgeFlangeFeatureData",
+        "IOneBendFeatureData",
+        "ISketchedBendFeatureData",
+        "IHemFeatureData",
+        "IMiterFlangeFeatureData",
+        "ISweptFlangeFeatureData",
+        "IGussetFeatureData",
+        "ISMGussetFeatureData",
+        "IDraftFeatureData2",
+        "ILoftedBendsFeatureData",
+    ],
+    "焊件": [
+        "IStructureSystemFolder",
+        "IStructureSystemMemberFeatureData",
+        "IStructureSystemMemberProfile",
+        "IStructureSystemSplitMember",
+        "IProfileCenterMateFeatureData",
+        "IWeldmentCutListFeature",
+        "ICutListItem",
+        "ICutListSortOptions",
+        "IWeldBead",
+        "IWeldmentBeadFeatureData",
+        "ICosmeticWeldBeadFeatureData",
+        "IWeldSymbol",
+        "IWeldmentTrimExtendFeatureData",
+        "IProfileGroupFolder",
+    ],
+    "曲面": [
+        "ISurface",
+        "ISurfaceTrimFeatureData",
+        "ISurfaceExtendFeatureData",
+        "ISurfaceKnitFeatureData",
+        "ISurfaceFlattenFeatureData",
+        "ISurfaceOffsetFeatureData",
+        "ISurfaceRadiateFeatureData",
+        "IFillSurfaceFeatureData",
+        "ISurfacePlanarFeatureData",
+        "ISurfRevolveFeatureData",
+        "IShutOffSurfaceFeatureData",
+    ],
+    "装配": [
+        "IAssemblyDoc",
+        "IComponent2",
+        "IEnumComponents2",
+        "IMate2",
+        "IMateEntity2",
+        "IMateFeatureData",
+        "IMateInPlace",
+        "IMateReference",
+        "IExplodeStep",
+        "IPartExplodeStep",
+        "IMirrorComponentFeatureData",
+        "ICoincidentMateFeatureData",
+        "IConcentricMateFeatureData",
+        "IDistanceMateFeatureData",
+    ],
+    "工程图": [
+        "IDrawingDoc",
+        "IView",
+        "IView3D",
+        "ISheet",
+        "IDimension",
+        "IDisplayDimension",
+        "IAnnotation",
+        "IAnnotationView",
+        "ITableAnnotation",
+        "IModelView",
+        "IModelViewManager",
+        "ISectionViewData",
+        "IGeneralTableAnnotation",
+        "IBomTableAnnotation",
+        "IHoleTableAnnotation",
+        "IWeldmentCutListAnnotation",
+        "IBendTableAnnotation",
+        "IRevisionTableAnnotation",
+        "IMultiJogLeader",
+        "IDrawingComponent",
+    ],
     # ⚑ 下面这份「族 → 域」映射里，**每个族只登记一次**。
     #   早先版把 6 个族同时挂到两个域（ISurface 既在曲面又在几何与拓扑、
     #   ICenterOfMass 既在几何与拓扑又在质量属性、IModelDoc2 / IModelDocExtension /
@@ -120,31 +235,79 @@ DOMAIN_FAMILIES: dict[str, list[str]] = {
     #   导致 ① 族总数被**虚增** ②「低于 50% 的族有几个」这类统计**偏大**。
     #   现改为一族一域，归属按「它的主用场景」定；交叉场景在该族自身的
     #   来源块里说明。_assert_no_duplicate_families() 会拦回归。
-    "几何与拓扑": ["IBody2", "IFace2", "IEdge", "IVertex", "ICurve", "ILoop2",
-               "IEnumBodies2", "IBoundingBoxFeatureData", "IBoundaryBossFeatureData",
-               "ICenterOfMass", "IMidSurface3", "IEdgePoint"],
-    "质量属性与导出": ["IMassProperty2", "IMassPropertyOverrideOptions",
-                 "IDimensionTolerance"],
-    "配置/材料/自定义属性": ["IConfiguration", "IConfigurationManager",
-                    "ICustomPropertyManager", "IDesignTable",
-                    "IMaterialVisualPropertiesData", "IRenderMaterial",
-                    "ITextAndCustomProperty"],
-    "仿真(需许可证)": ["ICWLoadsAndRestraintsManager", "ICWStudyManager", "ICWStudy",
-                        "ICWResults", "ICWMesh", "ICWForce", "ICWPressure", "ICWHeatFlux",
-                        "ICWContactSet", "ICWMaterial", "ICWStaticStudyOptions",
-                        "ICWFrequencyStudyOptions", "ICWBucklingStudyOptions",
-                        "ICWNonLinearStudyOptions", "ICWThermalStudyOptions",
-                        "ICWDynamicStudyOptions", "ICWFatigueStudyOptions",
-                        "ICWDropTestStudyOptions", "ICWCompositeShellOptions"],
-    "路由/Composer/PDM": ["IRouteManager", "IRoutingComponentManager", "IWire",
-                          "IRouteProperty", "ICovering", "ICable", "ICableProperty",
-                          "IWireProperty", "ICostManager", "ICostPart", "ICostAnalysis",
-                          "ICostingDefaults", "ICostBody",
-                          "ISwDMDocument31", "ISwDMConfiguration18", "ISwDMTable6",
-                          "IFeatureWorksApp"],
+    "几何与拓扑": [
+        "IBody2",
+        "IFace2",
+        "IEdge",
+        "IVertex",
+        "ICurve",
+        "ILoop2",
+        "IEnumBodies2",
+        "IBoundingBoxFeatureData",
+        "IBoundaryBossFeatureData",
+        "ICenterOfMass",
+        "IMidSurface3",
+        "IEdgePoint",
+    ],
+    "质量属性与导出": [
+        "IMassProperty2",
+        "IMassPropertyOverrideOptions",
+        "IDimensionTolerance",
+    ],
+    "配置/材料/自定义属性": [
+        "IConfiguration",
+        "IConfigurationManager",
+        "ICustomPropertyManager",
+        "IDesignTable",
+        "IMaterialVisualPropertiesData",
+        "IRenderMaterial",
+        "ITextAndCustomProperty",
+    ],
+    "仿真(需许可证)": [
+        "ICWLoadsAndRestraintsManager",
+        "ICWStudyManager",
+        "ICWStudy",
+        "ICWResults",
+        "ICWMesh",
+        "ICWForce",
+        "ICWPressure",
+        "ICWHeatFlux",
+        "ICWContactSet",
+        "ICWMaterial",
+        "ICWStaticStudyOptions",
+        "ICWFrequencyStudyOptions",
+        "ICWBucklingStudyOptions",
+        "ICWNonLinearStudyOptions",
+        "ICWThermalStudyOptions",
+        "ICWDynamicStudyOptions",
+        "ICWFatigueStudyOptions",
+        "ICWDropTestStudyOptions",
+        "ICWCompositeShellOptions",
+    ],
+    "路由/Composer/PDM": [
+        "IRouteManager",
+        "IRoutingComponentManager",
+        "IWire",
+        "IRouteProperty",
+        "ICovering",
+        "ICable",
+        "ICableProperty",
+        "IWireProperty",
+        "ICostManager",
+        "ICostPart",
+        "ICostAnalysis",
+        "ICostingDefaults",
+        "ICostBody",
+        "ISwDMDocument31",
+        "ISwDMConfiguration18",
+        "ISwDMTable6",
+        "IFeatureWorksApp",
+    ],
 }
 
-WRAPPER = re.compile(r"\b(?:get_com_member|_safe_member)\s*\(\s*[^,()]+,\s*[\"']([A-Z]\w+)[\"']")
+WRAPPER = re.compile(
+    r"\b(?:get_com_member|_safe_member)\s*\(\s*[^,()]+,\s*[\"']([A-Z]\w+)[\"']"
+)
 #: ⚑ `_checked(签名表, 对象, "成员", …)` 这条路 —— 签名表工具统一用它做护栏，
 #:   成员名是**第 3 个**位置的字符串字面量。WRAPPER 认不出这种形态。
 GUARDED = re.compile(r"\b_checked\s*\(\s*[^,()]+,\s*[^,()]+,\s*[\"']([A-Z]\w+)[\"']")
@@ -187,8 +350,11 @@ def repo_members() -> tuple[dict[str, list[str]], dict[str, list[str]]]:
             for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
                 if SKIP.match(line):
                     continue
-                hit_called = (set(WRAPPER.findall(line)) | set(GUARDED.findall(line))
-                              | set(CALL.findall(line)))
+                hit_called = (
+                    set(WRAPPER.findall(line))
+                    | set(GUARDED.findall(line))
+                    | set(CALL.findall(line))
+                )
                 hit_lit = set(LITERAL.findall(line))
                 for mem in hit_called:
                     if rel not in called[mem]:
@@ -210,8 +376,7 @@ def _reflect_members(path: Path, iface: str) -> list[str]:
     if not path.is_file():
         return []
     text = path.read_text(encoding="utf-8", errors="replace")
-    match = re.search(rf"(?ms)^## {re.escape(iface)}\s*\r?\n(.*?)(?=\r?\n## |\Z)",
-                      text)
+    match = re.search(rf"(?ms)^## {re.escape(iface)}\s*\r?\n(.*?)(?=\r?\n## |\Z)", text)
     if not match:
         return []
     out = set()
@@ -223,7 +388,7 @@ def _reflect_members(path: Path, iface: str) -> list[str]:
         if not name:
             continue
         if name.startswith(("get_", "set_")):
-            name = name[4:]          # ← 与 audit_call_arity.py 同款归一
+            name = name[4:]  # ← 与 audit_call_arity.py 同款归一
         # ⚑⚑ 排除 COM 内部分发口（``IGetXxx`` / ``IUpdateYyy`` / ``ICreateZzz``）。
         #   反射清单把它们和真方法混在一起 —— 本机实测 26 个未满的族里，
         #   绝大多数缺口就是这类（``IGetSubFeatures`` / ``IUpdateCostForAllBodies`` /
@@ -242,6 +407,7 @@ def _reflect_members(path: Path, iface: str) -> list[str]:
     #   分母也必须同样不收，否则覆盖表永远差这一截。
     _INTERNAL = re.compile(r"^I[A-Z][a-z]")
     out = [n for n in out if not _INTERNAL.match(n)]
+
 
 def family_members(iface: str) -> list[str]:
     """取某接口族的成员名。
@@ -274,8 +440,11 @@ def family_members(iface: str) -> list[str]:
 
     d = SWAPI / iface
     if d.is_dir():
-        return sorted(p.stem for p in d.glob("*.md")
-                      if p.stem != "_overview" and not INTERNAL.match(p.stem))
+        return sorted(
+            p.stem
+            for p in d.glob("*.md")
+            if p.stem != "_overview" and not INTERNAL.match(p.stem)
+        )
     for path in REFLECT.values():
         members = _reflect_members(path, iface)
         if members:
@@ -315,6 +484,7 @@ def _domain_extension() -> dict[str, list[str]]:
     """
     import json
     from pathlib import Path as _P
+
     out: dict[str, list[str]] = {}
     mapping = {
         Path(__file__).resolve().parents[1] / "_reg_cosworks.json": "仿真(需许可证)",
@@ -340,7 +510,13 @@ def _unmapped_sldworks() -> list[str]:
     import json
     import re as _re
     from pathlib import Path as _P
-    src = _P(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+
+    src = _P(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect_sldworks"
+        / "iface_sldworks.txt"
+    )
     if not src.is_file():
         return []
     mapped: set[str] = set()
@@ -355,7 +531,6 @@ def _unmapped_sldworks() -> list[str]:
                 out.append(current)
             current = None
     return sorted(out)
-
 
 
 #: 模块里形如 ``"MemberName": 3,`` 的登记项（能力表 / arity 表）。
@@ -380,7 +555,6 @@ def repo_gated() -> set[str]:
     return out
 
 
-
 def _api_index_families() -> dict[str, list[str]]:
     """从 sw_api_<程序集>.py 的 FAMILIES 常量里取族名，按程序集分域。
 
@@ -389,7 +563,7 @@ def _api_index_families() -> dict[str, list[str]]:
     """
     out: dict[str, list[str]] = {}
     for p in sorted((REPO / "scripts").glob("sw_api_*.py")):
-        asm = p.stem[len("sw_api_"):]
+        asm = p.stem[len("sw_api_") :]
         txt = p.read_text(encoding="utf-8")
         m = re.search(r"FAMILIES: tuple\[str, \.\.\.\] = \((.*?)\n\)", txt, re.S)
         if not m:
@@ -432,7 +606,7 @@ def official_categories() -> dict:
             m = CATEGORY_RX.search(p.read_text(encoding="utf-8", errors="replace"))
             if m:
                 out[d.name] = m.group(1).strip()
-                break          #: 一个接口一条即可（成员文件各自都带同一行）
+                break  #: 一个接口一条即可（成员文件各自都带同一行）
     return out
 
 
@@ -452,57 +626,88 @@ def official_category_section(rows: list, cats: dict) -> list:
       ⚠ 而**不替换**业务域：报告自己也说两者维度不同（厂商视角 vs 业务视角），★ 那是对的。
     """
     from collections import Counter
+
     total = len(rows)
     unclaimed = [r for r in rows if str(r.get("domain", "")).startswith("全量索引/")]
     joined = [r for r in unclaimed if r.get("official_category")]
     c = Counter(r["official_category"].split("/")[0] for r in joined)
     L: list = []
     L += ["", "---", "", "## 四、官方分类（`category`）与「未认领」族的归位", ""]
-    L += ["> ⚠⚠ **本节的字段只有一个来源**：`C:\\swapi\\types\\<接口>\\*.md` 的 `category`",
-          "> —— 那是 **help 站点的文档镜像**（来源仓 `offline-solidworks-api-docs`，**无许可**）。",
-          "> ★ 实测**两份出厂反射转储都没有该字段** ⇒ **无法按铁律 4 做三源互证**。",
-          "> ⇒ 本字段只能当 **\"单一来源的分类\"** 用（分类与校验），**不能声称\"经官方核过\"**。", ""]
-    L += ["### 4.1 官方分类的覆盖（实测）", "",
-          "| 项 | 数 |", "|---|---|",
-          "| `C:\\swapi\\types` 下有 `category` 的接口 | **%d** |" % len(cats),
-          "| 本表 881 族里**能对上**官方分类的 | **%d**（%.1f%%）|"
-          % (sum(1 for r in rows if r.get("official_category")),
-             100.0 * sum(1 for r in rows if r.get("official_category")) / max(total, 1)),
-          "| 对不上的原因（主体）| ★ **`C:\\swapi` 不收录的程序集**（swdimxpert / RoutingLib / "
-          "sldcostingapi …）＋ 路由/Composer/PDM 与仿真两域 |", ""]
-    L += ["### 4.2 ★ 「未认领」族到底有多少（**按域全加起来**）", "",
-          "> ⚠ 外部审计只数了 `全量索引/sldworks` 一个桶（385 / 881 = 43.7%）⇒ **低估了**。",
-          "> 实测：`domain` 以 `全量索引/` 开头的**共有 %d 族 = %.1f%%**。" % (len(unclaimed),
-          100.0 * len(unclaimed) / max(total, 1)), "",
-          "| `domain` | 族数 |", "|---|---|"]
-    for k, v in sorted(Counter(r["domain"] for r in unclaimed).items(), key=lambda x: -x[1]):
+    L += [
+        "> ⚠⚠ **本节的字段只有一个来源**：`C:\\swapi\\types\\<接口>\\*.md` 的 `category`",
+        "> —— 那是 **help 站点的文档镜像**（来源仓 `offline-solidworks-api-docs`，**无许可**）。",
+        "> ★ 实测**两份出厂反射转储都没有该字段** ⇒ **无法按铁律 4 做三源互证**。",
+        '> ⇒ 本字段只能当 **"单一来源的分类"** 用（分类与校验），**不能声称"经官方核过"**。',
+        "",
+    ]
+    L += [
+        "### 4.1 官方分类的覆盖（实测）",
+        "",
+        "| 项 | 数 |",
+        "|---|---|",
+        "| `C:\\swapi\\types` 下有 `category` 的接口 | **%d** |" % len(cats),
+        "| 本表 881 族里**能对上**官方分类的 | **%d**（%.1f%%）|"
+        % (
+            sum(1 for r in rows if r.get("official_category")),
+            100.0 * sum(1 for r in rows if r.get("official_category")) / max(total, 1),
+        ),
+        "| 对不上的原因（主体）| ★ **`C:\\swapi` 不收录的程序集**（swdimxpert / RoutingLib / "
+        "sldcostingapi …）＋ 路由/Composer/PDM 与仿真两域 |",
+        "",
+    ]
+    L += [
+        "### 4.2 ★ 「未认领」族到底有多少（**按域全加起来**）",
+        "",
+        "> ⚠ 外部审计只数了 `全量索引/sldworks` 一个桶（385 / 881 = 43.7%）⇒ **低估了**。",
+        "> 实测：`domain` 以 `全量索引/` 开头的**共有 %d 族 = %.1f%%**。"
+        % (len(unclaimed), 100.0 * len(unclaimed) / max(total, 1)),
+        "",
+        "| `domain` | 族数 |",
+        "|---|---|",
+    ]
+    for k, v in sorted(
+        Counter(r["domain"] for r in unclaimed).items(), key=lambda x: -x[1]
+    ):
         L.append("| `%s` | %d |" % (k, v))
-    L += ["| **合计** | **%d / %d = %.1f%%** |" % (len(unclaimed), total,
-          100.0 * len(unclaimed) / max(total, 1)), ""]
-    L += ["### 4.3 ★ 官方分类能救回多少", "",
-          "| 项 | 数 |", "|---|---|",
-          "| 未认领族中有官方分类的 | **%d / %d（%.1f%%）** |"
-          % (len(joined), len(unclaimed), 100.0 * len(joined) / max(len(unclaimed), 1)), "",
-          "| 一级分类 | 能归位的族数 |", "|---|---|"]
+    L += [
+        "| **合计** | **%d / %d = %.1f%%** |"
+        % (len(unclaimed), total, 100.0 * len(unclaimed) / max(total, 1)),
+        "",
+    ]
+    L += [
+        "### 4.3 ★ 官方分类能救回多少",
+        "",
+        "| 项 | 数 |",
+        "|---|---|",
+        "| 未认领族中有官方分类的 | **%d / %d（%.1f%%）** |"
+        % (len(joined), len(unclaimed), 100.0 * len(joined) / max(len(unclaimed), 1)),
+        "",
+        "| 一级分类 | 能归位的族数 |",
+        "|---|---|",
+    ]
     for k, v in c.most_common():
         L.append("| %s | %d |" % (k, v))
-    L += ["", "⇒ ★ **收益是具体的**：上面这张表就是「按官方分类，未认领的族能立刻有归属」的清单。",
-          "",
-          "### 4.4 ⚠ 怎么用 / 怎么**不**用", "",
-          "```",
-          "✅ **用**：① 分类与校验（发现「手写域 vs 官方类」的错位）",
-          "        ② ★ 给「未认领」族兜底归属（4.3 那张表）",
-          "        ③ 辅助发现空白（某个官方一级分类下我们一族都没有 ⇒ 值得看一眼）",
-          "❌ **不用**：把一级分类**当作「该不该做成工具」的判据** ——",
-          "         标签说的是「接口**是什么**」（厂商视角），",
-          "         不是「我们**需不需要**工具」（项目视角）。★ 那正是本项目禁止的"
-          "「看着像就当成」。",
-          "⚠ **不替换**业务域：两者维度不同（厂商视角 vs 业务视角）——",
-          "   `ISelectionMgr` 官方归 `Utility Interfaces`，而本项目归「应用与会话」"
-          "（\"选中是所有操作的地基\"是业务判断，不是错）。",
-          "```", ""]
+    L += [
+        "",
+        "⇒ ★ **收益是具体的**：上面这张表就是「按官方分类，未认领的族能立刻有归属」的清单。",
+        "",
+        "### 4.4 ⚠ 怎么用 / 怎么**不**用",
+        "",
+        "```",
+        "✅ **用**：① 分类与校验（发现「手写域 vs 官方类」的错位）",
+        "        ② ★ 给「未认领」族兜底归属（4.3 那张表）",
+        "        ③ 辅助发现空白（某个官方一级分类下我们一族都没有 ⇒ 值得看一眼）",
+        "❌ **不用**：把一级分类**当作「该不该做成工具」的判据** ——",
+        "         标签说的是「接口**是什么**」（厂商视角），",
+        "         不是「我们**需不需要**工具」（项目视角）。★ 那正是本项目禁止的"
+        "「看着像就当成」。",
+        "⚠ **不替换**业务域：两者维度不同（厂商视角 vs 业务视角）——",
+        "   `ISelectionMgr` 官方归 `Utility Interfaces`，而本项目归「应用与会话」"
+        '（"选中是所有操作的地基"是业务判断，不是错）。',
+        "```",
+        "",
+    ]
     return L
-
 
 
 def _dedupe_domains() -> None:
@@ -533,13 +738,13 @@ def main() -> int:
     for _d, _f in _api_index_families().items():
         DOMAIN_FAMILIES.setdefault(_d, []).extend(_f)
     unmapped = _unmapped_sldworks()
-    _dedupe_domains()   # ⚑ 必须在**所有**族加进来之后去重
+    _dedupe_domains()  # ⚑ 必须在**所有**族加进来之后去重
     if unmapped:
         existing = DOMAIN_FAMILIES.setdefault("其他(sldworks 未归入 14 域)", [])
         for fam in unmapped:
             if fam not in existing:
                 existing.append(fam)
-    cats = official_categories()   #: ★ 官方分类（单一来源，见函数 docstring）
+    cats = official_categories()  #: ★ 官方分类（单一来源，见函数 docstring）
     called, catalogued = repo_members()
     gated = repo_gated()
     rows = []
@@ -551,31 +756,41 @@ def main() -> int:
             # ⚑ 护栏可达：登记在某模块能力表里、且有 `_checked(target, member, …)`
             #   这样的可达调用路径，但调用处传变量 ⇒ 「直接调用」列漏算。
             gated_hits = [m for m in mems if m in gated]
-            rows.append({
-                "domain": dom, "family": fam, "members": len(mems), "families": 1,
-                "hit": len(hit), "hit_members": hit[:10],
-                # ⚑ **列出未命中的成员名** —— 没有它，覆盖表只说「差 N 个」，
-                #   没法据此去补。补上之后「还缺什么」是可执行的。
-                "missing_members": sorted(
-                    m for m in mems
-                    if m not in catalogued)[:60],
-                # ⚑ 两个百分比含义不同，**必须分开报**：
-                #   pct      —— 该族成员里有多少「在代码里出现过名字」
-                #              （含只写在登记表里的，即**编了目录**）
-                #   used_pct —— 有多少**真的被调用过**（点调用或 get_com_member）
-                #   早先只报一个，把「编目录」和「实现」混为一谈。
-                "pct": (round(100.0 * len(hit) / len(mems)) if mems else None),
-                "used": len(used),
-                "used_pct": (round(100.0 * len(used) / len(mems)) if mems else None),
-                "gated": len(gated_hits),
-                "gated_pct": (round(100.0 * len(gated_hits) / len(mems)) if mems else None),
-                "used_members": used[:10],
-                "files": sorted({f for m in hit for f in catalogued[m]})[:3],
-                "note": "" if mems else "C:\\swapi 无该类型目录",
-                #: ★ 官方 category（**单一来源**：C:\swapi 的 help 站点镜像；
-                #:   出厂反射**没有**该字段 ⇒ 无法三源互证）。读不到就是空串。
-                "official_category": cats.get(fam, ""),
-            })
+            rows.append(
+                {
+                    "domain": dom,
+                    "family": fam,
+                    "members": len(mems),
+                    "families": 1,
+                    "hit": len(hit),
+                    "hit_members": hit[:10],
+                    # ⚑ **列出未命中的成员名** —— 没有它，覆盖表只说「差 N 个」，
+                    #   没法据此去补。补上之后「还缺什么」是可执行的。
+                    "missing_members": sorted(m for m in mems if m not in catalogued)[
+                        :60
+                    ],
+                    # ⚑ 两个百分比含义不同，**必须分开报**：
+                    #   pct      —— 该族成员里有多少「在代码里出现过名字」
+                    #              （含只写在登记表里的，即**编了目录**）
+                    #   used_pct —— 有多少**真的被调用过**（点调用或 get_com_member）
+                    #   早先只报一个，把「编目录」和「实现」混为一谈。
+                    "pct": (round(100.0 * len(hit) / len(mems)) if mems else None),
+                    "used": len(used),
+                    "used_pct": (
+                        round(100.0 * len(used) / len(mems)) if mems else None
+                    ),
+                    "gated": len(gated_hits),
+                    "gated_pct": (
+                        round(100.0 * len(gated_hits) / len(mems)) if mems else None
+                    ),
+                    "used_members": used[:10],
+                    "files": sorted({f for m in hit for f in catalogued[m]})[:3],
+                    "note": "" if mems else "C:\\swapi 无该类型目录",
+                    #: ★ 官方 category（**单一来源**：C:\swapi 的 help 站点镜像；
+                    #:   出厂反射**没有**该字段 ⇒ 无法三源互证）。读不到就是空串。
+                    "official_category": cats.get(fam, ""),
+                }
+            )
 
     #: ⚑⚑ **汇总数字与日期都算出来，不写死** —— 2026-10-01（轮 185 后）修：
     #:   此前 `"> 生成日期：2026-09-29"` 与正文段的
@@ -592,38 +807,49 @@ def main() -> int:
     _today = time.strftime("%Y-%m-%d")
 
     # ---- markdown ----
-    L = ["# 接口族覆盖度（family-coverage）", "",
-         "> 生成日期：%s" % _today,
-         "> 作用：把 A1 的定性判定（覆盖/部分/不覆盖）升级为**定量**。",
-         "> 方法：取 `C:\\swapi\\types\\<接口>\\` 的成员目录，再用与 `api-map.md`",
-         "> 相同的两路形态（直接调用 / 反射式）在本仓库找这些成员。",
-         ">",
-
-         "> ⚑⚑ **本表两个百分比含义不同，必须分开看**：",
-         ">",
-         "> | 列 | 含义 |",
-         "> |---|---|",
-         "> | **编目录** | 该族成员里有多少名字在代码里出现过 —— **含只写在登记表里的** |",
-         "> | **护栏可调** | 登记在某模块能力表里，且有 `_checked(target, member, …)` 这样的**可达调用路径** |",
-         "> | **直接调** | 静态上**看得见**字面量的调用（get_com_member 传名 / 点调用）|",
-         ">",
-         "> ⚑ **护栏可调 ⊇ 直接调**。差值来自「调用处传的是变量」——",
-         "> 模块写成 `_checked(target, member, …)` 时，静态归因看不到字面量。",
-         "> ⇒ **「直接调」系统性低估，不是精确值。**",
-         ">",
-         "> **合并这两个数字就是误导。** 早先版本只报一个触及率，",
-         "> 于是「族触及率 100%」是靠**把名字列进登记表**达成的 ——",
-         "> 那证明的是「这份 API 清单做完了」，**不是「这些 API 都能用了」**。",
-         "> 当前实测：{:,} 个成员里，**编入目录 {:,}（{:.0f}%）**、".format(
-             _tot_members, _tot_hit, 100.0 * _tot_hit / _tot_members if _tot_members else 0.0),
-         "> **真调用 {:,}（{:.0f}%）**。".format(
-             _tot_used, 100.0 * _tot_used / _tot_members if _tot_members else 0.0),
-         ">",
-         "> FeatureData 的属性赋值不计入真调用。", "",
-         "> ⚠ 全部由静态解析生成，未执行任何仓库代码、未连接 SolidWorks。", "",
-         "---", "",
-         "## 一、按域汇总", "",
-         "| 域 | 接口族 | 已触及 | 触及率 | 说明 |", "|---|---|---|---|---|"]
+    L = [
+        "# 接口族覆盖度（family-coverage）",
+        "",
+        "> 生成日期：%s" % _today,
+        "> 作用：把 A1 的定性判定（覆盖/部分/不覆盖）升级为**定量**。",
+        "> 方法：取 `C:\\swapi\\types\\<接口>\\` 的成员目录，再用与 `api-map.md`",
+        "> 相同的两路形态（直接调用 / 反射式）在本仓库找这些成员。",
+        ">",
+        "> ⚑⚑ **本表两个百分比含义不同，必须分开看**：",
+        ">",
+        "> | 列 | 含义 |",
+        "> |---|---|",
+        "> | **编目录** | 该族成员里有多少名字在代码里出现过 —— **含只写在登记表里的** |",
+        "> | **护栏可调** | 登记在某模块能力表里，且有 `_checked(target, member, …)` 这样的**可达调用路径** |",
+        "> | **直接调** | 静态上**看得见**字面量的调用（get_com_member 传名 / 点调用）|",
+        ">",
+        "> ⚑ **护栏可调 ⊇ 直接调**。差值来自「调用处传的是变量」——",
+        "> 模块写成 `_checked(target, member, …)` 时，静态归因看不到字面量。",
+        "> ⇒ **「直接调」系统性低估，不是精确值。**",
+        ">",
+        "> **合并这两个数字就是误导。** 早先版本只报一个触及率，",
+        "> 于是「族触及率 100%」是靠**把名字列进登记表**达成的 ——",
+        "> 那证明的是「这份 API 清单做完了」，**不是「这些 API 都能用了」**。",
+        "> 当前实测：{:,} 个成员里，**编入目录 {:,}（{:.0f}%）**、".format(
+            _tot_members,
+            _tot_hit,
+            100.0 * _tot_hit / _tot_members if _tot_members else 0.0,
+        ),
+        "> **真调用 {:,}（{:.0f}%）**。".format(
+            _tot_used, 100.0 * _tot_used / _tot_members if _tot_members else 0.0
+        ),
+        ">",
+        "> FeatureData 的属性赋值不计入真调用。",
+        "",
+        "> ⚠ 全部由静态解析生成，未执行任何仓库代码、未连接 SolidWorks。",
+        "",
+        "---",
+        "",
+        "## 一、按域汇总",
+        "",
+        "| 域 | 接口族 | 已触及 | 触及率 | 说明 |",
+        "|---|---|---|---|---|",
+    ]
     by_dom = defaultdict(lambda: [0, 0, ""])
     for r in rows:
         if r["families"] == 0:
@@ -636,81 +862,101 @@ def main() -> int:
         rate = f"{hit}/{tot}" if tot else "—"
         L.append(f"| {dom} | {tot or '—'} | {hit or '—'} | {rate} | {note} |")
 
-    L += ["", "---", "", "## 二、逐接口族明细", "",
-          "| 域 | 接口族 | 成员数 | 触及 | **成员触及率** | 触及的成员（前 10） | 主要出现在 |",
-          "|---|---|---|---|---|---|---|"]
+    L += [
+        "",
+        "---",
+        "",
+        "## 二、逐接口族明细",
+        "",
+        "| 域 | 接口族 | 成员数 | 触及 | **成员触及率** | 触及的成员（前 10） | 主要出现在 |",
+        "|---|---|---|---|---|---|---|",
+    ]
     for r in rows:
         if r["hit"] == 0 and r["members"] == 0:
-            L.append(f"| {r['domain']} | — | — | — | — | {r.get('note','')} | — |")
+            L.append(f"| {r['domain']} | — | — | — | — | {r.get('note', '')} | — |")
             continue
         hit_s = "、".join(f"`{m}`" for m in r["hit_members"]) or "—"
         files_s = "、".join(f"`{f}`" for f in r["files"]) or "—"
         pct = f"{r['pct']}%" if r.get("pct") is not None else "—"
-        L.append(f"| {r['domain']} | `{r['family']}` | {r['members']} | "
-                 f"{'**' + str(r['hit']) + '**' if r['hit'] else '0'} | {pct} | "
-                 f"{hit_s} | {files_s} |")
+        L.append(
+            f"| {r['domain']} | `{r['family']}` | {r['members']} | "
+            f"{'**' + str(r['hit']) + '**' if r['hit'] else '0'} | {pct} | "
+            f"{hit_s} | {files_s} |"
+        )
 
-    L += ["", "---", "", "## 三、读这张表要注意的", "",
-          "⚑ **「触及 0」的判据太弱，别拿它当「全覆盖」用。**",
-          "   一个 112 成员的族，只要碰过 1 个成员就算「已触及」——",
-          "   那是自欺。所以本表加了「**成员触及率**」一列，真正的覆盖面看它。",
-          "   「一、按域汇总」里的 x/x 只表示「没有整族缺席」，",
-          "   **不等于该族能力被完整实现**。",
-          "",
-          "1. **「触及」≠「覆盖」**。它只说明代码里出现过这个成员，",
-          "   不代表该接口族的能力被完整实现。",
-          "2. **属性赋值不计入**。`CreateDefinition` + `data.Thickness = x` 这种",
-          "   FeatureData 装配路径不在统计内，其成员在各模块的签名表里逐条登记。",
-          "3. **域 13 / 域 14 的成员来自 interop 反射**，不是 `C:\\swapi`",
-          "   （那两个域的程序集 `C:\\swapi` 不收录）。",
-          "   反射路径下 `get_X` / `set_X` 前缀已按 `audit_call_arity.py` 同款归一。",
-          "4. ⚠ **归因是按成员「名字」匹配的，会跨接口串味。** 例如",
-          "   `AccessSelections` 这一个名字挂在 125 个 `*FeatureData` 接口上，",
-          "   因此本表会把 `sw_surface.py` 里的某次 `AccessSelections` 调用",
-          "   同时记到 `ICosmeticWeldBeadFeatureData`、`IHemFeatureData` 等头上。",
-          "   **逐行明细请当线索看，不要当结论**；",
-          "   精确到某一行的归属请用 `docs/signature-audit.md`（它带参数个数校验）。",
-          "   **要看的是「触及 0」的族**（那不会有串味，是真的没碰过）。",
-          "5. ⚠ **归因只认「可静态识别形态」**：",
-          "   `get_com_member(对象, \"成员名\", …)` 这一路。下列三种写法**工具看不见**，",
-          "   代码写了也仍会显示未触及：",
-          "   **(a)** 属性名是变量（`get_com_member(d, name, v)`，name 来自字典或循环）",
-          "   **(b)** 用 `**flags` / `*args` 转发",
-          "   **(c)** 第一个实参是嵌套调用（`get_com_member(取对象(x), \"M\")`，",
-          "        第一个实参里出现括号）",
-          "   本项目已因此**三次**误判「某族没实现」，现已统一改为",
-          "   **显式成员名 + 先存局部变量**。凡本表显示 0 的族，",
-          "   已逐个核过「代码里确实没有该成员的字面量调用」。",
-          "",
-          "### 「触及 0」的族：已全部补齐", "",
-          "上一版这里列的是工程图域 8 个零命中族，并判断「多为范围外」。**该判断过宽**",
-          "（其中 IHoleTableAnnotation 那 5 个成员我自己都写了「未逐类分派」——那是偷懒，",
-          "不是阻塞）。现已全部补齐，工程图域 21/21：", "",
-          "| 接口族 | 成员 | 补法 |",
-          "|---|---|---|",
-          "| `ISectionViewData` | 35 | 剖视显示样式 13 个属性显式装配 + 白名单拒绝未支持属性 |",
-          "| 5 个表注解族 | 2+2+1+7+16 | 各自底层表对象 getter + 单元格读写 + 排序 + 修订增删 |",
-          "| `IAnnotationView` | 17 | 激活 / 显隐 / 证据回读（全是 0 参属性） |",
-          "| `IModelViewManager` | 42 | **只封装 4 个剖视相关成员**"
-          "（`CreateSectionViewData` / `CreateSectionView` / `GetSectionViewData` / "
-          "`RemoveSectionView`）；其余 38 个 FeatureManager UI 成员"
-          "逐个列在 `MODEL_VIEW_MANAGER_UI_MEMBERS` 常量里，**不假装它们不存在**，"
-          "需要时可按名单加 |",
-          "",
-          "> ⚑ 保留一条此前的自我纠正：曾怀疑工程图代码硬编码 `\"*Front\"`/`\"*Top\"`",
-          "> 是「模型视图名随 UI 语言变」的隐性缺陷（AGENTS.md §六 事实 9 确有",
-          "> 「基准面名随语言变」的前科），打算用 `IModelViewManager` 查视图名。",
-          "> **查证后假设不成立**：该接口是 FeatureManager UI 接口，",
-          "> `GetModelViewNames` 这个成员**在官方 API 中不存在**。",
-          "> 故不下「本地化缺陷」结论——按铁律 5，没有证据就不写。"]
+    L += [
+        "",
+        "---",
+        "",
+        "## 三、读这张表要注意的",
+        "",
+        "⚑ **「触及 0」的判据太弱，别拿它当「全覆盖」用。**",
+        "   一个 112 成员的族，只要碰过 1 个成员就算「已触及」——",
+        "   那是自欺。所以本表加了「**成员触及率**」一列，真正的覆盖面看它。",
+        "   「一、按域汇总」里的 x/x 只表示「没有整族缺席」，",
+        "   **不等于该族能力被完整实现**。",
+        "",
+        "1. **「触及」≠「覆盖」**。它只说明代码里出现过这个成员，",
+        "   不代表该接口族的能力被完整实现。",
+        "2. **属性赋值不计入**。`CreateDefinition` + `data.Thickness = x` 这种",
+        "   FeatureData 装配路径不在统计内，其成员在各模块的签名表里逐条登记。",
+        "3. **域 13 / 域 14 的成员来自 interop 反射**，不是 `C:\\swapi`",
+        "   （那两个域的程序集 `C:\\swapi` 不收录）。",
+        "   反射路径下 `get_X` / `set_X` 前缀已按 `audit_call_arity.py` 同款归一。",
+        "4. ⚠ **归因是按成员「名字」匹配的，会跨接口串味。** 例如",
+        "   `AccessSelections` 这一个名字挂在 125 个 `*FeatureData` 接口上，",
+        "   因此本表会把 `sw_surface.py` 里的某次 `AccessSelections` 调用",
+        "   同时记到 `ICosmeticWeldBeadFeatureData`、`IHemFeatureData` 等头上。",
+        "   **逐行明细请当线索看，不要当结论**；",
+        "   精确到某一行的归属请用 `docs/signature-audit.md`（它带参数个数校验）。",
+        "   **要看的是「触及 0」的族**（那不会有串味，是真的没碰过）。",
+        "5. ⚠ **归因只认「可静态识别形态」**：",
+        '   `get_com_member(对象, "成员名", …)` 这一路。下列三种写法**工具看不见**，',
+        "   代码写了也仍会显示未触及：",
+        "   **(a)** 属性名是变量（`get_com_member(d, name, v)`，name 来自字典或循环）",
+        "   **(b)** 用 `**flags` / `*args` 转发",
+        '   **(c)** 第一个实参是嵌套调用（`get_com_member(取对象(x), "M")`，',
+        "        第一个实参里出现括号）",
+        "   本项目已因此**三次**误判「某族没实现」，现已统一改为",
+        "   **显式成员名 + 先存局部变量**。凡本表显示 0 的族，",
+        "   已逐个核过「代码里确实没有该成员的字面量调用」。",
+        "",
+        "### 「触及 0」的族：已全部补齐",
+        "",
+        "上一版这里列的是工程图域 8 个零命中族，并判断「多为范围外」。**该判断过宽**",
+        "（其中 IHoleTableAnnotation 那 5 个成员我自己都写了「未逐类分派」——那是偷懒，",
+        "不是阻塞）。现已全部补齐，工程图域 21/21：",
+        "",
+        "| 接口族 | 成员 | 补法 |",
+        "|---|---|---|",
+        "| `ISectionViewData` | 35 | 剖视显示样式 13 个属性显式装配 + 白名单拒绝未支持属性 |",
+        "| 5 个表注解族 | 2+2+1+7+16 | 各自底层表对象 getter + 单元格读写 + 排序 + 修订增删 |",
+        "| `IAnnotationView` | 17 | 激活 / 显隐 / 证据回读（全是 0 参属性） |",
+        "| `IModelViewManager` | 42 | **只封装 4 个剖视相关成员**"
+        "（`CreateSectionViewData` / `CreateSectionView` / `GetSectionViewData` / "
+        "`RemoveSectionView`）；其余 38 个 FeatureManager UI 成员"
+        "逐个列在 `MODEL_VIEW_MANAGER_UI_MEMBERS` 常量里，**不假装它们不存在**，"
+        "需要时可按名单加 |",
+        "",
+        '> ⚑ 保留一条此前的自我纠正：曾怀疑工程图代码硬编码 `"*Front"`/`"*Top"`',
+        "> 是「模型视图名随 UI 语言变」的隐性缺陷（AGENTS.md §六 事实 9 确有",
+        "> 「基准面名随语言变」的前科），打算用 `IModelViewManager` 查视图名。",
+        "> **查证后假设不成立**：该接口是 FeatureManager UI 接口，",
+        "> `GetModelViewNames` 这个成员**在官方 API 中不存在**。",
+        "> 故不下「本地化缺陷」结论——按铁律 5，没有证据就不写。",
+    ]
 
     L += official_category_section(rows, cats)
 
     OUT_MD.write_text("\n".join(L), encoding="utf-8")
-    OUT_JSON.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     print(f"已生成 {OUT_MD}  ({OUT_MD.stat().st_size} 字节)")
     print(f"  明细 -> {OUT_JSON.name}")
-    print("  各域接口族触及情况:  （前一个数是**触及的成员数**，不是官方分类覆盖率 —— 后者见 md §四）")
+    print(
+        "  各域接口族触及情况:  （前一个数是**触及的成员数**，不是官方分类覆盖率 —— 后者见 md §四）"
+    )
     for dom, (tot, hit, note) in by_dom.items():
         if tot:
             print(f"    {dom:<24} {hit}/{tot}")

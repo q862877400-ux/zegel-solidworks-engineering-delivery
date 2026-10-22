@@ -27,6 +27,7 @@ r"""@brief 探针：`scripts/sw_*.py` 里**哪些模块带长度参数、却没�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -40,14 +41,39 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 #: 显式的**长度词表**（有界、可复核 —— 不是"聪明的启发式"）
 LENGTH_WORDS = (
-    "radius", "diameter", "depth", "thickness", "distance", "width", "height",
-    "length", "offset", "spacing", "pitch", "cx", "cy", "cz", "dx", "dy", "dz",
-    "x1", "y1", "z1", "x2", "y2", "z2", "x_mm", "y_mm", "z_mm", "size",
+    "radius",
+    "diameter",
+    "depth",
+    "thickness",
+    "distance",
+    "width",
+    "height",
+    "length",
+    "offset",
+    "spacing",
+    "pitch",
+    "cx",
+    "cy",
+    "cz",
+    "dx",
+    "dy",
+    "dz",
+    "x1",
+    "y1",
+    "z1",
+    "x2",
+    "y2",
+    "z2",
+    "x_mm",
+    "y_mm",
+    "z_mm",
+    "size",
 )
 
 #: 单位声明的**任意一种**写法
 UNIT_MARK = re.compile(
-    r"单位\s*[:：]|毫米|millimet|\bmm\b|meter|米（|（米）|（毫米）", re.IGNORECASE)
+    r"单位\s*[:：]|毫米|millimet|\bmm\b|meter|米（|（米）|（毫米）", re.IGNORECASE
+)
 
 
 # ⚠⚠ **2026-10-01 轮 133 的结论：本探针不能当判据，而且这个判据的原理不成立。**
@@ -65,7 +91,9 @@ def public_functions(path: Path):
         return []
     out = []
     for node in tree.body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and not node.name.startswith("_"):
+        if isinstance(
+            node, (ast.FunctionDef, ast.AsyncFunctionDef)
+        ) and not node.name.startswith("_"):
             out.append((node.name, [a.arg for a in node.args.args]))
     return out
 
@@ -77,13 +105,23 @@ def main() -> int:
             continue
         text = p.read_text(encoding="utf-8", errors="replace")
         fns = public_functions(p)
-        len_fns = [(n, a) for n, a in fns
-                   if any(any(w == str(x).lower() or str(x).lower().endswith("_" + w)
-                              for w in LENGTH_WORDS) for x in a)]
+        len_fns = [
+            (n, a)
+            for n, a in fns
+            if any(
+                any(
+                    w == str(x).lower() or str(x).lower().endswith("_" + w)
+                    for w in LENGTH_WORDS
+                )
+                for x in a
+            )
+        ]
         if not len_fns:
             no_len.append(p.stem)
             continue
-        (flagged if not UNIT_MARK.search(text) else declared).append((p.stem, len(len_fns)))
+        (flagged if not UNIT_MARK.search(text) else declared).append(
+            (p.stem, len(len_fns))
+        )
 
     print("`scripts/sw_*.py`（不含 API 名登记表）：")
     print("  带长度参数的模块 · **已声明单位**: %d" % len(declared))

@@ -32,17 +32,17 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk_surface_with_hole(doc):
     """★ 一张**带内环（孔）的平面曲面**。"""
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Front Plane")
     sm = C.get_com_member(doc, "SketchManager")
@@ -51,18 +51,22 @@ def _mk_surface_with_hole(doc):
     #: \u2605 \u5185\u5708\uff08\u2605 \u90a3\u5c31\u662f\u201c\u5b54\u201d\uff09
     C.get_com_member(sm, "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             return SF.create_extruded_surface_report(doc, 0.5, sketch_name=cand)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return {}
 
 
 def _geom(doc):
     from sw_connect import get_com_member as _g
+
     faces = loops = edges = 0
     area = 0.0
     for b in list(_g(doc, "GetBodies2", 1, True) or []):
@@ -70,18 +74,18 @@ def _geom(doc):
             faces += 1
             try:
                 loops += len(list(_g(f, "GetLoops") or []))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             for m in ("GetArea",):
                 try:
                     v = _g(f, m)
                     if v is not None:
                         area += float(v)
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
         try:
             edges += len(list(_g(b, "GetEdges") or []))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return {"faces": faces, "loops": loops, "edges": edges, "area": area}
 
@@ -96,9 +100,10 @@ def _one(sw, tag, pick):
         row["before"] = _geom(doc)
         from sw_connect import get_com_member as _g
         from sw_part import _select_com_object as _sel
+
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         picked = 0
         for b in list(_g(doc, "GetBodies2", 1, True) or []):
@@ -113,7 +118,7 @@ def _one(sw, tag, pick):
                     try:
                         if _sel(e, append=True, mark=0):
                             picked += 1
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
                     if picked >= 4:
                         break
@@ -123,7 +128,7 @@ def _one(sw, tag, pick):
         try:
             _g(doc, "InsertDeleteHole")
             row["called"] = True
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["called"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = list(FR.feature_names(doc) or [])
@@ -135,8 +140,10 @@ def _one(sw, tag, pick):
         row["area_delta"] = d["area"] - b0["area"]
         #: \u2605 \u5224\u636e\uff1a**\u51e0\u4f55\u91cf\u53d8\u4e86** \u6216 \u6811\u58
         #: 9e\u91cf
-        row["ok"] = bool(row["new"] or any(row["delta"].values()) or abs(row["area_delta"]) > 1e-12)
-    except Exception as exc:                                              # noqa: BLE001
+        row["ok"] = bool(
+            row["new"] or any(row["delta"].values()) or abs(row["area_delta"]) > 1e-12
+        )
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -144,37 +151,61 @@ def _one(sw, tag, pick):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u5220\u9664\u5b54\uff1a\u5728**\u5e26\u5185\u73af\uff08\u7f3a\u53e3\uff09\u7684\u66f2\u9762\u4f53**\u4e0a\u8bd5\uff08\u2605 \u800c\u4e0d\u662f\u5728\u5b9e\u4f53\u4e0a\uff09",
-          "official": "IModelDoc2.InsertDeleteHole() \u2014\u2014 0 \u53c2 \u00b7 void\uff1b"
-                      "\u5b83\u662f**\u66f2\u9762 / \u5bfc\u5165\u4f53\u7684\u4fee\u8865**\u547d\u4ee4",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u5220\u9664\u5b54\uff1a\u5728**\u5e26\u5185\u73af\uff08\u7f3a\u53e3\uff09\u7684\u66f2\u9762\u4f53**\u4e0a\u8bd5\uff08\u2605 \u800c\u4e0d\u662f\u5728\u5b9e\u4f53\u4e0a\uff09",
+        "official": "IModelDoc2.InsertDeleteHole() \u2014\u2014 0 \u53c2 \u00b7 void\uff1b"
+        "\u5b83\u662f**\u66f2\u9762 / \u5bfc\u5165\u4f53\u7684\u4fee\u8865**\u547d\u4ee4",
+        "cases": [],
+    }
     ev["cases"].append(_one(sw, "\u2460 \u53ea\u9009\u9762", "face"))
     ev["cases"].append(_one(sw, "\u2461 \u9009\u5b54\u7684\u8fb9", "edge"))
     ev["cases"].append(_one(sw, "\u2462 \u9762 + \u8fb9\u90fd\u9009", "both"))
-    ev["cases"].append(_one(sw, "\u2463 \u5bf9\u7167\uff1a\u4ec0\u4e48\u90fd\u4e0d\u9009", "none"))
+    ev["cases"].append(
+        _one(sw, "\u2463 \u5bf9\u7167\uff1a\u4ec0\u4e48\u90fd\u4e0d\u9009", "none")
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("delete_hole_works_on_surface" if ev["passed"]
-                     else "delete_hole_still_noop_on_surface")
+    ev["verdict"] = (
+        "delete_hole_works_on_surface"
+        if ev["passed"]
+        else "delete_hole_still_noop_on_surface"
+    )
     p = R / "output" / "delete-hole-on-surface-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
         b, a = c.get("before") or {}, c.get("after") or {}
-        print("  %-26s ok=%-6s made=%s picked=%s" % (
-            c.get("tag"), c.get("ok"), c.get("made"), c.get("picked")))
-        print("        \u9762 %s\u2192%s \u00b7 \u73af %s\u2192%s \u00b7 \u8fb9 %s\u2192%s \u00b7 \u9762\u79ef\u0394=%.4e" % (
-            b.get("faces"), a.get("faces"), b.get("loops"), a.get("loops"),
-            b.get("edges"), a.get("edges"), c.get("area_delta") or 0.0))
+        print(
+            "  %-26s ok=%-6s made=%s picked=%s"
+            % (c.get("tag"), c.get("ok"), c.get("made"), c.get("picked"))
+        )
+        print(
+            "        \u9762 %s\u2192%s \u00b7 \u73af %s\u2192%s \u00b7 \u8fb9 %s\u2192%s \u00b7 \u9762\u79ef\u0394=%.4e"
+            % (
+                b.get("faces"),
+                a.get("faces"),
+                b.get("loops"),
+                a.get("loops"),
+                b.get("edges"),
+                a.get("edges"),
+                c.get("area_delta") or 0.0,
+            )
+        )
         print("        \u65b0\u589e=%s" % (c.get("new"),))
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:130])

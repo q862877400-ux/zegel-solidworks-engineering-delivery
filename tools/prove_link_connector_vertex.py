@@ -48,14 +48,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "link-connector-vertex-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "link-connector-vertex-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "trials": []}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -70,18 +79,19 @@ def main() -> int:
 
         #: ★ 建算例（★ 连接件要挂在算例上）
         from scripts.sw_simulation import create_static_study, get_study_manager
+
         try:
             create_static_study(sw, "LinkStudy")
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["study_err"] = str(exc)[:100]
         mgr = get_study_manager(sw)
         study = None
         try:
             study = get_com_member(get_com_member(mgr, "GetStudy", 0))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             try:
                 study = get_com_member(mgr, "GetStudy", 0)
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["getstudy_err"] = str(exc)[:100]
         ev["study_none"] = study is None
         if study is None:
@@ -102,17 +112,18 @@ def main() -> int:
                 try:
                     v = get_com_member(lm, "Count")
                     out["count"] = int(v) if v is not None else None
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     out["count_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
                 try:
                     arr = get_com_member(lm, "GetLoadsAndRestraints")
                     out["lar_len"] = len(list(arr or []))
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     out["lar_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
                 try:
                     from scripts.sw_feature_readback import feature_names as _fn
+
                     out["tree"] = len(list(_fn(doc)))
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     out["tree_err"] = str(exc)[:60]
                 return out
 
@@ -133,14 +144,14 @@ def main() -> int:
                     vs = list(get_com_member(b, "GetVertices") or [])
                     if vs:
                         verts.append(vs[0])
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["verts_err"] = str(exc)[:100]
             ev["verts"] = len(verts)
             pts = []
             for v in verts:
                 try:
                     pts.append(tuple(float(x) for x in get_com_member(v, "GetPoint")))
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pts.append(None)
             ev["points"] = pts
 
@@ -157,7 +168,7 @@ def main() -> int:
                 #: ★★★ 2026-10-03（轮 457）**arity 要对** ——
                 #: ★ 真机抽象：`AddLinkConnector(first:Object, second:Object, ByRef Erro
                 #: rCode:Int32)`
-                #: ⇒ ★★ **arity 3**。★ 而本仓的 `add_link_connector` 走 `_check(..., 2, 
+                #: ⇒ ★★ **arity 3**。★ 而本仓的 `add_link_connector` 走 `_check(..., 2,
                 #: …)`
                 #:     ⇒ ★ **只传 2 个** ⚠（★ 与事实 315 那条"arity 写错"同一族）
                 #:   ★ 故本轮**把 3 个都传上**（★ out 参数给 0）✓
@@ -169,6 +180,7 @@ def main() -> int:
                 #:     `v = VARIANT(VT_BYREF | VT_R8, 0.0)` → `get_com_member(..., v)` ✓
                 from win32com.client import VARIANT
                 from pythoncom import VT_BYREF, VT_I4
+
                 try:
                     a, b = mk()
                     ec = VARIANT(VT_BYREF | VT_I4, 0)
@@ -176,7 +188,7 @@ def main() -> int:
                     rec["arity"] = 3
                     rec["byref_variant"] = True
                     rec["called"] = True
-                except Exception as exc3:                      # noqa: BLE001
+                except Exception as exc3:  # noqa: BLE001
                     rec["err_arity3"] = "%s: %s" % (type(exc3).__name__, str(exc3)[:90])
                     try:
                         a, b = mk()
@@ -184,36 +196,45 @@ def main() -> int:
                         lm.AddLinkConnector(a, b)
                         rec["arity"] = 2
                         rec["called"] = True
-                    except Exception as exc2:                  # noqa: BLE001
+                    except Exception as exc2:  # noqa: BLE001
                         rec["err"] = "%s: %s" % (type(exc2).__name__, str(exc2)[:110])
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
                 after = count()
                 rec["before"] = before
                 rec["after"] = after
                 ev["trials"].append(rec)
+
             def _n(d, key="count"):
                 v = (d or {}).get(key)
                 return v if isinstance(v, int) else -1
-            ev["any_built"] = any(_n(t.get("after")) > _n(t.get("before")) for t in ev["trials"])
+
+            ev["any_built"] = any(
+                _n(t.get("after")) > _n(t.get("before")) for t in ev["trials"]
+            )
             ev["verdict"] = "pass" if ev["any_built"] else "fail"
-        ev["note"] = ("★ 试三个有依据的形态（★ 都对应「VertexPoint 可能是什么」）："
-                      "① 一个 IVertex 对象 · ② 单元素数组 · ③ 点的三元组。"
-                      "★ 判据：★ 载荷与约束计数 **+1**（★ 不拿返回值当判据）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 试三个有依据的形态（★ 都对应「VertexPoint 可能是什么」）："
+            "① 一个 IVertex 对象 · ② 单元素数组 · ③ 点的三元组。"
+            "★ 判据：★ 载荷与约束计数 **+1**（★ 不拿返回值当判据）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

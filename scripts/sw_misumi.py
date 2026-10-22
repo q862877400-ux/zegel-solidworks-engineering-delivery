@@ -66,14 +66,22 @@ r"""米思米（MISUMI）中国站检索客户端 —— 免登录可用的部�
 # ⚠ 本模块不含任何 SolidWorks 调用（与本仓库其它模块无耦合）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 __all__ = [
-    "API_HOST", "APPLICATION_ID", "LANDING",
-    "session", "list_categories", "list_brands", "suggest_keywords",
-    "suggest_part", "full_text_search", "CAPABILITY",
+    "API_HOST",
+    "APPLICATION_ID",
+    "LANDING",
+    "session",
+    "list_categories",
+    "list_brands",
+    "suggest_keywords",
+    "suggest_part",
+    "full_text_search",
+    "CAPABILITY",
 ]
 
 API_HOST = "https://api.cn.misumi.com.cn"
@@ -81,8 +89,10 @@ LANDING = "https://www.misumi.com.cn/"
 #: 官网页面明文给出；日站社区文档称其为「公开应用标识，非用户密钥」
 APPLICATION_ID = "77f56fb2-4165-4116-b82f-e495838bb6e1"
 
-_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-       "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36")
+_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36"
+)
 
 #: 本机实测的能力清单，供调用方自查（免登录 / 需登录 / 参数未还原）
 CAPABILITY: dict[str, str] = {
@@ -101,33 +111,38 @@ def session() -> Any:
     """建一个带必需请求头的会话。⚠ 依赖 ``requests``，缺失时**明说**。"""
     try:
         import requests
-    except ImportError as exc:                                  # noqa: PERF203
-        raise ImportError(
-            "sw_misumi 需要 requests：pip install requests") from exc
+    except ImportError as exc:  # noqa: PERF203
+        raise ImportError("sw_misumi 需要 requests：pip install requests") from exc
     s = requests.Session()
     # ⚠ applicationId **只**由 ``_get`` 拼进 query string —— 放 header 无效
     #   （四组对照实测：只放 header -> 400 API000101）
-    s.headers.update({
-        "User-Agent": _UA,
-        "Referer": LANDING,
-        "Origin": "https://www.misumi.com.cn",
-    })
-    s.get(LANDING, timeout=20)          # 先拿 acw_tc cookie
+    s.headers.update(
+        {
+            "User-Agent": _UA,
+            "Referer": LANDING,
+            "Origin": "https://www.misumi.com.cn",
+        }
+    )
+    s.get(LANDING, timeout=20)  # 先拿 acw_tc cookie
     return s
 
 
 def _get(path: str, sess: Any = None, **params: Any) -> dict[str, Any]:
     s = sess or session()
-    r = s.get(API_HOST + path,
-              params=dict(params, applicationId=APPLICATION_ID, lang="CHN"),
-              timeout=20)   # applicationId 必须走 query（见文件头四组对照）
+    r = s.get(
+        API_HOST + path,
+        params=dict(params, applicationId=APPLICATION_ID, lang="CHN"),
+        timeout=20,
+    )  # applicationId 必须走 query（见文件头四组对照）
     r.raise_for_status()
     return r.json()
 
 
 def list_categories(sess: Any = None) -> list[dict[str, Any]]:
     """13 个大类（机械相关：mech / mech_screw / mech_material / press / mold / injection）。"""
-    return _get("/api/v1/category/search", sess, categoryLevel=1).get("categoryList", [])
+    return _get("/api/v1/category/search", sess, categoryLevel=1).get(
+        "categoryList", []
+    )
 
 
 def list_brands(sess: Any = None) -> list[dict[str, Any]]:
@@ -140,18 +155,32 @@ def suggest_keywords(keyword: str, sess: Any = None) -> list[str]:
     return _get("/api/v1/keyword/search", sess, keyword=keyword).get("keywordList", [])
 
 
-def suggest_part(keyword: str, count: int = 10, sess: Any = None) -> list[dict[str, Any]]:
+def suggest_part(
+    keyword: str, count: int = 10, sess: Any = None
+) -> list[dict[str, Any]]:
     """型号建议 —— **本模块最有用的一步**。
 
     返回每条含 ``partNumber`` / ``brandCode`` / ``brandName`` / ``innerCode``，
     其中 ``innerCode`` 是米思米内部主键（后续查规格要用）。
     """
-    return _get("/api/v1/partNumber/suggest", sess, keyword=keyword, count=count,
-                field="@default,partNumberList.innerCode").get("partNumberList", [])
+    return _get(
+        "/api/v1/partNumber/suggest",
+        sess,
+        keyword=keyword,
+        count=count,
+        field="@default,partNumberList.innerCode",
+    ).get("partNumberList", [])
 
 
-def full_text_search(keyword: str, page: int = 1, page_size: int = 10,
-                     sess: Any = None) -> dict[str, Any]:
+def full_text_search(
+    keyword: str, page: int = 1, page_size: int = 10, sess: Any = None
+) -> dict[str, Any]:
     """全文检索（实测「轴承」totalCount=1,287）。返回含 ``totalCount`` / ``resultList``。"""
-    return _get("/api/v1/fullText/search", sess, keyword=keyword,
-                page=page, pageSize=page_size, field="@default")
+    return _get(
+        "/api/v1/fullText/search",
+        sess,
+        keyword=keyword,
+        page=page,
+        pageSize=page_size,
+        field="@default",
+    )

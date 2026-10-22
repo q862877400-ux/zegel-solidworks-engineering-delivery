@@ -1,4 +1,5 @@
 """★ 阶段 1 · 效应解析（补 C1 —— ★ 接上官方类型库的读写标记）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -29,16 +30,61 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 #: ══ 一、成员动词 → 效应（★ 与既有生成器同一族口径）═══════════════════
 #: ★★ 判据：**写**的动词前缀（改文档 / 改属性 / 改选择 / 写文件）
 WRITE_VERBS = (
-    "Insert", "Create", "Add", "Set", "Delete", "Remove", "Modify", "Edit",
-    "Clear", "Save", "Close", "Open", "Export", "Import", "Rebuild", "Force",
-    "Update", "Replace", "Move", "Copy", "Scale", "Mirror", "Pattern",
-    "Extrude", "Revolve", "Fillet", "Chamfer", "Shell", "Draft", "Thicken",
-    "Sketch", "Select", "Unselect", "Activate", "Exit", "Run", "Load",
+    "Insert",
+    "Create",
+    "Add",
+    "Set",
+    "Delete",
+    "Remove",
+    "Modify",
+    "Edit",
+    "Clear",
+    "Save",
+    "Close",
+    "Open",
+    "Export",
+    "Import",
+    "Rebuild",
+    "Force",
+    "Update",
+    "Replace",
+    "Move",
+    "Copy",
+    "Scale",
+    "Mirror",
+    "Pattern",
+    "Extrude",
+    "Revolve",
+    "Fillet",
+    "Chamfer",
+    "Shell",
+    "Draft",
+    "Thicken",
+    "Sketch",
+    "Select",
+    "Unselect",
+    "Activate",
+    "Exit",
+    "Run",
+    "Load",
 )
 #: ★ 明确**只读**的动词
 READ_VERBS = (
-    "Get", "Is", "Has", "Read", "List", "Count", "Find", "Query", "Collect",
-    "Inspect", "Check", "Measure", "Evaluate", "Test", "Describe",
+    "Get",
+    "Is",
+    "Has",
+    "Read",
+    "List",
+    "Count",
+    "Find",
+    "Query",
+    "Collect",
+    "Inspect",
+    "Check",
+    "Measure",
+    "Evaluate",
+    "Test",
+    "Describe",
 )
 
 #: ══ 二、效应分级 ══════════════════════════════════════════════════════
@@ -63,14 +109,18 @@ def _bodies(mod: str) -> dict[str, str]:
         return {}
     try:
         tree = ast.parse(p.read_text(encoding="utf-8"))
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
     out: dict[str, str] = {}
     for n in ast.walk(tree):
         if isinstance(n, ast.FunctionDef):
             b = n.body
-            if b and isinstance(b[0], ast.Expr) and isinstance(b[0].value, ast.Constant) \
-                    and isinstance(b[0].value.value, str):
+            if (
+                b
+                and isinstance(b[0], ast.Expr)
+                and isinstance(b[0].value, ast.Constant)
+                and isinstance(b[0].value.value, str)
+            ):
                 b = b[1:]
             out[n.name] = "\n".join(ast.unparse(x) for x in b)
     return out
@@ -111,7 +161,9 @@ def resolve_effect(mod: str, fn: str, *, depth: int = 3) -> tuple[str, list[str]
         for m in re.finditer(r"\.(\w+)\s*\(", src):
             members.append(m.group(1))
         for m in re.finditer(
-                r"(?:get_com_member|call_com_member|safe_get_com_member)\s*\([^,]+,\s*[\"'](\w+)[\"']", src):
+            r"(?:get_com_member|call_com_member|safe_get_com_member)\s*\([^,]+,\s*[\"'](\w+)[\"']",
+            src,
+        ):
             members.append(m.group(1))
         #: ★ 同模块助手（★ 传递闭包 —— 补表 `_limitations` 的「只跟 2 层」）
         for m in re.finditer(r"\b([a-z_][a-z0-9_]*)\s*\(", src):

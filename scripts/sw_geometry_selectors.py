@@ -68,20 +68,23 @@ __all__ = [
 
 #: 合法的**点**选择器（全部**从模型派生** —— 不接受裸坐标）
 POINT_SELECTORS = (
-    "origin",        # 模型原点 (0,0,0)
-    "bbox:min",      # 体包围盒的最小角
-    "bbox:max",      # 体包围盒的最大角
-    "bbox:center",   # 体包围盒中心
-    "centroid",      # 质心（质量属性）
+    "origin",  # 模型原点 (0,0,0)
+    "bbox:min",  # 体包围盒的最小角
+    "bbox:max",  # 体包围盒的最大角
+    "bbox:center",  # 体包围盒中心
+    "centroid",  # 质心（质量属性）
 )
 
 #: 合法的**方向**选择器（**命名轴**，不是坐标）
 DIRECTION_SELECTORS = ("+x", "-x", "+y", "-y", "+z", "-z")
 
 _AXIS = {
-    "+x": (1.0, 0.0, 0.0), "-x": (-1.0, 0.0, 0.0),
-    "+y": (0.0, 1.0, 0.0), "-y": (0.0, -1.0, 0.0),
-    "+z": (0.0, 0.0, 1.0), "-z": (0.0, 0.0, -1.0),
+    "+x": (1.0, 0.0, 0.0),
+    "-x": (-1.0, 0.0, 0.0),
+    "+y": (0.0, 1.0, 0.0),
+    "-y": (0.0, -1.0, 0.0),
+    "+z": (0.0, 0.0, 1.0),
+    "-z": (0.0, 0.0, -1.0),
 }
 
 
@@ -126,7 +129,7 @@ def resolve_point(model, selector: str, *, body_index: int = 0) -> tuple:
     if key == "origin":
         return (0.0, 0.0, 0.0)
 
-    bodies = get_com_member(model, "GetBodies2", 0, True)   # 0 = swSolidBody
+    bodies = get_com_member(model, "GetBodies2", 0, True)  # 0 = swSolidBody
     if not bodies:
         raise GeometrySelectorError("活动文档里没有实体（swSolidBody）—— 先建几何")
     if body_index >= len(bodies):

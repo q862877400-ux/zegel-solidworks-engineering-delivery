@@ -1,10 +1,11 @@
 """★ 批次⑰：给 `mech-design` **全部 86 篇**做逐篇处置清单（★ 收口）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   tools/triage_mech_design.py
 # 定位:   规格 `specs/332-known-facts-triage` 批次⑰ ——★★ 收口判据要求「**各批都有明确
-#           的『已扫 / 已判断』结论**」。★ `mech-design` 有 **86 篇** —— ★ 前几批精读了 
+#           的『已扫 / 已判断』结论**」。★ `mech-design` 有 **86 篇** —— ★ 前几批精读了
 #           **18 篇**，  ★ 本工具给**全部 86 篇**逐篇处置（★ 吸收 / 放过 + 理由）。
 # 官方依据: `~/.agents/skills/mech-design/知识库/`（★ 只读）
 # 许可:   本仓库 MIT。★ 外部 skill 只读。
@@ -18,8 +19,7 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-KB = (pathlib.Path.home() / ".agents" / "skills" / "mech-design"
-      / "知识库")
+KB = pathlib.Path.home() / ".agents" / "skills" / "mech-design" / "知识库"
 
 #: ★★★ **已吸收的篇**（★ 逐篇带理由 —— ★ 前几批精读过的）
 ABSORBED: dict[str, str] = {
@@ -59,43 +59,60 @@ ABSORBED: dict[str, str] = {
     "元教训合集-操作问题误判成环境问题": "★★ 元教训（★ 与事实 51/53 同族）",
     #: ── ★★ 批次⑰ 精读的 5 篇 ──
     "失败处置决策树": "★★★★★ **四层决策树**（L1 参数 60% · L2 **方法选错** · "
-                      "L3 环境 20% · L4 版本/许可 20%）+ "
-                      "★「**参数试了 5 遍都不行 = 方法选错了**」+ "
-                      "★「**同一错误码连续 2 次就进决策树**」",
+    "L3 环境 20% · L4 版本/许可 20%）+ "
+    "★「**参数试了 5 遍都不行 = 方法选错了**」+ "
+    "★「**同一错误码连续 2 次就进决策树**」",
     "特征数据接口名对照表": "★★★★★ **136 个 FeatureData 接口名** —— "
-                            "★ 孔族 `IWizardHoleFeatureData2` · "
-                            "★ loft/sweep `ILoftFeatureData`/`ISweepFeatureData` · "
-                            "★ 可变圆角 `IVariableFilletFeatureData2` · "
-                            "★★ **Simulation 载荷是两套不同层次**",
+    "★ 孔族 `IWizardHoleFeatureData2` · "
+    "★ loft/sweep `ILoftFeatureData`/`ISweepFeatureData` · "
+    "★ 可变圆角 `IVariableFilletFeatureData2` · "
+    "★★ **Simulation 载荷是两套不同层次**",
     "阵列pattern": "★★★ **「圆周均布 N 个」首选「一草图多圆」**"
-                   "（★ 不用轴、不用阵列；★ 实测 9 圆一次成功）",
+    "（★ 不用轴、不用阵列；★ 实测 9 圆一次成功）",
     "sweep正确入口与诊断": "★★ 扫描的 mark 分工（1=Profile · 2=Guide · 4=Sweep path）"
-                           "+ ★ **6 次尝试的精确诊断**（卡在路径 mark=4 设不上）",
+    "+ ★ **6 次尝试的精确诊断**（卡在路径 mark=4 设不上）",
     "草图": "★★ 草图相关（★ 已由本仓 `check_sketch_definition` + "
-            "`sketch-definition-protocol.md` 覆盖并超越）",
+    "`sketch-definition-protocol.md` 覆盖并超越）",
 }
 
 #: ★★ **放过的判据**（★ 按主题 —— ★ 每条带理由）
 PASS_RULES: list = [
-    (re.compile(r"(Simulation|仿真|拓扑|网格|求解|许可|CAE|静力|疲劳|焊缝|失效)"),
-     "放过：★ Simulation 探路记录 —— ★ 已进 `known-facts.md` 与本仓 "
-     "`docs/A9-solve-attempts.md`"),
-    (re.compile(r"(18仓库|GitHub|项目通读|外部资料源|施工计划|调研源|切削用量数据源|"
-                r"反面样本)"),
-     "放过：★ 外部项目调研 —— ★ 与本仓 `docs/sources.md` 重复"),
-    (re.compile(r"(BT30|主轴|设计任务|方案比选|需求分析)"),
-     "放过：★ 具体零件设计案例（★ 非通用方法）"),
-    (re.compile(r"(材料选型)"),
-     "放过：★ 材料选型数据表（★ 属选型数据，★ 非建模方法）"),
-    (re.compile(r"(轴承|齿轮|V带|弹簧|螺旋传动|丝杠|电机|O型圈|标准件)"),
-     "放过：★ 选型计算 —— ★ 数据已由 `standard_parts.py` 接出（★ 17 张表）"),
-    (re.compile(r"(公差|配合|GD&T|粗糙度|形位)"),
-     "放过：★ 公差体系 —— ★ 关键条已吸收（★ 见 `ABSORBED`）"),
-    (re.compile(r"(环境|工具|许可|NET|编译|Python|VBA|宏|弹窗|守卫|attach|"
-                r"进程|产品真实可用性|接口遍历|官方API全量|服务端49)"),
-     "放过：★ 环境/工具探路 —— ★ 已进 `known-facts.md`"),
-    (re.compile(r"(工程图|图纸|图幅|视图|标注|BOM|钣金|焊接|工艺|工序|DFM|失效)"),
-     "放过：★ 已吸收关键条（★ 见 `ABSORBED`）"),
+    (
+        re.compile(r"(Simulation|仿真|拓扑|网格|求解|许可|CAE|静力|疲劳|焊缝|失效)"),
+        "放过：★ Simulation 探路记录 —— ★ 已进 `known-facts.md` 与本仓 "
+        "`docs/A9-solve-attempts.md`",
+    ),
+    (
+        re.compile(
+            r"(18仓库|GitHub|项目通读|外部资料源|施工计划|调研源|切削用量数据源|"
+            r"反面样本)"
+        ),
+        "放过：★ 外部项目调研 —— ★ 与本仓 `docs/sources.md` 重复",
+    ),
+    (
+        re.compile(r"(BT30|主轴|设计任务|方案比选|需求分析)"),
+        "放过：★ 具体零件设计案例（★ 非通用方法）",
+    ),
+    (re.compile(r"(材料选型)"), "放过：★ 材料选型数据表（★ 属选型数据，★ 非建模方法）"),
+    (
+        re.compile(r"(轴承|齿轮|V带|弹簧|螺旋传动|丝杠|电机|O型圈|标准件)"),
+        "放过：★ 选型计算 —— ★ 数据已由 `standard_parts.py` 接出（★ 17 张表）",
+    ),
+    (
+        re.compile(r"(公差|配合|GD&T|粗糙度|形位)"),
+        "放过：★ 公差体系 —— ★ 关键条已吸收（★ 见 `ABSORBED`）",
+    ),
+    (
+        re.compile(
+            r"(环境|工具|许可|NET|编译|Python|VBA|宏|弹窗|守卫|attach|"
+            r"进程|产品真实可用性|接口遍历|官方API全量|服务端49)"
+        ),
+        "放过：★ 环境/工具探路 —— ★ 已进 `known-facts.md`",
+    ),
+    (
+        re.compile(r"(工程图|图纸|图幅|视图|标注|BOM|钣金|焊接|工艺|工序|DFM|失效)"),
+        "放过：★ 已吸收关键条（★ 见 `ABSORBED`）",
+    ),
 ]
 
 
@@ -133,16 +150,25 @@ def main() -> int:
             print("   %s  ← %s" % (s, p))
     #: ★★ 落盘
     out = ROOT / "specs" / "332-known-facts-triage" / "mech-design-ledger.md"
-    L = ["# `mech-design` 全库逐篇处置台账（规格 332 · 批次⑰）", "",
-         "**判据**：", "",
-         "| 处置 | 含义 |", "|---|---|",
-         "| **吸收** | 给出**可落到本仓语料/工具层/判据**的**方法** |",
-         "| **放过** | 已由别处覆盖 / 非通用方法 / 数据已接出 |",
-         "",
-         "**★ 全库共 %d 篇**" % len(arts), "",
-         "---", "",
-         "## 一、★ 已吸收（%d 篇）" % len(absorbed), "",
-         "| 篇 | 吸收了什麼 |", "|---|---|"]
+    L = [
+        "# `mech-design` 全库逐篇处置台账（规格 332 · 批次⑰）",
+        "",
+        "**判据**：",
+        "",
+        "| 处置 | 含义 |",
+        "|---|---|",
+        "| **吸收** | 给出**可落到本仓语料/工具层/判据**的**方法** |",
+        "| **放过** | 已由别处覆盖 / 非通用方法 / 数据已接出 |",
+        "",
+        "**★ 全库共 %d 篇**" % len(arts),
+        "",
+        "---",
+        "",
+        "## 一、★ 已吸收（%d 篇）" % len(absorbed),
+        "",
+        "| 篇 | 吸收了什麼 |",
+        "|---|---|",
+    ]
     for s, _, why in absorbed:
         L.append("| `%s` | %s |" % (s, why))
     L.append("")

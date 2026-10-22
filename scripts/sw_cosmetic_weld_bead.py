@@ -1,4 +1,5 @@
 """★ 装饰焊缝（官方 `IFeatureManager::InsertCosmeticWeldBead`，**一个参数**）—— 选两个面 + 回读判据。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（取面沿用 sw_selection_spec；选实体沿用 IEntity.Select4 的既有定案
@@ -27,7 +28,7 @@ from __future__ import annotations
 
 from typing import Any
 
-_MM = 0.001                                                                        #: ★ 毫米 → 米（事实 2）
+_MM = 0.001  #: ★ 毫米 → 米（事实 2）
 
 
 #: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_net_blend.py` /
@@ -44,10 +45,10 @@ def _faces_all_bodies(model) -> list[Any]:
 
     faces: list[Any] = []
     _bi = 0
-    while _bi <= 32:                                                               #: ★ 兜底，防死循环
+    while _bi <= 32:  #: ★ 兜底，防死循环
         try:
             _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
-        except Exception:                                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             break
         if not _b:
             break
@@ -61,7 +62,7 @@ def insert_cosmetic_weld_bead_report(
     *,
     face_index_1: int = 0,
     face_index_2: int = 1,
-    weld_size_mm: float = 12.95,               #: ★ 官方示例是 0.51 **英寸** ≈ 12.95 mm ✓
+    weld_size_mm: float = 12.95,  #: ★ 官方示例是 0.51 **英寸** ≈ 12.95 mm ✓
 ) -> dict[str, Any]:
     """★ 插一条**装饰焊缝**（★ 官方 `InsertCosmeticWeldBead(WeldSize)`，★ **一个参数**）✓
 
@@ -75,7 +76,7 @@ def insert_cosmetic_weld_bead_report(
     steps: list[dict[str, Any]] = []
     try:
         model.ClearSelection2(True)
-    except Exception:                                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     before = _feature_count(model)
 
@@ -83,25 +84,47 @@ def insert_cosmetic_weld_bead_report(
     steps.append({"step": "faces", "count": len(faces)})
     for i, idx in enumerate((face_index_1, face_index_2)):
         if idx < 0 or idx >= len(faces):
-            return {"ok": False, "error": "★ 面序号越界：%r（共 %d 个面）" % (idx, len(faces)),
-                    "feature_count_before": before, "steps": steps}
+            return {
+                "ok": False,
+                "error": "★ 面序号越界：%r（共 %d 个面）" % (idx, len(faces)),
+                "feature_count_before": before,
+                "steps": steps,
+            }
         f = faces[idx]
         try:
-            f.Select4(bool(i == 1), _sp._empty_callout())                          #: ★ 第二个 append ✓
-        except Exception as exc:                                                   # noqa: BLE001
+            f.Select4(bool(i == 1), _sp._empty_callout())  #: ★ 第二个 append ✓
+        except Exception as exc:  # noqa: BLE001
             steps.append({"step": "select_face_%d" % i, "error": str(exc)[:140]})
-        steps.append({"step": "select_face_%d" % i, "index": idx,
-                      "selection_count": int(model.SelectionManager.GetSelectedObjectCount2(-1))})
+        steps.append(
+            {
+                "step": "select_face_%d" % i,
+                "index": idx,
+                "selection_count": int(
+                    model.SelectionManager.GetSelectedObjectCount2(-1)
+                ),
+            }
+        )
     #: ★★ 守卫用**回读计数**：★ 两个面都要在选区里（★ 事实 8 ✓）
     cnt = int(model.SelectionManager.GetSelectedObjectCount2(-1))
     if cnt < 2:
-        return {"ok": False, "error": "★ 选面只到 %d（判据是回读计数，不是 bool）" % cnt,
-                "selection_count": cnt, "feature_count_before": before, "steps": steps}
+        return {
+            "ok": False,
+            "error": "★ 选面只到 %d（判据是回读计数，不是 bool）" % cnt,
+            "selection_count": cnt,
+            "feature_count_before": before,
+            "steps": steps,
+        }
 
     feat = model.FeatureManager.InsertCosmeticWeldBead(float(weld_size_mm) * _MM)
     after = _feature_count(model)
-    steps.append({"step": "InsertCosmeticWeldBead", "returned": feat is not None,
-                  "before": before, "after": after})
+    steps.append(
+        {
+            "step": "InsertCosmeticWeldBead",
+            "returned": feat is not None,
+            "before": before,
+            "after": after,
+        }
+    )
 
     return {
         #: ★★ 判据**只留回读**（★ 事实 8）—— ★ 返回值 `None` **不代表失败** ✓（★ 边界特
@@ -113,7 +136,7 @@ def insert_cosmetic_weld_bead_report(
         "steps": steps,
         "official": "IFeatureManager::InsertCosmeticWeldBead（★ v1 标 Obsolete，★ 但官方示例用的就是它 ✓）",
         "units": "★ 入参毫米；COM 侧米（事实 2）✓",
-        #: ★★★ 2026-10-07（规格 220 续 · 第 58 轮）★ **等级按真机证据提上来**（★ 红线⑥ 
+        #: ★★★ 2026-10-07（规格 220 续 · 第 58 轮）★ **等级按真机证据提上来**（★ 红线⑥
         #: 的正面用例 ✓）
         #: ★ 真机逐字（`tools/probe_spec220_cosmetic_bead.py`）：★ **6.38 s** · ★ **0 弹
         #: 窗** · ★
@@ -122,5 +145,5 @@ def insert_cosmetic_weld_bead_report(
         #: ★★ 判据 = **特征树回读增量 ≥ 1**（★ 事实 8 ✓）；★ 返回值 `None` **不代表失败*
         #: * ✓
         "verification": "verified —— ★ 真机建成（faces=[0,7] · 特征树 22→23 · 6.38 s · 0 弹窗）"
-                        "（★ 规格 220 续 第 57/58 轮；判据 = 特征树回读增量，事实 8）",
+        "（★ 规格 220 续 第 57/58 轮；判据 = 特征树回读增量，事实 8）",
     }

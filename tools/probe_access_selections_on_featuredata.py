@@ -43,35 +43,53 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+
 #: ★ 空 Dispatch 变体（★ 事实 12/33：`VARIANT(VT_DISPATCH, None)`）
-from scripts.sw_connect import create_empty_dispatch_variant as _av       # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 
 def _mk(doc):
     """★ 造两张相交曲面（★ 曲面切除的前置）。"""
     made = 0
-    for i, (plane, rect) in enumerate((("Front Plane", (-0.02, -0.02, 0.02, 0.02)),
-                                       ("Top Plane", (-0.02, -0.01, 0.02, 0.01)))):
+    for i, (plane, rect) in enumerate(
+        (
+            ("Front Plane", (-0.02, -0.02, 0.02, 0.02)),
+            ("Top Plane", (-0.02, -0.01, 0.02, 0.01)),
+        )
+    ):
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                         rect[0], rect[1], 0.0, rect[2], rect[3], 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            rect[0],
+            rect[1],
+            0.0,
+            rect[2],
+            rect[3],
+            0.0,
+        )
         P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or [])
-                 if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        names = [
+            n
+            for n in (P.feature_names(doc) or [])
+            if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+        ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                    "ok"
+                ):
                     made += 1
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return made
 
@@ -79,16 +97,27 @@ def _mk(doc):
 def _mk_faces_and_solid(doc):
     """★ 实体 + 曲面（★ 给加厚/直纹用）。"""
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     _mk(doc)
 
@@ -100,15 +129,17 @@ def _try_access(doc, feat, label):
         out["feat"] = "None"
         return out
     try:
-        out["feat"] = "%s / %s" % (str(C.get_com_member(feat, "Name")),
-                                   str(C.get_com_member(feat, "GetTypeName2")))
-    except Exception:                                                     # noqa: BLE001
+        out["feat"] = "%s / %s" % (
+            str(C.get_com_member(feat, "Name")),
+            str(C.get_com_member(feat, "GetTypeName2")),
+        )
+    except Exception:  # noqa: BLE001
         pass
     fd = None
     try:
         fd = C.get_com_member(feat, "GetDefinition")
         out["getdefinition"] = type(fd).__name__ if fd is not None else "None"
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["getdefinition_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
     if fd is None:
         return out
@@ -116,7 +147,7 @@ def _try_access(doc, feat, label):
         r = C.get_com_member(fd, "AccessSelections", doc, _av())
         out["access_returns"] = str(r)
         out["access_ok"] = True
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["access_ok"] = False
         out["access_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         #: \u2605 \u628a\u9519\u7801\u62bd\u51fa\u6765\uff08\u2605 \u4e8b\u5b9e 47 \u768
@@ -140,7 +171,7 @@ def _try_access(doc, feat, label):
             r2 = C.get_com_member(fd, "AccessSelections", doc, _av())
             out["access2_returns"] = str(r2)
             out["access2_ok"] = True
-        except Exception as exc2:                                         # noqa: BLE001
+        except Exception as exc2:  # noqa: BLE001
             out["access2_ok"] = False
             out["access2_err"] = "%s: %s" % (type(exc2).__name__, str(exc2)[:160])
             s2 = str(exc2)
@@ -151,7 +182,7 @@ def _try_access(doc, feat, label):
     try:
         C.get_com_member(fd, "ReleaseSelectionAccess")
         out["release"] = "ok"
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["release_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
     return out
 
@@ -165,7 +196,7 @@ def _run(sw, tag, build, entry_call):
         feat = entry_call(doc)
         row.update(_try_access(doc, feat, tag))
         row["ok"] = bool(row.get("access_ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -173,27 +204,30 @@ def _run(sw, tag, build, entry_call):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u5bf9\u201c\u9759\u9ed8 None\u201d\u90a3\u51e0\u6761\u8bd5 `*FeatureData.AccessSelections`"
-                 "\uff08\u2605 \u4e8b\u5b9e 424 \u7ed9\u7684\u65b0\u8def\uff09",
-          "why": "\u7c7b\u578b\u5e93\u8bc1\u660e\u90a3\u516d\u4e2a *FeatureData \u90fd\u5e26 AccessSelections\uff1b"
-                 "\u800c IAccessSelections \u4e0d\u5728\u7c7b\u578b\u5e93\u91cc \u21d2 \u8c03\u4e00\u6b21\u5c31\u80fd\u5206\u8fa8\u8d70\u54ea\u5c42",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u5bf9\u201c\u9759\u9ed8 None\u201d\u90a3\u51e0\u6761\u8bd5 `*FeatureData.AccessSelections`"
+        "\uff08\u2605 \u4e8b\u5b9e 424 \u7ed9\u7684\u65b0\u8def\uff09",
+        "why": "\u7c7b\u578b\u5e93\u8bc1\u660e\u90a3\u516d\u4e2a *FeatureData \u90fd\u5e26 AccessSelections\uff1b"
+        "\u800c IAccessSelections \u4e0d\u5728\u7c7b\u578b\u5e93\u91cc \u21d2 \u8c03\u4e00\u6b21\u5c31\u80fd\u5206\u8fa8\u8d70\u54ea\u5c42",
+        "cases": [],
+    }
 
     def _surfcut(doc):
         from sw_connect import get_com_member as _get, out_i4 as _oi4
         from sw_part import _select_com_object as _sel
+
         _mk(doc)
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
             fs = list(_get(b, "GetFaces") or [])
@@ -201,15 +235,18 @@ def main() -> int:
                 _sel(fs[0], append=True, mark=0)
             break
         fm = C.get_com_member(doc, "FeatureManager")
-        return C.get_com_member(fm, "InsertCutSurface", False, 0, False, True, [], _oi4())
+        return C.get_com_member(
+            fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
+        )
 
     def _thicken(doc):
         _mk_faces_and_solid(doc)
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
+
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         n = 0
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
@@ -217,15 +254,18 @@ def main() -> int:
                 if _sel(f, append=(n > 0), mark=0):
                     n += 1
         fm = C.get_com_member(doc, "FeatureManager")
-        return C.get_com_member(fm, "FeatureBossThicken", 0.003, 0, 0, True, True, False, True)
+        return C.get_com_member(
+            fm, "FeatureBossThicken", 0.003, 0, 0, True, True, False, True
+        )
 
     def _splitline(doc):
         _mk_faces_and_solid(doc)
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
+
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         n = 0
         for bt in (0, 1):
@@ -236,26 +276,50 @@ def main() -> int:
         fm = C.get_com_member(doc, "FeatureManager")
         return C.get_com_member(fm, "InsertSplitLineIntersect", 0)
 
-    for tag, build, call in (("\u66f2\u9762\u5207\u9664\uff08\u2605 \u5b83\u56de\u5bf9\u8c61\uff09", _mk, _surfcut),
-                             ("\u52a0\u539a", _mk_faces_and_solid, _thicken),
-                             ("\u5206\u5272\u7ebf\uff08\u4ea4\u53c9\uff09", _mk_faces_and_solid, _splitline)):
+    for tag, build, call in (
+        (
+            "\u66f2\u9762\u5207\u9664\uff08\u2605 \u5b83\u56de\u5bf9\u8c61\uff09",
+            _mk,
+            _surfcut,
+        ),
+        ("\u52a0\u539a", _mk_faces_and_solid, _thicken),
+        ("\u5206\u5272\u7ebf\uff08\u4ea4\u53c9\uff09", _mk_faces_and_solid, _splitline),
+    ):
         ev["cases"].append(_run(sw, tag, build, call))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
-    ev["with_fd"] = sum(1 for c in ev["cases"] if (c.get("getdefinition") or "None") != "None")
+    ev["with_fd"] = sum(
+        1 for c in ev["cases"] if (c.get("getdefinition") or "None") != "None"
+    )
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("access_selections_works" if ev["passed"]
-                     else ("no_featuredata_reachable" if not ev["with_fd"]
-                           else "access_selections_fails"))
+    ev["verdict"] = (
+        "access_selections_works"
+        if ev["passed"]
+        else (
+            "no_featuredata_reachable"
+            if not ev["with_fd"]
+            else "access_selections_fails"
+        )
+    )
     p = R / "output" / "access-selections-on-featuredata-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08AccessSelections \u8fc7 %d / %d \u00b7 \u62ff\u5230\u6570\u636e\u5bf9\u8c61 %d\uff09" % (
-        ev["verdict"], ev["passed"], ev["total"], ev["with_fd"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08AccessSelections \u8fc7 %d / %d \u00b7 \u62ff\u5230\u6570\u636e\u5bf9\u8c61 %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"], ev["with_fd"])
+    )
     for c in ev["cases"]:
         print("  %-24s \u7279\u5f81=%s" % (c.get("tag"), c.get("feat")))
-        print("        GetDefinition=%s \u00b7 AccessSelections \u8fc7=%s" % (
-            c.get("getdefinition"), c.get("access_ok")))
-        print("        \u56de=%s \u9519\u7801=%s" % (c.get("access_returns"), c.get("error_code")))
+        print(
+            "        GetDefinition=%s \u00b7 AccessSelections \u8fc7=%s"
+            % (c.get("getdefinition"), c.get("access_ok"))
+        )
+        print(
+            "        \u56de=%s \u9519\u7801=%s"
+            % (c.get("access_returns"), c.get("error_code"))
+        )
         for k in ("getdefinition_err", "access_err", "err"):
             if c.get(k):
                 print("        %s=%s" % (k, str(c[k])[:140]))

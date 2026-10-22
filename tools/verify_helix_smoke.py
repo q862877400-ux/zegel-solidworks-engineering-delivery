@@ -26,6 +26,7 @@ r"""@brief 真机冒烟：`sw_helix` —— 验 `insert_helix` 那条路。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -42,6 +43,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "helix-smoke-evidence.json")
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -52,8 +55,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def feature_names(model):
     """把特征树的名字逐个列出来（用于核对"新建的是哪一个"）。"""
     out = []
@@ -62,7 +67,7 @@ def feature_names(model):
         while f is not None:
             out.append(str(__import__("sw_connect").get_com_member(f, "Name")))
             f = __import__("sw_connect").get_com_member(f, "GetNextFeature")
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return out
 
@@ -80,13 +85,18 @@ def main() -> int:
     scratch = None
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         scratch = sw_connect.new_document(sw, "part")
-        chk("新建临时零件（不碰用户文档）", scratch is not None, "ok" if scratch else "建不出来")
+        chk(
+            "新建临时零件（不碰用户文档）",
+            scratch is not None,
+            "ok" if scratch else "建不出来",
+        )
 
         from scripts import sw_helix, sw_part, sw_selection_spec, sw_sketch
 
@@ -94,8 +104,12 @@ def main() -> int:
             t0 = time.time()
             try:
                 return True, fn(), time.time() - t0
-            except Exception as exc:      # noqa: BLE001
-                return False, "%s: %s" % (type(exc).__name__, str(exc)[:160]), time.time() - t0
+            except Exception as exc:  # noqa: BLE001
+                return (
+                    False,
+                    "%s: %s" % (type(exc).__name__, str(exc)[:160]),
+                    time.time() - t0,
+                )
 
         # ① 程序化造前置：进草图 → 画一个圆 → 选中它
         ok, r, _ = timed(lambda: sw_part.start_sketch(scratch))
@@ -114,7 +128,9 @@ def main() -> int:
 
         sel = 0
         if segs:
-            oksel, rsel, _ = timed(lambda: sw_selection_spec.select_object(scratch, segs[0]))
+            oksel, rsel, _ = timed(
+                lambda: sw_selection_spec.select_object(scratch, segs[0])
+            )
             sel = int(rsel) if oksel and isinstance(rsel, int) else 0
         chk("选中那个圆（官方示例的前置）", sel >= 1, "选区计数 = %d" % sel)
 
@@ -122,11 +138,17 @@ def main() -> int:
         ev["features_before"] = before
 
         # ② ★ 本冒烟的核心
-        okh, rh, dth = timed(lambda: sw_helix.insert_helix(
-            scratch, height_mm=50.0, pitch_mm=10.0, revolution=5.0))
-        chk("★ insert_helix(height=50mm, pitch=10mm, 5 圈)", okh,
-            ("返回 %r · %.2fs" % (rh, dth)) if okh else rh)
-        ev["returned"] = (rh if okh else None)
+        okh, rh, dth = timed(
+            lambda: sw_helix.insert_helix(
+                scratch, height_mm=50.0, pitch_mm=10.0, revolution=5.0
+            )
+        )
+        chk(
+            "★ insert_helix(height=50mm, pitch=10mm, 5 圈)",
+            okh,
+            ("返回 %r · %.2fs" % (rh, dth)) if okh else rh,
+        )
+        ev["returned"] = rh if okh else None
 
         after = feature_names(scratch)
         ev["features_after"] = after
@@ -135,13 +157,16 @@ def main() -> int:
 
         # ★★ 验 `_newest_feature_name` 的疑点：返回的名字是不是**那个新特征**
         if okh and new:
-            chk("★★ 返回的名字 == **新建的那个特征**（核 `FirstFeature` 疑点）",
+            chk(
+                "★★ 返回的名字 == **新建的那个特征**（核 `FirstFeature` 疑点）",
                 str(rh) in new,
-                "返回 %r · 新增 %s · 树首 %r" % (rh, new, after[0] if after else None))
+                "返回 %r · 新增 %s · 树首 %r" % (rh, new, after[0] if after else None),
+            )
         # ★★★ 硬验证：把螺旋线的**定义读回来**，核单位换算
         #   官方：`Height` 单位是**米**、`Startangle` 是**弧度**
         #   ⇒ 传 50 mm 应当读回 0.05（而不是 50）
         if okh and new:
+
             def _read_def():
                 feat = sw_connect.get_com_member(scratch, "FeatureByName", str(rh))
                 if feat is None:
@@ -159,27 +184,39 @@ def main() -> int:
             ev["definition"] = rd if okd else str(rd)
             if okd and isinstance(rd, dict) and rd.get("height") is not None:
                 h = float(rd["height"])
-                chk("★★★ 读回 Height ≈ **0.05 米**（证明 mm→米 换算对）",
-                    abs(h - 0.05) < 1e-6, "Height = %r 米（传的是 50 mm）" % h)
+                chk(
+                    "★★★ 读回 Height ≈ **0.05 米**（证明 mm→米 换算对）",
+                    abs(h - 0.05) < 1e-6,
+                    "Height = %r 米（传的是 50 mm）" % h,
+                )
                 p = rd.get("pitch")
-                chk("★ 读回 Pitch ≈ **0.01 米**（10 mm）",
-                    p is not None and abs(float(p) - 0.01) < 1e-6, "Pitch = %r" % p)
+                chk(
+                    "★ 读回 Pitch ≈ **0.01 米**（10 mm）",
+                    p is not None and abs(float(p) - 0.01) < 1e-6,
+                    "Pitch = %r" % p,
+                )
                 rv = rd.get("revolution")
-                chk("★ 读回 Revolution ≈ 5", rv is not None and abs(float(rv) - 5.0) < 1e-6,
-                    "Revolution = %r" % rv)
+                chk(
+                    "★ 读回 Revolution ≈ 5",
+                    rv is not None and abs(float(rv) - 5.0) < 1e-6,
+                    "Revolution = %r" % rv,
+                )
             else:
-                chk("读回螺旋线定义（拿不到就如实记）", False,
-                    "取不到 GetDefinition / Height —— %s" % (rd,))
+                chk(
+                    "读回螺旋线定义（拿不到就如实记）",
+                    False,
+                    "取不到 GetDefinition / Height —— %s" % (rd,),
+                )
 
         ok, r, _ = timed(lambda: sw_part.end_sketch(scratch))
         chk("end_sketch（退出草图）", ok, "ok" if ok else r)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         chk("整体冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:200]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if scratch is not None and sw is not None:
@@ -187,18 +224,30 @@ def main() -> int:
                 if t:
                     sw.CloseDoc(t)
                     print("   （已关闭临时零件 %s，不保存）" % t)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("   ⚠ 收尾关文档失败（请人工确认）：%s" % str(exc)[:90])
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（已知事实 64 的检查）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（已知事实 64 的检查）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              verdict="pass" if checks and all(checks) else "fail",
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        verdict="pass" if checks and all(checks) else "fail",
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
     print("  ⚠ 只证「建成了 + 名字对得上」；**不证螺距/圈数/单位都正确**。")

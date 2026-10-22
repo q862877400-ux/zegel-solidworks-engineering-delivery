@@ -74,10 +74,18 @@ def scan() -> tuple[int, list[str]]:
                 #: 检查）。
                 compile(p.read_text(encoding="utf-8"), str(p), "exec")
             except SyntaxError as exc:
-                bad.append("%s:%s: %s" % (p.relative_to(REPO_ROOT), exc.lineno,
-                                          (exc.msg or "").split("(")[0].strip()))
+                bad.append(
+                    "%s:%s: %s"
+                    % (
+                        p.relative_to(REPO_ROOT),
+                        exc.lineno,
+                        (exc.msg or "").split("(")[0].strip(),
+                    )
+                )
             except UnicodeDecodeError:
-                bad.append("%s: 不是 UTF-8（★ 本仓库要求 UTF-8）" % p.relative_to(REPO_ROOT))
+                bad.append(
+                    "%s: 不是 UTF-8（★ 本仓库要求 UTF-8）" % p.relative_to(REPO_ROOT)
+                )
     return total, bad
 
 
@@ -92,8 +100,10 @@ def main() -> int:
     for b in bad[:20]:
         print("    ✗ %s" % b)
     if bad:
-        print("  ⇒ ★ 修法：★ 多数是**头部 docstring 未闭合**（★ 来源块写进 `\"\"\"` 里了）"
-              "—— ★ 在 `# ── 来源 ──` **之前**补 `\"\"\"`。")
+        print(
+            '  ⇒ ★ 修法：★ 多数是**头部 docstring 未闭合**（★ 来源块写进 `"""` 里了）'
+            '—— ★ 在 `# ── 来源 ──` **之前**补 `"""`。'
+        )
         return 1
     return 0
 

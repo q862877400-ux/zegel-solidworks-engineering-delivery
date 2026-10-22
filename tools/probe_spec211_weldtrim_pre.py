@@ -1,4 +1,5 @@
 """★ 探针：`InsertWeldmentTrimFeature2` **第二步** —— ★ 把前置完全对上，把「试死」与「大发现」分开。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-1 的第二步探针）
 # 文件:   tools/probe_spec211_weldtrim_pre.py
@@ -13,7 +14,7 @@
 #     · ★ **建成** ⇒ ★★ **「大发现」** ✓
 #   ★ 主判据一律**回读**：★ **特征树多了新特征**（★ 不看返回值 ✓）
 #   ★★ **前置逐条对上**（★ 否则读数没有判别力 ✓）：
-# ★ ① **焊件特征**：★ 官方要"焊件体" ⇒ ★ 先 `InsertWeldmentFeature`（★ 本模块既有的调用 
+# ★ ① **焊件特征**：★ 官方要"焊件体" ⇒ ★ 先 `InsertWeldmentFeature`（★ 本模块既有的调用
 # ✓）
 #     ★ ② **两个体**：★ 用**两次拉伸**各产一个体 ✓
 # ★ ③ **按 mark 选**：★★ **`IEntity::Select4` 没有 mark 参数** ✗（★ 记忆里 `revolve_boss
@@ -47,9 +48,11 @@ def main() -> int:
     import sw_weldment as W
     import sw_selection_spec as SS
 
-    out: dict = {"official": "IFeatureManager.InsertWeldmentTrimFeature2",
-                 "step": "第二步：把前置完全对上",
-                 "marks": dict(W.WELDMENT_TRIM_MARKS)}
+    out: dict = {
+        "official": "IFeatureManager.InsertWeldmentTrimFeature2",
+        "step": "第二步：把前置完全对上",
+        "marks": dict(W.WELDMENT_TRIM_MARKS),
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -63,8 +66,9 @@ def main() -> int:
     #: ① 两个体（★ 各由一次拉伸产生 ⇒ ★ 各有名字 ✓）
     for rect in (BODY_A, BODY_B):
         sw_part.start_sketch(model, "Front Plane")
-        sw_part.sketch_corner_rectangle(model, rect["x1_mm"], rect["y1_mm"],
-                                        rect["x2_mm"], rect["y2_mm"])
+        sw_part.sketch_corner_rectangle(
+            model, rect["x1_mm"], rect["y1_mm"], rect["x2_mm"], rect["y2_mm"]
+        )
         name = sw_part.current_sketch_name(model)
         sw_part.end_sketch(model)
         sw_part.extrude_boss(model, name, 20.0)
@@ -80,42 +84,69 @@ def main() -> int:
     weld = None
     try:
         weld = sw_connect.get_com_member(fm, "InsertWeldmentFeature")
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["weldment_feature_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
     out["weldment_feature_ok"] = weld is not None
-    print("★ `InsertWeldmentFeature` ⇒ %r" % ("建了" if weld is not None else "没建/报错"))
+    print(
+        "★ `InsertWeldmentFeature` ⇒ %r" % ("建了" if weld is not None else "没建/报错")
+    )
 
-    #: ③ **按 mark 选两个体**（★ 用"生成体的特征名" + `BODYFEATURE` ✓；★ Callout 按事实 
+    #: ③ **按 mark 选两个体**（★ 用"生成体的特征名" + `BODYFEATURE` ✓；★ Callout 按事实
     #: 33 ✓）
     if len(extrudes) < 2:
         out["stage"] = "precondition"
-        out["error"] = "★ 拉伸特征不足两个（★ 实测 %d 个）⇒ ★ 前置立不起来" % len(extrudes)
+        out["error"] = "★ 拉伸特征不足两个（★ 实测 %d 个）⇒ ★ 前置立不起来" % len(
+            extrudes
+        )
         print("★★ %s" % out["error"])
     else:
         ext = sw_connect.get_com_member(model, "Extension")
-        ok1 = bool(sw_part._select_by_id(ext, extrudes[0], "BODYFEATURE",
-                                         append=False, mark=1))
-        ok2 = bool(sw_part._select_by_id(ext, extrudes[1], "BODYFEATURE",
-                                         append=True, mark=2))
-        out["select_results"] = {"mark1_body_to_trim": ok1, "mark2_boundary": ok2,
-                                 "feature_names": extrudes[:2]}
+        ok1 = bool(
+            sw_part._select_by_id(ext, extrudes[0], "BODYFEATURE", append=False, mark=1)
+        )
+        ok2 = bool(
+            sw_part._select_by_id(ext, extrudes[1], "BODYFEATURE", append=True, mark=2)
+        )
+        out["select_results"] = {
+            "mark1_body_to_trim": ok1,
+            "mark2_boundary": ok2,
+            "feature_names": extrudes[:2],
+        }
         out["selection_count"] = SS.get_selection_count(model)
-        print("★ 选择：mark1=%r · mark2=%r · 选区计数=%r"
-              % (ok1, ok2, out["selection_count"]))
+        print(
+            "★ 选择：mark1=%r · mark2=%r · 选区计数=%r"
+            % (ok1, ok2, out["selection_count"])
+        )
         #: ④ **调**
         rep = W.insert_weldment_trim_report(model, end_cond=0, options=0, gap_mm=0.0)
-        out["report"] = {k: rep.get(k) for k in
-                         ("ok", "returned_is_none", "new_features", "feature_count_before",
-                          "feature_count_after", "selection_count_before", "error")}
+        out["report"] = {
+            k: rep.get(k)
+            for k in (
+                "ok",
+                "returned_is_none",
+                "new_features",
+                "feature_count_before",
+                "feature_count_after",
+                "selection_count_before",
+                "error",
+            )
+        }
         if rep.get("ok"):
-            out["verdict"] = "★★★★ **建成** ⇒ ★ **「大发现」**：★ 裁剪/延伸焊件这条路走得通 ✓"
+            out["verdict"] = (
+                "★★★★ **建成** ⇒ ★ **「大发现」**：★ 裁剪/延伸焊件这条路走得通 ✓"
+            )
         else:
-            out["verdict"] = ("★★★★ **前置全对上、仍不建** ⇒ ★★ **这才是真正的「试死」** ✓")
+            out["verdict"] = (
+                "★★★★ **前置全对上、仍不建** ⇒ ★★ **这才是真正的「试死」** ✓"
+            )
         print("★★ 调用后 ⇒ ok=%r · 新增 %r" % (rep.get("ok"), rep.get("new_features")))
         print("★★★ 判定 ⇒ %s" % out["verdict"])
 
     p = ROOT / "output" / "spec211-b3-weldtrim-pre.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

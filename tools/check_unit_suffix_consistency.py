@@ -1,4 +1,5 @@
 """★ 规格 212 · C 改版：**名字后缀 ↔ 描述单位词** 的一致性检查（★ 只报不拦）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 212 · C 批的第二版）
 # 文件:   tools/check_unit_suffix_consistency.py
@@ -32,7 +33,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
-for _p in (str(ROOT), str(ROOT / "mcp-server"), str(ROOT / "scripts"), str(ROOT / "tools")):
+for _p in (
+    str(ROOT),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "scripts"),
+    str(ROOT / "tools"),
+):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -85,47 +91,101 @@ def main() -> int:
                 continue
             with_suffix += 1
             if not d:
-                inconsistent.append({"tool": s.name, "param": name, "suffix": suf,
-                                     "why": "带后缀但**没有描述** ⇒ 无法核对"})
+                inconsistent.append(
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "suffix": suf,
+                        "why": "带后缀但**没有描述** ⇒ 无法核对",
+                    }
+                )
                 continue
             # ── ① 一致性：描述里有没有本档单位词 ──────────────────────────
             m = UNIT_WORDS[suf].search(d)
             if not m:
-                inconsistent.append({"tool": s.name, "param": name, "suffix": suf,
-                                     "why": "描述里**没有**本档单位词", "desc": d[:110]})
+                inconsistent.append(
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "suffix": suf,
+                        "why": "描述里**没有**本档单位词",
+                        "desc": d[:110],
+                    }
+                )
             # ── ③ ★★ **后缀说假话**（★ 描述自称无量纲、却有单位后缀）────────
             claim = _DIMENSIONLESS_CLAIM.search(d)
             if claim:
-                fake.append({"tool": s.name, "param": name, "suffix": suf,
-                             "claimed": claim.group(0), "desc": d[:110]})
+                fake.append(
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "suffix": suf,
+                        "claimed": claim.group(0),
+                        "desc": d[:110],
+                    }
+                )
             # ── ② 矛盾（★ 只登记并列，★ 不判）────────────────────────────
             if suf == "_mm" and _METER_WORDS.search(d):
-                conflicts.append({"tool": s.name, "param": name, "suffix": suf,
-                                  "matched": _METER_WORDS.search(d).group(0),
-                                  "desc": d[:110]})
-    print("★ 一致性体检（★ 只报不拦）：形参 **%d** ⇒ ★ **带单位后缀 %d**（★ 只查这些）"
-          % (scanned, with_suffix))
+                conflicts.append(
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "suffix": suf,
+                        "matched": _METER_WORDS.search(d).group(0),
+                        "desc": d[:110],
+                    }
+                )
+    print(
+        "★ 一致性体检（★ 只报不拦）：形参 **%d** ⇒ ★ **带单位后缀 %d**（★ 只查这些）"
+        % (scanned, with_suffix)
+    )
     print("★★ ① 描述里**没有**本档单位词 ⇒ **%d** 条" % len(inconsistent))
     for it in inconsistent[:18]:
-        print("      %-48s [%s] %s" % (it["tool"] + " · " + it["param"], it["suffix"],
-                                       it.get("why", "")[:44]))
+        print(
+            "      %-48s [%s] %s"
+            % (it["tool"] + " · " + it["param"], it["suffix"], it.get("why", "")[:44])
+        )
     if len(inconsistent) > 18:
         print("      …（共 %d 条）" % len(inconsistent))
-    print("★★★ ③ ★★ **后缀说假话**（★ 描述自称%s、却带单位后缀）⇒ **%d** 条"
-          % ("无量纲/枚举/布尔", len(fake)))
+    print(
+        "★★★ ③ ★★ **后缀说假话**（★ 描述自称%s、却带单位后缀）⇒ **%d** 条"
+        % ("无量纲/枚举/布尔", len(fake))
+    )
     for it in fake:
-        print("      %-48s [%s] 自称「%s」  %s" % (it["tool"] + " · " + it["param"],
-                                                   it["suffix"], it["claimed"], it["desc"][:44]))
-    print("★★ ② 名字带 `_mm` 而描述里出现**米**（★ 只登记并列、★ 由人工看，★ 不作判据）⇒ **%d** 条"
-          % len(conflicts))
+        print(
+            "      %-48s [%s] 自称「%s」  %s"
+            % (
+                it["tool"] + " · " + it["param"],
+                it["suffix"],
+                it["claimed"],
+                it["desc"][:44],
+            )
+        )
+    print(
+        "★★ ② 名字带 `_mm` 而描述里出现**米**（★ 只登记并列、★ 由人工看，★ 不作判据）⇒ **%d** 条"
+        % len(conflicts)
+    )
     for it in conflicts[:10]:
-        print("      %-48s 匹配 %r %s" % (it["tool"] + " · " + it["param"],
-                                          it["matched"], it["desc"][:44]))
+        print(
+            "      %-48s 匹配 %r %s"
+            % (it["tool"] + " · " + it["param"], it["matched"], it["desc"][:44])
+        )
     p = ROOT / "output" / "spec212-suffix-consistency.json"
-    p.write_text(json.dumps({"params": scanned, "with_suffix": with_suffix,
-                             "inconsistent": inconsistent, "meter_conflicts": conflicts,
-                             "fake_suffix": fake},
-                            ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(
+            {
+                "params": scanned,
+                "with_suffix": with_suffix,
+                "inconsistent": inconsistent,
+                "meter_conflicts": conflicts,
+                "fake_suffix": fake,
+            },
+            ensure_ascii=False,
+            indent=1,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

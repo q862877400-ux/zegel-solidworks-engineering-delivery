@@ -1,4 +1,5 @@
 """★ 宏执行：`ISldWorks.RunMacro2`（★ 规格 202 的 FR-008「宏/VBA 执行」那一半）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）+ 官方结构化页
 # 文件:   `C:\swapi\types\ISldWorks\RunMacro2.md` —— 官方签名**四个入参 + 一个 out**：
@@ -27,8 +28,8 @@ from typing import Any
 
 #: `swRunMacroOption_e` —— 两源一致（官方页表格 == 出厂反射）
 RUN_MACRO_OPTIONS = {
-    "default": 0,              # swRunMacroDefault
-    "unload_after_run": 1,     # swRunMacroUnloadAfterRun
+    "default": 0,  # swRunMacroDefault
+    "unload_after_run": 1,  # swRunMacroUnloadAfterRun
 }
 
 #: `swRunMacroError_e` —— **全 28 个成员**，★ 两源**按成员逐一比对一致**
@@ -36,13 +37,34 @@ RUN_MACRO_OPTIONS = {
 #: ✓
 #: enum-gate: enum swRunMacroError_e
 RUN_MACRO_ERRORS = {
-    "InvalidArg": 1, "MacrosAreDisabled": 2, "NotInDesignMode": 3, "OnlyCodeModules": 4,
-    "OutOfMemory": 5, "InvalidProcname": 6, "InvalidPropertyType": 7, "SuborfuncExpected": 8,
-    "BadParmCount": 9, "BadVarType": 10, "UserInterrupt": 11, "Exception": 12,
-    "Overflow": 13, "TypeMismatch": 14, "ParmNotOptional": 15, "UnknownLcid": 16,
-    "Busy": 17, "ConnectionTerminated": 18, "CallRejected": 19, "CallFailed": 20,
-    "Zombied": 21, "Invalidindex": 22, "NoPermission": 23, "Reverted": 24,
-    "TooManyOpenFiles": 25, "DiskError": 26, "CantSave": 27, "OpenFileFailed": 28,
+    "InvalidArg": 1,
+    "MacrosAreDisabled": 2,
+    "NotInDesignMode": 3,
+    "OnlyCodeModules": 4,
+    "OutOfMemory": 5,
+    "InvalidProcname": 6,
+    "InvalidPropertyType": 7,
+    "SuborfuncExpected": 8,
+    "BadParmCount": 9,
+    "BadVarType": 10,
+    "UserInterrupt": 11,
+    "Exception": 12,
+    "Overflow": 13,
+    "TypeMismatch": 14,
+    "ParmNotOptional": 15,
+    "UnknownLcid": 16,
+    "Busy": 17,
+    "ConnectionTerminated": 18,
+    "CallRejected": 19,
+    "CallFailed": 20,
+    "Zombied": 21,
+    "Invalidindex": 22,
+    "NoPermission": 23,
+    "Reverted": 24,
+    "TooManyOpenFiles": 25,
+    "DiskError": 26,
+    "CantSave": 27,
+    "OpenFileFailed": 28,
 }
 _ERROR_NAME_BY_VALUE = {v: k for k, v in RUN_MACRO_ERRORS.items()}
 
@@ -94,8 +116,8 @@ _ERROR_NAME_BY_VALUE = {v: k for k, v in RUN_MACRO_ERRORS.items()}
 #: ★ 官方 `swCommands_e` 里与「原生录制」有关的两条（★ 逐字抄；★ **130 多个 UserMacro 不
 #: 抄**）
 RECORD_COMMANDS = {
-    "record_pause_macro": 29,   # swCommands_RecordPauseMacro —— Record\Pause Macro（**切换**）
-    "stop_macro": 31,           # swCommands_StopMacro —— ★ 枚举页逐字「**opens the Save As dialog**」
+    "record_pause_macro": 29,  # swCommands_RecordPauseMacro —— Record\Pause Macro（**切换**）
+    "stop_macro": 31,  # swCommands_StopMacro —— ★ 枚举页逐字「**opens the Save As dialog**」
 }
 
 #: ★★ **本模块明确不去点的那个命令**（★ 理由逐字，不静默）
@@ -116,26 +138,35 @@ def toggle_macro_recording(sw_app) -> dict[str, Any]:
       ★ 调用方要么自己保证成对调用，要么用 :func:`record_macro_lines`（★ 它成对做）✓
     :returns: `{ok, entry_used, command_id, returned, note, error}`
     """
-    from sw_connect import get_com_member                               # noqa: E402
+    from sw_connect import get_com_member  # noqa: E402
+
     out: dict[str, Any] = {
-        "ok": False, "entry_used": 'ISldWorks::RunCommand(swCommands_RecordPauseMacro=29, "")',
-        "command_id": RECORD_COMMANDS["record_pause_macro"], "returned": None,
-        "note": ("★ **这是切换、不是置位** —— ★ 本函数**不声称**切换后的状态"
-                 "（★ 官方页没说怎么读它；★ 本仓不猜）"),
+        "ok": False,
+        "entry_used": 'ISldWorks::RunCommand(swCommands_RecordPauseMacro=29, "")',
+        "command_id": RECORD_COMMANDS["record_pause_macro"],
+        "returned": None,
+        "note": (
+            "★ **这是切换、不是置位** —— ★ 本函数**不声称**切换后的状态"
+            "（★ 官方页没说怎么读它；★ 本仓不猜）"
+        ),
         "error": None,
     }
     if sw_app is None:
         out["error"] = "sw_app 为 None"
         return out
     try:
-        out["returned"] = get_com_member(sw_app, "RunCommand",
-                                         int(RECORD_COMMANDS["record_pause_macro"]), "")
-    except Exception as exc:                                            # noqa: BLE001
+        out["returned"] = get_com_member(
+            sw_app, "RunCommand", int(RECORD_COMMANDS["record_pause_macro"]), ""
+        )
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "RunCommand 失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     out["ok"] = bool(out["returned"])
     if not out["ok"]:
-        out["error"] = "RunCommand(29) 回 %r（官方 Returns 逐字：True = 命令跑了）" % out["returned"]
+        out["error"] = (
+            "RunCommand(29) 回 %r（官方 Returns 逐字：True = 命令跑了）"
+            % out["returned"]
+        )
     return out
 
 
@@ -147,14 +178,20 @@ def record_line(sw_app, text: str) -> dict[str, Any]:
       ★ 本函数**只回报那个 `bool`**，★ **不把它当成「已写入」的证明** ✓
     :returns: `{ok, entry_used, text_len, returned, precondition_note, error}`
     """
-    from sw_connect import get_com_member                               # noqa: E402
+    from sw_connect import get_com_member  # noqa: E402
+
     out: dict[str, Any] = {
-        "ok": False, "entry_used": "ISldWorks::RecordLine(System.string Text)",
-        "text_len": len(str(text or "")), "returned": None, "error": None,
-        "precondition_note": ("★★ 官方 Remarks 逐字：**只有录制开着时** Text 才被写进宏 ⇒ "
-                              "★ 调用前先 `RunCommand(swCommands_RecordPauseMacro)` ✓ "
-                              "★ 而「真写进去了没有」**要落盘的宏文件才能证** —— 那要 "
-                              "`swCommands_StopMacro`（**弹 Save As**）⇒ ★ 本模块不去点它 ✓"),
+        "ok": False,
+        "entry_used": "ISldWorks::RecordLine(System.string Text)",
+        "text_len": len(str(text or "")),
+        "returned": None,
+        "error": None,
+        "precondition_note": (
+            "★★ 官方 Remarks 逐字：**只有录制开着时** Text 才被写进宏 ⇒ "
+            "★ 调用前先 `RunCommand(swCommands_RecordPauseMacro)` ✓ "
+            "★ 而「真写进去了没有」**要落盘的宏文件才能证** —— 那要 "
+            "`swCommands_StopMacro`（**弹 Save As**）⇒ ★ 本模块不去点它 ✓"
+        ),
     }
     if sw_app is None:
         out["error"] = "sw_app 为 None"
@@ -164,13 +201,15 @@ def record_line(sw_app, text: str) -> dict[str, Any]:
         return out
     try:
         out["returned"] = get_com_member(sw_app, "RecordLine", str(text))
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "RecordLine 失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     out["ok"] = bool(out["returned"])
     if not out["ok"]:
-        out["error"] = ("RecordLine 回 %r（官方 Returns 逐字：True = 成功）—— "
-                        "★ 也可能是**录制没开**（★ 见 precondition_note）" % out["returned"])
+        out["error"] = (
+            "RecordLine 回 %r（官方 Returns 逐字：True = 成功）—— "
+            "★ 也可能是**录制没开**（★ 见 precondition_note）" % out["returned"]
+        )
     return out
 
 
@@ -188,11 +227,16 @@ def record_macro_lines(sw_app, lines) -> dict[str, Any]:
       ★ 并在返回值里**写明限度**：★ **"宏文件真的落了盘"证不了**（那要弹 Save As 的 31）✓
     """
     out: dict[str, Any] = {
-        "ok": False, "entry_used": "RunCommand(29) → RecordLine × N → RunCommand(29)",
-        "lines_written": 0, "open_returned": None, "line_returns": [], "close_returned": None,
-        "stop_macro_warning": STOP_MACRO_DIALOG_WARNING, "error": None,
+        "ok": False,
+        "entry_used": "RunCommand(29) → RecordLine × N → RunCommand(29)",
+        "lines_written": 0,
+        "open_returned": None,
+        "line_returns": [],
+        "close_returned": None,
+        "stop_macro_warning": STOP_MACRO_DIALOG_WARNING,
+        "error": None,
         "★": "判据 = **成对调用 + 逐行返回值都为 True**；★★ 但**「宏文件落了盘」证不了** —— "
-             "那要 `swCommands_StopMacro`(31)，而它**弹 Save As** ⇒ 本模块**不点它** ✓",
+        "那要 `swCommands_StopMacro`(31)，而它**弹 Save As** ⇒ 本模块**不点它** ✓",
     }
     if sw_app is None:
         out["error"] = "sw_app 为 None"
@@ -221,16 +265,28 @@ def record_macro_lines(sw_app, lines) -> dict[str, Any]:
         out["close_returned"] = closed.get("returned")
         if not closed.get("ok") and not out["error"]:
             out["error"] = "停录制失败：%s" % closed.get("error")
-    out["ok"] = (bool(out["open_returned"]) and bool(out["close_returned"])
-                 and out["lines_written"] == len(items))
+    out["ok"] = (
+        bool(out["open_returned"])
+        and bool(out["close_returned"])
+        and out["lines_written"] == len(items)
+    )
     if not out["ok"] and not out["error"]:
-        out["error"] = ("回读判据未过：开 %r · 逐行 %r · 停 %r"
-                        % (out["open_returned"], out["line_returns"], out["close_returned"]))
+        out["error"] = "回读判据未过：开 %r · 逐行 %r · 停 %r" % (
+            out["open_returned"],
+            out["line_returns"],
+            out["close_returned"],
+        )
     return out
 
 
-def run_macro(sw_app, file_path: str, module_name: str, procedure_name: str,
-              *, options: int = RUN_MACRO_OPTIONS["default"]) -> dict[str, Any]:
+def run_macro(
+    sw_app,
+    file_path: str,
+    module_name: str,
+    procedure_name: str,
+    *,
+    options: int = RUN_MACRO_OPTIONS["default"],
+) -> dict[str, Any]:
     """执行一个宏文件，返回**可 JSON 化**的结果（★ 不回 COM 对象）。
 
     ★ 判据（★ 与仓库其余「回读优先」一致）：★ **`ok` 取官方那个 bool 返回值**，
@@ -251,14 +307,21 @@ def run_macro(sw_app, file_path: str, module_name: str, procedure_name: str,
     ret = None
     raised = None
     try:
-        ret = get_com_member(sw_app, "RunMacro2", str(file_path), str(module_name),
-                             str(procedure_name), int(options), err_holder)
-    except Exception as exc:                                   # noqa: BLE001
+        ret = get_com_member(
+            sw_app,
+            "RunMacro2",
+            str(file_path),
+            str(module_name),
+            str(procedure_name),
+            int(options),
+            err_holder,
+        )
+    except Exception as exc:  # noqa: BLE001
         raised = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     code = None
     try:
         code = int(err_holder.value)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         code = None
     return {
         "ok": bool(ret) and raised is None,
@@ -272,6 +335,6 @@ def run_macro(sw_app, file_path: str, module_name: str, procedure_name: str,
         "procedure": str(procedure_name),
         "options": int(options),
         "★": "★ `ok` = 官方 bool 返回值且**未抛异常**；★★ 失败原因看 `error_name`（★ 名字取自 "
-             "`swRunMacroError_e`，两源一致）✓ ⚠ 该 bool 的**语义**官方页没写细（Remarks 为空）⇒ "
-             "只回读数、不替官方下结论 ✓",
+        "`swRunMacroError_e`，两源一致）✓ ⚠ 该 bool 的**语义**官方页没写细（Remarks 为空）⇒ "
+        "只回读数、不替官方下结论 ✓",
     }

@@ -38,13 +38,18 @@ STUDY = "SPEC202_MeshSettings_%d" % int(time.time())
 
 def flush(ev: dict) -> None:
     """★ 每一步都落盘（★ 挂住/被杀也不丢读数）。"""
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
 
 
 def main() -> int:
-    ev: dict = {"★_目的": "只读网格设置那一组数 —— 定 `ElementSize`/`MinElementSize` 的**单位口径**",
-                "★_前情": "上一轮把 2.465（毫米）写进 MinElementSize ⇒ 探针卡 13 分钟、SW Not Responding",
-                "study": STUDY, "steps": {}}
+    ev: dict = {
+        "★_目的": "只读网格设置那一组数 —— 定 `ElementSize`/`MinElementSize` 的**单位口径**",
+        "★_前情": "上一轮把 2.465（毫米）写进 MinElementSize ⇒ 探针卡 13 分钟、SW Not Responding",
+        "study": STUDY,
+        "steps": {},
+    }
     flush(ev)
     doc = None
     try:
@@ -55,7 +60,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                             # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         doc = sw_connect.new_document(sw, "part")
@@ -71,16 +76,22 @@ def main() -> int:
         if study is None:
             raise RuntimeError("按名字取不到研究 %r" % STUDY)
         ev["steps"]["setup"] = {"study": STUDY, "bbox_mm": [100.0, 60.0, 30.0]}
-        flush(ev)                                                     # ★ 落盘
+        flush(ev)  # ★ 落盘
         print("  [1] 零件+算例就绪：%s" % STUDY)
 
         #: ★★ **只读**，而且走**可杀的子进程**（★ 上一轮就是卡在这里）
-        r = run_isolated("scripts.sw_simulation_worker", "mesh_settings_by_name",
-                         args=[STUDY], kwargs={}, timeout=180)
-        ev["steps"]["mesh_settings"] = {k: r.get(k) for k in
-                                        ("ok", "timed_out", "wall_seconds", "error")}
+        r = run_isolated(
+            "scripts.sw_simulation_worker",
+            "mesh_settings_by_name",
+            args=[STUDY],
+            kwargs={},
+            timeout=180,
+        )
+        ev["steps"]["mesh_settings"] = {
+            k: r.get(k) for k in ("ok", "timed_out", "wall_seconds", "error")
+        }
         ev["steps"]["mesh_settings"]["result"] = r.get("result")
-        flush(ev)                                                     # ★ 落盘
+        flush(ev)  # ★ 落盘
         print("  [2] 只读读数: ok=%s timed_out=%s" % (r.get("ok"), r.get("timed_out")))
         print("      result: %s" % str(r.get("result"))[:400])
 
@@ -91,21 +102,24 @@ def main() -> int:
             "ElementSize": size,
             "零件最大边_mm": 100.0,
             "官方建议量级_约": "4.93",
-            "★_结论": ("★ 4.93 量级 ⇒ **毫米**；0.0049 量级 ⇒ **米**；"
-                       "★ 读不到/为 None ⇒ **不下断言**（照铁律 5 写查不到）"),
+            "★_结论": (
+                "★ 4.93 量级 ⇒ **毫米**；0.0049 量级 ⇒ **米**；"
+                "★ 读不到/为 None ⇒ **不下断言**（照铁律 5 写查不到）"
+            ),
         }
         flush(ev)
-    except Exception as exc:                                          # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         flush(ev)
     finally:
         try:
             import sw_connect
+
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                             # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         flush(ev)
     print("★ wrote", OUT)

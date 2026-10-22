@@ -1,4 +1,5 @@
 """门禁脚本共用的「向上找声明行」实现（原先 4 个门禁各有一份）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   scripts/gate_decl.py
@@ -22,7 +23,8 @@ from typing import Any
 
 #: ★ `arity-reflect` 族共用的声明正则（两个门禁原本各写一遍、逐字相同）
 DECL_ARITY_REFLECT = re.compile(
-    r"^#:\s*arity-reflect:\s*byref=(?P<mode>included|excluded)\s*$")
+    r"^#:\s*arity-reflect:\s*byref=(?P<mode>included|excluded)\s*$"
+)
 
 
 def declaration_above(lines: list[str], lineno: int, decl: Any):

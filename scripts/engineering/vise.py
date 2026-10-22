@@ -1,4 +1,5 @@
 """★ 阶段 5 · 平口钳：共享接口 + 传动 + 钳口自由 + 螺纹定义（规格 320 的 H1~H4）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -81,8 +82,9 @@ class ViseModel:
 
     interfaces: dict = field(default_factory=dict)
 
-    def set(self, name: str, kind: str, value: float,
-            unit: str = "mm") -> SharedInterface:
+    def set(
+        self, name: str, kind: str, value: float, unit: str = "mm"
+    ) -> SharedInterface:
         it = SharedInterface(name=name, kind=kind, value=float(value), unit=unit)
         self.interfaces[name] = it
         return it
@@ -120,8 +122,10 @@ def default_model() -> ViseModel:
 # 二、接口变更传播（★ H1 —— ★ FR-002）
 #: ══════════════════════════════════════════════════════════════════════
 
-def propagate(interface_name: str, old: float, new: float,
-              all_parts: tuple | None = None) -> dict:
+
+def propagate(
+    interface_name: str, old: float, new: float, all_parts: tuple | None = None
+) -> dict:
     """★★ **接口变更传播**（★ FR-002）。
 
     ★★ 判据（★ 两条都要）：
@@ -129,21 +133,35 @@ def propagate(interface_name: str, old: float, new: float,
       · **不依赖它的零件可复用**（★ 不是「全都标脏」—— ★ 与阶段 3 的失效闭包同族）
     """
     if old == new:
-        return {"changed": False, "stale": [], "reusable": list(all_parts or ()),
-                "reason": "★ 值没变 ⇒ 无传播"}
+        return {
+            "changed": False,
+            "stale": [],
+            "reusable": list(all_parts or ()),
+            "reason": "★ 值没变 ⇒ 无传播",
+        }
     affected = set(INTERFACE_DEPENDENTS.get(interface_name, ()))
-    parts = list(all_parts) if all_parts is not None else sorted(
-        {p for v in INTERFACE_DEPENDENTS.values() for p in v})
+    parts = (
+        list(all_parts)
+        if all_parts is not None
+        else sorted({p for v in INTERFACE_DEPENDENTS.values() for p in v})
+    )
     stale = [p for p in parts if p in affected]
     reusable = [p for p in parts if p not in affected]
-    return {"changed": True, "interface": interface_name,
-            "old": old, "new": new, "stale": stale, "reusable": reusable,
-            "ok": bool(stale)}
+    return {
+        "changed": True,
+        "interface": interface_name,
+        "old": old,
+        "new": new,
+        "stale": stale,
+        "reusable": reusable,
+        "ok": bool(stale),
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 三、传动计算（★ H2 —— ★ FR-003：独立计算，不靠 CAD）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class TravelCheck:
@@ -168,17 +186,23 @@ class TravelCheck:
         return self.delta <= self.tolerance_mm
 
     def verdict(self) -> dict:
-        return {"computed_mm": round(self.computed, 6),
-                "readback_mm": round(self.readback_mm, 6),
-                "delta_mm": round(self.delta, 6),
-                "tolerance_mm": self.tolerance_mm,
-                "consistent": self.consistent,
-                "★": "★ 独立算（导程×圈数）与回读**分别**核对"}
+        return {
+            "computed_mm": round(self.computed, 6),
+            "readback_mm": round(self.readback_mm, 6),
+            "delta_mm": round(self.delta, 6),
+            "tolerance_mm": self.tolerance_mm,
+            "consistent": self.consistent,
+            "★": "★ 独立算（导程×圈数）与回读**分别**核对",
+        }
 
 
-def lead_to_travel(lead_mm: float, turns: float,
-                   *, readback_mm: float | None = None,
-                   tolerance_mm: float = 0.01) -> TravelCheck:
+def lead_to_travel(
+    lead_mm: float,
+    turns: float,
+    *,
+    readback_mm: float | None = None,
+    tolerance_mm: float = 0.01,
+) -> TravelCheck:
     """★★ **导程 → 位移**（★ H2 —— ★ FR-003）。
 
     ★★ 判据（★ **两条腿**）：
@@ -188,15 +212,19 @@ def lead_to_travel(lead_mm: float, turns: float,
       （★ 外部方案 §新增风险 4 逐字：「生成器与验证器都用同一份错误参数……
         会一起给出错误的绿灯」）。
     """
-    return TravelCheck(lead_mm=float(lead_mm), turns=float(turns),
-                       travel_mm=float(lead_mm) * float(turns),
-                       readback_mm=float(readback_mm or 0.0),
-                       tolerance_mm=float(tolerance_mm))
+    return TravelCheck(
+        lead_mm=float(lead_mm),
+        turns=float(turns),
+        travel_mm=float(lead_mm) * float(turns),
+        readback_mm=float(readback_mm or 0.0),
+        tolerance_mm=float(tolerance_mm),
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、活动钳口的自由度（★ H3 —— ★ FR-004/005）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class JawFreedom:
@@ -219,29 +247,42 @@ class JawFreedom:
           ★ 被固定 = **功能没了**，★ 而「装配成功」看不出来（★ R1 突变正是这一类）。
         """
         if self.is_fixed or self.dof <= 0:
-            return {"verdict": "jaw-fixed", "dof": self.dof,
-                    "releasing": False,
-                    "reason": "★★ 活动钳口**被固定**（或自由度为 0）⇒ "
-                              "★ 功能没了（★ 而装配成功看不出来）"}
+            return {
+                "verdict": "jaw-fixed",
+                "dof": self.dof,
+                "releasing": False,
+                "reason": "★★ 活动钳口**被固定**（或自由度为 0）⇒ "
+                "★ 功能没了（★ 而装配成功看不出来）",
+            }
         if not self.annotated_motions:
-            return {"verdict": "under_constrained", "dof": self.dof,
-                    "releasing": False,
-                    "reason": "★ 有自由度但**没逐条标注** ⇒ 欠约束"}
-        return {"verdict": "expected_motion", "dof": self.dof,
-                "motions": list(self.annotated_motions), "releasing": True,
-                "reason": "★ 有自由度且已标注 ⇒ 预期运动（★ 允许）"}
+            return {
+                "verdict": "under_constrained",
+                "dof": self.dof,
+                "releasing": False,
+                "reason": "★ 有自由度但**没逐条标注** ⇒ 欠约束",
+            }
+        return {
+            "verdict": "expected_motion",
+            "dof": self.dof,
+            "motions": list(self.annotated_motions),
+            "releasing": True,
+            "reason": "★ 有自由度且已标注 ⇒ 预期运动（★ 允许）",
+        }
 
 
-def check_jaw_free(*, dof: int, motions: list | None = None,
-                   is_fixed: bool = False) -> JawFreedom:
+def check_jaw_free(
+    *, dof: int, motions: list | None = None, is_fixed: bool = False
+) -> JawFreedom:
     """★ 建一个活动钳口自由度检查（★ 判据见 `JawFreedom.verdict`）。"""
-    return JawFreedom(dof=int(dof), annotated_motions=list(motions or ()),
-                      is_fixed=bool(is_fixed))
+    return JawFreedom(
+        dof=int(dof), annotated_motions=list(motions or ()), is_fixed=bool(is_fixed)
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 五、螺纹工程定义（★ H4 —— ★ FR-007）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class ThreadSpec:
@@ -280,30 +321,52 @@ class ThreadSpec:
         """
         miss = self.missing()
         if miss:
-            return {"verdict": "INDETERMINATE", "missing": miss,
-                    "releasing": False,
-                    "reason": "★ 螺纹工程定义缺 %s ⇒ **缺依据不得算通过**" % miss}
-        return {"verdict": "PASS", "releasing": True,
-                "spec": "%s %s × %g（%s，%s）"
-                        % (self.standard, self.designation, self.pitch_mm,
-                           self.tolerance_class, self.material)}
+            return {
+                "verdict": "INDETERMINATE",
+                "missing": miss,
+                "releasing": False,
+                "reason": "★ 螺纹工程定义缺 %s ⇒ **缺依据不得算通过**" % miss,
+            }
+        return {
+            "verdict": "PASS",
+            "releasing": True,
+            "spec": "%s %s × %g（%s，%s）"
+            % (
+                self.standard,
+                self.designation,
+                self.pitch_mm,
+                self.tolerance_class,
+                self.material,
+            ),
+        }
 
 
 #: ★ 默认的螺杆螺纹（★ 冻结：Tr20×4，梯形螺纹）
 def default_thread() -> ThreadSpec:
-    return ThreadSpec(standard="GB/T 5796", designation="Tr20", pitch_mm=4.0,
-                      tolerance_class="7H/7e", material="45钢")
+    return ThreadSpec(
+        standard="GB/T 5796",
+        designation="Tr20",
+        pitch_mm=4.0,
+        tolerance_class="7H/7e",
+        material="45钢",
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 六、整体验收（★ S5）
 #: ══════════════════════════════════════════════════════════════════════
 
-def evaluate_vise(model: ViseModel, *, thread: ThreadSpec | None = None,
-                  turns: float = 5.0, readback_mm: float | None = None,
-                  jaw_dof: int = 1,
-                  jaw_motions: list | None = None,
-                  jaw_fixed: bool = False) -> dict:
+
+def evaluate_vise(
+    model: ViseModel,
+    *,
+    thread: ThreadSpec | None = None,
+    turns: float = 5.0,
+    readback_mm: float | None = None,
+    jaw_dof: int = 1,
+    jaw_motions: list | None = None,
+    jaw_fixed: bool = False,
+) -> dict:
     """★★ **平口钳的整体判定**（★ S5）。
 
     ★★ 判据（★ 五项都要，★ FR-009：**几何通过 ≠ 功能通过**）：
@@ -330,8 +393,7 @@ def evaluate_vise(model: ViseModel, *, thread: ThreadSpec | None = None,
 
     #: ③ 传动
     lead = model.get("screw_lead_mm")
-    tc = lead_to_travel(lead.value if lead else 0.0, turns,
-                        readback_mm=readback_mm)
+    tc = lead_to_travel(lead.value if lead else 0.0, turns, readback_mm=readback_mm)
     out["travel"] = tc.verdict()
 
     #: ④ 活动钳口
@@ -340,15 +402,17 @@ def evaluate_vise(model: ViseModel, *, thread: ThreadSpec | None = None,
 
     #: ⑤ 关键规则（★ 螺纹是唯一的关键规则）
     out["rules"] = {"thread": out["thread"]["verdict"]}
-    out["indeterminate"] = [k for k, v in out["rules"].items()
-                            if v == "INDETERMINATE"]
+    out["indeterminate"] = [k for k, v in out["rules"].items() if v == "INDETERMINATE"]
 
     out["ok"] = bool(
         out.get("interfaces_ok")
         and out["thread"]["releasing"]
         and out["travel"]["consistent"]
         and out["jaw"]["releasing"]
-        and not out["indeterminate"])
-    out["★"] = ("★ 五项都要：接口齐 + 螺纹完整 + 传动一致 + 钳口可动 + 无 INDETERMINATE"
-                "（★ 几何通过 ≠ 功能通过）")
+        and not out["indeterminate"]
+    )
+    out["★"] = (
+        "★ 五项都要：接口齐 + 螺纹完整 + 传动一致 + 钳口可动 + 无 INDETERMINATE"
+        "（★ 几何通过 ≠ 功能通过）"
+    )
     return out

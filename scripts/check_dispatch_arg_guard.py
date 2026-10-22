@@ -78,7 +78,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑（与 `DSH_DISPATCH_ROOT` 同风格）。
-ROOT = Path(os.environ.get("DSH_DISPATCH_ARG_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_DISPATCH_ARG_ROOT") or Path(__file__).resolve().parents[1]
+)
 #: 反射转储根（默认 `ROOT/_raw/**/iface_*.txt`；`;` 分隔可多点）。
 DUMPS_ENV = os.environ.get("DSH_DISPATCH_ARG_DUMPS", "")
 #: 官方 API 文档镜像的 `types` 目录。
@@ -135,7 +137,8 @@ def official_members() -> tuple[set[str], list[str]]:
     names: set[str] = set()
     notes: list[str] = []
     dumps = [Path(p) for p in DUMPS_ENV.split(";") if p.strip()] or sorted(
-        ROOT.glob("_raw/**/iface_*.txt"))
+        ROOT.glob("_raw/**/iface_*.txt")
+    )
     rows = 0
     for p in dumps:
         p = Path(p)
@@ -146,7 +149,9 @@ def official_members() -> tuple[set[str], list[str]]:
             if h:
                 names.add(h.group("name"))
                 continue
-            m = re.match(r"^\s+[\w\.\[\]<>, ]+?\s+(?P<name>\w+)\((?P<args>.*)\)\s*$", raw)
+            m = re.match(
+                r"^\s+[\w\.\[\]<>, ]+?\s+(?P<name>\w+)\((?P<args>.*)\)\s*$", raw
+            )
             if not m:
                 continue
             rows += 1
@@ -239,8 +244,11 @@ def scope_env(scope) -> dict[str, object]:
             for tg in st.targets:
                 if isinstance(tg, ast.Name):
                     env.setdefault(tg.id, st.value)
-        elif isinstance(st, ast.AnnAssign) and isinstance(st.target, ast.Name) \
-                and st.value is not None:
+        elif (
+            isinstance(st, ast.AnnAssign)
+            and isinstance(st.target, ast.Name)
+            and st.value is not None
+        ):
             env.setdefault(st.target.id, st.value)
     return env
 
@@ -253,9 +261,12 @@ def _bind_node(name: str, env: dict, modenv: dict):
 
 def _iter_candidates(it, target, var: str, env: dict, modenv: dict):
     """⇒ `(候选值, 读取路径)` 或 `(None, 原因)`。"""
-    if isinstance(it, ast.Call) and isinstance(it.func, ast.Attribute) \
-            and isinstance(it.func.value, ast.Name) \
-            and it.func.attr in ("items", "keys", "values"):
+    if (
+        isinstance(it, ast.Call)
+        and isinstance(it.func, ast.Attribute)
+        and isinstance(it.func.value, ast.Name)
+        and it.func.attr in ("items", "keys", "values")
+    ):
         node = _bind_node(it.func.value.id, env, modenv)
         if node is not None:
             idx = index_in_target(target, var)
@@ -272,8 +283,11 @@ def _iter_candidates(it, target, var: str, env: dict, modenv: dict):
         node = _bind_node(it.id, env, modenv)
         if node is not None:
             idx = index_in_target(target, var)
-            if idx is not None and isinstance(node, (ast.Tuple, ast.List)) \
-                    and all(isinstance(e, (ast.Tuple, ast.List)) for e in node.elts):
+            if (
+                idx is not None
+                and isinstance(node, (ast.Tuple, ast.List))
+                and all(isinstance(e, (ast.Tuple, ast.List)) for e in node.elts)
+            ):
                 out = []
                 for e in node.elts:
                     if idx >= len(e.elts):
@@ -291,8 +305,11 @@ def _iter_candidates(it, target, var: str, env: dict, modenv: dict):
                 return keys, "for dict 字面量（经变量）"
         return None, "for:非字面量"
     idx = index_in_target(target, var)
-    if idx is not None and isinstance(it, (ast.Tuple, ast.List)) \
-            and all(isinstance(e, (ast.Tuple, ast.List)) for e in it.elts):
+    if (
+        idx is not None
+        and isinstance(it, (ast.Tuple, ast.List))
+        and all(isinstance(e, (ast.Tuple, ast.List)) for e in it.elts)
+    ):
         out = []
         for e in it.elts:
             if idx >= len(e.elts):
@@ -314,7 +331,9 @@ def _iter_candidates(it, target, var: str, env: dict, modenv: dict):
 def resolve(fn, var: str, env: dict, modenv: dict):
     """⇒ `(候选值列表, 读取路径)` 或 `(None, 原因)`。"""
     for st in ast.walk(fn):
-        if isinstance(st, (ast.For, ast.AsyncFor)) and var in names_in_target(st.target):
+        if isinstance(st, (ast.For, ast.AsyncFor)) and var in names_in_target(
+            st.target
+        ):
             got, why = _iter_candidates(st.iter, st.target, var, env, modenv)
             if got:
                 return got, why
@@ -331,8 +350,11 @@ def resolve(fn, var: str, env: dict, modenv: dict):
             got = str_consts(node.value)
             if got is not None:
                 return got, "dict 字面量下标"
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
-                and isinstance(node.func.value, ast.Name):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
+        ):
             base = _bind_node(node.func.value.id, env, modenv)
             if base is not None:
                 #: ★ `DICT.get(k)` 返回**值**（首版取键 ⇒ 语义键冒充成员名）。
@@ -378,8 +400,12 @@ def local_sites(files):
                 continue
             params = set(_params(fn))
             for sub in ast.walk(fn):
-                if not (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Name)
-                        and sub.func.id in wrappers and len(sub.args) >= 2):
+                if not (
+                    isinstance(sub, ast.Call)
+                    and isinstance(sub.func, ast.Name)
+                    and sub.func.id in wrappers
+                    and len(sub.args) >= 2
+                ):
                     continue
                 if innermost.get(id(sub)) is not fn:
                     continue
@@ -412,8 +438,10 @@ def main() -> int:
     min_sites, min_enum, min_values = _baseline()
 
     print("== `local` 桶调用点（成员名由局部变量传入）的候选集 ==")
-    print("扫描 `%s/scripts/**/*.py` · 官方成员名 %d 个（%s）"
-          % (ROOT.as_posix(), len(official), " · ".join(notes) or "无数据源"))
+    print(
+        "扫描 `%s/scripts/**/*.py` · 官方成员名 %d 个（%s）"
+        % (ROOT.as_posix(), len(official), " · ".join(notes) or "无数据源")
+    )
 
     violations: list[dict] = []
     enum_n = 0
@@ -428,64 +456,141 @@ def main() -> int:
         if got:
             enum_n += 1
             all_values.update(got)
-            uncovered = sorted({c for c in got if c not in official}) if official else []
+            uncovered = (
+                sorted({c for c in got if c not in official}) if official else []
+            )
             if decl is None:
                 if uncovered:
-                    violations.append({"kind": "undeclared", "file": shown, "line": lineno,
-                                       "detail": "候选值查不到且未表态：%s（变量 `%s`）"
-                                                 % (", ".join(uncovered[:8]), var)})
+                    violations.append(
+                        {
+                            "kind": "undeclared",
+                            "file": shown,
+                            "line": lineno,
+                            "detail": "候选值查不到且未表态：%s（变量 `%s`）"
+                            % (", ".join(uncovered[:8]), var),
+                        }
+                    )
             else:
                 code, rest = decl
                 if code == "dynamic":
-                    violations.append({"kind": "invalid-claim", "file": shown, "line": lineno,
-                                       "detail": "`dynamic` 但**静态可枚举**（%d 个候选）："
-                                                 "能枚举却声明枚举不出" % len(got)})
+                    violations.append(
+                        {
+                            "kind": "invalid-claim",
+                            "file": shown,
+                            "line": lineno,
+                            "detail": "`dynamic` 但**静态可枚举**（%d 个候选）："
+                            "能枚举却声明枚举不出" % len(got),
+                        }
+                    )
                 elif code == "probe":
                     if not uncovered:
-                        violations.append({"kind": "invalid-claim", "file": shown, "line": lineno,
-                                           "detail": "`probe` 但候选值**全部**查得到（无探测语义）"})
+                        violations.append(
+                            {
+                                "kind": "invalid-claim",
+                                "file": shown,
+                                "line": lineno,
+                                "detail": "`probe` 但候选值**全部**查得到（无探测语义）",
+                            }
+                        )
                     elif not rest:
-                        violations.append({"kind": "invalid-claim", "file": shown, "line": lineno,
-                                           "detail": "`probe` 缺理由"})
+                        violations.append(
+                            {
+                                "kind": "invalid-claim",
+                                "file": shown,
+                                "line": lineno,
+                                "detail": "`probe` 缺理由",
+                            }
+                        )
         else:
             if decl is None:
-                violations.append({"kind": "undeclared", "file": shown, "line": lineno,
-                                   "detail": "候选集枚举不出（%s）且未表态（变量 `%s`）" % (why, var)})
+                violations.append(
+                    {
+                        "kind": "undeclared",
+                        "file": shown,
+                        "line": lineno,
+                        "detail": "候选集枚举不出（%s）且未表态（变量 `%s`）"
+                        % (why, var),
+                    }
+                )
             else:
                 code, rest = decl
                 if code == "dynamic":
                     if not rest:
-                        violations.append({"kind": "invalid-claim", "file": shown, "line": lineno,
-                                           "detail": "`dynamic` 缺理由"})
+                        violations.append(
+                            {
+                                "kind": "invalid-claim",
+                                "file": shown,
+                                "line": lineno,
+                                "detail": "`dynamic` 缺理由",
+                            }
+                        )
                 elif code == "probe":
-                    violations.append({"kind": "invalid-claim", "file": shown, "line": lineno,
-                                       "detail": "`probe` 但候选集**枚举不出**（该用 `dynamic`）"})
+                    violations.append(
+                        {
+                            "kind": "invalid-claim",
+                            "file": shown,
+                            "line": lineno,
+                            "detail": "`probe` 但候选集**枚举不出**（该用 `dynamic`）",
+                        }
+                    )
 
     #: ★ 口径一致性（两个独立实现）：本门禁的取点数**必须**等于 `scan()` 的 `local` 桶。
     if len(sites) != buckets["local"]:
-        violations.append({"kind": "bucket-mismatch", "file": "-", "line": 0,
-                           "detail": "本门禁取点 %d != scan() 的 local 桶 %d（口径漂移）"
-                                     % (len(sites), buckets["local"])})
+        violations.append(
+            {
+                "kind": "bucket-mismatch",
+                "file": "-",
+                "line": 0,
+                "detail": "本门禁取点 %d != scan() 的 local 桶 %d（口径漂移）"
+                % (len(sites), buckets["local"]),
+            }
+        )
     #: ★ 只增不减（下界冻结）。
     if len(sites) < min_sites:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "local 调用点 %d < 下界 %d（只增不减：先查取点口径）"
-                                     % (len(sites), min_sites)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "local 调用点 %d < 下界 %d（只增不减：先查取点口径）"
+                % (len(sites), min_sites),
+            }
+        )
     if enum_n < min_enum:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可枚举调用点 %d < 下界 %d（只增不减：先查读取器）"
-                                     % (enum_n, min_enum)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可枚举调用点 %d < 下界 %d（只增不减：先查读取器）"
+                % (enum_n, min_enum),
+            }
+        )
     if len(all_values) < min_values:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "候选值 distinct %d < 下界 %d（只增不减）"
-                                     % (len(all_values), min_values)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "候选值 distinct %d < 下界 %d（只增不减）"
+                % (len(all_values), min_values),
+            }
+        )
     #: ★ 假绿守卫（事实 46）。
     if not sites:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "检查过的 `local` 调用点 == 0"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "检查过的 `local` 调用点 == 0",
+            }
+        )
 
-    print("local 调用点 %d · 可枚举 %d · 候选值 distinct %d"
-          % (len(sites), enum_n, len(all_values)))
+    print(
+        "local 调用点 %d · 可枚举 %d · 候选值 distinct %d"
+        % (len(sites), enum_n, len(all_values))
+    )
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
         for v in violations[:DETAIL_LIMIT]:
@@ -494,9 +599,17 @@ def main() -> int:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("local %d · 可枚举 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
-          % (len(sites), enum_n, len(all_values), len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "local %d · 可枚举 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
+        % (
+            len(sites),
+            enum_n,
+            len(all_values),
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

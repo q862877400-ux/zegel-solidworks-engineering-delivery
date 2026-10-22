@@ -85,9 +85,9 @@ from typing import Any
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
 #:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
 try:
-    from sw_connect import mm as _mm          # noqa: F401
-except Exception:                             # noqa: BLE001
-    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+    from sw_connect import mm as _mm  # noqa: F401
+except Exception:  # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0  # noqa: E731
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -119,6 +119,7 @@ except Exception:                             # noqa: BLE001
 try:
     from .sw_connect import get_com_member, call_com_member, out_i4
     from .sw_simulation import get_cw_document, get_study_manager
+
     #: ★★★★ 2026-10-04（接手轮）**补上 `delete_study`** ——
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #6`）：★ `create_topology_study` 要
     #:   **先删同名**（★ 官方示例逐字 `StudyManagerObj.DeleteStudy NewStudyName` ⇒
@@ -149,7 +150,7 @@ SWS_ANALYSIS_STUDY_TYPES: dict[str, int] = {
 }
 
 #: ``ICWTopologyStudyManager.CreateGoal(Int32)`` 的目标类型
-#: 反射：swsTopologyGoalType_e —— MaximizeStiffness=0 / MinimizeMaximumDisplacement=1 / 
+#: 反射：swsTopologyGoalType_e —— MaximizeStiffness=0 / MinimizeMaximumDisplacement=1 /
 #: MinimizeMass=2
 #: 官方教程「Best Stiffness to Weight ratio (default)」对应 MaximizeStiffness。
 #: enum-gate: enum swsTopologyStudyGoalType_e
@@ -268,8 +269,9 @@ _TOPOLOGY_GETTERS: dict[str, str] = {
 #         本函数复用既有模块的 get_study_manager，不重复实现取入口的逻辑。
 # ⚠ 本函数为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
-                          delete_existing: bool = True):
+def create_topology_study(
+    sw_app, name: str, *, mesh_type: int = 0, delete_existing: bool = True
+):
     """新建拓扑优化研究。返回 ``(study, entry_name)``。
 
     研究类型固定为 ``swsAnalysisStudyTypeTopology_Static``（13）——
@@ -309,11 +311,13 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
         try:
             delete_study(manager, str(name))
             delete_note = "★ 已按官方示例先删同名研究（★ DeleteStudy）"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             #: ★★ 同名不存在 ⇒ 官方那个 `DeleteStudy` 会报错 —— ★ 那是**正常**的（★ 首次
             #: 建）
-            delete_note = ("★ 先删同名未成（★ %s）⇒ ★ 当作「本来没有同名」继续 ✓"
-                           % type(exc).__name__)
+            delete_note = (
+                "★ 先删同名未成（★ %s）⇒ ★ 当作「本来没有同名」继续 ✓"
+                % type(exc).__name__
+            )
 
     # CreateNewStudy3(Name, StudyType, MeshType, &Err)
     study = get_com_member(
@@ -323,7 +327,9 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
 
     if study is None:
         # CreateNewStudy2(Name, StudyType, &Err) —— 无 MeshType
-        study = get_com_member(manager, "CreateNewStudy2", str(name), int(study_type), out_i4())
+        study = get_com_member(
+            manager, "CreateNewStudy2", str(name), int(study_type), out_i4()
+        )
         if study is not None:
             entry_name = "CreateNewStudy2"
 
@@ -363,7 +369,9 @@ def get_topology_study_options(study):
     """取 ``CWTopologyStudyOptions``（迭代/收敛选项）。"""
     options = get_com_member(study, "TopologyStudyOptions")
     if options is None:
-        raise RuntimeError("ICWStudy.TopologyStudyOptions 为 None：该研究不是拓扑优化研究")
+        raise RuntimeError(
+            "ICWStudy.TopologyStudyOptions 为 None：该研究不是拓扑优化研究"
+        )
     return options
 
 
@@ -438,8 +446,12 @@ def set_topology_goal(
         raise ValueError("至少要给一个约束（mass_reduce_percent 或 factor_of_safety）")
 
     manager = get_topology_study_manager(study)
-    made: dict[str, Any] = {"goal": None, "mass_constraint": None, "fos_constraint": None,
-                            "removed": []}
+    made: dict[str, Any] = {
+        "goal": None,
+        "mass_constraint": None,
+        "fos_constraint": None,
+        "removed": [],
+    }
 
     def _clear(kind: str) -> None:
         """建之前先删同族约束 —— 官方示例的前置动作。
@@ -476,8 +488,12 @@ def set_topology_goal(
             #   目标 2 或不建目标时才需要 Create。
             existing = None
             try:
-                existing = get_com_member(manager, "GetMassConstraint",
-                                          _default_constraint_name("mass"), out_i4())
+                existing = get_com_member(
+                    manager,
+                    "GetMassConstraint",
+                    _default_constraint_name("mass"),
+                    out_i4(),
+                )
             except Exception:
                 existing = None
 
@@ -502,7 +518,7 @@ def set_topology_goal(
             made["mass_constraint_reused"] = existing is not None
 
         if factor_of_safety is not None:
-            # ⚑ FOS 与 Stress 互斥（`swsTopoErrCode_CannotCreatFOSIfStressAlrdyPrsnt` = 
+            # ⚑ FOS 与 Stress 互斥（`swsTopoErrCode_CannotCreatFOSIfStressAlrdyPrsnt` =
             # 18、
             # `CannotCreatStressIfFOSAlrdyPrsnt` = 19）⇒ 建 FOS 前须确认没有 Stress 约束
             # 。
@@ -510,7 +526,9 @@ def set_topology_goal(
             _clear("stress")
             # CreateFactorOfSafetyConstraint(Int32& Err) → CWTopologyFactorOfSafetyConst
             # raint
-            constraint = get_com_member(manager, "CreateFactorOfSafetyConstraint", out_i4())
+            constraint = get_com_member(
+                manager, "CreateFactorOfSafetyConstraint", out_i4()
+            )
             if constraint is None:
                 raise RuntimeError("CreateFactorOfSafetyConstraint 未返回对象")
 
@@ -538,7 +556,7 @@ def set_topology_goal(
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（cosworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\topo-reflect\iface_cosworks.txt
-# 定位:   ICWTopologyStudyManager 的其余 Create*：CreateStressConstraint(Int32&)      
+# 定位:   ICWTopologyStudyManager 的其余 Create*：CreateStressConstraint(Int32&)
 #           → CWTopologyStressConstraintCreatePreservedRegionControl(Int32&) → CWTopolog
 #           yPreservedRegionCreateSymmetryControl(Int32&)        → CWTopologySymmetryCon
 #           trolCreateDemoldControl(Int32&)          → CWTopologyDemoldControlCreateThic
@@ -568,8 +586,13 @@ def create_factor_of_safety_constraint(study, *, specified_factor: float):
     constraint = get_com_member(manager, "CreateFactorOfSafetyConstraint", out_i4())
     if constraint is None:
         raise RuntimeError("CreateFactorOfSafetyConstraint 未返回对象")
-    return _edit(constraint, lambda: (
-        get_com_member(constraint, "SetValue", float(specified_factor)), constraint)[1])
+    return _edit(
+        constraint,
+        lambda: (
+            get_com_member(constraint, "SetValue", float(specified_factor)),
+            constraint,
+        )[1],
+    )
 
 
 def create_stress_constraint(study, *, value: float, comparator: int = 0):
@@ -629,19 +652,24 @@ def _apply_declarative_selection(selection: str, selection_kind: str) -> int:
     """
     from sw_connect import connect_solidworks, get_com_member as _get
     import sw_selection_spec as _SS
+
     sw, _m = connect_solidworks(wait_seconds=10)
     doc = _get(sw, "ActiveDoc")
     if doc is None:
         raise RuntimeError(
-            "★ 没有活动文档 ⇒ ★ 选不了（★ 这是**前置未成立**、★ 与「控制建不出来」是两件事）")
+            "★ 没有活动文档 ⇒ ★ 选不了（★ 这是**前置未成立**、★ 与「控制建不出来」是两件事）"
+        )
     got = int(_SS.resolve_selection(doc, str(selection), str(selection_kind or "FACE")))
     if got <= 0:
-        raise RuntimeError("★ 选区未建立：选择器 %r 解析后计数为 %d" % (str(selection), got))
+        raise RuntimeError(
+            "★ 选区未建立：选择器 %r 解析后计数为 %d" % (str(selection), got)
+        )
     return got
 
 
-def create_symmetry_control(study, *, symmetry_type: int = 0,
-                            selection: str = "", selection_kind: str = "FACE"):
+def create_symmetry_control(
+    study, *, symmetry_type: int = 0, selection: str = "", selection_kind: str = "FACE"
+):
     """建对称控制（官方教程用 1/4 对称）。调用方须先选好对称平面。
 
     ★★ 2026-10-07（规格 216 T-216-07）**加声明式选区**：★ `selection` 非空时，
@@ -665,15 +693,16 @@ def create_symmetry_control(study, *, symmetry_type: int = 0,
     return _edit(control, _configure)
 
 
-def create_demold_control(study, *, direction: int = 0,
-                          selection: str = "", selection_kind: str = "FACE"):
+def create_demold_control(
+    study, *, direction: int = 0, selection: str = "", selection_kind: str = "FACE"
+):
     """建脱模控制（制造约束）。调用方须先选好拔模方向的面/边/基准面。
 
     ★★ 2026-10-07（规格 216 T-216-07）**加声明式选区**：★ 同 `create_symmetry_control` ——
       ★ `selection` 非空时，由本函数在**紧邻 `SelectDemoldDirection` 之前**选上 ✓
     """
     manager = get_topology_study_manager(study)
-    #: ★★ 同 `create_symmetry_control`：★ 选区必须在 **`CreateDemoldControl` 之前**（★ 
+    #: ★★ 同 `create_symmetry_control`：★ 选区必须在 **`CreateDemoldControl` 之前**（★
     #: 真机订正）✓
     if str(selection or "").strip():
         _apply_declarative_selection(selection, selection_kind)
@@ -756,7 +785,9 @@ def list_topology_constraints_and_controls(study) -> dict[str, Any]:
         #   而下面的 `except` 把异常吞成 None ⇒ **本函数此前永远返回全 None（假通过）**。
         #   出参改为 `out_i4()`。同时把「取不到」与「调用失败」分开记，不再混为一谈。
         try:
-            found[kind] = get_com_member(manager, getter, _default_constraint_name(kind), out_i4())
+            found[kind] = get_com_member(
+                manager, getter, _default_constraint_name(kind), out_i4()
+            )
             found[kind + "__error"] = None
         except Exception as exc:
             found[kind] = None
@@ -789,8 +820,9 @@ _DEFAULT_CONSTRAINT_NAMES: dict[str, str] = {
 }
 
 
-def run_topology_study(study, *, units: int = 0, element_size: float = 0.0,
-                       tolerance: float = 0.0):
+def run_topology_study(
+    study, *, units: int = 0, element_size: float = 0.0, tolerance: float = 0.0
+):
     """建网格并求解。返回 ``RunAnalysis`` 的结果码。
 
     官方教程的顺序是「先网格、再运行」；``MeshAndRun`` 把两步合成一次调用，
@@ -830,22 +862,26 @@ def run_topology_study(study, *, units: int = 0, element_size: float = 0.0,
     code = call_com_member(study, "MeshAndRun")
     if code not in (None, 0):
         # 回退：先 CreateMesh(NUnits, DElementSize, DTolerance) 再 RunAnalysis()
-        get_com_member(study, "CreateMesh", int(units),
-                       _mm(element_size), _mm(tolerance))
+        get_com_member(
+            study, "CreateMesh", int(units), _mm(element_size), _mm(tolerance)
+        )
         code = call_com_member(study, "RunAnalysis")
     #: ★★★★ **承诺的那一步**：★ 用**结果**判成功（★ 而不是返回码）✓
     results = None
     try:
         results = collect_topology_numbers(study)
-    except Exception as exc:                                              # noqa: BLE001
-        results = {"status": "unknown",
-                   "reason": "★ 读结果时抛 %s: %s" % (type(exc).__name__, str(exc)[:150]),
-                   "source_members": {}}
+    except Exception as exc:  # noqa: BLE001
+        results = {
+            "status": "unknown",
+            "reason": "★ 读结果时抛 %s: %s" % (type(exc).__name__, str(exc)[:150]),
+            "source_members": {},
+        }
     return {
         "code": code,
         #: ★ **真相在这里**（★ 而不是 `code`）—— ★ 与 ToolSpec 那句逐字对应 ✓
-        "results_present": bool(isinstance(results, dict)
-                                and results.get("status") == "ok"),
+        "results_present": bool(
+            isinstance(results, dict) and results.get("status") == "ok"
+        ),
         "results": results,
     }
 
@@ -991,8 +1027,12 @@ def collect_topology_numbers(study) -> dict[str, Any]:
     if plot_count in (None, 0):
         return {
             "status": "no_results",
-            "reason": "study.Results 非 None 但 GetPlotCount() == %r（无结果图）" % (plot_count,),
-            "source_members": {"results": "ICWStudy.Results", "plot_count": "ICWResults.GetPlotCount"},
+            "reason": "study.Results 非 None 但 GetPlotCount() == %r（无结果图）"
+            % (plot_count,),
+            "source_members": {
+                "results": "ICWStudy.Results",
+                "plot_count": "ICWResults.GetPlotCount",
+            },
         }
 
     raw_names = get_com_member(results, "GetPlotNames")
@@ -1064,8 +1104,12 @@ def _kinds_summary(study) -> dict[str, Any]:
     raw = list_topology_constraints_and_controls(study)
     kinds = {k: (v is not None) for k, v in raw.items() if not k.endswith("__error")}
     errors = {k: v for k, v in raw.items() if k.endswith("__error") and v}
-    return {"kinds": kinds, "taken_count": sum(1 for v in kinds.values() if v),
-            "total": len(kinds), "errors": errors}
+    return {
+        "kinds": kinds,
+        "taken_count": sum(1 for v in kinds.values() if v),
+        "total": len(kinds),
+        "errors": errors,
+    }
 
 
 def topology_manager_report(study) -> dict[str, Any]:
@@ -1092,39 +1136,48 @@ def topology_options_report(study) -> dict[str, Any]:
     return out
 
 
-def set_topology_goal_report(study, *, goal_type: int = 0,
-                             mass_reduce_percent: float = 0.0) -> dict[str, Any]:
+def set_topology_goal_report(
+    study, *, goal_type: int = 0, mass_reduce_percent: float = 0.0
+) -> dict[str, Any]:
     """★ 设**拓扑目标**并回**回读报告**（★ 前后对照「取到了几个 kind」）。"""
     before = _kinds_summary(study)
     err = None
     try:
-        set_topology_goal(study, goal_type=goal_type, mass_reduce_percent=mass_reduce_percent)
-    except Exception as exc:                                   # noqa: BLE001
+        set_topology_goal(
+            study, goal_type=goal_type, mass_reduce_percent=mass_reduce_percent
+        )
+    except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     after = _kinds_summary(study)
     return {
         "ok": err is None and after["taken_count"] >= before["taken_count"],
-        "before": before, "after": after, "error": err,
+        "before": before,
+        "after": after,
+        "error": err,
         "★": "ok 判的是「无异常 **且** 取到的 kind 数不减少」（★ 回读，不看返回对象）",
     }
 
 
-def set_topology_iteration_options_report(study, *, iteration_option: int | None = None,
-                                          iteration_limit: int | None = None) -> dict[str, Any]:
+def set_topology_iteration_options_report(
+    study, *, iteration_option: int | None = None, iteration_limit: int | None = None
+) -> dict[str, Any]:
     """★ 设**迭代选项**并回**回读报告**（★ 前后对照）。"""
     before = _kinds_summary(study)
     err = None
     try:
         #: ⚠ 形参名是 **`iteration_limit`**（★ 不是我最初写的 `iteration_count`）——
         #:   真机一调就报 `unexpected keyword argument`（2026-10-01 轮 247）。
-        set_topology_iteration_options(study, iteration_option=iteration_option,
-                                       iteration_limit=iteration_limit)
-    except Exception as exc:                                   # noqa: BLE001
+        set_topology_iteration_options(
+            study, iteration_option=iteration_option, iteration_limit=iteration_limit
+        )
+    except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     after = _kinds_summary(study)
     return {
         "ok": err is None and after["taken_count"] >= before["taken_count"],
-        "before": before, "after": after, "error": err,
+        "before": before,
+        "after": after,
+        "error": err,
         "★": "ok 判的是「无异常 **且** 取到的 kind 数不减少」（★ 回读，不看返回对象）",
     }
 
@@ -1135,7 +1188,9 @@ def topology_constraints_report(study) -> dict[str, Any]:
     ★★ `list_topology_constraints_and_controls` 回的是 ``{kind: object|None}``（**含 COM 对象**）
       ⇒ MCP 回不了 ⇒ 本函数把它翻成**布尔 + 计数**（★ 那也是「取到了」这件事**可断言**的形态）。
     """
-    return {"ok": True, "study_name": str(get_com_member(study, "Name") or ""),
-            **_kinds_summary(study),
-            "★": "ok 恒 True（这是纯读取入口）；★ 判据在 taken_count / kinds 上"}
-
+    return {
+        "ok": True,
+        "study_name": str(get_com_member(study, "Name") or ""),
+        **_kinds_summary(study),
+        "★": "ok 恒 True（这是纯读取入口）；★ 判据在 taken_count / kinds 上",
+    }

@@ -42,32 +42,49 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_part as P                                       # noqa: E402
-from scripts import sw_surface_features as SF                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _mk_two_crossing_surfaces(doc):
     """★ 两张**相交**的曲面：★ 前视面拉一张（沿 Z 长）、★ 上视面拉一张（沿 Y 长）⇒ 它们在空间里交叉。"""
     made = 0
-    for i, (plane, rect) in enumerate((("Front Plane", (-0.02, -0.02, 0.02, 0.02)),
-                                       ("Top Plane", (-0.02, -0.01, 0.02, 0.01)))):
+    for i, (plane, rect) in enumerate(
+        (
+            ("Front Plane", (-0.02, -0.02, 0.02, 0.02)),
+            ("Top Plane", (-0.02, -0.01, 0.02, 0.01)),
+        )
+    ):
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                         rect[0], rect[1], 0.0, rect[2], rect[3], 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            rect[0],
+            rect[1],
+            0.0,
+            rect[2],
+            rect[3],
+            0.0,
+        )
         P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or [])
-                 if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        names = [
+            n
+            for n in (P.feature_names(doc) or [])
+            if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+        ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                    "ok"
+                ):
                     made += 1
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return made
 
@@ -81,7 +98,7 @@ def _run(sw, tag, fn):
         r = fn(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
         row["ok"] = bool((r or {}).get("ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -89,38 +106,70 @@ def _run(sw, tag, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u526a\u88c1\u66f2\u9762\uff1a`IFeatureManager.PreTrimSurface` + `PostTrimSurface`\uff08\u4e24\u6bb5\u5f0f\uff09",
-          "why": "T607 \u7684**\u771f\u540d**\u662f\u4e0a\u4e00\u8f6e\u624d\u4ece\u7c7b\u578b\u5e93\u91cc\u627e\u5230\u7684"
-                 "\uff08`InsertTrimSurface` \u67e5\u4e0d\u5230\uff09",
-          "cases": []}
-    ev["cases"].append(_run(sw, "\u2605 mutual=True\uff08\u4ea4\u9762\u4e92\u526a\uff09",
-                            lambda d: SF.trim_surface_report(d, mutual=True, split_system=True)))
-    ev["cases"].append(_run(sw, "\u2605 mutual=False\uff08standard\uff09",
-                            lambda d: SF.trim_surface_report(d, mutual=False, split_system=True)))
-    ev["cases"].append(_run(sw, "\u2605 mutual=True + sew=True",
-                            lambda d: SF.trim_surface_report(d, mutual=True, sew=True)))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u526a\u88c1\u66f2\u9762\uff1a`IFeatureManager.PreTrimSurface` + `PostTrimSurface`\uff08\u4e24\u6bb5\u5f0f\uff09",
+        "why": "T607 \u7684**\u771f\u540d**\u662f\u4e0a\u4e00\u8f6e\u624d\u4ece\u7c7b\u578b\u5e93\u91cc\u627e\u5230\u7684"
+        "\uff08`InsertTrimSurface` \u67e5\u4e0d\u5230\uff09",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _run(
+            sw,
+            "\u2605 mutual=True\uff08\u4ea4\u9762\u4e92\u526a\uff09",
+            lambda d: SF.trim_surface_report(d, mutual=True, split_system=True),
+        )
+    )
+    ev["cases"].append(
+        _run(
+            sw,
+            "\u2605 mutual=False\uff08standard\uff09",
+            lambda d: SF.trim_surface_report(d, mutual=False, split_system=True),
+        )
+    )
+    ev["cases"].append(
+        _run(
+            sw,
+            "\u2605 mutual=True + sew=True",
+            lambda d: SF.trim_surface_report(d, mutual=True, sew=True),
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "trim_surface_works" if ev["passed"] else "trim_surface_fails"
     p = R / "output" / "trim-surface-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
         r = c.get("result") or {}
-        print("  %-30s ok=%-6s \u9762\u5efa\u4e86 %s" % (c.get("tag"), c.get("ok"), c.get("made")))
+        print(
+            "  %-30s ok=%-6s \u9762\u5efa\u4e86 %s"
+            % (c.get("tag"), c.get("ok"), c.get("made"))
+        )
         if r:
-            print("        new=%-22s sel=%-4s pre=%s post=%s" % (
-                r.get("new_features"), r.get("faces_selected"),
-                r.get("pre_returned"), r.get("post_returned")))
+            print(
+                "        new=%-22s sel=%-4s pre=%s post=%s"
+                % (
+                    r.get("new_features"),
+                    r.get("faces_selected"),
+                    r.get("pre_returned"),
+                    r.get("post_returned"),
+                )
+            )
             if r.get("error"):
                 print("        err=%s" % str(r["error"])[:120])
         if c.get("err"):

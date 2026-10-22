@@ -26,12 +26,13 @@ r"""@brief 探针：`InsertCompositeCurve` 换**边**（而不是整个草图）
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_composite_curve_edges.py
 # 定位:   给 Spec Kit `072` 取「选边能不能让 `InsertCompositeCurve` 成功」的证据。
-# 官方依据: `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`（Remarks：`SelectByID2` 
+# 官方依据: `C:\swapi\types\IModelDoc2\InsertCompositeCurve.md`（Remarks：`SelectByID2`
 #           + mark 1）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -45,22 +46,24 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "composite-curve-edges.json")
-W, H, D = 0.05, 0.05, 0.02          #: 米（50×50×20 mm）
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "composite-curve-edges.json"
+)
+W, H, D = 0.05, 0.05, 0.02  #: 米（50×50×20 mm）
 
 
 def count_edges(sw_connect, doc) -> list:
     """枚举实体上的边（用 `IEntity` 的对象引用，**不按名字**，事实 32）。"""
     out = []
     try:
-        bodies = doc.GetBodies2(0, False)     #: 0 = swSolidBody
+        bodies = doc.GetBodies2(0, False)  #: 0 = swSolidBody
         if not bodies:
             return out
         body = bodies[0]
         edges = body.GetEdges()
         if edges:
             out = list(edges)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("     ⚠ 枚举边失败: %s" % str(exc)[:70])
     return out
 
@@ -72,10 +75,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         #: 一个 50×50×20 的方块 ⇒ 12 条边
@@ -96,7 +100,7 @@ def main() -> int:
             try:
                 if doc.Extension.SelectByID2(nm, "EDGE", 0, 0, 0, True, 1, callout, 0):
                     n1 += 1
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         print("  ① 按名字选边 ⇒ 计数 %d（事实 32 预期 0）" % n1)
         ev["by_name_selected"] = n1
@@ -109,38 +113,46 @@ def main() -> int:
                 try:
                     if e.Select4(True, callout):
                         n2 += 1
-                except Exception as exc:      # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     print("     ⚠ Select4 异常: %s" % str(exc)[:60])
         cnt2 = 0
         try:
             cnt2 = int(doc.SelectionManager.GetSelectedObjectCount2(-1))
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-        print("  ② 按**对象** `IEntity.Select4` 选前 2 条边 ⇒ 返回真 %d 次 · 选择集计数 %d"
-              % (n2, cnt2))
+        print(
+            "  ② 按**对象** `IEntity.Select4` 选前 2 条边 ⇒ 返回真 %d 次 · 选择集计数 %d"
+            % (n2, cnt2)
+        )
         ev["by_object_selected"] = n2
         ev["selection_count"] = cnt2
 
         #: ②b ★ 按**面上的点**选边，并且 **mark = 1**（官方 Remarks 明确要求）
         #: ⚠ `IEntity.Select4` **没有 mark 参数** ⇒ 上面那次选**可能不算数**
         #: ⇒ 这一条才是「按官方要求」的形态（事实 32：按点选边是可行路径）
-        pts = [(0.025, 0.0, 0.0), (0.05, 0.025, 0.0),   #: 底面两条相邻棱的中点
-               (0.0, 0.025, 0.0), (0.025, 0.05, 0.0)]
+        pts = [
+            (0.025, 0.0, 0.0),
+            (0.05, 0.025, 0.0),  #: 底面两条相邻棱的中点
+            (0.0, 0.025, 0.0),
+            (0.025, 0.05, 0.0),
+        ]
         doc.ClearSelection2(True)
         picked = 0
-        for (x, y, z) in pts[:2]:
+        for x, y, z in pts[:2]:
             try:
                 if doc.Extension.SelectByID2("", "EDGE", x, y, z, True, 1, callout, 0):
                     picked += 1
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("     ⚠ 按点选边异常: %s" % str(exc)[:60])
         cnt3 = 0
         try:
-            cnt3 = int(doc.SelectionManager.GetSelectedObjectCount2(1))   #: ★ mark = 1
-        except Exception:      # noqa: BLE001
+            cnt3 = int(doc.SelectionManager.GetSelectedObjectCount2(1))  #: ★ mark = 1
+        except Exception:  # noqa: BLE001
             pass
-        print("  ②b **按点 + mark=1** 选 2 条棱 ⇒ 命中 %d · **mark=1 的计数** %d"
-              % (picked, cnt3))
+        print(
+            "  ②b **按点 + mark=1** 选 2 条棱 ⇒ 命中 %d · **mark=1 的计数** %d"
+            % (picked, cnt3)
+        )
         ev["by_point_mark1_selected"] = picked
         ev["mark1_count"] = cnt3
         cnt2 = max(cnt2, cnt3)
@@ -151,7 +163,7 @@ def main() -> int:
                 sw_part.insert_composite_curve(doc)
                 print("  ③ ★ **`InsertCompositeCurve()` 成功**（选 2 条边）")
                 ev["result"] = "success_by_edges"
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 print("  ③ ✗ 仍失败：%s" % str(exc)[:110])
                 ev["result"] = "false_by_edges"
         else:
@@ -161,33 +173,39 @@ def main() -> int:
         #: ④ 侧证：特征树总数变化
         try:
             ev["tree_total"] = int(doc.GetFeatureCount)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         print("  ④ 特征树总数 = %s" % ev.get("tree_total"))
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
-    from tools.probe_sketch_enumeration_lag import SW_PID as _P    # noqa: F401
+    from tools.probe_sketch_enumeration_lag import SW_PID as _P  # noqa: F401
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

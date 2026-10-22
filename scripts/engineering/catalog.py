@@ -1,4 +1,5 @@
 """★ Q4/Q6 · 任务域 + 受控多标签 + 分面检索 + 暴露面（规格 323 的 N1~N10）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -12,7 +13,7 @@
 #           gram、  没有分面检索** ⇒ 补这 4 个缺口。
 # 官方依据: ① `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q4（L36-57）逐字：  八个一
 #           级任务域 + 七个受控多标签 + recall/chain_hit 门槛 + 阈值冻结② 同文件 Q6（L96
-#           -112）逐字：4096 token · 分面过滤 · 本地词法 +  中文 n-gram + 受控同义词 · 
+#           -112）逐字：4096 token · 分面过滤 · 本地词法 +  中文 n-gram + 受控同义词 ·
 #           少量方法卡 · 按需加载 · MCP 暴露面③ 同文件 Q12（L214-231）逐字：外挂单一源 ·
 #            注册时合成 ·  「效应按文档几何、文档属性、选择状态、界面状态、文件系统、网
 #           络分别描述」④ `metadata/domains.yaml` · `metadata/facets.yaml` · `metadata/t
@@ -40,8 +41,14 @@ TOKEN_BUDGET = 4096
 class CatalogError(Exception):
     """★ 目录层失败（★ 带封闭码）。"""
 
-    CODES = ("no-domain", "unknown-domain", "unknown-facet", "bad-facet-value",
-             "budget-exceeded", "thresholds-missing")
+    CODES = (
+        "no-domain",
+        "unknown-domain",
+        "unknown-facet",
+        "bad-facet-value",
+        "budget-exceeded",
+        "thresholds-missing",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法目录拒绝码：%r" % code
@@ -74,7 +81,7 @@ class Domain:
 @dataclass
 class FacetDef:
     name: str
-    values: dict = field(default_factory=dict)     #: id → label
+    values: dict = field(default_factory=dict)  #: id → label
 
 
 def load_domains() -> dict:
@@ -84,9 +91,12 @@ def load_domains() -> dict:
     for x in d.get("domains") or []:
         if not isinstance(x, dict):
             continue
-        dom = Domain(id=str(x.get("id", "")), name=str(x.get("name", "")),
-                     order=int(x.get("order") or 0),
-                     cues=list(x.get("cues") or []))
+        dom = Domain(
+            id=str(x.get("id", "")),
+            name=str(x.get("name", "")),
+            order=int(x.get("order") or 0),
+            cues=list(x.get("cues") or []),
+        )
         out[dom.id] = dom
     return out
 
@@ -123,8 +133,9 @@ def load_thresholds() -> dict:
         raise CatalogError("thresholds-missing", "★ 没有 %s" % p)
     d = json.loads(p.read_text(encoding="utf-8"))
     if not d.get("frozen_at"):
-        raise CatalogError("thresholds-missing",
-                           "★★ 阈值没有 `frozen_at` ⇒ 无法证明是**评测前**冻结的")
+        raise CatalogError(
+            "thresholds-missing", "★★ 阈值没有 `frozen_at` ⇒ 无法证明是**评测前**冻结的"
+        )
     return d
 
 
@@ -132,10 +143,10 @@ def load_thresholds() -> dict:
 # 二、结构标签（★ N1/N2/N3 —— ★ 从注册信息**自动生成**，★ Q4 L57）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 #: ★★ **域判定规则**（★ 按**工具名 + 标题**里的词匹配 `cues`）。
 #:   ★ 判据：**得分最高者胜**；★ 平局按 `order` 取小（★ 顺序即语义）。
-def classify_domain(name: str, title: str, doc: str,
-                    domains: dict) -> str:
+def classify_domain(name: str, title: str, doc: str, domains: dict) -> str:
     """★★ **给一个工具判主域**（★ N1 —— ★ FR-001）。
 
     ★★ 判据：**名字权重 3 · 标题权重 2 · 文档权重 1**。
@@ -173,9 +184,12 @@ def classify_domain(name: str, title: str, doc: str,
 #:   选择状态、界面状态、文件系统、网络分别描述」）
 _EFFECT_RULES = (
     #: 名字里带这些 ⇒ **文档几何**（★ 最重）
-    (r"extrude|revolve|sweep|loft|cut|fillet|chamfer|shell|dome|rib|"
-     r"pattern|mirror|scale|hole|boss|thicken|knit|trim|extend|flatten|"
-     r"draft|flange|hem|gusset|weld|mold|parting", "doc_geometry"),
+    (
+        r"extrude|revolve|sweep|loft|cut|fillet|chamfer|shell|dome|rib|"
+        r"pattern|mirror|scale|hole|boss|thicken|knit|trim|extend|flatten|"
+        r"draft|flange|hem|gusset|weld|mold|parting",
+        "doc_geometry",
+    ),
     #: 属性/配置
     (r"custom_propert|config|equation|material", "doc_property"),
     #: 选区
@@ -183,8 +197,11 @@ _EFFECT_RULES = (
     #: 界面
     (r"view|zoom|display|redraw|perspective|window|frame", "ui_state"),
     #: 文件系统
-    (r"export|save|write|batch_export|open_document|close_document|"
-     r"pack_and_go|dwg|dxf", "filesystem"),
+    (
+        r"export|save|write|batch_export|open_document|close_document|"
+        r"pack_and_go|dwg|dxf",
+        "filesystem",
+    ),
     #: 网络
     (r"misumi|http|download|suggest_part", "network"),
 )
@@ -208,8 +225,7 @@ def classify_effect(name: str, read_only: bool = True) -> list:
     return ["none"]
 
 
-def classify_object(name: str, needs_model: bool = False,
-                    inject: str = "") -> str:
+def classify_object(name: str, needs_model: bool = False, inject: str = "") -> str:
     n = (name or "").lower()
     if "drawing" in n or "sheet" in n:
         return "drawing"
@@ -240,8 +256,11 @@ def classify_operation(name: str, read_only: bool = True) -> str:
         return "select"
     if re.search(r"export|save|write", n):
         return "export"
-    if re.search(r"calculate|compute|evaluate|measure|solve|inspect|"
-                 r"evidence|report|check|list|read|get_", n):
+    if re.search(
+        r"calculate|compute|evaluate|measure|solve|inspect|"
+        r"evidence|report|check|list|read|get_",
+        n,
+    ):
         return "compute" if not read_only else "read"
     if re.search(r"update|set_|modify|activate|apply", n):
         return "modify"
@@ -256,19 +275,26 @@ def classify_result(name: str, read_only: bool = True) -> str:
         return "file"
     if re.search(r"report|evidence|review|inspect|check|summary", n):
         return "report"
-    if re.search(r"mass_propert|bounding_box|measure|volume|area|angle|"
-                 r"distance|count|params|status", n):
+    if re.search(
+        r"mass_propert|bounding_box|measure|volume|area|angle|"
+        r"distance|count|params|status",
+        n,
+    ):
         return "value"
-    if re.search(r"extrude|revolve|sweep|loft|fillet|chamfer|hole|shell|"
-                 r"pattern|mirror|dome|rib", n):
+    if re.search(
+        r"extrude|revolve|sweep|loft|fillet|chamfer|hole|shell|"
+        r"pattern|mirror|dome|rib",
+        n,
+    ):
         return "geometry"
     if read_only:
         return "value"
     return "state"
 
 
-def classify_precondition(name: str, needs_model: bool = False,
-                          inject: str = "") -> str:
+def classify_precondition(
+    name: str, needs_model: bool = False, inject: str = ""
+) -> str:
     n = (name or "").lower()
     if "assembly" in n or "mate" in n or "component" in n:
         return "needs_assembly"
@@ -297,7 +323,9 @@ def classify_backend(name: str, module: str = "") -> str:
     m = (module or "").lower()
     if re.search(r"calculix|elmer|\bsolver\b|simulation|topology|\bfea\b", n + " " + m):
         return "external_solver"
-    if re.search(r"export|\bdxf\b|\bstl\b|\bstep\b|iges|\bbmp\b|image|\bpdf\b|macro", n):
+    if re.search(
+        r"export|\bdxf\b|\bstl\b|\bstep\b|iges|\bbmp\b|image|\bpdf\b|macro", n
+    ):
         return "file_io"
     if m and not m.startswith("sw_"):
         return "pure_python"
@@ -306,9 +334,13 @@ def classify_backend(name: str, module: str = "") -> str:
     return "com_pywin32"
 
 
-def classify_availability(name: str, *, admitted: bool,
-                         backend_blocked: bool = False,
-                         needs_addin: bool = False) -> str:
+def classify_availability(
+    name: str,
+    *,
+    admitted: bool,
+    backend_blocked: bool = False,
+    needs_addin: bool = False,
+) -> str:
     """★★ **可用性**（★ Q4 的 `availability` —— ★ 它决定能不能进自主集合）。
 
     ★★ 判据顺序（★ 最严在前，★ 与 Q12/Q16 逐字对齐）：
@@ -333,6 +365,7 @@ def classify_availability(name: str, *, admitted: bool,
 # 三、工具卡（★ N3 —— ★ 模块**仅作定位信息**）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ToolCard:
     """★★ **工具卡**（★ Q6 L104 逐字：「返回少量方法卡，保留目标、输入、
@@ -346,7 +379,7 @@ class ToolCard:
     domain: str = ""
     title: str = ""
     facets: dict = field(default_factory=dict)
-    module: str = ""            #: ★ 仅定位 —— ★ **不参与检索匹配**
+    module: str = ""  #: ★ 仅定位 —— ★ **不参与检索匹配**
     tokens: int = 0
     admitted: bool = True
 
@@ -359,10 +392,15 @@ class ToolCard:
         return "%s %s %s" % (self.name, self.title, f)
 
     def to_dict(self) -> dict:
-        return {"name": self.name, "domain": self.domain,
-                "title": self.title, "facets": dict(self.facets),
-                "module": self.module, "tokens": self.tokens,
-                "admitted": self.admitted}
+        return {
+            "name": self.name,
+            "domain": self.domain,
+            "title": self.title,
+            "facets": dict(self.facets),
+            "module": self.module,
+            "tokens": self.tokens,
+            "admitted": self.admitted,
+        }
 
 
 def _est_tokens(*texts: str) -> int:
@@ -371,9 +409,12 @@ def _est_tokens(*texts: str) -> int:
     return max(1, int(len(blob) / 1.6))
 
 
-def build_catalog(*, registry: dict | None = None,
-                  domains: dict | None = None,
-                  facets: dict | None = None) -> list:
+def build_catalog(
+    *,
+    registry: dict | None = None,
+    domains: dict | None = None,
+    facets: dict | None = None,
+) -> list:
     """★★ **从注册信息合成工具卡**（★ N1/N2/N3 —— ★ Q4 L57「结构标签可以从
     注册信息生成」）。
 
@@ -381,6 +422,7 @@ def build_catalog(*, registry: dict | None = None,
       ★ 两个注册来源都要覆盖（★ `all_specs()` + `server.py` 的 `@mcp.tool`）。
     """
     from . import registry as REG
+
     reg = registry if registry is not None else REG.build_registry()
     doms = domains if domains is not None else load_domains()
     fac = facets if facets is not None else load_facets()
@@ -393,10 +435,11 @@ def build_catalog(*, registry: dict | None = None,
     #:   ⇒ ★ 判据：**先建 spec 索引，按规范名回查**（★ 两边都要读）。
     specs = {}
     try:
-        import register_capabilities as _rc                            # noqa: PLC0415
+        import register_capabilities as _rc  # noqa: PLC0415
+
         for s in _rc.all_specs():
             specs[s.name] = s
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     cards: list[ToolCard] = []
@@ -411,7 +454,9 @@ def build_catalog(*, registry: dict | None = None,
         if read_only is None:
             #: ★ 回退到 descriptor 的合成效应（★ 不是"猜只读"）
             read_only = getattr(d, "effect", "unknown") == "read"
-        needs_model = bool(getattr(sp, "needs_model", False)) if sp is not None else False
+        needs_model = (
+            bool(getattr(sp, "needs_model", False)) if sp is not None else False
+        )
         inject = getattr(d, "inject", "") or ""
 
         dom = classify_domain(name, title, doc, doms)
@@ -422,16 +467,16 @@ def build_catalog(*, registry: dict | None = None,
         if dom not in doms:
             raise CatalogError("unknown-domain", "★ 未知域：%r" % dom)
 
-        pre = classify_precondition(name, needs_model=needs_model,
-                                    inject=inject)
+        pre = classify_precondition(name, needs_model=needs_model, inject=inject)
         avail = classify_availability(
-            name, admitted=admitted,
-            needs_addin=(pre == "needs_addin"))
+            name, admitted=admitted, needs_addin=(pre == "needs_addin")
+        )
         eff = classify_effect(name, read_only=read_only)
         fv = {
             "effect": eff[0],
-            "object_kind": classify_object(name, needs_model=needs_model,
-                                           inject=inject),
+            "object_kind": classify_object(
+                name, needs_model=needs_model, inject=inject
+            ),
             "operation": classify_operation(name, read_only=read_only),
             "result_kind": classify_result(name, read_only=read_only),
             "precondition": pre,
@@ -444,18 +489,27 @@ def build_catalog(*, registry: dict | None = None,
                 raise CatalogError("unknown-facet", "★ 未知标签：%s" % fn)
             if fval not in fac[fn].values:
                 raise CatalogError(
-                    "bad-facet-value",
-                    "★ %s 的 %s=%r 不在受控取值里" % (name, fn, fval))
+                    "bad-facet-value", "★ %s 的 %s=%r 不在受控取值里" % (name, fn, fval)
+                )
 
-        cards.append(ToolCard(
-            name=name, domain=dom, title=title, facets=fv, module=module,
-            tokens=_est_tokens(name, title, doc, " ".join(fv.values())),
-            admitted=admitted))
+        cards.append(
+            ToolCard(
+                name=name,
+                domain=dom,
+                title=title,
+                facets=fv,
+                module=module,
+                tokens=_est_tokens(name, title, doc, " ".join(fv.values())),
+                admitted=admitted,
+            )
+        )
     #: ★★ **如实计数回退域**（★ 不是藏起来）——
     #:   ★ 判据：`title` 与 `doc` 都为空、且名字零命中 ⇒ 那才是真回退。
     for c in cards:
-        c.fallback = (c.domain == _fallback_domain(doms)
-                      and classify_domain(c.name, c.title, "", doms) == "")
+        c.fallback = (
+            c.domain == _fallback_domain(doms)
+            and classify_domain(c.name, c.title, "", doms) == ""
+        )
     return cards
 
 
@@ -514,7 +568,7 @@ def ngrams(text: str, n: int = 2) -> set:
     for seg in re.findall(r"[\u4e00-\u9fff]+", text or ""):
         for k in range(1, min(n, len(seg)) + 1):
             for i in range(len(seg) - k + 1):
-                out.add(seg[i:i + k])
+                out.add(seg[i : i + k])
     #: ★ 英文/标识符按词
     for w in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", text or ""):
         out.add(w.lower())
@@ -535,13 +589,14 @@ def expand_query(text: str) -> set:
 # 五、分面检索（★ N4/N6 —— ★ Q6 L102-107）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class RetrievalQuery:
     text: str = ""
-    domain: str = ""              #: ★ 任务类型
-    doc_state: str = ""           #: ★ 文档状态（★ 映射到 `precondition`）
-    backend: str = ""             #: ★ 后端可达性
-    capability: str = ""          #: ★ 能力范围（★ 映射到 `availability`）
+    domain: str = ""  #: ★ 任务类型
+    doc_state: str = ""  #: ★ 文档状态（★ 映射到 `precondition`）
+    backend: str = ""  #: ★ 后端可达性
+    capability: str = ""  #: ★ 能力范围（★ 映射到 `availability`）
     budget: int = TOKEN_BUDGET
 
 
@@ -554,8 +609,9 @@ class RetrievalResult:
     candidates_before_filter: int = 0
 
 
-def retrieve(q: RetrievalQuery, cards: list, *,
-             budget: int | None = None) -> RetrievalResult:
+def retrieve(
+    q: RetrievalQuery, cards: list, *, budget: int | None = None
+) -> RetrievalResult:
     """★★ **分面检索**（★ N4/N5/N6 —— ★ Q6 L102-107）。
 
     ★★ 判据顺序（★ 逐字承 Q6 的五步）：
@@ -617,23 +673,30 @@ def retrieve(q: RetrievalQuery, cards: list, *,
             continue
         used += c.tokens
         out.append(c)
-    return RetrievalResult(cards=out, tokens=used, truncated=truncated,
-                           facets_used=used_facets,
-                           candidates_before_filter=before)
+    return RetrievalResult(
+        cards=out,
+        tokens=used,
+        truncated=truncated,
+        facets_used=used_facets,
+        candidates_before_filter=before,
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 六、按需加载契约（★ N10 —— ★ Q6 L105）
 #: ══════════════════════════════════════════════════════════════════════
 
-def load_contract(card: ToolCard, *, registry: dict | None = None,
-                  budget: int = TOKEN_BUDGET) -> dict:
+
+def load_contract(
+    card: ToolCard, *, registry: dict | None = None, budget: int = TOKEN_BUDGET
+) -> dict:
     """★★ **选中后只加载该方法的完整参数契约**（★ N10 —— ★ Q6 L105）。
 
     ★★ 判据：**只回这一个工具的契约**，★ **不塞全部 schema**
       （★ Q6 L106 逐字：「不把全部工具 schema 塞给 LLM」）。
     """
     from . import registry as REG
+
     reg = registry if registry is not None else REG.build_registry()
     d = reg.get(card.name)
     if d is None:
@@ -645,25 +708,33 @@ def load_contract(card: ToolCard, *, registry: dict | None = None,
     params: dict = {}
     if isinstance(raw, dict):
         for pn, p in raw.items():
-            params[pn] = {"type": getattr(p, "type", "?"),
-                          "required": bool(getattr(p, "required", False)),
-                          "desc": (getattr(p, "desc", "") or "")[:120]}
+            params[pn] = {
+                "type": getattr(p, "type", "?"),
+                "required": bool(getattr(p, "required", False)),
+                "desc": (getattr(p, "desc", "") or "")[:120],
+            }
     else:
         req = set(getattr(d, "required", ()) or ())
         for pn in raw:
             nm = pn if isinstance(pn, str) else getattr(pn, "name", str(pn))
             params[nm] = {"required": nm in req}
-    contract = {"name": card.name, "domain": card.domain,
-                "title": card.title, "facets": dict(card.facets),
-                "params": params,
-                "requires": list(getattr(d, "requires", ()) or ()),
-                "inject": getattr(d, "inject", "") or "",
-                "admitted": bool(getattr(d, "admitted", True))}
+    contract = {
+        "name": card.name,
+        "domain": card.domain,
+        "title": card.title,
+        "facets": dict(card.facets),
+        "params": params,
+        "requires": list(getattr(d, "requires", ()) or ()),
+        "inject": getattr(d, "inject", "") or "",
+        "admitted": bool(getattr(d, "admitted", True)),
+    }
     tk = _est_tokens(json.dumps(contract, ensure_ascii=False))
     contract["tokens"] = tk
     if tk > budget:
-        raise CatalogError("budget-exceeded",
-                           "★ %s 的契约 %d token 超预算 %d" % (card.name, tk, budget))
+        raise CatalogError(
+            "budget-exceeded",
+            "★ %s 的契约 %d token 超预算 %d" % (card.name, tk, budget),
+        )
     return contract
 
 
@@ -671,9 +742,14 @@ def load_contract(card: ToolCard, *, registry: dict | None = None,
 # 七、recall / chain_hit 指标（★ N7 —— ★ Q4 L48-55）
 #: ══════════════════════════════════════════════════════════════════════
 
-def evaluate_recall(cases: list, cards: list, *,
-                    thresholds: dict | None = None,
-                    budget: int = TOKEN_BUDGET) -> dict:
+
+def evaluate_recall(
+    cases: list,
+    cards: list,
+    *,
+    thresholds: dict | None = None,
+    budget: int = TOKEN_BUDGET,
+) -> dict:
     """★★ **recall / chain_hit / 域跨度**（★ N7 —— ★ Q4 L48-55 逐字给的公式）。
 
     ★★ Q4 L49-51 逐字：
@@ -687,9 +763,9 @@ def evaluate_recall(cases: list, cards: list, *,
     th = (thresholds or load_thresholds())["thresholds"]
     rows = []
     for case in cases:
-        q = RetrievalQuery(text=case.get("text", ""),
-                           domain=case.get("domain", ""),
-                           budget=budget)
+        q = RetrievalQuery(
+            text=case.get("text", ""), domain=case.get("domain", ""), budget=budget
+        )
         r = retrieve(q, cards, budget=budget)
         got = {c.name for c in r.cards}
         chains = case.get("gold_chains") or []
@@ -702,24 +778,36 @@ def evaluate_recall(cases: list, cards: list, *,
         hit = any(set(g) <= got for g in chains if g)
         #: ★ 域跨度（★ 命中的卡跨了几个域）
         span = len({c.domain for c in r.cards})
-        rows.append({"id": case.get("id", "?"), "recall": round(rec, 4),
-                     "chain_hit": hit, "domain_span": span,
-                     "tokens": r.tokens,
-                     "whole_machine": bool(case.get("whole_machine"))})
+        rows.append(
+            {
+                "id": case.get("id", "?"),
+                "recall": round(rec, 4),
+                "chain_hit": hit,
+                "domain_span": span,
+                "tokens": r.tokens,
+                "whole_machine": bool(case.get("whole_machine")),
+            }
+        )
     live = [r for r in rows if "recall" in r]
     if not live:
-        return {"ok": False, "reason": "★ 没有可算的用例（★ 语料要业主编）",
-                "rows": rows, "thresholds": th}
+        return {
+            "ok": False,
+            "reason": "★ 没有可算的用例（★ 语料要业主编）",
+            "rows": rows,
+            "thresholds": th,
+        }
 
     avg_recall = sum(r["recall"] for r in live) / len(live)
     chain_rate = sum(1 for r in live if r["chain_hit"]) / len(live)
     #: ★ Q4 L55 逐字：**复杂整机需求不参加「≤3 个域」这一局部检索指标**
     local = [r for r in live if not r["whole_machine"]]
-    span3 = (sum(1 for r in local if r["domain_span"] <= 3) / len(local)
-             if local else 0.0)
+    span3 = (
+        sum(1 for r in local if r["domain_span"] <= 3) / len(local) if local else 0.0
+    )
 
     out = {
-        "n": len(live), "avg_recall": round(avg_recall, 4),
+        "n": len(live),
+        "avg_recall": round(avg_recall, 4),
         "chain_hit": round(chain_rate, 4),
         "domain_span_3_ratio": round(span3, 4),
         "local_n": len(local),
@@ -757,22 +845,36 @@ MODES = (MODE_AUTONOMOUS, MODE_COMPAT)
 AUTONOMOUS_ALLOW = (
     #: ── 规划入口（★ 规格 329 接进 MCP 的 4 个目录检索 —— Q6 L110）
     #:   ★ 它们去掉前缀后的**裸步名**正是 `catalog_*` ⇒ ★ 与唯一映射规则自然对上。
-    "solidworks_catalog_domains", "solidworks_catalog_retrieve",
-    "solidworks_catalog_contract", "solidworks_catalog_exposure",
+    "solidworks_catalog_domains",
+    "solidworks_catalog_retrieve",
+    "solidworks_catalog_contract",
+    "solidworks_catalog_exposure",
     #: ── 必要查询工具（★ 只读、无副作用）
-    "solidworks_part_mass_properties", "solidworks_part_bounding_box",
-    "solidworks_feature_list_names", "solidworks_entities_on_body",
-    "solidworks_current_selection", "solidworks_selection_count",
-    "solidworks_collect_model_summary", "solidworks_read_document_units",
-    "solidworks_feature_present", "solidworks_feature_whats_wrong",
-    "solidworks_collect_view_evidence", "solidworks_surface_evidence",
-    "solidworks_sheet_metal_evidence", "solidworks_weldment_evidence",
-    "solidworks_config_inspect", "solidworks_custom_property_list",
-    "solidworks_custom_property_names", "solidworks_equation_list",
-    "solidworks_drawing_list_sheets", "solidworks_drawing_list_views",
+    "solidworks_part_mass_properties",
+    "solidworks_part_bounding_box",
+    "solidworks_feature_list_names",
+    "solidworks_entities_on_body",
+    "solidworks_current_selection",
+    "solidworks_selection_count",
+    "solidworks_collect_model_summary",
+    "solidworks_read_document_units",
+    "solidworks_feature_present",
+    "solidworks_feature_whats_wrong",
+    "solidworks_collect_view_evidence",
+    "solidworks_surface_evidence",
+    "solidworks_sheet_metal_evidence",
+    "solidworks_weldment_evidence",
+    "solidworks_config_inspect",
+    "solidworks_custom_property_list",
+    "solidworks_custom_property_names",
+    "solidworks_equation_list",
+    "solidworks_drawing_list_sheets",
+    "solidworks_drawing_list_views",
     "solidworks_drawing_current_sheet_name",
-    "solidworks_assembly_list_components", "solidworks_assembly_list_mates",
-    "solidworks_sketch_count_lines", "solidworks_sketch_count_arcs",
+    "solidworks_assembly_list_components",
+    "solidworks_assembly_list_mates",
+    "solidworks_sketch_count_lines",
+    "solidworks_sketch_count_arcs",
     "solidworks_sketch_count_segments",
     "solidworks_sketch_fully_defined_status",
 )
@@ -796,10 +898,14 @@ def exposure(cards: list, mode: str = MODE_COMPAT) -> dict:
         names = [c.name for c in cards if c.name in AUTONOMOUS_ALLOW]
     else:
         names = [c.name for c in cards]
-    return {"mode": mode, "names": sorted(names), "count": len(names),
-            "hidden_count": len(cards) - len(names),
-            "★": "★ 隐藏 ≠ 防旁路 —— ★ 权限检查在分发处（authorization.check_tool）",
-            "dispatch_check_required": True}
+    return {
+        "mode": mode,
+        "names": sorted(names),
+        "count": len(names),
+        "hidden_count": len(cards) - len(names),
+        "★": "★ 隐藏 ≠ 防旁路 —— ★ 权限检查在分发处（authorization.check_tool）",
+        "dispatch_check_required": True,
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -813,13 +919,25 @@ def exposure(cards: list, mode: str = MODE_COMPAT) -> dict:
 # ★ 判据：**纯 Python、只读、不碰 COM**。
 
 
-def catalog_retrieve(*, query: str = "", domain: str = "",
-                     doc_state: str = "", backend: str = "",
-                     capability: str = "", budget: int = TOKEN_BUDGET) -> dict:
+def catalog_retrieve(
+    *,
+    query: str = "",
+    domain: str = "",
+    doc_state: str = "",
+    backend: str = "",
+    capability: str = "",
+    budget: int = TOKEN_BUDGET,
+) -> dict:
     """★★ **分面检索入口**（★ Q6 L102-107 五步）。"""
     cards = build_catalog()
-    q = RetrievalQuery(text=query, domain=domain, doc_state=doc_state,
-                       backend=backend, capability=capability, budget=budget)
+    q = RetrievalQuery(
+        text=query,
+        domain=domain,
+        doc_state=doc_state,
+        backend=backend,
+        capability=capability,
+        budget=budget,
+    )
     r = retrieve(q, cards, budget=budget)
     return {
         "cards": [c.to_dict() for c in r.cards],
@@ -827,8 +945,10 @@ def catalog_retrieve(*, query: str = "", domain: str = "",
         "truncated": r.truncated,
         "facets_used": r.facets_used,
         "candidates_before_filter": r.candidates_before_filter,
-        "★": ("★ 分面过滤在召回之前；★ `module` **不参与**检索匹配"
-              "（★ 只作定位信息 —— Q4 L40 逐字）"),
+        "★": (
+            "★ 分面过滤在召回之前；★ `module` **不参与**检索匹配"
+            "（★ 只作定位信息 —— Q4 L40 逐字）"
+        ),
     }
 
 
@@ -837,8 +957,10 @@ def catalog_contract(*, tool_name: str = "") -> dict:
     cards = {c.name: c for c in build_catalog()}
     card = cards.get(tool_name)
     if card is None:
-        return {"error": "★ 目录里没有 %s" % tool_name,
-                "hint": "先用 cadstudio_catalog_retrieve 找"}
+        return {
+            "error": "★ 目录里没有 %s" % tool_name,
+            "hint": "先用 cadstudio_catalog_retrieve 找",
+        }
     return load_contract(card)
 
 
@@ -847,8 +969,10 @@ def catalog_domains() -> dict:
     doms = load_domains()
     facets = load_facets()
     return {
-        "domains": [{"id": d.id, "name": d.name, "order": d.order}
-                    for d in sorted(doms.values(), key=lambda x: x.order)],
+        "domains": [
+            {"id": d.id, "name": d.name, "order": d.order}
+            for d in sorted(doms.values(), key=lambda x: x.order)
+        ],
         "facets": {k: sorted(v.values) for k, v in facets.items()},
         "★": "★ Q4 L38 逐字：八个一级任务域 + 七个受控多标签",
     }

@@ -1,10 +1,11 @@
 """★ 门禁：`docs/*.md` 里的量化断言必须能追溯到出处。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   scripts/check_fact_provenance.py
 # 定位:   `docs/text-to-cad-lessons-verdict.md` §2.3 的落地 ——★ 经验①「事实/尺寸来源分
-#           级」的**改造后采纳**形态。★ 判据：`docs/*.md` 里形如「N 条 / N 个 / N% / N 
+#           级」的**改造后采纳**形态。★ 判据：`docs/*.md` 里形如「N 条 / N 个 / N% / N
 #           秒 / N MB」的  量化断言，若来自实测，**同一行或同一段落**内必须能找到可追溯
 #           的  出处（命令 / 脚本路径 / 日志路径 / `git show` 引用 / 上游路径:行号）。
 # 官方依据: `docs/text-to-cad-lessons-verdict.md` §1.3（增量豁免范式）+ `docs/known-fact
@@ -23,7 +24,7 @@ import subprocess
 import sys
 import pathlib
 
-sys.stdout.reconfigure(encoding="utf-8")          # 事实 58：管道下 GBK 会崩
+sys.stdout.reconfigure(encoding="utf-8")  # 事实 58：管道下 GBK 会崩
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 #: ★ 相对上游的基线。★ 与 `scripts/check_provenance.py:59` 同一锚点。
@@ -41,16 +42,18 @@ QUANT = re.compile(
 #: ★ 可追溯出处的形态（任一命中即认为该断言有出处）。
 #: ⚠ 每条都对应一种**可复核**的指向，不是「看起来像引用」：
 TRACE = [
-    re.compile(r"`[^`]*\.(?:py|json|md|txt|log|yaml|yml|ps1|sh)(?::\d+(?:-\d+)?)?`"),  # 路径[:行]
-    re.compile(r"`[^`]*(?:--|pytest |python |git |pwsh |Get-|Select-)[^`]*`"),          # 命令
-    re.compile(r"\[[^\]]+\]\([^)]+\)"),                                                  # md 链接
-    re.compile(r"git show [0-9a-f]{4,}"),                                                # git show 引用
-    re.compile(r"(?:实测|核验|测得|跑过|依据|出处|来源)\s*[:：]"),                          # 显式声明
+    re.compile(
+        r"`[^`]*\.(?:py|json|md|txt|log|yaml|yml|ps1|sh)(?::\d+(?:-\d+)?)?`"
+    ),  # 路径[:行]
+    re.compile(r"`[^`]*(?:--|pytest |python |git |pwsh |Get-|Select-)[^`]*`"),  # 命令
+    re.compile(r"\[[^\]]+\]\([^)]+\)"),  # md 链接
+    re.compile(r"git show [0-9a-f]{4,}"),  # git show 引用
+    re.compile(r"(?:实测|核验|测得|跑过|依据|出处|来源)\s*[:：]"),  # 显式声明
     #: ★ 事实台账引用。★ 两个方向都要认 —— 「事实 62」与「第 62 条事实」都是引用，
     #:   而后者在 `docs/` 里更常见。⚠ 只认一个方向会漏报（★ 负例测试抓到的真实缺陷）。
     re.compile(r"事实\s*\d+"),
     re.compile(r"第\s*\d+\s*条事实"),
-    re.compile(r"[A-Za-z0-9_./-]+\.(?:py|md|json|txt|log):\d+"),                          # 裸路径:行号
+    re.compile(r"[A-Za-z0-9_./-]+\.(?:py|md|json|txt|log):\d+"),  # 裸路径:行号
     #: ★ 引文标记：数字是**引用别人的原文**，不是本文件的断言 ⇒ 不需要本文件的出处。
     #:   ★ 出现场景：`docs/tools-removed-*.md` 的归档表（描述列是已删文件的原始首句）。
     #:   ⚠ 必须与「实测/依据」并列，因为引文的责任方是**被引的那份原文**，不是这里。
@@ -60,9 +63,13 @@ TRACE = [
 
 def _git(*args: str) -> str:
     try:
-        out = subprocess.run(["git", "-C", str(ROOT), *args],
-                             capture_output=True, text=True,
-                             encoding="utf-8", errors="replace")
+        out = subprocess.run(
+            ["git", "-C", str(ROOT), *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
         return out.stdout if out.returncode == 0 else ""
     except OSError:
         return ""
@@ -123,7 +130,7 @@ def scan_text(text: str, *, allow_para: bool = True) -> list[tuple[int, str, str
             if allow_para and _para_has_trace(lines, i):
                 continue
             problems.append((i + 1, snippet, "量化断言没有可追溯出处"))
-            break                     # 一行报一次，避免噪声
+            break  # 一行报一次，避免噪声
     return problems
 
 
@@ -166,9 +173,9 @@ def selftest() -> bool:
         print("★★ 正例自证失败：带出处的量化断言被误报 %r" % (scan_text(good),))
         return False
     #: ③ 正例：段落级出处也算（出处在上/下一行）
-    good_para = ("核验命令如下：\n"
-                 "`python scripts/release_check.py`\n"
-                 "结果：37 条能力没有实现。")
+    good_para = (
+        "核验命令如下：\n`python scripts/release_check.py`\n结果：37 条能力没有实现。"
+    )
     if scan_text(good_para):
         print("★★ 正例自证失败：段落级出处未被接受")
         return False
@@ -184,8 +191,10 @@ def main() -> int:
         print("★★ 发现 %d 处量化断言没有出处：" % len(problems))
         for p in problems[:20]:
             print("   %s" % p)
-        print("\n★ 修法：给该断言补出处（命令 / 脚本路径:行号 / 日志路径 / `git show` 引用），"
-              "或改写为非量化表述。")
+        print(
+            "\n★ 修法：给该断言补出处（命令 / 脚本路径:行号 / 日志路径 / `git show` 引用），"
+            "或改写为非量化表述。"
+        )
         return 1
     print("★ [PASS] docs/ 增量里的量化断言都能追溯到出处")
     return 0

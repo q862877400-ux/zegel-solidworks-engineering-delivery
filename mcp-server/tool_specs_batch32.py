@@ -64,21 +64,28 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH32"]
 
-_FEAT = ("Expected feature name as it appears in the FeatureManager tree "
-         "(Chinese UI: 「抽壳1」/「筋1」/「圆顶1」/「复合曲线1」). ★ Leave empty to use the "
-         "default name. ⚠ The read-back uses this name, so a wrong name reports "
-         "`present: false` rather than silently succeeding.")
-_THICK = "Wall thickness in MILLIMETRES (the capability layer's unit follows the document)."
+_FEAT = (
+    "Expected feature name as it appears in the FeatureManager tree "
+    "(Chinese UI: 「抽壳1」/「筋1」/「圆顶1」/「复合曲线1」). ★ Leave empty to use the "
+    "default name. ⚠ The read-back uses this name, so a wrong name reports "
+    "`present: false` rather than silently succeeding."
+)
+_THICK = (
+    "Wall thickness in MILLIMETRES (the capability layer's unit follows the document)."
+)
 _HEIGHT = "Dome height in MILLIMETRES."
-_SKETCH = ("Name of an EXISTING sketch to use as the rib profile (e.g. 「草图2」). "
-           "★ The sketch must already be in the tree.")
+_SKETCH = (
+    "Name of an EXISTING sketch to use as the rib profile (e.g. 「草图2」). "
+    "★ The sketch must already be in the tree."
+)
 
 
 SPECS_BATCH32 = [
     ToolSpec(
         name="solidworks_part_shell",
         title="Shell the Part (read-back confirmed)",
-        module="sw_part", function="shell_report",
+        module="sw_part",
+        function="shell_report",
         inject="model",
         param_alias={"thickness_mm": "thickness_mm"},
         params=[
@@ -86,37 +93,50 @@ SPECS_BATCH32 = [
             Param("feature_name", str, default="", description=_FEAT),
         ],
         doc="Hollow the part with a wall thickness and return a READ-BACK report: whether the "
-            "feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item "
-            "count (★ rule 6 — feature creation must not succeed silently). "
-            "⚠ Does NOT save the document.",
+        "feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item "
+        "count (★ rule 6 — feature creation must not succeed silently). "
+        "⚠ Does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_part_rib",
         title="Create a Rib from a Sketch (read-back confirmed)",
-        module="sw_part", function="rib_report",
+        module="sw_part",
+        function="rib_report",
         inject="model",
         param_alias={"thickness_mm": "thickness_mm"},
         params=[
             Param("sketch_name", str, description=_SKETCH),
             Param("thickness_mm", float, description=_THICK),
             Param("feature_name", str, default="", description=_FEAT),
-            Param("direction", bool, default=True,
-                  description="Rib direction flag (official InsertRib arg 4)."),
+            Param(
+                "direction",
+                bool,
+                default=True,
+                description="Rib direction flag (official InsertRib arg 4).",
+            ),
         ],
         doc="Create a rib from an existing sketch and return a READ-BACK report (feature in "
-            "tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.",
+        "tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_part_insert_dome",
         title="Add a Dome to the Selected Face (read-back confirmed)",
-        module="sw_part", function="insert_dome_report",
+        module="sw_part",
+        function="insert_dome_report",
         inject="model",
         param_alias={"height_mm": "height_mm"},
         params=[
             Param("height_mm", float, description=_HEIGHT),
             Param("feature_name", str, default="", description=_FEAT),
-            Param("reverse", bool, default=False, description="Reverse the dome direction."),
-            Param("elliptic", bool, default=False, description="Make the dome elliptical."),
+            Param(
+                "reverse",
+                bool,
+                default=False,
+                description="Reverse the dome direction.",
+            ),
+            Param(
+                "elliptic", bool, default=False, description="Make the dome elliptical."
+            ),
             #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**新增 `face_index`** ——
             #: ★ 起因：★ 官方 Remarks 要求"先选一个面 + **mark=1**"，★ 而注入解析器**会
             #: 清空选区**
@@ -124,27 +144,32 @@ SPECS_BATCH32 = [
             #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 故用**声明式序号**，★ 由函数内自己选
             #: （`sw_part.select_face_by_index_mark1`，★ 形态由既有冒烟 9/9 证明、★ 已真
             #: 机复验）✓
-            Param("face_index", int, default=0,
-                  description="★ 第几个面（从 0 起）。★ 声明式序号 —— 不信坐标（规则 3）。"
-                              "越界或选不中会**响亮报错**，不会静默变成「圆顶建不出来」。"),
+            Param(
+                "face_index",
+                int,
+                default=0,
+                description="★ 第几个面（从 0 起）。★ 声明式序号 —— 不信坐标（规则 3）。"
+                "越界或选不中会**响亮报错**，不会静默变成「圆顶建不出来」。",
+            ),
         ],
         doc="★ Add a dome on the face at `face_index` (0-based) and return a READ-BACK report. "
-            "★★ The tool selects that face itself with **selection mark 1** (the official Remarks "
-            "require it) — so the caller does NOT need to pre-select anything, and a pre-selection "
-            "would be cleared anyway. ★ Read-back confirmed (rule 6); does NOT save the document.",
+        "★★ The tool selects that face itself with **selection mark 1** (the official Remarks "
+        "require it) — so the caller does NOT need to pre-select anything, and a pre-selection "
+        "would be cleared anyway. ★ Read-back confirmed (rule 6); does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_part_insert_composite_curve",
         title="Insert a Composite Curve from the Selection (read-back confirmed)",
-        module="sw_part", function="insert_composite_curve_report",
+        module="sw_part",
+        function="insert_composite_curve_report",
         inject="model",
         params=[
             Param("feature_name", str, default="", description=_FEAT),
         ],
         doc="Join the selected entities into a composite curve and return a READ-BACK report "
-            "(★ rule 6). The capability layer already raises when the official call returns "
-            "False — this adds the tree/rebuild/What's Wrong read-back on top. "
-            "⚠ The official Remarks require the entities to be selected with mark = 1 first. "
-            "⚠ Does NOT save the document.",
+        "(★ rule 6). The capability layer already raises when the official call returns "
+        "False — this adds the tree/rebuild/What's Wrong read-back on top. "
+        "⚠ The official Remarks require the entities to be selected with mark = 1 first. "
+        "⚠ Does NOT save the document.",
     ),
 ]

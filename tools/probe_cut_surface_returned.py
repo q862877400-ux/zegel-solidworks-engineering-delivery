@@ -44,23 +44,34 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-from scripts import sw_surface_features as SF                         # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _mk_solid(doc):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -68,19 +79,30 @@ def _mk_solid(doc):
 def _mk_surface(doc, plane="Front Plane"):
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.02,
+        -0.02,
+        0.0,
+        0.02,
+        0.02,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -97,17 +119,19 @@ def _probe_members(obj):
         try:
             v = fn(obj)
             out[label] = str(v)[:80]
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out[label] = "ERR %s" % str(exc)[:60]
     return out
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "InsertCutSurface \u8fd4\u56de\u7684**\u90a3\u4e2a\u5bf9\u8c61\u662f\u4ec0\u4e48**",
-          "why": "\u4e8b\u5b9e 405\uff1a\u53ea\u9009\u4e00\u5f20\u65f6\u56de `CDispatch`\u3001\u5168\u9009\u65f6\u56de `None`",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "InsertCutSurface \u8fd4\u56de\u7684**\u90a3\u4e2a\u5bf9\u8c61\u662f\u4ec0\u4e48**",
+        "why": "\u4e8b\u5b9e 405\uff1a\u53ea\u9009\u4e00\u5f20\u65f6\u56de `CDispatch`\u3001\u5168\u9009\u65f6\u56de `None`",
+        "cases": [],
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
@@ -117,10 +141,11 @@ def main() -> int:
         #: b\u5b9e 405 \u91cc\u56de\u5bf9\u8c61\u7684\u90a3\u79cd\u9009\u6cd5\uff09
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
+
         sel = 0
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
             faces = list(_get(b, "GetFaces") or [])
@@ -130,11 +155,14 @@ def main() -> int:
         ev["selected"] = sel
         before = list(P.feature_names(doc) or [])
         from sw_connect import out_i4 as _oi4
+
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            ret = C.get_com_member(fm, "InsertCutSurface", False, 0, False, True, [], _oi4())
-        except Exception as exc:                                          # noqa: BLE001
+            ret = C.get_com_member(
+                fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
+            )
+        except Exception as exc:  # noqa: BLE001
             ev["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         ev["returned_type"] = type(ret).__name__ if ret is not None else "None"
         ev["returned_repr"] = repr(ret)[:120]
@@ -144,7 +172,7 @@ def main() -> int:
         ev["new_features"] = [n for n in after if n not in before]
         ev["tree_after"] = after
         ev["ok"] = bool(ev["new_features"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -152,12 +180,18 @@ def main() -> int:
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "cut-surface-returned-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u9009\u4e2d=%s \u00b7 \u8fd4\u56de\u7c7b\u578b=**%s**" % (ev.get("selected"), ev.get("returned_type")))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u9009\u4e2d=%s \u00b7 \u8fd4\u56de\u7c7b\u578b=**%s**"
+        % (ev.get("selected"), ev.get("returned_type"))
+    )
     print("  repr=%s" % str(ev.get("returned_repr"))[:100])
     if ev.get("members"):
         for k, v in ev["members"].items():

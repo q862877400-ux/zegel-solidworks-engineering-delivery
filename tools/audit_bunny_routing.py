@@ -1,4 +1,5 @@
 """★ 机械检查：某批派活**实际**跑的是哪个模型（解压会话日志，不认 list_agents）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（针对 DSH 会话日志）
 # 文件:   tools/audit_bunny_routing.py
@@ -28,16 +29,19 @@ MARKS = ("space-bunny-free", "deepseek-flash", "opencode-zen", "gemini-3.8-flash
 def decompress(p: Path) -> bytes:
     """★ 三级降级：stdlib `compression.zstd` → `zstandard` 包 → `zstd` CLI。"""
     try:
-        from compression import zstd                              #: Python 3.14 自带
+        from compression import zstd  #: Python 3.14 自带
+
         return zstd.decompress(p.read_bytes())
-    except Exception:                                             # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     try:
-        import zstandard                                          # type: ignore
+        import zstandard  # type: ignore
+
         return zstandard.ZstdDecompressor().decompress(p.read_bytes())
-    except Exception:                                             # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     import subprocess
+
     r = subprocess.run(["zstd", "-d", "-c", str(p)], capture_output=True)
     if r.returncode == 0:
         return r.stdout
@@ -46,15 +50,26 @@ def decompress(p: Path) -> bytes:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--marker", default="bunny-records-deep",
-                    help="会话日志里必须出现的字符串（用来认出这一批的会话）")
-    ap.add_argument("--limit", type=int, default=40, help="最多扫几个（按修改时间倒序）")
-    ap.add_argument("--orchestrator", default="",
-                    help="编排者会话 id 前缀（★ 它跑会话模型是应然的，予以豁免）")
+    ap.add_argument(
+        "--marker",
+        default="bunny-records-deep",
+        help="会话日志里必须出现的字符串（用来认出这一批的会话）",
+    )
+    ap.add_argument(
+        "--limit", type=int, default=40, help="最多扫几个（按修改时间倒序）"
+    )
+    ap.add_argument(
+        "--orchestrator",
+        default="",
+        help="编排者会话 id 前缀（★ 它跑会话模型是应然的，予以豁免）",
+    )
     a = ap.parse_args()
 
-    logs = sorted(SESSIONS.glob("*/session.v4.jsonl.zstd"),
-                  key=lambda p: p.stat().st_mtime, reverse=True)[: a.limit]
+    logs = sorted(
+        SESSIONS.glob("*/session.v4.jsonl.zstd"),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )[: a.limit]
     print("★ 扫最近 %d 个会话，找含 %r 的：" % (len(logs), a.marker))
 
     hit = bad = orch = 0
@@ -64,7 +79,7 @@ def main() -> int:
     for log in logs:
         try:
             text = decompress(log).decode("utf-8", errors="replace")
-        except Exception as exc:                                  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("  %s 解压失败：%s" % (log.parent.name[:12], exc))
             continue
         if a.marker not in text:
@@ -74,8 +89,10 @@ def main() -> int:
 
     biggest = max(matched, key=lambda p: p.stat().st_size) if matched else None
     if biggest is not None:
-        print("  ★ 假定编排者 = %s（日志最大 %.1f MB）—— 若非如此请用 --orchestrator 指定"
-              % (biggest.parent.name[:12], biggest.stat().st_size / 1048576))
+        print(
+            "  ★ 假定编排者 = %s（日志最大 %.1f MB）—— 若非如此请用 --orchestrator 指定"
+            % (biggest.parent.name[:12], biggest.stat().st_size / 1048576)
+        )
 
     for log in matched:
         text = texts[log]
@@ -99,9 +116,16 @@ def main() -> int:
         else:
             bad += 1
             flag = "★ 混用/异常" if deep else "★ 无模型标记"
-        print("  %-14s %-16s bunny=%-4d deepseek=%-4d model 取值=%s"
-              % (log.parent.name[:12], flag, counts["space-bunny-free"],
-                 counts["deepseek-flash"], models))
+        print(
+            "  %-14s %-16s bunny=%-4d deepseek=%-4d model 取值=%s"
+            % (
+                log.parent.name[:12],
+                flag,
+                counts["space-bunny-free"],
+                counts["deepseek-flash"],
+                models,
+            )
+        )
 
     print("\n★ 结论：合规 %d 个 · 异常 %d 个" % (hit, bad))
     if bad:

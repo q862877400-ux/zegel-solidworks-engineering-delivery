@@ -116,19 +116,22 @@ def main() -> int:
     payload = {
         "schema": "refuted-patterns/1",
         "note": "★ 本表给 GATE-FINAL 的 C8（唯一常驻硬门禁）提供**可读对象**。"
-                "★ C8 的判据逐字是：本表里每条的 `anchor_quote` **必须逐字出现在 "
-                "docs/known-facts.md 中**。",
+        "★ C8 的判据逐字是：本表里每条的 `anchor_quote` **必须逐字出现在 "
+        "docs/known-facts.md 中**。",
         "why": "★ 2026-10-04（接手轮）的 A-3 查出：C8 自称「唯一常驻硬门禁」，"
-               "而它唯一依据的这个文件**当时在仓里不存在** ⇒ 那条闸**没有可读对象、永远通过**"
-               "（与**事实 40**「存在但没人用的守卫」同族）✓",
+        "而它唯一依据的这个文件**当时在仓里不存在** ⇒ 那条闸**没有可读对象、永远通过**"
+        "（与**事实 40**「存在但没人用的守卫」同族）✓",
         "inclusion": "★ 每条都是「**曾经被当成对的、后来被真机或复核推翻**」的东西 —— "
-                     "不是注意事项，而是**已付出代价的记录** ✓",
+        "不是注意事项，而是**已付出代价的记录** ✓",
         "patterns": PATTERNS,
     }
     OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print("★ 写出", OUT)
     print("★ 条数:", len(PATTERNS))
-    print("★ 自校（anchor_quote 逐字命中 known-facts.md）:", "★ 全部通过 ✓" if not bad else bad)
+    print(
+        "★ 自校（anchor_quote 逐字命中 known-facts.md）:",
+        "★ 全部通过 ✓" if not bad else bad,
+    )
     return 0
 
 

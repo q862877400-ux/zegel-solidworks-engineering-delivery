@@ -41,7 +41,7 @@ OUT = REPO / "output" / "fullydefinesketch2-probe-evidence.json"
 #:   `_Colinear` = 32 · `_Concentric` = 64 · `_Parallel` = 128 · `_Midpoint` = 256 ·
 #: `_Coincident` = 512 ⇒ ★ **Vertical 不在我读到的前 9 行里**（★ 页里 `enum_member_count
 #: : 10`）
-REL_H, REL_V = 2, 4                      #: ★ 那是 **mark**；关系值另外查
+REL_H, REL_V = 2, 4  #: ★ 那是 **mark**；关系值另外查
 
 
 def _relations_value() -> int:
@@ -58,7 +58,7 @@ def _relations_value() -> int:
                 name = parts[0].replace("swSketchFullyDefineRelationType_", "")
                 try:
                     out[name] = int(parts[1].split(" or ")[0])
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
     h, v = out.get("Horizontal"), out.get("Vertical")
     print("★ 官方枚举: Horizontal=%s Vertical=%s · 全部=%r" % (h, v, sorted(out)))
@@ -69,6 +69,7 @@ def _dim_count(model) -> int:
     """★ 换一个**可核的**读法：★ 数草图里的 `DisplayDimension`（★ `GetSketchDimensions` 一族）。"""
     try:
         from sw_connect import get_com_member
+
         sk = get_com_member(model, "SketchManager")
         act = get_com_member(sk, "ActiveSketch")
         if act is None:
@@ -81,13 +82,18 @@ def _dim_count(model) -> int:
                 except TypeError:
                     return -1
         return -1
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
 def main() -> int:
-    from sw_connect import (connect_solidworks, get_com_member, new_document,
-                            create_empty_dispatch_variant, out_i4)
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        create_empty_dispatch_variant,
+        out_i4,
+    )
 
     rel = _relations_value()
     app, _ = connect_solidworks(visible=True)
@@ -95,10 +101,15 @@ def main() -> int:
     rows = []
 
     import sw_part as P
+
     P.sketch(model, "Front Plane")
     sk = get_com_member(model, "SketchManager")
-    for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                 ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+    for a, b in (
+        ((-0.05, -0.03), (0.05, -0.03)),
+        ((0.05, -0.03), (0.05, 0.03)),
+        ((0.05, 0.03), (-0.05, 0.03)),
+        ((-0.05, 0.03), (-0.05, -0.03)),
+    ):
         get_com_member(sk, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
 
     def case(tag, *, with_origin: bool, rel_value: int):
@@ -110,37 +121,81 @@ def main() -> int:
             #:  = 6** ✓
             ext = get_com_member(model, "Extension")
             try:
-                sel = get_com_member(ext, "SelectByID2", "Point1@Origin", "EXTSKETCHPOINT",
-                                     0.0, 0.0, 0.0, False, mark,
-                                     create_empty_dispatch_variant(), 0)
-            except Exception as exc:                                      # noqa: BLE001
+                sel = get_com_member(
+                    ext,
+                    "SelectByID2",
+                    "Point1@Origin",
+                    "EXTSKETCHPOINT",
+                    0.0,
+                    0.0,
+                    0.0,
+                    False,
+                    mark,
+                    create_empty_dispatch_variant(),
+                    0,
+                )
+            except Exception as exc:  # noqa: BLE001
                 sel = "err: %s" % str(exc)[:70]
         before = _dim_count(model)
         got = err = None
         try:
-            got = get_com_member(sk, "FullyDefineSketch", True, True, rel_value, True,
-                                 1, create_empty_dispatch_variant(), 1,
-                                 create_empty_dispatch_variant(), 1, 1)
-        except Exception as exc:                                          # noqa: BLE001
+            got = get_com_member(
+                sk,
+                "FullyDefineSketch",
+                True,
+                True,
+                rel_value,
+                True,
+                1,
+                create_empty_dispatch_variant(),
+                1,
+                create_empty_dispatch_variant(),
+                1,
+                1,
+            )
+        except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:130])
         after = _dim_count(model)
-        rows.append({"tag": tag, "with_origin": with_origin, "rel_value": rel_value,
-                     "select_return": str(sel)[:44], "returned": str(got)[:44], "error": err,
-                     "dims_before": before, "dims_after": after,
-                     "built": (after > before) if (before >= 0 and after >= 0) else None})
+        rows.append(
+            {
+                "tag": tag,
+                "with_origin": with_origin,
+                "rel_value": rel_value,
+                "select_return": str(sel)[:44],
+                "returned": str(got)[:44],
+                "error": err,
+                "dims_before": before,
+                "dims_after": after,
+                "built": (after > before) if (before >= 0 and after >= 0) else None,
+            }
+        )
 
     case("★ 官方调用序（选原点 + mark 6）", with_origin=True, rel_value=rel)
     case("★ 不选原点（对照）", with_origin=False, rel_value=rel)
     P.end_sketch(model)
 
-    R = {"★_判据": "★ 建成 ⇒ 草图尺寸数增加（★ 且无异常）",
-         "★_来源": "★ 官方示例 `Fully_Define_Underdefined_Sketch_Example_VB.md` 的**调用序**",
-         "★_关系值": rel, "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 建成 ⇒ 草图尺寸数增加（★ 且无异常）",
+        "★_来源": "★ 官方示例 `Fully_Define_Underdefined_Sketch_Example_VB.md` 的**调用序**",
+        "★_关系值": rel,
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
-        print("★ %-34s built=%-5s dims %s→%s sel=%s ret=%s err=%s" % (
-            r["tag"], r["built"], r["dims_before"], r["dims_after"],
-            r["select_return"][:16], r["returned"][:16], (r["error"] or "")[:60]))
+        print(
+            "★ %-34s built=%-5s dims %s→%s sel=%s ret=%s err=%s"
+            % (
+                r["tag"],
+                r["built"],
+                r["dims_before"],
+                r["dims_after"],
+                r["select_return"][:16],
+                r["returned"][:16],
+                (r["error"] or "")[:60],
+            )
+        )
     print("★ wrote", OUT)
     return 0
 

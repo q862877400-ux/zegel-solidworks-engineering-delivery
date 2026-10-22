@@ -62,7 +62,8 @@ CLAIM_TOKENS = ("mark",)
 _NEG = r"(?:未|没|没有|不曾|无|缺)"
 _VERB = r"(?:给|提供|出|有)?"
 CLAIM_RE = re.compile(
-    r"%s\s*%s\s*\**\s*(%s)\b" % (_NEG, _VERB, "|".join(CLAIM_TOKENS)), re.I)
+    r"%s\s*%s\s*\**\s*(%s)\b" % (_NEG, _VERB, "|".join(CLAIM_TOKENS)), re.I
+)
 
 #: ★ 候选成员名的形态（防把散文里的词当成员）
 MEMBER_RE = re.compile(r"\b(I?[A-Z][A-Za-z0-9_]{2,})\b")
@@ -76,8 +77,14 @@ SELF = Path(__file__).name
 #: ★★ **不能当"没给 mark"断言的主语**的成员 —— ★ 它们**签名里本来就有 `Mark`**，
 #:   ★ 对它们说"官方没给 mark"是**自相矛盾**（实测：解析会把 `SelectByID2` 认成主语）。
 SUBJECT_EXCLUDE = {
-    "SelectByID2", "SelectByID", "SelectByRay", "IModelDocExtension",
-    "ISelectionMgr", "IModelDoc2", "IFeatureManager", "SelectionManager",
+    "SelectByID2",
+    "SelectByID",
+    "SelectByRay",
+    "IModelDocExtension",
+    "ISelectionMgr",
+    "IModelDoc2",
+    "IFeatureManager",
+    "SelectionManager",
 }
 
 #: ★★ **"这条断言已被我撤回"的标记** —— ★ 出现在同一行就**不当活断言算**。
@@ -85,7 +92,17 @@ SUBJECT_EXCLUDE = {
 #:   （★ 见 `sw_curve_and_split.py` 的更正段），★ 而那种**引述**不该被当成新违规。
 #:   ⚠ 限度如实写明：★ 它**是一个可被滥用的排除**（★ 写上"更正"就能躲）——
 #:   ★ 故门禁把跳过的条数**打印出来**，★ 让人看得见有多少条走了这条路。
-QUOTED_MARKERS = ("更正", "此前", "原先", "曾经", "是错的", "是假的", "错了", "已被证伪", "撤销")
+QUOTED_MARKERS = (
+    "更正",
+    "此前",
+    "原先",
+    "曾经",
+    "是错的",
+    "是假的",
+    "错了",
+    "已被证伪",
+    "撤销",
+)
 
 
 def _is_retracted(lines: list[str], lineno: int) -> bool:
@@ -99,6 +116,7 @@ def _is_retracted(lines: list[str], lineno: int) -> bool:
         if i < len(lines) and any(mk in lines[i] for mk in QUOTED_MARKERS):
             return True
     return False
+
 
 #: ★ 向上找主语的窗口（★ 越窄越不易误认；★ 窗口内主语不唯一就**跳过**）
 WINDOW = 25
@@ -114,8 +132,11 @@ WINDOW = 25
 #: ⚠ 豁免**按 (文件, 被认错的主语, token)** 给 ⇒ ★ 只挡这一处，★ 不挡住该文件里别的断言
 #: 。
 ALLOWED = {
-    ("scripts/sw_surface_ref_ops.py", "InsertProtrusionSwept3", "mark"):
-        "主语认错：真主语是 InsertRevolvedRefSurface（官方页 Remarks 确实无 mark，已逐字核过）",
+    (
+        "scripts/sw_surface_ref_ops.py",
+        "InsertProtrusionSwept3",
+        "mark",
+    ): "主语认错：真主语是 InsertRevolvedRefSurface（官方页 Remarks 确实无 mark，已逐字核过）",
 }
 
 
@@ -159,8 +180,13 @@ def _resolve_upward(lines: list[str], lineno: int, pages: dict[str, Path]):
     for i in range(lineno - 1, lo - 1, -1):
         if i >= len(lines):
             continue
-        found = sorted({t for t in MEMBER_RE.findall(lines[i])
-                        if t in pages and t not in SUBJECT_EXCLUDE})
+        found = sorted(
+            {
+                t
+                for t in MEMBER_RE.findall(lines[i])
+                if t in pages and t not in SUBJECT_EXCLUDE
+            }
+        )
         if not found:
             continue
         if len(found) > 1:
@@ -206,11 +232,18 @@ def scan() -> tuple[list, int, int, int, int]:
                         if re.search(r"\b%s\b" % re.escape(token), ln, re.I):
                             snippet = ln.strip()[:200]
                             break
-                    violations.append({
-                        "file": f"{d}/{path.name}", "line": lineno,
-                        "member": member, "member_line": mline, "token": token,
-                        "claim": text, "page": str(page), "page_says": snippet,
-                    })
+                    violations.append(
+                        {
+                            "file": f"{d}/{path.name}",
+                            "line": lineno,
+                            "member": member,
+                            "member_line": mline,
+                            "token": token,
+                            "claim": text,
+                            "page": str(page),
+                            "page_says": snippet,
+                        }
+                    )
     return violations, total, unresolved, quoted, exempted
 
 
@@ -221,17 +254,23 @@ def main() -> int:
         return 0
     pages = _member_pages() or {}
     violations, total, unresolved, quoted, exempted = scan()
-    print("官方断言门禁 · 官方成员页 %d 份 · 扫描目录 %s"
-          % (len(pages), " / ".join(SCAN_DIRS)))
-    print("  断言 %d 条（token 集 %s）· 引述已撤回 %d 条 · 主语不唯一/解析不到而**跳过** %d 条"
-          " · 已核对豁免 %d 条 · 违规 %d 条"
-          % (total, ",".join(CLAIM_TOKENS), quoted, unresolved, exempted, len(violations)))
+    print(
+        "官方断言门禁 · 官方成员页 %d 份 · 扫描目录 %s"
+        % (len(pages), " / ".join(SCAN_DIRS))
+    )
+    print(
+        "  断言 %d 条（token 集 %s）· 引述已撤回 %d 条 · 主语不唯一/解析不到而**跳过** %d 条"
+        " · 已核对豁免 %d 条 · 违规 %d 条"
+        % (total, ",".join(CLAIM_TOKENS), quoted, unresolved, exempted, len(violations))
+    )
     if not violations:
         return 0
     print("\n★ 以下断言与**官方页内容相反**（页里出现了被说成「没有」的东西）：")
     for v in violations:
-        print("  %s:%d  成员 %s（第 %d 行处解析到）· token `%s`"
-              % (v["file"], v["line"], v["member"], v["member_line"], v["token"]))
+        print(
+            "  %s:%d  成员 %s（第 %d 行处解析到）· token `%s`"
+            % (v["file"], v["line"], v["member"], v["member_line"], v["token"])
+        )
         print("      我方断言：%s" % v["claim"])
         print("      官方页（%s）里有：%s" % (v["page"], v["page_says"]))
     print("\n⇒ 修法：**照官方页改断言**（或删掉那句），★ 不要把「官方没写」当结论。")

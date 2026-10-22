@@ -40,17 +40,23 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUT = ROOT / "output" / "sweep-wall-units-capability-recheck.json"
 R_MM, L_MM, T_WRITE = 3.0, 40.0, 0.002
-SOLID = math.pi * R_MM ** 2 * L_MM
-RING_M = math.pi * (R_MM ** 2 - (R_MM - 2.0) ** 2) * L_MM          # ★ 0.002 m = 2 mm
-RING_MM = math.pi * (R_MM ** 2 - (R_MM - 0.002) ** 2) * L_MM       # ★ 0.002 mm
+SOLID = math.pi * R_MM**2 * L_MM
+RING_M = math.pi * (R_MM**2 - (R_MM - 2.0) ** 2) * L_MM  # ★ 0.002 m = 2 mm
+RING_MM = math.pi * (R_MM**2 - (R_MM - 0.002) ** 2) * L_MM  # ★ 0.002 mm
 
 ev: dict = {
-    "★_判据": ("轮廓半径 3 mm · 路径 40 mm · **写壁厚 0.002** ⇒ 量体积："
-               "★ ≈%.1f ⇒ **米**（0.002 m = 2 mm）· ★ ≈%.2f ⇒ **毫米**（0.002 mm）"
-               % (RING_M, RING_MM)),
-    "★_参照": {"实体圆柱": round(SOLID, 2), "若口径是米_环带": round(RING_M, 2),
-               "若口径是毫米_环带": round(RING_MM, 2)},
-    "steps": []}
+    "★_判据": (
+        "轮廓半径 3 mm · 路径 40 mm · **写壁厚 0.002** ⇒ 量体积："
+        "★ ≈%.1f ⇒ **米**（0.002 m = 2 mm）· ★ ≈%.2f ⇒ **毫米**（0.002 mm）"
+        % (RING_M, RING_MM)
+    ),
+    "★_参照": {
+        "实体圆柱": round(SOLID, 2),
+        "若口径是米_环带": round(RING_M, 2),
+        "若口径是毫米_环带": round(RING_MM, 2),
+    },
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -59,8 +65,13 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    from sw_connect import (connect_solidworks, create_empty_dispatch_variant,
-                            get_com_member, new_document, set_com_member)
+    from sw_connect import (
+        connect_solidworks,
+        create_empty_dispatch_variant,
+        get_com_member,
+        new_document,
+        set_com_member,
+    )
     import sw_part as P
     import sw_sweep as SW
 
@@ -86,25 +97,40 @@ def main() -> int:
         mp = get_com_member(model, "Extension")
         mp = get_com_member(mp, "CreateMassProperty") if mp is not None else None
         vol0 = float(get_com_member(mp, "Volume")) if mp is not None else None
-        step("volume_before", mm3=round(vol0, 3) if vol0 is not None else None,
-             expect_solid=round(SOLID, 2))
-    except Exception as exc:                                              # noqa: BLE001
+        step(
+            "volume_before",
+            mm3=round(vol0, 3) if vol0 is not None else None,
+            expect_solid=round(SOLID, 2),
+        )
+    except Exception as exc:  # noqa: BLE001
         step("volume_before_EXC", err="%s: %s" % (type(exc).__name__, str(exc)[:120]))
 
     #: ★★ 设薄壁 + 已知壁厚 ⇒ `ModifyDefinition`（★ 第 3 参走正解）✓
-    feat = P._safe_com_member(model, "FeatureByName", str(rep.get("feature_name") or "扫描1"))
+    feat = P._safe_com_member(
+        model, "FeatureByName", str(rep.get("feature_name") or "扫描1")
+    )
     data = get_com_member(feat, "GetDefinition") if feat is not None else None
     applied = {"error": None}
     if data is not None:
         try:
             set_com_member(data, "ThinFeature", True)
-            set_com_member(data, "ThinWallType", 0)                   #: 0 = One Direction
+            set_com_member(data, "ThinWallType", 0)  #: 0 = One Direction
             get_com_member(data, "SetWallThickness", True, T_WRITE)
-            applied["set"] = {"ThinFeature": True, "ThinWallType": 0,
-                              "SetWallThickness(True, %r)" % T_WRITE: True}
-            applied["modify_ok"] = bool(get_com_member(
-                feat, "ModifyDefinition", data, model, create_empty_dispatch_variant()))
-        except Exception as exc:                                          # noqa: BLE001
+            applied["set"] = {
+                "ThinFeature": True,
+                "ThinWallType": 0,
+                "SetWallThickness(True, %r)" % T_WRITE: True,
+            }
+            applied["modify_ok"] = bool(
+                get_com_member(
+                    feat,
+                    "ModifyDefinition",
+                    data,
+                    model,
+                    create_empty_dispatch_variant(),
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
             applied["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     step("apply_thin_wall", **applied)
 
@@ -119,9 +145,11 @@ def main() -> int:
         #:   ★★ **⇒ 改成 5%**（★ 远小于两候选距离的一半、★ 也远大于数值噪声）✓
         #: ★★★★ **最近候选分类**（★ 第三版 —— ★ 前两版的容差带都误判了）✓
         #:   ★ **三个候选**（★ 这次**不漏**）：★ 没生效（= 实体体积）· ★ 米 · ★ 毫米 ✓
-        _cands = [("★ **薄壁没生效**（★ 体积与实体一致 ⇒ `ThinFeature` 没被采纳）", SOLID),
-                  ("★ **米**（★ 写 `0.002` ⇒ 实际 2 mm）", RING_M),
-                  ("★ **毫米**（★ 写 `0.002` ⇒ 0.002 mm）", RING_MM)]
+        _cands = [
+            ("★ **薄壁没生效**（★ 体积与实体一致 ⇒ `ThinFeature` 没被采纳）", SOLID),
+            ("★ **米**（★ 写 `0.002` ⇒ 实际 2 mm）", RING_M),
+            ("★ **毫米**（★ 写 `0.002` ⇒ 0.002 mm）", RING_MM),
+        ]
         _near = min(_cands, key=lambda kv: abs(vol1 - kv[1]))
         _gap = abs(vol1 - _near[1])
         _others = min(abs(vol1 - v) for k, v in _cands if k != _near[0])
@@ -132,12 +160,14 @@ def main() -> int:
         if _gap < _others * 0.5:
             ev["★_GetWallThickness_口径"] = (
                 "%s ⇒ ★ 实测体积 %.3f（★ 候选 %.2f · ★ 次近 %.2f）"
-                % (_near[0], vol1, _near[1], _others))
+                % (_near[0], vol1, _near[1], _others)
+            )
         else:
             ev["★_GetWallThickness_口径"] = (
                 "★ **读数不明确**（★ 实测 %.3f · ★ 最近 %s(%.2f) · ★ 次近 %.2f）⇒ ★ 如实标、★ 不猜"
-                % (vol1, _near[0], _near[1], _others))
-    except Exception as exc:                                              # noqa: BLE001
+                % (vol1, _near[0], _near[1], _others)
+            )
+    except Exception as exc:  # noqa: BLE001
         ev["★_GetWallThickness_口径"] = "★ **量不到**：%s" % str(exc)[:90]
     step("VERDICT", verdict=ev["★_GetWallThickness_口径"])
 
@@ -151,7 +181,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                          # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

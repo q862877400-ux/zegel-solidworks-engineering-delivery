@@ -17,7 +17,7 @@
 #       ★ `HorizontalDimScheme` = **0=Chain / 1=Baseline / 2=Ordinate** ·
 #       ★ `HorizontalDatumDisp` = 「model edge, model vertex, sketch line, sketch point, or,
 #         if Nothing or null, **use entity with selection…**」✓
-# ★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图的 `DisplayDimension` 数 +N**（★ 且 `status == 
+# ★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图的 `DisplayDimension` 数 +N**（★ 且 `status ==
 # 0`）✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -41,6 +41,7 @@ def _dim_count(model) -> int:
     """★ 现成的读法：★ 草图尺寸数（★ 用 `ISketch.GetDimensionCount` 那一族不可靠 ⇒ 用遍历）。"""
     try:
         from sw_connect import get_com_member
+
         sk = get_com_member(model, "SketchManager")
         act = get_com_member(sk, "ActiveSketch")
         if act is None:
@@ -48,12 +49,17 @@ def _dim_count(model) -> int:
         #: ★ 官方 `ISketch::GetDimensionCount`（0 参）
         n = get_com_member(act, "GetDimensionCount")
         return int(n) if isinstance(n, int) else -1
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document, create_empty_dispatch_variant
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        create_empty_dispatch_variant,
+    )
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
@@ -62,10 +68,15 @@ def main() -> int:
     def case(tag, *, form):
         """★ 每种形态单独建一张**未定义**的矩形草图（★ 4 条线都不带尺寸）。"""
         import sw_part as P
+
         P.sketch(model, "Front Plane")
         sk = get_com_member(model, "SketchManager")
-        for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                     ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+        for a, b in (
+            ((-0.05, -0.03), (0.05, -0.03)),
+            ((0.05, -0.03), (0.05, 0.03)),
+            ((0.05, 0.03), (-0.05, 0.03)),
+            ((-0.05, 0.03), (-0.05, -0.03)),
+        ):
             get_com_member(sk, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
         before = _dim_count(model)
         got = err = None
@@ -78,11 +89,35 @@ def main() -> int:
                 #: ing** ⇒
                 #: 「use entity with selection…」⇒ ★ 本形态**不选**任何基准，★ 看它怎么
                 #: 反应
-                got = get_com_member(sk, "FullyDefineSketch", True, True, 0, True, 1, None, 1, None, -1, -1)
+                got = get_com_member(
+                    sk,
+                    "FullyDefineSketch",
+                    True,
+                    True,
+                    0,
+                    True,
+                    1,
+                    None,
+                    1,
+                    None,
+                    -1,
+                    -1,
+                )
             elif form == "new_empty_dispatch":
-                got = get_com_member(sk, "FullyDefineSketch", True, True, 0, True, 1,
-                                     create_empty_dispatch_variant(), 1,
-                                     create_empty_dispatch_variant(), -1, -1)
+                got = get_com_member(
+                    sk,
+                    "FullyDefineSketch",
+                    True,
+                    True,
+                    0,
+                    True,
+                    1,
+                    create_empty_dispatch_variant(),
+                    1,
+                    create_empty_dispatch_variant(),
+                    -1,
+                    -1,
+                )
             elif form == "new_selected_baseline":
                 #: ★★ 先**选基准线**（★ 官方 `HorizontalDatumDisp` 的 "use entity with s
                 #: election"）
@@ -91,30 +126,63 @@ def main() -> int:
                 if segs:
                     try:
                         segs[0].Select4(False, create_empty_dispatch_variant())
-                    except Exception:                                      # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-                got = get_com_member(sk, "FullyDefineSketch", True, True, 0, True, 1, None, 1, None, -1, -1)
-        except Exception as exc:                                          # noqa: BLE001
+                got = get_com_member(
+                    sk,
+                    "FullyDefineSketch",
+                    True,
+                    True,
+                    0,
+                    True,
+                    1,
+                    None,
+                    1,
+                    None,
+                    -1,
+                    -1,
+                )
+        except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = _dim_count(model)
         P.end_sketch(model)
-        rows.append({"form": form, "tag": tag, "returned": str(got)[:60], "error": err,
-                     "dims_before": before, "dims_after": after,
-                     "built": (after > before) if (before >= 0 and after >= 0) else None})
+        rows.append(
+            {
+                "form": form,
+                "tag": tag,
+                "returned": str(got)[:60],
+                "error": err,
+                "dims_before": before,
+                "dims_after": after,
+                "built": (after > before) if (before >= 0 and after >= 0) else None,
+            }
+        )
 
     case("★ 旧的 AutoDimension2（基线）", form="old_autodimension2")
     case("★ 新的 FullyDefineSketch + None", form="new_nulls")
     case("★ 新的 + 空 Dispatch", form="new_empty_dispatch")
     case("★ 新的 + 预选基准线", form="new_selected_baseline")
 
-    R = {"★_判据": "★ 建成 ⇒ 草图 `GetDimensionCount` 增加（★ 且返回 0）",
-         "★_问题": "★ 官方把 `AutoDimension2` 换成了 `FullyDefineSketch`（★ 5 参 → 10 参）⇒ 验它能不能替代",
-         "rows": rows}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 建成 ⇒ 草图 `GetDimensionCount` 增加（★ 且返回 0）",
+        "★_问题": "★ 官方把 `AutoDimension2` 换成了 `FullyDefineSketch`（★ 5 参 → 10 参）⇒ 验它能不能替代",
+        "rows": rows,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     for r in rows:
-        print("★ %-32s built=%-5s dims %s→%s ret=%s err=%s" % (
-            r["form"], r["built"], r["dims_before"], r["dims_after"],
-            r["returned"][:22], (r["error"] or "")[:70]))
+        print(
+            "★ %-32s built=%-5s dims %s→%s ret=%s err=%s"
+            % (
+                r["form"],
+                r["built"],
+                r["dims_before"],
+                r["dims_after"],
+                r["returned"][:22],
+                (r["error"] or "")[:70],
+            )
+        )
     print("★ wrote", OUT)
     return 0
 

@@ -46,9 +46,9 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant as _empty      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant as _empty  # noqa: E402
 
 OUT = REPO / "output" / "autodimension-successor-evidence.json"
 
@@ -60,7 +60,7 @@ def _g(o, n, *a):
 def _try(fn, *a):
     try:
         return {"ok": True, "ret": repr(fn(*a))[:100]}
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
 
 
@@ -69,7 +69,7 @@ def _dim_count(sketch) -> int:
     for nm in ("GetDimensionCount", "GetDisplayDimensionCount"):
         try:
             return int(_g(sketch, nm) or 0)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     try:
         n = 0
@@ -78,7 +78,7 @@ def _dim_count(sketch) -> int:
             n += 1
             dd = _g(sketch, "GetNextDisplayDimension", dd)
         return n
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -90,51 +90,72 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         sketch = _g(_g(doc, "SketchManager"), "ActiveSketch")
         R["草图"] = repr(sketch)[:70]
         R["★_基线尺寸数"] = _dim_count(sketch)
 
         #: ★★ 旧入口（★ 与我们生产代码**逐字相同的 5 参**）
         R["旧_AutoDimension2(1, 1, -1, 1, -1)"] = _try(
-            _g, sketch, "AutoDimension2", 1, 1, -1, 1, -1)
+            _g, sketch, "AutoDimension2", 1, 1, -1, 1, -1
+        )
         R["★_旧后尺寸数"] = _dim_count(sketch)
 
         #: ★★ 新入口 `FullyDefineSketch`（★ 11 参，★ 照官方 `## Parameters` 的语义填）
         sm = _g(doc, "SketchManager")
         R["新_FullyDefineSketch(11 参)"] = _try(
-            _g, sm, "FullyDefineSketch",
-            True,    # EntitiesToFullyDefine
-            True,    # UseRelations
-            -1,      # RelationsToApply（★ -1 = 官方示例里的"全部"）
-            True,    # UseDimensions
-            1,       # HorizontalDimScheme = 1 Baseline
+            _g,
+            sm,
+            "FullyDefineSketch",
+            True,  # EntitiesToFullyDefine
+            True,  # UseRelations
+            -1,  # RelationsToApply（★ -1 = 官方示例里的"全部"）
+            True,  # UseDimensions
+            1,  # HorizontalDimScheme = 1 Baseline
             _empty(),  # HorizontalDatumDisp（★ 事实 33：pywin32 下传裸 None 报类型不匹配）
-            1,       # VerticalDimScheme
+            1,  # VerticalDimScheme
             _empty(),  # VerticalDatumDisp
-            0,       # HorizontalDimPlacement = Above
-            0,       # VerticalDimPlacement = Right
-            _empty())  # 第 11 参
+            0,  # HorizontalDimPlacement = Above
+            0,  # VerticalDimPlacement = Right
+            _empty(),
+        )  # 第 11 参
         R["★_新后尺寸数"] = _dim_count(sketch)
         P.end_sketch(doc)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     b = R.get("★_基线尺寸数")
     o = R.get("★_旧后尺寸数")
     n = R.get("★_新后尺寸数")
-    R["★_旧加了尺寸吗"] = "★ 是" if isinstance(o, int) and isinstance(b, int) and o > b else "★★ 否"
-    R["★_新加了尺寸吗"] = "★ 是" if isinstance(n, int) and isinstance(b, int) and n > b else "★★ 否"
-    R["★★_结论"] = ("★ 旧的加上了 ⇒ 按判据**没有换的必要**"
-                    if R["★_旧加了尺寸吗"].startswith("★ 是")
-                    else "★★ 旧的没加上 ⇒ 值得试新入口")
+    R["★_旧加了尺寸吗"] = (
+        "★ 是" if isinstance(o, int) and isinstance(b, int) and o > b else "★★ 否"
+    )
+    R["★_新加了尺寸吗"] = (
+        "★ 是" if isinstance(n, int) and isinstance(b, int) and n > b else "★★ 否"
+    )
+    R["★★_结论"] = (
+        "★ 旧的加上了 ⇒ 按判据**没有换的必要**"
+        if R["★_旧加了尺寸吗"].startswith("★ 是")
+        else "★★ 旧的没加上 ⇒ 值得试新入口"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

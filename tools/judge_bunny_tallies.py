@@ -1,4 +1,5 @@
 """★ 从（被截断的）workflow 返回体里榨出裁决口径：`verdict_tally` + `recommendation_tally` 分档。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/judge_bunny_tallies.py
@@ -22,8 +23,10 @@ from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-SPILL = Path(r"C:\Users\Zegel\AppData\Local\Temp\dsh-spill-jWMrNL\session-bf32b25314ff"
-             r"\0d5af33ae392-workflow.txt")
+SPILL = Path(
+    r"C:\Users\Zegel\AppData\Local\Temp\dsh-spill-jWMrNL\session-bf32b25314ff"
+    r"\0d5af33ae392-workflow.txt"
+)
 
 VERDICT_RULES = [
     ("已有等价物", ("已有等价物", "已有等价", "不是缺口", "重复实现", "重实现")),
@@ -39,13 +42,13 @@ def block(text: str, name: str) -> str:
         return ""
     depth, start = 0, m.end() - 1
     for i in range(start, len(text)):
-        if text[i] == '{':
+        if text[i] == "{":
             depth += 1
-        elif text[i] == '}':
+        elif text[i] == "}":
             depth -= 1
             if depth == 0:
-                return text[start:i + 1]
-    return text[start:]          #: ★ 被截断 ⇒ 回剩下的全部（后面按行解析，能捞多少算多少）
+                return text[start : i + 1]
+    return text[start:]  #: ★ 被截断 ⇒ 回剩下的全部（后面按行解析，能捞多少算多少）
 
 
 def classify(text: str, rules):
@@ -60,8 +63,10 @@ def main() -> int:
     raw = SPILL.read_text(encoding="utf-8", errors="replace")
     print("★ 溢出文本 %d 字符（**被截断**，逐条映射已丢）" % len(raw))
 
-    for name, rules, title in (("verdict_tally", VERDICT_RULES, "verdict（判定）"),
-                               ("recommendation_tally", REC_RULES, "recommendation（建议）")):
+    for name, rules, title in (
+        ("verdict_tally", VERDICT_RULES, "verdict（判定）"),
+        ("recommendation_tally", REC_RULES, "recommendation（建议）"),
+    ):
         blk = block(raw, name)
         #: ★ 容错：按行捞 `"……": N`（键可能是被截断的长串）
         pairs = re.findall(r'"((?:[^"\\]|\\.)*)"\s*:\s*(\d+)', blk)

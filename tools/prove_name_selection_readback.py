@@ -41,13 +41,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "name-selection-readback-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "name-selection-readback-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from scripts.sw_part import _empty_callout, current_sketch_name, end_sketch, sketch_line, start_sketch
+    from scripts.sw_part import (
+        _empty_callout,
+        current_sketch_name,
+        end_sketch,
+        sketch_line,
+        start_sketch,
+    )
 
     ev: dict = {"trials": [], "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -71,52 +81,78 @@ def main() -> int:
                 if use_name:
                     #: ★ 按**名字**选（★ 官方示例的写法）
                     for i in (1, 2):
-                        st = ext.SelectByID2("Line%d@%s" % (i, sk), "EXTSKETCHSEGMENT",
-                                             0.0, 0.0, 0.0, True, 0, _empty_callout(), 0)
+                        st = ext.SelectByID2(
+                            "Line%d@%s" % (i, sk),
+                            "EXTSKETCHSEGMENT",
+                            0.0,
+                            0.0,
+                            0.0,
+                            True,
+                            0,
+                            _empty_callout(),
+                            0,
+                        )
                         rec["stat_L%d" % i] = bool(st)
                 else:
                     #: ★ 按**点**选（★ 我事实 337 那一族）
                     for y in (0.0, 0.02):
-                        st = ext.SelectByID2("", "EDGE", 0.0, y, 0.0, True, 0, _empty_callout(), 0)
+                        st = ext.SelectByID2(
+                            "", "EDGE", 0.0, y, 0.0, True, 0, _empty_callout(), 0
+                        )
                         rec.setdefault("stat_pt", []).append(bool(st))
-                rec["count2_minus1"] = int(get_com_member(sm, "GetSelectedObjectCount2", -1) or 0)
-                rec["count2_0"] = int(get_com_member(sm, "GetSelectedObjectCount2", 0) or 0)
+                rec["count2_minus1"] = int(
+                    get_com_member(sm, "GetSelectedObjectCount2", -1) or 0
+                )
+                rec["count2_0"] = int(
+                    get_com_member(sm, "GetSelectedObjectCount2", 0) or 0
+                )
                 #: ★★ 核心：★ 第 2 个对象读不读得到
                 for idx in (1, 2):
                     got = get_com_member(sm, "GetSelectedObject6", idx, 0)
                     rec["obj%d_is_none" % idx] = got is None
                     if got is not None:
                         try:
-                            rec["obj%d_type" % idx] = str(get_com_member(got, "GetType") or "")
-                        except Exception:                      # noqa: BLE001
+                            rec["obj%d_type" % idx] = str(
+                                get_com_member(got, "GetType") or ""
+                            )
+                        except Exception:  # noqa: BLE001
                             rec["obj%d_type" % idx] = "?"
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             ev["trials"].append(rec)
 
         byname = next((t for t in ev["trials"] if t["trial"] == "by_name"), {})
-        ev["by_name_reads_second"] = (byname.get("count2_minus1") == 2
-                                      and byname.get("obj2_is_none") is False)
+        ev["by_name_reads_second"] = (
+            byname.get("count2_minus1") == 2 and byname.get("obj2_is_none") is False
+        )
         ev["by_name_counts_two"] = byname.get("count2_minus1") == 2
-        ev["verdict"] = "pass" if ev["by_name_reads_second"] else (
-            "partial" if ev["by_name_counts_two"] else "fail")
-        ev["note"] = ("★ 验事实 358 提的那个假设：★ **按名字选草图线段**（EXTSKETCHSEGMENT）后，"
-                      "`GetSelectedObject6(2, 0)` 读不读得到**第二个**对象。"
-                      "★ 判据：① 计数 == 2；★ ② 第 2 个对象非 None。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["verdict"] = (
+            "pass"
+            if ev["by_name_reads_second"]
+            else ("partial" if ev["by_name_counts_two"] else "fail")
+        )
+        ev["note"] = (
+            "★ 验事实 358 提的那个假设：★ **按名字选草图线段**（EXTSKETCHSEGMENT）后，"
+            "`GetSelectedObject6(2, 0)` 读不读得到**第二个**对象。"
+            "★ 判据：① 计数 == 2；★ ② 第 2 个对象非 None。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

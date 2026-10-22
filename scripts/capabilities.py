@@ -11,7 +11,6 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
-
 from __future__ import annotations
 
 import json
@@ -44,10 +43,16 @@ def load_capabilities(path: str | Path | None = None) -> dict[str, Any]:
     """@brief 读取 JSON-compatible YAML 能力清单并校验能力与多语言路由。"""
     source = manifest_path(path)
     payload = json.loads(source.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict) or not isinstance(payload.get("capabilities"), list):
+    if not isinstance(payload, dict) or not isinstance(
+        payload.get("capabilities"), list
+    ):
         raise ValueError(f"能力清单格式无效: {source}")
     for item in payload["capabilities"]:
-        if not isinstance(item, dict) or not item.get("id") or item.get("level") not in VALID_LEVELS:
+        if (
+            not isinstance(item, dict)
+            or not item.get("id")
+            or item.get("level") not in VALID_LEVELS
+        ):
             raise ValueError(f"能力清单条目无效: {item!r}")
         # R11（docs/capabilities-schema-proposal.md §五）：
         # allowed_modes ⊆ {interactive, reviewed, unattended}；且 level != verified ⇒ 不
@@ -56,32 +61,46 @@ def load_capabilities(path: str | Path | None = None) -> dict[str, Any]:
         modes = set(item.get("allowed_modes") or [])
         invalid_modes = modes - VALID_MODES
         if invalid_modes:
-            raise ValueError(f"能力 {item['id']} 的 allowed_modes 含非法值: {sorted(invalid_modes)}")
+            raise ValueError(
+                f"能力 {item['id']} 的 allowed_modes 含非法值: {sorted(invalid_modes)}"
+            )
         if UNATTENDED_MODE in modes and item.get("level") != "verified":
             raise ValueError(
                 f"能力 {item['id']} 的 level={item.get('level')!r} 却带了无人值守授权 —— R11 禁止"
             )
     backends = payload.get("backend_catalog", {})
     routes = payload.get("operation_routes", [])
-    if not isinstance(backends, dict) or not all(isinstance(item, dict) for item in backends.values()):
+    if not isinstance(backends, dict) or not all(
+        isinstance(item, dict) for item in backends.values()
+    ):
         raise ValueError("backend_catalog 必须是对象映射")
     if not isinstance(routes, list):
         raise ValueError("operation_routes 必须是数组")
     route_ids: set[str] = set()
     capability_ids = {str(item["id"]) for item in payload["capabilities"]}
     for route in routes:
-        if not isinstance(route, dict) or not route.get("id") or route["id"] in route_ids:
+        if (
+            not isinstance(route, dict)
+            or not route.get("id")
+            or route["id"] in route_ids
+        ):
             raise ValueError(f"操作路由 ID 无效或重复: {route!r}")
         route_ids.add(str(route["id"]))
         unknown_capabilities = set(route.get("capability_ids", [])) - capability_ids
         if unknown_capabilities:
-            raise ValueError(f"路由 {route['id']} 引用了未知能力: {sorted(unknown_capabilities)}")
+            raise ValueError(
+                f"路由 {route['id']} 引用了未知能力: {sorted(unknown_capabilities)}"
+            )
         candidates = route.get("candidates", [])
         if not isinstance(candidates, list):
             raise ValueError(f"路由 {route['id']} 的 candidates 必须是数组")
         for candidate in candidates:
-            backend_id = candidate.get("backend") if isinstance(candidate, dict) else None
-            semantics = candidate.get("semantics") if isinstance(candidate, dict) else None
+            backend_id = (
+                candidate.get("backend") if isinstance(candidate, dict) else None
+            )
+            semantics = (
+                candidate.get("semantics") if isinstance(candidate, dict) else None
+            )
             if backend_id not in backends:
                 raise ValueError(f"路由 {route['id']} 引用了未知后端: {backend_id!r}")
             if semantics not in VALID_ROUTE_SEMANTICS:
@@ -90,23 +109,34 @@ def load_capabilities(path: str | Path | None = None) -> dict[str, Any]:
                 raise ValueError(f"路由 {route['id']} 的优先级必须是整数")
         unknown_diagnostics = set(route.get("diagnostic_backends", [])) - set(backends)
         if unknown_diagnostics:
-            raise ValueError(f"路由 {route['id']} 引用了未知诊断后端: {sorted(unknown_diagnostics)}")
+            raise ValueError(
+                f"路由 {route['id']} 引用了未知诊断后端: {sorted(unknown_diagnostics)}"
+            )
     return payload
 
 
-def capability_index(payload: Mapping[str, Any] | None = None) -> dict[str, dict[str, Any]]:
+def capability_index(
+    payload: Mapping[str, Any] | None = None,
+) -> dict[str, dict[str, Any]]:
     """@brief 返回能力 ID 到条目的索引。"""
     source = payload or load_capabilities()
     return {str(item["id"]): dict(item) for item in source.get("capabilities", [])}
 
 
-def backend_index(payload: Mapping[str, Any] | None = None) -> dict[str, dict[str, Any]]:
+def backend_index(
+    payload: Mapping[str, Any] | None = None,
+) -> dict[str, dict[str, Any]]:
     """@brief 返回执行后端 ID 到定义的索引。"""
     source = payload or load_capabilities()
-    return {str(key): dict(value) for key, value in source.get("backend_catalog", {}).items()}
+    return {
+        str(key): dict(value)
+        for key, value in source.get("backend_catalog", {}).items()
+    }
 
 
-def operation_route_index(payload: Mapping[str, Any] | None = None) -> dict[str, dict[str, Any]]:
+def operation_route_index(
+    payload: Mapping[str, Any] | None = None,
+) -> dict[str, dict[str, Any]]:
     """@brief 返回原子操作 ID 到多语言后端路由的索引。"""
     source = payload or load_capabilities()
     return {str(item["id"]): dict(item) for item in source.get("operation_routes", [])}
@@ -152,7 +182,9 @@ def resolve_operation_backend(
 
     supplied_requirements = {str(item) for item in (available_requirements or [])}
     missing_requirements = [
-        str(item) for item in route.get("requires", []) if str(item) not in supplied_requirements
+        str(item)
+        for item in route.get("requires", [])
+        if str(item) not in supplied_requirements
     ]
     if missing_requirements:
         return {
@@ -180,17 +212,23 @@ def resolve_operation_backend(
         backend_id = str(candidate["backend"])
         semantics = str(candidate["semantics"])
         if exact_api and semantics == "automation_equivalent":
-            considered.append({
-                "backend": backend_id,
-                "accepted": False,
-                "reason": "调用者要求原始接口语义，不能使用 Automation 等价接口",
-            })
+            considered.append(
+                {
+                    "backend": backend_id,
+                    "accepted": False,
+                    "reason": "调用者要求原始接口语义，不能使用 Automation 等价接口",
+                }
+            )
             continue
         if backend_id not in available:
-            considered.append({"backend": backend_id, "accepted": False, "reason": "运行时不可用"})
+            considered.append(
+                {"backend": backend_id, "accepted": False, "reason": "运行时不可用"}
+            )
             continue
         backend = backends[backend_id]
-        considered.append({"backend": backend_id, "accepted": True, "reason": "按优先级选中"})
+        considered.append(
+            {"backend": backend_id, "accepted": True, "reason": "按优先级选中"}
+        )
         return {
             "status": "ready",
             "operation_id": operation_id,
@@ -225,18 +263,26 @@ def backend_route_snapshot(payload: Mapping[str, Any] | None = None) -> dict[str
         "schema_version": source.get("backend_schema_version", "1.0"),
         "backend_count": len(backends),
         "route_count": len(routes),
-        "languages": sorted({str(item.get("language", "")) for item in backends.values()}),
+        "languages": sorted(
+            {str(item.get("language", "")) for item in backends.values()}
+        ),
         "backend_ids": sorted(backends),
         "operation_ids": sorted(routes),
     }
 
 
-def capability_level(capability_id: str, payload: Mapping[str, Any] | None = None) -> str:
+def capability_level(
+    capability_id: str, payload: Mapping[str, Any] | None = None
+) -> str:
     """@brief 返回能力等级，未知能力按未实现处理。"""
-    return capability_index(payload).get(capability_id, {}).get("level", "not_implemented")
+    return (
+        capability_index(payload).get(capability_id, {}).get("level", "not_implemented")
+    )
 
 
-def unattended_allowed(capability_ids: Iterable[str], payload: Mapping[str, Any] | None = None) -> bool:
+def unattended_allowed(
+    capability_ids: Iterable[str], payload: Mapping[str, Any] | None = None
+) -> bool:
     """@brief 判断一组能力是否允许无人值守执行。
 
     **判据是 `allowed_modes` 含 `unattended`，不再是 `level == "verified"`。**
@@ -258,8 +304,16 @@ def unattended_allowed(capability_ids: Iterable[str], payload: Mapping[str, Any]
     )
 
 
-def capability_snapshot(capability_ids: Iterable[str] | None = None, payload: Mapping[str, Any] | None = None) -> list[dict[str, Any]]:
+def capability_snapshot(
+    capability_ids: Iterable[str] | None = None,
+    payload: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """@brief 生成可写入任务证据的能力快照。"""
     index = capability_index(payload)
     selected = list(capability_ids) if capability_ids is not None else list(index)
-    return [dict(index.get(capability_id, {"id": capability_id, "level": "not_implemented"})) for capability_id in selected]
+    return [
+        dict(
+            index.get(capability_id, {"id": capability_id, "level": "not_implemented"})
+        )
+        for capability_id in selected
+    ]

@@ -35,7 +35,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "rigid-by-objects-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "rigid-by-objects-evidence.json"
+)
 STUDY = "DSH-ROBJ_%s" % time.strftime("%H%M%S")
 
 
@@ -43,8 +45,13 @@ def main() -> int:
     import sw_connect
     from sw_connect import safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_selection_spec import entities_as_array, entities_on_body
     from scripts import sw_simulation_loads as SL
 
@@ -70,12 +77,16 @@ def main() -> int:
             ev["steps"]["entry_check"] = {
                 "ok": len(src) == 1 and len(tgt) == 1 and src[0] is not tgt[0],
                 "body_face_count": len(all_faces),
-                "src_len": len(src), "tgt_len": len(tgt),
+                "src_len": len(src),
+                "tgt_len": len(tgt),
                 "src_is_tgt": src[0] is tgt[0],
-                "note": "★ 先验入口：★ 长度对、且两组**不是同一个对象** ⇒ 才继续施加"}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["entry_check"] = {"ok": False,
-                                          "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+                "note": "★ 先验入口：★ 长度对、且两组**不是同一个对象** ⇒ 才继续施加",
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["entry_check"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
 
         #: ★ ② 施加（★ 它**不读选区**，★ 所以先清一下让它干净）
         if (ev["steps"].get("entry_check") or {}).get("ok"):
@@ -85,31 +96,44 @@ def main() -> int:
                 ev["steps"]["rigid_by_objects"] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")]
-                    if isinstance(rep, dict) else None,
-                    "error": (rep.get("error") or "")[:120] if isinstance(rep, dict) else None}
-            except Exception as exc:                           # noqa: BLE001
+                    if isinstance(rep, dict)
+                    else None,
+                    "error": (rep.get("error") or "")[:120]
+                    if isinstance(rep, dict)
+                    else None,
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["rigid_by_objects"] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
         else:
-            ev["steps"]["rigid_by_objects"] = {"ok": False, "skipped": "★ 入口没验过 ⇒ 不施加（本轮纪律：先验再改）"}
+            ev["steps"]["rigid_by_objects"] = {
+                "ok": False,
+                "skipped": "★ 入口没验过 ⇒ 不施加（本轮纪律：先验再改）",
+            }
         ok = bool((ev["steps"].get("rigid_by_objects") or {}).get("ok"))
         ev["verdict"] = "pass" if ok else "partial"
-        ev["note"] = ("★ 事实 337 的正解第一枪：★ **按已知实体清单装数组**（`entities_as_array`）"
-                      "★ 而**不读选区**。★ 判据：① 数组长度对且两组不同 ② 施加后计数恰好 +1。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 事实 337 的正解第一枪：★ **按已知实体清单装数组**（`entities_as_array`）"
+            "★ 而**不读选区**。★ 判据：① 数组长度对且两组不同 ② 施加后计数恰好 +1。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

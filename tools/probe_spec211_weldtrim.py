@@ -1,4 +1,5 @@
 """★ 探针：`InsertWeldmentTrimFeature2` —— ★ 先"查行为" + ★★ 两个数组形参的**形态判定**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B3-1 的真机探针）
 # 文件:   tools/probe_spec211_weldtrim.py
@@ -45,8 +46,10 @@ def _classify(rep: dict) -> str:
         err = str(rep.get("error") or "")
         if "类型不匹配" in err or "0x80028CA0" in err:
             return "★★ **类型不匹配**（★ `0x80028CA0`）⇒ ★★ **数组形参的形态不对** ✗"
-        return ("★★ **静默回 `None`** ⇒ ★ **但还不算试死**（★ 前置没上 —— "
-                "★ 定则：「读到静默」≠「判定试死」）✓")
+        return (
+            "★★ **静默回 `None`** ⇒ ★ **但还不算试死**（★ 前置没上 —— "
+            "★ 定则：「读到静默」≠「判定试死」）✓"
+        )
     err = str(rep.get("error") or "")
     if err.startswith(("TypeError", "com_error", "AttributeError", "RuntimeError")):
         return "★★ **抛异常** ⇒ ★ %s" % err[:110]
@@ -57,9 +60,11 @@ def main() -> int:
     import sw_connect
     import sw_weldment as W
 
-    out: dict = {"official": "IFeatureManager.InsertWeldmentTrimFeature2",
-                 "step": "第一步：只查行为 + 数组形参的形态判定",
-                 "marks": dict(W.WELDMENT_TRIM_MARKS)}
+    out: dict = {
+        "official": "IFeatureManager.InsertWeldmentTrimFeature2",
+        "step": "第一步：只查行为 + 数组形参的形态判定",
+        "marks": dict(W.WELDMENT_TRIM_MARKS),
+    }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -72,9 +77,17 @@ def main() -> int:
 
     #: ★ ① 库层包装（★ 它内部传 `None` ✓）
     rep_none = W.insert_weldment_trim_report(model, gap_mm=0.0)
-    out["form_A_none"] = {k: rep_none.get(k) for k in
-                          ("ok", "returned_is_none", "selection_count_before",
-                           "feature_count_before", "feature_count_after", "error")}
+    out["form_A_none"] = {
+        k: rep_none.get(k)
+        for k in (
+            "ok",
+            "returned_is_none",
+            "selection_count_before",
+            "feature_count_before",
+            "feature_count_after",
+            "error",
+        )
+    }
     out["form_A_verdict"] = _classify(rep_none)
     print("★ 形态 ①（库层传 `None`）⇒ %s" % out["form_A_verdict"])
 
@@ -83,19 +96,31 @@ def main() -> int:
     try:
         empty = sw_connect.create_empty_dispatch_variant()
         fm = sw_connect.get_com_member(model, "FeatureManager")
-        feat = sw_connect.get_com_member(fm, "InsertWeldmentTrimFeature2",
-                                         0, 0, 0.0, empty, empty)
-        form_b = {"ok": True, "returned_is_none": feat is None,
-                  "returned_name": getattr(feat, "Name", None) if feat is not None else None}
-        form_b["verdict"] = ("★ 调用完成、★ 回 `%s`" % ("None" if feat is None else "对象"))
-    except Exception as exc:                                            # noqa: BLE001
-        form_b = {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:150]),
-                  "verdict": "★★ 抛 ⇒ 空 VARIANT 这个形态也不成"}
+        feat = sw_connect.get_com_member(
+            fm, "InsertWeldmentTrimFeature2", 0, 0, 0.0, empty, empty
+        )
+        form_b = {
+            "ok": True,
+            "returned_is_none": feat is None,
+            "returned_name": getattr(feat, "Name", None) if feat is not None else None,
+        }
+        form_b["verdict"] = "★ 调用完成、★ 回 `%s`" % (
+            "None" if feat is None else "对象"
+        )
+    except Exception as exc:  # noqa: BLE001
+        form_b = {
+            "ok": False,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:150]),
+            "verdict": "★★ 抛 ⇒ 空 VARIANT 这个形态也不成",
+        }
     out["form_B_empty_variant"] = form_b
     print("★ 形态 ②（空 VARIANT）⇒ %s" % form_b.get("verdict"))
 
     p = ROOT / "output" / "spec211-b3-weldtrim.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

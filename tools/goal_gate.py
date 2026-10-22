@@ -1,4 +1,5 @@
 """★ Stop hook 的**验收条件**：`output/AUTO_HANDOFF.md` ② 段没有编号待办 ⇒ exit 0（达成）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   D:/AI/SW
 # 文件:   output/GOAL.md（★ 本文件被它当 `- [ ] cmd:` 行引用）· output/AUTO_HANDOFF.md（
@@ -24,8 +25,8 @@ from pathlib import Path
 #:   而 hook 的消费方按 **UTF-8** 解码 ⇒ ★ 反馈会**全变乱码**（★ 已实测踩过）。
 for _s in (sys.stdout, sys.stderr):
     try:
-        _s.reconfigure(encoding="utf-8")                            # type: ignore[union-attr]
-    except Exception:                                              # noqa: BLE001
+        _s.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except Exception:  # noqa: BLE001
         pass
 
 TODO = re.compile(r"^\s*\d+\.\s")
@@ -38,22 +39,23 @@ def count_todos(text: str) -> int:
     m2 = SEC2.search(text)
     if not m2:
         return 0
-    rest = text[m2.end():]
+    rest = text[m2.end() :]
     m3 = SEC3.search(rest)
-    body = rest[:m3.start()] if m3 else rest
+    body = rest[: m3.start()] if m3 else rest
     return sum(1 for line in body.splitlines() if TODO.match(line))
 
 
 def main() -> int:
-    root = Path(os.environ.get("CODEBUDDY_PROJECT_DIR")
-                or Path(__file__).resolve().parents[1]).resolve()
+    root = Path(
+        os.environ.get("CODEBUDDY_PROJECT_DIR") or Path(__file__).resolve().parents[1]
+    ).resolve()
     handoff = root / "output" / "AUTO_HANDOFF.md"
     if not handoff.exists():
         print("output/AUTO_HANDOFF.md 不存在 ⇒ 本轮还没写交接单。", file=sys.stderr)
         return 1
     n = count_todos(handoff.read_text(encoding="utf-8", errors="replace"))
     if n == 0:
-        return 0                       # ★ 达成 ⇒ 该 cmd 通过 ⇒ 门放行
+        return 0  # ★ 达成 ⇒ 该 cmd 通过 ⇒ 门放行
     print("`output/AUTO_HANDOFF.md` ② 段仍有 **%d** 条编号待办。" % n, file=sys.stderr)
     return 1
 

@@ -32,18 +32,29 @@
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
    所有方法都需要调用方显式传入已连接/已打开的文档；本模块不建立连接。
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 try:
-    from .sw_connect import out_i4, get_com_member, set_com_member, create_empty_dispatch_variant
+    from .sw_connect import (
+        out_i4,
+        get_com_member,
+        set_com_member,
+        create_empty_dispatch_variant,
+    )
 except ImportError:
     #: ★★ 2026-10-01（轮 319）：**这条 fallback 原本少了 `set_com_member`** ——
     #:   而本机走的**就是**这条（`scripts` 不是包）⇒ 修完"设属性"的 11 处之后
     #:   立刻报 `NameError: name 'set_com_member' is not defined`。
     #:   ★ 教训：两条 import 分支的**名字集合必须一致**（★ 否则"只在 package 模式能跑"）。
-    from sw_connect import out_i4, get_com_member, set_com_member, create_empty_dispatch_variant
+    from sw_connect import (
+        out_i4,
+        get_com_member,
+        set_com_member,
+        create_empty_dispatch_variant,
+    )
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -80,12 +91,30 @@ __all__ = [
 #   镜面锐度对应的是 **Roughness**，不是 Shininess。已改。
 #   ⇒ 这条本身就是「不凭记忆写 API」的又一处实证。
 RENDER_MATERIAL_PRESETS: dict[str, dict[str, float]] = {
-    "matte": {"ambient": 0.25, "diffuse": 0.75, "specular": 0.10,
-              "roughness": 0.60, "transparency": 0.0, "emission": 0.0},
-    "glossy": {"ambient": 0.25, "diffuse": 0.80, "specular": 0.60,
-               "roughness": 0.20, "transparency": 0.0, "emission": 0.0},
-    "metallic": {"ambient": 0.30, "diffuse": 0.70, "specular": 0.90,
-                 "roughness": 0.10, "transparency": 0.0, "emission": 0.0},
+    "matte": {
+        "ambient": 0.25,
+        "diffuse": 0.75,
+        "specular": 0.10,
+        "roughness": 0.60,
+        "transparency": 0.0,
+        "emission": 0.0,
+    },
+    "glossy": {
+        "ambient": 0.25,
+        "diffuse": 0.80,
+        "specular": 0.60,
+        "roughness": 0.20,
+        "transparency": 0.0,
+        "emission": 0.0,
+    },
+    "metallic": {
+        "ambient": 0.30,
+        "diffuse": 0.70,
+        "specular": 0.90,
+        "roughness": 0.10,
+        "transparency": 0.0,
+        "emission": 0.0,
+    },
 }
 
 
@@ -146,8 +175,14 @@ class RenderMaterialSpec:
     extra: dict[str, float] = field(default_factory=dict)
 
     def validate(self) -> None:
-        for name in ("ambient", "diffuse", "specular", "roughness",
-                     "transparency", "emission"):
+        for name in (
+            "ambient",
+            "diffuse",
+            "specular",
+            "roughness",
+            "transparency",
+            "emission",
+        ):
             value = float(getattr(self, name))
             if value < 0.0:
                 raise ValueError(f"{name} 不能为负：{value}")
@@ -160,7 +195,8 @@ class RenderMaterialSpec:
                 "file_name 不能为空 —— 外观必须绑定一个 `.p2m` 材质文件，"
                 "否则 `AddDisplayStateSpecificRenderMaterial` 会「回 true 而清单不增」"
                 "（★ 真机实测；见 known-facts 事实 290）。"
-                "SW 自带的材质文件在 `<install>\\data\\graphics\\Materials\\**\\*.p2m`。")
+                "SW 自带的材质文件在 `<install>\\data\\graphics\\Materials\\**\\*.p2m`。"
+            )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -170,7 +206,7 @@ class RenderMaterialSpec:
 # 定位:   现代外观的创建与属性装配。官方签名：RenderMaterial CreateRenderMaterial(Stri
 #           ng Name)      ← 1 参Boolean       AddRenderMaterial(RenderMaterial, Int32& C
 #           ount)  ← 2 参Boolean       AddDefaultRenderMaterial(RenderMaterial, Int32& C
-#           ount)IRenderMaterial 上确认为 Double 的属性（本模块用到的 7 个）：  Ambient 
+#           ount)IRenderMaterial 上确认为 Double 的属性（本模块用到的 7 个）：  Ambient
 #           / Brightness / Diffuse / Emission / Roughness /  Specular / Transparency  全
 #           部 get/set 成对，**无 Initialize 成员**，故只设属性。
 # ⚑ 曾误写 Shininess（凭印象），反射清单中**无此成员**，
@@ -210,7 +246,7 @@ def create_render_material(model, name: str, spec: RenderMaterialSpec):
     for key, value in (spec.extra or {}).items():
         #: ★★★★ 2026-10-02（轮 367）**这一处漏了**：本轮之前这里是
         #:   `get_com_member(material, str(key), float(value))` —— ★★ **那是"取或调"**
-        #: （★ 事实 227）⇒ **属性值不是可调用对象** ⇒ `TypeError: 'float' object is not 
+        #: （★ 事实 227）⇒ **属性值不是可调用对象** ⇒ `TypeError: 'float' object is not
         #: callable`。
         #: ★ 前人（轮 319）修了 **11 处**同类，**而这一处漏了** —— ★ 与 `add_force` / `a
         #: dd_torque`
@@ -266,9 +302,15 @@ def add_render_material(model, material) -> bool:
     #:   「Not supported in SOLIDWORKS 2011 and later」）★ 真机已验证能调 ✓
     #: ★ `DisplayStateNames` 传**空 VARIANT**（★ 官方例子传 `Nothing`；★ 事实 33：
     #:   pywin32 下要用 `VARIANT(VT_DISPATCH, None)`，传裸 `None` 会报"类型不匹配"）
-    result = get_com_member(extension, "AddDisplayStateSpecificRenderMaterial",
-                            material, SW_ALL_DISPLAY_STATE,
-                            create_empty_dispatch_variant(), out_i4(), out_i4())
+    result = get_com_member(
+        extension,
+        "AddDisplayStateSpecificRenderMaterial",
+        material,
+        SW_ALL_DISPLAY_STATE,
+        create_empty_dispatch_variant(),
+        out_i4(),
+        out_i4(),
+    )
     refresh_scene_graph(model)
     return bool(result)
 
@@ -285,8 +327,8 @@ def refresh_scene_graph(model, update: bool = True):
 #           → IModelDocExtension 段 + IComponent2 段
 # 定位:   外观清单读取。官方签名（两处都提供，优先用文档级）：IModelDocExtension : Int
 #           32  GetRenderMaterialsCount()                     : Object GetRenderMaterial
-#           s()                     : RenderMaterial GetMaterial(Int32, String)         
-#                       : Boolean DeleteRenderMaterial(Int32, Boolean)IComponent2       
+#           s()                     : RenderMaterial GetMaterial(Int32, String)
+#                       : Boolean DeleteRenderMaterial(Int32, Boolean)IComponent2
 #            : Int32  GetRenderMaterialsCount()                     : Object GetRenderMa
 #           terials()
 #   ⚠ 注意 GetMaterial 的两个参数在反射清单里是 (Int32, String)，
@@ -302,10 +344,21 @@ def list_render_materials(model) -> list[Any]:
     """
     extension = get_extension(model)
     #: ★ 官方例子用法：`GetRenderMaterialsCount2(swAllDisplayState, Nothing)`
-    count = int(get_com_member(extension, "GetRenderMaterialsCount2",
-                               SW_ALL_DISPLAY_STATE, create_empty_dispatch_variant()) or 0)
-    materials = get_com_member(extension, "GetRenderMaterials2",
-                               SW_ALL_DISPLAY_STATE, create_empty_dispatch_variant())
+    count = int(
+        get_com_member(
+            extension,
+            "GetRenderMaterialsCount2",
+            SW_ALL_DISPLAY_STATE,
+            create_empty_dispatch_variant(),
+        )
+        or 0
+    )
+    materials = get_com_member(
+        extension,
+        "GetRenderMaterials2",
+        SW_ALL_DISPLAY_STATE,
+        create_empty_dispatch_variant(),
+    )
     items = list(materials) if isinstance(materials, (list, tuple)) else []
     return items[:count] if count else items
 
@@ -344,15 +397,16 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
       ★★ **而判据也同型**：★★★ **「不可换」要有**真机证据**、★ 证据要能复跑** ✓
     """
     extension = get_extension(model)
-    return bool(get_com_member(extension, "DeleteRenderMaterial",
-                               int(index), bool(cascade)))
+    return bool(
+        get_com_member(extension, "DeleteRenderMaterial", int(index), bool(cascade))
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks.dll 纯元数据反射）
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt
 #           → IMaterialVisualPropertiesData 段
-# 定位:   显示状态里的「材质可视化属性」。官方签名（**全部是属性，无方法**）：Boolean 
+# 定位:   显示状态里的「材质可视化属性」。官方签名（**全部是属性，无方法**）：Boolean
 #            ApplyAppearance / AdvancedGraphics / RealView / BlendColor /         ApplyM
 #           aterialColorToPart / ApplyMaterialHatchToSectionDouble   Angle / Scale2
 # ⚑ 名称歧义提示: 该接口的 `get_ApplyAppearance()` 读起来像方法，
@@ -409,11 +463,13 @@ def apply_visual_properties(
     if blend_color is not None:
         set_com_member(data, "BlendColor", bool(blend_color))
     if apply_material_color_to_part is not None:
-        set_com_member(data, "ApplyMaterialColorToPart",
-                       bool(apply_material_color_to_part))
+        set_com_member(
+            data, "ApplyMaterialColorToPart", bool(apply_material_color_to_part)
+        )
     if apply_material_hatch_to_section is not None:
-        set_com_member(data, "ApplyMaterialHatchToSection",
-                       bool(apply_material_hatch_to_section))
+        set_com_member(
+            data, "ApplyMaterialHatchToSection", bool(apply_material_hatch_to_section)
+        )
     if angle is not None:
         set_com_member(data, "Angle", float(angle))
     if scale2 is not None:
@@ -432,14 +488,16 @@ def collect_appearance_evidence(model) -> dict[str, Any]:
     materials = list_render_materials(model)
     rows = []
     for material in materials:
-        rows.append({
-            "ambient": float(get_com_member(material, "Ambient") or 0.0),
-            "diffuse": float(get_com_member(material, "Diffuse") or 0.0),
-            "specular": float(get_com_member(material, "Specular") or 0.0),
-            "roughness": float(get_com_member(material, "Roughness") or 0.0),
-            "transparency": float(get_com_member(material, "Transparency") or 0.0),
-            "emission": float(get_com_member(material, "Emission") or 0.0),
-        })
+        rows.append(
+            {
+                "ambient": float(get_com_member(material, "Ambient") or 0.0),
+                "diffuse": float(get_com_member(material, "Diffuse") or 0.0),
+                "specular": float(get_com_member(material, "Specular") or 0.0),
+                "roughness": float(get_com_member(material, "Roughness") or 0.0),
+                "transparency": float(get_com_member(material, "Transparency") or 0.0),
+                "emission": float(get_com_member(material, "Emission") or 0.0),
+            }
+        )
     return {
         "appearance_count": len(rows),
         "appearances": rows,
@@ -504,7 +562,9 @@ def _active_configuration(model):
         raise RuntimeError("IModelDoc2.ConfigurationManager 为 None ⇒ 取不到配置")
     cfg = get_com_member(mgr, "ActiveConfiguration")
     if cfg is None:
-        raise RuntimeError("IConfigurationManager.ActiveConfiguration 为 None ⇒ 取不到当前配置")
+        raise RuntimeError(
+            "IConfigurationManager.ActiveConfiguration 为 None ⇒ 取不到当前配置"
+        )
     return cfg
 
 
@@ -512,7 +572,7 @@ def _document_type(model) -> int:
     """★ 读 `IModelDoc2::GetType()`（`swDocumentTypes_e`）；取不到回 `0`（未知，**不当零件**）。"""
     try:
         return int(get_com_member(model, "GetType") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return 0
 
 
@@ -526,15 +586,15 @@ def _display_states_of(model) -> dict:
     names = [str(n) for n in (names or [])]
     try:
         count_reported = int(get_com_member(cfg, "GetDisplayStatesCount") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         count_reported = None
     dtype = _document_type(model)
     #: ★★ `ambiguous` 的判据 = **官方那句话的条件本身**（装配里组件会引用配置）——
     #:   ★ 只有这一条；★ 不按"名字个数 > 1"判（那会把零件的情形也误判成不干净）。
-    ambiguous = (dtype == DOC_ASSEMBLY)
+    ambiguous = dtype == DOC_ASSEMBLY
     try:
         conf_name = str(get_com_member(cfg, "Name") or "")
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         conf_name = ""
     return {
         "configuration": conf_name,
@@ -547,7 +607,10 @@ def _display_states_of(model) -> dict:
             "★ 官方逐字：「If more than one display state is active in the current model, call "
             "IComponent2::ReferencedDisplayState …」—— ★ 本文件是**装配**（`swDocASSEMBLY`）⇒ "
             "「**第一个名字即活动显示状态**」**不保证成立** ⇒ ★★ 调用方**不得**把 `active` 当证据，"
-            "要拿每个组件的 `IComponent2::ReferencedDisplayState` 自己判" if ambiguous else None),
+            "要拿每个组件的 `IComponent2::ReferencedDisplayState` 自己判"
+            if ambiguous
+            else None
+        ),
         "document_type": dtype,
     }
 
@@ -563,29 +626,53 @@ def list_display_states(model) -> dict:
     并给出理由，★ **不替调用方猜**哪个才是活动的 ✓
     ★ 判据 = `GetDisplayStates()` 与 `GetDisplayStatesCount()` **两个入口**的读数一致（规则 6）。
     """
-    out: dict = {"ok": False, "configuration": None, "display_states": [], "count": 0,
-                 "count_reported": None, "count_mismatch": None, "active": None,
-                 "ambiguous": None, "ambiguous_reason": None, "error": None}
+    out: dict = {
+        "ok": False,
+        "configuration": None,
+        "display_states": [],
+        "count": 0,
+        "count_reported": None,
+        "count_mismatch": None,
+        "active": None,
+        "ambiguous": None,
+        "ambiguous_reason": None,
+        "error": None,
+    }
     if model is None:
         out["error"] = "model 为 None"
         return out
     try:
         info = _display_states_of(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "读显示状态失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
-    out.update({k: info[k] for k in ("configuration", "active", "ambiguous",
-                                     "ambiguous_reason", "count_reported")})
+    out.update(
+        {
+            k: info[k]
+            for k in (
+                "configuration",
+                "active",
+                "ambiguous",
+                "ambiguous_reason",
+                "count_reported",
+            )
+        }
+    )
     out["display_states"] = info["names"]
     out["count"] = info["count"]
-    out["count_mismatch"] = (None if info["count_reported"] is None
-                             else info["count_reported"] != info["count"])
+    out["count_mismatch"] = (
+        None
+        if info["count_reported"] is None
+        else info["count_reported"] != info["count"]
+    )
     out["ok"] = True
     if out["count_mismatch"]:
         out["ok"] = False
-        out["error"] = ("两个官方入口读数不一致：`GetDisplayStates()` 回 %d 个、"
-                        "`GetDisplayStatesCount()` 回 %r ⇒ ★ 按规则 6 **不许**挑一个当结论"
-                        % (out["count"], out["count_reported"]))
+        out["error"] = (
+            "两个官方入口读数不一致：`GetDisplayStates()` 回 %d 个、"
+            "`GetDisplayStatesCount()` 回 %r ⇒ ★ 按规则 6 **不许**挑一个当结论"
+            % (out["count"], out["count_reported"])
+        )
     return out
 
 
@@ -601,9 +688,19 @@ def apply_display_state(model, display_state_name: str) -> dict:
       ③ ★★ 若 `ambiguous=True`（装配），**只记①不据②下结论**（★ 官方那句在这里不成立）——
       ★ 本函数于是 `ok = ①`，并在返回值里写明「②不可用」✓
     """
-    out: dict = {"ok": False, "requested": str(display_state_name), "returned": None,
-                 "before": None, "after": None, "active_before": None, "active_after": None,
-                 "changed": None, "ambiguous": None, "entry_used": None, "error": None}
+    out: dict = {
+        "ok": False,
+        "requested": str(display_state_name),
+        "returned": None,
+        "before": None,
+        "after": None,
+        "active_before": None,
+        "active_after": None,
+        "changed": None,
+        "ambiguous": None,
+        "entry_used": None,
+        "error": None,
+    }
     if model is None:
         out["error"] = "model 为 None"
         return out
@@ -613,39 +710,46 @@ def apply_display_state(model, display_state_name: str) -> dict:
         return out
     try:
         info_before = _display_states_of(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["before"] = list(info_before["names"])
     out["active_before"] = info_before["active"]
     out["ambiguous"] = info_before["ambiguous"]
     if name not in info_before["names"]:
-        out["error"] = ("显示状态 %r **不在这份清单里**（现有：%r）—— ★ 本函数不猜、不新建，"
-                        "如实报（铁律 5）" % (name, info_before["names"]))
+        out["error"] = (
+            "显示状态 %r **不在这份清单里**（现有：%r）—— ★ 本函数不猜、不新建，"
+            "如实报（铁律 5）" % (name, info_before["names"])
+        )
         return out
     cfg = _active_configuration(model)
     out["entry_used"] = "IConfiguration::ApplyDisplayState(System.string)"
     try:
         out["returned"] = get_com_member(cfg, "ApplyDisplayState", name)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     try:
         info_after = _display_states_of(model)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["after"] = list(info_after["names"])
     out["active_after"] = info_after["active"]
-    out["changed"] = (out["active_before"] != out["active_after"])
+    out["changed"] = out["active_before"] != out["active_after"]
     if out["ambiguous"]:
         #: ★★ 官方那句在装配里不成立 ⇒ **不用回读下结论**，如实说明
         out["ok"] = bool(out["returned"])
         if not out["ok"]:
-            out["error"] = "ApplyDisplayState 回 %r（官方 Returns 逐字：True = 已应用）" % out["returned"]
+            out["error"] = (
+                "ApplyDisplayState 回 %r（官方 Returns 逐字：True = 已应用）"
+                % out["returned"]
+            )
     else:
         out["ok"] = bool(out["returned"]) and (out["active_after"] == name)
         if not out["ok"]:
-            out["error"] = ("回读判据未过：returned=%r · 回读到的「第一个名字」=%r（请求 %r）"
-                            % (out["returned"], out["active_after"], name))
+            out["error"] = (
+                "回读判据未过：returned=%r · 回读到的「第一个名字」=%r（请求 %r）"
+                % (out["returned"], out["active_after"], name)
+            )
     return out

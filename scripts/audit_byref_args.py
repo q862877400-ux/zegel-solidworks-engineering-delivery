@@ -57,6 +57,7 @@
 #   其判据的正确性来自已被真机验证过的 `out_i4()` 契约（`sw_connect.py` 的来源块）。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -87,7 +88,7 @@ SCALAR_OUT = re.compile(r"^(Int32|Long|Double|Boolean|Int16|Single|String)&\s*$"
 #:   ⚠ 与下面那条注释**同源**：★ **工具自己的假阳性** ——
 #:     ★ 判据必须覆盖「**我自己推荐的写法**」，★ 否则它会去告自己写对的代码 ✓
 BYREF_OK = re.compile(
-    r"^\s*(?:[\w.]+\.)?_?out_\w*"        # out_i4() · _out_i4() · sw_connect.out_i4()
+    r"^\s*(?:[\w.]+\.)?_?out_\w*"  # out_i4() · _out_i4() · sw_connect.out_i4()
     r"|^\s*(?:[\w.]+\.)?_?VARIANT\s*\("  # VARIANT( · win32com.client.VARIANT(
 )
 # ⚠ 前导下划线是**必须**的：本项目既有 `out_i4`（`sw_connect`）也有 `_out_i4`（工具里的
@@ -234,12 +235,15 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
     """扫一个文件，返回 ``(违规列表, 检查过的调用点数)``。"""
     bad: list[dict] = []
     checked = 0
-    byref_vars = byref_variables(path)          # 先构造后传出的合法 by-ref 变量
+    byref_vars = byref_variables(path)  # 先构造后传出的合法 by-ref 变量
     #: ★★ 2026-10-03（接手轮）：**内联**用别名构造的也算合法（如 `_oi4()` 直接写进实参）
     #: 。
     _aliases = byref_alias_names(path)
-    _alias_inline = ([re.compile(r"^\s*%s\s*\(" % re.escape(a)) for a in _aliases]
-                     if _aliases else [])
+    _alias_inline = (
+        [re.compile(r"^\s*%s\s*\(" % re.escape(a)) for a in _aliases]
+        if _aliases
+        else []
+    )
     for lineno, wrapper, member, args in own_call_sites(path):
         if wrapper not in WRAPPERS:
             continue
@@ -260,19 +264,25 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
                 break
             for pos, (raw_i, ptype) in enumerate(counted_positions(plist)):
                 if not ptype.endswith("&") or not SCALAR_OUT.match(ptype):
-                    continue                      # 只关注标量出参
+                    continue  # 只关注标量出参
                 actual = args[pos]
                 if BYREF_OK.match(actual):
                     continue
                 if any(rx.match(actual) for rx in _alias_inline):
-                    continue                        # ★ 内联的**别名**构造（如 `_oi4()`）
-                if actual in byref_vars:            # 该变量是从 by-ref 构造赋来的
+                    continue  # ★ 内联的**别名**构造（如 `_oi4()`）
+                if actual in byref_vars:  # 该变量是从 by-ref 构造赋来的
                     continue
-                bad.append({
-                    "file": str(path.name), "line": lineno, "member": member,
-                    "position": pos, "type": ptype.strip(),
-                    "actual": actual, "signature": sig_name,
-                })
+                bad.append(
+                    {
+                        "file": str(path.name),
+                        "line": lineno,
+                        "member": member,
+                        "position": pos,
+                        "type": ptype.strip(),
+                        "actual": actual,
+                        "signature": sig_name,
+                    }
+                )
                 reported = True
                 break
     return bad, checked
@@ -280,7 +290,9 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="裸 by-ref 标量出参审计")
-    ap.add_argument("target", nargs="?", default="", help="单文件；省略则扫 scripts/ + tools/")
+    ap.add_argument(
+        "target", nargs="?", default="", help="单文件；省略则扫 scripts/ + tools/"
+    )
     ap.add_argument("reflection", nargs="*", help="iface_*.txt 反射清单")
     ap.add_argument("--all", action="store_true", help="扫 scripts/ + tools/")
     args = ap.parse_args()
@@ -297,7 +309,9 @@ def main() -> int:
     if args.target:
         targets = [Path(args.target)]
     else:
-        targets = sorted((ROOT / "scripts").glob("*.py")) + sorted((ROOT / "tools").glob("*.py"))
+        targets = sorted((ROOT / "scripts").glob("*.py")) + sorted(
+            (ROOT / "tools").glob("*.py")
+        )
 
     total_bad, total_checked = [], 0
     per_file: dict[str, int] = {}
@@ -310,7 +324,10 @@ def main() -> int:
             per_file[t.name] = len(bad)
         total_bad.extend(bad)
 
-    print("反射清单 %d 份；扫描 %d 个文件；检查过的调用点 **%d**" % (len(sig_paths), len(targets), total_checked))
+    print(
+        "反射清单 %d 份；扫描 %d 个文件；检查过的调用点 **%d**"
+        % (len(sig_paths), len(targets), total_checked)
+    )
     print("⇒ **标量出参裸传 %d 处**" % len(total_bad))
     if total_bad:
         print()
@@ -319,11 +336,22 @@ def main() -> int:
         print()
         print("  明细（前 30）：")
         for b in total_bad[:30]:
-            print("    %s:%d  %s(...)  第 %d 位应为 %s，实参是 `%s`"
-                  % (b["file"], b["line"], b["member"], b["position"], b["type"], b["actual"][:40]))
+            print(
+                "    %s:%d  %s(...)  第 %d 位应为 %s，实参是 `%s`"
+                % (
+                    b["file"],
+                    b["line"],
+                    b["member"],
+                    b["position"],
+                    b["type"],
+                    b["actual"][:40],
+                )
+            )
         print()
         print("  修法：把该实参换成 `out_i4()`（`sw_connect.out_i4`）。")
-        print("        ⚠ **不要**凭本工具的输出批量替换 —— 先逐条核对官方签名与调用上下文。")
+        print(
+            "        ⚠ **不要**凭本工具的输出批量替换 —— 先逐条核对官方签名与调用上下文。"
+        )
     return 0 if not total_bad else 1
 
 

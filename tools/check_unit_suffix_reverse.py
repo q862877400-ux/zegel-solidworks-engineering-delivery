@@ -1,4 +1,5 @@
 """★ 规格 212 · C：规则 2 的**逆向一半**（描述声明单位 ⇒ 名字必须有对应后缀）—— **只报不拦**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 212 · C 批）
 # 文件:   tools/check_unit_suffix_reverse.py
@@ -30,20 +31,32 @@ import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
-for _p in (str(ROOT), str(ROOT / "mcp-server"), str(ROOT / "scripts"), str(ROOT / "tools")):
+for _p in (
+    str(ROOT),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "scripts"),
+    str(ROOT / "tools"),
+):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
 #: ★★ 四档：★ `(规则名, 要求后缀, 单位词正则)` —— ★ **词边界 + 分档**，★ 不许混 ✓
 RULES = (
-    ("volume_mm3", "_mm3", re.compile(
-        r"(mm\s*[³3]|立方毫米|cubic\s+milli)", re.I)),
-    ("area_mm2", "_mm2", re.compile(
-        r"(mm\s*[²2]\b|平方毫米|square\s+milli)", re.I)),
-    ("length_mm", "_mm", re.compile(
-        r"(\bmm\b|毫米|厘米|inch\w*|\bcm\b|\bmet(er|re)s?\b|\bmillimet\w*|\bmillimet\w*)", re.I)),
-    ("angle_deg", "_deg", re.compile(
-        r"(\bdeg\w*|\bdegree\w*|度\b|radian\w*|弧度)", re.I)),
+    ("volume_mm3", "_mm3", re.compile(r"(mm\s*[³3]|立方毫米|cubic\s+milli)", re.I)),
+    ("area_mm2", "_mm2", re.compile(r"(mm\s*[²2]\b|平方毫米|square\s+milli)", re.I)),
+    (
+        "length_mm",
+        "_mm",
+        re.compile(
+            r"(\bmm\b|毫米|厘米|inch\w*|\bcm\b|\bmet(er|re)s?\b|\bmillimet\w*|\bmillimet\w*)",
+            re.I,
+        ),
+    ),
+    (
+        "angle_deg",
+        "_deg",
+        re.compile(r"(\bdeg\w*|\bdegree\w*|度\b|radian\w*|弧度)", re.I),
+    ),
 )
 
 
@@ -73,18 +86,28 @@ def main() -> int:
                 continue
             for rule, want, rx in RULES:
                 if low.endswith(want):
-                    continue                      # ★ 已有正确后缀 ⇒ 不看描述 ✓
+                    continue  # ★ 已有正确后缀 ⇒ 不看描述 ✓
                 m = rx.search(d)
                 if not m:
                     continue
                 #: ★ 已豁免的（★ 长度/角度两表）⇒ 不报 ✓
                 if (s.name, name) in len_ex or (s.name, name) in ang_ex:
                     continue
-                found.append({"tool": s.name, "param": name, "rule": rule,
-                              "want_suffix": want, "matched": m.group(0),
-                              "desc": d[:120]})
+                found.append(
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "rule": rule,
+                        "want_suffix": want,
+                        "matched": m.group(0),
+                        "desc": d[:120],
+                    }
+                )
 
-    print("★ 逆向体检（★ 只报不拦）：工具 **%d** · 形参 **%d**" % (len(rc.all_specs()), scanned))
+    print(
+        "★ 逆向体检（★ 只报不拦）：工具 **%d** · 形参 **%d**"
+        % (len(rc.all_specs()), scanned)
+    )
     print("★★ 发现 **%d** 条（★ 每条自证：规则 + 匹配原文）" % len(found))
     by_rule: dict = {}
     for f in found:
@@ -92,13 +115,20 @@ def main() -> int:
     for rule, items in sorted(by_rule.items()):
         print("  ── %-12s **%d** 条" % (rule, len(items)))
         for it in items[:14]:
-            print("      %-52s 匹配 %-14r %s"
-                  % (it["tool"] + " · " + it["param"], it["matched"], it["desc"][:52]))
+            print(
+                "      %-52s 匹配 %-14r %s"
+                % (it["tool"] + " · " + it["param"], it["matched"], it["desc"][:52])
+            )
         if len(items) > 14:
             print("      …（共 %d 条）" % len(items))
     p = ROOT / "output" / "spec212-reverse-lint.json"
-    p.write_text(json.dumps({"scanned_params": scanned, "findings": found},
-                            ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(
+            {"scanned_params": scanned, "findings": found}, ensure_ascii=False, indent=1
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

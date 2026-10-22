@@ -40,10 +40,13 @@ def main() -> int:
     import sw_boolean_ops as BO
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "规格 209 · B4-3 intersect（两步 PreIntersect2 → PostIntersect）",
-          "judge": "体数组长度 + 特征树增量 + GetIntersectionsCount（★ 不看返回值）",
-          "runs": [], "verdict": {}}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "规格 209 · B4-3 intersect（两步 PreIntersect2 → PostIntersect）",
+        "judge": "体数组长度 + 特征树增量 + GetIntersectionsCount（★ 不看返回值）",
+        "runs": [],
+        "verdict": {},
+    }
     opened = []
 
     def _close(doc):
@@ -51,14 +54,18 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     def _features(doc):
         rows, f, n = [], get_com_member(doc, "FirstFeature"), 0
         while f is not None and n < 4096:
-            rows.append((str(safe_get_com_member(f, "Name") or ""),
-                         str(safe_get_com_member(f, "GetTypeName2") or "")))
+            rows.append(
+                (
+                    str(safe_get_com_member(f, "Name") or ""),
+                    str(safe_get_com_member(f, "GetTypeName2") or ""),
+                )
+            )
             f = get_com_member(f, "GetNextFeature")
             n += 1
         return rows
@@ -78,46 +85,86 @@ def main() -> int:
             try:
                 doc = _box()
                 feats = _features(doc)
-                body_feat = next((n for n, t in feats if "Extru" in t or "拉伸" in n), "")
+                body_feat = next(
+                    (n for n, t in feats if "Extru" in t or "拉伸" in n), ""
+                )
                 plane = next((n for n, t in feats if t == "RefPlane" and n), "")
                 row["body_feature"] = body_feat
                 row["plane"] = plane
                 row["sel_spec"] = "SOLIDBODY:%s,PLANE:%s" % (body_feat, plane)
-                r = BO.create_intersect(doc, row["sel_spec"], region_type=rt, exclude=excl)
-                row.update({k: r.get(k) for k in
-                            ("ok", "selection_count", "pre_bodies", "exclude_array_len",
-                             "exclude_flagged", "feature", "feature_type", "tree_before",
-                             "tree_after", "new_features", "intersections_count", "error",
-                             "note")})
+                r = BO.create_intersect(
+                    doc, row["sel_spec"], region_type=rt, exclude=excl
+                )
+                row.update(
+                    {
+                        k: r.get(k)
+                        for k in (
+                            "ok",
+                            "selection_count",
+                            "pre_bodies",
+                            "exclude_array_len",
+                            "exclude_flagged",
+                            "feature",
+                            "feature_type",
+                            "tree_before",
+                            "tree_after",
+                            "new_features",
+                            "intersections_count",
+                            "error",
+                            "note",
+                        )
+                    }
+                )
                 row["feature_names_after"] = [n for n, _t in _features(doc)][-4:]
                 _close(doc)
-                print("  rt=%-28s excl=%-2s ok=%-5s pre=%s new=%r inter=%s"
-                      % (rt, excl or "-", r.get("ok"), r.get("pre_bodies"),
-                         r.get("new_features"), r.get("intersections_count")))
-            except Exception as exc:                           # noqa: BLE001
+                print(
+                    "  rt=%-28s excl=%-2s ok=%-5s pre=%s new=%r inter=%s"
+                    % (
+                        rt,
+                        excl or "-",
+                        r.get("ok"),
+                        r.get("pre_bodies"),
+                        r.get("new_features"),
+                        r.get("intersections_count"),
+                    )
+                )
+            except Exception as exc:  # noqa: BLE001
                 row["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
-                print("  rt=%-28s excl=%-2s FATAL %s" % (rt, excl or "-", str(exc)[:90]))
+                print(
+                    "  rt=%-28s excl=%-2s FATAL %s" % (rt, excl or "-", str(exc)[:90])
+                )
             ev["runs"].append(row)
 
     got = [r for r in ev["runs"] if r.get("ok")]
     ev["verdict"] = {
         "any_built": bool(got),
         "array_wrapping_works": any(r.get("pre_bodies") for r in ev["runs"]),
-        "intersections_count_read": any(r.get("intersections_count") for r in ev["runs"]),
-        "built_runs": [{"region_type": r["region_type"], "exclude": r["exclude"],
-                        "feature": r.get("feature"), "new": r.get("new_features")} for r in got],
+        "intersections_count_read": any(
+            r.get("intersections_count") for r in ev["runs"]
+        ),
+        "built_runs": [
+            {
+                "region_type": r["region_type"],
+                "exclude": r["exclude"],
+                "feature": r.get("feature"),
+                "new": r.get("new_features"),
+            }
+            for r in got
+        ],
     }
     print("  verdict =", json.dumps(ev["verdict"], ensure_ascii=False)[:300])
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

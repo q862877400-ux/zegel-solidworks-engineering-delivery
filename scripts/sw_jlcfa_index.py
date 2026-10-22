@@ -31,6 +31,7 @@ r"""嘉立创 FA 全库零件索引：按型号 / 分类 / 品牌 / 产品查询
 # ⚠ 本模块为静态整理，未在本机实测 SolidWorks 行为（见 AGENTS.md）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -50,7 +51,8 @@ def load_index(path: Path | None = None) -> dict[str, Any]:
             f"嘉立创 FA 索引不存在：{p}\n"
             f"  它从插件的明文 SQLite 抽取，需先运行 tools/build_jlcfa_index.py；\n"
             f"  数据源：D:\\Program Files\\SOLIDWORKS Corp\\JLCFA Parts Library "
-            f"Plugin Full Version ...\\ForFaceSelector\\ForFaceSelectorData\\DB\\")
+            f"Plugin Full Version ...\\ForFaceSelector\\ForFaceSelectorData\\DB\\"
+        )
     return json.loads(p.read_text(encoding="utf-8"))
 
 
@@ -64,8 +66,13 @@ def list_categories(index: dict[str, Any] | None = None) -> list[str]:
     return list((index if index is not None else load_index())["categories"])
 
 
-def search(keyword: str = "", brand: str = "", product: str = "", category: str = "",
-           index: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+def search(
+    keyword: str = "",
+    brand: str = "",
+    product: str = "",
+    category: str = "",
+    index: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """按关键词 / 品牌 / 产品 / 分类查型号。
 
     ⚑ **四个字段全都要搜** —— ��工漏了 ``product`` 与 ``category``，
@@ -80,8 +87,10 @@ def search(keyword: str = "", brand: str = "", product: str = "", category: str 
     ct = category.strip().lower()
     hits = []
     for item in data["parts"]:
-        if kw and not any(kw in str(item.get(f, "")).lower()
-                         for f in ("code", "name", "product", "brand")):
+        if kw and not any(
+            kw in str(item.get(f, "")).lower()
+            for f in ("code", "name", "product", "brand")
+        ):
             continue
         if br and br not in item["brand"].lower():
             continue

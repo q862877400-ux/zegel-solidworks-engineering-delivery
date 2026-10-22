@@ -6,6 +6,7 @@
      （`param_alias` 的目标是真形参名 ⇒ 两边对得上，`check_param_binding` 才放行）
   ③ ★ 来源块照仓库模板写（仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -31,8 +32,23 @@ for _p in (str(_ROOT), str(_ROOT / "scripts"), str(_ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-LENGTH_WORDS = ("size", "distance", "radius", "thickness", "length", "depth", "height", "width",
-                "diameter", "offset", "gap", "pitch", "spacing", "tolerance", "thick")
+LENGTH_WORDS = (
+    "size",
+    "distance",
+    "radius",
+    "thickness",
+    "length",
+    "depth",
+    "height",
+    "width",
+    "diameter",
+    "offset",
+    "gap",
+    "pitch",
+    "spacing",
+    "tolerance",
+    "thick",
+)
 ANGLE_WORDS = ("angle", "rotation", "twist")
 PYTYPE = {"int": "int", "float": "float", "bool": "bool", "str": "str", "string": "str"}
 
@@ -77,24 +93,29 @@ def _maybe_unit_name(row_name: str) -> tuple[str, str | None]:
 
 
 def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
-    lines = ['"""★ 批次 %s：由 Bunny 扇出产出、**经门禁**（`tools/check_bunny_toolspec_rows.py`）'
-             '过滤后的 ToolSpec 声明。"""' % batch,
-             "# ── 来源 ─────────────────────────────────────────────────────────────────────",
-             "# 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）",
-             "# 文件:   %s" % " · ".join(sorted({r["module"] for r in rows})),
-             "# 定位:   ★ 规格 `specs/204-tool-ramp/spec.md` 的批 %s；" % batch,
-             "#         ★★ **本文件由 `tools/build_toolspec_batch_from_rows.py` 生成** ——",
-             "#         行来自 Bunny 子代理（**只读官方源与仓库**），而**判据、门禁、真机、提交归主线** ✓",
-             "# 官方依据: 逐行的 `official_file` / `official_signature` 见下表（★ 每条都是官方页的逐字签名）",
-             "# 许可:   本仓库 MIT。★ 无第三方代码引入。",
-             "# 规模:   **%d 个工具**" % len(rows),
-             "# ⚠ 生成器**只收 `exposable=True` 且门禁 0 问题的行**（★ 被门禁挡下的 %d 行见 `output/`）"
-             % blocked,
-             "# ─────────────────────────────────────────────────────────────────────────────",
-             "from __future__ import annotations", "",
-             "from tool_registry import Param, ToolSpec", "",
-             "__all__ = [\"SPECS_BATCH%s\"]" % batch, "",
-             "SPECS_BATCH%s = [" % batch]
+    lines = [
+        '"""★ 批次 %s：由 Bunny 扇出产出、**经门禁**（`tools/check_bunny_toolspec_rows.py`）'
+        '过滤后的 ToolSpec 声明。"""' % batch,
+        "# ── 来源 ─────────────────────────────────────────────────────────────────────",
+        "# 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）",
+        "# 文件:   %s" % " · ".join(sorted({r["module"] for r in rows})),
+        "# 定位:   ★ 规格 `specs/204-tool-ramp/spec.md` 的批 %s；" % batch,
+        "#         ★★ **本文件由 `tools/build_toolspec_batch_from_rows.py` 生成** ——",
+        "#         行来自 Bunny 子代理（**只读官方源与仓库**），而**判据、门禁、真机、提交归主线** ✓",
+        "# 官方依据: 逐行的 `official_file` / `official_signature` 见下表（★ 每条都是官方页的逐字签名）",
+        "# 许可:   本仓库 MIT。★ 无第三方代码引入。",
+        "# 规模:   **%d 个工具**" % len(rows),
+        "# ⚠ 生成器**只收 `exposable=True` 且门禁 0 问题的行**（★ 被门禁挡下的 %d 行见 `output/`）"
+        % blocked,
+        "# ─────────────────────────────────────────────────────────────────────────────",
+        "from __future__ import annotations",
+        "",
+        "from tool_registry import Param, ToolSpec",
+        "",
+        '__all__ = ["SPECS_BATCH%s"]' % batch,
+        "",
+        "SPECS_BATCH%s = [" % batch,
+    ]
     for r in rows:
         #: ★★★ 2026-10-04 修正（★ 被**仓库自己的** `check_param_binding` 抓到）：★ **必
         #: 须把行里
@@ -109,7 +130,17 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             if isinstance(k, str) and isinstance(v, str) and k != v:
                 alias[k] = v
         params_src = []
-        _UNITISH = ("_mm", "_m", "_cm", "_inch", "_in", "_deg", "_px", "_pct", "_percent")
+        _UNITISH = (
+            "_mm",
+            "_m",
+            "_cm",
+            "_inch",
+            "_in",
+            "_deg",
+            "_px",
+            "_pct",
+            "_percent",
+        )
         for p in r.get("params") or []:
             kind = PYTYPE.get(str(p.get("type", "str")).lower(), "str")
             nm = str(p["name"])
@@ -129,16 +160,20 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             if real:
                 alias[out] = real
             desc = _esc(str(p.get("desc") or ""))
-            params_src.append('            Param("%s", %s, default=%s, description="%s"),'
-                              % (out, kind, _default_literal(kind, p.get("default")), desc[:300]))
+            params_src.append(
+                '            Param("%s", %s, default=%s, description="%s"),'
+                % (out, kind, _default_literal(kind, p.get("default")), desc[:300])
+            )
         if r.get("inject"):
             alias.setdefault("__inject__", "")
         lines += [
             "    ToolSpec(",
             '        name="%s",' % r["tool_name"],
-            '        title="%s",' % str(r.get("title") or r["tool_name"]).replace('"', "'")[:120],
+            '        title="%s",'
+            % str(r.get("title") or r["tool_name"]).replace('"', "'")[:120],
             '        module="%s", function="%s",' % (r["module"], r["function"]),
-            '        inject=%s,' % (json.dumps(r["inject"]) if r.get("inject") else '""'),
+            "        inject=%s,"
+            % (json.dumps(r["inject"]) if r.get("inject") else '""'),
         ]
         alias.pop("__inject__", None)
         #: ★★★★ 2026-10-04 修正（★ 被**注册器自己的门禁**抓到、且它**整批拒绝**）：
@@ -149,30 +184,47 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
         #:   （`width_px_mm → width_px`，而 `width_px` 不是真形参）⇒ 注册器报
         #:   「param_alias 指向未声明的参数」⇒ ★★ **整批 30 个工具全注册不上** ✓
         #:   ⇒ ★ 加一条**不变量**：**丢掉所有"值不是真形参名"的别名条目**（并如实报数）✓
-        real_params = set(inspect.signature(
-            getattr(importlib.import_module("scripts.%s" % r["module"]), r["function"])
-        ).parameters) if True else set()
+        real_params = (
+            set(
+                inspect.signature(
+                    getattr(
+                        importlib.import_module("scripts.%s" % r["module"]),
+                        r["function"],
+                    )
+                ).parameters
+            )
+            if True
+            else set()
+        )
         dropped = [k for k, v in alias.items() if v not in real_params]
         for k in dropped:
             alias.pop(k, None)
         if dropped:
-            print("   ⚠ %s：丢掉 %d 条**值不是真形参名**的别名 %r（★ 注册器会因此拒绝整批）"
-                  % (r["tool_name"], len(dropped), dropped))
+            print(
+                "   ⚠ %s：丢掉 %d 条**值不是真形参名**的别名 %r（★ 注册器会因此拒绝整批）"
+                % (r["tool_name"], len(dropped), dropped)
+            )
         if alias:
-            lines.append("        param_alias=%s," % json.dumps(alias, ensure_ascii=False))
+            lines.append(
+                "        param_alias=%s," % json.dumps(alias, ensure_ascii=False)
+            )
         lines.append("        params=[")
         lines += params_src
-        lines += ["        ],",
-                  #: ★★ 生成的 `doc` 里常带 **Windows 路径**（`C:\swapi\...`）⇒ ★ 必须**
-                  #: 转义反斜杠**，
-                  #:   否则 Python 报 `SyntaxWarning: invalid escape sequence '\s'`
-                  #: （★ 第一版只在 `desc` 里转了义、`doc` 里忘了 ⇒ 生成物 7 处告警，实
-                  #: 测发现）✓
-                  '        doc="★ 官方签名（逐字，来自 %s）：`%s`。%s",'
-                  % (Path(r["official_file"]).name,
-                     _esc(str(r.get("official_signature") or "")[:200]),
-                     _esc(str(r.get("official_remarks_gist") or "")[:300])),
-                  "    ),"]
+        lines += [
+            "        ],",
+            #: ★★ 生成的 `doc` 里常带 **Windows 路径**（`C:\swapi\...`）⇒ ★ 必须**
+            #: 转义反斜杠**，
+            #:   否则 Python 报 `SyntaxWarning: invalid escape sequence '\s'`
+            #: （★ 第一版只在 `desc` 里转了义、`doc` 里忘了 ⇒ 生成物 7 处告警，实
+            #: 测发现）✓
+            '        doc="★ 官方签名（逐字，来自 %s）：`%s`。%s",'
+            % (
+                Path(r["official_file"]).name,
+                _esc(str(r.get("official_signature") or "")[:200]),
+                _esc(str(r.get("official_remarks_gist") or "")[:300]),
+            ),
+            "    ),",
+        ]
     lines += ["]", ""]
     return "\n".join(lines)
 
@@ -184,8 +236,11 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     data = json.loads(Path(a.rows).read_text(encoding="utf-8", errors="replace"))
-    good = [x["row"] for x in data.get("results", [])
-            if x.get("ok") and x["row"].get("exposable") is not False]
+    good = [
+        x["row"]
+        for x in data.get("results", [])
+        if x.get("ok") and x["row"].get("exposable") is not False
+    ]
     blocked = len(data.get("results", [])) - len(good)
     #: ★ 查重（★ 同名只留第一条）
     seen, uniq = set(), []
@@ -199,6 +254,7 @@ def main() -> int:
     Path(a.out).write_text(src, encoding="utf-8")
     print("★ 生成 %s：%d 个工具（门禁挡下 %d 行）" % (a.out, len(uniq), blocked))
     import ast
+
     ast.parse(src)
     print("★ 语法自检通过 ✓")
     return 0

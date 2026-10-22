@@ -13,8 +13,15 @@ from __future__ import annotations
 import collections
 import pathlib
 
-DOC = pathlib.Path(pathlib.Path(__file__).resolve().parents[1] / "docs" / "user-feature-coverage.md")
-NAMES = ("Solidworks-MCP-Server", "SolidworksMCP-python", "SolidworksMCP-TS", "solidworks-mcp")
+DOC = pathlib.Path(
+    pathlib.Path(__file__).resolve().parents[1] / "docs" / "user-feature-coverage.md"
+)
+NAMES = (
+    "Solidworks-MCP-Server",
+    "SolidworksMCP-python",
+    "SolidworksMCP-TS",
+    "solidworks-mcp",
+)
 
 
 def main() -> int:
@@ -40,7 +47,10 @@ def main() -> int:
         print("【%s】%d 项" % (dom, len(by[dom])))
         for r in by[dom]:
             who = [n for n, v in zip(NAMES, r[3:]) if v == "✅"]
-            print("   · %-18s ★ 四家里有：%s" % (r[1], "、".join(who) or "（★ 四家都没有）"))
+            print(
+                "   · %-18s ★ 四家里有：%s"
+                % (r[1], "、".join(who) or "（★ 四家都没有）")
+            )
         print()
     return 0
 

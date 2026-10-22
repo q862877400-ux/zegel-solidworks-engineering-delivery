@@ -47,7 +47,9 @@ def _positive(params: dict[str, Any], key: str, default: float) -> float:
     return value
 
 
-def _versioned_target(out_dir: Path, name: str, extension: str, overwrite: bool) -> Path:
+def _versioned_target(
+    out_dir: Path, name: str, extension: str, overwrite: bool
+) -> Path:
     """@brief 默认生成新版本文件，避免覆盖旧交付物。"""
     target = out_dir / f"{name}.{extension}"
     if overwrite or not target.exists():
@@ -64,7 +66,8 @@ def _document_height(document: dict[str, Any]) -> float:
     heights = [
         float(_params(feature).get("height", 10.0))
         for feature in document.get("features", [])
-        if isinstance(feature, dict) and str(feature.get("type") or "").lower() in {"box", "cylinder"}
+        if isinstance(feature, dict)
+        and str(feature.get("type") or "").lower() in {"box", "cylinder"}
     ]
     return max([height for height in heights if height > 0] or [10.0])
 
@@ -99,8 +102,12 @@ def build_shape(document: dict[str, Any]):
                 height,
             ).Shape()
         elif kind in {"cylinder", "hole"}:
-            radius = _positive(params, "radius", float(params.get("diameter", 10.0)) / 2)
-            height = _positive(params, "height", through_height if kind == "hole" else 10.0)
+            radius = _positive(
+                params, "radius", float(params.get("diameter", 10.0)) / 2
+            )
+            height = _positive(
+                params, "height", through_height if kind == "hole" else 10.0
+            )
             base_z = z - height / 2
             primitive = BRepPrimAPI_MakeCylinder(
                 gp_Ax2(gp_Pnt(x, y, base_z), gp_Dir(0, 0, 1)),
@@ -108,12 +115,16 @@ def build_shape(document: dict[str, Any]):
                 height,
             ).Shape()
         else:
-            raise UnsupportedFeatureError(f"OCCT 后端暂不支持特征: {feature_id} ({kind})")
+            raise UnsupportedFeatureError(
+                f"OCCT 后端暂不支持特征: {feature_id} ({kind})"
+            )
 
         is_subtractive = kind == "hole" or operation in {"subtract", "cut", "remove"}
         if is_subtractive:
             if shape is None:
-                raise UnsupportedFeatureError(f"减材特征 {feature_id} 之前没有基础实体。")
+                raise UnsupportedFeatureError(
+                    f"减材特征 {feature_id} 之前没有基础实体。"
+                )
             algorithm = BRepAlgoAPI_Cut(shape, primitive)
             algorithm.Build()
             if not algorithm.IsDone():
@@ -128,7 +139,9 @@ def build_shape(document: dict[str, Any]):
                 raise RuntimeError(f"OCCT 布尔合并失败: {feature_id}")
             shape = algorithm.Shape()
         else:
-            raise UnsupportedFeatureError(f"OCCT 后端暂不支持操作: {feature_id} ({operation})")
+            raise UnsupportedFeatureError(
+                f"OCCT 后端暂不支持操作: {feature_id} ({operation})"
+            )
 
     if shape is None:
         raise UnsupportedFeatureError("NeutralCadDocument 没有可构造的实体特征。")
@@ -174,10 +187,14 @@ def collect_evidence(shape) -> dict[str, Any]:
     }
 
 
-def _mesh_shape(shape, linear_deflection: float = 0.2, angular_deflection: float = 0.35) -> None:
+def _mesh_shape(
+    shape, linear_deflection: float = 0.2, angular_deflection: float = 0.35
+) -> None:
     from OCP.BRepMesh import BRepMesh_IncrementalMesh
 
-    mesher = BRepMesh_IncrementalMesh(shape, linear_deflection, False, angular_deflection, True)
+    mesher = BRepMesh_IncrementalMesh(
+        shape, linear_deflection, False, angular_deflection, True
+    )
     mesher.Perform()
     if not mesher.IsDone():
         raise RuntimeError("OCCT 网格化失败。")
@@ -204,7 +221,11 @@ def export_occt(
     out_dir.mkdir(parents=True, exist_ok=True)
     shape = build_shape(document)
     evidence = collect_evidence(shape)
-    if not evidence["valid"] or evidence["topology"]["solids"] < 1 or evidence["volume"] <= 0:
+    if (
+        not evidence["valid"]
+        or evidence["topology"]["solids"] < 1
+        or evidence["volume"] <= 0
+    ):
         raise RuntimeError("OCCT 结果未通过实体有效性、拓扑或体积门禁。")
 
     normalized_formats = [item.lower().lstrip(".") for item in formats]
@@ -218,7 +239,10 @@ def export_occt(
             if normalized == "step":
                 target = _versioned_target(out_dir, name, "step", overwrite)
                 writer = STEPControl_Writer()
-                if writer.Transfer(shape, STEPControl_AsIs) != IFSelect_RetDone or writer.Write(str(target)) != IFSelect_RetDone:
+                if (
+                    writer.Transfer(shape, STEPControl_AsIs) != IFSelect_RetDone
+                    or writer.Write(str(target)) != IFSelect_RetDone
+                ):
                     raise RuntimeError("STEP 写入失败。")
             elif normalized == "iges":
                 target = _versioned_target(out_dir, name, "iges", overwrite)
@@ -250,7 +274,10 @@ def export_occt(
                 stl_path = _versioned_target(out_dir, name, "stl", overwrite)
             else:
                 stl_path = Path(temp_context.name) / f"{name}.stl"
-            if not StlAPI_Writer().Write(shape, str(stl_path)) or not stl_path.is_file():
+            if (
+                not StlAPI_Writer().Write(shape, str(stl_path))
+                or not stl_path.is_file()
+            ):
                 raise RuntimeError("STL 写入失败。")
             if "stl" in mesh_formats:
                 artifacts.append(
@@ -325,7 +352,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args(argv)
     try:
-        payload = export_occt(args.input, args.out_dir, args.formats, overwrite=args.overwrite)
+        payload = export_occt(
+            args.input, args.out_dir, args.formats, overwrite=args.overwrite
+        )
         _write_result(args.result_json, payload)
         return 0
     except Exception as exc:
@@ -333,13 +362,21 @@ def main(argv: list[str] | None = None) -> int:
             args.result_json,
             {
                 "backend": "headless_occt",
-                "status": "blocked" if isinstance(exc, (ImportError, ModuleNotFoundError, UnsupportedFeatureError)) else "failed",
+                "status": "blocked"
+                if isinstance(
+                    exc, (ImportError, ModuleNotFoundError, UnsupportedFeatureError)
+                )
+                else "failed",
                 "stage": "create",
                 "artifacts": [],
                 "geometryEvidence": {},
                 "limitations": [str(exc)],
                 "retryable": False,
-                "error_code": "occt_dependency_or_capability_missing" if isinstance(exc, (ImportError, ModuleNotFoundError, UnsupportedFeatureError)) else "occt_geometry_failed",
+                "error_code": "occt_dependency_or_capability_missing"
+                if isinstance(
+                    exc, (ImportError, ModuleNotFoundError, UnsupportedFeatureError)
+                )
+                else "occt_geometry_failed",
             },
         )
         return 2

@@ -1,4 +1,5 @@
-'''★ 批次 111：规格 220 · 装配/性能分析 —— ★ 换路径：用现成真函数产出性能要素读数。'''
+"""★ 批次 111：规格 220 · 装配/性能分析 —— ★ 换路径：用现成真函数产出性能要素读数。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（实现 = scripts/sw_assembly.py 的 collect_mate_feature_summary，**
 # 早已存在**）
@@ -24,19 +25,20 @@ from tool_registry import ToolSpec
 
 SPECS_BATCH111 = [
     ToolSpec(
-        name='solidworks_assembly_performance_analysis_report',
-        title='Assembly Performance Analysis — mate/feature counts (what Performance Evaluation shows)',
-        module='sw_assembly', function='collect_mate_feature_summary',
-        inject='model',
+        name="solidworks_assembly_performance_analysis_report",
+        title="Assembly Performance Analysis — mate/feature counts (what Performance Evaluation shows)",
+        module="sw_assembly",
+        function="collect_mate_feature_summary",
+        inject="model",
         params=[],
         read_only=True,
-        doc='★ **装配体性能分析（性能要素读数）**—— ★ 回一份**配合与特征的逐项摘要** ✓ '
-            '★ 真实来源：★ `sw_assembly.collect_mate_feature_summary`（**早已在本仓且可用** ✓）'
-            '★★ **如实标注（不许冒充）**：★ **官方 API 里搜不到同名接口** ✗ —— '
-            '★ 本工具是**换路径**做出的**真实**读数：★ **SolidWorks 自己的「Performance Evaluation」'
-            '报的正是「零件数 / 配合数 / 特征数」这类计数** ✓，★ 而本工具给的就是这类**可核对的计数摘要** ✓ '
-            '★ 它**不是**官方某个"性能分析"API 的包装（★ 那个不存在 ✗）'
-            '★ 判据：★ 回的是**结构化计数/摘要**（★ 读不到就如实报，★ 不假装有内容 ✓）'
-            '★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓',
+        doc="★ **装配体性能分析（性能要素读数）**—— ★ 回一份**配合与特征的逐项摘要** ✓ "
+        "★ 真实来源：★ `sw_assembly.collect_mate_feature_summary`（**早已在本仓且可用** ✓）"
+        "★★ **如实标注（不许冒充）**：★ **官方 API 里搜不到同名接口** ✗ —— "
+        "★ 本工具是**换路径**做出的**真实**读数：★ **SolidWorks 自己的「Performance Evaluation」"
+        "报的正是「零件数 / 配合数 / 特征数」这类计数** ✓，★ 而本工具给的就是这类**可核对的计数摘要** ✓ "
+        '★ 它**不是**官方某个"性能分析"API 的包装（★ 那个不存在 ✗）'
+        "★ 判据：★ 回的是**结构化计数/摘要**（★ 读不到就如实报，★ 不假装有内容 ✓）"
+        "★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓",
     ),
 ]

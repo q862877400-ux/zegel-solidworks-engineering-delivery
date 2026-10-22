@@ -6,7 +6,7 @@
 # 定位:   ★ 2026-10-03（轮 398）24h 计划 v2 **段 2** 的真机探针。被验的 5 个工具见
 # `mcp-server/tool_specs_batch54.py`：`sketch_arc` · `sketch_ellipse` · `sketch_polygon`
 #  ·
-# `sketch_slot` · `sketch_centerline`（★ `sketch_spline` 按计划**标不做** —— 事实 47/68 
+# `sketch_slot` · `sketch_centerline`（★ `sketch_spline` 按计划**标不做** —— 事实 47/68
 # 架构限制）。
 #   ★★ **按 ToolSpec 的契约调**：★ 回读段数走工具层同一个解析器
 #   （`sw_sketch.resolve_sketch(model, "")` ⇒ 与 `_sketch_args` 一致）。
@@ -39,7 +39,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "sketch-primitives-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "sketch-primitives-evidence.json"
+)
 
 
 def main() -> int:
@@ -53,8 +55,10 @@ def main() -> int:
     doc = None
     try:
         doc = sw_connect.new_document(sw, "part")
-        ev["steps"]["doc"] = {"ok": True,
-                              "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         def seg_count() -> int:
             return int(count_segments(resolve_sketch(doc, "")))
@@ -74,15 +78,19 @@ def main() -> int:
                 draw()
                 after = seg_count()
                 end_sketch(doc)
-                ev["steps"]["draw_" + label] = {"ok": after > before,
-                                                "segments": [before, after]}
-            except Exception as exc:                           # noqa: BLE001
+                ev["steps"]["draw_" + label] = {
+                    "ok": after > before,
+                    "segments": [before, after],
+                }
+            except Exception as exc:  # noqa: BLE001
                 try:
                     end_sketch(doc)
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 ev["steps"]["draw_" + label] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+                }
 
         #: ★ 负例①：**不存在的草图名** ⇒ 解析器**必须报错**
         #:   ⚠ 我第一版把“**没有活动草图**”当负例 —— ★★ **真机上它不成立**：
@@ -93,10 +101,14 @@ def main() -> int:
         try:
             resolve_sketch(doc, "\u8fd9个\u8349\u56fe\u4e0d\u5b58\u5728_xyz")
             ev["steps"]["neg_bogus_sketch_name"] = {
-                "ok": False, "note": "不存在的草图名竟然也能解析 ⇒ 本负例不成立（如实记）"}
-        except Exception as exc:                               # noqa: BLE001
+                "ok": False,
+                "note": "不存在的草图名竟然也能解析 ⇒ 本负例不成立（如实记）",
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["neg_bogus_sketch_name"] = {
-                "ok": True, "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])}
+                "ok": True,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+            }
 
         #: ★ 负例②：边数 < 3 ⇒ **如实记录它成不成**（★ 官方下限未查到 ⇒ 不臆断成败）
         try:
@@ -105,29 +117,38 @@ def main() -> int:
             P.sketch_polygon(doc, 0.0, 0.0, 15.0, 2)
             a = seg_count()
             end_sketch(doc)
-            ev["steps"]["probe_polygon_sides2"] = {"ok": True, "segments": [b, a],
-                                                   "note": "★ 只是**记录**它成不成，不是成败判据"}
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["probe_polygon_sides2"] = {
+                "ok": True,
+                "segments": [b, a],
+                "note": "★ 只是**记录**它成不成，不是成败判据",
+            }
+        except Exception as exc:  # noqa: BLE001
             try:
                 end_sketch(doc)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
             ev["steps"]["probe_polygon_sides2"] = {
-                "ok": True, "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
-                "note": "★ 只是**记录**它成不成，不是成败判据"}
+                "ok": True,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+                "note": "★ 只是**记录**它成不成，不是成败判据",
+            }
 
         judged = {k: v for k, v in ev["steps"].items() if not k.startswith("probe_")}
         exec_ok = all(v.get("ok") for v in judged.values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 段 2 草图图元 5 个工具；★ 判据是**段数增加**（★ 独立于返回值 —— "
-                      "回 COM 对象不等于图形在）；★ 负例：没有活动草图时解析必须失败。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 段 2 草图图元 5 个工具；★ 判据是**段数增加**（★ 独立于返回值 —— "
+            "回 COM 对象不等于图形在）；★ 负例：没有活动草图时解析必须失败。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

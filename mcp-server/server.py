@@ -6,6 +6,7 @@ MCP clients can operate a local Windows SolidWorks desktop session through
 Python COM. It intentionally serializes all tool calls because SolidWorks COM is
 a single-user desktop automation surface.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -172,8 +173,29 @@ class ExportFormat(str, Enum):
     DXF = "dxf"
 
 
-HEADLESS_OPEN_FORMATS = {"cadstudio", "step", "iges", "brep", "stl", "obj", "glb", "dxf", "svg", "pdf", "png"}
-DFM_PROCESSES = {"auto", "machining", "sheet_metal", "laser_cutting", "3d_printing", "CNC", "FDM", "SLA"}
+HEADLESS_OPEN_FORMATS = {
+    "cadstudio",
+    "step",
+    "iges",
+    "brep",
+    "stl",
+    "obj",
+    "glb",
+    "dxf",
+    "svg",
+    "pdf",
+    "png",
+}
+DFM_PROCESSES = {
+    "auto",
+    "machining",
+    "sheet_metal",
+    "laser_cutting",
+    "3d_printing",
+    "CNC",
+    "FDM",
+    "SLA",
+}
 FEA_SOLVERS = {"auto", "calculix", "elmer"}
 
 
@@ -210,9 +232,16 @@ class BaseInput(BaseModel):
 class SolidWorksConnectInput(BaseInput):
     """Input for connecting to SolidWorks."""
 
-    visible: bool = Field(default=True, description="Whether a newly started SolidWorks instance should be visible.")
-    wait_seconds: int = Field(default=5, ge=0, le=60, description="Seconds to wait after starting SolidWorks.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    visible: bool = Field(
+        default=True,
+        description="Whether a newly started SolidWorks instance should be visible.",
+    )
+    wait_seconds: int = Field(
+        default=5, ge=0, le=60, description="Seconds to wait after starting SolidWorks."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class CadStudioBackendRouteInput(BaseInput):
@@ -223,16 +252,44 @@ class CadStudioBackendRouteInput(BaseInput):
     available_requirements: list[str] = Field(default_factory=list, max_length=50)
     solidworks_revision: Optional[str] = Field(default=None, max_length=40)
     exact_api: bool = Field(default=False)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class CadStudioOpenFormatInput(BaseInput):
     """Input for no-CAD open-format export from a NeutralCadDocument."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute .cadstudio.json NeutralCadDocument path.")
-    output_dir: str = Field(..., min_length=1, description="Absolute output directory for open-format artifacts.")
-    formats: list[str] = Field(default_factory=lambda: ["cadstudio", "step", "iges", "brep", "stl", "obj", "glb", "dxf", "svg", "pdf", "png"], min_length=1, max_length=12)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute .cadstudio.json NeutralCadDocument path.",
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute output directory for open-format artifacts.",
+    )
+    formats: list[str] = Field(
+        default_factory=lambda: [
+            "cadstudio",
+            "step",
+            "iges",
+            "brep",
+            "stl",
+            "obj",
+            "glb",
+            "dxf",
+            "svg",
+            "pdf",
+            "png",
+        ],
+        min_length=1,
+        max_length=12,
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -246,7 +303,9 @@ class CadStudioOpenFormatInput(BaseInput):
     @classmethod
     def formats_must_be_whitelisted(cls, values: list[str]) -> list[str]:
         normalized = [value.lower().lstrip(".") for value in values]
-        unsupported = [value for value in normalized if value not in HEADLESS_OPEN_FORMATS]
+        unsupported = [
+            value for value in normalized if value not in HEADLESS_OPEN_FORMATS
+        ]
         if unsupported:
             raise ValueError("Unsupported open formats: " + ", ".join(unsupported))
         return normalized
@@ -255,9 +314,15 @@ class CadStudioOpenFormatInput(BaseInput):
 class CadStudioDxfPreviewInput(BaseInput):
     """Input for read-only DXF to PreviewScene conversion."""
 
-    source_path: str = Field(..., min_length=1, description="Absolute existing DXF path.")
-    output_path: str = Field(..., min_length=1, description="Absolute non-existing .scene.json output path.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    source_path: str = Field(
+        ..., min_length=1, description="Absolute existing DXF path."
+    )
+    output_path: str = Field(
+        ..., min_length=1, description="Absolute non-existing .scene.json output path."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("source_path")
     @classmethod
@@ -274,19 +339,40 @@ class CadStudioDxfPreviewInput(BaseInput):
         if not path.name.lower().endswith(".scene.json"):
             raise ValueError("Output must use the .scene.json suffix")
         if path.exists():
-            raise ValueError(f"Refusing to overwrite existing PreviewScene: {path.name}")
+            raise ValueError(
+                f"Refusing to overwrite existing PreviewScene: {path.name}"
+            )
         return value
 
 
 class CadStudioDfmReviewInput(BaseInput):
     """Input for NeutralCadDocument DFM review."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute .cadstudio.json NeutralCadDocument path.")
-    output_path: str = Field(..., min_length=1, description="Absolute JSON report path; existing files are versioned instead of overwritten.")
-    process: str = Field(default="auto", description="auto, machining, sheet_metal, laser_cutting, 3d_printing, CNC, FDM, or SLA.")
-    profile_paths: list[str] = Field(default_factory=list, max_length=8, description="Optional DFM profile JSON paths; merged as supplier capability intersection.")
-    brep_evidence_path: Optional[str] = Field(default=None, description="Optional SolidWorks/OCCT B-Rep evidence JSON path.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute .cadstudio.json NeutralCadDocument path.",
+    )
+    output_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute JSON report path; existing files are versioned instead of overwritten.",
+    )
+    process: str = Field(
+        default="auto",
+        description="auto, machining, sheet_metal, laser_cutting, 3d_printing, CNC, FDM, or SLA.",
+    )
+    profile_paths: list[str] = Field(
+        default_factory=list,
+        max_length=8,
+        description="Optional DFM profile JSON paths; merged as supplier capability intersection.",
+    )
+    brep_evidence_path: Optional[str] = Field(
+        default=None, description="Optional SolidWorks/OCCT B-Rep evidence JSON path."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -314,9 +400,15 @@ class CadStudioDfmReviewInput(BaseInput):
     @field_validator("profile_paths")
     @classmethod
     def profile_paths_must_exist(cls, values: list[str]) -> list[str]:
-        missing = [value for value in values if not Path(os.path.expandvars(value)).expanduser().is_file()]
+        missing = [
+            value
+            for value in values
+            if not Path(os.path.expandvars(value)).expanduser().is_file()
+        ]
         if missing:
-            raise ValueError("DFM profile files do not exist: " + ", ".join(missing[:5]))
+            raise ValueError(
+                "DFM profile files do not exist: " + ", ".join(missing[:5])
+            )
         return values
 
     @field_validator("brep_evidence_path")
@@ -333,9 +425,17 @@ class CadStudioDfmReviewInput(BaseInput):
 class CadStudioRoutingReviewInput(BaseInput):
     """Input for neutral Routing review."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute Routing JSON path.")
-    output_path: str = Field(..., min_length=1, description="Absolute JSON report path; existing files are versioned instead of overwritten.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute Routing JSON path."
+    )
+    output_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute JSON report path; existing files are versioned instead of overwritten.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -356,14 +456,18 @@ class CadStudioRoutingReviewInput(BaseInput):
 class CadStudioRoutingPreflightInput(BaseInput):
     """Input for SolidWorks Routing preflight."""
 
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class CadStudioFeaPreflightInput(BaseInput):
     """Input for open solver FEA preflight."""
 
     solver: str = Field(default="auto", description="auto, calculix, or elmer.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("solver")
     @classmethod
@@ -376,10 +480,18 @@ class CadStudioFeaPreflightInput(BaseInput):
 class CadStudioFeaPrepareInput(BaseInput):
     """Input for preparing a whitelisted CalculiX FEA deck."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute FEA 1.0 request JSON path.")
-    output_dir: str = Field(..., min_length=1, description="Output directory for versioned CalculiX .inp artifacts.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute FEA 1.0 request JSON path."
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Output directory for versioned CalculiX .inp artifacts.",
+    )
     solver: str = Field(default="auto", description="auto, calculix, or elmer.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -400,10 +512,20 @@ class CadStudioFeaPrepareInput(BaseInput):
 class CadStudioFeaRunInput(BaseInput):
     """Input for running an approved local FEA solver."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute FEA 1.0 request JSON path.")
-    output_dir: str = Field(..., min_length=1, description="Output directory for versioned solver artifacts.")
-    timeout_seconds: int = Field(default=600, ge=1, le=86400, description="Solver timeout in seconds.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute FEA 1.0 request JSON path."
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Output directory for versioned solver artifacts.",
+    )
+    timeout_seconds: int = Field(
+        default=600, ge=1, le=86400, description="Solver timeout in seconds."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -417,33 +539,55 @@ class CadStudioFeaRunInput(BaseInput):
 class CadStudioFeaConvergenceInput(BaseInput):
     """Input for running a whitelisted CalculiX mesh convergence sequence."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute FEA convergence 1.0 request JSON path.")
-    output_dir: str = Field(..., min_length=1, description="Output directory for versioned convergence artifacts.")
-    timeout_seconds_per_case: int = Field(default=600, ge=1, le=86400, description="Timeout for each mesh case.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute FEA convergence 1.0 request JSON path."
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Output directory for versioned convergence artifacts.",
+    )
+    timeout_seconds_per_case: int = Field(
+        default=600, ge=1, le=86400, description="Timeout for each mesh case."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
     def input_path_must_exist(cls, value: str) -> str:
         path = Path(os.path.expandvars(value)).expanduser()
         if path.suffix.lower() != ".json" or not path.is_file():
-            raise ValueError(f"FEA convergence input must be an existing JSON file: {value}")
+            raise ValueError(
+                f"FEA convergence input must be an existing JSON file: {value}"
+            )
         return value
 
 
 class CadStudioAdvancedGeometryInput(BaseInput):
     """Input for advanced surface/mold plan preflight."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute advanced geometry plan JSON path.")
-    output_path: str = Field(..., min_length=1, description="Absolute JSON report path; existing files are versioned instead of overwritten.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute advanced geometry plan JSON path."
+    )
+    output_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute JSON report path; existing files are versioned instead of overwritten.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
     def input_path_must_exist(cls, value: str) -> str:
         path = Path(os.path.expandvars(value)).expanduser()
         if path.suffix.lower() != ".json" or not path.is_file():
-            raise ValueError(f"Advanced geometry input must be an existing JSON file: {value}")
+            raise ValueError(
+                f"Advanced geometry input must be an existing JSON file: {value}"
+            )
         return value
 
     @field_validator("output_path")
@@ -457,9 +601,17 @@ class CadStudioAdvancedGeometryInput(BaseInput):
 class CadStudioOcpLoftInput(BaseInput):
     """Input for creating a restricted OCP parametric loft."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute OCP Loft 1.0 JSON request path.")
-    output_dir: str = Field(..., min_length=1, description="Output directory for versioned STEP/BREP/STL artifacts.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ..., min_length=1, description="Absolute OCP Loft 1.0 JSON request path."
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Output directory for versioned STEP/BREP/STL artifacts.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
@@ -473,56 +625,106 @@ class CadStudioOcpLoftInput(BaseInput):
 class CadStudioOcpSurfaceInput(BaseInput):
     """Input for restricted OCP smooth loft, sweep, knit, or thicken."""
 
-    input_path: str = Field(..., min_length=1, description="Absolute OCP advanced surface 1.0 JSON request path.")
-    output_dir: str = Field(..., min_length=1, description="Output directory for versioned STEP/BREP/STL artifacts.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    input_path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute OCP advanced surface 1.0 JSON request path.",
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Output directory for versioned STEP/BREP/STL artifacts.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("input_path")
     @classmethod
     def input_path_must_exist(cls, value: str) -> str:
         path = Path(os.path.expandvars(value)).expanduser()
         if path.suffix.lower() != ".json" or not path.is_file():
-            raise ValueError(f"OCP surface input must be an existing JSON file: {value}")
+            raise ValueError(
+                f"OCP surface input must be an existing JSON file: {value}"
+            )
         return value
 
 
 class SolidWorksHealthCheckInput(BaseInput):
     """Input for checking the local SolidWorks automation environment."""
 
-    start_solidworks: bool = Field(default=False, description="Start/connect SolidWorks for a live COM check.")
-    check_motion_type_library: bool = Field(default=True, description="Check for swmotionstudy.tlb availability.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    start_solidworks: bool = Field(
+        default=False, description="Start/connect SolidWorks for a live COM check."
+    )
+    check_motion_type_library: bool = Field(
+        default=True, description="Check for swmotionstudy.tlb availability."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksNewDocumentInput(BaseInput):
     """Input for creating a new document."""
 
-    doc_type: DocType = Field(default=DocType.PART, description="Document type to create.")
-    template_path: Optional[str] = Field(default=None, description="Optional explicit SolidWorks template path.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    doc_type: DocType = Field(
+        default=DocType.PART, description="Document type to create."
+    )
+    template_path: Optional[str] = Field(
+        default=None, description="Optional explicit SolidWorks template path."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksCreateBasicPartInput(BaseInput):
     """Input for creating a simple box or cylinder part."""
 
-    shape: BasicPartShape = Field(default=BasicPartShape.CYLINDER, description="Part primitive to create.")
-    output_path: Optional[str] = Field(default=None, description="Optional absolute .SLDPRT Save As path.")
-    plane_name: str = Field(default="Front Plane", min_length=1, description="Sketch plane name, English or Chinese.")
-    width_mm: float = Field(default=80.0, gt=0.0, le=5000.0, description="Box width in mm.")
-    height_mm: float = Field(default=60.0, gt=0.0, le=5000.0, description="Box height in mm.")
-    radius_mm: float = Field(default=25.0, gt=0.0, le=2500.0, description="Cylinder radius in mm.")
-    depth_mm: float = Field(default=50.0, gt=0.0, le=5000.0, description="Extrusion depth in mm.")
-    color: Optional[str] = Field(default=None, description="Optional document appearance color, e.g. #BFC4C8.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    shape: BasicPartShape = Field(
+        default=BasicPartShape.CYLINDER, description="Part primitive to create."
+    )
+    output_path: Optional[str] = Field(
+        default=None, description="Optional absolute .SLDPRT Save As path."
+    )
+    plane_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        description="Sketch plane name, English or Chinese.",
+    )
+    width_mm: float = Field(
+        default=80.0, gt=0.0, le=5000.0, description="Box width in mm."
+    )
+    height_mm: float = Field(
+        default=60.0, gt=0.0, le=5000.0, description="Box height in mm."
+    )
+    radius_mm: float = Field(
+        default=25.0, gt=0.0, le=2500.0, description="Cylinder radius in mm."
+    )
+    depth_mm: float = Field(
+        default=50.0, gt=0.0, le=5000.0, description="Extrusion depth in mm."
+    )
+    color: Optional[str] = Field(
+        default=None, description="Optional document appearance color, e.g. #BFC4C8."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksOpenDocumentInput(BaseInput):
     """Input for opening an existing document."""
 
-    path: str = Field(..., min_length=1, description="Absolute path to .SLDPRT/.SLDASM/.SLDDRW or importable file.")
+    path: str = Field(
+        ...,
+        min_length=1,
+        description="Absolute path to .SLDPRT/.SLDASM/.SLDDRW or importable file.",
+    )
     read_only: bool = Field(default=False, description="Open document read-only.")
     silent: bool = Field(default=True, description="Use SolidWorks silent open option.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("path")
     @classmethod
@@ -535,28 +737,49 @@ class SolidWorksOpenDocumentInput(BaseInput):
 class SolidWorksSaveDocumentInput(BaseInput):
     """Input for saving the active document."""
 
-    path: Optional[str] = Field(default=None, description="Optional Save As path. Omit to save current document.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    path: Optional[str] = Field(
+        default=None,
+        description="Optional Save As path. Omit to save current document.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksCloseDocumentsInput(BaseInput):
     """Input for closing SolidWorks documents."""
 
-    close_all: bool = Field(default=False, description="Close all documents when true; otherwise close active document.")
-    save_changes: bool = Field(default=False, description="Whether SolidWorks should save changed documents when closing all.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    close_all: bool = Field(
+        default=False,
+        description="Close all documents when true; otherwise close active document.",
+    )
+    save_changes: bool = Field(
+        default=False,
+        description="Whether SolidWorks should save changed documents when closing all.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksAddComponentInput(BaseInput):
     """Input for adding a component to the active assembly."""
 
-    path: str = Field(..., min_length=1, description="Absolute path to .SLDPRT or .SLDASM component.")
+    path: str = Field(
+        ..., min_length=1, description="Absolute path to .SLDPRT or .SLDASM component."
+    )
     x_mm: float = Field(default=0.0, description="Insertion X coordinate in mm.")
     y_mm: float = Field(default=0.0, description="Insertion Y coordinate in mm.")
     z_mm: float = Field(default=0.0, description="Insertion Z coordinate in mm.")
-    config_name: str = Field(default="", description="Optional component configuration name.")
-    fix_component: bool = Field(default=False, description="Fix the inserted component in the assembly.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    config_name: str = Field(
+        default="", description="Optional component configuration name."
+    )
+    fix_component: bool = Field(
+        default=False, description="Fix the inserted component in the assembly."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("path")
     @classmethod
@@ -569,37 +792,64 @@ class SolidWorksAddComponentInput(BaseInput):
 class SolidWorksSetComponentFixedInput(BaseInput):
     """Input for fixing or floating a component in the active assembly."""
 
-    component_keyword: str = Field(..., min_length=1, description="Keyword in the component name.")
-    fixed: bool = Field(default=True, description="True=fix component, False=float component.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    component_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the component name."
+    )
+    fixed: bool = Field(
+        default=True, description="True=fix component, False=float component."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksExportInput(BaseInput):
     """Input for exporting the active document."""
 
-    output_path: str = Field(..., min_length=1, description="Absolute output file path.")
+    output_path: str = Field(
+        ..., min_length=1, description="Absolute output file path."
+    )
     export_format: ExportFormat = Field(..., description="Export format.")
     stl_quality: str = Field(default="fine", description="STL quality: coarse or fine.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksDimensionUpdateInput(BaseInput):
     """Input for updating a named model dimension in millimeters."""
 
-    dimension_name: str = Field(..., min_length=1, max_length=240, description="Exact dimension name, e.g. D1@Boss-Extrude1.")
-    value_mm: float = Field(..., gt=0.0, le=100000.0, description="New dimension value in millimeters.")
-    configuration_mode: str = Field(default="current", pattern="^(current|all|specific)$")
+    dimension_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=240,
+        description="Exact dimension name, e.g. D1@Boss-Extrude1.",
+    )
+    value_mm: float = Field(
+        ..., gt=0.0, le=100000.0, description="New dimension value in millimeters."
+    )
+    configuration_mode: str = Field(
+        default="current", pattern="^(current|all|specific)$"
+    )
     configuration_names: list[str] = Field(default_factory=list, max_length=200)
     rebuild: bool = Field(default=True)
-    save: bool = Field(default=False, description="Save the current document after a verified rebuild.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    save: bool = Field(
+        default=False, description="Save the current document after a verified rebuild."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksAddinHostStatusInput(BaseInput):
     """Input for read-only C# Add-in host deployment and runtime diagnostics."""
 
-    assembly_path: Optional[str] = Field(default=None, description="Optional absolute Add-in assembly path.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    assembly_path: Optional[str] = Field(
+        default=None, description="Optional absolute Add-in assembly path."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksConfigurationCreateInput(BaseInput):
@@ -608,18 +858,24 @@ class SolidWorksConfigurationCreateInput(BaseInput):
     configuration_name: str = Field(..., min_length=1, max_length=240)
     comment: str = Field(default="", max_length=1024)
     alternate_name: str = Field(default="", max_length=240)
-    options: int = Field(default=0, ge=0, description="swConfigurationOptions2_e bitmask; default 0.")
+    options: int = Field(
+        default=0, ge=0, description="swConfigurationOptions2_e bitmask; default 0."
+    )
     if_exists: str = Field(default="reuse", pattern="^(reuse|error)$")
     activate: bool = Field(default=True)
     rebuild: bool = Field(default=True)
     save: bool = Field(default=False)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksConfigurationInspectInput(BaseInput):
     """Input for inspecting the active document configuration family."""
 
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksConfigurationActivateInput(BaseInput):
@@ -628,7 +884,9 @@ class SolidWorksConfigurationActivateInput(BaseInput):
     configuration_name: str = Field(..., min_length=1, max_length=240)
     rebuild: bool = Field(default=True)
     save: bool = Field(default=False)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksCustomPropertiesInput(BaseInput):
@@ -636,9 +894,13 @@ class SolidWorksCustomPropertiesInput(BaseInput):
 
     properties: Dict[str, str] = Field(..., min_length=1, max_length=100)
     configuration_name: str = Field(default="", max_length=240)
-    property_type: str = Field(default="text", pattern="^(text|number|double|yes_no|date)$")
+    property_type: str = Field(
+        default="text", pattern="^(text|number|double|yes_no|date)$"
+    )
     save: bool = Field(default=False)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksBatchExportInput(BaseInput):
@@ -646,16 +908,24 @@ class SolidWorksBatchExportInput(BaseInput):
 
     file_paths: list[str] = Field(..., min_length=1, max_length=200)
     output_dir: str = Field(..., min_length=1)
-    formats: list[str] = Field(default_factory=lambda: ["step"], min_length=1, max_length=10)
+    formats: list[str] = Field(
+        default_factory=lambda: ["step"], min_length=1, max_length=10
+    )
     overwrite: bool = Field(default=False)
     close_documents: bool = Field(default=True)
     stl_quality: str = Field(default="fine", pattern="^(coarse|fine)$")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("file_paths")
     @classmethod
     def source_files_must_exist(cls, values: list[str]) -> list[str]:
-        missing = [value for value in values if not Path(os.path.expandvars(value)).expanduser().is_file()]
+        missing = [
+            value
+            for value in values
+            if not Path(os.path.expandvars(value)).expanduser().is_file()
+        ]
         if missing:
             raise ValueError("Source files do not exist: " + ", ".join(missing[:5]))
         return values
@@ -667,7 +937,9 @@ class SolidWorksBomExportInput(BaseInput):
     output_path: str = Field(..., min_length=1)
     include_excluded: bool = Field(default=False)
     overwrite: bool = Field(default=False)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksPackAndGoInput(BaseInput):
@@ -684,25 +956,49 @@ class SolidWorksPackAndGoInput(BaseInput):
         default="stage_dependencies",
         description="原生依赖枚举缺失时生成可审计暂存包，或严格阻断",
     )
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksReviewInput(BaseInput):
     """Input for exporting previews and a review report."""
 
-    output_dir: str = Field(..., min_length=1, description="Directory for BMP previews and JSON report.")
-    basename: str = Field(default="mcp_review", min_length=1, max_length=80, description="Output filename prefix.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    output_dir: str = Field(
+        ..., min_length=1, description="Directory for BMP previews and JSON report."
+    )
+    basename: str = Field(
+        default="mcp_review",
+        min_length=1,
+        max_length=80,
+        description="Output filename prefix.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksGenerateDrawingInput(BaseInput):
     """Input for the structured SolidWorks engineering drawing workflow."""
 
-    spec_path: str = Field(..., min_length=1, description="Existing DrawingSpec v1 JSON path.")
-    output_dir: str = Field(..., min_length=1, description="Directory for SLDDRW, PDF, previews, and reports.")
-    drawing_filename: str = Field(default="drawing.slddrw", min_length=1, max_length=120)
-    overwrite: bool = Field(default=False, description="Allow replacing this run's requested drawing output.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    spec_path: str = Field(
+        ..., min_length=1, description="Existing DrawingSpec v1 JSON path."
+    )
+    output_dir: str = Field(
+        ...,
+        min_length=1,
+        description="Directory for SLDDRW, PDF, previews, and reports.",
+    )
+    drawing_filename: str = Field(
+        default="drawing.slddrw", min_length=1, max_length=120
+    )
+    overwrite: bool = Field(
+        default=False,
+        description="Allow replacing this run's requested drawing output.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("spec_path")
     @classmethod
@@ -723,12 +1019,22 @@ class SolidWorksGenerateDrawingInput(BaseInput):
 class SolidWorksReviewDrawingInput(BaseInput):
     """Input for the full engineering drawing review gate."""
 
-    drawing_path: str = Field(..., min_length=1, description="Existing .SLDDRW drawing path.")
-    spec_path: str = Field(..., min_length=1, description="Existing DrawingSpec v1 JSON path.")
-    output_dir: str = Field(..., min_length=1, description="Directory for review reports and previews.")
-    pdf_path: Optional[str] = Field(default=None, description="Optional exported PDF for vector text evidence.")
+    drawing_path: str = Field(
+        ..., min_length=1, description="Existing .SLDDRW drawing path."
+    )
+    spec_path: str = Field(
+        ..., min_length=1, description="Existing DrawingSpec v1 JSON path."
+    )
+    output_dir: str = Field(
+        ..., min_length=1, description="Directory for review reports and previews."
+    )
+    pdf_path: Optional[str] = Field(
+        default=None, description="Optional exported PDF for vector text evidence."
+    )
     basename: str = Field(default="drawing_review", min_length=1, max_length=80)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("drawing_path")
     @classmethod
@@ -760,11 +1066,17 @@ class SolidWorksReviewDrawingInput(BaseInput):
 class SolidWorksInspectDrawingInput(BaseInput):
     """Input for read-only structural drawing inspection."""
 
-    drawing_path: str = Field(..., min_length=1, description="Existing .SLDDRW drawing path.")
-    output_dir: str = Field(..., min_length=1, description="Directory for structural report and previews.")
+    drawing_path: str = Field(
+        ..., min_length=1, description="Existing .SLDDRW drawing path."
+    )
+    output_dir: str = Field(
+        ..., min_length=1, description="Directory for structural report and previews."
+    )
     basename: str = Field(default="drawing_inspect", min_length=1, max_length=80)
     paper_size_hint: Optional[str] = Field(default=None, pattern="^(A4|A3|A2|A1|A0)$")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("drawing_path")
     @classmethod
@@ -779,18 +1091,54 @@ class SolidWorksHoleFeatureInput(BaseInput):
     """Input for creating a constrained hole or semicircular slot on the active part."""
 
     feature_kind: HoleFeatureKind = Field(..., description="Hole or slot kind.")
-    center_x_mm: float = Field(default=0.0, description="Hole center X on the sketch plane, mm.")
-    center_y_mm: float = Field(default=0.0, description="Hole center Y on the sketch plane, mm.")
-    diameter_mm: float = Field(default=5.0, gt=0.0, le=1000.0, description="Main hole diameter, mm.")
-    depth_mm: Optional[float] = Field(default=None, gt=0.0, le=5000.0, description="Blind depth, mm.")
-    secondary_diameter_mm: Optional[float] = Field(default=None, gt=0.0, le=2000.0, description="Counterbore/countersink diameter, mm.")
-    secondary_depth_mm: Optional[float] = Field(default=None, gt=0.0, le=5000.0, description="Counterbore depth, mm.")
-    included_angle_deg: float = Field(default=90.0, ge=10.0, lt=170.0, description="Countersink included angle, degrees.")
-    slot_end_x_mm: Optional[float] = Field(default=None, description="Slot end X on the sketch plane, mm.")
-    slot_end_y_mm: Optional[float] = Field(default=None, description="Slot end Y on the sketch plane, mm.")
-    plane_name: str = Field(default="Front Plane", min_length=1, max_length=120, description="Standard sketch plane.")
-    feature_name: str = Field(default="MCP_孔槽", min_length=1, max_length=120, description="Feature tree name.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    center_x_mm: float = Field(
+        default=0.0, description="Hole center X on the sketch plane, mm."
+    )
+    center_y_mm: float = Field(
+        default=0.0, description="Hole center Y on the sketch plane, mm."
+    )
+    diameter_mm: float = Field(
+        default=5.0, gt=0.0, le=1000.0, description="Main hole diameter, mm."
+    )
+    depth_mm: Optional[float] = Field(
+        default=None, gt=0.0, le=5000.0, description="Blind depth, mm."
+    )
+    secondary_diameter_mm: Optional[float] = Field(
+        default=None,
+        gt=0.0,
+        le=2000.0,
+        description="Counterbore/countersink diameter, mm.",
+    )
+    secondary_depth_mm: Optional[float] = Field(
+        default=None, gt=0.0, le=5000.0, description="Counterbore depth, mm."
+    )
+    included_angle_deg: float = Field(
+        default=90.0,
+        ge=10.0,
+        lt=170.0,
+        description="Countersink included angle, degrees.",
+    )
+    slot_end_x_mm: Optional[float] = Field(
+        default=None, description="Slot end X on the sketch plane, mm."
+    )
+    slot_end_y_mm: Optional[float] = Field(
+        default=None, description="Slot end Y on the sketch plane, mm."
+    )
+    plane_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        max_length=120,
+        description="Standard sketch plane.",
+    )
+    feature_name: str = Field(
+        default="MCP_孔槽",
+        min_length=1,
+        max_length=120,
+        description="Feature tree name.",
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class HoleExpectationInput(BaseInput):
@@ -807,44 +1155,99 @@ class SolidWorksHoleInspectionInput(BaseInput):
     expected_holes: list[HoleExpectationInput] = Field(default_factory=list)
     position_tolerance_mm: float = Field(default=0.1, gt=0.0, le=10.0)
     diameter_tolerance_mm: float = Field(default=0.05, gt=0.0, le=10.0)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksPlaneCoincidentMateInput(BaseInput):
     """Input for adding a coincident mate between two component planes/features."""
 
-    component_a_keyword: str = Field(..., min_length=1, description="Keyword in the first component name.")
-    component_b_keyword: str = Field(..., min_length=1, description="Keyword in the second component name.")
-    feature_a_name: str = Field(default="Front Plane", min_length=1, description="Feature/plane name inside component A.")
-    feature_b_name: str = Field(default="Front Plane", min_length=1, description="Feature/plane name inside component B.")
-    mate_name: Optional[str] = Field(default=None, max_length=120, description="Optional mate feature name.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    component_a_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the first component name."
+    )
+    component_b_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the second component name."
+    )
+    feature_a_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        description="Feature/plane name inside component A.",
+    )
+    feature_b_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        description="Feature/plane name inside component B.",
+    )
+    mate_name: Optional[str] = Field(
+        default=None, max_length=120, description="Optional mate feature name."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksPlaneDistanceMateInput(BaseInput):
     """Input for adding a distance mate between two component planes/features."""
 
-    component_a_keyword: str = Field(..., min_length=1, description="Keyword in the first component name.")
-    component_b_keyword: str = Field(..., min_length=1, description="Keyword in the second component name.")
-    feature_a_name: str = Field(default="Front Plane", min_length=1, description="Feature/plane name inside component A.")
-    feature_b_name: str = Field(default="Front Plane", min_length=1, description="Feature/plane name inside component B.")
-    distance_mm: float = Field(default=0.0, ge=0.0, le=5000.0, description="Mate distance in mm.")
-    mate_name: Optional[str] = Field(default=None, max_length=120, description="Optional mate feature name.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    component_a_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the first component name."
+    )
+    component_b_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the second component name."
+    )
+    feature_a_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        description="Feature/plane name inside component A.",
+    )
+    feature_b_name: str = Field(
+        default="Front Plane",
+        min_length=1,
+        description="Feature/plane name inside component B.",
+    )
+    distance_mm: float = Field(
+        default=0.0, ge=0.0, le=5000.0, description="Mate distance in mm."
+    )
+    mate_name: Optional[str] = Field(
+        default=None, max_length=120, description="Optional mate feature name."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksConcentricMateInput(BaseInput):
     """Input for adding a concentric mate by largest matching cylinder faces."""
 
-    component_a_keyword: str = Field(..., min_length=1, description="Keyword in the first component name.")
-    component_b_keyword: str = Field(..., min_length=1, description="Keyword in the second component name.")
-    radius_a_min_mm: float = Field(default=0.0, ge=0.0, description="Minimum cylinder radius in component A, mm.")
-    radius_a_max_mm: Optional[float] = Field(default=None, ge=0.0, description="Maximum cylinder radius in component A, mm.")
-    radius_b_min_mm: float = Field(default=0.0, ge=0.0, description="Minimum cylinder radius in component B, mm.")
-    radius_b_max_mm: Optional[float] = Field(default=None, ge=0.0, description="Maximum cylinder radius in component B, mm.")
-    lock_rotation: bool = Field(default=False, description="Whether to lock concentric rotation. Keep false for motors.")
-    mate_name: Optional[str] = Field(default=None, max_length=120, description="Optional mate feature name.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    component_a_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the first component name."
+    )
+    component_b_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the second component name."
+    )
+    radius_a_min_mm: float = Field(
+        default=0.0, ge=0.0, description="Minimum cylinder radius in component A, mm."
+    )
+    radius_a_max_mm: Optional[float] = Field(
+        default=None, ge=0.0, description="Maximum cylinder radius in component A, mm."
+    )
+    radius_b_min_mm: float = Field(
+        default=0.0, ge=0.0, description="Minimum cylinder radius in component B, mm."
+    )
+    radius_b_max_mm: Optional[float] = Field(
+        default=None, ge=0.0, description="Maximum cylinder radius in component B, mm."
+    )
+    lock_rotation: bool = Field(
+        default=False,
+        description="Whether to lock concentric rotation. Keep false for motors.",
+    )
+    mate_name: Optional[str] = Field(
+        default=None, max_length=120, description="Optional mate feature name."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("radius_a_max_mm")
     @classmethod
@@ -864,28 +1267,66 @@ class SolidWorksConcentricMateInput(BaseInput):
 class SolidWorksSetAppearanceInput(BaseInput):
     """Input for setting document or component appearance color."""
 
-    target: AppearanceTarget = Field(default=AppearanceTarget.DOCUMENT, description="Appearance target.")
+    target: AppearanceTarget = Field(
+        default=AppearanceTarget.DOCUMENT, description="Appearance target."
+    )
     color: str = Field(..., min_length=1, description="Preset name or #RRGGBB color.")
-    component_keyword: Optional[str] = Field(default=None, description="Required when target=component.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    component_keyword: Optional[str] = Field(
+        default=None, description="Required when target=component."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksRotaryMotorInput(BaseInput):
     """Input for adding a constant-speed rotary motor to the active assembly."""
 
-    shaft_component_keyword: str = Field(..., min_length=1, description="Keyword in the stationary shaft/support component name.")
-    rotor_component_keyword: str = Field(..., min_length=1, description="Keyword in the rotating component name.")
-    shaft_radius_min_mm: float = Field(default=0.0, ge=0.0, description="Minimum shaft cylinder radius in mm.")
-    shaft_radius_max_mm: Optional[float] = Field(default=None, ge=0.0, description="Maximum shaft cylinder radius in mm.")
-    rotor_radius_min_mm: float = Field(default=0.0, ge=0.0, description="Minimum rotor cylinder radius in mm.")
-    rotor_radius_max_mm: Optional[float] = Field(default=None, ge=0.0, description="Maximum rotor cylinder radius in mm.")
+    shaft_component_keyword: str = Field(
+        ...,
+        min_length=1,
+        description="Keyword in the stationary shaft/support component name.",
+    )
+    rotor_component_keyword: str = Field(
+        ..., min_length=1, description="Keyword in the rotating component name."
+    )
+    shaft_radius_min_mm: float = Field(
+        default=0.0, ge=0.0, description="Minimum shaft cylinder radius in mm."
+    )
+    shaft_radius_max_mm: Optional[float] = Field(
+        default=None, ge=0.0, description="Maximum shaft cylinder radius in mm."
+    )
+    rotor_radius_min_mm: float = Field(
+        default=0.0, ge=0.0, description="Minimum rotor cylinder radius in mm."
+    )
+    rotor_radius_max_mm: Optional[float] = Field(
+        default=None, ge=0.0, description="Maximum rotor cylinder radius in mm."
+    )
     rpm: float = Field(default=60.0, description="Constant motor speed in RPM.")
-    study_name: str = Field(default="MCP_旋转马达算例", min_length=1, max_length=120, description="Motion Study name.")
-    motor_name: str = Field(default="MCP_匀速旋转马达", min_length=1, max_length=120, description="Motor feature name.")
-    duration_seconds: float = Field(default=4.0, gt=0.0, le=120.0, description="Motion Study duration in seconds.")
-    calculate: bool = Field(default=True, description="Calculate the Motion Study after creating the motor.")
-    play: bool = Field(default=False, description="Play the animation after calculation.")
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    study_name: str = Field(
+        default="MCP_旋转马达算例",
+        min_length=1,
+        max_length=120,
+        description="Motion Study name.",
+    )
+    motor_name: str = Field(
+        default="MCP_匀速旋转马达",
+        min_length=1,
+        max_length=120,
+        description="Motor feature name.",
+    )
+    duration_seconds: float = Field(
+        default=4.0, gt=0.0, le=120.0, description="Motion Study duration in seconds."
+    )
+    calculate: bool = Field(
+        default=True, description="Calculate the Motion Study after creating the motor."
+    )
+    play: bool = Field(
+        default=False, description="Play the animation after calculation."
+    )
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
     @field_validator("shaft_radius_max_mm")
     @classmethod
@@ -905,7 +1346,9 @@ class SolidWorksRotaryMotorInput(BaseInput):
 class SolidWorksMotionAuditInput(BaseInput):
     """Input for auditing Motion Study definitions and result freshness."""
 
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 class SolidWorksMotionValidationInput(BaseInput):
@@ -916,7 +1359,9 @@ class SolidWorksMotionValidationInput(BaseInput):
     minimum_duration_seconds: float = Field(default=0.001, gt=0.0, le=3600.0)
     minimum_motor_count: int = Field(default=1, ge=0, le=1000)
     require_results: bool = Field(default=True)
-    response_format: ResponseFormat = Field(default=ResponseFormat.JSON, description="Return format.")
+    response_format: ResponseFormat = Field(
+        default=ResponseFormat.JSON, description="Return format."
+    )
 
 
 def _coinitialize() -> None:
@@ -930,7 +1375,9 @@ def _active_model_required():
     sw, model = connect_solidworks(wait_seconds=1)
     model = sw.ActiveDoc or model
     if model is None:
-        raise RuntimeError("No active SolidWorks document. Use solidworks_open_document or solidworks_new_document first.")
+        raise RuntimeError(
+            "No active SolidWorks document. Use solidworks_open_document or solidworks_new_document first."
+        )
     return sw, model
 
 
@@ -974,7 +1421,9 @@ def _set_component_fixed(asm_model, component, fixed: bool = True) -> bool:
     asm_model.ClearSelection2(True)
     selected = False
     try:
-        selected = bool(component.Select4(False, create_empty_dispatch_variant(), False))
+        selected = bool(
+            component.Select4(False, create_empty_dispatch_variant(), False)
+        )
     except Exception:
         selected = False
     if not selected:
@@ -992,7 +1441,9 @@ def _set_component_fixed(asm_model, component, fixed: bool = True) -> bool:
             )
         )
     if not selected:
-        raise RuntimeError(f"Failed to select component: {get_com_member(component, 'Name2')}")
+        raise RuntimeError(
+            f"Failed to select component: {get_com_member(component, 'Name2')}"
+        )
     member_name = "FixComponent" if fixed else "UnfixComponent"
     result = get_com_member(asm_model, member_name)
     asm_model.ClearSelection2(True)
@@ -1029,7 +1480,7 @@ def _jsonable(value: Any) -> Any:
             got = got() if callable(got) else got
             if got:
                 return "<%s %s>" % (tname, got)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return "<%s>" % tname
 
@@ -1053,8 +1504,28 @@ def _jsonable(value: Any) -> Any:
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
 _KNOWN_UNIT_SUFFIXES = frozenset(
-    ("_mm", "_mm2", "_mm3", "_deg", "_px", "_s", "_kg", "_m2", "_m3", "_m",
-     "_rad", "_pct", "_n", "_hz", "_bar", "_c", "_gb", "_kb", "_mb"))
+    (
+        "_mm",
+        "_mm2",
+        "_mm3",
+        "_deg",
+        "_px",
+        "_s",
+        "_kg",
+        "_m2",
+        "_m3",
+        "_m",
+        "_rad",
+        "_pct",
+        "_n",
+        "_hz",
+        "_bar",
+        "_c",
+        "_gb",
+        "_kb",
+        "_mb",
+    )
+)
 
 
 #: ★ 「**像单位**」的后缀词表（★ **宽**：★ 只要像就得报出来让人认领）——
@@ -1069,7 +1540,9 @@ _UNITLIKE_RE = re.compile(
     r"deg|degree|rad|radian|px|pixel|pt|"
     r"s|sec|ms|min|hr|hour|"
     r"kg|g|mg|lb|lbs|oz|n|kn|"
-    r"c|f|k|pct|percent|gb|mb|kb|hz|bar|pa|mpa|psi)$", re.I)
+    r"c|f|k|pct|percent|gb|mb|kb|hz|bar|pa|mpa|psi)$",
+    re.I,
+)
 
 
 def _unit_suffix_of(key: str) -> str | None:
@@ -1105,12 +1578,15 @@ def _unit_guard(payload: Any, tool_name: str = "?") -> list:
     hits: list = []
     try:
         _scan_unit_keys(payload, tool_name, hits)
-    except Exception:                                                     # noqa: BLE001
-        return []                       #: ★ 守卫自己出错**不许影响工具**（★ 与预检同一纪律）✓
+    except Exception:  # noqa: BLE001
+        return []  #: ★ 守卫自己出错**不许影响工具**（★ 与预检同一纪律）✓
     if hits:
         _UNIT_GUARD_HITS.extend(hits)
-        print("[单位守卫] 工具 %s：%d 条 —— %s" % (tool_name, len(hits), "; ".join(hits[:3])),
-              file=sys.stderr)
+        print(
+            "[单位守卫] 工具 %s：%d 条 —— %s"
+            % (tool_name, len(hits), "; ".join(hits[:3])),
+            file=sys.stderr,
+        )
     return hits
 
 
@@ -1127,9 +1603,12 @@ def _result(payload: Any, response_format: ResponseFormat) -> str:
     if not isinstance(payload, dict):
         #: ★★ 非 dict ⇒ **裹成 dict**（而不是让 `.get` / `json.dumps` 抛），★ 并**标明**
         #: 原始类型。
-        payload = {"status": "ok", "result": _jsonable(payload),
-                   "result_type": type(payload).__name__,
-                   "note": "★ 该能力返回的不是 dict ⇒ 已按对象/标量降级包装（事实 508）"}
+        payload = {
+            "status": "ok",
+            "result": _jsonable(payload),
+            "result_type": type(payload).__name__,
+            "note": "★ 该能力返回的不是 dict ⇒ 已按对象/标量降级包装（事实 508）",
+        }
     #: ★★ D-5：★ 出口守卫（★ 只报不拦：★ 它绝不改 payload、绝不抛）✓
     _unit_guard(payload)
     if response_format == ResponseFormat.JSON:
@@ -1139,14 +1618,18 @@ def _result(payload: Any, response_format: ResponseFormat) -> str:
         if key == "status":
             continue
         if isinstance(value, (dict, list)):
-            rendered = json.dumps(value, ensure_ascii=False, indent=2, default=_jsonable)
+            rendered = json.dumps(
+                value, ensure_ascii=False, indent=2, default=_jsonable
+            )
             lines.append(f"- **{key}**:\n```json\n{rendered}\n```")
         else:
             lines.append(f"- **{key}**: {value}")
     return "\n".join(lines)
 
 
-def _tool_error(exc: Exception, response_format: ResponseFormat = ResponseFormat.JSON) -> str:
+def _tool_error(
+    exc: Exception, response_format: ResponseFormat = ResponseFormat.JSON
+) -> str:
     """Return actionable tool error content."""
     payload = {
         "status": "error",
@@ -1160,7 +1643,9 @@ def _tool_error(exc: Exception, response_format: ResponseFormat = ResponseFormat
     return _result(payload, response_format)
 
 
-def _run_locked(operation, response_format: ResponseFormat, load_automation: bool = True):
+def _run_locked(
+    operation, response_format: ResponseFormat, load_automation: bool = True
+):
     """Run one SolidWorks COM operation under the global lock."""
     with _sw_lock:
         try:
@@ -1177,7 +1662,12 @@ def _run_locked(operation, response_format: ResponseFormat, load_automation: boo
 @mcp.tool(
     name="cadstudio_resolve_backend",
     title="Resolve CAD Language Backend",
-    annotations={"readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
 def cadstudio_resolve_backend(params: CadStudioBackendRouteInput) -> str:
     """Select Python, C#, C++, SWBasic, OCCT, AutoCAD .NET, or an external solver."""
@@ -1286,10 +1776,25 @@ def cadstudio_check_dfm(params: CadStudioDfmReviewInput) -> str:
             }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
-        output_path = Path(os.path.expandvars(params.output_path)).expanduser().resolve()
-        profile_paths = [Path(os.path.expandvars(value)).expanduser().resolve() for value in params.profile_paths]
-        brep_evidence = Path(os.path.expandvars(params.brep_evidence_path)).expanduser().resolve() if params.brep_evidence_path else None
-        return write_dfm_report(input_path, output_path, process=params.process, profiles=profile_paths, brep_evidence=brep_evidence)
+        output_path = (
+            Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+        )
+        profile_paths = [
+            Path(os.path.expandvars(value)).expanduser().resolve()
+            for value in params.profile_paths
+        ]
+        brep_evidence = (
+            Path(os.path.expandvars(params.brep_evidence_path)).expanduser().resolve()
+            if params.brep_evidence_path
+            else None
+        )
+        return write_dfm_report(
+            input_path,
+            output_path,
+            process=params.process,
+            profiles=profile_paths,
+            brep_evidence=brep_evidence,
+        )
 
     return _run_locked(op, params.response_format, load_automation=False)
 
@@ -1311,7 +1816,9 @@ def cadstudio_check_routing(params: CadStudioRoutingReviewInput) -> str:
         from scripts.routing_review import review_routing_file
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
-        output_path = Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+        output_path = (
+            Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+        )
         return review_routing_file(input_path, output_path)
 
     return _run_locked(op, params.response_format, load_automation=False)
@@ -1327,7 +1834,9 @@ def cadstudio_check_routing(params: CadStudioRoutingReviewInput) -> str:
         "openWorldHint": False,
     },
 )
-def cadstudio_routing_preflight(params: CadStudioRoutingPreflightInput = CadStudioRoutingPreflightInput()) -> str:
+def cadstudio_routing_preflight(
+    params: CadStudioRoutingPreflightInput = CadStudioRoutingPreflightInput(),
+) -> str:
     """Probe SolidWorks Routing type library, add-in registration, and license evidence."""
 
     def op():
@@ -1371,7 +1880,9 @@ def solidworks_addin_host_status(
         "openWorldHint": False,
     },
 )
-def cadstudio_fea_preflight(params: CadStudioFeaPreflightInput = CadStudioFeaPreflightInput()) -> str:
+def cadstudio_fea_preflight(
+    params: CadStudioFeaPreflightInput = CadStudioFeaPreflightInput(),
+) -> str:
     """Discover approved CalculiX or Elmer solver executables without running arbitrary commands."""
 
     def op():
@@ -1432,7 +1943,9 @@ def cadstudio_prepare_fea(params: CadStudioFeaPrepareInput) -> str:
                 "message": "Elmer 安全输入适配器尚未实现；当前 prepare_fea 只生成 CalculiX .inp。",
             }
         output_dir.mkdir(parents=True, exist_ok=True)
-        return build_calculix_input(request, output_dir / f"{request['analysisId']}.inp")
+        return build_calculix_input(
+            request, output_dir / f"{request['analysisId']}.inp"
+        )
 
     return _run_locked(op, params.response_format, load_automation=False)
 
@@ -1463,7 +1976,9 @@ def cadstudio_run_fea(params: CadStudioFeaRunInput) -> str:
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
-        return run_analysis(input_path, output_dir, timeout_seconds=params.timeout_seconds)
+        return run_analysis(
+            input_path, output_dir, timeout_seconds=params.timeout_seconds
+        )
 
     return _run_locked(op, params.response_format, load_automation=False)
 
@@ -1528,7 +2043,9 @@ def cadstudio_review_advanced_geometry(params: CadStudioAdvancedGeometryInput) -
             }
 
         input_path = Path(os.path.expandvars(params.input_path)).expanduser().resolve()
-        output_path = Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+        output_path = (
+            Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+        )
         return write_preflight_report(input_path, output_path)
 
     return _run_locked(op, params.response_format, load_automation=False)
@@ -1606,11 +2123,15 @@ def cadstudio_create_ocp_surface(params: CadStudioOcpSurfaceInput) -> str:
         "openWorldHint": False,
     },
 )
-def solidworks_connect(params: SolidWorksConnectInput = SolidWorksConnectInput()) -> str:
+def solidworks_connect(
+    params: SolidWorksConnectInput = SolidWorksConnectInput(),
+) -> str:
     """Connect to a running SolidWorks instance or start one, then return active document status."""
 
     def op():
-        sw, model = connect_solidworks(wait_seconds=params.wait_seconds, visible=params.visible)
+        sw, model = connect_solidworks(
+            wait_seconds=params.wait_seconds, visible=params.visible
+        )
         return {
             "status": "ok",
             "revision": get_com_member(sw, "RevisionNumber"),
@@ -1630,7 +2151,9 @@ def solidworks_connect(params: SolidWorksConnectInput = SolidWorksConnectInput()
         "openWorldHint": False,
     },
 )
-def solidworks_health_check(params: SolidWorksHealthCheckInput = SolidWorksHealthCheckInput()) -> str:
+def solidworks_health_check(
+    params: SolidWorksHealthCheckInput = SolidWorksHealthCheckInput(),
+) -> str:
     """Check Python dependencies, SolidWorks COM registration, optional live connection, and Motion typelib."""
 
     def op():
@@ -1660,9 +2183,15 @@ def solidworks_health_check(params: SolidWorksHealthCheckInput = SolidWorksHealt
         if checks["missing_com_dependencies"]:
             issues.append("Missing Python COM dependencies.")
         if not checks["solidworks_detected"]:
-            issues.append("SolidWorks COM registration or installation was not detected.")
-        if params.check_motion_type_library and not checks.get("motion_type_library_ready"):
-            issues.append("Motion Study type library was not found; rotary motor tools may fail.")
+            issues.append(
+                "SolidWorks COM registration or installation was not detected."
+            )
+        if params.check_motion_type_library and not checks.get(
+            "motion_type_library_ready"
+        ):
+            issues.append(
+                "Motion Study type library was not found; rotary motor tools may fail."
+            )
         return {
             "status": "ok" if not issues else "warning",
             "checks": checks,
@@ -1687,7 +2216,9 @@ def solidworks_new_document(params: SolidWorksNewDocumentInput) -> str:
 
     def op():
         sw, _ = connect_solidworks(wait_seconds=1)
-        model = new_document(sw, params.doc_type.value, template_path=params.template_path)
+        model = new_document(
+            sw, params.doc_type.value, template_path=params.template_path
+        )
         return {"status": "ok", "document": _model_summary(model)}
 
     return _run_locked(op, params.response_format)
@@ -1713,7 +2244,9 @@ def solidworks_create_basic_part(params: SolidWorksCreateBasicPartInput) -> str:
             if params.shape == BasicPartShape.CYLINDER:
                 sketch_circle(model, 0.0, 0.0, mm(params.radius_mm))
             elif params.shape == BasicPartShape.BOX:
-                sketch_rectangle(model, 0.0, 0.0, mm(params.width_mm), mm(params.height_mm))
+                sketch_rectangle(
+                    model, 0.0, 0.0, mm(params.width_mm), mm(params.height_mm)
+                )
             else:
                 raise ValueError(f"Unsupported shape: {params.shape}")
         feature = extrude_boss(model, sketch_name, mm(params.depth_mm))
@@ -1731,7 +2264,11 @@ def solidworks_create_basic_part(params: SolidWorksCreateBasicPartInput) -> str:
             "feature_name": get_com_member(feature, "Name") if feature else None,
             "appearance_ok": appearance_ok,
             "saved": save_ok,
-            "output_path": str(Path(os.path.expandvars(params.output_path)).expanduser().resolve()) if params.output_path else None,
+            "output_path": str(
+                Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+            )
+            if params.output_path
+            else None,
             "document": _model_summary(model),
         }
 
@@ -1843,7 +2380,9 @@ def solidworks_set_component_fixed(params: SolidWorksSetComponentFixedInput) -> 
         "openWorldHint": False,
     },
 )
-def solidworks_save_document(params: SolidWorksSaveDocumentInput = SolidWorksSaveDocumentInput()) -> str:
+def solidworks_save_document(
+    params: SolidWorksSaveDocumentInput = SolidWorksSaveDocumentInput(),
+) -> str:
     """Save the active SolidWorks document, optionally using Save As."""
 
     def op():
@@ -1868,14 +2407,20 @@ def solidworks_save_document(params: SolidWorksSaveDocumentInput = SolidWorksSav
         "openWorldHint": False,
     },
 )
-def solidworks_close_documents(params: SolidWorksCloseDocumentsInput = SolidWorksCloseDocumentsInput()) -> str:
+def solidworks_close_documents(
+    params: SolidWorksCloseDocumentsInput = SolidWorksCloseDocumentsInput(),
+) -> str:
     """Close the active document or all documents in the current SolidWorks session."""
 
     def op():
         sw, model = _active_model_required()
         if params.close_all:
             sw.CloseAllDocuments(bool(params.save_changes))
-            return {"status": "ok", "closed": "all", "save_changes": params.save_changes}
+            return {
+                "status": "ok",
+                "closed": "all",
+                "save_changes": params.save_changes,
+            }
         title = get_com_member(model, "GetTitle")
         sw.CloseDoc(title)
         return {"status": "ok", "closed": title}
@@ -1911,7 +2456,8 @@ def solidworks_add_coincident_mate(params: SolidWorksPlaneCoincidentMateInput) -
         return {
             "status": "ok",
             "mate_created": mate is not None,
-            "mate_name": params.mate_name or (get_com_member(mate, "Name") if mate else None),
+            "mate_name": params.mate_name
+            or (get_com_member(mate, "Name") if mate else None),
             "component_a": get_com_member(component_a, "Name2"),
             "component_b": get_com_member(component_b, "Name2"),
             "mate_features": collect_mate_feature_summary(asm),
@@ -1950,7 +2496,8 @@ def solidworks_add_distance_mate(params: SolidWorksPlaneDistanceMateInput) -> st
         return {
             "status": "ok",
             "mate_created": mate is not None,
-            "mate_name": params.mate_name or (get_com_member(mate, "Name") if mate else None),
+            "mate_name": params.mate_name
+            or (get_com_member(mate, "Name") if mate else None),
             "distance_mm": params.distance_mm,
             "component_a": get_com_member(component_a, "Name2"),
             "component_b": get_com_member(component_b, "Name2"),
@@ -1982,15 +2529,26 @@ def solidworks_add_concentric_mate(params: SolidWorksConcentricMateInput) -> str
             asm,
             component_a,
             component_b,
-            radius_a=(mm(params.radius_a_min_mm), mm(params.radius_a_max_mm) if params.radius_a_max_mm is not None else None),
-            radius_b=(mm(params.radius_b_min_mm), mm(params.radius_b_max_mm) if params.radius_b_max_mm is not None else None),
+            radius_a=(
+                mm(params.radius_a_min_mm),
+                mm(params.radius_a_max_mm)
+                if params.radius_a_max_mm is not None
+                else None,
+            ),
+            radius_b=(
+                mm(params.radius_b_min_mm),
+                mm(params.radius_b_max_mm)
+                if params.radius_b_max_mm is not None
+                else None,
+            ),
             name=params.mate_name,
             lock_rotation=params.lock_rotation,
         )
         return {
             "status": "ok",
             "mate_created": mate is not None,
-            "mate_name": params.mate_name or (get_com_member(mate, "Name") if mate else None),
+            "mate_name": params.mate_name
+            or (get_com_member(mate, "Name") if mate else None),
             "lock_rotation": params.lock_rotation,
             "component_a": get_com_member(component_a, "Name2"),
             "component_b": get_com_member(component_b, "Name2"),
@@ -2057,9 +2615,13 @@ def solidworks_export_active(params: SolidWorksExportInput) -> str:
         _sw, model = _active_model_required()
         exporters = {
             ExportFormat.STEP: lambda: export_to_step(model, params.output_path),
-            ExportFormat.STL: lambda: export_to_stl(model, params.output_path, quality=params.stl_quality),
+            ExportFormat.STL: lambda: export_to_stl(
+                model, params.output_path, quality=params.stl_quality
+            ),
             ExportFormat.IGES: lambda: export_to_iges(model, params.output_path),
-            ExportFormat.PARASOLID: lambda: export_to_parasolid(model, params.output_path),
+            ExportFormat.PARASOLID: lambda: export_to_parasolid(
+                model, params.output_path
+            ),
             ExportFormat.PDF: lambda: export_to_pdf(model, params.output_path),
             ExportFormat.DXF: lambda: export_to_dxf(model, params.output_path),
         }
@@ -2067,7 +2629,9 @@ def solidworks_export_active(params: SolidWorksExportInput) -> str:
         return {
             "status": "ok" if success else "failed",
             "success": success,
-            "output_path": str(Path(os.path.expandvars(params.output_path)).expanduser().resolve()),
+            "output_path": str(
+                Path(os.path.expandvars(params.output_path)).expanduser().resolve()
+            ),
             "format": params.export_format.value,
             "document": _model_summary(model),
         }
@@ -2078,7 +2642,12 @@ def solidworks_export_active(params: SolidWorksExportInput) -> str:
 @mcp.tool(
     name="solidworks_inspect_configurations",
     title="Inspect SolidWorks Configurations",
-    annotations={"readOnlyHint": True, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": True,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
 def solidworks_inspect_configurations(
     params: SolidWorksConfigurationInspectInput = SolidWorksConfigurationInspectInput(),
@@ -2097,7 +2666,12 @@ def solidworks_inspect_configurations(
 @mcp.tool(
     name="solidworks_create_configuration",
     title="Create SolidWorks Configuration",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
 def solidworks_create_configuration(params: SolidWorksConfigurationCreateInput) -> str:
     """Create, optionally activate, rebuild, save, and read back a configuration."""
@@ -2124,9 +2698,16 @@ def solidworks_create_configuration(params: SolidWorksConfigurationCreateInput) 
 @mcp.tool(
     name="solidworks_activate_configuration",
     title="Activate SolidWorks Configuration",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
-def solidworks_activate_configuration(params: SolidWorksConfigurationActivateInput) -> str:
+def solidworks_activate_configuration(
+    params: SolidWorksConfigurationActivateInput,
+) -> str:
     """Activate an existing configuration and verify the active configuration by readback."""
 
     def op():
@@ -2146,7 +2727,12 @@ def solidworks_activate_configuration(params: SolidWorksConfigurationActivateInp
 @mcp.tool(
     name="solidworks_update_dimension",
     title="Update Named SolidWorks Dimension",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
 def solidworks_update_dimension(params: SolidWorksDimensionUpdateInput) -> str:
     """Update an exact named dimension, rebuild, optionally save, and return before/after evidence."""
@@ -2171,7 +2757,12 @@ def solidworks_update_dimension(params: SolidWorksDimensionUpdateInput) -> str:
 @mcp.tool(
     name="solidworks_set_custom_properties",
     title="Set SolidWorks Custom Properties",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": True,
+        "openWorldHint": False,
+    },
 )
 def solidworks_set_custom_properties(params: SolidWorksCustomPropertiesInput) -> str:
     """Set and read back file-level or configuration-level custom properties."""
@@ -2194,7 +2785,12 @@ def solidworks_set_custom_properties(params: SolidWorksCustomPropertiesInput) ->
 @mcp.tool(
     name="solidworks_batch_export_files",
     title="Batch Export SolidWorks Files",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": False,
+        "openWorldHint": False,
+    },
 )
 def solidworks_batch_export_files(params: SolidWorksBatchExportInput) -> str:
     """Export multiple local SolidWorks files and verify every output was produced this run."""
@@ -2217,7 +2813,12 @@ def solidworks_batch_export_files(params: SolidWorksBatchExportInput) -> str:
 @mcp.tool(
     name="solidworks_export_assembly_bom",
     title="Export Reviewed Assembly BOM CSV",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": False,
+        "openWorldHint": False,
+    },
 )
 def solidworks_export_assembly_bom(params: SolidWorksBomExportInput) -> str:
     """Export a component/property BOM CSV; the result always requires native BOM review."""
@@ -2239,7 +2840,12 @@ def solidworks_export_assembly_bom(params: SolidWorksBomExportInput) -> str:
 @mcp.tool(
     name="solidworks_pack_and_go",
     title="Native SolidWorks Pack and Go",
-    annotations={"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": False},
+    annotations={
+        "readOnlyHint": False,
+        "destructiveHint": False,
+        "idempotentHint": False,
+        "openWorldHint": False,
+    },
 )
 def solidworks_pack_and_go_tool(params: SolidWorksPackAndGoInput) -> str:
     """Run the native Pack and Go API into a protected output directory."""
@@ -2278,7 +2884,9 @@ def solidworks_review_active(params: SolidWorksReviewInput) -> str:
 
     def op():
         _sw, model = _active_model_required()
-        report, report_path = run_review(model, params.output_dir, basename=params.basename)
+        report, report_path = run_review(
+            model, params.output_dir, basename=params.basename
+        )
         return {
             "status": "ok",
             "report_path": report_path,
@@ -2314,18 +2922,26 @@ def solidworks_generate_drawing(params: SolidWorksGenerateDrawingInput) -> str:
         drawing_path = output_dir / params.drawing_filename
         pdf_path = drawing_path.with_suffix(".pdf")
         report_path = output_dir / f"{drawing_path.stem}_review_report.json"
-        if not params.overwrite and any(path.exists() for path in (drawing_path, pdf_path, report_path)):
-            raise ValueError("输出文件已存在；请更换 output_dir、设置 overwrite=true，或保留旧交付物并另起运行目录")
+        if not params.overwrite and any(
+            path.exists() for path in (drawing_path, pdf_path, report_path)
+        ):
+            raise ValueError(
+                "输出文件已存在；请更换 output_dir、设置 overwrite=true，或保留旧交付物并另起运行目录"
+            )
 
         spec_validation = drawing_validate_spec(params.spec_path)
         if spec_validation.get("status") == "blocked":
             return spec_validation
         spec = spec_validation["spec"]
-        source_path = Path(os.path.expandvars(str(spec["sourceModel"]))).expanduser().resolve()
+        source_path = (
+            Path(os.path.expandvars(str(spec["sourceModel"]))).expanduser().resolve()
+        )
         if not source_path.is_file():
             raise FileNotFoundError(f"DrawingSpec.sourceModel 不存在: {source_path}")
         sw, _active = connect_solidworks(wait_seconds=1, visible=True)
-        source_model = open_document(sw, str(source_path), read_only=False, silent=True, raise_on_error=True)
+        source_model = open_document(
+            sw, str(source_path), read_only=False, silent=True, raise_on_error=True
+        )
         drawing_model = new_document(sw, "drawing")
         generation = drawing_generate_from_spec(
             drawing_model,
@@ -2345,7 +2961,11 @@ def solidworks_generate_drawing(params: SolidWorksGenerateDrawingInput) -> str:
             views=("front", "top", "right"),
         )
         preview_evidence = [drawing_inspect_bmp_preview(path) for path in previews]
-        geometry_evidence = collect_geometry_measurements(source_model) if spec.get("holeRequirements") else None
+        geometry_evidence = (
+            collect_geometry_measurements(source_model)
+            if spec.get("holeRequirements")
+            else None
+        )
         review = drawing_review_artifacts(
             spec,
             structure=generation.get("structure"),
@@ -2358,15 +2978,27 @@ def solidworks_generate_drawing(params: SolidWorksGenerateDrawingInput) -> str:
             "capability": "solidworks-engineering-drawing",
             "sourceModel": str(source_path),
             "outputs": {
-                "slddrw": {"path": str(drawing_path), "exists": drawing_path.is_file(), "size_bytes": drawing_path.stat().st_size if drawing_path.is_file() else 0},
-                "pdf": {"path": str(pdf_path), "exists": pdf_path.is_file(), "size_bytes": pdf_path.stat().st_size if pdf_path.is_file() else 0},
+                "slddrw": {
+                    "path": str(drawing_path),
+                    "exists": drawing_path.is_file(),
+                    "size_bytes": drawing_path.stat().st_size
+                    if drawing_path.is_file()
+                    else 0,
+                },
+                "pdf": {
+                    "path": str(pdf_path),
+                    "exists": pdf_path.is_file(),
+                    "size_bytes": pdf_path.stat().st_size if pdf_path.is_file() else 0,
+                },
                 "previews": preview_evidence,
             },
             "generation": generation,
             "review": review,
             "manual_review_required": bool(review.get("manual_review_required", True)),
         }
-        report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        report_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         payload["reportPath"] = str(report_path)
         return payload
 
@@ -2390,7 +3022,9 @@ def solidworks_review_drawing(params: SolidWorksReviewDrawingInput) -> str:
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
         report_path = _drawing_report_path(output_dir, params.basename)
         sw, _active = connect_solidworks(wait_seconds=1, visible=True)
-        drawing_model = open_document(sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True)
+        drawing_model = open_document(
+            sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True
+        )
         structure = drawing_inspect_structure(drawing_model)
         previews = drawing_save_review_previews(
             drawing_model,
@@ -2405,8 +3039,17 @@ def solidworks_review_drawing(params: SolidWorksReviewDrawingInput) -> str:
             pdf_path=params.pdf_path,
             preview_evidence=preview_evidence,
         )
-        payload = {"status": review.get("status"), "drawingPath": str(Path(params.drawing_path).resolve()), "structure": structure, "previews": preview_evidence, "review": review, "manual_review_required": bool(review.get("manual_review_required", True))}
-        report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        payload = {
+            "status": review.get("status"),
+            "drawingPath": str(Path(params.drawing_path).resolve()),
+            "structure": structure,
+            "previews": preview_evidence,
+            "review": review,
+            "manual_review_required": bool(review.get("manual_review_required", True)),
+        }
+        report_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         payload["reportPath"] = str(report_path)
         return payload
 
@@ -2430,16 +3073,28 @@ def solidworks_inspect_drawing(params: SolidWorksInspectDrawingInput) -> str:
         output_dir = Path(os.path.expandvars(params.output_dir)).expanduser().resolve()
         report_path = _drawing_report_path(output_dir, params.basename)
         sw, _active = connect_solidworks(wait_seconds=1, visible=True)
-        drawing_model = open_document(sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True)
-        structure = drawing_inspect_structure(drawing_model, paper_size_hint=params.paper_size_hint)
+        drawing_model = open_document(
+            sw, params.drawing_path, read_only=True, silent=True, raise_on_error=True
+        )
+        structure = drawing_inspect_structure(
+            drawing_model, paper_size_hint=params.paper_size_hint
+        )
         previews = drawing_save_review_previews(
             drawing_model,
             output_dir / "previews",
             basename=params.basename,
             views=("front", "top", "right"),
         )
-        payload = {"status": structure.get("status"), "drawingPath": str(Path(params.drawing_path).resolve()), "structure": structure, "previews": [drawing_inspect_bmp_preview(path) for path in previews], "manual_review_required": True}
-        report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        payload = {
+            "status": structure.get("status"),
+            "drawingPath": str(Path(params.drawing_path).resolve()),
+            "structure": structure,
+            "previews": [drawing_inspect_bmp_preview(path) for path in previews],
+            "manual_review_required": True,
+        }
+        report_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
         payload["reportPath"] = str(report_path)
         return payload
 
@@ -2466,12 +3121,21 @@ def solidworks_create_hole_feature(params: SolidWorksHoleFeatureInput) -> str:
         if params.feature_kind == HoleFeatureKind.BLIND:
             if params.depth_mm is None:
                 raise ValueError("depth_mm is required for a blind hole")
-            evidence = create_blind_hole(model, center, mm(params.diameter_mm), mm(params.depth_mm), **common)
+            evidence = create_blind_hole(
+                model, center, mm(params.diameter_mm), mm(params.depth_mm), **common
+            )
         elif params.feature_kind == HoleFeatureKind.THROUGH:
-            evidence = create_through_hole(model, center, mm(params.diameter_mm), **common)
+            evidence = create_through_hole(
+                model, center, mm(params.diameter_mm), **common
+            )
         elif params.feature_kind == HoleFeatureKind.COUNTERBORE:
-            if params.secondary_diameter_mm is None or params.secondary_depth_mm is None:
-                raise ValueError("secondary_diameter_mm and secondary_depth_mm are required for a counterbore")
+            if (
+                params.secondary_diameter_mm is None
+                or params.secondary_depth_mm is None
+            ):
+                raise ValueError(
+                    "secondary_diameter_mm and secondary_depth_mm are required for a counterbore"
+                )
             evidence = create_counterbore_hole(
                 model,
                 center,
@@ -2493,7 +3157,9 @@ def solidworks_create_hole_feature(params: SolidWorksHoleFeatureInput) -> str:
             )
         else:
             if params.slot_end_x_mm is None or params.slot_end_y_mm is None:
-                raise ValueError("slot_end_x_mm and slot_end_y_mm are required for a semicircular slot")
+                raise ValueError(
+                    "slot_end_x_mm and slot_end_y_mm are required for a semicircular slot"
+                )
             evidence = create_semicircular_slot(
                 model,
                 center,
@@ -2503,7 +3169,11 @@ def solidworks_create_hole_feature(params: SolidWorksHoleFeatureInput) -> str:
                 **common,
             )
         get_com_member(model, "ForceRebuild3", False)
-        return {"status": "ok", "feature_evidence": evidence, "document": _model_summary(model)}
+        return {
+            "status": "ok",
+            "feature_evidence": evidence,
+            "document": _model_summary(model),
+        }
 
     return _run_locked(op, params.response_format)
 
@@ -2518,7 +3188,9 @@ def solidworks_create_hole_feature(params: SolidWorksHoleFeatureInput) -> str:
         "openWorldHint": False,
     },
 )
-def solidworks_inspect_hole_features(params: SolidWorksHoleInspectionInput = SolidWorksHoleInspectionInput()) -> str:
+def solidworks_inspect_hole_features(
+    params: SolidWorksHoleInspectionInput = SolidWorksHoleInspectionInput(),
+) -> str:
     """Read B-Rep holes, compound segments, slot arcs, and optional hole-position acceptance."""
 
     def op():
@@ -2534,7 +3206,9 @@ def solidworks_inspect_hole_features(params: SolidWorksHoleInspectionInput = Sol
                 diameter_tolerance_mm=params.diameter_tolerance_mm,
             )
         return {
-            "status": "ok" if position_checks is None or position_checks["status"] == "pass" else "failed",
+            "status": "ok"
+            if position_checks is None or position_checks["status"] == "pass"
+            else "failed",
             "measurements": measurements,
             "position_checks": position_checks,
             "document": _model_summary(model),
@@ -2559,7 +3233,9 @@ def solidworks_add_rotary_motor(params: SolidWorksRotaryMotorInput) -> str:
     def op():
         _sw, asm = _active_model_required()
         if int(get_com_member(asm, "GetType")) != 2:
-            raise RuntimeError("Active document must be an assembly (.SLDASM) to add a Motion Study motor.")
+            raise RuntimeError(
+                "Active document must be an assembly (.SLDASM) to add a Motion Study motor."
+            )
         shaft_comp = find_component_by_name(asm, params.shaft_component_keyword)
         rotor_comp = find_component_by_name(asm, params.rotor_component_keyword)
         study = create_motion_study(
@@ -2571,8 +3247,18 @@ def solidworks_add_rotary_motor(params: SolidWorksRotaryMotorInput) -> str:
             study,
             shaft_component=shaft_comp,
             rotor_component=rotor_comp,
-            shaft_radius=(mm(params.shaft_radius_min_mm), mm(params.shaft_radius_max_mm) if params.shaft_radius_max_mm is not None else None),
-            rotor_radius=(mm(params.rotor_radius_min_mm), mm(params.rotor_radius_max_mm) if params.rotor_radius_max_mm is not None else None),
+            shaft_radius=(
+                mm(params.shaft_radius_min_mm),
+                mm(params.shaft_radius_max_mm)
+                if params.shaft_radius_max_mm is not None
+                else None,
+            ),
+            rotor_radius=(
+                mm(params.rotor_radius_min_mm),
+                mm(params.rotor_radius_max_mm)
+                if params.rotor_radius_max_mm is not None
+                else None,
+            ),
             rpm=params.rpm,
             name=params.motor_name,
         )
@@ -2604,7 +3290,9 @@ def solidworks_add_rotary_motor(params: SolidWorksRotaryMotorInput) -> str:
         "openWorldHint": False,
     },
 )
-def solidworks_inspect_motion_studies(params: SolidWorksMotionAuditInput = SolidWorksMotionAuditInput()) -> str:
+def solidworks_inspect_motion_studies(
+    params: SolidWorksMotionAuditInput = SolidWorksMotionAuditInput(),
+) -> str:
     """Inspect Motion Study definitions, motor/force counts, and whether results are stale."""
 
     def op():
@@ -2628,7 +3316,9 @@ def solidworks_inspect_motion_studies(params: SolidWorksMotionAuditInput = Solid
         "openWorldHint": False,
     },
 )
-def solidworks_validate_motion_study(params: SolidWorksMotionValidationInput = SolidWorksMotionValidationInput()) -> str:
+def solidworks_validate_motion_study(
+    params: SolidWorksMotionValidationInput = SolidWorksMotionValidationInput(),
+) -> str:
     """Enforce Motion Study type, duration, motor count, result presence, and freshness requirements."""
 
     def op():
@@ -2713,7 +3403,10 @@ def _start_dialog_watcher() -> None:
         root = Path(__file__).resolve().parents[1]
         watcher = root / "tools" / "sw_dialog_watch.py"
         if not watcher.is_file():
-            print("[dialog-watch] 找不到 %s ⇒ 跳过（★ 不阻断启动）" % watcher, file=sys.stderr)
+            print(
+                "[dialog-watch] 找不到 %s ⇒ 跳过（★ 不阻断启动）" % watcher,
+                file=sys.stderr,
+            )
             return
         pidfile = root / "output" / "dialog-watch" / "watcher.pid"
         if pidfile.is_file():
@@ -2724,21 +3417,35 @@ def _start_dialog_watcher() -> None:
                 h = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
                 if h:
                     ctypes.windll.kernel32.CloseHandle(h)
-                    return                       #: ★ 已经在跑 ⇒ **不叠第二个**（幂等）
-            except Exception:                                   # noqa: BLE001
+                    return  #: ★ 已经在跑 ⇒ **不叠第二个**（幂等）
+            except Exception:  # noqa: BLE001
                 pass
-        creation = 0x00000008 | 0x00000200          #: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
-        kwargs: dict = {"cwd": str(root), "stdin": subprocess.DEVNULL,
-                        "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL,
-                        "creationflags": creation}
-        if hasattr(subprocess, "DETACHED_PROCESS"):           #: 平台上有就用官方常量
-            kwargs["creationflags"] = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
-        subprocess.Popen([sys.executable, str(watcher), "--interval", "1.0", "--quiet"], **kwargs)
-        print("[dialog-watch] 已启动常驻弹窗监控（★ 判据复用 sw_guard）", file=sys.stderr)
-    except Exception as exc:                                   # noqa: BLE001
+        creation = (
+            0x00000008 | 0x00000200
+        )  #: DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+        kwargs: dict = {
+            "cwd": str(root),
+            "stdin": subprocess.DEVNULL,
+            "stdout": subprocess.DEVNULL,
+            "stderr": subprocess.DEVNULL,
+            "creationflags": creation,
+        }
+        if hasattr(subprocess, "DETACHED_PROCESS"):  #: 平台上有就用官方常量
+            kwargs["creationflags"] = (
+                subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+            )
+        subprocess.Popen(
+            [sys.executable, str(watcher), "--interval", "1.0", "--quiet"], **kwargs
+        )
+        print(
+            "[dialog-watch] 已启动常驻弹窗监控（★ 判据复用 sw_guard）", file=sys.stderr
+        )
+    except Exception as exc:  # noqa: BLE001
         #: ★★ **绝不因为监控起不来而让 server 起不来**（★ 监控是辅助、不是依赖）
-        print("[dialog-watch] 启动失败（★ 已忽略，不影响服务）：%s" % (str(exc)[:160],),
-              file=sys.stderr)
+        print(
+            "[dialog-watch] 启动失败（★ 已忽略，不影响服务）：%s" % (str(exc)[:160],),
+            file=sys.stderr,
+        )
 
 
 _start_dialog_watcher()

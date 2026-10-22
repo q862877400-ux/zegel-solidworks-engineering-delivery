@@ -33,7 +33,9 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "loads-simple6-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "loads-simple6-evidence.json"
+)
 STUDY = "DSH-LOADS6"
 
 
@@ -59,32 +61,47 @@ def main() -> int:
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         doc = sw_connect.new_document(sw, "part")
-        from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                     sketch_corner_rectangle, start_sketch)
+        from scripts.sw_part import (
+            current_sketch_name,
+            end_sketch,
+            extrude_boss,
+            sketch_corner_rectangle,
+            start_sketch,
+        )
+
         start_sketch(doc, plane_name="Front Plane")
         sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
         sk = current_sketch_name(doc, "")
         end_sketch(doc)
         extrude_boss(doc, sk, 20.0)
         sim.create_static_study(sw, STUDY)
-        ev["steps"]["setup"] = {"ok": True,
-                                "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
-                                "study": STUDY}
+        ev["steps"]["setup"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+            "study": STUDY,
+        }
 
         def call_via_tool(spec_name: str, params: _P):
             """★ 与注册器 L409-432 同一顺序：inject → pre_call → derived_args。"""
             spec = next(s for s in b58.SPECS_BATCH58 if s.name == spec_name)
             kwargs = {}
             for p in spec.params:
-                if p.name in (spec.param_alias or {}) and spec.param_alias[p.name] is None:
+                if (
+                    p.name in (spec.param_alias or {})
+                    and spec.param_alias[p.name] is None
+                ):
                     continue
-                kwargs[(spec.param_alias or {}).get(p.name, p.name)] = getattr(params, p.name)
+                kwargs[(spec.param_alias or {}).get(p.name, p.name)] = getattr(
+                    params, p.name
+                )
             kwargs[spec.inject] = rc.RESOLVERS[spec.inject](params)
             if spec.pre_call is not None:
                 spec.pre_call(params)
             kwargs.update(spec.derived_args(params) or {})
-            fn = getattr(__import__("scripts.%s" % spec.module, fromlist=[spec.function]),
-                         spec.function)
+            fn = getattr(
+                __import__("scripts.%s" % spec.module, fromlist=[spec.function]),
+                spec.function,
+            )
             return fn(**kwargs)
 
         #: ★ 每个载荷都：清空选区 ⇒ 选顶面 ⇒ 调工具（★ 顺序照先例警告）
@@ -101,32 +118,41 @@ def main() -> int:
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 n_sel = sim.select_face_at(doc, 0.0, 0.0, 0.0)
-                params = _P(study_name=STUDY, selection="__current_selection__", **extra)
+                params = _P(
+                    study_name=STUDY, selection="__current_selection__", **extra
+                )
                 rep = call_via_tool(spec_name, params)
                 ev["steps"][label] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "selected": n_sel,
                     "count": [rep.get("count_before"), rep.get("count_after")]
-                    if isinstance(rep, dict) else None,
+                    if isinstance(rep, dict)
+                    else None,
                     "report_keys": sorted(rep)[:8] if isinstance(rep, dict) else None,
                 }
-            except Exception as exc:                           # noqa: BLE001
-                ev["steps"][label] = {"ok": False,
-                                      "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"][label] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 段 5 第一批 6 条简单载荷；★ 判据是**回读计数恰好 +1**。"
-                      "★ 调用走**工具层同序**（inject → pre_call → derived_args），"
-                      "★ 且每次**先 ClearSelection2**（★ 先例：select_face_at 不清空选区）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 段 5 第一批 6 条简单载荷；★ 判据是**回读计数恰好 +1**。"
+            "★ 调用走**工具层同序**（inject → pre_call → derived_args），"
+            "★ 且每次**先 ClearSelection2**（★ 先例：select_face_at 不清空选区）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1800])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if sw is not None and doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

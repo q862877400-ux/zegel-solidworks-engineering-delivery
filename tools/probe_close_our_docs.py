@@ -1,4 +1,5 @@
 """★ 处置探针：关掉**我方产物**文档 —— ★ 判据**严格限制**、★ 并逐条自证。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B6 的**处置**动作）
 # 文件:   tools/probe_close_our_docs.py
@@ -32,7 +33,7 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
         sys.path.insert(0, _p)
 
 #: ★ 我方产物根（★ 铁律 3：`output/` 是产物目录 ✓）
-OURS_ROOT = (ROOT / "output")
+OURS_ROOT = ROOT / "output"
 #: ★★ SW 默认名模式（★ "新建了没保存"的那种 ✓）
 DEFAULT_NAME = re.compile(r"^(零件|装配体|工程图|Part|Assembly|Drawing)\d*$", re.I)
 #: ★★★ 第三类（★ 2026-10-07 补，★ 并**当天加固**）：★ **无路径 + 标题形如 `<名字> - 图纸
@@ -51,7 +52,7 @@ def _our_stems() -> set:
     """★ 我方前缀（★ `output/` 下现存文件的主名 —— ★ 可枚举的实据 ✓）。"""
     try:
         return {p.stem.lower() for p in OURS_ROOT.rglob("*") if p.is_file()}
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set()
 
 
@@ -78,10 +79,14 @@ def _decide(path: str, title: str) -> tuple:
         _m = SHEET_TITLE.match(t)
         _stem = (_m.group(1) if _m else "").strip().lower()
         if _stem and _stem in _our_stems():
-            return True, ("★ ③ 无路径 + ★ 标题 `%s` 里的 `%s` **是我方 `output/` 下现存文件的主名**"
-                          "（★ 我方新建的工程图 ✓）" % (t, _stem))
-        return False, ("★★ 不动：★ 无路径 + 标题 `%s` —— ★ **它的前缀 `%s` 不在我方 `output/` 的实据里**"
-                       "（★ 可能是别人的未保存工程图 ⇒ **不错杀** ✓）" % (t, _stem))
+            return True, (
+                "★ ③ 无路径 + ★ 标题 `%s` 里的 `%s` **是我方 `output/` 下现存文件的主名**"
+                "（★ 我方新建的工程图 ✓）" % (t, _stem)
+            )
+        return False, (
+            "★★ 不动：★ 无路径 + 标题 `%s` —— ★ **它的前缀 `%s` 不在我方 `output/` 的实据里**"
+            "（★ 可能是别人的未保存工程图 ⇒ **不错杀** ✓）" % (t, _stem)
+        )
     return False, "★★ 不动：★ path=%r · title=%r（★ 不属于上面三类 ✓）" % (p, t)
 
 
@@ -95,7 +100,7 @@ def main() -> int:
         return 2
     try:
         docs = sw_connect.get_com_member(sw, "GetDocuments") or []
-    except Exception as e:                                              # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
         print("★ GetDocuments 失败：%s" % str(e)[:120])
         return 3
 
@@ -109,7 +114,7 @@ def main() -> int:
         try:
             path = str(sw_connect.get_com_member(d, "GetPathName") or "")
             title = str(sw_connect.get_com_member(d, "GetTitle") or "")
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         items.append((_priority(path), path, title))
     items.sort(key=lambda x: x[0])
@@ -126,31 +131,44 @@ def main() -> int:
             #: ★★ **回读**：★ 关完再列一遍，★ 确认它真没了 ✓（★ 不看返回值 —— 事实 8 ✓）
             left = []
             try:
-                left = [str(sw_connect.get_com_member(x, "GetTitle") or "")
-                        for x in (sw_connect.get_com_member(sw, "GetDocuments") or []) if x is not None]
-            except Exception:                                           # noqa: BLE001
+                left = [
+                    str(sw_connect.get_com_member(x, "GetTitle") or "")
+                    for x in (sw_connect.get_com_member(sw, "GetDocuments") or [])
+                    if x is not None
+                ]
+            except Exception:  # noqa: BLE001
                 pass
-            closed.append({"path": path, "title": title, "why": why,
-                           "still_open": title in left})
+            closed.append(
+                {"path": path, "title": title, "why": why, "still_open": title in left}
+            )
             print("★ 关掉 %r（%s）· ★ 回读仍在 = %r" % (title, why, title in left))
-        except Exception as e:                                          # noqa: BLE001
-            skipped.append({"path": path, "title": title,
-                            "why": "★ 关闭抛异常：%s" % str(e)[:100]})
+        except Exception as e:  # noqa: BLE001
+            skipped.append(
+                {"path": path, "title": title, "why": "★ 关闭抛异常：%s" % str(e)[:100]}
+            )
             print("★★ 关 %r 时抛：%s" % (title, str(e)[:100]))
 
     out["closed"] = closed
     out["skipped"] = skipped
     try:
-        left = [str(sw_connect.get_com_member(x, "GetTitle") or "")
-                for x in (sw_connect.get_com_member(sw, "GetDocuments") or []) if x is not None]
-    except Exception:                                                   # noqa: BLE001
+        left = [
+            str(sw_connect.get_com_member(x, "GetTitle") or "")
+            for x in (sw_connect.get_com_member(sw, "GetDocuments") or [])
+            if x is not None
+        ]
+    except Exception:  # noqa: BLE001
         left = []
     out["remaining"] = left
-    print("★★ 收尾：★ 关掉 %d 个 · ★ 跳过 %d 个 · ★ **会话里还剩 %r**"
-          % (len(closed), len(skipped), left))
+    print(
+        "★★ 收尾：★ 关掉 %d 个 · ★ 跳过 %d 个 · ★ **会话里还剩 %r**"
+        % (len(closed), len(skipped), left)
+    )
 
     p = ROOT / "output" / "spec211-b6-close-our-docs.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

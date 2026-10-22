@@ -30,6 +30,7 @@ r"""@brief P1 终局判定：运行期枚举活对象的成员，查三个「看
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -52,8 +53,15 @@ from scripts.sw_connect import (  # noqa: E402
 from scripts import sw_part  # noqa: E402
 
 WANTED = (
-    "smoothed", "smoothmesh", "convergence", "materialmass", "viewconv",
-    "exportmesh", "exporttopology", "savemesh", "createmeshbody",
+    "smoothed",
+    "smoothmesh",
+    "convergence",
+    "materialmass",
+    "viewconv",
+    "exportmesh",
+    "exporttopology",
+    "savemesh",
+    "createmeshbody",
 )
 
 
@@ -87,8 +95,10 @@ def main() -> int:
         sk = sw_part.sketch(model, "Front Plane")
         sw_part.sketch_corner_rectangle(model, -0.05, -0.03, 0.05, 0.03)
         sw_part.extrude_boss(model, sk, 0.02)
-        doc = get_com_member(get_com_member(sw.GetAddInObject("SldWorks.Simulation"),
-                                            "CosmosWorks"), "ActiveDoc")
+        doc = get_com_member(
+            get_com_member(sw.GetAddInObject("SldWorks.Simulation"), "CosmosWorks"),
+            "ActiveDoc",
+        )
         mgr = get_com_member(doc, "StudyManager")
         n = "SURFACE_%d" % int(time.time())
         get_com_member(mgr, "DeleteStudy", n)
@@ -125,15 +135,29 @@ def main() -> int:
         for obj, label in ((results, "ICWResults"), (study, "ICWStudy")):
             if obj is None:
                 continue
-            for cand in ("ExportSmoothedMesh", "GetSmoothedMesh", "ViewConvergenceData",
-                         "MaterialMass", "GetMaterialMassPlot", "ExportSmoothedMesh2"):
+            for cand in (
+                "ExportSmoothedMesh",
+                "GetSmoothedMesh",
+                "ViewConvergenceData",
+                "MaterialMass",
+                "GetMaterialMassPlot",
+                "ExportSmoothedMesh2",
+            ):
                 try:
                     r = get_com_member(obj, cand)
                     print("  ✓ %s.%s 存在 → %r" % (label, cand, r))
                 except Exception as exc:
                     msg = str(exc)
-                    tag = "名字不存在" if ("未知" in msg or "unknown" in msg.lower()
-                                          or "找不到" in msg or "not found" in msg.lower()) else msg[:50]
+                    tag = (
+                        "名字不存在"
+                        if (
+                            "未知" in msg
+                            or "unknown" in msg.lower()
+                            or "找不到" in msg
+                            or "not found" in msg.lower()
+                        )
+                        else msg[:50]
+                    )
                     print("  ✗ %s.%s → %s" % (label, cand, tag))
         return 0
     finally:

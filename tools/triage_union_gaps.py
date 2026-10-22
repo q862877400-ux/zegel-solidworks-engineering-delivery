@@ -35,6 +35,7 @@ solidworks_mold_parting_line → mold_parting_line     ≠  parting_line（外�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -46,28 +47,128 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 sys.stdout.reconfigure(encoding="utf-8")
 
-SOURCES = ROOT / "tools" / "union-sources.json"      # ⚠ 在 `tools/` 下，不是 `docs/`（读 `build_union_map.py` 得到）
+SOURCES = (
+    ROOT / "tools" / "union-sources.json"
+)  # ⚠ 在 `tools/` 下，不是 `docs/`（读 `build_union_map.py` 得到）
 OUT = ROOT / "docs" / "union-gap-triage.md"
 
 #: **域词**（取自各域的关键词表 —— 不另造一套）。出现在缺口名**之前**的这类词，视为「域
 #: 限定」而非「不同操作」。
 DOMAIN_WORDS = {
-    "mold", "sketch", "part", "assembly", "asm", "drawing", "view", "sheet", "metal",
-    "sheetmetal", "weldment", "weld", "surface", "simulation", "motion", "study",
-    "appearance", "material", "color", "config", "configuration", "ref", "reference",
-    "refgeom", "param", "dimension", "feature", "inspect", "measure", "macro", "session",
-    "document", "doc", "file", "hole", "fillet", "chamfer", "pattern", "boss", "cut",
-    "extrude", "revolve", "loft", "sweep", "draft", "shell", "rib", "bend", "flange",
-    "gusset", "endcap", "core", "cavity", "parting", "shut", "off", "balloon", "bom",
-    "section", "detail", "annotat", "topology", "fea", "mesh", "load", "restraint",
-    "result", "costing", "routing", "dfm", "pdm", "dimxpert", "ocp", "smooth",
+    "mold",
+    "sketch",
+    "part",
+    "assembly",
+    "asm",
+    "drawing",
+    "view",
+    "sheet",
+    "metal",
+    "sheetmetal",
+    "weldment",
+    "weld",
+    "surface",
+    "simulation",
+    "motion",
+    "study",
+    "appearance",
+    "material",
+    "color",
+    "config",
+    "configuration",
+    "ref",
+    "reference",
+    "refgeom",
+    "param",
+    "dimension",
+    "feature",
+    "inspect",
+    "measure",
+    "macro",
+    "session",
+    "document",
+    "doc",
+    "file",
+    "hole",
+    "fillet",
+    "chamfer",
+    "pattern",
+    "boss",
+    "cut",
+    "extrude",
+    "revolve",
+    "loft",
+    "sweep",
+    "draft",
+    "shell",
+    "rib",
+    "bend",
+    "flange",
+    "gusset",
+    "endcap",
+    "core",
+    "cavity",
+    "parting",
+    "shut",
+    "off",
+    "balloon",
+    "bom",
+    "section",
+    "detail",
+    "annotat",
+    "topology",
+    "fea",
+    "mesh",
+    "load",
+    "restraint",
+    "result",
+    "costing",
+    "routing",
+    "dfm",
+    "pdm",
+    "dimxpert",
+    "ocp",
+    "smooth",
 }
 #: **动词**（`_normalize` 已剥的那批 + 常见同类）。多出来的词里含这些 ⇒ 语义可能不同。
 VERBS = {
-    "create", "add", "insert", "set", "get", "list", "draw", "start", "make", "build",
-    "validate", "run", "apply", "delete", "remove", "update", "edit", "check", "export",
-    "import", "open", "close", "save", "load", "generate", "compute", "collect", "probe",
-    "enable", "disable", "toggle", "select", "clear", "reset", "copy", "move", "rotate",
+    "create",
+    "add",
+    "insert",
+    "set",
+    "get",
+    "list",
+    "draw",
+    "start",
+    "make",
+    "build",
+    "validate",
+    "run",
+    "apply",
+    "delete",
+    "remove",
+    "update",
+    "edit",
+    "check",
+    "export",
+    "import",
+    "open",
+    "close",
+    "save",
+    "load",
+    "generate",
+    "compute",
+    "collect",
+    "probe",
+    "enable",
+    "disable",
+    "toggle",
+    "select",
+    "clear",
+    "reset",
+    "copy",
+    "move",
+    "rotate",
 }
 
 
@@ -75,6 +176,7 @@ def _our_ops() -> set:
     """我们的归一操作名（复用采集器的归一逻辑，**不另造**）。"""
     from build_union_map import _our_tools
     from build_union_sources import _normalize
+
     return {_normalize(t) for t in _our_tools()}
 
 
@@ -87,6 +189,7 @@ def _script_ops() -> set:
     ⚠ 已知事实 25 记着这件事：`server.py` 只引用 25 个模块，后补的 58+ 个没进。
     """
     import re
+
     pat = re.compile(r"^def ([a-z_]\w*)\(", re.MULTILINE)
     out: set = set()
     for p in sorted((ROOT / "scripts").glob("sw_*.py")):
@@ -105,11 +208,11 @@ def _classify(gap: str, ours: set) -> tuple:
         extra = c[: -len(suffix) - 1] if c.endswith("_" + suffix) else ""
         toks = [t for t in extra.split("_") if t]
         if not toks:
-            strong.append(c)                       # 完全相同
+            strong.append(c)  # 完全相同
         elif all(t in DOMAIN_WORDS for t in toks):
-            strong.append(c)                       # 多出来的全是域词
+            strong.append(c)  # 多出来的全是域词
         else:
-            weak.append(c)                         # 含动词 ⇒ 语义可能不同
+            weak.append(c)  # 含动词 ⇒ 语义可能不同
     if strong:
         return "别名（强）", ", ".join(strong[:2])
     return "别名（弱）", ", ".join(weak[:2])
@@ -130,7 +233,12 @@ def main() -> int:
             union.add(op)
     gaps = sorted(union - ours)
 
-    buckets: dict[str, list] = {"别名（强）": [], "别名（弱）": [], "后缀候选（需人工核）": [], "真缺": []}
+    buckets: dict[str, list] = {
+        "别名（强）": [],
+        "别名（弱）": [],
+        "后缀候选（需人工核）": [],
+        "真缺": [],
+    }
     for g in gaps:
         kind, ev = _classify(g, ours)
         if kind == "真缺":
@@ -144,22 +252,38 @@ def main() -> int:
         buckets[kind].append((g, ev))
 
     total = len(gaps)
-    print("并集 %d 操作 · 我们（MCP 暴露面）%d · `scripts/` 公开函数 %d · **缺口 %d**"
-          % (len(union), len(ours), len(scripts), total))
+    print(
+        "并集 %d 操作 · 我们（MCP 暴露面）%d · `scripts/` 公开函数 %d · **缺口 %d**"
+        % (len(union), len(ours), len(scripts), total)
+    )
     print()
     for k in ("别名（强）", "别名（弱）", "后缀候选（需人工核）", "真缺"):
         n = len(buckets[k])
-        print("  %-16s **%3d** 个%s" % (k, n, "" if not n else "  （%.0f%%）" % (100.0 * n / total)))
+        print(
+            "  %-16s **%3d** 个%s"
+            % (k, n, "" if not n else "  （%.0f%%）" % (100.0 * n / total))
+        )
     print()
-    print("  ⇒ **真的要从零实现的** = 「真缺 %d」；"
-          "其余 %d 个是「命名/暴露」问题" % (len(buckets["真缺"]), total - len(buckets["真缺"])))
+    print(
+        "  ⇒ **真的要从零实现的** = 「真缺 %d」；"
+        "其余 %d 个是「命名/暴露」问题"
+        % (len(buckets["真缺"]), total - len(buckets["真缺"]))
+    )
     print()
     print("  ⚠⚠ **抽验警告（2026-10-01 轮 86 实测 10 条）**：")
     print("     「后缀候选」这一类的**假阳性率约一半** —— 它只比**最后一个词**：")
-    print("       ✅ parting_line → insert_parting_line · add_dimension → add_dimension · create_mate → add_mate")
-    print("       ❌ shut_off_surface → create_bspline_surface（都是 surface，但不是 shut-off）")
-    print("       ❌ set_material → add_render_material · create_section_view → activate_view")
-    print("     ⇒ 本表**只用于定范围**，**每个候选都要人工核**（★ 已知事实 53：不为它继续调启发式）。")
+    print(
+        "       ✅ parting_line → insert_parting_line · add_dimension → add_dimension · create_mate → add_mate"
+    )
+    print(
+        "       ❌ shut_off_surface → create_bspline_surface（都是 surface，但不是 shut-off）"
+    )
+    print(
+        "       ❌ set_material → add_render_material · create_section_view → activate_view"
+    )
+    print(
+        "     ⇒ 本表**只用于定范围**，**每个候选都要人工核**（★ 已知事实 53：不为它继续调启发式）。"
+    )
 
     lines = [
         "# B 级并入缺口分诊（`010`）",
@@ -169,16 +293,26 @@ def main() -> int:
         "> ⚠ **主匹配器没动**（纪律：已知事实 53 —— 不靠模糊启发式硬凑）。",
         "> 这张表是**另一口径**，用**有原则的规则**算出来，供人核。",
         "",
-        "**算于**：2026-10-01（轮 86）· 并集 **%d** · 我们 **%d** · 缺口 **%d**" % (len(union), len(ours), total),
+        "**算于**：2026-10-01（轮 86）· 并集 **%d** · 我们 **%d** · 缺口 **%d**"
+        % (len(union), len(ours), total),
         "",
         "| 类 | 个数 | 占比 | 含义 |",
         "|---|---|---|---|",
         "| **别名（强）** | %d | %.0f%% | 我们的操作名**以缺口名结尾**，且多出来的词**全是域词** ⇒ 极可能同一操作 |"
-        % (len(buckets["别名（强）"]), 100.0 * len(buckets["别名（强）"]) / max(total, 1)),
+        % (
+            len(buckets["别名（强）"]),
+            100.0 * len(buckets["别名（强）"]) / max(total, 1),
+        ),
         "| **别名（弱）** | %d | %.0f%% | 以缺口名结尾，但多出来的词里**含动词** ⇒ 疑似，语义可能不同 |"
-        % (len(buckets["别名（弱）"]), 100.0 * len(buckets["别名（弱）"]) / max(total, 1)),
+        % (
+            len(buckets["别名（弱）"]),
+            100.0 * len(buckets["别名（弱）"]) / max(total, 1),
+        ),
         "| **能力在、未暴露** | %d | %.0f%% | `scripts/sw_*.py` 里有同名函数，**只是没暴露成 MCP 工具** |"
-        % (len(buckets["后缀候选（需人工核）"]), 100.0 * len(buckets["后缀候选（需人工核）"]) / max(total, 1)),
+        % (
+            len(buckets["后缀候选（需人工核）"]),
+            100.0 * len(buckets["后缀候选（需人工核）"]) / max(total, 1),
+        ),
         "| **真缺** | %d | %.0f%% | 连 `scripts/` 里也没有同名函数 ⇒ **要从零实现** |"
         % (len(buckets["真缺"]), 100.0 * len(buckets["真缺"]) / max(total, 1)),
         "",
@@ -197,8 +331,10 @@ def main() -> int:
                 lines.append("| `%s` | %s |" % (g, ("`%s`" % ev) if ev else "—"))
             if len(buckets[k]) > 200:
                 lines.append("")
-                lines.append("（还有 %d 个，见 `tools/triage_union_gaps.py` 的输出）"
-                             % (len(buckets[k]) - 200))
+                lines.append(
+                    "（还有 %d 个，见 `tools/triage_union_gaps.py` 的输出）"
+                    % (len(buckets[k]) - 200)
+                )
         lines.append("")
     OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("  ⇒ 已写 %s" % OUT.relative_to(ROOT))

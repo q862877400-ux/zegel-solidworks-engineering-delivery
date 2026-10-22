@@ -1,4 +1,5 @@
 """★ 探针：用**正方体**坐实 `GetSectionProperties2` 的面积单位（★ 六面同面积 ⇒ 消除面序干扰）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B1-1 的单位坐实探针）
 # 文件:   tools/probe_spec211_section_units_cube.py
@@ -50,10 +51,11 @@ def main() -> int:
         return 2
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
-    for step, params in (("solidworks_sketch_start", {}),
-                         ("solidworks_sketch_add_rectangle", RECT),
-                         ("solidworks_extrude_boss",
-                          {"sketch_name": "Sketch1", "depth_mm": SIDE})):
+    for step, params in (
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", RECT),
+        ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": SIDE}),
+    ):
         ok, note = tool_caller.call(step, inject_objects=inj, **params)
         if not ok:
             print("★ 建状态没成：%s ⇒ %s" % (step, str(note)[:80]))
@@ -62,8 +64,13 @@ def main() -> int:
     ext = sw_connect.get_com_member(model, "Extension")
     rows, areas = [], []
     for idx in range(6):
-        ok, _n = tool_caller.call("solidworks_select_by_selector", inject_objects=inj,
-                                  selector="index:%d" % idx, kind="FACE", body_index=0)
+        ok, _n = tool_caller.call(
+            "solidworks_select_by_selector",
+            inject_objects=inj,
+            selector="index:%d" % idx,
+            kind="FACE",
+            body_index=0,
+        )
         row = {"face_index": idx, "selected": ok}
         if not ok:
             rows.append(row)
@@ -72,7 +79,7 @@ def main() -> int:
             sm = sw_connect.get_com_member(model, "SelectionManager")
             face = sw_connect.get_com_member(sm, "GetSelectedObject6", 1, -1)
             row["get_area"] = float(sw_connect.get_com_member(face, "GetArea"))
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["get_area"] = "★ %s" % type(exc).__name__
         try:
             raw = getattr(ext, "GetSectionProperties2")
@@ -81,12 +88,19 @@ def main() -> int:
                 row["status"], row["area"] = vals[0], vals[1]
                 row["centroid"] = list(vals[2:5])
                 areas.append(float(vals[1]))
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["sect_err"] = type(exc).__name__
         rows.append(row)
-        print("★ face[%d] GetArea=%r | retval[1]=%r status=%r 形心=%s"
-              % (idx, row.get("get_area"), row.get("area"), row.get("status"),
-                 row.get("centroid")))
+        print(
+            "★ face[%d] GetArea=%r | retval[1]=%r status=%r 形心=%s"
+            % (
+                idx,
+                row.get("get_area"),
+                row.get("area"),
+                row.get("status"),
+                row.get("centroid"),
+            )
+        )
 
     #: ★★ 判定：六面读数是否**同一个值**、且落在哪个候选单位上 ✓
     verdict = {"theory_mm2": THEORY_MM2, "readings": areas}
@@ -95,16 +109,27 @@ def main() -> int:
         verdict["all_same"] = v
         hit = [u for u, x in CANDIDATES.items() if abs(v - x) <= max(0.02 * x, 1e-6)]
         verdict["unit_by_candidate"] = hit or None
-        print("★★ 六面读数**全相同** = %r ⇒ ★ 落在候选单位：%s" % (v, hit or "★ 都不吻合"))
+        print(
+            "★★ 六面读数**全相同** = %r ⇒ ★ 落在候选单位：%s" % (v, hit or "★ 都不吻合")
+        )
     else:
         verdict["all_same"] = None
         print("★ 六面读数**不全相同** ⇒ %s ⇒ ★ 面序或几何有意外" % areas)
 
-    out = {"official": {"area_basis": "IFace2.GetArea ⇒ square meters",
-                        "sect": "GetSectionProperties2 retval[1] = area"},
-           "cube_side_mm": SIDE, "verdict": verdict, "faces": rows}
+    out = {
+        "official": {
+            "area_basis": "IFace2.GetArea ⇒ square meters",
+            "sect": "GetSectionProperties2 retval[1] = area",
+        },
+        "cube_side_mm": SIDE,
+        "verdict": verdict,
+        "faces": rows,
+    }
     p = ROOT / "output" / "spec211-b1-section-units-cube.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

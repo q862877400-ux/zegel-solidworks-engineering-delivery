@@ -13,6 +13,7 @@ r"""生成「并集广度地图」—— 域 × 来源 矩阵 + 缺口清单。
 # 覆盖:   后续同级定义
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -74,6 +75,7 @@ def _our_tools() -> list[str]:
     另一列 `_our_capabilities()` 量能力面，**两列并存、互不替代**。
     """
     import re
+
     out: set[str] = set()
     server = ROOT / "mcp-server" / "server.py"
     if server.is_file():
@@ -88,22 +90,66 @@ def _our_tools() -> list[str]:
 
 #: 域 → 函数名关键词（用于把 `scripts/sw_*.py` 的公开函数粗略归类）
 _CAP_KEYWORDS: dict[str, tuple[str, ...]] = {
-    "session": ("session", "document", "doc", "file", "open", "save", "export", "import"),
+    "session": (
+        "session",
+        "document",
+        "doc",
+        "file",
+        "open",
+        "save",
+        "export",
+        "import",
+    ),
     "refgeom": ("plane", "axis", "point", "csys", "coordinate", "reference"),
     "sketch": ("sketch", "spline", "line", "circle", "arc", "constraint", "relation"),
     "param": ("dimension", "param", "equation", "tolerance"),
-    "feature": ("feature", "extrude", "cut", "fillet", "chamfer", "hole", "pattern", "draft",
-                "shell", "rib"),
+    "feature": (
+        "feature",
+        "extrude",
+        "cut",
+        "fillet",
+        "chamfer",
+        "hole",
+        "pattern",
+        "draft",
+        "shell",
+        "rib",
+    ),
     "surface": ("surface", "loft", "sweep", "knit", "trim_surf", "patch"),
     "sheetmetal": ("sheet", "bend", "flange", "hem", "jog", "unfold"),
-    "weldment": ("weld", "gusset", "endcap", "end_cap", "cutlist", "cut_list", "structural_member"),
+    "weldment": (
+        "weld",
+        "gusset",
+        "endcap",
+        "end_cap",
+        "cutlist",
+        "cut_list",
+        "structural_member",
+    ),
     "mold": ("mold", "core", "cavity", "parting", "shut_off", "ripple"),
     "assembly": ("assembl", "mate", "component", "explode", "interference"),
     "drawing": ("drawing", "view", "balloon", "bom", "section", "detail", "annotat"),
-    "inspect": ("measure", "mass_prop", "check", "review", "validate", "inspect", "diff",
-                "provenance"),
-    "simulation": ("simulation", "study", "motion", "fea", "mesh", "load", "restraint",
-                   "topology", "result"),
+    "inspect": (
+        "measure",
+        "mass_prop",
+        "check",
+        "review",
+        "validate",
+        "inspect",
+        "diff",
+        "provenance",
+    ),
+    "simulation": (
+        "simulation",
+        "study",
+        "motion",
+        "fea",
+        "mesh",
+        "load",
+        "restraint",
+        "topology",
+        "result",
+    ),
     "appearance": ("appearance", "material", "color", "render", "config", "texture"),
     "macro": ("macro", "vba", "script", "batch", "auto", "queue", "worker", "cli"),
     "advanced": ("dfm", "costing", "routing", "pdm", "dimxpert", "ocp", "smooth"),
@@ -124,6 +170,7 @@ def _our_capabilities() -> dict[str, set[str]]:
     ⇒ 本列用于**排序与发现矛盾**，不是精确计数。
     """
     import re
+
     out: dict[str, set[str]] = {k: set() for k in DOMAIN_LABELS}
     func_re = re.compile(r"^def ([a-z_]\w*)\(", re.MULTILINE)
     for p in sorted((ROOT / "scripts").glob("sw_*.py")):
@@ -145,6 +192,7 @@ def _our_operations() -> dict[str, str]:
     """本仓库工具 -> 操作名（复用采集器的归一逻辑）。"""
     sys.path.insert(0, str(ROOT / "tools"))
     from build_union_sources import _domain, _normalize  # noqa: E402
+
     out = {}
     for t in _our_tools():
         op = _normalize(t)
@@ -165,7 +213,9 @@ def main() -> int:
     not_doing: list = []
     if NOT_DOING.is_file():
         try:
-            not_doing = json.loads(NOT_DOING.read_text(encoding="utf-8")).get("not_doing") or []
+            not_doing = (
+                json.loads(NOT_DOING.read_text(encoding="utf-8")).get("not_doing") or []
+            )
         except json.JSONDecodeError as exc:
             print("  ⚠ %s 不是合法 JSON（%s）⇒ 按空清单处理" % (NOT_DOING.name, exc))
 
@@ -182,7 +232,9 @@ def main() -> int:
     A("> **本文件是生成物** —— 由 `tools/build_union_map.py` 从")
     A("> `tools/union-sources.json` + `capabilities.yaml` 生成，不要手改。")
     A(">")
-    A("> 配套规范：`docs/union-conventions.md`（命名 / 单位 / 选择 / 验证等级 / 出处 / 失败要响）")
+    A(
+        "> 配套规范：`docs/union-conventions.md`（命名 / 单位 / 选择 / 验证等级 / 出处 / 失败要响）"
+    )
     A("")
     A("## 一 来源与许可（读**真实 LICENSE 文件**判定，不采信 README 徽章）")
     A("")
@@ -193,11 +245,21 @@ def main() -> int:
         can = "✅ 可抄改商用" if lic in COPYABLE else "👁 只读思想"
         if lic == "Apache-2.0":
             can = "✅ 可抄（**须带 NOTICE + 声明改动文件**）"
-        A("| `%s` | %s | %d | %d | %s | %s |" % (
-            s["repo"], lic, s["tool_count"], s["operation_count"],
-            s["declared_verified"] or "**未声明**", can))
-    A("| **本仓库（上游 + 本次）** | MIT | %d | %d | 见 capabilities.yaml | — |" % (
-        len(_our_tools()), len(ours)))
+        A(
+            "| `%s` | %s | %d | %d | %s | %s |"
+            % (
+                s["repo"],
+                lic,
+                s["tool_count"],
+                s["operation_count"],
+                s["declared_verified"] or "**未声明**",
+                can,
+            )
+        )
+    A(
+        "| **本仓库（上游 + 本次）** | MIT | %d | %d | 见 capabilities.yaml | — |"
+        % (len(_our_tools()), len(ours))
+    )
     A("")
     A("> ⚠ **验证口径的真相**：四家里只有 `Slacker-LLC` 声明全工具真机跑过。")
     A("> `Eduardof0nt` 工具最多（187），但**仓库内测试文件数为 0**。")
@@ -213,19 +275,26 @@ def main() -> int:
     A(">   `server.py` 只引用 25 个模块，我们后补的 58+ 个一个都没进）。")
     A(">")
     A("> **⇒ 只看「缺口」列会把已有的域记成「零」**（例：焊件列显示 `·`，")
-    A("> 而 `scripts/sw_weldment.py` 有 666 行 / 20 个函数且 `capabilities.yaml` 里是 `verified`）。")
+    A(
+        "> 而 `scripts/sw_weldment.py` 有 666 行 / 20 个函数且 `capabilities.yaml` 里是 `verified`）。"
+    )
     A("> **判断「该实现哪个域」请看能力面列；判断「该暴露哪个工具」才看 MCP 列。**")
     A(">")
     # ⚠ 这个标记的**含义原先只写在下面 `cell_cap += "⚠"` 的代码注释里** ⇒
     #   读者拿到的矩阵里查不到它是什么意思。**⇒ 图例里必须自解释**（一个事实一个家）。
     #   （2026-10-01 轮 49 跑 `specs/002-merge-template` 的 converge 步时发现。）
-    A("> - 能力面列里的 **`⚠`** = 该域**缺口(MCP) > 0 而我们已有 ≥5 个函数** ⇒ "
-      "**它多半不是能力缺口，只是没暴露成 MCP 工具**。")
+    A(
+        "> - 能力面列里的 **`⚠`** = 该域**缺口(MCP) > 0 而我们已有 ≥5 个函数** ⇒ "
+        "**它多半不是能力缺口，只是没暴露成 MCP 工具**。"
+    )
     A(">   ⚠ 这是**启发式标记**（阈值 5），不是判定；**要下结论仍须逐域人工核**。")
     A("")
     caps = _our_capabilities()
-    header = (["域"] + [s["repo"].split("/")[0][:14] for s in sources]
-              + ["本仓库(MCP)", "本仓库能力面", "并集", "缺口(MCP)"])
+    header = (
+        ["域"]
+        + [s["repo"].split("/")[0][:14] for s in sources]
+        + ["本仓库(MCP)", "本仓库能力面", "并集", "缺口(MCP)"]
+    )
     A("| " + " | ".join(header) + " |")
     A("|" + "---|" * len(header))
     total_union = 0
@@ -257,8 +326,10 @@ def main() -> int:
         row.append("**%d**" % len(gap) if gap else "✓")
         A("| " + " | ".join(row) + " |")
     A("")
-    A("**合计**：并集 %d 个操作；**MCP 暴露面**缺 **%d** 个（**不是**能力缺口 —— 见上）。"
-      % (total_union, total_gap))
+    A(
+        "**合计**：并集 %d 个操作；**MCP 暴露面**缺 **%d** 个（**不是**能力缺口 —— 见上）。"
+        % (total_union, total_gap)
+    )
     A("")
     if gap_rows:
         A("### 缺口按域排序（大 → 小）")
@@ -276,16 +347,22 @@ def main() -> int:
     # ence`，
     #     由 R12/R13 门禁守着），而「不做 + 原因」**一格机制都没有** ——
     #     矩阵里只有「缺 N」，读者**无从知道哪些是「我们不做」、哪些是「还没做」**。
-    # ⇒ 数据源 `docs/union-not-doing.json`；形状由 `check_union_conventions` 的 **R14** 
+    # ⇒ 数据源 `docs/union-not-doing.json`；形状由 `check_union_conventions` 的 **R14**
     # 守
     #     （`subject` / `reason` / `evidence` 三者非空）。
     A("### 不做 + 原因（A1 的另一半）")
     A("")
     A("> `AGENTS.md §一 A1`：「…每一格**都有来源，或写明「不做 + 原因」**」。")
-    A("> **有来源**那一半由 `capabilities.yaml` 的 `source`/`source_evidence` 承担（R12/R13 守着）；")
-    A("> **本表**承担「不做 + 原因」那一半。数据源 `docs/union-not-doing.json`，形状由 R14 守。")
+    A(
+        "> **有来源**那一半由 `capabilities.yaml` 的 `source`/`source_evidence` 承担（R12/R13 守着）；"
+    )
+    A(
+        "> **本表**承担「不做 + 原因」那一半。数据源 `docs/union-not-doing.json`，形状由 R14 守。"
+    )
     A(">")
-    A("> ⚠ **本表是显式清单，不是默认放行** —— 没登记在这里、又没在 `capabilities.yaml` 里的，")
+    A(
+        "> ⚠ **本表是显式清单，不是默认放行** —— 没登记在这里、又没在 `capabilities.yaml` 里的，"
+    )
     A("> 就仍是**缺口**（见上表的「缺 N」），不是「不做」。")
     A("")
     if not_doing:
@@ -293,10 +370,15 @@ def main() -> int:
         A("|---|---|---|")
         for item in not_doing:
             ev = "<br>".join("· %s" % e for e in item.get("evidence") or [])
-            A("| %s | %s | %s |" % (item.get("subject", ""), item.get("reason", ""), ev))
+            A(
+                "| %s | %s | %s |"
+                % (item.get("subject", ""), item.get("reason", ""), ev)
+            )
         A("")
     else:
-        A("> ⚠ **本清单为空** —— 一个「不做」都没登记（那通常意味着**还没逐域确证**，而不是「全都做」）。")
+        A(
+            "> ⚠ **本清单为空** —— 一个「不做」都没登记（那通常意味着**还没逐域确证**，而不是「全都做」）。"
+        )
         A("")
 
     A("## 三 每个域的**独家来源**（只有一家有 ⇒ 只能抄它，且必须自己测）")
@@ -314,10 +396,16 @@ def main() -> int:
             if len(owners) == 1 and owners[0] != "本仓库":
                 exclusive.append((op, owners[0]))
         if exclusive:
-            A("| %s | %d 个：%s | %s |" % (
-                label, len(exclusive),
-                ", ".join("`%s`" % o for o, _ in exclusive[:6]) + ("…" if len(exclusive) > 6 else ""),
-                exclusive[0][1]))
+            A(
+                "| %s | %d 个：%s | %s |"
+                % (
+                    label,
+                    len(exclusive),
+                    ", ".join("`%s`" % o for o, _ in exclusive[:6])
+                    + ("…" if len(exclusive) > 6 else ""),
+                    exclusive[0][1],
+                )
+            )
     A("")
     A("## 四 本仓库独家（别人都没有）")
     A("")
@@ -337,9 +425,11 @@ def main() -> int:
     #   抄它的东西**必须自己实测**，不能因为来源大就默认可信。
     A("## 五 可执行的并入清单（按域）")
     A("")
-    A("> **怎么读**：`来源` 列给出该域最有货的家；`来源验证` 列是**该来源自己声明的"
-      "跑过的环境** —— 空 = **它没声明跑过**，抄进来只能先标 `stitched`，"
-      "必须我们实测过才能升 `verified`（规则 4）。")
+    A(
+        "> **怎么读**：`来源` 列给出该域最有货的家；`来源验证` 列是**该来源自己声明的"
+        "跑过的环境** —— 空 = **它没声明跑过**，抄进来只能先标 `stitched`，"
+        "必须我们实测过才能升 `verified`（规则 4）。"
+    )
     A("")
     for dom, label in DOMAIN_LABELS.items():
         cells = grid[dom]
@@ -351,9 +441,13 @@ def main() -> int:
             continue
         # 该域各来源的覆盖数 + 验证口径
         ranked = sorted(
-            ((s["repo"], len(cells[s["repo"]]), s["declared_verified"], s["license"])
-             for s in sources if cells[s["repo"]]),
-            key=lambda x: -x[1])
+            (
+                (s["repo"], len(cells[s["repo"]]), s["declared_verified"], s["license"])
+                for s in sources
+                if cells[s["repo"]]
+            ),
+            key=lambda x: -x[1],
+        )
         if not ranked:
             continue
         A("### %s（缺 %d）" % (label, len(gap)))

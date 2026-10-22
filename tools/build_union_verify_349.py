@@ -1,9 +1,10 @@
 """★ 聚合 349 条逐条记录成一份**合法 JSON 且 < 256 KB** 的产物（规格 207 的 SC-1 / SC-5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/build_union_verify_349.py
 # 定位:   ★ 规格 207 的 **SC-1 + SC-5** 的落地件 —— 前几轮只有**逐条**记录（`output/bu
-#           nny-records-verify/` 273 份 · `output/bunny-records-deep/` N 份），而 SC-1 
+#           nny-records-verify/` 273 份 · `output/bunny-records-deep/` N 份），而 SC-1
 #           要的是「**349 个操作每个都有一条记录**」、SC-5 要的是「**返回体必须是合法 JS
 #           ON 且 < 256 KB**（枚举化）」⇒ ★ 这两条评的是**聚合件** ✓
 #         ★★ **为什么用生成器而不是手写**：deep 档还在长（57/76）⇒ 收齐后**重跑即定案**，
@@ -43,12 +44,14 @@ ENUMS = {
 CALIBERS = {
     "classifier_self_report": {
         "value": 0.782,
-        "numerator": 273, "denominator": 349,
+        "numerator": 273,
+        "denominator": 349,
         "meaning": "分类器把多少条打成了「①已有等价物」（★ 它的**自述**，不是实测）",
     },
     "per_item_measured": {
         "value": 0.2296,
-        "numerator": 62, "denominator": 270,
+        "numerator": 62,
+        "denominator": 270,
         "meaning": "逐条读完，「已有」这一标**错**了几条（62/270）",
     },
     "★_禁止相减": "两个分母不是同一件事（一个算打了多少标、一个算标错几条）⇒ 只并列，不做减法",
@@ -61,7 +64,7 @@ def _load_records(d: Path) -> dict[str, dict]:
     for f in sorted(d.glob("*.json")):
         try:
             r = json.loads(f.read_text(encoding="utf-8", errors="replace"))
-        except Exception:                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             print("  ★ 坏 JSON（跳过）：%s" % f.name)
             continue
         if not isinstance(r, dict):
@@ -77,8 +80,12 @@ def main() -> int:
     #: ★★ 事实 62：**一个门禁没有负例就不算门禁** ⇒ 给上限做成可注入的，
     #:   这样「超限拒绝落盘」这条分支**能被当场证伪**（`--limit-bytes 1000`）✓
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit-bytes", type=int, default=LIMIT_BYTES,
-                    help="★ 上限（默认 256 KiB）；★ 调小即可验证「超限拒绝落盘」这条分支")
+    ap.add_argument(
+        "--limit-bytes",
+        type=int,
+        default=LIMIT_BYTES,
+        help="★ 上限（默认 256 KiB）；★ 调小即可验证「超限拒绝落盘」这条分支",
+    )
     a = ap.parse_args()
     limit = a.limit_bytes
     ref = json.loads(REF.read_text(encoding="utf-8"))

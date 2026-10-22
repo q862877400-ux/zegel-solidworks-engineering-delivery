@@ -29,6 +29,7 @@ r"""@brief 真机证据：**配置族 6 + 导出族 6**（24h 段 4 / Spec Kit `
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -42,13 +43,18 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "config-export-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "config-export-evidence.json"
+)
 EXPORT_DIR = Path(Path(__file__).resolve().parents[1] / "output" / "_export_smoke")
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "config_and_export", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "config_and_export",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -66,13 +72,15 @@ def main() -> int:
             bindings[spec.name] = callable(getattr(mod, spec.function, None))
         ev["steps"]["bindings"] = {"ok": all(bindings.values()), "count": len(bindings)}
         ok = ok and ev["steps"]["bindings"]["ok"]
-        print("  [0] 12 个工具声明解析 = %s（%d 个）"
-              % (ev["steps"]["bindings"]["ok"], len(bindings)))
+        print(
+            "  [0] 12 个工具声明解析 = %s（%d 个）"
+            % (ev["steps"]["bindings"]["ok"], len(bindings))
+        )
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 造零件
@@ -87,94 +95,145 @@ def main() -> int:
         cfg: dict = {}
         try:
             r = D.inspect_configurations(doc)
-            cfg["inspect_configurations"] = {"ok": isinstance(r, dict) and bool(r),
-                                             "keys": sorted(r.keys())[:6]}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["inspect_configurations"] = {
+                "ok": isinstance(r, dict) and bool(r),
+                "keys": sorted(r.keys())[:6],
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["inspect_configurations"] = {"ok": False, "error": str(exc)[:120]}
         try:
             r = D.create_configuration(doc, "DSH-CFG-A", activate=False, rebuild=True)
-            cfg["create_configuration"] = {"ok": isinstance(r, dict) and bool(r),
-                                           "keys": sorted(r.keys())[:6]}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["create_configuration"] = {
+                "ok": isinstance(r, dict) and bool(r),
+                "keys": sorted(r.keys())[:6],
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["create_configuration"] = {"ok": False, "error": str(exc)[:120]}
         try:
             r = D.activate_configuration(doc, "DSH-CFG-A", rebuild=True)
-            cfg["activate_configuration"] = {"ok": isinstance(r, dict) and bool(r),
-                                             "keys": sorted(r.keys())[:6]}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["activate_configuration"] = {
+                "ok": isinstance(r, dict) and bool(r),
+                "keys": sorted(r.keys())[:6],
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["activate_configuration"] = {"ok": False, "error": str(exc)[:120]}
         try:
             r = D.set_custom_properties(doc, {"DSH_MARK": "1", "DSH_NOTE": "smoke"})
-            cfg["set_custom_properties"] = {"ok": bool(r), "n": len(r) if hasattr(r, "__len__") else None}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["set_custom_properties"] = {
+                "ok": bool(r),
+                "n": len(r) if hasattr(r, "__len__") else None,
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["set_custom_properties"] = {"ok": False, "error": str(exc)[:120]}
         try:
             r = D.read_custom_property(doc, "DSH_MARK")
-            cfg["read_custom_property"] = {"ok": isinstance(r, dict) and bool(r),
-                                           "value": (r or {}).get("value")}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["read_custom_property"] = {
+                "ok": isinstance(r, dict) and bool(r),
+                "value": (r or {}).get("value"),
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["read_custom_property"] = {"ok": False, "error": str(exc)[:120]}
         try:
             r = D.update_dimension_mm(doc, "D1@%s" % sk, 80.0, rebuild=True)
-            cfg["update_dimension_mm"] = {"ok": isinstance(r, dict) and bool(r),
-                                          "keys": sorted(r.keys())[:6]}
-        except Exception as exc:                               # noqa: BLE001
+            cfg["update_dimension_mm"] = {
+                "ok": isinstance(r, dict) and bool(r),
+                "keys": sorted(r.keys())[:6],
+            }
+        except Exception as exc:  # noqa: BLE001
             cfg["update_dimension_mm"] = {"ok": False, "error": str(exc)[:120]}
         ev["steps"]["config"] = cfg
-        print("  [1] 配置族: %d/%d 通过"
-              % (sum(1 for v in cfg.values() if v.get("ok")), len(cfg)))
+        print(
+            "  [1] 配置族: %d/%d 通过"
+            % (sum(1 for v in cfg.values() if v.get("ok")), len(cfg))
+        )
 
         #: ③ 导出族 6 个（★ 判"文件存在且非空"）
         EXPORT_DIR.mkdir(parents=True, exist_ok=True)
         exp: dict = {}
         for name, fn, ext in (
-            ("export_step", lambda: E.export_step_report(doc, str(EXPORT_DIR / "smoke.step")), "step"),
-            ("export_stl", lambda: E.export_stl_report(doc, str(EXPORT_DIR / "smoke.stl")), "stl"),
-            ("export_iges", lambda: E.export_iges_report(doc, str(EXPORT_DIR / "smoke.igs")), "igs"),
-            ("export_parasolid", lambda: E.export_parasolid_report(
-                doc, str(EXPORT_DIR / "smoke.x_t")), "x_t"),
-            ("export_dxf", lambda: E.export_dxf_report(doc, str(EXPORT_DIR / "smoke.dxf")), "dxf"),
-            ("export_bmp", lambda: E.export_bmp_report(doc, str(EXPORT_DIR / "smoke.bmp")), "bmp"),
+            (
+                "export_step",
+                lambda: E.export_step_report(doc, str(EXPORT_DIR / "smoke.step")),
+                "step",
+            ),
+            (
+                "export_stl",
+                lambda: E.export_stl_report(doc, str(EXPORT_DIR / "smoke.stl")),
+                "stl",
+            ),
+            (
+                "export_iges",
+                lambda: E.export_iges_report(doc, str(EXPORT_DIR / "smoke.igs")),
+                "igs",
+            ),
+            (
+                "export_parasolid",
+                lambda: E.export_parasolid_report(doc, str(EXPORT_DIR / "smoke.x_t")),
+                "x_t",
+            ),
+            (
+                "export_dxf",
+                lambda: E.export_dxf_report(doc, str(EXPORT_DIR / "smoke.dxf")),
+                "dxf",
+            ),
+            (
+                "export_bmp",
+                lambda: E.export_bmp_report(doc, str(EXPORT_DIR / "smoke.bmp")),
+                "bmp",
+            ),
         ):
             try:
                 r = fn()
-                exp[name] = {"ok": bool(r.get("ok")), "exists": r.get("exists"),
-                             "size_bytes": r.get("size_bytes"), "path": r.get("output_path"),
-                             "error": r.get("error")}
-            except Exception as exc:                           # noqa: BLE001
-                exp[name] = {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+                exp[name] = {
+                    "ok": bool(r.get("ok")),
+                    "exists": r.get("exists"),
+                    "size_bytes": r.get("size_bytes"),
+                    "path": r.get("output_path"),
+                    "error": r.get("error"),
+                }
+            except Exception as exc:  # noqa: BLE001
+                exp[name] = {
+                    "ok": False,
+                    "error": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+                }
         ev["steps"]["export"] = exp
-        print("  [2] 导出族: %d/%d 通过"
-              % (sum(1 for v in exp.values() if v.get("ok")), len(exp)))
+        print(
+            "  [2] 导出族: %d/%d 通过"
+            % (sum(1 for v in exp.values() if v.get("ok")), len(exp))
+        )
         for k, v in exp.items():
-            print("      %-18s ok=%-5s exists=%-5s size=%s" % (k, v.get("ok"), v.get("exists"),
-                                                               v.get("size_bytes")))
+            print(
+                "      %-18s ok=%-5s exists=%-5s size=%s"
+                % (k, v.get("ok"), v.get("exists"), v.get("size_bytes"))
+            )
 
         #: ④ 综合
         n_cfg = sum(1 for v in cfg.values() if v.get("ok"))
         n_exp = sum(1 for v in exp.values() if v.get("ok"))
         ev["steps"]["judgement"] = {
             "bindings": ev["steps"]["bindings"]["ok"],
-            "config_ok": n_cfg, "config_total": len(cfg),
-            "export_ok": n_exp, "export_total": len(exp),
+            "config_ok": n_cfg,
+            "config_total": len(cfg),
+            "export_ok": n_exp,
+            "export_total": len(exp),
             "★": "★ 配置族判 dict 非空 · 导出族判**文件存在且非空**（★ 回读优先）",
         }
         ok = ok and n_cfg >= 4 and n_exp >= 4
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -185,7 +244,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

@@ -23,7 +23,7 @@
 # 是**
 #     `SLDWORKS.exe` 的 pid ⇒ ★★ **`star.exe`（求解内核）拥有的弹窗被无条件跳过** ✓
 #     ★ 实测：那个 `[Simulation] 未定义载荷…` 框的 owner 是 **`star.exe`**（pid 46240），
-# 而修复前 `scan_family_windows(49384)` **回 0**、`modal_dialog_forensics` 也回 `count: 
+# 而修复前 `scan_family_windows(49384)` **回 0**、`modal_dialog_forensics` 也回 `count:
 # 0` ✓
 #   ★★★ 第二个原因：★ 护栏是**按条命令**开哨兵的（`run_guarded` 包一个子进程）——
 #     ★ 命令一结束哨兵就停；★ 而 `star.exe` 是 **SolidWorks 自己拉起来的**、会**在我们的命令
@@ -91,10 +91,20 @@ def scan_now(*, dismiss: bool = True) -> dict:
     for d in found:
         verdict = sw_guard.classify_dialog(d)
         mode = verdict.get("mode")
-        row = {"at": _now(), "kind": "dialog", "hwnd": d.get("hwnd"), "pid": d.get("pid"),
-               "exe": d.get("exe"), "class": d.get("class"), "title": d.get("title"),
-               "controls": d.get("controls") or [], "hung": d.get("hung"),
-               "verdict": verdict, "needs_llm": mode != "auto", "dismissed": False}
+        row = {
+            "at": _now(),
+            "kind": "dialog",
+            "hwnd": d.get("hwnd"),
+            "pid": d.get("pid"),
+            "exe": d.get("exe"),
+            "class": d.get("class"),
+            "title": d.get("title"),
+            "controls": d.get("controls") or [],
+            "hung": d.get("hung"),
+            "verdict": verdict,
+            "needs_llm": mode != "auto",
+            "dismissed": False,
+        }
         #: ★★ **只有 `auto` 档才点** —— ★ `needs_llm` / `forbidden` 一律**只记证**
         if dismiss and mode == "auto":
             fired = False
@@ -104,20 +114,30 @@ def scan_now(*, dismiss: bool = True) -> dict:
                     fired = sw_guard.dismiss_via_input(d["hwnd"]) or fired
                     if sw_guard._u.IsWindow(d["hwnd"]):
                         fired = False
-            except Exception:                                   # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 fired = False
             row["dismissed"] = bool(fired)
             row["still_present"] = bool(sw_guard._u.IsWindow(d["hwnd"]))
         rows.append(row)
         _append(row)
     pending = [r for r in rows if r.get("needs_llm") and not r.get("dismissed")]
-    snap = {"at": _now(), "dialogs": len(rows), "pending_needs_llm": len(pending),
-            "pids": sorted({r.get("pid") for r in rows}), "rows": rows}
+    snap = {
+        "at": _now(),
+        "dialogs": len(rows),
+        "pending_needs_llm": len(pending),
+        "pids": sorted({r.get("pid") for r in rows}),
+        "rows": rows,
+    }
     return snap
 
 
-def run(*, interval: float = 1.0, seconds: float | None = None, dismiss: bool = True,
-        quiet: bool = False) -> dict:
+def run(
+    *,
+    interval: float = 1.0,
+    seconds: float | None = None,
+    dismiss: bool = True,
+    quiet: bool = False,
+) -> dict:
     """★ **常驻循环**：每 `interval` 秒扫一遍；`seconds` 给了就是有界跑（★ 测试/CI 用）。
 
     ★ 状态随时落盘到 `output/dialog-watch/status.json` ⇒ ★ **别人（或 LLM）随时读得到** ✓
@@ -125,10 +145,18 @@ def run(*, interval: float = 1.0, seconds: float | None = None, dismiss: bool = 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     try:
         PIDFILE.write_text(str(os.getpid()), encoding="utf-8")
-    except Exception:                                           # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
-    state = {"started": _now(), "pid": os.getpid(), "running": True, "scans": 0,
-             "dialogs_seen": 0, "dismissed": 0, "pending_needs_llm": 0, "last": None}
+    state = {
+        "started": _now(),
+        "pid": os.getpid(),
+        "running": True,
+        "scans": 0,
+        "dialogs_seen": 0,
+        "dismissed": 0,
+        "pending_needs_llm": 0,
+        "last": None,
+    }
     stop = {"flag": False}
 
     def _sig(_s, _f):
@@ -137,7 +165,7 @@ def run(*, interval: float = 1.0, seconds: float | None = None, dismiss: bool = 
     for sig in (signal.SIGINT, signal.SIGTERM):
         try:
             signal.signal(sig, _sig)
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     t0 = time.time()
     try:
@@ -147,18 +175,33 @@ def run(*, interval: float = 1.0, seconds: float | None = None, dismiss: bool = 
             state["dialogs_seen"] += snap["dialogs"]
             state["dismissed"] += sum(1 for r in snap["rows"] if r.get("dismissed"))
             state["pending_needs_llm"] = snap["pending_needs_llm"]
-            state["last"] = {"at": snap["at"], "dialogs": snap["dialogs"],
-                             "pending_needs_llm": snap["pending_needs_llm"],
-                             "rows": [{k: r.get(k) for k in
-                                       ("at", "exe", "title", "needs_llm", "dismissed")}
-                                      for r in snap["rows"]]}
+            state["last"] = {
+                "at": snap["at"],
+                "dialogs": snap["dialogs"],
+                "pending_needs_llm": snap["pending_needs_llm"],
+                "rows": [
+                    {
+                        k: r.get(k)
+                        for k in ("at", "exe", "title", "needs_llm", "dismissed")
+                    }
+                    for r in snap["rows"]
+                ],
+            }
             state["uptime_s"] = round(time.time() - t0, 1)
             _write_status(state)
             if snap["dialogs"] and not quiet:
                 for r in snap["rows"]:
-                    print("[%s] %s:%s needs_llm=%s dismissed=%s %r"
-                          % (r["at"], r.get("exe"), r.get("pid"), r["needs_llm"],
-                             r["dismissed"], str(r.get("title"))[:40]))
+                    print(
+                        "[%s] %s:%s needs_llm=%s dismissed=%s %r"
+                        % (
+                            r["at"],
+                            r.get("exe"),
+                            r.get("pid"),
+                            r["needs_llm"],
+                            r["dismissed"],
+                            str(r.get("title"))[:40],
+                        )
+                    )
             if seconds is not None and time.time() - t0 >= seconds:
                 break
             time.sleep(max(0.2, interval))
@@ -168,7 +211,7 @@ def run(*, interval: float = 1.0, seconds: float | None = None, dismiss: bool = 
         _write_status(state)
         try:
             PIDFILE.unlink()
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return state
 
@@ -180,17 +223,18 @@ def status() -> dict:
         try:
             pid = int(PIDFILE.read_text(encoding="utf-8").strip())
             alive = _pid_alive(pid)
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             alive = None
     out = {"watcher_pidfile": str(PIDFILE), "watcher_alive": alive}
     if STATUS.is_file():
         try:
             out["status"] = json.loads(STATUS.read_text(encoding="utf-8"))
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             out["status"] = None
     out["events_file"] = str(EVENTS)
-    out["events_lines"] = (sum(1 for _ in EVENTS.open(encoding="utf-8"))
-                           if EVENTS.is_file() else 0)
+    out["events_lines"] = (
+        sum(1 for _ in EVENTS.open(encoding="utf-8")) if EVENTS.is_file() else 0
+    )
     return out
 
 
@@ -205,9 +249,13 @@ def _pid_alive(pid: int) -> bool:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="常驻弹窗监控（复用 sw_guard 的判据与处置）")
+    ap = argparse.ArgumentParser(
+        description="常驻弹窗监控（复用 sw_guard 的判据与处置）"
+    )
     ap.add_argument("--once", action="store_true", help="只扫一遍")
-    ap.add_argument("--seconds", type=float, default=None, help="跑这么多秒（默认常驻）")
+    ap.add_argument(
+        "--seconds", type=float, default=None, help="跑这么多秒（默认常驻）"
+    )
     ap.add_argument("--interval", type=float, default=1.0)
     ap.add_argument("--no-dismiss", action="store_true", help="只记证、一个都不点")
     ap.add_argument("--status", action="store_true", help="打印状态后退出")
@@ -217,12 +265,31 @@ def main() -> int:
         print(json.dumps(status(), ensure_ascii=False, indent=1)[:2500])
         return 0
     if a.once:
-        print(json.dumps(scan_now(dismiss=not a.no_dismiss), ensure_ascii=False, indent=1)[:2500])
+        print(
+            json.dumps(
+                scan_now(dismiss=not a.no_dismiss), ensure_ascii=False, indent=1
+            )[:2500]
+        )
         return 0
-    st = run(interval=a.interval, seconds=a.seconds, dismiss=not a.no_dismiss, quiet=a.quiet)
-    print(json.dumps({k: st.get(k) for k in ("started", "stopped", "scans", "dialogs_seen",
-                                             "dismissed", "pending_needs_llm")},
-                     ensure_ascii=False))
+    st = run(
+        interval=a.interval, seconds=a.seconds, dismiss=not a.no_dismiss, quiet=a.quiet
+    )
+    print(
+        json.dumps(
+            {
+                k: st.get(k)
+                for k in (
+                    "started",
+                    "stopped",
+                    "scans",
+                    "dialogs_seen",
+                    "dismissed",
+                    "pending_needs_llm",
+                )
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

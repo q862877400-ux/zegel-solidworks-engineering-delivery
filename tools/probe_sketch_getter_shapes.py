@@ -27,6 +27,7 @@ r"""@brief 探针：**所有**按类型取法的返回形状 —— 是「对象
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -57,12 +58,14 @@ CASES = [
 
 def _line(part, i):
     from scripts import sw_part
+
     y = float(i) * 20.0
     return sw_part.sketch_line(part, -10.0, y, 10.0, y)
 
 
 def _arc(part, i):
     from scripts import sw_part
+
     y = float(i) * 20.0
     #: 圆心 (0,y)、起点 (-10,y)、终点 (10,y)、逆时针
     return sw_part.sketch_arc(part, 0.0, y, -10.0, y, 10.0, y, 1)
@@ -70,16 +73,19 @@ def _arc(part, i):
 
 def _ellipse(part, i):
     from scripts import sw_part
+
     y = float(i) * 20.0
     return sw_part.sketch_ellipse(part, 0.0, y, 20.0, y, 0.0, y + 10.0)
 
 
 def _spline(part, i):
     from scripts import sw_part
+
     y = float(i) * 20.0
     #: 4 个控制点
-    return sw_part.sketch_spline(part, [(-20.0, y), (-7.0, y + 8.0),
-                                        (7.0, y - 8.0), (20.0, y)])
+    return sw_part.sketch_spline(
+        part, [(-20.0, y), (-7.0, y + 8.0), (7.0, y - 8.0), (20.0, y)]
+    )
 
 
 def modal_dialogs() -> tuple:
@@ -92,8 +98,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": {}}
     sw = None
@@ -101,13 +109,17 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
-        print("  %-10s %-6s %-22s %-8s %-10s %s" % ("类型", "画了", "取法", "元素数", "元素类型", "判定"))
+        print(
+            "  %-10s %-6s %-22s %-8s %-10s %s"
+            % ("类型", "画了", "取法", "元素数", "元素类型", "判定")
+        )
         for kind, getters, draw in CASES:
             for n in (1, 2):
                 d = sw_connect.new_document(sw, "part")
@@ -118,68 +130,85 @@ def main() -> int:
                     try:
                         draw(d, i)
                         drawn += 1
-                    except Exception as exc:      # noqa: BLE001
-                        print("  %-10s ⚠ 第 %d 个画不出来: %s" % (kind, i, str(exc)[:60]))
+                    except Exception as exc:  # noqa: BLE001
+                        print(
+                            "  %-10s ⚠ 第 %d 个画不出来: %s" % (kind, i, str(exc)[:60])
+                        )
                         break
                 skm = sw_connect.safe_get_com_member(d, "SketchManager")
                 sk = sw_connect.safe_get_com_member(skm, "ActiveSketch")
                 try:
                     segs = sw_sketch.get_sketch_segments(sk)
                     truth = len(segs) if isinstance(segs, list) else -1
-                except Exception:      # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     truth = -1
                 for g in getters:
                     fn = getattr(sw_sketch, g, None)
                     try:
                         got = fn(sk) if fn else None
-                    except Exception as exc:      # noqa: BLE001
+                    except Exception as exc:  # noqa: BLE001
                         got = "EXC:%s" % str(exc)[:40]
                     if isinstance(got, list):
                         cnt = len(got)
                         et = type(got[0]).__name__ if got else "—"
                     else:
-                        cnt, et = (got if isinstance(got, int) else -1), str(type(got).__name__)
+                        cnt, et = (
+                            (got if isinstance(got, int) else -1),
+                            str(type(got).__name__),
+                        )
                     if cnt == drawn:
                         verdict = "**对象列表**（正常）"
-                    elif drawn and isinstance(cnt, int) and cnt > 0 and cnt % drawn == 0:
+                    elif (
+                        drawn and isinstance(cnt, int) and cnt > 0 and cnt % drawn == 0
+                    ):
                         verdict = "★ **数值数组**：每条 %d 个" % (cnt // drawn)
                     elif cnt == 0:
                         verdict = "⚠ 取不到该类型"
                     else:
                         verdict = "? 需人工看"
-                    print("  %-10s %-6d %-22s %-8s %-10s %s"
-                          % (kind, drawn, g, cnt, et, verdict))
+                    print(
+                        "  %-10s %-6d %-22s %-8s %-10s %s"
+                        % (kind, drawn, g, cnt, et, verdict)
+                    )
                     ev["cases"]["%s_n%d_%s" % (kind, drawn, g)] = {
-                        "drawn": drawn, "segments": truth, "count": cnt,
-                        "element_type": et, "verdict": verdict}
+                        "drawn": drawn,
+                        "segments": truth,
+                        "count": cnt,
+                        "element_type": et,
+                        "verdict": verdict,
+                    }
                 sw_part.end_sketch(d)
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
                 docs.remove(d)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
     modals, _win_scanned = modal_dialogs()
     print()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("   证据: %s" % OUT)
     return 0
 

@@ -18,6 +18,7 @@ L235  if not claimed:  →  print("**SKIP** —— 文档里找不到逐模块�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -64,9 +65,15 @@ def main() -> int:
     print("══ ① 正常输入 ⇒ 各门禁退出码（基线）══")
     for name in CHECKS:
         s = REPO / "scripts" / name
-        p = subprocess.run([sys.executable, str(s)], capture_output=True, text=True,
-                           encoding="utf-8", errors="replace", cwd=str(REPO),
-                           stdin=subprocess.DEVNULL)
+        p = subprocess.run(
+            [sys.executable, str(s)],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(REPO),
+            stdin=subprocess.DEVNULL,
+        )
         print("  %-42s exit=%d" % (name, p.returncode))
 
     print()
@@ -85,13 +92,23 @@ def main() -> int:
     )
     print("  坏文档: 只有标题，**不含逐模块表**（%d 字节）" % bad.stat().st_size)
     p = subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "check_signature_audit_freshness.py"),
-         "--doc", str(bad)],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
-        cwd=str(REPO), stdin=subprocess.DEVNULL,
+        [
+            sys.executable,
+            str(REPO / "scripts" / "check_signature_audit_freshness.py"),
+            "--doc",
+            str(bad),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(REPO),
+        stdin=subprocess.DEVNULL,
     )
-    print("  ★ check_signature_audit_freshness --doc <坏文档> ⇒ **exit=%d**（应为 1）"
-          % p.returncode)
+    print(
+        "  ★ check_signature_audit_freshness --doc <坏文档> ⇒ **exit=%d**（应为 1）"
+        % p.returncode
+    )
     for l in (p.stdout or "").splitlines()[-3:]:
         if l.strip():
             print("       %s" % l.strip()[:100])
@@ -103,19 +120,34 @@ def main() -> int:
     # 轮 84 那个假用例就是「**变换没匹配上 ⇒ "坏输入" 等于真输入 ⇒ 用例空转却显示通过**
     # 」。
     #   ⇒ 这里**先算、再断言、再打印前后字节数**，让用例自己证明输入真的坏了。
-    bad2_text = re.sub(r"> 偏离上游：.+? · 工作区 clean", "> 偏离上游： · 工作区 clean", ro, count=1)
+    bad2_text = re.sub(
+        r"> 偏离上游：.+? · 工作区 clean", "> 偏离上游： · 工作区 clean", ro, count=1
+    )
     assert bad2_text != ro, "**变换没生效** —— 那个「坏报告」其实等于真报告，用例不成立"
     bad2 = Path(tempfile.gettempdir()) / "bad-harvest-report.md"
     bad2.write_text(bad2_text, encoding="utf-8")
-    print("  坏报告: %d -> %d 字节（数字被抹掉，自证 ✓）" % (len(ro.encode()), len(bad2_text.encode())))
-    p2 = subprocess.run(
-        [sys.executable, str(REPO / "scripts" / "check_report_freshness.py"),
-         "--report", str(bad2)],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
-        cwd=str(REPO), stdin=subprocess.DEVNULL,
+    print(
+        "  坏报告: %d -> %d 字节（数字被抹掉，自证 ✓）"
+        % (len(ro.encode()), len(bad2_text.encode()))
     )
-    print("  ★ check_report_freshness --report <坏报告> ⇒ **exit=%d**（轮 82 已修，应为 1）"
-          % p2.returncode)
+    p2 = subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "scripts" / "check_report_freshness.py"),
+            "--report",
+            str(bad2),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(REPO),
+        stdin=subprocess.DEVNULL,
+    )
+    print(
+        "  ★ check_report_freshness --report <坏报告> ⇒ **exit=%d**（轮 82 已修，应为 1）"
+        % p2.returncode
+    )
 
     print()
     print("══ ③ 仓库自身文件缺失（`server.py`）⇒ 遮蔽门禁怎么走 ══")
@@ -123,12 +155,20 @@ def main() -> int:
     txt = src.read_text(encoding="utf-8")
     m = re.search(r"SERVER\s*=\s*(.+)", txt)
     print("  SERVER = %s" % (m.group(1).strip() if m else "?"))
-    p3 = subprocess.run([sys.executable, str(src)], capture_output=True, text=True,
-                        encoding="utf-8", errors="replace", cwd=str(REPO),
-                        stdin=subprocess.DEVNULL)
+    p3 = subprocess.run(
+        [sys.executable, str(src)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(REPO),
+        stdin=subprocess.DEVNULL,
+    )
     print("  正常跑 ⇒ exit=%d" % p3.returncode)
     print("  ⚠ 它 `if not SERVER.is_file(): print('[SKIP] 找不到 …'); return 0` ——")
-    print("    而 SERVER 是**本仓库的文件** ⇒ 不在 = **仓库坏了**，不是「数据源不可用」。")
+    print(
+        "    而 SERVER 是**本仓库的文件** ⇒ 不在 = **仓库坏了**，不是「数据源不可用」。"
+    )
     return 0
 
 

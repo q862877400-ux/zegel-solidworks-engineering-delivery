@@ -40,6 +40,7 @@ r"""@brief 真机证据：**倒角 / 圆角 2 个工具**（砌墙 W4 续 / Spec
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -53,7 +54,9 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "chamfer-fillet-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "chamfer-fillet-evidence.json"
+)
 
 
 def feature_names(model, sc) -> list[str]:
@@ -61,7 +64,7 @@ def feature_names(model, sc) -> list[str]:
     names = []
     try:
         n = int(sc.safe_get_com_member(model, "GetFeatureCount"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return names
     for k in range(1, n + 1):
         f = sc.safe_get_com_member(model, "FeatureByPositionReverse", k)
@@ -89,16 +92,20 @@ def _volume_mm3(doc):
     """
     try:
         from scripts import sw_mass_property as MP
+
         r = MP.mass_properties(doc)
         v = r.get("volume") if isinstance(r, dict) else None
         return float(v) if v is not None else None
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "chamfer_fillet_on_selection", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "chamfer_fillet_on_selection",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -112,17 +119,21 @@ def main() -> int:
         bindings = {}
         for spec in b23.SPECS_BATCH23:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "aliases": dict(spec.param_alias or {}),
-                                   "has_pre_call": spec.pre_call is not None}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] and v["has_pre_call"]
-                                            for v in bindings.values()), "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "aliases": dict(spec.param_alias or {}),
+                "has_pre_call": spec.pre_call is not None,
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] and v["has_pre_call"] for v in bindings.values()),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -161,39 +172,57 @@ def main() -> int:
         f_ch = None
         vol_before = _volume_mm3(doc)
         try:
-            f_ch = apply_tool("solidworks_chamfer", "index:0", sw_part.chamfer, distance=2.0)
+            f_ch = apply_tool(
+                "solidworks_chamfer", "index:0", sw_part.chamfer, distance=2.0
+            )
             after_ch = feature_names(doc, sw_connect)
             vol_after = _volume_mm3(doc)
             #: ★ D4 判据：反解边长，看它是不是盒的某条棱
             w = 2.0
-            removed = (vol_before - vol_after) if (vol_before is not None and vol_after is not None) else None
-            implied_len = (2.0 * removed / (w * w)) if (removed and removed > 0) else None
-            edge_ok = (implied_len is not None and
-                       any(abs(implied_len - e) / e <= 0.02 for e in (40.0, 20.0, 10.0)))
+            removed = (
+                (vol_before - vol_after)
+                if (vol_before is not None and vol_after is not None)
+                else None
+            )
+            implied_len = (
+                (2.0 * removed / (w * w)) if (removed and removed > 0) else None
+            )
+            edge_ok = implied_len is not None and any(
+                abs(implied_len - e) / e <= 0.02 for e in (40.0, 20.0, 10.0)
+            )
             ev["steps"]["chamfer"] = {
                 "ok": bool(f_ch is not None) and len(after_ch) > len(base),
                 "feature": str(getattr(f_ch, "Name", "") or ""),
-                "n_before": len(base), "n_after": len(after_ch),
+                "n_before": len(base),
+                "n_after": len(after_ch),
                 "new_names": [n for n in after_ch if n not in base][:4],
                 #: ★★ 新增：体积判据（D4）
-                "volume_before_mm3": vol_before, "volume_after_mm3": vol_after,
+                "volume_before_mm3": vol_before,
+                "volume_after_mm3": vol_after,
                 "removed_mm3": removed,
                 "implied_edge_length_mm": implied_len,
                 "implied_matches_a_real_edge": edge_ok,
-                "★_d4": ("★ 反解 `L = 2·ΔV / w²` ⇒ 必须等于盒的某条棱（40/20/10）—— "
-                         "★ 这一条同时排除「零体积空操作」与「做在错的几何上」"),
+                "★_d4": (
+                    "★ 反解 `L = 2·ΔV / w²` ⇒ 必须等于盒的某条棱（40/20/10）—— "
+                    "★ 这一条同时排除「零体积空操作」与「做在错的几何上」"
+                ),
             }
             ok = ok and ev["steps"]["chamfer"]["ok"]
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["chamfer"] = {"ok": False, "raised": type(exc).__name__,
-                                      "msg": str(exc)[:110],
-                                      "volume_before_mm3": vol_before}
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["chamfer"] = {
+                "ok": False,
+                "raised": type(exc).__name__,
+                "msg": str(exc)[:110],
+                "volume_before_mm3": vol_before,
+            }
             ok = False
 
         #: ⑤ 圆角
         f_fi = None
         try:
-            f_fi = apply_tool("solidworks_fillet", "index:1", sw_part.fillet, radius=3.0)
+            f_fi = apply_tool(
+                "solidworks_fillet", "index:1", sw_part.fillet, radius=3.0
+            )
             after_fi = feature_names(doc, sw_connect)
             ev["steps"]["fillet"] = {
                 "ok": bool(f_fi is not None) and len(after_fi) > len(base),
@@ -202,9 +231,12 @@ def main() -> int:
                 "new_names": [n for n in after_fi if n not in base][:6],
             }
             ok = ok and ev["steps"]["fillet"]["ok"]
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["fillet"] = {"ok": False, "raised": type(exc).__name__,
-                                     "msg": str(exc)[:110]}
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["fillet"] = {
+                "ok": False,
+                "raised": type(exc).__name__,
+                "msg": str(exc)[:110],
+            }
 
         #: ⑥ ★★ 对照：清空选区后调 chamfer ⇒ 结果与"选中"是否不同
         try:
@@ -215,44 +247,53 @@ def main() -> int:
                 n_after_ctrl = len(feature_names(doc, sw_connect))
                 ev["steps"]["control_no_selection"] = {
                     "outcome": "建出来了：%s" % str(getattr(f_ctrl, "Name", "") or ""),
-                    "n_before": n_before_ctrl, "n_after": n_after_ctrl,
+                    "n_before": n_before_ctrl,
+                    "n_after": n_after_ctrl,
                     "★": "★ 清空选区也能建 ⇒ **说明「用 selection 驱动」不成立**（要改设计）"
-                         if n_after_ctrl > n_before_ctrl else "记录",
+                    if n_after_ctrl > n_before_ctrl
+                    else "记录",
                 }
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["control_no_selection"] = {
-                    "outcome": "抛了 %s" % type(exc).__name__, "msg": str(exc)[:90],
+                    "outcome": "抛了 %s" % type(exc).__name__,
+                    "msg": str(exc)[:90],
                     "★": "★ 清空选区会报错 ⇒ 支持「它作用在当前选择上」（本批设计成立）",
                 }
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["control_no_selection"] = {"outcome": "对照实验本身失败: %s"
-                                                   % str(exc)[:80]}
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["control_no_selection"] = {
+                "outcome": "对照实验本身失败: %s" % str(exc)[:80]
+            }
 
         #: ⑦ 负例：越界 index ⇒ 必须报错
         try:
             spec = next(s for s in b23.SPECS_BATCH23 if s.name == "solidworks_chamfer")
             spec.pre_call(_P("index:9999"))
-            ev["steps"]["negative_out_of_range"] = {"ok": False,
-                                                    "★": "★ **没有抛错** —— 越界却静默通过"}
+            ev["steps"]["negative_out_of_range"] = {
+                "ok": False,
+                "★": "★ **没有抛错** —— 越界却静默通过",
+            }
             ok = False
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["negative_out_of_range"] = {"ok": True, "raised": type(exc).__name__,
-                                                    "msg": str(exc)[:90]}
-    except Exception as exc:                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["negative_out_of_range"] = {
+                "ok": True,
+                "raised": type(exc).__name__,
+                "msg": str(exc)[:90],
+            }
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -263,7 +304,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

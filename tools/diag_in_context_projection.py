@@ -14,6 +14,7 @@
 
 ★ 本探针把每一步都回读，并把「选区计数」「活动文档」「草图实体数」全部落盘。
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -36,7 +37,12 @@ import time
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"), str(ROOT / "tools")]
+sys.path[:0] = [
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+]
 
 DIR = ROOT / "output" / "diag-in-context-projection"
 EV: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "steps": []}
@@ -54,7 +60,7 @@ def main() -> int:
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
     try:
         sw.CommandInProgress = True
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     DIR.mkdir(parents=True, exist_ok=True)
     docs: list = []
@@ -69,7 +75,9 @@ def main() -> int:
         if d is None:
             return 0
         mgr = sw_connect.safe_get_com_member(d, "SelectionManager")
-        return int(sw_connect.safe_get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        return int(
+            sw_connect.safe_get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0
+        )
 
     def seg_count(doc) -> object:
         """★ 活动草图的线段数（三态：取不到回 None）。"""
@@ -79,15 +87,18 @@ def main() -> int:
             return None
         try:
             from scripts import sw_sketch
+
             return len(sw_sketch.get_sketch_segments(sk) or [])
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None
 
     try:
         #: ══ ① 两个零件（★ 复刻业主场景：板 + 导轨）══════════════
         paths = []
-        for name, (w, h, d) in (("plate", (200.0, 150.0, 10.0)),
-                                ("rail", (30.0, 30.0, 120.0))):
+        for name, (w, h, d) in (
+            ("plate", (200.0, 150.0, 10.0)),
+            ("rail", (30.0, 30.0, 120.0)),
+        ):
             doc = sw_connect.new_document(sw, "part")
             docs.append(doc)
             sw_part.start_sketch(doc)
@@ -113,8 +124,12 @@ def main() -> int:
         code = sw_assembly_doc.edit_part_in_context(asm, comps[0])
         tgt = sw_connect.safe_get_com_member(asm, "GetEditTarget")
         active = sw_connect.safe_get_com_member(sw, "ActiveDoc")
-        step("③ 进入在位编辑", EditPart2=code, edit_target="非空" if tgt else "空",
-             active_is_asm=(active is asm))
+        step(
+            "③ 进入在位编辑",
+            EditPart2=code,
+            edit_target="非空" if tgt else "空",
+            active_is_asm=(active is asm),
+        )
         tgt_doc = active or asm
 
         #: ══ ④ 开草图（★ 官方序第 2 步）═══════════════════════
@@ -128,17 +143,29 @@ def main() -> int:
 
         #: ══ ⑥ 变体 A：按对象选边 + 回读计数 ═══════════════════
         cand = eds[0] if eds else None
-        ret_a = bool(cand.Select4(False, sw_part._empty_callout())) if cand is not None else None
+        ret_a = (
+            bool(cand.Select4(False, sw_part._empty_callout()))
+            if cand is not None
+            else None
+        )
         step("⑥A 按对象选边（Select4）", returned=ret_a, selection=sel_count())
 
         #: ══ ⑦ 变体 A：投影 ═══════════════════════════════════
         before = seg_count(tgt_doc)
         try:
             r = sw_sketch_edit.convert_entities(tgt_doc)
-            step("⑦A convert_entities", ok=r.get("ok"), before=r.get("segments_before"),
-                 after=r.get("segments_after"), delta=r.get("new_segments"))
-        except Exception as exc:      # noqa: BLE001
-            step("⑦A convert_entities 抛", err="%s: %s" % (type(exc).__name__, str(exc)[:110]))
+            step(
+                "⑦A convert_entities",
+                ok=r.get("ok"),
+                before=r.get("segments_before"),
+                after=r.get("segments_after"),
+                delta=r.get("new_segments"),
+            )
+        except Exception as exc:  # noqa: BLE001
+            step(
+                "⑦A convert_entities 抛",
+                err="%s: %s" % (type(exc).__name__, str(exc)[:110]),
+            )
         step("⑦A 投影后", segments=seg_count(tgt_doc))
 
         #: ══ ⑧ 变体 B：按「面上的点」选面（★ 官方示例的做法）═══
@@ -149,30 +176,51 @@ def main() -> int:
         #:   取导轨**顶面**上一点（导轨在 x=60,y=40,z=10，截面 30×30 ⇒ 中心 75,55）
         ext = sw_connect.safe_get_com_member(tgt_doc, "Extension")
         ret_b = None
-        for (px, py, pz) in ((0.075, 0.055, 0.13), (0.075, 0.055, 0.01),
-                             (0.06, 0.04, 0.13), (0.09, 0.07, 0.13)):
+        for px, py, pz in (
+            (0.075, 0.055, 0.13),
+            (0.075, 0.055, 0.01),
+            (0.06, 0.04, 0.13),
+            (0.09, 0.07, 0.13),
+        ):
             try:
-                ret_b = bool(ext.SelectByID2("", "FACE", px, py, pz, False, 0,
-                                             sw_part._empty_callout(), 0))
-            except Exception:      # noqa: BLE001
+                ret_b = bool(
+                    ext.SelectByID2(
+                        "", "FACE", px, py, pz, False, 0, sw_part._empty_callout(), 0
+                    )
+                )
+            except Exception:  # noqa: BLE001
                 ret_b = None
             if sel_count() > 0:
-                step("⑧B 按点选面（命中）", xyz=(px, py, pz), returned=ret_b,
-                     selection=sel_count())
+                step(
+                    "⑧B 按点选面（命中）",
+                    xyz=(px, py, pz),
+                    returned=ret_b,
+                    selection=sel_count(),
+                )
                 break
-            step("⑧B 按点选面（未命中）", xyz=(px, py, pz), returned=ret_b,
-                 selection=sel_count())
+            step(
+                "⑧B 按点选面（未命中）",
+                xyz=(px, py, pz),
+                returned=ret_b,
+                selection=sel_count(),
+            )
 
         if sel_count() > 0:
             before = seg_count(tgt_doc)
             try:
                 r = sw_sketch_edit.convert_entities(tgt_doc)
-                step("⑨B convert_entities（选面）", ok=r.get("ok"),
-                     before=r.get("segments_before"), after=r.get("segments_after"),
-                     delta=r.get("new_segments"))
-            except Exception as exc:      # noqa: BLE001
-                step("⑨B convert_entities 抛",
-                     err="%s: %s" % (type(exc).__name__, str(exc)[:110]))
+                step(
+                    "⑨B convert_entities（选面）",
+                    ok=r.get("ok"),
+                    before=r.get("segments_before"),
+                    after=r.get("segments_after"),
+                    delta=r.get("new_segments"),
+                )
+            except Exception as exc:  # noqa: BLE001
+                step(
+                    "⑨B convert_entities 抛",
+                    err="%s: %s" % (type(exc).__name__, str(exc)[:110]),
+                )
             step("⑨B 投影后", segments=seg_count(tgt_doc))
 
         sw_part.end_sketch(tgt_doc)
@@ -187,12 +235,12 @@ def main() -> int:
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in reversed(docs):
             try:
                 sw_connect.close_document(sw, d, save=False)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
 

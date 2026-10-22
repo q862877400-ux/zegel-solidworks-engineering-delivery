@@ -26,8 +26,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "resolver-mark-matrix-evidence.json"
 
@@ -40,15 +40,26 @@ def main() -> int:
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "rows": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     import register_capabilities as rc
+
     doc = None
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         P.end_sketch(doc)
         names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
         import scripts.sw_part as SP
+
         faces, edges = [], []
         for b in list(_g(doc, "GetBodies2", 0, True) or []):
             faces.extend(list(_g(b, "GetFaces") or []))
@@ -56,8 +67,10 @@ def main() -> int:
 
         def count(m):
             try:
-                return int(_g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0)
-            except Exception:                                             # noqa: BLE001
+                return int(
+                    _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0
+                )
+            except Exception:  # noqa: BLE001
                 return -1
 
         for kind, pool in (("FACE", faces), ("EDGE", edges)):
@@ -74,7 +87,7 @@ def main() -> int:
                             got = count(mark)
                             if got > picked:
                                 picked = got
-                        except Exception:                                 # noqa: BLE001
+                        except Exception:  # noqa: BLE001
                             continue
                     row["picked"] = picked
                     row["before"] = count(mark)
@@ -84,17 +97,19 @@ def main() -> int:
                     row["all_after"] = count(-1)
                     row["dropped"] = row["after_resolver"] < row["before"]
                     R["rows"].append(row)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     R["dropped_count"] = sum(1 for r in R["rows"] if r.get("dropped"))
     R["total"] = len(R["rows"])
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

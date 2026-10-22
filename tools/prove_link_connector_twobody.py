@@ -43,15 +43,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "link-connector-twobody-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "link-connector-twobody-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts.sw_feature_readback import feature_names
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_simulation import create_static_study, get_study_manager
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "trials": []}
@@ -80,18 +89,21 @@ def main() -> int:
         #: ★ 建算例
         try:
             create_static_study(sw, "LinkTwoBody")
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["study_err"] = str(exc)[:110]
         mgr = get_study_manager(sw)
         study = None
         try:
             study = get_com_member(mgr, "GetStudy", 0)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["getstudy_err"] = str(exc)[:110]
         ev["study_none"] = study is None
         if study is None:
             ev["verdict"] = "fail"
-            OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+            OUT.write_text(
+                json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+                encoding="utf-8",
+            )
             print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:900])
             return 0
         lm = get_com_member(study, "LoadsAndRestraintsManager")
@@ -99,7 +111,7 @@ def main() -> int:
         def cnt() -> int:
             try:
                 return int(get_com_member(lm, "Count") or 0)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 return -1
 
         #: ★ 收集两体的顶点
@@ -107,7 +119,7 @@ def main() -> int:
         for b in bs:
             try:
                 per_body.append(list(get_com_member(b, "GetVertices") or []))
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 per_body.append([])
         ev["verts_per_body"] = [len(v) for v in per_body]
 
@@ -121,40 +133,56 @@ def main() -> int:
 
         trials = []
         if len(per_body) >= 2 and per_body[0] and per_body[1]:
-            trials.append(("two_bodies_each_one",
-                           lambda: call(per_body[0][0], per_body[1][0])))
+            trials.append(
+                ("two_bodies_each_one", lambda: call(per_body[0][0], per_body[1][0]))
+            )
         if len(per_body) >= 1 and len(per_body[0]) >= 2:
-            trials.append(("same_body_two_verts_control",
-                           lambda: call(per_body[0][0], per_body[0][1])))
+            trials.append(
+                (
+                    "same_body_two_verts_control",
+                    lambda: call(per_body[0][0], per_body[0][1]),
+                )
+            )
         for label, fn in trials:
-            rec: dict = {"trial": label, "count_before": cnt(), "tree_before": len(list(feature_names(doc)))}
+            rec: dict = {
+                "trial": label,
+                "count_before": cnt(),
+                "tree_before": len(list(feature_names(doc))),
+            }
             try:
                 fn()
                 rec["called"] = True
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             rec["count_after"] = cnt()
             rec["tree_after"] = len(list(feature_names(doc)))
             ev["trials"].append(rec)
-        ev["any_built"] = any((t.get("count_after", 0) > t.get("count_before", 0)) for t in ev["trials"])
+        ev["any_built"] = any(
+            (t.get("count_after", 0) > t.get("count_before", 0)) for t in ev["trials"]
+        )
         ev["verdict"] = "pass" if ev["any_built"] else "fail"
-        ev["note"] = ("★ 两个体各取一个顶点（★ 而★ 带一个对照：同一体上的两个顶点）。"
-                      "★ 形态照事实 372：★ `IVertex` 对象 + `VARIANT(VT_BYREF|VT_I4)` 的 out。"
-                      "★ 判据：★ `Count` **+1** · ★ 特征树增量。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 两个体各取一个顶点（★ 而★ 带一个对照：同一体上的两个顶点）。"
+            "★ 形态照事实 372：★ `IVertex` 对象 + `VARIANT(VT_BYREF|VT_I4)` 的 out。"
+            "★ 判据：★ `Count` **+1** · ★ 特征树增量。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

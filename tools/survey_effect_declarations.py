@@ -1,4 +1,5 @@
 """★ 只读普查：为 448 个工具机械初判「效应声明」（改哪些状态类别），产出报告而不改声明。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具/一次性施工脚本）
 # 文件:   tools/survey_effect_declarations.py
@@ -14,7 +15,7 @@
 # 靠名字」⇒
 #     本脚本**只用动词**，并在报告里如实写明「类型库那一路未参与初判」（★ 不冒充用过）✓
 #   ★★ 裁决规则（保守方向）：**任一来源说「写」 ⇒ 不许标只读** ✓
-# 官方依据: 状态七分类由评审给出：文档内容 · 文件系统 · 选区 · 激活文档 · 编辑态 · 视图 
+# 官方依据: 状态七分类由评审给出：文档内容 · 文件系统 · 选区 · 激活文档 · 编辑态 · 视图
 #           · 重建或解析
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -46,10 +47,18 @@ def _com_members_in(node: ast.AST) -> list[str]:
         if not isinstance(n, ast.Call):
             continue
         f = n.func
-        name = f.attr if isinstance(f, ast.Attribute) else (f.id if isinstance(f, ast.Name) else "")
+        name = (
+            f.attr
+            if isinstance(f, ast.Attribute)
+            else (f.id if isinstance(f, ast.Name) else "")
+        )
         if name not in ("get_com_member", "safe_get_com_member", "call_com_member"):
             continue
-        if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant) and isinstance(n.args[1].value, str):
+        if (
+            len(n.args) >= 2
+            and isinstance(n.args[1], ast.Constant)
+            and isinstance(n.args[1].value, str)
+        ):
             out.append(n.args[1].value)
     return out
 
@@ -72,7 +81,7 @@ def _members_for(func, module, depth: int = 2) -> tuple[list[str], list[str]]:
     try:
         src = inspect.getsource(func)
         tree = ast.parse(inspect.cleandoc(src) if False else src)
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return [], ["源码取不到：%s" % type(exc).__name__]
     seen_funcs = {getattr(func, "__name__", "")}
     members = list(_com_members_in(tree))
@@ -89,7 +98,7 @@ def _members_for(func, module, depth: int = 2) -> tuple[list[str], list[str]]:
             try:
                 hsrc = inspect.getsource(helper)
                 htree = ast.parse(hsrc)
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             members += _com_members_in(htree)
             nxt |= _callee_names(htree)
@@ -99,6 +108,7 @@ def _members_for(func, module, depth: int = 2) -> tuple[list[str], list[str]]:
 
 def survey() -> dict:
     import register_capabilities as rc
+
     specs = rc.all_specs()
     rows = []
     unclassified: collections.Counter = collections.Counter()
@@ -112,7 +122,7 @@ def survey() -> dict:
             try:
                 mod = importlib.import_module(cand)
                 break
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if mod is None:
             rows.append({"tool": s.name, "error": "模块导入失败：%s" % s.module})
@@ -127,20 +137,25 @@ def survey() -> dict:
         destructive = verdict["destructive"]
         for v in verdict["unclassified"]:
             unclassified[v] += 1
-        rows.append({
-            "tool": s.name,
-            "module": s.module, "function": s.function,
-            "member_count": len(members),
-            "members_sample": sorted(set(members))[:8],
-            "declared_read_only": bool(getattr(s, "read_only", False)),
-            "proposed_writes": sorted(writes),
-            "writes_known": verdict["writes"] is not None,
-            #: ★★ 三态：True=确认无写 · False=确认有写 · None=未知（★ 别把它写成 False，
-            #: 会误导）✓
-            "proposed_read_only": (None if verdict["writes"] is None else (not writes)),
-            "proposed_destructive": destructive,
-            "notes": notes,
-        })
+        rows.append(
+            {
+                "tool": s.name,
+                "module": s.module,
+                "function": s.function,
+                "member_count": len(members),
+                "members_sample": sorted(set(members))[:8],
+                "declared_read_only": bool(getattr(s, "read_only", False)),
+                "proposed_writes": sorted(writes),
+                "writes_known": verdict["writes"] is not None,
+                #: ★★ 三态：True=确认无写 · False=确认有写 · None=未知（★ 别把它写成 False，
+                #: 会误导）✓
+                "proposed_read_only": (
+                    None if verdict["writes"] is None else (not writes)
+                ),
+                "proposed_destructive": destructive,
+                "notes": notes,
+            }
+        )
     ok = [r for r in rows if "error" not in r]
     with_members = [r for r in ok if r["member_count"]]
     no_members = [r for r in ok if not r["member_count"]]
@@ -148,22 +163,42 @@ def survey() -> dict:
         "_": "规格 210 · B1-1 只读普查：机械初判每个工具的 writes（★ 不改任何声明）",
         "judge": "来源=底层成员动词（★ 官方类型库的读写标记未参与，见 limitations）",
         "total": len(specs),
-        "surveyed": len(ok), "errors": len(rows) - len(ok),
-        "with_members": len(with_members), "no_members_found": len(no_members),
-        "proposed_read_only": sum(1 for r in with_members if r["proposed_read_only"] is True),
-        "proposed_unknown": sum(1 for r in with_members if r.get("proposed_read_only") is None),
-        "declared_read_only_now": sum(1 for r in with_members if r["declared_read_only"]),
+        "surveyed": len(ok),
+        "errors": len(rows) - len(ok),
+        "with_members": len(with_members),
+        "no_members_found": len(no_members),
+        "proposed_read_only": sum(
+            1 for r in with_members if r["proposed_read_only"] is True
+        ),
+        "proposed_unknown": sum(
+            1 for r in with_members if r.get("proposed_read_only") is None
+        ),
+        "declared_read_only_now": sum(
+            1 for r in with_members if r["declared_read_only"]
+        ),
         #: ★★ 真正危险的方向：**声明只读、而规则确认它写**（★ 不含"未知"）✓
-        "mismatch_declared_read_but_confirmed_write":
-            [r["tool"] for r in with_members if r["declared_read_only"] and r["proposed_read_only"] is False],
+        "mismatch_declared_read_but_confirmed_write": [
+            r["tool"]
+            for r in with_members
+            if r["declared_read_only"] and r["proposed_read_only"] is False
+        ],
         #: ★ 声明只读、规则判不出（★ 这批是 B1-7 要补的，不是安全问题）✓
-        "declared_read_but_unknown":
-            [r["tool"] for r in with_members if r["declared_read_only"] and r["proposed_read_only"] is None],
-        "mismatch_proposed_read_but_declared_write_count":
-            sum(1 for r in with_members if r["proposed_read_only"] and not r["declared_read_only"]),
-        "writes_class_histogram": dict(collections.Counter(
-            c for r in with_members for c in r["proposed_writes"])),
-        "destructive_proposed": sum(1 for r in with_members if r["proposed_destructive"]),
+        "declared_read_but_unknown": [
+            r["tool"]
+            for r in with_members
+            if r["declared_read_only"] and r["proposed_read_only"] is None
+        ],
+        "mismatch_proposed_read_but_declared_write_count": sum(
+            1
+            for r in with_members
+            if r["proposed_read_only"] and not r["declared_read_only"]
+        ),
+        "writes_class_histogram": dict(
+            collections.Counter(c for r in with_members for c in r["proposed_writes"])
+        ),
+        "destructive_proposed": sum(
+            1 for r in with_members if r["proposed_destructive"]
+        ),
         "unclassified_verbs": dict(unclassified.most_common(15)),
         "limitations": [
             "★ 只用了**底层成员动词**这一路；★ 评审提到的第二路（官方类型库读写标记）**未参与初判**",
@@ -177,21 +212,35 @@ def survey() -> dict:
 def main() -> int:
     ev = survey()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("工具总数            : %d" % ev["total"])
-    print("成功普查            : %d（模块/函数取不到 %d）" % (ev["surveyed"], ev["errors"]))
+    print(
+        "成功普查            : %d（模块/函数取不到 %d）"
+        % (ev["surveyed"], ev["errors"])
+    )
     print("含显式 COM 成员的   : %d" % ev["with_members"])
     print("★ 取不到成员名的    : %d  ← 「判不出」的就是这批" % ev["no_members_found"])
-    print("★ 初判为只读        : %d   （现在声明的只读是 %d）"
-          % (ev["proposed_read_only"], ev["declared_read_only_now"]))
-    print("★★ 声明只读、而规则**确认它写**: %d 个  ← ★ 只有这个方向是安全问题"
-          % len(ev["mismatch_declared_read_but_confirmed_write"]))
-    print("★ 声明只读、但规则**判不出**: %d 个  ← ★ 这批是 B1-7 要补的"
-          % len(ev["declared_read_but_unknown"]))
+    print(
+        "★ 初判为只读        : %d   （现在声明的只读是 %d）"
+        % (ev["proposed_read_only"], ev["declared_read_only_now"])
+    )
+    print(
+        "★★ 声明只读、而规则**确认它写**: %d 个  ← ★ 只有这个方向是安全问题"
+        % len(ev["mismatch_declared_read_but_confirmed_write"])
+    )
+    print(
+        "★ 声明只读、但规则**判不出**: %d 个  ← ★ 这批是 B1-7 要补的"
+        % len(ev["declared_read_but_unknown"])
+    )
     for t in ev["mismatch_declared_read_but_confirmed_write"][:8]:
         print("      %s" % t)
-    print("★ 初判只读但声明为写: %d 个（★ 这方向修掉就是「76 个」那件事）"
-          % ev["mismatch_proposed_read_but_declared_write_count"])
+    print(
+        "★ 初判只读但声明为写: %d 个（★ 这方向修掉就是「76 个」那件事）"
+        % ev["mismatch_proposed_read_but_declared_write_count"]
+    )
     print("writes 类别直方图   : %s" % ev["writes_class_histogram"])
     print("初判为破坏性        : %d" % ev["destructive_proposed"])
     print("未归类动词（前 15） : %s" % ev["unclassified_verbs"])

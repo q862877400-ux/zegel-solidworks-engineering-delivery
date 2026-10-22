@@ -31,12 +31,12 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts.sw_connect import get_com_member                            # noqa: E402
+from scripts.sw_connect import get_com_member  # noqa: E402
 
 #: ★ 官方枚举值（逐字取自 `InsertCosmeticThread3.md` 的 Parameters 段）
-STD_ANSI_METRIC = 1          #: `Standard`：1 = ANSI Metric
-END_TYPE_BLIND = 0           #: `EndType`：0 = Blind（此时 `Depth` 有效）
-END_TYPE_THROUGH = 2         #: `EndType`：2 = Through
+STD_ANSI_METRIC = 1  #: `Standard`：1 = ANSI Metric
+END_TYPE_BLIND = 0  #: `EndType`：0 = Blind（此时 `Depth` 有效）
+END_TYPE_THROUGH = 2  #: `EndType`：2 = Through
 
 
 def _feature_names(model):
@@ -53,8 +53,9 @@ def _feature_names(model):
     """
     try:
         from scripts import sw_feature_readback as FR
+
         return list(FR.feature_names(model) or [])
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -63,17 +64,26 @@ def find_cylindrical_face(model, *, visible_only: bool = True):
     for body in list(get_com_member(model, "GetBodies2", 0, bool(visible_only)) or []):
         for face in list(get_com_member(body, "GetFaces") or []):
             try:
-                if bool(get_com_member(get_com_member(face, "GetSurface"), "IsCylinder")):
+                if bool(
+                    get_com_member(get_com_member(face, "GetSurface"), "IsCylinder")
+                ):
                     return face
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return None
 
 
-def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_type: str = "",
-                           size: str = "", diameter_mm: float = 8.0,
-                           end_type: int = END_TYPE_THROUGH, depth_mm: float = 0.0,
-                           note: str = "") -> dict:
+def insert_cosmetic_thread(
+    model,
+    *,
+    standard: int = STD_ANSI_METRIC,
+    standard_type: str = "",
+    size: str = "",
+    diameter_mm: float = 8.0,
+    end_type: int = END_TYPE_THROUGH,
+    depth_mm: float = 0.0,
+    note: str = "",
+) -> dict:
     """★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（7 参 · 未废弃）。
 
     ★★ **官方前置（台账 `feature_cosmetic_thread.limitations` 逐字）**：选**圆柱面的一条边**
@@ -87,17 +97,27 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
         return {"ok": False, "op": "insert_cosmetic_thread", "error": "model 为 None"}
     try:
         get_com_member(model, "ClearSelection2", True)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     face = find_cylindrical_face(model)
     if face is None:
-        return {"ok": False, "op": "insert_cosmetic_thread", "preconditions_held": False,
-                "error": ("★ 前置未成立：该文档**找不到圆柱面**（`ISurface.IsCylinder()` 全 False）"
-                          "⇒ 装饰螺纹线要在一个圆柱孔/轴的边上"),
-                "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 CosmeticThread）"}
+        return {
+            "ok": False,
+            "op": "insert_cosmetic_thread",
+            "preconditions_held": False,
+            "error": (
+                "★ 前置未成立：该文档**找不到圆柱面**（`ISurface.IsCylinder()` 全 False）"
+                "⇒ 装饰螺纹线要在一个圆柱孔/轴的边上"
+            ),
+            "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 CosmeticThread）",
+        }
     edges = list(get_com_member(face, "GetEdges") or [])
-    out = {"op": "insert_cosmetic_thread", "cyl_face_found": True, "edge_count": len(edges),
-           "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 CosmeticThread）"}
+    out = {
+        "op": "insert_cosmetic_thread",
+        "cyl_face_found": True,
+        "edge_count": len(edges),
+        "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 CosmeticThread）",
+    }
     if not edges:
         out["ok"] = False
         out["preconditions_held"] = False
@@ -105,24 +125,37 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
         return out
     try:
         import scripts.sw_part as SP
+
         if not SP._select_com_object(edges[0], append=False, mark=0):
             out["ok"] = False
             out["preconditions_held"] = False
-            out["error"] = "★ 前置未成立：圆柱面的第一条边**没选上**（`_select_com_object` 回假）"
+            out["error"] = (
+                "★ 前置未成立：圆柱面的第一条边**没选上**（`_select_com_object` 回假）"
+            )
             return out
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = "★ 前置未成立：选边抛错 %s: %s" % (type(exc).__name__, str(exc)[:160])
+        out["error"] = "★ 前置未成立：选边抛错 %s: %s" % (
+            type(exc).__name__,
+            str(exc)[:160],
+        )
         return out
     out["preconditions_held"] = True
     before = _feature_names(model)
     try:
-        ret = get_com_member(get_com_member(model, "FeatureManager"), "InsertCosmeticThread3",
-                             int(standard), str(standard_type), str(size),
-                             float(diameter_mm) / 1000.0, int(end_type),
-                             float(depth_mm) / 1000.0, str(note))
-    except Exception as exc:                                            # noqa: BLE001
+        ret = get_com_member(
+            get_com_member(model, "FeatureManager"),
+            "InsertCosmeticThread3",
+            int(standard),
+            str(standard_type),
+            str(size),
+            float(diameter_mm) / 1000.0,
+            int(end_type),
+            float(depth_mm) / 1000.0,
+            str(note),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
@@ -131,7 +164,7 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
     for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
         try:
             out[k] = str(get_com_member(ret, m))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     if before is not None and after is not None:
         out["new_features"] = [n for n in after if n not in before]
@@ -139,14 +172,28 @@ def insert_cosmetic_thread(model, *, standard: int = STD_ANSI_METRIC, standard_t
     return out
 
 
-__all__ = ["insert_cosmetic_thread", "create_flatten_surface", "thicken_surface",
-           "find_cylindrical_face",
-           "STD_ANSI_METRIC", "END_TYPE_BLIND", "END_TYPE_THROUGH"]
+__all__ = [
+    "insert_cosmetic_thread",
+    "create_flatten_surface",
+    "thicken_surface",
+    "find_cylindrical_face",
+    "STD_ANSI_METRIC",
+    "END_TYPE_BLIND",
+    "END_TYPE_THROUGH",
+]
 
 
-def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction: int = 0,
-                    fill_volume: bool = False, merge: bool = True, use_feat_scope: bool = True,
-                    use_auto_select: bool = True) -> dict:
+def thicken_surface(
+    model,
+    *,
+    thickness_mm: float,
+    cut: bool = False,
+    direction: int = 0,
+    fill_volume: bool = False,
+    merge: bool = True,
+    use_feat_scope: bool = True,
+    use_auto_select: bool = True,
+) -> dict:
     """★ **加厚 / 加厚切除** —— ★★ **两个都未废弃的直入成员**（★ 这是 R4「换名重查」的产出）。
 
     ★★★ **为什么是这两个成员**（★ 都逐字读过官方页，见 `recon/r4-e-class-rename-lookup.md`）：
@@ -169,13 +216,18 @@ def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction:
     if model is None:
         return {"ok": False, "op": "thicken_surface", "error": "model 为 None"}
     kind = "FeatureCutThicken" if cut else "FeatureBossThicken"
-    out = {"op": "thicken_surface", "member": kind, "thickness_mm": float(thickness_mm),
-           "cut": bool(cut), "fill_volume": bool(fill_volume),
-           "official_precondition": "参考面必须按 **mark=1** 选中（官方 Remarks 逐字）",
-           "verified_by": "特征树新增 + 返回对象 GetTypeName2"}
+    out = {
+        "op": "thicken_surface",
+        "member": kind,
+        "thickness_mm": float(thickness_mm),
+        "cut": bool(cut),
+        "fill_volume": bool(fill_volume),
+        "official_precondition": "参考面必须按 **mark=1** 选中（官方 Remarks 逐字）",
+        "verified_by": "特征树新增 + 返回对象 GetTypeName2",
+    }
     try:
         get_com_member(model, "ClearSelection2", True)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     #: ★ 找一张**参考面**：先试**曲面体**（加厚曲面的常见情形），再退到实体体的面
     face = None
@@ -190,37 +242,60 @@ def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction:
     if face is None:
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = ("★ 前置未成立：**找不到可作参考的面**（曲面体与实体体都取不到面）"
-                        "⇒ 官方 Remarks 要求先有一张**参考面**并给 `mark=1`")
+        out["error"] = (
+            "★ 前置未成立：**找不到可作参考的面**（曲面体与实体体都取不到面）"
+            "⇒ 官方 Remarks 要求先有一张**参考面**并给 `mark=1`"
+        )
         return out
     try:
         import scripts.sw_part as SP
+
         if not SP._select_com_object(face, append=False, mark=1):
             out["ok"] = False
             out["preconditions_held"] = False
             out["error"] = "★ 前置未成立：参考面**没按 `mark=1` 选上**"
             return out
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (type(exc).__name__, str(exc)[:150])
+        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (
+            type(exc).__name__,
+            str(exc)[:150],
+        )
         return out
     out["preconditions_held"] = True
     fm = get_com_member(model, "FeatureManager")
     before = _feature_names(model)
-    thick_m = float(thickness_mm) / 1000.0                              #: ★ 规则 2：换算只此一次
+    thick_m = float(thickness_mm) / 1000.0  #: ★ 规则 2：换算只此一次
     try:
         if cut:
             #: ★ `FeatureCutThicken(Thickness, Direction, FaceIndex, FillVolume, UseFeat
             #: Scope, UseAutoSelect)`
-            ret = get_com_member(fm, kind, thick_m, int(direction), 0, bool(fill_volume),
-                                 bool(use_feat_scope), bool(use_auto_select))
+            ret = get_com_member(
+                fm,
+                kind,
+                thick_m,
+                int(direction),
+                0,
+                bool(fill_volume),
+                bool(use_feat_scope),
+                bool(use_auto_select),
+            )
         else:
             #: ★ `FeatureBossThicken(Thickness, Direction, FaceIndex, FillVolume, Merge,
             #:   UseFeatScope, UseAutoSelect)`
-            ret = get_com_member(fm, kind, thick_m, int(direction), 0, bool(fill_volume),
-                                 bool(merge), bool(use_feat_scope), bool(use_auto_select))
-    except Exception as exc:                                            # noqa: BLE001
+            ret = get_com_member(
+                fm,
+                kind,
+                thick_m,
+                int(direction),
+                0,
+                bool(fill_volume),
+                bool(merge),
+                bool(use_feat_scope),
+                bool(use_auto_select),
+            )
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
@@ -229,7 +304,7 @@ def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction:
     for k, memo in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
         try:
             out[k] = str(get_com_member(ret, memo))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     if before is not None and after is not None:
         out["new_features"] = [n for n in after if n not in before]
@@ -243,8 +318,13 @@ _BODY_TYPE_SURFACE = 1
 _BODY_TYPE_SOLID = 0
 
 
-def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears: bool = False,
-                           body_type: str = "surface") -> dict:
+def create_flatten_surface(
+    model,
+    *,
+    accuracy_factor: int = 4,
+    should_use_tears: bool = False,
+    body_type: str = "surface",
+) -> dict:
     """★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。
 
     ★★ **官方前置（台账 `surface_flatten.limitations` 逐字）**：必须选中 **面（mark = 1）** 与
@@ -259,26 +339,39 @@ def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears:
     """
     if model is None:
         return {"ok": False, "op": "create_flatten_surface", "error": "model 为 None"}
-    btype = _BODY_TYPE_SURFACE if str(body_type).lower().startswith("surf") else _BODY_TYPE_SOLID
+    btype = (
+        _BODY_TYPE_SURFACE
+        if str(body_type).lower().startswith("surf")
+        else _BODY_TYPE_SOLID
+    )
     try:
         get_com_member(model, "ClearSelection2", True)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     try:
         bodies = list(get_com_member(model, "GetBodies2", btype, True) or [])
-    except Exception as exc:                                            # noqa: BLE001
-        return {"ok": False, "op": "create_flatten_surface",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
-    out = {"op": "create_flatten_surface", "body_type": "surface" if btype else "solid",
-           "body_count": len(bodies), "accuracy_factor": int(accuracy_factor),
-           "should_use_tears": bool(should_use_tears),
-           "official_marks": "面=1 · 锚点=16 · 引导边=2 · 映射边=4 · 撕裂边=8（官方 Remarks 逐字）",
-           "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 FlattenSurface）"}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "op": "create_flatten_surface",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+        }
+    out = {
+        "op": "create_flatten_surface",
+        "body_type": "surface" if btype else "solid",
+        "body_count": len(bodies),
+        "accuracy_factor": int(accuracy_factor),
+        "should_use_tears": bool(should_use_tears),
+        "official_marks": "面=1 · 锚点=16 · 引导边=2 · 映射边=4 · 撕裂边=8（官方 Remarks 逐字）",
+        "verified_by": "特征树新增 + 返回对象 GetTypeName2（★ 真机建成时为 FlattenSurface）",
+    }
     if not bodies:
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = ("★ 前置未成立：`GetBodies2(%d, True)` 回空 ⇒ ★ 该文档**没有%s体**"
-                        % (btype, "曲面" if btype else "实体"))
+        out["error"] = (
+            "★ 前置未成立：`GetBodies2(%d, True)` 回空 ⇒ ★ 该文档**没有%s体**"
+            % (btype, "曲面" if btype else "实体")
+        )
         return out
     body = bodies[0]
     faces = list(get_com_member(body, "GetFaces") or [])
@@ -289,15 +382,19 @@ def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears:
         return out
     try:
         import scripts.sw_part as SP
+
         if not SP._select_com_object(faces[0], append=False, mark=1):
             out["ok"] = False
             out["preconditions_held"] = False
             out["error"] = "★ 前置未成立：面**没按 mark=1 选上**"
             return out
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (type(exc).__name__, str(exc)[:150])
+        out["error"] = "★ 前置未成立：选面抛错 %s: %s" % (
+            type(exc).__name__,
+            str(exc)[:150],
+        )
         return out
     got_anchor = False
     for edge in list(get_com_member(body, "GetEdges") or [])[:1]:
@@ -307,7 +404,7 @@ def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears:
                 if v is not None and SP._select_com_object(v, append=True, mark=16):
                     got_anchor = True
                     break
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if got_anchor:
             break
@@ -315,15 +412,21 @@ def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears:
     if not got_anchor:
         out["ok"] = False
         out["preconditions_held"] = False
-        out["error"] = ("★ 前置未成立：**锚点（mark=16）没选上** —— ★ 而台账逐字记着"
-                        "「面-only（mark=1）**不够**」⇒ ★ 这正是那一格失败的原因")
+        out["error"] = (
+            "★ 前置未成立：**锚点（mark=16）没选上** —— ★ 而台账逐字记着"
+            "「面-only（mark=1）**不够**」⇒ ★ 这正是那一格失败的原因"
+        )
         return out
     out["preconditions_held"] = True
     before = _feature_names(model)
     try:
-        ret = get_com_member(get_com_member(model, "FeatureManager"), "InsertFlattenSurface2",
-                             int(accuracy_factor), bool(should_use_tears))
-    except Exception as exc:                                            # noqa: BLE001
+        ret = get_com_member(
+            get_com_member(model, "FeatureManager"),
+            "InsertFlattenSurface2",
+            int(accuracy_factor),
+            bool(should_use_tears),
+        )
+    except Exception as exc:  # noqa: BLE001
         out["ok"] = False
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         return out
@@ -332,7 +435,7 @@ def create_flatten_surface(model, *, accuracy_factor: int = 4, should_use_tears:
     for k, memo in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
         try:
             out[k] = str(get_com_member(ret, memo))
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     if before is not None and after is not None:
         out["new_features"] = [n for n in after if n not in before]

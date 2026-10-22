@@ -1,4 +1,5 @@
 """★ 状态指纹：一组廉价读数，用来判「这次调用到底有没有改东西」。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现，铁律 3 的 `scripts/`）
 # 文件:   scripts/sw_fingerprint.py
@@ -7,7 +8,7 @@
 #   ★ B3 要「每次调用前后抓指纹差分」，★ 那**先得有一个可靠的指纹** ✓
 # ★ 外部评审的原话：★「整套方案的**量具是指纹**，所以要**校准它**，与你们『**回读的量具
 # 要校准**』是同一个思路」✓
-# 判据:   ★★ **九类状态**（评审给的清单）：选区 · 编辑态 · 文档修改标志 · 特征数 · 体数 
+# 判据:   ★★ **九类状态**（评审给的清单）：选区 · 编辑态 · 文档修改标志 · 特征数 · 体数
 # · 面数 ·
 #     显示状态 · 活动配置 · 重建状态 ✓
 # ★ 每一类的读数都**标明官方成员**（★ 铁律 4：不许凭印象）；★ **拿不到 ⇒ 记 `None` + 原
@@ -30,12 +31,21 @@ from __future__ import annotations
 
 try:
     from .sw_connect import get_com_member
-except ImportError:                                                     # pragma: no cover
+except ImportError:  # pragma: no cover
     from sw_connect import get_com_member
 
 #: ★★ 九类状态（★ 评审给的清单，★ 顺序固定便于比对与显示）✓
-STATE_CLASSES = ("selection", "edit_mode", "dirty", "features", "bodies", "faces",
-                 "display", "config", "rebuild")
+STATE_CLASSES = (
+    "selection",
+    "edit_mode",
+    "dirty",
+    "features",
+    "bodies",
+    "faces",
+    "display",
+    "config",
+    "rebuild",
+)
 
 #: ★ 每类的**官方成员**（★ 铁律 4：读数要能指认出处）✓
 OFFICIAL = {
@@ -89,7 +99,7 @@ def jsonable(value):
         return value
     try:
         return str(value)
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return "<unprintable>"
 
 
@@ -105,7 +115,7 @@ def _read(member, obj, *args, default=None):
     """
     try:
         return get_com_member(obj, member, *args), ""
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return default, "%s: %s" % (type(exc).__name__, str(exc)[:80])
 
 
@@ -113,7 +123,7 @@ def _count_features(model):
     """★ 特征计数：从 `FirstFeature` 顺着 `GetNextFeature` 数（★ 到 `FEATURE_CAP` 就停并说明）✓"""
     try:
         feat = get_com_member(model, "FirstFeature")
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return None, "FirstFeature 取不到：%s" % type(exc).__name__
     n = 0
     while feat is not None:
@@ -122,7 +132,7 @@ def _count_features(model):
             return None, "★ 特征数超过上限 %d ⇒ 不敢把「数到一半」当数完" % FEATURE_CAP
         try:
             feat = get_com_member(feat, "GetNextFeature")
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None, "GetNextFeature 在遍历中抛异常"
     return n, ""
 
@@ -142,9 +152,11 @@ def doc_kind_of(model) -> str:
     """★ 读**这个文档是什么类型**（★ 取不到 ⇒ `"unknown"` —— ★ 不猜）✓"""
     try:
         import sw_connect
+
         return {1: "part", 2: "assembly", 3: "drawing"}.get(
-            int(sw_connect.get_com_member(model, "GetType")), "unknown")
-    except Exception:                                                   # noqa: BLE001
+            int(sw_connect.get_com_member(model, "GetType")), "unknown"
+        )
+    except Exception:  # noqa: BLE001
         return "unknown"
 
 
@@ -174,7 +186,7 @@ def read(model, sw=None) -> dict:
     else:
         #: ★★★ 真机踩过：★ `GetSelectedObjectCount2` **是方法、要吃 `-1` 实参**
         #:   （★ 事实 8 就是用 `-1` 表示"全部标记"）—— ★ 我**无参**调它 ⇒
-        #: ★ `get_com_member` 的"无实参 ⇒ 先无参调一次、失败则**返回成员本身**"语义生效 
+        #: ★ `get_com_member` 的"无实参 ⇒ 先无参调一次、失败则**返回成员本身**"语义生效
         #: ⇒
         #:   ★★ 读出的是 **`<bound method ...>`**（★ 再被 `jsonable` 变成字符串）✗
         #:   ⇒ ★ 于是 `selection` 那一格**从来不是数字**，★ 差分自然"没动" ✓
@@ -211,8 +223,11 @@ def read(model, sw=None) -> dict:
         #:   ⇒ ★ 处置：★ **按 0 计**，★ 但把这条不确定**写进 `notes`**（★ 不假装分得清）✓
         #:   ★ 同族教训（本仓老话）：★「**选不上**」与「**选了也没用**」是两件事 ——
         #:     ★ 这里就是「**没有**」与「**读不到**」被混成了一件 ✓
-        notes_add("bodies", "★ GetBodies2 返回 None ⇒ 按「**没有实体**」计 0；"
-                            "★ 与「读不到」在此调用形状下**无法区分**（★ 已记此注，不假装）")
+        notes_add(
+            "bodies",
+            "★ GetBodies2 返回 None ⇒ 按「**没有实体**」计 0；"
+            "★ 与「读不到」在此调用形状下**无法区分**（★ 已记此注，不假装）",
+        )
         put("bodies", 0)
         put("faces", 0)
         notes_add("faces", "★ 由 bodies=0 推出 0（同上，无法与「读不到」区分）")
@@ -227,8 +242,11 @@ def read(model, sw=None) -> dict:
                 bad += 1
             else:
                 total += int(c)
-        put("faces", total if not bad else None,
-            "" if not bad else "★ %d 个体读不到面数 ⇒ 不敢报总数" % bad)
+        put(
+            "faces",
+            total if not bad else None,
+            "" if not bad else "★ %d 个体读不到面数 ⇒ 不敢报总数" % bad,
+        )
 
     # ⑦ 显示状态（★ 官方 `IModelDocExtension.GetDisplayStateSetting`）✓
     ext, why = _read("Extension", model)
@@ -255,8 +273,12 @@ def read(model, sw=None) -> dict:
             #:     ⇒ ★ 该成员在**本后端**上**不可用** ✓
             #:   ⇒ ★ 于是 `display` 这一类**当前无法作为差分依据** ⇒
             #:     ★★ 按验收判据的第二种出口**明写出来**（★ 不是"没试"，也不是"看不见"）✓
-            put("display", None, "★★ 读数不可用（★ 本后端限定）：`GetDisplayStateSetting` 三种 Option "
-                                 "全部抛 `com_error -2147417851`（服务端故障，★ 与事实 47 同族）")
+            put(
+                "display",
+                None,
+                "★★ 读数不可用（★ 本后端限定）：`GetDisplayStateSetting` 三种 Option "
+                "全部抛 `com_error -2147417851`（服务端故障，★ 与事实 47 同族）",
+            )
         else:
             names, why3 = _read("Names", setting)
             if names is None:
@@ -287,13 +309,18 @@ def read(model, sw=None) -> dict:
     #:   ★★ 为什么非要加这条：★ 全 None 的指纹**照样能让"两次读数相等"通过** ⇒
     #:     ★ 光靠第 0 格**发现不了**它 ✗（★ 我就是在真机上这么栽的）
     usable = any(v is not None for v in readings.values())
-    return {"readings": readings, "missing": missing, "notes": notes,
-            #: ★★ 带上**文档类型** ⇒ `compare_detailed` 才能判"哪些格**不适用**" ✓
-            "doc_kind": doc_kind_of(model),
-            "official": dict(OFFICIAL),
-            "usable": usable,
-            "unusable_why": "" if usable else
-            "★★ 九类读数**全部为 None** ⇒ 指纹**失效**（★ 别把它当成「什么都没变」）"}
+    return {
+        "readings": readings,
+        "missing": missing,
+        "notes": notes,
+        #: ★★ 带上**文档类型** ⇒ `compare_detailed` 才能判"哪些格**不适用**" ✓
+        "doc_kind": doc_kind_of(model),
+        "official": dict(OFFICIAL),
+        "usable": usable,
+        "unusable_why": ""
+        if usable
+        else "★★ 九类读数**全部为 None** ⇒ 指纹**失效**（★ 别把它当成「什么都没变」）",
+    }
 
 
 def _default_rebuild_reader(model):
@@ -310,7 +337,7 @@ def _default_rebuild_reader(model):
             #:   ★★ 于是 `rebuild` 一直被记成「读不到」，★ 而**真因是我读错了键** ✓
             return (not st.get("fully_rebuilt")), ""
         return str(st), ""
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return None, "needs_rebuild_status 不可用：%s" % type(exc).__name__
 
 
@@ -349,8 +376,13 @@ def compare_detailed(before, after) -> dict:
         #:     ★ 前者是**后端**限定、★ 后者是**文档类型**限定）✓
         _dk = (before or {}).get("doc_kind") or (after or {}).get("doc_kind")
         if cls in (NOT_APPLICABLE_BY_DOC.get(_dk) or ()):
-            not_applicable.append({"class": cls, "doc_kind": _dk,
-                                   "why": "★ 本文档类型（`%s`）上这一类**不适用**" % _dk})
+            not_applicable.append(
+                {
+                    "class": cls,
+                    "doc_kind": _dk,
+                    "why": "★ 本文档类型（`%s`）上这一类**不适用**" % _dk,
+                }
+            )
             continue
         #: ★ 双保险：★ 即便上游没归一，这里也按归一后的值比 ✓
         b, a = jsonable(rb.get(cls)), jsonable(ra.get(cls))
@@ -360,5 +392,10 @@ def compare_detailed(before, after) -> dict:
             changed.append({"class": cls, "before": b, "after": a})
         else:
             same.append(cls)
-    return {"changed": changed, "unknown": unknown, "same": same,
-            "unavailable": unavailable, "not_applicable": not_applicable}
+    return {
+        "changed": changed,
+        "unknown": unknown,
+        "same": same,
+        "unavailable": unavailable,
+        "not_applicable": not_applicable,
+    }

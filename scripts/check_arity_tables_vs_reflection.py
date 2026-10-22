@@ -28,7 +28,7 @@
 # ## ★★ 为什么要「显式声明约定」而不是二选一自动挑
 # 2026-10-09 第 4 轮量测：552 条声明按「原样计数」不符 **37**、按「剔除 by-ref」不符 **1
 # 5**，
-# 看着像 37 条真错 —— ★ 真相是**两种约定并存**（`ASSEMBLY_DOC_ARITY` 含 by-ref、其余 13 
+# 看着像 37 条真错 —— ★ 真相是**两种约定并存**（`ASSEMBLY_DOC_ARITY` 含 by-ref、其余 13
 # 张不含），
 # **各自约定下 552/552 全对**。⇒ ★ 若门禁自己挑约定（取残差最小），
 # **错的值会被自动「解释」掉**；约定必须由人**写死**，门禁只负责「按你写的查」。
@@ -50,7 +50,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑（与 `DSH_ENUM_GATE_ROOT` 同风格）。
-ROOT = Path(os.environ.get("DSH_ARITY_GATE_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_ARITY_GATE_ROOT") or Path(__file__).resolve().parents[1]
+)
 
 #: 表级 by-ref 约定声明（**紧邻表起始行上方**，中间只许有空行）。
 DECL = re.compile(r"^#:\s*arity-reflect:\s*byref=(?P<mode>included|excluded)\s*$")
@@ -131,11 +133,17 @@ def _table_of(node: ast.stmt) -> dict[str, int] | None:
             continue
         tbl: dict[str, int] = {}
         for k, v in zip(value.keys, value.values):
-            if (isinstance(k, ast.Constant) and isinstance(k.value, str)
-                    and isinstance(v, ast.Constant) and isinstance(v.value, int)):
+            if (
+                isinstance(k, ast.Constant)
+                and isinstance(k.value, str)
+                and isinstance(v, ast.Constant)
+                and isinstance(v.value, int)
+            ):
                 tbl[k.value] = v.value
         return {"name": nm.id, "entries": tbl}
     return None
+
+
 try:
     from .gate_decl import arity_mode_above as _decl
 except ImportError:
@@ -156,13 +164,15 @@ def find_arity_tables() -> list[dict]:
             found = _table_of(node)
             if found is None:
                 continue
-            out.append({
-                "file": path.relative_to(ROOT).as_posix(),
-                "line": node.lineno,
-                "name": found["name"],
-                "entries": found["entries"],
-                "decl": _decl(lines, node.lineno),
-            })
+            out.append(
+                {
+                    "file": path.relative_to(ROOT).as_posix(),
+                    "line": node.lineno,
+                    "name": found["name"],
+                    "entries": found["entries"],
+                    "decl": _decl(lines, node.lineno),
+                }
+            )
     return out
 
 
@@ -170,7 +180,9 @@ def checked_member_index(tree: ast.Module) -> int | None:
     """⇒ 该模块 `_checked()` 里 `member` 形参的下标（`(target, member, *args)`→1）。"""
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and node.name == "_checked":
-            pos = [x.arg for x in node.args.posonlyargs] + [x.arg for x in node.args.args]
+            pos = [x.arg for x in node.args.posonlyargs] + [
+                x.arg for x in node.args.args
+            ]
             return pos.index("member") if "member" in pos else None
     return None
 
@@ -214,8 +226,10 @@ def entries_used_at_call_sites() -> set[tuple[str, str]]:
 def main() -> int:
     dumps = find_dumps()
     if not any(p.is_file() for p in dumps):
-        print("[SKIP] 找不到出厂反射转储 `_raw/**/iface_*.txt` ⇒ 跳过"
-              "（便携性；可用 DSH_ARITY_DUMPS 覆盖路径）")
+        print(
+            "[SKIP] 找不到出厂反射转储 `_raw/**/iface_*.txt` ⇒ 跳过"
+            "（便携性；可用 DSH_ARITY_DUMPS 覆盖路径）"
+        )
         return 0
 
     per_member, dump_lines = parse_dumps(dumps)
@@ -233,50 +247,95 @@ def main() -> int:
             entries += 1
             seen = per_member.get(member)
             if not seen:
-                mismatches.append({"table": t["name"], "file": t["file"], "member": member,
-                                   "declared": declared, "mode": t["decl"], "reflection": []})
+                mismatches.append(
+                    {
+                        "table": t["name"],
+                        "file": t["file"],
+                        "member": member,
+                        "declared": declared,
+                        "mode": t["decl"],
+                        "reflection": [],
+                    }
+                )
                 continue
-            cands = {raw if t["decl"] == "included" else raw - byref for raw, byref in seen}
+            cands = {
+                raw if t["decl"] == "included" else raw - byref for raw, byref in seen
+            }
             if declared in cands:
                 if len(seen) > 1:
-                    ambiguous.append({"table": t["name"], "member": member, "declared": declared})
+                    ambiguous.append(
+                        {"table": t["name"], "member": member, "declared": declared}
+                    )
                 continue
-            mismatches.append({"table": t["name"], "file": t["file"], "member": member,
-                               "declared": declared, "mode": t["decl"],
-                               "reflection": sorted(seen)})
+            mismatches.append(
+                {
+                    "table": t["name"],
+                    "file": t["file"],
+                    "member": member,
+                    "declared": declared,
+                    "mode": t["decl"],
+                    "reflection": sorted(seen),
+                }
+            )
 
     used = entries_used_at_call_sites()
     used_n = sum(1 for t in tables for m in t["entries"] if (t["name"], m) in used)
 
     print("== `*_ARITY` 表 × 出厂反射转储 ==")
-    print("转储 %d 行 · 成员名 %d 个 · 表 %d 张 · 声明 %d 条"
-          % (dump_lines, len(per_member), len(tables), entries))
-    print("by-ref 约定：%s（未表态 %d 张）"
-          % (" / ".join("%s %d 张" % (m, mode_count[m]) for m in MODES), len(undeclared)))
-    print("调用站点覆盖（下界 · 只认 `_checked` / `call_assembly_doc`）："
-          "%d / %d 条（%.1f %%）" % (used_n, entries, 100.0 * used_n / max(entries, 1)))
+    print(
+        "转储 %d 行 · 成员名 %d 个 · 表 %d 张 · 声明 %d 条"
+        % (dump_lines, len(per_member), len(tables), entries)
+    )
+    print(
+        "by-ref 约定：%s（未表态 %d 张）"
+        % (" / ".join("%s %d 张" % (m, mode_count[m]) for m in MODES), len(undeclared))
+    )
+    print(
+        "调用站点覆盖（下界 · 只认 `_checked` / `call_assembly_doc`）："
+        "%d / %d 条（%.1f %%）" % (used_n, entries, 100.0 * used_n / max(entries, 1))
+    )
     print("同名多接口（按声明值可对上）：%d 条" % len(ambiguous))
     for t in tables:
-        print("  · %-22s %-30s %s %3d 条"
-              % (t["name"], t["file"], t["decl"] or "**未表态**", len(t["entries"])))
+        print(
+            "  · %-22s %-30s %s %3d 条"
+            % (t["name"], t["file"], t["decl"] or "**未表态**", len(t["entries"]))
+        )
     if undeclared:
-        print("[FAIL] 未表态 %d 张（每张须在其起始行正上方补一行 "
-              "`#: arity-reflect: byref=included|excluded`）：" % len(undeclared))
+        print(
+            "[FAIL] 未表态 %d 张（每张须在其起始行正上方补一行 "
+            "`#: arity-reflect: byref=included|excluded`）：" % len(undeclared)
+        )
         for t in undeclared[:DETAIL_LIMIT]:
             print("  %s:%d %s" % (t["file"], t["line"], t["name"]))
     if mismatches:
         print("[FAIL] 值不符 %d 条（按**各自声明的** by-ref 约定）：" % len(mismatches))
         for m in mismatches[:DETAIL_LIMIT]:
-            print("  %s %s.%s 声明 %s / 约定 %s / 反射 (原始, by-ref) %s"
-                  % (m["file"], m["table"], m["member"], m["declared"], m["mode"],
-                     m["reflection"]))
+            print(
+                "  %s %s.%s 声明 %s / 约定 %s / 反射 (原始, by-ref) %s"
+                % (
+                    m["file"],
+                    m["table"],
+                    m["member"],
+                    m["declared"],
+                    m["mode"],
+                    m["reflection"],
+                )
+            )
         if len(mismatches) > DETAIL_LIMIT:
             print("  …另有 %d 条" % (len(mismatches) - DETAIL_LIMIT))
     ok = not undeclared and not mismatches
     print("[PASS]" if ok else "[FAIL]")
-    print("已表态 %d · 未表态 %d · 值不符 %d · [%s] %d · exit %d"
-          % (len(tables) - len(undeclared), len(undeclared), len(mismatches),
-             "PASS" if ok else "FAIL", len(tables), 0 if ok else 1))
+    print(
+        "已表态 %d · 未表态 %d · 值不符 %d · [%s] %d · exit %d"
+        % (
+            len(tables) - len(undeclared),
+            len(undeclared),
+            len(mismatches),
+            "PASS" if ok else "FAIL",
+            len(tables),
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

@@ -31,6 +31,7 @@ r"""@brief 真机证据：**载荷族 4 个工具**（24h 段 2.1 / Spec Kit `14
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -49,9 +50,12 @@ STUDY = "DSH-143"
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "simulation_load_family",
-                "★": "★ 判据沿用本项目既有脚本：Count 恰好 +1（回读，不看返回对象）", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "simulation_load_family",
+        "★": "★ 判据沿用本项目既有脚本：Count 恰好 +1（回读，不看返回对象）",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -64,16 +68,21 @@ def main() -> int:
         bindings = {}
         for spec in b29.SPECS_BATCH29:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "inject": spec.inject}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] for v in bindings.values()),
-                                   "count": len(bindings), "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "inject": spec.inject,
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] for v in bindings.values()),
+            "count": len(bindings),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② 造零件 + 材料 + 研究
@@ -87,12 +96,16 @@ def main() -> int:
         #: ⚠ 先自报零件尺寸与文档单位（★ 上一批在这两处吃过亏 —— known-facts 180）
         try:
             bb = sw_part.get_bounding_box(doc)
-            ev["steps"]["part_size_mm"] = [round(float(x), 2) for x in (bb or {}).get("size", [])]
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["part_size_mm"] = [
+                round(float(x), 2) for x in (bb or {}).get("size", [])
+            ]
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["part_size_mm"] = "取不到: %s" % str(exc)[:60]
 
         sim.set_material(doc, "AISI 1020")
-        ev["steps"]["material"] = str(sw_connect.safe_get_com_member(doc, "MaterialIdName") or "")
+        ev["steps"]["material"] = str(
+            sw_connect.safe_get_com_member(doc, "MaterialIdName") or ""
+        )
         sim.create_static_study(sw, STUDY)
         study = sim.get_study_by_name(sw, STUDY)
         mgr = sim._loads_and_restraints_manager(study)
@@ -103,13 +116,20 @@ def main() -> int:
         def _apply(label: str, fn):
             """选一个面 ⇒ 施加载荷 ⇒ 记**回读报告**。"""
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-            sim.select_face_at(doc, 0.0, 0.0, 0.0)              #: 顶面
+            sim.select_face_at(doc, 0.0, 0.0, 0.0)  #: 顶面
             r = fn()
             r["label"] = label
             results.append(r)
-            print("    %-20s ok=%s  Count %s→%s  err=%s"
-                  % (label, r.get("ok"), r.get("count_before"), r.get("count_after"),
-                     (r.get("error") or "")[:60]))
+            print(
+                "    %-20s ok=%s  Count %s→%s  err=%s"
+                % (
+                    label,
+                    r.get("ok"),
+                    r.get("count_before"),
+                    r.get("count_after"),
+                    (r.get("error") or "")[:60],
+                )
+            )
             return r
 
         _apply("pressure", lambda: L.apply_pressure_report(mgr, doc))
@@ -121,26 +141,27 @@ def main() -> int:
         ev["steps"]["final_count"] = L._loads_count(mgr)
         n_ok = sum(1 for r in results if r.get("ok"))
         ev["steps"]["verdict_judgement"] = {
-            "applied_ok": n_ok, "of": len(results),
+            "applied_ok": n_ok,
+            "of": len(results),
             "final_count": ev["steps"]["final_count"],
             "★": "★ 四类各 +1 ⇒ final_count 应为 4；每条 ok 由 count_after == count_before + 1 判定",
         }
         ok = ok and n_ok == len(results) and ev["steps"]["final_count"] == len(results)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -151,7 +172,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

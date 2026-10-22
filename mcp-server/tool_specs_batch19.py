@@ -47,6 +47,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -55,17 +56,20 @@ __all__ = ["SPECS_BATCH19"]
 
 
 #: 本批三个工具**共用**的说明（它们都只作用于"当前活动文档"）
-_CURRENT_ONLY = ("★ Works on the CURRENTLY ACTIVE document only — no path needed. "
-                 "This is the difference from solidworks_inspect_drawing, which takes a "
-                 "drawing_path, opens the file itself and writes previews + a report. "
-                 "Raises if the active document is not a drawing (GetType() != 3).")
+_CURRENT_ONLY = (
+    "★ Works on the CURRENTLY ACTIVE document only — no path needed. "
+    "This is the difference from solidworks_inspect_drawing, which takes a "
+    "drawing_path, opens the file itself and writes previews + a report. "
+    "Raises if the active document is not a drawing (GetType() != 3)."
+)
 
 
 SPECS_BATCH19 = [
     ToolSpec(
         name="solidworks_drawing_list_sheets",
         title="List Drawing Sheets",
-        module="sw_drawing_query", function="sheets_summary",
+        module="sw_drawing_query",
+        function="sheets_summary",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -73,12 +77,13 @@ SPECS_BATCH19 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Sheet overview of the active drawing: how many sheets, their names, and which one is "
-            "current. " + _CURRENT_ONLY,
+        "current. " + _CURRENT_ONLY,
     ),
     ToolSpec(
         name="solidworks_drawing_get_current_sheet",
         title="Get Current Drawing Sheet",
-        module="sw_drawing_query", function="current_sheet_info",
+        module="sw_drawing_query",
+        function="current_sheet_info",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -86,13 +91,15 @@ SPECS_BATCH19 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Read the current sheet: paper size (name + code), WIDTH/HEIGHT IN MILLIMETRES, scale, "
-            "projection angle and sheet-format name. ⚠ The API returns width/height in METRES; this "
-            "tool converts once, at the boundary, and reports millimetres. " + _CURRENT_ONLY,
+        "projection angle and sheet-format name. ⚠ The API returns width/height in METRES; this "
+        "tool converts once, at the boundary, and reports millimetres. "
+        + _CURRENT_ONLY,
     ),
     ToolSpec(
         name="solidworks_drawing_list_views",
         title="List Drawing Views",
-        module="sw_drawing_query", function="list_views",
+        module="sw_drawing_query",
+        function="list_views",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
         #:  个实参 ⇒
@@ -100,7 +107,7 @@ SPECS_BATCH19 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="List the views on the CURRENT SHEET: name + type code. ⚠ The sheet itself is NOT "
-            "reported as a view — the raw API returns it as a pseudo-view (Type == 1) and that is "
-            "filtered out here. " + _CURRENT_ONLY,
+        "reported as a view — the raw API returns it as a pseudo-view (Type == 1) and that is "
+        "filtered out here. " + _CURRENT_ONLY,
     ),
 ]

@@ -1,4 +1,5 @@
 """★ 规格 211 · 单位体检：**全部工具**的"形参名后缀 × 描述声明"一致性审计（★ 只读）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（单位体检，用户 2026-10-07 指令：「先把已经做完的工具全部逐个检查」
 # ）
@@ -16,7 +17,7 @@
 #     ⇒ ★ 本审计查**一致性**（★ 名字与描述**互相印证或互相矛盾**），★ 不依赖词表 ✓
 # 判据:   ★★ **三类发现**（★ 按危险程度排序）：
 #     ★★ **A · 自相矛盾**：名字带 `_mm`，★ 而描述里说 meters / inches / 米 ✗ —— 最危险
-# ★★ **B · 声明了长度却没后缀**：描述里出现 mm/inches/meters 等长度单位，★ 而名字无后缀 
+# ★★ **B · 声明了长度却没后缀**：描述里出现 mm/inches/meters 等长度单位，★ 而名字无后缀
 # ✗
 #     ★ **C · 豁免理由不达标**：在 `_LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT` 里，
 #       ★ 但理由**没点明**「文档默认」/「不是长度」/「同一个形参两种量纲」之一 ✗
@@ -32,7 +33,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
-for _p in (str(ROOT), str(ROOT / "mcp-server"), str(ROOT / "scripts"), str(ROOT / "tools")):
+for _p in (
+    str(ROOT),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "scripts"),
+    str(ROOT / "tools"),
+):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -61,7 +67,12 @@ def main() -> int:
     specs = rc.all_specs()
     len_ex = getattr(tr, "_LEN_SUFFIX_EXEMPT", {})
     ang_ex = getattr(tr, "_ANGLE_SUFFIX_EXEMPT", {})
-    findings = {"A_conflict": [], "B_no_suffix": [], "C_exempt_reason": [], "D_bare_coord": []}
+    findings = {
+        "A_conflict": [],
+        "B_no_suffix": [],
+        "C_exempt_reason": [],
+        "D_bare_coord": [],
+    }
     n_params = 0
     for s in specs:
         for p in getattr(s, "params", ()) or ():
@@ -76,20 +87,37 @@ def main() -> int:
             # ── A · 自相矛盾：名字带 _mm 而描述说"米" ✗ ────────────────────
             if has_mm and METER_RE.search(d):
                 findings["A_conflict"].append(
-                    {"tool": s.name, "param": name, "kind": "名字 _mm / 描述说米", "desc": d[:130]})
+                    {
+                        "tool": s.name,
+                        "param": name,
+                        "kind": "名字 _mm / 描述说米",
+                        "desc": d[:130],
+                    }
+                )
             # ── B · 描述声明了长度单位却没后缀 ──────────────────────────────
             if not is_bool and not has_mm and d and LEN_UNIT_RE.search(d):
                 # ★ 豁免表里有 ⇒ 不算 B（★ 那是"有意不加"）✓
                 if (s.name, name) not in len_ex:
                     findings["B_no_suffix"].append(
-                        {"tool": s.name, "param": name, "desc": d[:130],
-                         "kind_matches": [w for w in tr._LEN_WORDS if w in low]})
+                        {
+                            "tool": s.name,
+                            "param": name,
+                            "desc": d[:130],
+                            "kind_matches": [w for w in tr._LEN_WORDS if w in low],
+                        }
+                    )
             # ★ 角度那一半
             if not is_bool and not has_deg and d and ANGLE_UNIT_RE.search(d):
                 if (s.name, name) not in ang_ex:
                     findings["B_no_suffix"].append(
-                        {"tool": s.name, "param": name, "desc": d[:130],
-                         "kind_matches": ["(角度)"] + [w for w in tr._ANGLE_WORDS if w in low]})
+                        {
+                            "tool": s.name,
+                            "param": name,
+                            "desc": d[:130],
+                            "kind_matches": ["(角度)"]
+                            + [w for w in tr._ANGLE_WORDS if w in low],
+                        }
+                    )
             # ── D · 裸坐标（★ 只登记；★ 规则 3 的门禁另有其事）────────────
             if name in getattr(tr, "_BARE_COORD_NAMES", ()):
                 findings["D_bare_coord"].append({"tool": s.name, "param": name})
@@ -99,24 +127,40 @@ def main() -> int:
             r = str(reason)
             if not any(k in r for k in EXEMPT_REASONS_OK):
                 findings["C_exempt_reason"].append(
-                    {"tool": key[0], "param": key[1], "table": label, "reason": r[:150]})
+                    {"tool": key[0], "param": key[1], "table": label, "reason": r[:150]}
+                )
 
     print("★ 体检：工具 **%d** 个 · 形参 **%d** 个" % (len(specs), n_params))
-    for k, label in (("A_conflict", "★★ A 自相矛盾（名字 _mm / 描述说米）"),
-                     ("B_no_suffix", "★★ B 描述声明长度却没后缀"),
-                     ("C_exempt_reason", "★ C 豁免理由不达标"),
-                     ("D_bare_coord", "★ D 裸坐标（只登记）")):
+    for k, label in (
+        ("A_conflict", "★★ A 自相矛盾（名字 _mm / 描述说米）"),
+        ("B_no_suffix", "★★ B 描述声明长度却没后缀"),
+        ("C_exempt_reason", "★ C 豁免理由不达标"),
+        ("D_bare_coord", "★ D 裸坐标（只登记）"),
+    ):
         v = findings[k]
         print("  %-34s **%d** 条" % (label, len(v)))
         for it in v[:12]:
-            print("      %-46s %s" % (it.get("tool") + " · " + str(it.get("param")),
-                                      (it.get("desc") or it.get("reason") or "")[:74]))
+            print(
+                "      %-46s %s"
+                % (
+                    it.get("tool") + " · " + str(it.get("param")),
+                    (it.get("desc") or it.get("reason") or "")[:74],
+                )
+            )
         if len(v) > 12:
             print("      …（共 %d 条）" % len(v))
 
     p = ROOT / "output" / "spec211-unit-audit.json"
-    p.write_text(json.dumps({"specs": len(specs), "params": n_params, "findings": findings},
-                            ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(
+            {"specs": len(specs), "params": n_params, "findings": findings},
+            ensure_ascii=False,
+            indent=1,
+            default=str,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

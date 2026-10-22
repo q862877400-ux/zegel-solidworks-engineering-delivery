@@ -52,7 +52,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 #: ★ 登记表路径可覆盖（`DSL_JUDGE_REGISTRY`）—— ★ 那是**负例自证**的前提：
 #:   ★ 测试要能拿一张“**故意坏的**”表去跑（事实 62：一个门禁“写了”不等于它“有效”，
 #:   **负例测试是唯一的证明**）。
-REGISTRY = Path(os.environ.get("DSL_JUDGE_REGISTRY") or (REPO_ROOT / "docs" / "judge-registry.json"))
+REGISTRY = Path(
+    os.environ.get("DSL_JUDGE_REGISTRY") or (REPO_ROOT / "docs" / "judge-registry.json")
+)
 WORKSPACE = Path(os.environ.get("DSL_WORKSPACE", Path(__file__).resolve().parents[1]))
 
 #: ★ 每条登记项**必须**有的字段（★ 缺一个就是"没登记清楚"）
@@ -69,7 +71,9 @@ def main(argv: list) -> int:
     judges = data.get("judges") or []
     print("  判据登记表：%d 条（%s）" % (len(judges), REGISTRY.name))
     if not WORKSPACE.is_dir():
-        print("  [SKIP] 工作区不可达（%s）⇒ 无法核对 evidence（便携性约定）" % WORKSPACE)
+        print(
+            "  [SKIP] 工作区不可达（%s）⇒ 无法核对 evidence（便携性约定）" % WORKSPACE
+        )
         return 0
 
     bad: list = []
@@ -84,23 +88,45 @@ def main(argv: list) -> int:
         #: ★ evidence **必须真的存在且 verdict=pass**（★ 否则"已知成功"是空话）
         ev_name = str(j.get("evidence") or "")
         if ev_name:
-            ev = WORKSPACE / ev_name if not Path(ev_name).is_absolute() else Path(ev_name)
+            ev = (
+                WORKSPACE / ev_name
+                if not Path(ev_name).is_absolute()
+                else Path(ev_name)
+            )
             if not ev.is_file():
                 bad.append((jid, "evidence 不存在", ev_name))
             else:
                 try:
                     v = json.loads(ev.read_text(encoding="utf-8")).get("verdict")
-                except Exception as exc:                       # noqa: BLE001
-                    bad.append((jid, "evidence 读不了", "%s: %s" % (type(exc).__name__, str(exc)[:60])))
+                except Exception as exc:  # noqa: BLE001
+                    bad.append(
+                        (
+                            jid,
+                            "evidence 读不了",
+                            "%s: %s" % (type(exc).__name__, str(exc)[:60]),
+                        )
+                    )
                 else:
                     kind = str(j.get("kind") or "judge")
                     if kind == "judge" and v != "pass":
                         #: ★ `judge` 的 evidence **必须** pass —— 那才叫“已知成功”
-                        bad.append((jid, "judge 的 evidence 不是 pass", "%s ⇒ %r" % (ev_name, v)))
+                        bad.append(
+                            (
+                                jid,
+                                "judge 的 evidence 不是 pass",
+                                "%s ⇒ %r" % (ev_name, v),
+                            )
+                        )
                     elif kind == "refuted" and v == "pass":
                         #: ★ `refuted`（被否的假设）的 evidence **不能** pass
                         #:   —— ★ 因为它证的就是“**没成**”
-                        bad.append((jid, "refuted 的 evidence 不该是 pass", "%s ⇒ %r" % (ev_name, v)))
+                        bad.append(
+                            (
+                                jid,
+                                "refuted 的 evidence 不该是 pass",
+                                "%s ⇒ %r" % (ev_name, v),
+                            )
+                        )
         #: ★ "已知成功场景"那个**脚本**也要真的在
         scen = str(j.get("known_good_scenario") or "")
         if scen and "/" in scen and not (REPO_ROOT / scen).is_file():
@@ -117,11 +143,20 @@ def main(argv: list) -> int:
         for jid, kind, item in bad[:30]:
             print("    %-38s %-22s %s" % (jid, kind, item))
         print("  ── 判据 ──")
-        print("  ★ 凡「用某个回读去判某条能力」的判据，**必须先在已知成功场景上被验过** ——")
-        print("  ★ 而「**验过**」的证据就是那条登记的 `evidence`（且它得是 `verdict: pass`）。")
-        print("  ★ 依据：上一轮**五次**事故全是「**能力好好的、而它看起来坏了**」，错的都在判据。")
+        print(
+            "  ★ 凡「用某个回读去判某条能力」的判据，**必须先在已知成功场景上被验过** ——"
+        )
+        print(
+            "  ★ 而「**验过**」的证据就是那条登记的 `evidence`（且它得是 `verdict: pass`）。"
+        )
+        print(
+            "  ★ 依据：上一轮**五次**事故全是「**能力好好的、而它看起来坏了**」，错的都在判据。"
+        )
         return 1
-    print("  [OK] 登记的 %d 条都完整：★ **judge** 各自的“已知成功场景”证据存在且 `verdict: pass`；★ **refuted**（被否的假设）的证据**如实不是** pass。" % len(judges))
+    print(
+        "  [OK] 登记的 %d 条都完整：★ **judge** 各自的“已知成功场景”证据存在且 `verdict: pass`；★ **refuted**（被否的假设）的证据**如实不是** pass。"
+        % len(judges)
+    )
     return 0
 
 

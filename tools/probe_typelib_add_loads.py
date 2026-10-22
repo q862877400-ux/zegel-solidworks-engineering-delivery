@@ -30,16 +30,32 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "typelib-add-loads-evidence.json")
-WANT = ("AddTemperature", "AddConvection", "AddHeatFlux", "AddHeatPower", "AddRadiation",
-        "AddElasticConnector", "AddForce", "AddPressure", "AddGravity")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "typelib-add-loads-evidence.json"
+)
+WANT = (
+    "AddTemperature",
+    "AddConvection",
+    "AddHeatFlux",
+    "AddHeatPower",
+    "AddRadiation",
+    "AddElasticConnector",
+    "AddForce",
+    "AddPressure",
+    "AddGravity",
+)
 
 
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"methods": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -66,27 +82,38 @@ def main() -> int:
             try:
                 fd = ti.GetFuncDesc(i)
                 names = ti.GetNames(fd.memid)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             if not names:
                 continue
             nm = names[0]
             if nm in WANT or nm.startswith("Add"):
                 #: ★ `names[0]` 是方法名，后面依次是形参名（★ 官方类型库给的）
-                ev["methods"][nm] = {"params": list(names[1:]),
-                                     "param_count": len(names) - 1}
+                ev["methods"][nm] = {
+                    "params": list(names[1:]),
+                    "param_count": len(names) - 1,
+                }
         ev["verdict"] = "pass" if ev["methods"] else "partial"
-        ev["note"] = ("★ 直读**出厂类型库**（`ITypeInfo`）—— ★ 铁律 4 说冲突时以它为准，"
-                      "★ 而它**在运行期可读** ⇒ 比 CHM（2021 版）与离线 dump 都硬。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 直读**出厂类型库**（`ITypeInfo`）—— ★ 铁律 4 说冲突时以它为准，"
+            "★ 而它**在运行期可读** ⇒ 比 CHM（2021 版）与离线 dump 都硬。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         for k in sorted(ev["methods"]):
             m = ev["methods"][k]
-            print("  %-24s %d \u53c2  %s" % (k, m["param_count"], ", ".join(m["params"])[:96]))
-        print("  \u5171 %d \u4e2a\u65b9\u6cd5 \u00b7 产物: %s" % (len(ev["methods"]), OUT))
+            print(
+                "  %-24s %d \u53c2  %s"
+                % (k, m["param_count"], ", ".join(m["params"])[:96])
+            )
+        print(
+            "  \u5171 %d \u4e2a\u65b9\u6cd5 \u00b7 产物: %s" % (len(ev["methods"]), OUT)
+        )
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

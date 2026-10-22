@@ -25,6 +25,7 @@ r"""@brief 审计：`get_com_member(x, "Name")`（**无实参**）的调用点�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -39,7 +40,11 @@ sys.path.insert(0, str(ROOT))
 sys.stdout.reconfigure(encoding="utf-8")
 
 RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "get_com_member-semantics-audit.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "get_com_member-semantics-audit.json"
+)
 #: 明显**只读**的方法名（试探性调它们无害）—— 留着好把清单缩到"要看的那几个"
 HARMLESS_PREFIX = ("Get", "Is", "Has", "IGet")
 
@@ -50,8 +55,11 @@ def reflection_members() -> dict:
     for p in RAW.rglob("iface_*.txt"):
         for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
             s = line.strip()
-            m = re.match(r"^(?:Void|Boolean|Int32|Double|String|Object|SketchSegment|"
-                         r"Feature|Face2|Body2|[\w.]+)\s+(\w+)\s*\((.*)\)$", s)
+            m = re.match(
+                r"^(?:Void|Boolean|Int32|Double|String|Object|SketchSegment|"
+                r"Feature|Face2|Body2|[\w.]+)\s+(\w+)\s*\((.*)\)$",
+                s,
+            )
             if m and "(" in s:
                 table[m.group(1)]["methods"].append(m.group(2))
                 continue
@@ -74,8 +82,11 @@ def find_call_sites():
                 if not isinstance(node, ast.Call):
                     continue
                 f = node.func
-                name = f.id if isinstance(f, ast.Name) else (
-                    f.attr if isinstance(f, ast.Attribute) else None)
+                name = (
+                    f.id
+                    if isinstance(f, ast.Name)
+                    else (f.attr if isinstance(f, ast.Attribute) else None)
+                )
                 if name not in ("get_com_member", "safe_get_com_member"):
                     continue
                 if len(node.args) < 2 or node.args[1].__class__ is not ast.Constant:
@@ -84,8 +95,14 @@ def find_call_sites():
                 if not isinstance(member, str):
                     continue
                 bare = len(node.args) == 2 and not node.keywords
-                sites.append({"file": str(p.relative_to(ROOT)), "line": node.lineno,
-                              "member": member, "no_args": bare})
+                sites.append(
+                    {
+                        "file": str(p.relative_to(ROOT)),
+                        "line": node.lineno,
+                        "member": member,
+                        "no_args": bare,
+                    }
+                )
     return sites
 
 
@@ -114,14 +131,19 @@ def main() -> int:
             as_prop.append((member, ss))
 
     print("  ── ① `Name` 在反射里**是方法** ⇒ ★ 这些调用点**会真的调一次** ──")
-    print("     共 **%d** 个不同的成员名 / **%d** 个调用点" %
-          (len(as_method), sum(len(x[1]) for x in as_method)))
+    print(
+        "     共 **%d** 个不同的成员名 / **%d** 个调用点"
+        % (len(as_method), sum(len(x[1]) for x in as_method))
+    )
     harmless = 0
     for member, ss, sigs in as_method:
         ro = member.startswith(HARMLESS_PREFIX)
         harmless += 1 if ro else 0
         flag = "（**只读**前缀 ⇒ 试探无害）" if ro else "★★ **要看**"
-        print("     %-34s %d 处 %s  例: %s" % (member, len(ss), flag, sigs[0][:40] if sigs else ""))
+        print(
+            "     %-34s %d 处 %s  例: %s"
+            % (member, len(ss), flag, sigs[0][:40] if sigs else "")
+        )
     print()
     print("  ── ② `Name` 在反射里**只有属性** ⇒ 试探调会失败但**无害** ──")
     print("     共 **%d** 个成员名" % len(as_prop))
@@ -134,12 +156,23 @@ def main() -> int:
     print("     共 **%d** 个成员名 %s" % (len(unknown), [u[0] for u in unknown[:8]]))
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({
-        "total_sites": total, "no_arg_sites": len(no_arg),
-        "as_method": [{"member": m, "sites": s, "sigs": sig} for m, s, sig in as_method],
-        "as_property": [{"member": m, "sites": s} for m, s in as_prop],
-        "unknown": [{"member": m, "sites": s} for m, s in unknown],
-    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {
+                "total_sites": total,
+                "no_arg_sites": len(no_arg),
+                "as_method": [
+                    {"member": m, "sites": s, "sigs": sig} for m, s, sig in as_method
+                ],
+                "as_property": [{"member": m, "sites": s} for m, s in as_prop],
+                "unknown": [{"member": m, "sites": s} for m, s in unknown],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print()
     print("  证据: %s" % OUT)
     return 0

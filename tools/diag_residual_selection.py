@@ -8,6 +8,7 @@
 
 ★ 本探针把「那 1 个残留到底是什么」读出来（类型 + 名字 + 所属文档）。
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -28,7 +29,12 @@ import time
 
 sys.stdout.reconfigure(encoding="utf-8")
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"), str(ROOT / "tools")]
+sys.path[:0] = [
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+]
 
 DIR = ROOT / "output" / "diag-residual-selection"
 EV: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "steps": []}
@@ -46,7 +52,7 @@ def main() -> int:
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
     try:
         sw.CommandInProgress = True
-    except Exception:      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     DIR.mkdir(parents=True, exist_ok=True)
     docs: list = []
@@ -71,7 +77,7 @@ def main() -> int:
                     v = getattr(o, meth)
                     v = v() if callable(v) else v
                     item[meth] = str(v)[:70]
-                except Exception:      # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
             out.append(item)
         step("选区 @%s" % tag, count=n, items=out)
@@ -80,8 +86,10 @@ def main() -> int:
     try:
         #: 两件
         paths = []
-        for name, (w, h, dd) in (("plate", (200.0, 150.0, 10.0)),
-                                 ("rail", (30.0, 30.0, 120.0))):
+        for name, (w, h, dd) in (
+            ("plate", (200.0, 150.0, 10.0)),
+            ("rail", (30.0, 30.0, 120.0)),
+        ):
             doc = sw_connect.new_document(sw, "part")
             docs.append(doc)
             sw_part.start_sketch(doc)
@@ -112,7 +120,7 @@ def main() -> int:
         #: ★ 手动清一次，再看
         try:
             tgt.ClearSelection2(True)
-        except Exception as e:      # noqa: BLE001
+        except Exception as e:  # noqa: BLE001
             step("ClearSelection2 异常", err=str(e)[:80])
         dump_sel("★ 手动 ClearSelection2 之后")
 
@@ -120,7 +128,11 @@ def main() -> int:
         b2 = sw_connect.safe_get_com_member(c1, "GetBody")
         eds = list(sw_connect.safe_get_com_member(b2, "GetEdges") or [])
         cand = eds[0] if eds else None
-        ret = bool(cand.Select4(False, sw_part._empty_callout())) if cand is not None else None
+        ret = (
+            bool(cand.Select4(False, sw_part._empty_callout()))
+            if cand is not None
+            else None
+        )
         step("④ 选导轨第一条边", returned=ret)
         dump_sel("★ 选边之后")
 
@@ -132,7 +144,7 @@ def main() -> int:
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         #: ★★ 收尾必须**真的关掉自己建的文档** ——
         #: ⚠ `GetTitle` / `GetPathName` 是**方法**（不是属性）⇒
@@ -147,7 +159,7 @@ def main() -> int:
                     t = t()
                 if t:
                     sw.CloseDoc(str(t))
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
 

@@ -67,22 +67,28 @@ def scan() -> list[tuple]:
             mod = importlib.import_module(s.module)
             fn = getattr(mod, s.function)
             sig = inspect.signature(fn)
-        except Exception:                                      # noqa: BLE001
-            continue                                           # ★ 导入不了的交给别的门禁
-        req = [nm for nm, p in sig.parameters.items()
-               if p.default is inspect.Parameter.empty
-               and p.kind in (inspect.Parameter.POSITIONAL_ONLY,
-                              inspect.Parameter.POSITIONAL_OR_KEYWORD)
-               and nm != "self"]
+        except Exception:  # noqa: BLE001
+            continue  # ★ 导入不了的交给别的门禁
+        req = [
+            nm
+            for nm, p in sig.parameters.items()
+            if p.default is inspect.Parameter.empty
+            and p.kind
+            in (
+                inspect.Parameter.POSITIONAL_ONLY,
+                inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            )
+            and nm != "self"
+        ]
         if not req:
             continue
         first = req[0]
         owner = next((k for k, names in INJECTED.items() if first in names), None)
         if owner is None:
-            continue                                           # ★ 不是注入对象 ⇒ 不归本门禁管
+            continue  # ★ 不是注入对象 ⇒ 不归本门禁管
         inj = (getattr(s, "inject", "") or "").strip()
         if inj or getattr(s, "derived_args", None):
-            continue                                           # ★ 有注入或有派生 ⇒ 已覆盖
+            continue  # ★ 有注入或有派生 ⇒ 已覆盖
         out.append((s.name, s.module, s.function, first))
     return out
 
@@ -98,7 +104,9 @@ def main() -> int:
         for n, m, f, first in bad:
             print("    · %s → %s.%s 需要 %r 而 inject 未声明" % (n, m, f, first))
         print()
-        print("  修法：给那条 ToolSpec 补 `inject=\"model\"`（或 `sw_app` / `manager` / `study`），")
+        print(
+            '  修法：给那条 ToolSpec 补 `inject="model"`（或 `sw_app` / `manager` / `study`），'
+        )
         print("        或改用 derived_args。★ 补完按 ToolSpec 契约真机调一次再提交。")
         return 1
     print("  [PASS] 0 条 —— 每个声明了工具的都覆盖了包装的必需对象形参")

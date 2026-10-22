@@ -28,6 +28,7 @@ r"""@brief 探针：找「**定义了却没人用**」的门禁常量（**死守
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -42,7 +43,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 #: 名字像门禁的常量（**有界词表**，刻意保守）
 GUARDISH = re.compile(
     r"(_RE|_REGEX|_PATTERN|_SUFFIX|_PREFIX|_NAMES|_MARK|_MARKS|_ALLOWED|_BANNED|"
-    r"_FORBIDDEN|_WHITELIST|_BLACKLIST|_REDLINE|_WORDS|_MAX|_MIN)$")
+    r"_FORBIDDEN|_WHITELIST|_BLACKLIST|_REDLINE|_WORDS|_MAX|_MIN)$"
+)
 
 
 def module_constants(path: Path):
@@ -74,8 +76,11 @@ def main() -> int:
                 checked += 1
                 #: 数**非注释**里出现的次数（形如 `NAME` 的独立词）
                 word = re.compile(r"\b%s\b" % re.escape(name))
-                hits = [i + 1 for i, l in enumerate(lines)
-                        if word.search(l) and not l.strip().startswith("#")]
+                hits = [
+                    i + 1
+                    for i, l in enumerate(lines)
+                    if word.search(l) and not l.strip().startswith("#")
+                ]
                 if len(hits) <= 1:
                     suspects.append((base, p.name, name, lineno, hits))
 

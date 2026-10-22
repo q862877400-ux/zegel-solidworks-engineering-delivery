@@ -49,6 +49,7 @@ r"""@brief 签名审计表新鲜度门禁：`signature-audit.md` 的**逐模块�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -70,7 +71,8 @@ RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
 #: 表行形态： ``| `sw_mold.py` | 17 | **17** | 0 | 0 |``
 TABLE_ROW = re.compile(
-    r"^\|\s*`([\w./]+\.py)`\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|")
+    r"^\|\s*`([\w./]+\.py)`\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|"
+)
 
 
 def parse_table(doc: Path = DOC) -> dict:
@@ -118,9 +120,14 @@ def resolve_module(name: str, repo: Path = REPO) -> Path | None:
     # ⚠ 排除**桌面内嵌快照**（`apps/*/resources/skill/**`，构建产物、gitignore）
     # —— 否则 `drawing_workflow.py` 会有 2 个命中（源 + 快照）⇒ 解析器判「不唯一」而放弃
     # 。
-    hits = [p for p in repo.rglob(name)
-            if p.is_file() and "__pycache__" not in p.parts and ".git" not in p.parts
-            and "resources" not in p.parts]
+    hits = [
+        p
+        for p in repo.rglob(name)
+        if p.is_file()
+        and "__pycache__" not in p.parts
+        and ".git" not in p.parts
+        and "resources" not in p.parts
+    ]
     return hits[0] if len(hits) == 1 else None
 
 
@@ -129,9 +136,15 @@ def actual_calls(module: Path, refs: list, repo: Path = REPO) -> int | None:
     tool = repo / "scripts" / "audit_call_arity.py"
     if not (tool.is_file() and module.is_file()):
         return None
-    proc = subprocess.run([sys.executable, str(tool), str(module), *refs],
-                          check=False, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace", cwd=str(repo))
+    proc = subprocess.run(
+        [sys.executable, str(tool), str(module), *refs],
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(repo),
+    )
     m = re.search(r"^调用点:\s*(\d+)", proc.stdout or "", re.M)
     return int(m.group(1)) if m else None
 
@@ -201,7 +214,7 @@ def check_totals(doc: Path) -> tuple:
             j -= 1
         body.reverse()
         if body and all(_num(c) is None for c in body[0]):
-            body = body[1:]                       # 去掉表头
+            body = body[1:]  # 去掉表头
         if not body:
             continue
         # ⚑ **列数一致性**（2026-10-01 轮 69 加）—— 被一次**假阳性**逼出来的：
@@ -210,9 +223,11 @@ def check_totals(doc: Path) -> tuple:
         #   ⚠ 报「列错位」比报「算术不符」**更接近真因**。
         widths = {len(r) for r in body} | {len(total)}
         if len(widths) > 1:
-            bad.append("L%d 的合计行**列数与前表不一致**（合计 %d 格 vs 表体 %s 格）"
-                       "⇒ 多半是多打/漏打了一个 `|`，不是算术问题"
-                       % (i + 1, len(total), sorted(len(r) for r in body)))
+            bad.append(
+                "L%d 的合计行**列数与前表不一致**（合计 %d 格 vs 表体 %s 格）"
+                "⇒ 多半是多打/漏打了一个 `|`，不是算术问题"
+                % (i + 1, len(total), sorted(len(r) for r in body))
+            )
             continue
         for c in range(1, min(len(total), max(len(r) for r in body))):
             tval = _num(total[c])
@@ -223,9 +238,10 @@ def check_totals(doc: Path) -> tuple:
                 continue
             checked += 1
             if sum(vals) != tval:
-                bad.append("L%d 的合计行第 %d 列：表体 %s = %d，而合计写 %d"
-                           % (i + 1, c + 1, " + ".join(str(v) for v in vals),
-                              sum(vals), tval))
+                bad.append(
+                    "L%d 的合计行第 %d 列：表体 %s = %d，而合计写 %d"
+                    % (i + 1, c + 1, " + ".join(str(v) for v in vals), sum(vals), tval)
+                )
     return bad, checked
 
 
@@ -241,8 +257,10 @@ def main(argv=None) -> int:
     #:   否则首行只有个文件名，读者看不出这道门禁要逐项比多少个模块。
     #:   ⚠ 打印顺序仍**在**「文档损坏 / SKIP」那些分支之前（它们要读得到表头）。
     claimed = parse_table(Path(a.doc))
-    print("签名审计表新鲜度门禁 · %s（文档列了 **%d** 个模块，逐个实跑比对）"
-          % (Path(a.doc).name, len(claimed)))
+    print(
+        "签名审计表新鲜度门禁 · %s（文档列了 **%d** 个模块，逐个实跑比对）"
+        % (Path(a.doc).name, len(claimed))
+    )
 
     if not claimed:
         # ⚠⚠ **这里曾经无条件 `SKIP`，那是假绿**（2026-10-01 轮 83 系统排查发现）：
@@ -268,7 +286,10 @@ def main(argv=None) -> int:
         print("  （**便携性守卫**：没有反射转储的机器上不应无条件红）")
         return 0
 
-    print("  反射文件 **%d** 份（已去重）· 文档列了 **%d** 个模块" % (len(refs), len(claimed)))
+    print(
+        "  反射文件 **%d** 份（已去重）· 文档列了 **%d** 个模块"
+        % (len(refs), len(claimed))
+    )
     print()
     stale, checked, skipped = [], 0, []
     for mod, want in sorted(claimed.items()):
@@ -294,14 +315,18 @@ def main(argv=None) -> int:
         for b in tbad:
             print("    · %s" % b)
         print()
-        print("  修法：把合计行改成表体各列的和（**或**改表体 —— 但先确认哪个才是对的）")
+        print(
+            "  修法：把合计行改成表体各列的和（**或**改表体 —— 但先确认哪个才是对的）"
+        )
         return 1
     else:
         print("  [PASS] 合计行 %d 个列和逐项相符" % tchecked)
     print()
 
     if skipped:
-        print("  ⚠ %d 个模块跑不了（文件不在）：%s" % (len(skipped), ", ".join(skipped)))
+        print(
+            "  ⚠ %d 个模块跑不了（文件不在）：%s" % (len(skipped), ", ".join(skipped))
+        )
     if checked == 0:
         # ⚠⚠ **这里曾经无条件 `SKIP`，那是假绿**（2026-10-01 轮 84 查证）：
         # 能走到这里 ⇒ `refs` **必然非空**（L238 已把「拿不到反射转储」那条 SKIP 掉了）
@@ -314,12 +339,16 @@ def main(argv=None) -> int:
         #   ⇒ 实测（`tools/probe_checked_zero_skip.py`）：把 `--repo` 指向**空目录**、
         #     `--raw` 用真反射 ⇒ 复现出「反射 13 份在、6 个模块全跑不了 ⇒ SKIP ⇒ exit 0」。
         #   ⇒ 真实语义是 **FAIL**（反射在、模块却在仓库里找不到 = 解析坏了/仓库残缺）。
-        print("  [FAIL] 反射转储**在**（%d 份），但表里 **%d** 个模块**一个都解析不出来**"
-              % (len(refs), len(claimed)))
+        print(
+            "  [FAIL] 反射转储**在**（%d 份），但表里 **%d** 个模块**一个都解析不出来**"
+            % (len(refs), len(claimed))
+        )
         print("  ⚠ 这与「便携性」**不是一回事**：那些模块是**本仓库自己的 `.py`** ——")
         print("     映射由 `scripts/<name>` 与 `subskills/**/<name>` 的解析顺序给出，")
         print("     全区找不到只可能是**解析坏了**或**仓库残缺**。")
-        print("     修法：确认 `scripts/` 与 `subskills/` 完整；或核 `resolve_module` 的解析顺序。")
+        print(
+            "     修法：确认 `scripts/` 与 `subskills/` 完整；或核 `resolve_module` 的解析顺序。"
+        )
         if skipped:
             print("     本次解析失败的模块：%s" % ", ".join(skipped))
         return 1
@@ -332,7 +361,9 @@ def main(argv=None) -> int:
         for mod, _was, now in stale:
             print("    | `%s` | %d | **%d** | 0 | 0 |" % (mod, now, now))
         print()
-        print("  ⚠ 口径：调用点数**会随代码增长**（新增 COM 调用即变）⇒ 这是**应该**的；")
+        print(
+            "  ⚠ 口径：调用点数**会随代码增长**（新增 COM 调用即变）⇒ 这是**应该**的；"
+        )
         print("    门禁要的是「**文档跟得上代码**」，不是「数字永远不变」。")
         return 1
     print("  [PASS] %d 个模块逐项相符" % checked)

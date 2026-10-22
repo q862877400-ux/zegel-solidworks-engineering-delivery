@@ -35,9 +35,12 @@ from pathlib import Path
 
 #: ★ 出厂 interop 程序集（★ 可用 `DSL_INTEROP` 覆盖）
 _CACHE: dict | None = None
-INTEROP = Path(os.environ.get(
-    "DSL_INTEROP",
-    r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll"))
+INTEROP = Path(
+    os.environ.get(
+        "DSL_INTEROP",
+        r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll",
+    )
+)
 
 
 PS_SCRIPT = r"""
@@ -64,11 +67,18 @@ def interface_iids(path=None, *, refresh=False):
     if not dll.is_file():
         raise FileNotFoundError("出厂程序集不在：%s" % dll)
     import subprocess
+
     env = dict(os.environ)
     env["DSL_INTEROP"] = str(dll)
-    r = subprocess.run(["powershell", "-NoProfile", "-Command", PS_SCRIPT],
-                       capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", env=env, timeout=300)
+    r = subprocess.run(
+        ["powershell", "-NoProfile", "-Command", PS_SCRIPT],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        timeout=300,
+    )
     out = {}
     for line in (r.stdout or "").splitlines():
         if "|" in line:
@@ -100,6 +110,7 @@ def qi(obj, name: str, path: Path | None = None):
     #: '`。
     #: ★★ **正解是 `pywintypes.IID`**（★ pywin32 里 IID 工厂在 pywintypes 上）。
     import pywintypes
+
     ole = getattr(obj, "_oleobj_", None)
     if ole is None:
         raise TypeError("这个对象没有 `_oleobj_` ⇒ 不是 pywin32 的 COM 包装")
@@ -113,7 +124,7 @@ def main(argv: list) -> int:
         return 0
     try:
         m = interface_iids()
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  [SKIP] 读不了程序集（★ 需要 pythonnet/clr）：%s" % str(exc)[:90])
         return 0
     if args:
@@ -122,8 +133,13 @@ def main(argv: list) -> int:
         return 0
     print("  出厂程序集：%s" % INTEROP.name)
     print("  带 Guid 的公开接口 **%d** 个" % len(m))
-    for n in ("IPrimaryMemberPathSegmentFeatureData", "IStructureSystemMemberFeatureData",
-              "IStructureSystemMemberProfile", "IFeatureManager", "IModelDocExtension"):
+    for n in (
+        "IPrimaryMemberPathSegmentFeatureData",
+        "IStructureSystemMemberFeatureData",
+        "IStructureSystemMemberProfile",
+        "IFeatureManager",
+        "IModelDocExtension",
+    ):
         if n in m:
             print("    %-46s %s" % (n, m[n]))
     print("  ★ 用法：python tools/typelib_iids.py <接口名>  # 查一个")

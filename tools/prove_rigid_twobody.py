@@ -35,7 +35,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "rigid-twobody-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "rigid-twobody-evidence.json"
+)
 STUDY = "DSH-R2B_%s" % time.strftime("%H%M%S")
 
 
@@ -43,8 +45,13 @@ def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_selection_spec import entities_as_array, entities_on_body
     from scripts import sw_simulation_loads as SL
 
@@ -67,8 +74,10 @@ def main() -> int:
         extrude_boss(doc, sk2, 20.0, merge=False)
 
         bodies = safe_get_com_member(doc, "GetBodies2", 0, True)
-        ev["steps"]["two_bodies"] = {"ok": bool(bodies) and len(list(bodies)) == 2,
-                                     "body_count": len(list(bodies)) if bodies else 0}
+        ev["steps"]["two_bodies"] = {
+            "ok": bool(bodies) and len(list(bodies)) == 2,
+            "body_count": len(list(bodies)) if bodies else 0,
+        }
         sim.create_static_study(sw, STUDY)
         mgr = sim._loads_and_restraints_manager(sim.get_study_by_name(sw, STUDY))
 
@@ -78,44 +87,64 @@ def main() -> int:
             f1 = entities_as_array(doc, "FACE", [0], body_index=1)
             n0 = len(entities_on_body(doc, "FACE", body_index=0))
             n1 = len(entities_on_body(doc, "FACE", body_index=1))
-            ev["steps"]["entry_check"] = {"ok": len(f0) == 1 and len(f1) == 1 and f0[0] is not f1[0],
-                                          "faces_per_body": [n0, n1]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["entry_check"] = {"ok": False,
-                                          "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+            ev["steps"]["entry_check"] = {
+                "ok": len(f0) == 1 and len(f1) == 1 and f0[0] is not f1[0],
+                "faces_per_body": [n0, n1],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["entry_check"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+            }
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 rep = SL.apply_rigid_connector_by_objects_report(
-                    mgr, doc, [0], [0], source_body_index=0, target_body_index=1)
+                    mgr, doc, [0], [0], source_body_index=0, target_body_index=1
+                )
                 ev["steps"]["rigid_twobody"] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")]
-                    if isinstance(rep, dict) else None,
-                    "error": (rep.get("error") or "")[:120] if isinstance(rep, dict) else None}
-            except Exception as exc:                           # noqa: BLE001
+                    if isinstance(rep, dict)
+                    else None,
+                    "error": (rep.get("error") or "")[:120]
+                    if isinstance(rep, dict)
+                    else None,
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["rigid_twobody"] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
         else:
-            ev["steps"]["rigid_twobody"] = {"ok": False, "skipped": "★ 入口没验过 ⇒ 不施加"}
-        ev["verdict"] = "pass" if (ev["steps"].get("rigid_twobody") or {}).get("ok") else "partial"
-        ev["note"] = ("★ 双体零件（★ 不用保存、不用装配）上试刚性连接件 —— "
-                      "★ 验事实 338 的假设「它要**两个体**才能连」。"
-                      "★ 判据：① 体数 2 ★ 两个体上各取到一个面 ★ ② 施加后计数恰好 +1。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            ev["steps"]["rigid_twobody"] = {
+                "ok": False,
+                "skipped": "★ 入口没验过 ⇒ 不施加",
+            }
+        ev["verdict"] = (
+            "pass" if (ev["steps"].get("rigid_twobody") or {}).get("ok") else "partial"
+        )
+        ev["note"] = (
+            "★ 双体零件（★ 不用保存、不用装配）上试刚性连接件 —— "
+            "★ 验事实 338 的假设「它要**两个体**才能连」。"
+            "★ 判据：① 体数 2 ★ 两个体上各取到一个面 ★ ② 施加后计数恰好 +1。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

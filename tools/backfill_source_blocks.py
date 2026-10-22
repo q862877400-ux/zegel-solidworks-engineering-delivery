@@ -1,4 +1,5 @@
 """给早于 §十八 的 .py 补来源块（dry-run 先看，--write 才落盘）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/backfill_source_blocks.py
@@ -25,13 +26,17 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 R = pathlib.Path(__file__).resolve().parents[1]
 SKIP = ("__pycache__", "resources/skill", "archive")
-COM = re.compile(r"get_com_member|SelectByID2|Select4\(|IModelDoc|ISldWorks|ActiveDoc"
-                 r"|FeatureManager|SketchManager|Dispatch\(|EnsureDispatch")
+COM = re.compile(
+    r"get_com_member|SelectByID2|Select4\(|IModelDoc|ISldWorks|ActiveDoc"
+    r"|FeatureManager|SketchManager|Dispatch\(|EnsureDispatch"
+)
 #: ★★ 间接碰 COM：不直接写成员名，但 import 了本仓 COM 封装或 COM 库 ⇒ **不能**写成「不
 #: 调 COM」
-COM_IMPORT = re.compile(r"from\s+\.?sw_connect\b|from\s+\.?sw_preflight\s+import\s+import_com_dependencies"
-                        r"|import\s+win32com|import\s+comtypes|import\s+pythoncom|from\s+win32com"
-                        r"|from\s+comtypes")
+COM_IMPORT = re.compile(
+    r"from\s+\.?sw_connect\b|from\s+\.?sw_preflight\s+import\s+import_com_dependencies"
+    r"|import\s+win32com|import\s+comtypes|import\s+pythoncom|from\s+win32com"
+    r"|from\s+comtypes"
+)
 SHIM = re.compile(r"importlib\.util\.spec_from_file_location|兼容入口|兼容转发")
 SWAPI = re.compile(r"C:\\\\?swapi|C:/swapi|swapi[\\/]types")
 SPEC_BATCH = re.compile(r"ToolSpec\(")
@@ -40,8 +45,13 @@ MARK = "# ── 来源 ──────────────────�
 
 def first_doc(path: pathlib.Path) -> str:
     try:
-        doc = ast.get_docstring(ast.parse(path.read_text(encoding="utf-8", errors="replace"))) or ""
-    except Exception:                                                     # noqa: BLE001
+        doc = (
+            ast.get_docstring(
+                ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+            )
+            or ""
+        )
+    except Exception:  # noqa: BLE001
         return ""
     line = doc.strip().split("\n")[0].strip()
     return re.sub(r"^[@*★\s]+", "", line)[:80]
@@ -52,24 +62,16 @@ def first_doc(path: pathlib.Path) -> str:
 #: 」，
 #: 所以机械分类只能给出「待回填」；人工读一遍就能给出**如实且具体**的依据。
 MANUAL: dict[str, str] = {
-    "scripts/sw_macro_guard.py":
-        "本仓防护层（VBA 宏生成护栏）；判据来自 AGENTS.md 铁律 2 的弹窗/超时纪律，"
-        "★ 本文件未逐条标注官方页号",
-    "tools/_sweep_our_docs.py":
-        "不适用（本仓一次性清场工具：只关**我方**打开的文档，不调官方 API 做建模）",
-    "tools/probe_resolver_mark_matrix.py":
-        "★ 判的是**本仓** `register_capabilities.RESOLVERS` 的运行时行为（事实 503 一族），"
-        "★ 不涉官方签名",
-    "tools/probe_result_serializer.py":
-        "★ 判的是**本仓** `_result` 的 `json.dumps` 兼容性，★ 不涉官方签名",
-    "tools/scan_nondict_returns.py":
-        "★ 扫**本仓**工具的目标函数返回类型一致性，★ 不涉官方签名",
-    "tools/scan_obsolete_safe.py":
-        "官方源 `C:\\swapi` 的**废弃成员索引**（★ 文件内引 `known-facts` 多处）",
-    "tools/scan_obsolete_usage.py":
-        "官方源 `C:\\swapi` 的**废弃成员索引**（★ 拿官方索引去比，不靠人读）",
-    "tools/scan_preselect_requiring_tools.py":
-        "★ 扫**本仓**工具族的预选依赖（事实 503 一族），★ 不涉官方签名",
+    "scripts/sw_macro_guard.py": "本仓防护层（VBA 宏生成护栏）；判据来自 AGENTS.md 铁律 2 的弹窗/超时纪律，"
+    "★ 本文件未逐条标注官方页号",
+    "tools/_sweep_our_docs.py": "不适用（本仓一次性清场工具：只关**我方**打开的文档，不调官方 API 做建模）",
+    "tools/probe_resolver_mark_matrix.py": "★ 判的是**本仓** `register_capabilities.RESOLVERS` 的运行时行为（事实 503 一族），"
+    "★ 不涉官方签名",
+    "tools/probe_result_serializer.py": "★ 判的是**本仓** `_result` 的 `json.dumps` 兼容性，★ 不涉官方签名",
+    "tools/scan_nondict_returns.py": "★ 扫**本仓**工具的目标函数返回类型一致性，★ 不涉官方签名",
+    "tools/scan_obsolete_safe.py": "官方源 `C:\\swapi` 的**废弃成员索引**（★ 文件内引 `known-facts` 多处）",
+    "tools/scan_obsolete_usage.py": "官方源 `C:\\swapi` 的**废弃成员索引**（★ 拿官方索引去比，不靠人读）",
+    "tools/scan_preselect_requiring_tools.py": "★ 扫**本仓**工具族的预选依赖（事实 503 一族），★ 不涉官方签名",
 }
 
 
@@ -87,7 +89,10 @@ def classify(path: pathlib.Path, text: str) -> tuple[str, str]:
     if re.search(r"importlib\.util\.spec_from_file_location", code):
         return "shim", "不适用（兼容转发壳：真源见文件内 `_IMPLEMENTATION` 指向的模块）"
     if SPEC_BATCH.search(code):
-        return "spec", "= 各条 ToolSpec 所包装函数的来源（见同文件内 `module=` / `function=`）"
+        return (
+            "spec",
+            "= 各条 ToolSpec 所包装函数的来源（见同文件内 `module=` / `function=`）",
+        )
     touches_com = bool(COM.search(code) or COM_IMPORT.search(code))
     if not touches_com:
         return "pure", "不适用（本仓工具，不调 COM）"
@@ -95,9 +100,14 @@ def classify(path: pathlib.Path, text: str) -> tuple[str, str]:
         return "swapi", "官方源 `C:\\swapi\\types\\**`（★ 逐条见文件内引用）"
     if COM_IMPORT.search(code):
         #: ★ 经由本仓 COM 封装 ⇒ 依据在**被调模块**的来源块里，可追溯
-        return "deleg", ("经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；"
-                         "★ 各成员签名见被调模块的来源块，本文件为上层封装")
-    return "todo", "★ 待逐条回填（本文件早于 §十八；★ 不假装有依据 —— 见 `docs/repo-uniformity-report.md`）"
+        return "deleg", (
+            "经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；"
+            "★ 各成员签名见被调模块的来源块，本文件为上层封装"
+        )
+    return (
+        "todo",
+        "★ 待逐条回填（本文件早于 §十八；★ 不假装有依据 —— 见 `docs/repo-uniformity-report.md`）",
+    )
 
 
 def main() -> int:
@@ -114,6 +124,7 @@ def main() -> int:
             rows.append((f, classify(f, t)[0], classify(f, t)[1], first_doc(f)))
 
     import collections
+
     print("  ★ 待补 %d 个 · 分类:" % len(rows))
     for k, v in collections.Counter(r[1] for r in rows).most_common():
         print("     %-8s %d" % (k, v))
@@ -149,7 +160,11 @@ def main() -> int:
                 break
         if anchor is None:
             for i, ln in enumerate(lines):
-                if ln.strip() and not ln.lstrip().startswith("#") and not ln.lstrip().startswith('"""'):
+                if (
+                    ln.strip()
+                    and not ln.lstrip().startswith("#")
+                    and not ln.lstrip().startswith('"""')
+                ):
                     anchor = i
                     break
         if anchor is None:

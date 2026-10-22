@@ -27,12 +27,13 @@ if not REFLECT.is_file():
 # ── 来源 ──
 # 仓库:   本项目自身
 # 文件:   tools/scan_silent_source_fallbacks.py
-# 定位:   给 Spec Kit `118` 把「缺源 ⇒ 静默假值」这一类**扫出来**（事实 113–116 / 137 
+# 定位:   给 Spec Kit `118` 把「缺源 ⇒ 静默假值」这一类**扫出来**（事实 113–116 / 137
 #           的推广）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -43,16 +44,36 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.stdout.reconfigure(encoding="utf-8")
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "silent-source-fallbacks.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "silent-source-fallbacks.json"
+)
 SCAN = [ROOT / "scripts", ROOT / "tools", ROOT / "tests", ROOT / "mcp-server"]
 #: 缺源守卫的形态
-GUARD = re.compile(r"^\s*if\s+not\s+.{0,80}?(?:\.is_file\(\)|\.exists\(\)|\.is_dir\(\))\s*:")
+GUARD = re.compile(
+    r"^\s*if\s+not\s+.{0,80}?(?:\.is_file\(\)|\.exists\(\)|\.is_dir\(\))\s*:"
+)
 #: 视为「已说明理由」的词
 #: ⚠⚠ **2026-10-01（轮 198）补词表** —— 第一版没有「拿不到 / 回空」这类说法，
 #:   于是把 4 处**docstring 里已写明**的合法返回也报成了候选（候选数被高估）。
 #:   ★ 这是"判据太窄"的又一例（事实 51 / 185 / 190 / 192 / 193 / 196）。
-EXPLAINED = ("便携性", "SKIP", "合法", "空清单", "守卫", "absent", "不存在", "哨兵", "允许",
-             "拿不到", "回空", "没有", "尽力", "不确定", "无法判定", "报错")
+EXPLAINED = (
+    "便携性",
+    "SKIP",
+    "合法",
+    "空清单",
+    "守卫",
+    "absent",
+    "不存在",
+    "哨兵",
+    "允许",
+    "拿不到",
+    "回空",
+    "没有",
+    "尽力",
+    "不确定",
+    "无法判定",
+    "报错",
+)
 FALSY = (ast.List, ast.Dict, ast.Set, ast.Constant, ast.Tuple)
 
 
@@ -66,12 +87,12 @@ def _is_falsy(node) -> bool:
     if isinstance(node, ast.List):
         return not node.elts
     if isinstance(node, ast.Dict):
-        return not node.keys            #: ⚠ Dict 用 keys/values，**没有 elts**
+        return not node.keys  #: ⚠ Dict 用 keys/values，**没有 elts**
     if isinstance(node, (ast.Set, ast.Tuple)):
         return not node.elts
     if isinstance(node, ast.Constant):
         return node.value in (False, None, "", 0)
-    if isinstance(node, ast.Call):                       #: set() / list() / dict() / tuple()
+    if isinstance(node, ast.Call):  #: set() / list() / dict() / tuple()
         f = getattr(node.func, "id", None) or getattr(node.func, "attr", None)
         return f in ("set", "list", "dict", "tuple") and not node.args
     return False
@@ -112,9 +133,15 @@ def main() -> int:
                 if not GUARD.match(head):
                     continue
                 n_guard += 1
-                owner = next((f for f in ast.walk(tree)
-                              if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))
-                              and f.lineno <= n.lineno <= (f.end_lineno or f.lineno)), None)
+                owner = next(
+                    (
+                        f
+                        for f in ast.walk(tree)
+                        if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))
+                        and f.lineno <= n.lineno <= (f.end_lineno or f.lineno)
+                    ),
+                    None,
+                )
                 doc = docs.get(id(owner), "") if owner else docs.get(id(tree), "")
                 #: 直接函数体里第一个 return
                 ret = next((s for s in n.body if isinstance(s, ast.Return)), None)
@@ -126,21 +153,38 @@ def main() -> int:
                 if "#" in ret_line or any(k in ctx or k in doc for k in EXPLAINED):
                     explained += 1
                     continue
-                rows.append({"file": _rel(p), "line": n.lineno,
-                             "guard": head.strip()[:70], "ret": ret_line.strip()[:70]})
-    print("  ── 扫了 %d 个文件 · 缺源守卫 **%d** 处 ──"
-          % (sum(1 for b in SCAN if b.is_dir() for _ in b.glob("*.py")), n_guard))
+                rows.append(
+                    {
+                        "file": _rel(p),
+                        "line": n.lineno,
+                        "guard": head.strip()[:70],
+                        "ret": ret_line.strip()[:70],
+                    }
+                )
+    print(
+        "  ── 扫了 %d 个文件 · 缺源守卫 **%d** 处 ──"
+        % (sum(1 for b in SCAN if b.is_dir() for _ in b.glob("*.py")), n_guard)
+    )
     print("  ★ **已写明理由**的合法返回: **%d** 处" % explained)
     print("  ★★ **候选**（缺源 ⇒ 返回假值，且未见说明）: **%d** 处" % len(rows))
     print()
     for r in rows[:20]:
         print("    %-34s L%-5d %s" % (r["file"], r["line"], r["ret"]))
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"guards": n_guard, "explained": explained, "candidates": rows},
-                              ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(
+            {"guards": n_guard, "explained": explained, "candidates": rows},
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print()
     print("  证据: %s" % OUT)
-    print("  ⚠ **只列候选** —— 每个都要回代码看它到底该不该抛（本项目纪律：静态候选 ≠ 缺陷）。")
+    print(
+        "  ⚠ **只列候选** —— 每个都要回代码看它到底该不该抛（本项目纪律：静态候选 ≠ 缺陷）。"
+    )
     if n_guard == 0:
         print("  ✗ 守卫数为 0 ⇒ 判据没生效（事实 46 的假绿）⇒ 非 0 退出")
         return 2

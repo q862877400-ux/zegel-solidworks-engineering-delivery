@@ -42,6 +42,7 @@ r"""@brief 按**能力**对照各域缺口（补上广度地图只数 MCP 工具
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -55,22 +56,87 @@ SCRIPTS = REPO / "scripts"
 
 #: 域关键词 —— 与 build_union_map 的 16 个域对应（顺序一致，便于并排看）
 DOMAIN_KEYWORDS: list[tuple[str, tuple[str, ...]]] = [
-    ("① 会话/文档/文件", ("session", "document", "doc", "file", "open", "save", "export", "import")),
+    (
+        "① 会话/文档/文件",
+        ("session", "document", "doc", "file", "open", "save", "export", "import"),
+    ),
     ("② 参考几何", ("plane", "axis", "point", "csys", "coordinate", "reference")),
     ("③ 草图", ("sketch", "spline", "line", "circle", "arc", "constraint", "relation")),
-    ("④ 尺寸/约束/参数", ("dimension", "param", "equation", "tolerance", "gd", "mate_")),
-    ("⑤ 零件特征", ("feature", "extrude", "cut", "fillet", "chamfer", "hole", "pattern", "draft", "shell", "rib")),
+    (
+        "④ 尺寸/约束/参数",
+        ("dimension", "param", "equation", "tolerance", "gd", "mate_"),
+    ),
+    (
+        "⑤ 零件特征",
+        (
+            "feature",
+            "extrude",
+            "cut",
+            "fillet",
+            "chamfer",
+            "hole",
+            "pattern",
+            "draft",
+            "shell",
+            "rib",
+        ),
+    ),
     ("⑥ 曲面", ("surface", "loft", "sweep", "knit", "trim_surf", "patch")),
     ("⑦ 钣金", ("sheet", "bend", "flange", "hem", "jog", "unfold")),
-    ("⑧ 焊件", ("weld", "gusset", "endcap", "end_cap", "cutlist", "cut_list", "structural_member")),
+    (
+        "⑧ 焊件",
+        (
+            "weld",
+            "gusset",
+            "endcap",
+            "end_cap",
+            "cutlist",
+            "cut_list",
+            "structural_member",
+        ),
+    ),
     ("⑨ 模具", ("mold", "core", "cavity", "parting", "shut_off", "ripple")),
     ("⑩ 装配", ("assembl", "mate", "component", "explode", "interference")),
     ("⑪ 工程图", ("drawing", "view", "balloon", "bom", "section", "detail", "annotat")),
-    ("⑫ 检查/测量/反馈", ("measure", "mass_prop", "check", "review", "validate", "inspect", "diff", "provenance")),
-    ("⑬ 仿真/Motion", ("simulation", "study", "motion", "fea", "mesh", "load", "restraint", "topology", "result")),
-    ("⑭ 外观/材质/配置", ("appearance", "material", "color", "render", "config", "texture")),
-    ("⑮ 宏/自动化", ("macro", "vba", "script", "batch", "auto", "queue", "worker", "cli")),
-    ("⑯ 高级/专项", ("dfm", "costing", "routing", "pdm", "dimxpert", "topology", "ocp", "smooth")),
+    (
+        "⑫ 检查/测量/反馈",
+        (
+            "measure",
+            "mass_prop",
+            "check",
+            "review",
+            "validate",
+            "inspect",
+            "diff",
+            "provenance",
+        ),
+    ),
+    (
+        "⑬ 仿真/Motion",
+        (
+            "simulation",
+            "study",
+            "motion",
+            "fea",
+            "mesh",
+            "load",
+            "restraint",
+            "topology",
+            "result",
+        ),
+    ),
+    (
+        "⑭ 外观/材质/配置",
+        ("appearance", "material", "color", "render", "config", "texture"),
+    ),
+    (
+        "⑮ 宏/自动化",
+        ("macro", "vba", "script", "batch", "auto", "queue", "worker", "cli"),
+    ),
+    (
+        "⑯ 高级/专项",
+        ("dfm", "costing", "routing", "pdm", "dimxpert", "topology", "ocp", "smooth"),
+    ),
     ("⑰ 未归类", ()),  # 占位：不参与关键词匹配
 ]
 
@@ -143,7 +209,9 @@ def main() -> int:
     ours = ours_by_domain(funcs)
     gaps = map_gap_counts()
     mods = len({m for m, _ in funcs})
-    print("本仓库能力面：%d 个 scripts/sw_*.py 模块 / %d 个公开函数" % (mods, len(funcs)))
+    print(
+        "本仓库能力面：%d 个 scripts/sw_*.py 模块 / %d 个公开函数" % (mods, len(funcs))
+    )
     print()
     print("%-22s %8s %10s %10s" % ("域", "地图缺口", "我们函数", "我们模块"))
     print("-" * 54)
@@ -156,17 +224,24 @@ def main() -> int:
         flag = ""
         if gap and gap > 0 and n_fn >= 5:
             flag = "  ← ⚠ 地图说有缺口但我们有 %d 个函数" % n_fn
-        print("%-22s %8s %10d %10d%s" % (label, gap if gap is not None else "?", n_fn, n_md, flag))
+        print(
+            "%-22s %8s %10d %10d%s"
+            % (label, gap if gap is not None else "?", n_fn, n_md, flag)
+        )
     total_gap = sum(gaps.values()) if gaps else 0
     print()
     print("地图缺口合计（**MCP 暴露面口径，非能力口径**）: %d" % total_gap)
-    print("已分类函数: %d / 未归类: %d"
-          % (len(funcs) - len(ours["⑰ 未归类"]), len(ours["⑰ 未归类"])))
+    print(
+        "已分类函数: %d / 未归类: %d"
+        % (len(funcs) - len(ours["⑰ 未归类"]), len(ours["⑰ 未归类"]))
+    )
     print()
     print("⚠ 两个数字**不可合并**：")
     print("   「地图缺口」= 四家以 MCP 工具暴露、而本仓库没有以 MCP 工具暴露的操作数")
     print("   「我们函数」= 本仓库 scripts/ 里的实现（未暴露成 MCP 工具）")
-    print("   ⇒ 焊件行最能说明问题：地图说缺 5，而 scripts/sw_weldment.py 有 20 个函数。")
+    print(
+        "   ⇒ 焊件行最能说明问题：地图说缺 5，而 scripts/sw_weldment.py 有 20 个函数。"
+    )
     return 0
 
 

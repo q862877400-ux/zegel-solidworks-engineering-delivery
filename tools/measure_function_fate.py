@@ -20,6 +20,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -50,7 +51,7 @@ def main() -> int:
     #: ② 挂出去的
     exposed = set()
     srv = (MCP / "server.py").read_text(encoding="utf-8", errors="replace")
-    for m in re.finditer(r'@mcp\.tool\(([^)]*)\)', srv, re.S):
+    for m in re.finditer(r"@mcp\.tool\(([^)]*)\)", srv, re.S):
         for n in re.findall(r'"([a-z_][a-z0-9_]*)"', m.group(1)):
             exposed.add(n)
     for p in MCP.glob("tool_specs_batch*.py"):
@@ -75,7 +76,11 @@ def main() -> int:
             for line in lines:
                 if re.search(r"\b%s\s*\(" % re.escape(name), line):
                     #: 排除"自己文件里自己调自己"的递归
-                    if fname == home and re.search(r"\b%s\s*\([^)]*$" % re.escape(name), line) is None:
+                    if (
+                        fname == home
+                        and re.search(r"\b%s\s*\([^)]*$" % re.escape(name), line)
+                        is None
+                    ):
                         pass
                     called.add(name)
                     break
@@ -92,10 +97,23 @@ def main() -> int:
     print("    既挂了、也被别的代码调用 : %4d" % len(both))
     print("    只挂了（没人内部调）     : %4d" % len(only_tool))
     print("    只被内部调用（没挂）     : %4d" % len(only_called))
-    print("    ★ **两者都没有（写了没人用）** : %4d  ← 这就是「是不是白写」的答案" % len(orphan))
-    OUT.write_text(json.dumps({
-        "public": len(pub), "exposed": sorted(set(pub) & exposed), "called": sorted(called),
-        "orphan": sorted(orphan)}, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(
+        "    ★ **两者都没有（写了没人用）** : %4d  ← 这就是「是不是白写」的答案"
+        % len(orphan)
+    )
+    OUT.write_text(
+        json.dumps(
+            {
+                "public": len(pub),
+                "exposed": sorted(set(pub) & exposed),
+                "called": sorted(called),
+                "orphan": sorted(orphan),
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print("")
     print("  孤立函数里的前 20 个（模块 · 函数）:")
     for n in sorted(orphan)[:20]:

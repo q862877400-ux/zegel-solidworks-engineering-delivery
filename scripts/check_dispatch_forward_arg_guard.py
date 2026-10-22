@@ -87,7 +87,9 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: ★ 扫描根可被覆盖 ⇒ 负例能在**合成树**上端到端跑。
-ROOT = Path(os.environ.get("DSH_DISPATCH_FWD_ROOT") or Path(__file__).resolve().parents[1])
+ROOT = Path(
+    os.environ.get("DSH_DISPATCH_FWD_ROOT") or Path(__file__).resolve().parents[1]
+)
 #: 本门禁自己的官方源开关（未设 ⇒ 回落到 234 的 `DSH_DISPATCH_ARG_*`）。
 FWD_DUMPS = os.environ.get("DSH_DISPATCH_FWD_DUMPS", "")
 FWD_SWAPI = os.environ.get("DSH_DISPATCH_FWD_SWAPI", "")
@@ -98,9 +100,9 @@ CODES = {"dynamic", "upstream", "probe"}
 #: 明细打印上限。
 DETAIL_LIMIT = 25
 #: ★ 下界（真树实测 · 2026-10-09 · spec 235）—— 只增不减。
-BASELINE_SITES = 8          # 非字面量调用点
-BASELINE_ENUM = 4           # 其中可静态枚举
-BASELINE_VALUES = 12        # 可枚举候选值 distinct
+BASELINE_SITES = 8  # 非字面量调用点
+BASELINE_ENUM = 4  # 其中可静态枚举
+BASELINE_VALUES = 12  # 可枚举候选值 distinct
 
 
 def _baseline() -> tuple[int, int, int]:
@@ -142,13 +144,13 @@ def candidates(arg, fnode, env: dict, modenv: dict):
     """⇒ `(候选值列表, 读取路径)` 或 `(None, 原因)`（封闭形态清单见文件头）。"""
     import check_dispatch_arg_guard as cdag  # noqa: PLC0415
 
-    got = cdag.str_consts(arg)                     # 字面量 / 容器 / dict 的 values / IfExp / BinOp+
+    got = cdag.str_consts(arg)  # 字面量 / 容器 / dict 的 values / IfExp / BinOp+
     if got:
         return got, "字面量/IfExp"
     if isinstance(arg, ast.Subscript) and isinstance(arg.value, ast.Name):
         node = cdag._bind_node(arg.value.id, env, modenv)
         if node is not None:
-            got = cdag.str_consts(node)            # ★ `DICT[k]` 取**值**
+            got = cdag.str_consts(node)  # ★ `DICT[k]` 取**值**
             if got:
                 return got, "dict 字面量下标（**值**）"
     if isinstance(arg, ast.Name):
@@ -167,15 +169,23 @@ def forward_sites(entries, files):
     out = []
     for entry in entries:
         path, fn = entry[0], entry[1]
-        rel = path.relative_to(ROOT).as_posix() if path.is_relative_to(ROOT) else path.as_posix()
+        rel = (
+            path.relative_to(ROOT).as_posix()
+            if path.is_relative_to(ROOT)
+            else path.as_posix()
+        )
         for p, call in cdeg._entry_sites(entry, files, imap):
             env = cdeg._bind(fn, call)
             m = env.get(entry[3])
             if isinstance(m, ast.Constant) and isinstance(m.value, str):
-                continue                            # 字面量 ⇒ `audit_byref_args` 看得见
-            out.append((rel, p, fn, enclosing_def(files[p][1], call.lineno), m, call.lineno))
+                continue  # 字面量 ⇒ `audit_byref_args` 看得见
+            out.append(
+                (rel, p, fn, enclosing_def(files[p][1], call.lineno), m, call.lineno)
+            )
     out.sort(key=lambda r: (r[0], r[5]))
     return out
+
+
 try:
     from .gate_decl import decl_parts_above as _decl
 except ImportError:
@@ -189,16 +199,22 @@ def judge(got, decl, arg, encl, params, uncovered):
         if enumerable:
             if uncovered:
                 return "候选值查不到且未表态：%s" % ", ".join(uncovered[:8])
-            return None                              # 可枚举且全查得到 ⇒ 无需声明
+            return None  # 可枚举且全查得到 ⇒ 无需声明
         return "候选集枚举不出且**未表态**"
     head, rest = decl
     if head not in CODES:
         return "未知 code `%s`（封闭词表：%s）" % (head, " / ".join(sorted(CODES)))
     if enumerable:
         if head == "dynamic":
-            return "`dynamic` 但**静态可枚举**（%d 个候选）：能枚举却声明枚举不出" % len(got)
+            return (
+                "`dynamic` 但**静态可枚举**（%d 个候选）：能枚举却声明枚举不出"
+                % len(got)
+            )
         if head == "upstream":
-            return "`upstream` 但**静态可枚举**（%d 个候选）：能枚举却声明二级转发" % len(got)
+            return (
+                "`upstream` 但**静态可枚举**（%d 个候选）：能枚举却声明二级转发"
+                % len(got)
+            )
         if head == "probe":
             if not uncovered:
                 return "`probe` 但候选值**全部**查得到（无探测语义）"
@@ -213,11 +229,14 @@ def judge(got, decl, arg, encl, params, uncovered):
         return "`upstream` 缺 `<caller-def 名>` 与理由"
     caller = rest.split()[0]
     if not (isinstance(arg, ast.Name) and arg.id in params):
-        return ("`upstream` 但实参**不是**包围 `def` 的形参（`%s`）"
-                % (arg.id if isinstance(arg, ast.Name) else type(arg).__name__))
+        return "`upstream` 但实参**不是**包围 `def` 的形参（`%s`）" % (
+            arg.id if isinstance(arg, ast.Name) else type(arg).__name__
+        )
     if encl is None or encl.name != caller:
-        return ("`upstream %s` 与实际的包围 `def`（`%s`）不符"
-                % (caller, encl.name if encl is not None else "?"))
+        return "`upstream %s` 与实际的包围 `def`（`%s`）不符" % (
+            caller,
+            encl.name if encl is not None else "?",
+        )
     return None
 
 
@@ -237,11 +256,19 @@ def main() -> int:
         dist[_cls] = dist.get(_cls, 0) + 1
 
     print("== 分发口**调用点**的非字面量成员名实参 ==")
-    print("扫描 `%s/scripts/**/*.py` · 分发口 %d 个（%s）· 官方成员名 %d 个（%s）"
-          % (ROOT.as_posix(), len(entries),
-             " · ".join("%s %d" % (k, dist.get(k, 0))
-                        for k in ("resolved", "partial", "unresolved", "no-callers")),
-             len(official), " · ".join(notes) or "无数据源"))
+    print(
+        "扫描 `%s/scripts/**/*.py` · 分发口 %d 个（%s）· 官方成员名 %d 个（%s）"
+        % (
+            ROOT.as_posix(),
+            len(entries),
+            " · ".join(
+                "%s %d" % (k, dist.get(k, 0))
+                for k in ("resolved", "partial", "unresolved", "no-callers")
+            ),
+            len(official),
+            " · ".join(notes) or "无数据源",
+        )
+    )
 
     #: ★ 数据源全缺 ⇒ SKIP（缺数据源 ≠ 检查失败）。
     if not official and sites:
@@ -272,9 +299,14 @@ def main() -> int:
         if bad is None and decl is not None and decl[0] in CODES:
             claimed[decl[0]] = claimed.get(decl[0], 0) + 1
         if bad:
-            violations.append({"kind": "undeclared" if decl is None else "invalid-claim",
-                               "file": shown, "line": lineno,
-                               "detail": bad + ("" if got else "（读取路径：%s）" % why)})
+            violations.append(
+                {
+                    "kind": "undeclared" if decl is None else "invalid-claim",
+                    "file": shown,
+                    "line": lineno,
+                    "detail": bad + ("" if got else "（读取路径：%s）" % why),
+                }
+            )
 
     #: ★★ 口径不变量（**独立于本门禁的取点**）：带非字面量调用点的入口，
     #: `resolution()` 的分类**必须**是 `partial` / `unresolved`（`resolved` = 全字面量）
@@ -282,32 +314,71 @@ def main() -> int:
     for lineno, path in sorted(nonliteral_entries):
         cls = classes.get((path, lineno), ("?", 0))[0]
         if cls not in ("partial", "unresolved"):
-            violations.append({
-                "kind": "class-mismatch", "file": path.name, "line": lineno,
-                "detail": "该入口有非字面量调用点，但 `resolution()` 判它是 `%s`（口径漂移）" % cls})
+            violations.append(
+                {
+                    "kind": "class-mismatch",
+                    "file": path.name,
+                    "line": lineno,
+                    "detail": "该入口有非字面量调用点，但 `resolution()` 判它是 `%s`（口径漂移）"
+                    % cls,
+                }
+            )
 
     #: ★ 只增不减（下界冻结）。
     if len(sites) < min_sites:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "非字面量调用点 %d < 下界 %d（只增不减：先查取点）"
-                                     % (len(sites), min_sites)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "非字面量调用点 %d < 下界 %d（只增不减：先查取点）"
+                % (len(sites), min_sites),
+            }
+        )
     if enum_n < min_enum:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "可枚举调用点 %d < 下界 %d（只增不减：先查读取器）"
-                                     % (enum_n, min_enum)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "可枚举调用点 %d < 下界 %d（只增不减：先查读取器）"
+                % (enum_n, min_enum),
+            }
+        )
     if len(all_values) < min_values:
-        violations.append({"kind": "baseline-shrunk", "file": "-", "line": 0,
-                           "detail": "候选值 distinct %d < 下界 %d（只增不减）"
-                                     % (len(all_values), min_values)})
+        violations.append(
+            {
+                "kind": "baseline-shrunk",
+                "file": "-",
+                "line": 0,
+                "detail": "候选值 distinct %d < 下界 %d（只增不减）"
+                % (len(all_values), min_values),
+            }
+        )
     #: ★ 假绿守卫（事实 46）。
     if not sites:
-        violations.append({"kind": "zero-checked", "file": "-", "line": 0,
-                           "detail": "检查过的非字面量调用点 == 0"})
+        violations.append(
+            {
+                "kind": "zero-checked",
+                "file": "-",
+                "line": 0,
+                "detail": "检查过的非字面量调用点 == 0",
+            }
+        )
 
-    print("非字面量调用点 %d · 可枚举 %d · 候选值 distinct %d · 表态 %s"
-          % (len(sites), enum_n, len(all_values),
-             " / ".join("%s %d" % (k, claimed.get(k, 0))
-                        for k in ("upstream", "dynamic", "probe")) or "无"))
+    print(
+        "非字面量调用点 %d · 可枚举 %d · 候选值 distinct %d · 表态 %s"
+        % (
+            len(sites),
+            enum_n,
+            len(all_values),
+            " / ".join(
+                "%s %d" % (k, claimed.get(k, 0))
+                for k in ("upstream", "dynamic", "probe")
+            )
+            or "无",
+        )
+    )
     if violations:
         print("[FAIL] 违规 %d 处：" % len(violations))
         for v in violations[:DETAIL_LIMIT]:
@@ -316,9 +387,17 @@ def main() -> int:
             print("  …另有 %d 处" % (len(violations) - DETAIL_LIMIT))
     ok = not violations
     print("[PASS]" if ok else "[FAIL]")
-    print("非字面量 %d · 可枚举 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
-          % (len(sites), enum_n, len(all_values), len(violations),
-             "PASS" if ok else "FAIL", 0 if ok else 1))
+    print(
+        "非字面量 %d · 可枚举 %d · 候选值 %d · 违规 %d · [%s] · exit %d"
+        % (
+            len(sites),
+            enum_n,
+            len(all_values),
+            len(violations),
+            "PASS" if ok else "FAIL",
+            0 if ok else 1,
+        )
+    )
     return 0 if ok else 1
 
 

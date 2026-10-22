@@ -9,7 +9,7 @@
 #       · ★ 本仓 `hole_wizard` 的 `size` 参数是个**规格串**（如 `"M8"`）⇒
 #         ★★ **直径应由标准决定** ⇒ ★★★ **若读数 ≈ 8 而文档单位是毫米** ⇒ **随文档** ✓
 #       · ★ 而**若读数 ≈ 0.008** ⇒ **写死米** ✓
-# ★★★ **⚠ 前置**：★ `hole_wizard` 需要一个**轴对齐的实体 + 声明式面选择器**（★ 见工具的 
+# ★★★ **⚠ 前置**：★ `hole_wizard` 需要一个**轴对齐的实体 + 声明式面选择器**（★ 见工具的
 # doc）⇒
 #     ★ 本探针先建一块板、再在 `+z` 面上打孔 ✓
 #   覆盖:   全文件
@@ -38,8 +38,12 @@ def main() -> int:
     model = new_document(app, "part")
     with P.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                     ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+        for a, b in (
+            ((-0.05, -0.03), (0.05, -0.03)),
+            ((0.05, -0.03), (0.05, 0.03)),
+            ((0.05, 0.03), (-0.05, 0.03)),
+            ((-0.05, 0.03), (-0.05, -0.03)),
+        ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
     P.extrude_boss(model, sk, 20.0)
 
@@ -51,9 +55,11 @@ def main() -> int:
     hw = {"error": None, "returned": None}
     try:
         from sw_hole_features import create_hole_wizard_at_selection_report  # noqa: PLC0415
-        hw["returned"] = str(create_hole_wizard_at_selection_report(
-            model, "+z", "M8", diameter_mm=8))[:120]
-    except Exception as exc:                                              # noqa: BLE001
+
+        hw["returned"] = str(
+            create_hole_wizard_at_selection_report(model, "+z", "M8", diameter_mm=8)
+        )[:120]
+    except Exception as exc:  # noqa: BLE001
         hw["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
 
     r = hole_params(model)
@@ -68,11 +74,13 @@ def main() -> int:
     #:     ★★★★★ **⇒ **同一个接口里两个量的口径不同****（★ 本会话的**第五层**）✓
     verdict = "★ 判不出（★ 没读到直径）"
     detail = {}
-    for key, expect_m, expect_mm in (("ThruHoleDiameter", 0.008, 8.0),
-                                     ("HoleDiameter", 0.008, 8.0)):
+    for key, expect_m, expect_mm in (
+        ("ThruHoleDiameter", 0.008, 8.0),
+        ("HoleDiameter", 0.008, 8.0),
+    ):
         try:
             v = float(r.get(key))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if v == 0.0:
             detail[key] = "★ 0.0 ⇒ 本例不使用它（★ 判据要换一个量）"
@@ -85,20 +93,28 @@ def main() -> int:
             detail[key] = "★ 读数 %r ⇒ 两种都不是" % v
     try:
         v = float(r.get("ThruHoleDepth"))
-        detail["ThruHoleDepth"] = ("★ **毫米**（★ 读数 %r · 板厚 20mm）" % v) if abs(v - 20.0) < 0.5 \
+        detail["ThruHoleDepth"] = (
+            ("★ **毫米**（★ 读数 %r · 板厚 20mm）" % v)
+            if abs(v - 20.0) < 0.5
             else ("★ 读数 %r" % v)
-    except Exception:                                                     # noqa: BLE001
+        )
+    except Exception:  # noqa: BLE001
         pass
     verdict = "★ **同一个接口里两个量口径不同** —— " + " · ".join(
-        "%s ⇒ %s" % (k, v) for k, v in detail.items())
+        "%s ⇒ %s" % (k, v) for k, v in detail.items()
+    )
 
-    R = {"★_目的": "★ 验 `hole_params` + ★ **测出那一族的单位口径**（★ 官方 `## Returns` 没写）",
-         "★_前置": hw,
-         "读取": {k: str(v)[:50] for k, v in f.items()},
-         "★_单位口径（★ 官方未写）": r.get("★_单位口径"),
-         "★_单位判定": verdict,
-         "★_逐量判定": detail}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_目的": "★ 验 `hole_params` + ★ **测出那一族的单位口径**（★ 官方 `## Returns` 没写）",
+        "★_前置": hw,
+        "读取": {k: str(v)[:50] for k, v in f.items()},
+        "★_单位口径（★ 官方未写）": r.get("★_单位口径"),
+        "★_单位判定": verdict,
+        "★_逐量判定": detail,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ 前置 hole_wizard:", json.dumps(hw, ensure_ascii=False)[:150])
     print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:400])
     print("★ 单位判定:", verdict)

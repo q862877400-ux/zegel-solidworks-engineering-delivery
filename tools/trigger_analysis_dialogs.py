@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/trigger_analysis_dialogs.py
-# 定位:   ★ 2026-10-02（轮 377）**用户要求"再触发一次那两级弹窗"**，用来验 `sw_guard` 
+# 定位:   ★ 2026-10-02（轮 377）**用户要求"再触发一次那两级弹窗"**，用来验 `sw_guard`
 #           的自动处置。
 # 官方依据: `C:\swapi\types\ICWStudy\RunAnalysis.md`（★ 零参；★ 返回码不可信，要读 `Resu
 #           lts`）。
@@ -29,14 +29,21 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "trigger-analysis-dialogs.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "trigger-analysis-dialogs.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_simulation as SIM
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -53,9 +60,11 @@ def main() -> int:
         ev["doc"] = title
         #: ★ ① 材料（★ 让"材料未定义"这条不再是失败点）
         try:
-            ev["steps"]["material"] = {"ok": True,
-                                       "name": str(SIM.set_material(doc, "AISI 1020") or "")[:48]}
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["material"] = {
+                "ok": True,
+                "name": str(SIM.set_material(doc, "AISI 1020") or "")[:48],
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["material"] = {"ok": False, "err": str(exc)[:100]}
         #: ★ ② 建研究（★ 静态）—— `create_static_study(sw_app, name)` 回 **`(study, entr
         #: y, err)`**，
@@ -72,25 +81,39 @@ def main() -> int:
         #: 方）
         #: ★ ③ 建网格（★ 这一般能成）
         try:
-            m = SIM.create_mesh_report(study) if hasattr(SIM, "create_mesh_report") else None
-            ev["steps"]["mesh"] = {"ok": bool(m and m.get("ok")), "detail": str(m)[:120]}
-        except Exception as exc:                               # noqa: BLE001
+            m = (
+                SIM.create_mesh_report(study)
+                if hasattr(SIM, "create_mesh_report")
+                else None
+            )
+            ev["steps"]["mesh"] = {
+                "ok": bool(m and m.get("ok")),
+                "detail": str(m)[:120],
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["mesh"] = {"ok": False, "err": str(exc)[:100]}
         #: ★★ ④ **跑求解** —— ★ **故意不设夹具/载荷** ⇒ ★ **这里会弹窗**（★ 而 `sw_guard
         #: ` 的哨兵该点掉它）
         try:
             r = SIM.run_analysis_report(study)
-            ev["steps"]["run_analysis"] = {"ok": bool(r.get("ok")), "detail": str(r)[:200]}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["run_analysis"] = {"ok": False, "err": "%s: %s" % (type(exc).__name__,
-                                                                           str(exc)[:120])}
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            ev["steps"]["run_analysis"] = {
+                "ok": bool(r.get("ok")),
+                "detail": str(r)[:200],
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["run_analysis"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+            }
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:900])
         print("  ⇒ 落盘 %s" % OUT)
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

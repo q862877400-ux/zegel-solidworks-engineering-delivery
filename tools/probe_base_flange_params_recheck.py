@@ -66,7 +66,7 @@ def main() -> int:
     try:
         spec = SM.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
         built["returned"] = str(SM.create_base_flange(model, sk, spec))[:60]
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         built["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
 
     r = base_flange_params(model)
@@ -80,7 +80,7 @@ def main() -> int:
             verdict = "★ **毫米**（★ 传 0.002 米 = 2mm ⇒ 回 %r）" % v
         else:
             verdict = "★ 读数 %r ⇒ 另查" % v
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     checks = {
@@ -93,12 +93,17 @@ def main() -> int:
         "★ 不读 D1OffsetDistance": "D1OffsetDistance" not in r,
         "★ 无 error": not r.get("error"),
     }
-    R = {"★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_flange_members.py`）",
-         "★_建法兰": built,
-         "读取": {k: str(v)[:60] for k, v in r.items()},
-         "★_逐条判据": checks, "★_全过": all(checks.values()),
-         "★_单位判定": verdict}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_flange_members.py`）",
+        "★_建法兰": built,
+        "读取": {k: str(v)[:60] for k, v in r.items()},
+        "★_逐条判据": checks,
+        "★_全过": all(checks.values()),
+        "★_单位判定": verdict,
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ spec 字段:", fields)
     print("★ 建法兰:", json.dumps(built, ensure_ascii=False)[:180])
     print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:420])

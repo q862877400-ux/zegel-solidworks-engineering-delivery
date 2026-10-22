@@ -2,7 +2,6 @@ from sw_feature_readback import feature_names
 from sw_connect import get_com_member
 
 
-
 # ── 24h 计划 段 6 续（Spec Kit `168`）：**放样（loft）** ──────────────────────────────
 # ★★★★★ 2026-10-01（轮 313）**这是"四家有我们没有"里核实的一个真缺**：
 #   ★ 全仓 grep `loft` ⇒ **工具 0 · 函数 0**（★ 同类：`sweep` 也是 0）——
@@ -39,32 +38,37 @@ from sw_connect import get_com_member
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 #: ★ **18 个官方参数**（★ 顺序即官方顺序 —— ★ 一处也不能挪）
-def _blend_args(closed: bool, keep_tangency: bool, thin: bool, thickness_m: float) -> tuple:
+def _blend_args(
+    closed: bool, keep_tangency: bool, thin: bool, thickness_m: float
+) -> tuple:
     """★ `InsertProtrusionBlend2` 的 18 参（★ 我们只暴露少数，★ 其余给有据的默认）。"""
     return (
-        bool(closed),            # Closed
-        bool(keep_tangency),     # KeepTangency
-        False,                   # ForceNonRational
-        1.0,                     # TessToleranceFactor（★ 官方说默认 1.0）
-        0,                       # StartMatchingType（0 = none）
-        0,                       # EndMatchingType（0 = none）
-        0.0,                     # StartTangentLength
-        0.0,                     # EndTangentLength
-        False,                   # StartTangentDir
-        False,                   # EndTangentDir
-        bool(thin),              # IsThinBody
-        float(thickness_m),      # Thickness1
-        float(thickness_m),      # Thickness2
-        0,                       # ThinType
-        True,                    # Merge
-        False,                   # UseFeatScope
-        False,                   # UseAutoSelect
-        0,                       # GuideCurveInfluence
+        bool(closed),  # Closed
+        bool(keep_tangency),  # KeepTangency
+        False,  # ForceNonRational
+        1.0,  # TessToleranceFactor（★ 官方说默认 1.0）
+        0,  # StartMatchingType（0 = none）
+        0,  # EndMatchingType（0 = none）
+        0.0,  # StartTangentLength
+        0.0,  # EndTangentLength
+        False,  # StartTangentDir
+        False,  # EndTangentDir
+        bool(thin),  # IsThinBody
+        float(thickness_m),  # Thickness1
+        float(thickness_m),  # Thickness2
+        0,  # ThinType
+        True,  # Merge
+        False,  # UseFeatScope
+        False,  # UseAutoSelect
+        0,  # GuideCurveInfluence
     )
 
 
-def create_loft_report(model, closed: bool = False, use_selected_profiles: bool = True) -> dict:
+def create_loft_report(
+    model, closed: bool = False, use_selected_profiles: bool = True
+) -> dict:
     """★ **用选中的草图轮廓放样**（★ 走 `InsertProtrusionBlend2`，官方 18 参）。
 
     ★ 轮廓要**先选中**（★ mark=1 —— ★ 官方 Remarks 定的），★ 且**按期望的顺序**。
@@ -75,23 +79,32 @@ def create_loft_report(model, closed: bool = False, use_selected_profiles: bool 
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     from sw_connect import get_com_member as _get
+
     try:
         sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", 1))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sel_n = -1
     if use_selected_profiles and sel_n < 2:
-        return {"ok": False, "stage": "selection", "mark1_count": sel_n,
-                "error": "放样至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"
-                         "★ 当前 mark=1 的选中数是 %r" % (sel_n,)}
+        return {
+            "ok": False,
+            "stage": "selection",
+            "mark1_count": sel_n,
+            "error": "放样至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"
+            "★ 当前 mark=1 的选中数是 %r" % (sel_n,),
+        }
     before = feature_names(model)
     args = _blend_args(closed, True, False, 0.0)
     try:
         fm = get_com_member(model, "FeatureManager")
         get_com_member(fm, "InsertProtrusionBlend2", *args)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "call", "args_count": len(args),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
-                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 18 个）"}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "args_count": len(args),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+            "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 18 个）",
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
     #: ★★★ 2026-10-01（轮 314）**硬判据：特征类型名**。
@@ -102,24 +115,35 @@ def create_loft_report(model, closed: bool = False, use_selected_profiles: bool 
     if new:
         try:
             from sw_connect import get_com_member as _g
+
             fobj = _g(model, "FeatureByName", new[-1])
             for _m in ("GetTypeName2", "GetTypeName"):
                 try:
                     tname = str(_g(fobj, _m))
                     break
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             tname = None
     ok_type = (tname == "Blend") if tname else False
-    return {"ok": bool(new) and ok_type, "feature_name": (new[-1] if new else None), "new_features": new,
-            "type_name": tname, "tree_before": len(before), "tree_after": len(after),
-            "args_count": len(args), "mark1_selected": sel_n, "closed": bool(closed),
-            "★": "官方 18 参 · mark=1 · 判据 = **特征树多了新特征** 且 "
-                 "**特征类型名 = `Blend`**（★ 真机定的；拉伸是 `Extrusion`）"}
+    return {
+        "ok": bool(new) and ok_type,
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "type_name": tname,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "args_count": len(args),
+        "mark1_selected": sel_n,
+        "closed": bool(closed),
+        "★": "官方 18 参 · mark=1 · 判据 = **特征树多了新特征** 且 "
+        "**特征类型名 = `Blend`**（★ 真机定的；拉伸是 `Extrusion`）",
+    }
 
 
-def _cut_blend_args(closed: bool, keep_tangency: bool, thin: bool, thickness_m: float) -> tuple:
+def _cut_blend_args(
+    closed: bool, keep_tangency: bool, thin: bool, thickness_m: float
+) -> tuple:
     """★ `InsertCutBlend` 的 **12 参**（★ 顺序即官方顺序）。
 
     ★★★★ 2026-10-03（轮 561）★ **官方签名逐字**（`C:\\swapi\\types\\IFeatureManager\\InsertCutBlend.md`）：
@@ -137,22 +161,24 @@ def _cut_blend_args(closed: bool, keep_tangency: bool, thin: bool, thickness_m: 
     ★ 故本函数**照 `_blend_args` 的形状**写，★ 删除那 6 个位（★ 而不是另立一套默认值）。
     """
     return (
-        bool(closed),            # Closed
-        bool(keep_tangency),     # KeepTangency
-        False,                   # ForceNonRational
-        1.0,                     # TessToleranceFactor（★ 官方说默认 1.0）
-        0,                       # StartMatchingType（0 = none）
-        0,                       # EndMatchingType（0 = none）
-        bool(thin),              # IsThinBody
-        float(thickness_m),      # Thickness1
-        float(thickness_m),      # Thickness2
-        0,                       # ThinType
-        False,                   # UseFeatScope
-        False,                   # UseAutoSelect
+        bool(closed),  # Closed
+        bool(keep_tangency),  # KeepTangency
+        False,  # ForceNonRational
+        1.0,  # TessToleranceFactor（★ 官方说默认 1.0）
+        0,  # StartMatchingType（0 = none）
+        0,  # EndMatchingType（0 = none）
+        bool(thin),  # IsThinBody
+        float(thickness_m),  # Thickness1
+        float(thickness_m),  # Thickness2
+        0,  # ThinType
+        False,  # UseFeatScope
+        False,  # UseAutoSelect
     )
 
 
-def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: bool = True) -> dict:
+def create_loft_cut_report(
+    model, closed: bool = False, use_selected_profiles: bool = True
+) -> dict:
     """★ **用选中的草图轮廓放样切除**（★ 走 `InsertCutBlend`，官方 **12 参**）。
 
     ★★★★ 2026-10-03（轮 561）★ 台账「**放样切除**」与「**边界切除**」两条的入口都是它。
@@ -177,26 +203,37 @@ def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: b
     #: 2605 \u800c\u90a3\u4e2a\u9519**\u770b\u4e0d\u51fa\u662f\u5bfc\u5165\u7684\u95ee\u
     #: 9898**\uff09\u3002
     if not use_selected_profiles:
-        return {"ok": False, "error": "本包装要求 use_selected_profiles=True（★ 官方 Remarks 要求先选）"}
+        return {
+            "ok": False,
+            "error": "本包装要求 use_selected_profiles=True（★ 官方 Remarks 要求先选）",
+        }
     sel_n = 0
     try:
         sm = get_com_member(model, "SelectionManager")
         sel_n = int(get_com_member(sm, "GetSelectedObjectCount2", 1) or 0)
-    except Exception:                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         sel_n = 0
     if sel_n < 2:
-        return {"ok": False, "stage": "selection", "mark1_count": sel_n,
-                "error": "放样切除至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"
-                         "★ 当前 mark=1 的选中数是 %r" % (sel_n,)}
+        return {
+            "ok": False,
+            "stage": "selection",
+            "mark1_count": sel_n,
+            "error": "放样切除至少要选 **2 个轮廓**（★ mark=1 —— 官方 Remarks）；"
+            "★ 当前 mark=1 的选中数是 %r" % (sel_n,),
+        }
     before = feature_names(model)
     args = _cut_blend_args(closed, True, False, 0.0)
     try:
         fm = get_com_member(model, "FeatureManager")
         get_com_member(fm, "InsertCutBlend", *args)
-    except Exception as exc:                                       # noqa: BLE001
-        return {"ok": False, "stage": "call", "args_count": len(args),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
-                "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 12 个）"}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "call",
+            "args_count": len(args),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:220]),
+            "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 12 个）",
+        }
     after = feature_names(model)
     new = [n for n in after if n not in before]
     tname = None
@@ -207,9 +244,9 @@ def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: b
                 try:
                     tname = str(get_com_member(fobj, _m))
                     break
-                except Exception:                                  # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     continue
-        except Exception:                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             tname = None
     #: ★★★ 2026-10-03（轮 561）**判据修正**：切与不切**类型名不同** ⚠
     #:   · 放样**凸台**（`InsertProtrusionBlend2`）⇒ 类型名 **`Blend`**
@@ -220,9 +257,16 @@ def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: b
     #:     （★ 而那正是**事实 420 / 431 那一类**：**失败在判据、不在 API**）
     #:   ★★★ 与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **"切"会换类型名**。
     ok_type = (tname in ("Blend", "BlendCut")) if tname else False
-    return {"ok": bool(new) and ok_type, "feature_name": (new[-1] if new else None),
-            "new_features": new, "type_name": tname,
-            "tree_before": len(before), "tree_after": len(after),
-            "args_count": len(args), "mark1_selected": sel_n, "closed": bool(closed),
-            "★": "官方 **12 参** · mark=1 · 判据 = **特征树多了新特征** 且 "
-                 "**类型名 = `Blend`**（★ 与 `InsertProtrusionBlend2` 同一族、同一套 mark）"}
+    return {
+        "ok": bool(new) and ok_type,
+        "feature_name": (new[-1] if new else None),
+        "new_features": new,
+        "type_name": tname,
+        "tree_before": len(before),
+        "tree_after": len(after),
+        "args_count": len(args),
+        "mark1_selected": sel_n,
+        "closed": bool(closed),
+        "★": "官方 **12 参** · mark=1 · 判据 = **特征树多了新特征** 且 "
+        "**类型名 = `Blend`**（★ 与 `InsertProtrusionBlend2` 同一族、同一套 mark）",
+    }

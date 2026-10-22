@@ -34,6 +34,7 @@ C  传两个裸 None
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -49,8 +50,12 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "outparam-object-byref-evidence.json")
-HOLE_TYPE_COUNTERBORE = 0      # swWzdCounterBore（官方：null 仅当 =5 swWzdLegacy）
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "outparam-object-byref-evidence.json"
+)
+HOLE_TYPE_COUNTERBORE = 0  # swWzdCounterBore（官方：null 仅当 =5 swWzdLegacy）
 
 
 def modal_dialogs() -> tuple:
@@ -63,11 +68,15 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     import pywintypes
-    from win32com.client import VARIANT      # ⚠ `pythoncom.VARIANT` **不存在**（第一版就栽在这）
+    from win32com.client import (
+        VARIANT,
+    )  # ⚠ `pythoncom.VARIANT` **不存在**（第一版就栽在这）
 
     ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
     checks: list = []
@@ -80,45 +89,72 @@ def main() -> int:
     sw = None
     try:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
-        data = sw_connect.safe_get_com_member(sw, "GetHoleStandardsData", HOLE_TYPE_COUNTERBORE)
-        chk("拿到 IHoleStandardsData（HoleTypeID=0 沉头孔）", data is not None,
-            type(data).__name__ if data is not None else "**None**")
+        data = sw_connect.safe_get_com_member(
+            sw, "GetHoleStandardsData", HOLE_TYPE_COUNTERBORE
+        )
+        chk(
+            "拿到 IHoleStandardsData（HoleTypeID=0 沉头孔）",
+            data is not None,
+            type(data).__name__ if data is not None else "**None**",
+        )
         ev["got_data"] = data is not None
 
         if data is not None:
+
             def attempt(label, args_factory):
                 t0 = time.time()
                 try:
                     args = args_factory()
                     r = sw_connect.safe_get_com_member(data, "GetHoleStandards", *args)
                     return label, "返回 %r" % (r,), False, time.time() - t0
-                except pywintypes.com_error as exc:      # noqa: PERF203
+                except pywintypes.com_error as exc:  # noqa: PERF203
                     code = exc.args[0] if exc.args else None
-                    txt = exc.args[2][0] if len(exc.args) > 2 and exc.args[2] else str(exc)
-                    return label, "com_error %s: %s" % (code, str(txt)[:60]), True, time.time() - t0
-                except Exception as exc:      # noqa: BLE001
-                    return label, "%s: %s" % (type(exc).__name__, str(exc)[:70]), True, time.time() - t0
+                    txt = (
+                        exc.args[2][0]
+                        if len(exc.args) > 2 and exc.args[2]
+                        else str(exc)
+                    )
+                    return (
+                        label,
+                        "com_error %s: %s" % (code, str(txt)[:60]),
+                        True,
+                        time.time() - t0,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    return (
+                        label,
+                        "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                        True,
+                        time.time() - t0,
+                    )
 
             def mk_byref():
                 #: ⚠ 用 `win32com.client.VARIANT`，不是 `pythoncom.VARIANT`（后者不存在
                 #: ）
                 import pythoncom as _pc
-                return [VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None),
-                        VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None)]
+
+                return [
+                    VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None),
+                    VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None),
+                ]
 
             def mk_byref_variant():
                 #: ★ 照 `probe_outparam_convention.py` 对 `Int32&` 的**已知good形态**
                 #: （`VARIANT(VT_BYREF|VT_I4, 0)` 通过）类推：容器出参用 `VT_BYREF|VT_VA
                 #: RIANT`。
                 import pythoncom as _pc
-                return [VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None),
-                        VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None)]
+
+                return [
+                    VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None),
+                    VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None),
+                ]
 
             forms = [
                 ("A 不传出参", lambda: []),
@@ -135,29 +171,51 @@ def main() -> int:
 
             # ★ 裁读：A 报「非选择性的参数」⇒ 出参**必填** ⇒ 裁定 ①
             a = results[0]
-            not_optional = ("非选择性" in a["detail"]) or ("PARAMNOTOPTIONAL" in a["detail"].upper()) \
-                or ("8002000E" in a["detail"].upper()) or ("-2147352578" in a["detail"])
-            ev["verdict"] = ("out-required" if not_optional else
-                             ("out-optional" if not a["threw"] else "inconclusive"))
-            chk("★ 裁定：**A 形态报「非选择性的参数」** ⇒ Object& 出参是**必填**的",
-                not_optional, "A: %s" % a["detail"])
-    except Exception as exc:      # noqa: BLE001
+            not_optional = (
+                ("非选择性" in a["detail"])
+                or ("PARAMNOTOPTIONAL" in a["detail"].upper())
+                or ("8002000E" in a["detail"].upper())
+                or ("-2147352578" in a["detail"])
+            )
+            ev["verdict"] = (
+                "out-required"
+                if not_optional
+                else ("out-optional" if not a["threw"] else "inconclusive")
+            )
+            chk(
+                "★ 裁定：**A 形态报「非选择性的参数」** ⇒ Object& 出参是**必填**的",
+                not_optional,
+                "A: %s" % a["detail"],
+            )
+    except Exception as exc:  # noqa: BLE001
         chk("整体探针", False, "%s: %s" % (type(exc).__name__, str(exc)[:200]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     modals, _win_scanned = modal_dialogs()
-    chk("★ 收尾无残留模态框（已知事实 64 的检查）", (not modals) and _win_scanned > 0,
-        "扫了 %d 个窗口 · %s" % (_win_scanned, "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals)))
+    chk(
+        "★ 收尾无残留模态框（已知事实 64 的检查）",
+        (not modals) and _win_scanned > 0,
+        "扫了 %d 个窗口 · %s"
+        % (
+            _win_scanned,
+            "无模态框" if not modals else "有 %d 个: %s" % (len(modals), modals),
+        ),
+    )
 
-    ev.update(passed=sum(1 for c in checks if c), total=len(checks),
-              finished=time.strftime("%Y-%m-%d %H:%M:%S"))
+    ev.update(
+        passed=sum(1 for c in checks if c),
+        total=len(checks),
+        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+    )
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print()
     print("  ── %d/%d · 裁定：%s ──" % (ev["passed"], ev["total"], ev.get("verdict")))
     print("  ⚠ 只证 `GetHoleStandards` 这一个成员；**不证所有 Object& 出参都一样**。")

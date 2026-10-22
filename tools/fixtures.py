@@ -1,4 +1,5 @@
 """★ 夹具库：真实件**一次性**复制进来、**冻结哈希清单**，此后测试只认它、不再碰原目录。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（测试基础设施）
 # 文件:   tools/fixtures.py
@@ -59,7 +60,7 @@ def load_manifest(root=None) -> dict:
         return {"_": "★ 还没建夹具库", "created": "", "sources": [], "files": {}}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {"_": "★ 清单读取失败", "created": "", "sources": [], "files": {}}
 
 
@@ -95,18 +96,24 @@ def verify(root=None) -> dict:
         present.add(name)
         if sha256_of(p) != rec.get("sha256"):
             changed.append(name)
-    on_disk = {str(p.relative_to(base)).replace("\\", "/")
-               for p in base.rglob("*")
-               if p.is_file() and p.name != MANIFEST_NAME}
-    return {"ok": not missing and not changed, "checked": len(present),
-            "missing": sorted(missing), "changed": sorted(changed),
-            "extra": sorted(on_disk - set(files))}
+    on_disk = {
+        str(p.relative_to(base)).replace("\\", "/")
+        for p in base.rglob("*")
+        if p.is_file() and p.name != MANIFEST_NAME
+    }
+    return {
+        "ok": not missing and not changed,
+        "checked": len(present),
+        "missing": sorted(missing),
+        "changed": sorted(changed),
+        "extra": sorted(on_disk - set(files)),
+    }
 
 
 def collect_sources(folders, *, recursive: bool = False):
     """★ 从给定目录收集**可能是夹具**的 CAD 件（★ 只按扩展名，★ 其它文件一律不碰）✓"""
     found = []
-    for folder in (folders or ()):
+    for folder in folders or ():
         base = Path(str(folder))
         if not base.is_dir():
             continue
@@ -130,7 +137,7 @@ def build(sources, root=None, *, note: str = "", dry_run: bool = False) -> dict:
     man = load_manifest(base)
     files = dict(man.get("files") or {})
     copied, skipped = [], []
-    for src in (sources or ()):
+    for src in sources or ():
         src = Path(str(src))
         if not src.is_file():
             skipped.append({"source": str(src), "why": "★ 不是文件"})
@@ -149,9 +156,12 @@ def build(sources, root=None, *, note: str = "", dry_run: bool = False) -> dict:
         if not dry_run:
             base.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(src), str(base / name))
-        files[name] = {"sha256": digest, "size": src.stat().st_size,
-                       "source": str(src),
-                       "copied": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        files[name] = {
+            "sha256": digest,
+            "size": src.stat().st_size,
+            "source": str(src),
+            "copied": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
         copied.append({"name": name, "from": str(src), "sha256": digest[:16]})
     new_man = {
         "_": "★ 夹具库清单（规格 210 · B5-5）：★ 冻结哈希 —— ★ 哈希一变就不再算留出集。★ 不要手改。",
@@ -160,14 +170,22 @@ def build(sources, root=None, *, note: str = "", dry_run: bool = False) -> dict:
         "created": man.get("created") or datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "note": note,
-        "sources": sorted({str(Path(c["from"]).parent) for c in copied}
-                          | set(man.get("sources") or [])),
+        "sources": sorted(
+            {str(Path(c["from"]).parent) for c in copied}
+            | set(man.get("sources") or [])
+        ),
         "files": files,
     }
     if not dry_run:
         base.mkdir(parents=True, exist_ok=True)
         (base / MANIFEST_NAME).write_text(
             json.dumps(new_man, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
-            encoding="utf-8")
-    return {"library": str(base), "copied": copied, "skipped": skipped,
-            "manifest": new_man, "dry_run": dry_run}
+            encoding="utf-8",
+        )
+    return {
+        "library": str(base),
+        "copied": copied,
+        "skipped": skipped,
+        "manifest": new_man,
+        "dry_run": dry_run,
+    }

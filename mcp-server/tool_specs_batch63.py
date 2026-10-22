@@ -1,4 +1,3 @@
-
 # ── 200 轮计划 v3 · 段 5（该挂清理）：**按声明式选择器选面** ──────────────────────────
 # ★★★★★ 2026-10-03（轮 452）★ 来源：**规则 3 的判断** + 真机证据 `output/face-selector-e
 # vidence.json`（**PASS**）。
@@ -39,28 +38,41 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH63"]
 
-_SEL = ("Declarative face selector — ★ one of `+x` / `-x` / `+y` / `-y` / `+z` / `-z`"
-        "（★ 它指**面朝的那个方向**，例如 `+z` 是朝上的那个面）。"
-        "⚠★ 非法值会**抛**（★ 而**不是**静默不选），★ 错误信息里会列出合法值。")
+_SEL = (
+    "Declarative face selector — ★ one of `+x` / `-x` / `+y` / `-y` / `+z` / `-z`"
+    "（★ 它指**面朝的那个方向**，例如 `+z` 是朝上的那个面）。"
+    "⚠★ 非法值会**抛**（★ 而**不是**静默不选），★ 错误信息里会列出合法值。"
+)
 
 SPECS_BATCH63 = [
     ToolSpec(
         name="solidworks_select_face_selector",
         title="Select a Face by Declarative Selector",
-        module="sw_simulation", function="select_face_by_selector_report",
+        module="sw_simulation",
+        function="select_face_by_selector_report",
         inject="model",
         params=[
             Param("selection", str, description=_SEL),
-            Param("mark", int, default=0,
-                  description="★ 选择标记（★ 多引用特征读 mark 0/1/2 —— 规则 3 的第三句）"),
-            Param("append", bool, default=False,
-                  description="★ 传给底层的 `Append`。⚠★ **真机：`append=False` 时它并没清掉上一次的选区**"
-                              "（★ 回读 1 → 2）⇒ ★★ **要换一个面就自己先 `ClearSelection2`**"),
+            Param(
+                "mark",
+                int,
+                default=0,
+                description="★ 选择标记（★ 多引用特征读 mark 0/1/2 —— 规则 3 的第三句）",
+            ),
+            Param(
+                "append",
+                bool,
+                default=False,
+                description="★ 传给底层的 `Append`。⚠★ **真机：`append=False` 时它并没清掉上一次的选区**"
+                "（★ 回读 1 → 2）⇒ ★★ **要换一个面就自己先 `ClearSelection2`**",
+            ),
         ],
-        doc=("Select ONE face by a **declarative selector** and return a READ-BACK report. "
-             "★★ 这是「**按面上的点定位**」那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，"
-             "而**按点可行**）—— ★ 而本工具把它包成**声明式**（★ 规则 3）。"
-             "★ `ok` 的判据是**回读计数 == 1**（★ **不是**返回值 —— 事实 8）。"
-             "★★ **不接受裸坐标**：★ 坐标在能力层内部算，★ 对外的参数**只有选择器**。"),
+        doc=(
+            "Select ONE face by a **declarative selector** and return a READ-BACK report. "
+            "★★ 这是「**按面上的点定位**」那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，"
+            "而**按点可行**）—— ★ 而本工具把它包成**声明式**（★ 规则 3）。"
+            "★ `ok` 的判据是**回读计数 == 1**（★ **不是**返回值 —— 事实 8）。"
+            "★★ **不接受裸坐标**：★ 坐标在能力层内部算，★ 对外的参数**只有选择器**。"
+        ),
     ),
 ]

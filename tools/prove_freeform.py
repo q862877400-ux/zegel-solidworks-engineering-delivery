@@ -48,9 +48,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 SW_SEL_FACES = 2
 
@@ -58,16 +58,27 @@ SW_SEL_FACES = 2
 def _box(doc, size=0.03):
     """★ 造一个立方体（★ **每个面都是四边** —— ★ 满足前置 "The face must have four sides"）。"""
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -size, -size, 0.0, size, size, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -size,
+        -size,
+        0.0,
+        size,
+        size,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in ((names[-1] if names else "\u8349\u56fe1"), "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, size * 2.0)
             return True
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return False
 
@@ -83,14 +94,31 @@ def _side(doc):
         ⇒ ★ 故**清一次**是前置。
     """
     try:
-        doc.ClearSelection2(True)          #: ★ 前置：选区里只能有那一个面
-    except Exception:                                                 # noqa: BLE001
+        doc.ClearSelection2(True)  #: ★ 前置：选区里只能有那一个面
+    except Exception:  # noqa: BLE001
         pass
     ext = C.get_com_member(doc, "Extension")
-    ok = C.get_com_member(ext, "SelectByRay", 0.0, 0.0, 0.2,
-                          0.0, 0.0, -1.0, 1e-4, SW_SEL_FACES, False, 0, 0)
-    n = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                             "GetSelectedObjectCount2", -1) or 0)
+    ok = C.get_com_member(
+        ext,
+        "SelectByRay",
+        0.0,
+        0.0,
+        0.2,
+        0.0,
+        0.0,
+        -1.0,
+        1e-4,
+        SW_SEL_FACES,
+        False,
+        0,
+        0,
+    )
+    n = int(
+        C.get_com_member(
+            C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+        )
+        or 0
+    )
     return bool(ok), n
 
 
@@ -105,16 +133,25 @@ def _one(sw, tag, *, n_curves=1, n_points=1):
         fm = C.get_com_member(doc, "FeatureManager")
         #: \u2605 \u7b2c 2 \u6b65\uff1a\u52a0**\u66f2\u7ebf**\uff08\u2605 8 \u53c2\uff09
         for i in range(n_curves):
-            C.get_com_member(fm, "SetFreeformCurveData",
-                             0, 0.25 + 0.25 * i,
-                             0.0, 1.0, 0.0,      #: \u2605 \u4e00\u7aef\u5207\u5411
-                             0.0, 1.0, 0.0)      #: \u2605 \u53e6\u4e00\u7aef\u5207\u5411
+            C.get_com_member(
+                fm,
+                "SetFreeformCurveData",
+                0,
+                0.25 + 0.25 * i,
+                0.0,
+                1.0,
+                0.0,  #: \u2605 \u4e00\u7aef\u5207\u5411
+                0.0,
+                1.0,
+                0.0,
+            )  #: \u2605 \u53e6\u4e00\u7aef\u5207\u5411
         row["steps"]["2_curves"] = n_curves
         #: \u2605 \u7b2c 3 \u6b65\uff1a\u5728\u66f2\u7ebf\u4e0a\u52a0**\u70b9**\uff08\u2
         #: 605 6 \u53c2\uff0c\u2605 \u504f\u79fb\u5178\u578b\u4e3a 0\uff09
         for j in range(n_points):
-            C.get_com_member(fm, "SetFreeformPointData",
-                             0, 0.25, 0.5 + 0.3 * j, 0.0, 0.0, 0.0)
+            C.get_com_member(
+                fm, "SetFreeformPointData", 0, 0.25, 0.5 + 0.3 * j, 0.0, 0.0, 0.0
+            )
         row["steps"]["3_points"] = n_points
         #: \u2605 \u7b2c 4 \u6b65\uff1a\u8fb9\u754c\u8fde\u7eed\u6027\uff08\u2605 2 \u53
         #: c2\uff1b\u2605 `-1 = Movable`\uff09
@@ -130,8 +167,10 @@ def _one(sw, tag, *, n_curves=1, n_points=1):
         row["new_features"] = [n for n in after if n not in before]
         row["ok"] = feat is not None and bool(row["new_features"])
         if not row["ok"] and feat is None:
-            row["err"] = "InsertFreeform2 \u56de None\uff08\u2605 \u800c\u524d\u56db\u6b65\u90fd\u6ca1\u62a5\u9519\uff09"
-    except Exception as exc:                                              # noqa: BLE001
+            row["err"] = (
+                "InsertFreeform2 \u56de None\uff08\u2605 \u800c\u524d\u56db\u6b65\u90fd\u6ca1\u62a5\u9519\uff09"
+            )
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     finally:
         if doc is not None:
@@ -139,35 +178,65 @@ def _one(sw, tag, *, n_curves=1, n_points=1):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u81ea\u7531\u6837\u5f0f\uff08`InsertFreeform2`\uff09\u2014\u2014 \u2605 \u6309\u5b98\u65b9 `## Remarks` \u7684**\u4e94\u6b65\u94fe**\u8d70",
-          "official": "`C:\\swapi\\types\\IFeatureManager\\InsertFreeform2.md` \u7684 `## Remarks`"
-                      "\uff08\u2605 \u4e94\u6b65\uff1a\u9009\u9762 \u2192 \u52a0\u66f2\u7ebf \u2192 \u52a0\u70b9 \u2192 \u8fb9\u754c\u8fde\u7eed\u6027 \u2192 \u63d2\u5165\uff09",
-          "arity": {"InsertFreeform2": 4, "SetFreeformCurveData": 8,
-                    "SetFreeformPointData": 6, "SetFreeformBoundaryContinuity": 2},
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 \u4e94\u6b65\u9f50\u5168\uff08\u2605 1 \u66f2\u7ebf + 1 \u70b9\uff09"))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a**\u4e0d\u9009\u9762**\u5c31\u63d2\u5165", n_curves=0, n_points=0))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u81ea\u7531\u6837\u5f0f\uff08`InsertFreeform2`\uff09\u2014\u2014 \u2605 \u6309\u5b98\u65b9 `## Remarks` \u7684**\u4e94\u6b65\u94fe**\u8d70",
+        "official": "`C:\\swapi\\types\\IFeatureManager\\InsertFreeform2.md` \u7684 `## Remarks`"
+        "\uff08\u2605 \u4e94\u6b65\uff1a\u9009\u9762 \u2192 \u52a0\u66f2\u7ebf \u2192 \u52a0\u70b9 \u2192 \u8fb9\u754c\u8fde\u7eed\u6027 \u2192 \u63d2\u5165\uff09",
+        "arity": {
+            "InsertFreeform2": 4,
+            "SetFreeformCurveData": 8,
+            "SetFreeformPointData": 6,
+            "SetFreeformBoundaryContinuity": 2,
+        },
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 \u4e94\u6b65\u9f50\u5168\uff08\u2605 1 \u66f2\u7ebf + 1 \u70b9\uff09",
+        )
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a**\u4e0d\u9009\u9762**\u5c31\u63d2\u5165",
+            n_curves=0,
+            n_points=0,
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "freeform_%d_of_%d" % (ev["passed"], ev["total"])
     p = R / "output" / "freeform-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a**%s**" % ev["verdict"])
     for c in ev["cases"]:
-        print("  %-40s ok=%-6s \u7279\u5f81 %s -> %s" % (
-            c.get("tag"), c.get("ok"), c.get("before"),
-            (c.get("before") or 0) + len(c.get("new_features") or [])))
+        print(
+            "  %-40s ok=%-6s \u7279\u5f81 %s -> %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("before"),
+                (c.get("before") or 0) + len(c.get("new_features") or []),
+            )
+        )
         print("        \u6b65\u9aa4=%s" % (c.get("steps"),))
-        print("        \u56de=%s \u65b0\u589e=%s" % (c.get("returned"), c.get("new_features")))
+        print(
+            "        \u56de=%s \u65b0\u589e=%s"
+            % (c.get("returned"), c.get("new_features"))
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:150])
     print("  \u4ea7\u7269\uff1a%s" % p)

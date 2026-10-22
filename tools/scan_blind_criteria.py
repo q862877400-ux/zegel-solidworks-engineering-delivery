@@ -56,22 +56,43 @@ def files():
 def family_a(tree: ast.AST, src: str) -> list[dict]:
     """★ 族 A：`subprocess.run(...)` 之后**只**判 `returncode`（★ 没回读别的）。"""
     out = []
-    for fn in [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]:
+    for fn in [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]:
         body_src = ast.get_source_segment(src, fn) or ""
         if "subprocess.run" not in body_src and "check_output" not in body_src:
             continue
         #: \u2605 \u8be5\u51fd\u6570\u91cc\u6709\u6ca1\u6709\u300c\u56de\u8bfb\u300d\u60
         #: 27\u7684\u4e1c\u897f\uff08\u2605 \u800c\u4e0d\u53ea\u662f\u9000\u51fa\u7801\u
         #: ff09
-        reads = any(k in body_src for k in (
-            "GetTitle", "GetBodies", "GetFaces", "feature_names", "count_segments",
-            "RevisionNumber", "GetDocuments", "collect_", "evidence", "json.loads",
-            "verdict", "sw_alive",
-        ))
+        reads = any(
+            k in body_src
+            for k in (
+                "GetTitle",
+                "GetBodies",
+                "GetFaces",
+                "feature_names",
+                "count_segments",
+                "RevisionNumber",
+                "GetDocuments",
+                "collect_",
+                "evidence",
+                "json.loads",
+                "verdict",
+                "sw_alive",
+            )
+        )
         rc_only = ("returncode" in body_src or "return_code" in body_src) and not reads
         if rc_only:
-            out.append({"family": "A", "where": fn.name,
-                        "why": "\u8dd1\u5b50\u8fdb\u7a0b\u540e**\u53ea\u770b\u9000\u51fa\u7801**\uff0c\u6ca1\u56de\u8bfb\u5236\u54c1/SW \u72b6\u6001"})
+            out.append(
+                {
+                    "family": "A",
+                    "where": fn.name,
+                    "why": "\u8dd1\u5b50\u8fdb\u7a0b\u540e**\u53ea\u770b\u9000\u51fa\u7801**\uff0c\u6ca1\u56de\u8bfb\u5236\u54c1/SW \u72b6\u6001",
+                }
+            )
     return out
 
 
@@ -101,23 +122,52 @@ def families_bc(tree: ast.AST) -> list[dict]:
         for a in n.args[2:]:
             why = _is_container(a)
             if why:
-                out.append({"family": "B", "line": getattr(n, "lineno", 0),
-                            "why": "\u5411 COM \u4f20\u4e86 %s\uff08\u2605 COM \u8981 VARIANT \u6570\u7ec4\uff09" % why})
+                out.append(
+                    {
+                        "family": "B",
+                        "line": getattr(n, "lineno", 0),
+                        "why": "\u5411 COM \u4f20\u4e86 %s\uff08\u2605 COM \u8981 VARIANT \u6570\u7ec4\uff09"
+                        % why,
+                    }
+                )
                 continue
             if isinstance(a, ast.Constant) and a.value is None:
-                out.append({"family": "C", "line": getattr(n, "lineno", 0),
-                            "why": "\u5411 COM \u4f20\u4e86 None\uff08\u2605 \u540c\u65cf\uff1a\u7c7b\u578b\u4e0d\u5bf9 \u21d2 \u53ef\u80fd\u5d29\uff09"})
+                out.append(
+                    {
+                        "family": "C",
+                        "line": getattr(n, "lineno", 0),
+                        "why": "\u5411 COM \u4f20\u4e86 None\uff08\u2605 \u540c\u65cf\uff1a\u7c7b\u578b\u4e0d\u5bf9 \u21d2 \u53ef\u80fd\u5d29\uff09",
+                    }
+                )
                 continue
             if isinstance(a, ast.Call):
                 fn2 = getattr(a.func, "id", None) or getattr(a.func, "attr", None) or ""
-                if fn2 in ("_empty_callout", "empty_dispatch_variant", "create_empty_dispatch_variant"):
-                    out.append({"family": "C", "line": getattr(n, "lineno", 0),
-                                "why": "\u5411 COM \u4f20\u4e86**\u7a7a Dispatch** %s()\uff08\u2605 \u540c\u65cf\uff09" % fn2})
+                if fn2 in (
+                    "_empty_callout",
+                    "empty_dispatch_variant",
+                    "create_empty_dispatch_variant",
+                ):
+                    out.append(
+                        {
+                            "family": "C",
+                            "line": getattr(n, "lineno", 0),
+                            "why": "\u5411 COM \u4f20\u4e86**\u7a7a Dispatch** %s()\uff08\u2605 \u540c\u65cf\uff09"
+                            % fn2,
+                        }
+                    )
     return out
 
 
-READBACK = ("get_view_scale", "_report", "==", "!=", "safe_get_com_member",
-            "collect_", "GetTitle", "feature_names")
+READBACK = (
+    "get_view_scale",
+    "_report",
+    "==",
+    "!=",
+    "safe_get_com_member",
+    "collect_",
+    "GetTitle",
+    "feature_names",
+)
 
 
 def family_d(tree: ast.AST, src: str) -> list[dict]:
@@ -127,11 +177,17 @@ def family_d(tree: ast.AST, src: str) -> list[dict]:
     ⚠ 判据保守：★ 只在**函数体里完全没有**"回读"性调用时才算（★ 有 getter/比较就不算）。
     """
     out = []
-    for fn in [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]:
+    for fn in [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]:
         body = ast.get_source_segment(src, fn) or ""
         #: \u2605 \u53ea\u770b\u300c\u6709 `return True` / `return False`\u300d\u7684
         rets = [x for x in ast.walk(fn) if isinstance(x, ast.Return)]
-        if not any(isinstance(r.value, ast.Constant) and r.value.value is True for r in rets):
+        if not any(
+            isinstance(r.value, ast.Constant) and r.value.value is True for r in rets
+        ):
             continue
         #: \u2605 \u800c\u4f53\u5185**\u6ca1\u6709\u4efb\u4f55**\u56de\u8bfb/\u6bd4\u8f8
         #: 3
@@ -141,19 +197,29 @@ def family_d(tree: ast.AST, src: str) -> list[dict]:
         #: f\u7eaf\u51fd\u6570\uff0c\u4e0d\u5728\u672c\u65cf\uff09
         if "get_com_member(" not in body and "set_com_member(" not in body:
             continue
-        out.append({"family": "D", "where": fn.name, "line": fn.lineno,
-                    "why": "\u65e0\u6761\u4ef6 `return True` \u800c\u4f53\u5185**\u6ca1\u6709\u56de\u8bfb/\u6bd4\u8f83**"
-                           "\uff08\u2605 \u300c\u5931\u8d25\u4e5f\u62a5\u6210\u529f\u300d\u65cf\uff09"})
+        out.append(
+            {
+                "family": "D",
+                "where": fn.name,
+                "line": fn.lineno,
+                "why": "\u65e0\u6761\u4ef6 `return True` \u800c\u4f53\u5185**\u6ca1\u6709\u56de\u8bfb/\u6bd4\u8f83**"
+                "\uff08\u2605 \u300c\u5931\u8d25\u4e5f\u62a5\u6210\u529f\u300d\u65cf\uff09",
+            }
+        )
     return out
 
 
 def main() -> int:
-    res = {"_": "「\u5224\u636e\u770b\u4e0d\u89c1\u771f\u5b9e\u72b6\u6001」\u540c\u65cf\u626b\u63cf\uff08\u2605 \u53ea\u62a5\u5019\u9009\uff0c\u4e0d\u4e0b\u7ed3\u8bba\uff09",
-           "families": {
-               "A": "\u5224\u636e\u53ea\u8ba4\u5b50\u8fdb\u7a0b\u9000\u51fa\u7801",
-               "B": "\u5411 COM \u4f20 Python \u5bb9\u5668\uff08\u2605 B5 \u5d29\u6e83\u6700\u53ef\u7591\u6e90\u4e4b\u4e00\uff09",
-               "C": "\u5411 COM \u4f20 None / \u7a7a Dispatch\uff08\u540c\u65cf\uff09",
-           }, "hits": [], "counts": {"A": 0, "B": 0, "C": 0, "D": 0}}
+    res = {
+        "_": "「\u5224\u636e\u770b\u4e0d\u89c1\u771f\u5b9e\u72b6\u6001」\u540c\u65cf\u626b\u63cf\uff08\u2605 \u53ea\u62a5\u5019\u9009\uff0c\u4e0d\u4e0b\u7ed3\u8bba\uff09",
+        "families": {
+            "A": "\u5224\u636e\u53ea\u8ba4\u5b50\u8fdb\u7a0b\u9000\u51fa\u7801",
+            "B": "\u5411 COM \u4f20 Python \u5bb9\u5668\uff08\u2605 B5 \u5d29\u6e83\u6700\u53ef\u7591\u6e90\u4e4b\u4e00\uff09",
+            "C": "\u5411 COM \u4f20 None / \u7a7a Dispatch\uff08\u540c\u65cf\uff09",
+        },
+        "hits": [],
+        "counts": {"A": 0, "B": 0, "C": 0, "D": 0},
+    }
     nf = 0
     for p in files():
         try:
@@ -168,10 +234,15 @@ def main() -> int:
             res["counts"][h["family"]] += 1
     res["files_scanned"] = nf
     res["hits"].sort(key=lambda x: (x["family"], x["file"], x.get("line", 0)))
-    OUT.write_text(json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(res, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
     print("  \u626b\u4e86 %d \u4e2a .py" % nf)
     for k, v in res["counts"].items():
-        print("  \u65cf %s\uff08%s\uff09\uff1a**%d** \u5904" % (k, res["families"][k][:40], v))
+        print(
+            "  \u65cf %s\uff08%s\uff09\uff1a**%d** \u5904"
+            % (k, res["families"][k][:40], v)
+        )
     print()
     for fam in ("D", "B", "C", "A"):
         rows = [h for h in res["hits"] if h["family"] == fam]
@@ -179,8 +250,13 @@ def main() -> int:
             continue
         print("  === \u65cf %s \u524d 10 ===\u200b" % fam)
         for h in rows[:10]:
-            print("     %-46s %s" % (h["file"] + (":%d" % h["line"] if h.get("line") else ""),
-                                     h["why"][:56]))
+            print(
+                "     %-46s %s"
+                % (
+                    h["file"] + (":%d" % h["line"] if h.get("line") else ""),
+                    h["why"][:56],
+                )
+            )
     print("  \u4ea7\u7269\uff1a%s" % OUT)
     return 0
 

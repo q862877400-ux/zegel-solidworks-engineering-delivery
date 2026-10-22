@@ -32,6 +32,7 @@ r"""@brief 真机证据：**网格参数生效判据**（24h 段 5「修地基�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -53,9 +54,12 @@ BAD_SIZE = 4930.501659457233
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "mesh_size_sanity_gate",
-                "★": "★ 证明这道闸能把'跑求解必挂'掐断在网格之前", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "mesh_size_sanity_gate",
+        "★": "★ 证明这道闸能把'跑求解必挂'掐断在网格之前",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -66,7 +70,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 造同一工况的零件（100×60×20 mm）
@@ -83,8 +87,10 @@ def main() -> int:
         #: ① 判据对**不合理**的尺寸（★ 真实观测到的 4930.5）
         bad = sim.check_mesh_size_sane(doc, BAD_SIZE)
         ev["steps"]["rejects_bad"] = bad
-        print("  [1] 不合理尺寸 %.1f ⇒ ok=%s  %s" % (BAD_SIZE, bad.get("ok"),
-                                                     (bad.get("reason") or "")[:88]))
+        print(
+            "  [1] 不合理尺寸 %.1f ⇒ ok=%s  %s"
+            % (BAD_SIZE, bad.get("ok"), (bad.get("reason") or "")[:88])
+        )
 
         #: ② 判据对**合理**的尺寸（★ 既有脚本真正在用的 4.9339）
         good = sim.check_mesh_size_sane(doc, GOOD_SIZE)
@@ -95,13 +101,20 @@ def main() -> int:
         size, tol = sim.default_element_size_and_tolerance(study, -1)
         gate = sim.check_mesh_size_sane(doc, float(size))
         ev["steps"]["live_reading"] = {
-            "element_size": float(size), "tolerance": float(tol),
-            "gate_ok": bool(gate.get("ok")), "gate_reason": (gate.get("reason") or "")[:200],
+            "element_size": float(size),
+            "tolerance": float(tol),
+            "gate_ok": bool(gate.get("ok")),
+            "gate_reason": (gate.get("reason") or "")[:200],
             "would_stop_before_mesh": not bool(gate.get("ok")),
         }
-        print("  [3] ★ 本机实测读到 %.4f ⇒ 闸 ok=%s ⇒ %s"
-              % (size, gate.get("ok"),
-                 "**停下，不建网格不跑求解**" if not gate.get("ok") else "继续"))
+        print(
+            "  [3] ★ 本机实测读到 %.4f ⇒ 闸 ok=%s ⇒ %s"
+            % (
+                size,
+                gate.get("ok"),
+                "**停下，不建网格不跑求解**" if not gate.get("ok") else "继续",
+            )
+        )
 
         #: ④ ★★★ 断言：不合理时**绝不**继续；且本脚本全程**未调** CreateMesh / RunAnalys
         #: is
@@ -110,12 +123,19 @@ def main() -> int:
         if gate.get("ok"):
             #: 只有判据放行才建网格（★ 本脚本刻意不跑求解 —— 那是弹框的那一步）
             try:
-                r = sim.create_mesh(study, units=0, element_size=float(size), tolerance=float(tol))
+                r = sim.create_mesh(
+                    study, units=0, element_size=float(size), tolerance=float(tol)
+                )
                 executed_mesh = True
                 mesh = sw_connect.safe_get_com_member(study, "Mesh")
-                ev["steps"]["mesh"] = {"ok": True, "return_code": r,
-                                       "element_count": int(sw_connect.safe_get_com_member(mesh, "ElementCount") or 0)}
-            except Exception as exc:                           # noqa: BLE001
+                ev["steps"]["mesh"] = {
+                    "ok": True,
+                    "return_code": r,
+                    "element_count": int(
+                        sw_connect.safe_get_com_member(mesh, "ElementCount") or 0
+                    ),
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["mesh"] = {"ok": False, "error": str(exc)[:120]}
         ev["steps"]["safety"] = {
             "executed_create_mesh": executed_mesh,
@@ -123,8 +143,10 @@ def main() -> int:
             "gate_blocked": not bool(gate.get("ok")),
             "★": "★★ 关键断言：闸不放行时 **executed_create_mesh=False** ⇒ 那条会挂的链被掐断在网格之前",
         }
-        print("  [4] 建网格执行了=%s · 跑求解执行了=%s（★ 本脚本刻意不跑）"
-              % (executed_mesh, executed_run))
+        print(
+            "  [4] 建网格执行了=%s · 跑求解执行了=%s（★ 本脚本刻意不跑）"
+            % (executed_mesh, executed_run)
+        )
 
         #: ⑤ 综合
         checks = {
@@ -133,26 +155,28 @@ def main() -> int:
             "no_mesh_when_blocked": (bool(gate.get("ok")) or not executed_mesh),
             "never_runs_analysis": not executed_run,
         }
-        ev["steps"]["judgement"] = {"checks": checks,
-                                    "passed": sum(1 for v in checks.values() if v),
-                                    "of": len(checks),
-                                    "★": "★ 四项全真 ⇒ 这道闸成立"}
+        ev["steps"]["judgement"] = {
+            "checks": checks,
+            "passed": sum(1 for v in checks.values() if v),
+            "of": len(checks),
+            "★": "★ 四项全真 ⇒ 这道闸成立",
+        }
         ok = all(checks.values())
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -163,7 +187,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

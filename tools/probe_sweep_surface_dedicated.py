@@ -29,7 +29,7 @@
 # ★ 而它标 **Obsolete. Superseded by `IFeatureManager::InsertSweepSurface3`** ⚠ ⇒ ★ **两
 # 个都试** ✓
 #
-# ★ 前置（★ 事实 384 的正解）：轮廓 **mark=1** · 路径 **mark=4**（★ 用 `SelectByID2` 带 
+# ★ 前置（★ 事实 384 的正解）：轮廓 **mark=1** · 路径 **mark=4**（★ 用 `SelectByID2` 带
 # mark）。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -50,37 +50,54 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
-import scripts.sw_weldment as W                                       # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_weldment as W  # noqa: E402
 
 
 def _mk_profile_path(doc):
     """★ 轮廓（上视面圆）+ 路径（前视面直线，★ 起点在 Z=0 上 —— 方向 1 的硬约束）。"""
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                     0.0, 0.0, 0.0, 5.0 / 1000.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCircleByRadius",
+        0.0,
+        0.0,
+        0.0,
+        5.0 / 1000.0,
+    )
     P.end_sketch(doc)
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Front Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
-                     0.0, 0.0, 0.0, 40.0 / 1000.0, 0.0, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateLine",
+        0.0,
+        0.0,
+        0.0,
+        40.0 / 1000.0,
+        0.0,
+        0.0,
+    )
     P.end_sketch(doc)
 
 
 def _pick(doc):
     """★ 轮廓 mark=1 · 路径 mark=4（★ 官方逐字）。"""
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     ext = C.get_com_member(doc, "Extension")
     picked = {}
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     for label, idx, mark in (("profile", 0, 1), ("path", 1, 4)):
         if idx >= len(names):
@@ -90,14 +107,19 @@ def _pick(doc):
                 if P._select_by_id(ext, cand, "SKETCH", append=bool(picked), mark=mark):
                     picked[label] = (cand, mark)
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     per = {}
     for m in (1, 4):
         try:
-            per[str(m)] = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                               "GetSelectedObjectCount2", m))
-        except Exception:                                                 # noqa: BLE001
+            per[str(m)] = int(
+                C.get_com_member(
+                    C.get_com_member(doc, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    m,
+                )
+            )
+        except Exception:  # noqa: BLE001
             per[str(m)] = -1
     return picked, per
 
@@ -127,9 +149,9 @@ def _one(sw, tag, method):
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
                         row[k] = str(C.get_com_member(ret, m))
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
@@ -138,13 +160,13 @@ def _one(sw, tag, method):
             for f in W.iter_features_recursive(doc):
                 try:
                     types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         row["new_types"] = [t for t in types if "Sweep" in t or "Surf" in t]
         row["ok"] = bool(row["new"] or row.get("ret_type"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -152,32 +174,55 @@ def _one(sw, tag, method):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u4e13\u7528\u65b9\u6cd5** `IFeatureManager.InsertSweepSurface2/3`",
-          "found_by": "\u4ece `InsertProtrusionSwept4` \u7684 **See Also** \u91cc\u6316\u5230\u7684 "
-                      "\u2014\u2014 \u2605 \u800c\u672c\u4ed3\u4ece\u6765\u6ca1\u67e5\u8fc7\u8fd9\u4e2a\u540d\u5b57",
-          "cases": []}
-    for tag, m in (("\u2605 InsertSweepSurface2", "InsertSweepSurface2"),
-                   ("\u2605 InsertSweepSurface3\uff08\u2605 \u7ee7\u4efb\u8005\uff09", "InsertSweepSurface3")):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u626b\u63cf\u66f2\u9762\uff1a**\u4e13\u7528\u65b9\u6cd5** `IFeatureManager.InsertSweepSurface2/3`",
+        "found_by": "\u4ece `InsertProtrusionSwept4` \u7684 **See Also** \u91cc\u6316\u5230\u7684 "
+        "\u2014\u2014 \u2605 \u800c\u672c\u4ed3\u4ece\u6765\u6ca1\u67e5\u8fc7\u8fd9\u4e2a\u540d\u5b57",
+        "cases": [],
+    }
+    for tag, m in (
+        ("\u2605 InsertSweepSurface2", "InsertSweepSurface2"),
+        (
+            "\u2605 InsertSweepSurface3\uff08\u2605 \u7ee7\u4efb\u8005\uff09",
+            "InsertSweepSurface3",
+        ),
+    ):
         ev["cases"].append(_one(sw, tag, m))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "sweep_surface_works" if ev["passed"] else "still_fails"
     p = R / "output" / "sweep-surface-dedicated-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-34s ok=%-6s sel=%s" % (c.get("tag"), c.get("ok"), c.get("sel_by_mark")))
-        print("        \u56de=%-9s \u540d=%s \u578b=%s new=%s new_types=%s" % (
-            c.get("returned"), c.get("ret_name"), c.get("ret_type"), c.get("new"), c.get("new_types")))
+        print(
+            "  %-34s ok=%-6s sel=%s" % (c.get("tag"), c.get("ok"), c.get("sel_by_mark"))
+        )
+        print(
+            "        \u56de=%-9s \u540d=%s \u578b=%s new=%s new_types=%s"
+            % (
+                c.get("returned"),
+                c.get("ret_name"),
+                c.get("ret_type"),
+                c.get("new"),
+                c.get("new_types"),
+            )
+        )
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:150])
     print("  \u4ea7\u7269\uff1a%s" % p)

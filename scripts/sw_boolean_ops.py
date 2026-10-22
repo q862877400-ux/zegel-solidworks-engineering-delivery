@@ -23,7 +23,7 @@
 #   · `C:\swapi\types\IFeatureManager\PostIntersect.md` ——
 # `Feature PostIntersect(System.object IntersectionsToExclude, System.bool Merge, System
 # .bool Consume)`
-# ★ `## Parameters` 逐字：`IntersectionsToExclude` 是「**Array of booleans** indicating 
+# ★ `## Parameters` 逐字：`IntersectionsToExclude` 是「**Array of booleans** indicating
 # which
 #       bodies returned by `PreIntersect` to **exclude**」· `Merge` = 合并成一个体 ·
 #       `Consume` = 把输入曲面从特征树里**移除**
@@ -35,7 +35,7 @@
 # ：
 #     ```
 #     status = swModelDocExt.SelectByID2("Shell1", "SOLIDBODY", 0,0,0, True, 0, Nothing, 0)
-# status = swModelDocExt.SelectByID2("Plane6", "PLANE",     0,0,0, True, 0, Nothing, 0) 
+# status = swModelDocExt.SelectByID2("Plane6", "PLANE",     0,0,0, True, 0, Nothing, 0)
 #   ← 都 mark 0
 #     bodyArray = swFeatureMgr.PreIntersect2(False, 1)          ← CapPlanar=False, 内部区域
 #     swModel.ClearSelection2 True
@@ -76,13 +76,13 @@ pythoncom, win32com, VARIANT = import_com_dependencies()
 
 __all__ = ["REGION_TYPES", "as_bool_variant", "create_intersect"]
 
-#: ★ 官方 `PreIntersect2` 的 `RegionType` **三值表**（★ 逐字抄自该页 `## Parameters`；★ 
+#: ★ 官方 `PreIntersect2` 的 `RegionType` **三值表**（★ 逐字抄自该页 `## Parameters`；★
 #: **不许跨条复制**）
 #: enum-gate: member PreIntersect2
 REGION_TYPES = {
-    "intersecting": 0,                 # Intersecting regions
-    "internal": 1,                     # Internal regions
-    "intersecting_and_internal": 2,    # Intersecting and internal regions
+    "intersecting": 0,  # Intersecting regions
+    "internal": 1,  # Internal regions
+    "intersecting_and_internal": 2,  # Intersecting and internal regions
 }
 
 
@@ -106,11 +106,16 @@ def _feature_names(model) -> list:
     return out
 
 
-def create_intersect(model, selection: str = "__current_selection__", *,
-                     cap_planar: bool = False,
-                     region_type: str = "intersecting_and_internal",
-                     exclude: str = "", merge: bool = True,
-                     consume: bool = False) -> dict:
+def create_intersect(
+    model,
+    selection: str = "__current_selection__",
+    *,
+    cap_planar: bool = False,
+    region_type: str = "intersecting_and_internal",
+    exclude: str = "",
+    merge: bool = True,
+    consume: bool = False,
+) -> dict:
     """★ **相交（Intersect）**：官方**两步** `PreIntersect2` → `PostIntersect`。
 
     :param selection: **声明式选择器**（★ 规则 3）：
@@ -131,29 +136,43 @@ def create_intersect(model, selection: str = "__current_selection__", *,
       ② **特征树增量**（★ `PostIntersect` 回的 `IFeature` **不当判据**）；
       ③ ★ **`IIntersectFeatureData::GetIntersectionsCount()`**（零参回 int）✓
     """
-    from sw_part import _empty_callout                                 # noqa: E402
+    from sw_part import _empty_callout  # noqa: E402
+
     out: dict = {
-        "ok": False, "entry_used": "IFeatureManager::PreIntersect2 → PostIntersect",
-        "selection": str(selection)[:120], "selection_count": None, "pre_bodies": None,
-        "exclude_array_len": None, "exclude_flagged": None, "feature": None,
-        "feature_type": None, "tree_before": None, "tree_after": None, "new_features": None,
-        "intersections_count": None, "region_type": None, "error": None, "note": None,
+        "ok": False,
+        "entry_used": "IFeatureManager::PreIntersect2 → PostIntersect",
+        "selection": str(selection)[:120],
+        "selection_count": None,
+        "pre_bodies": None,
+        "exclude_array_len": None,
+        "exclude_flagged": None,
+        "feature": None,
+        "feature_type": None,
+        "tree_before": None,
+        "tree_after": None,
+        "new_features": None,
+        "intersections_count": None,
+        "region_type": None,
+        "error": None,
+        "note": None,
         "★": "判据 = **PreIntersect2 回的体数** + **特征树增量** + "
-             "**`IIntersectFeatureData::GetIntersectionsCount()`**；★ 不拿回的那个 IFeature 当判据",
+        "**`IIntersectFeatureData::GetIntersectionsCount()`**；★ 不拿回的那个 IFeature 当判据",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     rt = str(region_type).strip().lower()
     if rt not in REGION_TYPES:
-        out["error"] = ("未知的 region_type %r；合法：%s"
-                        % (region_type, ", ".join(sorted(REGION_TYPES))))
+        out["error"] = "未知的 region_type %r；合法：%s" % (
+            region_type,
+            ", ".join(sorted(REGION_TYPES)),
+        )
         return out
     out["region_type"] = rt
     try:
         names_before = _feature_names(model)
         out["tree_before"] = len(names_before)
-    except Exception as exc:                                           # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "前置回读失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     sel = str(selection or "").strip() or "__current_selection__"
@@ -164,33 +183,56 @@ def create_intersect(model, selection: str = "__current_selection__", *,
             ext = get_com_member(model, "Extension")
             for k, item in enumerate([x.strip() for x in sel.split(",") if x.strip()]):
                 type_name, _, name = item.partition(":")
-                if not name:                                           #: 只给名字 ⇒ 默认实体
+                if not name:  #: 只给名字 ⇒ 默认实体
                     type_name, name = "SOLIDBODY", type_name
-                get_com_member(ext, "SelectByID2", name.strip(), type_name.strip().upper(),
-                               0.0, 0.0, 0.0, bool(k > 0), 0, _empty_callout(), 0)
+                get_com_member(
+                    ext,
+                    "SelectByID2",
+                    name.strip(),
+                    type_name.strip().upper(),
+                    0.0,
+                    0.0,
+                    0.0,
+                    bool(k > 0),
+                    0,
+                    _empty_callout(),
+                    0,
+                )
         out["selection_count"] = int(
-            get_com_member(get_com_member(model, "SelectionManager"),
-                           "GetSelectedObjectCount2", -1) or 0)
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
         if out["selection_count"] <= 0:
-            out["error"] = ("选完**回读计数为 0** ⇒ 没有可相交的对象在选区里（★ 事实 8）"
-                            "—— ★ 官方 Remarks 逐字要求**先选中**相交的曲面/实体/基准面")
+            out["error"] = (
+                "选完**回读计数为 0** ⇒ 没有可相交的对象在选区里（★ 事实 8）"
+                "—— ★ 官方 Remarks 逐字要求**先选中**相交的曲面/实体/基准面"
+            )
             return out
-    except Exception as exc:                                           # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "选择失败：%s: %s" % (type(exc).__name__, str(exc)[:180])
         return out
     #: ① PreIntersect2
     try:
         fm = get_com_member(model, "FeatureManager")
-        bodies = get_com_member(fm, "PreIntersect2", bool(cap_planar), int(REGION_TYPES[rt]))
-    except Exception as exc:                                           # noqa: BLE001
-        out["error"] = "PreIntersect2 失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
+        bodies = get_com_member(
+            fm, "PreIntersect2", bool(cap_planar), int(REGION_TYPES[rt])
+        )
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = "PreIntersect2 失败：%s: %s" % (
+            type(exc).__name__,
+            str(exc)[:200],
+        )
         return out
     body_list = [b for b in (bodies or [])] if bodies is not None else []
     out["pre_bodies"] = len(body_list)
     if not body_list:
-        out["error"] = ("`PreIntersect2` **一个相交体都没回**（★ 它回 `System.object`）"
-                        "⇒ 前置可能不成立（选的对象不相交 / cap_planar 与 region_type 组合不产生区域）"
-                        "—— ★ 本函数**不据此继续调 PostIntersect**（那只会造出一个空特征）")
+        out["error"] = (
+            "`PreIntersect2` **一个相交体都没回**（★ 它回 `System.object`）"
+            "⇒ 前置可能不成立（选的对象不相交 / cap_planar 与 region_type 组合不产生区域）"
+            "—— ★ 本函数**不据此继续调 PostIntersect**（那只会造出一个空特征）"
+        )
         return out
     #: ★ 官方示例：清选区 → 拼**与体数等长**的布尔数组（全 False = 一个都不排除）
     try:
@@ -199,27 +241,35 @@ def create_intersect(model, selection: str = "__current_selection__", *,
         flags = [(i in want_exclude) for i in range(len(body_list))]
         out["exclude_array_len"] = len(flags)
         out["exclude_flagged"] = [i for i, f in enumerate(flags) if f]
-        wrapped = as_bool_variant(flags)                #: ★★ 唯一要真机验的包装
-    except Exception as exc:                                           # noqa: BLE001
+        wrapped = as_bool_variant(flags)  #: ★★ 唯一要真机验的包装
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "拼排除数组失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     #: ② PostIntersect
     try:
-        feature = get_com_member(fm, "PostIntersect", wrapped, bool(merge), bool(consume))
-    except Exception as exc:                                           # noqa: BLE001
-        out["error"] = ("PostIntersect 失败：%s: %s（★ 这一路只有 `System.object` 一个变量 —— "
-                        "布尔 SafeArray 的包装）" % (type(exc).__name__, str(exc)[:200]))
+        feature = get_com_member(
+            fm, "PostIntersect", wrapped, bool(merge), bool(consume)
+        )
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = (
+            "PostIntersect 失败：%s: %s（★ 这一路只有 `System.object` 一个变量 —— "
+            "布尔 SafeArray 的包装）" % (type(exc).__name__, str(exc)[:200])
+        )
         return out
-    out["feature"] = str(get_com_member(feature, "Name") or "") if feature is not None else None
+    out["feature"] = (
+        str(get_com_member(feature, "Name") or "") if feature is not None else None
+    )
     if feature is None:
-        out["error"] = ("`PostIntersect` 回 None ⇒ **相交特征没建出来**（★ 在 pywin32 下"
-                        "返回 None 就是失败，★ 不靠「没报错」下结论）")
+        out["error"] = (
+            "`PostIntersect` 回 None ⇒ **相交特征没建出来**（★ 在 pywin32 下"
+            "返回 None 就是失败，★ 不靠「没报错」下结论）"
+        )
     #: ③ 回读：特征树增量 + `GetIntersectionsCount()`
     try:
         names_after = _feature_names(model)
         out["tree_after"] = len(names_after)
         out["new_features"] = [n for n in names_after if n not in names_before]
-    except Exception as exc:                                           # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "后置回读失败：%s" % str(exc)[:150]
         return out
     try:
@@ -227,13 +277,19 @@ def create_intersect(model, selection: str = "__current_selection__", *,
             data = get_com_member(feature, "GetDefinition")
             if data is not None:
                 out["intersections_count"] = int(
-                    get_com_member(data, "GetIntersectionsCount") or 0)
-    except Exception as exc:                                           # noqa: BLE001
-        out["note"] = "IIntersectFeatureData 读回失败（不影响主判据）：%s" % str(exc)[:120]
+                    get_com_member(data, "GetIntersectionsCount") or 0
+                )
+    except Exception as exc:  # noqa: BLE001
+        out["note"] = (
+            "IIntersectFeatureData 读回失败（不影响主判据）：%s" % str(exc)[:120]
+        )
     built = (out["tree_after"] > out["tree_before"]) and bool(out["new_features"])
     out["ok"] = bool(built and feature is not None)
     if not out["ok"] and not out["error"]:
-        out["error"] = ("回读判据未过：特征树 %r → %r · 新特征 %r · 相交数 %r"
-                        % (out["tree_before"], out["tree_after"], out["new_features"],
-                           out["intersections_count"]))
+        out["error"] = "回读判据未过：特征树 %r → %r · 新特征 %r · 相交数 %r" % (
+            out["tree_before"],
+            out["tree_after"],
+            out["new_features"],
+            out["intersections_count"],
+        )
     return out

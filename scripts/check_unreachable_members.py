@@ -72,7 +72,7 @@ WARN_PREFIX_I = True
 #: \u2605\u2605 **\u53d6\u8bc1\u8c41\u514d**\uff1a\u2605 \u6709\u4e9b\u7ad9\u70b9**\u654
 #: 5\u610f\u53bb\u8c03**\u5b83\uff08\u2605 \u4e3a\u4e86\u62ff\u5230\u201c\u5230\u4e0d\u4
 #: e86\u201d\u7684\u8bc1\u636e\uff09
-#: \u2014\u2014 \u2605 \u800c**\u8c41\u514d\u5fc5\u987b\u5e26\u7406\u7531**\uff1b\u2605 
+#: \u2014\u2014 \u2605 \u800c**\u8c41\u514d\u5fc5\u987b\u5e26\u7406\u7531**\uff1b\u2605
 #: **\u65b0\u589e\u7684\u7ad9\u70b9\u4e0d\u4f1a\u81ea\u52a8\u8fdb\u6765**\uff08\u2605 \u
 #: 90a3\u624d\u662f\u95e8\u7981\u7684\u4f5c\u7528\uff09\u3002
 #: \u2605 2026-10-03\uff08\u8f6e 579\uff09\uff1a**\u672c\u6761\u662f\u95e8\u7981\u7b2c\u
@@ -80,11 +80,15 @@ WARN_PREFIX_I = True
 #: \u2605 \u5b83\u547d\u4e2d\u4e86 3 \u5904\uff0c\u2605 \u800c\u90a3 3 \u5904**\u6b63\u6
 #: 62f\u4e8b\u5b9e 428 \u7684\u53d6\u8bc1\u4ee3\u7801** \u26a0
 ALLOWED: dict[tuple[str, str], str] = {
-    ("scripts/sw_weldment.py", "InsertWeldmentCutList2"):
-        "\u2605 **\u53d6\u8bc1\u7ad9\u70b9**\uff1a\u4e8b\u5b9e 428 \u5c31\u662f\u8dd1\u5b83\u5f97\u51fa\u7684"
-        "\uff08\u2605 \u90a3\u91cc\u5fc5\u987b**\u771f\u53bb\u53d6\u4e00\u6b21**\u624d\u80fd\u8bc1\u660e\u201c\u6210\u5458\u4e0d\u5728\u5bf9\u8c61\u4e0a\u201d\uff09",
-    ("tools/probe_weldment_cutlist_recheck.py", "InsertWeldmentCutList2"):
-        "\u2605 **\u63a2\u9488**\uff1a\u4e13\u95e8\u590d\u67e5\u4e8b\u5b9e 428 \u7684\u90a3\u4e00\u6761",
+    (
+        "scripts/sw_weldment.py",
+        "InsertWeldmentCutList2",
+    ): "\u2605 **\u53d6\u8bc1\u7ad9\u70b9**\uff1a\u4e8b\u5b9e 428 \u5c31\u662f\u8dd1\u5b83\u5f97\u51fa\u7684"
+    "\uff08\u2605 \u90a3\u91cc\u5fc5\u987b**\u771f\u53bb\u53d6\u4e00\u6b21**\u624d\u80fd\u8bc1\u660e\u201c\u6210\u5458\u4e0d\u5728\u5bf9\u8c61\u4e0a\u201d\uff09",
+    (
+        "tools/probe_weldment_cutlist_recheck.py",
+        "InsertWeldmentCutList2",
+    ): "\u2605 **\u63a2\u9488**\uff1a\u4e13\u95e8\u590d\u67e5\u4e8b\u5b9e 428 \u7684\u90a3\u4e00\u6761",
 }
 
 #: \u2605 \u626b\u54ea\u4e9b\u76ee\u5f55
@@ -126,7 +130,7 @@ def scan() -> tuple[list[tuple[str, int, str, str]], list[tuple[str, int, str]]]
                 #: ` \u5728 Windows \u4e0a\u7ed9**\u53cd\u659c\u6760**\uff0c
                 #: \u2605 \u800c `ALLOWED` \u7684\u952e\u5199\u7684\u662f**\u6b63\u659c\
                 #: u6760** \u21d2 \u2605 **\u952e\u6c38\u8fdc\u5bf9\u4e0d\u4e0a**\u3001
-                #: \u8c41\u514d\u9759\u9ed8\u5931\u6548 \u26a0\uff08\u2605 **\u8f6e 579 
+                #: \u8c41\u514d\u9759\u9ed8\u5931\u6548 \u26a0\uff08\u2605 **\u8f6e 579
                 #: \u8e29\u5230**\uff09
                 rel = path.relative_to(R).as_posix()
                 if name in DENY:
@@ -135,34 +139,49 @@ def scan() -> tuple[list[tuple[str, int, str, str]], list[tuple[str, int, str]]]
                     if (rel, name) in ALLOWED:
                         continue
                     deny_hits.append((rel, lineno, name, DENY[name]))
-                elif WARN_PREFIX_I and name.startswith("I") and len(name) > 1 and name[1].isupper():
+                elif (
+                    WARN_PREFIX_I
+                    and name.startswith("I")
+                    and len(name) > 1
+                    and name[1].isupper()
+                ):
                     warn_hits.append((rel, lineno, name))
     return deny_hits, warn_hits
 
 
 def main(argv: list[str] | None = None) -> int:
     deny, warn = scan()
-    print("\u2605 \u53ef\u8fbe\u6027\u95e8\u7981\uff08\u2605 \u540d\u5355\u6bcf\u6761\u5e26\u8bc1\u636e\uff09")
+    print(
+        "\u2605 \u53ef\u8fbe\u6027\u95e8\u7981\uff08\u2605 \u540d\u5355\u6bcf\u6761\u5e26\u8bc1\u636e\uff09"
+    )
     print("   \u626b\u4e86\uff1a%s" % ", ".join(ROOTS))
     print("   \u2605 deny \u540d\u5355\uff1a%d \u6761" % len(DENY))
     print()
     if deny:
-        print("   \u2605\u2605 **\u547d\u4e2d\u4e86 %d \u5904\u201c\u5df2\u8bc1\u5230\u4e0d\u4e86\u201d\u7684\u6210\u5458**\uff1a" % len(deny))
+        print(
+            "   \u2605\u2605 **\u547d\u4e2d\u4e86 %d \u5904\u201c\u5df2\u8bc1\u5230\u4e0d\u4e86\u201d\u7684\u6210\u5458**\uff1a"
+            % len(deny)
+        )
         for rel, lineno, name, why in deny:
             print("      %s:%d  `%s`" % (rel, lineno, name))
             print("         %s" % why)
         print()
     if warn:
-        print("   \u2605 \u63d0\u793a\uff08\u4e0d\u62e6\uff09\uff1a\u8fd9 %d \u5904\u7528\u4e86 **`I` \u524d\u7f00\u6210\u5458**"
-              "\uff08\u2605 \u4e8b\u5b9e 456\uff1a\u5b83\u4eec\u5728\u8fdf\u5230\u7ed1\u5b9a\u4e0b**\u591a\u534a\u62a5\u201c\u53ea\u5199\u5c5e\u6027\u201d**\uff09\uff1a" % len(warn))
+        print(
+            "   \u2605 \u63d0\u793a\uff08\u4e0d\u62e6\uff09\uff1a\u8fd9 %d \u5904\u7528\u4e86 **`I` \u524d\u7f00\u6210\u5458**"
+            "\uff08\u2605 \u4e8b\u5b9e 456\uff1a\u5b83\u4eec\u5728\u8fdf\u5230\u7ed1\u5b9a\u4e0b**\u591a\u534a\u62a5\u201c\u53ea\u5199\u5c5e\u6027\u201d**\uff09\uff1a"
+            % len(warn)
+        )
         for rel, lineno, name in warn[:12]:
             print("      %s:%d  `%s`" % (rel, lineno, name))
         if len(warn) > 12:
             print("      \u2026\u8fd8\u6709 %d \u5904" % (len(warn) - 12))
         print()
     if not deny:
-        print("   [ok] \u6ca1\u6709\u547d\u4e2d\uff08\u2605 \u800c\u8fd9\u53ea\u8bf4\u660e\u201c\u6ca1\u8c03\u90a3\u4e9b\u540d\u5b57\u201d\uff0c"
-              "\u2605 **\u4e0d\u8bc1\u660e\u522b\u7684\u90fd\u80fd\u8c03**\uff09")
+        print(
+            "   [ok] \u6ca1\u6709\u547d\u4e2d\uff08\u2605 \u800c\u8fd9\u53ea\u8bf4\u660e\u201c\u6ca1\u8c03\u90a3\u4e9b\u540d\u5b57\u201d\uff0c"
+            "\u2605 **\u4e0d\u8bc1\u660e\u522b\u7684\u90fd\u80fd\u8c03**\uff09"
+        )
     if argv is not None and "--quiet" in argv:
         return 1 if deny else 0
     return 1 if deny else 0

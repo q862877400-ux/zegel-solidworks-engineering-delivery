@@ -30,6 +30,7 @@ r"""@brief 探针：`InsertRib` 的**前置形态** —— 三个变体一次试
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -47,9 +48,11 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "rib-preconditions.j
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "question": "InsertRib 的真机前置形态（草图特征 vs 草图里的边 / 索引 0 vs 1）",
-                "variants": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "question": "InsertRib 的真机前置形态（草图特征 vs 草图里的边 / 索引 0 vs 1）",
+        "variants": {},
+    }
     sw = None
     try:
         import sw_connect
@@ -58,7 +61,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         def _plate_and_sketch():
@@ -72,8 +75,8 @@ def main() -> int:
             #: ★ 筋的轮廓草图：在右视基准面上画一条**开放线**（典型用法）
             P.start_sketch(d, plane_name="Right Plane")
             try:
-                P.sketch_centerline(d, 0.0, 0.0, 0.0, 30.0)    #: 参考中心线
-            except Exception:                                  # noqa: BLE001
+                P.sketch_centerline(d, 0.0, 0.0, 0.0, 30.0)  #: 参考中心线
+            except Exception:  # noqa: BLE001
                 pass
             sk2 = P.current_sketch_name(d)
             P.end_sketch(d)
@@ -92,37 +95,63 @@ def main() -> int:
                     try:
                         from scripts.sw_selection_spec import resolve_selection
 
-                        resolve_selection(d, "index:0", "SKETCH")   #: ★ 选中那个草图
-                    except Exception as exc:                        # noqa: BLE001
-                        ev["variants"].setdefault(label, {})["select_error"] = str(exc)[:120]
+                        resolve_selection(d, "index:0", "SKETCH")  #: ★ 选中那个草图
+                    except Exception as exc:  # noqa: BLE001
+                        ev["variants"].setdefault(label, {})["select_error"] = str(exc)[
+                            :120
+                        ]
                 #: ★ 直接调 COM（★ 绕过能力层，好把 ref_index 换掉）
                 from scripts.sw_connect import get_com_member
 
                 fm = get_com_member(d, "FeatureManager")
                 try:
-                    get_com_member(fm, "InsertRib", True, False, 2.0, int(ref_index),
-                                   False, False, False, 0.0, True, False)
+                    get_com_member(
+                        fm,
+                        "InsertRib",
+                        True,
+                        False,
+                        2.0,
+                        int(ref_index),
+                        False,
+                        False,
+                        False,
+                        0.0,
+                        True,
+                        False,
+                    )
                     err = None
-                except Exception as exc:                           # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     err = "%s: %s" % (type(exc).__name__, str(exc)[:160])
                 after = FR.feature_names(d)
                 rb = FR.feature_readback(d, "筋1")
                 out = {
-                    "name_arg": name_arg, "ref_index": int(ref_index),
+                    "name_arg": name_arg,
+                    "ref_index": int(ref_index),
                     "call_error": err,
-                    "features_before": before, "features_after": after,
+                    "features_before": before,
+                    "features_after": after,
                     "count_delta": len(after) - len(before),
                     "rib_present": rb.get("present"),
                     "ok": err is None and (len(after) > len(before)),
                 }
                 ev["variants"][label] = out
-                print("  [%s] ref_index=%d · 调用错误=%s · 特征 %d→%d · 筋在=%s"
-                      % (label, ref_index, (err or "无")[:40], len(before), len(after),
-                         rb.get("present")))
+                print(
+                    "  [%s] ref_index=%d · 调用错误=%s · 特征 %d→%d · 筋在=%s"
+                    % (
+                        label,
+                        ref_index,
+                        (err or "无")[:40],
+                        len(before),
+                        len(after),
+                        rb.get("present"),
+                    )
+                )
                 return out
-            except Exception as exc:                               # noqa: BLE001
-                ev["variants"][label] = {"ok": False,
-                                         "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+            except Exception as exc:  # noqa: BLE001
+                ev["variants"][label] = {
+                    "ok": False,
+                    "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+                }
                 print("  [%s] ★ 异常: %s" % (label, str(exc)[:70]))
                 return ev["variants"][label]
             finally:
@@ -131,7 +160,7 @@ def main() -> int:
                         t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                         if t:
                             sw.CloseDoc(t)
-                except Exception:                                  # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
 
         _run("A_sketch_feature_index0", 0, False)
@@ -142,24 +171,28 @@ def main() -> int:
         ev["verdict"] = {
             "variants_tried": list(ev["variants"]),
             "variants_that_built_a_feature": ok,
-            "★": ("★ 若有任一变体建出了特征 ⇒ **那就是正确的前置形态**；"
-                  "★ 若全失败 ⇒ 三个候选都排除，★ **如实记下并停手**（事实 53）"),
+            "★": (
+                "★ 若有任一变体建出了特征 ⇒ **那就是正确的前置形态**；"
+                "★ 若全失败 ⇒ 三个候选都排除，★ **如实记下并停手**（事实 53）"
+            ),
         }
         print("  ── 判读 ──")
         print("     %s" % json.dumps(ev["verdict"], ensure_ascii=False)[:260])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

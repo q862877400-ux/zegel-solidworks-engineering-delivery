@@ -1,4 +1,5 @@
 """★ 门禁：函数内的相对导入必须带兜底（否则非包导入路径下必炸）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（门禁）
 # 文件:   scripts/check_relative_imports.py
@@ -34,7 +35,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: ★★ 中文 Windows 上打印 `⇒`（U+21D2）会 `UnicodeEncodeError: 'gbk' codec can't encode 
+#: ★★ 中文 Windows 上打印 `⇒`（U+21D2）会 `UnicodeEncodeError: 'gbk' codec can't encode
 #: character` ✓
 #: ★ 2026-10-07 实测：本门禁**逻辑上是绿的**（**35 = 基线 35**，加 `PYTHONIOENCODING=utf
 #: -8` 跑即 exit 0）✗
@@ -45,8 +46,8 @@ ROOT = Path(__file__).resolve().parents[1]
 #: ★ 所以**必须在门禁自己这里兜住** —— 与 `check_refuted_patterns.py` 的既有修法逐字同型
 #:  ✓
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
-except Exception:                                                         # noqa: BLE001
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:  # noqa: BLE001
     pass
 
 #: ★ 认"相对导入"（★ 缩进不限；★ `from .x import y` 形态）✓
@@ -66,7 +67,7 @@ def scan(root: Path) -> list:
     for p in sorted(scripts.glob("*.py")):
         try:
             lines = p.read_text(encoding="utf-8").splitlines()
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for i, ln in enumerate(lines):
             if not PATTERN.match(ln):
@@ -74,7 +75,7 @@ def scan(root: Path) -> list:
             prev = lines[i - 1].strip() if i else ""
             #: ★★ 用 `startswith` —— ★ 修法带 `# noqa` 注释（★ 见来源块）✓
             if prev.startswith("try:"):
-                continue                    # ★ 有兜底 ⇒ 合格 ✓
+                continue  # ★ 有兜底 ⇒ 合格 ✓
             found.append({"file": p.name, "line": i + 1, "text": ln.strip()[:80]})
     return found
 
@@ -87,12 +88,24 @@ def main() -> int:
     found = scan(Path(a.root))
     ok = len(found) <= BASELINE_COUNT
     if a.json:
-        print(json.dumps({"ok": ok, "count": len(found), "baseline": BASELINE_COUNT,
-                          "items": found}, ensure_ascii=False, indent=1))
+        print(
+            json.dumps(
+                {
+                    "ok": ok,
+                    "count": len(found),
+                    "baseline": BASELINE_COUNT,
+                    "items": found,
+                },
+                ensure_ascii=False,
+                indent=1,
+            )
+        )
         return 0 if ok else 1
     verdict = "不增长 ✓" if ok else "**增长了 ✗**"
-    print("★ 无兜底的相对导入：**%d** 处（★ 棘轮基线 **%d**）⇒ %s"
-          % (len(found), BASELINE_COUNT, verdict))
+    print(
+        "★ 无兜底的相对导入：**%d** 处（★ 棘轮基线 **%d**）⇒ %s"
+        % (len(found), BASELINE_COUNT, verdict)
+    )
     if not ok:
         for it in found:
             print("   %s:%d  %s" % (it["file"], it["line"], it["text"]))

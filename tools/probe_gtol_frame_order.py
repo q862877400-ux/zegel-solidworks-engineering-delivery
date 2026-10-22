@@ -45,6 +45,7 @@ ConvertFormat 后 GetFrame(1)/(2) -> 仍全 None
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -60,6 +61,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "gtol-frame-order.json")
+
+
 def main() -> int:
     ev: dict = {"steps": []}
     sw = None
@@ -67,15 +70,18 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_gtol
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
         gtol = sw_gtol.insert_gtol(doc)
-        print("  ① `insert_gtol()` ⇒ %s" % ("有对象" if gtol is not None else "**None**"))
+        print(
+            "  ① `insert_gtol()` ⇒ %s" % ("有对象" if gtol is not None else "**None**")
+        )
         ev["insert_gtol_ok"] = gtol is not None
         if gtol is None:
             return 1
@@ -83,7 +89,7 @@ def main() -> int:
         def rd(name):
             try:
                 return sw_connect.safe_get_com_member(gtol, name)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 return "EXC:%s" % str(exc)[:40]
 
         def rec(tag, **kw):
@@ -92,14 +98,23 @@ def main() -> int:
 
         rec("新建后 GetFrameCount", count=rd("GetFrameCount"))
         rec("新建后 AddFrame()【旧顺序】", ret=rd("AddFrame"))
-        rec("新建后 GetFrame(0)", got=type(rd("GetFrame", )).__name__ if False else "（见下）")
+        rec(
+            "新建后 GetFrame(0)",
+            got=type(
+                rd(
+                    "GetFrame",
+                )
+            ).__name__
+            if False
+            else "（见下）",
+        )
 
         #: ★ 关键：**先转换，再加帧**
         rec("CanConvertFormat()", ret=rd("CanConvertFormat"))
         try:
             conv = sw_connect.safe_get_com_member(gtol, "ConvertFormat")
             rec("★ ConvertFormat()【先转换】", ret=conv)
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rec("★ ConvertFormat()", exc="%s: %s" % (type(exc).__name__, str(exc)[:40]))
         rec("转换后 GetFrameCount", count=rd("GetFrameCount"))
 
@@ -107,8 +122,11 @@ def main() -> int:
         try:
             add = sw_connect.safe_get_com_member(gtol, "AddFrame")
             rec("★★ AddFrame()【转换之后】", ret=add)
-        except Exception as exc:      # noqa: BLE001
-            rec("★★ AddFrame()【转换之后】", exc="%s: %s" % (type(exc).__name__, str(exc)[:40]))
+        except Exception as exc:  # noqa: BLE001
+            rec(
+                "★★ AddFrame()【转换之后】",
+                exc="%s: %s" % (type(exc).__name__, str(exc)[:40]),
+            )
         rec("加帧后 GetFrameCount", count=rd("GetFrameCount"))
 
         #: ③ 取帧
@@ -116,9 +134,13 @@ def main() -> int:
         for idx in (0, 1, 2, 3):
             try:
                 f = sw_connect.safe_get_com_member(gtol, "GetFrame", idx)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 f = "EXC:%s" % str(exc)[:30]
-            frames.append("有" if (f is not None and not str(f).startswith("EXC")) else str(f)[:14])
+            frames.append(
+                "有"
+                if (f is not None and not str(f).startswith("EXC"))
+                else str(f)[:14]
+            )
         rec("★★ GetFrame(0..3)", frames=frames)
         ev["frames"] = frames
 
@@ -130,41 +152,52 @@ def main() -> int:
                 if f is not None and not isinstance(f, str):
                     got_frame = f
                     break
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         if got_frame is not None:
             try:
                 r = sw_connect.safe_get_com_member(got_frame, "AddIndicator", 0, 0, "A")
                 rec("★★★ IGtolFrame.AddIndicator(0,0,'A')", ret=r)
                 ev["add_indicator_ok"] = bool(r)
-            except Exception as exc:      # noqa: BLE001
-                rec("★★★ AddIndicator", exc="%s: %s" % (type(exc).__name__, str(exc)[:50]))
-                ev["add_indicator_tb"] = traceback.format_exc().strip().splitlines()[-2:]
+            except Exception as exc:  # noqa: BLE001
+                rec(
+                    "★★★ AddIndicator",
+                    exc="%s: %s" % (type(exc).__name__, str(exc)[:50]),
+                )
+                ev["add_indicator_tb"] = (
+                    traceback.format_exc().strip().splitlines()[-2:]
+                )
         else:
             rec("★★★ AddIndicator", skipped="**没拿到 frame**")
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

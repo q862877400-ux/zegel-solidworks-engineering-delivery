@@ -1,4 +1,5 @@
 """★ 诊断：抓指纹会不会把「草图编辑态」弄没（★ 决定三条 sketch_* 能不能跑）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（一次性诊断）
 # 文件:   tools/diag_read_exits_sketch.py
@@ -29,6 +30,7 @@ def main() -> int:
     import sw_connect
     import sw_fingerprint as FP
     import tool_caller
+
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
         print("★ 连不上")
@@ -37,14 +39,20 @@ def main() -> int:
     inj = {"model": model, "sw": sw}
     ok, note = tool_caller.call("solidworks_sketch_start", inject_objects=inj)
     print("★ sketch_start ⇒ ok=%s %s" % (ok, str(note)[:60]))
-    print("★ 进草图后 edit_mode =", repr(FP.read(model, sw)["readings"].get("edit_mode")))
-    print("★ 再读一次（纯读数）  =", repr(FP.read(model, sw)["readings"].get("edit_mode")))
+    print(
+        "★ 进草图后 edit_mode =", repr(FP.read(model, sw)["readings"].get("edit_mode"))
+    )
+    print(
+        "★ 再读一次（纯读数）  =", repr(FP.read(model, sw)["readings"].get("edit_mode"))
+    )
     full = FP.read(model, sw)
     print("★ 跑完整指纹之后 edit_mode =", repr(full["readings"].get("edit_mode")))
     #: ★ 直接问 COM（★ 不经过指纹）—— ★ 这才看得出是谁干的 ✓
     sm = sw_connect.get_com_member(model, "SketchManager")
-    print("★ COM 直问 SketchManager.ActiveSketch =",
-          "有" if sw_connect.get_com_member(sm, "ActiveSketch") is not None else "None")
+    print(
+        "★ COM 直问 SketchManager.ActiveSketch =",
+        "有" if sw_connect.get_com_member(sm, "ActiveSketch") is not None else "None",
+    )
     return 0
 
 

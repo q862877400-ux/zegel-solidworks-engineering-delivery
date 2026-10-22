@@ -28,6 +28,7 @@ r"""@brief 复算：`check_member_owner_interface.py` 的**形参接口推断**�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -42,7 +43,8 @@ for p in (str(ROOT), str(ROOT / "scripts")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 sys.path.insert(0, str(ROOT / "scripts"))
-import check_member_owner_interface as C          # noqa: E402
+import check_member_owner_interface as C  # noqa: E402
+
 
 def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
     """★ **被回退的那条推断逻辑**（轮 174）—— **本脚本把它内联在这里，只为复算它为何错**。
@@ -61,15 +63,24 @@ def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
             continue
         pname = m.group(1)
         for cand in sorted(iface_names, key=len, reverse=True):
-            if re.search(r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b):
+            if re.search(
+                r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b
+            ):
                 out[pname] = cand
                 break
     #: ⚠ 那条退路：没有 `:param` 时，若**恰好 1 个形参**且 docstring 里接口名**恰好 1 个
     #: ** ⇒ 采纳
     args = [a.arg for a in fn.args.args if a.arg not in ("self", "cls")]
     if len(args) == 1:
-        found = sorted({c for c in iface_names
-                        if re.search(r"(?<![A-Za-z0-9_])" + re.escape(c) + r"(?![A-Za-z0-9_])", doc)})
+        found = sorted(
+            {
+                c
+                for c in iface_names
+                if re.search(
+                    r"(?<![A-Za-z0-9_])" + re.escape(c) + r"(?![A-Za-z0-9_])", doc
+                )
+            }
+        )
         if len(found) == 1:
             out[args[0]] = found[0]
     return out
@@ -110,15 +121,20 @@ def main() -> int:
     n_ok = 0
     for k, want in EXPECT.items():
         v = (got.get(k) or {}).get("model")
-        ok = (v == want)
+        ok = v == want
         n_ok += 1 if ok else 0
-        print("    %s %-28s 推成 %-18s（复现预期 %s）" % ("✓" if ok else "**✗**", k, v, want))
+        print(
+            "    %s %-28s 推成 %-18s（复现预期 %s）"
+            % ("✓" if ok else "**✗**", k, v, want)
+        )
 
     #: ★ `mold_evidence` 必须**放弃**（推不出 ⇒ 留白）—— 那是"正确地放弃"
     me = got.get("mold_evidence")
     print()
-    print("    %s mold_evidence ⇒ %s（docstring 里接口名太多 ⇒ **正确地放弃**）"
-          % ("✓" if not me else "**✗**", me if me else "{}"))
+    print(
+        "    %s mold_evidence ⇒ %s（docstring 里接口名太多 ⇒ **正确地放弃**）"
+        % ("✓" if not me else "**✗**", me if me else "{}")
+    )
 
     total = len(EXPECT) + 1
     passed = n_ok + (1 if not me else 0)

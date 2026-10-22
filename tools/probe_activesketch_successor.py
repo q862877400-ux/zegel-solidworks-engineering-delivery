@@ -10,7 +10,7 @@
 #     · `C:\\swapi\\types\\ISketchManager\\ActiveSketch.md` 签名逐字：
 #       `Sketch ActiveSketch {get;}`   ← ★★ **属性（只读）**，不是方法
 #   ★★ 本仓既有的真机读数（`scripts/sw_sketch.py` 的函数文档逐字）：
-# 「① 草图**已关闭**时，`SketchManager.ActiveSketch` 与 `model.GetActiveSketch2` **都是 
+# 「① 草图**已关闭**时，`SketchManager.ActiveSketch` 与 `model.GetActiveSketch2` **都是
 # None**」
 #     ⇒ ★ 说明两者**行为等价**（★ 但那句话本身也要复核）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -29,8 +29,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "activesketch-successor-evidence.json"
 
@@ -50,22 +50,34 @@ def main() -> int:
         row0 = {"case": "★ 无活动草图"}
         try:
             row0["GetActiveSketch2"] = repr(_g(doc, "GetActiveSketch2"))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row0["GetActiveSketch2"] = "ERR %s" % type(exc).__name__
         try:
             sm = _g(doc, "SketchManager")
             row0["SketchManager.ActiveSketch"] = repr(_g(sm, "ActiveSketch"))
-        except Exception as exc:                                          # noqa: BLE001
-            row0["SketchManager.ActiveSketch"] = "ERR %s: %s" % (type(exc).__name__, str(exc)[:90])
+        except Exception as exc:  # noqa: BLE001
+            row0["SketchManager.ActiveSketch"] = "ERR %s: %s" % (
+                type(exc).__name__,
+                str(exc)[:90],
+            )
         R["cases"].append(row0)
 
         #: ★ 用例 2：**开着草图**时两者各是什么（★ 这才是关键对照）
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         row1 = {"case": "★ 草图开着"}
         try:
             row1["GetActiveSketch2"] = repr(_g(doc, "GetActiveSketch2"))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row1["GetActiveSketch2"] = "ERR %s" % type(exc).__name__
         try:
             sm = _g(doc, "SketchManager")
@@ -73,11 +85,16 @@ def main() -> int:
             row1["SketchManager.ActiveSketch"] = repr(sk)
             #: ★ 两者是不是**同一个对象**：★ 拿它的名字比
             try:
-                row1["ActiveSketch.Name"] = repr(_g(sk, "Name") if sk is not None else None)
-            except Exception as exc:                                      # noqa: BLE001
+                row1["ActiveSketch.Name"] = repr(
+                    _g(sk, "Name") if sk is not None else None
+                )
+            except Exception as exc:  # noqa: BLE001
                 row1["ActiveSketch.Name"] = "ERR %s" % type(exc).__name__
-        except Exception as exc:                                          # noqa: BLE001
-            row1["SketchManager.ActiveSketch"] = "ERR %s: %s" % (type(exc).__name__, str(exc)[:90])
+        except Exception as exc:  # noqa: BLE001
+            row1["SketchManager.ActiveSketch"] = "ERR %s: %s" % (
+                type(exc).__name__,
+                str(exc)[:90],
+            )
         R["cases"].append(row1)
         P.end_sketch(doc)
 
@@ -85,34 +102,46 @@ def main() -> int:
         row2 = {"case": "★ 草图已关闭"}
         try:
             row2["GetActiveSketch2"] = repr(_g(doc, "GetActiveSketch2"))
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row2["GetActiveSketch2"] = "ERR %s" % type(exc).__name__
         try:
-            row2["SketchManager.ActiveSketch"] = repr(_g(_g(doc, "SketchManager"), "ActiveSketch"))
-        except Exception as exc:                                          # noqa: BLE001
-            row2["SketchManager.ActiveSketch"] = "ERR %s: %s" % (type(exc).__name__, str(exc)[:90])
+            row2["SketchManager.ActiveSketch"] = repr(
+                _g(_g(doc, "SketchManager"), "ActiveSketch")
+            )
+        except Exception as exc:  # noqa: BLE001
+            row2["SketchManager.ActiveSketch"] = "ERR %s: %s" % (
+                type(exc).__name__,
+                str(exc)[:90],
+            )
         R["cases"].append(row2)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     #: ★ 判据（★ 先写死）：★ 开草图时**两者都非 None**、★ 关闭时**两者都 None** ⇒ **等价
     #: ，可换**
     c1 = R["cases"][1] if len(R["cases"]) > 1 else {}
     c2 = R["cases"][2] if len(R["cases"]) > 2 else {}
-    open_both = (str(c1.get("GetActiveSketch2", "")).startswith("<")
-                 and str(c1.get("SketchManager.ActiveSketch", "")).startswith("<"))
-    closed_both_none = (c2.get("GetActiveSketch2") == "None"
-                        and c2.get("SketchManager.ActiveSketch") == "None")
-    R["verdict"] = ("★ PASS —— 开草图时两者都非 None、关闭时都是 None ⇒ **行为等价，可换**"
-                    if open_both and closed_both_none else
-                    "★★ 需人工看 —— 两者行为不一致（★ 如实记，★ 不硬换）")
+    open_both = str(c1.get("GetActiveSketch2", "")).startswith("<") and str(
+        c1.get("SketchManager.ActiveSketch", "")
+    ).startswith("<")
+    closed_both_none = (
+        c2.get("GetActiveSketch2") == "None"
+        and c2.get("SketchManager.ActiveSketch") == "None"
+    )
+    R["verdict"] = (
+        "★ PASS —— 开草图时两者都非 None、关闭时都是 None ⇒ **行为等价，可换**"
+        if open_both and closed_both_none
+        else "★★ 需人工看 —— 两者行为不一致（★ 如实记，★ 不硬换）"
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

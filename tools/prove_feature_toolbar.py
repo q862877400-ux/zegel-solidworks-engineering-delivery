@@ -34,7 +34,8 @@ import time
 from pathlib import Path
 
 R = Path(Path(__file__).resolve().parents[1])
-sys.path.insert(0, str(R / "scripts")); sys.path.insert(0, str(R / "mcp-server"))
+sys.path.insert(0, str(R / "scripts"))
+sys.path.insert(0, str(R / "mcp-server"))
 OUT = R / "output" / "feature-toolbar-evidence.json"
 
 
@@ -65,8 +66,10 @@ def main() -> int:
     def gm(d):
         try:
             b = list(get_com_member(d, "GetBodies2", -1, True) or [])[0]
-            return [len(list(get_com_member(b, "GetFaces") or [])),
-                    len(list(get_com_member(b, "GetEdges") or []))]
+            return [
+                len(list(get_com_member(b, "GetFaces") or [])),
+                len(list(get_com_member(b, "GetEdges") or [])),
+            ]
         except Exception:
             return None
 
@@ -78,7 +81,13 @@ def main() -> int:
             n0, g0 = nt(doc), gm(doc)
             msg = fn(doc, sk)
             n1, g1 = nt(doc), gm(doc)
-            row.update({"tree": [n0, n1], "geom": [g0, g1], "note": str(msg)[:70] if msg else ""})
+            row.update(
+                {
+                    "tree": [n0, n1],
+                    "geom": [g0, g1],
+                    "note": str(msg)[:70] if msg else "",
+                }
+            )
             #: ★★★ 2026-10-03（轮 463）**判据修正** ——
             #:   ★ 我原来用「树或几何变了」⇒ ★★ 而把 `ok:False` 的
             #:     放样/筋/包覆 **误判成能**（真侧 ok:False 才是真的）⚠
@@ -101,7 +110,10 @@ def main() -> int:
                 except Exception:
                     pass
         ev["items"].append(row)
-        print("  %-16s %-3s  %s" % (zh, row["verdict"], str(row.get("err") or row.get("note") or "")[:74]))
+        print(
+            "  %-16s %-3s  %s"
+            % (zh, row["verdict"], str(row.get("err") or row.get("note") or "")[:74])
+        )
         return row
 
     def no_entry(zh):
@@ -114,23 +126,26 @@ def main() -> int:
 
     def _sweep(d, s):
         import sw_sweep
-        P.start_sketch(d, plane_name="Front Plane")          # \u8f6e\u5ed3
+
+        P.start_sketch(d, plane_name="Front Plane")  # \u8f6e\u5ed3
         P.sketch_circle(d, 0.0, 0.0, 4.0)
         s1 = P.current_sketch_name(d, "")
         P.end_sketch(d)
-        P.start_sketch(d, plane_name="Top Plane")            # \u8def\u5f84
+        P.start_sketch(d, plane_name="Top Plane")  # \u8def\u5f84
         P.sketch_line(d, 0.0, 0.0, 0.0, 40.0)
         s2 = P.current_sketch_name(d, "")
         P.end_sketch(d)
         clear_selection(d)
         ext = get_com_member(d, "Extension")
-        P._select_by_id(ext, s1, "SKETCH", mark=1)      # 轮廓 mark=1
-        P._select_by_id(ext, s2, "SKETCH", append=True, mark=4)   # 路径 mark=4
+        P._select_by_id(ext, s1, "SKETCH", mark=1)  # 轮廓 mark=1
+        P._select_by_id(ext, s2, "SKETCH", append=True, mark=4)  # 路径 mark=4
         return sw_sweep.create_sweep_report(d)
+
     run("扫描", _sweep)
 
     def _loft(d, s):
         import sw_loft
+
         P.start_sketch(d, plane_name="Front Plane")
         P.sketch_corner_rectangle(d, -20.0, -20.0, 20.0, 20.0)
         s1 = P.current_sketch_name(d, "")
@@ -144,6 +159,7 @@ def main() -> int:
         P._select_by_id(ext, s1, "SKETCH", mark=1)
         P._select_by_id(ext, s2, "SKETCH", append=True, mark=1)
         return sw_loft.create_loft_report(d)
+
     run("放样凸台", _loft)
     no_entry("边界凸台")
 
@@ -153,17 +169,27 @@ def main() -> int:
         s2 = P.current_sketch_name(d, "")
         P.end_sketch(d)
         return P.extrude_cut(d, s2, 0.0)
+
     run("拉伸切除", _cut)
 
     def _hole(d, s):
         import sw_hole_features as H
+
         return H.create_through_hole_at_selection_report(d, "index:0", 6.0)
+
     run("异型孔", _hole)
     no_entry("旋转切除")
     run("扫描切除", lambda d, s: (_sweep(d, s), None)[1])
     no_entry("放样切除")
     no_entry("边界切除")
-    run("圆角", lambda d, s: (clear_selection(d), resolve_selection(d, "index:0", "EDGE"), P.fillet(d, 2.0))[-1])
+    run(
+        "圆角",
+        lambda d, s: (
+            clear_selection(d),
+            resolve_selection(d, "index:0", "EDGE"),
+            P.fillet(d, 2.0),
+        )[-1],
+    )
     run("线性阵列", lambda d, s: P.linear_pattern(d, s, 1.0, 0.0, 0.0, 15.0, 2))
 
     def _rib(d, s):
@@ -172,41 +198,60 @@ def main() -> int:
         s2 = P.current_sketch_name(d, "")
         P.end_sketch(d)
         return P.rib_report(d, s2, 2.0)
+
     run("筋", _rib)
     no_entry("拔模")
     run("抽壳", lambda d, s: P.shell_report(d, 2.0))
 
     def _wrap(d, s):
         import sw_wrap
+
         P.start_sketch(d, plane_name="Front Plane")
         P.sketch_circle(d, 0.0, 0.0, 5.0)
         s2 = P.current_sketch_name(d, "")
         P.end_sketch(d)
         clear_selection(d)
         ext = get_com_member(d, "Extension")
-        P._select_by_id(ext, s2, "SKETCH", mark=4)      # 草图 mark=4
+        P._select_by_id(ext, s2, "SKETCH", mark=4)  # 草图 mark=4
         import sw_selection_spec as SS
-        SS.select_entity_by_index(d, "FACE", 0, append=True)   # 面 mark=1（它自带）
+
+        SS.select_entity_by_index(d, "FACE", 0, append=True)  # 面 mark=1（它自带）
         return sw_wrap.create_wrap_report(d)
+
     run("包覆", _wrap)
     no_entry("相交")
-    run("镜向", lambda d, s: P.mirror_feature(d, [n for n in P.feature_names(d) if "拉伸" in n or "Boss" in n][-1], "Right Plane"))
+    run(
+        "镜向",
+        lambda d, s: P.mirror_feature(
+            d,
+            [n for n in P.feature_names(d) if "拉伸" in n or "Boss" in n][-1],
+            "Right Plane",
+        ),
+    )
+
     def _axis(d, s):
         import sw_selection_spec as SS
+
         SS.select_entity_by_index(d, "FACE", 0)
         return P.create_axis_report(d)
+
     run("参考几何体", _axis)
 
     def _curve(d, s):
         import sw_selection_spec as SS
+
         SS.select_entity_by_index(d, "EDGE", 0)
         return P.insert_composite_curve_report(d)
+
     run("曲线", _curve)
 
     ok = sum(1 for i in ev["items"] if i["verdict"] == "能")
     ev["can"], ev["total"] = ok, len(ev["items"])
     ev["verdict"] = "pass" if ok == ev["total"] else "partial"
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  ── **能 %d / 共 %d**" % (ok, ev["total"]))
     print("  产物：%s" % OUT)
     try:

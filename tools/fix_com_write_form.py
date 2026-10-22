@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具）
 # 文件:   tools/fix_com_write_form.py
-# 定位:   ★ 2026-10-03（轮 468）★ 承门禁 `tools/check_com_write_form.py` 报出的 **98 
+# 定位:   ★ 2026-10-03（轮 468）★ 承门禁 `tools/check_com_write_form.py` 报出的 **98
 #           处**。
 #   ★★ **为什么可以批量**：★ 那是**同一条规矩的机械违反** ——
 #     `get_com_member(obj, "<属性>", 值)` 与 `set_com_member(obj, "<属性>", 值)`
@@ -72,22 +72,30 @@ def main() -> int:
         lines = src.splitlines(keepends=True)
         #: \u2605 \u4ece**\u540e\u5f80\u524d**\u6362\uff08\u2605 \u4f4d\u7f6e\u4e0d\u4f1
         #: a\u56e0\u524d\u9762\u7684\u6539\u52a8\u800c\u504f\u79fb\uff09
-        for (l0, c0, l1, c1) in sorted(spans, reverse=True):
+        for l0, c0, l1, c1 in sorted(spans, reverse=True):
             if l0 != l1:
-                print("    \u26a0 \u8df3\u8fc7\u8de8\u884c\u8c03\u7528 %s:%d" % (rel, l0))
+                print(
+                    "    \u26a0 \u8df3\u8fc7\u8de8\u884c\u8c03\u7528 %s:%d" % (rel, l0)
+                )
                 continue
             line = lines[l0 - 1]
             seg = line[c0:c1]
             if seg != "get_com_member":
-                print("    \u26a0 \u8df3\u8fc7\uff08\u53d6\u5230 %r\uff09%s:%d" % (seg[:30], rel, l0))
+                print(
+                    "    \u26a0 \u8df3\u8fc7\uff08\u53d6\u5230 %r\uff09%s:%d"
+                    % (seg[:30], rel, l0)
+                )
                 continue
             lines[l0 - 1] = line[:c0] + "set_com_member" + line[c1:]
             total += 1
         new = "".join(lines)
         try:
             compile(new, str(p), "exec")
-        except SyntaxError as e:                                  # noqa: BLE001
-            print("    **\u8bed\u6cd5\u574f\uff0c\u4e0d\u5199** %s: %s" % (rel, str(e)[:60]))
+        except SyntaxError as e:  # noqa: BLE001
+            print(
+                "    **\u8bed\u6cd5\u574f\uff0c\u4e0d\u5199** %s: %s"
+                % (rel, str(e)[:60])
+            )
             continue
         p.write_text(new, encoding="utf-8")
         print("    \u6539\u4e86 %-46s %d \u5904" % (rel, len(spans)))

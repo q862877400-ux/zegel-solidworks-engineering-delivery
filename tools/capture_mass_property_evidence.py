@@ -37,6 +37,7 @@ r"""@brief 真机证据：**读质量属性 1 个工具**（砌墙 W5 / Spec Kit
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -50,14 +51,19 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-property-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "mass-property-evidence.json"
+)
 
 EXPECT = {"volume": 8000.0, "surface_area": 2800.0, "center_of_mass": [0.0, 0.0, -5.0]}
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "mass_property_read", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "mass_property_read",
+        "steps": {},
+    }
     sw = None
     docs: list = []
     ok = True
@@ -78,7 +84,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         part = sw_connect.new_document(sw, "part")
         docs.append(part)
@@ -94,29 +100,41 @@ def main() -> int:
         mp = mass_property_object(part)
         ev["steps"]["getter"] = {
             "ok": hasattr(mp, "Mass") and hasattr(mp, "Volume"),
-            "has_Mass": hasattr(mp, "Mass"), "has_Volume": hasattr(mp, "Volume"),
+            "has_Mass": hasattr(mp, "Mass"),
+            "has_Volume": hasattr(mp, "Volume"),
             "★": "★ 记录『当属性取即可』——与 `CustomPropertyManager`（必须当方法调）**相反**",
         }
 
         #: ④ ★★ 数字断言
         got = mass_properties(part)
+
         def _close(a, b, tol=1e-6):
             try:
                 return abs(float(a) - float(b)) <= tol * max(1.0, abs(float(b)))
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 return False
-        com_ok = (isinstance(got.get("center_of_mass"), list)
-                  and len(got["center_of_mass"]) == 3
-                  and all(_close(got["center_of_mass"][i], EXPECT["center_of_mass"][i], 1e-6)
-                          for i in range(3)))
+
+        com_ok = (
+            isinstance(got.get("center_of_mass"), list)
+            and len(got["center_of_mass"]) == 3
+            and all(
+                _close(got["center_of_mass"][i], EXPECT["center_of_mass"][i], 1e-6)
+                for i in range(3)
+            )
+        )
         ev["steps"]["numeric_assertions"] = {
-            "ok": (_close(got.get("volume"), EXPECT["volume"])
-                   and _close(got.get("surface_area"), EXPECT["surface_area"])
-                   and com_ok),
-            "got": got, "expect": EXPECT,
-            "check": {"volume": _close(got.get("volume"), EXPECT["volume"]),
-                      "surface_area": _close(got.get("surface_area"), EXPECT["surface_area"]),
-                      "center_of_mass": com_ok},
+            "ok": (
+                _close(got.get("volume"), EXPECT["volume"])
+                and _close(got.get("surface_area"), EXPECT["surface_area"])
+                and com_ok
+            ),
+            "got": got,
+            "expect": EXPECT,
+            "check": {
+                "volume": _close(got.get("volume"), EXPECT["volume"]),
+                "surface_area": _close(got.get("surface_area"), EXPECT["surface_area"]),
+                "center_of_mass": com_ok,
+            },
         }
         ok = ok and ev["steps"]["numeric_assertions"]["ok"]
 
@@ -126,50 +144,64 @@ def main() -> int:
             d = float(got.get("density") or 0.0)
             m = float(got.get("mass") or 0.0)
             ev["steps"]["mass_unit_puzzle"] = {
-                "volume": v, "density": d, "mass": m,
+                "volume": v,
+                "density": d,
+                "mass": m,
                 "volume_times_density": v * d,
                 "mass_over_that": (m / (v * d)) if (v and d) else None,
                 "★": "★ 如实记录：mass 恰好等于 volume(mm³) × density ⇒ **量纲不成立** ⇒ "
-                     "mass 的物理单位**未确证**，★ 不猜、不给它安一个单位",
+                "mass 的物理单位**未确证**，★ 不猜、不给它安一个单位",
             }
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["mass_unit_puzzle"] = {"note": "算不出: %s" % str(exc)[:60]}
 
         #: ⑥ ⚠ 如实记录 `AccuracyLevel` 读不到
         try:
             from scripts.sw_connect import get_com_member as _g
+
             _g(mp, "AccuracyLevel")
-            ev["steps"]["accuracy_level"] = {"readable": True, "★": "★ 与探针那次不同了 —— 要更新说明"}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["accuracy_level"] = {"readable": False, "err": str(exc)[:70],
-                                             "★": "★ 与探针一致：读不到 ⇒ 不暴露它"}
+            ev["steps"]["accuracy_level"] = {
+                "readable": True,
+                "★": "★ 与探针那次不同了 —— 要更新说明",
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["accuracy_level"] = {
+                "readable": False,
+                "err": str(exc)[:70],
+                "★": "★ 与探针一致：读不到 ⇒ 不暴露它",
+            }
 
         #: ⑦ 负例：在**工程图**上调 ⇒ 必须报错
         drw = sw_connect.new_document(sw, "drawing")
         docs.append(drw)
         try:
             mass_properties(drw)
-            ev["steps"]["negative_on_drawing"] = {"ok": False,
-                                                  "★": "★ **没有抛错** —— 在工程图上静默通过了"}
+            ev["steps"]["negative_on_drawing"] = {
+                "ok": False,
+                "★": "★ **没有抛错** —— 在工程图上静默通过了",
+            }
             ok = False
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["negative_on_drawing"] = {"ok": True, "raised": type(exc).__name__,
-                                                  "msg": str(exc)[:90]}
-    except Exception as exc:                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["negative_on_drawing"] = {
+                "ok": True,
+                "raised": type(exc).__name__,
+                "msg": str(exc)[:90],
+            }
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-        for d in docs:                                         #: ★ 关件不保存
+        for d in docs:  #: ★ 关件不保存
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t and sw is not None:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -180,7 +212,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

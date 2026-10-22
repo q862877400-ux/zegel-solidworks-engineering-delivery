@@ -45,6 +45,7 @@ r"""@brief 接口归属检查 —— 装上**可核验的 `CONST → 接口` 映
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -182,7 +183,9 @@ def officially_named() -> dict:
     out: dict = {}
     if not TYPES.is_dir() or not CD_DOC.is_file():
         return out
-    consts = set(re.findall(r"^\s*-\s*(swFm\w+)\s*\(", CD_DOC.read_text(encoding="utf-8"), re.M))
+    consts = set(
+        re.findall(r"^\s*-\s*(swFm\w+)\s*\(", CD_DOC.read_text(encoding="utf-8"), re.M)
+    )
     for d in sorted(TYPES.iterdir()):
         if not d.is_dir() or not d.name.startswith("I"):
             continue
@@ -251,9 +254,14 @@ def build_map() -> tuple:
     manual_used: set = set()
     if not CD_DOC.is_file() or not TYPES.is_dir():
         return mapped, ambiguous, unmapped
-    consts = {m.group(1): m.group(2).strip()
-              for m in re.finditer(r"^\s*-\s*(swFm\w+)\s*\(([^)]*)\)\s*$",
-                                   CD_DOC.read_text(encoding="utf-8"), re.M)}
+    consts = {
+        m.group(1): m.group(2).strip()
+        for m in re.finditer(
+            r"^\s*-\s*(swFm\w+)\s*\(([^)]*)\)\s*$",
+            CD_DOC.read_text(encoding="utf-8"),
+            re.M,
+        )
+    }
     if not consts:
         return mapped, ambiguous, unmapped
     ifaces: dict = {}
@@ -322,10 +330,13 @@ def build_map() -> tuple:
                     #    ⚠ **本规则是启发式**，不如 ①② 硬 —— 因此**排在最后**，
                     #      且仅在 ①② 之后仍多命中时才用。
                     base = set(_norm(cdesc).split())
-                    ranked = sorted(withf, key=lambda i: len(set(_norm(ifaces[i]).split()) - base))
+                    ranked = sorted(
+                        withf, key=lambda i: len(set(_norm(ifaces[i]).split()) - base)
+                    )
                     if len(ranked) >= 2 and (
-                            len(set(_norm(ifaces[ranked[0]]).split()) - base)
-                            < len(set(_norm(ifaces[ranked[1]]).split()) - base)):
+                        len(set(_norm(ifaces[ranked[0]]).split()) - base)
+                        < len(set(_norm(ifaces[ranked[1]]).split()) - base)
+                    ):
                         hits = [ranked[0]]
         if len(hits) == 1:
             mapped[cname] = hits[0]
@@ -348,8 +359,12 @@ def enum_values() -> dict:
     """`{swFm*: 数值}`（反射转储）—— 用于把模块常量反查回 `swFm*` 名。"""
     for r in RAW.rglob("enum_values_sldworks.txt"):
         try:
-            return dict(re.findall(r"(swFm\w+)\s*[=:,]\s*(-?\d+)",
-                                   r.read_text(encoding="utf-8", errors="replace")))
+            return dict(
+                re.findall(
+                    r"(swFm\w+)\s*[=:,]\s*(-?\d+)",
+                    r.read_text(encoding="utf-8", errors="replace"),
+                )
+            )
         except OSError:
             pass
     return {}
@@ -367,9 +382,14 @@ def module_consts(path: Path) -> dict:
     `tests/test_cd_site_disposition.py::test_module_consts_reads_trailing_comment`。
     """
     try:
-        return {m.group(1): m.group(2)
-                for m in re.finditer(r"^[ \t]*([A-Z][A-Z0-9_]*)[ \t]*=[ \t]*(\d+)[ \t]*(?:#.*)?$",
-                                     path.read_text(encoding="utf-8"), re.M)}
+        return {
+            m.group(1): m.group(2)
+            for m in re.finditer(
+                r"^[ \t]*([A-Z][A-Z0-9_]*)[ \t]*=[ \t]*(\d+)[ \t]*(?:#.*)?$",
+                path.read_text(encoding="utf-8"),
+                re.M,
+            )
+        }
     except OSError:
         return {}
 
@@ -463,7 +483,11 @@ def enclosing_range(lines: list, start: int) -> tuple:
         if re.match(r"^def\s", lines[i]):
             def_line = i
             break
-        if lines[i] and not lines[i][0].isspace() and not lines[i].startswith(("#", ")", "]", "}")):
+        if (
+            lines[i]
+            and not lines[i][0].isspace()
+            and not lines[i].startswith(("#", ")", "]", "}"))
+        ):
             break
     if def_line is None:
         return max(0, start - 40), min(len(lines), start + 40)
@@ -473,7 +497,11 @@ def enclosing_range(lines: list, start: int) -> tuple:
         if m and len(m.group(1)) == 0:
             end = j
             break
-        if lines[j] and not lines[j][0].isspace() and not lines[j].startswith(("#", ")", "]", "}")):
+        if (
+            lines[j]
+            and not lines[j][0].isspace()
+            and not lines[j].startswith(("#", ")", "]", "}"))
+        ):
             end = j
             break
     return def_line, end
@@ -485,7 +513,11 @@ def enclosing_func_name(lines: list, start: int) -> str:
         m = re.match(r"^def\s+(\w+)", lines[i])
         if m:
             return m.group(1)
-        if lines[i] and not lines[i][0].isspace() and not lines[i].startswith(("#", ")", "]", "}")):
+        if (
+            lines[i]
+            and not lines[i][0].isspace()
+            and not lines[i].startswith(("#", ")", "]", "}"))
+        ):
             break
     return ""
 
@@ -504,7 +536,7 @@ def calls_of(lines: list, fname: str) -> list:
     for i, line in enumerate(lines):
         if not pat.search(line) or re.match(r"^\s*def\s", line):
             continue
-        inner = line[line.find("(") + 1:]
+        inner = line[line.find("(") + 1 :]
         depth, buf, args = 1, "", []
         for ch in inner:
             if ch == "(":
@@ -529,8 +561,10 @@ def param_index(lines: list, fname: str, pname: str) -> int:
     for line in lines:
         m = re.match(r"^def\s+%s\s*\(([^)]*)\)" % re.escape(fname), line)
         if m:
-            plist = [x.strip().split(":")[0].split("=")[0].strip()
-                     for x in m.group(1).split(",")]
+            plist = [
+                x.strip().split(":")[0].split("=")[0].strip()
+                for x in m.group(1).split(",")
+            ]
             return plist.index(pname) if pname in plist else -1
     return -1
 
@@ -582,7 +616,7 @@ def scan_sites(paths) -> list:
         for var, line_no, arg in calls:
             # ⚠⚠ **形参驱动的站点必须展开成 N 个检查**（每个调用点一次）。
             const0 = to_const(arg, consts, byval)
-            plans = []          # [(常量, [要收集的范围], 说明)]
+            plans = []  # [(常量, [要收集的范围], 说明)]
             arg_texts = [arg or ""]
             if const0:
                 plans.append((const0, [enclosing_range(lines, line_no - 1)], "块内"))
@@ -598,18 +632,45 @@ def scan_sites(paths) -> list:
                             arg_texts.append(args[pi])
                             c2 = to_const(args[pi], consts, byval)
                             if c2:
-                                plans.append((c2, [base, enclosing_range(lines, cl - 1)],
-                                              "调用点 L%d" % cl))
+                                plans.append(
+                                    (
+                                        c2,
+                                        [base, enclosing_range(lines, cl - 1)],
+                                        "调用点 L%d" % cl,
+                                    )
+                                )
             if not plans:
-                out.append({"path": t, "line": line_no, "var": var, "arg": arg,
-                            "const": None, "code": "dynamic", "used": 0, "bad": 0,
-                            "why": "块内", "arg_texts": arg_texts, "hosts": []})
+                out.append(
+                    {
+                        "path": t,
+                        "line": line_no,
+                        "var": var,
+                        "arg": arg,
+                        "const": None,
+                        "code": "dynamic",
+                        "used": 0,
+                        "bad": 0,
+                        "why": "块内",
+                        "arg_texts": arg_texts,
+                        "hosts": [],
+                    }
+                )
                 continue
             pat = re.compile(r"\b%s\s*\.\s*(\w+)\s*(?:=[^=]|\()" % re.escape(var))
             for const, ranges, why in plans:
-                rec = {"path": t, "line": line_no, "var": var, "arg": arg, "const": const,
-                       "code": "checked", "used": 0, "bad": 0, "why": why,
-                       "arg_texts": arg_texts, "hosts": hconsts.get(const, [])}
+                rec = {
+                    "path": t,
+                    "line": line_no,
+                    "var": var,
+                    "arg": arg,
+                    "const": const,
+                    "code": "checked",
+                    "used": 0,
+                    "bad": 0,
+                    "why": why,
+                    "arg_texts": arg_texts,
+                    "hosts": hconsts.get(const, []),
+                }
                 iface = mapped.get(const)
                 if not iface:
                     rec["code"] = "unmapped"
@@ -651,11 +712,15 @@ def main(argv=None) -> int:
     _named = len(OFFICIAL_NAMED)
     _manual = len(MANUAL_USED)
     _auto = len(mapped) - _manual - _named
-    print("`CONST → 接口` 映射表：唯一命中 **%d**"
-          "（**官方点名** %d + **文本匹配** %d + **人工确证** %d）/ 歧义 %d / 未映射 %d"
-          % (len(mapped), _named, _auto, _manual, len(ambiguous), len(unmapped)))
-    print("  ⚠ **三类证据强度递减**：官方点名（官方**断言**）> 文本匹配（对官方 prose 的**推断**）"
-          "> 人工确证（我逐条读过官方描述）")
+    print(
+        "`CONST → 接口` 映射表：唯一命中 **%d**"
+        "（**官方点名** %d + **文本匹配** %d + **人工确证** %d）/ 歧义 %d / 未映射 %d"
+        % (len(mapped), _named, _auto, _manual, len(ambiguous), len(unmapped))
+    )
+    print(
+        "  ⚠ **三类证据强度递减**：官方点名（官方**断言**）> 文本匹配（对官方 prose 的**推断**）"
+        "> 人工确证（我逐条读过官方描述）"
+    )
     if OFFICIAL_NAMED:
         print("     ★ 官方点名 %d 条：%s" % (_named, " ".join(sorted(OFFICIAL_NAMED))))
     if MANUAL_USED:
@@ -671,19 +736,39 @@ def main(argv=None) -> int:
         codes[s["code"]] = codes.get(s["code"], 0) + 1
     checked = codes.get("checked", 0)
     skipped = len(sites) - checked
-    problems = [(s["path"].name, s["why"], s["const"], s["iface"],
-                 [(m, 0) for m in s["bad_members"]])
-                for s in sites if s["code"] == "checked" and s["bad"]]
+    problems = [
+        (
+            s["path"].name,
+            s["why"],
+            s["const"],
+            s["iface"],
+            [(m, 0) for m in s["bad_members"]],
+        )
+        for s in sites
+        if s["code"] == "checked" and s["bad"]
+    ]
 
-    print("扫描 %d 个文件；**检查过 %d 个 `CreateDefinition` 站点**；跳过 %d"
-          "（映射表没有 / 成员集空 / 没收集到成员）" % (len(targets), checked, skipped))
+    print(
+        "扫描 %d 个文件；**检查过 %d 个 `CreateDefinition` 站点**；跳过 %d"
+        "（映射表没有 / 成员集空 / 没收集到成员）" % (len(targets), checked, skipped)
+    )
     #: ★★ **分码明细** —— 旧实现把四种处置合成一个数（静默降级，spec 237）。
-    print("  ★ 分码：%s" % " · ".join("%s %d" % (c, codes.get(c, 0)) for c in SITE_CODES))
+    print(
+        "  ★ 分码：%s" % " · ".join("%s %d" % (c, codes.get(c, 0)) for c in SITE_CODES)
+    )
     for s in sites:
         if s["code"] != "checked":
-            print("     [%s] %s:%d  const=%s  官方宿主页=%s" % (
-                s["code"], s["path"].name, s["line"], s["const"] or "（解析不出）",
-                " / ".join(s.get("hosts") or []) or "**无**（没有任何官方 `CreateDefinition` 页收录）"))
+            print(
+                "     [%s] %s:%d  const=%s  官方宿主页=%s"
+                % (
+                    s["code"],
+                    s["path"].name,
+                    s["line"],
+                    s["const"] or "（解析不出）",
+                    " / ".join(s.get("hosts") or [])
+                    or "**无**（没有任何官方 `CreateDefinition` 页收录）",
+                )
+            )
     print()
 
     # ⚠ **假绿守卫**（第 29 轮的教训，保留）
@@ -704,14 +789,20 @@ def main(argv=None) -> int:
         print("[OK] 没有「成员不在期望接口上」的站点")
     print()
     print("  ⚠ **本工具按「诊断」定位**：映射表来自**文本匹配**，有歧义/未映射的洞")
-    print("     （实测：**%d 唯一**（官方点名 %d + 文本匹配 %d + 人工确证 %d）/ 歧义 %d / 未映射 %d）"
-          % (len(mapped), _named, _auto, _manual, len(ambiguous), len(unmapped)))
+    print(
+        "     （实测：**%d 唯一**（官方点名 %d + 文本匹配 %d + 人工确证 %d）/ 歧义 %d / 未映射 %d）"
+        % (len(mapped), _named, _auto, _manual, len(ambiguous), len(unmapped))
+    )
     print("     ⇒ 报 `[HIT]` 时值得看；**没有命中不等于归属一定正确**。")
-    print("  ⚠ ★ 官方 `CreateDefinition` **宿主页不止一个**（%s）⇒ 「常量属于哪个宿主」由"
-          % " / ".join(sorted(CD_DOCS)))
+    print(
+        "  ⚠ ★ 官方 `CreateDefinition` **宿主页不止一个**（%s）⇒ 「常量属于哪个宿主」由"
+        % " / ".join(sorted(CD_DOCS))
+    )
     print("     `scripts/check_cd_host_scope.py` 判（本工具只按宿主域查成员）。")
     print("  ⚠ 与 `check_member_names.py`（**门禁**）互补不替代：")
-    print("     那个判「名字在**某个**接口里存在」（快、全仓）；本工具判「在**这个**接口里存在」。")
+    print(
+        "     那个判「名字在**某个**接口里存在」（快、全仓）；本工具判「在**这个**接口里存在」。"
+    )
     return 0
 
 

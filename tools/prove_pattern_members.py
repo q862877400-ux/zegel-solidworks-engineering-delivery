@@ -37,13 +37,22 @@ sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pattern-members-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "pattern-members-evidence.json"
+)
 
 #: ★ 要问的（★ 前 5 个是 `LinearPattern` 那族；★ 而后面几个是**对照**）
-NAMES = ["FeatureLinearPattern", "FeatureLinearPattern2", "FeatureLinearPattern3",
-         "FeatureLinearPattern4", "FeatureLinearPattern5",
-         "FeatureCircularPattern4", "FeatureCircularPattern5",
-         "InsertProtrusionBlend2", "FeatureExtrusion3"]
+NAMES = [
+    "FeatureLinearPattern",
+    "FeatureLinearPattern2",
+    "FeatureLinearPattern3",
+    "FeatureLinearPattern4",
+    "FeatureLinearPattern5",
+    "FeatureCircularPattern4",
+    "FeatureCircularPattern5",
+    "InsertProtrusionBlend2",
+    "FeatureExtrusion3",
+]
 
 
 def main() -> int:
@@ -58,7 +67,7 @@ def main() -> int:
         doc = sw_connect.new_document(sw, "part")
         fm = get_com_member(doc, "FeatureManager")
         got = probe_members(fm, NAMES)
-        ev["probed"] = len(NAMES)                                   # ★ 先报查了多少（事实 357）
+        ev["probed"] = len(NAMES)  # ★ 先报查了多少（事实 357）
         ev["states"] = got
         #: ★ 对照：★ CircularPattern4 **已验能用** ⇒ 它必须是 callable（★ 否则本探针的判
         #: 据有问题）
@@ -67,22 +76,27 @@ def main() -> int:
         ev["linear_pattern_states"] = lp
         ev["any_linear_available"] = sorted(n for n, v in lp.items() if v == "callable")
         ev["verdict"] = "pass" if ev["control_ok"] else "invalid"
-        ev["note"] = ("★ 问真机：那几个阵列成员取得取不到。★ **对照**是 `FeatureCircularPattern4` —— "
-                      "★ 它**已挂且能用**，★ 故它必须回 callable（★ 否则说明本探针的判据本身不对）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 问真机：那几个阵列成员取得取不到。★ **对照**是 `FeatureCircularPattern4` —— "
+            "★ 它**已挂且能用**，★ 故它必须回 callable（★ 否则说明本探针的判据本身不对）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

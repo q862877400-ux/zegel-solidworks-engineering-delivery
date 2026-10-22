@@ -2,20 +2,35 @@
 SolidWorks 文件导出工具
 支持 STEP、STL、IGES、PDF、DXF/DWG、Parasolid 等格式
 """
+
 import os
 from pathlib import Path
 
 try:
     from .sw_preflight import import_com_dependencies
+
     #: ★★ 2026-10-07（规格 211 · D 项）：★ 加 `save_document` 到**已有的**导入行 ——
     #: ★ 那是「受控临时另存」要用的（★ 用户授权，见 `export_flat_pattern_dxf` 的 docstri
     #: ng ✓）
     #:   ★★★ **加名字、不加行**：★ `check_relative_imports.py` 的棘轮数的是**行** ✓
-    from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document, save_document, set_com_member
+    from .sw_connect import (
+        create_empty_dispatch_variant,
+        get_com_member,
+        open_document,
+        save_document,
+        set_com_member,
+    )
     from .sw_connect import out_i4
 except ImportError:
     from sw_preflight import import_com_dependencies
-    from sw_connect import create_empty_dispatch_variant, get_com_member, open_document, out_i4, save_document, set_com_member
+    from sw_connect import (
+        create_empty_dispatch_variant,
+        get_com_member,
+        open_document,
+        out_i4,
+        save_document,
+        set_com_member,
+    )
 
 pythoncom, _win32com, VARIANT = import_com_dependencies()
 
@@ -42,7 +57,18 @@ def _report_preference_guard(rep, where: str, result=None):
         result.setdefault("preference_guard", data)
     return data
 
-SUPPORTED_BATCH_FORMATS = {".step", ".stp", ".stl", ".igs", ".iges", ".x_t", ".pdf", ".dxf", ".dwg"}
+
+SUPPORTED_BATCH_FORMATS = {
+    ".step",
+    ".stp",
+    ".stl",
+    ".igs",
+    ".iges",
+    ".x_t",
+    ".pdf",
+    ".dxf",
+    ".dwg",
+}
 
 
 def _ensure_parent_dir(file_path):
@@ -77,9 +103,17 @@ def export_to_stl(model, output_path, quality="fine"):
     quality_map = {"coarse": 1, "fine": 0}
     if quality not in quality_map:
         return _export_generic(model, output_path)
-    with preference_guard(model, [Preference(
-            "integer", SW_STL_QUALITY_PREF, quality_map[quality],
-            why="导出 STL 的精细度（沿用既有偏好号 78，名字未核实）")]) as rep:
+    with preference_guard(
+        model,
+        [
+            Preference(
+                "integer",
+                SW_STL_QUALITY_PREF,
+                quality_map[quality],
+                why="导出 STL 的精细度（沿用既有偏好号 78，名字未核实）",
+            )
+        ],
+    ) as rep:
         result = _export_generic(model, output_path)
     _report_preference_guard(rep, "export_to_stl", result)
     return result
@@ -128,6 +162,7 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     """
     if sw is None:
         import sw_connect
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
     # ── 来源 ─────────────────────────────────────────────────────────
     # 仓库:   SolidWorks 官方 API 签名（两源互证）
@@ -199,11 +234,16 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     errors = out_i4()
     warnings = out_i4()
     success = get_com_member(
-        get_com_member(model, "Extension"), "SaveAs3",
-        str(output_path), 0, 1,
-        pdf_data,                                     #: ★★ PDF 的 ExportData（★ 不能为空 Dispatch）
-        create_empty_dispatch_variant(),              #: ★ AdvancedSaveAsOptions（★ 空 Dispatch）
-        errors, warnings)                             #: ★ 两个出参（★ 事实 12/68 那一族）
+        get_com_member(model, "Extension"),
+        "SaveAs3",
+        str(output_path),
+        0,
+        1,
+        pdf_data,  #: ★★ PDF 的 ExportData（★ 不能为空 Dispatch）
+        create_empty_dispatch_variant(),  #: ★ AdvancedSaveAsOptions（★ 空 Dispatch）
+        errors,
+        warnings,
+    )  #: ★ 两个出参（★ 事实 12/68 那一族）
 
     _print_result("PDF", output_path, success, errors, warnings)
     return success
@@ -294,8 +334,13 @@ def export_flat_pattern_dxf(
             )
         #: ★★★ **受控临时另存**（★ 本仓第一个"保存文档"的动作 ⇒ 约束拉满 ✓）
         target_dir = temporary_save_dir or os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "_temp_save")
-        target_dir = os.path.abspath(os.path.expandvars(os.path.expanduser(str(target_dir))))
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "output",
+            "_temp_save",
+        )
+        target_dir = os.path.abspath(
+            os.path.expandvars(os.path.expanduser(str(target_dir)))
+        )
         #: ★★ 判据①：**必须在仓库内**（★ 不许写用户目录 —— 硬约束 ✓）
         #:   ★★★ 2026-10-07 **修过一版**：★ 第一版写的是
         #:     `target.lower().startswith(repo_root.lower())` ✗ ——
@@ -309,23 +354,31 @@ def export_flat_pattern_dxf(
         if not target_norm.startswith(repo_prefix):
             raise ValueError(
                 "★ 临时另存只允许落在仓库内（★ 收到 %r，★ 仓库根 %r）—— "
-                "「真机跑不许写到用户目录」那条硬约束在这一点上不放行" % (target_dir, repo_root))
+                "「真机跑不许写到用户目录」那条硬约束在这一点上不放行"
+                % (target_dir, repo_root)
+            )
         _ensure_parent_dir(os.path.join(target_dir, "x.sldprt"))
         #: ★★ 判据②：**不许覆盖已有文件**（★ 用时间戳名 ✓ —— ★ 覆盖会毁掉上一次的证据 ✓
         #: ）
         import time as _time
+
         stamp = _time.strftime("%Y%m%d-%H%M%S")
         temp_path = os.path.join(target_dir, "flatpattern-%s.sldprt" % stamp)
         if os.path.exists(temp_path):
             raise ValueError("★ 临时另存目标已存在、拒绝覆盖：%r" % temp_path)
         model_title = str(get_com_member(model, "GetTitle") or "part")
         if not _save_as(model, temp_path):
-            raise RuntimeError("★ 临时另存失败：%r ⇒ 展开 DXF 的前置仍未满足" % temp_path)
+            raise RuntimeError(
+                "★ 临时另存失败：%r ⇒ 展开 DXF 的前置仍未满足" % temp_path
+            )
         model_path = str(get_com_member(model, "GetPathName") or "")
         if not model_path:
             raise RuntimeError("★ 临时另存后仍读不到路径 ⇒ 放弃导出（★ 不猜）")
         print("★★ 已临时另存（★ 用户授权的受控例外）：%s" % temp_path)
-        print("★★ 文档 %r 用完请自行决定去留 —— ★ 本函数**不删**它（★ 删数据是红线 ✓）" % model_title)
+        print(
+            "★★ 文档 %r 用完请自行决定去留 —— ★ 本函数**不删**它（★ 删数据是红线 ✓）"
+            % model_title
+        )
 
     output_path = os.path.abspath(os.path.expandvars(os.path.expanduser(output_path)))
     _ensure_parent_dir(output_path)
@@ -341,17 +394,19 @@ def export_flat_pattern_dxf(
     if merge_coplanar_faces:
         options |= SW_SHEET_METAL_EXPORT_MERGE_COPLANAR_FACES
 
-    return bool(model.ExportToDWG2(
-        output_path,
-        model_path,
-        SW_EXPORT_TO_DWG_SHEET_METAL,
-        True,
-        _sheet_metal_alignment_variant(alignment),
-        False,
-        False,
-        options,
-        None,
-    ))
+    return bool(
+        model.ExportToDWG2(
+            output_path,
+            model_path,
+            SW_EXPORT_TO_DWG_SHEET_METAL,
+            True,
+            _sheet_metal_alignment_variant(alignment),
+            False,
+            False,
+            options,
+            None,
+        )
+    )
 
 
 def batch_export(sw, file_paths, output_dir, format_ext=".step"):
@@ -368,12 +423,14 @@ def batch_export(sw, file_paths, output_dir, format_ext=".step"):
     results = []
     for document in report["documents"]:
         output = document.get("outputs", [{}])[0]
-        results.append({
-            "file": document["source"],
-            "success": document["success"],
-            "output": output.get("path"),
-            "error": document.get("error") or output.get("error"),
-        })
+        results.append(
+            {
+                "file": document["source"],
+                "success": document["success"],
+                "output": output.get("path"),
+                "error": document.get("error") or output.get("error"),
+            }
+        )
     return results
 
 
@@ -417,14 +474,18 @@ def _activate_source_document(sw, model, source_path):
             ole_object = getattr(sw, "_oleobj_", None)
             if ole_object is None:
                 raise
-            dynamic_sw = _win32com.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
+            dynamic_sw = _win32com.dynamic.DumbDispatch(
+                ole_object, "SldWorks.Application"
+            )
             dynamic_sw.ActivateDoc2(title, False, errors)
         active = get_com_member(sw, "ActiveDoc")
     if active is None:
         raise RuntimeError(f"SolidWorks 无法激活源文档: {source_path}")
     active_path = str(get_com_member(active, "GetPathName") or "")
     if not active_path or Path(active_path).resolve() != Path(source_path).resolve():
-        raise RuntimeError(f"活动文档与导出源不一致: active={active_path}, source={source_path}")
+        raise RuntimeError(
+            f"活动文档与导出源不一致: active={active_path}, source={source_path}"
+        )
     return active
 
 
@@ -460,7 +521,10 @@ def batch_export_formats(
     返回每个输出的文件大小和 ``produced_this_run`` 证据。原本已经在
     SolidWorks 中打开的文档不会被本函数关闭。
     """
-    source_paths = [str(Path(os.path.expandvars(str(path))).expanduser().resolve()) for path in file_paths]
+    source_paths = [
+        str(Path(os.path.expandvars(str(path))).expanduser().resolve())
+        for path in file_paths
+    ]
     if not source_paths:
         raise ValueError("file_paths 不能为空")
     extensions = list(dict.fromkeys(_normalize_format(item) for item in formats))
@@ -473,7 +537,12 @@ def batch_export_formats(
 
     for source_path in source_paths:
         source = Path(source_path)
-        document_result = {"source": source_path, "success": False, "outputs": [], "was_open": False}
+        document_result = {
+            "source": source_path,
+            "success": False,
+            "outputs": [],
+            "was_open": False,
+        }
         if not source.is_file():
             document_result["error"] = "源文件不存在"
             documents.append(document_result)
@@ -484,7 +553,9 @@ def batch_export_formats(
             existing_model = None
         was_open = bool(existing_model)
         document_result["was_open"] = was_open
-        model = existing_model or open_document(sw, source_path, silent=True, raise_on_error=False)
+        model = existing_model or open_document(
+            sw, source_path, silent=True, raise_on_error=False
+        )
         if model is None:
             document_result["error"] = "SolidWorks 无法打开源文件"
             documents.append(document_result)
@@ -495,7 +566,11 @@ def batch_export_formats(
                 output_path = output_root / f"{source.stem}{extension}"
                 output_key = str(output_path).casefold()
                 before = _file_signature(output_path)
-                output_result = {"format": extension, "path": str(output_path), "success": False}
+                output_result = {
+                    "format": extension,
+                    "path": str(output_path),
+                    "success": False,
+                }
                 if output_key in claimed_outputs:
                     output_result["error"] = "不同源文件产生同名输出，已阻止覆盖"
                     document_result["outputs"].append(output_result)
@@ -507,18 +582,26 @@ def batch_export_formats(
                     continue
                 try:
                     _activate_source_document(sw, model, source_path)
-                    api_success = bool(_export_for_format(model, str(output_path), extension, stl_quality))
+                    api_success = bool(
+                        _export_for_format(
+                            model, str(output_path), extension, stl_quality
+                        )
+                    )
                     after = _file_signature(output_path)
                     produced = api_success and after is not None and after != before
-                    output_result.update({
-                        "success": bool(produced),
-                        "api_success": api_success,
-                        "exists": after is not None,
-                        "size_bytes": after[0] if after else 0,
-                        "produced_this_run": bool(produced),
-                    })
+                    output_result.update(
+                        {
+                            "success": bool(produced),
+                            "api_success": api_success,
+                            "exists": after is not None,
+                            "size_bytes": after[0] if after else 0,
+                            "produced_this_run": bool(produced),
+                        }
+                    )
                     if api_success and not produced:
-                        output_result["error"] = "SolidWorks 返回成功，但没有检测到本轮新产物"
+                        output_result["error"] = (
+                            "SolidWorks 返回成功，但没有检测到本轮新产物"
+                        )
                 except Exception as error:
                     output_result["error"] = str(error)
                 document_result["outputs"].append(output_result)
@@ -539,7 +622,11 @@ def batch_export_formats(
         "output_dir": str(output_root),
         "formats": extensions,
         "documents": documents,
-        "summary": {"documents": len(documents), "outputs": output_count, "succeeded": success_count},
+        "summary": {
+            "documents": len(documents),
+            "outputs": output_count,
+            "succeeded": success_count,
+        },
     }
     print(f"批量导出完成: {success_count}/{output_count} 个输出成功")
     return report
@@ -588,7 +675,7 @@ def _export_generic(model, output_path):
     #:   导出全部失败**，报 `com_error: (-2147352571, '类型不匹配。', None, **5**)` ✓
     #: ★ **根因（★ 四格对照实测，不是推断）**：官方 `SaveAs3.md` 的 `**Signature**:` 逐
     #: 字是 **7 参** ⇒
-    #: `(Name, Version, Options, ExportData, **AdvancedSaveAsOptions**, out Errors, out 
+    #: `(Name, Version, Options, ExportData, **AdvancedSaveAsOptions**, out Errors, out
     #: Warnings)`；
     #:     ★★ 而这里原来**只传 6 个** ⇒ `AdvancedSaveAsOptions` **整段缺席** ⇒
     #:     ★★★ `errors` 落到了**位置 5** ⇒ ★ 报错里那个「**位置 5**」正是它 ✓
@@ -604,11 +691,15 @@ def _export_generic(model, output_path):
     #:   ★★ 即：★ **同一文件里那个"能用"的 `export_to_image`（传 7 个）就是正解** ——
     #:     ★★★ 这处缺陷的形态是「**照它抄时漏抄了一整参**」 ✓
     success = get_com_member(
-        get_com_member(model, "Extension"), "SaveAs3",
-        output_path, 0, 1,
-        create_empty_dispatch_variant(),              #: ★ ExportData（★ 空 Dispatch，不是 None）
-        create_empty_dispatch_variant(),              #: ★★ AdvancedSaveAsOptions（★ 原来漏了这一参 ⇒ 位置 5 报错）
-        errors, warnings
+        get_com_member(model, "Extension"),
+        "SaveAs3",
+        output_path,
+        0,
+        1,
+        create_empty_dispatch_variant(),  #: ★ ExportData（★ 空 Dispatch，不是 None）
+        create_empty_dispatch_variant(),  #: ★★ AdvancedSaveAsOptions（★ 原来漏了这一参 ⇒ 位置 5 报错）
+        errors,
+        warnings,
     )
 
     ext = os.path.splitext(output_path)[1].upper()
@@ -620,8 +711,10 @@ def _export_generic(model, output_path):
     if artifact_ok:
         print(f"  产物校验: OK · {artifact_size} 字节")
     else:
-        print("  产物校验: **失败** —— %s"
-              % ("目标文件不存在" if signature is None else "目标文件是 0 字节"))
+        print(
+            "  产物校验: **失败** —— %s"
+            % ("目标文件不存在" if signature is None else "目标文件是 0 字节")
+        )
     #: ★ 判据取**两者的与**：★ 调用不报错 **且** 产物真的写出来了
     return bool(success) and artifact_ok
 
@@ -695,7 +788,7 @@ def get_mass_property_override_options(model, accuracy: float = 1.0):
     #   但**两者在当前后端都拿不到 `IMassProperty2`**（见 docstring 的实测）。
     try:
         mass_property = get_com_member(extension, "GetMassProperties", float(accuracy))
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         raise RuntimeError(
             "IModelDocExtension.GetMassProperties 在当前后端（pywin32 迟到绑定）上**调用失败**"
             "（原始错误：%s）⇒ 质量属性覆盖选项在当前后端**不可用**；"
@@ -732,13 +825,17 @@ def set_mass_property_override(
     if override_options is None:
         raise ValueError("override_options 为 None：须先取 GetOverrideOptions()")
     set_com_member(override_options, "OverrideMass", bool(override_mass))
-    set_com_member(override_options, "OverrideCenterOfMass", bool(override_center_of_mass))
-    set_com_member(override_options, "OverrideMomentsOfInertia",
-                   bool(override_moments_of_inertia))
+    set_com_member(
+        override_options, "OverrideCenterOfMass", bool(override_center_of_mass)
+    )
+    set_com_member(
+        override_options, "OverrideMomentsOfInertia", bool(override_moments_of_inertia)
+    )
     if mass_value is not None:
         get_com_member(override_options, "SetOverrideMassValue", float(mass_value))
-    return get_com_member(mass_property, "SetOverrideOptions",
-                          override_options, 0, third_argument)
+    return get_com_member(
+        mass_property, "SetOverrideOptions", override_options, 0, third_argument
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -790,7 +887,7 @@ def export_to_bmp(model, output_path, width=0, height=0):
 # 官方依据: ① 出厂类型库反射 `iface_sldworks.txt` —— ★ **两个重载**：  `Int32   SaveAs3(
 #           String, Int32, Int32)`  `Boolean SaveAs3(String, Int32, Int32, Object, Objec
 #           t, Int32&, Int32&)`② `C:\swapi\types\IModelDocExtension\SaveAs3.md`：  `bool
-#            SaveAs3(string Name, int Version, int Options, object ExportData,   object 
+#            SaveAs3(string Name, int Version, int Options, object ExportData,   object
 #           AdvancedSaveAsOptions, out int Errors, out int Warnings)`  ⚠ **三级废弃链**
 #           ：`SaveAs` ⇒（Superseded）⇒ `SaveAs2` ⇒（Superseded）⇒ **`SaveAs3`**  ⇒ 本模
 #           块**只用现行那个**。③ ★ 本函数用的是**反射里那个 3 参重载**（`Int32 SaveAs3(
@@ -830,13 +927,19 @@ def export_to_image(model, output_path, *, silent=True):
     #:   （事实 12 / 68 那一族；`sw_connect.out_i4` 就是为此存在的）。
     #: ★ 返回也从 `Int32` 变成 **`Boolean`** ⇒ 判据随之改变。
     ok = get_com_member(
-        get_com_member(model, "Extension"), "SaveAs3",
-        str(p), 0, SW_SAVE_AS_SILENT if silent else 0,
+        get_com_member(model, "Extension"),
+        "SaveAs3",
+        str(p),
+        0,
+        SW_SAVE_AS_SILENT if silent else 0,
         #: ⚠⚠ **实测（轮 147）**：`ExportData` / `AdvancedSaveAsOptions` 传 `None`
         #: 报 **`类型不匹配`**（位置 4）—— 与事实 12 / 33 同一个坑
         #: ⇒ 必须用 `create_empty_dispatch_variant()`（本模块已导入）给出空 Dispatch。
-        create_empty_dispatch_variant(), create_empty_dispatch_variant(),
-        out_i4(), out_i4())
+        create_empty_dispatch_variant(),
+        create_empty_dispatch_variant(),
+        out_i4(),
+        out_i4(),
+    )
     if ok is False:
         #: ⚠ 3 参重载返回 `Int32` 状态码（0 = 成功）。⚠ **0 不代表文件一定写出来了** ——
         #: 调用方应当**再查文件**（同既有 `export_to_step` 那一族的纪律）。
@@ -873,7 +976,7 @@ def _export_report(model, output_path: str, call, fmt: str) -> dict[str, Any]:
     ret = None
     try:
         ret = call()
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     exists = p.is_file()
     size = p.stat().st_size if exists else 0
@@ -888,46 +991,62 @@ def _export_report(model, output_path: str, call, fmt: str) -> dict[str, Any]:
         "size_before": size_before,
         "grew_or_created": (exists and (not existed_before or size != size_before)),
         "error": err,
-        "★": ("ok = 无异常 **且** 文件存在 **且** 大小 > 0 —— ★ 判据是**文件**，不是返回值"
-              "（本项目铁律：回读优先）"),
+        "★": (
+            "ok = 无异常 **且** 文件存在 **且** 大小 > 0 —— ★ 判据是**文件**，不是返回值"
+            "（本项目铁律：回读优先）"
+        ),
     }
 
 
 def export_step_report(model, output_path: str):
     """★ **导出 STEP** 并回**回读报告**（★ 判据 = 文件存在且非空）。"""
-    return _export_report(model, output_path, lambda: export_to_step(model, output_path), "step")
+    return _export_report(
+        model, output_path, lambda: export_to_step(model, output_path), "step"
+    )
 
 
 def export_stl_report(model, output_path: str, quality: str = "fine"):
     """★ **导出 STL** 并回**回读报告**。"""
-    return _export_report(model, output_path,
-                          lambda: export_to_stl(model, output_path, quality), "stl")
+    return _export_report(
+        model, output_path, lambda: export_to_stl(model, output_path, quality), "stl"
+    )
 
 
 def export_iges_report(model, output_path: str):
     """★ **导出 IGES** 并回**回读报告**。"""
-    return _export_report(model, output_path, lambda: export_to_iges(model, output_path), "iges")
+    return _export_report(
+        model, output_path, lambda: export_to_iges(model, output_path), "iges"
+    )
 
 
 def export_parasolid_report(model, output_path: str):
     """★ **导出 Parasolid** 并回**回读报告**。"""
-    return _export_report(model, output_path,
-                          lambda: export_to_parasolid(model, output_path), "parasolid")
+    return _export_report(
+        model, output_path, lambda: export_to_parasolid(model, output_path), "parasolid"
+    )
 
 
 def export_dxf_report(model, output_path: str):
     """★ **导出 DXF** 并回**回读报告**。"""
-    return _export_report(model, output_path, lambda: export_to_dxf(model, output_path), "dxf")
+    return _export_report(
+        model, output_path, lambda: export_to_dxf(model, output_path), "dxf"
+    )
 
 
-def export_bmp_report(model, output_path: str, pixel_width: int = 0,
-                      pixel_height: int = 0):
+def export_bmp_report(
+    model, output_path: str, pixel_width: int = 0, pixel_height: int = 0
+):
     """★ **导出 BMP** 并回**回读报告**（★ 既有冒烟 `tools/verify_bmp_smoke.py` 覆盖它）。
 
     ⚠ 两个尺寸参数是**像素**，★ 故命名 `pixel_*` 而**不是** `*_mm`（规则 2 只管长度/角度）。
     """
-    return _export_report(model, output_path,
-                          lambda: export_to_bmp(model, output_path, pixel_width, pixel_height), "bmp")
+    return _export_report(
+        model,
+        output_path,
+        lambda: export_to_bmp(model, output_path, pixel_width, pixel_height),
+        "bmp",
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -957,13 +1076,19 @@ def export_image_report(model, output_path: str) -> dict:
     ⇒ ★ 本包装用本模块既有的 `_export_report` 包一层 —— ★★ 判据是**文件**（存在且 size > 0），
     ★ 并附 `size_before` / `grew_or_created`（★ 免得把"旧文件本来就在"当成"导出成功"）。
     """
-    return _export_report(model, output_path,
-                          lambda: export_to_image(model, output_path), "image")
+    return _export_report(
+        model, output_path, lambda: export_to_image(model, output_path), "image"
+    )
 
 
-def export_flat_pattern_dxf_report(model, output_path: str, *, include_bend_lines: bool = True,
-                                   include_sketches: bool = False,
-                                   include_hidden_edges: bool = False) -> dict:
+def export_flat_pattern_dxf_report(
+    model,
+    output_path: str,
+    *,
+    include_bend_lines: bool = True,
+    include_sketches: bool = False,
+    include_hidden_edges: bool = False,
+) -> dict:
     """★ **导出钣金展开图为 DXF** 并回**回读报告**。
 
     ⚠ ★ 这要求**钣金件**（★ 与既有的 `solidworks_export_dxf` 是同一条路的两端：
@@ -971,9 +1096,14 @@ def export_flat_pattern_dxf_report(model, output_path: str, *, include_bend_line
     ★ 判据同样是**文件**（★ 复用 `_export_report`）。
     """
     return _export_report(
-        model, output_path,
-        lambda: export_flat_pattern_dxf(model, output_path,
-                                        include_bend_lines=include_bend_lines,
-                                        include_sketches=include_sketches,
-                                        include_hidden_edges=include_hidden_edges),
-        "dxf_flat_pattern")
+        model,
+        output_path,
+        lambda: export_flat_pattern_dxf(
+            model,
+            output_path,
+            include_bend_lines=include_bend_lines,
+            include_sketches=include_sketches,
+            include_hidden_edges=include_hidden_edges,
+        ),
+        "dxf_flat_pattern",
+    )

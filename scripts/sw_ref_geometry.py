@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_ref_geometry.py
-# 定位:   ★ 2026-10-03（轮 479）★ 承 `specs/201-toolbar-gaps` 的 **B8**（参考几何体 4 
+# 定位:   ★ 2026-10-03（轮 479）★ 承 `specs/201-toolbar-gaps` 的 **B8**（参考几何体 4
 #           条）
 #   与 **T701**（边界框）。用户工具栏里判「不能」的那些，本模块收这 5 条。
 #
@@ -69,9 +69,9 @@
 from __future__ import annotations
 
 try:
-    from .sw_connect import get_com_member, set_com_member          # noqa: F401
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
-    from sw_connect import get_com_member, set_com_member           # noqa: F401
+    from .sw_connect import get_com_member, set_com_member  # noqa: F401
+except ImportError:  # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, set_com_member  # noqa: F401
 
 __all__ = [
     "insert_ref_plane",
@@ -101,23 +101,29 @@ __all__ = [
 #: ⚠ 本表是官方 14 项里的**子集 10 项**（未收 `Perpendicular`/`Tangent`/`Project`/`Paral
 #: lelToScreen`）。
 REF_PLANE_CONSTRAINTS = {
-    "Parallel": 1,                                        # swRefPlaneReferenceConstraint_Parallel
-    "Coincident": 4,                                      # swRefPlaneReferenceConstraint_Coincident
-    "Distance": 8,                                        # swRefPlaneReferenceConstraint_Distance
-    "Angle": 16,                                          # swRefPlaneReferenceConstraint_Angle
-    "MidPlane": 128,                                      # swRefPlaneReferenceConstraint_MidPlane
-    "OptionFlip": 256,                                    # swRefPlaneReferenceConstraint_OptionFlip
-    "OptionOriginOnCurve": 512,                           # swRefPlaneReferenceConstraint_OptionOriginOnCurve
-    "OptionProjectToNearestLocation": 1024,               # swRefPlaneReferenceConstraint_OptionProjectToNearestLocation
-    "OptionProjectAlongSketchNormal": 2048,               # swRefPlaneReferenceConstraint_OptionProjectAlongSketchNormal
-    "OptionReferenceFlip": 8192,                          # swRefPlaneReferenceConstraint_OptionReferenceFlip
+    "Parallel": 1,  # swRefPlaneReferenceConstraint_Parallel
+    "Coincident": 4,  # swRefPlaneReferenceConstraint_Coincident
+    "Distance": 8,  # swRefPlaneReferenceConstraint_Distance
+    "Angle": 16,  # swRefPlaneReferenceConstraint_Angle
+    "MidPlane": 128,  # swRefPlaneReferenceConstraint_MidPlane
+    "OptionFlip": 256,  # swRefPlaneReferenceConstraint_OptionFlip
+    "OptionOriginOnCurve": 512,  # swRefPlaneReferenceConstraint_OptionOriginOnCurve
+    "OptionProjectToNearestLocation": 1024,  # swRefPlaneReferenceConstraint_OptionProjectToNearestLocation
+    "OptionProjectAlongSketchNormal": 2048,  # swRefPlaneReferenceConstraint_OptionProjectAlongSketchNormal
+    "OptionReferenceFlip": 8192,  # swRefPlaneReferenceConstraint_OptionReferenceFlip
 }
 
 #: ★ 官方 `swRefPointType_e`
 #: enum-gate: enum swRefPointType_e
 REF_POINT_TYPES = {
-    "Invalid": 0, "Undefined": 1, "AlongCurve": 2, "CenterEdge": 3,
-    "FaceCenter": 4, "FaceVertexProjection": 5, "Intersection": 6, "SketchPoint": 7,
+    "Invalid": 0,
+    "Undefined": 1,
+    "AlongCurve": 2,
+    "CenterEdge": 3,
+    "FaceCenter": 4,
+    "FaceVertexProjection": 5,
+    "Intersection": 6,
+    "SketchPoint": 7,
 }
 
 #: ★ 官方 `swRefPointAlongCurveType_e`
@@ -131,7 +137,9 @@ GLOBAL_BBOX_FIT_OPTIONS = {"BestFit": 1, "CustomPlane": 2, "CustomCoordSys": 3}
 #: ★ 官方 `swGlobalBoundingBoxResult_e` —— ★ **`Success = 0`**（★ 本模块据此判成败）
 #: enum-gate: enum swGlobalBoundingBoxResult_e
 GLOBAL_BBOX_RESULT = {
-    "Success": 0, "NoValidBodiesFound": 1, "NonPlanarFaceSelected": 2,
+    "Success": 0,
+    "NoValidBodiesFound": 1,
+    "NonPlanarFaceSelected": 2,
 }
 
 #: ★ 本模块覆盖到的工具栏项 ⇒ 官方成员（★ 与 `docs/toolbar-ledger.json` 对齐用）
@@ -161,20 +169,31 @@ except ImportError:
     from sw_feature_tree import new_features
 
 
-
 def _judge(model, r, op):
     """★ 统一判据：**回对象非 None** **且** **特征树有新特征**（★ 两判据都要）。"""
     after = _tree_names(model)
     added = new_features(r.pop("_before", None), after)
-    r.update({"op": op, "tree_after": after, "new_features": added,
-              "ok": bool(r.get("returned_is_none") is False and added),
-              "verified_by": "returned_object + tree_delta"})
+    r.update(
+        {
+            "op": op,
+            "tree_after": after,
+            "new_features": added,
+            "ok": bool(r.get("returned_is_none") is False and added),
+            "verified_by": "returned_object + tree_delta",
+        }
+    )
     return r
 
 
-def insert_ref_plane(model, first_constraint: int, first_angle_or_dist: float = 0.0,
-                     second_constraint: int = 0, second_angle_or_dist: float = 0.0,
-                     third_constraint: int = 0, third_angle_or_dist: float = 0.0) -> dict:
+def insert_ref_plane(
+    model,
+    first_constraint: int,
+    first_angle_or_dist: float = 0.0,
+    second_constraint: int = 0,
+    second_angle_or_dist: float = 0.0,
+    third_constraint: int = 0,
+    third_angle_or_dist: float = 0.0,
+) -> dict:
     """★ **基准面**：`IFeatureManager.InsertRefPlane(6 参)` → object（回 [[Reference plane]]）。
 
     ★ 官方原话：「Inserts a **constraint-based reference plane** using the **selected reference
@@ -199,35 +218,51 @@ def insert_ref_plane(model, first_constraint: int, first_angle_or_dist: float = 
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
-    obj = get_com_member(fm, "InsertRefPlane",
-                         int(first_constraint), float(first_angle_or_dist),
-                         int(second_constraint), float(second_angle_or_dist),
-                         int(third_constraint), float(third_angle_or_dist))
-    return _judge(model, {"_before": before, "returned_is_none": obj is None,
-                          "constraints": [int(first_constraint), int(second_constraint),
-                                          int(third_constraint)],
-                          #: ★★ 2026-10-07（规格 212 · D）：★ 本键**已经把"官方未给单位"
-                          #: 说出来了** ✓，
-                          #: 但它用的是**自己造的键名** ⇒ ★★ 仓里的既有约定是 **`unit_as
-                          #: sumption`**
-                          #: （★ 见 `sw_curve_and_split.py` / `sw_drawing_create_missing
-                          #: .py`，共 7 处）✓
-                          #: ★ 依据**铁律 1「只缝合不发明」** —— ★ **该用既有约定的键名*
-                          #: * ✓
-                          #:   ★ 故**两个键都留**：★ `unit_assumption` 承载**统一说法**，
-                          #: ★ `angle_or_dist_unit` 保留**它比统一说法多出的信息**（★ 指
-                          #: 明是哪个参数）✓
-                          "angle_or_dist_unit": "★ 官方未给单位 —— 按文档原样透传，本模块不换算",
-                          "unit_assumption": "★ 官方未给单位 —— 按文档原样透传，本模块不换算；"
-                                             "★ 该形参（`FirstConstraintAngleOrDistance` 族）在 "
-                                             "`FirstConstraint` 取 `Angle` 时是角度、取 `Distance` "
-                                             "时是长度 ⇒ ★ 详见 `angle_or_dist_unit`",
-                          "selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定"},
-                  "ref_plane")
+    obj = get_com_member(
+        fm,
+        "InsertRefPlane",
+        int(first_constraint),
+        float(first_angle_or_dist),
+        int(second_constraint),
+        float(second_angle_or_dist),
+        int(third_constraint),
+        float(third_angle_or_dist),
+    )
+    return _judge(
+        model,
+        {
+            "_before": before,
+            "returned_is_none": obj is None,
+            "constraints": [
+                int(first_constraint),
+                int(second_constraint),
+                int(third_constraint),
+            ],
+            #: ★★ 2026-10-07（规格 212 · D）：★ 本键**已经把"官方未给单位"
+            #: 说出来了** ✓，
+            #: 但它用的是**自己造的键名** ⇒ ★★ 仓里的既有约定是 **`unit_as
+            #: sumption`**
+            #: （★ 见 `sw_curve_and_split.py` / `sw_drawing_create_missing
+            #: .py`，共 7 处）✓
+            #: ★ 依据**铁律 1「只缝合不发明」** —— ★ **该用既有约定的键名*
+            #: * ✓
+            #:   ★ 故**两个键都留**：★ `unit_assumption` 承载**统一说法**，
+            #: ★ `angle_or_dist_unit` 保留**它比统一说法多出的信息**（★ 指
+            #: 明是哪个参数）✓
+            "angle_or_dist_unit": "★ 官方未给单位 —— 按文档原样透传，本模块不换算",
+            "unit_assumption": "★ 官方未给单位 —— 按文档原样透传，本模块不换算；"
+            "★ 该形参（`FirstConstraintAngleOrDistance` 族）在 "
+            "`FirstConstraint` 取 `Angle` 时是角度、取 `Distance` "
+            "时是长度 ⇒ ★ 详见 `angle_or_dist_unit`",
+            "selection_mark": "★ 官方 Remarks 只说「these marks」、**未给取值表** ⇒ 不假定",
+        },
+        "ref_plane",
+    )
 
 
-def insert_coordinate_system(model, x_flipped: bool = False, y_flipped: bool = False,
-                             z_flipped: bool = False) -> dict:
+def insert_coordinate_system(
+    model, x_flipped: bool = False, y_flipped: bool = False, z_flipped: bool = False
+) -> dict:
     """★ **坐标系**：`IFeatureManager.InsertCoordinateSystem(3 参)` → `Feature`。
 
     ★★ **用的是 `IFeatureManager` 那个，不是 `IModelDoc2` 那个**（★ 铁律 4）——
@@ -243,17 +278,29 @@ def insert_coordinate_system(model, x_flipped: bool = False, y_flipped: bool = F
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
-    feat = get_com_member(fm, "InsertCoordinateSystem",
-                          bool(x_flipped), bool(y_flipped), bool(z_flipped))
-    return _judge(model, {"_before": before, "returned_is_none": feat is None,
-                          "flipped": [bool(x_flipped), bool(y_flipped), bool(z_flipped)]},
-                  "coordinate_system")
+    feat = get_com_member(
+        fm, "InsertCoordinateSystem", bool(x_flipped), bool(y_flipped), bool(z_flipped)
+    )
+    return _judge(
+        model,
+        {
+            "_before": before,
+            "returned_is_none": feat is None,
+            "flipped": [bool(x_flipped), bool(y_flipped), bool(z_flipped)],
+        },
+        "coordinate_system",
+    )
 
 
-def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0,
-                           distance_or_percent: float = 0.0,
-                           number_of_ref_points: int = 1,
-                           selection: str = "", selection_kind: str = "FACE") -> dict:
+def insert_reference_point(
+    model,
+    ref_point_type: int,
+    along_curve_type: int = 0,
+    distance_or_percent: float = 0.0,
+    number_of_ref_points: int = 1,
+    selection: str = "",
+    selection_kind: str = "FACE",
+) -> dict:
     """★ **点**：`IFeatureManager.InsertReferencePoint(4 参)` → object。
 
     :param ref_point_type: 取值见 `REF_POINT_TYPES`（★ 官方 `swRefPointType_e`）。
@@ -272,19 +319,28 @@ def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     if int(number_of_ref_points) != 1:
-        return {"ok": False, "error": "官方 Remarks：NumberOfRefPoints **必须是 1**，收到 %r"
-                % number_of_ref_points}
+        return {
+            "ok": False,
+            "error": "官方 Remarks：NumberOfRefPoints **必须是 1**，收到 %r"
+            % number_of_ref_points,
+        }
     if int(ref_point_type) not in set(REF_POINT_TYPES.values()):
-        return {"ok": False, "error": "ref_point_type 不在 swRefPointType_e 的取值表内：%r（表：%s）"
-                % (ref_point_type, REF_POINT_TYPES)}
+        return {
+            "ok": False,
+            "error": "ref_point_type 不在 swRefPointType_e 的取值表内：%r（表：%s）"
+            % (ref_point_type, REF_POINT_TYPES),
+        }
     if int(along_curve_type) not in set(REF_POINT_ALONG_CURVE_TYPES.values()):
-        return {"ok": False, "error": "along_curve_type 不在 swRefPointAlongCurveType_e 内：%r（表：%s）"
-                % (along_curve_type, REF_POINT_ALONG_CURVE_TYPES)}
+        return {
+            "ok": False,
+            "error": "along_curve_type 不在 swRefPointAlongCurveType_e 内：%r（表：%s）"
+            % (along_curve_type, REF_POINT_ALONG_CURVE_TYPES),
+        }
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
-    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**声明式选区入口 + 紧邻调用才选** 
+    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**声明式选区入口 + 紧邻调用才选**
     #: ——
     #:   ★ 起因（★ 台账 `ref_geometry` 逐字）：「点（`InsertReferencePoint`）要先选实体，
     #:     **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉 —— ★ 这正是它
@@ -292,30 +348,49 @@ def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0
     #: ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选
     #: 好 ✗
     #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 故收**声明式选择器 + 实体种类**
-    #: （`resolve_selection` 认的合法形式：`__current_selection__` / `index:<n>` / 一个 
+    #: （`resolve_selection` 认的合法形式：`__current_selection__` / `index:<n>` / 一个
     #: COM 对象）✓
     #:   ★★ 注意顺序：★ 这段**必须**紧贴下面那个 `InsertReferencePoint` 调用 ——
     #:     ★ 中间**不许**再插任何动选区的步骤（★ 上引台账那句就是这条约束的出处）✓
     if str(selection or "").strip():
         import sw_selection_spec as _SS
+
         try:
-            got = _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
-        except Exception as exc:                                       # noqa: BLE001
-            return {"ok": False,
-                    "error": "选区未建立：%s: %s（★ 前置未成立，★ 与「点建不出来」是两件事）"
-                             % (type(exc).__name__, str(exc)[:140]),
-                    "selection": str(selection), "selection_kind": str(selection_kind)}
+            got = _SS.resolve_selection(
+                model, str(selection), str(selection_kind or "FACE")
+            )
+        except Exception as exc:  # noqa: BLE001
+            return {
+                "ok": False,
+                "error": "选区未建立：%s: %s（★ 前置未成立，★ 与「点建不出来」是两件事）"
+                % (type(exc).__name__, str(exc)[:140]),
+                "selection": str(selection),
+                "selection_kind": str(selection_kind),
+            }
         if int(got) <= 0:
-            return {"ok": False,
-                    "error": "选区未建立：选择器 %r 解析后计数为 %d（★ 前置未成立）"
-                             % (str(selection), int(got))}
-    obj = get_com_member(fm, "InsertReferencePoint",
-                         int(ref_point_type), int(along_curve_type),
-                         float(distance_or_percent), 1)
-    return _judge(model, {"_before": before, "returned_is_none": obj is None,
-                          "ref_point_type": int(ref_point_type),
-                          "along_curve_type": int(along_curve_type)},
-                  "reference_point")
+            return {
+                "ok": False,
+                "error": "选区未建立：选择器 %r 解析后计数为 %d（★ 前置未成立）"
+                % (str(selection), int(got)),
+            }
+    obj = get_com_member(
+        fm,
+        "InsertReferencePoint",
+        int(ref_point_type),
+        int(along_curve_type),
+        float(distance_or_percent),
+        1,
+    )
+    return _judge(
+        model,
+        {
+            "_before": before,
+            "returned_is_none": obj is None,
+            "ref_point_type": int(ref_point_type),
+            "along_curve_type": int(along_curve_type),
+        },
+        "reference_point",
+    )
 
 
 def insert_center_of_mass(model) -> dict:
@@ -327,8 +402,9 @@ def insert_center_of_mass(model) -> dict:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
     feat = get_com_member(fm, "InsertCenterOfMass")
-    return _judge(model, {"_before": before, "returned_is_none": feat is None},
-                  "center_of_mass")
+    return _judge(
+        model, {"_before": before, "returned_is_none": feat is None}, "center_of_mass"
+    )
 
 
 def create_3d_bounding_box(model) -> dict:
@@ -354,14 +430,18 @@ def create_3d_bounding_box(model) -> dict:
     before = _tree_names(model)
     get_com_member(ext, "Create3DBoundingBox")
     r = _judge(model, {"_before": before, "returned_is_none": False}, "bounding_box")
-    r["verified_by"] = "tree_delta"        # ★ 官方回 void ⇒ 判据只有树增量
+    r["verified_by"] = "tree_delta"  # ★ 官方回 void ⇒ 判据只有树增量
     r["scope"] = "★ 官方：**焊件零件的切割清单项**专用 —— 普通零件上不成是应然的"
     return r
 
 
-def insert_global_bounding_box(model, bbox_type: int = 1, lwta_direction_type: int = 0,
-                               include_hidden_bodies: bool = False,
-                               include_surface_bodies: bool = False) -> dict:
+def insert_global_bounding_box(
+    model,
+    bbox_type: int = 1,
+    lwta_direction_type: int = 0,
+    include_hidden_bodies: bool = False,
+    include_surface_bodies: bool = False,
+) -> dict:
     """★ **边界框（普通零件/装配体）**：`IFeatureManager.InsertGlobalBoundingBox2(…)` → `IFeature`。
 
     ★★ 这才是工具栏「边界框」对应的官方成员（★ 台账 T701 给的 `Create3DBoundingBox`
@@ -383,8 +463,11 @@ def insert_global_bounding_box(model, bbox_type: int = 1, lwta_direction_type: i
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     if int(bbox_type) not in set(GLOBAL_BBOX_FIT_OPTIONS.values()):
-        return {"ok": False, "error": "bbox_type 不在 swGlobalBoundingBoxFitOptions_e 内：%r（表：%s）"
-                % (bbox_type, GLOBAL_BBOX_FIT_OPTIONS)}
+        return {
+            "ok": False,
+            "error": "bbox_type 不在 swGlobalBoundingBoxFitOptions_e 内：%r（表：%s）"
+            % (bbox_type, GLOBAL_BBOX_FIT_OPTIONS),
+        }
     fm = get_com_member(model, "FeatureManager")
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
@@ -401,25 +484,40 @@ def insert_global_bounding_box(model, bbox_type: int = 1, lwta_direction_type: i
         from sw_connect import out_i4 as _out_i4
     status_buf = _out_i4(0)
     before = _tree_names(model)
-    raw = get_com_member(fm, "InsertGlobalBoundingBox2",
-                         int(bbox_type), int(lwta_direction_type),
-                         bool(include_hidden_bodies), bool(include_surface_bodies), status_buf)
+    raw = get_com_member(
+        fm,
+        "InsertGlobalBoundingBox2",
+        int(bbox_type),
+        int(lwta_direction_type),
+        bool(include_hidden_bodies),
+        bool(include_surface_bodies),
+        status_buf,
+    )
     #: ★ out 值从**那个 VARIANT 里读回来**（★ 不是从返回值）✓
     status = None
     try:
         status = int(getattr(status_buf, "value", status_buf))
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         status = None
     feat = raw[0] if isinstance(raw, (tuple, list)) and raw else raw
-    r = _judge(model, {"_before": before, "returned_is_none": feat is None,
-                       "bbox_type": int(bbox_type), "raw_type": type(raw).__name__},
-               "global_bounding_box")
+    r = _judge(
+        model,
+        {
+            "_before": before,
+            "returned_is_none": feat is None,
+            "bbox_type": int(bbox_type),
+            "raw_type": type(raw).__name__,
+        },
+        "global_bounding_box",
+    )
     r["status"] = status
     #: ★ 反查：字典是 `名 → 值`，而 out 给的是**值** ⇒ 必须反向找名
     #:   （★ 我第一版写成 `GLOBAL_BBOX_RESULT.get(status)` ⇒ 永远不中、显示"(未知)"）
     _by_val = {v: k for k, v in GLOBAL_BBOX_RESULT.items()}
     r["status_meaning"] = _by_val.get(status) if isinstance(status, int) else None
     if isinstance(status, int):
-        r["ok"] = (status == GLOBAL_BBOX_RESULT["Success"]) and bool(r.get("new_features"))
+        r["ok"] = (status == GLOBAL_BBOX_RESULT["Success"]) and bool(
+            r.get("new_features")
+        )
         r["verified_by"] = "status_code(Success=0) + tree_delta"
     return r

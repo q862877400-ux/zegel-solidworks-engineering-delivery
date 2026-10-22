@@ -48,6 +48,7 @@
 #     · **复现了「`SelectByID2` 对边/面的名字选不中」**（两者计数均为 0）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -76,7 +77,7 @@ __all__ = [
 CURRENT_SELECTION = "__current_selection__"
 
 #: 实体类型（`SelectByID2` / 体遍历用的官方类型串）
-#: ★★ 2026-10-01（轮 328）**加了 `VERTEX`** —— ★ 判据：官方 `IBody2.GetVertices()`（**0 
+#: ★★ 2026-10-01（轮 328）**加了 `VERTEX`** —— ★ 判据：官方 `IBody2.GetVertices()`（**0
 #: 参**，
 #:   ★ 反射 arity = 0）× `ILoop2.GetVertices()` ⇒ ★ **顶点就是体上的一种 entity**，
 #:   ★ 所以它属于**本函数**的语义，★ **不该新开一个工具**（★ 缝合优先）。
@@ -120,10 +121,10 @@ def current_selection(model, *, mark: int = -1) -> list[Any]:
     sm = get_com_member(model, "SelectionManager")
     count = get_selection_count(model)
     out: list[Any] = []
-    for i in range(1, count + 1):          # ⚠ 官方 Index **从 1 开始**
+    for i in range(1, count + 1):  # ⚠ 官方 Index **从 1 开始**
         try:
             obj = get_com_member(sm, "GetSelectedObject6", i, int(mark))
-        except Exception:                   # noqa: BLE001 —— 个别下标取不到就跳过，不编造
+        except Exception:  # noqa: BLE001 —— 个别下标取不到就跳过，不编造
             continue
         if obj is not None:
             out.append(obj)
@@ -158,7 +159,7 @@ def entities_on_body(model, kind: str, *, body_index: int = 0) -> list[Any]:
         raise EntitySelectionError(
             "未知的实体类型 %r；合法值：%r" % (kind, list(ENTITY_KINDS))
         )
-    bodies = get_com_member(model, "GetBodies2", 0, True)   # 0 = swSolidBody
+    bodies = get_com_member(model, "GetBodies2", 0, True)  # 0 = swSolidBody
     if not bodies:
         raise EntitySelectionError("活动文档里没有实体（swSolidBody）—— 先建几何")
     if body_index >= len(bodies):
@@ -184,8 +185,9 @@ def select_object(model, obj, *, append: bool = False) -> int:
     return get_selection_count(model)
 
 
-def select_entity_by_index(model, kind: str, index: int, *,
-                           body_index: int = 0, append: bool = False) -> int:
+def select_entity_by_index(
+    model, kind: str, index: int, *, body_index: int = 0, append: bool = False
+) -> int:
     """按**序号**选第 `index` 个实体（`index` 从 0 开始，是本模块的约定）。
 
     ⚠ 序号顺序官方未承诺稳定 —— 见 :func:`entities_on_body`。
@@ -235,11 +237,14 @@ def resolve_entity(model, selector, kind: str, *, body_index: int = 0):
             try:
                 idx = int(s.split(":", 1)[1])
             except ValueError:
-                raise EntitySelectionError("非法的 index 选择器 %r（应为 index:<整数>）" % sel)
+                raise EntitySelectionError(
+                    "非法的 index 选择器 %r（应为 index:<整数>）" % sel
+                )
             items = entities_on_body(model, kind, body_index=body_index)
             if idx < 0 or idx >= len(items):
                 raise EntitySelectionError(
-                    "%s 序号 %d 越界（体 %d 上共 %d 个）" % (kind, idx, body_index, len(items))
+                    "%s 序号 %d 越界（体 %d 上共 %d 个）"
+                    % (kind, idx, body_index, len(items))
                 )
             obj = items[idx]
             select_object(model, obj)
@@ -316,24 +321,28 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
     if str(selection or "").strip():
         try:
             resolve_selection(model, str(selection), str(selection_kind or "FACE"))
-        except Exception as exc:                                   # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["selection_count"] = 0
-            out["error"] = ("选区未建立：%s: %s（★ 前置未成立、★ 与「取不到点」是两件事）"
-                            % (type(exc).__name__, str(exc)[:140]))
+            out["error"] = (
+                "选区未建立：%s: %s（★ 前置未成立、★ 与「取不到点」是两件事）"
+                % (type(exc).__name__, str(exc)[:140])
+            )
             return out
     try:
         mgr = get_com_member(model, "SelectionManager")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "取不到 SelectionManager：%s" % str(exc)[:120]
         return out
     try:
         n = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
         out["selection_count"] = n
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     if not out["selection_count"]:
-        out["error"] = ("当前**没有选中任何东西** ⇒ 读不到点。"
-                        "★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。")
+        out["error"] = (
+            "当前**没有选中任何东西** ⇒ 读不到点。"
+            "★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。"
+        )
         return out
     #: ★★★★ 2026-10-01 轮 266 真机实测：★ **必须用 `GetSelectionPoint2`，且它吃 `AtIndex
     #: `**。
@@ -366,7 +375,7 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
         entry_used = _nm
         try:
             pt = cand(*_args)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             errors.append("%s%s 报错：%s" % (_nm, _args, str(exc)[:130]))
             pt = None
             continue
@@ -380,14 +389,19 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
         out.setdefault("error", "两个入口都取不到点（★ 见上面的报错）")
         return out
     if pt is None:
-        out["error"] = ("GetSelectionPoint 回 None ⇒ "
-                        "★ 选中的**不是**一个点（可能是面 / 边 / 特征）。"
-                        "★ 本函数不猜别的重载，如实报「取不到」。")
+        out["error"] = (
+            "GetSelectionPoint 回 None ⇒ "
+            "★ 选中的**不是**一个点（可能是面 / 边 / 特征）。"
+            "★ 本函数不猜别的重载，如实报「取不到」。"
+        )
         return out
     try:
         vals = [float(x) for x in pt][:3]
-    except Exception as exc:                                   # noqa: BLE001
-        out["error"] = "返回值不是可转 float 的序列：%s（%s）" % (str(pt)[:60], type(pt).__name__)
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = "返回值不是可转 float 的序列：%s（%s）" % (
+            str(pt)[:60],
+            type(pt).__name__,
+        )
         return out
     if len(vals) < 3:
         out["error"] = "返回值长度 %d < 3" % len(vals)
@@ -395,6 +409,7 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
     out["ok"] = True
     out["point_mm"] = tuple(vals)
     return out
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -405,7 +420,7 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
 #   ★★ 而 **这两者的返回值 MCP 层过不去**（COM 对象不可 JSON 序列化）⇒ 本段给它们各加一层
 # **只回 JSON** 的 report 包装（★ 而"选中"这个动作本身靠 `Select4` —— 事实 32：对边/面按
 # 名字选不中）。
-# 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4` 
+# 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4`
 #           ·
 #   `ISelectionMgr.GetSelectedObjectCount2`（★ 判据永远是这个回读数 —— 事实 8）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -413,8 +428,9 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def select_by_selector_report(model, selector, kind: str = "EDGE", *,
-                              body_index: int = 0, append: bool = False) -> dict:
+def select_by_selector_report(
+    model, selector, kind: str = "EDGE", *, body_index: int = 0, append: bool = False
+) -> dict:
     """★ **用声明式选择器选中一个实体**（★ MCP 可用的形态 —— 只回 JSON，不回 COM 对象）。
 
     ★ 它把 `select_object`（吃 COM 对象）与 `resolve_entity`（吐 COM 对象）**接起来**，
@@ -425,16 +441,23 @@ def select_by_selector_report(model, selector, kind: str = "EDGE", *,
     :returns: `{ok, selector, kind, count}` —— ★★ **判据是 `count`**（★ 事实 8：`Select4` 的
         返回值不可信，只有 `GetSelectedObjectCount2(-1)` 的回读算数）。
     """
-    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
-                 "count": None, "error": None}
+    out: dict = {
+        "ok": False,
+        "selector": str(selector)[:60],
+        "kind": str(kind).upper(),
+        "count": None,
+        "error": None,
+    }
     try:
         obj = resolve_entity(model, selector, kind, body_index=body_index)
-    except Exception as exc:                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     try:
-        out["count"] = int(select_object(model, obj, append=append))   #: ★ 它自己回读计数
-    except Exception as exc:                                       # noqa: BLE001
+        out["count"] = int(
+            select_object(model, obj, append=append)
+        )  #: ★ 它自己回读计数
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "Select4 失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["ok"] = bool(out["count"])
@@ -443,7 +466,9 @@ def select_by_selector_report(model, selector, kind: str = "EDGE", *,
     return out
 
 
-def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: int = 0) -> dict:
+def resolve_entity_report(
+    model, selector, kind: str = "EDGE", *, body_index: int = 0
+) -> dict:
     """★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。
 
     ★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本包装把它换成
@@ -452,24 +477,33 @@ def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: in
     :returns: `{ok, selector, kind, count, resolved}` —— ★ `resolved=True` 表示解析出了对象；
         ★ 而**是否真的在选区里**看 `count`（★ 解析出来 ≠ 选中 —— 事实 8）。
     """
-    out: dict = {"ok": False, "selector": str(selector)[:60], "kind": str(kind).upper(),
-                 "count": None, "resolved": False, "error": None}
+    out: dict = {
+        "ok": False,
+        "selector": str(selector)[:60],
+        "kind": str(kind).upper(),
+        "count": None,
+        "resolved": False,
+        "error": None,
+    }
     try:
         obj = resolve_entity(model, selector, kind, body_index=body_index)
         out["resolved"] = obj is not None
-    except Exception as exc:                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     try:
         out["count"] = int(get_selection_count(model))
-    except Exception as exc:                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "回读选区计数失败：%s" % str(exc)[:120]
         return out
     out["ok"] = bool(out["resolved"]) and bool(out["count"])
     if not out["ok"] and out["resolved"] and not out["count"]:
-        out["error"] = ("解析出了对象**而选区计数为 0** ⇒ 选择器是 `__current_selection__` 时"
-                        "常见（★ 它不重选）；★ 要真的选中请用 `select_by_selector_report`")
+        out["error"] = (
+            "解析出了对象**而选区计数为 0** ⇒ 选择器是 `__current_selection__` 时"
+            "常见（★ 它不重选）；★ 要真的选中请用 `select_by_selector_report`"
+        )
     return out
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -483,9 +517,9 @@ def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: in
 #   ★★★ 而**事实 32** 早就写着：★ 选实体的可行路径是 `IEntity.Select4`（**按对象**）
 #     或按面上的点 ⇒ ★★ **而"实体对象"本仓**本来就能直接拿到**（`entities_on_body`）——
 #     ★ 它用 `IBody2.GetFaces()/GetEdges()/GetVertices()` 直接列出一个体上的实体 ✓
-# ⇒ ★★ 于是"多实体"载荷**根本不需要"从选区读回来"**：★ **把已知的那些对象直接装成数组** 
+# ⇒ ★★ 于是"多实体"载荷**根本不需要"从选区读回来"**：★ **把已知的那些对象直接装成数组**
 # ✓
-# 官方依据: `IBody2.GetFaces` / `GetEdges` / `GetVertices`（★ 本模块 `entities_on_body` 
+# 官方依据: `IBody2.GetFaces` / `GetEdges` / `GetVertices`（★ 本模块 `entities_on_body`
 #           已在用）·
 #   事实 32（选实体的可行路径）· 事实 8（返回值不可信，以计数为准）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -514,7 +548,8 @@ def entities_as_array(model, kind: str, indices, *, body_index: int = 0) -> list
         if index < 0 or index >= len(items):
             raise EntitySelectionError(
                 "%s 序号 %d 越界（体 %d 上共 %d 个）—— 早失败：传不完整的数组会让 SW 越界"
-                % (kind, index, body_index, len(items)))
+                % (kind, index, body_index, len(items))
+            )
         picked.append(items[index])
     return picked
 
@@ -577,9 +612,11 @@ def entity_geometry(model, kind: str, index: int, *, body_index: int = 0) -> dic
         items = entities_on_body(model, kind, body_index=body_index)
         if index < 0 or index >= len(items):
             raise EntitySelectionError(
-                "%s 序号 %d 越界（体 %d 上共 %d 个）" % (kind, index, body_index, len(items)))
+                "%s 序号 %d 越界（体 %d 上共 %d 个）"
+                % (kind, index, body_index, len(items))
+            )
         ent = items[index]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         info["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         return info
     k = info["kind"]
@@ -587,7 +624,7 @@ def entity_geometry(model, kind: str, index: int, *, body_index: int = 0) -> dic
         try:
             pt = get_com_member(ent, "GetPoint")
             info["point_mm"] = [round(float(v), 6) for v in list(pt)[:3]]
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             info["error"] = "IVertex.GetPoint 读不到：%s" % str(exc)[:120]
     elif k == "EDGE":
         pts = []
@@ -595,17 +632,24 @@ def entity_geometry(model, kind: str, index: int, *, body_index: int = 0) -> dic
             try:
                 v = get_com_member(ent, member)
                 p = get_com_member(v, "GetPoint") if v is not None else None
-                pts.append(None if p is None else [round(float(x), 6) for x in list(p)[:3]])
-            except Exception as exc:                           # noqa: BLE001
-                info["error"] = "IEdge.%s→GetPoint 读不到：%s" % (member, str(exc)[:100])
+                pts.append(
+                    None if p is None else [round(float(x), 6) for x in list(p)[:3]]
+                )
+            except Exception as exc:  # noqa: BLE001
+                info["error"] = "IEdge.%s→GetPoint 读不到：%s" % (
+                    member,
+                    str(exc)[:100],
+                )
                 pts.append(None)
         info["start_mm"], info["end_mm"] = pts[0], pts[1]
         if pts[0] and pts[1]:
-            info["length_mm"] = round(sum((pts[1][i] - pts[0][i]) ** 2 for i in range(3)) ** 0.5, 6)
+            info["length_mm"] = round(
+                sum((pts[1][i] - pts[0][i]) ** 2 for i in range(3)) ** 0.5, 6
+            )
     elif k == "FACE":
         try:
             info["area_mm2"] = round(float(get_com_member(ent, "GetArea") or 0.0), 6)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             info["error"] = "IFace2.GetArea 读不到：%s" % str(exc)[:120]
     return info
 
@@ -622,17 +666,22 @@ def entities_report(model, kind: str, *, body_index: int = 0) -> dict:
       ★ ★ **读不到某一类就回 `None`**（★ 不拿 0 冒充）✓
     """
     out: dict = {
-        "ok": False, "kind": str(kind).upper(), "body_index": int(body_index), "count": None,
-        "entities": [], "euler": None, "error": None,
+        "ok": False,
+        "kind": str(kind).upper(),
+        "body_index": int(body_index),
+        "count": None,
+        "entities": [],
+        "euler": None,
+        "error": None,
         "★": "判据 = **计数** + **欧拉公式 V−E+F=2**（★ 本仓既有判据，不需要新 API）；"
-             "★ 每类的计数**各自回读**，读不到就 `None`（不拿 0 冒充）",
+        "★ 每类的计数**各自回读**，读不到就 `None`（不拿 0 冒充）",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     try:
         items = entities_on_body(model, kind, body_index=body_index)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["count"] = len(items)
@@ -645,7 +694,7 @@ def entities_report(model, kind: str, *, body_index: int = 0) -> dict:
     for k in ENTITY_KINDS:
         try:
             counts[k] = len(entities_on_body(model, k, body_index=body_index))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             counts[k] = None
     v, e, f = counts.get("VERTEX"), counts.get("EDGE"), counts.get("FACE")
     euler = {"vertex": v, "edge": e, "face": f}
@@ -660,7 +709,9 @@ def entities_report(model, kind: str, *, body_index: int = 0) -> dict:
     out["ok"] = out["count"] is not None
     unreadable = [r["index"] for r in rows if r.get("error")]
     if unreadable:
-        out["error"] = ("**%d 个实体的几何读不到**（★ 这正是裁决书点名的"
-                        "「读属性读不到」风险）：序号 %r —— ★ 计数仍然有效，几何字段如实为空"
-                        % (len(unreadable), unreadable[:8]))
+        out["error"] = (
+            "**%d 个实体的几何读不到**（★ 这正是裁决书点名的"
+            "「读属性读不到」风险）：序号 %r —— ★ 计数仍然有效，几何字段如实为空"
+            % (len(unreadable), unreadable[:8])
+        )
     return out

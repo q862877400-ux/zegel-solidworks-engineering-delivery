@@ -45,9 +45,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_sweep as S                                    # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_sweep as S  # noqa: E402
 
 
 def _feature_type_name(model, name):
@@ -61,10 +61,10 @@ def _feature_type_name(model, name):
                 t = str(C.get_com_member(f, m) or "")
                 if t:
                     return t
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         return None
-    except Exception:                                                    # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -76,29 +76,48 @@ def _one(sw, const):
         doc = C.new_document(sw, "part")
         #: ★ 轮廓：上视面（XY · Z=0）的圆
         P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                         0.0, 0.0, 0.0, 5.0 / 1000.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCircleByRadius",
+            0.0,
+            0.0,
+            0.0,
+            5.0 / 1000.0,
+        )
         P.end_sketch(doc)
         #: ★ 路径：前视面（XZ · Y=0）从原点沿 X ⇒ ★ 起点 (0,0,0) 的 Z=0（★ 官方：路径起
         #: 点须在轮廓平面上）
         try:
             C.get_com_member(doc, "ClearSelection2", True)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
-                         0.0, 0.0, 0.0, 40.0, 0.0, 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateLine",
+            0.0,
+            0.0,
+            0.0,
+            40.0,
+            0.0,
+            0.0,
+        )
         P.end_sketch(doc)
         row["tree_after_sketches"] = list(P.feature_names(doc) or [])
 
         #: ★ 选区：轮廓 mark=1 + 路径 mark=4（★ 用 `SelectByID2` —— 事实 384 的正解）
         ext = C.get_com_member(doc, "Extension")
         picked = {}
-        for cand, mark, label in (("\u8349\u56fe1", 1, "profile"), ("\u8349\u56fe2", 4, "path")):
+        for cand, mark, label in (
+            ("\u8349\u56fe1", 1, "profile"),
+            ("\u8349\u56fe2", 4, "path"),
+        ):
             for name in P._get_sketch_name_candidates(cand):
                 try:
-                    ok = P._select_by_id(ext, name, "SKETCH", append=bool(picked), mark=mark)
-                except Exception:                                        # noqa: BLE001
+                    ok = P._select_by_id(
+                        ext, name, "SKETCH", append=bool(picked), mark=mark
+                    )
+                except Exception:  # noqa: BLE001
                     ok = False
                 if ok:
                     picked[label] = name
@@ -107,9 +126,14 @@ def _one(sw, const):
         per = {}
         for m in (1, 4):
             try:
-                per[m] = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                              "GetSelectedObjectCount2", m))
-            except Exception:                                            # noqa: BLE001
+                per[m] = int(
+                    C.get_com_member(
+                        C.get_com_member(doc, "SelectionManager"),
+                        "GetSelectedObjectCount2",
+                        m,
+                    )
+                )
+            except Exception:  # noqa: BLE001
                 per[m] = -1
         row["sel_by_mark"] = per
 
@@ -123,21 +147,30 @@ def _one(sw, const):
             return row
         access = None
         try:
-            access = bool(C.get_com_member(data, "AccessSelections", doc, P._empty_callout()))
-        except Exception as exc:                                         # noqa: BLE001
+            access = bool(
+                C.get_com_member(data, "AccessSelections", doc, P._empty_callout())
+            )
+        except Exception as exc:  # noqa: BLE001
             access = "ERR %s" % str(exc)[:90]
         row["access_selections"] = access
         try:
             feat = C.get_com_member(fm, "CreateFeature", data)
-            row["create_feature_type"] = type(feat).__name__ if feat is not None else "None"
-        except Exception as exc:                                         # noqa: BLE001
+            row["create_feature_type"] = (
+                type(feat).__name__ if feat is not None else "None"
+            )
+        except Exception as exc:  # noqa: BLE001
             row["create_feature_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = list(P.feature_names(doc) or [])
         new = [n for n in after if n not in before]
         tname = _feature_type_name(doc, new[-1]) if new else None
-        row.update({"new_features": new, "type_name": tname,
-                    "ok": bool(new) and (tname == "Sweep")})
-    except Exception as exc:                                             # noqa: BLE001
+        row.update(
+            {
+                "new_features": new,
+                "type_name": tname,
+                "ok": bool(new) and (tname == "Sweep"),
+            }
+        )
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -145,29 +178,46 @@ def _one(sw, const):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "A/B\uff1a\u540c\u4e00\u5957\u9009\u533a\u4e0b \u5b9e\u4f53\u626b\u63cf(17) vs \u66f2\u9762\u626b\u63cf(62)",
-          "judge": "\u7279\u5f81\u6811\u589e\u91cf **\u4e14** \u7c7b\u578b\u540d = Sweep\uff08\u4e8b\u5b9e 242\uff09",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "A/B\uff1a\u540c\u4e00\u5957\u9009\u533a\u4e0b \u5b9e\u4f53\u626b\u63cf(17) vs \u66f2\u9762\u626b\u63cf(62)",
+        "judge": "\u7279\u5f81\u6811\u589e\u91cf **\u4e14** \u7c7b\u578b\u540d = Sweep\uff08\u4e8b\u5b9e 242\uff09",
+        "cases": [],
+    }
     ev["cases"].append(_one(sw, 17))
     ev["cases"].append(_one(sw, 62))
     p = R / "output" / "sweep-ab-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     for c in ev["cases"]:
-        print("  const=%-3s \u5224\u636e=%s  \u9009\u533a=%s  access=%s" % (
-            c.get("const"), "\u6210" if c.get("ok") else "\u4e0d\u6210", c.get("sel_by_mark"),
-            str(c.get("access_selections"))[:44]))
-        print("        \u65b0\u589e=%s \u7c7b\u578b=%s CreateFeature=%s %s" % (
-            c.get("new_features"), c.get("type_name"), c.get("create_feature_type"),
-            (c.get("create_feature_err") or c.get("err") or "")[:70]))
+        print(
+            "  const=%-3s \u5224\u636e=%s  \u9009\u533a=%s  access=%s"
+            % (
+                c.get("const"),
+                "\u6210" if c.get("ok") else "\u4e0d\u6210",
+                c.get("sel_by_mark"),
+                str(c.get("access_selections"))[:44],
+            )
+        )
+        print(
+            "        \u65b0\u589e=%s \u7c7b\u578b=%s CreateFeature=%s %s"
+            % (
+                c.get("new_features"),
+                c.get("type_name"),
+                c.get("create_feature_type"),
+                (c.get("create_feature_err") or c.get("err") or "")[:70],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

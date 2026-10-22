@@ -86,7 +86,11 @@ def _module_refs(path: Path):
     for node in ast.walk(tree):
         if isinstance(node, ast.Call):
             f = node.func
-            name = f.id if isinstance(f, ast.Name) else (f.attr if isinstance(f, ast.Attribute) else "")
+            name = (
+                f.id
+                if isinstance(f, ast.Name)
+                else (f.attr if isinstance(f, ast.Attribute) else "")
+            )
             if name in ("get_com_member", "set_com_member", "_get", "_sel", "getattr"):
                 for a in node.args[1:2]:
                     if isinstance(a, ast.Constant) and isinstance(a.value, str):
@@ -119,15 +123,29 @@ def main() -> int:
                     hits.append(f"{mod}:{m}(★ 真调用)")
                 elif m in a:
                     hits.append(f"{mod}:{m}(属性访问)")
-        rows.append({"item": item, "members": members,
-                     "implemented": bool(hits), "hits": sorted(set(hits))[:4]})
+        rows.append(
+            {
+                "item": item,
+                "members": members,
+                "implemented": bool(hits),
+                "hits": sorted(set(hits))[:4],
+            }
+        )
     out = R / "output" / "gap-implementation-audit.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({"modules_scanned": len(refs), "rows": rows},
-                              ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {"modules_scanned": len(refs), "rows": rows}, ensure_ascii=False, indent=1
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     done = [r for r in rows if r["implemented"]]
     print("缺口项审计 · 扫了 %d 个模块（★ 已排除 sw_api_* 反射转储）" % len(refs))
-    print("  ★ **已有真实现**（⇒ 最便宜的待办：挂工具即可）：%d / %d" % (len(done), len(rows)))
+    print(
+        "  ★ **已有真实现**（⇒ 最便宜的待办：挂工具即可）：%d / %d"
+        % (len(done), len(rows))
+    )
     for r in done:
         print("    %-22s %s" % (r["item"], r["hits"][0]))
     print("  未实现：%d 项（★ 需从零做或判到不了）" % (len(rows) - len(done)))

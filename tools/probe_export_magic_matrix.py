@@ -26,6 +26,7 @@ r"""@brief 探针：**导出格式矩阵** —— 逐个格式**读魔数**，�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -42,6 +43,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "export-magic-matrix.json")
 DIR = Path(Path(__file__).resolve().parents[1] / "output" / "magic-matrix")
 PART = Path(Path(__file__).resolve().parents[1] / "output" / "magic-matrix-part.sldprt")
+
+
 def classify(b: bytes) -> str:
     """按文件头判格式（**只看头，不解内容**）。"""
     if b[:8] == b"\x89PNG\r\n\x1a\n":
@@ -70,6 +73,7 @@ def classify(b: bytes) -> str:
     #: STL 二进制：前 80 字节是 header，接着 4 字节三角面数（小端）
     if len(b) >= 84:
         import struct
+
         n = struct.unpack_from("<I", b, 80)[0]
         return "STL(binary?)" if 0 < n < 5_000_000 else "UNKNOWN"
     return "UNKNOWN"
@@ -82,18 +86,23 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sheet_metal, sw_export
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         sw_part.start_sketch(doc)
         sw_part.sketch_corner_rectangle(doc, 0.0, 0.0, 60.0, 40.0)
         sw_part.end_sketch(doc)
         sw_sheet_metal.create_base_flange(
-            doc, "草图1",
-            sw_sheet_metal.BaseFlangeSpec(thickness=0.001, bend_radius=0.001, depth=0.040))
+            doc,
+            "草图1",
+            sw_sheet_metal.BaseFlangeSpec(
+                thickness=0.001, bend_radius=0.001, depth=0.040
+            ),
+        )
         DIR.mkdir(parents=True, exist_ok=True)
         if PART.exists():
             PART.unlink()
@@ -122,7 +131,7 @@ def main() -> int:
             note = ""
             try:
                 fn(p)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 note = "%s: %s" % (type(exc).__name__, str(exc)[:58])
             row = {"format": tag, "ext": ext, "error": note or None}
             if p.is_file() and p.stat().st_size > 0:
@@ -131,41 +140,62 @@ def main() -> int:
                 #: （**顺序 bug**：IGES 只认首字节 `S`/`s`，而 ASCII STL 以 `solid` 开头
                 #:  ⇒ 先命中 IGES）。⇒ ★ **改成把文件头原文打出来**，用**证据**判，
                 #: 不再让一个容易写错的分类器挡住真相。
-                head_txt = b[:24].decode("ascii", "replace").replace("\r", "\\r").replace("\n", "\\n")
-                row.update(bytes=p.stat().st_size, kind=classify(b),
-                           head_hex=b[:8].hex(), head_ascii=head_txt)
+                head_txt = (
+                    b[:24]
+                    .decode("ascii", "replace")
+                    .replace("\r", "\\r")
+                    .replace("\n", "\\n")
+                )
+                row.update(
+                    bytes=p.stat().st_size,
+                    kind=classify(b),
+                    head_hex=b[:8].hex(),
+                    head_ascii=head_txt,
+                )
             elif not note:
                 note = "**文件不存在**"
                 row["error"] = note
             ev["rows"].append(row)
-            print("  %-11s %-15s %-9s %-30s %s"
-                  % (tag, row.get("kind", "—"), row.get("bytes", "—"),
-                     repr(row.get("head_ascii", ""))[:30],
-                     note or "（读头为准，不看分类器）"))
-    except Exception as exc:      # noqa: BLE001
+            print(
+                "  %-11s %-15s %-9s %-30s %s"
+                % (
+                    tag,
+                    row.get("kind", "—"),
+                    row.get("bytes", "—"),
+                    repr(row.get("head_ascii", ""))[:30],
+                    note or "（读头为准，不看分类器）",
+                )
+            )
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
     print()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

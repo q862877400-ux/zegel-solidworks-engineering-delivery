@@ -36,6 +36,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -46,7 +47,8 @@ SPECS_BATCH14 = [
     ToolSpec(
         name="solidworks_get_active_view",
         title="Get Active View",
-        module="sw_view", function="get_active_view",
+        module="sw_view",
+        function="get_active_view",
         inject="model",
         doc="Get the currently active 3D view (the official member is IModelDoc.ActiveView).",
         params=[],
@@ -61,23 +63,31 @@ SPECS_BATCH14 = [
         #:   ★★ 而改指向的**理由是可核的**：`entities_on_body` **返回 COM 对象** ⇒
         #: **过不了 MCP 的 JSON 边界** ⇒ 那条工具**经工具层其实拿不到东西**（★ 名字没变
         #: 、能力变了）✓
-        module="sw_selection_spec", function="entities_report",
+        module="sw_selection_spec",
+        function="entities_report",
         inject="model",
         doc="List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). "
-            "★ 每条带可 JSON 化的读数：EDGE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` "
-            "**没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ `IVertex.GetPoint()`。"
-            "★★ 同时回 **欧拉校验 `V−E+F=2`**（★ 本仓既有判据，不需新 API）✓ "
-            "⚠ Index order is NOT promised stable by the official API — do not treat "
-            "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
+        "★ 每条带可 JSON 化的读数：EDGE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` "
+        "**没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ `IVertex.GetPoint()`。"
+        "★★ 同时回 **欧拉校验 `V−E+F=2`**（★ 本仓既有判据，不需新 API）✓ "
+        "⚠ Index order is NOT promised stable by the official API — do not treat "
+        "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
         params=[
-            Param("kind", str,
-                  description="Entity kind. Valid values (from sw_selection_spec.ENTITY_KINDS): "
-                              "\"EDGE\", \"FACE\", or \"VERTEX\". "
-                              "★ VERTEX uses the official IBody2.GetVertices() (0 args); "
-                              "★ a 20×20×10 box returns FACE=6 · EDGE=12 · VERTEX=8, "
-                              "so Euler's V−E+F=2 holds."),
-            Param("body_index", int, default=0,
-                  description="Zero-based solid-body index. ⚠ Not a persistent reference."),
+            Param(
+                "kind",
+                str,
+                description="Entity kind. Valid values (from sw_selection_spec.ENTITY_KINDS): "
+                '"EDGE", "FACE", or "VERTEX". '
+                "★ VERTEX uses the official IBody2.GetVertices() (0 args); "
+                "★ a 20×20×10 box returns FACE=6 · EDGE=12 · VERTEX=8, "
+                "so Euler's V−E+F=2 holds.",
+            ),
+            Param(
+                "body_index",
+                int,
+                default=0,
+                description="Zero-based solid-body index. ⚠ Not a persistent reference.",
+            ),
         ],
     ),
 ]

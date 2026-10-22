@@ -8,7 +8,7 @@
 # 仓库:   本项目自身
 # 文件:   scripts/routing_review.py
 # 定位:   brief Routing 中性路线校验与 SolidWorks 2026 前置探测。
-# 官方依据: 经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；★ 
+# 官方依据: 经由本仓 COM 封装（`sw_connect` / `sw_preflight` / win32com / comtypes）；★
 #           各成员签名见被调模块的来源块，本文件为上层封装
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -57,7 +57,9 @@ def _point(value: Any, label: str) -> tuple[float, float, float]:
     return point
 
 
-def _finite_number(value: Any, label: str, *, minimum: float | None = None, positive: bool = False) -> float:
+def _finite_number(
+    value: Any, label: str, *, minimum: float | None = None, positive: bool = False
+) -> float:
     """@brief 读取有限标量并拒绝布尔值和越界数值。"""
     if isinstance(value, bool):
         raise ValueError(f"{label} 必须是有限数值。")
@@ -74,7 +76,9 @@ def _finite_number(value: Any, label: str, *, minimum: float | None = None, posi
     return number
 
 
-def _distance(first: tuple[float, float, float], second: tuple[float, float, float]) -> float:
+def _distance(
+    first: tuple[float, float, float], second: tuple[float, float, float]
+) -> float:
     """@brief 返回两点欧氏距离。"""
     return math.dist(first, second)
 
@@ -107,12 +111,20 @@ def _segment_hits_box(
     return True
 
 
-def _path_points(item: dict[str, Any], start: tuple[float, float, float], end: tuple[float, float, float], segment_id: str) -> list[tuple[float, float, float]]:
+def _path_points(
+    item: dict[str, Any],
+    start: tuple[float, float, float],
+    end: tuple[float, float, float],
+    segment_id: str,
+) -> list[tuple[float, float, float]]:
     """@brief 返回包含首尾端点的折线路径。"""
     raw_points = item.get("points")
     if not isinstance(raw_points, list) or not raw_points:
         return [start, end]
-    points = [_point(value, f"{segment_id}.points[{index}]") for index, value in enumerate(raw_points)]
+    points = [
+        _point(value, f"{segment_id}.points[{index}]")
+        for index, value in enumerate(raw_points)
+    ]
     if points[0] != start:
         points.insert(0, start)
     if points[-1] != end:
@@ -138,13 +150,31 @@ def _native_addin_registration() -> list[dict[str, Any]]:
                     clsid = winreg.EnumKey(addins, index)
                     try:
                         with winreg.OpenKey(addins, clsid) as item:
-                            title = str(winreg.QueryValueEx(item, "Title")[0]) if _registry_has(item, "Title") else ""
-                            description = str(winreg.QueryValueEx(item, "Description")[0]) if _registry_has(item, "Description") else ""
+                            title = (
+                                str(winreg.QueryValueEx(item, "Title")[0])
+                                if _registry_has(item, "Title")
+                                else ""
+                            )
+                            description = (
+                                str(winreg.QueryValueEx(item, "Description")[0])
+                                if _registry_has(item, "Description")
+                                else ""
+                            )
                     except OSError:
                         continue
                     combined = f"{title} {description}".casefold()
-                    if any(token in combined for token in ("routing", "route", "管路", "线路", "路由")):
-                        rows.append({"root": root_name, "clsid": clsid, "title": title, "description": description})
+                    if any(
+                        token in combined
+                        for token in ("routing", "route", "管路", "线路", "路由")
+                    ):
+                        rows.append(
+                            {
+                                "root": root_name,
+                                "clsid": clsid,
+                                "title": title,
+                                "description": description,
+                            }
+                        )
         except OSError:
             continue
     return rows
@@ -178,7 +208,11 @@ def probe_solidworks_routing() -> dict[str, Any]:
     install_dir = Path(str(installation.get("executable") or "")).parent
     files = [
         str(path)
-        for name in ("SWRoutingLib.tlb", "SolidWorks.Interop.SWRoutingLib.dll", "sldroutingdveu.dll")
+        for name in (
+            "SWRoutingLib.tlb",
+            "SolidWorks.Interop.SWRoutingLib.dll",
+            "sldroutingdveu.dll",
+        )
         if (path := install_dir / name).is_file()
     ]
     addins = _native_addin_registration()
@@ -221,39 +255,101 @@ def probe_solidworks_routing() -> dict[str, Any]:
 
 def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
     """@brief 校验中性 Routing 图结构、端点、长度、弯曲半径和端点表。"""
-    routing = document.get("routing") if isinstance(document.get("routing"), dict) else document
+    routing = (
+        document.get("routing")
+        if isinstance(document.get("routing"), dict)
+        else document
+    )
     route_type = str(routing.get("routeType") or "").strip().lower()
     units = str(routing.get("units") or document.get("units") or "mm")
-    endpoints = routing.get("endpoints") if isinstance(routing.get("endpoints"), list) else []
-    segments = routing.get("segments") if isinstance(routing.get("segments"), list) else []
-    obstacles = routing.get("obstacles") if isinstance(routing.get("obstacles"), list) else []
-    supports = routing.get("supports") if isinstance(routing.get("supports"), list) else []
+    endpoints = (
+        routing.get("endpoints") if isinstance(routing.get("endpoints"), list) else []
+    )
+    segments = (
+        routing.get("segments") if isinstance(routing.get("segments"), list) else []
+    )
+    obstacles = (
+        routing.get("obstacles") if isinstance(routing.get("obstacles"), list) else []
+    )
+    supports = (
+        routing.get("supports") if isinstance(routing.get("supports"), list) else []
+    )
     checks: list[dict[str, Any]] = []
     issues: list[dict[str, Any]] = []
     endpoint_map: dict[str, tuple[float, float, float]] = {}
     for index, item in enumerate(endpoints):
         if not isinstance(item, dict):
-            issues.append({"code": "routing_endpoint_invalid", "severity": "critical", "message": f"endpoint[{index}] 不是 object。"})
+            issues.append(
+                {
+                    "code": "routing_endpoint_invalid",
+                    "severity": "critical",
+                    "message": f"endpoint[{index}] 不是 object。",
+                }
+            )
             continue
         endpoint_id = str(item.get("id") or "").strip()
         if not endpoint_id:
-            issues.append({"code": "routing_endpoint_invalid", "severity": "critical", "message": f"endpoint[{index}] 缺少 id。"})
+            issues.append(
+                {
+                    "code": "routing_endpoint_invalid",
+                    "severity": "critical",
+                    "message": f"endpoint[{index}] 缺少 id。",
+                }
+            )
             continue
         if endpoint_id in endpoint_map:
-            issues.append({"code": "routing_endpoint_duplicate", "severity": "critical", "message": f"端点 id 重复: {endpoint_id}"})
+            issues.append(
+                {
+                    "code": "routing_endpoint_duplicate",
+                    "severity": "critical",
+                    "message": f"端点 id 重复: {endpoint_id}",
+                }
+            )
             continue
         try:
-            endpoint_map[endpoint_id] = _point(item.get("position"), f"endpoint {endpoint_id}")
+            endpoint_map[endpoint_id] = _point(
+                item.get("position"), f"endpoint {endpoint_id}"
+            )
         except (TypeError, ValueError) as exc:
-            issues.append({"code": "routing_endpoint_invalid", "severity": "critical", "message": str(exc)})
+            issues.append(
+                {
+                    "code": "routing_endpoint_invalid",
+                    "severity": "critical",
+                    "message": str(exc),
+                }
+            )
     if route_type not in ROUTE_TYPES:
-        issues.append({"code": "routing_type_invalid", "severity": "critical", "message": f"不支持的 routeType: {route_type or 'missing'}"})
+        issues.append(
+            {
+                "code": "routing_type_invalid",
+                "severity": "critical",
+                "message": f"不支持的 routeType: {route_type or 'missing'}",
+            }
+        )
     if units not in ROUTING_UNITS:
-        issues.append({"code": "routing_units_invalid", "severity": "critical", "message": f"不支持的 Routing 单位: {units}"})
+        issues.append(
+            {
+                "code": "routing_units_invalid",
+                "severity": "critical",
+                "message": f"不支持的 Routing 单位: {units}",
+            }
+        )
     if len(endpoint_map) < 2:
-        issues.append({"code": "routing_endpoints_missing", "severity": "critical", "message": "Routing 至少需要两个有效端点。"})
+        issues.append(
+            {
+                "code": "routing_endpoints_missing",
+                "severity": "critical",
+                "message": "Routing 至少需要两个有效端点。",
+            }
+        )
     if not segments:
-        issues.append({"code": "routing_segments_missing", "severity": "critical", "message": "Routing 缺少 segments。"})
+        issues.append(
+            {
+                "code": "routing_segments_missing",
+                "severity": "critical",
+                "message": "Routing 缺少 segments。",
+            }
+        )
 
     segment_evidence: list[dict[str, Any]] = []
     collision_evidence: list[dict[str, Any]] = []
@@ -261,31 +357,63 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
     bom_index: dict[tuple[str, float, str, str], dict[str, Any]] = {}
     used_endpoints: set[str] = set()
     segment_ids: set[str] = set()
-    route_graph: dict[str, set[str]] = {endpoint_id: set() for endpoint_id in endpoint_map}
+    route_graph: dict[str, set[str]] = {
+        endpoint_id: set() for endpoint_id in endpoint_map
+    }
     valid_supports: list[dict[str, Any]] = []
     support_ids: set[str] = set()
     for index, support in enumerate(supports):
         if not isinstance(support, dict):
-            issues.append({"code": "routing_support_invalid", "severity": "critical", "message": f"support[{index}] 不是 object。"})
+            issues.append(
+                {
+                    "code": "routing_support_invalid",
+                    "severity": "critical",
+                    "message": f"support[{index}] 不是 object。",
+                }
+            )
             continue
         support_id = str(support.get("id") or "").strip()
         segment_ref = str(support.get("segmentId") or "").strip()
         if not support_id or not segment_ref:
-            issues.append({"code": "routing_support_invalid", "severity": "critical", "message": f"support[{index}] 缺少 id 或 segmentId。"})
+            issues.append(
+                {
+                    "code": "routing_support_invalid",
+                    "severity": "critical",
+                    "message": f"support[{index}] 缺少 id 或 segmentId。",
+                }
+            )
             continue
         if support_id in support_ids:
-            issues.append({"code": "routing_support_duplicate", "severity": "critical", "message": f"支撑 id 重复: {support_id}"})
+            issues.append(
+                {
+                    "code": "routing_support_duplicate",
+                    "severity": "critical",
+                    "message": f"支撑 id 重复: {support_id}",
+                }
+            )
             continue
         support_ids.add(support_id)
         valid_supports.append(support)
     total_length = 0.0
     for index, item in enumerate(segments):
         if not isinstance(item, dict):
-            issues.append({"code": "routing_segment_invalid", "severity": "critical", "message": f"segment[{index}] 不是 object。"})
+            issues.append(
+                {
+                    "code": "routing_segment_invalid",
+                    "severity": "critical",
+                    "message": f"segment[{index}] 不是 object。",
+                }
+            )
             continue
         segment_id = str(item.get("id") or f"segment-{index + 1}")
         if segment_id in segment_ids:
-            issues.append({"code": "routing_segment_duplicate", "severity": "critical", "message": f"分段 id 重复: {segment_id}"})
+            issues.append(
+                {
+                    "code": "routing_segment_duplicate",
+                    "severity": "critical",
+                    "message": f"分段 id 重复: {segment_id}",
+                }
+            )
             continue
         segment_ids.add(segment_id)
         start_id = str(item.get("start") or "")
@@ -293,7 +421,13 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
         start = endpoint_map.get(start_id)
         end = endpoint_map.get(end_id)
         if not start or not end:
-            issues.append({"code": "routing_endpoint_reference_missing", "severity": "critical", "message": f"{segment_id} 引用不存在的端点。"})
+            issues.append(
+                {
+                    "code": "routing_endpoint_reference_missing",
+                    "severity": "critical",
+                    "message": f"{segment_id} 引用不存在的端点。",
+                }
+            )
             continue
         used_endpoints.update((start_id, end_id))
         route_graph[start_id].add(end_id)
@@ -301,112 +435,296 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
         try:
             points = _path_points(item, start, end, segment_id)
         except ValueError as exc:
-            issues.append({"code": "routing_path_point_invalid", "severity": "critical", "message": str(exc)})
+            issues.append(
+                {
+                    "code": "routing_path_point_invalid",
+                    "severity": "critical",
+                    "message": str(exc),
+                }
+            )
             continue
         legs = list(zip(points, points[1:]))
         if any(_distance(first, second) <= 1e-12 for first, second in legs):
-            issues.append({"code": "routing_zero_length_leg", "severity": "critical", "message": f"{segment_id} 含重复路径点或零长度路径段。"})
+            issues.append(
+                {
+                    "code": "routing_zero_length_leg",
+                    "severity": "critical",
+                    "message": f"{segment_id} 含重复路径点或零长度路径段。",
+                }
+            )
         length = sum(_distance(first, second) for first, second in legs)
         try:
-            bend_radius = _finite_number(item.get("bendRadius", routing.get("minimumBendRadius", 0)), f"{segment_id}.bendRadius", minimum=0)
-            required_radius = _finite_number(routing.get("minimumBendRadius", 0), "minimumBendRadius", minimum=0)
-            clearance = _finite_number(item.get("clearance", routing.get("minimumClearance", 0)), f"{segment_id}.clearance", minimum=0)
+            bend_radius = _finite_number(
+                item.get("bendRadius", routing.get("minimumBendRadius", 0)),
+                f"{segment_id}.bendRadius",
+                minimum=0,
+            )
+            required_radius = _finite_number(
+                routing.get("minimumBendRadius", 0), "minimumBendRadius", minimum=0
+            )
+            clearance = _finite_number(
+                item.get("clearance", routing.get("minimumClearance", 0)),
+                f"{segment_id}.clearance",
+                minimum=0,
+            )
         except ValueError as exc:
-            issues.append({"code": "routing_scalar_invalid", "severity": "critical", "message": str(exc)})
+            issues.append(
+                {
+                    "code": "routing_scalar_invalid",
+                    "severity": "critical",
+                    "message": str(exc),
+                }
+            )
             continue
         if length <= 0:
-            issues.append({"code": "routing_zero_length", "severity": "critical", "message": f"{segment_id} 长度为 0。"})
+            issues.append(
+                {
+                    "code": "routing_zero_length",
+                    "severity": "critical",
+                    "message": f"{segment_id} 长度为 0。",
+                }
+            )
         if required_radius <= 0 or bend_radius <= 0:
-            issues.append({"code": "routing_bend_radius_missing", "severity": "high", "message": f"{segment_id} 缺少有效弯曲半径。"})
+            issues.append(
+                {
+                    "code": "routing_bend_radius_missing",
+                    "severity": "high",
+                    "message": f"{segment_id} 缺少有效弯曲半径。",
+                }
+            )
         elif bend_radius < required_radius:
-            issues.append({"code": "routing_bend_radius_too_small", "severity": "high", "message": f"{segment_id} 弯曲半径 {bend_radius:g} 小于要求 {required_radius:g} {units}。"})
+            issues.append(
+                {
+                    "code": "routing_bend_radius_too_small",
+                    "severity": "high",
+                    "message": f"{segment_id} 弯曲半径 {bend_radius:g} 小于要求 {required_radius:g} {units}。",
+                }
+            )
         total_length += length
         collisions = []
         for obstacle in obstacles:
             if not isinstance(obstacle, dict):
                 continue
             try:
-                minimum = _point(obstacle.get("min"), f"obstacle {obstacle.get('id')}.min")
-                maximum = _point(obstacle.get("max"), f"obstacle {obstacle.get('id')}.max")
+                minimum = _point(
+                    obstacle.get("min"), f"obstacle {obstacle.get('id')}.min"
+                )
+                maximum = _point(
+                    obstacle.get("max"), f"obstacle {obstacle.get('id')}.max"
+                )
             except ValueError as exc:
-                issues.append({"code": "routing_obstacle_invalid", "severity": "critical", "message": str(exc)})
+                issues.append(
+                    {
+                        "code": "routing_obstacle_invalid",
+                        "severity": "critical",
+                        "message": str(exc),
+                    }
+                )
                 continue
             if any(minimum[axis] > maximum[axis] for axis in range(3)):
-                issues.append({"code": "routing_obstacle_bounds_invalid", "severity": "critical", "message": f"障碍物 {obstacle.get('id')} 的 min/max 颠倒。"})
+                issues.append(
+                    {
+                        "code": "routing_obstacle_bounds_invalid",
+                        "severity": "critical",
+                        "message": f"障碍物 {obstacle.get('id')} 的 min/max 颠倒。",
+                    }
+                )
                 continue
-            if any(_segment_hits_box(first, second, minimum, maximum, clearance) for first, second in legs):
+            if any(
+                _segment_hits_box(first, second, minimum, maximum, clearance)
+                for first, second in legs
+            ):
                 collisions.append(str(obstacle.get("id") or "obstacle"))
         if collisions:
-            issues.append({"code": "routing_collision_or_clearance", "severity": "critical", "message": f"{segment_id} 与障碍物或要求间隙相交。", "obstacles": collisions})
-        collision_evidence.append({"segmentId": segment_id, "clearance": clearance, "obstacles": collisions, "status": "fail" if collisions else "pass"})
+            issues.append(
+                {
+                    "code": "routing_collision_or_clearance",
+                    "severity": "critical",
+                    "message": f"{segment_id} 与障碍物或要求间隙相交。",
+                    "obstacles": collisions,
+                }
+            )
+        collision_evidence.append(
+            {
+                "segmentId": segment_id,
+                "clearance": clearance,
+                "obstacles": collisions,
+                "status": "fail" if collisions else "pass",
+            }
+        )
 
         try:
             max_support_spacing = _finite_number(
-                item.get("maximumSupportSpacing", routing.get("maximumSupportSpacing", 0)),
+                item.get(
+                    "maximumSupportSpacing", routing.get("maximumSupportSpacing", 0)
+                ),
                 f"{segment_id}.maximumSupportSpacing",
                 minimum=0,
             )
         except ValueError as exc:
-            issues.append({"code": "routing_support_spacing_invalid", "severity": "critical", "message": str(exc)})
+            issues.append(
+                {
+                    "code": "routing_support_spacing_invalid",
+                    "severity": "critical",
+                    "message": str(exc),
+                }
+            )
             max_support_spacing = 0.0
-        segment_supports = [support for support in valid_supports if str(support.get("segmentId") or "") == segment_id]
-        required_support_count = max(math.ceil(length / max_support_spacing) - 1, 0) if max_support_spacing > 0 else 0
+        segment_supports = [
+            support
+            for support in valid_supports
+            if str(support.get("segmentId") or "") == segment_id
+        ]
+        required_support_count = (
+            max(math.ceil(length / max_support_spacing) - 1, 0)
+            if max_support_spacing > 0
+            else 0
+        )
         if max_support_spacing <= 0:
-            issues.append({"code": "routing_support_spacing_missing", "severity": "high", "message": f"{segment_id} 缺少最大支撑间距。"})
+            issues.append(
+                {
+                    "code": "routing_support_spacing_missing",
+                    "severity": "high",
+                    "message": f"{segment_id} 缺少最大支撑间距。",
+                }
+            )
         elif len(segment_supports) < required_support_count:
-            issues.append({"code": "routing_supports_insufficient", "severity": "high", "message": f"{segment_id} 至少需要 {required_support_count} 个中间支撑，当前 {len(segment_supports)} 个。"})
+            issues.append(
+                {
+                    "code": "routing_supports_insufficient",
+                    "severity": "high",
+                    "message": f"{segment_id} 至少需要 {required_support_count} 个中间支撑，当前 {len(segment_supports)} 个。",
+                }
+            )
         support_positions = []
         for support in segment_supports:
             try:
-                position = _finite_number(support.get("distanceAlong"), f"{segment_id}.support.distanceAlong", minimum=0)
+                position = _finite_number(
+                    support.get("distanceAlong"),
+                    f"{segment_id}.support.distanceAlong",
+                    minimum=0,
+                )
             except ValueError as exc:
-                issues.append({"code": "routing_support_position_invalid", "severity": "high", "message": str(exc)})
+                issues.append(
+                    {
+                        "code": "routing_support_position_invalid",
+                        "severity": "high",
+                        "message": str(exc),
+                    }
+                )
                 continue
             if position > length:
-                issues.append({"code": "routing_support_position_out_of_range", "severity": "high", "message": f"{segment_id} 支撑位置 {position:g} 超出分段长度 {length:g}。"})
+                issues.append(
+                    {
+                        "code": "routing_support_position_out_of_range",
+                        "severity": "high",
+                        "message": f"{segment_id} 支撑位置 {position:g} 超出分段长度 {length:g}。",
+                    }
+                )
                 continue
             support_positions.append(position)
         support_positions.sort()
-        gaps = [right - left for left, right in zip([0.0, *support_positions], [*support_positions, length])]
+        gaps = [
+            right - left
+            for left, right in zip(
+                [0.0, *support_positions], [*support_positions, length]
+            )
+        ]
         maximum_actual_spacing = max(gaps, default=length)
-        if max_support_spacing > 0 and maximum_actual_spacing > max_support_spacing + 1e-9:
-            issues.append({"code": "routing_support_spacing_exceeded", "severity": "high", "message": f"{segment_id} 实际最大支撑间距 {maximum_actual_spacing:g} 超过要求 {max_support_spacing:g}。"})
-        support_evidence.append({
-            "segmentId": segment_id,
-            "maximumSpacing": max_support_spacing,
-            "maximumActualSpacing": maximum_actual_spacing,
-            "required": required_support_count,
-            "actual": len(segment_supports),
-            "validPositions": len(support_positions),
-            "status": "pass" if max_support_spacing > 0 and len(segment_supports) >= required_support_count and maximum_actual_spacing <= max_support_spacing + 1e-9 else "warning",
-        })
+        if (
+            max_support_spacing > 0
+            and maximum_actual_spacing > max_support_spacing + 1e-9
+        ):
+            issues.append(
+                {
+                    "code": "routing_support_spacing_exceeded",
+                    "severity": "high",
+                    "message": f"{segment_id} 实际最大支撑间距 {maximum_actual_spacing:g} 超过要求 {max_support_spacing:g}。",
+                }
+            )
+        support_evidence.append(
+            {
+                "segmentId": segment_id,
+                "maximumSpacing": max_support_spacing,
+                "maximumActualSpacing": maximum_actual_spacing,
+                "required": required_support_count,
+                "actual": len(segment_supports),
+                "validPositions": len(support_positions),
+                "status": "pass"
+                if max_support_spacing > 0
+                and len(segment_supports) >= required_support_count
+                and maximum_actual_spacing <= max_support_spacing + 1e-9
+                else "warning",
+            }
+        )
 
         try:
-            diameter = _finite_number(item.get("diameter", routing.get("diameter", 0)), f"{segment_id}.diameter", minimum=0)
+            diameter = _finite_number(
+                item.get("diameter", routing.get("diameter", 0)),
+                f"{segment_id}.diameter",
+                minimum=0,
+            )
         except ValueError as exc:
-            issues.append({"code": "routing_diameter_invalid", "severity": "high", "message": str(exc)})
+            issues.append(
+                {
+                    "code": "routing_diameter_invalid",
+                    "severity": "high",
+                    "message": str(exc),
+                }
+            )
             diameter = 0.0
         material = str(item.get("material") or routing.get("material") or "待确认")
         part_number = str(item.get("partNumber") or routing.get("partNumber") or "")
         bom_key = (route_type, diameter, material, part_number)
-        bom_row = bom_index.setdefault(bom_key, {"routeType": route_type, "diameter": diameter, "material": material, "partNumber": part_number, "segmentCount": 0, "totalLength": 0.0, "units": units})
+        bom_row = bom_index.setdefault(
+            bom_key,
+            {
+                "routeType": route_type,
+                "diameter": diameter,
+                "material": material,
+                "partNumber": part_number,
+                "segmentCount": 0,
+                "totalLength": 0.0,
+                "units": units,
+            },
+        )
         bom_row["segmentCount"] += 1
         bom_row["totalLength"] += length
-        segment_evidence.append({
-            "id": segment_id,
-            "start": start_id,
-            "end": end_id,
-            "length": length,
-            "bendRadius": bend_radius,
-            "pointCount": len(points),
-            "clearance": clearance,
-        })
+        segment_evidence.append(
+            {
+                "id": segment_id,
+                "start": start_id,
+                "end": end_id,
+                "length": length,
+                "bendRadius": bend_radius,
+                "pointCount": len(points),
+                "clearance": clearance,
+            }
+        )
     disconnected = sorted(set(endpoint_map).difference(used_endpoints))
     if disconnected:
-        issues.append({"code": "routing_disconnected_endpoints", "severity": "high", "message": "存在未连接端点。", "endpoints": disconnected})
-    orphan_supports = sorted(str(item.get("id")) for item in valid_supports if str(item.get("segmentId")) not in segment_ids)
+        issues.append(
+            {
+                "code": "routing_disconnected_endpoints",
+                "severity": "high",
+                "message": "存在未连接端点。",
+                "endpoints": disconnected,
+            }
+        )
+    orphan_supports = sorted(
+        str(item.get("id"))
+        for item in valid_supports
+        if str(item.get("segmentId")) not in segment_ids
+    )
     if orphan_supports:
-        issues.append({"code": "routing_support_segment_missing", "severity": "critical", "message": "支撑引用了不存在的分段。", "supports": orphan_supports})
+        issues.append(
+            {
+                "code": "routing_support_segment_missing",
+                "severity": "critical",
+                "message": "支撑引用了不存在的分段。",
+                "supports": orphan_supports,
+            }
+        )
     if used_endpoints:
         pending = {next(iter(used_endpoints))}
         reached: set[str] = set()
@@ -418,13 +736,53 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
             pending.update(route_graph.get(current, set()).difference(reached))
         disconnected_network = sorted(used_endpoints.difference(reached))
         if disconnected_network:
-            issues.append({"code": "routing_disconnected_graph", "severity": "critical", "message": "Routing 分段形成了多个互不连通的子网络。", "endpoints": disconnected_network})
-    checks.append({"id": "routing_endpoint_table", "status": "pass" if len(endpoint_map) >= 2 else "fail", "count": len(endpoint_map)})
-    checks.append({"id": "routing_segment_lengths", "status": "pass" if segment_evidence else "fail", "totalLength": total_length, "segments": segment_evidence})
-    checks.append({"id": "routing_collision_clearance", "status": "fail" if any(item["status"] == "fail" for item in collision_evidence) else "pass", "segments": collision_evidence})
-    checks.append({"id": "routing_support_spacing", "status": "warning" if any(item["status"] != "pass" for item in support_evidence) else "pass", "segments": support_evidence})
+            issues.append(
+                {
+                    "code": "routing_disconnected_graph",
+                    "severity": "critical",
+                    "message": "Routing 分段形成了多个互不连通的子网络。",
+                    "endpoints": disconnected_network,
+                }
+            )
+    checks.append(
+        {
+            "id": "routing_endpoint_table",
+            "status": "pass" if len(endpoint_map) >= 2 else "fail",
+            "count": len(endpoint_map),
+        }
+    )
+    checks.append(
+        {
+            "id": "routing_segment_lengths",
+            "status": "pass" if segment_evidence else "fail",
+            "totalLength": total_length,
+            "segments": segment_evidence,
+        }
+    )
+    checks.append(
+        {
+            "id": "routing_collision_clearance",
+            "status": "fail"
+            if any(item["status"] == "fail" for item in collision_evidence)
+            else "pass",
+            "segments": collision_evidence,
+        }
+    )
+    checks.append(
+        {
+            "id": "routing_support_spacing",
+            "status": "warning"
+            if any(item["status"] != "pass" for item in support_evidence)
+            else "pass",
+            "segments": support_evidence,
+        }
+    )
     preflight = probe_solidworks_routing()
-    status = "blocked" if any(item["severity"] == "critical" for item in issues) else "review_required"
+    status = (
+        "blocked"
+        if any(item["severity"] == "critical" for item in issues)
+        else "review_required"
+    )
     return {
         "schemaVersion": "1.0",
         "status": status,
@@ -433,7 +791,9 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
         "units": units,
         "checks": checks,
         "reviewFindings": issues,
-        "endpointTable": [{"id": key, "position": list(value)} for key, value in endpoint_map.items()],
+        "endpointTable": [
+            {"id": key, "position": list(value)} for key, value in endpoint_map.items()
+        ],
         "segmentEvidence": segment_evidence,
         "collisionEvidence": collision_evidence,
         "supportEvidence": support_evidence,
@@ -451,7 +811,9 @@ def build_routing_report(document: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def review_routing_file(input_path: str | Path, output_path: str | Path) -> dict[str, Any]:
+def review_routing_file(
+    input_path: str | Path, output_path: str | Path
+) -> dict[str, Any]:
     """@brief 读取 Routing JSON 并写出不覆盖旧文件的结构化报告。"""
     source = Path(input_path).expanduser().resolve()
     target = Path(output_path).expanduser().resolve()
@@ -463,7 +825,9 @@ def review_routing_file(input_path: str | Path, output_path: str | Path) -> dict
             "status": "blocked",
             "stage": "input_validation",
             "checks": [{"id": "routing_input", "status": "fail", "error_code": code}],
-            "reviewFindings": [{"code": code, "severity": "critical", "message": message}],
+            "reviewFindings": [
+                {"code": code, "severity": "critical", "message": message}
+            ],
             "artifacts": [],
             "manual_review_required": False,
             "retryable": retryable,
@@ -475,18 +839,33 @@ def review_routing_file(input_path: str | Path, output_path: str | Path) -> dict
 
     try:
         if not source.is_file():
-            return blocked("routing_input_missing", f"Routing 输入文件不存在: {source}", retryable=True)
+            return blocked(
+                "routing_input_missing",
+                f"Routing 输入文件不存在: {source}",
+                retryable=True,
+            )
         if source.stat().st_size > _MAX_INPUT_BYTES:
-            return blocked("routing_input_too_large", f"Routing 输入文件超过 {_MAX_INPUT_BYTES} 字节限制。")
+            return blocked(
+                "routing_input_too_large",
+                f"Routing 输入文件超过 {_MAX_INPUT_BYTES} 字节限制。",
+            )
     except OSError as exc:
-        return blocked("routing_input_unreadable", f"无法读取 Routing 输入文件: {exc}", retryable=True)
+        return blocked(
+            "routing_input_unreadable",
+            f"无法读取 Routing 输入文件: {exc}",
+            retryable=True,
+        )
 
     try:
         payload = json.loads(source.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-        return blocked("routing_input_invalid_json", f"Routing 输入不是有效 UTF-8 JSON: {exc}")
+        return blocked(
+            "routing_input_invalid_json", f"Routing 输入不是有效 UTF-8 JSON: {exc}"
+        )
     if not isinstance(payload, dict):
-        return blocked("routing_input_root_invalid", "Routing 输入根节点必须是 JSON object。")
+        return blocked(
+            "routing_input_root_invalid", "Routing 输入根节点必须是 JSON object。"
+        )
 
     if target.exists():
         index = 2
@@ -496,22 +875,36 @@ def review_routing_file(input_path: str | Path, output_path: str | Path) -> dict
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
-        report = blocked("routing_output_unwritable", f"Routing 报告目录不可写: {exc}", retryable=True)
+        report = blocked(
+            "routing_output_unwritable",
+            f"Routing 报告目录不可写: {exc}",
+            retryable=True,
+        )
         report["reportPath"] = str(target)
         return report
     report = build_routing_report(payload)
     report["sourceDocument"] = str(source)
     report["reportPath"] = str(target)
     try:
-        target.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
+        target.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+            newline="\n",
+        )
     except OSError as exc:
-        return blocked("routing_output_write_failed", f"Routing 报告写入失败: {exc}", retryable=True)
+        return blocked(
+            "routing_output_write_failed",
+            f"Routing 报告写入失败: {exc}",
+            retryable=True,
+        )
     return report
 
 
 def main(argv: list[str] | None = None) -> int:
     """@brief 命令行入口。"""
-    parser = argparse.ArgumentParser(description="CAD Studio Routing 中性校验与 SOLIDWORKS 前置探测")
+    parser = argparse.ArgumentParser(
+        description="CAD Studio Routing 中性校验与 SOLIDWORKS 前置探测"
+    )
     parser.add_argument("--preflight", action="store_true")
     parser.add_argument("--input", type=Path)
     parser.add_argument("--output", type=Path)

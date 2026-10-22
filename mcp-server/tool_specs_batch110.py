@@ -1,4 +1,5 @@
-'''★ 批次 110：规格 220 · 装配/零部件阵列 —— ★ 直接指向现成的真函数，不新增包装。'''
+"""★ 批次 110：规格 220 · 装配/零部件阵列 —— ★ 直接指向现成的真函数，不新增包装。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（实现 = scripts/sw_assembly.py 的 iter_feature_tree，**早已存在**）
 # 文件:   mcp-server/tool_specs_batch110.py
@@ -22,22 +23,28 @@ from tool_registry import Param, ToolSpec
 
 SPECS_BATCH110 = [
     ToolSpec(
-        name='solidworks_assembly_component_pattern_report',
-        title='Assembly Component Patterns — read them off the assembly feature tree',
-        module='sw_assembly', function='iter_feature_tree',
-        inject='model',
+        name="solidworks_assembly_component_pattern_report",
+        title="Assembly Component Patterns — read them off the assembly feature tree",
+        module="sw_assembly",
+        function="iter_feature_tree",
+        inject="model",
         params=[
-            Param('include_subfeatures', bool, default=True, required=False,
-                  description='是否连子特征一起遍历（默认 true）'),
+            Param(
+                "include_subfeatures",
+                bool,
+                default=True,
+                required=False,
+                description="是否连子特征一起遍历（默认 true）",
+            ),
         ],
         read_only=True,
-        doc='★ **零部件阵列（读侧）**—— ★ 遍历**装配特征树**，★ **零部件阵列节点就在其中** ✓ '
-            '★ 真实来源：★ `sw_assembly.iter_feature_tree`（**早已在本仓且可用** ✓）'
-            '★★ **如实标注（不许冒充）**：★ 本工具给的是**整棵装配特征树的逐节点清单**'
-            '（★ **含**零部件阵列节点 ✓），★ **不是**只挑阵列出来的专项读数 ✗ —— '
-            '★ 官方的 `GetPatternComponentCount` / `DissolveComponentPattern` 是**另一条路**，'
-            '★ 本批**没有**用它们（★ 若将来要做专项读数，★ 再照官方签名加 ✓）'
-            '★ 判据：★ 回的是**结构化节点清单**（★ 读不到就回空，★ 不假装有内容 ✓）'
-            '★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓',
+        doc="★ **零部件阵列（读侧）**—— ★ 遍历**装配特征树**，★ **零部件阵列节点就在其中** ✓ "
+        "★ 真实来源：★ `sw_assembly.iter_feature_tree`（**早已在本仓且可用** ✓）"
+        "★★ **如实标注（不许冒充）**：★ 本工具给的是**整棵装配特征树的逐节点清单**"
+        "（★ **含**零部件阵列节点 ✓），★ **不是**只挑阵列出来的专项读数 ✗ —— "
+        "★ 官方的 `GetPatternComponentCount` / `DissolveComponentPattern` 是**另一条路**，"
+        "★ 本批**没有**用它们（★ 若将来要做专项读数，★ 再照官方签名加 ✓）"
+        "★ 判据：★ 回的是**结构化节点清单**（★ 读不到就回空，★ 不假装有内容 ✓）"
+        "★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓",
     ),
 ]

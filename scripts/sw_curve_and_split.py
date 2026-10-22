@@ -73,9 +73,9 @@
 from __future__ import annotations
 
 try:
-    from .sw_connect import get_com_member, set_com_member          # noqa: F401
-except ImportError:                                                 # 顶层载入（脚本 / 探针）
-    from sw_connect import get_com_member, set_com_member           # noqa: F401
+    from .sw_connect import get_com_member, set_com_member  # noqa: F401
+except ImportError:  # 顶层载入（脚本 / 探针）
+    from sw_connect import get_com_member, set_com_member  # noqa: F401
 
 __all__ = [
     "insert_split_line_project",
@@ -113,7 +113,6 @@ except ImportError:
     from sw_feature_tree import new_features
 
 
-
 def _selection_mark_counts(model):
     """★ 回读**按标记分组**的选区计数（★ 事实 8：`SelectByID2` 的返回值不可信，只有计数算数）。
 
@@ -121,13 +120,13 @@ def _selection_mark_counts(model):
     """
     try:
         sm = get_com_member(model, "SelectionManager")
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     out = {}
     for m in (0, 1, 4):
         try:
             out[str(m)] = int(get_com_member(sm, "GetSelectedObjectCount2", m))
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             out[str(m)] = -1
     return out
 
@@ -144,27 +143,28 @@ def _face_loop_stats(model):
     """
     try:
         bodies = list(get_com_member(model, "GetBodies2", 0, True) or [])
-    except Exception:                                                # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     hist = {}
     count = 0
     for b in bodies:
         try:
             faces = list(get_com_member(b, "GetFaces") or [])
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         for f in faces:
             count += 1
             try:
                 k = int(get_com_member(f, "GetLoopCount"))
-            except Exception:                                        # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 k = -1
             hist[str(k)] = hist.get(str(k), 0) + 1
     return {"face_count": count, "loop_histogram": hist}
 
 
-def insert_split_line_project(model, is_directional: bool = False,
-                              flip_dir: bool = False) -> dict:
+def insert_split_line_project(
+    model, is_directional: bool = False, flip_dir: bool = False
+) -> dict:
     """★ **分割线（投影）**：`IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` → `void`。
 
     :param is_directional: 官方逐字「Whether to project in **one direction**」。
@@ -195,7 +195,9 @@ def insert_split_line_project(model, is_directional: bool = False,
     marks = _selection_mark_counts(model)
     before_tree = _tree_names(model)
     before_faces = _face_loop_stats(model)
-    get_com_member(model, "InsertSplitLineProject", bool(is_directional), bool(flip_dir))
+    get_com_member(
+        model, "InsertSplitLineProject", bool(is_directional), bool(flip_dir)
+    )
     after_tree = _tree_names(model)
     after_faces = _face_loop_stats(model)
     added = new_features(before_tree, after_tree)
@@ -204,8 +206,9 @@ def insert_split_line_project(model, is_directional: bool = False,
         face_delta = after_faces["face_count"] - before_faces["face_count"]
     inner_gained = False
     if before_faces is not None and after_faces is not None:
-        inner_gained = (int(after_faces["loop_histogram"].get("2", 0))
-                        > int(before_faces["loop_histogram"].get("2", 0)))
+        inner_gained = int(after_faces["loop_histogram"].get("2", 0)) > int(
+            before_faces["loop_histogram"].get("2", 0)
+        )
     #: ★ 前置是否成立（★ 回读，★ 不猜）：草图 mark 4 **且** 面 mark 1 都至少一个
     pre = None
     if marks is not None:
@@ -223,23 +226,33 @@ def insert_split_line_project(model, is_directional: bool = False,
     #:   ★★ 依据：★★★ **跨种类用 `and` · 同种类用 `or`**（★ 本会话 E5-3 那条规则）——
     #: 而"树增量"与"面数增量"是**两个种类** ⇒ ★ **用 `or` 就是把"缺一不可"写成"有一个就
     #: 行"** ✓
-    return {"ok": bool(added),
-            "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
-                       "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
-            "op": "split_line_project",
-            "is_directional": bool(is_directional), "flip_dir": bool(flip_dir),
-            "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
-            "faces_before": before_faces, "faces_after": after_faces,
-            "face_delta": face_delta, "gained_inner_loop": inner_gained,
-            "selection_marks": marks,
-            "preconditions_held": pre,
-            "selection_mark": ("★ 官方 Remarks 逐字：投影**草图** mark = **4** · 要切的**面** mark = **1**"
-                               "（★ 本模块 2026-10-03 更正：原先写的「官方未给 mark 表」是错的）"),
-            "geometry_requirement": ("投影草图所在平面须在实体**之外**、与某面平行、沿投影方向隔开；"
-                                     "★ 否则特征会建出来而面不被切开"),
-            "returns_none_even_on_success": True,
-            "verified_by": "tree_delta+face_count_delta+inner_loop"}
-
+    return {
+        "ok": bool(added),
+        "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
+        "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
+        "op": "split_line_project",
+        "is_directional": bool(is_directional),
+        "flip_dir": bool(flip_dir),
+        "tree_before": before_tree,
+        "tree_after": after_tree,
+        "new_features": added,
+        "faces_before": before_faces,
+        "faces_after": after_faces,
+        "face_delta": face_delta,
+        "gained_inner_loop": inner_gained,
+        "selection_marks": marks,
+        "preconditions_held": pre,
+        "selection_mark": (
+            "★ 官方 Remarks 逐字：投影**草图** mark = **4** · 要切的**面** mark = **1**"
+            "（★ 本模块 2026-10-03 更正：原先写的「官方未给 mark 表」是错的）"
+        ),
+        "geometry_requirement": (
+            "投影草图所在平面须在实体**之外**、与某面平行、沿投影方向隔开；"
+            "★ 否则特征会建出来而面不被切开"
+        ),
+        "returns_none_even_on_success": True,
+        "verified_by": "tree_delta+face_count_delta+inner_loop",
+    }
 
 
 def insert_split_line_silhouette(model) -> dict:
@@ -286,27 +299,37 @@ def insert_split_line_silhouette(model) -> dict:
     pre = None
     if marks is not None:
         pre = bool(marks.get("2", 0) >= 1 and marks.get("1", 0) >= 1)
-    #: ★★★★ 2026-10-04（接手轮）**同上一处**（★ `split_line_project`）—— ★ 跨种类不许用 
+    #: ★★★★ 2026-10-04（接手轮）**同上一处**（★ `split_line_project`）—— ★ 跨种类不许用
     #: `or` ✓
     #:   ★ 官方 `InsertSplitLineSil` 同样**回 `void`** ⇒ ★ 判据只剩「特征树增量」✓
-    return {"ok": bool(added),
-            "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
-                       "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
-            "op": "split_line_silhouette",
-            "tree_before": before_tree, "tree_after": after_tree, "new_features": added,
-            "faces_before": before_faces, "faces_after": after_faces,
-            "face_delta": face_delta,
-            "selection_marks": marks,
-            "preconditions_held": pre,
-            "selection_mark": "★ 官方 Remarks 逐字：**方向项** mark = **2** · 要切的**面** mark = **1**",
-            "geometry_requirement": ("视线**不能顺着回转轴**（否则轮廓退化成已有边）；"
-                                     "圆柱轴 = +Z 时用前视面不成、换上视面成"),
-            "inner_loop_expected": False,
-            "returns_none_even_on_success": True,
-            "verified_by": "tree_delta+face_count_delta"}
+    return {
+        "ok": bool(added),
+        "ok_note": "★ 官方此入口回 `void` ⇒ 没有「回对象非 None」可判 ⇒ "
+        "★ 判据只剩「特征树增量」（★ 面数增量只作旁证，★ 不顶替）",
+        "op": "split_line_silhouette",
+        "tree_before": before_tree,
+        "tree_after": after_tree,
+        "new_features": added,
+        "faces_before": before_faces,
+        "faces_after": after_faces,
+        "face_delta": face_delta,
+        "selection_marks": marks,
+        "preconditions_held": pre,
+        "selection_mark": "★ 官方 Remarks 逐字：**方向项** mark = **2** · 要切的**面** mark = **1**",
+        "geometry_requirement": (
+            "视线**不能顺着回转轴**（否则轮廓退化成已有边）；"
+            "圆柱轴 = +Z 时用前视面不成、换上视面成"
+        ),
+        "inner_loop_expected": False,
+        "returns_none_even_on_success": True,
+        "verified_by": "tree_delta+face_count_delta",
+    }
 
 
-def insert_curve_through_points(model, points_mm, ) -> dict:
+def insert_curve_through_points(
+    model,
+    points_mm,
+) -> dict:
     """★ **通过参考点的曲线**：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → `InsertCurveFileEnd()`。
 
     :param points_mm: 点的列表，每项 `[x, y, z]`（**毫米**）。
@@ -329,15 +352,25 @@ def insert_curve_through_points(model, points_mm, ) -> dict:
         return {"ok": False, "error": "至少要 2 个点（曲线），收到 %d 个" % len(pts)}
     for p in pts:
         if not (isinstance(p, (list, tuple)) and len(p) >= 3):
-            return {"ok": False, "error": "每个点要是 [x, y, z]（毫米），收到 %r" % (p,)}
+            return {
+                "ok": False,
+                "error": "每个点要是 [x, y, z]（毫米），收到 %r" % (p,),
+            }
     before = _tree_names(model)
     get_com_member(model, "InsertCurveFileBegin")
     point_rets = []
     for p in pts:
-        point_rets.append(bool(get_com_member(model, "InsertCurveFilePoint",
-                                              float(p[0]) / 1000.0,
-                                              float(p[1]) / 1000.0,
-                                              float(p[2]) / 1000.0)))
+        point_rets.append(
+            bool(
+                get_com_member(
+                    model,
+                    "InsertCurveFilePoint",
+                    float(p[0]) / 1000.0,
+                    float(p[1]) / 1000.0,
+                    float(p[2]) / 1000.0,
+                )
+            )
+        )
     end_ret = bool(get_com_member(model, "InsertCurveFileEnd"))
     after = _tree_names(model)
     added = new_features(before, after)
@@ -346,7 +379,7 @@ def insert_curve_through_points(model, points_mm, ) -> dict:
     #:   `★ 判据 = Point/End 的返回值 **且** 特征树增量。` ★ 而目标：
     #:   `point_rets.append(bool(get_com_member(model, "InsertCurveFilePoint", …)))` ／
     #:   `return {"ok": end_ret and bool(added), … "point_re…`」· ★ 判定「**确认**」）✓
-    #: ★★★ **病灶**：★ `point_rets` **算了、也报出来了**，★ **但 `ok` 里只有 `end_ret` 
+    #: ★★★ **病灶**：★ `point_rets` **算了、也报出来了**，★ **但 `ok` 里只有 `end_ret`
     #: 与 `added`**
     #:     ⇒ ★★ **doc 说的"Point 的返回值"那一项漏了** ✓
     #:   ★★ 而本函数的 docstring **L310-311 逐字**又重申了一次：
@@ -355,20 +388,31 @@ def insert_curve_through_points(model, points_mm, ) -> dict:
     #:       **且** **特征树有新特征**」⇒ ★★★★ **四个量、一路 `and`** ✓
     #:   ★ 修法：★ **把已算好的 `point_rets` 用 `all()` 纳入**（★ 不新算）✓
     all_points_ok = bool(point_rets) and all(point_rets)
-    return {"ok": bool(all_points_ok and end_ret and bool(added)),
-            "verified_by": "★ 每个 `InsertCurveFilePoint` 回 True **and** `InsertCurveFileEnd` 回 True "
-                           "**and** 特征树有新特征（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
-            "all_point_returns_true": all_points_ok,
-            "op": "curve_through_points",
-            "n_points": len(pts), "point_returns": point_rets, "end_return": end_ret,
-            "unit_assumption": "★ 官方未给单位；按 SolidWorks API 惯例当作**米** ⇒ 入参毫米已换算",
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "verified_by": "return_values + tree_delta"}
+    return {
+        "ok": bool(all_points_ok and end_ret and bool(added)),
+        "verified_by": "★ 每个 `InsertCurveFilePoint` 回 True **and** `InsertCurveFileEnd` 回 True "
+        "**and** 特征树有新特征（★ doc 承诺的三个判据；★ 跨种类 ⇒ `and`）",
+        "all_point_returns_true": all_points_ok,
+        "op": "curve_through_points",
+        "n_points": len(pts),
+        "point_returns": point_rets,
+        "end_return": end_ret,
+        "unit_assumption": "★ 官方未给单位；按 SolidWorks API 惯例当作**米** ⇒ 入参毫米已换算",
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "verified_by": "return_values + tree_delta",
+    }
 
 
-def insert_mate_reference(model, name: str, primary_entity=None,
-                          primary_type: int = 0, primary_alignment: int = 0,
-                          primary_align_axes: bool = False) -> dict:
+def insert_mate_reference(
+    model,
+    name: str,
+    primary_entity=None,
+    primary_type: int = 0,
+    primary_alignment: int = 0,
+    primary_align_axes: bool = False,
+) -> dict:
     """★ **配合参考**：`IFeatureManager.InsertMateReference2(…)` → `Feature`（★ 官方 **12 参**）。
 
     :param name: 配合参考的名字（官方 `BstrMateReferenceName`）。
@@ -425,19 +469,37 @@ def insert_mate_reference(model, name: str, primary_entity=None,
     #:   ⇒ ★ **第三组只有 3 个** ⇒ 总数 **12** ✓
     #:   ★★ 教训：★ **别按"三组同形"去推** —— ★ 官方那一组就是少一个形参；
     #:      ★ 个数要以**完整签名逐字数**为准（★ 事实 47/48 一族：arity 是硬事实）。
-    feat = get_com_member(fm, "InsertMateReference2",
-                          str(name), primary_entity, int(primary_type),
-                          int(primary_alignment), bool(primary_align_axes),
-                          _empty, 0, 0, False,
-                          _empty, 0, 0)
+    feat = get_com_member(
+        fm,
+        "InsertMateReference2",
+        str(name),
+        primary_entity,
+        int(primary_type),
+        int(primary_alignment),
+        bool(primary_align_axes),
+        _empty,
+        0,
+        0,
+        False,
+        _empty,
+        0,
+        0,
+    )
     after = _tree_names(model)
     added = new_features(before, after)
-    return {"ok": feat is not None and bool(added), "op": "mate_reference",
-            "returned_is_none": feat is None, "name": str(name),
-            "primary_type": int(primary_type), "primary_alignment": int(primary_alignment),
-            "tree_before": before, "tree_after": after, "new_features": added,
-            "exposes": "★ 只暴露**主**那一组（官方 12 参的其余两组本模块留 None）—— 不假装支持三组",
-            "verified_by": "feature_not_none + tree_delta"}
+    return {
+        "ok": feat is not None and bool(added),
+        "op": "mate_reference",
+        "returned_is_none": feat is None,
+        "name": str(name),
+        "primary_type": int(primary_type),
+        "primary_alignment": int(primary_alignment),
+        "tree_before": before,
+        "tree_after": after,
+        "new_features": added,
+        "exposes": "★ 只暴露**主**那一组（官方 12 参的其余两组本模块留 None）—— 不假装支持三组",
+        "verified_by": "feature_not_none + tree_delta",
+    }
 
 
 # ── ★★ 本模块**不做**的两条，以及为什么（★ 铁律 4 + 铁律 5）─────────────────────

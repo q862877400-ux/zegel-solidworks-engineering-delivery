@@ -1,5 +1,5 @@
 # ── 24h 计划 v2 · 段 2：**草图图元**（`sw_part` 的 5 条真缺口）────────────────────────
-# ★★★★ 2026-10-03（轮 398）来源：`tools/triage_real_gaps.py` 判定的「该挂」里 `sw_part` 
+# ★★★★ 2026-10-03（轮 398）来源：`tools/triage_real_gaps.py` 判定的「该挂」里 `sw_part`
 # 那 15 条中
 #   **属于"草图图元"的 5 条**（★ 其余归段 3 的实体特征）。★ 照既有 `tool_specs_batch21.py`
 # 的 `sketch_line` / `sketch_circle` / `sketch_corner_rectangle` 模式（同模块、同注入、
@@ -37,20 +37,29 @@
 
 from tool_registry import Param, ToolSpec
 
-_GEOM_NOTE = ("⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented "
-              "exception in rule 3 (a *drawing primitive* has no named entity to select). "
-              "Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. "
-              "★ Start a sketch with solidworks_sketch_start first, and finish with "
-              "solidworks_sketch_end; read back with the solidworks_sketch_count_* tools.")
+_GEOM_NOTE = (
+    "⚠ Sketch geometry MUST be given as in-plane coordinates — this is the documented "
+    "exception in rule 3 (a *drawing primitive* has no named entity to select). "
+    "Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. "
+    "★ Start a sketch with solidworks_sketch_start first, and finish with "
+    "solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
+)
 
 SPECS_BATCH54 = [
     ToolSpec(
         name="solidworks_sketch_add_arc",
         title="Add an Arc to the Sketch",
-        module="sw_part", inject="model", function="sketch_arc",
-        param_alias={"center_x_mm": "cx", "center_y_mm": "cy",
-                     "start_x_mm": "x1", "start_y_mm": "y1",
-                     "end_x_mm": "x2", "end_y_mm": "y2"},
+        module="sw_part",
+        inject="model",
+        function="sketch_arc",
+        param_alias={
+            "center_x_mm": "cx",
+            "center_y_mm": "cy",
+            "start_x_mm": "x1",
+            "start_y_mm": "y1",
+            "end_x_mm": "x2",
+            "end_y_mm": "y2",
+        },
         params=[
             Param("center_x_mm", float, description="圆心 X，毫米"),
             Param("center_y_mm", float, description="圆心 Y，毫米"),
@@ -58,18 +67,30 @@ SPECS_BATCH54 = [
             Param("start_y_mm", float, description="起点 Y，毫米"),
             Param("end_x_mm", float, description="终点 X，毫米"),
             Param("end_y_mm", float, description="终点 Y，毫米"),
-            Param("direction", int, default=1,
-                  description="弧的方向（官方 CreateArc 的参数：顺时针 / 逆时针）"),
+            Param(
+                "direction",
+                int,
+                default=1,
+                description="弧的方向（官方 CreateArc 的参数：顺时针 / 逆时针）",
+            ),
         ],
         doc="★ **在当前草图里画一段圆弧**（圆心 + 起点 + 终点）。" + _GEOM_NOTE,
     ),
     ToolSpec(
         name="solidworks_sketch_add_ellipse",
         title="Add an Ellipse to the Sketch",
-        module="sw_part", inject="model", function="sketch_ellipse",
-        param_alias={"center_x_mm": "cx", "center_y_mm": "cy",
-                     "major_x_mm": "major_x", "major_y_mm": "major_y",
-                     "minor_x_mm": "minor_x", "minor_y_mm": "minor_y", "z_mm": "z"},
+        module="sw_part",
+        inject="model",
+        function="sketch_ellipse",
+        param_alias={
+            "center_x_mm": "cx",
+            "center_y_mm": "cy",
+            "major_x_mm": "major_x",
+            "major_y_mm": "major_y",
+            "minor_x_mm": "minor_x",
+            "minor_y_mm": "minor_y",
+            "z_mm": "z",
+        },
         params=[
             Param("center_x_mm", float, description="中心 X，毫米"),
             Param("center_y_mm", float, description="中心 Y，毫米"),
@@ -77,15 +98,20 @@ SPECS_BATCH54 = [
             Param("major_y_mm", float, description="主轴端点 Y，毫米"),
             Param("minor_x_mm", float, description="副轴端点 X，毫米"),
             Param("minor_y_mm", float, description="副轴端点 Y，毫米"),
-            Param("z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"),
+            Param(
+                "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
+            ),
         ],
         doc="★ **在当前草图里画一个整椭圆**（官方 `ISketchManager.CreateEllipse`）。"
-            "★ 官方那族另有**椭圆弧**（`CreateEllipticalArc`）—— 本工具只画整椭圆。" + _GEOM_NOTE,
+        "★ 官方那族另有**椭圆弧**（`CreateEllipticalArc`）—— 本工具只画整椭圆。"
+        + _GEOM_NOTE,
     ),
     ToolSpec(
         name="solidworks_sketch_add_polygon",
         title="Add a Polygon to the Sketch",
-        module="sw_part", inject="model", function="sketch_polygon",
+        module="sw_part",
+        inject="model",
+        function="sketch_polygon",
         param_alias={"center_x_mm": "cx", "center_y_mm": "cy", "radius_mm": "radius"},
         params=[
             Param("center_x_mm", float, description="中心 X，毫米"),
@@ -93,14 +119,22 @@ SPECS_BATCH54 = [
             Param("radius_mm", float, description="内切圆半径，毫米"),
             Param("sides", int, default=6, description="边数（默认 6；至少 3）"),
         ],
-        doc="★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。" + _GEOM_NOTE,
+        doc="★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。"
+        + _GEOM_NOTE,
     ),
     ToolSpec(
         name="solidworks_sketch_add_slot",
         title="Add a Slot to the Sketch",
-        module="sw_part", inject="model", function="sketch_slot",
-        param_alias={"start_x_mm": "x1", "start_y_mm": "y1",
-                     "end_x_mm": "x2", "end_y_mm": "y2", "radius_mm": "radius"},
+        module="sw_part",
+        inject="model",
+        function="sketch_slot",
+        param_alias={
+            "start_x_mm": "x1",
+            "start_y_mm": "y1",
+            "end_x_mm": "x2",
+            "end_y_mm": "y2",
+            "radius_mm": "radius",
+        },
         params=[
             Param("start_x_mm", float, description="槽口起点 X，毫米"),
             Param("start_y_mm", float, description="槽口起点 Y，毫米"),
@@ -113,18 +147,27 @@ SPECS_BATCH54 = [
     ToolSpec(
         name="solidworks_sketch_add_centerline",
         title="Add a Centerline to the Sketch",
-        module="sw_part", inject="model", function="sketch_centerline",
-        param_alias={"start_x_mm": "x1", "start_y_mm": "y1",
-                     "end_x_mm": "x2", "end_y_mm": "y2", "z_mm": "z"},
+        module="sw_part",
+        inject="model",
+        function="sketch_centerline",
+        param_alias={
+            "start_x_mm": "x1",
+            "start_y_mm": "y1",
+            "end_x_mm": "x2",
+            "end_y_mm": "y2",
+            "z_mm": "z",
+        },
         params=[
             Param("start_x_mm", float, description="起点 X，毫米"),
             Param("start_y_mm", float, description="起点 Y，毫米"),
             Param("end_x_mm", float, description="终点 X，毫米"),
             Param("end_y_mm", float, description="终点 Y，毫米"),
-            Param("z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"),
+            Param(
+                "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
+            ),
         ],
         doc="★ **在当前草图里画一条中心线**（官方 `ISketchManager.CreateCenterLine`）。"
-            "★★ 用途：中心线可以**当旋转轴**（见 `solidworks_revolve_boss` 那族对轴的要求）——"
-            "所以它不只是画一条虚线，而是**建旋转特征的前置**。" + _GEOM_NOTE,
+        "★★ 用途：中心线可以**当旋转轴**（见 `solidworks_revolve_boss` 那族对轴的要求）——"
+        "所以它不只是画一条虚线，而是**建旋转特征的前置**。" + _GEOM_NOTE,
     ),
 ]

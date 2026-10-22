@@ -43,17 +43,27 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "face-selector-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "face-selector-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_simulation import FACE_SELECTORS, select_face_by_selector
 
-    ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "selectors": list(FACE_SELECTORS)}
+    ev: dict = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "selectors": list(FACE_SELECTORS),
+    }
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
@@ -67,7 +77,7 @@ def main() -> int:
         def clear():
             try:
                 doc.ClearSelection2(True)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
         #: ① 合法选择器 ⇒ 计数 1
@@ -81,7 +91,7 @@ def main() -> int:
             clear()
             try:
                 per[s] = int(select_face_by_selector(doc, s))
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 per[s] = "%s: %s" % (type(exc).__name__, str(exc)[:40])
         ev["per_selector"] = per
         #: ③ 非法选择器 ⇒ 抛
@@ -91,7 +101,7 @@ def main() -> int:
             ev["illegal"] = "**\u6ca1\u629b**\uff08\u56de %r\uff09" % r
         except ValueError as exc:
             ev["illegal"] = "ValueError: %s" % str(exc)[:80]
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             ev["illegal"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
 
         #: ★★★ 2026-10-03（轮 452）**判据修正** ——
@@ -101,27 +111,39 @@ def main() -> int:
         ok1 = ev["plus_z"] == 1
         ok2 = all(v == 1 for v in per.values())
         ok3 = str(ev["illegal"]).startswith("ValueError")
-        ev["verdict"] = "pass" if (ok1 and ok2 and ok3) else (
-            "partial" if (ok1 or ok2) else "fail")
-        ev["criteria"] = {"single_call_is_one": ok1, "all_six_are_one": ok2, "illegal_raises": ok3}
+        ev["verdict"] = (
+            "pass" if (ok1 and ok2 and ok3) else ("partial" if (ok1 or ok2) else "fail")
+        )
+        ev["criteria"] = {
+            "single_call_is_one": ok1,
+            "all_six_are_one": ok2,
+            "illegal_raises": ok3,
+        }
         ev["found_behaviour"] = (
-            "★ **`append=False` 时真机仍回 %s**（★ 即**它并没清掉上一次的选区**）⇒ 调用方要自己先 `ClearSelection2`**" % ev.get("plus_z_again_no_append"))
-        ev["note"] = ("★ 判据三条：① 合法选择器回读计数 == 1 · ② 六个选择器**都**是 1（且 append=False 不累积）· "
-                      "③ 非法选择器**抛** ValueError（而不是静默回 0）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+            "★ **`append=False` 时真机仍回 %s**（★ 即**它并没清掉上一次的选区**）⇒ 调用方要自己先 `ClearSelection2`**"
+            % ev.get("plus_z_again_no_append")
+        )
+        ev["note"] = (
+            "★ 判据三条：① 合法选择器回读计数 == 1 · ② 六个选择器**都**是 1（且 append=False 不累积）· "
+            "③ 非法选择器**抛** ValueError（而不是静默回 0）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

@@ -42,9 +42,11 @@ def main() -> int:
     from sw_connect import connect_solidworks, new_document, get_com_member
 
     steps = []
-    R = {"★_判据": "★ 毫米文档 + 曲面 depth=10.0 + 加厚 thickness=2.0 ⇒ "
-                  "★ 实体厚 **2 mm** ⇒ `*0.001` 错；★ 厚 **0.002 mm**（或加厚不出）⇒ 对",
-         "steps": steps}
+    R = {
+        "★_判据": "★ 毫米文档 + 曲面 depth=10.0 + 加厚 thickness=2.0 ⇒ "
+        "★ 实体厚 **2 mm** ⇒ `*0.001` 错；★ 厚 **0.002 mm**（或加厚不出）⇒ 对",
+        "steps": steps,
+    }
 
     def rec(name, **kw):
         steps.append(dict(name=name, **kw))
@@ -53,7 +55,7 @@ def main() -> int:
     model = new_document(app, "part")
     try:
         R["GetUnits"] = list(get_com_member(model, "GetUnits"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["GetUnits"] = "error: %s" % str(exc)[:60]
 
     P.sketch(model, "Front Plane")
@@ -69,23 +71,30 @@ def main() -> int:
     #:   ⇒ ★★★ **我却看不到 `error` 与 `selection`**（★ 那正是我上一轮刚定的
     #:     「探针必须把**每一次尝试 + 原始返回值**落盘」）✓
     surf = S.create_extruded_surface_report(model, 10.0, "Sketch1")
-    rec("create_extruded_surface(depth_mm=10.0)", ok=(surf or {}).get("ok"),
+    rec(
+        "create_extruded_surface(depth_mm=10.0)",
+        ok=(surf or {}).get("ok"),
         new_features=(surf or {}).get("new_features"),
         surface_bodies=(surf or {}).get("surface_body_count"),
         stage=(surf or {}).get("stage"),
         error=str((surf or {}).get("error"))[:220],
         selection=str((surf or {}).get("selection"))[:280],
         select_returned=(surf or {}).get("select_returned"),
-        selection_count=(surf or {}).get("selection_count"))
+        selection_count=(surf or {}).get("selection_count"),
+    )
     R["surface_return_full"] = {k: str(v)[:240] for k, v in (surf or {}).items()}
     R["surface_ok"] = (surf or {}).get("ok")
     R["surface_new_features"] = (surf or {}).get("new_features")
 
     #: ② 加厚成实体（★ L318 那处 `th * 0.001`）—— ★ 不这样量不到（★ 曲面不是实体）
     th = S.thicken_surface_report(model, 2.0)
-    rec("thicken_surface(thickness_mm=2.0)", ok=(th or {}).get("ok"),
+    rec(
+        "thicken_surface(thickness_mm=2.0)",
+        ok=(th or {}).get("ok"),
         new_features=(th or {}).get("new_features"),
-        stage=(th or {}).get("stage"), error=str((th or {}).get("error"))[:200])
+        stage=(th or {}).get("stage"),
+        error=str((th or {}).get("error"))[:200],
+    )
     R["thicken_return_full"] = {k: str(v)[:240] for k, v in (th or {}).items()}
     R["thicken_ok"] = (th or {}).get("ok")
 
@@ -97,14 +106,24 @@ def main() -> int:
         R["size"] = size
         #: ★ 建草图时 `sketch_corner_rectangle(-25,-15,25,15)` 给的是 50×30 ⇒
         #:   ★★ 若它按毫米 ⇒ 实体应是 **50 × 30 × 2 mm**
-        R["★_读法"] = ("★ 若 size ≈ [50, 30, **2**] ⇒ 本仓的『毫米』口径**在整条链上一致**；"
-                       "★ 若第三个分量 ≈ 0.002 或前两维 ≈ 0.05 ⇒ **某处小了 1000 倍**")
-    except Exception as exc:                                              # noqa: BLE001
+        R["★_读法"] = (
+            "★ 若 size ≈ [50, 30, **2**] ⇒ 本仓的『毫米』口径**在整条链上一致**；"
+            "★ 若第三个分量 ≈ 0.002 或前两维 ≈ 0.05 ⇒ **某处小了 1000 倍**"
+        )
+    except Exception as exc:  # noqa: BLE001
         R["bbox_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
 
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    print(json.dumps({k: v for k, v in R.items() if k != "★_判据"},
-                     ensure_ascii=False, indent=1, default=str)[:1400])
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
+    print(
+        json.dumps(
+            {k: v for k, v in R.items() if k != "★_判据"},
+            ensure_ascii=False,
+            indent=1,
+            default=str,
+        )[:1400]
+    )
     print("★ wrote", OUT)
     return 0
 

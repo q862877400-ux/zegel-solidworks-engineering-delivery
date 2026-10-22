@@ -35,16 +35,22 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUT = ROOT / "output" / "sweep-wall-via-hook-recheck.json"
 R_MM, L_MM, T_WRITE = 3.0, 40.0, 0.002
-C_SOLID = math.pi * R_MM ** 2 * L_MM
-C_METER = math.pi * (R_MM ** 2 - (R_MM - 2.0) ** 2) * L_MM
-C_MM = math.pi * (R_MM ** 2 - (R_MM - 0.002) ** 2) * L_MM
+C_SOLID = math.pi * R_MM**2 * L_MM
+C_METER = math.pi * (R_MM**2 - (R_MM - 2.0) ** 2) * L_MM
+C_MM = math.pi * (R_MM**2 - (R_MM - 0.002) ** 2) * L_MM
 
 ev: dict = {
-    "★_判据": ("轮廓半径 3 mm · 路径 40 mm · **写壁厚 0.002** ⇒ 量体积、"
-               "★ **最近候选分类**：实体 %.2f / 米 %.2f / 毫米 %.2f" % (C_SOLID, C_METER, C_MM)),
-    "★_候选": {"实体_即薄壁没生效": round(C_SOLID, 2), "若口径是米_环带": round(C_METER, 2),
-               "若口径是毫米_环带": round(C_MM, 2)},
-    "steps": []}
+    "★_判据": (
+        "轮廓半径 3 mm · 路径 40 mm · **写壁厚 0.002** ⇒ 量体积、"
+        "★ **最近候选分类**：实体 %.2f / 米 %.2f / 毫米 %.2f" % (C_SOLID, C_METER, C_MM)
+    ),
+    "★_候选": {
+        "实体_即薄壁没生效": round(C_SOLID, 2),
+        "若口径是米_环带": round(C_METER, 2),
+        "若口径是毫米_环带": round(C_MM, 2),
+    },
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -53,7 +59,12 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    from sw_connect import connect_solidworks, get_com_member, new_document, set_com_member
+    from sw_connect import (
+        connect_solidworks,
+        get_com_member,
+        new_document,
+        set_com_member,
+    )
     import sw_part as P
     import sw_sweep as SW
 
@@ -77,28 +88,40 @@ def main() -> int:
 
     def _thin(data):
         set_com_member(data, "ThinFeature", True)
-        set_com_member(data, "ThinWallType", 0)                  #: 0 = One Direction
+        set_com_member(data, "ThinWallType", 0)  #: 0 = One Direction
         get_com_member(data, "SetWallThickness", True, T_WRITE)
-        hook_log["set"] = {"ThinFeature": True, "ThinWallType": 0,
-                           "SetWallThickness(True, %r)" % T_WRITE: True}
+        hook_log["set"] = {
+            "ThinFeature": True,
+            "ThinWallType": 0,
+            "SetWallThickness(True, %r)" % T_WRITE: True,
+        }
         try:
             hook_log["ThinFeature_readback"] = get_com_member(data, "ThinFeature")
-        except Exception as exc:                                              # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             hook_log["ThinFeature_readback"] = "err: %s" % str(exc)[:60]
 
     rep = SW.create_sweep_report(model, False, mutate=_thin)
-    step("create_sweep_report(mutate=钩子)", ok=rep.get("ok"), feature=rep.get("feature_name"),
-         type_name=rep.get("type_name"))
+    step(
+        "create_sweep_report(mutate=钩子)",
+        ok=rep.get("ok"),
+        feature=rep.get("feature_name"),
+        type_name=rep.get("type_name"),
+    )
     step("hook", **hook_log)
 
     got = None
     try:
         import sw_feature_readback as R
+
         got = R.sweep_params(model)
-        step("sweep_params", feature=got.get("feature"), IsThinFeature=got.get("IsThinFeature"),
-             ThinFeature=got.get("ThinFeature"),
-             GetWallThickness=got.get("GetWallThickness"))
-    except Exception as exc:                                                  # noqa: BLE001
+        step(
+            "sweep_params",
+            feature=got.get("feature"),
+            IsThinFeature=got.get("IsThinFeature"),
+            ThinFeature=got.get("ThinFeature"),
+            GetWallThickness=got.get("GetWallThickness"),
+        )
+    except Exception as exc:  # noqa: BLE001
         step("sweep_params_EXC", err="%s: %s" % (type(exc).__name__, str(exc)[:130]))
 
     vol = None
@@ -106,13 +129,15 @@ def main() -> int:
         mp = get_com_member(get_com_member(model, "Extension"), "CreateMassProperty")
         vol = float(get_com_member(mp, "Volume"))
         step("volume", mm3=round(vol, 3))
-    except Exception as exc:                                                  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         step("volume_EXC", err=str(exc)[:110])
 
     #: ★★★★ **最近候选分类**（★ 三个候选都摆上、★ 不许漏）✓
-    cands = [("★ **薄壁没生效**（★ 体积 = 实体）", C_SOLID),
-             ("★ **米**（★ `0.002` ⇒ 2 mm 环带）", C_METER),
-             ("★ **毫米**（★ `0.002` ⇒ 0.002 mm 环带）", C_MM)]
+    cands = [
+        ("★ **薄壁没生效**（★ 体积 = 实体）", C_SOLID),
+        ("★ **米**（★ `0.002` ⇒ 2 mm 环带）", C_METER),
+        ("★ **毫米**（★ `0.002` ⇒ 0.002 mm 环带）", C_MM),
+    ]
     if vol is None:
         ev["★_GetWallThickness_口径"] = "★ **量不到体积** ⇒ ★ 如实标"
     else:
@@ -126,11 +151,13 @@ def main() -> int:
         if gap < others * 0.5:
             ev["★_GetWallThickness_口径"] = (
                 "%s ⇒ ★ 实测 %.3f（★ 最近候选 %.2f · ★ 次近 %.2f）"
-                % (near[0], vol, near[1], others))
+                % (near[0], vol, near[1], others)
+            )
         else:
             ev["★_GetWallThickness_口径"] = (
                 "★ **读数不明确**（★ 实测 %.3f · ★ 最近 %s %.2f · ★ 次近 %.2f）⇒ ★ 如实标、★ 不猜"
-                % (vol, near[0], near[1], others))
+                % (vol, near[0], near[1], others)
+            )
     step("VERDICT", verdict=ev["★_GetWallThickness_口径"])
 
     OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -143,7 +170,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                              # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

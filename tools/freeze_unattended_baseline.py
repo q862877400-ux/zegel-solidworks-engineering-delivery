@@ -16,6 +16,7 @@
 
 import json, sys
 from pathlib import Path
+
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 
@@ -33,14 +34,15 @@ for c in caps:
     (allowed if unattended_allowed([cid], payload) else denied).append(cid)
 
 print("迁移前 unattended_allowed() == True：%d 条" % len(allowed))
-for c in allowed: print("   + %s" % c)
+for c in allowed:
+    print("   + %s" % c)
 print()
 print("迁移前 == False：%d 条" % len(denied))
 print("   （%s …）" % ", ".join(denied[:4]))
 
 out = {
     "_comment": "迁移前 unattended_allowed() 为真的 capability_id 集合。由 freeze_unattended_baseline.py 生成；"
-                "等价性验收测试 tests/test_unattended_equivalence.py 读它，迁移后必须逐条相同。",
+    "等价性验收测试 tests/test_unattended_equivalence.py 读它，迁移后必须逐条相同。",
     "captured_from_schema_version": payload.get("schema_version"),
     "allowed": sorted(allowed),
     "denied_count": len(denied),

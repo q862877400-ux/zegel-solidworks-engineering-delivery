@@ -34,6 +34,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -123,7 +124,7 @@ def _checked(target, member: str, *args):
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）→ IModelDocExtension 
+# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）→ IModelDocExtension
 # 段
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IModelDocExtension 段
 #         （`topo-sldworks\iface_sldworks.txt` **两套反射一致**）
@@ -303,8 +304,9 @@ def set_lot_size(cost_analysis, lot_size: int) -> bool:
     return True
 
 
-def set_markup(cost_analysis, markup_type: int | None = None,
-               markup_percent: float | None = None) -> bool:
+def set_markup(
+    cost_analysis, markup_type: int | None = None, markup_percent: float | None = None
+) -> bool:
     """设加价。⚑ MarkUpType / MarkUpPercent 都是**属性**。
 
     ⚠ `MarkUpType` 的取值（按成本/按价格/按数量？）两套源都查不到。
@@ -317,7 +319,9 @@ def set_markup(cost_analysis, markup_type: int | None = None,
         get_com_member(cost_analysis, "MarkUpPercent", float(markup_percent))
     return True
 
+
 #: dispatch-guard: exempt internal-helper
+
 
 def _num(target, member: str, default=0, *args):
     """读一个成员 ⇒ 数值；**只有 `None` 才回落到 `default`**。
@@ -356,18 +360,18 @@ def read_cost_analysis(cost_analysis) -> dict[str, Any]:
         "currency_code": str(get_com_member(cost_analysis, "CurrencyCode") or ""),
         "currency_name": str(get_com_member(cost_analysis, "CurrencyName") or ""),
         "currency_separator": str(
-            get_com_member(cost_analysis, "CurrencySeparator") or ""),
+            get_com_member(cost_analysis, "CurrencySeparator") or ""
+        ),
         "length_unit": int(_num(cost_analysis, "LengthUnit", -1)),
         "mass_unit": int(_num(cost_analysis, "MassUnit", -1)),
         "unit_system": int(_num(cost_analysis, "UnitSystem", -1)),
         "material_cost": float(_num(cost_analysis, "GetMaterialCost", 0.0)),
-        "manufacturing_cost": float(
-            _num(cost_analysis, "GetManufacturingCost", 0.0)),
+        "manufacturing_cost": float(_num(cost_analysis, "GetManufacturingCost", 0.0)),
         "setup_cost": float(_num(cost_analysis, "GetSetupCost", 0.0)),
         "total_to_manufacture": float(
-            _num(cost_analysis, "GetTotalCostToManufacture", 0.0)),
-        "total_to_charge": float(
-            _num(cost_analysis, "GetTotalCostToCharge", 0.0)),
+            _num(cost_analysis, "GetTotalCostToManufacture", 0.0)
+        ),
+        "total_to_charge": float(_num(cost_analysis, "GetTotalCostToCharge", 0.0)),
     }
 
 
@@ -396,8 +400,10 @@ def set_default_lot_size(defaults, single_body: int, multibody: int) -> dict[str
         raise ValueError("defaults 为 None")
     get_com_member(defaults, "LotSizeForSingleBody", int(single_body))
     get_com_member(defaults, "LotSizeForMultibody", int(multibody))
-    return {"LotSizeForSingleBody": int(single_body),
-            "LotSizeForMultibody": int(multibody)}
+    return {
+        "LotSizeForSingleBody": int(single_body),
+        "LotSizeForMultibody": int(multibody),
+    }
 
 
 def set_default_template(defaults, category: int, template_name: str) -> bool:
@@ -493,17 +499,21 @@ def collect_costing_evidence(cost_part) -> dict[str, Any]:
 def _costing_chain(cost_manager):
     """★ 从 `cost_manager` 往下取 `(model, defaults, err)`（★ 取不到就**如实报哪一环**）。"""
     if cost_manager is None:
-        return None, None, "cost_manager 为 None（★ 先用 solidworks_get_costing_manager 取它）"
+        return (
+            None,
+            None,
+            "cost_manager 为 None（★ 先用 solidworks_get_costing_manager 取它）",
+        )
     try:
         m = get_costing_model(cost_manager)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return None, None, "取 CostingModel 失败：%s" % str(exc)[:160]
     if m is None:
         return None, None, "CostingModel 为 None ⇒ ★ Costing 可能没在这个文档上初始化"
     try:
         d = get_costing_defaults(cost_manager)
-    except Exception:                                          # noqa: BLE001
-        d = None                                               #: ★ 默认值取不到不算致命
+    except Exception:  # noqa: BLE001
+        d = None  #: ★ 默认值取不到不算致命
     return m, d, None
 
 
@@ -514,7 +524,7 @@ def collect_costing_evidence_report(cost_manager) -> dict:
         return {"ok": False, "error": err}
     try:
         r = collect_costing_evidence(m)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
     return {"ok": isinstance(r, dict), "readback": r}
 
@@ -526,17 +536,26 @@ def read_cost_analysis_report(cost_manager) -> dict:
         return {"ok": False, "error": err}
     try:
         ca = get_cost_analysis(m)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "get_cost_analysis",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "get_cost_analysis",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     if ca is None:
-        return {"ok": False, "stage": "get_cost_analysis",
-                "error": "成本分析为 None ⇒ ★ 该零件可能还没做过成本分析（★ 先 create_cost_analysis）"}
+        return {
+            "ok": False,
+            "stage": "get_cost_analysis",
+            "error": "成本分析为 None ⇒ ★ 该零件可能还没做过成本分析（★ 先 create_cost_analysis）",
+        }
     try:
         r = read_cost_analysis(ca)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "read_cost_analysis",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "read_cost_analysis",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     return {"ok": isinstance(r, dict), "readback": r}
 
 
@@ -547,7 +566,7 @@ def get_body_count_report(cost_manager) -> dict:
         return {"ok": False, "error": err}
     try:
         n = get_body_count(m)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
     return {"ok": n is not None, "body_count": n}
 
@@ -559,13 +578,13 @@ def list_cost_bodies_report(cost_manager) -> dict:
         return {"ok": False, "error": err}
     try:
         b = get_bodies(m)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
     names = []
-    for x in (b or []):
+    for x in b or []:
         try:
             nm = get_com_member(x, "Name")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             nm = None
         names.append(str(nm) if nm else "?")
     return {"ok": b is not None, "count": len(names), "names": names[:20]}
@@ -578,14 +597,17 @@ def read_cost_body_report(cost_manager, body_name: str) -> dict:
         return {"ok": False, "error": err}
     try:
         bodies = get_bodies(m) or []
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "get_bodies",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "get_bodies",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     target = None
     for x in bodies:
         try:
             nm = str(get_com_member(x, "Name") or "")
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             nm = ""
         if nm == str(body_name):
             target = x
@@ -593,15 +615,23 @@ def read_cost_body_report(cost_manager, body_name: str) -> dict:
     if target is None:
         got = []
         for x in bodies:
-            try: got.append(str(get_com_member(x, "Name") or "?"))
-            except Exception: got.append("?")
-        return {"ok": False, "stage": "find_body",
-                "error": "没有名为 %r 的实体。★ 合法值：%s" % (body_name, got[:20])}
+            try:
+                got.append(str(get_com_member(x, "Name") or "?"))
+            except Exception:
+                got.append("?")
+        return {
+            "ok": False,
+            "stage": "find_body",
+            "error": "没有名为 %r 的实体。★ 合法值：%s" % (body_name, got[:20]),
+        }
     try:
         r = read_cost_body(target)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "read_cost_body",
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "read_cost_body",
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     return {"ok": isinstance(r, dict), "body_name": str(body_name), "readback": r}
 
 
@@ -611,7 +641,11 @@ def list_costing_templates_report(cost_manager, category: int = 0) -> dict:
     if err:
         return {"ok": False, "error": err}
     if d is None:
-        return {"ok": False, "stage": "CostingDefaults", "error": "取不到 CostingDefaults"}
+        return {
+            "ok": False,
+            "stage": "CostingDefaults",
+            "error": "取不到 CostingDefaults",
+        }
     try:
         #: ★★★★ 2026-10-02（轮 366）**真 bug 修在一行上**：这里原先传的是 `d`（`CostingD
         #: efaults`），
@@ -628,11 +662,14 @@ def list_costing_templates_report(cost_manager, category: int = 0) -> dict:
         #: 工具层入口不通
         #:   ⇒ 差别只剩这一处；★ 改成 `cost_manager` 后真机通过。
         t = list_templates(cost_manager, category)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
-    return {"ok": t is not None, "category": int(category),
-            "count": len(t) if hasattr(t, "__len__") else None,
-            "templates": [str(x) for x in (t or [])][:20]}
+    return {
+        "ok": t is not None,
+        "category": int(category),
+        "count": len(t) if hasattr(t, "__len__") else None,
+        "templates": [str(x) for x in (t or [])][:20],
+    }
 
 
 def get_default_template_report(cost_manager, category: int) -> dict:
@@ -641,12 +678,20 @@ def get_default_template_report(cost_manager, category: int) -> dict:
     if err:
         return {"ok": False, "error": err}
     if d is None:
-        return {"ok": False, "stage": "CostingDefaults", "error": "取不到 CostingDefaults"}
+        return {
+            "ok": False,
+            "stage": "CostingDefaults",
+            "error": "取不到 CostingDefaults",
+        }
     try:
         t = get_default_template(d, int(category))
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
-    return {"ok": t is not None, "category": int(category), "template": str(t) if t else None}
+    return {
+        "ok": t is not None,
+        "category": int(category),
+        "template": str(t) if t else None,
+    }
 
 
 def get_costing_method_report(cost_manager, method_name: str) -> dict:
@@ -656,7 +701,10 @@ def get_costing_method_report(cost_manager, method_name: str) -> dict:
         return {"ok": False, "error": err}
     try:
         v = get_costing_method(m, str(method_name))
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "method_name": str(method_name),
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "method_name": str(method_name),
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     return {"ok": v is not None, "method_name": str(method_name), "value": v}

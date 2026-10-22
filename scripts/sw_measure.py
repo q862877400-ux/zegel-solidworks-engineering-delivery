@@ -1,10 +1,8 @@
-
-
 # ── 24h 计划 段 6 续（Spec Kit `167`）：**几何量测（IMeasure）** ──────────────────────
 # ★★★★★ 2026-10-01（轮 311）**这一族是"四家有我们没有"里核实的真缺**：
 # ★ 我们有 `part_mass_properties`（**整体**质量属性）· ★ 而**逐几何量测**（两点距离 / 边
 # 长度 /
-# 面积 / 角度）**一个都没有** —— ★ 全仓 grep `measure` / `volume` / `area` / `distance` 
+# 面积 / 角度）**一个都没有** —— ★ 全仓 grep `measure` / `volume` / `area` / `distance`
 # **均为 0**。
 #   ★ 而四家强候选里正有 `measure` 与 `measure_distance`。
 #
@@ -35,7 +33,7 @@
 # ` / `Angle` /
 # `Length` / `TotalLength` / `ArcLength` / `ChordLength` / `Area` / `TotalArea` / `Perim
 # eter` /
-# `Diameter` / `Radius` / `DeltaX` / `DeltaY` / `DeltaZ` / `IsIntersect` / `IsParallel` 
+# `Diameter` / `Radius` / `DeltaX` / `DeltaY` / `DeltaZ` / `IsIntersect` / `IsParallel`
 # /
 #    `IsPerpendicular` / `Calculate` / `ArcOption` …）+
 #   ★ 官方示例 `Measure_Selected_Entities_Example_VB.md`（★ 调用序）
@@ -71,8 +69,9 @@ MEASURE_FLAGS = (
 )
 
 
-def measure_selection_report(model, arc_option: int = 1,
-                             selection: str = "", selection_kind: str = "FACE") -> dict:
+def measure_selection_report(
+    model, arc_option: int = 1, selection: str = "", selection_kind: str = "FACE"
+) -> dict:
     """★ **量当前选中的实体**（★ 走 `IModelDocExtension.CreateMeasure` → `IMeasure`）。
 
     ★ 调用序**照官方示例**：★ `Extension` → `CreateMeasure` → 设 `ArcOption` → `Calculate(Nothing)` → 读。
@@ -88,11 +87,19 @@ def measure_selection_report(model, arc_option: int = 1,
     try:
         opt = int(arc_option)
     except (TypeError, ValueError):
-        return {"ok": False, "error": "arc_option 必须是整数（0=中心到中心 · 1=最小距离 · 2=最大距离）"}
+        return {
+            "ok": False,
+            "error": "arc_option 必须是整数（0=中心到中心 · 1=最小距离 · 2=最大距离）",
+        }
     if opt not in (0, 1, 2):
-        return {"ok": False, "stage": "validate",
-                "error": "arc_option 只能是 **0 / 1 / 2**（★ 官方示例给的语义）；收到 %r" % arc_option}
+        return {
+            "ok": False,
+            "stage": "validate",
+            "error": "arc_option 只能是 **0 / 1 / 2**（★ 官方示例给的语义）；收到 %r"
+            % arc_option,
+        }
     from sw_connect import get_com_member as _get
+
     #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）先按声明式选择器**重建**选区 ——
     #: ★ 起因：★ 本函数的语义**就是"量调用方选中的东西"**，★ 而**注入解析器会清空选区**
     #: （**事实 503**）
@@ -107,37 +114,59 @@ def measure_selection_report(model, arc_option: int = 1,
     #: 实的回读判据**）✓
     if str(selection or "").strip():
         import sw_selection_spec as _SS
+
         try:
             _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
-        except Exception as exc:                                   # noqa: BLE001
-            return {"ok": False, "stage": "selection", "selected_count": 0,
-                    "error": "选区未建立：%s: %s（★ 前置未成立、★ 与「量不出来」是两件事）"
-                             % (type(exc).__name__, str(exc)[:140]),
-                    "selection": str(selection), "selection_kind": str(selection_kind)}
+        except Exception as exc:  # noqa: BLE001
+            return {
+                "ok": False,
+                "stage": "selection",
+                "selected_count": 0,
+                "error": "选区未建立：%s: %s（★ 前置未成立、★ 与「量不出来」是两件事）"
+                % (type(exc).__name__, str(exc)[:140]),
+                "selection": str(selection),
+                "selection_kind": str(selection_kind),
+            }
     #: ★ ① 选中了几何？★ 回读计数（★ 事实 8：不信返回值）
     try:
-        sel_n = int(_get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1))
-    except Exception:                                          # noqa: BLE001
+        sel_n = int(
+            _get(_get(model, "SelectionManager"), "GetSelectedObjectCount2", -1)
+        )
+    except Exception:  # noqa: BLE001
         sel_n = -1
     if sel_n == 0:
-        return {"ok": False, "stage": "selection", "selected_count": sel_n,
-                "error": "没有选中的实体 —— ★ 量测要先选中（★ 用声明式选择那族工具），★ 规则 3"}
+        return {
+            "ok": False,
+            "stage": "selection",
+            "selected_count": sel_n,
+            "error": "没有选中的实体 —— ★ 量测要先选中（★ 用声明式选择那族工具），★ 规则 3",
+        }
     #: ★ ② 官方调用序
     try:
         ext = _get(model, "Extension")
         m = _get(ext, "CreateMeasure")
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "create", "selected_count": sel_n,
-                "error": "CreateMeasure 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "create",
+            "selected_count": sel_n,
+            "error": "CreateMeasure 失败：%s: %s"
+            % (type(exc).__name__, str(exc)[:180]),
+        }
     if m is None:
-        return {"ok": False, "stage": "create", "selected_count": sel_n,
-                "error": "CreateMeasure 回了 None（★ 本机不可用？）"}
+        return {
+            "ok": False,
+            "stage": "create",
+            "selected_count": sel_n,
+            "error": "CreateMeasure 回了 None（★ 本机不可用？）",
+        }
     geometry = {"arc_option": opt}
     try:
         from sw_connect import set_com_member as _set
+
         _set(m, "ArcOption", opt)
         geometry["arc_option_set"] = True
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         geometry["arc_option_set"] = False
         geometry["arc_option_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     try:
@@ -146,14 +175,19 @@ def measure_selection_report(model, arc_option: int = 1,
         #:   传了实参 ⇒ 它**先无参调一次**（回 `True`）、★ 再拿那个 `True` 去"调用"
         #:   ⇒ `TypeError: 'bool' object is not callable`。★ 改成无参即回 `True` ✓
         ok_calc = _get(m, "Calculate")
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "calculate", "selected_count": sel_n, "geometry": geometry,
-                "error": "Calculate 失败：%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "calculate",
+            "selected_count": sel_n,
+            "geometry": geometry,
+            "error": "Calculate 失败：%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     values, applicable = {}, []
     for label, member in MEASURE_FIELDS:
         try:
             v = _get(m, member)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if v is None:
             continue
@@ -168,10 +202,16 @@ def measure_selection_report(model, arc_option: int = 1,
     for label, member in MEASURE_FLAGS:
         try:
             flags[label] = bool(_get(m, member))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
-    return {"ok": bool(ok_calc) and bool(applicable), "calculate_returned": bool(ok_calc),
-            "selected_count": sel_n, "values": values, "applicable": applicable, "flags": flags,
-            "geometry": geometry,
-            "★": "★ `-1` = 该项对当前选择**不适用**（★ 官方约定，如实保留）；"
-                 "★ `applicable` 列出真量到的项；★ 调用序照官方示例（Extension→CreateMeasure→ArcOption→Calculate）"}
+    return {
+        "ok": bool(ok_calc) and bool(applicable),
+        "calculate_returned": bool(ok_calc),
+        "selected_count": sel_n,
+        "values": values,
+        "applicable": applicable,
+        "flags": flags,
+        "geometry": geometry,
+        "★": "★ `-1` = 该项对当前选择**不适用**（★ 官方约定，如实保留）；"
+        "★ `applicable` 列出真量到的项；★ 调用序照官方示例（Extension→CreateMeasure→ArcOption→Calculate）",
+    }

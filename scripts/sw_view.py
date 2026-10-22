@@ -68,7 +68,11 @@ from typing import Any
 try:
     from .sw_connect import get_com_member, call_com_member, set_com_member
 except ImportError:
-    from sw_connect import get_com_member, call_com_member, set_com_member# ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
+    from sw_connect import (
+        get_com_member,
+        call_com_member,
+        set_com_member,
+    )  # ── 来源 ─────────────────────────────────────────────────────────────, set_com_member
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_view.py —— 本文件自身
 # 定位:   模块导出清单与方法型成员签名表。
@@ -153,9 +157,9 @@ VIEW_ARITY: dict[str, int] = {
 VIEW_UNWRAPPED: dict[str, str] = {
     "ProjectModelPoint": "末位 3 个 Double 是 by-ref 出参，迟到绑定不保证回写",
     "UnprojectModelPoint": "末位 3 个 Double 是 by-ref 出参，"
-                           "且两个方法的轴心参数语义官方无文档",
+    "且两个方法的轴心参数语义官方无文档",
     "GetDIBHeader": "参数是 out 缓冲（GetDIBHeaderx64 变体用 Int64）；"
-                    "缓冲区分配规则两套源都查不到",
+    "缓冲区分配规则两套源都查不到",
     "GetDIBHeaderx64": "参数是 out 缓冲（Int64）；缓冲区分配规则两套源都查不到",
     "GetStripsOfDIB": "3 个参数的缓冲区分配规则查不到",
     "GetStripsOfDIBx64": "参数含 Int64 缓冲区，分配规则查不到",
@@ -166,7 +170,7 @@ VIEW_UNWRAPPED: dict[str, str] = {
     "GetMouse": "依赖可见窗口句柄，headless 下无意义",
     "SectionAnnotationViewAttr": "语义与前置条件官方无文档",
     "GetBkgdImageDisplayAreaAspectRatio": "返回 Double 但语义无文档，"
-                                          "无法判断单位与含义",
+    "无法判断单位与含义",
     "GetStereoSeparation": "返回 Object（SAFEARRAY？），类型未明，不封装",
     "IGetStereoSeparation": "COM 内部分发口；对应非 I 版的 GetStereoSeparation",
     "IGetEyePoint": "COM 内部分发口；对应非 I 版的 GetEyePoint",
@@ -478,8 +482,7 @@ def collect_view_evidence(view) -> dict[str, Any]:
         "hlr_quality": int(get_com_member(view, "HlrQuality") or -1),
         "scale": get_view_scale(view),
         "has_perspective": has_perspective(view),
-        "enable_graphics_update": bool(
-            get_com_member(view, "EnableGraphicsUpdate")),
+        "enable_graphics_update": bool(get_com_member(view, "EnableGraphicsUpdate")),
         "display_zebra_stripes": bool(get_com_member(view, "DisplayZebraStripes")),
         "xor_highlight": bool(get_com_member(view, "XorHighlight")),
         "has_camera": get_view_camera(view) is not None,

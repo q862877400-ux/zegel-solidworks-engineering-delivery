@@ -26,7 +26,13 @@ if str(SCRIPTS) not in sys.path:
 if str(DESKTOP) not in sys.path:
     sys.path.insert(0, str(DESKTOP))
 
-from cad_workbench.queue_worker import cancel_marker_path, default_tauri_queue_dir, process_queue, read_job, write_job  # noqa: E402
+from cad_workbench.queue_worker import (
+    cancel_marker_path,
+    default_tauri_queue_dir,
+    process_queue,
+    read_job,
+    write_job,
+)  # noqa: E402
 from cad_doctor import run_doctor  # noqa: E402
 from cad_diagnostics import create_diagnostic_bundle  # noqa: E402
 
@@ -60,14 +66,30 @@ def _job_path(queue_dir: Path, job_id: str) -> Path:
 
 def _retry_from_stage(job: dict[str, Any]) -> str:
     """根据领域证据推断局部重试的最早阶段。"""
-    phases = (((job.get("result") or {}).get("engineeringPlan") or {}).get("phases") or [])
+    phases = ((job.get("result") or {}).get("engineeringPlan") or {}).get(
+        "phases"
+    ) or []
     for phase in phases:
-        if phase.get("status") in {"blocked", "failed", "review_required"} and phase.get("id"):
+        if phase.get("status") in {
+            "blocked",
+            "failed",
+            "review_required",
+        } and phase.get("id"):
             return str(phase["id"])
     for key in ("drawingEvidence", "bomEvidence"):
-        if (job.get(key) or {}).get("status") in {"blocked", "failed", "fail", "warning"}:
+        if (job.get(key) or {}).get("status") in {
+            "blocked",
+            "failed",
+            "fail",
+            "warning",
+        }:
             return "drawing-bom"
-    if (job.get("dfmEvidence") or {}).get("status") in {"blocked", "failed", "fail", "warning"}:
+    if (job.get("dfmEvidence") or {}).get("status") in {
+        "blocked",
+        "failed",
+        "fail",
+        "warning",
+    }:
         return "dfm-review"
     if job.get("status") in {"failed", "review_required"}:
         return "final-review"
@@ -77,9 +99,24 @@ def _retry_from_stage(job: dict[str, Any]) -> str:
 def _run_history_snapshot(job: dict[str, Any]) -> dict[str, Any]:
     """保存不包含 Prompt、凭据和递归历史的只读任务快照。"""
     fields = (
-        "runId", "status", "stage", "createdAt", "updatedAt", "lastMessage", "error", "result",
-        "artifacts", "artifactLedgerPath", "reviewGatePath", "reviewGate", "drawingEvidence",
-        "bomEvidence", "dfmEvidence", "reviewFindings", "artifactRelations", "blockedReasons",
+        "runId",
+        "status",
+        "stage",
+        "createdAt",
+        "updatedAt",
+        "lastMessage",
+        "error",
+        "result",
+        "artifacts",
+        "artifactLedgerPath",
+        "reviewGatePath",
+        "reviewGate",
+        "drawingEvidence",
+        "bomEvidence",
+        "dfmEvidence",
+        "reviewFindings",
+        "artifactRelations",
+        "blockedReasons",
     )
     return {field: job[field] for field in fields if field in job}
 
@@ -91,35 +128,56 @@ def prepare_job_for_retry(job: dict[str, Any], updated_at: str) -> dict[str, Any
     previous_run_id = job.get("runId")
     history = [*(job.get("runHistory") or []), _run_history_snapshot(job)][-20:]
     retry_stage = _retry_from_stage(job)
-    job.update({
-        "runHistory": history,
-        "retryPolicy": {
-            "previousRunId": previous_run_id,
-            "retryFromStage": retry_stage,
-            "scope": "failed_stage_and_downstream",
-            "preservePreviousArtifacts": True,
-            "overwrite": False,
-            "requestedAt": updated_at,
-        },
-        "runId": f"retry-{uuid4().hex}",
-        "status": "queued",
-        "progress": 0,
-        "updatedAt": updated_at,
-        "lastMessage": "已重新排队，将从失败阶段及其后继阶段执行。",
-        "artifacts": [],
-    })
+    job.update(
+        {
+            "runHistory": history,
+            "retryPolicy": {
+                "previousRunId": previous_run_id,
+                "retryFromStage": retry_stage,
+                "scope": "failed_stage_and_downstream",
+                "preservePreviousArtifacts": True,
+                "overwrite": False,
+                "requestedAt": updated_at,
+            },
+            "runId": f"retry-{uuid4().hex}",
+            "status": "queued",
+            "progress": 0,
+            "updatedAt": updated_at,
+            "lastMessage": "已重新排队，将从失败阶段及其后继阶段执行。",
+            "artifacts": [],
+        }
+    )
     for field in (
-        "error", "result", "artifactLedgerPath", "reviewGatePath", "reviewGate", "reviewedAt",
-        "reviewedBy", "reviewDecision", "reviewNote", "runnerId", "workerPid", "heartbeatAt",
-        "leaseUntil", "cancelRequested", "workerLog", "drawingEvidence", "bomEvidence",
-        "dfmEvidence", "reviewFindings", "artifactRelations", "blockedReasons",
+        "error",
+        "result",
+        "artifactLedgerPath",
+        "reviewGatePath",
+        "reviewGate",
+        "reviewedAt",
+        "reviewedBy",
+        "reviewDecision",
+        "reviewNote",
+        "runnerId",
+        "workerPid",
+        "heartbeatAt",
+        "leaseUntil",
+        "cancelRequested",
+        "workerLog",
+        "drawingEvidence",
+        "bomEvidence",
+        "dfmEvidence",
+        "reviewFindings",
+        "artifactRelations",
+        "blockedReasons",
     ):
         job.pop(field, None)
     return job
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="cad-studio", description="CAD Studio 本地任务与环境 CLI")
+    parser = argparse.ArgumentParser(
+        prog="cad-studio", description="CAD Studio 本地任务与环境 CLI"
+    )
     parser.add_argument("--queue-dir", type=Path, default=default_tauri_queue_dir())
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("doctor")
@@ -133,47 +191,122 @@ def main(argv: list[str] | None = None) -> int:
     cancel = sub.add_parser("cancel")
     cancel.add_argument("job_id")
     diagnostics = sub.add_parser("export-diagnostics")
-    diagnostics.add_argument("--output", type=Path, default=Path.cwd() / "cad-studio-diagnostics.zip")
+    diagnostics.add_argument(
+        "--output", type=Path, default=Path.cwd() / "cad-studio-diagnostics.zip"
+    )
     write_open = sub.add_parser("write-open-format")
-    write_open.add_argument("--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json")
+    write_open.add_argument(
+        "--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json"
+    )
     write_open.add_argument("--out-dir", type=Path, required=True)
-    write_open.add_argument("--formats", nargs="+", default=["cadstudio", "step", "iges", "brep", "stl", "obj", "glb", "dxf", "svg", "pdf", "png"])
+    write_open.add_argument(
+        "--formats",
+        nargs="+",
+        default=[
+            "cadstudio",
+            "step",
+            "iges",
+            "brep",
+            "stl",
+            "obj",
+            "glb",
+            "dxf",
+            "svg",
+            "pdf",
+            "png",
+        ],
+    )
     preview_dxf = sub.add_parser("preview-dxf")
     preview_dxf.add_argument("--input", type=Path, required=True, help="只读 DXF 输入")
-    preview_dxf.add_argument("--output", type=Path, required=True, help="不覆盖的 .scene.json 输出")
+    preview_dxf.add_argument(
+        "--output", type=Path, required=True, help="不覆盖的 .scene.json 输出"
+    )
     dfm = sub.add_parser("check-dfm")
-    dfm.add_argument("--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json")
-    dfm.add_argument("--output", type=Path, required=True, help="不覆盖旧文件的 DFM report JSON 输出")
-    dfm.add_argument("--process", default="auto", help="machining/sheet_metal/laser_cutting/3d_printing；auto 时读取文档 metadata")
-    dfm.add_argument("--profile", action="append", default=[], help="可重复指定 DFM Profile JSON，按供应商能力交集合并")
-    dfm.add_argument("--brep-evidence", type=Path, help="可选 SolidWorks/OCCT B-Rep 证据 JSON")
+    dfm.add_argument(
+        "--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json"
+    )
+    dfm.add_argument(
+        "--output", type=Path, required=True, help="不覆盖旧文件的 DFM report JSON 输出"
+    )
+    dfm.add_argument(
+        "--process",
+        default="auto",
+        help="machining/sheet_metal/laser_cutting/3d_printing；auto 时读取文档 metadata",
+    )
+    dfm.add_argument(
+        "--profile",
+        action="append",
+        default=[],
+        help="可重复指定 DFM Profile JSON，按供应商能力交集合并",
+    )
+    dfm.add_argument(
+        "--brep-evidence", type=Path, help="可选 SolidWorks/OCCT B-Rep 证据 JSON"
+    )
     routing = sub.add_parser("check-routing")
-    routing.add_argument("--input", type=Path, required=True, help="Routing 中性 JSON 输入")
-    routing.add_argument("--output", type=Path, required=True, help="不覆盖旧文件的 Routing report JSON 输出")
+    routing.add_argument(
+        "--input", type=Path, required=True, help="Routing 中性 JSON 输入"
+    )
+    routing.add_argument(
+        "--output",
+        type=Path,
+        required=True,
+        help="不覆盖旧文件的 Routing report JSON 输出",
+    )
     sub.add_parser("routing-preflight")
     fea_preflight = sub.add_parser("fea-preflight")
-    fea_preflight.add_argument("--solver", choices=("auto", "calculix", "elmer"), default="auto")
+    fea_preflight.add_argument(
+        "--solver", choices=("auto", "calculix", "elmer"), default="auto"
+    )
     fea_prepare = sub.add_parser("prepare-fea")
-    fea_prepare.add_argument("--input", type=Path, required=True, help="FEA 1.0 请求 JSON")
-    fea_prepare.add_argument("--out-dir", type=Path, required=True, help="CalculiX 输入文件输出目录")
-    fea_prepare.add_argument("--solver", choices=("auto", "calculix", "elmer"), default="auto")
+    fea_prepare.add_argument(
+        "--input", type=Path, required=True, help="FEA 1.0 请求 JSON"
+    )
+    fea_prepare.add_argument(
+        "--out-dir", type=Path, required=True, help="CalculiX 输入文件输出目录"
+    )
+    fea_prepare.add_argument(
+        "--solver", choices=("auto", "calculix", "elmer"), default="auto"
+    )
     fea_run = sub.add_parser("run-fea")
     fea_run.add_argument("--input", type=Path, required=True, help="FEA 1.0 请求 JSON")
     fea_run.add_argument("--out-dir", type=Path, required=True, help="版本化求解目录")
-    fea_run.add_argument("--timeout", type=int, default=600, help="求解超时秒数，范围 1-86400")
+    fea_run.add_argument(
+        "--timeout", type=int, default=600, help="求解超时秒数，范围 1-86400"
+    )
     fea_convergence = sub.add_parser("run-fea-convergence")
-    fea_convergence.add_argument("--input", type=Path, required=True, help="FEA 网格收敛 1.0 请求 JSON")
-    fea_convergence.add_argument("--out-dir", type=Path, required=True, help="版本化收敛序列目录")
-    fea_convergence.add_argument("--timeout-per-case", type=int, default=600, help="每档网格求解超时秒数，范围 1-86400")
+    fea_convergence.add_argument(
+        "--input", type=Path, required=True, help="FEA 网格收敛 1.0 请求 JSON"
+    )
+    fea_convergence.add_argument(
+        "--out-dir", type=Path, required=True, help="版本化收敛序列目录"
+    )
+    fea_convergence.add_argument(
+        "--timeout-per-case",
+        type=int,
+        default=600,
+        help="每档网格求解超时秒数，范围 1-86400",
+    )
     advanced = sub.add_parser("review-advanced-geometry")
-    advanced.add_argument("--input", type=Path, required=True, help="复杂曲面/模具中性计划 JSON")
-    advanced.add_argument("--output", type=Path, required=True, help="不覆盖旧文件的前置报告 JSON 输出")
+    advanced.add_argument(
+        "--input", type=Path, required=True, help="复杂曲面/模具中性计划 JSON"
+    )
+    advanced.add_argument(
+        "--output", type=Path, required=True, help="不覆盖旧文件的前置报告 JSON 输出"
+    )
     loft = sub.add_parser("create-ocp-loft")
-    loft.add_argument("--input", type=Path, required=True, help="OCP Loft 1.0 参数 JSON")
-    loft.add_argument("--out-dir", type=Path, required=True, help="STEP/BREP/STL 版本化输出目录")
+    loft.add_argument(
+        "--input", type=Path, required=True, help="OCP Loft 1.0 参数 JSON"
+    )
+    loft.add_argument(
+        "--out-dir", type=Path, required=True, help="STEP/BREP/STL 版本化输出目录"
+    )
     surface = sub.add_parser("create-ocp-surface")
-    surface.add_argument("--input", type=Path, required=True, help="OCP 高级曲面 1.0 参数 JSON")
-    surface.add_argument("--out-dir", type=Path, required=True, help="STEP/BREP/STL 版本化输出目录")
+    surface.add_argument(
+        "--input", type=Path, required=True, help="OCP 高级曲面 1.0 参数 JSON"
+    )
+    surface.add_argument(
+        "--out-dir", type=Path, required=True, help="STEP/BREP/STL 版本化输出目录"
+    )
     args = parser.parse_args(argv)
 
     if args.command == "doctor":
@@ -184,12 +317,22 @@ def main(argv: list[str] | None = None) -> int:
         jobs = _queue_jobs(args.queue_dir)
         if args.job_id:
             jobs = [job for job in jobs if job.get("id") == args.job_id]
-        print(json.dumps({"queueDir": args.queue_dir.name, "jobs": jobs}, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {"queueDir": args.queue_dir.name, "jobs": jobs},
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
         return 0 if jobs or not args.job_id else 1
     if args.command == "run":
         from cad_workbench.queue_worker import build_handlers
 
-        processed = process_queue(args.queue_dir, limit=args.limit, handlers=build_handlers(enable_mock=args.enable_mock))
+        processed = process_queue(
+            args.queue_dir,
+            limit=args.limit,
+            handlers=build_handlers(enable_mock=args.enable_mock),
+        )
         print(json.dumps({"processed": processed}, ensure_ascii=False, indent=2))
         return 0
     if args.command in {"retry", "cancel"}:
@@ -203,7 +346,14 @@ def main(argv: list[str] | None = None) -> int:
                 raise SystemExit(str(exc)) from exc
             cancel_marker_path(path).unlink(missing_ok=True)
         else:
-            job.update({"status": "cancelled", "cancelRequested": True, "updatedAt": now, "lastMessage": "已请求取消任务。"})
+            job.update(
+                {
+                    "status": "cancelled",
+                    "cancelRequested": True,
+                    "updatedAt": now,
+                    "lastMessage": "已请求取消任务。",
+                }
+            )
             cancel_marker_path(path).touch()
         write_job(path, job)
         print(json.dumps(job, ensure_ascii=False, indent=2))
@@ -222,15 +372,21 @@ def main(argv: list[str] | None = None) -> int:
         from dxf_preview_scene import dxf_to_preview_scene
 
         scene = dxf_to_preview_scene(args.input, args.output)
-        print(json.dumps({
-            "status": "pass",
-            "backend": "ezdxf-preview-scene",
-            "input": args.input.name,
-            "output": str(args.output.resolve()),
-            "entityCount": len(scene["entities"]),
-            "layerCount": len(scene["layers"]),
-            "limitations": scene["limitations"],
-        }, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {
+                    "status": "pass",
+                    "backend": "ezdxf-preview-scene",
+                    "input": args.input.name,
+                    "output": str(args.output.resolve()),
+                    "entityCount": len(scene["entities"]),
+                    "layerCount": len(scene["layers"]),
+                    "limitations": scene["limitations"],
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
         return 0
     if args.command == "check-dfm":
         #: ★★★ 2026-10-10 **业主架构指令**（★ 只继承工具 · 方法移出）：
@@ -241,13 +397,19 @@ def main(argv: list[str] | None = None) -> int:
         #:     ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ ★ 是方法 ✗
         #:   ★ 已移出：★ `archive/inherited-methods/scripts/dfm_review.py` ✓
         #:   ★★ **本分支改为如实报「已移出」**（★ 不静默 2 —— ★ 那会让人以为命令错了）✓
-        print(json.dumps({
-            "status": "removed",
-            "command": "check-dfm",
-            "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
-            "where": "archive/inherited-methods/scripts/dfm_review.py",
-            "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
-        }, ensure_ascii=True, indent=2))
+        print(
+            json.dumps(
+                {
+                    "status": "removed",
+                    "command": "check-dfm",
+                    "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                    "where": "archive/inherited-methods/scripts/dfm_review.py",
+                    "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+                },
+                ensure_ascii=True,
+                indent=2,
+            )
+        )
         return 1
     if args.command == "check-routing":
         from routing_review import review_routing_file
@@ -269,20 +431,29 @@ def main(argv: list[str] | None = None) -> int:
     #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
     #:   ★ 已移出：★ `archive/inherited-methods/scripts/` ✓
     _METHOD_COMMANDS = {
-        "fea-preflight": "fea_analysis", "prepare-fea": "fea_analysis",
-        "run-fea": "fea_analysis", "run-fea-convergence": "fea_convergence",
+        "fea-preflight": "fea_analysis",
+        "prepare-fea": "fea_analysis",
+        "run-fea": "fea_analysis",
+        "run-fea-convergence": "fea_convergence",
         "review-advanced-geometry": "advanced_geometry",
         "create-ocp-loft": "advanced_geometry_ocp",
         "create-ocp-surface": "advanced_surface_ocp",
     }
     if args.command in _METHOD_COMMANDS:
-        print(json.dumps({
-            "status": "removed",
-            "command": args.command,
-            "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
-            "where": "archive/inherited-methods/scripts/%s.py" % _METHOD_COMMANDS[args.command],
-            "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
-        }, ensure_ascii=True, indent=2))
+        print(
+            json.dumps(
+                {
+                    "status": "removed",
+                    "command": args.command,
+                    "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
+                    "where": "archive/inherited-methods/scripts/%s.py"
+                    % _METHOD_COMMANDS[args.command],
+                    "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
+                },
+                ensure_ascii=True,
+                indent=2,
+            )
+        )
         return 1
     return 2
 

@@ -1,6 +1,5 @@
 """@brief SolidWorks 复杂孔、复合孔和半圆端槽的稳定草图切除封装。"""
 
-
 from __future__ import annotations
 
 import math
@@ -11,17 +10,29 @@ from typing import Iterable, Sequence
 #: 依据：`FeatureCut4.md:22`「D1 … in meters」+ `output/probe-unit-decisive/decisive.jso
 #: n`。
 try:
-    from sw_connect import mm as _mm          # noqa: F401
-except Exception:                             # noqa: BLE001
-    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+    from sw_connect import mm as _mm  # noqa: F401
+except Exception:  # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0  # noqa: E731
 
 
 try:
     from .sw_connect import get_com_member, set_com_member
-    from .sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
+    from .sw_part import (
+        _select_com_object,
+        extrude_cut,
+        sketch,
+        sketch_circle,
+        sketch_slot,
+    )
 except ImportError:
     from sw_connect import get_com_member, set_com_member
-    from sw_part import _select_com_object, extrude_cut, sketch, sketch_circle, sketch_slot
+    from sw_part import (
+        _select_com_object,
+        extrude_cut,
+        sketch,
+        sketch_circle,
+        sketch_slot,
+    )
 
 
 # ── 来源 ───────────────────────────────────────────────────────────────
@@ -34,6 +45,7 @@ except ImportError:
 # ⚠ 未在本机实测: 见各条 `limitations`。
 # 覆盖:   后续同级定义
 # ──────────────────────────────────────────────────────────────────────────
+
 
 @dataclass(frozen=True)
 class HoleFeatureEvidence:
@@ -55,7 +67,13 @@ class HoleFeatureEvidence:
         """@brief 返回可序列化证据，并附加毫米值。"""
         value = asdict(self)
         value["center_mm"] = [round(item * 1000.0, 6) for item in self.center_m]
-        for key in ("diameter_mm", "depth_mm", "counterbore_diameter_mm", "counterbore_depth_mm", "countersink_diameter_mm"):
+        for key in (
+            "diameter_mm",
+            "depth_mm",
+            "counterbore_diameter_mm",
+            "counterbore_depth_mm",
+            "countersink_diameter_mm",
+        ):
             if value.get(key) is not None:
                 value[key.replace("_m", "_mm")] = round(value[key] * 1000.0, 6)
         return value
@@ -65,7 +83,7 @@ def _positive(name: str, value: float) -> float:
     """@brief 校验正有限长度。"""
     number = float(value)
     if not math.isfinite(number) or number <= 0.0:
-            raise ValueError("center 必须包含两个草图平面坐标，单位为米")
+        raise ValueError("center 必须包含两个草图平面坐标，单位为米")
     return number
 
 
@@ -96,7 +114,14 @@ def _feature_name(feature, fallback: str) -> str:
         return fallback
 
 
-def _circle_cut(model, plane_name: str, center: tuple[float, float], diameter: float, depth: float, feature_name: str):
+def _circle_cut(
+    model,
+    plane_name: str,
+    center: tuple[float, float],
+    diameter: float,
+    depth: float,
+    feature_name: str,
+):
     """@brief 创建单个圆形草图并执行定深或贯穿切除。"""
     with sketch(model, plane_name) as sketch_name:
         segment = sketch_circle(model, center[0], center[1], diameter / 2.0)
@@ -111,7 +136,9 @@ def _circle_cut(model, plane_name: str, center: tuple[float, float], diameter: f
     return _feature_name(feature, feature_name)
 
 
-def _entry_point_3d(plane_name: str, center: tuple[float, float]) -> tuple[float, float, float]:
+def _entry_point_3d(
+    plane_name: str, center: tuple[float, float]
+) -> tuple[float, float, float]:
     """@brief 把标准基准面的二维坐标映射到入口平面三维点。"""
     normalized = str(plane_name).strip().lower()
     if "top" in normalized or "上视" in normalized:
@@ -121,7 +148,15 @@ def _entry_point_3d(plane_name: str, center: tuple[float, float]) -> tuple[float
     return center[0], center[1], 0.0
 
 
-def _chamfer_hole_entry(model, plane_name, center, hole_diameter, countersink_diameter, half_angle_rad, feature_name):
+def _chamfer_hole_entry(
+    model,
+    plane_name,
+    center,
+    hole_diameter,
+    countersink_diameter,
+    half_angle_rad,
+    feature_name,
+):
     """@brief 选择通孔入口圆边并创建角度/距离倒角。"""
     edge = _find_hole_entry_edge(model, plane_name, center, hole_diameter / 2.0)
     model.ClearSelection2(True)
@@ -135,21 +170,29 @@ def _chamfer_hole_entry(model, plane_name, center, hole_diameter, countersink_di
     return _feature_name(feature, feature_name)
 
 
-def create_blind_hole(model, center, diameter, depth, plane_name="Front Plane", name="盲孔") -> dict:
+def create_blind_hole(
+    model, center, diameter, depth, plane_name="Front Plane", name="盲孔"
+) -> dict:
     """@brief 创建定深盲孔，并返回创建参数证据。"""
     center = _center(center)
     diameter = _positive("diameter", diameter)
     depth = _positive("depth", depth)
     feature_name = _circle_cut(model, plane_name, center, diameter, depth, name)
-    return HoleFeatureEvidence("blind", center, diameter, depth, False, plane_name, (feature_name,)).to_dict()
+    return HoleFeatureEvidence(
+        "blind", center, diameter, depth, False, plane_name, (feature_name,)
+    ).to_dict()
 
 
-def create_through_hole(model, center, diameter, plane_name="Front Plane", name="通孔") -> dict:
+def create_through_hole(
+    model, center, diameter, plane_name="Front Plane", name="通孔"
+) -> dict:
     """@brief 创建完全贯穿圆孔，并返回创建参数证据。"""
     center = _center(center)
     diameter = _positive("diameter", diameter)
     feature_name = _circle_cut(model, plane_name, center, diameter, 0.0, name)
-    return HoleFeatureEvidence("through", center, diameter, None, True, plane_name, (feature_name,)).to_dict()
+    return HoleFeatureEvidence(
+        "through", center, diameter, None, True, plane_name, (feature_name,)
+    ).to_dict()
 
 
 def create_counterbore_hole(
@@ -168,10 +211,25 @@ def create_counterbore_hole(
     counterbore_depth = _positive("counterbore_depth", counterbore_depth)
     if counterbore_diameter <= hole_diameter:
         raise ValueError("counterbore_diameter 必须大于 hole_diameter")
-    through_name = _circle_cut(model, plane_name, center, hole_diameter, 0.0, f"{name}_通孔")
-    recess_name = _circle_cut(model, plane_name, center, counterbore_diameter, counterbore_depth, f"{name}_沉孔")
+    through_name = _circle_cut(
+        model, plane_name, center, hole_diameter, 0.0, f"{name}_通孔"
+    )
+    recess_name = _circle_cut(
+        model,
+        plane_name,
+        center,
+        counterbore_diameter,
+        counterbore_depth,
+        f"{name}_沉孔",
+    )
     return HoleFeatureEvidence(
-        "counterbore", center, hole_diameter, None, True, plane_name, (through_name, recess_name),
+        "counterbore",
+        center,
+        hole_diameter,
+        None,
+        True,
+        plane_name,
+        (through_name, recess_name),
         counterbore_diameter_mm=counterbore_diameter,
         counterbore_depth_mm=counterbore_depth,
     ).to_dict()
@@ -196,12 +254,26 @@ def create_countersink_hole(
     if not math.isfinite(angle) or not 10.0 <= angle < 170.0:
         raise ValueError("included_angle_deg 必须在 [10, 170) 范围内")
     half_angle = math.radians(angle / 2.0)
-    through_name = _circle_cut(model, plane_name, center, hole_diameter, 0.0, f"{name}_通孔")
+    through_name = _circle_cut(
+        model, plane_name, center, hole_diameter, 0.0, f"{name}_通孔"
+    )
     sink_name = _chamfer_hole_entry(
-        model, plane_name, center, hole_diameter, countersink_diameter, half_angle, f"{name}_锥面"
+        model,
+        plane_name,
+        center,
+        hole_diameter,
+        countersink_diameter,
+        half_angle,
+        f"{name}_锥面",
     )
     return HoleFeatureEvidence(
-        "countersink", center, hole_diameter, None, True, plane_name, (through_name, sink_name),
+        "countersink",
+        center,
+        hole_diameter,
+        None,
+        True,
+        plane_name,
+        (through_name, sink_name),
         countersink_diameter_mm=countersink_diameter,
         countersink_angle_deg=angle,
     ).to_dict()
@@ -247,13 +319,17 @@ def create_semicircular_slot(
     }
 
 
-def create_hole_pattern(model, positions: Iterable[Sequence[float]], creator, **kwargs) -> list[dict]:
+def create_hole_pattern(
+    model, positions: Iterable[Sequence[float]], creator, **kwargs
+) -> list[dict]:
     """@brief 按显式孔位逐个创建孔；creator 为本模块任一孔创建函数。"""
     evidence = []
     for index, position in enumerate(positions, start=1):
         item_kwargs = dict(kwargs)
         base_name = str(item_kwargs.pop("name", "孔"))
-        evidence.append(creator(model, position, name=f"{base_name}_{index}", **item_kwargs))
+        evidence.append(
+            creator(model, position, name=f"{base_name}_{index}", **item_kwargs)
+        )
     if not evidence:
         raise ValueError("positions 至少包含一个孔位")
     return evidence
@@ -283,6 +359,7 @@ def create_hole_pattern(model, positions: Iterable[Sequence[float]], creator, **
 #         下一个来源块截断（**轮 125 实测踩到**）⇒ 这里用「全文件」以保证覆盖。
 # ─────────────────────────────────────────────────────────────────────
 
+
 def list_fastener_types(sw, standard_name: str, hole_type_id: int = 0):
     """列出某孔标准下的**紧固件类型**（官方 `IHoleStandardsData.GetFastenerTypes`）。
 
@@ -300,13 +377,15 @@ def list_fastener_types(sw, standard_name: str, hole_type_id: int = 0):
     if not ok:
         raise RuntimeError(
             "IHoleStandardsData.GetFastenerTypes(%r) 返回 False —— "
-            "常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）" % standard_name
+            "常见原因：标准名拼错（用 `list_hole_standards()` 里的 `name`）"
+            % standard_name
         )
     return _pair(ids, names, "FastenerTypes")
 
 
-def list_fastener_table_types(sw, standard_name: str, fastener_id: int,
-                              hole_type_id: int = 0):
+def list_fastener_table_types(
+    sw, standard_name: str, fastener_id: int, hole_type_id: int = 0
+):
     """列出某紧固件的**表类型 ID**（官方 `IHoleStandardsData.GetFastenerTableTypes`）。
 
     ⚠ **官方第 2 参是 `Int32`（紧固件 ID），不是尺寸名** ——
@@ -318,8 +397,9 @@ def list_fastener_table_types(sw, standard_name: str, fastener_id: int,
     """
     data = _hole_standards_data(sw, hole_type_id)
     out = _out_container()
-    ok = get_com_member(data, "GetFastenerTableTypes", str(standard_name),
-                        int(fastener_id), out)
+    ok = get_com_member(
+        data, "GetFastenerTableTypes", str(standard_name), int(fastener_id), out
+    )
     if not ok:
         raise RuntimeError(
             "IHoleStandardsData.GetFastenerTableTypes(%r, %r) 返回 False —— "
@@ -329,8 +409,9 @@ def list_fastener_table_types(sw, standard_name: str, fastener_id: int,
     return _as_list(out)
 
 
-def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
-                       hole_type_id: int = 0):
+def get_fastener_table(
+    sw, standard_name: str, fastener_id: int, table_id: int, hole_type_id: int = 0
+):
     """取某紧固件的**孔表本体**（官方 `IHoleStandardsData.GetFastenerTable`）。
 
     ★★★ 2026-10-03（轮 500）**本函数已修好并真机跑通** —— ★ 它原来被记成「不可用」 ⚠
@@ -360,9 +441,16 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
     #: ⚠ 而不是 `_out_container()`（那个是 `VT_BYREF|VT_VARIANT`，对**本方法**报类型不匹
     #: 配）
     from sw_connect import out_dispatch
+
     out = out_dispatch()
-    ok = get_com_member(data, "GetFastenerTable", str(standard_name),
-                        int(fastener_id), int(table_id), out)
+    ok = get_com_member(
+        data,
+        "GetFastenerTable",
+        str(standard_name),
+        int(fastener_id),
+        int(table_id),
+        out,
+    )
     if not ok:
         raise RuntimeError(
             "IHoleStandardsData.GetFastenerTable(%r, %r, %r) 返回 False —— "
@@ -408,6 +496,7 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
 #     一个是 ID（`(0, 1, 16, …)`）、一个是名称（`('ANSI Inch', 'ANSI Metric', …)`），
 #     **一一对应**。⇒ 本节的入口把它们配对成 `[{id, name}, …]`。
 
+
 def _out_container():
     """造一个**容器出参**（`Object&` / `Variant&` 用）。
 
@@ -433,6 +522,7 @@ def _out_container():
     """
     import pythoncom
     from win32com.client import VARIANT
+
     return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_VARIANT, None)
 
 
@@ -476,6 +566,7 @@ def _as_list(v):
 #         `list_fastener_types` / `list_fastener_table_types` / `get_fastener_table` 五个单元。
 # ─────────────────────────────────────────────────────────────────────
 
+
 def _hole_standards_data(sw, hole_type_id: int, *, initialize: bool = True):
     """取 **并初始化** `IHoleStandardsData`（官方 `ISldWorks.GetHoleStandardsData`）。
 
@@ -510,10 +601,10 @@ def _pair(ids_v, names_v, what: str):
     a, b = _as_list(ids_v), _as_list(names_v)
     if len(a) != len(b):
         raise RuntimeError(
-            "%s 的两个出参长度不一致（%d vs %d）⇒ 无法按位配对，**不猜**" % (what, len(a), len(b))
+            "%s 的两个出参长度不一致（%d vs %d）⇒ 无法按位配对，**不猜**"
+            % (what, len(a), len(b))
         )
     return [{"id": i, "name": str(n)} for i, n in zip(a, b)]
-
 
 
 def list_hole_standards(sw, hole_type_id: int = 0):
@@ -588,8 +679,9 @@ def configure_straight_tap(
     if drill_point_angle is not None:
         set_com_member(element, "DrillPointAngle", float(drill_point_angle))
     if drill_point_angle_override is not None:
-        set_com_member(element, "DrillPointAngleOverride",
-                       bool(drill_point_angle_override))
+        set_com_member(
+            element, "DrillPointAngleOverride", bool(drill_point_angle_override)
+        )
     return element
 
 
@@ -657,38 +749,49 @@ def get_hole_standards(standards_data, standards_out, types_out):
     """``Boolean GetHoleStandards(Object& Standards, Object& Types)``"""
     if standards_data is None:
         raise ValueError("standards_data 为 None：须先取得 IHoleStandardsData")
-    return get_com_member(standards_data, "GetHoleStandards",
-                          standards_out, types_out)
+    return get_com_member(standards_data, "GetHoleStandards", standards_out, types_out)
 
 
 def get_fastener_types(standards_data, table_name, types_out, sizes_out):
     """``Boolean GetFastenerTypes(String, Object& Types, Object& Sizes)``"""
     if standards_data is None:
         raise ValueError("standards_data 为 None")
-    return get_com_member(standards_data, "GetFastenerTypes",
-                          str(table_name), types_out, sizes_out)
+    return get_com_member(
+        standards_data, "GetFastenerTypes", str(table_name), types_out, sizes_out
+    )
 
 
 def get_fastener_table_types(standards_data, table_name, size, table_types_out):
     """``Boolean GetFastenerTableTypes(String, Int32, Object& TableTypes)``"""
     if standards_data is None:
         raise ValueError("standards_data 为 None")
-    return get_com_member(standards_data, "GetFastenerTableTypes",
-                          str(table_name), int(size), table_types_out)
+    return get_com_member(
+        standards_data,
+        "GetFastenerTableTypes",
+        str(table_name),
+        int(size),
+        table_types_out,
+    )
 
 
 def get_fastener_table(standards_data, table_name, size, kind, table_data_out):
     """``Boolean GetFastenerTable(String, Int32, Int32, Object& TableData)``"""
     if standards_data is None:
         raise ValueError("standards_data 为 None")
-    return get_com_member(standards_data, "GetFastenerTable",
-                          str(table_name), int(size), int(kind), table_data_out)
+    return get_com_member(
+        standards_data,
+        "GetFastenerTable",
+        str(table_name),
+        int(size),
+        int(kind),
+        table_data_out,
+    )
 
 
 # ── 24h 计划 段 4 续（Spec Kit `151`）：**声明式建孔**（★ 规则 3 的精神）──────────────
 # ★★★★ 为什么要有这一族（★ 而它比"把既有函数挂上去"更好）：
 #   · 能力层既有的 `create_through_hole(model, center, ...)` 吃 **`center`（坐标元组）**；
-# · ★ 而**上游**的统一建孔工具 `solidworks_create_hole_feature`（`mcp-server/server.py` 
+# · ★ 而**上游**的统一建孔工具 `solidworks_create_hole_feature`（`mcp-server/server.py`
 # L2244）
 # 吃的是 **`center_x_mm` / `center_y_mm`** —— ★★ **那是**裸坐标参数名****（规则 3 的**字
 # 面**红线）。
@@ -721,7 +824,7 @@ def _point_from_selection(model, selection: str):
     """
     try:
         from .sw_selection_spec import resolve_selection, selection_point
-    except ImportError:                                        # pragma: no cover
+    except ImportError:  # pragma: no cover
         from sw_selection_spec import resolve_selection, selection_point
     if str(selection) == "__current_selection__":
         #: ★ 已选好的直接用（★ 与 `sw_part._ensure_sketch_selected` 同约定）
@@ -740,10 +843,13 @@ def _point_from_selection(model, selection: str):
             try:
                 resolve_selection(model, str(selection), _kind)
                 break
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 errs.append("%s:%s" % (_kind, str(exc)[:60]))
         else:
-            return None, "选择 %r 三种类型都失败：%s" % (selection, " | ".join(errs)[:200])
+            return None, "选择 %r 三种类型都失败：%s" % (
+                selection,
+                " | ".join(errs)[:200],
+            )
     r = selection_point(model)
     if not r.get("ok"):
         return None, "读不到点：%s" % str(r.get("error"))[:150]
@@ -803,15 +909,15 @@ def _point_from_selection(model, selection: str):
 def _feature_names_here(model) -> list:
     """★ 当前文档的特征名列表（★ 取样用 —— ★ 失败就回**空列表**，★ 不让取样本身炸掉主流程）。"""
     try:
-        from scripts.sw_part import feature_names                     # noqa: PLC0415
-    except Exception:                                                     # noqa: BLE001
+        from scripts.sw_part import feature_names  # noqa: PLC0415
+    except Exception:  # noqa: BLE001
         try:
-            from sw_part import feature_names                         # type: ignore # noqa: PLC0415
-        except Exception:                                                 # noqa: BLE001
+            from sw_part import feature_names  # type: ignore # noqa: PLC0415
+        except Exception:  # noqa: BLE001
             return []
     try:
         return [str(x) for x in (feature_names(model) or [])]
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
 
 
@@ -837,88 +943,186 @@ def _with_tree_judgement(model, fn, *args, **kwargs) -> dict:
     return out
 
 
-def create_through_hole_at_selection_report(model, selection: str, diameter_mm: float,
-                                            plane_name: str = "Front Plane",
-                                            name: str = "通孔") -> dict:
+def create_through_hole_at_selection_report(
+    model,
+    selection: str,
+    diameter_mm: float,
+    plane_name: str = "Front Plane",
+    name: str = "通孔",
+) -> dict:
     """★ **声明式建通孔**：★ 从 `selection` 读点 ⇒ 建完全贯穿圆孔 ⇒ 回**回读证据 + 用的那个点**。
 
     ★★ 与 `create_through_hole` 的**唯一区别**：★ **它不要坐标**（★ 规则 3）。
     """
     pt, err = _point_from_selection(model, selection)
     if err:
-        return {"ok": False, "kind": "through", "selection": str(selection), "error": err}
-    ev = _with_tree_judgement(model, create_through_hole, pt, diameter_mm,
-                              plane_name=plane_name, name=name)
-    ev.update({"selection": str(selection), "center_sent_mm": list(pt), "★_units": "从选区读到毫米 ⇒ 换算成米 ⇒ 取前两维（规则 2 的边界）",
-               "★": "点来自**声明式选择**（不是调用方传坐标）—— 规则 3"})
+        return {
+            "ok": False,
+            "kind": "through",
+            "selection": str(selection),
+            "error": err,
+        }
+    ev = _with_tree_judgement(
+        model, create_through_hole, pt, diameter_mm, plane_name=plane_name, name=name
+    )
+    ev.update(
+        {
+            "selection": str(selection),
+            "center_sent_mm": list(pt),
+            "★_units": "从选区读到毫米 ⇒ 换算成米 ⇒ 取前两维（规则 2 的边界）",
+            "★": "点来自**声明式选择**（不是调用方传坐标）—— 规则 3",
+        }
+    )
     return ev
 
 
-def create_blind_hole_at_selection_report(model, selection: str, diameter_mm: float, depth_mm: float,
-                                          plane_name: str = "Front Plane",
-                                          name: str = "盲孔") -> dict:
+def create_blind_hole_at_selection_report(
+    model,
+    selection: str,
+    diameter_mm: float,
+    depth_mm: float,
+    plane_name: str = "Front Plane",
+    name: str = "盲孔",
+) -> dict:
     """★ **声明式建盲孔**（★ 吃 `selection` 与 `depth_mm`，★ 不要坐标）。"""
     pt, err = _point_from_selection(model, selection)
     if err:
         return {"ok": False, "kind": "blind", "selection": str(selection), "error": err}
-    ev = _with_tree_judgement(model, create_blind_hole, pt, diameter_mm, depth_mm,
-                              plane_name=plane_name, name=name)
-    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
-               "★": "点来自**声明式选择** —— 规则 3"})
+    ev = _with_tree_judgement(
+        model,
+        create_blind_hole,
+        pt,
+        diameter_mm,
+        depth_mm,
+        plane_name=plane_name,
+        name=name,
+    )
+    ev.update(
+        {
+            "selection": str(selection),
+            "point_from_selection_mm": list(pt),
+            "★": "点来自**声明式选择** —— 规则 3",
+        }
+    )
     return ev
 
 
-def create_counterbore_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
-                                               counterbore_diameter_mm: float,
-                                               counterbore_depth_mm: float,
-                                               plane_name: str = "Front Plane",
-                                               name: str = "沉头孔") -> dict:
+def create_counterbore_hole_at_selection_report(
+    model,
+    selection: str,
+    hole_diameter_mm: float,
+    counterbore_diameter_mm: float,
+    counterbore_depth_mm: float,
+    plane_name: str = "Front Plane",
+    name: str = "沉头孔",
+) -> dict:
     """★ **声明式建沉头孔**（★ 不要坐标）。"""
     pt, err = _point_from_selection(model, selection)
     if err:
-        return {"ok": False, "kind": "counterbore", "selection": str(selection), "error": err}
-    ev = _with_tree_judgement(model, create_counterbore_hole, pt, hole_diameter_mm,
-                              counterbore_diameter_mm, counterbore_depth_mm,
-                              plane_name=plane_name, name=name)
-    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
-               "★": "点来自**声明式选择** —— 规则 3"})
+        return {
+            "ok": False,
+            "kind": "counterbore",
+            "selection": str(selection),
+            "error": err,
+        }
+    ev = _with_tree_judgement(
+        model,
+        create_counterbore_hole,
+        pt,
+        hole_diameter_mm,
+        counterbore_diameter_mm,
+        counterbore_depth_mm,
+        plane_name=plane_name,
+        name=name,
+    )
+    ev.update(
+        {
+            "selection": str(selection),
+            "point_from_selection_mm": list(pt),
+            "★": "点来自**声明式选择** —— 规则 3",
+        }
+    )
     return ev
 
 
-def create_countersink_hole_at_selection_report(model, selection: str, hole_diameter_mm: float,
-                                               countersink_diameter_mm: float,
-                                               included_angle_deg: float = 90.0,
-                                               plane_name: str = "Front Plane",
-                                               name: str = "锥沉孔") -> dict:
+def create_countersink_hole_at_selection_report(
+    model,
+    selection: str,
+    hole_diameter_mm: float,
+    countersink_diameter_mm: float,
+    included_angle_deg: float = 90.0,
+    plane_name: str = "Front Plane",
+    name: str = "锥沉孔",
+) -> dict:
     """★ **声明式建锥沉孔**（★ 不要坐标；★ 角度参数带 `_deg`，规则 2）。"""
     pt, err = _point_from_selection(model, selection)
     if err:
-        return {"ok": False, "kind": "countersink", "selection": str(selection), "error": err}
-    ev = _with_tree_judgement(model, create_countersink_hole, pt, hole_diameter_mm,
-                              countersink_diameter_mm, included_angle_deg,
-                              plane_name=plane_name, name=name)
-    ev.update({"selection": str(selection), "point_from_selection_mm": list(pt),
-               "★": "点来自**声明式选择** —— 规则 3"})
+        return {
+            "ok": False,
+            "kind": "countersink",
+            "selection": str(selection),
+            "error": err,
+        }
+    ev = _with_tree_judgement(
+        model,
+        create_countersink_hole,
+        pt,
+        hole_diameter_mm,
+        countersink_diameter_mm,
+        included_angle_deg,
+        plane_name=plane_name,
+        name=name,
+    )
+    ev.update(
+        {
+            "selection": str(selection),
+            "point_from_selection_mm": list(pt),
+            "★": "点来自**声明式选择** —— 规则 3",
+        }
+    )
     return ev
 
 
-def create_semicircular_slot_at_selection_report(model, start_selection: str, end_selection: str,
-                                                width_mm: float, depth_mm: float = 0.0,
-                                                plane_name: str = "Front Plane",
-                                                name: str = "半圆端槽") -> dict:
+def create_semicircular_slot_at_selection_report(
+    model,
+    start_selection: str,
+    end_selection: str,
+    width_mm: float,
+    depth_mm: float = 0.0,
+    plane_name: str = "Front Plane",
+    name: str = "半圆端槽",
+) -> dict:
     """★ **声明式建半圆端槽**：★ **两端各用一次声明式选择**（★ 于是**两个点都不是坐标参数**）。"""
     pts = []
     for sel in (start_selection, end_selection):
         pt, err = _point_from_selection(model, sel)
         if err:
-            return {"ok": False, "kind": "semicircular_slot", "selection": str(sel), "error": err}
+            return {
+                "ok": False,
+                "kind": "semicircular_slot",
+                "selection": str(sel),
+                "error": err,
+            }
         pts.append(pt)
-    ev = _with_tree_judgement(model, create_semicircular_slot, pts[0], pts[1], width_mm, _mm(depth_mm),
-                              plane_name=plane_name, name=name)
-    ev.update({"start_selection": str(start_selection),
-               "end_selection": str(end_selection),
-               "centers_sent_mm": [list(p) for p in pts], "★_units": "同族：毫米 ⇒ 米 + 取前两维",
-               "★": "两个点都来自**声明式选择** —— 规则 3"})
+    ev = _with_tree_judgement(
+        model,
+        create_semicircular_slot,
+        pts[0],
+        pts[1],
+        width_mm,
+        _mm(depth_mm),
+        plane_name=plane_name,
+        name=name,
+    )
+    ev.update(
+        {
+            "start_selection": str(start_selection),
+            "end_selection": str(end_selection),
+            "centers_sent_mm": [list(p) for p in pts],
+            "★_units": "同族：毫米 ⇒ 米 + 取前两维",
+            "★": "两个点都来自**声明式选择** —— 规则 3",
+        }
+    )
     return ev
 
 
@@ -948,8 +1152,13 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], radius: float,
-                          tolerance: float = 1e-6):
+def _find_hole_entry_edge(
+    model,
+    plane_name: str,
+    center: tuple[float, float],
+    radius: float,
+    tolerance: float = 1e-6,
+):
     """★ **按圆心和半径寻找通孔在草图基准面一侧的圆边**（★ 带**逐环诊断**的版本）。
 
     ★★ 与旧版的差别**只在失败路径**：★ 旧版 `except Exception: continue` 把原因吞了，
@@ -957,38 +1166,49 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
     并在失败时把它们放进 `RuntimeError`（★ **判定逻辑一字未改**）。
     """
     target = _entry_point_3d(plane_name, center)
-    diag = {"bodies": 0, "faces": 0, "edges": 0, "curves": 0, "circles": 0,
-            "params_ok": 0, "first_error": None}
+    diag = {
+        "bodies": 0,
+        "faces": 0,
+        "edges": 0,
+        "curves": 0,
+        "circles": 0,
+        "params_ok": 0,
+        "first_error": None,
+    }
     candidates = []
 
     def _note(stage, exc):
         if diag["first_error"] is None:
-            diag["first_error"] = "%s: %s: %s" % (stage, type(exc).__name__, str(exc)[:160])
+            diag["first_error"] = "%s: %s: %s" % (
+                stage,
+                type(exc).__name__,
+                str(exc)[:160],
+            )
 
     try:
         bodies = list(get_com_member(model, "GetBodies2", 0, False) or [])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         _note("GetBodies2", exc)
         bodies = []
     diag["bodies"] = len(bodies)
     for body in bodies:
         try:
             faces = list(get_com_member(body, "GetFaces") or [])
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             _note("GetFaces", exc)
             continue
         diag["faces"] += len(faces)
         for face in faces:
             try:
                 edges = list(get_com_member(face, "GetEdges") or [])
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 _note("GetEdges", exc)
                 continue
             diag["edges"] += len(edges)
             for edge in edges:
                 try:
                     curve = get_com_member(edge, "GetCurve")
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     _note("GetCurve", exc)
                     continue
                 if curve is None:
@@ -997,13 +1217,13 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
                 try:
                     if not bool(get_com_member(curve, "IsCircle")):
                         continue
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     _note("IsCircle", exc)
                     continue
                 diag["circles"] += 1
                 try:
                     params = list(get_com_member(curve, "CircleParams") or [])
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     _note("CircleParams", exc)
                     continue
                 if len(params) < 7:
@@ -1011,13 +1231,13 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
                 try:
                     if abs(float(params[6]) - radius) > tolerance:
                         continue
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     _note("params[6]", exc)
                     continue
                 diag["params_ok"] += 1
                 try:
                     distance = math.dist([float(value) for value in params[:3]], target)
-                except Exception as exc:                       # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     _note("math.dist", exc)
                     continue
                 candidates.append((distance, edge))
@@ -1026,12 +1246,25 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
             "无法按圆心和半径找到沉头孔入口圆边 —— ★ 逐环诊断（★ 判定逻辑未改，只加诊断）："
             "bodies=%d · faces=%d · edges=%d · curves=%d · circles=%d · params_ok=%d · "
             "target=%s · radius=%r · first_error=%s"
-            % (diag["bodies"], diag["faces"], diag["edges"], diag["curves"],
-               diag["circles"], diag["params_ok"], target, radius, diag["first_error"]))
+            % (
+                diag["bodies"],
+                diag["faces"],
+                diag["edges"],
+                diag["curves"],
+                diag["circles"],
+                diag["params_ok"],
+                target,
+                radius,
+                diag["first_error"],
+            )
+        )
     candidates.sort(key=lambda item: item[0])
     if candidates[0][0] > max(tolerance * 10.0, 1e-5):
-        raise RuntimeError(f"找到的圆边偏离沉头入口位置: {candidates[0][0] * 1000.0:.3f} mm")
+        raise RuntimeError(
+            f"找到的圆边偏离沉头入口位置: {candidates[0][0] * 1000.0:.3f} mm"
+        )
     return candidates[0][1]
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -1057,9 +1290,16 @@ _HOLE_PATTERN_CREATORS = {
 }
 
 
-def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm: float = 8.0,
-                        depth_mm: float | None = None, plane_name: str = "Front Plane",
-                        name: str = "孔") -> dict:
+def hole_pattern_report(
+    model,
+    positions,
+    *,
+    kind: str = "through",
+    diameter_mm: float = 8.0,
+    depth_mm: float | None = None,
+    plane_name: str = "Front Plane",
+    name: str = "孔",
+) -> dict:
     """★ **按显式孔位一次创建一组孔**（★ 把 `create_hole_pattern` 的 `creator` 换成**具名种类**）。
 
     ★★ **为什么需要这一层**：`create_hole_pattern(model, positions, creator, **kwargs)` 收的是
@@ -1073,16 +1313,26 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
         ★★ **判据两条都要**：★ 每个孔位都回了证据 **且** **特征树真的长了**（★ 规则 6 ——
         ★ 本会话已见过"回对象而什么都没发生"的空存根）。
     """
-    out: dict = {"ok": False, "kind": str(kind), "requested": None, "holes": [],
-                 "tree_before": None, "tree_after": None, "new_features": [], "error": None}
+    out: dict = {
+        "ok": False,
+        "kind": str(kind),
+        "requested": None,
+        "holes": [],
+        "tree_before": None,
+        "tree_after": None,
+        "new_features": [],
+        "error": None,
+    }
     if kind not in _HOLE_PATTERN_CREATORS:
-        out["error"] = ("kind 只支持 %r（★ counterbore / countersink 另有必填参数，"
-                        "★ 未在本工具暴露）" % sorted(_HOLE_PATTERN_CREATORS))
+        out["error"] = (
+            "kind 只支持 %r（★ counterbore / countersink 另有必填参数，"
+            "★ 未在本工具暴露）" % sorted(_HOLE_PATTERN_CREATORS)
+        )
         return out
     #: ★ 规整 + 校验孔位（★ 每个必须是至少两个数的序列）
     try:
         pairs = []
-        for item in (positions or []):
+        for item in positions or []:
             seq = list(item)
             if len(seq) < 2:
                 out["error"] = "每个孔位至少要有 x / y 两个数：%r" % (item,)
@@ -1095,19 +1345,25 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
         out["error"] = "positions 至少包含一个孔位"
         return out
     out["requested"] = len(pairs)
-    kwargs: dict = {"diameter": float(diameter_mm), "plane_name": str(plane_name), "name": str(name)}
+    kwargs: dict = {
+        "diameter": float(diameter_mm),
+        "plane_name": str(plane_name),
+        "name": str(name),
+    }
     if kind == "blind":
         if depth_mm is None:
             out["error"] = "kind=blind 时 depth_mm 必填"
             return out
-        kwargs["depth"] = _mm(depth_mm)   #: ★ 单位修复：FeatureCut4 的 D1 吃米
-    import sw_hole_features as _self                               #: ★ 自引用取 creator（避免循环导入的写法）
+        kwargs["depth"] = _mm(depth_mm)  #: ★ 单位修复：FeatureCut4 的 D1 吃米
+    import sw_hole_features as _self  #: ★ 自引用取 creator（避免循环导入的写法）
+
     creator = getattr(_self, _HOLE_PATTERN_CREATORS[kind])
     from sw_feature_readback import feature_names
+
     before = feature_names(model)
     try:
         evidence = creator and create_hole_pattern(model, pairs, creator, **kwargs)
-    except Exception as exc:                                       # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "建孔失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     after = feature_names(model)
@@ -1115,17 +1371,24 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
     out["tree_after"] = len(after)
     out["new_features"] = [x for x in after if x not in before]
     #: ★ 每个孔的证据（★ 只留可 JSON 序列化的摘要 —— ★ 证据项可能是 dataclass）
-    for item in (evidence or []):
+    for item in evidence or []:
         if isinstance(item, dict):
-            out["holes"].append({k: v for k, v in item.items()
-                                 if isinstance(v, (str, int, float, bool, type(None)))})
+            out["holes"].append(
+                {
+                    k: v
+                    for k, v in item.items()
+                    if isinstance(v, (str, int, float, bool, type(None)))
+                }
+            )
         else:
             out["holes"].append({"repr": str(item)[:80]})
     built = len(out["holes"])
     out["ok"] = (built == len(pairs)) and len(after) > len(before)
     if not out["ok"] and built == len(pairs):
-        out["error"] = ("每个孔位都回了证据而**特征树没长**（%d → %d）⇒ 孔**没真建成**"
-                        "（★ 规则 6：不许只看返回值）" % (len(before), len(after)))
+        out["error"] = (
+            "每个孔位都回了证据而**特征树没长**（%d → %d）⇒ 孔**没真建成**"
+            "（★ 规则 6：不许只看返回值）" % (len(before), len(after))
+        )
     elif not out["ok"]:
         out["error"] = "只回了 %d 条证据（请求 %d 个孔位）" % (built, len(pairs))
     return out
@@ -1152,11 +1415,11 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #: 枚举均取自**本机反射 dump**（铁律 4 的裁决者）
-SW_SEL_FACES = 2                #: `swSelectType_e`：`swSelFACES = 2`
-SW_WZD_HOLE = 2                 #: `swWzdGeneralHoleTypes_e`：`swWzdHole = 2`
-SW_END_THROUGH_ALL = 1          #: `swEndConditions_e`：`swEndCondThroughAll = 1`
-SW_END_BLIND = 0                #: `swEndConditions_e`：`swEndCondBlind = 0`
-SW_WZD_ANSI_METRIC = 1          #: `swWzdHoleStandards_e`：ANSI Metric
+SW_SEL_FACES = 2  #: `swSelectType_e`：`swSelFACES = 2`
+SW_WZD_HOLE = 2  #: `swWzdGeneralHoleTypes_e`：`swWzdHole = 2`
+SW_END_THROUGH_ALL = 1  #: `swEndConditions_e`：`swEndCondThroughAll = 1`
+SW_END_BLIND = 0  #: `swEndConditions_e`：`swEndCondBlind = 0`
+SW_WZD_ANSI_METRIC = 1  #: `swWzdHoleStandards_e`：ANSI Metric
 
 #: ANSI Metric + `swWzdHole` 下**真机查到的合法** `FastenerTypeIndex`
 #: enum-gate: not-enum observed
@@ -1197,12 +1460,14 @@ def create_hole_wizard_at_selection_report(
     ext = get_com_member(model, "Extension")
     #: 前置 ①：从声明式选择里读出一个点（毫米）
     from sw_simulation import resolve_face_selector
+
     pt = resolve_face_selector(model, selection)
     if pt is None:
         raise RuntimeError(
             "面选择器 %r 解析不了（★ 合法值：+x/-x/+y/-y/+z/-z；"
-            "★ 而它**只对轴对齐的实体可靠**）" % selection)
-    x, y, z = (float(pt[0]), float(pt[1]), float(pt[2]))   #: ★ 已是**米**
+            "★ 而它**只对轴对齐的实体可靠**）" % selection
+        )
+    x, y, z = (float(pt[0]), float(pt[1]), float(pt[2]))  #: ★ 已是**米**
     #: ★★★★ 2026-10-04（接手轮）**取样：调用前记一次特征树**（★ doc 承诺的判据是"树增量"
     #: ）✓
     _before_wizard = _feature_names_here(model)
@@ -1211,28 +1476,68 @@ def create_hole_wizard_at_selection_report(
     sy = y - ray_dir[1] * (plane_offset_mm / 1000.0)
     sz = z - ray_dir[2] * (plane_offset_mm / 1000.0)
     model.ClearSelection2(True)
-    ok_ray = get_com_member(ext, "SelectByRay", sx, sy, sz,
-                            float(ray_dir[0]), float(ray_dir[1]), float(ray_dir[2]),
-                            1e-4, int(SW_SEL_FACES), False, 0, 0)
+    ok_ray = get_com_member(
+        ext,
+        "SelectByRay",
+        sx,
+        sy,
+        sz,
+        float(ray_dir[0]),
+        float(ray_dir[1]),
+        float(ray_dir[2]),
+        1e-4,
+        int(SW_SEL_FACES),
+        False,
+        0,
+        0,
+    )
     sel_n = -1
     try:
-        sel_n = int(get_com_member(get_com_member(model, "SelectionManager"),
-                                   "GetSelectedObjectCount2", -1) or 0)
-    except Exception:                                                     # noqa: BLE001
+        sel_n = int(
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
         sel_n = -1
     if not ok_ray or sel_n < 1:
         raise RuntimeError(
             "射线选面没命中（`SelectByRay` 回 %r，选中数 %s）⇒ 没有孔位就不能建孔。"
-            "官方 Remarks：孔位要用 `SelectByRay` 且 `Mark = 0`。" % (ok_ray, sel_n))
+            "官方 Remarks：孔位要用 `SelectByRay` 且 `Mark = 0`。" % (ok_ray, sel_n)
+        )
     #: 前置 ② ③：27 参（顺序照官方签名）
     end_type = SW_END_THROUGH_ALL if through else SW_END_BLIND
     feature = get_com_member(
-        get_com_member(model, "FeatureManager"), "HoleWizard5",
-        int(generic_type), int(standard_index), int(fastener_index), str(size),
-        int(end_type), float(diameter_mm) / 1000.0, float(depth_mm) / 1000.0,
+        get_com_member(model, "FeatureManager"),
+        "HoleWizard5",
+        int(generic_type),
+        int(standard_index),
+        int(fastener_index),
+        str(size),
+        int(end_type),
+        float(diameter_mm) / 1000.0,
+        float(depth_mm) / 1000.0,
         0.0,
-        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-        "", False, True, False, False, False, False,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        "",
+        False,
+        True,
+        False,
+        False,
+        False,
+        False,
     )
     if feature is None:
         raise RuntimeError(
@@ -1244,7 +1549,7 @@ def create_hole_wizard_at_selection_report(
             #: `）：
             #:     · ★ **A 只板 + 孔** ⇒ ★ **成** ✓
             #:     · ★★ **B 板 + 阵列 + 圆角 + 孔** ⇒ ★ **`None`** ✓
-            #: · ★ **C 板 + 圆角 + 孔**（★ **去阵列**）⇒ ★★ **成** ⇒ ★ **圆角不是元凶** 
+            #: · ★ **C 板 + 圆角 + 孔**（★ **去阵列**）⇒ ★★ **成** ⇒ ★ **圆角不是元凶**
             #: ✓
             #:     · ★★ **D 板 + 阵列 + 孔**（★ **去圆角**）⇒ ★ **`None`** ⇒
             #:       ★★★★ **⇒ **阵列是元凶**** ✓
@@ -1259,7 +1564,8 @@ def create_hole_wizard_at_selection_report(
             #:     （★ 阵列把面切分/移动之后、★ 原来的点不再落在同一个面上）✓
             "★ ★★★ **本轮补充（真机实测）**：★ 做过**线性阵列**之后再打孔，"
             "**射线容易打不中面** ⇒ **建议顺序：板 → 孔 → 阵列 → 圆角**"
-            "（★ 见 `output/why-hole-none.json` 的二分法四条腿）。")
+            "（★ 见 `output/why-hole-none.json` 的二分法四条腿）。"
+        )
     feat_name = _feature_name(feature, name or "异型孔向导")
     #: ★★★★ 2026-10-04（接手轮）**补上 doc 承诺的第二个判据**（★ `JUDGE-C_D_E` 🔴 #1 · E
     #: 5-2）——

@@ -46,16 +46,22 @@ def geometry_signature(values: Any, precision: int = 6) -> str:
             return {str(key): normalize(value[key]) for key in sorted(value, key=str)}
         return value
 
-    canonical = json.dumps(normalize(values), ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+    canonical = json.dumps(
+        normalize(values), ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:24]
 
 
-def reference_from_metadata(entity_type: str, feature_name: str | None = None, geometry: Any = None) -> SemanticEntityReference:
+def reference_from_metadata(
+    entity_type: str, feature_name: str | None = None, geometry: Any = None
+) -> SemanticEntityReference:
     """@brief 从特征名、类型和几何摘要创建引用。"""
     return SemanticEntityReference(
         entity_type=str(entity_type),
         feature_name=str(feature_name) if feature_name else None,
-        geometry_signature=geometry_signature(geometry) if geometry is not None else None,
+        geometry_signature=geometry_signature(geometry)
+        if geometry is not None
+        else None,
     )
 
 
@@ -67,18 +73,42 @@ def resolve_semantic_reference(
     scored: list[tuple[int, Mapping[str, Any]]] = []
     for candidate in candidates:
         score = 0
-        if str(candidate.get("entity_type", candidate.get("type", ""))) == reference.entity_type:
+        if (
+            str(candidate.get("entity_type", candidate.get("type", "")))
+            == reference.entity_type
+        ):
             score += 4
-        if reference.feature_name and candidate.get("feature_name", candidate.get("name")) == reference.feature_name:
+        if (
+            reference.feature_name
+            and candidate.get("feature_name", candidate.get("name"))
+            == reference.feature_name
+        ):
             score += 3
-        if reference.geometry_signature and candidate.get("geometry_signature") == reference.geometry_signature:
+        if (
+            reference.geometry_signature
+            and candidate.get("geometry_signature") == reference.geometry_signature
+        ):
             score += 5
         if score:
             scored.append((score, candidate))
     if not scored:
-        return {"status": "not_found", "reference": reference.to_dict(), "candidates": []}
+        return {
+            "status": "not_found",
+            "reference": reference.to_dict(),
+            "candidates": [],
+        }
     best_score = max(score for score, _ in scored)
     best = [candidate for score, candidate in scored if score == best_score]
     if len(best) != 1:
-        return {"status": "ambiguous", "score": best_score, "reference": reference.to_dict(), "candidates": [dict(item) for item in best]}
-    return {"status": "resolved", "score": best_score, "reference": reference.to_dict(), "entity": dict(best[0])}
+        return {
+            "status": "ambiguous",
+            "score": best_score,
+            "reference": reference.to_dict(),
+            "candidates": [dict(item) for item in best],
+        }
+    return {
+        "status": "resolved",
+        "score": best_score,
+        "reference": reference.to_dict(),
+        "entity": dict(best[0]),
+    }

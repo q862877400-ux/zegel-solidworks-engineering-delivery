@@ -32,6 +32,7 @@ r"""@brief 门禁：**所有**逐条自评表的 A 编号必须与 `AGENTS.md §
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import os
@@ -43,7 +44,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parents[1]
 #: `AGENTS.md` 在**工作区**（不在本仓库）⇒ 可用环境变量覆盖；拿不到就 SKIP。
-AGENTS = Path(os.environ.get("DSH_AGENTS_MD", Path(__file__).resolve().parents[1] / "AGENTS.md"))
+AGENTS = Path(
+    os.environ.get("DSH_AGENTS_MD", Path(__file__).resolve().parents[1] / "AGENTS.md")
+)
 
 CRIT_ROW = re.compile(r"^\|\s*\*{0,2}(A\d+)\*{0,2}\s*\|")
 #: 一张表至少要有这么多 `A\d+` 行，才算「逐条自评表」（排除"顺带提到 A5"）
@@ -87,7 +90,7 @@ def _tables(text: str) -> list:
         if line.startswith("|"):
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
             if not cells or set(cells[0]) <= set("-: "):
-                continue                      # 分隔行
+                continue  # 分隔行
             if not in_block:
                 in_block, ids, odd, start = True, set(), [], i
             m = CRIT_ROW.match(line)
@@ -124,8 +127,12 @@ def main() -> int:
 
     #: ⚑ **首行自带分母**（轮 192）：分母本来在下一行，而**只看首行的人会以为没有**
     #:   （本项目实测过一次这样的误判）。
-    print("报告判据编号门禁 · 权威来自 `AGENTS.md §一`（权威判据 **%d** 条）" % len(auth))
-    print("  权威判据 **%d** 条：%s" % (len(auth), sorted(auth, key=lambda s: int(s[1:]))))
+    print(
+        "报告判据编号门禁 · 权威来自 `AGENTS.md §一`（权威判据 **%d** 条）" % len(auth)
+    )
+    print(
+        "  权威判据 **%d** 条：%s" % (len(auth), sorted(auth, key=lambda s: int(s[1:])))
+    )
     print()
 
     scanned = bad = 0
@@ -147,20 +154,33 @@ def main() -> int:
                 if extra:
                     print("         有**定义里没有**的编号：%s" % extra)
                 if odd:
-                    print("         混入**非 `A\\d+`** 的行（属于别的节）：%s" % odd[:6])
+                    print(
+                        "         混入**非 `A\\d+`** 的行（属于别的节）：%s" % odd[:6]
+                    )
             else:
-                print("[PASS] %s（表起始第 %d 行）· %d 条逐条一致" % (rel, start, len(ids)))
+                print(
+                    "[PASS] %s（表起始第 %d 行）· %d 条逐条一致"
+                    % (rel, start, len(ids))
+                )
 
     print()
     if scanned == 0:
         print("[FAIL] **一张逐条自评表都没扫到** —— 判据没作用到任何地方")
-        print("  修法：自评表要有 `| **A1** | …` 这样以 `A\\d+` 开头的行，且**至少 %d 行**。" % MIN_ROWS)
+        print(
+            "  修法：自评表要有 `| **A1** | …` 这样以 `A\\d+` 开头的行，且**至少 %d 行**。"
+            % MIN_ROWS
+        )
         return 1
     if bad:
         print("  修法：让**每一张**自评表都**逐条对应 `AGENTS.md §一` 的 A1–A10** ——")
-        print("        **编号、条数、含义三样都对齐**（同名不同事是这一类问题的根因）。")
+        print(
+            "        **编号、条数、含义三样都对齐**（同名不同事是这一类问题的根因）。"
+        )
         return 1
-    print("[PASS] 扫了 **%d** 张自评表，**每一张**的编号都与 `AGENTS.md §一` 逐条一致" % scanned)
+    print(
+        "[PASS] 扫了 **%d** 张自评表，**每一张**的编号都与 `AGENTS.md §一` 逐条一致"
+        % scanned
+    )
     return 0
 
 

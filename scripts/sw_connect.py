@@ -2,6 +2,7 @@
 SolidWorks 连接工具
 提供连接到 SolidWorks 实例的各种方法
 """
+
 import glob
 import os
 import tempfile
@@ -35,9 +36,9 @@ DOC_TYPE_LABELS = {
 }
 
 DEFAULT_TEMPLATE_PREFS = {
-    "part": 8,       # swUserPreferenceStringValue_e.swDefaultTemplatePart
-    "assembly": 9,   # swUserPreferenceStringValue_e.swDefaultTemplateAssembly
-    "drawing": 10,   # swUserPreferenceStringValue_e.swDefaultTemplateDrawing
+    "part": 8,  # swUserPreferenceStringValue_e.swDefaultTemplatePart
+    "assembly": 9,  # swUserPreferenceStringValue_e.swDefaultTemplateAssembly
+    "drawing": 10,  # swUserPreferenceStringValue_e.swDefaultTemplateDrawing
 }
 
 SW_ALWAYS_USE_DEFAULT_TEMPLATES = 111
@@ -68,12 +69,16 @@ class _LaunchGuard:
             kernel32 = ctypes.windll.kernel32
             self.handle = kernel32.CreateMutexW(None, False, self.name)
             if not self.handle:
-                raise SolidWorksConnectionError("SW_MUTEX", "locking", "无法创建 SolidWorks 启动互斥锁")
+                raise SolidWorksConnectionError(
+                    "SW_MUTEX", "locking", "无法创建 SolidWorks 启动互斥锁"
+                )
             wait_result = kernel32.WaitForSingleObject(self.handle, 15000)
             if wait_result not in (0, 0x80):
                 kernel32.CloseHandle(self.handle)
                 self.handle = None
-                raise SolidWorksConnectionError("SW_MUTEX_TIMEOUT", "locking", "等待其它启动任务超时")
+                raise SolidWorksConnectionError(
+                    "SW_MUTEX_TIMEOUT", "locking", "等待其它启动任务超时"
+                )
             return self
 
         try:
@@ -88,7 +93,9 @@ class _LaunchGuard:
             except (ProcessLookupError, ValueError):
                 self.path.unlink(missing_ok=True)
                 return self.__enter__()
-            raise SolidWorksConnectionError("SW_MUTEX_BUSY", "locking", "已有 SolidWorks 启动任务") from exc
+            raise SolidWorksConnectionError(
+                "SW_MUTEX_BUSY", "locking", "已有 SolidWorks 启动任务"
+            ) from exc
         return self
 
     def __exit__(self, *_):
@@ -130,19 +137,66 @@ class _LaunchGuard:
 #:   ⇒ 只读路径（`Get*`/`Is*`/`Has*`）**不计数** ✓
 #: ⚠ **未 arm 时是空操作** ⇒ 对既有行为**零影响**（无性能与语义代价）。
 _WRITE_VERB = (
-    "Insert", "Create", "Add", "Set", "Delete", "Remove", "Modify", "Edit",
-    "Clear", "Save", "Close", "Open", "Export", "Import", "Rebuild", "Force",
-    "Update", "Replace", "Move", "Copy", "Scale", "Mirror", "Pattern",
-    "Extrude", "Revolve", "Fillet", "Chamfer", "Shell", "Draft", "Thicken",
-    "Sketch", "Select", "Unselect", "Activate", "Exit", "Run", "Load",
+    "Insert",
+    "Create",
+    "Add",
+    "Set",
+    "Delete",
+    "Remove",
+    "Modify",
+    "Edit",
+    "Clear",
+    "Save",
+    "Close",
+    "Open",
+    "Export",
+    "Import",
+    "Rebuild",
+    "Force",
+    "Update",
+    "Replace",
+    "Move",
+    "Copy",
+    "Scale",
+    "Mirror",
+    "Pattern",
+    "Extrude",
+    "Revolve",
+    "Fillet",
+    "Chamfer",
+    "Shell",
+    "Draft",
+    "Thicken",
+    "Sketch",
+    "Select",
+    "Unselect",
+    "Activate",
+    "Exit",
+    "Run",
+    "Load",
     #: ★★ 实测补（2026-10-11）：`FeatureExtrusion3` / `FeatureCut4` /
     #:   `FeatureRevolve2` / `FeatureCircularPattern4` 都是**建特征**的写调用，
     #:   而它们以 **`Feature`** 开头 ⇒ 漏了它会把最核心的建模调用**记成只读**
     #:   （★ 实测踩过：`_bump_if_write('FeatureExtrusion3')` 当时没记上）。
     "Feature",
 )
-_READ_VERB = ("Get", "Is", "Has", "Read", "List", "Count", "Find", "Query",
-              "Collect", "Inspect", "Check", "Measure", "Evaluate", "Test", "Describe")
+_READ_VERB = (
+    "Get",
+    "Is",
+    "Has",
+    "Read",
+    "List",
+    "Count",
+    "Find",
+    "Query",
+    "Collect",
+    "Inspect",
+    "Check",
+    "Measure",
+    "Evaluate",
+    "Test",
+    "Describe",
+)
 
 
 def _bump_if_write(attr_name: str) -> None:
@@ -159,8 +213,8 @@ def _bump_if_write(attr_name: str) -> None:
     if attr_name.startswith(_WRITE_VERB):
         try:
             fn(attr_name)
-        except Exception:      # noqa: BLE001
-            pass               #: ★ 计数失败**不得**影响 COM 调用
+        except Exception:  # noqa: BLE001
+            pass  #: ★ 计数失败**不得**影响 COM 调用
 
 
 def set_com_write_hook(fn) -> None:
@@ -226,7 +280,14 @@ def get_com_member(obj, attr_name, *args):
                 "★ **不是参数没传对**（★ 事实 28 / 386）。"
                 "★ 官方签名里该成员可能是存在的（`kind: method`）⇒ "
                 "★ 请查 `type(getattr(obj, %r))` 与 `callable(...)`，不要改参数重试。"
-                % (type(obj).__name__, attr_name, len(args), type(member).__name__, attr_name))
+                % (
+                    type(obj).__name__,
+                    attr_name,
+                    len(args),
+                    type(member).__name__,
+                    attr_name,
+                )
+            )
         #: ★★ 阶段 1 · C6（2026-10-11）：**在 COM 边界上数写调用** ——
         #:   ★ 这是 SC-009「负例的 COM 写调用数必须为 0」的**唯一判据来源**
         #:   （★ 事实 8：返回值不可信 ⇒ 判「写没写」只能**在边界计数**）。
@@ -252,11 +313,16 @@ def get_com_member(obj, attr_name, *args):
         return member() if callable(member) else member
     except Exception as exc:
         message = str(exc)
-        if ("-2147352573" in message or "找不到成员" in message or "Member not found" in message
-                #: `DISP_E_PARAMNOTOPTIONAL` —— 说明"它是个**需要实参的方法**"，
-                #: 而不是"读不到这个成员"。
-                or "-2147352561" in message or "非选择性的参数" in message
-                or "Parameter not optional" in message):
+        if (
+            "-2147352573" in message
+            or "找不到成员" in message
+            or "Member not found" in message
+            #: `DISP_E_PARAMNOTOPTIONAL` —— 说明"它是个**需要实参的方法**"，
+            #: 而不是"读不到这个成员"。
+            or "-2147352561" in message
+            or "非选择性的参数" in message
+            or "Parameter not optional" in message
+        ):
             return member
         raise
 
@@ -280,9 +346,9 @@ def call_com_member(obj, attr_name, *args):
 
 #: 官方 `swProcessType_e` 之类与「模态框」相关的常量**没有官方枚举** ⇒ 本模块只用两个
 #: **Win32 公开常量**（不是魔法数）：
-_WM_COMMAND = 0x0111        #: Win32 `WM_COMMAND`
-_IDOK = 1                   #: Win32 标准「确定 / OK」按钮的命令 ID
-_DIALOG_CLASS = "#32770"    #: Win32 **预定义对话框类**（官方常量 `WC_DIALOG`）
+_WM_COMMAND = 0x0111  #: Win32 `WM_COMMAND`
+_IDOK = 1  #: Win32 标准「确定 / OK」按钮的命令 ID
+_DIALOG_CLASS = "#32770"  #: Win32 **预定义对话框类**（官方常量 `WC_DIALOG`）
 
 
 def solidworks_process_id(sw):
@@ -313,12 +379,16 @@ def _resolve_pid(target=None):
     """
     if target is None:
         import win32com.client
+
         #: ⚠ 用 `call_com_member` 而**不是**直接 `.GetProcessID()` —— pywin32 迟到绑定下
         #: 成员**有时解析成属性、有时解析成方法**（轮 167 实测：直接
         #: `(...).GetProcessID()` 报 `TypeError: 'int' object is not callable`，
         #: 因为它已被求值成 int）。★ 这正是 `call_com_member` 存在的理由。
-        return int(call_com_member(
-            win32com.client.GetActiveObject("SldWorks.Application"), "GetProcessID"))
+        return int(
+            call_com_member(
+                win32com.client.GetActiveObject("SldWorks.Application"), "GetProcessID"
+            )
+        )
     if isinstance(target, int):
         return target
     return solidworks_process_id(target)
@@ -328,12 +398,13 @@ def _dialog_handles(pid, *, only_visible=False):
     """枚举某 PID 的顶层窗口里 class 为 `#32770` 的那些（**Win32 `WC_DIALOG`**）。"""
     import ctypes
     import ctypes.wintypes as _w
+
     u = ctypes.windll.user32
     out: list = []
     total = [0]
 
     @ctypes.WINFUNCTYPE(ctypes.c_bool, _w.HWND, _w.LPARAM)
-    def cb(h, _l):      # noqa: ANN001
+    def cb(h, _l):  # noqa: ANN001
         p = _w.DWORD()
         u.GetWindowThreadProcessId(h, ctypes.byref(p))
         if p.value != pid:
@@ -359,6 +430,7 @@ def count_residual_dialogs(target=None, *, settle_seconds=0.0, poll_ms=200):
     计数里，读日志时误判成「没点掉」。**发现与处置是两件事，计数也要分开。**
     """
     import time
+
     pid = _resolve_pid(target)
     best_n = 0
     #: ⚠ `scanned` **每一轮都更新**（不是只在发现对话框时）—— 否则"没发现"会报成
@@ -393,6 +465,7 @@ def dismiss_residual_dialogs(target=None, *, settle_seconds=0.0, poll_ms=200):
     """
     import ctypes
     import time
+
     pid = _resolve_pid(target)
     dismissed = 0
     scanned = 0
@@ -431,6 +504,7 @@ def settle_residual_dialogs(target=None, *, settle_seconds=1.0, poll_ms=200):
     dismissed = 0
     scanned = 0
     import time
+
     pid = _resolve_pid(target)
     deadline = time.time() + max(0.0, float(settle_seconds))
     while True:
@@ -439,6 +513,7 @@ def settle_residual_dialogs(target=None, *, settle_seconds=1.0, poll_ms=200):
         found = max(found, len(handles))
         for h in handles:
             import ctypes
+
             ctypes.windll.user32.PostMessageW(h, _WM_COMMAND, _IDOK, 0)
             dismissed += 1
         if time.time() >= deadline:
@@ -477,7 +552,8 @@ def residual_dialogs(pid=None, *, only_visible=False, settle_seconds=1.0, poll_m
     import ctypes
     import ctypes.wintypes as _w
     import time
-    pid = _resolve_pid(pid)          #: ★ `None` ⇒ 自己从 COM 派生（零硬编码）
+
+    pid = _resolve_pid(pid)  #: ★ `None` ⇒ 自己从 COM 派生（零硬编码）
     u = ctypes.windll.user32
 
     def one_pass():
@@ -485,7 +561,7 @@ def residual_dialogs(pid=None, *, only_visible=False, settle_seconds=1.0, poll_m
         total = [0]
 
         @ctypes.WINFUNCTYPE(ctypes.c_bool, _w.HWND, _w.LPARAM)
-        def cb(h, _l):      # noqa: ANN001
+        def cb(h, _l):  # noqa: ANN001
             p = _w.DWORD()
             u.GetWindowThreadProcessId(h, ctypes.byref(p))
             if p.value != pid:
@@ -534,7 +610,9 @@ def get_com_member_raw(obj, attr_name):
     """
     return getattr(obj, attr_name)
 
+
 #: dispatch-guard: covered-wrappers
+
 
 def safe_get_com_member(obj, attr_name, *args):
     """
@@ -727,7 +805,9 @@ def _wait_until_ready(sw, timeout_seconds):
             last_error = exc
             time.sleep(0.1)
     raise SolidWorksConnectionError(
-        "SW_START_TIMEOUT", "ready", f"SolidWorks 启动超时（{timeout_seconds:.1f}s）: {last_error or 'COM 未就绪'}"
+        "SW_START_TIMEOUT",
+        "ready",
+        f"SolidWorks 启动超时（{timeout_seconds:.1f}s）: {last_error or 'COM 未就绪'}",
     )
 
 
@@ -741,15 +821,25 @@ def _record_owned_instance(sw, prog_id: str) -> None:
     try:
         import json as _json
         import time as _time
+
         pid = None
         try:
             pid = int(get_com_member(sw, "GetProcessID"))
         except Exception:
             pass
         OWNED_MARKER.parent.mkdir(parents=True, exist_ok=True)
-        OWNED_MARKER.write_text(_json.dumps(
-            {"pid": pid, "prog_id": prog_id, "at": _time.strftime("%Y-%m-%dT%H:%M:%S")},
-            ensure_ascii=False, indent=2), encoding="utf-8")
+        OWNED_MARKER.write_text(
+            _json.dumps(
+                {
+                    "pid": pid,
+                    "prog_id": prog_id,
+                    "at": _time.strftime("%Y-%m-%dT%H:%M:%S"),
+                },
+                ensure_ascii=False,
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
     except Exception:
         #: 标记写失败**不许影响连接** —— 代价只是"这次回收时证不出归属"。
         pass
@@ -759,6 +849,7 @@ def read_owned_instance() -> dict | None:
     """读归属标记；没有就回 None。"""
     try:
         import json as _json
+
         return _json.loads(OWNED_MARKER.read_text(encoding="utf-8"))
     except Exception:
         return None
@@ -786,7 +877,9 @@ def close_owned_solidworks(sw, started_by_cad_studio):
     return False
 
 
-def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metadata=False):
+def connect_solidworks(
+    version=None, wait_seconds=5, visible=True, return_metadata=False
+):
     """
     连接到 SolidWorks 实例。
 
@@ -829,11 +922,15 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
             except Exception as launch_error:
                 close_owned_solidworks(sw, launched_here)
                 raise SolidWorksConnectionError(
-                    "SW_LAUNCH_FAILED", "launch", f"无法启动 {prog_id}: {launch_error}; attach={attach_error}"
+                    "SW_LAUNCH_FAILED",
+                    "launch",
+                    f"无法启动 {prog_id}: {launch_error}; attach={attach_error}",
                 ) from launch_error
 
     if sw is None:
-        raise SolidWorksConnectionError("SW_NO_INSTANCE", "connect", "未获得 SolidWorks COM 实例")
+        raise SolidWorksConnectionError(
+            "SW_NO_INSTANCE", "connect", "未获得 SolidWorks COM 实例"
+        )
 
     model = _read_active_document(sw)
     if model:
@@ -860,7 +957,7 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
     #:     （★ 与"没这个键"区分开：★ **键一定在**、值可能是 `None`）✓
     try:
         revision = get_sw_version(sw)["revision"]
-    except Exception:                                                  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         revision = None
     metadata = {
         "prog_id": prog_id,
@@ -893,9 +990,18 @@ def find_template(sw, doc_type="part"):
     doc_type, _ = normalize_doc_type(doc_type)
 
     type_map = {
-        "part": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["part"]), "*.prtdot"),
-        "assembly": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["assembly"]), "*.asmdot"),
-        "drawing": (sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["drawing"]), "*.drwdot"),
+        "part": (
+            sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["part"]),
+            "*.prtdot",
+        ),
+        "assembly": (
+            sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["assembly"]),
+            "*.asmdot",
+        ),
+        "drawing": (
+            sw.GetUserPreferenceStringValue(DEFAULT_TEMPLATE_PREFS["drawing"]),
+            "*.drwdot",
+        ),
     }
 
     default_path, pattern = type_map.get(doc_type, type_map["part"])
@@ -950,13 +1056,20 @@ def ensure_default_templates(sw):
         template_path = find_template(sw, doc_type)
         templates[doc_type] = template_path
         current_path = str(sw.GetUserPreferenceStringValue(preference) or "")
-        restore.append({"kind": "string", "preference": preference, "old": current_path})
+        restore.append(
+            {"kind": "string", "preference": preference, "old": current_path}
+        )
         if _expand_path(current_path) != _expand_path(template_path):
             sw.SetUserPreferenceStringValue(preference, template_path)
     try:
         old_toggle = sw.GetUserPreferenceToggle(SW_ALWAYS_USE_DEFAULT_TEMPLATES)
-        restore.append({"kind": "toggle", "preference": SW_ALWAYS_USE_DEFAULT_TEMPLATES,
-                        "old": old_toggle})
+        restore.append(
+            {
+                "kind": "toggle",
+                "preference": SW_ALWAYS_USE_DEFAULT_TEMPLATES,
+                "old": old_toggle,
+            }
+        )
         sw.SetUserPreferenceToggle(SW_ALWAYS_USE_DEFAULT_TEMPLATES, True)
     except Exception as exc:
         print(f"提示: 无法设置始终使用默认模板: {exc}")
@@ -974,10 +1087,19 @@ def restore_default_templates(sw, template_info):
     # preference-guard: 本函数就是"还原那一步"（★ 写回 `ensure_default_templates` 记下的
     # 旧值 —— 事实 525）
     for item in info.get("restore") or []:
-        kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
+        kind, preference, old = (
+            item.get("kind"),
+            item.get("preference"),
+            item.get("old"),
+        )
         if old is None or (kind == "string" and old == ""):
-            skipped.append({"kind": kind, "preference": preference,
-                            "why": "★ 旧值读不到/为空 ⇒ 不写回（免得写错）"})
+            skipped.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "why": "★ 旧值读不到/为空 ⇒ 不写回（免得写错）",
+                }
+            )
             continue
         try:
             if kind == "string":
@@ -988,12 +1110,28 @@ def restore_default_templates(sw, template_info):
                 sw.SetUserPreferenceToggle(preference, bool(old))
                 back = sw.GetUserPreferenceToggle(preference)
                 match = bool(back) == bool(old)
-            restored.append({"kind": kind, "preference": preference, "old": old,
-                             "readback": back, "match": match})
-        except Exception as exc:                               # noqa: BLE001
-            errors.append({"kind": kind, "preference": preference,
-                           "error": f"{type(exc).__name__}: {str(exc)[:120]}"})
-    info["restored"], info["restore_skipped"], info["restore_errors"] = restored, skipped, errors
+            restored.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "old": old,
+                    "readback": back,
+                    "match": match,
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            errors.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "error": f"{type(exc).__name__}: {str(exc)[:120]}",
+                }
+            )
+    info["restored"], info["restore_skipped"], info["restore_errors"] = (
+        restored,
+        skipped,
+        errors,
+    )
     if errors:
         print(f"⚠ 默认模板偏好的还原有失败项 ⇒ {errors}")
     return info
@@ -1026,7 +1164,9 @@ def new_document(sw, doc_type="part", template_path=None):
             time.sleep(0.25)
 
     if model is None:
-        raise RuntimeError(f"创建{DOC_TYPE_LABELS.get(doc_type, doc_type)}文档失败，SolidWorks 未返回活动文档")
+        raise RuntimeError(
+            f"创建{DOC_TYPE_LABELS.get(doc_type, doc_type)}文档失败，SolidWorks 未返回活动文档"
+        )
 
     print(f"已创建新{DOC_TYPE_LABELS.get(doc_type, doc_type)}文档")
     return model
@@ -1066,7 +1206,7 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
         IModelDoc2 对象
     """
     file_path = _expand_path(file_path)
-    #: ★★★ **B5-3 的咽喉点**：会打开文档的调用**几乎都经过这里** ⇒ 沙盒策略就挂在这一处 
+    #: ★★★ **B5-3 的咽喉点**：会打开文档的调用**几乎都经过这里** ⇒ 沙盒策略就挂在这一处
     #: ✓
     #: ★★ 评审的判决：要守的**不是**"输出不落在输入旁边"，而是「**打开的永远不是原件**」
     #: ——
@@ -1075,7 +1215,7 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     #:   ★ 默认 `passthrough`（不改变既有行为）；★ **护栏**会给探针设 `enforce` ✓
     try:
         import sw_sandbox as _sb
-    except ImportError:                                                 # pragma: no cover
+    except ImportError:  # pragma: no cover
         try:
             from . import sw_sandbox as _sb
         except ImportError:
@@ -1121,7 +1261,7 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     #:   ★★ 官方开关（★ `swOpenDocOptions_e` 枚举）：
     #:     **`swOpenDocOptions_LoadExternalReferencesInMemory = 512 (0x200)`**
     #:     —— 官方原话「**Open external references in memory only**」。
-    #: ★★★ **而官方还明说**：「`swExtRefLoadRefDocsInMemory`（System Options → External 
+    #: ★★★ **而官方还明说**：「`swExtRefLoadRefDocsInMemory`（System Options → External
     #: References →
     #: Load documents in memory only）**is ignored when opening documents through the AP
     #: I**
@@ -1138,7 +1278,9 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
         if read_only:
             print("提示: LoadFile4 导入外来 CAD 文件时不支持 read_only，已忽略该参数")
         if silent:
-            print("提示: LoadFile4 导入外来 CAD 文件时不支持 OpenDoc6 silent 选项，已忽略该参数")
+            print(
+                "提示: LoadFile4 导入外来 CAD 文件时不支持 OpenDoc6 silent 选项，已忽略该参数"
+            )
         #: ★★ 2026-10-04（接手轮）**这两条偏好用完立刻还回去**（★ 交付纪律 · 事实 525）
         #: ：
         #:   原文是 `ensure_default_templates(sw)` **直接写全局用户偏好且永不还原**
@@ -1147,7 +1289,7 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
         #: 「Fully qualified path and name of the template」—— ★ 我们自己的 `new_documen
         #: t`
         #:     也**已经直接传完整路径** ⇒ 这两条偏好**只在 SolidWorks 内部创建文档时才需要**
-        #: （`LoadFile4` 导入外来 CAD 正是这种情形）⇒ ★ 故用 `try/finally` 只包住那一步 
+        #: （`LoadFile4` 导入外来 CAD 正是这种情形）⇒ ★ 故用 `try/finally` 只包住那一步
         #: ✓
         template_info = ensure_default_templates(sw)
         try:
@@ -1169,7 +1311,9 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
                 ole_object = getattr(sw, "_oleobj_", None)
                 if ole_object is None:
                     raise
-                dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
+                dynamic_sw = win32com_client.dynamic.DumbDispatch(
+                    ole_object, "SldWorks.Application"
+                )
                 model = dynamic_sw.LoadFile4(file_path, "r", import_data, errors)
         finally:
             restore_default_templates(sw, template_info)
@@ -1184,8 +1328,12 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
             ole_object = getattr(sw, "_oleobj_", None)
             if ole_object is None:
                 raise
-            dynamic_sw = win32com_client.dynamic.DumbDispatch(ole_object, "SldWorks.Application")
-            model = dynamic_sw.OpenDoc6(file_path, doc_type, options, "", errors, warnings)
+            dynamic_sw = win32com_client.dynamic.DumbDispatch(
+                ole_object, "SldWorks.Application"
+            )
+            model = dynamic_sw.OpenDoc6(
+                file_path, doc_type, options, "", errors, warnings
+            )
         if isinstance(model, (tuple, list)):
             values = list(model)
             model = values[0] if values else None
@@ -1218,10 +1366,12 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     #: （见 `dismiss_residual_dialogs` 的 docstring：★ 「查得太早 ⇒ 报无残留而屏幕上明明
     #: 有一个」）。
     try:
-        found, dismissed, _scanned = settle_residual_dialogs(sw, settle_seconds=1.5, poll_ms=250)
+        found, dismissed, _scanned = settle_residual_dialogs(
+            sw, settle_seconds=1.5, poll_ms=250
+        )
         if found:
             print(f"  模态框收尾: 发现 {found} 个 · 点掉 {dismissed} 个")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print(f"  模态框收尾失败（不阻断打开）: {type(exc).__name__}: {str(exc)[:120]}")
     return model
 
@@ -1287,4 +1437,5 @@ def mm(value):
 def deg(value):
     """角度转弧度。"""
     import math
+
     return value * math.pi / 180.0

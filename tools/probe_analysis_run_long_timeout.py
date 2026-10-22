@@ -68,32 +68,35 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 OUT = REPO / "output" / "analysis-run-long-timeout-evidence.json"
 #: ★ 带时间戳的唯一名（★ 本仓逐字：「算例**重名**会让计数回读取不到」）✓
 STUDY = "SPEC202_LongSolve_%d" % int(time.time())
-T_RUN = 1800.0        # ① 300 s → 1800 s
+T_RUN = 1800.0  # ① 300 s → 1800 s
 T_MESH = 600.0
-#: ★ 2026-10-04（第十版）：★ **建网格这一步单独用一个更短的上限** —— ★ 真机实测它**卡过 
+#: ★ 2026-10-04（第十版）：★ **建网格这一步单独用一个更短的上限** —— ★ 真机实测它**卡过
 #: 9 分钟**
-  #: 没回来（内存平稳、SW `Not Responding`）⇒ ★ 为了"探得动"，这一步**有界在 5 分钟**：
-  #: ★ 到点就**杀子进程并如实报 `timed_out`**（★ 那本身就是一条可用结论）✓
+#: 没回来（内存平稳、SW `Not Responding`）⇒ ★ 为了"探得动"，这一步**有界在 5 分钟**：
+#: ★ 到点就**杀子进程并如实报 `timed_out`**（★ 那本身就是一条可用结论）✓
 T_MESH_SAFE = 300.0
 #: ③ 求解后轮询：★ 每 15 s 读一次 `Results`，最多 40 次（10 分钟）
 POLL_EVERY, POLL_MAX = 15.0, 40
 
 
 def main() -> int:
-    ev: dict = {"★_目的": "给足超时 + **正确网格尺寸**，验「跑求解」能不能算出结果",
-                "★_T_RUN_秒": T_RUN,
-                "★_根因假设": "create_mesh 的 element_size 吃**毫米**；"
-                              "mesh_size_report(units=-1) 回的是**米** ⇒ 上一版喂 4930.5 毫米 = 4.9 米/单元",
-                "★_前情": "① element_size=4.9339(mm) ⇒ 7310 单元 ⇒ 求解 1 秒出 4 张图（跑通）"
-                          "；② element_size=4930.5 ⇒ 退化退回默认 7250 单元 ⇒ 结果为空"
-                          "；③ 真正 timed_out=True 的那次网格是对的（观察窗：建立刚度矩阵 33 分钟）",
-                "steps": {}}
+    ev: dict = {
+        "★_目的": "给足超时 + **正确网格尺寸**，验「跑求解」能不能算出结果",
+        "★_T_RUN_秒": T_RUN,
+        "★_根因假设": "create_mesh 的 element_size 吃**毫米**；"
+        "mesh_size_report(units=-1) 回的是**米** ⇒ 上一版喂 4930.5 毫米 = 4.9 米/单元",
+        "★_前情": "① element_size=4.9339(mm) ⇒ 7310 单元 ⇒ 求解 1 秒出 4 张图（跑通）"
+        "；② element_size=4930.5 ⇒ 退化退回默认 7250 单元 ⇒ 结果为空"
+        "；③ 真正 timed_out=True 的那次网格是对的（观察窗：建立刚度矩阵 33 分钟）",
+        "steps": {},
+    }
     doc = None
 
     def flush() -> None:
         """★ **每一步都落盘**（★ 第八版新增）—— ★ 上一版挂住时 `ev` 还在内存里、**读数全丢** ✓"""
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str),
-                       encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        )
 
     try:
         import sw_connect
@@ -103,7 +106,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                             # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ① 造零件 + 材料 + 研究 + 夹具 + 载荷（★ 这些不弹框 ⇒ 留父进程）
@@ -145,26 +148,45 @@ def main() -> int:
             _items = []
             for _i in range(_cnt):
                 try:
-                    _it = sw_connect.safe_get_com_member(_mgr, "GetLoadsAndRestraints", _i,
-                                                         sw_connect.out_i4())
-                    _items.append({"name": str(sw_connect.safe_get_com_member(_it, "Name") or ""),
-                                   "type": sw_connect.safe_get_com_member(_it, "Type"),
-                                   "entities": sw_connect.safe_get_com_member(_it, "EntityCount"),
-                                   "state": sw_connect.safe_get_com_member(_it, "State")})
-                except Exception as exc:                                   # noqa: BLE001
-                    _items.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:60])})
+                    _it = sw_connect.safe_get_com_member(
+                        _mgr, "GetLoadsAndRestraints", _i, sw_connect.out_i4()
+                    )
+                    _items.append(
+                        {
+                            "name": str(
+                                sw_connect.safe_get_com_member(_it, "Name") or ""
+                            ),
+                            "type": sw_connect.safe_get_com_member(_it, "Type"),
+                            "entities": sw_connect.safe_get_com_member(
+                                _it, "EntityCount"
+                            ),
+                            "state": sw_connect.safe_get_com_member(_it, "State"),
+                        }
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    _items.append(
+                        {"error": "%s: %s" % (type(exc).__name__, str(exc)[:60])}
+                    )
             ev["steps"]["loads_and_restraints"] = {"count": _cnt, "items": _items}
-        except Exception as exc:                                           # noqa: BLE001
-            ev["steps"]["loads_and_restraints"] = {"error": "%s: %s" % (type(exc).__name__,
-                                                                       str(exc)[:120])}
-        print("  [1e] 夹具/载荷读数: %s" % str(ev["steps"]["loads_and_restraints"])[:220])
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["loads_and_restraints"] = {
+                "error": "%s: %s" % (type(exc).__name__, str(exc)[:120])
+            }
+        print(
+            "  [1e] 夹具/载荷读数: %s" % str(ev["steps"]["loads_and_restraints"])[:220]
+        )
         flush()
         ev["steps"]["setup"] = {"material": material, "study": STUDY}
 
         def iso(fn: str, args: list, kwargs: dict, timeout: float) -> dict:
             t0 = time.time()
-            r = run_isolated("scripts.sw_simulation_worker", fn,
-                             args=args, kwargs=kwargs, timeout=timeout)
+            r = run_isolated(
+                "scripts.sw_simulation_worker",
+                fn,
+                args=args,
+                kwargs=kwargs,
+                timeout=timeout,
+            )
             r["wall_seconds"] = round(time.time() - t0, 1)
             return r
 
@@ -177,7 +199,7 @@ def main() -> int:
         #: ★★★ **选哪个**：★ 用**几何判据**（`check_mesh_size_sane`：单元尺寸不得大于零
         #: 件最大边）
         #:     —— ★ 它是**既有的那道闸**、且与本探针的零件尺寸直接相关
-        #: ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实** 
+        #: ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实**
         #: ✓
         #:   ★★★★ **先等 SolidWorks 闲下来**（★ 第十版新增）：★ 真机实测（2026-10-04）——
         #:     ★ 刚把 SW 拉起来那几秒它自己在忙 ⇒ ★ **忙检把三次读数全拒了**（★ 假警报）
@@ -187,11 +209,15 @@ def main() -> int:
         idle = wait_until_idle(timeout=90, interval=3.0)
         ev["steps"]["wait_until_idle"] = idle
         flush()
-        print("  [1a] 等 SolidWorks 空闲: idle=%s waited=%ss attempts=%s"
-              % (idle.get("idle"), idle.get("waited"), idle.get("attempts")))
+        print(
+            "  [1a] 等 SolidWorks 空闲: idle=%s waited=%ss attempts=%s"
+            % (idle.get("idle"), idle.get("waited"), idle.get("attempts"))
+        )
         if not idle.get("idle"):
-            raise RuntimeError("SolidWorks 一直忙 ⇒ 停下（★ 忙时下发调用会卡死，事实 526）：%s"
-                               % idle.get("reason"))
+            raise RuntimeError(
+                "SolidWorks 一直忙 ⇒ 停下（★ 忙时下发调用会卡死，事实 526）：%s"
+                % idle.get("reason")
+            )
         reading: dict = {}
         for u in (-1, 0, 2):
             r = iso("mesh_size_by_name", [STUDY], {"units": u}, 120)
@@ -200,18 +226,27 @@ def main() -> int:
                 #: ★ 忙拒绝 ⇒ **等一下重试一次**（★ 那是设计好的拒绝，不是能力坏了）
                 wait_until_idle(timeout=60, interval=3.0)
                 r = iso("mesh_size_by_name", [STUDY], {"units": u}, 120)
-                got = (r.get("result") or {}) if isinstance(r.get("result"), dict) else {}
+                got = (
+                    (r.get("result") or {}) if isinstance(r.get("result"), dict) else {}
+                )
                 if got.get("blocked") == "SOLIDWORKS_BUSY":
-                    raise RuntimeError("忙检两次都拒 ⇒ 停下（★ 不硬闯，事实 526）：%s"
-                                       % got.get("error"))
-            reading["units=%d" % u] = {"ok": r.get("ok"), "timed_out": r.get("timed_out"),
-                                       "result": r.get("result")}
-            print("  [1] units=%-3d element_size=%r tolerance=%r"
-                  % (u, got.get("element_size"), got.get("tolerance")))
+                    raise RuntimeError(
+                        "忙检两次都拒 ⇒ 停下（★ 不硬闯，事实 526）：%s"
+                        % got.get("error")
+                    )
+            reading["units=%d" % u] = {
+                "ok": r.get("ok"),
+                "timed_out": r.get("timed_out"),
+                "result": r.get("result"),
+            }
+            print(
+                "  [1] units=%-3d element_size=%r tolerance=%r"
+                % (u, got.get("element_size"), got.get("tolerance"))
+            )
 
         #: ★ 候选：每个都是「**值 + 与之配套的单位口径**」的一对（★ 口径写在名字里）——
         #:   ★★★ 真机对照（`tools/probe_mesh_profile_matrix.py` 四档）把这件事**钉死了**：
-        #: `units=2`（Metric=**毫米**）+ `element_size=4.9305` ⇒ 网格 **7250 单元 / 1.1 
+        #: `units=2`（Metric=**毫米**）+ `element_size=4.9305` ⇒ 网格 **7250 单元 / 1.1
         #: s** ✓
         #: ★ 而 `units=0`（**SI=米**）+ 同一个 `4.9305` ⇒ 单元 = **4.93 米** ⇒ 比零件还
         #: 大
@@ -236,19 +271,30 @@ def main() -> int:
         chosen, sane, tried = None, None, []
         for label, s, t, u_used in cands:
             chk = sim.check_mesh_size_sane(doc, s)
-            tried.append({"候选": label, "element_size": s, "tolerance": t, "units": u_used,
-                          "sane": chk.get("ok"), "reason": chk.get("reason")})
-            print("      [候选] %-16s element_size=%-12.4f units=%-3s sane=%s %s"
-                  % (label, s, u_used, chk.get("ok"), str(chk.get("reason"))[:56]))
+            tried.append(
+                {
+                    "候选": label,
+                    "element_size": s,
+                    "tolerance": t,
+                    "units": u_used,
+                    "sane": chk.get("ok"),
+                    "reason": chk.get("reason"),
+                }
+            )
+            print(
+                "      [候选] %-16s element_size=%-12.4f units=%-3s sane=%s %s"
+                % (label, s, u_used, chk.get("ok"), str(chk.get("reason"))[:56])
+            )
             if chk.get("ok"):
                 chosen, sane = (label, s, t, u_used), chk
                 break
         ev["steps"]["mesh_size"] = {
-            "readings": reading, "候选": tried,
+            "readings": reading,
+            "候选": tried,
             "★_选中": chosen[0] if chosen else None,
             "★_选中的 units": chosen[3] if chosen else None,
             "★": "★ 官方**没写单位** ⇒ 三个单位各读一次 + 用几何闸选（★ 不许隐式换算）；"
-                 "★★ **选中的 units 必须原样传给 create_mesh** —— 值与其单位口径要配套 ✓",
+            "★★ **选中的 units 必须原样传给 create_mesh** —— 值与其单位口径要配套 ✓",
         }
         ev["steps"]["mesh_size_sane"] = sane
         #: ★ 把**内存预算与预估**一并落进证据（★ 事后能看出"当时放行时预估是多少"）
@@ -261,8 +307,10 @@ def main() -> int:
         if not chosen:
             raise RuntimeError("三个单位口径的读数都不合理 ⇒ 停下报事实（不猜单位）")
         element_size, tolerance, mesh_units = chosen[1], chosen[2], chosen[3]
-        print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f · **units=%d**（max_dim=%s）"
-              % (chosen[0], element_size, tolerance, mesh_units, sane.get("max_dim")))
+        print(
+            "  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f · **units=%d**（max_dim=%s）"
+            % (chosen[0], element_size, tolerance, mesh_units, sane.get("max_dim"))
+        )
 
         #: ③ ★★★ **建网格之前先按官方那几条"降规模"的旋钮设一遍**（★ 第七版 · 本轮新增）
         #: ——
@@ -313,20 +361,33 @@ def main() -> int:
         #: ；
         #:         · `MesherType = 0`（`swsMesherTypeStandard`）⇒ **避开曲率自适应自动加密** ✓
         #: ★★ **读写都走隔离层**（★ 第六版的教训）：非隔离调用一旦把 SW 带进长计算，
-        #: ★ 主进程被杀之后 **SW 自己还在烧 CPU**（实测：`Not Responding` + 每个 6 秒吃 
+        #: ★ 主进程被杀之后 **SW 自己还在烧 CPU**（实测：`Not Responding` + 每个 6 秒吃
         #: 1 核）
         #:   ⇒ ★ **凡可能在 SW 侧触发计算的调用，一律经 `run_isolated`**（可杀）✓
         ms_r = iso("mesh_settings_by_name", [STUDY], {}, 180)
-        before_settings = ms_r.get("result") if isinstance(ms_r.get("result"), dict) else {}
+        before_settings = (
+            ms_r.get("result") if isinstance(ms_r.get("result"), dict) else {}
+        )
         ev["steps"]["mesh_settings_before"] = {**ms_r, "result": before_settings}
         ev["steps"]["mesh_settings_before"] = before_settings
-        print("  [1c] 改动前的网格设置：Quality=%s MesherType=%s MinElementSize=%s "
-              "MaxElementSize=%s MinElementsInCircle=%s ElementSize=%s"
-              % (before_settings.get("Quality"), before_settings.get("MesherType"),
-                 before_settings.get("MinElementSize"), before_settings.get("MaxElementSize"),
-                 before_settings.get("MinElementsInCircle"), before_settings.get("ElementSize")))
-        cfg_r = iso("configure_mesh_settings_by_name", [STUDY],
-                    {"quality": 0, "mesher_type": 0}, 300)
+        print(
+            "  [1c] 改动前的网格设置：Quality=%s MesherType=%s MinElementSize=%s "
+            "MaxElementSize=%s MinElementsInCircle=%s ElementSize=%s"
+            % (
+                before_settings.get("Quality"),
+                before_settings.get("MesherType"),
+                before_settings.get("MinElementSize"),
+                before_settings.get("MaxElementSize"),
+                before_settings.get("MinElementsInCircle"),
+                before_settings.get("ElementSize"),
+            )
+        )
+        cfg_r = iso(
+            "configure_mesh_settings_by_name",
+            [STUDY],
+            {"quality": 0, "mesher_type": 0},
+            300,
+        )
         cfg = cfg_r.get("result") if isinstance(cfg_r.get("result"), dict) else {}
         #: ⚠ ★ **不设** `min_element_size` / `max_element_size` / `min_elements_in_circl
         #: e` ——
@@ -335,8 +396,10 @@ def main() -> int:
         #: 它 ✓
         ev["steps"]["mesh_settings_configure"] = {**cfg_r, "result": cfg}
         flush()
-        print("  [1d] 设网格旋钮: ok=%s changed=%s"
-              % (cfg.get("ok"), [c["name"] for c in cfg.get("changed") or []]))
+        print(
+            "  [1d] 设网格旋钮: ok=%s changed=%s"
+            % (cfg.get("ok"), [c["name"] for c in cfg.get("changed") or []])
+        )
 
         #: ④ ★★★★ **建网格 —— 走"唯一推荐入口"**（★ 第九版 · 本轮把整条链收进一个能力）
         #: ：
@@ -344,31 +407,56 @@ def main() -> int:
         #:   （关曲率自适应 + Draft）→ ③ 建网格 → ④ 读**真节点数** → ⑤ 求解前内存闸 →
         #:   ⑥ **还原网格设置**（★ 不离开用户的模型）→ ⑦ 回可入证据的报告 ✓
         #:   ★ 而且 worker 入口**先过忙检** ⇒ ★ SolidWorks 忙时**一个 COM 调用都不发** ✓
-        mesh_r = iso("create_mesh_safely_by_name", [STUDY],
-                     {"units": mesh_units, "element_size": element_size,
-                      "tolerance": tolerance},
-                     T_MESH_SAFE)
-        mesh_safe = mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
-        ev["steps"]["create_mesh"] = {k: mesh_r.get(k) for k in
-                                      ("ok", "timed_out", "wall_seconds", "error")}
+        mesh_r = iso(
+            "create_mesh_safely_by_name",
+            [STUDY],
+            {"units": mesh_units, "element_size": element_size, "tolerance": tolerance},
+            T_MESH_SAFE,
+        )
+        mesh_safe = (
+            mesh_r.get("result") if isinstance(mesh_r.get("result"), dict) else {}
+        )
+        ev["steps"]["create_mesh"] = {
+            k: mesh_r.get(k) for k in ("ok", "timed_out", "wall_seconds", "error")
+        }
         ev["steps"]["create_mesh"]["result"] = mesh_safe
         flush()
-        mesh_res = mesh_safe.get("mesh") if isinstance(mesh_safe.get("mesh"), dict) else {}
-        print("  [2] 建网格(安全入口): ok=%s timed_out=%s wall=%ss blocked=%s"
-              % (mesh_r.get("ok"), mesh_r.get("timed_out"), mesh_r.get("wall_seconds"),
-                 mesh_safe.get("blocked")))
-        print("      element_count=%s node_count=%s ⇒ %s"
-              % (mesh_safe.get("element_count"), mesh_safe.get("node_count"),
-                 mesh_safe.get("★_结论")))
+        mesh_res = (
+            mesh_safe.get("mesh") if isinstance(mesh_safe.get("mesh"), dict) else {}
+        )
+        print(
+            "  [2] 建网格(安全入口): ok=%s timed_out=%s wall=%ss blocked=%s"
+            % (
+                mesh_r.get("ok"),
+                mesh_r.get("timed_out"),
+                mesh_r.get("wall_seconds"),
+                mesh_safe.get("blocked"),
+            )
+        )
+        print(
+            "      element_count=%s node_count=%s ⇒ %s"
+            % (
+                mesh_safe.get("element_count"),
+                mesh_safe.get("node_count"),
+                mesh_safe.get("★_结论"),
+            )
+        )
         if mesh_safe.get("blocked"):
-            raise RuntimeError("安全入口**拒了**（★ 这是设计好的拒绝、不是失败）：%s ⇒ %s"
-                               % (mesh_safe["blocked"], mesh_safe.get("reason")))
+            raise RuntimeError(
+                "安全入口**拒了**（★ 这是设计好的拒绝、不是失败）：%s ⇒ %s"
+                % (mesh_safe["blocked"], mesh_safe.get("reason"))
+            )
         after_settings = mesh_safe.get("after_settings") or {}
         ev["steps"]["mesh_settings_after"] = after_settings
         flush()
-        print("      ★ 真实读数：ElementCount=%s **NodeCount=%s** Quality=%s"
-              % (after_settings.get("ElementCount"), after_settings.get("NodeCount"),
-                 after_settings.get("Quality")))
+        print(
+            "      ★ 真实读数：ElementCount=%s **NodeCount=%s** Quality=%s"
+            % (
+                after_settings.get("ElementCount"),
+                after_settings.get("NodeCount"),
+                after_settings.get("Quality"),
+            )
+        )
 
         #: ⑤ ★★★ **跑求解前的第二道闸**（★ 优先用**真节点数** ⇒ DOF≈3×节点数）——
         #:   ★ `check_mesh_size_sane` 只能按**包围盒**估；★ 这里用**真实读数**
@@ -380,29 +468,52 @@ def main() -> int:
         _solver = sim.static_solver_type_report(study)
         ev["steps"]["solver_type"] = _solver
         flush()
-        print("  [2a] 本研究求解器: ok=%s value=%s name=%s%s"
-              % (_solver.get("ok"), _solver.get("value"), _solver.get("name"),
-                 ("（读不到：%s）" % _solver.get("reason"))[:80] if not _solver.get("ok") else ""))
-        pre = sim.solve_memory_preflight(int(mesh_res.get("element_count") or 0),
-                                        node_count=int(after_settings.get("NodeCount") or 0) or None,
-                                        solver_name=_solver.get("name"))
+        print(
+            "  [2a] 本研究求解器: ok=%s value=%s name=%s%s"
+            % (
+                _solver.get("ok"),
+                _solver.get("value"),
+                _solver.get("name"),
+                ("（读不到：%s）" % _solver.get("reason"))[:80]
+                if not _solver.get("ok")
+                else "",
+            )
+        )
+        pre = sim.solve_memory_preflight(
+            int(mesh_res.get("element_count") or 0),
+            node_count=int(after_settings.get("NodeCount") or 0) or None,
+            solver_name=_solver.get("name"),
+        )
         ev["steps"]["solve_memory_preflight"] = pre
-        print("  [2b] 求解前内存闸: ok=%s est_dof=%s est_ram_gb=%s budget=%s"
-              % (pre.get("ok"), pre.get("est_dof"), pre.get("est_ram_gb"),
-                 pre.get("memory_budget_gb")))
+        print(
+            "  [2b] 求解前内存闸: ok=%s est_dof=%s est_ram_gb=%s budget=%s"
+            % (
+                pre.get("ok"),
+                pre.get("est_dof"),
+                pre.get("est_ram_gb"),
+                pre.get("memory_budget_gb"),
+            )
+        )
         if not pre.get("ok"):
-            raise RuntimeError("求解前内存闸不放行 ⇒ 停下（★ 不拿内存去赌）：%s" % pre.get("reason"))
+            raise RuntimeError(
+                "求解前内存闸不放行 ⇒ 停下（★ 不拿内存去赌）：%s" % pre.get("reason")
+            )
 
         #: ⑥ ★★ 跑求解 —— 本探针的核心（★ T_RUN=1800）✓
         run_r = iso("run_analysis_by_name", [STUDY], {}, T_RUN)
         run_res = run_r.get("result") if isinstance(run_r.get("result"), dict) else {}
-        ev["steps"]["run_analysis"] = {k: run_r.get(k) for k in
-                                       ("ok", "timed_out", "wall_seconds", "error")}
+        ev["steps"]["run_analysis"] = {
+            k: run_r.get(k) for k in ("ok", "timed_out", "wall_seconds", "error")
+        }
         ev["steps"]["run_analysis"]["result"] = run_r.get("result")
-        print("  [3] 跑求解: ok=%s **timed_out=%s** wall=%ss"
-              % (run_r.get("ok"), run_r.get("timed_out"), run_r.get("wall_seconds")))
-        print("      results_present=%s plot_count=%s"
-              % (run_res.get("results_present"), run_res.get("plot_count")))
+        print(
+            "  [3] 跑求解: ok=%s **timed_out=%s** wall=%ss"
+            % (run_r.get("ok"), run_r.get("timed_out"), run_r.get("wall_seconds"))
+        )
+        print(
+            "      results_present=%s plot_count=%s"
+            % (run_res.get("results_present"), run_res.get("plot_count"))
+        )
 
         #: ⑤ ★★★ **轮询结果读数**（★ 求解可能异步 ⇒ 判据是**结果**、不是返回码）
         poll = []
@@ -414,13 +525,21 @@ def main() -> int:
                     cnt = None
                     if res is not None:
                         cnt = sw_connect.safe_get_com_member(res, "GetPlotCount")
-                    poll.append({"i": i + 1, "elapsed_s": round((i + 1) * POLL_EVERY, 1),
-                                 "results_present": res is not None, "plot_count": cnt})
-                    print("      [poll %d] +%ss results=%s plot_count=%s"
-                          % (i + 1, round((i + 1) * POLL_EVERY, 1), res is not None, cnt))
+                    poll.append(
+                        {
+                            "i": i + 1,
+                            "elapsed_s": round((i + 1) * POLL_EVERY, 1),
+                            "results_present": res is not None,
+                            "plot_count": cnt,
+                        }
+                    )
+                    print(
+                        "      [poll %d] +%ss results=%s plot_count=%s"
+                        % (i + 1, round((i + 1) * POLL_EVERY, 1), res is not None, cnt)
+                    )
                     if res is not None and int(cnt or 0) > 0:
                         break
-                except Exception as exc:                              # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     poll.append({"i": i + 1, "error": str(exc)[:120]})
                     break
         ev["steps"]["results_poll"] = poll
@@ -430,12 +549,17 @@ def main() -> int:
         #:   —— ★ **不自己搓读数器**（★ 它复跑一次 `RunAnalysis` 只为回读 `Results`/图数，
         #:   而求解已完成 ⇒ 秒级返回）✓
         final_r = iso("run_analysis_by_name", [STUDY], {}, 600)
-        final_res = final_r.get("result") if isinstance(final_r.get("result"), dict) else {}
-        ev["steps"]["final_readback"] = {k: final_r.get(k) for k in
-                                         ("ok", "timed_out", "wall_seconds", "error")}
+        final_res = (
+            final_r.get("result") if isinstance(final_r.get("result"), dict) else {}
+        )
+        ev["steps"]["final_readback"] = {
+            k: final_r.get(k) for k in ("ok", "timed_out", "wall_seconds", "error")
+        }
         ev["steps"]["final_readback"]["result"] = final_r.get("result")
-        print("      [终局回读] results_present=%s plot_count=%s"
-              % (final_res.get("results_present"), final_res.get("plot_count")))
+        print(
+            "      [终局回读] results_present=%s plot_count=%s"
+            % (final_res.get("results_present"), final_res.get("plot_count"))
+        )
         evi = sim.collect_study_evidence(sw)
         ev["steps"]["collect_evidence"] = {
             "ok": isinstance(evi, dict) and int(evi.get("study_count") or 0) >= 1,
@@ -454,35 +578,51 @@ def main() -> int:
         flush()
         ev["★_element_count"] = mesh_res.get("element_count")
         flush()
-        ev["★_results_present"] = bool(run_res.get("results_present")
-                                       or final_res.get("results_present")
-                                       or (poll and poll[-1].get("results_present")))
+        ev["★_results_present"] = bool(
+            run_res.get("results_present")
+            or final_res.get("results_present")
+            or (poll and poll[-1].get("results_present"))
+        )
         flush()
         ev["★_plot_count"] = plot_count
         flush()
         ev["★_ok"] = bool(ev["★_results_present"] and int(plot_count or 0) > 0)
         flush()
-        ev["★_判据"] = ("★ ① element_count（网格读数）② results_present/plot_count/plot_names"
-                        "（**解算结果读数**）③ timed_out ④ wall_seconds")
+        ev["★_判据"] = (
+            "★ ① element_count（网格读数）② results_present/plot_count/plot_names"
+            "（**解算结果读数**）③ timed_out ④ wall_seconds"
+        )
         flush()
-    except Exception as exc:                                          # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["★_异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
         flush()
     finally:
         try:
             import sw_connect
+
             if doc is not None:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                                    #: ★ 只关自己那份
-        except Exception:                                             # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 只关自己那份
+        except Exception:  # noqa: BLE001
             pass
 
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    print("★ ★_timed_out =", ev.get("★_timed_out"), "· ★_element_count =", ev.get("★_element_count"),
-          "· ★_results_present =", ev.get("★_results_present"), "· ★_plot_count =", ev.get("★_plot_count"),
-          "· ★_ok =", ev.get("★_ok"))
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
+    print(
+        "★ ★_timed_out =",
+        ev.get("★_timed_out"),
+        "· ★_element_count =",
+        ev.get("★_element_count"),
+        "· ★_results_present =",
+        ev.get("★_results_present"),
+        "· ★_plot_count =",
+        ev.get("★_plot_count"),
+        "· ★_ok =",
+        ev.get("★_ok"),
+    )
     print("★ wrote", OUT)
     return 0
 

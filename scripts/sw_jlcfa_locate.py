@@ -38,6 +38,7 @@ r"""嘉立创 FA 插件的定位层 —— 与侧边栏宽度无关的三层定�
 # ⚠ 依赖 ``pywinauto``（UIA 后端）与 ``Pillow``。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import sys
@@ -48,8 +49,14 @@ from typing import Any
 sys.stdout.reconfigure(encoding="utf-8")
 
 __all__ = [
-    "CONTAINER_NAMES", "THEME_BLUES", "locate", "container_rect",
-    "find_blue_groups", "focus_solidworks", "capture_front", "capture_window",
+    "CONTAINER_NAMES",
+    "THEME_BLUES",
+    "locate",
+    "container_rect",
+    "find_blue_groups",
+    "focus_solidworks",
+    "capture_front",
+    "capture_window",
 ]
 
 # ── 第 1 层：容器 ────────────────────────────────────────────────────
@@ -64,11 +71,13 @@ BLUE_TOL = 45
 
 def _ctl():
     import ctl
+
     return ctl
 
 
 def _modal():
     import sw_gui_modal
+
     return sw_gui_modal
 
 
@@ -213,8 +222,10 @@ def locate(win, name: str, ctype: str | None = None):
         except Exception:
             continue
         # Text/Button 是**可点标签/按钮**；Pane 多半是容器外壳
-        rank = (0 if c.element_info.control_type in ("Text", "Button") else 1,
-                r.width() * r.height())
+        rank = (
+            0 if c.element_info.control_type in ("Text", "Button") else 1,
+            r.width() * r.height(),
+        )
         if best is None or rank < best[0]:
             best = (rank, c)
     return best[1] if best else None
@@ -267,8 +278,12 @@ def _is_blue(p) -> bool:
     r, g, b = p[0], p[1], p[2]
     if b < 130 or b - r < 60 or b - g < 30:
         return False
-    return any(abs(r - t[0]) <= BLUE_TOL and abs(g - t[1]) <= BLUE_TOL
-               and abs(b - t[2]) <= BLUE_TOL for t in THEME_BLUES)
+    return any(
+        abs(r - t[0]) <= BLUE_TOL
+        and abs(g - t[1]) <= BLUE_TOL
+        and abs(b - t[2]) <= BLUE_TOL
+        for t in THEME_BLUES
+    )
 
 
 def find_blue_groups(pane_img, min_run: int = 35, step: int = 3):
@@ -336,6 +351,7 @@ def focus_solidworks(hwnd: int) -> bool:
     import win32api
     import win32con
     import win32gui
+
     for _ in range(3):
         if win32gui.GetForegroundWindow() == hwnd:
             return True
@@ -349,8 +365,7 @@ def focus_solidworks(hwnd: int) -> bool:
         finally:
             # ⚠ 无论上面发生什么，**必须**抬起 Alt
             try:
-                win32api.keybd_event(win32con.VK_MENU, 0,
-                                     win32con.KEYEVENTF_KEYUP, 0)
+                win32api.keybd_event(win32con.VK_MENU, 0, win32con.KEYEVENTF_KEYUP, 0)
             except Exception:
                 pass
             time.sleep(0.35)
@@ -360,6 +375,7 @@ def focus_solidworks(hwnd: int) -> bool:
 def capture_front(path: str):
     """★ 置前 + **整屏**截图 —— 唯一能看到**浮窗/模态框**的取证方式。"""
     from PIL import ImageGrab
+
     img = ImageGrab.grab()
     img.save(path)
     return img
@@ -388,8 +404,15 @@ def capture_window(hwnd: int, path: str):
     gdi32.DeleteObject.argtypes = [vp]
     gdi32.DeleteDC.argtypes = [vp]
     gdi32.GetDIBits.restype = ci
-    gdi32.GetDIBits.argtypes = [vp, vp, ctypes.c_uint, ctypes.c_uint,
-                                vp, vp, ctypes.c_uint]
+    gdi32.GetDIBits.argtypes = [
+        vp,
+        vp,
+        ctypes.c_uint,
+        ctypes.c_uint,
+        vp,
+        vp,
+        ctypes.c_uint,
+    ]
     user32.GetWindowDC.restype = vp
     user32.GetWindowDC.argtypes = [vp]
     user32.ReleaseDC.argtypes = [vp, vp]
@@ -397,15 +420,19 @@ def capture_window(hwnd: int, path: str):
     user32.PrintWindow.argtypes = [vp, vp, ctypes.c_uint]
 
     class BIH(ctypes.Structure):
-        _fields_ = [("biSize", wintypes.DWORD), ("biWidth", ctypes.c_long),
-                    ("biHeight", ctypes.c_long), ("biPlanes", wintypes.WORD),
-                    ("biBitCount", wintypes.WORD),
-                    ("biCompression", wintypes.DWORD),
-                    ("biSizeImage", wintypes.DWORD),
-                    ("biXPelsPerMeter", ctypes.c_long),
-                    ("biYPelsPerMeter", ctypes.c_long),
-                    ("biClrUsed", wintypes.DWORD),
-                    ("biClrImportant", wintypes.DWORD)]
+        _fields_ = [
+            ("biSize", wintypes.DWORD),
+            ("biWidth", ctypes.c_long),
+            ("biHeight", ctypes.c_long),
+            ("biPlanes", wintypes.WORD),
+            ("biBitCount", wintypes.WORD),
+            ("biCompression", wintypes.DWORD),
+            ("biSizeImage", wintypes.DWORD),
+            ("biXPelsPerMeter", ctypes.c_long),
+            ("biYPelsPerMeter", ctypes.c_long),
+            ("biClrUsed", wintypes.DWORD),
+            ("biClrImportant", wintypes.DWORD),
+        ]
 
     class BI(ctypes.Structure):
         _fields_ = [("bmiHeader", BIH), ("bmiColors", wintypes.DWORD * 3)]
@@ -417,7 +444,7 @@ def capture_window(hwnd: int, path: str):
     mem = gdi32.CreateCompatibleDC(hdc)
     bmp = gdi32.CreateCompatibleBitmap(hdc, w, h)
     old = gdi32.SelectObject(mem, bmp)
-    ok = user32.PrintWindow(hwnd, mem, 2)          # 2 = PW_RENDERFULLCONTENT
+    ok = user32.PrintWindow(hwnd, mem, 2)  # 2 = PW_RENDERFULLCONTENT
     bi = BI()
     bi.bmiHeader.biSize = ctypes.sizeof(BIH)
     bi.bmiHeader.biWidth = w

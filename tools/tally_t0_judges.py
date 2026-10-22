@@ -33,10 +33,15 @@ for cid in sorted(by):
     sev = sorted({r.get("severity", "?") for r in rs})
     judges = sorted({r.get("_judge") for r in rs})
     kinds = sorted({r.get("kind", "?") for r in rs})
-    print("★ %s（%d 路报出 · 严重度 %s · 类 %s）" % (cid, len(rs), "/".join(sev), "/".join(kinds)))
+    print(
+        "★ %s（%d 路报出 · 严重度 %s · 类 %s）"
+        % (cid, len(rs), "/".join(sev), "/".join(kinds))
+    )
     for r in rs:
-        print("     [J%s %s] %s" % (r.get("_judge"), r.get("severity"),
-                                    (r.get("why") or "").strip()))
+        print(
+            "     [J%s %s] %s"
+            % (r.get("_judge"), r.get("severity"), (r.get("why") or "").strip())
+        )
         if r.get("fix"):
             print("        修法: %s" % r["fix"].strip())
     print()

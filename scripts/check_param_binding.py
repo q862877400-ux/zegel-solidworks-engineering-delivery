@@ -38,6 +38,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import inspect
@@ -71,8 +72,10 @@ def check() -> list[str]:
     for spec in rc.all_specs():
         fn = _target(spec)
         if fn is None:
-            problems.append("%s: 目标函数 scripts.%s.%s 不存在" % (spec.name, spec.module,
-                                                              spec.function))
+            problems.append(
+                "%s: 目标函数 scripts.%s.%s 不存在"
+                % (spec.name, spec.module, spec.function)
+            )
             continue
         try:
             formals = set(inspect.signature(fn).parameters)
@@ -89,7 +92,8 @@ def check() -> list[str]:
                 problems.append(
                     "%s: 参数 %r 既不在 %s 的形参表里、也没在 param_alias 里 "
                     "⇒ 调用时会 TypeError（★ 事故一/二 的同一族）"
-                    % (spec.name, p.name, spec.function))
+                    % (spec.name, p.name, spec.function)
+                )
 
         #: ② `param_alias` 的目标名必须真的存在
         for src, dst in alias.items():
@@ -98,13 +102,16 @@ def check() -> list[str]:
             if dst not in formals:
                 problems.append(
                     "%s: param_alias 把 %r 改名成 %r，但 %s 的形参里没有 %r"
-                    % (spec.name, src, dst, spec.function, dst))
+                    % (spec.name, src, dst, spec.function, dst)
+                )
 
         #: ③ 注入名必须是解析器的键
         inj = getattr(spec, "inject", "") or ""
         if inj and inj not in resolver_keys:
-            problems.append("%s: inject=%r 不是 RESOLVERS 的键（有：%s）"
-                            % (spec.name, inj, sorted(resolver_keys)))
+            problems.append(
+                "%s: inject=%r 不是 RESOLVERS 的键（有：%s）"
+                % (spec.name, inj, sorted(resolver_keys))
+            )
 
         #: ④ ★★★ 2026-10-03（接手轮）**注入名还必须等于目标函数的形参名**（★ 事实 **502*
         #: *）。
@@ -127,8 +134,10 @@ def check() -> list[str]:
         if inj and getattr(spec, "extra_op", None) is None:
             _has_var_kw = False
             try:
-                _has_var_kw = any(q.kind == inspect.Parameter.VAR_KEYWORD
-                                  for q in inspect.signature(fn).parameters.values())
+                _has_var_kw = any(
+                    q.kind == inspect.Parameter.VAR_KEYWORD
+                    for q in inspect.signature(fn).parameters.values()
+                )
             except (TypeError, ValueError):
                 pass
             if not _has_var_kw and inj not in formals:
@@ -138,7 +147,8 @@ def check() -> list[str]:
                     "`TypeError: unexpected keyword argument %r`（★ 事实 502）。"
                     "★ 修法：把 `inject` 改成与目标函数首参一致，并在 `RESOLVERS` 里加一行"
                     "（★ 那张表就是为此设计的 —— 事实 169）"
-                    % (spec.name, inj, spec.function, sorted(formals)[:10], inj))
+                    % (spec.name, inj, spec.function, sorted(formals)[:10], inj)
+                )
 
         #: ⑤ ★★★ 2026-10-03（接手轮）**目标函数的「必填形参」，spec 必须声明它**。
         #:   ★ 为什么必须有它：①②④ 问的都是「**声明了的名字有没有去处**」，
@@ -147,7 +157,7 @@ def check() -> list[str]:
         #:   ★ 实测（`tools/probe_r3_tools.py` 的真机报错带出来的）：
         #:     `solidworks_delivery_pack_and_go_audit_matrix`（`tool_specs_batch36.py`）
         #:     **只声明 3 个参数、而函数要 8 个** ⇒ 真机
-        #: `TypeError: … missing 2 required positional arguments: 'associated_drawings' 
+        #: `TypeError: … missing 2 required positional arguments: 'associated_drawings'
         #: and 'outputs'`
         #:     （★ 另有 3 个 `KEYWORD_ONLY`，Python 补上位置参数后**再报**）。
         #:   ★ 豁免（★ 写明理由，不静默）：① 该形参就是**注入名**（由 `RESOLVERS` 供给）；
@@ -160,7 +170,10 @@ def check() -> list[str]:
         except (TypeError, ValueError):
             _params = {}
         for _r, _par in _params.items():
-            if _par.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+            if _par.kind in (
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            ):
                 continue
             if _par.default is not inspect.Parameter.empty or _r in ("self", "cls"):
                 continue
@@ -173,7 +186,8 @@ def check() -> list[str]:
                 "`TypeError: missing 1 required positional argument: %r`。"
                 "★ 修法：给它补一个 `Param(%r, …)`（★ 或确认它本该由 `derived_args` 供给 —— "
                 "那就给 spec 加上 `derived_args`）。"
-                % (spec.name, spec.function, _r, _r, _r))
+                % (spec.name, spec.function, _r, _r, _r)
+            )
     return problems
 
 
@@ -186,24 +200,27 @@ def check_forms() -> list:
     ★ 为什么单列：★ 这两处的错**只有"跑一次"能抓**，★ 而报错**指向名字**。
     """
     import register_capabilities as rc
+
     _RES = set(rc.RESOLVERS)
     problems: list = []
     for spec in rc.all_specs():
         inj = getattr(spec, "inject", None)
         if inj and not isinstance(inj, str):
             problems.append(
-                "%s: inject=%r 是 %s —— ★ **必须是字符串**（如 inject=\"model\"）；"
+                '%s: inject=%r 是 %s —— ★ **必须是字符串**（如 inject="model"）；'
                 "★ 元组/列表会让 `in` 判断永远失败，而报错会误导成"
                 "名字不在 RESOLVERS 里（★ 事实 232）。合法值：%s"
-                % (spec.name, inj, type(inj).__name__, sorted(_RES)))
-        for _p in (getattr(spec, "params", None) or []):
+                % (spec.name, inj, type(inj).__name__, sorted(_RES))
+            )
+        for _p in getattr(spec, "params", None) or []:
             _k = getattr(_p, "kind", None)
             if isinstance(_k, str):
                 problems.append(
                     "%s: 参数 %r 的 kind=%r 是**字符串** —— ★ **必须传类型对象**"
                     "（str / int / float / bool / dict / list）；★ 传字符串会让下游生成模型时炸，"
                     "而报错离这里很远（★ 事实 232）。"
-                    % (spec.name, getattr(_p, "name", "?"), _k))
+                    % (spec.name, getattr(_p, "name", "?"), _k)
+                )
     return problems
 
 
@@ -228,6 +245,7 @@ def check_field_forms() -> list:
       ★ 而**第三层只有"跑一次"能抓**、★ 且**它的报错指向名字**。
     """
     import register_capabilities as rc
+
     whitelist = {
         "inject": ("str", "NoneType"),
         "module": ("str",),
@@ -249,7 +267,8 @@ def check_field_forms() -> list:
                 problems.append(
                     "%s: 字段 %s 的形态是 **%s** —— ★ **期望 %s**（★ 白名单据 180 个既有工具实测："
                     "事实 233）。★ 形态错时下游的**报错会指向名字而不是形态**，很难查。"
-                    % (spec.name, field, got, " / ".join(allowed)))
+                    % (spec.name, field, got, " / ".join(allowed))
+                )
         #: \u2605 `param_alias` \u7684**\u503c**\u4e5f\u67e5\uff08\u2605 \u4e24\u79cd\u5
         #: 408\u6cd5\uff1astr | None\uff09
         pa = getattr(spec, "param_alias", None)
@@ -259,7 +278,8 @@ def check_field_forms() -> list:
                     problems.append(
                         "%s: param_alias[%r] 的值是 **%s** —— ★ **期望 str 或 None**"
                         "（★ 180 个既有工具只有这两种；事实 233）。"
-                        % (spec.name, k, type(v).__name__))
+                        % (spec.name, k, type(v).__name__)
+                    )
     return problems
 
 
@@ -279,17 +299,21 @@ def main() -> int:
         import register_capabilities as rc
 
         total = len(rc.all_specs())
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
-    print("参数绑定门禁 · 扫 %d 个工具（判据：声明名 ∈ 形参 或 ∈ param_alias；"
-          "★ 注入名 ∈ RESOLVERS **且** ∈ 目标函数形参）" % total)
+    print(
+        "参数绑定门禁 · 扫 %d 个工具（判据：声明名 ∈ 形参 或 ∈ param_alias；"
+        "★ 注入名 ∈ RESOLVERS **且** ∈ 目标函数形参）" % total
+    )
     if problems:
         print("\n  [FAIL] %d 处：" % len(problems))
         for x in problems[:40]:
             print("    · %s" % x)
         return 1
-    print("  [PASS] 0 处 —— 声明参数都有归属、param_alias 目标都存在、"
-          "注入名既是解析器的键、也与目标函数的形参名一致（★ 事实 502）")
+    print(
+        "  [PASS] 0 处 —— 声明参数都有归属、param_alias 目标都存在、"
+        "注入名既是解析器的键、也与目标函数的形参名一致（★ 事实 502）"
+    )
     return 0
 
 

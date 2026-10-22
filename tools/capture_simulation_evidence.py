@@ -38,6 +38,7 @@ python tools/capture_simulation_evidence.py
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -68,8 +69,14 @@ _STOP = threading.Event()
 
 def _ps(cmd: str) -> str:
     try:
-        return subprocess.run(["powershell", "-NoProfile", "-Command", cmd],
-                              capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15).stdout.strip()
+        return subprocess.run(
+            ["powershell", "-NoProfile", "-Command", cmd],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=15,
+        ).stdout.strip()
     except Exception:
         return ""
 
@@ -77,8 +84,10 @@ def _ps(cmd: str) -> str:
 def _watchdog() -> None:
     """旁路线程：只读内存，超阈值杀网格器。**不碰 COM**（STA 线程亲和）。"""
     while not _STOP.wait(5):
-        v = _ps("(Get-Process cwbcbfmesh -ErrorAction SilentlyContinue | "
-                "Measure-Object WorkingSet64 -Sum).Sum")
+        v = _ps(
+            "(Get-Process cwbcbfmesh -ErrorAction SilentlyContinue | "
+            "Measure-Object WorkingSet64 -Sum).Sum"
+        )
         mb = int(int(v) / 1_048_576) if v.isdigit() else 0
         if mb > MEM_LIMIT_MB:
             _ps("Stop-Process -Name cwbcbfmesh -Force -ErrorAction SilentlyContinue")
@@ -124,15 +133,20 @@ def main() -> int:
         ev["steps"]["material"] = {"ok": bool(mid), "MaterialIdName": mid}
         say("[2] 材料回读 = %r" % mid)
         if not mid:
-            raise RuntimeError("材料未赋上（库名或材料名不对）—— 判据是回读 MaterialIdName")
+            raise RuntimeError(
+                "材料未赋上（库名或材料名不对）—— 判据是回读 MaterialIdName"
+            )
 
         # ── 研究 ──
-        doc = get_com_member(get_com_member(sw.GetAddInObject("SldWorks.Simulation"),
-                                            "CosmosWorks"), "ActiveDoc")
+        doc = get_com_member(
+            get_com_member(sw.GetAddInObject("SldWorks.Simulation"), "CosmosWorks"),
+            "ActiveDoc",
+        )
         mgr = get_com_member(doc, "StudyManager")
         name = "EVIDENCE_%d" % int(time.time())
         get_com_member(mgr, "DeleteStudy", name)
         from scripts.sw_connect import out_i4
+
         study = get_com_member(mgr, "CreateNewStudy3", name, 0, 0, out_i4())
         ev["steps"]["study"] = {"ok": study is not None, "name": name}
         say("[3] 静力学研究 = %r" % (study is not None))
@@ -147,8 +161,12 @@ def main() -> int:
         frc = sim.apply_normal_force(study, model=model, magnitude=100.0)
         get_com_member(model, "ClearSelection2", True)
         try:
-            count = int(get_com_member(get_com_member(study, "LoadsAndRestraintsManager"),
-                                       "Count") or 0)
+            count = int(
+                get_com_member(
+                    get_com_member(study, "LoadsAndRestraintsManager"), "Count"
+                )
+                or 0
+            )
         except Exception:
             count = -1
         ev["steps"]["fixtures_and_loads"] = {
@@ -163,7 +181,9 @@ def main() -> int:
         size, tol = sim.default_element_size_and_tolerance(study, -1)
         t0 = time.time()
         mc = get_com_member(study, "CreateMesh", 0, float(size), float(tol))
-        elements = int(get_com_member(get_com_member(study, "Mesh"), "ElementCount") or 0)
+        elements = int(
+            get_com_member(get_com_member(study, "Mesh"), "ElementCount") or 0
+        )
         ev["steps"]["mesh"] = {
             "ok": mc == 0 and 0 < elements <= ELEMENT_SANE_MAX,
             "return_code": mc,
@@ -199,8 +219,10 @@ def main() -> int:
             "plot_names": names,
             "seconds": round(time.time() - t1, 1),
         }
-        say("[6] RunAnalysis=%r（**该返回码不可信**） Results非空=%r 图数=%r"
-            % (rc, results is not None, plots))
+        say(
+            "[6] RunAnalysis=%r（**该返回码不可信**） Results非空=%r 图数=%r"
+            % (rc, results is not None, plots)
+        )
         if names:
             say("    图名 = %r" % (names,))
 
@@ -221,8 +243,9 @@ def main() -> int:
             except Exception:
                 pass
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n",
-                            encoding="utf-8")
+        out_path.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         say("")
         say("证据已写入 %s" % out_path)
         say("结论: %s" % ev["verdict"].upper())

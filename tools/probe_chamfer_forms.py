@@ -31,6 +31,7 @@ r"""@brief 探针：`ISketchManager.CreateChamfer` 的**可行参数组合** —
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -46,6 +47,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "chamfer-forms.json")
+
+
 def main() -> int:
     ev: dict = {"trials": []}
     sw = None
@@ -53,10 +56,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch, sw_sketch_edit
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
@@ -75,7 +79,7 @@ def main() -> int:
                 try:
                     if s.Select4(True, sw_part._empty_callout()):
                         n_sel += 1
-                except Exception:      # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
             return sk, segs, n_sel
 
@@ -83,7 +87,7 @@ def main() -> int:
             try:
                 v = sw_sketch.get_sketch_segments(sk)
                 return len(v) if isinstance(v, list) else -1
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 return -1
 
         #: (标签, type, distance_mm, angle_or_distance)
@@ -96,48 +100,68 @@ def main() -> int:
         for label, t, dist, ang in combos:
             sk, segs, n_sel = fresh_pair()
             before = count(sk)
-            rec = {"label": label, "type": t, "distance_mm": dist, "angle_or_dist": ang,
-                   "selected": n_sel, "segments_before": before}
+            rec = {
+                "label": label,
+                "type": t,
+                "distance_mm": dist,
+                "angle_or_dist": ang,
+                "selected": n_sel,
+                "segments_before": before,
+            }
             try:
                 sw_sketch_edit.create_sketch_chamfer(
-                    doc, chamfer_type=t, distance_mm=dist, angle_or_distance=ang)
+                    doc, chamfer_type=t, distance_mm=dist, angle_or_distance=ang
+                )
                 rec["raised"] = None
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["raised"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
                 rec["tb"] = traceback.format_exc().strip().splitlines()[-3:]
             rec["segments_after"] = count(sk)
             rec["changed"] = rec["segments_after"] != rec["segments_before"]
             ev["trials"].append(rec)
-            print("  %-26s 选中=%d 段数 %s → %s  ⇒ **%s**  %s"
-                  % (label, n_sel, rec["segments_before"], rec["segments_after"],
-                     "变了 ✚" if rec["changed"] else "没变",
-                     (rec["raised"] or "")[:44]))
+            print(
+                "  %-26s 选中=%d 段数 %s → %s  ⇒ **%s**  %s"
+                % (
+                    label,
+                    n_sel,
+                    rec["segments_before"],
+                    rec["segments_after"],
+                    "变了 ✚" if rec["changed"] else "没变",
+                    (rec["raised"] or "")[:44],
+                )
+            )
             if rec["changed"]:
                 print("     ★★ **这个组合可行**")
             sw_part.end_sketch(doc)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     dialogs, _点掉, scanned = _sc.settle_residual_dialogs()
-    print("  收尾：扫了 %d 个窗口 · %s" % (scanned, "无模态框" if not dialogs else dialogs))
+    print(
+        "  收尾：扫了 %d 个窗口 · %s"
+        % (scanned, "无模态框" if not dialogs else dialogs)
+    )
     ev["modal_dialogs"] = dialogs
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

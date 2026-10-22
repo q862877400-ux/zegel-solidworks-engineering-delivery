@@ -23,6 +23,7 @@ r"""@brief 探针：我们代码里写的官方枚举成员，分别落在**哪�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -82,10 +83,12 @@ def members_covered(paths) -> tuple:
 
 
 #: ⚠ **我们自己的模块名/函数名不是官方成员**（轮 108 第一版把它们也当成成员了）。
-OWN_NAME = re.compile(r"^sw_(jlcfa|api|com|connect|export|part|assembly|drawing|review|mold|"
-                      r"sheet|weldment|simulation|selection|render|macro|costing|routing|"
-                      r"sketch|hole|helix|delivery|document|preflight|addin|misumi|gear|"
-                      r"pattern|surface|topology|motion|fea|dfm|cad|gui|automation)_")
+OWN_NAME = re.compile(
+    r"^sw_(jlcfa|api|com|connect|export|part|assembly|drawing|review|mold|"
+    r"sheet|weldment|simulation|selection|render|macro|costing|routing|"
+    r"sketch|hole|helix|delivery|document|preflight|addin|misumi|gear|"
+    r"pattern|surface|topology|motion|fea|dfm|cad|gui|automation)_"
+)
 
 
 def assemblies() -> list:
@@ -105,19 +108,26 @@ def main() -> int:
     dumps = dumps_on_disk()
     covered, covered_enums = members_covered(dumps)
     print("代码注释里的官方成员名：**%d** 个" % len(code))
-    print("_raw 下的枚举转储：**%d** 份 ⇒ 覆盖 **%d** 个成员 + **%d** 个枚举类型名"
-          % (len(dumps), len(covered), len(covered_enums)))
+    print(
+        "_raw 下的枚举转储：**%d** 份 ⇒ 覆盖 **%d** 个成员 + **%d** 个枚举类型名"
+        % (len(dumps), len(covered), len(covered_enums))
+    )
     print("  " + "\n  ".join(str(p.relative_to(RAW)) for p in dumps))
     print()
 
     # ⚠ 先剔掉**我们自己的名字**（第一版把它们当成官方成员 ⇒ 假阳性）
     own = sorted(m for m in code if OWN_NAME.match(m))
     if own:
-        print("⚠ **剔除我们自己的模块/函数名 %d 个**（不是官方成员）：%s"
-              % (len(own), ", ".join(own[:6])))
+        print(
+            "⚠ **剔除我们自己的模块/函数名 %d 个**（不是官方成员）：%s"
+            % (len(own), ", ".join(own[:6]))
+        )
         print()
-    uncovered = sorted(m for m in code
-                       if m not in covered and m not in covered_enums and m not in set(own))
+    uncovered = sorted(
+        m
+        for m in code
+        if m not in covered and m not in covered_enums and m not in set(own)
+    )
     print("★ 代码里用到、但**现有转储没覆盖**的成员/枚举名：**%d** 个" % len(uncovered))
     if not uncovered:
         print("  ⇒ 现有转储已覆盖代码里用到的**全部**成员。")
@@ -148,7 +158,10 @@ def main() -> int:
         print("  %-46s %d 个成员" % (asm, len(by_asm[asm])))
         print("      例：%s" % ", ".join(by_asm[asm][:4]))
     if nowhere:
-        print("  %-46s %d 个（在任何 DLL 里都找不到 —— 可能是名字写错）" % ("**查不到**", len(nowhere)))
+        print(
+            "  %-46s %d 个（在任何 DLL 里都找不到 —— 可能是名字写错）"
+            % ("**查不到**", len(nowhere))
+        )
         print("      例：%s" % ", ".join(nowhere[:6]))
 
     has_dump = {p.stem for p in dumps}

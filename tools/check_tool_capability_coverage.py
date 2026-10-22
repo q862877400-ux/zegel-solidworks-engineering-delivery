@@ -37,6 +37,7 @@ r"""@brief **门禁：每个工具都要有归属** —— ★ 一个 `solidwork
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -77,8 +78,10 @@ def main() -> int:
     by_name = {s.name: s for s in specs}
     uncited = sorted(set(by_name) - cited)
 
-    print("工具↔能力 归属检查 · `all_specs()` = %d 个工具 · 被能力条目认领的 = %d"
-          % (len(by_name), len(set(by_name) & cited)))
+    print(
+        "工具↔能力 归属检查 · `all_specs()` = %d 个工具 · 被能力条目认领的 = %d"
+        % (len(by_name), len(set(by_name) & cited))
+    )
     print()
     if not uncited:
         print("  ✓ 每个工具都有归属（★ `mcp_tools` 已补齐）")
@@ -87,8 +90,10 @@ def main() -> int:
     by_mod: dict = defaultdict(list)
     for n in uncited:
         by_mod[by_name[n].module].append(n)
-    print("  ★ **没有归属的工具 %d 个** ⇒ ★ 这就是「该补 `mcp_tools` 或补能力条目」的清单："
-          % len(uncited))
+    print(
+        "  ★ **没有归属的工具 %d 个** ⇒ ★ 这就是「该补 `mcp_tools` 或补能力条目」的清单："
+        % len(uncited)
+    )
     for m in sorted(by_mod, key=lambda x: (-len(by_mod[x]), x)):
         print("    %-24s %2d 个" % (m, len(by_mod[m])))
         for n in by_mod[m]:

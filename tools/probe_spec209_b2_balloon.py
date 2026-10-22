@@ -52,10 +52,13 @@ def main() -> int:
     import sw_drawing_expose as E0
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "规格 209 · B2-2 balloon —— 给「两家矛盾」定案（判据 = GetNoteCount 的增量）",
-          "judge": "sum(IView::GetNoteCount) 的增量（★ 不用返回的数组当判据）",
-          "steps": {}, "verdict": {}}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "规格 209 · B2-2 balloon —— 给「两家矛盾」定案（判据 = GetNoteCount 的增量）",
+        "judge": "sum(IView::GetNoteCount) 的增量（★ 不用返回的数组当判据）",
+        "steps": {},
+        "verdict": {},
+    }
     opened = []
     outdir = R / "output" / "probe209"
     outdir.mkdir(parents=True, exist_ok=True)
@@ -65,14 +68,26 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     def _select_view(drw, view_name):
         from sw_part import _empty_callout
+
         get_com_member(drw, "ClearSelection2", True)
-        get_com_member(get_com_member(drw, "Extension"), "SelectByID2", view_name,
-                       "DRAWINGVIEW", 0.0, 0.0, 0.0, False, 0, _empty_callout(), 0)
+        get_com_member(
+            get_com_member(drw, "Extension"),
+            "SelectByID2",
+            view_name,
+            "DRAWINGVIEW",
+            0.0,
+            0.0,
+            0.0,
+            False,
+            0,
+            _empty_callout(),
+            0,
+        )
         get_com_member(drw, "ActivateView", view_name)
 
     try:
@@ -97,9 +112,10 @@ def main() -> int:
         opened.append(drw)
         made = None
         try:
-            made = E0.create_projected_view(drw, asm_path, view_name="*Front",
-                                            x_mm=140.0, y_mm=120.0, scale=0.0)
-        except Exception as exc:                               # noqa: BLE001
+            made = E0.create_projected_view(
+                drw, asm_path, view_name="*Front", x_mm=140.0, y_mm=120.0, scale=0.0
+            )
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["view_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         views = [DM._view_name(v) for v in DM._iter_views(drw)]
         ev["views"] = views
@@ -110,18 +126,34 @@ def main() -> int:
             #: ── ① **没有 BOM 表**时调 AutoBalloon5 ────────────────────────────────
             _select_view(drw, views[0])
             r1 = DM.auto_insert_balloons(drw)
-            ev["steps"]["no_bom"] = {k: r1.get(k) for k in
-                                     ("ok", "returned_is_none", "balloon_note_count",
-                                      "note_count_before", "note_count_after",
-                                      "note_count_delta", "selection_count", "error")}
-            print("  【无 BOM】ok=%s 返回数组=%s 标注数 %s→%s (Δ%s)"
-                  % (r1.get("ok"), r1.get("balloon_note_count"), r1.get("note_count_before"),
-                     r1.get("note_count_after"), r1.get("note_count_delta")))
+            ev["steps"]["no_bom"] = {
+                k: r1.get(k)
+                for k in (
+                    "ok",
+                    "returned_is_none",
+                    "balloon_note_count",
+                    "note_count_before",
+                    "note_count_after",
+                    "note_count_delta",
+                    "selection_count",
+                    "error",
+                )
+            }
+            print(
+                "  【无 BOM】ok=%s 返回数组=%s 标注数 %s→%s (Δ%s)"
+                % (
+                    r1.get("ok"),
+                    r1.get("balloon_note_count"),
+                    r1.get("note_count_before"),
+                    r1.get("note_count_after"),
+                    r1.get("note_count_delta"),
+                )
+            )
 
             #: ── ② **另起一张**工程图 + 先插 BOM 表，再调 ─────────────────────────────
             #: ★★ 第一版把这一格跑在**同一张图、同一个视图**上 —— ★ 而那时气泡**已经存在
             #: **了，
-            #: `IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ Δ=0 **不能**当「有 BOM 
+            #: `IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ Δ=0 **不能**当「有 BOM
             #: 表就不行」
             #: 的证据（★★ 那是我探针的**设计缺陷**，已如实记进产物）⇒ ★ **换一张干净的图
             #: **重做 ✓
@@ -129,10 +161,19 @@ def main() -> int:
             drw2 = sw_connect.new_document(sw, "drawing")
             opened.append(drw2)
             try:
-                E0.create_projected_view(drw2, asm_path, view_name="*Front",
-                                         x_mm=140.0, y_mm=120.0, scale=0.0)
-            except Exception as exc:                           # noqa: BLE001
-                ev["steps"]["view2_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+                E0.create_projected_view(
+                    drw2,
+                    asm_path,
+                    view_name="*Front",
+                    x_mm=140.0,
+                    y_mm=120.0,
+                    scale=0.0,
+                )
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"]["view2_error"] = "%s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:160],
+                )
             views2 = [DM._view_name(v) for v in DM._iter_views(drw2)]
             ev["views2"] = views2
             print("  第二张图视图：%r" % (views2,))
@@ -141,23 +182,53 @@ def main() -> int:
             bom = None
             if view_obj is not None:
                 try:
-                    bom = get_com_member(view_obj, "InsertBomTable6", False, 0.15, 0.15, 1, 1,
-                                         "", "", False, 0, False, False, False)
+                    bom = get_com_member(
+                        view_obj,
+                        "InsertBomTable6",
+                        False,
+                        0.15,
+                        0.15,
+                        1,
+                        1,
+                        "",
+                        "",
+                        False,
+                        0,
+                        False,
+                        False,
+                        False,
+                    )
                     ev["steps"]["bom_table"] = {"returned": str(bom)[:80]}
-                except Exception as exc:                       # noqa: BLE001
-                    ev["steps"]["bom_table"] = {"error": "%s: %s" % (type(exc).__name__,
-                                                                    str(exc)[:160])}
+                except Exception as exc:  # noqa: BLE001
+                    ev["steps"]["bom_table"] = {
+                        "error": "%s: %s" % (type(exc).__name__, str(exc)[:160])
+                    }
                 print("  BOM 表：%s" % str(ev["steps"]["bom_table"])[:110])
                 _select_view(drw2, views2[0])
                 r2 = DM.auto_insert_balloons(drw2)
-                ev["steps"]["with_bom"] = {k: r2.get(k) for k in
-                                           ("ok", "returned_is_none", "balloon_note_count",
-                                            "note_count_before", "note_count_after",
-                                            "note_count_delta", "selection_count", "error")}
-                print("  【有 BOM·独立图纸】ok=%s 返回数组=%s 标注数 %s→%s (Δ%s)"
-                      % (r2.get("ok"), r2.get("balloon_note_count"),
-                         r2.get("note_count_before"), r2.get("note_count_after"),
-                         r2.get("note_count_delta")))
+                ev["steps"]["with_bom"] = {
+                    k: r2.get(k)
+                    for k in (
+                        "ok",
+                        "returned_is_none",
+                        "balloon_note_count",
+                        "note_count_before",
+                        "note_count_after",
+                        "note_count_delta",
+                        "selection_count",
+                        "error",
+                    )
+                }
+                print(
+                    "  【有 BOM·独立图纸】ok=%s 返回数组=%s 标注数 %s→%s (Δ%s)"
+                    % (
+                        r2.get("ok"),
+                        r2.get("balloon_note_count"),
+                        r2.get("note_count_before"),
+                        r2.get("note_count_after"),
+                        r2.get("note_count_delta"),
+                    )
+                )
 
         nb, wb = ev["steps"].get("no_bom", {}), ev["steps"].get("with_bom", {})
         ev["verdict"] = {
@@ -171,26 +242,30 @@ def main() -> int:
                 "**没有 BOM 表时它照样插了 1 个气泡**（Δ=%r、返回数组 %r）⇒ "
                 "★★ **两家外部项目的话都不该照抄**：Slacker-LLC 的「静默无效」不成立、"
                 "Eduardof0nt 的 `bool(result)` 也不能当判据（★ 它只是「返回数组非空」）✓"
-                % (nb.get("note_count_delta"), nb.get("balloon_note_count"))),
+                % (nb.get("note_count_delta"), nb.get("balloon_note_count"))
+            ),
             "★ 判据定案": (
                 "★★ **判据只能是 `sum(IView::GetNoteCount)` 的增量** —— "
                 "★ 两个前置格都是**回读 Δ** 与**返回数组长度**一起记的："
-                "Δ>0 才是「真插进去了」的证据；★ 返回数组长度**只回报、不当判据** ✓"),
+                "Δ>0 才是「真插进去了」的证据；★ 返回数组长度**只回报、不当判据** ✓"
+            ),
         }
         print("  verdict =", json.dumps(ev["verdict"], ensure_ascii=False)[:500])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         print("  FATAL %s" % str(exc)[:150])
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

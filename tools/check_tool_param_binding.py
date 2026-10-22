@@ -26,7 +26,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC                                        # noqa: E402
+import register_capabilities as RC  # noqa: E402
 
 #: ★ 注入名之外、由注册器自己塞进去的键（★ 不是 spec.params 的成员）
 SKIP = {"response_format"}
@@ -39,13 +39,18 @@ def main() -> int:
     missing_mod: list = []
     for spec in RC.all_specs():
         name = getattr(spec, "name", None)
-        mod_name, fn_name = getattr(spec, "module", None), getattr(spec, "function", None)
+        mod_name, fn_name = (
+            getattr(spec, "module", None),
+            getattr(spec, "function", None),
+        )
         if not (name and mod_name and fn_name):
             continue
         try:
             mod = importlib.import_module("scripts.%s" % mod_name)
-        except Exception as exc:                                          # noqa: BLE001
-            missing_mod.append((name, mod_name, "%s: %s" % (type(exc).__name__, str(exc)[:90])))
+        except Exception as exc:  # noqa: BLE001
+            missing_mod.append(
+                (name, mod_name, "%s: %s" % (type(exc).__name__, str(exc)[:90]))
+            )
             continue
         fn = getattr(mod, fn_name, None)
         if fn is None:
@@ -53,14 +58,16 @@ def main() -> int:
             continue
         try:
             sig = inspect.signature(fn)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         actual = set(sig.parameters)
         #: ★ 能力层可能 `**kwargs` ⇒ 那时不判
-        has_var_kw = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
+        has_var_kw = any(
+            p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
+        )
         inject = getattr(spec, "inject", None)
         alias = getattr(spec, "param_alias", None) or {}
-        for p in (getattr(spec, "params", None) or []):
+        for p in getattr(spec, "params", None) or []:
             pname = getattr(p, "name", None)
             if not pname or pname in SKIP:
                 continue
@@ -76,9 +83,19 @@ def main() -> int:
                 #: e`，照它办。
                 continue
             if target not in actual and not has_var_kw:
-                bad.append((name, pname, target, mod_name + "." + fn_name, sorted(actual)[:14]))
+                bad.append(
+                    (name, pname, target, mod_name + "." + fn_name, sorted(actual)[:14])
+                )
         if inject and inject not in actual and not has_var_kw:
-            bad.append((name, "<inject>", inject, mod_name + "." + fn_name, sorted(actual)[:14]))
+            bad.append(
+                (
+                    name,
+                    "<inject>",
+                    inject,
+                    mod_name + "." + fn_name,
+                    sorted(actual)[:14],
+                )
+            )
 
         #: ★★★ ⑤ **2026-10-03（接手轮）新加**：**目标函数的「必填形参」，spec 必须声明它
         #: **。
@@ -95,14 +112,17 @@ def main() -> int:
         #: ② spec 有 **`derived_args`**（★ 它会补 kwargs，静态看不出来）⇒ **不报**，只单
         #: 独记数。
         supplied = set()
-        for _p in (getattr(spec, "params", None) or []):
+        for _p in getattr(spec, "params", None) or []:
             _n = getattr(_p, "name", None)
             if _n:
                 supplied.add(alias.get(_n, _n))
         if inject:
             supplied.add(inject)
         for r, par in sig.parameters.items():
-            if par.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+            if par.kind in (
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            ):
                 continue
             if par.default is not inspect.Parameter.empty or r in ("self", "cls"):
                 continue
@@ -111,7 +131,15 @@ def main() -> int:
             if getattr(spec, "derived_args", None) is not None:
                 derived_ok.append((name, r, mod_name + "." + fn_name))
                 continue
-            bad.append((name, "<必填形参未声明>", r, mod_name + "." + fn_name, sorted(actual)[:14]))
+            bad.append(
+                (
+                    name,
+                    "<必填形参未声明>",
+                    r,
+                    mod_name + "." + fn_name,
+                    sorted(actual)[:14],
+                )
+            )
 
     #: ★★ **2026-10-03（接手轮）：判据必须自报「覆盖面」** —— ★ 只报违规数的判据
     #:   **无法自证它在工作**（★ 事实 506：我另外两条判据因为**读错字段**
@@ -120,7 +148,10 @@ def main() -> int:
     print("模块/函数取不到的：%d" % len(missing_mod))
     for m in missing_mod[:10]:
         print("   %-52s %s" % (m[0][:51], m[2][:80]))
-    print("★ 可能由 derived_args 供给的必填形参（★ 静态判不了，只记数）：%d" % len(derived_ok))
+    print(
+        "★ 可能由 derived_args 供给的必填形参（★ 静态判不了，只记数）：%d"
+        % len(derived_ok)
+    )
     for d in derived_ok[:8]:
         print("   %-50s %s" % (d[0][:49], d[1]))
     print("★ 绑定不上的：%d" % len(bad))
@@ -128,13 +159,20 @@ def main() -> int:
         #: ★★ 2026-10-03：**两类必须分开报** —— ①「声明名无去处」与 ⑤「必填形参未声明」
         #:   的措辞混在一起会**误读**（★ 我第一版就把 ⑤ 的 5 条当成了 ① 的假阳性）。
         if b[1] == "<必填形参未声明>":
-            print("   %-46s [⑤函数要、spec 没给] 必填形参 %-24s ⇒ 经工具层必 "
-                  "TypeError: missing 1 required positional argument" % (b[0][:45], b[2]))
+            print(
+                "   %-46s [⑤函数要、spec 没给] 必填形参 %-24s ⇒ 经工具层必 "
+                "TypeError: missing 1 required positional argument" % (b[0][:45], b[2])
+            )
         elif b[1] == "<inject>":
-            print("   %-46s [④注入键≠形参名] inject=%r ⇒ 经工具层必 TypeError" % (b[0][:45], b[2]))
+            print(
+                "   %-46s [④注入键≠形参名] inject=%r ⇒ 经工具层必 TypeError"
+                % (b[0][:45], b[2])
+            )
         else:
-            print("   %-46s [①声明名无去处] 声明 %-22s ⇒ 目标函数里没有；形参=%s"
-                  % (b[0][:45], b[2], b[4]))
+            print(
+                "   %-46s [①声明名无去处] 声明 %-22s ⇒ 目标函数里没有；形参=%s"
+                % (b[0][:45], b[2], b[4])
+            )
     return 1 if bad else 0
 
 

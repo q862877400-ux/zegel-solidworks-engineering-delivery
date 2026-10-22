@@ -7,7 +7,7 @@
 #           「复制实体」。
 #
 #   ★★★★ **而本轮先把那条台账的归因**纠正了****：
-# 台账写的是 `IModelDoc2.SketchModifyCopy` —— ★ **而按铁律 5 全接口查：那个名字不存在** 
+# 台账写的是 `IModelDoc2.SketchModifyCopy` —— ★ **而按铁律 5 全接口查：那个名字不存在**
 # ⚠
 #     （★ `SketchModify` 全族**只有四个**：`Flip` / `Rotate` / `Scale` / `Translate`）
 #
@@ -25,7 +25,7 @@
 #
 #   ★ 前置：★ **一个 3D 草图**（★ `ISketchManager.Insert3DSketch`）+ ★ 里面一条线。
 #   ★ 判据（★ 规则 6 + 事实 436）：**草图段数增加**（★ 复制一份 ⇒ 段数应变 2）。
-# ⚠ 全程走 `tools/sw_guard.py`；★ 三格：`Copy=True` / `Copy=False`（对照：只转不复制）/ 
+# ⚠ 全程走 `tools/sw_guard.py`；★ 三格：`Copy=True` / `Copy=False`（对照：只转不复制）/
 # 不选对照。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -43,15 +43,15 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 def _seg_count(doc):
     try:
         sk = C.get_com_member(doc, "GetActiveSketch2")
         return len(list(C.get_com_member(sk, "GetSketchSegments") or [])) if sk else -1
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -65,7 +65,7 @@ def _one(sw, tag, do_copy):
         try:
             C.get_com_member(sm, "Insert3DSketch", True)
             row["sketch3d"] = "Insert3DSketch"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["sketch3d"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         #: \u2605 \u91cc\u9762\u753b\u4e00\u6761\u7ebf
         C.get_com_member(sm, "CreateLine", -0.02, 0.0, 0.0, 0.02, 0.0, 0.0)
@@ -82,18 +82,27 @@ def _one(sw, tag, do_copy):
             #: L`\uff08`0x8002000F`\uff09
             #: \u2014\u2014 \u2605 **\u5b83\u770b\u4e0d\u51fa\u662f\u54ea\u4e2a\u53c2\u6
             #: 570\u6f0f\u4e86** \u26a0
-            ret = C.get_com_member(sm, "RotateOrCopy3DAboutXYZ",
-                                   bool(do_copy), 1, True,
-                                   0.0, 0.0, 0.0,
-                                   0.7853981633974483, 0.0, 0.0)
+            ret = C.get_com_member(
+                sm,
+                "RotateOrCopy3DAboutXYZ",
+                bool(do_copy),
+                1,
+                True,
+                0.0,
+                0.0,
+                0.0,
+                0.7853981633974483,
+                0.0,
+                0.0,
+            )
             row["returned"] = str(ret)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(doc)
         row["seg_after"] = after
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -101,32 +110,58 @@ def _one(sw, tag, do_copy):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u590d\u5236\u5b9e\u4f53\uff1a`ISketchManager.RotateOrCopy3DAboutXYZ`\uff08\u2605 **\u7b2c\u4e00\u53c2 `Copy`**\uff09",
-          "official": "\u53f0\u8d26\u5199\u7684 `SketchModifyCopy` **\u5168\u63a5\u53e3\u67e5\u4e0d\u5230**\uff08\u94c1\u5f8b 5\uff09\uff1b"
-                      "\u800c `ISketchManager` \u91cc\u542b `Copy` \u7684\u53ea\u6709 `RotateOrCopy3DAboutXYZ` / `AboutVector`\uff0c"
-                      "\u2605 \u5b98\u65b9\u5bf9 `Copy` \u7684\u9010\u5b57\uff1a\"True to copy 3D sketch entities\"",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 `Copy=True`\uff08\u2605 \u590d\u5236\uff09", True))
-    ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a`Copy=False`\uff08\u2605 \u53ea\u65cb\u8f6c\u3001\u4e0d\u590d\u5236\uff09", False))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u590d\u5236\u5b9e\u4f53\uff1a`ISketchManager.RotateOrCopy3DAboutXYZ`\uff08\u2605 **\u7b2c\u4e00\u53c2 `Copy`**\uff09",
+        "official": "\u53f0\u8d26\u5199\u7684 `SketchModifyCopy` **\u5168\u63a5\u53e3\u67e5\u4e0d\u5230**\uff08\u94c1\u5f8b 5\uff09\uff1b"
+        "\u800c `ISketchManager` \u91cc\u542b `Copy` \u7684\u53ea\u6709 `RotateOrCopy3DAboutXYZ` / `AboutVector`\uff0c"
+        '\u2605 \u5b98\u65b9\u5bf9 `Copy` \u7684\u9010\u5b57\uff1a"True to copy 3D sketch entities"',
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(sw, "\u2605 `Copy=True`\uff08\u2605 \u590d\u5236\uff09", True)
+    )
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u5bf9\u7167\uff1a`Copy=False`\uff08\u2605 \u53ea\u65cb\u8f6c\u3001\u4e0d\u590d\u5236\uff09",
+            False,
+        )
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = "rotate_or_copy_works" if ev["cases"][0].get("ok") else "rotate_or_copy_fails"
+    ev["verdict"] = (
+        "rotate_or_copy_works" if ev["cases"][0].get("ok") else "rotate_or_copy_fails"
+    )
     p = R / "output" / "rotate-or-copy-3d-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-40s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s" % (
-            c.get("tag"), c.get("ok"), c.get("seg_before"), c.get("seg_after"),
-            c.get("new_segments"), c.get("returned")))
+        print(
+            "  %-40s ok=%-6s \u6bb5 %s \u2192 %s\uff08\u589e %s\uff09\u56de=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("seg_before"),
+                c.get("seg_after"),
+                c.get("new_segments"),
+                c.get("returned"),
+            )
+        )
         if c.get("sketch3d"):
             print("        3D \u8349\u56fe\uff1a%s" % c.get("sketch3d"))
         if c.get("err"):

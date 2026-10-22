@@ -28,6 +28,7 @@ diff 记号」，并**直接点名文件与行号**（编译错误只给一个 I
 
 ⚠ 只读本地文件，不改任何东西。
 """
+
 from __future__ import annotations
 
 import re
@@ -119,7 +120,7 @@ def scan(path: Path) -> list[tuple[int, str]]:
         return hits
 
     depth = 0
-    in_doc = False          # 是否在 """ 或 ''' 里面（docstring 里的示例不是代码）
+    in_doc = False  # 是否在 """ 或 ''' 里面（docstring 里的示例不是代码）
     prev_code = ""
     for index, line in enumerate(lines):
         stripped = line.strip()

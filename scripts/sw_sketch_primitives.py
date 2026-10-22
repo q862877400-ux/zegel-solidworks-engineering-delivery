@@ -27,7 +27,7 @@
 # ⚠ **单位**：一律**毫米**，与本仓 `sw_part.sketch_*` 那族一致（★ 不是官方文档里那个"米"
 # ，
 #     见已知事实 73 的实测）。★ 换算只在**工具层**边界做一次（规则 2）。
-# ⚠ **返回值**：官方这族里 `Create3Point*` / `CreateParallelogram` / `PerimeterCircle` 
+# ⚠ **返回值**：官方这族里 `Create3Point*` / `CreateParallelogram` / `PerimeterCircle`
 # 声明回
 #     `System.object`，其余回 `SketchSegment`。★ 本模块**对 `None` 一律抛** ——
 # ★ 因为"建了但返回 None"与"没建"在调用方看来是同一种失败（事实 40 的教训：让失败可见）
@@ -42,7 +42,7 @@
 
 from __future__ import annotations
 
-_MM_TO_M = 1.0 / 1000.0      #: ★ 毫米 → 米（事实 2 的换算口径）
+_MM_TO_M = 1.0 / 1000.0  #: ★ 毫米 → 米（事实 2 的换算口径）
 
 import sys
 from pathlib import Path
@@ -59,8 +59,7 @@ from sw_connect import get_com_member  # noqa: E402
 #:   草图 40×40 回读 `[40,40,0]` ✓ 而 `extrude_boss(20.0)` 回读 Z = **20000 mm**
 #:   ⇒ COM 吃**米**，用户传毫米 ⇒ 进 COM 前必须换算恰好一次。
 #: ⚠ 用单 token 替换（`float(` → `_f(`）落地，避免括号配对出错（事实 61）。
-_f = lambda v: v * _MM_TO_M          # noqa: E731
-
+_f = lambda v: v * _MM_TO_M  # noqa: E731
 
 
 def _sm(model):
@@ -84,28 +83,61 @@ def _need(seg, member: str, why: str = ""):
 def sketch_3point_corner_rectangle(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点边角矩形：`Create3PointCornerRectangle`（三点定一个**任意角度**的矩形）。"""
     return _need(
-        get_com_member(_sm(model), "Create3PointCornerRectangle",
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       _f(x3), _f(y3), 0.0),
-        "Create3PointCornerRectangle")
+        get_com_member(
+            _sm(model),
+            "Create3PointCornerRectangle",
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            _f(x3),
+            _f(y3),
+            0.0,
+        ),
+        "Create3PointCornerRectangle",
+    )
 
 
 def sketch_3point_center_rectangle(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点中心矩形：`Create3PointCenterRectangle`（★ 第一点是**中心**）。"""
     return _need(
-        get_com_member(_sm(model), "Create3PointCenterRectangle",
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       _f(x3), _f(y3), 0.0),
-        "Create3PointCenterRectangle")
+        get_com_member(
+            _sm(model),
+            "Create3PointCenterRectangle",
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            _f(x3),
+            _f(y3),
+            0.0,
+        ),
+        "Create3PointCenterRectangle",
+    )
 
 
 def sketch_parallelogram(model, x1, y1, x2, y2, x3, y3):
     """★ 平行四边形：`CreateParallelogram`（三点：一角 + 两条邻边的端点）。"""
     return _need(
-        get_com_member(_sm(model), "CreateParallelogram",
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       _f(x3), _f(y3), 0.0),
-        "CreateParallelogram")
+        get_com_member(
+            _sm(model),
+            "CreateParallelogram",
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            _f(x3),
+            _f(y3),
+            0.0,
+        ),
+        "CreateParallelogram",
+    )
 
 
 def sketch_tangent_arc(model, x1, y1, x2, y2, arc_type=1):
@@ -115,64 +147,143 @@ def sketch_tangent_arc(model, x1, y1, x2, y2, arc_type=1):
         ⇒ 默认 1（★ **标注为未核实**，按铁律 5 不假装知道）。
     """
     return _need(
-        get_com_member(_sm(model), "CreateTangentArc",
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       int(arc_type)),
-        "CreateTangentArc", "★ 切线弧要求草图上**已有**一条线段可供相切")
+        get_com_member(
+            _sm(model),
+            "CreateTangentArc",
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            int(arc_type),
+        ),
+        "CreateTangentArc",
+        "★ 切线弧要求草图上**已有**一条线段可供相切",
+    )
 
 
 def sketch_3point_arc(model, x1, y1, x2, y2, x3, y3):
     """★ 3 点圆弧：`Create3PointArc`（起点 / 终点 / 弧上一点）。"""
     return _need(
-        get_com_member(_sm(model), "Create3PointArc",
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       _f(x3), _f(y3), 0.0),
-        "Create3PointArc")
+        get_com_member(
+            _sm(model),
+            "Create3PointArc",
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            _f(x3),
+            _f(y3),
+            0.0,
+        ),
+        "Create3PointArc",
+    )
 
 
-def sketch_elliptical_arc(model, cx, cy, major_x, major_y, minor_x, minor_y,
-                          x1, y1, x2, y2, direction=1):
+def sketch_elliptical_arc(
+    model, cx, cy, major_x, major_y, minor_x, minor_y, x1, y1, x2, y2, direction=1
+):
     """★ 部分椭圆：`CreateEllipticalArc`（★ 中心 + 长短轴点 + 起终点 + 方向）。"""
     return _need(
-        get_com_member(_sm(model), "CreateEllipticalArc",
-                       _f(cx), _f(cy), 0.0,
-                       _f(major_x), _f(major_y), 0.0,
-                       _f(minor_x), _f(minor_y), 0.0,
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0,
-                       int(direction)),
-        "CreateEllipticalArc")
+        get_com_member(
+            _sm(model),
+            "CreateEllipticalArc",
+            _f(cx),
+            _f(cy),
+            0.0,
+            _f(major_x),
+            _f(major_y),
+            0.0,
+            _f(minor_x),
+            _f(minor_y),
+            0.0,
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+            int(direction),
+        ),
+        "CreateEllipticalArc",
+    )
 
 
 def sketch_parabola(model, fx, fy, ax, ay, x1, y1, x2, y2):
     """★ 抛物线：`CreateParabola`（焦点 + 顶点 + 两点定端点）。"""
     return _need(
-        get_com_member(_sm(model), "CreateParabola",
-                       _f(fx), _f(fy), 0.0, _f(ax), _f(ay), 0.0,
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0),
-        "CreateParabola")
+        get_com_member(
+            _sm(model),
+            "CreateParabola",
+            _f(fx),
+            _f(fy),
+            0.0,
+            _f(ax),
+            _f(ay),
+            0.0,
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+        ),
+        "CreateParabola",
+    )
 
 
 def sketch_conic(model, fx, fy, ax, ay, x1, y1, x2, y2):
     """★ 圆锥曲线：`CreateConic`（★ 官方签名与 `CreateParabola` **同形**）。"""
     return _need(
-        get_com_member(_sm(model), "CreateConic",
-                       _f(fx), _f(fy), 0.0, _f(ax), _f(ay), 0.0,
-                       _f(x1), _f(y1), 0.0, _f(x2), _f(y2), 0.0),
-        "CreateConic")
+        get_com_member(
+            _sm(model),
+            "CreateConic",
+            _f(fx),
+            _f(fy),
+            0.0,
+            _f(ax),
+            _f(ay),
+            0.0,
+            _f(x1),
+            _f(y1),
+            0.0,
+            _f(x2),
+            _f(y2),
+            0.0,
+        ),
+        "CreateConic",
+    )
 
 
 def sketch_perimeter_circle(model, x1, y1, x2, y2, x3, y3):
     """★ 周边圆：`PerimeterCircle`（★ 官方签名**只有 6 个参数 —— 没有 Z**）。"""
     return _need(
-        get_com_member(_sm(model), "PerimeterCircle",
-                       _f(x1), _f(y1), _f(x2), _f(y2), _f(x3), _f(y3)),
-        "PerimeterCircle")
+        get_com_member(
+            _sm(model),
+            "PerimeterCircle",
+            _f(x1),
+            _f(y1),
+            _f(x2),
+            _f(y2),
+            _f(x3),
+            _f(y3),
+        ),
+        "PerimeterCircle",
+    )
 
 
 #: ★ B1 批的成员清单（★ 供探针与门禁按名单跑，不遍历）
 B1_MEMBERS = (
-    "sketch_3point_corner_rectangle", "sketch_3point_center_rectangle",
-    "sketch_parallelogram", "sketch_tangent_arc", "sketch_3point_arc",
-    "sketch_elliptical_arc", "sketch_parabola", "sketch_conic",
+    "sketch_3point_corner_rectangle",
+    "sketch_3point_center_rectangle",
+    "sketch_parallelogram",
+    "sketch_tangent_arc",
+    "sketch_3point_arc",
+    "sketch_elliptical_arc",
+    "sketch_parabola",
+    "sketch_conic",
     "sketch_perimeter_circle",
 )

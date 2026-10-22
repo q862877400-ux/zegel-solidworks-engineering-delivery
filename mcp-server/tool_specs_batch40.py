@@ -60,23 +60,38 @@ SPECS_BATCH40 = [
     ToolSpec(
         name="solidworks_motion_create_study",
         title="Create a Motion Study on the Active Assembly",
-        module="sw_motion", function="create_motion_study",
+        module="sw_motion",
+        function="create_motion_study",
         inject="asm_model",
         params=[
-            Param("name", str, default=None, description="Study name (omit for the default)."),
-            Param("duration", float, default=4.0,
-                  description="Study duration in SECONDS (★ not a length)."),
-            Param("study_type", int, default=None,
-                  description="Study type enum value (omit for the default)."),
+            Param(
+                "name",
+                str,
+                default=None,
+                description="Study name (omit for the default).",
+            ),
+            Param(
+                "duration",
+                float,
+                default=4.0,
+                description="Study duration in SECONDS (★ not a length).",
+            ),
+            Param(
+                "study_type",
+                int,
+                default=None,
+                description="Study type enum value (omit for the default).",
+            ),
         ],
         doc="Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY "
-            "document — the capability layer reports it if the active document is not one. "
-            "⚠ Does NOT save the document.",
+        "document — the capability layer reports it if the active document is not one. "
+        "⚠ Does NOT save the document.",
     ),
     ToolSpec(
         name="solidworks_motion_collect_summary",
         title="Collect the Motion Study Summary",
-        module="sw_motion", function="collect_motion_study_summary",
+        module="sw_motion",
+        function="collect_motion_study_summary",
         inject="asm_model",
         params=[],
         doc="Return a JSON-able summary of the assembly's motion studies. ★ Read-only.",
@@ -84,62 +99,117 @@ SPECS_BATCH40 = [
     ToolSpec(
         name="solidworks_motion_validate_studies",
         title="Validate the Motion Studies Against Requirements",
-        module="sw_motion", function="validate_motion_studies_report",
+        module="sw_motion",
+        function="validate_motion_studies_report",
         inject="asm_model",
         params=[
-            Param("study_name", str, default=None, description="Only validate this study."),
-            Param("expected_study_type", int, default=None, description="Require this study type."),
-            Param("minimum_duration_seconds", float, default=None,
-                  description="Require at least this duration in SECONDS."),
-            Param("minimum_motor_count", int, default=None,
-                  description="Require at least this many motors."),
-            Param("require_results", bool, default=None, description="Require computed results."),
+            Param(
+                "study_name", str, default=None, description="Only validate this study."
+            ),
+            Param(
+                "expected_study_type",
+                int,
+                default=None,
+                description="Require this study type.",
+            ),
+            Param(
+                "minimum_duration_seconds",
+                float,
+                default=None,
+                description="Require at least this duration in SECONDS.",
+            ),
+            Param(
+                "minimum_motor_count",
+                int,
+                default=None,
+                description="Require at least this many motors.",
+            ),
+            Param(
+                "require_results",
+                bool,
+                default=None,
+                description="Require computed results.",
+            ),
         ],
         doc="Validate the motion studies against the given requirements and return the result. "
-            "★ Read-only (★ it reports, it does not fix).",
+        "★ Read-only (★ it reports, it does not fix).",
     ),
     ToolSpec(
         name="solidworks_motion_study_manager",
         title="Get the Motion Study Manager",
-        module="sw_motion", function="get_motion_study_manager",
+        module="sw_motion",
+        function="get_motion_study_manager",
         inject="asm_model",
         params=[
-            Param("load_type_library", bool, default=True,
-                  description="Load the Motion type library first (★ needed on a fresh session)."),
+            Param(
+                "load_type_library",
+                bool,
+                default=True,
+                description="Load the Motion type library first (★ needed on a fresh session).",
+            ),
         ],
         doc="Return the assembly's motion study manager (★ the entry point for the rest). "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_motion_ensure_type_library",
         title="Ensure the Motion Type Library Is Loaded",
-        module="sw_motion", function="ensure_motion_type_library",
+        module="sw_motion",
+        function="ensure_motion_type_library",
         inject=None,
         params=[
-            Param("raise_on_error", bool, default=False,
-                  description="Raise instead of reporting a boolean when loading fails."),
+            Param(
+                "raise_on_error",
+                bool,
+                default=False,
+                description="Raise instead of reporting a boolean when loading fails.",
+            ),
         ],
         doc="Check (and load) the Motion type library. ★ Zero-argument apart from the flag — "
-            "use it to find out whether Motion is usable BEFORE asking for anything else. "
-            "★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。",
+        "use it to find out whether Motion is usable BEFORE asking for anything else. "
+        "★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。",
     ),
     ToolSpec(
         name="solidworks_motion_validate_summary",
         title="Validate One Motion Study Summary",
-        module="sw_motion", function="validate_motion_study_summary",
+        module="sw_motion",
+        function="validate_motion_study_summary",
         inject=None,
         params=[
-            Param("summary", dict,
-                  description="A summary dict (★ as returned by solidworks_motion_collect_summary)."),
-            Param("study_name", str, default=None, description="Only validate this study."),
-            Param("expected_study_type", int, default=None, description="Require this study type."),
-            Param("minimum_duration_seconds", float, default=None,
-                  description="Require at least this duration in SECONDS."),
-            Param("minimum_motor_count", int, default=None,
-                  description="Require at least this many motors."),
-            Param("require_results", bool, default=None, description="Require computed results."),
+            Param(
+                "summary",
+                dict,
+                description="A summary dict (★ as returned by solidworks_motion_collect_summary).",
+            ),
+            Param(
+                "study_name", str, default=None, description="Only validate this study."
+            ),
+            Param(
+                "expected_study_type",
+                int,
+                default=None,
+                description="Require this study type.",
+            ),
+            Param(
+                "minimum_duration_seconds",
+                float,
+                default=None,
+                description="Require at least this duration in SECONDS.",
+            ),
+            Param(
+                "minimum_motor_count",
+                int,
+                default=None,
+                description="Require at least this many motors.",
+            ),
+            Param(
+                "require_results",
+                bool,
+                default=None,
+                description="Require computed results.",
+            ),
         ],
         doc="Validate a motion-study summary dict (★ pure data — no SolidWorks call). "
-            "★ Useful to re-check a summary recorded earlier.",
+        "★ Useful to re-check a summary recorded earlier.",
     ),
 ]

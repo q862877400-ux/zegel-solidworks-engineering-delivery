@@ -46,7 +46,9 @@ OUT = REPO / "output" / "union-denominator.json"
 NON_FEATURE_IFACE = re.compile(
     r"^(I?)(Event|Events|Notify|Notification|Handler|Callback|Sink|"
     r"Enum|Constants?|Table|List|Array|Collection|Enumerator|Iterator|"
-    r"Error|Errors|Status|Result|Info|Data\b.*$)", re.I)
+    r"Error|Errors|Status|Result|Info|Data\b.*$)",
+    re.I,
+)
 
 
 def ui_items() -> list:
@@ -63,8 +65,13 @@ def ui_items() -> list:
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) < 3 or cells[0] in ("域", "") or set(cells[0]) <= set("-: "):
             continue
-        out.append({"domain": cells[0], "feature": cells[1],
-                    "ours": cells[2] if len(cells) > 2 else ""})
+        out.append(
+            {
+                "domain": cells[0],
+                "feature": cells[1],
+                "ours": cells[2] if len(cells) > 2 else "",
+            }
+        )
     return out
 
 
@@ -102,8 +109,9 @@ def main() -> int:
     ui_tokens = set()
     for it in ui:
         ui_tokens |= set(re.findall(r"[\u4e00-\u9fff]{2,}|[A-Za-z]{3,}", it["feature"]))
-    overlap_guess = sorted(k for k in feature_fams
-                           if any(tok.lower() in k.lower() for tok in ui_tokens))
+    overlap_guess = sorted(
+        k for k in feature_fams if any(tok.lower() in k.lower() for tok in ui_tokens)
+    )
 
     R = {
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -122,9 +130,8 @@ def main() -> int:
             "细下界（UI 145）": n_ui,
             "细上界（一成员一功能）": n_ui + n_member,
         },
-        "★_粒度说明":
-            "★ UI 侧是**用户心智单位**（画直线/拉伸），API 侧**族**是**接口** —— "
-            "`IFeatureManager` 一族里 200+ 成员覆盖几十个功能 ⇒ 直接取并集会**严重低估**功能数。",
+        "★_粒度说明": "★ UI 侧是**用户心智单位**（画直线/拉伸），API 侧**族**是**接口** —— "
+        "`IFeatureManager` 一族里 200+ 成员覆盖几十个功能 ⇒ 直接取并集会**严重低估**功能数。",
         "ui_items": ui,
         "feature_families": sorted(feature_fams),
     }
@@ -136,11 +143,19 @@ def main() -> int:
     print("   ★★ N_family_feature（剔掉非功能族后的候选）  = **%d**" % n_family_feature)
     print("   ★★ N_member_unique（不重复成员名，细粒度上界）= **%d**" % n_member)
     print()
-    print("   ⇒ ★ **粗粒度并集** = %d + %d - %d（按词根粗估的重叠） = **%d**"
-          % (n_ui, n_family_feature, len(overlap_guess),
-             n_ui + n_family_feature - len(overlap_guess)))
+    print(
+        "   ⇒ ★ **粗粒度并集** = %d + %d - %d（按词根粗估的重叠） = **%d**"
+        % (
+            n_ui,
+            n_family_feature,
+            len(overlap_guess),
+            n_ui + n_family_feature - len(overlap_guess),
+        )
+    )
     print("   ⇒ ★ **细粒度下界** = %d（UI 145）" % n_ui)
-    print("   ⇒ ★ **细粒度上界** = %d + %d = **%d**" % (n_ui, n_member, n_ui + n_member))
+    print(
+        "   ⇒ ★ **细粒度上界** = %d + %d = **%d**" % (n_ui, n_member, n_ui + n_member)
+    )
     print()
     print("★ 被当作「非功能族」剔掉的（前 24）：")
     print("   " + ", ".join(dropped[:24]))
@@ -149,7 +164,9 @@ def main() -> int:
     print("   " + ", ".join(overlap_guess[:24]))
     print()
     print("★★ 产出:", OUT, "（%.1f s）" % (time.time() - started))
-    print("★★★ 注意：★ 精确去重**需要一条判据**（何为「同一个功能」）—— ★ 那是判据设计（M3），★ 本脚本不拍板。")
+    print(
+        "★★★ 注意：★ 精确去重**需要一条判据**（何为「同一个功能」）—— ★ 那是判据设计（M3），★ 本脚本不拍板。"
+    )
     return 0
 
 

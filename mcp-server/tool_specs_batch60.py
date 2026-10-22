@@ -43,50 +43,82 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 from tool_registry import Param
+
 #: ★★ 复用 batch29 的骨架（`module="sw_simulation_loads"` · `inject="manager"` ·
 #:   `pre_call=_select_face` · `derived_args=_derive_model` 一整套都在里面）。
 from tool_specs_batch29 import _SEL, _STUDY, _spec
 
-_READBACK = ("★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
-             "⚠ 需要 Simulation 加载项（首次调用会自动加载）。")
-_STATIC = ("★ **本载荷在「静力算例」下验证通过**（`study_type=0`，默认）——"
-           "★ 与热载荷那 4 条相反（★ 各载荷对算例类型的要求不同，★ 逐条记）。"
-           "⚠★ **建算例时请用唯一名字** —— 算例**重名**会让计数回读取不到（真机实测）。")
+_READBACK = (
+    "★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
+    "⚠ 需要 Simulation 加载项（首次调用会自动加载）。"
+)
+_STATIC = (
+    "★ **本载荷在「静力算例」下验证通过**（`study_type=0`，默认）——"
+    "★ 与热载荷那 4 条相反（★ 各载荷对算例类型的要求不同，★ 逐条记）。"
+    "⚠★ **建算例时请用唯一名字** —— 算例**重名**会让计数回读取不到（真机实测）。"
+)
 
 SPECS_BATCH60 = [
     _spec(
-        "solidworks_simulation_apply_distributed_mass", "Apply a Distributed Mass",
+        "solidworks_simulation_apply_distributed_mass",
+        "Apply a Distributed Mass",
         "apply_distributed_mass_report",
         "Add a **DISTRIBUTED MASS** to the selected face(s) and return a READ-BACK report. "
-        + _READBACK + " " + _STATIC,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL),
-         Param("mass", float, description="质量（★ 官方 `DMass` 入参，★ 单位随 `units`）"),
-         Param("units", int, default=0,
-               description="官方 `NUnits` 枚举（★ 反射 dump 未收录 ⇒ 只做 int 透传，默认 0）")],
+        + _READBACK
+        + " "
+        + _STATIC,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+            Param(
+                "mass",
+                float,
+                description="质量（★ 官方 `DMass` 入参，★ 单位随 `units`）",
+            ),
+            Param(
+                "units",
+                int,
+                default=0,
+                description="官方 `NUnits` 枚举（★ 反射 dump 未收录 ⇒ 只做 int 透传，默认 0）",
+            ),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_force", "Apply a Force or Moment",
+        "solidworks_simulation_apply_force",
+        "Apply a Force or Moment",
         "apply_force_report",
         "Add a **FORCE / MOMENT** to the selected face(s) and return a READ-BACK report. "
         "★ `force_type` 是官方的种类枚举（★ 默认 1）。"
         "⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）—— ★ 裸函数的默认 `None` 会"
         "`类型不匹配`（事实 12）。" + _READBACK + " " + _STATIC,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL),
-         Param("force_type", int, default=1, description="官方 `AddForce` 的种类枚举（默认 1）")],
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+            Param(
+                "force_type",
+                int,
+                default=1,
+                description="官方 `AddForce` 的种类枚举（默认 1）",
+            ),
+        ],
     ),
     _spec(
-        "solidworks_simulation_apply_remote_load", "Apply a Remote Load",
+        "solidworks_simulation_apply_remote_load",
+        "Apply a Remote Load",
         "apply_remote_load_report",
         "Add a **REMOTE LOAD** (location + direction + magnitude) to the selected face(s) "
-        + "and return a READ-BACK report. " + _READBACK + " " + _STATIC,
-        [Param("study_name", str, default="", description=_STUDY),
-         Param("selection", str, description=_SEL),
-         Param("load_type", int, description="官方 `NLoadType` 枚举"),
-         Param("units", int, description="官方 `NLocationUnits` 枚举"),
-         Param("dx", float, description="方向 X 分量"),
-         Param("dy", float, description="方向 Y 分量"),
-         Param("dz", float, description="方向 Z 分量")],
+        + "and return a READ-BACK report. "
+        + _READBACK
+        + " "
+        + _STATIC,
+        [
+            Param("study_name", str, default="", description=_STUDY),
+            Param("selection", str, description=_SEL),
+            Param("load_type", int, description="官方 `NLoadType` 枚举"),
+            Param("units", int, description="官方 `NLocationUnits` 枚举"),
+            Param("dx", float, description="方向 X 分量"),
+            Param("dy", float, description="方向 Y 分量"),
+            Param("dz", float, description="方向 Z 分量"),
+        ],
     ),
 ]

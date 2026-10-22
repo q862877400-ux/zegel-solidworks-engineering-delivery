@@ -44,11 +44,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
-import scripts.sw_surface_ref_ops as SRO                              # noqa: E402
-import scripts.sw_hole_features as HF                                 # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_surface_ref_ops as SRO  # noqa: E402
+import scripts.sw_hole_features as HF  # noqa: E402
 
 
 def _get(o, name, *a):
@@ -63,14 +63,14 @@ def _surface_body_count(doc):
     """★ 曲面体计数（`GetBodies2(1, True)` —— 1 = `swSurfaceBody`）。"""
     try:
         return len(list(_get(doc, "GetBodies2", 1, True) or []))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
 def _solid_body_count(doc):
     try:
         return len(list(_get(doc, "GetBodies2", 0, True) or []))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -79,7 +79,7 @@ def _close(sw, doc):
         t = str(_get(doc, "GetTitle") or "")
         if t:
             _get(sw, "CloseDoc", t)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
 
@@ -91,10 +91,14 @@ def case_revolved(sw):
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
         sm = _get(doc, "SketchManager")
-        _get(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)     #: 轴线
+        _get(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)  #: 轴线
         _get(sm, "CreateCornerRectangle", 0.01, -0.02, 0.0, 0.03, 0.02, 0.0)
         P.end_sketch(doc)
-        sk = [n for n in _tree(doc) if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        sk = [
+            n
+            for n in _tree(doc)
+            if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+        ]
         row["sketch"] = sk[-1] if sk else None
         ext = _get(doc, "Extension")
         doc.ClearSelection2(True)
@@ -103,16 +107,21 @@ def case_revolved(sw):
             if cand and P._select_by_id(ext, cand, "SKETCH", append=False, mark=0):
                 selected.append(cand)
         row["selected"] = selected
-        row["sel_count"] = int(_get(_get(doc, "SelectionManager"),
-                                    "GetSelectedObjectCount2", -1) or 0)
+        row["sel_count"] = int(
+            _get(_get(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
+        )
         before_tree, before_surf = _tree(doc), _surface_body_count(doc)
         res = SRO.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
-        row["returned"] = {k: res.get(k) for k in
-                           ("ok", "returned_is_none", "new_features", "selection_mark")}
+        row["returned"] = {
+            k: res.get(k)
+            for k in ("ok", "returned_is_none", "new_features", "selection_mark")
+        }
         row["tree_new"] = [n for n in _tree(doc) if n not in before_tree]
         row["surface_bodies"] = [before_surf, _surface_body_count(doc)]
-        row["ok"] = bool(row["tree_new"]) and (row["surface_bodies"][1] or 0) > (before_surf or 0)
-    except Exception as exc:                                              # noqa: BLE001
+        row["ok"] = bool(row["tree_new"]) and (row["surface_bodies"][1] or 0) > (
+            before_surf or 0
+        )
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -127,24 +136,34 @@ def case_hole_wizard(sw):
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _get(_get(doc, "SketchManager"), "CreateCornerRectangle",
-             -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _get(
+            _get(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         P.end_sketch(doc)
-        for cand in ([n for n in _tree(doc) if n.startswith("\u8349\u56fe")] or ["\u8349\u56fe1"])[::-1]:
+        for cand in (
+            [n for n in _tree(doc) if n.startswith("\u8349\u56fe")] or ["\u8349\u56fe1"]
+        )[::-1]:
             try:
                 P.extrude_boss(doc, cand, 0.02)
                 break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         before_tree = _tree(doc)
         try:
             rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
             row["report"] = {k: rep.get(k) for k in list(rep)[:8]}
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         row["tree_new"] = [n for n in _tree(doc) if n not in before_tree]
         row["ok"] = bool(row["tree_new"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -163,8 +182,16 @@ def case_fully_defined(sw):
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _get(_get(doc, "SketchManager"), "CreateCornerRectangle",
-             -0.02, -0.01, 0.0, 0.02, 0.01, 0.0)
+        _get(
+            _get(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.02,
+            -0.01,
+            0.0,
+            0.02,
+            0.01,
+            0.0,
+        )
         sk = _get(doc, "GetActiveSketch2")
         if sk is None:
             sk = _get(_get(doc, "SketchManager"), "ActiveSketch")
@@ -183,19 +210,20 @@ def case_fully_defined(sw):
                 try:
                     if P._select_com_object(s, append=True, mark=0):
                         n_sel += 1
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
             row["segments_selected"] = n_sel
             if n_sel:
                 P.add_sketch_relation(doc, "sgFIXED")
             row["status_after_fixed"] = int(_get(sk, "GetConstrainedStatus"))
-            row["status_changed"] = (row["status_after_fixed"]
-                                     != row["status_under_defined"])
-        except Exception as exc:                                          # noqa: BLE001
+            row["status_changed"] = (
+                row["status_after_fixed"] != row["status_under_defined"]
+            )
+        except Exception as exc:  # noqa: BLE001
             row["extra_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         P.end_sketch(doc)
         row["ok"] = isinstance(row.get("status_under_defined"), int)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -205,30 +233,44 @@ def case_fully_defined(sw):
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u8986\u76d6\u9762\u7f3a\u53e3\u6279 1\uff1a\u65cb\u8f6c\u66f2\u9762 / \u5b54\u5411\u5bfc"
-               " / \u5b8c\u5168\u5b9a\u4e49\u68c0\u67e5\uff08\u2605 \u6837\u6761\u66f2\u7ebf**\u4e0d\u6d4b**"
-               "\uff1a\u5df2\u6709\u4e0d\u8fbe\u7ed3\u8bba\uff0c\u4e8b\u5b9e 47/68\uff09",
-          "spec": "specs/202-user-coverage-gaps",
-          "cases": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u8986\u76d6\u9762\u7f3a\u53e3\u6279 1\uff1a\u65cb\u8f6c\u66f2\u9762 / \u5b54\u5411\u5bfc"
+        " / \u5b8c\u5168\u5b9a\u4e49\u68c0\u67e5\uff08\u2605 \u6837\u6761\u66f2\u7ebf**\u4e0d\u6d4b**"
+        "\uff1a\u5df2\u6709\u4e0d\u8fbe\u7ed3\u8bba\uff0c\u4e8b\u5b9e 47/68\uff09",
+        "spec": "specs/202-user-coverage-gaps",
+        "cases": [],
+    }
     for fn in (case_revolved, case_hole_wizard, case_fully_defined):
         try:
             ev["cases"].append(fn(sw))
-        except Exception as exc:                                          # noqa: BLE001
-            ev["cases"].append({"tag": fn.__name__,
-                                "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
-                                "ok": False})
+        except Exception as exc:  # noqa: BLE001
+            ev["cases"].append(
+                {
+                    "tag": fn.__name__,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
+                    "ok": False,
+                }
+            )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     p = R / "output" / "coverage-gap-batch1-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                 encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a\u6210 %d / %d" % (ev["passed"], ev["total"]))
     for c in ev["cases"]:
         print("  %-46s ok=%s" % (c.get("tag"), c.get("ok")))
-        for k in ("tree_new", "surface_bodies", "status_under_defined",
-                  "status_after_fixed", "status_changed", "segments_selected"):
+        for k in (
+            "tree_new",
+            "surface_bodies",
+            "status_under_defined",
+            "status_after_fixed",
+            "status_changed",
+            "segments_selected",
+        ):
             if k in c:
                 print("        %-22s %s" % (k, c[k]))
         if c.get("err"):

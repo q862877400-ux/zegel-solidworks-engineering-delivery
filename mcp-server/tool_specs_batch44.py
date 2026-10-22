@@ -1,4 +1,3 @@
-
 # ── 24h 计划 段 6 续（Spec Kit `164` 的批次声明）：**图纸比例的读与写** ──────────────
 # ★ ★★★★ 2026-10-01（轮 301）真机 **PASS 5/5**（★ 证据 `output/sheet-scale-evidence.json
 # `）：
@@ -36,11 +35,16 @@ SPECS_BATCH44 = [
         function="get_sheet_scale_report",
         inject="model",
         params=[
-            Param("sheet_name", str, default="", description="图纸名；留空 = 当前图纸（★ 声明式：不传坐标）"),
+            Param(
+                "sheet_name",
+                str,
+                default="",
+                description="图纸名；留空 = 当前图纸（★ 声明式：不传坐标）",
+            ),
         ],
         doc="★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，"
-            "取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。"
-            "⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。",
+        "取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。"
+        "⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。",
     ),
     ToolSpec(
         name="solidworks_drawing_set_sheet_scale",
@@ -49,15 +53,29 @@ SPECS_BATCH44 = [
         function="set_sheet_scale_report",
         inject="model",
         params=[
-            Param("numerator", float, description="比例前项 —— ★ 真机限制：**只接受 1**（图纸比例只能是 1:n）"),
+            Param(
+                "numerator",
+                float,
+                description="比例前项 —— ★ 真机限制：**只接受 1**（图纸比例只能是 1:n）",
+            ),
             Param("denominator", float, description="比例后项，必须 > 0"),
-            Param("scale_anno_position", bool, default=False, description="是否同时缩放注释位置"),
-            Param("scale_anno_text_height", bool, default=False, description="是否同时缩放注释字高"),
+            Param(
+                "scale_anno_position",
+                bool,
+                default=False,
+                description="是否同时缩放注释位置",
+            ),
+            Param(
+                "scale_anno_text_height",
+                bool,
+                default=False,
+                description="是否同时缩放注释字高",
+            ),
             Param("sheet_name", str, default="", description="图纸名；留空 = 当前图纸"),
         ],
         doc="★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, "
-            "scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。"
-            "★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。"
-            "⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。",
+        "scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。"
+        "★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。"
+        "⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。",
     ),
 ]

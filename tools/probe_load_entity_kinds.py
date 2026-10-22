@@ -7,7 +7,7 @@
 #   ★★ 「**判「未建成」之前，先穷举"调用前提"这一维**」—— 候选维度四选：
 # ① 选区卫生 ✓（已排除）② **算例类型** ✓（已排除：thermal 让 4 条成了、temperature 仍不
 # 成）
-# ③ **参数单位与个数** ✓（已排除：读了 `_check` 的实现 —— arity 校核对得上、`out_i4()` 
+# ③ **参数单位与个数** ✓（已排除：读了 `_check` 的实现 —— arity 校核对得上、`out_i4()`
 # 也补了）
 #     ④ ★ **实体种类** ← **本表要穷举的就是它**。
 # ★ 而**官方文本**正好指着这个维度：`ICWLoadsAndRestraintsManager` 各条的 Parameters 段
@@ -36,15 +36,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "load-entity-kinds-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "load-entity-kinds-evidence.json"
+)
 STUDY = "DSH-KINDS"
 
 
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_selection_spec import select_entity_by_index
     from scripts import sw_simulation_loads as SL
 
@@ -80,32 +87,48 @@ def main() -> int:
                     else:
                         select_entity_by_index(doc, kind, 0)
                     rep = fn(mgr, doc, *extra)
-                    row[kind] = {"ok": bool(isinstance(rep, dict) and rep.get("ok")),
-                                 "count": [rep.get("count_before"), rep.get("count_after")]
-                                 if isinstance(rep, dict) else None,
-                                 "err": (rep.get("error") or "")[:60]
-                                 if isinstance(rep, dict) else None}
-                except Exception as exc:                       # noqa: BLE001
-                    row[kind] = {"ok": False,
-                                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:70])}
+                    row[kind] = {
+                        "ok": bool(isinstance(rep, dict) and rep.get("ok")),
+                        "count": [rep.get("count_before"), rep.get("count_after")]
+                        if isinstance(rep, dict)
+                        else None,
+                        "err": (rep.get("error") or "")[:60]
+                        if isinstance(rep, dict)
+                        else None,
+                    }
+                except Exception as exc:  # noqa: BLE001
+                    row[kind] = {
+                        "ok": False,
+                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:70]),
+                    }
             ev["grid"][label] = row
-        wins = {"%s/%s" % (k, kk) for k, r in ev["grid"].items()
-                for kk, v in r.items() if v.get("ok")}
+        wins = {
+            "%s/%s" % (k, kk)
+            for k, r in ev["grid"].items()
+            for kk, v in r.items()
+            if v.get("ok")
+        }
         ev["successes"] = sorted(wins)
         ev["verdict"] = "pass" if wins else "partial"
-        ev["note"] = ("★ **实体种类 × 载荷** 的穷举表（★ 官方文本说这族各自要求的实体种类不同）—— "
-                      "★ 落成一张表而不是「改一处试一次」。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ **实体种类 × 载荷** 的穷举表（★ 官方文本说这族各自要求的实体种类不同）—— "
+            "★ 落成一张表而不是「改一处试一次」。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         for label, _fn, _e in loads:
-            cells = " | ".join("%s:%s" % (kk, "✓" if ev["grid"][label][kk].get("ok") else "✗")
-                               for kk in kinds)
+            cells = " | ".join(
+                "%s:%s" % (kk, "✓" if ev["grid"][label][kk].get("ok") else "✗")
+                for kk in kinds
+            )
             print("  %-14s %s" % (label, cells))
         print("  成功格：%s" % (ev["successes"] or "（无）"))
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

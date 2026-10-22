@@ -1,4 +1,5 @@
-'''★ 批次 109（v4）：规格 220 · 装配序列/说明书 —— ★ 直接指向**已有的真函数**，不新增包装。'''
+"""★ 批次 109（v4）：规格 220 · 装配序列/说明书 —— ★ 直接指向**已有的真函数**，不新增包装。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（实现 = scripts/sw_delivery.py 的 collect_assembly_bom，**早已存在*
 # *）
@@ -23,22 +24,28 @@ from tool_registry import Param, ToolSpec
 
 SPECS_BATCH109 = [
     ToolSpec(
-        name='solidworks_assembly_sequence_report',
-        title='Assembly Sequence / Manual — BOM rows as ordered assembly steps',
-        module='sw_delivery', function='collect_assembly_bom',
-        inject='model',
+        name="solidworks_assembly_sequence_report",
+        title="Assembly Sequence / Manual — BOM rows as ordered assembly steps",
+        module="sw_delivery",
+        function="collect_assembly_bom",
+        inject="model",
         params=[
-            Param('include_excluded', bool, default=False, required=False,
-                  description='是否把被排除的件也算进件表（默认 false）'),
+            Param(
+                "include_excluded",
+                bool,
+                default=False,
+                required=False,
+                description="是否把被排除的件也算进件表（默认 false）",
+            ),
         ],
         read_only=True,
-        doc='★ **装配说明书（装配序列）**—— ★ 回一份**按行序排列的装配件表**（★ 每行 = 一个装配步骤）✓ '
-            '★ 真实来源：★ `sw_delivery.collect_assembly_bom`（**真实 BOM**，★ 早已在本仓且可用 ✓）'
-            '★★ **如实标注（不许冒充）**：★ **官方 API 里没有「装配序列」这个成员** —— '
-            '★ `C:\\swapi\\types` 里只查到**序号**类成员（★ 那是 **BOM 行号** ✗）'
-            '⇒ ★ 本工具给的是**用户心智里的「装配说明书」**（件表 + 行序 + 数量 + 配置），'
-            '★ **不是** SolidWorks 那个不存在的功能 ✓ '
-            '★ 判据：★ 回的是**结构化行**（★ 读不到就回空表，★ 不假装有内容 ✓）'
-            '★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓',
+        doc="★ **装配说明书（装配序列）**—— ★ 回一份**按行序排列的装配件表**（★ 每行 = 一个装配步骤）✓ "
+        "★ 真实来源：★ `sw_delivery.collect_assembly_bom`（**真实 BOM**，★ 早已在本仓且可用 ✓）"
+        "★★ **如实标注（不许冒充）**：★ **官方 API 里没有「装配序列」这个成员** —— "
+        "★ `C:\\swapi\\types` 里只查到**序号**类成员（★ 那是 **BOM 行号** ✗）"
+        "⇒ ★ 本工具给的是**用户心智里的「装配说明书」**（件表 + 行序 + 数量 + 配置），"
+        "★ **不是** SolidWorks 那个不存在的功能 ✓ "
+        "★ 判据：★ 回的是**结构化行**（★ 读不到就回空表，★ 不假装有内容 ✓）"
+        "★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓",
     ),
 ]

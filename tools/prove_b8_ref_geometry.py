@@ -36,10 +36,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
-from scripts import sw_ref_geometry as M                             # noqa: E402
-import scripts.sw_sketch_primitives as SP                            # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_ref_geometry as M  # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
 
 
 def _solid(doc, plane="Front Plane", pts=(-20, -10, 20, -10, 20, 10), depth=0.02):
@@ -67,7 +67,7 @@ def _solid(doc, plane="Front Plane", pts=(-20, -10, 20, -10, 20, 10), depth=0.02
             rets.append({cand: repr(r)[:60]})
             if r:
                 break
-        except Exception as exc:                                         # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             rets.append({cand: "%s: %s" % (type(exc).__name__, str(exc)[:80])})
     after = list(P.feature_names(doc) or [])
     info["extrude_returns"] = rets
@@ -89,7 +89,7 @@ def _one(sw, zh, fn):
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
-    except Exception as exc:                                             # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -97,21 +97,23 @@ def _one(sw, zh, fn):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                            # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def _case(zh, needs_solid, fn):
     """★ 包一层：按需先建实体（★ 并把**实体的取证细节**带回来）。"""
+
     def run(doc):
         if needs_solid:
             built, info = _solid(doc)
             r = fn(doc)
             r["solid_built"] = built
-            r["solid_info"] = info          # ★ 取证：extrude 的返回值 + 树的前后
+            r["solid_info"] = info  # ★ 取证：extrude 的返回值 + 树的前后
             return r
         return fn(doc)
+
     run.__name__ = zh
     return _one, run
 
@@ -125,7 +127,10 @@ def _after_pick(doc, idx, mark, fn):
     ok, info = _pick_face(doc, idx, mark)
     r = fn()
     if isinstance(r, dict):
-        r["preselect"] = {"ok": ok, **({"info": info} if isinstance(info, dict) else {"why": info})}
+        r["preselect"] = {
+            "ok": ok,
+            **({"info": info} if isinstance(info, dict) else {"why": info}),
+        }
     return r
 
 
@@ -152,25 +157,38 @@ def _pick_face(doc, idx=0, mark=0):
         #: ★ 先清选区（★ 免得上一次的残留把 mark 搞乱）
         try:
             C.get_com_member(doc, "ClearSelection2", True)
-        except Exception:                                                # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         ok = bool(P._select_com_object(fs[idx], append=False, mark=int(mark)))
         try:
-            n = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                     "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                # noqa: BLE001
+            n = int(
+                C.get_com_member(
+                    C.get_com_member(doc, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             n = -1
-        return ok, {"face_index": idx, "mark": int(mark), "sel_count": n, "n_faces": len(fs)}
-    except Exception as exc:                                             # noqa: BLE001
+        return ok, {
+            "face_index": idx,
+            "mark": int(mark),
+            "sel_count": n,
+            "n_faces": len(fs),
+        }
+    except Exception as exc:  # noqa: BLE001
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:80])
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "B8 参考几何体 5 条逐个真机跑（specs/201-toolbar-gaps）",
-          "judge": "特征树叶子名增量（sw_part.feature_names）",
-          "items": []}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "B8 参考几何体 5 条逐个真机跑（specs/201-toolbar-gaps）",
+        "judge": "特征树叶子名增量（sw_part.feature_names）",
+        "items": [],
+    }
 
     cases = [
         ("质心", True, lambda d: M.insert_center_of_mass(d)),
@@ -184,13 +202,23 @@ def main() -> int:
         #:   `0 = First reference entity · 1 = Second · 2 = Third`
         #:   ⚠ 我上一轮**根本没选**就调 ⇒ `回None=True`（它没对象可回）
         #:   ⇒ ★ 本轮：选第一个面当**第一参考实体（mark=0）**，用 `Coincident(4)`
-        ("基准面", True, lambda d: _after_pick(d, 0, 0,
-                                              lambda: M.insert_ref_plane(d, 4, 0.0, 0, 0.0, 0, 0.0))),
+        (
+            "基准面",
+            True,
+            lambda d: _after_pick(
+                d, 0, 0, lambda: M.insert_ref_plane(d, 4, 0.0, 0, 0.0, 0, 0.0)
+            ),
+        ),
         ("坐标系", False, lambda d: M.insert_coordinate_system(d, False, False, False)),
         #: ★ 点：★ FaceCenter（★ 要有面）⇒ **在调用前一刻再选一次**（★ 诊断里就是这样成
         #: 的）
-        ("点", True, lambda d: _after_pick(d, 0, 0,
-                                          lambda: M.insert_reference_point(d, 4, 0, 0.0, 1))),
+        (
+            "点",
+            True,
+            lambda d: _after_pick(
+                d, 0, 0, lambda: M.insert_reference_point(d, 4, 0, 0.0, 1)
+            ),
+        ),
     ]
     for zh, solid, fn in cases:
         _, run = _case(zh, solid, fn)
@@ -204,9 +232,15 @@ def main() -> int:
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["total"]))
     for i in ev["items"]:
         tb, ta = i.get("tree_before"), i.get("tree_after")
-        extra = ("  \u6811 %d\u2192%d %s" % (len(tb), len(ta), i.get("new_features"))) if tb and ta else ""
-        print("  %-8s %-4s %-28s%s" % (i.get("zh"), i.get("verdict"),
-                                       i.get("verified_by") or "", extra))
+        extra = (
+            ("  \u6811 %d\u2192%d %s" % (len(tb), len(ta), i.get("new_features")))
+            if tb and ta
+            else ""
+        )
+        print(
+            "  %-8s %-4s %-28s%s"
+            % (i.get("zh"), i.get("verdict"), i.get("verified_by") or "", extra)
+        )
         if i.get("err"):
             print("        err=%s" % str(i["err"])[:90])
     print("  \u4ea7\u7269\uff1a%s" % p)

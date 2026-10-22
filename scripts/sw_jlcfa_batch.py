@@ -30,6 +30,7 @@ r"""批量抽查 —— **搜索式**取件，逐件自检留证。
 # ⚠ 会驱动鼠标键盘。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -96,8 +97,16 @@ def _wait_generated(h: int, w, secs: int = 26):
 
 def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     """搜索 → 结果 → 填参 → 生成。返回结果字典。"""
-    rec: dict[str, Any] = {"cat": cat, "sub": sub, "code": code, "ok": False,
-                           "stage": "", "pct": None, "title": "", "secs": 0.0}
+    rec: dict[str, Any] = {
+        "cat": cat,
+        "sub": sub,
+        "code": code,
+        "ok": False,
+        "stage": "",
+        "pct": None,
+        "title": "",
+        "secs": 0.0,
+    }
     t0 = time.time()
     h, w = _conn()
 
@@ -144,8 +153,10 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     for _attempt in range(4):
         if S.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
             break
-        S.log("      型号行未对上「%s」（现 %r），重试导航"
-              % (code, FILL.model_line(w)[:38]))
+        S.log(
+            "      型号行未对上「%s」（现 %r），重试导航"
+            % (code, FILL.model_line(w)[:38])
+        )
         S.cache_drop()
         h, w = _conn()
         pt2 = SR.first_result_point(w)
@@ -184,7 +195,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     #   ⇒ 就是用户看到的「一直重复输入 0」。
     #   修好的取值逻辑只在 ``FILL.fill_all`` 里，回退等于把老 bug 请回来。
     if left != 0:
-        rec["stage"] = ("型号行读不到" if left < 0 else "参数未齐(缺%d)" % left)
+        rec["stage"] = "型号行读不到" if left < 0 else "参数未齐(缺%d)" % left
         _shot(h, w, "FAIL_not100_%s" % code)
         rec["secs"] = time.time() - t0
         return rec
@@ -217,8 +228,10 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                 cr = L.container_rect(w)
                 if cr and L._overlaps(r, cr):
                     btn = c
-                    S.log("      放宽查找命中生成按钮 %s"
-                          % ((r.left, r.top, r.right, r.bottom),))
+                    S.log(
+                        "      放宽查找命中生成按钮 %s"
+                        % ((r.left, r.top, r.right, r.bottom),)
+                    )
                     break
             except Exception:
                 continue
@@ -234,8 +247,10 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                 r = c.rectangle()
                 if r.width() > 0 and r.height() > 0 and r.top > 0:
                     btn = c
-                    S.log("      极宽查找命中生成按钮 %s"
-                          % ((r.left, r.top, r.right, r.bottom),))
+                    S.log(
+                        "      极宽查找命中生成按钮 %s"
+                        % ((r.left, r.top, r.right, r.bottom),)
+                    )
                     break
             except Exception:
                 continue
@@ -279,19 +294,40 @@ def main(plan: list[tuple[str, str, str]]):
         try:
             rec = run_one(cat, sub, code)
         except Exception:
-            rec = {"cat": cat, "sub": sub, "code": code, "ok": False,
-                   "stage": "异常:" + traceback.format_exc()[-160:], "secs": 0.0}
+            rec = {
+                "cat": cat,
+                "sub": sub,
+                "code": code,
+                "ok": False,
+                "stage": "异常:" + traceback.format_exc()[-160:],
+                "secs": 0.0,
+            }
         results.append(rec)
-        S.log("  => %s  %-22s %.0fs  %s"
-              % ("✓" if rec["ok"] else "✗", rec["stage"], rec["secs"],
-                 rec.get("title", "")[:44]))
-        REPORT.write_text(json.dumps(results, ensure_ascii=False, indent=1),
-                          encoding="utf-8")
+        S.log(
+            "  => %s  %-22s %.0fs  %s"
+            % (
+                "✓" if rec["ok"] else "✗",
+                rec["stage"],
+                rec["secs"],
+                rec.get("title", "")[:44],
+            )
+        )
+        REPORT.write_text(
+            json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8"
+        )
     S.log("════ 汇总（总 %.0fs）════" % (time.time() - t_all))
     for r in results:
-        S.log("  %s %-10s %-14s %-14s %.0fs  %s"
-              % ("✓" if r["ok"] else "✗", r["cat"][:9], r["sub"][:13],
-                 r["code"][:13], r.get("secs", 0), r["stage"][:30]))
+        S.log(
+            "  %s %-10s %-14s %-14s %.0fs  %s"
+            % (
+                "✓" if r["ok"] else "✗",
+                r["cat"][:9],
+                r["sub"][:13],
+                r["code"][:13],
+                r.get("secs", 0),
+                r["stage"][:30],
+            )
+        )
     ok = sum(1 for r in results if r["ok"])
     S.log("成功 %d/%d" % (ok, len(results)))
     return results

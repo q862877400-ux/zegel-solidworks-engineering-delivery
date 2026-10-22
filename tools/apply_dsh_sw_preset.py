@@ -1,4 +1,5 @@
 """★ 把生成好的 preset 块**安全地**追加进 DSH 活配置（★ 校验不过就自动回滚）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（DSH 侧配置应用器）
 # 文件:   tools/apply_dsh_sw_preset.py
@@ -32,9 +33,13 @@ from pathlib import Path
 
 HOME = Path(os.path.expanduser("~"))
 LIVE_CFG = HOME / ".dsh/profiles/web/cordis.patch.yml"
-BLOCK = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml")
+BLOCK = Path(
+    Path(__file__).resolve().parents[1] / "output" / "_dsh_sw_preset_block.yml"
+)
 DSH_ROOT = Path(r"D:\AI\DSH\deepseek-harness")
-OUT_JSON = Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-apply.json")
+OUT_JSON = Path(
+    Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-apply.json"
+)
 
 #: ★ 复核脚本 —— ★★ **写成文件再调**（★ 这样参数位**无歧义** ✓）：
 #:   ★ `node -e "<代码>" <arg>` ⇒ 参数在 **`argv[1]`** ✗
@@ -64,13 +69,21 @@ CHECKER = Path(Path(__file__).resolve().parents[1] / "output" / "_dsh_yaml_check
 
 def _check(path: Path) -> dict:
     CHECKER.write_text(JS_CHECK, encoding="utf-8")
-    r = subprocess.run(["node", str(CHECKER), str(path)],
-                       capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", timeout=180)
+    r = subprocess.run(
+        ["node", str(CHECKER), str(path)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=180,
+    )
     try:
         return json.loads((r.stdout or "").strip().splitlines()[-1])
-    except Exception:                                                   # noqa: BLE001
-        return {"ok": False, "err": "校验器输出不可解析：%r" % ((r.stdout or r.stderr) or "")[:200]}
+    except Exception:  # noqa: BLE001
+        return {
+            "ok": False,
+            "err": "校验器输出不可解析：%r" % ((r.stdout or r.stderr) or "")[:200],
+        }
 
 
 def _all_ids(chk: dict) -> list:
@@ -95,8 +108,10 @@ def main() -> int:
     #: ★ 判据①：阳性对照 —— ★ 原配置必须能解析 ✓
     base = _check(LIVE_CFG)
     out["before"] = base
-    print("★ ① 阳性对照 ⇒ ok=%r · 顶层 %r 条 · insert id %r"
-          % (base.get("ok"), base.get("top"), base.get("ids")))
+    print(
+        "★ ① 阳性对照 ⇒ ok=%r · 顶层 %r 条 · insert id %r"
+        % (base.get("ok"), base.get("top"), base.get("ids"))
+    )
     if not base.get("ok"):
         print("✗ 原配置就解析不了 ⇒ **不动它** ✓")
         return 3
@@ -105,9 +120,13 @@ def main() -> int:
     #: ★ 判据②③：★ 先在**临时合并体**上验（★ 不碰活配置 ✓）
     tmp = LIVE_CFG.with_suffix(".patch.yml.__merged_preview__")
     try:
-        tmp.write_text(LIVE_CFG.read_text(encoding="utf-8").rstrip("\n") + "\n\n"
-                       + BLOCK.read_text(encoding="utf-8").rstrip("\n") + "\n",
-                       encoding="utf-8")
+        tmp.write_text(
+            LIVE_CFG.read_text(encoding="utf-8").rstrip("\n")
+            + "\n\n"
+            + BLOCK.read_text(encoding="utf-8").rstrip("\n")
+            + "\n",
+            encoding="utf-8",
+        )
         merged = _check(tmp)
         out["merged"] = merged
         if not merged.get("ok"):
@@ -119,7 +138,10 @@ def main() -> int:
         out["missing"] = missing
         out["lost"] = lost
         print("★ ② 合并体 ⇒ ok · 顶层 %r · id %d 个" % (merged.get("top"), len(mid)))
-        print("     新 id 缺失 %r · **原有 id 丢失** %r（★ 必须两个都空）" % (missing, lost))
+        print(
+            "     新 id 缺失 %r · **原有 id 丢失** %r（★ 必须两个都空）"
+            % (missing, lost)
+        )
         if missing or lost:
             print("✗ 判据②/③ 没过 ⇒ **不动活配置** ✓")
             return 5
@@ -127,12 +149,14 @@ def main() -> int:
         print("     ★★ 声明出来的 preset ⇒ %r" % list(presets.keys()))
         for k, v in presets.items():
             if k == "sw-engineer":
-                print("        preset %r 共 %d 个插件 · **含 mcp-solidworks=%r**"
-                      % (k, len(v), "mcp-solidworks" in v))
+                print(
+                    "        preset %r 共 %d 个插件 · **含 mcp-solidworks=%r**"
+                    % (k, len(v), "mcp-solidworks" in v)
+                )
     finally:
         try:
             tmp.unlink()
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     #: ── 写：★ 先备份，★ 用 Python（★ 避开 PS 编码坑 ✓）──────────────────
@@ -142,9 +166,15 @@ def main() -> int:
     out["backup"] = str(bak)
     print("★ 备份 ⇒ %s" % bak.name)
 
-    LIVE_CFG.write_text(merged_src := (LIVE_CFG.read_text(encoding="utf-8").rstrip("\n") + "\n\n"
-                                       + BLOCK.read_text(encoding="utf-8").rstrip("\n") + "\n"),
-                        encoding="utf-8")
+    LIVE_CFG.write_text(
+        merged_src := (
+            LIVE_CFG.read_text(encoding="utf-8").rstrip("\n")
+            + "\n\n"
+            + BLOCK.read_text(encoding="utf-8").rstrip("\n")
+            + "\n"
+        ),
+        encoding="utf-8",
+    )
 
     #: ★ 判据④：★ 落盘后再验（★ 防"写进去的和验过的不一样" ✗）
     after = _check(LIVE_CFG)
@@ -163,19 +193,26 @@ def main() -> int:
     out["presets_after"] = list((after.get("presets") or {}).keys())
     print("✓✓✓ **应用成功** —— ★ preset 声明 ⇒ %r" % out["presets_after"])
     print("   ★★ 用户下一步：★ **新建会话 → 选 preset「Lean 模式（SW工程师）」** ✓")
-    OUT_JSON.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+    )
     print("★ 证据：%s" % OUT_JSON)
     return 0
 
 
 if __name__ == "__main__":
     import traceback
+
     try:
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException:                                              # noqa: BLE001
+    except BaseException:  # noqa: BLE001
         tb = traceback.format_exc()
-        Path(Path(__file__).resolve().parents[1] / "output" / "dsh-sw-preset-apply-traceback.txt").write_text(tb, encoding="utf-8")
+        Path(
+            Path(__file__).resolve().parents[1]
+            / "output"
+            / "dsh-sw-preset-apply-traceback.txt"
+        ).write_text(tb, encoding="utf-8")
         print("★★ 异常已落盘：\n%s" % tb[-1500:])
         raise SystemExit(3)

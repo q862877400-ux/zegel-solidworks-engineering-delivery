@@ -27,6 +27,7 @@ sourceArtifact:  必须存在；**sourceSha256 必须等于它的真实 sha256**
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -44,17 +45,36 @@ sys.stdout.reconfigure(encoding="utf-8")
 from scripts.dfm_review import build_dfm_report  # noqa: E402
 
 
-
 #: ★ 本仓库根（★ 2026-10-03 合并后自定位）
 _ROOT_S = str(Path(__file__).resolve().parents[1])
+
+
 def _doc(path: Path) -> Path:
-    path.write_text(json.dumps({
-        "documentId": "brep-probe", "title": "B-Rep 探针件", "units": "mm",
-        "features": [{"id": "base", "type": "box",
-                      "parameters": {"length": 120, "width": 70, "height": 8}}],
-        "metadata": {"manufacturing": {"process": "machining", "material": "Al6061",
-                                       "wallThickness": 3.0}},
-    }, ensure_ascii=False), encoding="utf-8")
+    path.write_text(
+        json.dumps(
+            {
+                "documentId": "brep-probe",
+                "title": "B-Rep 探针件",
+                "units": "mm",
+                "features": [
+                    {
+                        "id": "base",
+                        "type": "box",
+                        "parameters": {"length": 120, "width": 70, "height": 8},
+                    }
+                ],
+                "metadata": {
+                    "manufacturing": {
+                        "process": "machining",
+                        "material": "Al6061",
+                        "wallThickness": 3.0,
+                    }
+                },
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
     return path
 
 
@@ -67,11 +87,17 @@ def _evidence(td: Path, *, tamper: bool = False) -> Path:
         "backend": "headless_occt",
         "producedThisRun": True,
         "sourceArtifact": artifact.name,
-        "sourceSha256": ("0" * 64) if tamper else real,     # ← 篡改：故意写错哈希
+        "sourceSha256": ("0" * 64) if tamper else real,  # ← 篡改：故意写错哈希
         "units": "mm",
         "geometryEvidence": {
             "units": "mm",
-            "topology": {"solids": 1, "shells": 1, "faces": 6, "edges": 12, "vertices": 8},
+            "topology": {
+                "solids": 1,
+                "shells": 1,
+                "faces": 6,
+                "edges": 12,
+                "vertices": 8,
+            },
             "boundingBox": {"min": [0, 0, 0], "max": [120, 70, 8]},
             "size": [120, 70, 8],
         },
@@ -95,9 +121,13 @@ def main() -> int:
         ev_ok = _evidence(td)
         r1 = build_dfm_report(doc, brep_evidence=ev_ok)
         be1 = r1.get("brepEvidence") or {}
-        print("      status=%r error_code=%r" % (r1.get("status"), r1.get("error_code")))
-        print("      brepEvidence.available=%r verifiedSource=%r backend=%r"
-              % (be1.get("available"), be1.get("verifiedSource"), be1.get("backend")))
+        print(
+            "      status=%r error_code=%r" % (r1.get("status"), r1.get("error_code"))
+        )
+        print(
+            "      brepEvidence.available=%r verifiedSource=%r backend=%r"
+            % (be1.get("available"), be1.get("verifiedSource"), be1.get("backend"))
+        )
         print("      bounds=%r" % (r1.get("bounds"),))
 
         print()
@@ -105,7 +135,9 @@ def main() -> int:
         ev_bad = _evidence(td, tamper=True)
         r2 = build_dfm_report(doc, brep_evidence=ev_bad)
         be2 = r2.get("brepEvidence") or {}
-        print("      status=%r error_code=%r" % (r2.get("status"), r2.get("error_code")))
+        print(
+            "      status=%r error_code=%r" % (r2.get("status"), r2.get("error_code"))
+        )
         print("      brepEvidence=%r" % (be2,))
         checks = {c.get("id"): c for c in (r2.get("checks") or [])}
         print("      dfm_brep_evidence check=%r" % (checks.get("dfm_brep_evidence"),))
@@ -115,7 +147,9 @@ def main() -> int:
         ev_ok2 = _evidence(td)
         (td / "model.brep").write_text("TAMPERED\n", encoding="utf-8")
         r3 = build_dfm_report(doc, brep_evidence=ev_ok2)
-        print("      status=%r error_code=%r" % (r3.get("status"), r3.get("error_code")))
+        print(
+            "      status=%r error_code=%r" % (r3.get("status"), r3.get("error_code"))
+        )
         be3 = r3.get("brepEvidence") or {}
         print("      brepEvidence=%r" % (be3,))
     return 0

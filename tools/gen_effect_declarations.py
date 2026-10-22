@@ -1,10 +1,11 @@
 """★ 生成效应表（规格 210 · B1）：从底层成员动词机械初判每个工具改哪几类状态，落成生成物。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_effect_declarations.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-2**。★ 产出 `docs/effect-decl
 #           arations.json`，
-# 由声明层（`mcp-server/tool_registry.py`）惰性读取 ⇒ ★ 于是 448 个工具**有了机器可读的 
+# 由声明层（`mcp-server/tool_registry.py`）惰性读取 ⇒ ★ 于是 448 个工具**有了机器可读的
 # writes** ✓
 # ★★ 为什么做成「生成物」而不是逐个改 99 个声明文件：★ 一处生成、一处读取、一处门禁守着
 # 新鲜度 ——
@@ -43,24 +44,35 @@ def _com_members(node: ast.AST) -> list[str]:
         if not isinstance(n, ast.Call):
             continue
         f = n.func
-        name = f.attr if isinstance(f, ast.Attribute) else (f.id if isinstance(f, ast.Name) else "")
+        name = (
+            f.attr
+            if isinstance(f, ast.Attribute)
+            else (f.id if isinstance(f, ast.Name) else "")
+        )
         if name not in ("get_com_member", "safe_get_com_member", "call_com_member"):
             continue
-        if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant) and isinstance(n.args[1].value, str):
+        if (
+            len(n.args) >= 2
+            and isinstance(n.args[1], ast.Constant)
+            and isinstance(n.args[1].value, str)
+        ):
             out.append(n.args[1].value)
     return out
 
 
 def _callees(node: ast.AST) -> set[str]:
-    return {n.func.id for n in ast.walk(node)
-            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)}
+    return {
+        n.func.id
+        for n in ast.walk(node)
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+    }
 
 
 def _members_of(func, module) -> list[str]:
     """★ 一个工具函数（★ 含它调用的同模块助手，最多 `HELPER_DEPTH` 层）里出现的 COM 成员名 ✓"""
     try:
         tree = ast.parse(inspect.getsource(func))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return []
     members = list(_com_members(tree))
     seen = {getattr(func, "__name__", "")}
@@ -76,7 +88,7 @@ def _members_of(func, module) -> list[str]:
                 continue
             try:
                 htree = ast.parse(inspect.getsource(helper))
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
             members += _com_members(htree)
             nxt |= _callees(htree)
@@ -94,12 +106,15 @@ def _src_deep(fn, module=None) -> str:
     parts = [_src_of(fn)]
     try:
         import inspect
+
         src = inspect.getsource(fn)
         for name in _callees(ast.parse(_dedent(src))):
             sub = getattr(module, name, None)
-            if callable(sub) and getattr(sub, "__module__", "") == getattr(module, "__name__", ""):
+            if callable(sub) and getattr(sub, "__module__", "") == getattr(
+                module, "__name__", ""
+            ):
                 parts.append(_src_of(sub))
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return "\n".join(p for p in parts if p)
 
@@ -107,6 +122,7 @@ def _src_deep(fn, module=None) -> str:
 def _dedent(src: str) -> str:
     """★ 去掉函数源码的公共缩进（★ 才能 `ast.parse`）✓"""
     import textwrap
+
     return textwrap.dedent(src)
 
 
@@ -114,15 +130,23 @@ def _src_of(fn) -> str:
     """★ 取函数的**源码文本**（★ `doc_type` 从它里面反推）✓"""
     try:
         import inspect
+
         return inspect.getsource(fn)
-    except Exception:                                               # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
 
 
 def build() -> dict:
     import register_capabilities as rc
-    from effect_rules import (STATE_CLASSES, classify_members, derive_doc_type,
-                          derive_needs, derive_requires, load_kind_index)
+    from effect_rules import (
+        STATE_CLASSES,
+        classify_members,
+        derive_doc_type,
+        derive_needs,
+        derive_requires,
+        load_kind_index,
+    )
+
     specs = rc.all_specs()
     tools: dict = {}
     errors: list[str] = []
@@ -135,7 +159,7 @@ def build() -> dict:
             try:
                 mod = importlib.import_module(cand)
                 break
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if mod is None:
             errors.append("%s: 模块 %s 导入失败" % (s.name, s.module))
@@ -147,8 +171,9 @@ def build() -> dict:
         #: ★ 取注入名（★ `requires` 由它推）✓
         try:
             import tool_registry as _tr
+
             _inj = _tr.effective_inject(s)
-        except Exception:                                       # noqa: BLE001
+        except Exception:  # noqa: BLE001
             _inj = getattr(s, "inject", "") or ""
         members = _members_of(fn, mod)
         #: ★★ 第二路：显式把官方成员种类索引传进去（规格 210 · B1-7）✓
@@ -166,13 +191,16 @@ def build() -> dict:
             #: ★★ `needs` —— ★ 宿主要处于什么**状态**（★ 编辑态/实体/选区）✓
             "needs": list(derive_needs(_src_deep(fn, mod))),
             "inject": _inj,
-            "writes": verdict["writes"],            # ★ None = 未知（★ 不是「无写」）
+            "writes": verdict["writes"],  # ★ None = 未知（★ 不是「无写」）
             "destructive": verdict["destructive"],
             "members": len(members),
             "source": "static" if verdict["writes"] is not None else "unknown",
         }
-        hist["unknown" if verdict["writes"] is None else
-             ("pure_read" if not verdict["writes"] else "has_writes")] += 1
+        hist[
+            "unknown"
+            if verdict["writes"] is None
+            else ("pure_read" if not verdict["writes"] else "has_writes")
+        ] += 1
     return {
         "_": "★ 生成物（规格 210 · B1-2）：每个工具的 writes 由**底层成员动词**机械初判。★ 不要手改。",
         "_regenerate": "python tools/gen_effect_declarations.py",
@@ -192,8 +220,10 @@ def build() -> dict:
 def main() -> int:
     data = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     c = data["counts"]
     print("工具数        : %d" % len(data["tools"]))
     print("★ 确认无写    : %d" % c.get("pure_read", 0))

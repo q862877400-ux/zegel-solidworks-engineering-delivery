@@ -1,4 +1,5 @@
 """★ 指纹灵敏度标定（真机）：逐类挑一个"已知会改它"的写操作，看指纹有没有动。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_fingerprint_sensitivity.py
@@ -31,9 +32,9 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import sw_fingerprint as FP                                          # noqa: E402
+import sw_fingerprint as FP  # noqa: E402
 
-#: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空 
+#: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空
 #: ✓
 #: ★★ 每一类配一个**已知会改它**的写操作 —— ★ 值是 **MCP 工具名**（★ 按 `ToolSpec` 契约
 #: 调）✓
@@ -66,18 +67,22 @@ KNOWN_WRITERS = {
 #:     · `rebuild` ⇒ `needs_rebuild_before=0 · after=0`（文档**本来就是重建好的**）
 #:     · `selection` ⇒ 选区**本来就是空的**
 #:   ⇒ ★★ 正解：★ **给每一类配前置**，★ 让它**从一个「变得了」的状态出发** ✓
-#: ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`** 
+#: ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`**
 #: ✓
 #:   ★★ 这正好与 B3 的「每组只建一次状态」是同一件事 —— ★ 两批在这里**接上**了 ✓
 _RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
 #: ★ 造一个实体（★ 后续「选实体」与"重建"都要它）✓
-_BODY_CHAIN = (("solidworks_sketch_start", {}),
-               ("solidworks_sketch_add_rectangle", _RECT),
-               ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 10.0}))
+_BODY_CHAIN = (
+    ("solidworks_sketch_start", {}),
+    ("solidworks_sketch_add_rectangle", _RECT),
+    ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 10.0}),
+)
 
 #: ★ `select_by_selector` 的 `selector` 支持 `index:<n>`（★ 读该工具的声明描述得知）✓
-_SELECT_ONE = ("solidworks_select_by_selector",
-               {"selector": "index:0", "kind": "EDGE", "body_index": 0})
+_SELECT_ONE = (
+    "solidworks_select_by_selector",
+    {"selector": "index:0", "kind": "EDGE", "body_index": 0},
+)
 
 WRITER_PRECONDITION = {
     #: ★★ 真机查明：★ **画矩形并不会留下选中** ⇒ 选区仍是 0 ⇒ `clear_selection` 清不掉东
@@ -85,14 +90,20 @@ WRITER_PRECONDITION = {
     #:   ⇒ ★ 前置改成：★ **先造体 → 再选一个实体**（★ 选区变成 1）⇒ 再清就有得清 ✓
     "selection": list(_BODY_CHAIN) + [_SELECT_ONE],
     #: ★ 先建草图、画矩形 ⇒ `extrude_boss` 才有 `Sketch1` 可拉 ✓
-    "features": [("solidworks_sketch_start", {}),
-                 ("solidworks_sketch_add_rectangle", _RECT)],
-    "bodies": [("solidworks_sketch_start", {}),
-               ("solidworks_sketch_add_rectangle", _RECT)],
-    "faces": [("solidworks_sketch_start", {}),
-              ("solidworks_sketch_add_rectangle", _RECT)],
+    "features": [
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", _RECT),
+    ],
+    "bodies": [
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", _RECT),
+    ],
+    "faces": [
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", _RECT),
+    ],
     #: ★★ 真机查明：★ **新零件本来就是重建好的** ⇒ `session_rebuild` 不改变那个布尔 ✗
-    #: ⇒ ★ 前置改成：★ **先造一个实体的改动**（★ 那会留下「需要重建」）⇒ 再重建就有得变 
+    #: ⇒ ★ 前置改成：★ **先造一个实体的改动**（★ 那会留下「需要重建」）⇒ 再重建就有得变
     #: ✓
     "rebuild": list(_BODY_CHAIN),
 }
@@ -111,7 +122,9 @@ WRITER_PARAMS = {
     #: ★ 真机实测：★ 声明里的形参是 `configuration_name`（`Ellipsis` = 必填）
     #: ★★ 用**唯一名字** —— 真机踩过：★ 复用同名 ⇒ `{"created": false, "reused": true}`
     #:   ⇒ ★ 写操作"成功"却**什么都没改** ⇒ 被记成 `not_detected`（★ 那是假结论）✗
-    "solidworks_config_create": {"configuration_name": "MCP_CALIB_%d" % __import__("time").time_ns()},
+    "solidworks_config_create": {
+        "configuration_name": "MCP_CALIB_%d" % __import__("time").time_ns()
+    },
     "solidworks_session_rebuild": {},
     "solidworks_set_standard_view": {},
 }
@@ -119,12 +132,14 @@ WRITER_PARAMS = {
 
 def _connect():
     import sw_connect
+
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     return sw
 
 
 def _new_part(sw):
     import sw_connect
+
     return sw_connect.new_document(sw, "part")
 
 
@@ -135,9 +150,10 @@ def _new_part(sw):
       ★ 只是**搭舞台**；★ 被测的写操作一律按 `ToolSpec` 契约调 ✓
     """
     import sw_connect
+
     try:
         return sw_connect.new_document(sw, "part")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -150,6 +166,7 @@ def act(sw, model, name, cls=""):
       ★ **绝不许**把"没调成"说成"这一类不可见" ✗
     """
     import tool_caller
+
     inj = {"model": model, "sw": sw}
     params = dict(WRITER_PARAMS.get(name) or {})
     return tool_caller.call(name, inject_objects=inj, **params)
@@ -166,9 +183,12 @@ def run_precondition(sw, model, cls):
       ⇒ ★ 正解：★ **先跑前置 → 再取 before → 再跑写操作 → 再取 after** ✓
     """
     import tool_caller
+
     inj = {"model": model, "sw": sw}
-    for step_name, step_params in (WRITER_PRECONDITION.get(cls) or []):
-        ok_step, note_step = tool_caller.call(step_name, inject_objects=inj, **step_params)
+    for step_name, step_params in WRITER_PRECONDITION.get(cls) or []:
+        ok_step, note_step = tool_caller.call(
+            step_name, inject_objects=inj, **step_params
+        )
         if not ok_step:
             return False, "★ 前置 %s 没成：%s" % (step_name, note_step[:90])
     return True, ""
@@ -176,8 +196,12 @@ def run_precondition(sw, model, cls):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="★ 指纹灵敏度标定（规格 210 · B2）")
-    ap.add_argument("--only", action="append", default=[],
-                    help="★ 只标定这些类（可重复）；★ 不给就只做第 0 格")
+    ap.add_argument(
+        "--only",
+        action="append",
+        default=[],
+        help="★ 只标定这些类（可重复）；★ 不给就只做第 0 格",
+    )
     ap.add_argument("--json-out", default="")
     args = ap.parse_args()
 
@@ -203,15 +227,21 @@ def main() -> int:
     same = r2["readings"] == r3["readings"]
     report["step0_readonly"] = {
         "equal": same,
-        "read1": r1["readings"], "read2": r2["readings"], "read3": r3["readings"],
+        "read1": r1["readings"],
+        "read2": r2["readings"],
+        "read3": r3["readings"],
         "read1_differs_from_2": r1["readings"] != r2["readings"],
         "missing": r2["missing"],
         "usable": r2.get("usable"),
     }
-    print("★ 第 0 格（读数只读）：比**第 2 与第 3 次** ⇒ %s"
-          % ("完全相等 ✓" if same else "★ 不相等 ⇒ 指纹有副作用 ✗"))
+    print(
+        "★ 第 0 格（读数只读）：比**第 2 与第 3 次** ⇒ %s"
+        % ("完全相等 ✓" if same else "★ 不相等 ⇒ 指纹有副作用 ✗")
+    )
     if r1["readings"] != r2["readings"]:
-        print("   （第 1 与第 2 次不同 ⇒ ★ 文档刚建好**还没稳**，★ 所以第 1 次只当加热用）")
+        print(
+            "   （第 1 与第 2 次不同 ⇒ ★ 文档刚建好**还没稳**，★ 所以第 1 次只当加热用）"
+        )
     if not r2.get("usable"):
         print("   ★★ 指纹**失效**：%s" % r2.get("unusable_why"))
     if r2["missing"]:
@@ -223,8 +253,10 @@ def main() -> int:
             continue
         writer = KNOWN_WRITERS.get(cls, "")
         if not writer:
-            report["classes"][cls] = {"verdict": "untested",
-                                      "why": "★ 本轮没给这一类配廉价写操作 ⇒ 如实记「没试」"}
+            report["classes"][cls] = {
+                "verdict": "untested",
+                "why": "★ 本轮没给这一类配廉价写操作 ⇒ 如实记「没试」",
+            }
             print("   %-10s ⇒ ★ untested（没试）" % cls)
             continue
         #: ★★★ 2026-10-06 **真机暴露的更根本的设计错**：★ 我原来把九类**在同一个文档上顺
@@ -245,14 +277,22 @@ def main() -> int:
         #: ★★ **顺序**（★ 真机踩过）：★ 前置 ⇒ before ⇒ 写操作 ⇒ after ✓
         pre_ok, pre_note = run_precondition(sw, model, cls)
         if not pre_ok:
-            report["classes"][cls] = {"verdict": "untested", "writer": writer, "why": pre_note}
+            report["classes"][cls] = {
+                "verdict": "untested",
+                "writer": writer,
+                "why": pre_note,
+            }
             print("   %-10s ⇒ ★ untested（前置没成：%s）" % (cls, pre_note[:60]))
             continue
         before = FP.read(model, sw)
         ok, note = act(sw, model, writer, cls)
         if not ok:
             #: ★★ **没调成 ⇒ 记 `untested`**（★ 不许说成"不可见"）✓
-            report["classes"][cls] = {"verdict": "untested", "writer": writer, "why": note}
+            report["classes"][cls] = {
+                "verdict": "untested",
+                "writer": writer,
+                "why": note,
+            }
             print("   %-10s ⇒ ★ untested（写操作没调成：%s）" % (cls, note[:70]))
             continue
         after = FP.read(model, sw)
@@ -266,11 +306,18 @@ def main() -> int:
             verdict = "unreadable"
         else:
             verdict = "not_detected"
-        report["classes"][cls] = {"verdict": verdict, "writer": writer, "writer_ok": ok,
-                                  "writer_note": note[:120],
-                                  "before": before["readings"].get(cls),
-                                  "after": after["readings"].get(cls)}
-        print("   %-10s ⇒ %-12s （写操作 %s）" % (cls, verdict, "成功" if ok else "★ 失败"))
+        report["classes"][cls] = {
+            "verdict": verdict,
+            "writer": writer,
+            "writer_ok": ok,
+            "writer_note": note[:120],
+            "before": before["readings"].get(cls),
+            "after": after["readings"].get(cls),
+        }
+        print(
+            "   %-10s ⇒ %-12s （写操作 %s）"
+            % (cls, verdict, "成功" if ok else "★ 失败")
+        )
 
     if args.json_out:
         #: ★★ 必须带 `default=str` —— ★ 真机踩过：★ 指纹里某些读数是 **COM 对象**
@@ -278,7 +325,8 @@ def main() -> int:
         #:   ★★ **报告根本没落盘**，★ 而 stdout 只说了"三档统计" ⇒ 看不出丢了东西 ✗
         Path(args.json_out).write_text(
             json.dumps(report, ensure_ascii=False, indent=1, default=str) + "\n",
-            encoding="utf-8")
+            encoding="utf-8",
+        )
         print("★ 报告：%s" % args.json_out)
     counts = {}
     for v in report["classes"].values():

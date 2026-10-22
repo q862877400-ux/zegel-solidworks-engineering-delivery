@@ -21,6 +21,7 @@ r"""SolidWorks Toolbox 零件索引：按标准 / 型号 / 关键词查零件并
 # 覆盖:   后续同级定义
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -39,7 +40,8 @@ def load_index(path: Path | None = None) -> dict[str, Any]:
         raise FileNotFoundError(
             f"Toolbox 索引不存在：{p}\n"
             f"⚠ SolidWorks Toolbox 装在 D:\\SOLIDWORKS Data\\。\n"
-            f"  若刚装 Toolbox，用 tools/build_toolbox_index.py 重建。")
+            f"  若刚装 Toolbox，用 tools/build_toolbox_index.py 重建。"
+        )
     return json.loads(p.read_text(encoding="utf-8"))
 
 
@@ -52,8 +54,12 @@ def list_standards(index: dict[str, Any] | None = None) -> dict[str, int]:
     return dict(sorted(out.items(), key=lambda kv: -kv[1]))
 
 
-def search(keyword: str, standard: str = "", category: str = "",
-           index: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+def search(
+    keyword: str,
+    standard: str = "",
+    category: str = "",
+    index: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """按关键词 / 标准 / 大类查零件。**关键词只匹配零件名，不做模糊拼写纠正**。
 
     返回的每条含 ``part`` / ``code`` / ``path`` / ``standard`` / ``category``。
@@ -74,23 +80,28 @@ def search(keyword: str, standard: str = "", category: str = "",
     return hits
 
 
-def part_path(standard: str, part_name: str,
-              index: dict[str, Any] | None = None) -> str:
+def part_path(
+    standard: str, part_name: str, index: dict[str, Any] | None = None
+) -> str:
     """取某个零件的**完整路径**（供 `IAssemblyDoc.AddComponent5` 的 File 参数用）。
 
     ⚠ 查不到就抛错，**不返回猜测的路径** —— 猜出来的路径插进装配会静默失败。
     """
     data = index if index is not None else load_index()
-    hits = [i for i in data["parts"]
-            if i["standard"].lower() == standard.strip().lower()
-            and i["part"].lower() == part_name.strip().lower()]
+    hits = [
+        i
+        for i in data["parts"]
+        if i["standard"].lower() == standard.strip().lower()
+        and i["part"].lower() == part_name.strip().lower()
+    ]
     if not hits:
         near = search(part_name, standard=standard, index=data)[:5]
         hint = ("；相近的: " + ", ".join(h["part"] for h in near)) if near else ""
         raise KeyError(
             f"Toolbox 里没有 {standard} / {part_name}{hint}\n"
             f"⚠ 尺寸是零件文件内的配置，不在文件名里 —— "
-            f"用 list_standards() + search() 先定位零件名。")
+            f"用 list_standards() + search() 先定位零件名。"
+        )
     if len(hits) > 1:
         paths = "\n    ".join(h["path"] for h in hits[:5])
         raise KeyError(f"{standard} / {part_name} 命中多个，请写全路径:\n    {paths}")

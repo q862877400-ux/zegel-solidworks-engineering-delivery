@@ -1,4 +1,5 @@
 """★ Q14 · 落点与持久化：runs 目录 + 原子提交清单 + 四类持久化（规格 327 的 T10~T15）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -42,18 +43,26 @@ RUNS = ROOT / "output" / "runs"
 
 def set_runs_root(path: pathlib.Path | str) -> None:
     """★★ **换运行目录的根**（★ 测试隔离用 —— ★ 见 `RUNS` 的实测记录）。"""
-    global RUNS                                                         # noqa: PLW0603
+    global RUNS  # noqa: PLW0603
     RUNS = pathlib.Path(path)
 
 
 def reset_runs_root() -> None:
     """★ 恢复默认根。"""
-    global RUNS                                                         # noqa: PLW0603
+    global RUNS  # noqa: PLW0603
     RUNS = ROOT / "output" / "runs"
 
+
 #: ★★ Q14 L271-281 逐字给的**七个子目录**
-RUN_SUBDIRS = ("plans", "interfaces", "questions", "events", "attempts",
-               "checkpoints", "commits")
+RUN_SUBDIRS = (
+    "plans",
+    "interfaces",
+    "questions",
+    "events",
+    "attempts",
+    "checkpoints",
+    "commits",
+)
 
 #: ★★ Q14 L297 逐字要持久化的**四类**
 PERSISTED_KINDS = ("task_tree", "interfaces", "evidence", "open_questions")
@@ -66,8 +75,7 @@ REBUILDABLE = ("derived_views", "scheduler_ready_queue", "com_objects")
 class RunError(Exception):
     """★ 运行目录失败（★ 带封闭码）。"""
 
-    CODES = ("missing-subdir", "no-commit", "overwrite", "missing-kind",
-             "bad-sequence")
+    CODES = ("missing-subdir", "no-commit", "overwrite", "missing-kind", "bad-sequence")
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法运行拒绝码：%r" % code
@@ -88,8 +96,7 @@ def init_run(run_id: str) -> dict:
         p = d / sub
         p.mkdir(parents=True, exist_ok=True)
         made.append(sub)
-    return {"run_id": run_id, "path": str(d), "subdirs": made,
-            "n": len(made)}
+    return {"run_id": run_id, "path": str(d), "subdirs": made, "n": len(made)}
 
 
 def check_structure(run_id: str) -> dict:
@@ -97,13 +104,13 @@ def check_structure(run_id: str) -> dict:
     d = run_dir(run_id)
     have = {s: (d / s).is_dir() for s in RUN_SUBDIRS}
     miss = [s for s, ok in have.items() if not ok]
-    return {"ok": not miss, "missing": miss, "have": have,
-            "n": len(RUN_SUBDIRS)}
+    return {"ok": not miss, "missing": miss, "have": have, "n": len(RUN_SUBDIRS)}
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 一、原子写（★ T11/T12 —— ★ Q14 L283）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def atomic_write(path: pathlib.Path, payload) -> dict:
     """★★ **同卷原子重命名发布**（★ T11 —— ★ Q14 L283 逐字）。
@@ -119,14 +126,14 @@ def atomic_write(path: pathlib.Path, payload) -> dict:
       ```
     """
     if path.exists():
-        raise RunError("overwrite",
-                       "★★ %s 已存在 ⇒ **旧版本不覆盖**（★ Q14 L283 逐字）"
-                       % path.name)
+        raise RunError(
+            "overwrite",
+            "★★ %s 已存在 ⇒ **旧版本不覆盖**（★ Q14 L283 逐字）" % path.name,
+        )
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.parent / (".tmp-" + path.name)
-    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=1),
-                   encoding="utf-8")
-    tmp.replace(path)          #: ★ 同卷原子重命名
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
+    tmp.replace(path)  #: ★ 同卷原子重命名
     return {"path": str(path), "atomic": True, "overwrote": False}
 
 
@@ -134,21 +141,20 @@ def write_revision(run_id: str, kind: str, revision: str, payload) -> dict:
     """★ 写一个**不可变版本文件**（★ T12 —— ★ Q14 L283 逐字）。"""
     if kind not in RUN_SUBDIRS:
         raise RunError("missing-subdir", "★ 未知子目录：%r" % kind)
-    return atomic_write(run_dir(run_id) / kind / ("%s.json" % revision),
-                        payload)
+    return atomic_write(run_dir(run_id) / kind / ("%s.json" % revision), payload)
 
 
 def write_event(run_id: str, sequence: int, payload) -> dict:
     """★ 写一个事件（★ Q14 L271-281 的 `events/<sequence>.json`）。"""
     if sequence < 0:
         raise RunError("bad-sequence", "★ 序号必须 ≥0")
-    return atomic_write(run_dir(run_id) / "events" / ("%06d.json" % sequence),
-                        payload)
+    return atomic_write(run_dir(run_id) / "events" / ("%06d.json" % sequence), payload)
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 二、提交清单（★ T13 —— ★ Q14 L283）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Commit:
@@ -156,16 +162,18 @@ class Commit:
     引用内容**」）。"""
 
     sequence: int = 0
-    references: list = field(default_factory=list)   #: ★ 引用的文件（相对路径）
+    references: list = field(default_factory=list)  #: ★ 引用的文件（相对路径）
     note: str = ""
 
     def to_dict(self) -> dict:
-        return {"sequence": self.sequence,
-                "references": list(self.references), "note": self.note}
+        return {
+            "sequence": self.sequence,
+            "references": list(self.references),
+            "note": self.note,
+        }
 
 
-def commit(run_id: str, sequence: int, references: list,
-           note: str = "") -> dict:
+def commit(run_id: str, sequence: int, references: list, note: str = "") -> dict:
     """★★ **发布一条提交清单**（★ Q14 L283 逐字）。"""
     c = Commit(sequence=sequence, references=list(references), note=note)
     p = run_dir(run_id) / "commits" / ("%06d.json" % sequence)
@@ -194,13 +202,19 @@ def is_complete(run_id: str, artifact: str) -> dict:
     """
     p = run_dir(run_id) / artifact
     on_disk = p.is_file()
-    referenced = any(artifact in (c.get("references") or [])
-                     for c in load_commits(run_id))
-    return {"artifact": artifact, "on_disk": on_disk,
-            "referenced": referenced,
-            "complete": on_disk and referenced,
-            "★": ("★★ **孤立暂存不算完成**（★ Q14 L283）："
-                  "在盘上=%s · 被提交引用=%s" % (on_disk, referenced))}
+    referenced = any(
+        artifact in (c.get("references") or []) for c in load_commits(run_id)
+    )
+    return {
+        "artifact": artifact,
+        "on_disk": on_disk,
+        "referenced": referenced,
+        "complete": on_disk and referenced,
+        "★": (
+            "★★ **孤立暂存不算完成**（★ Q14 L283）："
+            "在盘上=%s · 被提交引用=%s" % (on_disk, referenced)
+        ),
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -227,8 +241,8 @@ def persist(run_id: str, kind: str, revision: str, payload) -> dict:
     """
     if kind in REBUILDABLE:
         raise RunError(
-            "missing-kind",
-            "★ %r 是**可重建**的（★ Q14 L297）⇒ **不持久化**" % kind)
+            "missing-kind", "★ %r 是**可重建**的（★ Q14 L297）⇒ **不持久化**" % kind
+        )
     if kind not in PERSISTED_KINDS:
         raise RunError("missing-kind", "★ 未知持久化类别：%r" % kind)
     sub = KIND_TO_SUBDIR[kind]
@@ -242,9 +256,12 @@ def check_persistence(run_id: str) -> dict:
     for kind, sub in KIND_TO_SUBDIR.items():
         sd = d / sub
         have[kind] = bool(sd.is_dir() and list(sd.glob("*.json")))
-    return {"ok": all(have.values()), "have": have,
-            "missing": [k for k, v in have.items() if not v],
-            "★": "★ Q14 L297：四类均持久化（★ 可重建的三类不走这条路）"}
+    return {
+        "ok": all(have.values()),
+        "have": have,
+        "missing": [k for k, v in have.items() if not v],
+        "★": "★ Q14 L297：四类均持久化（★ 可重建的三类不走这条路）",
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
@@ -253,18 +270,27 @@ def check_persistence(run_id: str) -> dict:
 
 #: ★★ **B 侧入口复用的是同一个核心**（★ Q14 L265 逐字：「后续 A 只能做
 #:   **同一核心的另一个适配器**」）
-SHARED_CORE = ("engineering.registry", "engineering.protocols",
-               "engineering.decisions", "engineering.rule_service",
-               "engineering.recovery", "engineering.catalog",
-               "engineering.authorization", "engineering.executor")
+SHARED_CORE = (
+    "engineering.registry",
+    "engineering.protocols",
+    "engineering.decisions",
+    "engineering.rule_service",
+    "engineering.recovery",
+    "engineering.catalog",
+    "engineering.authorization",
+    "engineering.executor",
+)
 
 #: ★★ **它不许另建的**（★ Q14 L265 逐字：「**不先启用其 UI 和另一套规划循环**」）
-NOT_ALLOWED_TO_BUILD = ("ui", "second_planning_loop", "second_state_system",
-                        "second_rule_system")
+NOT_ALLOWED_TO_BUILD = (
+    "ui",
+    "second_planning_loop",
+    "second_state_system",
+    "second_rule_system",
+)
 
 
-def thin_orchestrator(*, reuses_core: list,
-                      builds: list) -> dict:
+def thin_orchestrator(*, reuses_core: list, builds: list) -> dict:
     """★★ **B 侧薄编排入口的判据**（★ T15 —— ★ Q14 L265 逐字）。
 
     ★★ 判据（★ 两条）：
@@ -277,26 +303,36 @@ def thin_orchestrator(*, reuses_core: list,
     reused = [m for m in reuses_core if m in SHARED_CORE]
     return {
         "ok": not bad and len(reused) >= 3,
-        "reused": reused, "reused_n": len(reused),
+        "reused": reused,
+        "reused_n": len(reused),
         "forbidden_built": bad,
-        "reason": ("★★ 不许另建 %s（★ Q14 L265：「不先启用其 UI 和另一套规划循环」）"
-                   % bad if bad else
-                   ("" if len(reused) >= 3 else
-                    "★ 只复用了 %d 个核心模块（★ 要 ≥3）" % len(reused))),
+        "reason": (
+            "★★ 不许另建 %s（★ Q14 L265：「不先启用其 UI 和另一套规划循环」）" % bad
+            if bad
+            else (
+                ""
+                if len(reused) >= 3
+                else "★ 只复用了 %d 个核心模块（★ 要 ≥3）" % len(reused)
+            )
+        ),
         "★": "★ 复用同一规划核心（★ Q14 L265：「同一核心的另一个适配器」）",
     }
 
 
 def core_status() -> dict:
     """★ 检查**共享核心**是否都在。"""
-    import importlib                                                    # noqa: PLC0415
+    import importlib  # noqa: PLC0415
+
     have = {}
     for m in SHARED_CORE:
         try:
             importlib.import_module(m)
             have[m] = True
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             have[m] = False
-    return {"ok": all(have.values()), "have": have,
-            "n": len(SHARED_CORE),
-            "missing": [k for k, v in have.items() if not v]}
+    return {
+        "ok": all(have.values()),
+        "have": have,
+        "n": len(SHARED_CORE),
+        "missing": [k for k, v in have.items() if not v],
+    }

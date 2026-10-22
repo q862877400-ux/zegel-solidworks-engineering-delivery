@@ -1,4 +1,5 @@
 """★ 批次 89：C 类**最后两组语义无歧义**的解锁 —— Costing 写侧 3 个 + 运动算例 2 个（★ 含护城河域 AVI）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_costing.py`（`include_body` / `set_costing_method` / `update_cost_
@@ -49,53 +50,69 @@ SPECS_BATCH89 = [
     ToolSpec(
         name="solidworks_costing_include_body",
         title="Include/Exclude a Body from the Cost Calculation",
-        module="sw_costing", function="include_body",
+        module="sw_costing",
+        function="include_body",
         inject="cost_part",
         params=[
-            Param("body_name", str, description="实体名（★ 字符串名字，**不是**坐标 —— 规则 3）。"
-                                                "★ 可用 `solidworks_costing_list_bodies` 先列出实体名。"),
-            Param("include", bool, default=True,
-                  description="True 纳入成本计算 / False 排除。"),
+            Param(
+                "body_name",
+                str,
+                description="实体名（★ 字符串名字，**不是**坐标 —— 规则 3）。"
+                "★ 可用 `solidworks_costing_list_bodies` 先列出实体名。",
+            ),
+            Param(
+                "include",
+                bool,
+                default=True,
+                description="True 纳入成本计算 / False 排除。",
+            ),
         ],
         doc="把某个实体纳入（或排除出）**成本计算**。★ 官方依据：`C:\\swapi\\types` **无该成员的页**"
-            "（那套源不含 `sldcostingapi` 册）⇒ ★ 真源是**本仓** `scripts/sw_costing.py:240-242`"
-            "（`_checked(cost_part, \"IncludeBody\", body_name, include)`），"
-            "而该模块的来源块写明依据是「反射确认的实参个数」。"
-            "★ 注入键 `cost_part` 给的是 Costing 的**成本模型对象**（其依据在仓里："
-            "`get_body_count_report` 逐字把 `_costing_chain(cost_manager)` 取出的对象喂给 "
-            "`get_body_count(cost_part)`）✓ ⚠ **未在本机实测**（铁律 2）。",
+        "（那套源不含 `sldcostingapi` 册）⇒ ★ 真源是**本仓** `scripts/sw_costing.py:240-242`"
+        '（`_checked(cost_part, "IncludeBody", body_name, include)`），'
+        "而该模块的来源块写明依据是「反射确认的实参个数」。"
+        "★ 注入键 `cost_part` 给的是 Costing 的**成本模型对象**（其依据在仓里："
+        "`get_body_count_report` 逐字把 `_costing_chain(cost_manager)` 取出的对象喂给 "
+        "`get_body_count(cost_part)`）✓ ⚠ **未在本机实测**（铁律 2）。",
     ),
     ToolSpec(
         name="solidworks_costing_set_method",
         title="Set a Costing Method on the Cost Model",
-        module="sw_costing", function="set_costing_method",
+        module="sw_costing",
+        function="set_costing_method",
         inject="cost_part",
         params=[
             Param("method_name", str, description="成本方法名（字符串）。"),
-            Param("method", int, description="方法值（`System.int`）。"
-                                             "⚠ **取值官方无文档** —— 本工具**不猜**、原样透传。"),
+            Param(
+                "method",
+                int,
+                description="方法值（`System.int`）。"
+                "⚠ **取值官方无文档** —— 本工具**不猜**、原样透传。",
+            ),
         ],
         doc="设某个成本方法的取值。★ 同族：只读的 `solidworks_costing_method_value`（读当前值）——"
-            "本工具是它的**写侧配对** ✓ ★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-            "★ 真源是**本仓** `scripts/sw_costing.py:245-247`；⚠ **未在本机实测**（铁律 2）。",
+        "本工具是它的**写侧配对** ✓ ★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
+        "★ 真源是**本仓** `scripts/sw_costing.py:245-247`；⚠ **未在本机实测**（铁律 2）。",
     ),
     ToolSpec(
         name="solidworks_costing_update_cost_for_all_bodies",
         title="Recompute the Cost for All Bodies",
-        module="sw_costing", function="update_cost_for_all_bodies",
+        module="sw_costing",
+        function="update_cost_for_all_bodies",
         inject="cost_part",
         params=[],
         doc="对**全部实体**重算成本。零参。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-            "★ 真源是**本仓** `scripts/sw_costing.py:265-267`；⚠ **未在本机实测**（铁律 2）。"
-            "★ 典型调用序：改完材料/模板（`solidworks_costing_set_default_*`）或纳入实体"
-            "（`solidworks_costing_include_body`）之后，用本工具让成本刷新 ✓",
+        "★ 真源是**本仓** `scripts/sw_costing.py:265-267`；⚠ **未在本机实测**（铁律 2）。"
+        "★ 典型调用序：改完材料/模板（`solidworks_costing_set_default_*`）或纳入实体"
+        "（`solidworks_costing_include_body`）之后，用本工具让成本刷新 ✓",
     ),
     # ── ② 运动算例（2）—— ★ 有官方页，逐字引自 `C:\swapi\types\IMotionStudy\` ─────────
     # ────
     ToolSpec(
         name="solidworks_motion_calculate_and_play",
         title="Calculate the Motion Study (and Optionally Play It)",
-        module="sw_motion", function="calculate_and_play",
+        module="sw_motion",
+        function="calculate_and_play",
         inject="motion_study",
         #: ★★ `param_alias` 里给 **None** = 「**由解析器消费、不进目标函数**」——
         #:   ★ 这是 `tool_registry.py:511-513` 逐字写明的机制：
@@ -103,39 +120,56 @@ SPECS_BATCH89 = [
         #:   ★ 而 `resolve_motion_study` 正是**读**这个参数来决定注哪个算例的 ✓
         param_alias={"motion_study_name": None},
         params=[
-            Param("play", bool, default=True,
-                  description="True 时**计算成功后**调用 `Play` 播放；False 只计算。"),
-            Param("motion_study_name", str, default="",
-                  description="★ 运动算例名。**留空**时：算例数 == 1 就用那一个；"
-                              "0 个 ⇒ 报错（先建算例）；**>1 个 ⇒ 报错并要求点名**"
-                              "（★ 本工具**不替你猜**用哪一个）✓"),
+            Param(
+                "play",
+                bool,
+                default=True,
+                description="True 时**计算成功后**调用 `Play` 播放；False 只计算。",
+            ),
+            Param(
+                "motion_study_name",
+                str,
+                default="",
+                description="★ 运动算例名。**留空**时：算例数 == 1 就用那一个；"
+                "0 个 ⇒ 报错（先建算例）；**>1 个 ⇒ 报错并要求点名**"
+                "（★ 本工具**不替你猜**用哪一个）✓",
+            ),
         ],
         doc="两步：`IMotionStudy::Calculate()` 再（可选）`IMotionStudy::Play()`。"
-            "★ 官方签名逐字：`C:\\swapi\\types\\IMotionStudy\\Calculate.md` ⇒ `System.bool Calculate()`；"
-            "`…\\Play.md` ⇒ `System.bool Play()`。★ 返回值是两步里 **`Calculate` 的 bool** ✓ "
-            "⚠ 本仓累计多处「返回码撒谎」⇒ ★ 别只看返回值，配套用 "
-            "`solidworks_motion_collect_summary` 复核结果是否真的出现 ✓",
+        "★ 官方签名逐字：`C:\\swapi\\types\\IMotionStudy\\Calculate.md` ⇒ `System.bool Calculate()`；"
+        "`…\\Play.md` ⇒ `System.bool Play()`。★ 返回值是两步里 **`Calculate` 的 bool** ✓ "
+        "⚠ 本仓累计多处「返回码撒谎」⇒ ★ 别只看返回值，配套用 "
+        "`solidworks_motion_collect_summary` 复核结果是否真的出现 ✓",
     ),
     ToolSpec(
         name="solidworks_motion_export_avi",
         title="Export the Motion Study to AVI (one of this repo's moat domains)",
-        module="sw_motion", function="export_motion_study_avi",
+        module="sw_motion",
+        function="export_motion_study_avi",
         inject="motion_study",
         #: ★★ 同 `calculate_and_play`：`motion_study_name` 由**解析器消费**（`None` = 不
         #: 进目标函数）✓
         param_alias={"motion_study_name": None},
         params=[
-            Param("file_path", str, description="输出文件路径（★ 含扩展名；★ **父目录必须已存在**）。"
-                                                "★ 同一成员也能写 `.bmp` / `.tga`，扩展名由你给。"),
-            Param("motion_study_name", str, default="",
-                  description="★ 运动算例名（留空的语义见 `solidworks_motion_calculate_and_play`）。"),
+            Param(
+                "file_path",
+                str,
+                description="输出文件路径（★ 含扩展名；★ **父目录必须已存在**）。"
+                "★ 同一成员也能写 `.bmp` / `.tga`，扩展名由你给。",
+            ),
+            Param(
+                "motion_study_name",
+                str,
+                default="",
+                description="★ 运动算例名（留空的语义见 `solidworks_motion_calculate_and_play`）。",
+            ),
         ],
         doc="把运动算例导出成 **AVI** —— ★★ **AVI 导出是本仓三个「业界空白域护城河」之一** ✓ "
-            "★ 官方签名逐字：`C:\\swapi\\types\\IMotionStudy\\SaveToAVI.md` ⇒ "
-            "`System.bool SaveToAVI( System.string FileName, AVIParameter Parameter )`。"
-            "★★ **判据不看返回值**：本仓累计多处「返回码撒谎」⇒ 该函数**以「文件真的出现且大小 > 0」为准**"
-            "（返回 `{ok, returned, exists, size_bytes, path}`）✓ "
-            "⚠ `AVIParameter` 是 **COM 对象**、**过不了 MCP 的 JSON 边界** ⇒ ★ 本工具**不收它**"
-            "（函数默认 `None`）⇒ ★ 时长/帧率走 SolidWorks 默认值（★ 本仓**不猜**默认值）✓",
+        "★ 官方签名逐字：`C:\\swapi\\types\\IMotionStudy\\SaveToAVI.md` ⇒ "
+        "`System.bool SaveToAVI( System.string FileName, AVIParameter Parameter )`。"
+        "★★ **判据不看返回值**：本仓累计多处「返回码撒谎」⇒ 该函数**以「文件真的出现且大小 > 0」为准**"
+        "（返回 `{ok, returned, exists, size_bytes, path}`）✓ "
+        "⚠ `AVIParameter` 是 **COM 对象**、**过不了 MCP 的 JSON 边界** ⇒ ★ 本工具**不收它**"
+        "（函数默认 `None`）⇒ ★ 时长/帧率走 SolidWorks 默认值（★ 本仓**不猜**默认值）✓",
     ),
 ]

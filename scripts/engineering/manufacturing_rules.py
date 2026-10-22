@@ -1,4 +1,5 @@
 """★ 把仓库里**早就有的**制造规则接进工具层（★ 业主 2026-10-14 的盘点收获）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -6,13 +7,13 @@
 # 定位:   规格 `specs/331-manufacturing-rules-wiring` ——★★ 把 `subskills/solidworks-vi
 #           becad/knowledge/manufacturing_rules.yaml`  （★ **早就在仓库里**）接成**可调
 #           用的规则服务**。★★★ 触发它的是 2026-10-14 业主：「继续搜索你本项目内部已经有
-#           的东西，  说不定**还有很多我早就提供给你了**，你只是**文件太多给忘了**。」★ 
+#           的东西，  说不定**还有很多我早就提供给你了**，你只是**文件太多给忘了**。」★
 #           实测：这份规则**只被一个测试引用**（`test_threaded_hole_subskill.py`），  ★★
 #            **工具层完全没用** —— 而它里面有：    · **螺纹底孔表**（M3~M12 的 pitch / t
-#           ap_drill / 口部倒角）    · **间隙孔表**（M3~M8）    · **特征顺序**（13 步 · 
+#           ap_drill / 口部倒角）    · **间隙孔表**（M3~M8）    · **特征顺序**（13 步 ·
 #           ★ 大圆角在孔槽之前）    · **槽/口袋的最小尺寸**（端部半径 / 壁厚 / 底厚）
 # 官方依据: ① 该 YAML 本身（★ 来源块在 `subskills/solidworks-vibecad/`）② `subskills/sol
-#           idworks-fillet-chamfer-cnc/references/   cnc-fillet-chamfer-lessons.md`（★ 
+#           idworks-fillet-chamfer-cnc/references/   cnc-fillet-chamfer-lessons.md`（★
 #           特征顺序与降级策略的另一份来源）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
@@ -24,8 +25,9 @@ import pathlib
 from dataclasses import dataclass
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-RULES_FILE = (ROOT / "subskills" / "solidworks-vibecad" / "knowledge"
-              / "manufacturing_rules.yaml")
+RULES_FILE = (
+    ROOT / "subskills" / "solidworks-vibecad" / "knowledge" / "manufacturing_rules.yaml"
+)
 
 
 class RuleError(Exception):
@@ -44,13 +46,15 @@ def load_rules() -> dict:
     """★ 读**仓库里早就有的**那份规则（★ 不重写、不复制 —— 单一源）。"""
     if not RULES_FILE.is_file():
         raise RuleError("no-rules", "★ 没有 %s" % RULES_FILE)
-    import yaml                                                         # noqa: PLC0415
+    import yaml  # noqa: PLC0415
+
     return yaml.safe_load(RULES_FILE.read_text(encoding="utf-8")) or {}
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 一、螺纹底孔（★ 这是**我一直在手推**的东西）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def thread_spec(size: str) -> dict:
     """★★ **螺纹底孔规格**（★ 从既有 YAML 查，★ 不凭记忆）。
@@ -62,7 +66,7 @@ def thread_spec(size: str) -> dict:
       ★ 而**这张表一直在仓库里**。
     """
     rules = load_rules()
-    tbl = (rules.get("thread_defaults") or rules.get("threads") or {})
+    tbl = rules.get("thread_defaults") or rules.get("threads") or {}
     #: ★ 兼容两种键名（★ 表在 `threads:` 下 —— 见实测）
     if not tbl:
         for k in rules:
@@ -70,9 +74,9 @@ def thread_spec(size: str) -> dict:
                 tbl = rules[k]
                 break
     if size not in tbl:
-        raise RuleError("not-in-table",
-                        "★ %s 不在底孔表里（表里有：%s）"
-                        % (size, sorted(tbl)))
+        raise RuleError(
+            "not-in-table", "★ %s 不在底孔表里（表里有：%s）" % (size, sorted(tbl))
+        )
     return dict(tbl[size])
 
 
@@ -82,12 +86,14 @@ def thread_sizes() -> list:
     for k in rules:
         v = rules[k]
         if isinstance(v, dict) and any(
-                isinstance(x, dict) and "tap_drill" in x for x in v.values()):
+            isinstance(x, dict) and "tap_drill" in x for x in v.values()
+        ):
             return sorted(v)
     return []
 
 
 #: ══ 二、间隙孔（★ 通孔让螺栓穿过用）═════════════════════════════════
+
 
 def clearance_hole(size: str) -> float:
     """★★ **间隙孔直径**（★ 从既有表查）。
@@ -97,13 +103,14 @@ def clearance_hole(size: str) -> float:
     rules = load_rules()
     tbl = (rules.get("cnc_defaults") or {}).get("hole_clearance") or {}
     if size not in tbl:
-        raise RuleError("not-in-table",
-                        "★ %s 不在间隙孔表里（表里有：%s）"
-                        % (size, sorted(tbl)))
+        raise RuleError(
+            "not-in-table", "★ %s 不在间隙孔表里（表里有：%s）" % (size, sorted(tbl))
+        )
     return float(tbl[size])
 
 
 #: ══ 三、特征顺序（★ 大圆角在孔槽之前）═══════════════════════════════
+
 
 def feature_order(kind: str = "cnc_mount") -> list:
     """★★★ **特征顺序**（★ 从既有 YAML 查）。
@@ -115,8 +122,9 @@ def feature_order(kind: str = "cnc_mount") -> list:
     rules = load_rules()
     tbl = rules.get("feature_order") or {}
     if kind not in tbl:
-        raise RuleError("not-in-table",
-                        "★ 没有 %s 的特征顺序（有：%s）" % (kind, sorted(tbl)))
+        raise RuleError(
+            "not-in-table", "★ 没有 %s 的特征顺序（有：%s）" % (kind, sorted(tbl))
+        )
     return list(tbl[kind])
 
 
@@ -130,23 +138,31 @@ def fillet_before_holes(kind: str = "cnc_mount") -> dict:
     """★★ **判据：倒角/圆角是否排在孔之前**（★ 这是既有规则的核心）。"""
     i_f = order_index("outer_fillet_and_chamfer", kind)
     i_h = order_index("through_holes", kind)
-    return {"fillet_index": i_f, "hole_index": i_h,
-            "ok": 0 <= i_f < i_h,
-            "★": ("★ 既有规则：**大圆角/外轮廓倒角在孔槽之前** —— "
-                  "★ 否则复杂拓扑上求解很久")}
+    return {
+        "fillet_index": i_f,
+        "hole_index": i_h,
+        "ok": 0 <= i_f < i_h,
+        "★": (
+            "★ 既有规则：**大圆角/外轮廓倒角在孔槽之前** —— ★ 否则复杂拓扑上求解很久"
+        ),
+    }
 
 
 #: ══ 四、槽/口袋的最小尺寸 ═══════════════════════════════════════════
 
+
 def slot_min_end_radius() -> float:
     """★ 槽端部**最小**半径（★ 加工得出来）。"""
-    return float(((load_rules().get("cnc_defaults") or {})
-                  .get("slot") or {}).get("min_end_radius", 0.0))
+    return float(
+        ((load_rules().get("cnc_defaults") or {}).get("slot") or {}).get(
+            "min_end_radius", 0.0
+        )
+    )
 
 
 def pocket_limits() -> dict:
     """★ 口袋的**最小壁厚 / 底厚**。"""
-    p = ((load_rules().get("cnc_defaults") or {}).get("pocket") or {})
+    p = (load_rules().get("cnc_defaults") or {}).get("pocket") or {}
     return {"min_wall": p.get("min_wall"), "min_floor": p.get("min_floor")}
 
 
@@ -179,33 +195,37 @@ def degrade_ladder(value_mm: float, *, strict: bool = False) -> list:
 def degradation_record(*, requested_mm: float, actual_mm: float) -> dict:
     """★ 降级**留痕**（★ 逐字要求：三个字段 + 每次失败信息）。"""
     degraded = abs(actual_mm - requested_mm) > 1e-9
-    return {"requested_value_mm": requested_mm,
-            "actual_value_mm": actual_mm,
-            "status": "degraded" if degraded else "as_requested",
-            "★": "★ 既有规则逐字：「**对外说明必须使用实际尺寸**」"}
+    return {
+        "requested_value_mm": requested_mm,
+        "actual_value_mm": actual_mm,
+        "status": "degraded" if degraded else "as_requested",
+        "★": "★ 既有规则逐字：「**对外说明必须使用实际尺寸**」",
+    }
 
 
 #: ══ 六、推荐半径（★ 来自 lessons 文件 L139）══════════════════════════
 
 #: ★★ **保守默认值**（★ 逐字）
 FILLET_DEFAULTS = {
-    "base_plate_corner": (6.0, 10.0),      #: 底板立角大圆角 R6–R10
-    "boss_corner": (3.0, 6.0),             #: 凸台立角圆角 R3–R6
-    "outer_chamfer": (0.8, 2.0),           #: 外轮廓倒角 C0.8–C2
-    "boss_top_chamfer": (0.5, 1.0),        #: 凸台顶面倒角 C0.5–C1
-    "hole_mouth_chamfer": (0.3, 0.8),      #: 孔口倒角 C0.3–C0.8
+    "base_plate_corner": (6.0, 10.0),  #: 底板立角大圆角 R6–R10
+    "boss_corner": (3.0, 6.0),  #: 凸台立角圆角 R3–R6
+    "outer_chamfer": (0.8, 2.0),  #: 外轮廓倒角 C0.8–C2
+    "boss_top_chamfer": (0.5, 1.0),  #: 凸台顶面倒角 C0.5–C1
+    "hole_mouth_chamfer": (0.3, 0.8),  #: 孔口倒角 C0.3–C0.8
 }
 
 
 def fillet_range(where: str) -> tuple:
     """★ 某处的**推荐半径/倒角范围**（★ 从 lessons 文件照录）。"""
     if where not in FILLET_DEFAULTS:
-        raise RuleError("not-in-table",
-                        "★ 没有 %s（有：%s）" % (where, sorted(FILLET_DEFAULTS)))
+        raise RuleError(
+            "not-in-table", "★ 没有 %s（有：%s）" % (where, sorted(FILLET_DEFAULTS))
+        )
     return FILLET_DEFAULTS[where]
 
 
 #: ══ 七、总报告 ═══════════════════════════════════════════════════════
+
 
 def rules_report() -> dict:
     """★ **规则总览**（★ 证明「仓库里早就有」）。"""
@@ -213,8 +233,8 @@ def rules_report() -> dict:
         "source": str(RULES_FILE.relative_to(ROOT)),
         "thread_sizes": thread_sizes(),
         "clearance_sizes": sorted(
-            ((load_rules().get("cnc_defaults") or {})
-             .get("hole_clearance") or {})),
+            ((load_rules().get("cnc_defaults") or {}).get("hole_clearance") or {})
+        ),
         "feature_order_len": len(feature_order()),
         "fillet_before_holes": fillet_before_holes(),
         "slot_min_end_radius": slot_min_end_radius(),

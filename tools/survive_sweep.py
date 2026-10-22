@@ -1,4 +1,5 @@
 """★ 存活普查：逐工具「调一次 + 前后抓指纹」，输出「声明 vs 观察」差异表。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机普查驱动器）
 # 文件:   tools/survive_sweep.py
@@ -26,7 +27,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
-for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
+for _p in (
+    str(ROOT),
+    str(ROOT / "tools"),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -36,9 +42,10 @@ EFFECTS = ROOT / "docs" / "effect-declarations.json"
 def _fresh_part(sw):
     """★ 建一个**新的空零件** —— ★ 每条工具**各用一个**（★ 样本隔离）✓"""
     import sw_connect
+
     try:
         return sw_connect.new_document(sw, "part")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -51,9 +58,16 @@ def _fresh_part(sw):
 #: ★★ 合成规则**按形参名与单位后缀**来（★ 只求"形状对"，★ 不求语义对 —— 语义由差分去判）
 #: ✓
 _SYNTH_BY_HINT = (
-    ("_mm", 20.0), ("_deg", 90.0), ("_count", 1), ("_index", 0),
-    ("_name", "MCP_CALIB"), ("path", "MCP_CALIB_out.step"),
-    ("_type", 0), ("_flag", True), ("_id", 0), ("_size", 1.0),
+    ("_mm", 20.0),
+    ("_deg", 90.0),
+    ("_count", 1),
+    ("_index", 0),
+    ("_name", "MCP_CALIB"),
+    ("path", "MCP_CALIB_out.step"),
+    ("_type", 0),
+    ("_flag", True),
+    ("_id", 0),
+    ("_size", 1.0),
 )
 
 
@@ -73,6 +87,7 @@ def synth_args(spec) -> dict:
     """
     import inspect
     import importlib
+
     ann: dict = {}
     try:
         mod = importlib.import_module("scripts." + str(getattr(spec, "module", "")))
@@ -80,13 +95,13 @@ def synth_args(spec) -> dict:
         if fn is not None:
             for pname, pp in inspect.signature(fn).parameters.items():
                 ann[pname] = pp.annotation
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         ann = {}
 
     out = {}
-    for pp in (getattr(spec, "params", None) or ()):
+    for pp in getattr(spec, "params", None) or ():
         if getattr(pp, "default", None) is not Ellipsis:
-            continue                        # ★ 有默认值的不必合成 ✓
+            continue  # ★ 有默认值的不必合成 ✓
         #: ★ ① 先按**真签名里的类型注解**（★ 最硬）✓
         a = ann.get(pp.name)
         if a is not None:
@@ -137,13 +152,19 @@ def synth_args(spec) -> dict:
         out[pp.name] = value
     return out
 
+
 #: ★ 每组需要的**默认文档种类**（★ 可被生成物里的 `doc_type` 覆盖 —— ★ 见 `build_host`）
 #: ✓
 _KIND_BY_REQUIRES = {
-    "part": "part", "none": "part", "selection": "part", "view": "part",
-    "study": "part", "costing": "part",
-    "assembly": "assembly", "drawing": "drawing",
-    "app": None,          # ★ 只需要应用对象 ⇒ **不用建文档** ✓
+    "part": "part",
+    "none": "part",
+    "selection": "part",
+    "view": "part",
+    "study": "part",
+    "costing": "part",
+    "assembly": "assembly",
+    "drawing": "drawing",
+    "app": None,  # ★ 只需要应用对象 ⇒ **不用建文档** ✓
 }
 
 
@@ -165,6 +186,7 @@ def build_host(sw, inject_name: str, doc_type=None):
     :returns: `(inject_objects, why)` —— ★ `why` 非空表示**这一组还没法建**（★ 如实记，不假装）✓
     """
     import sw_connect
+
     name = str(inject_name or "")
     if name in ("", "none"):
         return {"sw": sw}, ""
@@ -173,18 +195,22 @@ def build_host(sw, inject_name: str, doc_type=None):
     if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
         try:
             doc = sw.ActiveDoc
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             doc = None
         return {name: sw, "sw": sw, "_doc": doc}, ""
     #: ★★ `doc_type`（★ 机械初推）**优先于** `inject` 推出的种类 ✓
-    kind = (doc_type if doc_type in ("part", "assembly", "drawing") else None) or \
-        {"model": "part", "doc": "part", "asm_model": "assembly",
-         "component": "assembly", "drawing_model": "drawing"}.get(name)
+    kind = (doc_type if doc_type in ("part", "assembly", "drawing") else None) or {
+        "model": "part",
+        "doc": "part",
+        "asm_model": "assembly",
+        "component": "assembly",
+        "drawing_model": "drawing",
+    }.get(name)
     if kind:
         try:
             doc = sw_connect.new_document(sw, kind)
             return {name: doc, "sw": sw, "_doc": doc}, ""
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             return {}, "★ 建 %s 失败：%s" % (kind, type(exc).__name__)
     #: ★★ 补两类**易取**的（★ 官方属性，★ 已读页面）✓
     #:   · `selection` ⇒ `IModelDoc2.SelectionManager` ✓
@@ -198,11 +224,13 @@ def build_host(sw, inject_name: str, doc_type=None):
                 return {}, "★ 零件建好了，但 `%s` 取不到（★ 返回 None）" % attr
             #: ★ `selection`/`view` 的宿主**不是文档** ⇒ ★ 但**指纹仍读在文档上** ✓
             return {name: host, "sw": sw, "_doc": doc}, ""
-        except Exception as exc:                                        # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             return {}, "★ 建 `%s` 宿主失败：%s" % (name, type(exc).__name__)
     #: ★ 剩下两类（study / cost_manager）**还没建** ⇒ ★ 如实报出 ✓
-    return {}, ("★ 这一类宿主**还没建**（`%s`）—— ★ 需要构造仿真研究 / 成本管理器"
-                "（★ 要加载对应插件）" % name)
+    return {}, (
+        "★ 这一类宿主**还没建**（`%s`）—— ★ 需要构造仿真研究 / 成本管理器"
+        "（★ 要加载对应插件）" % name
+    )
 
 
 def apply_needs(sw, model, needs) -> str:
@@ -217,18 +245,24 @@ def apply_needs(sw, model, needs) -> str:
     :returns: 空串表示成功；★ 否则是**原因**（★ 如实记，不当成通过）✓
     """
     import tool_caller
+
     inj = {"model": model, "sw": sw}
     rect = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
-    body_steps = [("solidworks_sketch_start", {}),
-                  ("solidworks_sketch_add_rectangle", rect),
-                  ("solidworks_extrude_boss",
-                   {"sketch_name": "Sketch1", "depth_mm": 10.0})]
+    body_steps = [
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", rect),
+        ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 10.0}),
+    ]
     plan = {
         "body": body_steps,
         #: ★ `selection` ⇒ 先有个体、★ 再选一个实体 ✓
-        "selection": body_steps + [("solidworks_select_by_selector",
-                                    {"selector": "index:0", "kind": "EDGE",
-                                     "body_index": 0})],
+        "selection": body_steps
+        + [
+            (
+                "solidworks_select_by_selector",
+                {"selector": "index:0", "kind": "EDGE", "body_index": 0},
+            )
+        ],
         "edit:sketch": [("solidworks_sketch_start", {})],
     }
     for n in ("body", "selection", "edit:sketch"):
@@ -272,10 +306,14 @@ def main() -> int:
     #:   ⇒ ★ 加 `--offset` 分块，★ 既能**跑全**、★ 又能**定位卡点** ✓
     ap.add_argument("--offset", type=int, default=0, help="★ 跳过前 N 个（★ 分块用）")
     #: ★★ 按**声明**分组跑（★ 三组语义完全不同，★ 分开跑才好读）✓
-    ap.add_argument("--declared", choices=("empty", "nonempty", "null", "all"), default="empty",
-                    help="★ empty=`writes == []`（已确认无写，硬红门禁盯这批）· "
-                         "nonempty=`writes` 非空（★ 验 conservative）· "
-                         "null=未声明（★ 预期全 undecided）· all=全部")
+    ap.add_argument(
+        "--declared",
+        choices=("empty", "nonempty", "null", "all"),
+        default="empty",
+        help="★ empty=`writes == []`（已确认无写，硬红门禁盯这批）· "
+        "nonempty=`writes` 非空（★ 验 conservative）· "
+        "null=未声明（★ 预期全 undecided）· all=全部",
+    )
     ap.add_argument("--json-out", default="output/spec210-survival-diff.json")
     args = ap.parse_args()
 
@@ -284,6 +322,7 @@ def main() -> int:
     import tool_caller
 
     table = json.loads(EFFECTS.read_text(encoding="utf-8")).get("tools", {})
+
     #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
     #: ★★ 先把目标按 `requires` **分组**（★ 每组只建一次状态）✓
     def _requires_of(tool_name: str) -> str:
@@ -309,15 +348,21 @@ def main() -> int:
     else:
         targets = sorted(table)
     if args.offset:
-        targets = targets[args.offset:]
+        targets = targets[args.offset :]
     if args.limit:
-        targets = targets[:args.limit]
+        targets = targets[: args.limit]
     by_requires: dict = {}
     for n in targets:
         by_requires.setdefault(_requires_of(n), []).append(n)
-    print("★ 目标：%d 个（★ 按声明分组 `%s`）· ★ 分成 **%d** 个 `requires` 组：%s"
-          % (len(targets), args.declared, len(by_requires),
-             {k: len(v) for k, v in sorted(by_requires.items())}))
+    print(
+        "★ 目标：%d 个（★ 按声明分组 `%s`）· ★ 分成 **%d** 个 `requires` 组：%s"
+        % (
+            len(targets),
+            args.declared,
+            len(by_requires),
+            {k: len(v) for k, v in sorted(by_requires.items())},
+        )
+    )
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
     if sw is None:
@@ -327,8 +372,10 @@ def main() -> int:
     rows = []
     for req in sorted(by_requires):
         group = by_requires[req]
-        print("\n★ ── `requires=%s` 组：%d 个（★ **只建一次状态**，★ 写工具后重建）──"
-              % (req, len(group)))
+        print(
+            "\n★ ── `requires=%s` 组：%d 个（★ **只建一次状态**，★ 写工具后重建）──"
+            % (req, len(group))
+        )
         #: ★★ 组键是 `inject|doc_type` ⇒ 拆回两半分别用 ✓
         _req_inj, _, _req_dt = req.partition("|")
         _dt = _req_dt or (table.get(group[0]) or {}).get("doc_type")
@@ -336,19 +383,35 @@ def main() -> int:
         if not why_state:
             #: ★★ 按**整组的 `needs` 并集**把状态推到位（★ 机械初推的，见 `apply_needs`
             #: ）✓
-            _needs = sorted({n for t in group for n in (table.get(t) or {}).get("needs") or []})
+            _needs = sorted(
+                {n for t in group for n in (table.get(t) or {}).get("needs") or []}
+            )
             _why_needs = apply_needs(sw, injects.get("_doc"), _needs)
             if _why_needs:
                 for _n in group:
-                    rows.append({"tool": _n, "verdict": "undecided", "requires": req,
-                                 "writer_ok": True, "why": _why_needs})
+                    rows.append(
+                        {
+                            "tool": _n,
+                            "verdict": "undecided",
+                            "requires": req,
+                            "writer_ok": True,
+                            "why": _why_needs,
+                        }
+                    )
                 print("   ★ 整组跳过（建状态没成）：%s" % _why_needs[:90])
                 continue
         if why_state:
             #: ★ 建不出宿主 ⇒ 整组**如实记未判定**（★ 不许当成通过）✓
             for _n in group:
-                rows.append({"tool": _n, "verdict": "undecided", "requires": req,
-                             "writer_ok": True, "why": why_state})
+                rows.append(
+                    {
+                        "tool": _n,
+                        "verdict": "undecided",
+                        "requires": req,
+                        "writer_ok": True,
+                        "why": why_state,
+                    }
+                )
             print("   ★ 整组跳过：%s" % why_state)
             continue
         #: ★★ 组内**连着调**；★ **写工具之后重建状态**（★ 那是"副本重载"）✓
@@ -358,41 +421,81 @@ def main() -> int:
             decl = table.get(name) or {}
             if decl.get("writes"):
                 #: ★★ 写工具之后**重建**（★ 那是"副本重载"）；★ 有 `doc_type` 就按它建 ✓
-                injects, why_state = build_host(sw, _req_inj, decl.get("doc_type") or _req_dt)
+                injects, why_state = build_host(
+                    sw, _req_inj, decl.get("doc_type") or _req_dt
+                )
                 if not why_state:
                     #: ★★ 重建之后**状态要重推**（★ 重建把状态清掉了）✓
-                    _why_needs = apply_needs(sw, injects.get("_doc"),
-                                             (decl.get("needs") or []))
+                    _why_needs = apply_needs(
+                        sw, injects.get("_doc"), (decl.get("needs") or [])
+                    )
                 if why_state:
-                    rows.append({"tool": name, "verdict": "undecided", "requires": req,
-                                 "writer_ok": True, "why": "★ 重建状态失败：%s" % why_state})
+                    rows.append(
+                        {
+                            "tool": name,
+                            "verdict": "undecided",
+                            "requires": req,
+                            "writer_ok": True,
+                            "why": "★ 重建状态失败：%s" % why_state,
+                        }
+                    )
                     continue
             #: ★★ 指纹一律读**文档**（★ 见 `build_host` 的说明）✓
             _doc = injects.get("_doc")
-            before = FP.read(_doc, sw) if _doc is not None else {"readings": {}, "usable": False}
+            before = (
+                FP.read(_doc, sw)
+                if _doc is not None
+                else {"readings": {}, "usable": False}
+            )
             #: ★★ 按声明**合成实参**（★ 真机证明 12/17 的失败只是"没给参数"）✓
             spec_entry = tool_caller._specs().get(name)
             extra = synth_args(spec_entry[0]) if spec_entry else {}
             ok, note = tool_caller.call(
-                name, inject_objects=dict(injects),
-                **{k: v for k, v in extra.items()
-                   if k not in ("model", "sw", "asm_model", "view", "sldworks",
-                                "doc", "study")})
-            after = FP.read(_doc, sw) if _doc is not None else {"readings": {}, "usable": False}
+                name,
+                inject_objects=dict(injects),
+                **{
+                    k: v
+                    for k, v in extra.items()
+                    if k
+                    not in (
+                        "model",
+                        "sw",
+                        "asm_model",
+                        "view",
+                        "sldworks",
+                        "doc",
+                        "study",
+                    )
+                },
+            )
+            after = (
+                FP.read(_doc, sw)
+                if _doc is not None
+                else {"readings": {}, "usable": False}
+            )
             diff = FP.compare_detailed(before, after)
-            verdict = classify(table[name].get("writes"),
-                               {"changed": diff["changed"], "unknown": diff["unknown"]},
-                               bool(before.get("usable")) and bool(after.get("usable")),
-                               call_ok=bool(ok))
-            rows.append({
-                "tool": name, "verdict": verdict, "writer_ok": ok, "requires": req,
-                "call_note": str(note)[:120],
-                "declared_writes": table[name].get("writes"),
-                "changed_classes": [c["class"] for c in diff["changed"]],
-                "unknown_classes": [c["class"] for c in diff["unknown"]],
-            })
-            print("   %-46s %-13s 变了=%s" % (name, verdict,
-                                             rows[-1]["changed_classes"] or "无"))
+            verdict = classify(
+                table[name].get("writes"),
+                {"changed": diff["changed"], "unknown": diff["unknown"]},
+                bool(before.get("usable")) and bool(after.get("usable")),
+                call_ok=bool(ok),
+            )
+            rows.append(
+                {
+                    "tool": name,
+                    "verdict": verdict,
+                    "writer_ok": ok,
+                    "requires": req,
+                    "call_note": str(note)[:120],
+                    "declared_writes": table[name].get("writes"),
+                    "changed_classes": [c["class"] for c in diff["changed"]],
+                    "unknown_classes": [c["class"] for c in diff["unknown"]],
+                }
+            )
+            print(
+                "   %-46s %-13s 变了=%s"
+                % (name, verdict, rows[-1]["changed_classes"] or "无")
+            )
 
     counts: dict = {}
     for r in rows:
@@ -404,16 +507,26 @@ def main() -> int:
         "_": "★ B3 存活普查的「声明 vs 观察」差异表（★ 每条各用一个新零件）",
         "declared_group": args.declared,
         "_judge": "★ agree=一致 · conservative=声明保守 · ★★ missed=**声明漏报**（硬红门禁）· undecided=未判定",
-        "counts": counts, "missed": missed, "call_failed": call_failed, "rows": rows,
+        "counts": counts,
+        "missed": missed,
+        "call_failed": call_failed,
+        "rows": rows,
     }
     p = Path(args.json_out)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 四类统计：%s" % counts)
-    print("★★ 硬红门禁（声明只读却观察到指纹变化）：**%d** 条 %s"
-          % (len(missed), missed[:5] if missed else ""))
-    print("★ 调用没调成的（★ 我们没测到，不算通过也不算失败）：**%d** 条 %s"
-          % (len(call_failed), call_failed[:5] if call_failed else ""))
+    print(
+        "★★ 硬红门禁（声明只读却观察到指纹变化）：**%d** 条 %s"
+        % (len(missed), missed[:5] if missed else "")
+    )
+    print(
+        "★ 调用没调成的（★ 我们没测到，不算通过也不算失败）：**%d** 条 %s"
+        % (len(call_failed), call_failed[:5] if call_failed else "")
+    )
     print("★ 报告：%s" % p)
     return 0
 

@@ -37,29 +37,33 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "judge-alternatives-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "judge-alternatives-evidence.json"
+)
 STUDY = "DSH-JUDGE_%s" % time.strftime("%H%M%S")
 
 
 def _read_count(manager):
     """★ 旧判据：`Count` **属性**。"""
     from sw_connect import get_com_member
+
     try:
         v = get_com_member(manager, "Count")
         return {"value": int(v) if v is not None else None, "err": None}
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return {"value": None, "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])}
 
 
 def _read_list(manager):
     """★ 新判据：`GetLoadsAndRestraints(i, out_i4())` **按序号数**（★ ByRef 照事实 330 补）。"""
     from sw_connect import get_com_member, out_i4
+
     n = 0
     errs = []
     for i in range(0, 64):
         try:
             obj = get_com_member(manager, "GetLoadsAndRestraints", int(i), out_i4())
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             errs.append("%s: %s" % (type(exc).__name__, str(exc)[:80]))
             break
         if obj is None:
@@ -71,8 +75,13 @@ def _read_list(manager):
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts import sw_simulation_loads as SL
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study": STUDY}
@@ -98,11 +107,17 @@ def main() -> int:
             ev["steps"]["apply_force"] = {
                 "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                 "count": [rep.get("count_before"), rep.get("count_after")]
-                if isinstance(rep, dict) else None,
-                "error": (rep.get("error") or "")[:100] if isinstance(rep, dict) else None}
-        except Exception as exc:                               # noqa: BLE001
+                if isinstance(rep, dict)
+                else None,
+                "error": (rep.get("error") or "")[:100]
+                if isinstance(rep, dict)
+                else None,
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["apply_force"] = {
-                "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:130])}
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:130]),
+            }
         ev["steps"]["count_after"] = _read_count(mgr)
         ev["steps"]["list_after"] = _read_list(mgr)
 
@@ -110,26 +125,30 @@ def main() -> int:
         ca = ev["steps"]["count_after"].get("value")
         lb = ev["steps"]["list_before"].get("value")
         la = ev["steps"]["list_after"].get("value")
-        ev["old_judge_works"] = (cb is not None and ca == (cb or 0) + 1)
-        ev["new_judge_works"] = (lb is not None and la == (lb or 0) + 1)
+        ev["old_judge_works"] = cb is not None and ca == (cb or 0) + 1
+        ev["new_judge_works"] = lb is not None and la == (lb or 0) + 1
         ev["verdict"] = "pass" if ev["new_judge_works"] else "partial"
-        ev["note"] = ("★ 在**已知成功**的场景（`apply_force`）上同时读两个判据："
-                      "★ 旧= `Count` 属性 · 新= `GetLoadsAndRestraints(i, out_i4())` 数个数。"
-                      "★ **新判据能复现 0→1 ⇒ 它可用**；★ 否则它也不可用（★ 那就不该换）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 在**已知成功**的场景（`apply_force`）上同时读两个判据："
+            "★ 旧= `Count` 属性 · 新= `GetLoadsAndRestraints(i, out_i4())` 数个数。"
+            "★ **新判据能复现 0→1 ⇒ 它可用**；★ 否则它也不可用（★ 那就不该换）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1600])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

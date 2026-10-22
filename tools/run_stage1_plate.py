@@ -9,6 +9,7 @@
    `--case N` 只跑第 N 个用例 ⇒ 调用方**分别起 3 次进程** ⇒
    证明**不依赖前一次进程的状态** ✓
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -29,13 +30,17 @@ import sys
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"),
-                str(ROOT / "tools")]
+sys.path[:0] = [
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+]
 
-from scripts.engineering import authorization as AUTH                  # noqa: E402
-from scripts.engineering import executor as X                          # noqa: E402
+from scripts.engineering import authorization as AUTH  # noqa: E402
+from scripts.engineering import executor as X  # noqa: E402
 from scripts.engineering import registry as R
-import tool_caller                          # noqa: E402
+import tool_caller  # noqa: E402
 
 OUT = ROOT / "output" / "stage1"
 
@@ -69,23 +74,32 @@ def build_plan(case: dict) -> R.ExecutablePlan:
     return R.ExecutablePlan(
         method_id="plate",
         steps=(
-            R.PlanStep(step="sketch_start",
-                       params={"plane_name": "Front Plane"},
-                       derive="★ 前视基准面（★ 板的主平面）"),
-            R.PlanStep(step="sketch_add_rectangle",
-                       params={"x1_mm": 0.0, "y1_mm": 0.0,
-                               "x2_mm": c["w"], "y2_mm": c["h"]},
-                       derive="★ 左下 (0,0) → 右上 (W,H) ⇒ 板 %g×%g mm" % (c["w"], c["h"])),
+            R.PlanStep(
+                step="sketch_start",
+                params={"plane_name": "Front Plane"},
+                derive="★ 前视基准面（★ 板的主平面）",
+            ),
+            R.PlanStep(
+                step="sketch_add_rectangle",
+                params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": c["w"], "y2_mm": c["h"]},
+                derive="★ 左下 (0,0) → 右上 (W,H) ⇒ 板 %g×%g mm" % (c["w"], c["h"]),
+            ),
             R.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
-            R.PlanStep(step="extrude_boss",
-                       params={"sketch_name": "草图1", "depth_mm": c["d"]},
-                       derive="★ 拉伸 %g mm（★ 工具层做 mm→m 换算，恰好一次）" % c["d"]),
-            R.PlanStep(step="chamfer",
-                       params={"selection": "index:0", "distance_mm": c["c"],
-                               "angle_deg": 45.0},
-                       derive="★ 倒角 %g×45°（★ 后置 —— 避免早期拓扑依赖）；"
-                              "★ `selection` 是**声明式选择器**（规则 3：不收坐标）"
-                              % c["c"]),
+            R.PlanStep(
+                step="extrude_boss",
+                params={"sketch_name": "草图1", "depth_mm": c["d"]},
+                derive="★ 拉伸 %g mm（★ 工具层做 mm→m 换算，恰好一次）" % c["d"],
+            ),
+            R.PlanStep(
+                step="chamfer",
+                params={
+                    "selection": "index:0",
+                    "distance_mm": c["c"],
+                    "angle_deg": 45.0,
+                },
+                derive="★ 倒角 %g×45°（★ 后置 —— 避免早期拓扑依赖）；"
+                "★ `selection` 是**声明式选择器**（规则 3：不收坐标）" % c["c"],
+            ),
         ),
     )
 
@@ -126,8 +140,7 @@ def run_case(reg, n: int, sw) -> dict:
     #: ══ ④ 执行（★ 走 `solidworks_*` 全名 —— ★ FR-012）══════════════
     X.COUNTER.reset()
     host = {"model": doc, "sw_app": sw}
-    out = X.execute_plan(plan, reg, host=host, owned=owned, doc=doc,
-                         log_dir=OUT)
+    out = X.execute_plan(plan, reg, host=host, owned=owned, doc=doc, log_dir=OUT)
     rec["execute_ok"] = out["ok"]
     rec["com_writes"] = out["com_write_total"]
     rec["records"] = X.records_to_dicts(out["records"])
@@ -135,10 +148,12 @@ def run_case(reg, n: int, sw) -> dict:
     #: ══ ⑤ 回读判据（★ 事实 71：`GetPartBox` 回**毫米**）══════════════
     try:
         pd = list(sw_connect.safe_get_com_member(doc, "GetPartBox", False))
-        size = [round(float(pd[3]) - float(pd[0]), 3),
-                round(float(pd[4]) - float(pd[1]), 3),
-                round(float(pd[5]) - float(pd[2]), 3)]
-    except Exception as exc:                                               # noqa: BLE001
+        size = [
+            round(float(pd[3]) - float(pd[0]), 3),
+            round(float(pd[4]) - float(pd[1]), 3),
+            round(float(pd[5]) - float(pd[2]), 3),
+        ]
+    except Exception as exc:  # noqa: BLE001
         size = None
         rec["bbox_error"] = str(exc)[:120]
     rec["bbox_mm"] = size
@@ -152,8 +167,8 @@ def run_case(reg, n: int, sw) -> dict:
     #:      ⇒ 要 **×1e9** 才是 mm³（★ 与 `GetPartBox` 的毫米口径**不同**，别混）
     try:
         ok_mp, mp = tool_caller.call(
-            "solidworks_part_mass_properties",
-            inject_objects={"model": doc})
+            "solidworks_part_mass_properties", inject_objects={"model": doc}
+        )
         if ok_mp:
             #: ⚠ 实测：它回的字符串是 **Python dict 的 repr**（单引号），**不是 JSON**
             #:   ⇒ `json.loads` 会报 `JSONDecodeError`。两路都试。
@@ -163,14 +178,15 @@ def run_case(reg, n: int, sw) -> dict:
             elif isinstance(mp, str):
                 try:
                     data = json.loads(mp)
-                except Exception:                                          # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     import ast as _ast
+
                     data = _ast.literal_eval(mp)
             if isinstance(data, dict) and data.get("volume") is not None:
                 rec["volume_m3"] = data["volume"]
                 rec["volume_mm3"] = round(float(data["volume"]) * 1e9, 3)
                 rec["mass_evidence"] = str(data)[:300]
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         rec["volume_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
 
     #: ══ ⑥ 保存 + 重开（★ 规格要求「真实建板、保存、重开」）══════════
@@ -179,7 +195,7 @@ def run_case(reg, n: int, sw) -> dict:
     try:
         sw_connect.save_document(doc, str(p))
         rec["saved"] = p.is_file()
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         rec["save_error"] = str(exc)[:120]
 
     rec["expected_bbox"] = [c["w"], c["h"], c["d"]]
@@ -194,8 +210,12 @@ def run_case(reg, n: int, sw) -> dict:
         rec["volume_delta"] = round(dv, 4)
         rec["volume_rel_err"] = round(dv / ev, 9) if ev else None
         rec["volume_ok"] = (dv <= 0.01) or (ev and dv / ev <= 1e-6)
-    rec["pass"] = bool(rec.get("execute_ok") and rec.get("bbox_ok")
-                       and rec.get("volume_ok") and rec.get("saved"))
+    rec["pass"] = bool(
+        rec.get("execute_ok")
+        and rec.get("bbox_ok")
+        and rec.get("volume_ok")
+        and rec.get("saved")
+    )
     rec["finished"] = time.strftime("%H:%M:%S")
     return rec
 
@@ -216,39 +236,68 @@ def run_negatives(reg, sw) -> dict:
             return "别人的文档.SLDPRT"
 
     cases = [
-        ("① 工具未准入", R.ExecutablePlan(method_id="n", steps=(
-            R.PlanStep(step="x", params={}, tool=bad_tool),)), {}),
+        (
+            "① 工具未准入",
+            R.ExecutablePlan(
+                method_id="n", steps=(R.PlanStep(step="x", params={}, tool=bad_tool),)
+            ),
+            {},
+        ),
         ("② 路径越权", plan, {"write_paths": (r"C:\Windows\evil.json",)}),
         ("③ 文档越权", plan, {"owned": AUTH.OwnedDocuments(), "doc": _Foreign()}),
-        ("④ 计划未编译", R.ExecutablePlan(method_id="n", steps=(
-            R.PlanStep(step="extrude_boss", params={"sketch_name": "s", "depth_mm": 1.0}),)), {}),
+        (
+            "④ 计划未编译",
+            R.ExecutablePlan(
+                method_id="n",
+                steps=(
+                    R.PlanStep(
+                        step="extrude_boss",
+                        params={"sketch_name": "s", "depth_mm": 1.0},
+                    ),
+                ),
+            ),
+            {},
+        ),
     ]
     for name, p, kw in cases:
         X.COUNTER.reset()
         got = X.execute_plan(p, reg, **kw)
-        out["negatives"].append({
-            "name": name, "ok": got["ok"], "code": got.get("code", ""),
-            "com_writes": X.COUNTER.count(),
-            "pass": (got["ok"] is False) and X.COUNTER.count() == 0,
-        })
+        out["negatives"].append(
+            {
+                "name": name,
+                "ok": got["ok"],
+                "code": got.get("code", ""),
+                "com_writes": X.COUNTER.count(),
+                "pass": (got["ok"] is False) and X.COUNTER.count() == 0,
+            }
+        )
     out["finished"] = time.strftime("%H:%M:%S")
     return out
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--case", type=int, choices=(1, 2, 3), default=0,
-                    help="★ 只跑第 N 个用例（★ 独立启动用）")
-    ap.add_argument("--negatives", action="store_true",
-                    help="★ 跑四类负例（★ SC-005~SC-009）")
-    ap.add_argument("--plan-only", action="store_true",
-                    help="★ 只编译不执行（★ 无真机也能跑）")
+    ap.add_argument(
+        "--case",
+        type=int,
+        choices=(1, 2, 3),
+        default=0,
+        help="★ 只跑第 N 个用例（★ 独立启动用）",
+    )
+    ap.add_argument(
+        "--negatives", action="store_true", help="★ 跑四类负例（★ SC-005~SC-009）"
+    )
+    ap.add_argument(
+        "--plan-only", action="store_true", help="★ 只编译不执行（★ 无真机也能跑）"
+    )
     args = ap.parse_args()
 
     OUT.mkdir(parents=True, exist_ok=True)
     reg = R.build_registry()
-    print("★ 目录：%d 个工具（准入 %d）"
-          % (len(reg), sum(1 for d in reg.values() if d.admitted)))
+    print(
+        "★ 目录：%d 个工具（准入 %d）"
+        % (len(reg), sum(1 for d in reg.values() if d.admitted))
+    )
 
     if args.plan_only:
         ok = 0
@@ -262,10 +311,11 @@ def main() -> int:
         return 0 if ok == 3 else 1
 
     import sw_connect
+
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
     try:
         sw.CommandInProgress = True
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
     docs: list = []
@@ -273,10 +323,13 @@ def main() -> int:
         if args.negatives:
             ev = run_negatives(reg, sw)
             (OUT / "negatives.json").write_text(
-                json.dumps(ev, ensure_ascii=False, indent=1), encoding="utf-8")
+                json.dumps(ev, ensure_ascii=False, indent=1), encoding="utf-8"
+            )
             for r in ev["negatives"]:
-                print("   %s %-14s code=%-22s com_writes=%d"
-                      % ("✓" if r["pass"] else "✗", r["name"], r["code"], r["com_writes"]))
+                print(
+                    "   %s %-14s code=%-22s com_writes=%d"
+                    % ("✓" if r["pass"] else "✗", r["name"], r["code"], r["com_writes"])
+                )
             return 0 if all(r["pass"] for r in ev["negatives"]) else 1
 
         ns = [args.case] if args.case else [1, 2, 3]
@@ -284,11 +337,19 @@ def main() -> int:
         for n in ns:
             rec = run_case(reg, n, sw)
             allrec.append(rec)
-            print("   用例 %d：compiled=%s auth=%s exec=%s bbox=%s（期望 %s）体积=%s（期望 %.1f）"
-                  % (n, rec.get("compiled"), rec.get("authorized"),
-                     rec.get("execute_ok"), rec.get("bbox_mm"),
-                     rec.get("expected_bbox"), rec.get("volume_mm3"),
-                     rec.get("expected_volume", 0)))
+            print(
+                "   用例 %d：compiled=%s auth=%s exec=%s bbox=%s（期望 %s）体积=%s（期望 %.1f）"
+                % (
+                    n,
+                    rec.get("compiled"),
+                    rec.get("authorized"),
+                    rec.get("execute_ok"),
+                    rec.get("bbox_mm"),
+                    rec.get("expected_bbox"),
+                    rec.get("volume_mm3"),
+                    rec.get("expected_volume", 0),
+                )
+            )
         p = OUT / ("case%d.json" % ns[0] if len(ns) == 1 else "cases.json")
         p.write_text(json.dumps(allrec, ensure_ascii=False, indent=1), encoding="utf-8")
         print("★ 证据 → %s" % p)
@@ -296,17 +357,22 @@ def main() -> int:
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         #: ★ 只关**本任务创建的**文档（★ 不碰别人的 —— AGENTS.md §十九）
         try:
             for d in list(sw.GetDocuments or []):
                 t = sw_connect.safe_get_com_member(d, "GetTitle")
                 t = t() if callable(t) else t
-                if t and str(t) in ("板1.SLDPRT", "板2.SLDPRT", "板3.SLDPRT",
-                                    "Part1", "零件1"):
+                if t and str(t) in (
+                    "板1.SLDPRT",
+                    "板2.SLDPRT",
+                    "板3.SLDPRT",
+                    "Part1",
+                    "零件1",
+                ):
                     sw.CloseDoc(str(t))
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
 

@@ -1,4 +1,5 @@
 """★ 任意草图的**几何关系生成器** —— 从轮廓**测**出关系，不查形状表。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -8,7 +9,7 @@
 #           **……你现在换一个 L 型是这样的  一个逻辑，那改天换一个比较奇怪的形状呢？你比
 #           如说换一个 **U 型**呢，  换一个 **H 型**呢？**你不能每一次都凭大语言模型本身
 #           去分析**，  你应该有一个**几何关系的生成器**，或者是一个库，或者是什么其他的
-#           方案。  ……就给你一个**任意的草图**，就哪怕比如说一个 **X 形状**的横截面，  
+#           方案。  ……就给你一个**任意的草图**，就哪怕比如说一个 **X 形状**的横截面，
 #           这个 X 形状它就比较复杂了，它**没有任何一条线是水平的或者是竖直的**，  但是
 #           它也互相是有各种关系的，比如说 X 的**长边和短边是垂直的**，  X **两边的线应
 #           该是共线的**……  ★ 像这种**硬编码**的形式去生成形状关系是一种很蠢、  而且很容
@@ -51,8 +52,13 @@ ARC = "arc"
 class SketchGenError(Exception):
     """★ 生成器失败（★ 带封闭码）。"""
 
-    CODES = ("too-few-vertices", "not-closed", "bad-segment",
-             "unknown-relation", "ambiguous")
+    CODES = (
+        "too-few-vertices",
+        "not-closed",
+        "bad-segment",
+        "unknown-relation",
+        "ambiguous",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法生成器拒绝码：%r" % code
@@ -64,6 +70,7 @@ class SketchGenError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 # 一、轮廓输入（★ 与形状名字无关）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Segment:
@@ -128,13 +135,14 @@ def _ang_close(a: float, b: float, tol: float = ANGLE_TOL_DEG) -> bool:
 # 二、关系清单（★ 输出 = 名字 + 段序号）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class Relation:
     """★ 一条几何关系。"""
 
-    kind: str                       #: HORIZONTAL / VERTICAL / PARALLEL / …
-    segs: tuple = ()                #: ★ 段序号（0 基）
-    why: str = ""                   #: ★ **依据**（★ 量到了什么 ⇒ 判成这个）
+    kind: str  #: HORIZONTAL / VERTICAL / PARALLEL / …
+    segs: tuple = ()  #: ★ 段序号（0 基）
+    why: str = ""  #: ★ **依据**（★ 量到了什么 ⇒ 判成这个）
 
     def key(self) -> str:
         return "%s:%s" % (self.kind, ",".join(str(s) for s in self.segs))
@@ -171,12 +179,14 @@ class SketchPlan:
         """★ 转成 `solidworks_sketch_apply_relations` 吃的格式。"""
         return ";".join(
             "%s:%s" % (r.kind.lower(), ",".join(str(s) for s in r.segs))
-            for r in self.relations)
+            for r in self.relations
+        )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 三、★★ 核心：从几何量测推关系
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def detect_relations(segs: list) -> list:
     """★★ **从轮廓量测出关系**（★ 不查形状表）。
@@ -199,23 +209,30 @@ def detect_relations(segs: list) -> list:
         if s.kind == ARC:
             continue
         if abs(s.dy) <= LEN_TOL_MM:
-            out.append(Relation("HORIZONTAL", (i,),
-                                "dy=%.3g ≈ 0 ⇒ 水平" % s.dy))
+            out.append(Relation("HORIZONTAL", (i,), "dy=%.3g ≈ 0 ⇒ 水平" % s.dy))
         elif abs(s.dx) <= LEN_TOL_MM:
-            out.append(Relation("VERTICAL", (i,),
-                                "dx=%.3g ≈ 0 ⇒ 竖直" % s.dx))
+            out.append(Relation("VERTICAL", (i,), "dx=%.3g ≈ 0 ⇒ 竖直" % s.dx))
 
     #: ② 相邻段端点重合
     for i in range(n):
         a, b = segs[i], segs[(i + 1) % n]
-        if (abs(a.x2 - b.x1) <= LEN_TOL_MM
-                and abs(a.y2 - b.y1) <= LEN_TOL_MM):
-            out.append(Relation("COINCIDENT", (i, (i + 1) % n),
-                                "第 %d 段终点 == 第 %d 段起点" % (i, (i + 1) % n)))
+        if abs(a.x2 - b.x1) <= LEN_TOL_MM and abs(a.y2 - b.y1) <= LEN_TOL_MM:
+            out.append(
+                Relation(
+                    "COINCIDENT",
+                    (i, (i + 1) % n),
+                    "第 %d 段终点 == 第 %d 段起点" % (i, (i + 1) % n),
+                )
+            )
         else:
-            out.append(Relation("COINCIDENT", (i, (i + 1) % n),
-                                "★ 两端**不重合**（差 %.4g mm）⇒ 必须补这条关系"
-                                % math.hypot(a.x2 - b.x1, a.y2 - b.y1)))
+            out.append(
+                Relation(
+                    "COINCIDENT",
+                    (i, (i + 1) % n),
+                    "★ 两端**不重合**（差 %.4g mm）⇒ 必须补这条关系"
+                    % math.hypot(a.x2 - b.x1, a.y2 - b.y1),
+                )
+            )
 
     #: ③ 平行 / 垂直
     for i in range(n):
@@ -225,11 +242,17 @@ def detect_relations(segs: list) -> list:
                 continue
             aa, ab = a.angle_deg, b.angle_deg
             if _ang_close(aa, ab):
-                out.append(Relation("PARALLEL", (i, j),
-                                    "方向 %.2f° vs %.2f° ⇒ 平行" % (aa, ab)))
+                out.append(
+                    Relation(
+                        "PARALLEL", (i, j), "方向 %.2f° vs %.2f° ⇒ 平行" % (aa, ab)
+                    )
+                )
             elif _ang_close(abs(aa - ab), 90.0):
-                out.append(Relation("PERPENDICULAR", (i, j),
-                                    "方向 %.2f° vs %.2f° ⇒ 垂直" % (aa, ab)))
+                out.append(
+                    Relation(
+                        "PERPENDICULAR", (i, j), "方向 %.2f° vs %.2f° ⇒ 垂直" % (aa, ab)
+                    )
+                )
 
     #: ④ 共线（★ 平行 + 端点落在对方所在直线上）
     for i in range(n):
@@ -247,9 +270,13 @@ def detect_relations(segs: list) -> list:
             vx, vy = b.x1 - a.x1, b.y1 - a.y1
             perp = abs(ux * vy - uy * vx)
             if perp <= LEN_TOL_MM:
-                out.append(Relation("COLLINEAR", (i, j),
-                                    "平行且起点到第 %d 段所在直线距离 %.3g ≈ 0 ⇒ 共线"
-                                    % (i, perp)))
+                out.append(
+                    Relation(
+                        "COLLINEAR",
+                        (i, j),
+                        "平行且起点到第 %d 段所在直线距离 %.3g ≈ 0 ⇒ 共线" % (i, perp),
+                    )
+                )
 
     #: ⑤ 圆弧：等半径 / 相切
     for i, s in enumerate(segs):
@@ -258,8 +285,9 @@ def detect_relations(segs: list) -> list:
         for j in range(i + 1, n):
             t = segs[j]
             if t.kind == ARC and abs(s.r - t.r) <= LEN_TOL_MM:
-                out.append(Relation("SAMELENGTH", (i, j),
-                                    "两弧半径都是 %.4g ⇒ 相等" % s.r))
+                out.append(
+                    Relation("SAMELENGTH", (i, j), "两弧半径都是 %.4g ⇒ 相等" % s.r)
+                )
         for j in ((i - 1) % n, (i + 1) % n):
             t = segs[j]
             if t.kind == ARC:
@@ -276,8 +304,11 @@ def detect_relations(segs: list) -> list:
                 rx, ry = ex - s.cx, ey - s.cy
                 dot = ux * rx + uy * ry
                 if abs(dot) / max(1e-12, math.hypot(rx, ry)) <= 1e-3:
-                    out.append(Relation("TANGENT", (j, i),
-                                        "第 %d 段与第 %d 弧在端点相切" % (j, i)))
+                    out.append(
+                        Relation(
+                            "TANGENT", (j, i), "第 %d 段与第 %d 弧在端点相切" % (j, i)
+                        )
+                    )
     return out
 
 
@@ -293,10 +324,9 @@ def detect_symmetry(segs: list) -> list:
     out = []
 
     def _mirror_closed(axis: str, tol: float = 1e-6) -> bool:
-        for (x, y) in pts:
+        for x, y in pts:
             mx, my = (-x, y) if axis == "y" else (x, -y)
-            if not any(abs(mx - px) <= tol and abs(my - py) <= tol
-                       for (px, py) in pts):
+            if not any(abs(mx - px) <= tol and abs(my - py) <= tol for (px, py) in pts):
                 return False
         return True
 
@@ -336,6 +366,7 @@ def _residuals(r: Relation, v: list) -> list:
       ★ 「每类关系扣几分」那种说法**算不了秩**
       （★ 那正是我在这一处栽了两次的地方）。
     """
+
     def ep(i: int) -> tuple:
         return (v[4 * i], v[4 * i + 1]), (v[4 * i + 2], v[4 * i + 3])
 
@@ -363,8 +394,10 @@ def _residuals(r: Relation, v: list) -> list:
         return [cross, ux * wy - uy * wx]
     if r.kind == "SAMELENGTH":
         (a1, a2), (b1, b2) = ep(r.segs[0]), ep(r.segs[1])
-        return [math.hypot(a2[0] - a1[0], a2[1] - a1[1])
-                - math.hypot(b2[0] - b1[0], b2[1] - b1[1])]
+        return [
+            math.hypot(a2[0] - a1[0], a2[1] - a1[1])
+            - math.hypot(b2[0] - b1[0], b2[1] - b1[1])
+        ]
     return []
 
 
@@ -425,8 +458,7 @@ def _jacobian_rank(relations: list, v: list) -> int:
     return rank
 
 
-def dof_account(segs: list, relations: list, *,
-                anchored: bool = True) -> dict:
+def dof_account(segs: list, relations: list, *, anchored: bool = True) -> dict:
     """★★ **自由度账**（★ 判「完全定义够不够」）。
 
     ★★ 公式（★ 判据 —— ★ **秩由数值算，不是查表**）：
@@ -459,23 +491,30 @@ def dof_account(segs: list, relations: list, *,
     rank = _jacobian_rank(ind, v)
     dof0 = 4 * len(segs)
     anchor = ANCHOR_COST if anchored else 0
-    return {"segments": len(segs), "dof_initial": dof0,
-            "relations": len(relations), "independent": len(ind),
-            "redundant": len(relations) - len(ind),
-            "rank": rank, "anchor_cost": anchor,
-            "dof_before_dims": dof0 - rank - anchor,
-            "dims_needed": max(0, dof0 - rank - anchor)}
+    return {
+        "segments": len(segs),
+        "dof_initial": dof0,
+        "relations": len(relations),
+        "independent": len(ind),
+        "redundant": len(relations) - len(ind),
+        "rank": rank,
+        "anchor_cost": anchor,
+        "dof_before_dims": dof0 - rank - anchor,
+        "dims_needed": max(0, dof0 - rank - anchor),
+    }
 
 
-def generate(segs: list, *, anchored: bool = True,
-             dims: list | None = None) -> SketchPlan:
+def generate(
+    segs: list, *, anchored: bool = True, dims: list | None = None
+) -> SketchPlan:
     """★★ **主入口**：给任意轮廓 ⇒ 出关系清单 + 尺寸需求 + 自由度账。
 
     ★★ 判据：**同一条代码路径**服务所有形状 —— ★ 输入只有**顶点坐标**。
     """
     if len(segs) < 3:
-        raise SketchGenError("too-few-vertices",
-                             "★ 闭合轮廓至少 3 段，实得 %d" % len(segs))
+        raise SketchGenError(
+            "too-few-vertices", "★ 闭合轮廓至少 3 段，实得 %d" % len(segs)
+        )
     rels = detect_relations(segs)
     rels += detect_symmetry(segs)
     acct = dof_account(segs, rels, anchored=anchored)
@@ -492,12 +531,14 @@ def generate(segs: list, *, anchored: bool = True,
             % (acct["relations"], acct["rank"]),
             "★ 锚定原点 ⇒ 扣 %d" % acct["anchor_cost"],
             "★ 还需 **%d 个尺寸**" % need,
-        ])
+        ],
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 五、从**顶点序列**建轮廓（★ 便于把形状写成数据）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def polygon(points: list) -> list:
     """★ 由**顶点序列**（闭合）建 `Segment` 列表。
@@ -522,16 +563,47 @@ SHAPES: dict[str, list] = {
     #: ★ L 形（★ 外框 100×100，右上角挖掉 60×60 的缺口）
     "L": [(0, 0), (100, 0), (100, 100), (40, 100), (40, 40), (0, 40)],
     #: ★ U 形（★ 100×80 的框，上方挖一个 60×50 的槽）
-    "U": [(0, 0), (100, 0), (100, 80), (70, 80), (70, 50),
-          (30, 50), (30, 80), (0, 80)],
+    "U": [(0, 0), (100, 0), (100, 80), (70, 80), (70, 50), (30, 50), (30, 80), (0, 80)],
     #: ★ H 形（★ 两条竖梁 + 中间横梁）
-    "H": [(0, 0), (30, 0), (30, 40), (70, 40), (70, 0), (100, 0),
-          (100, 100), (70, 100), (70, 60), (30, 60), (30, 100), (0, 100)],
+    "H": [
+        (0, 0),
+        (30, 0),
+        (30, 40),
+        (70, 40),
+        (70, 0),
+        (100, 0),
+        (100, 100),
+        (70, 100),
+        (70, 60),
+        (30, 60),
+        (30, 100),
+        (0, 100),
+    ],
     #: ★ T 形
-    "T": [(0, 0), (100, 0), (100, 30), (65, 30), (65, 100),
-          (35, 100), (35, 30), (0, 30)],
+    "T": [
+        (0, 0),
+        (100, 0),
+        (100, 30),
+        (65, 30),
+        (65, 100),
+        (35, 100),
+        (35, 30),
+        (0, 30),
+    ],
     #: ★★ X 形（★ 业主举的例子 —— **没有一条线水平或竖直**）
     #:   ★ 由两条交叉的斜带构成：长边与短边**垂直**，两侧线**共线**
-    "X": [(0, 0), (20, 0), (60, 40), (100, 0), (120, 0), (70, 50),
-          (120, 100), (100, 100), (60, 60), (20, 100), (0, 100), (50, 50)],
+    "X": [
+        (0, 0),
+        (20, 0),
+        (60, 40),
+        (100, 0),
+        (120, 0),
+        (70, 50),
+        (120, 100),
+        (100, 100),
+        (60, 60),
+        (20, 100),
+        (0, 100),
+        (50, 50),
+    ],
 }

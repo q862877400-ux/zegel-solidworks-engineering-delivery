@@ -28,7 +28,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "session-accumulation-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "session-accumulation-evidence.json"
+)
 
 
 def main() -> int:
@@ -41,18 +45,23 @@ def main() -> int:
         #: ★ `GetDocumentCount` 是**属性**（★ 真机：当方法调会报 `'int' object is not ca
         #: llable`）
         ev["document_count"] = sw_connect.safe_get_com_member(sw, "GetDocumentCount")
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["document_count_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     try:
         studies = sim.list_studies(sw)
         ev["studies"] = studies
         ev["study_count"] = len(studies) if hasattr(studies, "__len__") else None
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["studies_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     ev["verdict"] = "pass" if "document_count" in ev else "partial"
-    ev["note"] = ("★ 只量「本会话积累了多少」（★ 文档数 + 算例清单）—— ★ 不动任何东西。"
-                  "★ 若累积很多 ⇒ 支持「轮 418 的失败与会话状态有关」那个假设。")
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    ev["note"] = (
+        "★ 只量「本会话积累了多少」（★ 文档数 + 算例清单）—— ★ 不动任何东西。"
+        "★ 若累积很多 ⇒ 支持「轮 418 的失败与会话状态有关」那个假设。"
+    )
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1200])
     print("  产物: %s" % OUT)
     return 0

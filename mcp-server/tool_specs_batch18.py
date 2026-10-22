@@ -51,6 +51,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -94,53 +95,61 @@ def _sketch_args(p) -> dict:
 
 
 #: 本批 4 个工具共用的参数表（只有 `sketch_name`）
-_PARAMS = lambda: [                                            # noqa: E731
-    Param("sketch_name", str, default="",
-          description="Sketch feature name (e.g. \"Sketch1\" / \"草图1\"). ★ Leave empty to use "
-                      "the CURRENT sketch. ⚠ A CLOSED sketch is still reachable by name — that is "
-                      "the only reliable route (the probe showed GetActiveSketch2 / ActiveSketch "
-                      "both return None once the sketch is closed)."),
+_PARAMS = lambda: [  # noqa: E731
+    Param(
+        "sketch_name",
+        str,
+        default="",
+        description='Sketch feature name (e.g. "Sketch1" / "草图1"). ★ Leave empty to use '
+        "the CURRENT sketch. ⚠ A CLOSED sketch is still reachable by name — that is "
+        "the only reliable route (the probe showed GetActiveSketch2 / ActiveSketch "
+        "both return None once the sketch is closed).",
+    ),
 ]
 
-_ALIAS = lambda: dict(_consumed("sketch_name"))                # noqa: E731
+_ALIAS = lambda: dict(_consumed("sketch_name"))  # noqa: E731
 
 SPECS_BATCH18 = [
     ToolSpec(
         name="solidworks_sketch_count_lines",
         title="Count Sketch Lines",
-        module="sw_sketch", function="count_lines",
+        module="sw_sketch",
+        function="count_lines",
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
         doc="Count the straight LINES in a sketch. ⚠ Use this rather than the raw getter: "
-            "the underlying ISketch call returns a NUMBER array (12 floats per line), which "
-            "cannot answer \"how many lines\".",
+        "the underlying ISketch call returns a NUMBER array (12 floats per line), which "
+        'cannot answer "how many lines".',
     ),
     ToolSpec(
         name="solidworks_sketch_count_arcs",
         title="Count Sketch Arcs",
-        module="sw_sketch", function="count_arcs",
+        module="sw_sketch",
+        function="count_arcs",
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
         doc="Count the ARCS in a sketch (the underlying call returns 16 floats per arc). "
-            "⚠ A full CIRCLE counts as ONE arc — verified on a real machine (2026-10-01): a sketch "
-            "with 1 line + 1 circle reports count_lines=1, count_arcs=1, count_segments=2.",
+        "⚠ A full CIRCLE counts as ONE arc — verified on a real machine (2026-10-01): a sketch "
+        "with 1 line + 1 circle reports count_lines=1, count_arcs=1, count_segments=2.",
     ),
     ToolSpec(
         name="solidworks_sketch_count_segments",
         title="Count Sketch Segments",
-        module="sw_sketch", function="count_segments",
+        module="sw_sketch",
+        function="count_segments",
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
         doc="Count ALL segments in a sketch. ⚠ Not the same as the line count: segments are the "
-            "total geometry units; lines are one kind among them.",
+        "total geometry units; lines are one kind among them.",
     ),
     ToolSpec(
         name="solidworks_sketch_is_3d",
         title="Is 3D Sketch",
-        module="sw_sketch", function="is_3d_sketch",
+        module="sw_sketch",
+        function="is_3d_sketch",
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),

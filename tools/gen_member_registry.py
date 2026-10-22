@@ -48,7 +48,12 @@ for _s in (sys.stdout, sys.stderr):
     except Exception:  # noqa: BLE001
         pass
 
-REFLECT = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+REFLECT = Path(
+    Path(__file__).resolve().parents[1]
+    / "_raw"
+    / "reflect_sldworks"
+    / "iface_sldworks.txt"
+)
 RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 SIG = re.compile(r"^(\S+)\s+(\w+)\s*\((.*)\)$")
 INTERNAL = re.compile(r"^I[A-Z]")
@@ -99,10 +104,12 @@ def analyze(blocks: dict[str, list[str]], iface: str, fold: bool = False) -> dic
             #   表现为「护栏按 3 参要求，调用方却一个都不该传」，运行必被自己拦下。
             #   ⇒ 口径统一为「非 & 结尾的参数个数」。
             _params = [a.strip() for a in args.split(",") if a.strip()]
-            methods.append({
-                "name": name,
-                "arity": len([a for a in _params if not a.endswith("&")]),
-            })
+            methods.append(
+                {
+                    "name": name,
+                    "arity": len([a for a in _params if not a.endswith("&")]),
+                }
+            )
     if fold:
         reduced: dict[str, dict] = {}
         for item in methods:
@@ -155,8 +162,7 @@ def main() -> int:
     if not all_out:
         return 1
     out = RAW / "member_registry.json"
-    out.write_text(json.dumps(all_out, ensure_ascii=False, indent=2),
-                   encoding="utf-8")
+    out.write_text(json.dumps(all_out, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n-> {out}")
     return 0
 

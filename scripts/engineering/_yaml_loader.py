@@ -1,4 +1,5 @@
 """元数据 YAML 读取的单一实现（原先有两个名字）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/_yaml_loader.py
@@ -27,4 +28,5 @@ def load_yaml(path: pathlib.Path) -> dict:
       手写版把域读成 0 个，而「0 个域」看起来像「元数据是空的」，不像「解析器坏了」✗
     """
     import yaml  # noqa: PLC0415,F811
+
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}

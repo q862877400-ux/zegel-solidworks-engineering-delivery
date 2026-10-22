@@ -1,4 +1,5 @@
 """★ 适用性与重试：结构化的「不适用」码集 · 按 requires 生成的预检 · 重试门控与指纹保险。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现，铁律 3 的 `scripts/`）
 # 文件:   scripts/sw_applicability.py
@@ -55,9 +56,15 @@ class NotApplicable(Exception):
 
     def to_dict(self) -> dict:
         """★ 工具层要返回的形状（★ 编排层据此做「代码 → 动作」映射）✓"""
-        return {"ok": False, "not_applicable": True, "code": self.code,
-                "needs": self.needs, "better": self.better,
-                "detail": self.detail, "action_hint": CODES[self.code]}
+        return {
+            "ok": False,
+            "not_applicable": True,
+            "code": self.code,
+            "needs": self.needs,
+            "better": self.better,
+            "detail": self.detail,
+            "action_hint": CODES[self.code],
+        }
 
 
 #: ★★ **「代码 → 动作」映射**（★ 编排层**只有这一张表**，★ 不含任何工具专属知识）✓
@@ -75,7 +82,7 @@ ACTION_MAP = {
 def _table(path: Path) -> dict:
     try:
         return json.loads(path.read_text(encoding="utf-8")).get("tools", {}) or {}
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
 
 
@@ -109,15 +116,32 @@ def retry_allowed(tool_name: str) -> dict:
     st = static_writes(tool_name)
     ob = observed_writes(tool_name)
     if ob:
-        return {"allowed": False, "why": "★★ 实证**观察到有写** ⇒ 不开（★ 实证确凿）",
-                "static": st, "observed": ob}
+        return {
+            "allowed": False,
+            "why": "★★ 实证**观察到有写** ⇒ 不开（★ 实证确凿）",
+            "static": st,
+            "observed": ob,
+        }
     if st:
-        return {"allowed": False, "why": "★ 静态说**有写** ⇒ 不开（★ 保守）",
-                "static": st, "observed": ob}
+        return {
+            "allowed": False,
+            "why": "★ 静态说**有写** ⇒ 不开（★ 保守）",
+            "static": st,
+            "observed": ob,
+        }
     if st is None:
-        return {"allowed": False, "why": "★ 静态**未知**（`None`）⇒ 不开（★ 未知不冒充已知）",
-                "static": st, "observed": ob}
-    return {"allowed": True, "why": "★ 两侧都「确认无写」⇒ 开 ✓", "static": st, "observed": ob}
+        return {
+            "allowed": False,
+            "why": "★ 静态**未知**（`None`）⇒ 不开（★ 未知不冒充已知）",
+            "static": st,
+            "observed": ob,
+        }
+    return {
+        "allowed": True,
+        "why": "★ 两侧都「确认无写」⇒ 开 ✓",
+        "static": st,
+        "observed": ob,
+    }
 
 
 def fingerprint_allows_retry(before, after) -> dict:
@@ -130,15 +154,23 @@ def fingerprint_allows_retry(before, after) -> dict:
       ★ 自定义属性/材料/视图不覆盖）⇒ ★ 变了**一定**能看出来，★ 没变**不保证**真没变 ✓
     """
     import sw_fingerprint as FP
+
     diff = FP.compare_detailed(before or {}, after or {})
     changed = [c["class"] for c in diff.get("changed", [])]
     if changed:
-        return {"retry": False, "changed": changed,
-                "why": "★★ 指纹**变了**（%s）⇒ **不重试**，先对账 ✓「 % 」、".join(changed)}
-    return {"retry": True, "changed": [],
-            "why": "★ 指纹没变 ⇒ 该调用**大概率没生效**，可以重试 ✓",
-            "caveat": "★ 指纹有盲区（★ %s 等）⇒ 没变**不保证**真没变"
-                      % "、".join(sorted(FP.KNOWN_UNAVAILABLE))}
+        return {
+            "retry": False,
+            "changed": changed,
+            "why": "★★ 指纹**变了**（%s）⇒ **不重试**，先对账 ✓「 % 」、".join(changed),
+        }
+    return {
+        "retry": True,
+        "changed": [],
+        "why": "★ 指纹没变 ⇒ 该调用**大概率没生效**，可以重试 ✓",
+        "caveat": "★ 指纹有盲区（★ %s 等）⇒ 没变**不保证**真没变"
+        % "、".join(sorted(FP.KNOWN_UNAVAILABLE)),
+    }
+
 
 # ── 预检装饰器（规格 210 · B4 第 ② 条）──────────────────────────────────
 # ★★ 评审的原话：★「**预检由共享装饰器按声明的 `requires` 自动生成**，
@@ -149,8 +181,10 @@ def fingerprint_allows_retry(before, after) -> dict:
 
 #: ★ `inject` 名 → 需要的文档类型（★ `None` = 不需要特定类型但不许为空）✓
 _DOC_TYPE_BY_INJECT = {
-    "model": None, "doc": None,
-    "asm_model": "assembly", "component": "assembly",
+    "model": None,
+    "doc": None,
+    "asm_model": "assembly",
+    "component": "assembly",
     "drawing_model": "drawing",
 }
 
@@ -162,8 +196,9 @@ def doc_kind(doc) -> str:
     """★ 读一个文档是**哪种类型**（★ 取不到 ⇒ `「unknown」` —— ★ 不猜）✓"""
     try:
         from sw_connect import get_com_member
+
         return _DOC_CODE_TO_KIND.get(int(get_com_member(doc, "GetType")), "unknown")
-    except Exception:                                                   # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return "unknown"
 
 
@@ -182,19 +217,29 @@ def precheck(inject_name: str, obj, *, tool_name: str = "") -> dict:
     """
     name = str(inject_name or "")
     if obj is None:
-        raise NotApplicable("no_document", needs=[name or "host"],
-                            detail="★ 声明注入 %r 但拿到的是空对象" % name)
+        raise NotApplicable(
+            "no_document",
+            needs=[name or "host"],
+            detail="★ 声明注入 %r 但拿到的是空对象" % name,
+        )
     if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
         return {"ok": True, "checked": "app"}
     want = _DOC_TYPE_BY_INJECT.get(name, "__none__")
     if want == "__none__":
         #: ★ 还没建对应检查的那几类 ⇒ ★ **如实说「没查」** ✓
-        return {"ok": True, "unchecked": True,
-                "why": "★ 这一类（`%s`）的预检**还没建** ⇒ 如实记「没查」，★ 不假装查过" % name}
+        return {
+            "ok": True,
+            "unchecked": True,
+            "why": "★ 这一类（`%s`）的预检**还没建** ⇒ 如实记「没查」，★ 不假装查过"
+            % name,
+        }
     got = doc_kind(obj)
     if want and got != want:
-        raise NotApplicable("wrong_doc_type", needs=[want],
-                            detail="★ 需要 `%s`，★ 拿到的是 `%s`" % (want, got))
+        raise NotApplicable(
+            "wrong_doc_type",
+            needs=[want],
+            detail="★ 需要 `%s`，★ 拿到的是 `%s`" % (want, got),
+        )
     return {"ok": True, "checked": "doc", "kind": got}
 
 

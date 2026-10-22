@@ -30,7 +30,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 D = Path(Path(__file__).resolve().parents[1] / "output" / "pick-test")
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
-import metric_scope as ms   # ★ 口径注册表（事实 517：口径必须落成代码）
+import metric_scope as ms  # ★ 口径注册表（事实 517：口径必须落成代码）
 
 idx = json.loads((D / "_judge_index.json").read_text(encoding="utf-8"))
 by_i = {p["index"]: p for p in idx}
@@ -44,11 +44,13 @@ for f in sorted(D.glob("judge-out-*.json")):
         if i not in by_i:
             continue
         verdicts.setdefault(i, {})
-        verdicts[i][jt] = {v["tool"]: v.get("verdict", "?") for v in (row.get("verdicts") or [])}
+        verdicts[i][jt] = {
+            v["tool"]: v.get("verdict", "?") for v in (row.get("verdicts") or [])
+        }
 
 print("★ 挑工具结果 %d 组 · 收到裁判结论的 %d 组" % (len(by_i), len(verdicts)))
 print()
-print(ms.block_for('model_pick_correct'))
+print(ms.block_for("model_pick_correct"))
 print()
 
 rows = []
@@ -57,17 +59,23 @@ for i, p in by_i.items():
     first = p["candidates"][0] if p["candidates"] else None
     a = vs.get("A", {})
     b = vs.get("B", {})
-    rows.append({
-        "index": i, "task": p["task"], "stratum": p["stratum"],
-        "expected": p["expected_tool"], "first": first,
-        "cands": p["candidates"], "none": p["none"],
-        "vA_first": a.get(first, "no_verdict") if first else None,
-        "vB_first": b.get(first, "no_verdict") if first else None,
-        "any_yes_A": any(v == "yes" for v in a.values()),
-        "any_yes_B": any(v == "yes" for v in b.values()),
-        "yes_tools_A": [t for t, v in a.items() if v == "yes"],
-        "yes_tools_B": [t for t, v in b.items() if v == "yes"],
-    })
+    rows.append(
+        {
+            "index": i,
+            "task": p["task"],
+            "stratum": p["stratum"],
+            "expected": p["expected_tool"],
+            "first": first,
+            "cands": p["candidates"],
+            "none": p["none"],
+            "vA_first": a.get(first, "no_verdict") if first else None,
+            "vB_first": b.get(first, "no_verdict") if first else None,
+            "any_yes_A": any(v == "yes" for v in a.values()),
+            "any_yes_B": any(v == "yes" for v in b.values()),
+            "yes_tools_A": [t for t, v in a.items() if v == "yes"],
+            "yes_tools_B": [t for t, v in b.items() if v == "yes"],
+        }
+    )
 
 #: ★ ① 首选的判定分布（★ 业主问的那个百分比）
 for jt, key in (("A（主判）", "vA_first"), ("B（复核）", "vB_first")):
@@ -84,12 +92,16 @@ for jt, key in (("A（主判）", "vA_first"), ("B（复核）", "vB_first")):
 for jt, key in (("A", "any_yes_A"), ("B", "any_yes_B")):
     v = [r for r in rows if r["cands"]]
     k = sum(1 for r in v if r[key])
-    print("★ ②【%s】首选+备选里**至少有一个被判 yes** 的: %d / %d = **%.0f%%**"
-          % (jt, k, len(v), 100.0 * k / len(v)))
+    print(
+        "★ ②【%s】首选+备选里**至少有一个被判 yes** 的: %d / %d = **%.0f%%**"
+        % (jt, k, len(v), 100.0 * k / len(v))
+    )
 print()
 
 #: ★ ③ 判 yes 但与我标的期望不同的
-print("★★ ③ 裁判判 yes、但**不是我标的那个工具**的（★ 要么我标错了，要么这件事有多个正解）:")
+print(
+    "★★ ③ 裁判判 yes、但**不是我标的那个工具**的（★ 要么我标错了，要么这件事有多个正解）:"
+)
 n_diff = 0
 for r in rows:
     yes = set(r["yes_tools_A"]) | set(r["yes_tools_B"])
@@ -97,31 +109,56 @@ for r in rows:
         n_diff += 1
         print("     [%s] 任务「%s」" % (r["stratum"].split("_")[0], r["task"][:26]))
         print("          我标的: %s" % r["expected"].removeprefix("solidworks_"))
-        print("          ★ 裁判认可的: %s" % ", ".join(t.removeprefix("solidworks_")
-                                                       for t in sorted(yes)))
+        print(
+            "          ★ 裁判认可的: %s"
+            % ", ".join(t.removeprefix("solidworks_") for t in sorted(yes))
+        )
 print("     ⇒ 共 **%d** 组" % n_diff)
 print()
 
 #: ★ ④ 两裁判分歧
-both = [r for r in rows if r["vA_first"] and r["vB_first"] and r["vA_first"] != "no_verdict"
-        and r["vB_first"] != "no_verdict"]
+both = [
+    r
+    for r in rows
+    if r["vA_first"]
+    and r["vB_first"]
+    and r["vA_first"] != "no_verdict"
+    and r["vB_first"] != "no_verdict"
+]
 dis = [r for r in both if r["vA_first"] != r["vB_first"]]
-print("★ ④ 两个裁判对**首选**的判定不一致: %d / %d = **%.0f%%**（★ 越大说明「对不对」越主观）"
-      % (len(dis), len(both), 100.0 * len(dis) / max(1, len(both))))
+print(
+    "★ ④ 两个裁判对**首选**的判定不一致: %d / %d = **%.0f%%**（★ 越大说明「对不对」越主观）"
+    % (len(dis), len(both), 100.0 * len(dis) / max(1, len(both)))
+)
 for r in dis[:8]:
-    print("     %s: A=%s B=%s" % (r["first"].removeprefix("solidworks_")[:34],
-                                  r["vA_first"], r["vB_first"]))
+    print(
+        "     %s: A=%s B=%s"
+        % (r["first"].removeprefix("solidworks_")[:34], r["vA_first"], r["vB_first"])
+    )
 print()
 
 #: 分层
 print("★ 分层（以 A 判为准）: yes / 有效")
-for st in ("C1_cold_no_cn_doc_small_domain", "C2_cold_thin_doc",
-           "C3_non_api_selfmade", "H_hot_baseline"):
-    s = [r for r in rows if r["stratum"] == st and r["vA_first"] and r["vA_first"] != "no_verdict"]
+for st in (
+    "C1_cold_no_cn_doc_small_domain",
+    "C2_cold_thin_doc",
+    "C3_non_api_selfmade",
+    "H_hot_baseline",
+):
+    s = [
+        r
+        for r in rows
+        if r["stratum"] == st and r["vA_first"] and r["vA_first"] != "no_verdict"
+    ]
     if s:
         y = sum(1 for r in s if r["vA_first"] == "yes")
-        print("     %-34s %d / %d = %.0f%%" % (st.split("_")[0], y, len(s), 100.0 * y / len(s)))
+        print(
+            "     %-34s %d / %d = %.0f%%"
+            % (st.split("_")[0], y, len(s), 100.0 * y / len(s))
+        )
 
-(D / "_final.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")
+(D / "_final.json").write_text(
+    json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8"
+)
 print()
 print("★ 明细: output/pick-test/_final.json")

@@ -43,10 +43,13 @@ def main() -> int:
     import sw_drawing_expose as E0
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "规格 209 · B2-3 centerline（★ 定案：静默无效 vs 能用）",
-          "judge": "视图可见实体数 + 选区计数 + IView::GetCenterLineCount 的增量",
-          "runs": [], "verdict": {}}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "规格 209 · B2-3 centerline（★ 定案：静默无效 vs 能用）",
+        "judge": "视图可见实体数 + 选区计数 + IView::GetCenterLineCount 的增量",
+        "runs": [],
+        "verdict": {},
+    }
     opened = []
     outdir = R / "output" / "probe209"
     outdir.mkdir(parents=True, exist_ok=True)
@@ -56,7 +59,7 @@ def main() -> int:
             t = str(safe_get_com_member(doc, "GetTitle") or "")
             if t:
                 sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     try:
@@ -74,9 +77,10 @@ def main() -> int:
         opened.append(drw)
         made = None
         try:
-            made = E0.create_projected_view(drw, part_path, view_name="*Front",
-                                            x_mm=140.0, y_mm=120.0, scale=0.0)
-        except Exception as exc:                               # noqa: BLE001
+            made = E0.create_projected_view(
+                drw, part_path, view_name="*Front", x_mm=140.0, y_mm=120.0, scale=0.0
+            )
+        except Exception as exc:  # noqa: BLE001
             ev["steps_view_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         views = [DM._view_name(v) for v in DM._iter_views(drw)]
         ev["views"] = views
@@ -86,49 +90,72 @@ def main() -> int:
         if views:
             #: 先看**视图里到底有多少可见实体**（★ 这一步本身就能解释「静默无效」）
             for et in ("edge", "face", "silhouette_edge", "vertex"):
-                r = DM.insert_center_lines(drw, views[0], entity_type=et, entity_index=0)
-                ev["runs"].append({
-                    "entity_type": et, "ok": r.get("ok"),
-                    "visible_count": r.get("visible_count"),
-                    "selection_count": r.get("selection_count"),
-                    "centerline_count": [r.get("centerline_count_before"),
-                                         r.get("centerline_count_after")],
-                    "centerline_delta": r.get("centerline_delta"),
-                    "returned_is_none": r.get("returned_is_none"),
-                    "error": r.get("error")})
-                print("  %-16s ok=%-5s 可见=%-4s 选中=%-3s 中心线 %s→%s (Δ%s)"
-                      % (et, r.get("ok"), r.get("visible_count"), r.get("selection_count"),
-                         r.get("centerline_count_before"), r.get("centerline_count_after"),
-                         r.get("centerline_delta")))
+                r = DM.insert_center_lines(
+                    drw, views[0], entity_type=et, entity_index=0
+                )
+                ev["runs"].append(
+                    {
+                        "entity_type": et,
+                        "ok": r.get("ok"),
+                        "visible_count": r.get("visible_count"),
+                        "selection_count": r.get("selection_count"),
+                        "centerline_count": [
+                            r.get("centerline_count_before"),
+                            r.get("centerline_count_after"),
+                        ],
+                        "centerline_delta": r.get("centerline_delta"),
+                        "returned_is_none": r.get("returned_is_none"),
+                        "error": r.get("error"),
+                    }
+                )
+                print(
+                    "  %-16s ok=%-5s 可见=%-4s 选中=%-3s 中心线 %s→%s (Δ%s)"
+                    % (
+                        et,
+                        r.get("ok"),
+                        r.get("visible_count"),
+                        r.get("selection_count"),
+                        r.get("centerline_count_before"),
+                        r.get("centerline_count_after"),
+                        r.get("centerline_delta"),
+                    )
+                )
 
         got = [x for x in ev["runs"] if x.get("ok")]
         selected = [x for x in ev["runs"] if (x.get("selection_count") or 0) > 0]
         ev["verdict"] = {
-            "any_entity_visible_in_view": any((x.get("visible_count") or 0) > 0
-                                              for x in ev["runs"]),
+            "any_entity_visible_in_view": any(
+                (x.get("visible_count") or 0) > 0 for x in ev["runs"]
+            ),
             "any_selection_succeeded": bool(selected),
             "any_centerline_built": bool(got),
-            "★ 定案": ("★ **选中成功且 Δ>0** ⇒ 「静默无效」不成立"
-                       if got else
-                       ("★ **选中成功但 Δ=0** ⇒ 「**选了也没用**」—— 支持「静默无效」那一家的观察"
-                        if selected else
-                        "★ **本探针没备成前置**（视图里没有可见实体 / 选不上）"
-                        "⇒ ★ **不能**据此判「能力无效」（★ 两者必须分开）")),
+            "★ 定案": (
+                "★ **选中成功且 Δ>0** ⇒ 「静默无效」不成立"
+                if got
+                else (
+                    "★ **选中成功但 Δ=0** ⇒ 「**选了也没用**」—— 支持「静默无效」那一家的观察"
+                    if selected
+                    else "★ **本探针没备成前置**（视图里没有可见实体 / 选不上）"
+                    "⇒ ★ **不能**据此判「能力无效」（★ 两者必须分开）"
+                )
+            ),
         }
         print("  verdict =", json.dumps(ev["verdict"], ensure_ascii=False)[:400])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         print("  FATAL %s" % str(exc)[:150])
 
     for d in opened:
         _close(d)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT)
     try:
         sw.CommandInProgress = False
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return 0
 

@@ -19,6 +19,7 @@ r"""不受遮挡地抓取窗口内容（ctypes 直接调 GDI + PrintWindow）。
 # ⚠ 只读操作（不点击、不输入），不连接 SolidWorks。
 # ────────────────────────────────────────────────────────────────────
 """
+
 import ctypes
 import sys
 from ctypes import wintypes
@@ -43,8 +44,15 @@ gdi32.SelectObject.argtypes = [c_void_p, c_void_p]
 gdi32.DeleteObject.argtypes = [c_void_p]
 gdi32.DeleteDC.argtypes = [c_void_p]
 gdi32.GetDIBits.restype = c_int
-gdi32.GetDIBits.argtypes = [c_void_p, c_void_p, c_uint, c_uint,
-                            c_void_p, c_void_p, c_uint]
+gdi32.GetDIBits.argtypes = [
+    c_void_p,
+    c_void_p,
+    c_uint,
+    c_uint,
+    c_void_p,
+    c_void_p,
+    c_uint,
+]
 user32.GetWindowDC.restype = c_void_p
 user32.GetWindowDC.argtypes = [c_void_p]
 user32.ReleaseDC.argtypes = [c_void_p, c_void_p]
@@ -57,23 +65,29 @@ PW_RENDERFULLCONTENT = 2
 
 
 class BITMAPINFOHEADER(ctypes.Structure):
-    _fields_ = [("biSize", wintypes.DWORD), ("biWidth", ctypes.c_long),
-                ("biHeight", ctypes.c_long), ("biPlanes", wintypes.WORD),
-                ("biBitCount", wintypes.WORD), ("biCompression", wintypes.DWORD),
-                ("biSizeImage", wintypes.DWORD),
-                ("biXPelsPerMeter", ctypes.c_long),
-                ("biYPelsPerMeter", ctypes.c_long),
-                ("biClrUsed", wintypes.DWORD), ("biClrImportant", wintypes.DWORD)]
+    _fields_ = [
+        ("biSize", wintypes.DWORD),
+        ("biWidth", ctypes.c_long),
+        ("biHeight", ctypes.c_long),
+        ("biPlanes", wintypes.WORD),
+        ("biBitCount", wintypes.WORD),
+        ("biCompression", wintypes.DWORD),
+        ("biSizeImage", wintypes.DWORD),
+        ("biXPelsPerMeter", ctypes.c_long),
+        ("biYPelsPerMeter", ctypes.c_long),
+        ("biClrUsed", wintypes.DWORD),
+        ("biClrImportant", wintypes.DWORD),
+    ]
 
 
 class BITMAPINFO(ctypes.Structure):
-    _fields_ = [("bmiHeader", BITMAPINFOHEADER),
-                ("bmiColors", wintypes.DWORD * 3)]
+    _fields_ = [("bmiHeader", BITMAPINFOHEADER), ("bmiColors", wintypes.DWORD * 3)]
 
 
 def capture(hwnd: int, path: str = None) -> Image.Image:
     """抓窗口自身内容（PW_RENDERFULLCONTENT 能拿到 DWM 合成界面）。"""
     import win32gui
+
     left, top, right, bottom = win32gui.GetWindowRect(hwnd)
     w, h = right - left, bottom - top
     if w <= 0 or h <= 0:
@@ -88,10 +102,10 @@ def capture(hwnd: int, path: str = None) -> Image.Image:
     bmi = BITMAPINFO()
     bmi.bmiHeader.biSize = ctypes.sizeof(BITMAPINFOHEADER)
     bmi.bmiHeader.biWidth = w
-    bmi.bmiHeader.biHeight = -h          # 负数 = 自上而下
+    bmi.bmiHeader.biHeight = -h  # 负数 = 自上而下
     bmi.bmiHeader.biPlanes = 1
     bmi.bmiHeader.biBitCount = 32
-    bmi.bmiHeader.biCompression = 0      # BI_RGB
+    bmi.bmiHeader.biCompression = 0  # BI_RGB
 
     buf = ctypes.create_string_buffer(w * h * 4)
     got = gdi32.GetDIBits(memDC, bmp, 0, h, buf, ctypes.byref(bmi), DIB_RGB_COLORS)

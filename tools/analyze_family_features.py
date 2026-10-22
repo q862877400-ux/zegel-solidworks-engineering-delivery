@@ -20,6 +20,7 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -56,8 +57,13 @@ def interface_features(iface: str) -> dict:
     feat = {
         "iface": iface,
         "exists": d.is_dir(),
-        "methods": 0, "properties": 0, "other": 0, "obsolete": 0,
-        "members": 0, "has_example": False, "action_word": bool(ACTION_WORDS.search(iface)),
+        "methods": 0,
+        "properties": 0,
+        "other": 0,
+        "obsolete": 0,
+        "members": 0,
+        "has_example": False,
+        "action_word": bool(ACTION_WORDS.search(iface)),
     }
     if not d.is_dir():
         return feat
@@ -87,11 +93,21 @@ def main() -> int:
     out = []
     for r in rows:
         iface = r["family"]
-        f = interface_features(iface) if f"{iface}" and (SWAPI / iface).is_dir() else {
-            "iface": iface, "exists": False, "methods": 0, "properties": 0,
-            "other": 0, "obsolete": 0, "members": 0, "has_example": False,
-            "action_word": bool(ACTION_WORDS.search(iface)),
-        }
+        f = (
+            interface_features(iface)
+            if f"{iface}" and (SWAPI / iface).is_dir()
+            else {
+                "iface": iface,
+                "exists": False,
+                "methods": 0,
+                "properties": 0,
+                "other": 0,
+                "obsolete": 0,
+                "members": 0,
+                "has_example": False,
+                "action_word": bool(ACTION_WORDS.search(iface)),
+            }
+        )
         f["iface"] = iface
         f["domain"] = r.get("domain", "")
         f["official_category"] = r.get("official_category", "")
@@ -106,16 +122,32 @@ def main() -> int:
 
     done = [f for f in out if f["used"] > 0]
     todo = [f for f in out if f["used"] == 0 and f["ledger_members"] > 0]
+
     def stat(arr, label):
         n = len(arr)
         if not n:
-            print("  %-24s (空)" % label); return
+            print("  %-24s (空)" % label)
+            return
         with_m = sum(1 for f in arr if f["methods"] > 0)
         only_p = sum(1 for f in arr if f["methods"] == 0 and f["properties"] > 0)
         ex = sum(1 for f in arr if f["in_examples"])
         aw = sum(1 for f in arr if f["action_word"])
-        print("  %-24s %4d 族 · **有方法的 %3d(%.0f%%)** · 只有属性的 %3d(%.0f%%) · 官方示例提到 %3d(%.0f%%) · 名含动作词 %3d(%.0f%%)"
-              % (label, n, with_m, 100.0*with_m/n, only_p, 100.0*only_p/n, ex, 100.0*ex/n, aw, 100.0*aw/n))
+        print(
+            "  %-24s %4d 族 · **有方法的 %3d(%.0f%%)** · 只有属性的 %3d(%.0f%%) · 官方示例提到 %3d(%.0f%%) · 名含动作词 %3d(%.0f%%)"
+            % (
+                label,
+                n,
+                with_m,
+                100.0 * with_m / n,
+                only_p,
+                100.0 * only_p / n,
+                ex,
+                100.0 * ex / n,
+                aw,
+                100.0 * aw / n,
+            )
+        )
+
     print("  ── 特征对比（正例 vs 未做）──")
     stat(done, "★ 做过的（used>0）")
     stat(todo, "  有成员但没做过")

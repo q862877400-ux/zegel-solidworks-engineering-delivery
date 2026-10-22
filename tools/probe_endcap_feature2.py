@@ -34,16 +34,16 @@ import sys
 import time
 from pathlib import Path
 
-import pythoncom                                                    # noqa: E402
-import win32com.client as w32                                       # noqa: E402
+import pythoncom  # noqa: E402
+import win32com.client as w32  # noqa: E402
 
 REPO = Path(Path(__file__).resolve().parents[1])
 for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                  # noqa: E402
-from scripts import sw_part as P                                     # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "endcap-feature2-evidence.json"
 
@@ -83,13 +83,17 @@ def _face_center(face):
             pt = list(_g(surf, "Evaluate", 0.5, 0.5) or [])
             if len(pt) >= 3:
                 return (float(pt[0]), float(pt[1]), float(pt[2]))
-    except Exception:                                                 # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     try:
-        box = list(_g(face, "GetBox") or [])                          #: ★ 兜底（并注明它可能不在面上）
+        box = list(_g(face, "GetBox") or [])  #: ★ 兜底（并注明它可能不在面上）
         if len(box) >= 6:
-            return ((box[0] + box[3]) / 2.0, (box[1] + box[4]) / 2.0, (box[2] + box[5]) / 2.0)
-    except Exception:                                                 # noqa: BLE001
+            return (
+                (box[0] + box[3]) / 2.0,
+                (box[1] + box[4]) / 2.0,
+                (box[2] + box[5]) / 2.0,
+            )
+    except Exception:  # noqa: BLE001
         pass
     return None
 
@@ -100,7 +104,7 @@ def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
     prof = _profile()
     R["profile"] = prof
-    for idx in range(4):                       #: ★ 试前 4 张面（每张单独一个案例）
+    for idx in range(4):  #: ★ 试前 4 张面（每张单独一个案例）
         row: dict = {"face_index": idx}
         doc = None
         try:
@@ -108,11 +112,16 @@ def main() -> int:
             P.start_sketch(doc, plane_name="Front Plane")
             _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
             P.end_sketch(doc)
-            names = [n for n in (P.feature_names(doc) or [])
-                     if n.startswith("草图") or n.lower().startswith("sketch")]
+            names = [
+                n
+                for n in (P.feature_names(doc) or [])
+                if n.startswith("草图") or n.lower().startswith("sketch")
+            ]
             from scripts.sw_weldment import create_structural_member_from_sketch
+
             sm = create_structural_member_from_sketch(
-                doc, sketch_name=(names[-1] if names else "草图1"), profile_path=prof)
+                doc, sketch_name=(names[-1] if names else "草图1"), profile_path=prof
+            )
             row["weldment_ok"] = bool(isinstance(sm, dict) and sm.get("ok"))
             faces = []
             for b in list(_g(doc, "GetBodies2", 0, True) or []):
@@ -127,16 +136,30 @@ def main() -> int:
             row["point"] = [round(v, 5) for v in pt] if pt else None
             #: ★ 按**面上的点**选（★ 事实 32 的可行路径）
             ext = _g(doc, "Extension")
-#: ★★ **事实 33 逐字**：`SelectByID2` 的 Callout **必须**传 `VARIANT(VT_DISPATCH, None)`
-#:   （`sw_part._empty_callout()`）—— ★ 传 `None` 得到 `类型不匹配`，
-#:   ★★ 而**那个错误看不出是 Callout 的问题**（★ 本轮又踩一次）。
+            #: ★★ **事实 33 逐字**：`SelectByID2` 的 Callout **必须**传 `VARIANT(VT_DISPATCH, None)`
+            #:   （`sw_part._empty_callout()`）—— ★ 传 `None` 得到 `类型不匹配`，
+            #:   ★★ 而**那个错误看不出是 Callout 的问题**（★ 本轮又踩一次）。
             ok_sel = False
             if pt:
-                ok_sel = bool(_g(ext, "SelectByID2", "", "FACE", pt[0], pt[1], pt[2],
-                                 False, 0, P._empty_callout(), 0))
+                ok_sel = bool(
+                    _g(
+                        ext,
+                        "SelectByID2",
+                        "",
+                        "FACE",
+                        pt[0],
+                        pt[1],
+                        pt[2],
+                        False,
+                        0,
+                        P._empty_callout(),
+                        0,
+                    )
+                )
             row["select_returned"] = ok_sel
-            row["sel_count"] = int(_g(_g(doc, "SelectionManager"),
-                                      "GetSelectedObjectCount2", -1) or 0)
+            row["sel_count"] = int(
+                _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
+            )
             if row["sel_count"] < 1:
                 row["skip"] = "★ 按点没选上面"
                 R["cases"].append(row)
@@ -148,33 +171,44 @@ def main() -> int:
             arr = w32.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [got])
             before = list(P.feature_names(doc) or [])
             #: ★★ 官方例子逐字配方
-            ret = _g(_g(doc, "FeatureManager"), "InsertEndCapFeature2",
-                     0.005, False, True, 0.003, 0.5, 0.003, arr)
+            ret = _g(
+                _g(doc, "FeatureManager"),
+                "InsertEndCapFeature2",
+                0.005,
+                False,
+                True,
+                0.003,
+                0.5,
+                0.003,
+                arr,
+            )
             row["returned_is_none"] = ret is None
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
                         row[k] = str(_g(ret, m))
-                    except Exception:                                 # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
             after = list(P.feature_names(doc) or [])
             row["new_features"] = [n for n in after if n not in before]
             row["ok"] = bool(row["new_features"])
-        except Exception as exc:                                      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["ok"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         finally:
             try:
                 if doc is not None:
                     _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-            except Exception:                                         # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         R["cases"].append(row)
         if row.get("ok"):
-            break                             #: ★ 建成一张就够了（判据是"能不能建成"）
+            break  #: ★ 建成一张就够了（判据是"能不能建成"）
     R["passed"] = sum(1 for r in R["cases"] if r.get("ok"))
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

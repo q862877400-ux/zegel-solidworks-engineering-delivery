@@ -30,6 +30,7 @@ ICWResults 的绘图方法绝大多数以 by-ref 结束（``Int32&`` / ``Object&
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -83,20 +84,26 @@ __all__ = [
 # ────────────────────────────────────────────────────────────────────
 #: enum-gate: enum swsStaticResultNodalStressComponentTypes_e
 SWS_NODAL_STRESS_COMPONENTS = {
-    "sx": 0, "sy": 1, "sz": 2,        # swsStaticNodalStress_SX / SY / SZ
-    "txy": 3, "txz": 4, "tyz": 5,     # swsStaticNodalStress_TXY / TXZ / TYZ
-    "p1": 6, "p2": 7, "p3": 8,        # swsStaticNodalStress_P1 / P2 / P3
+    "sx": 0,  # swsStaticNodalStress_SX
+    "sy": 1,  # swsStaticNodalStress_SY
+    "sz": 2,  # swsStaticNodalStress_SZ
+    "txy": 3,  # swsStaticNodalStress_TXY
+    "txz": 4,  # swsStaticNodalStress_TXZ
+    "tyz": 5,  # swsStaticNodalStress_TYZ
+    "p1": 6,  # swsStaticNodalStress_P1
+    "p2": 7,  # swsStaticNodalStress_P2
+    "p3": 8,  # swsStaticNodalStress_P3
 }
 
 SWS_MESH_QUALITY = {
-    "draft": 0,     # swsMeshQualityDraft
-    "high": 1,      # swsMeshQualityHigh
+    "draft": 0,  # swsMeshQualityDraft
+    "high": 1,  # swsMeshQualityHigh
 }
 
 SWS_MESHER_TYPES = {
-    "standard": 0,        # swsMesherTypeStandard
-    "alternate": 1,       # swsMesherTypeAlternate
-    "alternate_cb": 2,    # swsMesherTypeAlternateCB
+    "standard": 0,  # swsMesherTypeStandard
+    "alternate": 1,  # swsMesherTypeAlternate
+    "alternate_cb": 2,  # swsMesherTypeAlternateCB
 }
 
 
@@ -173,17 +180,30 @@ def _checked(table: dict[str, int], target, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def create_plot(results, plot_type: int, component: int, step: int = 0,
-                show_deformation: bool = False):
+def create_plot(
+    results,
+    plot_type: int,
+    component: int,
+    step: int = 0,
+    show_deformation: bool = False,
+):
     """创建云图。⚠ 三个 Int32 参数的语义官方无文档，按位置透传。"""
-    return _checked(RESULTS_ARITY, results, "CreatePlot",
-                    int(plot_type), int(component), int(step), bool(show_deformation))
+    return _checked(
+        RESULTS_ARITY,
+        results,
+        "CreatePlot",
+        int(plot_type),
+        int(component),
+        int(step),
+        bool(show_deformation),
+    )
 
 
 def create_deformed_body(results, plot_type: int, name: str = ""):
     """生成变形体。"""
-    return _checked(RESULTS_ARITY, results, "CreateDeformedBody",
-                    int(plot_type), str(name))
+    return _checked(
+        RESULTS_ARITY, results, "CreateDeformedBody", int(plot_type), str(name)
+    )
 
 
 def activate_plot(results, plot_name: str) -> bool:
@@ -210,11 +230,20 @@ def delete_plot(results, plot_name: str) -> bool:
 # 覆盖:   后续同级定义
 # ⚠ 本组为照官方签名新写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-def get_displacement_at_points(results, component: int, step: int,
-                               points, out_values=None):
+def get_displacement_at_points(
+    results, component: int, step: int, points, out_values=None
+):
     """按点集取位移。⚠ 参数语义官方无文档，按位置透传。"""
-    return _checked(RESULTS_ARITY, results, "GetDisplacementAtPoints",
-                    int(component), int(step), points, out_values, 0)
+    return _checked(
+        RESULTS_ARITY,
+        results,
+        "GetDisplacementAtPoints",
+        int(component),
+        int(step),
+        points,
+        out_values,
+        0,
+    )
 
 
 def get_buckling_load_factors(results):
@@ -291,6 +320,7 @@ def collect_mesh_evidence(mesh) -> dict[str, Any]:
         "mesh_control_count": int(get_com_member(mesh, "MeshControlCount") or 0),
         "number_of_loops": int(get_com_member(mesh, "NumberOfLoops") or 0),
         "failed_component_count": int(
-            get_com_member(mesh, "GetNoOfFailedComponents") or 0),
+            get_com_member(mesh, "GetNoOfFailedComponents") or 0
+        ),
         "worst_jacobian_ratio": get_worst_jacobian_ratio(mesh),
     }

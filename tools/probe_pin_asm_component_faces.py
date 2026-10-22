@@ -37,9 +37,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "pin-asm-component-faces-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "pin-asm-component-faces-evidence.json"
+)
 STUDY = "DSH-PINCF_%s" % time.strftime("%H%M%S")
-SAMPLES = Path(r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\tutorial\api")
+SAMPLES = Path(
+    r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\tutorial\api"
+)
 
 
 def main() -> int:
@@ -67,53 +73,74 @@ def main() -> int:
             try:
                 body = get_com_member(c, "GetBody")
                 rec["has_body"] = body is not None
-                faces = list(get_com_member(body, "GetFaces")) if body is not None else []
+                faces = (
+                    list(get_com_member(body, "GetFaces")) if body is not None else []
+                )
                 rec["face_count"] = len(faces)
                 comp_faces.append(faces[0] if faces else None)
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
                 comp_faces.append(None)
             detail.append(rec)
         ev["steps"]["entry_check"] = {
             "ok": len(comps) >= 2 and all(f is not None for f in comp_faces[:2]),
-            "components": len(comps), "detail": detail,
-            "note": "★ 先验入口：★ 两个组件各拿到一个面 ⇒ 才继续施加"}
+            "components": len(comps),
+            "detail": detail,
+            "note": "★ 先验入口：★ 两个组件各拿到一个面 ⇒ 才继续施加",
+        }
         sim.create_static_study(sw, STUDY)
         mgr = sim._loads_and_restraints_manager(sim.get_study_by_name(sw, STUDY))
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-                rep = SL._report(mgr,
-                                 lambda: SL.add_pin_connector(mgr, [comp_faces[0]], [comp_faces[1]]),
-                                 "pin_component_faces", doc)
+                rep = SL._report(
+                    mgr,
+                    lambda: SL.add_pin_connector(mgr, [comp_faces[0]], [comp_faces[1]]),
+                    "pin_component_faces",
+                    doc,
+                )
                 ev["steps"]["pin_component_faces"] = {
                     "ok": bool(rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")],
-                    "error": (rep.get("error") or "")[:130]}
-            except Exception as exc:                           # noqa: BLE001
+                    "error": (rep.get("error") or "")[:130],
+                }
+            except Exception as exc:  # noqa: BLE001
                 ev["steps"]["pin_component_faces"] = {
-                    "ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
         else:
-            ev["steps"]["pin_component_faces"] = {"ok": False, "skipped": "★ 入口没验过 ⇒ 不施加"}
-        ev["verdict"] = "pass" if (ev["steps"].get("pin_component_faces") or {}).get("ok") else "partial"
-        ev["note"] = ("★ 销钉连接件的**最后一个候选**：★ 装配体 + **组件上的面** —— "
-                      "★ 即 `IComponent2.GetBody()` 拿体、再 `GetFaces()` 取面。"
-                      "★ 判据：① 两组件各拿到一个面 ② 施加后计数恰好 +1。"
-                      "★ 零件用**已在盘上的**自带件 ⇒ ★ 不保存任何东西（硬约束⑦）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+            ev["steps"]["pin_component_faces"] = {
+                "ok": False,
+                "skipped": "★ 入口没验过 ⇒ 不施加",
+            }
+        ev["verdict"] = (
+            "pass"
+            if (ev["steps"].get("pin_component_faces") or {}).get("ok")
+            else "partial"
+        )
+        ev["note"] = (
+            "★ 销钉连接件的**最后一个候选**：★ 装配体 + **组件上的面** —— "
+            "★ 即 `IComponent2.GetBody()` 拿体、再 `GetFaces()` 取面。"
+            "★ 判据：① 两组件各拿到一个面 ② 施加后计数恰好 +1。"
+            "★ 零件用**已在盘上的**自带件 ⇒ ★ 不保存任何东西（硬约束⑦）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

@@ -25,6 +25,7 @@ r"""搜索取件 —— **全 UIA，不用截图**。
 # ⚠ 会驱动鼠标。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -125,6 +126,7 @@ def search(hwnd: int, win, code: str, log=S.log):
         #   ⇒ 中途异常会把**那个字符键卡在按下态**。⇒ 改走 `sw_gui_input._press`。
         import win32api
         from scripts import sw_gui_input as _gi
+
         for ch in code:
             vk = win32api.VkKeyScan(ch) & 0xFF
             _gi._press(vk, pause=0.03)
@@ -168,7 +170,7 @@ def _is_card_pane(c) -> tuple:
         if model is None:
             for p in CARD_PREFIXES:
                 if t.startswith(p):
-                    model = t[len(p):].strip()
+                    model = t[len(p) :].strip()
                     break
     if model is not None and has_upd:
         try:
@@ -211,8 +213,10 @@ def first_result_point(win, log=S.log):
         return None
     model, r = cards[0]
     pt = ((r.left + r.right) // 2, (r.top + r.bottom) // 2)
-    log("      结果卡「%s」%s -> 点击 %s"
-        % (model, (r.left, r.top, r.right, r.bottom), pt))
+    log(
+        "      结果卡「%s」%s -> 点击 %s"
+        % (model, (r.left, r.top, r.right, r.bottom), pt)
+    )
     return pt
 
 

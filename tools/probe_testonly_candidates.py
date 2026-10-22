@@ -26,6 +26,7 @@ r"""@brief 量第三个池子：**「未暴露 + 只被测试调用」** —— 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import importlib
@@ -41,8 +42,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 
 DEF = re.compile(r"^def ([a-z_]\w*)\(", re.M)
-INTERNAL = re.compile(r"(_to_|_from_|^parse|^normalize|^empty|^variant|^callout|^pump|^_|^get_com|"
-                      r"^coerce|^make_empty|^try_|^is_|^has_|^main$|^session$|^connect$|^cache_drop$)")
+INTERNAL = re.compile(
+    r"(_to_|_from_|^parse|^normalize|^empty|^variant|^callout|^pump|^_|^get_com|"
+    r"^coerce|^make_empty|^try_|^is_|^has_|^main$|^session$|^connect$|^cache_drop$)"
+)
 
 
 def main() -> int:
@@ -51,10 +54,16 @@ def main() -> int:
         for fn in DEF.findall(p.read_text(encoding="utf-8", errors="ignore")):
             funcs.setdefault(fn, p.name)
 
-    srv = (ROOT / "mcp-server" / "server.py").read_text(encoding="utf-8", errors="ignore")
+    srv = (ROOT / "mcp-server" / "server.py").read_text(
+        encoding="utf-8", errors="ignore"
+    )
     exposed = {f for _, f in re.findall(r'"(\w+)":\s*[A-Za-z_]\w*\.(\w+)\s*,', srv)}
     for p in (ROOT / "mcp-server").glob("tool_specs_*.py"):
-        exposed |= set(re.findall(r'function="([\w]+)"', p.read_text(encoding="utf-8", errors="ignore")))
+        exposed |= set(
+            re.findall(
+                r'function="([\w]+)"', p.read_text(encoding="utf-8", errors="ignore")
+            )
+        )
 
     def _callers(dirs):
         got: set = set()
@@ -77,12 +86,12 @@ def main() -> int:
     for f, mod in sorted(funcs.items()):
         if f in exposed or INTERNAL.search(f):
             continue
-        if f in prod or f not in tests:      # ★ **只要"只被测试调用"**
+        if f in prod or f not in tests:  # ★ **只要"只被测试调用"**
             continue
         try:
             fn = getattr(importlib.import_module("scripts.%s" % mod[:-3]), f)
             sig = inspect.signature(fn)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         ps = list(sig.parameters.values())
         if ps and ps[0].name != "model":
@@ -95,8 +104,10 @@ def main() -> int:
     for mod, f, s in rows:
         by[mod].append((f, s))
 
-    print("=== 「未暴露 + **只被测试调用** + 签名兼容」：**%d** 个，跨 %d 个模块 ==="
-          % (len(rows), len(by)))
+    print(
+        "=== 「未暴露 + **只被测试调用** + 签名兼容」：**%d** 个，跨 %d 个模块 ==="
+        % (len(rows), len(by))
+    )
     print("★ 这一池特性最好：**有测试 ⇒ 跑过的概率高** · **未暴露 ⇒ 用户够不到**")
     print()
     for mod in sorted(by, key=lambda m: -len(by[m])):

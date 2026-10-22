@@ -29,9 +29,23 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 import register_capabilities as RC  # noqa: E402
 
-SIMPLE = {str: "str", float: "float", int: "int", bool: "bool", list: "list", dict: "dict"}
+SIMPLE = {
+    str: "str",
+    float: "float",
+    int: "int",
+    bool: "bool",
+    list: "list",
+    dict: "dict",
+}
 NONEY = (type(None),)
-STRS = {"str": str, "float": float, "int": int, "bool": bool, "list": list, "dict": dict}
+STRS = {
+    "str": str,
+    "float": float,
+    "int": int,
+    "bool": bool,
+    "list": list,
+    "dict": dict,
+}
 
 
 def _norm(ann):
@@ -44,8 +58,14 @@ def _norm(ann):
             if s == n or s.endswith("." + n):
                 return t
         if "|" in s or "Optional" in s or "Union" in s:
-            parts = [x.strip() for x in s.replace("Optional[", "").replace("Union[", "")
-                     .replace("]", "").split("|") if x.strip() and x.strip() != "None"]
+            parts = [
+                x.strip()
+                for x in s.replace("Optional[", "")
+                .replace("Union[", "")
+                .replace("]", "")
+                .split("|")
+                if x.strip() and x.strip() != "None"
+            ]
             return _norm(parts[0]) if len(parts) == 1 else None
         return None
     if ann is object or getattr(ann, "__name__", "") == "Any":
@@ -59,17 +79,22 @@ def _norm(ann):
 t6, t7, noann, nodef = [], [], 0, 0
 for spec in RC.all_specs():
     name = getattr(spec, "name", None) or "?"
-    mod_name, fn_name = getattr(spec, "module", "") or "", getattr(spec, "function", "") or ""
+    mod_name, fn_name = (
+        getattr(spec, "module", "") or "",
+        getattr(spec, "function", "") or "",
+    )
     sig = None
     if mod_name and fn_name:
         try:
-            sig = inspect.signature(getattr(importlib.import_module("scripts." + mod_name), fn_name))
-        except Exception:                                                 # noqa: BLE001
+            sig = inspect.signature(
+                getattr(importlib.import_module("scripts." + mod_name), fn_name)
+            )
+        except Exception:  # noqa: BLE001
             sig = None
     alias = dict(getattr(spec, "param_alias", None) or {})
-    for p in (getattr(spec, "params", None) or []):
+    for p in getattr(spec, "params", None) or []:
         pname = getattr(p, "name", None)
-        kind = getattr(p, "kind", None)              #: ★★ 正确字段名（上一版写成 type ⇒ 空跑）
+        kind = getattr(p, "kind", None)  #: ★★ 正确字段名（上一版写成 type ⇒ 空跑）
         if not pname or kind is None:
             continue
         got = kind if isinstance(kind, type) else STRS.get(str(kind).strip())
@@ -83,8 +108,16 @@ for spec in RC.all_specs():
                 if want is None:
                     noann += 1
                 elif want is not got and {want, got} != {int, float}:
-                    t6.append((name, pname, tgt, SIMPLE[got], SIMPLE[want],
-                               "%s.%s" % (mod_name, fn_name)))
+                    t6.append(
+                        (
+                            name,
+                            pname,
+                            tgt,
+                            SIMPLE[got],
+                            SIMPLE[want],
+                            "%s.%s" % (mod_name, fn_name),
+                        )
+                    )
         #: ⑦ 默认值比对
         d = getattr(p, "default", Ellipsis)
         if d is Ellipsis:
@@ -98,12 +131,22 @@ for spec in RC.all_specs():
             continue
         t7.append((name, pname, SIMPLE[got], repr(d)[:24], type(d).__name__))
 
-print("★ 判据 ⑥（声明类型 vs 函数标注）**矛盾**：%d 处（★ 函数无标注跳过 %d 个）" % (len(t6), noann))
+print(
+    "★ 判据 ⑥（声明类型 vs 函数标注）**矛盾**：%d 处（★ 函数无标注跳过 %d 个）"
+    % (len(t6), noann)
+)
 for m in sorted(t6):
-    print("   %-44s %-20s 声明=%-6s 函数标=%s" % (m[0].replace("solidworks_", "")[:43],
-                                                   m[1] + "→" + m[2], m[3], m[4]))
+    print(
+        "   %-44s %-20s 声明=%-6s 函数标=%s"
+        % (m[0].replace("solidworks_", "")[:43], m[1] + "→" + m[2], m[3], m[4])
+    )
 print()
-print("★ 判据 ⑦（默认值 vs 声明类型）**矛盾**：%d 处（★ 无默认值 %d 个）" % (len(t7), nodef))
+print(
+    "★ 判据 ⑦（默认值 vs 声明类型）**矛盾**：%d 处（★ 无默认值 %d 个）"
+    % (len(t7), nodef)
+)
 for m in sorted(t7):
-    print("   %-44s %-20s 声明=%-6s 默认=%-26s (%s)" % (m[0].replace("solidworks_", "")[:43],
-                                                         m[1], m[2], m[3], m[4]))
+    print(
+        "   %-44s %-20s 声明=%-6s 默认=%-26s (%s)"
+        % (m[0].replace("solidworks_", "")[:43], m[1], m[2], m[3], m[4])
+    )

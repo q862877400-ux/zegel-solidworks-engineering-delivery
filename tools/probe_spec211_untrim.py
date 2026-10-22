@@ -1,4 +1,5 @@
 """★ 探针：`InsertUntrimSurface2`（取消剪裁）—— ★ 三条**必然失败**的负例 + 官方前置的实证。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（规格 211 · B2-1 的真机探针）
 # 文件:   tools/probe_spec211_untrim.py
@@ -17,7 +18,7 @@
 #       surface parts**」⇒ ★★ **特征树不该有新特征** ✓ —— ★ 这是**官方那条前置的实证** ✓
 # ★ 另记：★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 报告里
 # 如实标 ✓
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`（签名 + Parameters 
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`（签名 + Parameters
 #           + Remarks 两条）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -40,18 +41,28 @@ def main() -> int:
     import tool_caller
     import sw_surface_features as sf
 
-    out = {"official": "IFeatureManager.InsertUntrimSurface2",
-           "scope_note": ("★ 本批补的是「取消剪裁」；「剪裁曲面」本身仓里已有"
-                          "（trim_surface_report + cut_surface_report）✓"),
-           "positive_case_note": ("★ 正例（曲面零件上真的取消剪裁）**本轮未做** —— 它需要"
-                                 "「先建出被剪裁的曲面」那一条链，★ 不在本批范围 ✓")}
+    out = {
+        "official": "IFeatureManager.InsertUntrimSurface2",
+        "scope_note": (
+            "★ 本批补的是「取消剪裁」；「剪裁曲面」本身仓里已有"
+            "（trim_surface_report + cut_surface_report）✓"
+        ),
+        "positive_case_note": (
+            "★ 正例（曲面零件上真的取消剪裁）**本轮未做** —— 它需要"
+            "「先建出被剪裁的曲面」那一条链，★ 不在本批范围 ✓"
+        ),
+    }
 
     #: ── ① / ② 枚举越界（★ 纯 Python ⇒ 必然失败 ✓）───────────────────────
     neg = {}
     r = sf.untrim_surface_report(object(), face_untrim_type=9)
-    neg["face_type_9"] = "✓ 拒：%s" % str(r.get("error"))[:80] if not r["ok"] else "★★ 没拒"
+    neg["face_type_9"] = (
+        "✓ 拒：%s" % str(r.get("error"))[:80] if not r["ok"] else "★★ 没拒"
+    )
     r = sf.untrim_surface_report(object(), edge_untrim_type=9)
-    neg["edge_type_9"] = "✓ 拒：%s" % str(r.get("error"))[:80] if not r["ok"] else "★★ 没拒"
+    neg["edge_type_9"] = (
+        "✓ 拒：%s" % str(r.get("error"))[:80] if not r["ok"] else "★★ 没拒"
+    )
     out["negatives"] = neg
     for k, v in neg.items():
         print("★ 负例 %-14s %s" % (k, v))
@@ -63,35 +74,61 @@ def main() -> int:
         return 2
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
-    for step, params in (("solidworks_sketch_start", {}),
-                         ("solidworks_sketch_add_rectangle", RECT),
-                         ("solidworks_extrude_boss",
-                          {"sketch_name": "Sketch1", "depth_mm": 20.0})):
+    for step, params in (
+        ("solidworks_sketch_start", {}),
+        ("solidworks_sketch_add_rectangle", RECT),
+        ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 20.0}),
+    ):
         ok, note = tool_caller.call(step, inject_objects=inj, **params)
         if not ok:
             print("★ 建状态没成：%s" % step)
             return 1
     rep = sf.untrim_surface_report(model, distance_mm=0.0)
-    out["solid_part_call"] = {k: rep.get(k) for k in
-                              ("ok", "doc_type", "faces_selected", "stage",
-                               "feature_count_before", "feature_count_after",
-                               "new_features", "error", "trim_opposite_side_valid")}
-    print("★★ 普通零件上（★ 能选到面）⇒ ok=%r · 特征 %r→%r · 新增 %r"
-          % (rep.get("ok"), rep.get("feature_count_before"),
-             rep.get("feature_count_after"), rep.get("new_features")))
-    print("★★ `BTrimOppositeSide` 在 `merge=True` 时是否有效 = %r（★ 官方：只在 BMerge=false 时）"
-          % rep.get("trim_opposite_side_valid"))
+    out["solid_part_call"] = {
+        k: rep.get(k)
+        for k in (
+            "ok",
+            "doc_type",
+            "faces_selected",
+            "stage",
+            "feature_count_before",
+            "feature_count_after",
+            "new_features",
+            "error",
+            "trim_opposite_side_valid",
+        )
+    }
+    print(
+        "★★ 普通零件上（★ 能选到面）⇒ ok=%r · 特征 %r→%r · 新增 %r"
+        % (
+            rep.get("ok"),
+            rep.get("feature_count_before"),
+            rep.get("feature_count_after"),
+            rep.get("new_features"),
+        )
+    )
+    print(
+        "★★ `BTrimOppositeSide` 在 `merge=True` 时是否有效 = %r（★ 官方：只在 BMerge=false 时）"
+        % rep.get("trim_opposite_side_valid")
+    )
 
     #: ── ④ ★ 负例：★ 没预选（★ 官方 "requires preselection"）─────────────
     sw_connect.new_document(sw, "part")
     m2 = sw_connect.get_com_member(sw, "ActiveDoc")
     rep2 = sf.untrim_surface_report(m2, distance_mm=0.0)
-    out["no_preselection"] = {k: rep2.get(k) for k in ("ok", "faces_selected", "stage", "error")}
-    print("★★ 没预选 ⇒ ok=%r · stage=%r · faces_selected=%r"
-          % (rep2.get("ok"), rep2.get("stage"), rep2.get("faces_selected")))
+    out["no_preselection"] = {
+        k: rep2.get(k) for k in ("ok", "faces_selected", "stage", "error")
+    }
+    print(
+        "★★ 没预选 ⇒ ok=%r · stage=%r · faces_selected=%r"
+        % (rep2.get("ok"), rep2.get("stage"), rep2.get("faces_selected"))
+    )
 
     p = ROOT / "output" / "spec211-b2-untrim.json"
-    p.write_text(json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("★ 证据：%s" % p)
     return 0
 

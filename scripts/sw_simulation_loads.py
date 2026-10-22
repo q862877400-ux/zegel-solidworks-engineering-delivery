@@ -37,6 +37,7 @@ JSON 转义（``\\u003c`` = ``<``）嵌在 script 标签里**，按 ``<script>``
   ⇒ 各方法的 ``*_array`` 参数由调用方提供，本模块不代为构造。
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -51,7 +52,7 @@ from typing import Any
 #   ★ 本模块的设计约束是「**不连 COM 也能 import**」—— 契约测试
 #     `tests/test_sw_simulation_loads_contract.py` 把 `sw_connect` stub 掉后仍要能导入。
 #   ★ 而 `create_empty_dispatch_variant` 在真机上是 `AddPressure` / `AddForce` 的
-# **必需实参**（裸传 `None` 会报 `类型不匹配@arg3`，见 `add_pressure` / `add_torque` 的 
+# **必需实参**（裸传 `None` 会报 `类型不匹配@arg3`，见 `add_pressure` / `add_torque` 的
 # docstring）。
 # ⇒ 所以：**取得到就用，取不到置 `None`**（★ 调用点据此判断），**绝不让整模块 import 失
 # 败**。
@@ -71,7 +72,7 @@ except ImportError:
         #:   ⚠ 真机上它一定在（`sw_connect.create_empty_dispatch_variant`，已知事实 12）。
         from sw_connect import get_com_member, out_i4
 
-        create_empty_dispatch_variant = None                    # type: ignore[assignment]
+        create_empty_dispatch_variant = None  # type: ignore[assignment]
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本任务新增的能力层）
@@ -116,8 +117,10 @@ __all__ = [
     "get_edge_weld_connector",
     "get_loads_and_restraints",
     "collect_loads_evidence",
-    "apply_pressure_report", "apply_torque_report",
-    "apply_gravity_report", "apply_centrifugal_force_report",
+    "apply_pressure_report",
+    "apply_torque_report",
+    "apply_gravity_report",
+    "apply_centrifugal_force_report",
 ]
 
 
@@ -142,38 +145,38 @@ __all__ = [
 # ⚠ 本表为静态照录，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 SWS_RESTRAINT_TYPES = {
-    "fixed": 0,                        # swsRestraintTypeFixed
-    "immovable": 1,                    # swsRestraintTypeImmovable
-    "symmetric": 2,                    # swsRestraintTypeSymmetric
-    "roller": 3,                       # swsRestraintTypeRoller
-    "hinge": 4,                        # swsRestraintTypeHinge
-    "reference_geometry": 5,           # swsRestraintTypeReferenceGeometry
-    "flat_face": 6,                    # swsRestraintTypeFlatFace
-    "cylindrical_faces": 7,            # swsRestraintTypeCylindricalFaces
-    "spherical_surface": 8,            # swsRestraintTypeSphericalSurface
-    "cyclic_symmetry": 9,              # swsRestraintTypeCyclicSymmetry
+    "fixed": 0,  # swsRestraintTypeFixed
+    "immovable": 1,  # swsRestraintTypeImmovable
+    "symmetric": 2,  # swsRestraintTypeSymmetric
+    "roller": 3,  # swsRestraintTypeRoller
+    "hinge": 4,  # swsRestraintTypeHinge
+    "reference_geometry": 5,  # swsRestraintTypeReferenceGeometry
+    "flat_face": 6,  # swsRestraintTypeFlatFace
+    "cylindrical_faces": 7,  # swsRestraintTypeCylindricalFaces
+    "spherical_surface": 8,  # swsRestraintTypeSphericalSurface
+    "cyclic_symmetry": 9,  # swsRestraintTypeCyclicSymmetry
 }
 
 SWS_FORCE_TYPES = {
-    "force_or_moment": 0,              # swsForceTypeForceOrMoment
-    "normal": 1,                       # swsForceTypeNormal
-    "torque": 2,                       # swsForceTypeTorque
+    "force_or_moment": 0,  # swsForceTypeForceOrMoment
+    "normal": 1,  # swsForceTypeNormal
+    "torque": 2,  # swsForceTypeTorque
 }
 
 SWS_PRESSURE_TYPES = {
-    "normal": 0,                       # swsPressureTypeNormal
-    "use_reference_geometry": 1,       # swsPressureTypeUseReferenceGeometry
+    "normal": 0,  # swsPressureTypeNormal
+    "use_reference_geometry": 1,  # swsPressureTypeUseReferenceGeometry
 }
 
 SWS_RADIATION_TYPES = {
-    "surface_to_ambient": 0,           # swsRadiationTypeSurfaceToAmbient
-    "surface_to_surface": 1,           # swsRadiationTypeSurfaceToSurface
+    "surface_to_ambient": 0,  # swsRadiationTypeSurfaceToAmbient
+    "surface_to_surface": 1,  # swsRadiationTypeSurfaceToSurface
 }
 
 SWS_SPRING_SUBTYPES = {
-    "flat_parallel_faces": 0,          # swsSpringSubTypeFlatParallelFaces
+    "flat_parallel_faces": 0,  # swsSpringSubTypeFlatParallelFaces
     "concentric_cylindrical_faces": 1,  # swsSpringSubTypeConcentricCylindricalFaces
-    "between_vertices": 2,             # swsSpringSubTypeBetweenVertices
+    "between_vertices": 2,  # swsSpringSubTypeBetweenVertices
 }
 
 
@@ -281,8 +284,12 @@ def _check(manager, member: str, arity: int, *args):
     #: ` 在 3、
     #:   `AddForce3` 在 18 ⇒ ★ 照旧写法会把别的参数当 `RefGeom` 去换（比不换更坏）。
     _pos = _REFGEOM_POSITIONS.get(member)
-    if (_pos is not None and len(tail) > _pos and tail[_pos] is None
-            and create_empty_dispatch_variant is not None):
+    if (
+        _pos is not None
+        and len(tail) > _pos
+        and tail[_pos] is None
+        and create_empty_dispatch_variant is not None
+    ):
         tail[_pos] = create_empty_dispatch_variant()
     return get_com_member(manager, member, *tail)
 
@@ -304,7 +311,7 @@ def _check(manager, member: str, arity: int, *args):
 #:     AddForce3(… 19 个…, DispArray, **RefGeom**, PerUnitLength)         → 位置 18
 #:     AddPressure(NPressureType, DispArray, **RegGeom**)                → 位置 2
 #:     AddRestraint(NRestraintType, DispArray, **RefGeom**)              → 位置 2
-#: AddPrescribedDisplacement(Displacements, NLengthUnit, DispArray, **RefGeom**) → 位置 
+#: AddPrescribedDisplacement(Displacements, NLengthUnit, DispArray, **RefGeom**) → 位置
 #: 3
 #:     ```
 #:   ⇒ ★ **按位置换才对**，★ 而"一刀切位置 2"会把 `AddForce2`/`AddPrescribedDisplacement`
@@ -327,20 +334,45 @@ _REFGEOM_MEMBERS = frozenset(_REFGEOM_POSITIONS)
 #: ★ 只列**已从官方声明核过**的；★ 表外的**不加**（★ 宁可报错也不乱补参数 —— 铁律 5）。
 #: ★ 依据：`D:\AI\SW\_raw\chm_cosworks\` 的逐页 VB 声明（★ 与 `sw_simulation_loads.py`
 #:   既有来源块里抄的 `Function AddPressure(…, ByRef ErrorCode …)` 一致）。
-_ERRORCODE_MEMBERS = frozenset({
-    "AddBearingConnector", "AddBearingLoad", "AddBoltConnector",
-    "AddCable", "AddCentrifugalForce", "AddConvection",
-    "AddCyclicSymmetryRestraint", "AddDistributedMass", "AddEdgeWeldConnector",
-    "AddElasticConnector", "AddForce", "AddForce2",
-    "AddForce3", "AddGeneralSpringConnector", "AddGravity",
-    "AddHeatFlux", "AddHeatPower", "AddInitialConditionForDynamicStudy",
-    "AddInitialConditionForDynamicStudy2", "AddLinkageRod", "AddLinkConnector",
-    "AddPinConnector", "AddPrescribedDisplacement", "AddPressure",
-    "AddRadiation", "AddRemoteLoad", "AddRestraint",
-    "AddRigidConnector", "AddSelectedBaseExcitation", "AddSelectedBaseExcitation2",
-    "AddSpotWeldConnector", "AddSpringConnector", "AddTemperature",
-    "AddUniformBaseExcitation", "AddUniformBaseExcitation2",
-})
+_ERRORCODE_MEMBERS = frozenset(
+    {
+        "AddBearingConnector",
+        "AddBearingLoad",
+        "AddBoltConnector",
+        "AddCable",
+        "AddCentrifugalForce",
+        "AddConvection",
+        "AddCyclicSymmetryRestraint",
+        "AddDistributedMass",
+        "AddEdgeWeldConnector",
+        "AddElasticConnector",
+        "AddForce",
+        "AddForce2",
+        "AddForce3",
+        "AddGeneralSpringConnector",
+        "AddGravity",
+        "AddHeatFlux",
+        "AddHeatPower",
+        "AddInitialConditionForDynamicStudy",
+        "AddInitialConditionForDynamicStudy2",
+        "AddLinkageRod",
+        "AddLinkConnector",
+        "AddPinConnector",
+        "AddPrescribedDisplacement",
+        "AddPressure",
+        "AddRadiation",
+        "AddRemoteLoad",
+        "AddRestraint",
+        "AddRigidConnector",
+        "AddSelectedBaseExcitation",
+        "AddSelectedBaseExcitation2",
+        "AddSpotWeldConnector",
+        "AddSpringConnector",
+        "AddTemperature",
+        "AddUniformBaseExcitation",
+        "AddUniformBaseExcitation2",
+    }
+)
 
 
 def _wants_error_code(member: str) -> bool:
@@ -391,8 +423,12 @@ def add_reference_geometry_restraint(manager, entities, ref_geom):
     「valid only if NRestraintType is swsRestraintTypeReferenceGeometry」。
     """
     return _check(
-        manager, "AddRestraint", 3,
-        SWS_RESTRAINT_TYPES["reference_geometry"], entities, ref_geom,
+        manager,
+        "AddRestraint",
+        3,
+        SWS_RESTRAINT_TYPES["reference_geometry"],
+        entities,
+        ref_geom,
     )
 
 
@@ -411,8 +447,7 @@ def add_torque(manager, entities, ref_geom=None):
     """
     if ref_geom is None and create_empty_dispatch_variant is not None:
         ref_geom = create_empty_dispatch_variant()
-    return _check(
-        manager, "AddForce", 3, SWS_FORCE_TYPES["torque"], entities, ref_geom)
+    return _check(manager, "AddForce", 3, SWS_FORCE_TYPES["torque"], entities, ref_geom)
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -510,11 +545,21 @@ def add_distributed_mass(manager, entities, mass: float, units: int = 0):
     return _check(manager, "AddDistributedMass", 3, entities, int(units), float(mass))
 
 
-def add_remote_load(manager, entities, load_type: int, units: int,
-                    dx: float, dy: float, dz: float):
+def add_remote_load(
+    manager, entities, load_type: int, units: int, dx: float, dy: float, dz: float
+):
     """加远程载荷（位置 + 方向 + 幅值）。"""
-    return _check(manager, "AddRemoteLoad", 6, int(load_type), entities,
-                  int(units), float(dx), float(dy), float(dz))
+    return _check(
+        manager,
+        "AddRemoteLoad",
+        6,
+        int(load_type),
+        entities,
+        int(units),
+        float(dx),
+        float(dy),
+        float(dz),
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -538,15 +583,24 @@ def add_remote_load(manager, entities, load_type: int, units: int,
 # ────────────────────────────────────────────────────────────────────
 def add_cyclic_symmetry_restraint(manager, first_face, second_face, axis):
     """加循环对称夹具。"""
-    return _check(manager, "AddCyclicSymmetryRestraint", 3,
-                  first_face, second_face, axis)
+    return _check(
+        manager, "AddCyclicSymmetryRestraint", 3, first_face, second_face, axis
+    )
 
 
-def add_prescribed_displacement(manager, displacements, entities,
-                                length_unit: int = 0, ref_geom=None):
+def add_prescribed_displacement(
+    manager, displacements, entities, length_unit: int = 0, ref_geom=None
+):
     """加位移约束。``displacements`` 是官方 Displacements（自定义计算数组）。"""
-    return _check(manager, "AddPrescribedDisplacement", 4,
-                  displacements, int(length_unit), entities, ref_geom)
+    return _check(
+        manager,
+        "AddPrescribedDisplacement",
+        4,
+        displacements,
+        int(length_unit),
+        entities,
+        ref_geom,
+    )
 
 
 def add_bearing_load(manager, coordinate_system, first_faces):
@@ -604,9 +658,15 @@ def add_rigid_connector(manager, source_faces, target_faces):
     return _check(manager, "AddRigidConnector", 2, source_faces, target_faces)
 
 
-def add_link_connector_report(manager, model, first, second, *,
-                              first_body_index: int = 0,
-                              second_body_index: int = 0) -> dict:
+def add_link_connector_report(
+    manager,
+    model,
+    first,
+    second,
+    *,
+    first_body_index: int = 0,
+    second_body_index: int = 0,
+) -> dict:
     """★ 用**两个声明式选择器**取两个顶点，建连接件，回**可 JSON 化**的报告。
 
     ★★ **为什么它这样设计**（★ 规则 3 的判断 · 事实 367 那条）：
@@ -626,35 +686,50 @@ def add_link_connector_report(manager, model, first, second, *,
       ★★ **而★ 两个顶点**可以**在同一个体上** —— 真机（事实 373）验过：★ **同体也成** ✓
     :returns: `{ok, count_before, count_after, first, second, ...}`
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_selection_spec import resolve_entity
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_selection_spec import resolve_entity
     try:
         count_before = int(get_com_member(manager, "Count") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         count_before = -1
     try:
         va = resolve_entity(model, first, "VERTEX", body_index=int(first_body_index))
         vb = resolve_entity(model, second, "VERTEX", body_index=int(second_body_index))
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "resolve_vertex", "count_before": count_before,
-                "first": str(first)[:80], "second": str(second)[:80],
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "resolve_vertex",
+            "count_before": count_before,
+            "first": str(first)[:80],
+            "second": str(second)[:80],
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     try:
         add_link_connector(manager, va, vb)
-    except Exception as exc:                                   # noqa: BLE001
-        return {"ok": False, "stage": "AddLinkConnector", "count_before": count_before,
-                "error": "%s: %s" % (type(exc).__name__, str(exc)[:180])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "stage": "AddLinkConnector",
+            "count_before": count_before,
+            "error": "%s: %s" % (type(exc).__name__, str(exc)[:180]),
+        }
     try:
         count_after = int(get_com_member(manager, "Count") or 0)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         count_after = -1
-    return {"ok": count_after == count_before + 1,
-            "count_before": count_before, "count_after": count_after,
-            "first": str(first)[:80], "second": str(second)[:80],
-            "★": ("★ 判据是**载荷与约束计数 +1**（★ 而不是返回值 —— 事实 8）；"
-                  "★★ 而两个顶点**可以在同一个体上**（★ 事实 373 真机验过）")}
+    return {
+        "ok": count_after == count_before + 1,
+        "count_before": count_before,
+        "count_after": count_after,
+        "first": str(first)[:80],
+        "second": str(second)[:80],
+        "★": (
+            "★ 判据是**载荷与约束计数 +1**（★ 而不是返回值 —— 事实 8）；"
+            "★★ 而两个顶点**可以在同一个体上**（★ 事实 373 真机验过）"
+        ),
+    }
 
 
 def add_link_connector(manager, first_vertex, second_vertex):
@@ -669,20 +744,29 @@ def add_elastic_connector(manager, entities):
 
 def add_bolt_connector(manager, bolt_heads, bolt_nuts, bolt_type: int = 0):
     """加螺栓连接件。"""
-    return _check(manager, "AddBoltConnector", 3,
-                  int(bolt_type), bolt_heads, bolt_nuts)
+    return _check(manager, "AddBoltConnector", 3, int(bolt_type), bolt_heads, bolt_nuts)
 
 
 def add_spot_weld_connector(manager, first_face, second_face, weld_locations):
     """加点焊连接件。"""
-    return _check(manager, "AddSpotWeldConnector", 3,
-                  first_face, second_face, weld_locations)
+    return _check(
+        manager, "AddSpotWeldConnector", 3, first_face, second_face, weld_locations
+    )
 
 
-def add_edge_weld_connector(manager, first_face, second_face, edges, weld_style: int = 0):
+def add_edge_weld_connector(
+    manager, first_face, second_face, edges, weld_style: int = 0
+):
     """加边焊连接件。"""
-    return _check(manager, "AddEdgeWeldConnector", 4,
-                  first_face, second_face, edges, int(weld_style))
+    return _check(
+        manager,
+        "AddEdgeWeldConnector",
+        4,
+        first_face,
+        second_face,
+        edges,
+        int(weld_style),
+    )
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -730,11 +814,13 @@ def collect_loads_evidence(manager) -> dict[str, Any]:
         except Exception as exc:  # noqa: BLE001
             items.append({"index": index, "error": str(exc)})
             continue
-        items.append({
-            "index": index,
-            "name": str(get_com_member(item, "GetName") or ""),
-            "type": int(get_com_member(item, "GetType") or -1),
-        })
+        items.append(
+            {
+                "index": index,
+                "name": str(get_com_member(item, "GetName") or ""),
+                "type": int(get_com_member(item, "GetType") or -1),
+            }
+        )
     return {"count": count, "items": items}
 
 
@@ -754,7 +840,7 @@ def _loads_count(manager) -> int:
     try:
         v = get_com_member(manager, "Count")
         return int(v) if v is not None else -1
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return -1
 
 
@@ -778,14 +864,14 @@ def _report(manager, fn, label: str, model=None):
         try:
             get_com_member(model, "ClearSelection2", True)
             cleared = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             cleared = False
     before = _loads_count(manager)
     obj = None
     err = None
     try:
         obj = fn()
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         err = "%s: %s" % (type(exc).__name__, str(exc)[:300])
     after = _loads_count(manager)
     return {
@@ -796,8 +882,10 @@ def _report(manager, fn, label: str, model=None):
         "selection_cleared": cleared,
         "created_object": type(obj).__name__ if obj is not None else None,
         "error": err,
-        "★": ("ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）；"
-              "★ `selection_cleared=True` = 施加载荷**之前**已清选区（修地基 D1）"),
+        "★": (
+            "ok 判的是 count_after == count_before + 1（★ 回读优先，不看返回对象）；"
+            "★ `selection_cleared=True` = 施加载荷**之前**已清选区（修地基 D1）"
+        ),
     }
 
 
@@ -807,25 +895,31 @@ def apply_pressure_report(manager, model, pressure_type: int = 0, reg_geom=None)
     ★ `model` 是活动文档 —— **给了它才会把选区实体装成官方要求的 `DispArray`**
       （机制与 `sw_simulation.apply_fixed_restraint` 完全一致，★ 复用 `_selected_dispatch_array`）。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
 
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_pressure(manager, entities, pressure_type, reg_geom),
-                   "pressure", model)
+    return _report(
+        manager,
+        lambda: add_pressure(manager, entities, pressure_type, reg_geom),
+        "pressure",
+        model,
+    )
 
 
 def apply_torque_report(manager, model, ref_geom=None):
     """**加力矩**并回**回读报告**（★ 同 `apply_pressure_report`，`model` 用来装 `DispArray`）。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
 
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_torque(manager, entities, ref_geom), "torque", model)
+    return _report(
+        manager, lambda: add_torque(manager, entities, ref_geom), "torque", model
+    )
 
 
 def apply_gravity_report(manager, model):
@@ -833,9 +927,9 @@ def apply_gravity_report(manager, model):
 
     ⚠ 官方参数是**单实体**（`DispEntity`）⇒ ★ 取选区里的**第一个**实体。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
 
     ents = _selected_dispatch_array(model)
@@ -845,15 +939,20 @@ def apply_gravity_report(manager, model):
 
 def apply_centrifugal_force_report(manager, model):
     """**加离心力**并回**回读报告**。⚠ 官方参数是**单实体** ⇒ 取选区第一个。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
 
     ents = _selected_dispatch_array(model)
     entity = ents[0] if ents else None
-    return _report(manager, lambda: add_centrifugal_force(manager, entity),
-                   "centrifugal_force", model)
+    return _report(
+        manager,
+        lambda: add_centrifugal_force(manager, entity),
+        "centrifugal_force",
+        model,
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -880,63 +979,81 @@ def apply_centrifugal_force_report(manager, model):
 
 def apply_convection_report(manager, model):
     """**加对流**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_convection(manager, entities), "convection", model)
+    return _report(
+        manager, lambda: add_convection(manager, entities), "convection", model
+    )
 
 
 def apply_elastic_connector_report(manager, model):
     """**加弹性连接**并回**回读报告**。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_elastic_connector(manager, entities), "elastic_connector", model)
+    return _report(
+        manager,
+        lambda: add_elastic_connector(manager, entities),
+        "elastic_connector",
+        model,
+    )
 
 
 def apply_heat_flux_report(manager, model):
     """**加热流**并回**回读报告**。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_heat_flux(manager, entities), "heat_flux", model)
+    return _report(
+        manager, lambda: add_heat_flux(manager, entities), "heat_flux", model
+    )
 
 
 def apply_heat_power_report(manager, model):
     """**加热功率**并回**回读报告**。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_heat_power(manager, entities), "heat_power", model)
+    return _report(
+        manager, lambda: add_heat_power(manager, entities), "heat_power", model
+    )
 
 
 def apply_temperature_report(manager, model):
     """**加温度**并回**回读报告**。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_temperature(manager, entities), "temperature", model)
+    return _report(
+        manager, lambda: add_temperature(manager, entities), "temperature", model
+    )
 
 
 def apply_radiation_report(manager, model, radiation_type: int = 0):
     """**加热辐射**并回**回读报告**（★ 唯一带一个 int 参数的那个）。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_radiation(manager, entities, radiation_type),
-                   "radiation", model)
+    return _report(
+        manager,
+        lambda: add_radiation(manager, entities, radiation_type),
+        "radiation",
+        model,
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -967,13 +1084,17 @@ def apply_radiation_report(manager, model, radiation_type: int = 0):
 
 def apply_distributed_mass_report(manager, model, mass: float, units: int = 0):
     """**加分布质量**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"""
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager, lambda: add_distributed_mass(manager, entities, float(mass), int(units)),
-                   "distributed_mass", model)
+    return _report(
+        manager,
+        lambda: add_distributed_mass(manager, entities, float(mass), int(units)),
+        "distributed_mass",
+        model,
+    )
 
 
 def apply_force_report(manager, model, force_type: int = 1):
@@ -982,36 +1103,52 @@ def apply_force_report(manager, model, force_type: int = 1):
     ⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）—— ★ 裸函数的默认值是 `None`，
     而**事实 12** 明写 Object 入参裸传 `None` 会 `类型不匹配`。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_connect import create_empty_dispatch_variant
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_connect import create_empty_dispatch_variant
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager,
-                   lambda: add_force(manager, entities, int(force_type),
-                                     create_empty_dispatch_variant()),
-                   "force", model)
+    return _report(
+        manager,
+        lambda: add_force(
+            manager, entities, int(force_type), create_empty_dispatch_variant()
+        ),
+        "force",
+        model,
+    )
 
 
-def apply_remote_load_report(manager, model, load_type: int, units: int,
-                             dx: float, dy: float, dz: float):
+def apply_remote_load_report(
+    manager, model, load_type: int, units: int, dx: float, dy: float, dz: float
+):
     """**加远程载荷**（位置 + 方向 + 幅值）并回**回读报告**。
 
     ⚠ `load_type` / `units` 的枚举在本仓的来源块里注明"反射 dump 未收录 ⇒ 只做 int 透传"。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     entities = _selected_dispatch_array(model)
-    return _report(manager,
-                   lambda: add_remote_load(manager, entities, int(load_type), int(units),
-                                           float(dx), float(dy), float(dz)),
-                   "remote_load", model)
+    return _report(
+        manager,
+        lambda: add_remote_load(
+            manager,
+            entities,
+            int(load_type),
+            int(units),
+            float(dx),
+            float(dy),
+            float(dz),
+        ),
+        "remote_load",
+        model,
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -1047,15 +1184,17 @@ def _split_selection(model, *, per_side: int = 1):
     :param per_side: 每一侧要几个实体（★ 两侧都按它取 ⇒ **总数必须是 `2 * per_side`**）。
     :raises RuntimeError: 选区条数不足或不是 `2 * per_side`（★ 早失败优于静默）。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_simulation import _selected_dispatch_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_simulation import _selected_dispatch_array
     objs = _selected_dispatch_array(model)
     want = 2 * int(per_side)
     if len(objs) < want:
-        raise RuntimeError("选区里只有 %d 个实体，本连接件需要 %d 个（每侧 %d 个）"
-                           % (len(objs), want, per_side))
+        raise RuntimeError(
+            "选区里只有 %d 个实体，本连接件需要 %d 个（每侧 %d 个）"
+            % (len(objs), want, per_side)
+        )
     return objs[:per_side], objs[per_side:want]
 
 
@@ -1066,7 +1205,12 @@ def apply_link_connector_report(manager, model):
     ⇒ ★ 请**先选中两个顶点**（★ 前一个给第一个参数、后一个给第二个）。
     """
     a, b = _split_selection(model, per_side=1)
-    return _report(manager, lambda: add_link_connector(manager, a[0], b[0]), "link_connector", model)
+    return _report(
+        manager,
+        lambda: add_link_connector(manager, a[0], b[0]),
+        "link_connector",
+        model,
+    )
 
 
 def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
@@ -1076,7 +1220,10 @@ def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
     ⇒ ★ 请**先选中 `2 × faces_per_side` 个面**（★ 前一半 = 源、后一半 = 目标）。
     """
     a, b = _split_selection(model, per_side=max(1, int(faces_per_side)))
-    return _report(manager, lambda: add_rigid_connector(manager, a, b), "rigid_connector", model)
+    return _report(
+        manager, lambda: add_rigid_connector(manager, a, b), "rigid_connector", model
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -1092,17 +1239,23 @@ def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
 #   ⇒ ★★ 两者并存，★ 由调用方按场景选；★ **而探针与工具用后者**。
 # 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistI
 #           DTargetArray)`
-# （★ 出厂类型库反射逐字）· `IBody2.GetFaces`（★ `entities_on_body` 已在用）· 事实 32 / 
+# （★ 出厂类型库反射逐字）· `IBody2.GetFaces`（★ `entities_on_body` 已在用）· 事实 32 /
 # 336 / 337
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def apply_rigid_connector_by_objects_report(manager, model, source_indices, target_indices,
-                                            *, kind: str = "FACE",
-                                            source_body_index: int = 0,
-                                            target_body_index: int = 0):
+def apply_rigid_connector_by_objects_report(
+    manager,
+    model,
+    source_indices,
+    target_indices,
+    *,
+    kind: str = "FACE",
+    source_body_index: int = 0,
+    target_body_index: int = 0,
+):
     """★ **按已知的实体清单**加刚性连接件（★ **不读选区**）并回**回读报告**。
 
     ★ 官方签名：`AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray)`
@@ -1112,16 +1265,21 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
     :param source_indices / target_indices: 两组实体的**序号**（★ 0 基）。
     :param kind: `"FACE"` / `"EDGE"` / `"VERTEX"`。
     """
-    try:                                                       # noqa: SIM105
+    try:  # noqa: SIM105
         from .sw_selection_spec import entities_as_array
-    except ImportError:                                       # ★ 回退绝对导入 ✓
+    except ImportError:  # ★ 回退绝对导入 ✓
         from sw_selection_spec import entities_as_array
     #: ★★ 两侧**可分别指定体号** —— ★ 因为"连接件"连的是**两个**东西**：
     #:   ★ 而多体零件里两个体的序号不同（★ 事实 338 的新假设：它要两个体才能连）。
     src = entities_as_array(model, kind, source_indices, body_index=source_body_index)
     tgt = entities_as_array(model, kind, target_indices, body_index=target_body_index)
-    return _report(manager, lambda: add_rigid_connector(manager, src, tgt),
-                   "rigid_connector_by_objects", model)
+    return _report(
+        manager,
+        lambda: add_rigid_connector(manager, src, tgt),
+        "rigid_connector_by_objects",
+        model,
+    )
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -1140,7 +1298,7 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
 #   ★ 而**装配体那条路**在硬约束⑦（禁保存）下**仍然走得通**：
 #     ★ 用**已在盘上的**自带零件（★ 本机 `…\samples\tutorial\api\` 下有几十个 `.sldprt`）
 #       ⇒ ★ **不保存任何东西** ✓
-# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射的形参名 
+# 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射的形参名
 #           ·
 # `IAssemblyDoc.AddComponent5`（★ `sw_assembly.add_component` 已在用）· `swsAnalysisStud
 # yTypeStatic = 0`
@@ -1171,7 +1329,8 @@ def apply_pin_connector_report(manager, model, *, first: int = 0, second: int = 
         raise RuntimeError(
             "装配体顶层只有 %d 个组件，取不到第 %d / %d 个 —— 早失败："
             "★ 销钉连接件要**两个零件**（★ 单体文档上它会成功返回却不建）"
-            % (len(comps), int(first), int(second)))
+            % (len(comps), int(first), int(second))
+        )
     #: ★★★ 2026-10-03（轮 426）**两个组件要装成数组** ——
     #:   ★ 真机第一版传了**裸对象** ⇒ `TypeError: must be real number, not dict`
     #:     （★ pywin32 试图把它当数字）。
@@ -1179,6 +1338,9 @@ def apply_pin_connector_report(manager, model, *, first: int = 0, second: int = 
     #:   ★★ 而这与刚性连接件那次**完全自洽**：
     #:     ★ 那次传的是 `entities_as_array` 回的**列表** ⇒ 成了；
     #:     ★ 这次传裸对象 ⇒ 报 TypeError ✓
-    return _report(manager,
-                   lambda: add_pin_connector(manager, [comps[int(first)]], [comps[int(second)]]),
-                   "pin_connector", model)
+    return _report(
+        manager,
+        lambda: add_pin_connector(manager, [comps[int(first)]], [comps[int(second)]]),
+        "pin_connector",
+        model,
+    )

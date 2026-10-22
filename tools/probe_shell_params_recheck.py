@@ -33,8 +33,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUT = ROOT / "output" / "shell-params-capability-recheck.json"
-ev: dict = {"★_判据": "板 60×40×10（毫米）⇒ 抽壳 **2 mm** ⇒ 读 Thickness 看 2.0 还是 0.002",
-            "steps": []}
+ev: dict = {
+    "★_判据": "板 60×40×10（毫米）⇒ 抽壳 **2 mm** ⇒ 读 Thickness 看 2.0 还是 0.002",
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -72,10 +74,12 @@ def main() -> int:
         #:   ★★★★ **⚠ 我第一版**在注释里写了"要兜底"、★ 却**没写兜底代码**** ⇒
         #: ★★ **⇒ 又验证那条**：★ **"写在注释里的打算"不等于"做了"**（★ 与**事实 62**同
         #: 族）✓
-        for x1, y1, x2, y2 in ((-30.0, -20.0, 30.0, -20.0),
-                               (30.0, -20.0, 30.0, 20.0),
-                               (30.0, 20.0, -30.0, 20.0),
-                               (-30.0, 20.0, -30.0, -20.0)):
+        for x1, y1, x2, y2 in (
+            (-30.0, -20.0, 30.0, -20.0),
+            (30.0, -20.0, 30.0, 20.0),
+            (30.0, 20.0, -30.0, 20.0),
+            (-30.0, 20.0, -30.0, -20.0),
+        ):
             get_com_member(sm, "CreateLine", x1, y1, 0.0, x2, y2, 0.0)
     step("sketch", sketch_name=str(sk), method="CreateLine ×4")
 
@@ -85,12 +89,22 @@ def main() -> int:
 
     #: ★★★ 抽壳 2 mm ⇒ 已知量 ⇒ **口径自明** ✓
     rep = shell_report(model, 2.0)
-    step("shell_report", ok=rep.get("ok"), readback=rep.get("readback"),
-         created=rep.get("created_object"))
+    step(
+        "shell_report",
+        ok=rep.get("ok"),
+        readback=rep.get("readback"),
+        created=rep.get("created_object"),
+    )
 
     got = R.shell_params(model)
-    step("shell_params", **{k: v for k, v in got.items()
-                            if k not in ("★_不读（★ 要前置 / ★ 指针接口 / ★ 事实 47）",)})
+    step(
+        "shell_params",
+        **{
+            k: v
+            for k, v in got.items()
+            if k not in ("★_不读（★ 要前置 / ★ 指针接口 / ★ 事实 47）",)
+        },
+    )
 
     #: ★★★★★ **口径判定**（★ 可核）✓
     th = got.get("Thickness")
@@ -113,7 +127,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                          # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

@@ -53,19 +53,36 @@ def collect_dialogs_safe(timeout: float = 15.0, target=None) -> dict:
     """带硬时限的弹窗检测：回 `{count, pid, dialogs, timed_out, note}`，**永不阻塞调用方**。"""
     code = _CHILD.format(tools=TOOLS, scripts=REPO_ROOT / "scripts")
     try:
-        proc = subprocess.run([sys.executable, "-u", "-c", code], check=False,
-                              capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=timeout, cwd=str(REPO_ROOT),
-                              stdin=subprocess.DEVNULL)
+        proc = subprocess.run(
+            [sys.executable, "-u", "-c", code],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            cwd=str(REPO_ROOT),
+            stdin=subprocess.DEVNULL,
+        )
     except subprocess.TimeoutExpired:
-        return {"count": None, "pid": None, "dialogs": [], "timed_out": True,
-                "note": "★ 取证超时（枚举本身是快的 ⇒ 卡的是截图/取控件那一步）；"
-                        "★ 调用方应判定『有弹窗』并处置，而不是继续等。"}
+        return {
+            "count": None,
+            "pid": None,
+            "dialogs": [],
+            "timed_out": True,
+            "note": "★ 取证超时（枚举本身是快的 ⇒ 卡的是截图/取控件那一步）；"
+            "★ 调用方应判定『有弹窗』并处置，而不是继续等。",
+        }
     out = proc.stdout or ""
     marker = "@@RESULT@@"
     if marker not in out:
-        return {"count": None, "pid": None, "dialogs": [], "timed_out": False,
-                "note": "★ 子进程没给出结果（stderr: %s）" % (proc.stderr or "")[-160:]}
+        return {
+            "count": None,
+            "pid": None,
+            "dialogs": [],
+            "timed_out": False,
+            "note": "★ 子进程没给出结果（stderr: %s）" % (proc.stderr or "")[-160:],
+        }
     data = json.loads(out.split(marker, 1)[1].splitlines()[0])
     data["timed_out"] = False
     return data
@@ -77,9 +94,15 @@ def main() -> int:
     args = ap.parse_args()
     r = collect_dialogs_safe(timeout=args.timeout)
     print(json.dumps(r, ensure_ascii=False, indent=1)[:1500])
-    print("  ⇒ %s" % ("没有弹窗" if r.get("count") == 0
-                     else "★ **发现弹窗**（★ count=%s · timed_out=%s）"
-                          % (r.get("count"), r.get("timed_out"))))
+    print(
+        "  ⇒ %s"
+        % (
+            "没有弹窗"
+            if r.get("count") == 0
+            else "★ **发现弹窗**（★ count=%s · timed_out=%s）"
+            % (r.get("count"), r.get("timed_out"))
+        )
+    )
     return 0 if r.get("count") == 0 else 1
 
 

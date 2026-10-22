@@ -53,6 +53,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -67,69 +68,107 @@ SPECS_BATCH11 = [
     ToolSpec(
         name="solidworks_topology_create_mass_constraint",
         title="Create Topology Mass Constraint",
-        module="sw_topology", function="create_mass_constraint",
+        module="sw_topology",
+        function="create_mass_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a mass constraint for a topology study (mass-reduction percent "
-            "semantics). Returns the constraint object.",
+        "semantics). Returns the constraint object.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("reduce_percent", float,
-                  description="Target mass reduction in percent (e.g. 75 means -75%)."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "reduce_percent",
+                float,
+                description="Target mass reduction in percent (e.g. 75 means -75%).",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_topology_create_factor_of_safety_constraint",
         title="Create Topology Factor-of-Safety Constraint",
-        module="sw_topology", function="create_factor_of_safety_constraint",
+        module="sw_topology",
+        function="create_factor_of_safety_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a factor-of-safety constraint for a topology study (stress must "
-            "stay below that percentage of yield strength).",
+        "stay below that percentage of yield strength).",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("specified_factor", float,
-                  description="Factor of safety (e.g. 1.5)."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "specified_factor", float, description="Factor of safety (e.g. 1.5)."
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_topology_create_preserved_region",
         title="Create Topology Preserved Region",
-        module="sw_topology", function="create_preserved_region",
+        module="sw_topology",
+        function="create_preserved_region",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Create a preserved region for a topology study (material that must not "
-            "be removed). ⚠ `option` is an official enum value; omit to use the default.",
+        "be removed). ⚠ `option` is an official enum value; omit to use the default.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("option", int, default=0,
-                  description="Official option enum value; 0 means the module default."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "option",
+                int,
+                default=0,
+                description="Official option enum value; 0 means the module default.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_topology_create_thickness_control",
         title="Create Topology Thickness Control",
-        module="sw_topology", function="create_thickness_control",
+        module="sw_topology",
+        function="create_thickness_control",
         inject="study",
         doc="Create a thickness control for a topology study (minimum/maximum "
-            "thickness). Units are millimetres (rule 2).",
-        param_alias={"study_name": None,           # 由解析器消费，不进目标函数
-                     "min_thickness_mm": "min_thickness",
-                     "max_thickness_mm": "max_thickness"},
+        "thickness). Units are millimetres (rule 2).",
+        param_alias={
+            "study_name": None,  # 由解析器消费，不进目标函数
+            "min_thickness_mm": "min_thickness",
+            "max_thickness_mm": "max_thickness",
+        },
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("min_thickness_mm", float, default=0.0,
-                  description="Minimum thickness in millimetres; 0 means the module default."),
-            Param("max_thickness_mm", float, default=0.0,
-                  description="Maximum thickness in millimetres; 0 means the module default."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "min_thickness_mm",
+                float,
+                default=0.0,
+                description="Minimum thickness in millimetres; 0 means the module default.",
+            ),
+            Param(
+                "max_thickness_mm",
+                float,
+                default=0.0,
+                description="Maximum thickness in millimetres; 0 means the module default.",
+            ),
         ],
     ),
 ]

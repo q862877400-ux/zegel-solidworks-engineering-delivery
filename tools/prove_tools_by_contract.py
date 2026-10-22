@@ -40,21 +40,30 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "mcp-server"))
 
-import register_capabilities as RC                                    # noqa: E402
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_sketch_primitives as SP                             # noqa: E402
-import importlib                                                      # noqa: E402
+import register_capabilities as RC  # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_sketch_primitives as SP  # noqa: E402
+import importlib  # noqa: E402
 
 #: ★ 按**声明的类型**取样（★ 探针自己的表，不是产品逻辑）
 _VALUE_BY_KIND = {float: 1.0, int: 1, bool: True, str: ""}
 #: ★ 有语义的参数要给**能看出效果**的值（★ 否则"没变化"与"测不出"分不开）
 _BY_NAME = {
-    "start_x_mm": 0.0, "start_y_mm": 0.0, "end_x_mm": 5.0, "end_y_mm": 5.0,
-    "center_x_mm": 0.0, "center_y_mm": 0.0, "angle_deg": 30.0,
+    "start_x_mm": 0.0,
+    "start_y_mm": 0.0,
+    "end_x_mm": 5.0,
+    "end_y_mm": 5.0,
+    "center_x_mm": 0.0,
+    "center_y_mm": 0.0,
+    "angle_deg": 30.0,
     "factor": 1.5,
-    "base_x_mm": 0.0, "base_y_mm": 0.0, "dest_x_mm": 3.0, "dest_y_mm": 3.0,
-    "keep_relations": True, "axis_flag": 1,
+    "base_x_mm": 0.0,
+    "base_y_mm": 0.0,
+    "dest_x_mm": 3.0,
+    "dest_y_mm": 3.0,
+    "keep_relations": True,
+    "axis_flag": 1,
 }
 
 
@@ -77,13 +86,17 @@ def main(argv) -> int:
         try:
             importlib.import_module("scripts." + _s.module)
             todo.append(_s)
-        except Exception:                                            # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     ev["n_tools"] = len(todo)
 
     for spec in todo:
-        row = {"tool": spec.name, "inject": spec.inject,
-               "declared_params": [p.name for p in spec.params], "verdict": "不能"}
+        row = {
+            "tool": spec.name,
+            "inject": spec.inject,
+            "declared_params": [p.name for p in spec.params],
+            "verdict": "不能",
+        }
         doc = None
         try:
             mod = importlib.import_module("scripts." + spec.module)
@@ -100,12 +113,16 @@ def main(argv) -> int:
 
             inj = doc if spec.inject == "model" else None
             out = fn(inj, **kwargs) if inj is not None else fn(**kwargs)
-            row["returned"] = out if isinstance(out, (dict, bool, type(None))) else str(type(out))
+            row["returned"] = (
+                out if isinstance(out, (dict, bool, type(None))) else str(type(out))
+            )
             row["ok"] = bool(isinstance(out, dict) and out.get("ok"))
-            row["verified_by"] = (out or {}).get("verified_by") if isinstance(out, dict) else None
+            row["verified_by"] = (
+                (out or {}).get("verified_by") if isinstance(out, dict) else None
+            )
             row["verdict"] = "能" if row["ok"] else "不能"
             P.end_sketch(doc)
-        except Exception as exc:                                     # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         finally:
             if doc is not None:
@@ -113,7 +130,7 @@ def main(argv) -> int:
                     t = str(C.get_com_member(doc, "GetTitle") or "")
                     if t:
                         C.get_com_member(sw, "CloseDoc", t)
-                except Exception:                                    # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
         ev["items"].append(row)
 
@@ -124,17 +141,21 @@ def main(argv) -> int:
     #:     在本探针里**必然回 `不能`**（★ 而那**不是**能力不行）❗
     #:   ⇒ ★ 故本证据里另存 `n_prerequisites_missing`，并在 cwd 说明里点明。
     ev["n_prerequisites_missing"] = sum(1 for i in ev["items"] if not i.get("ok"))
-    ev["_scope"] = ("本探针不建前置 —— 不能的那些"
-                    "多半是“需要先选中实体/面”，"
-                    "而不是能力不行；功能是否建成看专项探针")
+    ev["_scope"] = (
+        "本探针不建前置 —— 不能的那些"
+        "多半是“需要先选中实体/面”，"
+        "而不是能力不行；功能是否建成看专项探针"
+    )
     ev["passed"] = sum(1 for i in ev["items"] if i.get("ok"))
     p = R / "output" / "tools-by-contract-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print("  \u8bda\u5b9e %s / %s" % (ev["passed"], ev["n_tools"]))
     for i in ev["items"]:
-        print("  %-46s %-4s %s" % (i["tool"], i["verdict"],
-                                   i.get("verified_by") or i.get("err", "")[:60]))
+        print(
+            "  %-46s %-4s %s"
+            % (i["tool"], i["verdict"], i.get("verified_by") or i.get("err", "")[:60])
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

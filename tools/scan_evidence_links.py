@@ -33,7 +33,9 @@ def main() -> int:
         seen.setdefault(m.group(1), "bare")
     for name, how in sorted(seen.items()):
         f = REPO / "output" / name
-        (alive if f.is_file() else dead).append((name, how, f.stat().st_size if f.is_file() else 0))
+        (alive if f.is_file() else dead).append(
+            (name, how, f.stat().st_size if f.is_file() else 0)
+        )
     print("★ capabilities.yaml 里引到的 `output/*.json` 共 **%d** 个" % len(seen))
     print("★★ 存在的 **%d** 个" % len(alive))
     print("★★★ 死链   **%d** 个" % len(dead))

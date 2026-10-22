@@ -17,6 +17,7 @@ r"""SolidWorks 自动化的通用可复用知识：错误码、弹窗、选区�
 # ⚠ 本模块为静态整理，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -55,7 +56,7 @@ __all__ = [
 # ────────────────────────────────────────────────────────────────────
 HRESULTS: dict[int, str] = {
     0x80040112: "COM 类未授权 —— 通常是**该产品没有许可**"
-                "（PDM / Simulation / Routers 等独立许可产品）",
+    "（PDM / Simulation / Routers 等独立许可产品）",
     0x80070057: "参数无效（E_INVALIDARG）",
     0x8007000E: "内存不足（E_OUTOFMEMORY）",
     0x80004002: "未找到接口/对象（E_NOINTERFACE）",
@@ -108,13 +109,13 @@ def explain_hresult(code: int) -> str:
 #: ⚠ 只列**反射里确实存在**的；用前请对回 sw_api_sldworks.ARITY。
 #: enum-gate: not-enum arity
 DIALOG_AND_NOTIFY: dict[str, int] = {
-    "CommandInProgress": 1,          # 反射整行两种形态：get_=0 参 / set_=1 参
-    "FrameState": 1,                 # 同上：get_=0 / set_=1
+    "CommandInProgress": 1,  # 反射整行两种形态：get_=0 参 / set_=1 参
+    "FrameState": 1,  # 同上：get_=0 / set_=1
     "DefineUserNotification": 1,
     "ShowUserNotification": 2,
     "CloseUserNotification": 1,
-    "GetErrorMessages": 0,           # ⚑ 三个参数全是 [out]，调用方一个都不传
-    "GetLastSaveError": 0,           # ⚑ 同上
+    "GetErrorMessages": 0,  # ⚑ 三个参数全是 [out]，调用方一个都不传
+    "GetLastSaveError": 0,  # ⚑ 同上
     "SendMsgToUser": 1,
     "SendMsgToUser2": 3,
 }
@@ -125,6 +126,7 @@ DIALOG_SUPPRESSORS: dict[str, int] = {
     # ⚑ 这几个值取自对 swconst 的反射（swUserPreferenceToggle_e）
     "swInputDimValOnCreate": 10,
 }
+
 
 def enter_command_lock(sldworks) -> bool:
     """置 ``CommandInProgress=True`` —— 拦住会弹窗的操作。

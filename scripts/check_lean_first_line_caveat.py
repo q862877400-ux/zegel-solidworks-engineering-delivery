@@ -62,18 +62,22 @@ def judge(name: str, doc: str) -> list:
 
     if any(m in text for m in UNAVAILABLE_MARKS):
         if not any(m in first for m in UNAVAILABLE_MARKS):
-            problems.append((
-                "首句未说「本机不可用」",
-                "★ 文档里有 %s，而 lean 首句（前 %d 字）里没有 ⇒ 模型看不到这个结论"
-                % ("/".join(m for m in UNAVAILABLE_MARKS if m in text), LEAN_CHARS),
-            ))
+            problems.append(
+                (
+                    "首句未说「本机不可用」",
+                    "★ 文档里有 %s，而 lean 首句（前 %d 字）里没有 ⇒ 模型看不到这个结论"
+                    % ("/".join(m for m in UNAVAILABLE_MARKS if m in text), LEAN_CHARS),
+                )
+            )
 
     if PIPELINE_FINGERPRINT in text and INTERNAL_MARK not in first:
-        problems.append((
-            "首句未自证「内部件」",
-            "★ 它是 `%s` 管线的内部步骤，而 lean 首句里没有 `%s` ⇒ 模型会以为它是给自己用的"
-            % (PIPELINE_FINGERPRINT, INTERNAL_MARK),
-        ))
+        problems.append(
+            (
+                "首句未自证「内部件」",
+                "★ 它是 `%s` 管线的内部步骤，而 lean 首句里没有 `%s` ⇒ 模型会以为它是给自己用的"
+                % (PIPELINE_FINGERPRINT, INTERNAL_MARK),
+            )
+        )
     return problems
 
 
@@ -82,7 +86,7 @@ def scan() -> tuple:
     sys.path.insert(0, str(ROOT / "mcp-server"))
     sys.path.insert(0, str(ROOT / "scripts"))
     sys.path.insert(0, str(ROOT))
-    import register_capabilities as rc                     # noqa: PLC0415
+    import register_capabilities as rc  # noqa: PLC0415
 
     rows = []
     subject = 0
@@ -100,24 +104,35 @@ def scan() -> tuple:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="首句自证门禁（lean 投影看得见才算数）")
-    ap.add_argument("--report", action="store_true",
-                    help="只报表（★ 命中集 / 看了多少条），退出码仍按判据给")
+    ap.add_argument(
+        "--report",
+        action="store_true",
+        help="只报表（★ 命中集 / 看了多少条），退出码仍按判据给",
+    )
     args = ap.parse_args(argv)
 
     try:
         rows, checked, subject = scan()
-    except Exception as exc:                               # noqa: BLE001
-        print("★ 无法读取 ToolSpec（%s: %s）⇒ 本门禁无法判定" % (type(exc).__name__, exc))
+    except Exception as exc:  # noqa: BLE001
+        print(
+            "★ 无法读取 ToolSpec（%s: %s）⇒ 本门禁无法判定" % (type(exc).__name__, exc)
+        )
         return 2
 
-    #: ★ 防**假绿**：一条都没看就等于没判（与 `check_no_bare_byref_args` 的 `checked >= 
+    #: ★ 防**假绿**：一条都没看就等于没判（与 `check_no_bare_byref_args` 的 `checked >=
     #: 300` 同型）✓
     if checked < 300:
-        print("★ 只看到 %d 条 spec（应 ≥300）⇒ 注册表可能没加载全，**这个绿不可信**" % checked)
+        print(
+            "★ 只看到 %d 条 spec（应 ≥300）⇒ 注册表可能没加载全，**这个绿不可信**"
+            % checked
+        )
         return 2
 
     if args.report:
-        print("★ 看了 %d 条 spec；受本判据约束 **%d** 条；命中 **%d** 条" % (checked, subject, len(rows)))
+        print(
+            "★ 看了 %d 条 spec；受本判据约束 **%d** 条；命中 **%d** 条"
+            % (checked, subject, len(rows))
+        )
         for r in rows:
             print("   [%s] %s —— %s" % (r["kind"], r["name"], r["why"]))
         return 1 if rows else 0
@@ -127,11 +142,15 @@ def main(argv=None) -> int:
         for r in rows:
             print("   [%s] %s\n        %s" % (r["kind"], r["name"], r["why"]))
         print("\n★ 修法：把该结论**前置一句**到 `doc` 的最前面（★ 只做加法，")
-        print("   ★ 不要改写原有文字 —— 见 specs/215-tool-surface-decisions/spec.md §二）")
+        print(
+            "   ★ 不要改写原有文字 —— 见 specs/215-tool-surface-decisions/spec.md §二）"
+        )
         return 1
 
-    print("★ 首句自证门禁通过：看了 %d 条 spec，其中 **%d** 条带「不可用/内部件」标记，"
-          "★ 结论**全部**在 lean 首句里（前 %d 字）" % (checked, subject, LEAN_CHARS))
+    print(
+        "★ 首句自证门禁通过：看了 %d 条 spec，其中 **%d** 条带「不可用/内部件」标记，"
+        "★ 结论**全部**在 lean 首句里（前 %d 字）" % (checked, subject, LEAN_CHARS)
+    )
     return 0
 
 

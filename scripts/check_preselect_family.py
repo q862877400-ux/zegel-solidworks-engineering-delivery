@@ -1,4 +1,5 @@
 """★ 门禁：不许再挂「要求调用方先选、却没有任何入口能选」的工具（注册 ≠ 能跑）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（门禁）
 # 文件:   scripts/check_preselect_family.py
@@ -49,8 +50,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 
 #: ★ 中文 Windows 上打印 `⇒` 会 `UnicodeEncodeError: 'gbk' codec`（**事实 58** 那一族）
 try:
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
-except Exception:                                                         # noqa: BLE001
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:  # noqa: BLE001
     pass
 
 BASELINE = ROOT / "docs" / "preselect-family-baseline.json"
@@ -89,7 +90,8 @@ NEGATION = re.compile(
     r"|没有选中时|未选中时|无选中时"
     r"|does\s+not\s+need\s+to\s+select|no\s+selection\s+is\s+needed"
     r"|selects?\s+(it|them)\s+(itself|automatically)|auto-?select",
-    re.I)
+    re.I,
+)
 #: 否定词要在这个窗口内出现才算「它其实不要求先选」（★ 太窄会漏、太宽会误吞，取 ±160 字
 #: ）
 NEGATION_WINDOW = 160
@@ -119,15 +121,15 @@ def _match_snippet(text: str) -> str:
             lo = max(0, m.start() - NEGATION_WINDOW)
             hi = min(len(text), m.end() + NEGATION_WINDOW)
             if NEGATION.search(text[lo:hi]):
-                continue                                # ★ 这一处是否定句 ⇒ 看下一处
+                continue  # ★ 这一处是否定句 ⇒ 看下一处
             lo2 = max(0, m.start() - 24)
-            return text[lo2:m.end() + 40].replace("\n", " ")
+            return text[lo2 : m.end() + 40].replace("\n", " ")
     return ""
 
 
 def _has_selection_param(spec) -> bool:
     """⇒ spec 是否已有「表达选区」的入参（★ `selection` / `*_selection` 形态）✓"""
-    for p in (spec.params or []):
+    for p in spec.params or []:
         name = getattr(p, "name", "") or ""
         if name == "selection" or name.endswith("_selection"):
             return True
@@ -169,7 +171,8 @@ SELF_SELECT = re.compile(
     #: ⚠ 仍然**不是**放宽到任意调用：★ 必须真的叫 `select_…(`（★ 带左括号 = 是**调用**、
     #: 不是提及）✓
     r"select_[a-z0-9_]+\s*\(",
-    re.I)
+    re.I,
+)
 
 _MODULE_CACHE: dict = {}
 
@@ -199,13 +202,21 @@ def _function_source(module: str, func: str) -> str:
     if tree is None:
         return ""
     for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == func:
+        if (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+            and node.name == func
+        ):
             return ast.get_source_segment(text, node) or ""
     return ""
 
 
-def judge(doc: str, has_pre_call: bool, has_derived_args: bool,
-          has_selection_param: bool, function_source: str) -> str:
+def judge(
+    doc: str,
+    has_pre_call: bool,
+    has_derived_args: bool,
+    has_selection_param: bool,
+    function_source: str,
+) -> str:
     """★ **纯函数**：判一条 spec 是不是「要求先选却无法选」。⇒ 命中则回**原文片段**，否则回 `""` ✓
 
     ★★ 做成纯函数是**为了能被负例测试直接喂样本**（事实 62：门禁只靠负例证明）——
@@ -213,30 +224,39 @@ def judge(doc: str, has_pre_call: bool, has_derived_args: bool,
       四条判据全部在这一处，★ 顺序即文档里的 ① ② ③ ④ ✓
     """
     if has_pre_call or has_derived_args:
-        return ""                                       # ★ ② 有建选区的落点
+        return ""  # ★ ② 有建选区的落点
     if has_selection_param:
-        return ""                                       # ★ ③ 模型有办法表达选区
+        return ""  # ★ ③ 模型有办法表达选区
     snip = _match_snippet(doc)
     if not snip:
-        return ""                                       # ★ ① 它自己没说要先选
+        return ""  # ★ ① 它自己没说要先选
     if SELF_SELECT.search(function_source or ""):
-        return ""                                       # ★ ④ 它自己会选 ⇒ 不是缺陷
+        return ""  # ★ ④ 它自己会选 ⇒ 不是缺陷
     return snip
 
 
 def scan() -> list:
     """⇒ `[{tool, module, function, snippet}]` —— ★ **四条同时成立**才算命中 ✓"""
     import register_capabilities as rc
+
     hits = []
     for spec in rc.all_specs():
-        snip = judge(spec.doc or "",
-                     spec.pre_call is not None,
-                     spec.derived_args is not None,
-                     _has_selection_param(spec),
-                     _function_source(spec.module, spec.function))
+        snip = judge(
+            spec.doc or "",
+            spec.pre_call is not None,
+            spec.derived_args is not None,
+            _has_selection_param(spec),
+            _function_source(spec.module, spec.function),
+        )
         if snip:
-            hits.append({"tool": spec.name, "module": spec.module,
-                         "function": spec.function, "snippet": snip})
+            hits.append(
+                {
+                    "tool": spec.name,
+                    "module": spec.module,
+                    "function": spec.function,
+                    "snippet": snip,
+                }
+            )
     return sorted(hits, key=lambda h: (h["module"], h["tool"]))
 
 
@@ -245,20 +265,24 @@ def load_baseline() -> dict:
         return {"entries": []}
     try:
         return json.loads(BASELINE.read_text(encoding="utf-8"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         raise SystemExit("★ 基线 %s 解析失败：%s" % (BASELINE, exc))
 
 
 def main(argv: list) -> int:
     ap = argparse.ArgumentParser(description="「要求先选却无法选」门禁")
-    ap.add_argument("--report", action="store_true", help="★ 只打印命中全表（不判基线）")
+    ap.add_argument(
+        "--report", action="store_true", help="★ 只打印命中全表（不判基线）"
+    )
     args = ap.parse_args(argv[1:])
 
     hits = scan()
 
     if args.report:
-        print("★ 预选族门禁 · 命中 **%d** 条（判据：文档要求先选 ∧ 无 pre_call/derived_args ∧ 无 selection 入参）"
-              % len(hits))
+        print(
+            "★ 预选族门禁 · 命中 **%d** 条（判据：文档要求先选 ∧ 无 pre_call/derived_args ∧ 无 selection 入参）"
+            % len(hits)
+        )
         by_mod: dict = defaultdict(list)
         for h in hits:
             by_mod[h["module"]].append(h)
@@ -273,7 +297,9 @@ def main(argv: list) -> int:
     for e in entries:
         for f in ("tool", "reason"):
             if not str(e.get(f) or "").strip():
-                print("★ 基线条目缺字段 `%s`（★ 一个没有理由的豁免等于没写）：%r" % (f, e))
+                print(
+                    "★ 基线条目缺字段 `%s`（★ 一个没有理由的豁免等于没写）：%r" % (f, e)
+                )
                 return 1
     known = {e["tool"] for e in entries}
     got = {h["tool"] for h in hits}
@@ -284,18 +310,30 @@ def main(argv: list) -> int:
     print("★ 预选族门禁 —— 命中 %d 条 · 基线认可 %d 条" % (len(got), len(known)))
     if new:
         print()
-        print("  ★★ **新增命中 %d 条** ⇒ ★ 这些工具**要求调用方先选、而模型没有任何办法选**" % len(new))
-        print("     （★ 事实 503：`RESOLVERS` 会清空选区 ⇒ 选区**必须**由 `pre_call` 在注入之后重建）")
+        print(
+            "  ★★ **新增命中 %d 条** ⇒ ★ 这些工具**要求调用方先选、而模型没有任何办法选**"
+            % len(new)
+        )
+        print(
+            "     （★ 事实 503：`RESOLVERS` 会清空选区 ⇒ 选区**必须**由 `pre_call` 在注入之后重建）"
+        )
         for tool in new:
             h = next(x for x in hits if x["tool"] == tool)
             print("      %-52s %s" % (tool, h["snippet"][:100]))
         print()
-        print("  ★ 修法两条：① 给它加 `pre_call`（照 `tool_specs_batch74.py::_select_faces_for` 的形状）；")
-        print("    ② 或若它**根本不需要**调用方先选（自建选区／官方明示可降级）⇒ 登记进")
+        print(
+            "  ★ 修法两条：① 给它加 `pre_call`（照 `tool_specs_batch74.py::_select_faces_for` 的形状）；"
+        )
+        print(
+            "    ② 或若它**根本不需要**调用方先选（自建选区／官方明示可降级）⇒ 登记进"
+        )
         print("       docs/preselect-family-baseline.json 并**写明理由**。")
     if stale:
         print()
-        print("  ★ **基线腐坏 %d 条** ⇒ ★ 名单里认了、实际已不存在（★ 名单要跟着改）：" % len(stale))
+        print(
+            "  ★ **基线腐坏 %d 条** ⇒ ★ 名单里认了、实际已不存在（★ 名单要跟着改）："
+            % len(stale)
+        )
         for tool in stale:
             print("      %s" % tool)
     if not new and not stale:

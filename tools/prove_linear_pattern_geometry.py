@@ -45,14 +45,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "linear-pattern-geometry-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "linear-pattern-geometry-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "trials": []}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -72,6 +81,7 @@ def main() -> int:
             #: ★★★ 而本仓**早就有** `sw_feature_readback.feature_names`（★ 还专门一个模
             #: 块）✓
             from scripts.sw_feature_readback import feature_names as _fn
+
             return list(_fn(doc))
 
         def geom() -> dict:
@@ -83,26 +93,30 @@ def main() -> int:
                 if bodies:
                     bb = get_com_member(bodies[0], "GetBodyBox")
                     out["box"] = [round(float(x), 6) for x in bb] if bb else None
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["err"] = str(exc)[:80]
             return out
 
         before_names = tree()
         before_geom = geom()
         ev["before"] = {"tree": len(before_names), "geom": before_geom}
-        ev["feature_name"] = (before_names[-1] if before_names else "")
+        ev["feature_name"] = before_names[-1] if before_names else ""
 
         #: ★ 三条分别试（★ 而**每条都是同一件事的一个判据**）
         for label, fn in (
-            ("pattern_named_feature", lambda: __import__("scripts.sw_part", fromlist=["x"])
-             .linear_pattern(doc, ev["feature_name"], 1.0, 0.0, 0.0, 25.0, 3)),
+            (
+                "pattern_named_feature",
+                lambda: __import__("scripts.sw_part", fromlist=["x"]).linear_pattern(
+                    doc, ev["feature_name"], 1.0, 0.0, 0.0, 25.0, 3
+                ),
+            ),
         ):
             rec: dict = {"trial": label}
             try:
                 r = fn()
                 rec["raw_none"] = r is None
                 rec["raw_type"] = type(r).__name__
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 rec["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
             after_names = tree()
             after_geom = geom()
@@ -111,23 +125,31 @@ def main() -> int:
             rec["geom_changed"] = after_geom != before_geom
             rec["geom"] = after_geom
             ev["trials"].append(rec)
-        ev["verdict"] = ("pass" if any(t.get("geom_changed") for t in ev["trials"])
-                         else ("partial" if any(t.get("tree_new") for t in ev["trials"]) else "fail"))
-        ev["note"] = "★ 三条判据并列：① 特征树名字增量 · ② 特征数 · ③ 几何（体数 + 包围盒）。★ 「建成」 = 几何真的变了。"
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+        ev["verdict"] = (
+            "pass"
+            if any(t.get("geom_changed") for t in ev["trials"])
+            else ("partial" if any(t.get("tree_new") for t in ev["trials"]) else "fail")
+        )
+        ev["note"] = (
+            "★ 三条判据并列：① 特征树名字增量 · ② 特征数 · ③ 几何（体数 + 包围盒）。★ 「建成」 = 几何真的变了。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1, default=str)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             try:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return 0
 

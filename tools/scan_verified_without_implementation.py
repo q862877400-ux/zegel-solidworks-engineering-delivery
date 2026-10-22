@@ -46,17 +46,21 @@ def _specs() -> dict:
     """
     out: dict = {}
     try:
-        import register_capabilities as rc                                 # noqa: PLC0415
+        import register_capabilities as rc  # noqa: PLC0415
+
         for spec in rc.all_specs():
             name = getattr(spec, "name", None) or (
-                spec.get("name") if isinstance(spec, dict) else None)
+                spec.get("name") if isinstance(spec, dict) else None
+            )
             mod = getattr(spec, "module", None) or (
-                spec.get("module") if isinstance(spec, dict) else None)
+                spec.get("module") if isinstance(spec, dict) else None
+            )
             fn = getattr(spec, "function", None) or (
-                spec.get("function") if isinstance(spec, dict) else None)
+                spec.get("function") if isinstance(spec, dict) else None
+            )
             if name:
                 out[str(name)] = (str(mod or ""), str(fn or ""))
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("★ 取不到 ToolSpec 注册表:", type(exc).__name__, str(exc)[:120])
 
     #: ★★ **第二条路径**：★ `server.py` 里的 `name="..."` 那批（★ 只有名字）✓
@@ -76,8 +80,11 @@ def _defined_functions() -> set:
         for f in (REPO / d).rglob("*.py"):
             if f.name in skip:
                 continue
-            for m in re.finditer(r"^\s*def (\w+)\(", f.read_text(encoding="utf-8", errors="replace"),
-                                 re.M):
+            for m in re.finditer(
+                r"^\s*def (\w+)\(",
+                f.read_text(encoding="utf-8", errors="replace"),
+                re.M,
+            ):
                 out.add(m.group(1))
     return out
 
@@ -87,7 +94,9 @@ def main() -> int:
     defined = _defined_functions()
     print("★ ToolSpec 条数:", len(specs), "· 实现面函数名:", len(defined))
 
-    caps = json.loads((REPO / "capabilities.yaml").read_text(encoding="utf-8"))["capabilities"]
+    caps = json.loads((REPO / "capabilities.yaml").read_text(encoding="utf-8"))[
+        "capabilities"
+    ]
     rows = []
     for c in caps:
         if c.get("level") != "verified":
@@ -105,12 +114,17 @@ def main() -> int:
                 #: ★★ 由 `server.py` 提供 ⇒ ★ **不报缺**（★ 但**计入**一个单独的口径）✓
                 continue
             if not fn or fn not in defined:
-                missing.append("%s ⇒ module=%s function=%s（★ 实现面找不到）" % (t, _mod, fn))
+                missing.append(
+                    "%s ⇒ module=%s function=%s（★ 实现面找不到）" % (t, _mod, fn)
+                )
         if missing:
             rows.append({"id": c["id"], "level": c.get("level"), "missing": missing})
 
-    R = {"★_判据": "★ verified 条目挂的 MCP 工具 ⇒ 其声明的 function 必须能在实现面找到",
-         "★_合计": len(rows), "rows": rows}
+    R = {
+        "★_判据": "★ verified 条目挂的 MCP 工具 ⇒ 其声明的 function 必须能在实现面找到",
+        "★_合计": len(rows),
+        "rows": rows,
+    }
     OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1), encoding="utf-8")
     print()
     print("★★ 挂的工具**指不到实现**的 `verified` 条目：**%d** 个" % len(rows))

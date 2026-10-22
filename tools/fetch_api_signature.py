@@ -29,6 +29,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,8 +55,14 @@ LIB_PREFIX: dict[str, tuple[str, ...]] = {
     "cosworksapi": ("CosmosWorksLib", "SolidWorks.Interop.cosworks"),
 }
 
-_ESC = (("\\u003c", "<"), ("\\u003e", ">"), ("\\u0026", "&"), ("\\n", "\n"),
-        ("\\\"", '"'), ("\\/", "/"))
+_ESC = (
+    ("\\u003c", "<"),
+    ("\\u003e", ">"),
+    ("\\u0026", "&"),
+    ("\\n", "\n"),
+    ('\\"', '"'),
+    ("\\/", "/"),
+)
 
 
 def _unescape(text: str) -> str:
@@ -83,13 +90,17 @@ def _system_proxy() -> str:
     只读注册表，不写（AGENTS.md 红线：不碰系统层）。
     """
     import os
+
     env = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
     if env:
         return env
     try:
         import winreg  # type: ignore[import-not-found]
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER,
-                            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings") as k:
+
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+        ) as k:
             enable, _ = winreg.QueryValueEx(k, "ProxyEnable")
             server, _ = winreg.QueryValueEx(k, "ProxyServer")
         if enable and server:
@@ -99,22 +110,33 @@ def _system_proxy() -> str:
     return ""
 
 
-def fetch_online(book: str, iface: str, member: str, timeout: int = 25) -> tuple[str, str]:
+def fetch_online(
+    book: str, iface: str, member: str, timeout: int = 25
+) -> tuple[str, str]:
     """返回 ``(页面文本, 命中的 URL)``；取不到返回 ``('', '')``。
 
     ⚠ HTTP 200 不代表命中（见模块头）—— 本函数**只负责取**，命中判定交给调用方。
     """
     proxy = _system_proxy()
     opener = urllib.request.build_opener(
-        urllib.request.ProxyHandler({"http": proxy, "https": proxy}) if proxy
+        urllib.request.ProxyHandler({"http": proxy, "https": proxy})
+        if proxy
         else urllib.request.ProxyHandler({})
     )
     for lib in LIB_PREFIX.get(book, ("",)):
-        for iface_form in (iface, iface.lstrip("I") if iface.startswith("I") else iface):
-            for name in (f"{lib}~{lib}.{iface_form}~{member}", f"{lib}~{iface_form}~{member}"):
+        for iface_form in (
+            iface,
+            iface.lstrip("I") if iface.startswith("I") else iface,
+        ):
+            for name in (
+                f"{lib}~{lib}.{iface_form}~{member}",
+                f"{lib}~{iface_form}~{member}",
+            ):
                 url = f"{BASE}/{book}/{name}.html"
                 try:
-                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                    req = urllib.request.Request(
+                        url, headers={"User-Agent": "Mozilla/5.0"}
+                    )
                     with opener.open(req, timeout=timeout) as resp:
                         if resp.status != 200:
                             continue
@@ -132,8 +154,11 @@ def fetch_local(book: str, iface: str, member: str) -> tuple[str, str]:
     root = BOOKS.get(book)
     if not root or not Path(root).is_dir():
         return "", ""
-    for pat in (f"*~{iface}~{member}.html", f"*~{iface.lstrip('I')}~{member}.html",
-                f"*{member}.html"):
+    for pat in (
+        f"*~{iface}~{member}.html",
+        f"*~{iface.lstrip('I')}~{member}.html",
+        f"*{member}.html",
+    ):
         for p in Path(root).rglob(pat):
             try:
                 text = p.read_text(encoding="cp1252", errors="replace")
@@ -163,25 +188,51 @@ def extract(text: str, member: str) -> dict:
             continue
         if cur is not None:
             # 收集到下一个明显的段标题为止
-            if re.match(r"^(Property Value|Return Value|Remarks|Example|See Also|Parameters)\b",
-                        s, re.I):
+            if re.match(
+                r"^(Property Value|Return Value|Remarks|Example|See Also|Parameters)\b",
+                s,
+                re.I,
+            ):
                 cur = None
                 continue
-            if member.lower() in s.lower() or s.startswith((")", "ByVal", "ByRef", "Dim",
-                                                            "public", "Public", "Sub",
-                                                            "Function", "void", "int")):
+            if member.lower() in s.lower() or s.startswith(
+                (
+                    ")",
+                    "ByVal",
+                    "ByRef",
+                    "Dim",
+                    "public",
+                    "Public",
+                    "Sub",
+                    "Function",
+                    "void",
+                    "int",
+                )
+            ):
                 blocks[cur].append(s)
     # 命中判定：至少有一段里出现了成员调用形状
     hit = any(any(member.lower() in ln.lower() for ln in v) for v in blocks.values())
-    return {"matched": hit, "member": member, "blocks": {k: v[:14] for k, v in blocks.items()}}
+    return {
+        "matched": hit,
+        "member": member,
+        "blocks": {k: v[:14] for k, v in blocks.items()},
+    }
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="取官方 API 成员签名（在线优先，本地兜底）")
+    ap = argparse.ArgumentParser(
+        description="取官方 API 成员签名（在线优先，本地兜底）"
+    )
     ap.add_argument("member", help="成员名，如 CreateMesh / SetMaterialPropertyName2")
-    ap.add_argument("--iface", default="", help="接口名，如 ICWStudy / IPartDoc（可省略）")
-    ap.add_argument("--book", default="sldworksapi", choices=sorted(BOOKS),
-                    help="册：sldworksapi 或 cosworksapi")
+    ap.add_argument(
+        "--iface", default="", help="接口名，如 ICWStudy / IPartDoc（可省略）"
+    )
+    ap.add_argument(
+        "--book",
+        default="sldworksapi",
+        choices=sorted(BOOKS),
+        help="册：sldworksapi 或 cosworksapi",
+    )
     ap.add_argument("--no-cache", action="store_true", help="不用缓存")
     ap.add_argument("--json", action="store_true", help="输出 JSON")
     args = ap.parse_args()
@@ -197,37 +248,53 @@ def main() -> int:
             text, src = fetch_online(args.book, args.iface, args.member)
         if not text:
             # 未给接口名时，先试几个常见形态
-            for guess in ([args.iface] if args.iface else
-                          ["ICWStudy", "CWStudy", "IModelDoc2", "IPartDoc"]):
+            for guess in (
+                [args.iface]
+                if args.iface
+                else ["ICWStudy", "CWStudy", "IModelDoc2", "IPartDoc"]
+            ):
                 text, src = fetch_online(args.book, guess, args.member)
                 if text:
                     break
         origin = "online"
         if not text:
-            for guess in ([args.iface] if args.iface else ["ICWStudy", "CWStudy",
-                                                           "IModelDoc2", "IPartDoc"]):
+            for guess in (
+                [args.iface]
+                if args.iface
+                else ["ICWStudy", "CWStudy", "IModelDoc2", "IPartDoc"]
+            ):
                 text, src = fetch_local(args.book, guess, args.member)
                 if text:
                     break
             origin = "local"
         if not text:
-            print("查不到：'%s'（册 %s）—— 在线与本地都无命中。" % (args.member, args.book),
-                  file=sys.stderr)
-            print("⇒ 按铁律 5 不猜。可试：换 --book，或补 --iface 指定接口名。", file=sys.stderr)
+            print(
+                "查不到：'%s'（册 %s）—— 在线与本地都无命中。"
+                % (args.member, args.book),
+                file=sys.stderr,
+            )
+            print(
+                "⇒ 按铁律 5 不猜。可试：换 --book，或补 --iface 指定接口名。",
+                file=sys.stderr,
+            )
             return 2
         out = extract(text, args.member)
         out["origin"] = origin
         out["source"] = src
         CACHE.mkdir(parents=True, exist_ok=True)
-        cache_file.write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n",
-                              encoding="utf-8")
+        cache_file.write_text(
+            json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
 
     if args.json:
         print(json.dumps(out, ensure_ascii=False, indent=2))
     else:
         print("成员: %s" % out["member"])
         print("来源: %s" % out.get("source", "?"))
-        print("命中: %s  ← **判据是签名里真的出现成员名**（HTTP 200 不算）" % out["matched"])
+        print(
+            "命中: %s  ← **判据是签名里真的出现成员名**（HTTP 200 不算）"
+            % out["matched"]
+        )
         for sec, body in out.get("blocks", {}).items():
             print()
             print("  [%s]" % sec)

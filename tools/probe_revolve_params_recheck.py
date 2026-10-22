@@ -37,10 +37,13 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 OUT = ROOT / "output" / "revolve-params-capability-recheck.json"
 ANGLE_DEG = 30.0
 ev: dict = {
-    "★_判据": ("建 **30.0**° 的旋转 ⇒ 读 `GetRevolutionAngle`："
-               "★ ≈30.0 ⇒ **度** · ★ ≈0.5236（π/6）⇒ **弧度**"),
+    "★_判据": (
+        "建 **30.0**° 的旋转 ⇒ 读 `GetRevolutionAngle`："
+        "★ ≈30.0 ⇒ **度** · ★ ≈0.5236（π/6）⇒ **弧度**"
+    ),
     "★_为什么还要量体积": "★ 只读角度是**读回我写的东西** ⇒ ★ 体积是**独立几何** ✓",
-    "steps": []}
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -55,7 +58,7 @@ def step(name: str, **kw) -> None:
     ev["steps"].append(dict(name=name, **kw))
     try:
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
-    except OSError:                                                       # pragma: no cover
+    except OSError:  # pragma: no cover
         pass
     print("★ %-28s %s" % (name, json.dumps(kw, ensure_ascii=False)[:230]))
 
@@ -70,13 +73,21 @@ def main() -> int:
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
     #: ★ 轮廓：★ 一个**矩形**（★ 它绕一条中心线转 30° ⇒ 得到一段"扇形环"体）✓
-    #: ★★ 用 `sketch_corner_rectangle` —— ★ 它在本仓**已改成 `get_com_member` 形态**（★ 
+    #: ★★ 用 `sketch_corner_rectangle` —— ★ 它在本仓**已改成 `get_com_member` 形态**（★
     #: 轮 126）✓
     with P.sketch(model, "Front Plane") as sk:
         P.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
         #: ★ 中心线（★ 旋转轴）—— ★ 沿 Y 轴、★ 在 x=0 ✓
-        get_com_member(get_com_member(model, "SketchManager"),
-                       "CreateCenterLine", 0.0, -20.0, 0.0, 0.0, 20.0, 0.0)
+        get_com_member(
+            get_com_member(model, "SketchManager"),
+            "CreateCenterLine",
+            0.0,
+            -20.0,
+            0.0,
+            0.0,
+            20.0,
+            0.0,
+        )
     step("sketch", sketch_name=str(sk), rect="(10,0)-(20,10)", centerline="x=0")
 
     #: ★★★★★★★ 2026-10-04（轮 130）**要传**弧度**** —— ★ 我先前传了**度** ✗
@@ -92,8 +103,10 @@ def main() -> int:
     #:       别手调内部实现**」✓
     built = {"error": None, "★_注意": "★ 能力层的契约是**弧度**（★ 形参名 angle_rad）"}
     try:
-        built["returned"] = str(P.revolve_boss(model, str(sk), math.radians(ANGLE_DEG)))[:80]
-    except Exception as exc:                                              # noqa: BLE001
+        built["returned"] = str(
+            P.revolve_boss(model, str(sk), math.radians(ANGLE_DEG))
+        )[:80]
+    except Exception as exc:  # noqa: BLE001
         built["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     step("revolve_boss", angle_deg=ANGLE_DEG, **built)
 
@@ -106,12 +119,16 @@ def main() -> int:
         f = get_com_member(model, "FirstFeature")
         while f is not None:
             try:
-                names.append((str(get_com_member(f, "Name") or ""),
-                              str(get_com_member(f, "GetTypeName2") or "")))
-            except Exception:                                             # noqa: BLE001
+                names.append(
+                    (
+                        str(get_com_member(f, "Name") or ""),
+                        str(get_com_member(f, "GetTypeName2") or ""),
+                    )
+                )
+            except Exception:  # noqa: BLE001
                 pass
             f = get_com_member(f, "GetNextFeature")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         names = [("EXC", str(exc)[:80])]
     step("feature_type_names", all=names)
     ev["★_真实的类型名"] = names
@@ -122,35 +139,61 @@ def main() -> int:
     #:   ★★ **⇒ 先把 `_CONTAINER_NODES` 也打出来**（★ 万一 `旋转1` 在里面？）✓
     try:
         import sw_feature_readback as _R
-        step("container_nodes", count=len(_R._CONTAINER_NODES),
-             has_my_feature=("旋转1" in _R._CONTAINER_NODES))
-    except Exception as exc:                                              # noqa: BLE001
+
+        step(
+            "container_nodes",
+            count=len(_R._CONTAINER_NODES),
+            has_my_feature=("旋转1" in _R._CONTAINER_NODES),
+        )
+    except Exception as exc:  # noqa: BLE001
         step("container_nodes_EXC", err=str(exc)[:110])
     trace = []
     try:
         from sw_connect import safe_get_com_member as _sg
+
         f = _sg(model, "FirstFeature")
         while f is not None:
             try:
                 nm = str(_sg(f, "Name") or "")
                 tn = str(_sg(f, "GetTypeName2") or "")
                 trace.append((nm, tn, ("Revolve" in tn)))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 trace.append(("EXC", str(exc)[:50], False))
             f = _sg(f, "GetNextFeature")
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         trace.append(("LOOP_EXC", str(exc)[:90], False))
-    step("fallback_trace", tail=[x for x in trace if x[1] not in (
-        "FavoriteFolder", "HistoryFolder", "SelectionSetFolder", "SensorFolder",
-        "DocsFolder", "DetailCabinet", "InkMarkupFolder", "EnvFolder")][-6:])
+    step(
+        "fallback_trace",
+        tail=[
+            x
+            for x in trace
+            if x[1]
+            not in (
+                "FavoriteFolder",
+                "HistoryFolder",
+                "SelectionSetFolder",
+                "SensorFolder",
+                "DocsFolder",
+                "DetailCabinet",
+                "InkMarkupFolder",
+                "EnvFolder",
+            )
+        ][-6:],
+    )
 
     got = R.revolve_params(model)
-    step("revolve_params", feature=got.get("feature"), definition=got.get("definition"),
-         error=got.get("error"), GetAxisType=got.get("GetAxisType"),
-         IsBossFeature=got.get("IsBossFeature"), IsThinFeature=got.get("IsThinFeature"),
-         GetContoursCount=got.get("GetContoursCount"),
-         ReverseDirection=got.get("ReverseDirection"),
-         GetRevolutionAngle=got.get("GetRevolutionAngle"))
+    step(
+        "revolve_params",
+        feature=got.get("feature"),
+        definition=got.get("definition"),
+        error=got.get("error"),
+        GetAxisType=got.get("GetAxisType"),
+        IsBossFeature=got.get("IsBossFeature"),
+        IsThinFeature=got.get("IsThinFeature"),
+        GetContoursCount=got.get("GetContoursCount"),
+        ReverseDirection=got.get("ReverseDirection"),
+        GetRevolutionAngle=got.get("GetRevolutionAngle"),
+    )
 
     ga = got.get("GetRevolutionAngle")
     fwd = ga.get("forward") if isinstance(ga, dict) else None
@@ -160,8 +203,10 @@ def main() -> int:
         #: ★★★ **最近候选分类**（★ 轮 128/129 的教训：容差带不可靠）✓
         #: ★ 本次传的是 **π/6 弧度**（= 30°）⇒ ★ 期望读回 **≈0.5236**（弧度）✓
         #:   ★★ **⇒ 若读回 ≈0.5236 ⇒ 那**只能**是弧度**（★ 若它回度、★ 该是 30.0）✓
-        cands = [("★ **度**（★ 若它回 30.0 ⇒ 那是**度**）", 30.0),
-                 ("★ **弧度**（★ 若它回 0.5236 ⇒ 那是**弧度**）", math.pi / 6)]
+        cands = [
+            ("★ **度**（★ 若它回 30.0 ⇒ 那是**度**）", 30.0),
+            ("★ **弧度**（★ 若它回 0.5236 ⇒ 那是**弧度**）", math.pi / 6),
+        ]
         near = min(cands, key=lambda kv: abs(float(fwd) - kv[1]))
         gap = abs(float(fwd) - near[1])
         others = min(abs(float(fwd) - v) for k, v in cands if k != near[0])
@@ -171,12 +216,14 @@ def main() -> int:
         ev["★_次近距离"] = round(others, 6)
         if gap < others * 0.5:
             ev["★_GetRevolutionAngle_口径"] = (
-                "%s ⇒ ★ 实测 %.6f（★ 最近 %.6f · ★ 次近 %.6f）" % (near[0], float(fwd),
-                                                                    near[1], others))
+                "%s ⇒ ★ 实测 %.6f（★ 最近 %.6f · ★ 次近 %.6f）"
+                % (near[0], float(fwd), near[1], others)
+            )
         else:
             ev["★_GetRevolutionAngle_口径"] = (
                 "★ **不明确**（★ 实测 %.6f · ★ 最近 %s %.6f · ★ 次近 %.6f）⇒ ★ 如实标"
-                % (float(fwd), near[0], near[1], others))
+                % (float(fwd), near[0], near[1], others)
+            )
     step("VERDICT", verdict=ev["★_GetRevolutionAngle_口径"])
 
     #: ★★★★ **独立几何**：★ 量体积 ✓
@@ -185,11 +232,11 @@ def main() -> int:
         vol = float(get_com_member(mp, "Volume"))
         #: ★ 矩形 x∈[10,20] · y∈[0,10] ⇒ 绕 x=0 转 30° 的体积 =
         #:   (30/360)·π·(20²−10²)·10 = (1/12)·π·300·10 ✓
-        expect = (ANGLE_DEG / 360.0) * math.pi * (20.0 ** 2 - 10.0 ** 2) * 10.0
+        expect = (ANGLE_DEG / 360.0) * math.pi * (20.0**2 - 10.0**2) * 10.0
         step("volume", mm3=round(vol, 3), expect_deg=round(expect, 3))
         ev["★_体积_实测"] = round(vol, 3)
         ev["★_体积_期望"] = round(expect, 3)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         step("volume_EXC", err=str(exc)[:110])
 
     OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -202,7 +249,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                          # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

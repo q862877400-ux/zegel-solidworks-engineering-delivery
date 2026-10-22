@@ -37,16 +37,18 @@ SPECS_BATCH42 = [
     ToolSpec(
         name="solidworks_drawing_sheets_summary",
         title="Summarise Every Drawing Sheet",
-        module="sw_drawing_query", function="sheets_summary",
+        module="sw_drawing_query",
+        function="sheets_summary",
         inject="model",
         params=[],
         doc="Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). "
-            "★ Read-only.",
+        "★ Read-only.",
     ),
     ToolSpec(
         name="solidworks_drawing_current_sheet_info",
         title="Get the Current Drawing Sheet's Info",
-        module="sw_drawing_query", function="current_sheet_info",
+        module="sw_drawing_query",
+        function="current_sheet_info",
         inject="model",
         params=[],
         doc="Return info about the sheet currently being edited as a dict. ★ Read-only.",

@@ -33,13 +33,30 @@ except ImportError:
 
 def build_parser() -> argparse.ArgumentParser:
     """@brief 构造命令行参数解析器。"""
-    parser = argparse.ArgumentParser(description="按 CAD 原子操作选择 Python、C#、C++ 或无头后端。")
+    parser = argparse.ArgumentParser(
+        description="按 CAD 原子操作选择 Python、C#、C++ 或无头后端。"
+    )
     parser.add_argument("--operation", help="operation_routes 中的原子操作 ID。")
-    parser.add_argument("--list", action="store_true", help="列出全部操作路由及后端摘要。")
-    parser.add_argument("--available", action="append", default=[], help="本机可用后端 ID，可重复指定。")
-    parser.add_argument("--requirement", action="append", default=[], help="已满足的加载项/许可证条件，可重复指定。")
-    parser.add_argument("--solidworks-revision", help="SolidWorks Revision，例如 34.1.1。")
-    parser.add_argument("--exact-api", action="store_true", help="要求原始 I* 接口语义，不接受 Automation 等价方法。")
+    parser.add_argument(
+        "--list", action="store_true", help="列出全部操作路由及后端摘要。"
+    )
+    parser.add_argument(
+        "--available", action="append", default=[], help="本机可用后端 ID，可重复指定。"
+    )
+    parser.add_argument(
+        "--requirement",
+        action="append",
+        default=[],
+        help="已满足的加载项/许可证条件，可重复指定。",
+    )
+    parser.add_argument(
+        "--solidworks-revision", help="SolidWorks Revision，例如 34.1.1。"
+    )
+    parser.add_argument(
+        "--exact-api",
+        action="store_true",
+        help="要求原始 I* 接口语义，不接受 Automation 等价方法。",
+    )
     parser.add_argument("--manifest", type=Path, help="可选能力清单路径。")
     return parser
 
@@ -55,7 +72,9 @@ def route_report(args: argparse.Namespace) -> dict:
                 {
                     "id": route_id,
                     "label": route.get("label", route_id),
-                    "candidate_backends": [item["backend"] for item in route.get("candidates", [])],
+                    "candidate_backends": [
+                        item["backend"] for item in route.get("candidates", [])
+                    ],
                     "blocked_reason": route.get("blocked_reason"),
                     "requires": route.get("requires", []),
                 }

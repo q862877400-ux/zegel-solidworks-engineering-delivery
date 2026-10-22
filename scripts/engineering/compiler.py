@@ -1,4 +1,5 @@
 """★ EC03 方法库与受约束规划编译 —— **纯离线编译器**（★ 不 import 任何 COM 模块）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   `output/ENGINEERING_CONSTRUCTION_PLAN.md` **§5 EC03**（★ T01–T08 逐字）
@@ -23,12 +24,29 @@ from dataclasses import dataclass, field
 from typing import Any
 
 __all__ = [
-    "PlanError", "RejectCode", "Complexity", "MethodSpec", "METHOD_LIBRARY",
-    "SketchIR", "FeatureIR", "AssemblyIR", "DrawingIR",
-    "ToolDAG", "DAGNode", "CompiledPlan", "EleganceScore",
-    "compile_contract", "score_elegance", "assert_no_com_imports",
-    "is_production_method", "list_sandbox_methods", "SANDBOX_PREFIX",
-    "SolveStatus", "find_unsat_core", "solve_with_budget", "rank_plans",
+    "PlanError",
+    "RejectCode",
+    "Complexity",
+    "MethodSpec",
+    "METHOD_LIBRARY",
+    "SketchIR",
+    "FeatureIR",
+    "AssemblyIR",
+    "DrawingIR",
+    "ToolDAG",
+    "DAGNode",
+    "CompiledPlan",
+    "EleganceScore",
+    "compile_contract",
+    "score_elegance",
+    "assert_no_com_imports",
+    "is_production_method",
+    "list_sandbox_methods",
+    "SANDBOX_PREFIX",
+    "SolveStatus",
+    "find_unsat_core",
+    "solve_with_budget",
+    "rank_plans",
 ]
 
 
@@ -36,20 +54,29 @@ __all__ = [
 # 一、★★★★ 编译期拒绝码（★ **封闭词表** —— ★ 非法路由**在编译期**失败）
 # ══════════════════════════════════════════════════════════════════════
 
+
 class RejectCode:
     """★★ 编译期拒绝码（★ 逐字承计划 §5 EC03 验收）。"""
 
-    OVERREACH = "reject-overreach"              #: ★ 越权（★ 动冻结域之外）
+    OVERREACH = "reject-overreach"  #: ★ 越权（★ 动冻结域之外）
     UNDERCONSTRAINED = "reject-underconstrained"  #: ★ 欠约束（★ 参数没定域）
-    CYCLIC = "reject-cyclic-dependency"         #: ★ 循环依赖
-    ILLEGAL_ROUTE = "reject-illegal-route"      #: ★ 非法路由
+    CYCLIC = "reject-cyclic-dependency"  #: ★ 循环依赖
+    ILLEGAL_ROUTE = "reject-illegal-route"  #: ★ 非法路由
     NOT_APPLICABLE = "reject-method-not-applicable"  #: ★ 方法不适用
     UNKNOWN_NOT_FEASIBLE = "reject-unknown-not-feasible"  #: ★ `unknown` 不得当可行
-    CONTRACT_NOT_FROZEN = "reject-contract-not-frozen"    #: ★ 契约未冻结
-    NO_METHOD = "reject-no-method-for-intent"   #: ★ 没有匹配的方法
+    CONTRACT_NOT_FROZEN = "reject-contract-not-frozen"  #: ★ 契约未冻结
+    NO_METHOD = "reject-no-method-for-intent"  #: ★ 没有匹配的方法
 
-    ALL = (OVERREACH, UNDERCONSTRAINED, CYCLIC, ILLEGAL_ROUTE, NOT_APPLICABLE,
-           UNKNOWN_NOT_FEASIBLE, CONTRACT_NOT_FROZEN, NO_METHOD)
+    ALL = (
+        OVERREACH,
+        UNDERCONSTRAINED,
+        CYCLIC,
+        ILLEGAL_ROUTE,
+        NOT_APPLICABLE,
+        UNKNOWN_NOT_FEASIBLE,
+        CONTRACT_NOT_FROZEN,
+        NO_METHOD,
+    )
 
 
 class PlanError(Exception):
@@ -76,6 +103,7 @@ class Complexity:
 # 二、★★★★★ MethodSpec（★ FR-001 —— ★ 逐字承 EC03-T01）
 # ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class MethodSpec:
     """★★ `MethodSpec`（★ 逐字承计划 §5 EC03-T01）：
@@ -84,16 +112,16 @@ class MethodSpec:
     """
 
     id: str
-    goal: str                                            #: ★ 目标
-    applicable_devices: tuple = ()                       #: ★ 适用域
-    preconditions: tuple = ()                            #: ★ 前置
-    postconditions: tuple = ()                           #: ★ 后置
-    steps: tuple = ()                                    #: ★ 步骤（★ **工具名序列**）
-    forbidden: tuple = ()                                #: ★★ **禁止条件**
-    complexity: str = Complexity.MEDIUM                  #: ★ 复杂度
-    modification_domain: tuple = ()                      #: ★★ **修改域**（★ 越权检查靠它）
-    verification_obligations: tuple = ()                 #: ★ 验证义务
-    failure_domain: tuple = ()                           #: ★★ **失败域**（★ 什么时候不适用）
+    goal: str  #: ★ 目标
+    applicable_devices: tuple = ()  #: ★ 适用域
+    preconditions: tuple = ()  #: ★ 前置
+    postconditions: tuple = ()  #: ★ 后置
+    steps: tuple = ()  #: ★ 步骤（★ **工具名序列**）
+    forbidden: tuple = ()  #: ★★ **禁止条件**
+    complexity: str = Complexity.MEDIUM  #: ★ 复杂度
+    modification_domain: tuple = ()  #: ★★ **修改域**（★ 越权检查靠它）
+    verification_obligations: tuple = ()  #: ★ 验证义务
+    failure_domain: tuple = ()  #: ★★ **失败域**（★ 什么时候不适用）
     #: ★★ **选法原因与替代方案**（★ EC03-T02 逐字）
     rationale: str = ""
     alternatives: tuple = ()
@@ -116,8 +144,13 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
         applicable_devices=("plate",),
         preconditions=("★ 外形尺寸与板厚已冻结", "★ 基准已定语义角色"),
         postconditions=("★ 体数 = 1", "★ 厚度回读等于冻结值"),
-        steps=("sketch_start", "sketch_add_rectangle", "sketch_end",
-               "extrude_boss", "chamfer"),
+        steps=(
+            "sketch_start",
+            "sketch_add_rectangle",
+            "sketch_end",
+            "extrude_boss",
+            "chamfer",
+        ),
         forbidden=("★ 禁止先倒角再打孔", "★ 禁止在未冻结基准上开草图"),
         complexity=Complexity.LOW,
         modification_domain=("outline", "thickness", "chamfer", "datum"),
@@ -132,8 +165,13 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
         applicable_devices=("plate", "bracket"),
         preconditions=("★ 孔径/孔距/基准已冻结", "★ 边距已按 EC02 规则验过"),
         postconditions=("★ 孔数与冻结一致", "★ 孔心坐标回读一致"),
-        steps=("sketch_start", "sketch_add_circle", "sketch_end", "extrude_cut",
-               "circular_pattern"),
+        steps=(
+            "sketch_start",
+            "sketch_add_circle",
+            "sketch_end",
+            "extrude_cut",
+            "circular_pattern",
+        ),
         forbidden=("★ 禁止逐孔单独建（★ 应为阵列）", "★ 禁止边距未验就开孔"),
         complexity=Complexity.MEDIUM,
         modification_domain=("hole_diameter", "hole_spacing", "hole_count", "datum"),
@@ -148,8 +186,13 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
         applicable_devices=("shaft",),
         preconditions=("★ 各档直径与长度已冻结", "★ 材料许用应力已定"),
         postconditions=("★ 回转体数 = 1", "★ 各档直径回读一致"),
-        steps=("sketch_start", "sketch_add_line", "sketch_add_centerline", "sketch_end",
-               "revolve_boss"),
+        steps=(
+            "sketch_start",
+            "sketch_add_line",
+            "sketch_add_centerline",
+            "sketch_end",
+            "revolve_boss",
+        ),
         forbidden=("★ 禁止无中心线回转", "★ 禁止各档用独立实体"),
         complexity=Complexity.MEDIUM,
         modification_domain=("diameter", "length", "fillet", "datum"),
@@ -164,8 +207,14 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
         applicable_devices=("bracket",),
         preconditions=("★ 包络与安装对象已冻结", "★ 孔组与折弯半径已定"),
         postconditions=("★ 支架体数 = 1", "★ 安装孔与对象配合"),
-        steps=("sketch_start", "sketch_add_rectangle", "sketch_end",
-               "extrude_boss", "sheet_metal_create_base_flange", "hole_group"),
+        steps=(
+            "sketch_start",
+            "sketch_add_rectangle",
+            "sketch_end",
+            "extrude_boss",
+            "sheet_metal_create_base_flange",
+            "hole_group",
+        ),
         forbidden=("★ 禁止折弯半径 < 板厚", "★ 禁止孔跨折弯线"),
         complexity=Complexity.HIGH,
         modification_domain=("outline", "thickness", "bend_radius", "hole_spacing"),
@@ -189,7 +238,7 @@ class SketchIR:
     """★ 草图 IR（★ 设计语义引用 —— ★ **不写裸坐标**）。"""
 
     name: str
-    plane_datum: str = ""                 #: ★ 引用 EC01 的 `Datum.identity()`
+    plane_datum: str = ""  #: ★ 引用 EC01 的 `Datum.identity()`
     entities: tuple = ()
     version: str = IR_VERSION
 
@@ -199,10 +248,10 @@ class FeatureIR:
     """★ 特征 IR。"""
 
     name: str
-    kind: str = ""                        #: ★ 如 `boss` / `cut` / `revolve` / `fillet`
+    kind: str = ""  #: ★ 如 `boss` / `cut` / `revolve` / `fillet`
     source_sketch: str = ""
     params: dict = field(default_factory=dict)
-    depends_on: tuple = ()                #: ★★ **依赖**（★ 循环检查靠它）
+    depends_on: tuple = ()  #: ★★ **依赖**（★ 循环检查靠它）
     version: str = IR_VERSION
 
 
@@ -231,6 +280,7 @@ class DrawingIR:
 # 四、★★★★★ 工具 DAG（★ FR-006）
 # ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class DAGNode:
     """★ DAG 节点（★ 带**前后置**与**验证步骤** —— ★ EC03-T06 逐字）。"""
@@ -239,7 +289,7 @@ class DAGNode:
     preconditions: tuple = ()
     postconditions: tuple = ()
     verification: tuple = ()
-    depends_on: tuple = ()                #: ★★ **前驱**（★ 循环检查靠它）
+    depends_on: tuple = ()  #: ★★ **前驱**（★ 循环检查靠它）
 
 
 @dataclass
@@ -264,7 +314,7 @@ class ToolDAG:
             color[u] = GRAY
             for v in graph.get(u, ()):
                 if v not in graph:
-                    continue                   #: ★ 悬空前驱由 `illegal_route` 抓
+                    continue  #: ★ 悬空前驱由 `illegal_route` 抓
                 if color[v] == GRAY:
                     return stack + [u, v]
                 if color[v] == WHITE:
@@ -295,7 +345,7 @@ class ToolDAG:
                 if v not in graph:
                     continue
                 if color[v] == GRAY:
-                    return path[path.index(v):] + [v]
+                    return path[path.index(v) :] + [v]
                 if color[v] == WHITE:
                     r = visit(v)
                     if r:
@@ -316,7 +366,7 @@ class ToolDAG:
         names = {n.tool for n in self.nodes}
         bad = []
         for n in self.nodes:
-            for d in (n.depends_on or ()):
+            for d in n.depends_on or ():
                 if d not in names:
                     bad.append("%s→%s" % (n.tool, d))
         return bad
@@ -325,6 +375,7 @@ class ToolDAG:
 # ══════════════════════════════════════════════════════════════════════
 # 五、★★★★★ 编译产物（★ 冻结带哈希 —— ★ 不可静默改写）
 # ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class CompiledPlan:
@@ -343,10 +394,16 @@ class CompiledPlan:
         payload = {
             "contract_hash": self.contract_hash,
             "method_id": self.method_id,
-            "nodes": [{"tool": n.tool, "pre": list(n.preconditions or ()),
-                       "post": list(n.postconditions or ()),
-                       "ver": list(n.verification or ()),
-                       "dep": list(n.depends_on or ())} for n in self.dag.nodes],
+            "nodes": [
+                {
+                    "tool": n.tool,
+                    "pre": list(n.preconditions or ()),
+                    "post": list(n.postconditions or ()),
+                    "ver": list(n.verification or ()),
+                    "dep": list(n.depends_on or ()),
+                }
+                for n in self.dag.nodes
+            ],
             "irs": [type(x).__name__ + ":" + getattr(x, "name", "") for x in self.irs],
         }
         blob = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
@@ -373,6 +430,7 @@ class CompiledPlan:
 # 六、★★★★★ 「优雅」的多指标（★ FR-007 —— ★ **不能仅最少特征**）
 # ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class EleganceScore:
     """★★ **优雅的多指标**（★ 逐字承 EC03-T07）：
@@ -380,27 +438,34 @@ class EleganceScore:
     「★ 修改稳定、基准表达、意图可读、工具风险、可制造性；★ **不能仅最少特征**」。
     """
 
-    modification_stability: float = 0.0    #: ★ 改一个参数要动几处
-    datum_expression: float = 0.0          #: ★ 基准是否用语义角色
-    intent_readability: float = 0.0        #: ★ 特征名/结构是否可读
-    tool_risk: float = 0.0                 #: ★ 用到的工具风险（★ 越高越差 ⇒ 取负向）
-    manufacturability: float = 0.0         #: ★ 可制造性
+    modification_stability: float = 0.0  #: ★ 改一个参数要动几处
+    datum_expression: float = 0.0  #: ★ 基准是否用语义角色
+    intent_readability: float = 0.0  #: ★ 特征名/结构是否可读
+    tool_risk: float = 0.0  #: ★ 用到的工具风险（★ 越高越差 ⇒ 取负向）
+    manufacturability: float = 0.0  #: ★ 可制造性
 
     def total(self) -> float:
         """★ 加权总分（★ **五指标都要** —— ★ 不是 `1/特征数`）。"""
-        return (0.25 * self.modification_stability
-                + 0.20 * self.datum_expression
-                + 0.15 * self.intent_readability
-                + 0.20 * (1.0 - self.tool_risk)
-                + 0.20 * self.manufacturability)
+        return (
+            0.25 * self.modification_stability
+            + 0.20 * self.datum_expression
+            + 0.15 * self.intent_readability
+            + 0.20 * (1.0 - self.tool_risk)
+            + 0.20 * self.manufacturability
+        )
 
     def is_single_metric(self) -> bool:
         """★★★ **自查**：★ 是不是退化成了「单指标」（★ 那**不算**优雅）。
 
         ★★ 判据：★ 五个指标里**只有 ≤1 个非零** ⇒ ★ 退化。
         """
-        vals = (self.modification_stability, self.datum_expression,
-                self.intent_readability, self.tool_risk, self.manufacturability)
+        vals = (
+            self.modification_stability,
+            self.datum_expression,
+            self.intent_readability,
+            self.tool_risk,
+            self.manufacturability,
+        )
         return sum(1 for v in vals if v > 0.0) <= 1
 
 
@@ -421,19 +486,25 @@ def score_elegance(plan: CompiledPlan) -> EleganceScore:
     semantic = sum(1 for t in tools if t.islower() and "_" in t)
     readability = min(1.0, semantic / max(1, len(tools)))
     #: ★ **工具风险**：★ 危险工具（★ 删除/替换/薄壁）拉高风险
-    risky = sum(1 for t in tools if any(k in t for k in ("delete", "replace", "thicken")))
+    risky = sum(
+        1 for t in tools if any(k in t for k in ("delete", "replace", "thicken"))
+    )
     risk = min(1.0, risky / max(1, len(tools)))
     #: ★ **可制造性**：★ 有倒角/圆角后置 + 有孔阵列 ⇒ 好
-    #: ⚠ 别把续行的 `+` 写成**行首** —— ★ 门禁 `check_diff_markers.py` 会把它当 **patch 
+    #: ⚠ 别把续行的 `+` 写成**行首** —— ★ 门禁 `check_diff_markers.py` 会把它当 **patch
     #: 记号**
     #: （★ 本会话就红了一次：★ 报「`scripts/engineering/compiler.py:428` 混入 diff 记号
     #: 」）
     has_finish = any("chamfer" in t or "fillet" in t for t in tools)
     has_pattern = any("pattern" in t for t in tools)
     manuf = 0.5 + (0.25 if has_finish else 0.0) + (0.25 if has_pattern else 0.0)
-    return EleganceScore(modification_stability=stability, datum_expression=datum,
-                         intent_readability=readability, tool_risk=risk,
-                         manufacturability=min(1.0, manuf))
+    return EleganceScore(
+        modification_stability=stability,
+        datum_expression=datum,
+        intent_readability=readability,
+        tool_risk=risk,
+        manufacturability=min(1.0, manuf),
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -486,54 +557,69 @@ def compile_contract(contract: Any, *, device_class: str = "") -> CompiledPlan:
     """
     #: ④ 契约必须**已冻结**（★ 否则编译的是一个还没定的东西）
     if not getattr(contract, "content_hash", ""):
-        raise PlanError(RejectCode.CONTRACT_NOT_FROZEN,
-                        "★ 契约没有内容哈希（★ 未冻结）⇒ 不编译")
+        raise PlanError(
+            RejectCode.CONTRACT_NOT_FROZEN, "★ 契约没有内容哈希（★ 未冻结）⇒ 不编译"
+        )
     if getattr(contract, "state", "") != "frozen":
-        raise PlanError(RejectCode.CONTRACT_NOT_FROZEN,
-                        "★ 契约状态是 %r（★ 非 `frozen`）⇒ 不编译" % getattr(contract, "state", ""))
+        raise PlanError(
+            RejectCode.CONTRACT_NOT_FROZEN,
+            "★ 契约状态是 %r（★ 非 `frozen`）⇒ 不编译" % getattr(contract, "state", ""),
+        )
     #: ★★ **`unknown` 不得当可行**（★ FR-005）
     blocking = list(getattr(contract, "blocking_fields", lambda: [])())
     if blocking:
-        raise PlanError(RejectCode.UNKNOWN_NOT_FEASIBLE,
-                        "★ 契约仍有必需缺失字段 %r ⇒ `unknown` **不得当可行**" % blocking)
+        raise PlanError(
+            RejectCode.UNKNOWN_NOT_FEASIBLE,
+            "★ 契约仍有必需缺失字段 %r ⇒ `unknown` **不得当可行**" % blocking,
+        )
     #: ★ 确定性选法
     spec = _pick_method(getattr(contract, "intent", ""))
     if spec is None:
-        raise PlanError(RejectCode.NO_METHOD,
-                        "★ 没有匹配「%s」的方法" % getattr(contract, "intent", ""))
+        raise PlanError(
+            RejectCode.NO_METHOD,
+            "★ 没有匹配「%s」的方法" % getattr(contract, "intent", ""),
+        )
     #: ★★ **适用域检查**
     if device_class and not spec.applies_to(device_class):
-        raise PlanError(RejectCode.NOT_APPLICABLE,
-                        "★ 方法 %s 不适用设备类别 %r（★ 适用 %r）"
-                        % (spec.id, device_class, list(spec.applicable_devices)))
+        raise PlanError(
+            RejectCode.NOT_APPLICABLE,
+            "★ 方法 %s 不适用设备类别 %r（★ 适用 %r）"
+            % (spec.id, device_class, list(spec.applicable_devices)),
+        )
     #: ★★ **欠约束检查**（★ 参数域必须存在 —— ★ 计划验收逐字）
     domains = getattr(contract, "parameter_domains", {}) or {}
     if not domains:
-        raise PlanError(RejectCode.UNDERCONSTRAINED,
-                        "★ 契约没有任何 `parameter_domains` ⇒ 欠约束")
+        raise PlanError(
+            RejectCode.UNDERCONSTRAINED, "★ 契约没有任何 `parameter_domains` ⇒ 欠约束"
+        )
     #: ★★ **越权检查**（★ 契约里的域必须在方法的**修改域**内）
     over = [k for k in domains if not spec.allows(k)]
     if over:
-        raise PlanError(RejectCode.OVERREACH,
-                        "★ 参数 %r 不在方法 %s 的修改域 %r 内 ⇒ 越权"
-                        % (over, spec.id, list(spec.modification_domain)))
+        raise PlanError(
+            RejectCode.OVERREACH,
+            "★ 参数 %r 不在方法 %s 的修改域 %r 内 ⇒ 越权"
+            % (over, spec.id, list(spec.modification_domain)),
+        )
     #: ★ 编译成 DAG（★ 每步带前后置与验证）
     nodes: list[DAGNode] = []
     prev = None
     for i, step in enumerate(spec.steps):
-        nodes.append(DAGNode(
-            tool=step,
-            preconditions=spec.preconditions if i == 0 else (),
-            postconditions=spec.postconditions if i == len(spec.steps) - 1 else (),
-            verification=spec.verification_obligations if i == len(spec.steps) - 1 else (),
-            depends_on=(prev,) if prev else (),
-        ))
+        nodes.append(
+            DAGNode(
+                tool=step,
+                preconditions=spec.preconditions if i == 0 else (),
+                postconditions=spec.postconditions if i == len(spec.steps) - 1 else (),
+                verification=spec.verification_obligations
+                if i == len(spec.steps) - 1
+                else (),
+                depends_on=(prev,) if prev else (),
+            )
+        )
         prev = step
     dag = ToolDAG(nodes=nodes)
     #: ★★ **循环依赖检查**（★ 编译期）
     if dag.has_cycle():
-        raise PlanError(RejectCode.CYCLIC,
-                        "★ DAG 有环：%r" % dag.cycle_path())
+        raise PlanError(RejectCode.CYCLIC, "★ DAG 有环：%r" % dag.cycle_path())
     #: ★★ **非法路由检查**（★ 悬空前驱）
     dangling = dag.unknown_dependencies()
     if dangling:
@@ -541,10 +627,19 @@ def compile_contract(contract: Any, *, device_class: str = "") -> CompiledPlan:
     #: ★ 造 IR（★ 带版本）
     irs: list = [SketchIR(name="sketch1", plane_datum="datum:mounting_interface")]
     for i, step in enumerate(spec.steps):
-        irs.append(FeatureIR(name="feat%d_%s" % (i + 1, step), kind=step,
-                             depends_on=(nodes[i - 1].tool,) if i else ()))
-    return CompiledPlan(contract_hash=getattr(contract, "content_hash", ""),
-                        method_id=spec.id, dag=dag, irs=irs)
+        irs.append(
+            FeatureIR(
+                name="feat%d_%s" % (i + 1, step),
+                kind=step,
+                depends_on=(nodes[i - 1].tool,) if i else (),
+            )
+        )
+    return CompiledPlan(
+        contract_hash=getattr(contract, "content_hash", ""),
+        method_id=spec.id,
+        dag=dag,
+        irs=irs,
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -552,8 +647,16 @@ def compile_contract(contract: Any, *, device_class: str = "") -> CompiledPlan:
 # ══════════════════════════════════════════════════════════════════════
 
 #: ★★ **禁止出现的 COM 模块名**（★ 本模块**及其依赖**都不许有）
-COM_MODULE_MARKERS = ("win32com", "comtypes", "pythoncom", "pywintypes",
-                      "SldWorks", "sw_connect", "sw_part", "sw_session")
+COM_MODULE_MARKERS = (
+    "win32com",
+    "comtypes",
+    "pythoncom",
+    "pywintypes",
+    "SldWorks",
+    "sw_connect",
+    "sw_part",
+    "sw_session",
+)
 
 
 def assert_no_com_imports() -> dict:
@@ -563,6 +666,7 @@ def assert_no_com_imports() -> dict:
     ★★★ **⇒ 这条让「编译期验计划」在**没有 SolidWorks 的机器上**也成立** ✓
     """
     import pathlib
+
     src = pathlib.Path(__file__).read_text(encoding="utf-8", errors="replace")
     #: ★★ 只扫 `import` 行（★ 注释里提到「不 import COM」是**允许**的）
     hits = []
@@ -573,8 +677,11 @@ def assert_no_com_imports() -> dict:
         for marker in COM_MODULE_MARKERS:
             if marker in s:
                 hits.append(s)
-    return {"ok": not hits, "offending_imports": hits,
-            "checked_markers": list(COM_MODULE_MARKERS)}
+    return {
+        "ok": not hits,
+        "offending_imports": hits,
+        "checked_markers": list(COM_MODULE_MARKERS),
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -601,19 +708,22 @@ def is_production_method(method_id: str) -> bool:
 
 def list_sandbox_methods(candidates: list[str]) -> list[str]:
     """★ 从候选里挑出**沙箱产物**（★ 便于审查 —— ★ 不是直接入库）。"""
-    return [m for m in candidates if isinstance(m, str) and m.startswith(SANDBOX_PREFIX)]
+    return [
+        m for m in candidates if isinstance(m, str) and m.startswith(SANDBOX_PREFIX)
+    ]
 
 
 # ══════════════════════════════════════════════════════════════════════
 # 十、★★★★ 不可满足核心 / 超时 / 多方案排序（★ FR-005 · EC03-T05）
 # ══════════════════════════════════════════════════════════════════════
 
+
 class SolveStatus:
     """★★ 求解状态（★ **`unknown` 不是「可行」** —— ★ FR-005 逐字）。"""
 
     SAT = "satisfiable"
     UNSAT = "unsatisfiable"
-    UNKNOWN = "unknown"                #: ★★ 超时/信息不足
+    UNKNOWN = "unknown"  #: ★★ 超时/信息不足
     TIMEOUT = "timeout"
 
     ALL = (SAT, UNSAT, UNKNOWN, TIMEOUT)
@@ -641,12 +751,16 @@ def find_unsat_core(constraints: list) -> dict:
         if lo > hi:
             #: ★★★ **最小核心** = ★ 造成冲突的那几条（★ 不是全部约束）
             culprit = sorted(items, key=lambda it: (it[1], it[2]))
-            return {"status": SolveStatus.UNSAT, "variable": var,
-                    "core": [c[0] for c in culprit],
-                    "reason": ("★ 变量 %s 的区间不相交：★ 下界最大 %r > 上界最小 %r"
-                               % (var, lo, hi))}
-    return {"status": SolveStatus.SAT, "core": [],
-            "reason": "★ 所有区间约束都有交集"}
+            return {
+                "status": SolveStatus.UNSAT,
+                "variable": var,
+                "core": [c[0] for c in culprit],
+                "reason": (
+                    "★ 变量 %s 的区间不相交：★ 下界最大 %r > 上界最小 %r"
+                    % (var, lo, hi)
+                ),
+            }
+    return {"status": SolveStatus.SAT, "core": [], "reason": "★ 所有区间约束都有交集"}
 
 
 def solve_with_budget(constraints: list, *, steps_budget: int = 10_000) -> dict:
@@ -656,12 +770,18 @@ def solve_with_budget(constraints: list, *, steps_budget: int = 10_000) -> dict:
       ⇒ ★★ **`unknown` 绝不落入默认可行** ✓
     """
     if steps_budget <= 0:
-        return {"status": SolveStatus.TIMEOUT, "core": [],
-                "reason": "★ 预算为 0 ⇒ **超时**（★ `unknown` 不当可行）"}
+        return {
+            "status": SolveStatus.TIMEOUT,
+            "core": [],
+            "reason": "★ 预算为 0 ⇒ **超时**（★ `unknown` 不当可行）",
+        }
     needed = max(1, len(constraints))
     if needed > steps_budget:
-        return {"status": SolveStatus.TIMEOUT, "core": [],
-                "reason": "★ 需要 %d 步 > 预算 %d ⇒ **超时**" % (needed, steps_budget)}
+        return {
+            "status": SolveStatus.TIMEOUT,
+            "core": [],
+            "reason": "★ 需要 %d 步 > 预算 %d ⇒ **超时**" % (needed, steps_budget),
+        }
     return find_unsat_core(constraints)
 
 
@@ -672,9 +792,11 @@ def rank_plans(plans: list, *, prefer: str = "elegance") -> list:
     ★ 排序键：★ `elegance` ⇒ ★ 用 `EleganceScore.total()`；
       ★★ **复杂度只在并列时**当次序（★ 不是主指标）。
     """
+
     def key(p):
         s = score_elegance(p) if prefer == "elegance" else EleganceScore()
         c = METHOD_LIBRARY.get(getattr(p, "method_id", ""), None)
         rank = Complexity.RANK.get(c.complexity, 2) if c else 2
         return (-s.total(), rank)
+
     return sorted(plans, key=key)

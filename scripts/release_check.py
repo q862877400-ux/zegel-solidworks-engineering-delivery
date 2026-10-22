@@ -1,4 +1,5 @@
 """发布前静态一致性门禁。"""
+
 from __future__ import annotations
 
 import json
@@ -82,7 +83,9 @@ def _git_available() -> bool:
     try:
         subprocess.run(
             ["git", "-C", str(ROOT), "rev-parse", "--git-dir"],
-            check=True, capture_output=True, timeout=30,
+            check=True,
+            capture_output=True,
+            timeout=30,
             stdin=subprocess.DEVNULL,
         )
         return True
@@ -103,24 +106,33 @@ def _run_provenance_gate() -> dict[str, object]:
     anchor = os.environ.get("PROVENANCE_ANCHOR", "origin/main")
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_provenance.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_provenance.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
         return {"status": "fail", "reason": f"门禁**无法启动**（超时/OSError）: {exc}"}
     if proc.returncode == 2:
-        return {"status": "skipped", "anchor": anchor,
-                "reason": "门禁读不到锚点，请设置 PROVENANCE_ANCHOR"}
+        return {
+            "status": "skipped",
+            "anchor": anchor,
+            "reason": "门禁读不到锚点，请设置 PROVENANCE_ANCHOR",
+        }
     ok = proc.returncode == 0
     return {
         "status": "pass" if ok else "fail",
         "anchor": anchor,
         "output": (proc.stdout or "").strip()[-2000:],
     }
-
 
 
 def _version(path: Path, pattern: str) -> str:
@@ -130,12 +142,16 @@ def _version(path: Path, pattern: str) -> str:
     return match.group(1)
 
 
-def find_bundled_skill_drift(root: Path, bundled_skill: Path, expected_paths=None) -> list[str]:
+def find_bundled_skill_drift(
+    root: Path, bundled_skill: Path, expected_paths=None
+) -> list[str]:
     """@brief 返回桌面内嵌 Skill 中缺少源文件或内容不一致的相对路径。"""
     if not bundled_skill.is_dir():
         return ["<bundled-skill-missing>"]
     drift: list[str] = []
-    for bundled_path in sorted(path for path in bundled_skill.rglob("*") if path.is_file()):
+    for bundled_path in sorted(
+        path for path in bundled_skill.rglob("*") if path.is_file()
+    ):
         relative_path = bundled_path.relative_to(bundled_skill)
         source_path = root / relative_path
         relative_name = relative_path.as_posix()
@@ -149,7 +165,9 @@ def find_bundled_skill_drift(root: Path, bundled_skill: Path, expected_paths=Non
                 # Tauri build.rs 会原子性不足地重建 resources/skill；并行检查时
                 # 将瞬时消失稳定记录为缺失，而不是暴露底层文件系统异常。
                 drift.append(f"missing-bundle:{relative_name}")
-    for relative_path in sorted(expected_paths or [], key=lambda value: Path(value).as_posix()):
+    for relative_path in sorted(
+        expected_paths or [], key=lambda value: Path(value).as_posix()
+    ):
         relative = Path(relative_path)
         if not (bundled_skill / relative).is_file():
             drift.append(f"missing-bundle:{relative.as_posix()}")
@@ -177,18 +195,27 @@ def _run_fact_single_home_gate() -> dict[str, object]:
     try:
         proc = subprocess.run(
             [os.environ.get("PYTHON", "python"), str(script)],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
         #: ★ 起不来也是故障（与 `_run_provenance_gate` 的同类分支一致）⇒ `fail` ✓
-        return {"status": "fail", "reason": "门禁**无法启动**（超时/OSError）: %s" % exc}
+        return {
+            "status": "fail",
+            "reason": "门禁**无法启动**（超时/OSError）: %s" % exc,
+        }
     out = (proc.stdout or "").strip()
     #: ★ 数**逐条**告警行（不数那句汇总，否则会多算 1）——
     #:   脚本的逐条措辞是「[WARN] <文件> 逐字复述了事实 <N> 的正文」✓
-    hits = sum(1 for line in out.splitlines()
-               if "[WARN]" in line and "复述了事实" in line)
+    hits = sum(
+        1 for line in out.splitlines() if "[WARN]" in line and "复述了事实" in line
+    )
     return {
         "status": "hits" if hits else "clean",
         "hits": hits,
@@ -219,10 +246,17 @@ def _run_marker_gate() -> dict[str, object]:
     # ─────────────────────────────────────────────────────────────────
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_diff_markers.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=120, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_diff_markers.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -250,12 +284,20 @@ def _run_unit_conversion_count_gate() -> dict[str, object]:
     """
     import os
     import subprocess
+
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_unit_conversion_count.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_unit_conversion_count.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -290,12 +332,20 @@ def _run_length_units_gate() -> dict[str, object]:
     """
     import os
     import subprocess
+
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_length_units_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_length_units_guard.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -329,10 +379,17 @@ def _run_union_conventions_gate() -> dict[str, object]:
     # ─────────────────────────────────────────────────────────────────
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_union_conventions.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_union_conventions.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -359,13 +416,24 @@ def _run_union_conventions_gate() -> dict[str, object]:
     # ─────────────────────────────────────────────────────────────────
     try:
         proof = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "tools" / "prove_authorization_check.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=120, cwd=str(ROOT), stdin=subprocess.DEVNULL,
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "tools" / "prove_authorization_check.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        verdict["proof"] = {"status": "fail", "reason": f"检验**无法启动**（超时/OSError）: {exc}"}
+        verdict["proof"] = {
+            "status": "fail",
+            "reason": f"检验**无法启动**（超时/OSError）: {exc}",
+        }
         return verdict
     verdict["proof"] = {
         "status": "pass" if proof.returncode == 0 else "fail",
@@ -413,10 +481,17 @@ def _run_relative_imports_gate() -> dict[str, object]:
     """@brief 跑相对导入兜底门禁（`scripts/check_relative_imports.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_relative_imports.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_relative_imports.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -429,10 +504,17 @@ def _run_env_pitfalls_gate() -> dict[str, object]:
     """@brief 跑环境坑门禁（`scripts/check_env_pitfalls.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_env_pitfalls.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_env_pitfalls.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -459,10 +541,17 @@ def _run_refuted_patterns_gate() -> dict[str, object]:
     """@brief 跑 **C8 · 台账分叉门禁**（`scripts/check_refuted_patterns.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_refuted_patterns.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_refuted_patterns.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -491,10 +580,17 @@ def _run_spec_acceptance_paths_gate() -> dict[str, object]:
     """@brief 跑验收命令可跑性门禁（`scripts/check_spec_acceptance_paths.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_spec_acceptance_paths.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_spec_acceptance_paths.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -524,10 +620,17 @@ def _run_probe_reuse_gate() -> dict[str, object]:
     """@brief 跑探针复用门禁（`scripts/check_probe_reuse.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_probe_reuse.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_probe_reuse.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -559,10 +662,17 @@ def _run_preselect_family_gate() -> dict[str, object]:
     """@brief 跑预选族门禁（`scripts/check_preselect_family.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_preselect_family.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_preselect_family.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -594,10 +704,17 @@ def _run_lean_first_line_gate() -> dict[str, object]:
     """@brief 跑首句自证门禁（`scripts/check_lean_first_line_caveat.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_lean_first_line_caveat.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_lean_first_line_caveat.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -625,10 +742,17 @@ def _run_report_freshness_gate() -> dict[str, object]:
     """@brief 跑交付报告数字新鲜度门禁（`scripts/check_report_freshness.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_report_freshness.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_report_freshness.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -647,10 +771,17 @@ def _run_corpus_shape_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_corpus_shape.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_corpus_shape.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -670,10 +801,17 @@ def _run_known_facts_triage_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_known_facts_triage.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_known_facts_triage.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -694,10 +832,17 @@ def _run_fact_provenance_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_fact_provenance.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_fact_provenance.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -717,10 +862,17 @@ def _run_assumption_ledger_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_assumption_ledger.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_assumption_ledger.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -743,10 +895,17 @@ def _run_repo_uniformity_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_repo_uniformity.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_repo_uniformity.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -767,10 +926,17 @@ def _run_tools_index_fresh_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_tools_index_fresh.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_tools_index_fresh.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -792,10 +958,17 @@ def _run_sketch_definition_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_sketch_definition.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_sketch_definition.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -817,10 +990,17 @@ def _run_review_ids_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_review_ids.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_review_ids.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -840,10 +1020,17 @@ def _run_python_syntax_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_python_syntax.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_python_syntax.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -865,10 +1052,17 @@ def _run_server_side_tools_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "tools" / "check_server_side_tools.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "tools" / "check_server_side_tools.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -889,10 +1083,17 @@ def _run_judge_preflight_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "tools" / "check_judge_preflight.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "tools" / "check_judge_preflight.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -916,10 +1117,17 @@ def _run_inject_binding_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "tools" / "check_inject_binding.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "tools" / "check_inject_binding.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -950,10 +1158,20 @@ def _run_inout_array_audit_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"), "-m", "pytest", "-q",
-             str(ROOT / "tests" / "test_inout_array_audit_contract.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                "-m",
+                "pytest",
+                "-q",
+                str(ROOT / "tests" / "test_inout_array_audit_contract.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -977,10 +1195,17 @@ def _run_typelib_tables_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "tools" / "check_typelib_tables.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "tools" / "check_typelib_tables.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1007,10 +1232,17 @@ def _run_undefined_names_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_undefined_names.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_undefined_names.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1035,10 +1267,17 @@ def _run_signature_audit_freshness_gate() -> dict[str, object]:
     """@brief 跑签名审计表新鲜度门禁（`scripts/check_signature_audit_freshness.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_signature_audit_freshness.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=600, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_signature_audit_freshness.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=600,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1063,10 +1302,17 @@ def _run_digest_freshness_gate() -> dict[str, object]:
     """@brief 跑交付状态摘要的新鲜度门禁（`scripts/check_digest_freshness.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_digest_freshness.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=600, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_digest_freshness.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=600,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1091,10 +1337,17 @@ def _run_license_redlines_gate() -> dict[str, object]:
     """@brief 跑 A6 许可红线门禁（`scripts/check_license_redlines.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_license_redlines.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_license_redlines.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1114,10 +1367,17 @@ def _run_param_binding_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_param_binding.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_param_binding.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1136,10 +1396,17 @@ def _run_member_name_gate() -> dict[str, object]:
     """
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_member_names.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_member_names.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1178,10 +1445,17 @@ def _run_backend_limited_completeness_gate() -> dict[str, object]:
     """跑名单**完整性**门禁（scripts/check_backend_limited_completeness.py）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_backend_limited_completeness.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_backend_limited_completeness.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1196,10 +1470,17 @@ def _run_backend_limited_gate() -> dict[str, object]:
     """跑「后端到不了」名单的证据门禁（scripts/check_backend_limited_evidence.py）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_backend_limited_evidence.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_backend_limited_evidence.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1214,10 +1495,17 @@ def _run_verified_evidence_gate() -> dict[str, object]:
     """跑 A4 证据门禁（scripts/check_verified_evidence.py）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_verified_evidence.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_verified_evidence.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1232,10 +1520,17 @@ def _run_unreachable_members_gate() -> dict[str, object]:
     """跑可达性门禁（scripts/check_unreachable_members.py）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_unreachable_members.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_unreachable_members.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1249,7 +1544,7 @@ def _run_unreachable_members_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把「**别把官方属性当方法叫**」接进发布前检查）
 # 文件:   `scripts/check_property_form_members.py`（本门禁的实现）
-# 两个官方源：`_raw/**/iface_sldworks.txt`（出厂反射）· `C:\swapi\types\**\*.md`（kind 
+# 两个官方源：`_raw/**/iface_sldworks.txt`（出厂反射）· `C:\swapi\types\**\*.md`（kind
 # 元数据）
 # 定位:   新增 `_run_property_form_members_gate`：**硬门禁**。
 #   ★☆ **为什么接进来**（★ 2026-10-04 接手轮 · 事实 520）：★ `drawing_workflow.py` 里
@@ -1275,10 +1570,17 @@ def _run_property_form_members_gate() -> dict[str, object]:
     """@brief 跑属性形成员名门禁（`scripts/check_property_form_members.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_property_form_members.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_property_form_members.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1287,6 +1589,7 @@ def _run_property_form_members_gate() -> dict[str, object]:
         "status": "pass" if proc.returncode == 0 else "fail",
         "output": (proc.stdout or "").strip()[-1800:],
     }
+
 
 # ⚠⚠ **为什么现在才接**（2026-10-01 轮 70）：该门禁**早就存在**，却**不在硬门禁列表里**
 #   ⇒ 它**红着也没人知道**。实测时它报：
@@ -1326,10 +1629,17 @@ def _run_user_preference_writes_gate() -> dict[str, object]:
     """@brief 跑用户偏好写入门禁（`scripts/check_user_preference_writes.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_user_preference_writes.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_user_preference_writes.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1344,10 +1654,17 @@ def _run_official_md_claims_gate() -> dict[str, object]:
     """@brief 跑官方断言门禁（`scripts/check_official_md_claims.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_official_md_claims.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_official_md_claims.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1376,10 +1693,17 @@ def _run_workspace_shadowing_gate() -> dict[str, object]:
     """@brief 跑工作区遮蔽门禁（`scripts/check_workspace_shadowing.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_workspace_shadowing.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_workspace_shadowing.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1406,10 +1730,17 @@ def _run_gate_wiring_gate() -> dict[str, object]:
     """@brief 跑门禁接线元门禁（`scripts/check_gate_wiring.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_gate_wiring.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_gate_wiring.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1439,10 +1770,17 @@ def _run_report_criteria_alignment_gate() -> dict[str, object]:
     """@brief 跑报告判据编号门禁（`scripts/check_report_criteria_alignment.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_report_criteria_alignment.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_report_criteria_alignment.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1474,10 +1812,17 @@ def _run_negative_input_selfproof_gate() -> dict[str, object]:
     """@brief 跑负例输入自证门禁（`scripts/check_negative_input_selfproof.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_negative_input_selfproof.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_negative_input_selfproof.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1506,10 +1851,17 @@ def _run_enum_values_gate() -> dict[str, object]:
     """@brief 跑枚举值门禁（`scripts/check_enum_values_vs_reflection.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_enum_values_vs_reflection.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_enum_values_vs_reflection.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1540,10 +1892,17 @@ def _run_arity_tables_gate() -> dict[str, object]:
     """@brief 跑 `*_ARITY` 表 × 出厂反射门禁（`scripts/check_arity_tables_vs_reflection.py`）。"""
     try:
         proc = subprocess.run(
-            [os.environ.get("PYTHON", "python"),
-             str(ROOT / "scripts" / "check_arity_tables_vs_reflection.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_arity_tables_vs_reflection.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1574,14 +1933,24 @@ def _run_assembly_doc_call_shape_gate() -> dict[str, object]:
     """@brief 跑 `call_assembly_doc` 调用形状门禁（`scripts/check_assembly_doc_call_shape.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_assembly_doc_call_shape.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "check_assembly_doc_call_shape.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        return {"status": "fail", "output": "`call_assembly_doc` 调用形状门禁无法执行: %s" % exc}
+        return {
+            "status": "fail",
+            "output": "`call_assembly_doc` 调用形状门禁无法执行: %s" % exc,
+        }
     status = "pass" if proc.returncode == 0 else "fail"
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
@@ -1609,10 +1978,14 @@ def _run_dispatch_entry_guard_gate() -> dict[str, object]:
     """@brief 跑分发口守卫覆盖门禁（`scripts/check_dispatch_entry_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_entry_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=180, cwd=str(ROOT),
+            [sys.executable, str(ROOT / "scripts" / "check_dispatch_entry_guard.py")],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1643,10 +2016,14 @@ def _run_dispatch_byref_guard_gate() -> dict[str, object]:
     """@brief 跑分发口调用点的 by-ref 占位门禁（`scripts/check_dispatch_byref_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_byref_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [sys.executable, str(ROOT / "scripts" / "check_dispatch_byref_guard.py")],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1680,10 +2057,17 @@ def _run_dispatch_blindspot_guard_gate() -> dict[str, object]:
     """@brief 跑分发口调用点的解析盲区门禁（`scripts/check_dispatch_blindspot_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_blindspot_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "check_dispatch_blindspot_guard.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1714,10 +2098,14 @@ def _run_dispatch_arg_guard_gate() -> dict[str, object]:
     """@brief 跑 `local` 桶调用点的候选集门禁（`scripts/check_dispatch_arg_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_arg_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [sys.executable, str(ROOT / "scripts" / "check_dispatch_arg_guard.py")],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
@@ -1751,14 +2139,24 @@ def _run_dispatch_forward_arg_gate() -> dict[str, object]:
     """@brief 跑分发口**调用点**的非字面量实参门禁（`scripts/check_dispatch_forward_arg_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_forward_arg_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "check_dispatch_forward_arg_guard.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        return {"status": "fail", "output": "分发口调用点非字面量实参门禁无法执行: %s" % exc}
+        return {
+            "status": "fail",
+            "output": "分发口调用点非字面量实参门禁无法执行: %s" % exc,
+        }
     status = "pass" if proc.returncode == 0 else "fail"
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
@@ -1776,7 +2174,7 @@ def _run_dispatch_forward_arg_gate() -> dict[str, object]:
 # 实相符**：
 # · `sites`     ⇒ 上游有 AST 调用点，且**每个**调用点传**字面量**（候选值须在官方两源查
 # 得到）；
-# · `tool-only` ⇒ 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 
+# · `tool-only` ⇒ 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的
 # `function=`；
 #     · `orphan`    ⇒ 上游既无 AST 调用点、也无 ToolSpec 引用。
 # ★★ `tool-only` 这一档是**必需**的：`set_study_option_report` 的 AST 调用点是 **0**，但
@@ -1790,14 +2188,24 @@ def _run_dispatch_upstream_gate() -> dict[str, object]:
     """@brief 跑分发口 `upstream` 声明的上游覆盖门禁（`scripts/check_dispatch_upstream_guard.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_dispatch_upstream_guard.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "check_dispatch_upstream_guard.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        return {"status": "fail", "output": "分发口 upstream 上游覆盖门禁无法执行: %s" % exc}
+        return {
+            "status": "fail",
+            "output": "分发口 upstream 上游覆盖门禁无法执行: %s" % exc,
+        }
     status = "pass" if proc.returncode == 0 else "fail"
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
@@ -1826,14 +2234,24 @@ def _run_cd_site_disposition_gate() -> dict[str, object]:
     """@brief 跑 `CreateDefinition` 站点处置门禁（`scripts/check_create_definition_site_disposition.py`）。"""
     try:
         proc = subprocess.run(
-            [sys.executable,
-             str(ROOT / "scripts" / "check_create_definition_site_disposition.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "check_create_definition_site_disposition.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        return {"status": "fail", "output": "CreateDefinition 站点处置门禁无法执行: %s" % exc}
+        return {
+            "status": "fail",
+            "output": "CreateDefinition 站点处置门禁无法执行: %s" % exc,
+        }
     status = "pass" if proc.returncode == 0 else "fail"
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
@@ -1865,12 +2283,20 @@ def _run_cd_host_scope_gate() -> dict[str, object]:
     try:
         proc = subprocess.run(
             [sys.executable, str(ROOT / "scripts" / "check_cd_host_scope.py")],
-            check=False, capture_output=True, text=True, encoding="utf-8",
-            errors="replace", timeout=300, cwd=str(ROOT),
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
             stdin=subprocess.DEVNULL,
         )
     except (subprocess.TimeoutExpired, OSError) as exc:
-        return {"status": "fail", "output": "CreateDefinition 宿主域门禁无法执行: %s" % exc}
+        return {
+            "status": "fail",
+            "output": "CreateDefinition 宿主域门禁无法执行: %s" % exc,
+        }
     status = "pass" if proc.returncode == 0 else "fail"
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
@@ -1904,8 +2330,13 @@ def _run_interface_ownership_probe() -> dict[str, object]:
     """@brief 跑接口归属**诊断**（详细定位见上方来源块）。"""
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "check_interface_member_ownership.py")],
-        capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=180, cwd=str(ROOT), stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=180,
+        cwd=str(ROOT),
+        stdin=subprocess.DEVNULL,
     )
     output = (proc.stdout or "") + (proc.stderr or "")
     # ⚠ **按行首**判 `[HIT]` —— 该脚本的说明文字里也写着「报 `[HIT]` 时值得看」，
@@ -1952,12 +2383,23 @@ def _gate_detail(res: dict) -> str:
 
 def run_release_check() -> dict[str, object]:
     """@brief 校验应用版本、能力真源和必需发布文件。"""
-    ui_version = _version(ROOT / "apps/workbench-ui/package.json", r'"version"\s*:\s*"([^"]+)"')
-    tauri_version = _version(ROOT / "apps/workbench-ui/src-tauri/tauri.conf.json", r'"version"\s*:\s*"([^"]+)"')
-    cargo_version = _version(ROOT / "apps/workbench-ui/src-tauri/Cargo.toml", r'(?m)^version\s*=\s*"([^"]+)"')
-    app_version = _version(ROOT / "apps/workbench-ui/src/App.tsx", r'const APP_VERSION\s*=\s*"([^"]+)"')
+    ui_version = _version(
+        ROOT / "apps/workbench-ui/package.json", r'"version"\s*:\s*"([^"]+)"'
+    )
+    tauri_version = _version(
+        ROOT / "apps/workbench-ui/src-tauri/tauri.conf.json",
+        r'"version"\s*:\s*"([^"]+)"',
+    )
+    cargo_version = _version(
+        ROOT / "apps/workbench-ui/src-tauri/Cargo.toml", r'(?m)^version\s*=\s*"([^"]+)"'
+    )
+    app_version = _version(
+        ROOT / "apps/workbench-ui/src/App.tsx", r'const APP_VERSION\s*=\s*"([^"]+)"'
+    )
     if len({ui_version, tauri_version, cargo_version, app_version}) != 1:
-        raise AssertionError(f"版本不一致: npm={ui_version}, tauri={tauri_version}, cargo={cargo_version}, app={app_version}")
+        raise AssertionError(
+            f"版本不一致: npm={ui_version}, tauri={tauri_version}, cargo={cargo_version}, app={app_version}"
+        )
     manifest = json.loads((ROOT / "capabilities.yaml").read_text(encoding="utf-8"))
     capabilities = manifest.get("capabilities", [])
     ids = [item.get("id") for item in capabilities]
@@ -2001,7 +2443,8 @@ def run_release_check() -> dict[str, object]:
     markers = _run_marker_gate()
     if markers.get("status") == "fail":
         raise AssertionError(
-            "diff 记号残留检查未通过：\n" + str(markers.get("output", "")))
+            "diff 记号残留检查未通过：\n" + str(markers.get("output", ""))
+        )
     # ⚑ 成员名门禁放在 provenance 之后、bundled 校验之前 ——
     #   它需要读 6 份反射清单（最慢的一道），但它拦下的是
     #   「代码里写了官方不存在的成员」这种必然在运行时炸的问题。
@@ -2009,7 +2452,8 @@ def run_release_check() -> dict[str, object]:
     if member_names.get("status") == "fail":
         raise AssertionError(
             "成员名门禁未通过（代码里用了官方不存在的成员名）：\n"
-            + str(member_names.get("output", "")))
+            + str(member_names.get("output", ""))
+        )
     # ⚑ **C8 · 台账分叉门禁**（硬门禁，2026-10-04 接手轮接进）：
     #   ★ C8 自称「**唯一常驻硬门禁**」，而**它唯一依据的 `docs/refuted-patterns.json`
     #     当时在仓里不存在** ⇒ ★ 那条闸**没有可读对象、永远「通过」**（★ 事实 40 同族）✓
@@ -2021,7 +2465,8 @@ def run_release_check() -> dict[str, object]:
     if refuted.get("status") == "fail":
         raise AssertionError(
             "C8 台账分叉门禁未通过（已证伪清单的锚点没有逐字命中 known-facts.md）：\n"
-            + str(refuted.get("output", "")))
+            + str(refuted.get("output", ""))
+        )
     # ⚑ **探针复用门禁**（硬门禁，2026-10-07 接手轮接进 · 交接文档 §五-2）：
     #   ★ 判「**是不是又手搓了一个已有工具的替代品**」——
     # ★ 356 个 `tools/probe_*` / `prove_*` 里，名字冲着某能力去、又真调了该能力实现函数
@@ -2034,8 +2479,9 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "探针复用门禁未通过（探针手搓了已有工具的替代品；★ 请改走工具层，"
             "或把「确实不能改」的登记进 docs/probe-reuse-baseline.json 并写明理由）：\n"
-            + str(probe_reuse.get("output", "")))
-    # ⚑ **预选族门禁**（硬门禁，2026-10-07 接手轮接进；★ recon §四-3 点名要建 · ROADMAP 
+            + str(probe_reuse.get("output", ""))
+        )
+    # ⚑ **预选族门禁**（硬门禁，2026-10-07 接手轮接进；★ recon §四-3 点名要建 · ROADMAP
     # 下一步候选 ①）：
     # ★ 判「**要求调用方先选、而模型没有任何办法选**」—— ★ 那就是「注册 ≠ 能跑」里最隐蔽
     # 的一类：
@@ -2049,7 +2495,8 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "预选族门禁未通过（有工具要求调用方先选、却没有任何入口能选；★ 请加 `pre_call`，"
             "或把「它其实不需要预选」的登记进 docs/preselect-family-baseline.json 并写明理由）：\n"
-            + str(preselect_family.get("output", "")))
+            + str(preselect_family.get("output", ""))
+        )
     # ⚑ **首句自证门禁**（硬门禁，2026-10-07 接手轮接进；★ 规格 215 §二-④ 点名要建）：
     #   ★★ lean 投影只保留**第一句**、且截到 **120** 字
     #     （`@local/dsh-lean-mode` 的 `firstLine()`）⇒
@@ -2064,7 +2511,8 @@ def run_release_check() -> dict[str, object]:
             "首句自证门禁未通过（有工具把「本机不可用 / 我是内部件」的结论写在了 lean 窗口之外"
             " —— 模型看不到；★ 修法：把该结论**前置一句**到 `doc` 最前面，★ 只做加法、"
             "不改写原有文字；★ 见 specs/215-tool-surface-decisions/spec.md §二）：\n"
-            + str(lean_first.get("output", "")))
+            + str(lean_first.get("output", ""))
+        )
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -2074,22 +2522,26 @@ def run_release_check() -> dict[str, object]:
     if backend_full.get("status") == "fail":
         raise AssertionError(
             "名单完整性门禁未通过（★ 该进「后端到不了」的漏了）：\n"
-            + str(backend_full.get("output", "")))
+            + str(backend_full.get("output", ""))
+        )
     backend_lim = _run_backend_limited_gate()
     if backend_lim.get("status") == "fail":
         raise AssertionError(
             "「后端到不了」名单的证据门禁未通过（任务书：写明依据并单列）：\n"
-            + str(backend_lim.get("output", "")))
+            + str(backend_lim.get("output", ""))
+        )
     verified_ev = _run_verified_evidence_gate()
     if verified_ev.get("status") == "fail":
         raise AssertionError(
             "证据门禁未通过（A4：`verified` 必须带运行证据）：\n"
-            + str(verified_ev.get("output", "")))
+            + str(verified_ev.get("output", ""))
+        )
     unreachable = _run_unreachable_members_gate()
     if unreachable.get("status") == "fail":
         raise AssertionError(
             "可达性门禁未通过（代码里调了**已证到不了**的成员）：\n"
-            + str(unreachable.get("output", "")))
+            + str(unreachable.get("output", ""))
+        )
     # ⚑ **属性形成员名门禁**（硬门禁，2026-10-04 接手轮接进 · 事实 520）：
     #   ★ 判「**官方那个成员是属性，而代码把它当方法叫**」—— ★ 两个官方源同时成立才算
     # （★ 只有反射会误伤几百处：`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有页*
@@ -2100,8 +2552,8 @@ def run_release_check() -> dict[str, object]:
     if property_form.get("status") == "fail":
         raise AssertionError(
             "属性形成员名门禁未通过（把官方属性写成 `get_X`/`set_X` 去调 ⇒ 反射里没有该名 ⇒ "
-            "`getattr` 抛 AttributeError）：\n"
-            + str(property_form.get("output", "")))
+            "`getattr` 抛 AttributeError）：\n" + str(property_form.get("output", ""))
+        )
     # ⚑ **用户偏好写入门禁**（硬门禁，2026-10-04 接进 · 事实 525）：
     #   ★ 判「**别人装我们的工具会不会被改掉 SolidWorks 设置**」——
     #   ★ 每一处 `SetUserPreference*` 必须可还原（守卫 / 带理由标记 / 豁免名单）。
@@ -2109,7 +2561,8 @@ def run_release_check() -> dict[str, object]:
     if pref_writes.get("status") == "fail":
         raise AssertionError(
             "用户偏好写入门禁未通过（有不可还原的全局偏好写入 ⇒ 会留在用户的 SolidWorks 里）：\n"
-            + str(pref_writes.get("output", "")))
+            + str(pref_writes.get("output", ""))
+        )
     # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录
     # ，
     #   以该工作区为 CWD 的 Python 进程就会 `import` 到**那个本地文件**而不是真包
@@ -2120,7 +2573,8 @@ def run_release_check() -> dict[str, object]:
     if shadowing.get("status") == "fail":
         raise AssertionError(
             "工作区遮蔽门禁未通过（工作区根有会遮蔽依赖包的文件/目录）：\n"
-            + str(shadowing.get("output", "")))
+            + str(shadowing.get("output", ""))
+        )
     # ⚑ **门禁接线元门禁**（硬门禁）：每个 `scripts/check_*.py` 必须被本文件调用，
     #   或登记进 `docs/gate-wiring-exemptions.json`（带非空 reason + evidence）。
     #   ⚠ 轮 70 实测：`check_workspace_shadowing.py` 早就存在却**从没被调用**，
@@ -2129,7 +2583,8 @@ def run_release_check() -> dict[str, object]:
     if wiring.get("status") == "fail":
         raise AssertionError(
             "门禁接线元门禁未通过（有门禁没被接线也没豁免）：\n"
-            + str(wiring.get("output", "")))
+            + str(wiring.get("output", ""))
+        )
     # ⚑ **报告判据编号门禁**（硬门禁）：`docs/harvest-report.md §四` 的逐条自评
     #   必须与 `AGENTS.md §一` 的 **A1–A10 逐条对齐**（编号、条数、含义三样）。
     #   ⚠⚠ **为什么需要**（2026-10-01 轮 82 实测）：该节此前用的是**另一套编号**
@@ -2144,7 +2599,8 @@ def run_release_check() -> dict[str, object]:
     if crit_align.get("status") == "fail":
         raise AssertionError(
             "报告判据编号门禁未通过（§四 的自评编号与 AGENTS.md §一 不一致）：\n"
-            + str(crit_align.get("output", "")))
+            + str(crit_align.get("output", ""))
+        )
     # ⚑ **负例输入自证门禁**（硬门禁）：`tools/` 下探针里「用变换造负例输入」的地方，
     #   必须**自证变换生效** —— 否则那个"坏输入"等于真输入，**用例空转却显示通过**。
     #   ⚠⚠ 触发它的是 2026-10-01 轮 84 撞见的**假用例**：删逐模块表的正则**没匹配上**
@@ -2155,7 +2611,8 @@ def run_release_check() -> dict[str, object]:
     if selfproof.get("status") == "fail":
         raise AssertionError(
             "负例输入自证门禁未通过（探针里的「坏输入」可能是空转的）：\n"
-            + str(selfproof.get("output", "")))
+            + str(selfproof.get("output", ""))
+        )
     # ⚑ **枚举值门禁**（硬门禁，轮 106）：补「**值级**」覆盖缺口。
     #   ⚠ 旧门禁查的是「名字在不在官方清单里」，**不查「值对不对」** ——
     #     023（枚举凭记忆写反）与 024（两源冲突）连着两轮的错**都从那里漏过去**。
@@ -2165,7 +2622,8 @@ def run_release_check() -> dict[str, object]:
     if enum_values.get("status") == "fail":
         raise AssertionError(
             "枚举值门禁未通过（代码里的官方枚举值与出厂反射对不上）：\n"
-            + str(enum_values.get("output", "")))
+            + str(enum_values.get("output", ""))
+        )
     # ⚑ **`*_ARITY` 表 × 出厂反射门禁**（硬门禁，2026-10-09 · spec 227）：
     #   把 224/225/226 三次登记的「`not-enum arity` **不验值**」收口 ——
     #   ★ 表里的数字是运行期 `_checked()` 的校核依据 ⇒ 表错 = 校核错，且**错得静默**。
@@ -2174,7 +2632,8 @@ def run_release_check() -> dict[str, object]:
     if arity_tables.get("status") == "fail":
         raise AssertionError(
             "`*_ARITY` 表与出厂反射对不上（值不符或表未声明 by-ref 约定）：\n"
-            + str(arity_tables.get("output", "")))
+            + str(arity_tables.get("output", ""))
+        )
     # ⚑ **`call_assembly_doc` 调用形状门禁**（硬门禁，2026-10-09 · spec 228）：
     #   227 让 `*_ARITY` 表的**数字**与反射对上了，但**调用方**那一侧仍无人守 ——
     #   ★ `call_assembly_doc` **不在** `audit_byref_args.WRAPPERS` 里 ⇒ 它的调用点
@@ -2183,7 +2642,8 @@ def run_release_check() -> dict[str, object]:
     if assembly_doc_shape.get("status") == "fail":
         raise AssertionError(
             "`call_assembly_doc` 调用形状不符（arity 或 by-ref 占位）：\n"
-            + str(assembly_doc_shape.get("output", "")))
+            + str(assembly_doc_shape.get("output", ""))
+        )
     # ⚑ **分发口守卫覆盖门禁**（硬门禁，2026-10-09 · spec 229）：
     #   228 只修了**一个**入口；★ 而「加新分发口要问一句」那句话**不是守卫** ——
     #   本门禁把**全部 37 个分发口**逐个表态，且每条声明**都由门禁自证**。
@@ -2191,7 +2651,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_guard.get("status") == "fail":
         raise AssertionError(
             "分发口（成员名以形参转发给 COM 包装器的函数）未表态或声明不成立：\n"
-            + str(dispatch_guard.get("output", "")))
+            + str(dispatch_guard.get("output", ""))
+        )
     # ⚑ **分发口 by-ref 占位门禁**（硬门禁，2026-10-09 · spec 231）：
     #   230 **只分类、不判罪**（「可解析」≠「已核」）；本门禁把那 18 个分发口的
     #   **327 个可解析调用点**喂进 `audit_byref_args` 的同一套判据。
@@ -2200,7 +2661,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_byref.get("status") == "fail":
         raise AssertionError(
             "分发口调用点的标量 by-ref 占位不符（或下界缩水 / 检查量为 0）：\n"
-            + str(dispatch_byref.get("output", "")))
+            + str(dispatch_byref.get("output", ""))
+        )
     # ⚑ **分发口解析盲区门禁**（硬门禁，2026-10-09 · spec 232）：
     #   `_entry_sites()` 有 5 种看不见的调用形态（别名导入 / 点式基名 / 同文件自限定 /
     #   `getattr` 动态）。★ 真树实测**全 0** ⇒ 不扩解析器，只把边界**封死**：
@@ -2209,7 +2671,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_blind.get("status") == "fail":
         raise AssertionError(
             "分发口调用点存在解析器**看不见**的调用形态（或下界缩水 / 检查量为 0）：\n"
-            + str(dispatch_blind.get("output", "")))
+            + str(dispatch_blind.get("output", ""))
+        )
     # ⚑ **`local` 桶候选集门禁**（硬门禁，2026-10-09 · spec 234）：
     #   成员名由**局部变量**传入的调用点（46 个）从 229 起**只被计数、无判据**。
     #   本门禁要求：候选集能枚举 ⇒ 每个值必须在官方两源里查得到（否则按 `probe` 表态）；
@@ -2218,7 +2681,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_arg.get("status") == "fail":
         raise AssertionError(
             "`local` 桶调用点的候选集未表态 / 声明不成立 / 候选值查不到：\n"
-            + str(dispatch_arg.get("output", "")))
+            + str(dispatch_arg.get("output", ""))
+        )
     # ⚑ **分发口调用点的非字面量实参门禁**（硬门禁，2026-10-09 · spec 235）：
     #   37 个分发口的 362 个调用点里，8 个把成员名以**非字面量**传入 ⇒ `audit_byref_args`
     #   看不见，而 `resolution()` 只把入口分类计数。本门禁要求：能枚举 ⇒ 每个候选值必须在
@@ -2229,7 +2693,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_fwd.get("status") == "fail":
         raise AssertionError(
             "分发口调用点的非字面量实参未表态 / 声明不成立 / 候选值查不到：\n"
-            + str(dispatch_fwd.get("output", "")))
+            + str(dispatch_fwd.get("output", ""))
+        )
     # ⚑ **分发口 `upstream` 声明的上游覆盖门禁**（硬门禁，2026-10-09 · spec 236）：
     #   235 的 `upstream` 只自证**形态**（实参是包围 `def` 的形参 + 名字对得上），
     #   **从不检查那个 `def` 的调用方传了什么** ⇒ 半开的逃生门。本门禁要求声明必须带
@@ -2241,7 +2706,8 @@ def run_release_check() -> dict[str, object]:
     if dispatch_upstream.get("status") == "fail":
         raise AssertionError(
             "分发口 upstream 声明的上游桶未表态 / 与事实不符 / 上游调用点非字面量 / 候选值查不到：\n"
-            + str(dispatch_upstream.get("output", "")))
+            + str(dispatch_upstream.get("output", ""))
+        )
     # ⚑ **`CreateDefinition` 站点处置门禁**（硬门禁）：非 `checked` 站点必须逐站点表态，
     # 且四个 code（`unmapped` / `empty-members` / `no-members-used` / `dynamic`）各自自
     # 证。
@@ -2252,7 +2718,8 @@ def run_release_check() -> dict[str, object]:
     if cd_site.get("status") == "fail":
         raise AssertionError(
             "`CreateDefinition` 站点处置未表态 / 与事实不符 / 读取器太窄 / 下界缩小：\n"
-            + str(cd_site.get("output", "")))
+            + str(cd_site.get("output", ""))
+        )
     # ⚑ **`CreateDefinition` 宿主域门禁**（硬门禁）：常量必须落在**官方宿主页**的域内 ——
     #   `unmapped` 的常量若出现在任一官方 `CreateDefinition` 页 ⇒ 必须补映射（不许逃避）；
     #   官方**逐条点名**的接口不得被人工表/文本匹配覆盖；多宿主点名不一致 ⇒ 不猜。
@@ -2262,7 +2729,8 @@ def run_release_check() -> dict[str, object]:
     if cd_host.get("status") == "fail":
         raise AssertionError(
             "`CreateDefinition` 站点的常量不在官方宿主域内 / 与官方点名不一致：\n"
-            + str(cd_host.get("output", "")))
+            + str(cd_host.get("output", ""))
+        )
     # ⚑ **官方断言门禁**（硬门禁）：代码里「官方没有 X」的断言必须与官方页一致。
     #   立它的真因：`sw_curve_and_split.py` 谎称"官方没给 mark 表"，而官方 Remarks 里就有
     #   ⇒ 两轮真机失败被**归因错了**。★ 接上去当场又抓出 `InsertSplitLineSil` 同样的错。
@@ -2270,7 +2738,8 @@ def run_release_check() -> dict[str, object]:
     if official_md.get("status") == "fail":
         raise AssertionError(
             "官方断言门禁未通过（代码里「官方没有 X」的断言与官方页相反）：\n"
-            + str(official_md.get("output", "")))
+            + str(official_md.get("output", ""))
+        )
     # ⚑ 并入规范门禁（docs/union-conventions.md §四）：
     #   校验「来源出处 / 许可白名单 / 规范与地图存在 / 地图与来源同步 /
     #   能力验证等级合法」五条。**放在成员名之后、bundled 校验之前** ——
@@ -2280,7 +2749,8 @@ def run_release_check() -> dict[str, object]:
     if union.get("status") == "fail":
         raise AssertionError(
             "并入规范门禁未通过（见 docs/union-conventions.md）：\n"
-            + str(union.get("output", "")))
+            + str(union.get("output", ""))
+        )
     # ⚑ **参数绑定门禁**（硬门禁）：每个工具声明的参数名必须**有归属** ——
     #   要么在目标函数的形参表里，要么在 `param_alias` 里。
     # 触发它的是 **2026-10-01 两次真实事故**：W7 的 `magnitude_n` 与 段1.1 的 `study_nam
@@ -2293,7 +2763,8 @@ def run_release_check() -> dict[str, object]:
     if param_binding.get("status") == "fail":
         raise AssertionError(
             "参数绑定门禁未通过（声明的参数既不在形参表、也不在 param_alias 里）：\n"
-            + str(param_binding.get("output", "")))
+            + str(param_binding.get("output", ""))
+        )
     # ⚑ **单位纪律门禁**（硬门禁 · ★ 2026-10-10 新增）：
     #   有长度形参的工具，进 COM 前**必须**有换算痕迹（本仓纪律：入参毫米 · COM 侧米）。
     #   ★★★ **为什么要接进来**（业主 2026-10-10 逐字点破）：
@@ -2309,7 +2780,8 @@ def run_release_check() -> dict[str, object]:
     if length_units.get("status") == "fail":
         raise AssertionError(
             "单位纪律门禁未通过（有长度形参的工具进 COM 前必须有换算）：\n"
-            + str(length_units.get("output", "")))
+            + str(length_units.get("output", ""))
+        )
     # ⚑ **单位换算次数门禁**（硬门禁，2026-10-11 新增）：★ 上面那道只看**工具层**，
     #   而 59 个工具的真因在**内部函数**那一层 ⇒ 扫描面与真因不在同一层 ⇒ **假绿**。
     #   ★ 本门禁判据是**换算次数恰好 1**（0 次 ⇒ 放大 1000 倍；2 次 ⇒ 缩小 1000 倍），
@@ -2320,14 +2792,16 @@ def run_release_check() -> dict[str, object]:
     if unit_count.get("status") == "fail":
         raise AssertionError(
             "单位换算次数门禁未通过（每个收长度形参的工具必须**恰好换算一次**）：\n"
-            + str(unit_count.get("output", "")))
+            + str(unit_count.get("output", ""))
+        )
     # ⚑ **环境坑门禁**（硬门禁）：查「subprocess 缺 encoding=」（事实 58）与
     #   「Path("<盘符>:") 当盘根」（事实 59）—— 两类都**已在真机上造成真实故障**。
     env_pitfalls = _run_env_pitfalls_gate()
     if env_pitfalls.get("status") == "fail":
         raise AssertionError(
             "环境坑门禁未通过（subprocess 编码 / Path 盘根）：\n"
-            + str(env_pitfalls.get("output", "")))
+            + str(env_pitfalls.get("output", ""))
+        )
     # ⚑ **相对导入兜底门禁**（硬门禁，规格 210 · B3）：函数内的相对导入**必须带兜底** ——
     #   ⚠ 触发它的是 2026-10-06 存活普查里的**真机报错**：
     #     `ImportError: attempted relative import with no known parent package` ——
@@ -2337,7 +2811,8 @@ def run_release_check() -> dict[str, object]:
     if rel_imports.get("status") == "fail":
         raise AssertionError(
             "相对导入兜底门禁未通过（棘轮基线被突破）：\n"
-            + str(rel_imports.get("output", "")))
+            + str(rel_imports.get("output", ""))
+        )
     # ⚑ **验收命令可跑性门禁**（硬门禁）：`specs/**/*.md` 的 `→ 验收:` 行点到的脚本
     #   必须在**仓库里**（ROADMAP §〇 纪律三「验收必须是可跑的命令」）。
     #   触发它的是 2026-10-01 实测到的 **2 例仓库外验收脚本**。
@@ -2347,7 +2822,8 @@ def run_release_check() -> dict[str, object]:
     if spec_paths.get("status") == "fail":
         raise AssertionError(
             "验收命令可跑性门禁未通过（→ 验收: 行点到了仓库外的脚本）：\n"
-            + str(spec_paths.get("output", "")))
+            + str(spec_paths.get("output", ""))
+        )
     # ⚑ **交付报告数字新鲜度门禁**（硬门禁）：`docs/harvest-report.md` 声称的
     #   「偏离上游：N 个文件 / +N 行 / -N 行 · N 个 commit」必须与 git 实际相符。
     #   触发它的是 2026-10-01（轮 54）实测的**8 倍/20 倍/10 倍**偏差 ——
@@ -2358,7 +2834,8 @@ def run_release_check() -> dict[str, object]:
     if report_fresh.get("status") == "fail":
         raise AssertionError(
             "交付报告数字新鲜度门禁未通过（harvest-report 的偏离数字与 git 不符）：\n"
-            + str(report_fresh.get("output", "")))
+            + str(report_fresh.get("output", ""))
+        )
     # ⚑ **`.py` 语法门禁**（硬门禁）：`scripts/` `tools/` `tests/` `mcp-server/` `subski
     # lls/`
     #   下**每个** `.py` 必须能 `ast.parse`。★ 触发它的是**本会话同一处踩了五次**：
@@ -2369,7 +2846,9 @@ def run_release_check() -> dict[str, object]:
     py_syntax = _run_python_syntax_gate()
     if py_syntax.get("status") == "fail":
         raise AssertionError(
-            ".py 语法门禁未通过（有文件不能 ast.parse）：\n" + str(py_syntax.get("output", "")))
+            ".py 语法门禁未通过（有文件不能 ast.parse）：\n"
+            + str(py_syntax.get("output", ""))
+        )
     # ⚑ **评审稿编号门禁**（硬门禁）：★ 评审稿里引用的 `L1-/L2-/L3-` 编号
     #   必须**真的存在**，且**括号里的描述要对得上**。
     #   ★ 触发它的是 2026-10-12（业主：「那 60 条语料的标签给我打开」）：
@@ -2382,7 +2861,8 @@ def run_release_check() -> dict[str, object]:
     if rev_ids.get("status") == "fail":
         raise AssertionError(
             "评审稿编号门禁未通过（引用了不存在的编号，或描述与编号对不上）：\n"
-            + str(rev_ids.get("output", "")))
+            + str(rev_ids.get("output", ""))
+        )
     # ⚑ **草图完全定义门禁**（硬门禁）：★ 有草图的语料条目必须写清
     #   **位置 / 大小 / 形状关系**三要素。
     #   ★ 触发它的是 2026-10-12（业主审 L3-001~008 的 4 处批注）：
@@ -2396,13 +2876,14 @@ def run_release_check() -> dict[str, object]:
     shape = _run_corpus_shape_gate()
     if shape.get("status") == "fail":
         raise AssertionError(
-            "语料形状门禁未通过（列表字段里有嵌套）：\n"
-            + str(shape.get("output", "")))
+            "语料形状门禁未通过（列表字段里有嵌套）：\n" + str(shape.get("output", ""))
+        )
     kf = _run_known_facts_triage_gate()
     if kf.get("status") == "fail":
         raise AssertionError(
             "known-facts 逐条处置门禁未通过（有事实没被判定）：\n"
-            + str(kf.get("output", "")))
+            + str(kf.get("output", ""))
+        )
     # ⚑ **量化断言出处门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §2.
     # 3
     #   —— 经验①「事实/尺寸来源分级」的改造后采纳形态。
@@ -2412,7 +2893,8 @@ def run_release_check() -> dict[str, object]:
     if fp.get("status") == "fail":
         raise AssertionError(
             "量化断言出处门禁未通过（有断言没有可追溯出处）：\n"
-            + str(fp.get("output", "")))
+            + str(fp.get("output", ""))
+        )
     # ⚑ **假设台账门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §6.3
     #   —— 经验⑤「不追问但记录」的改造后采纳形态。
     #   ★ 核心判据：`open` 的假设不得充当 `verified` 能力的证据
@@ -2421,7 +2903,8 @@ def run_release_check() -> dict[str, object]:
     if al.get("status") == "fail":
         raise AssertionError(
             "假设台账门禁未通过（状态不自洽或未验证假设被当证据）：\n"
-            + str(al.get("output", "")))
+            + str(al.get("output", ""))
+        )
     # ⚑ **仓库统一化体检门禁**（硬门禁）：★ 来源业主 2026-10-21
     #   「避免局部很整洁、整体很混乱；同一个功能多个函数重复实现；同一个东西命名不一样」。
     #   ★ 为什么必须有这一道：本仓 50+ 道门禁**每道只管一摊**，
@@ -2433,7 +2916,8 @@ def run_release_check() -> dict[str, object]:
     if ru.get("status") == "fail":
         raise AssertionError(
             "仓库统一化体检未通过（局部整洁但整体可能已分裂）：\n"
-            + str(ru.get("output", "")))
+            + str(ru.get("output", ""))
+        )
     # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有
     # 文档吗」。
     #   ★ 判据：\docs/tools-index.md\ 的集合与描述都要与 \	ools/*.py\ 一致
@@ -2442,12 +2926,14 @@ def run_release_check() -> dict[str, object]:
     if tix.get("status") == "fail":
         raise AssertionError(
             "tools 索引新鲜度门禁未通过（索引与 tools/ 实际内容不一致）：\n"
-            + str(tix.get("output", "")))
+            + str(tix.get("output", ""))
+        )
     sk_def = _run_sketch_definition_gate()
     if sk_def.get("status") == "fail":
         raise AssertionError(
             "草图完全定义门禁未通过（有草图的条目没写清三要素）：\n"
-            + str(sk_def.get("output", "")))
+            + str(sk_def.get("output", ""))
+        )
     # ⚑ **未定义名门禁**（硬门禁）：★ 与语法门禁**互补** —— 语法只判"能不能 parse"，
     #   本道判"读到的名字有没有被绑定过"。★ 触发它的是轮 403 真机抓到的
     #   `out_i4` 漏导入（★ 语法合法、19 道门禁全绿、而一调用就 NameError）。
@@ -2455,7 +2941,8 @@ def run_release_check() -> dict[str, object]:
     if undef.get("status") == "fail":
         raise AssertionError(
             "未定义名门禁未通过（有名字读之前从未被绑定 ⇒ NameError 隐患）：\n"
-            + str(undef.get("output", "")))
+            + str(undef.get("output", ""))
+        )
     # ⚑ **出厂类型库对照门禁**（硬门禁）：能力层里**手抄的成员表**
     #   必须与 `SolidWorks.Interop.cosworks.dll` 的元数据**逐条一致**。
     #   ★ 触发它的是轮 415：`_ERRORCODE_MEMBERS` 手抄 CHM 时漏了两个名字 ⇒
@@ -2468,12 +2955,14 @@ def run_release_check() -> dict[str, object]:
     if ss.get("status") == "fail":
         raise AssertionError(
             "服务端侧工具名门禁未通过（两条声明路上有**重名**）：\n"
-            + str(ss.get("output", "")))
+            + str(ss.get("output", ""))
+        )
     jp = _run_judge_preflight_gate()
     if jp.get("status") == "fail":
         raise AssertionError(
             "判据前置门禁未通过（有判据没登记清楚、或它的“已知成功”证据不成立）：\n"
-            + str(jp.get("output", "")))
+            + str(jp.get("output", ""))
+        )
     #: ★ 注入绑定门禁（硬）：每条 ToolSpec 声明的 inject 必须覆盖包装的必需对象形参。
     #: ⚠ 它**必须紧跟自己的 fail 检查** —— 元门禁 `check_gate_wiring.py` 判 hard/diagnos
     #: tic
@@ -2484,12 +2973,14 @@ def run_release_check() -> dict[str, object]:
     if ib.get("status") == "fail":
         raise AssertionError(
             "注入绑定门禁未通过（有 ToolSpec 漏声明 inject ⇒ 那条工具走 MCP 必炸）：\n"
-            + str(ib.get("output", "")))
+            + str(ib.get("output", ""))
+        )
     tl_tables = _run_typelib_tables_gate()
     if tl_tables.get("status") == "fail":
         raise AssertionError(
             "出厂类型库对照门禁未通过（手抄的成员表与出厂类型库不一致）：\n"
-            + str(tl_tables.get("output", "")))
+            + str(tl_tables.get("output", ""))
+        )
     #: ★★ 2026-10-03（轮 515）**新增**：`in,out` 数组形参审计的**契约门禁** ——
     #:   ⚠ 为什么加：那份审计（`tools/audit_inout_array_params.py` ⇒
     #:   `output/inout-array-params.json`）是事实 128/129 的落地产物，
@@ -2500,7 +2991,8 @@ def run_release_check() -> dict[str, object]:
     if inout.get("status") == "fail":
         raise AssertionError(
             "in,out 数组形参审计的契约未通过（产物缺失/过期，或审计的安全边界被删）：\n"
-            + str(inout.get("output", "")))
+            + str(inout.get("output", ""))
+        )
     # ⚑ **签名审计表新鲜度门禁**（硬门禁）：`docs/signature-audit.md` 的**逐模块调用点数
     # **
     #   必须与实跑 `scripts/audit_call_arity.py` 的结果相符（A5 的制品）。
@@ -2512,7 +3004,8 @@ def run_release_check() -> dict[str, object]:
     if sig_fresh.get("status") == "fail":
         raise AssertionError(
             "签名审计表新鲜度门禁未通过（signature-audit 的逐模块数字与实跑不符）：\n"
-            + str(sig_fresh.get("output", "")))
+            + str(sig_fresh.get("output", ""))
+        )
     # ⚑ **A6 许可红线门禁**（硬门禁）：来源块声明的来源与许可必须在**白名单**内 ——
     #   把 `AGENTS.md §一 A6`「逐文件对照许可判定表」做成**可跑的那一半**。
     #   ⚠ 它判**声明是否自洽/越界**，**不判声明是否属实**（后者是语义判断，靠人核）。
@@ -2520,7 +3013,8 @@ def run_release_check() -> dict[str, object]:
     if license_rl.get("status") == "fail":
         raise AssertionError(
             "A6 许可红线门禁未通过（来源声明 vs 许可白名单）：\n"
-            + str(license_rl.get("output", "")))
+            + str(license_rl.get("output", ""))
+        )
     # ⚑ **A8 交付状态摘要门禁**（硬门禁）：`docs/harvest-digest.md` 必须与生成器输出一致
     #  ——
     # 把 `AGENTS.md §一 A8`「报告写明并入了什么 / 仍空缺什么 / 为什么」做成**可跑的那一
@@ -2530,12 +3024,15 @@ def run_release_check() -> dict[str, object]:
     if digest_fresh.get("status") == "fail":
         raise AssertionError(
             "A8 交付状态摘要新鲜度门禁未通过（digest 与真源分叉）：\n"
-            + str(digest_fresh.get("output", "")))
+            + str(digest_fresh.get("output", ""))
+        )
     # ⚑ 接口归属**诊断**（**不是门禁**，不拦发布）—— 放在所有硬门禁**之后**：
     #   诊断慢、且映射表有洞，放前面没意义。**假绿（检查量为 0）会在返回体里标出来。**
     ownership = _run_interface_ownership_probe()
     expected_runtime_files = collect_runtime_files(ROOT)
-    bundled_drift = find_bundled_skill_drift(ROOT, BUNDLED_SKILL, expected_runtime_files)
+    bundled_drift = find_bundled_skill_drift(
+        ROOT, BUNDLED_SKILL, expected_runtime_files
+    )
     if bundled_drift:
         preview = ", ".join(bundled_drift[:10])
         suffix = " ..." if len(bundled_drift) > 10 else ""
@@ -2583,7 +3080,7 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-07（接手轮）★ 同一道元门禁**第四次**教同一课 ⇒ ★ 两处**必须同时加**
         #:  ✓
         "probe_reuse": probe_reuse,
-        #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★ 
+        #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★
         #: 元门禁在守）✓
         "preselect_family": preselect_family,
         #: ★ 2026-10-07（接手轮 · 规格 215）★ **第六次**同一课：首句自证门禁
@@ -2669,7 +3166,7 @@ def run_release_check() -> dict[str, object]:
         #:   理由同 `py_syntax` 那条：★ 不进返回体，外面就**看不见它是跑了还是跳了**
         #:   （★ 静默跳过与没跑等价；★ 这条元门禁当场抓到过两次）。
         "official_md_claims": official_md,
-        "interface_ownership": ownership,        #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
+        "interface_ownership": ownership,  #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
         #: 元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外
         #: 面**看不见**
         #:   （★ 静默跳过与没跑等价）」。★ **这条正是元门禁存在的意义**（轮 191 的定则）。
@@ -2724,7 +3221,7 @@ def run_release_check() -> dict[str, object]:
     #: ⚑⚑ **2026-10-01（轮 191）：`gates` 与 `gate_details` 在**同一个循环**里一起建** —
     #: —
     #:   这样两者**不可能分叉**（一个门禁要么两处都有，要么两处都没有）。
-    #: ★ 为什么加 `gate_details`：轮 74 已经把「**13 个门禁的 `status`**」和 `skipped` 
+    #: ★ 为什么加 `gate_details`：轮 74 已经把「**13 个门禁的 `status`**」和 `skipped`
     #: 都暴露了，
     #:   但**每道门禁的 `output`（「扫了多少 / 跳过了什么 / 覆盖面在哪」）仍只有 4 道有**
     #:   ⇒ ★★ 于是「**status 隐形**」修好了，「**覆盖面隐形**」没修 ——
@@ -2758,8 +3255,9 @@ def run_release_check() -> dict[str, object]:
         "skipped": skipped,
         "skipped_count": len(skipped),
         "gates_passed": sorted(n for n, s in gates.items() if s == "pass"),
-        "gates_diagnostic": sorted(n for n, s in gates.items()
-                                   if s in ("clean", "hits", "checked_nothing")),
+        "gates_diagnostic": sorted(
+            n for n, s in gates.items() if s in ("clean", "hits", "checked_nothing")
+        ),
         "provenance": provenance,
         #: ★ 2026-10-05 ★ 诊断门禁的**第二处**（与 `_gate_results` 那处必须同时加，
         #:   否则元门禁报「没进返回体」= 静默跳过与没跑等价）✓

@@ -1,4 +1,5 @@
 """★ 会话裁决：**一个裁决、两条探路** —— 会话干不干净、有没有未保存改动。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具层）
 # 文件:   tools/session_verdict.py
@@ -11,7 +12,7 @@
 # lag`**；
 # ★ 官方原文：GetSaveFlag = "Gets whether the document is currently dirty and needs to b
 # e saved" ✓
-# ② **窗口标题路**（糙但**在 COM 已卡死时仍可用**）—— PowerShell `Get-Process SLDWORKS` 
+# ② **窗口标题路**（糙但**在 COM 已卡死时仍可用**）—— PowerShell `Get-Process SLDWORKS`
 # 取
 #        `MainWindowTitle`，抠 `[...]` 里的文档名，★ 末尾 `*` = 未保存标记 ✓
 #   ★★ 为什么**不能**只用 COM 那一条：★ 回收脚本的使用场景**正是 COM 可能已经卡死**
@@ -59,70 +60,124 @@ def parse_title_documents(title: str) -> list:
     ⚠ 限度：★ 标题路**拿不到路径**（只能给名字），★ 所以"是不是我方"要退回**命名约定**判 ✓
     """
     out = []
-    #: ★ 括号后可能还有空格再跟 `*`（实测形态 `[...] *`）⇒ ★ 必须允许空白，否则标记又丢 
+    #: ★ 括号后可能还有空格再跟 `*`（实测形态 `[...] *`）⇒ ★ 必须允许空白，否则标记又丢
     #: ✓
     for inner, after in re.findall(r"\[([^\]]+)\](\s*\*?)", title or ""):
         name = inner.strip()
-        out.append({"path": "", "title": name.rstrip("*").strip(),
-                    "dirty": name.rstrip().endswith("*") or "*" in after})
+        out.append(
+            {
+                "path": "",
+                "title": name.rstrip("*").strip(),
+                "dirty": name.rstrip().endswith("*") or "*" in after,
+            }
+        )
     return out
 
 
 def title_documents(timeout_s: int = 60) -> dict:
     """★ **窗口标题路**（不碰 COM ⇒ ★ 卡死时仍可用）：`[{path?, title, dirty}]` + 进程状态。"""
-    ps = ("Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
-          "ForEach-Object { \"$($_.Id)`t$($_.Responding)`t$($_.MainWindowTitle)\" }")
+    ps = (
+        "Get-Process -Name SLDWORKS -ErrorAction SilentlyContinue | "
+        'ForEach-Object { "$($_.Id)`t$($_.Responding)`t$($_.MainWindowTitle)" }'
+    )
     try:
-        proc = subprocess.run(["pwsh", "-NoProfile", "-Command", ps], check=False,
-                              capture_output=True, text=True, encoding="utf-8",
-                              errors="replace", timeout=timeout_s, stdin=subprocess.DEVNULL)
-    except (subprocess.TimeoutExpired, OSError) as exc:                   # noqa: BLE001
-        return {"usable": False, "why": "取进程失败：%s" % type(exc).__name__,
-                "processes": [], "documents": []}
+        proc = subprocess.run(
+            ["pwsh", "-NoProfile", "-Command", ps],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_s,
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:  # noqa: BLE001
+        return {
+            "usable": False,
+            "why": "取进程失败：%s" % type(exc).__name__,
+            "processes": [],
+            "documents": [],
+        }
     processes, documents = [], []
     for line in (proc.stdout or "").splitlines():
         parts = line.split("\t")
         if len(parts) < 3 or not parts[0].strip().isdigit():
             continue
-        pid, responding, title = int(parts[0]), parts[1].strip().lower() == "true", parts[2].strip()
+        pid, responding, title = (
+            int(parts[0]),
+            parts[1].strip().lower() == "true",
+            parts[2].strip(),
+        )
         processes.append({"pid": pid, "responding": responding, "title": title})
         #: ★ 解析**委托**给纯函数（★ 一份实现两处用）✓
         documents.extend(parse_title_documents(title))
-    return {"usable": bool(processes), "why": "" if processes else "★ 没有 SLDWORKS 进程",
-            "processes": processes, "documents": documents}
+    return {
+        "usable": bool(processes),
+        "why": "" if processes else "★ 没有 SLDWORKS 进程",
+        "processes": processes,
+        "documents": documents,
+    }
 
 
 def com_documents(timeout_s: int = 25) -> dict:
     """★ **COM 路**（准）：连一次、枚举文档、读路径与**官方未保存标记**；★ 连不上就如实报"用不了" ✓"""
     code = (
         "import sys,json;sys.stdout.reconfigure(encoding='utf-8');"
-        "sys.path[:0]=[r'%s',r'%s'];" % (REPO_ROOT, REPO_ROOT / "scripts") +
-        "import sw_connect,sw_session;"
+        "sys.path[:0]=[r'%s',r'%s'];"
+        % (REPO_ROOT, REPO_ROOT / "scripts")
+        + "import sw_connect,sw_session;"
         "sw=sw_connect.connect_solidworks(wait_seconds=8)[0];"
         "print(json.dumps(sw_session.open_documents(sw) if sw is not None else None))"
     )
     try:
-        proc = subprocess.run([sys.executable, "-c", code], check=False, capture_output=True,
-                              text=True, encoding="utf-8", errors="replace",
-                              timeout=timeout_s, stdin=subprocess.DEVNULL)
+        proc = subprocess.run(
+            [sys.executable, "-c", code],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_s,
+            stdin=subprocess.DEVNULL,
+        )
     except subprocess.TimeoutExpired:
-        return {"usable": False, "why": "★ COM 探测在 %d s 内未返回 ⇒ 会话卡死" % timeout_s,
-                "documents": []}
+        return {
+            "usable": False,
+            "why": "★ COM 探测在 %d s 内未返回 ⇒ 会话卡死" % timeout_s,
+            "documents": [],
+        }
     text = (proc.stdout or "").strip().splitlines()
     if not text or text[-1].strip() == "null":
-        return {"usable": False, "why": "★ 连不上 SolidWorks（或它没在运行）", "documents": []}
+        return {
+            "usable": False,
+            "why": "★ 连不上 SolidWorks（或它没在运行）",
+            "documents": [],
+        }
     import json
+
     try:
         snap = json.loads(text[-1])
-    except Exception as exc:                                            # noqa: BLE001
-        return {"usable": False, "why": "★ COM 返回值解析失败：%s" % type(exc).__name__,
-                "documents": []}
-    return {"usable": True, "why": "", "snapshot": snap,
-            "documents": snap.get("documents", [])}
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "usable": False,
+            "why": "★ COM 返回值解析失败：%s" % type(exc).__name__,
+            "documents": [],
+        }
+    return {
+        "usable": True,
+        "why": "",
+        "snapshot": snap,
+        "documents": snap.get("documents", []),
+    }
 
 
-def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
-                    prefer: str = "com", timeout_s: int = 25) -> dict:
+def session_verdict(
+    allowed_paths=(),
+    *,
+    allow_untitled: bool = False,
+    prefer: str = "com",
+    timeout_s: int = 25,
+) -> dict:
     """★★ **一个裁决**：会话干不干净、有没有未保存改动 —— ★ 两条探路，**并报出用的是哪条** ✓
 
     :param prefer: `"com"`（默认，准）或 `"title"`（★ 只在**确定 COM 用不了**时用，如回收脚本）
@@ -135,7 +190,9 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
     #: ★ 因"读不出"而降级掉的那些路（★ 记进返回值，免得读者以为只试了一条）✓
     tried_paths: list = []
     for path in order:
-        probe = com_documents(timeout_s=timeout_s) if path == "com" else title_documents()
+        probe = (
+            com_documents(timeout_s=timeout_s) if path == "com" else title_documents()
+        )
         tried.append(path)
         if not probe.get("usable"):
             #: ★★★ **"没在运行"不是"探不通"** —— ★ 这是本文件最容易犯的错：
@@ -145,9 +202,16 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
             #: ★★ 我第一版把两者混成了同一种失败 ⇒ ★ 护栏会**拒绝每一次跑**（因为探针常
             #: 常要先拉起 SW）✗
             if path == "title" and not (probe.get("processes") or []):
-                return {"ok": True, "path_used": "title", "documents": [], "ours": [],
-                        "foreign": [], "unsaved": [], "unsaved_unknown": 0,
-                        "why": "★ 没有 SLDWORKS 进程 ⇒ 会话必然是干净的（★ 这是「空」，不是「探不通」）"}
+                return {
+                    "ok": True,
+                    "path_used": "title",
+                    "documents": [],
+                    "ours": [],
+                    "foreign": [],
+                    "unsaved": [],
+                    "unsaved_unknown": 0,
+                    "why": "★ 没有 SLDWORKS 进程 ⇒ 会话必然是干净的（★ 这是「空」，不是「探不通」）",
+                }
             continue
         docs = probe.get("documents") or []
         allowed = {_norm(p) for p in (allowed_paths or ()) if str(p or "").strip()}
@@ -158,7 +222,9 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
                 if path == "title":
                     #: ★ 标题路拿不到路径 ⇒ ★ 退回**命名约定**判（★ 与回收脚本同一套正则
                     #: ）✓
-                    (ours if OURS.search(str(d.get("title") or "")) else foreign).append(d)
+                    (
+                        ours if OURS.search(str(d.get("title") or "")) else foreign
+                    ).append(d)
                 else:
                     #: ★ COM 路拿不到路径（新建未存盘）⇒ ★ 默认非我方（保守）✓
                     (ours if allow_untitled else foreign).append(d)
@@ -176,11 +242,11 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
         if not docs and problem:
             #: ★★★ 2026-10-06 **真机查出的静默漏洞 + 我随后的过度纠正**（两个都记下来）
             #: ：
-            #: ★ 漏洞：★ SolidWorks 明明开着文档，而 COM 路的 `GetDocuments` 返回**空** 
+            #: ★ 漏洞：★ SolidWorks 明明开着文档，而 COM 路的 `GetDocuments` 返回**空**
             #: ⇒
             #: `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗（★ 门禁瞎着却报"干
             #: 净"）
-            #: ★ 过度纠正：★ 我随后改成"读不出就**拒绝**" ⇒ ★★ 结果**会话干净时也拒绝** 
+            #: ★ 过度纠正：★ 我随后改成"读不出就**拒绝**" ⇒ ★★ 结果**会话干净时也拒绝**
             #: ⇒
             #:     ★ **门禁变成了路障**（★ 与上一轮 `sandbox_before` 那次同族）✗
             #: ⇒ ★★ 正解：★ **降级到另一条探路**，★ 并把"用的是哪条"如实记进 `path_used`
@@ -197,11 +263,20 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
             "unsaved": unsaved,
             "unsaved_unknown": sum(1 for d in docs if (d or {}).get("dirty") is None),
             "tried_paths": tried_paths,
-            "why": "" if not foreign else (
-                "★ 会话里有 %d 个**不是我们打开的**文档 ⇒ 拒绝开始" % len(foreign)),
+            "why": ""
+            if not foreign
+            else ("★ 会话里有 %d 个**不是我们打开的**文档 ⇒ 拒绝开始" % len(foreign)),
         }
-    return {"ok": False, "path_used": "", "documents": [], "ours": [], "foreign": [],
-            "unsaved": [], "unsaved_unknown": 0, "tried_paths": tried_paths,
-            "why": "★★ **所有探路都读不出已打开的文档**（试过 %s；其中因读不出而降级的有 %s）⇒ "
-                   "★ 按铁律 5 记「查不到」并**停下问人**，★ **不许当成「会话是干净的」**"
-                   % ("、".join(tried), "、".join(tried_paths) or "无")}
+    return {
+        "ok": False,
+        "path_used": "",
+        "documents": [],
+        "ours": [],
+        "foreign": [],
+        "unsaved": [],
+        "unsaved_unknown": 0,
+        "tried_paths": tried_paths,
+        "why": "★★ **所有探路都读不出已打开的文档**（试过 %s；其中因读不出而降级的有 %s）⇒ "
+        "★ 按铁律 5 记「查不到」并**停下问人**，★ **不许当成「会话是干净的」**"
+        % ("、".join(tried), "、".join(tried_paths) or "无"),
+    }

@@ -50,9 +50,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "render-material-sequence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "render-material-sequence.json"
+)
 
-#: ★ 官方示例用的显示状态选项（★ 反射：swThisDisplayState=1 · **swAllDisplayState=2** · 
+#: ★ 官方示例用的显示状态选项（★ 反射：swThisDisplayState=1 · **swAllDisplayState=2** ·
 #: swSpecifyDisplayState=3）
 ALL_DISPLAY_STATE = 2
 
@@ -64,8 +66,14 @@ def main() -> int:
 
     import sw_connect
     from sw_connect import get_com_member, out_i4
-    from sw_part import (_select_com_object, current_sketch_name, end_sketch,
-                         extrude_boss, sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        _select_com_object,
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_render_material as M
 
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -81,7 +89,9 @@ def main() -> int:
         ext = M.get_extension(doc)
 
         #: ① 取活动配置
-        conf = get_com_member(get_com_member(doc, "ConfigurationManager"), "ActiveConfiguration")
+        conf = get_com_member(
+            get_com_member(doc, "ConfigurationManager"), "ActiveConfiguration"
+        )
         #: ② 建显示状态（★ 官方第一步）
         ev["steps"]["create_display_state"] = {
             "ok": bool(get_com_member(conf, "CreateDisplayState", "MCP_DS")),
@@ -91,56 +101,92 @@ def main() -> int:
         ev["steps"]["get_display_states"] = {"ok": bool(names), "names": names[:5]}
         #: ④ 选一个面（★ 官方 `' Select a face`）
         face = None
-        for b in (get_com_member(doc, "GetBodies2", 0, False) or []):
+        for b in get_com_member(doc, "GetBodies2", 0, False) or []:
             fs = get_com_member(b, "GetFaces") or []
             if fs:
                 face = fs[0]
                 break
         doc.ClearSelection2(True)
-        sel_ok = bool(face is not None and _select_com_object(face, append=True, mark=0))
+        sel_ok = bool(
+            face is not None and _select_com_object(face, append=True, mark=0)
+        )
         ev["steps"]["select_face"] = {"ok": sel_ok}
         #: ⑤ 建外观 + **AddEntity**（★ 我们此前漏掉的那一步）
         mat = M.create_render_material(doc, "MCP_SeqMat", M.RenderMaterialSpec())
         try:
-            ev["steps"]["add_entity"] = {"ok": bool(get_com_member(mat, "AddEntity", face))}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["add_entity"] = {"ok": False,
-                                         "err": "%s: %s" % (type(exc).__name__, str(exc)[:100])}
+            ev["steps"]["add_entity"] = {
+                "ok": bool(get_com_member(mat, "AddEntity", face))
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["add_entity"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:100]),
+            }
         #: ⑥ Add（★ opt=2 + **真实名字数组**）
         id1, id2 = out_i4(), out_i4()
         try:
-            r = get_com_member(ext, "AddDisplayStateSpecificRenderMaterial",
-                               mat, ALL_DISPLAY_STATE, names, id1, id2)
-            ev["steps"]["add"] = {"ok": bool(r), "id1": repr(id1.value), "id2": repr(id2.value)}
-        except Exception as exc:                               # noqa: BLE001
-            ev["steps"]["add"] = {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:100])}
+            r = get_com_member(
+                ext,
+                "AddDisplayStateSpecificRenderMaterial",
+                mat,
+                ALL_DISPLAY_STATE,
+                names,
+                id1,
+                id2,
+            )
+            ev["steps"]["add"] = {
+                "ok": bool(r),
+                "id1": repr(id1.value),
+                "id2": repr(id2.value),
+            }
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["add"] = {
+                "ok": False,
+                "err": "%s: %s" % (type(exc).__name__, str(exc)[:100]),
+            }
         #: ⑦ 读回
         try:
-            n = int(get_com_member(ext, "GetRenderMaterialsCount2", ALL_DISPLAY_STATE, names) or 0)
+            n = int(
+                get_com_member(
+                    ext, "GetRenderMaterialsCount2", ALL_DISPLAY_STATE, names
+                )
+                or 0
+            )
             raw = get_com_member(ext, "GetRenderMaterials2", ALL_DISPLAY_STATE, names)
             item = None
             if raw is not None:
                 try:
                     item = str(get_com_member(raw, "MaterialIdName") or "")[:60]
-                except Exception:                              # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     item = "(object)"
-            ev["steps"]["read_back"] = {"ok": n > 0, "count": n, "raw_type": type(raw).__name__, "item": item}
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["read_back"] = {
+                "ok": n > 0,
+                "count": n,
+                "raw_type": type(raw).__name__,
+                "item": item,
+            }
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["read_back"] = {"ok": False, "err": str(exc)[:80]}
 
         #: ★ 判据：**七步都执行成功**（★ 含读）才算 pass；★ 而"读回空"是已知边界（不谎报
         #:  pass）
         exec_ok = all(v.get("ok") for k, v in ev["steps"].items() if k != "read_back")
-        ev["verdict"] = "pass" if (exec_ok and ev["steps"]["read_back"].get("ok")) else "partial"
-        ev["note"] = ("★ 官方示例的每一步都执行成功；★ 而**读回仍空** ⇒ 那是**本机文档/环境**的边界"
-                      "（★ 不是步骤缺失）。★ 详见 known-facts 事实 286/287。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["verdict"] = (
+            "pass" if (exec_ok and ev["steps"]["read_back"].get("ok")) else "partial"
+        )
+        ev["note"] = (
+            "★ 官方示例的每一步都执行成功；★ 而**读回仍空** ⇒ 那是**本机文档/环境**的边界"
+            "（★ 不是步骤缺失）。★ 详见 known-facts 事实 286/287。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1500])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None and not args.keep:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

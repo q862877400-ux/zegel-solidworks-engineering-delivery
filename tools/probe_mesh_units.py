@@ -34,6 +34,7 @@ r"""@brief 探针：`default_element_size_and_tolerance` 的 **`units` 口径** 
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -63,7 +64,7 @@ def main() -> int:
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 造 100×60×20 的板（★ 与既有脚本同一工况）+ 材料 + 研究
@@ -80,8 +81,10 @@ def main() -> int:
         #: ③ 零件的真实尺寸（★ 用来判"哪个 units 才是毫米"）
         try:
             bb = sw_part.get_bounding_box(doc)
-            ev["steps"]["part_size_mm"] = [round(float(x), 2) for x in (bb or {}).get("size", [])]
-        except Exception as exc:                               # noqa: BLE001
+            ev["steps"]["part_size_mm"] = [
+                round(float(x), 2) for x in (bb or {}).get("size", [])
+            ]
+        except Exception as exc:  # noqa: BLE001
             ev["steps"]["part_size_mm"] = "取不到: %s" % str(exc)[:60]
 
         #: ① 父进程：四个 units
@@ -90,19 +93,31 @@ def main() -> int:
             try:
                 size, tol = sim.default_element_size_and_tolerance(study, u)
                 parent[str(u)] = {"element_size": float(size), "tolerance": float(tol)}
-            except Exception as exc:                           # noqa: BLE001
-                parent[str(u)] = {"error": "%s: %s" % (type(exc).__name__, str(exc)[:60])}
+            except Exception as exc:  # noqa: BLE001
+                parent[str(u)] = {
+                    "error": "%s: %s" % (type(exc).__name__, str(exc)[:60])
+                }
         ev["steps"]["parent"] = parent
         print("  [父进程] %s" % json.dumps(parent, ensure_ascii=False)[:300])
 
         #: ② 子进程（经隔离）：同样四个 units
         child = {}
         for u in (-1, 0, 1, 2):
-            r = run_isolated("scripts.sw_simulation_worker", "mesh_size_by_name",
-                             args=[STUDY], kwargs={"units": u}, timeout=60)
-            child[str(u)] = ({"element_size": (r.get("result") or {}).get("element_size"),
-                              "tolerance": (r.get("result") or {}).get("tolerance")}
-                             if r.get("ok") else {"error": (r.get("error") or "")[:80]})
+            r = run_isolated(
+                "scripts.sw_simulation_worker",
+                "mesh_size_by_name",
+                args=[STUDY],
+                kwargs={"units": u},
+                timeout=60,
+            )
+            child[str(u)] = (
+                {
+                    "element_size": (r.get("result") or {}).get("element_size"),
+                    "tolerance": (r.get("result") or {}).get("tolerance"),
+                }
+                if r.get("ok")
+                else {"error": (r.get("error") or "")[:80]}
+            )
         ev["steps"]["child"] = child
         print("  [子进程] %s" % json.dumps(child, ensure_ascii=False)[:300])
 
@@ -113,31 +128,39 @@ def main() -> int:
                 es = v.get("element_size")
                 out[k] = ("~%.1f" % es) if isinstance(es, (int, float)) else "?"
             return out
+
         size_mm = ev["steps"].get("part_size_mm")
         maxdim = max(size_mm) if isinstance(size_mm, list) and size_mm else None
         ev["steps"]["verdict"] = {
-            "parent": _magnitude(parent), "child": _magnitude(child),
-            "parent_child_same": {k: (parent.get(k, {}).get("element_size")
-                                      == child.get(k, {}).get("element_size"))
-                                  for k in parent},
+            "parent": _magnitude(parent),
+            "child": _magnitude(child),
+            "parent_child_same": {
+                k: (
+                    parent.get(k, {}).get("element_size")
+                    == child.get(k, {}).get("element_size")
+                )
+                for k in parent
+            },
             "part_max_dim_mm": maxdim,
-            "★": ("★★ 若某 units 的值与零件尺度**同量级**（如 4.9 对 100）⇒ 那是「毫米」口径；"
-                  "★ 若大 1000 倍（如 4930）⇒ 那是「米」口径被当成毫米用 ⇒ **传给 CreateMesh 会导致网格退化**"),
+            "★": (
+                "★★ 若某 units 的值与零件尺度**同量级**（如 4.9 对 100）⇒ 那是「毫米」口径；"
+                "★ 若大 1000 倍（如 4930）⇒ 那是「米」口径被当成毫米用 ⇒ **传给 CreateMesh 会导致网格退化**"
+            ),
         }
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     print("  ── units 口径探针 ──")
@@ -146,7 +169,9 @@ def main() -> int:
     if ev.get("error"):
         print("  ⚠ error: %s" % ev["error"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if not ev.get("error") else 1
 

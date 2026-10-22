@@ -1,4 +1,5 @@
 """★ 解压 DSH 会话日志（zstd）并数出**实际用的模型路由**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   DSH 会话日志（不是 SW 仓库）
 # 文件:   C:\Users\Zegel\.dsh\sessions\--D-AI-SW--\<会话id>\session.v4.jsonl.zstd
@@ -27,23 +28,33 @@ SESSIONS = {
     "8009e438-da57-4870-81bf-111e348b0577": "bunny-vf5",
 }
 ROOT = Path(r"C:\Users\Zegel\.dsh\sessions\--D-AI-SW--")
-MARKS = ("space-bunny-free", "deepseek-flash", "opencode-zen", "deepseek-official",
-         "gemini-3.8-flash", "opencode", "zen")
+MARKS = (
+    "space-bunny-free",
+    "deepseek-flash",
+    "opencode-zen",
+    "deepseek-official",
+    "gemini-3.8-flash",
+    "opencode",
+    "zen",
+)
 
 
 def decompress(p: Path) -> bytes:
     """★ 三级降级：stdlib `compression.zstd` → `zstandard` 包 → `zstd` CLI。"""
     try:
-        from compression import zstd                              #: ★ Python 3.14 自带
+        from compression import zstd  #: ★ Python 3.14 自带
+
         return zstd.decompress(p.read_bytes())
-    except Exception:                                             # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     try:
-        import zstandard                                          # type: ignore
+        import zstandard  # type: ignore
+
         return zstandard.ZstdDecompressor().decompress(p.read_bytes())
-    except Exception:                                             # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     import subprocess
+
     r = subprocess.run(["zstd", "-d", "-c", str(p)], capture_output=True)
     if r.returncode == 0:
         return r.stdout
@@ -58,19 +69,22 @@ def main() -> int:
             continue
         try:
             data = decompress(log)
-        except Exception as exc:                                  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("★ %-10s 解压失败：%s" % (who, exc))
             continue
         text = data.decode("utf-8", errors="replace")
         counts = {m: text.count(m) for m in MARKS}
         hits = {k: v for k, v in counts.items() if v}
-        print("★ %-10s 日志 %d 字符；命中：%s" % (who, len(text), hits or "**一个标识都没有**"))
+        print(
+            "★ %-10s 日志 %d 字符；命中：%s"
+            % (who, len(text), hits or "**一个标识都没有**")
+        )
         #: ★ 再捞一眼 model 字段（可能落在 `"model":"..."` 里）
         models = set(re.findall(r'"model"\s*:\s*"([^"]{1,40})"', text))
-        print("             出现过的 \"model\" 取值：%s" % (sorted(models) or "（无）"))
+        print('             出现过的 "model" 取值：%s' % (sorted(models) or "（无）"))
         #: ★ provider 字段
         provs = set(re.findall(r'"provider"\s*:\s*"([^"]{1,40})"', text))
-        print("             出现过的 \"provider\" 取值：%s" % (sorted(provs) or "（无）"))
+        print('             出现过的 "provider" 取值：%s' % (sorted(provs) or "（无）"))
         print()
     return 0
 

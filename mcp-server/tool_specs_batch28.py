@@ -54,26 +54,34 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH28"]
 
-_STUDY = ("Name of an EXISTING simulation study (e.g. \"Study 1\" / \"算例 1\"). "
-          "⚠ Leave empty to use the FIRST study — create one first with "
-          "solidworks_simulation_create_study.")
-_UNITS = ("Official swsUnit_e value (0 = SI, 1 = English, 2 = Metric). "
-          "★ It is an enum, NOT a length, so it carries no unit suffix.")
-_SEL = ("Declarative selection — reserved for the mesh/analysis family; not used by these "
-        "four tools (they act on the whole study).")
+_STUDY = (
+    'Name of an EXISTING simulation study (e.g. "Study 1" / "算例 1"). '
+    "⚠ Leave empty to use the FIRST study — create one first with "
+    "solidworks_simulation_create_study."
+)
+_UNITS = (
+    "Official swsUnit_e value (0 = SI, 1 = English, 2 = Metric). "
+    "★ It is an enum, NOT a length, so it carries no unit suffix."
+)
+_SEL = (
+    "Declarative selection — reserved for the mesh/analysis family; not used by these "
+    "four tools (they act on the whole study)."
+)
 
 
 SPECS_BATCH28 = [
     ToolSpec(
         name="solidworks_simulation_mesh_size",
         title="Get the Suggested Mesh Element Size",
-        module="sw_simulation", function="mesh_size_report",
+        module="sw_simulation",
+        function="mesh_size_report",
         inject="study",
         param_alias={"study_name": None},
         params=[
@@ -81,54 +89,68 @@ SPECS_BATCH28 = [
             Param("units", int, default=-1, description=_UNITS),
         ],
         doc="Return the suggested mesh `{element_size, tolerance, units}` for a study. "
-            "★ The default units = -1 yields MILLIMETRE-scale values (verified in this repo) and "
-            "nothing is converted — the `units` value is echoed back so the caller can tell.",
+        "★ The default units = -1 yields MILLIMETRE-scale values (verified in this repo) and "
+        "nothing is converted — the `units` value is echoed back so the caller can tell.",
     ),
     ToolSpec(
         name="solidworks_simulation_create_mesh",
         title="Create the Mesh for a Study",
-        module="sw_simulation", function="create_mesh_report",
+        module="sw_simulation",
+        function="create_mesh_report",
         inject="study",
-        param_alias={"study_name": None, "element_size_mm": "element_size",
-                     "tolerance_mm": "tolerance"},
+        param_alias={
+            "study_name": None,
+            "element_size_mm": "element_size",
+            "tolerance_mm": "tolerance",
+        },
         params=[
             Param("study_name", str, default="", description=_STUDY),
             Param("units", int, default=0, description=_UNITS),
-            Param("element_size_mm", float, default=0.0,
-                  description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose)."),
-            Param("tolerance_mm", float, default=0.0,
-                  description="Mesh tolerance in MILLIMETRES (0.0 = let SolidWorks choose; "
-                              "the official default is 5% of the element size)."),
+            Param(
+                "element_size_mm",
+                float,
+                default=0.0,
+                description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose).",
+            ),
+            Param(
+                "tolerance_mm",
+                float,
+                default=0.0,
+                description="Mesh tolerance in MILLIMETRES (0.0 = let SolidWorks choose; "
+                "the official default is 5% of the element size).",
+            ),
         ],
         doc="Mesh the study and return a READ-BACK report "
-            "`{ok, return_code, return_is_trustworthy, element_count}`. "
-            "★★ Judge success by `ok`, which is derived from `element_count > 0` — NOT from the "
-            "return code (this repo's rule: COM return values that cannot prove themselves are "
-            "never trusted; `return_is_trustworthy` is always false).",
+        "`{ok, return_code, return_is_trustworthy, element_count}`. "
+        "★★ Judge success by `ok`, which is derived from `element_count > 0` — NOT from the "
+        "return code (this repo's rule: COM return values that cannot prove themselves are "
+        "never trusted; `return_is_trustworthy` is always false).",
     ),
     ToolSpec(
         name="solidworks_simulation_run_analysis",
         title="Run the Study and Report Read-Back Results",
-        module="sw_simulation", function="run_analysis_report",
+        module="sw_simulation",
+        function="run_analysis_report",
         inject="study",
         param_alias={"study_name": None},
         params=[
             Param("study_name", str, default="", description=_STUDY),
         ],
         doc="Run the study and return a READ-BACK report "
-            "`{ok, return_code, return_is_trustworthy, results_present, plot_count, plot_names}`. "
-            "★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
-            "code — this repo has documented four separate cases of a COM return code lying.",
+        "`{ok, return_code, return_is_trustworthy, results_present, plot_count, plot_names}`. "
+        "★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
+        "code — this repo has documented four separate cases of a COM return code lying.",
     ),
     ToolSpec(
         name="solidworks_simulation_collect_evidence",
         title="Collect Simulation Study Evidence",
-        module="sw_simulation", function="collect_study_evidence",
+        module="sw_simulation",
+        function="collect_study_evidence",
         inject="sw_app",
         params=[],
         doc="Return a JSON-able summary of every study in the active document: per-study "
-            "`name / type / state / entity_count / analysis_type / mesh_type / configuration / "
-            "is_active / loads_and_restraints`, plus `cosmos_version`, `study_count` and "
-            "`active_study_index`. ★ Reading only.",
+        "`name / type / state / entity_count / analysis_type / mesh_type / configuration / "
+        "is_active / loads_and_restraints`, plus `cosmos_version`, `study_count` and "
+        "`active_study_index`. ★ Reading only.",
     ),
 ]

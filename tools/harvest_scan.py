@@ -1,9 +1,10 @@
 """★ 批次②–⑥的**通用挖掘器**：扫指定目录，抽「可吸收的建模知识」，逐条判定。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
 # 文件:   tools/harvest_scan.py
-# 定位:   规格 `specs/332-known-facts-triage` 的**批次②–⑥通用器**。★★ 业主 2026-10-14 
+# 定位:   规格 `specs/332-known-facts-triage` 的**批次②–⑥通用器**。★★ 业主 2026-10-14
 #           授权全自动挖掘；★ 收口判据要求  「各批有明确的『已扫 / 已判断』结论」。★★ 判
 #           据：**同一套分类规则**服务所有批次 ⇒ ★ 换批次不改代码。
 # 官方依据: 本仓文件系统 + `tools/triage_known_facts.py` 的分类规则
@@ -35,7 +36,8 @@ BATCHES = {
 MODEL_ACTION = re.compile(
     r"(草图|几何关系|完全定义|约束|倒角|圆角|拉伸|旋转|切除|阵列|镜像|"
     r"孔|螺纹|槽|键槽|基准面|中心线|轮廓|拔模|抽壳|特征树|父子|"
-    r"尺寸|标注|工程图|配合|装配)")
+    r"尺寸|标注|工程图|配合|装配)"
+)
 
 #: ★★ **"这是知识"的判据** —— ★ 有「不要/必须/优先/推荐」这类**规范语气**
 NORMATIVE = re.compile(r"(不要|必须|应当|优先|推荐|避免|禁止|正确做法|惯例|最佳实践)")
@@ -46,16 +48,22 @@ CRITERION = re.compile(r"(判据|回读|证据|验证|以.*为准|不能只看|�
 #: ★ **"这是过程记录"** ⇒ ★ 放过
 PROCESS = re.compile(
     r"(轮 \d+|提交|commit|git |门禁|台账|规格 \d+|spec \d+|进度|盘点|"
-    r"收口|验收|清单|统计|基线|ROADMAP|handoff)")
+    r"收口|验收|清单|统计|基线|ROADMAP|handoff)"
+)
 
 
 #: ★★ **已由批次①覆盖的文件**（★ 排除，免得重复计数）
 #:   ⚠ 实测（2026-10-14）：`docs/known-facts.md` 就在 `docs/` 下 ⇒
 #:     ★ 批次⑥把它又扫了一遍 ⇒ **重复计数** ✗
-ALREADY_COVERED = {"docs/known-facts.md", "docs/dead-ends.md",
-                   "docs/harvest-digest.md", "docs/metrics.md",
-                   "docs/union-coverage-matrix.md", "docs/gate-inventory.md",
-                   "docs/union-level-audit.md"}
+ALREADY_COVERED = {
+    "docs/known-facts.md",
+    "docs/dead-ends.md",
+    "docs/harvest-digest.md",
+    "docs/metrics.md",
+    "docs/union-coverage-matrix.md",
+    "docs/gate-inventory.md",
+    "docs/union-level-audit.md",
+}
 
 
 def scan(batch: str) -> dict:
@@ -93,8 +101,7 @@ def scan(batch: str) -> dict:
                 pass_.append((str(f.relative_to(ROOT)), ln, s2))
             else:
                 pass_.append((str(f.relative_to(ROOT)), ln, s2))
-    return {"files": len(files), "skip": skip,
-            "absorb": absorb, "pass": pass_}
+    return {"files": len(files), "skip": skip, "absorb": absorb, "pass": pass_}
 
 
 def main() -> int:
@@ -114,20 +121,25 @@ def main() -> int:
                 continue
             seen.add(k)
             uniq.append((f, ln, s))
-        summary[b] = {"files": r["files"], "skip": r["skip"],
-                      "absorb": len(r["absorb"]), "absorb_uniq": len(uniq),
-                      "pass": len(r["pass"])}
-        print("★ %-18s 文件 %5d · 该吸收 %4d（去重 %4d）· 放过 %6d"
-              % (b, r["files"], len(r["absorb"]), len(uniq), len(r["pass"])))
+        summary[b] = {
+            "files": r["files"],
+            "skip": r["skip"],
+            "absorb": len(r["absorb"]),
+            "absorb_uniq": len(uniq),
+            "pass": len(r["pass"]),
+        }
+        print(
+            "★ %-18s 文件 %5d · 该吸收 %4d（去重 %4d）· 放过 %6d"
+            % (b, r["files"], len(r["absorb"]), len(uniq), len(r["pass"]))
+        )
         if args.show:
             print()
-            for f, ln, s in uniq[:args.show]:
+            for f, ln, s in uniq[: args.show]:
                 print("   %s:%d" % (f, ln))
                 print("      %s" % s[:150])
             print()
     out = ROOT / "output" / "harvest-scan.json"
-    out.write_text(json.dumps(summary, ensure_ascii=False, indent=1),
-                   encoding="utf-8")
+    out.write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
     print()
     print("★ ⇒ %s" % out)
     return 0

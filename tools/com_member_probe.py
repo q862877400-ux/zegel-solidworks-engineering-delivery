@@ -32,9 +32,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-INTEROP = Path(os.environ.get(
-    "DSL_INTEROP",
-    r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll"))
+INTEROP = Path(
+    os.environ.get(
+        "DSL_INTEROP",
+        r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll",
+    )
+)
 
 PS_MEMBERS = r"""
 $ErrorActionPreference = "Stop"
@@ -70,12 +73,21 @@ def interface_members(type_name: str, dll: Path | None = None) -> dict:
     #: ★★ **正解是 `-EncodedCommand`**（base64 / UTF-16LE）—— ★ 那是传多行脚本**最稳**的
     #: 方式 ✓
     import base64
+
     enc = base64.b64encode(PS_MEMBERS.encode("utf-16-le")).decode("ascii")
-    r = subprocess.run(["powershell", "-NoProfile", "-EncodedCommand", enc],
-                       capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", env=env, timeout=300)
+    r = subprocess.run(
+        ["powershell", "-NoProfile", "-EncodedCommand", enc],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env,
+        timeout=300,
+    )
     if r.returncode != 0 or not (r.stdout or "").strip():
-        raise RuntimeError("反射失败（%s）：%s" % (type_name, (r.stderr or r.stdout or "")[:160]))
+        raise RuntimeError(
+            "反射失败（%s）：%s" % (type_name, (r.stderr or r.stdout or "")[:160])
+        )
     out: dict = {}
     for line in r.stdout.splitlines():
         if "|" in line:
@@ -101,7 +113,7 @@ def probe_members(obj, names) -> dict:
     for n in names:
         try:
             v = getattr(obj, n, None)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             out[n] = "missing"
             continue
         out[n] = "missing" if v is None else ("callable" if callable(v) else "value")
@@ -125,7 +137,9 @@ def probe_members(obj, names) -> dict:
 def main(argv: list) -> int:
     args = [a for a in argv if not a.startswith("--")]
     if len(args) < 2:
-        print("  用法：python tools/com_member_probe.py <\u63a5\u53e3\u540d> <\u6a21\u5f0f>")
+        print(
+            "  用法：python tools/com_member_probe.py <\u63a5\u53e3\u540d> <\u6a21\u5f0f>"
+        )
         print("        ★ 模式：`members` 只列程序集里的名单（★ 不需要 SW）")
         print("        ★★ 而**问真机**的用法见 `tools/prove_member_availability.py`")
         return 2
@@ -133,7 +147,7 @@ def main(argv: list) -> int:
     if mode == "members":
         try:
             m = interface_members(name)
-        except Exception as exc:                               # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("  [SKIP] %s" % str(exc)[:120])
             return 0
         print("  %s：程序集里 **%d** 个成员" % (name, len(m)))

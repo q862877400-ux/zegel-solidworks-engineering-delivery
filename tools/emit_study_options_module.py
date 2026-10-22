@@ -6,6 +6,7 @@ r"""生成 scripts/sw_simulation_study_options.py（含 setter 登记表）。
     python -m py_compile scripts\sw_simulation_study_options.py
     python tests\test_sw_simulation_study_options_contract.py
 """
+
 from __future__ import annotations
 
 import json
@@ -300,7 +301,9 @@ def main() -> int:
 
     lines = [HEADER]
     lines.append("#: 反射确认的 setter 登记表：{族: {setter名: 参数类型}}\n")
-    lines.append("# ⚠ 机械生成（D:\\AI\\SW\\tools\\gen_study_options_registry.py），不手抄。\n")
+    lines.append(
+        "# ⚠ 机械生成（D:\\AI\\SW\\tools\\gen_study_options_registry.py），不手抄。\n"
+    )
     lines.append("STUDY_OPTION_SETTERS: dict[str, dict[str, str]] = {\n")
     for family, items in data.items():
         if not items:
@@ -336,8 +339,7 @@ def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("".join(lines), encoding="utf-8")
     print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节)")
-    print(f"  族 {len([1 for v in data.values() if v])} 个 / "
-          f"setter {len(seen)} 个")
+    print(f"  族 {len([1 for v in data.values() if v])} 个 / setter {len(seen)} 个")
     return 0
 
 

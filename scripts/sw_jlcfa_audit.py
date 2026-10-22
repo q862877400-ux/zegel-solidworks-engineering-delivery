@@ -22,6 +22,7 @@ r"""抽查执行器 —— 逐个型号跑「分类→型号→填参→生成�
 # ⚠ 本模块会驱动鼠标键盘。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -64,7 +65,7 @@ def goto(kind: str, name: str, h: int, w, tries: int = 2):
     if cur == kind or (kind == "SELECT" and cur == "GENERATED"):
         return h, w
     for _ in range(tries):
-        S.ensure_front(h)          # 只尽力置前，**不再阻断**
+        S.ensure_front(h)  # 只尽力置前，**不再阻断**
         S.cache_drop()
         h, w = _conn()
         if kind == "CATEGORY":
@@ -136,8 +137,10 @@ def goto_element(kind: str, name: str, h: int, w, back_rounds: int = 6):
         S.ensure_front(h)
         r = _find_target(kind, name, w)
         if r is not None:
-            S.log("      第%d轮找到「%s」%s" % (rnd, name,
-                     (r.left, r.top, r.right, r.bottom)))
+            S.log(
+                "      第%d轮找到「%s」%s"
+                % (rnd, name, (r.left, r.top, r.right, r.bottom))
+            )
             S.click((r.left + r.right) // 2, (r.top + r.bottom) // 2, 1.2)
             t0 = time.time()
             while time.time() - t0 < 22:
@@ -165,8 +168,15 @@ def goto_element(kind: str, name: str, h: int, w, back_rounds: int = 6):
 
 def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     """跑一个零件。返回结果字典。"""
-    rec: dict[str, Any] = {"cat": cat, "sub": sub, "code": code, "ok": False,
-                           "stage": "", "pct": None, "title": ""}
+    rec: dict[str, Any] = {
+        "cat": cat,
+        "sub": sub,
+        "code": code,
+        "ok": False,
+        "stage": "",
+        "pct": None,
+        "title": "",
+    }
     h, w = _conn()
     st = S.read_state(w)
     rec["start"] = S.page_kind(st)
@@ -210,8 +220,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     rec["pct"] = pct
     if pct != 100:
         rec["stage"] = "未到100%%(%s)" % pct
-        S.evidence("FAIL_%s_%s" % (sub, code), h, w, S.read_state(w),
-                   note=rec["stage"])
+        S.evidence("FAIL_%s_%s" % (sub, code), h, w, S.read_state(w), note=rec["stage"])
         return rec
 
     # ⑤ 生成预览
@@ -238,10 +247,18 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
             break
     rec["title"] = title[:80]
     rec["stage"] = "生成预览"
-    rec["ok"] = ("SLDPRT" in title or "SLDASM" in title
-                or "建模完成" in S.read_state(w)["visible"])
-    S.evidence(("OK_" if rec["ok"] else "PART_") + "%s_%s" % (sub, code),
-               h, w, S.read_state(w), note=rec["title"])
+    rec["ok"] = (
+        "SLDPRT" in title
+        or "SLDASM" in title
+        or "建模完成" in S.read_state(w)["visible"]
+    )
+    S.evidence(
+        ("OK_" if rec["ok"] else "PART_") + "%s_%s" % (sub, code),
+        h,
+        w,
+        S.read_state(w),
+        note=rec["title"],
+    )
     return rec
 
 
@@ -254,19 +271,34 @@ def main(plan: list[tuple[str, str, str]]):
         try:
             rec = run_one(cat, sub, code)
         except Exception:
-            rec = {"cat": cat, "sub": sub, "code": code, "ok": False,
-                   "stage": "异常:" + traceback.format_exc()[-160:]}
+            rec = {
+                "cat": cat,
+                "sub": sub,
+                "code": code,
+                "ok": False,
+                "stage": "异常:" + traceback.format_exc()[-160:],
+            }
         results.append(rec)
-        S.log("  => %s  %s  %s" % ("✓" if rec["ok"] else "✗", rec["stage"],
-                                   rec.get("title", "")[:52]))
-        REPORT.write_text(json.dumps(results, ensure_ascii=False, indent=1),
-                          encoding="utf-8")
+        S.log(
+            "  => %s  %s  %s"
+            % ("✓" if rec["ok"] else "✗", rec["stage"], rec.get("title", "")[:52])
+        )
+        REPORT.write_text(
+            json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8"
+        )
         S.log("  用时 %.0fs" % (time.time() - t_all))
     S.log("════ 汇总 ════")
     for r in results:
-        S.log("  %s %-10s %-12s %-12s %s"
-              % ("✓" if r["ok"] else "✗", r["cat"][:9], r["sub"][:11],
-                 r["code"][:11], r["stage"][:34]))
+        S.log(
+            "  %s %-10s %-12s %-12s %s"
+            % (
+                "✓" if r["ok"] else "✗",
+                r["cat"][:9],
+                r["sub"][:11],
+                r["code"][:11],
+                r["stage"][:34],
+            )
+        )
     ok = sum(1 for r in results if r["ok"])
     S.log("成功 %d/%d" % (ok, len(results)))
     return results

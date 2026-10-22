@@ -30,6 +30,7 @@ r"""@brief 真机冒烟：`sw_mold.py` 的**只读**函数（`mold_evidence` 等
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -58,7 +59,12 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-evidence-smoke
 #:     把一条**本来正常**的能力钉在 `stitched` 上 ⇒ ★★ **旧结论会把好能力误判成坏能力。**
 #: ★ 现改为：**计数键名对 `counts` 子字典、属性键名对顶层**（★ 与实现的**更好**形状对齐
 #: ）。
-WANTED_COUNTS = ("parting_lines", "parting_surfaces", "cavity_surfaces", "core_surfaces")
+WANTED_COUNTS = (
+    "parting_lines",
+    "parting_surfaces",
+    "cavity_surfaces",
+    "core_surfaces",
+)
 WANTED_PROPS = ("parting_type", "core_cavity_split")
 
 
@@ -80,62 +86,90 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_mold
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
         chk("新建临时零件（不碰用户文档）", doc is not None, "ok")
 
         evd = sw_mold.mold_evidence(doc)
-        chk("★ `mold_evidence()` 可调用且返回 dict", isinstance(evd, dict),
-            type(evd).__name__)
+        chk(
+            "★ `mold_evidence()` 可调用且返回 dict",
+            isinstance(evd, dict),
+            type(evd).__name__,
+        )
         if isinstance(evd, dict):
             ev["evidence_keys"] = sorted(evd.keys())
             print("     键: %s" % sorted(evd.keys()))
             #: ★★ 判据按**实现真实的形状**：计数在 `counts` 子字典、属性在顶层。
             counts = evd.get("counts") if isinstance(evd.get("counts"), dict) else {}
-            have = ([k for k in WANTED_COUNTS if k in counts]
-                    + [k for k in WANTED_PROPS if k in evd])
-            chk("★★ 含官方只读入口的键（%d/%d）" % (len(have), len(WANTED_COUNTS) + len(WANTED_PROPS)),
-                len(have) >= 4, have)
+            have = [k for k in WANTED_COUNTS if k in counts] + [
+                k for k in WANTED_PROPS if k in evd
+            ]
+            chk(
+                "★★ 含官方只读入口的键（%d/%d）"
+                % (len(have), len(WANTED_COUNTS) + len(WANTED_PROPS)),
+                len(have) >= 4,
+                have,
+            )
             #: ★ 定量：新零件上计数必须为 0
-            zeros = ([k for k in WANTED_COUNTS if k in counts and counts[k] in (0, None, "", "0")]
-                     + [k for k in WANTED_PROPS if k in evd and evd[k] in (0, None, "", "0")])
-            chk("★★ 新零件上这些读数**都是空/0**（非 0 就是读错了对象）",
-                len(zeros) >= 4, "%d 个为 0/空" % len(zeros))
-            ev["values"] = {"counts": {k: counts.get(k) for k in WANTED_COUNTS if k in counts},
-                            **{k: evd.get(k) for k in WANTED_PROPS if k in evd}}
-    except Exception as exc:      # noqa: BLE001
+            zeros = [
+                k
+                for k in WANTED_COUNTS
+                if k in counts and counts[k] in (0, None, "", "0")
+            ] + [k for k in WANTED_PROPS if k in evd and evd[k] in (0, None, "", "0")]
+            chk(
+                "★★ 新零件上这些读数**都是空/0**（非 0 就是读错了对象）",
+                len(zeros) >= 4,
+                "%d 个为 0/空" % len(zeros),
+            )
+            ev["values"] = {
+                "counts": {k: counts.get(k) for k in WANTED_COUNTS if k in counts},
+                **{k: evd.get(k) for k in WANTED_PROPS if k in evd},
+            }
+    except Exception as exc:  # noqa: BLE001
         chk("真机冒烟", False, "%s: %s" % (type(exc).__name__, str(exc)[:90]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
-    chk("★ 收尾（轮询 + 查到就点掉）", found == 0,
-        "发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
+    chk(
+        "★ 收尾（轮询 + 查到就点掉）",
+        found == 0,
+        "发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned),
+    )
 
     print()
-    print("  ── %d/%d · verdict: %s ──" % (ok_n, total, "pass" if ok_n == total else "fail"))
-    print("  ⚠ **未验**：`MoldDraftAnalysis` / `MoldUndercutDetect` / `InsertMold*` —— "
-          "在未准备的分型件上会弹框（见 `verify_batch9_smoke.py` 的 PRECONDITIONS）。")
+    print(
+        "  ── %d/%d · verdict: %s ──"
+        % (ok_n, total, "pass" if ok_n == total else "fail")
+    )
+    print(
+        "  ⚠ **未验**：`MoldDraftAnalysis` / `MoldUndercutDetect` / `InsertMold*` —— "
+        "在未准备的分型件上会弹框（见 `verify_batch9_smoke.py` 的 PRECONDITIONS）。"
+    )
     ev["passed"], ev["total"] = ok_n, total
     ev["verdict"] = "pass" if ok_n == total else "fail"
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ok_n == total else 1
 

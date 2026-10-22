@@ -1,4 +1,5 @@
 """特征树名清单的单一实现（原先在 4 个模块里各有一份）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   scripts/sw_feature_tree.py
@@ -38,7 +39,7 @@ def tree_names(model):
         from sw_part import feature_names as _fn
     try:
         return list(_fn(model) or [])
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -81,7 +82,6 @@ def feature_count(model) -> int:
         return -1
 
 
-
 def feature_type_name(model, name):
     """★ 读特征类型名（★ 事实 242：那是**只依赖 API 对不对**的硬判据）。
 
@@ -94,8 +94,8 @@ def feature_type_name(model, name):
         for meth in ("GetTypeName2", "GetTypeName"):
             try:
                 return str(get_com_member(f, meth))
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return None

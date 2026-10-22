@@ -38,6 +38,7 @@ r"""SolidWorks swmotionstudy 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -57,222 +58,212 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = ["ASSEMBLY", "FAMILIES", "ARITY", "PROPERTIES", "call_index"]
 
-ASSEMBLY = 'swmotionstudy'
+ASSEMBLY = "swmotionstudy"
 
-FAMILIES: tuple[str, ...] = (    'DMotionStudyEvents',
-    'DMotionStudyEvents_Event',
-    'IAVIParameter',
-    'ICosmosMotionStudyProperties',
-    'ICosmosMotionStudyResults',
-    'IMotionPlotFeatureOutput',
-    'IMotionStudy',
-    'IMotionStudyManager',
-    'IMotionStudyProperties',
-    'IMotionStudyResults',
-    'IPhysicalSimulationMotionStudyProperties',
+FAMILIES: tuple[str, ...] = (
+    "DMotionStudyEvents",
+    "DMotionStudyEvents_Event",
+    "IAVIParameter",
+    "ICosmosMotionStudyProperties",
+    "ICosmosMotionStudyResults",
+    "IMotionPlotFeatureOutput",
+    "IMotionStudy",
+    "IMotionStudyManager",
+    "IMotionStudyProperties",
+    "IMotionStudyResults",
+    "IPhysicalSimulationMotionStudyProperties",
 )
 
 #: 全量能力登记表 {族: {能力名: 实参个数}}（排除 by-ref 出参）
 ARITY: dict[str, dict[str, int]] = {
-    'DMotionStudyEvents': {
-        'ForceOutputTimeStepChangeNotify': 6,
-        'ForceTimeStepChangeNotify': 2,
-        'MotorOutputTimeStepChangeNotify': 6,
-        'MotorTimeStepChangeNotify': 2,
-        'OutputTimeStepChangeNotify': 1,
-        'PartCollideNotify': 7,
-        'SpecialMotionEventNotify': 2,
-        'StartCalculateNotify': 1,
-        'StopCalculateNotify': 1,
+    "DMotionStudyEvents": {
+        "ForceOutputTimeStepChangeNotify": 6,
+        "ForceTimeStepChangeNotify": 2,
+        "MotorOutputTimeStepChangeNotify": 6,
+        "MotorTimeStepChangeNotify": 2,
+        "OutputTimeStepChangeNotify": 1,
+        "PartCollideNotify": 7,
+        "SpecialMotionEventNotify": 2,
+        "StartCalculateNotify": 1,
+        "StopCalculateNotify": 1,
     },
-    'DMotionStudyEvents_Event': {
-        'add_ForceOutputTimeStepChangeNotify': 1,
-        'add_ForceTimeStepChangeNotify': 1,
-        'add_MotorOutputTimeStepChangeNotify': 1,
-        'add_MotorTimeStepChangeNotify': 1,
-        'add_OutputTimeStepChangeNotify': 1,
-        'add_PartCollideNotify': 1,
-        'add_SpecialMotionEventNotify': 1,
-        'add_StartCalculateNotify': 1,
-        'add_StopCalculateNotify': 1,
-        'remove_ForceOutputTimeStepChangeNotify': 1,
-        'remove_ForceTimeStepChangeNotify': 1,
-        'remove_MotorOutputTimeStepChangeNotify': 1,
-        'remove_MotorTimeStepChangeNotify': 1,
-        'remove_OutputTimeStepChangeNotify': 1,
-        'remove_PartCollideNotify': 1,
-        'remove_SpecialMotionEventNotify': 1,
-        'remove_StartCalculateNotify': 1,
-        'remove_StopCalculateNotify': 1,
+    "DMotionStudyEvents_Event": {
+        "add_ForceOutputTimeStepChangeNotify": 1,
+        "add_ForceTimeStepChangeNotify": 1,
+        "add_MotorOutputTimeStepChangeNotify": 1,
+        "add_MotorTimeStepChangeNotify": 1,
+        "add_OutputTimeStepChangeNotify": 1,
+        "add_PartCollideNotify": 1,
+        "add_SpecialMotionEventNotify": 1,
+        "add_StartCalculateNotify": 1,
+        "add_StopCalculateNotify": 1,
+        "remove_ForceOutputTimeStepChangeNotify": 1,
+        "remove_ForceTimeStepChangeNotify": 1,
+        "remove_MotorOutputTimeStepChangeNotify": 1,
+        "remove_MotorTimeStepChangeNotify": 1,
+        "remove_OutputTimeStepChangeNotify": 1,
+        "remove_PartCollideNotify": 1,
+        "remove_SpecialMotionEventNotify": 1,
+        "remove_StartCalculateNotify": 1,
+        "remove_StopCalculateNotify": 1,
     },
-    'IAVIParameter': {
+    "IAVIParameter": {},
+    "ICosmosMotionStudyProperties": {},
+    "ICosmosMotionStudyResults": {
+        "CreatePlotFeatureData": 0,
+        "CreatePlotXAxisFeatureData": 0,
+        "CreatePlotYAxisFeatureData": 0,
+        "ExportCSVFile": 2,
+        "GetPlotCount": 0,
+        "GetPlotFeatures": 0,
+        "GetValues": 3,
+        "InsertPlotFeature": 3,
     },
-    'ICosmosMotionStudyProperties': {
+    "IMotionPlotFeatureOutput": {
+        "GetXAxis": 0,
+        "GetYAxis": 1,
     },
-    'ICosmosMotionStudyResults': {
-        'CreatePlotFeatureData': 0,
-        'CreatePlotXAxisFeatureData': 0,
-        'CreatePlotYAxisFeatureData': 0,
-        'ExportCSVFile': 2,
-        'GetPlotCount': 0,
-        'GetPlotFeatures': 0,
-        'GetValues': 3,
-        'InsertPlotFeature': 3,
+    "IMotionStudy": {
+        "Activate": 0,
+        "AddCosmosWorksPlot": 5,
+        "Calculate": 0,
+        "CreateByCollapse": 3,
+        "CreateByExplode": 3,
+        "CreateByRotateModel": 6,
+        "CreateDefinition": 1,
+        "CreateFeature": 1,
+        "Duplicate": 0,
+        "GetDuration": 0,
+        "GetFireOutputTimeStepEvents": 0,
+        "GetMotionFeatures": 0,
+        "GetMotionFeaturesCount": 0,
+        "GetNumOfExternalForces": 0,
+        "GetNumOfExternalMotors": 0,
+        "GetProperties": 1,
+        "GetResults": 1,
+        "GetSupportedStudyTypes": 0,
+        "GetTime": 0,
+        "Play": 0,
+        "PlayFromStart": 0,
+        "SaveToAVI": 2,
+        "SetDuration": 1,
+        "SetFireOutputTimeStepEvents": 1,
+        "SetTime": 1,
+        "Stop": 0,
     },
-    'IMotionPlotFeatureOutput': {
-        'GetXAxis': 0,
-        'GetYAxis': 1,
+    "IMotionStudyManager": {
+        "ActivateMotionStudy": 1,
+        "CreateAVIParameter": 0,
+        "CreateMotionStudy": 0,
+        "DeleteMotionStudy": 1,
+        "GetMotionStudy": 1,
+        "GetMotionStudyCount": 0,
+        "GetMotionStudyNames": 0,
     },
-    'IMotionStudy': {
-        'Activate': 0,
-        'AddCosmosWorksPlot': 5,
-        'Calculate': 0,
-        'CreateByCollapse': 3,
-        'CreateByExplode': 3,
-        'CreateByRotateModel': 6,
-        'CreateDefinition': 1,
-        'CreateFeature': 1,
-        'Duplicate': 0,
-        'GetDuration': 0,
-        'GetFireOutputTimeStepEvents': 0,
-        'GetMotionFeatures': 0,
-        'GetMotionFeaturesCount': 0,
-        'GetNumOfExternalForces': 0,
-        'GetNumOfExternalMotors': 0,
-        'GetProperties': 1,
-        'GetResults': 1,
-        'GetSupportedStudyTypes': 0,
-        'GetTime': 0,
-        'Play': 0,
-        'PlayFromStart': 0,
-        'SaveToAVI': 2,
-        'SetDuration': 1,
-        'SetFireOutputTimeStepEvents': 1,
-        'SetTime': 1,
-        'Stop': 0,
+    "IMotionStudyProperties": {
+        "GetFrameRate": 0,
+        "SetFrameRate": 1,
     },
-    'IMotionStudyManager': {
-        'ActivateMotionStudy': 1,
-        'CreateAVIParameter': 0,
-        'CreateMotionStudy': 0,
-        'DeleteMotionStudy': 1,
-        'GetMotionStudy': 1,
-        'GetMotionStudyCount': 0,
-        'GetMotionStudyNames': 0,
+    "IMotionStudyResults": {
+        "GetAngularAcceleration": 2,
+        "GetAngularVelocity": 2,
+        "GetCMPosition": 2,
+        "GetEulerAngles": 2,
+        "GetForceFromMate": 2,
+        "GetLinearAcceleration": 2,
+        "GetLinearVelocity": 2,
+        "GetTorqueFromMate": 2,
+        "IsOutOfDate": 0,
     },
-    'IMotionStudyProperties': {
-        'GetFrameRate': 0,
-        'SetFrameRate': 1,
-    },
-    'IMotionStudyResults': {
-        'GetAngularAcceleration': 2,
-        'GetAngularVelocity': 2,
-        'GetCMPosition': 2,
-        'GetEulerAngles': 2,
-        'GetForceFromMate': 2,
-        'GetLinearAcceleration': 2,
-        'GetLinearVelocity': 2,
-        'GetTorqueFromMate': 2,
-        'IsOutOfDate': 0,
-    },
-    'IPhysicalSimulationMotionStudyProperties': {
-    },
+    "IPhysicalSimulationMotionStudyProperties": {},
 }
 
 #: 属性名（反射里是 get_/set_，**不是方法**；这里只留去掉前缀的名字）
 PROPERTIES: dict[str, tuple[str, ...]] = {
-    'DMotionStudyEvents': (
+    "DMotionStudyEvents": (),
+    "DMotionStudyEvents_Event": (),
+    "IAVIParameter": (
+        "AspectRatio",
+        "AspectRatio",
+        "BlurLength",
+        "BlurLength",
+        "BlurOffset",
+        "BlurOffset",
+        "EndTime",
+        "EndTime",
+        "FramePerSecond",
+        "FramePerSecond",
+        "ImageSize",
+        "ImageSize",
+        "MotionBlur",
+        "MotionBlur",
+        "OutputType",
+        "OutputType",
+        "PreserveRatio",
+        "PreserveRatio",
+        "RendererType",
+        "RendererType",
+        "SaveEntireAnimation",
+        "SaveEntireAnimation",
+        "ScreenHeight",
+        "ScreenHeight",
+        "ScreenRatio",
+        "ScreenRatio",
+        "ScreenWidth",
+        "ScreenWidth",
+        "StartTime",
+        "StartTime",
     ),
-    'DMotionStudyEvents_Event': (
+    "ICosmosMotionStudyProperties": (
+        "AnimateDuringSimulation",
+        "AnimateDuringSimulation",
+        "ContactResolution3D",
+        "ContactResolution3D",
+        "DeleteRedundantConstraints",
+        "DeleteRedundantConstraints",
+        "ErrorTolerance",
+        "ErrorTolerance",
+        "IntegratorAdaptivity",
+        "IntegratorAdaptivity",
+        "IntegratorType",
+        "IntegratorType",
+        "JacobianEval",
+        "JacobianEval",
+        "MakeAllMatesFlexible",
+        "MakeAllMatesFlexible",
+        "MaxIterations",
+        "MaxIterations",
+        "MaxStepSize",
+        "MaxStepSize",
+        "MinStepSize",
+        "MinStepSize",
+        "UsePreciseContact",
+        "UsePreciseContact",
+        "WireFrameGraphics",
+        "WireFrameGraphics",
     ),
-    'IAVIParameter': (
-        'AspectRatio',
-        'AspectRatio',
-        'BlurLength',
-        'BlurLength',
-        'BlurOffset',
-        'BlurOffset',
-        'EndTime',
-        'EndTime',
-        'FramePerSecond',
-        'FramePerSecond',
-        'ImageSize',
-        'ImageSize',
-        'MotionBlur',
-        'MotionBlur',
-        'OutputType',
-        'OutputType',
-        'PreserveRatio',
-        'PreserveRatio',
-        'RendererType',
-        'RendererType',
-        'SaveEntireAnimation',
-        'SaveEntireAnimation',
-        'ScreenHeight',
-        'ScreenHeight',
-        'ScreenRatio',
-        'ScreenRatio',
-        'ScreenWidth',
-        'ScreenWidth',
-        'StartTime',
-        'StartTime',
+    "ICosmosMotionStudyResults": (),
+    "IMotionPlotFeatureOutput": (),
+    "IMotionStudy": (
+        "IsActive",
+        "IsPlaying",
+        "Name",
+        "Name",
+        "PlayMode",
+        "PlayMode",
+        "StudyType",
+        "StudyType",
     ),
-    'ICosmosMotionStudyProperties': (
-        'AnimateDuringSimulation',
-        'AnimateDuringSimulation',
-        'ContactResolution3D',
-        'ContactResolution3D',
-        'DeleteRedundantConstraints',
-        'DeleteRedundantConstraints',
-        'ErrorTolerance',
-        'ErrorTolerance',
-        'IntegratorAdaptivity',
-        'IntegratorAdaptivity',
-        'IntegratorType',
-        'IntegratorType',
-        'JacobianEval',
-        'JacobianEval',
-        'MakeAllMatesFlexible',
-        'MakeAllMatesFlexible',
-        'MaxIterations',
-        'MaxIterations',
-        'MaxStepSize',
-        'MaxStepSize',
-        'MinStepSize',
-        'MinStepSize',
-        'UsePreciseContact',
-        'UsePreciseContact',
-        'WireFrameGraphics',
-        'WireFrameGraphics',
-    ),
-    'ICosmosMotionStudyResults': (
-    ),
-    'IMotionPlotFeatureOutput': (
-    ),
-    'IMotionStudy': (
-        'IsActive',
-        'IsPlaying',
-        'Name',
-        'Name',
-        'PlayMode',
-        'PlayMode',
-        'StudyType',
-        'StudyType',
-    ),
-    'IMotionStudyManager': (
-    ),
-    'IMotionStudyProperties': (
-    ),
-    'IMotionStudyResults': (
-    ),
-    'IPhysicalSimulationMotionStudyProperties': (
-        'GeometricAccuracy',
-        'GeometricAccuracy',
-        'MateAccuracy',
-        'MateAccuracy',
+    "IMotionStudyManager": (),
+    "IMotionStudyProperties": (),
+    "IMotionStudyResults": (),
+    "IPhysicalSimulationMotionStudyProperties": (
+        "GeometricAccuracy",
+        "GeometricAccuracy",
+        "MateAccuracy",
+        "MateAccuracy",
     ),
 }
-
 
 
 def _require(obj, what: str = "对象"):
@@ -301,16 +292,19 @@ def call_index(obj, family: str, member: str, *args):
     if sub is None:
         raise KeyError(
             f"本清单没有这个族: {family}（swmotionstudy 共 {len(ARITY)} 族）。"
-            f"⚠ 别的程序集请用对应的 call_index。")
+            f"⚠ 别的程序集请用对应的 call_index。"
+        )
     expected = sub.get(member)
     if expected is None:
         raise KeyError(
             f"{family} 上没有名为 {member} 的能力（该族登记 {len(sub)} 项）。"
-            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。")
+            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。"
+        )
     if expected != len(args):
         raise ValueError(
             f"{family}.{member} 官方签名是 {expected} 个实参"
-            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个")
+            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个"
+        )
     _require(obj, f"{family} 对象")
     return get_com_member(obj, member, *args)
 
@@ -332,4 +326,3 @@ def call_index(obj, family: str, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测 SolidWorks 行为（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-

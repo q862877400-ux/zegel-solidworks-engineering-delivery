@@ -1,4 +1,5 @@
 """★ `mech-design` 的**设计规则库**（3 个 YAML）接成可查服务。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -68,7 +69,8 @@ def _load(which: str) -> dict:
     p = KB / FILES[which]
     if not p.is_file():
         raise RuleError("no-lib", "★ 没有 %s" % p)
-    import yaml                                                         # noqa: PLC0415
+    import yaml  # noqa: PLC0415
+
     text = p.read_text(encoding="utf-8")
     try:
         return yaml.safe_load(text) or {}
@@ -78,18 +80,21 @@ def _load(which: str) -> dict:
             d = yaml.safe_load(fixed) or {}
         except yaml.YAMLError as exc2:
             #: ★★★ **第 4 类：不修** —— ★ 如实报（★ 事实 53）
-            return {"_yaml_unreadable": (
-                "⚠⚠ **该文件有多处 YAML 语法错，本模块修不全** —— "
-                "★ 已修 ①②③（裸标量 / `:{` 缺空格 / `:\"` 缺空格），"
-                "★ 仍剩**第 4 类**（两个键挤在一行）⇒ "
-                "★ **按事实 53 停手**（★ 不再加正则）\n"
-                "  首错：%s\n  修复后仍错：%s"
-                % (str(exc)[:160], str(exc2)[:160])),
-                "_yaml_source": str(p)}
+            return {
+                "_yaml_unreadable": (
+                    "⚠⚠ **该文件有多处 YAML 语法错，本模块修不全** —— "
+                    '★ 已修 ①②③（裸标量 / `:{` 缺空格 / `:"` 缺空格），'
+                    "★ 仍剩**第 4 类**（两个键挤在一行）⇒ "
+                    "★ **按事实 53 停手**（★ 不再加正则）\n"
+                    "  首错：%s\n  修复后仍错：%s" % (str(exc)[:160], str(exc2)[:160])
+                ),
+                "_yaml_source": str(p),
+            }
         if isinstance(d, dict):
             d["_yaml_repair"] = (
                 "⚠ **原文件有 YAML 语法错**（★ ①②③ 类之一）⇒ "
-                "★ 本模块**只读时修**、★ **未改原文件**（★ 那是用户的资产）")
+                "★ 本模块**只读时修**、★ **未改原文件**（★ 那是用户的资产）"
+            )
         return d
 
 
@@ -113,23 +118,25 @@ def _repair_bare_scalars(text: str) -> str:
     out = []
     for line in text.splitlines():
         s = line.strip()
-        if (s.startswith('"') and s.endswith('"')
-                and ':' not in s[:-1].replace('：', '')):
+        if (
+            s.startswith('"')
+            and s.endswith('"')
+            and ":" not in s[:-1].replace("：", "")
+        ):
             indent = len(line) - len(line.lstrip())
             out.append(" " * indent + "- " + s)
         else:
             out.append(line)
     text = "\n".join(out) + "\n"
     #: ★ 修 ②：`key:{` / `key:[` 的 `:` 后**缺空格** ⇒ 补一个
-    import re                                                           # noqa: PLC0415
-    text = re.sub(r'^(\s*"[^"]+")\s*:\s*(\{|\[)', r'\1: \2', text,
-                  flags=re.M)
+    import re  # noqa: PLC0415
+
+    text = re.sub(r'^(\s*"[^"]+")\s*:\s*(\{|\[)', r"\1: \2", text, flags=re.M)
     #: ★ 修 ③：`key:"value"` 的 `:` 后**缺空格**（★ 第三类 —— 实测
     #:   `fits_iso286.yaml` L90 的 `H11/c11:"间隙 非常松…"`）
     #:   ⚠ 这一类的报错文本**又不一样**（「could not find expected ':'」）⇒
     #:   ★ 判据：**三类一起修**（★ 幂等、互不干扰）。
-    return re.sub(r'^(\s*[A-Za-z0-9_./\-]+)\s*:\s*(")', r'\1: \2', text,
-                  flags=re.M)
+    return re.sub(r'^(\s*[A-Za-z0-9_./\-]+)\s*:\s*(")', r"\1: \2", text, flags=re.M)
 
 
 def _get(d: dict, path: str):
@@ -137,8 +144,9 @@ def _get(d: dict, path: str):
     cur = d
     for k in path.split("."):
         if not isinstance(cur, dict) or k not in cur:
-            raise RuleError("unknown-key", "★ 没有 `%s`（★ 在 `%s` 处断了）"
-                            % (path, k))
+            raise RuleError(
+                "unknown-key", "★ 没有 `%s`（★ 在 `%s` 处断了）" % (path, k)
+            )
         cur = cur[k]
     return cur
 
@@ -146,6 +154,7 @@ def _get(d: dict, path: str):
 #: ══════════════════════════════════════════════════════════════════════
 # 一、设计规则（★ `design_rules.yaml`）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def rule(path: str):
     """★★ **按路径查规则**（★ 如 `general.bolt.min_spacing`）。
@@ -158,9 +167,11 @@ def rule(path: str):
     """
     d = _load("rules")
     if "_yaml_unreadable" in d:
-        raise RuleError("no-lib",
-                        "★ `design_rules.yaml` **读不全**（★ 见 `_load`）"
-                        "⇒ ★ **不假装查到**（★ 本仓事实 53：不继续加正则硬修）")
+        raise RuleError(
+            "no-lib",
+            "★ `design_rules.yaml` **读不全**（★ 见 `_load`）"
+            "⇒ ★ **不假装查到**（★ 本仓事实 53：不继续加正则硬修）",
+        )
     return _get(d, path)
 
 
@@ -175,6 +186,7 @@ def rules_tree() -> dict:
 #: ══════════════════════════════════════════════════════════════════════
 # 二、材料库（★ `material_db.yaml` —— ★ 含 SolidWorks 牌号映射）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def _materials_table() -> dict:
     """★ 找到**真的材料表**（★ 结构实测：`steels` / `aluminum` … 是**分组**）。
@@ -199,7 +211,8 @@ def _materials_table() -> dict:
         for k, m in v.items():
             #: ★ 只收**看起来像材料**的项（★ 有 `name` 或 `sw_material` 或密度）
             if isinstance(m, dict) and (
-                    "name" in m or "sw_material" in m or "density" in m):
+                "name" in m or "sw_material" in m or "density" in m
+            ):
                 flat[k] = m
     return flat
 
@@ -217,8 +230,9 @@ def material(name: str) -> dict:
     """
     tbl = _materials_table()
     if name not in tbl:
-        raise RuleError("unknown-material",
-                        "★ 材料库里没有 `%s`（有：%s）" % (name, sorted(tbl)))
+        raise RuleError(
+            "unknown-material", "★ 材料库里没有 `%s`（有：%s）" % (name, sorted(tbl))
+        )
     return dict(tbl[name])
 
 
@@ -232,11 +246,14 @@ def sw_material_of(name: str) -> str:
 # 三、公差配合（★ `fits_iso286.yaml`）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 def fits_meta() -> dict:
     """★ 公差库的**元信息**（★ 有哪些键）。"""
     d = _load("fits")
-    return {k: (sorted(v) if isinstance(v, dict) else type(v).__name__)
-            for k, v in d.items()}
+    return {
+        k: (sorted(v) if isinstance(v, dict) else type(v).__name__)
+        for k, v in d.items()
+    }
 
 
 def fit(name: str) -> dict:
@@ -266,18 +283,24 @@ def fits_raw() -> dict:
 # 四、总览
 #: ══════════════════════════════════════════════════════════════════════
 
+
 def report() -> dict:
     """★ **总览**（★ 证明「业主早就给了」）。"""
     out = {"source": str(KB)}
     for which, fname in FILES.items():
         p = KB / fname
-        out[which] = {"file": fname, "exists": p.is_file(),
-                      "bytes": p.stat().st_size if p.is_file() else 0}
+        out[which] = {
+            "file": fname,
+            "exists": p.is_file(),
+            "bytes": p.stat().st_size if p.is_file() else 0,
+        }
     try:
         out["material_count"] = len(materials())
         out["rule_groups"] = sorted(rules_tree())
     except RuleError as exc:
         out["error"] = str(exc)
-    out["★"] = ("★ 三个 YAML 全部来自 `mech-design`（★ 业主早装好的）—— "
-                "★ `design_rules.yaml` 自述「**先确认参数，不猜**」")
+    out["★"] = (
+        "★ 三个 YAML 全部来自 `mech-design`（★ 业主早装好的）—— "
+        "★ `design_rules.yaml` 自述「**先确认参数，不猜**」"
+    )
     return out

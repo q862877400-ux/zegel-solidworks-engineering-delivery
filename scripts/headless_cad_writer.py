@@ -34,7 +34,12 @@ DESKTOP = ROOT / "apps" / "desktop"
 if str(DESKTOP) not in sys.path:
     sys.path.insert(0, str(DESKTOP))
 
-from cad_workbench.cad_core_contracts import preview_manifest_for_artifact, sha256_file, write_json_contract  # noqa: E402
+from cad_workbench.cad_core_contracts import (
+    preview_manifest_for_artifact,
+    sha256_file,
+    write_json_contract,
+)  # noqa: E402
+
 try:  # noqa: E402
     from dxf_preview_scene import dxf_to_preview_scene
 except ModuleNotFoundError:  # noqa: E402
@@ -70,7 +75,9 @@ def _versioned_target(out_dir: Path, name: str, extension: str) -> Path:
         version += 1
 
 
-def _run_occt_service(document_path: Path, out_dir: Path, formats: list[str]) -> dict[str, Any]:
+def _run_occt_service(
+    document_path: Path, out_dir: Path, formats: list[str]
+) -> dict[str, Any]:
     """@brief 在独立进程中运行 OCCT，避免原生崩溃影响队列 Worker。"""
     service = ROOT / "scripts" / "headless_occt_service.py"
     with tempfile.TemporaryDirectory(prefix="cadstudio-occt-result-") as temp_dir:
@@ -111,7 +118,9 @@ def _run_occt_service(document_path: Path, out_dir: Path, formats: list[str]) ->
             "backend": "headless_occt",
             "status": "failed",
             "artifacts": [],
-            "limitations": [f"OCCT 隔离服务未返回结果文件，退出码 {completed.returncode}。"],
+            "limitations": [
+                f"OCCT 隔离服务未返回结果文件，退出码 {completed.returncode}。"
+            ],
             "error_code": "occt_result_missing",
         }
 
@@ -122,11 +131,26 @@ def _box_mesh(length: float, width: float, height: float) -> list[Triangle]:
     y = width / 2
     z = height / 2
     v = [
-        (-x, -y, -z), (x, -y, -z), (x, y, -z), (-x, y, -z),
-        (-x, -y, z), (x, -y, z), (x, y, z), (-x, y, z),
+        (-x, -y, -z),
+        (x, -y, -z),
+        (x, y, -z),
+        (-x, y, -z),
+        (-x, -y, z),
+        (x, -y, z),
+        (x, y, z),
+        (-x, y, z),
     ]
-    quads = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7)]
-    return [(v[a], v[b], v[c]) for a, b, c, _ in quads] + [(v[a], v[c], v[d]) for a, _, c, d in quads]
+    quads = [
+        (0, 3, 2, 1),
+        (4, 5, 6, 7),
+        (0, 1, 5, 4),
+        (1, 2, 6, 5),
+        (2, 3, 7, 6),
+        (3, 0, 4, 7),
+    ]
+    return [(v[a], v[b], v[c]) for a, b, c, _ in quads] + [
+        (v[a], v[c], v[d]) for a, _, c, d in quads
+    ]
 
 
 def _cylinder_mesh(radius: float, height: float, segments: int = 48) -> list[Triangle]:
@@ -135,7 +159,14 @@ def _cylinder_mesh(radius: float, height: float, segments: int = 48) -> list[Tri
     z1 = height / 2
     top = (0.0, 0.0, z1)
     bottom = (0.0, 0.0, z0)
-    ring0 = [(math.cos(i / segments * math.tau) * radius, math.sin(i / segments * math.tau) * radius, z0) for i in range(segments)]
+    ring0 = [
+        (
+            math.cos(i / segments * math.tau) * radius,
+            math.sin(i / segments * math.tau) * radius,
+            z0,
+        )
+        for i in range(segments)
+    ]
     ring1 = [(x, y, z1) for x, y, _ in ring0]
     triangles: list[Triangle] = []
     for index in range(segments):
@@ -167,7 +198,11 @@ def _validate_document(document: Any) -> dict[str, Any]:
     if not isinstance(document.get("features", []), list):
         raise ValueError("NeutralCadDocument.features 必须是数组。")
     for feature in document.get("features", []):
-        if not isinstance(feature, dict) or not str(feature.get("id") or "").strip() or not str(feature.get("type") or "").strip():
+        if (
+            not isinstance(feature, dict)
+            or not str(feature.get("id") or "").strip()
+            or not str(feature.get("type") or "").strip()
+        ):
             raise ValueError("每个 feature 必须包含非空 id 和 type。")
         params = _feature_params(feature)
         for key in ("length", "width", "height", "radius", "diameter"):
@@ -187,12 +222,26 @@ def _triangles(document: dict[str, Any]) -> tuple[list[Triangle], list[str], boo
         kind = str(feature.get("type") or "").lower()
         operation = str(feature.get("operation") or "add").lower()
         if operation not in {"add", "new", "union"}:
-            limitations.append(f"网格后端暂不支持布尔操作: {feature.get('id')} ({operation})")
+            limitations.append(
+                f"网格后端暂不支持布尔操作: {feature.get('id')} ({operation})"
+            )
             mesh_blocked = True
         elif kind == "box":
-            triangles.extend(_box_mesh(float(params.get("length", 10)), float(params.get("width", 10)), float(params.get("height", 10))))
+            triangles.extend(
+                _box_mesh(
+                    float(params.get("length", 10)),
+                    float(params.get("width", 10)),
+                    float(params.get("height", 10)),
+                )
+            )
         elif kind == "cylinder":
-            triangles.extend(_cylinder_mesh(float(params.get("radius", 5)), float(params.get("height", 10)), int(params.get("segments", 48))))
+            triangles.extend(
+                _cylinder_mesh(
+                    float(params.get("radius", 5)),
+                    float(params.get("height", 10)),
+                    int(params.get("segments", 48)),
+                )
+            )
         else:
             limitations.append(f"暂未无头写入特征: {feature.get('id') or kind}")
             mesh_blocked = True
@@ -229,7 +278,9 @@ def _feature_radius(params: dict[str, Any]) -> float:
     return float(params.get("radius", float(params.get("diameter", 10)) / 2))
 
 
-def _document_2d_geometry(document: dict[str, Any]) -> tuple[list[Line2], list[Circle2], tuple[float, float, float, float]]:
+def _document_2d_geometry(
+    document: dict[str, Any],
+) -> tuple[list[Line2], list[Circle2], tuple[float, float, float, float]]:
     """@brief 从中性 CAD 特征提取基础二维轮廓，用于 DXF/SVG/PDF/PNG 回退预览。"""
     lines: list[Line2] = []
     circles: list[Circle2] = []
@@ -269,7 +320,16 @@ def _document_2d_geometry(document: dict[str, Any]) -> tuple[list[Line2], list[C
             include_point(x - radius, y - radius)
             include_point(x + radius, y + radius)
     margin = max((bounds[2] - bounds[0]) * 0.08, (bounds[3] - bounds[1]) * 0.08, 10.0)
-    return lines, circles, (bounds[0] - margin, bounds[1] - margin, bounds[2] + margin, bounds[3] + margin)
+    return (
+        lines,
+        circles,
+        (
+            bounds[0] - margin,
+            bounds[1] - margin,
+            bounds[2] + margin,
+            bounds[3] + margin,
+        ),
+    )
 
 
 def _unsupported_2d_features(document: dict[str, Any]) -> list[str]:
@@ -278,9 +338,14 @@ def _unsupported_2d_features(document: dict[str, Any]) -> list[str]:
     for feature in document.get("features", []):
         kind = str(feature.get("type") or "").lower()
         operation = str(feature.get("operation") or "add").lower()
-        supported = kind in {"hole", "line", "polyline", "circle", "text", "dimension"} or (
-            kind in {"box", "cylinder"} and operation in {"add", "new", "union"}
-        )
+        supported = kind in {
+            "hole",
+            "line",
+            "polyline",
+            "circle",
+            "text",
+            "dimension",
+        } or (kind in {"box", "cylinder"} and operation in {"add", "new", "union"})
         if not supported:
             unsupported.append(str(feature.get("id") or kind or "unknown"))
     return unsupported
@@ -311,9 +376,15 @@ def write_dxf(path: Path, document: dict[str, Any]) -> None:
     for x, y, radius, layer in circles:
         msp.add_circle((x, y), radius, dxfattribs={"layer": layer})
         extension = max(radius * 1.45, radius + 2.0)
-        msp.add_line((x - extension, y), (x + extension, y), dxfattribs={"layer": "CENTER"})
-        msp.add_line((x, y - extension), (x, y + extension), dxfattribs={"layer": "CENTER"})
-        msp.add_diameter_dim(center=(x, y), radius=radius, angle=45, dxfattribs={"layer": "DIMENSION"}).render()
+        msp.add_line(
+            (x - extension, y), (x + extension, y), dxfattribs={"layer": "CENTER"}
+        )
+        msp.add_line(
+            (x, y - extension), (x, y + extension), dxfattribs={"layer": "CENTER"}
+        )
+        msp.add_diameter_dim(
+            center=(x, y), radius=radius, angle=45, dxfattribs={"layer": "DIMENSION"}
+        ).render()
 
     for feature in document.get("features", []):
         if not isinstance(feature, dict):
@@ -324,72 +395,189 @@ def write_dxf(path: Path, document: dict[str, Any]) -> None:
         if layer not in doc.layers:
             doc.layers.add(layer, color=7)
         if kind == "line":
-            msp.add_line((float(params.get("x1", 0)), float(params.get("y1", 0))), (float(params.get("x2", 0)), float(params.get("y2", 0))), dxfattribs={"layer": layer})
+            msp.add_line(
+                (float(params.get("x1", 0)), float(params.get("y1", 0))),
+                (float(params.get("x2", 0)), float(params.get("y2", 0))),
+                dxfattribs={"layer": layer},
+            )
         elif kind == "polyline":
-            points = params.get("points") if isinstance(params.get("points"), list) else []
-            clean_points = [(float(point[0]), float(point[1])) for point in points if isinstance(point, (list, tuple)) and len(point) >= 2]
+            points = (
+                params.get("points") if isinstance(params.get("points"), list) else []
+            )
+            clean_points = [
+                (float(point[0]), float(point[1]))
+                for point in points
+                if isinstance(point, (list, tuple)) and len(point) >= 2
+            ]
             if len(clean_points) >= 2:
-                msp.add_lwpolyline(clean_points, close=bool(params.get("closed")), dxfattribs={"layer": layer})
+                msp.add_lwpolyline(
+                    clean_points,
+                    close=bool(params.get("closed")),
+                    dxfattribs={"layer": layer},
+                )
         elif kind == "circle":
-            msp.add_circle((float(params.get("x", 0)), float(params.get("y", 0))), _feature_radius(params), dxfattribs={"layer": layer})
+            msp.add_circle(
+                (float(params.get("x", 0)), float(params.get("y", 0))),
+                _feature_radius(params),
+                dxfattribs={"layer": layer},
+            )
         elif kind == "text":
-            value = str(params.get("text") or feature.get("name") or feature.get("id") or "")
-            msp.add_text(value, height=float(params.get("height", 3)), dxfattribs={"layer": layer}).set_placement((float(params.get("x", 0)), float(params.get("y", 0))))
+            value = str(
+                params.get("text") or feature.get("name") or feature.get("id") or ""
+            )
+            msp.add_text(
+                value,
+                height=float(params.get("height", 3)),
+                dxfattribs={"layer": layer},
+            ).set_placement((float(params.get("x", 0)), float(params.get("y", 0))))
         elif kind == "dimension":
             p1 = (float(params.get("x1", 0)), float(params.get("y1", 0)))
             p2 = (float(params.get("x2", 0)), float(params.get("y2", 0)))
-            base = (float(params.get("baseX", (p1[0] + p2[0]) / 2)), float(params.get("baseY", min(p1[1], p2[1]) - 10)))
-            msp.add_linear_dim(base=base, p1=p1, p2=p2, angle=float(params.get("angle", 0)), dxfattribs={"layer": "DIMENSION"}).render()
+            base = (
+                float(params.get("baseX", (p1[0] + p2[0]) / 2)),
+                float(params.get("baseY", min(p1[1], p2[1]) - 10)),
+            )
+            msp.add_linear_dim(
+                base=base,
+                p1=p1,
+                p2=p2,
+                angle=float(params.get("angle", 0)),
+                dxfattribs={"layer": "DIMENSION"},
+            ).render()
 
-    boxes = [feature for feature in document.get("features", []) if isinstance(feature, dict) and str(feature.get("type") or "").lower() == "box"]
+    boxes = [
+        feature
+        for feature in document.get("features", [])
+        if isinstance(feature, dict) and str(feature.get("type") or "").lower() == "box"
+    ]
     if boxes:
         params = _feature_params(boxes[0])
         length = float(params.get("length", 10))
         width = float(params.get("width", 10))
         x0, y0 = -length / 2, -width / 2
         x1, y1 = length / 2, width / 2
-        msp.add_linear_dim(base=(0, y0 - 12), p1=(x0, y0), p2=(x1, y0), angle=0, dxfattribs={"layer": "DIMENSION"}).render()
-        msp.add_linear_dim(base=(x1 + 12, 0), p1=(x1, y0), p2=(x1, y1), angle=90, dxfattribs={"layer": "DIMENSION"}).render()
+        msp.add_linear_dim(
+            base=(0, y0 - 12),
+            p1=(x0, y0),
+            p2=(x1, y0),
+            angle=0,
+            dxfattribs={"layer": "DIMENSION"},
+        ).render()
+        msp.add_linear_dim(
+            base=(x1 + 12, 0),
+            p1=(x1, y0),
+            p2=(x1, y1),
+            angle=90,
+            dxfattribs={"layer": "DIMENSION"},
+        ).render()
 
-    drawing = document.get("metadata", {}).get("drawing", {}) if isinstance(document.get("metadata"), dict) else {}
+    drawing = (
+        document.get("metadata", {}).get("drawing", {})
+        if isinstance(document.get("metadata"), dict)
+        else {}
+    )
     if isinstance(drawing, dict) and bool(drawing.get("includeFrame")):
         _add_gbt_frame(msp, document, drawing)
     else:
-        msp.add_text(str(document.get("title") or document.get("documentId") or "CAD Studio"), height=3, dxfattribs={"layer": "TEXT"}).set_placement((0, -18))
+        msp.add_text(
+            str(document.get("title") or document.get("documentId") or "CAD Studio"),
+            height=3,
+            dxfattribs={"layer": "TEXT"},
+        ).set_placement((0, -18))
     doc.saveas(path)
 
 
-def _add_gbt_frame(modelspace: Any, document: dict[str, Any], drawing: dict[str, Any]) -> None:
+def _add_gbt_frame(
+    modelspace: Any, document: dict[str, Any], drawing: dict[str, Any]
+) -> None:
     """@brief 添加居中图幅、装订边和可检索的 GB/T 风格标题栏字段。"""
-    sheet_sizes = {"A4": (210.0, 297.0), "A3": (420.0, 297.0), "A2": (594.0, 420.0), "A1": (841.0, 594.0)}
+    sheet_sizes = {
+        "A4": (210.0, 297.0),
+        "A3": (420.0, 297.0),
+        "A2": (594.0, 420.0),
+        "A1": (841.0, 594.0),
+    }
     sheet = str(drawing.get("sheet") or "A3").upper()
     width, height = sheet_sizes.get(sheet, sheet_sizes["A3"])
-    if str(drawing.get("orientation") or "landscape").lower() == "portrait" and width > height:
+    if (
+        str(drawing.get("orientation") or "landscape").lower() == "portrait"
+        and width > height
+    ):
         width, height = height, width
     x0, y0 = -width / 2, -height / 2
     x1, y1 = width / 2, height / 2
-    modelspace.add_lwpolyline([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], close=True, dxfattribs={"layer": "FRAME"})
-    modelspace.add_lwpolyline([(x0 + 20, y0 + 5), (x1 - 5, y0 + 5), (x1 - 5, y1 - 5), (x0 + 20, y1 - 5)], close=True, dxfattribs={"layer": "FRAME"})
+    modelspace.add_lwpolyline(
+        [(x0, y0), (x1, y0), (x1, y1), (x0, y1)],
+        close=True,
+        dxfattribs={"layer": "FRAME"},
+    )
+    modelspace.add_lwpolyline(
+        [(x0 + 20, y0 + 5), (x1 - 5, y0 + 5), (x1 - 5, y1 - 5), (x0 + 20, y1 - 5)],
+        close=True,
+        dxfattribs={"layer": "FRAME"},
+    )
 
     title_width = min(180.0, width - 30.0)
     title_height = 40.0
     tx0, ty0 = x1 - 5 - title_width, y0 + 5
     tx1, ty1 = x1 - 5, ty0 + title_height
-    modelspace.add_lwpolyline([(tx0, ty0), (tx1, ty0), (tx1, ty1), (tx0, ty1)], close=True, dxfattribs={"layer": "TITLE"})
+    modelspace.add_lwpolyline(
+        [(tx0, ty0), (tx1, ty0), (tx1, ty1), (tx0, ty1)],
+        close=True,
+        dxfattribs={"layer": "TITLE"},
+    )
     for offset in (10.0, 22.0, 31.0):
-        modelspace.add_line((tx0, ty0 + offset), (tx1, ty0 + offset), dxfattribs={"layer": "TITLE"})
-    modelspace.add_line((tx0 + title_width * 0.62, ty0), (tx0 + title_width * 0.62, ty1), dxfattribs={"layer": "TITLE"})
+        modelspace.add_line(
+            (tx0, ty0 + offset), (tx1, ty0 + offset), dxfattribs={"layer": "TITLE"}
+        )
+    modelspace.add_line(
+        (tx0 + title_width * 0.62, ty0),
+        (tx0 + title_width * 0.62, ty1),
+        dxfattribs={"layer": "TITLE"},
+    )
     fields = [
-        ("名称", str(document.get("title") or document.get("documentId") or "未命名"), tx0 + 3, ty0 + 34),
-        ("图号", str(drawing.get("drawingNumber") or document.get("documentId") or "-"), tx0 + 3, ty0 + 25),
+        (
+            "名称",
+            str(document.get("title") or document.get("documentId") or "未命名"),
+            tx0 + 3,
+            ty0 + 34,
+        ),
+        (
+            "图号",
+            str(drawing.get("drawingNumber") or document.get("documentId") or "-"),
+            tx0 + 3,
+            ty0 + 25,
+        ),
         ("材料", str(drawing.get("material") or "待确认"), tx0 + 3, ty0 + 14),
-        ("比例", str(drawing.get("scale") or "1:1"), tx0 + title_width * 0.64, ty0 + 34),
-        ("单位", str(document.get("units") or "mm"), tx0 + title_width * 0.64, ty0 + 25),
-        ("设计", str(drawing.get("designer") or "CAD Studio"), tx0 + title_width * 0.64, ty0 + 14),
-        ("审核", str(drawing.get("reviewer") or "待复核"), tx0 + title_width * 0.64, ty0 + 4),
+        (
+            "比例",
+            str(drawing.get("scale") or "1:1"),
+            tx0 + title_width * 0.64,
+            ty0 + 34,
+        ),
+        (
+            "单位",
+            str(document.get("units") or "mm"),
+            tx0 + title_width * 0.64,
+            ty0 + 25,
+        ),
+        (
+            "设计",
+            str(drawing.get("designer") or "CAD Studio"),
+            tx0 + title_width * 0.64,
+            ty0 + 14,
+        ),
+        (
+            "审核",
+            str(drawing.get("reviewer") or "待复核"),
+            tx0 + title_width * 0.64,
+            ty0 + 4,
+        ),
     ]
     for label, value, x, y in fields:
-        modelspace.add_text(f"{label}: {value}", height=2.6, dxfattribs={"layer": "TITLE"}).set_placement((x, y))
+        modelspace.add_text(
+            f"{label}: {value}", height=2.6, dxfattribs={"layer": "TITLE"}
+        ).set_placement((x, y))
 
 
 def write_svg(path: Path, document: dict[str, Any]) -> None:
@@ -398,7 +586,9 @@ def write_svg(path: Path, document: dict[str, Any]) -> None:
     min_x, min_y, max_x, max_y = bounds
     width = max(max_x - min_x, 1.0)
     height = max(max_y - min_y, 1.0)
-    title = html.escape(str(document.get("title") or document.get("documentId") or "CAD Studio"))
+    title = html.escape(
+        str(document.get("title") or document.get("documentId") or "CAD Studio")
+    )
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{min_x:.6g} {-max_y:.6g} {width:.6g} {height:.6g}">',
         f"<title>{title}</title>",
@@ -407,10 +597,20 @@ def write_svg(path: Path, document: dict[str, Any]) -> None:
     ]
     for x0, y0, x1, y1, layer in lines:
         color = "#1f2937" if layer == "OUTLINE" else "#0f766e"
-        svg.append(f'<line x1="{x0:.6g}" y1="{y0:.6g}" x2="{x1:.6g}" y2="{y1:.6g}" stroke="{color}" stroke-width="0.7"/>')
+        svg.append(
+            f'<line x1="{x0:.6g}" y1="{y0:.6g}" x2="{x1:.6g}" y2="{y1:.6g}" stroke="{color}" stroke-width="0.7"/>'
+        )
     for x, y, radius, _layer in circles:
-        svg.append(f'<circle cx="{x:.6g}" cy="{y:.6g}" r="{radius:.6g}" stroke="#0f766e" stroke-width="0.7"/>')
-    svg.extend(["</g>", f'<text x="{min_x:.6g}" y="{-min_y:.6g}" fill="#475569" font-size="4">{title}</text>', "</svg>"])
+        svg.append(
+            f'<circle cx="{x:.6g}" cy="{y:.6g}" r="{radius:.6g}" stroke="#0f766e" stroke-width="0.7"/>'
+        )
+    svg.extend(
+        [
+            "</g>",
+            f'<text x="{min_x:.6g}" y="{-min_y:.6g}" fill="#475569" font-size="4">{title}</text>',
+            "</svg>",
+        ]
+    )
     path.write_text("\n".join(svg) + "\n", encoding="utf-8")
 
 
@@ -432,7 +632,10 @@ def write_pdf(path: Path, document: dict[str, Any]) -> None:
     def ty(y: float) -> float:
         return (y - min_y) * scale
 
-    commands = ["0.97 0.98 0.99 rg 0 0 %.3f %.3f re f" % (page_w, page_h), "0.12 0.16 0.22 RG 0.75 w"]
+    commands = [
+        "0.97 0.98 0.99 rg 0 0 %.3f %.3f re f" % (page_w, page_h),
+        "0.12 0.16 0.22 RG 0.75 w",
+    ]
     for x0, y0, x1, y1, _layer in lines:
         commands.append(f"{tx(x0):.3f} {ty(y0):.3f} m {tx(x1):.3f} {ty(y1):.3f} l S")
     commands.append("0.06 0.46 0.43 RG")
@@ -440,19 +643,29 @@ def write_pdf(path: Path, document: dict[str, Any]) -> None:
         points = []
         for index in range(40):
             angle = index / 40 * math.tau
-            points.append((tx(x + math.cos(angle) * radius), ty(y + math.sin(angle) * radius)))
+            points.append(
+                (tx(x + math.cos(angle) * radius), ty(y + math.sin(angle) * radius))
+            )
         if points:
             commands.append(f"{points[0][0]:.3f} {points[0][1]:.3f} m")
             commands.extend(f"{px:.3f} {py:.3f} l" for px, py in points[1:])
             commands.append("h S")
-    title = _pdf_escape(str(document.get("title") or document.get("documentId") or "CAD Studio"))
+    title = _pdf_escape(
+        str(document.get("title") or document.get("documentId") or "CAD Studio")
+    )
     commands.append(f"0.28 0.33 0.41 rg BT /F1 10 Tf 12 12 Td ({title}) Tj ET")
     content = ("\n".join(commands) + "\n").encode("ascii", errors="ignore")
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-        f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {page_w:.3f} {page_h:.3f}] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>".encode("ascii"),
-        b"<< /Length " + str(len(content)).encode("ascii") + b" >>\nstream\n" + content + b"endstream",
+        f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {page_w:.3f} {page_h:.3f}] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>".encode(
+            "ascii"
+        ),
+        b"<< /Length "
+        + str(len(content)).encode("ascii")
+        + b" >>\nstream\n"
+        + content
+        + b"endstream",
         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
     ]
     body = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
@@ -466,15 +679,26 @@ def write_pdf(path: Path, document: dict[str, Any]) -> None:
     body.extend(f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode("ascii"))
     for offset in offsets[1:]:
         body.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
-    body.extend(f"trailer << /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n".encode("ascii"))
+    body.extend(
+        f"trailer << /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF\n".encode(
+            "ascii"
+        )
+    )
     path.write_bytes(bytes(body))
 
 
 def _png_chunk(kind: bytes, payload: bytes) -> bytes:
-    return struct.pack(">I", len(payload)) + kind + payload + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
+    return (
+        struct.pack(">I", len(payload))
+        + kind
+        + payload
+        + struct.pack(">I", zlib.crc32(kind + payload) & 0xFFFFFFFF)
+    )
 
 
-def write_png(path: Path, document: dict[str, Any], width: int = 900, height: int = 620) -> None:
+def write_png(
+    path: Path, document: dict[str, Any], width: int = 900, height: int = 620
+) -> None:
     """@brief 写出无依赖 PNG 回退预览，确保无 WebGL 时仍有真实任务图像。"""
     lines, circles, bounds = _document_2d_geometry(document)
     min_x, min_y, max_x, max_y = bounds
@@ -494,7 +718,9 @@ def write_png(path: Path, document: dict[str, Any], width: int = 900, height: in
             offset = (py * width + px) * 3
             pixels[offset : offset + 3] = bytes(color)
 
-    def draw_line(a: tuple[int, int], b: tuple[int, int], color: tuple[int, int, int]) -> None:
+    def draw_line(
+        a: tuple[int, int], b: tuple[int, int], color: tuple[int, int, int]
+    ) -> None:
         x0, y0 = a
         x1, y1 = b
         dx = abs(x1 - x0)
@@ -527,9 +753,14 @@ def write_png(path: Path, document: dict[str, Any], width: int = 900, height: in
                 draw_line(previous, current, (15, 118, 110))
             previous = current
 
-    raw = b"".join(b"\x00" + pixels[row * width * 3 : (row + 1) * width * 3] for row in range(height))
+    raw = b"".join(
+        b"\x00" + pixels[row * width * 3 : (row + 1) * width * 3]
+        for row in range(height)
+    )
     payload = b"\x89PNG\r\n\x1a\n"
-    payload += _png_chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+    payload += _png_chunk(
+        b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    )
     payload += _png_chunk(b"IDAT", zlib.compress(raw, level=6))
     payload += _png_chunk(b"IEND", b"")
     path.write_bytes(payload)
@@ -554,15 +785,27 @@ def write_rendered_dxf_format(path: Path, document: dict[str, Any]) -> None:
         axes.set_aspect("equal")
         axes.axis("off")
         context = RenderContext(dxf_document)
-        Frontend(context, MatplotlibBackend(axes)).draw_layout(dxf_document.modelspace(), finalize=True)
-        figure.savefig(path, format=path.suffix.lower().lstrip("."), facecolor="white", bbox_inches="tight", pad_inches=0.04)
+        Frontend(context, MatplotlibBackend(axes)).draw_layout(
+            dxf_document.modelspace(), finalize=True
+        )
+        figure.savefig(
+            path,
+            format=path.suffix.lower().lstrip("."),
+            facecolor="white",
+            bbox_inches="tight",
+            pad_inches=0.04,
+        )
         plt.close(figure)
 
 
-def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> dict[str, Any]:
+def export_headless(
+    document_path: Path, out_dir: Path, formats: list[str]
+) -> dict[str, Any]:
     """@brief 将 NeutralCadDocument 写成开放格式产物。"""
     try:
-        document = _validate_document(json.loads(document_path.read_text(encoding="utf-8")))
+        document = _validate_document(
+            json.loads(document_path.read_text(encoding="utf-8"))
+        )
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         return {
             "backend": "headless_open_format",
@@ -592,15 +835,26 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
         limitations.extend(occt_result.get("limitations") or [])
         geometry_evidence = occt_result.get("geometryEvidence") or {}
         if occt_result.get("status") != "pass":
-            missing_formats.extend({"step" if fmt == "stp" else "iges" if fmt == "igs" else fmt for fmt in occt_requested})
+            missing_formats.extend(
+                {
+                    "step" if fmt == "stp" else "iges" if fmt == "igs" else fmt
+                    for fmt in occt_requested
+                }
+            )
     elif any(fmt in ADVANCED_OCCT_FORMATS for fmt in normalized_formats):
         blocked = [fmt for fmt in normalized_formats if fmt in ADVANCED_OCCT_FORMATS]
         occt_handled.update(blocked)
         missing_formats.extend(blocked)
         limitations.append("未发现 OCP 运行时，STEP/IGES/BREP/GLB 保持 blocked。")
-    if (not triangles or mesh_blocked) and any(fmt in {"stl", "obj"} and fmt not in occt_handled for fmt in normalized_formats):
-        limitations.append("当前文档不能完整网格化，未写出 STL/OBJ，避免把部分几何当成完整交付。")
-    if unsupported_2d and any(fmt in {"dxf", "svg", "pdf", "png"} for fmt in normalized_formats):
+    if (not triangles or mesh_blocked) and any(
+        fmt in {"stl", "obj"} and fmt not in occt_handled for fmt in normalized_formats
+    ):
+        limitations.append(
+            "当前文档不能完整网格化，未写出 STL/OBJ，避免把部分几何当成完整交付。"
+        )
+    if unsupported_2d and any(
+        fmt in {"dxf", "svg", "pdf", "png"} for fmt in normalized_formats
+    ):
         limitations.append("当前二维后端无法完整表达特征: " + ", ".join(unsupported_2d))
     for normalized in normalized_formats:
         if normalized in occt_handled:
@@ -632,7 +886,9 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
                 write_rendered_dxf_format(target, document)
             except ImportError:
                 write_svg(target, document)
-                limitations.append("缺少 matplotlib，SVG 使用简化轮廓回退，不包含完整尺寸文字。")
+                limitations.append(
+                    "缺少 matplotlib，SVG 使用简化轮廓回退，不包含完整尺寸文字。"
+                )
         elif normalized == "pdf":
             if unsupported_2d:
                 missing_formats.append(normalized)
@@ -641,7 +897,9 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
                 write_rendered_dxf_format(target, document)
             except ImportError:
                 write_pdf(target, document)
-                limitations.append("缺少 matplotlib，PDF 使用简化轮廓回退，不包含完整尺寸文字。")
+                limitations.append(
+                    "缺少 matplotlib，PDF 使用简化轮廓回退，不包含完整尺寸文字。"
+                )
         elif normalized == "png":
             if unsupported_2d:
                 missing_formats.append(normalized)
@@ -650,32 +908,70 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
                 write_rendered_dxf_format(target, document)
             except ImportError:
                 write_png(target, document)
-                limitations.append("缺少 matplotlib，PNG 使用简化轮廓回退，不包含完整尺寸文字。")
+                limitations.append(
+                    "缺少 matplotlib，PNG 使用简化轮廓回退，不包含完整尺寸文字。"
+                )
         else:
             limitations.append(f"无头后端暂不支持写入格式: {normalized}")
             missing_formats.append(normalized)
             continue
-        artifacts.append({"kind": "cadstudio" if normalized in {"cadstudio", "cadstudio.json", "json"} else normalized, "path": str(target), "exists": True, "producedThisRun": True, "sha256": sha256_file(target), "sourceBackend": "headless_open_format"})
+        artifacts.append(
+            {
+                "kind": "cadstudio"
+                if normalized in {"cadstudio", "cadstudio.json", "json"}
+                else normalized,
+                "path": str(target),
+                "exists": True,
+                "producedThisRun": True,
+                "sha256": sha256_file(target),
+                "sourceBackend": "headless_open_format",
+            }
+        )
     preview_scene_path = ""
-    dxf_artifact = next((item["path"] for item in artifacts if item["kind"] == "dxf"), "")
+    dxf_artifact = next(
+        (item["path"] for item in artifacts if item["kind"] == "dxf"), ""
+    )
     if dxf_artifact:
         scene_target = _versioned_target(out_dir, name, "scene.json")
         try:
             dxf_to_preview_scene(dxf_artifact, scene_target)
             preview_scene_path = str(scene_target)
-            artifacts.append({"kind": "preview_scene", "path": preview_scene_path, "exists": True, "producedThisRun": True, "sha256": sha256_file(scene_target), "sourceBackend": "ezdxf-preview-scene"})
+            artifacts.append(
+                {
+                    "kind": "preview_scene",
+                    "path": preview_scene_path,
+                    "exists": True,
+                    "producedThisRun": True,
+                    "sha256": sha256_file(scene_target),
+                    "sourceBackend": "ezdxf-preview-scene",
+                }
+            )
         except (OSError, ValueError, ImportError) as exc:
             limitations.append(f"DXF PreviewScene 生成失败: {exc}")
 
     preview_source = ""
     for preview_kind in ("glb", "preview_scene", "dxf", "stl", "obj"):
-        preview_source = next((item["path"] for item in artifacts if item["kind"] == preview_kind), "")
+        preview_source = next(
+            (item["path"] for item in artifacts if item["kind"] == preview_kind), ""
+        )
         if preview_source:
             break
-    fallback_image = next((item["path"] for item in artifacts if item["kind"] == "png"), "")
+    fallback_image = next(
+        (item["path"] for item in artifacts if item["kind"] == "png"), ""
+    )
     preview_manifest_path = ""
     if preview_source:
-        manifest = preview_manifest_for_artifact(document_path, preview_source, fallback_image=fallback_image, units=document.get("units", "mm"), evidence_refs=[f"feature:{feature.get('id')}" for feature in document.get("features", []) if isinstance(feature, dict) and feature.get("id")])
+        manifest = preview_manifest_for_artifact(
+            document_path,
+            preview_source,
+            fallback_image=fallback_image,
+            units=document.get("units", "mm"),
+            evidence_refs=[
+                f"feature:{feature.get('id')}"
+                for feature in document.get("features", [])
+                if isinstance(feature, dict) and feature.get("id")
+            ],
+        )
         if preview_scene_path and preview_source == preview_scene_path:
             try:
                 scene = json.loads(Path(preview_scene_path).read_text(encoding="utf-8"))
@@ -688,9 +984,27 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
                 )
             except (OSError, json.JSONDecodeError):
                 limitations.append("PreviewScene 清单读取失败，保留源文件预览。")
-        preview_manifest_path = str(write_json_contract(_versioned_target(out_dir, name, "preview.json"), manifest))
-        artifacts.append({"kind": "preview_manifest", "path": preview_manifest_path, "exists": True, "producedThisRun": True, "sha256": sha256_file(preview_manifest_path)})
-    status = "pass" if artifacts and not missing_formats else "pilot" if artifacts else "blocked"
+        preview_manifest_path = str(
+            write_json_contract(
+                _versioned_target(out_dir, name, "preview.json"), manifest
+            )
+        )
+        artifacts.append(
+            {
+                "kind": "preview_manifest",
+                "path": preview_manifest_path,
+                "exists": True,
+                "producedThisRun": True,
+                "sha256": sha256_file(preview_manifest_path),
+            }
+        )
+    status = (
+        "pass"
+        if artifacts and not missing_formats
+        else "pilot"
+        if artifacts
+        else "blocked"
+    )
     return {
         "backend": "headless_open_format",
         "status": status,
@@ -707,11 +1021,35 @@ def export_headless(document_path: Path, out_dir: Path, formats: list[str]) -> d
 def main(argv: list[str] | None = None) -> int:
     """@brief CLI 入口。"""
     parser = argparse.ArgumentParser(description="CAD Studio 无头开放格式写入器")
-    parser.add_argument("--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json")
+    parser.add_argument(
+        "--input", type=Path, required=True, help="NeutralCadDocument .cadstudio.json"
+    )
     parser.add_argument("--out-dir", type=Path, required=True)
-    parser.add_argument("--formats", nargs="+", default=["cadstudio", "step", "iges", "brep", "stl", "obj", "glb", "dxf", "svg", "pdf", "png"])
+    parser.add_argument(
+        "--formats",
+        nargs="+",
+        default=[
+            "cadstudio",
+            "step",
+            "iges",
+            "brep",
+            "stl",
+            "obj",
+            "glb",
+            "dxf",
+            "svg",
+            "pdf",
+            "png",
+        ],
+    )
     args = parser.parse_args(argv)
-    print(json.dumps(export_headless(args.input, args.out_dir, args.formats), ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            export_headless(args.input, args.out_dir, args.formats),
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     return 0
 
 

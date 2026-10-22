@@ -47,7 +47,7 @@ def _func_src(mod_file: Path, fname: str) -> str:
     try:
         src = mod_file.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(src)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return ""
     for n in ast.walk(tree):
         if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == fname:
@@ -64,9 +64,15 @@ def _com_calls(text: str) -> int:
 
 
 def main() -> int:
-    mat = json.loads((REPO / "output" / "operation-object-matrix-v2.json").read_text(encoding="utf-8"))
+    mat = json.loads(
+        (REPO / "output" / "operation-object-matrix-v2.json").read_text(
+            encoding="utf-8"
+        )
+    )
     unplaced = mat["无处可放"]
-    m = json.loads((REPO / "output" / "tool-to-member-map.json").read_text(encoding="utf-8"))
+    m = json.loads(
+        (REPO / "output" / "tool-to-member-map.json").read_text(encoding="utf-8")
+    )
     rows = {r["tool"].replace("solidworks_", ""): r for r in m["行"]}
 
     pure, real, unknown = [], [], []
@@ -80,8 +86,13 @@ def main() -> int:
             unknown.append({"tool": t, "why": "★ 取不到函数源码"})
             continue
         k = _com_calls(src)
-        rec = {"tool": t, "module": r["module"], "function": r["function"], "com_calls": k,
-               "lines": len(src.splitlines())}
+        rec = {
+            "tool": t,
+            "module": r["module"],
+            "function": r["function"],
+            "com_calls": k,
+            "lines": len(src.splitlines()),
+        }
         (pure if k == 0 else real).append(rec)
 
     R = {
@@ -106,7 +117,9 @@ def main() -> int:
     print()
     print("★ 真缺口明细（前 12）：")
     for x in R["真缺口明细"][:12]:
-        print("   %-34s %-20s COM %d" % (x["tool"][:33], x["module"][:19], x["com_calls"]))
+        print(
+            "   %-34s %-20s COM %d" % (x["tool"][:33], x["module"][:19], x["com_calls"])
+        )
     print()
     print("★ 纯数据明细（前 12）：")
     for x in R["纯数据明细"][:12]:

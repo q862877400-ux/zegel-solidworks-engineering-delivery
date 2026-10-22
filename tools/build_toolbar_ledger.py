@@ -18,7 +18,7 @@
 # ③ D:\AI\SW\AI Solidworks\官方文档\      ← CHM 解包，查语义与示例（本脚本只做存在性抽查
 # ）
 #     ```
-# ⇒ ★ 输出：每条标 `api_verified`（★ 在①里找到的接口/成员）/ `api_missing`（★ 查不到 ⇒ 
+# ⇒ ★ 输出：每条标 `api_verified`（★ 在①里找到的接口/成员）/ `api_missing`（★ 查不到 ⇒
 # 按铁律 5 记「查不到」）
 #     并生成 `docs/toolbar-ledger.md`（★ 人看的台账）✓
 # 官方依据: 本机 `C:\swapi\`（结构化官方源）。
@@ -59,10 +59,10 @@ def _load_backend_limited() -> tuple[set, dict]:
     """★ 读「已知后端到不了」名单（返回 ``(工具栏名集合, 名→条目)``）。"""
     try:
         d = json.loads(BACKEND_LIMITED_FILE.read_text(encoding="utf-8"))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set(), {}
     m = {}
-    for it in (d.get("items") or []):
+    for it in d.get("items") or []:
         tb = str(it.get("toolbar") or "").strip()
         if tb:
             m[tb] = it
@@ -113,7 +113,7 @@ def load_verified_capabilities() -> set:
     """
     try:
         data = json.loads(CAPABILITIES.read_text(encoding="utf-8"))
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return set()
     caps = data.get("capabilities") or []
     return {c.get("id") for c in caps if c.get("level") == "verified" and c.get("id")}
@@ -143,8 +143,11 @@ def verify(api: str, ifaces: set, members: set) -> dict:
     ids = re.findall(r"[A-Za-z_][A-Za-z0-9_]{3,}", api or "")
     hit_iface = [i for i in ids if i.lower() in ifaces]
     hit_member = [i for i in ids if i.lower() in members]
-    return {"api_iface_hits": hit_iface, "api_member_hits": hit_member,
-            "api_verified": bool(hit_iface or hit_member)}
+    return {
+        "api_iface_hits": hit_iface,
+        "api_member_hits": hit_member,
+        "api_verified": bool(hit_iface or hit_member),
+    }
 
 
 def repo_index() -> dict:
@@ -181,7 +184,9 @@ def repo_index() -> dict:
             if d.name == "scripts":
                 try:
                     for n in ast.walk(ast.parse(txt)):
-                        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        if isinstance(
+                            n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+                        ):
                             names.add(n.name)
                 except SyntaxError:
                     pass
@@ -221,8 +226,13 @@ def check_repo(it: dict, idx: dict, official_ids: set) -> dict:
                 out["entry_why"] = "查到了"
 
     #: ② 本仓源码里出现没出现过那些官方标识符
-    hits = sorted({i for i in official_ids
-                   if i not in ("Entry", "Ref", "None") and i in idx["all_source"]})
+    hits = sorted(
+        {
+            i
+            for i in official_ids
+            if i not in ("Entry", "Ref", "None") and i in idx["all_source"]
+        }
+    )
     out["implemented_hits"] = hits
     return out
 
@@ -240,8 +250,10 @@ def main() -> int:
     #: ★★ 两层本仓核实（轮 483）—— 见 `repo_index` 的说明
     _IDX.clear()
     _IDX.update(repo_index())
-    print("  本仓索引：模块 %d 个 · 源码 %.1f 万字" % (len(_IDX["modules"]),
-                                              len(_IDX["all_source"]) / 10000.0))
+    print(
+        "  本仓索引：模块 %d 个 · 源码 %.1f 万字"
+        % (len(_IDX["modules"]), len(_IDX["all_source"]) / 10000.0)
+    )
 
     for it in items:
         it.update(verify(it.get("api", ""), ifaces, members))
@@ -318,25 +330,50 @@ def main() -> int:
     for k in ("已能", "可攻关", "待验证", "待查"):
         lines.append("| %s | %d |" % (k, c.get(k, 0)))
     lines.append("| **合计** | **%d** |" % len(items))
-    lines += ["", "## 逐条", "", "| 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |", "|---|---|---|---|---|"]
+    lines += [
+        "",
+        "## 逐条",
+        "",
+        "| 工具条 | 条目 | 档 | 官方成员（已核） | 本仓入口 |",
+        "|---|---|---|---|---|",
+    ]
     order = {"可攻关": 0, "待验证": 1, "待查": 2, "已能": 3}
     for it in sorted(items, key=lambda x: (order.get(x["tier"], 9), x["tb"], x["zh"])):
         hits = it["api_iface_hits"] + it["api_member_hits"]
-        lines.append("| %s | %s | **%s** | %s | %s |" % (
-            it["tb"], it["zh"], it["tier"],
-            (", ".join("`%s`" % h for h in hits[:3]) or "—"),
-            ("`%s`" % it["entry"]) if it.get("entry") else "—"))
+        lines.append(
+            "| %s | %s | **%s** | %s | %s |"
+            % (
+                it["tb"],
+                it["zh"],
+                it["tier"],
+                (", ".join("`%s`" % h for h in hits[:3]) or "—"),
+                ("`%s`" % it["entry"]) if it.get("entry") else "—",
+            )
+        )
     lines.append("")
     OUT_MD.write_text("\n".join(lines), encoding="utf-8")
-    OUT_JSON.write_text(json.dumps(
-        {"_": "\u53f0\u8d26 + \u5b98\u65b9\u6e90\u6838\u5b9e\u7ed3\u679c", "summary": dict(c),
-         "by_toolbar_gap": dict(c_tb), "items": items},
-        ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps(
+            {
+                "_": "\u53f0\u8d26 + \u5b98\u65b9\u6e90\u6838\u5b9e\u7ed3\u679c",
+                "summary": dict(c),
+                "by_toolbar_gap": dict(c_tb),
+                "items": items,
+            },
+            ensure_ascii=False,
+            indent=1,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
     print("  产物：%s" % OUT_MD)
     print("  产物：%s" % OUT_JSON)
     missing = [it["zh"] for it in items if it["tier"] == "\u5f85\u67e5"]
     if missing:
-        print("  \u2605 \u5f85\u67e5\uff08api \u6ca1\u6838\u5230\uff0c\u5148\u67e5\u6e05\uff09\uff1a%s" % ", ".join(missing[:12]))
+        print(
+            "  \u2605 \u5f85\u67e5\uff08api \u6ca1\u6838\u5230\uff0c\u5148\u67e5\u6e05\uff09\uff1a%s"
+            % ", ".join(missing[:12])
+        )
     return 0
 
 

@@ -27,7 +27,7 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 ROOT = Path(Path(__file__).resolve().parents[1])
 SEED = 20261004
-TARGET = 48                      #: ★ 48 个任务 ⇒ 48 条挑工具路（★ 与业主"60 路"同量级）
+TARGET = 48  #: ★ 48 个任务 ⇒ 48 条挑工具路（★ 与业主"60 路"同量级）
 
 sample = json.loads((ROOT / "output" / "rag-sample.json").read_text(encoding="utf-8"))
 recs, strata = sample["records"], sample["strata"]
@@ -40,9 +40,15 @@ for f in sorted(qdir.glob("out-*.json")):
     for row in json.loads(f.read_text(encoding="utf-8")):
         t = row["tool"]
         if t in recs and row.get("cn_query"):
-            tasks.append({"tool": t, "task_cn": row["cn_query"],
-                          "stratum": stratum_of.get(t, "?"),
-                          "title": recs[t]["title"], "doc": recs[t]["doc"][:400]})
+            tasks.append(
+                {
+                    "tool": t,
+                    "task_cn": row["cn_query"],
+                    "stratum": stratum_of.get(t, "?"),
+                    "title": recs[t]["title"],
+                    "doc": recs[t]["doc"][:400],
+                }
+            )
 print("★ 可用任务（有中文查询的）: %d" % len(tasks))
 
 #: ★ 分层抽样：保证冷门/自研层/热门都有
@@ -54,23 +60,51 @@ picked = []
 for st, pool in by.items():
     pool = sorted(pool, key=lambda x: x["tool"])
     rng.shuffle(pool)
-    n = max(6, round(TARGET * len(pool) / len(tasks)))       #: ★ 按层大小配额，每层至少 6
+    n = max(6, round(TARGET * len(pool) / len(tasks)))  #: ★ 按层大小配额，每层至少 6
     picked += pool[:n]
 picked = picked[:TARGET]
-print("★ 抽样 %d 个 · 分层: %s" % (len(picked), {k: sum(1 for p in picked if p["stratum"] == k)
-                                                 for k in by}))
+print(
+    "★ 抽样 %d 个 · 分层: %s"
+    % (len(picked), {k: sum(1 for p in picked if p["stratum"] == k) for k in by})
+)
 
 OUT = ROOT / "output" / "pick-test"
 OUT.mkdir(parents=True, exist_ok=True)
 for i, p in enumerate(picked):
-    (OUT / ("task-%02d.json" % i)).write_text(json.dumps({
-        "index": i,
-        "task": p["task_cn"],                 #: ★ 只给任务文本与"我预期的工具"（★ 挑工具路看不到后者）
-        #: ★★ 期望工具**不放进挑工具路的输入** —— 只放在答案表里，供事后对账
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
-(OUT / "_answers.json").write_text(json.dumps(
-    [{"index": i, "task": p["task_cn"], "expected_tool": p["tool"],
-      "stratum": p["stratum"], "title": p["title"], "doc": p["doc"]}
-     for i, p in enumerate(picked)], ensure_ascii=False, indent=1), encoding="utf-8")
-print("★ 写出 %d 个 task-XX.json（★ **不含**期望工具）+ 一份 _answers.json（含，供对账）" % len(picked))
+    (OUT / ("task-%02d.json" % i)).write_text(
+        json.dumps(
+            {
+                "index": i,
+                "task": p[
+                    "task_cn"
+                ],  #: ★ 只给任务文本与"我预期的工具"（★ 挑工具路看不到后者）
+                #: ★★ 期望工具**不放进挑工具路的输入** —— 只放在答案表里，供事后对账
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
+(OUT / "_answers.json").write_text(
+    json.dumps(
+        [
+            {
+                "index": i,
+                "task": p["task_cn"],
+                "expected_tool": p["tool"],
+                "stratum": p["stratum"],
+                "title": p["title"],
+                "doc": p["doc"],
+            }
+            for i, p in enumerate(picked)
+        ],
+        ensure_ascii=False,
+        indent=1,
+    ),
+    encoding="utf-8",
+)
+print(
+    "★ 写出 %d 个 task-XX.json（★ **不含**期望工具）+ 一份 _answers.json（含，供对账）"
+    % len(picked)
+)
 print("★ 目录: %s" % OUT)

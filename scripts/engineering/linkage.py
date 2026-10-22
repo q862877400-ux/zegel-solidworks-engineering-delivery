@@ -1,4 +1,5 @@
 """★ 阶段 6 · 可调连杆：闭环求解 + 分支 + 奇异 + 连续性（规格 321 的 L1~L4）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -35,8 +36,8 @@ BLOCKED_VERIFICATION = "BLOCKED_VERIFICATION"
 LINKAGE_CODES = (PASS, FAIL, INDETERMINATE, BLOCKED_VERIFICATION)
 
 #: ★★ **两个装配分支**（★ L2 —— ★ 同一个闭环有两个解）
-BRANCH_OPEN = "open"          #: ★ 开口式：`θ4 ∈ (0, π)`
-BRANCH_CROSSED = "crossed"    #: ★ 交叉式：`θ4 ∈ (π, 2π)`
+BRANCH_OPEN = "open"  #: ★ 开口式：`θ4 ∈ (0, π)`
+BRANCH_CROSSED = "crossed"  #: ★ 交叉式：`θ4 ∈ (π, 2π)`
 BRANCHES = (BRANCH_OPEN, BRANCH_CROSSED)
 
 #: ★ 默认残差容差（mm）—— ★ 冻结值
@@ -60,14 +61,15 @@ class LinkageError(CodedError):
 # 二、平面四杆闭环求解（★ L1 —— ★ 独立算，不靠 CAD）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class FourBar:
     """★ 平面四杆：曲柄 `a` · 连杆 `b` · 摇杆 `c` · 机架 `d`。"""
 
-    a: float = 40.0       #: ★ 曲柄（★ 主动件）
-    b: float = 120.0      #: ★ 连杆
-    c: float = 80.0       #: ★ 摇杆
-    d: float = 150.0      #: ★ 机架
+    a: float = 40.0  #: ★ 曲柄（★ 主动件）
+    b: float = 120.0  #: ★ 连杆
+    c: float = 80.0  #: ★ 摇杆
+    d: float = 150.0  #: ★ 机架
 
     def __post_init__(self) -> None:
         for nm in ("a", "b", "c", "d"):
@@ -96,24 +98,30 @@ class FourBar:
 @dataclass
 class FourBarSolution:
     theta2: float = 0.0
-    theta3: float = 0.0          #: ★ 连杆角
-    theta4: float = 0.0          #: ★ 摇杆角
+    theta3: float = 0.0  #: ★ 连杆角
+    theta4: float = 0.0  #: ★ 摇杆角
     branch: str = BRANCH_OPEN
     residual: float = 0.0
     ok: bool = False
 
     def to_dict(self) -> dict:
-        return {"theta2_deg": round(math.degrees(self.theta2), 6),
-                "theta3_deg": round(math.degrees(self.theta3), 6),
-                "theta4_deg": round(math.degrees(self.theta4), 6),
-                "branch": self.branch,
-                "residual_mm": self.residual,
-                "ok": self.ok}
+        return {
+            "theta2_deg": round(math.degrees(self.theta2), 6),
+            "theta3_deg": round(math.degrees(self.theta3), 6),
+            "theta4_deg": round(math.degrees(self.theta4), 6),
+            "branch": self.branch,
+            "residual_mm": self.residual,
+            "ok": self.ok,
+        }
 
 
-def solve_four_bar(fb: FourBar, theta2: float, *,
-                   branch: str = BRANCH_OPEN,
-                   tol_mm: float = DEFAULT_TOL_MM) -> FourBarSolution:
+def solve_four_bar(
+    fb: FourBar,
+    theta2: float,
+    *,
+    branch: str = BRANCH_OPEN,
+    tol_mm: float = DEFAULT_TOL_MM,
+) -> FourBarSolution:
     """★★ **闭环求解**（★ L1 —— ★ 用**解析法**，★ 不靠 CAD）。
 
     ★★ 原理（★ 标准四杆闭环解析解）：
@@ -147,7 +155,8 @@ def solve_four_bar(fb: FourBar, theta2: float, *,
         #: ★ 判别式 < 0 ⇒ **这个曲柄角下装不起来**（★ 不是"解错了"）
         raise LinkageError(
             "no-solution",
-            "★ θ2=%g° 下闭环无解（判别式 %.6f < 0）" % (math.degrees(theta2), disc))
+            "★ θ2=%g° 下闭环无解（判别式 %.6f < 0）" % (math.degrees(theta2), disc),
+        )
 
     root = math.sqrt(disc)
     #: ★★ **两个分支**：判别式的 ± 号。
@@ -173,13 +182,18 @@ def solve_four_bar(fb: FourBar, theta2: float, *,
         raise LinkageError(
             "no-solution",
             "★ θ2=%g° 下没有 %s 分支的解（只有 %s）"
-            % (math.degrees(theta2), branch,
-               [c[3] for c in cands]))
+            % (math.degrees(theta2), branch, [c[3] for c in cands]),
+        )
     theta3, theta4, residual, _got_branch = picked
 
-    return FourBarSolution(theta2=theta2, theta3=theta3, theta4=theta4,
-                           branch=branch, residual=residual,
-                           ok=residual <= tol_mm)
+    return FourBarSolution(
+        theta2=theta2,
+        theta3=theta3,
+        theta4=theta4,
+        branch=branch,
+        residual=residual,
+        ok=residual <= tol_mm,
+    )
 
 
 def branch_of(fb: FourBar, theta2: float, theta4: float) -> str:
@@ -197,11 +211,12 @@ def branch_of(fb: FourBar, theta2: float, theta4: float) -> str:
 # 三、奇异区间（★ L3）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class SingularPoint:
     theta2_deg: float = 0.0
-    kind: str = "toggle"          #: `toggle` / `fold`
-    margin: float = 0.0           #: ★ 判别式（★ 越小越接近奇异）
+    kind: str = "toggle"  #: `toggle` / `fold`
+    margin: float = 0.0  #: ★ 判别式（★ 越小越接近奇异）
 
 
 @dataclass
@@ -225,8 +240,9 @@ def _disc(fb: FourBar, theta2: float) -> float:
     return B_ * B_ - 4.0 * A_ * C_
 
 
-def singular_scan(fb: FourBar, *, samples: int = 360,
-                  margin: float = 1e-3) -> SingularScan:
+def singular_scan(
+    fb: FourBar, *, samples: int = 360, margin: float = 1e-3
+) -> SingularScan:
     """★★ **奇异区间扫描**（★ L3 —— ★ FR-005）。
 
     ★★ 判据：**判别式趋近 0** ⇒ 闭环接近**奇异**（★ 两分支在此**合并**）。
@@ -254,6 +270,7 @@ def singular_scan(fb: FourBar, *, samples: int = 360,
 # 四、连续性判定（★ L4 —— ★ FR-007/009）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class ContinuityVerdict:
     verdict: str = PASS
@@ -267,11 +284,14 @@ class ContinuityVerdict:
         assert self.verdict in LINKAGE_CODES, "★ 非法判定：%r" % self.verdict
 
 
-def continuity_verdict(*, order_requires_continuous: bool,
-                       is_full_domain_proof: bool,
-                       sampled: int = 0,
-                       uncovered: int = 0,
-                       interferences: list | None = None) -> ContinuityVerdict:
+def continuity_verdict(
+    *,
+    order_requires_continuous: bool,
+    is_full_domain_proof: bool,
+    sampled: int = 0,
+    uncovered: int = 0,
+    interferences: list | None = None,
+) -> ContinuityVerdict:
     """★★ **连续性判定**（★ L4 —— ★ FR-007/009）。
 
     ★★ 判据顺序（★ **最严的在前**）：
@@ -291,42 +311,63 @@ def continuity_verdict(*, order_requires_continuous: bool,
     """
     if interferences:
         return ContinuityVerdict(
-            FAIL, "", 0.0, False, False,
-            "★ 检出干涉 %d 处 ⇒ 必须解释（★ 不能当无干涉）" % len(interferences))
+            FAIL,
+            "",
+            0.0,
+            False,
+            False,
+            "★ 检出干涉 %d 处 ⇒ 必须解释（★ 不能当无干涉）" % len(interferences),
+        )
 
     total = sampled + uncovered
     cov = (sampled / total) if total > 0 else 0.0
 
     if order_requires_continuous and not is_full_domain_proof:
         return ContinuityVerdict(
-            INDETERMINATE, BLOCKED_VERIFICATION, cov, False, False,
+            INDETERMINATE,
+            BLOCKED_VERIFICATION,
+            cov,
+            False,
+            False,
             "★★ 订单要求**连续无干涉**，而只有**采样证据** ⇒ "
-            "`INDETERMINATE` + `BLOCKED_VERIFICATION`（★ **不能自动交付**）")
+            "`INDETERMINATE` + `BLOCKED_VERIFICATION`（★ **不能自动交付**）",
+        )
 
     if uncovered:
         return ContinuityVerdict(
-            INDETERMINATE, BLOCKED_VERIFICATION, cov, False, False,
-            "★ 有 %d 个**未覆盖区间** ⇒ 不能自动交付" % uncovered)
+            INDETERMINATE,
+            BLOCKED_VERIFICATION,
+            cov,
+            False,
+            False,
+            "★ 有 %d 个**未覆盖区间** ⇒ 不能自动交付" % uncovered,
+        )
 
     return ContinuityVerdict(
-        PASS, "", cov, is_full_domain_proof, True,
-        "★ 无干涉、无未覆盖区间 ⇒ 放行")
+        PASS, "", cov, is_full_domain_proof, True, "★ 无干涉、无未覆盖区间 ⇒ 放行"
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 五、整体验收（★ S6）
 #: ══════════════════════════════════════════════════════════════════════
 
-def evaluate_linkage(fb: FourBar, theta2: float, *,
-                     branch: str = BRANCH_OPEN,
-                     target_dof: int = 1,
-                     actual_dof: int = 1,
-                     intentional_dof: list | None = None,
-                     order_requires_continuous: bool = False,
-                     is_full_domain_proof: bool = False,
-                     sampled: int = 360, uncovered: int = 0,
-                     interferences: list | None = None,
-                     tol_mm: float = DEFAULT_TOL_MM) -> dict:
+
+def evaluate_linkage(
+    fb: FourBar,
+    theta2: float,
+    *,
+    branch: str = BRANCH_OPEN,
+    target_dof: int = 1,
+    actual_dof: int = 1,
+    intentional_dof: list | None = None,
+    order_requires_continuous: bool = False,
+    is_full_domain_proof: bool = False,
+    sampled: int = 360,
+    uncovered: int = 0,
+    interferences: list | None = None,
+    tol_mm: float = DEFAULT_TOL_MM,
+) -> dict:
     """★★ **连杆机构的整体判定**（★ S6）。
 
     ★★ 判据（★ 五项都要）：
@@ -352,7 +393,7 @@ def evaluate_linkage(fb: FourBar, theta2: float, *,
     if out.get("solution"):
         got_branch = branch_of(fb, theta2, math.radians(out["solution"]["theta4_deg"]))
         out["branch"] = got_branch
-        out["branch_ok"] = (got_branch == branch)
+        out["branch_ok"] = got_branch == branch
     else:
         out["branch"] = ""
         out["branch_ok"] = False
@@ -366,27 +407,44 @@ def evaluate_linkage(fb: FourBar, theta2: float, *,
     motions = list(intentional_dof or ())
     if actual_dof > 0:
         out["dof_annotated"] = bool(motions) and all(
-            str(m.get("why", "")).strip() for m in motions)
+            str(m.get("why", "")).strip() for m in motions
+        )
     else:
         out["dof_annotated"] = True
 
     #: ⑤ 连续性
-    cv = continuity_verdict(order_requires_continuous=order_requires_continuous,
-                            is_full_domain_proof=is_full_domain_proof,
-                            sampled=sampled, uncovered=uncovered,
-                            interferences=interferences)
-    out["continuity"] = {"verdict": cv.verdict, "run_state": cv.run_state,
-                         "coverage": round(cv.coverage, 6),
-                         "releasing": cv.releasing, "reason": cv.reason}
+    cv = continuity_verdict(
+        order_requires_continuous=order_requires_continuous,
+        is_full_domain_proof=is_full_domain_proof,
+        sampled=sampled,
+        uncovered=uncovered,
+        interferences=interferences,
+    )
+    out["continuity"] = {
+        "verdict": cv.verdict,
+        "run_state": cv.run_state,
+        "coverage": round(cv.coverage, 6),
+        "releasing": cv.releasing,
+        "reason": cv.reason,
+    }
 
     #: ★ 奇异（★ 报告用 —— ★ 不直接判失败，★ 由"指定区间义务"决定）
     ss = singular_scan(fb, samples=min(360, max(36, sampled)))
-    out["singular"] = {"count": len(ss.points), "scanned": ss.scanned,
-                       "kinds": sorted({p.kind for p in ss.points})}
+    out["singular"] = {
+        "count": len(ss.points),
+        "scanned": ss.scanned,
+        "kinds": sorted({p.kind for p in ss.points}),
+    }
 
-    out["ok"] = bool(out.get("residual_ok") and out.get("branch_ok")
-                     and out.get("dof_ok") and out.get("dof_annotated")
-                     and cv.releasing)
-    out["★"] = ("★ 五项：闭环残差 + 分支对 + 自由度对 + 自由度已标注 + 连续性放行"
-                "（★ **正确闭链正例必须能过** —— ★ 不许「保守到失去能力」）")
+    out["ok"] = bool(
+        out.get("residual_ok")
+        and out.get("branch_ok")
+        and out.get("dof_ok")
+        and out.get("dof_annotated")
+        and cv.releasing
+    )
+    out["★"] = (
+        "★ 五项：闭环残差 + 分支对 + 自由度对 + 自由度已标注 + 连续性放行"
+        "（★ **正确闭链正例必须能过** —— ★ 不许「保守到失去能力」）"
+    )
     return out

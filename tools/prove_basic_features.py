@@ -33,16 +33,27 @@ import time
 from pathlib import Path
 
 R = Path(Path(__file__).resolve().parents[1])
-sys.path.insert(0, str(R / "scripts")); sys.path.insert(0, str(R / "tools"))
+sys.path.insert(0, str(R / "scripts"))
+sys.path.insert(0, str(R / "tools"))
 OUT = R / "output" / "basic-features-evidence.json"
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
-    from sw_part import (chamfer, extrude_boss, extrude_cut, feature_names, fillet,
-                         sketch_circle, sketch_corner_rectangle, sketch_line, end_sketch,
-                         start_sketch, current_sketch_name)
+    from sw_part import (
+        chamfer,
+        extrude_boss,
+        extrude_cut,
+        feature_names,
+        fillet,
+        sketch_circle,
+        sketch_corner_rectangle,
+        sketch_line,
+        end_sketch,
+        start_sketch,
+        current_sketch_name,
+    )
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
     ev = {"sketch_names": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
@@ -73,9 +84,16 @@ def main() -> int:
             row["built"] = after > before
         row["verdict"] = "pass" if row["built"] else "fail"
         ev["steps"].append(row)
-        print("  %-26s %s  \u6811 %s\u2192%s  %s" % (
-            name, "\u2713" if row["built"] else "**\u2717**", before, after,
-            row.get("err", "")[:70]))
+        print(
+            "  %-26s %s  \u6811 %s\u2192%s  %s"
+            % (
+                name,
+                "\u2713" if row["built"] else "**\u2717**",
+                before,
+                after,
+                row.get("err", "")[:70],
+            )
+        )
         return row
 
     doc = None
@@ -84,11 +102,13 @@ def main() -> int:
         ev["doc"] = "part"
         #: ① \u8349\u56fe\uff08\u77e9\u5f62\uff09+ \u62c9\u4f38\u51f8\u53f0
         names = {}
+
         def s1():
             start_sketch(doc, plane_name="Front Plane")
             sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
             names["sk1"] = current_sketch_name(doc, "")
             end_sketch(doc)
+
         rec("sketch_rectangle", s1, "doc")
         sk1 = names.get("sk1", "")
         rec("extrude_boss_20mm", lambda: extrude_boss(doc, sk1, 20.0))
@@ -100,6 +120,7 @@ def main() -> int:
             sketch_circle(doc, 0.0, 0.0, 8.0)
             names["sk2"] = current_sketch_name(doc, "")
             end_sketch(doc)
+
         rec("sketch_circle_for_cut", s2)
         sk2 = names.get("sk2", "")
         rec("extrude_cut_through", lambda: extrude_cut(doc, sk2, 0.0))
@@ -108,15 +129,23 @@ def main() -> int:
         #:   因为圆角会**改变边序**（圆角把一条直边换成一段圆弧），
         #:   而**倒角对圆边无效** ⇒ 若不重选，倒角那步会因为选到了圆弧而"看起来不建" ⚠
         #:   ★★ 那正是**事实 104** 的教训：「看到异常就定性」是误判之源。）
-        from sw_selection_spec import clear_selection, get_selection_count, resolve_selection
+        from sw_selection_spec import (
+            clear_selection,
+            get_selection_count,
+            resolve_selection,
+        )
+
         def _sel0():
             clear_selection(doc)
             resolve_selection(doc, "index:0", "EDGE")
+
         rec("select_edge0_for_fillet", _sel0, "selection")
         rec("fillet_edge0_r2", lambda: fillet(doc, 2.0))
+
         def _sel1():
             clear_selection(doc)
             resolve_selection(doc, "index:2", "EDGE")
+
         rec("select_edge2_for_chamfer", _sel1, "selection")
         rec("chamfer_edge1_1p5", lambda: chamfer(doc, 1.5))
 
@@ -124,15 +153,21 @@ def main() -> int:
         #: \u505a\u8f74\uff09
         def s4():
             from sw_part import sketch_centerline
+
             start_sketch(doc, plane_name="Right Plane")
-            sketch_centerline(doc, 0.0, 0.0, 0.0, 30.0)   # ★ 旋转轴
+            sketch_centerline(doc, 0.0, 0.0, 0.0, 30.0)  # ★ 旋转轴
             sketch_corner_rectangle(doc, 5.0, 0.0, 12.0, 30.0)
             names["sk4"] = current_sketch_name(doc, "")
             end_sketch(doc)
+
         rec("sketch_for_revolve", s4)
         sk4 = names.get("sk4", "")
         import math
-        rec("revolve_boss_360", lambda: __import__("sw_part").revolve_boss(doc, sk4, math.radians(360.0)))
+
+        rec(
+            "revolve_boss_360",
+            lambda: __import__("sw_part").revolve_boss(doc, sk4, math.radians(360.0)),
+        )
 
         #: ⑤ \u62bd\u58f3
         rec("shell_2mm", lambda: __import__("sw_part").shell(doc, 2.0))
@@ -140,10 +175,18 @@ def main() -> int:
         ev["passed"] = sum(1 for s in ev["steps"] if s["verdict"] == "pass")
         ev["total"] = len(ev["steps"])
         ev["verdict"] = "pass" if ev["passed"] == ev["total"] else "partial"
-        ev["note"] = ("★ 每个基础操作一行；★ 判据是**特征树增量**（★ 不靠返回值 —— 事实 8）。"
-                      "★ 没建成的会带 err。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-        print("  \u2500\u2500 **%d/%d** \u901a\u8fc7 \u21d2 %s" % (ev["passed"], ev["total"], str(ev["verdict"]).upper()))
+        ev["note"] = (
+            "★ 每个基础操作一行；★ 判据是**特征树增量**（★ 不靠返回值 —— 事实 8）。"
+            "★ 没建成的会带 err。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+            encoding="utf-8",
+        )
+        print(
+            "  \u2500\u2500 **%d/%d** \u901a\u8fc7 \u21d2 %s"
+            % (ev["passed"], ev["total"], str(ev["verdict"]).upper())
+        )
         print("  产物：%s" % OUT)
         try:
             sw.CommandInProgress = False

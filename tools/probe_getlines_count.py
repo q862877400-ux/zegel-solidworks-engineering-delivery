@@ -19,6 +19,7 @@ r"""@brief 探针：`get_lines` 对**1 条直线**到底读回几条？（轮 14
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -34,7 +35,11 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "getlines-count-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "getlines-count-evidence.json"
+)
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -45,8 +50,10 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def main() -> int:
     ev = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": {}}
     sw = None
@@ -54,10 +61,11 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         for n_lines in (1, 2, 3):
@@ -73,35 +81,42 @@ def main() -> int:
             lns = sw_sketch.get_lines(sk)
             ns = len(segs) if isinstance(segs, list) else type(segs).__name__
             nl = len(lns) if isinstance(lns, list) else type(lns).__name__
-            print("  画 %d 条直线 ⇒ get_sketch_segments=%s · get_lines=%s" % (n_lines, ns, nl))
+            print(
+                "  画 %d 条直线 ⇒ get_sketch_segments=%s · get_lines=%s"
+                % (n_lines, ns, nl)
+            )
             if isinstance(lns, list) and lns:
                 print("        get_lines[0] 类型 = %s" % type(lns[0]).__name__)
                 print("        get_lines 全表前 3 项 = %r" % (lns[:3],))
             ev["cases"]["%d_lines" % n_lines] = {"segments": ns, "lines": nl}
             sw_part.end_sketch(d)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
         print("   （已关闭 %d 个临时零件，均不保存）" % len(docs))
 
     modals, _win_scanned = modal_dialogs()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return 0
 
 

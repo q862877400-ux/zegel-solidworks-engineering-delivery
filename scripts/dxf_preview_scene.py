@@ -25,7 +25,16 @@ from typing import Any, Iterable
 
 MAX_DXF_BYTES = 50 * 1024 * 1024
 MAX_ENTITIES = 200_000
-SUPPORTED_TYPES = {"LINE", "CIRCLE", "ARC", "LWPOLYLINE", "POLYLINE", "TEXT", "MTEXT", "DIMENSION"}
+SUPPORTED_TYPES = {
+    "LINE",
+    "CIRCLE",
+    "ARC",
+    "LWPOLYLINE",
+    "POLYLINE",
+    "TEXT",
+    "MTEXT",
+    "DIMENSION",
+}
 LAYER_COLORS = {
     "OUTLINE": "#25312f",
     "HOLES": "#176c65",
@@ -46,13 +55,18 @@ def _point(value: Any) -> list[float]:
     return [x, y]
 
 
-def _circle_points(center: Any, radius: float, start: float = 0.0, end: float = 360.0) -> list[list[float]]:
+def _circle_points(
+    center: Any, radius: float, start: float = 0.0, end: float = 360.0
+) -> list[list[float]]:
     """@brief 将圆或圆弧离散为稳定的浏览器折线。"""
     cx, cy = _point(center)
     sweep = (end - start) % 360.0 or 360.0
     segments = max(12, min(96, int(math.ceil(sweep / 6.0))))
     return [
-        [cx + math.cos(math.radians(start + sweep * index / segments)) * radius, cy + math.sin(math.radians(start + sweep * index / segments)) * radius]
+        [
+            cx + math.cos(math.radians(start + sweep * index / segments)) * radius,
+            cy + math.sin(math.radians(start + sweep * index / segments)) * radius,
+        ]
         for index in range(segments + 1)
     ]
 
@@ -88,7 +102,12 @@ def _entity_payload(entity: Any) -> dict[str, Any] | None:
         base["points"] = _circle_points(entity.dxf.center, float(entity.dxf.radius))
     elif kind == "ARC":
         base["kind"] = "arc"
-        base["points"] = _circle_points(entity.dxf.center, float(entity.dxf.radius), float(entity.dxf.start_angle), float(entity.dxf.end_angle))
+        base["points"] = _circle_points(
+            entity.dxf.center,
+            float(entity.dxf.radius),
+            float(entity.dxf.start_angle),
+            float(entity.dxf.end_angle),
+        )
     elif kind == "LWPOLYLINE":
         points = [[float(x), float(y)] for x, y in entity.get_points("xy")]
         if entity.closed and points:
@@ -103,7 +122,9 @@ def _entity_payload(entity: Any) -> dict[str, Any] | None:
         base["points"] = points
     elif kind in {"TEXT", "MTEXT"}:
         base["kind"] = "text"
-        base["text"] = str(entity.plain_text() if kind == "MTEXT" else entity.dxf.get("text", ""))[:4096]
+        base["text"] = str(
+            entity.plain_text() if kind == "MTEXT" else entity.dxf.get("text", "")
+        )[:4096]
         base["points"] = [_point(entity.dxf.insert)]
     elif kind == "DIMENSION":
         base["kind"] = "dimension"
@@ -130,7 +151,9 @@ def _bounds(entities: Iterable[dict[str, Any]]) -> dict[str, float]:
     return {"minX": min(xs), "minY": min(ys), "maxX": max(xs), "maxY": max(ys)}
 
 
-def dxf_to_preview_scene(source: str | Path, output: str | Path | None = None) -> dict[str, Any]:
+def dxf_to_preview_scene(
+    source: str | Path, output: str | Path | None = None
+) -> dict[str, Any]:
     """@brief 只读解析 DXF，返回并可选写出 PreviewScene 1.0。"""
     import ezdxf
 
@@ -156,10 +179,17 @@ def dxf_to_preview_scene(source: str | Path, output: str | Path | None = None) -
             entities.append(payload)
     layer_counts = Counter(str(entity.get("layer") or "0") for entity in entities)
     layers = [
-        {"name": name, "color": LAYER_COLORS.get(name.upper(), "#42514e"), "count": count, "visible": True}
+        {
+            "name": name,
+            "color": LAYER_COLORS.get(name.upper(), "#42514e"),
+            "count": count,
+            "visible": True,
+        }
         for name, count in sorted(layer_counts.items())
     ]
-    warnings = [f"未显示 {kind}: {count}" for kind, count in sorted(unsupported.items())]
+    warnings = [
+        f"未显示 {kind}: {count}" for kind, count in sorted(unsupported.items())
+    ]
     scene = {
         "schemaVersion": "1.0",
         "kind": "dxf-scene",
@@ -173,12 +203,16 @@ def dxf_to_preview_scene(source: str | Path, output: str | Path | None = None) -
     }
     if output is not None:
         target = Path(output).expanduser().resolve()
-        if target.suffix.lower() != ".json" or not target.name.lower().endswith(".scene.json"):
+        if target.suffix.lower() != ".json" or not target.name.lower().endswith(
+            ".scene.json"
+        ):
             raise ValueError("PreviewScene 输出必须使用 .scene.json 后缀")
         if target.exists():
             raise FileExistsError(f"拒绝覆盖已有 PreviewScene: {target.name}")
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(scene, ensure_ascii=False, indent=2), encoding="utf-8")
+        target.write_text(
+            json.dumps(scene, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
     return scene
 
 
@@ -189,7 +223,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("output", type=Path)
     args = parser.parse_args(argv)
     scene = dxf_to_preview_scene(args.source, args.output)
-    print(json.dumps({"status": "pass", "output": str(args.output), "entities": len(scene["entities"]), "layers": len(scene["layers"])}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "status": "pass",
+                "output": str(args.output),
+                "entities": len(scene["entities"]),
+                "layers": len(scene["layers"]),
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

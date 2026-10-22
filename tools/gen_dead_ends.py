@@ -62,7 +62,8 @@ DEAD = re.compile(
     #: ★★★ 2026-10-04 补的 7 条（★ 每条都出自裁判的实测漏抓清单）——
     r"静默不成|全败|不抛但特征树不变|没建成|不可达|取不到|"
     #: ★★ 顺带补的同族"结论性"措辞（★ 都是"试完了没成"的意思，★ 不是中性词）
-    r"不注册|保持不注册|验不了|没法验|不适用|不存在这个成员)")
+    r"不注册|保持不注册|验不了|没法验|不适用|不存在这个成员)"
+)
 
 
 def collect() -> list[tuple[str, str, str]]:
@@ -111,7 +112,9 @@ def render(rows: list[tuple[str, str, str]]) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--check", action="store_true", help="只比对，不写（过期则 exit 1）")
+    ap.add_argument(
+        "--check", action="store_true", help="只比对，不写（过期则 exit 1）"
+    )
     args = ap.parse_args()
 
     rows = collect()
@@ -120,7 +123,9 @@ def main() -> int:
     if args.check:
         old = OUT.read_text(encoding="utf-8") if OUT.is_file() else ""
         if old != text:
-            print("  ✗ `docs/dead-ends.md` 与 `capabilities.yaml` 不一致 ⇒ 跑 tools/gen_dead_ends.py")
+            print(
+                "  ✗ `docs/dead-ends.md` 与 `capabilities.yaml` 不一致 ⇒ 跑 tools/gen_dead_ends.py"
+            )
             return 1
         print("  ✓ `docs/dead-ends.md` 是最新的（%d 条 / %d 能力）" % (len(rows), caps))
         return 0

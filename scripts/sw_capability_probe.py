@@ -11,7 +11,6 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
-
 from __future__ import annotations
 
 import argparse
@@ -21,7 +20,11 @@ import os
 from pathlib import Path
 
 try:
-    from .sw_preflight import import_com_dependencies, missing_com_dependencies, solidworks_installed
+    from .sw_preflight import (
+        import_com_dependencies,
+        missing_com_dependencies,
+        solidworks_installed,
+    )
     from .capabilities import (
         UNATTENDED_MODE,
         backend_route_snapshot,
@@ -31,7 +34,11 @@ try:
     )
     from .cad_installation import discover_installations
 except ImportError:
-    from sw_preflight import import_com_dependencies, missing_com_dependencies, solidworks_installed
+    from sw_preflight import (
+        import_com_dependencies,
+        missing_com_dependencies,
+        solidworks_installed,
+    )
     from capabilities import (
         UNATTENDED_MODE,
         backend_route_snapshot,
@@ -146,7 +153,11 @@ def probe_capabilities(check_solidworks: bool = True) -> dict:
     all_types: set[str] = set()
     for name, patterns in TYPELIB_PATTERNS.items():
         path = _find_typelib(patterns)
-        item = {"present": path is not None, "path": str(path) if path else None, "type_count": 0}
+        item = {
+            "present": path is not None,
+            "path": str(path) if path else None,
+            "type_count": 0,
+        }
         if path:
             try:
                 names = _type_names(pythoncom, path)
@@ -162,7 +173,9 @@ def probe_capabilities(check_solidworks: bool = True) -> dict:
         report["capabilities"][capability] = {
             "interfaces_found": matches,
             "interface_coverage": len(matches) / len(interface_names),
-            "implementation_status": manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("level", "not_implemented"),
+            "implementation_status": manifest_index.get(
+                CAPABILITY_ALIASES[capability], {}
+            ).get("level", "not_implemented"),
             # 授权判据是 `allowed_modes` 含 `unattended`，不再是 `level == "verified"`。
             # 2026-10-01 的 pilot→五级迁移把「证据强度」与「授权」拆开
             # （docs/capabilities-schema-proposal.md §1.2）：那 13 条由 pilot 升为 verif
@@ -171,7 +184,12 @@ def probe_capabilities(check_solidworks: bool = True) -> dict:
             # 与本字段的语义（可直接无人值守）相反。本处是迁移必须同批改的第二条授权路径
             # 。
             "ready_for_unattended_use": UNATTENDED_MODE
-            in (manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("allowed_modes") or [])
+            in (
+                manifest_index.get(CAPABILITY_ALIASES[capability], {}).get(
+                    "allowed_modes"
+                )
+                or []
+            )
             and len(matches) == len(interface_names),
             "manifest_capability_id": CAPABILITY_ALIASES[capability],
         }
@@ -180,9 +198,15 @@ def probe_capabilities(check_solidworks: bool = True) -> dict:
 
 def main() -> int:
     """@brief 命令行入口。"""
-    parser = argparse.ArgumentParser(description="探测 SolidWorks 高级机械能力和本机类型库。")
+    parser = argparse.ArgumentParser(
+        description="探测 SolidWorks 高级机械能力和本机类型库。"
+    )
     parser.add_argument("--output", type=Path, help="可选 JSON 输出路径。")
-    parser.add_argument("--no-solidworks-check", action="store_true", help="仅校验能力清单，不访问本机 SolidWorks/类型库。")
+    parser.add_argument(
+        "--no-solidworks-check",
+        action="store_true",
+        help="仅校验能力清单，不访问本机 SolidWorks/类型库。",
+    )
     args = parser.parse_args()
     report = probe_capabilities(check_solidworks=not args.no_solidworks_check)
     payload = json.dumps(report, ensure_ascii=False, indent=2)
@@ -192,7 +216,11 @@ def main() -> int:
     print(payload)
     if args.no_solidworks_check:
         return 0
-    return 0 if report["solidworks_detected"] and not report["missing_com_dependencies"] else 1
+    return (
+        0
+        if report["solidworks_detected"] and not report["missing_com_dependencies"]
+        else 1
+    )
 
 
 if __name__ == "__main__":

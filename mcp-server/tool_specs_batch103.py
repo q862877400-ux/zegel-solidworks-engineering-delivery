@@ -1,4 +1,5 @@
 """★ 批次 103：规格 217 · B1（前半）—— 草图读数/关系/按名取草图/相交曲线共 5 项。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `specs/217-expose-orphans/plan.md` 的 **B1**（★ 前半）
@@ -29,59 +30,80 @@ SPECS_BATCH103 = [
     ToolSpec(
         name="solidworks_count_sketch_relations",
         title="Count Sketch Relations",
-        module="sw_sketch_dimensions", function="count_sketch_relations",
+        module="sw_sketch_dimensions",
+        function="count_sketch_relations",
         inject="model",
         read_only=True,
         params=[
-            Param("filter", int, default=-1,
-                  description="★ 关系类型过滤（-1 = 不过滤，数全部）；★ 取值表见源码块的官方枚举。"),
+            Param(
+                "filter",
+                int,
+                default=-1,
+                description="★ 关系类型过滤（-1 = 不过滤，数全部）；★ 取值表见源码块的官方枚举。",
+            ),
         ],
         doc="★ 数当前草图里的**几何关系**（★ 读侧，回一个整数）。"
-            "★★ `filter` 按关系类型筛（-1 = 全数）；★ 取值表以 `scripts/sw_sketch_dimensions.py` "
-            "来源块里的官方枚举为准。"
-            "★ 与既有 `solidworks_sketch_fully_defined_status` 的区别：那个读**完全定义状态码**，"
-            "★ 这个读**关系条数** —— 两个是不同读数，不是重复工具。"
-            "⚠ 需要**活动草图**（没有则报错，不静默回 0）。",
+        "★★ `filter` 按关系类型筛（-1 = 全数）；★ 取值表以 `scripts/sw_sketch_dimensions.py` "
+        "来源块里的官方枚举为准。"
+        "★ 与既有 `solidworks_sketch_fully_defined_status` 的区别：那个读**完全定义状态码**，"
+        "★ 这个读**关系条数** —— 两个是不同读数，不是重复工具。"
+        "⚠ 需要**活动草图**（没有则报错，不静默回 0）。",
     ),
     ToolSpec(
         name="solidworks_delete_all_sketch_relations",
         title="Delete All Sketch Relations",
-        module="sw_sketch_dimensions", function="delete_all_sketch_relations",
+        module="sw_sketch_dimensions",
+        function="delete_all_sketch_relations",
         inject="model",
         params=[],
         doc="★ **删掉当前草图里的全部几何关系**（★ 动作，回 `bool`）。"
-            "★★ **判据请回读**：★ 先 `solidworks_count_sketch_relations` 记数、删后再数一次 "
-            "（★ 本仓事实 8：布尔返回值不可信，判据只有回读）。"
-            "⚠ 破坏性动作：★ 会**清掉草图的几何关系**（尺寸不受影响，但草图的约束没了）。",
+        "★★ **判据请回读**：★ 先 `solidworks_count_sketch_relations` 记数、删后再数一次 "
+        "（★ 本仓事实 8：布尔返回值不可信，判据只有回读）。"
+        "⚠ 破坏性动作：★ 会**清掉草图的几何关系**（尺寸不受影响，但草图的约束没了）。",
     ),
     ToolSpec(
         name="solidworks_delete_sketch_relation",
         title="Delete One Sketch Relation",
-        module="sw_sketch_dimensions", function="delete_sketch_relation",
+        module="sw_sketch_dimensions",
+        function="delete_sketch_relation",
         inject="model",
         params=[
-            Param("index", int, description="★ 关系序号（★ 口径以源码块/官方 `GetSketchRelations` 为准）。"),
-            Param("filter", int, default=-1,
-                  description="★ 关系类型过滤（-1 = 不过滤）。", required=False),
+            Param(
+                "index",
+                int,
+                description="★ 关系序号（★ 口径以源码块/官方 `GetSketchRelations` 为准）。",
+            ),
+            Param(
+                "filter",
+                int,
+                default=-1,
+                description="★ 关系类型过滤（-1 = 不过滤）。",
+                required=False,
+            ),
         ],
         doc="★ **按序号删掉一条几何关系**（★ 动作，回 `bool`）。"
-            "★★ 判据同 `delete_all`：**回读计数**（★ 事实 8）。"
-            "★ 声明式：★ 参数是**序号**，不是坐标（规则 3）✓。"
-            "⚠ 序号越界应报错，不静默。",
+        "★★ 判据同 `delete_all`：**回读计数**（★ 事实 8）。"
+        "★ 声明式：★ 参数是**序号**，不是坐标（规则 3）✓。"
+        "⚠ 序号越界应报错，不静默。",
     ),
     ToolSpec(
         name="solidworks_sketch_by_name",
         title="Get Sketch by Name",
-        module="sw_sketch", function="sketch_by_name",
+        module="sw_sketch",
+        function="sketch_by_name",
         inject="model",
         read_only=True,
         params=[
-            Param("name", str, description="★ 草图特征名（★ 名字不是坐标 ⇒ 规则 3 合规）。"),
+            Param(
+                "name",
+                str,
+                description="★ 草图特征名（★ 名字不是坐标 ⇒ 规则 3 合规）。",
+            ),
         ],
         doc="★ **按名字取一张草图**（★ 读侧）。"
-            "★ 用法：★ 先拿到草图特征名（如 `草图1` / `Sketch1`，★ **随 UI 语言变**，见已知事实 9）⇒ "
-            "★ 再喂给需要草图的动作。"
-            "⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。",
+        "★ 用法：★ 先拿到草图特征名（如 `草图1` / `Sketch1`，★ **随 UI 语言变**，见已知事实 9）⇒ "
+        "★ 再喂给需要草图的动作。"
+        "⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。",
     ),
 ]
 # ★★ 2026-10-07（规格 217 · T-217-01 第 3 轮）：**`sketch_intersect_curves` 撤出本批** —
@@ -92,4 +114,3 @@ SPECS_BATCH103 = [
 #   ★ 它与 `add_*_dimension` 三条**同类**（都要先选中实体）⇒ ★ 一并挪到 **T-217-01b**
 #     （★ 那一批统一配**声明式选择 + 紧邻调用**）✓
 #   ★★ 记一笔：**这是本规格第一次"门禁在尽职地拦下我自己新加的工具"** —— ★ 判据有效 ✓
-

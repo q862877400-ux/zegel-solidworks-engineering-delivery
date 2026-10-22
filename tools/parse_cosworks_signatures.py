@@ -52,12 +52,12 @@ def vb_declaration(text: str):
     idx = text.find("Visual Basic (Declaration)")
     if idx < 0:
         return None, None, None
-    window = text[idx:idx + 1500]
+    window = text[idx : idx + 1500]
     match = _VB_DECL.search(window)
     if not match:
         return None, None, None
     name, params, returns = match.groups()
-    flat = _CONTINUE.sub(" ", params)      # 把多行续行压成一行
+    flat = _CONTINUE.sub(" ", params)  # 把多行续行压成一行
     return name, _PARAM_LINE.findall(flat), returns
 
 
@@ -66,13 +66,13 @@ def param_docs(text: str, name: str) -> str:
     idx = text.find("Parameters")
     if idx < 0:
         return ""
-    window = text[idx:idx + 1800]
+    window = text[idx : idx + 1800]
     pos = window.find(name)
     if pos < 0:
         return ""
-    tail = window[pos + len(name):]
+    tail = window[pos + len(name) :]
     stop = tail.find("Return Value")
-    tail = tail[:stop if stop > 0 else 220]
+    tail = tail[: stop if stop > 0 else 220]
     return " ".join(tail.split())[:200]
 
 
@@ -80,7 +80,7 @@ def return_doc(text: str) -> str:
     idx = text.find("Return Value")
     if idx < 0:
         return ""
-    tail = " ".join(text[idx + len("Return Value"):idx + 260].split())
+    tail = " ".join(text[idx + len("Return Value") : idx + 260].split())
     for marker in ("Example", "Remarks", "See Also"):
         if marker in tail:
             tail = tail.split(marker)[0]
@@ -103,7 +103,9 @@ def main() -> int:
         if not parsed or not parsed[0]:
             continue
         name, params, returns = parsed
-        rows.append((method, name, returns or "", params or [], return_doc(text), path.name))
+        rows.append(
+            (method, name, returns or "", params or [], return_doc(text), path.name)
+        )
 
     lines = [
         "# cosworks 官方方法签名（从 CHM `cosworks` 册提取）",
@@ -126,8 +128,11 @@ def main() -> int:
             lines.append("- **参数**（据官方 Parameters 段）：")
             for direction, pname, ptype in params:
                 doc = param_docs(
-                    (SRC / src).read_text(encoding="utf-8", errors="replace"), pname)
-                lines.append(f"    - `{direction} {pname} As {ptype}` — {doc or '（无说明）'}")
+                    (SRC / src).read_text(encoding="utf-8", errors="replace"), pname
+                )
+                lines.append(
+                    f"    - `{direction} {pname} As {ptype}` — {doc or '（无说明）'}"
+                )
         lines.append(f"- 来源页：`{src}`")
         lines.append("")
 

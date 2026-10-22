@@ -1,4 +1,5 @@
 """无头（headless）路线的共用访问器（原先在两个模块里各有一份）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   scripts/headless_common.py
@@ -24,4 +25,6 @@ def feature_params(feature: dict[str, Any]) -> dict[str, Any]:
     ★ 为什么容忍而不抛：无头路线的输入是外部 JSON，**字段缺失是常态**；
       这里回空 dict 让上层按「没给参数」处理，★ 而不是让整条流水线因一个字段崩掉。
     """
-    return feature.get("parameters") if isinstance(feature.get("parameters"), dict) else {}
+    return (
+        feature.get("parameters") if isinstance(feature.get("parameters"), dict) else {}
+    )

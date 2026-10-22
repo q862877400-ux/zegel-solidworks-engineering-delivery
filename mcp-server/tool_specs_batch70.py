@@ -9,19 +9,19 @@
 #
 # ==================  ==================================================  ==========  ==
 # ======
-# 工具栏原文           官方成员                                             真机        
+# 工具栏原文           官方成员                                             真机
 # 登记
 # ==================  ==================================================  ==========  ==
 # ======
-# 质心                 `IFeatureManager.InsertCenterOfMass()`               ✅          
+# 质心                 `IFeatureManager.InsertCenterOfMass()`               ✅
 #  ✅
-# 边界框               `IFeatureManager.InsertGlobalBoundingBox2(…)`        ✅ Status=0 
+# 边界框               `IFeatureManager.InsertGlobalBoundingBox2(…)`        ✅ Status=0
 #  ✅
-# 坐标系               `IFeatureManager.InsertCoordinateSystem(…)`          ✅          
+# 坐标系               `IFeatureManager.InsertCoordinateSystem(…)`          ✅
 #  ✅
-# 基准面               `IFeatureManager.InsertRefPlane(6 参)`               ❌          
+# 基准面               `IFeatureManager.InsertRefPlane(6 参)`               ❌
 #  ✗
-# 点                   `IFeatureManager.InsertReferencePoint(4 参)`          ❌         
+# 点                   `IFeatureManager.InsertReferencePoint(4 参)`          ❌
 #   ✗
 # ==================  ==================================================  ==========  ==
 # ======
@@ -72,101 +72,213 @@ _BATCH70: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_insert_center_of_mass",
         title="Insert Center of Mass",
-        module="sw_ref_geometry", function="insert_center_of_mass",
+        module="sw_ref_geometry",
+        function="insert_center_of_mass",
         inject="model",
         param_alias={},
         params=[],
         doc="★ 质心：`IFeatureManager.InsertCenterOfMass()`（**零参数**，回 `Feature`）。"
-            "★ 真机建成（★ 判据 = 回对象非 None + 特征树增量）。",
+        "★ 真机建成（★ 判据 = 回对象非 None + 特征树增量）。",
     ),
     ToolSpec(
         name="solidworks_insert_global_bounding_box",
         title="Insert Global Bounding Box",
-        module="sw_ref_geometry", function="insert_global_bounding_box",
+        module="sw_ref_geometry",
+        function="insert_global_bounding_box",
         inject="model",
-        param_alias={k: k for k in ("bbox_type", "lwta_direction_type",
-                                    "include_hidden_bodies", "include_surface_bodies")},
+        param_alias={
+            k: k
+            for k in (
+                "bbox_type",
+                "lwta_direction_type",
+                "include_hidden_bodies",
+                "include_surface_bodies",
+            )
+        },
         params=[
-            Param("bbox_type", int, description="`swGlobalBoundingBoxFitOptions_e`："
-                                              "1=BestFit · 2=CustomPlane · 3=CustomCoordSys（默认 1）。"
-                                              "⚠ 只有 **2=CustomPlane** 才要先选面/基准面。",
-                  required=False, default=1),
-            Param("lwta_direction_type", int, description="`swGlobalBBoxLWTADirectionType_e`："
-                                                        "0=Unspecified · 1=LWTDir_XYZ · 2=YXZ · 3=YZX · 6=XZY · "
-                                                        "7/8/9=AxisDir_X/Y/Z（默认 0）。",
-                  required=False, default=0),
-            Param("include_hidden_bodies", bool, description="是否含隐藏体（★ 布尔是标志）。",
-                  required=False, default=False),
-            Param("include_surface_bodies", bool, description="是否含曲面体（★ 布尔是标志）。",
-                  required=False, default=False),
+            Param(
+                "bbox_type",
+                int,
+                description="`swGlobalBoundingBoxFitOptions_e`："
+                "1=BestFit · 2=CustomPlane · 3=CustomCoordSys（默认 1）。"
+                "⚠ 只有 **2=CustomPlane** 才要先选面/基准面。",
+                required=False,
+                default=1,
+            ),
+            Param(
+                "lwta_direction_type",
+                int,
+                description="`swGlobalBBoxLWTADirectionType_e`："
+                "0=Unspecified · 1=LWTDir_XYZ · 2=YXZ · 3=YZX · 6=XZY · "
+                "7/8/9=AxisDir_X/Y/Z（默认 0）。",
+                required=False,
+                default=0,
+            ),
+            Param(
+                "include_hidden_bodies",
+                bool,
+                description="是否含隐藏体（★ 布尔是标志）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "include_surface_bodies",
+                bool,
+                description="是否含曲面体（★ 布尔是标志）。",
+                required=False,
+                default=False,
+            ),
         ],
-        doc='★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。',
+        doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
     ),
     ToolSpec(
         name="solidworks_insert_coordinate_system",
         title="Insert Coordinate System",
-        module="sw_ref_geometry", function="insert_coordinate_system",
+        module="sw_ref_geometry",
+        function="insert_coordinate_system",
         inject="model",
         param_alias={k: k for k in ("x_flipped", "y_flipped", "z_flipped")},
         params=[
-            Param("x_flipped", bool, description="X 轴翻转（★ 官方形参名 `XFlippedIn`）。",
-                  required=False, default=False),
-            Param("y_flipped", bool, description="Y 轴翻转。", required=False, default=False),
-            Param("z_flipped", bool, description="Z 轴翻转。", required=False, default=False),
+            Param(
+                "x_flipped",
+                bool,
+                description="X 轴翻转（★ 官方形参名 `XFlippedIn`）。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "y_flipped",
+                bool,
+                description="Y 轴翻转。",
+                required=False,
+                default=False,
+            ),
+            Param(
+                "z_flipped",
+                bool,
+                description="Z 轴翻转。",
+                required=False,
+                default=False,
+            ),
         ],
         doc="★ 坐标系：`IFeatureManager.InsertCoordinateSystem(…)`（3 参，回 `Feature`）。"
-            "★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**"
-            "（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
+        "★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**"
+        "（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
     ),
     ToolSpec(
         name="solidworks_insert_ref_plane",
         title="Insert Reference Plane",
-        module="sw_ref_geometry", function="insert_ref_plane",
+        module="sw_ref_geometry",
+        function="insert_ref_plane",
         inject="model",
-        param_alias={k: k for k in (
-            "first_constraint", "first_angle_or_dist", "second_constraint",
-            "second_angle_or_dist", "third_constraint", "third_angle_or_dist")},
+        param_alias={
+            k: k
+            for k in (
+                "first_constraint",
+                "first_angle_or_dist",
+                "second_constraint",
+                "second_angle_or_dist",
+                "third_constraint",
+                "third_angle_or_dist",
+            )
+        },
         params=[
-            Param("first_constraint", int, description="`swRefPlaneReferenceConstraints_e`："
-                                                     "1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane"
-                                                     "（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。"),
-            Param("first_angle_or_dist", float, description="第一约束的角度或距离"
-                                                          "（★ 官方**未给单位** ⇒ 原样透传）。",
-                  required=False, default=0.0),
-            Param("second_constraint", int, description="第二约束（同上表；0 = 不用）。",
-                  required=False, default=0),
-            Param("second_angle_or_dist", float, description="第二约束的角度或距离。",
-                  required=False, default=0.0),
-            Param("third_constraint", int, description="第三约束（0 = 不用）。",
-                  required=False, default=0),
-            Param("third_angle_or_dist", float, description="第三约束的角度或距离。",
-                  required=False, default=0.0),
+            Param(
+                "first_constraint",
+                int,
+                description="`swRefPlaneReferenceConstraints_e`："
+                "1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane"
+                "（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。",
+            ),
+            Param(
+                "first_angle_or_dist",
+                float,
+                description="第一约束的角度或距离（★ 官方**未给单位** ⇒ 原样透传）。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "second_constraint",
+                int,
+                description="第二约束（同上表；0 = 不用）。",
+                required=False,
+                default=0,
+            ),
+            Param(
+                "second_angle_or_dist",
+                float,
+                description="第二约束的角度或距离。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "third_constraint",
+                int,
+                description="第三约束（0 = 不用）。",
+                required=False,
+                default=0,
+            ),
+            Param(
+                "third_angle_or_dist",
+                float,
+                description="第三约束的角度或距离。",
+                required=False,
+                default=0.0,
+            ),
         ],
         doc="★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。"
-            "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
-            "**0 = First reference entity · 1 = Second · 2 = Third**。"
-            "★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
+        "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
+        "**0 = First reference entity · 1 = Second · 2 = Third**。"
+        "★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
     ),
     ToolSpec(
         name="solidworks_insert_reference_point",
         title="Insert Reference Point",
-        module="sw_ref_geometry", function="insert_reference_point",
+        module="sw_ref_geometry",
+        function="insert_reference_point",
         inject="model",
-        param_alias={k: k for k in ("ref_point_type", "along_curve_type",
-                                    "distance_or_percent", "number_of_ref_points",
-                                    "selection", "selection_kind")},
+        param_alias={
+            k: k
+            for k in (
+                "ref_point_type",
+                "along_curve_type",
+                "distance_or_percent",
+                "number_of_ref_points",
+                "selection",
+                "selection_kind",
+            )
+        },
         params=[
-            Param("ref_point_type", int, description="`swRefPointType_e`："
-                                                    "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
-                                                    "4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。"),
-            Param("along_curve_type", int, description="`swRefPointAlongCurveType_e`："
-                                                      "0=Distance · 1=Percentage · 2=EvenlyDistributed。",
-                  required=False, default=0),
-            Param("distance_or_percent", float, description="沿曲线的距离或百分比。",
-                  required=False, default=0.0),
-            Param("number_of_ref_points", int, description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
-                  required=False, default=1),
-            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**新增两个声明式选区入参** 
+            Param(
+                "ref_point_type",
+                int,
+                description="`swRefPointType_e`："
+                "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
+                "4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。",
+            ),
+            Param(
+                "along_curve_type",
+                int,
+                description="`swRefPointAlongCurveType_e`："
+                "0=Distance · 1=Percentage · 2=EvenlyDistributed。",
+                required=False,
+                default=0,
+            ),
+            Param(
+                "distance_or_percent",
+                float,
+                description="沿曲线的距离或百分比。",
+                required=False,
+                default=0.0,
+            ),
+            Param(
+                "number_of_ref_points",
+                int,
+                description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
+                required=False,
+                default=1,
+            ),
+            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**新增两个声明式选区入参**
             #: ——
             #: ★ 起因：★ 台账 `ref_geometry` 逐字「点（`InsertReferencePoint`）要先选实
             #: 体，
@@ -175,17 +287,27 @@ _BATCH70: list[ToolSpec] = [
             #:     （事实 503）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
             #: ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**选择器字符串 + 实体种类**（★ 由函数紧邻
             #: 调用前自己选）✓
-            Param("selection", str, description="★ 声明式选择器（规则 3：不收坐标）："
-                                                "`index:<n>` 或 `__current_selection__`；★ 空串=不选。",
-                  required=False, default=""),
-            Param("selection_kind", str, description="`FACE` / `EDGE` / `VERTEX` —— ★ 与 `ref_point_type` 配套："
-                                                     "4=FaceCenter 配 FACE · 3=CenterEdge 配 EDGE。",
-                  required=False, default="FACE"),
+            Param(
+                "selection",
+                str,
+                description="★ 声明式选择器（规则 3：不收坐标）："
+                "`index:<n>` 或 `__current_selection__`；★ 空串=不选。",
+                required=False,
+                default="",
+            ),
+            Param(
+                "selection_kind",
+                str,
+                description="`FACE` / `EDGE` / `VERTEX` —— ★ 与 `ref_point_type` 配套："
+                "4=FaceCenter 配 FACE · 3=CenterEdge 配 EDGE。",
+                required=False,
+                default="FACE",
+            ),
         ],
         doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
-            "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
-            "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"
-            "★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
+        "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
+        "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"
+        "★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
     ),
 ]
 

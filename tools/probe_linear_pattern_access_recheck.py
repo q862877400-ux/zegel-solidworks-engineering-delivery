@@ -44,9 +44,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts.sw_connect import create_empty_dispatch_variant as _av    # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 
 SW_FM_LPATTERN = 6
@@ -55,35 +55,55 @@ SW_FM_LPATTERN = 6
 def _mk_solid_with_hole(doc):
     """★ 实体 + 一个可阵列的**小凸台**（★ 阵列要有特征可选）。"""
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                     -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCornerRectangle",
+        -0.03,
+        -0.03,
+        0.0,
+        0.03,
+        0.03,
+        0.0,
+    )
     P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or [])
-             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     ok = False
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
             P.extrude_boss(doc, cand, 0.02)
             ok = True
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     #: \u2605 \u7b2c\u4e8c\u4e2a\u7279\u5f81\uff08\u2605 \u4f9b\u9635\u5217\uff09
     try:
         doc.ClearSelection2(True)
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
-                     -0.02, 0.0, 0.0, 3.0 / 1000.0)
+    C.get_com_member(
+        C.get_com_member(doc, "SketchManager"),
+        "CreateCircleByRadius",
+        -0.02,
+        0.0,
+        0.0,
+        3.0 / 1000.0,
+    )
     P.end_sketch(doc)
-    names2 = [n for n in (P.feature_names(doc) or [])
-              if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+    names2 = [
+        n
+        for n in (P.feature_names(doc) or [])
+        if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+    ]
     for cand in (names2[-1] if names2 else "\u8349\u56fe2", "\u8349\u56fe2"):
         try:
             P.extrude_boss(doc, cand, 0.005)
             break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return ok
 
@@ -101,10 +121,12 @@ def _one(sw, tag, mode):
             row["createdef"] = type(data).__name__ if data is not None else "None"
             if data is not None:
                 try:
-                    row["data_typename"] = str(data._oleobj_.GetTypeInfo().GetDocumentation(-1)[0])
-                except Exception:                                         # noqa: BLE001
+                    row["data_typename"] = str(
+                        data._oleobj_.GetTypeInfo().GetDocumentation(-1)[0]
+                    )
+                except Exception:  # noqa: BLE001
                     pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["createdef_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
         if data is None:
             row["access"] = "no_data"
@@ -120,7 +142,7 @@ def _one(sw, tag, mode):
                 r = C.get_com_member(data, "AccessSelections", None, None)
             row["access"] = "ok"
             row["access_returns"] = str(r)
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["access"] = "err"
             s = str(exc)
             row["access_err"] = "%s: %s" % (type(exc).__name__, s[:200])
@@ -131,9 +153,9 @@ def _one(sw, tag, mode):
         try:
             C.get_com_member(data, "ReleaseSelectionAccess")
             row["release"] = "ok"
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["release_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     finally:
         if doc is not None:
@@ -141,35 +163,61 @@ def _one(sw, tag, mode):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u91cd\u8dd1 `ILinearPatternFeatureData.AccessSelections`\uff08\u2605 \u89e3\u00a7\u4e8c vs \u4e8b\u5b9e 425/426 \u7684\u51b2\u7a81\uff09",
-          "conflict": "toolbar-gaps-backend-limits.md \u00a7\u4e8c\uff08\u8f6e 484\uff09\u8bb0\u300c(model, \u7a7aDispatch) "
-                      "\u21d2 0x80010105\u300d\uff1b\u800c\u4e8b\u5b9e 425/426\uff08\u8f6e 545/546\uff09\u6d4b\u51fa\u300c\u8fc7=True\u300d\uff086/6\uff09",
-          "cases": []}
-    for tag, mode in (("\u2460 (model, None)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e00\u884c\uff09", "model_none"),
-                      ("\u2461 (model, \u7a7aDispatch)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e8c\u884c\uff09", "model_emptydisp"),
-                      ("\u2462 (None, None)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e09\u884c\uff09", "none_none")):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u91cd\u8dd1 `ILinearPatternFeatureData.AccessSelections`\uff08\u2605 \u89e3\u00a7\u4e8c vs \u4e8b\u5b9e 425/426 \u7684\u51b2\u7a81\uff09",
+        "conflict": "toolbar-gaps-backend-limits.md \u00a7\u4e8c\uff08\u8f6e 484\uff09\u8bb0\u300c(model, \u7a7aDispatch) "
+        "\u21d2 0x80010105\u300d\uff1b\u800c\u4e8b\u5b9e 425/426\uff08\u8f6e 545/546\uff09\u6d4b\u51fa\u300c\u8fc7=True\u300d\uff086/6\uff09",
+        "cases": [],
+    }
+    for tag, mode in (
+        (
+            "\u2460 (model, None)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e00\u884c\uff09",
+            "model_none",
+        ),
+        (
+            "\u2461 (model, \u7a7aDispatch)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e8c\u884c\uff09",
+            "model_emptydisp",
+        ),
+        (
+            "\u2462 (None, None)\uff08\u2605 \u00a7\u4e8c \u7b2c\u4e09\u884c\uff09",
+            "none_none",
+        ),
+    ):
         ev["cases"].append(_one(sw, tag, mode))
     ev["ok_count"] = sum(1 for c in ev["cases"] if c.get("access") == "ok")
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("linear_pattern_access_works" if ev["ok_count"]
-                     else "linear_pattern_access_fails_again")
+    ev["verdict"] = (
+        "linear_pattern_access_works"
+        if ev["ok_count"]
+        else "linear_pattern_access_fails_again"
+    )
     p = R / "output" / "linear-pattern-access-recheck-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u8fc7 %d / %d\uff09" % (ev["verdict"], ev["ok_count"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u8fc7 %d / %d\uff09"
+        % (ev["verdict"], ev["ok_count"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-40s CreateDefinition=%s data=%s" % (
-            c.get("tag"), c.get("createdef"), str(c.get("data_typename"))[:30]))
-        print("        access=%-6s \u56de=%s \u9519\u7801=%s" % (
-            c.get("access"), c.get("access_returns"), c.get("error_code")))
+        print(
+            "  %-40s CreateDefinition=%s data=%s"
+            % (c.get("tag"), c.get("createdef"), str(c.get("data_typename"))[:30])
+        )
+        print(
+            "        access=%-6s \u56de=%s \u9519\u7801=%s"
+            % (c.get("access"), c.get("access_returns"), c.get("error_code"))
+        )
         for k in ("createdef_err", "access_err", "err"):
             if c.get(k):
                 print("        %s=%s" % (k, str(c[k])[:150]))

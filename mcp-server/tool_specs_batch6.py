@@ -27,6 +27,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -38,7 +39,8 @@ SPECS_BATCH6 = [
     ToolSpec(
         name="solidworks_available_point_selectors",
         title="Available Point Selectors",
-        module="sw_geometry_selectors", function="available_point_selectors",
+        module="sw_geometry_selectors",
+        function="available_point_selectors",
         read_only=True,
         doc="List the point-selector names usable when specifying geometry (no document needed).",
         param_alias={},
@@ -47,7 +49,8 @@ SPECS_BATCH6 = [
     ToolSpec(
         name="solidworks_available_direction_selectors",
         title="Available Direction Selectors",
-        module="sw_geometry_selectors", function="available_direction_selectors",
+        module="sw_geometry_selectors",
+        function="available_direction_selectors",
         read_only=True,
         doc="List the direction-selector names usable when specifying geometry (no document needed).",
         param_alias={},
@@ -56,14 +59,19 @@ SPECS_BATCH6 = [
     ToolSpec(
         name="solidworks_collect_assembly_bom",
         title="Collect Assembly BOM",
-        module="sw_delivery", function="collect_assembly_bom",
+        module="sw_delivery",
+        function="collect_assembly_bom",
         inject="model",
         read_only=True,
         doc="Read the assembly BOM as structured rows (the CSV-export tool is a different one).",
         param_alias={},
         params=[
-            Param("include_excluded", bool, default=False,
-                  description="Include components excluded from the BOM; default false."),
+            Param(
+                "include_excluded",
+                bool,
+                default=False,
+                description="Include components excluded from the BOM; default false.",
+            ),
         ],
     ),
     # ⚠⚠ **`get_mass_property_override_options` 未纳入本批**（2026-10-01 轮 93 真机实测

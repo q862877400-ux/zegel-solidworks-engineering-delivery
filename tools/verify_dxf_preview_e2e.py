@@ -28,6 +28,7 @@ r"""@brief 验收命令：`dxf_preview_scene` 的**端到端**（离线，**不�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -54,7 +55,7 @@ def _make_dxf(path: Path) -> None:
     import ezdxf
 
     doc = ezdxf.new("R2018")
-    doc.header["$INSUNITS"] = 4                      # 4 = 毫米
+    doc.header["$INSUNITS"] = 4  # 4 = 毫米
     ms = doc.modelspace()
     ms.add_line((0, 0), (40, 0), dxfattribs={"layer": "OUTLINE"})
     ms.add_line((40, 0), (40, 25), dxfattribs={"layer": "OUTLINE"})
@@ -86,23 +87,41 @@ def main() -> int:
         print("=== ① 转换（库函数）===")
         scene = dxf_to_preview_scene(src)
         kinds = sorted(e["kind"] for e in scene["entities"])
-        chk("实体数 = 6（3DFACE 被排除）", len(scene["entities"]) == 6,
-            "实际 %d 个：%s" % (len(scene["entities"]), kinds))
-        chk("四种实体都识别", set(kinds) >= {"line", "circle", "arc", "polyline"},
-            "种类：%s" % sorted(set(kinds)))
-        chk("schemaVersion=1.0 且 units=mm",
+        chk(
+            "实体数 = 6（3DFACE 被排除）",
+            len(scene["entities"]) == 6,
+            "实际 %d 个：%s" % (len(scene["entities"]), kinds),
+        )
+        chk(
+            "四种实体都识别",
+            set(kinds) >= {"line", "circle", "arc", "polyline"},
+            "种类：%s" % sorted(set(kinds)),
+        )
+        chk(
+            "schemaVersion=1.0 且 units=mm",
             scene.get("schemaVersion") == "1.0" and scene.get("units") == "mm",
-            "schemaVersion=%r units=%r" % (scene.get("schemaVersion"), scene.get("units")))
+            "schemaVersion=%r units=%r"
+            % (scene.get("schemaVersion"), scene.get("units")),
+        )
 
         print()
         print("=== ② 图层（承诺：白名单实体 + 图层计数）===")
         layers = {l["name"]: l for l in scene["layers"]}
-        chk("OUTLINE 层 4 个实体", layers.get("OUTLINE", {}).get("count") == 4,
-            "实际 %r" % (layers.get("OUTLINE", {}).get("count"),))
-        chk("HOLES 层 1 个 · NOTES 层 1 个",
-            layers.get("HOLES", {}).get("count") == 1 and layers.get("NOTES", {}).get("count") == 1,
-            "HOLES=%r NOTES=%r" % (layers.get("HOLES", {}).get("count"),
-                                   layers.get("NOTES", {}).get("count")))
+        chk(
+            "OUTLINE 层 4 个实体",
+            layers.get("OUTLINE", {}).get("count") == 4,
+            "实际 %r" % (layers.get("OUTLINE", {}).get("count"),),
+        )
+        chk(
+            "HOLES 层 1 个 · NOTES 层 1 个",
+            layers.get("HOLES", {}).get("count") == 1
+            and layers.get("NOTES", {}).get("count") == 1,
+            "HOLES=%r NOTES=%r"
+            % (
+                layers.get("HOLES", {}).get("count"),
+                layers.get("NOTES", {}).get("count"),
+            ),
+        )
 
         print()
         print("=== ③ 边界（承诺：几何范围）===")
@@ -110,16 +129,29 @@ def main() -> int:
         # 手算：x ∈ [0,40]（圆弧在 (5,5) r=3 ⇒ 最小 2；圆 (20,12.5) r=5 ⇒ y ∈ [7.5,17.5]
         # ；
         # 多段线到 y=30；文本 (2,2)。⇒ x_min=0 · x_max=40 · y_max=30
-        chk("x 范围 [0, 40]", abs(b["minX"] - 0) < 1e-6 and abs(b["maxX"] - 40) < 1e-6,
-            "minX=%s maxX=%s" % (b["minX"], b["maxX"]))
-        chk("y 上界 = 30（多段线顶点）", abs(b["maxY"] - 30) < 1e-6, "maxY=%s" % b["maxY"])
+        chk(
+            "x 范围 [0, 40]",
+            abs(b["minX"] - 0) < 1e-6 and abs(b["maxX"] - 40) < 1e-6,
+            "minX=%s maxX=%s" % (b["minX"], b["maxX"]),
+        )
+        chk(
+            "y 上界 = 30（多段线顶点）",
+            abs(b["maxY"] - 30) < 1e-6,
+            "maxY=%s" % b["maxY"],
+        )
 
         print()
         print("=== ④ 不支持实体**只记 warnings**（承诺）===")
-        chk("warnings 提到 3DFACE", any("3DFACE" in w for w in scene["warnings"]),
-            "%r" % (scene["warnings"],))
-        chk("3DFACE 不在 entities 里",
-            all(e.get("kind") != "3dface" for e in scene["entities"]), "已排除")
+        chk(
+            "warnings 提到 3DFACE",
+            any("3DFACE" in w for w in scene["warnings"]),
+            "%r" % (scene["warnings"],),
+        )
+        chk(
+            "3DFACE 不在 entities 里",
+            all(e.get("kind") != "3dface" for e in scene["entities"]),
+            "已排除",
+        )
 
         print()
         print("=== ⑤ **只读**：源 DXF 不得被改动 ===")
@@ -133,7 +165,9 @@ def main() -> int:
         chk("首次写盘成功", out.is_file(), "已写 %s" % out.name)
         try:
             dxf_to_preview_scene(src, out)
-            chk("**拒绝覆盖**已有场景", False, "**没有报错 —— 与 limitations 承诺不符**")
+            chk(
+                "**拒绝覆盖**已有场景", False, "**没有报错 —— 与 limitations 承诺不符**"
+            )
         except FileExistsError:
             chk("**拒绝覆盖**已有场景", True, "FileExistsError ✓")
         try:
@@ -146,29 +180,44 @@ def main() -> int:
         print("=== ⑦ CLI 可用（用户入口）===")
         cli_out = td / "cli.scene.json"
         proc = subprocess.run(
-            [sys.executable, str(_REPO / "scripts" / "dxf_preview_scene.py"),
-             str(src), str(cli_out)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-            cwd=str(_REPO), stdin=subprocess.DEVNULL,
+            [
+                sys.executable,
+                str(_REPO / "scripts" / "dxf_preview_scene.py"),
+                str(src),
+                str(cli_out),
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(_REPO),
+            stdin=subprocess.DEVNULL,
         )
         payload = {}
         try:
             payload = json.loads((proc.stdout or "").strip().splitlines()[-1])
         except (json.JSONDecodeError, IndexError):
             pass
-        chk("CLI 退出码 0 且 status=pass",
+        chk(
+            "CLI 退出码 0 且 status=pass",
             proc.returncode == 0 and payload.get("status") == "pass",
-            "rc=%s payload=%s" % (proc.returncode, payload))
+            "rc=%s payload=%s" % (proc.returncode, payload),
+        )
 
     ev["passed"] = sum(1 for c in checks if c)
     ev["total"] = len(checks)
     ev["verdict"] = "pass" if all(checks) else "fail"
     ev["finished"] = time.strftime("%Y-%m-%d %H:%M:%S")
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
 
     print()
-    print("  ── %d/%d 项通过 · verdict: %s ──" % (ev["passed"], ev["total"], ev["verdict"]))
+    print(
+        "  ── %d/%d 项通过 · verdict: %s ──"
+        % (ev["passed"], ev["total"], ev["verdict"])
+    )
     print("  证据已写: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

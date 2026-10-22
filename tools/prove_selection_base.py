@@ -37,13 +37,20 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "selection-base-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "selection-base-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
-    from sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                         sketch_corner_rectangle, start_sketch)
+    from sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     import sw_selection_spec as S
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -56,8 +63,10 @@ def main() -> int:
         sk = current_sketch_name(doc)
         end_sketch(doc)
         extrude_boss(doc, sk, 10.0)
-        ev["steps"]["doc"] = {"ok": True,
-                              "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
+        ev["steps"]["doc"] = {
+            "ok": True,
+            "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
+        }
 
         def step(label, fn, key_ok=True):
             try:
@@ -66,18 +75,21 @@ def main() -> int:
                     ev["steps"][label] = {"ok": bool(v.get("ok")), "value": v}
                 else:
                     ev["steps"][label] = {"ok": bool(v) if key_ok else True, "value": v}
-            except Exception as exc:                               # noqa: BLE001
-                ev["steps"][label] = {"ok": False,
-                                      "err": "%s: %s" % (type(exc).__name__, str(exc)[:140])}
-
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"][label] = {
+                    "ok": False,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:140]),
+                }
 
         def expect_ok_false(label, fn, want_error=True):
             """★ 负例：**期望它回 ok=False**（★ 或抛）—— ★ 成功 = 它**真的拒绝了**。"""
             try:
                 v = fn()
-            except Exception as exc:                               # noqa: BLE001
-                ev["steps"][label] = {"ok": True,
-                                      "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"][label] = {
+                    "ok": True,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+                }
                 return
             ok_false = isinstance(v, dict) and v.get("ok") is False
             has_err = (not want_error) or bool(isinstance(v, dict) and v.get("error"))
@@ -87,9 +99,11 @@ def main() -> int:
             try:
                 v = fn()
                 ev["steps"][label] = {"ok": False, "unexpected": str(v)[:80]}
-            except Exception as exc:                               # noqa: BLE001
-                ev["steps"][label] = {"ok": True,
-                                      "err": "%s: %s" % (type(exc).__name__, str(exc)[:120])}
+            except Exception as exc:  # noqa: BLE001
+                ev["steps"][label] = {
+                    "ok": True,
+                    "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+                }
 
         #: ① 清空后计数 = 0
         doc.ClearSelection2(True)
@@ -111,30 +125,46 @@ def main() -> int:
         step("select_face_index0", lambda: S.select_entity_by_index(doc, "FACE", 0))
         step("selection_point", lambda: S.selection_point(doc))
         #: ③ 解析选择器并选中（★ 用 index:1）
-        step("resolve_selection_index1", lambda: S.resolve_selection(doc, "index:1", "EDGE"))
+        step(
+            "resolve_selection_index1",
+            lambda: S.resolve_selection(doc, "index:1", "EDGE"),
+        )
         #: ⑤ 用选择器选中
-        step("select_by_selector_index2", lambda: S.select_by_selector_report(doc, "index:2", "EDGE"))
+        step(
+            "select_by_selector_index2",
+            lambda: S.select_by_selector_report(doc, "index:2", "EDGE"),
+        )
         #: ⑥ 解析实体
-        step("resolve_entity_index0", lambda: S.resolve_entity_report(doc, "index:0", "EDGE"))
+        step(
+            "resolve_entity_index0",
+            lambda: S.resolve_entity_report(doc, "index:0", "EDGE"),
+        )
         #: ── 负例 ──
-        expect_fail("neg_index_out_of_range",
-                    lambda: S.select_entity_by_index(doc, "EDGE", 999))
+        expect_fail(
+            "neg_index_out_of_range", lambda: S.select_entity_by_index(doc, "EDGE", 999)
+        )
         doc.ClearSelection2(True)
         expect_ok_false("neg_empty_selection_point", lambda: S.selection_point(doc))
-        expect_ok_false("neg_bad_selector",
-                        lambda: S.resolve_entity_report(doc, "index:not_an_int", "EDGE"))
+        expect_ok_false(
+            "neg_bad_selector",
+            lambda: S.resolve_entity_report(doc, "index:not_an_int", "EDGE"),
+        )
 
         exec_ok = all(v.get("ok") for v in ev["steps"].values() if isinstance(v, dict))
         ev["verdict"] = "pass" if exec_ok else "partial"
-        ev["note"] = ("★ 段 1 选择底座 6 个工具；★ 判据统一是**回读计数**（★ 事实 8："
-                      "Select4 的 bool 返回值不可信）；★ 含三条负例（越界 / 空选区读点 / 非法选择器）。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 段 1 选择底座 6 个工具；★ 判据统一是**回读计数**（★ 事实 8："
+            "Select4 的 bool 返回值不可信）；★ 含三条负例（越界 / 空选区读点 / 非法选择器）。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1800])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         if doc is not None:
             t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")

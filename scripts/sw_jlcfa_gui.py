@@ -33,6 +33,7 @@ r"""嘉立创 FA 选型插件的 GUI 自动化 —— 实测跑通全链路（20
 # ⚠ 本模块会**驱动 GUI 并操作 SolidWorks**，调用方须先读上方「已知不足」。
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -52,8 +53,10 @@ import shot
 
 SHOTS = Path(Path(__file__).resolve().parents[1] / "shots")
 SHOTS.mkdir(exist_ok=True)
-BF = Path("D:\\Program Files\\SOLIDWORKS Corp\\JLCFA Parts Library Plugin "
-          "Full Version v2.4.1-20260918-1\\ForFaceSelector\\BuildFile")
+BF = Path(
+    "D:\\Program Files\\SOLIDWORKS Corp\\JLCFA Parts Library Plugin "
+    "Full Version v2.4.1-20260918-1\\ForFaceSelector\\BuildFile"
+)
 STATE = Path(Path(__file__).resolve().parents[1] / "bf_state.json")
 
 
@@ -64,6 +67,7 @@ def log(msg: str) -> None:
 def sw_window() -> int:
     """按**进程名**找 SolidWorks 主窗口（不信标题 —— 浏览器标签页会冒充）。"""
     import win32process
+
     hits = []
 
     def cb(h, _):
@@ -75,10 +79,14 @@ def sw_window() -> int:
         try:
             pid = win32process.GetWindowThreadProcessId(h)[1]
             import subprocess
-            out = subprocess.run(["tasklist", "/FI", "PID eq %d" % pid,
-                                  "/FO", "CSV", "/NH"],
-                                 capture_output=True, text=True,
-                                 encoding="utf-8", errors="replace")
+
+            out = subprocess.run(
+                ["tasklist", "/FI", "PID eq %d" % pid, "/FO", "CSV", "/NH"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
             name = out.stdout.split(",")[0].strip('"')
         except Exception:
             name = ""
@@ -92,8 +100,6 @@ def sw_window() -> int:
     return hits[0][0]
 
 
-
-
 def ensure_window(hwnd: int) -> tuple:
     """★ 护栏：每次操作前确认窗口**没被最小化、尺寸正常**。
 
@@ -104,6 +110,7 @@ def ensure_window(hwnd: int) -> tuple:
     实则是窗口根本不在屏幕上。**症状离原因很远**，只能靠状态断言拦住。
     """
     import win32con
+
     if win32gui.IsIconic(hwnd):
         log("  [护栏] 窗口已最小化 -> 恢复")
         win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
@@ -112,7 +119,9 @@ def ensure_window(hwnd: int) -> tuple:
     w, h = r[2] - r[0], r[3] - r[1]
     if w < 600 or h < 400 or r[0] < -100:
         raise RuntimeError(
-            "窗口状态异常 rect=%s 尺寸=%dx%d —— 拒绝操作（可能又被最小化/移出屏幕）" % (r, w, h))
+            "窗口状态异常 rect=%s 尺寸=%dx%d —— 拒绝操作（可能又被最小化/移出屏幕）"
+            % (r, w, h)
+        )
     return r
 
 
@@ -136,14 +145,13 @@ def drag(x1: int, y1: int, x2: int, y2: int, steps: int = 12) -> None:
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
     time.sleep(0.15)
     for i in range(1, steps + 1):
-        win32api.SetCursorPos((int(x1 + (x2 - x1) * i / steps),
-                              int(y1 + (y2 - y1) * i / steps)))
+        win32api.SetCursorPos(
+            (int(x1 + (x2 - x1) * i / steps), int(y1 + (y2 - y1) * i / steps))
+        )
         time.sleep(0.03)
     time.sleep(0.15)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
     time.sleep(0.5)
-
-
 
 
 def wheel(x: int, y: int, clicks: int = -3, pause: float = 0.4) -> None:
@@ -155,8 +163,7 @@ def wheel(x: int, y: int, clicks: int = -3, pause: float = 0.4) -> None:
     win32api.SetCursorPos((int(x), int(y)))
     time.sleep(0.2)
     for _ in range(abs(clicks)):
-        win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0,
-                             clicks * 120, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, clicks * 120, 0)
         time.sleep(0.12)
     time.sleep(pause)
 

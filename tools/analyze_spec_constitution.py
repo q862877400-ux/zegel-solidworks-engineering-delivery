@@ -39,7 +39,9 @@ def check(spec_dir: Path):
     f, spec = [], _read(spec_dir / "spec.md")
     plan, tasks = _read(spec_dir / "plan.md"), _read(spec_dir / "tasks.md")
     recon = spec_dir / "recon"
-    recon_txt = "".join(_read(p) for p in sorted(recon.glob("*.md"))) if recon.is_dir() else ""
+    recon_txt = (
+        "".join(_read(p) for p in sorted(recon.glob("*.md"))) if recon.is_dir() else ""
+    )
 
     #: §I 缝合优先 —— 每条 FR 都要写「来源=」
     frs = re.findall(r"^- \*\*FR-\d+\*\*", spec, re.M)
@@ -47,7 +49,13 @@ def check(spec_dir: Path):
     if not frs:
         f.append(("FAIL", "§I", "spec.md 里**一条 `**FR-xxx**` 都没有**"))
     elif len(with_src) < len(frs):
-        f.append(("FAIL", "§I", "FR %d 条里只有 %d 条带「来源=」" % (len(frs), len(with_src))))
+        f.append(
+            (
+                "FAIL",
+                "§I",
+                "FR %d 条里只有 %d 条带「来源=」" % (len(frs), len(with_src)),
+            )
+        )
     else:
         f.append(("PASS", "§I", "FR %d 条**全部**带「来源=」" % len(frs)))
 
@@ -57,14 +65,29 @@ def check(spec_dir: Path):
     if len(src_hits) >= 3 and has_order:
         f.append(("PASS", "§II", "三源齐（%s）+ 有裁决顺序" % "/".join(src_hits)))
     else:
-        f.append(("FAIL", "§II", "plan.md 三源缺项或没写裁决顺序（命中 %s）" % src_hits))
+        f.append(
+            ("FAIL", "§II", "plan.md 三源缺项或没写裁决顺序（命中 %s）" % src_hits)
+        )
 
     #: §III 查不到就写查不到 —— 侦察产物要真的出现该字样（★ 0 处 = 可能整份在凑）
     n_missing = recon_txt.count("官方没写")
     if n_missing > 0:
-        f.append(("PASS", "§III", "侦察产物里「官方没写」出现 **%d** 处（★ 说明它敢报查不到）" % n_missing))
+        f.append(
+            (
+                "PASS",
+                "§III",
+                "侦察产物里「官方没写」出现 **%d** 处（★ 说明它敢报查不到）"
+                % n_missing,
+            )
+        )
     else:
-        f.append(("WARN", "§III", "侦察产物里**没有**「官方没写」—— ★ 要么真的全命中，要么在凑（需人工抽查）"))
+        f.append(
+            (
+                "WARN",
+                "§III",
+                "侦察产物里**没有**「官方没写」—— ★ 要么真的全命中，要么在凑（需人工抽查）",
+            )
+        )
 
     #: §IV 许可红线 —— plan 每行来源都要带 license
     lic = sum(1 for l in plan.splitlines() if "license" in l.lower())
@@ -77,9 +100,21 @@ def check(spec_dir: Path):
     n_task = len(re.findall(r"^- \[[ x~-]\] \*\*T\d+\*\*", tasks, re.M))
     n_acc = tasks.count("→ 验收:")
     if n_task and n_task == n_acc:
-        f.append(("PASS", "§V", "任务 **%d** 条 · `→ 验收:` **%d** 条（一一对应）" % (n_task, n_acc)))
+        f.append(
+            (
+                "PASS",
+                "§V",
+                "任务 **%d** 条 · `→ 验收:` **%d** 条（一一对应）" % (n_task, n_acc),
+            )
+        )
     else:
-        f.append(("FAIL", "§V", "任务 %d 条而 `→ 验收:` %d 条 ⇒ **没有一一对应**" % (n_task, n_acc)))
+        f.append(
+            (
+                "FAIL",
+                "§V",
+                "任务 %d 条而 `→ 验收:` %d 条 ⇒ **没有一一对应**" % (n_task, n_acc),
+            )
+        )
 
     #: 宪法 §"三处不许写" 第 1 条 —— spec 不许写「当前进度」
     #: ★ 判据**只认真正的进度形态**（`x/145` 覆盖率 · `x%` 百分数 · `x → y` 变化），
@@ -96,9 +131,15 @@ def check(spec_dir: Path):
         #:   ★ `110/145`（SC 的目标）与 `100%`（"不设 100% 目标"）**都是合规的**；
         #: ★ 而出现**覆盖率现状**（如 `96/145`）就**违规**（那是 §一 明令不许写的进度）
         #: 。
-        f.append(("INFO", "不许写·进度", "spec.md 里出现**数值候选** %d 处：%s —— "
-                  "★ **人工判**：是**目标值**则合规；是**当前值**（覆盖率现状）则违规"
-                  % (len(prog), prog[:5])))
+        f.append(
+            (
+                "INFO",
+                "不许写·进度",
+                "spec.md 里出现**数值候选** %d 处：%s —— "
+                "★ **人工判**：是**目标值**则合规；是**当前值**（覆盖率现状）则违规"
+                % (len(prog), prog[:5]),
+            )
+        )
     else:
         f.append(("PASS", "不许写·进度", "spec.md 里没有数值候选（覆盖率/百分数/x→y）"))
 
@@ -108,7 +149,13 @@ def check(spec_dir: Path):
     if sid in roadmap:
         f.append(("PASS", "接口·ROADMAP", "`docs/ROADMAP.md` 里点名了 `%s`" % sid))
     else:
-        f.append(("FAIL", "接口·ROADMAP", "`docs/ROADMAP.md` **没有**提到 `%s` ⇒ **另起了体系**" % sid))
+        f.append(
+            (
+                "FAIL",
+                "接口·ROADMAP",
+                "`docs/ROADMAP.md` **没有**提到 `%s` ⇒ **另起了体系**" % sid,
+            )
+        )
 
     return f, sum(1 for x in f if x[0] == "FAIL")
 
@@ -128,10 +175,15 @@ def main() -> int:
     for lvl, clause, msg in findings:
         mark = {"PASS": "  ✓", "WARN": "  ⚠", "FAIL": "  ✗", "INFO": "  ·"}[lvl]
         print("%s [%s] %s" % (mark, clause, msg))
-    print("\n合计：FAIL %d · WARN %d · INFO %d · PASS %d"
-          % (fails, sum(1 for x in findings if x[0] == "WARN"),
-             sum(1 for x in findings if x[0] == "INFO"),
-             sum(1 for x in findings if x[0] == "PASS")))
+    print(
+        "\n合计：FAIL %d · WARN %d · INFO %d · PASS %d"
+        % (
+            fails,
+            sum(1 for x in findings if x[0] == "WARN"),
+            sum(1 for x in findings if x[0] == "INFO"),
+            sum(1 for x in findings if x[0] == "PASS"),
+        )
+    )
     return 1 if fails else 0
 
 

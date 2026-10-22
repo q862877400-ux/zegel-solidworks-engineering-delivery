@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """生成 scripts/sw_drawing_view.py（IView 成员登记表 + 通用访问器）。"""
+
 from __future__ import annotations
 
 import json
@@ -293,7 +294,12 @@ def main() -> int:
 
 def _props(data: dict) -> list[str]:
     """属性名从反射再取一次（生成器只落了方法）。"""
-    path = Path(Path(__file__).resolve().parents[1] / "_raw" / "reflect_sldworks" / "iface_sldworks.txt")
+    path = Path(
+        Path(__file__).resolve().parents[1]
+        / "_raw"
+        / "reflect_sldworks"
+        / "iface_sldworks.txt"
+    )
     current, out = None, []
     for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
         if raw.startswith("## "):

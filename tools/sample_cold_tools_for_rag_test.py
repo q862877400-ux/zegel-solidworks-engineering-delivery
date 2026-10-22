@@ -39,16 +39,20 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as rc                                    # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 SEED = 20261004
-TARGET_PER_STRATUM = 40          #: ★ 每档 40 ⇒ 总 ~120–160（比上一轮 24 大 5–6 倍）
+TARGET_PER_STRATUM = 40  #: ★ 每档 40 ⇒ 总 ~120–160（比上一轮 24 大 5–6 倍）
 
 
 def read_docs() -> str:
     """★ 把三份中文清单拼起来（用于判"有没有人给它写过面向用户的话"）。"""
     parts = []
-    for rel in ("docs/usage-guide.md", "docs/user-feature-coverage.md", "capabilities.yaml"):
+    for rel in (
+        "docs/usage-guide.md",
+        "docs/user-feature-coverage.md",
+        "capabilities.yaml",
+    ):
         p = ROOT / rel
         if p.is_file():
             parts.append(p.read_text(encoding="utf-8", errors="replace"))
@@ -62,17 +66,26 @@ def has_official_member(module: str, function: str) -> bool:
         return False
     try:
         tree = ast.parse(p.read_text(encoding="utf-8", errors="replace"))
-    except Exception:                                                  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return False
-    fn = next((n for n in ast.walk(tree)
-               if isinstance(n, ast.FunctionDef) and n.name == function), None)
+    fn = next(
+        (
+            n
+            for n in ast.walk(tree)
+            if isinstance(n, ast.FunctionDef) and n.name == function
+        ),
+        None,
+    )
     if fn is None:
         return False
     for n in ast.walk(fn):
         if isinstance(n, ast.Call) and len(n.args) >= 2:
             a = n.args[1]
-            if isinstance(a, ast.Constant) and isinstance(a.value, str) \
-                    and re.match(r"^[A-Z][A-Za-z0-9_]{2,}$", a.value):
+            if (
+                isinstance(a, ast.Constant)
+                and isinstance(a.value, str)
+                and re.match(r"^[A-Z][A-Za-z0-9_]{2,}$", a.value)
+            ):
                 return True
     return False
 
@@ -94,25 +107,42 @@ def main() -> int:
         pat2 = r"(?<![A-Za-z0-9_])%s(?![A-Za-z0-9_])" % re.escape(core)
         mentioned = bool(re.search(pat, docs)) or bool(re.search(pat2, docs))
         mod = getattr(s, "module", "")
-        recs.append({
-            "tool": s.name, "module": mod, "function": getattr(s, "function", ""),
-            "title": getattr(s, "title", "") or "",
-            "doc": doc, "doc_len": len(doc),
-            "params": [p.name for p in (getattr(s, "params", None) or [])],
-            "domain_size": per_mod[mod],
-            "mentioned_in_cn_docs": mentioned,
-            "has_official_member": has_official_member(mod, getattr(s, "function", "")),
-        })
+        recs.append(
+            {
+                "tool": s.name,
+                "module": mod,
+                "function": getattr(s, "function", ""),
+                "title": getattr(s, "title", "") or "",
+                "doc": doc,
+                "doc_len": len(doc),
+                "params": [p.name for p in (getattr(s, "params", None) or [])],
+                "domain_size": per_mod[mod],
+                "mentioned_in_cn_docs": mentioned,
+                "has_official_member": has_official_member(
+                    mod, getattr(s, "function", "")
+                ),
+            }
+        )
 
-    cold_strong = [r for r in recs if not r["mentioned_in_cn_docs"]
-                   and r["domain_size"] < 8 and r["has_official_member"]]
-    cold_soft = [r for r in recs if not r["mentioned_in_cn_docs"]
-                 and r["doc_len"] < 120 and r["has_official_member"]]
+    cold_strong = [
+        r
+        for r in recs
+        if not r["mentioned_in_cn_docs"]
+        and r["domain_size"] < 8
+        and r["has_official_member"]
+    ]
+    cold_soft = [
+        r
+        for r in recs
+        if not r["mentioned_in_cn_docs"]
+        and r["doc_len"] < 120
+        and r["has_official_member"]
+    ]
     non_api = [r for r in recs if not r["has_official_member"]]
     hot = [r for r in recs if r["mentioned_in_cn_docs"] and r["domain_size"] >= 8]
 
     def pick(pool, n):
-        pool = sorted(pool, key=lambda x: x["tool"])       #: ★ 先定序，保证可复现
+        pool = sorted(pool, key=lambda x: x["tool"])  #: ★ 先定序，保证可复现
         rng.shuffle(pool)
         return pool[:n]
 
@@ -123,18 +153,36 @@ def main() -> int:
         "H_hot_baseline": pick(hot, 20),
     }
     print("★ 框架：433 个工具 · 域 %d 个" % len(per_mod))
-    print("★ 三档候选池大小：C1(无中文文档 ∧ 长尾域) **%d** · C2(无中文文档 ∧ doc<120) **%d** · "
-          "NON-API **%d** · HOT(基线) **%d**" % (len(cold_strong), len(cold_soft), len(non_api), len(hot)))
+    print(
+        "★ 三档候选池大小：C1(无中文文档 ∧ 长尾域) **%d** · C2(无中文文档 ∧ doc<120) **%d** · "
+        "NON-API **%d** · HOT(基线) **%d**"
+        % (len(cold_strong), len(cold_soft), len(non_api), len(hot))
+    )
     print("★ 抽样（seed=%d）：%s" % (SEED, {k: len(v) for k, v in sample.items()}))
     print()
     for k, v in sample.items():
-        print("  【%s】%d 个 ⇒ 例：%s" % (k, len(v),
-              ", ".join(x["tool"].removeprefix("solidworks_") for x in v[:5])))
+        print(
+            "  【%s】%d 个 ⇒ 例：%s"
+            % (
+                k,
+                len(v),
+                ", ".join(x["tool"].removeprefix("solidworks_") for x in v[:5]),
+            )
+        )
     out = ROOT / "output" / "rag-sample.json"
-    out.write_text(json.dumps({"seed": SEED, "target_per_stratum": TARGET_PER_STRATUM,
-                               "strata": {k: [x["tool"] for x in v] for k, v in sample.items()},
-                               "records": {x["tool"]: x for v in sample.values() for x in v}},
-                              ensure_ascii=False, indent=1), encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {
+                "seed": SEED,
+                "target_per_stratum": TARGET_PER_STRATUM,
+                "strata": {k: [x["tool"] for x in v] for k, v in sample.items()},
+                "records": {x["tool"]: x for v in sample.values() for x in v},
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
     print()
     print("★ 写出：%s（★ 共 %d 条记录）" % (out, sum(len(v) for v in sample.values())))
     return 0

@@ -40,6 +40,7 @@
 
 ⚠ 本模块为静态签名比对后新写，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -188,15 +189,24 @@ def edit_route(route_manager) -> bool:
 
 def create_route_line(route_manager, x1, y1, z1, x2, y2, z2):
     """由两端点创建路由线段。⚠ 6 个 Double 的坐标系含义官方无文档。"""
-    return _checked(route_manager, "CreateRouteLine",
-                    float(x1), float(y1), float(z1), float(x2), float(y2), float(z2))
+    return _checked(
+        route_manager,
+        "CreateRouteLine",
+        float(x1),
+        float(y1),
+        float(z1),
+        float(x2),
+        float(y2),
+        float(z2),
+    )
 
 
 def create_flatten_route(route_manager, *args):
     """创建平面化路由（官方 11 参）。⚠ 参数语义无文档，按位置透传。"""
     if len(args) != 11:
         raise ValueError(
-            f"CreateFlattenRoute 官方签名是 11 个实参，给了 {len(args)} 个")
+            f"CreateFlattenRoute 官方签名是 11 个实参，给了 {len(args)} 个"
+        )
     return _checked(route_manager, "CreateFlattenRoute", *args)
 
 
@@ -204,7 +214,8 @@ def create_pipe_drawing(route_manager, *args):
     """创建管路图（官方 12 参）。⚠ 参数语义无文档，按位置透传。"""
     if len(args) != 12:
         raise ValueError(
-            f"CreatePipeDrawingforPipeRoute 官方签名是 12 个实参，给了 {len(args)} 个")
+            f"CreatePipeDrawingforPipeRoute 官方签名是 12 个实参，给了 {len(args)} 个"
+        )
     return _checked(route_manager, "CreatePipeDrawingforPipeRoute", *args)
 
 
@@ -391,5 +402,6 @@ def collect_routing_evidence(route_manager) -> dict[str, Any]:
         "has_covering": bool(get_com_member(property_object, "HasCovering")),
         "bend_radius": float(get_com_member(property_object, "BendRadius") or 0.0),
         "minimum_bend_radius": float(
-            get_com_member(property_object, "MinimumBendRadius") or 0.0),
+            get_com_member(property_object, "MinimumBendRadius") or 0.0
+        ),
     }

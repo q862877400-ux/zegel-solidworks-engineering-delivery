@@ -32,6 +32,7 @@ r"""@brief 真机证据：**仿真研究族 3 个工具**（24h 计划 段 1.1 /
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -45,13 +46,18 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-study-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-study-evidence.json"
+)
 STUDY = "DSH-141"
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "simulation_study_create", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "simulation_study_create",
+        "steps": {},
+    }
     sw = None
     doc = None
     ok = True
@@ -65,16 +71,20 @@ def main() -> int:
         bindings = {}
         for spec in b27.SPECS_BATCH27:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "inject": spec.inject}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] for v in bindings.values()),
-                                   "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "inject": spec.inject,
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] for v in bindings.values()),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: 造零件（研究必须建在文档上）
@@ -90,19 +100,25 @@ def main() -> int:
             spec = next(s for s in b27.SPECS_BATCH27 if s.name == spec_name)
             kwargs = {}
             for p in spec.params:
-                if p.name in (spec.param_alias or {}) and spec.param_alias[p.name] is None:
+                if (
+                    p.name in (spec.param_alias or {})
+                    and spec.param_alias[p.name] is None
+                ):
                     continue
                 kwargs[(spec.param_alias or {}).get(p.name, p.name)] = params[p.name]
             if spec.inject:
                 kwargs[spec.inject] = rc.RESOLVERS[spec.inject](None)
-            fn = getattr(__import__("scripts.%s" % spec.module, fromlist=[spec.function]),
-                         spec.function)
+            fn = getattr(
+                __import__("scripts.%s" % spec.module, fromlist=[spec.function]),
+                spec.function,
+            )
             return fn(**kwargs)
 
         #: ① ★★ 建研究，断言 entry_name 非空
         created = call_via_tool("solidworks_simulation_create_study", study_name=STUDY)
         ev["steps"]["create"] = {
-            "ok": bool(created.get("ok")) and bool(str(created.get("entry_name") or "").strip()),
+            "ok": bool(created.get("ok"))
+            and bool(str(created.get("entry_name") or "").strip()),
             **created,
             "★": "★★ entry_name 是「是否走了降级入口」的唯一证据；空 ⇒ 没建成",
         }
@@ -122,34 +138,37 @@ def main() -> int:
         names = [x.get("name") for x in listed]
         ev["steps"]["list"] = {
             "ok": len(listed) >= 1 and STUDY in names,
-            "count": len(listed), "names": names,
+            "count": len(listed),
+            "names": names,
             "★": "★ 至少一个，且包含刚建的那个",
         }
         ok = ok and ev["steps"]["list"]["ok"]
 
         #: ④ ★ 负例：不存在的名字 ⇒ found 必须为假（★ 能力层回 None 不抛错）
-        miss = call_via_tool("solidworks_simulation_find_study", study_name="NoSuchStudy_XYZ")
+        miss = call_via_tool(
+            "solidworks_simulation_find_study", study_name="NoSuchStudy_XYZ"
+        )
         ev["steps"]["negative_missing"] = {
             "ok": miss.get("found") is False,
             **miss,
             "★": "★ 已实测能力层**回 None 不抛错** ⇒ 负例断言的是 found 为假，不是抛错",
         }
         ok = ok and ev["steps"]["negative_missing"]["ok"]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
-                    sw.CloseDoc(t)                             #: ★ 关件不保存
-        except Exception:                                      # noqa: BLE001
+                    sw.CloseDoc(t)  #: ★ 关件不保存
+        except Exception:  # noqa: BLE001
             pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -160,7 +179,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

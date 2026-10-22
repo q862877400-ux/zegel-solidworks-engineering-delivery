@@ -6,7 +6,7 @@
 # 定位:   ★ 2026-10-02（轮 376）**用户要的框架**：★ 不管弹窗是**启动前就有的**还是**执
 #           行中弹的**，
 #   都要①主动知道 ②主动处置 ③把内容交到 LLM 手上；★ 且**不许"等到天荒地老"**。
-# 官方依据: 不适用（★ 用 Win32 `EnumWindows`/`EnumChildWindows` + `WM_COMMAND`/`IDOK` + 
+# 官方依据: 不适用（★ 用 Win32 `EnumWindows`/`EnumChildWindows` + `WM_COMMAND`/`IDOK` +
 #           子进程超时）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -50,7 +50,7 @@ from pathlib import Path
 # ── ★★★ 2026-10-04（接手轮 · 真机实测撞出来的）**stdout 必须 reconfigure** ────────────
 # ★ 症状：本工具**干完了活**，却在**打印结果时自己崩** ——
 #   `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'`（`⇒`）✓✗
-# ★★ 根因：父进程是 pwsh ⇒ stdout 的编码 = 本机 **GBK**，而本工具打印的 JSON 里有 `⇒` / 
+# ★★ 根因：父进程是 pwsh ⇒ stdout 的编码 = 本机 **GBK**，而本工具打印的 JSON 里有 `⇒` /
 # `★`
 #   ⇒ ★ 与**事实 58**（`subprocess` 不给 `encoding=` 就在中文 Windows 上炸）**同族** ✓
 # ★★★ 为什么这条值得修（★ 不是美观问题）：★ 崩在 `print` 上会让**调用方拿到非零退出码**
@@ -61,7 +61,7 @@ from pathlib import Path
 for _stream in (sys.stdout, sys.stderr):
     try:
         _stream.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -72,9 +72,11 @@ _u = ctypes.windll.user32
 _PROC = ctypes.WINFUNCTYPE(ctypes.c_bool, wt.HWND, wt.LPARAM)
 _WM_COMMAND = 0x0111
 _IDOK = 1
-_BM_CLICK = 0x00F5        #: ★ 给按钮直接投一发点击（★ **用 PostMessage**，★ SendMessage 会等对方⇒卡）
+_BM_CLICK = (
+    0x00F5  #: ★ 给按钮直接投一发点击（★ **用 PostMessage**，★ SendMessage 会等对方⇒卡）
+)
 _VK_RETURN = 0x0D
-KEYEVENTF_KEYUP = 0x0002    #: ★ 名字必须是这个（现后缀）—— 门禁的 AST 判据按它认
+KEYEVENTF_KEYUP = 0x0002  #: ★ 名字必须是这个（现后缀）—— 门禁的 AST 判据按它认
 _INPUT_KEYBOARD = 1
 _MOUSEEVENTF_LEFTDOWN = 0x0002
 _MOUSEEVENTF_LEFTUP = 0x0004
@@ -104,7 +106,7 @@ def dismiss_via_input(hwnd: int) -> bool:
     try:
         _u.SetForegroundWindow(hwnd)
         time.sleep(0.15)
-    except Exception:                                           # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     #: ② 回车键（★ 走系统输入队列 —— 见上面真因）
     #:   ★★ 2026-10-02（轮 377）**门禁教会我正确形态**：★ 它的判据是
@@ -218,16 +220,21 @@ def sw_family_window(hwnd: int) -> bool:
 #:   `标题` / `描述` / `Button1` / `Button2` / `Hyperlink Text 1` / `Hyperlink Text 2` ✓
 #:   ★★ 那是 SolidWorks 的**消息框模板**（占位符尚未填内容）⇒ 我原来的三条判据
 #:   （`#32770` / 有 Button / 有可读文本）**全中** ⇒ 被当成 `needs_llm` 弹窗**刷屏** ✓
-#: ⇒ ★ 判据：★ **文本子控件全是占位符** ⇒ 判为模板、**不当弹窗**（★ 但仍记一条 `debug` 
+#: ⇒ ★ 判据：★ **文本子控件全是占位符** ⇒ 判为模板、**不当弹窗**（★ 但仍记一条 `debug`
 #: 事件，
 #:     免得"又变成静默失效" —— ★ 与事实 40 的老毛病保持距离）✓
-_TEMPLATE_TEXT = re.compile(r"^(标题|描述|Title|Description|Button\d+|Hyperlink Text \d+)$")
+_TEMPLATE_TEXT = re.compile(
+    r"^(标题|描述|Title|Description|Button\d+|Hyperlink Text \d+)$"
+)
 
 
 def _looks_like_template(controls: list[dict]) -> bool:
     """★ 这些子控件文本是不是**纯占位符**（★ 那说明它是个**模板**、不是真弹窗）。"""
-    texts = [str(c.get("text", "")).strip() for c in controls
-             if c.get("class") in ("Static", "Edit") and str(c.get("text", "")).strip()]
+    texts = [
+        str(c.get("text", "")).strip()
+        for c in controls
+        if c.get("class") in ("Static", "Edit") and str(c.get("text", "")).strip()
+    ]
     return bool(texts) and all(_TEMPLATE_TEXT.match(t) for t in texts)
 
 
@@ -253,8 +260,12 @@ def classify_dialog(d: dict) -> dict:
       · `forbidden`   ★ 文本含危险词（删除/覆盖/替换/丢失/不可逆/remove/overwrite/delete…）⇒ **绝不自动点**
     """
     controls = d.get("controls") or []
-    buttons = [str(c.get("text", "")).strip() for c in controls if c.get("class") == "Button"]
-    texts = " ".join(str(c.get("text", "")) for c in controls if c.get("class") != "Button")
+    buttons = [
+        str(c.get("text", "")).strip() for c in controls if c.get("class") == "Button"
+    ]
+    texts = " ".join(
+        str(c.get("text", "")) for c in controls if c.get("class") != "Button"
+    )
     blobs = " ".join(buttons)
 
     #: ★★★★★ 2026-10-04 **先判"这是**正常求解的进度窗**"**（★ 真机实测 · 用户那个框的旁
@@ -272,29 +283,99 @@ def classify_dialog(d: dict) -> dict:
     #:     `mode="progress"`（★ **`needs_llm=False`** ⇒ 不点、**也不中止**）✓
     _prog_marks = ("当前任务", "已用时间", "自由度", "current task", "elapsed")
     if any(m in texts for m in _prog_marks):
-        return {"mode": "progress", "reason": "★ 这是**正常求解的进度窗**（含运行态读数）"
-                                              "⇒ 既不点、**也不中止**（★ 事实 297）",
-                "buttons": buttons, "hit": []}
+        return {
+            "mode": "progress",
+            "reason": "★ 这是**正常求解的进度窗**（含运行态读数）"
+            "⇒ 既不点、**也不中止**（★ 事实 297）",
+            "buttons": buttons,
+            "hit": [],
+        }
 
     #: ★ **危险词**（★ 中英）—— 命中就**绝不自动点**（★ 哪怕只有一个"确定"）
     #:   ★★ 2026-10-02（轮 381）**自测抓到漏网**：★ 文本 "不可恢复" 被判成 `auto` ——
     #: 因为表里只有"不可逆"、没有"不可恢复" ⇒ ★★ 而**"是否删除？不可恢复"恰好只有一个"确
     #: 定"**
     #:   ⇒ ★ **会被自动点掉**（★ 后果不可逆）。⇒ 补词 + **加"提问信号"判据**（见下）。
-    DANGER = ("删除", "覆盖", "替换", "丢失", "不可逆", "不可恢复", "无法恢复", "无法撤销",
-              "撤销", "谨慎", "真的要", "确定要", "确认删除", "清空", "格式化", "永久", "风险",
-              "delete", "overwrite", "replace", "discard", "lose", "permanent", "format",
-              "reset all", "clear all", "cannot be undone", "irreversible")
+    DANGER = (
+        "删除",
+        "覆盖",
+        "替换",
+        "丢失",
+        "不可逆",
+        "不可恢复",
+        "无法恢复",
+        "无法撤销",
+        "撤销",
+        "谨慎",
+        "真的要",
+        "确定要",
+        "确认删除",
+        "清空",
+        "格式化",
+        "永久",
+        "风险",
+        "delete",
+        "overwrite",
+        "replace",
+        "discard",
+        "lose",
+        "permanent",
+        "format",
+        "reset all",
+        "clear all",
+        "cannot be undone",
+        "irreversible",
+    )
     #: ★★ **提问信号** —— ★ 弹窗在**问**（★ 问号/"是否"/"吗"/"要不要"）⇒ ★ **绝不自动点*
     #: *：
     #:   ★ 因为"问"意味着**至少两条分支**，★ 而回答哪条**要看语义** —— ★ 那正是 LLM 的活。
-    QUESTION = ("？", "?", "是否", "吗", "要不要", "确定要", "would you", "are you sure", "do you want")
+    QUESTION = (
+        "？",
+        "?",
+        "是否",
+        "吗",
+        "要不要",
+        "确定要",
+        "would you",
+        "are you sure",
+        "do you want",
+    )
     #: ★ **确认类**（★ 可以安全点的）
-    OKISH = ("确定", "确认", "关闭", "好", "是", "ok", "close", "yes", "continue", "继续", "完成",
-             "finish", "done")
+    OKISH = (
+        "确定",
+        "确认",
+        "关闭",
+        "好",
+        "是",
+        "ok",
+        "close",
+        "yes",
+        "continue",
+        "继续",
+        "完成",
+        "finish",
+        "done",
+    )
     #: ★ **高危类**（★ 出现就**不自动点**）
-    RISKY = ("否", "取消", "暂停", "上一步", "下一步", "跳过", "忽略", "no", "cancel", "pause",
-             "back", "next", "skip", "ignore", "abort", "retry", "重试")
+    RISKY = (
+        "否",
+        "取消",
+        "暂停",
+        "上一步",
+        "下一步",
+        "跳过",
+        "忽略",
+        "no",
+        "cancel",
+        "pause",
+        "back",
+        "next",
+        "skip",
+        "ignore",
+        "abort",
+        "retry",
+        "重试",
+    )
 
     blob = blobs + " " + texts
     low = blob.lower()
@@ -307,12 +388,13 @@ def classify_dialog(d: dict) -> dict:
         ⇒ ★ 英文必须按**词边界**（★ `\\blose\\b` 不匹配 `close`）；★ 中文没有词边界概念，照旧子串。
         """
         import re as _re
+
         out = []
         for w in words:
-            if all(ord(ch) > 0x2E80 for ch in w):          #: ★ 中文（含全角标点）⇒ 子串
+            if all(ord(ch) > 0x2E80 for ch in w):  #: ★ 中文（含全角标点）⇒ 子串
                 if w in blob:
                     out.append(w)
-            else:                                          #: ★ 英文 ⇒ 词边界
+            else:  #: ★ 英文 ⇒ 词边界
                 if _re.search(r"\b%s\b" % _re.escape(w.lower()), low):
                     out.append(w)
         return out
@@ -322,25 +404,47 @@ def classify_dialog(d: dict) -> dict:
     hit_risky = _hit(RISKY)
     okish = _hit(OKISH)
     if hit_danger:
-        return {"mode": "forbidden", "reason": "文本含危险词 %s ⇒ 绝不自动点" % hit_danger[:3],
-                "buttons": buttons, "hit": hit_danger[:3]}
+        return {
+            "mode": "forbidden",
+            "reason": "文本含危险词 %s ⇒ 绝不自动点" % hit_danger[:3],
+            "buttons": buttons,
+            "hit": hit_danger[:3],
+        }
     if hit_question:
-        return {"mode": "forbidden",
-                "reason": "弹窗在**提问**（%s）⇒ 至少两条分支、答哪条要看语义 ⇒ 绝不自动点"
-                          % hit_question[:3],
-                "buttons": buttons, "hit": hit_question[:3]}
+        return {
+            "mode": "forbidden",
+            "reason": "弹窗在**提问**（%s）⇒ 至少两条分支、答哪条要看语义 ⇒ 绝不自动点"
+            % hit_question[:3],
+            "buttons": buttons,
+            "hit": hit_question[:3],
+        }
     if hit_risky or len(buttons) > 1:
-        return {"mode": "needs_llm",
-                "reason": ("按钮 %s 里有多义/高危项 %s ⇒ 点哪个取决于弹窗在问什么"
-                           % (buttons, (hit_risky or ["多于一个同权按钮"])[:3])),
-                "buttons": buttons, "hit": hit_risky[:3]}
+        return {
+            "mode": "needs_llm",
+            "reason": (
+                "按钮 %s 里有多义/高危项 %s ⇒ 点哪个取决于弹窗在问什么"
+                % (buttons, (hit_risky or ["多于一个同权按钮"])[:3])
+            ),
+            "buttons": buttons,
+            "hit": hit_risky[:3],
+        }
     if okish or len(buttons) == 1:
-        return {"mode": "auto", "reason": "只有一个语义明确的确认按钮 %s ⇒ 可自动点" % (okish[:1] or buttons),
-                "buttons": buttons}
-    return {"mode": "needs_llm", "reason": "没有可识别的按钮 ⇒ 请 LLM 看文本决定", "buttons": buttons}
+        return {
+            "mode": "auto",
+            "reason": "只有一个语义明确的确认按钮 %s ⇒ 可自动点"
+            % (okish[:1] or buttons),
+            "buttons": buttons,
+        }
+    return {
+        "mode": "needs_llm",
+        "reason": "没有可识别的按钮 ⇒ 请 LLM 看文本决定",
+        "buttons": buttons,
+    }
 
 
-def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> list[dict]:
+def scan_family_windows(
+    pid: int | None = None, *, known: set | None = None
+) -> list[dict]:
     """★ **放宽后的弹窗判据**：★ 属于 SolidWorks 家族 + 新出现的可见顶层窗口 + **像弹窗**。
 
     ★★ "像弹窗"用**与类名无关**的三条特征取或（★ 用户要求覆盖**所有** SolidWorks 弹窗）：
@@ -378,8 +482,15 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
         if not sw_family_window(h):
             return True
         c, t = _cls(h), _txt(h)
-        if c.startswith(("Afx:", "DummyDWMListenerWindow", "ThumbnailDeviceHelperWnd",
-                         "Shell_TrayWnd", "ToolbarWindow32")):
+        if c.startswith(
+            (
+                "Afx:",
+                "DummyDWMListenerWindow",
+                "ThumbnailDeviceHelperWnd",
+                "Shell_TrayWnd",
+                "ToolbarWindow32",
+            )
+        ):
             return True
         kids_buttons: list[int] = []
         kids_text = 0
@@ -416,17 +527,28 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
         key = (int(h), c, t)
         if key in seen:
             return True
-        out.append({"hwnd": int(h), "pid": int(p.value), "class": c, "title": t[:160],
-                    "hung": bool(_u.IsHungAppWindow(h)), "buttons": kids_buttons,
-                    "text_children": kids_text, "controls": controls,
-                    "exe": _exe_of_window(h).rsplit("\\", 1)[-1]})
+        out.append(
+            {
+                "hwnd": int(h),
+                "pid": int(p.value),
+                "class": c,
+                "title": t[:160],
+                "hung": bool(_u.IsHungAppWindow(h)),
+                "buttons": kids_buttons,
+                "text_children": kids_text,
+                "controls": controls,
+                "exe": _exe_of_window(h).rsplit("\\", 1)[-1],
+            }
+        )
         return True
 
     _u.EnumWindows(_PROC(_cb), 0)
     return out
 
 
-def scan_any_new_window(pid: int | None = None, *, known: set | None = None) -> list[dict]:
+def scan_any_new_window(
+    pid: int | None = None, *, known: set | None = None
+) -> list[dict]:
     """★ **兜底探测**：★ 列出该 PID 的**所有可见顶层窗口**（★ **不限类名**）。
 
     ★★★★ 2026-10-02（轮 378）**用户问「这个机制适用于所有弹窗吗」**，我实测后如实分层的结论：
@@ -469,14 +591,28 @@ def scan_any_new_window(pid: int | None = None, *, known: set | None = None) -> 
         if c == "#32770":
             return True
         #: ★ 已知的"不是弹窗"的类名（★ 主窗口 / DWM 辅助窗口 / 托盘 …）—— 减少噪声
-        if c.startswith(("Afx:", "DummyDWMListenerWindow", "ThumbnailDeviceHelperWnd",
-                         "Shell_TrayWnd", "ToolbarWindow32")):
+        if c.startswith(
+            (
+                "Afx:",
+                "DummyDWMListenerWindow",
+                "ThumbnailDeviceHelperWnd",
+                "Shell_TrayWnd",
+                "ToolbarWindow32",
+            )
+        ):
             return True
         key = (int(h), c, t)
         if key in seen:
             return True
-        out.append({"hwnd": int(h), "pid": int(p.value), "class": c, "title": t[:160],
-                    "hung": bool(_u.IsHungAppWindow(h))})
+        out.append(
+            {
+                "hwnd": int(h),
+                "pid": int(p.value),
+                "class": c,
+                "title": t[:160],
+                "hung": bool(_u.IsHungAppWindow(h)),
+            }
+        )
         return True
 
     _u.EnumWindows(_PROC(_cb), 0)
@@ -505,7 +641,7 @@ def scan(pid: int | None = None, *, visible_only: bool = True) -> list[dict]:
         _u.GetWindowThreadProcessId(h, ctypes.byref(p))
         #: ★★★★★ 2026-10-04 **同一个根因的第三处**（★ 前两处在 `scan_family_windows` /
         #:   `scan_any_new_window`）—— ★★ **这处是负例测试当场抓出来的**（我先前漏了它）：
-        #: ★ 于是 `python tools/sw_guard.py --scan` / `--clear` **也看不见** `star.exe` 
+        #: ★ 于是 `python tools/sw_guard.py --scan` / `--clear` **也看不见** `star.exe`
         #: 的框 ✓
         if pid is not None and p.value != pid and not sw_family_window(h):
             return True
@@ -521,9 +657,16 @@ def scan(pid: int | None = None, *, visible_only: bool = True) -> list[dict]:
         if not hung:
             res = wt.DWORD(0)
             r = _u.SendMessageTimeoutW(h, 0x0000, 0, 0, 0x0002, 800, ctypes.byref(res))
-            hung = (r == 0)
-        out.append({"hwnd": int(h), "pid": int(p.value), "title": _txt(h)[:160],
-                    "hung": hung, "controls": _kids(h)})
+            hung = r == 0
+        out.append(
+            {
+                "hwnd": int(h),
+                "pid": int(p.value),
+                "title": _txt(h)[:160],
+                "hung": hung,
+                "controls": _kids(h),
+            }
+        )
         return True
 
     _u.EnumWindows(_PROC(_cb), 0)
@@ -638,8 +781,14 @@ class Sentinel:
     ★ 它同时扫 **启动前就有的**（★ `pre_scan`）与 **执行中弹的** —— ★ 两者都算"报警弹窗"。
     """
 
-    def __init__(self, pid: int | None, *, interval: float = 0.5, auto_dismiss: bool = True,
-                 stuck_after: float = 90.0):
+    def __init__(
+        self,
+        pid: int | None,
+        *,
+        interval: float = 0.5,
+        auto_dismiss: bool = True,
+        stuck_after: float = 90.0,
+    ):
         self.pid = pid
         self.interval = interval
         self.auto_dismiss = auto_dismiss
@@ -677,9 +826,11 @@ class Sentinel:
         self._seen_any: set[tuple] = set()
         #: ★ 进调用前先记录一份"基线的非弹窗顶层窗口"（★ 之后只报**新增**的）
         try:
-            self._seen_any |= {(w["hwnd"], w["class"], w["title"])
-                               for w in scan_any_new_window(pid, known=self._seen_any)}
-        except Exception:                                       # noqa: BLE001
+            self._seen_any |= {
+                (w["hwnd"], w["class"], w["title"])
+                for w in scan_any_new_window(pid, known=self._seen_any)
+            }
+        except Exception:  # noqa: BLE001
             pass
         #: ★★ **进调用之前先扫一遍**（★ 对应"只检测新窗口"那种失败：旧弹窗也得管）
         self._sweep(first=True)
@@ -696,21 +847,27 @@ class Sentinel:
         """
         try:
             import sys as _sys
+
             _scripts = str(REPO_ROOT / "scripts")
             if _scripts not in _sys.path:
                 _sys.path.insert(0, _scripts)
             from sw_busy import solidworks_stuck
 
             info = solidworks_stuck()
-        except Exception as exc:                                # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             #: ⚠ ★ 判据自身坏了 ⇒ **如实记一条**（★ 不静默）——
             #:   ★★ 本处第一次写时用了**从未绑定**的 `SCRIPTS_DIR`，★ 而那个 `except` 会把
             #: `NameError` **吞掉** ⇒ ★ **"卡住检测"会静默永不生效**（★ 正是事实 40 的毛
             #: 病）；
             #:   是**未定义名门禁**当场抓出来的（★ 它比"运行时才炸"早一步）✓
-            self.events.append({"at": datetime.now().isoformat(timespec="seconds"),
-                                "kind": "stuck-probe-error", "error": str(exc)[:160],
-                                "note": "★ 卡住判据没跑起来（★ 如实记 —— 不静默失效）"})
+            self.events.append(
+                {
+                    "at": datetime.now().isoformat(timespec="seconds"),
+                    "kind": "stuck-probe-error",
+                    "error": str(exc)[:160],
+                    "note": "★ 卡住判据没跑起来（★ 如实记 —— 不静默失效）",
+                }
+            )
             return
         if not info.get("stuck"):
             self._stuck_since = None
@@ -722,19 +879,32 @@ class Sentinel:
         if held < self.stuck_after or self._stuck_fired:
             return
         self._stuck_fired = True
-        ev = {"at": datetime.now().isoformat(timespec="seconds"), "phase": "during",
-              "kind": "stuck",
-              "title": "SolidWorks 不响应，且没有任何求解/网格内核进程",
-              "class": None, "exe": None, "hwnd": 0,
-              "solver_alive": info.get("solver_alive"), "solver_names": info.get("solver_names"),
-              "held_seconds": round(held, 1), "stuck_after": self.stuck_after,
-              "controls": [{"class": "Static", "text": r} for r in (info.get("reasons") or [])[:3]],
-              "hung": True,
-              "verdict": {"mode": "needs_llm", "why": "★ 没弹窗但**卡住了** ⇒ 交 LLM 判（★ 不瞎点）"},
-              "needs_llm": True,
-              "dismissed": False, "still_present": True,
-              "note": "★ 本档补的是**没有弹窗**那一类：★ 护栏原来只在「有框」时分档 ⇒ "
-                      "★★ 病因是「没框、调用挂着」时，LLM 档**永远进不去**（★ 用户当场问出来）"}
+        ev = {
+            "at": datetime.now().isoformat(timespec="seconds"),
+            "phase": "during",
+            "kind": "stuck",
+            "title": "SolidWorks 不响应，且没有任何求解/网格内核进程",
+            "class": None,
+            "exe": None,
+            "hwnd": 0,
+            "solver_alive": info.get("solver_alive"),
+            "solver_names": info.get("solver_names"),
+            "held_seconds": round(held, 1),
+            "stuck_after": self.stuck_after,
+            "controls": [
+                {"class": "Static", "text": r} for r in (info.get("reasons") or [])[:3]
+            ],
+            "hung": True,
+            "verdict": {
+                "mode": "needs_llm",
+                "why": "★ 没弹窗但**卡住了** ⇒ 交 LLM 判（★ 不瞎点）",
+            },
+            "needs_llm": True,
+            "dismissed": False,
+            "still_present": True,
+            "note": "★ 本档补的是**没有弹窗**那一类：★ 护栏原来只在「有框」时分档 ⇒ "
+            "★★ 病因是「没框、调用挂着」时，LLM 档**永远进不去**（★ 用户当场问出来）",
+        }
         self.events.append(ev)
         self._write(ev)
 
@@ -745,7 +915,7 @@ class Sentinel:
         self._sweep_stuck()
         #: ★★★★ 2026-10-02（轮 379）**主路径换成放宽判据** —— 用户要求
         #:   「★ **只要是 SolidWorks 的弹窗，这个机制就应该 100% 能处理**」。
-        #: ⇒ `scan_family_windows`：★ **属于 SolidWorks 家族**（★ 主进程 + `sldProcMon` 
+        #: ⇒ `scan_family_windows`：★ **属于 SolidWorks 家族**（★ 主进程 + `sldProcMon`
         #: /
         #: `swCefSubProc` / `cwbcbfmesh` / `sldsurfacing` / `sldworks_fs` … 靠 **exe 路
         #: 径**判定）
@@ -754,9 +924,13 @@ class Sentinel:
         #:   ⇒ 于是"认类名"那个盲区（XAML/Qt/CEF 的自定义类名）**被消掉**了。
         try:
             items = scan_family_windows(self.pid)
-        except Exception as exc:                                # noqa: BLE001
-            self.events.append({"at": datetime.now().isoformat(timespec="seconds"),
-                                "error": str(exc)[:160]})
+        except Exception as exc:  # noqa: BLE001
+            self.events.append(
+                {
+                    "at": datetime.now().isoformat(timespec="seconds"),
+                    "error": str(exc)[:160],
+                }
+            )
             return
         for d in items:
             key = (d["hwnd"], d["title"])
@@ -776,39 +950,65 @@ class Sentinel:
                     fired = dismiss_via_input(d["hwnd"]) or fired
                     if _u.IsWindow(d["hwnd"]):
                         fired = False
-            self.events.append({
-                "at": datetime.now().isoformat(timespec="seconds"),
-                "phase": "pre" if first else "during",
-                "kind": "dialog",
-                "hwnd": d["hwnd"], "pid": d["pid"], "title": d["title"],
-                "class": d.get("class"), "exe": d.get("exe"),
-                "controls": d.get("controls") or [{"class": "Button", "text": "(按钮 %d 个)" % len(d.get("buttons") or [])}],
-                "hung": d.get("hung"),
-                "verdict": verdict,
-                "needs_llm": verdict["mode"] != "auto",
-                "dismissed": fired,
-                "still_present": bool(_u.IsWindow(d["hwnd"])),
-            })
+            self.events.append(
+                {
+                    "at": datetime.now().isoformat(timespec="seconds"),
+                    "phase": "pre" if first else "during",
+                    "kind": "dialog",
+                    "hwnd": d["hwnd"],
+                    "pid": d["pid"],
+                    "title": d["title"],
+                    "class": d.get("class"),
+                    "exe": d.get("exe"),
+                    "controls": d.get("controls")
+                    or [
+                        {
+                            "class": "Button",
+                            "text": "(按钮 %d 个)" % len(d.get("buttons") or []),
+                        }
+                    ],
+                    "hung": d.get("hung"),
+                    "verdict": verdict,
+                    "needs_llm": verdict["mode"] != "auto",
+                    "dismissed": fired,
+                    "still_present": bool(_u.IsWindow(d["hwnd"])),
+                }
+            )
             self._write(self.events[-1])
         #: ★★★★ **兜底**：★ 报出"新出现的、家族内但**不像弹窗**"的窗口 ⇒ ★ **让残余盲区
         #: 可见**
         #:   （★ 正常运行时**零输出** —— 主窗口 / CEF 窗口都不满足"像弹窗"那三条）
         try:
             news = scan_family_windows(pid=None, known=None)
-            news = [w for w in news if (w["hwnd"], w["class"], w["title"]) not in self._seen_any]
-        except Exception:                                       # noqa: BLE001
+            news = [
+                w
+                for w in news
+                if (w["hwnd"], w["class"], w["title"]) not in self._seen_any
+            ]
+        except Exception:  # noqa: BLE001
             news = []
         for w in news:
             self._seen_any.add((w["hwnd"], w["class"], w["title"]))
-            if w["hung"] is False and (w["buttons"] or w["text_children"]) and w["class"] == "#32770":
-                continue                                            #: ★ 已在主路径里处置过
-            ev = {"at": datetime.now().isoformat(timespec="seconds"),
-                  "phase": "pre" if first else "during",
-                  "kind": "family-window",
-                  "hwnd": w["hwnd"], "pid": w["pid"], "class": w["class"], "exe": w["exe"],
-                  "title": w["title"], "hung": w["hung"], "dismissed": False,
-                  "note": "★ 属于 SolidWorks 家族，**但不像弹窗**（无 `#32770`、无 Button、无可读文本）"
-                          "⇒ 报出来是为了**不让残余盲区静默失效**。"}
+            if (
+                w["hung"] is False
+                and (w["buttons"] or w["text_children"])
+                and w["class"] == "#32770"
+            ):
+                continue  #: ★ 已在主路径里处置过
+            ev = {
+                "at": datetime.now().isoformat(timespec="seconds"),
+                "phase": "pre" if first else "during",
+                "kind": "family-window",
+                "hwnd": w["hwnd"],
+                "pid": w["pid"],
+                "class": w["class"],
+                "exe": w["exe"],
+                "title": w["title"],
+                "hung": w["hung"],
+                "dismissed": False,
+                "note": "★ 属于 SolidWorks 家族，**但不像弹窗**（无 `#32770`、无 Button、无可读文本）"
+                "⇒ 报出来是为了**不让残余盲区静默失效**。",
+            }
             self.events.append(ev)
             self._write(ev)
 
@@ -817,8 +1017,10 @@ class Sentinel:
         try:
             OUT_DIR.mkdir(parents=True, exist_ok=True)
             p = OUT_DIR / ("%s-%s.json" % (ev["at"].replace(":", ""), ev["hwnd"]))
-            p.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        except Exception:                                       # noqa: BLE001
+            p.write_text(
+                json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+            )
+        except Exception:  # noqa: BLE001
             pass
 
     def _loop(self) -> None:
@@ -846,8 +1048,11 @@ def _child_env() -> dict:
     """
     env = dict(os.environ)
     env["SW_SANDBOX_MODE"] = "enforce"
-    env.setdefault("SW_RUN_ID", __import__("datetime").datetime.now().strftime("%Y%m%d-%H%M%S"))
-    import sw_sandbox as _sb                                          # noqa: PLC0415
+    env.setdefault(
+        "SW_RUN_ID", __import__("datetime").datetime.now().strftime("%Y%m%d-%H%M%S")
+    )
+    import sw_sandbox as _sb  # noqa: PLC0415
+
     env.setdefault("SW_SANDBOX_ROOT", str(_sb.sandbox_root()))
     env.setdefault("SW_OUTPUT_ROOT", str(_sb.output_root()))
     return env
@@ -860,9 +1065,10 @@ def snapshot_sandbox() -> dict:
       ⇒ ★ 应用层拦不住（评审确认过）⇒ ★ **能看见就已经是全部** ✓
     """
     try:
-        import sw_sandbox as _sb                                      # noqa: PLC0415
+        import sw_sandbox as _sb  # noqa: PLC0415
+
         return _sb.snapshot_dir(_sb.sandbox_root())
-    except Exception:                                                  # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return {}
 
 
@@ -874,17 +1080,23 @@ def collect_sandbox_outputs(before: dict | None = None) -> dict:
       ★ 但**能看见它写了什么**，★ 于是产物**有名字、有去处、能被报出来** ✓
     """
     try:
-        import sw_sandbox as _sb                                      # noqa: PLC0415
+        import sw_sandbox as _sb  # noqa: PLC0415
+
         produced = _sb.sweep()
         copied = _sb.collect_outputs(produced, note="由 tools/sw_guard.py 在跑完后收集")
         appeared = _sb.new_since(before or {}, _sb.sandbox_root())
-        return {"copied": copied, "appeared": appeared, "output_root": str(_sb.output_root())}
-    except Exception:                                                  # noqa: BLE001
+        return {
+            "copied": copied,
+            "appeared": appeared,
+            "output_root": str(_sb.output_root()),
+        }
+    except Exception:  # noqa: BLE001
         return {"copied": [], "appeared": [], "output_root": ""}
 
 
-def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
-                        timeout_s: int = 25) -> dict:
+def precheck_before_run(
+    allowed_paths=(), *, allow_untitled: bool = False, timeout_s: int = 25
+) -> dict:
     """★★ **跑探针之前先问会话干不干净** —— 规格 210 · B5-2b。
 
     ★★ 外部评审的设计点原话：「**启动 SolidWorks 之前先问一次、连上之后再问一次**」——
@@ -896,38 +1108,64 @@ def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
       （★ 那时"读不到"本身就是要停下问人的理由，★ 不许当成"干净"）✓
       ★ 唯一的放行例外：★ **根本没有 SLDWORKS 进程** ⇒ 会话必然是空的 ⇒ 放行 ✓
     """
-    import session_verdict as SV                                   # noqa: PLC0415
+    import session_verdict as SV  # noqa: PLC0415
+
     rolls = []
-    for roll, prefer, label in ((1, "title", "启动之前（窗口标题路，不需 COM）"),
-                                (2, "com", "连上之后（COM 路，读实际打开的文档）")):
-        v = SV.session_verdict(allowed_paths=allowed_paths, allow_untitled=allow_untitled,
-                               prefer=prefer, timeout_s=timeout_s)
-        rolls.append({
-            "roll": roll, "label": label, "ok": bool(v.get("ok")),
-            "path_used": v.get("path_used") or "",
-            "why": v.get("why") or "",
-            "foreign": len(v.get("foreign") or []),
-            "unsaved": len(v.get("unsaved") or []),
-            "documents": len(v.get("documents") or []),
-        })
+    for roll, prefer, label in (
+        (1, "title", "启动之前（窗口标题路，不需 COM）"),
+        (2, "com", "连上之后（COM 路，读实际打开的文档）"),
+    ):
+        v = SV.session_verdict(
+            allowed_paths=allowed_paths,
+            allow_untitled=allow_untitled,
+            prefer=prefer,
+            timeout_s=timeout_s,
+        )
+        rolls.append(
+            {
+                "roll": roll,
+                "label": label,
+                "ok": bool(v.get("ok")),
+                "path_used": v.get("path_used") or "",
+                "why": v.get("why") or "",
+                "foreign": len(v.get("foreign") or []),
+                "unsaved": len(v.get("unsaved") or []),
+                "documents": len(v.get("documents") or []),
+            }
+        )
         if not v.get("ok"):
-            return {"ok": False, "refused": True, "rolls": rolls,
-                    "why": "★ 第 %d 次点名（%s）不放行：%s" % (roll, label, v.get("why") or "")}
+            return {
+                "ok": False,
+                "refused": True,
+                "rolls": rolls,
+                "why": "★ 第 %d 次点名（%s）不放行：%s"
+                % (roll, label, v.get("why") or ""),
+            }
     #: ★★★ **两次点名不一致 ⇒ 也拒绝**（★ 真机现场：标题路读到 1 个文档、COM 路读到 0 个
     #:  ⇒
     #:   ★ 当时**放行了** ✗）—— ★ 两次说法不同，说明**其中一次瞎了**；★ 我们不知道是哪次 ✓
     #:   ⇒ ★ 保守做法：★ **不放行**，把两次读数都交回给人看 ✓
     counts = [r["documents"] for r in rolls]
     if len(set(counts)) > 1:
-        return {"ok": False, "refused": True, "rolls": rolls,
-                "why": "★★ 两次点名**互相矛盾**（文档数 %s）⇒ 至少一次是瞎的 ⇒ 拒绝放行 ✓"
-                       % "、".join(str(c) for c in counts)}
+        return {
+            "ok": False,
+            "refused": True,
+            "rolls": rolls,
+            "why": "★★ 两次点名**互相矛盾**（文档数 %s）⇒ 至少一次是瞎的 ⇒ 拒绝放行 ✓"
+            % "、".join(str(c) for c in counts),
+        }
     return {"ok": True, "refused": False, "rolls": rolls, "why": ""}
 
 
-def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = None,
-                auto_dismiss: bool = True, precheck: bool = False,
-                allowed_paths=()) -> dict:
+def run_guarded(
+    argv: list[str],
+    *,
+    timeout: float = 120.0,
+    pid: int | None = None,
+    auto_dismiss: bool = True,
+    precheck: bool = False,
+    allowed_paths=(),
+) -> dict:
     """★ **在护栏里跑一个子进程命令** ⇒ 回 `{ok, returncode, timed_out, seconds, aborted_for_llm, dialogs}`。
 
     ★★ 四条保证（★ 前三条对"卡住"的三种失败，★ 第四条是 2026-10-02 轮 380 **用户点破**的）：
@@ -950,26 +1188,50 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
     if precheck:
         verdict = precheck_before_run(allowed_paths)
         if verdict["refused"]:
-            return {"ok": False, "returncode": None, "timed_out": False, "seconds": 0.0,
-                    "aborted_for_llm": False, "dialogs": [], "stdout_tail": "",
-                    "refused_by_precheck": True, "precheck": verdict}
-    sentinel = Sentinel(pid if pid is not None else sw_pid(), auto_dismiss=auto_dismiss).start()
+            return {
+                "ok": False,
+                "returncode": None,
+                "timed_out": False,
+                "seconds": 0.0,
+                "aborted_for_llm": False,
+                "dialogs": [],
+                "stdout_tail": "",
+                "refused_by_precheck": True,
+                "precheck": verdict,
+            }
+    sentinel = Sentinel(
+        pid if pid is not None else sw_pid(), auto_dismiss=auto_dismiss
+    ).start()
     rc: int | None = None
     out = err = ""
     timed = False
     aborted_for_llm = False
     try:
-        proc = subprocess.run(argv, check=False, capture_output=True, text=True,
-                              encoding="utf-8", errors="replace", timeout=timeout,
-                              cwd=str(REPO_ROOT), stdin=subprocess.DEVNULL,
-                              env=_child_env())
+        proc = subprocess.run(
+            argv,
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+            cwd=str(REPO_ROOT),
+            stdin=subprocess.DEVNULL,
+            env=_child_env(),
+        )
         rc, out, err = proc.returncode, proc.stdout or "", proc.stderr or ""
     except subprocess.TimeoutExpired as exc:
         rc, timed = None, True
-        out = (exc.stdout or b"").decode("utf-8", "replace") if isinstance(exc.stdout, bytes) \
+        out = (
+            (exc.stdout or b"").decode("utf-8", "replace")
+            if isinstance(exc.stdout, bytes)
             else (exc.stdout or "")
-        err = (exc.stderr or b"").decode("utf-8", "replace") if isinstance(exc.stderr, bytes) \
+        )
+        err = (
+            (exc.stderr or b"").decode("utf-8", "replace")
+            if isinstance(exc.stderr, bytes)
             else (exc.stderr or "")
+        )
     finally:
         time.sleep(0.4)
         sentinel.stop()
@@ -980,9 +1242,13 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
             aborted_for_llm = True
             try:
                 import subprocess as _sp
-                _sp.run(["taskkill", "/F", "/T", "/PID", str(getattr(proc, "pid", 0))],
-                        capture_output=True, timeout=15)
-            except Exception:                                   # noqa: BLE001
+
+                _sp.run(
+                    ["taskkill", "/F", "/T", "/PID", str(getattr(proc, "pid", 0))],
+                    capture_output=True,
+                    timeout=15,
+                )
+            except Exception:  # noqa: BLE001
                 pass
     #: ★★★★★ 2026-10-03（轮 466）**第 ⑤ 条：跑完必须回连一次 SolidWorks** ——
     #: ★★ 起因是**用户亲眼看到三个「SOLIDWORKS Design 意外关闭」窗口**而我的护栏全报 `ok
@@ -999,24 +1265,43 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
     if rc == 0 and not timed:
         try:
             import subprocess as _sp
+
             probe = _sp.run(
-                [sys.executable, "-c",
-                 "import sys;sys.path.insert(0, r'%s');import sw_connect;"
-                 "sw,doc=sw_connect.connect_solidworks(wait_seconds=15);"
-                 "print(repr(str(getattr(sw,'RevisionNumber','?'))))" % (str(REPO_ROOT / "scripts"))],
-                capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=60, stdin=_sp.DEVNULL)
-            sw_alive = (probe.returncode == 0)
+                [
+                    sys.executable,
+                    "-c",
+                    "import sys;sys.path.insert(0, r'%s');import sw_connect;"
+                    "sw,doc=sw_connect.connect_solidworks(wait_seconds=15);"
+                    "print(repr(str(getattr(sw,'RevisionNumber','?'))))"
+                    % (str(REPO_ROOT / "scripts")),
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=60,
+                stdin=_sp.DEVNULL,
+            )
+            sw_alive = probe.returncode == 0
             if not sw_alive:
-                sw_alive_error = ((probe.stderr or "") + (probe.stdout or "")).strip()[-400:]
-        except Exception as exc:                                # noqa: BLE001
+                sw_alive_error = ((probe.stderr or "") + (probe.stdout or "")).strip()[
+                    -400:
+                ]
+        except Exception as exc:  # noqa: BLE001
             sw_alive = False
             sw_alive_error = "%s: %s" % (type(exc).__name__, str(exc)[:200])
-    return {"ok": (rc == 0 and not timed and not aborted_for_llm), "returncode": rc,
-            "timed_out": timed, "aborted_for_llm": aborted_for_llm,
-            "sw_alive": sw_alive, "sw_alive_error": sw_alive_error,
-            "seconds": round(time.time() - t0, 2), "dialogs": sentinel.events,
-            "stdout_tail": out[-4000:], "stderr_tail": err[-2000:]}
+    return {
+        "ok": (rc == 0 and not timed and not aborted_for_llm),
+        "returncode": rc,
+        "timed_out": timed,
+        "aborted_for_llm": aborted_for_llm,
+        "sw_alive": sw_alive,
+        "sw_alive_error": sw_alive_error,
+        "seconds": round(time.time() - t0, 2),
+        "dialogs": sentinel.events,
+        "stdout_tail": out[-4000:],
+        "stderr_tail": err[-2000:],
+    }
 
 
 def main() -> int:
@@ -1026,16 +1311,33 @@ def main() -> int:
     ap.add_argument("--report", action="store_true", help="打印已记录的事件")
     #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-prechec
     #: k` ✓
-    ap.add_argument("--skip-doc-cleanup", action="store_true",
-                    help="★ 跑完不关我方文档（★ 默认会关；★ 有非我方文档时本来就不碰）")
-    ap.add_argument("--skip-sandbox-collect", action="store_true",
-                    help="★ 跑完不把沙盒产物拷到输出根目录（★ 默认会拷）")
-    ap.add_argument("--skip-precheck", action="store_true",
-                    help="★ 跳过会话预检（★ 默认是开的 —— 有非我方文档就拒绝开始）")
-    ap.add_argument("--allow-path", action="append", default=[],
-                    help="★ 明确声明「这是我方打开的文档路径」（可重复）")
-    ap.add_argument("--timeout", type=float, default=180.0,
-                    help="护栏执行命令时的硬超时（秒）——★ 保证不会「等到天荒地老」")
+    ap.add_argument(
+        "--skip-doc-cleanup",
+        action="store_true",
+        help="★ 跑完不关我方文档（★ 默认会关；★ 有非我方文档时本来就不碰）",
+    )
+    ap.add_argument(
+        "--skip-sandbox-collect",
+        action="store_true",
+        help="★ 跑完不把沙盒产物拷到输出根目录（★ 默认会拷）",
+    )
+    ap.add_argument(
+        "--skip-precheck",
+        action="store_true",
+        help="★ 跳过会话预检（★ 默认是开的 —— 有非我方文档就拒绝开始）",
+    )
+    ap.add_argument(
+        "--allow-path",
+        action="append",
+        default=[],
+        help="★ 明确声明「这是我方打开的文档路径」（可重复）",
+    )
+    ap.add_argument(
+        "--timeout",
+        type=float,
+        default=180.0,
+        help="护栏执行命令时的硬超时（秒）——★ 保证不会「等到天荒地老」",
+    )
     ap.add_argument("command", nargs="*", help="要护栏执行命令（--command 之后）")
     args = ap.parse_args()
     if args.report:
@@ -1043,8 +1345,12 @@ def main() -> int:
             print("  （没有事件记录）")
             return 0
         for p in sorted(OUT_DIR.glob("*.json"))[-12:]:
-            print("  " + json.dumps(json.loads(p.read_text(encoding="utf-8")),
-                                    ensure_ascii=False)[:200])
+            print(
+                "  "
+                + json.dumps(
+                    json.loads(p.read_text(encoding="utf-8")), ensure_ascii=False
+                )[:200]
+            )
         return 0
     if args.scan or args.clear:
         pid = sw_pid()
@@ -1058,7 +1364,9 @@ def main() -> int:
                 break
             print("  [轮%d] SLDWORKS pid=%s · 弹窗 **%d** 个" % (rnd, pid, len(found)))
             for d in found:
-                print("    hwnd=%s hung=%s title=%r" % (d["hwnd"], d["hung"], d["title"]))
+                print(
+                    "    hwnd=%s hung=%s title=%r" % (d["hwnd"], d["hung"], d["title"])
+                )
                 for c in d["controls"]:
                     print("       %-12s %s" % (c["class"], c["text"][:120]))
                 if not args.clear:
@@ -1074,8 +1382,10 @@ def main() -> int:
                     continue
                 second = dismiss_via_input(d["hwnd"])
                 time.sleep(0.5)
-                print("       ⇒ ② 真实输入事件: %s · 窗口已消失=%s"
-                      % (second, not _u.IsWindow(d["hwnd"])))
+                print(
+                    "       ⇒ ② 真实输入事件: %s · 窗口已消失=%s"
+                    % (second, not _u.IsWindow(d["hwnd"]))
+                )
         return 0
     if args.command:
         #: ★★★ 2026-10-04（接手轮）**修一处真缺陷**：这里原来写 `run_guarded(args.comman
@@ -1093,9 +1403,17 @@ def main() -> int:
         if not args.skip_precheck:
             v = precheck_before_run(args.allow_path)
             for roll in v["rolls"]:
-                print("  [预检 第%d次] %s ⇒ %s · 读到文档 %d 个 · 非我方 %d 个 · 未保存 %d 个"
-                      % (roll["roll"], roll["label"], "放行" if roll["ok"] else "★ 不放行",
-                         roll["documents"], roll["foreign"], roll["unsaved"]))
+                print(
+                    "  [预检 第%d次] %s ⇒ %s · 读到文档 %d 个 · 非我方 %d 个 · 未保存 %d 个"
+                    % (
+                        roll["roll"],
+                        roll["label"],
+                        "放行" if roll["ok"] else "★ 不放行",
+                        roll["documents"],
+                        roll["foreign"],
+                        roll["unsaved"],
+                    )
+                )
             if v["refused"]:
                 print("  ★★ 预检拒绝开始：%s" % v["why"])
                 print("  ★ 去留由人定；★ 确认可以继续时才用 `--skip-precheck` ✓")
@@ -1105,8 +1423,12 @@ def main() -> int:
         #: ★ 我第一版把它写进了 `run_guarded`、却在 `main` 里用 ⇒ **每次跑完都 NameError
         #:  崩掉** ✗
         sandbox_before = snapshot_sandbox()
-        r = run_guarded(args.command, timeout=args.timeout,
-                        precheck=not args.skip_precheck, allowed_paths=args.allow_path)
+        r = run_guarded(
+            args.command,
+            timeout=args.timeout,
+            precheck=not args.skip_precheck,
+            allowed_paths=args.allow_path,
+        )
         #: ★ 顺带把**子进程的 stdout** 也带回来（★ 原来只回一个 ≤1200 字符的 JSON 且
         #:   **明确剔掉了 `stdout_tail`**）⇒ ★ 长跑探针的**过程读数**（每一步的 print）
         #: 就全丢了 —— ★ 而"哪一步走完了"正是排查长跑失败时最需要的东西（★ 事实 293 同族
@@ -1119,23 +1441,34 @@ def main() -> int:
             print(tail[-4000:])
         #: ★★ **copy-out**（规格 210 · B5-3）：跑完把沙盒里的产物**拷到配置的输出根目录*
         #: * ✓
-        #: ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论** 
+        #: ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论**
         #: ✓
         if not args.skip_sandbox_collect:
             got = collect_sandbox_outputs(sandbox_before)
             if got["copied"]:
-                print("── 沙盒产物已收集 %d 个 ⇒ %s ──"
-                      % (len(got["copied"]), os.path.dirname(got["copied"][0]["copied_to"])))
+                print(
+                    "── 沙盒产物已收集 %d 个 ⇒ %s ──"
+                    % (
+                        len(got["copied"]),
+                        os.path.dirname(got["copied"][0]["copied_to"]),
+                    )
+                )
             if got["appeared"]:
                 #: ★★ 这就是「SolidWorks 自己写出来的那些」—— ★ 拦不住，但**看得见** ✓
-                print("── ★ 跑完多出 %d 个文件（★ 其中可能有 SolidWorks 自己写的产物）──"
-                      % len(got["appeared"]))
+                print(
+                    "── ★ 跑完多出 %d 个文件（★ 其中可能有 SolidWorks 自己写的产物）──"
+                    % len(got["appeared"])
+                )
                 for _p in got["appeared"][:8]:
                     print("     " + _p)
             try:
                 import sw_sandbox as _sb
-                print("   （沙盒：%s · 输出根：%s）" % (_sb.sandbox_root(), _sb.output_root()))
-            except Exception:                                          # noqa: BLE001
+
+                print(
+                    "   （沙盒：%s · 输出根：%s）"
+                    % (_sb.sandbox_root(), _sb.output_root())
+                )
+            except Exception:  # noqa: BLE001
                 pass
             #: ★★ **收尾**（规格 210 · B5）：★ 关掉**我方**打开的文档 ——
             #:   ★ 不这么做，下一次预检就会把**上一次留下的我方件**判成"非我方" ⇒
@@ -1144,6 +1477,7 @@ def main() -> int:
             if not args.skip_doc_cleanup:
                 try:
                     import close_our_docs as _cd
+
                     #: ★★ 变量名**不能叫 `r`** —— ★ 真机踩过：★ 上面 `r` 是**探针结果**
                     #: ，
                     #:   ★ 我复用它 ⇒ **覆盖掉探针结果** ⇒ 结尾 `r["ok"]` 抛 `KeyError` ✗
@@ -1153,8 +1487,10 @@ def main() -> int:
                         print("── 收尾：关掉我方文档 %s ──" % "、".join(_cl["closed"]))
                     if _cl["refused"]:
                         print("── 收尾：**没动任何文档**（%s）──" % _cl["why"])
-                except Exception as exc:                                # noqa: BLE001
-                    print("── 收尾关文档失败（★ 不影响结论）：%s ──" % type(exc).__name__)
+                except Exception as exc:  # noqa: BLE001
+                    print(
+                        "── 收尾关文档失败（★ 不影响结论）：%s ──" % type(exc).__name__
+                    )
         return 0 if r["ok"] else 1
     ap.print_help()
     return 0

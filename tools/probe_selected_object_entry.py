@@ -45,15 +45,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "selected-object-entry-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "selected-object-entry-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"entries": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -71,7 +80,9 @@ def main() -> int:
         c2 = sim.select_face_at(doc, 0.0, 0.0, 0.02, append=True)
         sm = get_com_member(doc, "SelectionManager")
         ev["count2"] = [c1, c2]
-        ev["count2_readback"] = repr(safe_get_com_member(sm, "GetSelectedObjectCount2", -1))
+        ev["count2_readback"] = repr(
+            safe_get_com_member(sm, "GetSelectedObjectCount2", -1)
+        )
 
         def try_entry(label, member, kind):
             rows = []
@@ -79,27 +90,45 @@ def main() -> int:
                 try:
                     #: ★ 参数顺序**按官方签名**：`GetSelectedObject6(Index, Mark)` ⇒ `(i
                     #: , mark)`
-                    argmap = {"5": (int(i),), "4": (int(i),),
-                              "6m-1": (int(i), -1), "6m0": (int(i), 0)}
+                    argmap = {
+                        "5": (int(i),),
+                        "4": (int(i),),
+                        "6m-1": (int(i), -1),
+                        "6m0": (int(i), 0),
+                    }
                     obj = get_com_member(sm, member, *argmap[kind])
                     rows.append({"i": i, "got": obj is not None})
-                except Exception as exc:                       # noqa: BLE001
-                    rows.append({"i": i, "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])})
+                except Exception as exc:  # noqa: BLE001
+                    rows.append(
+                        {"i": i, "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
+                    )
             ev["entries"][label] = rows
             return sum(1 for r in rows if r.get("got"))
 
         got = {}
-        got["GetSelectedObject5(i)"] = try_entry("GetSelectedObject5(i)", "GetSelectedObject5", "5")
-        got["GetSelectedObject4(i)"] = try_entry("GetSelectedObject4(i)", "GetSelectedObject4", "4")
-        got["GetSelectedObject6(i,-1)"] = try_entry("GetSelectedObject6(i,-1)", "GetSelectedObject6", "6m-1")
-        got["GetSelectedObject6(i,0)"] = try_entry("GetSelectedObject6(i,0)", "GetSelectedObject6", "6m0")
+        got["GetSelectedObject5(i)"] = try_entry(
+            "GetSelectedObject5(i)", "GetSelectedObject5", "5"
+        )
+        got["GetSelectedObject4(i)"] = try_entry(
+            "GetSelectedObject4(i)", "GetSelectedObject4", "4"
+        )
+        got["GetSelectedObject6(i,-1)"] = try_entry(
+            "GetSelectedObject6(i,-1)", "GetSelectedObject6", "6m-1"
+        )
+        got["GetSelectedObject6(i,0)"] = try_entry(
+            "GetSelectedObject6(i,0)", "GetSelectedObject6", "6m0"
+        )
         ev["got_counts"] = got
         winners = [k for k, v in got.items() if v >= 2]
         ev["entries_that_see_both"] = winners
         ev["verdict"] = "pass" if winners else "partial"
-        ev["note"] = ("★ 找一个**能按位置取到两个对象**的入口（★ 与 `Count2` 的 2 一致）—— "
-                      "★ 四个候选都是**官方存在的方法**，★ 逐个试，★ 不猜参数。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 找一个**能按位置取到两个对象**的入口（★ 与 `Count2` 的 2 一致）—— "
+            "★ 四个候选都是**官方存在的方法**，★ 逐个试，★ 不猜参数。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         for k, v in got.items():
             print("  %-26s \u53d6\u5230 %d/3" % (k, v))
         print("  \u80fd\u770b\u5230\u4e24\u4e2a\u7684\u5165\u53e3\uff1a%s" % winners)
@@ -107,14 +136,14 @@ def main() -> int:
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

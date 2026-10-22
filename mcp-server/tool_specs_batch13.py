@@ -46,6 +46,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -60,57 +61,87 @@ SPECS_BATCH13 = [
     ToolSpec(
         name="solidworks_simulation_generate_report",
         title="Generate Simulation Study Report",
-        module="sw_simulation_study", function="generate_report",
+        module="sw_simulation_study",
+        function="generate_report",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Generate a study report to a file. ⚠ `template` valid values were NOT found in the "
-            "local sources (see the batch header); pass the template name your SolidWorks "
-            "installation provides.",
+        "local sources (see the batch header); pass the template name your SolidWorks "
+        "installation provides.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("template", str,
-                  description="Report template name. ⚠ Valid values not found in local sources."),
-            Param("path", str,
-                  description="Output file path for the generated report."),
-            Param("append", bool, default=False,
-                  description="Append to an existing report instead of replacing it."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "template",
+                str,
+                description="Report template name. ⚠ Valid values not found in local sources.",
+            ),
+            Param(
+                "path", str, description="Output file path for the generated report."
+            ),
+            Param(
+                "append",
+                bool,
+                default=False,
+                description="Append to an existing report instead of replacing it.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_simulation_create_mesh_for_control",
         title="Create Simulation Mesh For Mesh Control",
-        module="sw_simulation_study", function="create_mesh_for_control",
+        module="sw_simulation_study",
+        function="create_mesh_for_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Mesh the study using a named mesh control.",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("control_name", str,
-                  description="Name of the mesh control to mesh with."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "control_name",
+                str,
+                description="Name of the mesh control to mesh with.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_simulation_default_element_size_and_tolerance",
         title="Get Simulation Default Element Size And Tolerance",
-        module="sw_simulation", function="default_element_size_and_tolerance",
+        module="sw_simulation",
+        function="default_element_size_and_tolerance",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
         doc="Get the suggested element size and tolerance (millimetre-scale when units=-1).",
         params=[
-            Param("study_name", str, default="",
-                  description="Target study; omit to use the active study. "
-                              "Consumed by the resolver, NOT passed to the function."),
-            Param("units", int, default=-1,
-                  description="swsUnit_e. ⚠ TWO LOCAL SOURCES DISAGREE: the existing "
-                              "`solidworks_topology_run` tool says \"0=SI, 1=English, 2=Metric; "
-                              "-1 is rejected by the API\", while this function's own docstring "
-                              "records a REAL-MACHINE result that `units=-1` returns "
-                              "millimetre-scale values. This tool keeps the -1 default (per the "
-                              "real-machine note) and does not merge the two statements."),
+            Param(
+                "study_name",
+                str,
+                default="",
+                description="Target study; omit to use the active study. "
+                "Consumed by the resolver, NOT passed to the function.",
+            ),
+            Param(
+                "units",
+                int,
+                default=-1,
+                description="swsUnit_e. ⚠ TWO LOCAL SOURCES DISAGREE: the existing "
+                '`solidworks_topology_run` tool says "0=SI, 1=English, 2=Metric; '
+                "-1 is rejected by the API\", while this function's own docstring "
+                "records a REAL-MACHINE result that `units=-1` returns "
+                "millimetre-scale values. This tool keeps the -1 default (per the "
+                "real-machine note) and does not merge the two statements.",
+            ),
         ],
     ),
 ]

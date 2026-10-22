@@ -42,6 +42,7 @@ swAddinsDisabled=4 · swLoadConflict=5 · swRegistrationError=6 · **swLicenseEr
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -54,15 +55,25 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-loadaddin-by-path.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "simulation-loadaddin-by-path.json"
+)
 #: 实测自注册表（只读）：`SldWorks.Simulation` 的 InprocServer32
 DLL = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\Simulation\cosworks.dll")
 CLSID = "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}"
 #: 官方 `swLoadAddinError_e` 的**全部 9 个成员**（读 `C:\swapi\enums\swLoadAddinError_e.
 #: md`）
-CODES = {0: "swSuccess", 1: "swAddinNotLoaded", 2: "swAddinAlreadyLoaded", 3: "swFileNotFound",
-         4: "swAddinsDisabled", 5: "swLoadConflict", 6: "swRegistrationError",
-         7: "swLicenseError", -1: "swUnknownError"}
+CODES = {
+    0: "swSuccess",
+    1: "swAddinNotLoaded",
+    2: "swAddinAlreadyLoaded",
+    3: "swFileNotFound",
+    4: "swAddinsDisabled",
+    5: "swLoadConflict",
+    6: "swRegistrationError",
+    7: "swLicenseError",
+    -1: "swUnknownError",
+}
 
 
 def main() -> int:
@@ -71,15 +82,18 @@ def main() -> int:
         print("  ✗ 路径不存在 ⇒ 判据失效（先查路径）")
         return 2
     import sw_connect
-    sw = sw_connect.connect_solidworks(wait_seconds=10)[0]      #: 复用已有实例
+
+    sw = sw_connect.connect_solidworks(wait_seconds=10)[0]  #: 复用已有实例
     try:
         sw.CommandInProgress = True
         try:
             rc = sw_connect.safe_get_com_member(sw, "LoadAddIn", str(DLL))
             ev["load_addin_rc"] = rc
-            print("  `LoadAddIn(<完整路径>)` ⇒ **%s = %s**"
-                  % (rc, CODES.get(rc, "（不在枚举里）")))
-        except Exception as exc:      # noqa: BLE001
+            print(
+                "  `LoadAddIn(<完整路径>)` ⇒ **%s = %s**"
+                % (rc, CODES.get(rc, "（不在枚举里）"))
+            )
+        except Exception as exc:  # noqa: BLE001
             ev["load_addin_exc"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
             print("  `LoadAddIn(<路径>)` ⇒ 抛异常 %s" % ev["load_addin_exc"])
         #: 加载后再取（两种形态都试，纯读）
@@ -87,13 +101,13 @@ def main() -> int:
             try:
                 got = sw_connect.safe_get_com_member(sw, "GetAddInObject", key)
                 ev[label] = None if got is None else type(got).__name__
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev[label] = "EXC:%s" % type(exc).__name__
             print("  加载后 GetAddInObject(%s) ⇒ **%s**" % (label, ev[label]))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     found, dismissed, scanned = sw_connect.settle_residual_dialogs(settle_seconds=1.0)
@@ -113,7 +127,9 @@ def main() -> int:
         ev["conclusion"] = "见 rc / 异常（不猜）"
     print("  ⇒ 结论：%s" % ev["conclusion"])
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

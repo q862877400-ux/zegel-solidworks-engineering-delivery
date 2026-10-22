@@ -20,7 +20,10 @@ from typing import Any
 
 from cad_doctor import run_doctor
 
-SENSITIVE_KEYS = re.compile(r"prompt|api.?key|token|secret|password|credential|content|cwd|projectpath|sourcepath|endpoint", re.I)
+SENSITIVE_KEYS = re.compile(
+    r"prompt|api.?key|token|secret|password|credential|content|cwd|projectpath|sourcepath|endpoint",
+    re.I,
+)
 
 
 def _redact(value: Any, key: str = "") -> Any:
@@ -49,17 +52,26 @@ def create_diagnostic_bundle(output: Path, *, events: Any = None) -> Path:
         "createdAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "doctor": _redact(run_doctor(probe_cad=False)),
         "events": _redact(events or []),
-        "privacy": {"telemetry": "off", "redacted": ["prompt", "API key", "token", "完整私人路径"]},
+        "privacy": {
+            "telemetry": "off",
+            "redacted": ["prompt", "API key", "token", "完整私人路径"],
+        },
     }
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("diagnostic.json", json.dumps(payload, ensure_ascii=False, indent=2))
+        archive.writestr(
+            "diagnostic.json", json.dumps(payload, ensure_ascii=False, indent=2)
+        )
     return output
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="导出脱敏 CAD Studio 诊断包")
-    parser.add_argument("--output", type=Path, default=Path.cwd() / "cad-studio-diagnostics.zip")
-    parser.add_argument("--events", type=Path, help="可选的本地事件 JSON，不会包含敏感字段")
+    parser.add_argument(
+        "--output", type=Path, default=Path.cwd() / "cad-studio-diagnostics.zip"
+    )
+    parser.add_argument(
+        "--events", type=Path, help="可选的本地事件 JSON，不会包含敏感字段"
+    )
     args = parser.parse_args(argv)
     events = None
     if args.events and args.events.is_file():

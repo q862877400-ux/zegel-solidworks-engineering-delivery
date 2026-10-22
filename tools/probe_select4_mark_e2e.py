@@ -4,7 +4,7 @@
 # 文件:   tools/probe_select4_mark_e2e.py
 # 定位:   ★★★ bunny 读官方文档指出：官方 `IEntity/Select2.md` 逐字「**Obsolete. Supers
 #           eded by
-# [[IEntity::Select4]].**」，而 `Select4(bool Append, **SelectData** Data)` 的第 2 参是 
+# [[IEntity::Select4]].**」，而 `Select4(bool Append, **SelectData** Data)` 的第 2 参是
 # `ISelectData`
 #   —— ★★ 而仓内 `_select_com_object` 原先给 `Select4` 传的是**空 VARIANT**
 #   ⇒ **`Select4` 分支的 `Mark` 永远是 0**（靠 `Select2` 排前面才没暴露）。
@@ -29,8 +29,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C                                       # noqa: E402
-from scripts import sw_part as P                                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "select4-mark-e2e-evidence.json"
 
@@ -47,7 +47,16 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        _g(_g(doc, "SketchManager"), "CreateCornerRectangle", -0.04, -0.03, 0.0, 0.04, 0.03, 0.0)
+        _g(
+            _g(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.04,
+            -0.03,
+            0.0,
+            0.04,
+            0.03,
+            0.0,
+        )
         P.end_sketch(doc)
         names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
@@ -57,16 +66,20 @@ def main() -> int:
         R["face_count"] = len(faces)
 
         def cnt(m):
-            return int(_g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0)
+            return int(
+                _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0
+            )
 
         #: ★ 三种调用形态各试 mark=1 与 mark=4
-        for label, kwargs in (("★新路径（带 model ⇒ Select4 + ISelectData）", {"model": doc}),
-                              ("旧路径（不带 model ⇒ 先 Select2）", {})):
+        for label, kwargs in (
+            ("★新路径（带 model ⇒ Select4 + ISelectData）", {"model": doc}),
+            ("旧路径（不带 model ⇒ 先 Select2）", {}),
+        ):
             for mark in (1, 4):
                 row: dict = {"how": label, "mark": mark}
                 try:
                     _g(doc, "ClearSelection2", True)
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 if not faces:
                     row["skip"] = "★ 没有面"
@@ -78,20 +91,24 @@ def main() -> int:
                 row["readback_all"] = cnt(-1)
                 row["mark_landed"] = row["readback_mark"] >= 1
                 R["cases"].append(row)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-    R["new_path_ok"] = all(c.get("mark_landed") for c in R["cases"]
-                           if c.get("how", "").startswith("★"))
-    R["old_path_ok"] = all(c.get("mark_landed") for c in R["cases"]
-                           if not c.get("how", "").startswith("★"))
+    R["new_path_ok"] = all(
+        c.get("mark_landed") for c in R["cases"] if c.get("how", "").startswith("★")
+    )
+    R["old_path_ok"] = all(
+        c.get("mark_landed") for c in R["cases"] if not c.get("how", "").startswith("★")
+    )
     R["seconds"] = round(time.time() - started, 2)
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("wrote", OUT)
     return 0
 

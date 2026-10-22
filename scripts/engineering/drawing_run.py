@@ -1,4 +1,5 @@
 """★ 阶段 2 · 图纸义务的真机编排（规格 317 的 D4 真机链）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -7,9 +8,9 @@
 #           （2026-10-12 第 1 轮）D4/D5 只做了机制与测试，**没跑真机图纸** ⇒ 本模块补那
 #           一段。
 # 官方依据: ① `subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json
-#           `   （★ DrawingSpec v1 的 `required` 九项：schemaVersion / sourceModel /    
-#           documentType / standard / projection / paperSize / modelSizeMm /    views / 
-#           outputs）② 工具真源 `solidworks_generate_drawing`（`mcp-server/server.py`） 
+#           `   （★ DrawingSpec v1 的 `required` 九项：schemaVersion / sourceModel /
+#           documentType / standard / projection / paperSize / modelSizeMm /    views /
+#           outputs）② 工具真源 `solidworks_generate_drawing`（`mcp-server/server.py`）
 #             —— 它**一条链**出「工程图 + PDF + 预览 + 机器审视报告」③ 本仓**事实 71**（
 #           `GetPartBox` 回毫米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -42,11 +43,16 @@ def gb_template_path() -> pathlib.Path:
     return pathlib.Path(_GB_TEMPLATES[0])
 
 
-def build_drawing_spec(*, source_model: str | pathlib.Path, size_mm: list,
-                       hole_dia_mm: float, hole_count: int,
-                       thickness_mm: float,
-                       required_dims: list | None = None,
-                       notes: list | None = None) -> dict:
+def build_drawing_spec(
+    *,
+    source_model: str | pathlib.Path,
+    size_mm: list,
+    hole_dia_mm: float,
+    hole_count: int,
+    thickness_mm: float,
+    required_dims: list | None = None,
+    notes: list | None = None,
+) -> dict:
     """★ 造一份 **DrawingSpec v1**（★ 按官方 schema 的九项必需字段）。
 
     ★★ 为什么必需字段一个都不能少：`solidworks_generate_drawing` 第一步就是
@@ -127,8 +133,14 @@ def write_spec(spec: dict, path: str | pathlib.Path) -> pathlib.Path:
 def validate_spec(spec: dict) -> dict:
     """★ 用**官方校验器**先验一遍（★ 别等真机报 blocked）。"""
     import importlib.util
-    p = (ROOT / "subskills" / "solidworks-engineering-drawing"
-         / "scripts" / "drawing_spec.py")
+
+    p = (
+        ROOT
+        / "subskills"
+        / "solidworks-engineering-drawing"
+        / "scripts"
+        / "drawing_spec.py"
+    )
     s = importlib.util.spec_from_file_location("_dspec", p)
     m = importlib.util.module_from_spec(s)
     s.loader.exec_module(m)

@@ -1,4 +1,5 @@
 """★ Q8 · 持久化问题对象 + 可信人工确认 + 补答版本闸门（规格 326 的 S1~S5）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -6,7 +7,7 @@
 # 定位:   规格 `specs/326-question-persistence-and-boundaries` 的 S1（12 字段）/S2（落
 #           盘读回）/ S3（`source=human` 必须可核）/ S4（补答拒旧版本）/S5（等待时释放执
 #           行锁）。★★ 实测（2026-10-12）起点：**没有 `question_id` / `requirement_revis
-#           ion` /`answer_source` / `allowed_default_ref`，**没有问题落盘**；★ 而「LLM 
+#           ion` /`answer_source` / `allowed_default_ref`，**没有问题落盘**；★ 而「LLM
 #           自报 source=human 不算人工确认」与「释放执行锁」**有表述无判据**。
 # 官方依据: `output/PROJECT_STATUS_REVIEW_CONTINUATION.md` Q8（L163-174）逐字：L165 逐字
 #           给的 12 字段：「`question_id / run_id / requirement_revision /  field / valu
@@ -34,9 +35,19 @@ RUNS = ROOT / "output" / "runs"
 #     unit / reason / blocking / allowed_default_ref / answer_source / status`」
 #:   ⚠ 实测（2026-10-12）：我在规格里写成「12 字段」—— ★ **数错了**。
 #:     ★ 逐字切分 `/` 得 **11 个** ⇒ ★ 以**原文**为准（★ 规格已同步更正）。
-QUESTION_FIELDS = ("question_id", "run_id", "requirement_revision", "field",
-                   "value_schema", "unit", "reason", "blocking",
-                   "allowed_default_ref", "answer_source", "status")
+QUESTION_FIELDS = (
+    "question_id",
+    "run_id",
+    "requirement_revision",
+    "field",
+    "value_schema",
+    "unit",
+    "reason",
+    "blocking",
+    "allowed_default_ref",
+    "answer_source",
+    "status",
+)
 
 #: ★ 状态（★ 封闭）
 OPEN = "open"
@@ -62,8 +73,14 @@ TRUSTED_CHANNELS = ("local_confirm_ui", "owner_typed", "signed_approval")
 class QuestionError(Exception):
     """★ 问题层失败（★ 带封闭码）。"""
 
-    CODES = ("missing-field", "bad-status", "bad-source", "untrusted-human",
-             "stale-revision", "no-question-id")
+    CODES = (
+        "missing-field",
+        "bad-status",
+        "bad-source",
+        "untrusted-human",
+        "stale-revision",
+        "no-question-id",
+    )
 
     def __init__(self, code: str, detail: str = "") -> None:
         assert code in self.CODES, "★ 非法问题拒绝码：%r" % code
@@ -75,6 +92,7 @@ class QuestionError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 # 一、问题对象（★ S1 —— ★ Q8 L165 的 12 字段）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class Question:
@@ -120,7 +138,7 @@ class Question:
         out = []
         for f in QUESTION_FIELDS:
             if f == "allowed_default_ref":
-                continue          #: ★ 可选（★ 只有"可按默认"的问题才需要）
+                continue  #: ★ 可选（★ 只有"可按默认"的问题才需要）
             v = getattr(self, f, None)
             if v is None or v == "":
                 out.append(f)
@@ -135,21 +153,40 @@ class Question:
 
     def to_dict(self) -> dict:
         return {f: getattr(self, f) for f in QUESTION_FIELDS} | {
-            "answer": self.answer, "channel_proof": self.channel_proof}
+            "answer": self.answer,
+            "channel_proof": self.channel_proof,
+        }
 
 
-def make_question(*, run_id: str, requirement_revision: str, field_name: str,
-                  value_schema: str, unit: str, reason: str,
-                  blocking: bool = True, allowed_default_ref: str = "") -> Question:
+def make_question(
+    *,
+    run_id: str,
+    requirement_revision: str,
+    field_name: str,
+    value_schema: str,
+    unit: str,
+    reason: str,
+    blocking: bool = True,
+    allowed_default_ref: str = "",
+) -> Question:
     """★ 造一个问题（★ `question_id` 由**字段+版本**摘要得到 ⇒ 可复核）。"""
-    import hashlib                                                     # noqa: PLC0415
+    import hashlib  # noqa: PLC0415
+
     blob = "%s|%s|%s|%s" % (run_id, requirement_revision, field_name, unit)
     qid = "q-" + hashlib.sha256(blob.encode("utf-8")).hexdigest()[:12]
-    q = Question(question_id=qid, run_id=run_id,
-                 requirement_revision=requirement_revision, field=field_name,
-                 value_schema=value_schema, unit=unit, reason=reason,
-                 blocking=blocking, allowed_default_ref=allowed_default_ref,
-                 answer_source=SRC_UNKNOWN, status=OPEN)
+    q = Question(
+        question_id=qid,
+        run_id=run_id,
+        requirement_revision=requirement_revision,
+        field=field_name,
+        value_schema=value_schema,
+        unit=unit,
+        reason=reason,
+        blocking=blocking,
+        allowed_default_ref=allowed_default_ref,
+        answer_source=SRC_UNKNOWN,
+        status=OPEN,
+    )
     q.validate()
     return q
 
@@ -157,6 +194,7 @@ def make_question(*, run_id: str, requirement_revision: str, field_name: str,
 #: ══════════════════════════════════════════════════════════════════════
 # 二、落盘（★ S2 —— ★ Q8 L167「先保存问题，再请求输入」）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def questions_path(run_id: str, revision: str) -> pathlib.Path:
     return RUNS / run_id / "questions" / ("%s.json" % revision)
@@ -171,8 +209,10 @@ def save_questions(run_id: str, revision: str, questions: list) -> pathlib.Path:
     p.parent.mkdir(parents=True, exist_ok=True)
     for q in questions:
         q.validate()
-    p.write_text(json.dumps([q.to_dict() for q in questions],
-                            ensure_ascii=False, indent=1), encoding="utf-8")
+    p.write_text(
+        json.dumps([q.to_dict() for q in questions], ensure_ascii=False, indent=1),
+        encoding="utf-8",
+    )
     return p
 
 
@@ -188,8 +228,8 @@ def load_questions(run_id: str, revision: str) -> list:
 # 三、可信人工确认（★ S3 —— ★ Q8 L171 逐字）
 #: ══════════════════════════════════════════════════════════════════════
 
-def answer(q: Question, value, *, source: str,
-           channel_proof: str = "") -> Question:
+
+def answer(q: Question, value, *, source: str, channel_proof: str = "") -> Question:
     """★★ **回答问题**（★ S3 —— ★ Q8 L171 逐字）。
 
     ★★ Q8 L171 逐字：「关键工程批准必须来自**可信的人机确认通道**。
@@ -212,7 +252,8 @@ def answer(q: Question, value, *, source: str,
             "untrusted-human",
             "★★ `source=human` 必须带可信通道证明（%s 之一），而拿到的是 %r"
             " —— ★ Q8 L171 逐字：「LLM 自己提交 `source=human` 不算人工确认」"
-            % (list(TRUSTED_CHANNELS), channel_proof))
+            % (list(TRUSTED_CHANNELS), channel_proof),
+        )
     q.answer = value
     q.answer_source = source
     q.channel_proof = channel_proof
@@ -225,8 +266,8 @@ def resolve_with_default(q: Question, value) -> Question:
     if not q.allowed_default_ref:
         raise QuestionError(
             "bad-source",
-            "★ %s 没有 `allowed_default_ref` ⇒ 不许按默认值填"
-            % q.question_id)
+            "★ %s 没有 `allowed_default_ref` ⇒ 不许按默认值填" % q.question_id,
+        )
     q.answer = value
     q.answer_source = SRC_DEFAULT
     q.status = ANSWERED
@@ -235,9 +276,16 @@ def resolve_with_default(q: Question, value) -> Question:
 
 #: ══ S4 补答拒旧版本（★ Q8 L170 逐字）════════════════════════════════
 
-def apply_answer(q: Question, value, *, source: str,
-                 carried_revision: str, current_revision: str,
-                 channel_proof: str = "") -> Question:
+
+def apply_answer(
+    q: Question,
+    value,
+    *,
+    source: str,
+    carried_revision: str,
+    current_revision: str,
+    channel_proof: str = "",
+) -> Question:
     """★★ **补答的版本闸门**（★ S4 —— ★ Q8 L170 逐字）。
 
     ★★ Q8 L170 逐字：「补答必须**携带问题 ID 与期望版本，拒绝旧版本覆盖**」。
@@ -253,11 +301,13 @@ def apply_answer(q: Question, value, *, source: str,
         raise QuestionError(
             "stale-revision",
             "★★ 补答携带旧版本 %r，而当前是 %r ⇒ **拒绝旧版本覆盖**"
-            % (carried_revision, current_revision))
+            % (carried_revision, current_revision),
+        )
     return answer(q, value, source=source, channel_proof=channel_proof)
 
 
 #: ══ S5 等待时释放执行锁（★ Q8 L167 逐字）════════════════════════════
+
 
 @dataclass
 class WaitingState:
@@ -280,18 +330,24 @@ class WaitingState:
 
     @property
     def released(self) -> bool:
-        return (not self.holds_execution_lock and not self.holds_com
-                and not self.holds_selection)
+        return (
+            not self.holds_execution_lock
+            and not self.holds_com
+            and not self.holds_selection
+        )
 
     def to_dict(self) -> dict:
-        return {"holds_execution_lock": self.holds_execution_lock,
-                "holds_com": self.holds_com,
-                "holds_selection": self.holds_selection,
-                "released": self.released,
-                "★": "★ Q8 L167：「等待用户时释放执行锁，不保持 COM 调用或选区」"}
+        return {
+            "holds_execution_lock": self.holds_execution_lock,
+            "holds_com": self.holds_com,
+            "holds_selection": self.holds_selection,
+            "released": self.released,
+            "★": "★ Q8 L167：「等待用户时释放执行锁，不保持 COM 调用或选区」",
+        }
 
 
 #: ══ 问题 → `WAITING_INPUT`（★ Q8 L170 逐字）══════════════════════════
+
 
 def waiting_payload(run_id: str, revision: str, questions: list) -> dict:
     """★★ **持久化的 `WAITING_INPUT` + 问题对象 + 回答入口**

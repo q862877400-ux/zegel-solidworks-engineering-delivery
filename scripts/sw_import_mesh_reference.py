@@ -139,10 +139,17 @@ def configure_mesh_import_preferences(
     #   在 `import_mesh_reference` 的 `finally` 里还回去（★ 事实 525）
     for preference, value in int_preferences:
         old = _read_preference_quietly(sw, "integer", preference)
-        report["restore"].append({"kind": "integer", "preference": preference, "old": old})
+        report["restore"].append(
+            {"kind": "integer", "preference": preference, "old": old}
+        )
         ok = sw.SetUserPreferenceIntegerValue(preference, value)
         report["operations"].append(
-            {"kind": "integer", "preference": preference, "value": value, "ok": bool(ok)}
+            {
+                "kind": "integer",
+                "preference": preference,
+                "value": value,
+                "ok": bool(ok),
+            }
         )
 
     toggle_preferences = [
@@ -152,7 +159,9 @@ def configure_mesh_import_preferences(
     ]
     for preference, value in toggle_preferences:
         old = _read_preference_quietly(sw, "toggle", preference)
-        report["restore"].append({"kind": "toggle", "preference": preference, "old": old})
+        report["restore"].append(
+            {"kind": "toggle", "preference": preference, "old": old}
+        )
         # SetUserPreferenceToggle 在部分版本返回 void；没有 COM 异常即可继续，最终以导入
         # 和预览为准。
         returned = sw.SetUserPreferenceToggle(preference, value)
@@ -174,7 +183,7 @@ def _read_preference_quietly(sw, kind: str, preference: int):
         from sw_preference_guard import read_preference
 
         return read_preference(sw, kind, preference)
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
 
 
@@ -189,10 +198,19 @@ def restore_mesh_import_preferences(sw, report: dict[str, Any]) -> dict[str, Any
     # preference-guard: 本函数就是"还原那一步"（★ 写回 `configure_mesh_import_preference
     # s` 记下的旧值 —— 事实 525）
     for item in report.get("restore") or []:
-        kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
+        kind, preference, old = (
+            item.get("kind"),
+            item.get("preference"),
+            item.get("old"),
+        )
         if old is None:
-            skipped.append({"kind": kind, "preference": preference,
-                            "why": "★ 旧值读不到 ⇒ 不写回（免得写错）"})
+            skipped.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "why": "★ 旧值读不到 ⇒ 不写回（免得写错）",
+                }
+            )
             continue
         try:
             from sw_preference_guard import read_preference
@@ -202,12 +220,25 @@ def restore_mesh_import_preferences(sw, report: dict[str, Any]) -> dict[str, Any
             else:
                 sw.SetUserPreferenceToggle(preference, bool(old))
             back = read_preference(sw, kind, preference)
-            restored.append({"kind": kind, "preference": preference, "old": old,
-                             "readback": back, "match": bool(back) == bool(old)
-                             if kind == "toggle" else back == old})
-        except Exception as exc:                               # noqa: BLE001
-            errors.append({"kind": kind, "preference": preference,
-                           "error": "%s: %s" % (type(exc).__name__, str(exc)[:120])})
+            restored.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "old": old,
+                    "readback": back,
+                    "match": bool(back) == bool(old)
+                    if kind == "toggle"
+                    else back == old,
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            errors.append(
+                {
+                    "kind": kind,
+                    "preference": preference,
+                    "error": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
+                }
+            )
     report["restored"] = restored
     report["restore_skipped"] = skipped
     report["restore_errors"] = errors
@@ -239,7 +270,9 @@ def import_mesh_reference(
     mesh = Path(mesh_path).expanduser().resolve()
     output = Path(output_sldprt).expanduser().resolve()
     if mesh.suffix.lower() not in {".obj", ".stl"}:
-        raise ValueError("当前脚本只处理 OBJ/STL。GLB/FBX/BLEND 请先用 Blender/trimesh 转换。")
+        raise ValueError(
+            "当前脚本只处理 OBJ/STL。GLB/FBX/BLEND 请先用 Blender/trimesh 转换。"
+        )
     if not mesh.exists():
         raise FileNotFoundError(str(mesh))
 

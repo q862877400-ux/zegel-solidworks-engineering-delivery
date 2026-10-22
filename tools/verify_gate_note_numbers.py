@@ -16,7 +16,9 @@ from pathlib import Path
 
 REPO = Path(Path(__file__).resolve().parents[1])
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-IDX = REPO / "specs" / "202-user-coverage-gaps" / "recon" / "official-members-index.json"
+IDX = (
+    REPO / "specs" / "202-user-coverage-gaps" / "recon" / "official-members-index.json"
+)
 
 
 def main() -> int:
@@ -30,7 +32,11 @@ def main() -> int:
     print("   ★ 成员槽合计        =", slots, "  （★ GATE-FINAL 写 11557）")
     print("   ★ 唯一成员名        =", uniq)
     print("   ★ JSON 头部字段     =", head)
-    print("   ★★ 11557 + 接口数   =", 11557 + len(pi), " （★ 若 == 12123 ⇒ 差值正是「每接口一个 _overview」）")
+    print(
+        "   ★★ 11557 + 接口数   =",
+        11557 + len(pi),
+        " （★ 若 == 12123 ⇒ 差值正是「每接口一个 _overview」）",
+    )
 
     print()
     print("★ C11 —— 「3 处」vs 实测")
@@ -40,14 +46,17 @@ def main() -> int:
             continue
         try:
             t = f.read_text(encoding="utf-8", errors="replace")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if "classify_audit_divergences" in t:
             n += t.count("classify_audit_divergences")
             files.add(str(f.relative_to(REPO)))
     #: ★ 排除"这个报告自己"与 D 自己的报告（★ 与裁判一致的口径）
-    skip = ("verify-done/D-gate-anchors.md", "verify-done/VERIFY-DONE-SUMMARY.md",
-            "verify50/vd50-D-3.md")
+    skip = (
+        "verify-done/D-gate-anchors.md",
+        "verify-done/VERIFY-DONE-SUMMARY.md",
+        "verify50/vd50-D-3.md",
+    )
     n2, f2 = 0, set()
     for f in REPO.rglob("*"):
         if not f.is_file() or ".git" in str(f):
@@ -57,7 +66,7 @@ def main() -> int:
             continue
         try:
             t = f.read_text(encoding="utf-8", errors="replace")
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         if "classify_audit_divergences" in t:
             n2 += t.count("classify_audit_divergences")

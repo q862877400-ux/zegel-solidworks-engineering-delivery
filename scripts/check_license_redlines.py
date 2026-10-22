@@ -38,6 +38,7 @@ r"""@brief **A6 许可红线门禁**：代码里声明的来源与许可必须�
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -63,10 +64,21 @@ FORBIDDEN = ("AGPL", "GPL", "无许可", "全版权保留", "All rights reserved
 
 #: 已知的第三方项目名（**显式表**，不靠猜）。新增来源时**在这里登记**。
 THIRD_PARTIES = (
-    "wzyn20051216", "microsoft/UFO", "UFO",
-    "Eduardof0nt", "andrewbartels1", "vespo92", "Slacker-LLC",
-    "alisamsam", "codestack", "Millwright", "kilwizac", "chatsw",
-    "delancy827", "guoleizhen717", "pengxiaoan",
+    "wzyn20051216",
+    "microsoft/UFO",
+    "UFO",
+    "Eduardof0nt",
+    "andrewbartels1",
+    "vespo92",
+    "Slacker-LLC",
+    "alisamsam",
+    "codestack",
+    "Millwright",
+    "kilwizac",
+    "chatsw",
+    "delancy827",
+    "guoleizhen717",
+    "pengxiaoan",
 )
 
 #: ⚠⚠ **已知是 Apache-2.0 的来源** —— 对它们，`# 许可:` **必须**出现 `Apache`
@@ -112,20 +124,32 @@ def scan_file(path: Path) -> list:
         has_forbidden = [f for f in FORBIDDEN if f.lower() in lic_text.lower()]
         # ① 点名第三方 ⇒ 必须声明白名单许可
         if named and not has_allowed:
-            out.append(("third-party-without-allowed-license",
-                        "来源点名 %s，而许可写的是 %r（须含 %s）"
-                        % (", ".join(named), lic_text[:70], " / ".join(ALLOWED))))
+            out.append(
+                (
+                    "third-party-without-allowed-license",
+                    "来源点名 %s，而许可写的是 %r（须含 %s）"
+                    % (", ".join(named), lic_text[:70], " / ".join(ALLOWED)),
+                )
+            )
         # ①b ⚠ **已知 Apache-2.0 的来源** ⇒ 必须**明写** Apache（见 APACHE_ONLY 的注释）
         apache_only = [t for t in named if t in APACHE_ONLY]
         if apache_only and "apache" not in lic_text.lower():
-            out.append(("apache-source-without-apache-notice-line",
-                        "来源 %s **是 Apache-2.0**，而许可写的是 %r —— "
-                        "光写「本仓库 MIT」会**漏掉 Apache 的 NOTICE 义务**"
-                        % (", ".join(apache_only), lic_text[:70])))
+            out.append(
+                (
+                    "apache-source-without-apache-notice-line",
+                    "来源 %s **是 Apache-2.0**，而许可写的是 %r —— "
+                    "光写「本仓库 MIT」会**漏掉 Apache 的 NOTICE 义务**"
+                    % (", ".join(apache_only), lic_text[:70]),
+                )
+            )
         # ② 不许把禁类许可当来源
         if has_forbidden:
-            out.append(("forbidden-license-claimed",
-                        "许可声明含禁类词 %s：%r" % (has_forbidden, lic_text[:70])))
+            out.append(
+                (
+                    "forbidden-license-claimed",
+                    "许可声明含禁类词 %s：%r" % (has_forbidden, lic_text[:70]),
+                )
+            )
     return out
 
 
@@ -140,8 +164,9 @@ def main(argv=None) -> int:
         p = repo / d
         if p.is_dir():
             files.extend(sorted(p.rglob("*.py")))
-    files = [f for f in files
-             if "__pycache__" not in f.parts and "resources" not in f.parts]
+    files = [
+        f for f in files if "__pycache__" not in f.parts and "resources" not in f.parts
+    ]
 
     bad, n_blocks, n_third = [], 0, 0
     apache_seen = []
@@ -172,15 +197,19 @@ def main(argv=None) -> int:
 
     # ③ Apache-2.0 ⇒ NOTICES 必须在
     if apache_seen and not NOTICES.is_file():
-        print("  [FAIL] 有 %d 个文件声明 Apache-2.0，而 `THIRD-PARTY-NOTICES.md` **不存在**"
-              % len(set(apache_seen)))
+        print(
+            "  [FAIL] 有 %d 个文件声明 Apache-2.0，而 `THIRD-PARTY-NOTICES.md` **不存在**"
+            % len(set(apache_seen))
+        )
         print("    Apache-2.0 的 `NOTICE` 义务紧跟**分发** ⇒ 该文件是硬要求（铁律 6）")
         return 1
 
     print("  [PASS] 0 个文件越界")
     if apache_seen:
-        print("    ✓ 有 %d 个文件声明 Apache-2.0，且 `THIRD-PARTY-NOTICES.md` 在"
-              % len(set(apache_seen)))
+        print(
+            "    ✓ 有 %d 个文件声明 Apache-2.0，且 `THIRD-PARTY-NOTICES.md` 在"
+            % len(set(apache_seen))
+        )
     print()
     print("  ⚠ 覆盖边界：本门禁判**声明是否自洽/越界**，**不判声明是否属实**")
     print("    （「某函数到底抄没抄」是语义判断，靠人核）")

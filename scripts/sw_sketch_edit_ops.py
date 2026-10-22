@@ -60,7 +60,7 @@
 
 from __future__ import annotations
 
-_MM_TO_M = 1.0 / 1000.0      #: ★ 毫米 → 米（事实 2 的换算口径）
+_MM_TO_M = 1.0 / 1000.0  #: ★ 毫米 → 米（事实 2 的换算口径）
 
 import math
 import sys
@@ -78,9 +78,9 @@ from sw_part import _empty_callout  # noqa: E402
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
 #:   依据：本仓定案 `output/probe-unit-decisive/decisive.json`。
 try:
-    from sw_connect import mm as _mm          # noqa: F401
-except Exception:                             # noqa: BLE001
-    _mm = lambda v: float(v) / 1000.0         # noqa: E731
+    from sw_connect import mm as _mm  # noqa: F401
+except Exception:  # noqa: BLE001
+    _mm = lambda v: float(v) / 1000.0  # noqa: E731
 
 
 #: ★ 长度换算助手：`_f(v)` = 先收窄成 float、再**毫米→米**（恰好一次）。
@@ -88,14 +88,19 @@ except Exception:                             # noqa: BLE001
 #:   草图 40×40 回读 `[40,40,0]` ✓ 而 `extrude_boss(20.0)` 回读 Z = **20000 mm**
 #:   ⇒ COM 吃**米**，用户传毫米 ⇒ 进 COM 前必须换算恰好一次。
 #: ⚠ 用单 token 替换（`float(` → `_f(`）落地，避免括号配对出错（事实 61）。
-_f = lambda v: v * _MM_TO_M          # noqa: E731
+_f = lambda v: v * _MM_TO_M  # noqa: E731
 
 
 #: ★ 官方 `swSketchTrimChoice_e`（★ 逐值抄自 `C:\swapi\enums\`）
 #: enum-gate: enum swSketchTrimChoice_e
 TRIM_CHOICES = {
-    "closest": 0, "corner": 1, "two_entities": 2, "entity_point": 3,
-    "entities": 4, "outside": 5, "inside": 6,
+    "closest": 0,
+    "corner": 1,
+    "two_entities": 2,
+    "entity_point": 3,
+    "entities": 4,
+    "outside": 5,
+    "inside": 6,
 }
 #: ★ 官方 `swSkOffsetCapEndType_e`
 #: enum-gate: enum swSkOffsetCapEndType_e
@@ -146,7 +151,9 @@ def _select_spec(model, selection: str, *, mark: int = 0) -> int:
         part = part.strip()
         if not part.startswith("index:"):
             raise ValueError(
-                "非法的草图段选择器 %r；合法形式：'__current_selection__' 或 'index:0' / 'index:0,index:1'" % part)
+                "非法的草图段选择器 %r；合法形式：'__current_selection__' 或 'index:0' / 'index:0,index:1'"
+                % part
+            )
         idxs.append(int(part.split(":", 1)[1]))
     n = 0
     for k, i in enumerate(idxs):
@@ -154,7 +161,9 @@ def _select_spec(model, selection: str, *, mark: int = 0) -> int:
     return n
 
 
-def sketch_trim(model, selection: str, option: str = "closest", x: float = 0.0, y: float = 0.0):
+def sketch_trim(
+    model, selection: str, option: str = "closest", x: float = 0.0, y: float = 0.0
+):
     """★ 剪裁实体：`SketchTrim(Option, X, Y, Z)`（★ `option` 逐值抄自官方枚举）。
 
     ⚠ ★ 官方 Remarks 对**每个选项**都写了"调用前必须先选几条段" ——
@@ -170,76 +179,147 @@ def sketch_trim(model, selection: str, option: str = "closest", x: float = 0.0, 
     """
     key = str(option).strip().lower()
     if key not in TRIM_CHOICES:
-        raise ValueError("未知的剪裁选项 %r；合法：%s" % (option, ", ".join(sorted(TRIM_CHOICES))))
+        raise ValueError(
+            "未知的剪裁选项 %r；合法：%s" % (option, ", ".join(sorted(TRIM_CHOICES)))
+        )
     _select_spec(model, selection)
-    return get_com_member(_sketch(model) and get_com_member(model, "SketchManager"),
-                          "SketchTrim", TRIM_CHOICES[key], _f(x), _f(y), 0.0)
+    return get_com_member(
+        _sketch(model) and get_com_member(model, "SketchManager"),
+        "SketchTrim",
+        TRIM_CHOICES[key],
+        _f(x),
+        _f(y),
+        0.0,
+    )
 
 
 def sketch_extend(model, selection: str, x: float = 0.0, y: float = 0.0):
     """★ 延伸实体：`SketchExtend(X, Y, Z)`（★ 延伸**选中的**草图段到最近的实体）。"""
     _select_spec(model, selection)
-    return get_com_member(get_com_member(model, "SketchManager"),
-                          "SketchExtend", float(x), float(y), 0.0)
+    return get_com_member(
+        get_com_member(model, "SketchManager"), "SketchExtend", float(x), float(y), 0.0
+    )
 
 
-def sketch_offset(model, selection: str, offset_mm: float, *, both_directions: bool = False,
-                  chain: bool = True, cap_ends: str = "none", make_construction: str = "dont",
-                  add_dimensions: bool = False):
+def sketch_offset(
+    model,
+    selection: str,
+    offset_mm: float,
+    *,
+    both_directions: bool = False,
+    chain: bool = True,
+    cap_ends: str = "none",
+    make_construction: str = "dont",
+    add_dimensions: bool = False,
+):
     """★ 等距实体：`SketchOffset2(Offset, BothDirections, Chain, CapEnds, MakeConstruction, AddDimensions)`。"""
     if cap_ends not in OFFSET_CAPS:
-        raise ValueError("未知的 cap_ends %r；合法：%s" % (cap_ends, ", ".join(sorted(OFFSET_CAPS))))
+        raise ValueError(
+            "未知的 cap_ends %r；合法：%s" % (cap_ends, ", ".join(sorted(OFFSET_CAPS)))
+        )
     if make_construction not in OFFSET_CONSTRUCTION:
-        raise ValueError("未知的 make_construction %r；合法：%s"
-                         % (make_construction, ", ".join(sorted(OFFSET_CONSTRUCTION))))
+        raise ValueError(
+            "未知的 make_construction %r；合法：%s"
+            % (make_construction, ", ".join(sorted(OFFSET_CONSTRUCTION)))
+        )
     _select_spec(model, selection)
-    return get_com_member(get_com_member(model, "SketchManager"), "SketchOffset2",
-                          _f(offset_mm), bool(both_directions), bool(chain),
-                          OFFSET_CAPS[cap_ends], OFFSET_CONSTRUCTION[make_construction],
-                          bool(add_dimensions))
+    return get_com_member(
+        get_com_member(model, "SketchManager"),
+        "SketchOffset2",
+        _f(offset_mm),
+        bool(both_directions),
+        bool(chain),
+        OFFSET_CAPS[cap_ends],
+        OFFSET_CONSTRUCTION[make_construction],
+        bool(add_dimensions),
+    )
 
 
-def sketch_fillet(model, selection: str, radius_mm: float, constrained_corners: int = 0):
+def sketch_fillet(
+    model, selection: str, radius_mm: float, constrained_corners: int = 0
+):
     """★ 绘制圆角：`CreateFillet(Radius, ConstrainedCorners)`（★ 用**选中的两条**草图段）。"""
     _select_spec(model, selection)
-    seg = get_com_member(get_com_member(model, "SketchManager"), "CreateFillet",
-                         _f(radius_mm), int(constrained_corners))
+    seg = get_com_member(
+        get_com_member(model, "SketchManager"),
+        "CreateFillet",
+        _f(radius_mm),
+        int(constrained_corners),
+    )
     if seg is None:
-        raise RuntimeError("CreateFillet 返回 None ⇒ 草图圆角没建出来"
-                           "（★ 官方要求两条草图段**相交**且都已选中）")
+        raise RuntimeError(
+            "CreateFillet 返回 None ⇒ 草图圆角没建出来"
+            "（★ 官方要求两条草图段**相交**且都已选中）"
+        )
     return seg
 
 
-def sketch_linear_pattern(model, selection: str, num_x: int = 2, num_y: int = 1,
-                          spacing_x_mm: float = 10.0, spacing_y_mm: float = 0.0,
-                          angle_x_deg: float = 0.0, angle_y_deg: float = 0.0,
-                          delete_instances: str = "", *, spacing_dim_x: bool = False,
-                          spacing_dim_y: bool = False, angle_dim: bool = False,
-                          count_dim_x: bool = False, count_dim_y: bool = False):
+def sketch_linear_pattern(
+    model,
+    selection: str,
+    num_x: int = 2,
+    num_y: int = 1,
+    spacing_x_mm: float = 10.0,
+    spacing_y_mm: float = 0.0,
+    angle_x_deg: float = 0.0,
+    angle_y_deg: float = 0.0,
+    delete_instances: str = "",
+    *,
+    spacing_dim_x: bool = False,
+    spacing_dim_y: bool = False,
+    angle_dim: bool = False,
+    count_dim_x: bool = False,
+    count_dim_y: bool = False,
+):
     """★ 线性草图阵列：`CreateLinearSketchStepAndRepeat(...)`（★ 12 参，逐条照抄）。"""
     _select_spec(model, selection)
-    return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateLinearSketchStepAndRepeat",
-                          int(num_x), int(num_y), _f(spacing_x_mm), _f(spacing_y_mm),
-                          math.radians(float(angle_x_deg)), math.radians(float(angle_y_deg)),
-                          str(delete_instances or ""),
-                          bool(spacing_dim_x), bool(spacing_dim_y), bool(angle_dim),
-                          bool(count_dim_x), bool(count_dim_y))
+    return get_com_member(
+        get_com_member(model, "SketchManager"),
+        "CreateLinearSketchStepAndRepeat",
+        int(num_x),
+        int(num_y),
+        _f(spacing_x_mm),
+        _f(spacing_y_mm),
+        math.radians(float(angle_x_deg)),
+        math.radians(float(angle_y_deg)),
+        str(delete_instances or ""),
+        bool(spacing_dim_x),
+        bool(spacing_dim_y),
+        bool(angle_dim),
+        bool(count_dim_x),
+        bool(count_dim_y),
+    )
 
 
-def sketch_circular_pattern(model, selection: str, arc_radius_mm: float = 20.0,
-                            arc_angle_deg: float = 360.0, pattern_num: int = 4,
-                            pattern_spacing_deg: float = 0.0, pattern_rotate: bool = True,
-                            delete_instances: str = "", *, radius_dim: bool = False,
-                            angle_dim: bool = False, count_dim: bool = False):
+def sketch_circular_pattern(
+    model,
+    selection: str,
+    arc_radius_mm: float = 20.0,
+    arc_angle_deg: float = 360.0,
+    pattern_num: int = 4,
+    pattern_spacing_deg: float = 0.0,
+    pattern_rotate: bool = True,
+    delete_instances: str = "",
+    *,
+    radius_dim: bool = False,
+    angle_dim: bool = False,
+    count_dim: bool = False,
+):
     """★ 圆周草图阵列：`CreateCircularSketchStepAndRepeat(...)`（★ 9 参）。"""
     _select_spec(model, selection)
-    return get_com_member(get_com_member(model, "SketchManager"),
-                          "CreateCircularSketchStepAndRepeat",
-                          _f(arc_radius_mm), math.radians(float(arc_angle_deg)),
-                          int(pattern_num), math.radians(float(pattern_spacing_deg)),
-                          bool(pattern_rotate), str(delete_instances or ""),
-                          bool(radius_dim), bool(angle_dim), bool(count_dim))
+    return get_com_member(
+        get_com_member(model, "SketchManager"),
+        "CreateCircularSketchStepAndRepeat",
+        _f(arc_radius_mm),
+        math.radians(float(arc_angle_deg)),
+        int(pattern_num),
+        math.radians(float(pattern_spacing_deg)),
+        bool(pattern_rotate),
+        str(delete_instances or ""),
+        bool(radius_dim),
+        bool(angle_dim),
+        bool(count_dim),
+    )
 
 
 def sketch_intersect_curves(model):
@@ -249,8 +329,13 @@ def sketch_intersect_curves(model):
 
 #: ★ B3 批的成员清单（★ 供探针与门禁按名单跑，不遍历）
 B3_MEMBERS = (
-    "sketch_trim", "sketch_extend", "sketch_offset", "sketch_fillet",
-    "sketch_linear_pattern", "sketch_circular_pattern", "sketch_intersect_curves",
+    "sketch_trim",
+    "sketch_extend",
+    "sketch_offset",
+    "sketch_fillet",
+    "sketch_linear_pattern",
+    "sketch_circular_pattern",
+    "sketch_intersect_curves",
 )
 
 
@@ -267,16 +352,16 @@ B3_MEMBERS = (
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
 # · `C:\swapi\types\ISketchManager\CreateConstructionGeometry.md` —— `void CreateConstru
 # ctionGeometry()`
-# ★ 摘要逐字：「**Sets** selected sketch segments **to be construction geometry instead 
+# ★ 摘要逐字：「**Sets** selected sketch segments **to be construction geometry instead
 # of
-# sketch geometry**.」（★ 是**置位**、不是 toggle —— 措辞是 "Sets … instead of"，★ 不是 
+# sketch geometry**.」（★ 是**置位**、不是 toggle —— 措辞是 "Sets … instead of"，★ 不是
 # "toggles"）
 #     ★ `## Remarks` 逐字：「This method supports **all document types**, unlike
 #       `IDrawingDoc::CreateConstructionGeometry`, which only supports drawing documents.」
 # · `C:\swapi\types\ISketchSegment\ConstructionGeometry.md` —— `System.bool Construction
 # Geometry {get; set;}`
 #     ★ 摘要逐字：「Gets **or sets** whether this sketch segment is construction geometry」
-# ⇒ ★★ **往回变（构造线 → 实体线）官方只有这条属性通道**（`CreateConstructionGeometry` 
+# ⇒ ★★ **往回变（构造线 → 实体线）官方只有这条属性通道**（`CreateConstructionGeometry`
 # 是单向置位）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -306,10 +391,10 @@ def _selection_segments(model, selection: str):
         mgr = get_com_member(model, "SelectionManager")
         count = int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
         objs = []
-        for i in range(1, count + 1):            # ⚠ 官方 Index **从 1 开始**
+        for i in range(1, count + 1):  # ⚠ 官方 Index **从 1 开始**
             try:
                 objs.append(get_com_member(mgr, "GetSelectedObject6", i, -1))
-            except Exception:                    # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         return [o for o in objs if o is not None], count
     idxs = []
@@ -318,7 +403,8 @@ def _selection_segments(model, selection: str):
         if not part.startswith("index:"):
             raise ValueError(
                 "非法的草图段选择器 %r；合法形式：'__current_selection__' 或 'index:0' / 'index:0,index:1'"
-                % part)
+                % part
+            )
         idxs.append(int(part.split(":", 1)[1]))
     segs = _SK.get_sketch_segments(sk)
     picked = []
@@ -339,13 +425,14 @@ def _construction_flags(model) -> list[bool]:
     for seg in _SK.get_sketch_segments(_sketch(model)) or []:
         try:
             flags.append(bool(get_com_member(seg, "ConstructionGeometry")))
-        except Exception:                        # noqa: BLE001
+        except Exception:  # noqa: BLE001
             flags.append(None)
     return flags
 
 
-def sketch_set_construction_geometry(model, selection: str, *,
-                                     construction: bool = True) -> dict:
+def sketch_set_construction_geometry(
+    model, selection: str, *, construction: bool = True
+) -> dict:
     """★ **把选中的草图段置为 / 复位为构造几何**（★ 规则 3：只收声明式选择器，不收坐标）。
 
     :param selection: ``"__current_selection__"`` 或 ``"index:0"`` / ``"index:0,index:1"``。
@@ -360,32 +447,40 @@ def sketch_set_construction_geometry(model, selection: str, *,
       并**如实报**哪几段没对上（★ 不静默 —— 这正是"toggle 还是置位"那件事会暴露的地方）。
     """
     out: dict = {
-        "ok": False, "requested": bool(construction), "entry_used": None,
-        "selection_count": None, "segments_before": None, "segments_after": None,
-        "target_before": None, "target_after": None, "construction_count_after": None,
+        "ok": False,
+        "requested": bool(construction),
+        "entry_used": None,
+        "selection_count": None,
+        "segments_before": None,
+        "segments_after": None,
+        "target_before": None,
+        "target_after": None,
+        "construction_count_after": None,
         "error": None,
         "★": "判据是**回读 `ISketchSegment.ConstructionGeometry`**；"
-             "★ 置位方向用官方零参 `ISketchManager.CreateConstructionGeometry()`、"
-             "复位方向用属性 setter（★ 官方唯一的回程）",
+        "★ 置位方向用官方零参 `ISketchManager.CreateConstructionGeometry()`、"
+        "复位方向用属性 setter（★ 官方唯一的回程）",
     }
     if model is None:
         out["error"] = "model 为 None"
         return out
     try:
         segs, count = _selection_segments(model, selection)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "解析选择器失败：%s: %s" % (type(exc).__name__, str(exc)[:150])
         return out
     out["selection_count"] = count
     if not segs:
-        out["error"] = ("选择器 %r 没给出任何草图段（★ 事实 32：草图段按名字选不中 ⇒ "
-                        "请用 'index:<n>' 或先在界面上选中）" % str(selection)[:50])
+        out["error"] = (
+            "选择器 %r 没给出任何草图段（★ 事实 32：草图段按名字选不中 ⇒ "
+            "请用 'index:<n>' 或先在界面上选中）" % str(selection)[:50]
+        )
         return out
 
     def _flag(seg):
         try:
             return bool(get_com_member(seg, "ConstructionGeometry"))
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return None
 
     out["target_before"] = [_flag(s) for s in segs]
@@ -393,22 +488,31 @@ def sketch_set_construction_geometry(model, selection: str, *,
     try:
         if construction:
             out["entry_used"] = "ISketchManager::CreateConstructionGeometry()"
-            get_com_member(get_com_member(model, "SketchManager"), "CreateConstructionGeometry")
+            get_com_member(
+                get_com_member(model, "SketchManager"), "CreateConstructionGeometry"
+            )
         else:
             out["entry_used"] = "ISketchSegment::ConstructionGeometry (setter = False)"
             for seg in segs:
                 _set_com_member(seg, "ConstructionGeometry", False)
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "调用失败：%s: %s" % (type(exc).__name__, str(exc)[:200])
         return out
     out["target_after"] = [_flag(s) for s in segs]
     out["segments_after"] = sum(1 for f in _construction_flags(model) if f)
     out["construction_count_after"] = out["segments_after"]
-    mismatched = [i for i, f in enumerate(out["target_after"]) if f is not bool(construction)]
+    mismatched = [
+        i for i, f in enumerate(out["target_after"]) if f is not bool(construction)
+    ]
     out["ok"] = not mismatched
     if mismatched:
-        out["error"] = ("回读不对：第 %r 段没达到请求的状态（★ 请求 %r，回读 %r）—— "
-                        "★ 这正是「再调一次是切换还是置位」那件事会暴露的地方"
-                        % (mismatched, bool(construction),
-                           [out["target_after"][i] for i in mismatched]))
+        out["error"] = (
+            "回读不对：第 %r 段没达到请求的状态（★ 请求 %r，回读 %r）—— "
+            "★ 这正是「再调一次是切换还是置位」那件事会暴露的地方"
+            % (
+                mismatched,
+                bool(construction),
+                [out["target_after"][i] for i in mismatched],
+            )
+        )
     return out

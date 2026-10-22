@@ -32,7 +32,7 @@ def main() -> int:
     print("★ id:", c["id"], "· level:", c["level"])
     print("★ label:", c["label"][:110])
     print("★ limitations:")
-    for x in (c.get("limitations") or []):
+    for x in c.get("limitations") or []:
         print("   ·", x[:200])
     print()
     print("★ 同域别的条目的 level（★ 看惯例）：")

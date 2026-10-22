@@ -29,8 +29,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "drawing-datum-tag2-evidence.json")
-FIXTURE = Path(r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\introsw\box.slddrw")
+OUT = Path(
+    Path(__file__).resolve().parents[1] / "output" / "drawing-datum-tag2-evidence.json"
+)
+FIXTURE = Path(
+    r"C:\Users\Public\Documents\SOLIDWORKS\SOLIDWORKS 2026\samples\introsw\box.slddrw"
+)
 
 
 def main() -> int:
@@ -53,15 +57,26 @@ def main() -> int:
                     vname = str(v)
                     ev["view_name_via"] = attr
                     break
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         ev["view_name"] = vname
         ext = get_com_member(doc, "Extension")
         empty = sw_connect.create_empty_dispatch_variant()
 
         def sel(name, kind, mark=0):
-            return get_com_member(ext, "SelectByID2", str(name), str(kind),
-                                  0.0, 0.0, 0.0, False, int(mark), empty, 0)
+            return get_com_member(
+                ext,
+                "SelectByID2",
+                str(name),
+                str(kind),
+                0.0,
+                0.0,
+                0.0,
+                False,
+                int(mark),
+                empty,
+                0,
+            )
 
         def count():
             return safe_get_com_member(view, "GetDatumTagCount")
@@ -85,29 +100,44 @@ def main() -> int:
                 r = act()
                 tag = get_com_member(doc, "InsertDatumTag2")
                 after = count()
-                cell.update({"act_returned": bool(r), "tag_is_none": tag is None,
-                             "count": [before, after], "ok": after == before + 1})
-            except Exception as exc:                           # noqa: BLE001
-                cell.update({"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])})
+                cell.update(
+                    {
+                        "act_returned": bool(r),
+                        "tag_is_none": tag is None,
+                        "count": [before, after],
+                        "ok": after == before + 1,
+                    }
+                )
+            except Exception as exc:  # noqa: BLE001
+                cell.update(
+                    {
+                        "ok": False,
+                        "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+                    }
+                )
             ev["trials"].append(cell)
         wins = [c for c in ev["trials"] if c.get("ok")]
         ev["verdict"] = "pass" if wins else "partial"
-        ev["note"] = ("★ 把「**选中什么**」当变量（★ 轮 408 的纪律）：① 按名选中视图；② 视图对象自选。"
-                      "★ 判据仍是 `GetDatumTagCount()` 真的 +1。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ 把「**选中什么**」当变量（★ 轮 408 的纪律）：① 按名选中视图；② 视图对象自选。"
+            "★ 判据仍是 `GetDatumTagCount()` 真的 +1。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1400])
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

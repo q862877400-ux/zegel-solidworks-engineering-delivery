@@ -1,11 +1,12 @@
 """★ 建「成员种类」索引：官方类型库里每个成员是**方法还是属性**，属性**能不能设**。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_member_kind_index.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-7**（外部评审说的「第二路判据
 #           」）。
 #   ★★ 为什么需要它：B1-1 用**底层成员动词**只覆盖了 **88/448（20%）**，★ 因为成员里大量是
-# **属性式访问**（`FeatureManager` / `FirstFeature` / `Extension` / `SelectionManager` 
+# **属性式访问**（`FeatureManager` / `FirstFeature` / `Extension` / `SelectionManager`
 # 这类名词），
 # 动词表认不出它们。★ 评审的原话是「类型库能标出 `propget`/`propput`，但**普通方法没有读
 # 写标记**，
@@ -14,7 +15,7 @@
 #   ★ **属性**再看签名行里的 `{get; set;}`（可设 ⇒ **写**）vs `{get;}`（只读 ⇒ **读**）✓
 #   ★ **方法没有这个标记** ⇒ ★ 本索引对方法只记 `kind`，**不判读写**（★ 不冒充）✓
 # 官方依据: `C:\swapi\types\<接口>\<成员>.md`（结构化 markdown，官方离线源之一）
-# 许可:   本仓库 MIT。无第三方代码引入。★ 索引是从**本机官方源**派生的缓存 ⇒ 不入库（见 
+# 许可:   本仓库 MIT。无第三方代码引入。★ 索引是从**本机官方源**派生的缓存 ⇒ 不入库（见
 # .gitignore）✓
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -55,7 +56,7 @@ def build() -> dict:
             continue
         try:
             text = path.read_text(encoding="utf-8", errors="replace")
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
         m = re.search(r"^member:\s*(\S+)\s*$", text, re.M)
         if not m:
@@ -89,17 +90,28 @@ def main() -> int:
         return 1
     data = build()
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(data, ensure_ascii=False, indent=0, sort_keys=True) + "\n",
-                   encoding="utf-8")
+    OUT.write_text(
+        json.dumps(data, ensure_ascii=False, indent=0, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
     ms = data["members"]
     prop = [m for m, r in ms.items() if r["kind"] == "property"]
     writable = [m for m in prop if ms[m]["settable"]]
     print("扫到的成员页    : %d" % data["pages"])
     print("索引里的成员名  : %d" % len(ms))
-    print("★ 属性          : %d（其中**可写** %d · 只读 %d · 未标 %d）"
-          % (len(prop), len(writable), sum(1 for m in prop if ms[m]["settable"] is False),
-             sum(1 for m in prop if ms[m]["settable"] is None)))
-    print("★ 方法          : %d（★ 无读写标记，不判）" % sum(1 for r in ms.values() if r["kind"] == "method"))
+    print(
+        "★ 属性          : %d（其中**可写** %d · 只读 %d · 未标 %d）"
+        % (
+            len(prop),
+            len(writable),
+            sum(1 for m in prop if ms[m]["settable"] is False),
+            sum(1 for m in prop if ms[m]["settable"] is None),
+        )
+    )
+    print(
+        "★ 方法          : %d（★ 无读写标记，不判）"
+        % sum(1 for r in ms.values() if r["kind"] == "method")
+    )
     print("产物：%s（★ 不入库）" % OUT)
     return 0
 

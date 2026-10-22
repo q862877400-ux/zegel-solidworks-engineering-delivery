@@ -38,29 +38,72 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from typing import Any
 
 try:
     from .sw_connect import call_com_member, get_com_member, safe_get_com_member
-except ImportError:                                            # pragma: no cover
+except ImportError:  # pragma: no cover
     from sw_connect import call_com_member, get_com_member, safe_get_com_member
 
-__all__ = ["feature_names", "feature_present", "whats_wrong", "feature_readback",
-           "extrude_depth", "extrude_params", "pattern_params", "hole_params", "feature_info", "fillet_params", "csys_params", "base_flange_params", "shell_params", "rib_params", "dome_params", "sweep_params", "revolve_params", "loft_params"]
+__all__ = [
+    "feature_names",
+    "feature_present",
+    "whats_wrong",
+    "feature_readback",
+    "extrude_depth",
+    "extrude_params",
+    "pattern_params",
+    "hole_params",
+    "feature_info",
+    "fillet_params",
+    "csys_params",
+    "base_flange_params",
+    "shell_params",
+    "rib_params",
+    "dome_params",
+    "sweep_params",
+    "revolve_params",
+    "loft_params",
+]
 
 
 #: ★ FeatureManager 顶部的**容器节点**（不是特征）—— 实测回的是这些名字
 #:   （2026-10-01 轮 249）。★ 但**枚举名字是脆的**（UI 语言一变就失效），
 #:   所以真正的判据在下面：★ **用 `GetTypeName2` 判"它有没有特征类型"**（结构性判据）。
-_CONTAINER_NODES = frozenset({
-    "收藏", "历史记录", "选择集", "传感器", "设计活页夹", "注解", "材质",
-    "标注", "光源与相机", "实体", "曲面实体", "备注", "方程式", "材质 <未指定>",
-    "Favorites", "History", "Selection Sets", "Sensors", "Design Binder",
-    "Annotations", "Material", "Callouts", "Lights and Cameras", "Solid Bodies",
-    "Surface Bodies", "Notes", "Equations",
-})
+_CONTAINER_NODES = frozenset(
+    {
+        "收藏",
+        "历史记录",
+        "选择集",
+        "传感器",
+        "设计活页夹",
+        "注解",
+        "材质",
+        "标注",
+        "光源与相机",
+        "实体",
+        "曲面实体",
+        "备注",
+        "方程式",
+        "材质 <未指定>",
+        "Favorites",
+        "History",
+        "Selection Sets",
+        "Sensors",
+        "Design Binder",
+        "Annotations",
+        "Material",
+        "Callouts",
+        "Lights and Cameras",
+        "Solid Bodies",
+        "Surface Bodies",
+        "Notes",
+        "Equations",
+    }
+)
 
 
 def _is_real_feature(feat) -> bool:
@@ -72,7 +115,7 @@ def _is_real_feature(feat) -> bool:
     """
     try:
         return bool(safe_get_com_member(feat, "GetTypeName2"))
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return False
 
 
@@ -92,7 +135,7 @@ def feature_names(model, limit: int = 400) -> list[str]:
             if n and str(n) not in _CONTAINER_NODES and _is_real_feature(feat):
                 names.append(str(n))
             feat = safe_get_com_member(feat, "GetNextFeature")
-    except Exception:                                          # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return names
 
@@ -117,8 +160,12 @@ def whats_wrong(model) -> dict[str, Any]:
         （本函数初版直接对 model 调 ⇒ 取不到 ⇒ ★ 判据按设计报"不算通过"，**没有静默成 0**）。
     取不到时**如实报 "取不到"**（★ 不静默成 0 —— 那样就成了"假通过"）。
     """
-    out: dict[str, Any] = {"count": None, "entries": [], "error": None,
-                           "source_member": "IModelDocExtension.GetWhatsWrongCount"}
+    out: dict[str, Any] = {
+        "count": None,
+        "entries": [],
+        "error": None,
+        "source_member": "IModelDocExtension.GetWhatsWrongCount",
+    }
     try:
         ext = get_com_member(model, "Extension")
         out["count"] = int(call_com_member(ext, "GetWhatsWrongCount") or 0)
@@ -135,14 +182,16 @@ def whats_wrong(model) -> dict[str, Any]:
                 feats = v_f.value
                 if feats:
                     out["entries"] = [str(x)[:200] for x in list(feats)[:10]]
-            except Exception as exc:                           # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out["entries_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     return out
 
 
-def feature_readback(model, feature_name: str, *, do_rebuild: bool = True) -> dict[str, Any]:
+def feature_readback(
+    model, feature_name: str, *, do_rebuild: bool = True
+) -> dict[str, Any]:
     """★ **建特征之后的回读判据**（项目规则 6）。
 
     :param model: 活动文档。
@@ -152,10 +201,15 @@ def feature_readback(model, feature_name: str, *, do_rebuild: bool = True) -> di
                  "whats_wrong_count", "whats_wrong_entries", "reason"}``
         ★★ **`ok` 三条都真才算**：特征在树里 **且** 重建成功 **且** 查错数为 0。
     """
-    res: dict[str, Any] = {"feature_name": str(feature_name), "present": False,
-                           "rebuild_ok": None, "whats_wrong_count": None,
-                           "whats_wrong_entries": [], "reason": "",
-                           "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0"}
+    res: dict[str, Any] = {
+        "feature_name": str(feature_name),
+        "present": False,
+        "rebuild_ok": None,
+        "whats_wrong_count": None,
+        "whats_wrong_entries": [],
+        "reason": "",
+        "★": "规则 6：特征在树里 + EditRebuild3 真 + GetWhatsWrong2 数 0",
+    }
     try:
         if do_rebuild:
             res["rebuild_ok"] = bool(call_com_member(model, "EditRebuild3"))
@@ -164,24 +218,30 @@ def feature_readback(model, feature_name: str, *, do_rebuild: bool = True) -> di
         res["whats_wrong_count"] = ww.get("count")
         res["whats_wrong_entries"] = ww.get("entries") or []
         c = feature_names(model)
-        res["names_sample"] = c[-12:]                          #: ★ 尾部（新特征在末尾）
+        res["names_sample"] = c[-12:]  #: ★ 尾部（新特征在末尾）
 
         reasons = []
         if not res["present"]:
-            reasons.append("特征名 %r 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）"
-                           % feature_name)
+            reasons.append(
+                "特征名 %r 不在特征树里（★ 可能没建出来，或名字与 UI 语言不符）"
+                % feature_name
+            )
         if do_rebuild and res["rebuild_ok"] is False:
             reasons.append("EditRebuild3 返回 False ⇒ 重建失败")
         if res["whats_wrong_count"] is None:
             reasons.append("GetWhatsWrong2 取不到（★ **不算通过** —— 不静默成 0）")
         elif res["whats_wrong_count"] > 0:
-            reasons.append("GetWhatsWrong2 报 %d 条错：%s"
-                           % (res["whats_wrong_count"], res["whats_wrong_entries"][:2]))
+            reasons.append(
+                "GetWhatsWrong2 报 %d 条错：%s"
+                % (res["whats_wrong_count"], res["whats_wrong_entries"][:2])
+            )
         res["reason"] = "；".join(reasons)
         res["ok"] = not reasons
-    except Exception as exc:                                   # noqa: BLE001
-        res["reason"] = "回读判据自身出错（★ 不算通过）：%s: %s" % (type(exc).__name__,
-                                                                    str(exc)[:160])
+    except Exception as exc:  # noqa: BLE001
+        res["reason"] = "回读判据自身出错（★ 不算通过）：%s: %s" % (
+            type(exc).__name__,
+            str(exc)[:160],
+        )
         res["ok"] = False
     return res
 
@@ -223,9 +283,16 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
       ★ 而**本函数不替调用方换算** ⇒ ★ 要毫米就自己按 `GetUnits()` 判 ✓
     """
     from sw_connect import get_com_member, safe_get_com_member
-    out = {"feature": feature_name, "forward": bool(forward),
-           "depth": None, "unit_source": "document", "definition": None,
-           "end_condition": None, "error": None}
+
+    out = {
+        "feature": feature_name,
+        "forward": bool(forward),
+        "depth": None,
+        "unit_source": "document",
+        "definition": None,
+        "end_condition": None,
+        "error": None,
+    }
     try:
         feat = None
         if feature_name:
@@ -237,7 +304,7 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
             #:     逐字见 `sw_assembly.py` L267 与 `sw_sweep.py` L165
             #:     （★ 后者还写明了「★ `IModelDoc2.FeatureByName(name)`（**方法**）」）✓
             #:   ★★★★ **可复用判据**：★★★ **"一个存在但没人用的守卫与没有守卫等价"**
-            #: （★ 事实 40 那一族）—— ★★ **而这里反过来：★ 门禁**确实抓到了一个真错**** 
+            #: （★ 事实 40 那一族）—— ★★ **而这里反过来：★ 门禁**确实抓到了一个真错****
             #: ✓
             #: ⇒ ★ **写新 COM 调用前，先在仓里搜**同名成员怎么用的**（★ 本仓 27 处现成例
             #: 子）✓
@@ -250,13 +317,18 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
                 try:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if "Extrusion" in tn:
-                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                        feat, out["feature"] = (
+                            f,
+                            str(safe_get_com_member(f, "Name") or ""),
+                        )
                         break
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
-            out["error"] = "找不到拉伸特征（★ 给了名字就按名字、★ 否则找第一个 `Extrusion`）"
+            out["error"] = (
+                "找不到拉伸特征（★ 给了名字就按名字、★ 否则找第一个 `Extrusion`）"
+            )
             return out
         fd = get_com_member(feat, "GetDefinition")
         out["definition"] = type(fd).__name__ if fd is not None else None
@@ -266,9 +338,9 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
         out["depth"] = get_com_member(fd, "GetDepth", bool(forward))
         try:
             out["end_condition"] = get_com_member(fd, "GetEndCondition", bool(forward))
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             out["end_condition"] = None
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -305,11 +377,18 @@ def extrude_params(model, feature_name: str = "") -> dict:
     ★★★ **⚠ `GetFace` 已废弃** ⇒ ★ **本函数不调它**；★ `GetDirectionReference` 带 out ⇒ **也不碰** ✓
     """
     from sw_connect import get_com_member, safe_get_com_member
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "forward": {}, "reverse": {}, "★_单位口径": {
-                     "depth": "document（★ 真机：20mm ⇒ 20.0）",
-                     "draft_angle": "radians（★ 官方逐字 in radians）",
-                 }}
+
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "forward": {},
+        "reverse": {},
+        "★_单位口径": {
+            "depth": "document（★ 真机：20mm ⇒ 20.0）",
+            "draft_angle": "radians（★ 官方逐字 in radians）",
+        },
+    }
     try:
         feat = None
         if feature_name:
@@ -322,9 +401,12 @@ def extrude_params(model, feature_name: str = "") -> dict:
                 try:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if "Extrusion" in tn:
-                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
+                        feat, out["feature"] = (
+                            f,
+                            str(safe_get_com_member(f, "Name") or ""),
+                        )
                         break
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -340,22 +422,23 @@ def extrude_params(model, feature_name: str = "") -> dict:
             for name in ("GetDepth", "GetDraftAngle", "GetEndCondition"):
                 try:
                     row[name] = get_com_member(fd, name, fwd)
-                except Exception as exc:                                  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     row[name] = "err: %s" % str(exc)[:60]
             out[tag] = row
         #: ★★ 两个**属性**（★ `{get;set}`）⇒ ★ 用 `get_com_member` 直接取 ✓
         for name in ("ReverseDirection", "BothDirections"):
             try:
                 out[name] = bool(get_com_member(fd, name))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:60]
         try:
             out["GetContoursCount"] = get_com_member(fd, "GetContoursCount")
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["GetContoursCount"] = "err: %s" % str(exc)[:60]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureDa
@@ -395,13 +478,18 @@ def pattern_params(model, feature_name: str = "") -> dict:
     ★★★ **⚠ 本函数不替调用方换算** —— ★ 米就是米 ⇒ ★ 要毫米自己乘 1000 ✓
     """
     from sw_connect import get_com_member, safe_get_com_member
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "★_单位口径": {
-                     "D1Spacing": "meters（★ 官方逐字 in meters）",
-                     "D2Spacing": "meters（★ 同上）",
-                     "D1TotalInstances": "无量纲（★ 实例数，含原件）",
-                     "D2TotalInstances": "无量纲",
-                 }}
+
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "★_单位口径": {
+            "D1Spacing": "meters（★ 官方逐字 in meters）",
+            "D2Spacing": "meters（★ 同上）",
+            "D1TotalInstances": "无量纲（★ 实例数，含原件）",
+            "D2TotalInstances": "无量纲",
+        },
+    }
     try:
         feat = None
         if feature_name:
@@ -413,8 +501,11 @@ def pattern_params(model, feature_name: str = "") -> dict:
                 try:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if "LPattern" in tn:
-                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
-                except Exception:                                         # noqa: BLE001
+                        feat, out["feature"] = (
+                            f,
+                            str(safe_get_com_member(f, "Name") or ""),
+                        )
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -426,23 +517,39 @@ def pattern_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ 属性一类（★ `{get;set}`）⇒ ★ 直接取 ✓
-        for name in ("D1TotalInstances", "D1Spacing", "D2TotalInstances", "D2Spacing",
-                     "D1ReverseDirection", "D2ReverseDirection", "GeometryPattern",
-                     "D2PatternSeedOnly", "VarySketch", "BodyPattern",
-                     "PropagateVisualProperty", "D1EndCondition"):
+        for name in (
+            "D1TotalInstances",
+            "D1Spacing",
+            "D2TotalInstances",
+            "D2Spacing",
+            "D1ReverseDirection",
+            "D2ReverseDirection",
+            "GeometryPattern",
+            "D2PatternSeedOnly",
+            "VarySketch",
+            "BodyPattern",
+            "PropagateVisualProperty",
+            "D1EndCondition",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ **方法**一类（★ 零参）⇒ ★ 也直接取 ✓
-        for name in ("GetPatternFeatureCount", "GetPatternFaceCount", "GetPatternBodyCount",
-                     "GetSkippedItemCount", "GetD1AxisType", "GetD2AxisType",
-                     "IsDirection2Specified"):
+        for name in (
+            "GetPatternFeatureCount",
+            "GetPatternFaceCount",
+            "GetPatternBodyCount",
+            "GetSkippedItemCount",
+            "GetD1AxisType",
+            "GetD2AxisType",
+            "IsDirection2Specified",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -498,12 +605,27 @@ def hole_params(model, feature_name: str = "") -> dict:
            ★★ 所以**把实测口径写进返回值**、★★★ 并**保留 "官方未写" 那个事实**）✓
     """
     from sw_connect import get_com_member, safe_get_com_member
+
     UNK = "unknown（★ 官方 ## Returns 未写；★ 真机实测见 docstring 的表）"
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "★_单位口径": {k: UNK for k in (
-                     "HoleDiameter", "HoleDepth", "ThreadDepth", "ThruHoleDiameter",
-                     "CounterBoreDiameter", "CounterBoreDepth", "CounterSinkDiameter",
-                     "CounterSinkAngle", "HeadClearance")}}
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "★_单位口径": {
+            k: UNK
+            for k in (
+                "HoleDiameter",
+                "HoleDepth",
+                "ThreadDepth",
+                "ThruHoleDiameter",
+                "CounterBoreDiameter",
+                "CounterBoreDepth",
+                "CounterSinkDiameter",
+                "CounterSinkAngle",
+                "HeadClearance",
+            )
+        },
+    }
     try:
         feat = None
         if feature_name:
@@ -515,8 +637,11 @@ def hole_params(model, feature_name: str = "") -> dict:
                 try:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if "HoleWzd" in tn or "Wzd" in tn:
-                        feat, out["feature"] = f, str(safe_get_com_member(f, "Name") or "")
-                except Exception:                                         # noqa: BLE001
+                        feat, out["feature"] = (
+                            f,
+                            str(safe_get_com_member(f, "Name") or ""),
+                        )
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -528,21 +653,35 @@ def hole_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ 属性（★ `{get;set}`）⇒ ★ 直接取；★ **`FastenerType` 已废弃 ⇒ 不读** ✓
-        for name in ("HoleDiameter", "HoleDepth", "ThreadDepth", "ThruHoleDiameter",
-                     "ThruHoleDepth", "CounterBoreDiameter", "CounterBoreDepth",
-                     "CounterSinkDiameter", "CounterSinkAngle", "HeadClearance",
-                     "Standard", "FastenerSize", "ThreadClass", "Type", "EndCondition",
-                     "CosmeticThreadType", "ReverseDirection"):
+        for name in (
+            "HoleDiameter",
+            "HoleDepth",
+            "ThreadDepth",
+            "ThruHoleDiameter",
+            "ThruHoleDepth",
+            "CounterBoreDiameter",
+            "CounterBoreDepth",
+            "CounterSinkDiameter",
+            "CounterSinkAngle",
+            "HeadClearance",
+            "Standard",
+            "FastenerSize",
+            "ThreadClass",
+            "Type",
+            "EndCondition",
+            "CosmeticThreadType",
+            "ReverseDirection",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ 零参方法 ⇒ ★ 也取 ✓
         try:
             out["GetSketchPointCount"] = get_com_member(fd, "GetSketchPointCount")
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["GetSketchPointCount"] = "err: %s" % str(exc)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -558,7 +697,7 @@ def hole_params(model, feature_name: str = "") -> dict:
 #   ★★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
 #     · ★ `GetID()` ⇒ 「Feature ID of this feature」⇒ **unique within the document** ✓
 #     · ★ `GetFaceCount()` ⇒ 「Number of faces in this feature」✓
-# · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e` 
+# · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e`
 # ✓
 # · ★ `GetMaterialIdName()` ⇒ 「Material name」· ★ `Description` / ★ `CreatedBy` ⇒ 字符
 # 串 ✓
@@ -593,6 +732,7 @@ def feature_info(model, feature_name: str = "") -> dict:
       ★★★★ **⇒ 三次全是**判据/兜底**的错、★ 能力一直是对的**（★ 事实 51 的第三次实例）✓
     """
     from sw_connect import get_com_member, safe_get_com_member
+
     out: dict = {"feature": feature_name, "error": None}
     try:
         feat = None
@@ -616,19 +756,33 @@ def feature_info(model, feature_name: str = "") -> dict:
                     feat = f
                     break
                 f = safe_get_com_member(f, "GetNextFeature")
-            out["feature"] = str(safe_get_com_member(feat, "Name") or "") if feat is not None else ""
+            out["feature"] = (
+                str(safe_get_com_member(feat, "Name") or "") if feat is not None else ""
+            )
         if feat is None:
             out["error"] = "没有特征"
             return out
         #: ★★ 属性（★ `{get;}` / `{get;set}`）⇒ ★ 直接取 ✓
-        for name in ("Name", "Description", "CreatedBy", "Visible", "GetMaterialIdName"):
+        for name in (
+            "Name",
+            "Description",
+            "CreatedBy",
+            "Visible",
+            "GetMaterialIdName",
+        ):
             try:
                 out[name] = get_com_member(feat, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ 零参方法 ⇒ ★ 也取 ✓
-        for name in ("GetID", "GetFaceCount", "GetEditStatus", "GetTypeName2", "GetChildren",
-                     "GetParents"):
+        for name in (
+            "GetID",
+            "GetFaceCount",
+            "GetEditStatus",
+            "GetTypeName2",
+            "GetChildren",
+            "GetParents",
+        ):
             try:
                 v = get_com_member(feat, name)
                 #: ★ 数组类：★ 取长度（★ 回 `None` 就是空）✓
@@ -636,11 +790,11 @@ def feature_info(model, feature_name: str = "") -> dict:
                     out[name] = len(list(v)) if v is not None else 0
                 else:
                     out[name] = v
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★ **⚠ 读 `GetTypeName2` 是**对的**** —— ★ 上一轮修的判据证明它**没废弃** ✓
         #:   （★ 旧判据 `"Obsolete" in t` 会把它误报成废弃 ⇒ ★ **而本函数按新判据**）
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -679,8 +833,15 @@ def fillet_params(model, feature_name: str = "") -> dict:
       ★★ **那是下一步的事**、★ **硬写会得到一个每次都不一样的结果** ✓
     """
     from sw_connect import get_com_member, safe_get_com_member
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "★_单位口径": {"DefaultRadius": "unknown（★ 官方 ## Returns 未写；★ 真机实测见证据）"}}
+
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "★_单位口径": {
+            "DefaultRadius": "unknown（★ 官方 ## Returns 未写；★ 真机实测见证据）"
+        },
+    }
     try:
         feat = None
         if feature_name:
@@ -695,7 +856,7 @@ def fillet_params(model, feature_name: str = "") -> dict:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if nm not in _CONTAINER_NODES and "Fillet" in tn:
                         feat, out["feature"] = f, nm
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -707,19 +868,26 @@ def fillet_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ 属性（★ `{get;}` / ★ `{get;set}`）⇒ ★ 直接取 ✓
-        for name in ("DefaultRadius", "Type", "OverflowType", "RoundCorners", "KeepFeatures",
-                     "ConstantWidth", "PropagateToTangentFaces"):
+        for name in (
+            "DefaultRadius",
+            "Type",
+            "OverflowType",
+            "RoundCorners",
+            "KeepFeatures",
+            "ConstantWidth",
+            "PropagateToTangentFaces",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ 零参方法 ⇒ ★ 也取 ✓
         for name in ("GetEdgeCount", "GetSetbackVerticesCount"):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -755,13 +923,26 @@ def csys_params(model, feature_name: str = "") -> dict:
       （★ 它们**可能存在**于别的源 —— ★ 那要另查；★ **不等于"不存在"**）✓
     """
     from sw_connect import get_com_member, safe_get_com_member
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "★_单位口径": "★ 本族**没有长度量**（★ 三是计数、★ 一是枚举、★ 一是变换对象）",
-                 "★_页不在（★ 不调、★ 不猜）": [
-                     "Flipped", "ReverseXDirection", "ReverseYDirection", "ReverseZDirection",
-                     "GetXAxisEntities", "GetYAxisEntities", "GetZAxisEntities",
-                     "GetXAxisEntitiesType", "GetYAxisEntitiesType", "GetZAxisEntitiesType",
-                     "GetOriginEntity"]}
+
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "★_单位口径": "★ 本族**没有长度量**（★ 三是计数、★ 一是枚举、★ 一是变换对象）",
+        "★_页不在（★ 不调、★ 不猜）": [
+            "Flipped",
+            "ReverseXDirection",
+            "ReverseYDirection",
+            "ReverseZDirection",
+            "GetXAxisEntities",
+            "GetYAxisEntities",
+            "GetZAxisEntities",
+            "GetXAxisEntitiesType",
+            "GetYAxisEntitiesType",
+            "GetZAxisEntitiesType",
+            "GetOriginEntity",
+        ],
+    }
     try:
         feat = None
         if feature_name:
@@ -776,7 +957,7 @@ def csys_params(model, feature_name: str = "") -> dict:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if nm not in _CONTAINER_NODES and "CoordSys" in tn:
                         feat, out["feature"] = f, nm
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -788,11 +969,15 @@ def csys_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ 零参方法（★ 官方逐字有页的那四个）⇒ ★ 直接取 ✓
-        for name in ("GetOriginEntityType", "GetXAxisEntitiesCount",
-                     "GetYAxisEntitiesCount", "GetZAxisEntitiesCount"):
+        for name in (
+            "GetOriginEntityType",
+            "GetXAxisEntitiesCount",
+            "GetYAxisEntitiesCount",
+            "GetZAxisEntitiesCount",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ `Transform` 是**属性**、★ 回一个**对象** ⇒ ★ 取它的 `ArrayData`（★ 16 个
         #: 数）✓
@@ -803,9 +988,9 @@ def csys_params(model, feature_name: str = "") -> dict:
                 arr = list(get_com_member(tr, "ArrayData") or [])
                 out["Transform.ArrayData_len"] = len(arr)
                 out["Transform.ArrayData_head"] = [round(float(x), 6) for x in arr[:4]]
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["Transform"] = "err: %s" % str(exc)[:60]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -841,13 +1026,26 @@ def base_flange_params(model, feature_name: str = "") -> dict:
     ★★★ **⚠ 本函数不读 `D1OffsetDistance`**（★ 官方标**真废弃**）✓
     """
     from sw_connect import get_com_member, safe_get_com_member
+
     UNK = "unknown（★ 官方 ## Returns 未写；★ 真机实测见证据）"
-    out: dict = {"feature": feature_name, "definition": None, "error": None,
-                 "★_单位口径": {k: UNK for k in (
-                     "Thickness", "BendRadius", "TableRadius", "TableThickness",
-                     "ReliefWidth", "ReliefDepth")},
-                 "★_无量纲": ["KFactor", "TableKFactor", "ReliefRatio"],
-                 "★_不读（★ 官方标真废弃）": ["D1OffsetDistance"]}
+    out: dict = {
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
+        "★_单位口径": {
+            k: UNK
+            for k in (
+                "Thickness",
+                "BendRadius",
+                "TableRadius",
+                "TableThickness",
+                "ReliefWidth",
+                "ReliefDepth",
+            )
+        },
+        "★_无量纲": ["KFactor", "TableKFactor", "ReliefRatio"],
+        "★_不读（★ 官方标真废弃）": ["D1OffsetDistance"],
+    }
     try:
         feat = None
         if feature_name:
@@ -862,7 +1060,7 @@ def base_flange_params(model, feature_name: str = "") -> dict:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if nm not in _CONTAINER_NODES and "BaseFlange" in tn:
                         feat, out["feature"] = f, nm
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -874,27 +1072,44 @@ def base_flange_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ **七个长度/比例量 + 三个开关类**（★ 全是有页的）⇒ ★ 直接取 ✓
-        for name in ("Thickness", "BendRadius", "KFactor", "TableKFactor", "TableRadius",
-                     "TableThickness", "ReliefType", "ReliefRatio", "ReliefWidth",
-                     "ReliefDepth", "UseReliefRatio", "OverrideThickness", "OverrideRadius",
-                     "OverrideKFactor", "UseGaugeTable", "UseDefaultBendAllowance",
-                     "UseDefaultBendRelief", "SymmetricThickness", "ReverseDirection",
-                     "ReverseThickness", "D1EndConditionType", "ThicknessTableName",
-                     "OverrideDefaultSheetMetalParameters"):
+        for name in (
+            "Thickness",
+            "BendRadius",
+            "KFactor",
+            "TableKFactor",
+            "TableRadius",
+            "TableThickness",
+            "ReliefType",
+            "ReliefRatio",
+            "ReliefWidth",
+            "ReliefDepth",
+            "UseReliefRatio",
+            "OverrideThickness",
+            "OverrideRadius",
+            "OverrideKFactor",
+            "UseGaugeTable",
+            "UseDefaultBendAllowance",
+            "UseDefaultBendRelief",
+            "SymmetricThickness",
+            "ReverseDirection",
+            "ReverseThickness",
+            "D1EndConditionType",
+            "ThicknessTableName",
+            "OverrideDefaultSheetMetalParameters",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ 两个**计数**（★ 零参方法）⇒ ★ 也取 ✓
         for name in ("GetTableRadiiCount", "GetTableThicknessesCount"):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
-
 
 
 #: ★★★★★★★ **族 → **真机打出来的**类型名**（★ 2026-10-04 轮 131 建）——
@@ -924,9 +1139,15 @@ FEATURE_TYPE_NAMES = {
     "loft": "Blend",
 }
 
-def _read_feature_params(model, feature_name: str, type_substring: str,
-                         readable: tuple, container_label: str,
-                         unit_note: dict | None = None) -> dict:
+
+def _read_feature_params(
+    model,
+    feature_name: str,
+    type_substring: str,
+    readable: tuple,
+    container_label: str,
+    unit_note: dict | None = None,
+) -> dict:
     """★ 共用帮手：★ 按**类型名子串**找特征 ⇒ ★ 取 `GetDefinition` ⇒ ★ 读给定成员 ✓
 
     ★★★★ **为什么抽出来**（★ 事实 60 定则④：★ 好用的函数要在**所有**同类场合用它）：
@@ -941,6 +1162,7 @@ def _read_feature_params(model, feature_name: str, type_substring: str,
       · `container_label`：★ 找不到时报错的那句话 ✓
     """
     from sw_connect import get_com_member, safe_get_com_member
+
     out: dict = {"feature": feature_name, "definition": None, "error": None}
     if unit_note:
         out["★_单位口径"] = unit_note
@@ -958,7 +1180,7 @@ def _read_feature_params(model, feature_name: str, type_substring: str,
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if nm not in _CONTAINER_NODES and type_substring in tn:
                         feat, out["feature"] = f, nm
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -973,9 +1195,9 @@ def _read_feature_params(model, feature_name: str, type_substring: str,
             try:
                 #: dispatch-arg: dynamic `readable` 是形参：成员名元组由调用方给，本函数内无绑定
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
@@ -1019,14 +1241,30 @@ def rib_params(model, feature_name: str = "") -> dict:
       ★ `IAccessSelections` / ★ `AccessSelections` / ★ `ReleaseSelectionAccess`（★ 前置）✓
     """
     return _read_feature_params(
-        model, feature_name, FEATURE_TYPE_NAMES["rib"],
-        ("Thickness", "DraftAngle", "Type", "ExtrusionDirection", "RefSketchIndex",
-         "NextReference", "EnableDraft", "DraftOutward", "DraftFromWall", "FlipSide",
-         "IsTwoSided", "ReverseThicknessDir"),
+        model,
+        feature_name,
+        FEATURE_TYPE_NAMES["rib"],
+        (
+            "Thickness",
+            "DraftAngle",
+            "Type",
+            "ExtrusionDirection",
+            "RefSketchIndex",
+            "NextReference",
+            "EnableDraft",
+            "DraftOutward",
+            "DraftFromWall",
+            "FlipSide",
+            "IsTwoSided",
+            "ReverseThicknessDir",
+        ),
         "找不到筋特征（★ 类型名含 `Rib`）",
-        {"Thickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
-         "DraftAngle": "unknown（★ 官方只说 `Angle for the draft`、未写度/弧度；"
-                       "★ 真机实测见证据 —— ★ 本会话已有 `GetDraftAngle` 是 **radians** 的先例）"})
+        {
+            "Thickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+            "DraftAngle": "unknown（★ 官方只说 `Angle for the draft`、未写度/弧度；"
+            "★ 真机实测见证据 —— ★ 本会话已有 `GetDraftAngle` 是 **radians** 的先例）",
+        },
+    )
 
 
 def dome_params(model, feature_name: str = "") -> dict:
@@ -1060,10 +1298,13 @@ def dome_params(model, feature_name: str = "") -> dict:
         ★ 官方 `## Remarks` 指向「Accessing Selections that Define Features」✓
     """
     out = _read_feature_params(
-        model, feature_name, FEATURE_TYPE_NAMES["dome"],
+        model,
+        feature_name,
+        FEATURE_TYPE_NAMES["dome"],
         ("Height", "Elliptical", "ReverseDir", "GetFaceCount"),
         "找不到圆顶特征（★ 类型名含 `Dome`）",
-        {"Height": "unknown（★ 官方未写单位；★ 真机实测见证据）"})
+        {"Height": "unknown（★ 官方未写单位；★ 真机实测见证据）"},
+    )
     #: ★★★ 把 `ReverseDir` 的**官方语义**一并带回来（★ 免得下一个人按名字猜）✓
     out["★_ReverseDir_语义"] = {
         "True": "concave dome（★ 凹的圆顶）",
@@ -1071,9 +1312,17 @@ def dome_params(model, feature_name: str = "") -> dict:
         "★_出处": "官方 `IDomeFeatureData2/ReverseDir.md` 的 `## Returns` 逐字",
     }
     out["★_不读（★ 真废弃 / ★ 指针 / ★ 前置）"] = [
-        "Face", "IFace", "IGetFaces", "ISetFaces",
-        "AccessSelections", "IAccessSelections", "ReleaseSelectionAccess",
-        "Faces", "Direction", "ConstraintPointOrSketch"]
+        "Face",
+        "IFace",
+        "IGetFaces",
+        "ISetFaces",
+        "AccessSelections",
+        "IAccessSelections",
+        "ReleaseSelectionAccess",
+        "Faces",
+        "Direction",
+        "ConstraintPointOrSketch",
+    ]
     return out
 
 
@@ -1204,21 +1453,48 @@ def sweep_params(model, feature_name: str = "") -> dict:
       · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
     """
     out = _read_feature_params(
-        model, feature_name, FEATURE_TYPE_NAMES["sweep"],
-        ("SweepType", "IsBossFeature", "IsThinFeature", "ThinFeature", "ThinWallType",
-         "CircularProfile", "CircularProfileDiameter",
-         "GetTwistAngle", "GetD2TwistAngle", "TwistControlType",
-         "D1ReverseTwistDir", "D2ReverseTwistDir",
-         "Direction", "StartTangencyType", "EndTangencyType", "PathAlignmentType",
-         "GetPathType", "GetProfileType", "GetCutSweepOption",
-         "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
-         "AdvancedSmoothing", "AlignWithEndFaces", "AutoSelect", "MaintainTangency",
-         "Merge", "MergeSmoothFaces", "FeatureScope", "TangentPropagation"),
+        model,
+        feature_name,
+        FEATURE_TYPE_NAMES["sweep"],
+        (
+            "SweepType",
+            "IsBossFeature",
+            "IsThinFeature",
+            "ThinFeature",
+            "ThinWallType",
+            "CircularProfile",
+            "CircularProfileDiameter",
+            "GetTwistAngle",
+            "GetD2TwistAngle",
+            "TwistControlType",
+            "D1ReverseTwistDir",
+            "D2ReverseTwistDir",
+            "Direction",
+            "StartTangencyType",
+            "EndTangencyType",
+            "PathAlignmentType",
+            "GetPathType",
+            "GetProfileType",
+            "GetCutSweepOption",
+            "GetGuideCurvesCount",
+            "GetFeatureScopeBodiesCount",
+            "AdvancedSmoothing",
+            "AlignWithEndFaces",
+            "AutoSelect",
+            "MaintainTangency",
+            "Merge",
+            "MergeSmoothFaces",
+            "FeatureScope",
+            "TangentPropagation",
+        ),
         "找不到扫描特征（★ 类型名含 `Sweep`）",
-        {"CircularProfileDiameter": "unknown（★ 官方未写单位；★ 真机实测见证据）",
-         "GetWallThickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
-         "GetTwistAngle": "**radians**（★ 官方 `## Returns` 逐字写明 —— ★ **本族唯一写了单位的两条之一**）",
-         "GetD2TwistAngle": "**radians**（★ 官方同款逐字）"})
+        {
+            "CircularProfileDiameter": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+            "GetWallThickness": "unknown（★ 官方未写单位；★ 真机实测见证据）",
+            "GetTwistAngle": "**radians**（★ 官方 `## Returns` 逐字写明 —— ★ **本族唯一写了单位的两条之一**）",
+            "GetD2TwistAngle": "**radians**（★ 官方同款逐字）",
+        },
+    )
 
     #: ★★★★★★ **`GetWallThickness` 要**带实参**调**（★ 轮 126 真机抓到的）——
     #: ★ 它官方签名是 `System.double GetWallThickness( System.bool Forward )` ⇒
@@ -1229,19 +1505,21 @@ def sweep_params(model, feature_name: str = "") -> dict:
     if out.get("definition") is not None:
         try:
             from sw_connect import get_com_member as _g
-            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
-                if out.get("feature") else None
+
+            fd2 = (
+                _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition")
+                if out.get("feature")
+                else None
+            )
             if fd2 is not None:
                 out["GetWallThickness"] = {
                     "forward": _g(fd2, "GetWallThickness", True),
                     "backward": _g(fd2, "GetWallThickness", False),
                     "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
                 }
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["GetWallThickness"] = "err: %s" % str(exc)[:60]
     return out
-
-
 
 
 def loft_params(model, feature_name: str = "") -> dict:
@@ -1308,33 +1586,59 @@ def loft_params(model, feature_name: str = "") -> dict:
         #: 制** ✗
         #: ★★★ **⇒ 机制见本模块的 `FEATURE_TYPE_NAMES`**（★ 每个名字都要有**证据引用**）
         #: ✓
-        model, feature_name, FEATURE_TYPE_NAMES["loft"],
-        ("GetProfileCount", "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
-         "IsBossFeature", "IsThinFeature",
-         "StartTangencyType", "EndTangencyType", "GuideCurveInfluence",
-         "NumberOfSections",
-         "Close", "AdvancedSmoothing", "MaintainTangency", "Merge", "FeatureScope",
-         "AutoSelect", "ReverseStartTangentDirection", "ReverseEndTangentDirection",
-         "StartConstraintApplyToAll", "EndConstraintApplyToAll",
-         "StartConstraintDraftAngleDirection", "EndConstraintDraftAngleDirection",
-         "StartConstraintDraftAngle", "EndConstraintDraftAngle",
-         "StartTangentLength", "EndTangentLength"),
+        model,
+        feature_name,
+        FEATURE_TYPE_NAMES["loft"],
+        (
+            "GetProfileCount",
+            "GetGuideCurvesCount",
+            "GetFeatureScopeBodiesCount",
+            "IsBossFeature",
+            "IsThinFeature",
+            "StartTangencyType",
+            "EndTangencyType",
+            "GuideCurveInfluence",
+            "NumberOfSections",
+            "Close",
+            "AdvancedSmoothing",
+            "MaintainTangency",
+            "Merge",
+            "FeatureScope",
+            "AutoSelect",
+            "ReverseStartTangentDirection",
+            "ReverseEndTangentDirection",
+            "StartConstraintApplyToAll",
+            "EndConstraintApplyToAll",
+            "StartConstraintDraftAngleDirection",
+            "EndConstraintDraftAngleDirection",
+            "StartConstraintDraftAngle",
+            "EndConstraintDraftAngle",
+            "StartTangentLength",
+            "EndTangentLength",
+        ),
         "找不到放样特征（★ 类型名含 `Loft`）",
-        {"StartConstraintDraftAngle": "unknown（★ 官方未写度还是弧度；★ **要真机量**）",
-         "EndConstraintDraftAngle": "unknown（★ 同上）",
-         "StartTangentLength": "unknown（★ 官方未写单位；★ **要真机量**）",
-         "EndTangentLength": "unknown（★ 同上）",
-         "GetWallThickness": "unknown（★ 官方未写单位；★ **要真机量**）",
-         "NumberOfSections": "★ **不带单位**（★ 官方逐字 `Number of sections` ⇒ **个数**；"
-                             "★ 而它的 CLR 类型是 `double` ⇒ ★ **少见的一类**）"})
+        {
+            "StartConstraintDraftAngle": "unknown（★ 官方未写度还是弧度；★ **要真机量**）",
+            "EndConstraintDraftAngle": "unknown（★ 同上）",
+            "StartTangentLength": "unknown（★ 官方未写单位；★ **要真机量**）",
+            "EndTangentLength": "unknown（★ 同上）",
+            "GetWallThickness": "unknown（★ 官方未写单位；★ **要真机量**）",
+            "NumberOfSections": "★ **不带单位**（★ 官方逐字 `Number of sections` ⇒ **个数**；"
+            "★ 而它的 CLR 类型是 `double` ⇒ ★ **少见的一类**）",
+        },
+    )
 
     #: ★★★★ **带实参的两个：★ 单独带参调**（★ 不能走那张"逐名读取"表）——
     #:   ★ 因为 `get_com_member` 对"必须带实参"的成员会**静默回 bound method** ✓
     if out.get("definition") is not None:
         try:
             from sw_connect import get_com_member as _g
-            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
-                if out.get("feature") else None
+
+            fd2 = (
+                _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition")
+                if out.get("feature")
+                else None
+            )
             if fd2 is not None:
                 out["GetWallThickness"] = {
                     "forward": _g(fd2, "GetWallThickness", True),
@@ -1345,8 +1649,9 @@ def loft_params(model, feature_name: str = "") -> dict:
                 n = out.get("GetGuideCurvesCount")
                 if isinstance(n, int) and n > 0:
                     out["GetGuideTangencyType"] = [
-                        _g(fd2, "GetGuideTangencyType", i) for i in range(min(n, 16))]
-        except Exception as exc:                                          # noqa: BLE001
+                        _g(fd2, "GetGuideTangencyType", i) for i in range(min(n, 16))
+                    ]
+        except Exception as exc:  # noqa: BLE001
             out["★_带参量错误"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
     return out
 
@@ -1389,15 +1694,28 @@ def revolve_params(model, feature_name: str = "") -> dict:
         #:  ——
         #:   ★ 真机读数：★ `["旋转1", "Revolution", **false**]` ⇒
         #:     ★★ **⇒ 那个 `false` 是 `("Revolve" in "Revolution")` 的结果** ⇒
-        #: ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol` 
+        #: ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol`
         #: 后分岔）✓
         #:   ★★★★ **⇒ 而我先前**把它写成"本该是 True"**** ⇒ ★ **那正是"我以为"** ✗
         #:   ★★★★★ **⇒ 教训**：★★★ **"我以为一个子串在里面"不可靠 ⇒ 让机器判** ✓
-        model, feature_name, FEATURE_TYPE_NAMES["revolve"],
-        ("GetAxisType", "IsBossFeature", "IsThinFeature", "GetContoursCount",
-         "GetFeatureScopeBodiesCount", "ThinWallType",
-         "ReverseDirection", "Merge", "FeatureScope", "AutoSelect",
-         "AutoSelectComponents", "AssemblyFeatureScope", "PropagateFeatureToParts"),
+        model,
+        feature_name,
+        FEATURE_TYPE_NAMES["revolve"],
+        (
+            "GetAxisType",
+            "IsBossFeature",
+            "IsThinFeature",
+            "GetContoursCount",
+            "GetFeatureScopeBodiesCount",
+            "ThinWallType",
+            "ReverseDirection",
+            "Merge",
+            "FeatureScope",
+            "AutoSelect",
+            "AutoSelectComponents",
+            "AssemblyFeatureScope",
+            "PropagateFeatureToParts",
+        ),
         #: ★ 标签里那个旧名也一并改掉 —— ★ 真机打出来的真名是 `Revolution` ✓
         "找不到旋转特征（★ 类型名含 `Revolution`）",
         #: ★★★★★★★ 2026-10-04（轮 130）**已量出：★ radians**（★ 第十三族）——
@@ -1410,40 +1728,47 @@ def revolve_params(model, feature_name: str = "") -> dict:
         #:     ★★★ ③ **反面对照**：★ 我先前**误传度**（`30.0`）⇒ 读回
         #:       `**4.867259 rad = 278.8734°**`、★ 而 `30 rad mod 360° = **278.8734°**`
         #:       （★ 差 `0.000000°`）⇒ ★ **也印证同一件事** ✓
-        {"GetRevolutionAngle": "**radians**（★ 官方**没写**；★ 三条独立证据定案 —— "
-                               "★ 反面对照：误传**度**时读回 4.867259 rad = 278.8734°、"
-                               "而 30 rad mod 360° 也正是 278.8734°）",
-         #: ★★★★★★★ 2026-10-04（轮 138）**已量出：★ 随文档单位（毫米）** ——
-         #:   ★ **怎么量的**：★ 建**薄壁旋转**（★ `revolve_boss(…, thin={"type": 0,
-         #:     "thickness": **0.002**})`）⇒ ★ 特征名 **`旋转-薄壁1`**、★ 读回
-         #:     `IsThinFeature = **true**` · ★ `ThinWallType = **0**` ·
-         #:     ★★ **`GetWallThickness = {forward: 0.002, backward: 0.002}`** ✓
-         #: ★★ **而体积给出**精确判据****（★ **不是粗估** —— ★ 轮廓是折线 ⇒ 积分是初等的
-         #: ）：
-         #:     ★ 矩形周长 2×(10+10) = **40 mm** · ★ 绕 x=0 转 30°（θ=π/6）⇒
-         #: ★ 扫掠面积 = ∫ r·θ ds = (10+20+15+15)·10·θ = **600θ = 100π = 314.159265 mm²*
-         #: * ⇒
-         #:     ★★ 体积 = t × 314.159 ⇒ ★ **实测 `0.628444`** ⇒ **反推 t = 0.002000399** ✓
-         #:     ★★★ **⇒ 与我写进去的 `0.002` 一致到 6 位**（★ 那 4e-7 偏差来自几何圆角化）✓
-         #: ★★★ **对照组**：★ 若口径是**米**（★ `0.002 m = 2 mm`）⇒ 体积该是 **628.319**
-         #:  ⇒
-         #:     ★★ **⇒ 与实测差** 1000 倍**** ⇒ **⇒ 毫无歧义** ✓
-         #:   ★★★★ **⇒ 而它与 `ISweepFeatureData::GetWallThickness` **同口径**** ✓
-         #:   ★★★★★ **⚠ 而**方法**也值得记**：★ 我第一版把薄壁那两条候选当**粗估**、
-         #:     说「只到生效这一层」⇒ ★★ **⇒ 而其实**可以算准**** ⇒
-         #: ★★★ **⇒ 判据**：★★★ **"估算不了"常常是**我没把几何写出来**、★ 而不是真估不了
-         #: ** ✓
-         "GetWallThickness": "**随文档单位（★ 毫米文档 ⇒ 毫米值）** —— ★ 官方**没写**；"
-                             "★ 真机定案：★ 写 `0.002` ⇒ 读回 `0.002`、★ 而**反推壁厚 "
-                             "= 0.002000399**（★ 体积 0.628444 ÷ 扫掠面积 314.159265）· "
-                             "★ 对照组：★ 若口径是**米**体积该是 **628.319**（★ 差 **1000 倍**）✓"})
+        {
+            "GetRevolutionAngle": "**radians**（★ 官方**没写**；★ 三条独立证据定案 —— "
+            "★ 反面对照：误传**度**时读回 4.867259 rad = 278.8734°、"
+            "而 30 rad mod 360° 也正是 278.8734°）",
+            #: ★★★★★★★ 2026-10-04（轮 138）**已量出：★ 随文档单位（毫米）** ——
+            #:   ★ **怎么量的**：★ 建**薄壁旋转**（★ `revolve_boss(…, thin={"type": 0,
+            #:     "thickness": **0.002**})`）⇒ ★ 特征名 **`旋转-薄壁1`**、★ 读回
+            #:     `IsThinFeature = **true**` · ★ `ThinWallType = **0**` ·
+            #:     ★★ **`GetWallThickness = {forward: 0.002, backward: 0.002}`** ✓
+            #: ★★ **而体积给出**精确判据****（★ **不是粗估** —— ★ 轮廓是折线 ⇒ 积分是初等的
+            #: ）：
+            #:     ★ 矩形周长 2×(10+10) = **40 mm** · ★ 绕 x=0 转 30°（θ=π/6）⇒
+            #: ★ 扫掠面积 = ∫ r·θ ds = (10+20+15+15)·10·θ = **600θ = 100π = 314.159265 mm²*
+            #: * ⇒
+            #:     ★★ 体积 = t × 314.159 ⇒ ★ **实测 `0.628444`** ⇒ **反推 t = 0.002000399** ✓
+            #:     ★★★ **⇒ 与我写进去的 `0.002` 一致到 6 位**（★ 那 4e-7 偏差来自几何圆角化）✓
+            #: ★★★ **对照组**：★ 若口径是**米**（★ `0.002 m = 2 mm`）⇒ 体积该是 **628.319**
+            #:  ⇒
+            #:     ★★ **⇒ 与实测差** 1000 倍**** ⇒ **⇒ 毫无歧义** ✓
+            #:   ★★★★ **⇒ 而它与 `ISweepFeatureData::GetWallThickness` **同口径**** ✓
+            #:   ★★★★★ **⚠ 而**方法**也值得记**：★ 我第一版把薄壁那两条候选当**粗估**、
+            #:     说「只到生效这一层」⇒ ★★ **⇒ 而其实**可以算准**** ⇒
+            #: ★★★ **⇒ 判据**：★★★ **"估算不了"常常是**我没把几何写出来**、★ 而不是真估不了
+            #: ** ✓
+            "GetWallThickness": "**随文档单位（★ 毫米文档 ⇒ 毫米值）** —— ★ 官方**没写**；"
+            "★ 真机定案：★ 写 `0.002` ⇒ 读回 `0.002`、★ 而**反推壁厚 "
+            "= 0.002000399**（★ 体积 0.628444 ÷ 扫掠面积 314.159265）· "
+            "★ 对照组：★ 若口径是**米**体积该是 **628.319**（★ 差 **1000 倍**）✓",
+        },
+    )
 
     #: ★★★★ **两个带实参的：★ 单独带参调**（★ 不能走那张"逐名读取"表）✓
     if out.get("definition") is not None:
         try:
             from sw_connect import get_com_member as _g
-            fd2 = _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition") \
-                if out.get("feature") else None
+
+            fd2 = (
+                _g(_g(model, "FeatureByName", str(out["feature"])), "GetDefinition")
+                if out.get("feature")
+                else None
+            )
             if fd2 is not None:
                 out["GetRevolutionAngle"] = {
                     "forward": _g(fd2, "GetRevolutionAngle", True),
@@ -1455,7 +1780,7 @@ def revolve_params(model, feature_name: str = "") -> dict:
                     "backward": _g(fd2, "GetWallThickness", False),
                     "★_单位口径": "unknown（★ 官方未写单位；★ 真机实测见证据）",
                 }
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             out["★_带参量错误"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
     return out
 
@@ -1496,19 +1821,33 @@ def shell_params(model, feature_name: str = "") -> dict:
       · ★ **`AccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ ★ 同上（★ 成对的前置）✓
     """
     from sw_connect import get_com_member, safe_get_com_member
+
     UNK = "unknown（★ 官方 ## Returns 未写单位；★ 真机实测见证据）"
     out: dict = {
-        "feature": feature_name, "definition": None, "error": None,
+        "feature": feature_name,
+        "definition": None,
+        "error": None,
         "★_单位口径": {"Thickness": UNK, "GetMultipleThicknessAtIndex": UNK},
-        "★_无量纲": ["Direction", "FacesRemovedCount",
-                     "GetMultipleThicknessFacesCount"],
-        "★_方向语义": {"0": "inward shell（★ 向内的抽壳）",
-                       "1": "outward shell（★ 向外的抽壳）"},
+        "★_无量纲": [
+            "Direction",
+            "FacesRemovedCount",
+            "GetMultipleThicknessFacesCount",
+        ],
+        "★_方向语义": {
+            "0": "inward shell（★ 向内的抽壳）",
+            "1": "outward shell（★ 向外的抽壳）",
+        },
         "★_不读（★ 要前置 / ★ 指针接口 / ★ 事实 47）": [
-            "IGetFacesRemoved", "IGetMultipleThicknessFaces", "IAccessSelections",
-            "ISetFacesRemoved", "ISetMultipleThicknessFaces",
-            "FacesRemoved", "MultipleThicknessFaces",
-            "AccessSelections", "ReleaseSelectionAccess"],
+            "IGetFacesRemoved",
+            "IGetMultipleThicknessFaces",
+            "IAccessSelections",
+            "ISetFacesRemoved",
+            "ISetMultipleThicknessFaces",
+            "FacesRemoved",
+            "MultipleThicknessFaces",
+            "AccessSelections",
+            "ReleaseSelectionAccess",
+        ],
     }
     try:
         feat = None
@@ -1524,7 +1863,7 @@ def shell_params(model, feature_name: str = "") -> dict:
                     tn = str(safe_get_com_member(f, "GetTypeName2") or "")
                     if nm not in _CONTAINER_NODES and "Shell" in tn:
                         feat, out["feature"] = f, nm
-                except Exception:                                         # noqa: BLE001
+                except Exception:  # noqa: BLE001
                     pass
                 f = safe_get_com_member(f, "GetNextFeature")
         if feat is None:
@@ -1536,25 +1875,30 @@ def shell_params(model, feature_name: str = "") -> dict:
             out["error"] = "`IFeature::GetDefinition` 回 None"
             return out
         #: ★★ **那五个可读的**（★ 逐条查过官方页）⇒ ★ 直接取 ✓
-        for name in ("Thickness", "Direction", "FacesRemovedCount",
-                     "GetMultipleThicknessFacesCount"):
+        for name in (
+            "Thickness",
+            "Direction",
+            "FacesRemovedCount",
+            "GetMultipleThicknessFacesCount",
+        ):
             try:
                 out[name] = get_com_member(fd, name)
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
         #: ★★★ **逐面厚度**：★ 先数、★ 再按索引取（★ 官方 Remarks 说"先调计数"）✓
         #:   ★★ 设**上限**，★ 免得异常时死循环 ✓
         try:
             n = int(out.get("GetMultipleThicknessFacesCount") or 0)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             n = 0
         out["multiple_thickness"] = []
         for i in range(min(max(n, 0), 32)):
             try:
                 out["multiple_thickness"].append(
-                    get_com_member(fd, "GetMultipleThicknessAtIndex", i))
-            except Exception as exc:                                      # noqa: BLE001
+                    get_com_member(fd, "GetMultipleThicknessAtIndex", i)
+                )
+            except Exception as exc:  # noqa: BLE001
                 out["multiple_thickness"].append("err: %s" % str(exc)[:50])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         out["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out

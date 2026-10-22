@@ -11,7 +11,7 @@ SolidWorks VBA 宏生成防护层。
 # 仓库:   本项目自身
 # 文件:   scripts/sw_macro_guard.py
 # 定位:   SolidWorks VBA 宏生成防护层。
-# 官方依据: 本仓防护层（VBA 宏生成护栏）；判据来自 AGENTS.md 铁律 2 的弹窗/超时纪律，★ 
+# 官方依据: 本仓防护层（VBA 宏生成护栏）；判据来自 AGENTS.md 铁律 2 的弹窗/超时纪律，★
 #           本文件未逐条标注官方页号
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -65,7 +65,7 @@ RETRY_PROMPT_SUFFIX = """
 
 
 VBA_TEMPLATES: Dict[str, str] = {
-    "cube": r'''
+    "cube": r"""
 Option Explicit
 
 Dim swApp As SldWorks.SldWorks
@@ -86,8 +86,8 @@ Sub main()
     swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
-'''.strip(),
-    "cylinder": r'''
+""".strip(),
+    "cylinder": r"""
 Option Explicit
 
 Dim swApp As SldWorks.SldWorks
@@ -108,8 +108,8 @@ Sub main()
     swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.05, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
-'''.strip(),
-    "extrude": r'''
+""".strip(),
+    "extrude": r"""
 Option Explicit
 
 Dim swApp As SldWorks.SldWorks
@@ -130,8 +130,8 @@ Sub main()
     swModel.FeatureManager.FeatureExtrusion3 True, False, True, 0, 0, 0.01, 0#, False, False, False, False, 0#, 0#, False, False, False, False, True, False, True, 0, 0#, False
     swModel.ForceRebuild3 False
 End Sub
-'''.strip(),
-    "sketch": r'''
+""".strip(),
+    "sketch": r"""
 Option Explicit
 
 Dim swApp As SldWorks.SldWorks
@@ -152,7 +152,7 @@ Sub main()
     swModel.SketchManager.InsertSketch True
     swModel.ForceRebuild3 False
 End Sub
-'''.strip(),
+""".strip(),
 }
 
 
@@ -196,10 +196,14 @@ def normalize_model_family(model_name: Optional[str]) -> str:
     return "generic"
 
 
-def build_prompt(user_request: str, model_name: Optional[str] = None, strict: Optional[bool] = None) -> str:
+def build_prompt(
+    user_request: str, model_name: Optional[str] = None, strict: Optional[bool] = None
+) -> str:
     """按模型族生成提示词。"""
     family = normalize_model_family(model_name)
-    use_strict = strict if strict is not None else family in {"kimi", "claude", "generic"}
+    use_strict = (
+        strict if strict is not None else family in {"kimi", "claude", "generic"}
+    )
     system_prompt = STRICT_FORMAT_PROMPT if use_strict else GPT_PROMPT
     return f"{system_prompt}\n\n用户需求：\n{user_request.strip()}\n"
 
@@ -208,7 +212,9 @@ def extract_vba_code(text: str) -> str:
     """从模型输出中提取 VBA 代码。"""
     if not text:
         return ""
-    fence = re.search(r"```(?:vb|vba|visualbasic)?\s*(.*?)```", text, re.IGNORECASE | re.DOTALL)
+    fence = re.search(
+        r"```(?:vb|vba|visualbasic)?\s*(.*?)```", text, re.IGNORECASE | re.DOTALL
+    )
     if fence:
         return fence.group(1).strip()
     return text.strip()
@@ -290,9 +296,14 @@ def generate_macro_with_guard(
                     validation=validation,
                 )
 
-        prompt = build_prompt(user_request, model_name=model_name, strict=True) + RETRY_PROMPT_SUFFIX
+        prompt = (
+            build_prompt(user_request, model_name=model_name, strict=True)
+            + RETRY_PROMPT_SUFFIX
+        )
         if last_validation.issues:
-            prompt += "\n当前校验问题：\n" + "\n".join(f"- {issue}" for issue in last_validation.issues)
+            prompt += "\n当前校验问题：\n" + "\n".join(
+                f"- {issue}" for issue in last_validation.issues
+            )
 
     fallback = fallback_macro_for_request(user_request)
     if fallback:
@@ -304,7 +315,10 @@ def generate_macro_with_guard(
             validation=validation,
         )
 
-    raise ValueError("模型输出未通过校验，且没有匹配到本地 VBA 兜底模板: " + "; ".join(last_validation.issues))
+    raise ValueError(
+        "模型输出未通过校验，且没有匹配到本地 VBA 兜底模板: "
+        + "; ".join(last_validation.issues)
+    )
 
 
 def write_macro_file(code: str, output_path: str) -> str:
@@ -317,11 +331,15 @@ def write_macro_file(code: str, output_path: str) -> str:
 
 def _parse_args():
     """解析命令行参数。"""
-    parser = argparse.ArgumentParser(description="SolidWorks VBA 宏提示词、校验与本地模板工具。")
+    parser = argparse.ArgumentParser(
+        description="SolidWorks VBA 宏提示词、校验与本地模板工具。"
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     prompt_parser = subparsers.add_parser("prompt", help="按模型族输出提示词。")
-    prompt_parser.add_argument("--model", default="", help="模型名称，如 gpt-4.1、kimi、claude。")
+    prompt_parser.add_argument(
+        "--model", default="", help="模型名称，如 gpt-4.1、kimi、claude。"
+    )
     prompt_parser.add_argument("request", help="用户建模需求。")
 
     validate_parser = subparsers.add_parser("validate", help="校验 VBA 文件。")
@@ -343,7 +361,11 @@ def main() -> int:
     if args.command == "validate":
         code = Path(args.file).read_text(encoding="utf-8")
         result = validate_vba_macro(code)
-        print(json.dumps({"ok": result.ok, "issues": result.issues}, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {"ok": result.ok, "issues": result.issues}, ensure_ascii=False, indent=2
+            )
+        )
         return 0 if result.ok else 1
 
     if args.command == "template":

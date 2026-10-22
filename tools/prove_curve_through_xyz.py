@@ -44,8 +44,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
 
 #: \u2605 \u8981\u7a7f\u8fc7\u7684\u70b9\uff08\u2605 **\u6beb\u7c73**\uff0c\u2605 \u672c
 #: \u4ed3\u7ea6\u5b9a\uff1a\u8fb9\u754c\u6362\u7b97\u4e00\u6b21\uff09
@@ -67,20 +67,21 @@ def _one(sw, tag, mode):
             try:
                 C.get_com_member(doc, "InsertCurveFileBegin")
                 steps["Begin"] = "ok"
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 steps["Begin"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
             pts = []
-            for (x, y, z) in PTS_MM:
+            for x, y, z in PTS_MM:
                 try:
-                    ok = C.get_com_member(doc, "InsertCurveFilePoint",
-                                          x / 1000.0, y / 1000.0, z / 1000.0)
+                    ok = C.get_com_member(
+                        doc, "InsertCurveFilePoint", x / 1000.0, y / 1000.0, z / 1000.0
+                    )
                     pts.append(bool(ok))
-                except Exception as exc:                                  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     pts.append("%s: %s" % (type(exc).__name__, str(exc)[:50]))
             steps["Point"] = pts
             try:
                 steps["End"] = bool(C.get_com_member(doc, "InsertCurveFileEnd"))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 steps["End"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
             row["steps"] = steps
         else:
@@ -88,17 +89,23 @@ def _one(sw, tag, mode):
             #: es through the points in the specified file"\uff09
             f = R / "output" / "_xyz_points.txt"
             f.parent.mkdir(parents=True, exist_ok=True)
-            f.write_text("\n".join("%.6f %.6f %.6f" % (x / 1000.0, y / 1000.0, z / 1000.0)
-                                   for (x, y, z) in PTS_MM) + "\n", encoding="utf-8")
+            f.write_text(
+                "\n".join(
+                    "%.6f %.6f %.6f" % (x / 1000.0, y / 1000.0, z / 1000.0)
+                    for (x, y, z) in PTS_MM
+                )
+                + "\n",
+                encoding="utf-8",
+            )
             row["file"] = str(f)
             try:
                 row["returned"] = str(C.get_com_member(doc, "InsertCurveFile", str(f)))
-            except Exception as exc:                                      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
     finally:
         if doc is not None:
@@ -106,30 +113,50 @@ def _one(sw, tag, mode):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u901a\u8fc7 XYZ \u70b9\u7684\u66f2\u7ebf\uff1a`InsertCurveFileBegin/Point/End`\uff08\u4e09\u6b65\u5f0f\uff09\u00b7 `InsertCurveFile`",
-          "official": "Begin/Point/End \u56db\u9875\u5747**\u672a\u6807\u5e9f\u5f03**\uff1b"
-                      "\u2605 Begin \u56de **void** \u21d2 \u6309\u4e8b\u5b9e 436\uff0c\u5224\u636e\u53d6**\u7279\u5f81\u6811\u589e\u91cf**",
-          "cases": []}
-    ev["cases"].append(_one(sw, "\u2605 **\u4e09\u6b65\u5f0f**\uff08Begin \u2192 Point\u00d74 \u2192 End\uff09", "steps"))
-    ev["cases"].append(_one(sw, "\u2605 **\u4ece\u6587\u4ef6**\uff08`InsertCurveFile`\uff09", "file"))
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u901a\u8fc7 XYZ \u70b9\u7684\u66f2\u7ebf\uff1a`InsertCurveFileBegin/Point/End`\uff08\u4e09\u6b65\u5f0f\uff09\u00b7 `InsertCurveFile`",
+        "official": "Begin/Point/End \u56db\u9875\u5747**\u672a\u6807\u5e9f\u5f03**\uff1b"
+        "\u2605 Begin \u56de **void** \u21d2 \u6309\u4e8b\u5b9e 436\uff0c\u5224\u636e\u53d6**\u7279\u5f81\u6811\u589e\u91cf**",
+        "cases": [],
+    }
+    ev["cases"].append(
+        _one(
+            sw,
+            "\u2605 **\u4e09\u6b65\u5f0f**\uff08Begin \u2192 Point\u00d74 \u2192 End\uff09",
+            "steps",
+        )
+    )
+    ev["cases"].append(
+        _one(sw, "\u2605 **\u4ece\u6587\u4ef6**\uff08`InsertCurveFile`\uff09", "file")
+    )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "xyz_curve_%d_of_%d" % (ev["passed"], ev["total"])
     p = R / "output" / "curve-through-xyz-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
     print("  \u5224\u522b\uff1a**%s**" % ev["verdict"])
     for c in ev["cases"]:
-        print("  %-44s ok=%-6s \u7279\u5f81 %s \u2192 %s" % (
-            c.get("tag"), c.get("ok"), c.get("before"), (c.get("before") or 0) + len(c.get("new") or [])))
+        print(
+            "  %-44s ok=%-6s \u7279\u5f81 %s \u2192 %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("before"),
+                (c.get("before") or 0) + len(c.get("new") or []),
+            )
+        )
         print("        \u65b0\u589e=%s" % (c.get("new"),))
         if c.get("steps"):
             for k, v in c["steps"].items():

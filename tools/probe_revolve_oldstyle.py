@@ -49,10 +49,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                   # noqa: E402
-from scripts import sw_part as P                                      # noqa: E402
-import scripts.sw_feature_readback as FR                              # noqa: E402
-import scripts.sw_weldment as W                                       # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_weldment as W  # noqa: E402
 
 
 def _mk_profile_with_centerline(doc, with_centerline=True):
@@ -76,7 +76,7 @@ def _pick_sketch(doc, name, mark, append=False):
             if P._select_by_id(ext, cand, "SKETCH", append=append, mark=mark):
                 picked = cand
                 break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             continue
     return picked
 
@@ -89,9 +89,9 @@ def _tree(model):
         for f in W.iter_features_recursive(model):
             try:
                 types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
-    except Exception:                                                     # noqa: BLE001
+    except Exception:  # noqa: BLE001
         pass
     return {"names": top, "types": types}
 
@@ -102,44 +102,63 @@ def _one(sw, tag, entry, with_centerline):
     try:
         doc = C.new_document(sw, "part")
         _mk_profile_with_centerline(doc, with_centerline)
-        names = [n for n in (FR.feature_names(doc) or [])
-                 if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
+        names = [
+            n
+            for n in (FR.feature_names(doc) or [])
+            if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
+        ]
         sk = names[-1] if names else "\u8349\u56fe1"
         try:
             doc.ClearSelection2(True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         row["picked"] = _pick_sketch(doc, sk, 0)
         try:
-            row["sel"] = int(C.get_com_member(C.get_com_member(doc, "SelectionManager"),
-                                              "GetSelectedObjectCount2", -1) or 0)
-        except Exception:                                                 # noqa: BLE001
+            row["sel"] = int(
+                C.get_com_member(
+                    C.get_com_member(doc, "SelectionManager"),
+                    "GetSelectedObjectCount2",
+                    -1,
+                )
+                or 0
+            )
+        except Exception:  # noqa: BLE001
             row["sel"] = -1
         before = _tree(doc)
         try:
             if entry == "modeldoc":
-                ret = C.get_com_member(doc, "InsertRevolvedRefSurface",
-                                       math.radians(360.0), False, 0.0, 0)
+                ret = C.get_com_member(
+                    doc, "InsertRevolvedRefSurface", math.radians(360.0), False, 0.0, 0
+                )
             else:
                 fm = C.get_com_member(doc, "FeatureManager")
-                ret = C.get_com_member(fm, "InsertRevolvedRefSurface",
-                                       math.radians(360.0), False, 0.0, 0)
+                ret = C.get_com_member(
+                    fm, "InsertRevolvedRefSurface", math.radians(360.0), False, 0.0, 0
+                )
             row["returned"] = type(ret).__name__ if ret is not None else "None"
             if ret is not None:
                 for k, m in (("ret_name", "Name"), ("ret_type", "GetTypeName2")):
                     try:
                         row[k] = str(C.get_com_member(ret, m))
-                    except Exception:                                     # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         pass
-        except Exception as exc:                                          # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _tree(doc)
-        row["new"] = [n for n in (after.get("names") or []) if n not in (before.get("names") or [])]
-        row["new_types"] = [t for t in (after.get("types") or []) if t not in (before.get("types") or [])]
+        row["new"] = [
+            n
+            for n in (after.get("names") or [])
+            if n not in (before.get("names") or [])
+        ]
+        row["new_types"] = [
+            t
+            for t in (after.get("types") or [])
+            if t not in (before.get("types") or [])
+        ]
         #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811**\u6216**\u
         #: 8fd4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d
         row["ok"] = bool(row["new"] or row["new_types"] or row.get("ret_type"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -147,33 +166,62 @@ def _one(sw, tag, entry, with_centerline):
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u65cb\u8f6c\u66f2\u9762\uff1a`IModelDoc2`\uff08**\u65e7\u5f0f**\uff09vs `IFeatureManager`\uff08\u65b0\u67b6\u6784\uff09",
-          "why": "\u5b98\u65b9\u539f\u8bdd\u8981 **centerline**\uff1b\u800c\u672c\u4ed3\u65e7\u5b9e\u73b0\u53ea\u58f0\u660e\u201c\u8981\u9009\u597d\u8f6e\u5ed3\u201d",
-          "cases": []}
-    for tag, entry, cl in (("\u2605 IModelDoc2\uff08\u65e7\u5f0f\uff09+ \u4e2d\u5fc3\u7ebf", "modeldoc", True),
-                           ("IModelDoc2\uff08\u65e7\u5f0f\uff09\u00b7 \u65e0\u4e2d\u5fc3\u7ebf", "modeldoc", False),
-                           ("\u5bf9\u7167\uff1aIFeatureManager\uff08\u65b0\u67b6\u6784\uff09+ \u4e2d\u5fc3\u7ebf",
-                            "featuremanager", True)):
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u65cb\u8f6c\u66f2\u9762\uff1a`IModelDoc2`\uff08**\u65e7\u5f0f**\uff09vs `IFeatureManager`\uff08\u65b0\u67b6\u6784\uff09",
+        "why": "\u5b98\u65b9\u539f\u8bdd\u8981 **centerline**\uff1b\u800c\u672c\u4ed3\u65e7\u5b9e\u73b0\u53ea\u58f0\u660e\u201c\u8981\u9009\u597d\u8f6e\u5ed3\u201d",
+        "cases": [],
+    }
+    for tag, entry, cl in (
+        (
+            "\u2605 IModelDoc2\uff08\u65e7\u5f0f\uff09+ \u4e2d\u5fc3\u7ebf",
+            "modeldoc",
+            True,
+        ),
+        (
+            "IModelDoc2\uff08\u65e7\u5f0f\uff09\u00b7 \u65e0\u4e2d\u5fc3\u7ebf",
+            "modeldoc",
+            False,
+        ),
+        (
+            "\u5bf9\u7167\uff1aIFeatureManager\uff08\u65b0\u67b6\u6784\uff09+ \u4e2d\u5fc3\u7ebf",
+            "featuremanager",
+            True,
+        ),
+    ):
         ev["cases"].append(_one(sw, tag, entry, cl))
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
     ev["verdict"] = "revolve_oldstyle_works" if ev["passed"] else "all_revolve_fail"
     p = R / "output" / "revolve-oldstyle-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-38s ok=%-6s \u9009\u4e2d=%-3s \u56de=%-9s \u540d=%s \u578b=%s" % (
-            c.get("tag"), c.get("ok"), c.get("sel"), c.get("returned"),
-            c.get("ret_name"), c.get("ret_type")))
+        print(
+            "  %-38s ok=%-6s \u9009\u4e2d=%-3s \u56de=%-9s \u540d=%s \u578b=%s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                c.get("sel"),
+                c.get("returned"),
+                c.get("ret_name"),
+                c.get("ret_type"),
+            )
+        )
         print("        new=%s new_types=%s" % (c.get("new"), c.get("new_types")))
         if c.get("err"):
             print("        err=%s" % str(c["err"])[:130])

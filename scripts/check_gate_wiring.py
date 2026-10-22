@@ -36,6 +36,7 @@ r"""@brief 元门禁：`scripts/check_*.py` 每个都必须**被 `release_check.
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ast
@@ -57,7 +58,9 @@ CLASSIFICATION = ROOT / "docs" / "gate-classification.json"
 
 def wired_pattern(name: str) -> re.Pattern:
     """⇒ 「被 `subprocess` 调用」的精确形态（见本文件 docstring 的口径）。"""
-    return re.compile(r"str\(\s*ROOT\s*/\s*\"scripts\"\s*/\s*\"%s\"\s*\)" % re.escape(name))
+    return re.compile(
+        r"str\(\s*ROOT\s*/\s*\"scripts\"\s*/\s*\"%s\"\s*\)" % re.escape(name)
+    )
 
 
 def _has_raise(node) -> bool:
@@ -85,8 +88,8 @@ def _is_fail_check(stmt, var: str) -> bool:
 #: ⇒ 剩下的 `skipped` 只允许由下面这些**条件**触发（都得是可核的"数据源缺失/脚本约定"）
 #: ：
 ALLOWED_SKIP_CONDITIONS = (
-    "_git_available",       # 非 git 工作树 ⇒ 无法判定新增行（便携性）
-    "returncode == 2",      # 脚本自己的 SKIP 约定（`check_provenance.py` 读不到锚点）
+    "_git_available",  # 非 git 工作树 ⇒ 无法判定新增行（便携性）
+    "returncode == 2",  # 脚本自己的 SKIP 约定（`check_provenance.py` 读不到锚点）
     #: ⚑ 被检查脚本**自己在输出里报 `[SKIP]`** ⇒ 由它驱动状态分类（`_run_interface_owner
     #: ship_probe`
     #:   的 `skipped = any(... startswith("[SKIP]") ...)`）。
@@ -116,11 +119,18 @@ def skip_branches(src: str) -> list:
         # 只看**本分支**（不含 `orelse`）：`elif` 在 AST 里是 `orelse` 里的 `If`
         if '"skipped"' not in body_src and "'skipped'" not in body_src:
             continue
-        lo = max(0, node.lineno - 13)          # 往上 12 行（含 test 与变量来源）
-        context = "\n".join(lines[lo:node.end_lineno or node.lineno])
-        out.append((node.lineno, " | ".join(
-            l.strip() for l in lines[lo:node.lineno] if l.strip())[-150:] or ast.unparse(node.test),
-            context))
+        lo = max(0, node.lineno - 13)  # 往上 12 行（含 test 与变量来源）
+        context = "\n".join(lines[lo : node.end_lineno or node.lineno])
+        out.append(
+            (
+                node.lineno,
+                " | ".join(l.strip() for l in lines[lo : node.lineno] if l.strip())[
+                    -150:
+                ]
+                or ast.unparse(node.test),
+                context,
+            )
+        )
     return sorted(out)
 
 
@@ -136,9 +146,11 @@ def aggregated_vars(src: str) -> set:
     tree = ast.parse(src)
     names: set = set()
     for node in ast.walk(tree):
-        if not (isinstance(node, ast.Assign)
-                and any(getattr(t, "id", None) == "_gate_results" for t in node.targets)
-                and isinstance(node.value, ast.Dict)):
+        if not (
+            isinstance(node, ast.Assign)
+            and any(getattr(t, "id", None) == "_gate_results" for t in node.targets)
+            and isinstance(node.value, ast.Dict)
+        ):
             continue
         for v in node.value.values:
             if isinstance(v, ast.Name):
@@ -164,12 +176,18 @@ def actual_runners(src: str) -> dict:
         for idx, stmt in enumerate(body):
             if not (isinstance(stmt, ast.Assign) and isinstance(stmt.value, ast.Call)):
                 continue
-            callee = getattr(stmt.value.func, "id", None) or getattr(stmt.value.func, "attr", None)
+            callee = getattr(stmt.value.func, "id", None) or getattr(
+                stmt.value.func, "attr", None
+            )
             if not (callee and callee.startswith("_run_")):
                 continue
             var = getattr(stmt.targets[0], "id", "?") if stmt.targets else "?"
             nxt = body[idx + 1] if idx + 1 < len(body) else None
-            out[callee] = "hard" if (nxt is not None and _is_fail_check(nxt, var)) else "diagnostic"
+            out[callee] = (
+                "hard"
+                if (nxt is not None and _is_fail_check(nxt, var))
+                else "diagnostic"
+            )
     return out
 
 
@@ -193,7 +211,10 @@ def main() -> int:
             print("[FAIL] %s 不是合法 JSON：%s" % (EXEMPTIONS.name, exc))
             return 1
 
-    print("门禁接线元门禁 · `scripts/check_*.py` %d 个 · 豁免登记 %d 条" % (len(gates), len(exempt)))
+    print(
+        "门禁接线元门禁 · `scripts/check_*.py` %d 个 · 豁免登记 %d 条"
+        % (len(gates), len(exempt))
+    )
     print()
 
     unwired_unexempted, wired_but_exempted, bad_exemptions = [], [], []
@@ -213,7 +234,9 @@ def main() -> int:
         if not isinstance(ev, list) or not [e for e in ev if str(e).strip()]:
             bad_exemptions.append("%s 缺**非空** `evidence`" % g)
         if g not in gates:
-            bad_exemptions.append("%s 不在 `scripts/check_*.py` 里（名单腐坏：文件已改名/删除？）" % g)
+            bad_exemptions.append(
+                "%s 不在 `scripts/check_*.py` 里（名单腐坏：文件已改名/删除？）" % g
+            )
 
     # ⚑ **接线方式**（2026-10-01 轮 72 加）：登记的分类必须与**实况**一致。
     #   实况用 AST 从 `release_check.py` 现算（精确到兄弟语句），**不读登记表的自述**。
@@ -237,29 +260,41 @@ def main() -> int:
         want = (declared.get(runner) or {}).get("kind")
         gate = (declared.get(runner) or {}).get("gate", "—")
         if act is None:
-            kind_bad.append("%s（登记为 `%s`）在 `release_check.py` 里**找不到这个 `_run_*` 调用点**"
-                            "（名单腐坏：函数改名/删除了？）" % (runner, want))
+            kind_bad.append(
+                "%s（登记为 `%s`）在 `release_check.py` 里**找不到这个 `_run_*` 调用点**"
+                "（名单腐坏：函数改名/删除了？）" % (runner, want)
+            )
             continue
         if want is None:
-            kind_bad.append("%s 在 `release_check.py` 里被调用，却**没登记分类**"
-                            "（登记表必须覆盖每一个调用点）" % runner)
+            kind_bad.append(
+                "%s 在 `release_check.py` 里被调用，却**没登记分类**"
+                "（登记表必须覆盖每一个调用点）" % runner
+            )
             continue
-        if want not in ("hard", "diagnostic", "release_static",
-                        "release_hardware", "retired"):
+        if want not in (
+            "hard",
+            "diagnostic",
+            "release_static",
+            "release_hardware",
+            "retired",
+        ):
             #: ★★ 2026-10-12（规格 324 · Q16）扩到**四类**：
             #:   `release_static` / `release_hardware` / `diagnostic` / `retired`
             #:   ★ `hard` 与 `diagnostic` 是**旧名**，仍收（★ 向后兼容）。
-            kind_bad.append("%s 的 `kind=%r` 不在枚举 "
-                            "`release_static`/`release_hardware`/`diagnostic`/"
-                            "`retired`（旧名 `hard`/`diagnostic` 也收）内"
-                            % (runner, want))
+            kind_bad.append(
+                "%s 的 `kind=%r` 不在枚举 "
+                "`release_static`/`release_hardware`/`diagnostic`/"
+                "`retired`（旧名 `hard`/`diagnostic` 也收）内" % (runner, want)
+            )
             continue
         #: ★★ 新旧名等价映射（★ 规格 324 的 `LEGACY_KIND_MAP`）
         _alias = {"hard": "release_static", "diagnostic": "diagnostic"}
         if _alias.get(want, want) != _alias.get(act, act):
-            kind_bad.append("%s（%s）登记为 **%s**，而实测是 **%s** —— "
-                            "「本该拦的写成诊断」会**静默放行**（后者更危险）"
-                            % (runner, gate, want, act))
+            kind_bad.append(
+                "%s（%s）登记为 **%s**，而实测是 **%s** —— "
+                "「本该拦的写成诊断」会**静默放行**（后者更危险）"
+                % (runner, gate, want, act)
+            )
             continue
         for field in ("gate", "reason"):
             if not str((declared.get(runner) or {}).get(field) or "").strip():
@@ -274,12 +309,17 @@ def main() -> int:
     skip_bad = []
     for ln, cond, context in skips:
         ok = any(tok in context for tok in ALLOWED_SKIP_CONDITIONS)
-        print("    L%-4d %-64s %s" % (ln, cond[:62], "✓" if ok else "**✗ 依据不在白名单**"))
+        print(
+            "    L%-4d %-64s %s"
+            % (ln, cond[:62], "✓" if ok else "**✗ 依据不在白名单**")
+        )
         if not ok:
-            skip_bad.append("L%d 的 `skipped` 依据是 `%s` —— 不在白名单 %s 内；"
-                            "⚠ **「无法启动/超时/异常」必须是 `fail`**，"
-                            "因为调用点只看 `fail` ⇒ `skipped` 会被**静默放行**"
-                            % (ln, cond[:60], list(ALLOWED_SKIP_CONDITIONS)))
+            skip_bad.append(
+                "L%d 的 `skipped` 依据是 `%s` —— 不在白名单 %s 内；"
+                "⚠ **「无法启动/超时/异常」必须是 `fail`**，"
+                "因为调用点只看 `fail` ⇒ `skipped` 会被**静默放行**"
+                % (ln, cond[:60], list(ALLOWED_SKIP_CONDITIONS))
+            )
     if not skips:
         print("    （本文件里没有 `skipped` 分支）")
 
@@ -303,11 +343,15 @@ def main() -> int:
         ok = v in agg
         print("    %-24s %s" % (v, "已汇总 ✓" if ok else "**✗ 没进返回体**"))
         if not ok:
-            agg_bad.append("`%s` 的结果**没有进返回体** ⇒ 「它跳过了/它没跑」在外面**看不见**"
-                           "（★ 静默跳过与没跑等价）⇒ 加进 `_gate_results`" % v)
+            agg_bad.append(
+                "`%s` 的结果**没有进返回体** ⇒ 「它跳过了/它没跑」在外面**看不见**"
+                "（★ 静默跳过与没跑等价）⇒ 加进 `_gate_results`" % v
+            )
     for v in sorted(agg - run_vars):
-        agg_bad.append("`_gate_results` 里的 `%s` 没有对应的 `_run_*` 赋值"
-                       "（名单腐坏：变量名改了？）" % v)
+        agg_bad.append(
+            "`_gate_results` 里的 `%s` 没有对应的 `_run_*` 赋值"
+            "（名单腐坏：变量名改了？）" % v
+        )
 
     # ⚑ **第六层：覆盖范围（`scripts/` + `tools/`）与「应执行 vs 实际」**
     #   （2026-10-12 · 规格 324 · Q16 逐字：「元门禁**同时覆盖** `scripts/`、`tools/`，
@@ -317,10 +361,13 @@ def main() -> int:
     cover_bad: list = []
     try:
         sys.path.insert(0, str(ROOT / "scripts"))
-        from engineering import gate_inventory as GI                    # noqa: PLC0415
+        from engineering import gate_inventory as GI  # noqa: PLC0415
+
         inv = GI.build_inventory()
-        print("    `scripts/` 检查文件 = %d · `tools/` 检查文件 = %d"
-              % (inv["scripts"]["n"], inv["tools"]["n"]))
+        print(
+            "    `scripts/` 检查文件 = %d · `tools/` 检查文件 = %d"
+            % (inv["scripts"]["n"], inv["tools"]["n"])
+        )
         #: ★★ **`tools/` 必须被扫到**（★ Q16 逐字要求覆盖）
         if inv["tools"]["n"] <= 0:
             cover_bad.append("★ `tools/` 里**一个检查文件都没扫到** ⇒ 覆盖不成立")
@@ -330,13 +377,16 @@ def main() -> int:
         should = set(inv["should_run_in_release"])
         declared = set(inv["declared"])
         miss = sorted(should - declared)
-        print("    应执行 %d · 已登记 %d · **应执行却没登记 %d**"
-              % (len(should), len(declared), len(miss)))
+        print(
+            "    应执行 %d · 已登记 %d · **应执行却没登记 %d**"
+            % (len(should), len(declared), len(miss))
+        )
         #: ★ 判据：**已登记的门禁必须有文件**（★ 名单腐坏）
         ghost = inv["declared_but_no_file"]
         if ghost:
-            cover_bad.append("★ 这些门禁**登记了却没有文件**（名单腐坏）：%s"
-                             % ghost[:4])
+            cover_bad.append(
+                "★ 这些门禁**登记了却没有文件**（名单腐坏）：%s" % ghost[:4]
+            )
         #: ★★ **四类计数如实报**（★ 0 条也要报 —— ★ 不假装四类都满）
         counts = inv["counts"]
         print("    四类计数：%s" % counts)
@@ -348,7 +398,7 @@ def main() -> int:
         for e in ret:
             if not e.get("replaced_by"):
                 cover_bad.append("★ %s 是 retired 却没有 `replaced_by`" % e.get("gate"))
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         cover_bad.append("★ 清点失败：%s: %s" % (type(exc).__name__, str(exc)[:120]))
 
     print()
@@ -371,18 +421,28 @@ def main() -> int:
             print("    · %s" % b)
     if unwired_unexempted:
         failed = True
-        print("[FAIL] %d 个门禁**没有被 `release_check.py` 调用**，也没登记豁免：" % len(unwired_unexempted))
+        print(
+            "[FAIL] %d 个门禁**没有被 `release_check.py` 调用**，也没登记豁免："
+            % len(unwired_unexempted)
+        )
         for g in unwired_unexempted:
             print("    · `scripts/%s`" % g)
         print()
-        print("  ⚠ 一个存在但没人跑的门禁，与没有门禁等价（轮 70 实测：`check_workspace_shadowing.py`")
+        print(
+            "  ⚠ 一个存在但没人跑的门禁，与没有门禁等价（轮 70 实测：`check_workspace_shadowing.py`"
+        )
         print("     早就存在却从没被调用，而它当时**正红着**）。")
         print("  ⇒ 两条修法（**由人定**）：")
         print("     ① **接进** `release_check.py`（照现有 `_run_*_gate` 的写法）；")
-        print("     ② 或登记进 `docs/gate-wiring-exemptions.json` 并**写明理由与依据**。")
+        print(
+            "     ② 或登记进 `docs/gate-wiring-exemptions.json` 并**写明理由与依据**。"
+        )
     if wired_but_exempted:
         failed = True
-        print("[FAIL] %d 个门禁**已接线却仍挂在豁免名单里**（名单腐坏）：" % len(wired_but_exempted))
+        print(
+            "[FAIL] %d 个门禁**已接线却仍挂在豁免名单里**（名单腐坏）："
+            % len(wired_but_exempted)
+        )
         for g in wired_but_exempted:
             print("    · `scripts/%s`" % g)
         print("  ⇒ 从 `docs/gate-wiring-exemptions.json` 删掉那些条目。")

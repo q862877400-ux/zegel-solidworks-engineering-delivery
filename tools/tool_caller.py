@@ -1,4 +1,5 @@
 """★ 按 `ToolSpec` 契约调一个工具（★ 给 B2 的灵敏度标定与 B3 的存活普查共用）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（工具层）
 # 文件:   tools/tool_caller.py
@@ -48,6 +49,7 @@ def _specs() -> dict:
     if _SPECS_CACHE is None:
         import register_capabilities as rc
         from tool_registry import effective_inject
+
         _SPECS_CACHE = {}
         for s in rc.all_specs():
             _SPECS_CACHE[s.name] = (s, effective_inject(s))
@@ -56,18 +58,20 @@ def _specs() -> dict:
             import importlib.util
             import pathlib as _pl
             import re as _re
+
             srv = _pl.Path(__file__).resolve().parents[1] / "mcp-server" / "server.py"
             if srv.is_file():
                 txt = srv.read_text(encoding="utf-8", errors="replace")
                 for m in _re.finditer(
-                        r"@mcp\.tool\((.*?)\)\s*\n(?:async\s+)?def\s+(\w+)\(", txt, _re.S):
+                    r"@mcp\.tool\((.*?)\)\s*\n(?:async\s+)?def\s+(\w+)\(", txt, _re.S
+                ):
                     head, fn = m.group(1), m.group(2)
                     nm = _re.search(r'name\s*=\s*["\']([^"\']+)["\']', head)
                     cn = nm.group(1) if nm else fn
                     if cn in _SPECS_CACHE:
                         continue
                     _SPECS_CACHE[cn] = (_ServerSpec(cn, fn), "")
-        except Exception:                                                  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return _SPECS_CACHE
 
@@ -102,7 +106,7 @@ def _call_server_tool(spec, params: dict):
 
     try:
         srv = importlib.import_module("server")
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "★ 导入 server 模块失败：%s" % str(exc)[:120]
     fn = getattr(srv, spec.function, None)
     if not callable(fn):
@@ -120,20 +124,24 @@ def _call_server_tool(spec, params: dict):
                 cls = getattr(srv, ann, None)
             if cls is not None:
                 break
-    except Exception:                                                      # noqa: BLE001
+    except Exception:  # noqa: BLE001
         cls = None
 
     if cls is None:
-        return False, ("★ 取不到 %s 的入参类型 ⇒ 无法装参数（★ 不静默猜）"
-                       % spec.function)
+        return False, (
+            "★ 取不到 %s 的入参类型 ⇒ 无法装参数（★ 不静默猜）" % spec.function
+        )
     try:
         obj = cls(**params)
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "★ 装入参对象 %s 失败：%s: %s" % (
-            getattr(cls, "__name__", cls), type(exc).__name__, str(exc)[:160])
+            getattr(cls, "__name__", cls),
+            type(exc).__name__,
+            str(exc)[:160],
+        )
     try:
         r = fn(obj)
-    except Exception as exc:                                               # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "★ 调用抛 %s: %s" % (type(exc).__name__, str(exc)[:160])
     #: ★ 统一成字符串载荷（★ 与 `_call_regular` 的约定一致）
     text = r if isinstance(r, str) else str(r)
@@ -147,11 +155,21 @@ def describe(tool_name: str) -> dict:
         return {"found": False}
     spec, inject = entry
     params = []
-    for p in (spec.params or []):
-        params.append({"name": p.name, "required": bool(getattr(p, "required", False)),
-                       "default": getattr(p, "default", None)})
-    return {"found": True, "inject": inject or "", "module": spec.module,
-            "function": spec.function, "params": params}
+    for p in spec.params or []:
+        params.append(
+            {
+                "name": p.name,
+                "required": bool(getattr(p, "required", False)),
+                "default": getattr(p, "default", None),
+            }
+        )
+    return {
+        "found": True,
+        "inject": inject or "",
+        "module": spec.module,
+        "function": spec.function,
+        "params": params,
+    }
 
 
 def call(tool_name: str, *, inject_objects=None, **params):
@@ -177,7 +195,7 @@ def call(tool_name: str, *, inject_objects=None, **params):
             try:
                 mod = importlib.import_module(cand)
                 break
-            except Exception:                                           # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
         if mod is None:
             return False, "★ 模块导入失败：%s" % spec.module
@@ -193,13 +211,16 @@ def call(tool_name: str, *, inject_objects=None, **params):
         #: 参**，
         #:      返回的字典**并进**调用关键字实参里 ✓（★ 单位换算也在这里做）
         vals = {}
-        for pp in (spec.params or ()):
+        for pp in spec.params or ():
             if pp.name in params:
                 vals[pp.name] = params[pp.name]
-            elif getattr(pp, "default", None) is not None and getattr(pp, "default", None) is not Ellipsis:
+            elif (
+                getattr(pp, "default", None) is not None
+                and getattr(pp, "default", None) is not Ellipsis
+            ):
                 vals[pp.name] = pp.default
         #: ★ 先按声明检查"必填且没给"（★ `Ellipsis` 是本仓约定的"必填"）✓
-        for pp in (spec.params or ()):
+        for pp in spec.params or ():
             if getattr(pp, "default", None) is Ellipsis and pp.name not in vals:
                 return False, "★ 缺必填形参：%s" % pp.name
         alias = getattr(spec, "param_alias", None) or {}
@@ -207,16 +228,20 @@ def call(tool_name: str, *, inject_objects=None, **params):
         for name, value in vals.items():
             target = alias.get(name, name)
             if target is None:
-                continue                       # ★ 解析器消费掉，不传给目标函数 ✓
+                continue  # ★ 解析器消费掉，不传给目标函数 ✓
             kwargs[target] = value
         derived = getattr(spec, "derived_args", None)
         if callable(derived):
             import types as _types
+
             try:
                 extra = derived(_types.SimpleNamespace(**vals)) or {}
                 kwargs.update(extra)
-            except Exception as exc:                                    # noqa: BLE001
-                return False, "★ derived_args 抛 %s: %s" % (type(exc).__name__, str(exc)[:80])
+            except Exception as exc:  # noqa: BLE001
+                return False, "★ derived_args 抛 %s: %s" % (
+                    type(exc).__name__,
+                    str(exc)[:80],
+                )
         if inject:
             obj = (inject_objects or {}).get(inject)
             if obj is None:
@@ -237,6 +262,7 @@ def call(tool_name: str, *, inject_objects=None, **params):
         pre = getattr(spec, "pre_call", None)
         if callable(pre):
             import types as _t2
+
             try:
                 #: ★★ 实测（2026-10-12）：`pre_call` 的真实签名是 **`pre_call(params)`**
                 #: ，
@@ -246,9 +272,11 @@ def call(tool_name: str, *, inject_objects=None, **params):
                 #: ⇒ ★ 必须传 `SimpleNamespace(**vals)`（★ 与 `derived_args` 同一形状）
                 #: 。
                 pre(_t2.SimpleNamespace(**vals))
-            except Exception as exc:                                    # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 return False, "★ pre_call（声明式选择器解析）抛 %s: %s" % (
-                    type(exc).__name__, str(exc)[:120])
+                    type(exc).__name__,
+                    str(exc)[:120],
+                )
         #: ★★ 声明里的形参**未必都被底层函数接受** —— ★ 真机实测：`solidworks_extrude_bo
         #: ss`
         #:   ★ 抛 `TypeError: extrude_boss() got an unexpected keyword argument '...'` ⇒
@@ -259,10 +287,11 @@ def call(tool_name: str, *, inject_objects=None, **params):
         #: 吞掉）✓
         try:
             import inspect as _ins
+
             allowed = set(_ins.signature(fn).parameters)
             dropped = sorted(k for k in kwargs if k not in allowed)
             kwargs = {k: v for k, v in kwargs.items() if k in allowed}
-        except (TypeError, ValueError):                                  # 内建/无签名
+        except (TypeError, ValueError):  # 内建/无签名
             dropped = []
         r = fn(**kwargs)
         #: ★ 工具层回的是 JSON 字符串（MCP 形状）⇒ ★ 不解释它，只**如实带回开头** ✓
@@ -277,6 +306,7 @@ def call(tool_name: str, *, inject_objects=None, **params):
         payload_ok = None
         try:
             import json as _json
+
             obj = _json.loads(text)
             if isinstance(obj, dict):
                 for key in ("ok", "success", "succeeded"):
@@ -285,7 +315,7 @@ def call(tool_name: str, *, inject_objects=None, **params):
                         break
                 if payload_ok is None and (obj.get("error") or obj.get("errors")):
                     payload_ok = False
-        except Exception:                                               # noqa: BLE001
+        except Exception:  # noqa: BLE001
             payload_ok = None
         #: ★★★★ 2026-10-12 **修一个真缺陷**（★ 阶段 1 真机验收抓到的）：
         #:   ★ 原实现 `return True, note`，而 `note = text[:160]` ——
@@ -305,5 +335,5 @@ def call(tool_name: str, *, inject_objects=None, **params):
             #:  ✓
             return False, "★ 工具返回体说失败：%s" % note[:140]
         return True, text
-    except Exception as exc:                                            # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return False, "★ 调用抛 %s: %s" % (type(exc).__name__, str(exc)[:120])

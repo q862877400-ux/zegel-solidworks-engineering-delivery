@@ -1,4 +1,5 @@
 """★ 生成 bunny 工作量清单：一条一个操作（③强候选 + ②需人工核）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/make_bunny_workload.py
@@ -34,17 +35,27 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 def main() -> int:
-    gap = json.loads((ROOT / "output" / "union-gap-v3.json").read_text(encoding="utf-8"))
+    gap = json.loads(
+        (ROOT / "output" / "union-gap-v3.json").read_text(encoding="utf-8")
+    )
     rows = gap.get("rows") or []
 
     #: ★ 操作名 → (来源库, 许可)。★ 四家都有的取全部（bunny 自己挑最相关的那家读）
-    src = json.loads((ROOT / "tools" / "union-sources.json").read_text(encoding="utf-8"))
+    src = json.loads(
+        (ROOT / "tools" / "union-sources.json").read_text(encoding="utf-8")
+    )
     owners: dict[str, list[dict]] = {}
     for s in src.get("sources") or []:
-        repo = "%s/%s" % (s.get("owner"), s.get("repo")) if s.get("owner") else str(s.get("repo"))
-        for t in (s.get("tools") or []):
+        repo = (
+            "%s/%s" % (s.get("owner"), s.get("repo"))
+            if s.get("owner")
+            else str(s.get("repo"))
+        )
+        for t in s.get("tools") or []:
             nm = str(t.get("name") if isinstance(t, dict) else t)
-            owners.setdefault(nm, []).append({"repo": repo, "license": str(s.get("license"))})
+            owners.setdefault(nm, []).append(
+                {"repo": repo, "license": str(s.get("license"))}
+            )
 
     #: ★ 只取 ②③（①「已有等价物」不派 —— 那 273 条要核的话是**另一条更便宜的验证链**）
     work = []
@@ -53,19 +64,27 @@ def main() -> int:
         if "已有等价物" in tier:
             continue
         op = str(r.get("operation"))
-        work.append({
-            "index": len(work) + 1,
-            "op": op,
-            "domain": r.get("domain"),
-            "classifier_tier": tier,
-            "classifier_best_cov": r.get("best_cov"),
-            "classifier_top3": r.get("top"),
-            "sources": owners.get(op, []),
-        })
+        work.append(
+            {
+                "index": len(work) + 1,
+                "op": op,
+                "domain": r.get("domain"),
+                "classifier_tier": tier,
+                "classifier_best_cov": r.get("best_cov"),
+                "classifier_top3": r.get("top"),
+                "sources": owners.get(op, []),
+            }
+        )
 
     out = ROOT / "output" / "bunny-workload.json"
-    out.write_text(json.dumps({"count": len(work), "note": "一个 bunny 一条；②③ 档",
-                               "items": work}, ensure_ascii=False, indent=1), encoding="utf-8")
+    out.write_text(
+        json.dumps(
+            {"count": len(work), "note": "一个 bunny 一条；②③ 档", "items": work},
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
 
     print("★ union 总数: %s" % gap.get("union_size"))
     print("★ 三档: %s" % json.dumps(gap.get("tiers"), ensure_ascii=False))
@@ -73,9 +92,14 @@ def main() -> int:
     print("★ 已写: %s" % out)
     print("\n★ 前 8 条：")
     for w in work[:8]:
-        srcs = ",".join(x["repo"].split("/")[-1] for x in w["sources"][:2]) or "（未在四家名单里）"
-        print("   #%-3d %-26s %-22s cov=%-6s %s" % (w["index"], w["op"], w["domain"],
-                                                    w["classifier_best_cov"], srcs))
+        srcs = (
+            ",".join(x["repo"].split("/")[-1] for x in w["sources"][:2])
+            or "（未在四家名单里）"
+        )
+        print(
+            "   #%-3d %-26s %-22s cov=%-6s %s"
+            % (w["index"], w["op"], w["domain"], w["classifier_best_cov"], srcs)
+        )
     return 0
 
 

@@ -35,6 +35,7 @@ r"""@brief 为 `capabilities[].source` 生成**有证据的提案**（不写文�
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -57,12 +58,19 @@ def upstream_files() -> set:
     try:
         out = subprocess.run(
             ["git", "-C", str(REPO), "ls-tree", "-r", "--name-only", "origin/main"],
-            capture_output=True, text=True, encoding="utf-8", timeout=120,
-            stdin=subprocess.DEVNULL)
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=120,
+            stdin=subprocess.DEVNULL,
+        )
     except Exception:  # noqa: BLE001
         return set()
-    return {Path(l.strip()).name for l in (out.stdout or "").splitlines()
-            if l.strip().startswith("scripts/") and l.strip().endswith(".py")}
+    return {
+        Path(l.strip()).name
+        for l in (out.stdout or "").splitlines()
+        if l.strip().startswith("scripts/") and l.strip().endswith(".py")
+    }
 
 
 def our_files() -> list:
@@ -73,9 +81,25 @@ def our_files() -> list:
 #: ⚠ 这是收紧匹配的关键：第一版用 `solidworks` 作关键词 ⇒ 命中 **87 个模块**。
 GENERIC = {
     # ⚠ **`part` 不在泛词表里** —— 它对 `sw_part.py` 是强信号（第一版误列过）。
-    "solidworks", "solidworks-com", "local", "python", "host", "addin",
-    "features", "geometry", "general", "standard", "external", "updates",
-    "local-python", "headless", "occt", "com", "sw", "skill", "tools",
+    "solidworks",
+    "solidworks-com",
+    "local",
+    "python",
+    "host",
+    "addin",
+    "features",
+    "geometry",
+    "general",
+    "standard",
+    "external",
+    "updates",
+    "local-python",
+    "headless",
+    "occt",
+    "com",
+    "sw",
+    "skill",
+    "tools",
 }
 
 
@@ -127,7 +151,7 @@ def stems_only(kws: list, files: list) -> list:
                 if len(k) >= 4 and any(v in stem for v in _variants(k)):
                     hits.append(f.name)
                     break
-            elif k in f.name:            # 中文：直接出现在文件名里
+            elif k in f.name:  # 中文：直接出现在文件名里
                 hits.append(f.name)
                 break
     return sorted(set(hits))
@@ -162,7 +186,7 @@ def main() -> int:
     proposals = []
     for c in caps:
         kws = keywords(c)
-        hits = stems_only(kws, ours)   # ⚠ 收紧：只按文件名主干
+        hits = stems_only(kws, ours)  # ⚠ 收紧：只按文件名主干
         on_up = [h for h in hits if h in up]
         new = [h for h in hits if h not in up]
         if not hits:
@@ -183,7 +207,10 @@ def main() -> int:
         print("  %-30s → **%s**   （%s）" % (cid, src, why))
         print("      关键词: %r" % (kws[:6],))
         if hits:
-            print("      命中模块 %d 个（上游 %d / 新增 %d）:" % (len(hits), len(on_up), len(new)))
+            print(
+                "      命中模块 %d 个（上游 %d / 新增 %d）:"
+                % (len(hits), len(on_up), len(new))
+            )
             for h in hits[:8]:
                 tag = "上游" if h in up else "**新增**"
                 print("        [%s] %s" % (tag, h))
@@ -195,6 +222,7 @@ def main() -> int:
     print()
     print("=" * 78)
     import collections
+
     dist = collections.Counter(p[1] for p in proposals)
     print("**分布**：" + " · ".join("%s=%d" % (k, v) for k, v in dist.most_common()))
     print()

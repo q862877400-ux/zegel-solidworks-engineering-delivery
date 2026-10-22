@@ -55,7 +55,9 @@ import time
 from pathlib import Path
 
 OUT_ROOT = Path(Path(__file__).resolve().parents[1] / "output" / "dialogs")
-DIALOG_CLASS = "#32770"          #: Win32 预定义对话框类（`WC_DIALOG`）—— ★ 与 sw_connect 同一判据
+DIALOG_CLASS = (
+    "#32770"  #: Win32 预定义对话框类（`WC_DIALOG`）—— ★ 与 sw_connect 同一判据
+)
 
 user32 = ctypes.windll.user32
 gdi32 = ctypes.windll.gdi32
@@ -66,13 +68,18 @@ def resolve_pid(target=None) -> int | None:
     if isinstance(target, int):
         return target
     try:
-        out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq SLDWORKS.exe", "/FO", "CSV", "/NH"],
-                             capture_output=True, text=True, encoding="utf-8", errors="replace")
+        out = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq SLDWORKS.exe", "/FO", "CSV", "/NH"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
         for line in (out.stdout or "").splitlines():
             parts = [x.strip('"') for x in line.split('","')]
             if len(parts) >= 2 and parts[1].isdigit():
                 return int(parts[1])
-    except Exception:                                              # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return None
     return None
 
@@ -96,7 +103,7 @@ def _top_level(hwnd, pid):
         import sw_guard
 
         return bool(sw_guard.sw_family_window(hwnd))
-    except Exception:                                       # noqa: BLE001
+    except Exception:  # noqa: BLE001
         return False
 
 
@@ -130,7 +137,7 @@ def _controls(hwnd: int) -> list[dict]:
         user32.SendMessageW(child, 0x000D, 1024, txt)
         try:
             cid = int(user32.GetDlgCtrlID(child))
-        except Exception:                                          # noqa: BLE001
+        except Exception:  # noqa: BLE001
             cid = None
         rows.append({"class": cls.value, "text": txt.value, "id": cid})
         return True
@@ -177,13 +184,22 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     user32.ReleaseDC(0, hdc_screen)
     if not ok:
         #: ★ 兜底才用 `PrintWindow`（★ 调用方应把它放在**有超时的子进程**里）
-        ok = user32.PrintWindow(hwnd, mem, 2)         #: ★ PW_RENDERFULLCONTENT = 2
+        ok = user32.PrintWindow(hwnd, mem, 2)  #: ★ PW_RENDERFULLCONTENT = 2
 
     class BITMAPINFOHEADER(ctypes.Structure):
-        _fields_ = [("biSize", wt.DWORD), ("biWidth", wt.LONG), ("biHeight", wt.LONG),
-                    ("biPlanes", wt.WORD), ("biBitCount", wt.WORD), ("biCompression", wt.DWORD),
-                    ("biSizeImage", wt.DWORD), ("biXPelsPerMeter", wt.LONG),
-                    ("biYPelsPerMeter", wt.LONG), ("biClrUsed", wt.DWORD), ("biClrImportant", wt.DWORD)]
+        _fields_ = [
+            ("biSize", wt.DWORD),
+            ("biWidth", wt.LONG),
+            ("biHeight", wt.LONG),
+            ("biPlanes", wt.WORD),
+            ("biBitCount", wt.WORD),
+            ("biCompression", wt.DWORD),
+            ("biSizeImage", wt.DWORD),
+            ("biXPelsPerMeter", wt.LONG),
+            ("biYPelsPerMeter", wt.LONG),
+            ("biClrUsed", wt.DWORD),
+            ("biClrImportant", wt.DWORD),
+        ]
 
     class BITMAPINFO(ctypes.Structure):
         _fields_ = [("bmiHeader", BITMAPINFOHEADER), ("bmiColors", wt.DWORD * 3)]
@@ -191,10 +207,10 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     bi = BITMAPINFO()
     bi.bmiHeader.biSize = ctypes.sizeof(BITMAPINFOHEADER)
     bi.bmiHeader.biWidth = w
-    bi.bmiHeader.biHeight = -h          #: ★ 负高度 = 自上而下（与 PNG 行序一致）
+    bi.bmiHeader.biHeight = -h  #: ★ 负高度 = 自上而下（与 PNG 行序一致）
     bi.bmiHeader.biPlanes = 1
     bi.bmiHeader.biBitCount = 32
-    bi.bmiHeader.biCompression = 0      #: BI_RGB
+    bi.bmiHeader.biCompression = 0  #: BI_RGB
     buf = ctypes.create_string_buffer(w * h * 4)
     gdi32.GetDIBits(mem, bmp, 0, h, buf, ctypes.byref(bi), 0)
     gdi32.DeleteObject(bmp)
@@ -203,7 +219,7 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     if not ok:
         return False
     #: ★ 手写 PNG（★ 只做"能看"这一件事 —— 不引 Pillow）：★ 直接存**BMP** 更省事且无损，
-    #: 而调用方（LLM）读图只需 `read_image` 支持 PNG/JPEG/WebP/GIF ⇒ ★ 所以这里存 **BMP 
+    #: 而调用方（LLM）读图只需 `read_image` 支持 PNG/JPEG/WebP/GIF ⇒ ★ 所以这里存 **BMP
     #: 的裸数据**？
     #: ★ **不行** —— 那就得多一步转换。⇒ ★ 本函数落 **`.bmp`**，由调用方用系统 `System.D
     #: rawing`
@@ -243,33 +259,42 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     #:     · **亮度极差**（`range`）：★ 有内容必然有明暗差，★ 而它同样与主题无关
     #:   ⇒ ★ 本函数**不再判 blank**，改报 `content_present` + 三个量，
     #:     由调用方（LLM）看数字判 —— ★ **而不是由一个阈值替它判**。
-    step = 4 * 97                                              #: ★ 抽样（★ 全扫太慢）
+    step = 4 * 97  #: ★ 抽样（★ 全扫太慢）
     colors: dict[int, int] = {}
     lum_min, lum_max = 255, 0
     total = 0
     for i in range(0, len(raw) - 3, step):
-        b, g, r = raw[i], raw[i + 1], raw[i + 2]             #: ★ BGRA 顺序
+        b, g, r = raw[i], raw[i + 1], raw[i + 2]  #: ★ BGRA 顺序
         key = (r << 16) | (g << 8) | b
         colors[key] = colors.get(key, 0) + 1
-        lum = (r * 299 + g * 587 + b * 114) // 1000           #: ★ 感知亮度
+        lum = (r * 299 + g * 587 + b * 114) // 1000  #: ★ 感知亮度
         lum_min = min(lum_min, lum)
         lum_max = max(lum_max, lum)
         total += 1
     distinct = len(colors)
     mode_count = max(colors.values()) if colors else 0
     non_mode = total - mode_count
-    stats = {"distinct_colors": distinct, "sampled": total,
-             "non_mode_pixels": non_mode,
-             "non_mode_ratio": round(non_mode / total, 4) if total else 0.0,
-             "luminance_range": (lum_max - lum_min),
-             "★": "★ **与配色无关**的三个量：唯一色数 / 非众数像素占比 / 亮度极差。"
-                  "★ 深色主题下真弹窗也有内容 ⇒ ★ **不要用「黑不黑」当判据**"}
+    stats = {
+        "distinct_colors": distinct,
+        "sampled": total,
+        "non_mode_pixels": non_mode,
+        "non_mode_ratio": round(non_mode / total, 4) if total else 0.0,
+        "luminance_range": (lum_max - lum_min),
+        "★": "★ **与配色无关**的三个量：唯一色数 / 非众数像素占比 / 亮度极差。"
+        "★ 深色主题下真弹窗也有内容 ⇒ ★ **不要用「黑不黑」当判据**",
+    }
     #: ★ 内容判据（★ 与颜色无关）：★ 颜色数 > 1 **或** 有非众数像素 **或** 有亮度差
     content_present = bool(distinct > 1 and (non_mode > 0 or (lum_max - lum_min) > 0))
     stats["content_present"] = content_present
-    bmp_path.with_suffix(".stats").write_text(json.dumps(stats, ensure_ascii=False), encoding="utf-8")
-    return {"ok": bool(ok), "content_present": content_present, "stats": stats,
-            "path": str(bmp_path)}
+    bmp_path.with_suffix(".stats").write_text(
+        json.dumps(stats, ensure_ascii=False), encoding="utf-8"
+    )
+    return {
+        "ok": bool(ok),
+        "content_present": content_present,
+        "stats": stats,
+        "path": str(bmp_path),
+    }
 
 
 def collect_dialogs(target=None, out_root: Path | None = None) -> dict:
@@ -297,46 +322,76 @@ def collect_dialogs(target=None, out_root: Path | None = None) -> dict:
             got = _screenshot(hwnd, shot)
             if isinstance(got, dict):
                 shot_info = got
-            else:                                              #: ★ 兼容旧形态（bool）
-                shot_info = {"ok": bool(got), "blank": None,
-                             "path": str(shot.with_suffix(".bmp")) if got else None}
-        except Exception as exc:                                # noqa: BLE001
-            shot_info = {"ok": False, "blank": None, "path": None, "error": str(exc)[:80]}
-        dialogs.append({"index": i, "hwnd": int(hwnd), "title": tb.value, "class": cb.value,
-                        "controls": _controls(hwnd),
-                        "bmp": shot_info.get("path"),
-                        "screenshot_ok": bool(shot_info.get("ok")),
-                        #: ★★★ 2026-10-02（轮 337）**不再报 `screenshot_blank`** ——
-                        #: ★ 用户指出「不能用黑白判，SolidWorks 可以自定义颜色，黑色皮肤
-                        #: 怎么办」
-                        #: ⇒ ★ 改报**与配色无关**的 `screenshot_content_present` + 三个
-                        #: 统计量，
-                        #:     由调用方（LLM）看数字判，★ **而不是由一个阈值替它判**。
-                        "screenshot_content_present": shot_info.get("content_present"),
-                        "screenshot_stats": shot_info.get("stats"),
-                        "★shot": "★ `screenshot_content_present=False` ⇒ 图里**没有内容**"
-                                  "（纯色空窗）；★ 而它**与配色无关** —— 深色主题的真弹窗也算有内容。"
-                                  "★ 判据看 `screenshot_stats` 的三个量：唯一色数 / 非众数占比 / 亮度极差"})
-    pack = {"count": len(dialogs), "pid": pid, "dir": str(root), "dialogs": dialogs,
-            "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "★": "★ 本模块**不点**弹窗 —— ★ 按纪律（自我纠错 §9）先把内容交 LLM 判根因，"
-                 "判完再点，点完必须改到不再弹"}
-    (root / "dialogs.json").write_text(json.dumps(pack, ensure_ascii=False, indent=2) + "\n",
-                                       encoding="utf-8")
+            else:  #: ★ 兼容旧形态（bool）
+                shot_info = {
+                    "ok": bool(got),
+                    "blank": None,
+                    "path": str(shot.with_suffix(".bmp")) if got else None,
+                }
+        except Exception as exc:  # noqa: BLE001
+            shot_info = {
+                "ok": False,
+                "blank": None,
+                "path": None,
+                "error": str(exc)[:80],
+            }
+        dialogs.append(
+            {
+                "index": i,
+                "hwnd": int(hwnd),
+                "title": tb.value,
+                "class": cb.value,
+                "controls": _controls(hwnd),
+                "bmp": shot_info.get("path"),
+                "screenshot_ok": bool(shot_info.get("ok")),
+                #: ★★★ 2026-10-02（轮 337）**不再报 `screenshot_blank`** ——
+                #: ★ 用户指出「不能用黑白判，SolidWorks 可以自定义颜色，黑色皮肤
+                #: 怎么办」
+                #: ⇒ ★ 改报**与配色无关**的 `screenshot_content_present` + 三个
+                #: 统计量，
+                #:     由调用方（LLM）看数字判，★ **而不是由一个阈值替它判**。
+                "screenshot_content_present": shot_info.get("content_present"),
+                "screenshot_stats": shot_info.get("stats"),
+                "★shot": "★ `screenshot_content_present=False` ⇒ 图里**没有内容**"
+                "（纯色空窗）；★ 而它**与配色无关** —— 深色主题的真弹窗也算有内容。"
+                "★ 判据看 `screenshot_stats` 的三个量：唯一色数 / 非众数占比 / 亮度极差",
+            }
+        )
+    pack = {
+        "count": len(dialogs),
+        "pid": pid,
+        "dir": str(root),
+        "dialogs": dialogs,
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "★": "★ 本模块**不点**弹窗 —— ★ 按纪律（自我纠错 §9）先把内容交 LLM 判根因，"
+        "判完再点，点完必须改到不再弹",
+    }
+    (root / "dialogs.json").write_text(
+        json.dumps(pack, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return pack
 
 
 def main() -> int:
     """★ 命令行入口：★ `python tools/modal_dialog_forensics.py` ⇒ 打印证据包路径。"""
     pack = collect_dialogs()
-    print(json.dumps({k: pack[k] for k in ("count", "pid", "dir") if k in pack},
-                     ensure_ascii=False, indent=2))
+    print(
+        json.dumps(
+            {k: pack[k] for k in ("count", "pid", "dir") if k in pack},
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
     for d in pack.get("dialogs", []):
-        print("  [%d] title=%r class=%s controls=%d bmp=%s"
-              % (d["index"], d["title"][:40], d["class"], len(d["controls"]), d["bmp"]))
+        print(
+            "  [%d] title=%r class=%s controls=%d bmp=%s"
+            % (d["index"], d["title"][:40], d["class"], len(d["controls"]), d["bmp"])
+        )
         for c in d["controls"][:8]:
             if c["text"]:
-                print("        %-16s id=%-6s %r" % (c["class"], c["id"], c["text"][:60]))
+                print(
+                    "        %-16s id=%-6s %r" % (c["class"], c["id"], c["text"][:60])
+                )
     return 0
 
 

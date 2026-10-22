@@ -10,6 +10,7 @@
    · **关键需求不满足却获放行**的次数 = **0**
    · 可解盲题**正确且可编译**率 **≥90%**
 """
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -31,11 +32,15 @@ import sys
 import time
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-sys.path[:0] = [str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server"),
-                str(ROOT / "tools")]
+sys.path[:0] = [
+    str(ROOT),
+    str(ROOT / "scripts"),
+    str(ROOT / "mcp-server"),
+    str(ROOT / "tools"),
+]
 
-from scripts.engineering import design_ir as DI                          # noqa: E402
-from scripts.engineering import planner as PL                            # noqa: E402
+from scripts.engineering import design_ir as DI  # noqa: E402
+from scripts.engineering import planner as PL  # noqa: E402
 
 OUT = ROOT / "output" / "stage4"
 CORPUS = ROOT / "corpus" / "l3-semantic.yaml"
@@ -45,8 +50,8 @@ EXPECT = {
     "solvable": DI.READY_FOR_REVIEW,
     "missing_input": DI.WAITING_INPUT,
     #: ★ 能力边界与对抗语义都**不得进执行**（★ 具体是拒绝还是等待由内容定）
-    "capability_boundary": None,      #: ★ 只要求「不可执行」
-    "adversarial": None,              #: ★ 只要求「不可执行」
+    "capability_boundary": None,  #: ★ 只要求「不可执行」
+    "adversarial": None,  #: ★ 只要求「不可执行」
 }
 
 
@@ -64,8 +69,14 @@ def load_corpus(path: pathlib.Path) -> list:
             m = re.match(r"^\s+(\w+):\s*(.*)$", line)
             if m:
                 k, v = m.group(1), m.group(2).strip()
-                if k in ("id", "requirement", "category", "split",
-                         "needs_owner_judgment", "notes"):
+                if k in (
+                    "id",
+                    "requirement",
+                    "category",
+                    "split",
+                    "needs_owner_judgment",
+                    "notes",
+                ):
                     cur[k] = v
                 elif k in ("function", "interface", "question", "result"):
                     cur.setdefault("labels", {})[k] = v
@@ -83,10 +94,15 @@ def evaluate(items: list) -> dict:
         ir = DI.parse_requirement(req)
         got = ir.state
 
-        row = {"id": it["id"], "category": it.get("category"),
-               "split": it.get("split"), "want": want or "(不可执行)",
-               "got": got, "executable": ir.executable,
-               "question": (ir.open_questions or [""])[0][:40]}
+        row = {
+            "id": it["id"],
+            "category": it.get("category"),
+            "split": it.get("split"),
+            "want": want or "(不可执行)",
+            "got": got,
+            "executable": ir.executable,
+            "question": (ir.open_questions or [""])[0][:40],
+        }
 
         #: ★★ 判据①：**应等待或拒绝却进入执行**（★ 最严重）
         if want is not None and want != DI.READY_FOR_REVIEW and ir.executable:
@@ -126,8 +142,9 @@ def summarize(ev: dict) -> dict:
 
     #: ★★ 三条硬判据（★ S4-A 逐字）
     misrelease = [r for r in rows if r["verdict"] == "MISRELEASE"]
-    blind_solvable = [r for r in rows
-                      if r["category"] == "solvable" and r["split"] == "blind"]
+    blind_solvable = [
+        r for r in rows if r["category"] == "solvable" and r["split"] == "blind"
+    ]
     blind_ok = [r for r in blind_solvable if r["verdict"] == "PASS"]
     rate = (len(blind_ok) / len(blind_solvable)) if blind_solvable else 0.0
 
@@ -153,8 +170,13 @@ def run_s4b() -> dict:
 
     #: ① 关键缺项 ⇒ WAITING_INPUT 且**不写 CAD**
     ir = DI.parse_requirement("设计一块板")
-    rows.append({"case": "关键缺项不写 CAD", "got": ir.state,
-                 "ok": ir.state == DI.WAITING_INPUT and ir.blocks_cad})
+    rows.append(
+        {
+            "case": "关键缺项不写 CAD",
+            "got": ir.state,
+            "ok": ir.state == DI.WAITING_INPUT and ir.blocks_cad,
+        }
+    )
 
     #: ② 最多两批主动问题
     el = DI.Elicitation()
@@ -165,31 +187,58 @@ def run_s4b() -> dict:
         el.ask(["载荷？"])
     except DI.DesignIRError:
         exceeded = True
-    rows.append({"case": "最多两批问题", "got": "第 3 批被拒" if exceeded else "没拒",
-                 "ok": exceeded and len(el.batches) == 2})
+    rows.append(
+        {
+            "case": "最多两批问题",
+            "got": "第 3 批被拒" if exceeded else "没拒",
+            "ok": exceeded and len(el.batches) == 2,
+        }
+    )
 
     #: ③ 候选不超 4096 token
-    ir2 = DI.parse_requirement("在一块 100×60×20 的板上四角各打一个 M6 通孔，孔心距边 10mm")
+    ir2 = DI.parse_requirement(
+        "在一块 100×60×20 的板上四角各打一个 M6 通孔，孔心距边 10mm"
+    )
     ret = DI.retrieve_methods(ir2)
-    rows.append({"case": "候选 ≤4096 token", "got": ret["tokens"],
-                 "ok": ret["tokens"] <= DI.CANDIDATE_TOKEN_BUDGET})
+    rows.append(
+        {
+            "case": "候选 ≤4096 token",
+            "got": ret["tokens"],
+            "ok": ret["tokens"] <= DI.CANDIDATE_TOKEN_BUDGET,
+        }
+    )
 
     #: ④ 数据拒绝 ⇒ 出站 0
     p = DI.outbound_permit(data_permitted=False, budget_permitted=True)
-    rows.append({"case": "数据拒绝 ⇒ 出站 0", "got": p.code,
-                 "ok": (not p.allowed) and p.code == DI.DATA_NOT_PERMITTED})
+    rows.append(
+        {
+            "case": "数据拒绝 ⇒ 出站 0",
+            "got": p.code,
+            "ok": (not p.allowed) and p.code == DI.DATA_NOT_PERMITTED,
+        }
+    )
 
     #: ⑤ 余额拒绝 ⇒ 出站 0
     p2 = DI.outbound_permit(data_permitted=True, budget_permitted=False)
-    rows.append({"case": "余额拒绝 ⇒ 出站 0", "got": p2.code,
-                 "ok": (not p2.allowed) and p2.code == DI.BUDGET_NOT_PERMITTED})
+    rows.append(
+        {
+            "case": "余额拒绝 ⇒ 出站 0",
+            "got": p2.code,
+            "ok": (not p2.allowed) and p2.code == DI.BUDGET_NOT_PERMITTED,
+        }
+    )
 
     #: ⑥ 未知费用 ⇒ **不释放**预算预占
     bh = DI.BudgetHold()
     bh.hold(10.0)
     released = bh.release(cost_known=False)
-    rows.append({"case": "未知费用不释放预占", "got": released,
-                 "ok": released is False and bh.held is True})
+    rows.append(
+        {
+            "case": "未知费用不释放预占",
+            "got": released,
+            "ok": released is False and bh.held is True,
+        }
+    )
 
     #: ⑦ 都获准 ⇒ 放行
     p3 = DI.outbound_permit(data_permitted=True, budget_permitted=True)
@@ -216,31 +265,45 @@ def main() -> int:
     for c, v in sorted(s["by_category"].items()):
         print("   %-22s %d/%d" % (c, v["pass"], v["n"]))
     print()
-    print("★ 误放（应等待/拒绝却进执行）= **%d** %s"
-          % (s["misrelease"], s["misrelease_ids"][:5]))
-    print("★ 可解盲题：%d/%d ⇒ **%.1f%%**（要求 ≥90%%）"
-          % (s["blind_ok"], s["blind_solvable"], s["blind_rate"] * 100))
+    print(
+        "★ 误放（应等待/拒绝却进执行）= **%d** %s"
+        % (s["misrelease"], s["misrelease_ids"][:5])
+    )
+    print(
+        "★ 可解盲题：%d/%d ⇒ **%.1f%%**（要求 ≥90%%）"
+        % (s["blind_ok"], s["blind_solvable"], s["blind_rate"] * 100)
+    )
 
     if args.show:
         print()
-        for r in ev["rows"][:args.show]:
-            print("   %-8s %-20s want=%-20s got=%-20s ⇒ %s"
-                  % (r["id"], r["category"], r["want"], r["got"], r["verdict"]))
+        for r in ev["rows"][: args.show]:
+            print(
+                "   %-8s %-20s want=%-20s got=%-20s ⇒ %s"
+                % (r["id"], r["category"], r["want"], r["got"], r["verdict"])
+            )
 
     s4b = run_s4b()
     print()
     print("★ S4-B：")
     for r in s4b["s4b"]:
-        print("   %s %-22s ⇒ %s" % ("✓" if r["ok"] else "✗", r["case"],
-                                    str(r["got"])[:40]))
+        print(
+            "   %s %-22s ⇒ %s"
+            % ("✓" if r["ok"] else "✗", r["case"], str(r["got"])[:40])
+        )
 
-    out = {"summary": s, "rows": ev["rows"], "s4b": s4b,
-           "finished": time.strftime("%H:%M:%S")}
+    out = {
+        "summary": s,
+        "rows": ev["rows"],
+        "s4b": s4b,
+        "finished": time.strftime("%H:%M:%S"),
+    }
     p = OUT / "corpus-eval.json"
     p.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print()
-    print("★ S4-A：%s · S4-B：%s" % ("过" if s["ok"] else "不过",
-                                     "过" if s4b["ok"] else "不过"))
+    print(
+        "★ S4-A：%s · S4-B：%s"
+        % ("过" if s["ok"] else "不过", "过" if s4b["ok"] else "不过")
+    )
     print("★ 证据 → %s" % p)
     return 0 if (s["ok"] and s4b["ok"]) else 1
 

@@ -38,6 +38,7 @@ r"""SolidWorks SWRoutingLib 官方接口全量索引。
 
 ⚠ 本模块为机械抄录，未在本机实测（见 AGENTS.md 铁律 2）。
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -57,218 +58,208 @@ except ImportError:
 # ────────────────────────────────────────────────────────────────────
 __all__ = ["ASSEMBLY", "FAMILIES", "ARITY", "PROPERTIES", "call_index"]
 
-ASSEMBLY = 'SWRoutingLib'
+ASSEMBLY = "SWRoutingLib"
 
-FAMILIES: tuple[str, ...] = (    'IAdvancedRouteSelector',
-    'IAutoRoute',
-    'ICable',
-    'ICableProperty',
-    'ICovering',
-    'IElectricalFlatRoute',
-    'IElectricalRoute',
-    'IElectricalRouteProperty',
-    'IRibbonCable',
-    'IRouteManager',
-    'IRouteProperty',
-    'IRoutingComponentManager',
-    'IWire',
-    'IWireProperty',
+FAMILIES: tuple[str, ...] = (
+    "IAdvancedRouteSelector",
+    "IAutoRoute",
+    "ICable",
+    "ICableProperty",
+    "ICovering",
+    "IElectricalFlatRoute",
+    "IElectricalRoute",
+    "IElectricalRouteProperty",
+    "IRibbonCable",
+    "IRouteManager",
+    "IRouteProperty",
+    "IRoutingComponentManager",
+    "IWire",
+    "IWireProperty",
 )
 
 #: 全量能力登记表 {族: {能力名: 实参个数}}（排除 by-ref 出参）
 ARITY: dict[str, dict[str, int]] = {
-    'IAdvancedRouteSelector': {
-        'Find': 4,
-        'getAttachedComponentsCount': 1,
-        'Select': 4,
-        'SetSelectionColor': 2,
+    "IAdvancedRouteSelector": {
+        "Find": 4,
+        "getAttachedComponentsCount": 1,
+        "Select": 4,
+        "SetSelectionColor": 2,
     },
-    'IAutoRoute': {
-        'ConvertGuidelinesToRoute': 0,
-        'CreatePointToPointAutoRoute': 1,
-        'CreateRouteThroughSketchEntities': 4,
-        'DeleteAllGuidelines': 0,
-        'MergeGuidelines': 0,
-        'SelectGuidelines': 0,
-        'ShowGuidelines': 0,
+    "IAutoRoute": {
+        "ConvertGuidelinesToRoute": 0,
+        "CreatePointToPointAutoRoute": 1,
+        "CreateRouteThroughSketchEntities": 4,
+        "DeleteAllGuidelines": 0,
+        "MergeGuidelines": 0,
+        "SelectGuidelines": 0,
+        "ShowGuidelines": 0,
     },
-    'ICable': {
-        'GetCableProperty': 0,
-        'GetCores': 0,
-        'GetCoresCount': 0,
-        'GetCuttingLength': 0,
+    "ICable": {
+        "GetCableProperty": 0,
+        "GetCores": 0,
+        "GetCoresCount": 0,
+        "GetCuttingLength": 0,
     },
-    'ICableProperty': {
-        'GetCoreProperties': 0,
-        'GetCorePropertyCount': 0,
+    "ICableProperty": {
+        "GetCoreProperties": 0,
+        "GetCorePropertyCount": 0,
     },
-    'ICovering': {
+    "ICovering": {},
+    "IElectricalFlatRoute": {
+        "GetConnectorData": 1,
+        "GetElectricalDrawingSettings": 0,
+        "GetFittingFilePath": 1,
+        "GetSketchSegments": 1,
+        "GetSketchSegmentsCount": 1,
     },
-    'IElectricalFlatRoute': {
-        'GetConnectorData': 1,
-        'GetElectricalDrawingSettings': 0,
-        'GetFittingFilePath': 1,
-        'GetSketchSegments': 1,
-        'GetSketchSegmentsCount': 1,
+    "IElectricalRoute": {
+        "GetActiveRouteSketch": 0,
+        "GetCables": 0,
+        "GetCablesCount": 0,
+        "GetRibbonCableDispatch": 0,
+        "GetRouteProperty": 1,
+        "GetRouteSegmentID": 1,
+        "GetSketchSegments": 1,
+        "GetSketchSegmentsCount": 1,
+        "GetWires": 0,
+        "GetWiresCount": 0,
+        "RouteWires": 0,
     },
-    'IElectricalRoute': {
-        'GetActiveRouteSketch': 0,
-        'GetCables': 0,
-        'GetCablesCount': 0,
-        'GetRibbonCableDispatch': 0,
-        'GetRouteProperty': 1,
-        'GetRouteSegmentID': 1,
-        'GetSketchSegments': 1,
-        'GetSketchSegmentsCount': 1,
-        'GetWires': 0,
-        'GetWiresCount': 0,
-        'RouteWires': 0,
+    "IElectricalRouteProperty": {},
+    "IRibbonCable": {},
+    "IRouteManager": {
+        "AddToRoute": 0,
+        "ChangeRoutingLibComponentPaths": 2,
+        "CreateFlattenRoute": 11,
+        "CreatePipeDrawingforPipeRoute": 12,
+        "CreateRouteLine": 6,
+        "EditRoute": 0,
+        "ExitRoute": 0,
+        "ExportPipeData": 3,
+        "ExportTubeData": 3,
+        "GetAdvancedRouteSelector": 0,
+        "GetAllRouteSegmentCount": 0,
+        "GetAllRouteSegmentIDs": 0,
+        "GetAutoRoute": 0,
+        "GetElectricalComponentFromSearchpath": 1,
+        "GetElectricalFlatRoute": 1,
+        "GetElectricalRoute": 0,
+        "GetRouteProperty": 0,
+        "GetRoutingComponentFromSearchpath": 1,
+        "GetRoutingLibComponentReferences": 1,
+        "ImportFromToList": 6,
+        "StartRoute": 2,
     },
-    'IElectricalRouteProperty': {
+    "IRouteProperty": {
+        "AddCovering": 1,
+        "CreateCovering": 0,
+        "GetCovering": 0,
+        "GetFixedLength": 0,
+        "RemoveCovering": 0,
+        "SetFixedLength": 1,
     },
-    'IRibbonCable': {
+    "IRoutingComponentManager": {
+        "CreateEndConnectorIllustration": 0,
+        "GetComponentCrossSectionType": 0,
+        "GetComponentRouteType": 0,
+        "GetComponentRouteTypeFromCustomProperty": 0,
+        "GetComponentType": 0,
+        "GetComponentUserDefinedRouteTypeName": 0,
+        "GetCPointConfiguration": 0,
+        "GetRouteComponentSubType": 0,
+        "GetRouteComponentTypeSetThrRLM": 0,
+        "GetRoutingComponentDescription": 0,
+        "GetRoutingStringValue": 1,
+        "SetComponentCrossSectionType": 1,
+        "SetComponentRouteTypeToCustomProperty": 1,
+        "SetComponentType": 1,
+        "SetComponentUserDefinedRouteTypeName": 1,
+        "SetCPointConfiguration": 1,
+        "SetRouteComponentSubType": 1,
+        "SetRouteComponentTypeSetThrRLM": 1,
+        "SetRouteTypeAndSubRouteType": 2,
+        "SetRoutingComponentDescription": 1,
     },
-    'IRouteManager': {
-        'AddToRoute': 0,
-        'ChangeRoutingLibComponentPaths': 2,
-        'CreateFlattenRoute': 11,
-        'CreatePipeDrawingforPipeRoute': 12,
-        'CreateRouteLine': 6,
-        'EditRoute': 0,
-        'ExitRoute': 0,
-        'ExportPipeData': 3,
-        'ExportTubeData': 3,
-        'GetAdvancedRouteSelector': 0,
-        'GetAllRouteSegmentCount': 0,
-        'GetAllRouteSegmentIDs': 0,
-        'GetAutoRoute': 0,
-        'GetElectricalComponentFromSearchpath': 1,
-        'GetElectricalFlatRoute': 1,
-        'GetElectricalRoute': 0,
-        'GetRouteProperty': 0,
-        'GetRoutingComponentFromSearchpath': 1,
-        'GetRoutingLibComponentReferences': 1,
-        'ImportFromToList': 6,
-        'StartRoute': 2,
+    "IWire": {
+        "GetCuttingLength": 0,
+        "GetRouteErrors": 0,
+        "GetRouteErrorsCount": 0,
+        "GetRouteSegmentIDs": 0,
+        "GetRouteSegmentIDsCount": 0,
+        "GetWireProperty": 0,
+        "SetRoutePathForWire": 1,
     },
-    'IRouteProperty': {
-        'AddCovering': 1,
-        'CreateCovering': 0,
-        'GetCovering': 0,
-        'GetFixedLength': 0,
-        'RemoveCovering': 0,
-        'SetFixedLength': 1,
-    },
-    'IRoutingComponentManager': {
-        'CreateEndConnectorIllustration': 0,
-        'GetComponentCrossSectionType': 0,
-        'GetComponentRouteType': 0,
-        'GetComponentRouteTypeFromCustomProperty': 0,
-        'GetComponentType': 0,
-        'GetComponentUserDefinedRouteTypeName': 0,
-        'GetCPointConfiguration': 0,
-        'GetRouteComponentSubType': 0,
-        'GetRouteComponentTypeSetThrRLM': 0,
-        'GetRoutingComponentDescription': 0,
-        'GetRoutingStringValue': 1,
-        'SetComponentCrossSectionType': 1,
-        'SetComponentRouteTypeToCustomProperty': 1,
-        'SetComponentType': 1,
-        'SetComponentUserDefinedRouteTypeName': 1,
-        'SetCPointConfiguration': 1,
-        'SetRouteComponentSubType': 1,
-        'SetRouteComponentTypeSetThrRLM': 1,
-        'SetRouteTypeAndSubRouteType': 2,
-        'SetRoutingComponentDescription': 1,
-    },
-    'IWire': {
-        'GetCuttingLength': 0,
-        'GetRouteErrors': 0,
-        'GetRouteErrorsCount': 0,
-        'GetRouteSegmentIDs': 0,
-        'GetRouteSegmentIDsCount': 0,
-        'GetWireProperty': 0,
-        'SetRoutePathForWire': 1,
-    },
-    'IWireProperty': {
-    },
+    "IWireProperty": {},
 }
 
 #: 属性名（反射里是 get_/set_，**不是方法**；这里只留去掉前缀的名字）
 PROPERTIES: dict[str, tuple[str, ...]] = {
-    'IAdvancedRouteSelector': (
+    "IAdvancedRouteSelector": (),
+    "IAutoRoute": (),
+    "ICable": (
+        "UserName",
+        "UserName",
     ),
-    'IAutoRoute': (
+    "ICableProperty": (
+        "Diameter",
+        "Name",
     ),
-    'ICable': (
-        'UserName',
-        'UserName',
+    "ICovering": (
+        "Color",
+        "Color",
+        "Name",
+        "Name",
+        "OuterDiameter",
+        "OuterDiameter",
+        "PartNumber",
+        "PartNumber",
     ),
-    'ICableProperty': (
-        'Diameter',
-        'Name',
+    "IElectricalFlatRoute": (),
+    "IElectricalRoute": (),
+    "IElectricalRouteProperty": (
+        "BundleDiameter",
+        "BundleDiameter",
+        "BundleMinimumBendRadius",
+        "IsOuterDiameterFixed",
+        "IsOuterDiameterFixed",
+        "OuterDiameter",
+        "OuterDiameter",
+        "SubType",
+        "SubType",
     ),
-    'ICovering': (
-        'Color',
-        'Color',
-        'Name',
-        'Name',
-        'OuterDiameter',
-        'OuterDiameter',
-        'PartNumber',
-        'PartNumber',
+    "IRibbonCable": (
+        "GetRibbonCableThickness",
+        "GetRibbonCableWidth",
     ),
-    'IElectricalFlatRoute': (
+    "IRouteManager": (),
+    "IRouteProperty": (
+        "BendRadius",
+        "BendRadius",
+        "HasCovering",
+        "MinimumBendRadius",
+        "RouteType",
     ),
-    'IElectricalRoute': (
+    "IRoutingComponentManager": (),
+    "IWire": (
+        "FromComponentReference",
+        "FromComponentReference",
+        "FromPinReference",
+        "FromPinReference",
+        "ToComponentReference",
+        "ToComponentReference",
+        "ToPinReference",
+        "ToPinReference",
+        "UserName",
+        "UserName",
     ),
-    'IElectricalRouteProperty': (
-        'BundleDiameter',
-        'BundleDiameter',
-        'BundleMinimumBendRadius',
-        'IsOuterDiameterFixed',
-        'IsOuterDiameterFixed',
-        'OuterDiameter',
-        'OuterDiameter',
-        'SubType',
-        'SubType',
-    ),
-    'IRibbonCable': (
-        'GetRibbonCableThickness',
-        'GetRibbonCableWidth',
-    ),
-    'IRouteManager': (
-    ),
-    'IRouteProperty': (
-        'BendRadius',
-        'BendRadius',
-        'HasCovering',
-        'MinimumBendRadius',
-        'RouteType',
-    ),
-    'IRoutingComponentManager': (
-    ),
-    'IWire': (
-        'FromComponentReference',
-        'FromComponentReference',
-        'FromPinReference',
-        'FromPinReference',
-        'ToComponentReference',
-        'ToComponentReference',
-        'ToPinReference',
-        'ToPinReference',
-        'UserName',
-        'UserName',
-    ),
-    'IWireProperty': (
-        'Color',
-        'Diameter',
-        'Name',
-        'PartNumber',
-        'Size',
+    "IWireProperty": (
+        "Color",
+        "Diameter",
+        "Name",
+        "PartNumber",
+        "Size",
     ),
 }
-
 
 
 def _require(obj, what: str = "对象"):
@@ -297,16 +288,19 @@ def call_index(obj, family: str, member: str, *args):
     if sub is None:
         raise KeyError(
             f"本清单没有这个族: {family}（SWRoutingLib 共 {len(ARITY)} 族）。"
-            f"⚠ 别的程序集请用对应的 call_index。")
+            f"⚠ 别的程序集请用对应的 call_index。"
+        )
     expected = sub.get(member)
     if expected is None:
         raise KeyError(
             f"{family} 上没有名为 {member} 的能力（该族登记 {len(sub)} 项）。"
-            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。")
+            f"⚠ 若它是属性或 COM 内部分发口，请用对应封装。"
+        )
     if expected != len(args):
         raise ValueError(
             f"{family}.{member} 官方签名是 {expected} 个实参"
-            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个")
+            f"（不含末位 by-ref 出参），本次调用给了 {len(args)} 个"
+        )
     _require(obj, f"{family} 对象")
     return get_com_member(obj, member, *args)
 
@@ -328,4 +322,3 @@ def call_index(obj, family: str, member: str, *args):
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态照录，未在本机实测 SolidWorks 行为（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
-

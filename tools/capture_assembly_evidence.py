@@ -42,6 +42,7 @@ r"""@brief 真机证据：**装配只读 3 个工具**（砌墙 W6 / Spec Kit `1
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -60,8 +61,11 @@ FIXTURES = Path(Path(__file__).resolve().parents[1] / "output" / "_fixtures")
 
 
 def main() -> int:
-    ev: dict = {"captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-                "capability": "assembly_read", "steps": {}}
+    ev: dict = {
+        "captured_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "capability": "assembly_read",
+        "steps": {},
+    }
     sw = None
     docs: list = []
     ok = True
@@ -74,16 +78,20 @@ def main() -> int:
         bindings = {}
         for spec in b25.SPECS_BATCH25:
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
-            bindings[spec.name] = {"resolved": callable(getattr(mod, spec.function, None)),
-                                   "inject": spec.inject}
-        ev["steps"]["bindings"] = {"ok": all(v["resolved"] for v in bindings.values()),
-                                   "detail": bindings}
+            bindings[spec.name] = {
+                "resolved": callable(getattr(mod, spec.function, None)),
+                "inject": spec.inject,
+            }
+        ev["steps"]["bindings"] = {
+            "ok": all(v["resolved"] for v in bindings.values()),
+            "detail": bindings,
+        }
         ok = ok and ev["steps"]["bindings"]["ok"]
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
         #: ② ★ 造一个**临时零件**（40×20×10 盒）并存到 _fixtures/
@@ -97,8 +105,11 @@ def main() -> int:
         sw_part.end_sketch(part)
         sw_part.extrude_boss(part, sk, 10.0)
         sw_connect.save_document(part, str(part_path))
-        ev["steps"]["fixture"] = {"saved": part_path.is_file(), "path": str(part_path),
-                                  "★": "★ 只写进 output/_fixtures/（临时夹具），不碰用户目录"}
+        ev["steps"]["fixture"] = {
+            "saved": part_path.is_file(),
+            "path": str(part_path),
+            "★": "★ 只写进 output/_fixtures/（临时夹具），不碰用户目录",
+        }
 
         def build_asm(second_z: float, tag: str):
             """建一个含**两个**同一零件的装配；第二个的插入 z 由参数给。"""
@@ -109,15 +120,22 @@ def main() -> int:
             comps = sw_assembly.get_components(asm)
             inter = sw_assembly.get_interference_detection(asm)
             mates = sw_assembly.collect_mate_feature_summary(asm)
-            return {"tag": tag, "n_components": len(comps), "components": comps[:3],
-                    "interference": inter, "n_mates": len(mates)}
+            return {
+                "tag": tag,
+                "n_components": len(comps),
+                "components": comps[:3],
+                "interference": inter,
+                "n_mates": len(mates),
+            }
 
         #: ③ ★ 重叠场景（第二个也在 z=0 ⇒ 完全重合）
         overlap = build_asm(0.0, "overlap")
         ev["steps"]["overlap_case"] = {
-            "ok": (overlap["n_components"] == 2
-                   and overlap["interference"].get("interference_count") is not None
-                   and (overlap["interference"].get("interference_count") or 0) >= 1),
+            "ok": (
+                overlap["n_components"] == 2
+                and overlap["interference"].get("interference_count") is not None
+                and (overlap["interference"].get("interference_count") or 0) >= 1
+            ),
             **overlap,
             "★": "★ 两个组件**重叠** ⇒ 期望 status=warn 且 count>=1",
         }
@@ -126,9 +144,11 @@ def main() -> int:
         #: ④ ★ 分开场景（第二个在 z=60 ⇒ 盒厚 10，间隔 60 ⇒ 不接触）
         apart = build_asm(60.0, "apart")
         ev["steps"]["apart_case"] = {
-            "ok": (apart["n_components"] == 2
-                   and apart["interference"].get("interference_count") == 0
-                   and apart["interference"].get("status") == "pass"),
+            "ok": (
+                apart["n_components"] == 2
+                and apart["interference"].get("interference_count") == 0
+                and apart["interference"].get("status") == "pass"
+            ),
             **apart,
             "★": "★ 两个组件**分开** ⇒ 期望 status=pass 且 count==0",
         }
@@ -139,26 +159,27 @@ def main() -> int:
         c_ap = ev["steps"]["apart_case"]["interference"].get("interference_count")
         ev["steps"]["discriminates"] = {
             "ok": (c_ov is not None and c_ap is not None and c_ov != c_ap),
-            "overlap_count": c_ov, "apart_count": c_ap,
+            "overlap_count": c_ov,
+            "apart_count": c_ap,
             "★": "★★ **两个场景给出不同的数**才说明判据在**看几何**；"
-                 "都回 0 ⇒ 仍是静默降级；都回 warn ⇒ 判据不对",
+            "都回 0 ⇒ 仍是静默降级；都回 warn ⇒ 判据不对",
         }
         ok = ok and ev["steps"]["discriminates"]["ok"]
-    except Exception as exc:                                   # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
         ok = False
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
-        for d in docs:                                         #: ★ 关件不保存
+        for d in docs:  #: ★ 关件不保存
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t and sw is not None:
                     sw.CloseDoc(t)
-            except Exception:                                  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
     ev["verdict"] = "pass" if (ok and not ev.get("error")) else "fail"
@@ -169,7 +190,9 @@ def main() -> int:
         print("  ⚠ error: %s" % ev["error"])
     print("  结论: %s" % ev["verdict"].upper())
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0 if ev["verdict"] == "pass" else 1
 

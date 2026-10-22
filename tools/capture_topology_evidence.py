@@ -41,6 +41,7 @@ python tools/capture_topology_evidence.py
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import argparse
@@ -70,8 +71,14 @@ _STOP = threading.Event()
 
 def _ps(cmd: str) -> str:
     try:
-        return subprocess.run(["powershell", "-NoProfile", "-Command", cmd],
-                              capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15).stdout.strip()
+        return subprocess.run(
+            ["powershell", "-NoProfile", "-Command", cmd],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=15,
+        ).stdout.strip()
     except Exception:
         return ""
 
@@ -80,8 +87,10 @@ def _watchdog() -> None:
     """旁路线程：只读内存，超阈值杀网格器/求解器。**不碰 COM**（STA 线程亲和）。"""
     while not _STOP.wait(5):
         for name in ("cwbcbfmesh",):
-            v = _ps("(Get-Process %s -ErrorAction SilentlyContinue | "
-                    "Measure-Object WorkingSet64 -Sum).Sum" % name)
+            v = _ps(
+                "(Get-Process %s -ErrorAction SilentlyContinue | "
+                "Measure-Object WorkingSet64 -Sum).Sum" % name
+            )
             mb = int(int(v) / 1_048_576) if v.isdigit() else 0
             if mb > MEM_LIMIT_MB:
                 _ps("Stop-Process -Name %s -Force -ErrorAction SilentlyContinue" % name)
@@ -92,8 +101,12 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="采集拓扑优化闭环的真机证据")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--quiet", action="store_true")
-    ap.add_argument("--mass-reduce-percent", type=float, default=75.0,
-                    help="减重百分比（官方教程用 75，语义是「减掉 75%%」）")
+    ap.add_argument(
+        "--mass-reduce-percent",
+        type=float,
+        default=75.0,
+        help="减重百分比（官方教程用 75，语义是「减掉 75%%」）",
+    )
     args = ap.parse_args()
 
     out_path = Path(args.out)
@@ -121,8 +134,12 @@ def main() -> int:
         sk = sw_part.sketch(model, "Front Plane")
         sw_part.sketch_corner_rectangle(model, -0.05, -0.03, 0.05, 0.03)
         sw_part.extrude_boss(model, sk, 0.02)
-        ev["steps"]["part"] = {"ok": True, "title": title, "size_mm": [100, 60, 20],
-                               "bodies": 1}
+        ev["steps"]["part"] = {
+            "ok": True,
+            "title": title,
+            "size_mm": [100, 60, 20],
+            "bodies": 1,
+        }
         say("[1] 单实体板 %r" % title)
 
         mid = sim.set_material(model, "AISI 1020")
@@ -134,17 +151,24 @@ def main() -> int:
         study, entry = topo.create_topology_study(sw, "TOPO_EV_%d" % int(time.time()))
         atype = get_com_member(study, "AnalysisType") if study is not None else None
         ev["steps"]["topology_study"] = {
-            "ok": study is not None and atype == topo.SWS_ANALYSIS_STUDY_TYPES["topology_static"],
+            "ok": study is not None
+            and atype == topo.SWS_ANALYSIS_STUDY_TYPES["topology_static"],
             "entry": entry,
             "AnalysisType": atype,
             "expected": topo.SWS_ANALYSIS_STUDY_TYPES["topology_static"],
         }
-        say("[3] 拓扑研究 = %r  入口=%r  AnalysisType=%r" % (study is not None, entry, atype))
+        say(
+            "[3] 拓扑研究 = %r  入口=%r  AnalysisType=%r"
+            % (study is not None, entry, atype)
+        )
         if study is None:
             raise RuntimeError("建拓扑研究失败")
 
-        res_goal = topo.set_topology_goal(study, goal_type=topo.TP_GOAL_MAXIMIZE_STIFFNESS,
-                                          mass_reduce_percent=args.mass_reduce_percent)
+        res_goal = topo.set_topology_goal(
+            study,
+            goal_type=topo.TP_GOAL_MAXIMIZE_STIFFNESS,
+            mass_reduce_percent=args.mass_reduce_percent,
+        )
         # ⚠⚠ **不要用真假值判成功码**（本脚本第一版踩到）：`set_topology_goal` 的 `goal`
         #    是 `EndEdit` 的**返回码**，**成功是 `0`**；而 Python 的 `bool(0)` 是 `False`
         #    ⇒ 第一版写成 `bool(res_goal.get("goal") and …)`，把「成功」判成了「失败」，
@@ -165,9 +189,14 @@ def main() -> int:
             "removed": res_goal.get("removed"),
             "mass_reduce_percent": args.mass_reduce_percent,
         }
-        say("[4] EndEdit=%r（0=成功） mass_constraint=%r reused=%r"
-            % (goal_code, res_goal.get("mass_constraint") is not None,
-               res_goal.get("mass_constraint_reused")))
+        say(
+            "[4] EndEdit=%r（0=成功） mass_constraint=%r reused=%r"
+            % (
+                goal_code,
+                res_goal.get("mass_constraint") is not None,
+                res_goal.get("mass_constraint_reused"),
+            )
+        )
 
         n_fix = sim.select_face_at(model, 0.0, 0.0, -0.02)
         rst = sim.apply_fixed_restraint(study, model=model)
@@ -176,8 +205,12 @@ def main() -> int:
         frc = sim.apply_normal_force(study, model=model, magnitude=100.0)
         get_com_member(model, "ClearSelection2", True)
         try:
-            count = int(get_com_member(get_com_member(study, "LoadsAndRestraintsManager"),
-                                       "Count") or 0)
+            count = int(
+                get_com_member(
+                    get_com_member(study, "LoadsAndRestraintsManager"), "Count"
+                )
+                or 0
+            )
         except Exception:
             count = -1
         ev["steps"]["fixtures_and_loads"] = {
@@ -191,11 +224,15 @@ def main() -> int:
         size, tol = sim.default_element_size_and_tolerance(study, -1)
         t0 = time.time()
         mc = get_com_member(study, "CreateMesh", 0, float(size), float(tol))
-        elements = int(get_com_member(get_com_member(study, "Mesh"), "ElementCount") or 0)
+        elements = int(
+            get_com_member(get_com_member(study, "Mesh"), "ElementCount") or 0
+        )
         ev["steps"]["mesh"] = {
             "ok": mc == 0 and 0 < elements <= ELEMENT_SANE_MAX,
-            "return_code": mc, "element_count": elements,
-            "suggested_size_mm": size, "suggested_tolerance_mm": tol,
+            "return_code": mc,
+            "element_count": elements,
+            "suggested_size_mm": size,
+            "suggested_tolerance_mm": tol,
             "seconds": round(time.time() - t0, 1),
         }
         say("[6] CreateMesh=%r 单元=%d 用时%.0fs" % (mc, elements, time.time() - t0))
@@ -210,7 +247,9 @@ def main() -> int:
             except Exception:
                 plots = None
             try:
-                names = [str(x) for x in (get_com_member(results, "GetPlotNames") or ())]
+                names = [
+                    str(x) for x in (get_com_member(results, "GetPlotNames") or ())
+                ]
             except Exception:
                 names = None
         seq = round(time.time() - t1, 1)
@@ -220,11 +259,15 @@ def main() -> int:
             "run_analysis_return": rc,
             "run_analysis_return_is_trustworthy": False,
             "results_present": results is not None,
-            "plot_count": plots, "plot_names": names, "seconds": seq,
+            "plot_count": plots,
+            "plot_names": names,
+            "seconds": seq,
             "note": "无拓扑许可时：会弹「拓扑算例未获许可」且 Results 为空，而返回码仍为 0",
         }
-        say("[7] RunAnalysis=%r（**返回码不可信**） Results非空=%r 图数=%r"
-            % (rc, results is not None, plots))
+        say(
+            "[7] RunAnalysis=%r（**返回码不可信**） Results非空=%r 图数=%r"
+            % (rc, results is not None, plots)
+        )
         if names:
             say("    图名 = %r" % (names,))
 
@@ -253,8 +296,9 @@ def main() -> int:
             except Exception:
                 pass
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n",
-                            encoding="utf-8")
+        out_path.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
         say("")
         say("证据已写入 %s" % out_path)
         say("结论: %s" % ev["verdict"].upper())

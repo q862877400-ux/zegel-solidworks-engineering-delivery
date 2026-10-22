@@ -2,7 +2,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/repair_harvest_report_line.py
-# 定位:   恢复 docs/harvest-report.md 里被审计输出覆盖的那一行（★ 第二次发生；从 HEAD 
+# 定位:   恢复 docs/harvest-report.md 里被审计输出覆盖的那一行（★ 第二次发生；从 HEAD
 #           取值，不手打）。
 # 官方依据: 不适用（本仓工具，不调 COM）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -22,8 +22,13 @@ P = ROOT / "docs" / "harvest-report.md"
 rel = "docs/harvest-report.md"
 
 #: ★ 从 HEAD 取"那一行"的原文（★ 不手打 —— 事实 48 定则①：内容从文件里搬，不从脑子里搬）
-head = subprocess.run(["git", "show", "HEAD:%s" % rel], cwd=str(ROOT),
-                      capture_output=True, encoding="utf-8", errors="replace").stdout
+head = subprocess.run(
+    ["git", "show", "HEAD:%s" % rel],
+    cwd=str(ROOT),
+    capture_output=True,
+    encoding="utf-8",
+    errors="replace",
+).stdout
 head_line = next((ln for ln in head.splitlines() if "偏离上游：" in ln), None)
 print("★ HEAD 里那一行: %r" % (head_line or "")[:130])
 

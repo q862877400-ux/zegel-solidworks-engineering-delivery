@@ -24,6 +24,7 @@ r"""@brief 探针：找「**文件在、却没被登记**」与「**登记了、
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import re
@@ -61,19 +62,28 @@ def main() -> int:
     print()
     try:
         import register_capabilities as rc
+
         allnames = {s.name for s in rc.all_specs()}
         for mod in sorted(declared):
             mm = __import__(mod)
-            var = next((getattr(mm, n) for n in dir(mm)
-                        if n.startswith("SPECS_") and isinstance(getattr(mm, n), list)), None)
+            var = next(
+                (
+                    getattr(mm, n)
+                    for n in dir(mm)
+                    if n.startswith("SPECS_") and isinstance(getattr(mm, n), list)
+                ),
+                None,
+            )
             if var is None:
                 print("  ⚠ %s 里找不到 SPECS_* 列表" % mod)
                 continue
             names = {s.name for s in var}
             absent = sorted(names - allnames)
-            print("  %-22s 声明 %2d 条 · 不在 all_specs() 里: %d %s"
-                  % (mod, len(names), len(absent), absent or ""))
-    except Exception as exc:      # noqa: BLE001
+            print(
+                "  %-22s 声明 %2d 条 · 不在 all_specs() 里: %d %s"
+                % (mod, len(names), len(absent), absent or "")
+            )
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 无法导入注册器：%s" % str(exc)[:120])
     return 0
 

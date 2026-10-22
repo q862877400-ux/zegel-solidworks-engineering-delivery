@@ -1,4 +1,5 @@
 """★ 提交纪律护栏：**只提交自己这一线的文件**，并在提交前拦住「误带删除」。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
 # 文件:   tools/commit_mine.py
@@ -33,9 +34,15 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 def _git(*args: str) -> subprocess.CompletedProcess:
     """★ 跑一条 git（★ `encoding=` 必给 —— 事实 58：中文 Windows 上不给会 `UnicodeDecodeError`）。"""
-    return subprocess.run(("git",) + args, cwd=ROOT,
-                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
-                          text=True, encoding="utf-8", errors="replace")
+    return subprocess.run(
+        ("git",) + args,
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
 
 
 def _tracked_files() -> list[str]:
@@ -64,19 +71,29 @@ def staged() -> list[tuple[str, int, int]]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="★ 只提交自己这一线的文件（★ 先 reset 再只 add 点名的）")
+    ap = argparse.ArgumentParser(
+        description="★ 只提交自己这一线的文件（★ 先 reset 再只 add 点名的）"
+    )
     ap.add_argument("paths", nargs="*", help="★ 本线改动的文件（相对仓库根）")
-    ap.add_argument("--allow-deletions", action="store_true",
-                    help="★ 确实要删文件时才开（★ 默认拦：与事实 61 同族）")
+    ap.add_argument(
+        "--allow-deletions",
+        action="store_true",
+        help="★ 确实要删文件时才开（★ 默认拦：与事实 61 同族）",
+    )
     ap.add_argument("--dry-run", action="store_true", help="★ 只看会提交什么，不提交")
-    ap.add_argument("-m", "--message-file", default=None, help="★ 提交信息文件（★ 用 -F ⇒ 避开引号坑）")
+    ap.add_argument(
+        "-m",
+        "--message-file",
+        default=None,
+        help="★ 提交信息文件（★ 用 -F ⇒ 避开引号坑）",
+    )
     a = ap.parse_args(argv)
 
     if not a.paths:
         print("★ 必须点名本线的文件 —— ★ 本工具的**存在理由**就是不许 `git add -A` ✓")
         return 2
 
-    # ★★★ 第 0 步（★ 本轮补的，理由是一条实测踩到的顺序问题）：**先看删除、再看存在性** 
+    # ★★★ 第 0 步（★ 本轮补的，理由是一条实测踩到的顺序问题）：**先看删除、再看存在性**
     # ——
     # ★ 真 git 的 `add -- <被删的路径>` **是合法的**（那是"记录删除"）⇒
     # ★★ 所以不能拿"路径不存在"去拦删除，否则**唯一的删除拦路石会排在存在性后面而永不生
@@ -84,11 +101,16 @@ def main(argv: list[str] | None = None) -> int:
     pre = staged()
     pre_del = sum(d for _n, _a, d in pre)
     if pre_del and not a.allow_deletions:
-        print("★★ 索引里**已经**有 **%d** 行删除 ⇒ 按事实 61 的定则**停下核查**：" % pre_del)
+        print(
+            "★★ 索引里**已经**有 **%d** 行删除 ⇒ 按事实 61 的定则**停下核查**："
+            % pre_del
+        )
         for name, add_n, del_n in pre:
             if del_n:
                 print("   %+5d %+5d  %s" % (add_n, del_n, name))
-        print("   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓")
+        print(
+            "   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓"
+        )
         return 6
 
     # ★★★ 第 1 步（★ 关键）：把 `round_chain.ps1` 那三次 `git add -A` 清掉
@@ -112,14 +134,17 @@ def main(argv: list[str] | None = None) -> int:
         if (ROOT / p).exists():
             continue
         if p in tracked:
-            deletable.append(p)      #: ★ 合法：已跟踪 + 已删 ⇒ 记录删除
+            deletable.append(p)  #: ★ 合法：已跟踪 + 已删 ⇒ 记录删除
         else:
-            bad.append(p)            #: ★ 真错：不存在且未跟踪
+            bad.append(p)  #: ★ 真错：不存在且未跟踪
     if bad:
         print("★ 这些路径**不存在且未被 git 跟踪**，拒绝提交（拼错了？）：%s" % bad)
         return 4
     if deletable and not a.allow_deletions:
-        print("★★ 这些路径**已被删除**（%d 个）⇒ 要记录删除必须加 `--allow-deletions`：" % len(deletable))
+        print(
+            "★★ 这些路径**已被删除**（%d 个）⇒ 要记录删除必须加 `--allow-deletions`："
+            % len(deletable)
+        )
         for p in deletable[:20]:
             print("   %s" % p)
         return 6
@@ -137,12 +162,16 @@ def main(argv: list[str] | None = None) -> int:
     if total_del and not a.allow_deletions:
         print()
         print("★★ 索引里有 **%d** 行删除 ⇒ 按事实 61 的定则**停下核查**：" % total_del)
-        print("   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓")
+        print(
+            "   ★ 批量改动**必须先证明只做加法**；★ 确实要删就加 `--allow-deletions` ✓"
+        )
         return 6
 
     if a.dry_run or not a.message_file:
         print()
-        print("★ 未提交（★ 没给 `-m <信息文件>`）—— ★ 索引已备好，可自行 `git commit -F <文件>` ✓")
+        print(
+            "★ 未提交（★ 没给 `-m <信息文件>`）—— ★ 索引已备好，可自行 `git commit -F <文件>` ✓"
+        )
         return 0
 
     msg = Path(a.message_file)
@@ -156,7 +185,9 @@ def main(argv: list[str] | None = None) -> int:
         return 8
     print("★ 提交成功：%s" % (commit.stdout or "").strip().splitlines()[0])
     print("★ 本次提交的文件：")
-    for name in (_git("show", "--name-only", "--pretty=format:", "HEAD").stdout or "").splitlines():
+    for name in (
+        _git("show", "--name-only", "--pretty=format:", "HEAD").stdout or ""
+    ).splitlines():
         if name.strip():
             print("   %s" % name.strip())
     return 0

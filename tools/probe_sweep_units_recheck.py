@@ -32,10 +32,13 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 OUT = ROOT / "output" / "sweep-units-capability-recheck.json"
 ev: dict = {
-    "★_判据": ("设 `CircularProfile=True` + `CircularProfileDiameter=12.0` ⇒ `ModifyDefinition` ⇒ "
-               "量包围盒：★ 横截面 ≈12 ⇒ **毫米**；★ ≈12000 ⇒ **米**"),
+    "★_判据": (
+        "设 `CircularProfile=True` + `CircularProfileDiameter=12.0` ⇒ `ModifyDefinition` ⇒ "
+        "量包围盒：★ 横截面 ≈12 ⇒ **毫米**；★ ≈12000 ⇒ **米**"
+    ),
     "★_为什么用几何": "★ 读回同一个属性是**循环自证**；几何是**独立**的 ✓",
-    "steps": []}
+    "steps": [],
+}
 
 
 def step(name: str, **kw) -> None:
@@ -69,8 +72,12 @@ def main() -> int:
     step("select", profile=got_prof, path_ok=ok_path)
 
     rep = SW.create_sweep_report(model, False)
-    step("create_sweep_report", ok=rep.get("ok"), feature=rep.get("feature_name"),
-         type_name=rep.get("type_name"))
+    step(
+        "create_sweep_report",
+        ok=rep.get("ok"),
+        feature=rep.get("feature_name"),
+        type_name=rep.get("type_name"),
+    )
 
     #: ★★ 现在的包围盒（★ 基线：★ 草图轮廓 ⇒ 直径 6 mm 的管、★ 长 40）✓
     model.ViewZoomtofit2() if hasattr(model, "ViewZoomtofit2") else None
@@ -78,12 +85,14 @@ def main() -> int:
         b0 = P.get_bounding_box(model)
         s0 = sorted(round(float(v), 4) for v in b0["size"])
         step("bbox_before", size=s0)
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         step("bbox_before_EXC", err=str(exc)[:110])
         s0 = None
 
     #: ★★★ 设圆轮廓 + 已知直径 ⇒ `ModifyDefinition` ✓
-    feat = P._safe_com_member(model, "FeatureByName", str(rep.get("feature_name") or "扫描1"))
+    feat = P._safe_com_member(
+        model, "FeatureByName", str(rep.get("feature_name") or "扫描1")
+    )
     step("feature_found", ok=bool(feat))
     data = get_com_member(feat, "GetDefinition") if feat is not None else None
     step("definition", type=type(data).__name__ if data is not None else None)
@@ -91,6 +100,7 @@ def main() -> int:
     if data is not None:
         try:
             from sw_connect import set_com_member
+
             set_com_member(data, "CircularProfile", True)
             set_com_member(data, "CircularProfileDiameter", 12.0)
             applied["set"] = {"CircularProfile": True, "CircularProfileDiameter": 12.0}
@@ -106,10 +116,17 @@ def main() -> int:
             #: ★★★★ **⇒ 正解就在本仓**（★ `sw_connect.create_empty_dispatch_variant()`）
             #: ✓
             from sw_connect import create_empty_dispatch_variant
-            applied["modify_ok"] = bool(get_com_member(
-                feat, "ModifyDefinition", data, model,
-                create_empty_dispatch_variant()))
-        except Exception as exc:                                          # noqa: BLE001
+
+            applied["modify_ok"] = bool(
+                get_com_member(
+                    feat,
+                    "ModifyDefinition",
+                    data,
+                    model,
+                    create_empty_dispatch_variant(),
+                )
+            )
+        except Exception as exc:  # noqa: BLE001
             applied["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
     step("apply_circular_profile", **applied)
 
@@ -122,15 +139,19 @@ def main() -> int:
         cross = [v for v in s1 if abs(v - 40.0) > 5.0]
         ev["★_横截面"] = cross
         if cross and all(abs(v - 12.0) < 1.5 for v in cross):
-            ev["★_CircularProfileDiameter_口径"] = "★ **毫米**（★ 写 `12.0` ⇒ 几何横截面 ≈12 mm）✓"
+            ev["★_CircularProfileDiameter_口径"] = (
+                "★ **毫米**（★ 写 `12.0` ⇒ 几何横截面 ≈12 mm）✓"
+            )
         elif cross and all(v > 1000 for v in cross):
             ev["★_CircularProfileDiameter_口径"] = (
                 "★ **米**（★ 写 `12.0` ⇒ 几何横截面 ≈%s mm ⇒ **它把 12.0 当成 12 米**）"
-                % round(max(cross)))
+                % round(max(cross))
+            )
         else:
             ev["★_CircularProfileDiameter_口径"] = (
-                "★ **读数不明确**（★ 横截面 %r）—— ★ 如实标、★ 不猜" % (cross,))
-    except Exception as exc:                                              # noqa: BLE001
+                "★ **读数不明确**（★ 横截面 %r）—— ★ 如实标、★ 不猜" % (cross,)
+            )
+    except Exception as exc:  # noqa: BLE001
         ev["★_CircularProfileDiameter_口径"] = "★ **量不到**：%s" % str(exc)[:90]
     step("VERDICT", verdict=ev["★_CircularProfileDiameter_口径"])
 
@@ -144,7 +165,7 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except SystemExit:
         raise
-    except BaseException as exc:                                          # noqa: BLE001
+    except BaseException as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])
         OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
         print("★ FATAL:", ev["fatal"])

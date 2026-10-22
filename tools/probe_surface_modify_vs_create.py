@@ -43,9 +43,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C                                    # noqa: E402
-from scripts import sw_part as P                                       # noqa: E402
-from scripts import sw_surface_features as SF                          # noqa: E402
+from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_part as P  # noqa: E402
+from scripts import sw_surface_features as SF  # noqa: E402
 
 
 def _mk_two_surfaces(doc):
@@ -54,18 +54,28 @@ def _mk_two_surfaces(doc):
     for i, plane in enumerate(("Front Plane", "Top Plane")):
         try:
             C.get_com_member(doc, "ClearSelection2", True)
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         P.start_sketch(doc, plane_name=plane)
-        C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
-                         -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)
+        C.get_com_member(
+            C.get_com_member(doc, "SketchManager"),
+            "CreateCornerRectangle",
+            -0.02,
+            -0.02,
+            0.0,
+            0.02,
+            0.02,
+            0.0,
+        )
         P.end_sketch(doc)
         for cand in ("\u8349\u56fe%d" % (i + 1), "Sketch%d" % (i + 1)):
             try:
-                if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
+                if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
+                    "ok"
+                ):
                     made += 1
                     break
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 continue
     return made
 
@@ -80,18 +90,23 @@ def _case_knit(doc):
 
 def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"),
-          "_": "\u9a8c\u8bc1\uff1a\u300c\u6539\u52a8\u5df2\u6709\u4f53\u300d\u6210 \u00b7 \u300c\u65b0\u5efa\u4f53\u300d\u4e0d\u6210\uff1f\uff08\u8dd1\u7f1d\u5408\u66f2\u9762\uff09",
-          "hypothesis": "\u4e0a\u4e00\u8f6e\u7684 2/2 \u6210\u90fd\u662f\u201c\u6539\u52a8\u5df2\u6709\u4f53\u201d\uff1b\u800c\u5931\u8d25\u7684 3 \u6761\u90fd\u8981\u201c\u65b0\u5efa\u72ec\u7acb\u4f53\u201d",
-          "cases": []}
-    row = {"tag": "\u5bf9\u7167\uff1a\u7f1d\u5408\u66f2\u9762\uff08\u6539\u52a8\u5df2\u6709\u4f53\uff09", "ok": False}
+    ev = {
+        "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "_": "\u9a8c\u8bc1\uff1a\u300c\u6539\u52a8\u5df2\u6709\u4f53\u300d\u6210 \u00b7 \u300c\u65b0\u5efa\u4f53\u300d\u4e0d\u6210\uff1f\uff08\u8dd1\u7f1d\u5408\u66f2\u9762\uff09",
+        "hypothesis": "\u4e0a\u4e00\u8f6e\u7684 2/2 \u6210\u90fd\u662f\u201c\u6539\u52a8\u5df2\u6709\u4f53\u201d\uff1b\u800c\u5931\u8d25\u7684 3 \u6761\u90fd\u8981\u201c\u65b0\u5efa\u72ec\u7acb\u4f53\u201d",
+        "cases": [],
+    }
+    row = {
+        "tag": "\u5bf9\u7167\uff1a\u7f1d\u5408\u66f2\u9762\uff08\u6539\u52a8\u5df2\u6709\u4f53\uff09",
+        "ok": False,
+    }
     doc = None
     try:
         doc = C.new_document(sw, "part")
         r = _case_knit(doc)
         row["result"] = {k: v for k, v in (r or {}).items() if k != "\u2605"}
         row["ok"] = bool((r or {}).get("ok"))
-    except Exception as exc:                                              # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         if doc is not None:
@@ -99,19 +114,31 @@ def main() -> int:
                 t = str(C.get_com_member(doc, "GetTitle") or "")
                 if t:
                     C.get_com_member(sw, "CloseDoc", t)
-            except Exception:                                             # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
     ev["cases"].append(row)
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))
     ev["total"] = len(ev["cases"])
-    ev["verdict"] = ("modify_ok_create_fail" if ev["passed"] else "hypothesis_rejected")
+    ev["verdict"] = "modify_ok_create_fail" if ev["passed"] else "hypothesis_rejected"
     p = R / "output" / "surface-modify-vs-create-evidence.json"
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
-    print("  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09" % (ev["verdict"], ev["passed"], ev["total"]))
+    p.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=1, default=str) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        "  \u5224\u522b\uff1a**%s**\uff08\u6210 %d / %d\uff09"
+        % (ev["verdict"], ev["passed"], ev["total"])
+    )
     for c in ev["cases"]:
-        print("  %-34s ok=%-6s %s" % (c.get("tag"), c.get("ok"),
-                                      json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:190]))
+        print(
+            "  %-34s ok=%-6s %s"
+            % (
+                c.get("tag"),
+                c.get("ok"),
+                json.dumps(c.get("result") or c.get("err"), ensure_ascii=False)[:190],
+            )
+        )
     print("  \u4ea7\u7269\uff1a%s" % p)
     return 0
 

@@ -22,6 +22,7 @@ r"""@brief 探针：`get_sketch_slots` / `get_sketch_points` 的形状（轮 142
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import ctypes
@@ -38,6 +39,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "slot-point-shapes.json")
+
+
 def modal_dialogs() -> tuple:
     """★ 已改为**委托共享实现**（2026-10-01 轮 149）。"""
     try:
@@ -48,15 +51,17 @@ def modal_dialogs() -> tuple:
     #: 只查不点的脚本在真发现弹窗时**什么也没处置**，弹窗还在 ⇒ 下一轮挂在这儿。
     _dialogs, _scanned = residual_dialogs()
     if _dialogs:
-            dismiss_residual_dialogs()
+        dismiss_residual_dialogs()
     return _dialogs, _scanned
+
+
 def measure(sw_sketch, sk, getter):
     fn = getattr(sw_sketch, getter, None)
     if fn is None:
         return None, "取法不存在"
     try:
         got = fn(sk)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         return None, "EXC: %s: %s" % (type(exc).__name__, str(exc)[:60])
     if isinstance(got, list):
         return len(got), (type(got[0]).__name__ if got else "—")
@@ -70,13 +75,17 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_part, sw_sketch
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
-        print("  %-16s %-6s %-22s %-8s %s" % ("画了什么", "个数", "取法", "元素数", "元素类型/判定"))
+        print(
+            "  %-16s %-6s %-22s %-8s %s"
+            % ("画了什么", "个数", "取法", "元素数", "元素类型/判定")
+        )
 
         # ══ ① 槽口：画 1 个 / 2 个 ══════════════════════════════════
         for n in (1, 2):
@@ -89,7 +98,7 @@ def main() -> int:
                 try:
                     sw_part.sketch_slot(d, -20.0, y, 20.0, y, 5.0)
                     drawn += 1
-                except Exception as exc:      # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     print("     ⚠ 第 %d 个槽口画不出: %s" % (i, str(exc)[:60]))
                     break
             skm = sw_connect.safe_get_com_member(d, "SketchManager")
@@ -97,10 +106,16 @@ def main() -> int:
             segs = sw_sketch.get_sketch_segments(sk)
             truth = len(segs) if isinstance(segs, list) else -1
             cnt, et = measure(sw_sketch, sk, "get_sketch_slots")
-            print("  %-16s %-6d %-22s %-8s %s（真值 segments=%d）"
-                  % ("槽口", drawn, "get_sketch_slots", cnt, et, truth))
-            ev["cases"]["slot_n%d" % drawn] = {"drawn": drawn, "segments": truth,
-                                               "count": cnt, "element": et}
+            print(
+                "  %-16s %-6d %-22s %-8s %s（真值 segments=%d）"
+                % ("槽口", drawn, "get_sketch_slots", cnt, et, truth)
+            )
+            ev["cases"]["slot_n%d" % drawn] = {
+                "drawn": drawn,
+                "segments": truth,
+                "count": cnt,
+                "element": et,
+            }
             sw_part.end_sketch(d)
             t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
             if t:
@@ -120,10 +135,16 @@ def main() -> int:
             segs = sw_sketch.get_sketch_segments(sk)
             truth = len(segs) if isinstance(segs, list) else -1
             cnt, et = measure(sw_sketch, sk, "get_sketch_points")
-            print("  %-16s %-6d %-22s %-8s %s（真值 segments=%d）"
-                  % ("直线(端点即草图点)", n, "get_sketch_points", cnt, et, truth))
-            ev["cases"]["point_from_%d_line" % n] = {"lines": n, "segments": truth,
-                                                     "count": cnt, "element": et}
+            print(
+                "  %-16s %-6d %-22s %-8s %s（真值 segments=%d）"
+                % ("直线(端点即草图点)", n, "get_sketch_points", cnt, et, truth)
+            )
+            ev["cases"]["point_from_%d_line" % n] = {
+                "lines": n,
+                "segments": truth,
+                "count": cnt,
+                "element": et,
+            }
             sw_part.end_sketch(d)
             t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
             if t:
@@ -136,7 +157,8 @@ def main() -> int:
         sw_part.start_sketch(d)
         sw_part.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
         sk = sw_connect.safe_get_com_member(
-            sw_connect.safe_get_com_member(d, "SketchManager"), "ActiveSketch")
+            sw_connect.safe_get_com_member(d, "SketchManager"), "ActiveSketch"
+        )
         for g in ("get_user_points", "get_polylines", "get_sketch_regions"):
             cnt, et = measure(sw_sketch, sk, g)
             print("  %-16s %-6d %-22s %-8s %s" % ("（顺带）", 1, g, cnt, et))
@@ -146,29 +168,33 @@ def main() -> int:
         if t:
             sw.CloseDoc(t)
         docs.remove(d)
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         print("  ⚠ 探针出错：%s: %s" % (type(exc).__name__, str(exc)[:160]))
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         for d in docs:
             try:
                 t = str(sw_connect.safe_get_com_member(d, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-            except Exception:      # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 pass
 
     modals, _win_scanned = modal_dialogs()
     print()
-    print("   收尾模态框: %s（扫了 %d 个窗口）"
-          % ("无" if not modals else modals, _win_scanned))
+    print(
+        "   收尾模态框: %s（扫了 %d 个窗口）"
+        % ("无" if not modals else modals, _win_scanned)
+    )
     ev["modal_dialogs"] = modals
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     return 0
 
 

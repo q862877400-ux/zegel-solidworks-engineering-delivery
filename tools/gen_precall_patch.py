@@ -45,8 +45,15 @@ def _specs_by_tool() -> dict:
     for f in sorted((REPO / "mcp-server").glob("tool_specs_batch*.py")):
         t = f.read_text(encoding="utf-8", errors="replace")
         for m in re.finditer(r'name="(solidworks_[a-z0-9_]+)"', t):
-            out.setdefault(m.group(1), {"file": f.name, "has_pre_call": False,
-                                        "has_param_alias": False, "params": []})
+            out.setdefault(
+                m.group(1),
+                {
+                    "file": f.name,
+                    "has_pre_call": False,
+                    "has_param_alias": False,
+                    "params": [],
+                },
+            )
         #: ★ 粗略取该文件里的 spec 块（★ 够用于"有没有 pre_call / param_alias"这两个布尔
         #: ）
         for blk in re.split(r"ToolSpec\(", t)[1:]:
@@ -71,15 +78,23 @@ def _cand_pre_calls() -> dict:
         except SyntaxError as exc:
             out[f.name] = {"parse_error": str(exc)[:120]}
             continue
-        fns = [n.name for n in ast.walk(tree)
-               if isinstance(n, ast.FunctionDef) and n.name.startswith("_pre_")]
-        helpers = [n.name for n in ast.walk(tree)
-                   if isinstance(n, ast.FunctionDef) and n.name.startswith("_")
-                   and not n.name.startswith("_pre_")]
+        fns = [
+            n.name
+            for n in ast.walk(tree)
+            if isinstance(n, ast.FunctionDef) and n.name.startswith("_pre_")
+        ]
+        helpers = [
+            n.name
+            for n in ast.walk(tree)
+            if isinstance(n, ast.FunctionDef)
+            and n.name.startswith("_")
+            and not n.name.startswith("_pre_")
+        ]
         #: ★ 从候选的**文字**里找它认领了哪几条工具（★ 候选里通常点名）
         txt = f.read_text(encoding="utf-8", errors="replace")
-        claimed = sorted(set(re.findall(r"(?:solidworks_)?(part_[a-z0-9_]+|mold_[a-z0-9_]+)",
-                                        txt)))[:24]
+        claimed = sorted(
+            set(re.findall(r"(?:solidworks_)?(part_[a-z0-9_]+|mold_[a-z0-9_]+)", txt))
+        )[:24]
         out[f.name] = {"pre_calls": fns, "helpers": helpers, "claimed_names": claimed}
     return out
 
@@ -92,47 +107,82 @@ def main() -> int:
     for cname, info in cands.items():
         for fn in info.get("pre_calls", []):
             #: ★ `_pre_part_sweep` ⇒ `part_sweep` ⇒ `solidworks_part_sweep`
-            short = fn[len("_pre_"):]
+            short = fn[len("_pre_") :]
             tool = "solidworks_" + short
             cur = specs.get(tool)
-            plan.append({
-                "candidate": cname,
-                "pre_call_fn": fn,
-                "tool": tool,
-                "tool_registered": cur is not None,
-                "spec_file": (cur or {}).get("file"),
-                "already_has_pre_call": (cur or {}).get("has_pre_call"),
-                "already_has_param_alias": (cur or {}).get("has_param_alias"),
-                "current_params": (cur or {}).get("params", []),
-                "action": ("★ 已挂（跳过）" if (cur or {}).get("has_pre_call")
-                           else ("★ 要挂：" + fn) if cur else "★ 工具没注册 —— 核对名字"),
-                "note": "★ 生成器**只出计划**；★ 落笔前须 Lead 复核 + 真机验证（M3）",
-            })
-    OUT.write_text(json.dumps({"at": time.strftime("%Y-%m-%d %H:%M:%S"),
-                               "generator": "tools/gen_precall_patch.py",
-                               "inputs": {"specs_scanned": len(specs),
-                                          "candidates": list(cands)},
-                               "candidate_detail": cands,
-                               "plan": plan},
-                              ensure_ascii=False, indent=1), encoding="utf-8")
+            plan.append(
+                {
+                    "candidate": cname,
+                    "pre_call_fn": fn,
+                    "tool": tool,
+                    "tool_registered": cur is not None,
+                    "spec_file": (cur or {}).get("file"),
+                    "already_has_pre_call": (cur or {}).get("has_pre_call"),
+                    "already_has_param_alias": (cur or {}).get("has_param_alias"),
+                    "current_params": (cur or {}).get("params", []),
+                    "action": (
+                        "★ 已挂（跳过）"
+                        if (cur or {}).get("has_pre_call")
+                        else ("★ 要挂：" + fn)
+                        if cur
+                        else "★ 工具没注册 —— 核对名字"
+                    ),
+                    "note": "★ 生成器**只出计划**；★ 落笔前须 Lead 复核 + 真机验证（M3）",
+                }
+            )
+    OUT.write_text(
+        json.dumps(
+            {
+                "at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "generator": "tools/gen_precall_patch.py",
+                "inputs": {"specs_scanned": len(specs), "candidates": list(cands)},
+                "candidate_detail": cands,
+                "plan": plan,
+            },
+            ensure_ascii=False,
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
 
-    print("★ 输入：仓内 **%d** 条工具 · bunny 候选 **%d** 份" % (len(specs), len(cands)))
+    print(
+        "★ 输入：仓内 **%d** 条工具 · bunny 候选 **%d** 份" % (len(specs), len(cands))
+    )
     for cn, info in cands.items():
         if "parse_error" in info:
             print("   %-22s ★ 解析失败: %s" % (cn, info["parse_error"]))
             continue
-        print("   %-22s pre_call **%d** 个 · 帮手 %d 个 ⇒ %s"
-              % (cn, len(info["pre_calls"]), len(info["helpers"]), ", ".join(info["pre_calls"])))
+        print(
+            "   %-22s pre_call **%d** 个 · 帮手 %d 个 ⇒ %s"
+            % (
+                cn,
+                len(info["pre_calls"]),
+                len(info["helpers"]),
+                ", ".join(info["pre_calls"]),
+            )
+        )
     print()
-    print("%-26s %-22s %-22s %-8s %s" % ("候选里的 pre_call", "对上的工具", "那条 spec 在哪", "已挂?", "动作"))
+    print(
+        "%-26s %-22s %-22s %-8s %s"
+        % ("候选里的 pre_call", "对上的工具", "那条 spec 在哪", "已挂?", "动作")
+    )
     print("-" * 122)
     for r in plan:
-        print("%-26s %-22s %-22s %-8s %s"
-              % (r["pre_call_fn"][:25], r["tool"].replace("solidworks_", "")[:21],
-                 str(r["spec_file"])[:21], str(r["already_has_pre_call"]), r["action"][:44]))
+        print(
+            "%-26s %-22s %-22s %-8s %s"
+            % (
+                r["pre_call_fn"][:25],
+                r["tool"].replace("solidworks_", "")[:21],
+                str(r["spec_file"])[:21],
+                str(r["already_has_pre_call"]),
+                r["action"][:44],
+            )
+        )
     print()
     print("★ 计划写到:", OUT, "（%.1f s）" % (time.time() - started))
-    print("★★ 注意：★ 本生成器**不改任何文件** —— ★ 它只回答「该给谁挂什么」，★ 落笔与真机验证由 Lead 做。")
+    print(
+        "★★ 注意：★ 本生成器**不改任何文件** —— ★ 它只回答「该给谁挂什么」，★ 落笔与真机验证由 Lead 做。"
+    )
     return 0
 
 

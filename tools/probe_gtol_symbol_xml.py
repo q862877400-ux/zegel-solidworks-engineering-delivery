@@ -38,6 +38,7 @@ r"""@brief 探针：绕开不通的 `AddIndicator`，试 **`IGtolFrame.SetSymbol
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 import json
@@ -60,29 +61,38 @@ def main() -> int:
     try:
         import sw_connect
         from scripts import sw_gtol
+
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
             sw.CommandInProgress = True
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         doc = sw_connect.new_document(sw, "part")
 
         gtol = sw_gtol.insert_gtol(doc)
         ev["insert_gtol"] = gtol is not None
-        print("  ① `insert_gtol()` ⇒ %s" % ("有对象" if gtol is not None else "**None**"))
+        print(
+            "  ① `insert_gtol()` ⇒ %s" % ("有对象" if gtol is not None else "**None**")
+        )
         if gtol is None:
             return 1
 
         #: 轮 165 的顺序：先转换，再加帧
-        ev["can_convert"] = bool(sw_connect.safe_get_com_member(gtol, "CanConvertFormat"))
+        ev["can_convert"] = bool(
+            sw_connect.safe_get_com_member(gtol, "CanConvertFormat")
+        )
         try:
             sw_connect.safe_get_com_member(gtol, "ConvertFormat")
-        except Exception as exc:      # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
             print("     ConvertFormat 抛错: %s" % str(exc)[:60])
         ev["add_frame"] = bool(sw_connect.safe_get_com_member(gtol, "AddFrame"))
-        ev["frame_count"] = int(sw_connect.safe_get_com_member(gtol, "GetFrameCount") or 0)
-        print("  ② 转换=%s · AddFrame=%s · GetFrameCount=%s"
-              % (ev["can_convert"], ev["add_frame"], ev["frame_count"]))
+        ev["frame_count"] = int(
+            sw_connect.safe_get_com_member(gtol, "GetFrameCount") or 0
+        )
+        print(
+            "  ② 转换=%s · AddFrame=%s · GetFrameCount=%s"
+            % (ev["can_convert"], ev["add_frame"], ev["frame_count"])
+        )
 
         frame = None
         for idx in (1, 2, 0):
@@ -104,7 +114,7 @@ def main() -> int:
         if isinstance(xml, str) and xml.strip():
             print("     ── XML 前 400 字 ──")
             for i in range(0, min(400, len(xml)), 100):
-                print("       %s" % xml[i:i + 100].replace("\n", " "))
+                print("       %s" % xml[i : i + 100].replace("\n", " "))
             ev["xml_head"] = xml[:600]
         else:
             print("     ⚠ XML 是空的 ⇒ 这条路也不通")
@@ -115,24 +125,31 @@ def main() -> int:
                 r = sw_connect.safe_get_com_member(frame, "SetSymbolXml", xml)
                 ev["set_same"] = r
                 print("  ⑤ `SetSymbolXml(原样)` ⇒ **%r**" % r)
-            except Exception as exc:      # noqa: BLE001
+            except Exception as exc:  # noqa: BLE001
                 ev["set_same"] = "EXC:%s" % str(exc)[:60]
                 print("  ⑤ `SetSymbolXml(原样)` 抛错: %s" % str(exc)[:80])
 
             #: ⑥ ★★ 改一处再写回 —— **定量证据**：读回能看到改动
             import re
+
             m = re.search(r">([^<]{1,20})<", xml)
             if m:
                 old_txt = m.group(1)
-                changed = xml[:m.start(1)] + ("0.05" if old_txt.strip() else "X") + xml[m.end(1):]
+                changed = (
+                    xml[: m.start(1)]
+                    + ("0.05" if old_txt.strip() else "X")
+                    + xml[m.end(1) :]
+                )
                 try:
                     r2 = sw_connect.safe_get_com_member(frame, "SetSymbolXml", changed)
                     ev["set_changed"] = r2
                     back = sw_connect.safe_get_com_member(frame, "GetSymbolXml")
-                    ev["readback_changed"] = (isinstance(back, str) and back != xml)
-                    print("  ⑥ `SetSymbolXml(改动 %r→0.05)` ⇒ %r · 读回**变了**: %s"
-                          % (old_txt[:14], r2, ev["readback_changed"]))
-                except Exception as exc:      # noqa: BLE001
+                    ev["readback_changed"] = isinstance(back, str) and back != xml
+                    print(
+                        "  ⑥ `SetSymbolXml(改动 %r→0.05)` ⇒ %r · 读回**变了**: %s"
+                        % (old_txt[:14], r2, ev["readback_changed"])
+                    )
+                except Exception as exc:  # noqa: BLE001
                     ev["set_changed"] = "EXC:%s" % str(exc)[:60]
                     print("  ⑥ 改动写回抛错: %s" % str(exc)[:80])
 
@@ -141,32 +158,38 @@ def main() -> int:
             try:
                 s = sw_connect.safe_get_com_member(sw, cand)
                 ev["schema_" + cand] = "有" if s is not None else None
-                print("  ⑦ `ISldWorks.%s` ⇒ %s" % (cand, "有" if s is not None else "None"))
-            except Exception as exc:      # noqa: BLE001
+                print(
+                    "  ⑦ `ISldWorks.%s` ⇒ %s"
+                    % (cand, "有" if s is not None else "None")
+                )
+            except Exception as exc:  # noqa: BLE001
                 print("  ⑦ `ISldWorks.%s` ⇒ %s" % (cand, str(exc)[:50]))
-    except Exception as exc:      # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         ev["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         print("  ⚠ 探针出错: %s" % ev["error"])
     finally:
         try:
             if sw is not None:
                 sw.CommandInProgress = False
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None and sw is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
 
     import sw_connect as _sc
+
     found, dismissed, scanned = _sc.settle_residual_dialogs(settle_seconds=1.0)
     print("  收尾：发现 %d · 点掉 %d · 扫了 %d 个窗口" % (found, dismissed, scanned))
     ev["cleanup"] = {"found": found, "dismissed": dismissed, "scanned": scanned}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT.write_text(
+        json.dumps(ev, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print("  证据: %s" % OUT)
     return 0
 

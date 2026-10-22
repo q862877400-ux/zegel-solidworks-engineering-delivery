@@ -29,11 +29,13 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH3", "SHEET_METAL_SPEC_MAP"]
+
 
 def _consumed(*names: str) -> dict:
     """构造 `param_alias`：**这些入参由 `derived_args` 消费，不传给目标函数**。
@@ -88,7 +90,8 @@ SPECS_BATCH3: list[ToolSpec] = [
     ToolSpec(
         name="solidworks_sheet_metal_create_base_flange",
         title="Create Sheet Metal Base Flange",
-        module="sw_sheet_metal", function="create_base_flange",
+        module="sw_sheet_metal",
+        function="create_base_flange",
         inject="model",
         # `spec` 是 dataclass ⇒ 由 `derived_args` 从展平入参装回；
         # `sketch_ref` 在实现里收**草图名**（转给 `sw_part._ensure_sketch_selected`）
@@ -98,66 +101,124 @@ SPECS_BATCH3: list[ToolSpec] = [
         # `sketch_name` 是实现里的 `sketch_ref`（显式别名）。
         param_alias=dict(
             {"sketch_name": "sketch_ref"},
-            **_consumed("thickness_mm", "bend_radius_mm", "depth_mm", "k_factor",
-                        "relief_ratio", "reverse_direction", "reverse_thickness"),
+            **_consumed(
+                "thickness_mm",
+                "bend_radius_mm",
+                "depth_mm",
+                "k_factor",
+                "relief_ratio",
+                "reverse_direction",
+                "reverse_thickness",
+            ),
         ),
         derived_args=lambda p: {"spec": _base_flange_spec(p)},
         params=[
-            Param("sketch_name", str,
-                  description="Sketch NAME. The special value '__current_selection__' reuses the "
-                              "current selection instead of selecting by name."),
-            Param("thickness_mm", float,
-                  description="Sheet thickness in MILLIMETRES (must be > 0)."),
-            Param("bend_radius_mm", float,
-                  description="Bend radius in MILLIMETRES (>= 0)."),
-            Param("depth_mm", float,
-                  description="Base flange depth in MILLIMETRES (must be > 0)."),
-            Param("k_factor", float, default=0.42,
-                  description="K-factor for the bend allowance (must be strictly between 0 and 1)."),
-            Param("relief_ratio", float, default=0.5,
-                  description="Relief ratio (must be > 0)."),
-            Param("reverse_direction", bool, default=False, description="Reverse the depth direction."),
-            Param("reverse_thickness", bool, default=False,
-                  description="Reverse which side the thickness is added to."),
+            Param(
+                "sketch_name",
+                str,
+                description="Sketch NAME. The special value '__current_selection__' reuses the "
+                "current selection instead of selecting by name.",
+            ),
+            Param(
+                "thickness_mm",
+                float,
+                description="Sheet thickness in MILLIMETRES (must be > 0).",
+            ),
+            Param(
+                "bend_radius_mm",
+                float,
+                description="Bend radius in MILLIMETRES (>= 0).",
+            ),
+            Param(
+                "depth_mm",
+                float,
+                description="Base flange depth in MILLIMETRES (must be > 0).",
+            ),
+            Param(
+                "k_factor",
+                float,
+                default=0.42,
+                description="K-factor for the bend allowance (must be strictly between 0 and 1).",
+            ),
+            Param(
+                "relief_ratio",
+                float,
+                default=0.5,
+                description="Relief ratio (must be > 0).",
+            ),
+            Param(
+                "reverse_direction",
+                bool,
+                default=False,
+                description="Reverse the depth direction.",
+            ),
+            Param(
+                "reverse_thickness",
+                bool,
+                default=False,
+                description="Reverse which side the thickness is added to.",
+            ),
         ],
-        doc=("Create a native base flange (swFmBaseFlange) from an open or closed sketch. Returns the real IFeature; failures raise instead of returning empty. "
-             "⚠⚠ **正确性边界（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #4）**："
-             "★ **只有闭轮廓**真机跑通（2026-10-01，SW 2026 SP4.1，特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）；"
-             "★★ **开放折线（轮廓法兰）真机失败** —— `CreateFeature(IBaseFlangeFeatureData) 创建失败`（2026-10-01 补测）。"
-             "★★★ **旧描述（已作废）**：本节此前写「An open polyline path produces a profile flange … VERIFIED ON A REAL MACHINE … and it WORKED」，"
-             "那是把**闭轮廓**的成功**外推**到了开放折线上 —— 而状态表明写 **`True` 仅对闭轮廓成立**。"
-             "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 它是第一现场）。"),
+        doc=(
+            "Create a native base flange (swFmBaseFlange) from an open or closed sketch. Returns the real IFeature; failures raise instead of returning empty. "
+            "⚠⚠ **正确性边界（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #4）**："
+            "★ **只有闭轮廓**真机跑通（2026-10-01，SW 2026 SP4.1，特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）；"
+            "★★ **开放折线（轮廓法兰）真机失败** —— `CreateFeature(IBaseFlangeFeatureData) 创建失败`（2026-10-01 补测）。"
+            "★★★ **旧描述（已作废）**：本节此前写「An open polyline path produces a profile flange … VERIFIED ON A REAL MACHINE … and it WORKED」，"
+            "那是把**闭轮廓**的成功**外推**到了开放折线上 —— 而状态表明写 **`True` 仅对闭轮廓成立**。"
+            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 它是第一现场）。"
+        ),
     ),
     # 签名: def create_one_bend(model, sketch_ref, spec: OneBendSpec)
     #     OneBendSpec: bend_radius, angle, reverse_direction=False, use_default_radius=True
     ToolSpec(
         name="solidworks_sheet_metal_create_one_bend",
         title="Create Sheet Metal One Bend",
-        module="sw_sheet_metal", function="create_one_bend",
+        module="sw_sheet_metal",
+        function="create_one_bend",
         inject="model",
         param_alias=dict(
             {"sketch_name": "sketch_ref"},
-            **_consumed("bend_radius_mm", "angle_deg", "reverse_direction",
-                        "use_default_radius"),
+            **_consumed(
+                "bend_radius_mm", "angle_deg", "reverse_direction", "use_default_radius"
+            ),
         ),
         derived_args=lambda p: {"spec": _one_bend_spec(p)},
         params=[
-            Param("sketch_name", str,
-                  description="Sketch NAME; '__current_selection__' reuses the current selection."),
+            Param(
+                "sketch_name",
+                str,
+                description="Sketch NAME; '__current_selection__' reuses the current selection.",
+            ),
             Param("bend_radius_mm", float, description="Bend radius in MILLIMETRES."),
-            Param("angle_deg", float, description="Bend angle in DEGREES (the spec is already in degrees)."),
-            Param("reverse_direction", bool, default=False, description="Reverse the bend direction."),
-            Param("use_default_radius", bool, default=True,
-                  description="Use the part default bend radius instead of bend_radius_mm."),
+            Param(
+                "angle_deg",
+                float,
+                description="Bend angle in DEGREES (the spec is already in degrees).",
+            ),
+            Param(
+                "reverse_direction",
+                bool,
+                default=False,
+                description="Reverse the bend direction.",
+            ),
+            Param(
+                "use_default_radius",
+                bool,
+                default=True,
+                description="Use the part default bend radius instead of bend_radius_mm.",
+            ),
         ],
-        doc=("Create a single sheet-metal bend on the selected sketch. ⚠ **仍不可用，但原因已具体化**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #1）。"
-             "★★ **旧描述（已作废）**：`CreateDefinition(33) returned None` · 「The correct call shape has not been determined yet」——"
-             "★ 那是**旧结论**：状态表把它标为「原记法」。"
-             "★★★ **现在的事实**：正确入口**已查明并已改用** —— `swFmSketchBend(35)`（接口 `ISketchedBendFeatureData`），"
-             "真机已验证 `CreateDefinition(35)` 返回**非 None**；"
-             "⚠ 仍缺「选中折弯线 / 固定面」这一步 ⇒ **仍标不可用**，但**卡点不是「形状未查明」**。"
-             "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）。"
-             "★ 本工具保留，是为了让失败**可诊断**，不是因为能用。"),
+        doc=(
+            "Create a single sheet-metal bend on the selected sketch. ⚠ **仍不可用，但原因已具体化**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #1）。"
+            "★★ **旧描述（已作废）**：`CreateDefinition(33) returned None` · 「The correct call shape has not been determined yet」——"
+            "★ 那是**旧结论**：状态表把它标为「原记法」。"
+            "★★★ **现在的事实**：正确入口**已查明并已改用** —— `swFmSketchBend(35)`（接口 `ISketchedBendFeatureData`），"
+            "真机已验证 `CreateDefinition(35)` 返回**非 None**；"
+            "⚠ 仍缺「选中折弯线 / 固定面」这一步 ⇒ **仍标不可用**，但**卡点不是「形状未查明」**。"
+            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）。"
+            "★ 本工具保留，是为了让失败**可诊断**，不是因为能用。"
+        ),
     ),
 ]
 
@@ -173,14 +234,14 @@ SHEET_METAL_SPEC_MAP: dict[str, dict] = {
         "判据": "函数**没有 ref 参数**，实现直接吃**当前选区** ⇒ 文档串要求调用前先选",
         "函数": ["create_edge_flange", "create_gusset"],
         "缺的基础设施": "「选择」入参 + 在调用前完成选择的步骤。"
-                    "★ 好消息：`sw_part._ensure_sketch_selected` 已示范了这个形态"
-                    "（**按名字选**，且支持特殊的 `__current_selection__`）"
-                    "⇒ 照它做一个「按名字/类型选边、选面」的解析层即可复用同一套设计。",
+        "★ 好消息：`sw_part._ensure_sketch_selected` 已示范了这个形态"
+        "（**按名字选**，且支持特殊的 `__current_selection__`）"
+        "⇒ 照它做一个「按名字/类型选边、选面」的解析层即可复用同一套设计。",
     },
     "C3_ref是对象": {
         "判据": "ref 参数在实现里是**已取到的 COM 对象**（文档串明写 GetSelectedObject6 取得）",
         "函数": ["create_draft", "create_swept_flange"],
         "缺的基础设施": "「选择 → 对象」桥：先按声明式规则选中，再 `GetSelectedObject6(1, -1)` 取出。"
-                    "与 C2 的解析层**同源**，可以一次做成。",
+        "与 C2 的解析层**同源**，可以一次做成。",
     },
 }

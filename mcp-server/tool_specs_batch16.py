@@ -55,6 +55,7 @@ Remarks 清单里**没有**这两个串。⇒ 已改为官方名 **`sgSAMELENGTH
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -65,34 +66,41 @@ SPECS_BATCH16 = [
     ToolSpec(
         name="solidworks_add_sketch_relation",
         title="Add Sketch Relation",
-        module="sw_part", function="add_sketch_relation",
+        module="sw_part",
+        function="add_sketch_relation",
         inject="model",
         doc="Add a sketch geometric relation to the current selection.",
         params=[
-            Param("relation_type", str,
-                  description="Relation name. Valid values (each verified against the official "
-                              "IModelDoc2::SketchAddConstraints Remarks list, C:/swapi/types/"
-                              "IModelDoc2/SketchAddConstraints.md): "
-                              "sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, "
-                              "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, "
-                              "sgATMIDDLE, sgCOINCIDENT. "
-                              "The 'sg' prefix is optional and matching is case-insensitive. "
-                              "Legacy names sgEQUAL / sgMIDPOINT do NOT exist in the official list "
-                              "and are rejected with a pointer to sgSAMELENGTH / sgATMIDDLE."),
+            Param(
+                "relation_type",
+                str,
+                description="Relation name. Valid values (each verified against the official "
+                "IModelDoc2::SketchAddConstraints Remarks list, C:/swapi/types/"
+                "IModelDoc2/SketchAddConstraints.md): "
+                "sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, "
+                "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, "
+                "sgATMIDDLE, sgCOINCIDENT. "
+                "The 'sg' prefix is optional and matching is case-insensitive. "
+                "Legacy names sgEQUAL / sgMIDPOINT do NOT exist in the official list "
+                "and are rejected with a pointer to sgSAMELENGTH / sgATMIDDLE.",
+            ),
         ],
     ),
     ToolSpec(
         name="solidworks_mirror_feature",
         title="Mirror Feature",
-        module="sw_part", function="mirror_feature",
+        module="sw_part",
+        function="mirror_feature",
         inject="model",
         doc="Mirror an existing feature about a plane.",
         params=[
-            Param("feature_name", str,
-                  description="Name of the feature to mirror."),
-            Param("mirror_plane_name", str,
-                  description="Name of the mirror plane (plane names follow the SolidWorks UI "
-                              "language, e.g. 「Front Plane」/「前视基准面」)."),
+            Param("feature_name", str, description="Name of the feature to mirror."),
+            Param(
+                "mirror_plane_name",
+                str,
+                description="Name of the mirror plane (plane names follow the SolidWorks UI "
+                "language, e.g. 「Front Plane」/「前视基准面」).",
+            ),
         ],
     ),
 ]

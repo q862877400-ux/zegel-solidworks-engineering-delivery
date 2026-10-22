@@ -1,4 +1,5 @@
 """★ 阶段 3 · 崩溃恢复：检查点 + 提交清单 + 失效闭包 + 恢复判定（规格 318 的 E1/E2/E3）。"""
+
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身
@@ -33,19 +34,24 @@ UNKNOWN_EFFECT = "UNKNOWN_EFFECT"
 COMMITTED = "COMMITTED"
 BLOCKED_VERIFICATION = "BLOCKED_VERIFICATION"
 
-RESUME_CODES = (REVISION_CONFLICT, STALE, UNKNOWN_EFFECT, COMMITTED,
-                BLOCKED_VERIFICATION)
+RESUME_CODES = (
+    REVISION_CONFLICT,
+    STALE,
+    UNKNOWN_EFFECT,
+    COMMITTED,
+    BLOCKED_VERIFICATION,
+)
 
 
 class RecoveryError(Exception):
     """★ 恢复期失败（★ 带封闭码）。"""
 
     CODES = (
-        "no-evidence",              #: ★ 无证据 ⇒ 不得进清单（★ P1 突变要抓的）
-        "not-applied",              #: ★ 还没生效 ⇒ 不得进清单
-        "incomplete-artifact",      #: ★ 引用了不完整文件
-        "revision-conflict",        #: ★ 版本冲突
-        "lease-held",               #: ★ 会话已被别人持有
+        "no-evidence",  #: ★ 无证据 ⇒ 不得进清单（★ P1 突变要抓的）
+        "not-applied",  #: ★ 还没生效 ⇒ 不得进清单
+        "incomplete-artifact",  #: ★ 引用了不完整文件
+        "revision-conflict",  #: ★ 版本冲突
+        "lease-held",  #: ★ 会话已被别人持有
     )
 
     def __init__(self, code: str, detail: str = "") -> None:
@@ -60,9 +66,9 @@ class RecoveryError(Exception):
 #: ══════════════════════════════════════════════════════════════════════
 
 #: ★ 三态（★ 见 data-model §1）
-STATE_INTENT = "intent"          #: 意图已落盘、COM **还没调** ⇒ ★ 窗口①
-STATE_APPLIED = "applied"        #: COM 已生效、**结果还没记账** ⇒ ★ 窗口②
-STATE_COMMITTED = "committed"    #: 已记账 + 证据齐 ⇒ 安全
+STATE_INTENT = "intent"  #: 意图已落盘、COM **还没调** ⇒ ★ 窗口①
+STATE_APPLIED = "applied"  #: COM 已生效、**结果还没记账** ⇒ ★ 窗口②
+STATE_COMMITTED = "committed"  #: 已记账 + 证据齐 ⇒ 安全
 
 ALL_STATES = (STATE_INTENT, STATE_APPLIED, STATE_COMMITTED)
 
@@ -94,6 +100,7 @@ class Checkpoint:
 # 三、提交清单（★ E1 —— ★ FR-004/005/012）
 #: ══════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class CommitManifest:
     entries: list = field(default_factory=list)
@@ -110,24 +117,31 @@ class CommitManifest:
         if cp.state != STATE_APPLIED:
             raise RecoveryError(
                 "not-applied",
-                "★ %s 还在 %r 态（★ 只有 `applied` 能进清单）" % (cp.stage, cp.state))
+                "★ %s 还在 %r 态（★ 只有 `applied` 能进清单）" % (cp.stage, cp.state),
+            )
         if not str(cp.evidence).strip():
             raise RecoveryError(
                 "no-evidence",
                 "★ %s **没有证据** ⇒ 不得标 %s（★ 「工具返回成功」不是证据）"
-                % (cp.stage, COMMITTED))
+                % (cp.stage, COMMITTED),
+            )
         if self.revision and cp.revision and cp.revision != self.revision:
             raise RecoveryError(
                 "revision-conflict",
-                "★ %s 的 revision=%r ≠ 清单的 %r" % (cp.stage, cp.revision,
-                                                     self.revision))
+                "★ %s 的 revision=%r ≠ 清单的 %r"
+                % (cp.stage, cp.revision, self.revision),
+            )
         if not self.revision and cp.revision:
             self.revision = cp.revision
         #: ★ 入清单时**升态**
         cp.state = STATE_COMMITTED
         self.entries.append(cp)
-        return {"ok": True, "stage": cp.stage, "state": cp.state,
-                "revision": self.revision}
+        return {
+            "ok": True,
+            "stage": cp.stage,
+            "state": cp.state,
+            "revision": self.revision,
+        }
 
     @property
     def stages(self) -> list:
@@ -136,8 +150,7 @@ class CommitManifest:
     @property
     def complete(self) -> bool:
         """★ 清单里**每条**都有证据（★ 不变式 K1 的总体判据）。"""
-        return bool(self.entries) and all(
-            str(e.evidence).strip() for e in self.entries)
+        return bool(self.entries) and all(str(e.evidence).strip() for e in self.entries)
 
     def references_incomplete(self) -> list:
         """★ 引用了**不完整文件**的条目（★ SC-005 / FR-012）。
@@ -151,7 +164,8 @@ class CommitManifest:
             ev = str(e.evidence).strip()
             hexpart = ev.split(":")[-1]
             if len(hexpart) != 64 or not all(
-                    c in "0123456789abcdef" for c in hexpart.lower()):
+                c in "0123456789abcdef" for c in hexpart.lower()
+            ):
                 bad.append(e.stage)
         return bad
 
@@ -166,15 +180,25 @@ class CommitManifest:
         return sorted(k for k, v in seen.items() if v > 1)
 
     def to_dict(self) -> dict:
-        return {"revision": self.revision, "complete": self.complete,
-                "entries": [{"stage": e.stage, "state": e.state,
-                             "artifact": e.artifact, "evidence": e.evidence[:24]}
-                            for e in self.entries]}
+        return {
+            "revision": self.revision,
+            "complete": self.complete,
+            "entries": [
+                {
+                    "stage": e.stage,
+                    "state": e.state,
+                    "artifact": e.artifact,
+                    "evidence": e.evidence[:24],
+                }
+                for e in self.entries
+            ],
+        }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 四、失效闭包（★ E2 —— ★ FR-006/007）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass
 class InvalidationClosure:
@@ -207,7 +231,7 @@ def invalidation_closure(nodes: list, changed: list) -> InvalidationClosure:
     #: ★ 建反向索引：版本键 → 直接依赖它的节点
     by_dep: dict[str, list[str]] = {}
     for n in nodes or ():
-        for d in (n.get("depends_on") or ()):
+        for d in n.get("depends_on") or ():
             by_dep.setdefault(d, []).append(n["name"])
 
     stale: set[str] = set()
@@ -225,14 +249,15 @@ def invalidation_closure(nodes: list, changed: list) -> InvalidationClosure:
                 stale.add(n["name"])
                 grew = True
     untouched = [n["name"] for n in (nodes or ()) if n["name"] not in stale]
-    return InvalidationClosure(changed=sorted(ch),
-                               stale_nodes=sorted(stale),
-                               untouched_nodes=untouched)
+    return InvalidationClosure(
+        changed=sorted(ch), stale_nodes=sorted(stale), untouched_nodes=untouched
+    )
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 五、恢复判定（★ E3 —— ★ FR-008/009）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 @dataclass(frozen=True)
 class ResumeVerdict:
@@ -245,8 +270,13 @@ class ResumeVerdict:
             assert self.code in RESUME_CODES, "★ 非法恢复码：%r" % self.code
 
 
-def resume_verdict(*, submitted_revision: str, current_revision: str,
-                   stale_nodes: list = (), unknown_effect: bool = False) -> ResumeVerdict:
+def resume_verdict(
+    *,
+    submitted_revision: str,
+    current_revision: str,
+    stale_nodes: list = (),
+    unknown_effect: bool = False,
+) -> ResumeVerdict:
     """★★ **能不能续跑**（★ E3）。
 
     ★★ 判据顺序（★ **最严的在前** —— ★ 与阶段 2 的七档同族）：
@@ -262,18 +292,24 @@ def resume_verdict(*, submitted_revision: str, current_revision: str,
     """
     if unknown_effect:
         return ResumeVerdict(
-            False, UNKNOWN_EFFECT,
-            "★ 效应不明（★ 不重试、不标完成、不续跑 —— ★ 停下交人）")
+            False,
+            UNKNOWN_EFFECT,
+            "★ 效应不明（★ 不重试、不标完成、不续跑 —— ★ 停下交人）",
+        )
     if str(submitted_revision or "") != str(current_revision or ""):
         return ResumeVerdict(
-            False, REVISION_CONFLICT,
+            False,
+            REVISION_CONFLICT,
             "★ 提交的 revision=%r ≠ 当前 %r ⇒ **不接受该提交**"
-            % (submitted_revision, current_revision))
+            % (submitted_revision, current_revision),
+        )
     if stale_nodes:
         return ResumeVerdict(
-            False, STALE,
+            False,
+            STALE,
             "★ 有 %d 个节点已失效 ⇒ 要重新验证：%s"
-            % (len(stale_nodes), list(stale_nodes)[:6]))
+            % (len(stale_nodes), list(stale_nodes)[:6]),
+        )
     return ResumeVerdict(True, detail="★ 版本一致、无失效节点、效应明确 ⇒ 可续跑")
 
 
@@ -281,9 +317,9 @@ def resume_verdict(*, submitted_revision: str, current_revision: str,
 # 六、三类崩溃窗口（★ E1 —— ★ 验收 S3-A）
 #: ══════════════════════════════════════════════════════════════════════
 
-BEFORE_CALL = "before_call"      #: ★ 窗口① 意图落盘后、调用前
-AFTER_EFFECT = "after_effect"    #: ★ 窗口② 生效未记账
-AFTER_SAVE = "after_save"        #: ★ 窗口③ 保存未发布
+BEFORE_CALL = "before_call"  #: ★ 窗口① 意图落盘后、调用前
+AFTER_EFFECT = "after_effect"  #: ★ 窗口② 生效未记账
+AFTER_SAVE = "after_save"  #: ★ 窗口③ 保存未发布
 
 CRASH_WINDOWS = (BEFORE_CALL, AFTER_EFFECT, AFTER_SAVE)
 
@@ -320,9 +356,9 @@ class ReplayJournal:
         return sorted(k for k, v in seen.items() if v > 1)
 
 
-def resume_from_checkpoints(manifest: CommitManifest, stages: list,
-                            journal: ReplayJournal, *,
-                            readback=None) -> dict:
+def resume_from_checkpoints(
+    manifest: CommitManifest, stages: list, journal: ReplayJournal, *, readback=None
+) -> dict:
     """★★ **从已提交检查点恢复**（★ E1 —— ★ FR-002/005）。
 
     ★★ 判据（★ 三个窗口各不相同）：
@@ -340,8 +376,7 @@ def resume_from_checkpoints(manifest: CommitManifest, stages: list,
     #:     而 `entries` 里可能有**没进清单的 `applied`**（★ 那正是窗口②）
     #:     ⇒ 它会被误判成「已提交」⇒ **跳过而不回读** ⇒ ★★ 窗口② 的判据失效。
     #:   ⇒ ★ 判据必须是 **`state == committed`**，不是「在 entries 里」。
-    committed = {e.stage for e in manifest.entries
-                 if e.state == STATE_COMMITTED}
+    committed = {e.stage for e in manifest.entries if e.state == STATE_COMMITTED}
     done: list = []
     skipped: list = []
     replayed: list = []
@@ -351,32 +386,45 @@ def resume_from_checkpoints(manifest: CommitManifest, stages: list,
             skipped.append({"stage": st, "why": "★ 已在提交清单里（窗口③）"})
             continue
         #: ★ 找该阶段的检查点（★ **只认 `applied`** —— ★ `committed` 已在上面跳过）
-        cp = next((c for c in manifest.entries
-                   if c.stage == st and c.state == STATE_APPLIED), None)
+        cp = next(
+            (c for c in manifest.entries if c.stage == st and c.state == STATE_APPLIED),
+            None,
+        )
         if cp is not None:
             if readback is None:
                 #: ★★ 保守：不知道生效没有 ⇒ **不重放**（★ 宁可停，不重复打孔）
-                skipped.append({"stage": st,
-                                "why": "★ 是 `applied` 态而没有 `readback` ⇒ "
-                                       "**拒绝重放**（★ 不重复打孔）"})
+                skipped.append(
+                    {
+                        "stage": st,
+                        "why": "★ 是 `applied` 态而没有 `readback` ⇒ "
+                        "**拒绝重放**（★ 不重复打孔）",
+                    }
+                )
                 continue
             if readback(st):
-                skipped.append({"stage": st,
-                                "why": "★ 回读说「已有」⇒ 跳过（★ 不重复打孔）"})
+                skipped.append(
+                    {"stage": st, "why": "★ 回读说「已有」⇒ 跳过（★ 不重复打孔）"}
+                )
                 continue
         #: ★ 重放（★ 窗口① 与「回读说没有」的窗口②）
         journal.record(st)
         done.append(st)
         replayed.append(st)
 
-    return {"ok": True, "done": done, "skipped": skipped, "replayed": replayed,
-            "duplicates": journal.duplicates(),
-            "no_duplicates": not journal.duplicates()}
+    return {
+        "ok": True,
+        "done": done,
+        "skipped": skipped,
+        "replayed": replayed,
+        "duplicates": journal.duplicates(),
+        "no_duplicates": not journal.duplicates(),
+    }
 
 
 #: ══════════════════════════════════════════════════════════════════════
 # 七、辅助：算证据（★ 用**内容摘要**，不是「返回值」）
 #: ══════════════════════════════════════════════════════════════════════
+
 
 def evidence_of(payload: object) -> str:
     """★ 由**内容**算证据（★ 不是「工具返回成功」那种东西）。"""

@@ -38,15 +38,24 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "selection-readback-raw-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "selection-readback-raw-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
 
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -64,7 +73,9 @@ def main() -> int:
         c2 = sim.select_face_at(doc, 0.0, 0.0, 0.02, append=True)
         ev["selection"] = {"count_via_count2": [c1, c2]}
         sm = get_com_member(doc, "SelectionManager")
-        ev["count2_readback"] = repr(safe_get_com_member(sm, "GetSelectedObjectCount2", -1))
+        ev["count2_readback"] = repr(
+            safe_get_com_member(sm, "GetSelectedObjectCount2", -1)
+        )
 
         #: ★ **直接读**（★ 带异常的原文），★ 两种 mark 都试
         per_mark = {}
@@ -73,10 +84,16 @@ def main() -> int:
             for i in range(1, 5):
                 try:
                     obj = get_com_member(sm, "GetSelectedObject6", int(i), int(mark))
-                    rows.append({"index": i, "raw": repr(obj)[:70], "is_none": obj is None})
-                except Exception as exc:                       # noqa: BLE001
-                    rows.append({"index": i,
-                                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])})
+                    rows.append(
+                        {"index": i, "raw": repr(obj)[:70], "is_none": obj is None}
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    rows.append(
+                        {
+                            "index": i,
+                            "err": "%s: %s" % (type(exc).__name__, str(exc)[:110]),
+                        }
+                    )
             per_mark["mark=%d" % mark] = rows
         ev["per_index"] = per_mark
         #: ★ 也读一下 `safe_get_com_member` 那条（★ 复现 `_selected_dispatch_array` 的行
@@ -86,23 +103,27 @@ def main() -> int:
             obj = safe_get_com_member(sm, "GetSelectedObject6", int(i), -1)
             safe_rows.append({"index": i, "is_none": obj is None})
         ev["via_safe_helper"] = safe_rows
-        ev["note"] = ("★ 直接按序号读，★ 把**原始值或原始异常**都记下来 —— ★ 才能分清"
-                      "「读不到」与「抛了异常被吞掉」。★ 两种 mark（-1 与 0）都试。")
+        ev["note"] = (
+            "★ 直接按序号读，★ 把**原始值或原始异常**都记下来 —— ★ 才能分清"
+            "「读不到」与「抛了异常被吞掉」。★ 两种 mark（-1 与 0）都试。"
+        )
         ev["verdict"] = "pass" if ev.get("per_index") else "partial"
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         print(json.dumps(ev, ensure_ascii=False, indent=1)[:1800])
         print("  产物: %s" % OUT)
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 

@@ -37,13 +37,17 @@ def main() -> int:
     model = new_document(app, "part")
     with P.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        for a, b in (((-0.05, -0.03), (0.05, -0.03)), ((0.05, -0.03), (0.05, 0.03)),
-                     ((0.05, 0.03), (-0.05, 0.03)), ((-0.05, 0.03), (-0.05, -0.03))):
+        for a, b in (
+            ((-0.05, -0.03), (0.05, -0.03)),
+            ((0.05, -0.03), (0.05, 0.03)),
+            ((0.05, 0.03), (-0.05, 0.03)),
+            ((-0.05, 0.03), (-0.05, -0.03)),
+        ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
     P.extrude_boss(model, sk, 20.0)
 
     #: ★★★★★ **判据要贴合对象**（★ 事实 51）：★ 我前两版都让**兜底**去挑第一个特征 ⇒
-    #: ★★ 而中文 UI 下第一个是 **`收藏`**（★ 容器）、★ 第二版修完是 **`前视基准面`**（★ 
+    #: ★★ 而中文 UI 下第一个是 **`收藏`**（★ 容器）、★ 第二版修完是 **`前视基准面`**（★
     #: `RefPlane`）——
     #:   ★★★ **两者都是「真节点」**（★ 官方文档：★ 基准面也是合法特征）⇒
     #:   ★★★★ **⇒ 错的是我的判据（「面数 = 6」只对拉伸成立）、★ 不是能力** ✓
@@ -55,7 +59,7 @@ def main() -> int:
             if "Extrusion" in str(get_com_member(f0, "GetTypeName2")):
                 ext_name = str(get_com_member(f0, "Name"))
                 break
-        except Exception:                                                 # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         f0 = get_com_member(f0, "GetNextFeature")
     r = feature_info(model, ext_name)
@@ -68,18 +72,25 @@ def main() -> int:
         #:   ★★ 那个拉伸有**两个父**（★ `前视基准面` + ★ `草图1`）⇒
         #:   ★★★ **⇒ 又是"我的期望错、★ 不是能力错"**（★ 本会话第 N 次）✓
         #:   ⇒ ★ **判据改成"≥ 1"**（★ 拉伸必然有父 —— ★ 至少那张草图）✓
-        "★ GetParents ≥ 1（★ 拉伸至少有一个父：草图）": isinstance(r.get("GetParents"), int)
+        "★ GetParents ≥ 1（★ 拉伸至少有一个父：草图）": isinstance(
+            r.get("GetParents"), int
+        )
         and r.get("GetParents") >= 1,
         "★ Visible 是 int": isinstance(r.get("Visible"), int),
         "★ GetEditStatus 是 int": isinstance(r.get("GetEditStatus"), int),
         "★ 无 error": not r.get("error"),
     }
-    R = {"★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_feature_members.py` 与 `_recheck_feature_family.py`）",
-         "★_说明": "★ **本函数不读 `GetBox`** —— ★ 官方 `## Remarks` 逐字「values are approximate…"
-                   "should not be used for comparison or calculation purposes」✓",
-         "读取": {k: str(v)[:44] for k, v in r.items()},
-         "★_逐条判据": checks, "★_全过": all(checks.values())}
-    OUT.write_text(json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    R = {
+        "★_判据": "★ 逐个对官方 `## Returns`（★ 见 `output/_read_feature_members.py` 与 `_recheck_feature_family.py`）",
+        "★_说明": "★ **本函数不读 `GetBox`** —— ★ 官方 `## Remarks` 逐字「values are approximate…"
+        "should not be used for comparison or calculation purposes」✓",
+        "读取": {k: str(v)[:44] for k, v in r.items()},
+        "★_逐条判据": checks,
+        "★_全过": all(checks.values()),
+    }
+    OUT.write_text(
+        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+    )
     print("★ 读取:", json.dumps(R["读取"], ensure_ascii=False)[:440])
     for k, v in checks.items():
         print("   %-40s %s" % (k, "✓" if v else "**✗**"))

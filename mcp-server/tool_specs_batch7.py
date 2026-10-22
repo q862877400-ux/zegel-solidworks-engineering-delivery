@@ -27,6 +27,7 @@
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """
+
 from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
@@ -38,7 +39,8 @@ SPECS_BATCH7 = [
     ToolSpec(
         name="solidworks_activate_model_for_preview",
         title="Activate Model For Preview",
-        module="sw_review", function="activate_model_for_preview",
+        module="sw_review",
+        function="activate_model_for_preview",
         inject="model",
         doc="Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as modified (view/selection state changes count).",
         param_alias={},
@@ -47,7 +49,8 @@ SPECS_BATCH7 = [
     ToolSpec(
         name="solidworks_clear_selection_for_preview",
         title="Clear Selection For Preview",
-        module="sw_review", function="clear_selection_for_preview",
+        module="sw_review",
+        function="clear_selection_for_preview",
         inject="model",
         doc="Clear the selection so the preview does not show highlighted entities. ⚠ May mark the document as modified (view/selection state changes count).",
         param_alias={},
@@ -56,13 +59,18 @@ SPECS_BATCH7 = [
     ToolSpec(
         name="solidworks_refresh_scene_graph",
         title="Refresh Scene Graph",
-        module="sw_render_material", function="refresh_scene_graph",
+        module="sw_render_material",
+        function="refresh_scene_graph",
         inject="model",
         doc="Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified (view/selection state changes count).",
         param_alias={},
         params=[
-            Param("update", bool, default=True,
-                  description="Whether to force a graphics update; default true."),
+            Param(
+                "update",
+                bool,
+                default=True,
+                description="Whether to force a graphics update; default true.",
+            ),
         ],
     ),
 ]

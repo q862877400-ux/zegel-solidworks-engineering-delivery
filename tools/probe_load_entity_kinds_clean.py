@@ -31,14 +31,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-OUT = Path(Path(__file__).resolve().parents[1] / "output" / "load-entity-kinds-clean-evidence.json")
+OUT = Path(
+    Path(__file__).resolve().parents[1]
+    / "output"
+    / "load-entity-kinds-clean-evidence.json"
+)
 
 
 def main() -> int:
     import sw_connect
     from scripts import sw_simulation as sim
-    from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
-                                 sketch_corner_rectangle, start_sketch)
+    from scripts.sw_part import (
+        current_sketch_name,
+        end_sketch,
+        extrude_boss,
+        sketch_corner_rectangle,
+        start_sketch,
+    )
     from scripts.sw_selection_spec import select_entity_by_index
     from scripts import sw_simulation_loads as SL
 
@@ -70,7 +79,9 @@ def main() -> int:
                 try:
                     #: ★★ **每一格一个新算例**（★ 做法① —— 那条宿主是"污染"的载体）
                     sim.create_static_study(sw, study, study_type=3)
-                    mgr = sim._loads_and_restraints_manager(sim.get_study_by_name(sw, study))
+                    mgr = sim._loads_and_restraints_manager(
+                        sim.get_study_by_name(sw, study)
+                    )
                     sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                     if kind == "FACE":
                         sim.select_face_at(doc, 0.0, 0.0, 0.0)
@@ -78,38 +89,53 @@ def main() -> int:
                         select_entity_by_index(doc, kind, 0)
                     rep = fn(mgr, doc, *extra)
                     cell["ok"] = bool(isinstance(rep, dict) and rep.get("ok"))
-                    cell["count"] = ([rep.get("count_before"), rep.get("count_after")]
-                                     if isinstance(rep, dict) else None)
-                    cell["err"] = (rep.get("error") or "")[:70] if isinstance(rep, dict) else None
-                except Exception as exc:                       # noqa: BLE001
+                    cell["count"] = (
+                        [rep.get("count_before"), rep.get("count_after")]
+                        if isinstance(rep, dict)
+                        else None
+                    )
+                    cell["err"] = (
+                        (rep.get("error") or "")[:70] if isinstance(rep, dict) else None
+                    )
+                except Exception as exc:  # noqa: BLE001
                     cell["ok"] = False
                     cell["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
                 row[kind] = cell
             ev["grid"][label] = row
-        wins = ["%s/%s" % (k, kk) for k, r in ev["grid"].items()
-                for kk, v in r.items() if v.get("ok")]
+        wins = [
+            "%s/%s" % (k, kk)
+            for k, r in ev["grid"].items()
+            for kk, v in r.items()
+            if v.get("ok")
+        ]
         ev["successes"] = wins
         ev["verdict"] = "pass" if wins else "partial"
-        ev["note"] = ("★ **每格一个新算例**（事实 324 的做法①）—— ★ 治的是「失败的调用污染下一格」。"
-                      "★ 顺序也记在 `order` 里。")
-        OUT.write_text(json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        ev["note"] = (
+            "★ **每格一个新算例**（事实 324 的做法①）—— ★ 治的是「失败的调用污染下一格」。"
+            "★ 顺序也记在 `order` 里。"
+        )
+        OUT.write_text(
+            json.dumps(ev, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
         for label, _fn, _e in loads:
-            cells = " | ".join("%s:%s" % (kk, "✓" if ev["grid"][label][kk].get("ok") else "✗")
-                               for kk in kinds)
+            cells = " | ".join(
+                "%s:%s" % (kk, "✓" if ev["grid"][label][kk].get("ok") else "✗")
+                for kk in kinds
+            )
             print("  %-14s %s" % (label, cells))
         print("  成功格（%d）：%s" % (len(wins), wins))
         print("  产物: %s ⇒ %s" % (OUT, str(ev["verdict"]).upper()))
     finally:
         try:
             sw.CommandInProgress = False
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
         try:
             if doc is not None:
                 t = str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")
                 if t:
                     sw.CloseDoc(t)
-        except Exception:                                      # noqa: BLE001
+        except Exception:  # noqa: BLE001
             pass
     return 0
 
