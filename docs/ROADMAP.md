@@ -45,6 +45,18 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化 · 第 27 轮：⑤ 判据改成 α-等价**
+  ★★ **旧口径致命缺陷**：它把**引用的全局常量也抹平**，于是「同一段结构、引用不同常量」也算重复
+  ⇒ 把 `official_members` **参数化统一**之后，两个薄调用**仍被报重复** ⇒ 它会给**每一个正确的修复打回票** ✗
+  ★ 新口径 = **α-等价**：只抹平局部绑定名（形参/赋值目标/嵌套 def·class/except as/import as），**保留**全局引用与属性名。
+  ★ 三个已知案例逐个核过：双胞胎（_optional/_safe_com_member）⇒判重复 ✓；已参数化的 official_members 薄调用 ⇒ 不判 ✓；
+  LINKAGE_CODES vs ALL_VERDICTS 那两个 __post_init__ ⇒ 不判 ✓（只是数据不同）。
+  本轮实做两组：`_sketch`→`sw_sketch.require_sketch` · `official_members`→`check_dispatch_arg_guard.official_members_with(dumps, swapi)`
+    （★ 同时修掉「改写模块全局不复原」的顺序依赖隐患，改成 try/finally 用完复原）；豁免 `_require`（12 个机械生成的 sw_api_* 抄录）。
+  ★ 六道 dispatch 门禁改前后逐个复验：byref 323 · entry 37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371 —— **一格未变** ✓
+  **读数**：⑤ 跨文件同函数体 **99 → 84**（口径换 α-等价 + 两组收敛 + 1 条豁免）· ① ruff 439（不变）· ②(信息项) 2,318。
+  **下一 WIP**：⑤ 剩 **84 组**（其中生产代码占少数，多数在一次性探针 `tools/`）。
+
 2026-10-22 ★★★ **仓库统一化（业主指令：整个项目统一化/规范化/同一口径）—— 第 26 轮收工**
   ★ 量具：新增 `scripts/check_repo_uniformity.py`（6 条指标）· 基线 `docs/repo-uniformity-baseline.json`（**只许降不许升**）·
   报告 `docs/repo-uniformity-report.md`（340 行，逐条记「为什么这么判」）。

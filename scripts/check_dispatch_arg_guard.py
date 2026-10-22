@@ -170,6 +170,28 @@ def official_members() -> tuple[set[str], list[str]]:
     return names, notes
 
 
+
+
+def official_members_with(dumps: str = "", swapi: str = ""):
+    """⇒ `(官方成员名集合, 数据源说明)`，**用指定的源覆盖本模块的两个路径**。
+
+    ★★ 2026-10-22（仓库统一化）：本函数的**调用形状**原在两个门禁里**各有一份**
+      （`check_dispatch_forward_arg_guard.official_members` 与 `check_dispatch_upstream_guard.official_members`，
+      逐字相同，**只差环境变量名**）⇒ 参数化后收教到本模块（★ 读取器的家）。
+    ★★ 同时修掉一个**潜在隐患**：原做法直接改写本模块的模块全局且**不复原** ⇒
+      两个门禁先后跑时，**后跑的那个会把源留给先跑的**（顺序依赖）✗
+      ⇒ 本函数用 `try/finally` **用完复原** ✓
+    """
+    global DUMPS_ENV, SWAPI_TYPES
+    old_d, old_s = DUMPS_ENV, SWAPI_TYPES
+    try:
+        if dumps:
+            DUMPS_ENV = dumps
+        if swapi:
+            SWAPI_TYPES = Path(swapi)
+        return official_members()
+    finally:
+        DUMPS_ENV, SWAPI_TYPES = old_d, old_s
 def names_in_target(t) -> list[str]:
     """⇒ 解包目标里的变量名（`a, b` / `[a, b]` / 单个 `a`）。"""
     if isinstance(t, ast.Name):

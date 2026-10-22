@@ -99,15 +99,11 @@ def _baseline() -> tuple[int, int, int]:
 
 
 def official_members():
-    """⇒ `(官方成员名集合, 数据源说明)`。★ 读取器**复用 234**，只用本门禁的源开关覆盖它的路径。"""
+    """⇒ `(官方成员名集合, 数据源说明)`。★ 读取器在 `check_dispatch_arg_guard`，路径由本门禁的开关覆盖。"""
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import check_dispatch_arg_guard as cdag  # noqa: PLC0415
 
-    if UP_DUMPS:
-        cdag.DUMPS_ENV = UP_DUMPS
-    if UP_SWAPI:
-        cdag.SWAPI_TYPES = Path(UP_SWAPI)
-    return cdag.official_members()
+    return cdag.official_members_with(UP_DUMPS, UP_SWAPI)
 
 
 def _iter_py(base: Path):

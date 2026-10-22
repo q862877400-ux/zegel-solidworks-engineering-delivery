@@ -257,9 +257,19 @@
     99
    ],
    "why": "收敛 _select_by_id（sw_part/sw_assembly 各 19 行逐字相同）与 _empty_callout（同族）到 sw_connect 单一实现；★ dispatch 门禁计数逐个复验不变（byref 323 · entry 37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371）"
+  },
+  {
+   "at": "2026-10-22t",
+   "from": [
+    99
+   ],
+   "to": [
+    85
+   ],
+   "why": "⑤ 判据改成 **alpha-等价**（只抹平局部绑定名、保留全局引用），并收敛 _sketch / official_members 两组；豁免 _require（机械生成的 sw_api_* 抄录）"
   }
  ],
- "dup_function_groups_ceiling": 99,
+ "dup_function_groups_ceiling": 84,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
@@ -283,6 +293,16 @@
    "verdict": "★ 判定【不统一】—— 保留两份",
    "reason": "两份函数体逐字相同，锂看应当收敛。★ 但它们各自读 `__file__` 做【本文件自证】—— 语义是「？模块自己不 import COM」。★★ 若合并到一处，两边都会去查【那个共享模块】—— 两个自证都会变成「永远通过」的假自证 ✗。⇒ ★ 这是「同代码、不同目标」：重复是【真的】，但统一会把它们变成假的 ✗",
    "evidence": "两份都用 pathlib.Path(__file__).read_text() 读自己的源码并扫 COM 标记词",
+   "date": "2026-10-22"
+  },
+  {
+   "functions": "_require",
+   "files": [
+    "scripts/sw_api_*.py（12 个）"
+   ],
+   "verdict": "★ 判定【不统一】—— 登记豁免",
+   "reason": "这 12 个文件的文件头自述「**官方 API 的完整抄录**」、「⚡ 逐条机械生成，**不手抄、不折叠、不合并重载**」；`_require` 是**生成模板的一部分**（每个文件恰用 1 次）。⇒ 手改会被下次重生成覆盖，且给「纯抄录」文件引入运行期依赖 ✗",
+   "evidence": "12 个 sw_api_*.py 各自 `def _require` + 1 处调用；文件头 L53 逐字写「⚡ 逐条机械生成」",
    "date": "2026-10-22"
   }
  ],

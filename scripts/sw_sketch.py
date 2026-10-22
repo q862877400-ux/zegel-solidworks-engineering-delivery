@@ -704,6 +704,19 @@ def resolve_sketch(model, name: str = ""):
     )
 
 
+
+
+def require_sketch(model):
+    """⇒ 活动草图（★ **取不到就报错**，不返回 `None` 让上层去猜）。
+
+    ★★ 2026-10-22（仓库统一化）：这 4 行原在 `sw_sketch_dimensions.py` 与
+      `sw_sketch_edit_ops.py` **各有一份、逐字相同**（都是接 `resolve_sketch` 再报错）
+      ⇒ 收敛到本模块（★ `resolve_sketch` 本来就在这里），两处改为导入别名。
+    """
+    sk = resolve_sketch(model, "")
+    if sk is None:
+        raise RuntimeError("没有活动草图（先 solidworks_sketch_start）")
+    return sk
 # ── 规格 209 · B2-4（idx 175 `blank_sketch`）──────────────────────────────────────────
 # ──────
 # ── 来源 ─────────────────────────────────────────────────────────────────────

@@ -65,13 +65,10 @@ for _p in (_HERE.parent, _HERE.parent.parent):
 import sw_sketch as _sk  # noqa: E402
 from sw_connect import get_com_member  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
+from sw_sketch import require_sketch as _sketch  # noqa: E402
 
-
-def _sketch(model):
-    sk = _sk.resolve_sketch(model, "")
-    if sk is None:
-        raise RuntimeError("没有活动草图（先 solidworks_sketch_start）")
-    return sk
+#: ★★ 2026-10-22（仓库统一化）这 4 行原与另一个草图模块逐字相同，
+#:   已收敛到 sw_sketch.require_sketch ⇒ 此处保留旧名作别名。
 
 
 def _relations(model):

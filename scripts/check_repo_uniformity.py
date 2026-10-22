@@ -343,19 +343,88 @@ def _dup_filenames() -> list[str]:
 _TOKEN = "@@ID@@"
 
 
-class _NormNames(ast.NodeTransformer):
-    """把 Name / arg 全换成占位符（让「变量名不同、逻辑相同」也归到一组）。"""
+class _AlphaRename(ast.NodeTransformer):
+    """把**局部绑定名**换成占位符；**自由/全局引用名与属性名保留**（★ α-等价）。
+
+    ★★ 2026-10-22（判据修正）：旧版把**所有** `Name` 都抹平（`_NormNames`），
+      于是「同一段逻辑、引用了**不同常量**」也被归成一组 —— 实测两处后果：
+        · `linkage.__post_init__`（`self.verdict in LINKAGE_CODES`）与
+          `rule_verdicts.__post_init__`（`self.verdict in ALL_VERDICTS`）被当成重复 ✗
+        · 我把 `official_members` **参数化统一**成
+          `cdag.official_members_with(FWD_DUMPS, FWD_SWAPI)` 之后，
+          两个薄调用**仍被报成重复** ✗ —— ★ 也就是说旧口径会**惩罚掉那个修复本身** ✗
+      ⇒ 对**棘轮型**指标这是致命的：它永远到不了 0，因为「参数化」看起来永远像「重复」。
+    ★ 新口径（α-等价）：**只抹平局部绑定名**（形参、赋值目标、嵌套 def/class 名、
+      `except as`、`import as`），**保留**对全局/常量的引用与属性名。
+      语义就是「把局部变量通通改个名之后，两段代码是否**逐字相同**」。
+    ★ 三个已知案例的判定（2026-10-22 实测）：
+      · `sw_delivery._optional_com_member` ↔ `sw_part._safe_com_member`
+        （逐字相同的双胞胎）⇒ **判重复** ✓
+      · 已参数化的 `official_members_with(...)` 两个薄调用
+        ⇒ **不判重复** ✓（那已经是修好的状态）
+      · `LINKAGE_CODES` vs `ALL_VERDICTS` 那两个 `__post_init__`
+        ⇒ **不判重复** ✓（只是数据不同）
+    """
+
+    def __init__(self, local: set[str]) -> None:
+        self.local = local
 
     def visit_Name(self, node: ast.Name) -> ast.AST:  # noqa: N802
-        return ast.copy_location(ast.Name(id=_TOKEN, ctx=node.ctx), node)
+        if node.id in self.local:
+            return ast.copy_location(ast.Name(id=_TOKEN, ctx=node.ctx), node)
+        return node
 
     def visit_arg(self, node: ast.arg) -> ast.AST:  # noqa: N802
         node.arg = _TOKEN
         return node
 
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.AST:  # noqa: N802
+        self.generic_visit(node)
+        node.name = "@@F@@"
+        return node
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> ast.AST:  # noqa: N802
+        self.generic_visit(node)
+        node.name = "@@F@@"
+        return node
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> ast.AST:  # noqa: N802
+        self.generic_visit(node)
+        node.name = "@@C@@"
+        return node
+
+
+def _bound_names(fn: ast.AST) -> set[str]:
+    """⇒ 该函数（含嵌套作用域）里**被就地绑定**的名字（★ 这些才可以安全抹平）。"""
+    out: set[str] = set()
+    args = getattr(fn, "args", None)
+    if args is not None:
+        pos = list(getattr(args, "posonlyargs", []))
+        for x in list(args.args) + list(args.kwonlyargs) + pos:
+            out.add(x.arg)
+        if args.vararg:
+            out.add(args.vararg.arg)
+        if args.kwarg:
+            out.add(args.kwarg.arg)
+    for node in ast.walk(fn):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+            out.add(node.id)
+        elif isinstance(
+            node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+        ) and node is not fn:
+            out.add(node.name)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            out.add(node.name)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for al in node.names:
+                out.add((al.asname or al.name).split(".")[0])
+        elif isinstance(node, ast.Global):
+            out.update(node.names)
+    return out
+
 
 def _body_hash(node: ast.AST) -> str:
-    """函数体的归一化哈希（去 docstring、去名字差异）。"""
+    """函数体的 **α-等价**哈希（去 docstring、抹平局部绑定名、保留全局引用）。"""
     try:
         body = list(getattr(node, "body", []))
         first = body[0] if body else None
@@ -366,7 +435,8 @@ def _body_hash(node: ast.AST) -> str:
         )
         if is_doc:
             body = body[1:]
-        mod = _NormNames().visit(ast.Module(body=body, type_ignores=[]))
+        tree = ast.Module(body=body, type_ignores=[])
+        mod = _AlphaRename(_bound_names(node)).visit(tree)
         ast.fix_missing_locations(mod)
         dumped = ast.dump(mod, annotate_fields=False, include_attributes=False)
         return hashlib.sha256(dumped.encode("utf-8")).hexdigest()[:16]
