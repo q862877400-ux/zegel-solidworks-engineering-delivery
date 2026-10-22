@@ -105,7 +105,7 @@ def main() -> int:
 
         print()
         print("=== ② 图层（承诺：白名单实体 + 图层计数）===")
-        layers = {l["name"]: l for l in scene["layers"]}
+        layers = {item["name"]: item for item in scene["layers"]}
         chk(
             "OUTLINE 层 4 个实体",
             layers.get("OUTLINE", {}).get("count") == 4,

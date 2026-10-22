@@ -216,7 +216,7 @@ def main() -> int:
     if args.report:
         return 0
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    L = [
+    item = [
         "# known-facts 逐条处置台账（规格 332）",
         "",
         "**判据**：",
@@ -237,22 +237,22 @@ def main() -> int:
         "|---|---|",
     ]
     for k, v in c.most_common():
-        L.append("| %s | %d |" % (k, v))
-    L.append("| **合计** | **%d** |" % len(rows))
-    L.append("")
-    L.append("## 二、★ **吸收**（%d 条）" % c.get("吸收", 0))
-    L.append("")
-    L.append("| 编号 | 理由 |")
-    L.append("|---|---|")
+        item.append("| %s | %d |" % (k, v))
+    item.append("| **合计** | **%d** |" % len(rows))
+    item.append("")
+    item.append("## 二、★ **吸收**（%d 条）" % c.get("吸收", 0))
+    item.append("")
+    item.append("| 编号 | 理由 |")
+    item.append("|---|---|")
     for n in sorted([x for x, v in rows.items() if v[0] == "吸收"], key=int):
-        L.append("| **%s** | %s |" % (n, rows[n][1]))
-    L.append("")
-    L.append("## 三、★ **待人工复核**（%d 条）" % c.get("复核", 0))
-    L.append("")
-    L.append("> %s" % " · ".join(todo))
-    L.append("")
-    L.append("## 四、**放过**（%d 条 · 按理由码分组）" % c.get("放过", 0))
-    L.append("")
+        item.append("| **%s** | %s |" % (n, rows[n][1]))
+    item.append("")
+    item.append("## 三、★ **待人工复核**（%d 条）" % c.get("复核", 0))
+    item.append("")
+    item.append("> %s" % " · ".join(todo))
+    item.append("")
+    item.append("## 四、**放过**（%d 条 · 按理由码分组）" % c.get("放过", 0))
+    item.append("")
     import collections as _c  # noqa: PLC0415
 
     by = _c.defaultdict(list)
@@ -260,11 +260,11 @@ def main() -> int:
         if verdict == "放过":
             by[why.split("：")[0]].append(n)
     for code in sorted(by):
-        L.append("### %s（%d 条）" % (code, len(by[code])))
-        L.append("")
-        L.append("> %s" % " · ".join(sorted(by[code], key=int)[:100]))
-        L.append("")
-    OUT.write_text("\n".join(L), encoding="utf-8")
+        item.append("### %s（%d 条）" % (code, len(by[code])))
+        item.append("")
+        item.append("> %s" % " · ".join(sorted(by[code], key=int)[:100]))
+        item.append("")
+    OUT.write_text("\n".join(item), encoding="utf-8")
     print()
     print("★ ⇒ %s" % OUT)
     return 0

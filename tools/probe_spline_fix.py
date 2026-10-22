@@ -6,7 +6,7 @@
 #           )`）⇒
 #   ★ **不能只靠旧探针的读数就宣布修好** —— 本探针**按工具层的契约**调一次修好后的实现，
 #   并把判据（草图段数增量）与返回对象的类型如实记下来。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateSpline.md`（`PointData` = **扁平 X,Y,Z
+# 官方依据: `c:\swapi\types\ISketchManager\CreateSpline.md`（`PointData` = **扁平 X,Y,Z
 # 序列**，
 #     至少两组；2D 草图里 Z 被忽略）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -25,14 +25,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "spline-fix-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _segs(doc):
@@ -52,24 +52,24 @@ def main() -> int:
         "at": time.strftime("%Y-%m-%d %H:%M:%S"),
         "form": "VARIANT(VT_ARRAY|VT_R8) —— 本轮修进 sw_part.sketch_spline",
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         before = _segs(doc)
         row["seg_before"] = before
         #: ★ 按**工具层的契约**给：`points` = [[x_mm, y_mm], …]（★ 至少两组）
         pts = [[0.0, 0.0], [20.0, 15.0], [40.0, -5.0]]
         row["points_mm"] = pts
-        ret = P.sketch_spline(doc, pts)
+        ret = p.sketch_spline(doc, pts)
         row["returned"] = type(ret).__name__ if ret is not None else "None"
         after = _segs(doc)
         row["seg_after"] = after
         row["seg_delta"] = after - before
         row["ok"] = bool(after > before)
-        P.end_sketch(doc)
-        row["feature_names"] = list(P.feature_names(doc) or [])
+        p.end_sketch(doc)
+        row["feature_names"] = list(p.feature_names(doc) or [])
     except Exception as exc:  # noqa: BLE001
         row["ok"] = False
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:300])

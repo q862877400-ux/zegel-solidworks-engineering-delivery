@@ -82,7 +82,7 @@ def main() -> int:
         for m in VERDICT.finditer(out):
             pass
         #: ★ 收尾那行也要看（证明迁移后的收尾仍在跑、且如实报）
-        tail = [l.strip() for l in out.splitlines() if "扫了" in l and "窗口" in l]
+        tail = [item.strip() for item in out.splitlines() if "扫了" in item and "窗口" in item]
         rec = {
             "script": name,
             "exit": r.returncode,

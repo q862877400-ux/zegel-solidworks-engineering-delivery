@@ -51,7 +51,7 @@ MM = 0.001  # 该族长度参数单位是米 ⇒ 毫米 * MM
 def main() -> int:
     import sw_connect
     import sw_mold as M
-    import sw_surface_features as SF
+    import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -116,10 +116,10 @@ def main() -> int:
             }
 
         def step(label, fn):
-            before = SF.feature_names(doc)
+            before = sf.feature_names(doc)
             try:
                 r = fn()
-                after = SF.feature_names(doc)
+                after = sf.feature_names(doc)
                 new = [n for n in after if n not in before]
                 ev["steps"][label] = {
                     "ok": bool(new),

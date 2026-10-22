@@ -50,8 +50,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -133,7 +133,7 @@ def _one(sw, tag, method):
         picked, per = _pick(doc)
         row["picked"] = {k: list(v) for k, v in picked.items()}
         row["sel_by_mark"] = per
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
@@ -153,11 +153,11 @@ def _one(sw, tag, method):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         types = []
         try:
-            for f in W.iter_features_recursive(doc):
+            for f in w.iter_features_recursive(doc):
                 try:
                     types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001

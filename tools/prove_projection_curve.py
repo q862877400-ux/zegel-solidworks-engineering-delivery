@@ -46,7 +46,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -145,7 +145,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
             except Exception:  # noqa: BLE001
                 continue
         row["marks"] = marks
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = _g(doc, "FeatureManager")
         feat = None
         try:
@@ -219,7 +219,7 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"] or row.get("ret_type"))
     except Exception as exc:  # noqa: BLE001

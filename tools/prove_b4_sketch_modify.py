@@ -42,8 +42,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_sketch as SK  # noqa: E402
 from scripts import sw_sketch_modify_ops as M  # noqa: E402
@@ -60,7 +60,7 @@ def _transform(doc):
         ⇒ ★★★ 故"草图内点的 bbox"（本探针第一版的判据）**根本测不出它们**
           —— ★ 那时 3 条记成 `geometry_unchanged`，★ **不是能力不行，是判据选错了** ⚠
 
-    ★ 官方依据（`C:\\swapi\\types\\IMathTransform\\ArrayData.md`，逐字）：
+    ★ 官方依据（`c:\\swapi\\types\\IMathTransform\\ArrayData.md`，逐字）：
       > Gets and sets the array of **16 doubles** for this transform.
       > The first **9** elements define the **3x3 rotation matrix**. The next **3** elements
       > define the **translation component**.
@@ -75,13 +75,13 @@ def _transform(doc):
     ⚠ 取不到 ⇒ 回 `None`（★ 调用方写 `measured: false`，**不猜**）。
     """
     try:
-        sk = C.get_com_member(C.get_com_member(doc, "SketchManager"), "ActiveSketch")
+        sk = c.get_com_member(c.get_com_member(doc, "SketchManager"), "ActiveSketch")
         if sk is None:
             return None
-        tf = C.get_com_member(sk, "ModelToSketchTransform")
+        tf = c.get_com_member(sk, "ModelToSketchTransform")
         if tf is None:
             return None
-        arr = C.get_com_member(tf, "ArrayData")
+        arr = c.get_com_member(tf, "ArrayData")
         if arr is None:
             return None
         vals = [round(float(x), 6) for x in arr]
@@ -106,7 +106,7 @@ def _bbox(doc):
     ⚠ 取不到 ⇒ 回 `None`（★ 调用方据此写 `measured: false`，**不猜**）。
     """
     try:
-        sk = C.get_com_member(C.get_com_member(doc, "SketchManager"), "ActiveSketch")
+        sk = c.get_com_member(c.get_com_member(doc, "SketchManager"), "ActiveSketch")
         if sk is None:
             return None
         flats = SK.get_lines(sk) or []
@@ -142,10 +142,10 @@ def _one(sw, zh, fn):
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
         #: ★ 一个矩形 ⇒ 有实体可操作（★ 用本仓现成的图元函数）
-        SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+        sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
         #: ★★★ 2026-10-03（轮 471）**量 bbox 必须在草图**打开**时** ——
         #:   官方对这几个成员的说明是 "Translates / Rotates … the coordinate system of the
         #:   **active or selected sketch**" ⇒ ★ 它们**要活动草图**。
@@ -194,19 +194,19 @@ def _one(sw, zh, fn):
         if doc is not None:
             try:
                 t = (
-                    str(C.safe_get_com_member(doc, "GetTitle") or "")
-                    if hasattr(C, "safe_get_com_member")
+                    str(c.safe_get_com_member(doc, "GetTitle") or "")
+                    if hasattr(c, "safe_get_com_member")
                     else ""
                 )
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "B4 批：草图编辑·移动族 5 条逐个真机跑（specs/201-toolbar-gaps）",

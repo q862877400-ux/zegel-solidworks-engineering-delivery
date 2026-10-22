@@ -51,9 +51,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_hole_features as HF  # noqa: E402
+from scripts import sw_hole_features as hf  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 SW_SEL_FACES = 2  #: \u2605 \u53cd\u5c04 dump\uff1a`swSelFACES = 2`
@@ -172,10 +172,10 @@ def main() -> int:
         #: \u2605 \u800c\u5408\u6cd5\u503c\u4ece**\u672c\u4ed3\u81ea\u5df1\u7684 lookup*
         #: *\u62ff\uff08\u2605 \u4e0d\u51ed\u5370\u8c61\u586b\uff09
         try:
-            ev["hole_standards"] = HF.list_hole_standards(sw, 0)[:6]
+            ev["hole_standards"] = hf.list_hole_standards(sw, 0)[:6]
         except Exception as exc:  # noqa: BLE001
             ev["hole_standards"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])
-        feats = list(FR.feature_names(doc) or [])
+        feats = list(fr.feature_names(doc) or [])
         ev["features_after_ray"] = feats[-3:]
     except Exception as exc:  # noqa: BLE001
         ev["fatal"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])

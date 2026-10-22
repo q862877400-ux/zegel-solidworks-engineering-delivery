@@ -206,7 +206,7 @@ def step_survey(limit: int = 40) -> int:
     )
     upstream = set(re.findall(r"@mcp\.tool[^\n]*\n(?:[^\n]*\n)*?def\s+(\w+)", srv))
 
-    AMBIG = {
+    ambig = {
         "win",
         "hwnd",
         "ctrl",
@@ -236,7 +236,7 @@ def step_survey(limit: int = 40) -> int:
             buckets["① 已覆盖（ToolSpec）"] += 1
             continue
         first = r["args"][0] if r["args"] else ""
-        if first in AMBIG:
+        if first in ambig:
             buckets["② 歧义首参（不碰）"] += 1
             continue
         if any(first == n for n in REFUSED):

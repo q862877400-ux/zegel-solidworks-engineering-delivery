@@ -105,10 +105,10 @@ def _find_dimension(doc):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "候选文档": [], "cases": []}
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "候选文档": [], "cases": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     for cand in CANDIDATES:
-        R["候选文档"].append({"path": str(cand), "exists": cand.exists()})
+        r["候选文档"].append({"path": str(cand), "exists": cand.exists()})
     try:
         for cand in CANDIDATES:
             if not cand.exists():
@@ -119,7 +119,7 @@ def main() -> int:
                 doc = C.open_document(sw, str(cand), read_only=True, silent=True)
                 if doc is None:
                     case["open"] = "★ 打开失败"
-                    R["cases"].append(case)
+                    r["cases"].append(case)
                     continue
                 case["open"] = "★ 打开成功"
                 dim, note = _find_dimension(doc)
@@ -136,12 +136,12 @@ def main() -> int:
                     case["新_GetSystemValue3(2, 空VARIANT)"] = _try(
                         _g, dim, "GetSystemValue3", 2, create_empty_dispatch_variant()
                     )
-                    R["cases"].append(case)
+                    r["cases"].append(case)
                     break
-                R["cases"].append(case)
+                r["cases"].append(case)
             except Exception as exc:  # noqa: BLE001
                 case["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-                R["cases"].append(case)
+                r["cases"].append(case)
             finally:
                 try:
                     if doc is not None:
@@ -149,12 +149,12 @@ def main() -> int:
                 except Exception:  # noqa: BLE001
                     pass
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
-    got = [c for c in R["cases"] if c.get("尺寸对象", "None") not in ("None", "")]
-    R["★_挖到尺寸的文档数"] = len(got)
-    R["seconds"] = round(time.time() - started, 2)
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+    got = [c for c in r["cases"] if c.get("尺寸对象", "None") not in ("None", "")]
+    r["★_挖到尺寸的文档数"] = len(got)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

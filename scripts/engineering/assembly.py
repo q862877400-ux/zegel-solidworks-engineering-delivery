@@ -461,17 +461,17 @@ def bom_traceability(rows: list) -> dict:
 
     ★★ 判据：★ 每一行必须带**可指认的字段**（★ 否则 BOM 是一张纸）。
     """
-    REQUIRED = ("name", "quantity", "file_path")
+    required = ("name", "quantity", "file_path")
     bad = []
     for i, r in enumerate(rows or []):
-        miss = [k for k in REQUIRED if k not in r]
+        miss = [k for k in required if k not in r]
         if miss:
             bad.append({"index": i, "missing": miss})
     return {
         "ok": bool(rows) and not bad,
         "rows": len(rows or []),
         "bad_rows": bad,
-        "required_fields": list(REQUIRED),
+        "required_fields": list(required),
         "reason": (
             "★ %d 行全部可追溯" % len(rows)
             if rows and not bad

@@ -25,7 +25,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import cloud_policy as CP  # noqa: E402
+from scripts.engineering import cloud_policy as cp  # noqa: E402
 
 OUT = ROOT / "output" / "s328"
 
@@ -33,10 +33,10 @@ OUT = ROOT / "output" / "s328"
 def run_u() -> dict:
     """★ **U1~U7 逐条**。"""
     rows = []
-    pol = CP.load_policy()
+    pol = cp.load_policy()
 
     #: U1 离线承诺
-    c = CP.offline_commitment()
+    c = cp.offline_commitment()
     rows.append(
         {
             "u": "U1",
@@ -50,7 +50,7 @@ def run_u() -> dict:
     )
 
     #: U2 不声称断网能自主
-    v_off = CP.offline_verdict(online=False)
+    v_off = cp.offline_verdict(online=False)
     rows.append(
         {
             "u": "U2",
@@ -63,7 +63,7 @@ def run_u() -> dict:
     )
 
     #: U3 关闭能力
-    d = CP.disabled_capabilities()
+    d = cp.disabled_capabilities()
     rows.append(
         {
             "u": "U3",
@@ -74,7 +74,7 @@ def run_u() -> dict:
     )
 
     #: U4 固定快照
-    pin = CP.check_model_pinning()
+    pin = cp.check_model_pinning()
     rows.append(
         {
             "u": "U4",
@@ -85,12 +85,12 @@ def run_u() -> dict:
     )
 
     #: U5 降级顺序
-    deg = CP.degradation_order()
+    deg = cp.degradation_order()
     rows.append(
         {
             "u": "U5",
             "what": "三级降级顺序",
-            "ok": deg["n"] == 3 and tuple(deg["steps"]) == CP.DEGRADATION_STEPS,
+            "ok": deg["n"] == 3 and tuple(deg["steps"]) == cp.DEGRADATION_STEPS,
             "got": "%d 级" % deg["n"],
         }
     )
@@ -101,13 +101,13 @@ def run_u() -> dict:
             "u": "U6",
             "what": "三条禁止",
             "ok": not any(deg["forbidden"].values())
-            and len(CP.DEGRADATION_FORBIDDEN) == 3,
+            and len(cp.DEGRADATION_FORBIDDEN) == 3,
             "got": "三条都没犯",
         }
     )
 
     #: U7 业主三条拍板
-    od = CP.owner_decisions()
+    od = cp.owner_decisions()
     rows.append(
         {
             "u": "U7",
@@ -130,7 +130,7 @@ def run_w() -> dict:
     rows = []
 
     #: W1 说过头
-    w1 = CP.check_offline_claim("断网仍能自主处理新需求")
+    w1 = cp.check_offline_claim("断网仍能自主处理新需求")
     rows.append(
         {
             "w": "W1",
@@ -141,9 +141,9 @@ def run_w() -> dict:
     )
 
     #: W2 开一项云端能力
-    p2 = CP.load_policy()
+    p2 = cp.load_policy()
     p2["disabled_cloud_capabilities"]["cloud_execution"] = True
-    w2 = CP.disabled_capabilities(p2)
+    w2 = cp.disabled_capabilities(p2)
     rows.append(
         {
             "w": "W2",
@@ -154,9 +154,9 @@ def run_w() -> dict:
     )
 
     #: W3 跟随 latest
-    p3 = CP.load_policy()
+    p3 = cp.load_policy()
     p3["cloud_whitelist"]["follow_latest"] = True
-    w3 = CP.check_model_pinning(p3)
+    w3 = cp.check_model_pinning(p3)
     rows.append(
         {
             "w": "W3",
@@ -167,15 +167,15 @@ def run_w() -> dict:
     )
 
     #: W4 跳过降级顺序
-    w4 = CP.check_degradation(used_steps=["fall_back_to_manual_or_deterministic"])
+    w4 = cp.check_degradation(used_steps=["fall_back_to_manual_or_deterministic"])
     rows.append(
         {"w": "W4", "what": "跳过降级顺序", "ok": w4["ok"] is False, "got": w4["code"]}
     )
 
     #: W5 抢显存
-    p5 = CP.load_policy()
+    p5 = cp.load_policy()
     p5["degradation_order"]["forbidden"]["compete_with_solidworks_for_vram"] = True
-    w5 = CP.check_degradation(used_steps=[], policy=p5)
+    w5 = cp.check_degradation(used_steps=[], policy=p5)
     rows.append(
         {
             "w": "W5",
@@ -186,7 +186,7 @@ def run_w() -> dict:
     )
 
     #: W6 偷建本地模型服务
-    w6 = CP.check_no_local_service(builds=["local_model_server"])
+    w6 = cp.check_no_local_service(builds=["local_model_server"])
     rows.append(
         {
             "w": "W6",
@@ -220,7 +220,7 @@ def main() -> int:
 
     print()
     print("★★ 业主三条拍板（★ 原话）：")
-    for k, q in CP.owner_decisions()["owner_quotes"].items():
+    for k, q in cp.owner_decisions()["owner_quotes"].items():
         print("   %-18s 「%s」" % (k, q))
 
     ev = {"u": u, "w": w, "finished": time.strftime("%H:%M:%S")}

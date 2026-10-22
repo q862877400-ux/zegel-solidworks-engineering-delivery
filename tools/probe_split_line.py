@@ -41,11 +41,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -99,7 +99,7 @@ def _mk_surface(doc, plane="Front Plane"):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -167,7 +167,7 @@ def _one(sw, tag, kind):
         doc = C.new_document(sw, "part")
         row["solid"] = _mk_solid(doc)
         row["surface"] = _mk_surface(doc)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = C.get_com_member(doc, "FeatureManager")
         picked = {}
         ret = None
@@ -193,11 +193,11 @@ def _one(sw, tag, kind):
                     row[k] = str(C.get_com_member(ret, m))
                 except Exception:  # noqa: BLE001
                     pass
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         types = []
         try:
-            for f in W.iter_features_recursive(doc):
+            for f in w.iter_features_recursive(doc):
                 try:
                     types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001

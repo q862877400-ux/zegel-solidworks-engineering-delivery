@@ -45,10 +45,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 #: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u88c1\u51b3\u8005\uff09
@@ -84,7 +84,7 @@ def _mk_trimmed_surface(doc):
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -131,7 +131,7 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
             )
         except Exception:  # noqa: BLE001
             row["sel"] = -1
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = _get(doc, "FeatureManager")
         ret = None
         try:
@@ -148,7 +148,7 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"] or row.get("ret_type"))
     except Exception as exc:  # noqa: BLE001

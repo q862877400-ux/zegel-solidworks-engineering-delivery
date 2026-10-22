@@ -9,7 +9,7 @@
 #   ★ 正确做法逐字来自 `scripts/sw_feature_readback.py` 的来源块：
 #     「`IModelDoc2.FirstFeature` / `IFeature.GetNextFeature`（遍历特征树按名找）」
 #     以及「用 `GetTypeName2` 判它有没有特征类型（**结构性判据**，与 UI 语言无关）」。
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（Remarks「end faces
+# 官方依据: `c:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（Remarks「end faces
 # 」）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -27,14 +27,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "weldment-feature-kind-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _walk(doc, limit=40):
@@ -57,7 +57,7 @@ def _walk(doc, limit=40):
 
 
 def _profile():
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for h in sorted(Path(root).rglob("*.sldlfp")):
             if "weldment profiles" in str(h).lower():
                 return str(h)
@@ -67,16 +67,16 @@ def _profile():
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
-        P.end_sketch(doc)
+        p.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p.feature_names(doc) or [])
             if n.startswith("草图") or n.lower().startswith("sketch")
         ]
         R["sketch"] = names[-1] if names else "草图1"

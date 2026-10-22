@@ -63,7 +63,7 @@ def main() -> int:
         import tool_specs_batch33 as b33
 
         from scripts import sw_document_data as D
-        from scripts import sw_export as E
+        from scripts import sw_export as e
         from scripts import sw_part as P
 
         #: ① 静态：12 个工具声明解析得到
@@ -154,32 +154,32 @@ def main() -> int:
         for name, fn, ext in (
             (
                 "export_step",
-                lambda: E.export_step_report(doc, str(EXPORT_DIR / "smoke.step")),
+                lambda: e.export_step_report(doc, str(EXPORT_DIR / "smoke.step")),
                 "step",
             ),
             (
                 "export_stl",
-                lambda: E.export_stl_report(doc, str(EXPORT_DIR / "smoke.stl")),
+                lambda: e.export_stl_report(doc, str(EXPORT_DIR / "smoke.stl")),
                 "stl",
             ),
             (
                 "export_iges",
-                lambda: E.export_iges_report(doc, str(EXPORT_DIR / "smoke.igs")),
+                lambda: e.export_iges_report(doc, str(EXPORT_DIR / "smoke.igs")),
                 "igs",
             ),
             (
                 "export_parasolid",
-                lambda: E.export_parasolid_report(doc, str(EXPORT_DIR / "smoke.x_t")),
+                lambda: e.export_parasolid_report(doc, str(EXPORT_DIR / "smoke.x_t")),
                 "x_t",
             ),
             (
                 "export_dxf",
-                lambda: E.export_dxf_report(doc, str(EXPORT_DIR / "smoke.dxf")),
+                lambda: e.export_dxf_report(doc, str(EXPORT_DIR / "smoke.dxf")),
                 "dxf",
             ),
             (
                 "export_bmp",
-                lambda: E.export_bmp_report(doc, str(EXPORT_DIR / "smoke.bmp")),
+                lambda: e.export_bmp_report(doc, str(EXPORT_DIR / "smoke.bmp")),
                 "bmp",
             ),
         ):

@@ -68,7 +68,7 @@ ITEM_TO_CAP = {
 
 
 def main() -> int:
-    import spec211_manual_verdicts as MV
+    import spec211_manual_verdicts as mv
 
     caps = json.loads((ROOT / "capabilities.yaml").read_text(encoding="utf-8"))[
         "capabilities"
@@ -76,7 +76,7 @@ def main() -> int:
     by_id = {c.get("id"): c for c in caps}
 
     rows = []
-    for item, (domain, verdict, why) in MV.VERDICTS.items():
+    for item, (domain, verdict, why) in mv.VERDICTS.items():
         cid = ITEM_TO_CAP.get(item)
         cap = by_id.get(cid) if cid else None
         rows.append(
@@ -91,7 +91,7 @@ def main() -> int:
             }
         )
     #: ★★ **21 项之外还有"未处理"的**（★ 台账没给它结论的）⇒ ★ 照样列出来，不藏 ✓
-    missing = [i for i in ITEM_TO_CAP if i not in MV.VERDICTS]
+    missing = [i for i in ITEM_TO_CAP if i not in mv.VERDICTS]
 
     #: ★ 生成 markdown 表 ✓
     lines = [

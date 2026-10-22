@@ -150,7 +150,7 @@ def main() -> int:
             print("   %s  ← %s" % (s, p))
     #: ★★ 落盘
     out = ROOT / "specs" / "332-known-facts-triage" / "mech-design-ledger.md"
-    L = [
+    item = [
         "# `mech-design` 全库逐篇处置台账（规格 332 · 批次⑰）",
         "",
         "**判据**：",
@@ -170,25 +170,25 @@ def main() -> int:
         "|---|---|",
     ]
     for s, _, why in absorbed:
-        L.append("| `%s` | %s |" % (s, why))
-    L.append("")
-    L.append("## 二、★ 放过（%d 篇 · 按主题）" % len(passed))
-    L.append("")
+        item.append("| `%s` | %s |" % (s, why))
+    item.append("")
+    item.append("## 二、★ 放过（%d 篇 · 按主题）" % len(passed))
+    item.append("")
     by: dict[str, list] = {}
     for s, _, why in passed:
         by.setdefault(why, []).append(s)
     for why in sorted(by):
-        L.append("### %s" % why)
-        L.append("")
-        L.append("> %s" % " · ".join("`%s`" % s for s in sorted(by[why])))
-        L.append("")
+        item.append("### %s" % why)
+        item.append("")
+        item.append("> %s" % " · ".join("`%s`" % s for s in sorted(by[why])))
+        item.append("")
     if unknown:
-        L.append("## 三、★★ 未判定（%d 篇）" % len(unknown))
-        L.append("")
+        item.append("## 三、★★ 未判定（%d 篇）" % len(unknown))
+        item.append("")
         for s, p in unknown:
-            L.append("- `%s` ← `%s`" % (s, p))
-        L.append("")
-    out.write_text("\n".join(L), encoding="utf-8")
+            item.append("- `%s` ← `%s`" % (s, p))
+        item.append("")
+    out.write_text("\n".join(item), encoding="utf-8")
     print()
     print("★ ⇒ %s" % out)
     return 0

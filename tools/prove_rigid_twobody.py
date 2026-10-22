@@ -46,7 +46,7 @@ def main() -> int:
     from sw_connect import safe_get_com_member
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -100,7 +100,7 @@ def main() -> int:
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-                rep = SL.apply_rigid_connector_by_objects_report(
+                rep = sl.apply_rigid_connector_by_objects_report(
                     mgr, doc, [0], [0], source_body_index=0, target_body_index=1
                 )
                 ev["steps"]["rigid_twobody"] = {

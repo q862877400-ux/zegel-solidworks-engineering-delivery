@@ -49,7 +49,7 @@ A3_GB = Path(
 
 
 def main() -> int:
-    import drawing_workflow as DW
+    import drawing_workflow as dw
     import sw_connect
     from sw_connect import safe_get_com_member
 
@@ -69,12 +69,12 @@ def main() -> int:
                 doc = sw_connect.new_document(sw, "drawing")
                 docs.append(doc)
                 try:
-                    DW.setup_current_sheet_as_a3(doc, [str(A3_GB)])
+                    dw.setup_current_sheet_as_a3(doc, [str(A3_GB)])
                     cell["a3"] = True
                 except Exception as exc:  # noqa: BLE001
                     cell["a3"] = False
                     cell["a3_err"] = str(exc)[:80]
-                view = DW.add_view(doc, str(PART), "*Front", 0.15, 0.15)
+                view = dw.add_view(doc, str(PART), "*Front", 0.15, 0.15)
                 cell["view"] = view is not None
                 if view is not None:
                     cell["datum_count"] = safe_get_com_member(view, "GetDatumTagCount")

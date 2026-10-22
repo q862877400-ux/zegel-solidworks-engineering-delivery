@@ -47,7 +47,7 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom
 import win32com.client
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -148,10 +148,10 @@ def _one(sw, tag, use_spline):
             )
         except Exception:  # noqa: BLE001
             row["sel"] = -1
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         r = P.insert_composite_curve_report(doc, "")
         row["report"] = dict(r or {})
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         #: \u2605 \u7167\u4f8b\u5b50\u7684\u8bfb\u56de\uff1a`SelectionMgr.Feature` \u219
         #: 2 `ICompositeCurveFeatureData`

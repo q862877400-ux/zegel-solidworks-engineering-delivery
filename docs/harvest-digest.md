@@ -36,7 +36,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 > ⚑ 本项目**只做本地提交**，未推任何远端（见 `docs/union-not-doing.json` 的「对外发布」条）。
 > ⚑ 报告本体的偏离数字（文件数 / 行数 / 提交数）由 `scripts/check_report_freshness.py` 用
->   **「`git add -A && git commit` 之后会变成什么」** 的口径守着 —— 那三个量**可预测**
+>   **「`git add -a && git commit` 之后会变成什么」** 的口径守着 —— 那三个量**可预测**
 >   （`git status` 非空就 `+1`），所以放报告正文是稳的；而**主题分布不可预测**，哪里都不放。
 
 ## 二 能力状态（硬依据：`capabilities.yaml`）

@@ -62,13 +62,13 @@ for _p in (_HERE.parent, _HERE.parent.parent):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-import sw_sketch as _SK  # noqa: E402
+import sw_sketch as _sk  # noqa: E402
 from sw_connect import get_com_member  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
 
 
 def _sketch(model):
-    sk = _SK.resolve_sketch(model, "")
+    sk = _sk.resolve_sketch(model, "")
     if sk is None:
         raise RuntimeError("没有活动草图（先 solidworks_sketch_start）")
     return sk
@@ -76,7 +76,7 @@ def _sketch(model):
 
 def _relations(model):
     """⇒ 当前草图的 `ISketchRelationManager`（★ 官方是 `ISketch.RelationManager` **属性**）。"""
-    return _SK.get_relation_manager(_sketch(model))
+    return _sk.get_relation_manager(_sketch(model))
 
 
 def add_horizontal_dimension(model, x_mm: float, y_mm: float):
@@ -104,7 +104,7 @@ def insert_chain_dimensions(model, selection: str = "__current_selection__"):
 
     ★ `Entities` 是**实体数组** ⇒ 本函数按声明式选择器把草图段装成数组（★ 不收坐标，规则 3）。
     """
-    segs = _SK.get_sketch_segments(_sketch(model))
+    segs = _sk.get_sketch_segments(_sketch(model))
     if not segs:
         raise RuntimeError("草图里没有线段可做尺寸链")
     sel = (selection or "").strip()

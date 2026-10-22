@@ -39,9 +39,9 @@ OUT = R / "output" / "spec209-model-annotations.json"
 
 def main() -> int:
     import sw_connect
-    import sw_drawing_create_missing as DM
-    import sw_drawing_expose as E0
-    import sw_part as P
+    import sw_drawing_create_missing as dm
+    import sw_drawing_expose as e0
+    import sw_part as p
     from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -71,10 +71,10 @@ def main() -> int:
         #: 可插**）✓
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
-        import sw_sketch_dimensions as SD
+        import sw_sketch_dimensions as sd
 
-        with P.sketch(part, "Front Plane") as sk:
-            P.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
+        with p.sketch(part, "Front Plane") as sk:
+            p.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
             ev["dimension_added"] = []
             for fn, args in (
                 ("add_horizontal_dimension", (0.0, 15.0)),
@@ -82,7 +82,7 @@ def main() -> int:
             ):
                 try:
                     ev["dimension_added"].append(
-                        {"fn": fn, "ret": str(getattr(SD, fn)(part, *args))[:60]}
+                        {"fn": fn, "ret": str(getattr(sd, fn)(part, *args))[:60]}
                     )
                 except Exception as exc:  # noqa: BLE001
                     ev["dimension_added"].append(
@@ -91,8 +91,8 @@ def main() -> int:
                             "error": "%s: %s" % (type(exc).__name__, str(exc)[:90]),
                         }
                     )
-        P.end_sketch(part)
-        P.extrude_boss(part, "草图1", 20.0)
+        p.end_sketch(part)
+        p.extrude_boss(part, "草图1", 20.0)
         print(
             "  尺寸：%s" % json.dumps(ev["dimension_added"], ensure_ascii=False)[:200]
         )
@@ -105,20 +105,20 @@ def main() -> int:
         opened.append(drw)
         made = None
         try:
-            made = E0.create_projected_view(
+            made = e0.create_projected_view(
                 drw, part_path, view_name="*Front", x_mm=140.0, y_mm=120.0, scale=0.0
             )
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["view_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
         ev["steps"]["view_made"] = str(made)[:120]
-        views = [DM._view_name(v) for v in DM._iter_views(drw)]
+        views = [dm._view_name(v) for v in dm._iter_views(drw)]
         ev["views"] = views
         ev["steps"]["view_count"] = len(views)
         print("  视图：%r" % (views,))
 
         if views:
             #: ③A 官方示例那一路：**AllViews=True** + 全插
-            r = DM.insert_model_annotations(
+            r = dm.insert_model_annotations(
                 drw,
                 views[0],
                 all_views=True,
@@ -150,7 +150,7 @@ def main() -> int:
             )
             #: ③B **AllViews=False** ⇒ ★ 视图**必须留在选区里**（官方摘要的 "currently s
             #: elected"）
-            r1b = DM.insert_model_annotations(
+            r1b = dm.insert_model_annotations(
                 drw,
                 views[0],
                 insert_all_annotations=True,
@@ -178,7 +178,7 @@ def main() -> int:
                 )
             )
             #: ④ 只插"标记给工程图的尺寸"（★ 官方示例的那一组参数，但 AllViews=False）
-            r2 = DM.insert_model_annotations(
+            r2 = dm.insert_model_annotations(
                 drw, views[0], types="swInsertDimensionsMarkedForDrawing"
             )
             ev["steps"]["marked_dims"] = {
@@ -201,11 +201,11 @@ def main() -> int:
         #: ⑤ 负例：空图纸（无视图）
         empty = sw_connect.new_document(sw, "drawing")
         opened.append(empty)
-        r3 = DM.insert_model_annotations(empty, insert_all_annotations=True)
+        r3 = dm.insert_model_annotations(empty, insert_all_annotations=True)
         ev["negative"]["no_view"] = {"ok": r3.get("ok"), "error": r3.get("error")}
         print("  负例 no_view ok=%s err=%s" % (r3.get("ok"), str(r3.get("error"))[:70]))
         #: ⑥ 负例：两个 insert_all 都 False 且 types 空
-        r4 = DM.insert_model_annotations(empty)
+        r4 = dm.insert_model_annotations(empty)
         ev["negative"]["nothing_selected"] = {
             "ok": r4.get("ok"),
             "error": r4.get("error"),

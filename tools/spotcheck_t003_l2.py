@@ -124,9 +124,9 @@ def main() -> int:
         "有 from typing import Any": has_any_import,
         "有 from __future__ import annotations": has_future,
         "文件顶部 60 行的 import": [
-            l.strip()
-            for l in head.splitlines()
-            if l.strip().startswith(("import ", "from "))
+            item.strip()
+            for item in head.splitlines()
+            if item.strip().startswith(("import ", "from "))
         ][:8],
     }
     print("   ★ 用到 `dict[str, Any]`：%s" % uses_any)

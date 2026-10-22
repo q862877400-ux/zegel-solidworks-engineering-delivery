@@ -27,7 +27,7 @@ REPO = Path(Path(__file__).resolve().parents[1])
 for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 #: 回读的"信号词"（★ 事实 8 的纪律：只信回读计数；`resolve_selection` 内建回读+报错）
 READ_TOKENS = (
@@ -77,7 +77,7 @@ def gather(pc, depth: int = 3) -> str:
 
 
 rows, nocl = [], []
-for s in RC.all_specs():
+for s in rc.all_specs():
     pc = getattr(s, "pre_call", None)
     if pc is None:
         continue
@@ -94,7 +94,7 @@ for s in RC.all_specs():
 
 print(
     "★ 有 `pre_call` 的工具：**%d** 个（总 %d）—— ★ 本版**跟了调用图**"
-    % (len(rows), len(RC.all_specs()))
+    % (len(rows), len(rc.all_specs()))
 )
 print("★ **没回读的**：%d 个" % len(nocl))
 for r in nocl:

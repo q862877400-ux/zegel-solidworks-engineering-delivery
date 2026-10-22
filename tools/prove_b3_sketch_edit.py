@@ -35,7 +35,7 @@ OUT = R / "output" / "b3-sketch-edit-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     import sw_sketch as SK
     import sw_sketch_edit_ops as E
     from sw_connect import get_com_member, safe_get_com_member
@@ -50,7 +50,7 @@ def main() -> int:
 
     def fresh():
         d = sw_connect.new_document(sw, "part")
-        P.start_sketch(d, plane_name="Front Plane")
+        p.start_sketch(d, plane_name="Front Plane")
         return d
 
     def nseg(d):
@@ -121,8 +121,8 @@ def main() -> int:
     #: \u2460 \u526a\u88c1\uff08\u2605 \u5224\u636e = \u6bb5\u6570**\u53d8\u5316**\uff09
     #: \u2014\u2014 \u4e00\u6761\u76f8\u4ea4\u7684\u7ebf + \u5706
     def s_trim(d):
-        P.sketch_line(d, -30.0, 0.0, 30.0, 0.0)
-        P.sketch_circle(d, 0.0, 0.0, 10.0)
+        p.sketch_line(d, -30.0, 0.0, 30.0, 0.0)
+        p.sketch_circle(d, 0.0, 0.0, 10.0)
 
     run(
         "剪裁-最近",
@@ -134,21 +134,21 @@ def main() -> int:
     #: \u2461 \u5ef6\u4f38\uff08\u2605 \u5224\u636e = \u51e0\u4f55\u53d8 \u2014\u2014 \u
     #: 6bb5\u6570\u4e0d\u53d8\uff09
     def s_ext(d):
-        P.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
-        P.sketch_line(d, 25.0, 0.0, 40.0, 0.0)
+        p.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
+        p.sketch_line(d, 25.0, 0.0, 40.0, 0.0)
 
     run("延伸实体", s_ext, lambda d: E.sketch_extend(d, "index:0"), "geom_change")
 
     #: \u2462 \u7b49\u8ddd\uff08\u2605 \u5224\u636e = \u6bb5\u6570\u6da8\uff09
     def s_off(d):
-        P.sketch_corner_rectangle(d, -20.0, -15.0, 20.0, 15.0)
+        p.sketch_corner_rectangle(d, -20.0, -15.0, 20.0, 15.0)
 
     run("等距实体", s_off, lambda d: E.sketch_offset(d, "index:0", 5.0), "count_up")
 
     #: \u2463 \u5706\u89d2\uff08\u2605 \u4e24\u6761\u76f8\u4ea4\u7ebf\uff09
     def s_fil(d):
-        P.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
-        P.sketch_line(d, 0.0, 0.0, 0.0, 20.0)
+        p.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
+        p.sketch_line(d, 0.0, 0.0, 0.0, 20.0)
 
     run(
         "绘制圆角",
@@ -159,7 +159,7 @@ def main() -> int:
 
     #: \u2464 \u7ebf\u6027\u9635\u5217
     def s_lp(d):
-        P.sketch_circle(d, -20.0, 0.0, 4.0)
+        p.sketch_circle(d, -20.0, 0.0, 4.0)
 
     run(
         "线性草图阵列",
@@ -172,7 +172,7 @@ def main() -> int:
 
     #: \u2465 \u5706\u5468\u9635\u5217
     def s_cp(d):
-        P.sketch_circle(d, 15.0, 0.0, 3.0)
+        p.sketch_circle(d, 15.0, 0.0, 3.0)
 
     run(
         "圆周草图阵列",
@@ -187,7 +187,7 @@ def main() -> int:
     #: u5b98\u65b9\u8981 3D \u8349\u56fe + \u4e24\u4e2a\u76f8\u4ea4\u9762\uff09
     run(
         "交叉曲线",
-        lambda d: P.sketch_circle(d, 0.0, 0.0, 10.0),
+        lambda d: p.sketch_circle(d, 0.0, 0.0, 10.0),
         lambda d: E.sketch_intersect_curves(d),
         "count_change",
         note="★ 官方前置：3D 草图 + 两个相交面；本探针只有 2D 草图 ⇒ 失败不构成能力结论",

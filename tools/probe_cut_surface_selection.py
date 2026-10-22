@@ -43,7 +43,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -97,7 +97,7 @@ def _mk_surface(doc, plane="Front Plane"):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue

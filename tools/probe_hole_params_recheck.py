@@ -30,13 +30,13 @@ OUT = REPO / "output" / "hole-params-capability-recheck.json"
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import hole_params
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
-    with P.sketch(model, "Front Plane") as sk:
+    with p.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
         for a, b in (
             ((-0.05, -0.03), (0.05, -0.03)),
@@ -45,7 +45,7 @@ def main() -> int:
             ((-0.05, 0.03), (-0.05, -0.03)),
         ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-    P.extrude_boss(model, sk, 20.0)
+    p.extrude_boss(model, sk, 20.0)
 
     #: ★★ 前置：★ 用**本仓的**异型孔入口 —— ★★ **名字是
     #: `create_hole_wizard_at_selection_report(model, selection, size, *, diameter_mm=8)

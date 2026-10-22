@@ -55,9 +55,9 @@ SW_FM_REF_SURFACE = 62
 def _types(model):
     out = {}
     try:
-        import scripts.sw_weldment as W
+        import scripts.sw_weldment as w
 
-        for feat in W.iter_features_recursive(model):
+        for feat in w.iter_features_recursive(model):
             out.setdefault(
                 str(C.get_com_member(feat, "GetTypeName2") or ""), []
             ).append(str(C.get_com_member(feat, "Name") or ""))

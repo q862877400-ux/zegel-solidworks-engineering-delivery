@@ -1,6 +1,6 @@
 """★ 真机验证 `GraphicsRedraw2` 的后继路径能不能调（★ 改之前先证）。
 
-★ 官方依据（★ 三源里的 `C:\\swapi`，逐条可复核）：
+★ 官方依据（★ 三源里的 `c:\\swapi`，逐条可复核）：
   · `types/IModelDoc2/GraphicsRedraw2.md` 逐字：
     「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
   · `types/IModelView/GraphicsRedraw.md` 签名逐字：
@@ -8,7 +8,7 @@
   · 该页 `## Parameters` 逐字：「**Rect**: Array of four integers or longs indicating the boundary
     of the region in the SOLIDWORKS graphics window to redraw;」
   · ★★ 官方例子用法（★ 两种都合法）：
-    `modelview.GraphicsRedraw(null)`（C#）· `GraphicsRedraw (Empty)`（VB）·
+    `modelview.GraphicsRedraw(null)`（c#）· `GraphicsRedraw (Empty)`（VB）·
     `swModelView.GraphicsRedraw(rect)`（传 4 元素数组）
 ★★ 本探针要验的（★ 判据先写死）：
   ★ **PASS** = 三条都成立：① `model.ActiveView` 拿到非 None · ② `GraphicsRedraw(None)` 不抛 ·
@@ -40,24 +40,24 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "graphicsredraw-successor-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -68,9 +68,9 @@ def main() -> int:
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
+        p.end_sketch(doc)
+        names = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
 
         #: ★ 基线：旧的 `IModelDoc2.GraphicsRedraw2()`
         try:

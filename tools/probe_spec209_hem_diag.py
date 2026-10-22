@@ -37,8 +37,8 @@ OUT = R / "output" / "spec209-hem-diag.json"
 def main() -> int:
     import sw_connect
     import sw_part as P
-    import sw_selection_spec as SS
-    import sw_sheet_metal as SM
+    import sw_selection_spec as ss
+    import sw_sheet_metal as sm
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -63,8 +63,8 @@ def main() -> int:
         opened.append(doc)
         with P.sketch(doc, "Front Plane") as sk:
             P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
-        SM.create_base_flange(
-            doc, sk, SM.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
+        sm.create_base_flange(
+            doc, sk, sm.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
         )
         return doc
 
@@ -91,7 +91,7 @@ def main() -> int:
         """
         rows = []
         try:
-            for i, e in enumerate(SS.entities_on_body(doc, "EDGE")):
+            for i, e in enumerate(ss.entities_on_body(doc, "EDGE")):
                 p0, p1 = _edge_points(e)
                 ln = None
                 if p0 and p1:
@@ -187,10 +187,10 @@ def main() -> int:
             sel_edge = str(kwargs.get("edge_selector"))
             if sel_edge.startswith("index:"):
                 idx = int(sel_edge.split(":", 1)[1])
-                SS.select_entity_by_index(doc, "EDGE", idx)
+                ss.select_entity_by_index(doc, "EDGE", idx)
                 row["selected_edge"] = idx
-                row["selection_count"] = SS.get_selection_count(doc)
-            r = SM.create_hem(doc, **kwargs)
+                row["selection_count"] = ss.get_selection_count(doc)
+            r = sm.create_hem(doc, **kwargs)
             row.update(
                 {
                     "ok": r.get("ok"),
@@ -224,7 +224,7 @@ def main() -> int:
     if hem_feature:
         name, doc = hem_feature
         try:
-            r = SM.create_unfold(doc, [name], face_index=0)
+            r = sm.create_unfold(doc, [name], face_index=0)
             ev["unfold_with_hem"] = {
                 "hem_feature_used": name,
                 "ok": r.get("ok"),

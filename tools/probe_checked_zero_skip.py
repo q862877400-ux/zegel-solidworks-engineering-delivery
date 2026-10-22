@@ -84,9 +84,9 @@ def main() -> int:
 
     print("── ① 正例：真仓库 + 真反射 ⇒ 应 exit 0 且 checked = 6 ──")
     rc, out = _run([])
-    for l in out.splitlines():
-        if "反射文件" in l or "[PASS]" in l or "[FAIL]" in l:
-            print("     %s" % l.strip()[:96])
+    for item in out.splitlines():
+        if "反射文件" in item or "[PASS]" in item or "[FAIL]" in item:
+            print("     %s" % item.strip()[:96])
     print("     ⇒ exit=%d" % rc)
 
     print()
@@ -96,11 +96,11 @@ def main() -> int:
     rc2, out2 = _run(["--repo", str(empty), "--raw", _default_raw()])
     print(
         "     反射文件行: %s"
-        % next((l.strip() for l in out2.splitlines() if "反射文件" in l), "（无）")[:96]
+        % next((item.strip() for item in out2.splitlines() if "反射文件" in item), "（无）")[:96]
     )
-    for l in out2.splitlines():
-        if "SKIP" in l or "[FAIL]" in l or "跑不了" in l:
-            print("     %s" % l.strip()[:96])
+    for item in out2.splitlines():
+        if "SKIP" in item or "[FAIL]" in item or "跑不了" in item:
+            print("     %s" % item.strip()[:96])
     print("     ⇒ exit=%d  ← **当前是多少？该是多少？**" % rc2)
     shutil.rmtree(empty.parent, ignore_errors=True)
     return 0

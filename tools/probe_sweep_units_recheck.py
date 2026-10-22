@@ -47,8 +47,8 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_part as P
-    import sw_sweep as SW
+    import sw_part as p
+    import sw_sweep as sw
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -57,21 +57,21 @@ def main() -> int:
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
     #: ★ 建一条**直的路径**（★ 这样横截面就是那个圆、★ 便于量 bbox）✓
-    with P.sketch(model, "Front Plane") as sk_prof:
-        P.sketch_circle(model, 0.0, 0.0, 3.0)
-    with P.sketch(model, "Top Plane") as sk_path:
-        P.sketch_line(model, 0.0, 0.0, 0.0, 40.0)
+    with p.sketch(model, "Front Plane") as sk_prof:
+        p.sketch_circle(model, 0.0, 0.0, 3.0)
+    with p.sketch(model, "Top Plane") as sk_path:
+        p.sketch_line(model, 0.0, 0.0, 0.0, 40.0)
     step("sketches", profile=str(sk_prof), path=str(sk_path))
 
-    got_prof = P._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
-    feat = P._safe_com_member(model, "FeatureByName", str(sk_path))
-    for cand in P._get_sketch_name_candidates(str(sk_path)):
+    got_prof = p._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
+    feat = p._safe_com_member(model, "FeatureByName", str(sk_path))
+    for cand in p._get_sketch_name_candidates(str(sk_path)):
         if feat is None:
-            feat = P._safe_com_member(model, "FeatureByName", cand)
-    ok_path = bool(feat) and bool(P._select_com_object(feat, append=True, mark=4))
+            feat = p._safe_com_member(model, "FeatureByName", cand)
+    ok_path = bool(feat) and bool(p._select_com_object(feat, append=True, mark=4))
     step("select", profile=got_prof, path_ok=ok_path)
 
-    rep = SW.create_sweep_report(model, False)
+    rep = sw.create_sweep_report(model, False)
     step(
         "create_sweep_report",
         ok=rep.get("ok"),
@@ -82,7 +82,7 @@ def main() -> int:
     #: ★★ 现在的包围盒（★ 基线：★ 草图轮廓 ⇒ 直径 6 mm 的管、★ 长 40）✓
     model.ViewZoomtofit2() if hasattr(model, "ViewZoomtofit2") else None
     try:
-        b0 = P.get_bounding_box(model)
+        b0 = p.get_bounding_box(model)
         s0 = sorted(round(float(v), 4) for v in b0["size"])
         step("bbox_before", size=s0)
     except Exception as exc:  # noqa: BLE001
@@ -90,7 +90,7 @@ def main() -> int:
         s0 = None
 
     #: ★★★ 设圆轮廓 + 已知直径 ⇒ `ModifyDefinition` ✓
-    feat = P._safe_com_member(
+    feat = p._safe_com_member(
         model, "FeatureByName", str(rep.get("feature_name") or "扫描1")
     )
     step("feature_found", ok=bool(feat))
@@ -132,7 +132,7 @@ def main() -> int:
 
     #: ★★★★ **独立判据：★ 量包围盒** ✓
     try:
-        b1 = P.get_bounding_box(model)
+        b1 = p.get_bounding_box(model)
         s1 = sorted(round(float(v), 4) for v in b1["size"])
         step("bbox_after", size=s1)
         #: ★ 横截面 = 那两个非长度方向的尺寸（★ 长度方向 ≈40）✓

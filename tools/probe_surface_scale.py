@@ -37,12 +37,12 @@ OUT = REPO / "output" / "surface-scale-probe-evidence.json"
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     import sw_surface_features as S
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     steps = []
-    R = {
+    r = {
         "★_判据": "★ 毫米文档 + 曲面 depth=10.0 + 加厚 thickness=2.0 ⇒ "
         "★ 实体厚 **2 mm** ⇒ `*0.001` 错；★ 厚 **0.002 mm**（或加厚不出）⇒ 对",
         "steps": steps,
@@ -54,14 +54,14 @@ def main() -> int:
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
     try:
-        R["GetUnits"] = list(get_com_member(model, "GetUnits"))
+        r["GetUnits"] = list(get_com_member(model, "GetUnits"))
     except Exception as exc:  # noqa: BLE001
-        R["GetUnits"] = "error: %s" % str(exc)[:60]
+        r["GetUnits"] = "error: %s" % str(exc)[:60]
 
-    P.sketch(model, "Front Plane")
-    P.sketch_corner_rectangle(model, -25.0, -15.0, 25.0, 15.0)
-    P.end_sketch(model)
-    rec("sketch_done", features=P.feature_names(model)[-3:])
+    p.sketch(model, "Front Plane")
+    p.sketch_corner_rectangle(model, -25.0, -15.0, 25.0, 15.0)
+    p.end_sketch(model)
+    rec("sketch_done", features=p.feature_names(model)[-3:])
 
     #: ① 建曲面（★ L87 那处 `d * 0.001`）
     #: ★★★★ 2026-10-04（★ 第二轮修正）：★ **把整个返回值原样落盘** ——
@@ -82,9 +82,9 @@ def main() -> int:
         select_returned=(surf or {}).get("select_returned"),
         selection_count=(surf or {}).get("selection_count"),
     )
-    R["surface_return_full"] = {k: str(v)[:240] for k, v in (surf or {}).items()}
-    R["surface_ok"] = (surf or {}).get("ok")
-    R["surface_new_features"] = (surf or {}).get("new_features")
+    r["surface_return_full"] = {k: str(v)[:240] for k, v in (surf or {}).items()}
+    r["surface_ok"] = (surf or {}).get("ok")
+    r["surface_new_features"] = (surf or {}).get("new_features")
 
     #: ② 加厚成实体（★ L318 那处 `th * 0.001`）—— ★ 不这样量不到（★ 曲面不是实体）
     th = S.thicken_surface_report(model, 2.0)
@@ -95,30 +95,30 @@ def main() -> int:
         stage=(th or {}).get("stage"),
         error=str((th or {}).get("error"))[:200],
     )
-    R["thicken_return_full"] = {k: str(v)[:240] for k, v in (th or {}).items()}
-    R["thicken_ok"] = (th or {}).get("ok")
+    r["thicken_return_full"] = {k: str(v)[:240] for k, v in (th or {}).items()}
+    r["thicken_ok"] = (th or {}).get("ok")
 
     #: ③ 量实体
     try:
-        bb = P.get_bounding_box(model)
-        R["bbox_after_thicken"] = bb
+        bb = p.get_bounding_box(model)
+        r["bbox_after_thicken"] = bb
         size = bb.get("size") if isinstance(bb, dict) else None
-        R["size"] = size
+        r["size"] = size
         #: ★ 建草图时 `sketch_corner_rectangle(-25,-15,25,15)` 给的是 50×30 ⇒
         #:   ★★ 若它按毫米 ⇒ 实体应是 **50 × 30 × 2 mm**
-        R["★_读法"] = (
+        r["★_读法"] = (
             "★ 若 size ≈ [50, 30, **2**] ⇒ 本仓的『毫米』口径**在整条链上一致**；"
             "★ 若第三个分量 ≈ 0.002 或前两维 ≈ 0.05 ⇒ **某处小了 1000 倍**"
         )
     except Exception as exc:  # noqa: BLE001
-        R["bbox_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+        r["bbox_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
 
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print(
         json.dumps(
-            {k: v for k, v in R.items() if k != "★_判据"},
+            {k: v for k, v in r.items() if k != "★_判据"},
             ensure_ascii=False,
             indent=1,
             default=str,

@@ -60,7 +60,7 @@ def _bodies(model):
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import (
         connect_solidworks,
         create_empty_dispatch_variant,
@@ -74,7 +74,7 @@ def main() -> int:
     def case(tag, *, form):
         model = new_document(app, "part")
         #: ★ 脚手架：★ 一块板（★ 用**上下文管理器** —— 上一轮的教训）
-        with P.sketch(model, "Front Plane") as sk1:
+        with p.sketch(model, "Front Plane") as sk1:
             sm = get_com_member(model, "SketchManager")
             for a, b in (
                 ((-0.05, -0.03), (0.05, -0.03)),
@@ -83,7 +83,7 @@ def main() -> int:
                 ((-0.05, 0.03), (-0.05, -0.03)),
             ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-        P.extrude_boss(model, sk1, 10.0)
+        p.extrude_boss(model, sk1, 10.0)
         body = (_bodies(model) or [None])[0]
         before = _feature_names(model)
         ext = get_com_member(model, "Extension")

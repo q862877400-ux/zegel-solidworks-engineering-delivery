@@ -65,7 +65,7 @@ def _active_or_last_sketch(model) -> str:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -94,12 +94,12 @@ def main() -> int:
         #: ★★★★ **用法（★ 我第一版写错过、★ 值记）**：★ `sw_part.sketch()` 是**上下文管
         #: 理器** ——
         #:   ★ 它的函数体是 `start_sketch(...)` + `yield` + `end_sketch(...)` ⇒
-        #:   ★★ **必须 `with P.sketch(model, …) as sk_name:`** ✓
+        #:   ★★ **必须 `with p.sketch(model, …) as sk_name:`** ✓
         #:   ★★★ 不 `with` 就**只造出生成器、★ 一个 COM 调用都不发** ⇒
         #: 症状是 `无法选择草图: Sketch2` —— ★★ **看起来像能力坏了、★ 实际是我的用法错了
         #: ** ✓
         #:      （★ 与**事实 517**同族：★ **"我调错了"与"能力坏了"长得一模一样**）
-        with P.sketch(model, "Front Plane") as sk_name_raw:
+        with p.sketch(model, "Front Plane") as sk_name_raw:
             sk = get_com_member(model, "SketchManager")
             #: ★ 用**四条线**拼矩形（★ `CreateCornerRectangle` 在 pywin32 上报
             #:   「非选择性的参数」⇒ ★ 换成本仓常用的 `CreateLine`）✓
@@ -114,7 +114,7 @@ def main() -> int:
         sk_name = sk_name_raw or ""
         probe = {}
         try:
-            P.extrude_boss(model, sk_name, 20.0)
+            p.extrude_boss(model, sk_name, 20.0)
             probe["extrude"] = "ok"
         except Exception as exc:  # noqa: BLE001
             probe["extrude"] = "err: %s" % str(exc)[:80]
@@ -125,7 +125,7 @@ def main() -> int:
         picked = None
         try:
             ent = resolve_entity(model, "index:0", "EDGE")
-            picked = bool(ent.Select4(False, P._empty_callout()))
+            picked = bool(ent.Select4(False, p._empty_callout()))
         except Exception as exc:  # noqa: BLE001
             picked = "err: %s" % str(exc)[:60]
         before = names()

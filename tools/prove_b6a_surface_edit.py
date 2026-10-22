@@ -43,18 +43,18 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_edit_ops as M  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _bodies(model):
     """★ 全部 body（★ **`-1` = `swAllBodies`** —— 数值照本仓现成的
     `sw_surface_features._body_count`；★ 我第一版写的 `1`/`0` **是猜的、不对**）。"""
     try:
-        return list(C.get_com_member(model, "GetBodies2", -1, True) or [])
+        return list(c.get_com_member(model, "GetBodies2", -1, True) or [])
     except Exception:  # noqa: BLE001
         return []
 
@@ -65,7 +65,7 @@ def _faces(model):
     if not bs:
         return []
     try:
-        return list(C.get_com_member(bs[0], "GetFaces") or [])
+        return list(c.get_com_member(bs[0], "GetFaces") or [])
     except Exception:  # noqa: BLE001
         return []
 
@@ -76,7 +76,7 @@ def _edges(model):
     if not bs:
         return []
     try:
-        return list(C.get_com_member(bs[0], "GetEdges") or [])
+        return list(c.get_com_member(bs[0], "GetEdges") or [])
     except Exception:  # noqa: BLE001
         return []
 
@@ -102,7 +102,7 @@ def _one(sw, zh, fn):
     row = {"zh": zh, "verdict": "不能", "op": zh}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
@@ -111,9 +111,9 @@ def _one(sw, zh, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -122,7 +122,7 @@ def _one(sw, zh, fn):
 def _case_planar(doc):
     """★ 平面区域：闭合矩形草图 ⇒ 退出草图 ⇒ 选草图（★ 官方语义是用选中边界）⇒ 调。"""
     P.start_sketch(doc, plane_name="Front Plane")
-    SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+    sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
     P.end_sketch(doc)
     #: ★★ `IFeatureManager` 上**没有** `FeatureByName`（★ 我第一版报
     #:   `AttributeError: <unknown>.FeatureByName`）；真名是 **`FeatureName`**，
@@ -146,9 +146,9 @@ def _make_surface(doc):
       **特征级、已真机验证**，判据 = 特征树增量）。
     """
     P.start_sketch(doc, plane_name="Front Plane")
-    SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+    sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
     P.end_sketch(doc)
-    return SF.create_extruded_surface_report(doc, 30.0)
+    return sf.create_extruded_surface_report(doc, 30.0)
 
 
 def _make_solid(doc):
@@ -162,7 +162,7 @@ def _make_solid(doc):
       ★ 故改用 `sw_part.extrude_boss`（★ 已验证的实体拉伸）。
     """
     P.start_sketch(doc, plane_name="Front Plane")
-    SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+    sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
@@ -210,7 +210,7 @@ def _case_replace(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),

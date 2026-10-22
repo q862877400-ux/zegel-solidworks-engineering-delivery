@@ -39,14 +39,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "fillet-generations-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -58,7 +58,7 @@ def _try(fn, *a):
 
 def _feat_names(doc) -> list:
     try:
-        return [str(x) for x in (P.feature_names(doc) or [])]
+        return [str(x) for x in (p.feature_names(doc) or [])]
     except Exception:  # noqa: BLE001
         return []
 
@@ -88,11 +88,11 @@ def _select_one_edge(doc) -> int:
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -103,9 +103,9 @@ def main() -> int:
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
-        nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 20.0)
+        p.end_sketch(doc)
+        nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 20.0)
         R["★_基线特征数"] = len(_feat_names(doc))
         fm = _g(doc, "FeatureManager")
 

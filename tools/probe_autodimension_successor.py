@@ -1,6 +1,6 @@
 """★ 真机验证 `ISketch.AutoDimension2` → `ISketchManager.FullyDefineSketch`。
 
-★★ 官方依据（三源里的 `C:\\swapi`）：
+★★ 官方依据（三源里的 `c:\\swapi`）：
   · `types/ISketch/AutoDimension2.md` 逐字：
     「**Obsolete. Superseded by [[ISketchManager::FullyDefineSketch]].**」
     ★ 而 `types/ISketchManager/AutoDimension2.md` —— ★★ **官方页**不存在****
@@ -46,15 +46,15 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant as _empty  # noqa: E402
 
 OUT = REPO / "output" / "autodimension-successor-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -84,12 +84,12 @@ def _dim_count(sketch) -> int:
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -101,18 +101,18 @@ def main() -> int:
             0.0,
         )
         sketch = _g(_g(doc, "SketchManager"), "ActiveSketch")
-        R["草图"] = repr(sketch)[:70]
-        R["★_基线尺寸数"] = _dim_count(sketch)
+        r["草图"] = repr(sketch)[:70]
+        r["★_基线尺寸数"] = _dim_count(sketch)
 
         #: ★★ 旧入口（★ 与我们生产代码**逐字相同的 5 参**）
-        R["旧_AutoDimension2(1, 1, -1, 1, -1)"] = _try(
+        r["旧_AutoDimension2(1, 1, -1, 1, -1)"] = _try(
             _g, sketch, "AutoDimension2", 1, 1, -1, 1, -1
         )
-        R["★_旧后尺寸数"] = _dim_count(sketch)
+        r["★_旧后尺寸数"] = _dim_count(sketch)
 
         #: ★★ 新入口 `FullyDefineSketch`（★ 11 参，★ 照官方 `## Parameters` 的语义填）
         sm = _g(doc, "SketchManager")
-        R["新_FullyDefineSketch(11 参)"] = _try(
+        r["新_FullyDefineSketch(11 参)"] = _try(
             _g,
             sm,
             "FullyDefineSketch",
@@ -128,33 +128,33 @@ def main() -> int:
             0,  # VerticalDimPlacement = Right
             _empty(),
         )  # 第 11 参
-        R["★_新后尺寸数"] = _dim_count(sketch)
-        P.end_sketch(doc)
+        r["★_新后尺寸数"] = _dim_count(sketch)
+        p.end_sketch(doc)
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    b = R.get("★_基线尺寸数")
-    o = R.get("★_旧后尺寸数")
-    n = R.get("★_新后尺寸数")
-    R["★_旧加了尺寸吗"] = (
+    b = r.get("★_基线尺寸数")
+    o = r.get("★_旧后尺寸数")
+    n = r.get("★_新后尺寸数")
+    r["★_旧加了尺寸吗"] = (
         "★ 是" if isinstance(o, int) and isinstance(b, int) and o > b else "★★ 否"
     )
-    R["★_新加了尺寸吗"] = (
+    r["★_新加了尺寸吗"] = (
         "★ 是" if isinstance(n, int) and isinstance(b, int) and n > b else "★★ 否"
     )
-    R["★★_结论"] = (
+    r["★★_结论"] = (
         "★ 旧的加上了 ⇒ 按判据**没有换的必要**"
-        if R["★_旧加了尺寸吗"].startswith("★ 是")
+        if r["★_旧加了尺寸吗"].startswith("★ 是")
         else "★★ 旧的没加上 ⇒ 值得试新入口"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

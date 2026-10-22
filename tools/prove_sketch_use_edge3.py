@@ -54,7 +54,7 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -138,7 +138,7 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
             row["segments_before"] = len(segs0) if segs0 is not None else 0
         except Exception:  # noqa: BLE001
             row["segments_before"] = None
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         try:
             ok = C.get_com_member(sk, "SketchUseEdge3", bool(chain), bool(inner_loops))
             row["returned"] = str(ok)
@@ -159,7 +159,7 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
             C.get_com_member(sk, "InsertSketch", True)
         except Exception:  # noqa: BLE001
             pass
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         grew = (row.get("segments_after") or 0) - (row.get("segments_before") or 0)
         row["segments_grew"] = grew

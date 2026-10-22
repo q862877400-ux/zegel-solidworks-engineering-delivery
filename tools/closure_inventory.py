@@ -135,7 +135,7 @@ def main() -> int:
     print()
     #: ★★ 落盘
     out = ROOT / "specs" / "332-known-facts-triage" / "closure-inventory.md"
-    L = [
+    item = [
         "# 收口盘点（规格 332 · 批次⑱）",
         "",
         "**判据**（★ 业主 2026-10-14 的收口条件）：",
@@ -150,8 +150,8 @@ def main() -> int:
         "|---|---|---|---|",
     ]
     for what, scope, gain, verdict in DONE:
-        L.append("| %s | %s | %s | %s |" % (what, scope, gain, verdict))
-    L += [
+        item.append("| %s | %s | %s | %s |" % (what, scope, gain, verdict))
+    item += [
         "",
         "## 二、还剩什么（%d 处）" % len(REMAIN),
         "",
@@ -159,9 +159,9 @@ def main() -> int:
         "|---|---|---|---|",
     ]
     for what, iswhat, worth, verdict in REMAIN:
-        L.append("| %s | %s | %s | %s |" % (what, iswhat, worth, verdict))
-    L.append("")
-    out.write_text("\n".join(L), encoding="utf-8")
+        item.append("| %s | %s | %s | %s |" % (what, iswhat, worth, verdict))
+    item.append("")
+    out.write_text("\n".join(item), encoding="utf-8")
     print("★ ⇒ %s" % out)
     return 0
 

@@ -49,7 +49,7 @@ def _spec_fields() -> list:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     import sw_sheet_metal as SM
     from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import base_flange_params
@@ -58,7 +58,7 @@ def main() -> int:
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
     #: ★★ 画一条**开放折线**（★ doc 说：★ 开放折线 ⇒ 轮廓法兰）✓
-    with P.sketch(model, "Front Plane") as sk:
+    with p.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
         get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.1, 0.0, 0.0)
 

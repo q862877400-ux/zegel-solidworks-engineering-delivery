@@ -59,8 +59,8 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
-import prove_split_line_geometry_controls as K  # noqa: E402
-import prove_split_line_geometry_per_example as G  # noqa: E402
+import prove_split_line_geometry_controls as k  # noqa: E402
+import prove_split_line_geometry_per_example as g  # noqa: E402
 import prove_split_line_minimal_matrix as M  # noqa: E402
 
 from scripts import sw_connect as C  # noqa: E402
@@ -71,15 +71,15 @@ from scripts.sw_simulation import select_face_at  # noqa: E402
 def _build_cylinder(doc):
     """★ 圆柱：前视面画圆 ⇒ 沿法向拉 30 mm（★ 有一个**曲面**才有轮廓线可切）。"""
     P.start_sketch(doc, plane_name="Front Plane")
-    G._get(G._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.015)
+    g._get(g._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.015)
     P.end_sketch(doc)
-    for cand in (G._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
+    for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
         try:
             P.extrude_boss(doc, cand, 0.03)
             break
         except Exception:  # noqa: BLE001
             continue
-    box = G._bbox(doc)
+    box = g._bbox(doc)
     #: ★ 侧面上的一点：★ 半径 15 mm 处的 (x, 0)，z 取高度中点
     z_mid = (box[2] + box[5]) / 2.0
     return box, (0.015, 0.0, z_mid)
@@ -98,7 +98,7 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
         doc = C.new_document(sw, "part")
         box, face_pt = _build_cylinder(doc)
         row["bbox_m"] = box
-        ext = G._get(doc, "Extension")
+        ext = g._get(doc, "Extension")
         doc.ClearSelection2(True)
         picked = {}
         if dir_mark is not None:
@@ -120,14 +120,14 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
         for m in (0, 1, 2, 4):
             try:
                 per[str(m)] = int(
-                    G._get(
-                        G._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m
+                    g._get(
+                        g._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m
                     )
                 )
             except Exception:  # noqa: BLE001
                 per[str(m)] = -1
         row["picked"], row["sel_by_mark"] = picked, per
-        res = K._call_and_read_sil(doc, row)
+        res = k._call_and_read_sil(doc, row)
         res["split_face_boxes"] = M._split_face_boxes(doc)
         return res
     except Exception as exc:  # noqa: BLE001
@@ -136,9 +136,9 @@ def _case(sw, tag, dir_name, dir_mark, pick_face):
     finally:
         if doc is not None:
             try:
-                t = str(G._get(doc, "GetTitle") or "")
+                t = str(g._get(doc, "GetTitle") or "")
                 if t:
-                    G._get(sw, "CloseDoc", t)
+                    g._get(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

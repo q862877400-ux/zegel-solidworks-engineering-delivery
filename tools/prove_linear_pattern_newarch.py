@@ -27,8 +27,8 @@
 #     （★ 见 `_raw/enum_values_sldworks.txt`）。★ 本探针**用真名** ✓
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
-# 官方依据: `C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md`（Obsolete 行）·
-#   `C:\swapi\types\ILinearPatternFeatureData\_overview.md` ·
+# 官方依据: `c:\swapi\types\IFeatureManager\FeatureLinearPattern5.md`（Obsolete 行）·
+#   `c:\swapi\types\ILinearPatternFeatureData\_overview.md` ·
 #   `D:\AI\SW\_raw\enum_values_sldworks.txt`（`swFmLPattern = 6`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -49,10 +49,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch_primitives as SPK  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as spk  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_pattern as SP  # noqa: E402
+from scripts import sw_pattern as sp  # noqa: E402
 
 #: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern
 #: `）
@@ -63,10 +63,10 @@ SW_FM_CURVE_PATTERN = 103
 def _geom(model):
     """★ 几何判据：**体数 + 第一个体的包围盒**（★ 与既有证据同口径）。"""
     try:
-        bs = list(C.get_com_member(model, "GetBodies2", -1, True) or [])
+        bs = list(c.get_com_member(model, "GetBodies2", -1, True) or [])
         out = {"bodies": len(bs)}
         if bs:
-            bb = C.get_com_member(bs[0], "GetBodyBox")
+            bb = c.get_com_member(bs[0], "GetBodyBox")
             out["box"] = [round(float(x), 3) for x in (bb or [])]
         return out
     except Exception as exc:  # noqa: BLE001
@@ -76,13 +76,13 @@ def _geom(model):
 def _pick_seed(model):
     """★ 选**种子特征**（★ 一个实体特征；★ 按对象选 —— 事实 32：特征可按名选，★ 而本探针走对象）。"""
     try:
-        fm = C.get_com_member(model, "FeatureManager")
-        n = int(C.get_com_member(fm, "GetFeatureCount", True) or 0)
+        fm = c.get_com_member(model, "FeatureManager")
+        n = int(c.get_com_member(fm, "GetFeatureCount", True) or 0)
         for i in range(n):
-            f = C.get_com_member(fm, "FeatureByPositionReverse", i)
+            f = c.get_com_member(fm, "FeatureByPositionReverse", i)
             if f is None:
                 continue
-            nm = str(C.get_com_member(f, "Name") or "")
+            nm = str(c.get_com_member(f, "Name") or "")
             if "\u51f8\u53f0" in nm or "\u62c9\u4f38" in nm:
                 if P._select_com_object(f, append=False, mark=0):
                     return nm
@@ -92,7 +92,7 @@ def _pick_seed(model):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u7ebf\u6027\u9635\u5217\u65b0\u67b6\u6784\uff08CreateDefinition + ILinearPatternFeatureData\uff09\u771f\u673a\u8bd5",
@@ -101,12 +101,12 @@ def main() -> int:
         "steps": [],
     }
 
-    doc = C.new_document(sw, "part")
+    doc = c.new_document(sw, "part")
     try:
         #: ① 建实体（★ 判据是树里出现"凸台/拉伸"，★ 别信 bool —— 轮 480 的教训）
         before = P.feature_names(doc) or []
         P.start_sketch(doc, plane_name="Front Plane")
-        SPK.sketch_3point_corner_rectangle(doc, -8, -8, 8, -8, 8, 8)
+        spk.sketch_3point_corner_rectangle(doc, -8, -8, 8, -8, 8, 8)
         P.end_sketch(doc)
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
@@ -124,10 +124,10 @@ def main() -> int:
         ev["seed"] = _pick_seed(doc)
 
         #: ③ **取 FeatureData**（★ 用真名 `swFmLPattern = 6`）
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c.get_com_member(doc, "FeatureManager")
         data = None
         try:
-            data = C.get_com_member(fm, "CreateDefinition", SW_FM_LPATTERN)
+            data = c.get_com_member(fm, "CreateDefinition", SW_FM_LPATTERN)
             ev["create_definition"] = {
                 "ok": data is not None,
                 "type": type(data).__name__,
@@ -141,7 +141,7 @@ def main() -> int:
         #: ④ **装配** —— ★★ **这一步里会走 `AccessSelections`**（★ 关键观察点）
         if data is not None:
             try:
-                r = SP.configure_linear_pattern(
+                r = sp.configure_linear_pattern(
                     data, doc, d1_spacing=0.015, d1_total_instances=3
                 )
                 ev["configure"] = {"ok": True, "returned": str(r)[:220]}
@@ -154,7 +154,7 @@ def main() -> int:
 
             #: ⑤ 建特征
             try:
-                feat = C.get_com_member(fm, "CreateFeature", data)
+                feat = c.get_com_member(fm, "CreateFeature", data)
                 ev["create_feature"] = {
                     "ok": feat is not None,
                     "type": type(feat).__name__,
@@ -178,9 +178,9 @@ def main() -> int:
         ev["verdict"] = "fail"
     finally:
         try:
-            t = str(C.get_com_member(doc, "GetTitle") or "")
+            t = str(c.get_com_member(doc, "GetTitle") or "")
             if t:
-                C.get_com_member(sw, "CloseDoc", t)
+                c.get_com_member(sw, "CloseDoc", t)
         except Exception:  # noqa: BLE001
             pass
 

@@ -24,9 +24,9 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-import check_fact_single_home as G  # noqa: E402
+import check_fact_single_home as g  # noqa: E402
 
-bodies = G.fact_bodies()
+bodies = g.fact_bodies()
 print("★ 家里的事实正文: **%d** 条" % len(bodies))
 if len(bodies) < 10:
     print("★★ 正文太少 ⇒ 无法造 20 例")
@@ -39,11 +39,11 @@ picks = [bodies[i] for i in range(0, min(len(bodies), step * 10), step)][:10]
 
 def judge(doc_text: str, monkey=None) -> bool:
     """★ 用门禁的真判据判一份"文档"会不会被报（★ 不碰磁盘，纯函数）。"""
-    bodies_norm = [(n, G._norm(b)) for n, b in bodies]
-    t = G._norm(doc_text)
+    bodies_norm = [(n, g._norm(b)) for n, b in bodies]
+    t = g._norm(doc_text)
     for n, b in bodies_norm:
-        probe = b[20 : 20 + G.MIN_LEN] if len(b) > 20 + G.MIN_LEN else b[: G.MIN_LEN]
-        if len(probe) >= G.MIN_LEN and probe in t:
+        probe = b[20 : 20 + g.MIN_LEN] if len(b) > 20 + g.MIN_LEN else b[: g.MIN_LEN]
+        if len(probe) >= g.MIN_LEN and probe in t:
             return True
     return False
 

@@ -40,19 +40,19 @@ def _sheet_metal_part(sw):
     """★ 建一个**未保存**的钣金件（★ 关键：★ 不调 `save_document` —— 那正是要触发的前置缺口 ✓）。"""
     import sw_connect
     import sw_part
-    import sw_sheet_metal as SM
+    import sw_sheet_metal as sm
 
     model = sw_connect.new_document(sw, "part")
     sw_part.start_sketch(model, "Front Plane")
     sw_part.sketch_corner_rectangle(model, 0.0, 0.0, 80.0, 60.0)
     sk = sw_part.current_sketch_name(model)
     sw_part.end_sketch(model)
-    spec = SM.BaseFlangeSpec(
+    spec = sm.BaseFlangeSpec(
         thickness=float(sw_connect.mm(2.0)),
         bend_radius=float(sw_connect.mm(1.0)),
         depth=float(sw_connect.mm(40.0)),
     )
-    SM.create_base_flange(model, sk, spec)
+    sm.create_base_flange(model, sk, spec)
     return model
 
 

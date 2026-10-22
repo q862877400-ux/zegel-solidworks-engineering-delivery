@@ -44,7 +44,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 
 #: \u2605 \u8981\u7a7f\u8fc7\u7684\u70b9\uff08\u2605 **\u6beb\u7c73**\uff0c\u2605 \u672c
@@ -57,7 +57,7 @@ def _one(sw, tag, mode):
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         if mode == "steps":
             #: \u2605 **\u4e09\u6b65\u5f0f**\uff1aBegin \u2192 Point\u00d7N \u2192 End\u
@@ -102,7 +102,7 @@ def _one(sw, tag, mode):
                 row["returned"] = str(C.get_com_member(doc, "InsertCurveFile", str(f)))
             except Exception as exc:  # noqa: BLE001
                 row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001

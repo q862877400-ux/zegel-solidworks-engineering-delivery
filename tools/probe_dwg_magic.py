@@ -103,13 +103,13 @@ def main() -> int:
             ),
         )
         #: ★ 官方要求先保存（本探针存到 **output/**，scratch 用途，收尾会删）
-        SAVED = Path(
+        saved = Path(
             Path(__file__).resolve().parents[1] / "output" / "magic-probe-part.sldprt"
         )
-        if SAVED.exists():
-            SAVED.unlink()
-        sw_connect.save_document(doc, str(SAVED))
-        print("  造出钣金件并**已保存**到 %s" % SAVED.name)
+        if saved.exists():
+            saved.unlink()
+        sw_connect.save_document(doc, str(saved))
+        print("  造出钣金件并**已保存**到 %s" % saved.name)
 
         for f in (DXF, DWG):
             if f.exists():

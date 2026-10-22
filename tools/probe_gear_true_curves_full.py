@@ -31,16 +31,16 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import gear_geometry as G  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import gear_geometry as g  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 
 def _features(doc):
     try:
-        from scripts import sw_feature_readback as F
+        from scripts import sw_feature_readback as f
 
-        return list(F.feature_names(doc) or [])
+        return list(f.feature_names(doc) or [])
     except Exception:  # noqa: BLE001
         return []
 
@@ -52,40 +52,40 @@ def _mass(doc):
         return M.read_mass_properties(doc)
     except Exception:  # noqa: BLE001
         try:
-            ext = C.get_com_member(doc, "Extension")
-            mp = C.get_com_member(ext, "CreateMassProperty")
-            return {"volume_m3": float(C.get_com_member(mp, "Volume"))}
+            ext = c.get_com_member(doc, "Extension")
+            mp = c.get_com_member(ext, "CreateMassProperty")
+            return {"volume_m3": float(c.get_com_member(mp, "Volume"))}
         except Exception as exc:  # noqa: BLE001
             return {"error": "%s: %s" % (type(exc).__name__, str(exc)[:150])}
 
 
 def _bbox(doc):
     try:
-        from scripts import sw_review as RV
+        from scripts import sw_review as rv
 
-        return RV.collect_geometry_measurements(doc)
+        return rv.collect_geometry_measurements(doc)
     except Exception as exc:  # noqa: BLE001
         return {"error": "%s: %s" % (type(exc).__name__, str(exc)[:150])}
 
 
 def _bodies(doc):
     try:
-        from scripts import sw_document_data as D
+        from scripts import sw_document_data as d
 
-        return D.count_bodies(doc) if hasattr(D, "count_bodies") else None
+        return d.count_bodies(doc) if hasattr(d, "count_bodies") else None
     except Exception:  # noqa: BLE001
         return None
 
 
 def main() -> int:
-    spec = G.GearSpec(
+    spec = g.GearSpec(
         module_mm=1.0,
         teeth=20,
         face_width_mm=10.0,
         pressure_angle_deg=20.0,
         bore_diameter_mm=8.0,
     )
-    geo = G.calculate_gear_geometry(spec)
+    geo = g.calculate_gear_geometry(spec)
     #: ★★ 解析面积（★ 从离线单元几何读 —— ★ 那是**独立**算的）
     cell = json.loads(
         (R / "output" / "_gear_unit_cell.json").read_text(encoding="utf-8")
@@ -110,20 +110,20 @@ def main() -> int:
         "expected_volume_mm3": v_expect_mm3,
         "steps": [],
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         before = _features(doc)
         P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        sm = c.get_com_member(doc, "SketchManager")
 
         #: ★★ ① 渐开线（★ 真曲线）
-        C.get_com_member(
+        c.get_com_member(
             sm,
             "CreateEquationSpline2",
-            G.involute_x_expression(geo.base_diameter_mm / 2.0),
-            G.involute_y_expression(geo.base_diameter_mm / 2.0),
+            g.involute_x_expression(geo.base_diameter_mm / 2.0),
+            g.involute_y_expression(geo.base_diameter_mm / 2.0),
             "",
             "%r" % geo.t_root,
             "%r" % geo.t_tip,
@@ -135,17 +135,17 @@ def main() -> int:
             True,
         )
         #: ★★ ② 摆线齿根（★ 真曲线 · ★ 含 sqrt）
-        hf = G.DEDENDUM_COEFF * spec.module_mm
-        rho = G.TOOL_TIP_RADIUS_COEFF * spec.module_mm
-        C.get_com_member(
+        hf = g.DEDENDUM_COEFF * spec.module_mm
+        rho = g.TOOL_TIP_RADIUS_COEFF * spec.module_mm
+        c.get_com_member(
             sm,
             "CreateEquationSpline2",
-            G.trochoid_x_expression(
+            g.trochoid_x_expression(
                 pitch_radius_mm=geo.pitch_diameter_mm / 2.0,
                 dedendum_mm=hf,
                 tool_tip_radius_mm=rho,
             ),
-            G.trochoid_y_expression(
+            g.trochoid_y_expression(
                 pitch_radius_mm=geo.pitch_diameter_mm / 2.0,
                 dedendum_mm=hf,
                 tool_tip_radius_mm=rho,
@@ -165,8 +165,8 @@ def main() -> int:
         P.sketch_circle(doc, 0.0, 0.0, geo.root_diameter_mm / 2.0)
         sk_name = None
         try:
-            sk = C.get_com_member(doc, "GetActiveSketch2")
-            sk_name = str(C.get_com_member(sk, "Name") or "")
+            sk = c.get_com_member(doc, "GetActiveSketch2")
+            sk_name = str(c.get_com_member(sk, "Name") or "")
         except Exception:  # noqa: BLE001
             pass
         P.end_sketch(doc)
@@ -179,7 +179,7 @@ def main() -> int:
             feat.Name = "SpurGear_m1_z20_involute"
         except Exception:  # noqa: BLE001
             pass
-        C.get_com_member(doc, "ForceRebuild3", False)
+        c.get_com_member(doc, "ForceRebuild3", False)
         after = _features(doc)
         rep["new_features"] = [x for x in after if x not in before][:8]
         rep["mass"] = _mass(doc)
@@ -229,9 +229,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
                 rep["closed"] = True
             except Exception:  # noqa: BLE001
                 pass

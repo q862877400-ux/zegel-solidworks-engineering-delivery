@@ -91,9 +91,9 @@ def _volume_mm3(doc):
     ⚠ 读不到时回 `None`（★ 判据那边会**如实标**，不假装量到了）。
     """
     try:
-        from scripts import sw_mass_property as MP
+        from scripts import sw_mass_property as mp
 
-        r = MP.mass_properties(doc)
+        r = mp.mass_properties(doc)
         v = r.get("volume") if isinstance(r, dict) else None
         return float(v) if v is not None else None
     except Exception:  # noqa: BLE001

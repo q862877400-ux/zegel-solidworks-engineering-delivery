@@ -32,7 +32,7 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import sw_fingerprint as FP  # noqa: E402
+import sw_fingerprint as fp  # noqa: E402
 
 #: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空
 #: ✓
@@ -176,7 +176,7 @@ def run_precondition(sw, model, cls):
     """★★ 跑**前置链** —— ★★ 必须在 **`before` 读数之前**跑（★ 真机踩过）✓
 
     ★★★ 2026-10-06 **真机查明的顺序错**：★ 前置原来写在 `act()` 里 ⇒
-      ★ 而 `before = FP.read(...)` 在 `act()` **之前** ⇒ ★★ 于是 before 是在
+      ★ 而 `before = fp.read(...)` 在 `act()` **之前** ⇒ ★★ 于是 before 是在
       **还没建前置状态**的新零件上取的 ✗
       ★ 现场：`selection` 的前置会**选中一个实体**（工具回 `count: 1`、直接回读也是 `1` ✓）⇒
       ★ 可 before 取在选中**之前** ⇒ ★★ 读出 `0 ⇒ 0` ⇒ **被误判成「这一类不可见」** ✗✗
@@ -221,9 +221,9 @@ def main() -> int:
     #:   ★★ 只比第 1 与第 2 次会把"**文档自己没稳**"误判成"**读数有副作用**" ✗
     #: ★ 正解：★ 让第 1 次读数**当"加热"用**，★ **只比第 2 与第 3 次**（★ 期间不做任何事
     #: ）✓
-    r1 = FP.read(model, sw)
-    r2 = FP.read(model, sw)
-    r3 = FP.read(model, sw)
+    r1 = fp.read(model, sw)
+    r2 = fp.read(model, sw)
+    r3 = fp.read(model, sw)
     same = r2["readings"] == r3["readings"]
     report["step0_readonly"] = {
         "equal": same,
@@ -248,7 +248,7 @@ def main() -> int:
         print("   读不到的类：%s" % "、".join(sorted(r2["missing"])))
 
     # ── 逐类标定 ──────────────────────────────────────────────────────────
-    for cls in FP.STATE_CLASSES:
+    for cls in fp.STATE_CLASSES:
         if args.only and cls not in args.only:
             continue
         writer = KNOWN_WRITERS.get(cls, "")
@@ -284,7 +284,7 @@ def main() -> int:
             }
             print("   %-10s ⇒ ★ untested（前置没成：%s）" % (cls, pre_note[:60]))
             continue
-        before = FP.read(model, sw)
+        before = fp.read(model, sw)
         ok, note = act(sw, model, writer, cls)
         if not ok:
             #: ★★ **没调成 ⇒ 记 `untested`**（★ 不许说成"不可见"）✓
@@ -295,8 +295,8 @@ def main() -> int:
             }
             print("   %-10s ⇒ ★ untested（写操作没调成：%s）" % (cls, note[:70]))
             continue
-        after = FP.read(model, sw)
-        d = FP.compare_detailed(before, after)
+        after = fp.read(model, sw)
+        d = fp.compare_detailed(before, after)
         moved = [c for c in d["changed"] if c["class"] == cls]
         unknown = [c for c in d["unknown"] if c["class"] == cls]
         if moved:

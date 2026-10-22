@@ -62,8 +62,8 @@ def main() -> int:
                 continue
             head = txt.split("\n## ", 1)[0]
             obs_line = ""
-            for l in head.splitlines():
-                s = l.strip()
+            for item in head.splitlines():
+                s = item.strip()
                 if s and not s.startswith(HEAD_SKIP) and OBS_LINE.search(s):
                     obs_line = s
                     break

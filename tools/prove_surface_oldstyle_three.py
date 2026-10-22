@@ -48,7 +48,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_surface(doc, plane="Front Plane", depth=20.0):
@@ -67,7 +67,7 @@ def _mk_surface(doc, plane="Front Plane", depth=20.0):
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            r = SF.create_extruded_surface_report(doc, depth, sketch_name=cand)
+            r = sf.create_extruded_surface_report(doc, depth, sketch_name=cand)
             if r.get("ok"):
                 return True
         except Exception:  # noqa: BLE001
@@ -124,12 +124,12 @@ def _run(sw, tag, fn):
 
 def _c_offset(doc):
     _mk_surface(doc)
-    return SF.insert_offset_surface_report(doc, 5.0)
+    return sf.insert_offset_surface_report(doc, 5.0)
 
 
 def _c_planar(doc):
     _mk_surface(doc)
-    return SF.insert_planar_ref_surface_report(doc)
+    return sf.insert_planar_ref_surface_report(doc)
 
 
 def _c_replace(doc):
@@ -139,7 +139,7 @@ def _c_replace(doc):
     except Exception:  # noqa: BLE001
         pass
     _mk_surface(doc, plane="Right Plane")
-    return SF.insert_replace_face_report(doc)
+    return sf.insert_replace_face_report(doc)
 
 
 def main() -> int:

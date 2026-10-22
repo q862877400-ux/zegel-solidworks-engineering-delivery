@@ -41,7 +41,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -65,9 +65,9 @@ def main() -> int:
         firsts = [
             (
                 "distributed_mass_first",
-                lambda m: SL.apply_distributed_mass_report(m, doc, 1.0, 0),
+                lambda m: sl.apply_distributed_mass_report(m, doc, 1.0, 0),
             ),
-            ("force_first", lambda m: SL.apply_force_report(m, doc, 1)),
+            ("force_first", lambda m: sl.apply_force_report(m, doc, 1)),
         ]
         for label, fn in firsts:
             study = "%s_%s" % (label, time.strftime("%H%M%S"))
@@ -92,7 +92,7 @@ def main() -> int:
                 #: ② **第二个**载荷（★ 换另一个 —— ★ 只为看"第二个"的回读是否正常）
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 sim.select_face_at(doc, 0.0, 0.0, 0.0)
-                r2 = SL.apply_remote_load_report(mgr, doc, 0, 0, 0.0, 0.0, -100.0)
+                r2 = sl.apply_remote_load_report(mgr, doc, 0, 0, 0.0, 0.0, -100.0)
                 cell["order"].append(
                     {
                         "first": False,

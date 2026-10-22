@@ -56,13 +56,13 @@ def _select_edge_by_index(model, edge_index: int, append: bool) -> dict[str, Any
       ⇒ ★ 必须 **`IEntity.Select4(Append, Callout)`** ✓
     """
     import sw_part as _sp
-    import sw_selection_spec as _SS
+    import sw_selection_spec as _ss
 
     edges = []
     _bi = 0
     while _bi <= 32:  #: ★ 遍历所有体（★ 两次拉伸会有多个体 ✓）
         try:
-            _b = list(_SS.entities_on_body(model, "EDGE", body_index=_bi) or [])
+            _b = list(_ss.entities_on_body(model, "EDGE", body_index=_bi) or [])
         except Exception:  # noqa: BLE001
             break
         if not _b:

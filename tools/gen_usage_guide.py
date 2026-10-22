@@ -92,30 +92,30 @@ def main() -> int:
         for d, items in by_domain.items()
     }
 
-    L: list[str] = []
-    L.append("# 官方使用指南（usage-guide）")
-    L.append("")
-    L.append(f"> 生成日期：2026-09-29 · 示例总数 **{total}**")
-    L.append(f"> 官方示例来源：`C:\\swapi\\examples\\`（`{total}` 个）")
-    L.append(
+    item: list[str] = []
+    item.append("# 官方使用指南（usage-guide）")
+    item.append("")
+    item.append(f"> 生成日期：2026-09-29 · 示例总数 **{total}**")
+    item.append(f"> 官方示例来源：`C:\\swapi\\examples\\`（`{total}` 个）")
+    item.append(
         "> 归类依据：**解析示例代码块里实际调用的 API 成员**，"
         "经反射清单反查宿主接口再映射到功能域 —— 不是按标题猜测。"
     )
-    L.append(">")
-    L.append("> **本文件与 `capability-matrix.md` 的分工**：")
-    L.append("> - `capability-matrix.md` = 有哪些成员、参数什么顺序（**接口清单**）")
-    L.append("> - `usage-guide.md` = 这件事**官方怎么用**（**使用指南**）")
-    L.append(">")
-    L.append(
+    item.append(">")
+    item.append("> **本文件与 `capability-matrix.md` 的分工**：")
+    item.append("> - `capability-matrix.md` = 有哪些成员、参数什么顺序（**接口清单**）")
+    item.append("> - `usage-guide.md` = 这件事**官方怎么用**（**使用指南**）")
+    item.append(">")
+    item.append(
         "> **本轮全部内容由静态解析生成，未启动 SolidWorks、未执行任何示例代码。**"
     )
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 一分钟索引：14 个域的官方示例存量")
-    L.append("")
-    L.append("| # | 功能域 | 官方示例（强相关） | 本仓库实现 |")
-    L.append("|---|---|---|---|")
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 一分钟索引：14 个域的官方示例存量")
+    item.append("")
+    item.append("| # | 功能域 | 官方示例（强相关） | 本仓库实现 |")
+    item.append("|---|---|---|---|")
     order = [
         "应用与会话",
         "草图",
@@ -136,145 +136,145 @@ def main() -> int:
         n = strong_count.get(d, 0)
         mods = DOMAIN_MODULES.get(d, "—")
         mark = " ⚠" if n == 0 else ""
-        L.append(f"| {i} | {d}{mark} | **{n}** | {mods} |")
-    L.append("")
-    L.append(
+        item.append(f"| {i} | {d}{mark} | **{n}** | {mods} |")
+    item.append("")
+    item.append(
         "> **多标签说明**：一个示例天然横跨多个域（`Select4` 几乎每个示例都调，"
         "`GetAnnotation` 三个域都有）。故本表按「该域被该示例调用的成员数」加权统计，"
         "同一示例会在多个域下出现。"
     )
-    L.append("")
+    item.append("")
 
     # —— 逐域展开
-    L.append("---")
-    L.append("")
-    L.append("## 逐域明细")
-    L.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 逐域明细")
+    item.append("")
     for d in order:
         items = by_domain.get(d, [])
         strong = sorted(
             [x for x in items if x.get("weight", 0) > 0],
             key=lambda x: (-x["weight"], x["file"]),
         )
-        L.append(f"### {d}")
-        L.append("")
-        L.append(f"- **官方示例（强相关）**：{len(strong)} 个")
-        L.append(f"- **本仓库实现**：{DOMAIN_MODULES.get(d, '—')}")
+        item.append(f"### {d}")
+        item.append("")
+        item.append(f"- **官方示例（强相关）**：{len(strong)} 个")
+        item.append(f"- **本仓库实现**：{DOMAIN_MODULES.get(d, '—')}")
         pre = DOMAIN_PREREQUISITES.get(d)
         if pre:
-            L.append(f"- ⚠ **前置**：{pre}")
-        L.append("")
+            item.append(f"- ⚠ **前置**：{pre}")
+        item.append("")
         if not strong:
-            L.append(
+            item.append(
                 "> ⚠ **该域在 `C:\\swapi\\examples` 中没有任何示例。**"
                 "官方示例集只覆盖 sldworks 等 12 个程序集，"
                 "而该域对应的程序集（cosworks / SWRoutingLib / sldcostingapi）"
                 "**不在收录范围内** —— 这与 `capability-matrix.md` 记录的"
                 "「两套官方源同时失效」是同一个根因。"
             )
-            L.append("")
+            item.append("")
             continue
-        L.append("| 命中 | 语言 | 官方示例 | 关键成员 |")
-        L.append("|---|---|---|---|")
+        item.append("| 命中 | 语言 | 官方示例 | 关键成员 |")
+        item.append("|---|---|---|---|")
         for it in strong[:25]:
             name = it["file"][:-3]
             mem = ", ".join(f"`{m}`" for m in it["types"][:6])
-            L.append(f"| {it['weight']} | {it['lang']} | `{name}` | {mem} |")
+            item.append(f"| {it['weight']} | {it['lang']} | `{name}` | {mem} |")
         if len(strong) > 25:
-            L.append(
+            item.append(
                 f"| … | | *其余 {len(strong) - 25} 个见* `_raw/examples_by_domain.txt` | |"
             )
-        L.append("")
+        item.append("")
 
     # —— 未覆盖
     # —— 路线专题
-    L.append("---")
-    L.append("")
-    L.append("## 专题 · 域 7 曲面的两条互补路线（读官方示例才看得出来）")
-    L.append("")
-    L.append("曲面域的官方示例几乎全部演示**路线 B**，而脚本能直接调的只有**路线 A**。")
-    L.append("只查接口清单会漏掉这个区分，故单列。")
-    L.append("")
-    L.append("### 路线 A · 脚本直接造几何曲面")
-    L.append("")
-    L.append("`ISldWorks.GetModeler()` → `IModeler` 的 19 个非指针 `Create*Surface`")
-    L.append("（平面 / 圆柱 / 球 / 圆锥 / 圆环 / 偏置 / 拉伸 / 旋转 / 直纹 / 扫掠 /")
-    L.append("B 样条 / Coons / 加厚 / Loft / 由边成面）。")
-    L.append("")
-    L.append("**本仓库实现**：`scripts/sw_surface.py`")
-    L.append("")
-    L.append("### 路线 B · 界面创建 + 脚本参数化")
-    L.append("")
-    L.append("```vbnet")
-    L.append(
+    item.append("---")
+    item.append("")
+    item.append("## 专题 · 域 7 曲面的两条互补路线（读官方示例才看得出来）")
+    item.append("")
+    item.append("曲面域的官方示例几乎全部演示**路线 B**，而脚本能直接调的只有**路线 A**。")
+    item.append("只查接口清单会漏掉这个区分，故单列。")
+    item.append("")
+    item.append("### 路线 A · 脚本直接造几何曲面")
+    item.append("")
+    item.append("`ISldWorks.GetModeler()` → `IModeler` 的 19 个非指针 `Create*Surface`")
+    item.append("（平面 / 圆柱 / 球 / 圆锥 / 圆环 / 偏置 / 拉伸 / 旋转 / 直纹 / 扫掠 /")
+    item.append("B 样条 / Coons / 加厚 / Loft / 由边成面）。")
+    item.append("")
+    item.append("**本仓库实现**：`scripts/sw_surface.py`")
+    item.append("")
+    item.append("### 路线 B · 界面创建 + 脚本参数化")
+    item.append("")
+    item.append("```vbnet")
+    item.append(
         "swFeat = (Feature)swFeatureMgr.PostTrimSurface(true)          ' 唯一有脚本入口的"
     )
-    L.append("surfTrimFeatData = (SurfaceTrimFeatureData)swFeat.GetDefinition()")
-    L.append("surfTrimFeatData.AccessSelections(swModel, Nothing)")
-    L.append("... 读 / 改属性 ...")
-    L.append("surfTrimFeatData.ReleaseSelectionAccess()")
-    L.append("```")
-    L.append("")
-    L.append("Radiate / Planar / Extend / Knit / Fill 等**没有脚本创建入口**——")
-    L.append(
+    item.append("surfTrimFeatData = (SurfaceTrimFeatureData)swFeat.GetDefinition()")
+    item.append("surfTrimFeatData.AccessSelections(swModel, Nothing)")
+    item.append("... 读 / 改属性 ...")
+    item.append("surfTrimFeatData.ReleaseSelectionAccess()")
+    item.append("```")
+    item.append("")
+    item.append("Radiate / Planar / Extend / Knit / Fill 等**没有脚本创建入口**——")
+    item.append(
         "官方示例一律是「用户在界面里 Insert ▸ Surface 建好，脚本再用 `GetDefinition()` 取回参数化」。"
     )
-    L.append("")
-    L.append(
+    item.append("")
+    item.append(
         "依据：扫描 `IFeatureManager` 全部 263 个方法，曲面类 `Post*` **只有** `PostTrimSurface` 一个。"
     )
-    L.append("")
-    L.append(
+    item.append("")
+    item.append(
         "> ⚑ **更正记录**：本项目早前依据「无任何接口返回 `ISurface*FeatureData`」"
     )
-    L.append("> 判定它们「不是创建入口」——这结论对；但由此推断「官方不用它们」是错的。")
-    L.append("> 官方示例（`Create_Radiate_Surface_Example_CSharp`、")
-    L.append("> `Create_Planar_Surface_Feature_Example_CSharp`、")
-    L.append(
+    item.append("> 判定它们「不是创建入口」——这结论对；但由此推断「官方不用它们」是错的。")
+    item.append("> 官方示例（`Create_Radiate_Surface_Example_CSharp`、")
+    item.append("> `Create_Planar_Surface_Feature_Example_CSharp`、")
+    item.append(
         "> `Create_Trimmed_Surface_Feature_Example_CSharp`、`Access_Selections_Example_VB`）"
     )
-    L.append("> 证明它们是**路线 B 的载体**。")
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 未被官方示例覆盖的域（与 A1 的「不覆盖+原因」对应）")
-    L.append("")
-    L.append("| 域 | 官方示例 | 本仓库 | 原因 |")
-    L.append("|---|---|---|---|")
-    L.append(
+    item.append("> 证明它们是**路线 B 的载体**。")
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 未被官方示例覆盖的域（与 A1 的「不覆盖+原因」对应）")
+    item.append("")
+    item.append("| 域 | 官方示例 | 本仓库 | 原因 |")
+    item.append("|---|---|---|---|")
+    item.append(
         "| 仿真(需许可证) | **0** | `scripts/sw_simulation.py`（部分） | "
         "`C:\\swapi` 只收录 12 个程序集，**不含 cosworks**；"
         "CHM `cosworks` 册是 JS 空壳。两个官方源同时失效 ⇒ "
         "84 个接口里只有 7 个载荷方法拿得到签名。 |"
     )
-    L.append(
+    item.append(
         "| 路由/Composer/PDM | **0** | **无** | 同上（SWRoutingLib / sldcostingapi / "
         "swdocumentmgr 均不在 `C:\\swapi` 收录范围），且需许可证。 |"
     )
-    L.append("")
-    L.append(
+    item.append("")
+    item.append(
         "> ⚠ 这两行的「0 个官方示例」本身就是**重要结论**：不是我没写指南，"
         "是**官方在这个域就没给可参考的示例**。"
     )
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 附：语言分布（可参考选哪种语言的示例来读）")
-    L.append("")
-    L.append("| 语言 | 示例数 |")
-    L.append("|---|---|")
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 附：语言分布（可参考选哪种语言的示例来读）")
+    item.append("")
+    item.append("| 语言 | 示例数 |")
+    item.append("|---|---|")
     for lang, n in sorted(data["languages"].items(), key=lambda kv: -kv[1]):
-        L.append(f"| {lang} | {n} |")
-    L.append("")
-    L.append(
+        item.append(f"| {lang} | {n} |")
+    item.append("")
+    item.append(
         "> 本仓库是 **Python**，而官方示例里**没有一个 Python 版本**"
         "（VB 1,201 / C# 794 / VB.NET 777 / C++ COM 41）。"
         "读 VB 即可 —— 迟到绑定的调用形状与 VB 最接近，"
         "这也是 AGENTS.md §六 多条「按 VB 推断 Python 调用形状」结论的由来。"
     )
 
-    OUT.write_text("\n".join(L), encoding="utf-8")
-    print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(L)} 行)")
+    OUT.write_text("\n".join(item), encoding="utf-8")
+    print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(item)} 行)")
     for d in order:
         print(f"  {d:<24} 强相关示例 {strong_count.get(d, 0)}")
     return 0

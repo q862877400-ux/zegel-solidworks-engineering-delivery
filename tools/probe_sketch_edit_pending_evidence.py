@@ -72,8 +72,8 @@ def _seg(model) -> object:
 
 
 def main() -> int:
-    import sw_part as P
-    import sw_sketch_edit as SE
+    import sw_part as p
+    import sw_sketch_edit as se
     from sw_connect import (
         connect_solidworks,
         create_empty_dispatch_variant,
@@ -89,13 +89,13 @@ def main() -> int:
     try:
         model = new_document(app, "part")
         #: ★ 先在 Front Plane 上画一条线并拉伸 ⇒ 得到一个可投影的**边**
-        with P.sketch(model, "Front Plane") as sk1:
+        with p.sketch(model, "Front Plane") as sk1:
             sm = get_com_member(model, "SketchManager")
             get_com_member(sm, "CreateLine", -0.05, -0.03, 0.0, 0.05, -0.03, 0.0)
             get_com_member(sm, "CreateLine", 0.05, -0.03, 0.0, 0.05, 0.03, 0.0)
             get_com_member(sm, "CreateLine", 0.05, 0.03, 0.0, -0.05, 0.03, 0.0)
             get_com_member(sm, "CreateLine", -0.05, 0.03, 0.0, -0.05, -0.03, 0.0)
-        P.extrude_boss(model, sk1, 10.0)
+        p.extrude_boss(model, sk1, 10.0)
         #: ★ 开新草图（★ 在同一个面上）⇒ 选一条**边** ⇒ 投影
         ext = get_com_member(model, "Extension")
         #: ★★★★★ **2026-10-04 修正前置**（★ 事实 517：★ 读回来的值不符时先核自己）——
@@ -103,7 +103,7 @@ def main() -> int:
         #:   ⇒ ★ 改成「**先进草图 → 再选边 → 再投影**」（★ 官方 Remarks 只要求
         #:     "调用前已选中"，★ 没说必须在草图外选）✓
         sel = sel_after = None
-        with P.sketch(model, "Front Plane") as sk2:
+        with p.sketch(model, "Front Plane") as sk2:
             get_com_member(model, "ClearSelection2", True)
             sel_after = bool(
                 get_com_member(
@@ -133,7 +133,7 @@ def main() -> int:
             r1["进草图后再选边"] = sel_after
             r1["调用前段数"] = _seg(model)
             try:
-                rr = SE.convert_entities(model)
+                rr = se.convert_entities(model)
                 r1["返回"] = json.dumps(rr, ensure_ascii=False, default=str)[:300]
             except Exception as exc:  # noqa: BLE001
                 r1["调用异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
@@ -150,7 +150,7 @@ def main() -> int:
     r2: dict = {"项": "sketch_mirror"}
     try:
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             #: ★ 中心线（★ 官方标记 **mark=2**）
             cl = get_com_member(sm, "CreateCenterLine", 0.0, -0.04, 0.0, 0.0, 0.04, 0.0)
@@ -196,7 +196,7 @@ def main() -> int:
             r2["选中"] = picked
             r2["调用前段数"] = _seg(model)
             try:
-                rr = SE.sketch_mirror(model)
+                rr = se.sketch_mirror(model)
                 r2["返回"] = str(rr)[:80]
             except Exception as exc:  # noqa: BLE001
                 r2["调用异常"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])

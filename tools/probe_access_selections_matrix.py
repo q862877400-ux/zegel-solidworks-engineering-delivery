@@ -40,7 +40,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 
@@ -68,7 +68,7 @@ def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02), depth
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            return SF.create_extruded_surface_report(doc, depth, sketch_name=cand)
+            return sf.create_extruded_surface_report(doc, depth, sketch_name=cand)
         except Exception:  # noqa: BLE001
             continue
     return {}
@@ -221,11 +221,11 @@ def main() -> int:
 
     def _offset(doc):
         _mk_surface(doc)
-        return SF.insert_offset_surface_report(doc, 5.0)
+        return sf.insert_offset_surface_report(doc, 5.0)
 
     def _extend(doc):
         _mk_surface(doc)
-        return SF.insert_extend_surface_report(doc, 5.0)
+        return sf.insert_extend_surface_report(doc, 5.0)
 
     def _planar(doc):
         _mk_surface(doc)
@@ -245,7 +245,7 @@ def main() -> int:
             0.0,
         )
         P.end_sketch(doc)
-        return SF.insert_planar_ref_surface_report(doc)
+        return sf.insert_planar_ref_surface_report(doc)
 
     def _revolve(doc):
         try:
@@ -283,11 +283,11 @@ def main() -> int:
         _mk_solid(doc)
         _mk_surface(doc, plane="Front Plane")
         _mk_surface(doc, plane="Top Plane", rect=(-0.02, -0.01, 0.02, 0.01))
-        return SF.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
+        return sf.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
 
     def _replace_face(doc):
         _mk_solid(doc)
-        return SF.insert_replace_face_report(doc)
+        return sf.insert_replace_face_report(doc)
 
     CASES = (
         ("\u7b49\u8ddd\u66f2\u9762", _offset, ("OffsetSurface",)),

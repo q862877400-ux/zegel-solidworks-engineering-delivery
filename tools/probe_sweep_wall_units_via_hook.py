@@ -59,8 +59,8 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_part as P
-    import sw_sweep as SW
+    import sw_part as p
+    import sw_sweep as sw
     from sw_connect import (
         connect_solidworks,
         get_com_member,
@@ -72,16 +72,16 @@ def main() -> int:
     model = new_document(app, "part")
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
-    with P.sketch(model, "Front Plane") as sk_prof:
-        P.sketch_circle(model, 0.0, 0.0, R_MM)
-    with P.sketch(model, "Top Plane") as sk_path:
-        P.sketch_line(model, 0.0, 0.0, 0.0, L_MM)
-    P._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
-    feat = P._safe_com_member(model, "FeatureByName", str(sk_path))
-    for cand in P._get_sketch_name_candidates(str(sk_path)):
+    with p.sketch(model, "Front Plane") as sk_prof:
+        p.sketch_circle(model, 0.0, 0.0, R_MM)
+    with p.sketch(model, "Top Plane") as sk_path:
+        p.sketch_line(model, 0.0, 0.0, 0.0, L_MM)
+    p._select_sketch_feature_by_name(model, str(sk_prof), mark=1)
+    feat = p._safe_com_member(model, "FeatureByName", str(sk_path))
+    for cand in p._get_sketch_name_candidates(str(sk_path)):
         if feat is None:
-            feat = P._safe_com_member(model, "FeatureByName", cand)
-    P._select_com_object(feat, append=True, mark=4)
+            feat = p._safe_com_member(model, "FeatureByName", cand)
+    p._select_com_object(feat, append=True, mark=4)
 
     #: ★★★★ 钩子：★ 在 `CreateFeature` **之前**设薄壁 ✓
     hook_log: dict = {}
@@ -100,7 +100,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             hook_log["ThinFeature_readback"] = "err: %s" % str(exc)[:60]
 
-    rep = SW.create_sweep_report(model, False, mutate=_thin)
+    rep = sw.create_sweep_report(model, False, mutate=_thin)
     step(
         "create_sweep_report(mutate=钩子)",
         ok=rep.get("ok"),

@@ -37,8 +37,8 @@ OUT = R / "output" / "spec209-unfold-fold.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
-    import sw_sheet_metal as SM
+    import sw_part as p
+    import sw_sheet_metal as sm
     from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -63,24 +63,24 @@ def main() -> int:
     def _plate():
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with P.sketch(doc, "Front Plane") as sk:
-            P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
+        with p.sketch(doc, "Front Plane") as sk:
+            p.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
         #: ★ 真厚度 2 mm（文档单位 = 毫米 —— 见 probe_spec209_hem_units.py 的定案）
-        SM.create_base_flange(
-            doc, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=50.0)
+        sm.create_base_flange(
+            doc, sk, sm.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=50.0)
         )
         return doc
 
     def _names(doc):
         return [
-            str(safe_get_com_member(f, "Name") or "") for f in SM.iter_features(doc)
+            str(safe_get_com_member(f, "Name") or "") for f in sm.iter_features(doc)
         ]
 
     #: ── 正例：unfold → fold ────────────────────────────────────────────────────────
     try:
         doc = _plate()
         ev["base_feature_names"] = _names(doc)
-        r1 = SM.create_unfold(doc, ["基体-法兰1"], face_index=0)
+        r1 = sm.create_unfold(doc, ["基体-法兰1"], face_index=0)
         ev["unfold"] = {
             "ok": r1.get("ok"),
             "new_features": r1.get("new_features"),
@@ -103,7 +103,7 @@ def main() -> int:
         )
         unfolded = (r1.get("new_features") or [None])[0]
         if unfolded:
-            r2 = SM.create_fold(
+            r2 = sm.create_fold(
                 doc, ["基体-法兰1"], face_index=0, unfold_feature_name=unfolded
             )
             ev["fold"] = {
@@ -134,7 +134,7 @@ def main() -> int:
     #: ── 负例：**不给 mark 4 的对象** ────────────────────────────────────────────────
     try:
         doc2 = _plate()
-        r3 = SM.create_unfold(doc2, [], face_index=0)
+        r3 = sm.create_unfold(doc2, [], face_index=0)
         ev["negative"] = {
             "ok": r3.get("ok"),
             "new_features": r3.get("new_features"),

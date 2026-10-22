@@ -76,8 +76,8 @@ def main() -> int:
             #:   ★ 现按**真实位置**取：★ 在 `# 标题` 与第一个 `## ` 之间找。
             head = txt.split("\n## ", 1)[0]  #: ★ 「标题之后、第一个 `## ` 之前」那一段
             line = ""
-            for l in head.splitlines():
-                s = l.strip()
+            for item in head.splitlines():
+                s = item.strip()
                 if (
                     s
                     and not s.startswith(

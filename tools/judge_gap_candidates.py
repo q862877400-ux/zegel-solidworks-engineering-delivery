@@ -43,7 +43,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
 
-import sw_com_traps as TRAPS  # noqa: E402
+import sw_com_traps as traps  # noqa: E402
 
 DESC_PATH = REPO_ROOT / "docs" / "operation-descriptions.json"
 TRIAGE = REPO_ROOT / "docs" / "union-gap-triage.md"
@@ -103,9 +103,9 @@ def main() -> int:
         text = " ".join(descs[op].values())
         #: ★ 判据②：实现扫描（★ 已排除反射转储）—— ★ 用操作名转驼峰去试
         camel = "".join(w.capitalize() for w in op.split("_"))
-        hits = TRAPS.find_real_implementations(
+        hits = traps.find_real_implementations(
             camel
-        ) or TRAPS.find_real_implementations(op)
+        ) or traps.find_real_implementations(op)
         #: ★ 判据③：名字词集是否被我们某个名字包含
         need = _words(op)
         named = [n for n in ours if need and need <= _words(n)]

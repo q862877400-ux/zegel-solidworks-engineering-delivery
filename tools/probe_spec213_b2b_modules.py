@@ -48,9 +48,9 @@ def _mk_part(sw, path: Path, w: float = 60.0, h: float = 40.0, d: float = 20.0):
 
 def main() -> int:
     import sw_assembly
-    import sw_assembly_doc as AD
+    import sw_assembly_doc as ad
     import sw_connect
-    import sw_part as PT
+    import sw_part as pt
     import sw_pattern as P
 
     out: dict = {
@@ -72,8 +72,8 @@ def main() -> int:
         row1["add_component"] = bool(
             sw_assembly.add_component(asm, str(WORK / "p1.sldprt"), 0.0, 0.0, 0.0)
         )
-        row1["exploded_view_created"] = bool(AD.create_exploded_view(asm))
-        res = AD.insert_explode_line_sketch_report(asm)
+        row1["exploded_view_created"] = bool(ad.create_exploded_view(asm))
+        res = ad.insert_explode_line_sketch_report(asm)
         #: ★★ 记**前后**（★ 判据是**变化**、★ 不是"现在有" —— 见模块函数里的注释 ✓）
         row1.update(
             {
@@ -121,7 +121,7 @@ def main() -> int:
         row2["sub_inserted"] = bool(
             sw_assembly.add_component(top, str(WORK / "sub.SLDASM"), 0.0, 0.0, 0.0)
         )
-        res2 = AD.create_speedpak_report(top, speedpak_type=1)
+        res2 = ad.create_speedpak_report(top, speedpak_type=1)
         row2.update(
             {
                 k: res2.get(k)
@@ -158,16 +158,16 @@ def main() -> int:
     row3: dict = {"case": "curve_driven_pattern（走模块函数 · ★ 预期不建 ⇒ stitched）"}
     try:
         m3 = sw_connect.new_document(sw, "part")
-        PT.start_sketch(m3, "Front Plane")
-        PT.sketch_corner_rectangle(m3, 0.0, 0.0, 40.0, 20.0)
-        sk3 = PT.current_sketch_name(m3)
-        PT.end_sketch(m3)
-        PT.extrude_boss(m3, sk3, 10.0)
+        pt.start_sketch(m3, "Front Plane")
+        pt.sketch_corner_rectangle(m3, 0.0, 0.0, 40.0, 20.0)
+        sk3 = pt.current_sketch_name(m3)
+        pt.end_sketch(m3)
+        pt.extrude_boss(m3, sk3, 10.0)
         #: ★ 方向 1 的曲线：★ 另画一条草图（★ 官方 mark 2 = Curve/edge/sketch ✓）
-        PT.start_sketch(m3, "Front Plane")
-        PT.sketch_corner_rectangle(m3, 0.0, 0.0, 120.0, 20.0)
-        curve_sk = PT.current_sketch_name(m3)
-        PT.end_sketch(m3)
+        pt.start_sketch(m3, "Front Plane")
+        pt.sketch_corner_rectangle(m3, 0.0, 0.0, 120.0, 20.0)
+        curve_sk = pt.current_sketch_name(m3)
+        pt.end_sketch(m3)
         row3["seed_feature"] = sk3
         row3["curve_sketch"] = curve_sk
         #: ★★★★ **修过一处**：★ 第一版我把 `seed_feature` 传成**草图名** ✗ ⇒
@@ -176,9 +176,9 @@ def main() -> int:
         #: 图名 ✓）⇒
         #:     ★ `mark1=True · mark2=True · 选区=2` ✓
         #:   ⇒ ★★★ **正解：mark 1 = 「Components to pattern」⇒ 传**拉伸特征的名字**** ✓
-        import sw_feature_readback as FR
+        import sw_feature_readback as fr
 
-        feat_names = FR.feature_names(m3)
+        feat_names = fr.feature_names(m3)
         extrudes = [n for n in feat_names if "拉伸" in n or "Extrude" in str(n)]
         seed = extrudes[0] if extrudes else sk3
         row3["feature_names"] = feat_names

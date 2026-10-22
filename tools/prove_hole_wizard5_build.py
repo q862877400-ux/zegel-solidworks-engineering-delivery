@@ -52,7 +52,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -120,7 +120,7 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
                 row["ray"] = str(_ray(doc, 0.0, 0.0))
             except Exception as exc:  # noqa: BLE001
                 row["ray"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         fm = C.get_com_member(doc, "FeatureManager")
         args = (
@@ -159,7 +159,7 @@ def _one(sw, tag, end_type, do_ray, fastener=40, ssize=""):
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new_features"])
     except Exception as exc:  # noqa: BLE001

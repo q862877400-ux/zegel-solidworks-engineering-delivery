@@ -77,7 +77,7 @@ READBACK = (
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
+    import sw_selection_spec as ss
 
     out: dict = {
         "official": "IModelDoc2.InsertWeldSymbol3 + IWeldSymbol",
@@ -106,8 +106,8 @@ def main() -> int:
     #: egment」✓）
     face_ok = False
     try:
-        SS.select_entity_by_index(model, "FACE", 0)
-        face_ok = SS.get_selection_count(model) > 0
+        ss.select_entity_by_index(model, "FACE", 0)
+        face_ok = ss.get_selection_count(model) > 0
     except Exception as e:  # noqa: BLE001
         out["select_error"] = "%s: %s" % (type(e).__name__, str(e)[:120])
     out["face_selected"] = face_ok

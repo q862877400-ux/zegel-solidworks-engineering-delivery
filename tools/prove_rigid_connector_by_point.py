@@ -47,7 +47,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -81,7 +81,7 @@ def main() -> int:
         }
         if c1 == 1 and c2 == 2:
             try:
-                rep = SL.apply_rigid_connector_report(mgr, doc)
+                rep = sl.apply_rigid_connector_report(mgr, doc)
                 ev["steps"]["rigid_connector"] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")]

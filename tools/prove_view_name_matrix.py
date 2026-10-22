@@ -25,14 +25,14 @@
 # ⇒ 因此它顺带回答「**卡点是否只在"禁保存"上**」。⚠ 只写 `output/`（gitignored），不碰任
 # 何用户数据。
 #   官方依据（★ 逐页读过）:
-# · `C:\swapi\types\IDrawingDoc\CreateDrawViewFromModelView3.md` —— 5 参；Remarks 逐字给
+# · `c:\swapi\types\IDrawingDoc\CreateDrawViewFromModelView3.md` —— 5 参；Remarks 逐字给
 # 出
 # "exactly match" 与 'the names of the standard views begin with an asterisk … ("*Front"
 # )'，
 #       并要求 ModelName 含 `.sldprt`/`.sldasm`
-# · `C:\swapi\types\IModelDoc2\GetModelViewNames.md` —— `System.object GetModelViewNames
+# · `c:\swapi\types\IModelDoc2\GetModelViewNames.md` —— `System.object GetModelViewNames
 # ()`，零参、未废弃
-# · `C:\swapi\types\IModelDoc2\GetModelViewCount.md` —— ★ **Obsolete** ⇒ 本探针**不用它*
+# · `c:\swapi\types\IModelDoc2\GetModelViewCount.md` —— ★ **Obsolete** ⇒ 本探针**不用它*
 # *
 #   许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -52,18 +52,18 @@ sys.path.insert(0, str(REPO))
 #: r`。
 sys.path.insert(0, str(REPO / "scripts"))
 
-import scripts.sw_drawing_query as DQ  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+import scripts.sw_drawing_query as dq  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "view-name-matrix-evidence.json"
 PART = REPO / "output" / "_probe_viewname_part.SLDPRT"
-TEMPLATE_ROOTS = (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks")
+TEMPLATE_ROOTS = (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks")
 
 
 def _get(o, name, *a):
     """★ 取或调（本仓既有形态）。"""
-    return C.get_com_member(o, name, *a)
+    return c.get_com_member(o, name, *a)
 
 
 def _as_list(v):
@@ -81,7 +81,7 @@ def _as_list(v):
 def _view_count(doc):
     """★ 当前图纸视图数（判据要**可回读的量**）。"""
     try:
-        return len(DQ.list_views(doc) or [])
+        return len(dq.list_views(doc) or [])
     except Exception:  # noqa: BLE001
         return None
 
@@ -95,9 +95,9 @@ def _find_drwdot():
 
 def _build_saved_part(sw, row: dict):
     """★ 建一块板并**存盘**（★ 官方要求 ModelName 含 `.sldprt`）⇒ 返回 (doc, path)。"""
-    doc = C.new_document(sw, "part")
+    doc = c.new_document(sw, "part")
     try:
-        P.start_sketch(doc, plane_name="Front Plane")
+        p.start_sketch(doc, plane_name="Front Plane")
         _get(
             _get(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -108,22 +108,22 @@ def _build_saved_part(sw, row: dict):
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
+        p.end_sketch(doc)
         names = [
             n
-            for n in (P.feature_names(doc) or [])
+            for n in (p.feature_names(doc) or [])
             if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")
         ]
         if not names:
             row["extrude_err"] = "找不到草图特征名"
             return None, None
-        P.extrude_boss(doc, names[-1], 0.01)
+        p.extrude_boss(doc, names[-1], 0.01)
         row["extrude_sketch"] = names[-1]
     except Exception as exc:  # noqa: BLE001
         row["extrude_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         return None, None
     try:
-        row["saved"] = bool(C.save_document(doc, str(PART)))
+        row["saved"] = bool(c.save_document(doc, str(PART)))
     except Exception as exc:  # noqa: BLE001
         row["save_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         row["saved"] = False
@@ -133,7 +133,7 @@ def _build_saved_part(sw, row: dict):
 def _new_drawing(sw, row: dict):
     """★ 新建工程图（★ 先走用户默认模板，不成再用本机实测存在的 `.drwdot` 兜底）。"""
     try:
-        return C.new_document(sw, "drawing")
+        return c.new_document(sw, "drawing")
     except Exception as exc:  # noqa: BLE001
         row["drawing_template_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     cand = _find_drwdot()
@@ -141,7 +141,7 @@ def _new_drawing(sw, row: dict):
         return None
     row["drawing_template_fallback"] = cand
     try:
-        return C.new_document(sw, "drawing", template_path=cand)
+        return c.new_document(sw, "drawing", template_path=cand)
     except Exception as exc2:  # noqa: BLE001
         row["drawing_template_err2"] = "%s: %s" % (type(exc2).__name__, str(exc2)[:160])
         return None
@@ -149,7 +149,7 @@ def _new_drawing(sw, row: dict):
 
 def main() -> int:
     started = time.time()
-    sw, _meta = C.connect_solidworks(wait_seconds=30)
+    sw, _meta = c.connect_solidworks(wait_seconds=30)
     report = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "part": str(PART), "cases": []}
 
     prep = {"saved": False, "model_view_names": [], "err": ""}
@@ -188,7 +188,7 @@ def main() -> int:
                 continue
             row["drawing_title"] = str(_get(doc, "GetTitle") or "")
             row["views_before"] = _view_count(doc)
-            row["sheet"] = DQ.current_sheet_name(doc)
+            row["sheet"] = dq.current_sheet_name(doc)
             ret = _get(
                 doc,
                 "CreateDrawViewFromModelView3",
@@ -201,7 +201,7 @@ def main() -> int:
             row["ret_is_none"] = ret is None
             row["views_after"] = _view_count(doc)
             row["view_names_after"] = [
-                v.get("name") for v in (DQ.list_views(doc) or [])
+                v.get("name") for v in (dq.list_views(doc) or [])
             ]
             delta = (
                 None

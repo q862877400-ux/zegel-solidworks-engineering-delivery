@@ -90,7 +90,7 @@ def check(spec_dir: Path):
         )
 
     #: §IV 许可红线 —— plan 每行来源都要带 license
-    lic = sum(1 for l in plan.splitlines() if "license" in l.lower())
+    lic = sum(1 for item in plan.splitlines() if "license" in item.lower())
     if lic >= 5:
         f.append(("PASS", "§IV", "plan.md 里带 `license` 的行 **%d** 条（≥5）" % lic))
     else:

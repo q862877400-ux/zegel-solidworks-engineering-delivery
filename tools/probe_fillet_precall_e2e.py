@@ -8,7 +8,7 @@
 # ★ 若成 ⇒ ★ 这是「**`pre_call` + `resolve_selection` 对零件特征有效**」的**第一条端到端
 # 证据**；
 #   ★ 若不成 ⇒ ★ 把它记成**否定结果**，并说明卡在哪一步。
-# 官方依据: `C:\\swapi\\types\\IFeatureManager\\FeatureFillet3.md`（★ 末位是变体数组，非
+# 官方依据: `c:\\swapi\\types\\IFeatureManager\\FeatureFillet3.md`（★ 末位是变体数组，非
 # 预选）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -26,20 +26,20 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "fillet-precall-e2e-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     import importlib
 
     rc = importlib.import_module("register_capabilities")
@@ -64,7 +64,7 @@ def main() -> int:
         doc = None
         row: dict = {"selection": sel}
         try:
-            doc = C.new_document(sw, "part")
+            doc = c.new_document(sw, "part")
             P.start_sketch(doc, plane_name="Front Plane")
             _g(
                 _g(doc, "SketchManager"),

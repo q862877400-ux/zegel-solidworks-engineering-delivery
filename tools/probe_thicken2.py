@@ -50,7 +50,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _build_surface(sw):
@@ -69,7 +69,7 @@ def _build_surface(sw):
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
                 break
         except Exception:  # noqa: BLE001
             continue
@@ -82,8 +82,8 @@ def _one(sw, tag, fn):
     try:
         doc = _build_surface(sw)
         row["pre"] = {
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
         }
         before = list(P.feature_names(doc) or [])
         try:
@@ -95,8 +95,8 @@ def _one(sw, tag, fn):
         after = list(P.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["post"] = {
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
         }
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001

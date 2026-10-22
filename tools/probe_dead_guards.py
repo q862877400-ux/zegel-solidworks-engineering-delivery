@@ -78,8 +78,8 @@ def main() -> int:
                 word = re.compile(r"\b%s\b" % re.escape(name))
                 hits = [
                     i + 1
-                    for i, l in enumerate(lines)
-                    if word.search(l) and not l.strip().startswith("#")
+                    for i, item in enumerate(lines)
+                    if word.search(item) and not item.strip().startswith("#")
                 ]
                 if len(hits) <= 1:
                     suspects.append((base, p.name, name, lineno, hits))

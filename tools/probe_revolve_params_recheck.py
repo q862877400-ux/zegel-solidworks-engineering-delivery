@@ -138,12 +138,12 @@ def main() -> int:
     #:     ★★ **可 `revolve_params` 报**找不到**** ✓
     #:   ★★ **⇒ 先把 `_CONTAINER_NODES` 也打出来**（★ 万一 `旋转1` 在里面？）✓
     try:
-        import sw_feature_readback as _R
+        import sw_feature_readback as _r
 
         step(
             "container_nodes",
-            count=len(_R._CONTAINER_NODES),
-            has_my_feature=("旋转1" in _R._CONTAINER_NODES),
+            count=len(_r._CONTAINER_NODES),
+            has_my_feature=("旋转1" in _r._CONTAINER_NODES),
         )
     except Exception as exc:  # noqa: BLE001
         step("container_nodes_EXC", err=str(exc)[:110])

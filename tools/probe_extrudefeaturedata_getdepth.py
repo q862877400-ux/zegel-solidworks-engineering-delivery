@@ -52,12 +52,12 @@ def _extrude_feature(model):
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
-    with P.sketch(model, "Front Plane") as sk:
+    with p.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
         for a, b in (
             ((-0.05, -0.03), (0.05, -0.03)),
@@ -66,7 +66,7 @@ def main() -> int:
             ((-0.05, 0.03), (-0.05, -0.03)),
         ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-    P.extrude_boss(model, sk, 20.0)  #: ★ **20 毫米** ⇒ 期望 0.02 米
+    p.extrude_boss(model, sk, 20.0)  #: ★ **20 毫米** ⇒ 期望 0.02 米
 
     feat, nm, tn = _extrude_feature(model)
     rows = {"feature": nm, "type": tn}
@@ -124,7 +124,7 @@ def main() -> int:
             )
     except Exception:  # noqa: BLE001
         unit_verdict = None
-    R = {
+    r = {
         "★_判据": "★ 建一个 depth=20mm 的凸台 ⇒ `GetDepth(True)` 读回来是 **20.0**（毫米口径）"
         " —— ★ **不是 0.02** ⇒ ★★ 它随**文档单位**",
         "★_官方依据": "`C:\\swapi\\types\\IExtrudeFeatureData2\\GetDepth.md`："
@@ -138,7 +138,7 @@ def main() -> int:
         "★★★ **两者同一口径** ⇒ ★ **`GetDepth` 随**文档单位**（本机文档是毫米）** ✓",
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("★ 特征:", nm, "· 型:", tn)
     print("★ 读数:", json.dumps(rows, ensure_ascii=False, default=str)[:220])

@@ -35,8 +35,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as L
-import sw_jlcfa_select as SEL
+import sw_jlcfa_locate as l
+import sw_jlcfa_select as sel
 import sw_jlcfa_steps as S
 
 warnings.filterwarnings("ignore")
@@ -57,7 +57,7 @@ def _container_texts(win) -> list[str]:
             r = c.rectangle()
         except Exception:
             continue
-        if t and L._overlaps(r, cr):
+        if t and l._overlaps(r, cr):
             out.append(t)
     return out
 
@@ -67,7 +67,7 @@ def _has_cjk(s: str) -> bool:
 
     ⚑⚑ 必须**先剥掉占位符 ``【去填写】```**（2026-09-30 实测教训）
     未填参数的型号行长这样：
-        ``CPDH-A9-W【去填写】-L【去填写】``
+        ``CPDH-A9-W【去填写】-l【去填写】``
     占位符本身是中文，若不剥掉，整个型号值会被判成「中文说明」而丢弃
     ⇒ ``model_row()`` 取不到值 ⇒ 判据链断掉。
     """
@@ -102,7 +102,7 @@ def model_row(win):
             r = c.rectangle()
         except Exception:
             continue
-        if t in ("产品型号：", "产品型号:") and L._overlaps(r, cr):
+        if t in ("产品型号：", "产品型号:") and l._overlaps(r, cr):
             label = c
             break
     if label is None:
@@ -206,7 +206,7 @@ def set_front(hwnd: int, tries: int = 5) -> bool:
     for _ in range(tries):
         if win32gui.GetForegroundWindow() == hwnd:
             return True
-        L.focus_solidworks(hwnd)
+        l.focus_solidworks(hwnd)
         time.sleep(0.4)
     return win32gui.GetForegroundWindow() == hwnd
 
@@ -273,13 +273,13 @@ def type_into(hwnd: int, ctl, rect, value: str, log=S.log) -> bool:
     ⚠ 该插件实测：ValuePattern 写了字但**不登记**，Ctrl+V 也不行 ——
       它监听**逐键 KeyPress**，所以 ``CONFIG["input_api"]`` 必须保持 ``type_keys``。
     """
-    import sw_gui_input as GI
+    import sw_gui_input as gi
 
     # ① 先清模态（弹窗在时，下面的点击会打在弹窗上）
     try:
-        if L._modal().modal_report(hwnd)["count"]:
+        if l._modal().modal_report(hwnd)["count"]:
             log("      ⚠ 有模态框（可能是「请输入指定范围内的数字」），先关")
-            L._modal().close_modals(hwnd, rounds=2)
+            l._modal().close_modals(hwnd, rounds=2)
             time.sleep(0.5)
     except Exception:
         pass
@@ -291,8 +291,8 @@ def type_into(hwnd: int, ctl, rect, value: str, log=S.log) -> bool:
     S.click((rect.left + rect.right) // 2, (rect.top + rect.bottom) // 2, 0.8)
     # ④ 交给输入层
     if log:
-        log("      目标 %s" % GI.label(ctl))
-    return GI.type_text(ctl, value, log=log)
+        log("      目标 %s" % gi.label(ctl))
+    return gi.type_text(ctl, value, log=log)
 
 
 def first_missing_label(win):
@@ -303,7 +303,7 @@ def first_missing_label(win):
     于是我一直重打第一个字段（还会拼成超范围值），
     **永远走不到第二个** ⇒ 抽查里两件停在「缺 1」，
     而且**时好时坏**（哪一件缺取决于顺序）。
-    型号行自带标签（``BMHA-0.4-L【去填写】-X15-W【去填写】``），
+    型号行自带标签（``BMHA-0.4-l【去填写】-X15-W【去填写】``），
     取第一个缺口的标签即可**逐字段自推进**。
     """
     import re
@@ -381,7 +381,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
     for rnd in range(1, max_rounds + 1):
         S.cache_drop()
         try:
-            hwnd, win = L.connect()
+            hwnd, win = l.connect()
         except Exception:
             pass
         left = unfilled(win)
@@ -396,28 +396,28 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             log("  ★ 参数齐了")
             return hwnd, win, 0
         # 先补下拉
-        pend = SEL.pending_params(win)
+        pend = sel.pending_params(win)
         if pend:
             name, cb, items, cur = pend[0]
-            if L._modal().modal_report(hwnd)["count"]:
-                L._modal().close_modals(hwnd, rounds=2)
+            if l._modal().modal_report(hwnd)["count"]:
+                l._modal().close_modals(hwnd, rounds=2)
                 continue
-            SEL.select_index(hwnd, win, cb, items, pick)
+            sel.select_index(hwnd, win, cb, items, pick)
             continue
         # 再补**第一个缺口**对应的输入框
         # ⚑ 进 Edit 分支前也要清模态：实测插件在超范围输入后会弹
         #   「请输入指定范围内的数字!」，**挡掉之后所有点击**
         #   （连打 3 次都不生效，因为点全落在弹窗上）。此前只在
         #   下拉分支查模态，Edit 分支漏了 —— 这就是「重复输入 0」的真凶。
-        if L._modal().modal_report(hwnd)["count"]:
+        if l._modal().modal_report(hwnd)["count"]:
             log("      ⚠ 关闭模态框后继续")
-            L._modal().close_modals(hwnd, rounds=2)
+            l._modal().close_modals(hwnd, rounds=2)
             time.sleep(0.6)
             continue
         label = first_missing_label(win)
         ent = find_edit_by_label(win, label)
         if ent is None:
-            ent = (SEL.pending_edits(win) or [None])[0]
+            ent = (sel.pending_edits(win) or [None])[0]
         if ent is None:
             log("      找不到缺口「%s」对应的输入框" % label)
             break
@@ -428,7 +428,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             lo, hi, step = row[4], row[5], row[6]
             val = _fmt_value(lo, hi, step)
         else:
-            rg = SEL._parse_hint(hint)
+            rg = sel._parse_hint(hint)
             if rg:
                 val = _fmt_value(rg[0], rg[1], _parse_step(hint))
             else:
@@ -447,7 +447,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
                 type_into(hwnd, ctl, r, cv, log=log)
                 S.cache_drop()
                 try:
-                    hwnd, win = L.connect()
+                    hwnd, win = l.connect()
                     if unfilled(win) < before_left:
                         val = cv
                         break
@@ -462,7 +462,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
         # 记录是否推进
         S.cache_drop()
         try:
-            hwnd, win = L.connect()
+            hwnd, win = l.connect()
             now_left = unfilled(win)
         except Exception:
             now_left = before_left
@@ -473,7 +473,7 @@ def fill_all(hwnd: int, win, max_rounds: int = 14, pick: int = 1, log=S.log):
             fails[key] = 0
     S.cache_drop()
     try:
-        hwnd, win = L.connect()
+        hwnd, win = l.connect()
     except Exception:
         pass
     return hwnd, win, unfilled(win)
@@ -515,8 +515,8 @@ def param_rows(win):
     ⚑⚑⚑ 为什么用树结构而不是坐标（2026-09-30 本机实测）
     实测一行的结构是：
 
-        Pane  'L(总长度）'                 ← 一行一个 Pane
-         ├─ Edit  'L(总长度）'            ← 输入框
+        Pane  'l(总长度）'                 ← 一行一个 Pane
+         ├─ Edit  'l(总长度）'            ← 输入框
          ├─ Text  '[195~1500]/1'         ← **插件自报的范围**
          └─ Text  '清除'
 
@@ -579,7 +579,7 @@ def _all_edits(win):
             t = (c.window_text() or "").strip()
             r = c.rectangle()
             ct = c.element_info.control_type
-            if not L._overlaps(r, cr):
+            if not l._overlaps(r, cr):
                 continue
             if ct == "Text" and t.startswith("[") and "~" in t:
                 hints.append((r.top, r.left, t))
@@ -591,7 +591,7 @@ def _all_edits(win):
             r = c.rectangle()
             if c.element_info.control_type != "Edit":
                 continue
-            if not L._overlaps(r, cr) or not t:
+            if not l._overlaps(r, cr) or not t:
                 continue
             if "请输入产品型号" in t:
                 continue

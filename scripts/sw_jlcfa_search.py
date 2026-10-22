@@ -38,7 +38,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as L
+import sw_jlcfa_locate as l
 import sw_jlcfa_steps as S
 
 warnings.filterwarnings("ignore")
@@ -62,7 +62,7 @@ def search_row(win):
     ⚑ 这样**完全不用 y 偏移**（我先前写「容器顶部 200px 内的 Edit」，
       侧边栏拉宽 / DPI 变化后这个阈值就可能不成立）。
     """
-    btn = L.locate(win, "搜索", "Button")
+    btn = l.locate(win, "搜索", "Button")
     if btn is None:
         return None, None, None
     try:
@@ -181,16 +181,16 @@ def _is_card_pane(c) -> tuple:
 
 def result_cards(win) -> list[tuple[str, object]]:
     """结果卡列表 ``[(型号, 卡矩形)]``，按 y 排序。**结构判据，无坐标阈值**。"""
-    cr = L.container_rect(win)
+    cr = l.container_rect(win)
     out = []
     if cr is None:
         return out
-    for c in L._controls(win):
+    for c in l._controls(win):
         try:
             if c.element_info.control_type != "Pane":
                 continue
             r = c.rectangle()
-            if not L._overlaps(r, cr) or r.height() < 40:
+            if not l._overlaps(r, cr) or r.height() < 40:
                 continue
         except Exception:
             continue
@@ -220,7 +220,7 @@ def first_result_point(win, log=S.log):
 
 
 if __name__ == "__main__":
-    h, w = L.connect()
+    h, w = l.connect()
     S.cache_drop()
     eb, er = search_box(w)
     print("搜索框:", (er.left, er.top, er.right, er.bottom) if er else None)

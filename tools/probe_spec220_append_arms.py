@@ -30,9 +30,9 @@ RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 100.0, "y2_mm": 60.0}
 
 def _centres(model):
     import sw_part as _sp
-    import sw_selection_spec as _SS
+    import sw_selection_spec as _ss
 
-    faces = list(_SS.entities_on_body(model, "FACE", body_index=0) or [])
+    faces = list(_ss.entities_on_body(model, "FACE", body_index=0) or [])
     out = []
     for i, f in enumerate(faces):
         b = list(_sp.get_com_member(f, "GetBox") or [])
@@ -72,8 +72,8 @@ def main() -> int:
             return 1
 
     f = _centres(model)
-    A, B = f[0], f[1]
-    print("★ 面心：A(0)=%r · B(1)=%r" % (A["c"], B["c"]))
+    a, B = f[0], f[1]
+    print("★ 面心：a(0)=%r · B(1)=%r" % (a["c"], B["c"]))
     ext = model.Extension
     sm = model.SelectionManager
     res = {}
@@ -81,10 +81,10 @@ def main() -> int:
     def cnt():
         return int(sm.GetSelectedObjectCount2(-1))
 
-    #: ── A 臂：SelectByID2 的两步（先 False 再 True）───────────────────────
+    #: ── a 臂：SelectByID2 的两步（先 False 再 True）───────────────────────
     model.ClearSelection2(True)
     ext.SelectByID2(
-        "", "FACE", A["c"][0], A["c"][1], A["c"][2], False, 0, _sp._empty_callout(), 0
+        "", "FACE", a["c"][0], a["c"][1], a["c"][2], False, 0, _sp._empty_callout(), 0
     )
     res["A1_select_A_AppendFalse"] = cnt()
     ext.SelectByID2(
@@ -92,10 +92,10 @@ def main() -> int:
     )
     res["A2_then_B_AppendTrue"] = cnt()
 
-    #: ── A' 臂：两步都用 Append=True ───────────────────────────────────────
+    #: ── a' 臂：两步都用 Append=True ───────────────────────────────────────
     model.ClearSelection2(True)
     ext.SelectByID2(
-        "", "FACE", A["c"][0], A["c"][1], A["c"][2], True, 0, _sp._empty_callout(), 0
+        "", "FACE", a["c"][0], a["c"][1], a["c"][2], True, 0, _sp._empty_callout(), 0
     )
     res["A3_A_AppendTrue"] = cnt()
     ext.SelectByID2(
@@ -106,7 +106,7 @@ def main() -> int:
     #: ── B 臂：走实体对象 IEntity.Select4(Append, Callout) ────────────────
     try:
         model.ClearSelection2(True)
-        r1 = A["face"].Select4(False, _sp._empty_callout())
+        r1 = a["face"].Select4(False, _sp._empty_callout())
         res["B1_Select4_A_AppendFalse"] = [bool(r1), cnt()]
         r2 = B["face"].Select4(True, _sp._empty_callout())
         res["B2_Select4_B_AppendTrue"] = [bool(r2), cnt()]
@@ -116,7 +116,7 @@ def main() -> int:
     for k, v in res.items():
         print("★ %-32s %r" % (k, v))
     out["steps"] = res
-    out["centres"] = [A["c"], B["c"]]
+    out["centres"] = [a["c"], B["c"]]
     p = ROOT / "output" / "spec220-append-arms.json"
     p.write_text(
         json.dumps(out, ensure_ascii=False, indent=1, default=str) + "\n",

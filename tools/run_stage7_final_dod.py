@@ -36,7 +36,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import housing as H  # noqa: E402
+from scripts.engineering import housing as h  # noqa: E402
 
 OUT = ROOT / "output" / "stage7"
 PY = sys.executable
@@ -72,23 +72,23 @@ def run_s7a() -> dict:
     rows = []
 
     #: ① 上下箱体服从同一基准
-    m = H.default_housing()
+    m = h.default_housing()
     try:
         m.require_baseline()
         rows.append({"case": "上下箱体同一基准", "ok": True, "got": m.baseline})
-    except H.HousingError as e:
+    except h.HousingError as e:
         rows.append({"case": "上下箱体同一基准", "ok": False, "got": e.detail})
 
     #: ② 孔系关系在容差内
     rs = [
-        H.BoreRelation(
+        h.BoreRelation(
             axis="主轴-上",
             center_distance_mm=120.0,
             expected_center_distance_mm=120.0,
             fit="H7/k6",
             split="上箱体",
         ),
-        H.BoreRelation(
+        h.BoreRelation(
             axis="主轴-下",
             center_distance_mm=120.0,
             expected_center_distance_mm=120.0,
@@ -96,7 +96,7 @@ def run_s7a() -> dict:
             split="下箱体",
         ),
     ]
-    cb = H.check_bore_relations(rs)
+    cb = h.check_bore_relations(rs)
     rows.append(
         {
             "case": "孔系关系在容差内",
@@ -106,7 +106,7 @@ def run_s7a() -> dict:
     )
 
     #: ③ 接口变更正确传播
-    p = H.propagate_axis("bore_center_distance_mm", 120.0, 140.0)
+    p = h.propagate_axis("bore_center_distance_mm", 120.0, 140.0)
     rows.append(
         {
             "case": "接口变更正确传播",
@@ -117,7 +117,7 @@ def run_s7a() -> dict:
 
     #: ④ 无越界声明
     claims = ["按已确认轴系交付箱体"]  #: ★ 合规的说法
-    bad = [c for c in claims if any(o in c for o in H.OUT_OF_SCOPE_CLAIMS)]
+    bad = [c for c in claims if any(o in c for o in h.OUT_OF_SCOPE_CLAIMS)]
     rows.append({"case": "无越界声明", "ok": not bad, "got": claims[0]})
 
     return {"s7a": rows, "ok": all(r["ok"] for r in rows)}
@@ -125,23 +125,23 @@ def run_s7a() -> dict:
 
 def run_s7b(live: dict | None = None) -> dict:
     """★ **S7-B**：最终 DoD（9 案例 + 全门禁 + 证据 + 四层）。"""
-    d = H.FinalDod()
+    d = h.FinalDod()
 
     #: ★★ 三类产品 × 3 变体 = 9 案例（★ 每类由**它自己的**模块验）
-    from scripts.engineering import linkage as LK
-    from scripts.engineering import vise as VS
+    from scripts.engineering import linkage as lk
+    from scripts.engineering import vise as vs
 
-    for v in H.VARIANTS:
+    for v in h.VARIANTS:
         #: ── 平口钳（★ 阶段 5）
-        vm = VS.default_model()
-        vr = VS.evaluate_vise(
+        vm = vs.default_model()
+        vr = vs.evaluate_vise(
             vm,
             turns=5.0 + v,
             readback_mm=20.0 + 4.0 * v,
             jaw_dof=1,
             jaw_motions=["沿导向移动"],
         )
-        c = H.CaseResult(
+        c = h.CaseResult(
             product="vise",
             variant=v,
             obligations_passed=vr["ok"],
@@ -151,7 +151,7 @@ def run_s7b(live: dict | None = None) -> dict:
                 "vise-v%d.pdf" % v,
             ],
         )
-        c.layers = H.LayeredVerdict(
+        c.layers = h.LayeredVerdict(
             planned=True,
             executed=True,
             engineering_passed=vr["ok"],
@@ -160,15 +160,15 @@ def run_s7b(live: dict | None = None) -> dict:
         d.add_case(c)
 
         #: ── 可调连杆（★ 阶段 6）
-        fb = LK.FourBar(a=40.0 + v, b=120.0, c=80.0, d=150.0)
+        fb = lk.FourBar(a=40.0 + v, b=120.0, c=80.0, d=150.0)
         import math
 
-        lr = LK.evaluate_linkage(
+        lr = lk.evaluate_linkage(
             fb,
             math.radians(30.0),
             intentional_dof=[{"name": "曲柄整转", "why": "主动件"}],
         )
-        c2 = H.CaseResult(
+        c2 = h.CaseResult(
             product="linkage",
             variant=v,
             obligations_passed=lr["ok"],
@@ -178,7 +178,7 @@ def run_s7b(live: dict | None = None) -> dict:
                 "linkage-v%d.pdf" % v,
             ],
         )
-        c2.layers = H.LayeredVerdict(
+        c2.layers = h.LayeredVerdict(
             planned=True,
             executed=True,
             engineering_passed=lr["ok"],
@@ -187,17 +187,17 @@ def run_s7b(live: dict | None = None) -> dict:
         d.add_case(c2)
 
         #: ── 箱体（★ 阶段 7）
-        hm = H.default_housing()
+        hm = h.default_housing()
         hm.set("bore_center_distance_mm", 120.0 + 10.0 * v)
         rsl = [
-            H.BoreRelation(
+            h.BoreRelation(
                 axis="主轴-上",
                 center_distance_mm=120.0 + 10.0 * v,
                 expected_center_distance_mm=120.0 + 10.0 * v,
                 fit="H7/k6",
                 split="上箱体",
             ),
-            H.BoreRelation(
+            h.BoreRelation(
                 axis="主轴-下",
                 center_distance_mm=120.0 + 10.0 * v,
                 expected_center_distance_mm=120.0 + 10.0 * v,
@@ -205,9 +205,9 @@ def run_s7b(live: dict | None = None) -> dict:
                 split="下箱体",
             ),
         ]
-        hb = H.check_bore_relations(rsl)
+        hb = h.check_bore_relations(rsl)
         hok = hb["ok"] and bool(hm.baseline)
-        c3 = H.CaseResult(
+        c3 = h.CaseResult(
             product="housing",
             variant=v,
             obligations_passed=hok,
@@ -217,7 +217,7 @@ def run_s7b(live: dict | None = None) -> dict:
                 "housing-v%d.pdf" % v,
             ],
         )
-        c3.layers = H.LayeredVerdict(
+        c3.layers = h.LayeredVerdict(
             planned=True, executed=True, engineering_passed=hok, human_approved=hok
         )
         d.add_case(c3)
@@ -239,8 +239,8 @@ def run_s7b(live: dict | None = None) -> dict:
     for c in d.cases:
         for a in c.artifacts:
             d.evidences.append(
-                H.Evidence(
-                    kind=H.EV_PRODUCT,
+                h.Evidence(
+                    kind=h.EV_PRODUCT,
                     path="output/stage7/%s" % a,
                     sha256="0" * 64,
                     note="★ 案例 %s 的交付件" % c.key,
@@ -390,7 +390,7 @@ def main() -> int:
             )
         )
 
-    out = {"s7a": a, "s7b": b, "live": live, "finished": time.strftime("%H:%M:%S")}
+    out = {"s7a": a, "s7b": b, "live": live, "finished": time.strftime("%h:%M:%S")}
     p = OUT / "final-dod.json"
     p.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     print()

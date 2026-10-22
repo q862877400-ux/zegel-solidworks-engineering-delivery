@@ -8,12 +8,12 @@
 #   ★ 对应 `specs/201-toolbar-gaps` 的 **T610**（★ 而 T605-T610 这六条一直空着）。
 #
 # 官方三源（★ 铁律 4）：
-#   · `C:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
+#   · `c:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
 # `Feature FeatureBossThicken(double Thickness, int Direction, int FaceIndex, bool FillV
 # olume,
 #      bool Merge, bool UseFeatScope, bool UseAutoSelect)`
 #     ★★ 参数表逐字：**`FaceIndex` ⇒「Not used」** ✓（★ 故本包装不收面索引）
-# · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**（★ 继任者是 `IFeatu
+# · `c:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**（★ 继任者是 `IFeatu
 # reManager` 那个）
 #
 # ★ 前置（★ 与 `knit_surfaces_report` 同款）：★ **文件里要有一个曲面体**
@@ -39,13 +39,13 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u52a0\u539a\u66f2\u9762\uff1aIFeatureManager.FeatureBossThicken\uff08B6/T610\uff09",
@@ -54,12 +54,12 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         #: \u2605 \u2460 \u5148\u5efa**\u4e00\u5f20\u66f2\u9762**\uff08\u2605 \u7528\u67
         #: 2c\u4ed3\u5df2\u9a8c\u8fc7\u7684\u62d3\u5c55\u66f2\u9762\uff09
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.02,
             -0.02,
@@ -72,7 +72,7 @@ def main() -> int:
         ex = None
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
-                ex = SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand)
+                ex = sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand)
                 break
             except Exception as exc:  # noqa: BLE001
                 ev["steps"].append(
@@ -91,12 +91,12 @@ def main() -> int:
         )
         ev["before"] = {
             "tree": len(P.feature_names(doc) or []),
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
         }
         #: \u2605 \u2461 \u52a0\u539a
         try:
-            r = SF.thicken_surface_report(doc, 3.0, fill_volume=True, merge=True)
+            r = sf.thicken_surface_report(doc, 3.0, fill_volume=True, merge=True)
             ev["thicken"] = r
         except Exception as exc:  # noqa: BLE001
             ev["thicken"] = {
@@ -105,8 +105,8 @@ def main() -> int:
             }
         ev["after"] = {
             "tree": len(P.feature_names(doc) or []),
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
             "names": list(P.feature_names(doc) or []),
         }
         ev["verdict"] = "pass" if (ev["thicken"] or {}).get("ok") else "fail"
@@ -116,9 +116,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

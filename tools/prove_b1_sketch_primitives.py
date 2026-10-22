@@ -32,9 +32,9 @@ OUT = R / "output" / "b1-sketch-primitives-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     import sw_sketch as SK
-    import sw_sketch_primitives as SP
+    import sw_sketch_primitives as sp
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -50,7 +50,7 @@ def main() -> int:
         doc = None
         try:
             doc = sw_connect.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            p.start_sketch(doc, plane_name="Front Plane")
 
             def nseg():
                 sk = get_com_member(
@@ -70,7 +70,7 @@ def main() -> int:
             )
             row["built"] = n1 > n0
             row["verdict"] = "能" if row["built"] else "不能"
-            P.end_sketch(doc)
+            p.end_sketch(doc)
         except Exception as e:
             row["err"] = "%s: %s" % (type(e).__name__, str(e)[:120])
         finally:
@@ -96,25 +96,25 @@ def main() -> int:
 
     one(
         "3点边角矩形",
-        lambda d: SP.sketch_3point_corner_rectangle(d, -30, -10, 30, -10, 30, 15),
+        lambda d: sp.sketch_3point_corner_rectangle(d, -30, -10, 30, -10, 30, 15),
     )
     one(
         "3点中心矩形",
-        lambda d: SP.sketch_3point_center_rectangle(d, 0, 0, 30, 0, 30, 15),
+        lambda d: sp.sketch_3point_center_rectangle(d, 0, 0, 30, 0, 30, 15),
     )
-    one("平行四边形", lambda d: SP.sketch_parallelogram(d, -25, -10, 25, -10, 5, 15))
-    one("3点圆弧", lambda d: SP.sketch_3point_arc(d, -20, 0, 20, 0, 0, 20))
+    one("平行四边形", lambda d: sp.sketch_parallelogram(d, -25, -10, 25, -10, 5, 15))
+    one("3点圆弧", lambda d: sp.sketch_3point_arc(d, -20, 0, 20, 0, 0, 20))
     one(
         "部分椭圆",
-        lambda d: SP.sketch_elliptical_arc(d, 0, 0, 30, 0, 0, 15, 30, 0, -30, 0, 1),
+        lambda d: sp.sketch_elliptical_arc(d, 0, 0, 30, 0, 0, 15, 30, 0, -30, 0, 1),
     )
-    one("抛物线", lambda d: SP.sketch_parabola(d, 0, 20, 0, 0, -25, 12, 25, 12))
-    one("圆锥", lambda d: SP.sketch_conic(d, 0, 20, 0, 0, -25, 12, 25, 12))
-    one("周边圆", lambda d: SP.sketch_perimeter_circle(d, -20, 0, 20, 0, 0, 18))
+    one("抛物线", lambda d: sp.sketch_parabola(d, 0, 20, 0, 0, -25, 12, 25, 12))
+    one("圆锥", lambda d: sp.sketch_conic(d, 0, 20, 0, 0, -25, 12, 25, 12))
+    one("周边圆", lambda d: sp.sketch_perimeter_circle(d, -20, 0, 20, 0, 0, 18))
 
     def _tangent(d):
-        P.sketch_line(d, -30.0, 0.0, 0.0, 0.0)
-        return SP.sketch_tangent_arc(d, 0.0, 0.0, 15.0, 15.0)
+        p.sketch_line(d, -30.0, 0.0, 0.0, 0.0)
+        return sp.sketch_tangent_arc(d, 0.0, 0.0, 15.0, 15.0)
 
     one("切线弧", _tangent)
 

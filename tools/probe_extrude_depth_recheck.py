@@ -23,7 +23,7 @@ OUT = REPO / "output" / "extrude-depth-capability-recheck.json"
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
     from sw_feature_readback import extrude_depth
 
@@ -31,7 +31,7 @@ def main() -> int:
     rows = []
     for depth_mm in (20.0, 5.0):
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             for a, b in (
                 ((-0.05, -0.03), (0.05, -0.03)),
@@ -40,7 +40,7 @@ def main() -> int:
                 ((-0.05, 0.03), (-0.05, -0.03)),
             ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-        P.extrude_boss(model, sk, depth_mm)
+        p.extrude_boss(model, sk, depth_mm)
         r = extrude_depth(model)  #: ★ 按名不给 ⇒ 兜底找第一个
         units = None
         try:

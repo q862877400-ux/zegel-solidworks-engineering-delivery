@@ -58,7 +58,7 @@ ROOT = Path(
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import check_dispatch_entry_guard as DEG  # noqa: E402
+import check_dispatch_entry_guard as deg  # noqa: E402
 from audit_byref_args import (  # noqa: E402
     BYREF_OK,
     SCALAR_OUT,
@@ -121,7 +121,7 @@ def com_args(entry, call_file: Path, call, slots, srcs, table=None):
       ★★ **spec 267 **试过、已回滚**** ✓
     """
     path, fn, _idx, pname, _ln = entry
-    env = DEG._bind(fn, call)
+    env = deg._bind(fn, call)
     mnode = env.get(pname)
     if not (isinstance(mnode, ast.Constant) and isinstance(mnode.value, str)):
         return ("nonliteral", None, None)
@@ -224,10 +224,10 @@ def main() -> int:
         return 0
     table = load_full_signatures(dumps)
 
-    entries, _visible, _nonlit, _buckets, _df, _cf, files = DEG.scan(ROOT)
-    classes, _resolved_sites = DEG.resolution(entries, files)
+    entries, _visible, _nonlit, _buckets, _df, _cf, files = deg.scan(ROOT)
+    classes, _resolved_sites = deg.resolution(entries, files)
     srcs = {p: files[p][0] for p in files}
-    imap = DEG._import_map(files)
+    imap = deg._import_map(files)
     min_entries, min_sites = _baseline()
 
     byref_cache: dict[Path, set[str]] = {}
@@ -250,13 +250,13 @@ def main() -> int:
         #: ★ 判**所有可一级转发的入口**，不只 `resolved` —— `partial` 入口的**字面量调用
         #: 点**
         #:   同样可判（230 实测那 3 个 `partial` 入口贡献了 42 个可解析调用点）。
-        inner = DEG.inner_wrapper_call(entry[1], entry[3])
-        slots = DEG.forward_slots(entry[1], inner) if inner is not None else None
+        inner = deg.inner_wrapper_call(entry[1], entry[3])
+        slots = deg.forward_slots(entry[1], inner) if inner is not None else None
         if slots is None:
             continue
         n_entries += 1
         hit = 0
-        for cp, call in DEG._entry_sites(entry, files, imap):
+        for cp, call in deg._entry_sites(entry, files, imap):
             status, member, com = com_args(entry, cp, call, slots, srcs)
             if status == "nonliteral":
                 nonliteral += 1

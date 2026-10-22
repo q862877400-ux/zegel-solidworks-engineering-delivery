@@ -306,10 +306,10 @@ def section_properties(
         #:   所以"选一次、读一次"这个配对不能被打断）✓
         #:   ★ 依据：★ 注入解析器**会清空选区**（**事实 503**）⇒ 模型没法先选好 ✗
         if str(selection or "").strip():
-            import sw_selection_spec as _SS
+            import sw_selection_spec as _ss
 
             try:
-                _SS.resolve_selection(
+                _ss.resolve_selection(
                     model, str(selection), str(selection_kind or "FACE")
                 )
             except Exception as exc:  # noqa: BLE001

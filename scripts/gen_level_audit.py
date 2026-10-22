@@ -67,7 +67,7 @@ def build(manifest: dict, gate) -> str:
     caps = manifest["capabilities"]
     lv = Counter(c["level"] for c in caps)
     sc = Counter(c["source"] for c in caps)
-    cross = {(s, l): 0 for s in sorted(gate.SOURCES) for l in sorted(gate.LEVELS)}
+    cross = {(s, item): 0 for s in sorted(gate.SOURCES) for item in sorted(gate.LEVELS)}
     for c in caps:
         cross[(c["source"], c["level"])] = cross.get((c["source"], c["level"]), 0) + 1
 
@@ -127,9 +127,9 @@ def build(manifest: dict, gate) -> str:
     L.append("")
     L.append("| level \\ source | " + " | ".join(sorted(gate.SOURCES)) + " |")
     L.append("|---|" + "---|" * len(gate.SOURCES))
-    for l in sorted(gate.LEVELS):
-        row = [str(cross.get((s, l), 0)) for s in sorted(gate.SOURCES)]
-        L.append("| `%s` | " % l + " | ".join(row) + " |")
+    for item in sorted(gate.LEVELS):
+        row = [str(cross.get((s, item), 0)) for s in sorted(gate.SOURCES)]
+        L.append("| `%s` | " % item + " | ".join(row) + " |")
     L.append("")
     L.append("> ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，")
     L.append("> `source: upstream` 说的是「**代码/广度来自上游**」—— **不是一回事**。")

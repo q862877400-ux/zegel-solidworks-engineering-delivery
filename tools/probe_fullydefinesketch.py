@@ -67,9 +67,9 @@ def main() -> int:
 
     def case(tag, *, form):
         """★ 每种形态单独建一张**未定义**的矩形草图（★ 4 条线都不带尺寸）。"""
-        import sw_part as P
+        import sw_part as p
 
-        P.sketch(model, "Front Plane")
+        p.sketch(model, "Front Plane")
         sk = get_com_member(model, "SketchManager")
         for a, b in (
             ((-0.05, -0.03), (0.05, -0.03)),
@@ -145,7 +145,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:140])
         after = _dim_count(model)
-        P.end_sketch(model)
+        p.end_sketch(model)
         rows.append(
             {
                 "form": form,

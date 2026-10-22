@@ -7,9 +7,9 @@
 ★★ **两种写法**：
   ★ ① **直接相位**：`x = rb*(cos(t+P) + t*sin(t+P))`（★ 三角里带加法）
   ★ ② **展开相位**（★ 只用 cos/sin/乘/加，★ 已被上一轮证明可用）：
-      ★ 令 `A=cos P` · `B=sin P`
-      ★ `x = rb*[cos(t)*(A+t*B) + sin(t)*(t*A−B)]`
-      ★ `y = rb*[sin(t)*(A+t*B) − cos(t)*(t*A−B)]`
+      ★ 令 `A=cos P` · `b=sin P`
+      ★ `x = rb*[cos(t)*(A+t*b) + sin(t)*(t*A−b)]`
+      ★ `y = rb*[sin(t)*(A+t*b) − cos(t)*(t*A−b)]`
       ★★ 核验：★ `t=0` ⇒ `(rb·cos P, rb·sin P)` —— ★ 落在基圆上、角度 = P ✓
 
 ★ 判据：★ **段数增加**（★ 事实 436）✓
@@ -104,15 +104,15 @@ def main() -> int:
         "_": "★ 带**相位**的渐开线表达式（★ 20 齿共用一个式子的前提）",
         "cases": [],
     }
-    PSI = math.radians(9.0)  #: ★ 随便一个相位（齿中心角附近）
-    A, B = math.cos(PSI), math.sin(PSI)
+    psi = math.radians(9.0)  #: ★ 随便一个相位（齿中心角附近）
+    A, b = math.cos(psi), math.sin(psi)
     #: ★ ① 直接相位（三角里带加法）
     ev["cases"].append(
         _one(
             sw,
             "① 直接相位 cos(t+P)",
-            "%.9f*(cos(t+%.9f)+t*sin(t+%.9f))" % (RB, PSI, PSI),
-            "%.9f*(sin(t+%.9f)-t*cos(t+%.9f))" % (RB, PSI, PSI),
+            "%.9f*(cos(t+%.9f)+t*sin(t+%.9f))" % (RB, psi, psi),
+            "%.9f*(sin(t+%.9f)-t*cos(t+%.9f))" % (RB, psi, psi),
             "0",
             "0.6",
         )
@@ -122,8 +122,8 @@ def main() -> int:
         _one(
             sw,
             "② 展开相位（★ 只用 cos/sin/乘/加）",
-            "%.9f*(cos(t)*(%.9f+t*%.9f)+sin(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
-            "%.9f*(sin(t)*(%.9f+t*%.9f)-cos(t)*(t*%.9f-%.9f))" % (RB, A, B, A, B),
+            "%.9f*(cos(t)*(%.9f+t*%.9f)+sin(t)*(t*%.9f-%.9f))" % (RB, A, b, A, b),
+            "%.9f*(sin(t)*(%.9f+t*%.9f)-cos(t)*(t*%.9f-%.9f))" % (RB, A, b, A, b),
             "0",
             "0.6",
         )

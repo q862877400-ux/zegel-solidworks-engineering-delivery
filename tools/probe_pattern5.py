@@ -47,10 +47,10 @@ def _feature_names(model):
 
 def _make_block(model, tag):
     """★ 脚手架：★ 建一块**带凸台的板**（★ 阵列需要有一个可阵的特征）。"""
-    import sw_part as P
+    import sw_part as p
     from sw_connect import get_com_member
 
-    with P.sketch(model, "Front Plane") as sk1:
+    with p.sketch(model, "Front Plane") as sk1:
         sm = get_com_member(model, "SketchManager")
         for a, b in (
             ((-0.05, -0.03), (0.05, -0.03)),
@@ -59,11 +59,11 @@ def _make_block(model, tag):
             ((-0.05, 0.03), (-0.05, -0.03)),
         ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-    P.extrude_boss(model, sk1, 10.0)
-    with P.sketch(model, "Front Plane") as sk2:
+    p.extrude_boss(model, sk1, 10.0)
+    with p.sketch(model, "Front Plane") as sk2:
         sm = get_com_member(model, "SketchManager")
         get_com_member(sm, "CreateCircleByRadius", -0.03, 0.0, 0.0, 0.008)
-    P.extrude_boss(model, sk2, 10.0)
+    p.extrude_boss(model, sk2, 10.0)
     return tag, sk1, sk2
 
 

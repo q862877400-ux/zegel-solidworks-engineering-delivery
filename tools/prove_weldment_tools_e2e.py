@@ -24,7 +24,7 @@
 #     · `solidworks_weldment_evidence`（inject=model · create_missing_cut_list）
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertStructuralWeldment2{,3}.md` ·
+# 官方依据: `c:\swapi\types\IFeatureManager\InsertStructuralWeldment2{,3}.md` ·
 # `…\InsertWeldmentCutList2.md`（`Feature InsertWeldmentCutList2( System.object Bodies )
 # `）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -47,17 +47,17 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "mcp-server"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_weldment as W  # noqa: E402
+from scripts import sw_weldment as w  # noqa: E402
 
 
 def _types(model):
     """★ 按**类型名**清点（★ 事实 242：挑只依赖被测对象的那个）。"""
     out = {}
     try:
-        for feat in W.iter_features_recursive(model):
-            t = str(C.get_com_member(feat, "GetTypeName2") or "")
+        for feat in w.iter_features_recursive(model):
+            t = str(c.get_com_member(feat, "GetTypeName2") or "")
             nm = str(getattr(feat, "Name", "") or "")
             out.setdefault(t, []).append(nm)
     except Exception as exc:  # noqa: BLE001
@@ -66,7 +66,7 @@ def _types(model):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u6309**\u5de5\u5177\u5c42\u5951\u7ea6**\u8dd1\u710a\u4ef6\u5207\u5272\u6e05\u5355\u90a3\u6761\u94fe",
@@ -79,12 +79,12 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         #: \u2605 \u2460 \u753b\u4e00\u6761\u8def\u5f84\u8349\u56fe\uff08\u2605 \u5de5\u
         #: 5177\u5c42\u53ea\u8981\u8349\u56fe\u540d\uff09
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateLine",
             0.0,
             0.0,
@@ -95,7 +95,7 @@ def main() -> int:
         )
         P.end_sketch(doc)
         profile = (
-            r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
+            r"c:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
             r"\GB\square-rods.sldlfp"
         )
 
@@ -103,7 +103,7 @@ def main() -> int:
         #: u53e3**
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
-                feat = W.create_structural_member_from_sketch(doc, cand, profile)
+                feat = w.create_structural_member_from_sketch(doc, cand, profile)
                 ev["steps"].append(
                     {
                         "step": "create",
@@ -125,7 +125,7 @@ def main() -> int:
 
         #: \u2605 \u2462 \u6309\u5951\u7ea6\u8c03 ensure\uff08\u2605 \u65e0\u53c2\uff09
         try:
-            folders = W.ensure_cut_list(doc)
+            folders = w.ensure_cut_list(doc)
             ev["steps"].append({"step": "ensure", "ok": True, "n": len(folders or [])})
         except Exception as exc:  # noqa: BLE001
             ev["steps"].append(
@@ -139,7 +139,7 @@ def main() -> int:
 
         #: \u2605 \u2463 \u6309\u5951\u7ea6\u8c03 evidence
         try:
-            e = W.weldment_evidence(doc, create_missing_cut_list=False)
+            e = w.weldment_evidence(doc, create_missing_cut_list=False)
             ev["evidence"] = {"ok": True, "keys": sorted(e.keys())[:10]}
         except Exception as exc:  # noqa: BLE001
             ev["evidence"] = {
@@ -158,9 +158,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

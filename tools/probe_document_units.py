@@ -95,12 +95,12 @@ def main() -> int:
         #:   ⚠⚠ **本探针初版硬编码 45，那是错的** —— **45 = `swImageQualityWireframe`**
         #:     （"线框图像质量"的布尔偏好）⇒ ★ 读它得到 0，**与单位毫无关系**
         #:     ⇒ ★ 由此得出的"新建零件默认单位是米"是**噪声**（见 known-facts 180 的更正）。
-        SW_UNITS_LINEAR = 47
+        sw_units_linear = 47
         #: ★ 官方签名是**两参**：`GetUserPreferenceInteger(UserPref, UserPrefOption)`
         #:   ⇒ ⚠ 只传一个会报 `非选择性的参数`（= 参数个数不符）。
         #: ★ `UserPrefOption` 按官方说明是"用于自定义标注与尺寸的制图标准" ⇒ 对单位取 0
         #: 。
-        SW_UNITS_LINEAR_OPT = 0
+        sw_units_linear_opt = 0
 
         def read_units(tag: str) -> dict:
             """读**用户偏好**与**文档单位**两处（★ 两者可能不同）。"""
@@ -108,7 +108,7 @@ def main() -> int:
             for label, call in (
                 (
                     "userpref_linear",
-                    lambda: int(sw.GetUserPreferenceIntegerValue(SW_UNITS_LINEAR)),
+                    lambda: int(sw.GetUserPreferenceIntegerValue(sw_units_linear)),
                 ),
                 (
                     "doc_units_via_ext",
@@ -116,8 +116,8 @@ def main() -> int:
                         sw_connect.safe_get_com_member(
                             sw_connect.safe_get_com_member(doc, "Extension"),
                             "GetUserPreferenceInteger",
-                            SW_UNITS_LINEAR,
-                            SW_UNITS_LINEAR_OPT,
+                            sw_units_linear,
+                            sw_units_linear_opt,
                         )
                         or -1
                     ),
@@ -156,7 +156,7 @@ def main() -> int:
         try:
             ext = sw_connect.safe_get_com_member(doc, "Extension")
             sw_connect.call_com_member(
-                ext, "SetUserPreferenceInteger", SW_UNITS_LINEAR, 2
+                ext, "SetUserPreferenceInteger", sw_units_linear, 2
             )  #: 2 = mm
             ev["steps"]["set_units_to_mm"] = "已尝试设为 2（mm）"
             print("  [3] 已把文档单位设为 2（mm）")

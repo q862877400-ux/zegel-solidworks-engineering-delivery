@@ -71,8 +71,8 @@ def main() -> int:
         import inspect
 
         print("  `sketch_spline` 的实现：")
-        for l in inspect.getsource(sw_part.sketch_spline).splitlines()[:24]:
-            print("    %s" % l[:100])
+        for item in inspect.getsource(sw_part.sketch_spline).splitlines()[:24]:
+            print("    %s" % item[:100])
         print()
 
         for label, fn in (

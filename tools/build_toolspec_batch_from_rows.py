@@ -129,7 +129,7 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             if isinstance(k, str) and isinstance(v, str) and k != v:
                 alias[k] = v
         params_src = []
-        _UNITISH = (
+        _unitish = (
             "_mm",
             "_m",
             "_cm",
@@ -152,7 +152,7 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
             #: 」）✓
             #: ② ★ 行里**已经给过这个参数的别名**（`param_alias` 里有它）⇒ ★ 以行的为准
             #: ，别再动 ✓
-            if nm.lower().endswith(_UNITISH) or nm in alias:
+            if nm.lower().endswith(_unitish) or nm in alias:
                 out, real = nm, None
             else:
                 out, real = _maybe_unit_name(nm)

@@ -30,7 +30,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "select4-mark-e2e-evidence.json"
 
@@ -41,12 +41,12 @@ def _g(o, n, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -57,13 +57,13 @@ def main() -> int:
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
+        p.end_sketch(doc)
+        names = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
         faces = []
         for b in list(_g(doc, "GetBodies2", 0, True) or []):
             faces.extend(list(_g(b, "GetFaces") or []))
-        R["face_count"] = len(faces)
+        r["face_count"] = len(faces)
 
         def cnt(m):
             return int(
@@ -83,31 +83,31 @@ def main() -> int:
                     pass
                 if not faces:
                     row["skip"] = "★ 没有面"
-                    R["cases"].append(row)
+                    r["cases"].append(row)
                     continue
-                ok = P._select_com_object(faces[0], append=False, mark=mark, **kwargs)
+                ok = p._select_com_object(faces[0], append=False, mark=mark, **kwargs)
                 row["ret"] = bool(ok)
                 row["readback_mark"] = cnt(mark)
                 row["readback_all"] = cnt(-1)
                 row["mark_landed"] = row["readback_mark"] >= 1
-                R["cases"].append(row)
+                r["cases"].append(row)
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["new_path_ok"] = all(
-        c.get("mark_landed") for c in R["cases"] if c.get("how", "").startswith("★")
+    r["new_path_ok"] = all(
+        c.get("mark_landed") for c in r["cases"] if c.get("how", "").startswith("★")
     )
-    R["old_path_ok"] = all(
-        c.get("mark_landed") for c in R["cases"] if not c.get("how", "").startswith("★")
+    r["old_path_ok"] = all(
+        c.get("mark_landed") for c in r["cases"] if not c.get("how", "").startswith("★")
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

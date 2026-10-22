@@ -73,7 +73,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -100,7 +100,7 @@ def main() -> int:
         try:
             sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
             sim.select_face_at(doc, 0.0, 0.0, 0.0)
-            rep = SL.apply_force_report(mgr, doc, 1)
+            rep = sl.apply_force_report(mgr, doc, 1)
             ev["steps"]["apply_force"] = {
                 "old_judge_ok": bool(isinstance(rep, dict) and rep.get("ok")),
                 "count": [rep.get("count_before"), rep.get("count_after")]

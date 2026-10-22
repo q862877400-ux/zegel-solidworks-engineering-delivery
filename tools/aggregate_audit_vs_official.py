@@ -35,14 +35,14 @@ for f in sorted(D.glob("audit-*.md")):
     checked = _num(r"都核了\s*\**(\d+)\**\s*处")
     reported = _num(r"报了\s*\**(\d+)\**\s*条")
     #: ★ 分歧表的行数（以 `| 数字 |` 开头的行）
-    table_rows = len([l for l in L if re.match(r"\|\s*\d+\s*\|", l)])
+    table_rows = len([item for item in L if re.match(r"\|\s*\d+\s*\|", item)])
     #: ★ 「查不到」段的条数
     try:
-        i0 = next(i for i, l in enumerate(L) if l.startswith("## 查不到"))
+        i0 = next(i for i, item in enumerate(L) if item.startswith("## 查不到"))
         i1 = next(
-            (i for i, l in enumerate(L) if i > i0 and l.startswith("## ")), len(L)
+            (i for i, item in enumerate(L) if i > i0 and item.startswith("## ")), len(L)
         )
-        notfound = len([l for l in L[i0:i1] if l.strip().startswith(("-", "*"))])
+        notfound = len([item for item in L[i0:i1] if item.strip().startswith(("-", "*"))])
     except StopIteration:
         notfound = 0
     rows.append(

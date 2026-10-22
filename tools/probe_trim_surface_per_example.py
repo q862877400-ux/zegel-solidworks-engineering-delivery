@@ -47,11 +47,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_two_crossing_surfaces(doc):
@@ -86,7 +86,7 @@ def _mk_two_crossing_surfaces(doc):
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -108,7 +108,7 @@ def _one(sw, tag, pick_mode):
             pass
         fm = C.get_com_member(doc, "FeatureManager")
         ext = C.get_com_member(doc, "Extension")
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         #: \u2605\u2605 **\u6b65\u9aa4\u2461\uff1a\u5148\u8c03 PreTrimSurface**\uff08\u2
         #: 605 \u800c\u6b64\u65f6\u5c1a\u672a\u9009\u4efb\u4f55\u4e1c\u897f\uff09
         pre = None
@@ -152,7 +152,7 @@ def _one(sw, tag, pick_mode):
             #: \u2605 \u5bf9\u7167\uff1a\u6309**\u5bf9\u8c61**\u9009**\u6240\u6709\u66f2
             #: \u9762\u9762**\uff08\u2605 \u672c\u4ed3\u539f\u6765\u7684\u505a\u6cd5\uff
             #: 09
-            picked = SF._select_all_surface_faces(doc, mark=0) > 0
+            picked = sf._select_all_surface_faces(doc, mark=0) > 0
         row["picked"] = picked
         try:
             row["sel"] = int(
@@ -178,11 +178,11 @@ def _one(sw, tag, pick_mode):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["post_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         types = []
         try:
-            for f in W.iter_features_recursive(doc):
+            for f in w.iter_features_recursive(doc):
                 try:
                     types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001

@@ -8,7 +8,7 @@
 #   ★ 结构照抄**已被真机验证过的**骨架（`tools/prove_b6a_surface_edit.py`）：
 #     · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回元组）
 #     · **每个用例一个新文档** ⇒ 失败不拖累后续
-#     · 用本仓包装（`P.start_sketch` / `P.extrude_boss` / `SP.*`），**不裸调**
+#     · 用本仓包装（`P.start_sketch` / `P.extrude_boss` / `sp.*`），**不裸调**
 #     · **判据 = 特征树叶子名增量**（`sw_part.feature_names` —— ★ 轮 473 的教训）
 #
 #   ★★ **前置**（★ 这三条官方都要求"先选参考实体"）：
@@ -36,8 +36,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_ref_geometry as M  # noqa: E402
 
@@ -57,7 +57,7 @@ def _solid(doc, plane="Front Plane", pts=(-20, -10, 20, -10, 20, 10), depth=0.02
     info = {"depth": depth}
     before = P.feature_names(doc) or []
     P.start_sketch(doc, plane_name=plane)
-    SP.sketch_3point_corner_rectangle(doc, *pts)
+    sp.sketch_3point_corner_rectangle(doc, *pts)
     P.end_sketch(doc)
     info["after_sketch"] = list(P.feature_names(doc) or [])
     rets = []
@@ -85,7 +85,7 @@ def _one(sw, zh, fn):
     row = {"zh": zh, "verdict": "不能"}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
@@ -94,9 +94,9 @@ def _one(sw, zh, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -148,22 +148,22 @@ def _pick_face(doc, idx=0, mark=0):
         ⇒ ★ 故这里**在调用前一刻**再选一次 ✓
     """
     try:
-        bs = list(C.get_com_member(doc, "GetBodies2", -1, True) or [])
+        bs = list(c.get_com_member(doc, "GetBodies2", -1, True) or [])
         if not bs:
             return False, "无 body"
-        fs = list(C.get_com_member(bs[0], "GetFaces") or [])
+        fs = list(c.get_com_member(bs[0], "GetFaces") or [])
         if len(fs) <= idx:
             return False, "面不够（%d）" % len(fs)
         #: ★ 先清选区（★ 免得上一次的残留把 mark 搞乱）
         try:
-            C.get_com_member(doc, "ClearSelection2", True)
+            c.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
         ok = bool(P._select_com_object(fs[idx], append=False, mark=int(mark)))
         try:
             n = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c.get_com_member(
+                    c.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -182,7 +182,7 @@ def _pick_face(doc, idx=0, mark=0):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "B8 参考几何体 5 条逐个真机跑（specs/201-toolbar-gaps）",

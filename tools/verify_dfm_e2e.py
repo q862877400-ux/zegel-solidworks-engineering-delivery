@@ -142,7 +142,7 @@ def main() -> int:
 
         # ── SC-001 四种工艺都被支持 ──────────────────────────────────
         print("=== SC-001 四种工艺 ===")
-        PROC_INPUTS = {
+        proc_inputs = {
             "machining": {"material": "Al6061", "wallThickness": 3.0},
             "sheet_metal": {
                 "material": "SPCC",
@@ -159,7 +159,7 @@ def main() -> int:
             },
         }
         ok_all = True
-        for proc, mfg in PROC_INPUTS.items():
+        for proc, mfg in proc_inputs.items():
             r = build_dfm_report(_doc(td / f"{proc}.json", {"process": proc, **mfg}))
             good = r.get("process") == proc and r.get("status") in (
                 "review_required",

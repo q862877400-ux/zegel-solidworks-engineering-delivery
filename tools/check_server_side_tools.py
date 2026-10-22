@@ -140,9 +140,9 @@ def main(argv: list) -> int:
         import sys as _s
 
         _s.path.insert(0, str(REPO_ROOT / "mcp-server"))
-        import register_capabilities as _RC
+        import register_capabilities as _rc
 
-        spec_names = {sp.name for sp in _RC.all_specs()}
+        spec_names = {sp.name for sp in _rc.all_specs()}
     except Exception as exc:  # noqa: BLE001
         print("  [SKIP] 取不到 ToolSpec 侧的名单：%s" % str(exc)[:90])
         return 0

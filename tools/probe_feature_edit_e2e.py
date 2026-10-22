@@ -1,6 +1,6 @@
 """★ 真机验证 `sw_part.feature_delete`（★ 阶段 5 补的第二个 `改 × 特征` 能力）。
 
-★★ 官方依据：★ `C:\\swapi\\types\\IModelDoc2\\EditDelete.md` 逐字
+★★ 官方依据：★ `c:\\swapi\\types\\IModelDoc2\\EditDelete.md` 逐字
   「**void EditDelete()**」（★ 0 参、★ 无废弃）
   ★★ 它返回 `void` ⇒ ★★★ **判据只能是"特征树里它没了"**（★ 没有返回值可看）✓
 
@@ -13,7 +13,7 @@
 # 仓库:   本项目自身（真机验证）。
 # 文件:   tools/probe_feature_edit_e2e.py
 # 定位:   ★ 阶段 5：验证新增的 `sw_part.feature_delete`。
-#   官方依据: `C:\\swapi\\types\\IModelDoc2\\EditDelete.md`
+#   官方依据: `c:\\swapi\\types\\IModelDoc2\\EditDelete.md`
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -30,14 +30,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "feature-edit-e2e-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -50,7 +50,7 @@ def _try(fn, *a):
 
 def _names(doc) -> list:
     try:
-        return [str(x) for x in (P.feature_names(doc) or [])]
+        return [str(x) for x in (p.feature_names(doc) or [])]
     except Exception:  # noqa: BLE001
         return []
 
@@ -58,11 +58,11 @@ def _names(doc) -> list:
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -73,9 +73,9 @@ def main() -> int:
             0.015,
             0.0,
         )
-        P.end_sketch(doc)
-        nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
+        p.end_sketch(doc)
+        nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
         before = _names(doc)
         R["★_删除前特征"] = before
         target = next(
@@ -84,7 +84,7 @@ def main() -> int:
         R["目标"] = target
 
         #: ★ 正例
-        R["feature_delete"] = _try(P.feature_delete, doc, target)
+        R["feature_delete"] = _try(p.feature_delete, doc, target)
         after = _names(doc)
         R["★_删除后特征"] = after
         R["★_它消失了吗"] = (
@@ -92,7 +92,7 @@ def main() -> int:
         )
 
         #: ★★ 负例（★ 事实 62）
-        R["负例_不存在的特征"] = _try(P.feature_delete, doc, "这个特征不存在_xyz")
+        R["负例_不存在的特征"] = _try(p.feature_delete, doc, "这个特征不存在_xyz")
         R["★_负例抛错了吗"] = (
             "★ 是 ✓" if not R["负例_不存在的特征"].get("ok") else "★★ 否（守卫没生效）"
         )

@@ -331,7 +331,7 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     #:     ★★ **在已经过定义（4）的草图上还继续加** ✗ ⇒ **越加越坏** ✓
     #: ★★★ 正确规则：★★ **只有 `status == 2`（欠定义）才允许加关系** ✓ —— ★ 其余全部**拒
     #: 加并说明** ✗
-    _STATUS_NAME = {
+    _status_name = {
         1: "swUnknownConstraint",
         2: "swUnderConstrained",
         3: "swFullyConstrained",
@@ -352,11 +352,11 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         }.get(st0, "★ 非欠定义状态 ⇒ 不擅自加 ✗")
         return {
             "ok": False,
-            "refused": _STATUS_NAME.get(st0, "status=%r" % (st0,)),
+            "refused": _status_name.get(st0, "status=%r" % (st0,)),
             "status_before": st0,
             "addable_status": ADDABLE_STATUS,
             "error": "草图状态为 **%s（%r）**：%s —— ★ **只有 `status == 2`（欠定义）才允许加关系** ✓"
-            % (_STATUS_NAME.get(st0, "未知"), st0, why),
+            % (_status_name.get(st0, "未知"), st0, why),
             "applied": 0,
             "total": len(plan),
             "results": [],

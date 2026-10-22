@@ -66,7 +66,7 @@ def modal_dialogs() -> tuple:
 
 
 def main() -> int:
-    ev: dict = {"started": time.strftime("%Y-%m-%d %H:%M:%S"), "checks": {}}
+    ev: dict = {"started": time.strftime("%Y-%m-%d %h:%M:%S"), "checks": {}}
     checks: list = []
 
     def chk(name, ok, detail):
@@ -79,7 +79,7 @@ def main() -> int:
     try:
         import sw_connect
 
-        from scripts import sw_hole_features as H
+        from scripts import sw_hole_features as h
 
         sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
         try:
@@ -88,7 +88,7 @@ def main() -> int:
             pass
 
         t0 = time.time()
-        rows = H.list_hole_standards(sw, HOLE_TYPE_COUNTERBORE)
+        rows = h.list_hole_standards(sw, HOLE_TYPE_COUNTERBORE)
         dt = time.time() - t0
         chk(
             "★ list_hole_standards(0) 跑通",
@@ -122,7 +122,7 @@ def main() -> int:
         # ── 轮 125：紧固件链路（★ 顺带验"必须热身"那条约束）──────────
         if rows:
             std_name = str(rows[0]["name"])
-            ft = H.list_fastener_types(sw, std_name, HOLE_TYPE_COUNTERBORE)
+            ft = h.list_fastener_types(sw, std_name, HOLE_TYPE_COUNTERBORE)
             chk(
                 "★ list_fastener_types(%r) 跑通" % std_name,
                 isinstance(ft, list) and ft,
@@ -145,7 +145,7 @@ def main() -> int:
             )
 
             if ft:
-                tt = H.list_fastener_table_types(
+                tt = h.list_fastener_table_types(
                     sw, std_name, ft[0]["id"], HOLE_TYPE_COUNTERBORE
                 )
                 chk(
@@ -158,10 +158,10 @@ def main() -> int:
 
                 # ★★ 反向验证"必须热身"：跳过热身 ⇒ 应失败
                 try:
-                    d_raw = H._hole_standards_data(
+                    d_raw = h._hole_standards_data(
                         sw, HOLE_TYPE_COUNTERBORE, initialize=False
                     )
-                    ax, bx = H._out_container(), H._out_container()
+                    ax, bx = h._out_container(), h._out_container()
                     raw_ok = sw_connect.get_com_member(
                         d_raw, "GetFastenerTypes", std_name, ax, bx
                     )
@@ -196,7 +196,7 @@ def main() -> int:
         passed=sum(1 for c in checks if c),
         total=len(checks),
         verdict="pass" if checks and all(checks) else "fail",
-        finished=time.strftime("%Y-%m-%d %H:%M:%S"),
+        finished=time.strftime("%Y-%m-%d %h:%M:%S"),
     )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(

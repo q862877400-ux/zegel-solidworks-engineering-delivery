@@ -45,7 +45,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_two_surfaces(doc):
@@ -70,7 +70,7 @@ def _mk_two_surfaces(doc):
         P.end_sketch(doc)
         for cand in ("\u8349\u56fe%d" % (i + 1), "Sketch%d" % (i + 1)):
             try:
-                if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -83,7 +83,7 @@ def _mk_two_surfaces(doc):
 def _case_knit(doc):
     """★ 对照（**改动已有体**）：把已有曲面**缝成一张**。"""
     n = _mk_two_surfaces(doc)
-    r = SF.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
+    r = sf.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
     r["surfaces_made"] = n
     return r
 

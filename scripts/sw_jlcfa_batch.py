@@ -46,10 +46,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_fill as FILL
-import sw_jlcfa_grid as G
-import sw_jlcfa_locate as L
-import sw_jlcfa_search as SR
+import sw_jlcfa_fill as fill
+import sw_jlcfa_grid as g
+import sw_jlcfa_locate as l
+import sw_jlcfa_search as sr
 import sw_jlcfa_steps as S
 
 warnings.filterwarnings("ignore")
@@ -60,17 +60,17 @@ EV.mkdir(parents=True, exist_ok=True)
 
 
 def _conn():
-    h, w = L.connect()
-    if L._modal().modal_report(h)["count"]:
-        L._modal().close_modals(h, rounds=2)
-        h, w = L.connect()
+    h, w = l.connect()
+    if l._modal().modal_report(h)["count"]:
+        l._modal().close_modals(h, rounds=2)
+        h, w = l.connect()
     S.cache_drop()
     return h, w
 
 
 def _shot(h: int, w, tag: str):
     try:
-        pane, _cr = G._capture(h, w)
+        pane, _cr = g._capture(h, w)
         if pane is not None:
             pane.save(str(EV / ("%s.png" % tag)))
     except Exception:
@@ -84,7 +84,7 @@ def _wait_generated(h: int, w, secs: int = 26):
         time.sleep(1.5)
         S.cache_drop()
         try:
-            h, w = L.connect()
+            h, w = l.connect()
             st = S.read_state(w)
         except Exception:
             continue
@@ -110,7 +110,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
 
     # ① 搜索
     rec["stage"] = "search"
-    if not SR.search(h, w, code):
+    if not sr.search(h, w, code):
         rec["stage"] = "搜索框不可用"
         _shot(h, w, "FAIL_nosearch_%s" % code)
         rec["secs"] = time.time() - t0
@@ -121,10 +121,10 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         time.sleep(1.0)
         S.cache_drop()
         try:
-            h, w = L.connect()
+            h, w = l.connect()
         except Exception:
             continue
-        pt = SR.first_result_point(w)
+        pt = sr.first_result_point(w)
         if pt:
             break
     if not pt:
@@ -146,18 +146,18 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     #   导航没生效，脚本又生成了一遍**上一个型号**，却被判成功。
     #   ⇒ 型号行对不上就是没进去，重试；仍对不上则判失败。
     def _code_ok(ww) -> bool:
-        return FILL.code_present(ww, code)
+        return fill.code_present(ww, code)
 
     for _attempt in range(4):
         if S.page_kind(st) in ("SELECT", "GENERATED") and _code_ok(w):
             break
         S.log(
             "      型号行未对上「%s」（现 %r），重试导航"
-            % (code, FILL.model_line(w)[:38])
+            % (code, fill.model_line(w)[:38])
         )
         S.cache_drop()
         h, w = _conn()
-        pt2 = SR.first_result_point(w)
+        pt2 = sr.first_result_point(w)
         if pt2:
             S.ensure_front(h)
             S.click(pt2[0], pt2[1], 2.5)
@@ -174,7 +174,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         rec["secs"] = time.time() - t0
         return rec
     if not _code_ok(w):
-        rec["stage"] = "型号行未对上(%s)" % FILL.model_line(w)[:24]
+        rec["stage"] = "型号行未对上(%s)" % fill.model_line(w)[:24]
         _shot(h, w, "FAIL_wrongmodel_%s" % code)
         rec["secs"] = time.time() - t0
         return rec
@@ -184,14 +184,14 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     # ⚑ 判据是**插件自己的型号行**（`【去填写】` 个数），
     #   不是进度百分比、也不是「输入框里有没有字」——
     #   实测 ValuePattern 能让框里有字而插件不登记。
-    h, w, left = FILL.fill_all(h, w)
+    h, w, left = fill.fill_all(h, w)
     rec["pct"] = S.read_state(w)["pct"]
     rec["unfilled"] = left
     # ⚑⚑ **不再回退到 ``SEL.fill_to_100``**（2026-09-30）
     #   实测那条旧路径里写着 ``str(int(rg[0]))``，
     #   对范围 ``[0.5~20]/0.001`` 会算出 **0**（低于下限）⇒ 插件拒收
     #   ⇒ 就是用户看到的「一直重复输入 0」。
-    #   修好的取值逻辑只在 ``FILL.fill_all`` 里，回退等于把老 bug 请回来。
+    #   修好的取值逻辑只在 ``fill.fill_all`` 里，回退等于把老 bug 请回来。
     if left != 0:
         rec["stage"] = "型号行读不到" if left < 0 else "参数未齐(缺%d)" % left
         _shot(h, w, "FAIL_not100_%s" % code)
@@ -205,14 +205,14 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     h, w = _conn()
     btn = None
     for _ in range(10):
-        btn = L.locate(w, "生成预览", "Button")
+        btn = l.locate(w, "生成预览", "Button")
         if btn is not None:
             break
         time.sleep(1.0)
         S.cache_drop()
         h, w = _conn()
     if btn is None:
-        # ⚑ 放宽查找：``L.locate`` 要求 ``is_visible()``，而该按钮
+        # ⚑ 放宽查找：``l.locate`` 要求 ``is_visible()``，而该按钮
         #   **经常报不可见**（实测 BHJF 参数已全齐 `BHJF-D6-L55-M3-N3`，
         #   仍读不到按钮 ⇒ 走到截图兜底 ⇒ 点偏 ⇒ 「未出现建模完成」）。
         #   按钮只要**在插件容器内 + 名字对 + 类型对**就点它。
@@ -223,8 +223,8 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                 if c.element_info.control_type != "Button":
                     continue
                 r = c.rectangle()
-                cr = L.container_rect(w)
-                if cr and L._overlaps(r, cr):
+                cr = l.container_rect(w)
+                if cr and l._overlaps(r, cr):
                     btn = c
                     S.log(
                         "      放宽查找命中生成按钮 %s"
@@ -252,7 +252,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
                     break
             except Exception:
                 continue
-    # ⚑ 只用 UIA 定位按钮 —— 并集遍历修好后 ``L.locate`` 已能稳定拿到
+    # ⚑ 只用 UIA 定位按钮 —— 并集遍历修好后 ``l.locate`` 已能稳定拿到
     #   （实测 `Button '生成预览' (2362,1271,2445,1303)`）。
     #   **不再有截图兜底**：截图是症状级补丁，根因是遍历漏节点，已修。
     if btn is None:

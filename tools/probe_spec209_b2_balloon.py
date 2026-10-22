@@ -46,9 +46,9 @@ OUT = R / "output" / "spec209-balloon.json"
 def main() -> int:
     import sw_assembly as A
     import sw_connect
-    import sw_drawing_create_missing as DM
-    import sw_drawing_expose as E0
-    import sw_part as P
+    import sw_drawing_create_missing as dm
+    import sw_drawing_expose as e0
+    import sw_part as p
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -94,10 +94,10 @@ def main() -> int:
         #: ① 零件（存盘）→ ② 装配（两个组件，存盘）→ ③ 装配工程图 + 一个投影视图
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
-        with P.sketch(part, "Front Plane") as sk:
-            P.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
-        P.end_sketch(part)
-        P.extrude_boss(part, "草图1", 10.0)
+        with p.sketch(part, "Front Plane") as sk:
+            p.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
+        p.end_sketch(part)
+        p.extrude_boss(part, "草图1", 10.0)
         part_path = str(outdir / "probe209_balloon_part.sldprt")
         ev["part_saved"] = bool(sw_connect.save_document(part, part_path))
 
@@ -112,12 +112,12 @@ def main() -> int:
         opened.append(drw)
         made = None
         try:
-            made = E0.create_projected_view(
+            made = e0.create_projected_view(
                 drw, asm_path, view_name="*Front", x_mm=140.0, y_mm=120.0, scale=0.0
             )
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["view_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-        views = [DM._view_name(v) for v in DM._iter_views(drw)]
+        views = [dm._view_name(v) for v in dm._iter_views(drw)]
         ev["views"] = views
         ev["view_made"] = bool(made)
         print("  装配工程图视图：%r" % (views,))
@@ -125,7 +125,7 @@ def main() -> int:
         if views:
             #: ── ① **没有 BOM 表**时调 AutoBalloon5 ────────────────────────────────
             _select_view(drw, views[0])
-            r1 = DM.auto_insert_balloons(drw)
+            r1 = dm.auto_insert_balloons(drw)
             ev["steps"]["no_bom"] = {
                 k: r1.get(k)
                 for k in (
@@ -161,7 +161,7 @@ def main() -> int:
             drw2 = sw_connect.new_document(sw, "drawing")
             opened.append(drw2)
             try:
-                E0.create_projected_view(
+                e0.create_projected_view(
                     drw2,
                     asm_path,
                     view_name="*Front",
@@ -174,10 +174,10 @@ def main() -> int:
                     type(exc).__name__,
                     str(exc)[:160],
                 )
-            views2 = [DM._view_name(v) for v in DM._iter_views(drw2)]
+            views2 = [dm._view_name(v) for v in dm._iter_views(drw2)]
             ev["views2"] = views2
             print("  第二张图视图：%r" % (views2,))
-            found = DM._find_view(drw2, views2[0]) if views2 else (None, "无视图")
+            found = dm._find_view(drw2, views2[0]) if views2 else (None, "无视图")
             view_obj = found[0] if isinstance(found, tuple) else found
             bom = None
             if view_obj is not None:
@@ -205,7 +205,7 @@ def main() -> int:
                     }
                 print("  BOM 表：%s" % str(ev["steps"]["bom_table"])[:110])
                 _select_view(drw2, views2[0])
-                r2 = DM.auto_insert_balloons(drw2)
+                r2 = dm.auto_insert_balloons(drw2)
                 ev["steps"]["with_bom"] = {
                     k: r2.get(k)
                     for k in (

@@ -36,7 +36,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_simulation as SIM
+    import sw_simulation as sim
     from sw_part import (
         current_sketch_name,
         end_sketch,
@@ -61,7 +61,7 @@ def main() -> int:
         try:
             ev["steps"]["material"] = {
                 "ok": True,
-                "name": str(SIM.set_material(doc, "AISI 1020") or "")[:48],
+                "name": str(sim.set_material(doc, "AISI 1020") or "")[:48],
             }
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["material"] = {"ok": False, "err": str(exc)[:100]}
@@ -72,8 +72,8 @@ def main() -> int:
         #: `tools/capture_mesh_solve_evidence.py:95-96` 的用法；★ 直接拿元组当 study 会
         #: 报
         #:   `'tuple' object has no attribute 'CreateMesh'`）。
-        SIM.create_static_study(sw, "DSH-TRIGGER")
-        study = SIM.get_study_by_name(sw, "DSH-TRIGGER")
+        sim.create_static_study(sw, "DSH-TRIGGER")
+        study = sim.get_study_by_name(sw, "DSH-TRIGGER")
         ev["steps"]["study"] = {"ok": study is not None, "type": type(study).__name__}
         #: ★★ **故意不设夹具、不载荷** —— 复现用户的现场：★ 求解器报
         #: 「**未定义载荷或规定的位移**」⇒ **弹模态框**（★ 而这正是要验 `sw_guard` 的地
@@ -81,8 +81,8 @@ def main() -> int:
         #: ★ ③ 建网格（★ 这一般能成）
         try:
             m = (
-                SIM.create_mesh_report(study)
-                if hasattr(SIM, "create_mesh_report")
+                sim.create_mesh_report(study)
+                if hasattr(sim, "create_mesh_report")
                 else None
             )
             ev["steps"]["mesh"] = {
@@ -94,7 +94,7 @@ def main() -> int:
         #: ★★ ④ **跑求解** —— ★ **故意不设夹具/载荷** ⇒ ★ **这里会弹窗**（★ 而 `sw_guard
         #: ` 的哨兵该点掉它）
         try:
-            r = SIM.run_analysis_report(study)
+            r = sim.run_analysis_report(study)
             ev["steps"]["run_analysis"] = {
                 "ok": bool(r.get("ok")),
                 "detail": str(r)[:200],

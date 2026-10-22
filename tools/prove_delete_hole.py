@@ -35,7 +35,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -128,14 +128,14 @@ def _one(sw, tag, with_hole):
         doc = C.new_document(sw, "part")
         row["built"] = _mk_solid_with_hole(doc, with_hole)
         row["before"] = _geom(doc)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         try:
             C.get_com_member(doc, "InsertDeleteHole")
             row["called"] = True
         except Exception as exc:  # noqa: BLE001
             row["called"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["after"] = _geom(doc)
         b, a = row["before"], row["after"]

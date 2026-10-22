@@ -45,8 +45,8 @@ OPTION_CANDIDATES = (1, 0)  #: ★ 1 = AllowTrimmedExtensionTrim ✓
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
-    import sw_weldment as W
+    import sw_selection_spec as ss
+    import sw_weldment as w
 
     out: dict = {
         "official": "IFeatureManager.InsertWeldmentTrimFeature2",
@@ -87,7 +87,7 @@ def main() -> int:
                 nm = sw_part.current_sketch_name(model)
                 sw_part.end_sketch(model)
                 sw_part.extrude_boss(model, nm, 20.0)
-            feats = W.feature_names(model)
+            feats = w.feature_names(model)
             ex = [f for f in feats if "拉伸" in f or "Extrude" in f]
             fm = sw_connect.get_com_member(model, "FeatureManager")
             try:
@@ -113,21 +113,21 @@ def main() -> int:
                 #:   ★ `select_entity_by_index` 的 `append` **默认为 `False`** ✓
                 #: ⇒ ★★ 于是八组读数**全部无效**（mark2 根本没上）⇒ ★ 那种读数**不能当结
                 #: 论** ✓）
-                SS.select_entity_by_index(model, "FACE", 0, append=True)
-                ok2 = SS.get_selection_count(model) > 1
+                ss.select_entity_by_index(model, "FACE", 0, append=True)
+                ok2 = ss.get_selection_count(model) > 1
             except Exception:  # noqa: BLE001
                 ok2 = False
-            before = W.feature_names(model)
-            rep = W.insert_weldment_trim_report(
+            before = w.feature_names(model)
+            rep = w.insert_weldment_trim_report(
                 model, end_cond=end_cond, options=options, gap_mm=0.0
             )
-            added = [n for n in W.feature_names(model) if n not in before]
+            added = [n for n in w.feature_names(model) if n not in before]
             row = {
                 "end_cond": end_cond,
                 "options": options,
                 "body_selected": ok1,
                 "boundary_by_face": ok2,
-                "selection_count": SS.get_selection_count(model),
+                "selection_count": ss.get_selection_count(model),
                 "ok": rep.get("ok"),
                 "added": added,
                 "returned_is_none": rep.get("returned_is_none"),

@@ -38,7 +38,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -110,7 +110,7 @@ def _one(sw, tag, cut):
         ok_solid, sk = _mk_solid_and_profile(doc)
         row["solid"] = ok_solid
         row["sketch"] = sk
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["vol_before"] = _volume(doc)
         try:
             if cut:
@@ -119,7 +119,7 @@ def _one(sw, tag, cut):
                 P.revolve_boss(doc, sk, math.radians(360.0), axis_sketch_name=sk)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["vol_after"] = _volume(doc)
         if row["vol_before"] and row["vol_after"]:

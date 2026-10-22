@@ -34,8 +34,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 from scripts.sw_assembly import add_component, get_components  # noqa: E402
 
 OUT = REPO / "output" / "add-component-three-paths-evidence.json"
@@ -43,7 +43,7 @@ PART = REPO / "output" / "probe_assy_part3.SLDPRT"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a, **kw):
@@ -55,13 +55,13 @@ def _try(fn, *a, **kw):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
         #: ★ 造零件
-        pdoc = C.new_document(sw, "part")
-        P.start_sketch(pdoc, plane_name="Front Plane")
+        pdoc = c.new_document(sw, "part")
+        p.start_sketch(pdoc, plane_name="Front Plane")
         _g(
             _g(pdoc, "SketchManager"),
             "CreateCornerRectangle",
@@ -72,17 +72,17 @@ def main() -> int:
             0.015,
             0.0,
         )
-        P.end_sketch(pdoc)
-        nm = [n for n in (P.feature_names(pdoc) or []) if n.startswith("草图")]
-        P.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 8.0)
-        R["保存"] = _try(C.save_document, pdoc, str(PART))
+        p.end_sketch(pdoc)
+        nm = [n for n in (p.feature_names(pdoc) or []) if n.startswith("草图")]
+        p.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 8.0)
+        r["保存"] = _try(c.save_document, pdoc, str(PART))
         _g(sw, "CloseDoc", str(_g(pdoc, "GetTitle") or ""))
-        R["零件存在"] = PART.exists()
+        r["零件存在"] = PART.exists()
 
-        doc = C.new_document(sw, "assembly")
-        R["装配"] = repr(_g(doc, "GetTitle"))[:60]
+        doc = c.new_document(sw, "assembly")
+        r["装配"] = repr(_g(doc, "GetTitle"))[:60]
         #: ★★ 走本仓自己的三步路（★ `sw` 也传进去，★ 让第 ③ 条路可用）
-        R["add_component(走本仓三步路)"] = _try(
+        r["add_component(走本仓三步路)"] = _try(
             add_component, doc, str(PART), 0.0, 0.0, 0.0, "", sw
         )
         comp = None
@@ -90,8 +90,8 @@ def main() -> int:
             comp = add_component(doc, str(PART), 0.0, 0.0, 0.0, "", sw)
         except Exception:  # noqa: BLE001
             comp = None
-        R["组件"] = repr(comp)[:90]
-        R["get_components"] = _try(get_components, doc)
+        r["组件"] = repr(comp)[:90]
+        r["get_components"] = _try(get_components, doc)
 
         #: ★★ 组件建成 ⇒ **才**验 `SetTransformAndSolve3`
         if comp is not None:
@@ -113,35 +113,35 @@ def main() -> int:
                 xf2 = _g(comp, "Transform2")
             except Exception:  # noqa: BLE001
                 xf2 = None
-            R["变换对象(GetTotalTransform(True))"] = repr(xf)[:70]
-            R["变换对象(Transform2 属性)"] = repr(xf2)[:70]
+            r["变换对象(GetTotalTransform(True))"] = repr(xf)[:70]
+            r["变换对象(Transform2 属性)"] = repr(xf2)[:70]
             if xf is None or "method" in repr(xf):
                 xf = xf2
-            R["旧_SetTransformAndSolve2(xf)"] = _try(
+            r["旧_SetTransformAndSolve2(xf)"] = _try(
                 _g, comp, "SetTransformAndSolve2", xf
             )
-            R["新_SetTransformAndSolve3(xf, True)"] = _try(
+            r["新_SetTransformAndSolve3(xf, True)"] = _try(
                 _g, comp, "SetTransformAndSolve3", xf, True
             )
-            R["新_SetTransformAndSolve3(xf, False)"] = _try(
+            r["新_SetTransformAndSolve3(xf, False)"] = _try(
                 _g, comp, "SetTransformAndSolve3", xf, False
             )
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["★_组件建成了吗"] = (
+    r["★_组件建成了吗"] = (
         "★ 是（可验变换）"
-        if R.get("组件", "None") not in ("None", "")
+        if r.get("组件", "None") not in ("None", "")
         else "★★ 否（变换仍验不了 —— 如实记）"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

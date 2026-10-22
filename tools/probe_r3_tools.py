@@ -31,21 +31,21 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "r3-tools-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _call(tool: str, args: dict) -> dict:
     """★ **按 ToolSpec 的契约调** —— ★ **逐字复刻注册器 `tool_registry.make_tool_function._impl`**。"""
-    spec = {getattr(s, "name", None): s for s in RC.all_specs()}.get(tool)
+    spec = {getattr(s, "name", None): s for s in rc.all_specs()}.get(tool)
     if spec is None:
         return {"ok": False, "err": "★ 工具没注册"}
     mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
@@ -75,9 +75,9 @@ def _call(tool: str, args: dict) -> dict:
             continue  #: ★ 由解析器消费，不进目标函数
         kwargs[alias.get(k, k)] = v
     inj = spec.inject
-    if inj not in RC.RESOLVERS:
+    if inj not in rc.RESOLVERS:
         return {"ok": False, "err": "★ 注入名 %r 不在 RESOLVERS" % inj}
-    kwargs[inj] = RC.RESOLVERS[inj](None)
+    kwargs[inj] = rc.RESOLVERS[inj](None)
 
     #: ★★★ **2026-10-03（接手轮）补的第二处**：注册器在调目标函数前还会跑
     #:   `pre_call(params)`（副作用）与 **`derived_args(params)`（补实参）**
@@ -230,7 +230,7 @@ def _profile() -> str:
       —— ★ **那是"库特征"、不是焊件轮廓** ⇒ `InsertStructuralWeldment5` 必失败
       （★ 真机报「创建失败」—— 而错误信息**指不出是轮廓选错了**）。
     """
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for h in sorted(Path(root).rglob("*.sldlfp")):
             if "weldment profiles" in str(h).lower():
                 return str(h)
@@ -247,7 +247,7 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
     ★ 取面顺序不做假设（★ 官方没说哪两个面），只保证「**选上了 N 个、且 mark 对**」，
       并把实选到的数量如实回报 —— ★ 选不上就报**前置未成立**，不硬调。
     """
-    import scripts.sw_part as _SP
+    import scripts.sw_part as _sp
 
     out = {"requested": count, "mark": mark, "selected": 0, "errs": []}
     try:
@@ -271,7 +271,7 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
             if picked >= count:
                 break
             try:
-                _SP._select_com_object(face, append=(picked > 0), mark=mark)
+                _sp._select_com_object(face, append=(picked > 0), mark=mark)
                 #: ★★ **不回读就等于没选** —— 上一版信了 bool 返回值 ⇒
                 #:   ★ 报「selected 1」而工具那边读到 **全 0**
                 #: （★ 工具 `_selection_marks` 回读的是 `GetSelectedObjectCount2(mark)`
@@ -292,7 +292,7 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
 def main() -> int:
     started = time.time()
     row: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
     row["profile_path"] = prof
 
@@ -365,7 +365,7 @@ def main() -> int:
         r: dict = {"tool": tool, "setup": setup}
         doc = None
         try:
-            doc = C.new_document(sw, "part")
+            doc = c.new_document(sw, "part")
             if setup == "base_flange":
                 sk = _l_shape_sketch(doc)
                 r["sketch"] = sk

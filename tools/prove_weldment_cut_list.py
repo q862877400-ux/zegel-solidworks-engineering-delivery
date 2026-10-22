@@ -21,7 +21,7 @@
 #     列在 **孤儿候选**里（★ 实现了、而**没被工具层调用**）—— ★ 那也正是本轮要消掉的。
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
-# 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md`
+# 官方依据: `c:\swapi\types\IFeatureManager\InsertWeldmentCutList2.md`
 #   （`Feature InsertWeldmentCutList2( System.object Bodies )` · `kind: method`）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -43,25 +43,25 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 import scripts.sw_sketch as SK  # noqa: E402                                   # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_weldment as W  # noqa: E402
+from scripts import sw_weldment as w  # noqa: E402
 
 
 def _cut_list_folders(model):
     """★ 按**类型名**数切割清单文件夹（★ 事实 242）。"""
     out = []
     try:
-        for feat in W.iter_features_recursive(model):
-            if str(C.get_com_member(feat, "GetTypeName2") or "") == "CutListFolder":
-                out.append(str(C.get_com_member(feat, "Name") or ""))
+        for feat in w.iter_features_recursive(model):
+            if str(c.get_com_member(feat, "GetTypeName2") or "") == "CutListFolder":
+                out.append(str(c.get_com_member(feat, "Name") or ""))
     except Exception as exc:  # noqa: BLE001
         return {"err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
     return out
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u771f\u673a\uff1asw_weldment.ensure_cut_list\uff08\u2605 \u5b83\u65e9\u5df2\u5b9e\u73b0 dispid \u515c\u5e95\uff09",
@@ -70,7 +70,7 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         #: \u2605 \u2460 \u5148\u5efa\u4e00\u4e2a**\u710a\u4ef6**\uff08\u2605 \u7ed3\u67
         #: 84\u6784\u4ef6\uff09
         #: \u2605\u2605 2026-10-03\uff08\u8f6e 497\uff09**\u7b2c\u4e00\u7248\u7b7e\u540d
@@ -89,8 +89,8 @@ def main() -> int:
         #: \u6bcf\u7ec4\u4e00\u4e2a `CreateStructuralMemberGroup`\uff09\u21d2 \u2605 \u6
         #: 545\u8fd9\u91cc**\u5728\u8349\u56fe\u5f00\u7740\u65f6**\u53d6\u6bb5\u3002
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateLine",
             0.0,
             0.0,
@@ -105,8 +105,8 @@ def main() -> int:
         #: 3\u4e86\u5c31\u53d6\u4e0d\u5230\uff09
         segments = []
         try:
-            sk = C.get_com_member(
-                C.get_com_member(doc, "SketchManager"), "ActiveSketch"
+            sk = c.get_com_member(
+                c.get_com_member(doc, "SketchManager"), "ActiveSketch"
             )
             segments = list(SK.get_sketch_segments(sk) or [])
         except Exception as exc:  # noqa: BLE001
@@ -118,14 +118,14 @@ def main() -> int:
             )
         P.end_sketch(doc)
         profile = (
-            r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
+            r"c:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
             r"\GB\square-rods.sldlfp"
         )
         ev["steps"].append({"step": "segments", "n": len(segments)})
         sm = None
         if segments:
             try:
-                sm = W.create_structural_member(
+                sm = w.create_structural_member(
                     doc, profile_path=profile, segment_groups=[[s] for s in segments]
                 )
             except Exception as exc:  # noqa: BLE001
@@ -141,9 +141,9 @@ def main() -> int:
 
         #: \u2605 \u2461 \u771f\u673a\u8c03\u5b83
         try:
-            folders = W.ensure_cut_list(doc)
+            folders = w.ensure_cut_list(doc)
             #: ⚠ 2026-10-03（轮 497）**这里也踩了一下**：我原来写
-            #:   `C.get_com_member(f, "Name")` —— ★ 而真机报
+            #:   `c.get_com_member(f, "Name")` —— ★ 而真机报
             #:   `AttributeError: 'PyIDispatch' object has no attribute 'Name'` ⚠
             #:   ⇒ ★ 那些 `CutListFolder` 的 `f` **直接读 `.Name` 不行**
             #:   ⇒ ★ 故**只记个数**；★ 而名字交给下面的 `_cut_list_folders()`
@@ -164,9 +164,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

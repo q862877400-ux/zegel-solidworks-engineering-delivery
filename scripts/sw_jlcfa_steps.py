@@ -59,7 +59,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_cards as C
-import sw_jlcfa_locate as L
+import sw_jlcfa_locate as l
 import win32api
 import win32con
 
@@ -82,7 +82,7 @@ def _container_from(allc):
     for c in allc:
         try:
             t = (c.window_text() or "").strip()
-            if t not in L.CONTAINER_NAMES:
+            if t not in l.CONTAINER_NAMES:
                 continue
             r = c.rectangle()
         except Exception:
@@ -129,7 +129,7 @@ def read_state(w) -> dict[str, Any]:
             ct = c.element_info.control_type
         except Exception:
             continue
-        if not t or not L._overlaps(r, cr):
+        if not t or not l._overlaps(r, cr):
             continue
         if ct == "ComboBox":
             try:
@@ -149,7 +149,7 @@ def read_state(w) -> dict[str, Any]:
                 vis = bool(c.is_visible()) and bool(c.is_enabled())
             except Exception:
                 vis = False
-            if vis and L._overlaps(r, cr) and r.width() > 4 and r.height() > 4:
+            if vis and l._overlaps(r, cr) and r.width() > 4 and r.height() > 4:
                 st["visible"].add(t)
         names.append(t)
         if t.startswith(C.CODE_PREFIX):
@@ -275,7 +275,7 @@ def run_step(
             time.sleep(0.6)
             cache_drop()  # ★ 界面可能已变，重新遍历
             try:
-                h2, w2 = L.connect()
+                h2, w2 = l.connect()
             except Exception:
                 continue
             st = read_state(w2)
@@ -327,7 +327,7 @@ def controls_cached(w) -> list:
         and now - _CACHE["t"] < CACHE_TTL
     ):
         return _CACHE["allc"]
-    allc = L._controls(w)
+    allc = l._controls(w)
     _CACHE.update({"win": w, "allc": allc, "t": now})
     log("   (缓存刷新: %d 个控件)" % len(allc))
     return allc
@@ -355,7 +355,7 @@ def ensure_front(h: int) -> bool:
     try:
         if win32gui.GetForegroundWindow() == h:
             return True
-        L.focus_solidworks(h)
+        l.focus_solidworks(h)
         if win32gui.GetForegroundWindow() != h:
             log("   (焦点未取得，仍继续 —— 由点击后的页面判据验收)")
     except Exception:

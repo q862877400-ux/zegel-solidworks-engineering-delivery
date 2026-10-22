@@ -318,7 +318,7 @@ def main() -> int:
     args = ap.parse_args()
 
     import sw_connect
-    import sw_fingerprint as FP
+    import sw_fingerprint as fp
     import tool_caller
 
     table = json.loads(EFFECTS.read_text(encoding="utf-8")).get("tools", {})
@@ -443,7 +443,7 @@ def main() -> int:
             #: ★★ 指纹一律读**文档**（★ 见 `build_host` 的说明）✓
             _doc = injects.get("_doc")
             before = (
-                FP.read(_doc, sw)
+                fp.read(_doc, sw)
                 if _doc is not None
                 else {"readings": {}, "usable": False}
             )
@@ -469,11 +469,11 @@ def main() -> int:
                 },
             )
             after = (
-                FP.read(_doc, sw)
+                fp.read(_doc, sw)
                 if _doc is not None
                 else {"readings": {}, "usable": False}
             )
-            diff = FP.compare_detailed(before, after)
+            diff = fp.compare_detailed(before, after)
             verdict = classify(
                 table[name].get("writes"),
                 {"changed": diff["changed"], "unknown": diff["unknown"]},

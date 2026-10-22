@@ -28,9 +28,9 @@ def main() -> int:
         lines = f.read_text(encoding="utf-8", errors="replace").splitlines()
         print("=" * 24, f.name)
         #: ★ 打印"计数"与"成立率"两节的要点 + 立刻要改那一节
-        for i, l in enumerate(lines):
-            if HEAD.match(l):
-                print("★ 节：", l.strip()[:110])
+        for i, item in enumerate(lines):
+            if HEAD.match(item):
+                print("★ 节：", item.strip()[:110])
                 n = 0
                 for k in range(i + 1, min(len(lines), i + 40)):
                     s = lines[k].strip()
@@ -48,9 +48,9 @@ def main() -> int:
                 print("   ★ 本节行数:", n)
                 break
         #: ★ 顺带抓成立率
-        for l in lines:
-            if "成立率" in l and "|" in l:
-                print("★", l.strip()[:130])
+        for item in lines:
+            if "成立率" in item and "|" in item:
+                print("★", item.strip()[:130])
         print()
     print("★ 三份稿的『立刻要改』条目合计（粗计）:", total)
     return 0

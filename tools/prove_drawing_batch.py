@@ -153,7 +153,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_drawing_query as DQ  # noqa: E402
+import scripts.sw_drawing_query as dq  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -326,7 +326,7 @@ def _real_views(doc):
       "空图纸上 `GetFirstView()` 回的是图纸本身、`Type == 1`"的那一处）取**名单**，再按名对上对象。
     """
     try:
-        names = [str((r or {}).get("name") or "") for r in (DQ.list_views(doc) or [])]
+        names = [str((r or {}).get("name") or "") for r in (dq.list_views(doc) or [])]
     except Exception as exc:  # noqa: BLE001
         return [], "取视图清单失败：%s: %s" % (type(exc).__name__, str(exc)[:120])
     chain, err = _chain(doc)
@@ -338,7 +338,7 @@ def _real_views(doc):
 def _view_count(doc):
     """★ **视图数**（判据之一 —— ★ 不用特征树增量）。"""
     try:
-        return len(DQ.list_views(doc) or [])
+        return len(dq.list_views(doc) or [])
     except Exception:  # noqa: BLE001
         return None
 
@@ -628,9 +628,9 @@ def _build_part(sw, row: dict):
         row["extrude_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         return None
     try:
-        from scripts import sw_hole_features as HF
+        from scripts import sw_hole_features as hf
 
-        rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
+        rep = hf.create_hole_wizard_at_selection_report(doc, "+z", "M8")
         row["hole"] = {k: rep.get(k) for k in ("ok", "selection_mark") if k in rep}
     except Exception as exc:  # noqa: BLE001
         #: ★ 孔不成**不阻断**：★ 只是"孔表/中心符号线"那两格的前置会更弱 ⇒ 如实记下来
@@ -1331,14 +1331,14 @@ def case_a1_setup_sheet(sw):
             row["note"] = "★ 前置未成立：新建工程图失败 ⇒ 本格不作判据"
             return row
         try:
-            sheet_name = DQ.current_sheet_name(doc)
+            sheet_name = dq.current_sheet_name(doc)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "读当前图纸名失败：%s: %s" % (
                 type(exc).__name__,
                 str(exc)[:140],
             )
             return row
-        before = DQ.current_sheet_info(doc)
+        before = dq.current_sheet_info(doc)
         ret = _get(
             doc,
             "SetupSheet6",
@@ -1367,7 +1367,7 @@ def case_a1_setup_sheet(sw):
             row["force_rebuild"] = True
         except Exception as exc:  # noqa: BLE001
             row["force_rebuild"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
-        after = DQ.current_sheet_info(doc)
+        after = dq.current_sheet_info(doc)
         changed = {
             k: [before.get(k), after.get(k)]
             for k in sorted(set(before) | set(after))

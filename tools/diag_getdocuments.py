@@ -60,15 +60,15 @@ def main() -> int:
     )
 
     print("\n★ C 组：用本仓的 get_com_member（★ 无实参 ⇒ 先无参调一次）")
-    import sw_connect as SC
+    import sw_connect as sc
 
     _show(
         "get_com_member(sw,'GetDocumentCount')",
-        lambda: SC.get_com_member(sw, "GetDocumentCount"),
+        lambda: sc.get_com_member(sw, "GetDocumentCount"),
     )
     _show(
         "get_com_member(sw,'GetDocuments')",
-        lambda: SC.get_com_member(sw, "GetDocuments"),
+        lambda: sc.get_com_member(sw, "GetDocuments"),
     )
 
     print("\n★ D 组：枚举回读（★ 独立读数，用来判 A/B/C 谁对）")

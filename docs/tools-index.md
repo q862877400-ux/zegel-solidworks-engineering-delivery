@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 626 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 628 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 66 | — |
+| （未归入上面任何一类） | 其他 | 68 | — |
 
 ## 探针（251 个）
 
@@ -774,7 +774,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（66 个）
+## 其他（68 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -829,6 +829,7 @@
 | `propose_capability_sources.py` | @brief 为 `capabilities[].source` 生成**有证据的提案**（不写文件，只打印） |
 | `reclaim_solidworks.py` | ★ **SolidWorks 会话解卡**：探连接 → 判定能不能安全重启 → 重启 → 复验 |
 | `register_topology_capability.py` | @brief 把拓扑优化登记进 capabilities.yaml（护城河域） |
+| `rename_pep8_names.py` | 把 ruff 报的 N812 / N806 改名成 PEP 8 口径（★ 每个名字全文件唯一才动） |
 | `repair_harvest_report_line.py` | ★ 恢复 docs/harvest-report.md 里被审计输出覆盖的那一行（★ 第二次发生 |
 | `sample_cold_tools_for_rag_test.py` | ★ 机械抽样：从全部工具清单里挑一批**冷门**的（★ 不靠我的口味） |
 | `selfcheck_official_source_errors.py` | ★ 自校 `docs/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核 |
@@ -846,6 +847,7 @@
 | `watch_dialogs.py` | ★ **常驻弹窗监视器**：发现弹窗就**主动把内容打印出来**（★ 那就是对 LLM 的"报信"），**不点** |
 | `watch_solver_memory.py` | ★ 内存看门狗：仿真求解进程（`cwbcbfmesh.exe`）吃过头就把它斩掉，★ 只报 + 只斩自己那份 |
 | `wrap_long_comments.py` | 把超宽**注释行**按显示宽度折行（用 tokenize 精确定位，不碰代码与字符串） |
+| `wrap_long_prose.py` | 把超过显示宽度上限的 **docstring / 长字符串行**按标点折行（中文不插空格） |
 
 ---
 

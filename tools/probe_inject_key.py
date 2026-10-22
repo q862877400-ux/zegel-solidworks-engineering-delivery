@@ -27,7 +27,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 OUT = REPO / "output" / "inject-key-evidence.json"
 
@@ -35,7 +35,7 @@ OUT = REPO / "output" / "inject-key-evidence.json"
 def main() -> int:
     started = time.time()
     row: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    specs = {getattr(s, "name", None): s for s in RC.all_specs()}
+    specs = {getattr(s, "name", None): s for s in rc.all_specs()}
     for tool, args in (
         ("solidworks_hole_standards", {"hole_type_id": 0}),
         ("solidworks_costing_evidence", {}),
@@ -59,7 +59,7 @@ def main() -> int:
                         continue
                     kwargs[t] = v
             inj = spec.inject
-            resolver = (RC.RESOLVERS or {}).get(inj)
+            resolver = (rc.RESOLVERS or {}).get(inj)
             r["inject"] = inj
             r["resolver_found"] = resolver is not None
             r["fn_params"] = list(__import__("inspect").signature(fn).parameters)

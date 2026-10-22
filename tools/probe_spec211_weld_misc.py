@@ -58,7 +58,7 @@ def _behaviour(feat, before, after, exc) -> str:
 
 def main() -> int:
     import sw_connect
-    import sw_weldment as W
+    import sw_weldment as w
 
     out: dict = {
         "official": [
@@ -76,7 +76,7 @@ def main() -> int:
 
     #: ══ A · 角撑板（★ `InsertGussetFeature3`，20 参、全标量 ✓）══════════
     model = sw_connect.new_document(sw, "part")
-    before = W.feature_names(model)
+    before = w.feature_names(model)
     fm = sw_connect.get_com_member(model, "FeatureManager")
     exc = None
     feat = None
@@ -114,7 +114,7 @@ def main() -> int:
         )  # BUseLenDimForChamfer · BNeedChamferInGusset
     except Exception as e:  # noqa: BLE001
         exc = e
-    after = W.feature_names(model)
+    after = w.feature_names(model)
     out["gusset_param_form"] = {
         "returned_name": getattr(feat, "Name", None) if feat is not None else None,
         "delta": [n for n in after if n not in before],
@@ -127,7 +127,7 @@ def main() -> int:
 
     #: ══ B · 圆角焊缝（★ `InsertFilletBeadFeature3`，18 参、两数组 ✓）══════
     model2 = sw_connect.new_document(sw, "part")
-    before2 = W.feature_names(model2)
+    before2 = w.feature_names(model2)
     fm2 = sw_connect.get_com_member(model2, "FeatureManager")
     exc2 = None
     feat2 = None
@@ -157,7 +157,7 @@ def main() -> int:
         )  # FaceSet1 · FaceSet2
     except Exception as e:  # noqa: BLE001
         exc2 = e
-    after2 = W.feature_names(model2)
+    after2 = w.feature_names(model2)
     out["fillet_bead_param_form"] = {
         "returned_name": getattr(feat2, "Name", None) if feat2 is not None else None,
         "delta": [n for n in after2 if n not in before2],

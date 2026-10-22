@@ -40,7 +40,7 @@ _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
 import sw_jlcfa_cards as C
-import sw_jlcfa_locate as L
+import sw_jlcfa_locate as l
 import sw_jlcfa_steps as S
 
 warnings.filterwarnings("ignore")
@@ -179,17 +179,17 @@ def _capture(hwnd: int, win):
     sh = importlib.util.module_from_spec(spec)
     sys.modules["shot"] = sh
     spec.loader.exec_module(sh)
-    cr = L.container_rect(win)
+    cr = l.container_rect(win)
     if cr is None:
         return None, None
-    img, ok, _W, _H = sh.capture(hwnd, "")
+    img, ok, _w, _h = sh.capture(hwnd, "")
     if img is None:
         return None, None
     return img.crop((cr.left, cr.top, cr.right, cr.bottom)), cr
 
 
 if __name__ == "__main__":
-    h, w = L.connect()
+    h, w = l.connect()
     S.cache_drop()
     pane, cr = _capture(h, w)
     print("容器 %s  截图 %s" % (cr, pane.size))

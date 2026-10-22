@@ -33,7 +33,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import vise as V  # noqa: E402
+from scripts.engineering import vise as v  # noqa: E402
 
 OUT = ROOT / "output" / "stage5"
 
@@ -41,10 +41,10 @@ OUT = ROOT / "output" / "stage5"
 def run_s5() -> dict:
     """★ **S5 五项功能义务**（★ FR-009：几何通过 ≠ 功能通过）。"""
     rows = []
-    m = V.default_model()
+    m = v.default_model()
 
     #: ① 规定工况全部通过
-    r = V.evaluate_vise(
+    r = v.evaluate_vise(
         m, turns=5.0, readback_mm=20.0, jaw_dof=1, jaw_motions=["沿导向移动（+X）"]
     )
     rows.append({"case": "规定工况全部通过", "ok": r["ok"], "got": r["ok"]})
@@ -87,7 +87,7 @@ def run_s5() -> dict:
     )
 
     #: ⑥ 共享接口变更正确传播
-    p = V.propagate("screw_lead_mm", 4.0, 6.0)
+    p = v.propagate("screw_lead_mm", 4.0, 6.0)
     rows.append(
         {
             "case": "共享接口变更正确传播",
@@ -111,10 +111,10 @@ def run_s5() -> dict:
 def run_reverse() -> dict:
     """★ **R1~R5 反向验证**（★ 规格 §5）。"""
     rows = []
-    m = V.default_model()
+    m = v.default_model()
 
     #: R1 固定活动钳口
-    bad = V.evaluate_vise(
+    bad = v.evaluate_vise(
         m, turns=5.0, readback_mm=20.0, jaw_dof=1, jaw_motions=["移动"], jaw_fixed=True
     )
     rows.append(
@@ -126,9 +126,9 @@ def run_reverse() -> dict:
     )
 
     #: R2 删去导向关系
-    m2 = V.default_model()
+    m2 = v.default_model()
     del m2.interfaces["guide_width_mm"]
-    r2 = V.evaluate_vise(
+    r2 = v.evaluate_vise(
         m2, turns=5.0, readback_mm=20.0, jaw_dof=1, jaw_motions=["移动"]
     )
     rows.append(
@@ -140,7 +140,7 @@ def run_reverse() -> dict:
     )
 
     #: R3 导程误绑
-    tc = V.lead_to_travel(20.0, 5.0, readback_mm=20.0)
+    tc = v.lead_to_travel(20.0, 5.0, readback_mm=20.0)
     rows.append(
         {
             "case": "R3 导程误绑",
@@ -150,13 +150,13 @@ def run_reverse() -> dict:
     )
 
     #: R4 删螺纹定义
-    r4 = V.evaluate_vise(
+    r4 = v.evaluate_vise(
         m,
         turns=5.0,
         readback_mm=20.0,
         jaw_dof=1,
         jaw_motions=["移动"],
-        thread=V.ThreadSpec(),
+        thread=v.ThreadSpec(),
     )
     rows.append(
         {
@@ -169,7 +169,7 @@ def run_reverse() -> dict:
     #: R5 仅体积通过
     import inspect
 
-    sig = inspect.signature(V.evaluate_vise)
+    sig = inspect.signature(v.evaluate_vise)
     rows.append(
         {
             "case": "R5 仅体积不能盖过功能",
@@ -186,7 +186,7 @@ def run_live() -> dict:
     import tool_caller
 
     from scripts import sw_connect
-    from scripts.engineering import drawing_run as DR
+    from scripts.engineering import drawing_run as dr
 
     out: dict = {}
     sw = sw_connect.connect_solidworks(wait_seconds=10)[0]
@@ -235,14 +235,14 @@ def run_live() -> dict:
         #: ★ 出图（★ 复用阶段 2 的 DrawingSpec 链）
         try:
             sw.CommandInProgress = False
-            spec = DR.build_drawing_spec(
+            spec = dr.build_drawing_spec(
                 source_model=p,
                 size_mm=out["expected_bbox"],
                 hole_dia_mm=0.0,
                 hole_count=0,
                 thickness_mm=30.0,
             )
-            sp = DR.write_spec(spec, OUT / "spec.json")
+            sp = dr.write_spec(spec, OUT / "spec.json")
             ok_d, res = tool_caller.call(
                 "solidworks_generate_drawing",
                 spec_path=str(sp),

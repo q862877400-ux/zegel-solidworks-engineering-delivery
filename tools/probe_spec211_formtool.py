@@ -68,9 +68,9 @@ def _find_tool() -> tuple:
 
 
 def _fnames(model):
-    import sw_surface_features as SF
+    import sw_surface_features as sf
 
-    return SF.feature_names(model)
+    return sf.feature_names(model)
 
 
 def main() -> int:
@@ -100,7 +100,7 @@ def main() -> int:
             return 2
 
         #: ★ 前置：★ **钣金件**（★ 仓里 `create_base_flange` 真机已验 ✓）
-        import sw_sheet_metal as SM
+        import sw_sheet_metal as sm
 
         #: ★★★ 按**契约**调（★ AGENTS.md：「按 `ToolSpec` 的契约调，别手调内部实现」✓）—
         #: —
@@ -119,12 +119,12 @@ def main() -> int:
         sw_part.end_sketch(model)
         flange = None
         try:
-            spec = SM.BaseFlangeSpec(
+            spec = sm.BaseFlangeSpec(
                 thickness=float(sw_connect.mm(2.0)),
                 bend_radius=float(sw_connect.mm(1.0)),
                 depth=float(sw_connect.mm(40.0)),
             )
-            flange = SM.create_base_flange(model, sk, spec)
+            flange = sm.create_base_flange(model, sk, spec)
         except Exception as e:  # noqa: BLE001
             out["flange_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
         after_flange = _fnames(model)
@@ -144,19 +144,19 @@ def main() -> int:
         #:   2D sketch containing points**」✗ ⇒ ★ **前置 = 先选一个面** ✓
         #: （★ 我第一版没选 ⇒ 回 None ⇒ ★ 那正是「前置没上」✓ —— ★ 判定文字也这么写的 ✓
         #: ）
-        import sw_selection_spec as SS
+        import sw_selection_spec as ss
 
         face_ok = False
         face_err = None
         try:
             #: ★ 选索引 0 的面（★ `append` 默认 `False` ⇒ 正好清空后单选一面 ✓）
-            SS.select_entity_by_index(model, "FACE", 0)
-            face_ok = SS.get_selection_count(model) > 0
+            ss.select_entity_by_index(model, "FACE", 0)
+            face_ok = ss.get_selection_count(model) > 0
         except Exception as e:  # noqa: BLE001
             face_err = "%s: %s" % (type(e).__name__, str(e)[:120])
         out["face_selected"] = face_ok
         out["face_error"] = face_err
-        out["selection_count"] = SS.get_selection_count(model)
+        out["selection_count"] = ss.get_selection_count(model)
         print("★ 前置：选面 ⇒ %r · 选区计数=%r" % (face_ok, out["selection_count"]))
         b2 = _fnames(model)
         exc = None

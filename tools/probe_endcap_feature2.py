@@ -9,7 +9,7 @@
 # 「Call `InsertEndCapFeature3` if you want to **pre-select** the faces to end-cap in th
 # e
 #      graphics area.」⇒ ★ **`2` 把面当参数收** ⇒ ★ 正好绕开事实 503（预选活不下来）。
-# ★★ 官方例子的**逐字配方**（`C:\\swapi\\examples\\Insert_Weldment_Features_Example_VB.m
+# ★★ 官方例子的**逐字配方**（`c:\\swapi\\examples\\Insert_Weldment_Features_Example_VB.m
 # d`）：
 #     ```
 #     face = selMgr.GetSelectedObject6(1, -1)        ' 取选中的面对象
@@ -21,7 +21,7 @@
 # ★ 选面用**按点**（`SelectByID2("", "FACE", x, y, z, …)`）—— ★ 本仓事实 32 明写这是**可
 # 行路径**
 #     （按名字不行、按对象可行、**按面上的点可行**）。
-# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature2.md` 的签名与 Remark
+# 官方依据: `c:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature2.md` 的签名与 Remark
 # s + 上面那份例子
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -42,20 +42,20 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "endcap-feature2-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _profile():
     pref = ("tube rectangular", "tube square", "pipe", "tube")
     found = []
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for h in sorted(Path(root).rglob("*.sldlfp")):
             s = str(h)
             if "weldment profiles" not in s.lower():
@@ -101,20 +101,20 @@ def _face_center(face):
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
     R["profile"] = prof
     for idx in range(4):  #: ★ 试前 4 张面（每张单独一个案例）
         row: dict = {"face_index": idx}
         doc = None
         try:
-            doc = C.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            doc = c.new_document(sw, "part")
+            p.start_sketch(doc, plane_name="Front Plane")
             _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
-            P.end_sketch(doc)
+            p.end_sketch(doc)
             names = [
                 n
-                for n in (P.feature_names(doc) or [])
+                for n in (p.feature_names(doc) or [])
                 if n.startswith("草图") or n.lower().startswith("sketch")
             ]
             from scripts.sw_weldment import create_structural_member_from_sketch
@@ -152,7 +152,7 @@ def main() -> int:
                         pt[2],
                         False,
                         0,
-                        P._empty_callout(),
+                        p._empty_callout(),
                         0,
                     )
                 )
@@ -169,7 +169,7 @@ def main() -> int:
             got = _g(_g(doc, "SelectionManager"), "GetSelectedObject6", 1, -1)
             row["got_type"] = type(got).__name__
             arr = w32.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [got])
-            before = list(P.feature_names(doc) or [])
+            before = list(p.feature_names(doc) or [])
             #: ★★ 官方例子逐字配方
             ret = _g(
                 _g(doc, "FeatureManager"),
@@ -189,7 +189,7 @@ def main() -> int:
                         row[k] = str(_g(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
-            after = list(P.feature_names(doc) or [])
+            after = list(p.feature_names(doc) or [])
             row["new_features"] = [n for n in after if n not in before]
             row["ok"] = bool(row["new_features"])
         except Exception as exc:  # noqa: BLE001

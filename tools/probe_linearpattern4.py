@@ -44,7 +44,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "linearpattern4-evidence.json"
 
@@ -62,37 +62,37 @@ def _try(fn, *a):
 
 def _names(doc) -> list:
     try:
-        return [str(x) for x in (P.feature_names(doc) or [])]
+        return [str(x) for x in (p.feature_names(doc) or [])]
     except Exception:  # noqa: BLE001
         return []
 
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "试法": []}
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "试法": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     #: ★ 新入口要"定义方向的尺寸名" ⇒ ★ 用**带尺寸的现成件**（★ 上一轮验证过它带 `D1@凸
     #: 台-拉伸1`）
-    EXIST = REPO / "output" / "_probe_drawing_part.SLDPRT"
-    R["带尺寸的件存在"] = EXIST.exists()
+    exist = REPO / "output" / "_probe_drawing_part.SLDPRT"
+    r["带尺寸的件存在"] = exist.exists()
     doc = None
     try:
-        if not EXIST.exists():
-            R["skip"] = "★ 没有带尺寸的件"
+        if not exist.exists():
+            r["skip"] = "★ 没有带尺寸的件"
             raise SystemExit(0)
-        doc = C.open_document(sw, str(EXIST), read_only=False, silent=True)
-        R["打开"] = repr(doc)[:60] if doc is not None else "None"
+        doc = C.open_document(sw, str(exist), read_only=False, silent=True)
+        r["打开"] = repr(doc)[:60] if doc is not None else "None"
         if doc is None:
             raise SystemExit(0)
         names = _names(doc)
-        R["特征"] = names[:12]
+        r["特征"] = names[:12]
         #: ★ 前置：★ 选一个要阵列的特征（★ 上一版验证过这条路成立）
         target = None
         for n in names:
             if "拉伸" in n or "凸台" in n or "Extrude" in n:
                 target = n
                 break
-        R["被阵列特征"] = target
+        r["被阵列特征"] = target
         if target:
             try:
                 _g(
@@ -111,11 +111,11 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 pass
         try:
-            R["回读选中数"] = int(
+            r["回读选中数"] = int(
                 _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
             )
         except Exception:  # noqa: BLE001
-            R["回读选中数"] = -1
+            r["回读选中数"] = -1
         fm = _g(doc, "FeatureManager")
 
         #: ★★ 两种 `DName`：★ 空 · ★ 那个件上真实的尺寸名
@@ -150,7 +150,7 @@ def main() -> int:
             n1 = len(_names(doc))
             case["后特征数"] = n1
             case["建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否"
-            R["试法"].append(case)
+            r["试法"].append(case)
             #: ★ 每次试完清选择（★ 免得第二次的前置被污染）
             try:
                 _g(doc, "ClearSelection2", True)
@@ -173,22 +173,22 @@ def main() -> int:
     except SystemExit:
         pass
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    ok = [c for c in R["试法"] if str(c.get("建成", "")).startswith("★ 是")]
-    R["★★_结论"] = (
+    ok = [c for c in r["试法"] if str(c.get("建成", "")).startswith("★ 是")]
+    r["★★_结论"] = (
         "★ 有建成的一种 ⇒ 新入口可用"
         if ok
         else "★★ 两种都没建成 ⇒ **如实记「前置未打通」**（不硬换）"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

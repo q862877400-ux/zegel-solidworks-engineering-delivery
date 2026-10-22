@@ -39,9 +39,9 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 
 OUT = REPO / "output" / "drawing-tools-e2e-evidence.json"
 #: ★★ **每次运行用唯一文件名** —— 否则上一轮留下的同名文件可能仍被 SolidWorks 打开
@@ -150,18 +150,18 @@ NEEDS_VIEW = {
 
 
 def _get(o, name, *a):
-    return C.get_com_member(o, name, *a)
+    return c.get_com_member(o, name, *a)
 
 
 def _find_drwdot():
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for f in sorted(Path(root).rglob("*.drwdot")):
             return str(f)
     return None
 
 
 def _find_slddrt():
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for f in sorted(Path(root).rglob("*.slddrt")):
             return str(f)
     return None
@@ -169,7 +169,7 @@ def _find_slddrt():
 
 def _build_part(sw, row: dict):
     """★ 建一块板并**存盘**（★ 视图工具的 `ModelName` 必须是含 `.sldprt` 的完整路径）。"""
-    doc = C.new_document(sw, "part")
+    doc = c.new_document(sw, "part")
     try:
         from scripts import sw_part as P
 
@@ -197,16 +197,16 @@ def _build_part(sw, row: dict):
         # （★ 与 `tools/prove_drawing_batch.py::_build_part` 同一手法；★ 孔不成**不阻断*
         # *）
         try:
-            from scripts import sw_hole_features as HF
+            from scripts import sw_hole_features as hf
 
-            rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
+            rep = hf.create_hole_wizard_at_selection_report(doc, "+z", "M8")
             row["hole"] = {k: rep.get(k) for k in ("ok",) if k in rep}
         except Exception as exc:  # noqa: BLE001
             row["hole_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
     except Exception as exc:  # noqa: BLE001
         row["part_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     try:
-        row["part_saved"] = bool(C.save_document(doc, str(PART)))
+        row["part_saved"] = bool(c.save_document(doc, str(PART)))
     except Exception as exc:  # noqa: BLE001
         row["part_save_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
         row["part_saved"] = False
@@ -215,14 +215,14 @@ def _build_part(sw, row: dict):
 
 def _new_drawing(sw, row: dict):
     try:
-        return C.new_document(sw, "drawing")
+        return c.new_document(sw, "drawing")
     except Exception as exc:  # noqa: BLE001
         row["drawing_template_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
     tpl = _find_drwdot()
     if not tpl:
         return None
     try:
-        return C.new_document(sw, "drawing", template_path=tpl)
+        return c.new_document(sw, "drawing", template_path=tpl)
     except Exception as exc2:  # noqa: BLE001
         row["drawing_template_err2"] = "%s: %s" % (type(exc2).__name__, str(exc2)[:140])
         return None
@@ -230,9 +230,9 @@ def _new_drawing(sw, row: dict):
 
 def _view_count(doc):
     try:
-        import scripts.sw_drawing_query as DQ
+        import scripts.sw_drawing_query as dq
 
-        return len(DQ.list_views(doc) or [])
+        return len(dq.list_views(doc) or [])
     except Exception:  # noqa: BLE001
         return None
 
@@ -286,12 +286,12 @@ def _call_tool(spec, resolvers, args: dict) -> tuple[object, str]:
 
 def main() -> int:
     started = time.time()
-    sw, _meta = C.connect_solidworks(wait_seconds=30)
+    sw, _meta = c.connect_solidworks(wait_seconds=30)
     report = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
 
-    specs = {getattr(s, "name", None): s for s in RC.all_specs()}
+    specs = {getattr(s, "name", None): s for s in rc.all_specs()}
     report["registered_tool_count"] = len(specs)
-    report["resolvers"] = sorted(RC.RESOLVERS)
+    report["resolvers"] = sorted(rc.RESOLVERS)
 
     prep = {}
     part_doc, part_path = _build_part(sw, prep)
@@ -334,15 +334,15 @@ def main() -> int:
                     row["preconditions_held"] = False
                 else:
                     try:
-                        from scripts import sw_drawing as _D
+                        from scripts import sw_drawing as _d
 
-                        v = _D.add_view(doc, part_path, "*Front", 0.10, 0.10)
+                        v = _d.add_view(doc, part_path, "*Front", 0.10, 0.10)
                         row["pre_view_created"] = v is not None
                         args["view_name"] = "*Front"  # ★ 占位名；下面按实际视图名改写
                         row["views_after_pre_step"] = _view_count(doc)
-                        import scripts.sw_drawing_query as _DQ
+                        import scripts.sw_drawing_query as _dq
 
-                        names_now = [x.get("name") for x in (_DQ.list_views(doc) or [])]
+                        names_now = [x.get("name") for x in (_dq.list_views(doc) or [])]
                         if names_now:
                             args["view_name"] = str(names_now[0])
                         row["pre_view_name"] = args.get("view_name")
@@ -365,7 +365,7 @@ def main() -> int:
                     row["views_before"] = row["views_before_call"]
                 if row["annotations_before_call"] is not None:
                     row["annotations_before"] = row["annotations_before_call"]
-            ret, how = _call_tool(spec, RC.RESOLVERS, args)
+            ret, how = _call_tool(spec, rc.RESOLVERS, args)
             row["call_path"] = how
             row["ret_type"] = type(ret).__name__
             row["ret_ok"] = bool(ret.get("ok")) if isinstance(ret, dict) else None

@@ -1,6 +1,6 @@
 """★ 真机验证装配族的**五条后继**（★ 一次跑完，★ 逐条记"能不能调"）。
 
-★★ 官方依据（三源里的 `C:\\swapi`，逐条可复核）：
+★★ 官方依据（三源里的 `c:\\swapi`，逐条可复核）：
   · `types/IModelDoc2/EditSuppress.md` 逐字「**Obsolete. Superseded [[IModelDoc2::EditSuppress2]].**」
     ★ 后继 `EditSuppress2()` —— ★★ **1 参（无参）⇒ 与旧的逐字同形 ⇒ 疑似纯改名**
   · `types/IModelDoc2/EditUnsuppress.md` 同上 ⇒ `EditUnsuppress2()`
@@ -32,14 +32,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "assembly-family-successor-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -51,13 +51,13 @@ def _try(fn, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
         #: ★ 装配文档（★ 装配族的前置）
-        doc = C.new_document(sw, "assembly")
-        R["装配文档"] = repr(_g(doc, "GetTitle"))[:80] if doc is not None else "None"
+        doc = c.new_document(sw, "assembly")
+        r["装配文档"] = repr(_g(doc, "GetTitle"))[:80] if doc is not None else "None"
 
         #: ★ 先放一个零件进去（★ 否则 suppress / 变换都没对象）
         try:
@@ -66,8 +66,8 @@ def main() -> int:
                 / "output"
                 / "probe_assy_part.SLDPRT"
             )
-            pdoc = C.new_document(sw, "part")
-            P.start_sketch(pdoc, plane_name="Front Plane")
+            pdoc = c.new_document(sw, "part")
+            p.start_sketch(pdoc, plane_name="Front Plane")
             _g(
                 _g(pdoc, "SketchManager"),
                 "CreateCornerRectangle",
@@ -78,29 +78,29 @@ def main() -> int:
                 0.015,
                 0.0,
             )
-            P.end_sketch(pdoc)
-            nm = [n for n in (P.feature_names(pdoc) or []) if n.startswith("草图")]
-            P.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 8.0)
+            p.end_sketch(pdoc)
+            nm = [n for n in (p.feature_names(pdoc) or []) if n.startswith("草图")]
+            p.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 8.0)
             _g(pdoc, "SaveAs3", str(part), 0, 1, None, None)
             _g(sw, "CloseDoc", str(_g(pdoc, "GetTitle") or ""))
-            R["造零件"] = str(part.exists())
+            r["造零件"] = str(part.exists())
         except Exception as exc:  # noqa: BLE001
-            R["造零件出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
+            r["造零件出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
             part = None
 
         #: ★★★ 旧入口（★ 基线）
-        R["旧_EditSuppress"] = _try(_g, doc, "EditSuppress")
-        R["旧_EditUnsuppress"] = _try(_g, doc, "EditUnsuppress")
+        r["旧_EditSuppress"] = _try(_g, doc, "EditSuppress")
+        r["旧_EditUnsuppress"] = _try(_g, doc, "EditUnsuppress")
         #: ★★★ 新入口
-        R["新_EditSuppress2"] = _try(_g, doc, "EditSuppress2")
-        R["新_EditUnsuppress2"] = _try(_g, doc, "EditUnsuppress2")
+        r["新_EditSuppress2"] = _try(_g, doc, "EditSuppress2")
+        r["新_EditUnsuppress2"] = _try(_g, doc, "EditUnsuppress2")
 
         #: ★ 组件（★ 给 SetTransformAndSolve* 用）
         if part is not None and part.exists():
-            R["旧_AddComponent4"] = _try(
+            r["旧_AddComponent4"] = _try(
                 _g, doc, "AddComponent4", str(part), "", 0.0, 0.0, 0.0
             )
-            R["新_AddComponent5"] = _try(
+            r["新_AddComponent5"] = _try(
                 _g, doc, "AddComponent5", str(part), 0, "", True, 0.0, 0.0, 0.0, True
             )
             comp = None
@@ -111,28 +111,28 @@ def main() -> int:
                     comp = m[0] if isinstance(m, (list, tuple)) and m else None
             except Exception:  # noqa: BLE001
                 comp = None
-            R["组件"] = repr(comp)[:80]
+            r["组件"] = repr(comp)[:80]
             if comp is not None:
                 xf = _try(_g, comp, "GetTotalTransform") if False else None
-                R["旧_SetTransformAndSolve2"] = _try(
+                r["旧_SetTransformAndSolve2"] = _try(
                     _g, comp, "SetTransformAndSolve2", None
                 )
-                R["新_SetTransformAndSolve3"] = _try(
+                r["新_SetTransformAndSolve3"] = _try(
                     _g, comp, "SetTransformAndSolve3", None, True
                 )
 
         #: ★★ `AddMate5` 的后继是**换范式**：★ 先 `CreateMateData(MateType)`
-        R["CreateMateData"] = _try(_g, doc, "CreateMateData", 0)
+        r["CreateMateData"] = _try(_g, doc, "CreateMateData", 0)
         md = None
         try:
             md = _g(doc, "CreateMateData", 0)
         except Exception:  # noqa: BLE001
             md = None
-        R["MateData 对象"] = repr(md)[:80]
-        R["新_CreateMate"] = _try(_g, doc, "CreateMate", md)
-        R["旧_AddMate5_仅试arity"] = _try(_g, doc, "AddMate5")
+        r["MateData 对象"] = repr(md)[:80]
+        r["新_CreateMate"] = _try(_g, doc, "CreateMate", md)
+        r["旧_AddMate5_仅试arity"] = _try(_g, doc, "AddMate5")
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
@@ -141,13 +141,13 @@ def main() -> int:
             pass
     new_ok = sorted(
         k
-        for k, v in R.items()
+        for k, v in r.items()
         if k.startswith("新_") and isinstance(v, dict) and v.get("ok")
     )
-    R["★_新入口能调的"] = "%d 条: %s" % (len(new_ok), ", ".join(x[2:] for x in new_ok))
-    R["seconds"] = round(time.time() - started, 2)
+    r["★_新入口能调的"] = "%d 条: %s" % (len(new_ok), ", ".join(x[2:] for x in new_ok))
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

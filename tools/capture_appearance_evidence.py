@@ -66,7 +66,7 @@ def main() -> int:
     try:
         import sw_connect
 
-        from scripts import sw_appearance as A
+        from scripts import sw_appearance as a
         from scripts import sw_part as P
         from scripts import sw_render_material as M
 
@@ -121,8 +121,8 @@ def main() -> int:
 
         #: ③ ★★ 读写配对：设文档外观 → 回读核对
         try:
-            A.set_document_appearance(doc, TEST_COLOR)
-            v = A.verify_appearance(doc, TEST_COLOR, 0.05)
+            a.set_document_appearance(doc, TEST_COLOR)
+            v = a.verify_appearance(doc, TEST_COLOR, 0.05)
             ev["steps"]["set_and_verify_document_appearance"] = {
                 "ok": bool(v),
                 "set_color": list(TEST_COLOR),

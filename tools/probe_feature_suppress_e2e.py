@@ -26,7 +26,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
         sys.path.insert(0, _p)
 
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "feature-suppress-e2e-evidence.json"
 
@@ -71,12 +71,12 @@ def _is_suppressed(model, name: str):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
     sw, _ = C.connect_solidworks(wait_seconds=30)
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -87,47 +87,47 @@ def main() -> int:
             0.015,
             0.0,
         )
-        P.end_sketch(doc)
-        nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
-        names = [str(x) for x in (P.feature_names(doc) or [])]
-        R["特征"] = names[:10]
+        p.end_sketch(doc)
+        nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
+        names = [str(x) for x in (p.feature_names(doc) or [])]
+        r["特征"] = names[:10]
         target = next(
             (n for n in names if ("拉伸" in n or "Extrude" in n or "凸台" in n)), None
         )
-        R["目标"] = target
-        R["★_抑制前"] = _is_suppressed(doc, target) if target else None
+        r["目标"] = target
+        r["★_抑制前"] = _is_suppressed(doc, target) if target else None
 
         #: ★★ 新能力
-        R["feature_suppress"] = _try(P.feature_suppress, doc, target)
-        R["★_抑制后"] = _is_suppressed(doc, target) if target else None
-        R["feature_unsuppress"] = _try(P.feature_unsuppress, doc, target)
-        R["★_解除后"] = _is_suppressed(doc, target) if target else None
+        r["feature_suppress"] = _try(p.feature_suppress, doc, target)
+        r["★_抑制后"] = _is_suppressed(doc, target) if target else None
+        r["feature_unsuppress"] = _try(p.feature_unsuppress, doc, target)
+        r["★_解除后"] = _is_suppressed(doc, target) if target else None
 
         #: ★ 负例（★ 事实 62：守卫要能被证伪）—— ★ 给一个**不存在的**特征名
-        R["负例_不存在的特征"] = _try(P.feature_suppress, doc, "这个特征不存在_xyz")
+        r["负例_不存在的特征"] = _try(p.feature_suppress, doc, "这个特征不存在_xyz")
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    a, b, c = R.get("★_抑制前"), R.get("★_抑制后"), R.get("★_解除后")
-    R["★★_结论"] = (
+    a, b, c = r.get("★_抑制前"), r.get("★_抑制后"), r.get("★_解除后")
+    r["★★_结论"] = (
         "★ PASS —— 抑制前 %s ⇒ 抑制后 %s ⇒ 解除后 %s" % (a, b, c)
         if (a is False and b is True and c is False)
         else "★★ 需人工看 —— 状态序列 %s ⇒ %s ⇒ %s 不是 False→True→False" % (a, b, c)
     )
-    R["★_负例拒绝了吗"] = (
+    r["★_负例拒绝了吗"] = (
         "★★ 否（★ 守卫没生效）"
-        if R.get("负例_不存在的特征", {}).get("ok")
+        if r.get("负例_不存在的特征", {}).get("ok")
         else "★ 是（★ 抛错）✓"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

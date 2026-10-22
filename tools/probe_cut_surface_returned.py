@@ -44,15 +44,15 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    c.get_com_member(
+        c.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -82,8 +82,8 @@ def _mk_surface(doc, plane="Front Plane"):
     except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    c.get_com_member(
+        c.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -100,7 +100,7 @@ def _mk_surface(doc, plane="Front Plane"):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -111,10 +111,10 @@ def _probe_members(obj):
     """★ 依次试几个**能说明它是什么**的成员（★ 每个都记结果，★ 不猜）。"""
     out = {}
     for label, fn in (
-        ("Name", lambda o: C.get_com_member(o, "Name")),
-        ("GetTypeName2", lambda o: C.get_com_member(o, "GetTypeName2")),
-        ("GetType", lambda o: C.get_com_member(o, "GetType")),
-        ("GetID", lambda o: C.get_com_member(o, "GetID")),
+        ("Name", lambda o: c.get_com_member(o, "Name")),
+        ("GetTypeName2", lambda o: c.get_com_member(o, "GetTypeName2")),
+        ("GetType", lambda o: c.get_com_member(o, "GetType")),
+        ("GetID", lambda o: c.get_com_member(o, "GetID")),
     ):
         try:
             v = fn(obj)
@@ -125,7 +125,7 @@ def _probe_members(obj):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "InsertCutSurface \u8fd4\u56de\u7684**\u90a3\u4e2a\u5bf9\u8c61\u662f\u4ec0\u4e48**",
@@ -134,7 +134,7 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         _mk_solid(doc)
         _mk_surface(doc)
         #: \u2605 \u53ea\u9009**\u7b2c\u4e00\u5f20**\u66f2\u9762\u9762\uff08\u2605 \u4e8
@@ -156,10 +156,10 @@ def main() -> int:
         before = list(P.feature_names(doc) or [])
         from sw_connect import out_i4 as _oi4
 
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            ret = C.get_com_member(
+            ret = c.get_com_member(
                 fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
             )
         except Exception as exc:  # noqa: BLE001
@@ -177,9 +177,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "cut-surface-returned-evidence.json"

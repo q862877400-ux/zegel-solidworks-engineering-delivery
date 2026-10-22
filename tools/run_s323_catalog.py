@@ -276,7 +276,7 @@ def run_v() -> dict:
     )
 
     #: V4 隐藏≠防旁路
-    from scripts.engineering import authorization as AUTH
+    from scripts.engineering import authorization as auth
 
     hidden = [c.name for c in cards if not c.admitted]
     exposed = C.exposure(cards, C.MODE_AUTONOMOUS)["names"]
@@ -286,9 +286,9 @@ def run_v() -> dict:
             "what": "隐藏≠防旁路（有分发处检查）",
             "ok": bool(hidden)
             and hidden[0] not in exposed
-            and hasattr(AUTH, "check_tool"),
+            and hasattr(auth, "check_tool"),
             "got": "未准入 %d 个 · 分发处检查=%s"
-            % (len(hidden), hasattr(AUTH, "check_tool")),
+            % (len(hidden), hasattr(auth, "check_tool")),
         }
     )
 

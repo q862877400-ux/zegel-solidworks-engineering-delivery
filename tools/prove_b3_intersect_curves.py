@@ -33,8 +33,8 @@ OUT = R / "output" / "b3-intersect-curves-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
-    import sw_sketch as SK
+    import sw_part as p
+    import sw_sketch as sk
     import sw_sketch_edit_ops as E
     from sw_connect import get_com_member, safe_get_com_member
 
@@ -49,38 +49,38 @@ def main() -> int:
     try:
         doc = sw_connect.new_document(sw, "part")
         #: \u2460 \u7b2c\u4e00\u4e2a\u4f53\uff1a\u4e00\u4e2a\u65b9\u5757
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_corner_rectangle(doc, -20.0, -20.0, 20.0, 20.0)
-        sk1 = P.current_sketch_name(doc, "")
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk1, 20.0)
+        p.start_sketch(doc, plane_name="Front Plane")
+        p.sketch_corner_rectangle(doc, -20.0, -20.0, 20.0, 20.0)
+        sk1 = p.current_sketch_name(doc, "")
+        p.end_sketch(doc)
+        p.extrude_boss(doc, sk1, 20.0)
         #: \u2461 \u7b2c\u4e8c\u4e2a\u4f53\uff08\u2605 \u4e0e\u7b2c\u4e00\u4e2a**\u76f8\
         #: u4ea4**\uff09\uff1a\u4fa7\u9762\u4e0a\u518d\u62c9\u4e00\u4e2a
-        P.start_sketch(doc, plane_name="Right Plane")
-        P.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
-        sk2 = P.current_sketch_name(doc, "")
-        P.end_sketch(doc)
-        P.extrude_boss(doc, sk2, 60.0)
-        ev["tree"] = len(list(P.feature_names(doc)))
+        p.start_sketch(doc, plane_name="Right Plane")
+        p.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
+        sk2 = p.current_sketch_name(doc, "")
+        p.end_sketch(doc)
+        p.extrude_boss(doc, sk2, 60.0)
+        ev["tree"] = len(list(p.feature_names(doc)))
         #: \u2462 \u8d77\u4e00\u4e2a 3D \u8349\u56fe\uff08\u5b98\u65b9 `Insert3DSketch`\
         #: uff09
         sm = get_com_member(doc, "SketchManager")
         r3d = get_com_member(sm, "Insert3DSketch", True)
         ev["insert_3d"] = str(r3d)[:24]
         sk3d = get_com_member(sm, "ActiveSketch")
-        n0 = int(SK.count_segments(sk3d) or 0) if sk3d is not None else -1
+        n0 = int(sk.count_segments(sk3d) or 0) if sk3d is not None else -1
         ev["active_3d"] = sk3d is not None
         #: \u2463 **\u6309\u5bf9\u8c61**\u9009\u4e24\u4e2a\u9762\uff08\u4e8b\u5b9e 32\uf
         #: f1a\u9762\u6309\u540d\u5b57\u9009\u4e0d\u4e2d\uff09
-        import sw_selection_spec as SS
+        import sw_selection_spec as ss
 
-        c1 = SS.select_entity_by_index(doc, "FACE", 0)
-        c2 = SS.select_entity_by_index(doc, "FACE", 1, append=True)
+        c1 = ss.select_entity_by_index(doc, "FACE", 0)
+        c2 = ss.select_entity_by_index(doc, "FACE", 1, append=True)
         ev["sel"] = [c1, c2]
         #: \u2464 \u8c03\u4ea4\u53c9\u66f2\u7ebf
         E.sketch_intersect_curves(doc)
         sk3d2 = get_com_member(get_com_member(doc, "SketchManager"), "ActiveSketch")
-        n1 = int(SK.count_segments(sk3d2) or 0) if sk3d2 is not None else -1
+        n1 = int(sk.count_segments(sk3d2) or 0) if sk3d2 is not None else -1
         ev["seg"] = [n0, n1]
         ev["built"] = n1 > n0
         ev["verdict"] = "pass" if ev["built"] else "fail"

@@ -43,8 +43,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import gear_geometry as G  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import gear_geometry as g  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 
@@ -52,35 +52,35 @@ def _inv(t: float) -> float:
     return t - math.atan(t)
 
 
-def tooth_curves(spec: G.GearSpec, geo: G.GearGeometry):
+def tooth_curves(spec: g.GearSpec, geo: g.GearGeometry):
     """★ **一个齿**的闭合轮廓 —— 6 条边，★ 全部是方程式驱动曲线（★ 真曲线）。
 
     ★ 逆时针顺序（★ 角度相对**齿中心** = 0）：
       ```
-      ① 右摆线    φ: 0 → phi_b      角 = +(raw(φ) + P_tro)
+      ① 右摆线    φ: 0 → phi_b      角 = +(raw(φ) + p_tro)
       ② 右渐开线  t: t_b → t_a      角 = +(P − inv(t))
       ③ 齿顶弧    t: −ang_tip → +ang_tip
       ④ 左渐开线  t: t_a → t_b      角 = −(P − inv(t))
-      ⑤ 左摆线    φ: phi_b → 0      角 = −(raw(φ) + P_tro)
-      ⑥ 齿根弧    角: −P_tro → +P_tro  （★ 短弧，★ 从齿下方闭合）
+      ⑤ 左摆线    φ: phi_b → 0      角 = −(raw(φ) + p_tro)
+      ⑥ 齿根弧    角: −p_tro → +p_tro  （★ 短弧，★ 从齿下方闭合）
       ```
-    ★★ 判据：★ ①的起点 = ⑥的终点（★ 角度 +P_tro）· ★ ⑤的终点 = ⑥的起点（★ 角度 −P_tro）✓
+    ★★ 判据：★ ①的起点 = ⑥的终点（★ 角度 +p_tro）· ★ ⑤的终点 = ⑥的起点（★ 角度 −p_tro）✓
     """
     m, z = spec.module_mm, spec.teeth
     alpha = math.radians(spec.pressure_angle_deg)
     r = m * z / 2.0
     rb = r * math.cos(alpha)
-    ra = r + G.ADDENDUM_COEFF * m
-    hf = G.DEDENDUM_COEFF * m
+    ra = r + g.ADDENDUM_COEFF * m
+    hf = g.DEDENDUM_COEFF * m
     rf = r - hf
-    rho = G.TOOL_TIP_RADIUS_COEFF * m
+    rho = g.TOOL_TIP_RADIUS_COEFF * m
 
     t_b, t_a = geo.t_root, geo.t_tip
     inv_a = math.tan(alpha) - alpha
     P = math.pi / (2.0 * z) + inv_a
 
     def tro(phi):
-        return G.trochoid_xy_mm(
+        return g.trochoid_xy_mm(
             phi, pitch_radius_mm=r, dedendum_mm=hf, tool_tip_radius_mm=rho
         )
 
@@ -93,7 +93,7 @@ def tooth_curves(spec: G.GearSpec, geo: G.GearGeometry):
             hi = mid
     phi_b = (lo + hi) / 2.0
     raw_end = math.atan2(tro(phi_b)[1], tro(phi_b)[0])
-    P_tro = P - raw_end
+    p_tro = P - raw_end
     ang_tip = P - _inv(t_a)
 
     k_ = 1.0 / 1000.0
@@ -137,11 +137,11 @@ def tooth_curves(spec: G.GearSpec, geo: G.GearGeometry):
         )
         return x, y
 
-    #: ① 右摆线 φ 0→phi_b，★ 相位 = −P_tro（★ 让终点落在 +P）
-    x, y = tro_expr(-P_tro)
+    #: ① 右摆线 φ 0→phi_b，★ 相位 = −p_tro（★ 让终点落在 +P）
+    x, y = tro_expr(-p_tro)
     curves.append(("right_trochoid", x, y, 0.0, phi_b))
     #: ② 右渐开线 t t_b→t_a，★ 相位 = +P
-    x, y = G.involute_flank_expressions(rb, P, right=True)
+    x, y = g.involute_flank_expressions(rb, P, right=True)
     curves.append(("right_involute", x, y, t_b, t_a))
     #: ③ 齿顶弧
     curves.append(
@@ -154,37 +154,37 @@ def tooth_curves(spec: G.GearSpec, geo: G.GearGeometry):
         )
     )
     #: ④ 左渐开线 t t_a→t_b，★ 相位 = −P
-    x, y = G.involute_flank_expressions(rb, -P, right=False)
+    x, y = g.involute_flank_expressions(rb, -P, right=False)
     curves.append(("left_involute", x, y, t_a, t_b))
-    #: ⑤ 左摆线 φ phi_b→0，★ 相位 = +P_tro
-    x, y = tro_expr(P_tro)
+    #: ⑤ 左摆线 φ phi_b→0，★ 相位 = +p_tro
+    x, y = tro_expr(p_tro)
     curves.append(("left_trochoid", x, y, phi_b, 0.0))
-    #: ⑥ 齿根弧：★ −P_tro → +P_tro
+    #: ⑥ 齿根弧：★ −p_tro → +p_tro
     curves.append(
         (
             "root_arc",
             "%.12f*cos(t)" % (rf * k_),
             "%.12f*sin(t)" % (rf * k_),
-            -P_tro,
-            P_tro,
+            -p_tro,
+            p_tro,
         )
     )
     return curves, {
         "P": P,
-        "P_tro": P_tro,
+        "p_tro": p_tro,
         "phi_b": phi_b,
         "ang_tip": ang_tip,
         "t_range": [t_b, t_a],
-        "span_rad": 2.0 * P_tro,
+        "span_rad": 2.0 * p_tro,
         "pitch_rad": 2.0 * math.pi / z,
     }
 
 
 def _features(doc):
     try:
-        from scripts import sw_feature_readback as F
+        from scripts import sw_feature_readback as f
 
-        return list(F.feature_names(doc) or [])
+        return list(f.feature_names(doc) or [])
     except Exception:  # noqa: BLE001
         return []
 
@@ -204,14 +204,14 @@ def main() -> int:
 
 
 def _main() -> int:
-    spec = G.GearSpec(
+    spec = g.GearSpec(
         module_mm=1.0,
         teeth=20,
         face_width_mm=10.0,
         pressure_angle_deg=20.0,
         bore_diameter_mm=8.0,
     )
-    geo = G.calculate_gear_geometry(spec)
+    geo = g.calculate_gear_geometry(spec)
     curves, meta = tooth_curves(spec, geo)
     rep = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -227,19 +227,19 @@ def _main() -> int:
         "curve_count": len(curves),
         "steps": [],
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         before = _features(doc)
         #: ── ① 一个齿的闭合草图 ────────────────────────────────
         P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        sm = c.get_com_member(doc, "SketchManager")
         ok = fail = 0
         fails = []
         for tag, x, y, t0, t1 in curves:
             try:
-                C.get_com_member(
+                c.get_com_member(
                     sm,
                     "CreateEquationSpline2",
                     x,
@@ -260,8 +260,8 @@ def _main() -> int:
                 fails.append("%s: %s" % (tag, str(exc)[:80]))
         rep["steps"].append({"tooth_curves_ok": ok, "failed": fail, "fails": fails[:3]})
         try:
-            sk = C.get_com_member(doc, "GetActiveSketch2")
-            tooth_sketch = str(C.get_com_member(sk, "Name") or "")
+            sk = c.get_com_member(doc, "GetActiveSketch2")
+            tooth_sketch = str(c.get_com_member(sk, "Name") or "")
         except Exception:  # noqa: BLE001
             tooth_sketch = "草图1"
         P.end_sketch(doc)
@@ -275,14 +275,14 @@ def _main() -> int:
             try:
                 feat.Name = tooth_name
             except Exception:  # noqa: BLE001
-                tooth_name = str(C.get_com_member(feat, "Name") or "")
+                tooth_name = str(c.get_com_member(feat, "Name") or "")
         rep["tooth_feature"] = tooth_name
 
         #: ── ③ 圆周阵列 ×z ─────────────────────────────────────
         if feat is not None:
             try:
                 #: ★ 需要一条**轴线** —— 用临时轴（★ 前视基准面的法向）
-                ax = C.get_com_member(doc, "GetActiveSketch2")
+                ax = c.get_com_member(doc, "GetActiveSketch2")
                 #: ★★ 直接用**基准轴**：★ 尝试几种常见命名
                 pat = None
                 errs = []
@@ -311,8 +311,8 @@ def _main() -> int:
             P.start_sketch(doc, plane_name="Front Plane")
             P.sketch_circle(doc, 0.0, 0.0, geo.root_diameter_mm / 2.0)
             try:
-                sk2 = C.get_com_member(doc, "GetActiveSketch2")
-                rim_sketch = str(C.get_com_member(sk2, "Name") or "")
+                sk2 = c.get_com_member(doc, "GetActiveSketch2")
+                rim_sketch = str(c.get_com_member(sk2, "Name") or "")
             except Exception:  # noqa: BLE001
                 rim_sketch = "草图2"
             P.end_sketch(doc)
@@ -336,8 +336,8 @@ def _main() -> int:
             P.start_sketch(doc, plane_name="Front Plane")
             P.sketch_circle(doc, 0.0, 0.0, spec.bore_diameter_mm / 2.0)
             try:
-                sk3 = C.get_com_member(doc, "GetActiveSketch2")
-                bore_sketch = str(C.get_com_member(sk3, "Name") or "")
+                sk3 = c.get_com_member(doc, "GetActiveSketch2")
+                bore_sketch = str(c.get_com_member(sk3, "Name") or "")
             except Exception:  # noqa: BLE001
                 bore_sketch = "草图3"
             P.end_sketch(doc)
@@ -351,21 +351,21 @@ def _main() -> int:
                 }
             )
 
-        C.get_com_member(doc, "ForceRebuild3", False)
+        c.get_com_member(doc, "ForceRebuild3", False)
         after = _features(doc)
         rep["new_features"] = [x for x in after if x not in before][:12]
         try:
-            ext = C.get_com_member(doc, "Extension")
-            mp = C.get_com_member(ext, "CreateMassProperty")
-            vol = float(C.get_com_member(mp, "Volume"))
+            ext = c.get_com_member(doc, "Extension")
+            mp = c.get_com_member(ext, "CreateMassProperty")
+            vol = float(c.get_com_member(mp, "Volume"))
             rep["volume_m3"] = vol
             rep["volume_mm3"] = vol * 1e9
         except Exception as exc:  # noqa: BLE001
             rep["mass_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         try:
-            from scripts import sw_review as RV
+            from scripts import sw_review as rv
 
-            rep["bbox"] = RV.collect_geometry_measurements(doc)
+            rep["bbox"] = rv.collect_geometry_measurements(doc)
         except Exception as exc:  # noqa: BLE001
             rep["bbox_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
     except Exception as exc:  # noqa: BLE001
@@ -373,9 +373,9 @@ def _main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
                 rep["closed"] = True
             except Exception:  # noqa: BLE001
                 pass

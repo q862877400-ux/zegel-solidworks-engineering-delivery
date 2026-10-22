@@ -68,9 +68,9 @@ def main() -> int:
         }
         #: ★ 我们已注册的 function 名（★ 取交集用）
         try:
-            import register_capabilities as RC
+            import register_capabilities as rc
 
-            ours = {s.function for s in RC.all_specs() if getattr(s, "function", None)}
+            ours = {s.function for s in rc.all_specs() if getattr(s, "function", None)}
         except Exception as exc:  # noqa: BLE001
             ours = set()
             ev["registry_err"] = str(exc)[:120]

@@ -408,7 +408,7 @@ def select_active_sketch_segments(model, indices=None) -> int:
       ★ 「选哪个」的语义：★ `indices=None` ⇒ **全选**（= "伸展整张草图"）；★ 给了序号就按序号选 ✓
     :returns: ★ **回读**到的选区计数（★ 0 会抛 —— ★ 事实 8：不信返回值）✓
     """
-    import sw_selection_spec as _SS
+    import sw_selection_spec as _ss
     from sw_connect import get_com_member as _get
     from sw_sketch import active_sketch
 
@@ -423,7 +423,7 @@ def select_active_sketch_segments(model, indices=None) -> int:
     pick = segs if indices is None else [segs[int(i)] for i in indices]
     got = 0
     for i, seg in enumerate(pick):
-        got = _SS.select_object(model, seg, append=(i > 0))
+        got = _ss.select_object(model, seg, append=(i > 0))
     if int(got) <= 0:
         raise RuntimeError("★ 选草图段未成立：回读计数为 0（★ 事实 8：判据只有回读）")
     return int(got)

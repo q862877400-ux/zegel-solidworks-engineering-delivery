@@ -247,9 +247,9 @@ def survey() -> list[dict]:
 
 def _host_alive(pid: int) -> bool:
     """★ 安全阀：宿主进程还在吗（用 OpenProcess 探活，不用 tasklist，快）。"""
-    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+    process_query_limited_information = 0x1000
     h = ctypes.WinDLL("kernel32", use_last_error=True).OpenProcess(
-        PROCESS_QUERY_LIMITED_INFORMATION, False, pid
+        process_query_limited_information, False, pid
     )
     if not h:
         return False

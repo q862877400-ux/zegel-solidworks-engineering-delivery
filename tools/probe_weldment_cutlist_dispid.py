@@ -21,7 +21,7 @@
 # ⇒ ★ **故「取不到」这个说法要精确化**：★ 名字**是已知的**、★ `getattr` 那条**回 None**
 # 。
 #
-#   ★ 官方签名（`C:\swapi\types\IFeatureManager\`）：
+#   ★ 官方签名（`c:\swapi\types\IFeatureManager\`）：
 #     `Feature InsertWeldmentCutList2( System.object Bodies )` —— **1 参**
 #     `Feature InsertWeldmentCutList()`                      —— **0 参**
 #
@@ -49,12 +49,12 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 from win32com.client import VARIANT  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u56de\u7b5b\uff1a\u7ed3\u6784\u7cfb\u7edf\u7684 InsertWeldmentCutList{,2} \u80fd\u4e0d\u80fd\u8c03\uff08dispid \u8def\u5f84\uff09",
@@ -62,12 +62,12 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         #: ★ \u5efa\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4e0d\u662f\u710a\u4ef6 \u2014\
         #: u2014 \u672c\u63a2\u9488\u53ea\u95ee\u8def\u5f84\u901a\u4e0d\u901a\uff09
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             0.0,
             0.0,
@@ -83,7 +83,7 @@ def main() -> int:
                 break
             except Exception:  # noqa: BLE001
                 continue
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c.get_com_member(doc, "FeatureManager")
         ole = fm._oleobj_
         before = list(P.feature_names(doc) or [])
 
@@ -111,7 +111,7 @@ def main() -> int:
 
         #: \u2605 \u2461 1 \u53c2\u90a3\u6761\uff08dispid 174\uff09\u2014\u2014 \u4e09\u
         #: 79cd\u5305\u88c5
-        bodies = list(C.get_com_member(doc, "GetBodies2", -1, True) or [])
+        bodies = list(c.get_com_member(doc, "GetBodies2", -1, True) or [])
         for tag, mk in (
             (
                 "CutList2(\u7a7a\u6570\u7ec4)",
@@ -148,9 +148,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

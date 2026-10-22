@@ -45,13 +45,13 @@ BODY_B = {"x1_mm": 30.0, "y1_mm": -20.0, "x2_mm": 90.0, "y2_mm": 60.0}
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
-    import sw_weldment as W
+    import sw_selection_spec as ss
+    import sw_weldment as w
 
     out: dict = {
         "official": "IFeatureManager.InsertWeldmentTrimFeature2",
         "step": "第二步：把前置完全对上",
-        "marks": dict(W.WELDMENT_TRIM_MARKS),
+        "marks": dict(w.WELDMENT_TRIM_MARKS),
     }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
@@ -72,7 +72,7 @@ def main() -> int:
         name = sw_part.current_sketch_name(model)
         sw_part.end_sketch(model)
         sw_part.extrude_boss(model, name, 20.0)
-    feats = W.feature_names(model)
+    feats = w.feature_names(model)
     extrudes = [f for f in feats if "拉伸" in f or "Extrude" in f]
     out["features"] = feats
     out["extrude_names"] = extrudes
@@ -112,13 +112,13 @@ def main() -> int:
             "mark2_boundary": ok2,
             "feature_names": extrudes[:2],
         }
-        out["selection_count"] = SS.get_selection_count(model)
+        out["selection_count"] = ss.get_selection_count(model)
         print(
             "★ 选择：mark1=%r · mark2=%r · 选区计数=%r"
             % (ok1, ok2, out["selection_count"])
         )
         #: ④ **调**
-        rep = W.insert_weldment_trim_report(model, end_cond=0, options=0, gap_mm=0.0)
+        rep = w.insert_weldment_trim_report(model, end_cond=0, options=0, gap_mm=0.0)
         out["report"] = {
             k: rep.get(k)
             for k in (

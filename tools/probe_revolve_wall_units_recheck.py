@@ -76,16 +76,16 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_feature_readback as R
-    import sw_part as P
+    import sw_feature_readback as r
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
-    with P.sketch(model, "Front Plane") as sk:
-        P.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
+    with p.sketch(model, "Front Plane") as sk:
+        p.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
         get_com_member(
             get_com_member(model, "SketchManager"),
             "CreateCenterLine",
@@ -103,7 +103,7 @@ def main() -> int:
     built = {"error": None}
     try:
         built["returned"] = str(
-            P.revolve_boss(
+            p.revolve_boss(
                 model, str(sk), math.radians(DEG), thin={"type": 0, "thickness": 0.002}
             )
         )[:90]
@@ -144,7 +144,7 @@ def main() -> int:
         ],
     )
 
-    got = R.revolve_params(model)
+    got = r.revolve_params(model)
     step(
         "revolve_params",
         feature=got.get("feature"),

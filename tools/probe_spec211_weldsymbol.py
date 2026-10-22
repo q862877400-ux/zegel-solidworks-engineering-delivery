@@ -114,9 +114,9 @@ def main() -> int:
             out["drawing_error"] = "%s: %s" % (type(e).__name__, str(e)[:120])
         if drawing is not None:
             try:
-                import sw_drawing_expose as DE
+                import sw_drawing_expose as de
 
-                DE.create_three_standard_views(drawing, str(p1))
+                de.create_three_standard_views(drawing, str(p1))
                 views_ok = True
             except Exception as e:  # noqa: BLE001
                 out["views_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])

@@ -34,7 +34,7 @@ WANT = {"A4_探针_甲": "alpha", "A4_探针_乙": "beta", "A4_探针_丙": "gam
 
 
 def main() -> int:
-    import sw_document_data as D
+    import sw_document_data as d
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -45,7 +45,7 @@ def main() -> int:
     except Exception:  # noqa: BLE001
         pass
 
-    wrote = D.set_custom_properties(model, WANT)
+    wrote = d.set_custom_properties(model, WANT)
     rows = (wrote or {}).get("properties") or []
     per_service = {}
     for r in rows:
@@ -62,7 +62,7 @@ def main() -> int:
     #: ）✓
     independent = {}
     for k in WANT:
-        rr = D.read_custom_property(model, k)
+        rr = d.read_custom_property(model, k)
         independent[k] = {
             "raw": rr.get("raw"),
             "exists": rr.get("exists"),

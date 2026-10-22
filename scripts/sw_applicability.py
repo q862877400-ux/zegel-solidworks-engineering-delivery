@@ -153,9 +153,9 @@ def fingerprint_allows_retry(before, after) -> dict:
     ★⚠ 限度（★ 评审自己点出的）：★ 指纹有**盲区**（★ 如 `display` 是本后端限定、
       ★ 自定义属性/材料/视图不覆盖）⇒ ★ 变了**一定**能看出来，★ 没变**不保证**真没变 ✓
     """
-    import sw_fingerprint as FP
+    import sw_fingerprint as fp
 
-    diff = FP.compare_detailed(before or {}, after or {})
+    diff = fp.compare_detailed(before or {}, after or {})
     changed = [c["class"] for c in diff.get("changed", [])]
     if changed:
         return {
@@ -168,7 +168,7 @@ def fingerprint_allows_retry(before, after) -> dict:
         "changed": [],
         "why": "★ 指纹没变 ⇒ 该调用**大概率没生效**，可以重试 ✓",
         "caveat": "★ 指纹有盲区（★ %s 等）⇒ 没变**不保证**真没变"
-        % "、".join(sorted(FP.KNOWN_UNAVAILABLE)),
+        % "、".join(sorted(fp.KNOWN_UNAVAILABLE)),
     }
 
 

@@ -236,8 +236,8 @@ def main(argv=None) -> int:
     #:   ⇒ ★★ **即：唯一能对上它的时刻不存在**（你写对了、一提交它又 +1）。
     #:   ⇒ ★★★ **而一个必然失败的判据不是判据**（事实 62 同族）⇒ ★ 给 ±1；
     #:   ★ **而 files / add / delete 仍严格**（它们不受提交影响）。
-    _STRICT = ("files", "add", "delete")
-    bad = [k for k in _STRICT if claimed.get(k) != real.get(k)]
+    _strict = ("files", "add", "delete")
+    bad = [k for k in _strict if claimed.get(k) != real.get(k)]
     _dc = abs(int(claimed.get("commits", 0)) - int(real.get("commits", 0)))
     if _dc > 1:
         bad.append("commits")

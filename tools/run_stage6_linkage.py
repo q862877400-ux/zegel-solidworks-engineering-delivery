@@ -30,12 +30,12 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import linkage as L  # noqa: E402
+from scripts.engineering import linkage as l  # noqa: E402
 
 OUT = ROOT / "output" / "stage6"
 
 #: ★ 受支持的连杆（★ 满足 Grashof ⇒ 曲柄整转）
-FB = L.FourBar(a=40.0, b=120.0, c=80.0, d=150.0)
+FB = l.FourBar(a=40.0, b=120.0, c=80.0, d=150.0)
 THETA2 = math.radians(30.0)
 
 
@@ -44,7 +44,7 @@ def run_s6() -> dict:
     rows = []
 
     #: ① 机构模型与执行 DAG 均有效（★ 闭环解得出来 + 残差在容差内）
-    s = L.solve_four_bar(FB, THETA2, branch=L.BRANCH_OPEN)
+    s = l.solve_four_bar(FB, THETA2, branch=l.BRANCH_OPEN)
     rows.append(
         {
             "case": "机构模型有效（闭环有解）",
@@ -57,16 +57,16 @@ def run_s6() -> dict:
     rows.append(
         {
             "case": "残差在冻结容差内",
-            "ok": s.residual <= L.DEFAULT_TOL_MM,
-            "got": "%.2e ≤ %.0e" % (s.residual, L.DEFAULT_TOL_MM),
+            "ok": s.residual <= l.DEFAULT_TOL_MM,
+            "got": "%.2e ≤ %.0e" % (s.residual, l.DEFAULT_TOL_MM),
         }
     )
 
     #: ③ 目标自由度与分支正确
-    r = L.evaluate_linkage(
+    r = l.evaluate_linkage(
         FB,
         THETA2,
-        branch=L.BRANCH_OPEN,
+        branch=l.BRANCH_OPEN,
         target_dof=1,
         actual_dof=1,
         intentional_dof=[{"name": "曲柄整转", "why": "主动件"}],
@@ -97,21 +97,21 @@ def run_reverse() -> dict:
     rows = []
 
     #: T1 交换运动副连接对象（★ 机架 ↔ 连杆）
-    good = L.solve_four_bar(FB, THETA2)
-    swapped = L.FourBar(a=40.0, b=150.0, c=80.0, d=120.0)
+    good = l.solve_four_bar(FB, THETA2)
+    swapped = l.FourBar(a=40.0, b=150.0, c=80.0, d=120.0)
     try:
-        sw = L.solve_four_bar(swapped, THETA2)
+        sw = l.solve_four_bar(swapped, THETA2)
         t1 = abs(sw.theta4 - good.theta4) > 1e-3
         got1 = "位姿差 %.4f°" % abs(math.degrees(sw.theta4 - good.theta4))
-    except L.LinkageError:
+    except l.LinkageError:
         t1 = True
         got1 = "★ 交换后解不出来"
     rows.append({"case": "T1 交换运动副", "ok": t1, "got": got1})
 
     #: T2 选错分支
-    got = L.branch_of(FB, good.theta2, good.theta4)
-    s_cross = L.solve_four_bar(FB, THETA2, branch=L.BRANCH_CROSSED)
-    t2 = (got != L.BRANCH_CROSSED) and abs(good.theta4 - s_cross.theta4) > 1e-3
+    got = l.branch_of(FB, good.theta2, good.theta4)
+    s_cross = l.solve_four_bar(FB, THETA2, branch=l.BRANCH_CROSSED)
+    t2 = (got != l.BRANCH_CROSSED) and abs(good.theta4 - s_cross.theta4) > 1e-3
     rows.append(
         {
             "case": "T2 选错分支",
@@ -122,7 +122,7 @@ def run_reverse() -> dict:
     )
 
     #: T3 锁死自由度
-    r3 = L.evaluate_linkage(
+    r3 = l.evaluate_linkage(
         FB,
         THETA2,
         target_dof=1,
@@ -138,7 +138,7 @@ def run_reverse() -> dict:
     )
 
     #: T4 ★★ 全拒策略必须被本规格判错
-    r4 = L.evaluate_linkage(
+    r4 = l.evaluate_linkage(
         FB, THETA2, intentional_dof=[{"name": "曲柄整转", "why": "主动件"}]
     )
     mutant_rejects = True  #: ★ 突变体：有环就拒
@@ -151,7 +151,7 @@ def run_reverse() -> dict:
     )
 
     #: T5 只采样却声称全行程
-    r5 = L.evaluate_linkage(
+    r5 = l.evaluate_linkage(
         FB,
         THETA2,
         intentional_dof=[{"name": "x", "why": "y"}],
@@ -163,8 +163,8 @@ def run_reverse() -> dict:
         {
             "case": "T5 只采样不自动交付",
             "ok": (
-                r5["continuity"]["verdict"] == L.INDETERMINATE
-                and r5["continuity"]["run_state"] == L.BLOCKED_VERIFICATION
+                r5["continuity"]["verdict"] == l.INDETERMINATE
+                and r5["continuity"]["run_state"] == l.BLOCKED_VERIFICATION
             ),
             "got": "%s + %s"
             % (r5["continuity"]["verdict"], r5["continuity"]["run_state"]),
@@ -193,7 +193,7 @@ def main() -> int:
         )
 
     #: ★ 奇异报告
-    ss = L.singular_scan(FB, samples=360)
+    ss = l.singular_scan(FB, samples=360)
     print()
     print(
         "★ 奇异扫描：%d 点（扫了 %d）· 类型 %s"

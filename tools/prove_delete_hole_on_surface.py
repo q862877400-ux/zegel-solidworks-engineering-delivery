@@ -32,10 +32,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_surface_with_hole(doc):
@@ -58,7 +58,7 @@ def _mk_surface_with_hole(doc):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            return SF.create_extruded_surface_report(doc, 0.5, sketch_name=cand)
+            return sf.create_extruded_surface_report(doc, 0.5, sketch_name=cand)
         except Exception:  # noqa: BLE001
             continue
     return {}
@@ -124,14 +124,14 @@ def _one(sw, tag, pick):
                         break
             break
         row["picked"] = picked
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         try:
             _g(doc, "InsertDeleteHole")
             row["called"] = True
         except Exception as exc:  # noqa: BLE001
             row["called"] = False
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["after"] = _geom(doc)
         d = row["after"]

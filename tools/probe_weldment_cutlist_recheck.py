@@ -45,7 +45,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -124,7 +124,7 @@ def _one(sw, tag, kind):
         doc = C.new_document(sw, "part")
         row["solid"] = _mk_multi_body(doc)
         row["n_bodies"] = len(_bodies(doc))
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
@@ -148,7 +148,7 @@ def _one(sw, tag, kind):
                 if tok in s:
                     row["error_code"] = tok
                     break
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         #: \u2605\u2605 \u4e8b\u5b9e 420 \u7684\u5206\u7c7b\u5224\u636e
         if row.get("err"):

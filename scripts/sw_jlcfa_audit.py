@@ -38,9 +38,9 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_cards as C
-import sw_jlcfa_locate as L
-import sw_jlcfa_select as SEL
+import sw_jlcfa_cards as c
+import sw_jlcfa_locate as l
+import sw_jlcfa_select as sel
 import sw_jlcfa_steps as S
 
 warnings.filterwarnings("ignore")
@@ -49,10 +49,10 @@ REPORT = Path(Path(__file__).resolve().parents[1] / "audit_report.json")
 
 
 def _conn():
-    h, w = L.connect()
-    if L._modal().modal_report(h)["count"]:
-        L._modal().close_modals(h, rounds=2)
-        h, w = L.connect()
+    h, w = l.connect()
+    if l._modal().modal_report(h)["count"]:
+        l._modal().close_modals(h, rounds=2)
+        h, w = l.connect()
     S.cache_drop()
     return h, w
 
@@ -68,11 +68,11 @@ def goto(kind: str, name: str, h: int, w, tries: int = 2):
         S.cache_drop()
         h, w = _conn()
         if kind == "CATEGORY":
-            r = L.rect_of(w, name)
+            r = l.rect_of(w, name)
         elif kind == "RESULT":
-            r = C.locate_category(w, name, S.controls_cached(w))
+            r = c.locate_category(w, name, S.controls_cached(w))
         elif kind == "SELECT":
-            pt = C.locate_code(w, name)
+            pt = c.locate_code(w, name)
             r = pt and (pt[0] - 40, pt[1] - 40, pt[0] + 40, pt[1] + 40)
         elif kind == "HOME":
             # ⚑⚑⚑ 抽查看 12 件全报「回首页失败」的**真正原因**（2026-09-30）
@@ -81,7 +81,7 @@ def goto(kind: str, name: str, h: int, w, tries: int = 2):
             #     空转 8 轮后判定失败。整套抽查因此 0/12。
             # ⚠ 「返回」只**退一级**（实测 SELECT→RESULT），
             #   所以回首页靠**外层循环反复点**，本分支只负责点一次。
-            r = L.rect_of(w, "返回")
+            r = l.rect_of(w, "返回")
         else:
             return h, w
         if r is None:
@@ -93,7 +93,7 @@ def goto(kind: str, name: str, h: int, w, tries: int = 2):
             time.sleep(0.7)
             S.cache_drop()
             try:
-                h, w = L.connect()
+                h, w = l.connect()
             except Exception:
                 continue
             _k = S.page_kind(S.read_state(w))
@@ -110,11 +110,11 @@ def _find_target(kind: str, name: str, w):
       只问「目标在不在这页上」⇒ 对 page_kind 认不出的中间页也有效。
     """
     if kind == "CATEGORY":
-        return L.rect_of(w, name)
+        return l.rect_of(w, name)
     if kind == "RESULT":
-        return C.locate_category(w, name, S.controls_cached(w))
+        return c.locate_category(w, name, S.controls_cached(w))
     if kind == "SELECT":
-        pt = C.locate_code(w, name)
+        pt = c.locate_code(w, name)
         return pt and (pt[0] - 40, pt[1] - 40, pt[0] + 40, pt[1] + 40)
     return None
 
@@ -146,7 +146,7 @@ def goto_element(kind: str, name: str, h: int, w, back_rounds: int = 6):
                 time.sleep(0.7)
                 S.cache_drop()
                 try:
-                    h, w = L.connect()
+                    h, w = l.connect()
                 except Exception:
                     continue
                 _k = S.page_kind(S.read_state(w))
@@ -156,7 +156,7 @@ def goto_element(kind: str, name: str, h: int, w, back_rounds: int = 6):
             S.log("      点了但没到 %s，继续找" % kind)
             continue
         # 找不到目标 → 退一级再看
-        rb = L.rect_of(w, "返回")
+        rb = l.rect_of(w, "返回")
         if rb is None:
             S.log("      第%d轮：无目标也无「返回」" % rnd)
             return None
@@ -215,7 +215,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
     rec["stage"] = "SELECT"
 
     # ④ 填参数
-    h, w, pct = SEL.fill_to_100(h, w, max_rounds=12, pick=1)
+    h, w, pct = sel.fill_to_100(h, w, max_rounds=12, pick=1)
     rec["pct"] = pct
     if pct != 100:
         rec["stage"] = "未到100%%(%s)" % pct
@@ -224,9 +224,9 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
 
     # ⑤ 生成预览
     S.cache_drop()
-    h, w = L.connect()
+    h, w = l.connect()
     S.ensure_front(h)
-    btn = L.locate(w, "生成预览", "Button")
+    btn = l.locate(w, "生成预览", "Button")
     if btn is None:
         rec["stage"] = "无生成按钮"
         return rec
@@ -238,7 +238,7 @@ def run_one(cat: str, sub: str, code: str) -> dict[str, Any]:
         time.sleep(1.0)
         S.cache_drop()
         try:
-            h, w = L.connect()
+            h, w = l.connect()
             title = w.window_text() or ""
         except Exception:
             continue

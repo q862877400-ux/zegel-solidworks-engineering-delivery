@@ -112,7 +112,7 @@ def _run(label: str, model, call) -> dict:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     import sw_sheet_metal as SM
     from sw_connect import (
         connect_solidworks,
@@ -123,12 +123,12 @@ def main() -> int:
 
     app, _ = connect_solidworks(visible=True)
     rows: list = []
-    VARIANT_NONE = create_empty_dispatch_variant()  #: ★ 修 ②：NULL 要包 VARIANT ✓
+    variant_none = create_empty_dispatch_variant()  #: ★ 修 ②：NULL 要包 VARIANT ✓
 
     #: ── ① 钣金角撑板：★ `CreateDefinition(swFmSMGusset=118)` + `AccessSelections` ──
     try:
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             for a, b in (
                 ((-0.06, -0.04), (0.06, -0.04)),
@@ -137,7 +137,7 @@ def main() -> int:
                 ((-0.06, 0.04), (-0.06, -0.04)),
             ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-        P.extrude_boss(model, sk, 2.0)
+        p.extrude_boss(model, sk, 2.0)
         SM.create_base_flange(
             model, sk, SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
         )
@@ -150,16 +150,16 @@ def main() -> int:
             }
         )
         fm = get_com_member(model, "FeatureManager")
-        SWFM_SM_GUSSET = 118  #: ★ 来自出厂反射（★ 事实 43：数值要查反射）✓
+        swfm_sm_gusset = 118  #: ★ 来自出厂反射（★ 事实 43：数值要查反射）✓
         rows.append(
             _run(
-                "① CreateDefinition(swFmSMGusset=118) + AccessSelections(model, VARIANT_NONE)",
+                "① CreateDefinition(swFmSMGusset=118) + AccessSelections(model, variant_none)",
                 model,
                 lambda: get_com_member(
-                    get_com_member(fm, "CreateDefinition", SWFM_SM_GUSSET),
+                    get_com_member(fm, "CreateDefinition", swfm_sm_gusset),
                     "AccessSelections",
                     model,
-                    VARIANT_NONE,
+                    variant_none,
                 ),
             )
         )
@@ -176,7 +176,7 @@ def main() -> int:
     #: ── ② 焊件那三个 ─────────────────────────────────────────────────────
     try:
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             get_com_member(sm, "CreateLine", -0.06, 0.0, 0.0, 0.06, 0.0, 0.0)
         #: ★★★★ **修 ⑤（★ 第四版）** —— ★ 导入方式：★ 上一步报
@@ -186,7 +186,7 @@ def main() -> int:
         #:   ⇒ ★ 正解是**本仓自己的写法**：★ `tools/diag_selection_lifetime.py:87` 逐字
         #: `from scripts.sw_weldment import create_structural_member_from_sketch`（★ **
         #: 带 `scripts.` 前缀**）✓
-        from scripts import sw_weldment as _W
+        from scripts import sw_weldment as _w
 
         prof = PROFILES / "ansi inch" / "rectangular tube.sldlfp"
         if not prof.is_file():
@@ -200,7 +200,7 @@ def main() -> int:
         #:     ⇒ **已由 `create_structural_member_from_sketch` 包装**（★ 事实 342/339）」✓
         #:   ★★★ **⇒ 而那正是 AGENTS.md 记的那条纪律**：
         #:     「★ **写探针验能力时：按 `ToolSpec` 的契约调，别手调内部实现**」✓
-        _W.create_structural_member_from_sketch(model, str(sk), str(prof))
+        _w.create_structural_member_from_sketch(model, str(sk), str(prof))
         rows.append(
             {
                 "项": "② 焊件结构构件（★ 前置 · 用包装版）",
@@ -285,8 +285,8 @@ def main() -> int:
                     0,
                     0,
                     0.0,
-                    VARIANT_NONE,
-                    VARIANT_NONE,
+                    variant_none,
+                    variant_none,
                 ),
             )
         )

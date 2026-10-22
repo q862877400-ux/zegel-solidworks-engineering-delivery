@@ -76,9 +76,9 @@ def main() -> int:
     ok1 = bool(sw_part._select_by_id(ext, sk1, "SKETCH", append=False, mark=1))
     ok2 = bool(sw_part._select_by_id(ext, sk2, "SKETCH", append=True, mark=4))
     out["select_results"] = {"profile_mark1": ok1, "path_mark4": ok2}
-    import sw_selection_spec as SS
+    import sw_selection_spec as ss
 
-    out["selection_count"] = SS.get_selection_count(model)
+    out["selection_count"] = ss.get_selection_count(model)
     print(
         "★ 选择：★ mark1(profile)=%r · mark4(path)=%r · 选区计数=%r"
         % (ok1, ok2, out["selection_count"])

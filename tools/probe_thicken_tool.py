@@ -7,7 +7,7 @@
 # `IFeatureManager.FeatureBossThicken`（**7 参·未废弃**）/ `FeatureCutThicken`（**6 参·
 # 未废弃**）。
 #   ★★ **必须真机验**：这两个成员**此前从没在本仓跑过**。
-# 官方依据: `C:\swapi\types\IFeatureManager\FeatureBossThicken.md` · `FeatureCutThicken.
+# 官方依据: `c:\swapi\types\IFeatureManager\FeatureBossThicken.md` · `FeatureCutThicken.
 # md`
 # （Remarks 逐字：参考面必须按 **mark=1** 选中 · `FillVolume=true` 时**其余参数被忽略**
 # 且**必须闭合曲面**）
@@ -27,17 +27,17 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 OUT = REPO / "output" / "thicken-tool-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _mk_surface(doc):
@@ -56,7 +56,7 @@ def _mk_surface(doc):
     ]
     for cand in (names[-1] if names else "草图1", "草图1", "Sketch1"):
         try:
-            return SF.create_extruded_surface_report(doc, 40.0, sketch_name=cand)
+            return sf.create_extruded_surface_report(doc, 40.0, sketch_name=cand)
         except Exception:  # noqa: BLE001
             continue
     return {}
@@ -65,8 +65,8 @@ def _mk_surface(doc):
 def main() -> int:
     started = time.time()
     row: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
-    specs = {getattr(s, "name", None): s for s in RC.all_specs()}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
+    specs = {getattr(s, "name", None): s for s in rc.all_specs()}
     for tool, args in (
         (
             "solidworks_thicken",
@@ -84,7 +84,7 @@ def main() -> int:
         r: dict = {"tool": tool}
         doc = None
         try:
-            doc = C.new_document(sw, "part")
+            doc = c.new_document(sw, "part")
             r["mk_surface"] = bool((_mk_surface(doc) or {}).get("ok"))
             r["surface_bodies"] = len(list(_g(doc, "GetBodies2", 1, True) or []))
             spec = specs.get(tool)
@@ -96,7 +96,7 @@ def main() -> int:
                 fn = getattr(mod, spec.function)
                 want = {getattr(pp, "name", None) for pp in (spec.params or [])}
                 kwargs = {k: v for k, v in args.items() if k in want}
-                kwargs[spec.inject] = RC.RESOLVERS[spec.inject](None)
+                kwargs[spec.inject] = rc.RESOLVERS[spec.inject](None)
                 r["call_path"] = "module=%s function=%s inject=%s params=%s" % (
                     spec.module,
                     spec.function,

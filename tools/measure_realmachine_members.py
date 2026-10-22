@@ -60,7 +60,7 @@ def main() -> int:
     #: 只有"带调用/带引号"的行才算（下界）；整个文件算（上界）
     lo, hi = set(), set()
     per_file = []
-    CALLISH = re.compile(r"[\"']([A-Za-z_]\w*)[\"']|\.([A-Z]\w+)\s*\(|([A-Z]\w+)\s*\(")
+    callish = re.compile(r"[\"']([A-Za-z_]\w*)[\"']|\.([A-Z]\w+)\s*\(|([A-Z]\w+)\s*\(")
     for p in scripts:
         try:
             t = p.read_text(encoding="utf-8", errors="replace")
@@ -69,7 +69,7 @@ def main() -> int:
         hi |= {m for m in mem if m in t}
         found_lo = set()
         for line in t.splitlines():
-            for g in CALLISH.findall(line):
+            for g in callish.findall(line):
                 for name in g:
                     if name in mem:
                         found_lo.add(name)

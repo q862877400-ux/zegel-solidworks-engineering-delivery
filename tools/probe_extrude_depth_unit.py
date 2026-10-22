@@ -28,30 +28,30 @@ OUT = REPO / "output" / "extrude-depth-unit-evidence.json"
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, new_document
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
     #: ★ 画一个 100×60 的矩形（★ 那两维走 `sketch_corner_rectangle`，★ 单位是**米**——见
     #: 下）
-    P.sketch(model, "Front Plane")
-    P.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
-    P.end_sketch(model)
+    p.sketch(model, "Front Plane")
+    p.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
+    p.end_sketch(model)
     #: ★★ 关键调用：★ docstring 说这里是**毫米**
-    P.extrude_boss(model, "Sketch1", 20.0)
-    bb = P.get_bounding_box(model)
-    R = {
+    p.extrude_boss(model, "Sketch1", 20.0)
+    bb = p.get_bounding_box(model)
+    r = {
         "★_判据": "★ docstring 说 `depth` 是毫米 ⇒ 厚应为 **20 mm**；"
         "★ 若厚 **20000 mm** ⇒ ★ 函数把毫米当米传了",
         "★_调用": "extrude_boss(model, 'Sketch1', **20.0**)",
         "bounding_box": bb,
-        "features": P.feature_names(model)[:8],
+        "features": p.feature_names(model)[:8],
     }
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
-    print(json.dumps(R, ensure_ascii=False, indent=1, default=str)[:1200])
+    print(json.dumps(r, ensure_ascii=False, indent=1, default=str)[:1200])
     print("★ wrote", OUT)
     return 0
 

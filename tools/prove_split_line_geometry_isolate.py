@@ -45,7 +45,7 @@ sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
 import prove_split_line_geometry_controls as K  # noqa: E402
-import prove_split_line_geometry_per_example as G  # noqa: E402
+import prove_split_line_geometry_per_example as g  # noqa: E402
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
@@ -58,8 +58,8 @@ def _legacy_geometry(doc):
     ★ 投影草图留在 **Front Plane（z = 0）** ⇒ ★ **草图被实体夹在中间**（★ 这正是它与例子的差别）。
     """
     P.start_sketch(doc, plane_name="Top Plane")
-    G._get(
-        G._get(doc, "SketchManager"),
+    g._get(
+        g._get(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -72,7 +72,7 @@ def _legacy_geometry(doc):
     box = None
     for d in (True, False):
         made = None
-        for cand in (G._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
+        for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
             try:
                 P.extrude_boss(doc, cand, 0.02, direction=d)
                 made = cand
@@ -81,18 +81,18 @@ def _legacy_geometry(doc):
                 continue
         if made is None:
             continue
-        box = G._bbox(doc)
+        box = g._bbox(doc)
         if box is not None:
             break
     P.start_sketch(doc, plane_name="Front Plane")
-    G._get(G._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.008)
+    g._get(g._get(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.008)
     P.end_sketch(doc)
     return box
 
 
 def _select_common(doc, picked):
     """★ 实体特征（mark 0）+ 投影草图（mark 4）—— ★ 与例子一致的选择序。"""
-    ext = G._get(doc, "Extension")
+    ext = g._get(doc, "Extension")
     for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
         try:
             if P._select_by_id(ext, nm, "BODYFEATURE", append=False, mark=0):
@@ -100,7 +100,7 @@ def _select_common(doc, picked):
                 break
         except Exception:  # noqa: BLE001
             continue
-    sk = G._sketch_names(doc)
+    sk = g._sketch_names(doc)
     if sk:
         try:
             if P._select_by_id(ext, sk[-1], "SKETCH", append=bool(picked), mark=4):
@@ -115,7 +115,7 @@ def _mark_counts(doc):
     for m in (0, 1, 4):
         try:
             per[str(m)] = int(
-                G._get(G._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m)
+                g._get(g._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m)
             )
         except Exception:  # noqa: BLE001
             per[str(m)] = -1
@@ -147,7 +147,7 @@ def _case(sw, tag, mode):
             row["picked"], row["sel_by_mark"] = picked, _mark_counts(doc)
             return K._call_and_read(doc, row, True, directed)
         #: ★ E2：**正确几何**，而选面改用"**第一张面**"（★ 只这一处不同）
-        ok, info = G._build(doc)
+        ok, info = g._build(doc)
         row["geometry"] = "correct:\u8349\u56fe\u5728\u5b9e\u4f53\u4e4b\u5916"
         row["built"] = ok
         if not ok:
@@ -156,8 +156,8 @@ def _case(sw, tag, mode):
         doc.ClearSelection2(True)
         picked = _select_common(doc, picked)
         try:
-            body = list(G._get(doc, "GetBodies2", 0, True))[0]
-            faces = list(G._get(body, "GetFaces") or [])
+            body = list(g._get(doc, "GetBodies2", 0, True))[0]
+            faces = list(g._get(body, "GetFaces") or [])
             if faces and P._select_com_object(faces[0], append=bool(picked), mark=1):
                 picked["face"] = (
                     "GetFaces()[0]\uff08\u2605 \u800c mark \u6b63\u5f53\u8bbe\u4e3a 1\uff09"
@@ -172,9 +172,9 @@ def _case(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(G._get(doc, "GetTitle") or "")
+                t = str(g._get(doc, "GetTitle") or "")
                 if t:
-                    G._get(sw, "CloseDoc", t)
+                    g._get(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

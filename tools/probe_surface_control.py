@@ -45,7 +45,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _one(sw, tag, fn):
@@ -86,11 +86,11 @@ def _case_fill(doc):
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
                 break
         except Exception:  # noqa: BLE001
             continue
-    return SF.insert_fill_surface_report(doc, 2)
+    return sf.insert_fill_surface_report(doc, 2)
 
 
 def _case_extend(doc):
@@ -110,11 +110,11 @@ def _case_extend(doc):
     P.end_sketch(doc)
     for cand in ("\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get("ok"):
                 break
         except Exception:  # noqa: BLE001
             continue
-    return SF.insert_extend_surface_report(doc, 5.0)
+    return sf.insert_extend_surface_report(doc, 5.0)
 
 
 def main() -> int:

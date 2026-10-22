@@ -142,7 +142,7 @@ def main() -> int:
     is_sp_before = None
     comp_name = None
     if comps:
-        import sw_selection_spec as SS
+        import sw_selection_spec as ss
 
         try:
             is_sp_before = bool(sw_connect.get_com_member(comps[0], "IsSpeedPak"))
@@ -177,7 +177,7 @@ def main() -> int:
                 )
             )
             #: ★ 回读（★ 不许信返回值 —— 事实 8 ✓）
-            sel_ok = SS.get_selection_count(top) > 0
+            sel_ok = ss.get_selection_count(top) > 0
         except Exception as e:  # noqa: BLE001
             out["select_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["component_selected"] = sel_ok
@@ -200,9 +200,9 @@ def main() -> int:
             #:   —— ★ **装配体文档本身就是 `IAssemblyDoc`** ✓）
             #: ★★ 且它**有实参个数登记表** ⇒ ★ 名字不在表里会**抛 `KeyError`（不静默忽略
             #: ）** ✓
-            import sw_assembly_doc as AD
+            import sw_assembly_doc as ad
 
-            ret = AD.call_assembly_doc(top, "CreateSpeedPak", 1)
+            ret = ad.call_assembly_doc(top, "CreateSpeedPak", 1)
             out["arity_checked"] = True
         except Exception as e:  # noqa: BLE001
             exc = e
@@ -285,13 +285,13 @@ if __name__ == "__main__":
         #: document
         #:        **has its own window**」✓ ⇒ ★ **只关"有自己窗口的"那批** ✓
         try:
-            import sw_connect as _C
+            import sw_connect as _c
 
-            _sw, _ = _C.connect_solidworks(wait_seconds=15)
+            _sw, _ = _c.connect_solidworks(wait_seconds=15)
             if _sw is not None:
                 _mine = ("sp1", "sp2", "sub")
                 try:
-                    _docs = _C.get_com_member(_sw, "GetDocuments") or []
+                    _docs = _c.get_com_member(_sw, "GetDocuments") or []
                 except Exception:  # noqa: BLE001
                     _docs = []
                 _closed = []
@@ -300,8 +300,8 @@ if __name__ == "__main__":
                     if _d is None:
                         continue
                     try:
-                        _path = str(_C.get_com_member(_d, "GetPathName") or "")
-                        _title = str(_C.get_com_member(_d, "GetTitle") or "")
+                        _path = str(_c.get_com_member(_d, "GetPathName") or "")
+                        _title = str(_c.get_com_member(_d, "GetTitle") or "")
                     except Exception:  # noqa: BLE001
                         continue
                     _base = Path(_path).stem or _title
@@ -313,14 +313,14 @@ if __name__ == "__main__":
                         continue
                     #: ★★ 官方判据：★ **只关"有自己窗口的"** ✓（★ 引用文档没有窗口 ✗）
                     try:
-                        _vis = bool(_C.get_com_member(_d, "Visible"))
+                        _vis = bool(_c.get_com_member(_d, "Visible"))
                     except Exception:  # noqa: BLE001
                         _vis = True
                     if not _vis:
                         _skipped_invisible.append(_base)
                         continue
                     try:
-                        _C.get_com_member(_sw, "CloseDoc", _title or _path)
+                        _c.get_com_member(_sw, "CloseDoc", _title or _path)
                         _closed.append(_base)
                     except Exception:  # noqa: BLE001
                         pass

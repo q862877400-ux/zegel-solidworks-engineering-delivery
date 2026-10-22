@@ -242,50 +242,50 @@ def main() -> int:
                 by_shape[shape] += 1
                 total_calls += 1
 
-    L: list[str] = []
-    L.append("# 官方 API 成员 → 本仓库函数 反向索引（api-map）")
-    L.append("")
-    L.append("> 生成日期：2026-09-29")
-    L.append(
+    item: list[str] = []
+    item.append("# 官方 API 成员 → 本仓库函数 反向索引（api-map）")
+    item.append("")
+    item.append("> 生成日期：2026-09-29")
+    item.append(
         f"> 覆盖：本仓库 **{files_scanned}** 个 .py 文件，"
         f"对撞到 **{len(usage)}** 个官方成员、**{total_calls}** 处调用点。"
     )
-    L.append(
+    item.append(
         "> 调用形态分布：" + " · ".join(f"{k} {v}" for k, v in sorted(by_shape.items()))
     )
-    L.append(
+    item.append(
         "> 反射来源：`D:\\AI\\SW\\_raw\\reflect_sldworks\\iface_sldworks.txt`"
         "（20,627 成员）+ `iface_cosworks.txt`（cosworks）"
     )
-    L.append(">")
-    L.append("> **怎么用这张表**：拿着官方文档里的成员名，在下面 §二 搜，")
-    L.append(
+    item.append(">")
+    item.append("> **怎么用这张表**：拿着官方文档里的成员名，在下面 §二 搜，")
+    item.append(
         "> 就能知道本仓库哪个函数能调到它。若搜不到，说明该能力**本仓库尚未实现**。"
     )
-    L.append(">")
-    L.append(
+    item.append(">")
+    item.append(
         "> **本表由 AST 解析 + 反射清单对撞生成，未执行任何仓库代码、未连接 SolidWorks。**"
     )
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 一、按功能域汇总")
-    L.append("")
-    L.append("| 功能域 | 触及的官方成员数 | 本仓库模块 |")
-    L.append("|---|---|---|")
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 一、按功能域汇总")
+    item.append("")
+    item.append("| 功能域 | 触及的官方成员数 | 本仓库模块 |")
+    item.append("|---|---|---|")
     for dom in sorted(domain_members, key=lambda d: -len(domain_members[d])):
         mods = sorted({k for k in DOMAIN_OF_MODULE if DOMAIN_OF_MODULE[k] == dom})
-        L.append(
+        item.append(
             f"| {dom} | **{len(domain_members[dom])}** | "
             f"{', '.join(f'`{m}`' for m in mods) if mods else '—'} |"
         )
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 二、成员 → 函数 逐条索引")
-    L.append("")
-    L.append("| 官方成员 | 宿主接口 | 参数 | 本仓库调用点 |")
-    L.append("|---|---|---|---|")
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 二、成员 → 函数 逐条索引")
+    item.append("")
+    item.append("| 官方成员 | 宿主接口 | 参数 | 本仓库调用点 |")
+    item.append("|---|---|---|---|")
 
     for mem in sorted(usage, key=lambda m: (-sum(usage[m].values()), m)):
         iface_all, params = members[mem]
@@ -309,35 +309,35 @@ def main() -> int:
             sites_txt = "<br>".join(f"`{k}` ×{v}" for k, v in top)
             if len(sites) > 3:
                 sites_txt += f"<br>… 另 {len(sites) - 3} 处"
-        L.append(f"| `{mem}` | {iface_s} | {arity_s} | {sites_txt} |")
+        item.append(f"| `{mem}` | {iface_s} | {arity_s} | {sites_txt} |")
 
-    L.append("")
-    L.append(
+    item.append("")
+    item.append(
         "> **宿主接口列**只列前 3 个：某些成员（如 `AccessSelections`）"
         "挂在 80+ 个 `*FeatureData` 接口上，全列出来表格就没法读了。"
     )
-    L.append(
+    item.append(
         "> 完整接口清单见 `_raw/` 下的反射清单，或跑 "
         "`python tools/gen_api_map.py` 时保留的 JSON。"
     )
-    L.append(">")
-    L.append(
+    item.append(">")
+    item.append(
         "> 表中「参数」列若显示多个数字且带 ⚠，说明该成员名在**多个接口上参数个数不同**"
     )
-    L.append("> （如 `RunAnalysis`：既在 `ICwAddincallback` 上，也在 `ICWStudy` 上；")
-    L.append(
+    item.append("> （如 `RunAnalysis`：既在 `ICwAddincallback` 上，也在 `ICWStudy` 上；")
+    item.append(
         "> `CreateMesh`：在 `ICWStudy` 上是 3 参、在 `ICwAddincallback` 上是 0 参）。"
     )
-    L.append("> 此时须结合「本仓库调用点」列判断实际调的是哪一个。")
+    item.append("> 此时须结合「本仓库调用点」列判断实际调的是哪一个。")
 
-    L.append("")
-    L.append("---")
-    L.append("")
-    L.append("## 三、这张表覆盖不到的部分（重要）")
-    L.append("")
-    L.append("| 情况 | 原因 |")
-    L.append("|---|---|")
-    L.append(
+    item.append("")
+    item.append("---")
+    item.append("")
+    item.append("## 三、这张表覆盖不到的部分（重要）")
+    item.append("")
+    item.append("| 情况 | 原因 |")
+    item.append("|---|---|")
+    item.append(
         "| 通过 `CreateDefinition` + FeatureData **属性赋值**间接触及的成员 | "
         "属性名出现在赋值左侧而非调用形态中（如 `data.Thickness = 0.001`）。"
         "本表只统计「可静态识别形态」的调用，不统计属性赋值。"
@@ -346,22 +346,22 @@ def main() -> int:
         "`scripts/sw_simulation.py` 的 5 组 `SWS_*` 表**逐条登记**，"
         "另有各函数来源块列出所用的官方成员名 |"
     )
-    L.append(
+    item.append(
         "| Simulation 域 27 个载荷方法 | 反射清单与两套官方文档都没有签名，"
         "本仓库**刻意不提供**入口（AGENTS.md 铁律 5） |"
     )
-    L.append(
+    item.append(
         "| 「其他/未归类」域下的成员 | 来自 `subskills/` 与 `scripts/` 里"
         "未登记到 DOMAIN_OF_MODULE 的模块（如 advanced_*、fea_*、dfm_* 等），"
         "它们不属于 14 个功能域的原生 API 面 |"
     )
-    L.append("")
-    L.append(
+    item.append("")
+    item.append(
         "> ⚠ 因此本表是**下界**而非全集：它只统计「形态可静态识别」的直接调用。"
         "完整的签名级核对请看 `docs/signature-audit.md`。"
     )
 
-    OUT.write_text("\n".join(L), encoding="utf-8")
+    OUT.write_text("\n".join(item), encoding="utf-8")
     side = OUT.with_suffix(".json")
     side.write_text(
         json.dumps(
@@ -380,7 +380,7 @@ def main() -> int:
         ),
         encoding="utf-8",
     )
-    print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(L)} 行)")
+    print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(item)} 行)")
     print(f"  完整接口清单 -> {side.name}")
     print(f"  扫描 .py 文件 {files_scanned} 个")
     print(f"  对撞到官方成员 {len(usage)} 个 / 调用点 {total_calls} 处")

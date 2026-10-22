@@ -39,10 +39,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 from scripts.sw_connect import create_empty_dispatch_variant as _av  # noqa: E402
 
 
@@ -77,7 +77,7 @@ def _mk_two_crossing_surfaces(doc):
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -165,7 +165,7 @@ def _run(sw, tag, cutter):
                 type(trimmed).__name__ if trimmed is not None else "None"
             )
         row["geom_after_trim"] = _geom(doc)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         #: \u2605 **\u73b0\u5728\u5bf9\u5b83\u8c03\u89e3\u9664\u526a\u88c1**\uff08\u2605
         #:  5 \u53c2\uff09
         try:
@@ -191,7 +191,7 @@ def _run(sw, tag, cutter):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["untrim_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["geom_final"] = _geom(doc)
         row["ok"] = bool(row["new"] or row.get("untrim_type"))

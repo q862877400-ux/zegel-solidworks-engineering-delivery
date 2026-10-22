@@ -54,7 +54,7 @@ def main() -> int:
         import sw_connect
         import tool_specs_batch32 as b32
 
-        from scripts import sw_feature_readback as FR
+        from scripts import sw_feature_readback as fr
         from scripts import sw_part as P
         from scripts import (
             sw_simulation as S,
@@ -88,11 +88,11 @@ def main() -> int:
         sk1 = P.current_sketch_name(doc)
         P.end_sketch(doc)
         P.extrude_boss(doc, sk1, 20.0)
-        ev["steps"]["base"] = {"sketch": sk1, "features": FR.feature_names(doc)}
+        ev["steps"]["base"] = {"sketch": sk1, "features": fr.feature_names(doc)}
 
         #: ③ ★★ 先自验判据（★ 不自证就不能判别人）
-        r_ok = FR.feature_readback(doc, sk1)
-        r_bad = FR.feature_readback(doc, "绝不存在的特征XYZ")
+        r_ok = fr.feature_readback(doc, sk1)
+        r_bad = fr.feature_readback(doc, "绝不存在的特征XYZ")
         ev["steps"]["criterion_selfcheck"] = {
             "ok": bool(r_ok.get("ok")) and not bool(r_bad.get("ok")),
             "existing_feature": {

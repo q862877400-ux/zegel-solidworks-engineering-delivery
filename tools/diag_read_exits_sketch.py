@@ -28,7 +28,7 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 
 def main() -> int:
     import sw_connect
-    import sw_fingerprint as FP
+    import sw_fingerprint as fp
     import tool_caller
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
@@ -40,12 +40,12 @@ def main() -> int:
     ok, note = tool_caller.call("solidworks_sketch_start", inject_objects=inj)
     print("★ sketch_start ⇒ ok=%s %s" % (ok, str(note)[:60]))
     print(
-        "★ 进草图后 edit_mode =", repr(FP.read(model, sw)["readings"].get("edit_mode"))
+        "★ 进草图后 edit_mode =", repr(fp.read(model, sw)["readings"].get("edit_mode"))
     )
     print(
-        "★ 再读一次（纯读数）  =", repr(FP.read(model, sw)["readings"].get("edit_mode"))
+        "★ 再读一次（纯读数）  =", repr(fp.read(model, sw)["readings"].get("edit_mode"))
     )
-    full = FP.read(model, sw)
+    full = fp.read(model, sw)
     print("★ 跑完整指纹之后 edit_mode =", repr(full["readings"].get("edit_mode")))
     #: ★ 直接问 COM（★ 不经过指纹）—— ★ 这才看得出是谁干的 ✓
     sm = sw_connect.get_com_member(model, "SketchManager")

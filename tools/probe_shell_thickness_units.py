@@ -76,7 +76,7 @@ def main() -> int:
     try:
         import sw_connect
 
-        from scripts import sw_feature_readback as FR
+        from scripts import sw_feature_readback as fr
         from scripts import sw_part as P
         from scripts.sw_simulation import select_face_at
 
@@ -98,7 +98,7 @@ def main() -> int:
             return _volume_mm3(doc)
 
         v0 = _make_plate()
-        ev["steps"]["plate"] = {"volume_mm3": v0, "features": FR.feature_names(doc)}
+        ev["steps"]["plate"] = {"volume_mm3": v0, "features": fr.feature_names(doc)}
         print("  [0] 板体积 = %s" % v0)
 
         #: ★ 两个厚度各抽一次壳（★ 每次用一个**新板**，避免上一次的壳影响下一次）

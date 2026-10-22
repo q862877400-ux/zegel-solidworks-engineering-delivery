@@ -40,9 +40,9 @@ OUT = R / "output" / "spec209-b2-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
-    import sw_selection_spec as SS
-    import sw_sheet_metal as SM
+    import sw_part as p
+    import sw_selection_spec as ss
+    import sw_sheet_metal as sm
     from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -69,20 +69,20 @@ def main() -> int:
         """★ 闭轮廓基体法兰 ⇒ 真机已验证可成的钣金件（特征树：钣金 / 基体-法兰 / 平展型式）✓"""
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with P.sketch(doc, "Front Plane") as sk:
-            P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
-        spec = SM.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
-        SM.create_base_flange(doc, sk, spec)
+        with p.sketch(doc, "Front Plane") as sk:
+            p.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
+        spec = sm.BaseFlangeSpec(thickness=0.002, bend_radius=0.001, depth=0.05)
+        sm.create_base_flange(doc, sk, spec)
         return doc
 
     def _feature_names(doc):
         return [
-            str(safe_get_com_member(f, "Name") or "") for f in SM.iter_features(doc)
+            str(safe_get_com_member(f, "Name") or "") for f in sm.iter_features(doc)
         ]
 
     def _faces(doc):
         try:
-            return len(SS.entities_on_body(doc, "FACE"))
+            return len(ss.entities_on_body(doc, "FACE"))
         except Exception:  # noqa: BLE001
             return None
 
@@ -90,7 +90,7 @@ def main() -> int:
     doc = None
     try:
         doc = _make_sheet_metal()
-        sm_ev = SM.sheet_metal_evidence(doc)
+        sm_ev = sm.sheet_metal_evidence(doc)
         ev["T1_base_flange"] = {
             "feature_names": _feature_names(doc),
             "feature_types": sm_ev.get("feature_types"),
@@ -117,7 +117,7 @@ def main() -> int:
     hem_feature = None
     if doc is not None and ev["T1_base_flange"].get("verdict") == "前置建成":
         try:
-            r = SM.create_hem(doc, "index:0")
+            r = sm.create_hem(doc, "index:0")
             hem_feature = r.get("feature") or None
             ev["T2_hem"] = {
                 "ok": r.get("ok"),
@@ -155,7 +155,7 @@ def main() -> int:
     #: ─
     if doc is not None and hem_feature:
         try:
-            r = SM.create_unfold(doc, [hem_feature], face_index=0)
+            r = sm.create_unfold(doc, [hem_feature], face_index=0)
             ev["T3_unfold"] = {
                 "ok": r.get("ok"),
                 "bend_feature_used": hem_feature,
@@ -195,7 +195,7 @@ def main() -> int:
     try:
         doc2 = _make_sheet_metal()
         names2 = _feature_names(doc2)
-        r2 = SM.create_unfold(doc2, [], face_index=0)
+        r2 = sm.create_unfold(doc2, [], face_index=0)
         ev["T4_unfold_no_bends"] = {
             "ok": r2.get("ok"),
             "bend_feature_used": [],

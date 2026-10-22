@@ -8,7 +8,7 @@
 #   ★ 结构照抄**本仓已被真机验证过的**骨架（`tools/prove_b6a_surface_edit.py`）：
 #     · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回元组）
 #     · **每个用例一个新文档** ⇒ 失败不拖累后续
-# · `P.start_sketch` / `SP.sketch_3point_corner_rectangle` / `P.end_sketch`（★ 本仓包装
+# · `P.start_sketch` / `sp.sketch_3point_corner_rectangle` / `P.end_sketch`（★ 本仓包装
 # ）
 #     · **判据 = 特征树叶子名增量**（`sw_part.feature_names`）
 #
@@ -38,8 +38,8 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_surface_ref_ops as M  # noqa: E402
 
@@ -60,7 +60,7 @@ def _mk_sketch(doc, plane, pts):
         ⇒ ★ **退草图后仍可用** ✓
     """
     P.start_sketch(doc, plane_name=plane)
-    SP.sketch_3point_corner_rectangle(doc, *pts)
+    sp.sketch_3point_corner_rectangle(doc, *pts)
     ref = None
     try:
         ref = P._capture_sketch_ref(doc, source="b6b-probe")
@@ -104,7 +104,7 @@ def _one(sw, zh, fn):
     row = {"zh": zh, "verdict": "不能"}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
@@ -113,9 +113,9 @@ def _one(sw, zh, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -125,18 +125,18 @@ def _case_revolve(doc):
     """★ 旋转曲面：**捕获 `CreateCenterLine` 的返回值当轴**，只选那一条（mark=4）⇒ 再选轮廓。"""
     P.start_sketch(doc, plane_name="Front Plane")
     #: ★ 轮廓：矩形（避开中心线所在轴）
-    SP.sketch_3point_corner_rectangle(doc, 5, -10, 25, -10, 25, 10)
+    sp.sketch_3point_corner_rectangle(doc, 5, -10, 25, -10, 25, 10)
     #: ★★★★★ 2026-10-03（轮 477）**轴 = `CreateCenterLine` 的返回值** ——
     #:   ★ 上一轮量到 **`轴选中数 = 5`**：`sw_part._select_revolve_axis(doc, "草图1")`
     #:     是**按草图名取该草图里所有段**再全按 `mark=4` 选 ⇒ ★ 矩形 4 边也被选成"轴"了
     #:     ⇒ ★ **轴不唯一** ⇒ 这才是没建成的直接原因。
-    #: ★★ 而官方签名给了更准的路（`C:\swapi\types\ISketchManager\CreateCenterLine.md`）
+    #: ★★ 而官方签名给了更准的路（`c:\swapi\types\ISketchManager\CreateCenterLine.md`）
     #: ：
     #:     > **Signature**: `SketchSegment CreateCenterLine(X1, Y1, Z1, …)`
     #:     ⇒ ★ **它回的就是那条中心线的 `SketchSegment`** ⇒ 捕获它 ⇒ **只选它** ✓
     #:   ★ 而顺序照 `sw_part.revolve_boss` 那条真机判据（★ 轮 360）：**先轴、后轮廓**。
-    axis_seg = C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    axis_seg = c.get_com_member(
+        c.get_com_member(doc, "SketchManager"),
         "CreateCenterLine",
         0.0,
         0.0,
@@ -181,8 +181,8 @@ def _case_revolve(doc):
 
     try:
         sel_n = int(
-            C.get_com_member(
-                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            c.get_com_member(
+                c.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
             )
             or 0
         )
@@ -210,7 +210,7 @@ def _case_loft(doc):
         if r is not None
     ]
     try:
-        C.get_com_member(doc, "ClearSelection2", True)
+        c.get_com_member(doc, "ClearSelection2", True)
     except Exception:  # noqa: BLE001
         pass
     #: ★ 两个轮廓，★★ **mark = 1**（官方 Remarks 逐字：
@@ -267,7 +267,7 @@ def _case_loft(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "B6-b 曲面特征第二组 2 条逐个真机跑（specs/201-toolbar-gaps）",

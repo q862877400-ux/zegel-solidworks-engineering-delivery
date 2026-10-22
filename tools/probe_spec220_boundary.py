@@ -52,7 +52,7 @@ def _build_plate(sw, tool_caller) -> object:
     #: 区 1→2 ✓）
     #:      ★ 而 `InsertCosmeticWeldBead(12.95)` **`returned: false`**、★ 树 **22 → 22** ✗
     #:   ⇒ ★ 改成 **x 从 100 起（与第一块共面贴合 ✓）** ⇒ ★ 两个面成为**真正的焊缝接头** ✓
-    RECT2 = {"x1_mm": 100.0, "y1_mm": 0.0, "x2_mm": 200.0, "y2_mm": 60.0}
+    rect2 = {"x1_mm": 100.0, "y1_mm": 0.0, "x2_mm": 200.0, "y2_mm": 60.0}
     #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extr
     #: ude 特征**" ✓）
     #: ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了
@@ -66,7 +66,7 @@ def _build_plate(sw, tool_caller) -> object:
         ),
         (
             ("solidworks_sketch_start", {}),
-            ("solidworks_sketch_add_rectangle", RECT2),
+            ("solidworks_sketch_add_rectangle", rect2),
             (
                 "solidworks_extrude_boss",
                 {
@@ -149,10 +149,10 @@ def main() -> int:
     #: ── ①b 逐面盒中心（★ 只读诊断：确认 face_index 0/1 的点是否不同、是否落在面内）──
     try:
         import sw_part as _sp
-        import sw_selection_spec as _SS
+        import sw_selection_spec as _ss
 
         _faces = list(
-            _SS.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0)
+            _ss.entities_on_body(_build_plate(sw, tool_caller), "FACE", body_index=0)
             or []
         )
         centres = []

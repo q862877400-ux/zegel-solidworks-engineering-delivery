@@ -65,7 +65,7 @@ def main() -> int:
 
         from scripts import sw_part
         from scripts import sw_simulation as sim
-        from scripts import sw_simulation_loads as L
+        from scripts import sw_simulation_loads as l
 
         #: ① 核 4 个工具声明解析得到（★ 静态那一半）
         bindings = {}
@@ -135,13 +135,13 @@ def main() -> int:
             )
             return r
 
-        _apply("pressure", lambda: L.apply_pressure_report(mgr, doc))
-        _apply("torque", lambda: L.apply_torque_report(mgr, doc))
-        _apply("gravity", lambda: L.apply_gravity_report(mgr, doc))
-        _apply("centrifugal_force", lambda: L.apply_centrifugal_force_report(mgr, doc))
+        _apply("pressure", lambda: l.apply_pressure_report(mgr, doc))
+        _apply("torque", lambda: l.apply_torque_report(mgr, doc))
+        _apply("gravity", lambda: l.apply_gravity_report(mgr, doc))
+        _apply("centrifugal_force", lambda: l.apply_centrifugal_force_report(mgr, doc))
 
         ev["steps"]["loads"] = results
-        ev["steps"]["final_count"] = L._loads_count(mgr)
+        ev["steps"]["final_count"] = l._loads_count(mgr)
         n_ok = sum(1 for r in results if r.get("ok"))
         ev["steps"]["verdict_judgement"] = {
             "applied_ok": n_ok,

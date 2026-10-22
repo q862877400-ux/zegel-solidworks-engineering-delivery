@@ -108,9 +108,9 @@ def main() -> int:
         "  ★ check_signature_audit_freshness --doc <坏文档> ⇒ **exit=%d**（应为 1）"
         % p.returncode
     )
-    for l in (p.stdout or "").splitlines()[-3:]:
-        if l.strip():
-            print("       %s" % l.strip()[:100])
+    for item in (p.stdout or "").splitlines()[-3:]:
+        if item.strip():
+            print("       %s" % item.strip()[:100])
 
     real_rep = REPO / "docs" / "harvest-report.md"
     ro = real_rep.read_text(encoding="utf-8")

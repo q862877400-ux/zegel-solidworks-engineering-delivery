@@ -55,7 +55,7 @@ sys.path.insert(0, str(R / "scripts"))
 import pythoncom  # noqa: E402
 import win32com.client  # noqa: E402
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -157,7 +157,7 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         #:   ⇒ ★ **落不到任何一条边的内部** ⇒ ★ 三格全 `selected = 0` ⚠
         #:   ★ 故改成**边中点**（★ 每条边只有一个中点、不共享）✓
         row["sel"] = _select_edges_by_object(doc, (0, 1, 2, 3), mark=1)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         try:
             ok = C.get_com_member(
@@ -184,7 +184,7 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
                     type(exc).__name__,
                     str(exc)[:80],
                 )
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         #: ★★★ 2026-10-03（轮 612）**补上规则 6 的完整回读**：
         #:   ★ **那个新草图到底是不是 3D、有几段** ——

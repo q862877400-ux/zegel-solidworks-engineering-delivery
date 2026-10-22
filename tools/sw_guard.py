@@ -296,7 +296,7 @@ def classify_dialog(d: dict) -> dict:
     #: 因为表里只有"不可逆"、没有"不可恢复" ⇒ ★★ 而**"是否删除？不可恢复"恰好只有一个"确
     #: 定"**
     #:   ⇒ ★ **会被自动点掉**（★ 后果不可逆）。⇒ 补词 + **加"提问信号"判据**（见下）。
-    DANGER = (
+    danger = (
         "删除",
         "覆盖",
         "替换",
@@ -329,7 +329,7 @@ def classify_dialog(d: dict) -> dict:
     #: ★★ **提问信号** —— ★ 弹窗在**问**（★ 问号/"是否"/"吗"/"要不要"）⇒ ★ **绝不自动点*
     #: *：
     #:   ★ 因为"问"意味着**至少两条分支**，★ 而回答哪条**要看语义** —— ★ 那正是 LLM 的活。
-    QUESTION = (
+    question = (
         "？",
         "?",
         "是否",
@@ -357,7 +357,7 @@ def classify_dialog(d: dict) -> dict:
         "done",
     )
     #: ★ **高危类**（★ 出现就**不自动点**）
-    RISKY = (
+    risky = (
         "否",
         "取消",
         "暂停",
@@ -399,9 +399,9 @@ def classify_dialog(d: dict) -> dict:
                     out.append(w)
         return out
 
-    hit_danger = _hit(DANGER)
-    hit_question = _hit(QUESTION)
-    hit_risky = _hit(RISKY)
+    hit_danger = _hit(danger)
+    hit_question = _hit(question)
+    hit_risky = _hit(risky)
     okish = _hit(OKISH)
     if hit_danger:
         return {
@@ -1108,14 +1108,14 @@ def precheck_before_run(
       （★ 那时"读不到"本身就是要停下问人的理由，★ 不许当成"干净"）✓
       ★ 唯一的放行例外：★ **根本没有 SLDWORKS 进程** ⇒ 会话必然是空的 ⇒ 放行 ✓
     """
-    import session_verdict as SV  # noqa: PLC0415
+    import session_verdict as sv  # noqa: PLC0415
 
     rolls = []
     for roll, prefer, label in (
         (1, "title", "启动之前（窗口标题路，不需 COM）"),
         (2, "com", "连上之后（COM 路，读实际打开的文档）"),
     ):
-        v = SV.session_verdict(
+        v = sv.session_verdict(
             allowed_paths=allowed_paths,
             allow_untitled=allow_untitled,
             prefer=prefer,

@@ -45,7 +45,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -95,12 +95,12 @@ def main() -> int:
             (
                 "link_connector",
                 "VERTEX",
-                lambda m: SL.apply_link_connector_report(m, doc),
+                lambda m: sl.apply_link_connector_report(m, doc),
             ),
             (
                 "rigid_connector",
                 "FACE",
-                lambda m: SL.apply_rigid_connector_report(m, doc),
+                lambda m: sl.apply_rigid_connector_report(m, doc),
             ),
         ]
         for label, kind, fn in cases:

@@ -148,8 +148,8 @@ def main() -> int:
     out_txt = log.read_text(encoding="utf-8", errors="replace") if log.is_file() else ""
     print()
     print("  ── 触发进程的输出 ──")
-    for l in out_txt.strip().splitlines()[-6:]:
-        print("    %s" % l[:100])
+    for item in out_txt.strip().splitlines()[-6:]:
+        print("    %s" % item[:100])
     ev["trigger_log_tail"] = out_txt.strip().splitlines()[-6:]
     ev["pid"] = sw_connect.solidworks_process_id(sw)
     OUT.write_text(

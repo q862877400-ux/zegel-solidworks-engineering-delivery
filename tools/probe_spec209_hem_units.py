@@ -41,8 +41,8 @@ OUT = R / "output" / "spec209-hem-units.json"
 def main() -> int:
     import sw_connect
     import sw_part as P
-    import sw_selection_spec as SS
-    import sw_sheet_metal as SM
+    import sw_selection_spec as ss
+    import sw_sheet_metal as sm
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -66,7 +66,7 @@ def main() -> int:
 
     def _edges(doc):
         rows = []
-        for i, e in enumerate(SS.entities_on_body(doc, "EDGE")):
+        for i, e in enumerate(ss.entities_on_body(doc, "EDGE")):
             try:
                 pts = []
                 for member in ("GetStartVertex", "GetEndVertex"):
@@ -88,10 +88,10 @@ def main() -> int:
         opened.append(doc)
         with P.sketch(doc, "Front Plane") as sk:
             P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
-        SM.create_base_flange(
+        sm.create_base_flange(
             doc,
             sk,
-            SM.BaseFlangeSpec(thickness=thickness, bend_radius=0.001, depth=0.05),
+            sm.BaseFlangeSpec(thickness=thickness, bend_radius=0.001, depth=0.05),
         )
         return doc
 
@@ -149,8 +149,8 @@ def main() -> int:
     doc2 = globals().get("_LAST_DOC")
     if doc2 is not None:
         try:
-            SS.select_entity_by_index(doc2, "EDGE", 4)
-            r = SM.create_hem(
+            ss.select_entity_by_index(doc2, "EDGE", 4)
+            r = sm.create_hem(
                 doc2,
                 "index:4",
                 length_m=0.01,
@@ -170,7 +170,7 @@ def main() -> int:
             }
             print("  HEM(2mm 板) ok=%s feature=%r" % (r.get("ok"), r.get("feature")))
             if r.get("feature"):
-                ru = SM.create_unfold(doc2, [r["feature"]], face_index=0)
+                ru = sm.create_unfold(doc2, [r["feature"]], face_index=0)
                 ev["unfold"] = {
                     "ok": ru.get("ok"),
                     "bend_used": r["feature"],

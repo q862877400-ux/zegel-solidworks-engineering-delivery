@@ -340,7 +340,7 @@ def main() -> int:
     )
 
     # ── 输出 ────────────────────────────────────────────────────
-    L = [
+    item = [
         "# 项目数字（唯一来源）",
         "",
         "> **本文件是生成物** —— 由 `tools/gen_metrics.py` 现算，**不要手改**。",
@@ -351,8 +351,8 @@ def main() -> int:
         "|---|---|---|---|---|",
     ]
     for i, (m, d, v, c) in enumerate(rows, 1):
-        L.append("| %d | %s | %s | **%s** | `%s` |" % (i, m, d, v, c))
-    L += [
+        item.append("| %d | %s | %s | **%s** | `%s` |" % (i, m, d, v, c))
+    item += [
         "",
         "## ★ 两条纪律（地基②）",
         "```",
@@ -362,7 +362,7 @@ def main() -> int:
         "```",
         "",
     ]
-    OUT.write_text("\n".join(L), encoding="utf-8")
+    OUT.write_text("\n".join(item), encoding="utf-8")
     for m, _d, v, _c in rows:
         print("  %-34s %s" % (m, v))
     print("")

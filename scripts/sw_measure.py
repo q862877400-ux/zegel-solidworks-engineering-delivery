@@ -113,10 +113,10 @@ def measure_selection_report(
     #: ★★ 选在**读计数之前** ⇒ ★ 后面那段"计数 0 就报错"**原样保留**（★ 它现在是一条**真
     #: 实的回读判据**）✓
     if str(selection or "").strip():
-        import sw_selection_spec as _SS
+        import sw_selection_spec as _ss
 
         try:
-            _SS.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
+            _ss.resolve_selection(model, str(selection), str(selection_kind or "FACE"))
         except Exception as exc:  # noqa: BLE001
             return {
                 "ok": False,

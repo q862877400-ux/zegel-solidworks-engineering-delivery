@@ -46,7 +46,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     from sw_part import end_sketch, start_sketch
     from sw_sketch import count_segments, resolve_sketch
 
@@ -65,11 +65,11 @@ def main() -> int:
 
         #: ★ 一个图元一张草图 —— 逐条量"画前 / 画后"的段数
         cases = (
-            ("arc", lambda: P.sketch_arc(doc, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 1)),
-            ("ellipse", lambda: P.sketch_ellipse(doc, 0.0, 0.0, 20.0, 0.0, 0.0, 10.0)),
-            ("polygon", lambda: P.sketch_polygon(doc, 0.0, 0.0, 15.0, 6)),
-            ("slot", lambda: P.sketch_slot(doc, -15.0, 0.0, 15.0, 0.0, 5.0)),
-            ("centerline", lambda: P.sketch_centerline(doc, -20.0, 0.0, 20.0, 0.0)),
+            ("arc", lambda: p.sketch_arc(doc, 0.0, 0.0, 10.0, 0.0, 0.0, 10.0, 1)),
+            ("ellipse", lambda: p.sketch_ellipse(doc, 0.0, 0.0, 20.0, 0.0, 0.0, 10.0)),
+            ("polygon", lambda: p.sketch_polygon(doc, 0.0, 0.0, 15.0, 6)),
+            ("slot", lambda: p.sketch_slot(doc, -15.0, 0.0, 15.0, 0.0, 5.0)),
+            ("centerline", lambda: p.sketch_centerline(doc, -20.0, 0.0, 20.0, 0.0)),
         )
         for label, draw in cases:
             try:
@@ -114,7 +114,7 @@ def main() -> int:
         try:
             start_sketch(doc, plane_name="Front Plane")
             b = seg_count()
-            P.sketch_polygon(doc, 0.0, 0.0, 15.0, 2)
+            p.sketch_polygon(doc, 0.0, 0.0, 15.0, 2)
             a = seg_count()
             end_sketch(doc)
             ev["steps"]["probe_polygon_sides2"] = {

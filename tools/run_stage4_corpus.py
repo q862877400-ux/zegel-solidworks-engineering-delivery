@@ -39,16 +39,16 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import design_ir as DI  # noqa: E402
-from scripts.engineering import planner as PL  # noqa: E402
+from scripts.engineering import design_ir as di  # noqa: E402
+from scripts.engineering import planner as pl  # noqa: E402
 
 OUT = ROOT / "output" / "stage4"
 CORPUS = ROOT / "corpus" / "l3-semantic.yaml"
 
 #: ★ 语料 category → 期望状态（★ 判据的**真源**）
 EXPECT = {
-    "solvable": DI.READY_FOR_REVIEW,
-    "missing_input": DI.WAITING_INPUT,
+    "solvable": di.READY_FOR_REVIEW,
+    "missing_input": di.WAITING_INPUT,
     #: ★ 能力边界与对抗语义都**不得进执行**（★ 具体是拒绝还是等待由内容定）
     "capability_boundary": None,  #: ★ 只要求「不可执行」
     "adversarial": None,  #: ★ 只要求「不可执行」
@@ -91,7 +91,7 @@ def evaluate(items: list) -> dict:
     for it in items:
         req = it.get("requirement", "")
         want = EXPECT.get(it.get("category", ""), None)
-        ir = DI.parse_requirement(req)
+        ir = di.parse_requirement(req)
         got = ir.state
 
         row = {
@@ -105,23 +105,23 @@ def evaluate(items: list) -> dict:
         }
 
         #: ★★ 判据①：**应等待或拒绝却进入执行**（★ 最严重）
-        if want is not None and want != DI.READY_FOR_REVIEW and ir.executable:
+        if want is not None and want != di.READY_FOR_REVIEW and ir.executable:
             row["verdict"] = "MISRELEASE"
-        elif want == DI.READY_FOR_REVIEW and not ir.executable:
+        elif want == di.READY_FOR_REVIEW and not ir.executable:
             #: ★ 判据②：可解的被误挡
             row["verdict"] = "MISBLOCK"
-        elif want is not None and want != got and want == DI.READY_FOR_REVIEW:
+        elif want is not None and want != got and want == di.READY_FOR_REVIEW:
             row["verdict"] = "WRONG_STATE"
         else:
             #: ★ 规划（★ 只对可解的做）
             if ir.executable:
                 try:
-                    ps = PL.plan_from_requirement(req)
+                    ps = pl.plan_from_requirement(req)
                     row["variants"] = len(ps.candidates)
                     row["compilable"] = len(ps.compilable)
                     #: ★ 判据③：**可解且可编译**
                     row["verdict"] = "PASS" if ps.ok else "NOT_COMPILABLE"
-                except PL.PlannerError as e:
+                except pl.PlannerError as e:
                     row["variants"] = 0
                     row["planner_error"] = e.code
                     row["verdict"] = "PLAN_FAILED"
@@ -169,23 +169,23 @@ def run_s4b() -> dict:
     rows = []
 
     #: ① 关键缺项 ⇒ WAITING_INPUT 且**不写 CAD**
-    ir = DI.parse_requirement("设计一块板")
+    ir = di.parse_requirement("设计一块板")
     rows.append(
         {
             "case": "关键缺项不写 CAD",
             "got": ir.state,
-            "ok": ir.state == DI.WAITING_INPUT and ir.blocks_cad,
+            "ok": ir.state == di.WAITING_INPUT and ir.blocks_cad,
         }
     )
 
     #: ② 最多两批主动问题
-    el = DI.Elicitation()
+    el = di.Elicitation()
     el.ask(["尺寸？"])
     el.ask(["材料？"])
     exceeded = False
     try:
         el.ask(["载荷？"])
-    except DI.DesignIRError:
+    except di.DesignIRError:
         exceeded = True
     rows.append(
         {
@@ -196,40 +196,40 @@ def run_s4b() -> dict:
     )
 
     #: ③ 候选不超 4096 token
-    ir2 = DI.parse_requirement(
+    ir2 = di.parse_requirement(
         "在一块 100×60×20 的板上四角各打一个 M6 通孔，孔心距边 10mm"
     )
-    ret = DI.retrieve_methods(ir2)
+    ret = di.retrieve_methods(ir2)
     rows.append(
         {
             "case": "候选 ≤4096 token",
             "got": ret["tokens"],
-            "ok": ret["tokens"] <= DI.CANDIDATE_TOKEN_BUDGET,
+            "ok": ret["tokens"] <= di.CANDIDATE_TOKEN_BUDGET,
         }
     )
 
     #: ④ 数据拒绝 ⇒ 出站 0
-    p = DI.outbound_permit(data_permitted=False, budget_permitted=True)
+    p = di.outbound_permit(data_permitted=False, budget_permitted=True)
     rows.append(
         {
             "case": "数据拒绝 ⇒ 出站 0",
             "got": p.code,
-            "ok": (not p.allowed) and p.code == DI.DATA_NOT_PERMITTED,
+            "ok": (not p.allowed) and p.code == di.DATA_NOT_PERMITTED,
         }
     )
 
     #: ⑤ 余额拒绝 ⇒ 出站 0
-    p2 = DI.outbound_permit(data_permitted=True, budget_permitted=False)
+    p2 = di.outbound_permit(data_permitted=True, budget_permitted=False)
     rows.append(
         {
             "case": "余额拒绝 ⇒ 出站 0",
             "got": p2.code,
-            "ok": (not p2.allowed) and p2.code == DI.BUDGET_NOT_PERMITTED,
+            "ok": (not p2.allowed) and p2.code == di.BUDGET_NOT_PERMITTED,
         }
     )
 
     #: ⑥ 未知费用 ⇒ **不释放**预算预占
-    bh = DI.BudgetHold()
+    bh = di.BudgetHold()
     bh.hold(10.0)
     released = bh.release(cost_known=False)
     rows.append(
@@ -241,7 +241,7 @@ def run_s4b() -> dict:
     )
 
     #: ⑦ 都获准 ⇒ 放行
-    p3 = DI.outbound_permit(data_permitted=True, budget_permitted=True)
+    p3 = di.outbound_permit(data_permitted=True, budget_permitted=True)
     rows.append({"case": "都获准 ⇒ 放行", "got": p3.allowed, "ok": p3.allowed})
 
     return {"s4b": rows, "ok": all(r["ok"] for r in rows)}

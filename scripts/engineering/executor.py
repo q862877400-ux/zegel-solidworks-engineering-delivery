@@ -21,7 +21,7 @@ import pathlib
 import time
 from dataclasses import dataclass, field
 
-from . import authorization as AUTH
+from . import authorization as auth
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 
@@ -110,7 +110,7 @@ def execute_plan(
     reg: dict,
     *,
     host: dict | None = None,
-    owned: AUTH.OwnedDocuments | None = None,
+    owned: auth.OwnedDocuments | None = None,
     doc=None,
     write_paths: tuple = (),
     log_dir: pathlib.Path | None = None,
@@ -128,7 +128,7 @@ def execute_plan(
     :returns: `{ok, code, records, com_write_total, plan_method}`
     """
     #: ① 授权（★ 不过就**立刻返回**，不碰 COM）
-    verdict = AUTH.authorize_plan(
+    verdict = auth.authorize_plan(
         plan, reg, owned=owned, doc=doc, write_paths=write_paths
     )
     if not verdict.ok:

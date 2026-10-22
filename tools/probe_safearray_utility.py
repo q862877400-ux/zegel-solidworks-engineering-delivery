@@ -205,7 +205,7 @@ def main() -> int:
             #: ）
             #: —— 轮 185 的教训：判据要**穷尽**、要锚在权威源（这里就是那份反射签名表）
             #: 。
-            ALL = [
+            all = [
                 "GetBoolean",
                 "GetBstr",
                 "GetByte",
@@ -229,19 +229,19 @@ def main() -> int:
                 "UnPackVariant",
             ]
             reachable = []
-            for nm in ALL:
+            for nm in all:
                 try:
                     m = getattr(util, nm)
                     reachable.append(nm)
                 except Exception:  # noqa: BLE001
                     pass
-            ev["members_total"] = len(ALL)
+            ev["members_total"] = len(all)
             ev["members_reachable"] = reachable
             rec(
                 "⑥ 官方 21 个成员里**迟到绑定可达**的",
-                len(reachable) == len(ALL),
+                len(reachable) == len(all),
                 "%d/%d ⇒ %s"
-                % (len(reachable), len(ALL), reachable or "**一个都没有**"),
+                % (len(reachable), len(all), reachable or "**一个都没有**"),
             )
 
             #: ⑦ 内省：这个 dispatch 到底带不带类型信息（区分「接口不对」与「没有 dispin

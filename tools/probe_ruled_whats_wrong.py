@@ -37,28 +37,28 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _horiz_edge_index(doc):
     """★ 找一条**水平边**（★ 两端 Z 相同 ⇒ 与拉伸方向垂直）。"""
-    b = list(C.get_com_member(doc, "GetBodies2", 0, True) or [])[0]
-    for i, e in enumerate(list(C.get_com_member(b, "GetEdges") or [])):
+    b = list(c.get_com_member(doc, "GetBodies2", 0, True) or [])[0]
+    for i, e in enumerate(list(c.get_com_member(b, "GetEdges") or [])):
         try:
             a = [
                 float(x)
                 for x in (
-                    C.get_com_member(C.get_com_member(e, "GetStartVertex"), "GetPoint")
+                    c.get_com_member(c.get_com_member(e, "GetStartVertex"), "GetPoint")
                     or []
                 )
             ]
             z = [
                 float(x)
                 for x in (
-                    C.get_com_member(C.get_com_member(e, "GetEndVertex"), "GetPoint")
+                    c.get_com_member(c.get_com_member(e, "GetEndVertex"), "GetPoint")
                     or []
                 )
             ]
@@ -70,7 +70,7 @@ def _horiz_edge_index(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "\u76f4\u7eb9\u66f2\u9762\u5931\u8d25\u540e\u8bfb What's Wrong\uff08\u2605 \u6362\u89c2\u6d4b\u624b\u6bb5\uff09",
@@ -78,10 +78,10 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateCornerRectangle",
             -0.02,
             -0.02,
@@ -97,12 +97,12 @@ def main() -> int:
                 break
             except Exception:  # noqa: BLE001
                 continue
-        ev["ww_before"] = FR.whats_wrong(doc)
+        ev["ww_before"] = fr.whats_wrong(doc)
 
         idx = _horiz_edge_index(doc)
         ev["edge_index"] = idx
-        b = list(C.get_com_member(doc, "GetBodies2", 0, True) or [])[0]
-        edges = list(C.get_com_member(b, "GetEdges") or [])
+        b = list(c.get_com_member(doc, "GetBodies2", 0, True) or [])[0]
+        edges = list(c.get_com_member(b, "GetEdges") or [])
         try:
             doc.ClearSelection2(True)
         except Exception:  # noqa: BLE001
@@ -111,8 +111,8 @@ def main() -> int:
             ev["selected"] = bool(P._select_com_object(edges[idx], append=True, mark=0))
             try:
                 ev["sel_count"] = int(
-                    C.get_com_member(
-                        C.get_com_member(doc, "SelectionManager"),
+                    c.get_com_member(
+                        c.get_com_member(doc, "SelectionManager"),
                         "GetSelectedObjectCount2",
                         -1,
                     )
@@ -121,19 +121,19 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 ev["sel_count"] = None
 
-        r = SF.insert_ruled_surface_report(doc, surface_type=1, length_mm=10.0)
+        r = sf.insert_ruled_surface_report(doc, surface_type=1, length_mm=10.0)
         ev["ruled"] = {k: v for k, v in r.items() if k != "\u2605"}
-        ev["ww_after"] = FR.whats_wrong(doc)
-        ev["rebuild_after"] = bool(C.get_com_member(doc, "EditRebuild3"))
-        ev["ww_after_rebuild"] = FR.whats_wrong(doc)
+        ev["ww_after"] = fr.whats_wrong(doc)
+        ev["rebuild_after"] = bool(c.get_com_member(doc, "EditRebuild3"))
+        ev["ww_after_rebuild"] = fr.whats_wrong(doc)
     except Exception as exc:  # noqa: BLE001
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

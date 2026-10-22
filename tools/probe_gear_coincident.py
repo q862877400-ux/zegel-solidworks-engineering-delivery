@@ -17,9 +17,9 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_coincident.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 真曲线齿廓的**显式重合**闭合。
-# 官方依据: `C:\swapi\types\ISketch\MergePoints.md`（★ Remarks 推荐 AddRelation+COINCIDE
+# 官方依据: `c:\swapi\types\ISketch\MergePoints.md`（★ Remarks 推荐 AddRelation+COINCIDE
 #           NT）
-#         `C:\swapi\types\ISketchRelationManager\AddRelation.md`
+#         `c:\swapi\types\ISketchRelationManager\AddRelation.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -37,22 +37,22 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import gear_geometry as G  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from tools.probe_gear_tooth_pattern2 import tooth_curves  # noqa: E402
 
 
 def _segments(doc):
     try:
-        sk = C.get_com_member(doc, "GetActiveSketch2")
-        return list(C.get_com_member(sk, "GetSketchSegments") or [])
+        sk = c.get_com_member(doc, "GetActiveSketch2")
+        return list(c.get_com_member(sk, "GetSketchSegments") or [])
     except Exception:  # noqa: BLE001
         return []
 
 
 def _pt_of(seg, which):
     try:
-        pt = C.get_com_member(seg, which)
+        pt = c.get_com_member(seg, which)
         arr = list(pt) if pt is not None else None
         return (float(arr[0]), float(arr[1])) if arr and len(arr) >= 2 else None
     except Exception:  # noqa: BLE001
@@ -75,16 +75,16 @@ def _main() -> int:
         "tooth_meta": meta,
         "steps": [],
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        sm = c.get_com_member(doc, "SketchManager")
         ok = 0
         for name, x, y, t0, t1 in curves:
             try:
-                C.get_com_member(
+                c.get_com_member(
                     sm,
                     "CreateEquationSpline2",
                     x,
@@ -109,11 +109,11 @@ def _main() -> int:
         #: ★★★ **逐对相邻曲线加重合关系**（★ 6 对，★ 首尾相接）
         #:   ★ 官方 `ISketchRelationManager::AddRelation(RelationType, EntitiesArray)`
         #:     ★★ `RelationType` 用 `swConstraintType_e` ⇒ ★ 真机试几种取值（★ 不臆造）
-        sk = C.get_com_member(doc, "GetActiveSketch2")
+        sk = c.get_com_member(doc, "GetActiveSketch2")
         rm = None
         for g in ("RelationManager", "GetRelationManager"):
             try:
-                rm = C.get_com_member(sk, g)
+                rm = c.get_com_member(sk, g)
                 if rm is not None:
                     break
             except Exception:  # noqa: BLE001
@@ -158,7 +158,7 @@ def _main() -> int:
         #: ★★ 用**选中端点 + AddRelation** 逐对加（★ 官方：★ 先选实体再 AddRelation）
         for jt in joints:
             try:
-                ext = C.get_com_member(doc, "Extension")
+                ext = c.get_com_member(doc, "Extension")
                 doc.ClearSelection2(True)
                 #: ★ `ISketchPoint::Select4(Append, Callout)`（★ 事实 32：★ 点也没有名字
                 #: ）
@@ -168,12 +168,12 @@ def _main() -> int:
                     (jt["to_seg"], jt["end_b"]),
                 ):
                     try:
-                        pt = C.get_com_member(
+                        pt = c.get_com_member(
                             segs[s_i], "GetStartPoint2" if e_i == 0 else "GetEndPoint2"
                         )
                         #: ★ 选**草图点对象**（★ 不是曲线）
-                        obj = C.get_com_member(pt, "GetSketchPoint") if False else None
-                        ok_a = bool(C.get_com_member(pt, "Select4", not ok_a, None))
+                        obj = c.get_com_member(pt, "GetSketchPoint") if False else None
+                        ok_a = bool(c.get_com_member(pt, "Select4", not ok_a, None))
                     except Exception:  # noqa: BLE001
                         pass
                 got = None
@@ -181,7 +181,7 @@ def _main() -> int:
                     #: ★★ `swConstraintType_COINCIDENT` 的取值 ⇒ ★ 试几个（★ 真机判）
                     for val in (5, 4, 3, 2, 1, 0):
                         try:
-                            got = C.get_com_member(rm, "AddRelation", val, None)
+                            got = c.get_com_member(rm, "AddRelation", val, None)
                             if got:
                                 break
                         except Exception:  # noqa: BLE001
@@ -198,8 +198,8 @@ def _main() -> int:
         rep["steps"].append({"segments_after_relations": len(_segments(doc))})
         try:
             rep["constrained_status"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "GetActiveSketch2"), "GetConstrainedStatus"
+                c.get_com_member(
+                    c.get_com_member(doc, "GetActiveSketch2"), "GetConstrainedStatus"
                 )
             )
         except Exception:  # noqa: BLE001
@@ -209,10 +209,10 @@ def _main() -> int:
         rep["extrude_ok"] = f is not None
         if f is not None:
             try:
-                mp = C.get_com_member(
-                    C.get_com_member(doc, "Extension"), "CreateMassProperty"
+                mp = c.get_com_member(
+                    c.get_com_member(doc, "Extension"), "CreateMassProperty"
                 )
-                rep["volume_mm3"] = float(C.get_com_member(mp, "Volume")) * 1e9
+                rep["volume_mm3"] = float(c.get_com_member(mp, "Volume")) * 1e9
             except Exception:  # noqa: BLE001
                 pass
     except Exception as exc:  # noqa: BLE001
@@ -220,9 +220,9 @@ def _main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "_probe_gear_coincident.json"

@@ -41,25 +41,25 @@ OUT = R / "output" / "feature-toolbar-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     from sw_connect import get_com_member, safe_get_com_member
     from sw_selection_spec import clear_selection, resolve_selection
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
-    ev = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "items": []}
+    ev = {"at": time.strftime("%Y-%m-%dT%h:%M:%S"), "items": []}
 
     def box(depth=10.0):
         d = sw_connect.new_document(sw, "part")
-        P.start_sketch(d, plane_name="Front Plane")
-        P.sketch_corner_rectangle(d, -25.0, -20.0, 25.0, 20.0)
-        sk = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        P.extrude_boss(d, sk, depth)
+        p.start_sketch(d, plane_name="Front Plane")
+        p.sketch_corner_rectangle(d, -25.0, -20.0, 25.0, 20.0)
+        sk = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        p.extrude_boss(d, sk, depth)
         return d, sk
 
     def nt(d):
         try:
-            return len(list(P.feature_names(d)))
+            return len(list(p.feature_names(d)))
         except Exception:
             return -1
 
@@ -121,24 +121,24 @@ def main() -> int:
         print("  %-16s %-3s  %s" % (zh, "不能", "本仓无入口"))
 
     # ── 有入口的 ───────────────────────────────────────────────────
-    run("拉伸凸台", lambda d, s: P.extrude_boss(d, s, 8.0))
-    run("旋转凸台", lambda d, s: P.revolve_boss(d, s, math.radians(360.0)))
+    run("拉伸凸台", lambda d, s: p.extrude_boss(d, s, 8.0))
+    run("旋转凸台", lambda d, s: p.revolve_boss(d, s, math.radians(360.0)))
 
     def _sweep(d, s):
         import sw_sweep
 
-        P.start_sketch(d, plane_name="Front Plane")  # \u8f6e\u5ed3
-        P.sketch_circle(d, 0.0, 0.0, 4.0)
-        s1 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        P.start_sketch(d, plane_name="Top Plane")  # \u8def\u5f84
-        P.sketch_line(d, 0.0, 0.0, 0.0, 40.0)
-        s2 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
+        p.start_sketch(d, plane_name="Front Plane")  # \u8f6e\u5ed3
+        p.sketch_circle(d, 0.0, 0.0, 4.0)
+        s1 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        p.start_sketch(d, plane_name="Top Plane")  # \u8def\u5f84
+        p.sketch_line(d, 0.0, 0.0, 0.0, 40.0)
+        s2 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
         clear_selection(d)
         ext = get_com_member(d, "Extension")
-        P._select_by_id(ext, s1, "SKETCH", mark=1)  # 轮廓 mark=1
-        P._select_by_id(ext, s2, "SKETCH", append=True, mark=4)  # 路径 mark=4
+        p._select_by_id(ext, s1, "SKETCH", mark=1)  # 轮廓 mark=1
+        p._select_by_id(ext, s2, "SKETCH", append=True, mark=4)  # 路径 mark=4
         return sw_sweep.create_sweep_report(d)
 
     run("扫描", _sweep)
@@ -146,36 +146,36 @@ def main() -> int:
     def _loft(d, s):
         import sw_loft
 
-        P.start_sketch(d, plane_name="Front Plane")
-        P.sketch_corner_rectangle(d, -20.0, -20.0, 20.0, 20.0)
-        s1 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        P.start_sketch(d, plane_name="Top Plane")
-        P.sketch_circle(d, 0.0, 0.0, 8.0)
-        s2 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
+        p.start_sketch(d, plane_name="Front Plane")
+        p.sketch_corner_rectangle(d, -20.0, -20.0, 20.0, 20.0)
+        s1 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        p.start_sketch(d, plane_name="Top Plane")
+        p.sketch_circle(d, 0.0, 0.0, 8.0)
+        s2 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
         clear_selection(d)
         ext = get_com_member(d, "Extension")
-        P._select_by_id(ext, s1, "SKETCH", mark=1)
-        P._select_by_id(ext, s2, "SKETCH", append=True, mark=1)
+        p._select_by_id(ext, s1, "SKETCH", mark=1)
+        p._select_by_id(ext, s2, "SKETCH", append=True, mark=1)
         return sw_loft.create_loft_report(d)
 
     run("放样凸台", _loft)
     no_entry("边界凸台")
 
     def _cut(d, s):
-        P.start_sketch(d, plane_name="Front Plane")
-        P.sketch_circle(d, 0.0, 0.0, 6.0)
-        s2 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        return P.extrude_cut(d, s2, 0.0)
+        p.start_sketch(d, plane_name="Front Plane")
+        p.sketch_circle(d, 0.0, 0.0, 6.0)
+        s2 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        return p.extrude_cut(d, s2, 0.0)
 
     run("拉伸切除", _cut)
 
     def _hole(d, s):
-        import sw_hole_features as H
+        import sw_hole_features as h
 
-        return H.create_through_hole_at_selection_report(d, "index:0", 6.0)
+        return h.create_through_hole_at_selection_report(d, "index:0", 6.0)
 
     run("异型孔", _hole)
     no_entry("旋转切除")
@@ -187,32 +187,32 @@ def main() -> int:
         lambda d, s: (
             clear_selection(d),
             resolve_selection(d, "index:0", "EDGE"),
-            P.fillet(d, 2.0),
+            p.fillet(d, 2.0),
         )[-1],
     )
-    run("线性阵列", lambda d, s: P.linear_pattern(d, s, 1.0, 0.0, 0.0, 15.0, 2))
+    run("线性阵列", lambda d, s: p.linear_pattern(d, s, 1.0, 0.0, 0.0, 15.0, 2))
 
     def _rib(d, s):
-        P.start_sketch(d, plane_name="Right Plane")
-        P.sketch_line(d, 0.0, 0.0, 0.0, 15.0)
-        s2 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        return P.rib_report(d, s2, 2.0)
+        p.start_sketch(d, plane_name="Right Plane")
+        p.sketch_line(d, 0.0, 0.0, 0.0, 15.0)
+        s2 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        return p.rib_report(d, s2, 2.0)
 
     run("筋", _rib)
     no_entry("拔模")
-    run("抽壳", lambda d, s: P.shell_report(d, 2.0))
+    run("抽壳", lambda d, s: p.shell_report(d, 2.0))
 
     def _wrap(d, s):
         import sw_wrap
 
-        P.start_sketch(d, plane_name="Front Plane")
-        P.sketch_circle(d, 0.0, 0.0, 5.0)
-        s2 = P.current_sketch_name(d, "")
-        P.end_sketch(d)
+        p.start_sketch(d, plane_name="Front Plane")
+        p.sketch_circle(d, 0.0, 0.0, 5.0)
+        s2 = p.current_sketch_name(d, "")
+        p.end_sketch(d)
         clear_selection(d)
         ext = get_com_member(d, "Extension")
-        P._select_by_id(ext, s2, "SKETCH", mark=4)  # 草图 mark=4
+        p._select_by_id(ext, s2, "SKETCH", mark=4)  # 草图 mark=4
         import sw_selection_spec as SS
 
         SS.select_entity_by_index(d, "FACE", 0, append=True)  # 面 mark=1（它自带）
@@ -222,9 +222,9 @@ def main() -> int:
     no_entry("相交")
     run(
         "镜向",
-        lambda d, s: P.mirror_feature(
+        lambda d, s: p.mirror_feature(
             d,
-            [n for n in P.feature_names(d) if "拉伸" in n or "Boss" in n][-1],
+            [n for n in p.feature_names(d) if "拉伸" in n or "Boss" in n][-1],
             "Right Plane",
         ),
     )
@@ -233,7 +233,7 @@ def main() -> int:
         import sw_selection_spec as SS
 
         SS.select_entity_by_index(d, "FACE", 0)
-        return P.create_axis_report(d)
+        return p.create_axis_report(d)
 
     run("参考几何体", _axis)
 
@@ -241,7 +241,7 @@ def main() -> int:
         import sw_selection_spec as SS
 
         SS.select_entity_by_index(d, "EDGE", 0)
-        return P.insert_composite_curve_report(d)
+        return p.insert_composite_curve_report(d)
 
     run("曲线", _curve)
 

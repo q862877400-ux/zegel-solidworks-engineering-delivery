@@ -52,7 +52,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_assembly import add_component, get_components
 
     ev: dict = {"steps": {}, "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "study": STUDY}
@@ -82,7 +82,7 @@ def main() -> int:
         if (ev["steps"].get("entry_check") or {}).get("ok"):
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
-                rep = SL.apply_pin_connector_report(mgr, doc)
+                rep = sl.apply_pin_connector_report(mgr, doc)
                 ev["steps"]["pin_connector"] = {
                     "ok": bool(isinstance(rep, dict) and rep.get("ok")),
                     "count": [rep.get("count_before"), rep.get("count_after")]

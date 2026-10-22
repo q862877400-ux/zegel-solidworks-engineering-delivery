@@ -93,11 +93,11 @@ def capture(hwnd: int, path: str = None) -> Image.Image:
     if w <= 0 or h <= 0:
         raise ValueError("窗口尺寸异常 %dx%d" % (w, h))
 
-    hwndDC = user32.GetWindowDC(hwnd)
-    memDC = gdi32.CreateCompatibleDC(hwndDC)
-    bmp = gdi32.CreateCompatibleBitmap(hwndDC, w, h)
-    old = gdi32.SelectObject(memDC, bmp)
-    ok = user32.PrintWindow(hwnd, memDC, PW_RENDERFULLCONTENT)
+    hwnddc = user32.GetWindowDC(hwnd)
+    memdc = gdi32.CreateCompatibleDC(hwnddc)
+    bmp = gdi32.CreateCompatibleBitmap(hwnddc, w, h)
+    old = gdi32.SelectObject(memdc, bmp)
+    ok = user32.PrintWindow(hwnd, memdc, PW_RENDERFULLCONTENT)
 
     bmi = BITMAPINFO()
     bmi.bmiHeader.biSize = ctypes.sizeof(BITMAPINFOHEADER)
@@ -108,12 +108,12 @@ def capture(hwnd: int, path: str = None) -> Image.Image:
     bmi.bmiHeader.biCompression = 0  # BI_RGB
 
     buf = ctypes.create_string_buffer(w * h * 4)
-    got = gdi32.GetDIBits(memDC, bmp, 0, h, buf, ctypes.byref(bmi), DIB_RGB_COLORS)
+    got = gdi32.GetDIBits(memdc, bmp, 0, h, buf, ctypes.byref(bmi), DIB_RGB_COLORS)
 
-    gdi32.SelectObject(memDC, old)
+    gdi32.SelectObject(memdc, old)
     gdi32.DeleteObject(bmp)
-    gdi32.DeleteDC(memDC)
-    user32.ReleaseDC(hwnd, hwndDC)
+    gdi32.DeleteDC(memdc)
+    user32.ReleaseDC(hwnd, hwnddc)
 
     if not got:
         raise RuntimeError("GetDIBits 失败")

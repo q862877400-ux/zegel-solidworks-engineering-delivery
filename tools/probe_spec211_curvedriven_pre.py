@@ -54,15 +54,15 @@ REF_POINT = {
 
 
 def _fnames(model):
-    import sw_surface_features as SF
+    import sw_surface_features as sf
 
-    return SF.feature_names(model)
+    return sf.feature_names(model)
 
 
 def _one(sw, ref_point: int) -> dict:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
+    import sw_selection_spec as ss
 
     model = sw_connect.new_document(sw, "part")
     if model is None:
@@ -88,7 +88,7 @@ def _one(sw, ref_point: int) -> dict:
         else False
     )
     ok2 = bool(sw_part._select_by_id(ext, sk2, "SKETCH", append=True, mark=2))
-    sel = SS.get_selection_count(model)
+    sel = ss.get_selection_count(model)
     before = _fnames(model)
     exc = None
     feat = None

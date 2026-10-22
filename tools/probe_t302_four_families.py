@@ -114,7 +114,7 @@ def _try(label: str, fn) -> dict:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -123,7 +123,7 @@ def main() -> int:
     #: ── ① 钣金角撑板 `InsertSheetMetalGussetFeature`（★ 它有 `swFmSMGusset`）──────
     try:
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             for a, b in (
                 ((-0.06, -0.04), (0.06, -0.04)),
@@ -132,7 +132,7 @@ def main() -> int:
                 ((-0.06, 0.04), (-0.06, -0.04)),
             ):
                 get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-        P.extrude_boss(model, sk, 2.0)
+        p.extrude_boss(model, sk, 2.0)
         #: ★ 建钣金基体法兰（★ 本仓已有的真机验证过的路径）
         #: ★★★★ **修 1**（★ 我第一版猜错了签名 —— ★ 事实 517）：★ 真签名是
         #: `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ⇒ **要一个 spec
@@ -152,10 +152,10 @@ def main() -> int:
         #:   `_raw/**/enum_values_sldworks.txt`（★ 事实 43：★ 枚举**数值**必须去反射查，
         #:   `C:\swapi\enums\` 那份的「Value」列装的是**描述**不是数值）✓
         fm = get_com_member(model, "FeatureManager")
-        SWFM_SM_GUSSET = 118
+        swfm_sm_gusset = 118
 
         def _mk_gusset():
-            obj = get_com_member(fm, "CreateDefinition", SWFM_SM_GUSSET)
+            obj = get_com_member(fm, "CreateDefinition", swfm_sm_gusset)
             if obj is None:
                 raise RuntimeError(
                     "CreateDefinition(swFmSMGusset=118) 回 None "
@@ -192,23 +192,23 @@ def main() -> int:
     #: ── ② 焊件那三个：★ 先建结构构件当前置 ────────────────────────────────
     try:
         model = new_document(app, "part")
-        with P.sketch(model, "Front Plane") as sk:
+        with p.sketch(model, "Front Plane") as sk:
             sm = get_com_member(model, "SketchManager")
             get_com_member(sm, "CreateLine", -0.06, 0.0, 0.0, 0.06, 0.0, 0.0)
-        import sw_weldment as W
+        import sw_weldment as w
 
         #: ★★★★ **修 3**（★ 我第一版把参数传反了 —— ★ 事实 517）：★ 真签名是
         #:   `create_structural_member(model, profile_path, segment_groups, …)` ⇒
         #:   ★ **第二个是型材路径、第三个是"段组"** ✓
-        PROF = (
+        prof = (
             r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
             r"\ansi inch\rectangular tube.sldlfp"
         )
         try:
             import pathlib as _pp
 
-            if _pp.Path(PROF).is_file():
-                W.create_structural_member(model, PROF, [[sk]])
+            if _pp.Path(prof).is_file():
+                w.create_structural_member(model, prof, [[sk]])
                 rows.append(
                     {"项": "焊件结构构件（★ 前置）", "★_ok": True, "返回": "ok"}
                 )
@@ -217,7 +217,7 @@ def main() -> int:
                     {
                         "项": "焊件结构构件（★ 前置）",
                         "★_ok": None,
-                        "异常": "型材文件不在：%s" % PROF,
+                        "异常": "型材文件不在：%s" % prof,
                     }
                 )
         except Exception as exc:  # noqa: BLE001

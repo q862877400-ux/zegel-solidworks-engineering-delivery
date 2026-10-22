@@ -402,8 +402,8 @@ def _reflect_members(path: Path, iface: str) -> list[str]:
     #   （`IGetSubFeatures` / `IUpdateCostForAllBodies` / `ICreateRouteThrough…`）。
     #   它们是**同一能力的内部变体**，索引（build_complete_index.py）已刻意不收，
     #   分母也必须同样不收，否则覆盖表永远差这一截。
-    _INTERNAL = re.compile(r"^I[A-Z][a-z]")
-    out = [n for n in out if not _INTERNAL.match(n)]
+    _internal = re.compile(r"^I[A-Z][a-z]")
+    out = [n for n in out if not _internal.match(n)]
 
 
 def family_members(iface: str) -> list[str]:
@@ -420,7 +420,7 @@ def family_members(iface: str) -> list[str]:
     #   `C:\swapi` 按文档页收录，会把它们算进去（本机实测 ISketchEllipse：
     #   swapi 21 个 / 反射方法 11 + 属性 10，那 10 个全是 IGet*）。
     #   ⇒ 分母必须与索引口径一致，否则覆盖表会**凭空多出** 36% 的「缺口」。
-    INTERNAL = re.compile(r"^I[A-Z][a-z]")
+    internal = re.compile(r"^I[A-Z][a-z]")
 
     # ⚑⚑⚑ **反射才是成员清单的权威**（AGENTS.md 铁律 4：两套源都要用，
     #   但用途不同）。
@@ -440,7 +440,7 @@ def family_members(iface: str) -> list[str]:
         return sorted(
             p.stem
             for p in d.glob("*.md")
-            if p.stem != "_overview" and not INTERNAL.match(p.stem)
+            if p.stem != "_overview" and not internal.match(p.stem)
         )
     for path in REFLECT.values():
         members = _reflect_members(path, iface)

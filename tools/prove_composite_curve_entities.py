@@ -38,10 +38,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_sketch_edit_ops as SEO  # noqa: E402
+from scripts import sw_sketch_edit_ops as seo  # noqa: E402
 
 
 def _two_connected_segments(doc, plane="Front Plane"):
@@ -111,11 +111,11 @@ def _one(sw, tag, mode):
             )  #: \u2605 \u9009\u6bb5\u8981\u5148\u79bb\u5f00\u8349\u56fe\u5417\uff1f\u2605 \u672c\u4ed3\u90a3\u4e2a helper \u81ea\u5df1\u4f1a\u5904\u7406
             for i in (0, 1):
                 try:
-                    if SEO.select_sketch_segment(doc, i):
+                    if seo.select_sketch_segment(doc, i):
                         picked += 1
                 except Exception:  # noqa: BLE001
                     try:
-                        if SEO.select_sketch_segment(doc, i):
+                        if seo.select_sketch_segment(doc, i):
                             picked += 1
                     except Exception:  # noqa: BLE001
                         pass
@@ -139,10 +139,10 @@ def _one(sw, tag, mode):
             )
         except Exception:  # noqa: BLE001
             row["sel_count"] = -1
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         r = P.insert_composite_curve_report(doc, "")
         row["report"] = dict(r or {})
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"] or (r or {}).get("present"))
     except Exception as exc:  # noqa: BLE001

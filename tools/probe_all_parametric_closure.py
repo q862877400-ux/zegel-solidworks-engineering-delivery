@@ -98,16 +98,16 @@ def _main() -> int:
                     pass
         return row
 
-    A = 0.01  #: ★ 10 mm
+    a = 0.01  #: ★ 10 mm
 
     #: ① 正方形：★ 4 条**参数式**曲线（★ 每条 0→1，★ 端点精确在角上）
     def d1(doc):
         sm = C.get_com_member(doc, "SketchManager")
-        #: 底边：★ x = A·t, y = 0        （★ 参数式：X 与 Y 都给 t 的表达式）
+        #: 底边：★ x = a·t, y = 0        （★ 参数式：X 与 Y 都给 t 的表达式）
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f*t" % A,
+            "%.9f*t" % a,
             "0.0",
             "",
             "0",
@@ -119,12 +119,12 @@ def _main() -> int:
             True,
             True,
         )
-        #: 右边：★ x = A, y = A·t
+        #: 右边：★ x = a, y = a·t
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f" % A,
-            "%.9f*t" % A,
+            "%.9f" % a,
+            "%.9f*t" % a,
             "",
             "0",
             "1",
@@ -135,12 +135,12 @@ def _main() -> int:
             True,
             True,
         )
-        #: 顶边：★ x = A(1−t), y = A
+        #: 顶边：★ x = a(1−t), y = a
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f-%.9f*t" % (A, A),
-            "%.9f" % A,
+            "%.9f-%.9f*t" % (a, a),
+            "%.9f" % a,
             "",
             "0",
             "1",
@@ -151,12 +151,12 @@ def _main() -> int:
             True,
             True,
         )
-        #: 左边：★ x = 0, y = A(1−t)
+        #: 左边：★ x = 0, y = a(1−t)
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
             "0.0",
-            "%.9f-%.9f*t" % (A, A),
+            "%.9f-%.9f*t" % (a, a),
             "",
             "0",
             "1",
@@ -176,7 +176,7 @@ def _main() -> int:
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f*t" % A,
+            "%.9f*t" % a,
             "0.0",
             "",
             "0",
@@ -191,8 +191,8 @@ def _main() -> int:
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f-%.9f*t" % (A, A),
-            "%.9f*t" % A,
+            "%.9f-%.9f*t" % (a, a),
+            "%.9f*t" % a,
             "",
             "0",
             "1",
@@ -207,7 +207,7 @@ def _main() -> int:
             sm,
             "CreateEquationSpline2",
             "0.0",
-            "%.9f-%.9f*t" % (A, A),
+            "%.9f-%.9f*t" % (a, a),
             "",
             "0",
             "1",
@@ -227,8 +227,8 @@ def _main() -> int:
         C.get_com_member(
             sm,
             "CreateEquationSpline2",
-            "%.9f*cos(t)" % A,
-            "%.9f*sin(t)" % A,
+            "%.9f*cos(t)" % a,
+            "%.9f*sin(t)" % a,
             "",
             "0",
             "6.283185307179586",

@@ -10,12 +10,12 @@
 
 ★★ 官方例子的确切用法（`examples/Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md`）：
   ```vbnet
-  status = swModelDocExt.AddDisplayStateSpecificRenderMaterial(swRenderMaterial, swAllDisplayState, displayStateNames, id1, id2)
-  nbrMaterials = swModelDocExt.GetRenderMaterialsCount2(swAllDisplayState, Nothing)
-  renderMaterials = swModelDocExt.GetRenderMaterials2(swAllDisplayState, Nothing)
+  status = swModelDocExt.AddDisplayStateSpecificRenderMaterial(swRenderMaterial, swalldisplaystate, displayStateNames, id1, id2)
+  nbrMaterials = swModelDocExt.GetRenderMaterialsCount2(swalldisplaystate, Nothing)
+  renderMaterials = swModelDocExt.GetRenderMaterials2(swalldisplaystate, Nothing)
   swModelDocExt.DeleteDisplayStateSpecificRenderMaterial (materialID1), (materialID2)
   ```
-  ★ `swDisplayStateOpts_e`：★ `swThisDisplayState = 1` · **`swAllDisplayState = 2`** · `swSpecifyDisplayState = 3`
+  ★ `swDisplayStateOpts_e`：★ `swThisDisplayState = 1` · **`swalldisplaystate = 2`** · `swSpecifyDisplayState = 3`
 
 ★★★ 判据（★ 跑之前写死）：
   · ★ 每条入口**不抛异常** ⇒ 记"能调"
@@ -26,10 +26,10 @@
 # 仓库:   本项目自身（真机验证）。
 # 文件:   tools/probe_render_material_family.py
 # 定位:   ★ T1 的「渲染材质族」4 条（★ `sw_render_material.py`）。
-#   官方依据: `C:\\swapi\\types\\IModelDocExtension\\` 下 14 个渲染材质成员页 ·
-# `C:\\swapi\\examples\\Add_and_Delete_Materials_from_Specific_Display_States_Example_VB
+#   官方依据: `c:\\swapi\\types\\IModelDocExtension\\` 下 14 个渲染材质成员页 ·
+# `c:\\swapi\\examples\\Add_and_Delete_Materials_from_Specific_Display_States_Example_VB
 # .md` ·
-#     `C:\\swapi\\enums\\swDisplayStateOpts_e.md`
+#     `c:\\swapi\\enums\\swDisplayStateOpts_e.md`
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -46,14 +46,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts.sw_connect import out_i4  # noqa: E402
 
 OUT = REPO / "output" / "render-material-family-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a, **kw):
@@ -68,11 +68,11 @@ def _try(fn, *a, **kw):
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
-    swAllDisplayState = 2  #: ★ 官方枚举
+    sw, _ = c.connect_solidworks(wait_seconds=30)
+    swalldisplaystate = 2  #: ★ 官方枚举
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         ext = _g(doc, "Extension")
         R["extension_ok"] = ext is not None
 
@@ -103,17 +103,17 @@ def main() -> int:
 
         #: ★★★ 新入口（★ 四条，★ 按官方例子；★ 空参数用空 VARIANT —— 事实 33）
         R["新_GetRenderMaterialsCount2"] = _try(
-            _g, ext, "GetRenderMaterialsCount2", swAllDisplayState, blank
+            _g, ext, "GetRenderMaterialsCount2", swalldisplaystate, blank
         )
         R["新_GetRenderMaterials2"] = _try(
-            _g, ext, "GetRenderMaterials2", swAllDisplayState, blank
+            _g, ext, "GetRenderMaterials2", swalldisplaystate, blank
         )
         R["新_AddDisplayStateSpecificRenderMaterial"] = _try(
             _g,
             ext,
             "AddDisplayStateSpecificRenderMaterial",
             mat_obj,
-            swAllDisplayState,
+            swalldisplaystate,
             blank,
             out_i4(),
             out_i4(),

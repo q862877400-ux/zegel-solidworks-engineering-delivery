@@ -26,7 +26,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import boundaries as B  # noqa: E402
+from scripts.engineering import boundaries as b  # noqa: E402
 from scripts.engineering import questions as Q  # noqa: E402
 from scripts.engineering import scope as S  # noqa: E402
 
@@ -181,7 +181,7 @@ def run_s() -> dict:
     rows.append(
         {
             "s": "S12",
-            "what": "Plan B",
+            "what": "Plan b",
             "ok": pb.route(human_did=["DesignIR"])["ready"] is False
             and pb.route(human_did=["DesignIR", "method_selection"])["ready"],
             "got": "人工 %s · 系统 %s"
@@ -213,7 +213,7 @@ def run_s() -> dict:
     )
 
     #: ── Q15
-    tb = B.transaction_boundary()
+    tb = b.transaction_boundary()
     rows.append(
         {
             "s": "S15",
@@ -223,7 +223,7 @@ def run_s() -> dict:
         }
     )
 
-    m = B.current_environment_mode()
+    m = b.current_environment_mode()
     rows.append(
         {
             "s": "S16",
@@ -233,7 +233,7 @@ def run_s() -> dict:
         }
     )
 
-    r17 = B.can_reclaim(owned_by_this_task=False, has_owner_documents=False)
+    r17 = b.can_reclaim(owned_by_this_task=False, has_owner_documents=False)
     rows.append(
         {
             "s": "S17",
@@ -243,7 +243,7 @@ def run_s() -> dict:
         }
     )
 
-    r18 = B.disk_gate(free_bytes=100, needed_bytes=10**9)
+    r18 = b.disk_gate(free_bytes=100, needed_bytes=10**9)
     rows.append(
         {
             "s": "S18",
@@ -254,7 +254,7 @@ def run_s() -> dict:
         }
     )
 
-    r19 = B.network_gate("execution_process")
+    r19 = b.network_gate("execution_process")
     rows.append(
         {
             "s": "S19",
@@ -354,7 +354,7 @@ def run_y() -> dict:
         }
     )
 
-    m8 = B.AttendedMode(
+    m8 = b.AttendedMode(
         separate_execution_identity=False,
         business_files_readonly=True,
         os_level_isolation=True,
@@ -369,7 +369,7 @@ def run_y() -> dict:
         }
     )
 
-    r9 = B.can_reclaim(owned_by_this_task=False, has_owner_documents=True)
+    r9 = b.can_reclaim(owned_by_this_task=False, has_owner_documents=True)
     rows.append(
         {
             "y": "Y9",
@@ -379,7 +379,7 @@ def run_y() -> dict:
         }
     )
 
-    r10 = B.disk_gate(free_bytes=1, needed_bytes=10**9)
+    r10 = b.disk_gate(free_bytes=1, needed_bytes=10**9)
     rows.append(
         {
             "y": "Y10",
@@ -411,7 +411,7 @@ def main() -> int:
             % ("✓" if r["ok"] else "✗", r["y"], r["what"], str(r["got"])[:46])
         )
 
-    m = B.current_environment_mode()
+    m = b.current_environment_mode()
     print()
     print(
         "★★ 本机运行模式（★ 如实报）：mode=%s · unattended_claim=%s"

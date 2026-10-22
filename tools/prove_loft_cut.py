@@ -38,9 +38,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_loft as L  # noqa: E402
+from scripts import sw_loft as l  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 
@@ -147,17 +147,17 @@ def _one(sw, tag, cut):
         solid, sketches = _mk_solid_and_profiles(doc)
         row["solid"] = solid
         row["sketches"] = sketches
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["vol_before"] = _vol(doc)
         picked = _pick(doc, sketches)
         row["picked"] = picked
         try:
             if cut:
-                r = L.create_loft_cut_report(
+                r = l.create_loft_cut_report(
                     doc, closed=False, use_selected_profiles=True
                 )
             else:
-                r = L.create_loft_report(doc, closed=False, use_selected_profiles=True)
+                r = l.create_loft_report(doc, closed=False, use_selected_profiles=True)
             row.update(
                 {
                     "report_ok": r.get("ok"),
@@ -170,7 +170,7 @@ def _one(sw, tag, cut):
             )
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["vol_after"] = _vol(doc)
         if row["vol_before"] and row["vol_after"]:

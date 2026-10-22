@@ -53,15 +53,15 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
     #: ★ 先建一个零件（★ 工程图要有模型才能投影；★ 而空图纸也能验"读侧"）
     part = new_document(app, "part")
-    with P.sketch(part, "Front Plane") as sk:
-        P.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
-    P.extrude_boss(part, sk, 10.0)
+    with p.sketch(part, "Front Plane") as sk:
+        p.sketch_corner_rectangle(part, -30.0, -20.0, 30.0, 20.0)
+    p.extrude_boss(part, sk, 10.0)
     step("part", title=str(get_com_member(part, "GetTitle")))
 
     #: ★★★★★★★ 2026-10-04（轮 139）**⚠ 那个"试装饰螺纹"的步骤**放在**最末****（★ 值记）
@@ -121,7 +121,7 @@ def main() -> int:
     try:
         part_path = str(get_com_member(part, "GetPathName") or "")
         made["part_path"] = part_path
-        import sw_drawing_expose as E0
+        import sw_drawing_expose as e0
 
         if not part_path:
             made["error"] = "★ 零件还没存盘 ⇒ 没有路径 ⇒ 插不了视图（★ 如实记）"
@@ -129,7 +129,7 @@ def main() -> int:
             #: ★ 第 ① 条（★ 已知能通）：`create_projected_view` ✓
             made["tried"].append("create_projected_view")
             made["projected"] = str(
-                E0.create_projected_view(
+                e0.create_projected_view(
                     drw,
                     part_path,
                     view_name="*Front",
@@ -141,7 +141,7 @@ def main() -> int:
             #: ★ 第 ② 条（★ 实测 blocked）：仍然试一次，★ **以便把"blocked"这件事记进证
             #: 据** ✓
             made["tried"].append("create_three_standard_views")
-            made["three_std"] = str(E0.create_three_standard_views(drw, part_path))[
+            made["three_std"] = str(e0.create_three_standard_views(drw, part_path))[
                 :150
             ]
     except Exception as exc:  # noqa: BLE001
@@ -155,9 +155,9 @@ def main() -> int:
     #:     ★★ **⇒ 可复用判据**：★ **调本仓能力前先看它的签名**（★ 别按"常识"传参）✓
     wrote = {"error": None}
     try:
-        import sw_drawing_expose as E
+        import sw_drawing_expose as e
 
-        f = getattr(E, "add_drawing_note", None)
+        f = getattr(e, "add_drawing_note", None)
         wrote["has_add_note"] = callable(f)
         if callable(f):
             wrote["returned"] = str(f(drw, x_mm=50.0, y_mm=50.0, text="★ 探针注释"))[
@@ -167,9 +167,9 @@ def main() -> int:
         wrote["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
     step("add_note", **wrote)
 
-    import sw_drawing_query as Q
+    import sw_drawing_query as q
 
-    rep = Q.view_annotations_report(drw)
+    rep = q.view_annotations_report(drw)
     step(
         "view_annotations_report",
         view_count=rep.get("view_count"),
@@ -200,10 +200,10 @@ def main() -> int:
     #:       `## Returns: Number of cosmetic threads` ✓
     thr = {"error": None}
     try:
-        import sw_feature_entry_ops as FE
+        import sw_feature_entry_ops as fe
 
         thr["returned"] = str(
-            FE.insert_cosmetic_thread(
+            fe.insert_cosmetic_thread(
                 part,
                 standard=1,
                 standard_type="",

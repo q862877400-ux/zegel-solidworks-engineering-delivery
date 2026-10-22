@@ -10,7 +10,7 @@
 # 族）。
 #   官方依据: `scripts/sw_sweep.py` 的 `create_sweep_report` docstring 逐字
 #     「用选中的「轮廓（mark=1）+ 路径（mark=4）」建扫描特征」+
-#     `C:\\swapi\\types\\IFeatureManager\\CreateDefinition.md`（`swFmSweep`）
+#     `c:\\swapi\\types\\IFeatureManager\\CreateDefinition.md`（`swFmSweep`）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 OUT = REPO / "output" / "explicit-reject-family-evidence.json"
@@ -40,13 +40,13 @@ FAMILY = [
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "static": [], "calls": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "static": [], "calls": []}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     import register_capabilities as rc
 
     specs = {getattr(s, "name", None): s for s in rc.all_specs()}
@@ -55,10 +55,10 @@ def main() -> int:
     for n in FAMILY:
         s = specs.get(n)
         if s is None:
-            R["static"].append({"tool": n, "registered": False})
+            r["static"].append({"tool": n, "registered": False})
             continue
         params = [getattr(p, "name", None) for p in (s.params or [])]
-        R["static"].append(
+        r["static"].append(
             {
                 "tool": n,
                 "registered": True,
@@ -83,19 +83,19 @@ def main() -> int:
     #: ★★ ② 真机：造一个"轮廓 + 路径"两条草图的件，★ **按契约调**（不预选任何东西）
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.01)
         P.end_sketch(doc)
         P.start_sketch(doc, plane_name="Right Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", 0.0, 0.0, 0.0, 0.0, 0.06, 0.0)
         P.end_sketch(doc)
-        R["setup_features"] = list(P.feature_names(doc) or [])
+        r["setup_features"] = list(P.feature_names(doc) or [])
         try:
             _g(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
-        R["marks_before_call"] = {
+        r["marks_before_call"] = {
             str(m): int(
                 _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", m) or 0
             )
@@ -106,7 +106,7 @@ def main() -> int:
             row: dict = {"tool": n}
             if s is None:
                 row["skip"] = "★ 没注册"
-                R["calls"].append(row)
+                r["calls"].append(row)
                 continue
             try:
                 kwargs = {s.inject: rc.RESOLVERS[s.inject](None)}
@@ -124,31 +124,31 @@ def main() -> int:
                 row["new_features"] = [
                     x
                     for x in (P.feature_names(doc) or [])
-                    if x not in (R.get("setup_features") or [])
+                    if x not in (r.get("setup_features") or [])
                 ]
             except Exception as exc:  # noqa: BLE001
                 row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
-            R["calls"].append(row)
+            r["calls"].append(row)
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:  # noqa: BLE001
             pass
-    R["any_has_selection_param"] = any(
-        x.get("has_selection_like_param") for x in R["static"]
+    r["any_has_selection_param"] = any(
+        x.get("has_selection_like_param") for x in r["static"]
     )
-    R["any_has_pre_call"] = any(x.get("pre_call") for x in R["static"])
-    R["verdict"] = (
+    r["any_has_pre_call"] = any(x.get("pre_call") for x in r["static"])
+    r["verdict"] = (
         "★★ 四条**既无 selection 参数、又无 pre_call** ⇒ ★ 调用方无从给选区 ⇒ **经工具层必然失败**"
-        if not R["any_has_selection_param"] and not R["any_has_pre_call"]
+        if not r["any_has_selection_param"] and not r["any_has_pre_call"]
         else "★ 至少一条有给选区的路 —— 需逐条看"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

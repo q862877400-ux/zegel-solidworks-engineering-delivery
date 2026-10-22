@@ -1,6 +1,6 @@
 """★ 真机验证 `IDimension.GetSystemValue2` / `SystemValue` → `GetSystemValue3`。
 
-★★ 官方依据（三源里的 `C:\\swapi`，逐条可复核）：
+★★ 官方依据（三源里的 `c:\\swapi`，逐条可复核）：
   · `types/IDimension/GetSystemValue2.md`：签名 `GetSystemValue2( System.string ConfigName )`（1 参）
     逐字「**Obsolete. See [[IDimension::GetSystemValue3]] and [[IDimension::IGetSystemValue3]].**」
   · `types/IDimension/SystemValue.md`：逐字「**Obsolete. Superseded by [[IDimension::GetSystemValue3]]…**」
@@ -34,14 +34,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "getsystemvalue-successor-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -54,11 +54,11 @@ def _try(fn, *a):
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -69,9 +69,9 @@ def main() -> int:
             0.015,
             0.0,
         )
-        P.end_sketch(doc)
-        nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
+        p.end_sketch(doc)
+        nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
 
         #: ★★★ 先把草图**开着**并**自动加尺寸** —— ★ 否则 `Parameter("D1@草图1")` 找不到
         #: 尺寸
@@ -80,7 +80,7 @@ def main() -> int:
         #: 弃名单里，
         #:     后继是 `FullyDefineSketch` —— ★ 本探针只用它**造前置**，★ 不评它该不该换）
         try:
-            P.start_sketch(doc, plane_name="Top Plane")
+            p.start_sketch(doc, plane_name="Top Plane")
             _g(
                 _g(doc, "SketchManager"),
                 "CreateCornerRectangle",
@@ -95,7 +95,7 @@ def main() -> int:
             R["FullyDefineSketch"] = _try(
                 _g, _g(doc, "SketchManager"), "FullyDefineSketch", 1, 0, 0, True, 0, 0
             )
-            P.end_sketch(doc)
+            p.end_sketch(doc)
         except Exception as exc:  # noqa: BLE001
             R["造前置出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
 

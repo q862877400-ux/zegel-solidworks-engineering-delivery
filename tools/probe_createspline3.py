@@ -50,7 +50,7 @@ def _seg_count(model) -> int:
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import (
         connect_solidworks,
         create_empty_dispatch_variant,
@@ -65,7 +65,7 @@ def main() -> int:
 
     def case(tag, *, form):
         """★ 每种形态单独建一张草图（★ 免得互相干扰）。"""
-        P.sketch(model, "Front Plane")
+        p.sketch(model, "Front Plane")
         before = _seg_count(model)
         sk = get_com_member(model, "SketchManager")
         pts = [0.0, 0.0, 0.0, 0.05, 0.03, 0.0, 0.10, 0.0, 0.0]  #: 三点、单位**米**
@@ -97,7 +97,7 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             err = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = _seg_count(model)
-        P.end_sketch(model)
+        p.end_sketch(model)
         rows.append(
             {
                 "form": form,

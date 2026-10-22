@@ -6,7 +6,7 @@
 # 定位:   ★★ 前置（选面）已经成立（事实 503 的修法生效，工具回读 `{'0':1,'all':1}`），
 #   ★ 而 API 仍**静默回 `None`** ⇒ ★ 下一个变量是「**选中了哪一张面**」。
 #   ★ 本探针**逐张面**试一遍（一次只换一张），看哪一张能建成 —— ★ 单变量、可复算。
-#   官方依据: `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`
+#   官方依据: `c:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`
 # （Remarks 逐字「select one or more **end faces**」；★ **没给 mark**，官方例子用 **0**
 # ）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -25,14 +25,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "endcap-face-matrix-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _cnt(doc, mark):
@@ -45,7 +45,7 @@ def _cnt(doc, mark):
 
 
 def _profile() -> str:
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for h in sorted(Path(root).rglob("*.sldlfp")):
             if "weldment profiles" in str(h).lower():
                 return str(h)
@@ -62,20 +62,20 @@ def _all_faces(doc):
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
     R["profile"] = prof
     for i in range(6):  #: ★ 最多试前 6 张面
         row: dict = {"face_index": i}
         doc = None
         try:
-            doc = C.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            doc = c.new_document(sw, "part")
+            p.start_sketch(doc, plane_name="Front Plane")
             _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
-            P.end_sketch(doc)
+            p.end_sketch(doc)
             names = [
                 n
-                for n in (P.feature_names(doc) or [])
+                for n in (p.feature_names(doc) or [])
                 if n.startswith("草图") or n.lower().startswith("sketch")
             ]
             from scripts.sw_weldment import create_structural_member_from_sketch
@@ -94,15 +94,15 @@ def main() -> int:
                 _g(doc, "ClearSelection2", True)
             except Exception:  # noqa: BLE001
                 pass
-            import scripts.sw_part as SP
+            import scripts.sw_part as sp
 
-            SP._select_com_object(faces[i], append=False, mark=0)
+            sp._select_com_object(faces[i], append=False, mark=0)
             row["selected_all"] = _cnt(doc, -1)
             if row["selected_all"] < 1:
                 row["skip"] = "★ 这张面没选上（回读 0）"
                 R["cases"].append(row)
                 continue
-            before = list(P.feature_names(doc) or [])
+            before = list(p.feature_names(doc) or [])
             ret = _g(
                 _g(doc, "FeatureManager"),
                 "InsertEndCapFeature3",
@@ -124,7 +124,7 @@ def main() -> int:
                         row[k] = str(_g(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
-            after = list(P.feature_names(doc) or [])
+            after = list(p.feature_names(doc) or [])
             row["new_features"] = [n for n in after if n not in before]
             row["ok"] = bool(row["new_features"] or row.get("ret_type"))
         except Exception as exc:  # noqa: BLE001

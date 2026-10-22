@@ -41,9 +41,9 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
-import prove_split_line_geometry_per_example as G  # noqa: E402
+import prove_split_line_geometry_per_example as g  # noqa: E402
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -51,10 +51,10 @@ from scripts import sw_part as P  # noqa: E402
 def _loops_per_face(doc):
     """★ **结构判据**：逐面读 `IFace2.GetLoopCount()` ⇒ 切开的那张面会出现 **2 个环**。"""
     out = []
-    for b in list(G._get(doc, "GetBodies2", 0, True) or []):
-        for f in list(G._get(b, "GetFaces") or []):
+    for b in list(g._get(doc, "GetBodies2", 0, True) or []):
+        for f in list(g._get(b, "GetFaces") or []):
             try:
-                out.append(int(G._get(f, "GetLoopCount")))
+                out.append(int(g._get(f, "GetLoopCount")))
             except Exception:  # noqa: BLE001
                 out.append(-1)
     return sorted(out)
@@ -62,18 +62,18 @@ def _loops_per_face(doc):
 
 def _inner_loop_edges(doc):
     """★ 找到"有 2 个环"的那张面，回报**内环**的边数（★ 投影一个圆 ⇒ 内环应为 1 条边）。"""
-    for b in list(G._get(doc, "GetBodies2", 0, True) or []):
-        for f in list(G._get(b, "GetFaces") or []):
+    for b in list(g._get(doc, "GetBodies2", 0, True) or []):
+        for f in list(g._get(b, "GetFaces") or []):
             try:
-                if int(G._get(f, "GetLoopCount")) != 2:
+                if int(g._get(f, "GetLoopCount")) != 2:
                     continue
-                loops = list(G._get(f, "GetLoops") or [])
+                loops = list(g._get(f, "GetLoops") or [])
                 if len(loops) != 2:
                     continue
                 counts = []
                 for lp in loops:
                     try:
-                        counts.append(int(G._get(lp, "GetEdgeCount")))
+                        counts.append(int(g._get(lp, "GetEdgeCount")))
                     except Exception:  # noqa: BLE001
                         counts.append(-1)
                 return counts
@@ -92,8 +92,8 @@ def _run_case(sw, tag, mode):
             #: ★ 复现上一会话的几何：Top Plane 拉 20 mm（实体 z∈[-30,30]）· 投影草图在 F
             #: ront Plane（z=0，**在实体内部**）
             P.start_sketch(doc, plane_name="Top Plane")
-            G._get(
-                G._get(doc, "SketchManager"),
+            g._get(
+                g._get(doc, "SketchManager"),
                 "CreateCornerRectangle",
                 -0.03,
                 -0.03,
@@ -103,17 +103,17 @@ def _run_case(sw, tag, mode):
                 0.0,
             )
             P.end_sketch(doc)
-            for cand in (G._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
+            for cand in (g._sketch_names(doc) or ["\u8349\u56fe1"])[::-1]:
                 try:
                     P.extrude_boss(doc, cand, 0.02)
                     break
                 except Exception:  # noqa: BLE001
                     continue
-            box = G._bbox(doc)
+            box = g._bbox(doc)
             row["bbox_m"] = box
             P.start_sketch(doc, plane_name="Front Plane")
-            G._get(
-                G._get(doc, "SketchManager"),
+            g._get(
+                g._get(doc, "SketchManager"),
                 "CreateCircleByRadius",
                 0.0,
                 0.0,
@@ -126,7 +126,7 @@ def _run_case(sw, tag, mode):
             for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
                 try:
                     if P._select_by_id(
-                        G._get(doc, "Extension"),
+                        g._get(doc, "Extension"),
                         nm,
                         "BODYFEATURE",
                         append=False,
@@ -138,22 +138,22 @@ def _run_case(sw, tag, mode):
                     continue
             try:
                 if P._select_by_id(
-                    G._get(doc, "Extension"),
-                    G._sketch_names(doc)[-1],
+                    g._get(doc, "Extension"),
+                    g._sketch_names(doc)[-1],
                     "SKETCH",
                     append=True,
                     mark=4,
                 ):
-                    picked["sketch"] = G._sketch_names(doc)[-1]
+                    picked["sketch"] = g._sketch_names(doc)[-1]
             except Exception:  # noqa: BLE001
                 pass
             #: ★ 上一会话取的就是**第一张面**
             try:
                 faces = list(
-                    G._get(list(G._get(doc, "GetBodies2", 0, True))[0], "GetFaces")
+                    g._get(list(g._get(doc, "GetBodies2", 0, True))[0], "GetFaces")
                     or []
                 )
-                if faces and G._get(faces[0], "Select4", True, P._empty_callout()):
+                if faces and g._get(faces[0], "Select4", True, P._empty_callout()):
                     picked["face"] = "GetFaces()[0]"
             except Exception:  # noqa: BLE001
                 pass
@@ -161,8 +161,8 @@ def _run_case(sw, tag, mode):
             for m in (0, 1, 4):
                 try:
                     per[str(m)] = int(
-                        G._get(
-                            G._get(doc, "SelectionManager"),
+                        g._get(
+                            g._get(doc, "SelectionManager"),
                             "GetSelectedObjectCount2",
                             m,
                         )
@@ -172,7 +172,7 @@ def _run_case(sw, tag, mode):
             row["picked"], row["sel_by_mark"] = picked, per
             return _call_and_read(doc, row)
         #: ★ A / B / C 共用**同一个**（正确的）几何搭建
-        ok_build, info = G._build(doc)
+        ok_build, info = g._build(doc)
         row.update({k: v for k, v in info.items() if k != "bbox_m"})
         row["built"] = ok_build
         if not ok_build:
@@ -188,7 +188,7 @@ def _run_case(sw, tag, mode):
             #: ★ 换成**远面**（投影落在近面 ⇒ 远面拿不到）
             info["pick_m"] = [(xmin + xmax) / 2.0, (ymin + ymax) / 2.0, max(zmin, zmax)]
             row["projection_lands_on"] = [0.0, 0.0, min(zmin, zmax)]
-        picked, per = G._select(doc, info)
+        picked, per = g._select(doc, info)
         row["picked"], row["sel_by_mark"] = picked, per
         row["pick_m"] = info["pick_m"]
         return _call_and_read(doc, row)
@@ -198,9 +198,9 @@ def _run_case(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(G._get(doc, "GetTitle") or "")
+                t = str(g._get(doc, "GetTitle") or "")
                 if t:
-                    G._get(sw, "CloseDoc", t)
+                    g._get(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 
@@ -220,9 +220,9 @@ def _call_and_read(
       （该面 1 环 → 2 环），★ 而**轮廓型**是沿曲面切出**两张独立的面**（★ **内环不会出现**）
       ⇒ ★ 用同一个判据会把轮廓型的成功误判成失败。
     """
-    faces_before = G._face_count(doc)
+    faces_before = g._face_count(doc)
     loops_before = _loops_per_face(doc)
-    before = list(FR.feature_names(doc) or [])
+    before = list(fr.feature_names(doc) or [])
     call_args = (
         list(args) if args is not None else [bool(is_directional), bool(flip_dir)]
     )
@@ -232,9 +232,9 @@ def _call_and_read(
         row["ret_is_none"] = ret is None
     except Exception as exc:  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-    after = list(FR.feature_names(doc) or [])
+    after = list(fr.feature_names(doc) or [])
     row["new"] = [n for n in after if n not in before]
-    row["face_delta"] = G._face_count(doc) - faces_before
+    row["face_delta"] = g._face_count(doc) - faces_before
     row["loops_before"] = loops_before
     row["loops_after"] = _loops_per_face(doc)
     row["split_face_loop_edge_counts"] = _inner_loop_edges(doc)
@@ -244,7 +244,7 @@ def _call_and_read(
         try:
             f = _feature_by_name(doc, n)
             if f is not None:
-                types[n] = str(G._get(f, "GetTypeName2") or "")
+                types[n] = str(g._get(f, "GetTypeName2") or "")
         except Exception:  # noqa: BLE001
             pass
     row["new_feature_types"] = types
@@ -263,9 +263,9 @@ def _call_and_read_sil(doc, row):
 
 
 def _feature_by_name(doc, name):
-    for f in G.W.iter_features_recursive(doc):
+    for f in g.W.iter_features_recursive(doc):
         try:
-            if str(G._get(f, "Name") or "") == name:
+            if str(g._get(f, "Name") or "") == name:
                 return f
         except Exception:  # noqa: BLE001
             continue

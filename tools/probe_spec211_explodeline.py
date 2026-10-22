@@ -48,10 +48,10 @@ WORK = ROOT / "output" / "spec211-b6-asm"
 
 def main() -> int:
     import sw_assembly
-    import sw_assembly_doc as AD
+    import sw_assembly_doc as ad
     import sw_connect
     import sw_part
-    import sw_surface_features as SF
+    import sw_surface_features as sf
 
     out: dict = {
         "official": "ISketchManager.InsertExplodeLineSketch",
@@ -104,7 +104,7 @@ def main() -> int:
     explode_ok = False
     if comp_ok:
         try:
-            explode_ok = bool(AD.create_exploded_view(asm))
+            explode_ok = bool(ad.create_exploded_view(asm))
         except Exception as e:  # noqa: BLE001
             out["explode_error"] = "%s: %s" % (type(e).__name__, str(e)[:130])
     out["exploded_view_created"] = explode_ok
@@ -126,7 +126,7 @@ def main() -> int:
         except Exception:  # noqa: BLE001
             before_active = None
     out["active_sketch_before"] = before_active is not None
-    before = SF.feature_names(asm) if asm is not None else []
+    before = sf.feature_names(asm) if asm is not None else []
     exc = None
     ret = None
     if asm is not None:
@@ -137,7 +137,7 @@ def main() -> int:
         except Exception as e:  # noqa: BLE001
             exc = e
             out["sketch_manager_ok"] = out.get("sketch_manager_ok", False)
-    after = SF.feature_names(asm) if asm is not None else []
+    after = sf.feature_names(asm) if asm is not None else []
     added = [n for n in after if n not in before]
     after_active = None
     if asm is not None:

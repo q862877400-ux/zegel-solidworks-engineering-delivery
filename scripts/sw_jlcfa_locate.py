@@ -321,7 +321,7 @@ def locate_shape(pane_img, which: str):
     """按形状取自绘控件。``which`` ∈ {category_btn, search_btn}。
 
     判据：**贴左端 = 分类按钮，贴右端 = 搜索按钮**（实测成立）。
-    返回**相对插件区**的 ``(l, t, r, b)``，找不到返回 None。
+    返回**相对插件区**的 ``(item, t, r, b)``，找不到返回 None。
     """
     gs = find_blue_groups(pane_img)
     if not gs:
@@ -436,8 +436,8 @@ def capture_window(hwnd: int, path: str):
     class BI(ctypes.Structure):
         _fields_ = [("bmiHeader", BIH), ("bmiColors", wintypes.DWORD * 3)]
 
-    l, t, r, b = win32gui.GetWindowRect(hwnd)
-    w, h = r - l, b - t
+    item, t, r, b = win32gui.GetWindowRect(hwnd)
+    w, h = r - item, b - t
     hdc = user32.GetWindowDC(hwnd)
     mfc = win32guiui.CreateDCFromHandle(hdc)
     mem = gdi32.CreateCompatibleDC(hdc)

@@ -43,8 +43,8 @@ def _units_of(model):
 
 
 def main() -> int:
-    import sw_document_data as D
-    import sw_part as P
+    import sw_document_data as d
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -79,17 +79,17 @@ def main() -> int:
                     "name": n,
                     "GetSystemValue2_原始": str(raw2)[:60],
                     "GetSystemValue3_原始": str(raw3)[:60],
-                    "★_本仓 _dimension_value_mm 会回": str(D._dimension_value_mm(dim)),
+                    "★_本仓 _dimension_value_mm 会回": str(d._dimension_value_mm(dim)),
                 }
             )
         rows.append(rec)
 
     #: ① 新建一个 20 mm 拉伸的零件（★ 与上一轮同一工况）
     model = new_document(app, "part")
-    P.sketch(model, "Front Plane")
-    P.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
-    P.end_sketch(model)
-    P.extrude_boss(model, "Sketch1", 20.0)
+    p.sketch(model, "Front Plane")
+    p.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
+    p.end_sketch(model)
+    p.extrude_boss(model, "Sketch1", 20.0)
     probe(model, "★ 新建（extrude_boss 20.0 = 20 mm）")
 
     #: ② 打开那份**旧**文档（★ 上游来源 —— 单位可能是米）

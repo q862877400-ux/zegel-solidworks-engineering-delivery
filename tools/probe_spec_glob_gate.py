@@ -56,9 +56,9 @@ def _case(label: str, acceptance: str) -> int:
     )
     rc, out = _run(root.parent)
     print("  %-46s ⇒ exit=%d" % (label, rc))
-    for l in out.splitlines():
-        if "[FAIL]" in l or "glob-no-match" in l or "missing-in-repo" in l:
-            print("      %s" % l.strip()[:98])
+    for item in out.splitlines():
+        if "[FAIL]" in item or "glob-no-match" in item or "missing-in-repo" in item:
+            print("      %s" % item.strip()[:98])
     shutil.rmtree(root.parent.parent, ignore_errors=True)
     return rc
 

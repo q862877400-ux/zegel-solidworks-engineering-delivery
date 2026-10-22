@@ -18,10 +18,10 @@
 #     **轮廓 mark = 1** · **路径 mark = 4**
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
-# 官方依据: `C:\swapi\types\IFeatureManager\CreateDefinition.md`（★ `swFmRefSurface` (su
+# 官方依据: `c:\swapi\types\IFeatureManager\CreateDefinition.md`（★ `swFmRefSurface` (su
 #           rface sweep)）·
 #   `D:\AI\SW\_raw\enum_values_sldworks.txt`（`swFmRefSurface = 62`）·
-#   `C:\swapi\types\IModelDoc2\InsertSweepRefSurface{,2}.md`（★ 两条 Obsolete 行）
+#   `c:\swapi\types\IModelDoc2\InsertSweepRefSurface{,2}.md`（★ 两条 Obsolete 行）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from scripts import sw_sweep as S  # noqa: E402
 
@@ -49,9 +49,9 @@ from scripts import sw_sweep as S  # noqa: E402
 def _mark(obj, mark):
     """★ 按**对象**选并打 mark（★ 事实 32：实体没名字）⇒ 回来读计数。"""
     try:
-        C.get_com_member(obj, "Select4", False, P._empty_callout())
-        sel = C.get_com_member(
-            C.get_com_member(_SW[0], "SelectionManager"), "GetSelectedObjectCount2", -1
+        c.get_com_member(obj, "Select4", False, P._empty_callout())
+        sel = c.get_com_member(
+            c.get_com_member(_SW[0], "SelectionManager"), "GetSelectedObjectCount2", -1
         )
         return True
     except Exception:  # noqa: BLE001
@@ -62,7 +62,7 @@ _SW = [None]
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
@@ -71,7 +71,7 @@ def main() -> int:
         "classify": "auto",
         "steps": [],
     }
-    doc = C.new_document(sw, "part")
+    doc = c.new_document(sw, "part")
     try:
         #: ① 轮廓：在**上视基准面**（XY · **Z=0**）画一个**圆**（★ 扫描最标准的轮廓）
         #: ★★★ 2026-10-03（轮 487）**换成圆，并把两个草图都安排成"路径起点在轮廓平面上"*
@@ -82,8 +82,8 @@ def main() -> int:
         #:   ★★ 而★ 轮廓在上视面（Z=0）⇒ ★ **路径的起点必须 Z=0** ⇒
         #:     路径画在**前视面**（XZ · Y=0）上、**从 (0,0) 沿 X** ⇒ 起点 (0,0,0) 的 Z=0 ✓
         P.start_sketch(doc, plane_name="Top Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateCircleByRadius",
             0.0,
             0.0,
@@ -102,13 +102,13 @@ def main() -> int:
         #:   ⇒ ★ 故这里**显式清一次**、并把**开草图前后的选区数**记进证据（★ 不猜）✓
         for _lbl in ("path_sketch",):
             try:
-                C.get_com_member(doc, "ClearSelection2", True)
+                c.get_com_member(doc, "ClearSelection2", True)
             except Exception:  # noqa: BLE001
                 pass
         try:
             ev["sel_before_path_sketch"] = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c.get_com_member(
+                    c.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -117,8 +117,8 @@ def main() -> int:
         except Exception:  # noqa: BLE001
             ev["sel_before_path_sketch"] = None
         P.start_sketch(doc, plane_name="Front Plane")
-        C.get_com_member(
-            C.get_com_member(doc, "SketchManager"),
+        c.get_com_member(
+            c.get_com_member(doc, "SketchManager"),
             "CreateLine",
             0.0,
             0.0,
@@ -149,7 +149,7 @@ def main() -> int:
         #:     ⇒ ★ 故正解是官方的 **`SelectByID2(名, "SKETCH", …, mark)`** ✓
         #:   ★ 官方专文给的 mark（★ `…\Sweep Features and SweepFeatureData Objects.md`）：
         #:     **草图轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128
-        ext = C.get_com_member(doc, "Extension")
+        ext = c.get_com_member(doc, "Extension")
         picked = {}
         for cand, mark, label in (
             ("\u8349\u56fe1", 1, "profile"),
@@ -167,8 +167,8 @@ def main() -> int:
                     break
         ev["picked"] = picked
         try:
-            sel = C.get_com_member(
-                C.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
+            sel = c.get_com_member(
+                c.get_com_member(doc, "SelectionManager"), "GetSelectedObjectCount2", -1
             )
             ev["sel_total"] = int(sel or 0)
         except Exception:  # noqa: BLE001
@@ -178,8 +178,8 @@ def main() -> int:
         for m in (1, 4):
             try:
                 per[m] = int(
-                    C.get_com_member(
-                        C.get_com_member(doc, "SelectionManager"),
+                    c.get_com_member(
+                        c.get_com_member(doc, "SelectionManager"),
                         "GetSelectedObjectCount2",
                         m,
                     )
@@ -194,9 +194,9 @@ def main() -> int:
         ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
-            t = str(C.get_com_member(doc, "GetTitle") or "")
+            t = str(c.get_com_member(doc, "GetTitle") or "")
             if t:
-                C.get_com_member(sw, "CloseDoc", t)
+                c.get_com_member(sw, "CloseDoc", t)
         except Exception:  # noqa: BLE001
             pass
 

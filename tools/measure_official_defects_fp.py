@@ -17,9 +17,9 @@ from pathlib import Path
 ROOT = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-import check_official_source_defects as G  # noqa: E402
+import check_official_source_defects as g  # noqa: E402
 
-ifaces, members, enums = G._real()
+ifaces, members, enums = g._real()
 print("★ 本机真名: 接口 %d · 枚举 %d" % (len(ifaces), len(enums)))
 real_ifaces = sorted(ifaces)[:10]
 fake_ifaces = [
@@ -45,12 +45,12 @@ def judge(files: dict) -> int:
         d.mkdir()
         for name, text in files.items():
             (d / name).write_text(text, encoding="utf-8")
-        old_root, old_dirs = G.ROOT, G.SCAN_DIRS
+        old_root, old_dirs = g.ROOT, g.SCAN_DIRS
         try:
-            G.ROOT, G.SCAN_DIRS = Path(td), ("scripts",)
-            return len(G.scan())
+            g.ROOT, g.SCAN_DIRS = Path(td), ("scripts",)
+            return len(g.scan())
         finally:
-            G.ROOT, G.SCAN_DIRS = old_root, old_dirs
+            g.ROOT, g.SCAN_DIRS = old_root, old_dirs
 
 
 tp = fp = tn = fn = 0

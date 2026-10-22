@@ -50,7 +50,7 @@ A3_GB = Path(
 
 
 def main() -> int:
-    import drawing_workflow as DW
+    import drawing_workflow as dw
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
 
@@ -71,7 +71,7 @@ def main() -> int:
         }
         #: ① **先上 A3 图框**（★ 事实 327 的具体下一步）
         try:
-            rep = DW.setup_current_sheet_as_a3(doc, [str(A3_GB)])
+            rep = dw.setup_current_sheet_as_a3(doc, [str(A3_GB)])
             ev["steps"]["setup_a3_sheet"] = {
                 "ok": rep is not None,
                 "returned": json.dumps(rep, ensure_ascii=False, default=str)[:130]
@@ -86,7 +86,7 @@ def main() -> int:
         #: ② 加视图
         view = None
         try:
-            view = DW.add_view(doc, str(PART), "*Front", 0.15, 0.15)
+            view = dw.add_view(doc, str(PART), "*Front", 0.15, 0.15)
             ev["steps"]["add_view"] = {
                 "ok": view is not None,
                 "returned": str(view)[:52],

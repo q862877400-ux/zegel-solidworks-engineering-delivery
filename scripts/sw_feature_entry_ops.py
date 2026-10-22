@@ -52,9 +52,9 @@ def _feature_names(model):
     ★ **取不到回 `None`**（★ **降级，不猜空表** —— ★ 否则"没读到"会被当成"没变化"）。
     """
     try:
-        from scripts import sw_feature_readback as FR
+        from scripts import sw_feature_readback as fr
 
-        return list(FR.feature_names(model) or [])
+        return list(fr.feature_names(model) or [])
     except Exception:  # noqa: BLE001
         return None
 

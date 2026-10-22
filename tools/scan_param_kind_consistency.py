@@ -27,7 +27,7 @@ REPO = Path(Path(__file__).resolve().parents[1])
 for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 SIMPLE = {
     str: "str",
@@ -77,7 +77,7 @@ def _norm(ann):
 
 
 t6, t7, noann, nodef = [], [], 0, 0
-for spec in RC.all_specs():
+for spec in rc.all_specs():
     name = getattr(spec, "name", None) or "?"
     mod_name, fn_name = (
         getattr(spec, "module", "") or "",

@@ -178,9 +178,9 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     mem = gdi32.CreateCompatibleDC(hdc)
     bmp = gdi32.CreateCompatibleBitmap(hdc, w, h)
     gdi32.SelectObject(mem, bmp)
-    SRCCOPY = 0x00CC0020
+    srccopy = 0x00CC0020
     hdc_screen = user32.GetDC(0)
-    ok = gdi32.BitBlt(mem, 0, 0, w, h, hdc_screen, rect.left, rect.top, SRCCOPY)
+    ok = gdi32.BitBlt(mem, 0, 0, w, h, hdc_screen, rect.left, rect.top, srccopy)
     user32.ReleaseDC(0, hdc_screen)
     if not ok:
         #: ★ 兜底才用 `PrintWindow`（★ 调用方应把它放在**有超时的子进程**里）

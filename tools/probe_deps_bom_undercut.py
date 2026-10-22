@@ -1,6 +1,6 @@
 """★ 真机验证三条：`ExcludeFromBOM` · `GetDependencies2` · `MoldUndercutDetect`。
 
-★★ 官方依据（三源里的 `C:\\swapi` + 反射 `_raw/reflect_sldworks/iface_sldworks.txt`）：
+★★ 官方依据（三源里的 `c:\\swapi` + 反射 `_raw/reflect_sldworks/iface_sldworks.txt`）：
   · `types/IComponent2/ExcludeFromBOM.md`：属性 `System.bool ExcludeFromBOM {get; set;}`（★ 1 参）
     逐字「**Obsolete. Superseded by [[IComponent2::GetExcludeFromBOM2]] and [[…**」
     ★ 后继 `GetExcludeFromBOM2(Config_opt, Config_names)` ⇒ ★ **属性 → 方法**（2 参）
@@ -37,8 +37,8 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 from scripts.sw_assembly import add_component, get_components  # noqa: E402
 
 OUT = REPO / "output" / "deps-bom-undercut-evidence.json"
@@ -47,7 +47,7 @@ SW_ALL_CONFIG = 2  #: ★ swInConfigurationOpts_e
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -59,13 +59,13 @@ def _try(fn, *a):
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
         #: ★ 造零件
-        pdoc = C.new_document(sw, "part")
-        P.start_sketch(pdoc, plane_name="Front Plane")
+        pdoc = c.new_document(sw, "part")
+        p.start_sketch(pdoc, plane_name="Front Plane")
         _g(
             _g(pdoc, "SketchManager"),
             "CreateCornerRectangle",
@@ -76,18 +76,18 @@ def main() -> int:
             0.02,
             0.0,
         )
-        P.end_sketch(pdoc)
-        nm = [n for n in (P.feature_names(pdoc) or []) if n.startswith("草图")]
-        P.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 10.0)
-        R["保存"] = _try(C.save_document, pdoc, str(PART))
+        p.end_sketch(pdoc)
+        nm = [n for n in (p.feature_names(pdoc) or []) if n.startswith("草图")]
+        p.extrude_boss(pdoc, (nm[-1] if nm else "草图1"), 10.0)
+        r["保存"] = _try(c.save_document, pdoc, str(PART))
 
         #: ★★ ① `GetDependencies2`（★ 在**零件文档**上 —— 就是 `sw_delivery.py` 的用法）
         #: ★ 本仓调用逐字：`get_com_member(model, "GetDependencies2", False, True, False
         #: )`
-        R["旧_GetDependencies2(3 参, 在 model 上)"] = _try(
+        r["旧_GetDependencies2(3 参, 在 model 上)"] = _try(
             _g, pdoc, "GetDependencies2", False, True, False
         )
-        R["新_GetDependencies(5 参)"] = _try(
+        r["新_GetDependencies(5 参)"] = _try(
             _g,
             P_extension(pdoc) if False else _g(pdoc, "Extension"),
             "GetDependencies",
@@ -100,7 +100,7 @@ def main() -> int:
         _g(sw, "CloseDoc", str(_g(pdoc, "GetTitle") or ""))
 
         #: ★★ ② `ExcludeFromBOM`（★ 需要**组件**）
-        doc = C.new_document(sw, "assembly")
+        doc = c.new_document(sw, "assembly")
         add_component(doc, str(PART), 0.0, 0.0, 0.0, "", sw)
         comps = get_components(doc)
         comp = None
@@ -109,13 +109,13 @@ def main() -> int:
             comp = m[0] if isinstance(m, (list, tuple)) and m else None
         except Exception:  # noqa: BLE001
             comp = None
-        R["组件"] = repr(comp)[:70]
+        r["组件"] = repr(comp)[:70]
         if comp is not None:
-            R["旧_ExcludeFromBOM(属性读)"] = _try(_g, comp, "ExcludeFromBOM")
-            R["新_GetExcludeFromBOM2(2, None)"] = _try(
+            r["旧_ExcludeFromBOM(属性读)"] = _try(_g, comp, "ExcludeFromBOM")
+            r["新_GetExcludeFromBOM2(2, None)"] = _try(
                 _g, comp, "GetExcludeFromBOM2", SW_ALL_CONFIG, None
             )
-            R["新_GetExcludeFromBOM2(1, None)"] = _try(
+            r["新_GetExcludeFromBOM2(1, None)"] = _try(
                 _g, comp, "GetExcludeFromBOM2", 1, None
             )
 
@@ -125,19 +125,19 @@ def main() -> int:
             fm = _g(doc, "FeatureManager")
         except Exception:  # noqa: BLE001
             fm = None
-        R["FeatureManager"] = repr(fm)[:70]
+        r["FeatureManager"] = repr(fm)[:70]
         if fm is not None:
             #: 参数名照官方：ColUndercut, ColBase, BCoordInput, Dx, Dy, Dz
-            R["旧_MoldUndercutDetect(6 参)"] = _try(
+            r["旧_MoldUndercutDetect(6 参)"] = _try(
                 _g, fm, "MoldUndercutDetect", 0, 0, True, 0.0, 0.0, 1.0
             )
             #: 新的是 9 参：ColUndercut1, ColUndercut2, ColOccluded, ColStraddle, ColBas
             #: e, …
-            R["新_MoldUndercutDetect2(9 参)"] = _try(
+            r["新_MoldUndercutDetect2(9 参)"] = _try(
                 _g, fm, "MoldUndercutDetect2", 0, 0, 0, 0, 0, True, 0.0, 0.0, 1.0
             )
     except Exception as exc:  # noqa: BLE001
-        R["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
+        r["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:220])
     finally:
         try:
             if doc is not None:
@@ -146,13 +146,13 @@ def main() -> int:
             pass
     ok = sorted(
         k
-        for k, v in R.items()
+        for k, v in r.items()
         if isinstance(v, dict) and v.get("ok") and k.startswith(("旧_", "新_"))
     )
-    R["★_能调的"] = "; ".join(ok)
-    R["seconds"] = round(time.time() - started, 2)
+    r["★_能调的"] = "; ".join(ok)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

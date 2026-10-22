@@ -34,9 +34,9 @@ OUT = R / "output" / "spec209-intersect.json"
 
 
 def main() -> int:
-    import sw_boolean_ops as BO
+    import sw_boolean_ops as bo
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -73,10 +73,10 @@ def main() -> int:
     def _box():
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with P.sketch(doc, "Front Plane") as sk:
-            P.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, "草图1", 20.0)
+        with p.sketch(doc, "Front Plane") as sk:
+            p.sketch_corner_rectangle(doc, -30.0, -20.0, 30.0, 20.0)
+        p.end_sketch(doc)
+        p.extrude_boss(doc, "草图1", 20.0)
         return doc
 
     for rt in ("intersecting", "intersecting_and_internal"):
@@ -92,7 +92,7 @@ def main() -> int:
                 row["body_feature"] = body_feat
                 row["plane"] = plane
                 row["sel_spec"] = "SOLIDBODY:%s,PLANE:%s" % (body_feat, plane)
-                r = BO.create_intersect(
+                r = bo.create_intersect(
                     doc, row["sel_spec"], region_type=rt, exclude=excl
                 )
                 row.update(

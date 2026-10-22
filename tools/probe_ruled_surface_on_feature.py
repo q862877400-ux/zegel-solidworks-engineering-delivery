@@ -44,10 +44,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -165,17 +165,17 @@ def _one(sw, tag, mode):
             )
         except Exception:  # noqa: BLE001
             row["sel"] = -1
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         ret = None
         try:
-            ret = SF.insert_ruled_surface_report(doc, surface_type=1, length_mm=10.0)
+            ret = sf.insert_ruled_surface_report(doc, surface_type=1, length_mm=10.0)
             row["ok"] = bool(ret.get("ok"))
             row["new"] = ret.get("new_features")
             row["returned_none"] = ret.get("returned_none")
             row["error"] = str(ret.get("error") or "")[:120]
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         if row.get("new") is None:
             row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["ok"] or row["new"])

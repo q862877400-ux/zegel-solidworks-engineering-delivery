@@ -62,15 +62,15 @@ MARKS = {
 #:   在这条链上**取不到任何特征** ✗ ⇒ 会让 `特征树 = []`、**读数整体无效** ✓）
 #:   ⇒ ★ 用 **B2-2 已验证可用**的 `sw_surface_features.feature_names` ✓
 def _fnames(model):
-    import sw_surface_features as SF
+    import sw_surface_features as sf
 
-    return SF.feature_names(model)
+    return sf.feature_names(model)
 
 
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
+    import sw_selection_spec as ss
 
     out: dict = {
         "official": "IFeatureManager.FeatureLocalCurveDrivenPattern",
@@ -118,7 +118,7 @@ def main() -> int:
     out["select"] = {
         "mark1_components_to_pattern": ok1,
         "mark2_direction1_curve": ok2,
-        "selection_count": SS.get_selection_count(model),
+        "selection_count": ss.get_selection_count(model),
     }
     print(
         "★ 选择：★ mark1(要阵列的特征)=%r · mark2(方向曲线)=%r · 选区计数=%r"

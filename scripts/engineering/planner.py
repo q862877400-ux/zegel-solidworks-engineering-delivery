@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from . import design_ir as DI
+from . import design_ir as di
 from . import registry as R
 
 #: ★★ **方案数下限/上限**（★ FR-007 逐字：**3–5 种**）
@@ -446,7 +446,7 @@ def _intent_steps(intent: str, text: str, geo: dict) -> list:
     return []
 
 
-def _variant_plans(ir: DI.DesignIR, geo: dict, methods: list) -> list:
+def _variant_plans(ir: di.DesignIR, geo: dict, methods: list) -> list:
     """★★ **生成 3–5 种方案**（★ FR-007 —— ★ 按**工艺路线**分，不是按方法数）。
 
     ★★ 为什么按路线而不是按方法：本仓 `METHOD_LIBRARY` 只有 **4 个方法**，
@@ -529,7 +529,7 @@ def _variant_plans(ir: DI.DesignIR, geo: dict, methods: list) -> list:
 
 
 def _steps_for(
-    method_id: str, geo: dict, ir: DI.DesignIR, route: str = "single_cut"
+    method_id: str, geo: dict, ir: di.DesignIR, route: str = "single_cut"
 ) -> list:
     """★★ **把方法展开成带参数的工具步骤**（★ 人工不写 —— ★ 这是本函数的意义）。"""
     w = geo.get("w", 100.0)
@@ -672,7 +672,7 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
       ```
     ★★ **① 是关键误放的闸门** —— ★ S4-A 要求「应等待或拒绝却进入执行的次数为 0」。
     """
-    ir = DI.parse_requirement(text)
+    ir = di.parse_requirement(text)
     if not ir.executable:
         raise PlannerError(
             "not-executable",
@@ -731,7 +731,7 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
         "pin",
     )
     if is_modeling:
-        ret = DI.retrieve_methods(ir)
+        ret = di.retrieve_methods(ir)
         cands = [c for c in ret["candidates"] if c.applicable]
         if not cands:
             raise PlannerError("no-method", "★ 检索不到适用的方法")
@@ -742,9 +742,9 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
     for pc in _variant_plans(ir, geo, cands[:MAX_VARIANTS]):
         #: ★ 试编译（★ 名字解析 + 参数绑定 + 子方法展开）
         try:
-            from . import expand as EX
+            from . import expand as ex
 
-            resolved = EX.expand_plan(pc.plan, reg)
+            resolved = ex.expand_plan(pc.plan, reg)
             pc.plan = resolved
             pc.compile_ok = True
         except Exception as exc:  # noqa: BLE001
@@ -768,7 +768,7 @@ def verdict_for(ps: PlanSet) -> str:
       · 有不可编译的 ⇒ `REJECTED_UNSUPPORTED`（★ **不放行**）
     """
     if ps.ok:
-        return DI.READY_FOR_REVIEW
+        return di.READY_FOR_REVIEW
     if not ps.compilable:
-        return DI.REJECTED_UNSUPPORTED
-    return DI.REJECTED_UNSUPPORTED
+        return di.REJECTED_UNSUPPORTED
+    return di.REJECTED_UNSUPPORTED

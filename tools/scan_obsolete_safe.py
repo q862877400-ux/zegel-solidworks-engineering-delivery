@@ -253,7 +253,7 @@ def main() -> int:
     #: 中** ✓
     #:   ⚠ 限度（★ 如实记）：★ 这是**启发式**（★ 同文件可能恰好没有那些词），
     #:     所以它**只降级、不删除** —— 存疑条目**仍会单独列出**供人看 ✓
-    SW_MARKERS = (
+    sw_markers = (
         "get_com_member",
         "call_com_member",
         "set_com_member",
@@ -263,14 +263,14 @@ def main() -> int:
         "sw_app",
         "sldworks",
     )
-    SUSPECT_LIB = ("ocp", "occ", "opencascade", "pythonocc", "cadquery")
+    suspect_lib = ("ocp", "occ", "opencascade", "pythonocc", "cadquery")
 
     def _is_crosslib_suspect(f: Path, raw: str) -> bool:
         low = str(f).lower()
-        if any(k in low for k in SUSPECT_LIB):
+        if any(k in low for k in suspect_lib):
             return True
         head = raw[:4000]
-        return not any(m in head for m in SW_MARKERS)
+        return not any(m in head for m in sw_markers)
 
     rows, scanned, calls = [], 0, 0
     for f in files:

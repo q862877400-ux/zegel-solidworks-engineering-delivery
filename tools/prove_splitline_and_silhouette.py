@@ -36,7 +36,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -91,7 +91,7 @@ def _case_silhouette(sw):
             for f in list(_get(b, "GetFaces") or [])[:1]:
                 _sel(f, append=True, mark=0)
             break
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         try:
             P.start_sketch(doc, plane_name="Right Plane")
             skm = C.get_com_member(doc, "SketchManager")
@@ -108,7 +108,7 @@ def _case_silhouette(sw):
             P.end_sketch(doc)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         #: \u2605 \u5224\u636e\uff1a**\u8349\u56fe\u91cc\u771f\u7684\u6709\u4e86\u7ebf\u
         #: 6bb5**\uff08\u2605 \u6216\u6811\u589e\u91cf\uff09
@@ -170,12 +170,12 @@ def _case_splitline(sw):
                 except Exception:  # noqa: BLE001
                     continue
         row["picked_sketch"] = picked
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         try:
             C.get_com_member(doc, "InsertSplitLineProject", False, False)
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001

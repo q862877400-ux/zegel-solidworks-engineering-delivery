@@ -106,7 +106,7 @@ def main(argv: list) -> int:
         return 0
     print("  类型库给出 `Add*` **%d** 个" % len(lib))
 
-    import sw_simulation_loads as L
+    import sw_simulation_loads as l
 
     bad: list = []
     skipped: list = []
@@ -119,18 +119,18 @@ def main(argv: list) -> int:
         for n, ps in lib.items()
         if n.startswith("Add") and any(pt.endswith("&") for _, pt in ps)
     }
-    have_err = set(L._ERRORCODE_MEMBERS)
+    have_err = set(l._ERRORCODE_MEMBERS)
     for n in sorted(want_err - have_err):
         bad.append(("_ERRORCODE_MEMBERS", "缺", n))
     for n in sorted(have_err - want_err):
         bad.append(("_ERRORCODE_MEMBERS", "多", n))
     #: ② `_REFGEOM_MEMBERS` —— ★ 应当是"有一个叫 `RefGeom` 的形参"的那些
     want_ref = {n for n, ps in lib.items() if any(pn == "RefGeom" for pn, _ in ps)}
-    have_ref = set(L._REFGEOM_MEMBERS)
+    have_ref = set(l._REFGEOM_MEMBERS)
     for n in sorted(want_ref - have_ref):
         bad.append(("_REFGEOM_MEMBERS", "缺", n))
     #: ③ `OFFICIAL_LOAD_SIGNATURES` —— ★ 应当是"**非 out** 形参的个数"
-    for n, expected in sorted(L.OFFICIAL_LOAD_SIGNATURES.items()):
+    for n, expected in sorted(l.OFFICIAL_LOAD_SIGNATURES.items()):
         ps = lib.get(n)
         if ps is None:
             #: ★ 只有 **`Add*`** 缺席才算问题；★ 其它名字（如 `Get*`）
@@ -153,7 +153,7 @@ def main(argv: list) -> int:
         print("  注：%s 不在该接口上（★ 非 `Add*`）⇒ 跳过" % ", ".join(sorted(skipped)))
     print(
         "  比对三张表（_ERRORCODE_MEMBERS %d · _REFGEOM_MEMBERS %d · OFFICIAL_LOAD_SIGNATURES %d）"
-        % (len(have_err), len(have_ref), len(L.OFFICIAL_LOAD_SIGNATURES))
+        % (len(have_err), len(have_ref), len(l.OFFICIAL_LOAD_SIGNATURES))
     )
     if bad:
         print("  不符 **%d** 处：" % len(bad))

@@ -430,7 +430,7 @@ def main(argv: list[str] | None = None) -> int:
     #:   ★ `create-ocp-loft` / `create-ocp-surface` → `*_ocp`（★ 几何配方）
     #:   ★★ 判据：★「**那个数字错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
     #:   ★ 已移出：★ `archive/inherited-methods/scripts/` ✓
-    _METHOD_COMMANDS = {
+    _method_commands = {
         "fea-preflight": "fea_analysis",
         "prepare-fea": "fea_analysis",
         "run-fea": "fea_analysis",
@@ -439,7 +439,7 @@ def main(argv: list[str] | None = None) -> int:
         "create-ocp-loft": "advanced_geometry_ocp",
         "create-ocp-surface": "advanced_surface_ocp",
     }
-    if args.command in _METHOD_COMMANDS:
+    if args.command in _method_commands:
         print(
             json.dumps(
                 {
@@ -447,7 +447,7 @@ def main(argv: list[str] | None = None) -> int:
                     "command": args.command,
                     "reason": "★ 该方法已按业主架构指令移出继承面（★ 只继承工具）",
                     "where": "archive/inherited-methods/scripts/%s.py"
-                    % _METHOD_COMMANDS[args.command],
+                    % _method_commands[args.command],
                     "criterion": "★ 「那个数字错了，回读能不能查出来」—— ★ 不能 ⇒ 方法",
                 },
                 ensure_ascii=True,

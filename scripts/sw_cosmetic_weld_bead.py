@@ -41,13 +41,13 @@ except ImportError:
 
 def _faces_all_bodies(model) -> list[Any]:
     """★ 遍历**所有体**取面（★ 两块凸台是两个独立的体 —— ★ 边界特征真机读数 ✓）"""
-    import sw_selection_spec as _SS
+    import sw_selection_spec as _ss
 
     faces: list[Any] = []
     _bi = 0
     while _bi <= 32:  #: ★ 兜底，防死循环
         try:
-            _b = list(_SS.entities_on_body(model, "FACE", body_index=_bi) or [])
+            _b = list(_ss.entities_on_body(model, "FACE", body_index=_bi) or [])
         except Exception:  # noqa: BLE001
             break
         if not _b:

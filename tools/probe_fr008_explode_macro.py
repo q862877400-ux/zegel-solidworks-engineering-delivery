@@ -34,7 +34,7 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
         sys.path.insert(0, _p)
 sys.stdout.reconfigure(encoding="utf-8")
 
-from scripts import sw_assembly_doc as A  # noqa: E402
+from scripts import sw_assembly_doc as a  # noqa: E402
 from scripts import sw_connect  # noqa: E402
 from scripts import sw_macro as M  # noqa: E402
 
@@ -131,10 +131,10 @@ def main() -> int:
             print("  [2b] 活动配置:", repr(cfg))
 
             #: ── ③ 正例：建爆炸视图 + **回读数** ──────────────────────
-            before = A.get_exploded_view_count(doc, cfg)
-            ok = A.create_exploded_view(doc)
-            after = A.get_exploded_view_count(doc, cfg)
-            names = A.get_exploded_view_names(doc, cfg)
+            before = a.get_exploded_view_count(doc, cfg)
+            ok = a.create_exploded_view(doc)
+            after = a.get_exploded_view_count(doc, cfg)
+            names = a.get_exploded_view_names(doc, cfg)
             ev["steps"]["explode_create"] = {
                 "count_before": before,
                 "return_value": ok,
@@ -150,8 +150,8 @@ def main() -> int:
 
             #: 显示切换（成对，无害）
             try:
-                A.view_explode_assembly(doc)
-                A.view_collapse_assembly(doc)
+                a.view_explode_assembly(doc)
+                a.view_collapse_assembly(doc)
                 ev["steps"]["view_toggle"] = {"ok": True}
                 print("  [3b] 展开/收拢显示：两次调用都没抛")
             except Exception as exc:  # noqa: BLE001
@@ -164,8 +164,8 @@ def main() -> int:
             #: 按名字显示（用回读到的名字，形成闭环）
             if names:
                 try:
-                    ok2 = A.show_exploded(doc, True, names[0])
-                    A.show_exploded(doc, False, names[0])
+                    ok2 = a.show_exploded(doc, True, names[0])
+                    a.show_exploded(doc, False, names[0])
                     ev["steps"]["show_exploded"] = {"ok": bool(ok2), "name": names[0]}
                     print("  [3c] 按名显示 %r ⇒ %s（随后已收起）" % (names[0], ok2))
                 except Exception as exc:  # noqa: BLE001
@@ -199,8 +199,8 @@ def main() -> int:
                 )
                 if part is not None and ptype == 1:
                     try:
-                        r = A.create_exploded_view(part)
-                        cnt = A.get_exploded_view_count(part, "")
+                        r = a.create_exploded_view(part)
+                        cnt = a.get_exploded_view_count(part, "")
                         ev["steps"]["explode_negative_on_part"].update(
                             {"return_value": bool(r), "count": cnt}
                         )

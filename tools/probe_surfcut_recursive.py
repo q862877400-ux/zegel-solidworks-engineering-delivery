@@ -41,17 +41,17 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
     P.start_sketch(doc, plane_name="Top Plane")
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    c.get_com_member(
+        c.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.03,
         -0.03,
@@ -81,8 +81,8 @@ def _mk_surface(doc, plane="Front Plane"):
     except Exception:  # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name=plane)
-    C.get_com_member(
-        C.get_com_member(doc, "SketchManager"),
+    c.get_com_member(
+        c.get_com_member(doc, "SketchManager"),
         "CreateCornerRectangle",
         -0.02,
         -0.02,
@@ -99,7 +99,7 @@ def _mk_surface(doc, plane="Front Plane"):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -110,16 +110,16 @@ def _recurse(model):
     """★ **递归**遍历（★ 走 `iter_features_recursive`）—— 报每个节点的 名字/类型/层级。"""
     rows = []
     try:
-        for feat in W.iter_features_recursive(model):
+        for feat in w.iter_features_recursive(model):
             row = {}
             for k, m in (("name", "Name"), ("type", "GetTypeName2")):
                 try:
-                    row[k] = str(C.get_com_member(feat, m) or "")
+                    row[k] = str(c.get_com_member(feat, m) or "")
                 except Exception as exc:  # noqa: BLE001
                     row[k] = "ERR %s" % str(exc)[:40]
             try:
                 row["has_sub"] = (
-                    C.get_com_member(feat, "GetFirstSubFeature") is not None
+                    c.get_com_member(feat, "GetFirstSubFeature") is not None
                 )
             except Exception:  # noqa: BLE001
                 row["has_sub"] = None
@@ -130,7 +130,7 @@ def _recurse(model):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "**\u9012\u5f52**\u904d\u5386\u627e SurfCut\uff08\u2605 \u4e0a\u4e00\u8f6e\u7559\u7684\u4e0b\u4e00\u6b65\uff09",
@@ -139,11 +139,11 @@ def main() -> int:
     }
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         _mk_solid(doc)
         _mk_surface(doc)
         ev["recurse_before"] = _recurse(doc)
-        ev["names_before"] = list(FR.feature_names(doc) or [])
+        ev["names_before"] = list(fr.feature_names(doc) or [])
         #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762 + 6 \u53c2
         try:
             doc.ClearSelection2(True)
@@ -158,10 +158,10 @@ def main() -> int:
             if faces:
                 _sel(faces[0], append=True, mark=0)
             break
-        fm = C.get_com_member(doc, "FeatureManager")
+        fm = c.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            ret = C.get_com_member(
+            ret = c.get_com_member(
                 fm, "InsertCutSurface", False, 0, False, True, [], _oi4()
             )
         except Exception as exc:  # noqa: BLE001
@@ -171,11 +171,11 @@ def main() -> int:
         if ret is not None:
             for k, m in (("returned_name", "Name"), ("returned_type", "GetTypeName2")):
                 try:
-                    ev[k] = str(C.get_com_member(ret, m))
+                    ev[k] = str(c.get_com_member(ret, m))
                 except Exception as exc:  # noqa: BLE001
                     ev[k] = "ERR %s" % str(exc)[:60]
         ev["recurse_after"] = _recurse(doc)
-        ev["names_after"] = list(FR.feature_names(doc) or [])
+        ev["names_after"] = list(fr.feature_names(doc) or [])
         #: \u2605 **\u5173\u952e\u5224\u65ad**\uff1a\u9012\u5f52\u94fe\u4e0a\u6709\u6ca1
         #: \u6709 `SurfCut`
         ev["surfcut_in_recurse"] = any(
@@ -190,9 +190,9 @@ def main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "surfcut-recursive-evidence.json"

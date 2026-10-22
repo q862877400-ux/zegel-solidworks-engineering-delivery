@@ -39,7 +39,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -106,7 +106,7 @@ def _one(sw, tag, then_delete_hole):
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         sk = _mk_sketch_with_hole(doc, pick_sketch=True)
         row["sketch_selected"] = sk
         #: \u2605 \u2460 **\u5e73\u9762\u533a\u57df**
@@ -116,7 +116,7 @@ def _one(sw, tag, then_delete_hole):
             row["planar_returned"] = str(ret)
         except Exception as exc:  # noqa: BLE001
             row["planar_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_after_planar"] = [n for n in after if n not in before]
         row["geom_after_planar"] = _geom(doc)
         #: \u2605 \u5224\u636e \u2460\uff1a**\u771f\u7684\u5f97\u5230\u4e00\u5f20**\u535
@@ -153,7 +153,7 @@ def _one(sw, tag, then_delete_hole):
                 break
             break
         row["hole_edges_picked"] = picked
-        b2 = list(FR.feature_names(doc) or [])
+        b2 = list(fr.feature_names(doc) or [])
         ret2 = None
         try:
             ret2 = _g(_g(doc, "FeatureManager"), "InsertDeleteHoleForSurface")
@@ -166,7 +166,7 @@ def _one(sw, tag, then_delete_hole):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["del_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
-        a2 = list(FR.feature_names(doc) or [])
+        a2 = list(fr.feature_names(doc) or [])
         row["new_after_delete"] = [n for n in a2 if n not in b2]
         row["geom_final"] = _geom(doc)
         row["loop_delta"] = row["geom_final"]["loops"] - g["loops"]

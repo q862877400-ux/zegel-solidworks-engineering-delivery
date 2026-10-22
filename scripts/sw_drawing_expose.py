@@ -40,8 +40,8 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_drawing as D  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_drawing as d  # noqa: E402
 
 
 def _mm(value) -> float:
@@ -53,8 +53,8 @@ def _selection_count(model) -> int:
     """★ 回读当前选区计数（★ 判"前置成不成立"要用它；事实 32/496）。"""
     try:
         return int(
-            C.get_com_member(
-                C.get_com_member(model, "SelectionManager"),
+            c.get_com_member(
+                c.get_com_member(model, "SelectionManager"),
                 "GetSelectedObjectCount2",
                 -1,
             )
@@ -95,7 +95,7 @@ def create_projected_view(
       · `create_standard_views_with_projection` 在本机**返回 blocked** —— ★ 而那**不是**
         「本机 COM 代理没有那个成员」：★★ 2026-10-04（接手轮）查明真因是**成员名拼错** ——
         代码里写 `CreateFirstAngleViews2`，而**官方真名是 `Create1stAngleViews2`**
-        （`1st` 非 `First`；`C:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` +
+        （`1st` 非 `First`；`c:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` +
         出厂类型库反射：真名 2 处 / 错名 0 处）。⇒ ★ 那条 `DRAWING_PROJECTION_API_UNAVAILABLE`
         **是假阴性**，已在 `drawing_workflow.py` 修掉（★ 修完**仍需真机复验**）。
       · 而 `add_view` → `CreateDrawViewFromModelView3` **实测建成**（返回真实 `CDispatch` 视图对象），
@@ -103,7 +103,7 @@ def create_projected_view(
     ★ 前置：`part_path` 必须是**已存盘的模型完整路径且含 `.sldprt`/`.sldasm`**（官方 Remarks 逐字）。
     ★ `scale=0.0` 表示不设视图比例（用图纸默认）；`>0` 时按 `1:1/scale` 写 `ScaleRatio`。
     """
-    res = D.add_view(
+    res = d.add_view(
         drawing_model,
         part_path,
         view_name,
@@ -133,7 +133,7 @@ def create_three_standard_views(
       ★ 若仍返回 `blocked`，那**才是**真的取不到该成员，而返回值里会带
       `member_present_but_not_callable` 说明「成员在但不可调用」（★ 事实 386）。
     """
-    res = D.create_standard_views_with_projection(
+    res = d.create_standard_views_with_projection(
         drawing_model, part_path, projection=projection
     )
     ok = (
@@ -162,14 +162,14 @@ def create_section_view(
     ★ 本函数**不代选**：先回读选区计数并在返回值里给出 `preconditions_held`。
 
     ★★★★ 2026-10-04（接手轮）**补上标签字母** —— 处置 `JUDGE-C_D_E.md` 的 🔴 **#12**
-      （★ `C-dw-1 #3`）：★ 原来传空 `SectionLabel` 且**从不 `SetLabel2`**
+      （★ `c-dw-1 #3`）：★ 原来传空 `SectionLabel` 且**从不 `SetLabel2`**
       ⇒ ★★ **建出来的剖视图没有标签字母** ✓
       ★ 而官方链路逐字：★ `IDrSection.SetLabel2(string Label)`（★ 回 `swSetSectionLabelStatus_e`：
         ★ `< 0` 失败 · ★ `= 0` 成功 · ★ `> 0` 成功但有情况）· ★ `IView.GetSection()` 拿 `IDrSection` ✓
-      ★★ 现 `label` 做成参数（★ 默认 `"A"`）⇒ ★ 多个剖视图可依次给 `A` / `B` / `C` ✓
+      ★★ 现 `label` 做成参数（★ 默认 `"A"`）⇒ ★ 多个剖视图可依次给 `A` / `B` / `c` ✓
     """
     pre = _selection_count(drawing_model)
-    res = D.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm), label=label)
+    res = d.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm), label=label)
     #: ★★ `add_section_view` 现在回 **dict**（★ 含 `view` / `label_status` / `label_ok`
     #: ）
     view = res.get("view") if isinstance(res, dict) else res
@@ -207,7 +207,7 @@ def create_detail_view(
 
     ★ `scale` 是比例分子（分母固定 1.0）⇒ `scale=2` 表示 **2:1**。
     """
-    res = D.add_detail_view(
+    res = d.add_detail_view(
         drawing_model,
         _mm(x_mm),
         _mm(y_mm),
@@ -241,7 +241,7 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
         ★ 不在官方成员名、也不在图框路径。
     ★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影；★ 这里顺带做掉。
     """
-    sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
+    sheet = c.get_com_member(drawing_model, "GetCurrentSheet")
     if sheet is None:
         return {
             "ok": False,
@@ -260,16 +260,16 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
         out["err"] = "★ 前置未成立：format_path 为空"
         return out
     try:
-        ret = C.get_com_member(sheet, "SetTemplateName", str(format_path))
+        ret = c.get_com_member(sheet, "SetTemplateName", str(format_path))
         out["ret_repr"] = repr(ret)
         try:
             out["template_name_readback"] = str(
-                C.get_com_member(sheet, "GetTemplateName") or ""
+                c.get_com_member(sheet, "GetTemplateName") or ""
             )
         except Exception:  # noqa: BLE001
             out["template_name_readback"] = None
         try:
-            C.get_com_member(drawing_model, "ForceRebuild3", False)
+            c.get_com_member(drawing_model, "ForceRebuild3", False)
         except Exception:  # noqa: BLE001
             pass
         #: ★★★★ 2026-10-04（接手轮）**把承诺的两个条件真的算出来**（★ 处置 `JUDGE-C_D_E.
@@ -313,7 +313,7 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
 
 def add_drawing_note(drawing_model, *, x_mm: float, y_mm: float, text: str) -> dict:
     """★ 注释/文字（`InsertNote`）—— ★ 引线附着点来自**调用前**的选择（官方 Remarks 逐字）。"""
-    res = D.add_note(drawing_model, _mm(x_mm), _mm(y_mm), text)
+    res = d.add_note(drawing_model, _mm(x_mm), _mm(y_mm), text)
     return _result("add_note", {"ok": res is not None, "note": res}, "注解计数增量")
 
 
@@ -321,12 +321,12 @@ def _selection_marks(model) -> dict:
     """★ 回读"当前选区里每个 mark 各有几个对象"（★ 判前置用；取不到回空 dict，不猜）。"""
     out: dict = {}
     try:
-        mgr = C.get_com_member(model, "SelectionManager")
-        n = int(C.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
+        mgr = c.get_com_member(model, "SelectionManager")
+        n = int(c.get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
         for i in range(1, n + 1):
             try:
-                m = C.get_com_member(mgr, "GetSelectedObject6", i, -1)
-                mark = C.get_com_member(mgr, "GetSelectedObjectType3", i, -1)
+                m = c.get_com_member(mgr, "GetSelectedObject6", i, -1)
+                mark = c.get_com_member(mgr, "GetSelectedObjectType3", i, -1)
                 if mark is not None:
                     out[str(mark)] = out.get(str(mark), 0) + 1
                 _ = m
@@ -341,7 +341,7 @@ def _view_by_name(drawing_model, view_name: str):
     """★ 按名取 `IView`（★ 沿 `GetFirstView`/`GetNextView` 链；取不到回 None）。
 
     ★★★★ 2026-10-04（轮 110）**视图名换到现行成员 `GetName2`** —— 处置阶段 2 · T1 ✓
-      ★ **官方逐字**（★ `C:\\swapi\\types\\IView\\Name.md`）：
+      ★ **官方逐字**（★ `c:\\swapi\\types\\IView\\Name.md`）：
         > ★ 「Obsolete. **Superseded by `IView::GetName2` and `IView::SetName2`**」✓
       ★★ **本仓已有两处**在用「先试 `GetName2`、★ 再兜底 `Name`」——
         ★ 见 `sw_drawing_create_missing.py` L193-195 与 `sw_drawing_query.py` L191-193 ⇒
@@ -350,18 +350,18 @@ def _view_by_name(drawing_model, view_name: str):
         ★★ 若只试一代而名字恰好来自另一代 ⇒ **会静默找不到**（★ 回 `None`）✓
     """
     try:
-        view = C.get_com_member(drawing_model, "GetFirstView")
+        view = c.get_com_member(drawing_model, "GetFirstView")
         while view is not None:
             vn = None
             try:
-                vn = C.get_com_member(view, "GetName2")
+                vn = c.get_com_member(view, "GetName2")
             except Exception:  # noqa: BLE001
                 vn = None
             if not vn:
-                vn = C.get_com_member(view, "Name")
+                vn = c.get_com_member(view, "Name")
             if str(vn or "") == str(view_name):
                 return view
-            view = C.get_com_member(view, "GetNextView")
+            view = c.get_com_member(view, "GetNextView")
     except Exception:  # noqa: BLE001
         return None
     return None
@@ -432,7 +432,7 @@ def create_hole_table(
             "★ 不一定是调用方没选。★ **仍然尝试调用**，成不成以表增量与返回值为准。"
         )
     try:
-        tbl = C.get_com_member(
+        tbl = c.get_com_member(
             view,
             "InsertHoleTable3",
             False,
@@ -443,7 +443,7 @@ def create_hole_table(
             str(template),
             int(tag_order),
             int(tag_type),
-            C.create_empty_dispatch_variant(),
+            c.create_empty_dispatch_variant(),
         )
         out["ok"] = tbl is not None
         out["raw_is_none"] = tbl is None
@@ -470,7 +470,7 @@ def create_revision_table(
       （★ 本函数把 `raw_is_none` 如实报出来，由调用方按契约解释）。
     ★ `Template` 是 `.sldrevtbt`；★ 官方 Remarks：模板与表**必须同型**。
     """
-    sheet = C.get_com_member(drawing_model, "GetCurrentSheet")
+    sheet = c.get_com_member(drawing_model, "GetCurrentSheet")
     if sheet is None:
         return {
             "ok": False,
@@ -484,7 +484,7 @@ def create_revision_table(
         "verified_by": "返回非 None + ISheet.RevisionTable 回读",
     }
     try:
-        tbl = C.get_com_member(
+        tbl = c.get_com_member(
             sheet,
             "InsertRevisionTable2",
             False,
@@ -509,7 +509,7 @@ def insert_center_marks(drawing_model, requirements) -> dict:
     ⚠ **真机阴性（已知）**：`InsertCenterMark3` 两格都不成、其中一格**前置是成立的**
     ⇒ ★ 本函数走的是**批量**那条路（`AutoInsertCenterMarks2`），★ **尚未单独真机验证** ⇒ 如实标注。
     """
-    res = D.auto_insert_center_marks(drawing_model, requirements)
+    res = d.auto_insert_center_marks(drawing_model, requirements)
     return _result(
         "insert_center_marks",
         res if isinstance(res, dict) else {"value": res},

@@ -41,7 +41,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_surface_features as SF
+    import sw_surface_features as sf
     from sw_part import (
         current_sketch_name,
         end_sketch,
@@ -62,21 +62,21 @@ def main() -> int:
             "ok": True,
             "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
         }
-        r1 = SF.create_extruded_surface_report(doc, 30.0, sk)
+        r1 = sf.create_extruded_surface_report(doc, 30.0, sk)
         ev["steps"]["prereq_extruded_surface"] = {
             "ok": bool(r1.get("ok")),
             "feature": r1.get("feature_name"),
             "tree": [r1.get("tree_before"), r1.get("tree_after")],
         }
         # ② 负例：resolutions 越界 ⇒ 必须被拒
-        neg = SF.insert_fill_surface_report(doc, 9)
+        neg = sf.insert_fill_surface_report(doc, 9)
         ev["steps"]["negative_bad_resolution"] = {
             "ok": (not neg.get("ok")),
             "returned_ok": bool(neg.get("ok")),
             "error": str(neg.get("error"))[:110],
         }
         # ③ 正例
-        pos = SF.insert_fill_surface_report(doc, 2)
+        pos = sf.insert_fill_surface_report(doc, 2)
         ev["steps"]["fill_surface"] = {
             "ok": bool(pos.get("ok")),
             "feature_name": pos.get("feature_name"),

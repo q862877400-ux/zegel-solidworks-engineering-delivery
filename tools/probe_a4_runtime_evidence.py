@@ -36,8 +36,8 @@ CANDIDATE_DIMS = ["D1@草图1", "D2@草图1", "D1@Sketch1", "D2@Sketch1"]
 
 
 def main() -> int:
-    import sw_document_data as D
-    import sw_part as P
+    import sw_document_data as d
+    import sw_part as p
     from sw_connect import connect_solidworks, new_document
 
     steps = []
@@ -73,11 +73,11 @@ def main() -> int:
             encoding="utf-8",
         )
         return 1
-    P.sketch(model, "Front Plane")
-    P.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
-    P.end_sketch(model)
-    P.extrude_boss(model, "Sketch1", 20.0)
-    rec("build_part", features=P.feature_names(model)[:8])
+    p.sketch(model, "Front Plane")
+    p.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
+    p.end_sketch(model)
+    p.extrude_boss(model, "Sketch1", 20.0)
+    rec("build_part", features=p.feature_names(model)[:8])
 
     #: ② `parameter_updates` —— 改尺寸 + 回读（★ 判据：等于新值 **且** 不等于旧值）
     #: ★★★ 2026-10-04：★ **先把候选名字探明**（★ 上一版直接猜 `D1@草图1` ⇒ `LookupError`
@@ -94,7 +94,7 @@ def main() -> int:
     para = {"ok": False, "reason": "候选尺寸名都读不到", "tried": []}
     for target in candidates:
         try:
-            res = D.update_dimension_mm(model, target, 35.0, rebuild=True)
+            res = d.update_dimension_mm(model, target, 35.0, rebuild=True)
         except Exception as exc:  # noqa: BLE001
             para["tried"].append(
                 "%s ⇒ %s: %s" % (target, type(exc).__name__, str(exc)[:60])
@@ -141,7 +141,7 @@ def main() -> int:
     #:   ★★ 而**我第一版又用 `read_custom_property` 去读**（★ 那一路读到 `None`）⇒
     #:     ★★★ **那是探针读错了、★ 不是能力有问题** ⇒ 改成**用它自己的回读** ✓
     want = {"A4_探针_甲": "alpha", "A4_探针_乙": "beta", "A4_探针_丙": "gamma"}
-    wrote = D.set_custom_properties(model, want)
+    wrote = d.set_custom_properties(model, want)
     rows = (wrote or {}).get("properties") or []
     per = {}
     for r in rows:

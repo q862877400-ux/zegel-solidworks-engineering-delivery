@@ -48,7 +48,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -157,13 +157,13 @@ def _one(sw, tag, *, n_curves=1, n_points=1):
         #: c2\uff1b\u2605 `-1 = Movable`\uff09
         C.get_com_member(fm, "SetFreeformBoundaryContinuity", 0, -1)
         row["steps"]["4_continuity"] = "-1 (Movable)"
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         #: \u2605 \u7b2c 5 \u6b65\uff1a\u63d2\u5165\uff08\u2605 4 \u53c2\uff1b\u2605 `Ns
         #: ided=True` \u7528\u65b0\u7b97\u6cd5\uff09
         feat = C.get_com_member(fm, "InsertFreeform2", True, False, False, 0.0)
         row["returned"] = type(feat).__name__ if feat is not None else "None"
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         row["ok"] = feat is not None and bool(row["new_features"])
         if not row["ok"] and feat is None:

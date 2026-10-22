@@ -45,9 +45,9 @@ def main(argv: list) -> int:
     text = REPORT.read_text(encoding="utf-8")
     sys.path.insert(0, str(REPO_ROOT / "mcp-server"))
     try:
-        import register_capabilities as RC
+        import register_capabilities as rc
 
-        tools = len(RC.all_specs())
+        tools = len(rc.all_specs())
     except Exception as exc:  # noqa: BLE001
         print("  [SKIP] 读不到注册表：%s" % str(exc)[:70])
         return 0

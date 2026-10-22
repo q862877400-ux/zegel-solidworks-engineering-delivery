@@ -47,10 +47,10 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_solid(doc):
@@ -104,7 +104,7 @@ def _mk_surface(doc, plane="Front Plane"):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -153,7 +153,7 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         row["n_solid"] = len(solid_bodies)
         row["n_surface"] = len(surf_bodies)
         row["n_bodies_passed"] = len(bodies)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
@@ -175,7 +175,7 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
                     pass
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new"])
     except Exception as exc:  # noqa: BLE001

@@ -71,7 +71,7 @@ for _p in (_HERE.parent, _HERE.parent.parent):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-import sw_sketch as _SK  # noqa: E402
+import sw_sketch as _sk  # noqa: E402
 from sw_connect import get_com_member  # noqa: E402
 from sw_connect import set_com_member as _set_com_member
 from sw_part import _empty_callout  # noqa: E402
@@ -112,7 +112,7 @@ OFFSET_CONSTRUCTION = {"dont": 0, "orig": 1, "offs": 2, "both": 3}
 
 
 def _sketch(model):
-    sk = _SK.resolve_sketch(model, "")
+    sk = _sk.resolve_sketch(model, "")
     if sk is None:
         raise RuntimeError("没有活动草图（先 solidworks_sketch_start）")
     return sk
@@ -123,7 +123,7 @@ def select_sketch_segment(model, index: int, *, append: bool = False) -> int:
 
     :returns: ★ 回读到的**选区计数**（★ 不是 `Select4` 的返回值 —— 事实 8）。
     """
-    segs = _SK.get_sketch_segments(_sketch(model))
+    segs = _sk.get_sketch_segments(_sketch(model))
     if not segs:
         raise RuntimeError("草图里没有线段可选中")
     if index < 0 or index >= len(segs):
@@ -407,7 +407,7 @@ def _selection_segments(model, selection: str):
                 % part
             )
         idxs.append(int(part.split(":", 1)[1]))
-    segs = _SK.get_sketch_segments(sk)
+    segs = _sk.get_sketch_segments(sk)
     picked = []
     for i in idxs:
         if i < 0 or i >= len(segs):
@@ -423,7 +423,7 @@ def _selection_segments(model, selection: str):
 def _construction_flags(model) -> list[bool]:
     """★ 回读**整张草图**每段的 `ISketchSegment.ConstructionGeometry` 属性（★ 官方 get/set）。"""
     flags = []
-    for seg in _SK.get_sketch_segments(_sketch(model)) or []:
+    for seg in _sk.get_sketch_segments(_sketch(model)) or []:
         try:
             flags.append(bool(get_com_member(seg, "ConstructionGeometry")))
         except Exception:  # noqa: BLE001

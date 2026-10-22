@@ -733,7 +733,7 @@ def check_not_doing() -> list:
 def main() -> int:
     #: ⚑ **轮 193：段名先单独列出来**，因为 `check_rule_registry` 要读它们
     #:   （「段名引用的编号必须在登记表里」）—— 这样检查**不需要解析自己的源码**。
-    _TITLES = (
+    _titles = (
         "规则 5 · 出处与许可",
         "规范与地图存在性",
         "地图与来源同步",
@@ -744,14 +744,14 @@ def main() -> int:
         "R 编号登记表（引用的编号必须都已登记）",
     )
     groups = (
-        (_TITLES[0], check_sources()),
-        (_TITLES[1], check_docs()),
-        (_TITLES[2], check_map_fresh()),
-        (_TITLES[3], check_capabilities_schema()),
-        (_TITLES[4], check_capabilities_levels()),
-        (_TITLES[5], check_authorization_source()),
-        (_TITLES[6], check_not_doing()),
-        (_TITLES[7], check_rule_registry(_TITLES)),
+        (_titles[0], check_sources()),
+        (_titles[1], check_docs()),
+        (_titles[2], check_map_fresh()),
+        (_titles[3], check_capabilities_schema()),
+        (_titles[4], check_capabilities_levels()),
+        (_titles[5], check_authorization_source()),
+        (_titles[6], check_not_doing()),
+        (_titles[7], check_rule_registry(_titles)),
     )
     #: ⚑ **首行汇总**（轮 192）：本门禁实际有 **7 段**检查，而此前首行只显示**第一段**
     #:   （`[PASS] 规则 5 · 出处与许可`）⇒ ★ 只看首行的人会以为它只查了"规则 5"。

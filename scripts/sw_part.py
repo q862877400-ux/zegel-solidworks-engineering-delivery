@@ -1232,8 +1232,8 @@ def add_sketch_relation(model, relation_type):
     #: `
     #:       的强制规定 —— 官方只定义取值，没规定「哪些状态允许加关系」。如实标注。
     #:   ★ 本门**不受任何开关影响** —— 没有 `verify=False` 之类的旁路 ✓
-    _ADDABLE_STATUS = 2
-    _STATUS_NAME = {
+    _addable_status = 2
+    _status_name = {
         1: "swUnknownConstraint",
         2: "swUnderConstrained",
         3: "swFullyConstrained",
@@ -1279,11 +1279,11 @@ def add_sketch_relation(model, relation_type):
         if isinstance(_v, (int, float)):
             _st = int(_v)
             break
-    if _st != _ADDABLE_STATUS:
+    if _st != _addable_status:
         raise ValueError(
             "草图状态为 **%s（%r）** ⇒ ★ 本仓规则：**只有 `status == 2`（欠定义）才允许加关系** ✓；"
             "当前状态下继续加会**过定义 / 无解** ✗。★ 请先修草图或撤销多余关系。"
-            % (_STATUS_NAME.get(_st, "未知"), _st)
+            % (_status_name.get(_st, "未知"), _st)
         )
     return model.SketchAddConstraints(name)
 

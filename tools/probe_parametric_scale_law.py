@@ -3,10 +3,10 @@
 ★★★ **已有读数**（★ `output/_probe_all_parametric_closure.json`）：
   ★ 4 条参数式曲线（★ `x = 0.01·t` 那种）⇒ ★ 闭合 ✓ · ★ 拉伸 ✓ · ★★ **体积 0.001 mm³**
   ★★ 而**边长应为 10 mm**（★ 若 0.01 是**米**）⇒ ★ 体积应 **1000 mm³** ⇒ **差 1e6** ✗
-  ★★★ **⇒ 不猜，直接扫**：★ A = 0.01 / 0.1 / 1.0 / 10.0 ⇒ ★ 读体积 ⇒
+  ★★★ **⇒ 不猜，直接扫**：★ a = 0.01 / 0.1 / 1.0 / 10.0 ⇒ ★ 读体积 ⇒
     ★★ `体积 ∝ A³` ⇒ ★ 由比例**反解单位因子** ✓
 
-★ 判据：★ 哪一格给出 **1000 mm³**（★ 10×10×10）⇒ ★ 那个 A 就是"10 mm 的米制写法" ✓
+★ 判据：★ 哪一格给出 **1000 mm³**（★ 10×10×10）⇒ ★ 那个 a 就是"10 mm 的米制写法" ✓
 """
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -42,13 +42,13 @@ def _main() -> int:
     }
     sw, _ = C.connect_solidworks(wait_seconds=30)
 
-    def square(A):
+    def square(a):
         def draw(doc):
             sm = C.get_com_member(doc, "SketchManager")
             C.get_com_member(
                 sm,
                 "CreateEquationSpline2",
-                "%.12f*t" % A,
+                "%.12f*t" % a,
                 "0.0",
                 "",
                 "0",
@@ -63,8 +63,8 @@ def _main() -> int:
             C.get_com_member(
                 sm,
                 "CreateEquationSpline2",
-                "%.12f" % A,
-                "%.12f*t" % A,
+                "%.12f" % a,
+                "%.12f*t" % a,
                 "",
                 "0",
                 "1",
@@ -78,8 +78,8 @@ def _main() -> int:
             C.get_com_member(
                 sm,
                 "CreateEquationSpline2",
-                "%.12f-%.12f*t" % (A, A),
-                "%.12f" % A,
+                "%.12f-%.12f*t" % (a, a),
+                "%.12f" % a,
                 "",
                 "0",
                 "1",
@@ -94,7 +94,7 @@ def _main() -> int:
                 sm,
                 "CreateEquationSpline2",
                 "0.0",
-                "%.12f-%.12f*t" % (A, A),
+                "%.12f-%.12f*t" % (a, a),
                 "",
                 "0",
                 "1",
@@ -108,13 +108,13 @@ def _main() -> int:
 
         return draw
 
-    for A in (0.01, 0.1, 1.0, 10.0):
+    for a in (0.01, 0.1, 1.0, 10.0):
         doc = None
-        row = {"A": A}
+        row = {"a": a}
         try:
             doc = C.new_document(sw, "part")
             P.start_sketch(doc, plane_name="Front Plane")
-            square(A)(doc)
+            square(a)(doc)
             try:
                 sk = C.get_com_member(doc, "GetActiveSketch2")
                 row["segments"] = len(
@@ -138,7 +138,7 @@ def _main() -> int:
                     #: ★★ 反解边长（★ 假设深度 10 mm 对）
                     if v > 0:
                         row["implied_side_mm"] = round((v / 10.0) ** 0.5, 9)
-                        row["side_over_A"] = round(row["implied_side_mm"] / A, 6)
+                        row["side_over_A"] = round(row["implied_side_mm"] / a, 6)
                 except Exception as exc:  # noqa: BLE001
                     row["mass_error"] = str(exc)[:100]
         except Exception as exc:  # noqa: BLE001
@@ -158,12 +158,12 @@ def _main() -> int:
         json.dumps(rep, ensure_ascii=False, indent=1, default=str) + "\n",
         encoding="utf-8",
     )
-    print("  ★ A 扫描（★ 全参数式正方形 · ★ 拉伸 10 mm）：")
+    print("  ★ a 扫描（★ 全参数式正方形 · ★ 拉伸 10 mm）：")
     for c in rep["cases"]:
         print(
-            "     A=%-8s 段=%-3s 点=%-3s 拉伸=%-6s 体积=%-14s 反解边长=%-10s 边长/A=%s %s"
+            "     a=%-8s 段=%-3s 点=%-3s 拉伸=%-6s 体积=%-14s 反解边长=%-10s 边长/a=%s %s"
             % (
-                c.get("A"),
+                c.get("a"),
                 c.get("segments"),
                 c.get("points"),
                 c.get("extrude_ok"),

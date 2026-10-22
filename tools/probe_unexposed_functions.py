@@ -62,10 +62,10 @@ def main() -> int:
     #:   有了签名就能**按数据筛**（首参是不是 `model` / `sw_app`、有没有裸坐标 `x/y/z`）。
     #:   ⚠ 本探针**仍然不判「该不该暴露」**（事实 53）—— 它只把**判据要用的料备齐**。
     sigs: dict[str, str] = {}
-    _DEF_SIG = re.compile(r"^def ([a-z_]\w*)\(([^)]*)\)", re.MULTILINE)
+    _def_sig = re.compile(r"^def ([a-z_]\w*)\(([^)]*)\)", re.MULTILINE)
     for p in sorted((ROOT / "scripts").glob("sw_*.py")):
         src = p.read_text(encoding="utf-8", errors="ignore")
-        for fn, raw in _DEF_SIG.findall(src):
+        for fn, raw in _def_sig.findall(src):
             funcs.setdefault(fn, p.name)
             sigs.setdefault(fn, raw)
     print(
@@ -116,9 +116,9 @@ def main() -> int:
 
     called_prod: set = set()
     called_tests: set = set()
-    PROD_DIRS = ("scripts", "subskills", "examples", "mcp-server")
+    prod_dirs = ("scripts", "subskills", "examples", "mcp-server")
     scan_files: list = []
-    for d in PROD_DIRS:
+    for d in prod_dirs:
         base = ROOT / d
         if base.is_dir():
             scan_files.extend(sorted(base.rglob("*.py")))

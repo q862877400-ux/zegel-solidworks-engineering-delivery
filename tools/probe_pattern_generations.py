@@ -1,6 +1,6 @@
 """★ 决定性对照：`FeatureLinearPattern3` / `FeatureCircularPattern4`（旧）**真能建成阵列吗**。
 
-★★ 官方依据（三源里的 `C:\\swapi`）：
+★★ 官方依据（三源里的 `c:\\swapi`）：
   · `types/IFeatureManager/FeatureLinearPattern3.md`（10 参）⇒ 逐字
     「**Obsolete. Superseded by [[IFeatureManager::FeatureLinearPattern4]].**」
     ★★ 而 `FeatureLinearPattern4`（20 参）**自己也废弃** ⇒ `FeatureLinearPattern5`
@@ -36,14 +36,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "pattern-generations-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _try(fn, *a):
@@ -55,15 +55,15 @@ def _try(fn, *a):
 
 def _names(doc) -> list:
     try:
-        return [str(x) for x in (P.feature_names(doc) or [])]
+        return [str(x) for x in (p.feature_names(doc) or [])]
     except Exception:  # noqa: BLE001
         return []
 
 
 def _make_part(sw, tag: str):
     """★ 建一个**新的**件（★ 每测一条都重来 —— 免得读数不可比）。"""
-    doc = C.new_document(sw, "part")
-    P.start_sketch(doc, plane_name="Front Plane")
+    doc = c.new_document(sw, "part")
+    p.start_sketch(doc, plane_name="Front Plane")
     _g(
         _g(doc, "SketchManager"),
         "CreateCornerRectangle",
@@ -74,33 +74,33 @@ def _make_part(sw, tag: str):
         0.01,
         0.0,
     )
-    P.end_sketch(doc)
-    nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-    P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
+    p.end_sketch(doc)
+    nm = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+    p.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
     return doc
 
 
 def main() -> int:
     started = time.time()
-    R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    r: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S")}
+    sw, _ = c.connect_solidworks(wait_seconds=30)
 
     #: ★★ ① 线性阵列（★ 旧入口，★ 与生产代码**逐字相同**的 10 实参）
     doc = None
     try:
         doc = _make_part(sw, "lp")
-        R["★_LP基线特征数"] = len(_names(doc))
+        r["★_LP基线特征数"] = len(_names(doc))
         #: ★ 前置：★ **选一个要阵列的特征**（★ 用本仓已验证的按名字选特征那条路）
         feat = None
         for n in _names(doc):
             if "拉伸" in n or "Extrude" in n or "凸台" in n:
                 feat = n
                 break
-        R["选的被阵列特征"] = feat
+        r["选的被阵列特征"] = feat
         if feat:
             _try(
-                P._ensure_sketch_selected
-                if hasattr(P, "_ensure_sketch_selected")
+                p._ensure_sketch_selected
+                if hasattr(p, "_ensure_sketch_selected")
                 else _g,
                 doc,
                 feat,
@@ -122,14 +122,14 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 pass
             try:
-                R["回读选中数"] = int(
+                r["回读选中数"] = int(
                     _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
                 )
             except Exception:  # noqa: BLE001
-                R["回读选中数"] = -1
+                r["回读选中数"] = -1
         fm = _g(doc, "FeatureManager")
         n0 = len(_names(doc))
-        R["旧_FeatureLinearPattern3(10 参)"] = _try(
+        r["旧_FeatureLinearPattern3(10 参)"] = _try(
             _g,
             fm,
             "FeatureLinearPattern3",
@@ -145,10 +145,10 @@ def main() -> int:
             False,
         )
         n1 = len(_names(doc))
-        R["★_LP后特征数"] = n1
-        R["★_LP建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
+        r["★_LP后特征数"] = n1
+        r["★_LP建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
     except Exception as exc:  # noqa: BLE001
-        R["LP_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        r["LP_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if doc is not None:
@@ -160,12 +160,12 @@ def main() -> int:
     doc = None
     try:
         doc = _make_part(sw, "cp")
-        R["★_CP基线特征数"] = len(_names(doc))
+        r["★_CP基线特征数"] = len(_names(doc))
         #: ★ 前置：★ 先建一根**基准轴**（★ 用本仓 `part_axis` —— ★ 它会自己找圆柱面）
-        R["建轴"] = _try(P.part_axis, doc, True)
+        r["建轴"] = _try(p.part_axis, doc, True)
         n0 = len(_names(doc))
         fm = _g(doc, "FeatureManager")
-        R["旧_FeatureCircularPattern4(7 参)"] = _try(
+        r["旧_FeatureCircularPattern4(7 参)"] = _try(
             _g,
             fm,
             "FeatureCircularPattern4",
@@ -178,10 +178,10 @@ def main() -> int:
             False,
         )
         n1 = len(_names(doc))
-        R["★_CP后特征数"] = n1
-        R["★_CP建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
+        r["★_CP后特征数"] = n1
+        r["★_CP建成"] = "★ 是（+%d）" % (n1 - n0) if n1 > n0 else "★★ 否（没变）"
     except Exception as exc:  # noqa: BLE001
-        R["CP_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+        r["CP_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     finally:
         try:
             if doc is not None:
@@ -189,15 +189,15 @@ def main() -> int:
         except Exception:  # noqa: BLE001
             pass
 
-    R["★★_结论"] = (
+    r["★★_结论"] = (
         "★ 至少一条旧的能建成 ⇒ 那一条**没有换的必要**"
-        if str(R.get("★_LP建成", "")).startswith("★ 是")
-        or str(R.get("★_CP建成", "")).startswith("★ 是")
+        if str(r.get("★_LP建成", "")).startswith("★ 是")
+        or str(r.get("★_CP建成", "")).startswith("★ 是")
         else "★★ 两条都建不成 ⇒ 值得试新入口"
     )
-    R["seconds"] = round(time.time() - started, 2)
+    r["seconds"] = round(time.time() - started, 2)
     OUT.write_text(
-        json.dumps(R, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
+        json.dumps(r, ensure_ascii=False, indent=1, default=str), encoding="utf-8"
     )
     print("wrote", OUT)
     return 0

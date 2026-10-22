@@ -9,7 +9,7 @@
 # 仓库:   本项目自身（真机探针）
 # 文件:   tools/probe_gear_curve_by_curve.py
 # 定位:   ★ 业主 2026-10-10「方法要规范」—— ★ 定位"6 条曲线只成 5 段"。
-# 官方依据: `C:\swapi\types\ISketchManager\CreateEquationSpline2.md`
+# 官方依据: `c:\swapi\types\ISketchManager\CreateEquationSpline2.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -26,38 +26,38 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import gear_geometry as G  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+from scripts import gear_geometry as g  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 from tools.probe_gear_tooth_pattern2 import tooth_curves  # noqa: E402
 
 
 def _main() -> int:
-    spec = G.GearSpec(
+    spec = g.GearSpec(
         module_mm=1.0,
         teeth=20,
         face_width_mm=10.0,
         pressure_angle_deg=20.0,
         bore_diameter_mm=8.0,
     )
-    geo = G.calculate_gear_geometry(spec)
+    geo = g.calculate_gear_geometry(spec)
     curves, meta = tooth_curves(spec, geo)
     rep = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "★ 逐条曲线数段数（★ 找出漏掉的那条）",
         "rows": [],
     }
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         P.start_sketch(doc, plane_name="Front Plane")
-        sm = C.get_com_member(doc, "SketchManager")
+        sm = c.get_com_member(doc, "SketchManager")
 
         def segs():
             try:
-                sk = C.get_com_member(doc, "GetActiveSketch2")
-                return len(list(C.get_com_member(sk, "GetSketchSegments") or []))
+                sk = c.get_com_member(doc, "GetActiveSketch2")
+                return len(list(c.get_com_member(sk, "GetSketchSegments") or []))
             except Exception:  # noqa: BLE001
                 return -1
 
@@ -66,7 +66,7 @@ def _main() -> int:
         for name, x, y, t0, t1 in curves:
             err = None
             try:
-                C.get_com_member(
+                c.get_com_member(
                     sm,
                     "CreateEquationSpline2",
                     x,
@@ -100,9 +100,9 @@ def _main() -> int:
         rep["final_segments"] = prev
         #: ★★ 试拉伸
         try:
-            sk = C.get_com_member(doc, "GetActiveSketch2")
+            sk = c.get_com_member(doc, "GetActiveSketch2")
             rep["constrained_status"] = int(
-                C.get_com_member(sk, "GetConstrainedStatus")
+                c.get_com_member(sk, "GetConstrainedStatus")
             )
         except Exception as exc:  # noqa: BLE001
             rep["constrained_status_error"] = str(exc)[:90]
@@ -118,9 +118,9 @@ def _main() -> int:
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     p = R / "output" / "_probe_gear_curve_by_curve.json"

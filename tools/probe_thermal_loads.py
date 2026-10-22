@@ -54,7 +54,7 @@ def main() -> int:
     #: 层导入**
     #:   ⇒ 报 `ImportError: attempted relative import with no known parent package`
     #:   ★ 而那是**探针的错**，不是能力坏了（★ 与事实 320 同族）。
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -89,12 +89,12 @@ def main() -> int:
 
         #: ★ 直接按包装的签名调：`(manager, model[, 额外 int])`
         targets = [
-            ("convection", SL.apply_convection_report, ()),
-            ("heat_flux", SL.apply_heat_flux_report, ()),
-            ("heat_power", SL.apply_heat_power_report, ()),
-            ("temperature", SL.apply_temperature_report, ()),
-            ("radiation", SL.apply_radiation_report, (0,)),
-            ("elastic_connector", SL.apply_elastic_connector_report, ()),
+            ("convection", sl.apply_convection_report, ()),
+            ("heat_flux", sl.apply_heat_flux_report, ()),
+            ("heat_power", sl.apply_heat_power_report, ()),
+            ("temperature", sl.apply_temperature_report, ()),
+            ("radiation", sl.apply_radiation_report, (0,)),
+            ("elastic_connector", sl.apply_elastic_connector_report, ()),
         ]
         if mgr is not None:
             for label, fn, extra in targets:

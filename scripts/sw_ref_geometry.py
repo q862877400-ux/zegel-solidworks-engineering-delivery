@@ -353,10 +353,10 @@ def insert_reference_point(
     #:   ★★ 注意顺序：★ 这段**必须**紧贴下面那个 `InsertReferencePoint` 调用 ——
     #:     ★ 中间**不许**再插任何动选区的步骤（★ 上引台账那句就是这条约束的出处）✓
     if str(selection or "").strip():
-        import sw_selection_spec as _SS
+        import sw_selection_spec as _ss
 
         try:
-            got = _SS.resolve_selection(
+            got = _ss.resolve_selection(
                 model, str(selection), str(selection_kind or "FACE")
             )
         except Exception as exc:  # noqa: BLE001

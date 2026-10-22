@@ -37,20 +37,20 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-from scripts import sw_connect as C  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_curve_and_split as M  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 #: ★ 中转：COM 实体放这里（★ **不进 JSON**）
 _LAST_ENTITY = []
-import scripts.sw_sketch_primitives as SP  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
 
 
 def _solid(doc, depth=0.02):
     """★ 建实体（★ 判据 = 树里真出现"凸台/拉伸" —— ★ 别信 `extrude_boss` 的 bool，轮 480 的教训）。"""
     before = P.feature_names(doc) or []
     P.start_sketch(doc, plane_name="Front Plane")
-    SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+    sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
     P.end_sketch(doc)
     rets = []
     for cand in ("草图1", "Sketch1"):
@@ -72,21 +72,21 @@ def _solid(doc, depth=0.02):
 def _pick_face(doc, idx=0, mark=0):
     """★ 按**对象**选一个面（★ 事实 32：面没有名字）⇒ 回来选中的计数。"""
     try:
-        bs = list(C.get_com_member(doc, "GetBodies2", -1, True) or [])
+        bs = list(c.get_com_member(doc, "GetBodies2", -1, True) or [])
         if not bs:
             return False, "无 body"
-        fs = list(C.get_com_member(bs[0], "GetFaces") or [])
+        fs = list(c.get_com_member(bs[0], "GetFaces") or [])
         if len(fs) <= idx:
             return False, "面不够"
         try:
-            C.get_com_member(doc, "ClearSelection2", True)
+            c.get_com_member(doc, "ClearSelection2", True)
         except Exception:  # noqa: BLE001
             pass
         ok = bool(P._select_com_object(fs[idx], append=False, mark=int(mark)))
         try:
             n = int(
-                C.get_com_member(
-                    C.get_com_member(doc, "SelectionManager"),
+                c.get_com_member(
+                    c.get_com_member(doc, "SelectionManager"),
                     "GetSelectedObjectCount2",
                     -1,
                 )
@@ -112,7 +112,7 @@ def _one(sw, zh, fn):
     row = {"zh": zh, "verdict": "不能"}
     doc = None
     try:
-        doc = C.new_document(sw, "part")
+        doc = c.new_document(sw, "part")
         r = fn(doc)
         row.update(r if isinstance(r, dict) else {"returned": str(r)})
         row["verdict"] = "能" if row.get("ok") else "不能"
@@ -121,9 +121,9 @@ def _one(sw, zh, fn):
     finally:
         if doc is not None:
             try:
-                t = str(C.get_com_member(doc, "GetTitle") or "")
+                t = str(c.get_com_member(doc, "GetTitle") or "")
                 if t:
-                    C.get_com_member(sw, "CloseDoc", t)
+                    c.get_com_member(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
     return row
@@ -143,7 +143,7 @@ def _case_split_project(doc):
     ok, sel = _pick_face(doc, 0, 0)
     try:
         P.start_sketch(doc)
-        SP.sketch_3point_corner_rectangle(doc, -5, -5, 5, -5, 5, 5)
+        sp.sketch_3point_corner_rectangle(doc, -5, -5, 5, -5, 5, 5)
         P.end_sketch(doc)
     except Exception as exc:  # noqa: BLE001
         return {
@@ -191,7 +191,7 @@ def _case_mate(doc):
 
 
 def main() -> int:
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     ev = {
         "at": time.strftime("%Y-%m-%dT%H:%M:%S"),
         "_": "B7-a 分割线/曲线/配合参考逐个真机跑（specs/201-toolbar-gaps）",

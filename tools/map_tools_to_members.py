@@ -202,10 +202,10 @@ def _global_pool() -> dict:
     #:   ★★ 可复用判据：★★ **"模块"不等于"文件"** ——
     #:     ★ 一个 `.py` 可能**只是转发**（★ 本仓有 `sw_drawing` 这种兼容入口）⇒
     #:     ★★★ **凡按"文件 → 函数"建索引的地方，都要处理"转发文件"** ✓
-    _BRIDGE_PAT = re.compile(
+    _bridge_pat = re.compile(
         r"_IMPLEMENTATION\s*=\s*\(?(.{0,400}?)\)?\s*\n\s*_SPEC", re.S
     )
-    _PYNAME_PAT = re.compile(r'"([A-Za-z_]\w*\.py)"')
+    _pyname_pat = re.compile(r'"([A-Za-z_]\w*\.py)"')
     for d in ("scripts", "mcp-server"):
         for f in sorted((REPO / d).glob("*.py")):
             try:
@@ -214,10 +214,10 @@ def _global_pool() -> dict:
                 continue
             if "importlib" not in txt:
                 continue
-            m2 = _BRIDGE_PAT.search(txt)
+            m2 = _bridge_pat.search(txt)
             if not m2:
                 continue
-            inner = _PYNAME_PAT.search(m2.group(1))
+            inner = _pyname_pat.search(m2.group(1))
             if not inner:
                 continue
             target = inner.group(1)[:-3]

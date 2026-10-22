@@ -44,7 +44,7 @@ OUT = Path(
 
 
 def main() -> int:
-    import compare_geometry as CG
+    import compare_geometry as cg
     import sw_connect
     from sw_connect import get_com_member
     from sw_part import (
@@ -86,7 +86,7 @@ def main() -> int:
         end_sketch(doc)
         extrude_boss(doc, sk, 20.0)
 
-        geo = CG.collect_geometry(doc)
+        geo = cg.collect_geometry(doc)
         ev["steps"]["geometry"] = {
             "ok": bool(geo.get("volume_mm3")),
             "volume_mm3": geo.get("volume_mm3"),
@@ -115,8 +115,8 @@ def main() -> int:
 
         #: ② `check_axis_alignment` —— ★ 真机 delta 当**正例**；★ 手工造一个超差当**负例
         #: **
-        pos = CG.check_axis_alignment((0.01, 0.02, 50.0), "axial")
-        neg = CG.check_axis_alignment((0.20, 0.00, 50.0), "axial")
+        pos = cg.check_axis_alignment((0.01, 0.02, 50.0), "axial")
+        neg = cg.check_axis_alignment((0.20, 0.00, 50.0), "axial")
         ev["steps"]["axis_alignment"] = {
             "ok": bool(pos.get("ok") and not neg.get("ok")),
             "positive": pos,
@@ -125,8 +125,8 @@ def main() -> int:
             "★ 负例横向 0.20 > 0.05 ⇒ 必须 fail",
         }
         #: ③ `check_radii` —— ★ R10 正例 · R10.5 负例（★ 容差 0.1）
-        rpos = CG.check_radii([10.0, 10.05], 10.0)
-        rneg = CG.check_radii([10.5], 10.0)
+        rpos = cg.check_radii([10.0, 10.05], 10.0)
+        rneg = cg.check_radii([10.5], 10.0)
         ev["steps"]["radii"] = {
             "ok": bool(rpos.get("ok") and not rneg.get("ok")),
             "positive": rpos,
@@ -142,8 +142,8 @@ def main() -> int:
         #:   （★ 又一次「按契约调」的教训 —— 与 `create_static_study` 那次同族）。
         zs = sorted({p[2] for p in verts}) if verts else [0.0, 20.0]
         top = zs[-1] if zs else 20.0
-        spos = CG.check_same_level([(top, top), (top, top + 0.03)], top)
-        sneg = CG.check_same_level([(top, top + 5.0)], top)
+        spos = cg.check_same_level([(top, top), (top, top + 0.03)], top)
+        sneg = cg.check_same_level([(top, top + 5.0)], top)
         ev["steps"]["same_level"] = {
             "ok": bool(spos.get("ok") and not sneg.get("ok")),
             "positive": spos,

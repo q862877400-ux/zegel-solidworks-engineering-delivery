@@ -40,9 +40,9 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_hole_features as HF
+    import sw_hole_features as hf
     import sw_mold as M
-    import sw_surface_features as SF
+    import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -73,7 +73,7 @@ def main() -> int:
         #: ① 打通孔（★ 关断面要盖的就是它）
         try:
             #: ★ 按**契约**调（实测签名：`(model, center, diameter, plane_name, name)`）
-            HF.create_through_hole(doc, (0.0, 0.0), 8.0)
+            hf.create_through_hole(doc, (0.0, 0.0), 8.0)
             faces_after = len(
                 get_com_member(
                     get_com_member(doc, "GetBodies2", 0, False)[0], "GetFaces"
@@ -142,10 +142,10 @@ def main() -> int:
             }
 
         #: ② 关断面（★ 零参）
-        before = SF.feature_names(doc)
+        before = sf.feature_names(doc)
         try:
             r = M.insert_shut_off_surface(doc)
-            after = SF.feature_names(doc)
+            after = sf.feature_names(doc)
             new = [n for n in after if n not in before]
             ev["steps"]["shut_off_surface"] = {
                 "ok": bool(new),

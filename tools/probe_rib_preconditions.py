@@ -57,7 +57,7 @@ def main() -> int:
     try:
         import sw_connect
 
-        from scripts import sw_feature_readback as FR
+        from scripts import sw_feature_readback as fr
         from scripts import sw_part as P
 
         sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
@@ -88,7 +88,7 @@ def main() -> int:
             d = None
             try:
                 d, sk2 = _plate_and_sketch()
-                before = FR.feature_names(d)
+                before = fr.feature_names(d)
                 #: ★ 选法：A/B = 传草图名（能力层自己选草图特征）；C = 先选好再传 __curr
                 #: ent_selection__
                 name_arg = "__current_selection__" if use_current_selection else sk2
@@ -124,8 +124,8 @@ def main() -> int:
                     err = None
                 except Exception as exc:  # noqa: BLE001
                     err = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-                after = FR.feature_names(d)
-                rb = FR.feature_readback(d, "筋1")
+                after = fr.feature_names(d)
+                rb = fr.feature_readback(d, "筋1")
                 out = {
                     "name_arg": name_arg,
                     "ref_index": int(ref_index),

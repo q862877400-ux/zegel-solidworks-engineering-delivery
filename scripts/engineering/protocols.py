@@ -312,9 +312,9 @@ def validate_protocol(pr: Protocol) -> dict:
     out["unresolved"] = [r["name"] for r in refs if not r["resolved"]]
 
     #: ★★ **失败状态码必须是封闭码**（★ 与 `design_ir.IR_CODES` 同族）
-    from . import design_ir as DI  # noqa: PLC0415
+    from . import design_ir as di  # noqa: PLC0415
 
-    known_codes = set(DI.IR_CODES) | {
+    known_codes = set(di.IR_CODES) | {
         "REVISE_LAYOUT",
         "UNSUPPORTED_CAPABILITY",
         "DIAGNOSIS_REQUIRED",

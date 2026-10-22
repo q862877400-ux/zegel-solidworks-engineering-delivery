@@ -53,7 +53,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -101,11 +101,11 @@ def main() -> int:
             if f is not None:
                 boss = nm
                 break
-        bb0 = P.get_bounding_box(doc, body_index=0)
+        bb0 = p.get_bounding_box(doc, body_index=0)
         ev["steps"]["before_pattern"] = {"ok": bool(bb0), "boss": boss, "bbox": bb0}
         try:
             linear_pattern(doc, boss or "凸台-拉伸2", 1.0, 0.0, 0.0, 0.01, 3)
-            bb1 = P.get_bounding_box(doc, body_index=0)
+            bb1 = p.get_bounding_box(doc, body_index=0)
             ev["steps"]["pattern_spacing_0p01"] = {"ok": True, "bbox": bb1}
         except Exception as exc:  # noqa: BLE001
             ev["steps"]["pattern_spacing_0p01"] = {

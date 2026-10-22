@@ -42,9 +42,9 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
-import prove_split_line_geometry_controls as K  # noqa: E402
+import prove_split_line_geometry_controls as k  # noqa: E402
 import prove_split_line_geometry_isolate as I  # noqa: E402
-import prove_split_line_geometry_per_example as G  # noqa: E402
+import prove_split_line_geometry_per_example as g  # noqa: E402
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
@@ -54,12 +54,12 @@ from scripts.sw_simulation import select_face_at  # noqa: E402
 def _split_face_boxes(doc):
     """★ 回报"有 2 个环"的那张面的包围盒 ⇒ ★ 知道**切开的是哪一张面**。"""
     out = []
-    for b in list(G._get(doc, "GetBodies2", 0, True) or []):
-        for f in list(G._get(b, "GetFaces") or []):
+    for b in list(g._get(doc, "GetBodies2", 0, True) or []):
+        for f in list(g._get(b, "GetFaces") or []):
             try:
-                if int(G._get(f, "GetLoopCount")) != 2:
+                if int(g._get(f, "GetLoopCount")) != 2:
                     continue
-                box = G._get(f, "GetBox")
+                box = g._get(f, "GetBox")
                 out.append([round(float(box[i]), 5) for i in range(6)] if box else None)
             except Exception:  # noqa: BLE001
                 continue
@@ -68,11 +68,11 @@ def _split_face_boxes(doc):
 
 def _select_for(doc, want_sketch, face_point):
     """★ 选：草图（mark 4，可选）→ 面（mark 1，按点，可选）⇒ ★ **回读计数**。"""
-    ext = G._get(doc, "Extension")
+    ext = g._get(doc, "Extension")
     picked = {}
     doc.ClearSelection2(True)
     if want_sketch:
-        sk = G._sketch_names(doc)
+        sk = g._sketch_names(doc)
         if sk:
             try:
                 if P._select_by_id(ext, sk[-1], "SKETCH", append=False, mark=4):
@@ -96,7 +96,7 @@ def _select_for(doc, want_sketch, face_point):
     for m in (0, 1, 4):
         try:
             per[str(m)] = int(
-                G._get(G._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m)
+                g._get(g._get(doc, "SelectionManager"), "GetSelectedObjectCount2", m)
             )
         except Exception:  # noqa: BLE001
             per[str(m)] = -1
@@ -118,7 +118,7 @@ def _case(sw, tag, mode):
             else:
                 face_point, d1, d2 = (0.0, y_mid, box[2]), True, False
         else:
-            ok, info = G._build(doc)
+            ok, info = g._build(doc)
             row["built"] = ok
             row["geometry"] = "correct(\u8349\u56fe\u5728\u5b9e\u4f53\u4e4b\u5916)"
             if not ok:
@@ -143,7 +143,7 @@ def _case(sw, tag, mode):
             per["4"] >= 1 if need_sketch else per["4"] == 0
         )
         row["preconditions_held"] = ok_pre
-        res = K._call_and_read(doc, row, d1, d2)
+        res = k._call_and_read(doc, row, d1, d2)
         res["split_face_boxes"] = _split_face_boxes(doc)
         if not ok_pre:
             res["ok"] = False
@@ -158,9 +158,9 @@ def _case(sw, tag, mode):
     finally:
         if doc is not None:
             try:
-                t = str(G._get(doc, "GetTitle") or "")
+                t = str(g._get(doc, "GetTitle") or "")
                 if t:
-                    G._get(sw, "CloseDoc", t)
+                    g._get(sw, "CloseDoc", t)
             except Exception:  # noqa: BLE001
                 pass
 

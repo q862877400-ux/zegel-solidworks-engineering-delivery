@@ -38,7 +38,7 @@ OUT = R / "output" / "spec209-blank-sketch.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     import sw_sketch as SK
     from sw_connect import safe_get_com_member
 
@@ -68,8 +68,8 @@ def main() -> int:
             ("A", (-20.0, -10.0, 20.0, 10.0)),
             ("B", (-5.0, -5.0, 5.0, 5.0)),
         ):
-            with P.sketch(doc, "Front Plane") as sk:
-                P.sketch_corner_rectangle(doc, x0, y0, x1, y1)
+            with p.sketch(doc, "Front Plane") as sk:
+                p.sketch_corner_rectangle(doc, x0, y0, x1, y1)
         names = [
             str(safe_get_com_member(f, "Name") or "")
             for f in SK._selected_feature_objects(doc)

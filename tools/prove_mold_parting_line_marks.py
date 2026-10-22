@@ -50,7 +50,7 @@ MARK_EDGES = 4
 def main() -> int:
     import sw_connect
     import sw_mold as M
-    import sw_surface_features as SF
+    import sw_surface_features as sf
     from sw_connect import get_com_member
     from sw_part import (
         current_sketch_name,
@@ -129,10 +129,10 @@ def main() -> int:
             "note": "★ 回读计数才对（★ 回 true 不算 —— 事实 8）",
         }
         #: ③ 插分型线
-        before = SF.feature_names(doc)
+        before = sf.feature_names(doc)
         try:
             name = M.insert_parting_line(doc)
-            after = SF.feature_names(doc)
+            after = sf.feature_names(doc)
             ev["steps"]["insert_parting_line"] = {
                 "ok": bool(name),
                 "feature_name": str(name)[:60],

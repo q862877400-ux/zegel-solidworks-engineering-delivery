@@ -6,7 +6,7 @@
 #           明式分支**
 #   恰恰只回读选区 ⇒ ★ 上一版**只要传 `selection` 就必失败**。
 #   ★ 本轮把它改成「拿不到就**回退**到自动路」，★ 本探针验的就是这条回退。
-# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark
+# 官方依据: `c:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark
 # 1**）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -24,35 +24,35 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "surface-fill-fallback-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _plate_with_hole(doc):
     """★ 造一块**中间有圆孔**的板 —— ★ 填充要的就是那一圈孔边。"""
-    P.start_sketch(doc, plane_name="Front Plane")
+    p.start_sketch(doc, plane_name="Front Plane")
     sm = _g(doc, "SketchManager")
     _g(sm, "CreateCornerRectangle", -0.05, -0.03, 0.0, 0.05, 0.03, 0.0)
-    P.end_sketch(doc)
-    names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-    P.extrude_boss(doc, (names[-1] if names else "草图1"), 10.0)
-    P.start_sketch(doc, plane_name="Front Plane")
+    p.end_sketch(doc)
+    names = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+    p.extrude_boss(doc, (names[-1] if names else "草图1"), 10.0)
+    p.start_sketch(doc, plane_name="Front Plane")
     _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.02)
-    P.end_sketch(doc)
-    names2 = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-    P.extrude_cut(doc, (names2[-1] if names2 else "草图2"), 0.0)
+    p.end_sketch(doc)
+    names2 = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+    p.extrude_cut(doc, (names2[-1] if names2 else "草图2"), 0.0)
 
 
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     #: ★★★ 第三例的关键：**先显式清掉选区**再调 —— ★ 这才**复现了工具层的条件**。
     #:   ★★ 为什么必须这样：`RESOLVERS["model"]` 经 `connect_solidworks()` **会清空选区**
     #:     （事实 503，证据 `output/selection-lifetime-evidence.json`）。
@@ -68,9 +68,9 @@ def main() -> int:
         doc = None
         row: dict = {"case": label, "selection": sel}
         try:
-            doc = C.new_document(sw, "part")
+            doc = c.new_document(sw, "part")
             _plate_with_hole(doc)
-            row["features_before"] = len(list(P.feature_names(doc) or []))
+            row["features_before"] = len(list(p.feature_names(doc) or []))
             if do_clear:
                 _g(doc, "ClearSelection2", True)
                 row["cleared_before_call"] = True

@@ -46,7 +46,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -71,11 +71,11 @@ def main() -> int:
         ev["study_type"] = 3
 
         loads = [
-            ("convection", SL.apply_convection_report, ()),
-            ("heat_flux", SL.apply_heat_flux_report, ()),
-            ("heat_power", SL.apply_heat_power_report, ()),
-            ("temperature", SL.apply_temperature_report, ()),
-            ("radiation", SL.apply_radiation_report, (0,)),
+            ("convection", sl.apply_convection_report, ()),
+            ("heat_flux", sl.apply_heat_flux_report, ()),
+            ("heat_power", sl.apply_heat_power_report, ()),
+            ("temperature", sl.apply_temperature_report, ()),
+            ("radiation", sl.apply_radiation_report, (0,)),
         ]
         kinds = ("FACE", "EDGE", "VERTEX")
         for label, fn, extra in loads:

@@ -44,7 +44,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_two_crossing_surfaces(doc):
@@ -79,7 +79,7 @@ def _mk_two_crossing_surfaces(doc):
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -124,21 +124,21 @@ def main() -> int:
         _run(
             sw,
             "\u2605 mutual=True\uff08\u4ea4\u9762\u4e92\u526a\uff09",
-            lambda d: SF.trim_surface_report(d, mutual=True, split_system=True),
+            lambda d: sf.trim_surface_report(d, mutual=True, split_system=True),
         )
     )
     ev["cases"].append(
         _run(
             sw,
             "\u2605 mutual=False\uff08standard\uff09",
-            lambda d: SF.trim_surface_report(d, mutual=False, split_system=True),
+            lambda d: sf.trim_surface_report(d, mutual=False, split_system=True),
         )
     )
     ev["cases"].append(
         _run(
             sw,
             "\u2605 mutual=True + sew=True",
-            lambda d: SF.trim_surface_report(d, mutual=True, sew=True),
+            lambda d: sf.trim_surface_report(d, mutual=True, sew=True),
         )
     )
     ev["passed"] = sum(1 for c in ev["cases"] if c.get("ok"))

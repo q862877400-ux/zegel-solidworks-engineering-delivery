@@ -37,10 +37,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_sketch_edit_ops as SEO  # noqa: E402
+from scripts import sw_sketch_edit_ops as seo  # noqa: E402
 
 
 def _solid(doc, h=0.02):
@@ -126,10 +126,10 @@ def _do_rib(doc, row):
         ),
     )
     row["sketch"] = sk
-    before = list(FR.feature_names(doc) or [])
+    before = list(fr.feature_names(doc) or [])
     r = P.rib_report(doc, sk, 0.003, "\u7b4b1", True)
     row["report"] = dict(r or {})
-    after = list(FR.feature_names(doc) or [])
+    after = list(fr.feature_names(doc) or [])
     row["new"] = [n for n in after if n not in before]
     row["ok_flag"] = bool(row["new"] or (r or {}).get("present"))
     return True
@@ -171,10 +171,10 @@ def _do_composite(doc, row):
             except Exception:  # noqa: BLE001
                 continue
     row["picked_mark1"] = picked
-    before = list(FR.feature_names(doc) or [])
+    before = list(fr.feature_names(doc) or [])
     r = P.insert_composite_curve_report(doc, "")
     row["report"] = dict(r or {})
-    after = list(FR.feature_names(doc) or [])
+    after = list(fr.feature_names(doc) or [])
     row["new"] = [n for n in after if n not in before]
     row["ok_flag"] = bool(row["new"] or (r or {}).get("present"))
     return True
@@ -209,7 +209,7 @@ def _do_intersect(doc, row):
     row["seg_before"] = before
     ret = None
     try:
-        ret = SEO.sketch_intersect_curves(doc)
+        ret = seo.sketch_intersect_curves(doc)
         row["returned"] = type(ret).__name__ if ret is not None else "None"
     except Exception as exc:  # noqa: BLE001
         row["err2"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])

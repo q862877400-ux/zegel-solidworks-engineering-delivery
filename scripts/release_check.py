@@ -2341,8 +2341,8 @@ def _run_interface_ownership_probe() -> dict[str, object]:
     output = (proc.stdout or "") + (proc.stderr or "")
     # ⚠ **按行首**判 `[HIT]` —— 该脚本的说明文字里也写着「报 `[HIT]` 时值得看」，
     #   用 `"[HIT]" in output` 会**误报**（本轮踩过：明明 `[OK]` 却报 hits）。
-    hits = any(l.lstrip().startswith("[HIT]") for l in output.splitlines())
-    skipped = any(l.lstrip().startswith("[SKIP]") for l in output.splitlines())
+    hits = any(l_.lstrip().startswith("[HIT]") for l_ in output.splitlines())
+    skipped = any(l_.lstrip().startswith("[SKIP]") for l_ in output.splitlines())
     # 退出码非 0 且不是 SKIP ⇒ 就是「检查量为 0」那条假绿守卫
     checked_nothing = proc.returncode != 0 and not skipped
     if skipped:

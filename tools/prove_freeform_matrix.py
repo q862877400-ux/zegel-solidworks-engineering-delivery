@@ -33,7 +33,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -111,7 +111,7 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
                 0.0,
             )
         C.get_com_member(fm, "SetFreeformBoundaryContinuity", 0, int(continuity))
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         row["before"] = len(before)
         try:
             feat = C.get_com_member(
@@ -121,7 +121,7 @@ def _one(sw, tag, *, nsided, continuity, direction, n_curves=1, n_points=1, angl
         except Exception as exc:  # noqa: BLE001
             row["insert_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:90])
             row["returned"] = "ERR"
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new_features"] = [n for n in after if n not in before]
         row["ok"] = bool(row["new_features"])
     except Exception as exc:  # noqa: BLE001

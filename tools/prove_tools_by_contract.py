@@ -44,8 +44,8 @@ import importlib  # noqa: E402
 
 import register_capabilities as RC  # noqa: E402
 
-import scripts.sw_sketch_primitives as SP  # noqa: E402
-from scripts import sw_connect as C  # noqa: E402
+import scripts.sw_sketch_primitives as sp  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 #: ★ 按**声明的类型**取样（★ 探针自己的表，不是产品逻辑）
@@ -74,7 +74,7 @@ _SW = [None]
 
 def main(argv) -> int:
     prefix = argv[1] if len(argv) > 1 else "solidworks_sketch_"
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     _SW[0] = sw
     ev = {"probe": "tools-by-contract", "prefix": prefix, "items": []}
 
@@ -103,9 +103,9 @@ def main(argv) -> int:
         try:
             mod = importlib.import_module("scripts." + spec.module)
             fn = getattr(mod, spec.function)
-            doc = C.new_document(sw, "part")
+            doc = c.new_document(sw, "part")
             P.start_sketch(doc, plane_name="Front Plane")
-            SP.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
+            sp.sketch_3point_corner_rectangle(doc, -20, -10, 20, -10, 20, 10)
 
             #: ★★ **按声明装配实参** —— 这正是 MCP 层会做的事
             kwargs = {}
@@ -129,9 +129,9 @@ def main(argv) -> int:
         finally:
             if doc is not None:
                 try:
-                    t = str(C.get_com_member(doc, "GetTitle") or "")
+                    t = str(c.get_com_member(doc, "GetTitle") or "")
                     if t:
-                        C.get_com_member(sw, "CloseDoc", t)
+                        c.get_com_member(sw, "CloseDoc", t)
                 except Exception:  # noqa: BLE001
                     pass
         ev["items"].append(row)

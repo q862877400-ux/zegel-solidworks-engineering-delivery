@@ -40,12 +40,12 @@ OUT = R / "output" / "union-adopt-b1-evidence.json"
 
 def main() -> int:
     import sw_connect
-    import sw_document_data as DD
-    import sw_part as P
-    import sw_render_material as RM
+    import sw_document_data as dd
+    import sw_part as p
+    import sw_render_material as rm
     import sw_session as S
     import sw_sketch as SK
-    import sw_sketch_edit_ops as E
+    import sw_sketch_edit_ops as e
     from sw_connect import get_com_member, get_com_member_raw, safe_get_com_member  # noqa: F401
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -75,11 +75,11 @@ def main() -> int:
     def _make_box(tag=""):
         d = sw_connect.new_document(sw, "part")
         opened.append(d)
-        P.start_sketch(d, plane_name="Front Plane")
-        P.sketch_corner_rectangle(d, -30.0, -20.0, 30.0, 20.0)
-        sk = P.current_sketch_name(d, "")
-        P.end_sketch(d)
-        P.extrude_boss(d, sk, 20.0)
+        p.start_sketch(d, plane_name="Front Plane")
+        p.sketch_corner_rectangle(d, -30.0, -20.0, 30.0, 20.0)
+        sk = p.current_sketch_name(d, "")
+        p.end_sketch(d)
+        p.extrude_boss(d, sk, 20.0)
         return d
 
     #: ── T1 · 重建（idx 235 + 236，三档 mode 一条工具）────────────────────────────────
@@ -166,11 +166,11 @@ def main() -> int:
     try:
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        P.start_sketch(doc, plane_name="Front Plane")
-        P.sketch_line(doc, -20.0, 0.0, 0.0, 0.0)
-        P.sketch_line(doc, 0.0, 0.0, 0.0, 20.0)
+        p.start_sketch(doc, plane_name="Front Plane")
+        p.sketch_line(doc, -20.0, 0.0, 0.0, 0.0)
+        p.sketch_line(doc, 0.0, 0.0, 0.0, 20.0)
         ev["T2_construction"].append({"step": "before", "flags": _flags(doc)})
-        r1 = E.sketch_set_construction_geometry(doc, "index:0", construction=True)
+        r1 = e.sketch_set_construction_geometry(doc, "index:0", construction=True)
         ev["T2_construction"].append(
             {
                 "step": "set index:0 → True",
@@ -196,7 +196,7 @@ def main() -> int:
             "_": "官方摘要逐字是「**Sets** … **instead of**」⇒ 预期置位；本格是**实测**，不是推断",
         }
         #: 复位方向：官方唯一的回程 = 属性 setter
-        r3 = E.sketch_set_construction_geometry(doc, "index:0", construction=False)
+        r3 = e.sketch_set_construction_geometry(doc, "index:0", construction=False)
         ev["T2_construction"].append(
             {
                 "step": "set index:0 → False",
@@ -210,7 +210,7 @@ def main() -> int:
         )
         #: 负例：越界下标必须被拒（★ 本函数**回字典**、不抛 —— 判据看 `ok`/`error`，不是
         #: "有没有抛"）
-        neg = E.sketch_set_construction_geometry(doc, "index:99", construction=True)
+        neg = e.sketch_set_construction_geometry(doc, "index:99", construction=True)
         ev["T2_construction"].append(
             {
                 "step": "负例 index:99",
@@ -234,23 +234,23 @@ def main() -> int:
     #: ─
     try:
         doc = _make_box()
-        l0 = RM.list_display_states(doc)
+        l0 = rm.list_display_states(doc)
         cfg = get_com_member(
             get_com_member(doc, "ConfigurationManager"), "ActiveConfiguration"
         )
         created = get_com_member(cfg, "CreateDisplayState", "MCP_DS_PROBE")
-        l1 = RM.list_display_states(doc)
+        l1 = rm.list_display_states(doc)
         #: ★ 激活**另一个**（不是当前活动的那个）—— ★ 这样 `changed` 才真的被判到
         #:   （★ 新建的显示状态会立刻成为第一个 = 活动 ⇒ 再用它自己验等于没验）
         target = next(
             (x for x in (l1.get("display_states") or []) if x != l1.get("active")), None
         )
         a1 = (
-            RM.apply_display_state(doc, target)
+            rm.apply_display_state(doc, target)
             if target
             else {"ok": None, "error": "只有一条显示状态"}
         )
-        a2 = RM.apply_display_state(doc, "no_such_state")
+        a2 = rm.apply_display_state(doc, "no_such_state")
         ev["T3_display_states"] = {
             "list_before": l0,
             "create_second": str(created),
@@ -280,7 +280,7 @@ def main() -> int:
     #: ── T4 · 引用文档（idx 244）★ 自建 零件 + 装配 ⇒ 依赖清单非空才叫有判据 ──────────
     #: ──────
     try:
-        import sw_assembly as A
+        import sw_assembly as a
 
         outdir = R / "output" / "probe209"
         outdir.mkdir(parents=True, exist_ok=True)
@@ -289,16 +289,16 @@ def main() -> int:
         save_part = sw_connect.save_document(part, part_path)
         asm = sw_connect.new_document(sw, "assembly")
         opened.append(asm)
-        comp = A.add_component(asm, part_path, 0.0, 0.0, 0.0, sw=sw)
+        comp = a.add_component(asm, part_path, 0.0, 0.0, 0.0, sw=sw)
         asm_path = str(outdir / "probe209_asm.sldasm")
         save_asm = sw_connect.save_document(asm, asm_path)
-        dep = DD.document_dependencies(
+        dep = dd.document_dependencies(
             sw, asm_path, traverse=True, search=False, add_read_only_info=False
         )
-        dep_ro = DD.document_dependencies(
+        dep_ro = dd.document_dependencies(
             sw, asm_path, traverse=False, search=False, add_read_only_info=True
         )
-        dep_missing = DD.document_dependencies(sw, str(outdir / "no_such_file.sldprt"))
+        dep_missing = dd.document_dependencies(sw, str(outdir / "no_such_file.sldprt"))
         #: ★★ 官方例子说非只读跟的是**空串**，★ 而本仓实测回的是 `"FALSE"` ⇒ ★ 取证原始*
         #: *类型与 repr**
         #: （★ 不靠 `str()` 之后的样子下结论 —— 那会把「真的是这个串」与「被我们转出来的
@@ -342,19 +342,19 @@ def main() -> int:
     #: ── T5 · 移动 / 复制实体（idx 209）★ 判据 = 包围盒变（移动）/ 实体个数增（复制）──
     #: ──────────
     try:
-        import sw_body_ops as BO
+        import sw_body_ops as bo
 
         doc = _make_box()
-        r_move = BO.move_copy_body(doc, "all", translate_x_mm=25.0)
-        r_copy = BO.move_copy_body(
+        r_move = bo.move_copy_body(doc, "all", translate_x_mm=25.0)
+        r_copy = bo.move_copy_body(
             doc, "all", translate_x_mm=40.0, copy=True, num_copies=1
         )
         #: ★★ 官方 Remarks 的坑：平移与旋转**同时给** ⇒ 官方只应用旋转 ⇒ 本工具必须**说
         #: 出来**
-        r_both = BO.move_copy_body(
+        r_both = bo.move_copy_body(
             doc, "all", translate_x_mm=5.0, rotate_angle_z_deg=30.0
         )
-        r_neg = BO.move_copy_body(doc, "index:99", translate_x_mm=1.0)
+        r_neg = bo.move_copy_body(doc, "index:99", translate_x_mm=1.0)
         #: ★★ T5b · **用"旋转后的包围盒"定死角度单位与"哪根轴"**（★ 不是靠"没报错"当判据
         #: ）：
         #:   60×40×20（x ±30 / y ±20 / z ∈[-20,0]）分别只给 **X / Y / Z 一个角**，
@@ -367,7 +367,7 @@ def main() -> int:
         import math as _m
 
         def _spans(doc_):
-            st = BO.body_state(doc_)
+            st = bo.body_state(doc_)
             bb = st.get("bbox_mm") or {}
             if not bb.get("min"):
                 return None
@@ -393,7 +393,7 @@ def main() -> int:
         ):
             d_ax = _make_box()
             s0 = _spans(d_ax)
-            r_ax = BO.move_copy_body(d_ax, "all", **kw)
+            r_ax = bo.move_copy_body(d_ax, "all", **kw)
             s1 = _spans(d_ax)
             axes[label] = {
                 "ok": r_ax.get("ok"),

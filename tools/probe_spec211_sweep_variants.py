@@ -63,7 +63,7 @@ def _new_part(sw):
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_selection_spec as SS
+    import sw_selection_spec as ss
     import sw_surface_features as sf
 
     out: dict = {
@@ -96,13 +96,13 @@ def main() -> int:
     ext = sw_connect.get_com_member(model, "Extension")
     sw_part._select_by_id(ext, sk_p, "SKETCH", append=False, mark=1)
     sw_part._select_by_id(ext, sk_path, "SKETCH", append=True, mark=4)
-    sel_before_guide = SS.get_selection_count(model)
+    sel_before_guide = ss.get_selection_count(model)
     sw_part._select_by_id(ext, sk_guide, "SKETCH", append=True, mark=2)
     rep_a = sf.sweep_surface_report(model, use_auto_select=True)
     out["variants"]["A_with_guide"] = {
         "sketches": {"profile": sk_p, "path": sk_path, "guide": sk_guide},
         "selection_before_guide": sel_before_guide,
-        "selection_after": SS.get_selection_count(model),
+        "selection_after": ss.get_selection_count(model),
         "features_delta": [n for n in sf.feature_names(model) if n not in before],
         "report": {
             k: rep_a.get(k)
@@ -138,7 +138,7 @@ def main() -> int:
     rep_b = sf.sweep_surface_report(model2, use_auto_select=True)
     out["variants"]["B_closed_path"] = {
         "sketches": {"profile": b_p, "path": b_path},
-        "selection_count": SS.get_selection_count(model2),
+        "selection_count": ss.get_selection_count(model2),
         "features_delta": [n for n in sf.feature_names(model2) if n not in before2],
         "report": {
             k: rep_b.get(k)

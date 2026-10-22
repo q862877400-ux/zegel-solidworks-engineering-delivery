@@ -55,7 +55,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 _ROOT_S = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, r"" + _ROOT_S + r"\scripts")
 
-import sw_jlcfa_locate as L
+import sw_jlcfa_locate as l
 
 warnings.filterwarnings("ignore")
 
@@ -98,17 +98,17 @@ CARD_DY = 55
 
 def code_labels(win) -> list[tuple[int, int, str, Any]]:
     """读出所有「代码：xxx」标签。返回 [(y, x, 型号, rect)]，按 y 排。"""
-    cr = L.container_rect(win)
+    cr = l.container_rect(win)
     if cr is None:
         return []
     out = []
-    for c in L._controls(win):
+    for c in l._controls(win):
         try:
             t = (c.window_text() or "").strip()
             r = c.rectangle()
         except Exception:
             continue
-        if not t.startswith(CODE_PREFIX) or not L._overlaps(r, cr):
+        if not t.startswith(CODE_PREFIX) or not l._overlaps(r, cr):
             continue
         out.append((r.top, r.left, t[len(CODE_PREFIX) :].strip(), r))
     out.sort()
@@ -153,15 +153,15 @@ def scroll_card_into_view(win, code: str, max_scrolls: int = 12):
             return None
         x = (sb.left + sb.right) // 2
         _drag(x, sb.top + 40, x, sb.top + sb.height - 60)
-        win = L.connect()[1]
+        win = l.connect()[1]
     return locate_code(win, code)
 
 
 def _scrollbar(win):
     """结果区的竖滚动条（最高的那个 ScrollBar）。"""
-    cr = L.container_rect(win)
+    cr = l.container_rect(win)
     best = None
-    for c in L._controls(win):
+    for c in l._controls(win):
         try:
             if c.element_info.control_type != "ScrollBar":
                 continue
@@ -170,7 +170,7 @@ def _scrollbar(win):
             continue
         if r.height() < 120:
             continue
-        if cr and not L._overlaps(r, cr):
+        if cr and not l._overlaps(r, cr):
             continue
         if best is None or r.height() > best.height():
             best = r
@@ -201,10 +201,10 @@ def category_cards(win, allc=None) -> list[tuple[str, Any]]:
     ⚠ 不筛控件类型/大小 —— 实测分类卡是 100x100 的 Pane，但尺寸可能随宽度变。
       只按「在插件区内 + 有名字 + 不是结构名」收。
     """
-    cr = L.container_rect(win)
+    cr = l.container_rect(win)
     if cr is None:
         return []
-    SKIP = {
+    skip = {
         "swCaption",
         "SearchBox",
         "swCmdMgr",
@@ -222,7 +222,7 @@ def category_cards(win, allc=None) -> list[tuple[str, Any]]:
     }
     out = []
     seen = set()
-    for c in L._controls(win):
+    for c in l._controls(win):
         try:
             t = (c.window_text() or "").strip()
             r = c.rectangle()
@@ -230,7 +230,7 @@ def category_cards(win, allc=None) -> list[tuple[str, Any]]:
             continue
         if not t or t in SKIP_NAMES or t in seen:
             continue
-        if not L._overlaps(r, cr) or r.width() < 40 or r.height() < 20:
+        if not l._overlaps(r, cr) or r.width() < 40 or r.height() < 20:
             continue
         # ⚑ 去掉相对容器偏移（拉宽/DPI 变化会失效）
         seen.add(t)
@@ -248,8 +248,8 @@ def locate_category(win, name: str, allc=None):
 
 
 if __name__ == "__main__":
-    h, w = L.connect()
-    cr = L.container_rect(w)
+    h, w = l.connect()
+    cr = l.container_rect(w)
     print("容器宽 %d" % (cr.right - cr.left))
     vis = visible_codes(w)
     print("视口内的卡 %d 张: %s" % (len(vis), [c for c, _, _ in vis[:6]]))

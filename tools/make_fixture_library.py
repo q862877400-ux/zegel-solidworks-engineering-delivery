@@ -25,7 +25,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "tools"))
 
-import fixtures as FX  # noqa: E402
+import fixtures as fx  # noqa: E402
 
 #: ★ 默认的**素材来源**：★ 用户工作区里的模型目录（★ 只**读**它们，然后复制）✓
 DEFAULT_SOURCES = (REPO_ROOT / "AI Solidworks" / "模型",)
@@ -45,11 +45,11 @@ def main() -> int:
     ap.add_argument("--note", default="", help="★ 写进清单的备注")
     args = ap.parse_args()
 
-    root = FX.library_root()
+    root = fx.library_root()
     print("★ 夹具库：%s" % root)
 
     if args.verify:
-        v = FX.verify()
+        v = fx.verify()
         print(
             "★ 校验 %d 个 · 缺失 %d · 哈希不符 %d · 清单外多余 %d"
             % (v["checked"], len(v["missing"]), len(v["changed"]), len(v["extra"]))
@@ -66,10 +66,10 @@ def main() -> int:
         return 0 if v["ok"] else 3
 
     folders = [Path(s) for s in args.source] or list(DEFAULT_SOURCES)
-    sources = FX.collect_sources(folders, recursive=args.recursive)
+    sources = fx.collect_sources(folders, recursive=args.recursive)
     print("★ 素材目录：%s" % "、".join(str(f) for f in folders))
     print("★ 收集到 CAD 件 %d 个（★ 只按扩展名；★ 别的文件一律不碰）" % len(sources))
-    r = FX.build(sources, note=args.note, dry_run=args.dry_run)
+    r = fx.build(sources, note=args.note, dry_run=args.dry_run)
     print(
         "★ 复制 %d 个 · 跳过 %d 个%s"
         % (
@@ -82,7 +82,7 @@ def main() -> int:
         print("   + %s  ⤺ %s" % (c["name"], Path(c["from"]).name))
     print(
         "★ 清单：%s（★ 共 %d 条）"
-        % (root / FX.MANIFEST_NAME, len(r["manifest"]["files"]))
+        % (root / fx.MANIFEST_NAME, len(r["manifest"]["files"]))
     )
     return 0
 

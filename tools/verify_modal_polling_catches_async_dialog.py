@@ -126,8 +126,8 @@ def main() -> int:
     )
     print()
     print("  ── 触发进程输出 ──")
-    for l in tail:
-        print("    %s" % l[:96])
+    for item in tail:
+        print("    %s" % item[:96])
     print()
     #: ★ 判据：**一次性**必须**漏**（0），而**轮询**必须**抓到**（≥1）
     blind_missed = ev["one_shot_count"] == 0

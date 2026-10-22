@@ -51,7 +51,7 @@ def main() -> int:
     from sw_connect import safe_get_com_member
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -99,9 +99,9 @@ def main() -> int:
             try:
                 sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                 #: ★ **直接调裸函数**（★ 这是分辨实验，★ 包装还没定型）
-                rep = SL._report(
+                rep = sl._report(
                     mgr,
-                    lambda: SL.add_pin_connector(mgr, f0, f1),
+                    lambda: sl.add_pin_connector(mgr, f0, f1),
                     "pin_with_faces",
                     doc,
                 )

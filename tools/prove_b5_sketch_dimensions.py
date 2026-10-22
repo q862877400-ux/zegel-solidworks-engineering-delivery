@@ -45,7 +45,7 @@ for _i, _a in enumerate(sys.argv):
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
+    import sw_part as p
     import sw_sketch_dimensions as D
     from sw_connect import get_com_member, safe_get_com_member
 
@@ -60,7 +60,7 @@ def main() -> int:
     def dim_count(model):
         """★ 遍历**草图特征**上的显示尺寸（`IFeature.GetFirstDisplayDimension` + `GetNext2`）。"""
         n = 0
-        for nm in P.feature_names(model):
+        for nm in p.feature_names(model):
             if not (nm.startswith("\u8349\u56fe") or nm.lower().startswith("sketch")):
                 continue
             try:
@@ -88,7 +88,7 @@ def main() -> int:
         doc = None
         try:
             doc = sw_connect.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            p.start_sketch(doc, plane_name="Front Plane")
             setup(doc)
             d0, r0 = dim_count(doc), rel_count(doc)
             ret = act(doc)
@@ -127,7 +127,7 @@ def main() -> int:
         finally:
             if doc is not None:
                 try:
-                    P.end_sketch(doc)
+                    p.end_sketch(doc)
                 except Exception:
                     pass
                 try:
@@ -171,14 +171,14 @@ def main() -> int:
     run.n = 0
 
     def box(d):
-        P.sketch_corner_rectangle(d, -25.0, -20.0, 25.0, 20.0)
+        p.sketch_corner_rectangle(d, -25.0, -20.0, 25.0, 20.0)
 
     #: \u2460 \u6c34\u5e73\u5c3a\u5bf8\uff08\u2605 \u9700\u5148\u9009\u4e2d\u4e00\u6761\
     #: u7ebf\u6bb5\uff09
     def s_h(d):
         box(d)
-        D_sel = __import__("sw_sketch_edit_ops").select_sketch_segment
-        D_sel(d, 0)
+        d_sel = __import__("sw_sketch_edit_ops").select_sketch_segment
+        d_sel(d, 0)
 
     run(
         "\u6c34\u5e73\u5c3a\u5bf8",
@@ -235,13 +235,13 @@ def main() -> int:
     #: \u2465 \u6dfb\u52a0\u51e0\u4f55\u5173\u7cfb\uff08\u2605 \u4ed3\u91cc\u5df2\u6709\
     #: uff0c\u672c\u8f6e\u9a8c\u5b83\u56de\u8bfb\u5f97\u5230\uff09
     def s_r(d):
-        P.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
+        p.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
         __import__("sw_sketch_edit_ops").select_sketch_segment(d, 0)
 
     run(
         "\u6dfb\u52a0\u51e0\u4f55\u5173\u7cfb",
         s_r,
-        lambda d: P.add_sketch_relation(d, "sgHORIZONTAL"),
+        lambda d: p.add_sketch_relation(d, "sgHORIZONTAL"),
         "rel_up",
     )
     #: \u2466 \u5173\u7cfb\u8ba1\u6570\uff08\u2605 \u53ea\u8bfb\uff09
@@ -254,9 +254,9 @@ def main() -> int:
 
     #: \u2467 \u5220\u9664\u5168\u90e8\u51e0\u4f55\u5173\u7cfb
     def s_del(d):
-        P.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
+        p.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
         __import__("sw_sketch_edit_ops").select_sketch_segment(d, 0)
-        P.add_sketch_relation(d, "sgHORIZONTAL")
+        p.add_sketch_relation(d, "sgHORIZONTAL")
 
     run(
         "\u5220\u9664\u5168\u90e8\u5173\u7cfb",

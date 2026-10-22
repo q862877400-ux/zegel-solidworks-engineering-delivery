@@ -54,9 +54,9 @@ def step(name: str, **kw) -> None:
 
 
 def main() -> int:
-    import sw_feature_readback as R
-    import sw_loft as L
-    import sw_part as P
+    import sw_feature_readback as r
+    import sw_loft as l
+    import sw_part as p
     from sw_connect import connect_solidworks, get_com_member, new_document
 
     app, _ = connect_solidworks(visible=True)
@@ -64,8 +64,8 @@ def main() -> int:
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
     #: ★ 两个轮廓：★ 前视面一个小方、★ 一个偏移面上一个大方（★ 放样要**两个不同平面**）✓
-    with P.sketch(model, "Front Plane") as sk1:
-        P.sketch_corner_rectangle(model, -10.0, -10.0, 10.0, 10.0)
+    with p.sketch(model, "Front Plane") as sk1:
+        p.sketch_corner_rectangle(model, -10.0, -10.0, 10.0, 10.0)
     step("sketch1", sketch_name=str(sk1), rect="-10,-10 .. 10,10")
 
     plane_ok = None
@@ -75,11 +75,11 @@ def main() -> int:
         #: ★ `insert_ref_plane` 在 **`sw_ref_geometry`** · ★ 面选择在 **`sw_simulation`*
         #: * ✓
         #:   ★★ **⇒ 本仓那条**「在仓里搜要搜够」** —— ★ 先问 `rc.all_specs()` 挂在哪** ✓
-        import sw_ref_geometry as _RG
-        import sw_simulation as _SIM
+        import sw_ref_geometry as _rg
+        import sw_simulation as _sim
 
-        _SIM.select_face_by_selector_report(model, selection="+z")
-        plane_ok = _RG.insert_ref_plane(model, 4, 40.0)
+        _sim.select_face_by_selector_report(model, selection="+z")
+        plane_ok = _rg.insert_ref_plane(model, 4, 40.0)
         step("ref_plane", ok=plane_ok)
     except Exception as exc:  # noqa: BLE001
         step("ref_plane_EXC", err="%s: %s" % (type(exc).__name__, str(exc)[:130]))
@@ -117,20 +117,20 @@ def main() -> int:
     ]
     step("found_planes", planes=planes)
     target = planes[-1] if planes else "Front Plane"
-    with P.sketch(model, target) as sk2:
-        P.sketch_corner_rectangle(model, -20.0, -20.0, 20.0, 20.0)
+    with p.sketch(model, target) as sk2:
+        p.sketch_corner_rectangle(model, -20.0, -20.0, 20.0, 20.0)
     step("sketch2", sketch_name=str(sk2), on=target, rect="-20,-20 .. 20,20")
 
     #: ★★★ **按 mark=1 选两个轮廓**（★ 官方给的 mark）✓
     try:
-        import sw_part as _P3
+        import sw_part as _p3
 
-        a = _P3._select_sketch_feature_by_name(model, str(sk1), mark=1)
-        f2 = _P3._safe_com_member(model, "FeatureByName", str(sk2))
-        for cand in _P3._get_sketch_name_candidates(str(sk2)):
+        a = _p3._select_sketch_feature_by_name(model, str(sk1), mark=1)
+        f2 = _p3._safe_com_member(model, "FeatureByName", str(sk2))
+        for cand in _p3._get_sketch_name_candidates(str(sk2)):
             if f2 is None:
-                f2 = _P3._safe_com_member(model, "FeatureByName", cand)
-        b = bool(f2) and bool(_P3._select_com_object(f2, append=True, mark=1))
+                f2 = _p3._safe_com_member(model, "FeatureByName", cand)
+        b = bool(f2) and bool(_p3._select_com_object(f2, append=True, mark=1))
         cnt = int(
             get_com_member(
                 get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", 1
@@ -142,7 +142,7 @@ def main() -> int:
 
     built = {"error": None}
     try:
-        built["returned"] = str(L.create_loft_report(model, False, True))[:180]
+        built["returned"] = str(l.create_loft_report(model, False, True))[:180]
     except Exception as exc:  # noqa: BLE001
         built["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
     step("create_loft_report", **built)
@@ -161,7 +161,7 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         step("type_names_EXC", err=str(exc)[:110])
 
-    got = R.loft_params(model)
+    got = r.loft_params(model)
     step(
         "loft_params",
         feature=got.get("feature"),

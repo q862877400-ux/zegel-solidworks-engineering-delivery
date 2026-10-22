@@ -29,7 +29,7 @@ OUT = REPO / "output" / "pattern-params-capability-recheck.json"
 
 
 def main() -> int:
-    import sw_part as P
+    import sw_part as p
     from sw_connect import (
         connect_solidworks,
         create_empty_dispatch_variant,
@@ -40,7 +40,7 @@ def main() -> int:
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
-    with P.sketch(model, "Front Plane") as sk:
+    with p.sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
         for a, b in (
             ((-0.02, -0.01), (0.02, -0.01)),
@@ -49,7 +49,7 @@ def main() -> int:
             ((-0.02, 0.01), (-0.02, -0.01)),
         ):
             get_com_member(sm, "CreateLine", a[0], a[1], 0.0, b[0], b[1], 0.0)
-    P.extrude_boss(model, sk, 10.0)
+    p.extrude_boss(model, sk, 10.0)
     #: ★★ 前置：★ 方向 `mark=1` · ★ 实体 `mark=256`（★ 官方示例逐字，★ 上轮验过）✓
     ext = get_com_member(model, "Extension")
     get_com_member(model, "ClearSelection2", True)
@@ -71,7 +71,7 @@ def main() -> int:
     bodies = list(get_com_member(model, "GetBodies2", 0, False) or [])
     d2 = bool(bodies[0].Select(True, 256)) if bodies else None
     #: ★ 官方 22 参：★ 2 个实例、★ 间距 **0.02 米**（= 20mm）、★ 第二向 1 个实例 ✓
-    P.linear_pattern(model, "", 1.0, 0.0, 0.0, 20.0, 2)
+    p.linear_pattern(model, "", 1.0, 0.0, 0.0, 20.0, 2)
 
     r = pattern_params(model)
 

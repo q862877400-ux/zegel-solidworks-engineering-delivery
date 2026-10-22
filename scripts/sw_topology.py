@@ -650,7 +650,7 @@ def _apply_declarative_selection(selection: str, selection_kind: str) -> int:
       ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**声明式选择器**（`index:<n>` / `__current_selection__`）✓
     :returns: ★ **回读**到的选区计数（★ 0 会抛 —— ★ 事实 8：不信返回值）✓
     """
-    import sw_selection_spec as _SS
+    import sw_selection_spec as _ss
     from sw_connect import connect_solidworks
     from sw_connect import get_com_member as _get
 
@@ -660,7 +660,7 @@ def _apply_declarative_selection(selection: str, selection_kind: str) -> int:
         raise RuntimeError(
             "★ 没有活动文档 ⇒ ★ 选不了（★ 这是**前置未成立**、★ 与「控制建不出来」是两件事）"
         )
-    got = int(_SS.resolve_selection(doc, str(selection), str(selection_kind or "FACE")))
+    got = int(_ss.resolve_selection(doc, str(selection), str(selection_kind or "FACE")))
     if got <= 0:
         raise RuntimeError(
             "★ 选区未建立：选择器 %r 解析后计数为 %d" % (str(selection), got)

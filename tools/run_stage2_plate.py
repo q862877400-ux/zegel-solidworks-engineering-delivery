@@ -42,7 +42,7 @@ import tool_caller  # noqa: E402
 from scripts.engineering import authorization as AUTH  # noqa: E402
 from scripts.engineering import drawing_obligations as DO  # noqa: E402
 from scripts.engineering import executor as X  # noqa: E402
-from scripts.engineering import expand as EXP  # noqa: E402
+from scripts.engineering import expand as exp  # noqa: E402
 from scripts.engineering import registry as R  # noqa: E402
 
 OUT = ROOT / "output" / "stage2"
@@ -168,11 +168,11 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
 
     #: ① 编译 + 展开（★ D1 在这里生效）
     try:
-        plan = EXP.expand_plan(build_plan(c), reg)
+        plan = exp.expand_plan(build_plan(c), reg)
         rec["compiled"] = True
         rec["steps"] = len(plan.steps)
         rec["tools"] = [s.tool for s in plan.steps]
-    except (R.RegistryError, EXP.ExpandError) as e:
+    except (R.RegistryError, exp.ExpandError) as e:
         rec["compiled"] = False
         rec["compile_error"] = "%s: %s" % (getattr(e, "code", "?"), e)
         sw.CloseDoc(rec["doc"])
@@ -323,7 +323,7 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
         复制出来的副本与已打开的文档冲突 ⇒ 同样报 65536。
       ⇒ ★ 本函数**先关掉所有 `stage2` 下的文档**（★ 只关我方的），再出图。
     """
-    from scripts.engineering import drawing_run as DR
+    from scripts.engineering import drawing_run as dr
 
     out: dict = {}
     src = OUT / ("%s_%s.sldprt" % (c["name"], revision))
@@ -351,7 +351,7 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
 
     ddir = OUT / ("drawing_%s_%s" % (c["name"], revision))
     ddir.mkdir(parents=True, exist_ok=True)
-    spec = DR.build_drawing_spec(
+    spec = dr.build_drawing_spec(
         source_model=src,
         size_mm=[c["w"], c["h"], c["d"]],
         hole_dia_mm=c["dia"],
@@ -359,14 +359,14 @@ def run_drawing(c: dict, n: int, *, revision: str = "rev-1") -> dict:
         thickness_mm=c["d"],
     )
     #: ★ 先用**官方校验器**验（★ 别等真机报 blocked）
-    v = DR.validate_spec(spec)
+    v = dr.validate_spec(spec)
     out["spec_status"] = v.get("status")
     if v.get("status") != "pass":
         out["drawing_error"] = "★ spec 校验不过：%s" % str(v.get("issues"))[:200]
         out["drawing_ok"] = False
         return out
 
-    sp = DR.write_spec(spec, ddir / "spec.json")
+    sp = dr.write_spec(spec, ddir / "spec.json")
     #: ★ 关键尺寸与技术要求（★ 覆盖率的分母）
     out["required_dimensions"] = len(spec["requiredDimensions"])
     out["notes"] = len(spec["notes"])
@@ -463,7 +463,7 @@ def run_negatives(reg) -> dict:
 
     #: N1：孔步骤**只返回成功而不执行** ⇒ 回读几何必须发现
     c = CASES[1]
-    plan = EXP.expand_plan(build_plan(c), reg)
+    plan = exp.expand_plan(build_plan(c), reg)
     #: ★ 造一个「没执行的」：把孔步骤全去掉，只留板
     n1_plan = R.ExecutablePlan(
         method_id="n1",
@@ -539,7 +539,7 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
     ★ 另加：**改后的几何要回读**（★ 改不动与改了没生效长得一样）。
     """
     from scripts import sw_connect
-    from scripts.engineering import change_run as CR
+    from scripts.engineering import change_run as cr
     from scripts.engineering import drawing_obligations as DO
 
     c = dict(CASES[n])
@@ -558,7 +558,7 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
     }
 
     #: ① 变更前产物摘要（rev-1）
-    before = CR.digest_set(
+    before = cr.digest_set(
         OUT / ("%s_rev-1.sldprt" % c["name"]),
         OUT / ("drawing_%s_rev-1" % c["name"]) / ("%s_rev-1.slddrw" % c["name"]),
         OUT
@@ -573,7 +573,7 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
     owned = AUTH.OwnedDocuments()
     owned.register(doc)
     out["doc"] = owned.title_of(doc)
-    plan = EXP.expand_plan(build_plan(c2), reg)
+    plan = exp.expand_plan(build_plan(c2), reg)
     v = AUTH.authorize_plan(plan, reg, owned=owned, doc=doc)
     out["authorized"] = v.ok
     if not v.ok:
@@ -650,7 +650,7 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
         pass
 
     #: ⑦ 变更后产物摘要（rev-2）+ 总判据
-    after = CR.digest_set(
+    after = cr.digest_set(
         p,
         OUT
         / ("drawing_%s_%s" % (c["name"], revision))
@@ -684,7 +684,7 @@ def run_change(reg, n: int, sw, *, revision: str = "rev-2") -> dict:
     out["affected_by"] = {
         ch.name: list(DO.affected_steps(plan.steps, ch.name)) for ch in changes
     }
-    out["verify"] = CR.verify_propagation(before, after, changes, plan.steps)
+    out["verify"] = cr.verify_propagation(before, after, changes, plan.steps)
 
     #: ⑧ 判据
     out["expected_bbox"] = [c2["w"], c2["h"], c2["d"]]
@@ -835,7 +835,7 @@ def main() -> int:
         ok = 0
         for n in (1, 2, 3):
             try:
-                ex = EXP.expand_plan(build_plan(CASES[n]), reg)
+                ex = exp.expand_plan(build_plan(CASES[n]), reg)
                 print("   ✓ 用例 %d：%d 步（全解析）" % (n, len(ex.steps)))
                 ok += 1
             except Exception as e:  # noqa: BLE001

@@ -37,9 +37,9 @@ OUT = R / "output" / "spec209-centerline.json"
 
 def main() -> int:
     import sw_connect
-    import sw_drawing_create_missing as DM
-    import sw_drawing_expose as E0
-    import sw_part as P
+    import sw_drawing_create_missing as dm
+    import sw_drawing_expose as e0
+    import sw_part as p
     from sw_connect import safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -66,10 +66,10 @@ def main() -> int:
         #: ★ 造一个**圆柱**（官方示例的靶子就是 `cylinder20-9`）⇒ 视图里有圆弧边/圆柱面
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
-        with P.sketch(part, "Front Plane") as sk:
-            P.sketch_circle(part, 0.0, 0.0, 20.0)
-        P.end_sketch(part)
-        P.extrude_boss(part, "草图1", 30.0)
+        with p.sketch(part, "Front Plane") as sk:
+            p.sketch_circle(part, 0.0, 0.0, 20.0)
+        p.end_sketch(part)
+        p.extrude_boss(part, "草图1", 30.0)
         part_path = str(outdir / "probe209_centerline_part.sldprt")
         ev["part_saved"] = bool(sw_connect.save_document(part, part_path))
 
@@ -77,12 +77,12 @@ def main() -> int:
         opened.append(drw)
         made = None
         try:
-            made = E0.create_projected_view(
+            made = e0.create_projected_view(
                 drw, part_path, view_name="*Front", x_mm=140.0, y_mm=120.0, scale=0.0
             )
         except Exception as exc:  # noqa: BLE001
             ev["steps_view_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-        views = [DM._view_name(v) for v in DM._iter_views(drw)]
+        views = [dm._view_name(v) for v in dm._iter_views(drw)]
         ev["views"] = views
         ev["view_made"] = bool(made)
         print("  视图：%r" % (views,))
@@ -90,7 +90,7 @@ def main() -> int:
         if views:
             #: 先看**视图里到底有多少可见实体**（★ 这一步本身就能解释「静默无效」）
             for et in ("edge", "face", "silhouette_edge", "vertex"):
-                r = DM.insert_center_lines(
+                r = dm.insert_center_lines(
                     drw, views[0], entity_type=et, entity_index=0
                 )
                 ev["runs"].append(

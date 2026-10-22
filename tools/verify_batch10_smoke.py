@@ -109,7 +109,7 @@ def main() -> int:
 
         # ── ★ 走「声明 → 解析器 → 调用」这条路 ───────────────────────
         #: 每条的实参（按声明里的参数名给）
-        ARGS = {
+        args = {
             "solidworks_part_bounding_box": {},  # 全默认
             "solidworks_hole_standards": {},  # 全默认（0 = 沉头孔）
             "solidworks_fastener_types": {"standard_name": "ANSI Inch"},
@@ -129,7 +129,7 @@ def main() -> int:
             host = resolver({})  # ★ 走**真实**解析器
             mod = importlib.import_module("scripts.%s" % spec.module)
             fn = getattr(mod, spec.function)
-            kwargs = dict(ARGS[spec.name])
+            kwargs = dict(args[spec.name])
             #: 只传**声明里有的**参数（其余的用默认）—— 这正是"参数名有没有抄错"的检验
             for k in list(kwargs):
                 if k not in {p.name for p in spec.params}:

@@ -33,9 +33,9 @@ OUT = R / "output" / "family-d-readback-evidence.json"
 
 
 def main() -> int:
-    import sw_automation_knowledge as AK
+    import sw_automation_knowledge as ak
     import sw_connect
-    import sw_selection as SE
+    import sw_selection as se
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -102,7 +102,7 @@ def main() -> int:
         "CommandInProgress",
         sw,
         "CommandInProgress",
-        lambda v: AK.enter_command_lock(sw) if v else AK.exit_command_lock(sw),
+        lambda v: ak.enter_command_lock(sw) if v else ak.exit_command_lock(sw),
         [True, False],
     )
     #: \u2461 ISelectionMgr.EnableSelection
@@ -112,7 +112,7 @@ def main() -> int:
         "EnableSelection",
         sel,
         "EnableSelection",
-        lambda v: SE.set_enable_selection(sel, v),
+        lambda v: se.set_enable_selection(sel, v),
         [False, True],
     )
     #: \u2462 ISelectionMgr.EnableContourSelection
@@ -120,7 +120,7 @@ def main() -> int:
         "EnableContourSelection",
         sel,
         "EnableContourSelection",
-        lambda v: SE.set_enable_contour_selection(sel, v),
+        lambda v: se.set_enable_contour_selection(sel, v),
         [True, False],
     )
 

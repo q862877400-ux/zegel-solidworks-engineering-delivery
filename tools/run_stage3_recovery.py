@@ -37,7 +37,7 @@ sys.path[:0] = [
     str(ROOT / "tools"),
 ]
 
-from scripts.engineering import recovery as RC  # noqa: E402
+from scripts.engineering import recovery as rc  # noqa: E402
 
 OUT = ROOT / "output" / "stage3"
 
@@ -90,27 +90,27 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
         "attempt": attempt,
         "started": time.strftime("%H:%M:%S"),
     }
-    manifest = RC.CommitManifest(revision="r1")
-    journal = RC.ReplayJournal()
+    manifest = rc.CommitManifest(revision="r1")
+    journal = rc.ReplayJournal()
 
     #: ★ 已生效的副作用集合（★ 模拟"崩之前已经打过的孔"）
     applied: set[str] = set()
     readback = lambda st: st in applied  # noqa: E731
 
-    if window == RC.BEFORE_CALL:
+    if window == rc.BEFORE_CALL:
         #: ★ 窗口①：意图落盘了，但**一个都没生效**
         #:   ⇒ 恢复时**全部重放**（★ 安全）
         cut = 4
-    elif window == RC.AFTER_EFFECT:
+    elif window == rc.AFTER_EFFECT:
         #: ★★ 窗口②：前 4 步**已生效但没记账**（★ 没进清单）
         cut = 4
         applied.update(UNIQUE[:4])
         for st in UNIQUE[:4]:
             manifest.entries.append(
-                RC.Checkpoint(
+                rc.Checkpoint(
                     stage=st,
-                    state=RC.STATE_APPLIED,
-                    evidence=RC.evidence_of({"stage": st, "applied": True}),
+                    state=rc.STATE_APPLIED,
+                    evidence=rc.evidence_of({"stage": st, "applied": True}),
                     revision="r1",
                 )
             )
@@ -120,10 +120,10 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
         applied.update(UNIQUE[:4])
         for st in UNIQUE[:4]:
             manifest.add(
-                RC.Checkpoint(
+                rc.Checkpoint(
                     stage=st,
-                    state=RC.STATE_APPLIED,
-                    evidence=RC.evidence_of({"stage": st, "applied": True}),
+                    state=rc.STATE_APPLIED,
+                    evidence=rc.evidence_of({"stage": st, "applied": True}),
                     revision="r1",
                 )
             )
@@ -133,7 +133,7 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
     rec["in_manifest_before"] = len(manifest.entries)
 
     #: ══ 恢复 ══
-    res = RC.resume_from_checkpoints(manifest, list(UNIQUE), journal, readback=readback)
+    res = rc.resume_from_checkpoints(manifest, list(UNIQUE), journal, readback=readback)
     rec["replayed"] = len(res["replayed"])
     rec["skipped"] = len(res["skipped"])
     rec["duplicates"] = res["duplicates"]
@@ -143,10 +143,10 @@ def run_window(window: str, attempt: int, *, reference: dict) -> dict:
     for st in res["replayed"]:
         applied.add(st)
         manifest.add(
-            RC.Checkpoint(
+            rc.Checkpoint(
                 stage=st,
-                state=RC.STATE_APPLIED,
-                evidence=RC.evidence_of({"stage": st, "applied": True}),
+                state=rc.STATE_APPLIED,
+                evidence=rc.evidence_of({"stage": st, "applied": True}),
                 revision="r1",
             )
         )
@@ -194,7 +194,7 @@ def run_s3b(reference: dict) -> dict:
     rows = []
 
     #: ① 文件内容变 ⇒ 相关节点 STALE
-    c = RC.invalidation_closure(
+    c = rc.invalidation_closure(
         [
             {"name": "plate", "depends_on": ["model"]},
             {"name": "holes", "depends_on": ["plate"]},
@@ -213,7 +213,7 @@ def run_s3b(reference: dict) -> dict:
     )
 
     #: ② 接口版本变 ⇒ 相关节点 STALE
-    c2 = RC.invalidation_closure(
+    c2 = rc.invalidation_closure(
         [
             {"name": "holes", "depends_on": ["iface"]},
             {"name": "plate", "depends_on": ["model"]},
@@ -231,7 +231,7 @@ def run_s3b(reference: dict) -> dict:
     )
 
     #: ③ 规则摘要变 ⇒ 相关节点 STALE
-    c3 = RC.invalidation_closure([{"name": "calc", "depends_on": ["rule"]}], ["rule"])
+    c3 = rc.invalidation_closure([{"name": "calc", "depends_on": ["rule"]}], ["rule"])
     rows.append(
         {
             "case": "规则摘要变",
@@ -243,19 +243,19 @@ def run_s3b(reference: dict) -> dict:
     )
 
     #: ④ 计划 revision 变 ⇒ 提交旧 revision ⇒ REVISION_CONFLICT
-    v = RC.resume_verdict(submitted_revision="r0", current_revision="r1")
+    v = rc.resume_verdict(submitted_revision="r0", current_revision="r1")
     rows.append(
         {
             "case": "提交旧计划 revision",
             "code": v.code,
             "got": v.code,
-            "ok": v.code == RC.REVISION_CONFLICT,
+            "ok": v.code == rc.REVISION_CONFLICT,
             "untouched_kept": True,
         }
     )
 
     #: ⑤ 旧问题回答 ⇒ 同样 REVISION_CONFLICT
-    v2 = RC.resume_verdict(
+    v2 = rc.resume_verdict(
         submitted_revision="q-answer-v1", current_revision="q-answer-v2"
     )
     rows.append(
@@ -263,13 +263,13 @@ def run_s3b(reference: dict) -> dict:
             "case": "提交旧问题回答",
             "code": v2.code,
             "got": v2.code,
-            "ok": v2.code == RC.REVISION_CONFLICT,
+            "ok": v2.code == rc.REVISION_CONFLICT,
             "untouched_kept": True,
         }
     )
 
     #: ⑥ 效应不明 ⇒ UNKNOWN_EFFECT（★ 即使版本一致）
-    v3 = RC.resume_verdict(
+    v3 = rc.resume_verdict(
         submitted_revision="r1", current_revision="r1", unknown_effect=True
     )
     rows.append(
@@ -277,7 +277,7 @@ def run_s3b(reference: dict) -> dict:
             "case": "效应不明",
             "code": v3.code,
             "got": v3.code,
-            "ok": v3.code == RC.UNKNOWN_EFFECT,
+            "ok": v3.code == rc.UNKNOWN_EFFECT,
             "untouched_kept": True,
         }
     )
@@ -316,7 +316,7 @@ def main() -> int:
 
     #: ★★ 三类窗口 × 3 次 = 9
     recs = []
-    for w in RC.CRASH_WINDOWS:
+    for w in rc.CRASH_WINDOWS:
         for k in range(1, 4):
             r = run_window(w, k, reference=reference)
             recs.append(r)

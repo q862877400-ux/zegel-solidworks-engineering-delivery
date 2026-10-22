@@ -4,13 +4,13 @@
 # 文件:   tools/probe_endcap_official_args.py
 # 定位:   ★★ 上一轮逐面矩阵证明「不是选面问题」，`diag_weldment_feature_kind` 证明
 #   「体确实是真焊件」⇒ ★ 下一个变量是**实参**。
-#   ★★★ 官方例子（`C:\\swapi\\examples\\Insert_Weldment_End_Cap_Example_VB.md`）逐字：
+#   ★★★ 官方例子（`c:\\swapi\\examples\\Insert_Weldment_End_Cap_Example_VB.md`）逐字：
 #     `InsertEndCapFeature3(0.005, False, False, 0.003, 0.6, 0.003, True, 0.002, False, 2)`
 #     ★ 而**原工具与我的探针**传的是 `(0.005, False, False, 0, 0, 0, False, 0, False, 0)` ——
 #     ★★ 关键差异：`BIsGivenOffset=False` 时生效的是 **`WallThicknessRatio`**，
 #        ★ 官方用 **0.6**，我们传 **0.0**（★ 退化值）；`BIsEndCapInward` 官方用 **2**
-#        （= `swSpecifyInset`，见 `C:\\swapi\\enums\\swEndCapThicknessDirection_e.md`）。
-# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature3.md` 的 Remarks + Ex
+#        （= `swSpecifyInset`，见 `c:\\swapi\\enums\\swEndCapThicknessDirection_e.md`）。
+# 官方依据: `c:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature3.md` 的 Remarks + Ex
 # amples
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -28,14 +28,14 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "endcap-official-args-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def _profile(hollow: bool = True) -> str:
@@ -49,7 +49,7 @@ def _profile(hollow: bool = True) -> str:
     """
     pref = ("tube rectangular", "tube square", "pipe", "tube")
     found: list[str] = []
-    for root in (r"C:\ProgramData\SOLIDWORKS", r"C:\ProgramData\SolidWorks"):
+    for root in (r"c:\ProgramData\SOLIDWORKS", r"c:\ProgramData\SolidWorks"):
         for h in sorted(Path(root).rglob("*.sldlfp")):
             s = str(h)
             if "weldment profiles" not in s.lower():
@@ -64,7 +64,7 @@ def _profile(hollow: bool = True) -> str:
 
 def _pick_end_faces(doc, count, mark=0):
     """★ 选 **open ends**（官方 Remarks 逐字「select one or more **end faces**」）。"""
-    import scripts.sw_part as SP
+    import scripts.sw_part as sp
 
     try:
         _g(doc, "ClearSelection2", True)
@@ -76,7 +76,7 @@ def _pick_end_faces(doc, count, mark=0):
             if picked >= count:
                 break
             try:
-                SP._select_com_object(face, append=(picked > 0), mark=mark)
+                sp._select_com_object(face, append=(picked > 0), mark=mark)
                 got = int(
                     _g(_g(doc, "SelectionManager"), "GetSelectedObjectCount2", mark)
                     or 0
@@ -107,7 +107,7 @@ VARIANTS = [
 def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "cases": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     prof = _profile()
     R["profile"] = prof
     R["profile_is_hollow_guess"] = any(k in prof.lower() for k in ("tube", "pipe"))
@@ -115,13 +115,13 @@ def main() -> int:
         doc = None
         row: dict = {"variant": label, "args": list(a)}
         try:
-            doc = C.new_document(sw, "part")
-            P.start_sketch(doc, plane_name="Front Plane")
+            doc = c.new_document(sw, "part")
+            p.start_sketch(doc, plane_name="Front Plane")
             _g(_g(doc, "SketchManager"), "CreateLine", -0.08, 0.0, 0.0, 0.08, 0.0, 0.0)
-            P.end_sketch(doc)
+            p.end_sketch(doc)
             names = [
                 n
-                for n in (P.feature_names(doc) or [])
+                for n in (p.feature_names(doc) or [])
                 if n.startswith("草图") or n.lower().startswith("sketch")
             ]
             from scripts.sw_weldment import create_structural_member_from_sketch
@@ -131,7 +131,7 @@ def main() -> int:
             )
             row["weldment_ok"] = bool(isinstance(sm, dict) and sm.get("ok"))
             row["faces_selected"] = _pick_end_faces(doc, 1)
-            before = list(P.feature_names(doc) or [])
+            before = list(p.feature_names(doc) or [])
             ret = _g(_g(doc, "FeatureManager"), "InsertEndCapFeature3", *a)
             row["returned_is_none"] = ret is None
             if ret is not None:
@@ -140,7 +140,7 @@ def main() -> int:
                         row[k] = str(_g(ret, m))
                     except Exception:  # noqa: BLE001
                         pass
-            after = list(P.feature_names(doc) or [])
+            after = list(p.feature_names(doc) or [])
             row["new_features"] = [n for n in after if n not in before]
             row["ok"] = bool(row["new_features"])
         except Exception as exc:  # noqa: BLE001

@@ -65,9 +65,9 @@ def classify_dialog(buttons: str, texts: str = "", title: str = "") -> dict:
         if b:
             ctrls.append({"class": "Button", "text": b})
 
-    import sw_guard as _G
+    import sw_guard as _g
 
-    verdict = _G.classify_dialog({"title": str(title or ""), "controls": ctrls})
+    verdict = _g.classify_dialog({"title": str(title or ""), "controls": ctrls})
 
     #: ★★ **回一份**可判**的结果**（★ 附上「该不该点」的**显式**结论 —— ★ 少一步推断）
     mode = verdict.get("mode")

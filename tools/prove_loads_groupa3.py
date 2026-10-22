@@ -49,7 +49,7 @@ def main() -> int:
     import sw_connect
 
     from scripts import sw_simulation as sim
-    from scripts import sw_simulation_loads as SL
+    from scripts import sw_simulation_loads as sl
     from scripts.sw_part import (
         current_sketch_name,
         end_sketch,
@@ -76,12 +76,12 @@ def main() -> int:
         targets = [
             (
                 "distributed_mass",
-                lambda m: SL.apply_distributed_mass_report(m, doc, 1.0, 0),
+                lambda m: sl.apply_distributed_mass_report(m, doc, 1.0, 0),
             ),
-            ("force", lambda m: SL.apply_force_report(m, doc, 1)),
+            ("force", lambda m: sl.apply_force_report(m, doc, 1)),
             (
                 "remote_load",
-                lambda m: SL.apply_remote_load_report(m, doc, 0, 0, 0.0, 0.0, -100.0),
+                lambda m: sl.apply_remote_load_report(m, doc, 0, 0, 0.0, 0.0, -100.0),
             ),
         ]
         for label, fn in targets:

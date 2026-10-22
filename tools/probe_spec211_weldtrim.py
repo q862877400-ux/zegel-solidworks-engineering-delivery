@@ -58,12 +58,12 @@ def _classify(rep: dict) -> str:
 
 def main() -> int:
     import sw_connect
-    import sw_weldment as W
+    import sw_weldment as w
 
     out: dict = {
         "official": "IFeatureManager.InsertWeldmentTrimFeature2",
         "step": "第一步：只查行为 + 数组形参的形态判定",
-        "marks": dict(W.WELDMENT_TRIM_MARKS),
+        "marks": dict(w.WELDMENT_TRIM_MARKS),
     }
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=20)
@@ -76,7 +76,7 @@ def main() -> int:
         return 2
 
     #: ★ ① 库层包装（★ 它内部传 `None` ✓）
-    rep_none = W.insert_weldment_trim_report(model, gap_mm=0.0)
+    rep_none = w.insert_weldment_trim_report(model, gap_mm=0.0)
     out["form_A_none"] = {
         k: rep_none.get(k)
         for k in (

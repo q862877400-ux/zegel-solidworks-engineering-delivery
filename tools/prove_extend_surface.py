@@ -45,7 +45,7 @@ OUT = Path(
 
 def main() -> int:
     import sw_connect
-    import sw_surface_features as SF
+    import sw_surface_features as sf
     from sw_part import (
         current_sketch_name,
         end_sketch,
@@ -68,7 +68,7 @@ def main() -> int:
             "ok": True,
             "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or ""),
         }
-        r1 = SF.create_extruded_surface_report(doc, 30.0, sk)
+        r1 = sf.create_extruded_surface_report(doc, 30.0, sk)
         ev["steps"]["prereq_extruded_surface"] = {
             "ok": bool(r1.get("ok")),
             "feature": r1.get("feature_name"),
@@ -81,7 +81,7 @@ def main() -> int:
         #: "along the **selected** faces"，★ 但实测它**自己会找**）⇒ ★★ 那条**不是负例**
         #: ，
         #:   保留它会得出"判据失效"的**错误结论**。⇒ 换成参数校验这条（★ 那才可证伪）。
-        neg = SF.insert_extend_surface_report(doc, 0.0)
+        neg = sf.insert_extend_surface_report(doc, 0.0)
         ev["steps"]["negative_zero_distance"] = {
             "ok": (not neg.get("ok")),
             "returned_ok": bool(neg.get("ok")),
@@ -90,7 +90,7 @@ def main() -> int:
 
         #: ③ 正例：★ 选面由 `insert_extend_surface_report` 内部完成（`_select_all_surfac
         #: e_faces`）
-        pos = SF.insert_extend_surface_report(doc, 10.0)
+        pos = sf.insert_extend_surface_report(doc, 10.0)
         ev["steps"]["extend_surface"] = {
             "ok": bool(pos.get("ok")),
             "feature_name": pos.get("feature_name"),

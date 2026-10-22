@@ -26,25 +26,25 @@ for _p in (str(REPO), str(REPO / "scripts"), str(REPO / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_part as P  # noqa: E402
+from scripts import sw_connect as c  # noqa: E402
+from scripts import sw_part as p  # noqa: E402
 
 OUT = REPO / "output" / "resolver-mark-matrix-evidence.json"
 
 
 def _g(o, n, *a):
-    return C.get_com_member(o, n, *a)
+    return c.get_com_member(o, n, *a)
 
 
 def main() -> int:
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "rows": []}
-    sw, _ = C.connect_solidworks(wait_seconds=30)
+    sw, _ = c.connect_solidworks(wait_seconds=30)
     import register_capabilities as rc
 
     doc = None
     try:
-        doc = C.new_document(sw, "part")
-        P.start_sketch(doc, plane_name="Front Plane")
+        doc = c.new_document(sw, "part")
+        p.start_sketch(doc, plane_name="Front Plane")
         _g(
             _g(doc, "SketchManager"),
             "CreateCornerRectangle",
@@ -55,10 +55,10 @@ def main() -> int:
             0.03,
             0.0,
         )
-        P.end_sketch(doc)
-        names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
-        P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
-        import scripts.sw_part as SP
+        p.end_sketch(doc)
+        names = [n for n in (p.feature_names(doc) or []) if n.startswith("草图")]
+        p.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
+        import scripts.sw_part as sp
 
         faces, edges = [], []
         for b in list(_g(doc, "GetBodies2", 0, True) or []):
@@ -83,7 +83,7 @@ def main() -> int:
                         if picked >= n:
                             break
                         try:
-                            SP._select_com_object(obj, append=(picked > 0), mark=mark)
+                            sp._select_com_object(obj, append=(picked > 0), mark=mark)
                             got = count(mark)
                             if got > picked:
                                 picked = got

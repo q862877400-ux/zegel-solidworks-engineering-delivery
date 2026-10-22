@@ -201,7 +201,7 @@ def check_forms() -> list:
     """
     import register_capabilities as rc
 
-    _RES = set(rc.RESOLVERS)
+    _res = set(rc.RESOLVERS)
     problems: list = []
     for spec in rc.all_specs():
         inj = getattr(spec, "inject", None)
@@ -210,7 +210,7 @@ def check_forms() -> list:
                 '%s: inject=%r 是 %s —— ★ **必须是字符串**（如 inject="model"）；'
                 "★ 元组/列表会让 `in` 判断永远失败，而报错会误导成"
                 "名字不在 RESOLVERS 里（★ 事实 232）。合法值：%s"
-                % (spec.name, inj, type(inj).__name__, sorted(_RES))
+                % (spec.name, inj, type(inj).__name__, sorted(_res))
             )
         for _p in getattr(spec, "params", None) or []:
             _k = getattr(_p, "kind", None)

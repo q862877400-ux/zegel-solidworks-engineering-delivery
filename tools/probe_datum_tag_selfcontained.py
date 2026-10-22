@@ -49,7 +49,7 @@ PART = Path(
 
 
 def main() -> int:
-    import drawing_workflow as DW
+    import drawing_workflow as dw
     import sw_connect
     from sw_connect import get_com_member, safe_get_com_member
 
@@ -70,7 +70,7 @@ def main() -> int:
         #: ① 加视图（★ 零件是**已在盘上**的 —— 我没有保存任何东西）
         view = None
         try:
-            view = DW.add_view(doc, str(PART), "*Front", 0.15, 0.15)
+            view = dw.add_view(doc, str(PART), "*Front", 0.15, 0.15)
             ev["steps"]["add_view"] = {
                 "ok": view is not None,
                 "returned": str(view)[:52],

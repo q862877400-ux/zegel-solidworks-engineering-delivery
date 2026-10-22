@@ -30,11 +30,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_hole_features as HF  # noqa: E402
+from scripts import sw_hole_features as hf  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_selection_spec as SS  # noqa: E402
+from scripts import sw_selection_spec as ss  # noqa: E402
 
 
 def _plate(doc, t=0.02):
@@ -90,16 +90,16 @@ def main() -> int:
             doc = C.new_document(sw, "part")
             row["plate"] = _plate(doc)
             row["picked"] = _pick_top_face(doc)
-            row["point"] = SS.selection_point(doc)
-            before = list(FR.feature_names(doc) or [])
+            row["point"] = ss.selection_point(doc)
+            before = list(fr.feature_names(doc) or [])
             row["before"] = len(before)
             try:
-                rep = HF.create_hole_wizard_at_selection_report(doc, "+z", size)
+                rep = hf.create_hole_wizard_at_selection_report(doc, "+z", size)
                 row["report"] = rep
                 row["ok"] = True
             except Exception as exc:  # noqa: BLE001
                 row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-            after = list(FR.feature_names(doc) or [])
+            after = list(fr.feature_names(doc) or [])
             row["new_features"] = [n for n in after if n not in before]
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])

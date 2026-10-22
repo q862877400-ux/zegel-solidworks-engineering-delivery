@@ -44,9 +44,9 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_hole_features as HF  # noqa: E402
-import scripts.sw_surface_ref_ops as SRO  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_hole_features as hf  # noqa: E402
+import scripts.sw_surface_ref_ops as sro  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -56,7 +56,7 @@ def _get(o, name, *a):
 
 
 def _tree(doc):
-    return list(FR.feature_names(doc) or [])
+    return list(fr.feature_names(doc) or [])
 
 
 def _surface_body_count(doc):
@@ -111,7 +111,7 @@ def case_revolved(sw):
             _get(_get(doc, "SelectionManager"), "GetSelectedObjectCount2", -1) or 0
         )
         before_tree, before_surf = _tree(doc), _surface_body_count(doc)
-        res = SRO.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
+        res = sro.insert_revolved_ref_surface(doc, 360.0, 0, False, 0.0)
         row["returned"] = {
             k: res.get(k)
             for k in ("ok", "returned_is_none", "new_features", "selection_mark")
@@ -157,7 +157,7 @@ def case_hole_wizard(sw):
                 continue
         before_tree = _tree(doc)
         try:
-            rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
+            rep = hf.create_hole_wizard_at_selection_report(doc, "+z", "M8")
             row["report"] = {k: rep.get(k) for k in list(rep)[:8]}
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])

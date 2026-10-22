@@ -38,8 +38,8 @@ OUT = R / "output" / "spec209-b3-entities.json"
 
 def main() -> int:
     import sw_connect
-    import sw_part as P
-    import sw_selection_spec as SS
+    import sw_part as p
+    import sw_selection_spec as ss
     from sw_connect import get_com_member, safe_get_com_member
 
     sw, _ = sw_connect.connect_solidworks(wait_seconds=30)
@@ -64,14 +64,14 @@ def main() -> int:
     try:
         doc = sw_connect.new_document(sw, "part")
         opened.append(doc)
-        with P.sketch(doc, "Front Plane") as sk:
-            P.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
-        P.end_sketch(doc)
-        P.extrude_boss(doc, "草图1", 10.0)
+        with p.sketch(doc, "Front Plane") as sk:
+            p.sketch_corner_rectangle(doc, -10.0, -10.0, 10.0, 10.0)
+        p.end_sketch(doc)
+        p.extrude_boss(doc, "草图1", 10.0)
         #: ★ 先确认体上一个面都没有的极端情况（★ 只作前置读数，不当判据）
         ev["body_count"] = len(list(get_com_member(doc, "GetBodies2", 0, False) or []))
         for kind in ("FACE", "EDGE", "VERTEX"):
-            r = SS.entities_report(doc, kind)
+            r = ss.entities_report(doc, kind)
             ev["reports"][kind] = {
                 "ok": r.get("ok"),
                 "count": r.get("count"),
@@ -106,13 +106,13 @@ def main() -> int:
         #: 报告函数**，
         #: ★ 它**回字典不抛** ⇒ 判据是 `error` 非空，**不是"有没有抛"**（★ 我在 B2 批已
         #: 栽过同一形态）✓
-        bad_g = SS.entity_geometry(doc, "EDGE", 99)
+        bad_g = ss.entity_geometry(doc, "EDGE", 99)
         ev["negative"]["bad_index"] = {
             "error": bad_g.get("error"),
             "judged_ok": bool(bad_g.get("error")) and "越界" in str(bad_g.get("error")),
             "_": "★ 报告函数回字典 ⇒ 判据看 error 字段（不抛）",
         }
-        bad = SS.entities_report(doc, "SPHERE")
+        bad = ss.entities_report(doc, "SPHERE")
         ev["negative"]["bad_kind"] = {
             "ok": bad.get("ok"),
             "error": bad.get("error"),

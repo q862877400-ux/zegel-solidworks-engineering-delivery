@@ -124,7 +124,7 @@ def skip_branches(src: str) -> list:
         out.append(
             (
                 node.lineno,
-                " | ".join(l.strip() for l in lines[lo : node.lineno] if l.strip())[
+                " | ".join(l_.strip() for l_ in lines[lo : node.lineno] if l_.strip())[
                     -150:
                 ]
                 or ast.unparse(node.test),
@@ -361,9 +361,9 @@ def main() -> int:
     cover_bad: list = []
     try:
         sys.path.insert(0, str(ROOT / "scripts"))
-        from engineering import gate_inventory as GI  # noqa: PLC0415
+        from engineering import gate_inventory as gi  # noqa: PLC0415
 
-        inv = GI.build_inventory()
+        inv = gi.build_inventory()
         print(
             "    `scripts/` 检查文件 = %d · `tools/` 检查文件 = %d"
             % (inv["scripts"]["n"], inv["tools"]["n"])
@@ -393,8 +393,8 @@ def main() -> int:
         #: ★ 真机门禁必须**单独编排且明确 NOT_RUN**
         print("    真机门禁（单独编排 · NOT_RUN）= %d" % inv["not_run_n"])
         #: ★ `retired` 必须带替代关系
-        cls = GI.load_classification().get("classification") or []
-        ret = [e for e in cls if e.get("kind") == GI.RETIRED]
+        cls = gi.load_classification().get("classification") or []
+        ret = [e for e in cls if e.get("kind") == gi.RETIRED]
         for e in ret:
             if not e.get("replaced_by"):
                 cover_bad.append("★ %s 是 retired 却没有 `replaced_by`" % e.get("gate"))

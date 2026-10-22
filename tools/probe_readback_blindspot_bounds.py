@@ -36,11 +36,11 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02)):
@@ -67,7 +67,7 @@ def _mk_surface(doc, plane="Front Plane", rect=(-0.02, -0.02, 0.02, 0.02)):
     ]
     for cand in (names[-1] if names else "\u8349\u56fe1", "\u8349\u56fe1", "Sketch1"):
         try:
-            if SF.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
+            if sf.create_extruded_surface_report(doc, 30.0, sketch_name=cand).get("ok"):
                 return True
         except Exception:  # noqa: BLE001
             continue
@@ -103,10 +103,10 @@ def _mk_solid(doc):
 
 def _visible(doc, tag):
     """★ 回 ① `feature_names` ② 递归链 ③ 两边的**类型名集合**。"""
-    names = list(FR.feature_names(doc) or [])
+    names = list(fr.feature_names(doc) or [])
     types = []
     try:
-        for f in W.iter_features_recursive(doc):
+        for f in w.iter_features_recursive(doc):
             try:
                 types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
             except Exception:  # noqa: BLE001
@@ -150,12 +150,12 @@ def _run(sw, tag, build):
 
 def _c_extend(doc):
     _mk_surface(doc)
-    return SF.insert_extend_surface_report(doc, 5.0)
+    return sf.insert_extend_surface_report(doc, 5.0)
 
 
 def _c_offset(doc):
     _mk_surface(doc)
-    return SF.insert_offset_surface_report(doc, 5.0)
+    return sf.insert_offset_surface_report(doc, 5.0)
 
 
 def _c_planar(doc):
@@ -176,7 +176,7 @@ def _c_planar(doc):
         0.0,
     )
     P.end_sketch(doc)
-    return SF.insert_planar_ref_surface_report(doc)
+    return sf.insert_planar_ref_surface_report(doc)
 
 
 def main() -> int:

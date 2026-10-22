@@ -66,9 +66,9 @@ def upstream_files() -> set:
     except Exception:  # noqa: BLE001
         return set()
     return {
-        Path(l.strip()).name
-        for l in (out.stdout or "").splitlines()
-        if l.strip().startswith("scripts/") and l.strip().endswith(".py")
+        Path(item.strip()).name
+        for item in (out.stdout or "").splitlines()
+        if item.strip().startswith("scripts/") and item.strip().endswith(".py")
     }
 
 

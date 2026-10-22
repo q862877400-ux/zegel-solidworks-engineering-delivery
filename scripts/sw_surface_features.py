@@ -1680,9 +1680,9 @@ def sweep_surface_report(
     before = feature_names(model)
     #: ★★ **记调用前的选择计数**（★ 让"选不上"与"选了没用"可分辨 ✓）
     try:
-        import sw_selection_spec as SS
+        import sw_selection_spec as ss
 
-        out["selection_count_before"] = SS.get_selection_count(model)
+        out["selection_count_before"] = ss.get_selection_count(model)
     except Exception as exc:  # noqa: BLE001
         out["selection_count_before"] = None
         out["selection_count_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:80])

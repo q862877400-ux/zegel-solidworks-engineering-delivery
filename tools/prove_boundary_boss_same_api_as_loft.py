@@ -43,10 +43,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
-import scripts.sw_weldment as W  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
+import scripts.sw_weldment as w  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
-from scripts import sw_loft as L  # noqa: E402
+from scripts import sw_loft as l  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
 
@@ -123,7 +123,7 @@ def main() -> int:
     try:
         doc = C.new_document(sw, "part")
         sketches = _two_profiles(doc)
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         picked = _pick_profiles(doc, sketches)
         row = {
             "tag": "\u2605 \u7528 create_loft_report \u5efa\u300c\u8fb9\u754c\u51f8\u53f0\u300d\u90a3\u4e2a\u7279\u5f81",
@@ -131,18 +131,18 @@ def main() -> int:
             "profiles_picked": picked,
         }
         try:
-            r = L.create_loft_report(doc, closed=False, use_selected_profiles=True)
+            r = l.create_loft_report(doc, closed=False, use_selected_profiles=True)
             row["report_ok"] = r.get("ok")
             row["feature_name"] = r.get("feature_name")
             row["args_count"] = r.get("args_count")
             row["mark1_selected"] = r.get("mark1_selected")
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         types = []
         try:
-            for f in W.iter_features_recursive(doc):
+            for f in w.iter_features_recursive(doc):
                 try:
                     types.append(str(C.get_com_member(f, "GetTypeName2") or ""))
                 except Exception:  # noqa: BLE001

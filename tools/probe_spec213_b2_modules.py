@@ -61,7 +61,7 @@ def _feature_names(model):
 def main() -> int:
     import sw_connect
     import sw_part
-    import sw_sheet_metal as SM
+    import sw_sheet_metal as sm
     import sw_weldment as W
 
     out: dict = {
@@ -123,15 +123,15 @@ def main() -> int:
             #: ★★ 契约逐字：`create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)
             #: ` ✗ ——
             #:   ★ 不是 `(model, sketch, thickness, …)`（★ 且它**不抛、只回 `None`** ✓）
-            spec = SM.BaseFlangeSpec(
+            spec = sm.BaseFlangeSpec(
                 thickness=float(sw_connect.mm(2.0)),
                 bend_radius=float(sw_connect.mm(1.0)),
                 depth=float(sw_connect.mm(40.0)),
             )
-            SM.create_base_flange(model2, sk2, spec)
+            sm.create_base_flange(model2, sk2, spec)
             row2["features_after_flange"] = _feature_names(model2)
 
-            res2 = SM.insert_form_tool_report(model2, str(tool), face_index=0)
+            res2 = sm.insert_form_tool_report(model2, str(tool), face_index=0)
             row2["result"] = {
                 k: (v if isinstance(v, (int, bool, str, list, dict)) else str(v)[:60])
                 for k, v in res2.items()

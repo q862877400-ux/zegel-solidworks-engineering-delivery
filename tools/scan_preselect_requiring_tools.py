@@ -32,7 +32,7 @@ REPO = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "mcp-server"))
 sys.path.insert(0, str(REPO / "scripts"))
-import register_capabilities as RC  # noqa: E402
+import register_capabilities as rc  # noqa: E402
 
 READ_TOKENS = (
     "GetSelectedObjectCount2",
@@ -72,7 +72,7 @@ def func_src(mod_name: str, fn_name: str):
 
 
 rows = []
-for spec in RC.all_specs():
+for spec in rc.all_specs():
     name = getattr(spec, "name", None)
     if not name:
         continue

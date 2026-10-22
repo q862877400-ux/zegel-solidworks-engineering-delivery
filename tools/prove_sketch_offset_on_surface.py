@@ -49,7 +49,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
 
@@ -160,7 +160,7 @@ def _one(sw, tag, use_front, by_point=True):
         except Exception as exc:  # noqa: BLE001
             row["sketch3d"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
         before_seg = _seg_count(doc)
-        before_feat = list(FR.feature_names(doc) or [])
+        before_feat = list(fr.feature_names(doc) or [])
         row["seg_before"] = before_seg
         #: \u2605 **\u4e3b\u8c03\u7528**\uff08\u2605 `UseFront` \u5b98\u65b9\u8bf4**\u5f
         #: c5\u987b True**\uff09
@@ -183,7 +183,7 @@ def _one(sw, tag, use_front, by_point=True):
             steps["InsertSketch"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
         row["steps"] = steps
         after_seg = _seg_count(doc)
-        after_feat = list(FR.feature_names(doc) or [])
+        after_feat = list(fr.feature_names(doc) or [])
         row["seg_after"] = after_seg
         row["new_features"] = [n for n in after_feat if n not in before_feat]
         row["ok"] = bool(

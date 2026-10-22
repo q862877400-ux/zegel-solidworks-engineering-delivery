@@ -41,7 +41,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _build_solid(sw):
@@ -92,9 +92,9 @@ def _one(sw, tag, *, surface_type, need_edge=True, length_mm=10.0):
     doc = None
     try:
         doc = _build_solid(sw)
-        row["solid"] = SF._solid_body_count(doc)
+        row["solid"] = sf._solid_body_count(doc)
         row["sel"] = _pick_edge(doc, 0) if need_edge else 0
-        r = SF.insert_ruled_surface_report(
+        r = sf.insert_ruled_surface_report(
             doc, surface_type=surface_type, length_mm=length_mm
         )
         row["result"] = {k: v for k, v in r.items() if k != "\u2605"}

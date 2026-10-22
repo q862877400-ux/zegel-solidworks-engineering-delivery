@@ -7,7 +7,7 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 1783,
+ "ruff_total_ceiling": 1196,
  "clone_groups_ceiling": 2283,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
@@ -217,6 +217,16 @@
     1783
    ],
    "why": "★ 两条判据修正（都有实测依据）：① E501 改两档（代码行 88 列 / 散文行 120 列，因 E501 的 99.6% 是中文散文）；② UP031 退出（与 E501 互相打架：转 292 条净只降 13）"
+  },
+  {
+   "at": "2026-10-22p",
+   "from": [
+    1783
+   ],
+   "to": [
+    1196
+   ],
+   "why": "N812 784→315 / N806 206→115（558 个名字改为 PEP8 口径，安全前提：全文件仅绑定一次且目标名不存在）；E741 全清；② 降为信息项（三个化妆轴都会移动它，不能当棘轮）"
   }
  ],
  "dup_function_groups_ceiling": 101,

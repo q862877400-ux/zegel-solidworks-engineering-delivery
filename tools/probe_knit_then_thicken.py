@@ -46,10 +46,10 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_feature_readback as FR  # noqa: E402
+import scripts.sw_feature_readback as fr  # noqa: E402
 from scripts import sw_connect as C  # noqa: E402
 from scripts import sw_part as P  # noqa: E402
-from scripts import sw_surface_features as SF  # noqa: E402
+from scripts import sw_surface_features as sf  # noqa: E402
 
 
 def _mk_two_surfaces(doc):
@@ -79,7 +79,7 @@ def _mk_two_surfaces(doc):
         ]
         for cand in ((names[-1],) + tuple(names) + ("\u8349\u56fe%d" % (i + 1),))[:4]:
             try:
-                if SF.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
+                if sf.create_extruded_surface_report(doc, 20.0, sketch_name=cand).get(
                     "ok"
                 ):
                     made += 1
@@ -96,11 +96,11 @@ def _one(sw, tag, do_knit, entry):
         doc = C.new_document(sw, "part")
         row["surfaces_made"] = _mk_two_surfaces(doc)
         row["pre"] = {
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
         }
         if do_knit:
-            k = SF.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
+            k = sf.knit_surfaces_report(doc, 0.001, try_to_form_solid=False)
             row["knit"] = {
                 "ok": k.get("ok"),
                 "new": k.get("new_features"),
@@ -108,10 +108,10 @@ def _one(sw, tag, do_knit, entry):
                 "body_after": k.get("body_after"),
             }
             row["after_knit"] = {
-                "solid": SF._solid_body_count(doc),
-                "surface": SF._surface_body_count(doc),
+                "solid": sf._solid_body_count(doc),
+                "surface": sf._surface_body_count(doc),
             }
-        before = list(FR.feature_names(doc) or [])
+        before = list(fr.feature_names(doc) or [])
         ret = None
         try:
             if entry == "modeldoc":
@@ -130,11 +130,11 @@ def _one(sw, tag, do_knit, entry):
                         pass
         except Exception as exc:  # noqa: BLE001
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
-        after = list(FR.feature_names(doc) or [])
+        after = list(fr.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["post"] = {
-            "solid": SF._solid_body_count(doc),
-            "surface": SF._surface_body_count(doc),
+            "solid": sf._solid_body_count(doc),
+            "surface": sf._surface_body_count(doc),
         }
         #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811 \u6216 \u8f
         #: d4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d \u6216 **\u4f53\u7c7b\u578b\u53d

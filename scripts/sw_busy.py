@@ -96,7 +96,7 @@ def _enum_windows() -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
 
     proc_query = 0x1000  # PROCESS_QUERY_LIMITED_INFORMATION
-    CB = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
+    cb = ctypes.WINFUNCTYPE(ctypes.c_bool, wintypes.HWND, wintypes.LPARAM)
 
     def _cb(hwnd, _lparam):
         pid = wintypes.DWORD()
@@ -132,7 +132,7 @@ def _enum_windows() -> list[dict[str, Any]]:
             )
         return True
 
-    user32.EnumWindows(CB(_cb), 0)
+    user32.EnumWindows(cb(_cb), 0)
     return out
 
 
@@ -159,8 +159,8 @@ def solver_processes() -> list[str]:
     ★ 实现：`CreateToolhelp32Snapshot` + `Process32FirstW/NextW`（★ **纯 ctypes、不启子进程**）✓
     ⚠ 取不到快照 ⇒ 回**空列表**（★ 那时 `solidworks_stuck` 会偏保守，见它的注）。
     """
-    TH32CS_SNAPPROCESS = 0x00000002
-    MAX_PATH = 260
+    th32cs_snapprocess = 0x00000002
+    max_path = 260
     k32 = ctypes.windll.kernel32
 
     class PROCESSENTRY32W(ctypes.Structure):
@@ -174,11 +174,11 @@ def solver_processes() -> list[str]:
             ("th32ParentProcessID", wintypes.DWORD),
             ("pcPriClassBase", ctypes.c_long),
             ("dwFlags", wintypes.DWORD),
-            ("szExeFile", wintypes.WCHAR * MAX_PATH),
+            ("szExeFile", wintypes.WCHAR * max_path),
         ]
 
     names: list[str] = []
-    snap = k32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+    snap = k32.CreateToolhelp32Snapshot(th32cs_snapprocess, 0)
     if snap in (None, -1, 0xFFFFFFFF):
         return names
     try:
