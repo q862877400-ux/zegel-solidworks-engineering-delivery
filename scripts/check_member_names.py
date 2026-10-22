@@ -130,11 +130,12 @@ COM_INFRA = {"QueryInterface", "AddRef", "Release", "GetTypeInfo", "GetIDsOfName
 _WRAP_NAMES = {"get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw"}
 
 
-def _base_name(node):
-    """取 `a.b.c` 的根标识符 `a`（不是 `a` 就返回 `None`）。"""
-    while isinstance(node, ast.Attribute):
-        node = node.value
-    return node.id if isinstance(node, ast.Name) else None
+#: ★ 2026-10-22 统一化：本函数与 tools/probe_direct_member_access 里的嵌套 ident
+#:   逐字相同，已收敛到 scripts/ast_helpers.base_name
+try:
+    from .ast_helpers import base_name as _base_name
+except ImportError:
+    from ast_helpers import base_name as _base_name
 
 
 def find_direct_member_access(path, known):

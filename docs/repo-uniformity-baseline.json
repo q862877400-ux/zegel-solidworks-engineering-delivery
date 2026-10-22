@@ -151,9 +151,23 @@
     104
    ],
    "why": "抽出 CodedError 基类：4 个模块的 *Error.__init__ 逐字相同（design_rules/selection_calc/standard_parts/linkage）"
+  },
+  {
+   "at": "2026-10-22j",
+   "from": [
+    25851,
+    2491,
+    104
+   ],
+   "to": [
+    25851,
+    2491,
+    101
+   ],
+   "why": "收敛 _feature_params/_params → headless_common.feature_params；_base_name/ident → ast_helpers.base_name；★ 登记 assert_no_com_imports 否定裁决（自证不能合并）"
   }
  ],
- "dup_function_groups_ceiling": 104,
+ "dup_function_groups_ceiling": 101,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
@@ -167,6 +181,17 @@
    "evidence": "本轮实测：改为别名后 check_dispatch_byref_guard 报 `已核调用点 302`；回滚后回到 `323` 且 exit 0",
    "date": "2026-10-22",
    "note_subskills": "★ 同族还有第三份 subskills/.../drawing_workflow._safe_member（★ 门禁 SCAN_DIRS 不含 subskills，故组串只出现两个名字）"
+  },
+  {
+   "functions": "assert_no_com_imports",
+   "files": [
+    "scripts/engineering/automation.py",
+    "scripts/engineering/jobs.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留两份",
+   "reason": "两份函数体逐字相同，锂看应当收敛。★ 但它们各自读 `__file__` 做【本文件自证】—— 语义是「？模块自己不 import COM」。★★ 若合并到一处，两边都会去查【那个共享模块】—— 两个自证都会变成「永远通过」的假自证 ✗。⇒ ★ 这是「同代码、不同目标」：重复是【真的】，但统一会把它们变成假的 ✗",
+   "evidence": "两份都用 pathlib.Path(__file__).read_text() 读自己的源码并扫 COM 标记词",
+   "date": "2026-10-22"
   }
  ],
  "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"

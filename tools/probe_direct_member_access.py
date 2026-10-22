@@ -88,15 +88,16 @@ COM_INFRA = {"QueryInterface", "AddRef", "Release", "GetTypeInfo", "GetIDsOfName
 
 def _scan_file(path: Path, known: set) -> list:
     """用 `ast` 扫一个文件：**同一函数内**被当 COM 对象用过的标识符，再查它们身上的大驼峰调用。"""
+    #: ★ 2026-10-22 统一化：原来这里嵌着一个 4 行的 `def ident`，与
+    #:   `scripts/check_member_names._base_name` 逐字相同 ⇒ 已收敛到
+    #:   `scripts/ast_helpers.base_name`；此处按旧名 `ident` 导入（★ 调用点零改动）
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+
+    from ast_helpers import base_name as ident  # noqa: PLC0415
     try:
         tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
     except SyntaxError:
         return []
-
-    def ident(node) -> str | None:
-        while isinstance(node, ast.Attribute):
-            node = node.value
-        return node.id if isinstance(node, ast.Name) else None
 
     out: list = []
     for fn in [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))]:

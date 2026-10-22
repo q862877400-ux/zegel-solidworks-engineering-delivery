@@ -32,8 +32,12 @@ class UnsupportedFeatureError(ValueError):
     """@brief 当前 OCCT 路由无法表达输入特征。"""
 
 
-def _params(feature: dict[str, Any]) -> dict[str, Any]:
-    return feature.get("parameters") if isinstance(feature.get("parameters"), dict) else {}
+#: ★ 2026-10-22 统一化：本函数与 headless_cad_writer._feature_params 逐字相同，
+#:   已收敛到 scripts/headless_common.feature_params；此处保留旧名作别名
+try:
+    from .headless_common import feature_params as _params
+except ImportError:
+    from headless_common import feature_params as _params
 
 
 def _positive(params: dict[str, Any], key: str, default: float) -> float:

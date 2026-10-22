@@ -49,8 +49,12 @@ OCCT_FORMATS = {"step", "stp", "iges", "igs", "brep", "stl", "obj", "glb"}
 ADVANCED_OCCT_FORMATS = {"step", "stp", "iges", "igs", "brep", "glb"}
 
 
-def _feature_params(feature: dict[str, Any]) -> dict[str, Any]:
-    return feature.get("parameters") if isinstance(feature.get("parameters"), dict) else {}
+#: ★ 2026-10-22 统一化：本函数与 headless_occt_service._params 逐字相同，
+#:   已收敛到 scripts/headless_common.feature_params
+try:
+    from .headless_common import feature_params as _feature_params
+except ImportError:
+    from headless_common import feature_params as _feature_params
 
 
 def _versioned_target(out_dir: Path, name: str, extension: str) -> Path:
