@@ -1,13 +1,15 @@
 """★ 真机核：★ `sw_surface_features` 的 `* 0.001` 到底对不对（★ 事实 517 §三的待核项）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
-# 文件:   `scripts/sw_surface_features.py::create_extruded_surface_report`（★ L87 `d * 0.001`）
+# 文件:   `scripts/sw_surface_features.py::create_extruded_surface_report`（★ L87 `d * 0
+# .001`）
 #         `scripts/sw_surface_features.py::thicken_surface_report`（★ L318 `th * 0.001`）
 #         `scripts/sw_part.py::get_bounding_box`（★ **量实体** —— 曲面量不了）
 # 定位:   ★ `docs/known-facts.md` **事实 517** §三 的**待核项** —— ★ 该模块有 **5 处 `
 #           * 0.001`**
 #   （★ 都注明「★ 毫米 ⇒ 米」），★ 而**轮 56 的真机定案**说：
-#     ★★ `FeatureExtrusion3` 的 `D1` 传 `20.0` ⇒ 实体得到 **20 mm** ⇒ ★ **按**文档单位**解释** ✓
+# ★★ `FeatureExtrusion3` 的 `D1` 传 `20.0` ⇒ 实体得到 **20 mm** ⇒ ★ **按**文档单位**解释
+# ** ✓
 #   ★★★ **本探针的判据（★ 一个数就能定案）**：★ 在**毫米文档**里
 #     · ★ 建曲面 `depth_mm=**10.0**` ⇒ ★ 曲面应高 **10 mm**
 #     · ★★ 加厚 `thickness_mm=**2.0**` ⇒ ★ **量生成的实体厚度**：
@@ -62,7 +64,8 @@ def main() -> int:
     #: ① 建曲面（★ L87 那处 `d * 0.001`）
     #: ★★★★ 2026-10-04（★ 第二轮修正）：★ **把整个返回值原样落盘** ——
     #:   ★ 上一版只记 `ok` / `new_features` / `surface_body_count` ⇒
-    #:   ★★ 而第一轮跑出 `new_features: []`（★ 调了没建）、★ 第二轮变成 `None`（★ 根本没调）
+    #: ★★ 而第一轮跑出 `new_features: []`（★ 调了没建）、★ 第二轮变成 `None`（★ 根本没调
+    #: ）
     #:   ⇒ ★★★ **我却看不到 `error` 与 `selection`**（★ 那正是我上一轮刚定的
     #:     「探针必须把**每一次尝试 + 原始返回值**落盘」）✓
     surf = S.create_extruded_surface_report(model, 10.0, "Sketch1")

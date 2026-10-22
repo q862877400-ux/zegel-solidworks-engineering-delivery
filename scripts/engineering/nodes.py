@@ -199,7 +199,8 @@ class AccessPolicy:
     """
 
     grants: dict = field(default_factory=dict)     #: `{user: [project, ...]}`
-    #: ★★ **数据保留**（★ EC10-T06 逐字：★「★ 数据保留、日志脱敏、文件下载授权和外发确认」）
+    #: ★★ **数据保留**（★ EC10-T06 逐字：★「★ 数据保留、日志脱敏、文件下载授权和外发确认
+    #: 」）
     retention_days: int = 90
     log_redaction: bool = True
     download_authorization: bool = True

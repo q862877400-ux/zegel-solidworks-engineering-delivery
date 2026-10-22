@@ -12,8 +12,10 @@
 #   ★★ 入口清单是**先盘问出来的**（事实 371：别猜函数名）：
 #     ```
 #     拉伸/旋转/切除/圆角/倒角/抽壳/镜向/阵列/圆顶 \u2192 sw_part
-#     扫描 \u2192 sw_sweep · 放样 \u2192 sw_loft · 包覆 \u2192 sw_wrap · 筋 \u2192 sw_part.rib_report
-#     孔 \u2192 sw_hole_features · 曲线 \u2192 sw_part.insert_composite_curve_report + sw_helix
+# 扫描 \u2192 sw_sweep · 放样 \u2192 sw_loft · 包覆 \u2192 sw_wrap · 筋 \u2192 sw_part.r
+# ib_report
+# 孔 \u2192 sw_hole_features · 曲线 \u2192 sw_part.insert_composite_curve_report + sw_he
+# lix
 #     基准轴 \u2192 sw_part.create_axis_report
 #     ```
 # 官方依据: 各包装模块（★ 与 ToolSpec 的 module/function 同名同签名）。

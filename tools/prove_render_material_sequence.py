@@ -30,7 +30,8 @@ python tools/prove_render_material_sequence.py --keep # 不关文档（调试）
 # 官方依据: `D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\Add_and_Delete_Materials
 #           _from_
 #   Specific_Display_States_Example_VBNET.htm`（★ 七步序列：CreateDisplayState · 选面 ·
-#   GetSelectedObject6 · **AddEntity** · GetDisplayStates · AddDisplayStateSpecificRenderMaterial ·
+# GetSelectedObject6 · **AddEntity** · GetDisplayStates · AddDisplayStateSpecificRenderM
+# aterial ·
 #   GetRenderMaterialsCount2）· `C:\swapi\types\IConfiguration\CreateDisplayState.md` ·
 #   `C:\swapi\types\IModelDocExtension\AddDisplayStateSpecificRenderMaterial.md`。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -51,7 +52,8 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "render-material-sequence.json")
 
-#: ★ 官方示例用的显示状态选项（★ 反射：swThisDisplayState=1 · **swAllDisplayState=2** · swSpecifyDisplayState=3）
+#: ★ 官方示例用的显示状态选项（★ 反射：swThisDisplayState=1 · **swAllDisplayState=2** · 
+#: swSpecifyDisplayState=3）
 ALL_DISPLAY_STATE = 2
 
 
@@ -126,7 +128,8 @@ def main() -> int:
         except Exception as exc:                               # noqa: BLE001
             ev["steps"]["read_back"] = {"ok": False, "err": str(exc)[:80]}
 
-        #: ★ 判据：**七步都执行成功**（★ 含读）才算 pass；★ 而"读回空"是已知边界（不谎报 pass）
+        #: ★ 判据：**七步都执行成功**（★ 含读）才算 pass；★ 而"读回空"是已知边界（不谎报
+        #:  pass）
         exec_ok = all(v.get("ok") for k, v in ev["steps"].items() if k != "read_back")
         ev["verdict"] = "pass" if (exec_ok and ev["steps"]["read_back"].get("ok")) else "partial"
         ev["note"] = ("★ 官方示例的每一步都执行成功；★ 而**读回仍空** ⇒ 那是**本机文档/环境**的边界"

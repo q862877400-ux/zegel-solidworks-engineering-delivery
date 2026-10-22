@@ -4,17 +4,20 @@
 # 仓库:   本项目自身（工具声明）
 # 文件:   mcp-server/tool_specs_batch65.py
 # 定位:   ★ 2026-10-03（轮 464）★ `specs/201-toolbar-gaps` **B1 批**的 MCP 工具声明。
-#   ★★ 包装在 `scripts/sw_sketch_primitives.py`（★ 签名取自 `C:\\swapi\\types\\ISketchManager\\`，
+# ★★ 包装在 `scripts/sw_sketch_primitives.py`（★ 签名取自 `C:\\swapi\\types\\ISketchMana
+# ger\\`，
 #     逐条读过）；本文件只做**声明式接线** ✓
 #   ★★★ **`inject="model"` 一律显式写** —— ★ 那是轮 461 刚修的坑（16 个 ToolSpec 漏声明
 #     ⇒ 走 MCP 必炸），★ 而门禁 `tools/check_inject_binding.py` 现在会拦 ✓
-#   ★ **参数名带单位后缀**（`_mm`）而包装收短名 ⇒ 走 `param_alias`（规则 2：换算与改名在边界做一次）✓
+# ★ **参数名带单位后缀**（`_mm`）而包装收短名 ⇒ 走 `param_alias`（规则 2：换算与改名在边
+# 界做一次）✓
 # 官方依据: `C:\swapi\types\ISketchManager\*.md`（9 个成员）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 走 `tools/check_inject_binding.py`（注入绑定）+ `scripts/check_param_binding.py`（参数绑定）。
+# ★ 判据：★ 走 `tools/check_inject_binding.py`（注入绑定）+ `scripts/check_param_binding
+# .py`（参数绑定）。
 
 from tool_registry import Param, ToolSpec
 

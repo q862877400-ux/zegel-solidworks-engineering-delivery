@@ -106,9 +106,11 @@ def check() -> list[str]:
             problems.append("%s: inject=%r 不是 RESOLVERS 的键（有：%s）"
                             % (spec.name, inj, sorted(resolver_keys)))
 
-        #: ④ ★★★ 2026-10-03（接手轮）**注入名还必须等于目标函数的形参名**（★ 事实 **502**）。
+        #: ④ ★★★ 2026-10-03（接手轮）**注入名还必须等于目标函数的形参名**（★ 事实 **502*
+        #: *）。
         #:   ★ **为什么这条以前没有、而它必须要有**：`tool_registry.py:507` 是
-        #:     `kwargs[inject_as or inj] = resolver(params)`，★ 而 `register()`（同文件 `:559`）
+        #: `kwargs[inject_as or inj] = resolver(params)`，★ 而 `register()`（同文件 `:55
+        #: 9`）
         #:     **不往下传 `inject_as`** ⇒ ★ **注入键字面上等于 `inject` 的值**
         #:     ⇒ ★★ 若 `inject` 与目标函数的首参名不同，调用时必
         #:     `TypeError: … got an unexpected keyword argument '<inject>'`。
@@ -145,7 +147,8 @@ def check() -> list[str]:
         #:   ★ 实测（`tools/probe_r3_tools.py` 的真机报错带出来的）：
         #:     `solidworks_delivery_pack_and_go_audit_matrix`（`tool_specs_batch36.py`）
         #:     **只声明 3 个参数、而函数要 8 个** ⇒ 真机
-        #:     `TypeError: … missing 2 required positional arguments: 'associated_drawings' and 'outputs'`
+        #: `TypeError: … missing 2 required positional arguments: 'associated_drawings' 
+        #: and 'outputs'`
         #:     （★ 另有 3 个 `KEYWORD_ONLY`，Python 补上位置参数后**再报**）。
         #:   ★ 豁免（★ 写明理由，不静默）：① 该形参就是**注入名**（由 `RESOLVERS` 供给）；
         #:     ② spec 有 **`derived_args`**（★ 它会补 kwargs、静态看不出来）。
@@ -247,7 +250,8 @@ def check_field_forms() -> list:
                     "%s: 字段 %s 的形态是 **%s** —— ★ **期望 %s**（★ 白名单据 180 个既有工具实测："
                     "事实 233）。★ 形态错时下游的**报错会指向名字而不是形态**，很难查。"
                     % (spec.name, field, got, " / ".join(allowed)))
-        #: \u2605 `param_alias` \u7684**\u503c**\u4e5f\u67e5\uff08\u2605 \u4e24\u79cd\u5408\u6cd5\uff1astr | None\uff09
+        #: \u2605 `param_alias` \u7684**\u503c**\u4e5f\u67e5\uff08\u2605 \u4e24\u79cd\u5
+        #: 408\u6cd5\uff1astr | None\uff09
         pa = getattr(spec, "param_alias", None)
         if isinstance(pa, dict):
             for k, v in pa.items():

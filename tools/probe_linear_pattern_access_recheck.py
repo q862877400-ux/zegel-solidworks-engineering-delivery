@@ -13,9 +13,11 @@
 #       (None, None)         ⇒ 类型不匹配，位置 1
 #       ```
 #       ⇒ ★ 据此判 **线性阵列族到不了**（★ 而那就是**目标点名第一族**的理由）。
-#     · 而**事实 425/426**（轮 545/546，同样真机）：★ `(doc, 空Dispatch)` ⇒ **过 = True**（**6/6**）✓
+# · 而**事实 425/426**（轮 545/546，同样真机）：★ `(doc, 空Dispatch)` ⇒ **过 = True**（*
+# *6/6**）✓
 #
-#   ★★ **两个可能**：① ★ **接口不同**（`ILinearPatternFeatureData` vs `ISurfaceCutFeatureData` 那族）；
+# ★★ **两个可能**：① ★ **接口不同**（`ILinearPatternFeatureData` vs `ISurfaceCutFeatureD
+# ata` 那族）；
 #     ② ★ 当年那次**有别的毛病**（★ 例如 `data` 不是真拿到、或 model 传错）。
 #     ⇒ ★ **本探针就是那个决定性实验**：★ **把 §二 那三种传法在同一个脚本里重跑一遍**。
 #
@@ -107,7 +109,8 @@ def _one(sw, tag, mode):
         if data is None:
             row["access"] = "no_data"
             return row
-        #: \u2605 \u4e09\u79cd\u4f20\u6cd5\uff08\u2605 \u4e0e \u00a7\u4e8c \u9010\u5b57\u5bf9\u9f50\uff09
+        #: \u2605 \u4e09\u79cd\u4f20\u6cd5\uff08\u2605 \u4e0e \u00a7\u4e8c \u9010\u5b57\
+        #: u5bf9\u9f50\uff09
         try:
             if mode == "model_none":
                 r = C.get_com_member(data, "AccessSelections", doc, None)

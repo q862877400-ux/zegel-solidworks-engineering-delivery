@@ -14,7 +14,8 @@
 #   `derived_args` → 目标函数** ⇒ ★ **「建立选区」只有 `pre_call`（第 2 步）与
 #   `derived_args`（第 3 步）两个落点** ✓
 #   ★★ 而 **事实 503**：`RESOLVERS[inj]` 会**清空选区**（真机证据
-#   `output/selection-lifetime-evidence.json`：调过 `RESOLVERS['model']` 之后 `mark1 = 2 → 0`）
+# `output/selection-lifetime-evidence.json`：调过 `RESOLVERS['model']` 之后 `mark1 = 2 →
+#  0`）
 #   ⇒ ★★★ **「调用方先选好、我再调工具」这条路经 MCP 表面不可能成立** ——
 #     选区**必须**由 `pre_call` 在注入**之后**重建 ✓
 # 判据:   ★ **三条同时成立**才算命中（★ 三条缺一都会把好工具报成坏的）：
@@ -56,7 +57,8 @@ BASELINE = ROOT / "docs" / "preselect-family-baseline.json"
 
 #: ★★ ① 的**关键词表**：只收「**调用方必须先选**」这一个语义的表述（中英双份）✓
 #:   ⚠ 刻意**不**收裸 `selected` / `selection` —— ★ 那会把「文档在解释自己怎么取选区」的
-#:     （比如自建选区的 `hole_wizard`）也报进来（★ 外部清单第 6 类的关键词假阳性，已见一次）✗
+#: （比如自建选区的 `hole_wizard`）也报进来（★ 外部清单第 6 类的关键词假阳性，已见一次）
+#: ✗
 PRESELECT_PATTERNS = (
     r"调用前.{0,12}(先选|选中|选择)",
     r"(先|预先|须先|必须先|需要先).{0,8}(选|选中|选择)",
@@ -75,9 +77,11 @@ PRESELECT = [re.compile(p, re.I) for p in PRESELECT_PATTERNS]
 #: ★★ **否定 / 自建选区** 的排除表（★ 实测必须要有，否则假阳性一眼可见）——
 #:   ★ 起因：第一版纯关键词，27 条里当场就有反例：★ `feature_cosmetic_thread` 的自述逐字是
 #:     「调用方**不必**先选」、`thicken` 是「★ 本工具**自己**把第一张面按 mark=1 选上」、
-#:     `drawing_add_note` 是「**没有选中时**……自由放置」（★ 那两条 recon §三-3.2 已**逐字复核过**
+#: `drawing_add_note` 是「**没有选中时**……自由放置」（★ 那两条 recon §三-3.2 已**逐字复
+#: 核过**
 #:     并降级为「无关」）⇒ ★★ **关键词命中 ≠ 它在要求先选** ✓
-#:   ★ 这与我核外部清单第 6 类时抓到的假阳性**同型**（`NOT deprecated` 被 `deprecated` 命中）✓
+#: ★ 这与我核外部清单第 6 类时抓到的假阳性**同型**（`NOT deprecated` 被 `deprecated` 命
+#: 中）✓
 NEGATION = re.compile(
     r"不必先选|不用先选|毋须先选|无需先选|不需要先选|无须先选"
     r"|不必由调用方|不需要调用方"
@@ -86,7 +90,8 @@ NEGATION = re.compile(
     r"|does\s+not\s+need\s+to\s+select|no\s+selection\s+is\s+needed"
     r"|selects?\s+(it|them)\s+(itself|automatically)|auto-?select",
     re.I)
-#: 否定词要在这个窗口内出现才算「它其实不要求先选」（★ 太窄会漏、太宽会误吞，取 ±160 字）
+#: 否定词要在这个窗口内出现才算「它其实不要求先选」（★ 太窄会漏、太宽会误吞，取 ±160 字
+#: ）
 NEGATION_WINDOW = 160
 
 
@@ -129,31 +134,40 @@ def _has_selection_param(spec) -> bool:
     return False
 
 
-#: ★★ ④ **函数侧**：「自己能建选区」的信号（★ 有它 ⇒ 它不依赖调用方预选 ⇒ **不是缺陷**）✓
+#: ★★ ④ **函数侧**：「自己能建选区」的信号（★ 有它 ⇒ 它不依赖调用方预选 ⇒ **不是缺陷**）
+#: ✓
 #:   ★ 这一条是照 recon §3.1 的原方法加的：它逐条读过 41 条目标函数体，
 #:     把「24 条函数体**零选区 token**」当作「靠官方 API 隐式吃选区」的判据 ✓
-#:   ★★ 实测（未加它之前）：21 条里有 3 条是**自建选区**（`create_fold` / `insert_replace_face` /
+#: ★★ 实测（未加它之前）：21 条里有 3 条是**自建选区**（`create_fold` / `insert_replace_
+#: face` /
 #:     `create_revolved_surface`）—— 它们**不是缺陷**，却因为文档里提过「先选」被报进来 ✗
 SELF_SELECT = re.compile(
     r"SelectByID2|Select4\(|SelectByRay|\bresolve_selection\b|resolve_entity|"
     r"clear_selection|ClearSelection|"
     #: ★★ 2026-10-07（接手轮 · 规格 216 · T-216-05）**补上本仓自己的选择助手名** ——
     #:   ★ 起因：把 14 条逐条读函数体时，实测出 **2 条假阳性**：
-    #:     · `sw_assembly.suppress_component` 逐字 `_select_by_id(asm_model.Extension, component_name, "COMPONENT")`
-    #:     · `sw_sheet_metal.insert_form_tool_report` 逐字 `SS.select_entity_by_index(model, "FACE", face_int)`
+    #: · `sw_assembly.suppress_component` 逐字 `_select_by_id(asm_model.Extension, compo
+    #: nent_name, "COMPONENT")`
+    #: · `sw_sheet_metal.insert_form_tool_report` 逐字 `SS.select_entity_by_index(model,
+    #:  "FACE", face_int)`
     #:   ★★ 这两条**自己就会选**，★ 却因为 token 集不含这两个名字，被报成「没人能选」✗
     #:   ⚠ 与 `audit_byref_args.BYREF_OK`（只认**裸名**、不认 `sw_connect.out_i4()`）·
-    #:     `check_probe_reuse`（判据过宽）**同型** ⇒ ★★ **判据必须覆盖"本仓自己常用的写法"** ✓
-    #:   ⚠ 边界（★ 刻意写清）：★ 这里**只加名字**、不加语义 —— ★ 若某函数**调用了**助手却仍
-    #:     **没选够**（例如只选了 1 个而需要 2 个），★ 本道**看不见** ⇒ ★ 那一类要靠**真机验证** ✓
+    #: `check_probe_reuse`（判据过宽）**同型** ⇒ ★★ **判据必须覆盖"本仓自己常用的写法"**
+    #:  ✓
+    #: ⚠ 边界（★ 刻意写清）：★ 这里**只加名字**、不加语义 —— ★ 若某函数**调用了**助手却
+    #: 仍
+    #: **没选够**（例如只选了 1 个而需要 2 个），★ 本道**看不见** ⇒ ★ 那一类要靠**真机验
+    #: 证** ✓
     r"_select_by_id|_select_faces_for|_select_com_object|select_component_by_name|"
     #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**改成「命名约定」而不是逐个点名** ——
     #:   ★ 起因：★ 我给圆顶新写的自选助手叫 `sw_part.select_face_by_index_mark1` ⇒
     #:     ★ 逐个点名的名单**必然漏**（★ 本仓 `sw_selection_spec` 里就有 `select_object` /
-    #:     `select_entity_by_index` / `select_by_selector_report` / `select_face_at` … 一族）✗
+    #: `select_entity_by_index` / `select_by_selector_report` / `select_face_at` … 一族
+    #: ）✗
     #:   ★★ 而本仓的约定是：**凡 `select_*` 函数，就是"把选择交给一个具名助手"** ⇒
     #:     ★ 目标函数里出现 `select_xxx(` ⇒ ★ **它自己会选** ✓
-    #:   ⚠ 仍然**不是**放宽到任意调用：★ 必须真的叫 `select_…(`（★ 带左括号 = 是**调用**、不是提及）✓
+    #: ⚠ 仍然**不是**放宽到任意调用：★ 必须真的叫 `select_…(`（★ 带左括号 = 是**调用**、
+    #: 不是提及）✓
     r"select_[a-z0-9_]+\s*\(",
     re.I)
 

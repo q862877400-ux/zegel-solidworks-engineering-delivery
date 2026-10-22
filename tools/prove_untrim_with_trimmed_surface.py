@@ -14,7 +14,8 @@
 #       ⓒ 再对切剩的那张面调 `InsertUntrimSurface2`
 #
 #   ★ **两把"裁刀"都试**（★ 因为哪把真剪成过、账上并不清楚）：
-#     · `FeatureManager.InsertCutSurface`（★ 曲面切除 —— ★ 事实 406：它**回对象**、而对象在树外）
+# · `FeatureManager.InsertCutSurface`（★ 曲面切除 —— ★ 事实 406：它**回对象**、而对象在
+# 树外）
 #     · `ModelDoc2.PreTrimSurface` + `PostTrimSurface`（★ 剪裁曲面 —— ★ 事实 415：顺序是
 #       PreTrimSurface → 选 SURFACEBODY → PostTrimSurface）
 #
@@ -108,7 +109,8 @@ def _run(sw, tag, cutter):
             trimmed = _g(fm, "InsertCutSurface", False, 0, False, True, [], _oi4())
             row["cut_returned"] = type(trimmed).__name__ if trimmed is not None else "None"
         else:
-            #: \u2605 \u7167\u4e8b\u5b9e 415 \u7684\u987a\u5e8f\uff1a\u5148 Pre \u2192 \u518d\u9009 \u2192 \u518d Post
+            #: \u2605 \u7167\u4e8b\u5b9e 415 \u7684\u987a\u5e8f\uff1a\u5148 Pre \u2192 \
+            #: u518d\u9009 \u2192 \u518d Post
             try:
                 row["pre"] = str(_g(fm, "PreTrimSurface", False, True, False, False))
                 doc.ClearSelection2(True)
@@ -129,7 +131,8 @@ def _run(sw, tag, cutter):
             row["post_returned"] = type(trimmed).__name__ if trimmed is not None else "None"
         row["geom_after_trim"] = _geom(doc)
         before = list(FR.feature_names(doc) or [])
-        #: \u2605 **\u73b0\u5728\u5bf9\u5b83\u8c03\u89e3\u9664\u526a\u88c1**\uff08\u2605 5 \u53c2\uff09
+        #: \u2605 **\u73b0\u5728\u5bf9\u5b83\u8c03\u89e3\u9664\u526a\u88c1**\uff08\u2605
+        #:  5 \u53c2\uff09
         try:
             doc.ClearSelection2(True)
         except Exception:                                                     # noqa: BLE001

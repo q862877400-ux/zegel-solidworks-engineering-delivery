@@ -3,13 +3,15 @@
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `specs/213-hook-up-tools/spec.md` + `plan.md` + `tasks.md`
 # 定位:   ★ 规格 213 的 **B1**。★ 起因：★★ `docs/user-feature-coverage.md` 只量三列里的
-#   **第一列「有入口」**，★ 而它的来源是 `register_capabilities.all_specs()` 的**工具名集合** ✓
+# **第一列「有入口」**，★ 而它的来源是 `register_capabilities.all_specs()` 的**工具名集
+# 合** ✓
 #   ★★★ 实测：★ 规格 211 做成 `verified` 的能力**没有任何 ToolSpec 引用它们** ✗ ⇒
 #     ★★ 从「用户可发现、可调用」口径看它们**等于不存在** ✓
 #     （★ 装配域做了爆炸直线 + SpeedPak 两个 verified ⇒ 覆盖率**仍 5/10** ✓）
 # 本批:   ★★ **A 类 6 项 —— `scripts/` 里已有可复用实现，本批只加声明** ✓：
 #     `section_properties`(sw_mass_property.py:237) · `scale_feature`(sw_part.py:732) ·
-#     `untrim_surface`(sw_surface_features.py:1084) · `sweep_surface`(sw_surface_features.py:1195) ·
+# `untrim_surface`(sw_surface_features.py:1084) · `sweep_surface`(sw_surface_features.py
+# :1195) ·
 #     `weldment_trim`(sw_weldment.py:146) · `flat_pattern_dxf`(sw_export.py:250) ✓
 #   ★★ 形状照 `tool_specs_batch99.py`；★ 基线工具数 **448** ⇒ 本批应到 **454** ✓
 # 官方依据: 各能力的官方页三样已在规格 211 逐条读过（★ 见 `capabilities.yaml` 各条的
@@ -17,7 +19,8 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **6 个工具** ⇒ 工具数 448 → **454**
 # ★★ **参数命名要过的两道既有门禁**（★ 规格 212 的产出）：
-#   ★ 规则 2：★ 长度 `_mm` · ★ 角度 `_deg`；★ 且 `_BARE_COORD_NAMES = {x,y,z,point,coordinate}`
+# ★ 规则 2：★ 长度 `_mm` · ★ 角度 `_deg`；★ 且 `_BARE_COORD_NAMES = {x,y,z,point,coordin
+# ate}`
 #     ⇒ ★★ `scale_feature` 的 `x`/`y`/`z` 是**无量纲缩放比例**（★ 不是坐标 ✗）——
 #        本批**照原样声明**，★ 由 `check_spec` 裁定；★ 若被拦 ⇒ ★ 改用 `param_alias` 改名 ✓
 #   ★ 规则 2b：★ 名字带单位后缀 ⇒ 描述必须有单位词；★ 无量纲 ⇒ 名字不许带单位后缀 ✓
@@ -37,22 +40,28 @@ SPECS_BATCH100 = [
         module="sw_mass_property", function="section_properties",
         inject="model",
         #: ★★★ 2026-10-07（接手轮 · 规格 216）**`read_only` 由 `True` 改成 `False`** ——
-        #:   ★★ 依据是**台账明文裁定**（`capabilities.yaml` 的 `section_properties` 条目逐字）：
+        #: ★★ 依据是**台账明文裁定**（`capabilities.yaml` 的 `section_properties` 条目逐
+        #: 字）：
         #:     「★★ **有副作用**：★ 官方写「**This method clears the selection set**」＋
-        #:       「objects in the `Sections` parameter **are added to** the current selection set」
+        #: 「objects in the `Sections` parameter **are added to** the current selection 
+        #: set」
         #:       ⇒ ★★ **它清空并重写选择集** ⇒ ★ 按**规格 210** 的效应声明体系，
         #:       ★ **它不许被标 `read_only`** ✓」
         #:   ★★ 实测复核（2026-10-07）：★ 这里原先**显式**写的是 `read_only=True` ✗ ——
         #:     而 `tool_registry.effective_read_only` 的**判序第一是「显式声明优先」**
-        #:     （`explicit = getattr(spec, "read_only", None); if explicit is not None: return bool(explicit)`）
+        #: （`explicit = getattr(spec, "read_only", None); if explicit is not None: retu
+        #: rn bool(explicit)`）
         #:     ⇒ ★★ 那句显式声明**直接覆盖了派生** ⇒ ★ 于是台账的裁定**被架空**
         #:     （★ 而**没有任何门禁**在守它 —— 已实测确认）✗
         #:   ⚠ 为什么不能靠改效应表解决：★ 它是**生成物**（表头逐字 `★ 不要手改`），
         #:     而它的静态判据**只用「动词这一路」**（其 `_limitations` 自述）⇒
-        #:     ★★ **看不见只写在官方 `## Remarks` 里的副作用**（"clears the selection set" 不是动词写）
+        #: ★★ **看不见只写在官方 `## Remarks` 里的副作用**（"clears the selection set" 
+        #: 不是动词写）
         #:     ⇒ ★ 故效应表里那条 `writes: []` 是**欠近似**（★ 但**它是生成物、不改**）✓
-        #:   ★★ 正解：★ **人判（有官方 Remarks 引文的那一判）显式覆盖** ⇒ 写 `read_only=False` ✓
-        #:   ⚠ `state_classes` **本来就含 `selection`** ⇒ ★ 这条副作用**在体系的语义之内**，
+        #: ★★ 正解：★ **人判（有官方 Remarks 引文的那一判）显式覆盖** ⇒ 写 `read_only=Fa
+        #: lse` ✓
+        #: ⚠ `state_classes` **本来就含 `selection`** ⇒ ★ 这条副作用**在体系的语义之内**
+        #: ，
         #:     只是**静态判据抓不到** ⇒ ★ 不是"体系没设计"，是"这一路看不见" ✓
         read_only=False,
         params=[],
@@ -73,12 +82,16 @@ SPECS_BATCH100 = [
         title="Scale Feature (InsertScale)",
         module="sw_part", function="insert_scale",
         inject="model",
-        #: ★★★ 2026-10-07（本批真机门禁的裁定）：★ 原名 `x`/`y`/`z` **被规则 3 拦下** ✗ ——
-        #:   ★ 逐字：「规则 3 违反：工具 `solidworks_scale_feature` 的入参 `x` 是**裸坐标**
+        #: ★★★ 2026-10-07（本批真机门禁的裁定）：★ 原名 `x`/`y`/`z` **被规则 3 拦下** ✗ 
+        #: ——
+        #: ★ 逐字：「规则 3 违反：工具 `solidworks_scale_feature` 的入参 `x` 是**裸坐标*
+        #: *
         #:   —— 必须改用具名实体 + 声明式 selection」✓
         #:   ★★ 而它们**其实是无量纲缩放比例**、★ **不是坐标** ✗ ⇒
-        #:     ★ **改名成 `*_factor`**（★ 语义更准 ✓）+ ★ **用 `param_alias` 把它们映射回函数形参**
-        #:     （★ `make_tool_function` 逐字：`target = spec.param_alias.get(p.name, p.name)` ✓）✓
+        #: ★ **改名成 `*_factor`**（★ 语义更准 ✓）+ ★ **用 `param_alias` 把它们映射回函
+        #: 数形参**
+        #: （★ `make_tool_function` 逐字：`target = spec.param_alias.get(p.name, p.name)
+        #: ` ✓）✓
         param_alias={"x_factor": "x", "y_factor": "y", "z_factor": "z"},
         params=[
             Param("scale_type", int, default=1,

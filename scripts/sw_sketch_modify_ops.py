@@ -39,20 +39,26 @@
 #     ⇒ ★ **程序化要用 `SketchModify*` 族** ✓
 #
 # 官方依据（三源）:
-#   · `C:\swapi\types\IModelDoc2\SketchModifyTranslate.md`（`void (StartX, StartY, EndX, EndY)`）
-#   · `C:\swapi\types\IModelDoc2\SketchModifyRotate.md`（`void (CenterX, CenterY, Angle)`）
+# · `C:\swapi\types\IModelDoc2\SketchModifyTranslate.md`（`void (StartX, StartY, EndX, E
+# ndY)`）
+# · `C:\swapi\types\IModelDoc2\SketchModifyRotate.md`（`void (CenterX, CenterY, Angle)`
+# ）
 #   · `C:\swapi\types\IModelDoc2\SketchModifyScale.md`（`bool (ScaleFactor)`）
 #   · `C:\swapi\types\IModelDoc2\SketchModifyFlip.md`（`void (AxisFlag: int)`）
 #   · `C:\swapi\types\IModelDocExtension\Stretch.md`
-#     （`void (KeepRelations: bool, BaseX, BaseY, DestX, DestY)` · "Stretch the selected entities"）
-#   · `C:\swapi\types\ISketchManager\RotateOrCopy3DAboutXYZ.md`（★ 只做 3D —— 上表那段依据）
-#   · CHM：`AI Solidworks\官方文档\**\IModelDoc2~SketchModify{Flip,Rotate,Scale,Translate}.html`
+# （`void (KeepRelations: bool, BaseX, BaseY, DestX, DestY)` · "Stretch the selected ent
+# ities"）
+# · `C:\swapi\types\ISketchManager\RotateOrCopy3DAboutXYZ.md`（★ 只做 3D —— 上表那段依据
+# ）
+# · CHM：`AI Solidworks\官方文档\**\IModelDoc2~SketchModify{Flip,Rotate,Scale,Translate}
+# .html`
 #   · 反射：`_raw\reflect_sldworks\iface_sldworks.txt`（★ 与上面两个源**成员名一致**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件（★ 逐函数另有来源块）。
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数回 `{"ok": bool, ...}`，且 `ok` 来自**回读**（★ 规则 6：不静默成功）。
+# ★ 判据：★ 每个函数回 `{"ok": bool, ...}`，且 `ok` 来自**回读**（★ 规则 6：不静默成功）
+# 。
 
 from __future__ import annotations
 
@@ -95,20 +101,26 @@ def _require_model(model):
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（★ 复用本仓既有读法，★ 不发明）
-# 文件:   `scripts/sw_sketch.py::get_lines` · `get_arcs` · `get_model_to_sketch_transform`
+# 文件:   `scripts/sw_sketch.py::get_lines` · `get_arcs` · `get_model_to_sketch_transfor
+# m`
 # 定位:   ★★★★ 2026-10-04（接手轮）**新增两个取样助手** —— ★ 处置 `JUDGE-C_D_E.md` 的
-#   🔴 #1 · **E5-1**（★ 裁判逐字：「★ 仓内 doc：`★ 判据 = ModelToSketchTransform.ArrayData 的
+# 🔴 #1 · **E5-1**（★ 裁判逐字：「★ 仓内 doc：`★ 判据 = ModelToSketchTransform.ArrayData
+#  的
 #   平移分量变化` ／ 改几何的 ⇒ `判据 = 草图线段端点的 bbox 变没变` · ★ 而目标：
 #   `return {"ok": True, "op": "move", "verified_by": "no_exception", …}` ／
-#   ★★ **`ModelToSketchTransform` 与 `ArrayData` 在该文件各 0 次**」· ★ 判定「**确认**」）✓
-#   ★★★ **病灶**：★ 本文件头 L54 逐字承诺「★ 每个函数回 `{"ok": bool, …}`，★ 且 `ok` **来自回读**」
+# ★★ **`ModelToSketchTransform` 与 `ArrayData` 在该文件各 0 次**」· ★ 判定「**确认**」）
+# ✓
+# ★★★ **病灶**：★ 本文件头 L54 逐字承诺「★ 每个函数回 `{"ok": bool, …}`，★ 且 `ok` **来
+# 自回读**」
 #     ★★ 而 `sketch_move` / `sketch_rotate` / `sketch_stretch` / `sketch_flip` 四处逐字都写
 #       `"ok": True, … "verified_by": "no_exception"` ⇒ ★★★★ **"没抛异常"当成了"做成了"** ✓
 #     ★ （★ 那四处的 docstring **自己承认**判据弱 —— ★ 但**结果仍是无条件 `True`**，
 #        ★★ 所以规则 6 要的"不静默成功"**没有兑现** ✓）
 #   ⇒ 修法：★ **把 doc 承诺的两个判据都实现**（★ 而**两个都有现成读法**，★ 不用发明）：
-#     · ★ **`_sketch_bbox_mm(model)`** —— ★ 从 `get_lines` / `get_arcs` 的坐标算**端点 bbox** ✓
-#     · ★★ **`_sketch_transform_translation(model)`** —— ★ 从 `get_model_to_sketch_transform`
+# · ★ **`_sketch_bbox_mm(model)`** —— ★ 从 `get_lines` / `get_arcs` 的坐标算**端点 bbox*
+# * ✓
+# · ★★ **`_sketch_transform_translation(model)`** —— ★ 从 `get_model_to_sketch_transform
+# `
 #       取**平移分量** ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -193,7 +205,8 @@ def _geom_evidence(model, before_bbox, before_tf) -> dict:
     bbox_moved = _moved(before_bbox, after_bbox)
     tf_moved = _moved(before_tf, after_tf)
     #: ★★ `ok` 的判据：★ **两个量里至少一个明确变了**；
-    #:   ★★★ 而"两个都取不到"（★ `None`）⇒ ★ **`ok=None`**（★ 如实说"量不到"，★ **不报成功**）✓
+    #: ★★★ 而"两个都取不到"（★ `None`）⇒ ★ **`ok=None`**（★ 如实说"量不到"，★ **不报成功
+    #: **）✓
     if bbox_moved is None and tf_moved is None:
         ok = None
     else:
@@ -227,7 +240,8 @@ def sketch_move(model, start_x_mm: float, start_y_mm: float,
     out = {"op": "move",
            "sketch_before": before, "sketch_after": _active_sketch_name(model),
            "asked_mm": [start_x_mm, start_y_mm, end_x_mm, end_y_mm]}
-    #: ★★★★ 2026-10-04（接手轮）**改成 doc 承诺的判据**（★ 原来是 `"ok": True` + `no_exception`）✓
+    #: ★★★★ 2026-10-04（接手轮）**改成 doc 承诺的判据**（★ 原来是 `"ok": True` + `no_exc
+    #: eption`）✓
     out.update(_geom_evidence(model, before_bbox, before_tf))
     return out
 
@@ -264,8 +278,10 @@ def sketch_scale(model, factor: float) -> dict:
     before_tf = _sketch_transform_translation(model)
     r = get_com_member(model, "SketchModifyScale", float(factor))
     out = {"op": "scale", "returned": r, "asked_factor": factor}
-    #: ★★★ 2026-10-04（接手轮）：★ 保留官方的 `bool` 返回值判据（★ 它比 `void` 那几条强），
-    #:   ★★ **并叠加** doc 承诺的几何判据 ⇒ ★ 两者**都要**成立才算 `ok`（★ 跨种类 ⇒ `and`）✓
+    #: ★★★ 2026-10-04（接手轮）：★ 保留官方的 `bool` 返回值判据（★ 它比 `void` 那几条强
+    #: ），
+    #: ★★ **并叠加** doc 承诺的几何判据 ⇒ ★ 两者**都要**成立才算 `ok`（★ 跨种类 ⇒ `and`
+    #: ）✓
     geom = _geom_evidence(model, before_bbox, before_tf)
     out.update(geom)
     out["ok"] = bool(bool(r) and geom["ok"] is True)
@@ -304,7 +320,8 @@ def sketch_stretch(model, base_x_mm: float, base_y_mm: float,
                    float(base_x_mm) / 1000.0, float(base_y_mm) / 1000.0,
                    float(dest_x_mm) / 1000.0, float(dest_y_mm) / 1000.0)
     out = {"op": "stretch",
-           #: ★ 2026-10-07：把"选了多少段"**带进报告** —— ★ 它同时是**前置成立与否**的读数 ✓
+           #: ★ 2026-10-07：把"选了多少段"**带进报告** —— ★ 它同时是**前置成立与否**的读
+           #: 数 ✓
            "selected_count": selected, "select_all": bool(select_all),
            "sketch_before": before, "sketch_after": _active_sketch_name(model),
            "keep_relations": bool(keep_relations)}

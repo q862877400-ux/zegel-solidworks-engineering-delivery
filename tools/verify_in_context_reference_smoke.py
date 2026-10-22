@@ -92,7 +92,8 @@ def main() -> int:
         #: ② 装配
         asm = sw_connect.new_document(sw, "assembly")
         docs.append(asm)
-        #: ★★ **`sw_assembly.add_component` 本身就返回 `IComponent2`**（它的 docstring 明写）
+        #: ★★ **`sw_assembly.add_component` 本身就返回 `IComponent2`**（它的 docstring 
+        #: 明写）
         #: ⇒ 直接用它，**别去 `asm.GetComponents(True)` 再猜返回的是哪个接口族**
         #: （轮 161 就是这么卡住的：那批对象上**没有 `GetBody2`**）。
         c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
@@ -135,8 +136,10 @@ def main() -> int:
 
         #: ⚠⚠⚠ **顺序很重要**（轮 162 查出）：`sw_part.start_sketch` 内部会
         #: `ClearSelection2(True)` ⇒ **它会把我刚选的那条边清掉**。
-        #: ⇒ 正确顺序是：**先开草图 → 再选边 → 再投影**（第一版把选边放在开草图**之前**，
-        #:   于是 `SketchUseEdge3` 拿到的是**空选择集** ⇒ 返回 ok 而**草图里 0 个实体**）。
+        #: ⇒ 正确顺序是：**先开草图 → 再选边 → 再投影**（第一版把选边放在开草图**之前**
+        #: ，
+        #: 于是 `SketchUseEdge3` 拿到的是**空选择集** ⇒ 返回 ok 而**草图里 0 个实体**）
+        #: 。
         #: `SketchUseEdge3` 用的是**当前选择集** ⇒ 此刻选它才作数。
         #: 否则它返回 ok 而草图里**一个实体都没有**（轮 161 实测到这一步才发现）。
         #: ★ 选边走**按对象**（`IEntity.Select4`，事实 32 认可的可行路径），
@@ -179,7 +182,8 @@ def main() -> int:
         try:
             #: ⚠ 用**仓库已验证的**取法（`sw_sketch.get_sketch_segments`）——
             #: 第一版我自己写 `sk.GetSketchSegments()` ⇒ 拿到的东西不对
-            #: ⇒ 报 `TypeError: 'NoneType' object is not callable`（**不是** `add_relation` 的错）。
+            #: ⇒ 报 `TypeError: 'NoneType' object is not callable`（**不是** `add_relati
+            #: on` 的错）。
             from scripts import sw_sketch
             ents = sw_sketch.get_sketch_segments(sk) if sk is not None else []
             ents = list(ents) if ents else []

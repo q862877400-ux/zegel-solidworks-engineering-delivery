@@ -1,10 +1,13 @@
 
-# ── 24h 计划 段 6 续（Spec Kit `166` 的批次声明）：**曲面特征（第一条）** ──────────────
+# ── 24h 计划 段 6 续（Spec Kit `166` 的批次声明）：**曲面特征（第一条）** ─────────────
+# ─
 # ★★★★★ 2026-10-01（轮 308）真机（`output/surface-feature-evidence.json`）：
-#   · ★★ **通过**：`create_extruded_surface_report(doc, 10.0)` ⇒ **`曲面-拉伸1`** · 特征树 `6 → 7` · 22 参
+# · ★★ **通过**：`create_extruded_surface_report(doc, 10.0)` ⇒ **`曲面-拉伸1`** · 特征树
+#  `6 → 7` · 22 参
 #   · ★ **负例通过**：`depth_mm=-5.0` ⇒ **显式拒绝**
 #   · ⚠ **未通过**：`through_all=True` ⇒ 特征树 `7 → 7`（★ **没建成**）——
-#     ★ **如实标"未通过"**，★ 且**不猜参数**（★ `swEndConditions_e` 的取值要查了再改，铁律 4）。
+# ★ **如实标"未通过"**，★ 且**不猜参数**（★ `swEndConditions_e` 的取值要查了再改，铁律 4
+# ）。
 # ★★ **本批为什么重要**：★ 它把「**不做曲面族**」那条结论拆成两半 ——
 #   ★ `IModeler.Create*Surface`（造**曲面体**）**仍然不做**（事实 40 成立）；
 #   ★★ `IFeatureManager.FeatureExtruRefSurface3`（建**曲面特征**）**做了，且真机通过**。
@@ -13,7 +16,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch45.py —— 本文件
 # 定位:   段 6 续：把 `sw_surface_features` 的「曲面-拉伸」包装挂成 MCP 工具。
-# 官方签名依据: `C:\swapi\types\IFeatureManager\FeatureExtruRefSurface3.md`（22 参 · 回 void）·
+# 官方签名依据: `C:\swapi\types\IFeatureManager\FeatureExtruRefSurface3.md`（22 参 · 回 
+# void）·
 #   `scripts/sw_api_sldworks.py:4300`（反射 arity 22）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -43,7 +47,8 @@ SPECS_BATCH45 = [
     ),
 ]
 
-# ── 24h 计划 段 6 续（Spec Kit `166` 续的批次声明）：**缝合曲面** ──────────────────────
+# ── 24h 计划 段 6 续（Spec Kit `166` 续的批次声明）：**缝合曲面** ─────────────────────
+# ─
 # ★★★★★ 2026-10-01（轮 309）真机（`output/surface-knit-evidence.json`）**PASS 2/2**：
 #   · ★★ `knit_surfaces_report(doc, 0.0001)` ⇒ **新特征 `曲面-缝合1`** · 选中 **8** 张面 ·
 #     **body `2 → 1`** ✓（★ 判据两条都要 —— 规则 6）
@@ -81,18 +86,22 @@ _SPEC_KNIT = ToolSpec(
 
 SPECS_BATCH45 = SPECS_BATCH45 + [_SPEC_KNIT]
 
-# ── 24h 计划 段 6 续（objective② 的真缺之一）：**延伸曲面** ────────────────────────────
+# ── 24h 计划 段 6 续（objective② 的真缺之一）：**延伸曲面** ───────────────────────────
+# ─
 # ★★★★ 2026-10-02（轮 386）真机（`output/extend-surface-evidence.json`）**PASS**：
 #   · ★ 前置 `曲面-拉伸1`（树 6→7）；★ 负例 `distance_mm = 0` ⇒ **显式拒绝**
-#   · ★★ `insert_extend_surface_report(doc, 10.0)` ⇒ **新特征 `曲面-延伸1`** · 选 4 张面 · 树 **7→8** ✓
-# ★★ **对应四家缺口名 `extend_surface`**（★ objective② 重核后确认的真缺 —— 事实 302/303）。
+# · ★★ `insert_extend_surface_report(doc, 10.0)` ⇒ **新特征 `曲面-延伸1`** · 选 4 张面 ·
+#  树 **7→8** ✓
+# ★★ **对应四家缺口名 `extend_surface`**（★ objective② 重核后确认的真缺 —— 事实 302/303
+# ）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch45.py —— 追加本声明
 # 定位:   把 `sw_surface_features.insert_extend_surface_report` 挂成 MCP 工具。
 # 官方签名依据: `C:\swapi\types\IModelDoc2\InsertExtendSurface.md`
-#   （3 参：`bool ExtendLinear` / `int EndCondition`（0=按距离 · 1=到选定点）/ `double Distance`；
+# （3 参：`bool ExtendLinear` / `int EndCondition`（0=按距离 · 1=到选定点）/ `double Dis
+# tance`；
 #    ★ 回 `void` ⇒ 判据只能是特征树）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -122,21 +131,27 @@ _SPEC_EXTEND = ToolSpec(
 
 SPECS_BATCH45 = SPECS_BATCH45 + [_SPEC_EXTEND]
 
-# ── 24h 计划 段 6 续（objective② 的第二个真缺）：**填充曲面** ──────────────────────────
+# ── 24h 计划 段 6 续（objective② 的第二个真缺）：**填充曲面** ─────────────────────────
+# ─
 # ★★★★★ 2026-10-02（轮 388）真机（`output/fill-surface-evidence.json`）**PASS**：
 #   · ★ 前置 `曲面-拉伸1`（树 6→7）；★ 负例 `resolutions = 9` ⇒ **显式拒绝**
-#   · ★★ `insert_fill_surface_report(doc, 2)` ⇒ **新特征 `曲面填充1`** · 选 4 条边 · 树 **7→8** ✓
+# · ★★ `insert_fill_surface_report(doc, 2)` ⇒ **新特征 `曲面填充1`** · 选 4 条边 · 树 **
+# 7→8** ✓
 # ★★ **两个关键细节**（★ 真机撞出来的）：★ 边界边必须用 `SelectByID2` 带 **mark = 1**
-#   （★ `Select4` **没有 mark 参数** —— 事实 32；★ 传 mark = 4 会**静默失败**：回 true 而计数 0 —— 事实 8）·
+# （★ `Select4` **没有 mark 参数** —— 事实 32；★ 传 mark = 4 会**静默失败**：回 true 而
+# 计数 0 —— 事实 8）·
 #   ★ `Options = 1`（`swOptimizeSurface`，★ 与官方示例一致）。
-# ★★ **对应四家缺口名 `filled_surface`**（★ objective② 重核后确认的真缺 —— 事实 302/304）。
+# ★★ **对应四家缺口名 `filled_surface`**（★ objective② 重核后确认的真缺 —— 事实 302/304
+# ）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch45.py —— 追加本声明
 # 定位:   把 `sw_surface_features.insert_fill_surface_report` 挂成 MCP 工具。
-# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertFillSurface2.md`（**6 参** · mark 表 ·
-#   `Resolutions` = 1/2/3）· `C:\swapi\enums\swFeatureFillSurfaceOptions_e.md`（★ Bitmask，
+# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertFillSurface2.md`（**6 参** · mark 
+# 表 ·
+# `Resolutions` = 1/2/3）· `C:\swapi\enums\swFeatureFillSurfaceOptions_e.md`（★ Bitmask
+# ，
 #   `swOptimizeSurface = 1`，★ md 表与反射两源一致）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义

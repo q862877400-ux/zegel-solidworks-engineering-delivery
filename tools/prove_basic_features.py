@@ -8,9 +8,11 @@
 #   ★★ 故本探针不体检、不静态分析 —— **把每个基础操作真机跑一遍**，逐个报 verdict ✓
 #   ★ 覆盖（★ 一个零件从草图到切除到修饰到导出的完整日常）：
 #     ```
-#     \u8349\u56fe\uff1a\u77e9\u5f62 / \u5706 / \u7ebf       \u7279\u5f81\uff1a\u62c9\u4f38\u51f8\u53f0 / \u62c9\u4f38\u5207\u9664 / \u65cb\u8f6c / \u62bd\u58f3
+# \u8349\u56fe\uff1a\u77e9\u5f62 / \u5706 / \u7ebf       \u7279\u5f81\uff1a\u62c9\u4f38\
+# u51f8\u53f0 / \u62c9\u4f38\u5207\u9664 / \u65cb\u8f6c / \u62bd\u58f3
 #     \u4fee\u9970\uff1a\u5706\u89d2 / \u5012\u89d2        \u5b54\uff1a\u901a\u5b54
-#     \u6697\u793a\uff1a\u56de\u8bfb\u7279\u5f81\u6811\u589e\u91cf + \u8d28\u91cf\u5c5e\u6027\uff08\u2605 \u800c\u4e0d\u9760\u8fd4\u56de\u503c\uff09
+# \u6697\u793a\uff1a\u56de\u8bfb\u7279\u5f81\u6811\u589e\u91cf + \u8d28\u91cf\u5c5e\u602
+# 7\uff08\u2605 \u800c\u4e0d\u9760\u8fd4\u56de\u503c\uff09
 #     ```
 #   ★★ 判据（★ 规则 6 的精神）：★ **每一步看**特征树增量**（★ 或质量属性变化）** ——
 #     ★ 因为 COM 的返回值不可信（事实 8），★ 而"建成了"= **树真的长了** ✓
@@ -91,7 +93,8 @@ def main() -> int:
         sk1 = names.get("sk1", "")
         rec("extrude_boss_20mm", lambda: extrude_boss(doc, sk1, 20.0))
 
-        #: ② \u62c9\u4f38\u5207\u9664\uff08\u2605 \u7528\u6237\u70b9\u540d\u7684\u90a3\u4e2a\uff09
+        #: ② \u62c9\u4f38\u5207\u9664\uff08\u2605 \u7528\u6237\u70b9\u540d\u7684\u90a3\u
+        #: 4e2a\uff09
         def s2():
             start_sketch(doc, plane_name="Front Plane")
             sketch_circle(doc, 0.0, 0.0, 8.0)
@@ -117,7 +120,8 @@ def main() -> int:
         rec("select_edge2_for_chamfer", _sel1, "selection")
         rec("chamfer_edge1_1p5", lambda: chamfer(doc, 1.5))
 
-        #: ④ \u65cb\u8f6c\uff08\u65b0\u5efa\u4e00\u4e2a\u8349\u56fe + \u4e2d\u5fc3\u7ebf\u505a\u8f74\uff09
+        #: ④ \u65cb\u8f6c\uff08\u65b0\u5efa\u4e00\u4e2a\u8349\u56fe + \u4e2d\u5fc3\u7ebf
+        #: \u505a\u8f74\uff09
         def s4():
             from sw_part import sketch_centerline
             start_sketch(doc, plane_name="Right Plane")

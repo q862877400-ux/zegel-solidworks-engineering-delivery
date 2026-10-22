@@ -117,11 +117,13 @@ def main() -> int:
         ev["selection"] = sel_cnt
 
         # ③ ★ 核心：倒角
-        #: ⚠⚠⚠ **必须用 `distance_equal`(2)** —— 轮 164 实测（`tools/probe_chamfer_forms.py`）：
+        #: ⚠⚠⚠ **必须用 `distance_equal`(2)** —— 轮 164 实测（`tools/probe_chamfer_forms
+        #: .py`）：
         #: `type=0`（默认的 `distance_angle`）/ `type=1` ⇒ 段数**不变**且返回 None；
         #: **`type=2` ⇒ 段数 `2 → 3`**（倒角真的建出来了）。
         #: ★ 而 `type=2` 的返回对象**拿不到**（`com_error 0x80010105`）——
-        #: 那只是「取返回值」失败，**不代表倒角没做**（轮 122 正是据此误判为"架构性限制"）。
+        #: 那只是「取返回值」失败，**不代表倒角没做**（轮 122 正是据此误判为"架构性限制"
+        #: ）。
         okc, rc, dtc = timed(lambda: sw_sketch_edit.create_sketch_chamfer(
             scratch, chamfer_type=2, distance_mm=5.0))
         chk("★ create_sketch_chamfer(distance_equal=2, 5mm)", okc,

@@ -4,13 +4,17 @@
 # 文件:   tools/spec211_manual_verdicts.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B0**。★ 自动台账（`tools/gen_spec2
 #           11_ledger.py`）
-#   只能给**信号**（★ `AccessSelections` 是**关键词共现**、★ 太粗）；★ 本表是**逐项人工读官方页后**的**终判** ✓
-#   ★★ 依据**事实 53**：同一个启发式已连续改 **3 次** ⇒ ★ **停止调它**，改成「信号 + 人工终判」✓
+# 只能给**信号**（★ `AccessSelections` 是**关键词共现**、★ 太粗）；★ 本表是**逐项人工读
+# 官方页后**的**终判** ✓
+# ★★ 依据**事实 53**：同一个启发式已连续改 **3 次** ⇒ ★ **停止调它**，改成「信号 + 人工
+# 终判」✓
 # 判据:   ★ 每条 VARCHAR 三选一：
 #     `可做`   —— ★ `swapi` 侧有**参数式直接入口**，★ 且**不带 `AccessSelections`** ✓
-#     `不做`   —— ★ 带依据：① 四处零命中（官方无入口）· ② 入口要 `AccessSelections`（**事实 47**，★ 不试）✓
+# `不做`   —— ★ 带依据：① 四处零命中（官方无入口）· ② 入口要 `AccessSelections`（**事实 
+# 47**，★ 不试）✓
 #     `待实测` —— ★ 需真机确认（如本机有没有装那个产品）✓
-#   ★★ 本表**只补空**：★ 自动结果里已经是"可做"的，本表**不推翻**（★ 一致才写，不一致要写 `override` 并把理由写清）✓
+# ★★ 本表**只补空**：★ 自动结果里已经是"可做"的，本表**不推翻**（★ 一致才写，不一致要写 
+# `override` 并把理由写清）✓
 # 官方依据: `C:\swapi\types\*\*.md` 的 `**Signature**` 行 +
 #   `D:\AI\SW\AI Solidworks\官方文档\SWhelp\` 的 API 页名（★ 两者覆盖面不同，★ 都要查）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
@@ -22,18 +26,24 @@ from __future__ import annotations
 VERDICTS = {
     "边界凸台": ("特征", "不做", "★ 入口 = `IBoundaryBossFeatureData`（CHM 有 `~AccessSelections`）⇒ "
                             "属性式**要 ACL** ⇒ **事实 47**（后端限制）· ★ `AutoSelect` 或可绕开但**不试**"),
-    #: ★★★★★ 2026-10-07（B8 **第二次翻案被翻回来**）：★ 这条**原判「不做」其实是对的** ✗ ——
-    #:   ★★ 我 B8 曾把它改判「可做」，★ 依据是"参数式 `IFeatureManager::FeatureLocalCurveDrivenPattern`
+    #: ★★★★★ 2026-10-07（B8 **第二次翻案被翻回来**）：★ 这条**原判「不做」其实是对的** ✗
+    #:  ——
+    #: ★★ 我 B8 曾把它改判「可做」，★ 依据是"参数式 `IFeatureManager::FeatureLocalCurveD
+    #: rivenPattern`
     #:     存在且无 `AccessSelections`" ✗ ——
     #:   ★★★ **而那条例子里漏了一件事：★ 官方示例根本不用那个入口** ✓**
-    #:   ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Create_and_Access_Curve-driven_Pattern_Feature_Example_VB.md`）：
-    #:       `Set swCurveDrivenPatternFeatureData = swFeatureMgr.CreateDefinition(swFmCurvePattern)`
+    #: ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Create_and_Access_Curve-driven_Patter
+    #: n_Feature_Example_VB.md`）：
+    #: `Set swCurveDrivenPatternFeatureData = swFeatureMgr.CreateDefinition(swFmCurvePat
+    #: tern)`
     #:       `Set swFeature = swFeatureMgr.CreateFeature(swCurveDrivenPatternFeatureData)`
     #:     ⇒ ★ **官方走的是**属性式**那条**（★ `CreateDefinition` + `CreateFeature` ✗）✓
     #:   ★★★ 而那条路的 Data 是 **`ICurveDrivenPatternFeatureData`** ⇒
-    #:     ★★ **逐文件核过：★ 它带 `AccessSelections`** ✗（`AccessSelections.md` + `IAccessSelections.md` 都在 ✓）
+    #: ★★ **逐文件核过：★ 它带 `AccessSelections`** ✗（`AccessSelections.md` + `IAccessS
+    #: elections.md` 都在 ✓）
     #:   ⇒ ★★★ **事实 47 一挡就到不了建成** ✓
-    #:   ★★ 而★ **我 B8 调参数式那条的真机读数**是「★ **两档有效读数皆不建**」✗（第 0 / 1 档
+    #: ★★ 而★ **我 B8 调参数式那条的真机读数**是「★ **两档有效读数皆不建**」✗（第 0 / 1 
+    #: 档
     #:     `mark1=True · mark2=True · 选区=2` 而新增 `[]` ✓）⇒ ★★ **那条路真机也不通** ✓
     #:   ⇒ ★★★★★ **所以终判回到「不做（后端受限）」** ✓
     #:   ★★★ **两次翻案的教训是同一条**（★ 第一次是「焊接符号」）：
@@ -53,13 +63,16 @@ VERDICTS = {
     "扫描曲面": ("曲面", "可做", "★ `InsertSweepSurface2` / `InsertSweepSurface3`（**参数式、无 ACL**）"),
     #: ★★★★★ 2026-10-07（B8 **实测纠正**）：★ 这条**原判「可做」是错的** ✗ ——
     #:   ★★ **我把「边界曲面」与「直纹曲面」混成一个了** ✗✓ —— 证据：
-    #:     ★ **覆盖表自己就分两行**：★「曲面 / **边界曲面** ❌」· ★「曲面 / **直纹曲面** ✅」✓
+    #: ★ **覆盖表自己就分两行**：★「曲面 / **边界曲面** ❌」· ★「曲面 / **直纹曲面** ✅
+    #: 」✓
     #:   ★★★ 而全扫 `C:\swapi\types`：★ **没有任何 `*BoundarySurface*` 的入口** ✗ ——
-    #:     只有 `IFeatureManager::SetFreeformBoundaryContinuity`（★ **自由形**的边界连续性 ✗）·
+    #: 只有 `IFeatureManager::SetFreeformBoundaryContinuity`（★ **自由形**的边界连续性 ✗
+    #: ）·
     #:     `IFillSurfaceFeatureData::*Boundary*`（★ **填充曲面**的边界 ✗）⇒ ★ **都不是它** ✓
     #:   ★★ 且 `docs/toolbar-ledger.md` **早就写着**：「边界曲面 | **待查**」✓
     #:   ⇒ ★★★ **判「查不到官方入口」**（★ **铁律 5**：★ 查不到就说查不到 ✓）
-    #:     ★★ 而**"直纹曲面"是另一件东西**、★ 仓里**已有**（★ `sw_surface_edit_ops.insert_ruled_surface`
+    #: ★★ 而**"直纹曲面"是另一件东西**、★ 仓里**已有**（★ `sw_surface_edit_ops.insert_ru
+    #: led_surface`
     #:       走 `InsertRuledSurfaceFromEdge2` ✓）—— ★ 而它**不在本规格的 21 项里** ✓
     "边界曲面": ("曲面", "不做", "★★★ **查不到官方入口**（★ 铁律 5）—— ★ 全扫 `C:\\swapi\\types` 无 "
                             "`*BoundarySurface*` 入口；★ 最接近的是 `SetFreeformBoundaryContinuity`"
@@ -76,7 +89,8 @@ VERDICTS = {
     #:     ★ 它在 B2-1 里**补了包装**、★ 负例有真机证据（★ `untrim_surface` = `stitched`）✓
     #:   ⚠ ★ **教训**：★ 我 B0 判"可做"时**只查了"有没有入口"** ✗ ⇒
     #:     ★★ **没查"覆盖表/已知事实里有没有它已经试死的记录"** ✓ ——
-    #:     ★ 那正是 AGENTS.md 要求的**「先扫已走死的路」**（`docs/dead-ends.md` + `known-facts.md`）✓
+    #: ★ 那正是 AGENTS.md 要求的**「先扫已走死的路」**（`docs/dead-ends.md` + `known-fac
+    #: ts.md`）✓
     "剪裁曲面": ("曲面", "不做", "★★ **后端受限** —— ★ 依据**事实 419**：★「**照官方例子把前置完全对上**」"
                             "**而特征仍不建**（★ 案例之一就是**剔裁曲面**）✗ ⇒ ★ **不做** ✓ "
                             "★（★ **「取消剪裁」是另一半** —— ★ B2-1 已补包装、`untrim_surface` = `stitched` ✓）"),
@@ -95,14 +109,17 @@ VERDICTS = {
     #:     ★★ **「官方前置要求保存文档、而本仓硬约束不许保存」** ✗ ——
     #:     ★ 这与「剪裁曲面」（★ 事实 419：**前置全对上仍不建**）**不同族** ✗：
     #:       ★ 那是「能力到不了」✗、★ **本项是「能力可达、★ 而与本仓纪律冲突」** ✓
-    #:   ★★ **所以它是**用户可决定**的**：★ 若用户允许「为导出而临时保存」⇒ **本项即可做** ✓
-    #: ★★★★★ 2026-10-07（收口后加做 · **用户授权解除封条**）：★ 用户原话「★ **D 我允许你做**」✓
+    #: ★★ **所以它是**用户可决定**的**：★ 若用户允许「为导出而临时保存」⇒ **本项即可做**
+    #:  ✓
+    #: ★★★★★ 2026-10-07（收口后加做 · **用户授权解除封条**）：★ 用户原话「★ **D 我允许你
+    #: 做**」✓
     #:   ⇒ ★★ 本项**从「不做」改判「可做」，并当场真机建成** ✓
     #:   ★★★ 判据**一正两负**（★ 事实 62：★ 门禁只靠负例证明 ✓）：
     #:     ★ 负例① 默认（`allow_temporary_save=False`）仍拒 ✓
     #:     ★★ 负例② 授权了、★ 而临时目录在**仓库外** ⇒ 拒、★ 且**拒绝发生在另存之前** ✓
     #:     ★★★ 正例 授权 + 仓库内目录 ⇒ 临时另存 + 导出 DXF，★ 回读 **20219 字节** ✓
-    #:   ★★★ **授权是**场景性的****（★ 「为导出而临时保存」）—— ★★ **不是全仓废止硬约束⑦** ✓：
+    #: ★★★ **授权是**场景性的****（★ 「为导出而临时保存」）—— ★★ **不是全仓废止硬约束⑦**
+    #:  ✓：
     #:     ★ `allow_temporary_save` **默认 `False`** ⇒ ★ 其它任何保存动作仍受原约束 ✓
     #:   ★★ 实现里**修过一版真 bug**：★ 仓库内判据第一版是**子串前缀** ✗ ⇒
     #:     `D:\AI\SW-evil\x` 会被判成"仓库内"通过 ✗ —— ★ 由那条「负例的负例」抓出 ✓
@@ -121,21 +138,28 @@ VERDICTS = {
     "焊接符号": ("焊件", "可做", "★ `InsertWeldSymbol3` / `InsertWeldSymbol2`（★ 无 ACL）· 读回用 `GetFirstWeldSymbol` ✓"),
     "爆炸直线": ("装配", "可做", "★ `IAssemblyDoc::InsertExplodeLineSketch()`（**零参数、无 ACL**）· "
                             "配套 `AddExplodeStep2` 族 ✓"),
-    #: ★★★★★ 2026-10-07（B8 **第二次翻案被翻回来**）：★ 这条**原判「不做」其实是对的** ✗ ——
-    #:   ★★ 我 B8 曾改判「可做」（★ 依据是"参数式 `FeatureLocalCurveDrivenPattern` 无 ACL"）✗ ——
+    #: ★★★★★ 2026-10-07（B8 **第二次翻案被翻回来**）：★ 这条**原判「不做」其实是对的** ✗
+    #:  ——
+    #: ★★ 我 B8 曾改判「可做」（★ 依据是"参数式 `FeatureLocalCurveDrivenPattern` 无 ACL"
+    #: ）✗ ——
     #:   ★★★ **而官方示例根本不用那个入口** ✓**
-    #:   ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Create_Local_Curve-driven_Pattern_Example_CSharp.md`）：
-    #:       `swLocalCurvePatternFeat = (LocalCurvePatternFeatureData)swFeatMgr.CreateDefinition(`
+    #: ★★★★ **官方示例逐字**（★ `C:\swapi\examples\Create_Local_Curve-driven_Pattern_Exa
+    #: mple_CSharp.md`）：
+    #: `swLocalCurvePatternFeat = (LocalCurvePatternFeatureData)swFeatMgr.CreateDefiniti
+    #: on(`
     #:       `    (int)swFeatureNameID_e.swFmLocalCurvePattern);`
     #:       `swFeat = (Feature)swFeatMgr.CreateFeature(swLocalCurvePatternFeat);`
-    #:     ★ 且它的 `Postconditions` 逐字：★ 「**Selects the component and edge** for the local
+    #: ★ 且它的 `Postconditions` 逐字：★ 「**Selects the component and edge** for the lo
+    #: cal
     #:       curve-driven pattern feature.」✓ ⇒ ★★ **那是**装配**语境（component + edge）** ✓
     #:   ★★★ 而那条路的 Data 是 **`ILocalCurvePatternFeatureData`** ⇒
     #:     ★★ **逐文件核过：★ 它带 `AccessSelections`** ✗（`AccessSelections.md` ✓）
     #:   ⇒ ★★★ **事实 47 一挡就到不了建成** ✓
-    #:   ★★ 而★ 参数式那条**与「曲线驱动阵列」同一个入口、★ 同一批真机读数**（★ 两档有效皆不建 ✗）✓
+    #: ★★ 而★ 参数式那条**与「曲线驱动阵列」同一个入口、★ 同一批真机读数**（★ 两档有效皆
+    #: 不建 ✗）✓
     #:   ⇒ ★★★★★ **所以终判回到「不做（后端受限）」** ✓
-    #:   ★★ **旁证留档**：★ `ILocalSketchPatternFeatureData` **也带 `AccessSelections`** ✗ ——
+    #: ★★ **旁证留档**：★ `ILocalSketchPatternFeatureData` **也带 `AccessSelections`** ✗
+    #:  ——
     #:     ★ 即**这一族（`swFmLocal*Pattern`）的 Data 全都带** ✗✓
     "零部件阵列": ("装配", "不做", "★★★★ **后端受限** —— ★★ **官方示例逐字**（`Create_Local_Curve-driven_"
                              "Pattern_Example_CSharp.md`）走的是 **`CreateDefinition(swFmLocalCurvePattern)` + "

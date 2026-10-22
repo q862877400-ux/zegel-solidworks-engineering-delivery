@@ -124,8 +124,10 @@ SPECS_BATCH33 = [
             Param("dimension_name", str,
                   description="Exact dimension name, e.g. D1@草图1 or D1@凸台-拉伸1."),
             Param("value_mm", float, description="New value in MILLIMETRES."),
-            #: ★ 能力层的形参是 **`configuration_mode`**（+ `configuration_names`），**不是**
-            #:   `configuration_name` —— ★ 初版写错，被 `scripts/check_param_binding.py` 当场抓到
+            #: ★ 能力层的形参是 **`configuration_mode`**（+ `configuration_names`），**
+            #: 不是**
+            #: `configuration_name` —— ★ 初版写错，被 `scripts/check_param_binding.py` 
+            #: 当场抓到
             #:   （「既不在形参表里、也没在 param_alias 里 ⇒ 调用时会 TypeError」）。
             Param("configuration_mode", str, default="current",
                   description="'current' (active configuration only) / 'all' / 'specific'."),

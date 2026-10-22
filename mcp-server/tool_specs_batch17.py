@@ -78,7 +78,8 @@ def _radians_of_deg(p) -> dict:
 
 
 SPECS_BATCH17 = [
-    # 签名: def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal_spacing=True)
+    # 签名: def circular_pattern(model, feature_name, axis_name, angle_rad, count, equal
+    # _spacing=True)
     ToolSpec(
         name="solidworks_circular_pattern",
         title="Create Circular Pattern",

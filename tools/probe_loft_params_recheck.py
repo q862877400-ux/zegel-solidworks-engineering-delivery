@@ -5,14 +5,16 @@
 # 定位:   ★ 阶段 5 同族第 5 个：★ `查 × 特征` 官方 **451**、★ 我们 **13** ⇒ ★ **本族做
 #            `loft`** ✓
 #   **官方依据（★ 逐字）**：★ `StartConstraintDraftAngle`/`EndConstraintDraftAngle`
-#     ⇒「Draft angle」· ★ `StartTangentLength`/`EndTangentLength` ⇒「(Start/End) tangent length」·
+# ⇒「Draft angle」· ★ `StartTangentLength`/`EndTangentLength` ⇒「(Start/End) tangent len
+# gth」·
 #     ★ `GetWallThickness` ⇒「Wall thickness」· ★ `NumberOfSections` ⇒「Number of sections」
 #     （★ **而类型是 `double`**）✓
 #   ★★★ **⚠ 本探针只求"能建成 + 能读回"** —— ★ 那些量的口径**要另设几何才能定案** ⇒
 #     ★ **不谎称量到了**（★ 如实标 `unknown`）✓
 #   ★★★★ **写侧契约（★ 从 ToolSpec 读的、★ 不手调内部实现）**：
 #     ★ `create_loft_report(model, **closed=False**, **use_selected_profiles=True**)` ·
-#     ★★ **ToolSpec**：★ `params=['**profile_sketches**', 'closed', 'use_selected_profiles']` ⇒
+# ★★ **ToolSpec**：★ `params=['**profile_sketches**', 'closed', 'use_selected_profiles']
+# ` ⇒
 #       ★ **由 `pre_call` 把轮廓解析成选区**（★ 官方 mark：★ **轮廓 mark=1**）✓
 #     ★★★ **⇒ 所以本探针要**先按 mark=1 选好那些轮廓**** ✓
 #     ★★★★ **⚠ 选定后**要 `ClearSelection2` 或另选** —— ★ 免得两个草图叠在一起 ✓
@@ -67,7 +69,8 @@ def main() -> int:
     try:
         #: ★ 建一个**偏移基准面** —— ★ 用本仓既有能力（★ 不手拼 COM）✓
         #: ★★★ 用**对的模块** —— ★ 它们**不在** `sw_part`：
-        #:   ★ `insert_ref_plane` 在 **`sw_ref_geometry`** · ★ 面选择在 **`sw_simulation`** ✓
+        #: ★ `insert_ref_plane` 在 **`sw_ref_geometry`** · ★ 面选择在 **`sw_simulation`*
+        #: * ✓
         #:   ★★ **⇒ 本仓那条**「在仓里搜要搜够」** —— ★ 先问 `rc.all_specs()` 挂在哪** ✓
         import sw_ref_geometry as _RG
         import sw_simulation as _SIM

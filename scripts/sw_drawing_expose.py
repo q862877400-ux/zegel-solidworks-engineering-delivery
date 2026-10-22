@@ -1,12 +1,16 @@
 """★ 工程图「已有实现」的对外包装：收**毫米**、只在边界换算，并把**前置回读**带回来。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（ToolSpec 的边界换算层）。规格 `specs/202-user-coverage-gaps` 的 **R1**。
+# 仓库:   本项目自身（ToolSpec 的边界换算层）。规格 `specs/202-user-coverage-gaps` 的 **
+# R1**。
 # 文件:   scripts/sw_drawing_expose.py
 # 定位:   ★★ **为什么要有这一层**（三件事，缺一层都不成）：
-#   ① ★ **不重写实现**：真正的实现早已在 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`，
-#      经 `scripts/sw_drawing.py`（`spec_from_file_location` 按路径加载 + `globals()` 再导出）可达。
+# ① ★ **不重写实现**：真正的实现早已在 `subskills/solidworks-engineering-drawing/scripts
+# /drawing_workflow.py`，
+# 经 `scripts/sw_drawing.py`（`spec_from_file_location` 按路径加载 + `globals()` 再导出
+# ）可达。
 #      ★ 依据：`specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md` ——
-#      **工程图 13 项里本仓已实现 8 项、却只挂出了 4 项**（且全靠同一个 `solidworks_drawing` 工具）。
+# **工程图 13 项里本仓已实现 8 项、却只挂出了 4 项**（且全靠同一个 `solidworks_drawing` 
+# 工具）。
 #      ⇒ ★ 本层只做**转接**，★ 一行实现逻辑都不重写（"缝合优先不发明"）。
 #   ② ★ **单位边界**（规则 2）：既有实现的 `x`/`y` 是**米**，而对外一律收**毫米**
 #      ⇒ ★ **换算只在本文件发生一次**（`_mm()`），★ 上层与实现层都不做第二遍。
@@ -14,9 +18,12 @@
 #      ⇒ ★ 本层先回读**选区计数**再调用，并在返回值里如实给出 `preconditions_held`
 #      （★ 依据：事实 496 —— 一个前置失败会**拖垮整批**，所以前置必须与能力分开记）。
 #   官方依据（★ 逐页读过；契约抄本见 `recon/api/`）:
-#     · `IDrawingDoc.CreateDrawViewFromModelView3`（投影视图）· `IDrawingDoc.CreateSectionViewAt5`（剖面）
-#     · `IDrawingDoc.CreateDetailViewAt4`（局部，**12 参**）· `IDrawingDoc.SetupSheet6`（图纸格式）
-#     · `IModelDoc2.InsertNote`（注释）· `IView.InsertHoleTable3` / `ISheet.InsertRevisionTable2`（表）
+# · `IDrawingDoc.CreateDrawViewFromModelView3`（投影视图）· `IDrawingDoc.CreateSectionVi
+# ewAt5`（剖面）
+# · `IDrawingDoc.CreateDetailViewAt4`（局部，**12 参**）· `IDrawingDoc.SetupSheet6`（图
+# 纸格式）
+# · `IModelDoc2.InsertNote`（注释）· `IView.InsertHoleTable3` / `ISheet.InsertRevisionTa
+# ble2`（表）
 #     · `IDrawingDoc.InsertCenterMark3` / `IView.AutoInsertCenterMarks2`（中心符号线）
 #   许可:   本仓库 MIT。★ 无第三方代码引入（实现来自本仓 subskill）。
 # 覆盖:   全文件
@@ -120,7 +127,8 @@ def create_section_view(drawing_model, *, x_mm: float, y_mm: float, label: str =
     """
     pre = _selection_count(drawing_model)
     res = D.add_section_view(drawing_model, _mm(x_mm), _mm(y_mm), label=label)
-    #: ★★ `add_section_view` 现在回 **dict**（★ 含 `view` / `label_status` / `label_ok`）
+    #: ★★ `add_section_view` 现在回 **dict**（★ 含 `view` / `label_status` / `label_ok`
+    #: ）
     view = res.get("view") if isinstance(res, dict) else res
     extra = {}
     if isinstance(res, dict):
@@ -183,17 +191,24 @@ def set_sheet_format(drawing_model, format_path: str) -> dict:
             C.get_com_member(drawing_model, "ForceRebuild3", False)
         except Exception:                                               # noqa: BLE001
             pass
-        #: ★★★★ 2026-10-04（接手轮）**把承诺的两个条件真的算出来**（★ 处置 `JUDGE-C_D_E.md`
-        #:   的 🔴 #1 · **E5-5**）—— 裁判逐字：「★ 仓内 doc：`★ 判据：SetTemplateName 回 None
-        #:   **且** GetTemplateName 回读等于新路径。` ★ 而目标：`out["ret_repr"] = repr(ret)` ／
+        #: ★★★★ 2026-10-04（接手轮）**把承诺的两个条件真的算出来**（★ 处置 `JUDGE-C_D_E.
+        #: md`
+        #: 的 🔴 #1 · **E5-5**）—— 裁判逐字：「★ 仓内 doc：`★ 判据：SetTemplateName 回 N
+        #: one
+        #: **且** GetTemplateName 回读等于新路径。` ★ 而目标：`out["ret_repr"] = repr(re
+        #: t)` ／
         #:   `out["template_name_readback"] = …` ／ ★★ **`out["ok"] = True`（无条件）**」✓
-        #:   ★★★ **病灶（★ 实测）**：★ `ret` 与回读值都只**存进返回值**、★ **从没与承诺条件比**；
-        #:     ★★ 连**回读抛异常**（★ `template_name_readback = None`）时，★ `ok` **仍是 `True`** ✓
+        #: ★★★ **病灶（★ 实测）**：★ `ret` 与回读值都只**存进返回值**、★ **从没与承诺条
+        #: 件比**；
+        #: ★★ 连**回读抛异常**（★ `template_name_readback = None`）时，★ `ok` **仍是 `Tr
+        #: ue`** ✓
         #:   ⇒ 修法：★ **按 `verified_by` 那句逐字实现两个条件** ✓
-        #:     · ★ 条件 ①：★ `SetTemplateName` **回 `None`**（★ 官方回 `void` ⇒ 成功即 `None`）✓
+        #: · ★ 条件 ①：★ `SetTemplateName` **回 `None`**（★ 官方回 `void` ⇒ 成功即 `None
+        #: `）✓
         #:     · ★★ 条件 ②：★ `GetTemplateName` **回读等于新路径** —— ★ 比较用 `normcase` +
         #:       `normpath`（★ Windows 路径大小写与分隔符都可能不同，★ 而那是**同一个路径**）✓
-        #:   ★★★ 而"回读取不到"（★ 抛异常）⇒ ★ **条件 ② 判为不成立**（★ 因为承诺要求"等于"）✓
+        #: ★★★ 而"回读取不到"（★ 抛异常）⇒ ★ **条件 ② 判为不成立**（★ 因为承诺要求"等于"
+        #: ）✓
         ret_is_none = ret is None
         readback = out.get("template_name_readback")
         want = os.path.normcase(os.path.normpath(str(format_path)))
@@ -296,7 +311,8 @@ def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float
            "official_marks": "顶点=1 · 孔边与面=2 · X 向参考=4 · Y 向参考=8（官方 Remarks 逐字）",
            "verified_by": "GetTableAnnotationCount 增量（★ 前置成立才算）"}
     if not pre:
-        #: ★★★ 2026-10-03（接手轮）**从"硬失败"改成"告警后仍然尝试"** —— 与 `surface_fill` 同一形态。
+        #: ★★★ 2026-10-03（接手轮）**从"硬失败"改成"告警后仍然尝试"** —— 与 `surface_fil
+        #: l` 同一形态。
         #:   ★★ **为什么**（事实 503，真机隔离出来的）：注册器调工具的**顺序**是
         #:     `kwargs[inj] = resolver(params)` → `pre_call` → `fn(**kwargs)`，
         #:     ★ 而 **`RESOLVERS["drawing_model"]` 经 `connect_solidworks()` 会清空选区**
@@ -305,7 +321,8 @@ def create_hole_table(drawing_model, *, view_name: str, x_mm: float, y_mm: float
         #:   ⇒ ★ 上一版在这里 `return` 失败 ⇒ ★ **这条工具经工具层必然失败**。
         #:   ★★ **现在**：`pre` 不成立 ⇒ **记一条告警，但仍然调** ——
         #:     ★ 成不成**由 API 说了算**（★ 而硬判据是**表增量**，不是返回值 —— 事实 40）。
-        #:     ★ 若 API 真需要 mark，它会自己失败，★ 我们**如实报** `preconditions_held: False` +
+        #: ★ 若 API 真需要 mark，它会自己失败，★ 我们**如实报** `preconditions_held: Fal
+        #: se` +
         #:     `attempted_without_precondition: True` ⇒ ★ **不假装成功，也不提前判死**。
         out["preconditions_held"] = False
         out["attempted_without_precondition"] = True

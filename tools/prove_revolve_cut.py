@@ -9,12 +9,14 @@
 #     · `C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md` 逐字：
 #       > "**Obsolete. Superseded by `IFeatureManager::FeatureRevolve2`.**"
 #       ⇒ ★★ **故那个入口不用碰** ⚠
-#     · `FeatureRevolve2` 的 **20 参**里第 4 个是 **`IsCut`**（"True if this is a **cut** revolve feature"）；
+# · `FeatureRevolve2` 的 **20 参**里第 4 个是 **`IsCut`**（"True if this is a **cut** re
+# volve feature"）；
 #     · 它的 Remarks 给了**完整 mark 分工**（★ 其中 `mark = 32` 那条本仓从未用过）。
 #     ⇒ ★★ **故 = 本仓 `revolve_boss` 把那个布尔翻成 `True`** ✓
 #
 #   ★ 本探针就验这一件事：★ **同一个函数、只翻一个布尔，能不能真的切出材料**。
-#     ★ 判据（★ 规则 6 + 事实 420）：① **树增量** · ② **质量属性的体积变化**（★ 切除 ⇒ 变小）。
+# ★ 判据（★ 规则 6 + 事实 420）：① **树增量** · ② **质量属性的体积变化**（★ 切除 ⇒ 变小
+# ）。
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -58,7 +60,8 @@ def _mk_solid_and_profile(doc):
             break
         except Exception:                                                 # noqa: BLE001
             continue
-    #: \u2605 \u5256\u9762\uff08\u2605 \u524d\u89c6\u9762\u4e0a\u7684\u77e9\u5f62 + \u4e2d\u5fc3\u7ebf\uff09
+    #: \u2605 \u5256\u9762\uff08\u2605 \u524d\u89c6\u9762\u4e0a\u7684\u77e9\u5f62 + \u4e
+    #: 2d\u5fc3\u7ebf\uff09
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001
@@ -67,7 +70,8 @@ def _mk_solid_and_profile(doc):
     sm = C.get_com_member(doc, "SketchManager")
     #: \u2605 \u4e2d\u5fc3\u7ebf\uff08\u2605 \u65cb\u8f6c\u8f74\uff09
     C.get_com_member(sm, "CreateCenterLine", 0.0, -0.04, 0.0, 0.0, 0.04, 0.0)
-    #: \u2605 \u5256\u9762\uff1a\u2605 \u8ddd\u79bb\u8f74\u4e00\u5b9a\u504f\u79fb\u7684\u77e9\u5f62\uff08\u2605 \u5207\u51fa\u73af\u69fd\uff09
+    #: \u2605 \u5256\u9762\uff1a\u2605 \u8ddd\u79bb\u8f74\u4e00\u5b9a\u504f\u79fb\u7684\
+    #: u77e9\u5f62\uff08\u2605 \u5207\u51fa\u73af\u69fd\uff09
     C.get_com_member(sm, "CreateCornerRectangle", 0.010, -0.02, 0.0, 0.020, 0.02, 0.0)
     P.end_sketch(doc)
     names2 = [n for n in (P.feature_names(doc) or [])
@@ -106,7 +110,8 @@ def _one(sw, tag, cut):
         row["vol_after"] = _volume(doc)
         if row["vol_before"] and row["vol_after"]:
             row["vol_ratio"] = round(row["vol_after"] / row["vol_before"], 4)
-        #: \u2605 \u5224\u636e\uff1a**\u6811\u589e\u91cf** \u4e14\uff08\u5207\u9664 \u21d2 \u4f53\u79ef\u53d8\u5c0f\uff09
+        #: \u2605 \u5224\u636e\uff1a**\u6811\u589e\u91cf** \u4e14\uff08\u5207\u9664 \u21
+        #: d2 \u4f53\u79ef\u53d8\u5c0f\uff09
         row["ok"] = bool(row["new"]) and (row.get("vol_ratio") is None
                                          or (row["vol_ratio"] < 0.999 if cut else True))
     except Exception as exc:                                              # noqa: BLE001

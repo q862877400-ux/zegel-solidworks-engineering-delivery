@@ -4,10 +4,13 @@
 # 文件:   tools/probe_thicken_tool.py
 # 定位:   ★ 本工具是 **R4「E 类换名重查」** 的产出落地（`recon/r4-e-class-rename-looku
 #           p.md`）：
-#   `IFeatureManager.FeatureBossThicken`（**7 参·未废弃**）/ `FeatureCutThicken`（**6 参·未废弃**）。
+# `IFeatureManager.FeatureBossThicken`（**7 参·未废弃**）/ `FeatureCutThicken`（**6 参·
+# 未废弃**）。
 #   ★★ **必须真机验**：这两个成员**此前从没在本仓跑过**。
-#   官方依据: `C:\swapi\types\IFeatureManager\FeatureBossThicken.md` · `FeatureCutThicken.md`
-#     （Remarks 逐字：参考面必须按 **mark=1** 选中 · `FillVolume=true` 时**其余参数被忽略**且**必须闭合曲面**）
+# 官方依据: `C:\swapi\types\IFeatureManager\FeatureBossThicken.md` · `FeatureCutThicken.
+# md`
+# （Remarks 逐字：参考面必须按 **mark=1** 选中 · `FillVolume=true` 时**其余参数被忽略**
+# 且**必须闭合曲面**）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

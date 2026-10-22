@@ -1,7 +1,8 @@
 """★ 批次 84：由 Bunny 扇出产出、**经门禁**（`tools/check_bunny_toolspec_rows.py`）过滤后的 ToolSpec 声明。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
-# 文件:   sw_gui_focus · sw_gui_modal · sw_part · sw_ref_geometry · sw_sketch_edit_ops · sw_surface_features · sw_weldment
+# 文件:   sw_gui_focus · sw_gui_modal · sw_part · sw_ref_geometry · sw_sketch_edit_ops ·
+#  sw_surface_features · sw_weldment
 # 定位:   ★ 规格 `specs/204-tool-ramp/spec.md` 的批 84；
 #         ★★ **本文件由 `tools/build_toolspec_batch_from_rows.py` 生成** ——
 #         行来自 Bunny 子代理（**只读官方源与仓库**），而**判据、门禁、真机、提交归主线** ✓

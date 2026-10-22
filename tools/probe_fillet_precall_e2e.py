@@ -5,9 +5,11 @@
 # 定位:   ★★★ 事实 503 的正解是「前置写成 `pre_call`」（★ 只有它跑在注入之后），
 #   而仓内**最早、最规范**的那份就是 `solidworks_fillet` / `solidworks_chamfer` 用的
 #   `_select_edge` ⇒ ★ 本探针**按工具层契约**调 `solidworks_fillet`，看那条路真的能建成。
-#   ★ 若成 ⇒ ★ 这是「**`pre_call` + `resolve_selection` 对零件特征有效**」的**第一条端到端证据**；
+# ★ 若成 ⇒ ★ 这是「**`pre_call` + `resolve_selection` 对零件特征有效**」的**第一条端到端
+# 证据**；
 #   ★ 若不成 ⇒ ★ 把它记成**否定结果**，并说明卡在哪一步。
-#   官方依据: `C:\\swapi\\types\\IFeatureManager\\FeatureFillet3.md`（★ 末位是变体数组，非预选）
+# 官方依据: `C:\\swapi\\types\\IFeatureManager\\FeatureFillet3.md`（★ 末位是变体数组，非
+# 预选）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -60,7 +62,8 @@ def main() -> int:
             names = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
             P.extrude_boss(doc, (names[-1] if names else "草图1"), 15.0)
             row["tree_before"] = list(P.feature_names(doc) or [])
-            #: ★★ **按工具层契约调**：param_alias → 注入 → pre_call → derived_args → 目标函数
+            #: ★★ **按工具层契约调**：param_alias → 注入 → pre_call → derived_args → 目
+            #: 标函数
             args = {"selection": sel, "radius_mm": 2.0}
             alias = dict(getattr(spec, "param_alias", None) or {})
             want = {getattr(p, "name", None) for p in (spec.params or [])}
@@ -92,7 +95,8 @@ def main() -> int:
                 kwargs.update(spec.derived_args(pr) or {})
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
             ret = getattr(mod, spec.function)(**kwargs)
-            #: ★ 修：`ret` 不一定是 dict（★ 上一版直接 `.items()` ⇒ `AttributeError: <unknown>.items`）。
+            #: ★ 修：`ret` 不一定是 dict（★ 上一版直接 `.items()` ⇒ `AttributeError: <un
+            #: known>.items`）。
             row["ret_type"] = type(ret).__name__
             row["ret_ok"] = bool(isinstance(ret, dict) and ret.get("ok"))
             if isinstance(ret, dict):

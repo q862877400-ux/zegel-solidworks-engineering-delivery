@@ -15,9 +15,11 @@
 #     ⇒ ★ 拿到**该组件的体** ⇒ ★ `IBody2.GetFaces()` ⇒ ★ 取面。
 #   ★★ 而它**与 rigid 成的那次是同一个形状**（★ "两个东西 + 每侧一个实体"）：
 #     ★ rigid 成于 **两个体 + 每侧一个面** ⇒ ★ 两条现在指向同一个形态 ✓
-#   ⚠ ★ 按**事实 53**：★ pin 这一处已是**第 5 次** —— ★ **若这次也不成，就该停**（★ 记进 limitations）。
+# ⚠ ★ 按**事实 53**：★ pin 这一处已是**第 5 次** —— ★ **若这次也不成，就该停**（★ 记进 l
+# imitations）。
 # 官方依据: `IComponent2.GetBody()`（★ 出厂类型库反射）· `IBody2.GetFaces()` ·
-#   `AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)` · `swsAnalysisStudyTypeStatic = 0`
+# `AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)` · `swsAnalysisStudyTypeS
+# tatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

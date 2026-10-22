@@ -5,7 +5,8 @@
 # 文件:   tools/analyze_spec_constitution.py
 # 定位:   ★ 2026-10-03（接手轮）★ 补 **Spec Kit 全路径里我跳过的那一步**：
 #   宪法 §"命令的顺序" 逐字：「本项目默认走**全路径** ——
-#   `constitution → specify → clarify → plan → checklist → tasks → analyze → implement → converge`」，
+# `constitution → specify → clarify → plan → checklist → tasks → analyze → implement → c
+# onverge`」，
 #   ★ 而**我只走了 specify → plan → tasks → implement** ⚠
 #   ★ 且宪法自己点明：**「analyze（跨制品一致性）恰好是挡住『凭印象写 API』的那道」**。
 #
@@ -93,7 +94,8 @@ def check(spec_dir: Path):
         #: ⚠ **本判据分不清「目标值」与「当前值」** —— ★ 这是**已知限度**，
         #:   ★ 故按本仓纪律（事实 53：不为它继续调启发式）**只列候选、由人判**：
         #:   ★ `110/145`（SC 的目标）与 `100%`（"不设 100% 目标"）**都是合规的**；
-        #:   ★ 而出现**覆盖率现状**（如 `96/145`）就**违规**（那是 §一 明令不许写的进度）。
+        #: ★ 而出现**覆盖率现状**（如 `96/145`）就**违规**（那是 §一 明令不许写的进度）
+        #: 。
         f.append(("INFO", "不许写·进度", "spec.md 里出现**数值候选** %d 处：%s —— "
                   "★ **人工判**：是**目标值**则合规；是**当前值**（覆盖率现状）则违规"
                   % (len(prog), prog[:5])))

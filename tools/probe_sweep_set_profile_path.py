@@ -87,7 +87,8 @@ def _one(sw, tag, *, set_props):
             return row
 
         if set_props:
-            #: \u2605\u2605 \u672c\u8f6e\u7684\u81ea\u53d8\u91cf\uff1a\u628a\u4e24\u4e2a**\u5fc5\u9700\u5c5e\u6027**\u8bbe\u4e0a
+            #: \u2605\u2605 \u672c\u8f6e\u7684\u81ea\u53d8\u91cf\uff1a\u628a\u4e24\u4e2a
+            #: **\u5fc5\u9700\u5c5e\u6027**\u8bbe\u4e0a
             refs = {}
             for attr, idx in (("Profile", 0), ("Path", 1)):
                 r = _sketch_ref(doc, idx)
@@ -98,7 +99,8 @@ def _one(sw, tag, *, set_props):
                     except Exception as exc:                              # noqa: BLE001
                         refs[attr + "_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
             row["refs"] = refs
-            #: \u2605 \u5e26\u4e0a AutoSelect\uff08\u2605 \u5b83\u5728\u6210\u5458\u8868\u91cc\uff09
+            #: \u2605 \u5e26\u4e0a AutoSelect\uff08\u2605 \u5b83\u5728\u6210\u5458\u8868
+            #: \u91cc\uff09
             try:
                 C.set_com_member(data, "AutoSelect", True)
                 row["auto_select"] = True

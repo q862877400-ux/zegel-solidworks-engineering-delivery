@@ -50,7 +50,8 @@ def main() -> int:
         R["ret_repr"] = str(ret)[:90]
         R["new_features"] = [n for n in (P.feature_names(doc) or [])
                             if str(n).startswith(("圆角", "Fillet"))]
-        #: ★★★ 复刻 `server.py::_result` 的那一行（`json.dumps(payload, ensure_ascii=False, indent=2)`）
+        #: ★★★ 复刻 `server.py::_result` 的那一行（`json.dumps(payload, ensure_ascii=Fal
+        #: se, indent=2)`）
         try:
             json.dumps(ret, ensure_ascii=False, indent=2)
             R["json_dumps"] = "★ 竟然过了"

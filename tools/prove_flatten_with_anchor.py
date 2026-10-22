@@ -78,7 +78,8 @@ def _one(sw, tag, want_vertex, want_edge):
             fs = list(_get(b, "GetFaces") or [])
             if fs and _sel(fs[0], append=False, mark=1):
                 marks["1"] = 1
-            #: \u2605 mark=16 \u2014\u2014 \u951a\u70b9\uff08\u2605 \u7528\u8be5\u66f2\u9762\u7684**\u4e00\u4e2a\u9876\u70b9**\uff09
+            #: \u2605 mark=16 \u2014\u2014 \u951a\u70b9\uff08\u2605 \u7528\u8be5\u66f2\u
+            #: 9762\u7684**\u4e00\u4e2a\u9876\u70b9**\uff09
             if want_vertex:
                 for e in list(_get(b, "GetEdges") or [])[:1]:
                     for m in ("GetStartVertex", "GetEndVertex"):

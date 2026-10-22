@@ -275,11 +275,13 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
     """
     #: ★★★★ 2026-10-04（接手轮）**修掉一个"从来跑不通"的导入** ——
     #:   ★ 病灶：★ 原来写 `from sw_connect import …`（★ **裸顶层名**）⇒
-    #:     ★★ 而测试用 `from scripts import sw_document_data` ⇒ ★ **`sw_connect` 不在 `sys.path`** ⇒
+    #: ★★ 而测试用 `from scripts import sw_document_data` ⇒ ★ **`sw_connect` 不在 `sys.p
+    #: ath`** ⇒
     #:     ★★★ `ModuleNotFoundError: No module named 'sw_connect'` ✓
     #:   ★★ **实测确认它是存量**（★ 不是本轮引入）：★ `git stash` 掉本轮全部改动后，
     #:     `pytest tests/test_sw_document_data.py` **同样 2 failed / 8 passed** ✓
-    #:   ★★★ 修法：★ **与模块其他部分一致**（★ `try: from .sw_connect … / except ImportError: …`）✓
+    #: ★★★ 修法：★ **与模块其他部分一致**（★ `try: from .sw_connect … / except ImportErr
+    #: or: …`）✓
     try:
         from .sw_connect import create_empty_dispatch_variant as _empty
         from .sw_connect import get_com_member as _g
@@ -298,12 +300,15 @@ def _dimension_value_mm(dimension, configuration_name: str | None = None, *,
     #:   而**本机新建文档的单位是**毫米****（★ 真机实测 `GetUnits() = [0, 1, 8, 2, 0]`，
     #:   ★ 第 1 个 `swLengthUnit_e = 0 = swMM`）✓
     #:   ★★★ **真机证据（`tools/probe_dimension_unit.py`）**：★ 一个**厚 20 mm** 的板，
-    #:    ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★ 不是米** ✓
+    #: ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★ 
+    #: 不是米** ✓
     #:   ★★★ **而另一份证据**（`output/extrude-depth-unit-evidence.json`）**独立确认**：
-    #:    ★ `extrude_boss(model, "Sketch1", 20.0)` 建出来的实体 **`size = [100, 60, **20**]`**
+    #: ★ `extrude_boss(model, "Sketch1", 20.0)` 建出来的实体 **`size = [100, 60, **20**]
+    #: `**
     #:    ⇒ ★★ **实体真的是 20 mm 厚** ⇒ ★ **`GetSystemValue3` 回 20.0 就是毫米** ✓
     #:   ⇒ ★ 修法：★ **按文档单位换算**（★ 读一次 `GetUnits()`，★ 不再假定）✓
-    #:   ★ 而 `model` 为 `None`（★ 老调用方）⇒ ★ **回退到旧行为 `× 1000`**（★ 不破坏既有调用）✓
+    #: ★ 而 `model` 为 `None`（★ 老调用方）⇒ ★ **回退到旧行为 `× 1000`**（★ 不破坏既有调
+    #: 用）✓
     scale = _document_length_unit_scale(model) if model is not None else 1000.0
     return float(raw) * scale
 
@@ -348,7 +353,8 @@ def update_dimension_mm(
     #:   ★ **病灶**：★ `_dimension_value_mm` 硬编码 `× 1000`、★ 而这里硬编码 `/ 1000` ⇒
     #:     ★★ **两个相反方向的错、★ 互相掩盖**（★ 读回来的值**看起来对**）✓
     #:   ★★★ **真机定案**：★ `GetSystemValue3` / `SetSystemValue3` **吃的就是文档单位**
-    #:     （★ 实测：★ 毫米文档 + 厚 20mm 的板 ⇒ 回 `(20.0,)`；★ 而实体 `size=[100,60,**20**]`）✓
+    #: （★ 实测：★ 毫米文档 + 厚 20mm 的板 ⇒ 回 `(20.0,)`；★ 而实体 `size=[100,60,**20**
+    #: ]`）✓
     #:   ★★ 而 `model` 是**本函数已有**的入参 ⇒ ★ 用它读单位；★ `None` ⇒ 回退旧行为 ✓
     _scale = _document_length_unit_scale(model)
     before = (
@@ -465,35 +471,48 @@ def set_custom_properties(
     }
 
 
-# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**引用文档（依赖清单）** ────────────────────
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**引用文档（依赖清单）** ───────────
+# ─────────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_document_data.py —— 追加 `document_dependencies`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **244 `refere
 #           nced_documents`**。
 #   ★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字：「补齐 `solidworks_pack_and_go`
-#   一直枚举却不暴露的**读侧**」✓ ★ 落点由我先确认本模块职责后选定（该模块 = 文档数据读/写）。
+# 一直枚举却不暴露的**读侧**」✓ ★ 落点由我先确认本模块职责后选定（该模块 = 文档数据读/写
+# ）。
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
 #   · `C:\swapi\types\ISldWorks\GetDocumentDependencies2.md` ——
-#     `System.object GetDocumentDependencies2(System.string Document, System.bool Traverseflag,
+# `System.object GetDocumentDependencies2(System.string Document, System.bool Traversefl
+# ag,
 #      System.bool Searchflag, System.bool AddReadOnlyInfo)`
-#     ★ `## Returns` 逐字：「Array of strings with **two strings for each document** … ① File name
-#       ② Filename with the complete pathname; this combination repeats itself for each dependent file」
-#     ★ `## Remarks` 逐字 ①：「calling this method on a drawing document returns a list of all the
+# ★ `## Returns` 逐字：「Array of strings with **two strings for each document** … ① Fil
+# e name
+# ② Filename with the complete pathname; this combination repeats itself for each depend
+# ent file」
+# ★ `## Remarks` 逐字 ①：「calling this method on a drawing document returns a list of a
+# ll the
 #       part and assemblies used in the drawing」②「**Suppressed components are recognized and
-#       returned by this method as a dependent file.**」③ ★★ **盲区**：「Be aware that **Library
-#       features are completely unassociated**. … Therefore, **this method would not return Library
+# returned by this method as a dependent file.**」③ ★★ **盲区**：「Be aware that **Libra
+# ry
+# features are completely unassociated**. … Therefore, **this method would not return Li
+# brary
 #       features**.」④ `AddReadOnlyInfo=True` 时每个文档后**多一个** `"Read-Only"` 串
-#       （★ 且**只读**的那个才有，非只读的是**空串** —— 官方例子逐字 `… "SubAssem1", "c:\…", "" `）
+# （★ 且**只读**的那个才有，非只读的是**空串** —— 官方例子逐字 `… "SubAssem1", "c:\…", "
+# " `）
 #   · ⚠ `C:\swapi\types\ISldWorks\GetDocumentDependenciesCount.md` —— ★ 该页逐字写着
-#     **「Obsolete. Superseded by `ISldWorks::IGetDocumentDependenciesCount2`」** ⇒ ★★ 本函数
-#     **不去调它**（★ `I` 前缀那族是给进程内 C++ 的指针变体，且我们**本来也不需要预取个数** ——
+# **「Obsolete. Superseded by `ISldWorks::IGetDocumentDependenciesCount2`」** ⇒ ★★ 本函
+# 数
+# **不去调它**（★ `I` 前缀那族是给进程内 C++ 的指针变体，且我们**本来也不需要预取个数** 
+# ——
 #     `GetDocumentDependencies2` 一次就回**完整数组**）✓
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
-# ★★ **裁决书点名的硬约束**：「官方逐字：**Library features 不会返回** ⇒ doc **必须写明这个盲区**
-#   （不写就是静默的错答案）」✓ ⇒ ★ 见 `LIMITATIONS`，且**随返回值一起**带出去（★ 不让调用方漏读）。
+# ★★ **裁决书点名的硬约束**：「官方逐字：**Library features 不会返回** ⇒ doc **必须写明
+# 这个盲区**
+# （不写就是静默的错答案）」✓ ⇒ ★ 见 `LIMITATIONS`，且**随返回值一起**带出去（★ 不让调用
+# 方漏读）。
 
 #: ★ 本能力的**已知盲区**（★ 官方 `## Remarks` 逐字）—— ★ **随返回值一起回给调用方**
 DOCUMENT_DEPENDENCIES_LIMITATIONS = (
@@ -581,7 +600,8 @@ def document_dependencies(
     out["raw_len"] = len(items)
     step = 3 if add_read_only_info else 2
     if not items:
-        #: ★ 空数组**是合法读数**（无依赖文档）—— ★ 但要说清"这可能是真没依赖、也可能是文档名不对"
+        #: ★ 空数组**是合法读数**（无依赖文档）—— ★ 但要说清"这可能是真没依赖、也可能是
+        #: 文档名不对"
         out["ok"] = True
         out["error"] = None
         out["note"] = ("返回**空数组**：★ 可能是该文档**确实没有依赖**（例如未保存的新零件），"

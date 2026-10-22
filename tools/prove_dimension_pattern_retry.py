@@ -11,7 +11,8 @@
 #     （★ 而 AGENTS.md 正好警告过这一条：「每次失败都像是能力坏了，实际是我调错了」）。
 #   ⚠ 本探针因此**每次选之前一律先清空选区**。
 # 官方依据: `IModelDoc2.AddDimension2`（3 参 · **米** · 必须先选中实体）·
-#   `IFeatureManager.FeatureLinearPattern3`（**10 参** · `Spacing1` 是**米** · `Num1` 含原件）
+# `IFeatureManager.FeatureLinearPattern3`（**10 参** · `Spacing1` 是**米** · `Num1` 含原
+# 件）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

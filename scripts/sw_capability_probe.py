@@ -6,7 +6,8 @@
 #         与 §五 R11；AGENTS.md 铁律 1「每加一个能力必须能指认出处」。
 # 许可:   本仓库 MIT。本文件为原创实现，无第三方代码引入。
 # ⚠ 未在本机实测 SolidWorks（见 AGENTS.md 铁律 2）。本次是清单形状与授权判据的迁移，
-#   不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住。
+# 不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住
+# 。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
@@ -164,9 +165,11 @@ def probe_capabilities(check_solidworks: bool = True) -> dict:
             "implementation_status": manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("level", "not_implemented"),
             # 授权判据是 `allowed_modes` 含 `unattended`，不再是 `level == "verified"`。
             # 2026-10-01 的 pilot→五级迁移把「证据强度」与「授权」拆开
-            # （docs/capabilities-schema-proposal.md §1.2）：那 13 条由 pilot 升为 verified 的能力
+            # （docs/capabilities-schema-proposal.md §1.2）：那 13 条由 pilot 升为 verif
+            # ied 的能力
             # 跑过但不许无人值守；此处若仍按 level 判，会给它们**静默发授权**，
-            # 与本字段的语义（可直接无人值守）相反。本处是迁移必须同批改的第二条授权路径。
+            # 与本字段的语义（可直接无人值守）相反。本处是迁移必须同批改的第二条授权路径
+            # 。
             "ready_for_unattended_use": UNATTENDED_MODE
             in (manifest_index.get(CAPABILITY_ALIASES[capability], {}).get("allowed_modes") or [])
             and len(matches) == len(interface_names),

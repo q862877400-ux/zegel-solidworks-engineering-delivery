@@ -23,7 +23,8 @@ import inspect
 import sys
 from pathlib import Path as _Path
 
-#: ★★★ 本脚本要 **import 目标能力模块**（核"真形参名"）⇒ ★ 必须把仓库的两处放进 `sys.path`，
+#: ★★★ 本脚本要 **import 目标能力模块**（核"真形参名"）⇒ ★ 必须把仓库的两处放进 `sys.pat
+#: h`，
 #: 否则报 `ModuleNotFoundError: No module named 'scripts.sw_xxx'`（★ 真产出里当场撞到）✓
 _ROOT = _Path(__file__).resolve().parents[1]
 for _p in (str(_ROOT), str(_ROOT / "scripts"), str(_ROOT / "mcp-server")):
@@ -95,9 +96,12 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
              "__all__ = [\"SPECS_BATCH%s\"]" % batch, "",
              "SPECS_BATCH%s = [" % batch]
     for r in rows:
-        #: ★★★ 2026-10-04 修正（★ 被**仓库自己的** `check_param_binding` 抓到）：★ **必须把行里
-        #:   Bunny 给的 `param_alias` 一并带出来** —— 第一版只自动补了 `_mm`/`_deg` 那两类改名，
-        #:   ★★ 而 Bunny 还会把 `distance` 改名成 `distance_mm`（规则 2）并在 `param_alias` 里写明
+        #: ★★★ 2026-10-04 修正（★ 被**仓库自己的** `check_param_binding` 抓到）：★ **必
+        #: 须把行里
+        #: Bunny 给的 `param_alias` 一并带出来** —— 第一版只自动补了 `_mm`/`_deg` 那两类
+        #: 改名，
+        #: ★★ 而 Bunny 还会把 `distance` 改名成 `distance_mm`（规则 2）并在 `param_alias
+        #: ` 里写明
         #:   映射 ⇒ ★ 我不带出来 ⇒ 生成物里参数**对不上形参** ⇒ 运行期 `TypeError`
         #:   （★ 真产出里 `sw_assembly.add_mate5_checked` 的 6 个参数就是这样丢的）✓
         alias = {}
@@ -109,12 +113,15 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
         for p in r.get("params") or []:
             kind = PYTYPE.get(str(p.get("type", "str")).lower(), "str")
             nm = str(p["name"])
-            #: ★★★★ 2026-10-04 修正（★ 被 `check_param_binding` 抓到、且**注册器整批拒绝**）：
+            #: ★★★★ 2026-10-04 修正（★ 被 `check_param_binding` 抓到、且**注册器整批拒绝
+            #: **）：
             #:   **自动加单位后缀**这件事有两条**前置**，缺一就会造出假参数：
             #:   ① ★ 名字**已经带单位后缀**（`_mm`/`_px`/`_deg`…）⇒ ★ 别再改（真产出里
             #:      `width_px` 被我又改成 `width_px_mm` ⇒ 生成物里多出两个**不存在的形参**
-            #:      ⇒ 注册器报「param_alias 指向未声明的参数」+ 绑定门禁报「必填形参没被声明」）✓
-            #:   ② ★ 行里**已经给过这个参数的别名**（`param_alias` 里有它）⇒ ★ 以行的为准，别再动 ✓
+            #: ⇒ 注册器报「param_alias 指向未声明的参数」+ 绑定门禁报「必填形参没被声明
+            #: 」）✓
+            #: ② ★ 行里**已经给过这个参数的别名**（`param_alias` 里有它）⇒ ★ 以行的为准
+            #: ，别再动 ✓
             if nm.lower().endswith(_UNITISH) or nm in alias:
                 out, real = nm, None
             else:
@@ -135,8 +142,10 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
         ]
         alias.pop("__inject__", None)
         #: ★★★★ 2026-10-04 修正（★ 被**注册器自己的门禁**抓到、且它**整批拒绝**）：
-        #:   `param_alias` 的**值必须是真形参名**（不是工具参数名）—— ★ 真产出里 `set_view_frame`
-        #:   变成了 `{"width_px":"width", …, "width_px_mm":"width_px"}` ⇒ ★ 那条**链式别名**
+        #: `param_alias` 的**值必须是真形参名**（不是工具参数名）—— ★ 真产出里 `set_view
+        #: _frame`
+        #: 变成了 `{"width_px":"width", …, "width_px_mm":"width_px"}` ⇒ ★ 那条**链式别名
+        #: **
         #:   （`width_px_mm → width_px`，而 `width_px` 不是真形参）⇒ 注册器报
         #:   「param_alias 指向未声明的参数」⇒ ★★ **整批 30 个工具全注册不上** ✓
         #:   ⇒ ★ 加一条**不变量**：**丢掉所有"值不是真形参名"的别名条目**（并如实报数）✓
@@ -154,9 +163,11 @@ def build(batch: str, rows: list[dict], blocked: int = 0) -> str:
         lines.append("        params=[")
         lines += params_src
         lines += ["        ],",
-                  #: ★★ 生成的 `doc` 里常带 **Windows 路径**（`C:\swapi\...`）⇒ ★ 必须**转义反斜杠**，
+                  #: ★★ 生成的 `doc` 里常带 **Windows 路径**（`C:\swapi\...`）⇒ ★ 必须**
+                  #: 转义反斜杠**，
                   #:   否则 Python 报 `SyntaxWarning: invalid escape sequence '\s'`
-                  #:   （★ 第一版只在 `desc` 里转了义、`doc` 里忘了 ⇒ 生成物 7 处告警，实测发现）✓
+                  #: （★ 第一版只在 `desc` 里转了义、`doc` 里忘了 ⇒ 生成物 7 处告警，实
+                  #: 测发现）✓
                   '        doc="★ 官方签名（逐字，来自 %s）：`%s`。%s",'
                   % (Path(r["official_file"]).name,
                      _esc(str(r.get("official_signature") or "")[:200]),

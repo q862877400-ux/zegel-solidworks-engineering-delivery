@@ -5,7 +5,8 @@
 # 文件:   tools/probe_pattern_dimension_units.py
 # 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3 的**S0 前置**：`add_dimension` 与 `li
 #           near_pattern`
-#   的包装**都不做单位换算**，★ 而官方 API 吃**米**、`linear_pattern` 的文档串却写着**毫米**
+# 的包装**都不做单位换算**，★ 而官方 API 吃**米**、`linear_pattern` 的文档串却写着**毫米
+# **
 #   （★ 并注明"间距已测"）⇒ ★★ **在测清楚之前挂出去会把"单位"这个错固化进工具面**。
 # 官方依据: `IFeatureManager.FeatureLinearPattern3` · `IModelDoc2.AddDimension2` ·
 #   `IAnnotation.GetPosition`
@@ -21,7 +22,8 @@
 #      · 若 API 吃**米** ⇒ 步距 10 mm ⇒ 实例落在 15 / 25 / 35 ⇒ **包围盒 xmax > 20** ✓
 #      · 若 API 吃**毫米** ⇒ 步距 0.01 mm ⇒ 实例几乎重合 ⇒ **包围盒 xmax = 20**（板边）
 #    ⇒ ★★ **判据是符号**：`xmax > 20` ⇒ 米；`xmax == 20` ⇒ 毫米（★ 不依赖绝对精度）。
-# ② `AddDimension2` 的**坐标**：★ 传 **10.0**，再读回标注位置 `IAnnotation.GetPosition()`：
+# ② `AddDimension2` 的**坐标**：★ 传 **10.0**，再读回标注位置 `IAnnotation.GetPosition()
+# `：
 #      · 若回 ≈ **10**   ⇒ API 吃**米**（10 m）
 #      · 若回 ≈ **0.01** ⇒ API 吃**毫米**（10 mm = 0.01 m）
 # ```

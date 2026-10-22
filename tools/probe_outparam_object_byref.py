@@ -106,14 +106,16 @@ def main() -> int:
                     return label, "%s: %s" % (type(exc).__name__, str(exc)[:70]), True, time.time() - t0
 
             def mk_byref():
-                #: ⚠ 用 `win32com.client.VARIANT`，不是 `pythoncom.VARIANT`（后者不存在）
+                #: ⚠ 用 `win32com.client.VARIANT`，不是 `pythoncom.VARIANT`（后者不存在
+                #: ）
                 import pythoncom as _pc
                 return [VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None),
                         VARIANT(_pc.VT_BYREF | _pc.VT_DISPATCH, None)]
 
             def mk_byref_variant():
                 #: ★ 照 `probe_outparam_convention.py` 对 `Int32&` 的**已知good形态**
-                #: （`VARIANT(VT_BYREF|VT_I4, 0)` 通过）类推：容器出参用 `VT_BYREF|VT_VARIANT`。
+                #: （`VARIANT(VT_BYREF|VT_I4, 0)` 通过）类推：容器出参用 `VT_BYREF|VT_VA
+                #: RIANT`。
                 import pythoncom as _pc
                 return [VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None),
                         VARIANT(_pc.VT_BYREF | _pc.VT_VARIANT, None)]

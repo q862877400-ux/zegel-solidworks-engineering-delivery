@@ -173,7 +173,8 @@ def review_drawing_layout(structure, *, padding_m=0.001, preview_evidence=None) 
             return False
         overlapping_special_views = [
             item for item in views
-            # ★ 2026-10-03：原为魔数 `in {2, 3}`，改引单一真源（官方 `swDrawingViewTypes_e`：
+            # ★ 2026-10-03：原为魔数 `in {2, 3}`，改引单一真源（官方 `swDrawingViewTypes
+            # _e`：
             #   2 = swDrawingSectionView · 3 = swDrawingDetailView ⇒ **带标签的视图**）。
             #   ⇒ ★ 同一份知识不再两个家（另一处是 subskills/.../drawing_workflow.py）。
             if item.get("type") in LABELLED_VIEW_TYPES
@@ -596,9 +597,11 @@ def activate_model_for_preview(model):
 # 定位:   摆标准视图（供人看 / 出预览）。★ 2026-10-01（轮 340）**补返回值 + 如实报回读
 #           限制**。
 # 官方签名依据: `IModelDoc2.ShowNamedView2(Name, ViewId)`（`-1` = 不按名字、用 id）·
-#   `IModelDoc2.ActiveView`（★ 官方原文 "Gets the current active model view in read-only mode"）·
+# `IModelDoc2.ActiveView`（★ 官方原文 "Gets the current active model view in read-only m
+# ode"）·
 #   `IModelDoc2.ViewZoomtofit2`（`zoom_to_fit` 走的那条）。
-# 未在本机实测: 不适用 —— ★ 本函数**已真机实测**（`output/review-tools-evidence.json`：`ok=true`）；
+# 未在本机实测: 不适用 —— ★ 本函数**已真机实测**（`output/review-tools-evidence.json`：`
+# ok=true`）；
 #   ⚠ 而其中「**回读视图名**」那一步**真机走不通**（`ActiveView` 成员全报 `<unknown>`）——
 #   ★ 已按铁律 5 如实写进 `readback_note`，并在 capabilities 的 `limitations` 里标注。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -635,7 +638,8 @@ def set_standard_view(model, view_name="isometric"):
     try:
         av = get_com_member(model, "ActiveView")
         if av is not None:
-            #: ★★★ spec 256 换路由：`IView::Name` 已废弃 ⇒ 用官方后继 `GetName2`（★ 真机已证等价）。
+            #: ★★★ spec 256 换路由：`IView::Name` 已废弃 ⇒ 用官方后继 `GetName2`（★ 真机
+            #: 已证等价）。
             got = str(get_com_member(av, "GetName2"))
             why = None
     except Exception as exc:                                   # noqa: BLE001

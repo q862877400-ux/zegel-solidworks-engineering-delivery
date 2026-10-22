@@ -16,16 +16,20 @@
 #     ★ 对照：★ `AddPinConnector(DispArray**Comp**1, DispArray**Comp**2, …)` ⇒ ★ 要**组件**
 #             ★ `AddRigidConnector(PersistID**Face**Array, …)` ⇒ ★ 要**面**（★ 而我**做成了**）
 #     ```
-#   ★★ **故本轮试**三个**有依据的**形态**（★ 而★ 不瞎试 —— 每个都对应"VertexPoint 可能是什么"）：
+# ★★ **故本轮试**三个**有依据的**形态**（★ 而★ 不瞎试 —— 每个都对应"VertexPoint 可能是什
+# 么"）：
 #     ```
 #     ★ ① 各传**一个 `IVertex` 对象**（★ 最直译）
 #     ★ ② 各传**单元素数组** `[vertex]`（★ 因为形参类型是 `Object`，★ 而那常是数组）
-#     ★ ③ 各传**点的三元组**（★ `(x, y, z)` —— ★ 因为名字叫 **VertexPoint**，★ 可能直接要"带坐标的点"）✓
+# ★ ③ 各传**点的三元组**（★ `(x, y, z)` —— ★ 因为名字叫 **VertexPoint**，★ 可能直接要"带
+# 坐标的点"）✓
 #     ```
-#   ⚠★ **判据**（★ 与 `rigid` 同一口径）：★ **载荷与约束计数** `GetLoadsAndRestraints` **+1** ✓
+# ⚠★ **判据**（★ 与 `rigid` 同一口径）：★ **载荷与约束计数** `GetLoadsAndRestraints` **+
+# 1** ✓
 #     ★★ 而★ **不拿返回值当判据**（★ 事实 8）✓
 # 官方依据: 出厂程序集 `SolidWorks.Interop.cosworks.dll` 的
-#   `ICWLoadsAndRestraintsManager.AddLinkConnector`（★ **arity 3** · 形参名如上 · ★ 真机反射读得）·
+# `ICWLoadsAndRestraintsManager.AddLinkConnector`（★ **arity 3** · 形参名如上 · ★ 真机反
+# 射读得）·
 #   `IBody2.GetVertices`（★ 顶点对象）· `IEntity`/`IVertex` 的 `GetPoint`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -88,7 +92,8 @@ def main() -> int:
 
             def count():
                 #: ★★★ 2026-10-03（轮 457）**读数三条并列** ——
-                #:   ★ 上一版只用 `GetLoadsAndRestraints`，★ 而它**回 -1**（★ 而不是报错）⚠
+                #: ★ 上一版只用 `GetLoadsAndRestraints`，★ 而它**回 -1**（★ 而不是报错）
+                #: ⚠
                 #:   ★★ 而「建成没有」**现在读不出来** ⇒ ★ 故**把三条读数都报出来**：
                 #:     ① `Count`（★ 本仓旧包装用的 · ★★ 而事实里记过它**间歇性不稳**）
                 #:     ② `GetLoadsAndRestraints` 的长度（★ 而**报错原文**）
@@ -113,9 +118,12 @@ def main() -> int:
 
             #: ★ 取两个顶点（★ 一个体上的两个不同顶点）
             #: ★★★ 2026-10-03（轮 457）**两个体各取一个顶点** ——
-            #:   ★ 上一版两个顶点**同属一个体** ⇒ ★★ 调用**不报错而 Count 0→0**（★ 没建成）
-            #:   ★ 而 ★★ **`AddRigidConnector` 在两个体上才成**（★ 而它的形参叫 `PersistIDFace**Array**`）；
-            #:     ★★★ 而 `AddPinConnector` 的形参**直接叫 `DispArray**Comp**1/2`**（★ 两个组件）
+            #: ★ 上一版两个顶点**同属一个体** ⇒ ★★ 调用**不报错而 Count 0→0**（★ 没建成
+            #: ）
+            #: ★ 而 ★★ **`AddRigidConnector` 在两个体上才成**（★ 而它的形参叫 `PersistID
+            #: Face**Array**`）；
+            #: ★★★ 而 `AddPinConnector` 的形参**直接叫 `DispArray**Comp**1/2`**（★ 两个
+            #: 组件）
             #:   ⇒ ★ 故同理：**连接件连的是"两个东西"** ⇒ ★ **两个顶点得分属两个体** ✓
             verts = []
             try:
@@ -147,8 +155,10 @@ def main() -> int:
                 rec: dict = {"trial": label}
                 before = count()
                 #: ★★★ 2026-10-03（轮 457）**arity 要对** ——
-                #:   ★ 真机抽象：`AddLinkConnector(first:Object, second:Object, ByRef ErrorCode:Int32)`
-                #:     ⇒ ★★ **arity 3**。★ 而本仓的 `add_link_connector` 走 `_check(..., 2, …)`
+                #: ★ 真机抽象：`AddLinkConnector(first:Object, second:Object, ByRef Erro
+                #: rCode:Int32)`
+                #: ⇒ ★★ **arity 3**。★ 而本仓的 `add_link_connector` 走 `_check(..., 2, 
+                #: …)`
                 #:     ⇒ ★ **只传 2 个** ⚠（★ 与事实 315 那条"arity 写错"同一族）
                 #:   ★ 故本轮**把 3 个都传上**（★ out 参数给 0）✓
                 #: ★★★ 2026-10-03（轮 457）**out 参数要用 VARIANT(VT_BYREF|VT_I4)** ——

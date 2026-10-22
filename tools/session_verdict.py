@@ -3,12 +3,16 @@
 # 仓库:   本项目自身（工具层）
 # 文件:   tools/session_verdict.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B5-2**。★ 外部评审的要求：
-#   「把『枚举文档 + 区分是否我方 + 读未保存标记』**提到一处**，让护栏与回收脚本**都复用它**」
+# 「把『枚举文档 + 区分是否我方 + 读未保存标记』**提到一处**，让护栏与回收脚本**都复用它
+# **」
 #   ★ 并点名一个本仓反复吃过的亏：★ **一个好用的判定只在一个地方用，另一处又抄一遍** ✓
 # 判据:   ★★ **两条探路、一个裁决**（这是本文件存在的全部理由）：
-#     ① **COM 路**（准）—— `ISldWorks.GetDocuments` + `IModelDoc2.GetPathName` + **`GetSaveFlag`**；
-#        ★ 官方原文：GetSaveFlag = "Gets whether the document is currently dirty and needs to be saved" ✓
-#     ② **窗口标题路**（糙但**在 COM 已卡死时仍可用**）—— PowerShell `Get-Process SLDWORKS` 取
+# ① **COM 路**（准）—— `ISldWorks.GetDocuments` + `IModelDoc2.GetPathName` + **`GetSaveF
+# lag`**；
+# ★ 官方原文：GetSaveFlag = "Gets whether the document is currently dirty and needs to b
+# e saved" ✓
+# ② **窗口标题路**（糙但**在 COM 已卡死时仍可用**）—— PowerShell `Get-Process SLDWORKS` 
+# 取
 #        `MainWindowTitle`，抠 `[...]` 里的文档名，★ 末尾 `*` = 未保存标记 ✓
 #   ★★ 为什么**不能**只用 COM 那一条：★ 回收脚本的使用场景**正是 COM 可能已经卡死**
 #     ⇒ ★ 那时连接根本建不起来 ⇒ ★ 标题路是**兜底**，不是冗余 ✓
@@ -33,7 +37,8 @@ for _p in (str(REPO_ROOT), str(REPO_ROOT / "scripts")):
 #: ★ 我方文档的命名约定（★ 与回收脚本原先的判断**同一套**，避免两处各写一份）✓
 #: ★★ 我方文档的命名约定 —— ★ **必须覆盖三种文档类型**：★ 零件 `零件N`/`PartN` ·
 #:   ★ **装配体 `装配体N`** · ★ **工程图 `工程图N`** · ★ 以及 `MCP_` 前缀 ✓
-#:   ★★★ 2026-10-06 真机踩过：★ 我原先只写了 `零件|Part` ⇒ ★★ 收尾把**我们自己建的 `装配体1`**
+#: ★★★ 2026-10-06 真机踩过：★ 我原先只写了 `零件|Part` ⇒ ★★ 收尾把**我们自己建的 `装配体
+#: 1`**
 #:     判成「非我方」⇒ ★ **拒绝清理、并让门禁在下一轮拒绝一切** ✗
 #:     （★ 与 B2/B3 那两次同族：★ **"看起来像对家的缺陷"，先怀疑自己那半"**）✓
 OURS = re.compile(r"(零件|Part|装配体|Assembly|工程图|Drawing)\d+|^MCP_", re.I)
@@ -54,7 +59,8 @@ def parse_title_documents(title: str) -> list:
     ⚠ 限度：★ 标题路**拿不到路径**（只能给名字），★ 所以"是不是我方"要退回**命名约定**判 ✓
     """
     out = []
-    #: ★ 括号后可能还有空格再跟 `*`（实测形态 `[...] *`）⇒ ★ 必须允许空白，否则标记又丢 ✓
+    #: ★ 括号后可能还有空格再跟 `*`（实测形态 `[...] *`）⇒ ★ 必须允许空白，否则标记又丢 
+    #: ✓
     for inner, after in re.findall(r"\[([^\]]+)\](\s*\*?)", title or ""):
         name = inner.strip()
         out.append({"path": "", "title": name.rstrip("*").strip(),
@@ -133,9 +139,11 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
         tried.append(path)
         if not probe.get("usable"):
             #: ★★★ **"没在运行"不是"探不通"** —— ★ 这是本文件最容易犯的错：
-            #:   ★ SolidWorks **没启动** ⇒ 会话**必然是干净的**（没有任何文档开着）⇒ **必须放行** ✓
+            #: ★ SolidWorks **没启动** ⇒ 会话**必然是干净的**（没有任何文档开着）⇒ **必
+            #: 须放行** ✓
             #:   ★ 而"进程在、但两条路都读不出文档"才是**探不通**（★ 那时要停下问人）✓
-            #:   ★★ 我第一版把两者混成了同一种失败 ⇒ ★ 护栏会**拒绝每一次跑**（因为探针常常要先拉起 SW）✗
+            #: ★★ 我第一版把两者混成了同一种失败 ⇒ ★ 护栏会**拒绝每一次跑**（因为探针常
+            #: 常要先拉起 SW）✗
             if path == "title" and not (probe.get("processes") or []):
                 return {"ok": True, "path_used": "title", "documents": [], "ours": [],
                         "foreign": [], "unsaved": [], "unsaved_unknown": 0,
@@ -148,7 +156,8 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
             p = str((d or {}).get("path") or "")
             if not p:
                 if path == "title":
-                    #: ★ 标题路拿不到路径 ⇒ ★ 退回**命名约定**判（★ 与回收脚本同一套正则）✓
+                    #: ★ 标题路拿不到路径 ⇒ ★ 退回**命名约定**判（★ 与回收脚本同一套正则
+                    #: ）✓
                     (ours if OURS.search(str(d.get("title") or "")) else foreign).append(d)
                 else:
                     #: ★ COM 路拿不到路径（新建未存盘）⇒ ★ 默认非我方（保守）✓
@@ -157,19 +166,25 @@ def session_verdict(allowed_paths=(), *, allow_untitled: bool = False,
             (ours if _norm(p) in allowed else foreign).append(d)
         unsaved = [d for d in docs if (d or {}).get("dirty") is True]
         #: ★★★ 2026-10-06 **真机查出的静默漏洞**（★ 这是本规格最值钱的一条修正）：
-        #:   ★ 现场：SolidWorks **明明开着一个文档**，而 COM 路的 `GetDocuments` 返回**空** ⇒
+        #: ★ 现场：SolidWorks **明明开着一个文档**，而 COM 路的 `GetDocuments` 返回**空*
+        #: * ⇒
         #:     `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗✗
         #:   ⇒ ★★ 那就是「**一个存在但没人用的守卫**」的同类：★ **它瞎着，却报"干净"** ✓
         #:   ★ 判据改法：★ **只要读过之后仍然"读不出文档"**（`readback_problem` 非空）
         #:     且**一个文档都没读到** ⇒ ★ **不许放行** —— ★ 读不到 ≠ 没有 ✓
         problem = str((probe.get("snapshot") or {}).get("readback_problem") or "")
         if not docs and problem:
-            #: ★★★ 2026-10-06 **真机查出的静默漏洞 + 我随后的过度纠正**（两个都记下来）：
-            #:   ★ 漏洞：★ SolidWorks 明明开着文档，而 COM 路的 `GetDocuments` 返回**空** ⇒
-            #:     `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗（★ 门禁瞎着却报"干净"）
-            #:   ★ 过度纠正：★ 我随后改成"读不出就**拒绝**" ⇒ ★★ 结果**会话干净时也拒绝** ⇒
+            #: ★★★ 2026-10-06 **真机查出的静默漏洞 + 我随后的过度纠正**（两个都记下来）
+            #: ：
+            #: ★ 漏洞：★ SolidWorks 明明开着文档，而 COM 路的 `GetDocuments` 返回**空** 
+            #: ⇒
+            #: `count=None · 文档数=0`，★ 而当时的裁决**照样放行** ✗（★ 门禁瞎着却报"干
+            #: 净"）
+            #: ★ 过度纠正：★ 我随后改成"读不出就**拒绝**" ⇒ ★★ 结果**会话干净时也拒绝** 
+            #: ⇒
             #:     ★ **门禁变成了路障**（★ 与上一轮 `sandbox_before` 那次同族）✗
-            #:   ⇒ ★★ 正解：★ **降级到另一条探路**，★ 并把"用的是哪条"如实记进 `path_used`，
+            #: ⇒ ★★ 正解：★ **降级到另一条探路**，★ 并把"用的是哪条"如实记进 `path_used`
+            #: ，
             #:     ★ 同时把 COM 路的失败原因写进 `why` —— ★ 于是**既不瞎、也不堵** ✓
             tried_paths.append(path)
             continue

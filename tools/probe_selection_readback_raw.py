@@ -6,8 +6,10 @@
 # 定位:   ★ 2026-10-03（轮 422）承本轮的**决定性发现**：
 #   ★★ 同一份选区（两个面），★ **两条读法给出的数不一样**：
 #     ```
-#     SelectionManager.GetSelectedObjectCount2(-1)          ⇒ **2**   （select_face_at 用的）
-#     SelectionManager.GetSelectedObject6(1..2, -1) 逐个数  ⇒ **1**   （_selected_dispatch_array 用的）
+# SelectionManager.GetSelectedObjectCount2(-1)          ⇒ **2**   （select_face_at 用的
+# ）
+# SelectionManager.GetSelectedObject6(1..2, -1) 逐个数  ⇒ **1**   （_selected_dispatch_a
+# rray 用的）
 #     ```
 #     ⇒ ★ 而**传一个不完整的数组**给 `AddRigidConnector(SourceFaces, TargetFaces)`
 #       ⇒ ★★ SW 内部越界 ⇒ **RPC 服务器不可用**（★ 那正是 B 组四次"崩"的真因嫌疑）。
@@ -77,7 +79,8 @@ def main() -> int:
                                  "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])})
             per_mark["mark=%d" % mark] = rows
         ev["per_index"] = per_mark
-        #: ★ 也读一下 `safe_get_com_member` 那条（★ 复现 `_selected_dispatch_array` 的行为）
+        #: ★ 也读一下 `safe_get_com_member` 那条（★ 复现 `_selected_dispatch_array` 的行
+        #: 为）
         safe_rows = []
         for i in range(1, 5):
             obj = safe_get_com_member(sm, "GetSelectedObject6", int(i), -1)

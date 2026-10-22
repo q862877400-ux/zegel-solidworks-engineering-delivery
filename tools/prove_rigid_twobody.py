@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 425）承**事实 338** 的新假设。
 #   ★★ 那一轮的定性：★ 换成"按已知实体清单装数组"之后**不再崩**了，★ 而
 #     `AddRigidConnector` **成功返回却不建**（★ 计数 `0→0`、★ 无错误）。
-#   ★★★ 而**同族形参名自己给了线索**：★ `AddPinConnector(**DispArrayComp1**, **DispArrayComp2**)` ·
+# ★★★ 而**同族形参名自己给了线索**：★ `AddPinConnector(**DispArrayComp1**, **DispArrayCo
+# mp2**)` ·
 #     `AddSpringConnector(…, DispArrayComp1, DispArrayComp2)` ⇒ ★★ **写的是 `Comp`（零件）**
 #     ⇒ ★ **这一族"连接件"本来就是**连接两个东西**的** —— ★ 而**我一直在单体零件上试** ⚠
 #   ★★ **本探针用一个更干净的测法**：★ **双体零件**（★ 而非装配体）——

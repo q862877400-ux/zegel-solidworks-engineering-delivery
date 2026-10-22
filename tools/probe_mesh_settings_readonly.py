@@ -4,13 +4,15 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SOLIDWORKS Simulation 官方手册（本机解包 `C:\cworks_manual\`）
-# 文件:   `scripts/sw_simulation.py`（`mesh_settings_report`）· `scripts/sw_simulation_worker.py`
+# 文件:   `scripts/sw_simulation.py`（`mesh_settings_report`）· `scripts/sw_simulation_w
+# orker.py`
 #         （`mesh_settings_by_name` —— ★ 隔离入口）· `scripts/sw_isolate.py`（可杀的子进程）
 # 定位:   ★★★ **要回答的问题**（★ 铁律 5：不猜，去读）：
 #     `ICWMesh` 那几个 `Double`（`ElementSize` / `MinElementSize` / `MaxElementSize`）
 #     **到底吃什么单位**？—— ★ 上一轮我把 `element_size/2 = 2.465`（毫米）直接写进
 #     `MinElementSize`，★ 结果探针在 SW 里卡了 13 分钟且 SW 主线程 `Not Responding`
-#     ⇒ ★★ 高度怀疑是**单位口径不对**（若它吃**米**，2.465 m 的"最小单元"比零件还大 ⇒ 网格器无从下手）✓
+# ⇒ ★★ 高度怀疑是**单位口径不对**（若它吃**米**，2.465 m 的"最小单元"比零件还大 ⇒ 网格器
+# 无从下手）✓
 #   ★ 判据：★ 读到的 `ElementSize` 与"官方建议值"比 —— 官方建议 ≈ 零件最大边的 1/20
 #     ⇒ ★ 100 mm 的板：4.93 左右 ⇒ **毫米**；0.0049 左右 ⇒ **米** ✓
 #   ★★ 全程**只读**，且**每一步都 flush 证据**（★ 崩了/挂了也不丢读数 —— 本仓既有做法）✓

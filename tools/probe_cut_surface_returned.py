@@ -113,7 +113,8 @@ def main() -> int:
         doc = C.new_document(sw, "part")
         _mk_solid(doc)
         _mk_surface(doc)
-        #: \u2605 \u53ea\u9009**\u7b2c\u4e00\u5f20**\u66f2\u9762\u9762\uff08\u2605 \u4e8b\u5b9e 405 \u91cc\u56de\u5bf9\u8c61\u7684\u90a3\u79cd\u9009\u6cd5\uff09
+        #: \u2605 \u53ea\u9009**\u7b2c\u4e00\u5f20**\u66f2\u9762\u9762\uff08\u2605 \u4e8
+        #: b\u5b9e 405 \u91cc\u56de\u5bf9\u8c61\u7684\u90a3\u79cd\u9009\u6cd5\uff09
         try:
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001

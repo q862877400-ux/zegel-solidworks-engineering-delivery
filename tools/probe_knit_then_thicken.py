@@ -8,12 +8,14 @@
 #   ★★ **钥匙**（★ 事实 410 固化的教训）：★ **官方原话里的每个名词都要落实**。
 #
 #   ★★ **锁**：`IFeatureManager.FeatureBossThicken`（加厚）。它到上一轮为止的账是
-#     **14 组 / 5 种入口 · 前置每次完美（`solid = 0 · surface = 1`）· 全回 `None`**（事实 401）。
+# **14 组 / 5 种入口 · 前置每次完美（`solid = 0 · surface = 1`）· 全回 `None`**（事实 40
+# 1）。
 #
 #   ★★★ **而官方对该方法 `FillVolume` 参数的原话逐字是**：
 #     > "True if you want to make a **solid from the knitted surface**, false if not"
 #     ⇒ ★★ **"knitted surface"** —— ★ 那**直指一个前置：先把曲面缝合（knit）成一张** ⚠
-#     ★ 而本仓 `knit_surfaces_report` **真机验过能成**（事实 395，`曲面-缝合1` · body 2→1）。
+# ★ 而本仓 `knit_surfaces_report` **真机验过能成**（事实 395，`曲面-缝合1` · body 2→1）
+# 。
 #
 #   ★ 而且**那条正是我自己在事实 403 里写下的未查项**：
 #     > ⚠ **未查**：① 能否先 `knit` 成一张再加厚…
@@ -108,7 +110,9 @@ def _one(sw, tag, do_knit, entry):
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
         row["post"] = {"solid": SF._solid_body_count(doc), "surface": SF._surface_body_count(doc)}
-        #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811 \u6216 \u8fd4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d \u6216 **\u4f53\u7c7b\u578b\u53d8\u4e86**
+        #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811 \u6216 \u8f
+        #: d4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d \u6216 **\u4f53\u7c7b\u578b\u53d
+        #: 8\u4e86**
         row["ok"] = bool(row["new"] or row.get("ret_type")
                          or row["post"]["solid"] > row["pre"]["solid"])
     except Exception as exc:                                              # noqa: BLE001

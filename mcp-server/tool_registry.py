@@ -87,7 +87,8 @@ _ANGLE_SUFFIX = "_deg"
 #:     · 规则 2 要求**长度参数以 `_mm` 结尾**（`x_mm` 正是它要的写法）；
 #:     · 规则 3 却把 `x_mm` 当"裸坐标"拦掉。
 #:   ★★ 而**"裸"的定义本该是「没有单位信息、也没有具名实体」** ⇒
-#:     `x_mm` **带着单位**（★ 不裸）；★ 而 `x` / `boundary_z` / `d1_x` **都不带**（★ 才裸）。
+#: `x_mm` **带着单位**（★ 不裸）；★ 而 `x` / `boundary_z` / `d1_x` **都不带**（★ 才裸）
+#: 。
 #:   ★ 依据：`AGENTS.md` 明写规则 3 **有一条文档化的例外** ——
 #:     「*Sketch geometry MUST be given as in-plane coordinates — this is the documented
 #:      exception in rule 3*」⇒ 草图几何**本来就该给坐标** ✓
@@ -126,7 +127,8 @@ def _looks_like_coord_component(name: str) -> bool:
     #:   ⚠ 而这条**不是新例外** —— ★ 门禁**本来就在**放过它：`sketch_add_line` 的
     #:     `start_x_mm` / `end_x_mm` **从没被拦过**（★ 因为它们不以 `_x$` 结尾）。
     #:   ★★★ 矛盾在**精确黑名单**那三个条目（`x_mm`/`y_mm`/`z_mm`）：
-    #:     ★ 它们**同时**被规则 2 要求、★ 被规则 3 拦 —— ★ **两条规则自相矛盾** ⚠（本轮查明）
+    #: ★ 它们**同时**被规则 2 要求、★ 被规则 3 拦 —— ★ **两条规则自相矛盾** ⚠（本轮查明
+    #: ）
     #:   ⇒ ★ 而**无单位**的（`x` · `boundary_z` · `d1_x` · `major_y`）**照旧拦** ✓
     if low.endswith("_mm"):
         return False
@@ -157,7 +159,8 @@ _LEN_WORDS = (
 #: ⚠ 照 `check_interface_member_ownership.MANUAL_MAP` 的先例：
 #: **每条都要写清"为什么它不属于这一条"**，没依据的不许进来。
 #: 规则 2 的**角度词汇**。⚠ 刻意**不含** `rad` —— 它会**子串命中 `radius`**
-#: （本轮实测：`bend_radius_mm` / `use_default_radius` 一共 **7 处**假阳性就是这么来的）。
+#: （本轮实测：`bend_radius_mm` / `use_default_radius` 一共 **7 处**假阳性就是这么来的）
+#: 。
 _ANGLE_WORDS = ("angle", "degrees", "draft")
 
 #: ⚑⚑ **规则 2 的角度那一半的显式豁免**（判据同长度表：值是**交给 SolidWorks 的
@@ -166,7 +169,8 @@ _ANGLE_SUFFIX_EXEMPT: dict = {
     ("solidworks_mold_parting_surface", "angle"):
         "官方参数 `Angle`；本工具的文档写明「**0.0 = 用文档默认**」⇒ "
         "是**交给 SolidWorks 的文档默认量** ⇒ 加 `_deg` 反而**说错话**。",
-    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_deg` 会**说错一半**。
+    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_deg` 会**说错一半**
+    #: 。
     ("solidworks_insert_ref_plane", "first_angle_or_dist"):
         "官方参数 `FirstConstraintAngleOrDistance` —— ★ **同一个形参**在 `FirstConstraint` 取 "
         "`Angle(16)` 时是**角度**、取 `Distance(8)` 时是**长度**（官方 Parameters："
@@ -179,7 +183,8 @@ _ANGLE_SUFFIX_EXEMPT: dict = {
         "同上（`ThirdConstraintAngleOrDistance`）—— ★ 官方同一个形参承载角度或长度两种量纲。",
 }
 
-#: ⚑⚑⚑ **规则 2b 的三件套**（★ 2026-10-07 规格 212 · C-4；★ 判据**全确定性**、★ 不猜语义）─────
+#: ⚑⚑⚑ **规则 2b 的三件套**（★ 2026-10-07 规格 212 · C-4；★ 判据**全确定性**、★ 不猜语义
+#: ）─────
 #:   ★★ ① `_UNIT_DESC_WORDS`：**每档单位后缀 ↔ 该单位的写法**（★ 极窄：★ 只收该单位本身）✓
 #:     ★ 为什么要窄：★ C 批第一版"从描述推断形参是不是长度"**假阳性压不住** ✗
 #:     （★ 实录：`deg` 命中 `degenerate` · 「度」命中「**深**度」「**厚**度」）⇒
@@ -197,27 +202,31 @@ _UNIT_DESC_WORDS: dict = {
 #: ★★ ② `_DIMENSIONLESS_CLAIM`：**描述自称无量纲的固定词**（★ 用于"后缀说假话"那半）✓
 _DIMENSIONLESS_CLAIM = re.compile(r"(无量纲|枚举值|布尔|百分比|比值|计数|序号)")
 
-#: ★★ ③ `_UNIT_DESC_EXEMPT`：**唯一的逃生口** —— ★ 每条**必须写清"为什么它不需要描述里写单位"** ✓
+#: ★★ ③ `_UNIT_DESC_EXEMPT`：**唯一的逃生口** —— ★ 每条**必须写清"为什么它不需要描述里写
+#: 单位"** ✓
 #:   ★ 照 `_LEN_SUFFIX_EXEMPT` 的先例（`check_interface_member_ownership.MANUAL_MAP`）：
 #:   **绝不覆盖自动结果**、**输出分开报**、**没有依据的不许进来** ✓
 _UNIT_DESC_EXEMPT: dict = {
     ("solidworks_sheet_metal_insert_miter_flange", "relief_width_mm"):
         #: ★★ **这一条是"挂起"而不是"豁免"** —— ★ 它的单位**本身就没确证** ✗
-        #:   ★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **depth**」⇒
+        #: ★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**「…specify relief **d
+        #: epth**」⇒
         #:   ★ **官方这两句自相矛盾** ⇒ ★ 本工具**原样透传、不替官方调和**（铁律 5）✓
         #:   ★★ 而代码实测（`scripts/sw_sheet_metal.py`）：★ `float(args["ReliefWidth"])`
         #:   **直接送进 `InsertSheetMetalHem2`**、★ **中途没有 `mm()` 换算** ✗
         #:   ⇒ ★★★ **所以"名字该不该留 `_mm`"取决于官方吃什么 —— 而官方没说** ✗
         #:   ★ 已登记为 **`docs/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
         #:   ★ 传 `1.0` ⇒ **回读几何**：≈1mm ⇒ 名字对；★ ≈1000mm ⇒ 名字说假话）✓
-        #:   ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁免** ✓
+        #: ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁
+        #: 免** ✓
         "★ **挂起**（不是豁免）：★ 官方对该形参**未给单位**、★ 且官方 `ReliefWidth`/`ReliefDepth` "
         "两句自相矛盾 ⇒ ★ 『名字该不该留 `_mm`』**取决于官方吃什么，而官方没说** ✗ "
         "★ 已登记 `docs/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
 }
 
 
-#: ⚑⚑ **规则 2 的显式豁免**（★ 原表 —— ★ 2026-10-07 我插 2b 三件套时**误删了这一行** ✗，现补回）✓
+#: ⚑⚑ **规则 2 的显式豁免**（★ 原表 —— ★ 2026-10-07 我插 2b 三件套时**误删了这一行** ✗，
+#: 现补回）✓
 _LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一个形参承载两种量纲** ⇒ 加 `_mm` 会**说错一半**。
     ("solidworks_insert_reference_point", "distance_or_percent"):
         "官方参数 `DDistance_or_Percent` —— ★ **同一个形参**在 "
@@ -241,7 +250,8 @@ _LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一�
         "同 `pixel_width`：官方 `ExportToBMP` 的 `Height`，单位是**像素**不是长度。",
     ("solidworks_assembly_add_mate_checked", "width_mate_option"):
         #: ★★★ 2026-10-07（规格 212 · C-3）：★ 这条豁免是**改名撞出来的** ——
-        #:   ★ 原名 `width_mate_option_mm`，★ 而它其实是官方 `swMateWidthOptions_e` 的**枚举值**、
+        #: ★ 原名 `width_mate_option_mm`，★ 而它其实是官方 `swMateWidthOptions_e` 的**枚
+        #: 举值**、
         #:   ★★ **不是长度** ⇒ ★ 规格 212 的"后缀说假话"判据把它揪出来了 ✓
         #:   ★ 改名成能力层的真名 `width_mate_option` 之后 ⇒ ★★ **门禁又命中它** ——
         #:   ★ 因为门禁按**子串**匹配、`width` ∈ `_LEN_WORDS`）✗
@@ -259,24 +269,33 @@ _LEN_SUFFIX_EXEMPT: dict = {    #: ★ 2026-10-03（轮 480）：官方**同一�
         "**一个参数不可能同时是长度与角度**。"
         "★★ 也**不是**「交给 SolidWorks 的**文档默认**量」（那是另一类豁免的形态）—— "
         "它**是我们自己换算出的度**，只是后缀该是 `_deg` 而非 `_mm`。",
-    #: ★★★★ 2026-10-04（接手轮 · 规格 205 的批 86）：`sw_view.set_view_frame` 的四个**像素**参数。
-    #:   ★ 该函数的官方读数逐字是「Left position of document window in client area **in pixels**」
-    #:     ⇒ ★★ **单位是像素、不是长度** ⇒ 加 `_mm` 会把「像素」说成「毫米」（**那是说错话**）✓
+    #: ★★★★ 2026-10-04（接手轮 · 规格 205 的批 86）：`sw_view.set_view_frame` 的四个**像
+    #: 素**参数。
+    #: ★ 该函数的官方读数逐字是「Left position of document window in client area **in pi
+    #: xels**」
+    #: ⇒ ★★ **单位是像素、不是长度** ⇒ 加 `_mm` 会把「像素」说成「毫米」（**那是说错话**
+    #: ）✓
     #:   ★ 与既有的 `solidworks_export_bmp` 的 `pixel_width`/`pixel_height` **同一形态**
     #:     （★ 门禁按**子串**匹配，`width`/`height`/`left`/`top` 都在 `_LEN_WORDS` 里）✓
     #:   ⚠ ★ 我先前让**生成器自动改名**成 `width_px_mm` 想绕过本门禁 —— ★★ **方向错了**
-    #:     （那会造出一个**不存在的形参**，被 `check_param_binding` 与注册器**双双拒绝、整批 30 个
+    #: （那会造出一个**不存在的形参**，被 `check_param_binding` 与注册器**双双拒绝、整批
+    #:  30 个
     #:     全注册不上**）；★ 正解就是这里：**走豁免通道并写明理由** ✓
     ("solidworks_view_set_frame", "left_px"):
         "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
         "`Left position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
     ("solidworks_view_set_frame", "top_px"):
-        #: ⚑⚑ ★ 2026-10-07（规格 212 · A-1）**修自洽性**：★ 原文只写「**同 `left_px`**」⇒
-        #:   ★★ 而门禁要求**每条豁免自己点明三类依据之一**（「文档默认」/「不是长度（如像素）」/
-        #:   「同一个形参两种量纲」）✗ —— ★ **理由挂靠别条时，读者（与门禁）都得去翻另一条** ✓
+        #: ⚑⚑ ★ 2026-10-07（规格 212 · A-1）**修自洽性**：★ 原文只写「**同 `left_px`**」
+        #: ⇒
+        #: ★★ 而门禁要求**每条豁免自己点明三类依据之一**（「文档默认」/「不是长度（如像
+        #: 素）」/
+        #: 「同一个形参两种量纲」）✗ —— ★ **理由挂靠别条时，读者（与门禁）都得去翻另一条
+        #: ** ✓
         #:   ★ 故改成与 `width_px` **同构**的写法（★ 自己点明"不是长度、是像素"）✓
-        #:   ⚠ ★ **没有为过门禁说假话** —— ★ 该理由**本来就成立**（官方读数逐字就是像素），
-        #:     ★ 只是**没写全** ✓（★ 这条纪律见 `test_rule2_exemptions_are_explicit_and_reasoned` 的 docstring）
+        #: ⚠ ★ **没有为过门禁说假话** —— ★ 该理由**本来就成立**（官方读数逐字就是像素）
+        #: ，
+        #: ★ 只是**没写全** ✓（★ 这条纪律见 `test_rule2_exemptions_are_explicit_and_reas
+        #: oned` 的 docstring）
         "★ **不是长度**，是**像素** —— 官方 `IView.GetViewFrame` 的读数逐字 "
         "`Top position of document window in client area in pixels` ⇒ 加 `_mm` 是说错话。",
     ("solidworks_view_set_frame", "width_px"):
@@ -385,17 +404,20 @@ class ToolSpec:
     needs_model: bool = False
     read_only: Optional[bool] = None
     #: ★★ **效应声明**（规格 210 · B1）：**可能改**哪几类状态 ——
-    #:   类别固定七类：文档内容 / 文件系统 / 选区 / 激活文档 / 编辑态 / 视图 / 重建或解析。
+    #: 类别固定七类：文档内容 / 文件系统 / 选区 / 激活文档 / 编辑态 / 视图 / 重建或解析
+    #: 。
     #:   ★★ **三态**：`None` = **未知**（★ 机械初判判不出的那批，**不许当成"无写"**）·
     #:   `()` = **确认不改任何状态**（这才是"纯读"）· 非空 = 改这几类 ✓
     #:   ★ 由 `scripts/` 侧的效应表（生成物）填充，见 `effective_writes()`。
     writes: Optional[tuple] = None
-    #: ★ `writes` 的**来源**：`static`（机械初判）/ `observed`（真机指纹实证）/ `human`（人判）
+    #: ★ `writes` 的**来源**：`static`（机械初判）/ `observed`（真机指纹实证）/ `human`
+    #: （人判）
     writes_source: str = "unknown"
     #: ★ **依赖**哪几类状态（前置）。★ 与 `writes` 同一套类别名 ✓
     requires: tuple = ()
     idempotent: Optional[bool] = None
-    #: ★ `idempotent` 的**来源**（`static` / `observed` / `human`；`unknown` = 尚未判过）✓
+    #: ★ `idempotent` 的**来源**（`static` / `observed` / `human`；`unknown` = 尚未判过
+    #: ）✓
     idempotent_source: str = "unknown"
     #: ★★ **是否会做破坏性更新**（删除、覆盖保存、清空）—— ★ 与"写"**分开**：
     #:   ★ "写"可以是可补偿的（新增特征就删掉增量），★ "破坏性"是**不可逆**的那类 ✓
@@ -475,7 +497,8 @@ def check_spec(spec: ToolSpec) -> None:
                 "必须改用具名实体 + 声明式 selection" % (spec.name, p.name)
             )
         #: ★★ 规则 3 的**第二句**（2026-10-01 轮 218 接上，地基③）。
-        #:    ⚠ 规则 3 在文档里有**三句**，机器**只验过第一句**（参数名）⇒ 后两句无人看守（事实 153）。
+        #: ⚠ 规则 3 在文档里有**三句**，机器**只验过第一句**（参数名）⇒ 后两句无人看守（
+        #: 事实 153）。
         #:    ★ 而**能被机器判的其实只有两句**：
         #:      句1「不许裸坐标」    ⇒ 上面那段（参数名黑名单）
         #:      句2「必须是声明式选择」⇒ **本段**：声明式选择在参数上就是 `selection: str`
@@ -501,7 +524,8 @@ def check_spec(spec: ToolSpec) -> None:
         #    但它的长度那一半**从来没拦过任何东西**（已知事实 40：存在但没人用的守卫）。
         #    证据：`tests/test_rule2_length_suffix_is_enforced.py` 的负例。
         low = p.name.lower()
-        #: ⚠ `bool` **不是长度**（`use_default_radius` / `reverse_thickness` 是**标志**）
+        #: ⚠ `bool` **不是长度**（`use_default_radius` / `reverse_thickness` 是**标志**
+        #: ）
         if p.kind is not bool and any(w in low for w in _LEN_WORDS) \
                 and not low.endswith(_LEN_SUFFIX):
             if (spec.name, p.name) not in _LEN_SUFFIX_EXEMPT:
@@ -522,23 +546,30 @@ def check_spec(spec: ToolSpec) -> None:
                     "**写明为什么它不是度**"
                     % (spec.name, p.name, _ANGLE_SUFFIX, p.name, _ANGLE_SUFFIX)
                 )
-        # ⚑⚑⚑ 规则 2b 的**前半**（★ 2026-10-07 规格 212 · C-4）—— ★★ **只报不拦，不在这里 `raise`** ✓
+        # ⚑⚑⚑ 规则 2b 的**前半**（★ 2026-10-07 规格 212 · C-4）—— ★★ **只报不拦，不在这
+        # 里 `raise`** ✓
         #    ★★ 判据：**名字带单位后缀 ⇒ 描述里应有本档单位词** ✓
-        #    ★★★ **为什么它不做硬拦**（★ 这是本批最重要的分寸判断，★ 被一次测试失败逼出来的）：
-        #      ★ 实录：★ 接上硬拦后，**既有测试** `test_radius_param_is_not_flagged_as_an_angle`
+        # ★★★ **为什么它不做硬拦**（★ 这是本批最重要的分寸判断，★ 被一次测试失败逼出来的
+        # ）：
+        # ★ 实录：★ 接上硬拦后，**既有测试** `test_radius_param_is_not_flagged_as_an_ang
+        # le`
         #        当场失败 —— ★ 它的夹具 `bend_radius_mm` **描述里没写 "mm"** ✗
         #      ★★ 而那条夹具的**意图与单位无关**（★ 它测的是"半径不该被当角度" ✓）
         #      ⇒ ★★★ **判断**：★「描述没写全」**不构成危险**（★ 名字已经说清了 ✓）⇒
         #        ★ **它适合当"审计发现"，不适合当"硬拦"** ✗ ✓
-        #      ★★ 而**后半（说假话）才是真危险** —— ★ 它主动误导，★ **读代码的人与 AI 都会信** ✗
-        #    ★★ **故分工**：★ **前半**留 `tools/check_unit_suffix_consistency.py`（★ 只报 ✓）·
+        # ★★ 而**后半（说假话）才是真危险** —— ★ 它主动误导，★ **读代码的人与 AI 都会信*
+        # * ✗
+        # ★★ **故分工**：★ **前半**留 `tools/check_unit_suffix_consistency.py`（★ 只报 ✓
+        # ）·
         #      ★ **后半**在这里硬拦 ✓
         #    ★ 判据**全确定性**（★ 描述里的单位词是**固定词表**，★ 不猜语义）✓
         # ⚑⚑⚑ 规则 2b 的**后半：不许说假话**（★ 硬拦 ✓；★ C 批清后**已 0 条**）→
         #    ★★ **描述自称无量纲/枚举/布尔 ⇒ 名字不许带单位后缀** ✗
-        #    ★ 依据：★ 实录 —— `lock_rotation_deg` 是 `bool`、`width_mate_option_mm` 是 `int` 枚举，
+        # ★ 依据：★ 实录 —— `lock_rotation_deg` 是 `bool`、`width_mate_option_mm` 是 `in
+        # t` 枚举，
         #      ★★ 两个后缀**都在说假话**，★ 而**读代码的人与 AI 都会信它** ✗
-        #    ★★ 这正是**规则 2 的盲区**：★ 原门禁只查「名字含长度词却无 `_mm`」（**单向** ✗）⇒
+        # ★★ 这正是**规则 2 的盲区**：★ 原门禁只查「名字含长度词却无 `_mm`」（**单向** ✗
+        # ）⇒
         #      ★ 反过来那种（★ **不含长度词、却带了 `_mm`/`_deg`**）**门禁抓不到** ✓
         #    ⚠⚠ ★ **修过一次**：★ 我第一版在这半里也写了 `p.kind is not bool` ⇒
         #      ★★ **于是 `lock_rotation_deg`（★ 它正是 `bool`）逃掉了** ✗ ——
@@ -598,7 +629,8 @@ def build_input_model(spec: ToolSpec, base: type, response_enum: Any) -> type:
                                       **{k: v[1] for k, v in fields.items()}})
 
 
-#: ★★ B4 的预检开关（★ 规格 210）—— ★ **默认开**；★ `SW_PRECHECK=off` 可关（★ 于是**可回退**）✓
+#: ★★ B4 的预检开关（★ 规格 210）—— ★ **默认开**；★ `SW_PRECHECK=off` 可关（★ 于是**可回
+#: 退**）✓
 PRECHECK_ENABLED = str(os.environ.get("SW_PRECHECK", "on")).strip().lower() not in ("off", "0", "false")
 
 
@@ -666,7 +698,8 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
                         "（已给的：%r）" % (spec.name, inj, sorted((resolvers or {}).keys()))
                     )
                 kwargs[inject_as or inj] = resolver(params)
-                #: ★★ **B4：按声明自动生成的预检** ⇒ ★ 不适用就回**结构化载荷**，★ 不调目标函数 ✓
+                #: ★★ **B4：按声明自动生成的预检** ⇒ ★ 不适用就回**结构化载荷**，★ 不调
+                #: 目标函数 ✓
                 #:   ★（★ 只在 `inject` 非空时做 —— ★ 没有宿主对象就没有"不适用"可言）✓
                 _blocked = precheck_payload(spec, inj, kwargs.get(inject_as or inj))
                 if _blocked is not None:
@@ -699,7 +732,8 @@ def make_tool_function(spec: ToolSpec, input_model: type, run_locked: Callable[.
     return _impl
 
 
-#: ★★ 效应表（**生成物**，规格 210 · B1）：`工具名 -> {"writes": [...], "destructive": bool, "source": ...}`
+#: ★★ 效应表（**生成物**，规格 210 · B1）：`工具名 -> {"writes": [...], "destructive": b
+#: ool, "source": ...}`
 #:   ★ 由 `tools/gen_effect_declarations.py` 从**底层成员动词**机械初判生成；
 #:   ★★ **表缺失或查不到 ⇒ 一律按"未知"处理**（★ 保守方向：绝不因为查不到就当成"无写"）✓
 _EFFECTS_PATH = Path(__file__).resolve().parents[1] / "docs" / "effect-declarations.json"
@@ -719,11 +753,13 @@ def _effects_table() -> dict:
     return _EFFECTS_CACHE
 
 
-#: ★★★ **实证覆盖层**（规格 210 · B3/B4）：★ **真机观察到变化的工具** —— ★ 实证**优先于**静态 ✓
+#: ★★★ **实证覆盖层**（规格 210 · B3/B4）：★ **真机观察到变化的工具** —— ★ 实证**优先于*
+#: *静态 ✓
 #:   ★★ 外部评审的设计原话：★「**静态当提案与否决票，运行时实证当实证，两者都通过才开**」✓
 #:   ⇒ ★ 于是覆盖层的语义是：★ **静态说「无写」而实证观察到改动 ⇒ 以实证为准** ✓
 #:     ★（★ 保守方向：★ **一旦观察到变化，就绝不许再当只读**）✓
-#:   ★ 现场（真机）：★ `assembly_check_interference` 静态 `[]` 而观察 **改了 `selection`** ·
+#: ★ 现场（真机）：★ `assembly_check_interference` 静态 `[]` 而观察 **改了 `selection`**
+#:  ·
 #:     ★ `motion_create_study` 静态 `[]` 而观察 **改了 `selection`+`dirty`+`features`** ✓
 _OBSERVED_PATH = Path(__file__).resolve().parents[1] / "docs" / "effect-observed.json"
 _OBSERVED_CACHE: Optional[dict] = None
@@ -803,7 +839,8 @@ def _tool_annotations(spec: ToolSpec) -> dict:
     }
     if getattr(spec, "idempotent", None) is not None:
         ann["idempotentHint"] = bool(spec.idempotent)
-    #: ★ 未声明破坏性时：只读 ⇒ 可明确 False；★ 其余**一律不发**（缺省 = 可能破坏 = 保守）✓
+    #: ★ 未声明破坏性时：只读 ⇒ 可明确 False；★ 其余**一律不发**（缺省 = 可能破坏 = 保守
+    #: ）✓
     destructive = getattr(spec, "destructive", None)
     if destructive is not None:
         ann["destructiveHint"] = bool(destructive)

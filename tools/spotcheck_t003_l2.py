@@ -5,7 +5,8 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
 # 文件:   `specs/202-user-coverage-gaps/recon/bunny-L2-official-member-calls.md` ·
-#         `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py` · `C:\swapi\types\**`
+# `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py` · `C:\swapi\typ
+# es\**`
 # 定位:   ★ SPEC 的 **T003** 逐字：「逐条**拿官方原文抽查**侦察结论 —— 宪法 §III
 #   「**专挑最容易编造处**」」✓
 #   ★★ **L2 比 L1 厚得多**：★ 它自称「函数总数 **83** / 调用了至少一个官方成员的 **67** /

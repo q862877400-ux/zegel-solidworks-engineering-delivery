@@ -4,8 +4,10 @@
 # 文件:   tools/probe_explicit_reject_family.py
 # 定位:   ★★★ bunny 的 `recon/preselect-family-merged.md` 点名这一族为「**显式拒**」：
 #   目标函数**读到选区计数为 0 就 `return {"ok": False, "stage": "selection"}`**。
-#   ★★ 而它们的 spec **既没有 `selection` 类参数、也没有 `pre_call`**（本探针先静态断言这一点）
-#   ⇒ ★★ **调用方根本无从提供选区** ⇒ 经工具层**必然失败**（★ 与事实 502 的 11 条注入键同族）。
+# ★★ 而它们的 spec **既没有 `selection` 类参数、也没有 `pre_call`**（本探针先静态断言这
+# 一点）
+# ⇒ ★★ **调用方根本无从提供选区** ⇒ 经工具层**必然失败**（★ 与事实 502 的 11 条注入键同
+# 族）。
 #   官方依据: `scripts/sw_sweep.py` 的 `create_sweep_report` docstring 逐字
 #     「用选中的「轮廓（mark=1）+ 路径（mark=4）」建扫描特征」+
 #     `C:\\swapi\\types\\IFeatureManager\\CreateDefinition.md`（`swFmSweep`）

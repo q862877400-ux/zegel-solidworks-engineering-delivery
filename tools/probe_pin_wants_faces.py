@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_pin_wants_faces.py
 # 定位:   ★ 2026-10-03（轮 426）承本轮的**两步排除**：
-#   ★★ ① 传**裸组件对象** ⇒ `TypeError: must be real number, not dict`（★ 因为形参是**数组**）
+# ★★ ① 传**裸组件对象** ⇒ `TypeError: must be real number, not dict`（★ 因为形参是**数组
+# **）
 #   ★★ ② 改成 `[comp1]` / `[comp2]` **且** 用 `GetComponents` 的**原始 COM 对象**
 #     （★ `sw_assembly.get_components` 回的是**字典记录**，★ 不是 COM 对象）⇒
 #     ★★★ 而结果是 **计数 `[0, 0]`、★ 无错误** —— ★★ **与 rigid 在单体零件上那次形态相同**

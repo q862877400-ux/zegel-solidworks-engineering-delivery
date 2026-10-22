@@ -16,7 +16,8 @@
 #     ```
 #     ★ 而 `CenterArcDirection` 官方给了取值：**-1 = Clockwise · 1 = Counterclockwise** ✓
 #
-#   ★★★ **两个枚举的值来自**反射**（★ 铁律 4：数值去反射；★ 而 swapi 的 enums 页只给成员名列表）**：
+# ★★★ **两个枚举的值来自**反射**（★ 铁律 4：数值去反射；★ 而 swapi 的 enums 页只给成员名
+# 列表）**：
 #     ```
 #     swSketchSlotCreationType_e :  0 = line · 1 = center_line · 2 = arc · 3 = 3pointarc
 #     swSketchSlotLengthType_e   :  0 = CenterCenter · 1 = FullLength
@@ -24,7 +25,8 @@
 #     ⇒ ★★ **故台账那几条**（直槽口 / 中心点直槽口 / 中心点圆弧槽口 / 三点圆弧槽口）
 #       ★ **正好对上 0 / 1 / 2 / 3** ⇒ ★ **一次实现 = 4 条能力** ✓
 #
-#   ★ 本探针**四个值各试一次**（★ 判据：★ 草图里的**段数增加** —— ★ 返回值 `SketchSlot` 只是线索）。
+# ★ 本探针**四个值各试一次**（★ 判据：★ 草图里的**段数增加** —— ★ 返回值 `SketchSlot` 只
+# 是线索）。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -78,8 +80,10 @@ def _one(sw, name, creation_type):
         ret = None
         try:
             sm = C.get_com_member(doc, "SketchManager")
-            #: \u2605 \u53c2\u6570\uff1aSlotCreationType \u00b7 SlotLengthType(=0 CenterCenter) \u00b7 Width \u00b7
-            #:   P1 \u00b7 P2 \u00b7 P3 \u00b7 CenterArcDirection(=1 CCW) \u00b7 AddDimension(=True)
+            #: \u2605 \u53c2\u6570\uff1aSlotCreationType \u00b7 SlotLengthType(=0 Center
+            #: Center) \u00b7 Width \u00b7
+            #: P1 \u00b7 P2 \u00b7 P3 \u00b7 CenterArcDirection(=1 CCW) \u00b7 AddDimens
+            #: ion(=True)
             ret = C.get_com_member(sm, "CreateSketchSlot", int(creation_type), 0, 0.004,
                                    -0.02, 0.0, 0.0,
                                    0.02, 0.0, 0.0,

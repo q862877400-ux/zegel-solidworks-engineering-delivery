@@ -76,7 +76,8 @@ __all__ = [
 CURRENT_SELECTION = "__current_selection__"
 
 #: 实体类型（`SelectByID2` / 体遍历用的官方类型串）
-#: ★★ 2026-10-01（轮 328）**加了 `VERTEX`** —— ★ 判据：官方 `IBody2.GetVertices()`（**0 参**，
+#: ★★ 2026-10-01（轮 328）**加了 `VERTEX`** —— ★ 判据：官方 `IBody2.GetVertices()`（**0 
+#: 参**，
 #:   ★ 反射 arity = 0）× `ILoop2.GetVertices()` ⇒ ★ **顶点就是体上的一种 entity**，
 #:   ★ 所以它属于**本函数**的语义，★ **不该新开一个工具**（★ 缝合优先）。
 #: ⚠ 而**顶点不能"按名字选"**（★ 与边/面同理，事实 32）—— ★ 本处只做**枚举**。
@@ -131,7 +132,8 @@ def current_selection(model, *, mark: int = -1) -> list[Any]:
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks 反射）
-# 文件:   `IBody2.GetEdges() -> Object`（边数组） / `IBody2.GetFaces() -> Object`（面数组）
+# 文件:   `IBody2.GetEdges() -> Object`（边数组） / `IBody2.GetFaces() -> Object`（面数
+# 组）
 #         `IPartDoc.GetBodies2(Int32 Type, Boolean VisibleOnly) -> Object`
 # 定位:   **按序号取实体** —— 因为实测证明**边/面没有可用的名字**（见模块头），
 #         序号是唯一确定性的、可脚本化的定位方式。
@@ -163,7 +165,8 @@ def entities_on_body(model, kind: str, *, body_index: int = 0) -> list[Any]:
         raise EntitySelectionError(
             "body_index=%d 越界（共 %d 个体）" % (body_index, len(bodies))
         )
-    #: ★★ 2026-10-01（轮 328）：**顶点也走同一条路** —— ★ 官方 `IBody2.GetVertices()`（0 参）。
+    #: ★★ 2026-10-01（轮 328）：**顶点也走同一条路** —— ★ 官方 `IBody2.GetVertices()`（0
+    #:  参）。
     member = {"EDGE": "GetEdges", "FACE": "GetFaces", "VERTEX": "GetVertices"}[k]
     items = get_com_member(bodies[body_index], member)
     return list(items) if items else []
@@ -265,12 +268,15 @@ def resolve_selection(model, selector, kind: str, *, body_index: int = 0) -> int
     return count
 
 
-# ── 24h 计划 段 4 续（Spec Kit `150`）：**从选区读点**（★ 规则 3 的关键一环）─────────────
+# ── 24h 计划 段 4 续（Spec Kit `150`）：**从选区读点**（★ 规则 3 的关键一环）──────────
+# ───
 # ★★★ 为什么需要它（★ 规则 3 的**精神**，不只是字面）：
-#   孔族那几个建孔函数吃 **`center`（一个坐标元组）**。★ 规则 3 的红线**字面**只管**参数名**
+# 孔族那几个建孔函数吃 **`center`（一个坐标元组）**。★ 规则 3 的红线**字面**只管**参数名
+# **
 #   （`x` / `y` / `cx` …）⇒ ★ `center` **不在** `_BARE_COORD_NAMES` 里
 #   （★ 它在 `_COORD_COMPONENT_NOTE`，★ 那条的定性是"**名字不表态**，只登记不判"）。
-#   ⇒ ★★ **所以严格说它们能挂 —— 但那会绕过规则 3 的**精神****（"选择必须用声明式 `selection`"）。
+# ⇒ ★★ **所以严格说它们能挂 —— 但那会绕过规则 3 的**精神****（"选择必须用声明式 `selecti
+# on`"）。
 #   ⇒ ★★★ **正解与官方一致**：★ **官方 `HoleWizard` 的工作流就是"先在面上选一个点"**
 #     ⇒ ★★ **包一层**：★ **用声明式 `selection` 选点 ⇒ 从选区读坐标**
 #       ⇒ ★★★ **于是工具参数里**没有坐标**，★ 只有 `selection`** ✓
@@ -304,7 +310,8 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
     #:     （★ 预选族基线把它归在「真危险·诊断型」）✓
     #:   ★★ 与 `measure_selection` **同一条理由**：★ "读哪个"是**调用方的意图**
     #:     ⇒ ★ **绝不能由函数乱造**（★ 造了读到的就不是你要的那个）⇒ ★ 让调用方**声明** ✓
-    #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收 `selection`（`index:<n>` / `__current_selection__`）+ 种类 ✓
+    #: ★ 规则 3 **不许收裸坐标** ⇒ ★ 收 `selection`（`index:<n>` / `__current_selection_
+    #: _`）+ 种类 ✓
     #:   ★ 必须在**读选区之前**（★ 下面紧接着就是读计数）✓
     if str(selection or "").strip():
         try:
@@ -328,7 +335,8 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
         out["error"] = ("当前**没有选中任何东西** ⇒ 读不到点。"
                         "★ 先用声明式选择选中一个点 / 草图点 / 面，再调本函数。")
         return out
-    #: ★★★★ 2026-10-01 轮 266 真机实测：★ **必须用 `GetSelectionPoint2`，且它吃 `AtIndex`**。
+    #: ★★★★ 2026-10-01 轮 266 真机实测：★ **必须用 `GetSelectionPoint2`，且它吃 `AtIndex
+    #: `**。
     #:   · 老成员 `GetSelectionPoint` 的官方页写着
     #:     「**Obsolete. Superseded by `ISelectionMgr::GetSelectionPoint2`**」；
     #:   · 而它的签名是 **`GetSelectionPoint(AtIndex)`** —— ★ 当**零参**调会报
@@ -347,7 +355,8 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
     #:     ⇒ 走到 1 参那个必然报 **`(-2147352562, '无效的参数数目。')`**，
     #:     ★ 而那个错**指不出是参数个数的问题**（★ 同族：事实 33）。
     #:   ⇒ ★ **按名字给各自的 arity**（★ 那正是“签名三源”该给出的东西），
-    #:     并且**两个入口的报错都留住**（★ 先前是后者覆盖前者 ⇒ 看不到 2 参那个为什么失败）。
+    #: 并且**两个入口的报错都留住**（★ 先前是后者覆盖前者 ⇒ 看不到 2 参那个为什么失败）
+    #: 。
     errors: list = []
     for _nm, _args in (("GetSelectionPoint2", (1, -1)), ("GetSelectionPoint", (1,))):
         cand = get_com_member(mgr, _nm)
@@ -391,9 +400,11 @@ def selection_point(model, selection: str = "", selection_kind: str = "FACE") ->
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_selection_spec.py —— 追加两个 report 包装
 # 定位:   objective「真缺口」的 `sw_selection_spec` 族（24h 计划 v2 段 1 · 选择底座）。
-#   ★ 该模块已有 `select_object`（吃一个 **COM 对象**）与 `resolve_entity`（**返回**一个 COM 对象）
+# ★ 该模块已有 `select_object`（吃一个 **COM 对象**）与 `resolve_entity`（**返回**一个 C
+# OM 对象）
 #   ★★ 而 **这两者的返回值 MCP 层过不去**（COM 对象不可 JSON 序列化）⇒ 本段给它们各加一层
-#   **只回 JSON** 的 report 包装（★ 而"选中"这个动作本身靠 `Select4` —— 事实 32：对边/面按名字选不中）。
+# **只回 JSON** 的 report 包装（★ 而"选中"这个动作本身靠 `Select4` —— 事实 32：对边/面按
+# 名字选不中）。
 # 官方依据: `C:\swapi\types\IModelDocExtension\SelectByID2.md` · `IEntity` 的 `Select4` 
 #           ·
 #   `ISelectionMgr.GetSelectedObjectCount2`（★ 判据永远是这个回读数 —— 事实 8）
@@ -464,13 +475,16 @@ def resolve_entity_report(model, selector, kind: str = "EDGE", *, body_index: in
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_selection_spec.py —— 追加 `entities_as_array`
 # 定位:   ★ 2026-10-03（轮 424）承**事实 337** 的**正解**：★ **绕开"从选区读多实体"**。
-#   ★★ 事实 336/337 的定性：★ `ISelectionMgr` 上"按序号取对象"那一族（`GetSelectedObject6` /
-#     `4` / `5` / `GetSelectedObjectsFace`）**只拿得到第 1 个**，★ 而 `GetSelectedObjectCount2(-1)`
+# ★★ 事实 336/337 的定性：★ `ISelectionMgr` 上"按序号取对象"那一族（`GetSelectedObject6`
+#  /
+# `4` / `5` / `GetSelectedObjectsFace`）**只拿得到第 1 个**，★ 而 `GetSelectedObjectCoun
+# t2(-1)`
 #     **如实报 2** ⇒ ★★ **"从选区读回多个"这条路不通**（★ 五个入口都试过）。
 #   ★★★ 而**事实 32** 早就写着：★ 选实体的可行路径是 `IEntity.Select4`（**按对象**）
 #     或按面上的点 ⇒ ★★ **而"实体对象"本仓**本来就能直接拿到**（`entities_on_body`）——
 #     ★ 它用 `IBody2.GetFaces()/GetEdges()/GetVertices()` 直接列出一个体上的实体 ✓
-#   ⇒ ★★ 于是"多实体"载荷**根本不需要"从选区读回来"**：★ **把已知的那些对象直接装成数组** ✓
+# ⇒ ★★ 于是"多实体"载荷**根本不需要"从选区读回来"**：★ **把已知的那些对象直接装成数组** 
+# ✓
 # 官方依据: `IBody2.GetFaces` / `GetEdges` / `GetVertices`（★ 本模块 `entities_on_body` 
 #           已在用）·
 #   事实 32（选实体的可行路径）· 事实 8（返回值不可信，以计数为准）
@@ -505,14 +519,16 @@ def entities_as_array(model, kind: str, indices, *, body_index: int = 0) -> list
     return picked
 
 
-# ── 规格 209 · B3（idx 115 `edges` + idx 145 `faces`，★ 裁决书强制**合并成一条工具**）──────────
+# ── 规格 209 · B3（idx 115 `edges` + idx 145 `faces`，★ 裁决书强制**合并成一条工具**）─
+# ─────────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
 # 文件:   scripts/sw_selection_spec.py —— 追加 `entity_geometry` / `entities_report`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B3-1** · 外部项目 idx **115 `edges`**
 #   + idx **145 `faces`**。★★ 裁决书的硬约束（§一/§三.1/§六）逐字：
 #   「★ 不新建平行工具 ⇒ **扩已有的 `solidworks_entities_on_body`**」·
-#   「与 #115 的 `GetEdges` **是同一件活的两种 kind** ⇒ ★ **一条工具**（FACE/EDGE/VERTEX），
+# 「与 #115 的 `GetEdges` **是同一件活的两种 kind** ⇒ ★ **一条工具**（FACE/EDGE/VERTEX）
+# ，
 #     **不许开两条**」✓
 #   ★★ 它点名的**真风险**：「本条真风险**不是后端到不了**，而是『**读属性读不到**』
 #     （事实 3x）⇒ 先单独做一条**小验证**再落」✓
@@ -520,19 +536,24 @@ def entities_as_array(model, kind: str, indices, *, body_index: int = 0) -> list
 #     `entities_on_body` **返回 COM 对象** ⇒ ★ **过不了 MCP 的 JSON 边界** ——
 #     ★ 也就是说那条工具**经工具层拿不到任何可用的东西**（"能枚举"≠"能把结果交出去"）✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
-#   · `C:\swapi\types\IBody2\{GetEdges,GetFaces,GetVertices}.md` —— 三个都是**零参**、回 `System.object`
-#   · `C:\swapi\types\IEdge\{GetStartVertex,GetEndVertex}.md` —— 回 `System.object`（顶点）
+# · `C:\swapi\types\IBody2\{GetEdges,GetFaces,GetVertices}.md` —— 三个都是**零参**、回 `
+# System.object`
+# · `C:\swapi\types\IEdge\{GetStartVertex,GetEndVertex}.md` —— 回 `System.object`（顶点
+# ）
 #   · `C:\swapi\types\IVertex\GetPoint.md` —— `System.object GetPoint()`
 #   · `C:\swapi\types\IFace2\GetArea.md` —— `System.double GetArea()`
-#   · ★★ **`IEdge` 上没有任何「长度」成员** —— 官方成员表逐条列过（`GetCurve` / `GetCurveParams` /
+# · ★★ **`IEdge` 上没有任何「长度」成员** —— 官方成员表逐条列过（`GetCurve` / `GetCurveP
+# arams` /
 #     `GetStartVertex` / `GetEndVertex` …）⇒ ★ 边长**只能自己算**（两个顶点求距离）✓
-#     ⚠ 这一条是 2026-10-06 真机踩出来的：我按印象读 `IEdge.GetLength` ⇒ **12 条边全部抛异常**
+# ⚠ 这一条是 2026-10-06 真机踩出来的：我按印象读 `IEdge.GetLength` ⇒ **12 条边全部抛异常
+# **
 #     （★ 铁律 5：**名字缺席 = 官方没有这个成员**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
 # ★★ **单位**：`IVertex::GetPoint` 的读数与文档长度单位一致（本机 **毫米**）——
-#   ★ 判据是**边长**：60×40×2 的板算出 `{0.002, 40.0, 60.0}`、厚 2 的算出 `{2.0, 40.0, 60.0}`
+# ★ 判据是**边长**：60×40×2 的板算出 `{0.002, 40.0, 60.0}`、厚 2 的算出 `{2.0, 40.0, 60.
+# 0}`
 #   （见 `output/spec209-hem-units.json`）⇒ ★ 本模块如实标 `_mm` / `_mm2` ✓
 
 

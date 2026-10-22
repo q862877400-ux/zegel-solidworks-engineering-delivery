@@ -11,8 +11,10 @@
 #       ★ 其官方页**无 `## Remarks`** ⇒ ★ 前置**查不到**（★ 队友如实报 `None`）
 #     · 闭合角 `IModelDoc2.InsertSheetMetalClosedCorner`（**零参·回 `void`**）
 #       ★ 官方页**同样无 `## Remarks`** ⇒ ★ 判据只能是**树增量 + 面数增量 + 体积增量**三合一
-#     · 顶端盖 `InsertEndCapFeature3`（10 参）★ 官方：「select one or more **end faces**」· **没给 mark**
-#     · 角撑板 `InsertGussetFeature3`（20 参）★ 官方：「**two faces** … with a **Mark of 1**」
+# · 顶端盖 `InsertEndCapFeature3`（10 参）★ 官方：「select one or more **end faces**」· 
+# **没给 mark**
+# · 角撑板 `InsertGussetFeature3`（20 参）★ 官方：「**two faces** … with a **Mark of 1**
+# 」
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -61,7 +63,8 @@ def _call(tool: str, args: dict) -> dict:
     #:     ```
     #:   ★★ 后果：`batch74` 用 `param_alias` 把 `wall_ratio` 映射到 `wall_thickness_ratio`
     #:     ⇒ ★ 我传 `wall_ratio` 时当场 `TypeError: unexpected keyword argument`
-    #:     ⇒ ★ **把一条好工具记成了坏的**（★ 与事实 36/502 同族：**报错指向名字，真因在别处**）。
+    #: ⇒ ★ **把一条好工具记成了坏的**（★ 与事实 36/502 同族：**报错指向名字，真因在别处*
+    #: *）。
     out_note: list = []
     kwargs = {}
     for k, v in args.items():
@@ -113,7 +116,8 @@ def _call(tool: str, args: dict) -> dict:
         if isinstance(ret, dict):
             #: ★★ 2026-10-03：**记整份返回** —— 上一版只拷白名单键 ⇒
             #:   ★ 把 `selection_marks`（工具**自己读到的选区**）丢掉了 ⇒
-            #:   前置判 False 时**看不出它读到了几个、什么 mark**（★ 白名单会把诊断字段吃掉）。
+            #: 前置判 False 时**看不出它读到了几个、什么 mark**（★ 白名单会把诊断字段吃
+            #: 掉）。
             out["ret_all"] = {k: (str(v)[:200] if not isinstance(v, (int, float, bool, type(None), list, dict))
                                   else v) for k, v in ret.items()}
             for k in ("ok", "preconditions_held", "ret_name", "ret_type", "ret_is_none",
@@ -226,7 +230,8 @@ def _pick_faces(doc, count: int, mark: int) -> dict:
                 _SP._select_com_object(face, append=(picked > 0), mark=mark)
                 #: ★★ **不回读就等于没选** —— 上一版信了 bool 返回值 ⇒
                 #:   ★ 报「selected 1」而工具那边读到 **全 0**
-                #:   （★ 工具 `_selection_marks` 回读的是 `GetSelectedObjectCount2(mark)`）。
+                #: （★ 工具 `_selection_marks` 回读的是 `GetSelectedObjectCount2(mark)`
+                #: ）。
                 if _count(mark) > picked:
                     picked = _count(mark)
             except Exception as exc:                                      # noqa: BLE001
@@ -294,7 +299,8 @@ def main() -> int:
                 else:
                     r["setup_call"] = {"ok": False, "err": "★ 找不到 .sldlfp 焊件轮廓"}
             #: ★★ 2026-10-03（接手轮）：**官方前置是"先选面"** ⇒ 调工具前按 mark 选好
-            #:   （★ 端盖 mark=0 选 1 个端面 · 角撑板 mark=1 选 2 个面），并把实选数如实记下。
+            #: （★ 端盖 mark=0 选 1 个端面 · 角撑板 mark=1 选 2 个面），并把实选数如实记
+            #: 下。
             _need = {"solidworks_weldment_insert_end_cap": (1, 0),
                      "solidworks_weldment_gusset_create": (2, 1)}.get(tool)
             if _need:

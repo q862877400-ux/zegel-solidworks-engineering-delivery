@@ -143,8 +143,10 @@ def main() -> int:
                     "%s: %s" % (type(exc).__name__, str(exc)[:70]))
                 ev["packvariant_tb"] = traceback.format_exc().strip().splitlines()[-2:]
 
-            #: ⑥ ★★★ **定论扫描**：官方登记的**全部 21 个成员**逐个试（只试 5 个不下结论）
-            #:    —— 轮 185 的教训：判据要**穷尽**、要锚在权威源（这里就是那份反射签名表）。
+            #: ⑥ ★★★ **定论扫描**：官方登记的**全部 21 个成员**逐个试（只试 5 个不下结论
+            #: ）
+            #: —— 轮 185 的教训：判据要**穷尽**、要锚在权威源（这里就是那份反射签名表）
+            #: 。
             ALL = ["GetBoolean", "GetBstr", "GetByte", "GetDispatch", "GetDouble", "GetInfo",
                    "GetLong", "GetLongLong", "GetShort", "GetUNKNOWN", "PackVariant",
                    "PutBoolean", "PutBstr", "PutByte", "PutDispatch", "PutDouble", "PutLong",
@@ -161,7 +163,8 @@ def main() -> int:
             rec("⑥ 官方 21 个成员里**迟到绑定可达**的", len(reachable) == len(ALL),
                 "%d/%d ⇒ %s" % (len(reachable), len(ALL), reachable or "**一个都没有**"))
 
-            #: ⑦ 内省：这个 dispatch 到底带不带类型信息（区分「接口不对」与「没有 dispinterface」）
+            #: ⑦ 内省：这个 dispatch 到底带不带类型信息（区分「接口不对」与「没有 dispin
+            #: terface」）
             try:
                 ti = util._oleobj_.GetTypeInfo()
                 ta = ti.GetTypeAttr()

@@ -125,7 +125,8 @@ def main() -> int:
                 #: 实参：owner, 成员名, 之后才是数组实参
                 for k, a in enumerate(n.args[2:], start=2):
                     kind = is_bare_array(a)
-                    #: ★ **签名必须是 `Object`**（否则形状说明不了任何事 —— 轮 185 的 30 处假阳性）
+                    #: ★ **签名必须是 `Object`**（否则形状说明不了任何事 —— 轮 185 的 30
+                    #:  处假阳性）
                     if kind and member and arg_is_object(member, k - 2):
                         hits.append({"file": f.name, "line": n.lineno, "arg_index": k,
                                      "kind": "%s（**官方签名第 %d 参是 Object**）" % (kind, k - 2),
@@ -133,29 +134,39 @@ def main() -> int:
                     continue
                     #: ⚠⚠⚠ **2026-10-01（轮 185）加判据② —— 因为判据①太窄**：
                     #: 轮 183 的**真形态**是「实参是**变量**」：
-                    #: `data = VARIANT(...)` **之前**是 `get_com_member(skm, "CreateSpline", points)`
-                    #: ⇒ **字面量扫描看不到它**（★ 又一次"判据与实现的实际形态不匹配"，事实 51 那一族）。
-                    #: ⇒ 现在：**名字实参** ⇒ 回溯本文件里它的赋值，看**右侧是不是裸 list/tuple**。
+                    #: `data = VARIANT(...)` **之前**是 `get_com_member(skm, "CreateSpli
+                    #: ne", points)`
+                    #: ⇒ **字面量扫描看不到它**（★ 又一次"判据与实现的实际形态不匹配"，
+                    #: 事实 51 那一族）。
+                    #: ⇒ 现在：**名字实参** ⇒ 回溯本文件里它的赋值，看**右侧是不是裸 lis
+                    #: t/tuple**。
                     if isinstance(a, ast.Name):
                         #: ★★★ **2026-10-01（轮 185）：实参是**形参名**也算候选** ——
                         #: ⚠ 判据①（字面量）与判据②（回溯赋值）**都漏了形参那一种**，
                         #: 而**轮 183 修复前的真形态就是形参**：
                         #: ```
                         #:   def create_spline(sketch_manager, points, simulate=False):
-                        #:       return get_com_member(sketch_manager, "CreateSpline", **points**)
+                        #: return get_com_member(sketch_manager, "CreateSpline", **point
+                        #: s**)
                         #: ```
-                        #: ⇒ ★ 用 `git show 482b2f3^:scripts/sketch_relations.py` 当**负例**验证过：
-                        #:   **旧判据命中 0 处**（= 它证明不了任何事）⇒ ★ **本判据是为它加的**。
-                        #: ⚠ 形参的来源在**调用方** ⇒ 静态**不能排除** ⇒ 只能**列为候选**。
+                        #: ⇒ ★ 用 `git show 482b2f3^:scripts/sketch_relations.py` 当**负
+                        #: 例**验证过：
+                        #: **旧判据命中 0 处**（= 它证明不了任何事）⇒ ★ **本判据是为它加
+                        #: 的**。
+                        #: ⚠ 形参的来源在**调用方** ⇒ 静态**不能排除** ⇒ 只能**列为候选*
+                        #: *。
                         params = set()
                         for fn in ast.walk(tree):
                             if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
                                 params |= {p.arg for p in fn.args.args}
                         if a.id in params:
-                            #: ⚠⚠⚠ **2026-10-01（轮 185）：这一支**已废弃** —— 它造成 28 处假阳性**：
-                            #: `FeatureByName(name)` 的 `name` 是**字符串**、`GetComponents(top_level_only)`
+                            #: ⚠⚠⚠ **2026-10-01（轮 185）：这一支**已废弃** —— 它造成 28
+                            #:  处假阳性**：
+                            #: `FeatureByName(name)` 的 `name` 是**字符串**、`GetCompone
+                            #: nts(top_level_only)`
                             #: 是 **bool** ⇒ ★ **"实参是形参"根本不能当判据**。
-                            #: ⇒ ★ 改成**只列"签名说是 `Object` 的形参"**（锚在官方签名上）。
+                            #: ⇒ ★ 改成**只列"签名说是 `Object` 的形参"**（锚在官方签名
+                            #: 上）。
                             if member and arg_is_object(member, k - 2):
                                 hits.append({"file": f.name, "line": n.lineno, "arg_index": k,
                                              "member": member,

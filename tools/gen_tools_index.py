@@ -34,7 +34,8 @@ OUT = ROOT / "docs" / "tools-index.md"
 #: ★ lean 口径：第一句 + 120 字（与 `@local/dsh-lean-mode` 的 `firstLine()` 同源）。
 LEAN_CHARS = 120
 
-#: ★ 无文件头说明时的占位文案（★ 与 `scripts/check_tools_index_fresh.py` 的 NODESC 必须同一句）
+#: ★ 无文件头说明时的占位文案（★ 与 `scripts/check_tools_index_fresh.py` 的 NODESC 必须
+#: 同一句）
 NODESC = "★ **无文件头说明**（该脚本没写 docstring / 首行注释）"
 
 #: ★ 分类：按**文件名前缀**分（机械、零歧义），每类给一句「什么时候该用它」。

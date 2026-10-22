@@ -13,13 +13,18 @@
 #
 #   ★★★★★ **两个继任者的签名与 Remarks（逐字）**：
 #     ```
-#     System.object IModelDoc2.CreateLine2(P1x, P1y, P1z, P2x, P2y, P2z)     \u2190 **6 \u53c2**
-#       Remarks: If a sketch is **not active**, then the line is **not created and NULL is returned**.
+# System.object IModelDoc2.CreateLine2(P1x, P1y, P1z, P2x, P2y, P2z)     \u2190 **6 \u53
+# c2**
+# Remarks: If a sketch is **not active**, then the line is **not created and NULL is ret
+# urned**.
 #                (\u2605 2D \u8349\u56fe\u91cc Z \u88ab\u5ffd\u7565)
 #
-#     SketchSegment ISketchManager.CreateSpline(object PointData)             \u2190 **1 \u53c2**
-#       Remarks: \u81f3\u5c11**\u4e24\u4e2a** X,Y,Z\uff1b\u2605 **2D \u8349\u56fe\u91cc SOLIDWORKS \u5ffd\u7565 Z**\uff1b
-#                \u2605 \u5b83**\u4e0d\u914d\u5408** `AddToDB` / `DisplayWhenAdded`\uff08\u603b\u662f\u52a0\u8fdb DB\uff09\u3002
+# SketchSegment ISketchManager.CreateSpline(object PointData)             \u2190 **1 \u5
+# 3c2**
+# Remarks: \u81f3\u5c11**\u4e24\u4e2a** X,Y,Z\uff1b\u2605 **2D \u8349\u56fe\u91cc SOLIDW
+# ORKS \u5ffd\u7565 Z**\uff1b
+# \u2605 \u5b83**\u4e0d\u914d\u5408** `AddToDB` / `DisplayWhenAdded`\uff08\u603b\u662f\u
+# 52a0\u8fdb DB\uff09\u3002
 #     ```
 #
 #   ★ 判据（★ 规则 6 + 事实 436）：**草图段数增加**（★ 图元没有特征树增量）。
@@ -99,7 +104,8 @@ def _line2(doc):
 
 
 def _spline(doc):
-    #: \u2605 **1 \u53c2**\uff1a\u70b9\u6570\u7ec4\uff08\u2605 \u81f3\u5c11\u4e24\u4e2a X,Y,Z\uff09
+    #: \u2605 **1 \u53c2**\uff1a\u70b9\u6570\u7ec4\uff08\u2605 \u81f3\u5c11\u4e24\u4e2a 
+    #: X,Y,Z\uff09
     pts = [-0.02, 0.0, 0.0,
            0.0, 0.015, 0.0,
            0.02, 0.0, 0.0]

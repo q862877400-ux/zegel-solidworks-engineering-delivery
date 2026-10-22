@@ -147,10 +147,12 @@ SPECS_BATCH26 = [
         title="Apply a Normal Force to the Selected Faces",
         module="sw_simulation", function="apply_normal_force",
         inject="study",
-        #: ★★ `magnitude_n` → `magnitude`：能力层形参叫 `magnitude`（不带 `_n`），对外名带单位后缀
+        #: ★★ `magnitude_n` → `magnitude`：能力层形参叫 `magnitude`（不带 `_n`），对外名
+        #: 带单位后缀
         #:   ⇒ **必须靠 `param_alias` 改名**（W4 的定则）。
         #:   ⚠ 第一版**漏了这一条**，被"走工具路径"的证据脚本当场抓住
-        #:   （`TypeError: apply_normal_force() got an unexpected keyword argument 'magnitude_n'`）
+        #: （`TypeError: apply_normal_force() got an unexpected keyword argument 'magnit
+        #: ude_n'`）
         #:   —— ★ 若证据只直调能力层，这个 bug **永远不会暴露**（能力层本身是对的）。
         param_alias={**_consumed("study_name", "selection"), "magnitude_n": "magnitude"},
         pre_call=_select_face,

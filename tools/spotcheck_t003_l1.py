@@ -4,12 +4,14 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
-# 文件:   `specs/202-user-coverage-gaps/recon/bunny-L1-signature-transcribe.md`（★ 被抽查的侦察稿）·
+# 文件:   `specs/202-user-coverage-gaps/recon/bunny-L1-signature-transcribe.md`（★ 被抽
+# 查的侦察稿）·
 #         `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py`（★ 它的源）·
 #         `C:\swapi\types\**`（★ 官方原文）
 # 定位:   ★ SPEC 的 **T003** 逐字：「逐条**拿官方原文抽查**侦察结论 —— 宪法 §III
 #   「**专挑最容易编造处**」；`docs/` 下留抽查记录」✓
-#   ★★ **为什么挑 L1**：★ 那是**纯抄录签名**那份 —— ★ **实参个数与成员名是最容易被编造的**、
+# ★★ **为什么挑 L1**：★ 那是**纯抄录签名**那份 —— ★ **实参个数与成员名是最容易被编造的**
+# 、
 #     而**同时最好核**（★ 官方页一查就知道）✓
 #   ★★★ **两条独立判据（★ 都要）**：
 #     ★ ① **成员在不在** —— ★ 那个名字在 `C:\swapi\types\**` 里有没有一页；

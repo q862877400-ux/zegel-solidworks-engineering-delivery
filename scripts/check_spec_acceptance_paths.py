@@ -105,9 +105,12 @@ def check_line(line: str, repo: Path) -> list:
     for m in REPO_SCRIPT.finditer(line):
         tok = m.group(1)
         # ⚠⚠ **glob 不是字面路径**（2026-10-01 轮 83 实测到的假阳性）：
-        #   本仓库的验收判据**惯用 grep 形态**（如 `Select-String scripts\check_*.py -Pattern …`），
-        #   而这里原先直接 `p.is_file()` ⇒ **带 `*` 的必然判"仓库里没有这个文件"** ⇒ 误报。
-        #   ★ 与本函数 docstring 里记的那次假阳性（轮 53：绝对路径**在仓库里**却被报「仓库外」）
+        # 本仓库的验收判据**惯用 grep 形态**（如 `Select-String scripts\check_*.py -Patt
+        # ern …`），
+        # 而这里原先直接 `p.is_file()` ⇒ **带 `*` 的必然判"仓库里没有这个文件"** ⇒ 误报
+        # 。
+        # ★ 与本函数 docstring 里记的那次假阳性（轮 53：绝对路径**在仓库里**却被报「仓库
+        # 外」）
         #     **是同一族**：判据要贴合**实际的书写形态**。
         #   ⇒ 含 glob 元字符的 token 用 `repo.glob()` 展开：**匹配到 ≥1 个**才算通过；
         #     一个都没匹配到 ⇒ 报 `glob-no-match`（**仍然会红**，只是换了原因）。
@@ -143,11 +146,13 @@ def scan(specs_root: Path, repo: Path) -> list:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="验收命令可跑性门禁（→ 验收: 行点到的脚本须在仓库里）")
-    #: ★★★ 2026-10-17 修正（★ 环境搬迁暴露的 bug）：★ 原默认值**写死** `Path(__file__).resolve().parents[1] / "specs"` ✗ ——
+    #: ★★★ 2026-10-17 修正（★ 环境搬迁暴露的 bug）：★ 原默认值**写死** `Path(__file__).r
+    #: esolve().parents[1] / "specs"` ✗ ——
     #:   ★ 仓库搬到便携版工作区后，它**扫的是旧副本**、却拿**新仓库根**去判
     #:   ⇒ ★ 旧副本里的 `D:/AI/SW/...` 全被判「仓库外」⇒ **21 条假红** ✓
     #:   ★★ 更糟的是：★ 若旧副本被删，它会走 SKIP 分支（exit 0）⇒ **静默不检查任何东西** ✗
-    #:   ⇒ ★ 改为**从本文件位置推出仓库根**（与 `REPO` 同一口径）✓ —— ★ 便携性守卫仍在（不存在则 SKIP）✓
+    #: ⇒ ★ 改为**从本文件位置推出仓库根**（与 `REPO` 同一口径）✓ —— ★ 便携性守卫仍在（不
+    #: 存在则 SKIP）✓
     ap.add_argument("--specs-root", default=str(REPO / "specs"),
                     help="specs 目录（默认**本仓库**的 specs；**不存在则 SKIP**）")
     ap.add_argument("--repo", default=str(REPO))
@@ -166,7 +171,8 @@ def main(argv=None) -> int:
                   if ACCEPT.search(ln))
     hits = scan(specs_root, repo)
 
-    #: ⚑ **首行自带分母**（轮 192）：`n_lines` 已经在手边（原先下一行才打印）⇒ 提到首行。
+    #: ⚑ **首行自带分母**（轮 192）：`n_lines` 已经在手边（原先下一行才打印）⇒ 提到首行
+    #: 。
     print("验收命令可跑性门禁 · 扫 %s（**%d** 处 `→ 验收:` 行）" % (specs_root, n_lines))
     print("  **%d** 处 `→ 验收:` 行；仓库根 = %s" % (n_lines, repo))
     print()

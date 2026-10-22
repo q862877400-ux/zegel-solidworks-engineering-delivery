@@ -3,10 +3,12 @@
 # 仓库:   本项目自身 + 官方 `C:\\swapi\\types\\ISweepFeatureData\\*.md`
 # 文件:   tools/probe_sweep_wall_units_recheck.py（★ 只报不动 —— 证据脚本 · 新）
 # 定位:   ★ 轮 127 量出了 `CircularProfileDiameter`（★ 随文档单位）⇒
-#   ★★ **而 `GetWallThickness` 仍未定案**（★ 官方：valid only if `IsThinFeature` is true）⇒
+# ★★ **而 `GetWallThickness` 仍未定案**（★ 官方：valid only if `IsThinFeature` is true）
+# ⇒
 #   ★★★ **⇒ 本探针**建一个薄壁扫描**、★ 写一个**已知壁厚** ⇒ **量体积** ✓
 #   **官方依据（★ 逐字）**：
-#     · ★ `IsThinFeature()` ⇒ `System.bool IsThinFeature()` ⇒「True if a thin-walled sweep feature」
+# · ★ `IsThinFeature()` ⇒ `System.bool IsThinFeature()` ⇒「True if a thin-walled sweep f
+# eature」
 #       ★ `## Remarks: Note that you can make …`（★ 截断）✓
 #     · ★ `ThinFeature {get; set;}` ⇒「True to make a thin-walled sweep feature」✓
 #     · ★ `ThinWallType {get; set;}` ⇒「0 = One Direction …」✓
@@ -16,7 +18,8 @@
 #     ★ 轮廓：圆 **半径 3 mm**（★ 直径 6）· ★ 路径长 **40 mm** ⇒
 #       · ★ **实体**圆柱体积 = π·3²·40 = **1131.0** mm³ ✓
 #       · ★★ **写壁厚 `0.002`** ⇒
-#         - ★ 若口径是**米** ⇒ `0.002 m = **2 mm**` ⇒ 环带面积 = π·(3²−1²)=25.13 ⇒ 体积 **1005.3** ✓
+# - ★ 若口径是**米** ⇒ `0.002 m = **2 mm**` ⇒ 环带面积 = π·(3²−1²)=25.13 ⇒ 体积 **1005.3
+# ** ✓
 #         - ★ 若口径是**毫米** ⇒ `0.002 mm` ⇒ 环带面积 = π·(3²−2.998²)=0.0377 ⇒ 体积 **1.51** ✓
 #     ★★★ **⇒ 1005 与 1.5 差**三个量级**** ⇒ **口径自明**、★ **而那是几何、不是读回属性** ✓
 #   ★★★★ **⚠ 第 3 参**走本仓正解****：★ `create_empty_dispatch_variant()`

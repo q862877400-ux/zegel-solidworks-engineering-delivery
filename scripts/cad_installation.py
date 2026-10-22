@@ -225,9 +225,11 @@ def _common_candidates(product: str) -> list[Path]:
     ]
     for drive in ("D:", "E:"):
         # ⚠⚠ `Path("D:")` 是「带盘符的**相对**路径」，不是盘根！
-        #   `Path("D:") / "AutoCAD 2024" / exe` 会得到 `D:AutoCAD 2024\acad.exe`（**缺反斜杠**）
+        # `Path("D:") / "AutoCAD 2024" / exe` 会得到 `D:AutoCAD 2024\acad.exe`（**缺反斜
+        # 杠**）
         #   ⇒ 在 D:/E: 盘上**永远发现不了**安装。**必须在盘符后补 `/`。**
-        #   （2026-10-01 轮 45 修复；由 test_discover_installation_supports_injected_filesystem 抓到。）
+        # （2026-10-01 轮 45 修复；由 test_discover_installation_supports_injected_files
+        # ystem 抓到。）
         root = Path(drive + "/")
         if product == "solidworks":
             candidates.extend([

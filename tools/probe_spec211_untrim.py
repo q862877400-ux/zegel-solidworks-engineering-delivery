@@ -10,11 +10,13 @@
 #       「**先建出被剪裁的曲面**」那一条链（★ 曲面 → 相交 → 剪裁），★ 而那**不是本批的范围** ✓
 #       ★ 故本探针**只做负例** + ★ **把官方两条前置实证掉** ✓
 # 判据:   ★★ 三条负例（★ 全部"必然失败"，★ 且**都不需要复杂前置** ✓）：
-#     ★ ① **枚举越界**（`face_untrim_type=9`）⇒ ★ 不在官方 `swFaceUntrimType_e` ⇒ **必然非法** ✓
+# ★ ① **枚举越界**（`face_untrim_type=9`）⇒ ★ 不在官方 `swFaceUntrimType_e` ⇒ **必然非法
+# ** ✓
 #     ★ ② **枚举越界**（`edge_untrim_type=9`）⇒ ★ 同上（★ `swEdgeUntrimType_e`）✓
 #     ★ ③ ★★★ **普通零件上"能选到面"却调** ⇒ ★ 官方 `## Remarks` 逐字「**is valid only for
 #       surface parts**」⇒ ★★ **特征树不该有新特征** ✓ —— ★ 这是**官方那条前置的实证** ✓
-#   ★ 另记：★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 报告里如实标 ✓
+# ★ 另记：★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 报告里
+# 如实标 ✓
 # 官方依据: `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`（签名 + Parameters 
 #           + Remarks 两条）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件

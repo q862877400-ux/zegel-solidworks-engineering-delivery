@@ -4,7 +4,8 @@
 # 文件:   tools/probe_spec211_weldtrim_pre.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 第一步（上一轮）**只到"
 #           查行为"**：
-#   ★ 两种数组形参形态**都调通**、★ 而**特征树没变** ⇒ ★★ **因为前置没上**（★ 官方 `## Remarks`
+# ★ 两种数组形参形态**都调通**、★ 而**特征树没变** ⇒ ★★ **因为前置没上**（★ 官方 `## Rem
+# arks`
 #   明写 mark **1 = Body to trim** · **2 = Trimming boundaries** 都要选 ✓）
 #   ⇒ ★★★ **本探针把前置完全对上** —— ★★ 与「扫描曲面」那条**成功案例同型** ✓
 # 判据:   ★★★ **两条路分开**（★ 本探针存在的全部意义）：
@@ -12,9 +13,11 @@
 #     · ★ **建成** ⇒ ★★ **「大发现」** ✓
 #   ★ 主判据一律**回读**：★ **特征树多了新特征**（★ 不看返回值 ✓）
 #   ★★ **前置逐条对上**（★ 否则读数没有判别力 ✓）：
-#     ★ ① **焊件特征**：★ 官方要"焊件体" ⇒ ★ 先 `InsertWeldmentFeature`（★ 本模块既有的调用 ✓）
+# ★ ① **焊件特征**：★ 官方要"焊件体" ⇒ ★ 先 `InsertWeldmentFeature`（★ 本模块既有的调用 
+# ✓）
 #     ★ ② **两个体**：★ 用**两次拉伸**各产一个体 ✓
-#     ★ ③ **按 mark 选**：★★ **`IEntity::Select4` 没有 mark 参数** ✗（★ 记忆里 `revolve_boss` 那条
+# ★ ③ **按 mark 选**：★★ **`IEntity::Select4` 没有 mark 参数** ✗（★ 记忆里 `revolve_boss
+# ` 那条
 #        死路的一部分）⇒ ★★ 正解是 **`SelectByID2(<特征名>, "BODYFEATURE", …, mark, …)`** ✓
 #        （★ 事实 32：★ **特征有名字**、★ 实体没有 ⇒ ★ 按"生成体的**特征名**"选 ✓）
 #     ★ ④ `SelectByID2` 的 Callout **必须传** `VARIANT(VT_DISPATCH, None)`（**事实 33**）✓
@@ -82,7 +85,8 @@ def main() -> int:
     out["weldment_feature_ok"] = weld is not None
     print("★ `InsertWeldmentFeature` ⇒ %r" % ("建了" if weld is not None else "没建/报错"))
 
-    #: ③ **按 mark 选两个体**（★ 用"生成体的特征名" + `BODYFEATURE` ✓；★ Callout 按事实 33 ✓）
+    #: ③ **按 mark 选两个体**（★ 用"生成体的特征名" + `BODYFEATURE` ✓；★ Callout 按事实 
+    #: 33 ✓）
     if len(extrudes) < 2:
         out["stage"] = "precondition"
         out["error"] = "★ 拉伸特征不足两个（★ 实测 %d 个）⇒ ★ 前置立不起来" % len(extrudes)

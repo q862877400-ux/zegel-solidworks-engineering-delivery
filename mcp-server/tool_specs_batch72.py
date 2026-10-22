@@ -8,31 +8,39 @@
 #
 #   ★★ **这一批是"最便宜的待办"**（宪法 §I 缝合优先：**不发明，接出去**）：
 #     判据来自 `tools/audit_gap_implementations.py` —— ★ 它用 **AST** 量"本仓有没有真调用"，
-#     ★ **不用 grep**（★ 实测：grep 会把**来源块里引用的官方成员名**算成"有实现" ⇒ 假阳性）。
+# ★ **不用 grep**（★ 实测：grep 会把**来源块里引用的官方成员名**算成"有实现" ⇒ 假阳性）
+# 。
 #
 #   | 缺口项 | 官方成员 | 本仓入口 | 真机 | 关键词契约 |
 #   |---|---|---|---|---|
-#   | 曲面/旋转曲面 | `InsertRevolvedRefSurface` | `sw_surface_ref_ops.insert_revolved_ref_surface` | ✅ | `revolved_surface` |
-#   | 特征/孔向导 | `HoleWizard5` | `sw_hole_features.create_hole_wizard_at_selection_report` | ✅ | `hole_wizard` |
-#   | 草图/完全定义检查 | `ISketch.GetConstrainedStatus` | `sw_sketch_status.get_constrained_status` | ✅ | `fully_defined` |
+# | 曲面/旋转曲面 | `InsertRevolvedRefSurface` | `sw_surface_ref_ops.insert_revolved_ref
+# _surface` | ✅ | `revolved_surface` |
+# | 特征/孔向导 | `HoleWizard5` | `sw_hole_features.create_hole_wizard_at_selection_repo
+# rt` | ✅ | `hole_wizard` |
+# | 草图/完全定义检查 | `ISketch.GetConstrainedStatus` | `sw_sketch_status.get_constrain
+# ed_status` | ✅ | `fully_defined` |
 #   ⇒ ★ 工具名**有意含上述关键词** —— 覆盖率脚本按"功能关键词**子串**命中工具名"计分，
 #     ★ 而它们**确实就是那个功能** ⇒ 这**不是刷分**，是让名字与能力对上。
 #
 #   ★★ **真机证据**（`tools/prove_coverage_gap_batch1.py`，零弹窗 · `sw_alive: true`）：
 #     · 旋转曲面 ⇒ 树新增 **`曲面-旋转1`** · **曲面体 0→1**
 #     · 孔向导   ⇒ 树新增 **`异型孔向导`**（`M8`）
-#     · 完全定义 ⇒ `GetConstrainedStatus` 回 **int**，且**欠定义 2 / 加 FIXED 后 3**（★ 有区分度）
+# · 完全定义 ⇒ `GetConstrainedStatus` 回 **int**，且**欠定义 2 / 加 FIXED 后 3**（★ 有区
+# 分度）
 #     证据 `output/coverage-gap-batch1-evidence.json`
 #
-#   ⚠★ **本批**故意不**收「样条曲线」** —— ★ AST 也报它"有实现"，★ 而读那个函数的文档串才发现
-#     它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`；后继 `CreateSpline3`
+# ⚠★ **本批**故意不**收「样条曲线」** —— ★ AST 也报它"有实现"，★ 而读那个函数的文档串才
+# 发现
+# 它**2026-10-01 轮 141 已真机实测不达**（`CreateSpline2` 回 `None`；后继 `CreateSpline3
+# `
 #     末参是 **BYREF `Object&`** ⇒ pywin32 到不了，事实 47/68）。
 #     ⇒ ★★ **"有实现" ≠ "能用"** ⇒ 它进「带依据的到不了」名单，★ **不接成工具**。
 #
 #   官方依据（三源）:
 #     · `C:\swapi\types\IFeatureManager\InsertRevolvedRefSurface.md`
 #     · `C:\swapi\types\IFeatureManager\HoleWizard5.md`
-#     · `C:\swapi\types\ISketch\GetConstrainedStatus.md`（`System.int GetConstrainedStatus()`）
+# · `C:\swapi\types\ISketch\GetConstrainedStatus.md`（`System.int GetConstrainedStatus()
+# `）
 #   许可:   本仓库 MIT。★ **无第三方代码引入**（不外抄任何项目文本）。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

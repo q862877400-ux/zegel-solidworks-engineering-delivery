@@ -13,22 +13,27 @@
 #         ```
 # 官方依据: ★★ **逐页读过**（`C:\swapi` 的 md + 出厂类型库反射 arity）—— 逐条见各函数来
 #           源块：
-#   `IModelDoc2\{EditRebuild3,ForceRebuild3}.md` · `IModelDocExtension\{ForceRebuildAll,NeedsRebuild2}.md` ·
+# `IModelDoc2\{EditRebuild3,ForceRebuild3}.md` · `IModelDocExtension\{ForceRebuildAll,Ne
+# edsRebuild2}.md` ·
 #   `enums\swModelRebuildStatus_e.md` · `ISketchManager\CreateConstructionGeometry.md` ·
-#   `ISketchSegment\ConstructionGeometry.md` · `IConfiguration\{GetDisplayStates,ApplyDisplayState,
+# `ISketchSegment\ConstructionGeometry.md` · `IConfiguration\{GetDisplayStates,ApplyDisp
+# layState,
 #   GetDisplayStatesCount}.md` · `IConfigurationManager\ActiveConfiguration.md` ·
 #   `enums\swDocumentTypes_e.md` · `ISldWorks\GetDocumentDependencies2.md`
 #   ★★ 其中三条**官方逐字**被当成硬约束写进了实现（见下），**不是我们自己定的口径**：
 #     ① `EditRebuild3` 是**方法**（三家外部项目当属性读 ⇒ 拿到 bound method ⇒ 判据恒真）；
-#     ② `GetDisplayStates` 的 Remarks「first name = active」**只在没有多个显示状态同时活动时**成立
+# ② `GetDisplayStates` 的 Remarks「first name = active」**只在没有多个显示状态同时活动时
+# **成立
 #        ⇒ 装配里必须给 `ambiguous`；
 #     ③ `GetDocumentDependencies2` 「**Library features 不会返回**」⇒ 盲区要随返回值带出去。
 # 许可:   本仓库 MIT。★ 无第三方代码引入（全部按官方签名自建）。
 # 规模:   **6 个工具** ⇒ 工具数 433 → **439**
 # ★★ 本批**不做**的（★ 裁决书已裁掉，**别顺手补**）：
-#     · idx 273 `setup_template_positions` —— **缓办**（域未分类 + 要用 `ISheet::SetProperties2`
+# · idx 273 `setup_template_positions` —— **缓办**（域未分类 + 要用 `ISheet::SetProperti
+# es2`
 #       的写入通道，且那些属性名/数值约定**两套官方源都查不到**）✓
-#     · idx 115/145 `edges`/`faces` —— ★ **独立风险**（"读属性读不到"）⇒ 裁决书要求**先小验证**，
+# · idx 115/145 `edges`/`faces` —— ★ **独立风险**（"读属性读不到"）⇒ 裁决书要求**先小验
+# 证**，
 #       故不在本批（★ 它要**扩**已有 `solidworks_entities_on_body`，**不许开平行工具**）✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -39,7 +44,8 @@ __all__ = ["SPECS_BATCH92"]
 
 
 SPECS_BATCH92 = [
-    # ── ① 重建（1）—— ★★ 裁决书强制「235+236 合并成一条」，**不建两条** ─────────────────────
+    # ── ① 重建（1）—— ★★ 裁决书强制「235+236 合并成一条」，**不建两条** ───────────────
+    # ──────
     ToolSpec(
         name="solidworks_session_rebuild",
         title="Rebuild the Model (three modes: edit / force / all)",
@@ -69,7 +75,8 @@ SPECS_BATCH92 = [
             "⚠ **边界（官方 Remarks 逐字）**：`EditRebuild3` 「only works **in-context of the active "
             "document**」⇒ 对未激活的文档调用没有意义（本工具不替调用方激活文档）。",
     ),
-    # ── ② 构造几何（1）—— ★ 复用该文件已有的声明式选段包装（裁决书指定）────────────────────
+    # ── ② 构造几何（1）—— ★ 复用该文件已有的声明式选段包装（裁决书指定）───────────────
+    # ─────
     ToolSpec(
         name="solidworks_sketch_set_construction_geometry",
         title="Set / Unset Selected Sketch Segments as Construction Geometry",
@@ -92,7 +99,8 @@ SPECS_BATCH92 = [
             "读回不等于请求 ⇒ `ok=False` 并**如实报哪几段没对上**（★ 不静默 —— "
             "这正是「再调一次是切换还是置位」那件事会暴露的地方）✓",
     ),
-    # ── ③ 显示状态（2）—— ★★ `ambiguous` 是裁决书点名的硬约束 ─────────────────────────────
+    # ── ③ 显示状态（2）—— ★★ `ambiguous` 是裁决书点名的硬约束 ─────────────────────────
+    # ────
     ToolSpec(
         name="solidworks_config_list_display_states",
         title="List the Display States of the Active Configuration",
@@ -126,7 +134,8 @@ SPECS_BATCH92 = [
             "⚠ 本工具**不做**「新建显示状态」—— 那是 `IConfiguration::CreateDisplayState` 的事，"
             "不属于本规格的候选。",
     ),
-    # ── ④ 引用文档（1）—— ★ 补 pack_and_go 的读侧 ────────────────────────────────────────
+    # ── ④ 引用文档（1）—— ★ 补 pack_and_go 的读侧 ─────────────────────────────────────
+    # ───
     ToolSpec(
         name="solidworks_document_dependencies",
         title="List a Document's Referenced Documents (dependencies)",
@@ -159,7 +168,8 @@ SPECS_BATCH92 = [
             "⚠ 另两条官方逐字已写进返回值：★ **被压缩的组件也会出现**（别把「出现了」当「生效了」）· "
             "★ `search=True` 会**改当前目录**。",
     ),
-    # ── ⑤ 移动/复制实体（1）—— ★ 裁决书 §九 称它是「本批最干净的一条」────────────────────
+    # ── ⑤ 移动/复制实体（1）—— ★ 裁决书 §九 称它是「本批最干净的一条」─────────────────
+    # ───
     ToolSpec(
         name="solidworks_part_move_copy_body",
         title="Move or Copy Solid Bodies (InsertMoveCopyBody2)",

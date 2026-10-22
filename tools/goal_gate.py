@@ -1,8 +1,10 @@
 """★ Stop hook 的**验收条件**：`output/AUTO_HANDOFF.md` ② 段没有编号待办 ⇒ exit 0（达成）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   D:/AI/SW
-# 文件:   output/GOAL.md（★ 本文件被它当 `- [ ] cmd:` 行引用）· output/AUTO_HANDOFF.md（每轮交接单）
-#         skill `goal-handoff` 的 assets/goal-gate.sh（★ **门**在 `.codebuddy/hooks/goal-gate.sh`；
+# 文件:   output/GOAL.md（★ 本文件被它当 `- [ ] cmd:` 行引用）· output/AUTO_HANDOFF.md（
+# 每轮交接单）
+# skill `goal-handoff` 的 assets/goal-gate.sh（★ **门**在 `.codebuddy/hooks/goal-gate.sh
+# `；
 #         ★ 本文件只是它逐条执行的**其中一条验收命令**）
 # 定位:   ★★ **条件**（本文件，exit 0/1）与**门**（`goal-gate.sh`，exit 0/2）**分开** ——
 #         门负责安全阀与反馈，条件只管「达成没达成」。★ 这是 skill §2.3 与 §四 的架构。

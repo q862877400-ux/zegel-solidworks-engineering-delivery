@@ -10,12 +10,15 @@
 #     · 本轮读 `IFeatureManager.PreTrimSurface` 的 **CHM 页**，★ 而那页顶上写着
 #       「See Also **Example**」⇒ ★★ **顺着走** ⇒ 落到
 #       `Create_Trimmed_Surface_Feature_Example_{CSharp,VB,VBNET}.htm` ✓
-#   ⇒ ★★★ **那是本仓从未用过的源：官方**例子**（★ 它给的是**调用序** —— 签名与 Remarks 都给不了）**
+# ⇒ ★★★ **那是本仓从未用过的源：官方**例子**（★ 它给的是**调用序** —— 签名与 Remarks 都
+# 给不了）**
 #
-#   ★★★★★ **官方例子的完整调用序**（`Create_Trimmed_Surface_Feature_Example_VBNET.htm` 逐字）：
+# ★★★★★ **官方例子的完整调用序**（`Create_Trimmed_Surface_Feature_Example_VBNET.htm` 逐
+# 字）：
 #     ```
 #     ① 建两张相交曲面（FeatureExtruRefSurface2 ×2）
-#     ② **PreTrimSurface(False, True, False, False)**   ← ★ **先调它！且此时尚未选任何东西** ⚠
+# ② **PreTrimSurface(False, True, False, False)**   ← ★ **先调它！且此时尚未选任何东西**
+#  ⚠
 #     ③ **SelectByID2("", "SURFACEBODY", x, y, z, True, 0, Nothing, 0)**
 #          ← ★★ **选的是 `SURFACEBODY` 类型（按坐标）**，★ 而 `True` = append ⚠
 #     ④ **PostTrimSurface(True)**                       ← ★ **然后才提交**
@@ -89,14 +92,17 @@ def _one(sw, tag, pick_mode):
         fm = C.get_com_member(doc, "FeatureManager")
         ext = C.get_com_member(doc, "Extension")
         before = list(FR.feature_names(doc) or [])
-        #: \u2605\u2605 **\u6b65\u9aa4\u2461\uff1a\u5148\u8c03 PreTrimSurface**\uff08\u2605 \u800c\u6b64\u65f6\u5c1a\u672a\u9009\u4efb\u4f55\u4e1c\u897f\uff09
+        #: \u2605\u2605 **\u6b65\u9aa4\u2461\uff1a\u5148\u8c03 PreTrimSurface**\uff08\u2
+        #: 605 \u800c\u6b64\u65f6\u5c1a\u672a\u9009\u4efb\u4f55\u4e1c\u897f\uff09
         pre = None
         try:
             pre = C.get_com_member(fm, "PreTrimSurface", False, True, False, False)
             row["pre"] = str(pre)
         except Exception as exc:                                          # noqa: BLE001
             row["pre_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
-        #: \u2605\u2605 **\u6b65\u9aa4\u2462\uff1a\u9009 `SURFACEBODY`\uff08\u6309\u5750\u6807\uff09** \u2014\u2014 \u2605 \u800c\u4e0d\u662f\u6309\u5bf9\u8c61\u9009 FACE
+        #: \u2605\u2605 **\u6b65\u9aa4\u2462\uff1a\u9009 `SURFACEBODY`\uff08\u6309\u5750
+        #: \u6807\uff09** \u2014\u2014 \u2605 \u800c\u4e0d\u662f\u6309\u5bf9\u8c61\u9009
+        #:  FACE
         picked = False
         if pick_mode == "surfacebody_by_coord":
             for pt in ((0.0, 0.0, 0.0), (0.005, 0.0, 0.005), (-0.005, 0.0, -0.005),
@@ -110,7 +116,9 @@ def _one(sw, tag, pick_mode):
                 except Exception:                                         # noqa: BLE001
                     continue
         else:
-            #: \u2605 \u5bf9\u7167\uff1a\u6309**\u5bf9\u8c61**\u9009**\u6240\u6709\u66f2\u9762\u9762**\uff08\u2605 \u672c\u4ed3\u539f\u6765\u7684\u505a\u6cd5\uff09
+            #: \u2605 \u5bf9\u7167\uff1a\u6309**\u5bf9\u8c61**\u9009**\u6240\u6709\u66f2
+            #: \u9762\u9762**\uff08\u2605 \u672c\u4ed3\u539f\u6765\u7684\u505a\u6cd5\uff
+            #: 09
             picked = SF._select_all_surface_faces(doc, mark=0) > 0
         row["picked"] = picked
         try:

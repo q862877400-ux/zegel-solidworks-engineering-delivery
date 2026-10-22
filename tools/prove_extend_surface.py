@@ -4,8 +4,10 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_extend_surface.py
 # 定位:   ★ 2026-10-02（轮 386）objective② 重核后确认 `extend_surface` 为**真缺**
-#   （★ `docs/union-gap-evidence-based.md`），★ 而官方 `IModelDoc2.InsertExtendSurface` **3 参、可补**。
-#   ★ 本探针：★ 先建一个曲面特征 ⇒ **按对象选中它** ⇒ 延伸 ⇒ **回读特征树**（★ 它回 void，规则 6）。
+# （★ `docs/union-gap-evidence-based.md`），★ 而官方 `IModelDoc2.InsertExtendSurface` **
+# 3 参、可补**。
+# ★ 本探针：★ 先建一个曲面特征 ⇒ **按对象选中它** ⇒ 延伸 ⇒ **回读特征树**（★ 它回 void，
+# 规则 6）。
 # 官方依据: `C:\swapi\types\IModelDoc2\InsertExtendSurface.md` ——
 #   `void InsertExtendSurface(bool ExtendLinear, int EndCondition, double Distance)`；
 #   「Extends a surface along the **selected** faces or edges」；
@@ -16,7 +18,8 @@
 #
 # ★ 判据（★ 定量、可被"什么都没发生"证伪）：
 # ```
-# ① 前置：★ 先建出**一个曲面特征**（★ 用已真机通过的 `create_extruded_surface_report`）——
+# ① 前置：★ 先建出**一个曲面特征**（★ 用已真机通过的 `create_extruded_surface_report`）—
+# —
 #    没有曲面就没法延伸；★ 判据是**特征树真的多了**（★ 那一步的）
 # ② `insert_extend_surface_report` **返回 ok 且 `tree_after > tree_before`**
 # ③ ★ 反证：★ **不选任何面**时它**必须失败**（★ 官方要求"along the selected faces"）——
@@ -48,7 +51,8 @@ def main() -> int:
     doc = None
     try:
         doc = sw_connect.new_document(sw, "part")
-        #: ① 前置：★ 先建一个**曲面特征**（★ 用已真机通过的 `create_extruded_surface_report`）
+        #: ① 前置：★ 先建一个**曲面特征**（★ 用已真机通过的 `create_extruded_surface_rep
+        #: ort`）
         start_sketch(doc, plane_name="Front Plane")
         sketch_corner_rectangle(doc, -20.0, -10.0, 20.0, 10.0)
         sk = current_sketch_name(doc)
@@ -59,16 +63,19 @@ def main() -> int:
                                                   "feature": r1.get("feature_name"),
                                                   "tree": [r1.get("tree_before"), r1.get("tree_after")]}
 
-        #: ② **负例**：★ 距离 ≤ 0 ⇒ **必须被入口拒掉**（★ 那不依赖 `InsertExtendSurface` 的选择语义）。
+        #: ② **负例**：★ 距离 ≤ 0 ⇒ **必须被入口拒掉**（★ 那不依赖 `InsertExtendSurface`
+        #:  的选择语义）。
         #:   ⚠ 我第一版把"**不选面**"当负例 —— ★ 而真机上**不选面它也能成**（★ 官方描述说
-        #:   "along the **selected** faces"，★ 但实测它**自己会找**）⇒ ★★ 那条**不是负例**，
+        #: "along the **selected** faces"，★ 但实测它**自己会找**）⇒ ★★ 那条**不是负例**
+        #: ，
         #:   保留它会得出"判据失效"的**错误结论**。⇒ 换成参数校验这条（★ 那才可证伪）。
         neg = SF.insert_extend_surface_report(doc, 0.0)
         ev["steps"]["negative_zero_distance"] = {
             "ok": (not neg.get("ok")), "returned_ok": bool(neg.get("ok")),
             "error": str(neg.get("error"))[:110]}
 
-        #: ③ 正例：★ 选面由 `insert_extend_surface_report` 内部完成（`_select_all_surface_faces`）
+        #: ③ 正例：★ 选面由 `insert_extend_surface_report` 内部完成（`_select_all_surfac
+        #: e_faces`）
         pos = SF.insert_extend_surface_report(doc, 10.0)
         ev["steps"]["extend_surface"] = {
             "ok": bool(pos.get("ok")),

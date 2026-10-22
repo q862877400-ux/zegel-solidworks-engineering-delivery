@@ -102,10 +102,12 @@ def main() -> int:
         #: ③ ★ 四个读数（★ 全是回读报告，不回 COM 对象）
         nums = T.collect_topology_numbers(study)
         ev["steps"]["collect_numbers"] = {
-            #: ⚠ 判据**不是** `material_mass_plot` 非空 —— ★ 那张图**只有跑完求解才有**，
+            #: ⚠ 判据**不是** `material_mass_plot` 非空 —— ★ 那张图**只有跑完求解才有**
+            #: ，
             #:   而本脚本按设计**不跑求解**（★ 跑求解是另一个能力的事，且会弹模态框）。
             #:   ⇒ 本批判的是「**读数入口可用**」：函数回了 dict **且** 带 `status` 字段。
-            #:   ★ `status == "no_results"` 是**预期值** —— 而它恰好证明那个判据**真的在判**
+            #: ★ `status == "no_results"` 是**预期值** —— 而它恰好证明那个判据**真的在判
+            #: **
             #:     （★ 不是恒真的假通过；对照 `list_topology_constraints_and_controls` 那条
             #      「裸传 0 当出参 ⇒ 永远返回全 None」的既有教训）。
             "ok": isinstance(nums, dict) and "status" in nums,

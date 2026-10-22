@@ -9,10 +9,12 @@
 #
 # 官方三源（★ 铁律 4）：
 #   · `C:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
-#     `Feature FeatureBossThicken(double Thickness, int Direction, int FaceIndex, bool FillVolume,
+# `Feature FeatureBossThicken(double Thickness, int Direction, int FaceIndex, bool FillV
+# olume,
 #      bool Merge, bool UseFeatScope, bool UseAutoSelect)`
 #     ★★ 参数表逐字：**`FaceIndex` ⇒「Not used」** ✓（★ 故本包装不收面索引）
-#   · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**（★ 继任者是 `IFeatureManager` 那个）
+# · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**（★ 继任者是 `IFeatu
+# reManager` 那个）
 #
 # ★ 前置（★ 与 `knit_surfaces_report` 同款）：★ **文件里要有一个曲面体**
 #   ⇒ 本探针先用本仓**已验过**的 `create_extruded_surface_report` 建一张曲面 ✓
@@ -51,7 +53,8 @@ def main() -> int:
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: \u2605 \u2460 \u5148\u5efa**\u4e00\u5f20\u66f2\u9762**\uff08\u2605 \u7528\u672c\u4ed3\u5df2\u9a8c\u8fc7\u7684\u62d3\u5c55\u66f2\u9762\uff09
+        #: \u2605 \u2460 \u5148\u5efa**\u4e00\u5f20\u66f2\u9762**\uff08\u2605 \u7528\u67
+        #: 2c\u4ed3\u5df2\u9a8c\u8fc7\u7684\u62d3\u5c55\u66f2\u9762\uff09
         P.start_sketch(doc, plane_name="Front Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
                          -0.02, -0.02, 0.0, 0.02, 0.02, 0.0)

@@ -7,10 +7,12 @@
 #   ★★ 因为那些载荷都写在**同一个 `ICWLoadsAndRestraintsManager`** 上，
 #     ★ 于是"**失败的** `Add*` 调用"会**污染下一格**（★ 真机表现：`heat_flux` 在 FACE 上
 #     从轮 408 的 ✓ 变成 ✗，★ 而两次唯一差别是"中间夹了失败的 EDGE/VERTEX 尝试"）。
-#   ⇒ ★★ 正解用的是事实 324 里的**做法①**：★ **每一格建一个新算例**（★ 算例是载荷的宿主）。
+# ⇒ ★★ 正解用的是事实 324 里的**做法①**：★ **每一格建一个新算例**（★ 算例是载荷的宿主）
+# 。
 #   ★ 顺序也记下来（事实 324：★ "先试 A 再试 B"与反过来可能不同）。
 # 官方依据: `D:\AI\SW\_raw\cosworks_signatures.md` 里各条的 Parameters 段
-#   （`AddConvection`「faces or shell edges」· `AddHeatPower`「bodies, faces, edges, and vertices」·
+# （`AddConvection`「faces or shell edges」· `AddHeatPower`「bodies, faces, edges, and v
+# ertices」·
 #    `AddTemperature`「faces, edges, and vertices」）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

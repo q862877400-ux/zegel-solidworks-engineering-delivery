@@ -3,11 +3,14 @@
 # 仓库:   本项目自身（一次性诊断）
 # 文件:   tools/diag_display_select.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2 收口最后两格** ✓
-#   ★ 现象①：★ `GetDisplayStateSetting(swAllDisplayState=2)` 回 `None` ⇒ `display` 一直 unreadable
+# ★ 现象①：★ `GetDisplayStateSetting(swAllDisplayState=2)` 回 `None` ⇒ `display` 一直 un
+# readable
 #   ★ 现象②：★ `select_by_selector(selector="index:0", kind="EDGE", body_index=0)` 之后
 #     ★ 选区计数仍是 **0** ⇒ `selection` 那一格标不出来
-# 判据:   ★ 官方（已读）：`IModelDocExtension.GetDisplayStateSetting(int Option)`，`Option` 取
-#   `swDisplayStateOpts_e`（★ 官方枚举页给了值：`swThisDisplayState = 1` · `swAllDisplayState = 2` ·
+# 判据:   ★ 官方（已读）：`IModelDocExtension.GetDisplayStateSetting(int Option)`，`Opti
+# on` 取
+# `swDisplayStateOpts_e`（★ 官方枚举页给了值：`swThisDisplayState = 1` · `swAllDisplaySt
+# ate = 2` ·
 #   `swSpecifyDisplayState = 3`）⇒ ★ 三种都试一遍，★ 只列实测 ✓
 #   ★ 选择工具**自带回读**（★ 它的 doc 说判据是 `count`）⇒ ★ **读它的返回体**，★ 不猜 ✓
 # 官方依据: `C:\swapi\types\IModelDocExtension\GetDisplayStateSetting.md` · `enums\swDis

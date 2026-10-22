@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_part_read_and_dimension.py
 # 定位:   ★ 2026-10-03（轮 399）24h 计划 v2 **段 3** 的真机探针（无单位歧义的两条）。
-#   被验的工具见 `mcp-server/tool_specs_batch55.py`。★ 另两条（`add_dimension` / `linear_pattern`）
+# 被验的工具见 `mcp-server/tool_specs_batch55.py`。★ 另两条（`add_dimension` / `linear_p
+# attern`）
 #   **故意不在本批** —— 它们的包装不做换算而官方 API 吃米（文档却写毫米）⇒ 先测单位再挂。
 # 官方依据: `ISketch.AutoDimension2`（★ 5 参）· `IModelDoc2.GetActiveSketch2` ·
 #   `ISketchManager.ActiveSketch`
@@ -14,7 +15,8 @@
 #
 # ★ 判据（★ 正例 + 三条可证伪的负例）：
 # ```
-# ① `current_sketch_name` 在**草图打开时**回**真名**（★ 中文 UI 应是「草图N」而不是回退值）
+# ① `current_sketch_name` 在**草图打开时**回**真名**（★ 中文 UI 应是「草图N」而不是回退
+# 值）
 # ② `auto_dimension_sketch` 在**有活动草图**时 `status` = `pass` 且 `status_code` = 0
 # ③ ★ 负例：**没有活动草图**时 `auto_dimension_sketch` ⇒ `blocked` + `SKETCH_NOT_ACTIVE`
 # ④ ★ 负例：草图**关闭后** `current_sketch_name(fallback="...")` ⇒ 回**那个回退值**

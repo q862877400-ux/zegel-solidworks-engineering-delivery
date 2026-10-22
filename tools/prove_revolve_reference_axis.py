@@ -33,7 +33,8 @@ automatically size the axis.` ⇒ ★★ **要先选中某个项**（一条边 /
 # 定位:   objective⑥ 的下一半：核**参考轴**这条路径（轮 360 只核到"草图线段"那条不通）。
 # 官方依据: `D:\AI\SW\AI Solidworks\官方文档\SWhelp\sldworksapi\
 #   Create_360-degree_Revolve_Feature_Example_VBNET.htm`（★ 调用顺序与 `"AXIS"` 类型名）·
-#   `C:\swapi\types\IModelDoc2\InsertAxis2.md`（★ "based on the currently selected items"）。
+# `C:\swapi\types\IModelDoc2\InsertAxis2.md`（★ "based on the currently selected items"
+# ）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 新建临时文档并关闭（★ 不保存、不另存 —— 硬约束⑦）

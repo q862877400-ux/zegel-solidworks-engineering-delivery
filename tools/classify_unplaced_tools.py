@@ -36,7 +36,8 @@ sys.path.insert(0, str(REPO))
 
 OUT = REPO / "output" / "unplaced-classification.json"
 COM_FORMS = ("get_com_member(", "call_com_member(", "set_com_member(")
-#: ★ 点调用：★ `<名>.<Member>(` —— ★ 只认"看起来像 COM 对象"的宿主名（★ 排除 self/本仓模块）
+#: ★ 点调用：★ `<名>.<Member>(` —— ★ 只认"看起来像 COM 对象"的宿主名（★ 排除 self/本仓模
+#: 块）
 DOT = re.compile(r"\b([a-z_][A-Za-z0-9_]*)\.([A-Z][A-Za-z0-9_]*)\s*\(")
 #: ★ 这些宿主名是**纯 Python**（★ 本仓自己的对象/标准库），★ 不算 COM
 PY_HOSTS = {"self", "cls", "os", "re", "json", "path", "p", "m", "out", "builtins"}

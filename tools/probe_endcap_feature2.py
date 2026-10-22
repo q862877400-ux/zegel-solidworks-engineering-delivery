@@ -6,18 +6,23 @@
 #           回 `None`，
 #   ★ 四类原因已排除 ⇒ ★ **换一条路**（这正是事实 53 说的"回退换做法"）。
 #   ★ 官方 `InsertEndCapFeature2` 的 Remarks 逐字：
-#     「Call `InsertEndCapFeature3` if you want to **pre-select** the faces to end-cap in the
+# 「Call `InsertEndCapFeature3` if you want to **pre-select** the faces to end-cap in th
+# e
 #      graphics area.」⇒ ★ **`2` 把面当参数收** ⇒ ★ 正好绕开事实 503（预选活不下来）。
-#   ★★ 官方例子的**逐字配方**（`C:\\swapi\\examples\\Insert_Weldment_Features_Example_VB.md`）：
+# ★★ 官方例子的**逐字配方**（`C:\\swapi\\examples\\Insert_Weldment_Features_Example_VB.m
+# d`）：
 #     ```
 #     face = selMgr.GetSelectedObject6(1, -1)        ' 取选中的面对象
 #     Set faceECObj1(0) = face                       ' 装进数组
 #     endCapFeature = fm.InsertEndCapFeature2(0.005, False, True, 0.003, 0.5, 0.003, y)
 #     ```
-#     ★ 注意与事实 504 里那条 3 参路线的差异：`BIsChamfer=**True**` · `WallThicknessRatio=**0.5**`。
-#   ★ 选面用**按点**（`SelectByID2("", "FACE", x, y, z, …)`）—— ★ 本仓事实 32 明写这是**可行路径**
+# ★ 注意与事实 504 里那条 3 参路线的差异：`BIsChamfer=**True**` · `WallThicknessRatio=**
+# 0.5**`。
+# ★ 选面用**按点**（`SelectByID2("", "FACE", x, y, z, …)`）—— ★ 本仓事实 32 明写这是**可
+# 行路径**
 #     （按名字不行、按对象可行、**按面上的点可行**）。
-#   官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature2.md` 的签名与 Remarks + 上面那份例子
+# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature2.md` 的签名与 Remark
+# s + 上面那份例子
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -136,7 +141,8 @@ def main() -> int:
                 row["skip"] = "★ 按点没选上面"
                 R["cases"].append(row)
                 continue
-            #: ★ 官方：用 `GetSelectedObject6(1, -1)` 取回**面对象**（不是用我们自己的索引）
+            #: ★ 官方：用 `GetSelectedObject6(1, -1)` 取回**面对象**（不是用我们自己的索
+            #: 引）
             got = _g(_g(doc, "SelectionManager"), "GetSelectedObject6", 1, -1)
             row["got_type"] = type(got).__name__
             arr = w32.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [got])

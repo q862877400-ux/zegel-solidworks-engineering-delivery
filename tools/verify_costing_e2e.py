@@ -62,9 +62,12 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "costing-evidence.js
 # ⚠ 判据（本函数里全部照官方反射，**不猜**）：
 #   * `IModelDocExtension::GetCostingManager()` **零参**，返回 `Object`；
 #   * `ICostManager`：`get_CostingDefaults` / `get_CostingModel` /
-#     `GetTemplateCount(Int32)` / `GetTemplatePathnames(Int32)` / `Close()` / `WaitForUIUpdate()`；
-#   * `ICostPart`：`GetBodyCount()` / `GetBodies()` / `GetCostAnalysis()` / `CreateCostAnalysis(String)`；
-#   * `ICostAnalysis`：23 个成员（`get_CostingType` / `GetMaterialCost` / `GetTotalCostToManufacture` …）。
+# `GetTemplateCount(Int32)` / `GetTemplatePathnames(Int32)` / `Close()` / `WaitForUIUpda
+# te()`；
+# * `ICostPart`：`GetBodyCount()` / `GetBodies()` / `GetCostAnalysis()` / `CreateCostAna
+# lysis(String)`；
+# * `ICostAnalysis`：23 个成员（`get_CostingType` / `GetMaterialCost` / `GetTotalCostToM
+# anufacture` …）。
 # ⚠ **判据不看 `CreateCostAnalysis` 的返回值** —— 它返 `None` 但分析确实建了
 #   （SolidWorks「返回码撒谎」家族）；判据取 `GetCostAnalysis() is not None`。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -77,10 +80,14 @@ def main() -> int:
     title = None
     evidence: dict = {
         "started": time.strftime("%Y-%m-%d %H:%M:%S"),
-        #: ★★ 2026-10-07（接手轮 · 规格 216）：★ 原来是 `str(meta.get("revision", ""))` ——
-        #:   ★ 两处都不稳：① `connect_solidworks` 的 metadata **当时根本没有 `revision` 键**
-        #:   （★ 已在 `scripts/sw_connect.py` 补上）；② ★ 万一值为 `None`，`str(None)` 会写成
-        #:   **字符串 `"None"`** ✗ ⇒ ★ 这里加 `or ""`：★ **取不到就是空串，不写 `"None"`** ✓
+        #: ★★ 2026-10-07（接手轮 · 规格 216）：★ 原来是 `str(meta.get("revision", ""))` 
+        #: ——
+        #: ★ 两处都不稳：① `connect_solidworks` 的 metadata **当时根本没有 `revision` 键
+        #: **
+        #: （★ 已在 `scripts/sw_connect.py` 补上）；② ★ 万一值为 `None`，`str(None)` 会
+        #: 写成
+        #: **字符串 `"None"`** ✗ ⇒ ★ 这里加 `or ""`：★ **取不到就是空串，不写 `"None"`**
+        #:  ✓
         "solidworks_revision": str((meta or {}).get("revision") or ""),
         "verdict": "unknown",
         "steps": {},
@@ -118,7 +125,8 @@ def main() -> int:
             "manufacturing_method_0": int(sw_costing._num(defaults, "GetManufacturingMethod", -1, 0)),
         }
 
-        # ④ 部分 + 成本（⚠ 判据是 GetCostAnalysis 非 None，**不看** CreateCostAnalysis 的返回）
+        # ④ 部分 + 成本（⚠ 判据是 GetCostAnalysis 非 None，**不看** CreateCostAnalysis 
+        # 的返回）
         part = sw_costing.get_costing_model(mgr)
         evidence["steps"]["bodies"] = {
             "count": sw_costing.get_body_count(part),

@@ -5,7 +5,8 @@
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2 收口**。★ 现象：
 #   ★★ 指纹里 `bodies`/`faces` 两格一直 **unreadable** —— ★ 按官方签名补了
 #     `GetBodies2(swAllBodies=-1, BVisibleOnly=False)` 之后**仍然读不到** ⇒ ★ 查真因 ✓
-# 判据:   ★ 官方签名（已读页面）：`System.object GetBodies2( System.int BodyType, System.bool BVisibleOnly )`
+# 判据:   ★ 官方签名（已读页面）：`System.object GetBodies2( System.int BodyType, System
+# .bool BVisibleOnly )`
 #   ⇒ ★ 本脚本把**各种调用形状**都试一遍，★ 只列实测，★ 不推断 ✓
 # 官方依据: `C:\swapi\types\IPartDoc\GetBodies2.md` · `swBodyType_e`（`swAllBodies = -1`
 #           ）

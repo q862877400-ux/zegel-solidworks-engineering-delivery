@@ -15,7 +15,8 @@
 #
 #   ★★★★★ **继任者的文档（逐字）**：
 #     ```
-#     Feature InsertDeleteHoleForSurface()          \u2190 \u2605 **0 \u53c2**\uff0c\u800c**\u8fd4\u56de `IFeature`**\uff08\u2605 \u4e0d\u662f void\uff09
+# Feature InsertDeleteHoleForSurface()          \u2190 \u2605 **0 \u53c2**\uff0c\u800c**
+# \u8fd4\u56de `IFeature`**\uff08\u2605 \u4e0d\u662f void\uff09
 #     Remarks: Before calling this method, call SelectByID2 to select the
 #              **hole edges to remove** from the surface.
 #     ```
@@ -99,7 +100,8 @@ def _one(sw, tag, entry, pick):
                     if _sel(f, append=False, mark=0):
                         picked += 1
             else:
-                #: \u2605 **\u5185\u73af\u90a3\u5708\u8fb9**\uff08\u2605 \u5b98\u65b9 Remarks \u8bf4\u7684 "hole edges"\uff09
+                #: \u2605 **\u5185\u73af\u90a3\u5708\u8fb9**\uff08\u2605 \u5b98\u65b9 Re
+                #: marks \u8bf4\u7684 "hole edges"\uff09
                 for e in list(_g(b, "GetEdges") or []):
                     try:
                         if _sel(e, append=(picked > 0), mark=0):

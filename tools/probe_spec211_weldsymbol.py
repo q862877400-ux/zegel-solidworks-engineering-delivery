@@ -6,26 +6,37 @@
 # 官方依据（★ 三样逐字读过）：
 #   · ★★ `C:\swapi\types\IDrawingDoc\InsertWeldSymbol.md`
 #     `void InsertWeldSymbol( System.string Dim1, System.string Symbol, System.string Dim2,
-#      System.bool Symmetric, System.bool FieldWeld, System.bool ShowOtherSide, System.bool DashOnTop,
-#      System.bool Peripheral, System.bool HasProcess, System.string ProcessValue )` ⇒ ★ **参数式 10 参** ✓
+# System.bool Symmetric, System.bool FieldWeld, System.bool ShowOtherSide, System.bool D
+# ashOnTop,
+# System.bool Peripheral, System.bool HasProcess, System.string ProcessValue )` ⇒ ★ **参
+# 数式 10 参** ✓
 #     ★ `## Parameters` 逐字：★ `Dim1` = First text value **to the left of** the symbol ·
-#       ★ `Symbol` = **Weld symbol name**（see Remarks）· ★ `Dim2` = Text value **to the right of** the symbol ·
+# ★ `Symbol` = **Weld symbol name**（see Remarks）· ★ `Dim2` = Text value **to the right
+#  of** the symbol ·
 #       ★ `Symmetric` = True puts the symbol above **and below** the horizontal line ·
 #       ★ `FieldWeld` = True puts a **flag** for field welding · ★ `ShowOtherSide` ·
-#       ★ `DashOnTop` = True puts the dash line **on top** · ★ `Peripheral` = True puts a peripheral symbol ·
+# ★ `DashOnTop` = True puts the dash line **on top** · ★ `Peripheral` = True puts a peri
+# pheral symbol ·
 #       ★ `HasProcess` = True uses `ProcessValue` ✓
-#     ★★ `## Remarks` 逐字：「`Symbol` specifies the weld symbol name. You can find a list of
+# ★★ `## Remarks` 逐字：「`Symbol` specifies the weld symbol name. You can find a list o
+# f
 #       weld symbol names in **C:\ProgramData\SolidWorks\SolidWorks 20…**」✓
 #   · ★★★ **宿主是 `IDrawingDoc`** ✓ —— ★ 上一批全扫时确认过：
-#     `IModelDoc2` 下另有 `InsertWeldSymbol3`/`2`/`IInsertWeldSymbol3`；★ **本探针走 `IDrawingDoc` 那个** ✓
+# `IModelDoc2` 下另有 `InsertWeldSymbol3`/`2`/`IInsertWeldSymbol3`；★ **本探针走 `IDrawi
+# ngDoc` 那个** ✓
 # 前置核实（★ 本批现场查的，★ 不是假设）：
-#   ★ ① **零件要落盘**（★ `create_three_standard_views` 要 `part_path` ✓）⇒ ★ 写到**仓库内 `output/`** ✓
-#   ★ ② **工程图**：★ 仓里 `sw_session.new_drawing()` ✓ + `sw_drawing_expose.create_three_standard_views` ✓
+# ★ ① **零件要落盘**（★ `create_three_standard_views` 要 `part_path` ✓）⇒ ★ 写到**仓库内
+#  `output/`** ✓
+# ★ ② **工程图**：★ 仓里 `sw_session.new_drawing()` ✓ + `sw_drawing_expose.create_three_
+# standard_views` ✓
 #   ★ ③ **符号名清单**：★ 本机**有** —— `…\SOLIDWORKS 2026\design library\annotations\`
-#     下的 `.sldweldfvt`：★ `0.25 fillet both side` · `blend weld` · `fillet-allround` · `plug-bevelfillet` ✓
-# 判据:   ★★ 主判据一律**回读**；★ 而官方该成员**回 `void`** ✗ ⇒ ★★ **判据要落在「它真正改变的东西」上**
+# 下的 `.sldweldfvt`：★ `0.25 fillet both side` · `blend weld` · `fillet-allround` · `pl
+# ug-bevelfillet` ✓
+# 判据:   ★★ 主判据一律**回读**；★ 而官方该成员**回 `void`** ✗ ⇒ ★★ **判据要落在「它真正
+# 改变的东西」上**
 #     （★ 第 38 轮立的定则 ✓）—— ★ 焊接符号是**标注** ⇒ ★ 试**读回**；
-#     ★ 本探针**同时落两组读数**：★ ① 调用是否抛 · ★② 工程图的**注释/符号计数**（★ 有没有读回成员待查）
+# ★ 本探针**同时落两组读数**：★ ① 调用是否抛 · ★② 工程图的**注释/符号计数**（★ 有没有读
+# 回成员待查）
 #   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 已五次 ✓）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -115,10 +126,13 @@ def main() -> int:
     exc = None
     if drawing is not None:
         try:
-            #: ★★★ **不要绕 `GetDrawingDoc`** ✗ —— ★ 工程图文档**本身就是 `IDrawingDoc`** ✓
-            #:   ★★ 这与上一批 SpeedPak 那次是**同一类错**（★ 我写过 `get_com_member(top, "AssemblyDoc")`
+            #: ★★★ **不要绕 `GetDrawingDoc`** ✗ —— ★ 工程图文档**本身就是 `IDrawingDoc`*
+            #: * ✓
+            #: ★★ 这与上一批 SpeedPak 那次是**同一类错**（★ 我写过 `get_com_member(top, 
+            #: "AssemblyDoc")`
             #:    ⇒ `AttributeError: <unknown>.AssemblyDoc` ✗）⇒ ★★ **推广后的定则**：
-            #:     ★★★ **`IModelDoc2` 的族接口（`IAssemblyDoc` / `IDrawingDoc` / `IPartDoc`）
+            #: ★★★ **`IModelDoc2` 的族接口（`IAssemblyDoc` / `IDrawingDoc` / `IPartDoc`
+            #: ）
             #:     就是文档本身** ✗ —— ★ **不需要 `GetXxxDoc` 那一层** ✓
             ret = sw_connect.get_com_member(
                 drawing, "InsertWeldSymbol",
@@ -138,20 +152,28 @@ def main() -> int:
 
     #: ④ **判据**（★ 官方回 `void` ⇒ ★ 只能"抛不抛" + ★ 找读回成员 ✓）
     #: ★★★★ **判据要落在「它真正改变的东西」上**（★ 第 38 轮定则 ✓）——
-    #:   ★ 焊接符号是**视图上的标注** ✗ ⇒ ★ 顶层注释计数取不到（`GetAnnotationCount` 回 None ✗）
-    #:   ★★ 正解：★ **`IView::GetWeldSymbolCount` / `GetWeldSymbols`** ✓（★ B0 全扫时见过 ✓）
-    #:     ★ 官方逐字：★ `GetWeldSymbolCount` 的 `## Returns` = **Total number of weld symbols
+    #: ★ 焊接符号是**视图上的标注** ✗ ⇒ ★ 顶层注释计数取不到（`GetAnnotationCount` 回 No
+    #: ne ✗）
+    #: ★★ 正解：★ **`IView::GetWeldSymbolCount` / `GetWeldSymbols`** ✓（★ B0 全扫时见过 
+    #: ✓）
+    #: ★ 官方逐字：★ `GetWeldSymbolCount` 的 `## Returns` = **Total number of weld symbo
+    #: ls
     #:     on this drawing view** ✓ —— ★★ **那正是"它真正改变的东西"** ✓
     readback = {}
     if drawing is not None:
-        #: ★★★★★ 官方 `IDrawingDoc::GetFirstView` 的 `## Remarks` **逐字**（★ 层次说透了 ✓）：
-        #:   「★ **Because the drawing sheet also has sketch geometry, notes, GTols, and so on,
-        #:    this method returns the current drawing sheet.** ★ The **next** view returned by
+        #: ★★★★★ 官方 `IDrawingDoc::GetFirstView` 的 `## Remarks` **逐字**（★ 层次说透了
+        #:  ✓）：
+        #: 「★ **Because the drawing sheet also has sketch geometry, notes, GTols, and s
+        #: o on,
+        #: this method returns the current drawing sheet.** ★ The **next** view returned
+        #:  by
         #:    `IView::GetNextView` is the **first drawing view** in the current sheet.」✓✓
-        #:   ★ 且 `GetViews` 的 `## Returns` 逐字：「**An array of arrays**」+「the first view in the
+        #: ★ 且 `GetViews` 的 `## Returns` 逐字：「**An array of arrays**」+「the first 
+        #: view in the
         #:    list being **the sheet itself**」✗
         #:   ⇒ ★★★★ **所以第一个对象是**图纸**、★ 不是视图** ✗ ——
-        #:     ★★ 上一轮我把图纸当视图 ⇒ `GetWeldSymbolCount` 回 `None` ✗（★ 根因就在这里 ✓）
+        #: ★★ 上一轮我把图纸当视图 ⇒ `GetWeldSymbolCount` 回 `None` ✗（★ 根因就在这里 ✓
+        #: ）
         chain, cur = [], None
         try:
             cur = sw_connect.get_com_member(drawing, "GetFirstView")

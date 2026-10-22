@@ -20,8 +20,10 @@
 # 文件:   tools/probe_graphicsredraw_successor.py
 # 定位:   ★ T1b 的第一条：★ 把 `IModelDoc2.GraphicsRedraw2` 换成 `IModelView.GraphicsR
 #           edraw`。
-#   官方依据: 见上面 docstring（`IModelDoc2/GraphicsRedraw2.md` · `IModelView/GraphicsRedraw.md` ·
-#     官方例子 `Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md` 的 `(null)`）
+# 官方依据: 见上面 docstring（`IModelDoc2/GraphicsRedraw2.md` · `IModelView/GraphicsRedr
+# aw.md` ·
+# 官方例子 `Apply_and_Remove_Texture_By_Body_Display_State_Example_CSharp.md` 的 `(null)
+# `）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

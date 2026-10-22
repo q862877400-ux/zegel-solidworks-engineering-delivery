@@ -6,7 +6,8 @@
 #           )`）⇒
 #   ★ **不能只靠旧探针的读数就宣布修好** —— 本探针**按工具层的契约**调一次修好后的实现，
 #   并把判据（草图段数增量）与返回对象的类型如实记下来。
-#   官方依据: `C:\swapi\types\ISketchManager\CreateSpline.md`（`PointData` = **扁平 X,Y,Z 序列**，
+# 官方依据: `C:\swapi\types\ISketchManager\CreateSpline.md`（`PointData` = **扁平 X,Y,Z 
+# 序列**，
 #     至少两组；2D 草图里 Z 被忽略）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件

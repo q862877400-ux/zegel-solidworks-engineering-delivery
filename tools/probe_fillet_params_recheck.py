@@ -1,10 +1,12 @@
 """★ 真机验 `fillet_params` 并**测出那一族的单位口径**（★ 阶段 3 · 第 6 个能力）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ISimpleFilletFeatureData2\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ISimpleFilletFeatureDat
+# a2\`）
 # 文件:   `scripts/sw_feature_readback.py::fillet_params`（★ 刚补的能力）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **⚠ 前置签名**（★ **先在仓里搜出来的** —— ★ 不是猜的）：
-#     ★ `sw_part.fillet(model, radius, edges=None)` ⇒ ★★ **`radius` 在第 2 位、★ `edges` 关键字** ✓
+# ★ `sw_part.fillet(model, radius, edges=None)` ⇒ ★★ **`radius` 在第 2 位、★ `edges` 关
+# 键字** ✓
 #     （★ 我第一版注释里猜成 `fillet(model, selection, radius_mm)` ⇒ **错的**）✓
 #   ★★★ **判据**：★ 建一块板 ⇒ 给一条边打 `R5` 圆角 ⇒ `fillet_params`：
 #     ★ `DefaultRadius` ⇒ ★ 期望 ≈ 5（★ 若 ≈ 0.005 则是米）· ★ `GetEdgeCount` ⇒ **1** ·

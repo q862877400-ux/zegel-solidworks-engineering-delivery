@@ -1,12 +1,14 @@
 """★ 在**活的 `SelectionMgr`** 上逐个试官方候选成员，看**哪一个真的可达**（★ 不猜名字）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
-# 文件:   `C:\\swapi\\types\\ISelectionMgr\\GetSelectedObjectsComponent*.md`（官方 4 代）
+# 文件:   `C:\\swapi\\types\\ISelectionMgr\\GetSelectedObjectsComponent*.md`（官方 4 代
+# ）
 # 定位:   ★ 2026-10-04：`get_selected_component` 改用后继 `…Component4` 后**仍**报
 #         `<unknown>.GetSelectedObjectsComponent3/4` ⇒ ★ **不再猜**，直接在活对象上枚举可达性 ✓
 # 官方依据: `GetSelectedObjectsComponent4.md:31` 逐字「the now obsolete `GetSelectedObje
 #           ctsComponent3`」；
-#         `…4.md:14` 签名 `System.object GetSelectedObjectsComponent4( System.int Index, System.int Mark )`
+# `…4.md:14` 签名 `System.object GetSelectedObjectsComponent4( System.int Index, System.
+# int Mark )`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

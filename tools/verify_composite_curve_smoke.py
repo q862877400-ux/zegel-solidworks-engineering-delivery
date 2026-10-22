@@ -69,8 +69,10 @@ def main() -> int:
         #: 官方三份样例（VBA / C# / VB.NET）的 Description **一致**写
         #: 「insert a composite curve using **two sketches of splines**」，
         #: 且 Postconditions 第 2/3 步是「Creates a sketch of a **spline**」。
-        #: ⚠ **原来这里建的是两条**直线**（`sketch_line`）** ⇒ **前提根本不符合官方要求**
-        #: ⇒ 那才是「`InsertCompositeCurve` 返回 False」的可能原因（★ 而轮 183 已把**样条**修好了）。
+        #: ⚠ **原来这里建的是两条**直线**（`sketch_line`）** ⇒ **前提根本不符合官方要求*
+        #: *
+        #: ⇒ 那才是「`InsertCompositeCurve` 返回 False」的可能原因（★ 而轮 183 已把**样
+        #: 条**修好了）。
         for i in range(2):
             sw_part.start_sketch(doc)
             y = float(i) * 30.0
@@ -135,8 +137,10 @@ def main() -> int:
         #:   ⇒ ★★ **前置不可达** ⇒ `InsertCompositeCurve` 必然返回 False。
         #: ```
         #: ⇒ ★ **判据分三档**（不再把「前置不可达」记成功能失败）：
-        #:   · 前置**可达**（样条能建 + 2 个草图 + 都选中）⇒ **要求 True**；False ⇒ **真失败**；
-        #:   · 前置**不可达** ⇒ **不计入通过/失败**，如实记「**前置不可达**」并指出**卡在哪一环**。
+        #: · 前置**可达**（样条能建 + 2 个草图 + 都选中）⇒ **要求 True**；False ⇒ **真失
+        #: 败**；
+        #: · 前置**不可达** ⇒ **不计入通过/失败**，如实记「**前置不可达**」并指出**卡在
+        #: 哪一环**。
         precondition_ok = (n_sketch == 2) and s1 and s2
         spline_ok = False
         try:
@@ -154,10 +158,12 @@ def main() -> int:
         if not spline_ok:
             #: ⚠⚠⚠ **2026-10-01（轮 182）：不能拿「我的调用报错」就当「前置不可达」** ——
             #: ★ 我第一版这里直接引用探针的结论，而**本次调用的实际报错是 `TypeError`**
-            #: （= **我的调用姿势有问题**），**不是**探针那个 `RuntimeError: … 返回 None`。
+            #: （= **我的调用姿势有问题**），**不是**探针那个 `RuntimeError: … 返回 None
+            #: `。
             #: ⇒ ★ 如实分两种出口：
             #:   · `RuntimeError` 且提到 `None` ⇒ **本次独立复现了**「样条建不出」；
-            #:   · 别的异常 ⇒ **本次没复现成功** ⇒ **只能引用探针的结论**，**不得冒充独立复现**。
+            #: · 别的异常 ⇒ **本次没复现成功** ⇒ **只能引用探针的结论**，**不得冒充独立
+            #: 复现**。
             independently = ("RuntimeError" in spline_note and "None" in spline_note)
             chk("★★ `insert_composite_curve`：前置不可达 ⇒ **不计入通过/失败**",
                 True,

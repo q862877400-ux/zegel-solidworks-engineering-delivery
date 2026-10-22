@@ -1,7 +1,9 @@
 # ── 24h 计划 v2 · 段 2：**草图图元**（`sw_part` 的 5 条真缺口）────────────────────────
-# ★★★★ 2026-10-03（轮 398）来源：`tools/triage_real_gaps.py` 判定的「该挂」里 `sw_part` 那 15 条中
+# ★★★★ 2026-10-03（轮 398）来源：`tools/triage_real_gaps.py` 判定的「该挂」里 `sw_part` 
+# 那 15 条中
 #   **属于"草图图元"的 5 条**（★ 其余归段 3 的实体特征）。★ 照既有 `tool_specs_batch21.py`
-#   的 `sketch_line` / `sketch_circle` / `sketch_corner_rectangle` 模式（同模块、同注入、同别名风格）。
+# 的 `sketch_line` / `sketch_circle` / `sketch_corner_rectangle` 模式（同模块、同注入、
+# 同别名风格）。
 #
 # ★★ **为什么先做草图图元**（计划 §一 排序原则）：★ 它们让**测试几何更丰富** ——
 #   ★ 后面每一段的真机验证都要造件，而"能造出什么形状"决定了"能验到什么深度"。
@@ -11,7 +13,8 @@
 #   挂：sketch_arc · sketch_ellipse · sketch_polygon · sketch_slot · sketch_centerline
 #   ★ 不做：sketch_spline
 #     ⇒ 依据：`scripts/sw_part.sketch_spline` 的文档串（轮 141 真机实测）——
-#       `CreateSpline2` 返回 None（且此前是静默的）· 重绘后仍 0 段（排除了官方那句"必须重绘"）·
+# `CreateSpline2` 返回 None（且此前是静默的）· 重绘后仍 0 段（排除了官方那句"必须重绘"）
+# ·
 #       旧版 `CreateSpline` 在迟到绑定里没有这个成员；
 #       而后继 `CreateSpline3(Object, Object, Object, Boolean, Object&)` 末参是
 #       **BYREF `Object&`** ⇒ 已知事实 47/68 的**架构限制**（pywin32 到不了）
@@ -25,7 +28,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch54.py —— 本文件（新）
 # 定位:   24h 计划 v2 段 2：把 `sw_part` 的草图图元族挂成 MCP 工具。
-# 官方签名依据: `C:\swapi\types\ISketchManager\` 的 `CreateArc` / `CreateEllipse` / `CreatePolygon` /
+# 官方签名依据: `C:\swapi\types\ISketchManager\` 的 `CreateArc` / `CreateEllipse` / `Cre
+# atePolygon` /
 #   `CreateSketchSlot` / `CreateCenterLine`（本项目内的包装在 `scripts/sw_part.py`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

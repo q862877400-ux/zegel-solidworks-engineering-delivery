@@ -81,7 +81,8 @@ __all__ = [
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   Eduardof0nt/Solidworks-MCP-Server (MIT) + SolidWorks 官方 API 签名（纯元数据反射）
+# 仓库:   Eduardof0nt/Solidworks-MCP-Server (MIT) + SolidWorks 官方 API 签名（纯元数据反
+# 射）
 # 文件:   scripts/sw_mold.py 的 insert_parting_line
 # 定位:   IFeatureManager.InsertMoldPartingLine(Boolean)。来源写的是 `InsertPartingLin
 #           es`
@@ -213,15 +214,19 @@ def mold_draft_analysis(model, *, draft_angle_deg: float, analysis_type: int = 0
     #:      `MoldDraftAnalysis` —— ⚠ 真机实测 `IFeatureManager.MoldDraftAnalysis`
     #:      ⇒ **AttributeError: <unknown>.MoldDraftAnalysis**
     #:      ★ 官方两源一致：**它在 `IModelDoc2` 上**
-    #:        · 反射：`Void MoldDraftAnalysis(Double, Int32, Object, Int32)`（在 IModelDoc2 段）
-    #:        · `C:/swapi/types/IModelDoc2/MoldDraftAnalysis.md`：`IModelDoc2.MoldDraftAnalysis`
+    #: · 反射：`Void MoldDraftAnalysis(Double, Int32, Object, Int32)`（在 IModelDoc2 段
+    #: ）
+    #: · `C:/swapi/types/IModelDoc2/MoldDraftAnalysis.md`：`IModelDoc2.MoldDraftAnalysis
+    #: `
     #:   ② **返回类型写反**：原 docstring 说「返回码为 ``Int32``，由调用方判断」——
     #:      ⚠ 官方是 **`Void`** ⇒ **根本没有返回码**（"非 0 不一定是失败"那句**无从谈起**）。
     #: ```
     #: ⇒ ★ 这是靠 `scripts/check_member_owner_interface.py` **静态抓出来**的（轮 177），
     #:   并**真机核对**过（反射 / 真机否定 / 真机肯定，三条独立证据）。
-    #: ⚠ **本函数仍可能弹模态框**（与 `MoldUndercutDetect` 同族）：未定义拔模方向 / 无实体时
-    #:   官方会弹「此拔模方向尚未定义。」⇒ **调用方必须配 `settle_residual_dialogs` 兜底**。
+    #: ⚠ **本函数仍可能弹模态框**（与 `MoldUndercutDetect` 同族）：未定义拔模方向 / 无实
+    #: 体时
+    #: 官方会弹「此拔模方向尚未定义。」⇒ **调用方必须配 `settle_residual_dialogs` 兜底**
+    #: 。
     return get_com_member(model, "MoldDraftAnalysis",
                           float(draft_angle_deg), int(analysis_type), colors, int(option))
 
@@ -274,7 +279,8 @@ def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
     #:   ★★★ **新增那 3 个颜色的取值，官方**没给默认值**** ⇒
     #:     ★ **本项目的工程选择**：★ **沿用调用方给的两个颜色**
     #:     （★ `ColUndercut2` 用 `col_undercut`、★ `ColOccluded` 用 `col_base`、
-    #:      ★ `ColStraddle` 用 `col_base`）—— ⚠ **这是工程选择，不是官方默认**，★ 已在此写明 ✓
+    #: ★ `ColStraddle` 用 `col_base`）—— ⚠ **这是工程选择，不是官方默认**，★ 已在此写明 
+    #: ✓
     #:   ★★★ 真机证据（`tools/probe_deps_bom_undercut.py` ·
     #:     `output/deps-bom-undercut-evidence.json`）：★ 旧 6 参**能调**（回 `None`）·
     #:     ★★ 新 9 参**能调**（回 `None`）⇒ ★★ **可换** ✓
@@ -289,8 +295,10 @@ def mold_undercut_detect(model, *, col_undercut: int = 0, col_base: int = 0,
 # 仓库:   SolidWorks 官方 API 签名（纯元数据反射）+ 本项目既有模式（weldment_evidence）
 # 文件:   scripts/sw_mold.py 的 mold_evidence
 # 定位:   只读证据采集：把模具族的**只读入口**回读出来，供 capabilities 与人工核对。
-#         命名与形状照 scripts/sw_weldment.py::weldment_evidence 的既有模式（铁律 1 第三类来源）。
-# 官方签名依据: GetPartingLinesCount / GetPartingSurfacesCount / GetCavitySurfacesCount /
+# 命名与形状照 scripts/sw_weldment.py::weldment_evidence 的既有模式（铁律 1 第三类来源）
+# 。
+# 官方签名依据: GetPartingLinesCount / GetPartingSurfacesCount / GetCavitySurfacesCount 
+# /
 #         GetCoreSurfacesCount / get_PartingType / get_CoreCavitySplit
 # 许可:   本仓库 MIT。
 # 覆盖:   本函数整体（自本行至函数结束）
@@ -359,20 +367,23 @@ def mold_evidence(model) -> dict:
     _pt = _prop("PartingType")
     _ccs = _prop("CoreCavitySplit")
     #: ★★★★ 2026-10-04（接手轮）**加一个可判字段 `readable`** ——
-    #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）：★ ToolSpec 的 doc 说「可回读」、
+    #: 处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）：★ ToolSpec 的 doc 说「可回读」
+    #: 、
     #:   ★★ 而本函数自我标注「真机上只会返回全 `None`」⇒ ★★★ **两处说法相反** ✓
     #:   ★ **为什么不能只改 doc**：★ 因为**调用方无法从返回值区分**两种情况：
     #:     · ★ 「**读不到**」（★ 读错了对象 —— 本函数的现状）
     #:     · ★★ 「**真的没有分型**」（★ 空零件）✓
     #:   ⇒ ★★★ **两者表象相同（都是全 `None`）** ⇒ 所以必须有**一个显式的位**来分开 ✓
-    #:   ★★ 判据（★ 可核、★ 不看返回值里的自然语言）：★ **四项计数全 `None` 且两个属性全 `None`**
+    #: ★★ 判据（★ 可核、★ 不看返回值里的自然语言）：★ **四项计数全 `None` 且两个属性全 `
+    #: None`**
     #:     ⇒ ★ `readable: False` ✓
     #:   ★★★ **注意它说的是什么**：★ `False` = 「**按当前读法在这台机器上读不到**」·
     #:     ★★ **不是**「这个零件没有分型」（★ 后者要靠 `I*FeatureData` 那条未实现的路）✓
     _all_none = all(v is None for v in _counts.values()) and _pt is None and _ccs is None
     return {
         "counts": _counts,
-        # 这两个是零件级属性；用 set_com_member 的读侧配对是 get_com_member（已知事实 4）
+        # 这两个是零件级属性；用 set_com_member 的读侧配对是 get_com_member（已知事实 4
+        # ）
         "parting_type": _pt,
         "core_cavity_split": _ccs,
         #: ★ **真相在这**：★ `False` ⇒ **本次读数不作数**（★ 别当成"没有分型"）✓

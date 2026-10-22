@@ -12,11 +12,13 @@
 #     ```
 #     AddPinConnector(**DispArrayComp1:Object**, **DispArrayComp2:Object**, ErrorCode&)
 #     ```
-#     ⇒ ★★ 它**比刚性连接件更简单** —— ★ **组件对象本仓直接拿得到**（`sw_assembly.get_components`）
+# ⇒ ★★ 它**比刚性连接件更简单** —— ★ **组件对象本仓直接拿得到**（`sw_assembly.get_compon
+# ents`）
 #       ⇒ ★ 连"按序号取实体"都不需要 ✓
 #   ★ 而**装配体那条路在硬约束⑦（禁保存）下仍走得通**：★ 用**已在盘上的**自带零件
 #     （★ 本机 `…\samples\tutorial\api\` 下有几十个 `.sldprt`）⇒ ★ **不保存任何东西** ✓
-#   ★ 算例名用**唯一名**（事实 329/414）；★ 而**先验入口**（★ 本轮纪律）：★ 先看顶层组件是不是 2 个。
+# ★ 算例名用**唯一名**（事实 329/414）；★ 而**先验入口**（★ 本轮纪律）：★ 先看顶层组件是
+# 不是 2 个。
 # 官方依据: 出厂类型库反射（`AddPinConnector(DispArrayComp1, DispArrayComp2, ErrorCode&)
 #           `）·
 #   `IAssemblyDoc.AddComponent5` · `swsAnalysisStudyTypeStatic = 0`

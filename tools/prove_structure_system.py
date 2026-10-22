@@ -6,25 +6,33 @@
 # 定位:   ★ 2026-10-03（轮 445）承**事实 358**（那条链的官方序列）与**事实 359**（判据
 #           的最后一块拼图）。
 #   ★★★ **它要证明的**：★ 结构系统那条链**能不能建成** —— ★ 而它是
-#     `configure_member_profile` / `configure_split_member` 那两条**从"不做"回到"该挂"**的依赖。
-#   ★★ 官方序列（★ 逐句，★ 出自 `Access_Structure_System_Corner_Treatments_Example_VB.htm`）：
+# `configure_member_profile` / `configure_split_member` 那两条**从"不做"回到"该挂"**的依
+# 赖。
+# ★★ 官方序列（★ 逐句，★ 出自 `Access_Structure_System_Corner_Treatments_Example_VB.htm`
+# ）：
 #     ```
-#     ① modDocExt.SelectByID2("Line4@3DSketch1", "EXTSKETCHSEGMENT", 0,0,0, True, 0, Nothing, 0)
+# ① modDocExt.SelectByID2("Line4@3DSketch1", "EXTSKETCHSEGMENT", 0,0,0, True, 0, Nothing
+# , 0)
 #        ★ 逐条 **Append = True**（★ 选区先行）
 #     ② Set structMemDef = modDocExt.CreateStructureSystemMemberData(0)
 #     ③ Set profDef = structMemDef.MemberProfile
-#        profDef.ProfileStandard = "GB" · ProfileType = "round-rods" · ProfileSize = "ROUND BAR 23"
+# profDef.ProfileStandard = "GB" · ProfileType = "round-rods" · ProfileSize = "ROUND BAR
+#  23"
 #     ④ Set PrimDef = structMemDef ; Set memPathSegDef = PrimDef
-#        Set segments(0) = swSelMgr.GetSelectedObject6(1, 0) … ⇒ stat = memPathSegDef.SetPathSegments(segments)
+# Set segments(0) = swSelMgr.GetSelectedObject6(1, 0) … ⇒ stat = memPathSegDef.SetPathSe
+# gments(segments)
 #     ⑤ Set memData(0) = structMemDef ; memDataArray = memData
 #     ⑥ modDocExt.CreateStructureSystem memDataArray, Nothing ⇒ **IStructureSystemFolder**
 #     ```
-# ★ 判据（★ 规则 6：★ 建/改特征后**回读**）：★ 特征树**有增量** · 且报出**新特征的类型名**。
+# ★ 判据（★ 规则 6：★ 建/改特征后**回读**）：★ 特征树**有增量** · 且报出**新特征的类型名
+# **。
 #   ★★ 而**不拿 COM 返回值当判据**（★ 本仓一贯；★ 事实 8）。
 # 官方依据: `IModelDocExtension.CreateStructureSystemMemberData`（1 参 ⇒ `IStructureSyst
 #           emMemberFeatureData`）·
-#   `IModelDocExtension.CreateStructureSystem`（2 参 ⇒ `IFeature`，实为 `IStructureSystemFolder`）·
-#   `swStructureSystemMemberCreationType_Primary_PathSegment = 0` · 本机轮廓库 `GB\round-rods.sldlfp`
+# `IModelDocExtension.CreateStructureSystem`（2 参 ⇒ `IFeature`，实为 `IStructureSystemF
+# older`）·
+# `swStructureSystemMemberCreationType_Primary_PathSegment = 0` · 本机轮廓库 `GB\round-r
+# ods.sldlfp`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -69,10 +77,12 @@ def main() -> int:
         #: ★ 特征树（★ 判据用）
         def tree() -> list:
             #: ★ ★★ `GetFeatureCount` 是**方法**（不是属性）——
-            #:   ★ 真机第一版报 `TypeError: int() argument ... not 'method'`（★ 而那个报错**直接指出了真因**）。
+            #: ★ 真机第一版报 `TypeError: int() argument ... not 'method'`（★ 而那个报错
+            #: **直接指出了真因**）。
             fm = get_com_member(doc, "FeatureManager")
             #: ★ 它要**一个参数**（`TopLevelOnly`）—— ★ 真机第二版报
-            #:   `com_error(非选择性的参数)`（★ 而那正是**事实 33 同族**：参数不对时报的是这个）。
+            #: `com_error(非选择性的参数)`（★ 而那正是**事实 33 同族**：参数不对时报的是
+            #: 这个）。
             n = int(get_com_member(fm, "GetFeatureCount", True) or 0)
             out = []
             for i in range(n):
@@ -89,7 +99,8 @@ def main() -> int:
         ev["tree_before"] = len(before)
 
         #: ① 按名字选两条线段（★ 事实 359 证实这条路读得到多实体）
-        #: ★★ 先**清选区** —— 真机第一版 `selected_count` 是 **3**（★ 2 线段 + **基准面**）。
+        #: ★★ 先**清选区** —— 真机第一版 `selected_count` 是 **3**（★ 2 线段 + **基准面*
+        #: *）。
         try:
             doc.ClearSelection2(True)
         except Exception:                                  # noqa: BLE001
@@ -137,9 +148,12 @@ def main() -> int:
             if segs:
                 try:
                     #: ★★★ 2026-10-03（轮 446）**换接口** ——
-                    #:   ★ `SetPathSegments` **只在 `IPrimaryMemberPathSegmentFeatureData` 上**（★ 事实 360），
-                    #:   ★★ 而我们手里只有 `IStructureSystemMemberFeatureData` ⇒ **必须 QueryInterface**
-                    #:   ★ 而 IID 从**出厂程序集的 `[Guid]`** 取（★ `tools/typelib_iids.py`）。
+                    #: ★ `SetPathSegments` **只在 `IPrimaryMemberPathSegmentFeatureData`
+                    #:  上**（★ 事实 360），
+                    #: ★★ 而我们手里只有 `IStructureSystemMemberFeatureData` ⇒ **必须 Qu
+                    #: eryInterface**
+                    #: ★ 而 IID 从**出厂程序集的 `[Guid]`** 取（★ `tools/typelib_iids.py
+                    #: `）。
                     try:
                         import sys as _s
                         _s.path.insert(0, str(REPO_ROOT / "tools"))
@@ -159,7 +173,8 @@ def main() -> int:
             except Exception:                                  # noqa: BLE001
                 arr = None
             try:
-                #: ★ 诊断：它到底在不在（★ `'NoneType' object is not callable` 指向"getattr 回了 None"）
+                #: ★ 诊断：它到底在不在（★ `'NoneType' object is not callable` 指向"geta
+                #: ttr 回了 None"）
                 try:
                     _raw = getattr(ext, "CreateStructureSystem", "<没这个属性>")
                     ev["css_attr"] = type(_raw).__name__

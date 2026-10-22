@@ -1,10 +1,12 @@
 """★ 静态交叉核对：**每一条 ToolSpec 声明的参数名，是否都在其目标函数的形参里**。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（静态核对脚本）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**。
+# 仓库:   本项目自身（静态核对脚本）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**
+# 。
 # 文件:   tools/check_tool_param_binding.py
 # 定位:   ★★ **为什么要有它**：真机探针发现 `solidworks_weldment_insert_end_cap` 的 To
 #           olSpec 声明
-#   了 `wall_ratio`，★ 而能力层形参是 `wall_thickness_ratio` ⇒ ★ **经工具层调必 `TypeError`**。
+# 了 `wall_ratio`，★ 而能力层形参是 `wall_thickness_ratio` ⇒ ★ **经工具层调必 `TypeError
+# `**。
 #   ★ 这类错**完全可以静态抓**（不需要真机）⇒ ★ 本脚本把全批过一遍。
 #   ⚠ 口径：只判「**声明的参数名在目标函数形参里存不存在**」；★ **不判类型、不判语义**
 #     （★ 那两样得靠 `docs/signature-audit.md` 与真机）。
@@ -65,25 +67,33 @@ def main() -> int:
             checked += 1
             target = alias.get(pname, pname)
             if pname in alias and alias[pname] is None:
-                #: ★★ `param_alias[k] = None` 意为「由解析器消费、不进目标函数」——**不是**「改名为 None」。
+                #: ★★ `param_alias[k] = None` 意为「由解析器消费、不进目标函数」——**不是
+                #: **「改名为 None」。
                 #:   ★ 我第一版把 `None` 当成目标名去查 ⇒ 报了 **5 条假阳性**
-                #:   （`solidworks_delivery_pack_and_go_audit_matrix`，★ 而它形参表里明明有那几个名字）。
-                #:   ★ 仓内 `check_param_binding.py` 的口径是 `if p.name in alias: continue`，照它办。
+                #: （`solidworks_delivery_pack_and_go_audit_matrix`，★ 而它形参表里明明
+                #: 有那几个名字）。
+                #: ★ 仓内 `check_param_binding.py` 的口径是 `if p.name in alias: continu
+                #: e`，照它办。
                 continue
             if target not in actual and not has_var_kw:
                 bad.append((name, pname, target, mod_name + "." + fn_name, sorted(actual)[:14]))
         if inject and inject not in actual and not has_var_kw:
             bad.append((name, "<inject>", inject, mod_name + "." + fn_name, sorted(actual)[:14]))
 
-        #: ★★★ ⑤ **2026-10-03（接手轮）新加**：**目标函数的「必填形参」，spec 必须声明它**。
+        #: ★★★ ⑤ **2026-10-03（接手轮）新加**：**目标函数的「必填形参」，spec 必须声明它
+        #: **。
         #:   ★ 判据 ①②④ 问的都是「**声明了的名字有没有去处**」，
-        #:     ★ **没有一条反过来问「函数要的东西，spec 给没给」** ⇒ ★★ **漏一个必填参不会被抓**。
-        #:   ★ 实测（`tools/probe_r3_tools.py`）：`solidworks_sheet_metal_create_base_flange` 指向的
+        #: ★ **没有一条反过来问「函数要的东西，spec 给没给」** ⇒ ★★ **漏一个必填参不会被
+        #: 抓**。
+        #: ★ 实测（`tools/probe_r3_tools.py`）：`solidworks_sheet_metal_create_base_flan
+        #: ge` 指向的
         #:     函数要求 `spec`，★ 而 ToolSpec **一个 Param 都没声明它** ⇒ 真机当场
-        #:     `TypeError: create_base_flange() missing 1 required positional argument: 'spec'`
+        #: `TypeError: create_base_flange() missing 1 required positional argument: 'spe
+        #: c'`
         #:     ⇒ ★ **一条已注册、会计入覆盖率的工具，经工具层根本调不通**。
         #:   ★ 豁免（★ 写明理由，不静默）：① 该形参就是**注入名**（由 RESOLVERS 供给）；
-        #:     ② spec 有 **`derived_args`**（★ 它会补 kwargs，静态看不出来）⇒ **不报**，只单独记数。
+        #: ② spec 有 **`derived_args`**（★ 它会补 kwargs，静态看不出来）⇒ **不报**，只单
+        #: 独记数。
         supplied = set()
         for _p in (getattr(spec, "params", None) or []):
             _n = getattr(_p, "name", None)

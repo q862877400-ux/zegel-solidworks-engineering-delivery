@@ -157,7 +157,8 @@ def run_case(reg, n: int, sw, *, revision: str = "rev-1") -> dict:
     #: ★ 孔数：数**圆柱面**（★ 一个通孔 = 1 张圆柱面）。
     #: ★★ 实测（2026-10-12）：`solidworks_entities_on_body` 的 `entities` 里
     #:   **只有 `index` / `kind` / `area_mm2`**，**没有面类型** ⇒ 数不出圆柱面。
-    #:   ⇒ 直接走 COM：`IBody2.GetFaces()` → `IFace2.GetSurface()` → `ISurface.IsCylinder()`
+    #: ⇒ 直接走 COM：`IBody2.GetFaces()` → `IFace2.GetSurface()` → `ISurface.IsCylinder(
+    #: )`
     #:     （★ 那两页都是**官方成员**：`IFace2::GetSurface` / `ISurface::IsCylinder`）
     try:
         bodies = sw_connect.safe_get_com_member(doc, "GetBodies2", 0, False)

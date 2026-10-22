@@ -93,9 +93,11 @@ def main() -> int:
             out = []
             for i in range(count):
                 it = sw_connect.safe_get_com_member(mgr, "GetLoadsAndRestraints", i, out_i4())
-                #: ⚠⚠ **不能写 `State or -1`** —— `State` 的合法值包含 **0**，`0 or -1` 会得到 -1
+                #: ⚠⚠ **不能写 `State or -1`** —— `State` 的合法值包含 **0**，`0 or -1` 
+                #: 会得到 -1
                 #:   （★ 本文件的初版就是这么写的，于是把"State=0"读成了"-1" ——
-                #:    门禁 `check_env_pitfalls` 的"③ falsy-zero"当场抓到，见 known-facts 178）。
+                #: 门禁 `check_env_pitfalls` 的"③ falsy-zero"当场抓到，见 known-facts 17
+                #: 8）。
                 _st = sw_connect.safe_get_com_member(it, "State")
                 out.append(int(_st) if _st is not None else -1)
             return out

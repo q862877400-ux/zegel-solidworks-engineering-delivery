@@ -11,8 +11,10 @@
 #     「一半参数对一半模式无意义」的工具 ⇒ ★ **不合并**（★ 偏离已记进 tasks.md）✓
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertCenterLine2.md`（零参；摘要逐字
 #   「on the **selected entities**」；★ **无 Remarks 也无 Parameters**）·
-#   ★★ `examples\\Get_Centerlines_in_Drawing_Example_VB.md`（**调用序**：先选 **COMPONENT**、
-#   再按**点**选 **FACE**）· `IView\\GetVisibleEntities2.md` · `IView\\GetCenterLineCount.md` ·
+# ★★ `examples\\Get_Centerlines_in_Drawing_Example_VB.md`（**调用序**：先选 **COMPONENT*
+# *、
+# 再按**点**选 **FACE**）· `IView\\GetVisibleEntities2.md` · `IView\\GetCenterLineCount.
+# md` ·
 #   `enums\\swViewEntityType_e.md`
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **1 个工具** ⇒ 工具数 446 → **447**

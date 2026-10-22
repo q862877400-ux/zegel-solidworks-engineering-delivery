@@ -56,13 +56,15 @@ def main() -> int:
             #:     11 |
             #:     12 |Obsolete. Superseded by [[IEntity::Select4]].
             #:     13 |
-            #:     14 |**Signature**: `System.bool Select2( System.bool Append, System.int Mark )`
+            #: 14 |**Signature**: `System.bool Select2( System.bool Append, System.int M
+            #: ark )`
             #:     16 |## Parameters
             #:     ```
             #:   ⇒ ★★ **废弃那句是"标题之后、第一个 `## ` 之前"的独立一段**。
             #:   ★ 我第一版写成 `txt.split("## ", 1)[-1]`（取第一个 `## ` **之后**）
             #:     ⇒ ★ **正好把它切掉** ⇒ 于是 `obsolete_line` **全空**、后继只找到 1 个、
-            #:     ★★ 而 `OBS.search(txt)` 又会在正文里别处匹配到 "Obsolete" ⇒ **1718 个假阳性**。
+            #: ★★ 而 `OBS.search(txt)` 又会在正文里别处匹配到 "Obsolete" ⇒ **1718 个假阳
+            #: 性**。
             #:   ★ 现按**真实位置**取：★ 在 `# 标题` 与第一个 `## ` 之间找。
             head = txt.split("\n## ", 1)[0]          #: ★ 「标题之后、第一个 `## ` 之前」那一段
             line = ""
@@ -74,10 +76,14 @@ def main() -> int:
                     break
             if not line:
                 continue                              #: ★★ 没在那一段里 ⇒ **不算废弃**（★ 不猜）
-            #: ★★★ spec 251：**同名链接优先** —— 多链接里「**与被废弃成员同名**」的那个才是真后继。
-            #:   ★ 官方用它表达**接口迁移**（★ 实测：`IModelDoc2::SketchTrim` → `ISketchManager::SketchTrim`
-            #:     而旧规则取的是 `ISketchManager::SketchExtend`，语义是「延伸」**不是**「剪裁」）。
-            #:   ★ **先量**（`output/_probe251_rule_impact.py`）：全 **1671** 条里只有 **6** 条会变，
+            #: ★★★ spec 251：**同名链接优先** —— 多链接里「**与被废弃成员同名**」的那个
+            #: 才是真后继。
+            #: ★ 官方用它表达**接口迁移**（★ 实测：`IModelDoc2::SketchTrim` → `ISketchMa
+            #: nager::SketchTrim`
+            #: 而旧规则取的是 `ISketchManager::SketchExtend`，语义是「延伸」**不是**「剪
+            #: 裁」）。
+            #: ★ **先量**（`output/_probe251_rule_impact.py`）：全 **1671** 条里只有 **6
+            #: ** 条会变，
             #:     且**恰好**等于 244 登记的 `_KNOWN_WRONG` ⇒ ★ 修法安全。
             #:   ★ 规则来源：244（`specs/244-multi-successor-rule/`）的裁决。
             links = re.findall(r"\[\[([^\]]+)\]\]", line)

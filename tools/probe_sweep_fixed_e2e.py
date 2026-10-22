@@ -6,7 +6,8 @@
 #           ection`），
 #   因为 spec **既无 `selection` 类参数、也无 `pre_call`**。★ 本轮给它加了
 #   `profile_sketch`（mark 1）+ `path_sketch`（mark 4）与 `pre_call=_pre_sweep`。
-#   ★ 本探针**按工具层契约**调（`param_alias` → 注入 → `pre_call` → 目标函数），★ 看它建不建得成。
+# ★ 本探针**按工具层契约**调（`param_alias` → 注入 → `pre_call` → 目标函数），★ 看它建不
+# 建得成。
 #   官方依据: `scripts/sw_sweep.py` 的 docstring（mark：轮廓 1 · 路径 4）·
 #     `C:\\swapi\\types\\IFeatureManager\\CreateDefinition.md`（`swFmSweep`）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -57,7 +58,8 @@ def main() -> int:
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.012)
         P.end_sketch(doc)
         #: ★ 路径：右视基准面上一条**从原点出发**的线
-        #:   （★ 官方硬约束逐字：**路径的起点必须落在轮廓所在平面上** —— 原点在前视面上 ✓）
+        #: （★ 官方硬约束逐字：**路径的起点必须落在轮廓所在平面上** —— 原点在前视面上 ✓
+        #: ）
         P.start_sketch(doc, plane_name="Right Plane")
         _g(_g(doc, "SketchManager"), "CreateLine", 0.0, 0.0, 0.0, 0.0, 0.07, 0.0)
         P.end_sketch(doc)

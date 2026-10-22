@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 590）★ 执行**事实 466 留的下一步**（★ 用 `SelectByRay` 定位
 #            + 真建孔）。
 #
-#   ★★ **官方 `IFeatureManager.HoleWizard5.md`\uff08**27 \u53c2**\uff0c\u2605 \u672a\u6807\u5e9f\u5f03\uff09**\uff1a
+# ★★ **官方 `IFeatureManager.HoleWizard5.md`\uff08**27 \u53c2**\uff0c\u2605 \u672a\u6807
+# \u5e9f\u5f03\uff09**\uff1a
 #     ```
 #     Feature HoleWizard5(int GenericHoleType, int StandardIndex, int FastenerTypeIndex,
 #         string SSize, short EndType, double Diameter, double Depth, double Length,
@@ -14,19 +15,26 @@
 #         bool AutoSelect, bool AssemblyFeatureScope, bool AutoSelectComponents,
 #         bool PropagateFeatureToParts)
 #     \u2605 Remarks\uff1a"\u2026call **`SelectByRay` with Mark = 0** for each location."
-#     \u2605 Remarks\uff1a"If the material is on one side of the reference plane, then **RevDir is false**."
-#     \u2605 Remarks\uff1a`FastenerTypeIndex` \u5fc5\u987b\u4e0e standard \u5339\u914d\uff1b`SSize` \u5fc5\u987b\u5408\u6cd5\u3002
+# \u2605 Remarks\uff1a"If the material is on one side of the reference plane, then **Rev
+# Dir is false**."
+# \u2605 Remarks\uff1a`FastenerTypeIndex` \u5fc5\u987b\u4e0e standard \u5339\u914d\uff1b
+# `SSize` \u5fc5\u987b\u5408\u6cd5\u3002
 #     ```
 #
-#   ★ **\u679a\u4e3e\u5747\u53d6\u81ea\u672c\u673a\u53cd\u5c04 dump**\uff08\u2605 \u94c1\u5f8b 4 \u7684\u88c1\u51b3\u8005\uff09\uff1a
-#     `swWzdGeneralHoleTypes_e`\uff1a**`swWzdHole = 2`** \u00b7 `swWzdCounterBore = 0` \u00b7 `swWzdCounterSink = 1` \u00b7
+# ★ **\u679a\u4e3e\u5747\u53d6\u81ea\u672c\u673a\u53cd\u5c04 dump**\uff08\u2605 \u94c1\u
+# 5f8b 4 \u7684\u88c1\u51b3\u8005\uff09\uff1a
+# `swWzdGeneralHoleTypes_e`\uff1a**`swWzdHole = 2`** \u00b7 `swWzdCounterBore = 0` \u00b
+# 7 `swWzdCounterSink = 1` \u00b7
 #       `swWzdTap = 4` \u00b7 `swWzdLegacy = 5` \u00b7 \u69fd 6/7/8\uff1b
-#     `swEndConditions_e`\uff1a`swEndCondBlind = 0` \u00b7 **`swEndCondThroughAll = 1`**\uff1b
+# `swEndConditions_e`\uff1a`swEndCondBlind = 0` \u00b7 **`swEndCondThroughAll = 1`**\uff
+# 1b
 #     `swSelectType_e`\uff1a**`swSelFACES = 2`**\uff1b
-#     \u2605 \u800c**\u5b54\u6807\u51c6**\u53d6\u81ea\u672c\u4ed3 `sw_hole_features.list_hole_standards`\uff1a
+# \u2605 \u800c**\u5b54\u6807\u51c6**\u53d6\u81ea\u672c\u4ed3 `sw_hole_features.list_hol
+# e_standards`\uff1a
 #       `{0: ANSI Inch, 1: ANSI Metric, 16: AS, 2: BSI, 4: DIN, 13: GB, \u2026}`\u3002
 #
-#   ★ 判据（★ 规则 6）：**特征树增量**（★ 应出现「异型孔向导」特征，★ 而不是「切除-拉伸」）。
+# ★ 判据（★ 规则 6）：**特征树增量**（★ 应出现「异型孔向导」特征，★ 而不是「切除-拉伸」
+# ）。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 三格：ThroughAll / Blind / 对照（不选孔位）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

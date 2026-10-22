@@ -89,7 +89,8 @@ def main() -> int:
         scratch = sw_connect.new_document(sw, "part")
         from scripts import sw_mold
         try:
-            #: ★ 默认 `b_coord_input=True` + 方向 (0,0,1) ⇒ **不依赖模型已定义方向** ⇒ 不弹框
+            #: ★ 默认 `b_coord_input=True` + 方向 (0,0,1) ⇒ **不依赖模型已定义方向** ⇒ 
+            #: 不弹框
             r = sw_mold.mold_undercut_detect(scratch)
             chk("mold_undercut_detect（**坐标输入**模式下不弹框）可调用", True, "ok · %s" % type(r).__name__)
         except Exception as exc:      # noqa: BLE001

@@ -4,7 +4,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
-# 文件:   `tools/capture_mesh_solve_evidence.py`（★ 本探针照它的流程写 —— ★ 照 AGENTS.md 的
+# 文件:   `tools/capture_mesh_solve_evidence.py`（★ 本探针照它的流程写 —— ★ 照 AGENTS.md
+#  的
 #         「按 ToolSpec 的契约调，别手调内部实现」）· `tools/capture_simulation_evidence.py`
 #         （★ **它才是跑通的那条链**） · `scripts/sw_simulation.py` · `scripts/sw_isolate.py`
 # 定位:   ★★★ **第四版（★ 2026-10-04）—— 前三版都栽在同一个前提上，而那个前提是错的**：
@@ -14,7 +15,8 @@
 #     | ② 12.0 mm     | 退化 ⇒ 静默退回默认 | 7250 | 无结果 |
 #     | ③ 20.0 mm     | 退化 ⇒ 静默退回默认 | 7250 | 无结果 |
 #     ★★ **⇒ 真因（本版据此改写，★ 且它推翻了 `capabilities.yaml` 的一段措辞）**：
-#     ① `create_mesh` 的 `element_size` **吃毫米** —— ★ 证据：`capture_simulation_evidence.py`
+# ① `create_mesh` 的 `element_size` **吃毫米** —— ★ 证据：`capture_simulation_evidence.p
+# y`
 #        传 **4.9339** ⇒ **7310 单元**（那才是"正确网格"）；
 #     ② ★★ 而 `capabilities.yaml` 把 **7250 单元那一次**记成了「`run_analysis` 进入求解即挂
 #        （timed_out=True · 300 s）」—— ★ 而**同一份证据**（`output/mesh-solve-evidence.json`，
@@ -68,7 +70,8 @@ OUT = REPO / "output" / "analysis-run-long-timeout-evidence.json"
 STUDY = "SPEC202_LongSolve_%d" % int(time.time())
 T_RUN = 1800.0        # ① 300 s → 1800 s
 T_MESH = 600.0
-#: ★ 2026-10-04（第十版）：★ **建网格这一步单独用一个更短的上限** —— ★ 真机实测它**卡过 9 分钟**
+#: ★ 2026-10-04（第十版）：★ **建网格这一步单独用一个更短的上限** —— ★ 真机实测它**卡过 
+#: 9 分钟**
   #: 没回来（内存平稳、SW `Not Responding`）⇒ ★ 为了"探得动"，这一步**有界在 5 分钟**：
   #: ★ 到点就**杀子进程并如实报 `timed_out`**（★ 那本身就是一条可用结论）✓
 T_MESH_SAFE = 300.0
@@ -120,9 +123,12 @@ def main() -> int:
         if study is None:
             raise RuntimeError("按名字取不到研究 %r" % STUDY)
         #: ★★★★★ 2026-10-04（第十一版）**修正夹具/载荷的面选择 —— 这是那条弹窗的根因**：
-        #:   ★ 原文用的是**裸坐标** `select_face_at(0,0,-0.02)` / `select_face_at(0,0,0)`，
-        #:     而本文件自己的注释（`sw_simulation.select_face_at` 的来源块）逐字记着真机实测：
-        #:       `SelectByID2("", "FACE", 0, 0, 0, …)`      → 计数 **0**（★ 原点在**实体内部**）
+        #: ★ 原文用的是**裸坐标** `select_face_at(0,0,-0.02)` / `select_face_at(0,0,0)`
+        #: ，
+        #: 而本文件自己的注释（`sw_simulation.select_face_at` 的来源块）逐字记着真机实测
+        #: ：
+        #: `SelectByID2("", "FACE", 0, 0, 0, …)`      → 计数 **0**（★ 原点在**实体内部**
+        #: ）
         #:       `SelectByID2("", "FACE", 0, 0, -0.02, …)`  → 计数 **1** ✓
         #:   ★★ 于是**力的那一步是加在空选区上的** ⇒ 载荷建成也无效 ⇒ Simulation 弹
         #:     「**未定义载荷或规定的位移** … 固定-刚性零件上的载荷将不处于活动状态」⇒
@@ -168,9 +174,11 @@ def main() -> int:
         #:     ★★ **不是** `sw_simulation.py` 注释里那个"跑通"的 **4.933908705960544**
         #:     ⇒ ★ 两处记录**差 ~1000×**、且**官方页没写单位** ⇒ ★ 按铁律 5：**不猜**，
         #:     改成**当场把三个单位都读出来**（-1 / 0=SI / 2=Metric），★ 全部记进证据 ✓
-        #:   ★★★ **选哪个**：★ 用**几何判据**（`check_mesh_size_sane`：单元尺寸不得大于零件最大边）
+        #: ★★★ **选哪个**：★ 用**几何判据**（`check_mesh_size_sane`：单元尺寸不得大于零
+        #: 件最大边）
         #:     —— ★ 它是**既有的那道闸**、且与本探针的零件尺寸直接相关
-        #:     ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实** ✓
+        #: ⇒ ★ 候选按「更像毫米」排序，**取第一个过闸的**；★ 三个都不过就**停下报事实** 
+        #: ✓
         #:   ★★★★ **先等 SolidWorks 闲下来**（★ 第十版新增）：★ 真机实测（2026-10-04）——
         #:     ★ 刚把 SW 拉起来那几秒它自己在忙 ⇒ ★ **忙检把三次读数全拒了**（★ 假警报）
         #:     ⇒ ★ 故用**有界**的 `wait_until_idle`（★ 事实 526 纪律：不做无界等待）✓
@@ -203,10 +211,14 @@ def main() -> int:
 
         #: ★ 候选：每个都是「**值 + 与之配套的单位口径**」的一对（★ 口径写在名字里）——
         #:   ★★★ 真机对照（`tools/probe_mesh_profile_matrix.py` 四档）把这件事**钉死了**：
-        #:     `units=2`（Metric=**毫米**）+ `element_size=4.9305` ⇒ 网格 **7250 单元 / 1.1 s** ✓
-        #:     ★ 而 `units=0`（**SI=米**）+ 同一个 `4.9305` ⇒ 单元 = **4.93 米** ⇒ 比零件还大
-        #:     ⇒ ★★ **网格退化 ⇒ `CreateMesh` 回 `rc=8` / 0 单元**（★ 那正是本探针先前"建不出来"的根源）✓
-        #:   ⇒ ★ 故候选必须是 `(标签, 值, 容差, **units**)` 四元组，★ 且**选中的 units 原样传给 create_mesh** ✓
+        #: `units=2`（Metric=**毫米**）+ `element_size=4.9305` ⇒ 网格 **7250 单元 / 1.1 
+        #: s** ✓
+        #: ★ 而 `units=0`（**SI=米**）+ 同一个 `4.9305` ⇒ 单元 = **4.93 米** ⇒ 比零件还
+        #: 大
+        #: ⇒ ★★ **网格退化 ⇒ `CreateMesh` 回 `rc=8` / 0 单元**（★ 那正是本探针先前"建不
+        #: 出来"的根源）✓
+        #: ⇒ ★ 故候选必须是 `(标签, 值, 容差, **units**)` 四元组，★ 且**选中的 units 原
+        #: 样传给 create_mesh** ✓
         cands: list[tuple[str, float, float, int]] = []
         for u in (2, -1, 0):
             got = (reading.get("units=%d" % u) or {}).get("result") or {}
@@ -252,42 +264,57 @@ def main() -> int:
         print("  [1b] ★ 选中 %s ⇒ element_size=%.4f · tolerance=%.4f · **units=%d**（max_dim=%s）"
               % (chosen[0], element_size, tolerance, mesh_units, sane.get("max_dim")))
 
-        #: ③ ★★★ **建网格之前先按官方那几条"降规模"的旋钮设一遍**（★ 第七版 · 本轮新增）——
+        #: ③ ★★★ **建网格之前先按官方那几条"降规模"的旋钮设一遍**（★ 第七版 · 本轮新增）
+        #: ——
         #:   ★★ 真因（★ 官方手册给了机制）：★ **曲率自适应网格器会在高曲率处自动加密**，
         #:     而加密下界由 **`MinElementSize`** 定、**不由全局 `element_size` 定**
         #:     ⇒ ★ 这解释了"同一名义单元尺寸，一条链 7250 单元/1.4 s、另一条 40 GB" ✓
         #:   ★ 逐条取值与依据：
-        #:     · `Quality = 0`（`swsMeshQualityDraft`）—— 官方：draft「**does not have midside
+        #: · `Quality = 0`（`swsMeshQualityDraft`）—— 官方：draft「**does not have midsi
+        #: de
         #:       nodes**」⇒ 线性四面体 ⇒ 节点/DOF 大降；★ **代价**：官方说 draft 是给"quick
         #:       evaluation"用的 ⇒ 弯曲为主的问题该换机器/换求解器，**不该**靠 draft 蒙；
         #:     · `MesherType = 0`（`swsMesherTypeStandard`）—— 避开曲率自适应自动加密；
-        #:     · `MinElementSize = element_size/2`、`MaxElementSize = element_size*2` —— 官方逐字：
-        #:       「For this option to have effect, **h_min < h < h_max**」⇒ 给上**上下界**才管得住；
-        #:     · `MinElementsInCircle = 4` —— 官方的曲率密度旋钮（"minimum number of elements
+        #: · `MinElementSize = element_size/2`、`MaxElementSize = element_size*2` —— 官
+        #: 方逐字：
+        #: 「For this option to have effect, **h_min < h < h_max**」⇒ 给上**上下界**才管
+        #: 得住；
+        #: · `MinElementsInCircle = 4` —— 官方的曲率密度旋钮（"minimum number of element
+        #: s
         #:       that fit in a hypothetical circle"），★ 越小越省 ✓
         #:   ⚠ ★ **不改** `NumberOfLoops` / `AutomaticLooping2` —— ★ 它们的语义**未查证**
         #:     （铁律 5：查不到就别动）✓
         #:   ★★ **第七版（实测后修正）—— 只设两个"枚举"旋钮，不碰带单位的 Double**：
-        #:     ★ 只读实测（`output/mesh-settings-readonly-evidence.json`）拿到的**出厂默认**是：
+        #: ★ 只读实测（`output/mesh-settings-readonly-evidence.json`）拿到的**出厂默认**
+        #: 是：
         #:       `Quality=1`（High）· **`MesherType=2`（`AlternateCB` = 曲率自适应）** ·
         #:       `ElementSize=0` · **`MinElementSize=0`** · `MaxElementSize=0` ·
         #:       `ElementSizeFactorForEachLoop=0.8` · `MinElementsInCircle=8` ·
         #:       `NumberOfLoops=3` · `AutomaticLooping2=False` ✓
         #:     ★★★ **这就是"同一 `element_size` 两条链差别巨大"的机制**（★ 官方逐字）：
-        #:       `c_meshing_options.htm`「**Curvature-based mesher** — Creates **more elements in
-        #:       higher-curvature areas automatically**」+ `c_Element_Size_in_Curvature_Based_Mesher.htm`
-        #:       「the element size is determined … by the **minimum number of elements that fit in
-        #:       a hypothetical circle**」·「For this option to have effect, **h_min < h < h_max**」
-        #:       ⇒ ★★ **加密下界 `MinElementSize` 出厂是 0（=没有下界）** ⇒ ★ 曲率自适应**可以无限
+        #: `c_meshing_options.htm`「**Curvature-based mesher** — Creates **more elements
+        #:  in
+        #: higher-curvature areas automatically**」+ `c_Element_Size_in_Curvature_Based_
+        #: Mesher.htm`
+        #: 「the element size is determined … by the **minimum number of elements that f
+        #: it in
+        #: a hypothetical circle**」·「For this option to have effect, **h_min < h < h_m
+        #: ax**」
+        #: ⇒ ★★ **加密下界 `MinElementSize` 出厂是 0（=没有下界）** ⇒ ★ 曲率自适应**可以
+        #: 无限
         #:       细化**、而**全局 `element_size` 管不住它** ✓
-        #:     ⚠ ★ **为什么不设 `MinElementSize`**（★ 第六版在这里栽过）：★ 它的**单位口径未定**
+        #: ⚠ ★ **为什么不设 `MinElementSize`**（★ 第六版在这里栽过）：★ 它的**单位口径未
+        #: 定**
         #:       （只读实测回的是 `0.0` ⇒ 定不了）；★ 我上一轮按毫米写了 `2.465` ⇒
         #:       ★★ **探针在 SW 里卡了 13 分钟、SW 主线程 `Not Responding`** ✓
-        #:       ⇒ ★ 按铁律 5：**不猜单位** —— ★ 先只用两个**枚举**旋钮（`Int32`，**无单位风险**）：
-        #:         · `Quality = 0`（`swsMeshQualityDraft`）⇒ 线性四面体（无中间节点）⇒ DOF 大降；
+        #: ⇒ ★ 按铁律 5：**不猜单位** —— ★ 先只用两个**枚举**旋钮（`Int32`，**无单位风险
+        #: **）：
+        #: · `Quality = 0`（`swsMeshQualityDraft`）⇒ 线性四面体（无中间节点）⇒ DOF 大降
+        #: ；
         #:         · `MesherType = 0`（`swsMesherTypeStandard`）⇒ **避开曲率自适应自动加密** ✓
         #: ★★ **读写都走隔离层**（★ 第六版的教训）：非隔离调用一旦把 SW 带进长计算，
-        #:   ★ 主进程被杀之后 **SW 自己还在烧 CPU**（实测：`Not Responding` + 每个 6 秒吃 1 核）
+        #: ★ 主进程被杀之后 **SW 自己还在烧 CPU**（实测：`Not Responding` + 每个 6 秒吃 
+        #: 1 核）
         #:   ⇒ ★ **凡可能在 SW 侧触发计算的调用，一律经 `run_isolated`**（可杀）✓
         ms_r = iso("mesh_settings_by_name", [STUDY], {}, 180)
         before_settings = ms_r.get("result") if isinstance(ms_r.get("result"), dict) else {}
@@ -301,15 +328,18 @@ def main() -> int:
         cfg_r = iso("configure_mesh_settings_by_name", [STUDY],
                     {"quality": 0, "mesher_type": 0}, 300)
         cfg = cfg_r.get("result") if isinstance(cfg_r.get("result"), dict) else {}
-        #: ⚠ ★ **不设** `min_element_size` / `max_element_size` / `min_elements_in_circle` ——
+        #: ⚠ ★ **不设** `min_element_size` / `max_element_size` / `min_elements_in_circl
+        #: e` ——
         #:   ★ 前两个是**带单位的 Double**、口径未定（见上）；★ 后一个虽是无量纲 Int32，
-        #:   但它属于**曲率自适应那条路**，而本版已把 `MesherType` 换成 Standard ⇒ 先不动它 ✓
+        #: 但它属于**曲率自适应那条路**，而本版已把 `MesherType` 换成 Standard ⇒ 先不动
+        #: 它 ✓
         ev["steps"]["mesh_settings_configure"] = {**cfg_r, "result": cfg}
         flush()
         print("  [1d] 设网格旋钮: ok=%s changed=%s"
               % (cfg.get("ok"), [c["name"] for c in cfg.get("changed") or []]))
 
-        #: ④ ★★★★ **建网格 —— 走"唯一推荐入口"**（★ 第九版 · 本轮把整条链收进一个能力）：
+        #: ④ ★★★★ **建网格 —— 走"唯一推荐入口"**（★ 第九版 · 本轮把整条链收进一个能力）
+        #: ：
         #:   `create_mesh_safely` 一次做七件事：① 量预算前置闸 → ② **网格安全档**
         #:   （关曲率自适应 + Draft）→ ③ 建网格 → ④ 读**真节点数** → ⑤ 求解前内存闸 →
         #:   ⑥ **还原网格设置**（★ 不离开用户的模型）→ ⑦ 回可入证据的报告 ✓
@@ -345,7 +375,8 @@ def main() -> int:
         #:   ⇒ ★★ **内存超预算就绝不进求解**（★ 官方：内存不够会走 out-of-core、极慢）
         #:   ★★★ 2026-10-04（第十三版）：★ 先把**本研究的求解器**读出来一起交给闸门 ——
         #:     ★ 因为那条换算「每 2e6 自由度 1 GB」**逐字出自 FFEPlus**，
-        #:     而真机跑的是 **`Intel Direct Sparse`** ⇒ ★ **不能当同一把尺子**（★ 结果里会写明）✓
+        #: 而真机跑的是 **`Intel Direct Sparse`** ⇒ ★ **不能当同一把尺子**（★ 结果里会写
+        #: 明）✓
         _solver = sim.static_solver_type_report(study)
         ev["steps"]["solver_type"] = _solver
         flush()
@@ -394,7 +425,8 @@ def main() -> int:
                     break
         ev["steps"]["results_poll"] = poll
 
-        #: ⑥ ★ 终局回读：★ **重用契约里那一条**（`run_analysis_by_name` 走 `run_analysis_report`）
+        #: ⑥ ★ 终局回读：★ **重用契约里那一条**（`run_analysis_by_name` 走 `run_analysis
+        #: _report`）
         #:   —— ★ **不自己搓读数器**（★ 它复跑一次 `RunAnalysis` 只为回读 `Results`/图数，
         #:   而求解已完成 ⇒ 秒级返回）✓
         final_r = iso("run_analysis_by_name", [STUDY], {}, 600)

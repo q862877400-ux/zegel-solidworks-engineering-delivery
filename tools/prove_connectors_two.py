@@ -7,12 +7,14 @@
 #   ★★ **B 组（多面 / 多顶点）此前做不了** —— ★ 而轮 415/416 把**出厂类型库**读通之后
 #     **每个成员的形参表都有了** ⇒ ★ 本轮据此挑出两条**选择方式明确**的：
 #     ```
-#     AddLinkConnector(VertexPointforFirstLocation, VertexPointforSecondLocation)   ← 两个顶点
+# AddLinkConnector(VertexPointforFirstLocation, VertexPointforSecondLocation)   ← 两个顶
+# 点
 #     AddRigidConnector(PersistIDFaceArray, PersistIDTargetArray)                   ← 两组面
 #     ```
 #   ★ 姿态照**轮 408 那条已验证的设计**：★ **共用一个算例 + 看计数是否单调**；
 #     ★ 而算例名照**轮 414 的教训**用**唯一名**。
-#   ★★ 而"**算例类型**"这一维照旧**不能一概而论**（★ 事实 323/330）：★ 本探针先用 **static**。
+# ★★ 而"**算例类型**"这一维照旧**不能一概而论**（★ 事实 323/330）：★ 本探针先用 **static
+# **。
 # 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射出的形参
 #           名 ·
 #   `swsAnalysisStudyTypeStatic = 0`

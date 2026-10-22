@@ -51,8 +51,10 @@ from typing import Any
 #   ★ 本模块的设计约束是「**不连 COM 也能 import**」—— 契约测试
 #     `tests/test_sw_simulation_loads_contract.py` 把 `sw_connect` stub 掉后仍要能导入。
 #   ★ 而 `create_empty_dispatch_variant` 在真机上是 `AddPressure` / `AddForce` 的
-#     **必需实参**（裸传 `None` 会报 `类型不匹配@arg3`，见 `add_pressure` / `add_torque` 的 docstring）。
-#   ⇒ 所以：**取得到就用，取不到置 `None`**（★ 调用点据此判断），**绝不让整模块 import 失败**。
+# **必需实参**（裸传 `None` 会报 `类型不匹配@arg3`，见 `add_pressure` / `add_torque` 的 
+# docstring）。
+# ⇒ 所以：**取得到就用，取不到置 `None`**（★ 调用点据此判断），**绝不让整模块 import 失
+# 败**。
 # 许可:   本仓库 MIT。
 # 覆盖:   下面这段 `try` 导入
 # ─────────────────────────────────────────────────────────────────────
@@ -130,7 +132,8 @@ __all__ = [
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   SolidWorks 官方 API 枚举定义（对 interop 程序集纯元数据反射）# 文件:   D:\AI\SW\_raw\reflect\enum_cosworks.txt
+# 仓库:   SolidWorks 官方 API 枚举定义（对 interop 程序集纯元数据反射）# 文件:   D:\AI\S
+# W\_raw\reflect\enum_cosworks.txt
 # 定位:   各 Add* 方法首参（类型位）的合法取值。
 # 取值:   逐个反射核出。⚠ 这些枚举**在 CHM cosworks 册里没有页面**
 #         （该册只有 34 个接口页 + members 索引，无枚举页），
@@ -269,10 +272,13 @@ def _check(manager, member: str, arity: int, *args):
     #:     `com_error(-2147352571, '类型不匹配', None, **3**)`（★ 位置 3 就是它）。
     #:   ⇒ ★★ **正解是项目既有的空 Dispatch 参数包**（事实 12）：
     #:     `create_empty_dispatch_variant()` = `VARIANT(VT_DISPATCH, None)`。
-    #:   ⇒ ★ 现在**在 `_check` 里统一换**（★ 与补 `ErrorCode` 同一原则：**一处 ⇒ 整批受益**），
-    #:     ★ **只对已从官方声明核过"第 3 参是 `RefGeom`"的成员**换（★ 表外的不动 —— 铁律 5）。
+    #: ⇒ ★ 现在**在 `_check` 里统一换**（★ 与补 `ErrorCode` 同一原则：**一处 ⇒ 整批受益*
+    #: *），
+    #: ★ **只对已从官方声明核过"第 3 参是 `RefGeom`"的成员**换（★ 表外的不动 —— 铁律 5）
+    #: 。
     #: ★★ 2026-10-03（轮 416）：**按「该成员的 `RefGeom` 在第几个实参」换** ——
-    #:   ★ 旧写法写死了 `tail[2]`，★ 而反射说 `AddForce2` 在 3、`AddPrescribedDisplacement` 在 3、
+    #: ★ 旧写法写死了 `tail[2]`，★ 而反射说 `AddForce2` 在 3、`AddPrescribedDisplacement
+    #: ` 在 3、
     #:   `AddForce3` 在 18 ⇒ ★ 照旧写法会把别的参数当 `RefGeom` 去换（比不换更坏）。
     _pos = _REFGEOM_POSITIONS.get(member)
     if (_pos is not None and len(tail) > _pos and tail[_pos] is None
@@ -281,13 +287,15 @@ def _check(manager, member: str, arity: int, *args):
     return get_com_member(manager, member, *tail)
 
 
-#: ★★ 第 3 参是 `RefGeom`（且**不能裸传 `None`**）的成员 —— ★ 只列**已从官方声明核过**的。
+#: ★★ 第 3 参是 `RefGeom`（且**不能裸传 `None`**）的成员 —— ★ 只列**已从官方声明核过**的
+#: 。
 #: ★ 依据：`sw_simulation_loads.py` 既有来源块里抄的官方 VB 声明
 #:   （`AddForce(NForceType, DispArray, RefGeom, ErrorCode)` ·
 #:    `AddPressure(NPressureType, DispArray, RegGeom, ErrorCode)` ·
 #:    `AddRestraint(NRestraintType, DispArray, RefGeom, ErrorCode)`）·
 #:   ★ 以及真机实测（位置 3 的 `类型不匹配`，轮 245 / 349）。
-#: ★★★★★ 2026-10-03（轮 416）**本表改为「成员 → `RefGeom`/`RegGeom` 的形参位置」**（铁律 4：**以出厂类型库为准**）。
+#: ★★★★★ 2026-10-03（轮 416）**本表改为「成员 → `RefGeom`/`RegGeom` 的形参位置」**（铁律
+#:  4：**以出厂类型库为准**）。
 #:   ★ 旧表是一个 `frozenset`，★ 而 `_check` **写死了位置 2**（第 3 个实参）。
 #:   ★★ 真机反射（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）给出的真位置：
 #:     ```
@@ -296,7 +304,8 @@ def _check(manager, member: str, arity: int, *args):
 #:     AddForce3(… 19 个…, DispArray, **RefGeom**, PerUnitLength)         → 位置 18
 #:     AddPressure(NPressureType, DispArray, **RegGeom**)                → 位置 2
 #:     AddRestraint(NRestraintType, DispArray, **RefGeom**)              → 位置 2
-#:     AddPrescribedDisplacement(Displacements, NLengthUnit, DispArray, **RefGeom**) → 位置 3
+#: AddPrescribedDisplacement(Displacements, NLengthUnit, DispArray, **RefGeom**) → 位置 
+#: 3
 #:     ```
 #:   ⇒ ★ **按位置换才对**，★ 而"一刀切位置 2"会把 `AddForce2`/`AddPrescribedDisplacement`
 #:     的 **`DispArray` 当成 `RefGeom` 去换** ⇒ ★★ 那比不换更坏。
@@ -731,7 +740,8 @@ def collect_loads_evidence(manager) -> dict[str, Any]:
 
 # ── 24h 计划 段 2.1（Spec Kit `143`）：**四类常用载荷的「回读报告」包装** ──────────
 # ★★★ 为什么四个都要包（与 `sw_simulation` 的 `create_mesh_report` 同一理由）：
-#   `add_pressure` / `add_torque` / `add_gravity` / `add_centrifugal_force` **都回 COM 对象**
+# `add_pressure` / `add_torque` / `add_gravity` / `add_centrifugal_force` **都回 COM 对
+# 象**
 #   （`_check(...)` 直接回 `get_com_member(manager, member, *args)`）
 #   ⇒ ★ **MCP 回不了对象** ⇒ 必须翻成**可 JSON 化**的东西。
 # ★★ 判据用**既有脚本那条**（`tools/capture_simulation_loads_evidence.py`）：
@@ -849,13 +859,18 @@ def apply_centrifugal_force_report(manager, model):
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_simulation_loads.py —— 追加 6 个"简单载荷"的 report 封装
 # 定位:   ★ 2026-10-03（轮 402）24h 计划 v2 段 5（仿真载荷族）。
-#   ★★ **为什么是这 6 条**：`tools/triage_real_gaps.py` 在补了"动词对 + 读注册表对象"两条规则后，
-#     把 `sw_simulation_loads` 的 30 条缺口收敛到 **21 条真缺口**；★ 其中这一组是**同一种形态** ——
+# ★★ **为什么是这 6 条**：`tools/triage_real_gaps.py` 在补了"动词对 + 读注册表对象"两条
+# 规则后，
+# 把 `sw_simulation_loads` 的 30 条缺口收敛到 **21 条真缺口**；★ 其中这一组是**同一种形
+# 态** ——
 #     `add_X(manager, entities[, 一个 int])` ⇒ ★ 可以像既有的 `apply_pressure_report` 那样
 #     **复用同一套机器**（`_selected_dispatch_array` 装实体 + `_report` 回读计数）。
-#   ★ 其余 15 条是**多面 / 多顶点 / 多组件**参数（bearing / bolt / cyclic / edge_weld / link /
-#     pin / rigid / spot_weld / spring / prescribed_displacement / remote_load / reference_geometry /
-#     distributed_mass / force / get_edge_weld_connector）—— ★ 各自的选择方式不同，★ **留作后批**。
+# ★ 其余 15 条是**多面 / 多顶点 / 多组件**参数（bearing / bolt / cyclic / edge_weld / li
+# nk /
+# pin / rigid / spot_weld / spring / prescribed_displacement / remote_load / reference_g
+# eometry /
+# distributed_mass / force / get_edge_weld_connector）—— ★ 各自的选择方式不同，★ **留作
+# 后批**。
 # 官方依据: `ICWLoadsAndRestraintsManager` 的 `AddConvection` / `AddElasticConnector` /
 #   `AddHeatFlux` / `AddHeatPower` / `AddTemperature` / `AddRadiation`
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -930,7 +945,8 @@ def apply_radiation_report(manager, model, radiation_type: int = 0):
 #   ★★ **为什么是这三条**：重跑分诊后 `sw_simulation_loads` 的该挂剩 17 条，
 #     其中**与已验证的 6 条同形**（`(manager, entities, 若干普通数)`）的只剩：
 #     `add_distributed_mass` · `add_force` · `add_remote_load`
-#     （另两条 `add_reference_geometry_restraint` / `add_prescribed_displacement` 要**引用几何对象**，
+# （另两条 `add_reference_geometry_restraint` / `add_prescribed_displacement` 要**引用几
+# 何对象**，
 #      ★ 那需要另一条前置链 ⇒ 留后批）。
 #   ★★ **而本批带着轮 408 学到的那条纪律**：★ **算例类型**是"调用前提"的一维 ——
 #     这三条都是**结构载荷** ⇒ ★ 预期要 **`static`**（★ 而热载荷要 `thermal`），
@@ -942,7 +958,8 @@ def apply_radiation_report(manager, model, radiation_type: int = 0):
 #     ⇒ ★ 本包装**显式补它**（★ 而**不改裸函数** —— 免得动到别的调用方）。
 # 官方依据: CHM `ICWLoadsAndRestraintsManager~Add{DistributedMass,Force,RemoteLoad}.html
 #           ` 的 VB 声明 ·
-#   本模块既有的来源块（`AddDistributedMass` / `AddRemoteLoad` 的官方声明**逐字抄在 L441-449**）
+# 本模块既有的来源块（`AddDistributedMass` / `AddRemoteLoad` 的官方声明**逐字抄在 L441-4
+# 49**）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1013,9 +1030,11 @@ def apply_remote_load_report(manager, model, load_type: int, units: int,
 #     · `add_rigid_connector` —— ★ **两组面**（★ 按"前半 / 后半"切）。
 #   ⚠ **`add_pin_connector` 不做**：★ 官方形参是 `DispArrayComp1` / `DispArrayComp2`
 #     ⇒ ★ 那是**装配里的两个零件** ⇒ ★ 需要先建装配 ⇒ ★ 另一条链（★ 不在本批）。
-#   ⚠★ **切分规则要写明**（★ 免得调用方猜）：★ 选区里**前一半给第一个参数、后一半给第二个**；
+# ⚠★ **切分规则要写明**（★ 免得调用方猜）：★ 选区里**前一半给第一个参数、后一半给第二个*
+# *；
 #     ★ 而**条数必须为偶数**（★ 奇数就拒绝 —— ★ 早失败优于静默）。
-#   ⚠★ **算例类型**：★ 这两条是**连接件** ⇒ ★ 预期 **static**（★ 而**真机要验**，★ 不能一概而论）。
+# ⚠★ **算例类型**：★ 这两条是**连接件** ⇒ ★ 预期 **static**（★ 而**真机要验**，★ 不能一
+# 概而论）。
 # 官方依据: 出厂类型库反射（★ 形参名逐字来自它）· 本模块既有的 `_check` 与 arity 表
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -1061,7 +1080,8 @@ def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
-# 文件:   scripts/sw_simulation_loads.py —— 追加 `apply_rigid_connector_by_objects_report`
+# 文件:   scripts/sw_simulation_loads.py —— 追加 `apply_rigid_connector_by_objects_repor
+# t`
 # 定位:   ★ 2026-10-03（轮 424）承**事实 337 的正解**：★ **不读选区，按已知的实体清单
 #           装数组**。
 #   ★★ 为什么另起一个包装而**不动** `apply_rigid_connector_report`：
@@ -1072,7 +1092,8 @@ def apply_rigid_connector_report(manager, model, *, faces_per_side: int = 1):
 #   ⇒ ★★ 两者并存，★ 由调用方按场景选；★ **而探针与工具用后者**。
 # 官方依据: `ICWLoadsAndRestraintsManager.AddRigidConnector(PersistIDFaceArray, PersistI
 #           DTargetArray)`
-#   （★ 出厂类型库反射逐字）· `IBody2.GetFaces`（★ `entities_on_body` 已在用）· 事实 32 / 336 / 337
+# （★ 出厂类型库反射逐字）· `IBody2.GetFaces`（★ `entities_on_body` 已在用）· 事实 32 / 
+# 336 / 337
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1121,7 +1142,8 @@ def apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
 #       ⇒ ★ **不保存任何东西** ✓
 # 官方依据: 出厂类型库（`SolidWorks.Interop.cosworks.dll` **34.4.1.1011**）反射的形参名 
 #           ·
-#   `IAssemblyDoc.AddComponent5`（★ `sw_assembly.add_component` 已在用）· `swsAnalysisStudyTypeStatic = 0`
+# `IAssemblyDoc.AddComponent5`（★ `sw_assembly.add_component` 已在用）· `swsAnalysisStud
+# yTypeStatic = 0`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────

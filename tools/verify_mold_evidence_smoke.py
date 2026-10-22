@@ -48,13 +48,16 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mold-evidence-smoke
 #:   ★ 本脚本原先按**平铺**找键（`"parting_lines_count" in evd`），
 #:   而 `sw_mold.mold_evidence()` 回的是**嵌套**的：
 #:   ```
-#:   {"counts": {"parting_lines": …, "parting_surfaces": …, "cavity_surfaces": …, "core_surfaces": …},
+#: {"counts": {"parting_lines": …, "parting_surfaces": …, "cavity_surfaces": …, "core_su
+#: rfaces": …},
 #:    "parting_type": …, "core_cavity_split": …}
 #:   ```
-#:   ⇒ ★ 顶层只有 **2** 个（`parting_type` / `core_cavity_split`）⇒ 本脚本**永远报 3/5 fail**。
+#: ⇒ ★ 顶层只有 **2** 个（`parting_type` / `core_cavity_split`）⇒ 本脚本**永远报 3/5 fai
+#: l**。
 #:   ⇒ ★★★ **而那个结论被写进了 `capabilities.yaml` 的 `limitations`**，
 #:     把一条**本来正常**的能力钉在 `stitched` 上 ⇒ ★★ **旧结论会把好能力误判成坏能力。**
-#:   ★ 现改为：**计数键名对 `counts` 子字典、属性键名对顶层**（★ 与实现的**更好**形状对齐）。
+#: ★ 现改为：**计数键名对 `counts` 子字典、属性键名对顶层**（★ 与实现的**更好**形状对齐
+#: ）。
 WANTED_COUNTS = ("parting_lines", "parting_surfaces", "cavity_surfaces", "core_surfaces")
 WANTED_PROPS = ("parting_type", "core_cavity_split")
 

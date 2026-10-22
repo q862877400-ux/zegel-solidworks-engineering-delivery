@@ -21,7 +21,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 报**三组**（★ 能用 / 取不到 / 按类分）—— ★ 而**先报查了多少**（★ 事实 357 那条纪律）。
+# ★ 判据：★ 报**三组**（★ 能用 / 取不到 / 按类分）—— ★ 而**先报查了多少**（★ 事实 357 那
+# 条纪律）。
 
 from __future__ import annotations
 
@@ -54,7 +55,8 @@ def main() -> int:
         got = probe_members(ext, names)
         usable = sorted(n for n, v in got.items() if v != "missing")
         missing = sorted(n for n, v in got.items() if v == "missing")
-        #: ★ 按**名字形态**分类（★ 因为 `get_X`/`set_X` 是属性访问器、★ 迟到绑定下叫 `X`）
+        #: ★ 按**名字形态**分类（★ 因为 `get_X`/`set_X` 是属性访问器、★ 迟到绑定下叫 `X`
+        #: ）
         def bucket(n: str) -> str:
             if n.startswith("get_") or n.startswith("set_"):
                 return "property_accessor"

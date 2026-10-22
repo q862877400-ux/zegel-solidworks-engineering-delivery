@@ -43,10 +43,13 @@ def _fresh_part(sw):
 
 
 #: ★★★ 2026-10-06 **真机读数纠正了我自己的结论**：★ 我上一轮说"写工具缺前置" ✗ ——
-#:   ★★ 17 条失败里 **12 条**其实是「**缺必填形参**」（`x_mm`/`configuration_name`/`view_name`/…），
-#:   ★ 另有 **4 条**是「声明注入 `asm_model`/`sldworks`/`view` 但没给对象」· **2 条**是环境/取值错 ✓
+#: ★★ 17 条失败里 **12 条**其实是「**缺必填形参**」（`x_mm`/`configuration_name`/`view_n
+#: ame`/…），
+#: ★ 另有 **4 条**是「声明注入 `asm_model`/`sldworks`/`view` 但没给对象」· **2 条**是环
+#: 境/取值错 ✓
 #:   ⇒ ★ 正解是评审早说过的「**参数由声明合成**」—— ★ 不是每样都要"建前置" ✓
-#:   ★★ 合成规则**按形参名与单位后缀**来（★ 只求"形状对"，★ 不求语义对 —— 语义由差分去判）✓
+#: ★★ 合成规则**按形参名与单位后缀**来（★ 只求"形状对"，★ 不求语义对 —— 语义由差分去判）
+#: ✓
 _SYNTH_BY_HINT = (
     ("_mm", 20.0), ("_deg", 90.0), ("_count", 1), ("_index", 0),
     ("_name", "MCP_CALIB"), ("path", "MCP_CALIB_out.step"),
@@ -106,10 +109,14 @@ def synth_args(spec) -> dict:
                 out[pp.name] = ["MCP_CALIB"]
                 continue
             if base in ("str",):
-                #: ★★ 注解说 `str` ⇒ ★ 允许 ② 的名字后缀**细化**（如 `path` 给个文件名）✓
-                #:   ★★★ **但结果必须还是 `str`** —— ★ 真机被测试抓到：★ 我原先在这里 `pass`，
-                #:     ★ 于是落到 ②，★ 而 `doc_type` 命中了 `_type` 后缀 ⇒ ★ **给了数字 `0`** ✗✗
-                #:   ⇒ ★ **"类型优先"必须落到最后一道**：★ 合成完**按注解类型校验**，★ 不合就换回对的 ✓
+                #: ★★ 注解说 `str` ⇒ ★ 允许 ② 的名字后缀**细化**（如 `path` 给个文件名）
+                #: ✓
+                #: ★★★ **但结果必须还是 `str`** —— ★ 真机被测试抓到：★ 我原先在这里 `pas
+                #: s`，
+                #: ★ 于是落到 ②，★ 而 `doc_type` 命中了 `_type` 后缀 ⇒ ★ **给了数字 `0`*
+                #: * ✗✗
+                #: ⇒ ★ **"类型优先"必须落到最后一道**：★ 合成完**按注解类型校验**，★ 不
+                #: 合就换回对的 ✓
                 _low = pp.name.lower()
                 _cand = None
                 for _h, _v in _SYNTH_BY_HINT:
@@ -130,7 +137,8 @@ def synth_args(spec) -> dict:
         out[pp.name] = value
     return out
 
-#: ★ 每组需要的**默认文档种类**（★ 可被生成物里的 `doc_type` 覆盖 —— ★ 见 `build_host`）✓
+#: ★ 每组需要的**默认文档种类**（★ 可被生成物里的 `doc_type` 覆盖 —— ★ 见 `build_host`）
+#: ✓
 _KIND_BY_REQUIRES = {
     "part": "part", "none": "part", "selection": "part", "view": "part",
     "study": "part", "costing": "part",
@@ -160,7 +168,8 @@ def build_host(sw, inject_name: str, doc_type=None):
     name = str(inject_name or "")
     if name in ("", "none"):
         return {"sw": sw}, ""
-    #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）⇒ 给 `sw` ✓
+    #: ★ 应用对象类（`sldworks` / `sw_app` / `sw` / `manager` / `defaults` / `options`）
+    #: ⇒ 给 `sw` ✓
     if name in ("sldworks", "sw_app", "sw", "manager", "defaults", "options"):
         try:
             doc = sw.ActiveDoc
@@ -257,7 +266,8 @@ def classify(declared_writes, diff, usable, *, call_ok: bool) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description="★ 存活普查（规格 210 · B3）")
     ap.add_argument("--limit", type=int, default=0, help="★ 只跑前 N 个（★ 试跑用）")
-    #: ★★ **分块跑**：★ 真机实测 1.4 秒/条（★ 由 `--limit 12` 量得）⇒ 全组本应 3 分钟就能跑完，
+    #: ★★ **分块跑**：★ 真机实测 1.4 秒/条（★ 由 `--limit 12` 量得）⇒ 全组本应 3 分钟就
+    #: 能跑完，
     #:   ★★ 而实际全组跑**卡了 50 分钟没出来** ⇒ ★ 说明**某一条卡住**（★ 不是慢）✗
     #:   ⇒ ★ 加 `--offset` 分块，★ 既能**跑全**、★ 又能**定位卡点** ✓
     ap.add_argument("--offset", type=int, default=0, help="★ 跳过前 N 个（★ 分块用）")
@@ -277,10 +287,12 @@ def main() -> int:
     #: ★ 按 `--declared` 选目标（★ `[]` / 非空 / `None` / 全部 —— ★ 三组**不许混**）✓
     #: ★★ 先把目标按 `requires` **分组**（★ 每组只建一次状态）✓
     def _requires_of(tool_name: str) -> str:
-        #: ★★ 分组键 = **`inject`（精确注入名）** + **`doc_type`（机械初推的文档类型）** ✓
+        #: ★★ 分组键 = **`inject`（精确注入名）** + **`doc_type`（机械初推的文档类型）**
+        #:  ✓
         #:   ★ `requires`（**种类**）只用于统计基数 ✓
         #: ★★★ 2026-10-06 真机：★ 我第一版只用 `inject` 当键 ⇒
-        #:   ★★ 那 7 条 `drawing_*` 和 19 条 `doc_type=None` 的工具**挤进同一个 `model` 组**
+        #: ★★ 那 7 条 `drawing_*` 和 19 条 `doc_type=None` 的工具**挤进同一个 `model` 组
+        #: **
         #:   ⇒ ★ 组里建的是**零件** ⇒ ★ 七条全报 `当前文档不是工程图` ✗
         #:   ⇒ ★ 加 `doc_type` 进键 ⇒ ★ **同宿主且同文档类型**才同组 ✓
         row = table.get(tool_name) or {}
@@ -322,7 +334,8 @@ def main() -> int:
         _dt = _req_dt or (table.get(group[0]) or {}).get("doc_type")
         injects, why_state = build_host(sw, _req_inj, _dt)
         if not why_state:
-            #: ★★ 按**整组的 `needs` 并集**把状态推到位（★ 机械初推的，见 `apply_needs`）✓
+            #: ★★ 按**整组的 `needs` 并集**把状态推到位（★ 机械初推的，见 `apply_needs`
+            #: ）✓
             _needs = sorted({n for t in group for n in (table.get(t) or {}).get("needs") or []})
             _why_needs = apply_needs(sw, injects.get("_doc"), _needs)
             if _why_needs:

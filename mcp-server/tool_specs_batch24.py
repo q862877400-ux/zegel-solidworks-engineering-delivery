@@ -60,7 +60,8 @@ SPECS_BATCH24 = [
         title="Read Part Mass Properties",
         module="sw_mass_property", function="mass_properties",
         #: ★★★ 2026-10-03（轮 461）**这里原本漏了 inject** —— 真机表现：
-        #:   `TypeError: mass_properties() missing 1 required positional argument: 'model'`。
+        #: `TypeError: mass_properties() missing 1 required positional argument: 'model'
+        #: `。
         #:   同类：`solidworks_part_bounding_box` 写的是 `inject='model'` ✓
         #:   ⇒ ★ 而未声明注入时，调用不带文档 ⇒ 包装拿到 0 个实参 ⇒ 必炸。
         #:   ★★ 而**没有门禁查这件事**（`check_param_binding` 判的是「声明名 ∈ 形参」，

@@ -5,11 +5,15 @@
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的「钣金 / 成形工具」。
 # 官方依据（★ 三样逐字读过）：
 #   · ★★ `C:\swapi\types\IFeatureManager\InsertFormToolFeature.md`
-#     `Feature InsertFormToolFeature( System.string Path, System.bool Flip, System.double RotAngle,
-#      System.string Config, System.bool OverrideDoc, System.bool ShowPunch, System.bool ShowProfile,
+# `Feature InsertFormToolFeature( System.string Path, System.bool Flip, System.double Ro
+# tAngle,
+# System.string Config, System.bool OverrideDoc, System.bool ShowPunch, System.bool Show
+# Profile,
 #      System.bool ShowCenter, System.bool LinkToPart )` ⇒ ★ **参数式 9 参** ✓
-#     ★ `## Parameters` 逐字：★ `Path` = **Pathname of the forming tool part file in the Design Library**；
-#       ★ `RotAngle` = Angle of the forming tool；★ `OverrideDoc` = True to override the document
+# ★ `## Parameters` 逐字：★ `Path` = **Pathname of the forming tool part file in the Des
+# ign Library**；
+# ★ `RotAngle` = Angle of the forming tool；★ `OverrideDoc` = True to override the docum
+# ent
 #       settings in Tools > Options > Document Properties > **Sheet Metal**；
 #       ★ `ShowPunch` / `ShowProfile` / `ShowCenter` **valid only if `OverrideDoc` = true** ✓
 #   · ★ 另有属性式一代 `ILibraryFormToolFeatureData` —— ★★ **它带 `AccessSelections`** ✗
@@ -17,13 +21,16 @@
 # 前置核实（★ 本批现场查的，★ 不是假设）：
 #   ★★ 本机**有** Design Library 的成形工具文件 ✓：
 #     `C:\ProgramData\SolidWorks\SOLIDWORKS 2026\design library\` 下的
-#     `.sldftp`：`circular emboss` · `counter sink emboss` · `counter sink emboss2` · `dimple` ✓
-#   ★ 另一个前置是**钣金件** ✓ —— ★ 本仓 `sw_sheet_metal.create_base_flange` **真机已验能建成** ✓
+# `.sldftp`：`circular emboss` · `counter sink emboss` · `counter sink emboss2` · `dimpl
+# e` ✓
+# ★ 另一个前置是**钣金件** ✓ —— ★ 本仓 `sw_sheet_metal.create_base_flange` **真机已验能
+# 建成** ✓
 #     （★ 已知事实 34：★ 真建出「钣金6 / 基体-法兰1 / 平展型式6」✓）
 # 判据:   ★★ 第一步只"查行为"（★ 与"扫描曲面"/"裁剪焊件"/"曲线驱动阵列"**同型** ✓）：
 #     · ★ **建成**（★ 特征树 +1）⇒ ★ 大发现 ✓
 #     · ★ **抛** ⇒ 记下（★ 形态被拒 ✓）
-#     · ★ **静默回 `None` / 回对象而无特征** ⇒ ★★ **还不算试死**（★ 定则：「读到静默」≠「判定试死」✓）
+# · ★ **静默回 `None` / 回对象而无特征** ⇒ ★★ **还不算试死**（★ 定则：「读到静默」≠「判
+# 定试死」✓）
 #   ★★ 且按**新立的第 ④ 样**：★ 先把上面那些**枚举/路径**读完再动手 ✓
 #   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— 已四次 ✓）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
@@ -86,11 +93,15 @@ def main() -> int:
 
         #: ★ 前置：★ **钣金件**（★ 仓里 `create_base_flange` 真机已验 ✓）
         import sw_sheet_metal as SM
-        #: ★★★ 按**契约**调（★ AGENTS.md：「按 `ToolSpec` 的契约调，别手调内部实现」✓）——
+        #: ★★★ 按**契约**调（★ AGENTS.md：「按 `ToolSpec` 的契约调，别手调内部实现」✓）—
+        #: —
         #:   ★ 签名是 `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗
-        #:   ★★ 我第一版传 `(model, 80.0, 60.0, 2.0)` ⇒ **参数错** ⇒ 它**不抛**、回 `None` ✗
-        #:     ⇒ ★ 前置没上、**读数无效** ✓（★ 而 `flange_created=False` 一眼看出来 —— 第四次救命 ✓）
-        #:   ★ 契约逐字：`BaseFlangeSpec(thickness, bend_radius, depth, k_factor=0.42, …)` ✓
+        #: ★★ 我第一版传 `(model, 80.0, 60.0, 2.0)` ⇒ **参数错** ⇒ 它**不抛**、回 `None`
+        #:  ✗
+        #: ⇒ ★ 前置没上、**读数无效** ✓（★ 而 `flange_created=False` 一眼看出来 —— 第四
+        #: 次救命 ✓）
+        #: ★ 契约逐字：`BaseFlangeSpec(thickness, bend_radius, depth, k_factor=0.42, …)`
+        #:  ✓
         before = _fnames(model)
         #: ★ 先画**基体法兰的轮廓草图**（★ 契约要 `sketch_ref` ✓）
         sw_part.start_sketch(model, "Front Plane")
@@ -113,9 +124,11 @@ def main() -> int:
 
         #: ★ 调（★ 9 参逐位：★ Path · Flip · RotAngle · Config · OverrideDoc ·
         #:    ShowPunch · ShowProfile · ShowCenter · LinkToPart ✓）
-        #: ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or a
+        #: ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a f
+        #: ace or a
         #:   2D sketch containing points**」✗ ⇒ ★ **前置 = 先选一个面** ✓
-        #:   （★ 我第一版没选 ⇒ 回 None ⇒ ★ 那正是「前置没上」✓ —— ★ 判定文字也这么写的 ✓）
+        #: （★ 我第一版没选 ⇒ 回 None ⇒ ★ 那正是「前置没上」✓ —— ★ 判定文字也这么写的 ✓
+        #: ）
         import sw_selection_spec as SS
         face_ok = False
         face_err = None

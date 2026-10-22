@@ -2,16 +2,20 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   DSH 用户配置（不是 SW 仓库）
 # 文件:   C:\Users\Zegel\.dsh\profiles\web\cordis.patch.yml
-# 定位:   ★ 业主指令：「把默认模型直接改掉」（★ 起因：我两次用 `workflow` 的 `agent()` 派活**没传
+# 定位:   ★ 业主指令：「把默认模型直接改掉」（★ 起因：我两次用 `workflow` 的 `agent()` 
+# 派活**没传
 #           `model`** ⇒ **默认继承我自己的模型（DeepSeek）** ⇒ 烧掉当天约 50% 花费）✓✗
 #         ★★ 机制（**逐字读出来的，不是猜的**）：
 #           · `packages/core/agent/src/runtime-types.ts` 的 `AgentOptions` =
 #             `{ provider?, model?, reasoningEffort?, maxTokens? }` ✓
-#           · `packages/subagent/tool-subagent/src/index.ts:73-76` 的 `Config.agentOptions` 注释逐字：
+# · `packages/subagent/tool-subagent/src/index.ts:73-76` 的 `Config.agentOptions` 注释逐
+# 字：
 #             「Agent options applied to **every child**; omitted fields use child-loop defaults.」✓
-#           · `packages/subagent/subagent-spawn-in-process/src/index.ts:31` 的 provider 配置**只有**
+# · `packages/subagent/subagent-spawn-in-process/src/index.ts:31` 的 provider 配置**只有
+# **
 #             `providerName` ⇒ ★ **provider 层没有默认模型可改** ✓
-#           · `packages/workflow/workflow-ptc/src/host.ts:205-210` ⇒ workflow 的子代理**只在脚本显式
+# · `packages/workflow/workflow-ptc/src/host.ts:205-210` ⇒ workflow 的子代理**只在脚本显
+# 式
 #             传 provider/model 时才带 `agentOptions`**，否则**继承父级**；而 `workflow-ptc` 的
 #             `Config`（`src/index.ts:32-36`）**只有 `maxConcurrentAgents`** ⇒ ★ **workflow 这层没有
 #             配置默认值可改**（★ 本条如实记下，不假装改到了）✓

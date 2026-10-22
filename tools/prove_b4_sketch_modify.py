@@ -27,7 +27,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每条回 `{"op","ok","verified_by","bbox_before","bbox_after"}`，产物落 `output/`。
+# ★ 判据：★ 每条回 `{"op","ok","verified_by","bbox_before","bbox_after"}`，产物落 `outpu
+# t/`。
 
 from __future__ import annotations
 
@@ -160,7 +161,8 @@ def _one(sw, zh, fn):
                     "tf_before": tf_before, "tf_after": tf_after,
                     "bbox_changed": ch_bbox, "transform_changed": ch_tf})
         #: ★★ 判据分级（★ 说清"凭什么说能"）：
-        #:   · 量到了前后 **且变了**（bbox 或 变换）⇒ `geometry_changed` / `transform_changed`
+        #: · 量到了前后 **且变了**（bbox 或 变换）⇒ `geometry_changed` / `transform_chan
+        #: ged`
         #:   · 量到了而**都没变** ⇒ ★ 如实记 `unchanged`（★ 那才可能是"真不能"）
         #:   · 量不到 ⇒ `no_exception`（★ 最弱，且写明）
         if ch_bbox:

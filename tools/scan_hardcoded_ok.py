@@ -63,8 +63,10 @@ def _scan_file(path: Path) -> list:
                 if not (isinstance(k, ast.Constant) and k.value == "ok"):
                     continue
                 #: ★ `"ok": True` / `"ok": False` ⇒ 字面量
-                #: ★★★★ 2026-10-04（接手轮）**收窄：只报 `True`** —— ★ 病因是「**静默成功**」⇒
-                #:   形态必然是 `ok: True`；★ 而 `ok: False` 是**安全的**（★ 把失败报成失败）✓
+                #: ★★★★ 2026-10-04（接手轮）**收窄：只报 `True`** —— ★ 病因是「**静默成
+                #: 功**」⇒
+                #: 形态必然是 `ok: True`；★ 而 `ok: False` 是**安全的**（★ 把失败报成失
+                #: 败）✓
                 #:   实测依据：★ 第一版把 `sw_costing.py` 的 6 个函数都报成"最可疑"，
                 #:   ★★ 而它们报的全是**错误路径**的 `"ok": False` ⇒ 假阳性 ✓
                 if isinstance(v, ast.Constant):

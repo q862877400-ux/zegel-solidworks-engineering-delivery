@@ -16,7 +16,8 @@
 #     `PerpendicularToVector = **4**` · `Sweep = **5**`（★ **1-based** ⇒ **整体差 1**）
 #   ⇒ ★★ **铁律 4：冲突以出厂类型库为准** ⇒ 本探针**两组都试**，★ 用真机定谁对 ✓
 #
-#   ★ 官方第一句：「Inserts a ruled surface from the **selected edge**」⇒ ★ **要先选一条边**
+# ★ 官方第一句：「Inserts a ruled surface from the **selected edge**」⇒ ★ **要先选一条边
+# **
 #     （★ 而边**没有名字** ⇒ ★ 按对象选 —— **事实 32**）。
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
@@ -114,7 +115,8 @@ def main() -> int:
           "cases": []}
     #: ★ \u2460 \u6309**\u679a\u4e3e\u53e3\u5f84**\uff081 = TangentToSurface\uff09
     ev["cases"].append(_one(sw, "\u679a\u4e3e\u53e3\u5f84 type=1\uff08\u2605 \u94c1\u5f8b 4 \u7684\u9009\u6cd5\uff09", surface_type=1))
-    #: \u2605 \u2461 \u6309**md \u53c2\u6570\u8868\u53e3\u5f84**\uff080 = Tangent to Surface\uff09
+    #: \u2605 \u2461 \u6309**md \u53c2\u6570\u8868\u53e3\u5f84**\uff080 = Tangent to Sur
+    #: face\uff09
     ev["cases"].append(_one(sw, "\u2605 md \u53e3\u5f84\u90a3\u4e00\u7ec4 type=0", surface_type=0))
     #: \u2605 \u2462 \u679a\u4e3e\u53e3\u5f84\u7684 5 = Sweep
     ev["cases"].append(_one(sw, "\u679a\u4e3e\u53e3\u5f84 type=5\uff08Sweep\uff09", surface_type=5))

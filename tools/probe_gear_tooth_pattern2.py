@@ -222,7 +222,8 @@ def _main() -> int:
         #: ── ② 圆周阵列 ×z（★ 先建一条基准轴）──────────────────
         axis_name = None
         try:
-            #: ★ 用**前视基准面 + 右视基准面**的交线做轴 ⇒ ★ 官方 `InsertAxis2` 需要选中两个面
+            #: ★ 用**前视基准面 + 右视基准面**的交线做轴 ⇒ ★ 官方 `InsertAxis2` 需要选中
+            #: 两个面
             P.start_sketch(doc, plane_name="Front Plane")
             #: ★★ 更简单：★ 直接在**上视基准面**与**前视基准面**之间插轴
             for a, b in (("Front Plane", "Right Plane"), ("前视基准面", "右视基准面")):

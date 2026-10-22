@@ -7,16 +7,19 @@
 #   **`sw_pattern.py`（线性阵列的新架构）到底能不能真机跑通？**
 #
 #   ★★ **为什么值得单独问**（★ 三层证据指向同一处）：
-#     · 轮 482 我核 `specs/201-toolbar-gaps` 的 X 段时，看到旧入口 `FeatureLinearPattern3/4/5`
+# · 轮 482 我核 `specs/201-toolbar-gaps` 的 X 段时，看到旧入口 `FeatureLinearPattern3/4/
+# 5`
 #       全标 `Obsolete`、继任者写「`CreateFeature` + `ILinearPatternFeatureData`」，
 #       ★ 而本仓**有** `scripts/sw_pattern.py`（428 行）⇒ ★ 我当时判「不是后端到不了」⚠
-#     · 轮 483 复核证据时发现：`output/linear-pattern-*-evidence.json` **verdict 都是 `fail`**
+# · 轮 483 复核证据时发现：`output/linear-pattern-*-evidence.json` **verdict 都是 `fail`
+# **
 #       ⇒ ★ 旧入口**确实没建成** ✓
 #     · 而 `sw_pattern.py` 的**模块头**写着：它所有装配函数一律走
 #       **`AccessSelections(Object, Object)`** —— ★★ **而 `AccessSelections` 正是「指针族」**
 #       （★ **事实 47**：pywin32 下报 **`0x80010105`**）⚠
 #     ⇒ ★★★ **故本轮直接试**：★ 若它也报 `0x80010105`，那「线性阵列族」的归因**其实成立**，
-#        ★ 只是**理由不同**（★ 不是"旧入口废弃"，★ 而是**新旧两条路都要 `AccessSelections`**）。
+# ★ 只是**理由不同**（★ 不是"旧入口废弃"，★ 而是**新旧两条路都要 `AccessSelections`**）
+# 。
 #
 #   ★★★★ **顺带更正一处**：`sw_pattern.py` 注释里引用的常量名
 #     `swFmLinearPattern` / `swFmCurveDrivenPattern` **在反射转储里都不存在** ⚠
@@ -51,7 +54,8 @@ from scripts import sw_part as P                                     # noqa: E40
 from scripts import sw_pattern as SP                                 # noqa: E402
 import scripts.sw_sketch_primitives as SPK                           # noqa: E402
 
-#: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern`）
+#: ★ 真名（★ 来自 `_raw/enum_values_sldworks.txt`，**不是**注释里那个 `swFmLinearPattern
+#: `）
 SW_FM_LPATTERN = 6
 SW_FM_CURVE_PATTERN = 103
 

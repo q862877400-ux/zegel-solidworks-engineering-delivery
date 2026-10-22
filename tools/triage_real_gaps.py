@@ -5,9 +5,11 @@
 # 文件:   tools/triage_real_gaps.py
 # 定位:   ★ 2026-10-03（轮 396）24 小时计划 v2 的 **T0.1**（`docs/plan-24h-v2.md` 段 0
 #           ）。
-#   ★ 口径来自 `tools/audit_real_gaps.py`：**真缺口 = 公开函数 −（有我们工具 ∪ 被上游调）**。
+# ★ 口径来自 `tools/audit_real_gaps.py`：**真缺口 = 公开函数 −（有我们工具 ∪ 被上游调）*
+# *。
 #   ★★ 而"真缺口 101 条"**不等于 101 个该挂的工具** —— 里面混着
-#   **内部件**（类/异常/管道）与**不该挂的**（★ 事实 40：`IModeler.Create*Surface` 返回值跨次都变）。
+# **内部件**（类/异常/管道）与**不该挂的**（★ 事实 40：`IModeler.Create*Surface` 返回值
+# 跨次都变）。
 #   ⇒ 本脚本做那层分诊，并把**每一类的理由**写成可核对的字段。
 # 官方依据: 不适用（★ 纯静态扫描 + 既有文档里的既有结论）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -71,7 +73,8 @@ UNRELIABLE_PATTERN = re.compile(r"^create_.*surface$|^create_sheet_from_surface$
 #: ★★★ 2026-10-03（轮 438）**一条有原则的"不做"** ——
 #:   ★ 有些函数**本来就不能**做成工具：**它的签名是裸坐标**。
 #:   ★★ 依据：**规则 3**（本仓五统一之一）——「**声明式 `selection`，禁裸坐标**」；
-#:     ★ 而 `tool_registry` 已有对应门禁（`_BARE_COORD_NAMES` + `_looks_like_coord_component`）
+#: ★ 而 `tool_registry` 已有对应门禁（`_BARE_COORD_NAMES` + `_looks_like_coord_component
+#: `）
 #:     ⇒ ★ 即使把它挂上，**声明也会过不了门禁** ✓
 #:   ★★ 故它不是"该挂"，而是"不做"（★ 而理由是**规则**，不是"我们没功夫"）。
 CANNOT_BE_A_TOOL_WHY: dict[tuple[str, str], str] = {
@@ -114,8 +117,10 @@ _REPORT_SUFFIXES = ("_report", "2_report", "_report2")
 
 
 #: ★ 动词对（轮 402）：低层原语叫 `add_X`，★ 而**对外封装**叫 `apply_X`
-#:   （★ 真例：`sw_simulation_loads.add_fixed_restraint(manager, entities, …)` 吃 **COM manager**，
-#:   ★ 而 `sw_simulation.apply_fixed_restraint` 才是取 manager + 构造数组 + 调原语的那一层，
+#: （★ 真例：`sw_simulation_loads.add_fixed_restraint(manager, entities, …)` 吃 **COM ma
+#: nager**，
+#: ★ 而 `sw_simulation.apply_fixed_restraint` 才是取 manager + 构造数组 + 调原语的那一层
+#: ，
 #:   ★★ 而**后者已经是工具**）。
 #:   ⇒ ★ 只看 `_report` 后缀会**把这一整族误判成缺口**。
 _VERB_PAIRS = ("apply", "create", "set", "insert", "remove")
@@ -158,9 +163,11 @@ def used_by_other_module(module: str, name: str) -> bool:
     #:   ★ 第一版用的是**子串出现**（`if name in text`），★ 而它**太宽**：
     #:     注释 / 字符串 / 别名都算"出现" ⇒ 把真缺口吞掉。
     #:   ★★ 而**本仓的负例守卫当场抓到它**：
-    #:     `tests/test_real_gap_triage_contract.py::test_wrapper_rule_does_not_swallow_real_gaps`
+    #: `tests/test_real_gap_triage_contract.py::test_wrapper_rule_does_not_swallow_real_
+    #: gaps`
     #:     断言 `sw_part.linear_pattern` 必须是「该挂」，★ 而它被判成了「内部件」。
-    #:   ⇒ ★ 正解：**用 AST 找 `ast.Call`**（★ 即"真的被调用"）—— ★ 与**事实 51**（判据要贴合代码的组织单元，
+    #: ⇒ ★ 正解：**用 AST 找 `ast.Call`**（★ 即"真的被调用"）—— ★ 与**事实 51**（判据要
+    #: 贴合代码的组织单元，
     #:     不要按文本匹配）**同族**。
     own = ROOT / "scripts" / (module + ".py")
     import ast as _ast                                            # noqa: PLC0415
@@ -232,7 +239,8 @@ def is_empty_stub(module: str, name: str) -> str:
     return _EMPTY_STUB_CACHE[key]
 
 
-#: ★★★ 2026-10-03（轮 436）**显式别名表** —— 「**功能已由另一个名字的工具覆盖**」的那一类。
+#: ★★★ 2026-10-03（轮 436）**显式别名表** —— 「**功能已由另一个名字的工具覆盖**」的那一
+#: 类。
 #:
 #: ★★ **为什么用穷举表而不是再放宽规则**：**事实 53** ——
 #:   「同一个启发式连续修补 ≥ 3 次就该停下换做法；★ 而**最优换法常是
@@ -246,14 +254,16 @@ ALIASED_BY_TOOL: dict[tuple[str, str], str] = {
     ("sw_export", "export_to_bmp"):
         "solidworks_export_bmp（★ 它的 function `export_bmp_report` **调的正是** `export_to_bmp`）",
     #: ★★ 2026-10-03（轮 438）新增 —— ★ 依据已核：
-    #:   `sw_simulation.create_study_report` **调的正是** `create_static_study`（已读源码），
+    #: `sw_simulation.create_study_report` **调的正是** `create_static_study`（已读源码
+    #: ），
     #:   ★ 而它就是工具 `solidworks_simulation_create_study` 的 function。
     ("sw_simulation", "create_static_study"):
         "solidworks_simulation_create_study（★ 它的 function `create_study_report` **调的正是** "
         "`create_static_study`）",
     ("sw_export", "export_to_image"):
         "solidworks_export_image（★ `export_image_report` **调的正是** `export_to_image`）",
-    #: ★★★ 2026-10-03（轮 437）**本条已删** —— ★ 而那是**结构判据取代穷举表条目**的正确闭环：
+    #: ★★★ 2026-10-03（轮 437）**本条已删** —— ★ 而那是**结构判据取代穷举表条目**的正确
+    #: 闭环：
     #:   ★ `_server_export_functions()` 现已把 `server.py` 侧的 60 个 function 并进名单
     #:     ⇒ `batch_export_formats` 可见 ⇒ ★★ **前缀规则**（`batch_export` ⇐
     #:     `batch_export_*`）**自己就能认出它** ⇒ ★ 本条多余 ✓
@@ -274,7 +284,8 @@ def classify(module: str, name: str) -> tuple[str, str]:
         return "不做", ("事实 40：IModeler.Create*Surface 的返回值**跨次都变**"
                             "（官方 4 个已 Obsolete、*2 后继同样返回 None）⇒ "
                             "挂出来只会给人「能调」的错觉")
-    #: ★★ 2026-10-03（轮 436）**显式别名**：功能已由另一个名字的工具覆盖（★ 而启发式推不出来）
+    #: ★★ 2026-10-03（轮 436）**显式别名**：功能已由另一个名字的工具覆盖（★ 而启发式推不
+    #: 出来）
     _alias = ALIASED_BY_TOOL.get((module, name))
     if _alias is not None:
         return "已有", "功能已由 `%s` 覆盖" % _alias

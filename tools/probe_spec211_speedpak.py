@@ -7,18 +7,22 @@
 #   · ★★ `C:\swapi\types\IAssemblyDoc\CreateSpeedPak.md`
 #     `System.bool CreateSpeedPak( System.int SpeedPakType )` ⇒ ★ 参数式 **1 参** ✓
 #     ★ `## Parameters` 逐字：**1 = Mated** · **2 = Graphics** ✓
-#     ★★★ `## Returns` 逐字：「True if SpeedPak is created for the active configurations of the
+# ★★★ `## Returns` 逐字：「True if SpeedPak is created for the active configurations of 
+# the
 #       **selected subassemblies** in this assembly, false if not」✗
 #       ⇒ ★★ **前置 = 选中的**子装配**** ✓（★ 不是顶层零件 ✓）
 #     ★ `## Remarks`：★ 已选子装配**已有 SpeedPak 时再调不会新建** ✓
 #     ★★ 另有三份官方示例（C# / VB.NET / VBA）✓
-#   · ★★ **回读成员**：★ **`IComponent2::IsSpeedPak`** ✓（★ 也有 `IConfiguration::IsSpeedPak` ✓）
+# · ★★ **回读成员**：★ **`IComponent2::IsSpeedPak`** ✓（★ 也有 `IConfiguration::IsSpeedP
+# ak` ✓）
 #     ⇒ ★★★ 按**第 38 轮刚立的定则**：★ **判据要落在「它真正改变的东西」上** ✓ ——
 #       ★ 顶层特征树看不见 SpeedPak ✗ ⇒ ★ **判据 = `IComponent2::IsSpeedPak` 的回读** ✓
 # 前置链（★ 上一批已打通、本批复用 ✓）：
-#   ★ ① 零件要**落盘**（★ `add_component` 要磁盘路径 ✓）⇒ ★ 写到**仓库内 `output/`**（★ 非用户目录 ✓）
+# ★ ① 零件要**落盘**（★ `add_component` 要磁盘路径 ✓）⇒ ★ 写到**仓库内 `output/`**（★ 非
+# 用户目录 ✓）
 #   ★ ② **子装配本身也要落盘** —— ★ 因为顶层装配要 `add_component(<子装配路径>)` ✓
-#   ★ ③ 选择用 **`IComponent2.Select4`**（★ 事实 32：★ 按**对象**选 ✓；★ 该成员**没有 mark 参数** ✓
+# ★ ③ 选择用 **`IComponent2.Select4`**（★ 事实 32：★ 按**对象**选 ✓；★ 该成员**没有 mark
+#  参数** ✓
 #      —— ★ 而 `CreateSpeedPak` **没有 mark 表** ⇒ ★ 只需"选中" ✓）
 # 判据:   ★★ 主判据 = **`IComponent2::IsSpeedPak` 回读**（★ `False → True` ⇒ 建成 ✓）
 #   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 已四次 ✓）
@@ -61,7 +65,8 @@ def _components(model) -> list:
     import sw_connect
     #: ★★ 只要**顶层**组件（★ `False` 会把子装配**里面**的零件也递归带出来 ✗ ——
     #:   实测：顶层只加了 1 个子装配，而 `GetComponents(False)` 回了 **3 个** ✗
-    #:   ⇒ ★ 那会让 `comps[0]` 可能是"子装配里的零件"、★ 而它**不在顶层可见** ⇒ `Select4` 不生效 ✓）
+    #: ⇒ ★ 那会让 `comps[0]` 可能是"子装配里的零件"、★ 而它**不在顶层可见** ⇒ `Select4` 
+    #: 不生效 ✓）
     raw = sw_connect.get_com_member(model, "GetComponents", True)
     return [c for c in (raw or []) if c is not None]
 
@@ -147,7 +152,8 @@ def main() -> int:
                 comp_name = None
         out["component_name"] = comp_name
         try:
-            #: ★ 官方示例的调用序：★ `SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, mark, callout, 0)` ✓
+            #: ★ 官方示例的调用序：★ `SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, 
+            #: mark, callout, 0)` ✓
             ext = sw_connect.get_com_member(top, "Extension")
             sel_ok = bool(sw_connect.get_com_member(
                 ext, "SelectByID2", str(comp_name), "COMPONENT", 0.0, 0.0, 0.0,
@@ -166,11 +172,14 @@ def main() -> int:
     exc = None
     if top is not None:
         try:
-            #: ★★★ 按**契约**调：★ `sw_assembly_doc.call_assembly_doc(doc, member, *args)`
+            #: ★★★ 按**契约**调：★ `sw_assembly_doc.call_assembly_doc(doc, member, *args
+            #: )`
             #:   **直接拿 `doc` 当 `IAssemblyDoc`** ✓（★ 我第一版写
-            #:   `get_com_member(top, "AssemblyDoc")` ⇒ ★ `AttributeError: <unknown>.AssemblyDoc` ✗
+            #: `get_com_member(top, "AssemblyDoc")` ⇒ ★ `AttributeError: <unknown>.Assem
+            #: blyDoc` ✗
             #:   —— ★ **装配体文档本身就是 `IAssemblyDoc`** ✓）
-            #:   ★★ 且它**有实参个数登记表** ⇒ ★ 名字不在表里会**抛 `KeyError`（不静默忽略）** ✓
+            #: ★★ 且它**有实参个数登记表** ⇒ ★ 名字不在表里会**抛 `KeyError`（不静默忽略
+            #: ）** ✓
             import sw_assembly_doc as AD
             ret = AD.call_assembly_doc(top, "CreateSpeedPak", 1)
             out["arity_checked"] = True
@@ -219,18 +228,23 @@ if __name__ == "__main__":
         raise SystemExit(3)
     finally:
         #: ★★★ 2026-10-07（B6）：★ **探针自己收尾** ——
-        #:   ★ 上一版**漏了这一步** ✗ ⇒ 它落盘的 `sp1` / `sp2` / `sub` **留在会话里开着**，
+        #: ★ 上一版**漏了这一步** ✗ ⇒ 它落盘的 `sp1` / `sp2` / `sub` **留在会话里开着**
+        #: ，
         #:   ★★ 于是下一轮的护栏预检报「★ 有 4 个**不是我们打开的**文档 ⇒ **拒绝开始**」✗
         #:   ★ 而★ 那些**确实是我自己的产物** ✓ ⇒ ★ **该由我自己关掉** ✓
         #:   ★ 只关**本探针建的那几个**（★ 按路径前缀认，★ **绝不碰任何别的文档** ✓）
         #:   ★★★ 2026-10-07（第二轮修）：★ 上一版收尾报「关掉 []」✗ —— 两个真因：
         #:     ① ★ 我用 `getattr(_sw, "GetDocuments", …)()` **直接属性调用** ✗ ⇒
-        #:        ★ 正解是 `get_com_member(_sw, "GetDocuments")` ✓（★ 官方签名 `System.object GetDocuments()` ✓）
-        #:     ② ★★ **`GetDocuments` 会包含"作为文件引用被打开"的文档** ✗（★ 官方 `EnumDocuments2`
-        #:        的 `## Remarks` 逐字：「includes `IModelDoc2` objects that may have been opened as
+        #: ★ 正解是 `get_com_member(_sw, "GetDocuments")` ✓（★ 官方签名 `System.object G
+        #: etDocuments()` ✓）
+        #: ② ★★ **`GetDocuments` 会包含"作为文件引用被打开"的文档** ✗（★ 官方 `EnumDocum
+        #: ents2`
+        #: 的 `## Remarks` 逐字：「includes `IModelDoc2` objects that may have been open
+        #: ed as
         #:        **file references**, for example, from an assembly or drawing」✓）——
         #:        ★ 我的装配引用了 `sp1`/`sp2`/`sub` ⇒ ★ **它们会带上** ✓
-        #:        ★★★ 而官方给了判据：★「use `IModelDoc::Visible` to determine if a particular document
+        #: ★★★ 而官方给了判据：★「use `IModelDoc::Visible` to determine if a particular 
+        #: document
         #:        **has its own window**」✓ ⇒ ★ **只关"有自己窗口的"那批** ✓
         try:
             import sw_connect as _C

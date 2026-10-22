@@ -4,14 +4,16 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_dimension_edge_pairs.py
 # 定位:   ★ 2026-10-03（轮 405）24h 计划 v2 收敛报告 §五 第 ③ 条的落地。
-#   ★ 背景：轮 400 的 `add_dimension_report` 选中 **2 条边**后 `AddDimension2` **仍回 None**
+# ★ 背景：轮 400 的 `add_dimension_report` 选中 **2 条边**后 `AddDimension2` **仍回 None
+# **
 #     （★ 而我当时用的是**相邻边** 0 与 1）。
 #   ★★ **本探针不"再试一次"** —— ★ 而按**事实 53 的正解**：★ **把猜测变成一张穷举表**
 #     （★ 对 12 条边取两两 = **66 对**，逐对试并记录结果）。
 #     ★ 那样得到的不是"某次侥幸成功"，★ 而是**哪一类边对能成**这条可复用的规则。
 # 官方依据: `IModelDoc2.AddDimension2(X, Y, Z)` —— 官方 Remarks：
 #   “Before calling this method, you must **select the entities**” ＋
-#   “If extension lines are needed during dimensioning because the selected entities do not
+# “If extension lines are needed during dimensioning because the selected entities do no
+# t
 #    **unambiguously define** what needs to be dimensioned, then use …”
 #   ⇒ ★ 即：★ **能不能定义出来，取决于选中的实体**。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -53,7 +55,8 @@ def main() -> int:
         extrude_boss(doc, sk, 20.0)
         edges = entities_on_body(doc, "EDGE")
         ev["edge_count"] = len(edges)
-        #: ⚠★ 我第一版把 `edges` **原样**塞进 evidence ⇒ `json.dumps` 炸（**COM 对象不可序列化**）。
+        #: ⚠★ 我第一版把 `edges` **原样**塞进 evidence ⇒ `json.dumps` 炸（**COM 对象不可
+        #: 序列化**）。
         #:   ★ 那正是本项目「**包装绝不许漏出 COM 对象**」那条契约要防的形态 ——
         #:   而我在探针里自己犯了。★ 只留可序列化的摘要。
         ev["edges_repr"] = [str(e)[:48] for e in edges]

@@ -1,6 +1,7 @@
 # ── 24h 计划 · 阶段 3 · 段 5：**把回读能力挂出去**（轮 95–102 补的 6 个）──────────────
 # ★★★★★★ 2026-10-04（轮 103）**本文件补的是一个我自己造成的缺口**：
-#   ★ 任务书阶段 5 逐字：「每格：查官方签名 → 建能力 → **挂 ToolSpec** → 真机验证 → 提交」⇒
+# ★ 任务书阶段 5 逐字：「每格：查官方签名 → 建能力 → **挂 ToolSpec** → 真机验证 → 提交」
+# ⇒
 #   ★★ 我在轮 95–102 补了 **6 个回读能力**、★ 做了「建能力」与「真机验证」、
 #     ★★★ **却没做「挂 ToolSpec」** ⇒ 真机查（★ `output/_check_readback_toolspecs.py`）：
 #       ★ `ToolSpec 总数 280` · ★★ **我补的 6 个全部「没有」** ·
@@ -138,7 +139,8 @@ SPECS_BATCH77 = [
     #:     （★ `revolve_boss` / ★ `shell_report` / ★ `rib_report` / ★ `insert_dome_report` /
     #:      ★ `create_loft_report` / ★ `create_sweep_report`）、★ **却一个读都没有** ⇒
     #:     ★★★★ **⇒ 那正是本仓最典型的**「能写不能读」**** ✓
-    #:   ★★★★★ **⚠ 而 `IRevolveFeatureData` **查不到****（★ `C:\swapi\types\` 下没有那个目录）⇒
+    #: ★★★★★ **⚠ 而 `IRevolveFeatureData` **查不到****（★ `C:\swapi\types\` 下没有那个目
+    #: 录）⇒
     #:     按**铁律 5**：★ **停下、★ 不用相似名字蒙混** ⇒ **改做 `shell`**（★ 16 个成员里
     #:     5 个可读、★ 比 `sweep` 的 54 小）✓
     ToolSpec(
@@ -166,7 +168,8 @@ SPECS_BATCH77 = [
     #:   ★ **真机量到了**（★ `output/rib-dome-params-capability-recheck.json`）：
     #:     ★ 管 40×40×10（毫米）⇒ 圆顶 **5 mm** ⇒ 读回 **`Height = 5.0`** ⇒
     #:     ★★ **⇒ 单位口径 = **随文档单位**（★ 第十族）** ✓
-    #:   ★★★ **⚠ 而那次成功靠的是**三步选面序****（★ 先 `mark=0` ⇒ ★ `ClearSelection2(True)`
+    #: ★★★ **⚠ 而那次成功靠的是**三步选面序****（★ 先 `mark=0` ⇒ ★ `ClearSelection2(True
+    #: )`
     #:     ⇒ ★★ **再按 `mark=1` 选**）—— ★ 那序**只在** `tools/verify_dome_smoke.py` 里、
     #:     ★ **签名与 Remarks 的散文都给不出** ⇒
     #:     ★★★★ **⇒ 又一次验证**「官方示例给的是**调用序**」那条纪律** ✓

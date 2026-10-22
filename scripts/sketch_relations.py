@@ -234,7 +234,8 @@ def add_relation(sketch, entities, constraint_type: int):
     #: ```
     #: ★★★ **所以本函数此前**从没在真机上跑通过** —— 契约测试用的是**假对象**，
     #: 而假对象测不出「实参要不要包 VARIANT」（已知事实 99/101 那一族）。
-    #: ⚠ 另记：那个错误码 `0x80010105` 与已知事实 28/47 的「服务器出现意外情况」同一个码 ——
+    #: ⚠ 另记：那个错误码 `0x80010105` 与已知事实 28/47 的「服务器出现意外情况」同一个码
+    #:  ——
     #: 本轮的形态是「**数组实参没包 VARIANT**」，与那两条（`CreateBsplineSurface` /
     #: `AccessSelections`）**不同因同码**，报错本身看不出是哪一种。
     relation = get_com_member(manager, "AddRelation",
@@ -302,7 +303,8 @@ def suppress_relation(relation, suppressed: bool = True):
 #     · ★ `sketch_relations.create_spline`（**本函数**）= **库/内部入口**，★ 收**米**、
 #       ★ **未被挂成 ToolSpec** ✓
 #     · ★ `sw_part.sketch_spline` = **对外工具**，★ 收**毫米**、★ 函数内 `/1000.0` ✓
-#   ★★ **为什么现在补**：★ 2026-10-10 查出 `sw_part` 有 **4 个图元漏了换算**（★ 1000× bug）⇒
+# ★★ **为什么现在补**：★ 2026-10-10 查出 `sw_part` 有 **4 个图元漏了换算**（★ 1000× bug
+# ）⇒
 #     ★ 顺手扫同族模块时发现**本函数没写单位** ⇒ ★ 下一个接手方**极可能**照 `sw_part` 的
 #     「对外毫米」惯例来调它 ⇒ ★ **再犯一次 1000×** ✓
 #   ★ 配套判据：★ `tests/test_ec00_sketch_unit_conversion.py` 第 4 例要求
@@ -346,18 +348,22 @@ def create_spline(sketch_manager, points, simulate: bool = False):
             "控制点太少：官方 Remarks 要求**至少两组 X,Y,Z**（6 个数），收到 %d 个" % len(flat))
     import pythoncom
     import win32com.client
-    #: ★★★ **必须包 VARIANT(VT_ARRAY | VT_R8)** —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）
+    #: ★★★ **必须包 VARIANT(VT_ARRAY | VT_R8)** —— 裸 list/tuple 会**静默返回 None**（轮
+    #:  183 实测）
     data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, flat)
-    #: ⚠⚠⚠ **2026-10-01（轮 183）再修一处**：**默认走 `CreateSpline2`，不碰 `CreateSpline`**。
+    #: ⚠⚠⚠ **2026-10-01（轮 183）再修一处**：**默认走 `CreateSpline2`，不碰 `CreateSplin
+    #: e`**。
     #: 理由（真机实测 + 官方）：
     #: ```
-    #:   · 官方 md：`CreateSpline` **Obsolete. Superseded by ISketchManager::CreateSpline2.**
+    #: · 官方 md：`CreateSpline` **Obsolete. Superseded by ISketchManager::CreateSpline2
+    #: .**
     #:   · 真机：`getattr(sketch_manager, "CreateSpline")` ⇒ **None**
     #:     ⇒ 走它会在 `get_com_member` 里报 `TypeError: 'NoneType' object is not callable`
     #:       （⚠ 错误信息**指不出真因** —— 又是"报错看不出病因"那一族）
     #:   · 而 `CreateSpline2` **取得到、也建得出**（段数 0 → 1）✓
     #: ```
-    #: ⇒ ★ 因为 `CreateSpline` **用不了**，「不 simulate」也**只能**走 `CreateSpline2` + `False`。
+    #: ⇒ ★ 因为 `CreateSpline` **用不了**，「不 simulate」也**只能**走 `CreateSpline2` +
+    #:  `False`。
     return get_com_member(sketch_manager, "CreateSpline2", data, bool(simulate))
 
 

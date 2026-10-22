@@ -4,8 +4,10 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_sketch_primitives.py
 # 定位:   ★ 2026-10-03（轮 398）24h 计划 v2 **段 2** 的真机探针。被验的 5 个工具见
-#   `mcp-server/tool_specs_batch54.py`：`sketch_arc` · `sketch_ellipse` · `sketch_polygon` ·
-#   `sketch_slot` · `sketch_centerline`（★ `sketch_spline` 按计划**标不做** —— 事实 47/68 架构限制）。
+# `mcp-server/tool_specs_batch54.py`：`sketch_arc` · `sketch_ellipse` · `sketch_polygon`
+#  ·
+# `sketch_slot` · `sketch_centerline`（★ `sketch_spline` 按计划**标不做** —— 事实 47/68 
+# 架构限制）。
 #   ★★ **按 ToolSpec 的契约调**：★ 回读段数走工具层同一个解析器
 #   （`sw_sketch.resolve_sketch(model, "")` ⇒ 与 `_sketch_args` 一致）。
 # 官方依据: `C:\swapi\types\ISketchManager\` 的 `CreateArc` / `CreateEllipse` / `CreateP
@@ -18,9 +20,11 @@
 # ★ 判据（★ 定量 + 负例）：
 # ```
 # 正例（★ 每个图元各开一张草图）：★ 画完 `count_segments` **必须比画前多 ≥ 1**
-#   —— ★ 段数是**独立于返回值**的量（★ `CreateArc` 那些回 COM 对象、而"回对象"不等于"图形在"）。
+# —— ★ 段数是**独立于返回值**的量（★ `CreateArc` 那些回 COM 对象、而"回对象"不等于"图形
+# 在"）。
 # 负例：★ **没有活动草图**时调 `sketch_arc` ⇒ **必须失败**（★ 五个图元共享这条前置）
-#   · 以及 `sketch_polygon(sides=2)` ⇒ 如实记录它**成不成**（★ 官方的边数下限未查到 ⇒ 不臆断）
+# · 以及 `sketch_polygon(sides=2)` ⇒ 如实记录它**成不成**（★ 官方的边数下限未查到 ⇒ 不臆
+# 断）
 # ```
 # ★ 全程走 `sw_guard` 护栏（AGENTS.md 的常驻纪律）。
 
@@ -82,8 +86,10 @@ def main() -> int:
 
         #: ★ 负例①：**不存在的草图名** ⇒ 解析器**必须报错**
         #:   ⚠ 我第一版把“**没有活动草图**”当负例 —— ★★ **真机上它不成立**：
-        #:   `resolve_sketch(doc, "")` 对**已关闭**的草图也能按名取（★ `tool_specs_batch18` 批头就写着）
-        #:   ⇒ ★ 那不是负例。★ 与事实 303 同族：**从描述推出的“应该失败”不等于真机上会失败**。
+        #: `resolve_sketch(doc, "")` 对**已关闭**的草图也能按名取（★ `tool_specs_batch18
+        #: ` 批头就写着）
+        #: ⇒ ★ 那不是负例。★ 与事实 303 同族：**从描述推出的“应该失败”不等于真机上会失败
+        #: **。
         try:
             resolve_sketch(doc, "\u8fd9个\u8349\u56fe\u4e0d\u5b58\u5728_xyz")
             ev["steps"]["neg_bogus_sketch_name"] = {

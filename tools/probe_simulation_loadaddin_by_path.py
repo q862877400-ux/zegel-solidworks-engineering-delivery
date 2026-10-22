@@ -58,7 +58,8 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "simulation-loadaddi
 #: 实测自注册表（只读）：`SldWorks.Simulation` 的 InprocServer32
 DLL = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\Simulation\cosworks.dll")
 CLSID = "{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}"
-#: 官方 `swLoadAddinError_e` 的**全部 9 个成员**（读 `C:\swapi\enums\swLoadAddinError_e.md`）
+#: 官方 `swLoadAddinError_e` 的**全部 9 个成员**（读 `C:\swapi\enums\swLoadAddinError_e.
+#: md`）
 CODES = {0: "swSuccess", 1: "swAddinNotLoaded", 2: "swAddinAlreadyLoaded", 3: "swFileNotFound",
          4: "swAddinsDisabled", 5: "swLoadConflict", 6: "swRegistrationError",
          7: "swLicenseError", -1: "swUnknownError"}

@@ -15,7 +15,8 @@
 #   ★★ **每条发现自证**：★ 带 `rule`（哪一档）+ `matched`（匹配到的原文片段）⇒
 #      ★ **否则无法核实**（★ 实录：我上一版把两个规则的结果塞进同一个列表、**没记是哪条**，
 #        ★ 于是 `element_size_mm`（★ 本身带 `_mm`）被误报，而我**查不出是哪条规则干的** ✗）✓
-#   ★ 豁免仍走 `tool_registry._LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT`（★ 每条带理由）✓
+# ★ 豁免仍走 `tool_registry._LEN_SUFFIX_EXEMPT` / `_ANGLE_SUFFIX_EXEMPT`（★ 每条带理由）
+# ✓
 #   ★★ **只报不拦** —— ★ 一次加硬拦会让很多既有工具立刻注册不上 ✗（★ 那是"半套工具"
 #      ★ 进不了运行期，★ **比不拦更糟**）⇒ ★ 清空清单后才升级成 `GateError` ✓
 # 官方依据: 无（本仓约定 `docs/union-conventions.md` 规则 2 / 规则 2b）

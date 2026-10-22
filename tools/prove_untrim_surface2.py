@@ -92,7 +92,8 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
     try:
         doc = C.new_document(sw, "part")
         row["surfaces_made"] = _mk_trimmed_surface(doc)
-        #: \u2605 \u9884\u9009**\u66f2\u9762\u7684\u4e00\u5f20\u9762**\uff08\u2605 \u5b98\u65b9 "requires preselection"\uff09
+        #: \u2605 \u9884\u9009**\u66f2\u9762\u7684\u4e00\u5f20\u9762**\uff08\u2605 \u5b9
+        #: 8\u65b9 "requires preselection"\uff09
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
         try:
@@ -114,7 +115,8 @@ def _one(sw, tag, entry, distance, b_merge, b_trim):
         fm = _get(doc, "FeatureManager")
         ret = None
         try:
-            #: \u2605 5 \u53c2\uff1aFaceUntrimType(=0 AllEdges) \u00b7 EdgeUntrimType(=2 ExtendEdges) \u00b7
+            #: \u2605 5 \u53c2\uff1aFaceUntrimType(=0 AllEdges) \u00b7 EdgeUntrimType(=2
+            #:  ExtendEdges) \u00b7
             #:   Distance \u00b7 BMerge \u00b7 BTrimOppositeSide
             ret = _get(fm, entry, 0, 2, float(distance), bool(b_merge), bool(b_trim))
             row["returned"] = type(ret).__name__ if ret is not None else "None"

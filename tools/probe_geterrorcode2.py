@@ -88,7 +88,8 @@ def main() -> int:
             R["新_GetErrorCode2(out_i4)"] = _try(_g, feat, "GetErrorCode2", out)
         except Exception as exc:                                          # noqa: BLE001
             R["新_GetErrorCode2(out_i4)"] = {"ok": False, "err": "out_i4 建不出来: %s" % str(exc)[:90]}
-        #: ★ 直接取成员（★ 看它是不是 bound method —— ★ 事实：`get_com_member` 失败时会原样回成员）
+        #: ★ 直接取成员（★ 看它是不是 bound method —— ★ 事实：`get_com_member` 失败时会
+        #: 原样回成员）
         try:
             v = _g(feat, "GetErrorCode2")
             R["★_GetErrorCode2_取到的类型"] = "%s · 是成员本身=%s" % (

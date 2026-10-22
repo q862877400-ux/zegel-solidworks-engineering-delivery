@@ -148,7 +148,8 @@ def _one(sw, tag, pick, face_type, edge_type, b_trim):
         row["new"] = [n for n in after if n not in before]
         row["faces_after_untrim"] = _faces(doc)
         row["face_delta"] = row["faces_after_untrim"] - row["faces_after_trim"]
-        #: \u2605 \u5224\u636e\uff08\u2605 \u4e8b\u5b9e 436\uff1a\u6570\u51e0\u4f55\u91cf\uff09
+        #: \u2605 \u5224\u636e\uff08\u2605 \u4e8b\u5b9e 436\uff1a\u6570\u51e0\u4f55\u91c
+        #: f\uff09
         row["ok"] = bool(row["new"] or row.get("ret_type") or row["face_delta"])
     except Exception as exc:                                                  # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])

@@ -53,7 +53,8 @@ STUDY = "DSH-UNITS2"
 
 #: ★★★ **线性单位的取值名 —— 来源是官方枚举，不是我编的**（★ 这条注释本身是一次教训）：
 #:   `C:\swapi\enums\swLengthUnit_e.md`：**`swMM = 0`** · `swCM = 1` · **`swMETER = 2`** ·
-#:   `swINCHES = 3` · `swFEET = 4` · `swFEETINCHES = 5` · `swANGSTROM = 6` · `swMICRON = 8` ·
+#: `swINCHES = 3` · `swFEET = 4` · `swFEETINCHES = 5` · `swANGSTROM = 6` · `swMICRON = 8
+#: ` ·
 #:   `swMIL = 9`（★ 11 个成员；7 与 10 未在本枚举中出现）。
 #: ⚠⚠ **本文件的初版写的是 `{0: "m", 1: "cm", 2: "mm", …}` —— 那是我**凭空编的**，
 #:   把官方的 `swMM = 0` 翻译成了 "m" ⇒ ★ 与另一个错误（常量写成 45）叠加，
@@ -85,7 +86,8 @@ def main() -> int:
         SW_UNITS_LINEAR = 47
         #: ★ 官方签名是**两参**：`GetUserPreferenceInteger(UserPref, UserPrefOption)`
         #:   ⇒ ⚠ 只传一个会报 `非选择性的参数`（= 参数个数不符）。
-        #:   ★ `UserPrefOption` 按官方说明是"用于自定义标注与尺寸的制图标准" ⇒ 对单位取 0。
+        #: ★ `UserPrefOption` 按官方说明是"用于自定义标注与尺寸的制图标准" ⇒ 对单位取 0
+        #: 。
         SW_UNITS_LINEAR_OPT = 0
 
         def read_units(tag: str) -> dict:

@@ -8,23 +8,32 @@
 #
 #   ★★★ **本轮由一名 subagent 做静态调研、我再逐条对照官方原文核过**（★ 四项全对）：
 #     ① `C:\swapi\types\ISketchManager\SketchUseEdge3.md`：
-#        签名逐字 `System.bool SketchUseEdge3( System.bool Chain, System.bool InnerLoops )`（**2 参**）
-#        `Chain`    = "True to convert an entire chain of sketch entities, false to convert only the selected…"
-#        `InnerLoops` = "True to convert the inner loops of the selected faces to sketch entities, false to not"
-#        ★ Remarks 第 1 条讲 `Chain` 的语义；第 2 条讲 `swViewSketchRelations`（★ 与建特征无关）
-#     ② ★ **官方例子给了调用序**（`Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`）：
+# 签名逐字 `System.bool SketchUseEdge3( System.bool Chain, System.bool InnerLoops )`（**
+# 2 参**）
+# `Chain`    = "True to convert an entire chain of sketch entities, false to convert onl
+# y the selected…"
+# `InnerLoops` = "True to convert the inner loops of the selected faces to sketch entiti
+# es, false to not"
+# ★ Remarks 第 1 条讲 `Chain` 的语义；第 2 条讲 `swViewSketchRelations`（★ 与建特征无关
+# ）
+# ② ★ **官方例子给了调用序**（`Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_
+# Example_VB.md`）：
 #        ```
 #        SelectByID2("Front Plane", "PLANE", 0,0,0, True,  **0**, Nothing, 0)
 #        InsertRefPlane(8, 0.05, 0, 0, 0, 0)
 #        ClearSelection2 True
 #        SelectByID2("Plane1", "PLANE", 0,0,0, **False**, **0**, Nothing, 0)
-#        swSketchManager.InsertSketch True                       \u2190 \u2605 **\u5148\u5f00\u8349\u56fe**
-#        SelectByID2("", "FACE", <x>,<y>,<z>, **False**, **0**, Nothing, 0)   \u2190 \u2605 \u9762\u6309**\u5750\u6807**\u9009\u3001mark=0
+# swSketchManager.InsertSketch True                       \u2190 \u2605 **\u5148\u5f00\u
+# 8349\u56fe**
+# SelectByID2("", "FACE", <x>,<y>,<z>, **False**, **0**, Nothing, 0)   \u2190 \u2605 \u9
+# 762\u6309**\u5750\u6807**\u9009\u3001mark=0
 #        swSketchManager.SketchUseEdge3(**False**, **True**)      \u2190 \u2605 \u8c03\u7528
 #        ClearSelection2 True
-#        swSketchManager.InsertSketch True                       \u2190 \u2605 \u518d `InsertSketch` \u6536\u5c3e
+# swSketchManager.InsertSketch True                       \u2190 \u2605 \u518d `InsertSk
+# etch` \u6536\u5c3e
 #        ```
-#     ③ ★ **例子里的 mark 全是 `0`**（★ 三处 `SelectByID2` 全查过）；★ 而 `Append` 有 `True`/`False` 两种。
+# ③ ★ **例子里的 mark 全是 `0`**（★ 三处 `SelectByID2` 全查过）；★ 而 `Append` 有 `True`
+# /`False` 两种。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 判据 = **草图段数增量 + 特征树增量**（★ 规则 6）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -78,15 +87,21 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
         row["box"] = _box(doc)
         ext = C.get_com_member(doc, "Extension")
         sk = C.get_com_member(doc, "SketchManager")
-        #: \u2605 **\u5148\u5f00\u4e00\u4e2a\u8349\u56fe**\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u91cc `InsertSketch True` \u5728\u9009\u9762\u4e4b\u524d\uff09
+        #: \u2605 **\u5148\u5f00\u4e00\u4e2a\u8349\u56fe**\uff08\u2605 \u5b98\u65b9\u4f8
+        #: b\u5b50\u91cc `InsertSketch True` \u5728\u9009\u9762\u4e4b\u524d\uff09
         C.get_com_member(sk, "InsertSketch", True)
         doc.ClearSelection2(True)
         if use_selection:
-            #: \u2605\u2605\u2605 2026-10-03\uff08\u8f6e 613\uff09**\u53c8\u8e29\u4e86\u540c\u4e00\u4e2a\u5751**\uff08\u2605 \u4e8b\u5b9e 483\uff09\uff1a
-            #:   \u4e0a\u4e00\u7248\u7167\u5b98\u65b9\u4f8b\u5b50\u7528 `SelectByID2("", "FACE", x,y,z, \u2026)` \u9009\u9762
-            #:   \u21d2 \u771f\u673a **\u56db\u683c\u5168 `selected = 0`**\uff08\u2605 \u5750\u6807\u9009\u4e0d\u4e2d\uff09\u26a0
-            #:   \u800c**\u4e8b\u5b9e 32 / 482 \u90fd\u5199\u7740**\uff1a\u9009\u5b9e\u4f53\u8981\u7528 **`IEntity.Select4`\uff08\u6309\u5bf9\u8c61\uff09**\u3002
-            #:   \u6545\u6539\u7528**\u672c\u4ed3\u73b0\u6210\u7684**\uff1a`entities_on_body` + `select_object` \u2713
+            #: \u2605\u2605\u2605 2026-10-03\uff08\u8f6e 613\uff09**\u53c8\u8e29\u4e86\u
+            #: 540c\u4e00\u4e2a\u5751**\uff08\u2605 \u4e8b\u5b9e 483\uff09\uff1a
+            #: \u4e0a\u4e00\u7248\u7167\u5b98\u65b9\u4f8b\u5b50\u7528 `SelectByID2("", "
+            #: FACE", x,y,z, \u2026)` \u9009\u9762
+            #: \u21d2 \u771f\u673a **\u56db\u683c\u5168 `selected = 0`**\uff08\u2605 \u5
+            #: 750\u6807\u9009\u4e0d\u4e2d\uff09\u26a0
+            #: \u800c**\u4e8b\u5b9e 32 / 482 \u90fd\u5199\u7740**\uff1a\u9009\u5b9e\u4f5
+            #: 3\u8981\u7528 **`IEntity.Select4`\uff08\u6309\u5bf9\u8c61\uff09**\u3002
+            #: \u6545\u6539\u7528**\u672c\u4ed3\u73b0\u6210\u7684**\uff1a`entities_on_bo
+            #: dy` + `select_object` \u2713
             ss = __import__("sw_selection_spec")
             doc.ClearSelection2(True)
             best, best_z = None, -1e9
@@ -122,7 +137,8 @@ def _one(sw, tag, *, chain, inner_loops, use_selection):
             row["segments_after"] = len(segs1) if segs1 is not None else 0
         except Exception:                                                 # noqa: BLE001
             row["segments_after"] = None
-        #: \u2605 \u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u6700\u540e\u4e00\u884c\uff09
+        #: \u2605 \u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u6700\u540e\u4e00\u8
+        #: 84c\uff09
         try:
             C.get_com_member(sk, "InsertSketch", True)
         except Exception:                                                 # noqa: BLE001
@@ -153,7 +169,8 @@ def main() -> int:
                       "`C:\\swapi\\examples\\"
                       "Convert_Edges_and_Inner_Loops_of_Face_to_Sketch_Entities_Example_VB.md`",
           "cases": []}
-    #: \u2605 **\u5b98\u65b9\u4f8b\u5b50\u90a3\u7ec4\u53c2\u6570**\uff08\u2605 `False, True`\uff09\u4e0e\u4e09\u4e2a\u5bf9\u7167
+    #: \u2605 **\u5b98\u65b9\u4f8b\u5b50\u90a3\u7ec4\u53c2\u6570**\uff08\u2605 `False, T
+    #: rue`\uff09\u4e0e\u4e09\u4e2a\u5bf9\u7167
     ev["cases"].append(_one(sw, "\u2605 **\u5b98\u65b9\u4f8b\u5b50\u53c2\u6570 `(False, True)`**",
                             chain=False, inner_loops=True, use_selection=True))
     ev["cases"].append(_one(sw, "\u5bf9\u7167\uff1a`(True, True)`", chain=True, inner_loops=True,

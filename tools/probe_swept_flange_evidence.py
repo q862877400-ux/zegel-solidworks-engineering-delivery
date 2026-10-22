@@ -5,20 +5,26 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
 # 文件:   `scripts/sw_sheet_metal.py`（`create_base_flange` + `BaseFlangeSpec` ·
-#         `create_swept_flange` + `SweptFlangeSpec`）· `scripts/sw_part.py`（`sketch` / `extrude_boss`）
+# `create_swept_flange` + `SweptFlangeSpec`）· `scripts/sw_part.py`（`sketch` / `extrude
+# _boss`）
 # 定位:   ★ SPEC 的 **SC-004** 逐字：「`docs/user-feature-coverage.md` §五 那批 `stitc
 #           hed`
 #   **至少转 `verified` 3 条**」⇒ ★ **本探针供第 3 条用** ✓
-#   ★★ **为什么是这一项**：`capabilities.yaml` 的 `sheet_metal_creation.limitations[5]` **逐字**：
-#     「⚠ **未真机验证**：`create_swept_flange`（★ 需要 sweep 路径 + profile 两个选择，尚未试）」✓
+# ★★ **为什么是这一项**：`capabilities.yaml` 的 `sheet_metal_creation.limitations[5]` **
+# 逐字**：
+# 「⚠ **未真机验证**：`create_swept_flange`（★ 需要 sweep 路径 + profile 两个选择，尚未
+# 试）」✓
 #     ★★★ 而该条目的**其余五个工具**都已有结论：
 #       · `create_base_flange` ⇒ **真机验过并 WORKED**（★ 本探针也要再跑一次当前置）
-#       · `create_edge_flange` / `create_one_bend` / `create_gusset` ⇒ **`0x80010105`**（★ 指针族）
-#       · `create_draft` ⇒ **常量不在白名单**（★ `swFmDraft(3)` 不是 `CreateDefinition` 接受的类型）
+# · `create_edge_flange` / `create_one_bend` / `create_gusset` ⇒ **`0x80010105`**（★ 指
+# 针族）
+# · `create_draft` ⇒ **常量不在白名单**（★ `swFmDraft(3)` 不是 `CreateDefinition` 接受的
+# 类型）
 #   ★★★★ **官方依据（★ 已读）**：`IFeatureManager.InsertSheetMetalSweptFlange`（★ 20 参）·
 #     `SweptFlangeSpec` 的字段取自官方参数表 ✓
 #   ★★★★★ **判据（★ 含**几何读数** —— SPEC 的 Edge Cases 逐字要求）**：
-#     ★ ① **特征数增量** · ★ ② **实体数增量** · ★ ③ **曲面/钣金体读数**（`sheet_metal_evidence`）·
+# ★ ① **特征数增量** · ★ ② **实体数增量** · ★ ③ **曲面/钣金体读数**（`sheet_metal_eviden
+# ce`）·
 #     ★ ④ 有没有报 `0x80010105`（★ 指针族）✓
 #     （★ **只认树增量会误判** —— ★ 事实 486）✓
 #   ★★★★★★ **★ 只报不动**：★ 不改仓 · ★ 只写 `output/` ✓
@@ -92,16 +98,19 @@ def main() -> int:
             ok=(b1[0] or 0) > (b0[0] or 0))
 
         #: ── ② 造扫掠路径 + 轮廓 ──────────────────────────────────────
-        #: ★★★★★★ **修（★ 第一版两处错，★ 全部是事实 517）** —— ★ 能力层的 docstring **逐字**说：
+        #: ★★★★★★ **修（★ 第一版两处错，★ 全部是事实 517）** —— ★ 能力层的 docstring **
+        #: 逐字**说：
         #:   「`:param path_ref`: 扫掠路径（**边**）。官方示例用 **`SelectByRay`** 选边后
         #:     `SelectionManager.GetSelectedObject6(1, -1)` 取得」·
         #:   「`:param profile_ref`: 扫掠轮廓（**草图**）」✓
         #:   ★★ **而我第一版传的**是**两个名字字符串**（`草图6` / `草图7`）⇒ 于是报
         #:     `AttributeError: Property '<unknown>.Profile' can not be set.` ——
-        #:     ★★★ **而那正是**事实 36**那个症状**：★ 「写报 `Property '<unknown>.X' can not be set`
+        #: ★★★ **而那正是**事实 36**那个症状**：★ 「写报 `Property '<unknown>.X' can not
+        #:  be set`
         #:       ⇒ **看起来像「属性只读」，★ 实际是「值不对」**」✓
         #:   ⇒ ★ 所以：★ **`profile_ref` 要草图**对象**、★ `path_ref` 要**边对象**** ✓
-        #:   ★ 路径：一条直线（★ 造完草图后把它扫成一条**边**的载体 —— 用基体法兰的边更稳）
+        #: ★ 路径：一条直线（★ 造完草图后把它扫成一条**边**的载体 —— 用基体法兰的边更稳
+        #: ）
         with P.sketch(model, "Front Plane") as skp:
             sm_ = get_com_member(model, "SketchManager")
             get_com_member(sm_, "CreateLine", 0.0, -0.05, 0.0, 0.0, 0.05, 0.0)
@@ -115,14 +124,17 @@ def main() -> int:
         #: ★★★★★★ **修（★ 第二版两处错，★ 全部是事实 517）**：
         #:   ★ `P.sketch` 的上下文管理器 **yield 的是**名字字符串****（★ 源码逐字：
         #:     `yield sketch_ref.name if sketch_ref else current_sketch_name(model)`）——
-        #:     ★★ **不是 COM 对象** ⇒ 直接传它 ⇒ `Profile can not be set`（★ 事实 36 那个症状）✓
-        #:   ★ 而 `SelectByRay` 的位置 1 报`类型不匹配` ⇒ ★ 它要 **SAFEARRAY**、★ 不是我传的元组 ✓
+        #: ★★ **不是 COM 对象** ⇒ 直接传它 ⇒ `Profile can not be set`（★ 事实 36 那个症
+        #: 状）✓
+        #: ★ 而 `SelectByRay` 的位置 1 报`类型不匹配` ⇒ ★ 它要 **SAFEARRAY**、★ 不是我传
+        #: 的元组 ✓
         #:   ⇒ **正解**：★ `profile_ref` 用 `FeatureByName(名字)` 取**草图特征对象**；
         #:     ★ `path_ref` 从**体上取一条边对象**（★ 不碰 `SelectByRay` 的 SAFEARRAY）✓
         #: ★★★★★★★ **修（★ 第三版）**：★ `FeatureByName("草图7")` 回 **None** ⇒
         #:   ★★ **真因**：★ `P.sketch` yield 的那个名字是**进草图时**取的、★
         #:   **关掉之后特征树里的真名不一定还是它** ✓
-        #:   ⇒ ★ 正解：★ **遍历特征树、取**最后一个草图**的**真名**、★ 再 `FeatureByName`** ✓
+        #: ⇒ ★ 正解：★ **遍历特征树、取**最后一个草图**的**真名**、★ 再 `FeatureByName`*
+        #: * ✓
         names = [n for n in (P.feature_names(model) or [])
                  if str(n).startswith("草图") or str(n).lower().startswith("sketch")]
         R["草图名们"] = names
@@ -149,19 +161,25 @@ def main() -> int:
         try:
             spec = SM.SweptFlangeSpec(start_offset=0.0)
             #: ★★★★★★★ **修（★ 第四版 —— ★ 而这次是**读了官方例子**才找到的）**：
-            #:   ★ 官方例子 `C:\swapi\examples\Create_Swept_Flange_Example_VBNET.md` **逐行**：
+            #: ★ 官方例子 `C:\swapi\examples\Create_Swept_Flange_Example_VBNET.md` **逐
+            #: 行**：
             #:   ```
             #:   Dim swPathObj(0) As Edge                      ← ★ Path 是**Edge 数组**！
             #:   swPathObj(0) = …GetSelectedObject6(1, -1)
-            #:   swProfileSketch = …GetSelectedObject6(1, -1)  ← ★ Profile 是**单个 Sketch 对象**
+            #: swProfileSketch = …GetSelectedObject6(1, -1)  ← ★ Profile 是**单个 Sketch
+            #:  对象**
             #:   swFeatData.Path = swPathObj                   ← ★ 赋的是**数组**
             #:   swFeatData.Profile = swProfileSketch
             #:   swFeat = swFeatMgr.CreateFeature(swFeatData)
             #:   ```
-            #:   ★★ **⇒ 真因**：★ 我传的是**裸 Edge 对象**、★ 而官方要 **`Dim(0) As Edge`（一个数组）** ✓
-            #:   ★★★ **⇒ 那正是 AGENTS.md 那条**：「★ **CHM 那页顶上的 `Example`**（★ **例子给的是
-            #:     "调用序"，★ 签名与 Remarks 都给不了**）」—— ★ 我前四版**一次都没去读例子** ✓
-            #:   ★★★★ **可复用判据**：★ **反复「创建失败」而参数看着都对时，★ 去读官方例子、
+            #: ★★ **⇒ 真因**：★ 我传的是**裸 Edge 对象**、★ 而官方要 **`Dim(0) As Edge`
+            #: （一个数组）** ✓
+            #: ★★★ **⇒ 那正是 AGENTS.md 那条**：「★ **CHM 那页顶上的 `Example`**（★ **例
+            #: 子给的是
+            #: "调用序"，★ 签名与 Remarks 都给不了**）」—— ★ 我前四版**一次都没去读例子*
+            #: * ✓
+            #: ★★★★ **可复用判据**：★ **反复「创建失败」而参数看着都对时，★ 去读官方例子
+            #: 、
             #:     不要继续试参数**（★ 事实 53：★ 连续修补 ≥3 次就该停下换做法）✓
             got = SM.create_swept_flange(model, [path_obj], prof_obj, spec)
             R["返回"] = str(got)[:200]

@@ -5,13 +5,15 @@
 # 文件:   tools/probe_ruled_whats_wrong.py
 # 定位:   ★ 2026-10-03（轮 507）★ 做上一轮**登记在事实 391 里的那条方法论**：
 #
-#   > ★ **若要继续攻：该换的是观测手段**（★ 如查 SW 的"什么错"面板 / 试 `CreateDefinition` 新架构），
+# > ★ **若要继续攻：该换的是观测手段**（★ 如查 SW 的"什么错"面板 / 试 `CreateDefinition`
+#  新架构），
 #   > ★ **而不是**继续在同一入口上换参数 —— ★ 那已经证明不是参数问题。
 #
 #   ★★ **本仓早就有那条手段**：`scripts/sw_feature_readback.py` 的
 #     **`whats_wrong(model)`** —— ★ 它正是**本仓规则 6** 的落地：
 #     「建特征之后查 `EditRebuild3` + `GetWhatsWrong2`，**不静默成功**」✓
-#     （★ 官方依据：`IModelDoc2.EditRebuild3`（bool）· `IModelDoc2.GetWhatsWrong2`（按 by-ref 数组出参））
+# （★ 官方依据：`IModelDoc2.EditRebuild3`（bool）· `IModelDoc2.GetWhatsWrong2`（按 by-re
+# f 数组出参））
 #
 #   ⇒ ★ 故本探针：★ **建实体 → 选一条水平边 → 调直纹曲面 → 读 `whats_wrong`**
 #     ★★ 看 SW 到底**报了什么**（★ 而非只看"树没动"）。

@@ -8,11 +8,14 @@
 #   `insert_parting_surface` / `insert_shut_off_surface` / `insert_core_cavity_solids`。
 # 官方依据: `C:\swapi\types\IFeatureManager\` 的三份 md ——
 #   · `InsertMoldPartingSurface(int Radiate, bool ReverseAlignment, bool ReverseOffset,
-#       double OffsetDistance, double Angle, int Smooth, double SmoothDistance, bool Knit)` **8 参**；
+# double OffsetDistance, double Angle, int Smooth, double SmoothDistance, bool Knit)` **
+# 8 参**；
 #     ★ Remarks：**若模型里还没有分型线**，才必须先选方向与边 ⇒ ★ **有分型线后不必再选** ✓
 #   · `InsertMoldShutOffSurface()` —— **零参**
-#   · `InsertMoldCoreCavitySolids(double Dist1, double Dist2, bool Setback, double Angle)` **4 参**
-#   · 枚举两源一致：`swPartingSurfaceMoldParmTangent = 0` · `Normal = 1` · `Perpendicular = 4`；
+# · `InsertMoldCoreCavitySolids(double Dist1, double Dist2, bool Setback, double Angle)`
+#  **4 参**
+# · 枚举两源一致：`swPartingSurfaceMoldParmTangent = 0` · `Normal = 1` · `Perpendicular 
+# = 4`；
 #     `swPartingSurfaceSharp = 1` · `Smooth = 2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

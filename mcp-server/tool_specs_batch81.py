@@ -1,7 +1,8 @@
 """★ 批次 81：由 Bunny 扇出产出、**经门禁**（`tools/check_bunny_toolspec_rows.py`）过滤后的 ToolSpec 声明。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
-# 文件:   sw_automation_knowledge · sw_com_traps · sw_feature_readback · sw_import_mesh_reference · sw_misumi · sw_preflight · sw_review · sw_sketch_dimensions
+# 文件:   sw_automation_knowledge · sw_com_traps · sw_feature_readback · sw_import_mesh_
+# reference · sw_misumi · sw_preflight · sw_review · sw_sketch_dimensions
 # 定位:   ★ 规格 `specs/204-tool-ramp/spec.md` 的批 81；
 #         ★★ **本文件由 `tools/build_toolspec_batch_from_rows.py` 生成** ——
 #         行来自 Bunny 子代理（**只读官方源与仓库**），而**判据、门禁、真机、提交归主线** ✓
@@ -9,7 +10,8 @@
 #           签名）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **20 个工具**
-# ⚠ 生成器**只收 `exposable=True` 且门禁 0 问题的行**（★ 被门禁挡下的 63 行见 `output/`）
+# ⚠ 生成器**只收 `exposable=True` 且门禁 0 问题的行**（★ 被门禁挡下的 63 行见 `output/`
+# ）
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

@@ -88,10 +88,12 @@ def main() -> int:
         if comp is not None:
             #: ★★★ 2026-10-03 修：★ 官方 `IComponent2.GetTotalTransform` 是 **1 参**
             #:   （`GetTotalTransform(System.bool IncludePresentationXform)`）——
-            #:   ★★ 我上一版**无参调它** ⇒ `get_com_member` 的"取或调"试了 0 参调用、**失败**
+            #: ★★ 我上一版**无参调它** ⇒ `get_com_member` 的"取或调"试了 0 参调用、**失
+            #: 败**
             #:   ⇒ ★★★ **回了 `bound method`** ⇒ 报 `Objects of type 'method' can not be
             #:   converted to a COM VARIANT` ✓
-            #:   ★ 本仓注册表里也写着 `'GetTotalTransform': 1`（★ 与官方一致）⇒ **是我探针的错** ✓
+            #: ★ 本仓注册表里也写着 `'GetTotalTransform': 1`（★ 与官方一致）⇒ **是我探针
+            #: 的错** ✓
             xf, xf2 = None, None
             try:
                 xf = _g(comp, "GetTotalTransform", True)

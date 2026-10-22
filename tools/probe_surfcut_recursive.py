@@ -5,16 +5,19 @@
 # 文件:   tools/probe_surfcut_recursive.py
 # 定位:   ★ 2026-10-03（轮 526）★ 执行**上一轮留在事实 406 里的那条下一步**：
 #
-#   > ★ **下一步**：用 `iter_features_recursive` 重读一次，看 `SurfCut` 在**子特征**里或不在。
+# > ★ **下一步**：用 `iter_features_recursive` 重读一次，看 `SurfCut` 在**子特征**里或不
+# 在。
 #
 #   ★★ **要回答的问题**（★ 事实 406 立的）：
 #     · 已知：`InsertCutSurface` 的返回值**确实是一个特征**（`Name` = 「使用曲面切除1」·
 #       `GetTypeName2` = `SurfCut`）；
-#     · 而已知：`FirstFeature` + `GetNextFeature` 那条链**调用前后都是 22 节点**、`SurfCut` 不在上面；
+# · 而已知：`FirstFeature` + `GetNextFeature` 那条链**调用前后都是 22 节点**、`SurfCut` 
+# 不在上面；
 #     ⇒ ★ **故本轮问**：★ **它在不在 `GetFirstSubFeature` 那些**子链**里？**
 #
 #   ★ 两种结果都是信息：
-#     ⓐ ★ **在子链里** ⇒ ★★ **那是一条**全仓级**的判据修正**（本仓 `feature_names` 不走子特征、
+# ⓐ ★ **在子链里** ⇒ ★★ **那是一条**全仓级**的判据修正**（本仓 `feature_names` 不走子特
+# 征、
 #        而大量「特征树增量」判据都建在它上面）⚠
 #     ⓑ ★ **哪儿都没有** ⇒ ★ 那说明它是个**未提交/预览**态的特征（★ 需再确认一次才进树）
 #
@@ -143,7 +146,8 @@ def main() -> int:
                     ev[k] = "ERR %s" % str(exc)[:60]
         ev["recurse_after"] = _recurse(doc)
         ev["names_after"] = list(FR.feature_names(doc) or [])
-        #: \u2605 **\u5173\u952e\u5224\u65ad**\uff1a\u9012\u5f52\u94fe\u4e0a\u6709\u6ca1\u6709 `SurfCut`
+        #: \u2605 **\u5173\u952e\u5224\u65ad**\uff1a\u9012\u5f52\u94fe\u4e0a\u6709\u6ca1
+        #: \u6709 `SurfCut`
         ev["surfcut_in_recurse"] = any(str(r.get("type")) == "SurfCut"
                                        for r in (ev["recurse_after"] or []))
         ev["surfcut_in_names"] = any("SurfCut" in str(n) for n in (ev["names_after"] or []))

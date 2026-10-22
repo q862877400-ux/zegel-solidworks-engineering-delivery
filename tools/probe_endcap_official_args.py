@@ -10,7 +10,8 @@
 #     ★★ 关键差异：`BIsGivenOffset=False` 时生效的是 **`WallThicknessRatio`**，
 #        ★ 官方用 **0.6**，我们传 **0.0**（★ 退化值）；`BIsEndCapInward` 官方用 **2**
 #        （= `swSpecifyInset`，见 `C:\\swapi\\enums\\swEndCapThicknessDirection_e.md`）。
-#   官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature3.md` 的 Remarks + Examples
+# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertEndCapFeature3.md` 的 Remarks + Ex
+# amples
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

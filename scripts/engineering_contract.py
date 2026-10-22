@@ -127,7 +127,8 @@ UNIT_SCALE = {
     ("mass", "g"): 1.0 / 1000.0,
 }
 
-#: ★★ **偏置单位**（★ 官方/工程惯例：★ 温度**不能**用乘法 —— ★ 承 EC00 `contracts/quantity.md` §2.3）
+#: ★★ **偏置单位**（★ 官方/工程惯例：★ 温度**不能**用乘法 —— ★ 承 EC00 `contracts/quanti
+#: ty.md` §2.3）
 OFFSET_UNITS = {
     ("temperature", "degC"): ("K", 273.15),      #: ★ value + 273.15
 }
@@ -177,7 +178,8 @@ def normalize_quantity(q: Quantity, *, already_normalized: bool = False) -> Norm
         #: ★★ 区分「量纲不对」与「单位不认识」—— ★ 两个**不同**的码
         #:   ★★★ **2026-10-10 订正**：★ 第一版判反了 —— ★ 它查「该量纲有没有别的单位」
         #:     ⇒ ★ `("length","deg")` 落进「量纲有单位 ⇒ 单位不认识」✗
-        #:   ★★ **正解**：★ 查 **`unit` 是否属于**别的**量纲** —— ★ 是 ⇒ `reject-kind-mismatch`；
+        #: ★★ **正解**：★ 查 **`unit` 是否属于**别的**量纲** —— ★ 是 ⇒ `reject-kind-mism
+        #: atch`；
         #:     ★ 谁都不属于 ⇒ `reject-unknown-unit` ✓
         known_kinds_of_this_unit = {k for (k, u) in UNIT_SCALE if u == unit}
         known_kinds_of_this_unit |= {k for (k, u) in OFFSET_UNITS if u == unit}

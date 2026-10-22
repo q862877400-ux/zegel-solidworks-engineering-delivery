@@ -145,11 +145,13 @@ ASSEMBLY_DOC_ARITY: dict[str, int] = {
     'GetEditTargetComponent': 0,
     'GetExplodedViewConfigurationName': 1,
     #: ★★★ 2026-10-07（规格 213 · B2b）：★ **补登记** —— ★ 本仓**真机撞过**这一条 ✗：
-    #:   ★ 我为"爆炸直线"的前置复核写了 `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ ——
+    #: ★ 我为"爆炸直线"的前置复核写了 `call_assembly_doc(doc, "GetExplodedViewCount", 0)
+    #: ` ✗ ——
     #:   ★★ **多传了一个实参**，★ 而 `call_assembly_doc` 有 **arity 校核** ⇒ **被拒** ✓
     #:   ★★★ 真机表现就是 `explode_view_count = None` ✗ —— ★ 我一度以为"取不到"，
     #:     ★★ **其实是我传错了参数个数** ✓
-    #:   ★ 官方 `swapi` 与反射**两源一致**：★ `System.int GetExplodedViewCount()` ⇒ **零参** ✓
+    #: ★ 官方 `swapi` 与反射**两源一致**：★ `System.int GetExplodedViewCount()` ⇒ **零参
+    #: ** ✓
     #:     （★ 反射逐字：`Int32 GetExplodedViewCount()` ✓）⇒ ★ **登记为 0** ✓
     'GetExplodedViewCount': 0,
     'GetExplodedViewCount2': 1,
@@ -500,7 +502,8 @@ def edit_part_in_context(asm_model, component, *, silent=True, allow_read_only=T
     ⚠ 官方签名第 3 参是 **`ref Int32`** ⇒ 用本仓库既有的 `out_i4()` 给出参占位。
     """
     #: ⚠⚠ **实测（轮 161）**：本模块先前想用 `IComponent2.Select4(Append, Callout)` ——
-    #: 那是 **`IEntity`** 的签名；**`IComponent2` 上的 `Select4` 第二参是 `SelectData`**，
+    #: 那是 **`IEntity`** 的签名；**`IComponent2` 上的 `Select4` 第二参是 `SelectData`**
+    #: ，
     #: 传空 Dispatch 会报 `0x8002000F`（`DISP_E_PARAMNOTOPTIONAL`，
     #: **报错完全看不出是"参数类型不对"**）。
     #: ⇒ 改用 **`IComponent2.Select2(Boolean Append, Int32 Mark)`** ——
@@ -537,7 +540,8 @@ def list_external_file_references_count(component, *, include_hidden=False):
     #: （`Int32 ListExternalFileReferencesCount()` 与 `Int32 …(Boolean)`），
     #: 但在 pywin32 迟到绑定下它**表现为属性** ⇒ 传 0 个实参就拿到 `int`；
     #: ⚠ 若按 1 参调，会先拿到那个 int、再把它当函数调 ⇒
-    #: **`TypeError: 'int' object is not callable`**（报错完全看不出是"属性还是方法"的问题）。
+    #: **`TypeError: 'int' object is not callable`**（报错完全看不出是"属性还是方法"的问
+    #: 题）。
     #: ⇒ 先按 **0 参**取；取不到再退回 1 参。
     try:
         return int(call_com_member(component, "ListExternalFileReferencesCount") or 0)
@@ -548,13 +552,17 @@ def list_external_file_references_count(component, *, include_hidden=False):
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）+ 官方结构化页
-# 文件:   `C:\swapi\types\IAssemblyDoc\CreateExplodedView.md`（`System.bool CreateExplodedView()`）
+# 文件:   `C:\swapi\types\IAssemblyDoc\CreateExplodedView.md`（`System.bool CreateExplod
+# edView()`）
 #         · `...\AutoExplode.md`（`System.bool AutoExplode()`）
 #         · `...\ViewExplodeAssembly.md`（`void ViewExplodeAssembly()`）
 #         · `...\ViewCollapseAssembly.md`（`void ViewCollapseAssembly()`）
-#         · `...\ShowExploded2.md`（`System.bool ShowExploded2(Boolean ShowIt, String ExplodeViewName)`）
-#         · `...\GetExplodedViewNames2.md`（`System.object GetExplodedViewNames2(String ConfigurationName)`）
-#         · `...\GetExplodedViewCount2.md`（`System.int GetExplodedViewCount2(String ConfigurationName)`）
+# · `...\ShowExploded2.md`（`System.bool ShowExploded2(Boolean ShowIt, String ExplodeVie
+# wName)`）
+# · `...\GetExplodedViewNames2.md`（`System.object GetExplodedViewNames2(String Configur
+# ationName)`）
+# · `...\GetExplodedViewCount2.md`（`System.int GetExplodedViewCount2(String Configurati
+# onName)`）
 #         · `...\GetExplodedViewConfigurationName.md` · `...\EditExplodeParameters.md`
 # 定位:   ★★★ 规格 `specs/202-user-coverage-gaps/spec.md` 的 **FR-008** 逐字要求
 #         「装配**爆炸视图**与宏/VBA 执行 MUST 可用」——★ 而实测本仓**一条都没有**
@@ -564,8 +572,10 @@ def list_external_file_references_count(component, *, include_hidden=False):
 # 官方依据: 见上「文件」逐页；★ 语义以官方页为准（本段只做薄包装，不解释语义）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   本段以下 9 个函数（自 `create_exploded_view` 至 `edit_explode_parameters`）
-# ⚠ 未查证（如实标）：`.swb`/VSTA 与 VBA 在 `ModuleName` 语义上的差别（`RunMacro2` 那页 Remarks 为空）；
-#   以及 `GetExplodedViewConfigurationName` 那 1 个实参的**确切含义** —— 官方页只写 Parameters，未给语义。
+# ⚠ 未查证（如实标）：`.swb`/VSTA 与 VBA 在 `ModuleName` 语义上的差别（`RunMacro2` 那页 
+# Remarks 为空）；
+# 以及 `GetExplodedViewConfigurationName` 那 1 个实参的**确切含义** —— 官方页只写 Parame
+# ters，未给语义。
 # ─────────────────────────────────────────────────────────────────────────────
 def create_exploded_view(doc) -> bool:
     """建一个爆炸视图（官方 `IAssemblyDoc.CreateExplodedView`，**零参**）。
@@ -652,10 +662,12 @@ def edit_explode_parameters(doc):
 # ★★ 官方依据（`swapi` 逐字）：
 #   · `C:\swapi\types\ISketchManager\InsertExplodeLineSketch.md` ⇒
 #     `System.bool InsertExplodeLineSketch()` ⇒ ★★ **零参** ✓
-#     ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false if not ✓
+# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false 
+# if not ✓
 #   · ★★ **入口在 `ISketchManager` 上、不在装配文档上** ✗ ——
 #     ★ 所以要先 `get_com_member(doc, "SketchManager")` 再调 ✓
-#   · ★★ **前置链有三环，★ 而每一环单独落布尔**（★ 「读数无效」与「真的不建」长得一样 ✓）：
+# · ★★ **前置链有三环，★ 而每一环单独落布尔**（★ 「读数无效」与「真的不建」长得一样 ✓）
+# ：
 #     ★ ① 零件要**落盘**（`add_component` 要磁盘路径 ✗）· ★ ② 装配体
 #     · ★ ③ **爆炸状态**（`create_exploded_view`；★ 否则"爆炸直线"没有可依附的爆炸 ✓）
 # ★★ 判据 = **回读**：★ 特征树增量 + **`ISketchManager::ActiveSketch`** ✓ ——
@@ -691,8 +703,10 @@ def insert_explode_line_sketch_report(doc):
         return out
 
     #: ★ 前置②：★ 爆炸状态（★ 回读、★ 不猜 ✓）
-    #:   ★★★ **修过一处真 bug**：★ 第一版写的是 `call_assembly_doc(doc, "GetExplodedViewCount", 0)` ✗ ——
-    #:     ★★ **多传了一个实参**（★ 官方与反射**两源一致**：★ `Int32 GetExplodedViewCount()` **零参** ✓）⇒
+    #: ★★★ **修过一处真 bug**：★ 第一版写的是 `call_assembly_doc(doc, "GetExplodedViewCo
+    #: unt", 0)` ✗ ——
+    #: ★★ **多传了一个实参**（★ 官方与反射**两源一致**：★ `Int32 GetExplodedViewCount()`
+    #:  **零参** ✓）⇒
     #:     ★ `call_assembly_doc` 的 **arity 校核**把它拒了 ✓
     #:   ★★★ 真机表现：★ `explode_view_count = None` ✗ —— ★ 我一度读成"取不到"，
     #:     ★★ **而那是"我传错参数个数"** ✓（★ 与本规格反复吃的那类坑同型 ✓）
@@ -702,11 +716,14 @@ def insert_explode_line_sketch_report(doc):
         out["explode_view_count"] = None
         out["explode_view_error"] = "%s: %s" % (type(e).__name__, str(e)[:100])
 
-    #: ★★ 取特征名：★ 用仓里**既有的** `sw_feature_readback.feature_names`（★ 缝合、不发明 ✓）——
-    #:   ★★★ **必须写成带上兜底的相对导入**：★ `scripts/check_relative_imports.py` 的判据逐字是
+    #: ★★ 取特征名：★ 用仓里**既有的** `sw_feature_readback.feature_names`（★ 缝合、不发
+    #: 明 ✓）——
+    #: ★★★ **必须写成带上兜底的相对导入**：★ `scripts/check_relative_imports.py` 的判据
+    #: 逐字是
     #:     「`prev.startswith("try:")`」⇒ ★ **紧跟 `try:` 的那一行才算"有兜底"** ✓
     #:     ★★ 它**也扫函数内**的导入 ⇒ ★ 这样写**既不新增欠账、也不新起一层** ✓
-    #:     （★ 本批已在这条上撞过两次：★ 一次函数内裸写、★ 一次在 `try:` 与导入行之间插注释 ✗）
+    #: （★ 本批已在这条上撞过两次：★ 一次函数内裸写、★ 一次在 `try:` 与导入行之间插注释 
+    #: ✗）
     try:
         from .sw_feature_readback import feature_names
     except ImportError:
@@ -716,7 +733,8 @@ def insert_explode_line_sketch_report(doc):
     #:   ★ 本函数第一版只记了「现在有没有」（`active_sketch_present`）✗，
     #:   ★★ 而**真机对照原探针**才发现：★ 原探针的判据是 **`active_sketch_before=False →
     #:     active_sketch_after=True`**（★ 那才对应官方 Returns 里的 **inserted** ✓）——
-    #:   ★★★ **只看"现在有"分辨不了"插入"与"本来就开着"** ✗（★ 与 SpeedPak 那项同一个坑 ✓）
+    #: ★★★ **只看"现在有"分辨不了"插入"与"本来就开着"** ✗（★ 与 SpeedPak 那项同一个坑 ✓
+    #: ）
     active_before = None
     try:
         active_before = get_com_member(sm, "ActiveSketch")
@@ -747,7 +765,8 @@ def insert_explode_line_sketch_report(doc):
                 "active_sketch_present": active_after is not None,
                 "active_sketch_side_changed": side_changed,
                 "call_exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:140])})
-    #: ★★ 判据：★ **回读**（★ 不是那个 bool ✓）—— ★ 两条腿：特征树增量 **或** 草图侧变化 ✓
+    #: ★★ 判据：★ **回读**（★ 不是那个 bool ✓）—— ★ 两条腿：特征树增量 **或** 草图侧变化
+    #:  ✓
     out["ok"] = bool(added) or side_changed
     if out["ok"]:
         out["verdict"] = ("★★★★★ **建成** —— ★ 特征树新增 %r · ★★ **`ActiveSketch` 侧变化 %r → %r**"
@@ -768,7 +787,8 @@ def insert_explode_line_sketch_report(doc):
 #   · `C:\swapi\types\IAssemblyDoc\CreateSpeedPak.md` ⇒
 #     `System.bool CreateSpeedPak( System.int SpeedPakType )` ⇒ ★ 参数式 **1 参** ✓
 #     ★ `## Parameters` 逐字：**1 = Mated** · **2 = Graphics** ✓
-#   · ★★ **回读成员**：★ **`IComponent2::IsSpeedPak`** ✓（★ 也有 `IConfiguration::IsSpeedPak` ✓）
+# · ★★ **回读成员**：★ **`IComponent2::IsSpeedPak`** ✓（★ 也有 `IConfiguration::IsSpeedP
+# ak` ✓）
 #   · ★★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒
 #     ★ 本函数**必须**回读 `IsSpeedPak` 才算数 ✓
 #   ★★ 前置：★ **选中的子装配** —— ★ 用官方示例的调用序

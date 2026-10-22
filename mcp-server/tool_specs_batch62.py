@@ -1,4 +1,5 @@
-# ── 200 轮计划 v3 · 段 2：**焊件族的第一条**（结构构件）────────────────────────────────
+# ── 200 轮计划 v3 · 段 2：**焊件族的第一条**（结构构件）───────────────────────────────
+# ─
 # ★★★★ 2026-10-03（轮 428）★ 来源：★ 本轮的**侦察推翻了**一条既有结论。
 #
 # ★★ **为什么它以前没挂**（★ 而原因**早就写在能力表里**）：
@@ -38,7 +39,8 @@
 from tool_registry import Param, ToolSpec
 
 SPECS_BATCH62 = [
-    # 签名: def create_structural_member_from_sketch(model, sketch_name, profile_path, **kwargs)
+    # 签名: def create_structural_member_from_sketch(model, sketch_name, profile_path, *
+    # *kwargs)
     ToolSpec(
         name="solidworks_weldment_create_structural_member",
         title="Create a Structural Member",

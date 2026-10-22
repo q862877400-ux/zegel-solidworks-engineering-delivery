@@ -23,7 +23,8 @@ python tools/extract_operation_descriptions.py --show 20  # 另打印前 20 条
 # 文件:   tools/extract_operation_descriptions.py
 # 定位:   objective② 的判据依据抽取：把四家仓库里的「操作名 → 描述」抽出来。
 # 官方依据: 不适用（★ 本脚本读的是**四家 MIT/Apache 仓库**的文本，不是官方 API）。
-#   ★ 来源与许可：`Eduardof0nt/Solidworks-MCP-Server`（**MIT**）· `andrewbartels1/SolidworksMCP-python`
+# ★ 来源与许可：`Eduardof0nt/Solidworks-MCP-Server`（**MIT**）· `andrewbartels1/Solidwor
+# ksMCP-python`
 #   （**MIT**）—— ★ **只读其工具名与描述文本用于对照**，★ 未抄其代码。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

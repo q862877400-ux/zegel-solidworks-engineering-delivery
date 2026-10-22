@@ -48,7 +48,8 @@ def main() -> int:
     from scripts.sw_part import (current_sketch_name, end_sketch, extrude_boss,
                                  sketch_corner_rectangle, start_sketch)
     #: ★★ 必须以 **`scripts.<mod>`** 加载 —— 包装内部用的是**相对导入**
-    #:   （`from .sw_simulation import _selected_dispatch_array`）；★ 而我第一版写成了**顶层导入**
+    #: （`from .sw_simulation import _selected_dispatch_array`）；★ 而我第一版写成了**顶
+    #: 层导入**
     #:   ⇒ 报 `ImportError: attempted relative import with no known parent package`
     #:   ★ 而那是**探针的错**，不是能力坏了（★ 与事实 320 同族）。
     from scripts import sw_simulation_loads as SL

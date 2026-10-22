@@ -167,7 +167,8 @@ def current_sheet_info(model) -> dict[str, Any]:
 
 
 #: `swDrawingViewTypes_e` 里与"这不是一个视图、而是图纸本身"对应的取值。
-#: ★ 真机实测：空图纸上 `GetFirstView()` 返回的对象 `Type == 1`，且 `GetName2()` 就是图纸名。
+#: ★ 真机实测：空图纸上 `GetFirstView()` 返回的对象 `Type == 1`，且 `GetName2()` 就是图
+#: 纸名。
 SHEET_PSEUDO_VIEW_TYPE = 1
 
 
@@ -192,9 +193,11 @@ def list_views(model) -> list[dict[str, Any]]:
         try:
             name = str(get_com_member(view, "GetName2"))
         except Exception:                                       # noqa: BLE001
-            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 首行
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 
+            #: 首行
             #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
-            #:   ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型视图）
+            #: ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型
+            #: 视图）
             #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
             name = ""
         if vtype != SHEET_PSEUDO_VIEW_TYPE:                     #: ★ 跳过"图纸本身"
@@ -266,9 +269,11 @@ def view_annotations_report(model) -> dict:
         try:
             name = str(get_com_member(view, "GetName2"))
         except Exception:                                       # noqa: BLE001
-            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 首行
+            #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`** —— 官方 `IView/Name.md` 
+            #: 首行
             #:   「Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]」；
-            #:   ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型视图）
+            #: ★ 真机（SW 34.4.1）在 4 个视图上证明 `Name` == `GetName2`（★ 3 个真实模型
+            #: 视图）
             #:   ⇒ ★ 这里失败就是**取不到名字**，★ 报空串，**不换一个废弃成员再试**。
             name = ""
         if vtype == SHEET_PSEUDO_VIEW_TYPE:                               #: ★ 跳过"图纸本身"
@@ -278,7 +283,8 @@ def view_annotations_report(model) -> dict:
             view = nxt
             continue
         item: dict[str, Any] = {"name": name, "type": vtype}
-        #: ★ `GetAnnotationCount()` —— 独立的第一个判据（★ 官方 Remarks 说它给数组定大小）
+        #: ★ `GetAnnotationCount()` —— 独立的第一个判据（★ 官方 Remarks 说它给数组定大小
+        #: ）
         try:
             item["annotation_count_by_api"] = int(get_com_member(view, "GetAnnotationCount"))
         except Exception as exc:                                          # noqa: BLE001
@@ -308,19 +314,24 @@ def view_annotations_report(model) -> dict:
         except Exception as exc:                                          # noqa: BLE001
             item["arc_count"] = "err: %s" % str(exc)[:50]
         #: ★★★★★★★ 2026-10-04（轮 139）**第二批零参读侧（★ 工程图）** ——
-        #:   ★ **四个全零参、★ 全非废弃、★ 全非指针**、★ 而它们的 `## Remarks` 都是**同一句**：
+        #: ★ **四个全零参、★ 全非废弃、★ 全非指针**、★ 而它们的 `## Remarks` 都是**同一
+        #: 句**：
         #:     ★「Call this method before `IView::IGet…` to determine the size of the array
         #:       for that method」⇒ ★ **⇒ 即"先数个数、★ 再去取数组"的**前半**** ✓
         #:   · ★ `GetBendLineCount()` ⇒「Number of **bendlines** in a flat-pattern view」✓
         #:   · ★ `GetCThreadCount()` ⇒「Number of **cosmetic threads**」（★ 装饰螺纹）✓
         #:   · ★ `GetDatumOriginCount()` ⇒「Number of **datum origins**」（★ 基准原点）✓
         #:   · ★ `GetCenterLineCount()` ⇒「Number of **centerlines**」✓
-        #:   ★★ **⚠ 而另两条**看起来也是候选、★ 本轮**故意不纳入****（★ 逐条读 Remarks 才看见）：
-        #:     ★ **① `GetBomTable()`** —— `## Remarks` 逐字：★「This method **only returns a BOM
+        #: ★★ **⚠ 而另两条**看起来也是候选、★ 本轮**故意不纳入****（★ 逐条读 Remarks 才
+        #: 看见）：
+        #: ★ **① `GetBomTable()`** —— `## Remarks` 逐字：★「This method **only returns a
+        #:  BOM
         #:       table if there is a Microsoft Excel-based BOM** for the drawing view」⇒
         #:       ★★ **⇒ 前置不满足时**静默回 `None`**** ⇒ **⇒ 会误导** ⇒ 不纳入 ✓
-        #:     ★ **② `GetCenterMarkCount2(out int Size)`** —— `## Remarks` 逐字：★「**Center marks
-        #:       are now annotations. Previously, center marks were features.** ★ This method is
+        #: ★ **② `GetCenterMarkCount2(out int Size)`** —— `## Remarks` 逐字：★「**Center
+        #:  marks
+        #: are now annotations. Previously, center marks were features.** ★ This method 
+        #: is
         #:       **only valid for center marks that are features**」⇒
         #:       ★★ **⇒ 它对**新画的**中心标记**不适用****、★ 且**带 `out`**（★ 本仓既有结论：
         #:         带 `out` 的在 pywin32 上到不了）⇒ **不纳入** ✓
@@ -350,9 +361,11 @@ def view_annotations_report(model) -> dict:
 #   · ★ 读：`ISheet.GetProperties` 回 `[6.0, 12.0, **1.0, 1.0**, 1.0, 0.297, 0.21]`
 #     （★ 官方 Remarks 明写「You can get the two scale values from the sheet by using
 #      `ISheet::GetProperties`」）—— ★ 位置 3 / 4 就是 **Numerator / Denominator**；
-#   · ★ 写：`SetScale(1.0, 2.0, False, False)` ⇒ **回 `True`**，★ **而读回变成 `[6.0, 12.0, 1.0, 2.0, …]`**
+# · ★ 写：`SetScale(1.0, 2.0, False, False)` ⇒ **回 `True`**，★ **而读回变成 `[6.0, 12.0
+# , 1.0, 2.0, …]`**
 #     ⇒ ★★★ **即图纸比例真的从 1:1 改成了 1:2** ✓
-#   ★★ **它与"视图比例"形成对照**：★ `IView.ScaleRatio` **读得到、写不进**（★ 事实 227/294）·
+# ★★ **它与"视图比例"形成对照**：★ `IView.ScaleRatio` **读得到、写不进**（★ 事实 227/294
+# ）·
 #      ★ 而 `ISheet.SetScale` **写得进** ⇒ ★★★ **所以"想改比例"的正解是改**图纸**的比例**
 #      （★ 而视图默认 `UseSheetScale=True` ⇒ ★ 它会跟着变）✓
 #
@@ -419,7 +432,8 @@ def get_sheet_scale_report(model, sheet_name: str = "") -> dict:
         return {"ok": False, "error": "GetProperties 只回了 %d 个元素（★ 预期 ≥7）" % len(props),
                 "properties": [str(x)[:30] for x in props]}
     #: ★★★ 2026-10-01（轮 301）**顺序是真机定的**：传 `SetScale(1, 5)` 而读回
-    #:   **`5:1`** ⇒ ★★ **`props[3]` 是 Denominator、`props[4]` 是 Numerator**（与字面相反）。
+    #: **`5:1`** ⇒ ★★ **`props[3]` 是 Denominator、`props[4]` 是 Numerator**（与字面相反
+    #: ）。
     #:   ★ 另一组：传 `SetScale(1, 2)` → 读回 `2:1`。⇒ ★ **两组同向 ⇒ 定序可信**。
     den, num = float(props[3]), float(props[4])
     return {"ok": True, "sheet_name": str(sheet_name) or "(当前)", "numerator": num, "denominator": den,

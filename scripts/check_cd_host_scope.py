@@ -7,7 +7,8 @@
 #         `C:\swapi\types\IFeatureManager\CreateDefinition.md` 造 ⇒ 它隐含一个**从未被写出**的
 #         前提：「每个 `CreateDefinition` 调用的宿主都是 `IFeatureManager`」。
 #         ★★ 而官方有**两个**宿主页（`IFeatureManager` / `IMotionStudy`），各自有**自己的**
-#         `Type` 常量域。`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager`
+# `Type` 常量域。`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager
+# `
 #         的表 ⇒ 判成 `unmapped`。**「宿主没被表达」= 一个数里混了两种东西**（spec 237 同族）。
 # 官方依据: ① `C:\swapi\types\IFeatureManager\CreateDefinition.md` 的 `## Parameters`   
 #           （35 条，括注是**散文标签**）② `C:\swapi\types\IMotionStudy\CreateDefinition
@@ -23,22 +24,29 @@
 # ★★ 先量当场推翻它：**这 3 个常量一个都不属于 `IFeatureManager::CreateDefinition`**：
 #   · `swFmAEMRotationalMotor` —— 官方宿主是 **`IMotionStudy::CreateDefinition`**，
 #     且官方**逐条点名**返回 `ISimulationMotorFeatureData`（最强证据）；
-#   · `swFmDraft` —— 官方 `Type` 清单里**没有**；本仓另有**真机证据**：`CreateDefinition(3)`
+# · `swFmDraft` —— 官方 `Type` 清单里**没有**；本仓另有**真机证据**：`CreateDefinition(3
+# )`
 #     返回 `None`（`sw_sheet_metal.create_draft` 的来源块已记）；
-#   · `swFmMateProfileCenter` —— **只有枚举页**收录，没有任何官方文档把它绑到 `CreateDefinition`。
+# · `swFmMateProfileCenter` —— **只有枚举页**收录，没有任何官方文档把它绑到 `CreateDefin
+# ition`。
 # ⇒ ★ 照字面「补 `MANUAL_MAP`」会**污染一张本来正确的表**（把「别的宿主的常量」或
-#   「官方不支持的常量」写成「本宿主返回的接口」）—— 与「照错前提改会把正确的登记改错」同族。
+# 「官方不支持的常量」写成「本宿主返回的接口」）—— 与「照错前提改会把正确的登记改错」同
+# 族。
 #
 # ## 判据（四条，全部以**官方页**为事实源）
 # | 违规 | 条件 |
 # |---|---|
-# | `should-map` | 站点 `unmapped` 的常量**出现在任一官方宿主页** ⇒ 必须补映射，**不许**用 `unmapped` 逃避 |
-# | `host-mismatch` | 站点 `checked` 的常量被官方**点名**接口 ⇒ 映射值必须 **==** 点名值（人工表/文本匹配不得覆盖官方断言） |
+# | `should-map` | 站点 `unmapped` 的常量**出现在任一官方宿主页** ⇒ 必须补映射，**不许**
+# 用 `unmapped` 逃避 |
+# | `host-mismatch` | 站点 `checked` 的常量被官方**点名**接口 ⇒ 映射值必须 **==** 点名值
+# （人工表/文本匹配不得覆盖官方断言） |
 # | `ambiguous-host` | 同一常量在多个宿主页被点名成**不同**接口 ⇒ 不猜，红 |
-# | `unsupported-path` | ★ spec 239 新增：站点 `unmapped` 的常量**没有任何**官方宿主页收录 ⇒ 代码走了**官方不支持**的路径 ⇒ 必须表态官方替代入口 |
+# | `unsupported-path` | ★ spec 239 新增：站点 `unmapped` 的常量**没有任何**官方宿主页收
+# 录 ⇒ 代码走了**官方不支持**的路径 ⇒ 必须表态官方替代入口 |
 #
 # ## 为什么要有 `unsupported-path`（**先量**才发现的盲区）
-# 前三条**都只在「常量被官方收录」时才生效** ⇒ 「代码用了官方**根本不在** `CreateDefinition`
+# 前三条**都只在「常量被官方收录」时才生效** ⇒ 「代码用了官方**根本不在** `CreateDefinit
+# ion`
 # 域里的常量」**三条全都不管**（读数上与「一切正常」同形）。★ 这正是 238 那条核心事实的
 # **反面**：238 治「该映射却用 `unmapped` 逃避」，本码治「官方不支持却照旧调用」。
 # 真树现状（先量）：`sw_sheet_metal.py` 的 `swFmDraft`（★ 本仓另有**真机证据**：
@@ -59,16 +67,20 @@
 #   **必须紧贴调用行**（它只看第一行非空行）⇒ 两种声明需要**并存**，各读各的。
 #
 # ## 只增不减（下界冻结）
-# `sites`（站点数）· `named`（常量被官方点名的站点数）· `no-host`（常量**无**官方宿主页的
+# `sites`（站点数）· `named`（常量被官方点名的站点数）· `no-host`（常量**无**官方宿主页
+# 的
 # 站点数）都只允许**增**：减少 = 取点或读取器漏了。
 # ★★ `no-host` 的下界是**本码不空转**的守卫：真树 1（`swFmMateProfileCenter`）——
-#    `swFmDraft` 那个站点由 spec 239 改走官方入口 `IFeatureManager::InsertMultiFaceDraft` 后
+# `swFmDraft` 那个站点由 spec 239 改走官方入口 `IFeatureManager::InsertMultiFaceDraft` 
+# 后
 #    **正当消失** ⇒ 237/238 的 `sites` 下界随之 10 → 9（**已记录在案**）；
 #    ★★ spec 240：`swFmMateProfileCenter` 那个站点也改走官方入口
-#    （`IAssemblyDoc::CreateMateData` + `CreateMate`）⇒ `sites` 9 → **8**、`no-host` 1 → **0**
+# （`IAssemblyDoc::CreateMateData` + `CreateMate`）⇒ `sites` 9 → **8**、`no-host` 1 → **
+# 0**
 #    （★ 三个「官方不支持」的靶子**全部处置完毕**）。
 #    ★★★ **`no-host` 降到 0 ≠ 本码失效**：`unsupported-path` 的触发条件是
-#    「**站点存在** + 常量无宿主页 + 未表态」⇒ 有人写回 `CreateDefinition(swFmMateProfileCenter)`
+# 「**站点存在** + 常量无宿主页 + 未表态」⇒ 有人写回 `CreateDefinition(swFmMateProfileCe
+# nter)`
 #    时它照样红；而「有人重新写回 `CreateDefinition(swFmDraft)`」这件事同样由**本码**接住
 #    （它会红），不靠计数棘轮 ⇒ 这是「降低棘轮时必须补一条内容断言」的落地
 #    （★ spec 240 补的内容断言在 `tests/test_mate_official_entry.py`）。
@@ -268,7 +280,8 @@ def judge_sites(sites: list, pages: dict, owned: dict, mapped: dict, members_of,
                                              "必须补进映射表，**不许**用 `unmapped` 逃避"
                                              % (const, " / ".join(hosts))})
             else:
-                #: ★ spec 239：常量**没有任何**官方宿主页收录 ⇒ 代码走了官方不支持的路径。
+                #: ★ spec 239：常量**没有任何**官方宿主页收录 ⇒ 代码走了官方不支持的路径
+                #: 。
                 no_host += 1
                 bad = unsupported(s) if unsupported else None
                 if bad:

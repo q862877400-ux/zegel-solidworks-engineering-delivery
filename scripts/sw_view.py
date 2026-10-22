@@ -128,8 +128,10 @@ VIEW_ARITY: dict[str, int] = {
     "RemovePerspective": 0,
     "HasPerspective": 0,
     # ★ 2026-10-09（spec 227）：原登记 **5**，按**两源一致**订正为 **6** ——
-    #   官方 `C:\swapi\types\IModelView\ShowMagnifyingGlass.md` 签名 6 个形参、**无 by-ref**，
-    #   出厂反射 `_raw/reflect_sldworks/iface_sldworks.txt:11458` 同为 6（另 `sw_api_sldworks.py` 也登记 6）。
+    # 官方 `C:\swapi\types\IModelView\ShowMagnifyingGlass.md` 签名 6 个形参、**无 by-ref
+    # **，
+    # 出厂反射 `_raw/reflect_sldworks/iface_sldworks.txt:11458` 同为 6（另 `sw_api_sldwo
+    # rks.py` 也登记 6）。
     "ShowMagnifyingGlass": 6,
     "HideMagnifyingGlass": 0,
     "MoveMagnifyingGlass": 3,

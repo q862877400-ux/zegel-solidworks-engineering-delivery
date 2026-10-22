@@ -4,17 +4,22 @@
 # 仓库:   本项目自身（工具声明）
 # 文件:   mcp-server/tool_specs_batch66.py
 # 定位:   ★ 2026-10-03（轮 465）★ `specs/201-toolbar-gaps` **B3 批**的 MCP 工具声明。
-#   ★★ 包装在 `scripts/sw_sketch_edit_ops.py`（★ 签名与枚举逐条取自 `C:\\swapi\\`，见其来源块）。
+# ★★ 包装在 `scripts/sw_sketch_edit_ops.py`（★ 签名与枚举逐条取自 `C:\\swapi\\`，见其来
+# 源块）。
 #   ★★★ **只挂验成的 6 个** —— ★ B3 的第 7 条「交叉曲线」**未验成**
 #     （真因：官方前置是 3D 草图 + 两个相交面，而 `Insert3DSketch` 在本机回 `None`）
 #     ⇒ ★ 按本仓纪律，**未验成的不挂**（它的包装留在模块里，等前置打通再挂）✓
-#   ★★ **`inject="model"` 一律显式写**（★ 轮 461 修过的坑，门禁 `check_inject_binding` 会拦）✓
-#   ★ **选择走声明式下标**：`selection="index:0"` / `"index:0,index:1"` / `"__current_selection__"`
+# ★★ **`inject="model"` 一律显式写**（★ 轮 461 修过的坑，门禁 `check_inject_binding` 会
+# 拦）✓
+# ★ **选择走声明式下标**：`selection="index:0"` / `"index:0,index:1"` / `"__current_sele
+# ction__"`
 #     —— ★ 不收坐标（规则 3）✓
 # 官方依据: `C:\swapi\types\ISketchManager\` 的 `SketchTrim` / `SketchExtend` / `SketchO
 #           ffset2` /
-#   `CreateFillet` / `CreateLinearSketchStepAndRepeat` / `CreateCircularSketchStepAndRepeat`；
-#   枚举 `swSketchTrimChoice_e` / `swSkOffsetCapEndType_e` / `swSkOffsetMakeConstructionType_e`。
+# `CreateFillet` / `CreateLinearSketchStepAndRepeat` / `CreateCircularSketchStepAndRepea
+# t`；
+# 枚举 `swSketchTrimChoice_e` / `swSkOffsetCapEndType_e` / `swSkOffsetMakeConstructionTy
+# pe_e`。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

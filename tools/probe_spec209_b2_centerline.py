@@ -15,7 +15,8 @@
 #     ```
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertCenterLine2.md`（零参；摘要逐字
 #   「on the **selected entities**」；★ **无 Remarks 也无 Parameters** ⇒ 只能从示例读）·
-#   ★★ `examples\\Get_Centerlines_in_Drawing_Example_VB.md`（**调用序**：先选组件、再按点选面）·
+# ★★ `examples\\Get_Centerlines_in_Drawing_Example_VB.md`（**调用序**：先选组件、再按点
+# 选面）·
 #   `IView\\GetVisibleEntities2.md` · `IView\\GetCenterLineCount.md` ·
 #   `enums\\swViewEntityType_e.md`
 # 许可:   本仓库 MIT。无第三方代码引入。

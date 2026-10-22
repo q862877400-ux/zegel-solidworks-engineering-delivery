@@ -8,13 +8,16 @@
 #   ★★ **为什么能批量**：事实 425 只验了一条（`ISurfaceCutFeatureData` ⇒ **通**）。
 #     ★ 而**目标点名**那一族（`IAccessSelections` 指针族）需要**确定的边界**，不是一条样本。
 #     ⇒ ★★ **关键手法**：★ **拿「已经建成」的特征当载体** ——
-#       ★ 它们**都有特征对象** ⇒ ★ **都能 `GetDefinition`** ⇒ ★ **都能测 `AccessSelections`** ✓
+# ★ 它们**都有特征对象** ⇒ ★ **都能 `GetDefinition`** ⇒ ★ **都能测 `AccessSelections`** 
+# ✓
 #       （★ 而加厚 / 分割线**连对象都没有** ⇒ ★ 它们**测不了这一层**，那是另一回事。）
 #
 #   ★ 载体（★ 全是本仓**真机验过建成**的）：等距曲面 · 平面区域 · 替换面 · 旋转曲面 ·
 #     延伸曲面 · 缝合曲面 · 曲面切除。
-#   ★ 每个测三段：★ `GetDefinition` ⇒ `AccessSelections(doc, 空Dispatch)` ⇒ `ReleaseSelectionAccess`。
-#   ★★ 而 `Component` **必须传空 Dispatch 变体**（★ 事实 425：传 `None` ⇒ 类型不匹配（位置 2））。
+# ★ 每个测三段：★ `GetDefinition` ⇒ `AccessSelections(doc, 空Dispatch)` ⇒ `ReleaseSelect
+# ionAccess`。
+# ★★ 而 `Component` **必须传空 Dispatch 变体**（★ 事实 425：传 `None` ⇒ 类型不匹配（位置
+#  2））。
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -95,7 +98,9 @@ def _last_feature(doc, want_types=()):
                 tn = str(C.get_com_member(f, "GetTypeName2") or "")
             except Exception:                                             # noqa: BLE001
                 nm, tn = "", ""
-            #: \u2605 \u53ea\u6392\u9664**\u5bb9\u5668\u8282\u70b9**\u4e0e**\u57fa\u51c6\u9762**\uff08\u2605 \u800c\u4e0d\u662f\u6b63\u5411\u7b5b\u7c7b\u578b\uff09
+            #: \u2605 \u53ea\u6392\u9664**\u5bb9\u5668\u8282\u70b9**\u4e0e**\u57fa\u51c6
+            #: \u9762**\uff08\u2605 \u800c\u4e0d\u662f\u6b63\u5411\u7b5b\u7c7b\u578b\uff
+            #: 09
             if tn and tn not in ("RefPlane", "") and not nm.startswith(
                     ("\u524d\u89c6", "\u4e0a\u89c6", "\u53f3\u89c6", "Front", "Top", "Right", "\u539f\u70b9", "Origin")):
                 best = f

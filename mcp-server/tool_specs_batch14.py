@@ -54,10 +54,13 @@ SPECS_BATCH14 = [
     ToolSpec(
         name="solidworks_entities_on_body",
         title="List Entities On Body (with geometry)",
-        #: ★★ 2026-10-06（规格 209 · B3-1 · idx 115+145）：**指向改成 `entities_report`** ——
-        #:   ★ 裁决书强制「**扩已有的 `solidworks_entities_on_body`**，**不许开平行工具**」✓
+        #: ★★ 2026-10-06（规格 209 · B3-1 · idx 115+145）：**指向改成 `entities_report`*
+        #: * ——
+        #: ★ 裁决书强制「**扩已有的 `solidworks_entities_on_body`**，**不许开平行工具**
+        #: 」✓
         #:   ★★ 而改指向的**理由是可核的**：`entities_on_body` **返回 COM 对象** ⇒
-        #:     **过不了 MCP 的 JSON 边界** ⇒ 那条工具**经工具层其实拿不到东西**（★ 名字没变、能力变了）✓
+        #: **过不了 MCP 的 JSON 边界** ⇒ 那条工具**经工具层其实拿不到东西**（★ 名字没变
+        #: 、能力变了）✓
         module="sw_selection_spec", function="entities_report",
         inject="model",
         doc="List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). "

@@ -8,7 +8,8 @@
 #   （`0x80010105` 与 `0x800706BA`）⇒ ★★ **不是判据的问题，是"施加之后管理器不可用"**。
 #   ★ 而它**在一个"已知成功"的场景上也复现**（`apply_force`）⇒ ★ **与 B 组无关**。
 #   ⇒ ★★ 最可能的真因：★ **本会话累积了太多算例/文档**（★ 本会话已建过**几十个**算例）。
-#   ★ 本探针**只量这个**：★ 打开的文档数 · 已有的算例名 —— ★ 不施加任何载荷、不改任何东西。
+# ★ 本探针**只量这个**：★ 打开的文档数 · 已有的算例名 —— ★ 不施加任何载荷、不改任何东西
+# 。
 # 官方依据: `ISldWorks.GetDocumentCount`（★ 属性，不是方法 —— 真机实测）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -37,7 +38,8 @@ def main() -> int:
     ev: dict = {"at": time.strftime("%Y-%m-%dT%H:%M:%S")}
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     try:
-        #: ★ `GetDocumentCount` 是**属性**（★ 真机：当方法调会报 `'int' object is not callable`）
+        #: ★ `GetDocumentCount` 是**属性**（★ 真机：当方法调会报 `'int' object is not ca
+        #: llable`）
         ev["document_count"] = sw_connect.safe_get_com_member(sw, "GetDocumentCount")
     except Exception as exc:                                   # noqa: BLE001
         ev["document_count_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])

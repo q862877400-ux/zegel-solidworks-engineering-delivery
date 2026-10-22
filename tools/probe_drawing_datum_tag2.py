@@ -70,7 +70,8 @@ def main() -> int:
         if vname:
             trials.append(("select_view_by_name", lambda: sel(vname, "DRAWINGVIEW", 0)))
         #: ★★★ ★ 2026-10-03（轮 411）**这里原本有一条**
-        #:   `trials.append(("view_select_method", lambda: bool(get_com_member(view, "Select"))))`
+        #: `trials.append(("view_select_method", lambda: bool(get_com_member(view, "Sele
+        #: ct"))))`
         #:   —— ★ 而它是我**"试名字"性质**的调用（非官方入口）。
         #:   ★★ 真机后果：引出一个**模态进度窗**
         #:   （`#32770` · 静态文本「打开 零部件」「更新 工程图」「**正在加载零部件：**」）

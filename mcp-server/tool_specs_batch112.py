@@ -6,15 +6,19 @@
 #           的域**）
 #         ★ 生成器关键词（逐字）：`("fillet_bead", "weld_bead")` ✓
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
-#   · 入口：★ **`IFeatureManager::InsertFilletBeadFeature2`** ✓（★ v1 官方逐字 **Obsolete** ⇒ 只用 v2 ✓）
+# · 入口：★ **`IFeatureManager::InsertFilletBeadFeature2`** ✓（★ v1 官方逐字 **Obsolete*
+# * ⇒ 只用 v2 ✓）
 #   · 第 12 行逐字：★「…fills the gap between the **pre-selected part bodies**, if any.」
-#     ⇒ ★★ **前置 = 预先选中的实体** ✓（★ **不是「面集合」** ✗ —— ★ 台账那句二手概括是错的 ✓）
+# ⇒ ★★ **前置 = 预先选中的实体** ✓（★ **不是「面集合」** ✗ —— ★ 台账那句二手概括是错的 ✓
+# ）
 #   · 签名 16 参**逐字**（★ Type1·Size1·Length1·PenetrationType1·PenetrationValue1·Pitch·
-#     Type2·Size2·Length2·PenetrationType2·PenetrationValue2·Flag·EdgeNum1·DeSelEdge1·EdgeNum2·DeSelEdge2 ✓）
+# Type2·Size2·Length2·PenetrationType2·PenetrationValue2·Flag·EdgeNum1·DeSelEdge1·EdgeNu
+# m2·DeSelEdge2 ✓）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **1 个工具** ⇒ 工具数 478 → 479
 # ★★★ 等级如实：★★ 尚未真机验证 ⇒ ★ 台账**不提 level**（★ 红线⑥）✓
-# ★★ 参数契约：★ `inject='model'` 与目标函数首参名**一致** ✓（★ 第 22–24 轮门禁读数逼出来的定则 ✓）
+# ★★ 参数契约：★ `inject='model'` 与目标函数首参名**一致** ✓（★ 第 22–24 轮门禁读数逼出
+# 来的定则 ✓）
 # ★★ 引号纪律：★ 中文引号**一律用「」**（★ 事实 560 —— ★ 我为这条栽过 4 次）✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

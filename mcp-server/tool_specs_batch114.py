@@ -59,7 +59,8 @@ SPECS_BATCH114: list[ToolSpec] = [
         name="solidworks_gui_classify_dialog",
         title="Classify a SolidWorks Dialog into auto / needs_llm / forbidden / progress",
         #: ★★ **走 `scripts/sw_gui_dialog_classify`**（★ 工具层的**形状适配**）——
-        #:   ⚠ **为什么不直接挂 `sw_guard.classify_dialog`**（★ 实测）：★ 它的签名是 `(d: dict)`
+        #: ⚠ **为什么不直接挂 `sw_guard.classify_dialog`**（★ 实测）：★ 它的签名是 `(d: 
+        #: dict)`
         #:     ⇒ ★ 只吃 `controls` ⇒ ★ 多传 `title` 会 `TypeError` ✗
         #:   ★ 包装**收标量** · ★ **拼 `controls`** · ★ 再转交 ⇒ ★ **分级逻辑一行不改** ✓
         module="sw_gui_dialog_classify", function="classify_dialog",

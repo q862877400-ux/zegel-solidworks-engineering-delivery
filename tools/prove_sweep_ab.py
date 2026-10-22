@@ -9,10 +9,12 @@
 #
 #   ★★ 线索来自两处，而它们**互相矛盾**：
 #     · `scripts/sw_sweep.py` 的注释（★ 轮 315 真机定的）：
-#       > ★★ **即使这一步（`AccessSelections`）报错，特征仍然建成了**（`扫描1` · type=`Sweep`）
+# > ★★ **即使这一步（`AccessSelections`）报错，特征仍然建成了**（`扫描1` · type=`Sweep`
+# ）
 #       > ⇒ ★ **所以它不是必需的**
 #       ⇒ ★ 而**那条说的是 `swFmSweep = 17`（实体扫描）** ⚠
-#     · 轮 487 真机（曲面扫描，62）：`access_selections = 0x80010105` **且 `new_features = []`** ⚠
+# · 轮 487 真机（曲面扫描，62）：`access_selections = 0x80010105` **且 `new_features = [
+# ]`** ⚠
 #       ⇒ ★★ **即：62 这一路，报错就真的没建成** ✓（★ 假设）
 #
 #   ★ 做法：★ **同一份几何**（轮廓 = 上视面的圆 · 路径 = 前视面从原点沿 X 的线）
@@ -23,7 +25,8 @@
 # 官方依据: `C:\swapi\types\IFeatureManager\CreateDefinition.md`
 #   （★ `swFmSweep` (boss sweep) · ★ `swFmRefSurface` (surface sweep)）·
 #   `D:\AI\SW\_raw\enum_values_sldworks.txt`（`swFmSweep = 17` · `swFmRefSurface = 62`）·
-#   `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData Objects.md`（mark 表）
+# `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData
+#  Objects.md`（mark 表）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -76,7 +79,8 @@ def _one(sw, const):
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
                          0.0, 0.0, 0.0, 5.0 / 1000.0)
         P.end_sketch(doc)
-        #: ★ 路径：前视面（XZ · Y=0）从原点沿 X ⇒ ★ 起点 (0,0,0) 的 Z=0（★ 官方：路径起点须在轮廓平面上）
+        #: ★ 路径：前视面（XZ · Y=0）从原点沿 X ⇒ ★ 起点 (0,0,0) 的 Z=0（★ 官方：路径起
+        #: 点须在轮廓平面上）
         try:
             C.get_com_member(doc, "ClearSelection2", True)
         except Exception:                                                # noqa: BLE001

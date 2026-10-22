@@ -104,7 +104,8 @@ def main() -> int:
             sw_part.sketch_corner_rectangle(model2, 0.0, 0.0, 80.0, 60.0)
             sk2 = sw_part.current_sketch_name(model2)
             sw_part.end_sketch(model2)
-            #: ★★ 契约逐字：`create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗ ——
+            #: ★★ 契约逐字：`create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)
+            #: ` ✗ ——
             #:   ★ 不是 `(model, sketch, thickness, …)`（★ 且它**不抛、只回 `None`** ✓）
             spec = SM.BaseFlangeSpec(thickness=float(sw_connect.mm(2.0)),
                                      bend_radius=float(sw_connect.mm(1.0)),

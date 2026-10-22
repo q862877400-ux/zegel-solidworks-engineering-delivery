@@ -5,7 +5,8 @@
 # 文件:   tools/prove_linear_pattern_geometry.py
 # 定位:   ★ 2026-10-03（轮 453）—— ★ 承**事实 315**（`linear_pattern` 三次尝试后**没抛
 #           错而特征树 9→9**）
-#   与**本轮**的否定结论（★ `tools/prove_pattern_members.py`：★ 5 代成员**全都取得到** ⇒ **不是"成员不可用"**）。
+# 与**本轮**的否定结论（★ `tools/prove_pattern_members.py`：★ 5 代成员**全都取得到** ⇒ *
+# *不是"成员不可用"**）。
 #   ★★★ **故本轮换的是**判据**，不是参数**（★ 事实 53 那条区分）：
 #     ```
 #     ★ 事实 315 的判据 = 「**特征树名字有没有多一个**」
@@ -17,12 +18,15 @@
 #     ```
 #     ① ★ 特征树：★ 名字增量（★ 事实 315 用的那条）
 #     ② ★ `GetFeatureCount` 的前后（★ 比"名字"更粗、★ 而**不会漏掉改名**）
-#     ③ ★★ **几何**：★ `GetBodies2` 的**体数** + 第一个体的**包围盒**（★ 阵列**必须**让它变）
+# ③ ★★ **几何**：★ `GetBodies2` 的**体数** + 第一个体的**包围盒**（★ 阵列**必须**让它变
+# ）
 #     ```
-#   ⚠ **前置**：★ 要一个**能被阵列**的特征（★ 本探针先建一个凸台，★ 而它**没有**依赖外部草图）
+# ⚠ **前置**：★ 要一个**能被阵列**的特征（★ 本探针先建一个凸台，★ 而它**没有**依赖外部草
+# 图）
 # 官方依据: `IFeatureManager.FeatureLinearPattern3`（★ **10 参**：`Num1, Spacing1, Num2,
 #            Spacing2,
-#   FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）· 间距**单位是米**（事实 315）·
+# FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）· 间距**单位是米**
+# （事实 315）·
 #   本仓 `scripts/sw_part.py` 的 `linear_pattern`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -65,7 +69,8 @@ def main() -> int:
             #: ★★★ 2026-10-03（轮 453）**用本仓既有的帮手** ——
             #:   ★ 我第一版**自己搓**了一个读特征名的循环，
             #:   ★★ 而它在**树里有非特征项**时坏了（★ 真机：`feature_name = "?"`）⚠
-            #:   ★★★ 而本仓**早就有** `sw_feature_readback.feature_names`（★ 还专门一个模块）✓
+            #: ★★★ 而本仓**早就有** `sw_feature_readback.feature_names`（★ 还专门一个模
+            #: 块）✓
             from scripts.sw_feature_readback import feature_names as _fn
             return list(_fn(doc))
 

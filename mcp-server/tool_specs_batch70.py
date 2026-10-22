@@ -4,17 +4,27 @@
 # 仓库:   本项目自身（ToolSpec 声明层）
 # 文件:   mcp-server/tool_specs_batch70.py
 # 定位:   ★ 2026-10-03（轮 479）★ `specs/201-toolbar-gaps` 的 **B8** + **T701**。
-#   实现层在 `scripts/sw_ref_geometry.py`；★ 真机证据 `output/b8-ref-geometry-evidence.json`。
+# 实现层在 `scripts/sw_ref_geometry.py`；★ 真机证据 `output/b8-ref-geometry-evidence.jso
+# n`。
 #
-#   ==================  ==================================================  ==========  ========
-#   工具栏原文           官方成员                                             真机        登记
-#   ==================  ==================================================  ==========  ========
-#   质心                 `IFeatureManager.InsertCenterOfMass()`               ✅           ✅
-#   边界框               `IFeatureManager.InsertGlobalBoundingBox2(…)`        ✅ Status=0  ✅
-#   坐标系               `IFeatureManager.InsertCoordinateSystem(…)`          ✅           ✅
-#   基准面               `IFeatureManager.InsertRefPlane(6 参)`               ❌           ✗
-#   点                   `IFeatureManager.InsertReferencePoint(4 参)`          ❌           ✗
-#   ==================  ==================================================  ==========  ========
+# ==================  ==================================================  ==========  ==
+# ======
+# 工具栏原文           官方成员                                             真机        
+# 登记
+# ==================  ==================================================  ==========  ==
+# ======
+# 质心                 `IFeatureManager.InsertCenterOfMass()`               ✅          
+#  ✅
+# 边界框               `IFeatureManager.InsertGlobalBoundingBox2(…)`        ✅ Status=0 
+#  ✅
+# 坐标系               `IFeatureManager.InsertCoordinateSystem(…)`          ✅          
+#  ✅
+# 基准面               `IFeatureManager.InsertRefPlane(6 参)`               ❌          
+#  ✗
+# 点                   `IFeatureManager.InsertReferencePoint(4 参)`          ❌         
+#   ✗
+# ==================  ==================================================  ==========  ==
+# ======
 #
 #   ★★ **台账 T701 给的成员是错的**（★ 本仓 201 规格里那条）：
 #     它写 `Create3DBoundingBox` ⇒ ★ 官方原话是「Creates a 3D bounding box for a
@@ -28,7 +38,8 @@
 #     · `InsertGlobalBoundingBox2` 是 `…1` 的后继（★ 本模块直接用 `…2`）
 #
 #   ★★ **out 参数的正确传法**（★ 这一条踩过）：
-#     `InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResult_e`，
+# `InsertGlobalBoundingBox2` 的第 5 个形参 `Status` 是 **out**（`swGlobalBoundingBoxResu
+# lt_e`，
 #     **`Success=0`**）。⚠ 裸传 `0` 真机回
 #     `com_error: (-2147352571, '类型不匹配。', None, **5**)`（★ 位置 5 就是它）
 #     ⇒ ★ 必须用 **`sw_connect.out_i4()`**（其 docstring 逐字：「创建 `Int32&` 出参的
@@ -37,11 +48,13 @@
 #        比"特征树有没有多东西"更直接 ✓
 #
 # ★ 判据 = **回对象非 None** + **特征树叶子名增量**（`sw_part.feature_names`；
-#   ★ 边界框那条另用 `Status`）。★ 规则 2/3/6 均遵守（★ 参数是枚举/标志，**不是裸坐标**）。
+# ★ 边界框那条另用 `Status`）。★ 规则 2/3/6 均遵守（★ 参数是枚举/标志，**不是裸坐标**）
+# 。
 #
 # 官方依据（三源）:
 #   · `C:\\swapi\\types\\IFeatureManager\\InsertCenterOfMass.md`（`Feature ()`）
-#   · `C:\\swapi\\types\\IFeatureManager\\InsertGlobalBoundingBox2.md`（5 参 · `Status` 是 out）
+# · `C:\\swapi\\types\\IFeatureManager\\InsertGlobalBoundingBox2.md`（5 参 · `Status` 是
+#  out）
 #   · `C:\\swapi\\enums\\swGlobalBoundingBoxResult_e.md`（★ **Success=0**）
 #   · `C:\\swapi\\types\\IFeatureManager\\InsertCoordinateSystem.md`（3 参 → Feature）
 #   · `C:\\swapi\\types\\IModelDoc2\\InsertCoordinateSystem.md`（★ **Obsolete** 那一行）
@@ -153,11 +166,15 @@ _BATCH70: list[ToolSpec] = [
                   required=False, default=0.0),
             Param("number_of_ref_points", int, description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
                   required=False, default=1),
-            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**新增两个声明式选区入参** ——
-            #:   ★ 起因：★ 台账 `ref_geometry` 逐字「点（`InsertReferencePoint`）要先选实体，
-            #:     **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉）」；★ 而解析器**会清空选区**
+            #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**新增两个声明式选区入参** 
+            #: ——
+            #: ★ 起因：★ 台账 `ref_geometry` 逐字「点（`InsertReferencePoint`）要先选实
+            #: 体，
+            #: **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉）」；★ 而解析器**
+            #: 会清空选区**
             #:     （事实 503）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
-            #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**选择器字符串 + 实体种类**（★ 由函数紧邻调用前自己选）✓
+            #: ★ 规则 3 **不许收裸坐标** ⇒ ★ 收**选择器字符串 + 实体种类**（★ 由函数紧邻
+            #: 调用前自己选）✓
             Param("selection", str, description="★ 声明式选择器（规则 3：不收坐标）："
                                                 "`index:<n>` 或 `__current_selection__`；★ 空串=不选。",
                   required=False, default=""),

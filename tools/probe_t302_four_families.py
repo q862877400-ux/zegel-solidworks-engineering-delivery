@@ -4,7 +4,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
-# 文件:   `scripts/sw_weldment.py`（`create_structural_member`）· `scripts/sw_sheet_metal.py`
+# 文件:   `scripts/sw_weldment.py`（`create_structural_member`）· `scripts/sw_sheet_meta
+# l.py`
 #         （`create_base_flange`）· `scripts/sw_selection_spec.py`（声明式选择）
 # 定位:   ★ SPEC 的 **T302** 逐字：「**有 `AccessSelections` 的**先判指针族**再决定做
 #           不做**（事实 47/474）」⇒
@@ -16,7 +17,8 @@
 #     · `IFeatureManager.InsertGussetFeature{,2,3}`（★ **焊件**角撑板）
 #     · `IFeatureManager.InsertSheetMetalGussetFeature{,2,3}`（★ **钣金**角撑板）
 #     · `IFeatureManager.InsertWeldmentTrimFeature{,2}`（★ 焊件裁剪延伸）
-#   ★★★★ **官方旁证（★ 本轮查的）**：`IFeatureManager.CreateDefinition.md` 列的 **35 个常量**里，
+# ★★★★ **官方旁证（★ 本轮查的）**：`IFeatureManager.CreateDefinition.md` 列的 **35 个常
+# 量**里，
 #     与这四族相关的**只有 `swFmSMGusset`（钣金角撑板）一个** ——
 #     ★★ **`EndCap` / `Gusset`（焊件）/ `WeldmentTrim` 都不在那张名单上** ⇒
 #       ★★★ **⇒ 它们只能走 `IModelDoc2` / `IFeatureManager` 的**直接 Insert 方法**** ✓
@@ -112,7 +114,8 @@ def main() -> int:
         P.extrude_boss(model, sk, 2.0)
         #: ★ 建钣金基体法兰（★ 本仓已有的真机验证过的路径）
         #: ★★★★ **修 1**（★ 我第一版猜错了签名 —— ★ 事实 517）：★ 真签名是
-        #:   `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ⇒ **要一个 spec 对象** ✓
+        #: `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ⇒ **要一个 spec
+        #:  对象** ✓
         import sw_sheet_metal as SM
         try:
             spec = SM.BaseFlangeSpec(thickness=2.0, bend_radius=1.0, depth=20.0)
@@ -172,8 +175,10 @@ def main() -> int:
                          "异常": str(exc)[:160]})
         fm = get_com_member(model, "FeatureManager")
         #: ★★★★ **修 4**（★ 我第一版**根本没调** —— ★ 事实 517）：
-        #:   `get_com_member` 是「**取或调**」⇒ 0 参调用失败时**回成员本身**（一个 bound method）⇒
-        #:   ★★ 我第一版记下来的 `返回: <bound method …>` 就是那个 ⇒ **特征增量 0 不是能力的结论** ✓
+        #: `get_com_member` 是「**取或调**」⇒ 0 参调用失败时**回成员本身**（一个 bound m
+        #: ethod）⇒
+        #: ★★ 我第一版记下来的 `返回: <bound method …>` 就是那个 ⇒ **特征增量 0 不是能力
+        #: 的结论** ✓
         #:   ⇒ 现在**显式传参调**（★ 参数个数按官方签名，★ 先各给一个中性形）✓
         for label, meth, args in (
                 ("焊件顶端盖 InsertEndCapFeature3", "InsertEndCapFeature3", (0.002, True, 0.0)),

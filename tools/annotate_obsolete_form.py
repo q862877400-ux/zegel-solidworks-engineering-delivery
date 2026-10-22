@@ -1,9 +1,11 @@
 """★ 给废弃命中补一维标注「方法 ↔ 属性」（★ 任务书阶段 2 要的那一类 · 轮 135 · 第二版）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + `output/obsolete-dotcall-scan.json`（★ 判据产物）+ 官方页 front-matter
+# 仓库:   本项目自身 + `output/obsolete-dotcall-scan.json`（★ 判据产物）+ 官方页 front-m
+# atter
 # 文件:   tools/annotate_obsolete_form.py（★ 只报不动 —— 证据脚本）
 # 定位:   ★★ 任务书阶段 2 逐字：★「★ 给分类器补「**方法↔属性**」这一类
-#     （★ 现最大的一类：★ `GetActiveSketch2` **15** 条 + `SystemValue` + `GetSystemValue2`）」✓
+# （★ 现最大的一类：★ `GetActiveSketch2` **15** 条 + `SystemValue` + `GetSystemValue2`）
+# 」✓
 #   ★★★ **⚠ 同一条任务书也说**「不改判据」** ⇒ ★ **⇒ 补法是**加一维只读标注**、
 #     ★ **一行都不动 `tools/scan_obsolete_safe.py`** ✓
 #   ★★★★ **依据（★ 两条、★ 独立、★ 一致）**：★ ① 官方页 front-matter 的 `kind:` ·

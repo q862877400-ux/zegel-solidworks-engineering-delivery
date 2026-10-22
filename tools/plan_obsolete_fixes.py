@@ -46,11 +46,14 @@ def official_params(member: str) -> dict:
     names = re.findall(r"ByVal\s+(\w+)", t) or re.findall(r"\*\*(\w+)\*\*:", t)
     byref = bool(re.search(r"\bbyref\b|\bByRef\b|\bout\b", t, re.I))
     #: ★★★ 2026-10-03（接手轮）**新加「方法↔属性」的识别** —— ★ 这是**本仓最大的一类**：
-    #:   ★ `GetActiveSketch2`（★ 方法）→ `ActiveSketch`（★ **属性**，`Sketch ActiveSketch {get;}`）；
+    #: ★ `GetActiveSketch2`（★ 方法）→ `ActiveSketch`（★ **属性**，`Sketch ActiveSketch 
+    #: {get;}`）；
     #:   ★ `SystemValue`（★ **属性**）→ `GetSystemValue3`（★ 方法）。
-    #:   ★★ 判据：★ 官方签名里出现 **`{get;}` / `{set;}` / `{ get; set; }`** ⇒ **是属性** ✓
+    #: ★★ 判据：★ 官方签名里出现 **`{get;}` / `{set;}` / `{ get; set; }`** ⇒ **是属性** 
+    #: ✓
     #:   ★ 为什么必须单独成类：★ 属性**没有形参** ⇒ ★ 用"参数个数"去判会得到 0，
-    #:     而**调用形态完全不同**（★ 属性是**取值**、方法是**调用**）⇒ ★ 混在一起会给出错的改法。
+    #: 而**调用形态完全不同**（★ 属性是**取值**、方法是**调用**）⇒ ★ 混在一起会给出错的
+    #: 改法。
     is_property = bool(re.search(r"\{\s*(get|set)\s*;", sig, re.I))
     return {"found": True, "signature": sig, "n_params": len(params),
             "params": names[:20], "has_byref_or_out": byref, "is_property": is_property,
@@ -92,7 +95,8 @@ def main() -> int:
     plan = []
     for r in rows:
         succ = (r.get("successor") or "").split("::")[-1]
-        #: ★ 多级后继：★ `FeatureFillet` → `FeatureFillet2` → `FeatureFillet3`（★ 本仓事实）
+        #: ★ 多级后继：★ `FeatureFillet` → `FeatureFillet2` → `FeatureFillet3`（★ 本仓事
+        #: 实）
         chain, cur = [succ], succ
         for _ in range(3):
             info = official_params(cur)
@@ -117,9 +121,12 @@ def main() -> int:
         #:   ★ 后继多出 by-ref / out ⇒ ★ **换过去会撞 pywin32 迟到绑定的不可调用**
         #:   ⇒ ★★ **判为"不可换，保留现状并记档"**。
         byref_block = bool(finfo.get("has_byref_or_out"))
-        #: ★★★ 「方法 ↔ 属性」这一类（★ 本仓最大的一类）—— ★★ 单列，★ 因为**调用形态完全不同**：
-        #:   · ★ **方法 → 属性**：★ `obj.GetActiveSketch2()` ⇒ `obj.ActiveSketch`（★ 去掉括号）
-        #:   · ★ **属性 → 方法**：★ `obj.SystemValue` ⇒ `obj.GetSystemValue3(...)`（★ 要加括号与实参）
+        #: ★★★ 「方法 ↔ 属性」这一类（★ 本仓最大的一类）—— ★★ 单列，★ 因为**调用形态完全
+        #: 不同**：
+        #: · ★ **方法 → 属性**：★ `obj.GetActiveSketch2()` ⇒ `obj.ActiveSketch`（★ 去掉
+        #: 括号）
+        #: · ★ **属性 → 方法**：★ `obj.SystemValue` ⇒ `obj.GetSystemValue3(...)`（★ 要加
+        #: 括号与实参）
         #:   ★ 用"参数个数"判它会得到 0 vs 0（★ 属性没有形参）⇒ ★ **会误判成"纯改名"** ✓
         succ_is_prop = bool(finfo.get("is_property"))
         ours_is_call = "(" in (window.split(r["member"], 1)[-1][:2] if r["member"] in window else "")

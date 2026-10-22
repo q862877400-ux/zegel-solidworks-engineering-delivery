@@ -7,16 +7,20 @@
 #
 #   ★★ **它从哪个事实推出来**：
 #     · 本轮查出 **117 个 FeatureData 接口都带 `AccessSelections`**
-#       （`IExtrudeFeatureData2` · `IRevolveFeatureData2` · `ISweepFeatureData` · `ILoftFeatureData` ·
+# （`IExtrudeFeatureData2` · `IRevolveFeatureData2` · `ISweepFeatureData` · `ILoftFeatur
+# eData` ·
 #        `IFillSurfaceFeatureData` · `IThickenFeatureData` · `IRuledSurfaceFeatureData` · …）
 #     · ★★ **而本仓大量能力是成功过的**（拉伸 / 旋转 / 扫描实体 / 放样 / 填充曲面）
 #       ⇒ ★ **故「有 `AccessSelections`」≠「到不了」** ⚠
 #     · ★ 而本仓 `scripts/sw_sweep.py` 的注释（★ 轮 315 真机定的）**早就写着**：
-#       > ★★ **即使这一步（`AccessSelections`）报错，特征仍然建成了**（`扫描1` · type=`Sweep`）
+# > ★★ **即使这一步（`AccessSelections`）报错，特征仍然建成了**（`扫描1` · type=`Sweep`
+# ）
 #       > ⇒ ★ **所以它不是必需的**
 #
-#   ⇒ ★★★ **推论**：★ `AccessSelections` 只是"**认领选择**"，★ **`CreateFeature` 才是判据**
-#     ⇒ ★★ **故对「扫描曲面」该试：`CreateDefinition(62)` → 设属性 → **直接 `CreateFeature`**
+# ⇒ ★★★ **推论**：★ `AccessSelections` 只是"**认领选择**"，★ **`CreateFeature` 才是判据*
+# *
+# ⇒ ★★ **故对「扫描曲面」该试：`CreateDefinition(62)` → 设属性 → **直接 `CreateFeature`*
+# *
 #       （★ 中途 `AccessSelections` 若报错就**忽略**，★ 与实体扫描那条成功路一致）** ✓
 #
 #   ⚠ 而★ 轮 486-488 之所以没成，★ 很可能是因为**走的是 `configure_linear_pattern` 那条**
@@ -70,7 +74,8 @@ def _one(sw, tag, *, use_access, set_props=True):
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCircleByRadius",
                          0.0, 0.0, 0.0, 5.0 / 1000.0)
         P.end_sketch(doc)
-        #: \u2605 \u8def\u5f84\uff1a\u524d\u89c6\u9762\u4ece\u539f\u70b9\u6cbf X\uff08\u2605 \u8d77\u70b9 (0,0,0) \u7684 Z=0 \u2713\uff09
+        #: \u2605 \u8def\u5f84\uff1a\u524d\u89c6\u9762\u4ece\u539f\u70b9\u6cbf X\uff08\u
+        #: 2605 \u8d77\u70b9 (0,0,0) \u7684 Z=0 \u2713\uff09
         try:
             C.get_com_member(doc, "ClearSelection2", True)
         except Exception:                                                 # noqa: BLE001
@@ -79,7 +84,8 @@ def _one(sw, tag, *, use_access, set_props=True):
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
                          0.0, 0.0, 0.0, 40.0 / 1000.0, 0.0, 0.0)
         P.end_sketch(doc)
-        #: \u2605 \u9009\u533a\uff1a\u8f6e\u5ed3 mark=1 + \u8def\u5f84 mark=4\uff08\u2605 \u7528 SelectByID2 \u2014\u2014 \u4e8b\u5b9e 384 \u7684\u6b63\u89e3\uff09
+        #: \u2605 \u9009\u533a\uff1a\u8f6e\u5ed3 mark=1 + \u8def\u5f84 mark=4\uff08\u260
+        #: 5 \u7528 SelectByID2 \u2014\u2014 \u4e8b\u5b9e 384 \u7684\u6b63\u89e3\uff09
         ext = C.get_com_member(doc, "Extension")
         picked = {}
         for cand, mark, label in (("\u8349\u56fe1", 1, "profile"), ("\u8349\u56fe2", 4, "path")):
@@ -107,7 +113,8 @@ def _one(sw, tag, *, use_access, set_props=True):
         if data is None:
             return row
         if set_props:
-            #: \u2605 \u8bbe\u4e00\u4e24\u4e2a\u57fa\u672c\u5c5e\u6027\uff08\u2605 \u800c\u4e0d\u78b0 AccessSelections\uff09
+            #: \u2605 \u8bbe\u4e00\u4e24\u4e2a\u57fa\u672c\u5c5e\u6027\uff08\u2605 \u800
+            #: c\u4e0d\u78b0 AccessSelections\uff09
             for attr, val in (("Direction", None), ("TwistControlType", None)):
                 pass
         if use_access:

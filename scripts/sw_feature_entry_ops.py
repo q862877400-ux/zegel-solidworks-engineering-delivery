@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（**把探针里已验证的调用序抬成可挂工具的能力层**）。
 # 文件:   scripts/sw_feature_entry_ops.py
 # 定位:   ★★ **本文件的存在理由**（★ 一种反复出现的形态）：
-#   有些能力**已经真机建成过**，但代码只留在 `tools/prove_*.py` 探针里、**没抬进 `scripts/`**
+# 有些能力**已经真机建成过**，但代码只留在 `tools/prove_*.py` 探针里、**没抬进 `scripts/
+# `**
 #   ⇒ 于是 `capabilities.yaml` 里是 `level: verified`、**却挂不上任何 MCP 工具** ——
 #   ★ 而那正是台账 `limitations` **自己写明的下一步**：「⚠ **本包装未接进 MCP 工具层**」。
 #   ★ 依据：`specs/202-user-coverage-gaps/recon/scan-S2b-ledger-vs-tools.md` 的 **A 表**
@@ -12,8 +13,10 @@
 #   官方依据（逐页读过）:
 #     · `C:\swapi\types\IFeatureManager\InsertCosmeticThread3.md`
 #       `Feature InsertCosmeticThread3(int Standard, string StandardType, string Size,
-#        double Diameter, int EndType, double Depth, string Note)`（**7 参**，md **未标 Obsolete**）
-#     · `ISurface.IsCylinder()` —— ★ **官方判形方法**（★ **不猜** `Surface.Identity` 的字符串）
+# double Diameter, int EndType, double Depth, string Note)`（**7 参**，md **未标 Obsolet
+# e**）
+# · `ISurface.IsCylinder()` —— ★ **官方判形方法**（★ **不猜** `Surface.Identity` 的字符
+# 串）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -208,7 +211,8 @@ def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction:
     thick_m = float(thickness_mm) / 1000.0                              #: ★ 规则 2：换算只此一次
     try:
         if cut:
-            #: ★ `FeatureCutThicken(Thickness, Direction, FaceIndex, FillVolume, UseFeatScope, UseAutoSelect)`
+            #: ★ `FeatureCutThicken(Thickness, Direction, FaceIndex, FillVolume, UseFeat
+            #: Scope, UseAutoSelect)`
             ret = get_com_member(fm, kind, thick_m, int(direction), 0, bool(fill_volume),
                                  bool(use_feat_scope), bool(use_auto_select))
         else:
@@ -233,7 +237,8 @@ def thicken_surface(model, *, thickness_mm: float, cut: bool = False, direction:
     return out
 
 
-#: ★ `GetBodies2` 的 `Type` 参数：★ 0 = 实体体 · **1 = 曲面体**（★ 展平要的是**曲面体**）
+#: ★ `GetBodies2` 的 `Type` 参数：★ 0 = 实体体 · **1 = 曲面体**（★ 展平要的是**曲面体**
+#: ）
 _BODY_TYPE_SURFACE = 1
 _BODY_TYPE_SOLID = 0
 

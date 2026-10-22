@@ -116,7 +116,8 @@ def resolve_module(name: str, repo: Path = REPO) -> Path | None:
     if direct.is_file():
         return direct
     # ⚠ 排除**桌面内嵌快照**（`apps/*/resources/skill/**`，构建产物、gitignore）
-    #   —— 否则 `drawing_workflow.py` 会有 2 个命中（源 + 快照）⇒ 解析器判「不唯一」而放弃。
+    # —— 否则 `drawing_workflow.py` 会有 2 个命中（源 + 快照）⇒ 解析器判「不唯一」而放弃
+    # 。
     hits = [p for p in repo.rglob(name)
             if p.is_file() and "__pycache__" not in p.parts and ".git" not in p.parts
             and "resources" not in p.parts]
@@ -144,7 +145,8 @@ def actual_calls(module: Path, refs: list, repo: Path = REPO) -> int | None:
 #: ```
 #: ⇒ **手工数字没有门禁** ⇒ 改一行表体，合计不会自己跟着变
 #:   （**与 A8 的 `harvest-report` 同型缺口**：只查存在、不查数字）。
-#: ⚠ 本门禁只判**纯机器可判**的那一件：**带「合计」/「小计」的行必须是它上方表体的列和**。
+#: ⚠ 本门禁只判**纯机器可判**的那一件：**带「合计」/「小计」的行必须是它上方表体的列和**
+#: 。
 #:   它**不判**「表体内容对不对」（那要人核），但算术自洽是**必要**条件，
 #:   且**它能抓到最常见的腐坏方式**（改了行数忘改合计）。
 TOTAL_ROW = re.compile(r"^\|\s*\*{0,2}(合计|小计)\*{0,2}\s*\|")
@@ -247,7 +249,8 @@ def main(argv=None) -> int:
         #   与轮 82 修掉的 `check_report_freshness` **完全同型** ——
         #   `--doc` 默认指向**本仓库的** `docs/signature-audit.md`，
         #   所以「**文档里找不到逐模块表**」是**输入坏了**，不是「数据源不可用」。
-        #   实测（轮 82 那次的报告行就是被脚本写坏的）：**产物被写坏 ⇒ 门禁 SKIP ⇒ 全绿**。
+        # 实测（轮 82 那次的报告行就是被脚本写坏的）：**产物被写坏 ⇒ 门禁 SKIP ⇒ 全绿**
+        # 。
         # ⇒ **区分两件事**：① 文档**不存在** ⇒ SKIP（便携性，别的机器上不该无条件红）；
         #   ② 文档在、但**逐模块表读不出来** ⇒ **FAIL**（那份产物坏了就是坏了）。
         if Path(a.doc).is_file():
@@ -301,10 +304,12 @@ def main(argv=None) -> int:
         print("  ⚠ %d 个模块跑不了（文件不在）：%s" % (len(skipped), ", ".join(skipped)))
     if checked == 0:
         # ⚠⚠ **这里曾经无条件 `SKIP`，那是假绿**（2026-10-01 轮 84 查证）：
-        #   能走到这里 ⇒ `refs` **必然非空**（L238 已把「拿不到反射转储」那条 SKIP 掉了）。
+        # 能走到这里 ⇒ `refs` **必然非空**（L238 已把「拿不到反射转储」那条 SKIP 掉了）
+        # 。
         #   而表里的模块是**本仓库自己的 `.py`**（`scripts/*.py` / `subskills/**/*.py`）——
         #   **一个都解析不出来**只可能是：**路径解析坏了** 或 **仓库残缺**。
-        #   ★ **轮 55 首跑就撞上过这个形态**：`resolve_module` 当时写法不对 ⇒ 6/6 全报「跑不了」
+        # ★ **轮 55 首跑就撞上过这个形态**：`resolve_module` 当时写法不对 ⇒ 6/6 全报「跑
+        # 不了」
         #     ⇒ 被这条 SKIP 放成"便携性守卫"，**全绿**（当时靠人发现才修）。
         #   ⇒ 实测（`tools/probe_checked_zero_skip.py`）：把 `--repo` 指向**空目录**、
         #     `--raw` 用真反射 ⇒ 复现出「反射 13 份在、6 个模块全跑不了 ⇒ SKIP ⇒ exit 0」。

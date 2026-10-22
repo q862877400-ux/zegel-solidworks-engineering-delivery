@@ -7,16 +7,20 @@
 #   机器核验只到「`all_specs()` 里有它们 + `check_specs` 无问题」这一步 ——
 #   ★ **那不等于"经工具层能跑"**。本探针补的就是这一段：
 #   ★ **复刻注册器真实做的三步**（★ 逐字依据 `mcp-server/tool_registry.py`）：
-#     ① `kwargs[inject_as or inj] = resolver(params)`（:507）⇒ ★ 注入的**键名**由 `inject` 决定
-#     ② `kwargs[target] = getattr(params, p.name)`（:498）⇒ ★ 参数按 `spec.params` 的**名字**取
+# ① `kwargs[inject_as or inj] = resolver(params)`（:507）⇒ ★ 注入的**键名**由 `inject` 
+# 决定
+# ② `kwargs[target] = getattr(params, p.name)`（:498）⇒ ★ 参数按 `spec.params` 的**名字*
+# *取
 #     ③ `mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])`（:524）
 #        ⇒ ★ **模块名拼在 `scripts.` 之后**、函数按 `spec.function` 取
-#   ⇒ ★★ 这三步正是最容易错的地方（模块名拼错 / 注入键错 / 形参名错 —— 见 known-facts 491），
+# ⇒ ★★ 这三步正是最容易错的地方（模块名拼错 / 注入键错 / 形参名错 —— 见 known-facts 491
+# ），
 #     ★ 而它们**只有按契约调才会暴露**。
 #   ★ 判据三分（★ 事实 496：前置与能力必须分开记）：
 #     **建成** / **前置未成立**（写明缺什么）/ **真阴性**。
 #   官方依据（★ 逐页读过；契约抄本在 `specs/202-user-coverage-gaps/recon/api/`）:
-#     · `IDrawingDoc.CreateDrawViewFromModelView3` · `CreateSectionViewAt5` · `CreateDetailViewAt4`
+# · `IDrawingDoc.CreateDrawViewFromModelView3` · `CreateSectionViewAt5` · `CreateDetailV
+# iewAt4`
 #     · `IDrawingDoc.SetupSheet6` · `IModelDoc2.InsertNote` · `IView.InsertHoleTable3`
 #     · `ISheet.InsertRevisionTable2` · `IView.AutoInsertCenterMarks2`
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -41,11 +45,13 @@ from scripts import sw_connect as C                                     # noqa: 
 OUT = REPO / "output" / "drawing-tools-e2e-evidence.json"
 #: ★★ **每次运行用唯一文件名** —— 否则上一轮留下的同名文件可能仍被 SolidWorks 打开
 #:   ⇒ `SaveAs` 失败（`part_saved=False`）⇒ ★ 后续"需要已存盘零件"的格子会**静默跳过前置**
-#:   （2026-10-03 实测：那正是"两格都 views_before=0"的原因，且会让 `projected_view` **误用旧文件**）。
+#: （2026-10-03 实测：那正是"两格都 views_before=0"的原因，且会让 `projected_view` **误
+#: 用旧文件**）。
 _RUN_TAG = time.strftime("%H%M%S")
 PART = REPO / "output" / ("_probe_tools_e2e_part_%s.SLDPRT" % _RUN_TAG)
 
-#: ★ 8 条工具各自要给的实参（★ 名字**必须与 `tool_specs_batch75.py` 里 `Param(...)` 的第一个参数逐字一致**）。
+#: ★ 8 条工具各自要给的实参（★ 名字**必须与 `tool_specs_batch75.py` 里 `Param(...)` 的第
+#: 一个参数逐字一致**）。
 TOOL_ARGS: dict[str, dict] = {
     "solidworks_drawing_create_projected_view": {"part_path": str(PART), "view_name": "*Front",
                                                   "x_mm": 140.0, "y_mm": 120.0, "scale": 0.0},
@@ -81,10 +87,14 @@ TOOL_ARGS: dict[str, dict] = {
 }
 
 #: ★ 需要"同一张图上先有视图"才能测的工具（★ 逐个建一张新工程图 ⇒ 先补一个视图）。
-#: ★ `insert_center_marks` 也在内 —— 它先 `_map_standard_views_from_sheet_views` 找 **front/top/right**，
-#:   ★ 图上没视图时 `mapped_views.get("front")` 是 None ⇒ 直接判 failed（★ 那是**前置**，不是能力）。
-#: ★ `create_broken_view` 要**按视图名**解析（官方 Remarks：无选区前置，按名字取 IView）；
-#:   ★ `create_auxiliary_view` 官方要求「based on a **selected edge in a drawing view**」⇒ 先有视图。
+#: ★ `insert_center_marks` 也在内 —— 它先 `_map_standard_views_from_sheet_views` 找 **fr
+#: ont/top/right**，
+#: ★ 图上没视图时 `mapped_views.get("front")` 是 None ⇒ 直接判 failed（★ 那是**前置**，
+#: 不是能力）。
+#: ★ `create_broken_view` 要**按视图名**解析（官方 Remarks：无选区前置，按名字取 IView）
+#: ；
+#: ★ `create_auxiliary_view` 官方要求「based on a **selected edge in a drawing view**」⇒
+#:  先有视图。
 NEEDS_VIEW = {"solidworks_drawing_create_hole_table", "solidworks_drawing_insert_center_marks",
               "solidworks_drawing_create_broken_view", "solidworks_drawing_create_auxiliary_view"}
 
@@ -122,7 +132,8 @@ def _build_part(sw, row: dict):
             P.extrude_boss(doc, names[-1], 0.01)
             row["extrude_sketch"] = names[-1]
         # ★ 打一个孔：★ 好让"孔表 / 中心符号线（targets=['holes']）"有**圆边**可用
-        #   （★ 与 `tools/prove_drawing_batch.py::_build_part` 同一手法；★ 孔不成**不阻断**）
+        # （★ 与 `tools/prove_drawing_batch.py::_build_part` 同一手法；★ 孔不成**不阻断*
+        # *）
         try:
             from scripts import sw_hole_features as HF
             rep = HF.create_hole_wizard_at_selection_report(doc, "+z", "M8")
@@ -240,7 +251,8 @@ def main() -> int:
             row["drawing_title"] = str(_get(doc, "GetTitle") or "")
             row["views_before"] = _view_count(doc)
             row["annotations_before"] = _annotation_total(doc)
-            # ★ 有的工具要求"同一张图上先有视图" ⇒ 先补一个（★ 用**能力层**建，避免又引入一层变量）
+            # ★ 有的工具要求"同一张图上先有视图" ⇒ 先补一个（★ 用**能力层**建，避免又引
+            # 入一层变量）
             if name in NEEDS_VIEW:
                 if not part_path:
                     row["pre_step_skip"] = ("★ 前置未成立：零件没存盘 ⇒ 无法建母视图"
@@ -265,7 +277,8 @@ def main() -> int:
                 row["preconditions_held"] = bool(part_path)
             # ★★ **重新取基线** —— 前置步骤自己会建一个母视图；★ 若不在调工具前重取，
             #   `view_delta` 会把**前置步骤的成果**算成本工具的成果 ⇒ ★ **假绿**
-            #   （2026-10-03 实测踩到：`hole_table` / `insert_center_marks` 两格被误判为 ok）。
+            # （2026-10-03 实测踩到：`hole_table` / `insert_center_marks` 两格被误判为 o
+            # k）。
             if name in NEEDS_VIEW:
                 row["views_before_call"] = _view_count(doc)
                 row["annotations_before_call"] = _annotation_total(doc)
@@ -287,7 +300,8 @@ def main() -> int:
             #   原先只认 `ret_ok` 与 `view_delta` ⇒ ★ **产"注解"的工具全被漏判**
             #   （实测：`insert_surface_finish_symbol` 明明 `annotations 72 → 73`，
             #    ★ 却因 `ret_ok=False` 且 `view_delta=0` 被判成 `ok=False`）。
-            #   ★ 现把 **`annotation_delta`** 也纳入判据（★ 三条**都报**，判据取"任一为正"）。
+            # ★ 现把 **`annotation_delta`** 也纳入判据（★ 三条**都报**，判据取"任一为正"
+            # ）。
             row["ok"] = bool(row.get("ret_ok") or (row.get("view_delta") or 0) >= 1
                              or (row.get("annotation_delta") or 0) >= 1)
             row["verified_by"] = ("工具返回值 ok **或** 视图数增量 **或** 注解数增量"

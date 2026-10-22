@@ -4,9 +4,11 @@
 # 文件:   tools/probe_spec209_b2.py
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-2（hem）** 与 **B2-1（unfold）** 
 #           真机探针。
-#   ★★ 为什么这两条**同一次跑**：unfold 的**前置是"带折弯的钣金件"**，而本机磁盘上**没有**这种模型
+# ★★ 为什么这两条**同一次跑**：unfold 的**前置是"带折弯的钣金件"**，而本机磁盘上**没有**
+# 这种模型
 #     （全盘扫过 `.SLDPRT`：只有刀柄/螺母/垫圈/壳体那几个，**零个钣金件**），
-#     且 `create_edge_flange` / `create_one_bend` 属**事实 47 那一族**（`AccessSelections` 到不了，
+# 且 `create_edge_flange` / `create_one_bend` 属**事实 47 那一族**（`AccessSelections` 
+# 到不了，
 #     20+ 形态已穷尽 ⇒ **不许再试**）⇒ ★★ **hem 是唯一可达的"造出折弯"的路**
 #     （它是**直接 16 参调用**，不经过 `AccessSelections`）✓
 # 官方依据: 见 `scripts/sw_sheet_metal.py` 本轮追加段的来源块（两页 + 五个枚举 + 两份官
@@ -18,7 +20,8 @@
 # ★★ **判据（规则 6 —— 一律回读，不用返回值）**：
 #   ```
 #   T1 造前置    ★ 基体法兰（闭轮廓）建成 + `IsSheetMetal` 为真
-#   T2 hem       ★ 特征树 **+1** 且（**面数变化** 或 **包围盒变化**）；★ 并回读 `IHemFeatureData.Type`
+# T2 hem       ★ 特征树 **+1** 且（**面数变化** 或 **包围盒变化**）；★ 并回读 `IHemFeatu
+# reData.Type`
 #   T3 unfold    ★ 特征树增量 + **平展型式个数**；★ 且**记下"折弯特征"到底叫什么**
 #   T4 负例      ★ 在**没有折弯**的基体法兰上调 unfold ⇒ **如实报**（不拿"没报错"当成功）
 #   ```
@@ -121,8 +124,10 @@ def main() -> int:
             ev["T2_hem"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
             print("  T2 FATAL %s" % str(exc)[:140])
 
-    #: ── T3 · unfold（idx 336）★ 用 hem 造出来的那个特征当"折弯"（★★ 这一格就是裁决书要的
-    #:   "**必须先真机定出可建对象**"）────────────────────────────────────────────────────
+    #: ── T3 · unfold（idx 336）★ 用 hem 造出来的那个特征当"折弯"（★★ 这一格就是裁决书要
+    #: 的
+    #: "**必须先真机定出可建对象**"）───────────────────────────────────────────────────
+    #: ─
     if doc is not None and hem_feature:
         try:
             r = SM.create_unfold(doc, [hem_feature], face_index=0)
@@ -147,7 +152,8 @@ def main() -> int:
     else:
         ev["T3_unfold"] = {"skipped": "★ 前置不存在（没有 hem 特征可当折弯）—— 如实记，不伪造"}
 
-    #: ── T4 · 负例：**没有折弯**的基体法兰上调 unfold ─────────────────────────────────────
+    #: ── T4 · 负例：**没有折弯**的基体法兰上调 unfold ─────────────────────────────────
+    #: ────
     try:
         doc2 = _make_sheet_metal()
         names2 = _feature_names(doc2)

@@ -123,10 +123,12 @@ def mass_property_object(model):
     ext = get_com_member(model, "Extension")
     if ext is None:
         raise RuntimeError("取不到 model.Extension —— 无法读质量属性")
-    #: ★★★★ 2026-10-01（轮 263，**修地基 D3 查出的真 bug**）：★ **必须先用 `CreateMassProperty2`**。
+    #: ★★★★ 2026-10-01（轮 263，**修地基 D3 查出的真 bug**）：★ **必须先用 `CreateMassPr
+    #: operty2`**。
     #:   ★ 真机对照实验（`tools/probe_mass_units_controlled.py`）证据：
     #:     · **老入口** `CreateMassProperty`（官方标注 **Obsolete**）拿到的对象
-    #:       ⇒ ★★ **`Recalculate` 不可达**（真机报 `<unknown>.Recalculate` —— **事实 36 的形态**：
+    #: ⇒ ★★ **`Recalculate` 不可达**（真机报 `<unknown>.Recalculate` —— **事实 36 的形态
+    #: **：
     #:         名字在 `IMassProperty2` 里存在，但**挂在别的接口上**）；
     #:       ⇒ ★★★ **且 `Density` 恒为 `1000.0`，赋了 `AISI 1020`（≈7900 kg/m³）也不变**
     #:         ⇒ **读数是错的**（★ "看起来对、实际错" —— 最危险的一类）。
@@ -164,7 +166,8 @@ def mass_property_object(model):
 
 
 #: ★★ **截面属性**（规格 211 · B1-1）—— 官方 24 元数组的**下标定义**
-#:   ★ 官方依据：`C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` 的 `## Remarks`
+#: ★ 官方依据：`C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` 的 `## Remar
+#: ks`
 #:   「The format of the returned array (retval) of size 24」+ 逐项下标 ✓
 #: enum-gate: not-enum index
 SECTION_INDEX = {
@@ -187,7 +190,8 @@ SECTION_STATUS = {
 
 #: ★★★ **本成员的副作用**（★ 官方逐字，★ 必须如实登记）：
 #:   「**This method clears the selection set.**」
-#:   「The objects in the `Sections` parameter **are added to the current selection set**.」
+#: 「The objects in the `Sections` parameter **are added to the current selection set**.
+#: 」
 #:   ⇒ ★★ **它会清空并重写选择集** ⇒ ★ 按**规格 210** 的效应声明体系，
 #:     ★★ **它不许被标 `read_only`** ✓
 SECTION_SIDE_EFFECT = "clears_and_rewrites_selection"
@@ -263,7 +267,8 @@ def section_properties(model, selection: str = "", selection_kind: str = "FACE")
       · ★★ 面积可与 `IFace2.GetArea()` **交叉验证**（★ 12/12 次完全相同）⇒ 见 `section_area_crosscheck` ✓
     """
     out = {"ok": False, "side_effect": SECTION_SIDE_EFFECT,
-           #: ★★ 规格 212 · E-1：★ 三个键**必须同时出现**（★ 见 `SECTION_UNIT_ASSUMPTION` 的注释）✓
+           #: ★★ 规格 212 · E-1：★ 三个键**必须同时出现**（★ 见 `SECTION_UNIT_ASSUMPTION
+           #: ` 的注释）✓
            "units_verified": False, "unit_caveat": SECTION_UNIT_CAVEAT,
            "unit_assumption": SECTION_UNIT_ASSUMPTION,
            "entry_used": None, "error": ""}

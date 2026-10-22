@@ -1,11 +1,14 @@
 
 # ── 200 轮计划 v3 · 段 5（该挂清理）：**按声明式选择器选面** ──────────────────────────
-# ★★★★★ 2026-10-03（轮 452）★ 来源：**规则 3 的判断** + 真机证据 `output/face-selector-evidence.json`（**PASS**）。
+# ★★★★★ 2026-10-03（轮 452）★ 来源：**规则 3 的判断** + 真机证据 `output/face-selector-e
+# vidence.json`（**PASS**）。
 #
-# ★★ **为什么这一条能做，而它旁边两条不能**（★ 那是**规则 3** 的边界，★ 而不是"难不难"）：
+# ★★ **为什么这一条能做，而它旁边两条不能**（★ 那是**规则 3** 的边界，★ 而不是"难不难"）
+# ：
 #   ```
 #   ★ `select_object(model, obj)`          ⇒ 吃 **COM 对象** ⇒ ★ **没法人参数表达** ⇒ 不做
-#   ★ `resolve_face_selector(model, sel)`  ⇒ 回 **`(x, y, z)` 米** ⇒ ★★ **暴露它就是暴露裸坐标** ⇒ 不做
+# ★ `resolve_face_selector(model, sel)`  ⇒ 回 **`(x, y, z)` 米** ⇒ ★★ **暴露它就是暴露裸
+# 坐标** ⇒ 不做
 #   ★★ `select_face_by_selector(model, selection: str)` ⇒ ★ **对外的参数是**选择器****，
 #      ★ 而坐标**只在内部用** ⇒ ★★ **完全符合规则 3** ⇒ **做** ✓✓✓
 #   ```
@@ -15,7 +18,8 @@
 #   ② ★ **六个**选择器（`+x -x +y -y +z -z`）**各都是 1**
 #   ③ ★ 非法选择器 ⇒ **抛** `ValueError`（★ 而**不是**静默回 0；★ 错误信息里列出合法值）
 #   ```
-# ⚠★ **而真机顺带发现一条行为**：★ `append=False` 时**它并没清掉上一次的选区**（★ 回读 1 → **2**）——
+# ⚠★ **而真机顺带发现一条行为**：★ `append=False` 时**它并没清掉上一次的选区**（★ 回读 1
+#  → **2**）——
 #   ★★ 故**调用方要自己先 `ClearSelection2`**；★ 已写进工具文档与包装的 docstring ✓
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -24,7 +28,8 @@
 # 定位:   把 `select_face_by_selector_report` 挂成 MCP 工具（★ 段 5 该挂清理的一件）。
 # 官方依据: `IModelDocExtension.SelectByID2("", "FACE", x, y, z, …)`（★ 按**面上的点**定
 #           位 —— 事实 32）·
-#   本仓 `scripts/sw_simulation.py` 的 `select_face_by_selector` / `resolve_face_selector` / `select_face_at` ·
+# 本仓 `scripts/sw_simulation.py` 的 `select_face_by_selector` / `resolve_face_selector`
+#  / `select_face_at` ·
 #   `FACE_SELECTORS = ('+x', '-x', '+y', '-y', '+z', '-z')`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

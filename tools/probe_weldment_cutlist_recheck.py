@@ -12,7 +12,8 @@
 #     **它是回 `None`、报错、还是接口不在类型库里？**
 #
 #   ★ 静态已查（本轮）：
-#     · ★ **两源都有它**：`C:\\swapi\\types\\IFeatureManager\\InsertWeldmentCutList2.md` + CHM ✓
+# · ★ **两源都有它**：`C:\\swapi\\types\\IFeatureManager\\InsertWeldmentCutList2.md` + C
+# HM ✓
 #       ⇒ ★ **故"取不到"不是"官方没有它"**；
 #     · ★ 类型库：`InsertWeldmentCutList2` **arity=2（1 in `Bodies` + out）**；
 #       旧版 `InsertWeldmentCutList` **arity=1（0 in + out）**；
@@ -65,7 +66,8 @@ def _mk_multi_body(doc):
             break
         except Exception:                                                 # noqa: BLE001
             continue
-    #: \u2605 \u7b2c\u4e8c\u4e2a\u4e0d\u76f8\u4ea4\u7684\u4f53\uff08\u2605 \u591a\u4f53\uff09
+    #: \u2605 \u7b2c\u4e8c\u4e2a\u4e0d\u76f8\u4ea4\u7684\u4f53\uff08\u2605 \u591a\u4f53\
+    #: uff09
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001

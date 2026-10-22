@@ -50,7 +50,8 @@ OUT = REPO / "output" / "tool-to-member-map.json"
 #:     ⇒ ★★★ **共 63 处被漏掉** ⇒ 直接后果：
 #:       `sw_assembly.get_components` / `collect_mate_feature_summary` 被算成"抽不到成员"
 #:       ⇒ ★★ 进了"无处可放"清单（★ 见阶段 3 的分类：那 3 个"真问题"里它就占 2 个）✓
-#:   ★★★ 修法（★ 不"再加两个名字"）：★ **按**形态**认** —— ★ **任何以 `_com_member` 结尾的函数名** ✓
+#: ★★★ 修法（★ 不"再加两个名字"）：★ **按**形态**认** —— ★ **任何以 `_com_member` 结尾的
+#: 函数名** ✓
 #:     用 `\w*com_member` ⇒ ★ 6 种全覆盖，★ **且将来加第 7 种也不用改** ✓
 #:   ★★ **可复用判据**：★★ **"按白名单枚举写法"必然漏掉新写法** ——
 #:     ★ 凡"认若干种已知写法"的判据，★ 都要问"**有没有一个**形态**能覆盖全部**" ✓
@@ -64,7 +65,8 @@ DOT_PAT = re.compile(r"\.([A-Z][A-Za-z0-9_]{2,})\s*\(")
 #:      ★ 实测：★ `sw_connect.get_com_member` 的**文档里有示例**
 #:        （`InsertDome` / `InsertMoldShutOffSurface` / `RunAnalysis` / `Activate`）⇒
 #:        ★★ 而它**被每个模块 import** ⇒ ★★★ **于是那批示例出现在了**每一个工具**上** ✓
-#:   ★★ 错② **跟图跟进 `sw_connect`** ⇒ ★ 它是 **COM 管道层**（`get_com_member` / `call_com_member`），
+#: ★★ 错② **跟图跟进 `sw_connect`** ⇒ ★ 它是 **COM 管道层**（`get_com_member` / `call_co
+#: m_member`），
 #:      ★ **不是功能实现** ⇒ ★★ 跟它等于把"全仓文档"引进来 ✓
 #:   ⇒ ★ 修法：★ **① 抽成员名前先剥注释与 docstring（★ 但保留字符串字面量）**；
 #:            ★ **② 跟图跳过"管道层"模块**。
@@ -153,10 +155,12 @@ def _global_pool() -> dict:
     #:     ```
     #:     _IMPLEMENTATION = … / "subskills" / "solidworks-engineering-drawing"
     #:                          / "scripts" / "drawing_workflow.py"
-    #:     _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODULE)
+    #: _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODU
+    #: LE)
     #:     for _name in __all__: globals()[_name] = getattr(_MODULE, _name)
     #:     ```
-    #:   ★★ 即：★ **`sw_drawing` 里没有任何 `def`**（★ 实测 `^def` 匹配 **0 个**、★ 文件只 **29 行**），
+    #: ★★ 即：★ **`sw_drawing` 里没有任何 `def`**（★ 实测 `^def` 匹配 **0 个**、★ 文件只
+    #:  **29 行**），
     #:     ★★★ **真正的实现在 `subskills/` 下** ✓
     #:   ★★★★ 后果：★ **整个工程图族**（★ 30+ 个工具，★ 它们都委托到 `sw_drawing`）
     #:     抽到的成员**近 0** ⇒ ★ 矩阵把它们算成"低密度格"
@@ -175,17 +179,21 @@ def _global_pool() -> dict:
         stem = f.stem
         for name, src in _func_sources(f).items():
             pool.setdefault("%s.%s" % (stem, name), src)
-    #: ★★★★★ 2026-10-03（接手轮）**桥接模块** —— ★ 本仓有一类文件**自己没有任何 `def`**，
+    #: ★★★★★ 2026-10-03（接手轮）**桥接模块** —— ★ 本仓有一类文件**自己没有任何 `def`**
+    #: ，
     #:   而是用 `importlib` 把另一个模块的名字转出来（★ `scripts/sw_drawing.py` 逐字）：
     #:     ```
     #:     _IMPLEMENTATION = … / "subskills" / … / "scripts" / "drawing_workflow.py"
-    #:     _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODULE)
+    #: _SPEC = importlib.util.spec_from_file_location(…); _SPEC.loader.exec_module(_MODU
+    #: LE)
     #:     for _name in __all__: globals()[_name] = getattr(_MODULE, _name)
     #:     ```
-    #:   ★★ **后果**：★ 池里只有 `drawing_workflow.add_view`，★ **而没有 `sw_drawing.add_view`**
+    #: ★★ **后果**：★ 池里只有 `drawing_workflow.add_view`，★ **而没有 `sw_drawing.add_v
+    #: iew`**
     #:     ⇒ ★★★ 于是 `from scripts import sw_drawing as D` + `D.add_view(…)` **跟不下去**
     #:     ⇒ ★★★★ **整个工程图族（30+ 工具）抽到 0** ✓
-    #:   ⇒ ★ 修法：★ **认"桥接"这一形态** —— ★ 从文件里抽 `_IMPLEMENTATION` 指向的**目标模块名**，
+    #: ⇒ ★ 修法：★ **认"桥接"这一形态** —— ★ 从文件里抽 `_IMPLEMENTATION` 指向的**目标模
+    #: 块名**，
     #:     ★★ 并把 `目标模块.X` 的**键再挂一份到桥接模块名下** ✓
     #:   ★★ 可复用判据：★★ **"模块"不等于"文件"** ——
     #:     ★ 一个 `.py` 可能**只是转发**（★ 本仓有 `sw_drawing` 这种兼容入口）⇒
@@ -222,17 +230,20 @@ _IMPORT_PAT = re.compile(r"^\s*from\s+([A-Za-z_][\w.]*)\s+import\s+(.+)$", re.M)
 #:     from scripts import sw_drawing **as D**      ← ★ `from <包> import <模块> as <别名>`
 #:     res = **D.add_view**(drawing_model, …)        ← ★★ 用**模块别名**调
 #:     ```
-#:   ★★ 而 `_import_map` 原来只认「**名字 → 模块**」（★ `from X import a as b` 里的 `a` 是**函数**）⇒
+#: ★★ 而 `_import_map` 原来只认「**名字 → 模块**」（★ `from X import a as b` 里的 `a` 是
+#: **函数**）⇒
 #:     ★★★ **不认「模块别名 → 模块」** ⇒ 于是 `D.add_view` **跟不下去** ✓
 #:   ★★★★ 后果（★ 实测）：★ **整个工程图族**（★ `sw_drawing_expose` 里 30+ 个工具）
 #:     抽到的成员**近 0**（★ `create_projected_view` 0 个 · `create_section_view` 1 个 ·
 #:     `set_sheet_scale` 0 个）⇒ ★★★ **矩阵把它们算成"低密度格"** ✓
-#:   ⇒ ★ 修法：★ **同时抽 `import X as Y` 与 `from P import M as A`（★ 后者当"模块别名"）**，
+#: ⇒ ★ 修法：★ **同时抽 `import X as Y` 与 `from P import M as A`（★ 后者当"模块别名"）*
+#: *，
 #:     ★★ 并在跟图时**把 `A.foo` 解析成 `M.foo`** ✓
 _IMPORT_ALIAS_PAT = re.compile(r"^\s*import\s+([A-Za-z_][\w.]*)(?:\s+as\s+([A-Za-z_]\w*))?\s*$", re.M)
 
 
-#: ★★ 函数池的键的**副本**（★ 由 `main` 在建池后填）—— ★ 供 `_import_map` 判断"这个名字是不是模块"
+#: ★★ 函数池的键的**副本**（★ 由 `main` 在建池后填）—— ★ 供 `_import_map` 判断"这个名字
+#: 是不是模块"
 _POOL_KEYS: set = set()
 
 
@@ -260,12 +271,15 @@ def _import_map(mod_file: Path) -> dict:
             if not name.isidentifier():
                 continue
             if len(bits) > 1:
-                #: ★ `from X import a as b` ⇒ ★ **`b` 指向 `X`**（★ `a` 通常是个**函数**）
+                #: ★ `from X import a as b` ⇒ ★ **`b` 指向 `X`**（★ `a` 通常是个**函数**
+                #: ）
                 out[name] = srcmod
             else:
                 #: ★★★ 无 `as` 时**要分辨**：★ `from P import M` 里的 `M` 可能是
-                #:   ★ **函数**（⇒ 指向 `P`）★ 或 **模块**（⇒ 指向 `M` 自己，★ 用法 `M.foo`）
-                #:   ⇒ ★★ **用一个可核的判据**：★ **`M` 在函数池里吗**（★ 即 `M.<某函数>` 存在）✓
+                #: ★ **函数**（⇒ 指向 `P`）★ 或 **模块**（⇒ 指向 `M` 自己，★ 用法 `M.foo
+                #: `）
+                #: ⇒ ★★ **用一个可核的判据**：★ **`M` 在函数池里吗**（★ 即 `M.<某函数>` 
+                #: 存在）✓
                 is_module = any(k.startswith(name + ".") for k in _POOL_KEYS)
                 out[name] = name if is_module else srcmod
     #: ★★ `import X as Y` / `import X`
@@ -292,7 +306,8 @@ def main() -> int:
             official |= {p.stem for p in d.glob("*.md")}
 
     rows, cache = [], {}
-    #: ★★★ 2026-10-03（第 3 版）：**按 `模块.函数` 键 + import 精确解析**（★ 见 `_global_pool` 的说明）
+    #: ★★★ 2026-10-03（第 3 版）：**按 `模块.函数` 键 + import 精确解析**（★ 见 `_global
+    #: _pool` 的说明）
     pool = _global_pool()
     _POOL_KEYS.clear()
     _POOL_KEYS.update(pool.keys())      #: ★ 供 `_import_map` 判"这个名字是不是模块"
@@ -304,8 +319,10 @@ def main() -> int:
             imap_cache[mod] = _import_map(REPO / "scripts" / ("%s.py" % mod))
         imap = imap_cache[mod]
         #: ★★ 跟**多层**调用图（★ 事实 507：只看 spec 文档会漏，★ 要落到函数体；
-        #:   ★★ 而"落脚"往往在**第二、三层** —— ★ 第一版只跟一层 ⇒ ★ `fillet` / `chamfer` /
-        #:   `extrude_boss` / `sketch_add_line` 这些**明明调 COM 的**被算成"无引用"（74 条）。
+        #: ★★ 而"落脚"往往在**第二、三层** —— ★ 第一版只跟一层 ⇒ ★ `fillet` / `chamfer` 
+        #: /
+        #: `extrude_boss` / `sketch_add_line` 这些**明明调 COM 的**被算成"无引用"（74 条
+        #: ）。
         #:   ★ 现改为**广度优先跟 3 层**，★ 并把每一层抓到的函数体拼起来抽成员名。
         root = "%s.%s" % (mod, fn)
         seen, frontier, depth = {root}, [root], 0
@@ -315,7 +332,8 @@ def main() -> int:
             for cur in frontier:
                 text_cur = pool.get(cur, "")
                 cur_mod = cur.split(".", 1)[0]
-                #: ★★★ 只在**候选**里找：① 本模块的函数 ② 该模块 `import` 进来的名字的来源模块
+                #: ★★★ 只在**候选**里找：① 本模块的函数 ② 该模块 `import` 进来的名字的来
+                #: 源模块
                 cands = [k for k in pool if k.startswith(cur_mod + ".")]
                 for n, srcmod in (imap_cache.get(cur_mod) or {}).items():
                     #: ★★ 跳"管道层"（★ COM 水管，★ 不是功能实现）—— 见文件头的"错②"
@@ -331,11 +349,15 @@ def main() -> int:
                         nxt.append(key)
                         parts.append(pool.get(key, ""))
                 #: ★★★★ 2026-10-03（接手轮）**新增：模块别名调用** `A.foo(` ⇒ `M.foo` ——
-                #:   ★ 病灶：★ `sw_drawing_expose` 逐字 `from scripts import sw_drawing **as D**`
-                #:     然后 `**D.add_view**(…)` ⇒ ★★ 而上面那圈只找**裸函数名** ⇒ **跟不下去** ✓
+                #: ★ 病灶：★ `sw_drawing_expose` 逐字 `from scripts import sw_drawing **
+                #: as D**`
+                #: 然后 `**D.add_view**(…)` ⇒ ★★ 而上面那圈只找**裸函数名** ⇒ **跟不下去
+                #: ** ✓
                 #:   ★★★ 后果：★ 整个工程图族（30+ 工具）抽到的成员**近 0** ⇒
-                #:     矩阵把它们算成"低密度格" ⇒ ★★ **补能力的排期因此被误导**（见上一轮的记录）✓
-                #:   ★ 修法：★ 用 `_import_map` 里的**别名 → 模块**项，★ 把 `别名.函数` 也当候选 ✓
+                #: 矩阵把它们算成"低密度格" ⇒ ★★ **补能力的排期因此被误导**（见上一轮的
+                #: 记录）✓
+                #: ★ 修法：★ 用 `_import_map` 里的**别名 → 模块**项，★ 把 `别名.函数` 也
+                #: 当候选 ✓
                 for alias, srcmod in (imap_cache.get(cur_mod) or {}).items():
                     if srcmod in _PIPE_MODULES or srcmod == alias:
                         continue
@@ -354,8 +376,10 @@ def main() -> int:
         members = sorted(set(CALL_PAT.findall(text)))
         #: ★★★ 2026-10-03 修：本仓**两种调用形态都有** ——
         #:   ① `get_com_member(x, "Member", …)`（★ 本仓新写法）
-        #:   ② ★★ **点调用** `model.FeatureManager.FeatureFillet(…)`（★ `sw_part.fillet` 就是这种）
-        #:   ★ 第一版**只统计 ①** ⇒ ★ `fillet` / `chamfer` / `sketch_add_line` 等**明明调 COM 的**
+        #: ② ★★ **点调用** `model.FeatureManager.FeatureFillet(…)`（★ `sw_part.fillet` 
+        #: 就是这种）
+        #: ★ 第一版**只统计 ①** ⇒ ★ `fillet` / `chamfer` / `sketch_add_line` 等**明明调 
+        #: COM 的**
         #:   被算成"无引用"（64–74 条）⇒ ★★ **判据漏了一整种调用形态**（★ 与事实 51 同族：
         #:   判据的**分析范围**与代码的**组织单元**不匹配）。
         dotted = sorted({m for m in DOT_PAT.findall(text) if m in official})[:60]

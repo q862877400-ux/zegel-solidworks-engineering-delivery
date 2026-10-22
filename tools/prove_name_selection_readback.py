@@ -11,11 +11,13 @@
 #     ★ 当时我判「**读多实体那条路不通**」，★ 改用 `entities_as_array`。
 #   ★★★ **而两者的差别在**选择的方式****：
 #     ```
-#     ★ 官方示例：★ `SelectByID2("Line3@3DSketch1", "EXTSKETCHSEGMENT", 0,0,0, True, 0, Nothing, 0)`
+# ★ 官方示例：★ `SelectByID2("Line3@3DSketch1", "EXTSKETCHSEGMENT", 0,0,0, True, 0, Noth
+# ing, 0)`
 #        ⇒ ★ **按名字选** —— ★ 而草图线段**有**名字（★ 事实 32 说的是**边/面**没名字）⚠
 #     ★ 我实测的：★ 按点（`SelectByID2("", "EDGE", x,y,z, …)`）或按对象（`Select4`）
 #     ```
-#   ⇒ ★★ **本探针的判据**：★ **按名字选 2 条线段，然后看 `GetSelectedObject6(i, 0)` 回不回对象** ✓
+# ⇒ ★★ **本探针的判据**：★ **按名字选 2 条线段，然后看 `GetSelectedObject6(i, 0)` 回不回
+# 对象** ✓
 # ★ 判据（★ 两条都要）：
 #     ① `GetSelectedObjectCount2(-1)` == 2（★ 命中几条）
 #     ② `GetSelectedObject6(2, 0)` **非 None**（★ 而那就是"读得到多实体"）

@@ -10,15 +10,19 @@
 #     Feature InsertCosmeticThread3(int Standard, string StandardType, string Size,
 #                                   double Diameter, int EndType, double Depth, string Note)
 #     Standard   : swCosmeticStandardType_e
-#     EndType    : swCosmeticEndConditions_e\uff08Depth \u4ec5\u5728 Blind \u7c7b\u4e0b\u6709\u6548\uff09
+# EndType    : swCosmeticEndConditions_e\uff08Depth \u4ec5\u5728 Blind \u7c7b\u4e0b\u670
+# 9\u6548\uff09
 #     Note       : \u5de5\u7a0b\u56fe\u91cc\u7684\u6807\u6ce8\u6587\u5b57
 #     ```
-#     ★ **md 头上**未标 `Obsolete`****\uff08\u2605 \u53f0\u8d26\u7ed9\u7684 api \u540d\u662f\u5bf9\u7684\uff09\u2713
+# ★ **md 头上**未标 `Obsolete`****\uff08\u2605 \u53f0\u8d26\u7ed9\u7684 api \u540d\u662f
+# \u5bf9\u7684\uff09\u2713
 #
 #   ★★★ **两个枚举的值来自**反射**（★ 铁律 4）**：
 #     ```
-#     swCosmeticStandardType_e : 0=ANSI Inch \u00b7 **1=ANSI Metric** \u00b7 2=BSI \u00b7 4=DIN \u00b7 8=ISO \u00b7 9=JIS
-#     swCosmeticEndConditions_e: **0=Blind** \u00b7 1=BlindUptoNext \u00b7 **2=Through** \u00b7 3=Blind2Dia
+# swCosmeticStandardType_e : 0=ANSI Inch \u00b7 **1=ANSI Metric** \u00b7 2=BSI \u00b7 4=
+# DIN \u00b7 8=ISO \u00b7 9=JIS
+# swCosmeticEndConditions_e: **0=Blind** \u00b7 1=BlindUptoNext \u00b7 **2=Through** \u0
+# 0b7 3=Blind2Dia
 #     ```
 #
 #   ★ 前置：★ **实体 + 一个圆孔** ⇒ ★ **选孔的圆边**（★ 螺纹线加在圆形边上）。
@@ -100,14 +104,18 @@ def _one(sw, tag, pick):
         except Exception:                                                 # noqa: BLE001
             pass
         picked = 0
-        #: \u2605 \u5148\u627e**\u5706\u67f1\u9762**\uff08\u2605 \u5b83\u7684\u8fb9\u5c31\u662f\u90a3\u4e24\u4e2a\u5706\uff09
+        #: \u2605 \u5148\u627e**\u5706\u67f1\u9762**\uff08\u2605 \u5b83\u7684\u8fb9\u5c3
+        #: 1\u662f\u90a3\u4e24\u4e2a\u5706\uff09
         cyl = None
         for b in list(_g(doc, "GetBodies2", 0, True) or []):
             for f in list(_g(b, "GetFaces") or []):
                 try:
-                    #: \u2605\u2605 \u7528**\u5b98\u65b9\u7684\u5224\u5f62\u65b9\u6cd5**\uff08`ISurface.IsCylinder()`\uff09
-                    #:   \u2014\u2014 \u2605 \u800c**\u4e0d\u662f\u731c `Surface.Identity` \u7684\u5b57\u7b26\u4e32** \u26a0
-                    #:   \uff08\u2605 \u6211\u7b2c\u4e00\u7248\u5c31\u662f\u90a3\u4e48\u731c\u7684 \u21d2 \u2605 **\u4e09\u7ec4\u5168 `cyl=False`**\uff09
+                    #: \u2605\u2605 \u7528**\u5b98\u65b9\u7684\u5224\u5f62\u65b9\u6cd5**
+                    #: \uff08`ISurface.IsCylinder()`\uff09
+                    #: \u2014\u2014 \u2605 \u800c**\u4e0d\u662f\u731c `Surface.Identity`
+                    #:  \u7684\u5b57\u7b26\u4e32** \u26a0
+                    #: \uff08\u2605 \u6211\u7b2c\u4e00\u7248\u5c31\u662f\u90a3\u4e48\u73
+                    #: 1c\u7684 \u21d2 \u2605 **\u4e09\u7ec4\u5168 `cyl=False`**\uff09
                     if bool(_g(_g(f, "GetSurface"), "IsCylinder")):
                         cyl = f
                         break
@@ -127,7 +135,8 @@ def _one(sw, tag, pick):
         fm = _g(doc, "FeatureManager")
         ret = None
         try:
-            #: \u2605 7 \u53c2\uff1aStandard \u00b7 StandardType \u00b7 Size \u00b7 Diameter \u00b7 EndType \u00b7 Depth \u00b7 Note
+            #: \u2605 7 \u53c2\uff1aStandard \u00b7 StandardType \u00b7 Size \u00b7 Diam
+            #: eter \u00b7 EndType \u00b7 Depth \u00b7 Note
             ret = _g(fm, "InsertCosmeticThread3", STD_ANSI_METRIC, "", "",
                      0.008, END_THROUGH, 0.0, "")
             row["returned"] = type(ret).__name__ if ret is not None else "None"

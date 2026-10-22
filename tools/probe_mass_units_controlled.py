@@ -54,7 +54,8 @@ for p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
 sys.stdout.reconfigure(encoding="utf-8")
 
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "mass-units-controlled.json")
-#: ★ 对照材料（★ 选一个**密度有明确官方值**的；本机材料库的显示名见 `set_material` 的回读）
+#: ★ 对照材料（★ 选一个**密度有明确官方值**的；本机材料库的显示名见 `set_material` 的回
+#: 读）
 CANDIDATES = ("AISI 1020", "Plain Carbon Steel", "Alloy Steel", "AISI 304")
 
 
@@ -93,11 +94,14 @@ def main() -> int:
               ⇒ ★★★ **而它同时说明**：★ 第一版那个"此路不通"的结论**是我漏了一步**，不是设计前提错。
             """
             ext = sw_connect.get_com_member(doc, "Extension")
-            #: ★★★ 2026-10-01（轮 263）**改用后继入口** —— 第一版用 `CreateMassProperty`（**Obsolete**）
-            #:   拿到的对象**没有** `Recalculate`（真机报 `<unknown>.Recalculate` ⇒ **事实 36 的形态**：
+            #: ★★★ 2026-10-01（轮 263）**改用后继入口** —— 第一版用 `CreateMassProperty`
+            #: （**Obsolete**）
+            #: 拿到的对象**没有** `Recalculate`（真机报 `<unknown>.Recalculate` ⇒ **事实
+            #:  36 的形态**：
             #:   名字存在但**挂在别的接口上**）。★ 官方 `CreateMassProperty.md` 明写
             #:   「**Obsolete. Superseded by `IModelDocExtension::CreateMassProperty2`**」
-            #:   ⇒ ★ 而既有探针 L11 早就注着「`CreateMassProperty2` ← ⚠ **可能有后继**」，**当年没试**。
+            #: ⇒ ★ 而既有探针 L11 早就注着「`CreateMassProperty2` ← ⚠ **可能有后继**」，
+            #: **当年没试**。
             #:   ★★ 两个都试，**记录哪个能用**（★ 不假设）。
             entry, mp, entry_errs = None, None, []
             for nm in ("CreateMassProperty2", "CreateMassProperty"):

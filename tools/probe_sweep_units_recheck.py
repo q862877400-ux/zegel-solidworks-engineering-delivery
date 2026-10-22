@@ -8,7 +8,8 @@
 #   **官方依据（★ 逐字）**：
 #     · ★ `IFeature::ModifyDefinition(Data, TopDoc, Component)` ⇒ **3 参、回 bool** ✓
 #     · ★ `ISweepFeatureData::CircularProfile` ⇒ `bool {get; set;}` ✓
-#     · ★★ `ISweepFeatureData::CircularProfileDiameter` ⇒ `double {get; set;}`、★ `## Remarks`
+# · ★★ `ISweepFeatureData::CircularProfileDiameter` ⇒ `double {get; set;}`、★ `## Remark
+# s`
 #       「**This property is valid only if `CircularProfile` is set to true.**」✓
 #   ★★★ **⚠ 判据要**独立****（★ 不能"写 12.0 再读回 12.0"那样自证）⇒
 #     ★★ **⇒ 本探针用**几何**判**：★ 设直径 `12.0` ⇒ 用 `ModifyDefinition` 落地 ⇒
@@ -96,11 +97,14 @@ def main() -> int:
             #: ★★★★★ 2026-10-04（轮 127）**第 3 参要传**空 Dispatch VARIANT**** ——
             #:   ★ **真机读数**：★ 传 `None` ⇒
             #:     `com_error: (-2147352571, '**类型不匹配。**', None, **3**)` ✓
-            #:   ★★ **⇒ 位置 3** 正是 `ModifyDefinition(Data, TopDoc, **Component**)` 的第 3 参 ⇒
+            #: ★★ **⇒ 位置 3** 正是 `ModifyDefinition(Data, TopDoc, **Component**)` 的第
+            #:  3 参 ⇒
             #:     ★★★ **⇒ 那正是**事实 12/33 那一族**：★
-            #:       **空 Dispatch 参数包要用 `VARIANT(VT_DISPATCH, None)`**（★ 传裸 `None` 会报
+            #: **空 Dispatch 参数包要用 `VARIANT(VT_DISPATCH, None)`**（★ 传裸 `None` 会
+            #: 报
             #:       「类型不匹配」、★ **而那个错误看不出是哪个参数**）✓
-            #:   ★★★★ **⇒ 正解就在本仓**（★ `sw_connect.create_empty_dispatch_variant()`）✓
+            #: ★★★★ **⇒ 正解就在本仓**（★ `sw_connect.create_empty_dispatch_variant()`）
+            #: ✓
             from sw_connect import create_empty_dispatch_variant
             applied["modify_ok"] = bool(get_com_member(
                 feat, "ModifyDefinition", data, model,

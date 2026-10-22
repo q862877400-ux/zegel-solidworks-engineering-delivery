@@ -16,7 +16,8 @@
 #     ```
 #     ★ 取包装的**必需**位置形参（无默认值）的第一个；
 #     ★ 若它 ∈ {model, doc, document, sw, sw_app, app, manager, study}（★ 本仓的注入名约定）
-#     ★ 而该 spec **既没声明 inject**、**也没有 derived_args** ⇒ ★ **一定 NameError/TypeError** ⇒ 报 ✓
+# ★ 而该 spec **既没声明 inject**、**也没有 derived_args** ⇒ ★ **一定 NameError/TypeErro
+# r** ⇒ 报 ✓
 #     ```
 #   ⚠ **为什么只判"第一个"**：★ 更靠后的必需形参可能由**转换层**从声明参数喂进来
 #     （★ 如 `x1_mm` 声明 ⇒ 包装收 `x1`）⇒ ★ 那不属于本门禁的范围，判它会出假阳性 ✓

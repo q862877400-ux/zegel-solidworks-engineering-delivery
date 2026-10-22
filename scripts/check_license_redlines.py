@@ -54,7 +54,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 REPO = Path(__file__).resolve().parents[1]
 
-#: ✅ **允许**作为来源的许可（`AGENTS.md` 铁律 6 的表里「能做什么」非「只读思想」的那两档）
+#: ✅ **允许**作为来源的许可（`AGENTS.md` 铁律 6 的表里「能做什么」非「只读思想」的那两
+#: 档）
 ALLOWED = ("MIT", "Apache-2.0")
 
 #: 🚫 **不许当作代码来源**的许可（只读思想）

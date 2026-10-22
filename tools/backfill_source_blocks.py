@@ -7,7 +7,8 @@
 #           ① 兼容转发壳（importlib 加载真源 / docstring 自称"兼容入口"）⇒ 官方依据「不适用」
 #           ② 不调 COM 的纯工具 ⇒ 官方依据「不适用（本仓工具，不调 COM）」
 #           ③ 读 C:\\swapi 官方源的分析脚本 ⇒ 官方依据「官方源 C:\\swapi\\types（见文件内引用）」
-#           ④ 声明式 ToolSpec 批次 ⇒ 官方依据「= 被包装函数的来源（见各 ToolSpec 的 module/function）」
+# ④ 声明式 ToolSpec 批次 ⇒ 官方依据「= 被包装函数的来源（见各 ToolSpec 的 module/functio
+# n）」
 #           ⑤ 其余调 COM 的 ⇒ 如实写「★ 待逐条回填（本文件早于 §十八）」—— ★ 不假装有依据
 # 官方依据: AGENTS.md §十八「新建 .py 的模板：docstring 一行 + 来源块紧随其后」
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -26,7 +27,8 @@ R = pathlib.Path(__file__).resolve().parents[1]
 SKIP = ("__pycache__", "resources/skill", "archive")
 COM = re.compile(r"get_com_member|SelectByID2|Select4\(|IModelDoc|ISldWorks|ActiveDoc"
                  r"|FeatureManager|SketchManager|Dispatch\(|EnsureDispatch")
-#: ★★ 间接碰 COM：不直接写成员名，但 import 了本仓 COM 封装或 COM 库 ⇒ **不能**写成「不调 COM」
+#: ★★ 间接碰 COM：不直接写成员名，但 import 了本仓 COM 封装或 COM 库 ⇒ **不能**写成「不
+#: 调 COM」
 COM_IMPORT = re.compile(r"from\s+\.?sw_connect\b|from\s+\.?sw_preflight\s+import\s+import_com_dependencies"
                         r"|import\s+win32com|import\s+comtypes|import\s+pythoncom|from\s+win32com"
                         r"|from\s+comtypes")
@@ -46,7 +48,8 @@ def first_doc(path: pathlib.Path) -> str:
 
 
 #: ★★ 逐条人工确证的「官方依据」—— **只依赖各文件自己的 docstring 与既有台账**，不编造。
-#: 出这个表的原因：这些文件的性质是「判本仓自己的运行时行为」，而不是「照官方签名调 COM」，
+#: 出这个表的原因：这些文件的性质是「判本仓自己的运行时行为」，而不是「照官方签名调 COM
+#: 」，
 #: 所以机械分类只能给出「待回填」；人工读一遍就能给出**如实且具体**的依据。
 MANUAL: dict[str, str] = {
     "scripts/sw_macro_guard.py":

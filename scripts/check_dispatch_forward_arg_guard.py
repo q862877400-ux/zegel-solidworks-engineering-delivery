@@ -31,9 +31,12 @@
 # 声明写在**调用点所在行的正上方**（向上跳过空行取第一行非空行 —— 确定性关联，
 # 与 227/228/234 同一方式，**不用行窗口启发式**）：
 # ```
-# #: dispatch-fwd: dynamic <理由>              # 候选集由运行期决定（值不在静态可解范围内）
-# #: dispatch-fwd: upstream <caller-def 名> <理由>   # **二级转发**：实参是包围 `def` 的形参
-# #: dispatch-fwd: probe <理由>                # 试名探测（fallback 列表，允许含查不到的候选名）
+# #: dispatch-fwd: dynamic <理由>              # 候选集由运行期决定（值不在静态可解范围
+# 内）
+# #: dispatch-fwd: upstream <caller-def 名> <理由>   # **二级转发**：实参是包围 `def` 的
+# 形参
+# #: dispatch-fwd: probe <理由>                # 试名探测（fallback 列表，允许含查不到的
+# 候选名）
 # ```
 # ★ 三个 code 都**自带自证条件**，防止拿它一键躺平：
 #   · `dynamic`  ⇒ 若静态**能**枚举出候选集 ⇒ 红（能枚举却声明枚举不出 = 逃避表态）；
@@ -274,7 +277,8 @@ def main() -> int:
                                "detail": bad + ("" if got else "（读取路径：%s）" % why)})
 
     #: ★★ 口径不变量（**独立于本门禁的取点**）：带非字面量调用点的入口，
-    #:    `resolution()` 的分类**必须**是 `partial` / `unresolved`（`resolved` = 全字面量）。
+    #: `resolution()` 的分类**必须**是 `partial` / `unresolved`（`resolved` = 全字面量）
+    #: 。
     for lineno, path in sorted(nonliteral_entries):
         cls = classes.get((path, lineno), ("?", 0))[0]
         if cls not in ("partial", "unresolved"):

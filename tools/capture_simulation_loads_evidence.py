@@ -110,7 +110,8 @@ def main() -> int:
         sim.create_static_study(sw, "DSH-W7")
         ev["steps"]["part"] = {"ok": True, "title": str(sw_connect.safe_get_com_member(doc, "GetTitle") or "")}
 
-        #: ③ ★★ 走**工具真实路径**：inject(resolve_study) + pre_call(选面) + derived_args(补 model)
+        #: ③ ★★ 走**工具真实路径**：inject(resolve_study) + pre_call(选面) + derived_arg
+        #: s(补 model)
         def call_via_tool(spec_name: str, params: _P, **extra):
             spec = next(s for s in b26.SPECS_BATCH26 if s.name == spec_name)
             #: ★ 与注册器 L409-432 同一顺序：inject → extra_op → pre_call → derived_args
@@ -131,10 +132,13 @@ def main() -> int:
         n_fix = sim.select_face_at(doc, 0.0, 0.0, -0.02)
         rst, kw1 = call_via_tool("solidworks_simulation_apply_fixed_restraint",
                                  _P(study_name="DSH-W7", selection="__current_selection__"))
-        #: ★★ **必须先清空选区**再选施力面 —— 照既有脚本 `capture_simulation_evidence.py` 的
+        #: ★★ **必须先清空选区**再选施力面 —— 照既有脚本 `capture_simulation_evidence.py
+        #: ` 的
         #:   L145/L148（它用 `ClearSelection2(True)`）。
-        #:   ⚠ 我第一版**漏了这一步** ⇒ 夹具那个面**仍在选区里** ⇒ 第二次回读计数变成 **2**
-        #:   （`select_face_at` 默认 `append=False` 只表示"不追加"，**不清空**）⇒ 判据假红。
+        #: ⚠ 我第一版**漏了这一步** ⇒ 夹具那个面**仍在选区里** ⇒ 第二次回读计数变成 **2*
+        #: *
+        #: （`select_face_at` 默认 `append=False` 只表示"不追加"，**不清空**）⇒ 判据假红
+        #: 。
         sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
         #: 载荷：选顶面（z=0）
         n_frc = sim.select_face_at(doc, 0.0, 0.0, 0.0)

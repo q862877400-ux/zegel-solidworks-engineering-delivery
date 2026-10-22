@@ -64,9 +64,11 @@ def main() -> int:
         nm = [n for n in (P.feature_names(doc) or []) if n.startswith("草图")]
         P.extrude_boss(doc, (nm[-1] if nm else "草图1"), 10.0)
 
-        #: ★★★ 先把草图**开着**并**自动加尺寸** —— ★ 否则 `Parameter("D1@草图1")` 找不到尺寸
+        #: ★★★ 先把草图**开着**并**自动加尺寸** —— ★ 否则 `Parameter("D1@草图1")` 找不到
+        #: 尺寸
         #:   （★ 实测：矩形草图**本来就没有尺寸** ⇒ 前一版因此挖不到 `IDimension` ✓）
-        #:   ★ 用官方 `ISketchManager.AutoDimension2()` 自动标注（★ 注意它自己也在本仓的废弃名单里，
+        #: ★ 用官方 `ISketchManager.AutoDimension2()` 自动标注（★ 注意它自己也在本仓的废
+        #: 弃名单里，
         #:     后继是 `FullyDefineSketch` —— ★ 本探针只用它**造前置**，★ 不评它该不该换）
         try:
             P.start_sketch(doc, plane_name="Top Plane")
@@ -80,9 +82,11 @@ def main() -> int:
             R["造前置出错"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
 
         #: ★★★ 2026-10-03 修：★ 改用**本仓自己已验证的取法**
-        #:   —— `scripts/sw_document_data.py` L246 逐字 `dimension = model.Parameter(dimension_name)`
+        #: —— `scripts/sw_document_data.py` L246 逐字 `dimension = model.Parameter(dimen
+        #: sion_name)`
         #:   ⇒ ★★ `IModelDoc2.Parameter("D1@草图1")` 直接给 `IDimension` ✓
-        #:   ⚠ 上一版我从特征树挖 `GetFirstDisplayDimension` ⇒ ★ 拉伸特征**没有 display dimension**
+        #: ⚠ 上一版我从特征树挖 `GetFirstDisplayDimension` ⇒ ★ 拉伸特征**没有 display di
+        #: mension**
         #:     ⇒ ★ 挖不到 ⇒ 验证跳过（★ 那是**我取法的问题**，不是 API 的问题）✓
         dim, dim_name = None, ""
         for cand in ("D1@草图1", "D1@Sketch1", "D2@草图1", "D1@草图2"):

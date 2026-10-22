@@ -107,7 +107,8 @@ SKETCH_CROSS_HATCH = {
 #: ISketch 上「按类型分列」的取法 —— 官方给了十余个，比一把抓再过滤更可靠。
 #: ⚠⚠ **2026-10-01（轮 111）改：元组里把官方**后继**排在前面**。
 #:   起因：`029` 的废弃成员台账查出本模块在调 **6 个官方已标 `Obsolete`** 的取法
-#:   （`GetLines` / `GetArcs` / `GetEllipses` / `GetParabolas` / `GetSketchPoints` / `GetUserPoints`）。
+#: （`GetLines` / `GetArcs` / `GetEllipses` / `GetParabolas` / `GetSketchPoints` / `GetU
+#: serPoints`）。
 #:   ⇒ 改用后继；**旧名保留在元组里**（调用方需要时可自取，且便于对照）。
 #:   ⚠ 5 个后继是**零参直接可换**；**只有 `GetLines2(Int16)` 多一个参数**
 #:   （`swCrossHatchFilter_e`，见 `SKETCH_CROSS_HATCH`）。
@@ -160,7 +161,8 @@ def _require(sketch):
     return sketch
 
 
-#: ★ 2026-10-22 统一化：`as_sequence` 原与 `sw_drawing_create_missing._as_list` 两份逐字相同，
+#: ★ 2026-10-22 统一化：`as_sequence` 原与 `sw_drawing_create_missing._as_list` 两份逐字
+#: 相同，
 #:   现收敛到 sw_com_array.as_list；★ 公开名 `as_sequence` 保持不变（外部有 5 处引用）
 try:
     from .sw_com_array import as_list as as_sequence
@@ -186,8 +188,10 @@ except ImportError:
 #   其它重载留在 SKETCH_GETTERS 的元组里，调用方需要时可自取。
 #   **不替调用方决定「哪个对」**。
 # 覆盖:   后续同级定义
-# ⚑ **本组已于 2026-10-01（轮 117）真机实测** —— python tools/verify_sketch_getters_smoke.py
-#   （**17/17**）：新零件 → 进草图 → 画 **1 条线 + 1 段弧** → 逐个调取法 → 退草图 → 关件不保存。
+# ⚑ **本组已于 2026-10-01（轮 117）真机实测** —— python tools/verify_sketch_getters_smok
+# e.py
+# （**17/17**）：新零件 → 进草图 → 画 **1 条线 + 1 段弧** → 逐个调取法 → 退草图 → 关件不
+# 保存。
 #   ★ 交叉验证：get_sketch_segments 返回 **2**（线+弧）· get_lines 返回 **12** 个浮点 ·
 #     get_arcs 返回 **16** · get_sketch_points 返回 **5**；**收尾无残留模态框**。
 #   ★ 这也**验证了轮 111（030）那次替换**：6 个后继（含唯一带参的 GetLines2）真机可调。
@@ -462,7 +466,8 @@ def collect_sketch_evidence(sketch) -> dict[str, Any]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身既有模式（`sw_part._capture_sketch_ref` 的按名取法 + 本模块的 `get_*` 一族）
+# 仓库:   本项目自身既有模式（`sw_part._capture_sketch_ref` 的按名取法 + 本模块的 `get_*
+# ` 一族）
 # 文件:   scripts/sw_sketch.py（**本组为追加**，2026-10-01 轮 222 / 砌墙 W1）
 # 定位:   给「把 `sw_sketch` 的只读查询挂成 MCP 工具」提供**只回读数**的薄函数。
 #         ★ 为什么需要它（**真机实测定的，不是猜的**）：
@@ -473,13 +478,16 @@ def collect_sketch_evidence(sketch) -> dict[str, Any]:
 #          （结构不在官方文档里 —— ★ 官方**没写**返回结构，见下「除数」的实测依据）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 除数的依据是**本机实测**，不是官方文档：
-#   `D:\AI\SW\output\sketch-getter-shapes.json`（`tools/probe_sketch_getter_shapes.py`，轮 141）
-#   记着 `drawn` / `segments` / `count` / `element_type` ⇒ 画 1 条线 = 12 个 float（1↔12、2↔24、3↔36）。
+# `D:\AI\SW\output\sketch-getter-shapes.json`（`tools/probe_sketch_getter_shapes.py`，轮
+#  141）
+# 记着 `drawn` / `segments` / `count` / `element_type` ⇒ 画 1 条线 = 12 个 float（1↔12、
+# 2↔24、3↔36）。
 # 覆盖:   本组 4 个函数
 # ────────────────────────────────────────────────────────────────────
 #: 每「条」几何在官方返回的数值数组里占几个 `float`。
 #: ★ **有真机证据**（`output/sketch-getter-shapes.json`：1↔12、2↔24；弧 1↔16、2↔32）。
-#: ⚠ 这是**实测形状**，官方文档**没写**；若哪天长度不是它的整数倍 ⇒ `count_*` **会报错**，不静默圆整。
+#: ⚠ 这是**实测形状**，官方文档**没写**；若哪天长度不是它的整数倍 ⇒ `count_*` **会报错**
+#: ，不静默圆整。
 ELEMS_PER_LINE = 12
 ELEMS_PER_ARC = 16
 
@@ -553,7 +561,8 @@ def count_segments(sketch) -> int:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身既有模式（`sw_part._get_sketch_name_candidates` 的中英文变体 + 本模块的按名取）
+# 仓库:   本项目自身既有模式（`sw_part._get_sketch_name_candidates` 的中英文变体 + 本模
+# 块的按名取）
 # 文件:   scripts/sw_sketch.py（**本组为追加**，2026-10-01 轮 222 / 砌墙 W1）
 # 定位:   ★ **真机验证抓出来的 bug 的修法**：`sw_part.current_sketch_name` 在
 #         **草图已关闭**时回**英文 fallback `"Sketch1"`**，而中文 UI 下真名是「草图1」
@@ -636,7 +645,8 @@ def resolve_sketch(model, name: str = ""):
             return None
 
     #: 1+2 · 显式名，或"当前草图名"（★ 两者都试中英文变体）
-    #: ★★ 2026-10-03（轮 470）：**统一导入口径** —— 本行原写 `from scripts.sw_part import …`
+    #: ★★ 2026-10-03（轮 470）：**统一导入口径** —— 本行原写 `from scripts.sw_part impor
+    #: t …`
     #:   （★ 包内却用**绝对包路径**），而本模块别处走 `from .sw_connect import …`（相对）
     #:   ⇒ ★ 同一个包内混用两套口径 ⇒ `sys.modules` 里可能出现**同一模块两份实例**
     #:   ⇒ 那是 `cannot import name … from '<unknown module name>'` 的来源之一。
@@ -652,7 +662,8 @@ def resolve_sketch(model, name: str = ""):
         if sk is not None:
             return sk
 
-    #: ★★ 2026-10-03（轮 398）**缺陷修正**：★ **非空的名字一个都没解出来 ⇒ 报错，不许回退**。
+    #: ★★ 2026-10-03（轮 398）**缺陷修正**：★ **非空的名字一个都没解出来 ⇒ 报错，不许回
+    #: 退**。
     #:   真因：先前 `resolve_sketch(model, "<错名字>")` 会**静默回退**到
     #:   "特征树里最后一个草图" ⇒ ★★ 调用方会在**另一个草图**上读 / 写！
     #:   ★ 而本函数的批头明写「**选不中要报错，不静默**」。
@@ -683,14 +694,17 @@ def resolve_sketch(model, name: str = ""):
     )
 
 
-# ── 规格 209 · B2-4（idx 175 `blank_sketch`）────────────────────────────────────────────────
+# ── 规格 209 · B2-4（idx 175 `blank_sketch`）──────────────────────────────────────────
+# ──────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
 # 文件:   scripts/sw_sketch.py —— 追加 `feature_visibility` / `set_sketch_blanked`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-4** · 外部项目 idx **175 `hide_al
 #           l_sketches`**。
-#   ★★★ 裁决书的硬约束（§九）逐字：「官方 `BlankSketch` 逐字是「Hides the **selected** sketches」
-#     ⇒ ★ **官方没有 "all" 这个语义**（是别家自己许的）⇒ 工具名**不许叫 `hide_all_sketches`**，
+# ★★★ 裁决书的硬约束（§九）逐字：「官方 `BlankSketch` 逐字是「Hides the **selected** ske
+# tches」
+# ⇒ ★ **官方没有 "all" 这个语义**（是别家自己许的）⇒ 工具名**不许叫 `hide_all_sketches`*
+# *，
 #     要照官方的「**隐藏选中的草图**」；★ 别家**零选区 + 返回常量** = **规则 6 的反例**」✓
 #   ★★ 它点名的**真风险**：「怎么回读「隐藏了没有」」—— 官方 `BlankSketch` 回 `void`、
 #     且那一页**既无 Returns 也无 Remarks** ⇒ ★ 本节就是去**真机定出那个回读入口** ✓
@@ -704,7 +718,8 @@ def resolve_sketch(model, name: str = ""):
 #     （★ 官方示例里**只有肉眼**："Examine the graphics area"）
 #   · `C:\swapi\enums\swVisibilityState_e.md` —— `swVisibilityStateHide=1` ·
 #     `swVisibilityStateShown=2` · `swVisibilityStateUnknown=3`（★ **没有 0**）
-#   · ★★ `C:\swapi\examples\Hide_and_Show_Sketches_Example_VB.md` —— 官方**调用序**（逐字）：
+# · ★★ `C:\swapi\examples\Hide_and_Show_Sketches_Example_VB.md` —— 官方**调用序**（逐字
+# ）：
 #     ```
 #     ' Preconditions: … 3. **Select the sketches** in the FeatureManager design tree
 #     '                    or graphics area that you want to hide.
@@ -720,7 +735,8 @@ def resolve_sketch(model, name: str = ""):
 #   也**没有实现"选中的"**（★ 规则 6 的反例：返回常量不是判据）✓
 #   ⇒ ★ 本仓的名字 = **`set_sketch_blanked`**（动词用官方的 Blank，**不承诺 all**）✓
 
-#: ★ 官方 `swVisibilityState_e`（★ 逐值抄自 `C:\swapi\enums\swVisibilityState_e.md`；★ **注意没有 0**）
+#: ★ 官方 `swVisibilityState_e`（★ 逐值抄自 `C:\swapi\enums\swVisibilityState_e.md`；★ *
+#: *注意没有 0**）
 VISIBILITY_STATES = {1: "hide", 2: "shown", 3: "unknown"}
 
 

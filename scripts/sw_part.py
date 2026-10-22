@@ -34,7 +34,8 @@ from contextlib import contextmanager
 #:   （`NameError: name 'Any' is not defined`）。
 #:   ⚠ 之所以长期没暴露：`tests/test_extended_modules_contract.py` 把整个
 #:     `sw_part` 用 `_StubModule` 桩掉了，**从没真正 import 过它** ⇒
-#:     ★ 而公开工具 `solidworks_add_sketch_relation` 指向的正是本模块 ⇒ **该工具此前是死的**。
+#: ★ 而公开工具 `solidworks_add_sketch_relation` 指向的正是本模块 ⇒ **该工具此前是死的**
+#: 。
 #:   ⇒ ★ 修法：补 `from typing import Any`（最小改动，不改任何行为）✓
 from typing import Any
 
@@ -327,19 +328,23 @@ def _select_com_object(obj, append=False, mark=0, model=None):
     #: ★★★★ 2026-10-03（接手轮）**修掉一处静默的 mark 丢失**
     #:   （★ bunny 读官方文档指出、我复核确认；★★ 官方页 `IEntity/Select2.md` 逐字
     #:    「**Obsolete. Superseded by [[IEntity::Select4]].**」，而 `Select4` 签名逐字是
-    #:    `System.bool Select4( System.bool Append, SelectData Data )` —— ★★ **第 2 参是 `ISelectData`**）。
+    #: `System.bool Select4( System.bool Append, SelectData Data )` —— ★★ **第 2 参是 `I
+    #: SelectData`**）。
     #:   ★ 而本函数**原先**给 `Select4` 传 `_empty_callout()`（**空 VARIANT**）
     #:     ⇒ ★★ **`Select4` 分支的 `Mark` 永远是 0**。
     #:   ★ 之所以按 mark 的选择**此前还能工作**：★ 循环把 **`Select2` 排在前面**，
     #:     ★ 而 `Select2(Append, **Mark**)` **直接收 mark** ⇒ 它先成功就 `return` 了
     #:     ⇒ bug 被盖住；★ 而 `Select2` **是废弃成员** ⇒ ★ 一旦它被移除，**mark 静默丢失**。
-    #:   ★ 修法（★ 铁律 4「**取后继，不取废弃成员**」）：★ 传了 `model` ⇒ **先走 `Select4` + `SelectData`**
+    #: ★ 修法（★ 铁律 4「**取后继，不取废弃成员**」）：★ 传了 `model` ⇒ **先走 `Select4`
+    #:  + `SelectData`**
     #:     （`ISelectionMgr.CreateSelectData()` 建对象、设 **`Mark = mark`**）——
-    #:     ★ **三源互证**：官方签名 + 官方 C# 例子（`data.Mark = 1; entity.Select4(true, data);`）
+    #: ★ **三源互证**：官方签名 + 官方 C# 例子（`data.Mark = 1; entity.Select4(true, dat
+    #: a);`）
     #:     + 反射（`ISelectData` 有 `Mark`）。
     #:   ⚠ 两条 `Select*` 的布尔返回值**都不可信**（★ 事实 8）⇒ ★ **调用方仍须回读计数**。
     if model is not None:
-        #: ① ★ 首选**后继成员** `Select4` + 真 `ISelectData`（★ 这样 `mark` 才真的写得进去）
+        #: ① ★ 首选**后继成员** `Select4` + 真 `ISelectData`（★ 这样 `mark` 才真的写得进
+        #: 去）
         try:
             from sw_connect import get_com_member as _gcm
             from sw_connect import set_com_member as _scm
@@ -529,10 +534,12 @@ def current_sketch_name(model, fallback="Sketch1"):
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   `wzyn20051216/solidworks-automation-skill`（**上游**，MIT）—— 本段是**上游继承**的
+# 仓库:   `wzyn20051216/solidworks-automation-skill`（**上游**，MIT）—— 本段是**上游继承
+# **的
 #         草图/特征助手（`sketch_*` / `extrude_*` / `fillet` / `chamfer` / `rib` / …），
 #         **不是**从四家外部 MCP 项目移植的。
-# 文件:   scripts/sw_part.py —— 「草图与特征助手」这一段（L427 起，到下一个来源块之前）。
+# 文件:   scripts/sw_part.py —— 「草图与特征助手」这一段（L427 起，到下一个来源块之前）
+# 。
 # 定位:   2026-10-01（轮 132）**只做了一件事**：把这些函数的**长度单位声明**从
 #         「米」校正为「**毫米**」—— 因为实测发现原声明**与实际不符**。
 #         实测依据：`tools/verify_ellipse_smoke.py` —— 半径 **25** 的圆（**未换算**）
@@ -541,17 +548,22 @@ def current_sketch_name(model, fallback="Sketch1"):
 # 官方签名依据: 这些函数的 COM 入口（`CreateCircleByRadius` / `CreateCornerRectangle` /
 #         `FeatureExtrusion3` / `FeatureCut4` …）的官方依据见**原上游代码**与
 #         `docs/signature-audit.md`；本块**不改任何调用**，只校正单位声明。
-# 许可:   上游 MIT（保留版权声明，见 `THIRD-PARTY-NOTICES.md` §一.1）。无第三方代码引入。
-# 覆盖:   后续同级定义 —— 本块涵盖这一段全部助手函数，**止于下一个来源块**（「边界框」那块）。
+# 许可:   上游 MIT（保留版权声明，见 `THIRD-PARTY-NOTICES.md` §一.1）。无第三方代码引入
+# 。
+# 覆盖:   后续同级定义 —— 本块涵盖这一段全部助手函数，**止于下一个来源块**（「边界框」那
+# 块）。
 # ─────────────────────────────────────────────────────────────────────
 
-#: ★★★ 2026-10-08 根因修复（★ 目标 `goal-d2098c24` · 用户令：「**尺寸单位不对的问题…从根因修复**」✓）
-#:   ★★ 现场铁证：★ `solidworks_sketch_add_circle(radius_mm=10.5)` ⇒ ★ 真机用 `ISketchArc::GetRadius()`
+#: ★★★ 2026-10-08 根因修复（★ 目标 `goal-d2098c24` · 用户令：「**尺寸单位不对的问题…从根
+#: 因修复**」✓）
+#: ★★ 现场铁证：★ `solidworks_sketch_add_circle(radius_mm=10.5)` ⇒ ★ 真机用 `ISketchArc:
+#: :GetRadius()`
 #:     从模型读回 **10500.0 mm** ✗（★ 即 10.5 **米**，★ **1000×** ✓）—— ★ 同一 bug 也解释了
 #:     第 10 轮尺寸框里的 `21000.00mm` ✓
 #:   ★★ 根因：★ 下面这一族草图图元**文档写"毫米"**（★ 对外契约 ✓）★ 却把值**原样**送进
 #:     `ISketchManager.Create*` ✗，★ 而 **COM 侧单位是米** ✓（本仓事实 2）
-#:   ★ 对照：★ 同文件的 `sketch_spline` **有** `/1000.0` ✓ ⇒ ★ **同批工具不一致**，这就是根因 ✓
+#: ★ 对照：★ 同文件的 `sketch_spline` **有** `/1000.0` ✓ ⇒ ★ **同批工具不一致**，这就是
+#: 根因 ✓
 #:   ★★ 修法：★ **在这六个函数里各做一次 ÷1000** ✓（★ 对外"毫米"契约与形参名保持不变 ✓）
 #:   ★ 判据（★ 目标里写死）：★★ **回读值必须等于传入值** ✓（★ ±0.001 mm ✓）
 #:
@@ -673,9 +685,12 @@ def sketch_slot(model, x1, y1, x2, y2, radius):
         0,  # swSketchSlotCreationType_e: 0 = line（★ 第 1 参 ✓ 原就对）
         0,  # ★★ swSketchSlotLengthType_e: 0 = **CenterCenter**（★ 2026-10-04 修：
             #    原为 `radius` —— ★ 而官方该枚举**只有 0/1 两个成员**）✓
-        #: ★★★ 2026-10-10 修 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_verdict.json`）：
-        #:   ★ `x1/y1/x2/y2/radius` 原**原样**送进 COM ✗ —— ★ 而 COM 侧单位是**米**（事实 2）；
-        #:   ★★ 同模块 `sketch_line`/`sketch_circle` 等**都有** `_MM_TO_M` ⇒ ★ 本函数漏了 ✓
+        #: ★★★ 2026-10-10 修 **1000× 单位 bug**（★ 真机裁决，★ 证据 `output/_probe_unit_
+        #: verdict.json`）：
+        #: ★ `x1/y1/x2/y2/radius` 原**原样**送进 COM ✗ —— ★ 而 COM 侧单位是**米**（事实 
+        #: 2）；
+        #: ★★ 同模块 `sketch_line`/`sketch_circle` 等**都有** `_MM_TO_M` ⇒ ★ 本函数漏了 
+        #: ✓
         #:   ★ **对外契约仍是毫米** ⇒ ★ **只在这里换算一次** ✓
         2.0 * float(radius) * _MM_TO_M,  # ★★ 官方 `Width`（★ 2026-10-04 修系数 2）
         x1 * _MM_TO_M, y1 * _MM_TO_M, 0,
@@ -747,7 +762,8 @@ def sketch_spline(model, points):
         flat.extend([float(x) / 1000.0, float(y) / 1000.0, 0.0])
     if len(flat) < 6:
         raise ValueError("控制点太少：官方 Remarks 要求**至少两组 X,Y,Z**（6 个数），收到 %d 个" % len(flat))
-    #: ★★★ **必须包 `VARIANT(VT_ARRAY | VT_R8)`** —— ★ 裸 `array.array('d')` / list / tuple
+    #: ★★★ **必须包 `VARIANT(VT_ARRAY | VT_R8)`** —— ★ 裸 `array.array('d')` / list / tu
+    #: ple
     #: **静默回 `None`**（★ 而这正是本函数此前那条"建不出来"结论的**真因**）。
     data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, flat)
     seg = get_com_member(model, "SketchManager").CreateSpline2(data, False)
@@ -766,12 +782,14 @@ def sketch_spline(model, points):
 #   · `C:\swapi\types\IFeatureManager\InsertScale.md`：
 #       `Feature InsertScale( System.short Type, System.bool Uniform, System.double Xscale,
 #        System.double YScale, System.double ZScale )`
-#       `Type`: Value as defined in `swScaleType_e`；`YScale`/`ZScale` **valid only if `Uniform`
+# `Type`: Value as defined in `swScaleType_e`；`YScale`/`ZScale` **valid only if `Unifor
+# m`
 #       is false**；`Returns`: **`IFeature` 若缩放当前模型 · `Null` 若缩放选中的图形体**；
 #       `Remarks`: 缩放**图形体**时「**no scale feature is created**」（★ 只改显示）✗
 #   · `C:\swapi\enums\swScaleType_e.md`：`swScaleAboutCentroid` **0** ·
 #       `swScaleAboutOrigin` **1** · `swScaleAboutCoordinateSystem` **2**（★ 共 3 个成员）✓
-#   · ★★ **官方示例** `C:\swapi\examples\Insert_Scale_Feature_Example_VB.md`（★ 第 ③ 样，给调用序）：
+# · ★★ **官方示例** `C:\swapi\examples\Insert_Scale_Feature_Example_VB.md`（★ 第 ③ 样，
+# 给调用序）：
 #       `Set swScaleFeat = swFeatMgr.InsertScale(swScaleAboutOrigin, True, 3, 3, 3)`
 #       `If swScaleFeat Is Nothing Then Exit Sub`
 #       `Set swScale = swScaleFeat.GetDefinition`
@@ -784,8 +802,10 @@ def sketch_spline(model, points):
 #   ★ 加 `_feature_report` 的"建之前在不在 / 建之后在不在 / 重建 / 查错"四条 ✓
 # ⚠ **两条我方工程选择**（★ 不是官方要求，★ 如实标注）：
 #   ① `Type` 必须 ∈ `{0,1,2}`（★ 官方的 `swScaleType_e` 只有这三个 ⇒ 越界**必然非法**）✓
-#   ② `x <= 0` 拒绝 —— ★ **官方没说**「0 或负数会怎样」⇒ ★ 本守卫是**本项目防静默失败的选择**，
-#      ★★ **不是「官方要求抛错」**（★ 与本文件 `insert_composite_curve` 那条注释**同一纪律**）✓
+# ② `x <= 0` 拒绝 —— ★ **官方没说**「0 或负数会怎样」⇒ ★ 本守卫是**本项目防静默失败的选
+# 择**，
+# ★★ **不是「官方要求抛错」**（★ 与本文件 `insert_composite_curve` 那条注释**同一纪律**
+# ）✓
 #: ★ 官方 `swScaleType_e` 的三个取值（★ 越界必然非法）✓
 SCALE_TYPES = {0: "swScaleAboutCentroid", 1: "swScaleAboutOrigin",
                2: "swScaleAboutCoordinateSystem"}
@@ -803,7 +823,8 @@ def insert_scale(model, scale_type: int = 1, uniform: bool = True,
             "scale_type=%r 不在官方 `swScaleType_e` 内 ⇒ 必然非法（★ 合法值：%s）"
             % (scale_type, sorted(SCALE_TYPES)))
     if float(x) <= 0:
-        #: ★★ **我方工程选择**（★ 官方没说「0/负数会怎样」）—— ★ 防静默失败，★ 不假称官方要求 ✓
+        #: ★★ **我方工程选择**（★ 官方没说「0/负数会怎样」）—— ★ 防静默失败，★ 不假称官
+        #: 方要求 ✓
         raise ValueError(
             "x=%r ≤ 0 被拒 —— ★ 这是**本项目的工程选择**（防静默失败），"
             "★ **不是官方要求**：官方 `InsertScale` 页没写「0 或负数会怎样」" % x)
@@ -835,7 +856,8 @@ def insert_scale_report(model, scale_type: int = 1, uniform: bool = True,
     rep = _feature_report(
         model, feature_name or "缩放比例1",   #: ★★ 真机实测的**实际特征名**（★ 不是「缩放1」）——
         #:   ★ 发现方式：★ **建之前/之后对比特征名** ⇒ 新增的正是 `缩放比例1` ✓
-        #:   ★（★ 我原先按中文直觉猜「缩放1」⇒ `_feature_report` 的 `present_after` 回 `None` ✗）✓
+        #: ★（★ 我原先按中文直觉猜「缩放1」⇒ `_feature_report` 的 `present_after` 回 `No
+        #: ne` ✗）✓
         lambda: insert_scale(model, scale_type, uniform, x, y, z), "scale")
     #: ★★ **真判据**：体积比（★ 无量纲 ⇒ 不受单位影响）✓
     if kv is not None:
@@ -922,42 +944,56 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
         #: ★★★★★ 2026-10-04（接手轮）**记档保留 + 后继已验证可调** —— 处置阶段 2 · T1 ✓
         #:   ★ **官方逐字**（★ `ISketch/AutoDimension2.md`）：
         #:     「**Obsolete. Superseded by `ISketchManager::FullyDefineSketch`**.」✓
-        #:     ★ 旧签名 ⇒ `(int EntitiesToDimension, int HorizontalScheme, int HorizontalPlacement,
+        #: ★ 旧签名 ⇒ `(int EntitiesToDimension, int HorizontalScheme, int HorizontalPla
+        #: cement,
         #:       int VerticalScheme, int VerticalPlacement)` ⇒ **5 参** ✓
         #:   ★★ **后继逐字**（★ `ISketchManager/FullyDefineSketch.md`）：★ **现行** ·
         #:     ★ 签名 ⇒ **10 参** ✓
         #:     ★★ **⚠ 而它的 `## Returns` 逐字是**「Not currently defined」**** ⇒
         #:       ★★★ **官方没给返回码语义** ⇒ ★★ **我们**不许**解释那个返回码**（★ 铁律 5）✓
-        #:   ★★★ **调用序必须读**官方示例****（★ AGENTS.md 第 0 步：★ 签名与 Remarks 都给不了）——
-        #:     ★ 逐字（★ `C:\swapi\examples\Fully_Define_Underdefined_Sketch_Example_VB.md`）：
+        #: ★★★ **调用序必须读**官方示例****（★ AGENTS.md 第 0 步：★ 签名与 Remarks 都给
+        #: 不了）——
+        #: ★ 逐字（★ `C:\swapi\examples\Fully_Define_Underdefined_Sketch_Example_VB.md`
+        #: ）：
         #:     ```
         #:     swModel.ClearSelection2 True
         #:     lMarkHorizontal = 2   ' These are the marks expected for the dimension datums
         #:     lMarkVertical = 4
         #:     SelectByID2("Point1@Origin", "EXTSKETCHPOINT", 0,0,0, False,
         #:                 lMarkHorizontal Or lMarkVertical, Nothing, 0)
-        #:     FullyDefineSketch(True, True, <Vertical Or Horizontal>, True, 1, Nothing, 1, Nothing, 1, 1)
+        #: FullyDefineSketch(True, True, <Vertical Or Horizontal>, True, 1, Nothing, 1, 
+        #: Nothing, 1, 1)
         #:     ```
         #:     ★★ **⇒ 它印证**：★ `mark 2` / ★ `mark 4` **正是上面 740 行用的那两个** ✓
-        #:     ★★★ 而**枚举逐字**（★ `swSketchFullyDefineRelationType_e.md`）：★ `Horizontal = 2` ·
+        #: ★★★ 而**枚举逐字**（★ `swSketchFullyDefineRelationType_e.md`）：★ `Horizontal
+        #:  = 2` ·
         #:       ★ `Vertical = 4` ⇒ ★ **Or 起来 = 6** ✓
         #:   ★★★★ **真机两轮**（★ `probe_fullydefinesketch{,2}.py` · ★ `sw_guard` ·
         #:     ★ `sw_alive: true` · ★ **零弹窗**）：
         #:     | ★ 形态 | ★ 结果 |
         #:     |---|---|
-        #:     | ★ `FullyDefineSketch(…, **None**, …, **None**, …)` | ★★ **`类型不匹配`（位置 6）** |
+        #: | ★ `FullyDefineSketch(…, **None**, …, **None**, …)` | ★★ **`类型不匹配`（位
+        #: 置 6）** |
         #:     | ★★ 同上但两个 `DatumDisp` 传**空 Dispatch** | ★★★ **回 `4` · 零错误** ✓ |
-        #:     | ★★ 官方调用序（★ 选 `Point1@Origin` + `mark 6`） | ★★★ **回 `4` · 零错误** ✓ |
-        #:     | ★ 不选原点（★ 对照） | ★★ **也回 `4`** ⇒ ★ **那个返回码分不出"选了没选"** ✓ |
-        #:     ⇒ ★★★★ **⇒ 官方说的 "if Nothing or null" 在 pywin32 上要落成**空 `Dispatch`****
+        #: | ★★ 官方调用序（★ 选 `Point1@Origin` + `mark 6`） | ★★★ **回 `4` · 零错误** 
+        #: ✓ |
+        #: | ★ 不选原点（★ 对照） | ★★ **也回 `4`** ⇒ ★ **那个返回码分不出"选了没选"** ✓
+        #:  |
+        #: ⇒ ★★★★ **⇒ 官方说的 "if Nothing or null" 在 pywin32 上要落成**空 `Dispatch`**
+        #: **
         #:       （★ `VARIANT(VT_DISPATCH, None)` —— ★ 与**事实 12**同族）✓
         #:   ★★★★★ **⇒ 而本处**暂不换**，★ 理由是判据（★ 不跳步）**：
-        #:     ★ **① 判据立不起来**：★ 我试了 `GetDimensionCount` 与 `GetSketchDimensions` **两种读法**、
-        #:       ★★ **都量不到**（★ 回 `-1`）⇒ ★★★ **"它有没有真建出尺寸"这件事，我这次**没有可核读数**** ✓
-        #:       ★★★ **⇒ 按三态判据**：★ **量不到 ⇒ `None`** —— ★ **既不许报成功、★ 也不许报失败** ✓
-        #:     ★★ **② 返回码不可解释**：★ 官方的 `## Returns` 是「**Not currently defined**」⇒
+        #: ★ **① 判据立不起来**：★ 我试了 `GetDimensionCount` 与 `GetSketchDimensions` *
+        #: *两种读法**、
+        #: ★★ **都量不到**（★ 回 `-1`）⇒ ★★★ **"它有没有真建出尺寸"这件事，我这次**没有
+        #: 可核读数**** ✓
+        #: ★★★ **⇒ 按三态判据**：★ **量不到 ⇒ `None`** —— ★ **既不许报成功、★ 也不许报失
+        #: 败** ✓
+        #: ★★ **② 返回码不可解释**：★ 官方的 `## Returns` 是「**Not currently defined**
+        #: 」⇒
         #:       ★★★ **我不能拿 `4` 当"成功"**（★ 铁律 5 · ★ 且实测它**分不出**选了没选）✓
-        #:     ★★★ **⇒ 记档**：★ 后继**已验证**可调**（★ 前置与调用序都摸清了）、★ 而**替换要等一个
+        #: ★★★ **⇒ 记档**：★ 后继**已验证**可调**（★ 前置与调用序都摸清了）、★ 而**替换
+        #: 要等一个
         #:       能证明"尺寸真的建出来了"的判据** ⇒ ★ **下一轮补那个判据、★ 再换** ✓
         #:     ★★★★ **可复用判据**：★★★ **"后继能调"与"后继能替"是两件事** ——
         #:       ★ 前者只要**不报错**、★ 后者要**一个能证明产出存在的读数** ✓
@@ -973,9 +1009,11 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
             "selected": selected,
         }
     try:
-        #: ★★★ 2026-10-03（接手轮）**换成后继入口** —— 原来是 `model.GraphicsRedraw2()`。
+        #: ★★★ 2026-10-03（接手轮）**换成后继入口** —— 原来是 `model.GraphicsRedraw2()`
+        #: 。
         #:   官方 `IModelDoc2/GraphicsRedraw2.md` 逐字：
-        #:     「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
+        #: 「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::
+        #: IGraphicsRedraw]].**」
         #:   ★ 而后继的签名多一个 `Rect`（`void GraphicsRedraw( System.object Rect )`）——
         #:     ★★ 官方例子用 `(null)` / `(Empty)` / `(Nothing)` 传空，★ 真机已验证能调
         #:     （`output/graphicsredraw-successor-evidence.json` · **PASS**）。
@@ -995,7 +1033,8 @@ def auto_dimension_sketch(model, sketch=None, sketch_segments=None):
 
 def add_dimension(model, x, y):
     """在指定位置添加尺寸标注（单位: **毫米**）"""
-    #: ★★★ 2026-10-08 根因修复（问题① 单位）：★ 本函数对外是**毫米**（★ 工具层形参 `x_mm`/`y_mm` ✓）
+    #: ★★★ 2026-10-08 根因修复（问题① 单位）：★ 本函数对外是**毫米**（★ 工具层形参 `x_mm
+    #: `/`y_mm` ✓）
     #:   而官方 `IModelDoc2::AddDimension2(X, Y, Z)` 要的是**米** ✓ ⇒ ★ 补 ÷1000 ✓
     #:   （★ 与 `sketch_circle`/`sketch_line`/`sketch_arc` 是同一族病 ✓）
     return model.AddDimension2(x * _MM_TO_M, y * _MM_TO_M, 0)
@@ -1018,7 +1057,8 @@ _SG_RELATIONS = frozenset((
 #: ★★ 键**一律小写** —— 查表处用 `_cand.lower()` 对齐。
 #:   ⚠ 曾经的坑（2026-10-08 由独立复核抓出）：键写成混合大小写 `"sgEQUAL"`，
 #:     而查表用 `.lower()` ⇒ **恒不命中** ⇒ 提示恒为空 = **死代码** ✗
-#:     ★ 而当时的判据**抓不到**它（只断言「官方名出现在消息里」，而合法值清单本来就含官方名）。
+#: ★ 而当时的判据**抓不到**它（只断言「官方名出现在消息里」，而合法值清单本来就含官方名
+#: ）。
 #:     ⇒ ★ 判据已补强：必须断言提示的**专有措辞**「官方对应名为」出现 ✓
 _SG_LEGACY_ALIASES = {
     "sgequal": "sgSAMELENGTH",
@@ -1050,10 +1090,13 @@ def add_sketch_relation(model, relation_type):
     ⚠ 旧名 `sgEQUAL` / `sgMIDPOINT` **官方清单里不存在**，本函数会**拒绝**并提示官方名。
     """
     #: ★★★ 2026-10-08 根因修复（问题② 约束）：★ 现场铁证 ↓
-    #:   ★ 传 `PARALLEL`/`COINCIDENT`/`on_edge`/`PIERCE` ⇒ `SketchAddConstraints` **一律回 `True`** ✗
-    #:     而真判据（`ISketchSegment::GetRelationsCount` ✓）显示 **关系数 1 → 1 不变** ✗ ⇒ **空操作** ✓
+    #: ★ 传 `PARALLEL`/`COINCIDENT`/`on_edge`/`PIERCE` ⇒ `SketchAddConstraints` **一律回
+    #:  `True`** ✗
+    #: 而真判据（`ISketchSegment::GetRelationsCount` ✓）显示 **关系数 1 → 1 不变** ✗ ⇒ *
+    #: *空操作** ✓
     #:   ★ 带前缀的 `sgFIXED` ⇒ 关系数 **1 → 2** ✓ ⇒ ★ 根因 = **缺 `sg` 前缀 + 零校验** ✓
-    #:   ★ 修法：★ ① **白名单校验**（非法即抛 ✗，★ 不再静默 `True` ✓）② **自动补 `sg` 前缀** ✓
+    #: ★ 修法：★ ① **白名单校验**（非法即抛 ✗，★ 不再静默 `True` ✓）② **自动补 `sg` 前缀
+    #: ** ✓
     name = _sg_relation_name(relation_type)
     if name is None:
         _raw = str(relation_type or "").strip()
@@ -1071,7 +1114,8 @@ def add_sketch_relation(model, relation_type):
     #:     而它**不看草图状态**、失败也回 `True` ✗
     #:     ⇒ 在**已过定义**的草图上继续加 ⇒ **越加越坏**（现场铁证：status=4 时仍继续加）✗
     #:   ★ 判据：`ISketch::GetConstrainedStatus`，★ 本仓取 **2（欠定义）为唯一可加状态**。
-    #:     ⚠ 这是**本仓的项目规则**（沿用 `specs/221`），**不是**官方 `swConstrainedStatus_e`
+    #: ⚠ 这是**本仓的项目规则**（沿用 `specs/221`），**不是**官方 `swConstrainedStatus_e
+    #: `
     #:       的强制规定 —— 官方只定义取值，没规定「哪些状态允许加关系」。如实标注。
     #:   ★ 本门**不受任何开关影响** —— 没有 `verify=False` 之类的旁路 ✓
     _ADDABLE_STATUS = 2
@@ -1088,12 +1132,18 @@ def add_sketch_relation(model, relation_type):
             "没有活动草图 ⇒ `IModelDoc2::SketchAddConstraints` 在无活动草图时"
             "**静默回 True 而不加任何关系** ✗。★ 先 `sketch_start` 再调本函数。"
         )
-    #: ⚠⚠⚠ **不要写 `get_com_member(sk, "GetConstrainedStatus", "GetConstrainedStatus2")`** ✗
-    #:   `get_com_member(obj, attr_name, *args)` 的第 3 个参数是**调用实参**（`return member(*args)`），
-    #:   **不是**「备用成员名」⇒ 那样写会去调 `GetConstrainedStatus("GetConstrainedStatus2")`，
-    #:   实参个数不符 ⇒ 抛错 ⇒ 被吞 ⇒ `_st = None` ⇒ **本门恒拒、工具在真机上根本用不了**。
-    #:   （2026-10-08 由独立复核抓出；当时判据没抓到，因为测试桩比真函数宽容、把实参错误吞了。）
-    #:   ⇒ ★ 正确写法与 `scripts/sw_sketch_relations.py::_val` 一致：**只传成员名**，再按需调用。
+    #: ⚠⚠⚠ **不要写 `get_com_member(sk, "GetConstrainedStatus", "GetConstrainedStatus2")
+    #: `** ✗
+    #: `get_com_member(obj, attr_name, *args)` 的第 3 个参数是**调用实参**（`return memb
+    #: er(*args)`），
+    #: **不是**「备用成员名」⇒ 那样写会去调 `GetConstrainedStatus("GetConstrainedStatus2
+    #: ")`，
+    #: 实参个数不符 ⇒ 抛错 ⇒ 被吞 ⇒ `_st = None` ⇒ **本门恒拒、工具在真机上根本用不了**
+    #: 。
+    #: （2026-10-08 由独立复核抓出；当时判据没抓到，因为测试桩比真函数宽容、把实参错误吞
+    #: 了。）
+    #: ⇒ ★ 正确写法与 `scripts/sw_sketch_relations.py::_val` 一致：**只传成员名**，再按
+    #: 需调用。
     _st = None
     for _member in ("GetConstrainedStatus", "GetConstrainedStatus2"):
         try:
@@ -1310,8 +1360,10 @@ def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None,
     if axis_sketch_name:
         _select_revolve_axis(model, str(axis_sketch_name))
     _ensure_sketch_selected(model, sketch_name)
-    #: ★★★★★★★ 2026-10-04（轮 138）**可选薄壁** —— ★ 官方逐字：★ `FeatureRevolve2` 的签名
-    #:   **自带薄壁 4 个形参**（★ `IsThin` · `ThinType` · `ThinThickness1` · `ThinThickness2`）⇒
+    #: ★★★★★★★ 2026-10-04（轮 138）**可选薄壁** —— ★ 官方逐字：★ `FeatureRevolve2` 的签
+    #: 名
+    #: **自带薄壁 4 个形参**（★ `IsThin` · `ThinType` · `ThinThickness1` · `ThinThicknes
+    #: s2`）⇒
     #:   ★★ **⇒ 不必走 `CreateDefinition` 那条远路**（★ 与 `sweep` **不同**）✓
     #:   ★★★ **为什么加它**：★ 上一轮把旋转族 `GetWallThickness` 标成 `unknown` ⇒
     #:     ★ **而真因是**本仓一直建的是**非薄壁**（★ 旧实参第 3 位就是 `False`）⇒
@@ -1364,7 +1416,8 @@ def revolve_cut(model, sketch_name, angle_rad, axis_sketch_name=None):
     :param angle_rad: 旋转角（**弧度**）
     :param axis_sketch_name: 旋转轴（★ 官方 mark = 4 或 16；★ 且**必须先于轮廓进选择集**）
     """
-    #: ★ **先轴、后轮廓**（★ 顺序照官方示例 —— 反了会建不成，见 `revolve_boss` 的 docstring）
+    #: ★ **先轴、后轮廓**（★ 顺序照官方示例 —— 反了会建不成，见 `revolve_boss` 的 docstr
+    #: ing）
     if axis_sketch_name:
         _select_revolve_axis(model, str(axis_sketch_name))
     _ensure_sketch_selected(model, sketch_name)
@@ -1435,7 +1488,8 @@ def fillet(model, radius, edges=None):
         #: ★★★ 新增：`Ftyp` · `OverflowType` · `ConicRhoType` ⇒ ★ 0 = 默认
         0, 0, 0,
         #: ★★★★ 新增的五个数组（★ `Radii` / `Dist2Arr` / `RhoArr` / `SetBackDistances` /
-        #:   `PointRadiusArray` / `PointDist2Array` / `PointRhoArray`）⇒ ★ **均匀半径时都传 `None`** ✓
+        #: `PointRadiusArray` / `PointDist2Array` / `PointRhoArray`）⇒ ★ **均匀半径时都
+        #: 传 `None`** ✓
         None, None, None, None, None, None, None
     )
 
@@ -1500,30 +1554,40 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #   故在此显式标注，调用方若遇到方向不被识别可改为单位向量字符串。
     # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
     # ────────────────────────────────────────────────────────────────────
-    #: ★★★★★ 2026-10-04（接手轮）**记档保留 3.0 —— ★ 而这次的"没换"是**没验出来**、★ 如实记** ✓
+    #: ★★★★★ 2026-10-04（接手轮）**记档保留 3.0 —— ★ 而这次的"没换"是**没验出来**、★ 如
+    #: 实记** ✓
     #:   处置阶段 2 · T1 · ★ 逐条流程 ①② ✓
     #:   ★ **官方链**（★ 按接口限定地追 —— ★ 上一轮定的判据）：
     #:     · `FeatureLinearPattern3` 废弃 ⇒ `4` · `4` 废弃 ⇒ `5` ·★ **`5` 废弃** ✓
-    #:     ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空**」——
-    #:       ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`）：
+    #: ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空*
+    #: *」——
+    #: ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLi
+    #: nearPattern5.md:12`）：
     #:         「Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in
     #:           `ILinearPatternFeatureData` and `ILocalLinearPatternFeatureData`.」
-    #:       ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`** ✓
+    #: ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`**
+    #:  ✓
     #:   ★★ **⇒ 按铁律 4 查反射裁决**（★ 最高代是哪个）：
-    #:     ★ `FeatureLinearPattern` ⇒ 8/9/10/**20**/**22** ⇒ ★★ **`5` 是最高代、★ 反射里没有 `6`** ✓
+    #: ★ `FeatureLinearPattern` ⇒ 8/9/10/**20**/**22** ⇒ ★★ **`5` 是最高代、★ 反射里没有
+    #:  `6`** ✓
     #:     ★★ 而 `FeatureCircularPattern` ⇒ 4/5/6/7/**14** ⇒ ★ **`5` 也是最高代** ✓
-    #:     ⇒ ★★★ **∴ `5` 是**本族最高代**、★ 而**不是"没有后继"**** —— ★★ 「最高代」说的是**本族**（★ `1`–`5`），
+    #: ⇒ ★★★ **∴ `5` 是**本族最高代**、★ 而**不是"没有后继"**** —— ★★ 「最高代」说的是**
+    #: 本族**（★ `1`–`5`），
     #:       ★ **官方给的替换是**跨族**的 `CreateFeature`**（★ 见上面的订正 · ★ spec 293）✓
     #:   ★★★ **参数对位**（★ 官方签名逐字）：★ `FeatureLinearPattern5` **22 参** ⇒
-    #:     ★★ **前 10 参与本处的 `3` 代**逐字相同**（`Num1, Spacing1, Num2, Spacing2, FlipDir1,
+    #: ★★ **前 10 参与本处的 `3` 代**逐字相同**（`Num1, Spacing1, Num2, Spacing2, FlipDi
+    #: r1,
     #:       FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）、★ 新增 12 个是开关 ✓
-    #:   ★★★★ **官方 `## Remarks` 逐字给了 mark 表**（★ **而我第一版探针只读了签名、★ 没读它**）：
-    #:     ★ 「Using `IModelDocExtension::SelectByID2` … **ordered selection** … is required」
+    #: ★★★★ **官方 `## Remarks` 逐字给了 mark 表**（★ **而我第一版探针只读了签名、★ 没读
+    #: 它**）：
+    #: ★ 「Using `IModelDocExtension::SelectByID2` … **ordered selection** … is required
+    #: 」
     #:     · ★ **`1 and 2 to mark the directions`** ⇒ 方向 ✓
     #:     · ★★ **`4 to mark the features to pattern`** ⇒ **要阵列的特征用 mark 4** ✓
     #:     · ★★★ 而直接选特征用 **`IFeature::Select2`** ✓
     #:   ★★★★★ **真机三轮的结论是**否定的**（★ **如实记** —— ★ 硬纪律 ②）**：
-    #:     ★ `tools/probe_pattern5.py`（★ `sw_guard` · ★ `sw_alive: true` · ★ 零弹窗 · ★ 14.3 s ⇒
+    #: ★ `tools/probe_pattern5.py`（★ `sw_guard` · ★ `sw_alive: true` · ★ 零弹窗 · ★ 14.
+    #: 3 s ⇒
     #:       `output/pattern5-probe-evidence.json`）跑**四种**形态：
     #:       | ★ 形态 | ★ 特征数 | ★ 结果 |
     #:       |---|---|---|
@@ -1551,10 +1615,12 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #: ★★★★★ 2026-10-04（接手轮）**先补基线、★ 再换代 —— ★ 两件都做成了** ✓
     #:   处置阶段 2 · T1 · ★ 逐条流程 ①②③（★ 承接上一轮"没验出来"的记档）✓
     #:   ── 一 · ★ 上一轮为什么"没验出来" ──────────────────────────────
-    #:     ★ 上一轮真机跑**四种形态全没建成**（★ **含基线**）⇒ ★★ **我当时的结论是正确且诚实的**：
+    #: ★ 上一轮真机跑**四种形态全没建成**（★ **含基线**）⇒ ★★ **我当时的结论是正确且诚实
+    #: 的**：
     #:       ★ 「**这个探针证明不了 `5` 代能不能替**」—— ★ 因为**基线也立不起来** ✓
     #:   ── 二 · ★ 本轮查到的真因（★ **两处都是我调错、★ 不是能力不成**）──────
-    #:     ★★ **① 官方示例给了调用序**（★ `C:\swapi\examples\Change_Linear_Pattern_Example_VB.md`
+    #: ★★ **① 官方示例给了调用序**（★ `C:\swapi\examples\Change_Linear_Pattern_Example_V
+    #: B.md`
     #:        **逐字**）—— ★ **签名与 Remarks 都给不了"顺序 + mark"** ✓
     #:        ```
     #:        swModel.ClearSelection2 True
@@ -1567,37 +1633,49 @@ def linear_pattern(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count,
     #:        ```
     #:     ★★★ **② 选实体的成员是 `IBody2::Select`、★ 不是 `Select4`** ——
     #:        官方逐字（★ `C:\swapi\types\IBody2\Select.md`）：
-    #:          ★ `System.bool Select( System.bool Append, System.int Mark )` ⇒ **2 参、带 Mark** ✓
+    #: ★ `System.bool Select( System.bool Append, System.int Mark )` ⇒ **2 参、带 Mark**
+    #:  ✓
     #:        ★★ 我写 `Select4` ⇒ 报 `err: GetBodies2.Select4` ⇒
     #:          ★★★ **那是"我调错了成员"**（★ **事实 517** 第 N 次：★ 我调错了 ≈ 能力坏了）✓
     #:     ★★★★ **⇒ 而 `## Remarks` 只说了 `4 to mark the features to pattern`** ——
-    #:       ★ **示例对 `SOLIDBODY` 用的是 `256`** ⇒ ★★ **两种 mark 都对、★ 取决于选特征还是选体** ✓
+    #: ★ **示例对 `SOLIDBODY` 用的是 `256`** ⇒ ★★ **两种 mark 都对、★ 取决于选特征还是选
+    #: 体** ✓
     #:   ── 三 · ★ 真机结果（★ 三种**全部建成**）────────────────────────
     #:     ★ `tools/probe_linear_pattern_baseline.py`（★ `sw_guard` · ★ `sw_alive: true` ·
     #:       ★ **零弹窗** · ★ 9.76 s ⇒ `output/linear-pattern-baseline-evidence.json`）：
     #:       | ★ 形态 | ★ 特征数 | ★ 新特征 | ★ 结果 |
     #:       |---|---|---|---|
-    #:       | ★ `FeatureLinearPattern3`（10 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
-    #:       | ★ `FeatureLinearPattern4`（20 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
-    #:       | ★★ `FeatureLinearPattern5`（22 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** ✓ |
-    #:       ★★ 选中读数：★ `dir_by_point: true` · `body_Select(True,256): true` · `sel_count: 2` ✓
+    #: | ★ `FeatureLinearPattern3`（10 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** 
+    #: ✓ |
+    #: | ★ `FeatureLinearPattern4`（20 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成** 
+    #: ✓ |
+    #: | ★★ `FeatureLinearPattern5`（22 参） | ★ 20 → 21 | ★ `阵列(线性)1` | ★★ **建成**
+    #:  ✓ |
+    #: ★★ 选中读数：★ `dir_by_point: true` · `body_Select(True,256): true` · `sel_count:
+    #:  2` ✓
     #:     ⇒ ★★★★★ **⇒ ①本仓的"阵列"基线与 ②`5` 代的可用性**同时**得到真机证据** ✓
     #:   ── 四 · ★ 换代（★ 逐条流程 ③）──────────────────────────
     #:     ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ **`5` 也废弃**）·
-    #:     ★★ **而反射裁决**：★ `FeatureLinearPattern` 最高代 **`5`（22 参）**、★ **没有 `6`** ⇒
+    #: ★★ **而反射裁决**：★ `FeatureLinearPattern` 最高代 **`5`（22 参）**、★ **没有 `6`
+    #: ** ⇒
     #:       ★★★ **`5` 就是本族的现行可用那代** ⇒ ★ **换到 `5`、★ 参数按官方 22 参对位** ✓
-    #:     ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空**」——
-    #:       ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`）：
+    #: ★★★★ **⚠ 订正（★ spec 293 · 2026-10-10）**：★ 此处原写「★ 5 也废弃、★ **后继为空*
+    #: *」——
+    #: ★★★ **那句话是错的** ✗。★ **官方逐字**（`C:\swapi\types\IFeatureManager\FeatureLi
+    #: nearPattern5.md:12`）：
     #:         「**Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in
     #:           `ILinearPatternFeatureData` and `ILocalLinearPatternFeatureData`.**」
-    #:       ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`** ✓
+    #: ⇒ ★★ **后继不是 `FeatureLinearPattern6`，★ 是 `CreateFeature` + `I*FeatureData`**
+    #:  ✓
     #:       ★★★ **而它换不了（★ 不是"一处替换"）**：★ 官方指南逐字
     #:         （`C:\swapi\docs\...\Pattern Features and their Feature Data Objects.md:20`）：
     #:         「**Before calling `IFeatureManager::CreateDefinition`, you must pre-select the
     #:           entities needed to create the linear pattern feature.**」✓
-    #:       ⇒ ★★ **后继要求预选**：方向（mark **1** / **2**）+ 要阵列的面/特征/实体（mark **4** / **256**）；
+    #: ⇒ ★★ **后继要求预选**：方向（mark **1** / **2**）+ 要阵列的面/特征/实体（mark **4
+    #: ** / **256**）；
     #:         ★★ **而本函数**不做选择**（★ 靠 `DName1`/`DName2` **尺寸名**驱动、★ 无选择集）**
-    #:       ⇒ ★★★ **换它 = 改本函数的**契约****（★ 调用方要开始负责预选）⇒ ★ **不是"换路由"** ⇒
+    #: ⇒ ★★★ **换它 = 改本函数的**契约****（★ 调用方要开始负责预选）⇒ ★ **不是"换路由"**
+    #:  ⇒
     #:         ★★ **记档保留**（★ 逐站点拍板见 `specs/293-route-change-viability/`）✓
     #:   ★★★★★ **可复用判据（★ 本轮）**：
     #:     ★★★ **"换代验不出来"时，★ 先去修基线** —— ★ 基线立住的那一刻，
@@ -1657,7 +1735,8 @@ def feature_suppress(model, feature_name: str) -> bool:
     get_com_member(model, "ClearSelection2", True)
     selection = get_com_member(model, "Extension")
     #: ★ 按**对象**选特征：★ 事实 32 说实体（边/面）按名字选不到，
-    #:   而**特征按名字可以**（`SelectByID2(名, "BODYFEATURE", 0,0,0, False, 0, None, 0)`）✓
+    #: 而**特征按名字可以**（`SelectByID2(名, "BODYFEATURE", 0,0,0, False, 0, None, 0)`
+    #: ）✓
     ok = get_com_member(selection, "SelectByID2", str(feature_name), "BODYFEATURE",
                         0.0, 0.0, 0.0, False, 0, _empty_callout(), 0)
     count = int(get_com_member(get_com_member(model, "SelectionManager"),
@@ -1693,14 +1772,16 @@ def feature_unsuppress(model, feature_name: str) -> bool:
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API（`C:\swapi`，三源之一）+ 本项目既有模式
-# 文件:   C:\swapi\types\IModelDoc2\EditDelete.md → `void EditDelete()`（0 参，★ 无废弃）
+# 文件:   C:\swapi\types\IModelDoc2\EditDelete.md → `void EditDelete()`（0 参，★ 无废弃
+# ）
 # 定位:   ★ 阶段 5「按缺口密度补能力」—— ★ 继续补**「改 × 特征」格**（★ 本仓密度**最低
 #           **的一格：★ 官方 275 / 我们 2 ⇒ 0.7%）。
 #         ★★ 与 `feature_suppress` **同族**：★ `EditDelete()` 也是**文档级**、
 #            ★ **作用在当前选择上**（★ 官方 `## Parameters` 无参数 ⇒ 无对象形参）✓
 #        ★★★ 真机证据见 `tools/probe_feature_edit_e2e.py` ·
 #          `output/feature-edit-e2e-evidence.json`
-#        ⚠ 与 `EditSuppress2` 一样：★ **空选区下调用会静默什么都不做** ⇒ 本函数**先回读选区计数**、
+# ⚠ 与 `EditSuppress2` 一样：★ **空选区下调用会静默什么都不做** ⇒ 本函数**先回读选区计数
+# **、
 #          ★ **为 0 就抛错**（★ 本项目一贯纪律：不静默失败）✓
 # ────────────────────────────────────────────────────────────────────
 def feature_delete(model, feature_name: str) -> None:
@@ -1774,12 +1855,17 @@ def shell(model, thickness, faces_to_remove=None):
     #:   ⚠ 原写法 `model.FeatureManager.InsertFeatureShell(...)` 真机报
     #:     **`AttributeError: <unknown>.InsertFeatureShell`** —— ★ 那正是**事实 36 的形态**
     #:     （「同名接口分属不同族 ⇒ 用错接口 = 对象对任何成员都没反应」）。
-    #: ★★★★★ **`Thickness` 的单位 = 毫米（已实测判决）** —— ⚠ 而**官方文档写的是 meters**。
-    #:   ★ 判据（2026-10-01 轮 250，`tools/probe_shell_thickness_units.py`）：100×60×20 的板，
-    #:     `t=2.0` ⇒ 实体体积 **23232**、被挖空腔 **96768** = **96×56×18** ⇒ **四壁各减 2 mm**；
+    #: ★★★★★ **`Thickness` 的单位 = 毫米（已实测判决）** —— ⚠ 而**官方文档写的是 meters*
+    #: *。
+    #: ★ 判据（2026-10-01 轮 250，`tools/probe_shell_thickness_units.py`）：100×60×20 的
+    #: 板，
+    #: `t=2.0` ⇒ 实体体积 **23232**、被挖空腔 **96768** = **96×56×18** ⇒ **四壁各减 2 mm
+    #: **；
     #:     `t=4.0` ⇒ 实体 **43456**、空腔 **76544** = **92×52×16** ⇒ **四壁各减 4 mm**。
-    #:   ⇒ ★★ **几何自证口径是毫米** ⇒ **不要按官方那句 meters 换算**（★ 与本模块头一致）。
-    #:   ★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或直接失败（★ 实测都没有）。
+    #: ⇒ ★★ **几何自证口径是毫米** ⇒ **不要按官方那句 meters 换算**（★ 与本模块头一致）
+    #: 。
+    #: ★ 若按 meters 解，2.0 的壁就是 **2 米** ⇒ 会把 20 mm 厚的板吃光或直接失败（★ 实测
+    #: 都没有）。
     return model.InsertFeatureShell(thickness * _MM_TO_M, False)
 
 
@@ -1795,10 +1881,12 @@ def mirror_feature(model, feature_name, mirror_plane_name):
     #:   官方 `InsertMirrorFeature2.md` 的 Remarks 给了**完整的 mark 表**：
     #:     ★ **Features ⇒ 1** · ★ Faces ⇒ 128 · ★ Bodies ⇒ 256 ·
     #:     ★ **Planes or planar faces ⇒ 2** · ★ Structure systems ⇒ 134217728
-    #:   ★ 而旧写法是：特征 mark=**4**（★ **表里没有 4**）· 平面 mark=1（★ 而 1 是**特征**）
+    #: ★ 而旧写法是：特征 mark=**4**（★ **表里没有 4**）· 平面 mark=1（★ 而 1 是**特征**
+    #: ）
     #:   ⇒ ★★ **两个都错** ⇒ `InsertMirrorFeature2` 静默回 `None`。
     #:   ★ 另：选特征的 TypeName **只有 `BODYFEATURE` 对**（真机：回 True 且 mark 计数 1；
-    #:     `FEATURE` 回 False 计数 0；`BODY` / `特征` 回 False 而计数 1）—— ★ 以计数为准（事实 8）。
+    #: `FEATURE` 回 False 计数 0；`BODY` / `特征` 回 False 而计数 1）—— ★ 以计数为准（事
+    #: 实 8）。
     _select_by_id(model.Extension, feature_name, "BODYFEATURE", mark=1)
     _select_by_id(model.Extension, mirror_plane_name, "PLANE", append=True, mark=2)
     return model.FeatureManager.InsertMirrorFeature2(False, False, False, False, 0)
@@ -1902,20 +1990,28 @@ def rib(model, sketch_name, thickness, direction=True):
     # 本次改动: 原实现传 **9** 个实参，与上述两个版本**都不匹配**
     #           （既不是 10 也不是 8），必然失败。
     # 查证:   python scripts/audit_call_arity.py（随本仓库提供）
-    # ⚠ 末位布尔=**`IsNormToSketch`**（2026-10-01 轮 251 **已查证** —— 旧注记说"CHM 页没找到"，
+    # ⚠ 末位布尔=**`IsNormToSketch`**（2026-10-01 轮 251 **已查证** —— 旧注记说"CHM 页没
+    # 找到"，
     #   而 `C:\swapi\types\IFeatureManager\InsertRib.md` **有完整的 10 个参数说明**）：
-    #     `Is2Sided, ReverseThicknessDir, Thickness, ReferenceEdgeIndex, ReverseMaterialDir,`
+    # `Is2Sided, ReverseThicknessDir, Thickness, ReferenceEdgeIndex, ReverseMaterialDir,
+    # `
     #     `IsDrafted, DraftOutward, DraftAngle, IsNormToSketch, IsDraftedFromWall`
-    #   ⇒ ★ 本函数传的 10 个实参**位置对齐**（`direction, False, thickness, 0, False, False, False, 0, False, False`）
-    # ⚠⚠ **而真机仍失败（静默：不抛异常也不建出特征）** ⇒ ★ **嫌疑在 `ReferenceEdgeIndex`（本函数传 `0`）**：
-    #   官方说明它是「**Edge in the sketch** to use to determine the **material direction** and for
-    #   draft reference」⇒ ★ **"sketch 里的一条边"**，而 `0` 很可能不是合法边索引（★ 索引可能从 1 起）。
-    #   ★ **下一步的正路**：真机逐个试 `ReferenceEdgeIndex`（0 / 1）与 `_ensure_sketch_selected` 的
+    # ⇒ ★ 本函数传的 10 个实参**位置对齐**（`direction, False, thickness, 0, False, Fals
+    # e, False, 0, False, False`）
+    # ⚠⚠ **而真机仍失败（静默：不抛异常也不建出特征）** ⇒ ★ **嫌疑在 `ReferenceEdgeIndex
+    # `（本函数传 `0`）**：
+    # 官方说明它是「**Edge in the sketch** to use to determine the **material direction*
+    # * and for
+    # draft reference」⇒ ★ **"sketch 里的一条边"**，而 `0` 很可能不是合法边索引（★ 索引
+    # 可能从 1 起）。
+    # ★ **下一步的正路**：真机逐个试 `ReferenceEdgeIndex`（0 / 1）与 `_ensure_sketch_sel
+    # ected` 的
     #     选区形态（★ 官方要的可能**不是草图特征**，而是**草图里的一条线**）。
     #   ⚠ 在那之前**不盲改**（事实 53：同一处连续修补 ≥3 次就该停）。
     # ⚠ 本行为静态签名比对后修正，未在本机实测（见 AGENTS.md 铁律 2）
     # ────────────────────────────────────────────────────────────────────
-    #: ★★★★★★★ 2026-10-04（轮 124）**改用 `call_com_member` 形态** —— ★ 那才是本仓的正解 ✓
+    #: ★★★★★★★ 2026-10-04（轮 124）**改用 `call_com_member` 形态** —— ★ 那才是本仓的正解
+    #:  ✓
     #:   ★ **真机读数**（★ `output/rib-dome-params-capability-recheck.json`）：
     #:     ★ `rib_report ok=false` · ★ `created=null` · ★ **`error=""`** ⇒ **静默失败** ✓
     #:   ★★ **而**参数不是真因****（★ 逐条比过官方示例）：
@@ -1923,21 +2019,27 @@ def rib(model, sketch_name, thickness, direction=True):
     #:       Thickness, ReferenceEdgeIndex, ReverseMaterialDir, IsDrafted, DraftOutward,
     #:       DraftAngle, IsNormToSketch, IsDraftedFromWall` ✓
     #:     ★★ 官方示例：★ `InsertRib(**true**, false, 0.00254, 0, false, false, **true**,
-    #:       **0.0174532925199433**, false, false)` ⇒ ★ `DraftOutward=true` + `DraftAngle=1°` ✓
+    #: **0.0174532925199433**, false, false)` ⇒ ★ `DraftOutward=true` + `DraftAngle=1°` 
+    #: ✓
     #:     ★★★ 本仓：★ `Is2Sided=direction`（★ 默认 `True`）· ★ `IsDrafted=False` ⇒
     #:       ★★ **⇒ `DraftAngle=0` 与 `DraftOutward=False` 都**合规****
     #:       （★ 官方逐字「only valid if `IsDrafted` is true」）✓
     #:   ★★★★ **⇒ 真因在**调用形态****：★ 原写法 `model.FeatureManager.InsertRib(...)` 是
-    #:     **属性链直取 + 直调** ⇒ ★★ **而本仓的纪律是走 `get_com_member` / `call_com_member`**
+    #: **属性链直取 + 直调** ⇒ ★★ **而本仓的纪律是走 `get_com_member` / `call_com_member
+    #: `**
     #:     （★ 同模块 `insert_dome` 那次修的**正是**同一个问题 —— 它现在的形态逐字是
-    #:       `call_com_member(model, "InsertDome", float(height) * _MM_TO_M, bool(reverse), bool(elliptic))`）✓
-    #:   ★★★★★ **⚠ `ReferenceEdgeIndex` 传 `0`** ⇒ ★ 官方逐字：「Edge in the sketch to use to
+    #: `call_com_member(model, "InsertDome", float(height) * _MM_TO_M, bool(reverse), bo
+    #: ol(elliptic))`）✓
+    #: ★★★★★ **⚠ `ReferenceEdgeIndex` 传 `0`** ⇒ ★ 官方逐字：「Edge in the sketch to use
+    #:  to
     #:     determine the material direction and for draft reference」⇒ ★★ **第 0 条边** ✓
     #:     ★★★ **而官方示例也传 `0`** ⇒ ★ **一致** ✓
     #: ★★★★★★★ 2026-10-04（轮 124）**10 参在 pywin32 上到不了** —— ★ 真机实测 ✓
-    #:   ★ 用 **10 参**形态调 ⇒ ★ `com_error: (-2147352562, '**无效的参数数目。**', None, None)` ✓
+    #: ★ 用 **10 参**形态调 ⇒ ★ `com_error: (-2147352562, '**无效的参数数目。**', None, 
+    #: None)` ✓
     #:   ★★ **而 `call_com_member` 就是 `get_com_member`**（★ 逐字 `return get_com_member(
-    #:     obj, attr_name, *args)`）⇒ ★★★ **⇒ 它**不替你选 arity**、★ 那个报错是**真实的**** ✓
+    #: obj, attr_name, *args)`）⇒ ★★★ **⇒ 它**不替你选 arity**、★ 那个报错是**真实的****
+    #:  ✓
     #:   ★★★ 反射里**两个** `InsertRib` 都在：★ **10 参** 与 ★ **8 参** ⇒
     #:     ★★ **8 参那个就是 10 参的**前 8 个**（★ `Is2Sided, ReverseThicknessDir,
     #:       Thickness, ReferenceEdgeIndex, ReverseMaterialDir, IsDrafted,
@@ -2159,15 +2261,18 @@ def insert_dome(model, height, reverse=False, elliptic=False):
     ★ **为什么不用 `CreateDefinition`**：`swFmDome` **不在枚举里、也不在
     `CreateDefinition` 的 35 个合法常量里**（实测，轮 143）⇒ 那条路**不存在**。
     """
-    #: ★★★ **实参要喂给 `call_com_member` 自己，不是喂给它回的东西**（2026-10-01 轮 251 查清）：
+    #: ★★★ **实参要喂给 `call_com_member` 自己，不是喂给它回的东西**（2026-10-01 轮 251 
+    #: 查清）：
     #:   原写法 `call_com_member(model, "InsertDome")(h, r, e)` 有**两处**错：
     #:     ① `call_com_member(model, "InsertDome")` 本身就会**零参调一次**
     #:        ⇒ `InsertDome()` 少 3 个必需实参；
     #:     ② 再对它回的**结果**调 `(...)` —— 而 `InsertDome` 是 **`void`** ⇒ 回 `None`。
     #:   ⇒ ★★ 真机表现是 **"不抛异常、也不建出特征"的静默失败**（★ 被回读判据抓到）。
     #:   ★ 正确形态 = **`call_com_member(obj, name, *args)`**（实参直接跟着名字）。
-    #: ⚠ 官方 Remarks 还要求：★ **"select the face for the dome using a selection mark of 1"**
-    #:   ⇒ 调用方**必须用 `mark=1`** 选面（★ `select_face_at` 的默认 `mark=0` **不满足**）。
+    #: ⚠ 官方 Remarks 还要求：★ **"select the face for the dome using a selection mark o
+    #: f 1"**
+    #: ⇒ 调用方**必须用 `mark=1`** 选面（★ `select_face_at` 的默认 `mark=0` **不满足**）
+    #: 。
     call_com_member(model, "InsertDome", float(height) * _MM_TO_M,
                     bool(reverse), bool(elliptic))
 
@@ -2219,12 +2324,14 @@ def insert_composite_curve(model):
 #   ⚠ 而 `GetWhatsWrong2` 在本机两套源里**不存在**（★ 规则文本的一处失真）——
 #     真正的成员是 `IModelDocExtension.GetWhatsWrongCount`（★ 已记进
 #     `scripts/sw_feature_readback.py` 的 docstring）。
-# ⇒ ★ 本段三个包装**统一走 `sw_feature_readback.feature_readback`**（那个判据已真机打磨三遍）：
+# ⇒ ★ 本段三个包装**统一走 `sw_feature_readback.feature_readback`**（那个判据已真机打磨
+# 三遍）：
 #     · `shell`        ⇒ 抽壳（`InsertFeatureShell`）
 #     · `rib`          ⇒ 筋（`InsertRib`）
 #     · `insert_dome`  ⇒ 圆顶
 #   ★ 它们的共同点：**都回 COM 对象**（⇒ MCP 回不了）**且都该按规则 6 回读确认**。
-# ⇒ ★★ 判据 = ★ **特征在树里 + `EditRebuild3` 真 + `GetWhatsWrongCount == 0`**（三条都真才 ok）。
+# ⇒ ★★ 判据 = ★ **特征在树里 + `EditRebuild3` 真 + `GetWhatsWrongCount == 0`**（三条都真
+# 才 ok）。
 
 
 def _feature_report(model, feature_name: str, call, label: str) -> dict[str, Any]:
@@ -2358,7 +2465,8 @@ def insert_composite_curve_report(model, feature_name: str = ""):
                            lambda: insert_composite_curve(model), "composite_curve")
 
 
-# ── 24h 计划 段 5「修地基」**D2**（Spec Kit `149`）：**画几何前必须有活动草图** ──────────
+# ── 24h 计划 段 5「修地基」**D2**（Spec Kit `149`）：**画几何前必须有活动草图** ───────
+# ───
 # ★★★ 依据（★ 本项目自己的记载，**不是发明**）：
 #   · `specs/135-*` 的 `converge.md` L76：「L2 | ★ **「不 start 就画几何」没有机器守卫** |
 #     实测是**静默的**；**要加守卫应在能力层/工具层** ⇒ ★ **另开特性（不顺手改）**」
@@ -2396,7 +2504,8 @@ def _require_active_sketch(fn):
     @functools.wraps(fn)
     def _wrapped(model, *args, **kwargs):
         try:
-            #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model, "GetActiveSketch2")`。
+            #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `get_com_member(model,
+            #:  "GetActiveSketch2")`。
             #:   ★ 官方 `types/IModelDoc2/GetActiveSketch2.md` 逐字：
             #:     「**Obsolete. Superseded by [[ISketchManager::ActiveSketch]].**」
             #:   ★★ 真机已验证两者**行为等价**（`tools/probe_activesketch_successor.py` ·
@@ -2439,9 +2548,11 @@ for _fn in _SKETCH_DRAWING_FUNCS:
 #      `AttributeError: <unknown>.InsertAxis2`）；
 #   ② **它回 `bool` 而不是 `Feature`** ⇒ ★ **判据要数特征树**（★ 读 `.Name` 会崩）；
 #   ③ ★ 环形阵列的官方 mark 表要求 `1 = 方向轴` ⇒ ★ 没有轴就阵列不了。
-# 依据: ★ CHM `IModelDoc2~InsertAxis2.html` · ★ 反射 `sw_api_sldworks.py:6267`（arity = 1）·
+# 依据: ★ CHM `IModelDoc2~InsertAxis2.html` · ★ 反射 `sw_api_sldworks.py:6267`（arity = 
+# 1）·
 #   真机 `output/pattern-axis-evidence.json`（★ `InsertAxis2` 回 True · 出现 `基准轴1` ·
-#   `阵列(圆周)1` type=`CirPattern`）· `output/mirror-fixed-evidence.json`（★ `镜向1` type=`MirrorPattern`）
+# `阵列(圆周)1` type=`CirPattern`）· `output/mirror-fixed-evidence.json`（★ `镜向1` type
+# =`MirrorPattern`）
 # ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -2465,7 +2576,8 @@ def create_axis_report(model, reverse: bool = True,
     if model is None:
         return {"ok": False, "error": "model 为 None"}
     from sw_connect import get_com_member as _get
-    #: ★★★ 先按声明式选择器**重建**选区（★ 必须在读计数之前；★ 事实 503：注入已把它清空）✓
+    #: ★★★ 先按声明式选择器**重建**选区（★ 必须在读计数之前；★ 事实 503：注入已把它清空
+    #: ）✓
     if str(selection or "").strip():
         import sw_selection_spec as _SS
         try:
@@ -2503,13 +2615,15 @@ def create_axis_report(model, reverse: bool = True,
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_part.py —— 追加两个 report 包装（段 3 余下两条）
 # 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3：`add_dimension` / `linear_pattern`。
-#   ★★ **两个裸函数都不做单位换算，而官方 API 吃「米」** —— 这是从官方文档读出来的，不是猜的：
+# ★★ **两个裸函数都不做单位换算，而官方 API 吃「米」** —— 这是从官方文档读出来的，不是猜
+# 的：
 #     · `IModelDoc2.AddDimension2(X, Y, Z)`：“**Dimension text location in meters**”
 #       ＋ Remarks：“**Before calling this method, you must select the entities**”
 #     · `IFeatureManager.FeatureLinearPattern3`：`Spacing1` / `Spacing2`
 #       “Spacing … **in meters**”；`Num1` = 实例数**含原件**
 #   ⇒ ★ **`linear_pattern` 原来的文档串写着「间距（毫米，⚠ 间距已测）」是错的** ——
-#     ★ 传「毫米数」进去等于**间距被放大 1000 倍**（★ 本轮把它从"未核实"升级为"已核实并写明"）。
+# ★ 传「毫米数」进去等于**间距被放大 1000 倍**（★ 本轮把它从"未核实"升级为"已核实并写明"
+# ）。
 #   ★★ 两个包装都按**规则 2**（对外 `*_mm`，换算只在这一处）× **规则 3**（声明式选择）
 #      × **规则 6**（建完回读）来写；★ `add_dimension` 的"必须先选中实体"直接复用
 #      **段 1 的选择底座**（`resolve_selection`）—— ★ 那正是"把选择底座排在前面"的红利。
@@ -2605,18 +2719,22 @@ def linear_pattern_report(model, feature_name: str, spacing_mm: float, count: in
     before = feature_names(model)
     try:
         #: ★★ 官方签名（★ 这是 `3` 代那 10 参；★ 本行已换成 **`5` 代 22 参**）：
-        #:   `Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`
+        #: `Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, Geometry
+        #: Pattern, VaryInstance`
         #: ★ 而我第一版**传了 15 个** —— ★★ 真机报
         #:   `com_error: (-2147352562, '无效的参数数目。')`。
         #:   ★ 记一条：**“读了文档” ≠ “按文档写”** —— 我读了参数表，却凭印象补了尾部。
         #: ★★★★ 2026-10-04（接手轮）**换到现行的 `5` 代（22 参）** —— 处置阶段 2 · T1 ✓
         #:   ★ 官方链：★ `3` 废弃 ⇒ `4` ⇒ `5`（★ **`5` 也废弃**）—— ★★ 后继**不是** `6`，
-        #:     ★ **是跨族的 `IFeatureManager::CreateFeature`**（★ 官方逐字 · ★ 见 `linear_pattern` 的订正 · spec 293）·
-        #:   ★★ **反射裁决**：★ 最高代 `5`（**22 参**）、★ **没有 `6`** ⇒ ★ **`5` 是现行可用那代** ✓
+        #: ★ **是跨族的 `IFeatureManager::CreateFeature`**（★ 官方逐字 · ★ 见 `linear_pa
+        #: ttern` 的订正 · spec 293）·
+        #: ★★ **反射裁决**：★ 最高代 `5`（**22 参**）、★ **没有 `6`** ⇒ ★ **`5` 是现行可
+        #: 用那代** ✓
         #:   ★★★ **真机证据**（★ `tools/probe_linear_pattern_baseline.py` ·
         #:     `output/linear-pattern-baseline-evidence.json`）：★ 三种形态**全部建成**
         #:     （★ 特征数 20→21 · 新特征 `阵列(线性)1`）✓
-        #:   ★★★★ **而调用序来自**官方示例****（★ `Change_Linear_Pattern_Example_VB.md` 逐字）：
+        #: ★★★★ **而调用序来自**官方示例****（★ `Change_Linear_Pattern_Example_VB.md` 逐
+        #: 字）：
         #:     ★ `ClearSelection2(True)` ⇒ ★ 方向 **`mark=1`** ⇒ ★ 实体 **`mark=256`** ✓
         #:     ★★ **⚠ 而选实体要用 `IBody2::Select(Append, Mark)`、★ 不是 `Select4`** ✓
         #:   ★★★★★ **⚠ 本函数**不做选择**（★ 前置由调用方给）** ⇒

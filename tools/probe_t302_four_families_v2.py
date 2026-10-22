@@ -15,8 +15,10 @@
 #   ★★★★ **第一版全败在脚手架**（★ 见 `output/t302-four-families-findings.md`）⇒
 #     ★ **本版按**官方签名**逐参重写**，★ 并把上一轮那四条"我调错了"逐条修掉 ✓
 #   ★★★★★ **官方签名（★ 逐字，★ 纯读 `C:\swapi`）**：
-#     · `InsertEndCapFeature3(double Depth, bool BIsGivenOffset, bool BIsChamfer, double OffsetValue,
-#        double WallThicknessRatio, double ChamferValue, bool BIsCornerTreatment, double DepthOffset,
+# · `InsertEndCapFeature3(double Depth, bool BIsGivenOffset, bool BIsChamfer, double Off
+# setValue,
+# double WallThicknessRatio, double ChamferValue, bool BIsCornerTreatment, double DepthO
+# ffset,
 #        bool BIsReverse, int BIsEndCapInward)` —— **10 参**
 #       ★ Remarks：调用前要「**select one or more end faces of a structural member**」
 #     · `InsertGussetFeature3(…)` —— **20 参**
@@ -24,7 +26,8 @@
 #     · `InsertWeldmentTrimFeature2(int EndCond, int Options, double GapValue,
 #        object BodiesToTrim, object BodiesOrFaces)` —— **5 参**
 #       ★ Remarks：`SelectByID2` 的 marks：**1 = Body to trim · 2 = Trimming boundaries**
-#     · `ISMGussetFeatureData.AccessSelections(ModelDoc2 TopDoc, Component2 Component)` —— **2 参**
+# · `ISMGussetFeatureData.AccessSelections(ModelDoc2 TopDoc, Component2 Component)` —— *
+# *2 参**
 #       ★ Remarks：**Part ⇒ Component argument is NULL**
 #       ⇒ ★★ **裸传 `None` 会 `类型不匹配`** ⇒ **要包 `VARIANT(VT_DISPATCH, None)`** ✓
 #   ★★★★★★ **判据（★ 含**几何读数** —— SPEC 的 Edge Cases 逐字）**：
@@ -151,17 +154,21 @@ def main() -> int:
             get_com_member(sm, "CreateLine", -0.06, 0.0, 0.0, 0.06, 0.0, 0.0)
         #: ★★★★ **修 ⑤（★ 第四版）** —— ★ 导入方式：★ 上一步报
         #:   `attempted relative import with no known parent package` ⇒
-        #:   ★★ **真因**：`sw_weldment` 里有**相对导入**，★ 而以 `scripts/` 为 path 导入时**没有包上下文** ✓
+        #: ★★ **真因**：`sw_weldment` 里有**相对导入**，★ 而以 `scripts/` 为 path 导入时
+        #: **没有包上下文** ✓
         #:   ⇒ ★ 正解是**本仓自己的写法**：★ `tools/diag_selection_lifetime.py:87` 逐字
-        #:     `from scripts.sw_weldment import create_structural_member_from_sketch`（★ **带 `scripts.` 前缀**）✓
+        #: `from scripts.sw_weldment import create_structural_member_from_sketch`（★ **
+        #: 带 `scripts.` 前缀**）✓
         from scripts import sw_weldment as _W
         prof = PROFILES / "ansi inch" / "rectangular tube.sldlfp"
         if not prof.is_file():
             raise RuntimeError("型材文件不在：%s" % prof)
         #: ★★★★★ **修 ③** —— ★ 前两版都调了**内部实现** `create_structural_member`
         #:   （★ 它要 `segment_groups` 的**真对象**）⇒ ★ 而**本仓有包装好的那个**：
-        #:   ★★ `create_structural_member_from_sketch(model, sketch_name, profile_path, **kwargs)`
-        #:     —— ★ `test_real_gap_triage_contract.py` 逐字：★ 「`sw_weldment.create_structural_member`
+        #: ★★ `create_structural_member_from_sketch(model, sketch_name, profile_path, **
+        #: kwargs)`
+        #: —— ★ `test_real_gap_triage_contract.py` 逐字：★ 「`sw_weldment.create_structu
+        #: ral_member`
         #:     ⇒ **已由 `create_structural_member_from_sketch` 包装**（★ 事实 342/339）」✓
         #:   ★★★ **⇒ 而那正是 AGENTS.md 记的那条纪律**：
         #:     「★ **写探针验能力时：按 `ToolSpec` 的契约调，别手调内部实现**」✓
@@ -175,7 +182,8 @@ def main() -> int:
 
     if model is not None:
         fm = get_com_member(model, "FeatureManager")
-        #: ★★ 修 ④：★ **显式按官方签名传参**（★ 而不是 0 参调用 —— 那会回 bound method）✓
+        #: ★★ 修 ④：★ **显式按官方签名传参**（★ 而不是 0 参调用 —— 那会回 bound method）
+        #: ✓
         #: ★★★ 而**是否选对了面**先不管 —— ★ **本探针要判的是"它报哪一类错"** ✓
         rows.append(_run(
             "② 顶端盖 InsertEndCapFeature3（★ 10 参）", model,

@@ -1,7 +1,8 @@
 """★ EC00 范围清单：静态盘点代表工具集的**注入/参数/单位/风险/效果/来源/等级**（★ **不连接 COM**）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   D:/AI/SW
-# 文件:   `mcp-server/tool_registry.py`（`ToolSpec`/`Param` 数据类）· `mcp-server/register_capabilities.py`
+# 文件:   `mcp-server/tool_registry.py`（`ToolSpec`/`Param` 数据类）· `mcp-server/regist
+# er_capabilities.py`
 #         `capabilities.yaml`（`level` + `evidence`）· `docs/effect-declarations.json`（效应表）
 #         `specs/302-ec00-trustworthy-tool-base/spec.md`（FR-001/002 · SC-001）
 #         `output/ENGINEERING_P0_TASKS_DRAFT.md` §2 **T004**（★ 逐字：静态盘点**不连接 COM**）
@@ -10,7 +11,8 @@
 #         ★★ 纪律：**范围 100% 有字段，未知具名**；★★ **静态盘点不连接 COM**。
 # 官方依据: 不适用（本仓自产的静态盘点器，不碰 SolidWorks API）
 # 许可:   本仓自产（无外部来源）
-# 覆盖:   只读 `mcp-server/` + `capabilities.yaml` + `docs/effect-declarations.json`；★ 不写任何文件
+# 覆盖:   只读 `mcp-server/` + `capabilities.yaml` + `docs/effect-declarations.json`；★ 
+# 不写任何文件
 # ────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -156,7 +158,8 @@ def build() -> dict:
             "idempotent": spec.idempotent,
             "destructive": spec.destructive,
             "effect_declared": effects.get(tool, "unknown"),
-            #: ★★ **工具级等级 = `not-mapped`** —— ★ `capabilities.yaml` 的 `level` 是**能力域级**的，
+            #: ★★ **工具级等级 = `not-mapped`** —— ★ `capabilities.yaml` 的 `level` 是**
+            #: 能力域级**的，
             #:   ★★ **两者不同域** ⇒ ★ **如实标 `not-mapped`**（★ 不编一个假映射）。
             "capability_level": "not-mapped",
             "tests": _tests_referencing(tool),

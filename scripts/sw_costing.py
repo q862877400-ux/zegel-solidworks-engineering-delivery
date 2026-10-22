@@ -123,7 +123,8 @@ def _checked(target, member: str, *args):
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）→ IModelDocExtension 段
+# 仓库:   SolidWorks 官方 API 签名（sldworks interop 纯元数据反射）→ IModelDocExtension 
+# 段
 # 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IModelDocExtension 段
 #         （`topo-sldworks\iface_sldworks.txt` **两套反射一致**）
 # 定位:   ★★ **成本估算的**入口**：从 document 拿到 CostManager**。
@@ -132,14 +133,16 @@ def _checked(target, member: str, *args):
 #     旧文写着「取用路径：CostManager 由 **Composer 加载项**给出…**本机也没装 Composer**，
 #     ProgID 查不到 ⇒ 本模块**接收调用方传入的对象**，不代为取得。」
 #     **两条硬证据推翻它**：
-#       ① **官方反射里有** `IModelDocExtension::GetCostingManager()`（**不是** Composer 的东西）；
+# ① **官方反射里有** `IModelDocExtension::GetCostingManager()`（**不是** Composer 的东西
+# ）；
 #       ② 注册表里有 **`swcCostingAddin.SwcAddin`（`.34`）** 等 8 个 ProgID
 #          ⇒ **Costing 加载项本机是装了的**。
 #     **真机实测**（`D:\AI\SW\probe_costing_manager.py`）：`Extension.GetCostingManager()`
 #     返回**非 None**，随后 `GetTemplateCount(0) == 2`。
 #     ⇒ **「ProgID 查不到」这个观察是对的**（4 个 ProgID 全返 None），
 #       **但结论「所以拿不到」是错的** —— `GetAddInObject` 那条路本来就不是正解。
-#     ⚠ **教训**：把「某个特定取用路径走不通」写成「这个对象拿不到」，会让模块**放弃唯一的正解**
+# ⚠ **教训**：把「某个特定取用路径走不通」写成「这个对象拿不到」，会让模块**放弃唯一的正
+# 解**
 #       （这正是 `costing` 长期停在 `stitched` 的成因）。
 # 覆盖:   后续同级定义
 # ────────────────────────────────────────────────────────────────────
@@ -456,16 +459,20 @@ def collect_costing_evidence(cost_part) -> dict[str, Any]:
     }
 
 
-# ── 24h 计划 段 4 续（Spec Kit `155`）：**Costing 的"注入 manager + 内部取下游"包装** ──────
+# ── 24h 计划 段 4 续（Spec Kit `155`）：**Costing 的"注入 manager + 内部取下游"包装** ─
+# ─────
 # ★★★★ 为什么（★ 而这一片有真价值）：
-#   · **Costing 是 AGENTS.md §〇 点名的三个「真正全网空白域」之一**（拓扑优化 · 动画导出 AVI · Costing）；
+# · **Costing 是 AGENTS.md §〇 点名的三个「真正全网空白域」之一**（拓扑优化 · 动画导出 A
+# VI · Costing）；
 #   · `sw_costing` 有 **25 个公开函数**，★ 而**只挂了 1 个**（`get_costing_manager`）；
 #   · 其余 24 个的入参都是**宿主对象**（`cost_manager` / `cost_part` / `cost_analysis` /
 #     `cost_body` / `defaults`）⇒ ★★ **所以要点是"怎么拿到它们"**；
-#   ⇒ ★★★ **正解与轮 272 完全同一手法**：★ **注入 `manager`（已有 resolver）+ 包装内部取下游**
+# ⇒ ★★★ **正解与轮 272 完全同一手法**：★ **注入 `manager`（已有 resolver）+ 包装内部取下
+# 游**
 #     （`CostingModel` / `CostingDefaults` / `GetCostAnalysis()` / `GetBodies()`）。
 #   ★ `get_costing_manager` 的 docstring 记着两条**重要实测**：★
-#     「Costing 加载项**未「加载」也能拿到**」·「4 个 ProgID **全返 None** ⇒ **不要在入口上再试探**」。
+# 「Costing 加载项**未「加载」也能拿到**」·「4 个 ProgID **全返 None** ⇒ **不要在入口上
+# 再试探**」。
 #
 # ★ 判据（★ 三层，与 `configure_*_solver_report` 一致）：
 #   ① ★ **取下游对象成功**（★ 取不到就如实报，★ 含"卡在哪一环"）；
@@ -606,14 +613,19 @@ def list_costing_templates_report(cost_manager, category: int = 0) -> dict:
     if d is None:
         return {"ok": False, "stage": "CostingDefaults", "error": "取不到 CostingDefaults"}
     try:
-        #: ★★★★ 2026-10-02（轮 366）**真 bug 修在一行上**：这里原先传的是 `d`（`CostingDefaults`），
+        #: ★★★★ 2026-10-02（轮 366）**真 bug 修在一行上**：这里原先传的是 `d`（`CostingD
+        #: efaults`），
         #:   而 `GetTemplatePathnames` **挂在 `ICostManager` 上**（★ 反射转储
-        #:   `iface_sldcostingapi.txt` 的 `## ICostManager` 段里 `GetTemplateCount(Int32)` /
+        #: `iface_sldcostingapi.txt` 的 `## ICostManager` 段里 `GetTemplateCount(Int32)`
+        #:  /
         #:   `GetTemplatePathnames(Int32)` 成对）⇒ ★ **该传 `cost_manager`**。
-        #: ⚠ **报错极度误导**：COM 报 `<unknown>.GetTemplatePathnames`（★ 像"成员不存在"），
-        #:   而真因是**对象不对**（★ 事实 36 的形态）—— ★ 而 `get_default_template` 要的**是 `d``，
+        #: ⚠ **报错极度误导**：COM 报 `<unknown>.GetTemplatePathnames`（★ 像"成员不存在"
+        #: ），
+        #: 而真因是**对象不对**（★ 事实 36 的形态）—— ★ 而 `get_default_template` 要的**
+        #: 是 `d``，
         #:   ★★ **同一族里两个成员挂在不同接口上**。
-        #: ★ 证据：受控实验 A（只取 defaults）/ B（先 model 后 defaults）**都通**，★ 而工具层入口不通
+        #: ★ 证据：受控实验 A（只取 defaults）/ B（先 model 后 defaults）**都通**，★ 而
+        #: 工具层入口不通
         #:   ⇒ 差别只剩这一处；★ 改成 `cost_manager` 后真机通过。
         t = list_templates(cost_manager, category)
     except Exception as exc:                                   # noqa: BLE001

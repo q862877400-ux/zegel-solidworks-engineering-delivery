@@ -6,9 +6,11 @@
 # 定位:   ★ 2026-10-03（轮 552）★ 用「**查本仓调过没有**」那条方法论扫了剩下 27 条可攻
 #           关，
 #     ★ 而★ 扫出**两条已被调用过**（★ 其余 25 条真的没调过）：
-#       · `特征下拉 · 曲线-分割线` → 本仓 `sw_curve_and_split.py:118` 调了 `InsertSplitLineProject` ✓
+# · `特征下拉 · 曲线-分割线` → 本仓 `sw_curve_and_split.py:118` 调了 `InsertSplitLinePro
+# ject` ✓
 #       · `草图编辑 · 侧影实体`   → 本仓 `sw_sketch_edit.py:210` 调了 `SketchUseEdge3` ✓
-#     ★★ **而能力条目 `curve_and_split` 的 label 自己写着**：「…（★ **分割线两条未登记**）」 ⚠
+# ★★ **而能力条目 `curve_and_split` 的 label 自己写着**：「…（★ **分割线两条未登记**）」
+#  ⚠
 #     ⇒ ★ **故它们不是"没做"、而是"做了没登记"** ⇒ ★ **本探针真机核一次，再补登记** ✓
 #
 #   ★ 依据（★ 本仓既有 docstring 已记）：
@@ -62,7 +64,8 @@ def _case_silhouette(sw):
     try:
         doc = C.new_document(sw, "part")
         _mk_solid(doc)
-        #: \u2605 \u5148\u9009\u4e00\u4e2a\u9762\uff08\u2605 \u4fa7\u5f71\u8981\u6709\u65b9\u5411\uff09
+        #: \u2605 \u5148\u9009\u4e00\u4e2a\u9762\uff08\u2605 \u4fa7\u5f71\u8981\u6709\u6
+        #: 5b9\u5411\uff09
         from sw_connect import get_com_member as _get
         from sw_part import _select_com_object as _sel
         try:
@@ -86,7 +89,8 @@ def _case_silhouette(sw):
             row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
-        #: \u2605 \u5224\u636e\uff1a**\u8349\u56fe\u91cc\u771f\u7684\u6709\u4e86\u7ebf\u6bb5**\uff08\u2605 \u6216\u6811\u589e\u91cf\uff09
+        #: \u2605 \u5224\u636e\uff1a**\u8349\u56fe\u91cc\u771f\u7684\u6709\u4e86\u7ebf\u
+        #: 6bb5**\uff08\u2605 \u6216\u6811\u589e\u91cf\uff09
         row["ok"] = bool(row.get("segments") or row["new"])
     except Exception as exc:                                              # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:180])
@@ -108,7 +112,8 @@ def _case_splitline(sw):
     try:
         doc = C.new_document(sw, "part")
         _mk_solid(doc)
-        #: \u2605 \u524d\u89c6\u9762\u4e0a\u753b\u4e00\u4e2a\u8349\u56fe\uff08\u2605 \u6295\u5f71\u5206\u5272\u7ebf\u7684\u8f6e\u5ed3\uff09
+        #: \u2605 \u524d\u89c6\u9762\u4e0a\u753b\u4e00\u4e2a\u8349\u56fe\uff08\u2605 \u6
+        #: 295\u5f71\u5206\u5272\u7ebf\u7684\u8f6e\u5ed3\uff09
         try:
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001

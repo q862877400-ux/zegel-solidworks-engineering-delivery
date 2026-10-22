@@ -4,7 +4,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks Simulicon 官方手册（本机解包 `C:\cworks_manual\`）
-# 文件:   `D:\AI\SW\docs\known-facts.md` 事实 296（★ **SolidWorks 家族的进程/窗口判据**）·
+# 文件:   `D:\AI\SW\docs\known-facts.md` 事实 296（★ **SolidWorks 家族的进程/窗口判据**
+# ）·
 #         事实 526（★ **SW 忙时隔离子进程会卡在跨进程 COM 里**）·
 #         `tools/sw_guard.py`（★ 弹窗哨兵用的是**同一族**的窗口枚举，但那是"发现弹窗"、
 #         本模块是"发现**忙**"—— ★ 两件事：★ 弹窗**等**你点，★ 忙是**在算**、点也没用）✓
@@ -19,7 +20,8 @@
 #     ① ★ **进度状态窗** `OperationStatusWindow`（★ 真机实录标题 `进度` ——
 #        ★ 它在"建立刚度矩阵"与"网格化"时都会出现）⇒ 忙；
 #     ② ★ **不响应鬼窗** `swPM_GhostWindow` 且标题含 `Not Responding` / `无响应` ⇒ 忙 ✓
-#   ⚠ ★ **它只判"忙"，不判"弹窗"**：★ 弹窗由 `tools/sw_guard.py` 的哨兵管（那是**等你点**的东西）✓
+# ⚠ ★ **它只判"忙"，不判"弹窗"**：★ 弹窗由 `tools/sw_guard.py` 的哨兵管（那是**等你点**
+# 的东西）✓
 #   ⚠ ★ **只读、只枚举**：不点、不关、不发消息、不碰 COM；★ 读不到任何窗口 ⇒ 回**不忙**
 #     （★ 不因为读不到就误报"忙" —— ★ 那会把正常工作全挡住）✓
 #   许可:   本仓库 MIT。★ 只用标准库 `ctypes`。
@@ -41,7 +43,8 @@ BUSY_BLOCKED_CODE = "SOLIDWORKS_BUSY"
 
 #: ★★ **"真在算"的标志进程**（★ 判"卡住"要用它做反证）——
 #:   ★ 出处：本机 `…\SOLIDWORKS\Simulation\` 目录实测的文件名（★ 网格器 + 求解内核家族）：
-#:     `cwbcbfmesh.exe`(★ 实测吃过 38.5 GB 的那个) · `cwmeshproc.exe` · `cwanalysisproc.exe` ·
+#: `cwbcbfmesh.exe`(★ 实测吃过 38.5 GB 的那个) · `cwmeshproc.exe` · `cwanalysisproc.exe`
+#:  ·
 #:     `star.exe`/`dstar.exe`/`nstar.exe`/`hstar.exe`(★ COSMOS/M 系求解内核命名) ·
 #:     `fat.exe`(疲劳) · `stres.exe` · `ghs3d.exe` ✓
 #:   ★★★ **为什么要它**：★ "SW 不响应"**同时**出现在**正常的长求解**与**真卡住**两种情形里
@@ -218,10 +221,12 @@ def solidworks_busy(windows: list[dict[str, Any]] | None = None) -> dict[str, An
     reasons: list[str] = []
     evidence: list[dict[str, Any]] = []
     stray: list[dict[str, Any]] = []
-    #: ★ **在场判据 = 应用本体（`SLDWORKS.exe`）有窗口** —— ★ 不是"任意家族进程"（见 `_APP_EXE` 的注）
+    #: ★ **在场判据 = 应用本体（`SLDWORKS.exe`）有窗口** —— ★ 不是"任意家族进程"（见 `_A
+    #: PP_EXE` 的注）
     app_windows = [w for w in wins if _is_app(str(w.get("exe") or ""))]
     if not app_windows:
-        #: ★ 本体不在 ⇒ 无论看到什么"进度"窗都**不判忙**；★ 但**如实留下证据**（★ 那是孤儿窗）
+        #: ★ 本体不在 ⇒ 无论看到什么"进度"窗都**不判忙**；★ 但**如实留下证据**（★ 那是孤
+        #: 儿窗）
         for w in wins:
             if str(w.get("cls") or "") in _BUSY_CLASSES:
                 stray.append({"pid": w.get("pid"), "cls": w.get("cls"),
@@ -240,7 +245,8 @@ def solidworks_busy(windows: list[dict[str, Any]] | None = None) -> dict[str, An
         #:   ★★★ 真机教训（2026-10-04，第二次真机试跑当场抓到）：★ 本机有一个**遗留**的
         #:     `OperationStatusWindow`（标题 `进度`、**属 Explorer pid 14488**），
         #:     ★ 它**从 9:53 一直挂到 12:47**、连 SolidWorks 关掉之后都还在
-        #:     ⇒ ★ 若只认类名，判据会**一直回"忙"**、把正常工作**全挡住**（★ 实测：探针三次读数
+        #: ⇒ ★ 若只认类名，判据会**一直回"忙"**、把正常工作**全挡住**（★ 实测：探针三次
+        #: 读数
         #:     全被 `SOLIDWORKS_BUSY` 拒掉）✓
         #:   ★ 而**真的要报忙**时，现场还有 `swPM_GhostWindow`「Not Responding」（见 ②）——
         #:     那才是**可归属**的信号 ✓
@@ -255,7 +261,8 @@ def solidworks_busy(windows: list[dict[str, Any]] | None = None) -> dict[str, An
                               "exe": exe[:80],
                               "why": "★ 进度窗**不属 SolidWorks 家族**（多为 shell/残留）⇒ 不作数"})
             continue
-        #: ② 不响应鬼窗（★ 主线程被占住时 Windows 挂的那个壳 —— ★ **可归属**的那条主信号）
+        #: ② 不响应鬼窗（★ 主线程被占住时 Windows 挂的那个壳 —— ★ **可归属**的那条主信号
+        #: ）
         if "ghostwindow" in cls.lower() and any(m in low_title for m in _BUSY_TITLE_MARKERS):
             reasons.append("有**不响应鬼窗**（%r）⇒ 主线程被占住" % title[:40])
             evidence.append({"pid": w.get("pid"), "cls": cls, "title": title[:80]})

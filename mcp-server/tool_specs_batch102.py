@@ -15,8 +15,10 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **3 个工具** ⇒ 工具数 456 → **459**
 # ★★★ **等级要如实分两档**（★ A7：★ 全文不许把 `stitched` 写成 `verified`）：
-#   · ★ **`explode_line_sketch`** ⇒ 真机建成（★ `ActiveSketch` 在 + 特征树增量 ✓）⇒ **`verified`** ✓
-#   · ★ **`speedpak`** ⇒ 真机建成（★ `IComponent2::IsSpeedPak` 前后对比 ✓）⇒ **`verified`** ✓
+# · ★ **`explode_line_sketch`** ⇒ 真机建成（★ `ActiveSketch` 在 + 特征树增量 ✓）⇒ **`ver
+# ified`** ✓
+# · ★ **`speedpak`** ⇒ 真机建成（★ `IComponent2::IsSpeedPak` 前后对比 ✓）⇒ **`verified`*
+# * ✓
 #   · ★★ **`curve_driven_pattern`** ⇒ ★ **官方页第一行就是 `Obsolete`** ✗，
 #     且★ 真机**两档有效读数皆不建** ✗ ⇒ ★★ **只到 `stitched`** ✓（★ 不许写成 `verified` ✓）
 # ─────────────────────────────────────────────────────────────────────────────
@@ -34,9 +36,12 @@ SPECS_BATCH102 = [
         title="Insert/Close Explode Line Sketch (ISketchManager)",
         module="sw_assembly_doc", function="insert_explode_line_sketch_report",
         #: ★★ 2026-10-07（接手轮）订正：★ 目标函数首参是 **`doc`**，★ 不是 `model` ✗ ——
-        #:   ★ `register()` 不传 `inject_as` ⇒ **注入键字面上等于 `inject` 的值**（事实 502）
-        #:   ⇒ 写成 `inject="model"` 真调用时必 `TypeError: unexpected keyword argument 'model'` ✓
-        #:   ★ 同模块的**其余 spec 全部用 `inject="doc"`**（★ 例 `tool_specs_batch79.py:38`）✓
+        #: ★ `register()` 不传 `inject_as` ⇒ **注入键字面上等于 `inject` 的值**（事实 50
+        #: 2）
+        #: ⇒ 写成 `inject="model"` 真调用时必 `TypeError: unexpected keyword argument 'm
+        #: odel'` ✓
+        #: ★ 同模块的**其余 spec 全部用 `inject="doc"`**（★ 例 `tool_specs_batch79.py:38
+        #: `）✓
         inject="doc",
         params=[],
         doc=
@@ -57,8 +62,10 @@ SPECS_BATCH102 = [
         title="Create SpeedPak (IAssemblyDoc::CreateSpeedPak)",
         module="sw_assembly_doc", function="create_speedpak_report",
         #: ★★ 2026-10-07（接手轮）订正：★ 同上 —— 目标函数的**必填形参是 `doc`**
-        #:   （`create_speedpak_report(doc, *, speedpak_type, component_name, component_index)`）✓
-        #:   ⇒ ★ `inject` 必须是 `"doc"`（★ 它是 `RESOLVERS` 的键，指向同一个 `resolve_model`）✓
+        #: （`create_speedpak_report(doc, *, speedpak_type, component_name, component_in
+        #: dex)`）✓
+        #: ⇒ ★ `inject` 必须是 `"doc"`（★ 它是 `RESOLVERS` 的键，指向同一个 `resolve_mod
+        #: el`）✓
         inject="doc",
         params=[
             Param("speedpak_type", int, default=1,

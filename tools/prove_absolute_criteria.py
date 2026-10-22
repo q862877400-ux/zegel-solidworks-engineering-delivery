@@ -14,11 +14,14 @@
 #
 # ★ 为什么需要它（★ 硬约束③：每件"声称完成"必须有 `verdict: pass` 的 evidence）：
 # ```
-# ★ 相对判据（`compare_geometry`）已真机 PASS；★ 而**绝对判据**（★ 定位用）只做过**契约测试**，
+# ★ 相对判据（`compare_geometry`）已真机 PASS；★ 而**绝对判据**（★ 定位用）只做过**契约
+# 测试**，
 #   ★★ 从未在真机上用过 —— ★ 而"只写过测试"与"真机用过"是两件事（★ 事实 57 同族：
 #   ★ 一个测试一直是绿的，可能只是环境恰好满足）。
-# ★ 三条判据的分工（★ 调研 v2 发现①）：★ **定位用绝对、等价用相对** —— 只留一条会各瞎一半。
-#   · `check_axis_alignment(delta_mm, orientation, tol_mm)` ★ 方位/定位（★ `axial`：横向 ≤ tol 且 轴向 > tol）
+# ★ 三条判据的分工（★ 调研 v2 发现①）：★ **定位用绝对、等价用相对** —— 只留一条会各瞎一
+# 半。
+# · `check_axis_alignment(delta_mm, orientation, tol_mm)` ★ 方位/定位（★ `axial`：横向 ≤
+#  tol 且 轴向 > tol）
 #   · `check_radii(radii_mm, expected, tol_mm)`          ★ 半径
 #   · `check_same_level(z_pairs_mm, level_mm, tol_mm)`   ★ 同层
 # ```
@@ -90,7 +93,8 @@ def main() -> int:
             delta = [0.0, 0.0, 0.0]
         ev["steps"]["delta_from_real_vertices"] = {"ok": True, "delta_mm": delta}
 
-        #: ② `check_axis_alignment` —— ★ 真机 delta 当**正例**；★ 手工造一个超差当**负例**
+        #: ② `check_axis_alignment` —— ★ 真机 delta 当**正例**；★ 手工造一个超差当**负例
+        #: **
         pos = CG.check_axis_alignment((0.01, 0.02, 50.0), "axial")
         neg = CG.check_axis_alignment((0.20, 0.00, 50.0), "axial")
         ev["steps"]["axis_alignment"] = {
@@ -105,10 +109,12 @@ def main() -> int:
         ev["steps"]["radii"] = {"ok": bool(rpos.get("ok") and not rneg.get("ok")),
                                 "positive": rpos, "negative": rneg,
                                 "note": "★ 容差 0.1：10.05 过、10.5 必须不过"}
-        #: ④ `check_same_level` —— ★★ **契约：`z_pairs_mm` 是 `[(z_a, z_b), …]`（**二元组**，两端的 z）**，
+        #: ④ `check_same_level` —— ★★ **契约：`z_pairs_mm` 是 `[(z_a, z_b), …]`（**二元
+        #: 组**，两端的 z）**，
         #:   ★ 而 `level_mm` 是那条水平面 ⇒ ★ **所有端点都要落在它上面**。
         #:   ⚠ 我第一版传了**三元组** `(x, y, z)` ⇒ 它 `ValueError` 被自己接住并回
-        #:   `{"ok": False, "reasons": ["…要是二元组列…"]}` ⇒ ★★ **判据行为正确、是我调错了**
+        #: `{"ok": False, "reasons": ["…要是二元组列…"]}` ⇒ ★★ **判据行为正确、是我调错
+        #: 了**
         #:   （★ 又一次「按契约调」的教训 —— 与 `create_static_study` 那次同族）。
         zs = sorted({p[2] for p in verts}) if verts else [0.0, 20.0]
         top = zs[-1] if zs else 20.0

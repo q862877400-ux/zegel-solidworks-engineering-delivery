@@ -6,7 +6,8 @@
 # 官方依据（★ 三样逐字读过，★ 并**按第 ④ 样**读全）：
 #   · ★★ `C:\swapi\types\ISketchManager\InsertExplodeLineSketch.md`
 #     `System.bool InsertExplodeLineSketch()` ⇒ ★ **零参** ✓
-#     ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false if not ✓
+# ★ `## Returns` 逐字：True if the explode line sketch is **inserted or closed**, false 
+# if not ✓
 #     ★★ 六份官方示例（VB.NET ×2 · VBA ×2 · C# ×2）—— ★ 而**示例名本身就说清用法**：
 #       「Insert Explode Line Sketch and **Route Line**」· ★「…and **Jog Line**」
 #       ⇒ ★★ **它是"先插图、再画线"两步** ✓
@@ -18,10 +19,12 @@
 # 前置链（★ 本批逐条立起来的，★ 不是假设）：
 #   ★ ① **零件文件** —— ★ `add_component(asm_model, part_path, …)` **要磁盘上的路径** ✗
 #     ⇒ ★ 先建零件、`save_document(part, <仓库内 output/ 下>)` ✓
-#     ★★ **写在 `output/` 而不是用户目录** ✓（★ 铁律 3：★ `output/` 是产物目录、gitignore ✓；
+# ★★ **写在 `output/` 而不是用户目录** ✓（★ 铁律 3：★ `output/` 是产物目录、gitignore ✓
+# ；
 #        ★ 且"真机跑不许写到用户目录"这条**不受影响** ✓）
 #   ★ ② **装配体** —— `new_document(sw, "assembly")` + `sw_assembly.add_component(...)` ✓
-#   ★ ③ **爆炸状态** —— ★ 仓里 `sw_assembly_doc.create_exploded_view`（★ `IAssemblyDoc::CreateExplodedView`，
+# ★ ③ **爆炸状态** —— ★ 仓里 `sw_assembly_doc.create_exploded_view`（★ `IAssemblyDoc::Cr
+# eateExplodedView`，
 #      **零参**）**已覆盖** ✓
 # 判据:   ★★ 主判据一律**回读**：★ **特征树/树里多了新特征**（★ 不看返回值 ✓）
 #   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 已四次 ✓）
@@ -107,8 +110,10 @@ def main() -> int:
     #: ④ **爆炸直线**（★ `ISketchManager::InsertExplodeLineSketch`，**零参** ✓）
     #: ★★★ 换判据（★ 上轮补的定则）：★ **判据要落在「它真正改变的东西」上** ✗ ——
     #:   ★ 顶层特征树**只反映「特征」** ✗，★ 而**草图**另有其树 ✓
-    #:   ★★ 官方 `## Returns` 逐字：True if the explode line sketch is **inserted or closed** ✓
-    #:     ⇒ ★ **inserted 最可能的表现是「进入草图编辑」** ⇒ ★★ 判据 = `ISketchManager.ActiveSketch` ✓
+    #: ★★ 官方 `## Returns` 逐字：True if the explode line sketch is **inserted or close
+    #: d** ✓
+    #: ⇒ ★ **inserted 最可能的表现是「进入草图编辑」** ⇒ ★★ 判据 = `ISketchManager.Activ
+    #: eSketch` ✓
     before_active = None
     if asm is not None:
         try:
@@ -141,7 +146,8 @@ def main() -> int:
     out["sketch_side_changed"] = (before_active is None) != (after_active is None)
     out.update({"new_features": added, "returned": str(ret),
                 "exception": None if exc is None else "%s: %s" % (type(exc).__name__, str(exc)[:150])})
-    #: ★★ 判据优先级：★ ① 特征新增 ⇒ 建成 · ★② **草图侧变化** ⇒ 建成（★ inserted 的等价物 ✓）
+    #: ★★ 判据优先级：★ ① 特征新增 ⇒ 建成 · ★② **草图侧变化** ⇒ 建成（★ inserted 的等价
+    #: 物 ✓）
     if added or out.get("sketch_side_changed"):
         out["verdict"] = ("★★★★★ **建成** —— ★ 特征新增 %r · ★★ 草图侧变化 %r"
                           "（★ ActiveSketch %r → %r ⇒ ★ 正是官方 Returns 里那个 inserted ✓）"

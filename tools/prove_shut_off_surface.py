@@ -67,8 +67,10 @@ def main() -> int:
         except Exception as exc:                               # noqa: BLE001
             ev["steps"]["through_hole"] = {"ok": False,
                                            "err": "%s: %s" % (type(exc).__name__, str(exc)[:110])}
-        #: ①b ★★ **轮 391 的假设**：`shut_off` 属于**模具流程的一环** ⇒ 先建**分型线 + 分型面**
-        #:   （★ 轮 390/391 两次都只打孔、没建它们）。★ 手法照事实 306：mark=1 选方向、mark=4 按**中点**选边。
+        #: ①b ★★ **轮 391 的假设**：`shut_off` 属于**模具流程的一环** ⇒ 先建**分型线 + 
+        #: 分型面**
+        #: （★ 轮 390/391 两次都只打孔、没建它们）。★ 手法照事实 306：mark=1 选方向、mar
+        #: k=4 按**中点**选边。
         ext = get_com_member(doc, "Extension")
         callout = sw_connect.create_empty_dispatch_variant()
         doc.ClearSelection2(True)

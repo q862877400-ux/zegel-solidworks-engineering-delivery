@@ -7,19 +7,24 @@
 #
 #   > ★ **旧式方法**那侧是成的（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` /
 #   >   缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）——
-#   >   ★★ 而**新架构**（`CreateDefinition` + `CreateFeature`）那侧对扫描面/加厚/直纹**静默不成**。
+# >   ★★ 而**新架构**（`CreateDefinition` + `CreateFeature`）那侧对扫描面/加厚/直纹**静
+# 默不成**。
 #
-#   ★ B6 里剩的几条**恰好都有 `IModelDoc2` 上的旧式入口**（★ 与**成过**的 `InsertExtendSurface` 同层）：
+# ★ B6 里剩的几条**恰好都有 `IModelDoc2` 上的旧式入口**（★ 与**成过**的 `InsertExtendSur
+# face` 同层）：
 #     ✓ `IModelDoc2.InsertPlanarRefSurface()`                0 参 · 回 bool  → T605 平面区域
 #     ✓ `IModelDoc2.InsertOffsetSurface(Thickness, Reverse)` 2 参 · void     → T606 等距曲面
 #     ✓ `IModelDoc2.InsertFeatureReplaceFace()`              0 参 · void     → T609 替换面
-#     ✗ `InsertTrimSurface`                                  ★ **swapi 里查不到** → T607（铁律 5）
+# ✗ `InsertTrimSurface`                                  ★ **swapi 里查不到** → T607（铁
+# 律 5）
 #
 # 官方前置（★ md 的 `Remarks` 逐字）：
-#   · `InsertOffsetSurface` ⇒ 「Make the selections using `SelectByID2` **before** calling this method」
+# · `InsertOffsetSurface` ⇒ 「Make the selections using `SelectByID2` **before** calling
+#  this method」
 #   · `InsertPlanarRefSurface` ⇒ 「select the surface's **boundary entities** using
 #     `SelectByID2` with **Marks of 1**」
-#   · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1** and
+# · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1**
+#  and
 #     select the re[placement face] …」⇒ ★★ 两个 mark 分工（★ 而★ 本包装的选法是**推断** ⚠）
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。

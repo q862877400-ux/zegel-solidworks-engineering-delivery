@@ -1,21 +1,26 @@
 """★ 实体（body）级操作 —— **移动 / 复制实体**（`IFeatureManager::InsertMoveCopyBody2`）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）
-# 文件:   scripts/sw_body_ops.py（★ 本仓**没有**多体/布尔这一族 ⇒ 按铁律 3 在 `scripts/` 下新建）
+# 文件:   scripts/sw_body_ops.py（★ 本仓**没有**多体/布尔这一族 ⇒ 按铁律 3 在 `scripts/`
+#  下新建）
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **209 `move_b
 #           ody`**。
 #   ★★ 裁决书（`docs/recon-207/adjudication.md` §九）称它是「**本批最干净的一条**」：
-#   「官方页 **signature + 逐字 mark 表(1/2/4/8) + 官方示例调用序 + 读侧 `IMoveCopyBodyFeatureData`
+# 「官方页 **signature + 逐字 mark 表(1/2/4/8) + 官方示例调用序 + 读侧 `IMoveCopyBodyFea
+# tureData`
 #    全齐**；pywin32 **可达**」✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
 #   · `C:\swapi\types\IFeatureManager\InsertMoveCopyBody2.md` ——
-#     `Feature InsertMoveCopyBody2(System.double TransX, System.double TransY, System.double TransZ,
+# `Feature InsertMoveCopyBody2(System.double TransX, System.double TransY, System.double
+#  TransZ,
 #      System.double TransDist, System.double RotPointX, System.double RotPointY,
 #      System.double RotPointZ, System.double RotAngleX, System.double RotAngleY,
 #      System.double RotAngleZ, System.bool BCopy, System.int NumCopies)` —— ★ **12 参**
 #     ★★ `## Remarks` 逐字 ①：「Specify **either translation or rotation** parameters.
-#       Translation and rotation **cannot both be applied** by a single move/copy body feature.
-#       If you specify both translation and rotation parameters, **only the rotation parameters
+# Translation and rotation **cannot both be applied** by a single move/copy body feature
+# .
+# If you specify both translation and rotation parameters, **only the rotation parameter
+# s
 #       are applied**.」
 #     ★★ `## Remarks` 逐字 ②（**逐字 mark 表**）：
 #       ```
@@ -24,21 +29,26 @@
 #       Translation edge, vertex, coordinate system → 4
 #       Translation vertex                  → 8
 #       ```
-#   · `C:\swapi\types\IBody2\Select2.md` —— `System.bool Select2(System.bool Append, SelectData Data)`
+# · `C:\swapi\types\IBody2\Select2.md` —— `System.bool Select2(System.bool Append, Selec
+# tData Data)`
 #     ★★ **mark 不是形参** —— 它设在 **`ISelectData` 对象**上（见官方示例）✓
-#   · `C:\swapi\types\ISelectionMgr\CreateSelectData.md` —— `SelectData CreateSelectData()`
+# · `C:\swapi\types\ISelectionMgr\CreateSelectData.md` —— `SelectData CreateSelectData()
+# `
 #   · `C:\swapi\types\ISelectData\Mark.md` —— `System.int Mark {get; set;}`
 #   · `C:\swapi\enums\swBodyType_e.md` —— `swAllBodies = -1` · `swSolidBody = 0`
-#   · ★★ **官方示例 `examples\Move_Bodies_Example_VB.md` 给了"调用序"**（★ 签名与 Remarks 都给不出）：
+# · ★★ **官方示例 `examples\Move_Bodies_Example_VB.md` 给了"调用序"**（★ 签名与 Remarks 
+# 都给不出）：
 #     ```
 #     ① swModel.ClearSelection2 True
 #     ② bodyArr = swPart.GetBodies2(swAllBodies, false)
 #     ③ Set swSelData = swSelMgr.CreateSelectData : swSelData.Mark = 1
 #     ④ status = swBody.Select2(True, swSelData)      ← 每个体一次
-#     ⑤ Set swFeat = swFeatMgr.InsertMoveCopyBody2(0.1, 0.2, 0.3, 0#, 0#, 0#, 0#, 0#, 0#, 0#, False, 1)
+# ⑤ Set swFeat = swFeatMgr.InsertMoveCopyBody2(0.1, 0.2, 0.3, 0#, 0#, 0#, 0#, 0#, 0#, 0#
+# , False, 1)
 #     ```
 #     ⇒ ★★ **本模块的 `_select_bodies` 就是照这个调用序写的**（★ 不是我自己想的顺序）✓
-#   · ⚠ `C:\swapi\types\IBody2\Select.md` —— ★ **Obsolete**（Superseded by `Select2`）⇒ 用 `Select2` ✓
+# · ⚠ `C:\swapi\types\IBody2\Select.md` —— ★ **Obsolete**（Superseded by `Select2`）⇒ 用
+#  `Select2` ✓
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名与官方示例自建）。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -51,13 +61,16 @@
 #     ⚠⚠ **这与本仓绝大多数 COM 几何接口相反**（那些是米、走 `sw_connect.mm()`）⇒
 #     ★★ **所以必须逐接口实测，不能套"COM 惯例"** —— 本项目刚在这里差点做出一个
 #     **静默的 1000× 错误**（工具会"回 ok=True"而只挪了千分之一）✓
-#     ★ 同形态的先例：`IBody2.GetBodyBox` 的读数也是**毫米**（官方也没写，见 `sw_part.get_bounding_box`）。
+# ★ 同形态的先例：`IBody2.GetBodyBox` 的读数也是**毫米**（官方也没写，见 `sw_part.get_bo
+# unding_box`）。
 #   · `RotAngleX/Y/Z` 是**角度** —— ⚠ 官方页同样**没写单位**；★ 本模块按**同一实测口径**
-#     （文档角度单位 = 度）**原样传度**；★★ 该口径由真机探针的 `T5b` 用**旋转后的包围盒**证实 ✓
+# （文档角度单位 = 度）**原样传度**；★★ 该口径由真机探针的 `T5b` 用**旋转后的包围盒**证
+# 实 ✓
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名与官方示例自建）。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
-# ★★ **判据**（规则 6）：`InsertMoveCopyBody2` **回 `IFeature` 指针** —— ★ 真机拿到的就是
+# ★★ **判据**（规则 6）：`InsertMoveCopyBody2` **回 `IFeature` 指针** —— ★ 真机拿到的就
+# 是
 #   `<COMObject <unknown>>`（★ 它**给不出任何判据**）⇒ ★★ 本模块改用**两处回读**：
 #   ① **包围盒**（移动/旋转 ⇒ 必变）· ② **实体个数**（复制 ⇒ 必增）✓
 
@@ -91,10 +104,12 @@ __all__ = ["AXIS_INDEX", "BODY_MARKS", "BODY_TYPES", "ROTATION_AXIS_FINDING", "R
 #:   实现里**按这张表把值放进 API 实际吃的位置**：
 #:   ```python
 #:   ROTATION_AXIS_MAP = {"x": 2, "y": 1, "z": 0}
-#:   #  键 = 调用方要绕的轴；值 = 官方三参 (RotAngleX, RotAngleY, RotAngleZ) 里**真正作用于该轴**的下标
+#: #  键 = 调用方要绕的轴；值 = 官方三参 (RotAngleX, RotAngleY, RotAngleZ) 里**真正作用
+#: 于该轴**的下标
 #:   ```
 #:   ★ 若哪天 SW 修正了这个映射 ⇒ **只改这一个常量**（★ 而 `T5b` 会当场红）✓
-#:   ⚠ **未验**：★ **三轴同时给**时的合成顺序（Euler 序）官方没写 ⇒ 本模块**不承诺**那个语义 ✓
+#: ⚠ **未验**：★ **三轴同时给**时的合成顺序（Euler 序）官方没写 ⇒ 本模块**不承诺**那个语
+#: 义 ✓
 #: enum-gate: not-enum index
 AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
 #: enum-gate: not-enum derived
@@ -134,7 +149,8 @@ UNIT_FINDINGS = (
     "⇒ ★ **它给不出任何判据** ⇒ 本模块用「包围盒变 / 实体个数增」两处**回读** ✓",
 )
 
-#: ★ 官方 `InsertMoveCopyBody2` 的 **mark 表**（★ 逐字抄自该页 `## Remarks`；★ **不许跨条复制**）
+#: ★ 官方 `InsertMoveCopyBody2` 的 **mark 表**（★ 逐字抄自该页 `## Remarks`；★ **不许跨
+#: 条复制**）
 #: enum-gate: member InsertMoveCopyBody2
 BODY_MARKS = {
     "body_or_surface": 1,

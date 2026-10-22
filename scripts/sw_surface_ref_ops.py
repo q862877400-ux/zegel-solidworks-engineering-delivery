@@ -7,14 +7,20 @@
 #   台账「曲面」栏判「不能」的 13 条里，B6-a 收了 5 条，本模块收**第 2 组 2 条**，
 #   并把**另 2 条为什么不做**写在下面。
 #
-#   ==================  ================================================  ==================
+# ==================  ================================================  ================
+# ==
 #   工具栏原文           官方成员（★ 台账给的名字**两条都不对**）              判据
-#   ==================  ================================================  ==================
-#   旋转曲面             `IFeatureManager.InsertRevolvedRefSurface` → **IFeature**   回 Feature + 树增量
-#   放样曲面             `IModelDoc2.InsertLoftRefSurface2` → void                   树增量
-#   ==================  ================================================  ==================
+# ==================  ================================================  ================
+# ==
+# 旋转曲面             `IFeatureManager.InsertRevolvedRefSurface` → **IFeature**   回 Fe
+# ature + 树增量
+# 放样曲面             `IModelDoc2.InsertLoftRefSurface2` → void                   树增
+# 量
+# ==================  ================================================  ================
+# ==
 #
-#   ★★★ **台账给的两个名字都不对**（★ 这是本轮最大的发现，★ 也解释了它们为什么一直"不能"）：
+# ★★★ **台账给的两个名字都不对**（★ 这是本轮最大的发现，★ 也解释了它们为什么一直"不能"）
+# ：
 #     · 台账写 **`FeatureRevolveRefSurface`** ⇒ ★ **swapi 里根本没有这个名字**；
 #       真名是 **`IFeatureManager.InsertRevolvedRefSurface`**（★ 我按"含 Revolve/RefSurface"
 #       全仓搜出来的，★ 而同族 `FeatureExtruRefSurface{,2,3}` 命名不同 ⇒ **不能按前缀猜**）⚠
@@ -22,7 +28,8 @@
 #       曲面放样的真名是 **`IModelDoc2.InsertLoftRefSurface2`** ✓
 #
 #   ★★ **代际（★ 铁律 4：以后继版为准）**：
-#     · `IModelDoc2.InsertLoftRefSurface` **官方标 Obsolete** ⇒ 被 `…RefSurface2` 取代 ⇒ ★ 用 `…2`
+# · `IModelDoc2.InsertLoftRefSurface` **官方标 Obsolete** ⇒ 被 `…RefSurface2` 取代 ⇒ ★ 
+# 用 `…2`
 #     · `IModelDoc2.InsertSweepRefSurface` 与 `…RefSurface2` **两个都标 Obsolete**
 #       （继任者写的是 `IFeatureManager::InsertProtrusionSwept3`）⇒ ★ 见下面"查不到"段
 #
@@ -35,7 +42,8 @@
 #   · `C:\swapi\types\IFeatureManager\InsertRevolvedRefSurface.md`
 #     （`Feature (Angle: double, ReverseDir: bool, Angle2: double, RevType: int)`；
 #      ★ **RevType 0=One direction · 1=MidPlane · 2=Two direction**；
-#      ★ "Make the selections using `SelectByID2` before calling" · "does not support 3D sketches"）
+# ★ "Make the selections using `SelectByID2` before calling" · "does not support 3D sket
+# ches"）
 #   · `C:\swapi\types\IModelDoc2\InsertLoftRefSurface2.md`
 #     （6 参 `void`；★ "profile selections should be **1**"）
 #   · `C:\swapi\types\IModelDoc2\InsertLoftRefSurface.md`（★ **Obsolete** 那一行）
@@ -44,7 +52,8 @@
 # 覆盖:   全文件（★ 逐函数另有来源块）。
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回 Feature 非 None** + **特征树增量**
+# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回 Feature 非 None** + 
+# **特征树增量**
 #   （★ 事实 8：COM 返回值单独不可信；★ 规则 6：不静默成功）。
 
 from __future__ import annotations
@@ -79,7 +88,8 @@ SURFACE_REF_STATUS = {
 }
 
 
-#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字相同）
+#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字
+#: 相同）
 #:   ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`，此处只做导入别名 ✓
 try:
     from .sw_feature_tree import tree_names as _tree_names

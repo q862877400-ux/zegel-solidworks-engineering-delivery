@@ -234,8 +234,10 @@ def is_swp_macro(data: bytes) -> bool:
 # ⚑ 〔反射核〕本机 SolidWorks 版本上三者的 arity：
 #     SaveAs=4 · SaveAs2=6 · **SaveAs3=5** · SaveAs4 不存在
 #     ★★★★ 2026-10-04（接手轮）**给上面那句加**接口限定**** ——
-#       处置 `JUDGE-C_D_E.md` 的 🔴 **#6**（★ `C-dw-3 #22`）—— ★ 裁判逐字：「★ **仓内两处矛盾**」：
-#       ★ 本句写「**SaveAs4 不存在**」，★ 而**同一仓** `scripts/sw_api_sldworks.py` 的 `ARITY` 里
+# 处置 `JUDGE-C_D_E.md` 的 🔴 **#6**（★ `C-dw-3 #22`）—— ★ 裁判逐字：「★ **仓内两处矛盾*
+# *」：
+# ★ 本句写「**SaveAs4 不存在**」，★ 而**同一仓** `scripts/sw_api_sldworks.py` 的 `ARITY`
+#  里
 #       ★★ **`IModelDoc2` 段自己就有 `'SaveAs4': 3`** ✓
 #       ★★ **裁决（★ 我读了官方两个目录）**：
 #         · ★ `C:\swapi\types\IModelDocExtension\SaveAs*.md` **确实只有 3 个**
@@ -244,9 +246,11 @@ def is_swp_macro(data: bytes) -> bool:
 #         · ★★★ 官方 DXF 例子逐字也用它：`swModel.SaveAs4(sPathName, …)` ✓
 #       ⇒ ★★★★ **所以本句是**真的**、★ 但**缺了接口限定****（★ 而缺限定会让它看起来与
 #         `ARITY` 矛盾）⇒ ★ **加上限定即可** ✓
-#     ⇒ **正确说法**：★ `IModelDocExtension` 下**只有** `SaveAs` / `SaveAs2` / `SaveAs3`（★ **无** `SaveAs4`）；
+# ⇒ **正确说法**：★ `IModelDocExtension` 下**只有** `SaveAs` / `SaveAs2` / `SaveAs3`（★ 
+# **无** `SaveAs4`）；
 #       ★★ 而 `IModelDoc2` 下**有** `SaveAs4`（★ 签名逐字
-#       `bool SaveAs4(string Name, int Version, int Options, out int Errors, out int Warnings)`）✓
+# `bool SaveAs4(string Name, int Version, int Options, out int Errors, out int Warnings)
+# `）✓
 # ⇒ **本项目导出/保存一律用 ``SaveAs3``**，不要用 SaveAs / SaveAs2。
 # ⚠ ⚠ 官方文档另有一处**措辞错误**：讲 Options 组合时写
 #   "specify Options by **bitwise ANDing**"，但语义是**并置（OR）**标志位 ——
@@ -270,67 +274,92 @@ DEPRECATED_SAVEAS = {
 # 官方依据: ★ **每条都从官方类型表读到 `Obsolete. Superseded by [[<iface>::<member>]]`**
 #   （★ 文本形态见 `C:\swapi\types\IModelDocExtension\SaveAs.md` 第一行正文 ——
 #    ★ 注意是 `[[…::…]]` 这种 **wiki 链接**写法）。
-# ⚠ **只放**已核实**的**（★ 铁律 1 / 硬约束⑧）—— ★ 本表**不是**"扫一遍 Superseded 就全放进来"：
+# ⚠ **只放**已核实**的**（★ 铁律 1 / 硬约束⑧）—— ★ 本表**不是**"扫一遍 Superseded 就全放
+# 进来"：
 #   ★ 那份扫描（事实 271）出 42 处，而抽样就看出**三类假阳性**：
-#     ① 后继名 == 自己（解析错）· ② **不同 arity 的不同方法**（官方说 Superseded 指的是**那一族**，
+# ① 后继名 == 自己（解析错）· ② **不同 arity 的不同方法**（官方说 Superseded 指的是**那
+# 一族**，
 #     不是"同名替换"）· ③ **跳代常伴随签名变化**（★ 我们一直在用的 `GetBodies2` 就是例子）。
 #   ⇒ ★★ **每条进来前要**读两边的签名**（★ 那是独立的一件工作）。
 # 覆盖:   后续同级定义
 # ⚠ 本组为静态整理，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
 DEPRECATED_ENTRIES: dict[tuple[str, str], str] = {
-    #: ★ 保存族（★ 陷阱表 `DEPRECATED_SAVEAS` 已核过；★ arity：SaveAs=4 · SaveAs2=6 · **SaveAs3=5**）
+    #: ★ 保存族（★ 陷阱表 `DEPRECATED_SAVEAS` 已核过；★ arity：SaveAs=4 · SaveAs2=6 · **
+    #: SaveAs3=5**）
     ("IModelDocExtension", "SaveAs"): "SaveAs3",
     ("IModelDocExtension", "SaveAs2"): "SaveAs3",
     #: ★ 包覆族（★ 2026-10-01 轮 329–331 **真机验过两个都回对象**：
-    #:   `InsertWrapFeature`（3 参）与 `InsertWrapFeature2`（5 参）⇒ ★ **该用带 2 的那个**；
+    #: `InsertWrapFeature`（3 参）与 `InsertWrapFeature2`（5 参）⇒ ★ **该用带 2 的那个**
+    #: ；
     #:   ★ 证据 `output/wrap-v1-vs-v2.json`）
     ("IFeatureManager", "InsertWrapFeature"): "InsertWrapFeature2",
     #: ★ 装配族（★ 2026-10-09 spec 241 新增；★ 官方依据逐字已核）：
     #:   `C:\swapi\types\IAssemblyDoc\AddMate5.md:12` ⇒
     #:     「**Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]**」✓
-    #:   ★★ **后继页自证**：`IAssemblyDoc/CreateMate.md` **无** `Obsolete`（`grep -c -i obsolete` = **0**）✓
+    #: ★★ **后继页自证**：`IAssemblyDoc/CreateMate.md` **无** `Obsolete`（`grep -c -i ob
+    #: solete` = **0**）✓
     #:   ★★ **后继在仓库里真的被调用**（★ 判据② 的前提）：
-    #:     `scripts/sw_weldment.py` 走 `call_assembly_doc(model, "CreateMate", data)` ✓（spec 240）
+    #: `scripts/sw_weldment.py` 走 `call_assembly_doc(model, "CreateMate", data)` ✓（spe
+    #: c 240）
     #:   ⚠ **不是"同名替换"**：`AddMate5` 是 **15 参参数式**，而 `CreateMate` 收
     #:     `System.object MateData`（★ 要**先造 `I*MateFeatureData`**）⇒
     #:     ★★ **官方 Remarks 的三条分流**（★ 标准/高级/机械 ⇒ `CreateMate` ·
-    #:     **偏心同心** ⇒ `AddConcentricMateWithTolerance` · **柱面距离** ⇒ `AddDistanceMate`）
+    #: **偏心同心** ⇒ `AddConcentricMateWithTolerance` · **柱面距离** ⇒ `AddDistanceMate
+    #: `）
     #:     ★ 说明**分流语义靠 `mate_type` 一个参数定不下来** ⇒ ★ 换它**必须真机验** ✓
     #:   ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换与不换由调用方各自的记档决定**
-    #:     （★ 现行两处调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGISTERED`）。
+    #: （★ 现行两处调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGI
+    #: STERED`）。
     ("IAssemblyDoc", "AddMate5"): "CreateMate",
-    #: ★★ 2026-10-09（spec 246）新增 **5** 条 —— ★ 来自「242/243 口径的 `admissible` 候选」逐条复核
-    #:   （探针 `output/_probe246_candidates.py` + `output/_probe246_signatures.py`；★ **每条读了两边签名**）。
+    #: ★★ 2026-10-09（spec 246）新增 **5** 条 —— ★ 来自「242/243 口径的 `admissible` 候
+    #: 选」逐条复核
+    #: （探针 `output/_probe246_candidates.py` + `output/_probe246_signatures.py`；★ **
+    #: 每条读了两边签名**）。
     #:   ★★ **入选条件（三条全中）**：① **六关全过**（243 的 `_admission_failures`）·
-    #:     ② ★ **真树调用点的宿主接口 == 本条目的接口**（★ 245 的教训：按裸成员名判会**一半是假命中**）·
+    #: ② ★ **真树调用点的宿主接口 == 本条目的接口**（★ 245 的教训：按裸成员名判会**一半
+    #: 是假命中**）·
     #:     ③ ★ **两边签名已读**（见下）。
-    #:   ★ 官方依据逐条（`C:\swapi\types\<接口>\<成员>.md` 的 `Obsolete. Superseded by [[…]]`）：
+    #: ★ 官方依据逐条（`C:\swapi\types\<接口>\<成员>.md` 的 `Obsolete. Superseded by [[…
+    #: ]]`）：
     #:     · `ISldWorks\ActivateDoc2.md` ⇒ `[[ISldWorks::ActivateDoc3]]`
-    #:       （`ActivateDoc2(Name, Silent, out Errors)` → `ActivateDoc3(Name, UseUserPreferences, Option, out Errors)`）
+    #: （`ActivateDoc2(Name, Silent, out Errors)` → `ActivateDoc3(Name, UseUserPreferenc
+    #: es, Option, out Errors)`）
     #:     · `ISketch\AutoDimension2.md` ⇒ `[[ISketchManager::FullyDefineSketch]]`
-    #:       （★ **跨接口**：`ISketch` → `ISketchManager`；★ 语义 auto-dimension → fully-define）
-    #:     · `IFeatureManager\FeatureCircularPattern4.md` ⇒ `[[IFeatureManager::FeatureCircularPattern5]]`，
-    #:       ★★ **而 `FeatureCircularPattern5` 自己也废弃** ⇒ ★ 链终点 = `[[IFeatureManager::CreateFeature]]`
+    #: （★ **跨接口**：`ISketch` → `ISketchManager`；★ 语义 auto-dimension → fully-defin
+    #: e）
+    #: · `IFeatureManager\FeatureCircularPattern4.md` ⇒ `[[IFeatureManager::FeatureCircu
+    #: larPattern5]]`，
+    #: ★★ **而 `FeatureCircularPattern5` 自己也废弃** ⇒ ★ 链终点 = `[[IFeatureManager::C
+    #: reateFeature]]`
     #:       （★ 242 定则：官方那句是**字面后继**、不是"该用哪个"）
-    #:     · `IAssemblyDoc\GetExplodedViewCount.md` ⇒ `[[IAssemblyDoc::GetExplodedViewCount2]]`
+    #: · `IAssemblyDoc\GetExplodedViewCount.md` ⇒ `[[IAssemblyDoc::GetExplodedViewCount2
+    #: ]]`
     #:       （`GetExplodedViewCount()` → `GetExplodedViewCount2(ConfigurationName)`）
-    #:     · `ISelectionMgr\ResumeSelectionList.md` ⇒ `[[ISelectionMgr::ResumeSelectionList2]]`
+    #: · `ISelectionMgr\ResumeSelectionList.md` ⇒ `[[ISelectionMgr::ResumeSelectionList2
+    #: ]]`
     #:       （`ResumeSelectionList()` → `ResumeSelectionList2(Append)`）
-    #:   ⚠ ★ **五条都不是 drop-in 替换**（★ 参数都变了；`FeatureCircularPattern4` 更是换了整族）
+    #: ⚠ ★ **五条都不是 drop-in 替换**（★ 参数都变了；`FeatureCircularPattern4` 更是换了
+    #: 整族）
     #:     ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换与不换由调用方各自的记档决定**
-    #:     （★ 现行调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGISTERED`）。
-    #:   ★★ **被拒的候选（留档，防重走）**：`FeatureLinearPattern5` / `FeatureLocalCurveDrivenPattern` /
-    #:     `InsertFormToolFeature` / `SketchTrim` ⇒ **关 5**（官方那句点名多个后继，须人工表态）；
-    #:     `GetActiveSketch2` ⇒ **关 6**（后继页 `SketchManager::ActiveSketch` 在 `C:\swapi` 里**不存在**）；
+    #: （★ 现行调用点的理由写在 `tests/test_deprecated_entry_interlock.py` 的 `_REGISTER
+    #: ED`）。
+    #: ★★ **被拒的候选（留档，防重走）**：`FeatureLinearPattern5` / `FeatureLocalCurveDr
+    #: ivenPattern` /
+    #: `InsertFormToolFeature` / `SketchTrim` ⇒ **关 5**（官方那句点名多个后继，须人工表
+    #: 态）；
+    #: `GetActiveSketch2` ⇒ **关 6**（后继页 `SketchManager::ActiveSketch` 在 `C:\swapi`
+    #:  里**不存在**）；
     #:     `Add2`（宿主是 `IEquationMgr`）/ `GetModelDoc`（宿主是 `IView`）/
-    #:     `GetUserPreferenceIntegerValue`（宿主是 `ISldWorks`）⇒ ★ **宿主接口不匹配**（假命中）。
+    #: `GetUserPreferenceIntegerValue`（宿主是 `ISldWorks`）⇒ ★ **宿主接口不匹配**（假命
+    #: 中）。
     ("ISldWorks", "ActivateDoc2"): "ActivateDoc3",
     ("ISketch", "AutoDimension2"): "FullyDefineSketch",
     ("IFeatureManager", "FeatureCircularPattern4"): "CreateFeature",
     ("IAssemblyDoc", "GetExplodedViewCount"): "GetExplodedViewCount2",
     ("ISelectionMgr", "ResumeSelectionList"): "ResumeSelectionList2",
-    #: ★★ 2026-10-09（spec 247）新增 **2** 条 —— ★ 243 关 5 说「多后继**必须人工表态**」；
+    #: ★★ 2026-10-09（spec 247）新增 **2** 条 —— ★ 243 关 5 说「多后继**必须人工表态**」
+    #: ；
     #:   ★ 247 把「表态」机械化了：★ **官方那句的措辞**决定「几个是真后继」（★ 纯函数
     #:   `tests/test_deprecated_table_admission._official_successor_count`）：
     #:     · 「`Superseded by A and B`」⇒ ★ **两个都是后继** ⇒ ★ 靶子表的值是**裸成员名**、
@@ -341,17 +370,22 @@ DEPRECATED_ENTRIES: dict[tuple[str, str], str] = {
     #:     · `IFeatureManager\FeatureLinearPattern5.md` ⇒
     #:       「Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in
     #:        [[ILinearPatternFeatureData]] and [[ILocalLinearPatternFeatureData]].」
-    #:       ★ 两边签名：`FeatureLinearPattern5(22 参)` → `CreateFeature(System.object FeatureData)`
+    #: ★ 两边签名：`FeatureLinearPattern5(22 参)` → `CreateFeature(System.object Feature
+    #: Data)`
     #:     · `IFeatureManager\FeatureLocalCurveDrivenPattern.md` ⇒
     #:       「Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in
     #:        [[ILocalCurvePatternFeatureData]].」
-    #:       ★ 两边签名：`FeatureLocalCurveDrivenPattern(13 参)` → `CreateFeature(System.object FeatureData)`
+    #: ★ 两边签名：`FeatureLocalCurveDrivenPattern(13 参)` → `CreateFeature(System.objec
+    #: t FeatureData)`
     #:   ⚠ ★ **两条都不是 drop-in**（★ 都要**先造 `I*PatternFeatureData`**）
     #:     ⇒ ★ **本表只登记"它已废弃、后继是谁"**；★ **换路由必须真机验**。
     #:   ★★ **被拒的两条（留档，防重走）**：
-    #:     `IFeatureManager::InsertFormToolFeature`（「`Superseded by [[CreateDefinition]] and
-    #:       [[CreateFeature]]`」⇒ ★ **两个都是后继**：一个造 definition、一个建 feature ⇒ 表表达不了）·
-    #:     `IModelDoc2::SketchTrim`（★ 官方点名的两个里该取**同名**的 `ISketchManager::SketchTrim`
+    #: `IFeatureManager::InsertFormToolFeature`（「`Superseded by [[CreateDefinition]] a
+    #: nd
+    #: [[CreateFeature]]`」⇒ ★ **两个都是后继**：一个造 definition、一个建 feature ⇒ 表
+    #: 表达不了）·
+    #: `IModelDoc2::SketchTrim`（★ 官方点名的两个里该取**同名**的 `ISketchManager::Sketc
+    #: hTrim`
     #:       ⇒ ★ **关 4 拒**：后继名 == 被废弃名）。
     ("IFeatureManager", "FeatureLinearPattern5"): "CreateFeature",
     ("IFeatureManager", "FeatureLocalCurveDrivenPattern"): "CreateFeature",

@@ -77,8 +77,10 @@ def _one_bend_spec(p):
 
 
 #: ⚠ 参数逐条照**真实签名 + dataclass 字段**抄，出处：
-#:   `Select-String scripts/sw_sheet_metal.py -Pattern '^def create_(base_flange|one_bend)'`
-#:   `Select-String scripts/sw_sheet_metal.py -Pattern '^class (BaseFlangeSpec|OneBendSpec)'`
+#: `Select-String scripts/sw_sheet_metal.py -Pattern '^def create_(base_flange|one_bend)
+#: '`
+#: `Select-String scripts/sw_sheet_metal.py -Pattern '^class (BaseFlangeSpec|OneBendSpec
+#: )'`
 SPECS_BATCH3: list[ToolSpec] = [
     # 签名: def create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)
     #     BaseFlangeSpec: thickness, bend_radius, depth, k_factor=0.42,
@@ -90,7 +92,8 @@ SPECS_BATCH3: list[ToolSpec] = [
         inject="model",
         # `spec` 是 dataclass ⇒ 由 `derived_args` 从展平入参装回；
         # `sketch_ref` 在实现里收**草图名**（转给 `sw_part._ensure_sketch_selected`）
-        # ⚠ `spec` **不写进 param_alias** —— 它根本不是声明参数（由 derived_args 提供）。
+        # ⚠ `spec` **不写进 param_alias** —— 它根本不是声明参数（由 derived_args 提供）
+        # 。
         #   第一版写了 `{"spec": None}` ⇒ 门禁红：「param_alias 指向未声明的参数」。
         # `sketch_name` 是实现里的 `sketch_ref`（显式别名）。
         param_alias=dict(

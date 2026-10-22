@@ -7,7 +7,8 @@
 #   ★★ 两项的官方页都读了（★ 三样 ✓）：
 #     · ★★ `IFeatureManager::InsertGussetFeature3` —— ★ **纯参数式 20 参**、
 #       ★ **不带 `AccessSelections`**、★ **无 `object` 数组** ✓
-#       ★ 参数里有 `BIsProfile`（"True to use a polygon profile, **false to use a triangle profile**"）⇒
+# ★ 参数里有 `BIsProfile`（"True to use a polygon profile, **false to use a triangle pro
+# file**"）⇒
 #         ★★ **轮廓可能是它自己造的**（★ 不必预选 ✓）
 #       ★ `CrvIndex`: "Index of the edge to use if multiple intersecting edges exist" ⇒
 #         ★★ **它需要「两条相交的边」** ✓（★ 而边要选 —— ★ 本探针**无选择**下先看行为 ✓）
@@ -16,7 +17,8 @@
 #   ★★★ **本探针的存在理由（★ 最有判别力的一件事）**：
 #     ★ **事实 47** 记着 `create_gusset` **到不了建成** ✗ —— ★★ 而那条用的是**属性式
 #     `ISMGussetFeatureData`**（★ 事实 36：★ SM 与焊件的 gusset 是**两个不同接口** ✓）
-#     ⇒ ★★★ **参数式 `InsertGussetFeature3` 从没试过** ✓ ⇒ ★ **不论成不成，都是「翻案」或「确认」** ✓
+# ⇒ ★★★ **参数式 `InsertGussetFeature3` 从没试过** ✓ ⇒ ★ **不论成不成，都是「翻案」或「
+# 确认」** ✓
 # 判据:   ★★ 第一步只"查行为"（★ 与"扫描曲面"/"裁剪焊件"**同型** ✓）：
 #     · ★ **抛异常** ⇒ 记下（★ 形态被拒 ✓）
 #     · ★ **静默回 `None` / 回对象而无特征** ⇒ ★ **还不算试死**（★ 前置没上 ——
@@ -72,9 +74,12 @@ def main() -> int:
     exc = None
     feat = None
     try:
-        #: ★ 按签名**逐位**给：★ Depth · DirType · LocType · BIsProfile · ProfileD1..D4 ·
-        #:   ProfileAngle · BOffset · DProfileOffset · CrvIndex · BReverseDir · BReverseFace ·
-        #:   BUseLenDim · ProfileD5 · ProfileD6 · ProfileChamferAngle · BUseLenDimForChamfer ·
+        #: ★ 按签名**逐位**给：★ Depth · DirType · LocType · BIsProfile · ProfileD1..D4 
+        #: ·
+        #: ProfileAngle · BOffset · DProfileOffset · CrvIndex · BReverseDir · BReverseFa
+        #: ce ·
+        #: BUseLenDim · ProfileD5 · ProfileD6 · ProfileChamferAngle · BUseLenDimForChamf
+        #: er ·
         #:   BNeedChamferInGusset ✓（★ 20 位 ✓）
         feat = sw_connect.get_com_member(
             fm, "InsertGussetFeature3",

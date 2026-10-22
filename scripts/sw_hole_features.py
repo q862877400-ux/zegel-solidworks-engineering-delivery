@@ -8,7 +8,8 @@ from dataclasses import asdict, dataclass
 from typing import Iterable, Sequence
 
 #: ★ 长度换算助手：`_mm(v)` = **毫米→米**（恰好一次）。
-#:   依据：`FeatureCut4.md:22`「D1 … in meters」+ `output/probe-unit-decisive/decisive.json`。
+#: 依据：`FeatureCut4.md:22`「D1 … in meters」+ `output/probe-unit-decisive/decisive.jso
+#: n`。
 try:
     from sw_connect import mm as _mm          # noqa: F401
 except Exception:                             # noqa: BLE001
@@ -356,7 +357,8 @@ def get_fastener_table(sw, standard_name: str, fastener_id: int, table_id: int,
     """
     data = _hole_standards_data(sw, hole_type_id)
     #: ★★ 用**真机验证过**的 `IDispatch&` 包装（`out_dispatch`）——
-    #:   ⚠ 而不是 `_out_container()`（那个是 `VT_BYREF|VT_VARIANT`，对**本方法**报类型不匹配）
+    #: ⚠ 而不是 `_out_container()`（那个是 `VT_BYREF|VT_VARIANT`，对**本方法**报类型不匹
+    #: 配）
     from sw_connect import out_dispatch
     out = out_dispatch()
     ok = get_com_member(data, "GetFastenerTable", str(standard_name),
@@ -686,14 +688,17 @@ def get_fastener_table(standards_data, table_name, size, kind, table_data_out):
 # ── 24h 计划 段 4 续（Spec Kit `151`）：**声明式建孔**（★ 规则 3 的精神）──────────────
 # ★★★★ 为什么要有这一族（★ 而它比"把既有函数挂上去"更好）：
 #   · 能力层既有的 `create_through_hole(model, center, ...)` 吃 **`center`（坐标元组）**；
-#   · ★ 而**上游**的统一建孔工具 `solidworks_create_hole_feature`（`mcp-server/server.py` L2244）
-#     吃的是 **`center_x_mm` / `center_y_mm`** —— ★★ **那是**裸坐标参数名****（规则 3 的**字面**红线）。
+# · ★ 而**上游**的统一建孔工具 `solidworks_create_hole_feature`（`mcp-server/server.py` 
+# L2244）
+# 吃的是 **`center_x_mm` / `center_y_mm`** —— ★★ **那是**裸坐标参数名****（规则 3 的**字
+# 面**红线）。
 #   ⇒ ★★★ **所以本族是"规则 3 合规版"**：★ **只吃声明式 `selection`**，★ **内部用
 #     `sw_selection_spec.selection_point` 从选区读点** ⇒ ★ **工具参数里没有坐标**。
 #   ★ 而单位已由真机对照实验定死（★ 轮 267：`GetSelectionPoint2` 回的是**毫米**）。
 #
 # ★ 覆盖 5 种（★ 与能力层既有的一一对应）：通孔 · 盲孔 · 沉头孔 · 锥沉孔 · 半圆端槽。
-# ⚠ **判据**：★ 每个包装都回**能力层既有的** `HoleFeatureEvidence`（★ 它本来就是回读证据）——
+# ⚠ **判据**：★ 每个包装都回**能力层既有的** `HoleFeatureEvidence`（★ 它本来就是回读证据
+# ）——
 #   ★ 再套一层"选区点的坐标"（★ 于是调用方能看出**它建在哪个点上**）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -727,7 +732,8 @@ def _point_from_selection(model, selection: str):
         #:     且三点对照把单位定死为**毫米**）；
         #:   · 而选 **VERTEX / EDGE** 时它报 **`(-2147352562, '无效的参数数目。')`**
         #:     （★ `DISP_E_BADPARAMCOUNT`）—— ★★ 而那**不是**"签名有两个参数"错了，
-        #:     是**该对象类型下这个重载不吃那两个参数**（★ 与事实 47 同族：★ 对象类型决定可达性）。
+        #: 是**该对象类型下这个重载不吃那两个参数**（★ 与事实 47 同族：★ 对象类型决定可
+        #: 达性）。
         #:   ⇒ ★ 所以本助手**按面优先**试，★ 每次失败**记下来**（★ 便于下一步收敛）。
         errs = []
         for _kind in ("FACE", "EDGE", "VERTEX"):
@@ -743,18 +749,22 @@ def _point_from_selection(model, selection: str):
         return None, "读不到点：%s" % str(r.get("error"))[:150]
     pt = tuple(r["point_mm"])
     #: ★★★★ 2026-10-01 轮 268：**两处换算都在这里做（这就是规则 2 说的"边界"）**：
-    #:   ① ★ **降维** —— `_center` 的实现**只检查长度是 2**（★ 而它的报错信息写"单位为米"，
+    #: ① ★ **降维** —— `_center` 的实现**只检查长度是 2**（★ 而它的报错信息写"单位为米"
+    #: ，
     #:      ★★ **那误导了我一轮**：真因是**维度**，★ 不是单位）；
-    #:   ② ★ **单位** —— 建孔函数的 `center` 要**米**（★ `sw_connect.mm()` 的 docstring 写明
+    #: ② ★ **单位** —— 建孔函数的 `center` 要**米**（★ `sw_connect.mm()` 的 docstring 写
+    #: 明
     #:      「毫米转米（SolidWorks API 单位）」），★ 而 `selection_point` 回的经三点对照
     #:      确证是**毫米**（★ 轮 267）。
-    #:   ⇒ ★ 所以：★ `selection_point`（毫米，3 维） ⇒ **`mm()` + 取前两维** ⇒ `center`（米，2 维）。
+    #: ⇒ ★ 所以：★ `selection_point`（毫米，3 维） ⇒ **`mm()` + 取前两维** ⇒ `center`（
+    #: 米，2 维）。
     #: ★★★★★ 2026-10-01（轮 298）**真机推翻了上面那段注释（而它是一个**真 bug**）**：
     #:   旧注释写「**建孔函数的 `center` 要**米**」⇒ 于是本函数用 `mm()` 换算。
     #:   ★★ 而真机证据：★ **用毫米调 `create_countersink_hole` ⇒ 2/2 PASS**
     #:     （树 7→10 · 10→13）；★ 用米调 ⇒ 报「创建圆草图失败」
     #:     （★ 因为它变成了**亚微米圆**）。
-    #:   ★ 而链条是：`_circle_cut` ⇒ `sketch_circle(model, center[0], center[1], diameter/2)`
+    #: ★ 而链条是：`_circle_cut` ⇒ `sketch_circle(model, center[0], center[1], diameter/
+    #: 2)`
     #:     ⇒ ★ **`sketch_circle` 是 `sw_part` 的**，而那个模块的单位**就是毫米**
     #:     （★ 它自己的 docstring 明写）⇒ ★★ **所以整条链都是毫米**。
     #:   ⇒ ★★★ **修法：去掉 `mm()`，直接回毫米**。
@@ -770,20 +780,23 @@ def _point_from_selection(model, selection: str):
 # 定位:   ★★★★ 2026-10-04（接手轮）**新增判据助手** —— ★ 处置 `JUDGE-C_D_E.md` 的
 #   🔴 #1 · **E5-2**（★ 裁判逐字：「★ batch72 孔向导 —— ★ 仓内 doc 原文：
 #   `★ 判据 = **特征树增量**（★ 真机新增 异型孔向导）。` · ★ 而目标原文：
-#   `sw_hole_features.py`：`if feature is None: raise RuntimeError(` ／ `return { "ok": True,`
+# `sw_hole_features.py`：`if feature is None: raise RuntimeError(` ／ `return { "ok": Tr
+# ue,`
 #   ⇒ ★★ **无任何 before/after 取样**」· ★ 判定「**确认**」）✓
 #
 #   ★★★ **病灶（★ 实测的形态比裁判说的更精确）**：★ 那 5 个
 #   `*_at_selection_report` 函数逐字都写：
 #     ```python
-#     ev = create_xxx(model, ...)                     # ★ 底层回"证据"，★ 而它**没有 `ok` 键**
+# ev = create_xxx(model, ...)                     # ★ 底层回"证据"，★ 而它**没有 `ok` 键
+# **
 #     out = dict(ev) if isinstance(ev, dict) else {"evidence": ev}
 #     out.update({"ok": **True**, ...})                # ★★★ **无条件覆盖**
 #     ```
 #   ★★ 而底层的 `HoleFeatureEvidence.to_dict()` 逐字是 `value = asdict(self)`
 #     ⇒ ★★★ **它只回 `feature_names` / `through` 等字段、★ 根本没有 `ok`** ✓
 #     ⇒ ★★★★ **所以上层那个 `"ok": True` 连"底层成没成"都不知道** —— ★ 那正是「静默成功」 ✓
-#   ⇒ 修法：★ **按 doc 承诺的判据（**特征树增量**）真取样** —— ★ 见 `_with_tree_judgement` ✓
+# ⇒ 修法：★ **按 doc 承诺的判据（**特征树增量**）真取样** —— ★ 见 `_with_tree_judgement`
+#  ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -910,7 +923,8 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
 
 
 # ── 24h 计划 段 4 续（Spec Kit `163`）：**让"找不到入口圆边"的失败可见** ──────────────
-# ★★★★★ 2026-10-01（轮 297）真凶：`_find_hole_entry_edge` 用 `except Exception: continue`
+# ★★★★★ 2026-10-01（轮 297）真凶：`_find_hole_entry_edge` 用 `except Exception: continue
+# `
 #   **把"断在哪一环"吞掉了** —— ★ 于是真机上只看到一句
 #   「无法按圆心和半径找到沉头孔入口圆边」，★ **而看不出**是
 #   ① `GetBodies2` 空 · ② `GetFaces` 空 · ③ `GetEdges` 空 · ④ `GetCurve` 空 ·
@@ -918,7 +932,8 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
 #   ⇒ ★★ 这正是本项目一贯要防的"静默吞错"（事实 185/187/198 一族）。
 #
 # ★ 判据：★ **不改判定逻辑**（★ 仍然找同一条边、仍然用同样的容差），
-#   ★★ **只把每一环的计数与第一个异常记下来**，★ 并在失败时**回一个带诊断的 `RuntimeError`**。
+# ★★ **只把每一环的计数与第一个异常记下来**，★ 并在失败时**回一个带诊断的 `RuntimeError`
+# **。
 #   ⇒ ★ **于是"下一次"能一眼看出断在哪**（★ 而不是再猜一轮）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -926,7 +941,8 @@ def create_semicircular_slot_at_selection_report(model, start_selection: str, en
 # 文件:   scripts/sw_hole_features.py —— 本段
 # 定位:   段 4 续：把 `_find_hole_entry_edge` 的静默吞错改成**带诊断的失败**。
 # 官方依据: `IBody2.GetFaces` · `IFace2.GetEdges` · `IEdge.GetCurve` ·
-#          `ICurve.IsCircle` / `ICurve.CircleParams`（★ 见 `scripts/sw_hole_features.py` 既有来源块）
+# `ICurve.IsCircle` / `ICurve.CircleParams`（★ 见 `scripts/sw_hole_features.py` 既有来源
+# 块）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1022,7 +1038,8 @@ def _find_hole_entry_edge(model, plane_name: str, center: tuple[float, float], r
 # 文件:   scripts/sw_hole_features.py —— 追加 hole_pattern_report
 # 定位:   ★ 2026-10-03（轮 401）24h 计划 v2 段 4（孔族）。★ 来源是 `create_hole_pattern`
 #   —— ★ 它**已经有真实调用者**（`tests/test_sw_hole_features.py` 用过），★ 而它
-#   **吃一个 `creator` 可调用对象** ⇒ ★ MCP 层给不出函数对象 ⇒ 本包装把它换成**具名的种类**（`kind`）。
+# **吃一个 `creator` 可调用对象** ⇒ ★ MCP 层给不出函数对象 ⇒ 本包装把它换成**具名的种类*
+# *（`kind`）。
 #   ★★ 同族的 `configure_straight_tap` / `configure_tapered_tap` 本轮**不挂** ——
 #     它们吃的是 `IStraightTapElementData` / `ITaperedTapElementData` **COM 元素对象**，
 #     而本仓**没有任何路径能从孔特征拿到那个元素**（只在 mock 测试里出现过）
@@ -1118,14 +1135,19 @@ def hole_pattern_report(model, positions, *, kind: str = "through", diameter_mm:
 # 仓库:   本项目自身（**不是**从四家外部 MCP 项目移植）。
 # 文件:   scripts/sw_hole_features.py —— 「高级孔 / 异型孔向导」这一段。
 # 定位:   2026-10-03（轮 592）补：把**真机建成**的 `HoleWizard5` 做成包装。
-#   ★★ 官方依据: `C:\swapi\types\IFeatureManager\HoleWizard5.md`（**27 参**，md 未标废弃）·
-#     `IModelDocExtension\SelectByRay.md`（**11 参**）· 反射 arity（`'HoleWizard5': 27`，两源一致）。
+# ★★ 官方依据: `C:\swapi\types\IFeatureManager\HoleWizard5.md`（**27 参**，md 未标废弃）
+# ·
+# `IModelDocExtension\SelectByRay.md`（**11 参**）· 反射 arity（`'HoleWizard5': 27`，两
+# 源一致）。
 #   ★★★ 三个前置**缺一不可**（★ 事实 469，轮 591 真机）:
 #     ① **孔位要用 `SelectByRay`（`Mark = 0`）选出来**（事实 466）；
-#     ② **`SSize` 要"规格串"**（如 `M8`）—— 空串 / 纯数字（`8` / `0.008`）/ `M8x1.25` 全 `None`；
-#     ③ `FastenerTypeIndex` **要与 standard 匹配**（ANSI Metric + `swWzdHole` 下：40/41/704/38）。
+# ② **`SSize` 要"规格串"**（如 `M8`）—— 空串 / 纯数字（`8` / `0.008`）/ `M8x1.25` 全 `No
+# ne`；
+# ③ `FastenerTypeIndex` **要与 standard 匹配**（ANSI Metric + `swWzdHole` 下：40/41/704/
+# 38）。
 #   ★ 而它产出的是**真的异型孔向导特征**（名如 `M8 间隙孔1`）。
-#   ⚠ 上游同类包装是**画圆 + 剪切**（`_circle_cut`）—— 故两者**几何上等价、特征层不等价**（事实 464）。
+# ⚠ 上游同类包装是**画圆 + 剪切**（`_circle_cut`）—— 故两者**几何上等价、特征层不等价**
+# （事实 464）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -1181,7 +1203,8 @@ def create_hole_wizard_at_selection_report(
             "面选择器 %r 解析不了（★ 合法值：+x/-x/+y/-y/+z/-z；"
             "★ 而它**只对轴对齐的实体可靠**）" % selection)
     x, y, z = (float(pt[0]), float(pt[1]), float(pt[2]))   #: ★ 已是**米**
-    #: ★★★★ 2026-10-04（接手轮）**取样：调用前记一次特征树**（★ doc 承诺的判据是"树增量"）✓
+    #: ★★★★ 2026-10-04（接手轮）**取样：调用前记一次特征树**（★ doc 承诺的判据是"树增量"
+    #: ）✓
     _before_wizard = _feature_names_here(model)
     #: 从那个点沿反方向抬起，再向下打 —— 保证射线从体外进来
     sx = x - ray_dir[0] * (plane_offset_mm / 1000.0)
@@ -1217,13 +1240,16 @@ def create_hole_wizard_at_selection_report(
             "① `size` 不是规格串（必须如 M8）；② `fastener_index` 与 `standard_index` 不匹配；"
             "③ 射线没命中了面。"
             #: ★★★★★★ 2026-10-04（轮 105–106）**第 ③ 条被真机证实，★ 且定位到了元凶** ——
-            #:   ★ 二分法实测（★ `output/why-hole-none.json` · ★ `output/_why_hole_none.py`）：
+            #: ★ 二分法实测（★ `output/why-hole-none.json` · ★ `output/_why_hole_none.py
+            #: `）：
             #:     · ★ **A 只板 + 孔** ⇒ ★ **成** ✓
             #:     · ★★ **B 板 + 阵列 + 圆角 + 孔** ⇒ ★ **`None`** ✓
-            #:     · ★ **C 板 + 圆角 + 孔**（★ **去阵列**）⇒ ★★ **成** ⇒ ★ **圆角不是元凶** ✓
+            #: · ★ **C 板 + 圆角 + 孔**（★ **去阵列**）⇒ ★★ **成** ⇒ ★ **圆角不是元凶** 
+            #: ✓
             #:     · ★★ **D 板 + 阵列 + 孔**（★ **去圆角**）⇒ ★ **`None`** ⇒
             #:       ★★★★ **⇒ **阵列是元凶**** ✓
-            #:   ★★★ **⇒ 真因：★ **做了线性阵列之后、★ 那条沿 `+z` 往下的射线打不中面了**** ⇒
+            #: ★★★ **⇒ 真因：★ **做了线性阵列之后、★ 那条沿 `+z` 往下的射线打不中面了***
+            #: * ⇒
             #:     ★★ **本函数会在 `SelectByRay` 那一层就报「射线选面没命中」**
             #:       （★ **而不是**落到这一句）—— ★★★ **但上一轮我看到的 `None` 是**先命中了、
             #:       打孔才回 `None`** ⇒ ★★ **⇒ 说明射线命中与建孔成功是**两件事**** ✓
@@ -1235,9 +1261,11 @@ def create_hole_wizard_at_selection_report(
             "**射线容易打不中面** ⇒ **建议顺序：板 → 孔 → 阵列 → 圆角**"
             "（★ 见 `output/why-hole-none.json` 的二分法四条腿）。")
     feat_name = _feature_name(feature, name or "异型孔向导")
-    #: ★★★★ 2026-10-04（接手轮）**补上 doc 承诺的第二个判据**（★ `JUDGE-C_D_E` 🔴 #1 · E5-2）——
+    #: ★★★★ 2026-10-04（接手轮）**补上 doc 承诺的第二个判据**（★ `JUDGE-C_D_E` 🔴 #1 · E
+    #: 5-2）——
     #:   ★ 仓内 doc 逐字：「★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）」✓
-    #:   ★★ 本函数**原来只有** `feature is None ⇒ raise` 这一层（★ 那**已经**保证不会静默成功），
+    #: ★★ 本函数**原来只有** `feature is None ⇒ raise` 这一层（★ 那**已经**保证不会静默
+    #: 成功），
     #:     ★★★ 但 doc 承诺的**树增量**没做 ⇒ ★ 现在补上（★ 两层判据都留着）✓
     after = _feature_names_here(model)
     added = [n for n in after if n not in _before_wizard]

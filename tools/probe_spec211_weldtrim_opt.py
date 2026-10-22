@@ -4,17 +4,20 @@
 # 文件:   tools/probe_spec211_weldtrim_opt.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**。★ 前两步：★ 第一步"查行为"
 #           （★ 前置没上 ⇒
-#   没建 ✓）⇒ ★ 第二步"把 mark 1/2 选上"（★ 而**仍不建** ⇒ ★ 我当时**拒称"完全试死"** ✓）。
+# 没建 ✓）⇒ ★ 第二步"把 mark 1/2 选上"（★ 而**仍不建** ⇒ ★ 我当时**拒称"完全试死"** ✓）
+# 。
 #   ★★★ **本探针查到"不建"的第三种成因：档位传错** ✓✓ ——
 #     ★ `EndCond` 取 `swSolidworksWeldmentEndCondOptions_e`，★ 而该枚举里
 #       ★ **`swEndConditionTrim = 4`** ✓（★ 我第二步**传的是 `0` = `swEndConditionNone`** ✗）
 #     ★ `Options` 是 `swWeldmentTrimExtendOptionType_e` 的 **Logical sum**（★ 1/2/4/8 ✓）
 #   ⇒ ★★ 故本探针**传正确档位**再试一次 ✓ —— ★ 并按官方 Remarks：
-#     ★ mark **1 = Body or bodies to trim** · ★ mark **2 = Trimming boundaries (body **or face**)**
+# ★ mark **1 = Body or bodies to trim** · ★ mark **2 = Trimming boundaries (body **or fa
+# ce**)**
 #     ⇒ ★★★ **mark 2 用「面」** ✓（★ 面比体好选：★ `sw_selection_spec` 的 `index:<n>` ✓）
 # 判据:   ★★★ **三条路分开**（★ 与「扫描曲面」那条成功案例同型）：
 #     · ★ **建成** ⇒ ★★★ **「大发现」**：★ 裁剪/延伸焊件走得通 ✓
-#     ★ · ★ **仍不建** ⇒ ★★ **那才够格叫「试死」**（★ 因为三处都追过了：★ 前置 ✓ · mark ✓ · 档位 ✓）
+# ★ · ★ **仍不建** ⇒ ★★ **那才够格叫「试死」**（★ 因为三处都追过了：★ 前置 ✓ · mark ✓ · 
+# 档位 ✓）
 #   ★ 主判据一律**回读**：★ **特征树多了新特征**（★ 不看返回值 ✓）
 # 官方依据: `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`（签名 + Param
 #           eters + Remarks）
@@ -85,9 +88,11 @@ def main() -> int:
             #: ★★ mark 2 **用面**（★ 官方 Remarks 逐字允许 "body **or face**" ✓；
             #:    ★ 面比体好选：★ `index:<n>` ✓）
             try:
-                #: ★★★ **必须 `append=True`**（★ 我上一版漏了它 ⇒ ❌ 它**清空了 mark 1 的体** ✗：
+                #: ★★★ **必须 `append=True`**（★ 我上一版漏了它 ⇒ ❌ 它**清空了 mark 1 
+                #: 的体** ✗：
                 #:   ★ `select_entity_by_index` 的 `append` **默认为 `False`** ✓
-                #:   ⇒ ★★ 于是八组读数**全部无效**（mark2 根本没上）⇒ ★ 那种读数**不能当结论** ✓）
+                #: ⇒ ★★ 于是八组读数**全部无效**（mark2 根本没上）⇒ ★ 那种读数**不能当结
+                #: 论** ✓）
                 SS.select_entity_by_index(model, "FACE", 0, append=True)
                 ok2 = SS.get_selection_count(model) > 1
             except Exception:                                           # noqa: BLE001

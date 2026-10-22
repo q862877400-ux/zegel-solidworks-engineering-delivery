@@ -1,7 +1,8 @@
 """★ 批次 97：规格 209 · B2-2 —— BOM 气泡（`IDrawingDoc::AutoBalloon5`，给「两家矛盾」定案）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
-# 文件:   `scripts/sw_drawing_create_missing.py::auto_insert_balloons`（★ 能力层**早已实现**，
+# 文件:   `scripts/sw_drawing_create_missing.py::auto_insert_balloons`（★ 能力层**早已实
+# 现**，
 #         本批做两件事：★ **把判据收紧成纯回读** + ★ **把它挂成工具**）✓
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B2-2** · 外部项目 idx **34 `balloon`
 #           **。
@@ -13,7 +14,8 @@
 #     （★ 这也是裁决书 §九 的原话：「建议挂在 `auto_insert_balloons` 之上」）
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INote
 #           s**；
-#   `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IView\\GetNoteCount.md`（**判据来源**）·
+# `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IView\\GetNoteCount.md`（**判据来源*
+# *）·
 #   `C:\\swapi\\types\\IModelDocExtension\\InsertBOMBalloon2.md`（单发气泡，四步前置）·
 #   ★★ `examples\\Add_Autoballoon_to_Face_Example_VB.md`（**调用序**）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。

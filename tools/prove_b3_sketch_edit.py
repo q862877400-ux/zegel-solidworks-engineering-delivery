@@ -103,13 +103,15 @@ def main() -> int:
             str(row.get("err") or "")[:58]))
         return row
 
-    #: \u2460 \u526a\u88c1\uff08\u2605 \u5224\u636e = \u6bb5\u6570**\u53d8\u5316**\uff09\u2014\u2014 \u4e00\u6761\u76f8\u4ea4\u7684\u7ebf + \u5706
+    #: \u2460 \u526a\u88c1\uff08\u2605 \u5224\u636e = \u6bb5\u6570**\u53d8\u5316**\uff09
+    #: \u2014\u2014 \u4e00\u6761\u76f8\u4ea4\u7684\u7ebf + \u5706
     def s_trim(d):
         P.sketch_line(d, -30.0, 0.0, 30.0, 0.0)
         P.sketch_circle(d, 0.0, 0.0, 10.0)
     run("剪裁-最近", s_trim, lambda d: E.sketch_trim(d, "index:0", option="closest"), "count_change")
 
-    #: \u2461 \u5ef6\u4f38\uff08\u2605 \u5224\u636e = \u51e0\u4f55\u53d8 \u2014\u2014 \u6bb5\u6570\u4e0d\u53d8\uff09
+    #: \u2461 \u5ef6\u4f38\uff08\u2605 \u5224\u636e = \u51e0\u4f55\u53d8 \u2014\u2014 \u
+    #: 6bb5\u6570\u4e0d\u53d8\uff09
     def s_ext(d):
         P.sketch_line(d, -20.0, 0.0, 0.0, 0.0)
         P.sketch_line(d, 25.0, 0.0, 40.0, 0.0)
@@ -141,7 +143,8 @@ def main() -> int:
                                             arc_angle_deg=360.0, pattern_num=4),
         "count_up")
 
-    #: \u2466 \u4ea4\u53c9\u66f2\u7ebf\uff08\u2605 \u524d\u7f6e\u4e0d\u6ee1\u8db3\uff1a\u5b98\u65b9\u8981 3D \u8349\u56fe + \u4e24\u4e2a\u76f8\u4ea4\u9762\uff09
+    #: \u2466 \u4ea4\u53c9\u66f2\u7ebf\uff08\u2605 \u524d\u7f6e\u4e0d\u6ee1\u8db3\uff1a\
+    #: u5b98\u65b9\u8981 3D \u8349\u56fe + \u4e24\u4e2a\u76f8\u4ea4\u9762\uff09
     run("交叉曲线", lambda d: P.sketch_circle(d, 0.0, 0.0, 10.0),
         lambda d: E.sketch_intersect_curves(d), "count_change",
         note="★ 官方前置：3D 草图 + 两个相交面；本探针只有 2D 草图 ⇒ 失败不构成能力结论")

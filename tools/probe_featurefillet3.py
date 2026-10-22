@@ -1,15 +1,18 @@
 """★ 真机验 `FeatureFillet3` 能不能替代 `FeatureFillet`（★ 阶段 2 · T1 第 ② 步）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IFeatureManager\FeatureFillet3.md`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IFeatureManager\Feature
+# Fillet3.md`）
 # 文件:   `scripts/sw_part.py::fillet`（★ 生产）
 # 定位:   ★ **官方逐字**：★ `FeatureFillet` 废弃 ⇒ `2` · ★ `FeatureFillet2` 废弃 ⇒ `3` ·
 #     ★★ **`FeatureFillet3` **不废弃**** ✓
-#   ★★ **而 `IModelDoc2` 上还有另一族同名**（★ 5/7/9/13/7 参）⇒ ★★★ **按**铁律 4**查反射**：
+# ★★ **而 `IModelDoc2` 上还有另一族同名**（★ 5/7/9/13/7 参）⇒ ★★★ **按**铁律 4**查反射**
+# ：
 #     ★ `IFeatureManager` 上 ⇒ `FeatureFillet`(7) / `2`(11) / **`3`(14)** ✓
 #     ★★ **⚠ 那也正是本会话"环形链"的真因** —— ★ 跨族跳转（★ `IModelDoc2.FeatureFillet`
 #       的后继写的是 `IFeatureManager::FeatureFillet`）✓
 #   ★★★ **官方 14 参逐字**（★ `FeatureFillet3.md`）：
-#     `(int Options, double R1, double R2, double Rho, int Ftyp, int OverflowType, int ConicRhoType,
+# `(int Options, double R1, double R2, double Rho, int Ftyp, int OverflowType, int Conic
+# RhoType,
 #       object Radii, object Dist2Arr, object RhoArr, object SetBackDistances,
 #       object PointRadiusArray, object PointDist2Array, object PointRhoArray)` ✓
 #   ★★★★ **判据（★ 可核、★ 与 `FeatureCutThicken` 那次同法）**：★ 特征树**增量** ✓
@@ -70,7 +73,8 @@ def main() -> int:
     def names():
         try:
             fm = get_com_member(model, "FeatureManager")
-            #: ★ 数特征：★ 用 `GetFeatureCount`（★ 0 参）—— 回 `-1` 就说明**这个读法不行**
+            #: ★ 数特征：★ 用 `GetFeatureCount`（★ 0 参）—— 回 `-1` 就说明**这个读法不行
+            #: **
             v = get_com_member(fm, "GetFeatureCount")
             if isinstance(v, int):
                 return v
@@ -85,11 +89,13 @@ def main() -> int:
 
     def case(tag, *, form, skip_body: bool = False):
         #: ★ 每个形态单独建一块板（★ 免得互相干扰）⇒ ★ 拿到**这次**的草图名 ✓
-        #: ★★★★ **用法（★ 我第一版写错过、★ 值记）**：★ `sw_part.sketch()` 是**上下文管理器** ——
+        #: ★★★★ **用法（★ 我第一版写错过、★ 值记）**：★ `sw_part.sketch()` 是**上下文管
+        #: 理器** ——
         #:   ★ 它的函数体是 `start_sketch(...)` + `yield` + `end_sketch(...)` ⇒
         #:   ★★ **必须 `with P.sketch(model, …) as sk_name:`** ✓
         #:   ★★★ 不 `with` 就**只造出生成器、★ 一个 COM 调用都不发** ⇒
-        #:     症状是 `无法选择草图: Sketch2` —— ★★ **看起来像能力坏了、★ 实际是我的用法错了** ✓
+        #: 症状是 `无法选择草图: Sketch2` —— ★★ **看起来像能力坏了、★ 实际是我的用法错了
+        #: ** ✓
         #:      （★ 与**事实 517**同族：★ **"我调错了"与"能力坏了"长得一模一样**）
         with P.sketch(model, "Front Plane") as sk_name_raw:
             sk = get_com_member(model, "SketchManager")

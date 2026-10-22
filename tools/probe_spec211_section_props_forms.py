@@ -3,17 +3,21 @@
 # 仓库:   本项目自身（规格 211 · B1-1 的形态判定探针）
 # 文件:   tools/probe_spec211_section_props_forms.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B1-1**。★ 真机第一轮拿到的是
-#   `TypeError: … 取回来的成员**不可调用**（`getattr` 回了 `tuple`）` —— ★ 那是**本仓守卫**报的，
-#   ★ 而它明写「★ 这**多半是 pywin32 迟到绑定造不出该方法的调用包装**，★ **不是参数没传对**」
+# `TypeError: … 取回来的成员**不可调用**（`getattr` 回了 `tuple`）` —— ★ 那是**本仓守卫*
+# *报的，
+# ★ 而它明写「★ 这**多半是 pywin32 迟到绑定造不出该方法的调用包装**，★ **不是参数没传对*
+# *」
 #   ⇒ ★★ 但**不能凭一个报错就定性**（★ 不许把"一个实例"推广成"一族"）⇒ ★ **逐形态实测** ✓
 #   ★★ 仓里已有**同型先例（事实 386）**：`IModelDocExtension.InsertChainDimensions`
-#     —— 官方 `kind: method`、`System.object …(System.object)`，而 `type(getattr(...))` = `tuple`、
+# —— 官方 `kind: method`、`System.object …(System.object)`，而 `type(getattr(...))` = `t
+# uple`、
 #     `callable` = `False`、`repr` = `(None, None, None)`、`dir()` 里**没有该名字** ✓
 # 判据:   ★★ **五问**（★ 每一问都要落盘）：
 #     ① `type(getattr(ext, M))` 是什么？
 #     ② `callable(...)` 是真是假？
 #     ③ `M in dir(ext)` 吗？
-#     ④ ★ **老入口 `GetSectionProperties`** 同不同命？（★ 新入口不行、老入口行 ⇒ 就有兜底路）✓
+# ④ ★ **老入口 `GetSectionProperties`** 同不同命？（★ 新入口不行、老入口行 ⇒ 就有兜底路
+# ）✓
 #     ⑤ ★ **`I` 前缀的指针变体 `IGetSectionProperties2`** 呢？（★ 事实 47 说那族不可用）✓
 #   ★★ 结论只能落在**这五问的读数**上 —— ★ **不许**用"它跟 386 长得像"当结论 ✓
 # 官方依据: `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md`（签名 + Remarks
@@ -87,7 +91,8 @@ def main() -> int:
 
     ext = sw_connect.get_com_member(model, "Extension")
     print("★ Extension 取到 =", ext is not None)
-    #: ★★ 事实 386 的那个**对照样本**（★ 同接口、同签名形态）—— ★ 一起量，★ 才知道是不是同一族 ✓
+    #: ★★ 事实 386 的那个**对照样本**（★ 同接口、同签名形态）—— ★ 一起量，★ 才知道是不是
+    #: 同一族 ✓
     rows = [_probe(ext, m) for m in MEMBERS]
     rows.append(_probe(ext, "InsertChainDimensions"))     # ★ 事实 386 的样本（对照）✓
     rows.append(_probe(ext, "GetMassProperties2"))        # ★ 同接口上一个**已知可用**的对照 ✓

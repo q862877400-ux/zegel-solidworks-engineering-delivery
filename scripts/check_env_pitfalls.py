@@ -48,12 +48,16 @@ import sys
 import tokenize
 from pathlib import Path
 
-#: ★★★ 2026-10-03（接手轮）**必须强制 stdout 为 UTF-8** —— ★ 本门禁会 `print` 中文与 `⇒`/`→` 这类符号，
-#:   而默认走 `locale.getpreferredencoding()`（★ 本机 **GBK**）⇒ ★ 一旦 stdout 是**管道**，
-#:   `print("… ⇒ …")` 直接 **`UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'`**
+#: ★★★ 2026-10-03（接手轮）**必须强制 stdout 为 UTF-8** —— ★ 本门禁会 `print` 中文与 `⇒`
+#: /`→` 这类符号，
+#: 而默认走 `locale.getpreferredencoding()`（★ 本机 **GBK**）⇒ ★ 一旦 stdout 是**管道**
+#: ，
+#: `print("… ⇒ …")` 直接 **`UnicodeEncodeError: 'gbk' codec can't encode character '\u21
+#: d2'`**
 #:   ⇒ ★★ **门禁自己崩掉**（★ 实测：`scripts/check_env_pitfalls.py:366` 那行；
 #:     连带 `scripts/release_check.py:1192` 报「环境陷阱门禁未通过」；
-#:     再连带 `tests/test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` 失败）。
+#: 再连带 `tests/test_gate_negative_cases.py::test_gate_details_exposed_for_every_gate` 
+#: 失败）。
 #:   ★ 这是 **known-facts 58** 那一族的**第四个实例** —— 前三个分别在：
 #:     ① 测试里的 `subprocess.run` 缺 `encoding=`；② 本仓 11 处同类；
 #:     ③ `tools/check_judge_preflight.py`（**子进程输出侧**）。
@@ -190,15 +194,18 @@ def find_drive_only_root(path: Path) -> list:
     return uniq
 
 
-#: ⚠⚠ **`x or <默认值>` 吞掉合法 `0`** —— 只有当 **默认值 ≠ 该类型的 falsy 值** 时才有害：
+#: ⚠⚠ **`x or <默认值>` 吞掉合法 `0`** —— 只有当 **默认值 ≠ 该类型的 falsy 值** 时才有害
+#: ：
 #: ```
 #: int(x or 0)      # x==0 ⇒ 0 or 0 = 0        ⇒ 幂等 ⇒ 无害
 #: float(x or 0.0)  # x==0.0 ⇒ 0.0 or 0.0=0.0  ⇒ 幂等 ⇒ 无害
 #: int(x or -1)     # x==0 ⇒ 0 or -1 = **-1**  ⇒ 吞掉合法的 0 ⇒ 真 bug
 #: ```
-#: ★ 2026-10-01（轮 61）真机抓到实例：`sw_costing.read_cost_analysis` 写 `int(... or -1)`，
+#: ★ 2026-10-01（轮 61）真机抓到实例：`sw_costing.read_cost_analysis` 写 `int(... or -1)
+#: `，
 #: 而 `CostingType` 真值是 **`0`** ⇒ 被吞成 **`-1`**（把「机加工」误报成「未知」）。
-#: ⚠ 这与本项目**早已记录过**的「`bool(0)` 为 `False` ⇒ 不要用真假值判成功码」是**同一族**。
+#: ⚠ 这与本项目**早已记录过**的「`bool(0)` 为 `False` ⇒ 不要用真假值判成功码」是**同一族
+#: **。
 #:
 #: ⚠⚠ **本条用**基线白名单**而不是一次全绿**：实测全仓同族共 **45 处 / 11 个模块**，
 #: 一次全改的风险高于收益（事实 61：批量改文件先证明只做加法；且每一处都要判断
@@ -211,7 +218,8 @@ FALSY_ZERO_BASELINE = ROOT / "docs" / "falsy-zero-baseline.txt"
 
 #: ⚠ 检查③ **不扫 `tests/`** —— 理由（**实测撞出来的，不是想当然**）：
 #: 它的负例测试里**必须**出现那串字面量（`int(get_com_member(a, "CostingType") or -1)`）
-#: 才能证明门禁抓得到 ⇒ 扫 `tests/` 的话，**门禁会抓到自己的夹具**（2026-10-01 轮 61 实测）。
+#: 才能证明门禁抓得到 ⇒ 扫 `tests/` 的话，**门禁会抓到自己的夹具**（2026-10-01 轮 61 实
+#: 测）。
 #: ⇒ 检查③ 只针对**生产取值代码**（运行时真的会调 COM 的那些）。
 #: ⚠ ①（subprocess 编码）与 ②（盘根）**仍然扫 `tests/`** —— 那两类在测试里同样是真代码。
 FALSY_ZERO_DIRS = ("scripts", "tools", "mcp-server", "apps/desktop")
@@ -279,7 +287,8 @@ def load_falsy_zero_baseline() -> set:
 
 
 #: ⚠⚠ **`keybd_event` 的「按下」必须在 `finally` 里被抬起**（2026-10-01 轮 62 加）。
-#: 形态：`keybd_event(vk, 0, 0, 0)`（按下）→ `time.sleep(...)` → `keybd_event(vk, 0, KEYUP, 0)`。
+#: 形态：`keybd_event(vk, 0, 0, 0)`（按下）→ `time.sleep(...)` → `keybd_event(vk, 0, KEY
+#: UP, 0)`。
 #: `sleep` **可被中断**（`KeyboardInterrupt` / 线程被停 / 进程退出）⇒ **抬起永远到不了**
 #: ⇒ **修饰键卡在按下态**。后果（用户 2026-10-01 实报）：
 #:   * **Ctrl 卡住** ⇒ 之后按 `A` 就是 `Ctrl+A` = **全选（蓝底）**
@@ -419,7 +428,8 @@ def main(argv=None) -> int:
     else:
         print("   [PASS] 0 处")
 
-    # ③ `x or <默认>` 吞掉合法的 0（**基线记账 + 只拦新增**；**不扫 tests/**，见 FALSY_ZERO_DIRS）
+    # ③ `x or <默认>` 吞掉合法的 0（**基线记账 + 只拦新增**；**不扫 tests/**，见 FALSY_Z
+    # ERO_DIRS）
     baseline = load_falsy_zero_baseline()
     fz_all, fz_new = [], []
     for f in files_for_falsy_zero:

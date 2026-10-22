@@ -24,15 +24,20 @@ import subprocess
 import sys
 from pathlib import Path
 
-#: ★★ 中文 Windows 上打印 `★` / `⇒` 会 `UnicodeEncodeError: 'gbk' codec can't encode character` ✓
-#:   ★ 2026-10-07（接手轮 · 规格 214 T-214-01）**实测**：本探针在**默认控制台**下**根本跑不起来** ✗ ——
+#: ★★ 中文 Windows 上打印 `★` / `⇒` 会 `UnicodeEncodeError: 'gbk' codec can't encode cha
+#: racter` ✓
+#: ★ 2026-10-07（接手轮 · 规格 214 T-214-01）**实测**：本探针在**默认控制台**下**根本跑
+#: 不起来** ✗ ——
 #:     ★ 它 `main()` 里第一句 `print("★ ① initialize ⇒ …")` 就抛 `UnicodeEncodeError`，
 #:     ★ 然后**外层 `except BaseException` 里那句 print 又抛一次** ⇒ ★ 最终报的是
-#:     **`print("★ 异常已落盘…")` 的编码错**，★ **真正的失败原因被彻底盖住**（★ 事实 58 那一族）✓
+#: **`print("★ 异常已落盘…")` 的编码错**，★ **真正的失败原因被彻底盖住**（★ 事实 58 那一
+#: 族）✓
 #:   ★★ 判据（★ 加这一行之前/之后的**同一条命令**）：
 #:     · `python tools/probe_mcp_stdio_handshake.py` ⇒ ★ **崩在打印上**
-#:     · `$env:PYTHONIOENCODING='utf-8'` 后再跑 ⇒ ★ **`tools/list ⇒ 504` 且判定「可以挂」** ✓
-#:   ⇒ ★ 与 `scripts/check_refuted_patterns.py` / `scripts/check_relative_imports.py` 的既有修法**逐字同型** ✓
+#: · `$env:PYTHONIOENCODING='utf-8'` 后再跑 ⇒ ★ **`tools/list ⇒ 504` 且判定「可以挂」** 
+#: ✓
+#: ⇒ ★ 与 `scripts/check_refuted_patterns.py` / `scripts/check_relative_imports.py` 的既
+#: 有修法**逐字同型** ✓
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
 except Exception:                                                         # noqa: BLE001
@@ -42,10 +47,13 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 SERVER = ROOT / "mcp-server" / "server.py"
 #: ★ 与 DSH 配置里将要写的那个 `command` **必须是同一个**（★ 否则验证的不是同一件事 ✗）
 PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"
-#: ★★★ 2026-10-07 **实测订正**：★ 期望值**不是** `all_specs()` 的 459 ✗ —— ★ 而是 **504** ✓
+#: ★★★ 2026-10-07 **实测订正**：★ 期望值**不是** `all_specs()` 的 459 ✗ —— ★ 而是 **504*
+#: * ✓
 #:   ★ **对账**（★ 与记忆库里那条逐字吻合 ✓）：本仓有**两条注册路径** ——
-#:     ★ ① **声明式**：`register_capabilities.all_specs()` = **459**（★ 规格 213 收口后的实测值 ✓）
-#:     ★ ② **继承的装饰器**：`mcp-server/server.py` 里那 **45** 个（★ 上游原样、我们一行没改 ✓）
+#: ★ ① **声明式**：`register_capabilities.all_specs()` = **459**（★ 规格 213 收口后的实
+#: 测值 ✓）
+#: ★ ② **继承的装饰器**：`mcp-server/server.py` 里那 **45** 个（★ 上游原样、我们一行没改
+#:  ✓）
 #:     ⇒ ★★★ **459 + 45 = 504** ✓ ✓
 #:   ★★ **顺带解释了那条长期红的门禁**：`tests/test_mcp_protocol_layer.py` 逐字说
 #:     「两条路径合计 **504** 条，而本测试上次实测 **339** 条」✗ ——
@@ -53,7 +61,8 @@ PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"
 #:   ★★★ **教训（★ 本探针自己撞的）**：★ 我第一版拿 `all_specs()` 当地板 ✗ ⇒
 #:     ★★ **"服务器有几个工具"与"注册表里有几条"是两个分母** ✓（★ 本仓反复栽在这上面 ✓）
 EXPECTED_TOOLS = 504
-#: ★★ 命名前缀**不止一个**（★ 我第一版只查 `solidworks_` ✗）：★ 还有 `cadstudio_*`（★ CAD Studio
+#: ★★ 命名前缀**不止一个**（★ 我第一版只查 `solidworks_` ✗）：★ 还有 `cadstudio_*`（★ CA
+#: D Studio
 #:   DFM 一族 ✓）—— ★ 所以判据改成"**每个工具都属于已知前缀之一**" ✓
 KNOWN_PREFIXES = ("solidworks_", "cadstudio_", "mcp_")
 

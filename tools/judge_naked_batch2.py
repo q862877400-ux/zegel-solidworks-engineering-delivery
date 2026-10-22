@@ -9,7 +9,8 @@
 #   ★★ **方法（照事实 302）**：**两层证据** ——
 #     ① 按**功能词**在 `scripts/*.py` 收函数名（★ 不只看一个名字）；
 #     ② 看这些函数**调了哪些 COM 成员**（★ 那才是"真的在用"）。
-#   ★ 依据：★ 按名字找会**同时**漏判与误判（★ `revolved_surface` 漏判 · `fill_*` 若只看名字会误判）；
+# ★ 依据：★ 按名字找会**同时**漏判与误判（★ `revolved_surface` 漏判 · `fill_*` 若只看名
+# 字会误判）；
 #     铁律 4：**核功能不核名字**。
 # 官方依据: 不适用（★ 纯静态扫描 + 既有能力清单）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -70,7 +71,8 @@ def main() -> int:
         hits = sorted({f for f, ps in funcs.items()
                        if any(k.lower() in f.lower() for k in keys)})
         mem = sorted({m for m in members if any(k.lower() in m.lower() for k in keys)})
-        #: ★ 判据：★ **有函数**且那些函数**确实调了相关 COM 成员** ⇒ "已有"；★ 只有函数名像而 COM 为空 ⇒ 存疑
+        #: ★ 判据：★ **有函数**且那些函数**确实调了相关 COM 成员** ⇒ "已有"；★ 只有函数
+        #: 名像而 COM 为空 ⇒ 存疑
         #: ★★★★ 2026-10-03（轮 394）**第三层证据：枚举常量与文档串** ——
         #:   ★ 前两层（函数名 + COM 成员）**看不到"参数取值"** ⇒ 真例：
         #:   `solidworks_entities_on_body(kind="VERTEX")` 的函数名里**没有 vertex**

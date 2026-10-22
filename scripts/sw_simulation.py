@@ -128,8 +128,10 @@ __all__ = [
 #: 沿用 alisamsam/Solidworks-MCP (MIT) 的取值并在此显式标注为**待二次确认**。
 #: ⚑ **2026-10-01（轮 202）二次确认完成**：本机只读注册表实测
 #: `HKLM\SOFTWARE\Classes\SldWorks.Simulation` **存在**，且它指向 CLSID
-#: `{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}` ⇒ `InprocServer32` = 下面的 `SIMULATION_ADDIN_DLL`。
-#: ⇒ ★ **这个 ProgID 是对的**（旧代码取不到它，不是 ProgID 的问题，是**加载项没启用**）。
+#: `{C8F79410-CD71-4061-A2E4-B6BF17CCB27F}` ⇒ `InprocServer32` = 下面的 `SIMULATION_ADDI
+#: N_DLL`。
+#: ⇒ ★ **这个 ProgID 是对的**（旧代码取不到它，不是 ProgID 的问题，是**加载项没启用**）
+#: 。
 SIMULATION_ADDIN_PROGID = "SldWorks.Simulation"
 
 #: Simulation 加载项 DLL 的**完整路径** —— `LoadAddIn` 要的是这个（官方文档：
@@ -654,7 +656,8 @@ SWSU_METRIC = 2
 #           ance As Double _     ' ← 第 3 参 = 容差  ) As Long
 # 枚举:   ``swsUnit_e`` = SI 0 / English 1 / Metric 2
 #         （同源页 `CosmosWorksLib~swsUnit_e.html`）
-# ⚠⚠ **本函数此前把第 2、3 参写反了**（旧签名 `create_mesh(study, mesh_type, tolerance, size)`
+# ⚠⚠ **本函数此前把第 2、3 参写反了**（旧签名 `create_mesh(study, mesh_type, tolerance, 
+# size)`
 #   把 tolerance 传在第 2 位、size 第 3 位）。2026-10-01 真机实测（SW 2026 SP4.1）：
 #         CreateMesh(0, 4.9339, 0.2467)   → 返回 0，**7,219 个单元**（100×60×20 mm 板，✓ 正常）
 #         CreateMesh(0, 0.2467, 4.9339)   → 返回 0，**19,509,593 个单元**（✗ 爆），耗时 233 秒
@@ -664,7 +667,8 @@ SWSU_METRIC = 2
 #     同一次实测里 `GetDefaultElementSizeAndTolerance(-1,·)` 返回 4.9339/0.2467，
 #     对 100 mm 的板正是「约 5% 板长」的合理建议值；而传 `(2, ·)` 时它返回米级 0.0049339。
 # ⚠ 另注：`CreateMesh` 挂在 **ICWStudy** 上；`ICWMesh`（coclass `CWMesh`）持有
-#   `ElementSize` / `Tolerance` / `Unit` / `ElementCount` / `NodeCount` 等**设置与回读**成员，
+# `ElementSize` / `Tolerance` / `Unit` / `ElementCount` / `NodeCount` 等**设置与回读**成
+# 员，
 #   但**不持有** `CreateMesh`。设置用 `study.Mesh`，执行用 `study.CreateMesh(...)`。
 # ⚠ 本函数为照官方签名新写：**调用形状已真机实测**（见上），
 #   但**整链（建网格→求解→出结果）未在本机实测**（求解仍卡在材料赋值）。
@@ -701,7 +705,8 @@ def create_mesh(study, *, units: int = SWSU_SI, element_size: float = 0.0,
 #               ' 与 CreateMesh 的第 1 参同义  ByRef DElementSize As Double, _  ByRef DT
 #           olerance As Double _ )``
 # ⚠ 真机实测（2026-10-01）：传 ``NUnits=-1`` 返回**毫米级**（4.9339 / 0.2467）；
-#   传 ``NUnits=2``（Metric）返回**米级**（0.0049339 / 0.0002467）—— 同一个建议值两种量纲。
+# 传 ``NUnits=2``（Metric）返回**米级**（0.0049339 / 0.0002467）—— 同一个建议值两种量纲
+# 。
 #   **⇒ 用哪个 unit 取，就用哪个 unit 传给 `create_mesh` 的位置参数会错**；
 #   本库固定用**毫米**（`SWSU_SI` 另见 `create_mesh` 的来源块实测），故这里默认 `-1`
 #   以拿到毫米级数值。**⚠ 这一条「-1 给毫米」的规律是实测归纳，未在官方文档中找到说明。**
@@ -765,7 +770,8 @@ SWS_MATERIAL_DATABASE = "SOLIDWORKS Materials"
 #     ⇒ **``"Plain Carbon Steel"`` 不在该库里**；库里是 ``"AISI 1020"`` 这类名。
 #  ⚠⚠ 坑 2 —— **判据必须是回读 ``MaterialIdName``，不是返回值**。
 #     ``SetMaterialPropertyName2`` 返回 ``Void``；而在研究上调用
-#     ``SetFavLibraryMaterialToSelectedEntities`` / ``SetFavLibraryMaterialToAllBodiesByCompName``
+# ``SetFavLibraryMaterialToSelectedEntities`` / ``SetFavLibraryMaterialToAllBodiesByComp
+# Name``
 #     会返回 0/1 却**都无效果**（第四个「静默成功」）。
 #  ⚠ 直接写 ``set_MaterialIdName`` 只赋**标签**、不加载材料属性数据 ⇒
 #     `RunAnalysis` 仍报 19（MaterialNotDefined）。**不要走那条路。**
@@ -982,7 +988,8 @@ def select_face_by_selector(model, selection: str, *, mark: int = 0,
 # ⚠⚠ **返回码 0 不等于求解成功**（2026-10-01 真机）：夹具/载荷未定义时，
 #   Simulation 弹「未定义载荷或规定的位移」且研究显示「失败」，
 #   而 `RunAnalysis` **仍返回 0**。⇒ **判据必须是 `study.Results` 非空 + 图数**
-#   （实测成功时 `GetPlotCount = 4`、`GetPlotNames = ('品质1','应力1','位移1','应变1')`）。
+# （实测成功时 `GetPlotCount = 4`、`GetPlotNames = ('品质1','应力1','位移1','应变1')`）
+# 。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数整体（自本行至函数结束）
 # ⚠ 成功路径已在本机实测；失败路径未逐一实测。
@@ -1066,7 +1073,8 @@ def collect_study_evidence(sw_app) -> dict[str, Any]:
 
 # ── Spec Kit `141`（24h 计划 段 1.1）：仿真研究族的**可 JSON 化**包装 ──────────────
 # ★ 为什么要有这三个薄函数（而不是直接挂既有四个）：
-#   ① `create_static_study` 回**三元组** `(study, entry_name, error_code)` —— 而 `study` 是
+# ① `create_static_study` 回**三元组** `(study, entry_name, error_code)` —— 而 `study` 
+# 是
 #      **COM 对象** ⇒ MCP **回不了对象**；★ 而 `entry_name` 是「**是否走了降级入口**」的
 #      **唯一证据**（其 docstring 明写）⇒ ★ 必须把它翻出来。
 #   ② `iter_studies` yield 的是 **`(index, study)` 元组** ⇒ 同样含对象 ⇒ 不可直接回。
@@ -1135,7 +1143,8 @@ def find_study(sw_app, name: str) -> dict[str, Any]:
     return {"found": study is not None, "requested_name": str(name), "study_name": actual}
 
 # ── 24h 计划 段 1.2（Spec Kit `142`）：网格 / 求解的**回读优先**报告 ─────────────
-# ★★★ 为什么这三个也要包（本项目的**铁律**，写在 `tools/capture_simulation_evidence.py` 里）：
+# ★★★ 为什么这三个也要包（本项目的**铁律**，写在 `tools/capture_simulation_evidence.py` 
+# 里）：
 #   「**COM 返回值凡不能自证，一律以回读为判据**（本项目已累计四处「返回码撒谎」）」
 #   · `create_mesh` / `run_analysis` **都只回一个 int 返回码** ⇒ ★ **不能自证**
 #   ⇒ 所以本函数**一律回读**，并且**显式声明返回码不可信**
@@ -1219,19 +1228,26 @@ def run_analysis_report(study) -> dict[str, Any]:
 # ★★★★★ 为什么加它（2026-10-01 轮 248，把"跑求解必挂"的链条**掐断在网格这一步**）：
 #
 #   | 方式 | 报出的 element_size | CreateMesh 后的单元数 | RunAnalysis |
-#   | 既有 `tools/capture_simulation_evidence.py`（**跑通**）| **4.933908705960544** | **7310** | **1 秒 · 4 张图** |
-#   | 本项目其它链                                          | **4930.501659457233** | **7250** | ★ **300 秒超时 / 无结果** |
+# | 既有 `tools/capture_simulation_evidence.py`（**跑通**）| **4.933908705960544** | **7
+# 310** | **1 秒 · 4 张图** |
+# | 本项目其它链                                          | **4930.501659457233** | **72
+# 50** | ★ **300 秒超时 / 无结果** |
 #
-#   ⇒ ★★ **两次读同一条 `default_element_size_and_tolerance(study, -1)` 却差**恰好 1000 倍**
-#     （★ 原因**未查清**：`probe_document_units` 里"文档单位"那一处读不到，报 `非选择性的参数`／`-1`）。
+# ⇒ ★★ **两次读同一条 `default_element_size_and_tolerance(study, -1)` 却差**恰好 1000 倍
+# **
+# （★ 原因**未查清**：`probe_document_units` 里"文档单位"那一处读不到，报 `非选择性的参
+# 数`／`-1`）。
 #   ⇒ ★★★ **而 4930.5 是**不合理的**：那比零件（100 mm）大 49 倍** ——
-#     单元比零件还大 ⇒ ★ **网格退化** ⇒ `CreateMesh` **静默退回默认值**（7250 ≈ 默认的 7310）
+# 单元比零件还大 ⇒ ★ **网格退化** ⇒ `CreateMesh` **静默退回默认值**（7250 ≈ 默认的 7310
+# ）
 #     ⇒ ★★★★ **求解因此无解 / 卡住** ⇒ **而弹框与挂起就发生在那一步**。
 #   ⇒ ★★★★★ **所以：只要在**建网格之前**判出"这个 element_size 不合理"，就**不必跑求解** ⇒
-#     **挂起从源头被掐断**（★ 这与 `sw_isolate` 的进程隔离**互补**：一个防外溢，一个防发生）。
+# **挂起从源头被掐断**（★ 这与 `sw_isolate` 的进程隔离**互补**：一个防外溢，一个防发生）
+# 。
 #
 # ★★ 判据怎么选（★ 不发明）：★ **拿 `element_size` 与**零件自身尺寸**比** ——
-#   官方建议值必然是零件尺度的一个**小分数**（本机实测：100 mm 的板 ⇒ 4.93 mm，约 **1/20**）。
+# 官方建议值必然是零件尺度的一个**小分数**（本机实测：100 mm 的板 ⇒ 4.93 mm，约 **1/20**
+# ）。
 #   ⇒ 取一个**宽到不可能误伤**的门槛：**单元尺寸不得大于零件的最大边**。
 #     ★ 这个门槛**永远不该被合法的网格参数触到**（单元等于零件最大边 ⇒ 网格只有 1 个单元）。
 #
@@ -1250,8 +1266,10 @@ def run_analysis_report(study) -> dict[str, Any]:
 # ★★★★★ 2026-10-04（接手轮）**判据②的两个系数与内存预算** —— ★ 依据逐条写在下面：
 #
 # 【一】官方内存规则（★ 逐字取自本机解包的 Simulation 手册）
-#   文件: C:\cworks_manual\c_Analysis_Solvers.htm · C:\cworks_manual\IDC_HELP_PRESTATIC_OPTIONS.htm
-#   逐字: 「FFEPlus (iterative) … For every 2,000,000 degrees of freedom, you need 1GB of RAM.」
+# 文件: C:\cworks_manual\c_Analysis_Solvers.htm · C:\cworks_manual\IDC_HELP_PRESTATIC_OP
+# TIONS.htm
+# 逐字: 「FFEPlus (iterative) … For every 2,000,000 degrees of freedom, you need 1GB of 
+# RAM.」
 #   ⇒ ★ 故 DOF_PER_GB = 2_000_000（★ 这是**官方给的那条换算**，不是我们拍的）✓
 #
 # 【二】每单元的自由度系数（★ 实测标定，不是猜）
@@ -1263,7 +1281,8 @@ DOF_PER_GB = 2_000_000
 DOF_PER_ELEMENT = 4.2
 #: ★★ 每个节点的自由度数 = **3**（★ 三个平动）—— ★ 这是**第一性原理**，不是标定值。
 #:   ★ 而在本机的实测里它是**上界**：事实 293 的「30,456 自由度 / 11,301 节点」= **2.69**
-#:   （★ 因为约束把部分自由度消掉了）⇒ ★ 用 3 是**保守**（偏大）⇒ 对"内存上限"这种判据是**安全侧** ✓
+#: （★ 因为约束把部分自由度消掉了）⇒ ★ 用 3 是**保守**（偏大）⇒ 对"内存上限"这种判据是**
+#: 安全侧** ✓
 DOF_PER_NODE = 3
 
 # 【三】默认内存预算
@@ -1401,13 +1420,19 @@ def configure_mesh_settings(study, *, quality: int | None = None,
 
 
 #: ★★★ **网格安全档**（★ 事实 526：这是"爆内存"的**根因处置**）——
-#:   ★ 官方逐字给的机制：★ 曲率自适应网格器「Creates **more elements in higher-curvature areas
-#:     automatically**」，而加密下界「**Minimum element size**」**出厂是 `0.0`**（=没有下界）
+#: ★ 官方逐字给的机制：★ 曲率自适应网格器「Creates **more elements in higher-curvature a
+#: reas
+#: automatically**」，而加密下界「**Minimum element size**」**出厂是 `0.0`**（=没有下界
+#: ）
 #:     ⇒ ★★ **全局 `element_size` 管不住网格规模** ⇒ 圆角/边就能触发无界细化 ✓
-#:   ⇒ ★ 故安全档 = **两个 `Int32` 枚举**（★ 无单位风险，★ 见 `configure_mesh_settings` 的注）：
-#:     · `Quality = 0`（`swsMeshQualityDraft`）—— ★ 线性单元（无中间节点）⇒ 节点/DOF 大幅下降；
-#:     · `MesherType = 0`（`swsMesherTypeStandard`）—— ★ **关掉曲率自适应**（这条才是治本的那条）✓
-#:   ⚠ ★ **代价要一起给出去**（官方逐字：draft 是给「a **quick evaluation** … where **bending
+#: ⇒ ★ 故安全档 = **两个 `Int32` 枚举**（★ 无单位风险，★ 见 `configure_mesh_settings` 的
+#: 注）：
+#: · `Quality = 0`（`swsMeshQualityDraft`）—— ★ 线性单元（无中间节点）⇒ 节点/DOF 大幅下
+#: 降；
+#: · `MesherType = 0`（`swsMesherTypeStandard`）—— ★ **关掉曲率自适应**（这条才是治本的
+#: 那条）✓
+#: ⚠ ★ **代价要一起给出去**（官方逐字：draft 是给「a **quick evaluation** … where **bend
+#: ing
 #:     effects are small**」用的）⇒ ★ 弯曲为主的问题**不该**靠它蒙 ✓
 MESH_SAFETY_QUALITY_DRAFT = 0
 MESH_SAFETY_MESHER_STANDARD = 0
@@ -1573,7 +1598,8 @@ def create_mesh_safely(study, *, model=None, units: int = 0, element_size: float
     return out
 
 
-#: ★★ `swsSolverType_e` —— ★ 出处：本仓 `_raw` 的 cosworks 枚举页 + `STUDY_OPTION_SETTERS`
+#: ★★ `swsSolverType_e` —— ★ 出处：本仓 `_raw` 的 cosworks 枚举页 + `STUDY_OPTION_SETTER
+#: S`
 #:   （★ 逐条核过：Automatic=0 · DirectSparse=1 · **FFEPlus=2** · CASI=5 · Abaqus=6 ·
 #:    INTEL=7 · INTELCluster=8）✓
 #: enum-gate: enum swsSolverType_e
@@ -1667,12 +1693,15 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
     #: ★★★★ 2026-10-04 **把那条换算是"哪把尺子"说清楚**（★ 我自己刚留下的漏洞）：
     #:   · ★ 它**逐字出自 FFEPlus 那一页**（`c_Analysis_Solvers.htm`）✓
     #:   · ★★ 而真机那次**成功**的求解，求解器写的是 **`Intel Direct Sparse`** ⇒
-    #:     ★ **不是 FFEPlus** ⇒ ★★ 直接法的内存在本仓**没有官方规则**（★ 铁律 5：查不到就说查不到）✓
+    #: ★ **不是 FFEPlus** ⇒ ★★ 直接法的内存在本仓**没有官方规则**（★ 铁律 5：查不到就说
+    #: 查不到）✓
     #:   ⇒ ★ 于是结果里**必须**带一句"这条换算对谁成立"，★ 免得后人当通用尺子用 ✓
-    #: ⚠ ★ **不要写 `solver_name or ""`** —— ★ `SolverType = 0`（`automatic`）是**合法值**，
+    #: ⚠ ★ **不要写 `solver_name or ""`** —— ★ `SolverType = 0`（`automatic`）是**合法值
+    #: **，
     #:   而 `0 or ""` ⇒ `""` ⇒ 被判成"未告知"（★ 由我自己的负例当场抓出）✓
     _s = ("" if solver_name is None else str(solver_name)).strip().lower()
-    #: ⚠ ★ 按**子串**匹配，不按精确名 —— ★ 真机上那个名字是 **`Intel Direct Sparse`**（★ 带空格的组合名），
+    #: ⚠ ★ 按**子串**匹配，不按精确名 —— ★ 真机上那个名字是 **`Intel Direct Sparse`**（★
+    #:  带空格的组合名），
     #:   而第一版按精确等值比 ⇒ ★ **它落进了 else 分支**（★ 由我自己当场发现的）✓
     _is_direct = any(tok in _s for tok in ("direct", "intel", "sparse"))
     _is_ffe = ("ffe" in _s) or ("plus" in _s)
@@ -1680,8 +1709,10 @@ def solve_memory_preflight(element_count: int, *, node_count: int | None = None,
         out["★_适用性"] = ("⚠ ★ 求解器**未告知** ⇒ 这条换算的适用性未定（★ 它出自 **FFEPlus** 官方页；"
                            "★ 直接法如 `Intel Direct Sparse` 的内存在本仓**无官方规则**）")
     elif "automatic" in _s or _s == "0":
-        #: ★★ 真机实测（2026-10-04）：`SolverType = 0 (automatic)` **而求解器自己**选的是
-        #:   `Intel Direct Sparse`（进度窗逐字）⇒ ★ 对 `automatic` 这条 FFEPlus 尺子**更不适用** ✓
+        #: ★★ 真机实测（2026-10-04）：`SolverType = 0 (automatic)` **而求解器自己**选的
+        #: 是
+        #: `Intel Direct Sparse`（进度窗逐字）⇒ ★ 对 `automatic` 这条 FFEPlus 尺子**更不
+        #: 适用** ✓
         out["★_适用性"] = ("⚠⚠ 求解器 = `Automatic` ⇒ ★ **由 SolidWorks 自选** —— ★ 真机实测它选的是 "
                            "**`Intel Direct Sparse`**（★ 直接法）⇒ ★ **别用 FFEPlus 的换算**"
                            "（★ 想确定用哪个，就在进度窗上看 `类型:` 那一行）✓")

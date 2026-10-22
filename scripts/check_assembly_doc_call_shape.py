@@ -53,7 +53,8 @@
 # ## 便携性
 # 拿不到反射转储 ⇒ **仍做 arity 检查**（表值就在源码里），只把 by-ref 一项标为
 # **未核**并在读数里写明（缺数据源 ≠ 检查失败，与 227 同口径）。
-# 合成树开关：`DSH_ASSEMBLY_CALL_ROOT`（扫描根）· `DSH_ARITY_DUMPS`（反射路径，与 227 共用）。
+# 合成树开关：`DSH_ASSEMBLY_CALL_ROOT`（扫描根）· `DSH_ARITY_DUMPS`（反射路径，与 227 共
+# 用）。
 from __future__ import annotations
 
 import ast

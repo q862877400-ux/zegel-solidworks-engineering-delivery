@@ -30,10 +30,14 @@
 # ```
 # | 桶 | 含义 | 自证条件（写错即红） |
 # |---|---|---|
-# | `sites`     | 上游 `def` 在本仓**有** AST 调用点，且每个调用点都传**字面量**成员名 | 无调用点 ⇒ 红；任一调用点非字面量 ⇒ 红；候选值官方查不到 ⇒ 红 |
-# | `tool-only` | 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 `function="…"` | 有 AST 调用点 ⇒ 红；无 ToolSpec 引用 ⇒ 红 |
-# | `orphan`    | 上游**既无** AST 调用点、**也无** ToolSpec 引用（未被调用） | 任一非空 ⇒ 红 |
-# ★★ **为什么必须有 `tool-only` 这一档**：`set_study_option_report` 的 **AST 调用点是 0**，
+# | `sites`     | 上游 `def` 在本仓**有** AST 调用点，且每个调用点都传**字面量**成员名 |
+#  无调用点 ⇒ 红；任一调用点非字面量 ⇒ 红；候选值官方查不到 ⇒ 红 |
+# | `tool-only` | 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 
+# `function="…"` | 有 AST 调用点 ⇒ 红；无 ToolSpec 引用 ⇒ 红 |
+# | `orphan`    | 上游**既无** AST 调用点、**也无** ToolSpec 引用（未被调用） | 任一非空
+#  ⇒ 红 |
+# ★★ **为什么必须有 `tool-only` 这一档**：`set_study_option_report` 的 **AST 调用点是 0*
+# *，
 #   但它**不是** orphan —— 它由**工具层按名**注册（`tool_specs_batch37.py:96` 的
 #   `function="set_study_option_report"`）⇒ ★ 「AST 调用点为 0」**不等于**「没人用」
 #   （与 spec 234「窄读取器读出 0 也会骗人」同族）。

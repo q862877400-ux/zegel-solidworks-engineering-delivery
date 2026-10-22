@@ -4,7 +4,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SOLIDWORKS Simulation 官方手册（本机解包 `C:\cworks_manual\`）
-# 文件:   `scripts/sw_simulation.py`（`solve_memory_preflight` / `default_solve_memory_budget_gb`）
+# 文件:   `scripts/sw_simulation.py`（`solve_memory_preflight` / `default_solve_memory_b
+# udget_gb`）
 #         `scripts/sw_connect.py`（`read_owned_instance` —— ★ 只认**我们自己启动的**那份 SW）
 # 官方依据: `c_Analysis_Solvers.htm` 逐字「If a solver requires more memory than availab
 #           le onthe computer, then the solver uses disk space … the solution progress c
@@ -13,12 +14,15 @@
 #   `solve_memory_preflight` 按真实单元数估）都是**事前估计**；★ 而估算总有偏
 #   （非长方体 / 局部细化 / 接触迭代）⇒ ★★ **第三层是"运行期实测 + 越线就斩"** ✓
 #   ★ 判据（★ 两条都要）：
-#     ① **整机剩余物理内存** < `--floor-gb` ⇒ 斩（★ 保护整机 —— 用户的原话是"内存干满、程序卡住"）
+# ① **整机剩余物理内存** < `--floor-gb` ⇒ 斩（★ 保护整机 —— 用户的原话是"内存干满、程序
+# 卡住"）
 #     ② **求解进程工作集** > `--budget-gb` ⇒ 斩（★ 保护单个求解）
-#   ★★ **只斩两类进程**：`cwbcbfmesh.exe`（Simulation 求解器）· ★ 且仅在**连续越线 2 次**后
+# ★★ **只斩两类进程**：`cwbcbfmesh.exe`（Simulation 求解器）· ★ 且仅在**连续越线 2 次**
+# 后
 #     才动**我们自己启动的** `SLDWORKS`（★ PID 取自 `sw_connect` 的归属标记）——
 #     ★ **绝不按进程名杀 SolidWorks**（★ 那会误杀别的对话/用户自己开的，违反资源纪律）✓
-#   ⚠ 本脚本**只报不动**：不碰仓库、只写 `output/`；★ `--no-kill` 时连进程都不动（纯观测）✓
+# ⚠ 本脚本**只报不动**：不碰仓库、只写 `output/`；★ `--no-kill` 时连进程都不动（纯观测）
+# ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -153,7 +157,8 @@ def main() -> int:
                 for p in procs:
                     kill(p["pid"], "；".join(over), logf)
                     kills += 1
-                #: ★★ 连续越线 ≥2 次 ⇒ 求解器**在反复重生** ⇒ 连**我们自己那份** SW 一起收掉
+                #: ★★ 连续越线 ≥2 次 ⇒ 求解器**在反复重生** ⇒ 连**我们自己那份** SW 一起
+                #: 收掉
                 #:   （★ PID 只从归属标记取 —— ★ 绝不按进程名杀 SW）
                 if breach_streak >= 2:
                     pid = owned_solidworks_pid()

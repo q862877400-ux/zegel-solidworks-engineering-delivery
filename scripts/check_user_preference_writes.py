@@ -3,26 +3,35 @@
 （★ 交付纪律：别人的 SolidWorks 设置不该被我们留下痕迹）
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（`C:\swapi\types\ISldWorks\SetUserPreference*.md`）
-# 文件:   `scripts/sw_preference_guard.py`（★ **唯一被认可的写入姿势**：读旧值 → 设 → `finally` 还原）
+# 仓库:   本项目自身 + SolidWorks 官方文档（`C:\swapi\types\ISldWorks\SetUserPreference*
+# .md`）
+# 文件:   `scripts/sw_preference_guard.py`（★ **唯一被认可的写入姿势**：读旧值 → 设 → `f
+# inally` 还原）
 #         `scripts/check_unreachable_members.py`（★ **带理由豁免**的写法照它 —— 本仓既有模式）
 # 定位:   ★★★ **为什么需要它**（★ 2026-10-04 业主体检出的交付问题）：
 #   业主问「我们这个项目别人装上，是不是也要改他的 SolidWorks？」—— 核查结论是：
-#   ★ **本体零改动**（注册表写入 0 处、不写安装目录、不打补丁、不注入，全走官方 COM API）；
-#   ★★ 而**有一处真落点**：全仓曾有 **8 处 `SetUserPreference*`** 直接改用户的**全局用户偏好**
-#     （默认模板路径 ×3 / 新建提示 / STL 导出质量 / STL-VRML 导入选项 ×6 / 原点与三轴显示 ×2），
+# ★ **本体零改动**（注册表写入 0 处、不写安装目录、不打补丁、不注入，全走官方 COM API）
+# ；
+# ★★ 而**有一处真落点**：全仓曾有 **8 处 `SetUserPreference*`** 直接改用户的**全局用户偏
+# 好**
+# （默认模板路径 ×3 / 新建提示 / STL 导出质量 / STL-VRML 导入选项 ×6 / 原点与三轴显示 ×2
+# ），
 #     ★ 且**多数不还原** ⇒ 装一次我们的工具 = 用户的设置被永久改掉 ✓
 #   ⇒ ★ 本门禁把那条纪律**变成可执行的**：★ 每一处裸写都必须满足以下之一 ——
 #     ① **落在 `preference_guard` 的 `with` 里**（★ 首选：那是被 10 条负例证明过的姿势）；
 #     ② **所在函数的源码里带确认标记** `preference-guard:` **且其后有非空理由**
 #        （★ 用于"设"与"还原"分居两个函数的情形，如 `ensure_default_templates` /
 #          `restore_default_templates` —— ★ 标记本身就是那条还原链路的说明）；
-#     ③ **进豁免名单** `docs/preference-write-exemptions.json`（★ 每条带**非空 `reason` + `evidence`**，
+# ③ **进豁免名单** `docs/preference-write-exemptions.json`（★ 每条带**非空 `reason` + `e
+# vidence`**，
 #        照 `check_unreachable_members` 的既有模式）。
 #
-# ⚠ **本门禁的边界（★ 如实写）**：★ 它保证"**写过理由/走过守卫**"，**不证明"还原真的生效"**
-#   —— ★ 后者由 `sw_preference_guard` 的 **10 条负例**（`tests/test_preference_guard.py`）在做 ✓
-#   ★ 另：它只认 `SetUserPreference*` 这个**名字** ⇒ ★ 走 `sw_preference_guard.write_preference`
+# ⚠ **本门禁的边界（★ 如实写）**：★ 它保证"**写过理由/走过守卫**"，**不证明"还原真的生效
+# "**
+# —— ★ 后者由 `sw_preference_guard` 的 **10 条负例**（`tests/test_preference_guard.py`）
+# 在做 ✓
+# ★ 另：它只认 `SetUserPreference*` 这个**名字** ⇒ ★ 走 `sw_preference_guard.write_prefe
+# rence`
 #     的路径**天然不被拦**（★ 那是被认可的通道，且**只在 guard 内部被调用**）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件

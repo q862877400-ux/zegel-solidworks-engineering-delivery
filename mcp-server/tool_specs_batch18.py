@@ -86,7 +86,8 @@ def _sketch_args(p) -> dict:
 
     #: ★ 用 resolve_sketch 而**不是** sketch_by_name + current_sketch_name：
     #:   真机验证抓到 —— 草图关闭时 current_sketch_name 回**英文 fallback**「Sketch1」，
-    #:   而中文 UI 下真名是「草图1」⇒ 直接按那个名字找**必然找不到**（第一次真机调用即失败）。
+    #: 而中文 UI 下真名是「草图1」⇒ 直接按那个名字找**必然找不到**（第一次真机调用即失败
+    #: ）。
     #:   resolve_sketch 试中英文候选名，并在都失败时从**特征树**兜底（语言无关）。
     model = _model()
     return {"sketch": resolve_sketch(model, str(getattr(p, "sketch_name", "") or ""))}

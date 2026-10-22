@@ -17,7 +17,8 @@
 #     `IDrawingDoc::InsertWeldSymbol`（10 参、**静默无效、12 组 0→0**）✗；★ 而官方示例走
 #     **`IModelDoc2::InsertWeldSymbol3()`（零参）** ✓ ⇒ ★ **建成** ✓
 #   · ★★ **`forming_tool`（成形工具）**：★ 官方 `## Remarks` 逐字要求**先选一个面** ✗ ——
-#     ★ 我第一版没选 ⇒ 回 `None` ⇒ ★ **那与「建不出来」长得一模一样** ✓ ⇒ ★ 建成 `circular emboss1` ✓
+# ★ 我第一版没选 ⇒ 回 `None` ⇒ ★ **那与「建不出来」长得一模一样** ✓ ⇒ ★ 建成 `circular e
+# mboss1` ✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

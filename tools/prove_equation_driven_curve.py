@@ -17,12 +17,17 @@
 #           double RotationAngle, double XOffset, double YOffset,
 #           bool LockStart, bool LockEnd)                     \u2190 **11 \u53c2**
 #
-#       \u2605 **\u663e\u5f0f\u66f2\u7ebf\uff08\u53ea\u6709 2D\uff09 y=f(x)**\uff1a**XExpression \u7ed9 `""`**\uff1b
-#          YExpression = \u4ee5 x \u8868\u8fbe\u7684\u51fd\u6570\uff08\u2605 \u4f8b\u5b50 `y=exp(x)`\uff09
-#       \u2605 **\u53c2\u6570\u66f2\u7ebf**\uff1aXExpression = x \u5173\u4e8e t\uff08\u2605 \u4f8b `x=sin(t)`\uff09\uff1b
+# \u2605 **\u663e\u5f0f\u66f2\u7ebf\uff08\u53ea\u6709 2D\uff09 y=f(x)**\uff1a**XExpressi
+# on \u7ed9 `""`**\uff1b
+# YExpression = \u4ee5 x \u8868\u8fbe\u7684\u51fd\u6570\uff08\u2605 \u4f8b\u5b50 `y=exp(
+# x)`\uff09
+# \u2605 **\u53c2\u6570\u66f2\u7ebf**\uff1aXExpression = x \u5173\u4e8e t\uff08\u2605 \u
+# 4f8b `x=sin(t)`\uff09\uff1b
 #          YExpression = y \u5173\u4e8e t\uff08\u2605 `y=cos(t)`\uff09
-#       \u2605 RangeStart/RangeEnd = x\uff08\u663e\u5f0f\uff09\u6216 t\uff08\u53c2\u6570\uff09\u7684\u8303\u56f4
-#       \u2605 IsAngleRange \u00b7 RotationAngle(rad) \u00b7 XOffset \u00b7 YOffset \u00b7 LockStart \u00b7 LockEnd
+# \u2605 RangeStart/RangeEnd = x\uff08\u663e\u5f0f\uff09\u6216 t\uff08\u53c2\u6570\uff09
+# \u7684\u8303\u56f4
+# \u2605 IsAngleRange \u00b7 RotationAngle(rad) \u00b7 XOffset \u00b7 YOffset \u00b7 Loc
+# kStart \u00b7 LockEnd
 #       ```
 #
 #   ★ 判据（★ 规则 6 + 事实 436）：**草图段数增加**（★ 一条方程式曲线 ⇒ 段 +1）。
@@ -66,7 +71,8 @@ def _one(sw, tag, args):
         row["seg_before"] = before
         ret = None
         try:
-            #: \u2605 **11 \u53c2**\uff08\u2605 \u987a\u5e8f\u7167\u5b98\u65b9\u7b7e\u540d\uff09
+            #: \u2605 **11 \u53c2**\uff08\u2605 \u987a\u5e8f\u7167\u5b98\u65b9\u7b7e\u54
+            #: 0d\uff09
             ret = C.get_com_member(sm, "CreateEquationSpline2", *args)
             row["returned"] = type(ret).__name__ if ret is not None else "None"
         except Exception as exc:                                          # noqa: BLE001
@@ -100,10 +106,12 @@ def main() -> int:
                       "Remarks\uff1a\u663e\u5f0f\u66f2\u7ebf\u7ed9 XExpression=\"\"\u3001YExpression \u4ee5 x \u8868\u8fbe\uff1b"
                       "\u53c2\u6570\u66f2\u7ebf\u4e24\u4e2a\u90fd\u7ed9 t \u7684\u8868\u8fbe\u5f0f",
           "cases": []}
-    #: \u2605 \u663e\u5f0f\uff1a`y = exp(x)`\uff0c\u2605 XExpression = ""\uff08\u2605 \u5b98\u65b9\u8bf4\u7684\uff09
+    #: \u2605 \u663e\u5f0f\uff1a`y = exp(x)`\uff0c\u2605 XExpression = ""\uff08\u2605 \u
+    #: 5b98\u65b9\u8bf4\u7684\uff09
     ev["cases"].append(_one(sw, "\u2605 **\u663e\u5f0f** y=exp(x)\uff08X\u7ed9 \"\"\uff09",
                             ("", "exp(x)", "", "-1", "1", False, 0.0, 0.0, 0.0, True, True)))
-    #: \u2605 \u53c2\u6570\uff1a`x=sin(t)` \u00b7 `y=cos(t)`\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\uff09
+    #: \u2605 \u53c2\u6570\uff1a`x=sin(t)` \u00b7 `y=cos(t)`\uff08\u2605 \u5b98\u65b9\u4
+    #: f8b\u5b50\uff09
     ev["cases"].append(_one(sw, "\u2605 **\u53c2\u6570** x=sin(t) y=cos(t)",
                             ("sin(t)", "cos(t)", "", "0", "6.283185307179586", False, 0.0, 0.0, 0.0, True, True)))
     #: \u2605 \u5bf9\u7167\uff1a\u574f\u8868\u8fbe\u5f0f

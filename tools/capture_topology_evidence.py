@@ -152,7 +152,8 @@ def main() -> int:
         #    真机复核（`D:\AI\SW\probe_bool_com.py`）：
         #        goal            type=int        repr=0            bool()=**False**
         #        mass_constraint type=CDispatch   repr=<COMObject>  bool()=True
-        #    `scripts/sw_topology.py` 的来源块也写着「`EndEdit` = 0；实测 `goal=0`、`mass=True`」。
+        # `scripts/sw_topology.py` 的来源块也写着「`EndEdit` = 0；实测 `goal=0`、`mass=T
+        # rue`」。
         #    **⇒ 判据一律显式比 `0`，或用 `is not None`；永不用真假值。**
         goal_code = res_goal.get("goal")
         ev["steps"]["goal_and_constraints"] = {

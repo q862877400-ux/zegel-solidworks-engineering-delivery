@@ -2,9 +2,11 @@
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
 # 文件:   `scripts/sw_gui_modal.py`（弹窗护栏）· `scripts/sw_gui_focus.py`（焦点）·
-#         `scripts/sw_chamfer_geometry.py`（倒角几何**纯计算**）· `scripts/sw_surface.py`（运行时可用性）
+# `scripts/sw_chamfer_geometry.py`（倒角几何**纯计算**）· `scripts/sw_surface.py`（运行
+# 时可用性）
 # 定位:   ★ 规格 `specs/205-tool-ramp/` §8 的**批 91** —— ★ 本批的选域依据是**漏斗勘探**
-#         （`tools/bunny_toolspec_pipeline.py survey`）：★ 我把候选按"参数是否**全是显式标量**"筛过，
+# （`tools/bunny_toolspec_pipeline.py survey`）：★ 我把候选按"参数是否**全是显式标量**"
+# 筛过，
 #         只留 **25 个**，再剔掉基础设施/内部件 ⇒ ★ 本批 11 个 ✓
 # 官方依据: ★★ **四个模块都没有官方 md 页**（它们全是**本仓自研**的设备层/几何层）——
 #   `sw_gui_modal` / `sw_gui_focus` 是 **Win32 GUI 层**（pywin32，不是 SolidWorks API）；
@@ -16,9 +18,11 @@
 # ★★ 本批**不做**的（FR-002/D-5）：
 #     · `sw_capture.capture(...)` —— 返回 **PIL `Image`** ⇒ ★ 过不了 MCP 的 JSON 边界
 #       （★ 要有截图能力，用既有 `solidworks_export_image` / `solidworks_export_bmp`）✓
-#     · `sw_com_traps.{is_type_mismatch,explain,byref_long}` —— ★ 政策不做（详见 `REFUSED`）✓
+# · `sw_com_traps.{is_type_mismatch,explain,byref_long}` —— ★ 政策不做（详见 `REFUSED`）
+# ✓
 #     · `sw_sensor.{out_double,out_bstr}` —— ★ COM 出参工厂，**内部管道** ✓
-#     · `sw_sheet_metal.require_verified` / `sw_isolate.run_isolated` / `sw_simulation_worker.*`
+# · `sw_sheet_metal.require_verified` / `sw_isolate.run_isolated` / `sw_simulation_worke
+# r.*`
 #       —— ★ 属于**基础设施/隔离执行**（FR-007），不是用户动作 ⇒ 本批不发 ✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -33,7 +37,8 @@ _HWND = ("主窗口句柄（★ **窗口句柄**，不是几何坐标 —— 规
          "★ 要显式给：先用 `solidworks_gui_get_foreground_window` 取回句柄再传进来 ✓")
 
 SPECS_BATCH91 = [
-    # ── ① 弹窗护栏（4）—— ★★ 本仓的看家机制（事实 527 的常驻监控就是它）────────────────
+    # ── ① 弹窗护栏（4）—— ★★ 本仓的看家机制（事实 527 的常驻监控就是它）───────────────
+    # ─
     ToolSpec(
         name="solidworks_gui_find_modals",
         title="Find Visible Top-Level Modals Owned by This Process",
@@ -92,11 +97,13 @@ SPECS_BATCH91 = [
     #:   ★★ **判据**：★ 「**那个数字错了，回读能不能查出来**」——
     #:     ★ 它们是**倒角切除体积公式**（★ `V = …` 几何闭式解）⇒
     #:     ★★ **公式错了，回读几何查不出来**（★ 倒角看起来照样"倒上了"）⇒ ★ **是方法** ✗
-    #:   ★ 已移出：★ `scripts/sw_chamfer_geometry.py` → `archive/inherited-methods/scripts/` ✓
+    #: ★ 已移出：★ `scripts/sw_chamfer_geometry.py` → `archive/inherited-methods/scripts
+    #: /` ✓
     #:   ★★ 移出的三个工具：★ `solidworks_chamfer_straight_edge_volume` ·
     #:     `solidworks_chamfer_circular_rim_volume` · `solidworks_chamfer_volume_report`
     #:   ⚠ **本批其余都是工具**（★ GUI 护栏 / 焦点 / 曲面运行期查询）⇒ ★ **全部保留** ✓
-    # ── ③ 焦点（3）—— ★ 与既有 `solidworks_gui_get_foreground_window` 同族的不同面 ─────────
+    # ── ③ 焦点（3）—— ★ 与既有 `solidworks_gui_get_foreground_window` 同族的不同面 ────
+    # ─────
     ToolSpec(
         name="solidworks_gui_focus_state",
         title="Read the Current Focus State",
@@ -113,8 +120,10 @@ SPECS_BATCH91 = [
         title="Bring a Window to the Foreground and Verify It",
         module="sw_gui_focus", function="ensure_focus",
         inject="",
-        #: ★ 规则 2 的合法改名：源形参叫 `settle`（**秒**），按本仓"时长带 `_seconds`"的口径改名
-        #:   ⇒ ★ 必须配 `param_alias` 指回真形参名（★ 不配 ⇒ `check_param_binding` 当场抓到）✓
+        #: ★ 规则 2 的合法改名：源形参叫 `settle`（**秒**），按本仓"时长带 `_seconds`"的
+        #: 口径改名
+        #: ⇒ ★ 必须配 `param_alias` 指回真形参名（★ 不配 ⇒ `check_param_binding` 当场抓
+        #: 到）✓
         param_alias={"settle_seconds": "settle"},
         params=[
             Param("hwnd", int, description="要置前的窗口句柄（★ 句柄，不是坐标）。"),
@@ -137,7 +146,8 @@ SPECS_BATCH91 = [
         doc="★ **每个动作之前调用**：焦点不对就**修复**，**修不好就抛** ✓ "
             "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓",
     ),
-    # ── ④ 曲面运行时（1）—— ★ 只读前置检查 ─────────────────────────────────────────────
+    # ── ④ 曲面运行时（1）—— ★ 只读前置检查 ────────────────────────────────────────────
+    # ─
     ToolSpec(
         name="solidworks_surface_runtime_available",
         title="Is This IModeler Surface Method Usable on This Machine?",

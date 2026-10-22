@@ -1,14 +1,18 @@
 
 # ── 24h 计划 段 6 续（Spec Kit `164` 的批次声明）：**图纸比例的读与写** ──────────────
-# ★ ★★★★ 2026-10-01（轮 301）真机 **PASS 5/5**（★ 证据 `output/sheet-scale-evidence.json`）：
+# ★ ★★★★ 2026-10-01（轮 301）真机 **PASS 5/5**（★ 证据 `output/sheet-scale-evidence.json
+# `）：
 #   · 正例：`1:5` ✓ · `1:2` ✓ · `1:1` ✓（★ 三个都 `readback_matches: true`）
 #   · 负例：`numerator=3` ⇒ **显式拒绝并列出合法值** ✓ · `-1:5` ⇒ **显式拒绝** ✓
 # ★★ 本批工具（2 个）：
-#   1. `solidworks_drawing_sheet_scale`（读）—— 走官方 Remarks 指定的 `ISheet.GetProperties`；
+# 1. `solidworks_drawing_sheet_scale`（读）—— 走官方 Remarks 指定的 `ISheet.GetPropertie
+# s`；
 #   2. `solidworks_drawing_set_sheet_scale`（写）—— 走 `ISheet.SetScale`，**带回读判据**。
-# ★★★ **而它补上了一个真空**：★ 本会话曾证明 **`IView.ScaleRatio` 读得到、写不进**（事实 227/294）
+# ★★★ **而它补上了一个真空**：★ 本会话曾证明 **`IView.ScaleRatio` 读得到、写不进**（事实
+#  227/294）
 #   ⇒ ★★ **而图纸比例**写得进****（`ISheet.SetScale` 回 `True` 且读回真的变了）
-#     ⇒ ★ **所以"想改比例"的正解是改**图纸**的比例**（★ 视图默认 `UseSheetScale=True`，会跟着变）。
+# ⇒ ★ **所以"想改比例"的正解是改**图纸**的比例**（★ 视图默认 `UseSheetScale=True`，会跟
+# 着变）。
 # ⚠ **未在本机实测**：★ 无（★ 上面 5 项都是真机结果）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────

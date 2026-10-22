@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 446）承**事实 360** —— ★ 结构系统那条链卡在**接口归属**上。
 #   ★★★ **为什么需要它**：★ 官方 VBA 示例里那句 `Set PrimDef = structMemDef`
 #     靠的是 **VBA 的多接口自动转换**；★ 而在 **pywin32** 里，★ 拿到手的只有
-#     `IStructureSystemMemberFeatureData` ⇒ ★★ **要换到 `IPrimaryMemberPathSegmentFeatureData`
+# `IStructureSystemMemberFeatureData` ⇒ ★★ **要换到 `IPrimaryMemberPathSegmentFeatureDat
+# a`
 #     就必须自己 `QueryInterface`** —— ★ 而 QI **要 IID** ⚠
 #   ★★★★ **而 IID 从哪来**：★ 出厂 interop 程序集里**每个接口都带 `[Guid(...)]`** ——
 #      ★★ 那就是 IID ⇒ ★ **纯元数据反射可得**（★ 不需要 COM、不需要 SW 跑着）✓
@@ -14,7 +15,8 @@
 #        **1023** 个带 Guid 特性（★ 覆盖率 **99.1%**）✓
 #   ⚠ **不走的错路**（★ 都核过）：★ `pythoncom.LoadTypeLib` 要的是**COM 类型库**，
 #      ★ 而 `SolidWorks.Interop.*.dll` 是 **.NET interop 程序集** ⇒ 喂它会失败；
-#      ★ 而注册表 `TypeLib` 的 **591** 个条目里，含 SOLIDWORKS / SldWorks / cosworks 的 **0** 个 ✓
+# ★ 而注册表 `TypeLib` 的 **591** 个条目里，含 SOLIDWORKS / SldWorks / cosworks 的 **0**
+#  个 ✓
 # 官方依据: 出厂程序集 `D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\
 #   SolidWorks.Interop.sldworks.dll` 的 `System.Runtime.InteropServices.GuidAttribute` ·
 #   `TypeLibTypeAttribute`（★ 真机：`FHidden, FDual, FDispatchable`）
@@ -94,7 +96,8 @@ def qi(obj, name: str, path: Path | None = None):
     ★ 做法：`pythoncom` 从 IID 造出接口 ⇒ `obj._oleobj_.QueryInterface(iid)` ✓
     ⚠ 若对象不支持该接口 ⇒ **抛**（★ 而那是**有用的信息** —— ★ 说明接口归属真的不对）。
     """
-    #: ★ 第一版我写了 `pythoncom.IID` ⇒ 真机报 `module 'pythoncom' has no attribute 'IID'`。
+    #: ★ 第一版我写了 `pythoncom.IID` ⇒ 真机报 `module 'pythoncom' has no attribute 'IID
+    #: '`。
     #: ★★ **正解是 `pywintypes.IID`**（★ pywin32 里 IID 工厂在 pywintypes 上）。
     import pywintypes
     ole = getattr(obj, "_oleobj_", None)

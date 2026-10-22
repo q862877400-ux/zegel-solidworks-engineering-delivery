@@ -5,7 +5,8 @@
 # 文件:   tools/prove_dimension_and_pattern.py
 # 定位:   ★ 2026-10-03（轮 400）24h 计划 v2 段 3 收尾。★ 这两条上一轮因**单位存疑**被
 #           押后，
-#   ★ 本轮从**官方文档**查清（★ 不靠真机试）：`AddDimension2` 的坐标是**米**且**必须先选中实体**；
+# ★ 本轮从**官方文档**查清（★ 不靠真机试）：`AddDimension2` 的坐标是**米**且**必须先选中
+# 实体**；
 #   `FeatureLinearPattern3` 的 `Spacing1` 是**米**、`Num1` **含原件**。
 # 官方依据: `C:\swapi\types\IModelDoc2\AddDimension2.md` ·
 #   `C:\swapi\types\IFeatureManager\FeatureLinearPattern3.md`
@@ -15,7 +16,8 @@
 #
 # ★ 判据（★ 正例 + 两条负例）：
 # ```
-# ① `add_dimension_report(selector="index:0")` ⇒ `ok` 且 `dimension_created` 且 `selected ≥ 1`
+# ① `add_dimension_report(selector="index:0")` ⇒ `ok` 且 `dimension_created` 且 `selecte
+# d ≥ 1`
 #    （★ 选择由包装内部完成 —— ★ 兑现"段 1 选择底座"的前置红利）
 # ② `linear_pattern_report(feature, spacing_mm=10, count=3)` ⇒ **特征树 +1**（★ 规则 6）
 # ③ ★ 负例：`add_dimension_report` 用**指向空选区的选择器** ⇒ `ok=False` + 有原因

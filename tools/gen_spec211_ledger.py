@@ -3,17 +3,21 @@
 # 仓库:   本项目自身（规格 211 · B0 的台账生成器）
 # 文件:   tools/gen_spec211_ledger.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B0**。★ 21 项用户功能缺口要逐项查：
-#   ★ **官方有没有这个入口** · ★ 是**哪个接口的哪个成员** · ★ **要不要 `AccessSelections`**
+# ★ **官方有没有这个入口** · ★ 是**哪个接口的哪个成员** · ★ **要不要 `AccessSelections`*
+# *
 #   ⇒ ★★ 这三件事**决定一项是"可做"还是"不做"** —— 不先判就动手 = 拿真机窗口去撞已知的墙
 #     （★ 事实 47：`AccessSelections` 族 20+ 形态穷尽，★ **不许重试**）✓
 # 判据:   ★★ **必须同时查四处**（★ 2026-10-06 实测踩过：**只查一处会漏**）：
 #     ① `C:\swapi\types\<接口>\<成员>.md`（★ 签名精确）
 #     ② `C:\swapi\enums\*`（★ 常量）
-#     ③ ★ **CHM 正文树的 API 命名空间**（`SolidWorks.Interop.*`）—— ★★ 漏了它会**误判"查不到"**：
-#        实录 ★「边界凸台」⇒ ★ `C:\swapi\types` 里查不到，★ **而 CHM 里有 `IBoundaryBossFeatureData`** ✗
+# ③ ★ **CHM 正文树的 API 命名空间**（`SolidWorks.Interop.*`）—— ★★ 漏了它会**误判"查不到
+# "**：
+# 实录 ★「边界凸台」⇒ ★ `C:\swapi\types` 里查不到，★ **而 CHM 里有 `IBoundaryBossFeature
+# Data`** ✗
 #     ④ ★ CHM 里的**示例页**（`.htm`，★ 判"有没有示例可抄"）
 #   ★★ 判"不做"要有依据：① 四处**都查不到** ⇒ 「官方无入口」（铁律 5）·
-#     ② 入口存在但**要 `AccessSelections`** ⇒ 事实 47（后端限制）· ③ 要**另外的产品/许可证** ✓
+# ② 入口存在但**要 `AccessSelections`** ⇒ 事实 47（后端限制）· ③ 要**另外的产品/许可证**
+#  ✓
 # 官方依据: `C:\swapi\`（结构化）+ `D:\AI\SW\AI Solidworks\官方文档\SWhelp\`（CHM 解包）
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -86,8 +90,10 @@ def _chm_index() -> tuple:
         if "SolidWorks.Interop." not in n:
             continue
         #: ★ 形如 `...sldworks.IModelDoc2~GetSectionProperties2.html` ⇒ 取成员名 ✓
-        #: ★★★ **修过一次**：★ 我第一版写 `~([A-Za-z_][\w]*)\.html$`（★ **不许名字里有点**）⇒
-        #:   ★★ 于是**接口页**（`~SolidWorks.Interop.sldworks.IBoundaryBossFeatureData.html`）
+        #: ★★★ **修过一次**：★ 我第一版写 `~([A-Za-z_][\w]*)\.html$`（★ **不许名字里有点
+        #: **）⇒
+        #: ★★ 于是**接口页**（`~SolidWorks.Interop.sldworks.IBoundaryBossFeatureData.htm
+        #: l`）
         #:   一个都进不来 ⇒ ★ 台账把「边界凸台」误判成"四个源都查不到" ✗
         #:   ⇒ ★ 改成**允许点**、★ 再取**最后一段**（★ 于是接口页与成员页都收）✓
         m = re.search(r"~([\w.]+)\.html$", n)

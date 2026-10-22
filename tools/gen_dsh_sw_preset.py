@@ -26,9 +26,12 @@
 #     ★ ③ **`lean` 那条一个字节没动** ✓（★ 用户明令：「★ 你可不要直接让所有 lean 模式的
 #        对话都生效啊」✗ ⇒ ★ 必须能证明 lean preset 未被触碰 ✓）
 # 官方依据: `docs/subsystems/mcp.zh.md` 的「配置」节（★ `transport: 'stdio'` ✓）·
-#   `docs/config-catalog.zh.md` 的 `@deepseek-ai/dsh-mcp-client` 段（★ `StdioConfig` 字段 ✓）·
-#   `docs/glossary.zh.md:20`（★ **setup window**：★ 作用域在 agent 创建时组装 ⇒ ★ **必须新开会话** ✓）
-# 许可:   本仓库 MIT。★ 只读源块 + 只写一个新文件（★ 配置的追加由调用方做 ✓）。覆盖: 全文件
+# `docs/config-catalog.zh.md` 的 `@deepseek-ai/dsh-mcp-client` 段（★ `StdioConfig` 字段 
+# ✓）·
+# `docs/glossary.zh.md:20`（★ **setup window**：★ 作用域在 agent 创建时组装 ⇒ ★ **必须新
+# 开会话** ✓）
+# 许可:   本仓库 MIT。★ 只读源块 + 只写一个新文件（★ 配置的追加由调用方做 ✓）。覆盖: 全
+# 文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -53,7 +56,8 @@ NEW_PRESET_DESC = ("★ SW 工程师档：官方标准模式组成 + SolidWorks 
 #: ★★ `order` 取 9（★ `preset-lean` 是 8 ✓）—— ★ 只是个排序位、★ 不与别人撞 ✓
 NEW_ORDER = 9
 
-#: ★★★ **SW MCP 的条目**（★ 形状抄自本仓既有的 `preset-solidworks` ✓，而**路径全部改成现值** ✗）：
+#: ★★★ **SW MCP 的条目**（★ 形状抄自本仓既有的 `preset-solidworks` ✓，而**路径全部改成现
+#: 值** ✗）：
 #:   ★ 那条旧配置指向 `C:/Users/Zegel/solidpilot-mcp/...` ✗ —— ★★ 记忆库里正记着这个坑
 #:     （「★ **常驻 MCP 进程仍指向归档路径**」✗），★ 而**硬验收信号**是
 #:     「`server_path` 显示为 **`D:\AI\SW\mcp-server\server.py`**」✓
@@ -203,7 +207,8 @@ def main() -> int:
     return 0
 
 
-#: ★ 校验脚本：★ 拼"原配置 + 新块" ⇒ 必须能解析、★ 且新 id 全在、★ 且 **lean 那条没变** ✓
+#: ★ 校验脚本：★ 拼"原配置 + 新块" ⇒ 必须能解析、★ 且新 id 全在、★ 且 **lean 那条没变** 
+#: ✓
 JS_CHECK = r"""
 const fs = require('fs');
 const yaml = require('D:/AI/DSH/deepseek-harness/node_modules/js-yaml');

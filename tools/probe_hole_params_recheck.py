@@ -1,6 +1,7 @@
 """★ 真机验 `hole_params` 并**测出那一族的单位口径**（★ 阶段 3 补能力 · 第 4 个）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IWizardHoleFeatureData2\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IWizardHoleFeatureData2
+# \`）
 # 文件:   `scripts/sw_feature_readback.py::hole_params`（★ 刚补的能力）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **而本轮多一件事**：★ 那一族的官方 `## Returns` **没写单位** ⇒
@@ -8,7 +9,8 @@
 #       · ★ 本仓 `hole_wizard` 的 `size` 参数是个**规格串**（如 `"M8"`）⇒
 #         ★★ **直径应由标准决定** ⇒ ★★★ **若读数 ≈ 8 而文档单位是毫米** ⇒ **随文档** ✓
 #       · ★ 而**若读数 ≈ 0.008** ⇒ **写死米** ✓
-#   ★★★ **⚠ 前置**：★ `hole_wizard` 需要一个**轴对齐的实体 + 声明式面选择器**（★ 见工具的 doc）⇒
+# ★★★ **⚠ 前置**：★ `hole_wizard` 需要一个**轴对齐的实体 + 声明式面选择器**（★ 见工具的 
+# doc）⇒
 #     ★ 本探针先建一块板、再在 `+z` 面上打孔 ✓
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -42,7 +44,8 @@ def main() -> int:
     P.extrude_boss(model, sk, 20.0)
 
     #: ★★ 前置：★ 用**本仓的**异型孔入口 —— ★★ **名字是
-    #:   `create_hole_wizard_at_selection_report(model, selection, size, *, diameter_mm=8)`**
+    #: `create_hole_wizard_at_selection_report(model, selection, size, *, diameter_mm=8)
+    #: `**
     #:   （★ 我第一版猜的是 `hole_wizard` ⇒ ★ **不存在**）✓
     #:   ⇒ ★★★ **那正是上一轮那条判据**：★★★ **写新调用前，先在仓里搜同名成员怎么用的** ✓
     hw = {"error": None, "returned": None}
@@ -57,7 +60,8 @@ def main() -> int:
     f = {k: v for k, v in r.items() if not k.startswith("★_")}
 
     #: ★★★★★★ **单位判定（★ 与前三层对照）** —— ★ 判据写死、★ 只报 ✓
-    #:   ★★ **⚠ 我第一版只看 `HoleDiameter`** ⇒ ★ **它在本例是 `0.0`**（★ 通孔类型下不用它）⇒
+    #: ★★ **⚠ 我第一版只看 `HoleDiameter`** ⇒ ★ **它在本例是 `0.0`**（★ 通孔类型下不用它
+    #: ）⇒
     #:     ★★★ **判不出** ⇒ ★ **改用**通孔那两个量**（★ 它们才是本例在用的）** ✓
     #:   ★★★★ **实测（★ 本轮）**：★ `ThruHoleDiameter = **0.008**` ⇒ **米**（★ M8 = 8mm）·
     #:     ★ `ThruHoleDepth = **20.0**` ⇒ **毫米**（★ 板厚 20mm）⇒

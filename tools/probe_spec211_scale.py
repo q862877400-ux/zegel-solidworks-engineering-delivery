@@ -4,7 +4,8 @@
 # 文件:   tools/probe_spec211_scale.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B1-2**「缩放/变形」。
 #   ★ 官方页三样**逐字读过**（★ 见 `scripts/sw_part.py` 的 `insert_scale` 来源块）：
-#     · `C:\swapi\types\IFeatureManager\InsertScale.md`（签名 + Uniform 表 + Returns 的两种情形）
+# · `C:\swapi\types\IFeatureManager\InsertScale.md`（签名 + Uniform 表 + Returns 的两种
+# 情形）
 #     · `C:\swapi\enums\swScaleType_e.md`（★ **只有 3 个成员**）
 #     · ★★ `C:\swapi\examples\Insert_Scale_Feature_Example_VB.md`（★ **给了完整调用序** +
 #       ★ `GetErrorCode`）✓

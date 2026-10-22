@@ -21,8 +21,10 @@
 #   `UseFeatScope` 只切传给 `Bodies` 的体 · `UseAutoSelect` 自动切**所有**相交体 ·
 #   `Bodies` 空数组 ⇒ 「**cut all bodies**」。
 #
-#   ★ 前置：★ **选一个曲面或基准面**（官方：「using the **preselected** surface or plane」）。
-#     ⚠ 而探针里我**两种都试**：① 曲面面（★ 需要一个实体 + 一张曲面）② 基准面（★ 只要实体）。
+# ★ 前置：★ **选一个曲面或基准面**（官方：「using the **preselected** surface or plane」
+# ）。
+# ⚠ 而探针里我**两种都试**：① 曲面面（★ 需要一个实体 + 一张曲面）② 基准面（★ 只要实体）
+# 。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -112,9 +114,11 @@ def main() -> int:
           "note": "\u5b83\u4e0e\u300c\u526a\u88c1\u66f2\u9762\u300d\uff08Pre/PostTrimSurface\uff09**\u662f\u4e24\u4ef6\u4e8b** "
                   "\u2014\u2014 \u672c\u6761\u62ff\u9762/\u57fa\u51c6\u9762**\u5207\u5b9e\u4f53**",
           "cases": []}
-    #: \u2605 \u2460 \u53ea\u6709\u5b9e\u4f53\uff08\u2605 \u7528\u57fa\u51c6\u9762\u4f5c\u5207\u9762\uff09
+    #: \u2605 \u2460 \u53ea\u6709\u5b9e\u4f53\uff08\u2605 \u7528\u57fa\u51c6\u9762\u4f5c
+    #: \u5207\u9762\uff09
     ev["cases"].append(_run(sw, "\u53ea\u5b9e\u4f53 \u00b7 \u57fa\u51c6\u9762\u4f5c\u5207\u9762", _mk_solid))
-    #: \u2605 \u2461 \u5b9e\u4f53 + \u4e00\u5f20\u76f8\u4ea4\u66f2\u9762\uff08\u2605 \u7528\u66f2\u9762\u4f5c\u5207\u9762\uff09
+    #: \u2605 \u2461 \u5b9e\u4f53 + \u4e00\u5f20\u76f8\u4ea4\u66f2\u9762\uff08\u2605 \u7
+    #: 528\u66f2\u9762\u4f5c\u5207\u9762\uff09
     def _both(d):
         a = _mk_solid(d)
         b = _mk_surface(d)

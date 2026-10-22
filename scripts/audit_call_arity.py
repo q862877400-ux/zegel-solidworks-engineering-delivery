@@ -47,9 +47,11 @@ for _stream in (sys.stdout, sys.stderr):
         pass
 
 #: 被审计的成员包装函数名（与本仓库实际用法保持一致）
-#: ⚑⚑ 2026-10-01（轮 145）：原集合是 `{"_safe_member", "get_com_member", "get_com_member"}`
+#: ⚑⚑ 2026-10-01（轮 145）：原集合是 `{"_safe_member", "get_com_member", "get_com_member
+#: "}`
 #:   ——★ **第三项是重复的**（显然是 `safe_get_com_member` 写错了）
-#:   ⇒ **`safe_get_com_member` 的调用点一直被漏计**（与 `check_member_names.py` 同一个根因：
+#: ⇒ **`safe_get_com_member` 的调用点一直被漏计**（与 `check_member_names.py` 同一个根因
+#: ：
 #:      "有几个取成员的同义词"没有单一真源）。
 #:   ⚑ 本轮再加 `call_com_member`（轮 145 为"故意要调"的站点新起的名字）。
 #:   ⇒ 这三种**都是**"取/调 COM 成员"的调用点，都要算。
@@ -82,7 +84,8 @@ def load_signatures(paths):
                 name = name[4:]
             # ⚑⚑ arity 口径 = **调用方要传的实参个数**。
             #
-            # 旧规则「排除**所有** by-ref 出参」对 `Object&` 成立、**对 `Int32&` 不成立**：
+            # 旧规则「排除**所有** by-ref 出参」对 `Object&` 成立、**对 `Int32&` 不成立*
+            # *：
             # 反射里 `Void GetErrorMessages(Object&, Object&, Object&)` 确实是 0 参
             # （三个全是纯 [out]），但 2026-10-01 真机实测（SW 2026 SP4.1）证明
             # **标量出参 `Int32&` 必须由调用方传入**：
@@ -96,8 +99,10 @@ def load_signatures(paths):
             # 结论已固化进 `scripts/sw_connect.py::out_i4()` 的 docstring。
             #
             # ⇒ 规则按**类型**分（可证伪、不是启发式）：
-            #     `Int32&` / `Int16&` / `Double&` / `Boolean&` 等**标量出参** ⇒ 调用方要传，**计入**
-            #     `Object&` / `Variant&` 等**数组出参**（纯 [out] 容器） ⇒ 调用方不传，**排除**
+            # `Int32&` / `Int16&` / `Double&` / `Boolean&` 等**标量出参** ⇒ 调用方要传，
+            # **计入**
+            # `Object&` / `Variant&` 等**数组出参**（纯 [out] 容器） ⇒ 调用方不传，**排
+            # 除**
             #
             # ⚠ 这条修正的由来：本轮新增 `sw_mold.py` 后跑审计，`sw_topology` /
             #   `sw_simulation` 报 18 处「存疑」，逐条查全是「带 `Int32&` 的成员」。
@@ -108,12 +113,14 @@ def load_signatures(paths):
             # ⚑⚑ **2026-10-01（轮 123）：特例全部去掉 —— arity 就是反射里的参数个数。**
             #   真机实验 `tools/probe_outparam_object_byref.py` 对
             #   `IHoleStandardsData.GetHoleStandards(Object& Standards, Object& Types)`：
-            #     A 不传出参 ⇒ com_error -2147352561「**非选择性的参数**」（= `DISP_E_PARAMNOTOPTIONAL`）
+            # A 不传出参 ⇒ com_error -2147352561「**非选择性的参数**」（= `DISP_E_PARAMN
+            # OTOPTIONAL`）
             #     D `VARIANT(VT_BYREF|VT_VARIANT, None)` ×2 ⇒ **返回 True** ✓
             #   ⇒ ★ **`Object&` 出参是必填的** ⇒ 官方 arity = **2**。
             #   ⇒ 旧规则「`Object&` / `Variant&` / `Dispatch&` 一律排除」**是错的**。
             #   ★ 按**铁律 4**：arity 以**出厂反射的参数个数**为准，不做任何类型特例。
-            #   ⚠ 边界：只证了 `GetHoleStandards` 一个成员；但"以反射为准"这条**不需要外推**，
+            # ⚠ 边界：只证了 `GetHoleStandards` 一个成员；但"以反射为准"这条**不需要外推
+            # **，
             #     它本身就是本仓库的口径。
             count = len(_params)
             table[name][count].append(f"{current}.{name}({params.strip()}) -> {ret}")
@@ -176,7 +183,8 @@ def direct_call_sites(path, table):
 
 
 
-# ⚑⚑ **2026-10-01（轮 130）：`comtypes` 早绑定的调用点，本工具判不了 —— 单独归类，不算「存疑」。**
+# ⚑⚑ **2026-10-01（轮 130）：`comtypes` 早绑定的调用点，本工具判不了 —— 单独归类，不算「
+# 存疑」。**
 #
 # ## 为什么本工具的 arity 规则管不到它们
 # 本工具的 arity 口径（见上）是在 **pywin32 迟到绑定**上**真机量出来**的
@@ -196,14 +204,16 @@ def direct_call_sites(path, table):
 # ★★★★★★ 2026-10-04（轮 116）**⚠ 这张表按**行号**登记 ⇒ 它会**漂**** ——
 #   ★ **真机读数**：★ `tests/test_arity_comtypes_classification.py` 报
 #     「★ 应当恰好 **2** 条 comtypes，★ 实际 **0**」⇒
-#   ★★ **真因**：★ 我在轮 87 与 115 改过 `sw_delivery.py`（★ 加注释 · ★ 换成员 · ★ 修 fake）⇒
+# ★★ **真因**：★ 我在轮 87 与 115 改过 `sw_delivery.py`（★ 加注释 · ★ 换成员 · ★ 修 fake
+# ）⇒
 #     ★★★ **⇒ 那两条的行号从 `635` / `884` 漂到 `671` / `965`** ⇒ **登记失配** ✓
 #   ★★★★ **⇒ 已按新行号更正**；★ **而这个"按行号"的脆弱性是本表固有的** ——
 #     ★ 它与「钉死数量」「mock 落后」是**同一族**：★ **改了实现、★ 配套的定位就失配**、
 #     ★★ **而它**不会自己报错**（★ 只在跑那条测试时才现形）✓
 #   ★★★★★ **⇒ 下次改这个文件时，★ 记得同步这两行**；★ 更稳的做法是改成**按成员名**登记
 #     （★ 那要改 `audit` 的接口 —— ★ **本轮不动**、★ 如实留给后人）✓
-# ★★★★★★ **2026-10-10（规格 300）★ 那个「更稳的做法」本轮做了** —— ★★ 改成**按成员名**登记：
+# ★★★★★★ **2026-10-10（规格 300）★ 那个「更稳的做法」本轮做了** —— ★★ 改成**按成员名**登
+# 记：
 #   ★★ **起因**：★ 又一次**同一形态**的失配 —— 工作树里给 `sw_delivery.py:248` 加了一行
 #     `#: dispatch-guard: exempt internal-helper` ⇒ ★ **671/965 各 +1 漂到 672/966** ⇒
 #     `test_arity_comtypes_classification` 报「应当恰好 **2** 条 comtypes，★ 实际 **0**」✗
@@ -238,7 +248,8 @@ def audit(target, signature_paths):
     stem = _stem(target)
     for lineno, fn, member, argc in sites:
         # ⚑ 轮 130：先看是不是**已知的 comtypes 早绑定站点** —— 那类本工具判不了
-        #: ★★★★★ 2026-10-10（规格 300）**键改成按成员名** —— ★ 加注释/挪代码**不再失配** ✓
+        #: ★★★★★ 2026-10-10（规格 300）**键改成按成员名** —— ★ 加注释/挪代码**不再失配**
+        #:  ✓
         #:   ★★ 代价：同一文件里同名成员多处时会命中多行 ⇒ ★ 那正是**我们要的**
         #:     （★ 它们**同一病因**、★ 理由同一条）。
         reason = COMTYPES_CALL_SITES.get((stem, member))
@@ -301,7 +312,8 @@ def main() -> int:
     print(f"签名源: {', '.join(Path(p).name for p in sigs)}")
     print(f"调用点: {len(ok) + len(doubt) + len(missing) + len(dynamic)} 个\n")
     print(f"  通过     {len(ok)}")
-    # ⚑ 轮 130：`comtypes` 早绑定站点**单独报**（本工具的 arity 规则是在 pywin32 上量的）
+    # ⚑ 轮 130：`comtypes` 早绑定站点**单独报**（本工具的 arity 规则是在 pywin32 上量的
+    # ）
     print(f"  comtypes {len(comtypes)}   ← **本工具判不了**（早绑定自行分配 [out]）")
     print(f"  存疑     {len(doubt)}   ← 同名成员存在但 arity 全对不上")
     print(f"  查不到   {len(missing)}   ← 全程序集无此成员名")

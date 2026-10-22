@@ -7,10 +7,12 @@
 #         **B4-2（idx 173 hem）**。★ 三条都落在**已有模块** `sw_sheet_metal.py`（铁律 3）✓
 # 官方依据: ★★ 逐页读过 —— 见 `scripts/sw_sheet_metal.py` 本轮追加段的来源块：
 #   `IModelDoc2\{InsertSheetMetalUnfold,InsertSheetMetalFold}.md` ·
-#   `IFeatureManager\{InsertSheetMetalHem2,CreateCustomBendAllowance,GetFlatPatternFolder}.md` ·
+# `IFeatureManager\{InsertSheetMetalHem2,CreateCustomBendAllowance,GetFlatPatternFolder}
+# .md` ·
 #   `IFlatPatternFolder\{GetFlatPatternCount,GetFlatPatterns}.md` ·
 #   `ISelectionMgr\{SetSelectedObjectMark,GetSelectedObjectMark}.md` ·
-#   `enums\{swHemTypes_e,swHemPositionTypes_e,swSheetMetalReliefTypes_e,swReliefTearTypes_e,
+# `enums\{swHemTypes_e,swHemPositionTypes_e,swSheetMetalReliefTypes_e,swReliefTearTypes_
+# e,
 #   swSelectionMarkAction_e}.md` ·
 #   ★★ 两份官方示例（**mark 与调用序的唯一出处**）：
 #     `examples\Insert_and_Access_Fold_Feature_Example_VB.md` ·
@@ -18,9 +20,11 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入（全部按官方签名与官方示例自建）。
 # 规模:   **3 个工具** ⇒ 工具数 439 → **442**
 # ★★ **本批的诚实边界（别把它读成「三个都成了」）**：
-#   · `create_unfold` / `create_fold` —— ★ **真机建成了**（`展开1` / `折叠1`，marks 逐条 `[1, 4]`）✓
+# · `create_unfold` / `create_fold` —— ★ **真机建成了**（`展开1` / `折叠1`，marks 逐条 `
+# [1, 4]`）✓
 #   · `create_hem` —— ★★ **真机回 `None`（五种形态全部失败）** ⇒ 能力标 `stitched`，
-#     工具**仍然挂出来**（★ 与既有 4 个失败入口同策：★ 由 `require_verified` 在**调用前**抛**带原因**的错误，
+# 工具**仍然挂出来**（★ 与既有 4 个失败入口同策：★ 由 `require_verified` 在**调用前**抛*
+# *带原因**的错误，
 #     而不是让用户吃一个裸 COM 错误）✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -29,7 +33,8 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH93"]
 
-#: ★ 面序号 = **本仓的声明式选择**（★ 面**不能按名字选** —— 事实 32）⇒ 不是"裸坐标"（规则 3）✓
+#: ★ 面序号 = **本仓的声明式选择**（★ 面**不能按名字选** —— 事实 32）⇒ 不是"裸坐标"（规
+#: 则 3）✓
 _FACE_INDEX = ("**固定面**在体上的序号（0 基）—— ★ 本仓的**声明式选择**："
                "★ 事实 32 实测**面不能按名字选** ⇒ 只能按**序号/对象**选；"
                "★★ 序号顺序**官方未承诺稳定**（与体的拓扑生成顺序有关）⇒ **别当持久引用**。")
@@ -83,7 +88,8 @@ SPECS_BATCH93 = [
             "★ 本仓第一版把它放在调用前 ⇒ 会被选择函数开头的清选区**清掉**（★ 顺序错、静默失效）✓ "
             "★ 其余同 `solidworks_sheet_metal_create_unfold`（mark 表 / 判据 / 坑）✓",
     ),
-    # ── ③ 折边（idx 173）—— ★★ 真机**失败** ⇒ 挂出来但**调用前就抛带原因的错误** ──────────────
+    # ── ③ 折边（idx 173）—— ★★ 真机**失败** ⇒ 挂出来但**调用前就抛带原因的错误** ──────
+    # ────────
     ToolSpec(
         name="solidworks_sheet_metal_create_hem",
         title="Insert a Hem on Selected Edges (KNOWN UNAVAILABLE on this backend)",

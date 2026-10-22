@@ -4,7 +4,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\`）
-# 文件:   `tools/reclaim_solidworks.py`（★ **卡死**那条路；★ 本脚本补的是**健康但该关**那条）·
+# 文件:   `tools/reclaim_solidworks.py`（★ **卡死**那条路；★ 本脚本补的是**健康但该关**
+# 那条）·
 #         `scripts/sw_connect.py`（`connect_solidworks` / `get_com_member`）·
 #         官方 `ISldWorks.ExitApp`（★ **0 参** —— `C:\swapi\types\ISldWorks\ExitApp.md`）
 # 定位:   ★ **为什么要有它**：纪律那条要求「**用完你自己的就关掉你自己开的那个 SolidWo
@@ -36,7 +37,8 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-#: ★ SolidWorks 家族（★ 判据按 exe 文件名，★ 不按窗口类名 —— ★ 与 `tools/sw_guard.py` 同源）
+#: ★ SolidWorks 家族（★ 判据按 exe 文件名，★ 不按窗口类名 —— ★ 与 `tools/sw_guard.py` 同
+#: 源）
 FAMILY = ("sldworks", "sldprocmon", "swcefsubproc", "cwbcbfmesh", "sldsurfacing",
           "sldworks_fs")
 
@@ -109,14 +111,16 @@ def main() -> int:
     a = ap.parse_args()
 
     procs = family_processes()
-    #: ★★★★★★★ **修判据①（★ 第一版写错了）**：★ 第一版数的是**整个家族** ⇒ 实测报「**7 个**」
+    #: ★★★★★★★ **修判据①（★ 第一版写错了）**：★ 第一版数的是**整个家族** ⇒ 实测报「**7 
+    #: 个**」
     #:   ⇒ ★★ **而其中 6 个是**同一个 SW 的子进程**（`sldProcMon` / `swCefSubProc`×3 /
     #:     `sldsurfacing` / `cwbcbfmesh`）⇒ ★★★ **⇒ 它把子进程当成了第二个会话** ✓
     #:   ⇒ ★ 正确判据：★ **只数 `SLDWORKS.exe` 主进程** —— ★ 因为这里要答的问题是
     #:     「**有几个 SW 会话**」、★ 不是「**有几个 SW 相关进程**」✓
     #:   ★★★★ **⚠ 而 AGENTS.md 那条「认 SolidWorks **家族**进程」是给**弹窗扫描**用的** ——
     #:     ★ 那里**要**覆盖全部子进程（★ 弹窗可能出在子进程上）；★ **这里相反** ✓
-    #:   ★★★★★ **⇒ 事实 51：★ 判据要贴合被测对象**（★ 同一个"家族"名单、★ 两个用途要**两种数法**）✓
+    #: ★★★★★ **⇒ 事实 51：★ 判据要贴合被测对象**（★ 同一个"家族"名单、★ 两个用途要**两种
+    #: 数法**）✓
     mains = [p for p in procs if str(p.get("Name", "")).lower().startswith("sldworks")]
     print("★ SolidWorks 家族进程 %d 个 · ★ 其中 **SLDWORKS.exe 主进程 %d 个**："
           % (len(procs), len(mains)))

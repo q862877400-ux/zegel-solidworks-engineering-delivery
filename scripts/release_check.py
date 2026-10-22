@@ -11,9 +11,11 @@ from pathlib import Path
 
 #: 2026-10-03（接手轮）强制 stdout 为 UTF-8 —— 本脚本末尾会 `print(json.dumps(...))`，
 #:   而报告里含中文与 `⇒` 这类符号；stdout 是**管道/文件**时默认按 locale（本机 GBK）编码
-#:   ⇒ `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'` ⇒ **整个门禁链崩在最后一步**。
+#: ⇒ `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'` ⇒ **整个门禁链崩
+#: 在最后一步**。
 #:   ★ known-facts 58 那一族（中文 Windows 上两侧默认编码不一致 —— 病灶在输出侧）。
-#:   ★★ 实测：修了 30 道被引用门禁的编码之后，**这一处**才露出来（★ 它自己是调用方、不在那份名单里）。
+#: ★★ 实测：修了 30 道被引用门禁的编码之后，**这一处**才露出来（★ 它自己是调用方、不在那
+#: 份名单里）。
 sys.stdout.reconfigure(encoding="utf-8")
 
 try:
@@ -472,13 +474,16 @@ def _run_refuted_patterns_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把验收命令可跑性接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_spec_acceptance_paths.py`（本门禁的实现）
-#         `D:\AI\SW\docs\ROADMAP.md` §〇 纪律三「**验收必须是可跑的命令** —— 『我检查过了』不算」
+# `D:\AI\SW\docs\ROADMAP.md` §〇 纪律三「**验收必须是可跑的命令** —— 『我检查过了』不算
+# 」
 # 定位:   新增 `_run_spec_acceptance_paths_gate`：**硬门禁** ——
 #         它查的是 `specs/**/*.md` 的 `→ 验收:` 行点到的脚本**在不在仓库里**。
-#         触发它的是 2026-10-01 实测的 **2 例**（`capability_gap.py`、`probe_results_api_surface.py`
+# 触发它的是 2026-10-01 实测的 **2 例**（`capability_gap.py`、`probe_results_api_surface
+# .py`
 #         原先只在工作区根 ⇒ **换机器 / CI 跑不了**）。
 #         ⚠ **便携性**：specs 目录不在本机时，那个脚本**自己 SKIP 并 exit 0**
-#           ⇒ 别的机器上不会无条件红（这一点由它的契约测试 `test_missing_specs_root_skips` 守着）。
+# ⇒ 别的机器上不会无条件红（这一点由它的契约测试 `test_missing_specs_root_skips` 守着）
+# 。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────
@@ -508,7 +513,8 @@ def _run_spec_acceptance_paths_gate() -> dict[str, object]:
 #           且②**该探针确实调了那个工具的实现函数**（`module.function`）⇒ 命中。
 #         ★★ 触发它的是用户 2026-10-07 的原话：「★ 我怕你会**忘记你有哪些工具**，
 #           然后就一直用常用工具硬干」；★ 实测基础：`probe_*` 246 + `prove_*` 110 = **356 个**，
-#           而 `AGENTS.md` 那条纪律只管「**怎么调**（按 ToolSpec 契约）」、★ 不管「**该不该自己调**」✗
+# 而 `AGENTS.md` 那条纪律只管「**怎么调**（按 ToolSpec 契约）」、★ 不管「**该不该自己调*
+# *」✗
 #         ★★★ 存量 21 条已按「探针 × 工具」登记进 `docs/probe-reuse-baseline.json`
 #           （★ 每条带理由；★ 未登记的**新增命中**就是违规）⇒ ★ 它是**棘轮**，不是一次性清零 ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -533,14 +539,16 @@ def _run_probe_reuse_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把「注册 ≠ 能跑」这一族里**最隐蔽的一类**接成硬门禁）
 # 文件:   `scripts/check_preselect_family.py`（本门禁的实现）
-#         `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四「通用建议 3」（点名要建）
+# `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四「通用建议 3」（点
+# 名要建）
 #         `docs/ROADMAP.md` §一 游标「下一步候选 ①」
 # 定位:   新增 `_run_preselect_family_gate`：**硬门禁** ——
 #         ★ 判「**要求调用方先选、而模型没有任何办法选**」：① spec 文档**明写**要先选；
 #           ② 没有 `pre_call` 也没有 `derived_args`；③ 没有 `selection` 形态入参；
 #           ④ 目标函数**自己也不会选**。★ 四条同时成立才算命中 ✓
 #         ★★ 机制（**事实 503**）：调用序是 注入 → `pre_call` → `derived_args` → 目标函数，
-#           而 `RESOLVERS[inj]` **会清空选区**（真机证据 `output/selection-lifetime-evidence.json`：
+# 而 `RESOLVERS[inj]` **会清空选区**（真机证据 `output/selection-lifetime-evidence.json`
+# ：
 #           `mark1 = 2 → 0`）⇒ ★ 「调用方先选好我再调工具」经 MCP 表面**不可能成立** ✓
 #         ★★ 存量 **14 条**（★ 逐条读目标函数体落档、★ 每条带 verdict + 理由）登记进
 #           `docs/preselect-family-baseline.json` ⇒ ★ 棘轮：未登记的新增才拦发布 ✓
@@ -604,7 +612,8 @@ def _run_lean_first_line_gate() -> dict[str, object]:
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
-#         它查的是 `docs/harvest-report.md` 里「偏离上游：N 个文件 / +N 行 / -N 行 · N 个 commit」
+# 它查的是 `docs/harvest-report.md` 里「偏离上游：N 个文件 / +N 行 / -N 行 · N 个 commit
+# 」
 #         那行**是否与 git 实际相符**。触发它的是 2026-10-01（轮 54）实测的
 #         **8 倍文件数 / 20 倍行数 / 10 倍 commit 数** 偏差 ——
 #         此前 `REQUIRED_ABILITY_FILES` **只查这两份报告存在、不查数字**。
@@ -1042,7 +1051,8 @@ def _run_signature_audit_freshness_gate() -> dict[str, object]:
 # 仓库:   本项目自身（把 A8 状态摘要的新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_digest_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_digest_freshness_gate`：**硬门禁** ——
-#         把 `AGENTS.md §一 A8`「报告写明并入了什么 / 仍空缺什么 / 为什么」做成**可跑的那一半**。
+# 把 `AGENTS.md §一 A8`「报告写明并入了什么 / 仍空缺什么 / 为什么」做成**可跑的那一半**
+# 。
 # ⚠ 为什么必须是硬门禁：`docs/harvest-digest.md` 是**生成物**，
 #   一旦它与真源（`capabilities.yaml` / `git log` / 门禁栈）分叉，报告就在**说假话** ——
 #   而这类分叉**不会自己暴露**（本项目已多次记录「文档与代码不符比没有文档更糟」）。
@@ -1151,12 +1161,14 @@ def _run_member_name_gate() -> dict[str, object]:
 #       ★ 依据：一份**每条带真机证据**的 deny 名单（事实 456 · 428 等）
 #   ★★ **为什么接进硬门禁**（★ 事实 40 的教训）：★ **一个存在但没人用的守卫，
 #     与没有守卫等价 —— 且更糟**（让人以为防住了）。
-#   ★ 而它**第一次跑就逼出了自己的契约**：命中了 3 处，★ 而那 3 处是**事实 428 的取证代码**
+# ★ 而它**第一次跑就逼出了自己的契约**：命中了 3 处，★ 而那 3 处是**事实 428 的取证代码*
+# *
 #     ⇒ ★ 故补了**带理由的取证豁免**（`ALLOWED`），★ **而新增的命中会被拦**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
-#: ★ 2026-10-03（轮 594）接进：**A4** —— `level: verified` 必须带**我们自己的运行证据**。
+#: ★ 2026-10-03（轮 594）接进：**A4** —— `level: verified` 必须带**我们自己的运行证据**
+#: 。
 #:   实测：95 条 verified、**0 条无 evidence**（数据干净）——
 #:   而**之前没有任何门禁在守它** ⇒ 危险在于「数据干净、而没有东西保证它继续干净」。
 #: ★ 2026-10-03（轮 600）接进：**「后端到不了」名单必须写明依据**。
@@ -1237,7 +1249,8 @@ def _run_unreachable_members_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把「**别把官方属性当方法叫**」接进发布前检查）
 # 文件:   `scripts/check_property_form_members.py`（本门禁的实现）
-#         两个官方源：`_raw/**/iface_sldworks.txt`（出厂反射）· `C:\swapi\types\**\*.md`（kind 元数据）
+# 两个官方源：`_raw/**/iface_sldworks.txt`（出厂反射）· `C:\swapi\types\**\*.md`（kind 
+# 元数据）
 # 定位:   新增 `_run_property_form_members_gate`：**硬门禁**。
 #   ★☆ **为什么接进来**（★ 2026-10-04 接手轮 · 事实 520）：★ `drawing_workflow.py` 里
 #     `get_com_member(model, "GetModelViewManager")` —— ★ 而官方 `IModelDoc2` 上
@@ -1246,12 +1259,14 @@ def _run_unreachable_members_gate() -> dict[str, object]:
 #   ★★ **既有三道「名字」门禁都抓不到它**，各有各的原因：
 #     · `check_member_names.py`     —— ★ 只扫 `scripts/*.py`（★ 而它落在 `subskills/`）；
 #     · `check_interface_member_ownership.py` —— ★ 管"成员属于哪个接口"，不管"名字对不对"；
-#     · `check_unreachable_members.py` —— ★ 只认**一份手工 deny 名单**（★ 而这个名字不在里面）。
+# · `check_unreachable_members.py` —— ★ 只认**一份手工 deny 名单**（★ 而这个名字不在里面
+# ）。
 #   ★★★ **判据要两个源**（★ 只有反射会**误伤几百处**：`GetBodies2` / `GetCurrentSheet` …
 #     都是**官方方法、各有自己的页**）：★ 也就是"反射说它只有属性形" **且**
 #     "官方 md 里那个 `get_X` **没有页**" —— ★ 实测**收敛到 0 处**（真 bug 已修）✓
 #   ★★★★ **判据已被负例证明**：`tests/test_property_form_members_gate.py` 拿
-#     **修复前的原文**（`git show …`）喂进去 ⇒ **命中**；★ 修好版 + 4 个合法方法 ⇒ **不命中** ✓
+# **修复前的原文**（`git show …`）喂进去 ⇒ **命中**；★ 修好版 + 4 个合法方法 ⇒ **不命中*
+# * ✓
 #   ⚠ **便携性**：两个源任一不在 ⇒ 门禁自己 `[SKIP]` 并 exit 0 ⇒ **可以无条件接线** ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
@@ -1282,12 +1297,14 @@ def _run_property_form_members_gate() -> dict[str, object]:
 #   ⇒ `No module named 'mcp.server'; 'mcp' is not a package`。
 #   ★ **一个存在但没人跑的门禁，与没有门禁等价** —— 这次是同一教训的**另一个面**：
 #     门禁在，但**没接线**。
-# ⚠ **便携性**：工作区不在（别的机器）⇒ 该脚本自己 `[SKIP]` 并 exit 0 ⇒ **可以无条件接线**。
+# ⚠ **便携性**：工作区不在（别的机器）⇒ 该脚本自己 `[SKIP]` 并 exit 0 ⇒ **可以无条件接线
+# **。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（把「**别人装我们的工具，不该改他的 SolidWorks 设置**」接进发布前检查）
+# 仓库:   本项目自身（把「**别人装我们的工具，不该改他的 SolidWorks 设置**」接进发布前检
+# 查）
 # 文件:   `scripts/check_user_preference_writes.py`（本门禁的实现）
 #         `scripts/sw_preference_guard.py`（★ 唯一被认可的写入姿势：读旧值 → 设 → finally 还原）
 #         `docs/preference-write-exemptions.json`（★ 带 reason + evidence 的豁免名单）
@@ -1300,7 +1317,8 @@ def _run_property_form_members_gate() -> dict[str, object]:
 #       ★ 且**多数不还原** ⇒ 装一次就把别人的设置永久改掉 ✓
 #   ★★★ **判据三条**（首选守卫、次选带理由标记、末选豁免名单）——
 #     见 `check_user_preference_writes.py` 的来源块；★ 门禁**边界**也写在那里：
-#     它保证"走过守卫 / 写过理由"，**不证明"还原真的生效"**（★ 那由 guard 的 10 条负例在做）✓
+# 它保证"走过守卫 / 写过理由"，**不证明"还原真的生效"**（★ 那由 guard 的 10 条负例在做）
+# ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
@@ -1375,7 +1393,8 @@ def _run_workspace_shadowing_gate() -> dict[str, object]:
 # 文件:   `scripts/check_gate_wiring.py`（本门禁的实现）
 # 定位:   新增 `_run_gate_wiring_gate`：**硬门禁**。
 # ⚠⚠ **为什么需要它**（2026-10-01 轮 70 实测暴露）：`check_workspace_shadowing.py`
-#   **早就存在，却从没被调用** —— 而它当时**正红着**（工作区根的 `mcp.py` 遮蔽 `mcp` 包）。
+# **早就存在，却从没被调用** —— 而它当时**正红着**（工作区根的 `mcp.py` 遮蔽 `mcp` 包）
+# 。
 #   ★ **一个存在但没人跑的门禁，与没有门禁等价** —— 「接线」这一步此前**只靠人记**。
 #   ⇒ 本门禁把「接线」也变成机器判据：每个 `scripts/check_*.py` 必须**被调用**，
 #     或登记进 `docs/gate-wiring-exemptions.json`（带非空 reason + evidence）。
@@ -1400,16 +1419,19 @@ def _run_gate_wiring_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（把「报告判据编号一致性」接进发布前检查）+ Python 标准库 `subprocess`
+# 仓库:   本项目自身（把「报告判据编号一致性」接进发布前检查）+ Python 标准库 `subproces
+# s`
 # 文件:   `scripts/check_report_criteria_alignment.py`（本门禁的实现）
 # 定位:   新增 `_run_report_criteria_alignment_gate`：**硬门禁**。
 # ⚠⚠ **为什么需要**（2026-10-01 轮 82 实测）：`harvest-report.md §四` 的逐条自评
 #   用了**另一套编号**（**同名不同事**）—— 旧表的「A3」实为 A5、「A5」实为 A6、
 #   「A7」实为 A8，还混入「官方 API 覆盖」这条**非 A 判据**的行，**并缺 A1/A9/A10**。
-#   ⇒ 读者拿 §四 去对 `AGENTS.md §一` **对不上** —— 而那正是 **A8** 要的东西（「报告写明…」）
+# ⇒ 读者拿 §四 去对 `AGENTS.md §一` **对不上** —— 而那正是 **A8** 要的东西（「报告写明…
+# 」）
 #     **自己没做到**。同类问题此前已犯过一次（旧 §一 的「A1」指的是官方 API 覆盖）。
 #   ★ **靠人记必然再漂** ⇒ 把「编号一致」变成机器判据。
-# ⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时该脚本**自己 SKIP 并 exit 0**。
+# ⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时该脚本**自己 SKIP 并 exit 0*
+# *。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
@@ -1431,7 +1453,8 @@ def _run_report_criteria_alignment_gate() -> dict[str, object]:
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把「负例输入自证」审计接进发布前检查）+ Python 标准库 `subprocess`
-# 文件:   `scripts/check_negative_input_selfproof.py`（本门禁的实现；**它扫的是 `tools/`**）
+# 文件:   `scripts/check_negative_input_selfproof.py`（本门禁的实现；**它扫的是 `tools/`
+# **）
 # 定位:   新增 `_run_negative_input_selfproof_gate`：**硬门禁**。
 # ⚠⚠ **为什么需要**（2026-10-01 轮 84 撞见、轮 85 固化）：
 #   `tools/probe_skip_semantics.py` 里有个用例「**用正则把逐模块表删掉**来造坏文档」——
@@ -1507,7 +1530,8 @@ def _run_enum_values_gate() -> dict[str, object]:
 # ⚠ **本门禁**：① 每张 `*_ARITY` 表必须在其起始行**正上方**声明
 #   `#: arity-reflect: byref=included|excluded`（未表态即红）；
 #   ② 按**各自声明的**约定与**出厂反射转储**（`_raw/**/iface_*.txt`）逐条比实参个数。
-#   ★ 约定**必须由人写死**：两种 by-ref 约定并存（实测「原样计数」不符 37 / 「剔除 by-ref」不符 15
+# ★ 约定**必须由人写死**：两种 by-ref 约定并存（实测「原样计数」不符 37 / 「剔除 by-ref
+# 」不符 15
 #     而真相是各自约定下 552/552 全对）⇒ 若门禁自己挑约定，**错值会被自动「解释」掉**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
@@ -1539,7 +1563,8 @@ def _run_arity_tables_gate() -> dict[str, object]:
 #   ⇒ ★★ 这一族调用点的 **by-ref 占位从来没有任何判据在守**
 #   （而 `sw_connect.out_i4` 的**真机结论**是：by-ref 出参**必须给占位、不能省**，
 #     省略 ⇒ `DISP_E_PARAMNOTOPTIONAL`）。
-# ⚠ **本门禁**：① 复用 227 已立的 `#: arity-reflect: byref=included` 声明（未表态即红）；
+# ⚠ **本门禁**：① 复用 227 已立的 `#: arity-reflect: byref=included` 声明（未表态即红）
+# ；
 #   ② 每个字面量调用点：实参个数 == 表值；③ 形参以 `&` 结尾的位置必须是 by-ref 包装器
 #   （口径从 `audit_byref_args` **import，不重写**）；④ 检查量为 0 判失败（事实 46）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -1566,7 +1591,8 @@ def _run_assembly_doc_call_shape_gate() -> dict[str, object]:
 # 文件:   `scripts/check_dispatch_entry_guard.py`（本门禁的实现）
 # 定位:   新增 `_run_dispatch_entry_guard_gate`：**硬门禁**。
 # ⚠⚠ **为什么需要**（2026-10-09 · spec 229）：spec 228 只修了 `call_assembly_doc`
-#   **一个**入口，并把教训写成一句通用话 ——「**加新分发口时必须问一句：它进审计白名单了吗**」。
+# **一个**入口，并把教训写成一句通用话 ——「**加新分发口时必须问一句：它进审计白名单了吗*
+# *」。
 #   ★ 而「一句话」不是守卫。本轮先**量**清边界：真树 **1310** 个 COM 包装器调用点里，
 #   **91 个（7 %）的成员名不是字面量 ⇒ 静态审计一律看不见**；其中 **37 个**是
 #   **形参转发**（真「分发口」：`_checked(target, member, *args)` 这类）⇒ 逐个必须表态。
@@ -1633,7 +1659,8 @@ def _run_dispatch_byref_guard_gate() -> dict[str, object]:
 # 仓库:   本项目自身（发布门禁的一个检查项）
 # 文件:   `scripts/check_dispatch_blindspot_guard.py`（本门禁的实现）
 # 定位:   新增 `_run_dispatch_blindspot_guard_gate`：**硬门禁**。
-# ⚠⚠ **为什么需要**（2026-10-09 · spec 232）：`check_dispatch_entry_guard._entry_sites()`
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 232）：`check_dispatch_entry_guard._entry_sites()
+# `
 #   只认三种调用形态（同文件裸名 / `from <stem> import <名>` 后裸名 / `模块.名`），
 #   另有 **5 种**它**看不见**：a 模块别名 `import m as x` 后 `x.f()` · b 名字别名
 #   `from m import f as g` 后 `g()` · c 点式基名 `pkg.m.f()` · d 同文件自限定
@@ -1644,7 +1671,8 @@ def _run_dispatch_byref_guard_gate() -> dict[str, object]:
 # ⚠ **本门禁**：① 5 种形态逐形态普查并打印；② **任一非 0 即红**（`[blindspot]`）；
 #   ③ `entries == 0` 或 `covered == 0` ⇒ `[zero-checked]` 红（事实 46）；
 #   ④ 已覆盖调用点数**只增不减**（下界 362；减少 = 取点漏了）。
-# ★ 口径**全部 import，不重写**：取点/entries/已覆盖口径来自 `check_dispatch_entry_guard`。
+# ★ 口径**全部 import，不重写**：取点/entries/已覆盖口径来自 `check_dispatch_entry_guard
+# `。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
@@ -1672,7 +1700,8 @@ def _run_dispatch_blindspot_guard_gate() -> dict[str, object]:
 #   COM 包装器调用点（真树 **46** 个，spec 233 去重后的读数）—— 从 spec 229 起一路
 #   **只被计数、没有任何判据**。本门禁给它两条可红的路：
 #   ① **候选集能静态枚举** ⇒ 每个候选值必须能在**官方两源**（出厂反射转储 ∪ `C:\swapi`
-#      官方文档镜像）里查到；查不到 = 要么拼错，要么是**试名探测**（fallback 列表），后者须表态；
+# 官方文档镜像）里查到；查不到 = 要么拼错，要么是**试名探测**（fallback 列表），后者须表
+# 态；
 #   ② **枚举不出** ⇒ 必须显式表态 `#: dispatch-arg: dynamic <理由>`（未表态即红）。
 #   ★ 两个逃生门都**自带自证条件**（能枚举却声明 `dynamic` ⇒ 红；候选值全查得到却声明
 #     `probe` ⇒ 红；枚举不出却声明 `probe` ⇒ 红）—— 防止拿逃生门一键躺平。
@@ -1703,7 +1732,8 @@ def _run_dispatch_arg_guard_gate() -> dict[str, object]:
 # 定位:   新增 `_run_dispatch_forward_arg_gate`：**硬门禁**。
 # ⚠⚠ **为什么需要**（2026-10-09 · spec 235）：37 个分发口的 **362 个调用点**里，
 #   有 **8 个**把成员名以**非字面量**传入（条件式 / 变量 / 下标）⇒ `audit_byref_args`
-#   一律看不见。spec 230 的 `resolution()` 只把入口**分类计数**（`partial 3 · unresolved 4 ·
+# 一律看不见。spec 230 的 `resolution()` 只把入口**分类计数**（`partial 3 · unresolved 4
+#  ·
 #   no-callers 12`），**没有任何判据落在调用点上**。本门禁给每个这样的点两条可红的路：
 #   ① **候选集能静态枚举** ⇒ 每个候选值必须能在**官方两源**里查到；查不到 = 要么拼错、
 #      要么是**试名探测**（须按 `probe` 表态）；
@@ -1711,7 +1741,8 @@ def _run_dispatch_arg_guard_gate() -> dict[str, object]:
 #   ★ 三个 code 都**自带自证条件**（能枚举却声明 `dynamic`/`upstream` ⇒ 红；候选值全查得到
 #     却声明 `probe` ⇒ 红；枚举不出却声明 `probe` ⇒ 红；`upstream` 的 caller 名必须等于
 #     实际包围 `def`、实参必须是它的形参 ⇒ 否则红）—— 防止拿逃生门一键躺平。
-# ★ 与 `check_dispatch_entry_guard.resolution()` 的**口径不变量**：带非字面量调用点的入口
+# ★ 与 `check_dispatch_entry_guard.resolution()` 的**口径不变量**：带非字面量调用点的入
+# 口
 #   必须被判 `partial` / `unresolved`（`resolved` = 全字面量）⇒ 不符即红。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
@@ -1736,16 +1767,22 @@ def _run_dispatch_forward_arg_gate() -> dict[str, object]:
 # 仓库:   本项目自身（发布门禁的一个检查项）
 # 文件:   `scripts/check_dispatch_upstream_guard.py`（本门禁的实现）
 # 定位:   新增 `_run_dispatch_upstream_gate`：**硬门禁**。
-# ⚠⚠ **为什么需要**（2026-10-09 · spec 236）：spec 235 的 `upstream` 逃生门**只自证形态**
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 236）：spec 235 的 `upstream` 逃生门**只自证形态*
+# *
 #   （① 实参是包围 `def` 的形参；② 包围 `def` 名 == 声明的 `<caller-def 名>`）——
 #   ★★ **它从不检查那个 `<caller-def 名>` 的调用方到底传了什么** ⇒ 半开的逃生门：
 #   写 `upstream X` 只要 X 恰好是包围 `def`、恰好收一个成员名形参，就**永远绿**。
-#   本门禁要求声明**必须带一个上游桶**（`sites` / `tool-only` / `orphan`），且桶**必须与事实相符**：
-#     · `sites`     ⇒ 上游有 AST 调用点，且**每个**调用点传**字面量**（候选值须在官方两源查得到）；
-#     · `tool-only` ⇒ 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 `function=`；
+# 本门禁要求声明**必须带一个上游桶**（`sites` / `tool-only` / `orphan`），且桶**必须与事
+# 实相符**：
+# · `sites`     ⇒ 上游有 AST 调用点，且**每个**调用点传**字面量**（候选值须在官方两源查
+# 得到）；
+# · `tool-only` ⇒ 上游**无** AST 调用点，但名字出现在某 `mcp-server/tool_specs_*.py` 的 
+# `function=`；
 #     · `orphan`    ⇒ 上游既无 AST 调用点、也无 ToolSpec 引用。
-#   ★★ `tool-only` 这一档是**必需**的：`set_study_option_report` 的 AST 调用点是 **0**，但它**不是**
-#   orphan（由工具层按名注册）⇒ ★ 「AST 调用点为 0」**不等于**「没人用」（spec 234 同族）。
+# ★★ `tool-only` 这一档是**必需**的：`set_study_option_report` 的 AST 调用点是 **0**，但
+# 它**不是**
+# orphan（由工具层按名注册）⇒ ★ 「AST 调用点为 0」**不等于**「没人用」（spec 234 同族）
+# 。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
@@ -1769,11 +1806,14 @@ def _run_dispatch_upstream_gate() -> dict[str, object]:
 # 仓库:   本项目自身（发布门禁的一个检查项）
 # 文件:   `scripts/check_create_definition_site_disposition.py`（本门禁的实现）
 # 定位:   新增 `_run_cd_site_disposition_gate`：**硬门禁**。
-# ⚠⚠ **为什么需要**（2026-10-09 · spec 237）：`check_interface_member_ownership.py`（**诊断**）
+# ⚠⚠ **为什么需要**（2026-10-09 · spec 237）：`check_interface_member_ownership.py`（**
+# 诊断**）
 #   末尾只报「检查过 5 个 `CreateDefinition` 站点；跳过 5」——
 #   ★★ **四种语义完全不同的处置被合成一个数**：`dynamic`（可能只是读取器太窄）/
-#   `unmapped`（该审却漏审）/ `empty-members`（数据源缺）/ `no-members-used`（确实无事可查）。
-#   合成之后，**一次把 `checked` 退化成 `unmapped` 的回归完全不可见**（读数仍是「跳过 5→6」）。
+# `unmapped`（该审却漏审）/ `empty-members`（数据源缺）/ `no-members-used`（确实无事可查
+# ）。
+# 合成之后，**一次把 `checked` 退化成 `unmapped` 的回归完全不可见**（读数仍是「跳过 5→6
+# 」）。
 #   ★★ 而本规格「先量」当场量出真缺陷：`module_consts()` 的正则要求常量行**以数字结尾**
 #   ⇒ `SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter` **读不到**
 #   ⇒ `scripts/sw_weldment.py` 的常量表成 `{}` ⇒ 它唯一的站点被静默判成 `dynamic`
@@ -1805,14 +1845,18 @@ def _run_cd_site_disposition_gate() -> dict[str, object]:
 # ⚠⚠ **为什么需要**（2026-10-09 · spec 238）：`check_interface_member_ownership.py` 的
 #   `CONST → 接口` 映射表**只**从 `IFeatureManager\CreateDefinition.md` 造 ⇒ 隐含一个
 #   **从未被写出**的前提：「每个 `CreateDefinition` 调用的宿主都是 `IFeatureManager`」。
-#   ★★ 而官方有**两个**宿主页（`IFeatureManager` / `IMotionStudy`），各有**自己的** `Type` 常量域。
+# ★★ 而官方有**两个**宿主页（`IFeatureManager` / `IMotionStudy`），各有**自己的** `Type`
+#  常量域。
 #   合成之后，「这个常量属于别的宿主」与「官方根本不支持这个常量」**长得一模一样**
 #   （都是 `unmapped`）—— 与 237 的「四种处置合成一个数」同族。
-#   ★★ 本规格「先量」当场**推翻**上一轮交接单的待办（「给 3 个未映射常量补 `MANUAL_MAP`」）：
+# ★★ 本规格「先量」当场**推翻**上一轮交接单的待办（「给 3 个未映射常量补 `MANUAL_MAP`」
+# ）：
 #   这 3 个常量**一个都不属于** `IFeatureManager::CreateDefinition` ——
-#   `swFmAEMRotationalMotor` 属 `IMotionStudy`（官方**逐条点名** `ISimulationMotorFeatureData`）、
+# `swFmAEMRotationalMotor` 属 `IMotionStudy`（官方**逐条点名** `ISimulationMotorFeatureD
+# ata`）、
 #   `swFmDraft` 官方清单里没有（且本仓有真机证据 `CreateDefinition(3)` 返回 None）、
-#   `swFmMateProfileCenter` 只有枚举页收录。⇒ ★ 照字面补 `MANUAL_MAP` 会**污染一张本来正确的表**。
+# `swFmMateProfileCenter` 只有枚举页收录。⇒ ★ 照字面补 `MANUAL_MAP` 会**污染一张本来正确
+# 的表**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
@@ -1833,7 +1877,8 @@ def _run_cd_host_scope_gate() -> dict[str, object]:
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把接口归属**诊断**接进发布前检查）
-# 文件:   `scripts/check_interface_member_ownership.py`（判「成员在**这个**接口上存在」）
+# 文件:   `scripts/check_interface_member_ownership.py`（判「成员在**这个**接口上存在」
+# ）
 #         `C:\swapi\types\<接口>\<成员>.md`（官方类型表，**机器本地数据源**）
 # 定位:   新增 `_run_interface_ownership_probe`：⚠⚠ **这是**诊断**，不是门禁** ——
 #         与同文件里的 `_run_*_gate` **有三个差别**：
@@ -1924,14 +1969,16 @@ def run_release_check() -> dict[str, object]:
         "capabilities.yaml",
         "scripts/stability_regression.py",
         "scripts/release_check.py",
-        #: ★★★ 2026-10-10 **`scripts/dfm_review.py` 已从必检清单移除**（★ 业主架构指令）：
+        #: ★★★ 2026-10-10 **`scripts/dfm_review.py` 已从必检清单移除**（★ 业主架构指令）
+        #: ：
         #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
         #:     ★ **而像齿轮这种东西，在我认知里属于方法 —— 方法错了，工具再多也没有用。**
         #:     ★ **你要从你继承的东西里面把方法筛选出来，把工具留下来，方法全部都删掉。**」✓
         #:   ★★ `dfm_review` 是**方法**（★ DFM 规则库）——
         #:     ★ 判据：★「**规则错了，回读能不能查出来**」⇒ ★ **不能** ⇒ 方法 ✗
         #:   ★ 已移出：★ `archive/inherited-methods/scripts/dfm_review.py` ✓
-        #:   ⚠ **其余两项保留**（★ `stability_regression` / `release_check` 都是工具/门禁）✓
+        #: ⚠ **其余两项保留**（★ `stability_regression` / `release_check` 都是工具/门禁
+        #: ）✓
         *REQUIRED_ABILITY_FILES,
     ]
     missing = [item for item in required if not (ROOT / item).is_file()]
@@ -1947,7 +1994,8 @@ def run_release_check() -> dict[str, object]:
             "来源可追溯性门禁未通过（新增代码缺少出处）：\n"
             + str(provenance.get("output", ""))
         )
-    #: ★ **诊断**级（规格 206 / T5-1）：**不 raise** —— 只记录命中数 ⇒ 状态 `clean` / `hits` ✓
+    #: ★ **诊断**级（规格 206 / T5-1）：**不 raise** —— 只记录命中数 ⇒ 状态 `clean` / `h
+    #: its` ✓
     #:   ★ 位置放在 provenance 之后：两者同属「文档层的卫生」，一起读更省事 ✓
     fact_single_home = _run_fact_single_home_gate()
     markers = _run_marker_gate()
@@ -1965,8 +2013,10 @@ def run_release_check() -> dict[str, object]:
     # ⚑ **C8 · 台账分叉门禁**（硬门禁，2026-10-04 接手轮接进）：
     #   ★ C8 自称「**唯一常驻硬门禁**」，而**它唯一依据的 `docs/refuted-patterns.json`
     #     当时在仓里不存在** ⇒ ★ 那条闸**没有可读对象、永远「通过」**（★ 事实 40 同族）✓
-    #   ★★ 现已建表（10 条，`anchor_quote` 逐字取自 `known-facts.md`）**并把闸接在这里** ——
-    #     ★ 负例实测：★ 改掉一条的锚点 ⇒ **退出码 1 并点名 id**（★ 事实 62：负例是唯一证明）✓
+    # ★★ 现已建表（10 条，`anchor_quote` 逐字取自 `known-facts.md`）**并把闸接在这里** —
+    # —
+    # ★ 负例实测：★ 改掉一条的锚点 ⇒ **退出码 1 并点名 id**（★ 事实 62：负例是唯一证明）
+    # ✓
     refuted = _run_refuted_patterns_gate()
     if refuted.get("status") == "fail":
         raise AssertionError(
@@ -1974,7 +2024,8 @@ def run_release_check() -> dict[str, object]:
             + str(refuted.get("output", "")))
     # ⚑ **探针复用门禁**（硬门禁，2026-10-07 接手轮接进 · 交接文档 §五-2）：
     #   ★ 判「**是不是又手搓了一个已有工具的替代品**」——
-    #     ★ 356 个 `tools/probe_*` / `prove_*` 里，名字冲着某能力去、又真调了该能力实现函数的，
+    # ★ 356 个 `tools/probe_*` / `prove_*` 里，名字冲着某能力去、又真调了该能力实现函数
+    # 的，
     #       就是「这个能力已经有工具了、我却自己写了一遍」✓
     #   ★★ 存量 21 条已逐条登记进 `docs/probe-reuse-baseline.json`（**带理由**）⇒
     #     ★ 未登记的**新增命中**才拦发布 —— ★ 棘轮（ratchet），不是一次性清零 ✓
@@ -1984,12 +2035,15 @@ def run_release_check() -> dict[str, object]:
             "探针复用门禁未通过（探针手搓了已有工具的替代品；★ 请改走工具层，"
             "或把「确实不能改」的登记进 docs/probe-reuse-baseline.json 并写明理由）：\n"
             + str(probe_reuse.get("output", "")))
-    # ⚑ **预选族门禁**（硬门禁，2026-10-07 接手轮接进；★ recon §四-3 点名要建 · ROADMAP 下一步候选 ①）：
-    #   ★ 判「**要求调用方先选、而模型没有任何办法选**」—— ★ 那就是「注册 ≠ 能跑」里最隐蔽的一类：
+    # ⚑ **预选族门禁**（硬门禁，2026-10-07 接手轮接进；★ recon §四-3 点名要建 · ROADMAP 
+    # 下一步候选 ①）：
+    # ★ 判「**要求调用方先选、而模型没有任何办法选**」—— ★ 那就是「注册 ≠ 能跑」里最隐蔽
+    # 的一类：
     #     缺选区时它**不报错**，只是静默返回 None / 特征树不动 ✗
     #   ★★ 机制是**事实 503**：`RESOLVERS[inj]` 会清空选区（真机证据已落盘）⇒
     #     ★ 选区**必须**由 `pre_call` 在注入**之后**重建 ✓
-    #   ★★ 存量 14 条已逐条读函数体落档进 `docs/preselect-family-baseline.json`（带 verdict + 理由）✓
+    # ★★ 存量 14 条已逐条读函数体落档进 `docs/preselect-family-baseline.json`（带 verdic
+    # t + 理由）✓
     preselect_family = _run_preselect_family_gate()
     if preselect_family.get("status") == "fail":
         raise AssertionError(
@@ -2038,8 +2092,10 @@ def run_release_check() -> dict[str, object]:
             + str(unreachable.get("output", "")))
     # ⚑ **属性形成员名门禁**（硬门禁，2026-10-04 接手轮接进 · 事实 520）：
     #   ★ 判「**官方那个成员是属性，而代码把它当方法叫**」—— ★ 两个官方源同时成立才算
-    #   （★ 只有反射会误伤几百处：`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有页**）。
-    #   ★★ 既有三道名字门禁都漏这一类（各因见 `_run_property_form_members_gate` 的来源块）。
+    # （★ 只有反射会误伤几百处：`GetBodies2` / `GetCurrentSheet` 都是**官方方法、各有页*
+    # *）。
+    # ★★ 既有三道名字门禁都漏这一类（各因见 `_run_property_form_members_gate` 的来源块）
+    # 。
     property_form = _run_property_form_members_gate()
     if property_form.get("status") == "fail":
         raise AssertionError(
@@ -2054,7 +2110,8 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "用户偏好写入门禁未通过（有不可还原的全局偏好写入 ⇒ 会留在用户的 SolidWorks 里）：\n"
             + str(pref_writes.get("output", "")))
-    # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录，
+    # ⚑ **工作区遮蔽门禁**（硬门禁）：工作区根若有与 `server.py` 依赖包同名的 `.py`/目录
+    # ，
     #   以该工作区为 CWD 的 Python 进程就会 `import` 到**那个本地文件**而不是真包
     #   （实测：`D:\AI\SW\mcp.py` 遮蔽 `mcp` ⇒ `No module named 'mcp.server'`）。
     #   ⚠⚠ **它此前不在这个列表里** ⇒ **红着也没人知道**（轮 70 实测才发现）。
@@ -2081,7 +2138,8 @@ def run_release_check() -> dict[str, object]:
     #     ⇒ 读者拿 §四 去对 §一 **对不上** —— 而那正是 **A8** 要的东西（「报告写明…」）
     #       **自己没做到**。同类问题此前已犯过一次（旧 §一 的「A1」指官方 API 覆盖）。
     #     ★ **靠人记必然再漂** ⇒ 把「编号一致」变成机器判据。
-    #   ⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时它**自己 SKIP 并 exit 0**。
+    # ⚠ **便携性**：`AGENTS.md` 在工作区（不在本仓库）⇒ 拿不到时它**自己 SKIP 并 exit 0*
+    # *。
     crit_align = _run_report_criteria_alignment_gate()
     if crit_align.get("status") == "fail":
         raise AssertionError(
@@ -2091,7 +2149,8 @@ def run_release_check() -> dict[str, object]:
     #   必须**自证变换生效** —— 否则那个"坏输入"等于真输入，**用例空转却显示通过**。
     #   ⚠⚠ 触发它的是 2026-10-01 轮 84 撞见的**假用例**：删逐模块表的正则**没匹配上**
     #     ⇒ 门禁照常 `[PASS]`，而它被当成了"修好了"的证据（轮 83 的结论建立在此）。
-    #   ★ **假用例比没有用例更糟**。同族见已知事实 62（门禁写了不等于有效），只是发生在**测试**上。
+    # ★ **假用例比没有用例更糟**。同族见已知事实 62（门禁写了不等于有效），只是发生在**
+    # 测试**上。
     selfproof = _run_negative_input_selfproof_gate()
     if selfproof.get("status") == "fail":
         raise AssertionError(
@@ -2163,7 +2222,8 @@ def run_release_check() -> dict[str, object]:
     # ⚑ **分发口调用点的非字面量实参门禁**（硬门禁，2026-10-09 · spec 235）：
     #   37 个分发口的 362 个调用点里，8 个把成员名以**非字面量**传入 ⇒ `audit_byref_args`
     #   看不见，而 `resolution()` 只把入口分类计数。本门禁要求：能枚举 ⇒ 每个候选值必须在
-    #   官方两源里查得到（否则按 `probe` 表态）；枚举不出 ⇒ 必须表态 `dynamic` / `upstream`。
+    # 官方两源里查得到（否则按 `probe` 表态）；枚举不出 ⇒ 必须表态 `dynamic` / `upstream
+    # `。
     #   三个 code 都自带自证条件（含 `upstream` 的 caller 名必须等于实际包围 `def`）。
     dispatch_fwd = _run_dispatch_forward_arg_gate()
     if dispatch_fwd.get("status") == "fail":
@@ -2183,7 +2243,8 @@ def run_release_check() -> dict[str, object]:
             "分发口 upstream 声明的上游桶未表态 / 与事实不符 / 上游调用点非字面量 / 候选值查不到：\n"
             + str(dispatch_upstream.get("output", "")))
     # ⚑ **`CreateDefinition` 站点处置门禁**（硬门禁）：非 `checked` 站点必须逐站点表态，
-    #   且四个 code（`unmapped` / `empty-members` / `no-members-used` / `dynamic`）各自自证。
+    # 且四个 code（`unmapped` / `empty-members` / `no-members-used` / `dynamic`）各自自
+    # 证。
     #   立它的真因：原诊断把四种处置**合成一个「跳过 5」** ⇒ 一次把 `checked` 退化成
     #   `unmapped` 的回归**完全不可见**；★ 而 `dynamic` 那条守卫当场量出
     #   `module_consts` 的窄正则（带尾注释的常量行读不到）。
@@ -2195,7 +2256,8 @@ def run_release_check() -> dict[str, object]:
     # ⚑ **`CreateDefinition` 宿主域门禁**（硬门禁）：常量必须落在**官方宿主页**的域内 ——
     #   `unmapped` 的常量若出现在任一官方 `CreateDefinition` 页 ⇒ 必须补映射（不许逃避）；
     #   官方**逐条点名**的接口不得被人工表/文本匹配覆盖；多宿主点名不一致 ⇒ 不猜。
-    #   立它的真因：映射表**只**认 `IFeatureManager` ⇒ 「属别的宿主」与「官方不支持」在读数上**同形**。
+    # 立它的真因：映射表**只**认 `IFeatureManager` ⇒ 「属别的宿主」与「官方不支持」在读
+    # 数上**同形**。
     cd_host = _run_cd_host_scope_gate()
     if cd_host.get("status") == "fail":
         raise AssertionError(
@@ -2221,9 +2283,12 @@ def run_release_check() -> dict[str, object]:
             + str(union.get("output", "")))
     # ⚑ **参数绑定门禁**（硬门禁）：每个工具声明的参数名必须**有归属** ——
     #   要么在目标函数的形参表里，要么在 `param_alias` 里。
-    #   触发它的是 **2026-10-01 两次真实事故**：W7 的 `magnitude_n` 与 段1.1 的 `study_name`
-    #   都**漏写 `param_alias`** ⇒ 真机 `TypeError`（★ 两次都是"走工具真实路径"的证据脚本抓到的）。
-    #   ★ **"记下来"不等于"下次不犯"** ⇒ 本门禁把那类变成**机器检查**（并用负例证明过它抓得住）。
+    # 触发它的是 **2026-10-01 两次真实事故**：W7 的 `magnitude_n` 与 段1.1 的 `study_nam
+    # e`
+    # 都**漏写 `param_alias`** ⇒ 真机 `TypeError`（★ 两次都是"走工具真实路径"的证据脚本
+    # 抓到的）。
+    # ★ **"记下来"不等于"下次不犯"** ⇒ 本门禁把那类变成**机器检查**（并用负例证明过它抓
+    # 得住）。
     param_binding = _run_param_binding_gate()
     if param_binding.get("status") == "fail":
         raise AssertionError(
@@ -2276,7 +2341,8 @@ def run_release_check() -> dict[str, object]:
     # ⚑ **验收命令可跑性门禁**（硬门禁）：`specs/**/*.md` 的 `→ 验收:` 行点到的脚本
     #   必须在**仓库里**（ROADMAP §〇 纪律三「验收必须是可跑的命令」）。
     #   触发它的是 2026-10-01 实测到的 **2 例仓库外验收脚本**。
-    #   ⚠ **便携性**：specs 目录不在本机时它**自己 SKIP 并 exit 0** ⇒ 别的机器上不会无条件红。
+    # ⚠ **便携性**：specs 目录不在本机时它**自己 SKIP 并 exit 0** ⇒ 别的机器上不会无条件
+    # 红。
     spec_paths = _run_spec_acceptance_paths_gate()
     if spec_paths.get("status") == "fail":
         raise AssertionError(
@@ -2285,14 +2351,16 @@ def run_release_check() -> dict[str, object]:
     # ⚑ **交付报告数字新鲜度门禁**（硬门禁）：`docs/harvest-report.md` 声称的
     #   「偏离上游：N 个文件 / +N 行 / -N 行 · N 个 commit」必须与 git 实际相符。
     #   触发它的是 2026-10-01（轮 54）实测的**8 倍/20 倍/10 倍**偏差 ——
-    #   此前 `REQUIRED_ABILITY_FILES` **只查这两份报告存在，不查数字** ⇒ 报告可烂 50 轮而门禁全绿。
+    # 此前 `REQUIRED_ABILITY_FILES` **只查这两份报告存在，不查数字** ⇒ 报告可烂 50 轮而
+    # 门禁全绿。
     #   ⚠ **便携性**：报告没有那行、或拿不到 `origin/main` ⇒ 它**自己 SKIP 并 exit 0**。
     report_fresh = _run_report_freshness_gate()
     if report_fresh.get("status") == "fail":
         raise AssertionError(
             "交付报告数字新鲜度门禁未通过（harvest-report 的偏离数字与 git 不符）：\n"
             + str(report_fresh.get("output", "")))
-    # ⚑ **`.py` 语法门禁**（硬门禁）：`scripts/` `tools/` `tests/` `mcp-server/` `subskills/`
+    # ⚑ **`.py` 语法门禁**（硬门禁）：`scripts/` `tools/` `tests/` `mcp-server/` `subski
+    # lls/`
     #   下**每个** `.py` 必须能 `ast.parse`。★ 触发它的是**本会话同一处踩了五次**：
     #   新建文件时把**来源块写进了头部三引号里**（忘了闭合）⇒ Python 报的是
     #   `SyntaxError: invalid character '★'`（**错误信息指向星号、不是真因**），
@@ -2335,7 +2403,8 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "known-facts 逐条处置门禁未通过（有事实没被判定）：\n"
             + str(kf.get("output", "")))
-    # ⚑ **量化断言出处门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §2.3
+    # ⚑ **量化断言出处门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §2.
+    # 3
     #   —— 经验①「事实/尺寸来源分级」的改造后采纳形态。
     #   ★ 判据：`docs/*.md` 增量行里的量化断言必须能追溯到出处。
     #   ★ 存量不查（同 `scripts/check_provenance.py` 的增量范式）。
@@ -2357,14 +2426,16 @@ def run_release_check() -> dict[str, object]:
     #   「避免局部很整洁、整体很混乱；同一个功能多个函数重复实现；同一个东西命名不一样」。
     #   ★ 为什么必须有这一道：本仓 50+ 道门禁**每道只管一摊**，
     #     **没有一道在看"全局一致性"** ⇒ 局部全绿而整体可能已分裂。
-    #   ★ 判据：`scripts/check_repo_uniformity.py` 六条指标 + `docs/repo-uniformity-baseline.json`
+    # ★ 判据：`scripts/check_repo_uniformity.py` 六条指标 + `docs/repo-uniformity-baseli
+    # ne.json`
     #     （★ 基线**只许降不许升**）。
     ru = _run_repo_uniformity_gate()
     if ru.get("status") == "fail":
         raise AssertionError(
             "仓库统一化体检未通过（局部整洁但整体可能已分裂）：\n"
             + str(ru.get("output", "")))
-    # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有文档吗」。
+    # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有
+    # 文档吗」。
     #   ★ 判据：\docs/tools-index.md\ 的集合与描述都要与 \	ools/*.py\ 一致
     #     （★ 生成物最大的风险是「生成了但没人重生成 ⇒ 索引变成谎言」）。
     tix = _run_tools_index_fresh_gate()
@@ -2404,9 +2475,11 @@ def run_release_check() -> dict[str, object]:
             "判据前置门禁未通过（有判据没登记清楚、或它的“已知成功”证据不成立）：\n"
             + str(jp.get("output", "")))
     #: ★ 注入绑定门禁（硬）：每条 ToolSpec 声明的 inject 必须覆盖包装的必需对象形参。
-    #:   ⚠ 它**必须紧跟自己的 fail 检查** —— 元门禁 `check_gate_wiring.py` 判 hard/diagnostic
+    #: ⚠ 它**必须紧跟自己的 fail 检查** —— 元门禁 `check_gate_wiring.py` 判 hard/diagnos
+    #: tic
     #:   看的就是「该赋值节点的**下一个兄弟语句**是不是 fail 检查」。
-    #:   ★ 我第一版把它插在 `jp` 与 `jp` 的检查**之间** ⇒ 两条一起被判成 diagnostic（实测）。
+    #: ★ 我第一版把它插在 `jp` 与 `jp` 的检查**之间** ⇒ 两条一起被判成 diagnostic（实测
+    #: ）。
     ib = _run_inject_binding_gate()
     if ib.get("status") == "fail":
         raise AssertionError(
@@ -2428,10 +2501,12 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "in,out 数组形参审计的契约未通过（产物缺失/过期，或审计的安全边界被删）：\n"
             + str(inout.get("output", "")))
-    # ⚑ **签名审计表新鲜度门禁**（硬门禁）：`docs/signature-audit.md` 的**逐模块调用点数**
+    # ⚑ **签名审计表新鲜度门禁**（硬门禁）：`docs/signature-audit.md` 的**逐模块调用点数
+    # **
     #   必须与实跑 `scripts/audit_call_arity.py` 的结果相符（A5 的制品）。
     #   触发它的是 2026-10-01（轮 55）实测的 **3/6 模块失真** ——
-    #   与 `harvest-report` **完全同型**的缺口（只查存在、不查数字），只是这份还能**实跑复核**。
+    # 与 `harvest-report` **完全同型**的缺口（只查存在、不查数字），只是这份还能**实跑复
+    # 核**。
     #   ⚠ **便携性**：拿不到 `D:\AI\SW\_raw` 或模块文件 ⇒ 它**自己 SKIP 并 exit 0**。
     sig_fresh = _run_signature_audit_freshness_gate()
     if sig_fresh.get("status") == "fail":
@@ -2446,8 +2521,10 @@ def run_release_check() -> dict[str, object]:
         raise AssertionError(
             "A6 许可红线门禁未通过（来源声明 vs 许可白名单）：\n"
             + str(license_rl.get("output", "")))
-    # ⚑ **A8 交付状态摘要门禁**（硬门禁）：`docs/harvest-digest.md` 必须与生成器输出一致 ——
-    #   把 `AGENTS.md §一 A8`「报告写明并入了什么 / 仍空缺什么 / 为什么」做成**可跑的那一半**。
+    # ⚑ **A8 交付状态摘要门禁**（硬门禁）：`docs/harvest-digest.md` 必须与生成器输出一致
+    #  ——
+    # 把 `AGENTS.md §一 A8`「报告写明并入了什么 / 仍空缺什么 / 为什么」做成**可跑的那一
+    # 半**。
     #   ⚠ 它是**生成物**：与真源分叉时报告就在**说假话**，而这类分叉**不会自己暴露**。
     digest_fresh = _run_digest_freshness_gate()
     if digest_fresh.get("status") == "fail":
@@ -2464,7 +2541,8 @@ def run_release_check() -> dict[str, object]:
         suffix = " ..." if len(bundled_drift) > 10 else ""
         # ⚠ **把「该怎么办」写进报错里**（2026-10-01）：原来只报
         #   `桌面内嵌 Skill 与根 Skill 不一致: <bundled-skill-missing>`，
-        #   **看不出来那是一步**没跑的构建**（该目录在 `.gitignore` 里，是 `sync_bundled_skill.py`
+        # **看不出来那是一步**没跑的构建**（该目录在 `.gitignore` 里，是 `sync_bundled_s
+        # kill.py`
         #   生成的产物）⇒ 新人会以为是代码 bug。
         #   ⇒ 本分支现在**分开报两种情况**，并给出**可直接执行的修复命令**。
         if bundled_drift == ["<bundled-skill-missing>"]:
@@ -2496,24 +2574,31 @@ def run_release_check() -> dict[str, object]:
         "diff_markers": markers,
         "member_names": member_names,
         #: ★★ 2026-10-04（接手轮）★ **同一道元门禁第**三次**教同一课** ——
-        #:   我加了 `_run_refuted_patterns_gate` 与它的 fail 判据，**却没汇总进 `_gate_results`**
+        #: 我加了 `_run_refuted_patterns_gate` 与它的 fail 判据，**却没汇总进 `_gate_res
+        #: ults`**
         #:   ⇒ 它报「`refuted` 的结果**没有进返回体** ⇒ ★ **静默跳过与没跑等价**」⚠
-        #:   ★ 这与前两次（轮 579 的 `unreachable` · 轮 594 的 `verified_evidence`）**逐字同型** ✓
+        #: ★ 这与前两次（轮 579 的 `unreachable` · 轮 594 的 `verified_evidence`）**逐字
+        #: 同型** ✓
         "refuted": refuted,
-        #: ★ 2026-10-07（接手轮）★ 同一道元门禁**第四次**教同一课 ⇒ ★ 两处**必须同时加** ✓
+        #: ★ 2026-10-07（接手轮）★ 同一道元门禁**第四次**教同一课 ⇒ ★ 两处**必须同时加**
+        #:  ✓
         "probe_reuse": probe_reuse,
-        #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★ 元门禁在守）✓
+        #: ★ 2026-10-07（接手轮）★ **第五次**同一课：预选族门禁也必须**两处同时加**（★ 
+        #: 元门禁在守）✓
         "preselect_family": preselect_family,
         #: ★ 2026-10-07（接手轮 · 规格 215）★ **第六次**同一课：首句自证门禁
         #:   ★ 也必须**两处同时加**（★ `check_gate_wiring.py` 会拦"没进返回体"）✓
         "lean_first_line": lean_first,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
-        #:   `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价」⚠
+        #: `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价
+        #: 」⚠
         "unreachable": unreachable,
-        #: ★ 2026-10-04（接手轮）★ **同一道元门禁第三次教同一课**：新门禁必须**进返回体**
+        #: ★ 2026-10-04（接手轮）★ **同一道元门禁第三次教同一课**：新门禁必须**进返回体*
+        #: *
         #:   —— ★ 否则「静默跳过」与「没跑」等价（`check_gate_wiring.py` 会拦）✓
         "property_form_members": property_form,
-        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守）
+        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守
+        #: ）
         "user_preference_writes": pref_writes,
         #: ★ 2026-10-03（轮 594）★ 同一道元门禁，★ **第二次**教了同一课
         "verified_evidence": verified_ev,
@@ -2522,9 +2607,11 @@ def run_release_check() -> dict[str, object]:
         "workspace_shadowing": shadowing,
         "gate_wiring": wiring,
         "param_binding": param_binding,
-        #: ★ 2026-10-10（业主点破「知道了还再犯」）★ 单位纪律门禁 —— ★ 两处都必须加（元门禁在守）
+        #: ★ 2026-10-10（业主点破「知道了还再犯」）★ 单位纪律门禁 —— ★ 两处都必须加（元
+        #: 门禁在守）
         "length_units": length_units,
-        #: ★ 2026-10-11（业主第三次点破同一病）★ 单位**换算次数**门禁 —— ★ 两处都必须加（元门禁在守）
+        #: ★ 2026-10-11（业主第三次点破同一病）★ 单位**换算次数**门禁 —— ★ 两处都必须加
+        #: （元门禁在守）
         "unit_conversion_count": unit_count,
         "union_conventions": union,
         "env_pitfalls": env_pitfalls,
@@ -2537,10 +2624,12 @@ def run_release_check() -> dict[str, object]:
         "report_criteria_alignment": crit_align,
         "negative_input_selfproof": selfproof,
         "enum_values": enum_values,
-        #: ★ 2026-10-09（spec 227）：`*_ARITY` 表 × 出厂反射门禁 —— ★ 与其余硬门禁同处登记
+        #: ★ 2026-10-09（spec 227）：`*_ARITY` 表 × 出厂反射门禁 —— ★ 与其余硬门禁同处登
+        #: 记
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "arity_tables": arity_tables,
-        #: ★ 2026-10-09（spec 228）：`call_assembly_doc` 调用形状门禁 —— ★ 与其余硬门禁同处登记
+        #: ★ 2026-10-09（spec 228）：`call_assembly_doc` 调用形状门禁 —— ★ 与其余硬门禁
+        #: 同处登记
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "assembly_doc_call_shape": assembly_doc_shape,
         #: ★ 2026-10-09（spec 229）：分发口守卫覆盖门禁 —— ★ 与其余硬门禁同处登记
@@ -2554,20 +2643,25 @@ def run_release_check() -> dict[str, object]:
         #:   （46 个）**只被计数、无判据**；本门禁要求候选值在官方两源里查得到、
         #:   否则必须表态（`dynamic` / `probe`，两个逃生门都自带自证条件）✓
         "dispatch_arg_guard": dispatch_arg,
-        #: ★ 2026-10-09（spec 235）：分发口**调用点**的非字面量实参门禁 —— 362 个调用点里
+        #: ★ 2026-10-09（spec 235）：分发口**调用点**的非字面量实参门禁 —— 362 个调用点
+        #: 里
         #:   8 个把成员名以非字面量传入（`audit_byref_args` 看不见）；本门禁要求候选值在
-        #:   官方两源里查得到、否则表态（`dynamic` / `upstream` / `probe`，都自带自证条件）✓
+        #: 官方两源里查得到、否则表态（`dynamic` / `upstream` / `probe`，都自带自证条件
+        #: ）✓
         "dispatch_forward_arg_guard": dispatch_fwd,
         #: ★ 2026-10-09（spec 236）：分发口 `upstream` 声明的**上游覆盖**门禁 ——
         #:   235 的 `upstream` 只自证形态，**从不检查上游 `def` 的调用方传了什么** ⇒
-        #:   半开的逃生门；本门禁要求声明带上游桶且桶与事实相符（`sites` / `tool-only` / `orphan`）✓
+        #: 半开的逃生门；本门禁要求声明带上游桶且桶与事实相符（`sites` / `tool-only` / `
+        #: orphan`）✓
         "dispatch_upstream_guard": dispatch_upstream,
         #: ★ 2026-10-09（spec 237）：`CreateDefinition` 站点的**逐站点处置**门禁 ——
-        #:   原诊断把 `dynamic` / `unmapped` / `empty-members` / `no-members-used` **合成一个
+        #: 原诊断把 `dynamic` / `unmapped` / `empty-members` / `no-members-used` **合成
+        #: 一个
         #:   「跳过 N」**（静默降级）；本门禁要求非 `checked` 站点逐站点表态且自证 ✓
         "cd_site_disposition": cd_site,
         #: ★ 2026-10-09（spec 238）：`CreateDefinition` 站点的**宿主域**门禁 ——
-        #:   映射表**只**认 `IFeatureManager`（官方其实有 `IFeatureManager` / `IMotionStudy`
+        #: 映射表**只**认 `IFeatureManager`（官方其实有 `IFeatureManager` / `IMotionStud
+        #: y`
         #:   两个宿主页）⇒ 「常量属别的宿主」与「官方根本不支持它」在读数上**同形**；
         #:   本门禁要求常量落在官方宿主域内、且官方点名不得被覆盖 ✓
         "cd_host_scope": cd_host,
@@ -2576,7 +2670,8 @@ def run_release_check() -> dict[str, object]:
         #:   （★ 静默跳过与没跑等价；★ 这条元门禁当场抓到过两次）。
         "official_md_claims": official_md,
         "interface_ownership": ownership,        #: ★ 2026-10-01（轮 356）：**`.py` 语法门禁**必须汇总进返回体 ——
-        #:   元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外面**看不见**
+        #: 元门禁当场报了「`py_syntax` 的结果**没有进返回体** ⇒ 『它跳过了/它没跑』在外
+        #: 面**看不见**
         #:   （★ 静默跳过与没跑等价）」。★ **这条正是元门禁存在的意义**（轮 191 的定则）。
         "py_syntax": py_syntax,
         #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
@@ -2610,26 +2705,32 @@ def run_release_check() -> dict[str, object]:
         #:   ⚠ 而这一条**又是元门禁当场抓到的**（第三次同一类）：
         #:   我只加了 gate 与 fail 判据，却没汇总进 `_gate_results`
         #:   ⇒ 元门禁报「`inout` 的结果没有进返回体 ⇒ 『它跳过了/它没跑』在外面看不见」。
-        #:   ★★ 那已是元门禁**第三次**抓到它（轮 356 `py_syntax` · 轮 404 `undef` · 本轮 `inout`）。
+        #: ★★ 那已是元门禁**第三次**抓到它（轮 356 `py_syntax` · 轮 404 `undef` · 本轮 `
+        #: inout`）。
         "inout_array_audit": inout,
         #: ★ 2026-10-03（轮 420）：判据前置也必须进返回体（元门禁的第三条）
         "judge_preflight": jp,
         "inject_binding": ib,
         #: ★ 2026-10-03（轮 450）：服务端侧工具名也进返回体（元门禁的第三条）
         "server_side_tools": ss,
-        #: ★ 2026-10-21（业主指令「整体统一化」）：仓库统一化体检 —— ★ 与其余硬门禁同处登记
+        #: ★ 2026-10-21（业主指令「整体统一化」）：仓库统一化体检 —— ★ 与其余硬门禁同处
+        #: 登记
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "repo_uniformity": ru,
     }
-    # ⚠ 容错：不是每个 `_run_*` 都保证返回 dict ⇒ 取不到就标 `unknown`（**不谎报 `pass`**）。
+    # ⚠ 容错：不是每个 `_run_*` 都保证返回 dict ⇒ 取不到就标 `unknown`（**不谎报 `pass`*
+    # *）。
     gates: dict = {}
-    #: ⚑⚑ **2026-10-01（轮 191）：`gates` 与 `gate_details` 在**同一个循环**里一起建** ——
+    #: ⚑⚑ **2026-10-01（轮 191）：`gates` 与 `gate_details` 在**同一个循环**里一起建** —
+    #: —
     #:   这样两者**不可能分叉**（一个门禁要么两处都有，要么两处都没有）。
-    #: ★ 为什么加 `gate_details`：轮 74 已经把「**13 个门禁的 `status`**」和 `skipped` 都暴露了，
+    #: ★ 为什么加 `gate_details`：轮 74 已经把「**13 个门禁的 `status`**」和 `skipped` 
+    #: 都暴露了，
     #:   但**每道门禁的 `output`（「扫了多少 / 跳过了什么 / 覆盖面在哪」）仍只有 4 道有**
     #:   ⇒ ★★ 于是「**status 隐形**」修好了，「**覆盖面隐形**」没修 ——
     #:   而**「判据没覆盖」与「没有问题」在输出上长得一模一样**（轮 190 的定则）。
-    #: ⇒ 现在每道门禁都带一条**明细**（优先 `output`，其次 `reason`，最后退回 `status`），
+    #: ⇒ 现在每道门禁都带一条**明细**（优先 `output`，其次 `reason`，最后退回 `status`）
+    #: ，
     #:   于是「它到底扫了什么」**永远可见**，不必去翻各门禁自己的源码。
     gate_details: dict = {}
     for _name, _res in _gate_results.items():
@@ -2647,9 +2748,11 @@ def run_release_check() -> dict[str, object]:
         "bundled_skill_files": bundled_file_count,
         # ⚑ **13 个门禁的状态一次全列**（此前只列 4 个 ⇒ 其余是隐形的）
         "gates": gates,
-        # ⚑ **每道门禁的明细**（轮 191 加）：优先 `output`（它说的是**扫了多少 / 跳过了什么**），
+        # ⚑ **每道门禁的明细**（轮 191 加）：优先 `output`（它说的是**扫了多少 / 跳过了
+        # 什么**），
         #   其次 `reason`，最后退回 `status` ⇒ ★ **保证每道都非空**（与 `gates` 同键）。
-        #   ⚠ 截断到 700 字符：完整的 output 由各门禁自己的 stdout 提供，这里只要**够读**。
+        # ⚠ 截断到 700 字符：完整的 output 由各门禁自己的 stdout 提供，这里只要**够读**
+        # 。
         "gate_details": gate_details,
         # ⚑ **被跳过的单独列出**：跳过的门禁**没有在检查** ⇒ 必须一眼可见
         "skipped": skipped,
@@ -2673,11 +2776,13 @@ def run_release_check() -> dict[str, object]:
         "preselect_family": preselect_family,
         #: ★ 2026-10-07（接手轮 · 规格 215）★ 首句自证门禁的**第二处**（★ 元门禁要的）✓
         "lean_first_line": lean_first,
-        #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点** ⚠
+        #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点*
+        #: * ⚠
         "unreachable": unreachable,
         #: ★ 2026-10-04（接手轮）★ 新门禁的**第二处**（★ 两处必须同时加）✓
         "property_form_members": property_form,
-        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守）
+        #: ★ 2026-10-04（接手轮）★ 交付纪律门禁（事实 525）—— ★ 两处都必须加（元门禁在守
+        #: ）
         "user_preference_writes": pref_writes,
         "verified_evidence": verified_ev,
         "interface_ownership": ownership,

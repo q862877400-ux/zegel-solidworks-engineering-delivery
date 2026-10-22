@@ -4,16 +4,20 @@
 # 仓库:   本项目自身（ToolSpec 声明层）
 # 文件:   mcp-server/tool_specs_batch69.py
 # 定位:   ★ 2026-10-03（轮 476）★ `specs/201-toolbar-gaps` 的 **B6-b**。
-#   实现层在 `scripts/sw_surface_ref_ops.py`；★ 真机证据 `output/b6b-surface-ref-evidence.json`。
+# 实现层在 `scripts/sw_surface_ref_ops.py`；★ 真机证据 `output/b6b-surface-ref-evidence.
+# json`。
 #
 #   ==================  ==========================================  ==================
 #   工具栏原文           官方成员                                      真机
 #   ==================  ==========================================  ==================
-#   放样曲面             `IModelDoc2.InsertLoftRefSurface2`            ✅ **建成**（树 7→8）
-#   旋转曲面             `IFeatureManager.InsertRevolvedRefSurface`   ❌ 前置未成 ⇒ **本批不登记**
+# 放样曲面             `IModelDoc2.InsertLoftRefSurface2`            ✅ **建成**（树 7→8
+# ）
+# 旋转曲面             `IFeatureManager.InsertRevolvedRefSurface`   ❌ 前置未成 ⇒ **本批
+# 不登记**
 #   ==================  ==========================================  ==================
 #
-#   ★★★ **为什么旋转曲面不登记**（★ 这是本仓 A4 的口径：`verified` **必须有我们自己的运行证据**）：
+# ★★★ **为什么旋转曲面不登记**（★ 这是本仓 A4 的口径：`verified` **必须有我们自己的运行
+# 证据**）：
 #     · 真机试过 **4 种**前置（选草图特征 / 轮廓 mark=0 / 轮廓 mark=1 + 中心线 mark=4 /
 #       用本仓 `_select_revolve_axis` + `_ensure_sketch_selected`）—— **都没建成**（树 6→6）。
 #     · ★ 最后那次量到 **`轴选中数 = 5`** ⇒ ★ `_select_revolve_axis` 把该草图里**所有段**
@@ -27,14 +31,16 @@
 #       类型名判据取段，★ 而中心线**可能也是** `EXTSKETCHSEGMENT`，★ 或矩形边被误纳）。
 #
 # ★ 判据 = **特征树叶子名增量**（`sw_part.feature_names`）—— ★ 本条官方回 `void`。
-# ★ 规则 2（`_mm`/`_deg` 只在边界换算一次）· 规则 3（★ 参数是标志/数量，**不是裸坐标**）·
+# ★ 规则 2（`_mm`/`_deg` 只在边界换算一次）· 规则 3（★ 参数是标志/数量，**不是裸坐标**）
+# ·
 #   规则 6（★ 实现层回带 `verified_by` 的 dict）。
 #
 # 官方依据（三源）:
 #   · `C:\\swapi\\types\\IModelDoc2\\InsertLoftRefSurface2.md`
 #     （6 参 `void`；★ "profile selections should be **1**"）
 #   · `C:\\swapi\\types\\IModelDoc2\\InsertLoftRefSurface.md`（★ **Obsolete** 那一行）
-#   · `C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md`（★ 未登记，仅存依据）
+# · `C:\\swapi\\types\\IFeatureManager\\InsertRevolvedRefSurface.md`（★ 未登记，仅存依据
+# ）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

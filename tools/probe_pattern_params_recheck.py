@@ -1,6 +1,7 @@
 """★ 真机验 `pattern_params`（★ 阶段 3 补能力 · 第 3 个 · ★ 换族）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureData\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureDa
+# ta\`）
 # 文件:   `scripts/sw_feature_readback.py::pattern_params`（★ **刚补的能力**）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **判据（★ 逐个对官方 `## Returns`）**：

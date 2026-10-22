@@ -5,24 +5,34 @@
 # 文件:   scripts/sw_sketch_relations.py
 # 定位:   ★ 目标 goal-d2098c24 —— ★★ 用户 2026-10-08 逐字：「**你把给草图加定义做成一
 #           个专门的工具，
-#         相当于它和画圆、画圈工具是同级别的，它专门就是用来加定义的。那它这个定义是：哪几条线互相平行，
-#         哪条是垂直的，哪两个是同心圆，这些东西，你每一轮都要把所有这些几何关系该加的都加上。**」✓
+# 相当于它和画圆、画圈工具是同级别的，它专门就是用来加定义的。那它这个定义是：哪几条线互
+# 相平行，
+# 哪条是垂直的，哪两个是同心圆，这些东西，你每一轮都要把所有这些几何关系该加的都加上。**
+# 」✓
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
-#   · ★ 官方例 `C:\swapi\examples\Constrain_Sketch_Example_CSharp.md`（**99 行** ✓）逐字调用序：
-#     ★ `SelectByID2(段, "SKETCHSEGMENT", …, mark)` ⇒ ★ `SketchAddConstraints("sgCOLINEAR")` ⇒
+# · ★ 官方例 `C:\swapi\examples\Constrain_Sketch_Example_CSharp.md`（**99 行** ✓）逐字调
+# 用序：
+# ★ `SelectByID2(段, "SKETCHSEGMENT", …, mark)` ⇒ ★ `SketchAddConstraints("sgCOLINEAR")`
+#  ⇒
 #     ★ `ClearSelection2(true)` ⇒ ★ 重复 —— ★ 官方**也是逐条加** ✓（★ 共 6 条 ✓）
-#   · ★ 官方例 `Fully_Define_Underdefined_Sketch_Example_CSharp.md`（**73 行** ✓）：★ 正解是
+# · ★ 官方例 `Fully_Define_Underdefined_Sketch_Example_CSharp.md`（**73 行** ✓）：★ 正解
+# 是
 #     ★ **给基准点打 mark（`lMarkHorizontal | lMarkVertical`）+ `InsertSketch` 进出草图** ✓
 #     ★ **不是靠堆关系** ✗（★ 这正是用户批评的"过定义" ✗）
-#   · ★ `ISketchSegment` 成员表：★ **`GetRelationsCount`** ✓（★ 真判据 ✓）· ★ `GetConstrainedStatus` ✓
+# · ★ `ISketchSegment` 成员表：★ **`GetRelationsCount`** ✓（★ 真判据 ✓）· ★ `GetConstrai
+# nedStatus` ✓
 # ★★ 外部 MIT 项目证据（★ 铁律 1 的合法来源 ✓）：
-#   · ★ **Slacker-LLC** `CONTRIBUTING.md:56` 逐字：★「★ **`SketchAddConstraints` silently ignores a
-#     string it does…**」✓ ⇒ ★ 它**不校验**、失败也照回 `True` ✗（★ 我第 10 轮实测 13/13 全 True ✓）
-#   · ★ **Slacker-LLC** `README.md:227` 逐字：★「★ **`ISketchRelationManager.AddRelation` and verifies
+# · ★ **Slacker-LLC** `CONTRIBUTING.md:56` 逐字：★「★ **`SketchAddConstraints` silently 
+# ignores a
+# string it does…**」✓ ⇒ ★ 它**不校验**、失败也照回 `True` ✗（★ 我第 10 轮实测 13/13 全 
+# True ✓）
+# · ★ **Slacker-LLC** `README.md:227` 逐字：★「★ **`ISketchRelationManager.AddRelation` 
+# and verifies
 #     via the relation count**」✓ ⇒ ★ **正解入口 + 判据** ✓
 # 许可:   本仓库 MIT。★ 引用的四家均为 MIT（★ 仅作对照，未抄代码 ✓）。
 # 覆盖:   全文件
-# ★★ 判据：★★ 每条关系 ⇒ **`GetRelationsCount` 真的 +1** ✓（★ 不看返回码 ✗ —— 本仓事实 8 ✓）
+# ★★ 判据：★★ 每条关系 ⇒ **`GetRelationsCount` 真的 +1** ✓（★ 不看返回码 ✗ —— 本仓事实 8
+#  ✓）
 #   ★★ 负例 ①：★ 非法关系名 ⇒ `applied: False` ✗ ★ 负例 ②：★ 已完全定义 ⇒ **拒加** ✗
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -155,7 +165,8 @@ LEGACY_ALIASES: dict[str, str] = {
     "MIDPOINT": "ATMIDDLE",
 }
 
-#: ★ 完全定义的状态码（★ 官方 `GetConstrainedStatus` 取值表未公布 ✗ ⇒ ★ 本仓真机两状态读数 2/3 ✓）
+#: ★ 完全定义的状态码（★ 官方 `GetConstrainedStatus` 取值表未公布 ✗ ⇒ ★ 本仓真机两状态读
+#: 数 2/3 ✓）
 FULLY_DEFINED = 3
 
 
@@ -300,12 +311,15 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     #: ★★★ 2026-10-08 闸门修正（★ 用户 2026-10-08 截图指出"关系加得根本不对"✗）
     #:   ★★ 官方取值表 **逐字**（`C:\swapi\enums\swConstrainedStatus_e.md` ✓，7 个成员）：
     #:     ★ 1 `swUnknownConstraint` · ★ **2 `swUnderConstrained`（欠定义）** ✓ ·
-    #:     ★ **3 `swFullyConstrained`（完全定义）** ✓ · ★ **4 `swOverConstrained`（过定义）** ✗ ·
-    #:     ★ 5 `swNoSolution`（无解）✗ · ★ 6 `swInvalidSolution`（无效）✗ · ★ 7 `swAutosolveOff` ✓
+    #: ★ **3 `swFullyConstrained`（完全定义）** ✓ · ★ **4 `swOverConstrained`（过定义）*
+    #: * ✗ ·
+    #: ★ 5 `swNoSolution`（无解）✗ · ★ 6 `swInvalidSolution`（无效）✗ · ★ 7 `swAutosolve
+    #: Off` ✓
     #:   ★★ 现场铁证：★ 我真机读到的正是 **`status = 4`** ✗，★ 而截图上出现
     #:     **红「项目无法解出」+ 黄「项目冲突」** ✗ ⇒ ★ 我先前**只拦 `== 3`** ✗ ⇒
     #:     ★★ **在已经过定义（4）的草图上还继续加** ✗ ⇒ **越加越坏** ✓
-    #:   ★★★ 正确规则：★★ **只有 `status == 2`（欠定义）才允许加关系** ✓ —— ★ 其余全部**拒加并说明** ✗
+    #: ★★★ 正确规则：★★ **只有 `status == 2`（欠定义）才允许加关系** ✓ —— ★ 其余全部**拒
+    #: 加并说明** ✗
     _STATUS_NAME = {1: "swUnknownConstraint", 2: "swUnderConstrained",
                     3: "swFullyConstrained", 4: "swOverConstrained",
                     5: "swNoSolution", 6: "swInvalidSolution", 7: "swAutosolveOff"}
@@ -325,8 +339,10 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
                          % (_STATUS_NAME.get(st0, "未知"), st0, why),
                 "applied": 0, "total": len(plan), "results": []}
 
-    #: ★ 关系管理器（★ 正解入口 ✓ —— Slacker-LLC 逐字：★ `ISketchRelationManager.AddRelation` ✓）
-    #: ★ 关系管理器（★ 正解入口 ✓）—— ★★ 官方成员页**逐字**（`C:\swapi\types\ISketch\RelationManager.md` ✓）：
+    #: ★ 关系管理器（★ 正解入口 ✓ —— Slacker-LLC 逐字：★ `ISketchRelationManager.AddRela
+    #: tion` ✓）
+    #: ★ 关系管理器（★ 正解入口 ✓）—— ★★ 官方成员页**逐字**（`C:\swapi\types\ISketch\Rel
+    #: ationManager.md` ✓）：
     #:   ★ `**Signature**: SketchRelationManager RelationManager {get;}` ✓
     #: ⇒ ★★ **它是 `ISketch` 上的一个属性，★ 名字就叫 `RelationManager`** ✓
     #:   ★★ 官方例 `Get_Sketch_Relations_Example_CSharp.md` 第 51 行逐字：
@@ -426,8 +442,10 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
             continue
 
         #: ★ 入口 ①（正解）：★ `ISketchRelationManager::AddRelation` ✓
-        #:   ★★ 官方签名**逐字**（`C:\swapi\types\ISketchRelationManager\AddRelation.md` ✓）：
-        #:     ★ `SketchRelation AddRelation( System.object Entities, System.int RelationType )`
+        #: ★★ 官方签名**逐字**（`C:\swapi\types\ISketchRelationManager\AddRelation.md` ✓
+        #: ）：
+        #: ★ `SketchRelation AddRelation( System.object Entities, System.int RelationTyp
+        #: e )`
         #:   ⇒ ★★ **两个形参**：★ `Entities` = **"Array of entities"**（★ 实体数组 ✓）
         #:     + ★ `RelationType` = `swConstraintType_e` 数值 ✓
         #:   ★★ 我第 20 轮只传了**一个**参数 ✗ ⇒ 取不到 ⇒ 自动走兜底 ✓；★ 本轮补齐 ✓

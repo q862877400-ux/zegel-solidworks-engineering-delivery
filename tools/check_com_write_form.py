@@ -25,7 +25,8 @@
 #       ⇒ ★ **报**（写属性走了读/调 helper）✓
 #     ★ 名字在官方源里查不到 ⇒ **不报**（★ 交给 `check_member_names.py`，铁律 5 不猜）
 #     ```
-#   ⚠ **白名单**：本仓少数地方**故意**用 `get_com_member` 传实参去**调方法**（那是**对的**）——
+# ⚠ **白名单**：本仓少数地方**故意**用 `get_com_member` 传实参去**调方法**（那是**对的**
+# ）——
 #     本门禁只报 **`kind: property` 的**，方法与"查不到"都放过 ✓
 #   ⚠ **它自己有负例自证**：`tests/test_com_write_form_gate.py`（事实 62）。
 # 官方依据: `C:\swapi\types\**\*.md` 的 `kind:` 字段（property / method）。
@@ -97,11 +98,14 @@ def main() -> int:
             #:   ★ 本门禁原判据只有一条：「名字在官方源里是 `kind: property`，且传了实参」
             #:   ⇒ ★★ **过宽**：它把**合法的「读」也报了**（★ 实测 4 处假阳性：
             #:     `sw_equation.py` 的 `get_com_member(mgr, "Equation", i)`（**索引属性**，
-            #:     `i` 是**下标**）· `sw_assembly.py` 的 `MateEntityType` / `MateComponentName`（同）·
-            #:     `sw_custom_property.py` 的 `CustomPropertyManager`（★ 官方那是**方法**，收配置名））。
+            #: `i` 是**下标**）· `sw_assembly.py` 的 `MateEntityType` / `MateComponentNa
+            #: me`（同）·
+            #: `sw_custom_property.py` 的 `CustomPropertyManager`（★ 官方那是**方法**，
+            #: 收配置名））。
             #:   ★★ 而"读"与"写"在代码里的区别**就是**：**返回值用不用** ——
             #:     依据是本仓 `sw_connect.set_com_member` 的 docstring（逐字）：
-            #:     > 与已知事实 4（读用 `get_com_member`）成对：**读走 `get_com_member`，写走本函数。**
+            #: > 与已知事实 4（读用 `get_com_member`）成对：**读走 `get_com_member`，写
+            #: 走本函数。**
             #:   ⇒ ★ 故加第二条判据：★ **返回值被使用 ⇒ 那是读 ⇒ 放过**；
             #:     ★ **返回值被丢掉（`ast.Expr`）⇒ 那是写 ⇒ 报** ✓
             #:   ⚠ 这与我在轮 470 找"过度替换"时用的判据**是同一条** —— ★ 现在它进了门禁，
@@ -129,7 +133,8 @@ def main() -> int:
                 name = a1.value
                 if name.lower() not in props:
                     continue
-                #: ★★ 第二条判据：**返回值被使用 ⇒ 那是"读"（或带参的调用）⇒ 不是"写"** ⇒ 放过
+                #: ★★ 第二条判据：**返回值被使用 ⇒ 那是"读"（或带参的调用）⇒ 不是"写"** 
+                #: ⇒ 放过
                 if id(n) in ret_used:
                     continue
                 res["hits"].append({

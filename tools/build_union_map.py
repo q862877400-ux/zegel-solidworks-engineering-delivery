@@ -25,7 +25,8 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCES = ROOT / "tools" / "union-sources.json"
 OUT = ROOT / "docs" / "union-coverage-matrix.md"
 #: ⚑ 「不做 + 原因」的显式清单（`AGENTS.md §一 A1` 的另一半，2026-10-01 轮 67 加）。
-#: 形状由 `check_union_conventions` 的 **R14** 守（`subject`/`reason`/`evidence` 三者非空）。
+#: 形状由 `check_union_conventions` 的 **R14** 守（`subject`/`reason`/`evidence` 三者非
+#: 空）。
 NOT_DOING = ROOT / "docs" / "union-not-doing.json"
 
 #: 域的展示名与顺序（与 docs/union-conventions.md 的域枚举一致）
@@ -269,11 +270,14 @@ def main() -> int:
         A("")
 
     # ⚑ **§二之后：「不做 + 原因」**（2026-10-01 轮 67 加）——
-    #   `AGENTS.md §一 A1` 的原文是「域覆盖矩阵里本仓库每一格**都有来源，或写明「不做 + 原因」**」。
-    #   ⚠ 此前**只有「有来源」那一半有机制**（`capabilities.yaml` 的 `source`/`source_evidence`，
+    # `AGENTS.md §一 A1` 的原文是「域覆盖矩阵里本仓库每一格**都有来源，或写明「不做 + 原
+    # 因」**」。
+    # ⚠ 此前**只有「有来源」那一半有机制**（`capabilities.yaml` 的 `source`/`source_evid
+    # ence`，
     #     由 R12/R13 门禁守着），而「不做 + 原因」**一格机制都没有** ——
     #     矩阵里只有「缺 N」，读者**无从知道哪些是「我们不做」、哪些是「还没做」**。
-    #   ⇒ 数据源 `docs/union-not-doing.json`；形状由 `check_union_conventions` 的 **R14** 守
+    # ⇒ 数据源 `docs/union-not-doing.json`；形状由 `check_union_conventions` 的 **R14** 
+    # 守
     #     （`subject` / `reason` / `evidence` 三者非空）。
     A("### 不做 + 原因（A1 的另一半）")
     A("")

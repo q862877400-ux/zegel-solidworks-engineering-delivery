@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_cut_list_chain.py
 # 定位:   ★ 2026-10-03（轮 429）`plan-200r-v3` **段 2（焊件族）**的第二步。
-#   ★★ **为什么现在值得重试**：★ `capabilities.yaml` 的 `weldment_cut_list`（`level: stitched`）
+# ★★ **为什么现在值得重试**：★ `capabilities.yaml` 的 `weldment_cut_list`（`level: stitc
+# hed`）
 #     记着两条卡点，★ 而它们的**前提在轮 428 已经不成立了**：
 #     ```
 #     · `set_cut_list_properties` 报「**没有可写入切割清单的结构构件实体**」
@@ -19,7 +20,8 @@
 #     ```
 #   ★★ **判据**：★ ① `evidence` 里**真有**切割清单文件夹 ★ ② CSV **文件存在且非空**
 #     （★ 后者是硬约束③的原话：★ "判据是 FILE"）。
-#   ⚠ 只新建、**不保存** SW 文档（★ 硬约束⑦）；★ CSV 写到 `output/`（★ 那是产物目录，★ 不算保存文档）。
+# ⚠ 只新建、**不保存** SW 文档（★ 硬约束⑦）；★ CSV 写到 `output/`（★ 那是产物目录，★ 不
+# 算保存文档）。
 # 官方依据: `IFeatureManager.InsertStructuralWeldment5` · `IWeldmentCutListFeature` 那族
 #           （★ 仓内已有）
 # 许可:   本仓库 MIT。无第三方代码引入。

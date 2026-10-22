@@ -8,13 +8,19 @@
 #   ★★★★★ **而答案本仓早就有了** —— ★ 本轮按「**先扫已走死的路**」（AGENTS.md 那节）查了
 #     `tools/probe_spline_forms.py` 与它的证据 `output/spline-forms.json`：
 #     ```\n
-#     \u2460 \u6241\u5e73 list                     \u21d2 ret=None  \u00b7 \u6bb5 0 \u2192 0   \u2717
-#     \u2461 \u6241\u5e73 tuple                    \u21d2 ret=None  \u00b7 \u6bb5 0 \u2192 0   \u2717
-#     \u2462 **`VARIANT(VT_ARRAY|VT_R8)`**    \u21d2 ret=**`CDispatch`** \u00b7 **\u6bb5 0 \u2192 1** \u2713
-#     \u2463 list of tuples\uff08\u5bf9\u7167\uff09         \u21d2 ret=None             \u2717
+# \u2460 \u6241\u5e73 list                     \u21d2 ret=None  \u00b7 \u6bb5 0 \u2192 0
+#    \u2717
+# \u2461 \u6241\u5e73 tuple                    \u21d2 ret=None  \u00b7 \u6bb5 0 \u2192 0
+#    \u2717
+# \u2462 **`VARIANT(VT_ARRAY|VT_R8)`**    \u21d2 ret=**`CDispatch`** \u00b7 **\u6bb5 0 \
+# u2192 1** \u2713
+# \u2463 list of tuples\uff08\u5bf9\u7167\uff09         \u21d2 ret=None             \u27
+# 17
 #     ```\n
 #     \u21d2 \u2605\u2605 **\u6545\u6b63\u786e\u5f62\u6001 = \u7b2c \u2462 \u79cd**\uff1b
-#       \u2605 \u800c**\u6211\u4e0a\u4e00\u8f6e\u4f20\u7684\u5c31\u662f\u7b2c \u2460 \u79cd\uff08\u6241\u5e73 list\uff09\u2014\u2014 \u5df2\u77e5\u4e0d\u6210\u7684\u90a3\u4e2a** \u26a0
+# \u2605 \u800c**\u6211\u4e0a\u4e00\u8f6e\u4f20\u7684\u5c31\u662f\u7b2c \u2460 \u79cd\uf
+# f08\u6241\u5e73 list\uff09\u2014\u2014 \u5df2\u77e5\u4e0d\u6210\u7684\u90a3\u4e2a** \u
+# 26a0
 #
 #   ★ 官方依据（`C:\swapi\types\ISketchManager\CreateSpline.md` 的 Remarks）：
 #     · `PointData` = **扁平的 X,Y,Z 序列**（★ 至少两个）
@@ -44,7 +50,8 @@ import win32com.client                                               # noqa: E40
 from scripts import sw_connect as C                                   # noqa: E402
 from scripts import sw_part as P                                      # noqa: E402
 
-#: \u2605 \u6241\u5e73\u7684 X,Y,Z \u5e8f\u5217\uff08\u2605 \u5b98\u65b9\u8bf4\u81f3\u5c11\u4e24\u4e2a\uff09
+#: \u2605 \u6241\u5e73\u7684 X,Y,Z \u5e8f\u5217\uff08\u2605 \u5b98\u65b9\u8bf4\u81f3\u5c
+#: 11\u4e24\u4e2a\uff09
 PTS = [-0.02, -0.01, 0.0,
        0.0, 0.02, 0.0,
        0.02, -0.01, 0.0]
@@ -70,7 +77,8 @@ def _one(sw, tag, form):
         ret = None
         try:
             if form == "variant_r8":
-                #: \u2605\u2605 \u7b2c \u2462 \u79cd\uff08\u2605 \u524d\u4eba\u5df2\u8bc1\uff09
+                #: \u2605\u2605 \u7b2c \u2462 \u79cd\uff08\u2605 \u524d\u4eba\u5df2\u8bc
+                #: 1\uff09
                 data = win32com.client.VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_R8, list(PTS))
                 ret = C.call_com_member(sm, "CreateSpline", data)
             elif form == "spline2":

@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（规格 211 · B6 的**处置前置**）
 # 文件:   tools/probe_list_open_docs.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 B6。★★ **它存在的理由是一个死结**：
-#   · ★ `sw_guard` 的预检在**探针运行之前**拒绝开始（★ 因为会话里有"非我方 + 未保存"的文档 ✓）
+# · ★ `sw_guard` 的预检在**探针运行之前**拒绝开始（★ 因为会话里有"非我方 + 未保存"的文档
+#  ✓）
 #   · ★★ 而**清理那个文档要连 COM** ⇒ ★ **要先过预检** ✗ ⇒ **死结** ✓
 #   · ★★★ 出路：★ **用 `--skip-precheck` 跑**这一个**只读**动作** ✓ ——
 #     ★ "信任这次运行"用在**只读**上是可接受的 ✓、★ **而不是**用它去关文档 ✗
@@ -14,9 +15,12 @@
 #   · `C:\swapi\types\ISldWorks\GetDocuments.md`：`System.object GetDocuments()`
 #     ★ `## Returns`：Array of open documents in this SOLIDWORKS Design session ✓
 #   · ★★ `C:\swapi\types\ISldWorks\EnumDocuments2.md` 的 `## Remarks` 逐字：
-#     「… contain any open `IModelDoc2` pointer. ★ **This includes `IModelDoc2` objects that may have
-#      been opened as file references**, for example, from an assembly or drawing. ★ You might want to
-#      use the `IModelDoc::Visible` property to determine if a particular document **has its own window**
+# 「… contain any open `IModelDoc2` pointer. ★ **This includes `IModelDoc2` objects that
+#  may have
+# been opened as file references**, for example, from an assembly or drawing. ★ You migh
+# t want to
+# use the `IModelDoc::Visible` property to determine if a particular document **has its 
+# own window**
 #      and is visible to the user.」✓✓
 #   ⇒ ★★★ **所以"引用文档"会出现在列表里、★ 而没有自己的窗口** ✓
 #     —— ★ 那正是"未保存"那一条的可能身份 ✓

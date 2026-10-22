@@ -79,13 +79,16 @@ def _is_fail_check(stmt, var: str) -> bool:
 #: ⚑ **允许出现 `skipped` 的条件**（2026-10-01 轮 73 加）。
 #: 「同一个问题的第四层」：门禁**接好了**（轮 71）、**方式对了**（轮 72），
 #: 但**它跳过的时候**呢？调用点只看 `"fail"` ⇒ **`skipped` 会被静默放行**。
-#: ⇒ 实测：`release_check.py` 里原有 **5 处**「**无法启动**（`TimeoutExpired`/`OSError`）」
+#: ⇒ 实测：`release_check.py` 里原有 **5 处**「**无法启动**（`TimeoutExpired`/`OSError`
+#: ）」
 #:   返回 `skipped` —— **那是故障，不是便携性**！已全部改成 `fail`。
-#: ⇒ 剩下的 `skipped` 只允许由下面这些**条件**触发（都得是可核的"数据源缺失/脚本约定"）：
+#: ⇒ 剩下的 `skipped` 只允许由下面这些**条件**触发（都得是可核的"数据源缺失/脚本约定"）
+#: ：
 ALLOWED_SKIP_CONDITIONS = (
     "_git_available",       # 非 git 工作树 ⇒ 无法判定新增行（便携性）
     "returncode == 2",      # 脚本自己的 SKIP 约定（`check_provenance.py` 读不到锚点）
-    #: ⚑ 被检查脚本**自己在输出里报 `[SKIP]`** ⇒ 由它驱动状态分类（`_run_interface_ownership_probe`
+    #: ⚑ 被检查脚本**自己在输出里报 `[SKIP]`** ⇒ 由它驱动状态分类（`_run_interface_owner
+    #: ship_probe`
     #:   的 `skipped = any(... startswith("[SKIP]") ...)`）。
     #: ⚠ 本 token 要在**该 `If` 之前若干行**里找（因为条件是**变量**，来源在它上面）——
     #:   第一版判据只看 `If.test`，把这条**合法的** `skipped` 误报成了违规。
@@ -263,7 +266,8 @@ def main() -> int:
                 kind_bad.append("%s 的分类条目缺非空 `%s`" % (runner, field))
         print("    %-40s %-12s ✓" % (runner, act))
 
-    # ⚑ **第四层：`skipped` 的合法性**（2026-10-01 轮 73 加）—— 见 `ALLOWED_SKIP_CONDITIONS`。
+    # ⚑ **第四层：`skipped` 的合法性**（2026-10-01 轮 73 加）—— 见 `ALLOWED_SKIP_CONDITI
+    # ONS`。
     print()
     print("返回 `skipped` 的分支（必须由登记的「数据源缺失/脚本约定」触发）：")
     skips = skip_branches(src)
@@ -279,7 +283,8 @@ def main() -> int:
     if not skips:
         print("    （本文件里没有 `skipped` 分支）")
 
-    # ⚑ **第五层：汇总完整性**（2026-10-01 轮 74 加）—— 每个 `_run_*` 的结果都要进返回体。
+    # ⚑ **第五层：汇总完整性**（2026-10-01 轮 74 加）—— 每个 `_run_*` 的结果都要进返回体
+    # 。
     #   ⚠ 实测：返回体此前只汇总 4 个 ⇒ 其余 9 个**是隐形的**（含"跳过了"这件事）。
     print()
     print("汇总完整性（每个 `_run_*` 的结果都要进 `_gate_results`）：")

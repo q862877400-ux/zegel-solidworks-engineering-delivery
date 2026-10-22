@@ -7,24 +7,32 @@
 #           yRay`）。
 #
 #   ★★ **官方那两页**：
-#     `IModelDocExtension.SelectByRay.md`\uff08\u2605 \u672a\u5e9f\u5f03\uff0c**11 \u53c2**\uff09\uff1a
+# `IModelDocExtension.SelectByRay.md`\uff08\u2605 \u672a\u5e9f\u5f03\uff0c**11 \u53c2**\
+# uff09\uff1a
 #       ```
 #       bool SelectByRay(double WorldX, WorldY, WorldZ, double RayVecX, RayVecY, RayVecZ,
 #                        double RayRadius, int TypeWanted, bool Append, int Mark, int Option)
-#       \u2605 \u8bed\u4e49\uff1a"Defines a **cylindrical region of infinite length** that starts at the
+# \u2605 \u8bed\u4e49\uff1a"Defines a **cylindrical region of infinite length** that sta
+# rts at the
 #          specified point and runs parallel to the ray direction"
-#       \u2605 **\u53ea\u9009** faces/edges/vertices\uff1b\u2605 **\u4e0d\u652f\u6301**\u8349\u56fe\u5b9e\u4f53/\u8f74/\u4e2d\u5fc3\u7ebf\u7b49\u3002
+# \u2605 **\u53ea\u9009** faces/edges/vertices\uff1b\u2605 **\u4e0d\u652f\u6301**\u8349\
+# u56fe\u5b9e\u4f53/\u8f74/\u4e2d\u5fc3\u7ebf\u7b49\u3002
 #       \u2605 RayRadius **<= 2.9 m**\u3002
 #       ```
-#     `IFeatureManager.HoleWizard5.md`\uff08**27 \u53c2**\uff09\u7684 Remarks \u9010\u5b57\uff1a
+# `IFeatureManager.HoleWizard5.md`\uff08**27 \u53c2**\uff09\u7684 Remarks \u9010\u5b57\u
+# ff1a
 #       \u2605 "To add a hole or slot at one or more locations, call
 #          **`IModelDocExtension::SelectByRay` with Mark = 0** for each location."
 #
-#   ★★★ **\u6545\u5b54\u4f4d\u662f\u201c\u5c04\u7ebf\u9009\u51fa\u6765\u7684\u201d** \u2014\u2014 \u2605 \u800c**\u4e0d\u662f\u88f8\u5750\u6807**\uff1a
-#     \u2605 \u4ece\u5b54\u4f4d\u4e0a\u65b9\u53d1\u4e00\u6761\u5c04\u7ebf\u6253\u5230\u9762\u4e0a\uff0c\u2605 **\u547d\u4e2d\u4ec0\u4e48\u7531\u51e0\u4f55\u51b3\u5b9a** \u2014\u2014
+# ★★★ **\u6545\u5b54\u4f4d\u662f\u201c\u5c04\u7ebf\u9009\u51fa\u6765\u7684\u201d** \u201
+# 4\u2014 \u2605 \u800c**\u4e0d\u662f\u88f8\u5750\u6807**\uff1a
+# \u2605 \u4ece\u5b54\u4f4d\u4e0a\u65b9\u53d1\u4e00\u6761\u5c04\u7ebf\u6253\u5230\u9762\
+# u4e0a\uff0c\u2605 **\u547d\u4e2d\u4ec0\u4e48\u7531\u51e0\u4f55\u51b3\u5b9a** \u2014\u2
+# 014
 #     \u2605 \u800c `Mark = 0` \u6b63\u662f `HoleWizard5` \u8981\u7684\u3002
 #
-#   ★ `swSelFACES = 2`\uff08\u2605 \u53d6\u81ea\u672c\u673a\u53cd\u5c04 dump \u2014\u2014 \u94c1\u5f8b 4 \u7684\u88c1\u51b3\u8005\uff09\u3002
+# ★ `swSelFACES = 2`\uff08\u2605 \u53d6\u81ea\u672c\u673a\u53cd\u5c04 dump \u2014\u2014 
+# \u94c1\u5f8b 4 \u7684\u88c1\u51b3\u8005\uff09\u3002
 #   ★ 判据（★ 规则 6）：**特征树增量** **或** **选择计数**。
 #   ⚠ 全程走 `tools/sw_guard.py`。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -99,7 +107,8 @@ def main() -> int:
         doc = C.new_document(sw, "part")
         row = {"tag": "\u2605 \u5c04\u7ebf\u9009\u9762\uff08\u2605 `SelectByRay`\uff09", "ok": False}
         row["plate"] = _plate(doc)
-        #: \u2605 \u5c04\u7ebf\u4ece\uff08x=0, y=0, z=+0.05\uff09**\u5411\u4e0b**\u6253 \u21d2 \u5e94\u547d\u4e2d\u9876\u9762
+        #: \u2605 \u5c04\u7ebf\u4ece\uff08x=0, y=0, z=+0.05\uff09**\u5411\u4e0b**\u6253 
+        #: \u21d2 \u5e94\u547d\u4e2d\u9876\u9762
         before = _sel_count(doc)
         row["sel_before"] = before
         try:
@@ -111,7 +120,8 @@ def main() -> int:
         row["sel_after"] = after
         row["new_selected"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_selected"] and row["new_selected"] > 0)
-        #: \u2605 \u800c**\u770b\u770b\u9009\u4e2d\u7684\u662f\u4ec0\u4e48**\uff08\u2605 \u8bed\u4e49\u6838\u5bf9\uff09
+        #: \u2605 \u800c**\u770b\u770b\u9009\u4e2d\u7684\u662f\u4ec0\u4e48**\uff08\u2605
+        #:  \u8bed\u4e49\u6838\u5bf9\uff09
         try:
             sm = C.get_com_member(doc, "SelectionManager")
             o = C.get_com_member(sm, "GetSelectedObject6", 1, -1)
@@ -119,7 +129,8 @@ def main() -> int:
         except Exception as exc:                                          # noqa: BLE001
             row["sel_type"] = "%s" % type(exc).__name__
         ev["cases"].append(row)
-        #: \u2605 \u800c\u5408\u6cd5\u503c\u4ece**\u672c\u4ed3\u81ea\u5df1\u7684 lookup**\u62ff\uff08\u2605 \u4e0d\u51ed\u5370\u8c61\u586b\uff09
+        #: \u2605 \u800c\u5408\u6cd5\u503c\u4ece**\u672c\u4ed3\u81ea\u5df1\u7684 lookup*
+        #: *\u62ff\uff08\u2605 \u4e0d\u51ed\u5370\u8c61\u586b\uff09
         try:
             ev["hole_standards"] = HF.list_hole_standards(sw, 0)[:6]
         except Exception as exc:                                          # noqa: BLE001

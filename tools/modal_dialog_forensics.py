@@ -38,7 +38,8 @@ pack = collect_dialogs()            # 或 collect_dialogs(pid)
 # 文件:   tools/modal_dialog_forensics.py
 # 定位:   弹窗取证的**工具**：截图 + 结构落盘，供 LLM 判根因（纪律 自我纠错 §9）。
 # 官方签名依据: 不适用（★ 本文件只调 Win32 `user32`/`gdi32`，不调 SolidWorks API）。
-#   ★ 判据来源：`scripts/sw_connect.py` 的 `_DIALOG_CLASS = "#32770"`（Win32 `WC_DIALOG`）。
+# ★ 判据来源：`scripts/sw_connect.py` 的 `_DIALOG_CLASS = "#32770"`（Win32 `WC_DIALOG`）
+# 。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -202,8 +203,10 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     if not ok:
         return False
     #: ★ 手写 PNG（★ 只做"能看"这一件事 —— 不引 Pillow）：★ 直接存**BMP** 更省事且无损，
-    #:   而调用方（LLM）读图只需 `read_image` 支持 PNG/JPEG/WebP/GIF ⇒ ★ 所以这里存 **BMP 的裸数据**？
-    #:   ★ **不行** —— 那就得多一步转换。⇒ ★ 本函数落 **`.bmp`**，由调用方用系统 `System.Drawing`
+    #: 而调用方（LLM）读图只需 `read_image` 支持 PNG/JPEG/WebP/GIF ⇒ ★ 所以这里存 **BMP 
+    #: 的裸数据**？
+    #: ★ **不行** —— 那就得多一步转换。⇒ ★ 本函数落 **`.bmp`**，由调用方用系统 `System.D
+    #: rawing`
     #:   转 PNG（★ 与既有 `knitted_*.bmp → .png` 的流程一致）。
     bmp_path = png_path.with_suffix(".bmp")
     hdr = ctypes.create_string_buffer(14)
@@ -223,16 +226,20 @@ def _screenshot(hwnd: int, png_path: Path) -> bool:
     #:   `PrintWindow` 截出来是 **320×200 全黑**（PNG 只有 733 字节）。
     #:   ⇒ ★★ **"截到图了"不等于"图有用"** —— ★ 全黑（或近全黑）必须**如实标注**，
     #:     否则下游（LLM）会把一张黑图当成弹窗内容去判。
-    #:   ★ 真实弹窗是 `visible=True`（★ 本仓库真机验过：`#32770` 且 `IsWindowVisible` 为真）⇒
+    #: ★ 真实弹窗是 `visible=True`（★ 本仓库真机验过：`#32770` 且 `IsWindowVisible` 为真
+    #: ）⇒
     #:     ★ 对它们截图有效；★ **而不可见窗口只得靠"标题 + 控件文本"那一路文字情报**。
     raw = buf.raw
     #: ★★★★★ 2026-10-02（轮 337）**判据改成"有没有内容"，不能判"黑不黑"** —— 用户指出：
     #:   「判断不能用黑白啊，SolidWorks 可以自定义颜色的，人家来个**黑色皮肤**你怎么办，
     #:     要去**探测内容**」★ **完全对**：
-    #:   ★ 深色主题下**真弹窗也会整体偏暗** ⇒ ★ 用"全黑"当判据会把**有内容**的图误判成无效 ✗
+    #: ★ 深色主题下**真弹窗也会整体偏暗** ⇒ ★ 用"全黑"当判据会把**有内容**的图误判成无效
+    #:  ✗
     #:   ★★ 而"有没有内容"与颜色**无关** —— ★ 三个与配色无关的量：
-    #:     · **唯一色数**（`distinct`）：★ 纯色底 = 1；★ 有文字/控件 = 远大于 1（★ 黑底白字也有 2 种以上）
-    #:     · **非众数像素占比**（`non_mode_ratio`）：★ 有多少像素**不是**背景色（★ 即"画了东西"的部分）
+    #: · **唯一色数**（`distinct`）：★ 纯色底 = 1；★ 有文字/控件 = 远大于 1（★ 黑底白字
+    #: 也有 2 种以上）
+    #: · **非众数像素占比**（`non_mode_ratio`）：★ 有多少像素**不是**背景色（★ 即"画了东
+    #: 西"的部分）
     #:     · **亮度极差**（`range`）：★ 有内容必然有明暗差，★ 而它同样与主题无关
     #:   ⇒ ★ 本函数**不再判 blank**，改报 `content_present` + 三个量，
     #:     由调用方（LLM）看数字判 —— ★ **而不是由一个阈值替它判**。
@@ -300,8 +307,10 @@ def collect_dialogs(target=None, out_root: Path | None = None) -> dict:
                         "bmp": shot_info.get("path"),
                         "screenshot_ok": bool(shot_info.get("ok")),
                         #: ★★★ 2026-10-02（轮 337）**不再报 `screenshot_blank`** ——
-                        #:   ★ 用户指出「不能用黑白判，SolidWorks 可以自定义颜色，黑色皮肤怎么办」
-                        #:   ⇒ ★ 改报**与配色无关**的 `screenshot_content_present` + 三个统计量，
+                        #: ★ 用户指出「不能用黑白判，SolidWorks 可以自定义颜色，黑色皮肤
+                        #: 怎么办」
+                        #: ⇒ ★ 改报**与配色无关**的 `screenshot_content_present` + 三个
+                        #: 统计量，
                         #:     由调用方（LLM）看数字判，★ **而不是由一个阈值替它判**。
                         "screenshot_content_present": shot_info.get("content_present"),
                         "screenshot_stats": shot_info.get("stats"),

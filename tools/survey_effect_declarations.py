@@ -3,11 +3,15 @@
 # 仓库:   本项目自身（工具/一次性施工脚本）
 # 文件:   tools/survey_effect_declarations.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-1**（见 plan.md 的 B1）。
-#   ★★ 为什么要有它：外部评审判决「448 个工具无法一个一个真机验，成本主项是**建立前置状态**而不是调用」，
-#     并给出两步：① 先给每个工具补**机器可读**的效应声明（改哪些状态类别）② 再按前置签名分组做存活普查。
+# ★★ 为什么要有它：外部评审判决「448 个工具无法一个一个真机验，成本主项是**建立前置状态*
+# *而不是调用」，
+# 并给出两步：① 先给每个工具补**机器可读**的效应声明（改哪些状态类别）② 再按前置签名分组
+# 做存活普查。
 #     本脚本只做 ① 的**机械初判**，★ 且**只读**（不改任何声明）✓
-# 判据:   ★ 来源一：**底层成员动词**（评审逐字：「Create/Insert/Add/Delete/Set 这类判写，是高可信的保守规则」）·
-#   ★ 来源二：官方类型库的读写标记 —— ★ 评审同时提醒：「普通方法没有读写标记，对方法仍只能靠名字」⇒
+# 判据:   ★ 来源一：**底层成员动词**（评审逐字：「Create/Insert/Add/Delete/Set 这类判写
+# ，是高可信的保守规则」）·
+# ★ 来源二：官方类型库的读写标记 —— ★ 评审同时提醒：「普通方法没有读写标记，对方法仍只能
+# 靠名字」⇒
 #     本脚本**只用动词**，并在报告里如实写明「类型库那一路未参与初判」（★ 不冒充用过）✓
 #   ★★ 裁决规则（保守方向）：**任一来源说「写」 ⇒ 不许标只读** ✓
 # 官方依据: 状态七分类由评审给出：文档内容 · 文件系统 · 选区 · 激活文档 · 编辑态 · 视图 
@@ -99,8 +103,10 @@ def survey() -> dict:
     rows = []
     unclassified: collections.Counter = collections.Counter()
     for s in specs:
-        #: ★ 本仓的模块在 `scripts/` 下**按裸名**导入（`import sw_part`，不是 `scripts.sw_part`）——
-        #:   ★ 我第一版只试了带前缀的名字 ⇒ **448 个全部 ModuleNotFound** ✓（已改成两个都试）
+        #: ★ 本仓的模块在 `scripts/` 下**按裸名**导入（`import sw_part`，不是 `scripts.s
+        #: w_part`）——
+        #: ★ 我第一版只试了带前缀的名字 ⇒ **448 个全部 ModuleNotFound** ✓（已改成两个都
+        #: 试）
         mod = None
         for cand in (s.module, "scripts.%s" % s.module):
             try:
@@ -129,7 +135,8 @@ def survey() -> dict:
             "declared_read_only": bool(getattr(s, "read_only", False)),
             "proposed_writes": sorted(writes),
             "writes_known": verdict["writes"] is not None,
-            #: ★★ 三态：True=确认无写 · False=确认有写 · None=未知（★ 别把它写成 False，会误导）✓
+            #: ★★ 三态：True=确认无写 · False=确认有写 · None=未知（★ 别把它写成 False，
+            #: 会误导）✓
             "proposed_read_only": (None if verdict["writes"] is None else (not writes)),
             "proposed_destructive": destructive,
             "notes": notes,

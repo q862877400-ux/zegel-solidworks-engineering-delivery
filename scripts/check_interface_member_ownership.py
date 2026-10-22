@@ -65,7 +65,8 @@ TYPES = SWAPI / "types"
 CD_DOC = TYPES / "IFeatureManager" / "CreateDefinition.md"
 RAW = Path(Path(__file__).resolve().parents[1] / "_raw")
 
-#: ★★ **官方 `CreateDefinition` 宿主页清单**（spec 238）—— 官方**不止一个** `CreateDefinition`
+#: ★★ **官方 `CreateDefinition` 宿主页清单**（spec 238）—— 官方**不止一个** `CreateDefin
+#: ition`
 #: 方法：`IFeatureManager::CreateDefinition` 与 `IMotionStudy::CreateDefinition`，
 #: 两者各有**自己的** `Type` 常量域。旧实现只认第一个 ⇒ 把宿主没表达出来
 #: （`sw_motion.py` 的站点宿主是 `IMotionStudy`，却被拿去查 `IFeatureManager` 的表）。
@@ -85,7 +86,8 @@ ASSIGN = re.compile(r"^\s*(\w+)\s*=\s*(.*)$")
 #    报出 6 个假阳性）。**⇒ 范围必须贴合代码的**组织单元**：所在函数。**
 
 
-#: 靠**人工确证表**（`MANUAL_MAP`）补上的常量 —— **不是推断**，输出时与自动结果**分开报**
+#: 靠**人工确证表**（`MANUAL_MAP`）补上的常量 —— **不是推断**，输出时与自动结果**分开报*
+#: *
 MANUAL_USED: set = set()
 
 #: ── **人工确证的补充映射**（**不是推断**）─────────────────────────────
@@ -97,17 +99,20 @@ MANUAL_USED: set = set()
 MANUAL_MAP: dict = {
     # 描述 `Allows access to a sweep feature.`
     "swFmSweep": "ISweepFeatureData",
-    # 同 `swFmSweep` —— **扫掠切除与扫掠共用同一个 FeatureData**（名字里的 `Cut` 不改变类型）
+    # 同 `swFmSweep` —— **扫掠切除与扫掠共用同一个 FeatureData**（名字里的 `Cut` 不改变
+    # 类型）
     "swFmSweepCut": "ISweepFeatureData",
     # ⚠ **领域判断**：`sweep thread` 是**螺纹**（用扫掠方式生成），不是扫掠特征。
     #   描述 `Allows access to a thread feature.` ⇒ 不是纯文本匹配能得到的。
     "swFmSweepThread": "IThreadFeatureData",
-    # `…a derived pattern feature.`（对照候选 `IDerivedPartFeatureData` 是 `…a derived part feature.`）
+    # `…a derived pattern feature.`（对照候选 `IDerivedPartFeatureData` 是 `…a derived p
+    # art feature.`）
     "swFmDerivedLPattern": "IDerivedPatternFeatureData",
     # 名字唯一命中；描述 `Allows access to a table pattern feature.`
     "swFmTablePattern": "ITablePatternFeatureData",
     # 名字唯一命中；与 `swFmLibraryFeature` 的消歧结论互相印证。
-    # ⚠ 2026-10-01 轮 44：**已"升级"** —— `ILibraryFormToolFeatureData` 的 `_overview.md`
+    # ⚠ 2026-10-01 轮 44：**已"升级"** —— `ILibraryFormToolFeatureData` 的 `_overview.md
+    # `
     #   里**官方直接点名** `swFmFormToolInstance` ⇒ 现在由 `officially_named()` 给出
     #   （**官方断言 > 人工确证**），故从本表移出。**留下的这条注释是记录这次升级。**
     # `IDimPatternFeatureData` desc: "Allows access to a **variable pattern** feature,
@@ -116,16 +121,19 @@ MANUAL_MAP: dict = {
     "swFmDimPattern": "IDimPatternFeatureData",
     # `…a mirror component feature.`；对照：Part / Pattern / Solid 三个同族接口
     "swFmMirrorComponent": "IMirrorComponentFeatureData",
-    # ★★ 2026-10-01（轮 48）：`swFmRefSurface` —— **官方 Returns 段逐字列出**，不是文本推断：
+    # ★★ 2026-10-01（轮 48）：`swFmRefSurface` —— **官方 Returns 段逐字列出**，不是文本
+    # 推断：
     #   `ISweepFeatureData/SweepType.md` 的 ## Returns 写着
     #     「Sweep type as defined in [[swFeatureNameID_e]]:
     #        - swFmSweep (swept boss)
     #        - swFmSweepCut (swept cut)
     #        - **swRefSurface (swept surface)**」
-    #   ⇒ **同一个接口，前端靠 `SweepType` 分 boss/cut/surface** ⇒ `swFmRefSurface` ⇒ `ISweepFeatureData`。
+    # ⇒ **同一个接口，前端靠 `SweepType` 分 boss/cut/surface** ⇒ `swFmRefSurface` ⇒ `ISw
+    # eepFeatureData`。
     #   ★ 三条**独立佐证**：① 该接口 `_overview.md` 的官方示例就叫
     #     **"Insert **Swept-surface** Feature (VBA)"**；② 官方括注是 `(surface sweep)`；
-    #     ③ 全 swapi 里**没有**任何 `ISurfaceSweep*` 接口（候选里只有 `ISweepFeatureData`）。
+    # ③ 全 swapi 里**没有**任何 `ISurfaceSweep*` 接口（候选里只有 `ISweepFeatureData`）
+    # 。
     #   ★ **同一条证据顺带官方确认了本表已有的 `swFmSweep` / `swFmSweepCut`** ——
     #     它们从「人工确证」升到**有官方 Returns 段背书**（依据变硬，结论不变）。
     "swFmRefSurface": "ISweepFeatureData",
@@ -286,7 +294,8 @@ def build_map() -> tuple:
         if len(hits) > 1:
             # ── **消歧**：两条规则，都从**官方描述**读出（不是挑一个看起来对的）
             #   ① **含 "group" 的是子项** ⇒ 排除。官方证据：
-            #      `ISMNormalCutGroupData` = "…a normal cut **feature's cut-extrude face group**"
+            # `ISMNormalCutGroupData` = "…a normal cut **feature's cut-extrude face grou
+            # p**"
             #      `ITabAndSlotGroupData`  = "…a tab and slot **feature group**"
             #      ⇒ 它们是**别的接口**的子对象，**不是 `CreateDefinition` 返回的那个**。
             #   ② 剩下的里**含 "feature" 者优先**。官方证据：
@@ -306,7 +315,8 @@ def build_map() -> tuple:
                     #    描述离它最近的那个更可能是它。
                     #    实例：`swFmLibraryFeature (library)` ⇒
                     #      `ILibraryFeatureData`           = "library feature data"（+2 词）
-                    #      `ILibraryFormToolFeatureData`   = "library forming tool feature data"（+4 词）
+                    # `ILibraryFormToolFeatureData`   = "library forming tool feature da
+                    # ta"（+4 词）
                     #    ⇒ 选前者。
                     #    ⚠ **本规则是启发式**，不如 ①② 硬 —— 因此**排在最后**，
                     #      且仅在 ①② 之后仍多命中时才用。
@@ -496,8 +506,10 @@ def members_of(iface: str) -> set:
 
 #: ★★ **站点处置码（封闭词表）** —— spec 237 抽出。
 #: 旧实现把四种语义**完全不同**的处置**合成一个 `跳过 N`**（静默降级）：
-#: `no-const`（可能只是读取器太窄）/ `unmapped`（该审却漏审）/ `empty-members`（数据源缺）/
-#: `no-members-used`（确实无事可查）。合成之后，**一次把 `checked` 退化成 `unmapped` 的回归
+#: `no-const`（可能只是读取器太窄）/ `unmapped`（该审却漏审）/ `empty-members`（数据源缺
+#: ）/
+#: `no-members-used`（确实无事可查）。合成之后，**一次把 `checked` 退化成 `unmapped` 的
+#: 回归
 #: 完全不可见**（读数仍是「跳过 5→6」）。⇒ 分开报，并由
 #: `scripts/check_create_definition_site_disposition.py` 逐站点要求表态。
 SITE_CODES = ("checked", "unmapped", "empty-members", "no-members-used", "dynamic")

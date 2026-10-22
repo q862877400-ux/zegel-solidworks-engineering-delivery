@@ -14,7 +14,8 @@
 #           `GetPartBox` 回毫米）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
-# ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage2_plate.py --drawing`）。
+# ⚠ 等级 `stitched`：★ 尚未真机验证（真机验收见 `tools/run_stage2_plate.py --drawing`）
+# 。
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

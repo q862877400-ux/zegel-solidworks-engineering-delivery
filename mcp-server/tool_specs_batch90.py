@@ -1,17 +1,21 @@
 """★ 批次 90：Costing **写侧**最后 3 个（批量 / 加价 / 自定义成本）—— ★ C 类勘探后的收尾批。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
-# 文件:   `scripts/sw_costing.py`（`set_lot_size` / `set_markup` / `assign_custom_cost`）
+# 文件:   `scripts/sw_costing.py`（`set_lot_size` / `set_markup` / `assign_custom_cost`
+# ）
 # 定位:   ★ 规格 `specs/205-tool-ramp/` §8 的**批 90** —— ★ 走"加解析器换工具"：
 #         同笔加两个注入键 `"cost_analysis"` / `"cost_body"` ✓
 #         ★ 选域依据（**SC-009 要求的预筛**，跑的是 `output` 的 C 类普查）：
 #           C 类未覆盖候选 **281** 个，其中 ★ **97 个属"取哪一个"的歧义组**（`win`/`hwnd`/
-#           `route_manager`/`target`/`pdm_document`/`ctrl`/`study_name`/`obj`/`h`）⇒ **一律不碰**；
+# `route_manager`/`target`/`pdm_document`/`ctrl`/`study_name`/`obj`/`h`）⇒ **一律不碰**
+# ；
 #           `cost_analysis`(3) + `cost_body`(2) 这 **5 个**可加键 ⇒ ★ **组内真新 3 个** ✓
 # 官方依据: ★★ **本批三个都没有官方 md 页** —— `C:\swapi\types` 下 `glob`
-#   `set_LotSize` / `set_MarkUpType` / `AssignCustomCost` **均 0 命中**（那套源不含 `sldcostingapi` 册）
+# `set_LotSize` / `set_MarkUpType` / `AssignCustomCost` **均 0 命中**（那套源不含 `sldco
+# stingapi` 册）
 #   ⇒ ★ 真源是**本仓** `scripts/sw_costing.py`（其来源块逐字写着依据是
-#   「**反射确认的实参个数** `COSTING_ARITY`」，接口 `ICostManager` / `ICostModel` / `ICostAnalysis`）
+# 「**反射确认的实参个数** `COSTING_ARITY`」，接口 `ICostManager` / `ICostModel` / `ICos
+# tAnalysis`）
 #   ⇒ ★ **不编官方签名**（铁律 5），doc 里如实说明真源与"官方是属性还是方法" ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **3 个工具** ⇒ 工具数 419 → **422**

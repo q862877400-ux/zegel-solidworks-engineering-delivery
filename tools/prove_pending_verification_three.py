@@ -10,8 +10,10 @@
 #     **全在 `scripts/` 里** —— ★ 即**代码已经有了**，★ 而**验证状态没跟上** ⚠
 #     ⇒ ★ 故该做的是**真机复验**（★ 而不是从头实现）。
 #
-#   ★ 本轮验其中**三条**（★ 另外两条：线性阵列 = **已知边界**、曲面圆角 = 能力已 verified）：
-#     · **筋**        `sw_part.rib_report(model, sketch_name, thickness_mm, feature_name, direction)`
+# ★ 本轮验其中**三条**（★ 另外两条：线性阵列 = **已知边界**、曲面圆角 = 能力已 verified
+# ）：
+# · **筋**        `sw_part.rib_report(model, sketch_name, thickness_mm, feature_name, di
+# rection)`
 #     · **复合曲线**   `sw_part.insert_composite_curve_report(model, feature_name)`
 #       ★ 它的 docstring 逐字：「**调用前必须先用 mark = 1 选好实体**」⚠
 #     · **交叉曲线**   `sw_sketch_edit_ops.sketch_intersect_curves(model)`
@@ -100,7 +102,8 @@ def _case(sw, tag, fn):
 
 def _do_rib(doc, row):
     _solid(doc, 0.02)
-    #: \u2605 **\u7b4b**\uff1a\u4e00\u6761**\u7a7f\u8fc7\u5b9e\u4f53\u7684\u7ebf**\uff08\u2605 \u5728\u4e0a\u89c6\u9762\u4e0a\uff09
+    #: \u2605 **\u7b4b**\uff1a\u4e00\u6761**\u7a7f\u8fc7\u5b9e\u4f53\u7684\u7ebf**\uff08
+    #: \u2605 \u5728\u4e0a\u89c6\u9762\u4e0a\uff09
     sk = _new_sketch(doc, "Top Plane",
                      lambda sm: C.get_com_member(sm, "CreateLine", -0.025, 0.0, 0.0, 0.025, 0.0, 0.0))
     row["sketch"] = sk
@@ -115,12 +118,14 @@ def _do_rib(doc, row):
 
 def _do_composite(doc, row):
     _solid(doc, 0.01)
-    #: \u2605 **\u590d\u5408\u66f2\u7ebf**\uff1a\u4e24\u6761**\u76f8\u8fde\u7684\u7ebf**\uff08\u2605 \u5408\u8d77\u6765\u6210\u4e00\u6761\uff09
+    #: \u2605 **\u590d\u5408\u66f2\u7ebf**\uff1a\u4e24\u6761**\u76f8\u8fde\u7684\u7ebf**
+    #: \uff08\u2605 \u5408\u8d77\u6765\u6210\u4e00\u6761\uff09
     sk = _new_sketch(doc, "Front Plane", lambda sm: (
         C.get_com_member(sm, "CreateLine", -0.02, -0.01, 0.0, 0.0, 0.0, 0.0),
         C.get_com_member(sm, "CreateLine", 0.0, 0.0, 0.0, 0.02, 0.01, 0.0)))
     row["sketch"] = sk
-    #: \u2605 \u5b98\u65b9 Remarks\uff1a**\u5148\u7528 mark = 1 \u9009\u597d\u5b9e\u4f53**
+    #: \u2605 \u5b98\u65b9 Remarks\uff1a**\u5148\u7528 mark = 1 \u9009\u597d\u5b9e\u4f53
+    #: **
     ext = C.get_com_member(doc, "Extension")
     picked = 0
     from sw_connect import get_com_member as _g
@@ -152,8 +157,10 @@ def _do_composite(doc, row):
 
 def _do_intersect(doc, row):
     _solid(doc, 0.02)
-    #: \u2605 **\u4ea4\u53c9\u66f2\u7ebf**\uff1a\u5728\u4e00\u4e2a\u8349\u56fe\u91cc\uff0c\u62ff**\u5b9e\u4f53\u7684\u9762**\u53bb\u4ea4
-    #:   \u2605 \u5148\u9009\u4e00\u4e2a\u9762\uff08\u2605 \u4ea4\u53c9\u66f2\u7ebf\u8981\u6709\u4e1c\u897f\u53ef\u4ea4\uff09
+    #: \u2605 **\u4ea4\u53c9\u66f2\u7ebf**\uff1a\u5728\u4e00\u4e2a\u8349\u56fe\u91cc\uff
+    #: 0c\u62ff**\u5b9e\u4f53\u7684\u9762**\u53bb\u4ea4
+    #: \u2605 \u5148\u9009\u4e00\u4e2a\u9762\uff08\u2605 \u4ea4\u53c9\u66f2\u7ebf\u8981\
+    #: u6709\u4e1c\u897f\u53ef\u4ea4\uff09
     from sw_connect import get_com_member as _g
     try:
         doc.ClearSelection2(True)

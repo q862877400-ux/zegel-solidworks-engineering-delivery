@@ -3,33 +3,42 @@
 # ── 24h 计划 段 6 续（Spec Kit `169`）：**扫描（sweep）** ────────────────────────────
 # ★★★★★ 2026-10-01（轮 315）**这是"四家有我们没有"里核实的第二个真缺**：
 #   ★ 全仓 grep `sweep` ⇒ **工具 0 · 函数 0**（★ 与 `loft` 一样）——
-#   ★★ 而**扫描与放样是 SolidWorks 最基本的两种特征**。四家并集里有 **`sweep`**（Slacker-LLC）。
+# ★★ 而**扫描与放样是 SolidWorks 最基本的两种特征**。四家并集里有 **`sweep`**（Slacker-L
+# LC）。
 #
 # ★★★ **而入口不是 `InsertProtrusionSwept*`** —— ★ 官方 Remarks 第一句就写明：
-#   > 「SOLIDWORKS 2018 introduces a **new sweep architecture**, making this method **obsolete**.
+# > 「SOLIDWORKS 2018 introduces a **new sweep architecture**, making this method **obso
+# lete**.
 #   >  See **Sweep Features and SweepFeatureData Objects**」
-#   ⇒ ★★ 现代入口是 **`IFeatureManager.CreateDefinition(swFmSweep)` → `ISweepFeatureData` → `CreateFeature`**
-#     （★ 常量值 **17** —— ★ 反射 `swFmSweep = 17` × 官方 `CreateDefinition.md` 的「swFmSweep (boss sweep)」两源一致）
+# ⇒ ★★ 现代入口是 **`IFeatureManager.CreateDefinition(swFmSweep)` → `ISweepFeatureData` 
+# → `CreateFeature`**
+# （★ 常量值 **17** —— ★ 反射 `swFmSweep = 17` × 官方 `CreateDefinition.md` 的「swFmSwee
+# p (boss sweep)」两源一致）
 #
 # ★★ **官方调用序与 mark**（★ §5.0：判据先找后搓 —— ★ 读的是官方专文，不是自己猜）：
-#   源：`C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData Objects.md`
+# 源：`C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeature
+# Data Objects.md`
 #   ```
-#   ① 轮廓：★ 草图轮廓 ⇒ **Mark = 1**（闭合草图）· ★ 圆形轮廓 ⇒ **Mark = 4** · ★ 实体轮廓 ⇒ 1 + 2048
+# ① 轮廓：★ 草图轮廓 ⇒ **Mark = 1**（闭合草图）· ★ 圆形轮廓 ⇒ **Mark = 4** · ★ 实体轮廓 
+# ⇒ 1 + 2048
 #   ② 路径：★ **Mark = 4**  ← ★ 而「**路径的起点必须落在轮廓所在平面上**」（1 方向扫描）
 #   ③ 引导线 ⇒ Mark = 2（只与草图轮廓配）· ④ 方向向量 ⇒ Mark = 128
 #   ⑤ CreateDefinition(swFmSweep) ⇒ ISweepFeatureData ⇒ 设属性 ⇒ CreateFeature
 #   ```
 #
 # ★★★ **判据用**特征类型名**（★ 事实 242 的教训：挑只依赖被测对象的那个）——
-#   ★ 真机：放样 = `Blend` · 拉伸 = `Extrusion` · ★ **而扫描应为 `Sweep`**（★ 本次真机核）。
+# ★ 真机：放样 = `Blend` · 拉伸 = `Extrusion` · ★ **而扫描应为 `Sweep`**（★ 本次真机核）
+# 。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_sweep.py —— 本文件（新）
 # 定位:   24h 段 6 续：扫描（★ 补「四家有我们没有」的真缺）。
-# 官方签名依据: `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and SweepFeatureData Objects.md` ·
+# 官方签名依据: `C:\swapi\docs\Programming with the SOLIDWORKS API\Sweep Features and Sw
+# eepFeatureData Objects.md` ·
 #   `C:\swapi\types\IFeatureManager\CreateDefinition.md`（swFmSweep = 17）·
-#   `C:\swapi\types\ISweepFeatureData\`（54 个成员：`AccessSelections` / `CircularProfile` / `Direction` / …）·
+# `C:\swapi\types\ISweepFeatureData\`（54 个成员：`AccessSelections` / `CircularProfile`
+#  / `Direction` / …）·
 #   ★ 反射 arity 表 `scripts/sw_api_sldworks.py`（`swFmSweep = 17` · `swFmSweepCut = 18`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -96,12 +105,15 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     #:   传 `None` ⇒ `com_error: (-2147352571, '类型不匹配。', None, **2**)`（★ 位置 2）。
     #:   ★ 而真机实测：**即使这一步报错，特征仍然建成了**（`扫描1` · type=`Sweep`）
     #:   ⚠⚠ **2026-10-03（轮 488）更正**：上面那句**在本轮的前置下不成立** ⚠
-    #:     ★ 一次**A/B**（`tools/prove_sweep_ab.py`，★ 同一套几何 + 同一套选区 `{1:1, 4:1}`，只改常量）：
+    #: ★ 一次**A/B**（`tools/prove_sweep_ab.py`，★ 同一套几何 + 同一套选区 `{1:1, 4:1}`
+    #: ，只改常量）：
     #:       `const=17`（实体）⇒ **不成** · `access = 0x80010105` · `CreateFeature = None`；
     #:       `const=62`（曲面）⇒ **不成** · 同上。
-    #:     ⇒ ★★ **两路都卡在 `AccessSelections`**，★ 故「它不是必需的」这半句**至少在这套前置下不成立**；
+    #: ⇒ ★★ **两路都卡在 `AccessSelections`**，★ 故「它不是必需的」这半句**至少在这套前
+    #: 置下不成立**；
     #:     ★ 而轮 315 那次能成，说明**当时的前置与本轮不同**（★ 而差在哪尚未查）。
-    #:   ⇒ ★ 所以它**不是必需的**；★ 而本包装仍然试它（★ 因为官方步骤里有）、**而不把它当判据**。
+    #: ⇒ ★ 所以它**不是必需的**；★ 而本包装仍然试它（★ 因为官方步骤里有）、**而不把它当
+    #: 判据**。
     access = None
     try:
         from sw_part import _empty_callout as _ec
@@ -140,7 +152,8 @@ def create_sweep_report(model, cut: bool = False, mutate=None) -> dict:
     #:     「失败已越过前置、卡在扫描 API 自身」⇒ ★★ **那个结论是错的** ——
     #:     ★ 真相是**我们根本没拿到返回值**，★ 所以"建成没建成"当时**无从判断**。
     #:   ★★ 而且本函数 docstring 逐字写着判据：
-    #:     「**特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象的那个）」
+    #: 「**特征树多了新特征** **且** **类型名 = `Sweep`**（★ 事实 242：挑只依赖被测对象
+    #: 的那个）」
     #:     ⇒ ★★★ **那个"类型名"检查从来没实现过** —— ★ 典型的"文档承诺了、代码没做"。
     after = feature_names(model)
     new = [n for n in after if n not in before]

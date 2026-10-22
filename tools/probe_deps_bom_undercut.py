@@ -74,7 +74,8 @@ def main() -> int:
         R["保存"] = _try(C.save_document, pdoc, str(PART))
 
         #: ★★ ① `GetDependencies2`（★ 在**零件文档**上 —— 就是 `sw_delivery.py` 的用法）
-        #:   ★ 本仓调用逐字：`get_com_member(model, "GetDependencies2", False, True, False)`
+        #: ★ 本仓调用逐字：`get_com_member(model, "GetDependencies2", False, True, False
+        #: )`
         R["旧_GetDependencies2(3 参, 在 model 上)"] = _try(
             _g, pdoc, "GetDependencies2", False, True, False)
         R["新_GetDependencies(5 参)"] = _try(
@@ -111,7 +112,8 @@ def main() -> int:
             #: 参数名照官方：ColUndercut, ColBase, BCoordInput, Dx, Dy, Dz
             R["旧_MoldUndercutDetect(6 参)"] = _try(
                 _g, fm, "MoldUndercutDetect", 0, 0, True, 0.0, 0.0, 1.0)
-            #: 新的是 9 参：ColUndercut1, ColUndercut2, ColOccluded, ColStraddle, ColBase, …
+            #: 新的是 9 参：ColUndercut1, ColUndercut2, ColOccluded, ColStraddle, ColBas
+            #: e, …
             R["新_MoldUndercutDetect2(9 参)"] = _try(
                 _g, fm, "MoldUndercutDetect2", 0, 0, 0, 0, 0, True, 0.0, 0.0, 1.0)
     except Exception as exc:                                              # noqa: BLE001

@@ -13,7 +13,8 @@
 #     · ★★ `curve_driven_pattern` ⇒ ★ 特征树增量 —— ★ **预期不建**（★ 官方 `Obsolete` ✓）⇒
 #       ★ 本探针**如实记"不建"**、★ **不许把它写成建成**（★ A7 ✓）
 # 官方依据: 见三个模块函数各自的来源块（`swapi` 签名 + mark 表 / 前置）✓
-# 许可:   本仓库 MIT。★ 无第三方代码引入。★ 落盘一律在**仓库内 `output/`**（★ 非用户目录 ✓）。
+# 许可:   本仓库 MIT。★ 无第三方代码引入。★ 落盘一律在**仓库内 `output/`**（★ 非用户目录
+#  ✓）。
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -58,7 +59,8 @@ def main() -> int:
         return 2
     WORK.mkdir(parents=True, exist_ok=True)
 
-    #: ══════ ① 爆炸直线：★ 走 `sw_assembly_doc.insert_explode_line_sketch_report` ══════
+    #: ══════ ① 爆炸直线：★ 走 `sw_assembly_doc.insert_explode_line_sketch_report` ═════
+    #: ═
     row1: dict = {"case": "explode_line_sketch（走模块函数）"}
     try:
         _mk_part(sw, WORK / "p1.sldprt")
@@ -105,7 +107,8 @@ def main() -> int:
         print("★ ② SpeedPak ⇒ 抛 %s" % row2["exception"])
     out["cases"].append(row2)
 
-    #: ══════ ③ 曲线驱动阵列：★ 走 `sw_pattern.insert_local_curve_driven_pattern_report` ══════
+    #: ══════ ③ 曲线驱动阵列：★ 走 `sw_pattern.insert_local_curve_driven_pattern_report`
+    #:  ══════
     row3: dict = {"case": "curve_driven_pattern（走模块函数 · ★ 预期不建 ⇒ stitched）"}
     try:
         m3 = sw_connect.new_document(sw, "part")
@@ -123,7 +126,8 @@ def main() -> int:
         row3["curve_sketch"] = curve_sk
         #: ★★★★ **修过一处**：★ 第一版我把 `seed_feature` 传成**草图名** ✗ ⇒
         #:   ★★ 真机读数 `mark1=False · mark2=False` ⇒ **两处前置都没上** ⇒ **读数无效** ✗
-        #:   ★ 而**原探针**用的是 `extrudes[0]` = **`凸台-拉伸1`**（★ **特征名**、★ 不是草图名 ✓）⇒
+        #: ★ 而**原探针**用的是 `extrudes[0]` = **`凸台-拉伸1`**（★ **特征名**、★ 不是草
+        #: 图名 ✓）⇒
         #:     ★ `mark1=True · mark2=True · 选区=2` ✓
         #:   ⇒ ★★★ **正解：mark 1 = 「Components to pattern」⇒ 传**拉伸特征的名字**** ✓
         import sw_feature_readback as FR

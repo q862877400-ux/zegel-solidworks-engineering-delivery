@@ -82,7 +82,8 @@ def main() -> int:
         counts = {m: text.count(m) for m in MARKS}
         models = sorted(set(re.findall(r'"model"\s*:\s*"([^"]{1,40})"', text)))
         #: ★★ 先判**是不是编排者**再判合规 —— 否则本检查会把 Lead 自己的会话报成违规
-        #:   （实测：我一个会话因读写 `bunny-records-deep` 路径而被匹配到，deepseek 命中 2193）
+        #: （实测：我一个会话因读写 `bunny-records-deep` 路径而被匹配到，deepseek 命中 2
+        #: 193）
         #:   ⇒ ★ 编排者**本来就该是会话模型**；只有**工作者**必须全 bunny ✓
         #:   ★ 判据：编排者会话里会出现 `spawn_teammate`，工作者不会 ✓
         #: ★ 编排者（Lead）本来就该跑会话模型 ⇒ **豁免**；只有**工作者**必须全 bunny

@@ -6,10 +6,14 @@
 #           nnotations`**。
 #   ★★ 判据（规则 6，全回读）：
 #     ```
-#     ① 视图标注数        ★ IView::GetAnnotationCount() 的**前后读数**（本模块既有 _sum_over_views）
-#     ② 官方调用序        ★ 先选中视图（DRAWINGVIEW）→ **ActivateView** → ClearSelection2 → 调它
-#     ③ 负例              ★ 空图纸（一个视图都没有）⇒ **必须如实报**（官方语义是「当前选中的视图」）
-#     ④ Types 语义        ★ 两个 insert_all_* 都为 False 且 types 空 ⇒ **官方说 Types 只在那时有效**
+# ① 视图标注数        ★ IView::GetAnnotationCount() 的**前后读数**（本模块既有 _sum_over
+# _views）
+# ② 官方调用序        ★ 先选中视图（DRAWINGVIEW）→ **ActivateView** → ClearSelection2 → 
+# 调它
+# ③ 负例              ★ 空图纸（一个视图都没有）⇒ **必须如实报**（官方语义是「当前选中的
+# 视图」）
+# ④ Types 语义        ★ 两个 insert_all_* 都为 False 且 types 空 ⇒ **官方说 Types 只在那
+# 时有效**
 #                         ⇒ 本函数**拒绝**（★ 不猜）
 #     ```
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertModelAnnotations4.md`（8 参 + Paramete
@@ -59,7 +63,8 @@ def main() -> int:
     try:
         #: ① 造零件并**存盘**（★ 工程图投影要有路径 —— 既有探针的教训）
         #:   ★★ **而且要带尺寸** —— 第一版用"纯坐标画出来的草图"（**一个尺寸都没有**）⇒
-        #:     `InsertModelAnnotations4` **回的数组长度 0**（★ 那不是"调用失败"，是**没东西可插**）✓
+        #: `InsertModelAnnotations4` **回的数组长度 0**（★ 那不是"调用失败"，是**没东西
+        #: 可插**）✓
         part = sw_connect.new_document(sw, "part")
         opened.append(part)
         import sw_sketch_dimensions as SD
@@ -108,7 +113,8 @@ def main() -> int:
             print("  all_views=True  ok=%s 标注 %s→%s 返回 %s"
                   % (r.get("ok"), r.get("annotation_count_before"),
                      r.get("annotation_count_after"), r.get("returned_count")))
-            #: ③B **AllViews=False** ⇒ ★ 视图**必须留在选区里**（官方摘要的 "currently selected"）
+            #: ③B **AllViews=False** ⇒ ★ 视图**必须留在选区里**（官方摘要的 "currently s
+            #: elected"）
             r1b = DM.insert_model_annotations(drw, views[0],
                                               insert_all_annotations=True,
                                               insert_all_reference_geometry=True)

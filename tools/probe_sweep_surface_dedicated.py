@@ -6,14 +6,17 @@
 # 定位:   ★ 2026-10-03（轮 532）★ 用那把钥匙的**第三次命中**开 T602（扫描曲面）。
 #
 #   ★★ **钥匙**（事实 410）：★ **官方文档里的每个名词都要落实**。
-#     ★ 前两次：旋转曲面**成了**（缺 `centerline`）· 加厚与直纹**没成**（那两个词不是关键）。
+# ★ 前两次：旋转曲面**成了**（缺 `centerline`）· 加厚与直纹**没成**（那两个词不是关键）
+# 。
 #
 #   ★★★ **本次怎么找到的**（★ 顺着一页的 `See Also` 走）：
-#     · 先读 `IFeatureManager.InsertProtrusionSwept4` 的 **Remarks** ⇒ 「SOLIDWORKS 2018 introduces a
+# · 先读 `IFeatureManager.InsertProtrusionSwept4` 的 **Remarks** ⇒ 「SOLIDWORKS 2018 int
+# roduces a
 #       new sweep architecture, making this method obsolete…」★ 而它的 `## See Also` 里列着
 #       **`IFeatureManager::InsertSweepSurface2 Method`** ⚠
 #     · ⇒ ★★ **那正是"扫描**曲面**"的专用方法**（★ 名字里就有 `SweepSurface`）——
-#       ★ **而本仓从来没查过它**（★ 我查的是 `InsertSweepRefSurface*` 与 `CreateDefinition(62)`）✓
+# ★ **而本仓从来没查过它**（★ 我查的是 `InsertSweepRefSurface*` 与 `CreateDefinition(62)
+# `）✓
 #
 #   ★ 官方对 `InsertSweepSurface2` 的 `Remarks` 逐字（★ 关键那句在最前面）：
 #     > "**Because you are creating a surface, the sections can be open.**"
@@ -23,9 +26,11 @@
 #     ★ 参数（11 个）：Propagate · TwistCtrlOption · KeepTangency · BAdvancedSmoothing ·
 #       StartMatchingType · EndMatchingType · PathAlign · UseFeatScope · UseAutoSelect ·
 #       TwistAngle · BMergeSmoothFaces
-#     ★ 而它标 **Obsolete. Superseded by `IFeatureManager::InsertSweepSurface3`** ⚠ ⇒ ★ **两个都试** ✓
+# ★ 而它标 **Obsolete. Superseded by `IFeatureManager::InsertSweepSurface3`** ⚠ ⇒ ★ **两
+# 个都试** ✓
 #
-#   ★ 前置（★ 事实 384 的正解）：轮廓 **mark=1** · 路径 **mark=4**（★ 用 `SelectByID2` 带 mark）。
+# ★ 前置（★ 事实 384 的正解）：轮廓 **mark=1** · 路径 **mark=4**（★ 用 `SelectByID2` 带 
+# mark）。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -110,8 +115,10 @@ def _one(sw, tag, method):
         fm = C.get_com_member(doc, "FeatureManager")
         ret = None
         try:
-            #: \u2605 \u53c2\u6570\uff1aPropagate \u00b7 TwistCtrlOption \u00b7 KeepTangency \u00b7 BAdvancedSmoothing \u00b7
-            #:   StartMatchingType \u00b7 EndMatchingType \u00b7 PathAlign \u00b7 UseFeatScope \u00b7
+            #: \u2605 \u53c2\u6570\uff1aPropagate \u00b7 TwistCtrlOption \u00b7 KeepTang
+            #: ency \u00b7 BAdvancedSmoothing \u00b7
+            #: StartMatchingType \u00b7 EndMatchingType \u00b7 PathAlign \u00b7 UseFeatS
+            #: cope \u00b7
             #:   UseAutoSelect \u00b7 TwistAngle \u00b7 BMergeSmoothFaces
             args = (True, 0, True, False, 0, 0, 0, False, True, 0.0, True)
             ret = C.get_com_member(fm, method, *args)

@@ -11,9 +11,11 @@
 #            有关；
 #         `scripts/sw_macro_guard.py` 只做**生成 / 校验 / 落盘** VBA 文本，**不执行**。
 #         ★ 规格 202 的 FR-008 逐字要求「**宏/VBA 执行** MUST 可用」⇒ 本模块补的就是它。
-# ⚠ 官方 `## Remarks` 对本机版本**是空的**（该页 Remarks 段无内容）⇒ 本模块不替它补语义，
+# ⚠ 官方 `## Remarks` 对本机版本**是空的**（该页 Remarks 段无内容）⇒ 本模块不替它补语义
+# ，
 #   只按签名与枚举调用；语义未证之处一律标注「未查证」。
-# ⚠ `swRunMacroOption_e` / `swRunMacroError_e` 的**两套源逐条一致**（官方页 == 出厂反射）✓
+# ⚠ `swRunMacroOption_e` / `swRunMacroError_e` 的**两套源逐条一致**（官方页 == 出厂反射
+# ）✓
 #   ★ 顺带更正仓库一处旧记载：`scripts/sw_com_traps.py` 写「`swRunMacroError_e` **不在官方
 #     interop 类型库中**」——★ 实测**在**（反射里 28 个成员齐全），该句已过时（见事实 531）。
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -30,7 +32,8 @@ RUN_MACRO_OPTIONS = {
 }
 
 #: `swRunMacroError_e` —— **全 28 个成员**，★ 两源**按成员逐一比对一致**
-#:   （实测：官方页 28 个 == 出厂反射 28 个，`{成员: 值}` 字典相等；**只有排列顺序不同**）✓
+#: （实测：官方页 28 个 == 出厂反射 28 个，`{成员: 值}` 字典相等；**只有排列顺序不同**）
+#: ✓
 #: enum-gate: enum swRunMacroError_e
 RUN_MACRO_ERRORS = {
     "InvalidArg": 1, "MacrosAreDisabled": 2, "NotInDesignMode": 3, "OnlyCodeModules": 4,
@@ -44,41 +47,52 @@ RUN_MACRO_ERRORS = {
 _ERROR_NAME_BY_VALUE = {v: k for k, v in RUN_MACRO_ERRORS.items()}
 
 
-# ── 规格 209 · B4-1（idx 211 `native_macro_recording`）────────────────────────────────────────
+# ── 规格 209 · B4-1（idx 211 `native_macro_recording`）────────────────────────────────
+# ────────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」
-# 文件:   scripts/sw_macro.py —— 追加 `toggle_macro_recording` / `record_line` / `record_macro_lines`
+# 文件:   scripts/sw_macro.py —— 追加 `toggle_macro_recording` / `record_line` / `record
+# _macro_lines`
 #   （★ 裁决书指定的落点就是本模块）
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-1** · 外部项目 idx **211
-#   `native_macro_recording`** —— 裁决书：正解是 **`RecordLine`（写行）+ `RunCommand`（开关录制）
-#   + `DSldWorksEvents::BeginRecordNotify`/`EndRecordNotify`（录制起止事件）**，三者都在官方源里 ✓
+# `native_macro_recording`** —— 裁决书：正解是 **`RecordLine`（写行）+ `RunCommand`（开
+# 关录制）
+# + `DSldWorksEvents::BeginRecordNotify`/`EndRecordNotify`（录制起止事件）**，三者都在官
+# 方源里 ✓
 #   ★★★ 裁决书点名的**头号风险**：「`swCommands_e.md` 对 `swCommands_StopMacro` 逐字写着
 #     『**opens the Save As dialog**』⇒ 无头/无人值守下 `RunCommand(31)` **会弹模态框**」✓
 #     ⇒ ★★ 本模块**永不调用 31**，改用 **`swCommands_RecordPauseMacro`(29) 这个「切换」**
 #       来**开/停**录制 —— ★ 停录制走**暂停**那条路，**不触发 Save As** ✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
-#   · `C:\swapi\types\ISldWorks\RecordLine.md` —— `System.bool RecordLine(System.string Text)`
-#     ★ 摘要逐字：「Adds a line of code to a VBA macro **and** the SOLIDWORKS **journal file**.」
+# · `C:\swapi\types\ISldWorks\RecordLine.md` —— `System.bool RecordLine(System.string Te
+# xt)`
+# ★ 摘要逐字：「Adds a line of code to a VBA macro **and** the SOLIDWORKS **journal file
+# **.」
 #     ★★ `## Remarks` 逐字给**两个硬事实**（★ 本模块的口径就照它）：
 #       「Text is **only written to macros if macro recording is enabled** when the method is
 #        called (`ISldWorks::Run Command` **swCommands_RecordPauseMacro** "").」
-#       「**Users are prompted to select the type of macros to create when recording is stopped**
+# 「**Users are prompted to select the type of macros to create when recording is stoppe
+# d**
 #        (`ISldWorks::Run Command` **swCommands_StopMacro** "").」
-#   · `C:\swapi\types\ISldWorks\RunCommand.md` —— `System.bool RunCommand(System.int CommandID,
-#     System.string NewTitle)`；`NewTitle` = 该命令拉起的 PropertyManager 页标题（★ 本模块传 `""`）
+# · `C:\swapi\types\ISldWorks\RunCommand.md` —— `System.bool RunCommand(System.int Comma
+# ndID,
+# System.string NewTitle)`；`NewTitle` = 该命令拉起的 PropertyManager 页标题（★ 本模块传
+#  `""`）
 #   · `C:\swapi\enums\swCommands_e.md` —— ★ 逐字两条：
 #       `swCommands_RecordPauseMacro | 29`（Macro toolbar > **Record\Pause Macro**）
 #       `swCommands_StopMacro | 31; valid for a running macro, **opens the Save As dialog**`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
-# ★★ **判据**（规则 6）：★ 这几个调用回的都是 `bool`（**返回值**）⇒ ★ 本模块**不拿它当唯一判据**：
+# ★★ **判据**（规则 6）：★ 这几个调用回的都是 `bool`（**返回值**）⇒ ★ 本模块**不拿它当唯
+# 一判据**：
 #   `RecordLine` 的 Remarks 已给出**语义前提** —— 「**只有录制开着才写得进去**」
 #   ⇒ ★ 本模块把**三个返回值**（开录制 / 写行 / 停录制）**都回报**，
 #     并在返回值里写明「★ **"真写进去了没有"要落盘的宏文件才能证**，
 #     而那要 `swCommands_StopMacro`（**弹 Save As**）⇒ **本模块不去点它**」✓
 
-#: ★ 官方 `swCommands_e` 里与「原生录制」有关的两条（★ 逐字抄；★ **130 多个 UserMacro 不抄**）
+#: ★ 官方 `swCommands_e` 里与「原生录制」有关的两条（★ 逐字抄；★ **130 多个 UserMacro 不
+#: 抄**）
 RECORD_COMMANDS = {
     "record_pause_macro": 29,   # swCommands_RecordPauseMacro —— Record\Pause Macro（**切换**）
     "stop_macro": 31,           # swCommands_StopMacro —— ★ 枚举页逐字「**opens the Save As dialog**」
@@ -201,7 +215,8 @@ def record_macro_lines(sw_app, lines) -> dict[str, Any]:
             out["line_returns"].append(bool(r.get("ok")))
         out["lines_written"] = sum(1 for x in out["line_returns"] if x)
     finally:
-        #: ★★ 无论成功失败都要**把录制停掉**（否则 SW 会一直录着 —— ★ 那是留给用户的脏状态）✓
+        #: ★★ 无论成功失败都要**把录制停掉**（否则 SW 会一直录着 —— ★ 那是留给用户的脏状
+        #: 态）✓
         closed = toggle_macro_recording(sw_app)
         out["close_returned"] = closed.get("returned")
         if not closed.get("ok") and not out["error"]:

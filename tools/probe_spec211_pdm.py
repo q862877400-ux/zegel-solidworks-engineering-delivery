@@ -5,19 +5,26 @@
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的「其他 / PDM」—— ★ 21 项里**唯一一项"
 #           待实测"** ✓
 # 官方依据（★ 本批现场全扫所得）：
-#   · ★★★ **`ISldWorks` 下**没有** PDM 入口** ✗ —— 入口在 **`IApplication::PDMDocManager`** ✓
+# · ★★★ **`ISldWorks` 下**没有** PDM 入口** ✗ —— 入口在 **`IApplication::PDMDocManager`*
+# * ✓
 #     ★★ 而 `IApplication` **不是** `ISldWorks` ✗（★ 拿它要另找路 ✓）
-#   · ★★ **`IPDMDocManager` 只有 3 个成员**：★ `SetCancelOperation` · `SetDocumentStatus` ·
-#     `SetManagedDocument` ✓ —— ★★★ **全是"设置状态"、★ 没有"检入/检出/取版本"这类 PDM 核心操作** ✗
-#     ⇒ ★ **即：用户理解的"PDM 功能"（检入检出/版本/库）在官方离线源里**查不到**** ✓（铁律 5 ✓）
+# · ★★ **`IPDMDocManager` 只有 3 个成员**：★ `SetCancelOperation` · `SetDocumentStatus` 
+# ·
+# `SetManagedDocument` ✓ —— ★★★ **全是"设置状态"、★ 没有"检入/检出/取版本"这类 PDM 核心
+# 操作** ✗
+# ⇒ ★ **即：用户理解的"PDM 功能"（检入检出/版本/库）在官方离线源里**查不到**** ✓（铁律 5
+#  ✓）
 # 本仓既有的知识（★ 两条**关键**，★ 本批直接引用）：
-#   ★ `scripts/sw_automation_knowledge.py` 第 49 行附近：「★ 这是**官方文档不会给**的：它只在
+# ★ `scripts/sw_automation_knowledge.py` 第 49 行附近：「★ 这是**官方文档不会给**的：它
+# 只在
 #     「★ **你调 PDM 而没买许可**」时出现」✓
-#   ★★ `scripts/sw_com_traps.py` 第 83 行：★ `0x80040112`: **COM 类未授权 —— 通常是该产品没许可
+# ★★ `scripts/sw_com_traps.py` 第 83 行：★ `0x80040112`: **COM 类未授权 —— 通常是该产品
+# 没许可
 #     （PDM / Simulation / Routers）** ✓
 # ⇒ ★★★★ **所以 PDM 的性质与 Simulation / Routers 同类：★ 独立许可产品** ✓
 #   ★★ 而本规格的硬约束明写：★ **不装不改系统层** ✓、★ **许可红线** ✓
-# 判据:   ★★ 真机探：★ ① `sw` 上直接取 `PDMDocManager`（★ 试几种取法）· ★② 记**异常与 HRESULT** ✓
+# 判据:   ★★ 真机探：★ ① `sw` 上直接取 `PDMDocManager`（★ 试几种取法）· ★② 记**异常与 HR
+# ESULT** ✓
 #   ★★★ **三种结果三种记法**：
 #     · ★ **拿到对象** ⇒ ★ 再探它的 3 个成员（★ 而**那也不是用户功能级 PDM** ✓）
 #     · ★ **抛 `0x80040112`** ⇒ ★★★ **正是本仓早记过的那条**（★ **该产品没许可** ✓）✓
@@ -35,7 +42,8 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-#: ★ 试几种"取 PDM"的形态（★ 官方入口在 `IApplication::PDMDocManager`、★ 而 `sw` 是 `ISldWorks` ✗）
+#: ★ 试几种"取 PDM"的形态（★ 官方入口在 `IApplication::PDMDocManager`、★ 而 `sw` 是 `ISl
+#: dWorks` ✗）
 FORMS = ("sw.PDMDocManager（属性）", "sw.GetPDMDocManager()（方法）",
          "sw.Application.PDMDocManager")
 

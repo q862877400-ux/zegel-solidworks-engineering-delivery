@@ -1,28 +1,39 @@
 """★ 单变量矩阵：`ViewName` 取自**模型自己给的名单**（`GetModelViewNames`）能否建成视图。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（真机探针）。2026-10-03（接手轮）为重开「画图域建视图」那条已走死的路而写。
+# 仓库:   本项目自身（真机探针）。2026-10-03（接手轮）为重开「画图域建视图」那条已走死的
+# 路而写。
 # 文件:   tools/prove_view_name_matrix.py
 # 定位:   ★★ **为什么要重开**（★ 按纪律**先读了已走死的路**再决定重开）：
-#   · 事实 **327**（画图域第 2 次）：`add_view` 回 `None`，而官方签名**核对过是对的**（5 参）
+# · 事实 **327**（画图域第 2 次）：`add_view` 回 `None`，而官方签名**核对过是对的**（5 
+# 参）
 #     ⇒ 卡点不在 arity；当时给的候选是「无图框 / 模型未打开」。
-#   · 事实 **328**（第 3 次）：那两个候选**都被排除**（`setup_current_sheet_as_a3` 回 `status: pass`
+# · 事实 **328**（第 3 次）：那两个候选**都被排除**（`setup_current_sheet_as_a3` 回 `sta
+# tus: pass`
 #     而 `add_view` 仍 `None`；"只给路径 / 先打开模型"两格都 `view: false`）
 #     ⇒ 结论：建视图在**硬约束⑦（禁保存）**下**结构性做不到**。
 #   ★★ **本探针与原三次的差别（★ 这才算"换一个维度"，不是"再试一次"）**：
 #     · 那三次都**硬编码一个视图名**；★ 而官方 Remarks **逐字**要求
-#       "ViewName must **exactly match** the name of the model view … (for example, `"*Front"`)"
+# "ViewName must **exactly match** the name of the model view … (for example, `"*Front"`
+# )"
 #       ⇒ ★ 名字不对就回 `None`，**且从返回值看不出原因**。
-#     · ★★ 官方**有**「问出真实视图名」的成员 **`IModelDoc2.GetModelViewNames()`**（零参、**未废弃**）
+# · ★★ 官方**有**「问出真实视图名」的成员 **`IModelDoc2.GetModelViewNames()`**（零参、**
+# 未废弃**）
 #       ⇒ ★ 本探针**唯一变量 = ViewName**：同一零件 / 同一模板 / 同一位置，
 #         ★ 名单**取自模型自己**，外加 `*Front` **对照格**（用来**复现**事实 327/328 的失败）。
-#   ★ 另一处与原三次不同：★ 本探针**把零件存到了 `output/`**（★ 官方要求 ModelName 含 `.sldprt`）
-#     ⇒ 因此它顺带回答「**卡点是否只在"禁保存"上**」。⚠ 只写 `output/`（gitignored），不碰任何用户数据。
+# ★ 另一处与原三次不同：★ 本探针**把零件存到了 `output/`**（★ 官方要求 ModelName 含 `.sl
+# dprt`）
+# ⇒ 因此它顺带回答「**卡点是否只在"禁保存"上**」。⚠ 只写 `output/`（gitignored），不碰任
+# 何用户数据。
 #   官方依据（★ 逐页读过）:
-#     · `C:\swapi\types\IDrawingDoc\CreateDrawViewFromModelView3.md` —— 5 参；Remarks 逐字给出
-#       "exactly match" 与 'the names of the standard views begin with an asterisk … ("*Front")'，
+# · `C:\swapi\types\IDrawingDoc\CreateDrawViewFromModelView3.md` —— 5 参；Remarks 逐字给
+# 出
+# "exactly match" 与 'the names of the standard views begin with an asterisk … ("*Front"
+# )'，
 #       并要求 ModelName 含 `.sldprt`/`.sldasm`
-#     · `C:\swapi\types\IModelDoc2\GetModelViewNames.md` —— `System.object GetModelViewNames()`，零参、未废弃
-#     · `C:\swapi\types\IModelDoc2\GetModelViewCount.md` —— ★ **Obsolete** ⇒ 本探针**不用它**
+# · `C:\swapi\types\IModelDoc2\GetModelViewNames.md` —— `System.object GetModelViewNames
+# ()`，零参、未废弃
+# · `C:\swapi\types\IModelDoc2\GetModelViewCount.md` —— ★ **Obsolete** ⇒ 本探针**不用它*
+# *
 #   许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -37,7 +48,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 #: ★ `scripts/` 也要进 `sys.path` —— `scripts/sw_part.py` 内部用的是**绝对导入**
-#: （`from sw_feature_readback import feature_names`）⇒ 只加 REPO 会 `ModuleNotFoundError`。
+#: （`from sw_feature_readback import feature_names`）⇒ 只加 REPO 会 `ModuleNotFoundErro
+#: r`。
 sys.path.insert(0, str(REPO / "scripts"))
 
 from scripts import sw_connect as C                                    # noqa: E402

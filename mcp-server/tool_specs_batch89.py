@@ -1,7 +1,8 @@
 """★ 批次 89：C 类**最后两组语义无歧义**的解锁 —— Costing 写侧 3 个 + 运动算例 2 个（★ 含护城河域 AVI）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其 `scripts/` 源码里）
-# 文件:   `scripts/sw_costing.py`（`include_body` / `set_costing_method` / `update_cost_for_all_bodies`）·
+# 文件:   `scripts/sw_costing.py`（`include_body` / `set_costing_method` / `update_cost_
+# for_all_bodies`）·
 #         `scripts/sw_motion.py`（`calculate_and_play` / `export_motion_study_avi`）
 # 定位:   ★ 规格 `specs/205-tool-ramp/` §8 的**批 89** —— ★ 走的是「**加解析器换工具**
 #           」那条路：
@@ -14,11 +15,13 @@
 #       `C:\swapi\types\IMotionStudy\SaveToAVI.md`  ⇒
 #         `System.bool SaveToAVI( System.string FileName, AVIParameter Parameter )`
 #     ★ 解析器用的三个成员也都有页：
-#       `IMotionStudyManager\GetMotionStudy.md`      ⇒ `MotionStudy GetMotionStudy( System.string MotionStudyName )`
+# `IMotionStudyManager\GetMotionStudy.md`      ⇒ `MotionStudy GetMotionStudy( System.str
+# ing MotionStudyName )`
 #       `IMotionStudyManager\GetMotionStudyCount.md` ⇒ `System.int GetMotionStudyCount()`
 #       `IMotionStudyManager\GetMotionStudyNames.md`（同名清单）
 #   · ★★ **Costing 那三个`C:\swapi\types` 下没有官方页**（那套源不含 `sldcostingapi` 册；
-#     `IncludeBody` / `SetCostingMethod` / `UpdateCostForAllBodies` 三页 `glob` **均 0 命中**）⇒
+# `IncludeBody` / `SetCostingMethod` / `UpdateCostForAllBodies` 三页 `glob` **均 0 命中*
+# *）⇒
 #     ★ 真源是**本仓** `scripts/sw_costing.py`（它的来源块逐字写着依据是
 #     「**反射确认的实参个数** `COSTING_ARITY`」，成员名如 `ICostManager` / `ICostModel`）
 #     ⇒ ★ **不编官方签名**（铁律 5），doc 里如实说明真源 ✓
@@ -28,7 +31,8 @@
 #     · `sw_costing.get_body_count` / `get_bodies` / `get_costing_method` /
 #       `get_cost_analysis` / `collect_costing_evidence` —— ★ **各自的 `*_report` 包装
 #       （`get_body_count_report` 等）已挂成工具**（`solidworks_costing_body_count` /
-#       `…_list_bodies` / `…_method_value` / `…_read_analysis` / `…_evidence`）⇒ **FR-006 去重** ✓
+# `…_list_bodies` / `…_method_value` / `…_read_analysis` / `…_evidence`）⇒ **FR-006 去重
+# ** ✓
 #     · `sw_motion.add_constant_speed_rotary_motor` / `…_by_cylinders` —— ★ 上游遗留工具
 #       `solidworks_add_rotary_motor` 就是这两个的封装 ⇒ **已覆盖** ✓
 #     · `sw_costing.get_costing_model` 本身 —— ★ 它是**解析器用的路径**，不是给用户的动作 ✓
@@ -40,7 +44,8 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH89"]
 
 SPECS_BATCH89 = [
-    # ── ① Costing 写侧（3）—— ★ 无官方页 ⇒ 真源 = 本仓 `scripts/sw_costing.py` ──────────
+    # ── ① Costing 写侧（3）—— ★ 无官方页 ⇒ 真源 = 本仓 `scripts/sw_costing.py` ────────
+    # ──
     ToolSpec(
         name="solidworks_costing_include_body",
         title="Include/Exclude a Body from the Cost Calculation",
@@ -85,7 +90,8 @@ SPECS_BATCH89 = [
             "★ 典型调用序：改完材料/模板（`solidworks_costing_set_default_*`）或纳入实体"
             "（`solidworks_costing_include_body`）之后，用本工具让成本刷新 ✓",
     ),
-    # ── ② 运动算例（2）—— ★ 有官方页，逐字引自 `C:\swapi\types\IMotionStudy\` ─────────────
+    # ── ② 运动算例（2）—— ★ 有官方页，逐字引自 `C:\swapi\types\IMotionStudy\` ─────────
+    # ────
     ToolSpec(
         name="solidworks_motion_calculate_and_play",
         title="Calculate the Motion Study (and Optionally Play It)",
@@ -115,7 +121,8 @@ SPECS_BATCH89 = [
         title="Export the Motion Study to AVI (one of this repo's moat domains)",
         module="sw_motion", function="export_motion_study_avi",
         inject="motion_study",
-        #: ★★ 同 `calculate_and_play`：`motion_study_name` 由**解析器消费**（`None` = 不进目标函数）✓
+        #: ★★ 同 `calculate_and_play`：`motion_study_name` 由**解析器消费**（`None` = 不
+        #: 进目标函数）✓
         param_alias={"motion_study_name": None},
         params=[
             Param("file_path", str, description="输出文件路径（★ 含扩展名；★ **父目录必须已存在**）。"

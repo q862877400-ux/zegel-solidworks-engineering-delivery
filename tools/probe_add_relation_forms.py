@@ -65,7 +65,8 @@ def main() -> int:
             pass
         doc = sw_connect.new_document(sw, "part")
 
-        #: 造一个含 **2 条直线** 的草图，并**保持编辑态**（官方 Remarks：必须有活动草图）
+        #: 造一个含 **2 条直线** 的草图，并**保持编辑态**（官方 Remarks：必须有活动草图
+        #: ）
         sw_part.start_sketch(doc)
         sw_part.sketch_line(doc, -30.0, 0.0, 30.0, 0.0)
         sw_part.sketch_line(doc, -30.0, 20.0, 30.0, 20.0)

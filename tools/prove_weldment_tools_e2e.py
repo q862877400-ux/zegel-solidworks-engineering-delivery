@@ -18,13 +18,15 @@
 #       —— ★ **只要草图名 + 型材路径** ✓
 #
 #   ★ 本探针按契约调这三个：
-#     · `solidworks_weldment_create_structural_member`（inject=model · sketch_name · profile_path）
+# · `solidworks_weldment_create_structural_member`（inject=model · sketch_name · profile
+# _path）
 #     · `solidworks_weldment_ensure_cut_list`（inject=model · 无参）
 #     · `solidworks_weldment_evidence`（inject=model · create_missing_cut_list）
 #
 #   ⚠ 全程走 `tools/sw_guard.py`（★ 超时 + 弹窗处置 + `sw_alive` 复查）。
 # 官方依据: `C:\swapi\types\IFeatureManager\InsertStructuralWeldment2{,3}.md` ·
-#   `…\InsertWeldmentCutList2.md`（`Feature InsertWeldmentCutList2( System.object Bodies )`）。
+# `…\InsertWeldmentCutList2.md`（`Feature InsertWeldmentCutList2( System.object Bodies )
+# `）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -76,7 +78,8 @@ def main() -> int:
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: \u2605 \u2460 \u753b\u4e00\u6761\u8def\u5f84\u8349\u56fe\uff08\u2605 \u5de5\u5177\u5c42\u53ea\u8981\u8349\u56fe\u540d\uff09
+        #: \u2605 \u2460 \u753b\u4e00\u6761\u8def\u5f84\u8349\u56fe\uff08\u2605 \u5de5\u
+        #: 5177\u5c42\u53ea\u8981\u8349\u56fe\u540d\uff09
         P.start_sketch(doc, plane_name="Front Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
                          0.0, 0.0, 0.0, 120.0 / 1000.0, 0.0, 0.0)
@@ -84,7 +87,8 @@ def main() -> int:
         profile = (r"C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\weldment profiles"
                    r"\GB\square-rods.sldlfp")
 
-        #: \u2605 \u2461 \u6309\u5951\u7ea6\u8c03**\u5de5\u5177\u5c42\u90a3\u4e2a\u5165\u53e3**
+        #: \u2605 \u2461 \u6309\u5951\u7ea6\u8c03**\u5de5\u5177\u5c42\u90a3\u4e2a\u5165\
+        #: u53e3**
         for cand in ("\u8349\u56fe1", "Sketch1"):
             try:
                 feat = W.create_structural_member_from_sketch(doc, cand, profile)

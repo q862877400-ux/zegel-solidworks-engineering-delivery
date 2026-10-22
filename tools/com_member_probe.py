@@ -5,7 +5,8 @@
 # 文件:   tools/com_member_probe.py
 # 定位:   ★ 2026-10-03（轮 447）承**事实 361** —— ★ 那轮查明：★ 「**接口在文档里**」**
 #           ≠**
-#   「**这个对象能用它**」，★ 而**真正的判据**是 ★ `getattr(obj, 名字, None) is not None`。
+# 「**这个对象能用它**」，★ 而**真正的判据**是 ★ `getattr(obj, 名字, None) is not None`
+# 。
 #   ★★★ **本工具就是那条判据的自动化**：
 #     ```
 #     ① ★ 从出厂 interop 程序集读**某个接口的成员名单**（★ 纯元数据反射，★ 零依赖）
@@ -64,8 +65,10 @@ def interface_members(type_name: str, dll: Path | None = None) -> dict:
     env = dict(os.environ)
     env["DSL_INTEROP"] = str(dll)
     env["DSL_TYPE"] = type_name
-    #: ★★ 第一版用 `-Command` 传**多行脚本** ⇒ 真机报了**一串脚本原文**（★ 即它没当脚本执行）。
-    #:   ★★ **正解是 `-EncodedCommand`**（base64 / UTF-16LE）—— ★ 那是传多行脚本**最稳**的方式 ✓
+    #: ★★ 第一版用 `-Command` 传**多行脚本** ⇒ 真机报了**一串脚本原文**（★ 即它没当脚本
+    #: 执行）。
+    #: ★★ **正解是 `-EncodedCommand`**（base64 / UTF-16LE）—— ★ 那是传多行脚本**最稳**的
+    #: 方式 ✓
     import base64
     enc = base64.b64encode(PS_MEMBERS.encode("utf-16-le")).decode("ascii")
     r = subprocess.run(["powershell", "-NoProfile", "-EncodedCommand", enc],
@@ -105,10 +108,12 @@ def probe_members(obj, names) -> dict:
     return out
 
 
-# ⚑ 2026-10-03（轮 470）：这里曾有一个 `diff_against_interface(obj, type_name, *, limit)` ——
+# ⚑ 2026-10-03（轮 470）：这里曾有一个 `diff_against_interface(obj, type_name, *, limit)
+# ` ——
 #   它把「程序集成员名单」与「真机探测结果」对成三组（`on_object` / `unusable` /
 #   `missing_from_assembly`），是**建库阶段的一次性分析助手**；那一阶段的结论已经写进
-#   `docs/known-facts.md` 与能力条目的 `limitations` ⇒ **它没被取代，而是**任务结束了****，
+# `docs/known-facts.md` 与能力条目的 `limitations` ⇒ **它没被取代，而是**任务结束了****
+# ，
 #   从此全仓**没有任何调用点**（★ 实测：全仓出现 **1** 次 = 就只有这一处定义）。
 #   ★ 删掉它、留这段墓碑 —— 依据是本仓自己的先例（`tools/propose_capability_sources.py`
 #   L136-137 对 `match_modules` 的处理）★ 以及门禁 `tests/test_no_uncalled_helpers.py`

@@ -61,7 +61,8 @@ def main() -> int:
                                 **(extra or {})})
             print("  %s %-44s %s" % ("✓" if ok else "**✗**", name[:44], str(detail)[:76]))
 
-        #: ①b 先用**已有的** pywin32 通道确认实例在线（并拿到 PID 作对照），再走 comtypes
+        #: ①b 先用**已有的** pywin32 通道确认实例在线（并拿到 PID 作对照），再走 comtype
+        #: s
         base = win32com.client.GetActiveObject("SldWorks.Application")
         pid = None
         try:
@@ -78,7 +79,8 @@ def main() -> int:
         ev["comtypes_type"] = "%s.%s" % (type(sw).__module__, type(sw).__name__)
         try:
             pid2 = int(sw.GetProcessID())
-            #: ⚠ pywin32 那条 `GetProcessID()` 上面返回了 `None` ⇒ **只在两边都有值时才比**
+            #: ⚠ pywin32 那条 `GetProcessID()` 上面返回了 `None` ⇒ **只在两边都有值时才
+            #: 比**
             rec("   ↳ 同一个实例？",
                 (pid is None) or (pid2 == pid),
                 "comtypes PID=%s · pywin32 PID=%s ⇒ %s"
@@ -88,8 +90,10 @@ def main() -> int:
             rec("   ↳ GetProcessID（comtypes）", False, "%s" % type(exc).__name__[:40])
 
         #: ② 类型库里有 ISafeArrayUtility 吗
-        #: ⚠⚠ **2026-10-01（轮 188）第一版这里错了**：我拿 `type(sw).__module__` 去找模块，
-        #:   而它是 `comtypes._post_coinit.unknwn`（**基类所在模块**），不是生成的类型库模块。
+        #: ⚠⚠ **2026-10-01（轮 188）第一版这里错了**：我拿 `type(sw).__module__` 去找模
+        #: 块，
+        #: 而它是 `comtypes._post_coinit.unknwn`（**基类所在模块**），不是生成的类型库模
+        #: 块。
         #:   ⇒ 正确姿势：**显式 `cc.GetModule(<tlb 路径>)`**，从它的返回值里取接口类。
         iface = None
         mod = None
@@ -135,8 +139,10 @@ def main() -> int:
         #:   `TypeError: required argument 'Value' missing`。
         #:   ⇒ ★ 正确姿势是**读类型库自己的方法表**（`_methods_`，那才是权威 —— 铁律 4）：
         #:   ```
-        #:     PutDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in,out / in / in) ⇒ **3 参**
-        #:     GetDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in / in / **out**) ⇒ 2 参，出参作返回值
+        #: PutDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in,out / in / in) ⇒ 
+        #: **3 参**
+        #: GetDouble   argtypes=(VARIANT, c_long, c_double)  flags=(in / in / **out**) ⇒
+        #:  2 参，出参作返回值
         #:   ```
         if typed is not None:
             try:
@@ -167,7 +173,8 @@ def main() -> int:
                     rec("⑤b 往返 GetDouble(arr, 0)", False,
                         "%s: %s" % (type(exc).__name__, str(exc)[:70]))
             #: ⑥ 对照：**我们现在怎么做的**（这条决定"它有没有新增能力"）
-            #: ⚠ 第一版这里写错了：直接用了 `sw_connect.call_com_member` 而本函数里没导入它。
+            #: ⚠ 第一版这里写错了：直接用了 `sw_connect.call_com_member` 而本函数里没导
+            #: 入它。
             #:   ⇒ 改成**只用已导入的绑定**构造一次数组，证明"构造数组本来就不需要它"。
             try:
                 import pythoncom

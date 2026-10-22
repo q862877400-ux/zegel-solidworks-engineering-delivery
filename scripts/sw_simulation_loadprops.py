@@ -167,15 +167,19 @@ def configure_force(
             applied["Unit"] = int(unit)
         if magnitude is not None:
             #: ★★★★★ 2026-10-10 **修一处真 bug（★ 本仓自己的纪律被违反）**：
-            #:   ★ 原来这里写的是 `get_com_member(force, "NormalForceOrTorqueValue", 值)` ✗
-            #:   ★★ 而 `get_com_member` 的语义是「**取或调**」（★ 有实参 ⇒ **一定调用**）——
+            #: ★ 原来这里写的是 `get_com_member(force, "NormalForceOrTorqueValue", 值)` 
+            #: ✗
+            #: ★★ 而 `get_com_member` 的语义是「**取或调**」（★ 有实参 ⇒ **一定调用**）—
+            #: —
             #:     `NormalForceOrTorqueValue` 是**可写属性**（★ 不是方法）⇒
             #:     ★★ 它**不是「找不到成员」**，而是**取回来是个 `float`、不可调用** ⇒
             #:     ★ 于是 `get_com_member` **抛 `TypeError`** ⇒ ★ **力的大小从来没设上** ✗
             #:   ★★★ **后果（★ 真机实测）**：★ 求解弹窗报「★ **未定义载荷或规定的位移**」
             #:     +「固定-刚性零件上的载荷将不处于活动状态」⇒ ★ **求解被前置检查拦住** ✓
-            #:   ★★ **正解在本仓早已写明** —— `sw_connect.set_com_member` 的 docstring 逐字：
-            #:     「★★ 与已知事实 4（读用 `get_com_member`）成对：★ **读走 `get_com_member`，
+            #: ★★ **正解在本仓早已写明** —— `sw_connect.set_com_member` 的 docstring 逐
+            #: 字：
+            #: 「★★ 与已知事实 4（读用 `get_com_member`）成对：★ **读走 `get_com_member`
+            #: ，
             #:       ★ 写走本函数**」✓
             #:   ★ 故此处改用 `set_com_member`（★ 下面 `PhaseAngle` 等三处同病同修）。
             set_com_member(force, "NormalForceOrTorqueValue", float(magnitude))

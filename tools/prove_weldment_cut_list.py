@@ -69,20 +69,30 @@ def main() -> int:
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: \u2605 \u2460 \u5148\u5efa\u4e00\u4e2a**\u710a\u4ef6**\uff08\u2605 \u7ed3\u6784\u6784\u4ef6\uff09
-        #: \u2605\u2605 2026-10-03\uff08\u8f6e 497\uff09**\u7b2c\u4e00\u7248\u7b7e\u540d\u8c03\u9519\u4e86** \u2014\u2014
-        #:   \u26a0 \u6211\u4f20\u7684\u662f `(doc, "\u8349\u56fe1", profile)`\uff0c\u2605 \u800c\u771f\u7b7e\u540d\u662f
+        #: \u2605 \u2460 \u5148\u5efa\u4e00\u4e2a**\u710a\u4ef6**\uff08\u2605 \u7ed3\u67
+        #: 84\u6784\u4ef6\uff09
+        #: \u2605\u2605 2026-10-03\uff08\u8f6e 497\uff09**\u7b2c\u4e00\u7248\u7b7e\u540d
+        #: \u8c03\u9519\u4e86** \u2014\u2014
+        #: \u26a0 \u6211\u4f20\u7684\u662f `(doc, "\u8349\u56fe1", profile)`\uff0c\u2605
+        #:  \u800c\u771f\u7b7e\u540d\u662f
         #:     `create_structural_member(model, **profile_path**, **segment_groups**, ...)`
-        #:     \u21d2 \u2605 **\u6211\u628a\u300c\u8349\u56fe\u540d\u300d\u5f53\u6210\u4e86\u300c\u578b\u6750\u8def\u5f84\u300d** \u26a0
-        #:     \u771f\u673a\u62a5 `FileNotFoundError: \u710a\u4ef6\u578b\u6750\u4e0d\u5b58\u5728\u6216\u683c\u5f0f\u9519\u8bef: D:\AI\SW\\u8349\u56fe1` \u2713
-        #:   \u21d2 \u2605 \u6b63\u662f AGENTS.md \u90a3\u6761\u7eaa\u5f8b\uff1a**\u6309\u5951\u7ea6\u8c03\uff0c\u522b\u624b\u8c03\u5185\u90e8\u5b9e\u73b0** \u2713
-        #:   \u2605\u2605 \u800c `segment_groups` \u8981\u7684\u662f**\u8349\u56fe\u6bb5\u5bf9\u8c61**\uff08\u2605 `sw_weldment.py` L182-195\uff1a
-        #:     \u6bcf\u7ec4\u4e00\u4e2a `CreateStructuralMemberGroup`\uff09\u21d2 \u2605 \u6545\u8fd9\u91cc**\u5728\u8349\u56fe\u5f00\u7740\u65f6**\u53d6\u6bb5\u3002
+        #: \u21d2 \u2605 **\u6211\u628a\u300c\u8349\u56fe\u540d\u300d\u5f53\u6210\u4e86\
+        #: u300c\u578b\u6750\u8def\u5f84\u300d** \u26a0
+        #: \u771f\u673a\u62a5 `FileNotFoundError: \u710a\u4ef6\u578b\u6750\u4e0d\u5b58\u
+        #: 5728\u6216\u683c\u5f0f\u9519\u8bef: D:\AI\SW\\u8349\u56fe1` \u2713
+        #: \u21d2 \u2605 \u6b63\u662f AGENTS.md \u90a3\u6761\u7eaa\u5f8b\uff1a**\u6309\u
+        #: 5951\u7ea6\u8c03\uff0c\u522b\u624b\u8c03\u5185\u90e8\u5b9e\u73b0** \u2713
+        #: \u2605\u2605 \u800c `segment_groups` \u8981\u7684\u662f**\u8349\u56fe\u6bb5\u
+        #: 5bf9\u8c61**\uff08\u2605 `sw_weldment.py` L182-195\uff1a
+        #: \u6bcf\u7ec4\u4e00\u4e2a `CreateStructuralMemberGroup`\uff09\u21d2 \u2605 \u6
+        #: 545\u8fd9\u91cc**\u5728\u8349\u56fe\u5f00\u7740\u65f6**\u53d6\u6bb5\u3002
         P.start_sketch(doc, plane_name="Front Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
                          0.0, 0.0, 0.0, 120.0 / 1000.0, 0.0, 0.0)
-        #: \u2605 \u2605\u2605 **\u8d81\u8349\u56fe\u8fd8\u5f00\u7740\u53d6\u6bb5**\uff08\u2605 `_capture_sketch_ref` \u7684\u6559\u8bad\uff1a
-        #:   \u5b83\u7b2c\u4e00\u884c\u8bfb `SketchManager.ActiveSketch`\uff0c\u2605 \u5173\u4e86\u5c31\u53d6\u4e0d\u5230\uff09
+        #: \u2605 \u2605\u2605 **\u8d81\u8349\u56fe\u8fd8\u5f00\u7740\u53d6\u6bb5**\uff0
+        #: 8\u2605 `_capture_sketch_ref` \u7684\u6559\u8bad\uff1a
+        #: \u5b83\u7b2c\u4e00\u884c\u8bfb `SketchManager.ActiveSketch`\uff0c\u2605 \u517
+        #: 3\u4e86\u5c31\u53d6\u4e0d\u5230\uff09
         segments = []
         try:
             sk = C.get_com_member(C.get_com_member(doc, "SketchManager"), "ActiveSketch")
@@ -114,7 +124,8 @@ def main() -> int:
             #:   `AttributeError: 'PyIDispatch' object has no attribute 'Name'` ⚠
             #:   ⇒ ★ 那些 `CutListFolder` 的 `f` **直接读 `.Name` 不行**
             #:   ⇒ ★ 故**只记个数**；★ 而名字交给下面的 `_cut_list_folders()`
-            #:     （★ 它走 `iter_features_recursive` 拿到的是**特征对象**、那条路能读到 `Name`）✓
+            #: （★ 它走 `iter_features_recursive` 拿到的是**特征对象**、那条路能读到 `Na
+            #: me`）✓
             ev["ensure"] = {"ok": True, "n": len(folders or [])}
         except Exception as exc:                                          # noqa: BLE001
             ev["ensure"] = {"ok": False, "err": "%s: %s" % (type(exc).__name__, str(exc)[:200])}

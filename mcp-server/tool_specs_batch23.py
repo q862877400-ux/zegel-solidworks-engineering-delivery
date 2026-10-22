@@ -107,8 +107,10 @@ SPECS_BATCH23 = [
         title="Chamfer the Selected Edge(s)",
         module="sw_part", function="chamfer",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={**_ALIAS_SEL(), "distance_mm": "distance"},
         pre_call=_select_edge,
         params=[
@@ -126,8 +128,10 @@ SPECS_BATCH23 = [
         title="Round (Fillet) the Selected Edge(s)",
         module="sw_part", function="fillet",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={**_ALIAS_SEL(), "radius_mm": "radius"},
         pre_call=_select_edge,
         params=[
@@ -139,13 +143,15 @@ SPECS_BATCH23 = [
             "current selection.",
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**补「改 × 特征」格** ——
-    #:   ★ 那一格是本仓**密度最低**的：★ 官方 **275** 个成员、★ 我们原有 **2** 个工具（**0.7%**）。
+    #: ★ 那一格是本仓**密度最低**的：★ 官方 **275** 个成员、★ 我们原有 **2** 个工具（**0
+    #: .7%**）。
     #:   ★★ 而"抑制/解除抑制一个**特征**"是它最基础的能力，★ 本仓**没有**
     #:     （★ 已有的是**组件**的 `suppress_component` · **配合**的 `suppress_mate`）✓
     #:   ★★★ 出处：★ 官方 `IModelDoc2/EditSuppress2.md`（`bool EditSuppress2()`，0 参）+
     #:     本仓既有模式（★ `EditSuppress2` 是**文档级**的、★ 作用在**当前选择**上）✓
     #:   ★★★★ 真机：★ 两条都**回 `True`**、★ **负例（不存在的特征名）抛 `RuntimeError`** ✓
-    #:     （★ `tools/probe_feature_suppress_e2e.py` · `output/feature-suppress-e2e-evidence.json`）
+    #: （★ `tools/probe_feature_suppress_e2e.py` · `output/feature-suppress-e2e-evidence
+    #: .json`）
     #:   ★ 参数是**特征名**（★ 不是声明式选择器）—— ★ 因为**特征按名字可选**（★ 事实 32：
     #:     边/面没有名字，★ 而特征有）⇒ ★ 能力层内部做 `SelectByID2(名, "BODYFEATURE", …)` ✓
     ToolSpec(
@@ -182,7 +188,8 @@ SPECS_BATCH23 = [
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**继续补「改 × 特征」格** ——
     #:   ★ 与上两条**同族**：★ `EditDelete()` 也是**文档级**、★ **作用在当前选择上** ✓
-    #:   ★★ 官方 `IModelDoc2/EditDelete.md` 逐字 `void EditDelete()`（0 参、★ **无废弃**）✓
+    #: ★★ 官方 `IModelDoc2/EditDelete.md` 逐字 `void EditDelete()`（0 参、★ **无废弃**）
+    #: ✓
     #:   ★★★ 真机（★ `tools/probe_feature_edit_e2e.py` ·
     #:     `output/feature-edit-e2e-evidence.json`）：★ **特征真的被删掉**
     #:     （★ `['…','草图1','凸台-拉伸1']` ⇒ `['…','草图1']`）、

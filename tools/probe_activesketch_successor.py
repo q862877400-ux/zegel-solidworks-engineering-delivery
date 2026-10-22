@@ -10,7 +10,8 @@
 #     · `C:\\swapi\\types\\ISketchManager\\ActiveSketch.md` 签名逐字：
 #       `Sketch ActiveSketch {get;}`   ← ★★ **属性（只读）**，不是方法
 #   ★★ 本仓既有的真机读数（`scripts/sw_sketch.py` 的函数文档逐字）：
-#     「① 草图**已关闭**时，`SketchManager.ActiveSketch` 与 `model.GetActiveSketch2` **都是 None**」
+# 「① 草图**已关闭**时，`SketchManager.ActiveSketch` 与 `model.GetActiveSketch2` **都是 
+# None**」
 #     ⇒ ★ 说明两者**行为等价**（★ 但那句话本身也要复核）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -99,7 +100,8 @@ def main() -> int:
                 _g(sw, "CloseDoc", str(_g(doc, "GetTitle") or ""))
         except Exception:                                                 # noqa: BLE001
             pass
-    #: ★ 判据（★ 先写死）：★ 开草图时**两者都非 None**、★ 关闭时**两者都 None** ⇒ **等价，可换**
+    #: ★ 判据（★ 先写死）：★ 开草图时**两者都非 None**、★ 关闭时**两者都 None** ⇒ **等价
+    #: ，可换**
     c1 = R["cases"][1] if len(R["cases"]) > 1 else {}
     c2 = R["cases"][2] if len(R["cases"]) > 2 else {}
     open_both = (str(c1.get("GetActiveSketch2", "")).startswith("<")

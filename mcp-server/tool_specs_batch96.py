@@ -4,14 +4,18 @@
 # 文件:   `scripts/sw_drawing_create_missing.py`（本轮追加段）
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-5** · 外部项目 idx **205 `model_a
 #           nnotations`**。
-#   ★★ 裁决书的**建议落点**是 `scripts/sw_drawing.py`，★ 而**我落在 `sw_drawing_create_missing.py`**
-#     —— 理由**可核**：前者只有 **29 行**、是**桥接壳**（`exec_module` 加载 subskill 再 `globals().update`），
-#     往里加实现会被桥接逻辑覆盖；★ 而带视图助手（`_iter_views` / `_sum_over_views` / `_delta` /
+# ★★ 裁决书的**建议落点**是 `scripts/sw_drawing.py`，★ 而**我落在 `sw_drawing_create_mis
+# sing.py`**
+# —— 理由**可核**：前者只有 **29 行**、是**桥接壳**（`exec_module` 加载 subskill 再 `glo
+# bals().update`），
+# 往里加实现会被桥接逻辑覆盖；★ 而带视图助手（`_iter_views` / `_sum_over_views` / `_delt
+# a` /
 #     `_find_view`）的是后者 —— ★ **裁决书自己要求「复用该文件已有的读侧助手，别新造」** ✓
 #     ★ 这条**偏离已写进 tasks.md**（不静默）。
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\InsertModelAnnotations4.md`（8 参 + Paramete
 #           rs + Returns）·
-#   `C:\\swapi\\enums\\{swImportModelItemsSource_e,swInsertAnnotation_e}.md`（★ 后者 **26 个成员**位掩码）·
+# `C:\\swapi\\enums\\{swImportModelItemsSource_e,swInsertAnnotation_e}.md`（★ 后者 **26 
+# 个成员**位掩码）·
 #   `C:\\swapi\\types\\IView\\GetAnnotationCount.md` ·
 #   ★★ `C:\\swapi\\examples\\Insert_Model_Annotations_Example_VB.md`（**调用序**：
 #     选中视图 → **ActivateView** → 清选区 → 调它）✓

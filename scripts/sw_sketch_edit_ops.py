@@ -5,7 +5,8 @@
 # 文件:   scripts/sw_sketch_edit_ops.py
 # 定位:   ★ 2026-10-03（轮 465）★ `specs/201-toolbar-gaps` 的 **B3 批**（草图编辑 7 条
 #           ）。
-#   ★★ 起因：用户贴草图工具条截图逐条问「能/不能」，这 7 个当时全答「不能」（本仓无入口）；
+# ★★ 起因：用户贴草图工具条截图逐条问「能/不能」，这 7 个当时全答「不能」（本仓无入口）
+# ；
 #     随后要求「把这些不能实现的都攻关好」。
 #   ★★★ **签名与枚举三源互证（铁律 4）**：全部逐条读自 `C:\\swapi\\`：
 #     ```
@@ -20,7 +21,8 @@
 #       SketchSegment CreateFillet(double Radius, int ConstrainedCorners)
 #     C:\\swapi\\types\\ISketchManager\\CreateLinearSketchStepAndRepeat.md
 #       System.bool CreateLinearSketchStepAndRepeat(int NumX, int NumY, double SpacingX,
-#         double SpacingY, double AngleX, double AngleY, string DeleteInstances, bool XSpacingDim,
+# double SpacingY, double AngleX, double AngleY, string DeleteInstances, bool XSpacingDi
+# m,
 #         bool YSpacingDim, bool AngleDim, bool CreateNumOfInstancesDimInXDir,
 #         bool CreateNumOfInstancesDimInYDir)
 #     C:\\swapi\\types\\ISketchManager\\CreateCircularSketchStepAndRepeat.md
@@ -30,19 +32,24 @@
 #     C:\\swapi\\types\\ISketchManager\\IntersectCurves.md
 #       void IntersectCurves()
 #     C:\\swapi\\enums\\swSketchTrimChoice_e.md
-#       Closest 0 · Corner 1 · TwoEntities 2 · EntityPoint 3 · Entities 4 · Outside 5 · Inside 6
+# Closest 0 · Corner 1 · TwoEntities 2 · EntityPoint 3 · Entities 4 · Outside 5 · Inside
+#  6
 #     C:\\swapi\\enums\\swSkOffsetCapEndType_e.md
 #       NoCaps 0 · ArcCaps 1 · LineCaps 2
 #     C:\\swapi\\enums\\swSkOffsetMakeConstructionType_e.md
 #       Dont 0 · MakeOrig 1 · MakeOffs 2 · MakeBoth 3
 #     ```
 #   ★★★ **选择怎么做的（★ 本模块的核心设计）**：官方这族**全部要求"先选中草图实体"**，
-#     而**事实 32** 说得很清楚 —— **按名字选只对特征成立**，对**实体（边/面/草图段）不成立**。
-#     ⇒ ★ 故本模块走**按对象选**：`get_sketch_segments` 取到段对象，再 `Select4(append, callout)` ✓
-#     ★★ 对外的参数是**声明式下标**（`selection="index:0"` / `"index:0,index:1"` / `"__current_selection__"`），
+# 而**事实 32** 说得很清楚 —— **按名字选只对特征成立**，对**实体（边/面/草图段）不成立**
+# 。
+# ⇒ ★ 故本模块走**按对象选**：`get_sketch_segments` 取到段对象，再 `Select4(append, call
+# out)` ✓
+# ★★ 对外的参数是**声明式下标**（`selection="index:0"` / `"index:0,index:1"` / `"__curre
+# nt_selection__"`），
 #       **不收裸坐标**（规则 3）✓
 #   ⚠ **单位**：长度**毫米**、角度**度** —— 换算在工具层边界做一次（规则 2）。
-#     ★ 官方这两个阵列成员的 `AngleX`/`AngleY`/`ArcAngle` 是**弧度**（COM 惯例）⇒ 本模块**收度**、
+# ★ 官方这两个阵列成员的 `AngleX`/`AngleY`/`ArcAngle` 是**弧度**（COM 惯例）⇒ 本模块**收
+# 度**、
 #       在边界乘 `pi/180` ✓
 # 官方依据: 见上（`C:\\swapi\\` 的 7 个成员 + 3 个枚举）。
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名自建）。
@@ -118,7 +125,8 @@ def select_sketch_segment(model, index: int, *, append: bool = False) -> int:
     seg = segs[index]
     ok = get_com_member(seg, "Select4", bool(append), _empty_callout())
     if not ok and not append:
-        #: \u2605 Select4 \u7684\u8fd4\u56de\u503c\u4e0d\u53ef\u4fe1\uff08\u4e8b\u5b9e 8\uff09\u21d2 \u7528\u56de\u8bfb\u8ba1\u6570\u5b9a\u8bba
+        #: \u2605 Select4 \u7684\u8fd4\u56de\u503c\u4e0d\u53ef\u4fe1\uff08\u4e8b\u5b9e 8
+        #: \uff09\u21d2 \u7528\u56de\u8bfb\u8ba1\u6570\u5b9a\u8bba
         pass
     mgr = get_com_member(model, "SelectionManager")
     return int(get_com_member(mgr, "GetSelectedObjectCount2", -1) or 0)
@@ -246,23 +254,30 @@ B3_MEMBERS = (
 )
 
 
-# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**构造几何** ─────────────────────────────
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**构造几何** ───────────────────────
+# ──────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_sketch_edit_ops.py —— 追加 `sketch_set_construction_geometry`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **79 `constru
 #           ction_geometry`**。
-#   ★★ 裁决书的强制约束（`docs/recon-207/adjudication.md` §一）：「零参 + 普通 dispinterface ⇒
+# ★★ 裁决书的强制约束（`docs/recon-207/adjudication.md` §一）：「零参 + 普通 dispinterfa
+# ce ⇒
 #   后端可达性最高。落 `sw_sketch_edit_ops.py`，**复用**该文件已有的声明式选段包装」✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
-#   · `C:\swapi\types\ISketchManager\CreateConstructionGeometry.md` —— `void CreateConstructionGeometry()`
-#     ★ 摘要逐字：「**Sets** selected sketch segments **to be construction geometry instead of
-#       sketch geometry**.」（★ 是**置位**、不是 toggle —— 措辞是 "Sets … instead of"，★ 不是 "toggles"）
+# · `C:\swapi\types\ISketchManager\CreateConstructionGeometry.md` —— `void CreateConstru
+# ctionGeometry()`
+# ★ 摘要逐字：「**Sets** selected sketch segments **to be construction geometry instead 
+# of
+# sketch geometry**.」（★ 是**置位**、不是 toggle —— 措辞是 "Sets … instead of"，★ 不是 
+# "toggles"）
 #     ★ `## Remarks` 逐字：「This method supports **all document types**, unlike
 #       `IDrawingDoc::CreateConstructionGeometry`, which only supports drawing documents.」
-#   · `C:\swapi\types\ISketchSegment\ConstructionGeometry.md` —— `System.bool ConstructionGeometry {get; set;}`
+# · `C:\swapi\types\ISketchSegment\ConstructionGeometry.md` —— `System.bool Construction
+# Geometry {get; set;}`
 #     ★ 摘要逐字：「Gets **or sets** whether this sketch segment is construction geometry」
-#     ⇒ ★★ **往回变（构造线 → 实体线）官方只有这条属性通道**（`CreateConstructionGeometry` 是单向置位）
+# ⇒ ★★ **往回变（构造线 → 实体线）官方只有这条属性通道**（`CreateConstructionGeometry` 
+# 是单向置位）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
@@ -271,9 +286,12 @@ B3_MEMBERS = (
 #    "第二次调用把构造线变回实体"的工具**（静默的语义错）」
 #   ⇒ ★★ 本函数的**设计**（既做对、又可证）：**置位方向走官方零参入口**
 #     （`CreateConstructionGeometry`），**复位方向走属性 setter**（★ 官方唯一的回程）✓
-#   ★ 而"再调一次会怎样"由**真机探针**单独回答（`tools/probe_union_adopt_b1.py` 的 T2-c），
-#     ★★ **不把 toggle 语义烘进工具**（★ 无论答案是哪一种，本工具的语义都是"我要它**是/不是**构造线"）
-#   ★★★ **已知事实 32** 在这里照旧成立：草图段**按名字选不中** ⇒ 本函数走**按对象选**（`Select4`）✓
+# ★ 而"再调一次会怎样"由**真机探针**单独回答（`tools/probe_union_adopt_b1.py` 的 T2-c）
+# ，
+# ★★ **不把 toggle 语义烘进工具**（★ 无论答案是哪一种，本工具的语义都是"我要它**是/不是*
+# *构造线"）
+# ★★★ **已知事实 32** 在这里照旧成立：草图段**按名字选不中** ⇒ 本函数走**按对象选**（`Se
+# lect4`）✓
 
 
 def _selection_segments(model, selection: str):

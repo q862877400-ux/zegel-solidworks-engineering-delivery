@@ -38,7 +38,8 @@ from __future__ import annotations
 from tool_registry import Param, ToolSpec
 
 
-#: ★★ 事实 503：`RESOLVERS` 会清空选区 ⇒ 要「调用方先选」的工具，选区**必须**由 `pre_call`
+#: ★★ 事实 503：`RESOLVERS` 会清空选区 ⇒ 要「调用方先选」的工具，选区**必须**由 `pre_cal
+#: l`
 #:   在注入之后重建。本批只有 `solidworks_surface_offset` 属于这一类。
 #:   形状照 `tool_specs_batch74.py::_select_faces_for`；判据用**回读计数**（事实 8：
 #:   `Select4` 的 bool 返回值不可信），没选够就**抛**，不静默。
@@ -146,7 +147,8 @@ SPECS_BATCH116 = [
         doc="Revolve cut from a sketch. ★ angle in radians per the implementation signature.",
     ),
     #: ⚠ 2026-10-18 未接：`sw_sketch.get_sketch_slots(sketch)` —— ★ 首参名是 `sketch`，
-    #:   而 `register_capabilities.RESOLVERS` 的 21 个键里**没有** `sketch`（见该文件 L396：
+    #: 而 `register_capabilities.RESOLVERS` 的 21 个键里**没有** `sketch`（见该文件 L396
+    #: ：
     #:   「注入名只能是这张表的键」）⇒ 挂上去会在运行期抛
     #:   `TypeError: unexpected keyword argument 'model'`。
     #:   ★ 处置：本批**不接**它。要接需先在 RESOLVERS 里加一个 `resolve_sketch`，

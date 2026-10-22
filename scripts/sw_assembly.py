@@ -438,7 +438,8 @@ def add_mate5_checked(
         int(width_mate_option),
         error_status,
     )
-    # swAddMateError_e 中 1=swAddMateError_NoError；0=Unknown 在部分版本也会伴随非空 Mate。
+    # swAddMateError_e 中 1=swAddMateError_NoError；0=Unknown 在部分版本也会伴随非空 Mat
+    # e。
     if mate is None or int(error_status.value) not in (
         SW_ADD_MATE_ERROR_UNKNOWN,
         SW_ADD_MATE_ERROR_NO_ERROR,
@@ -587,13 +588,17 @@ def apply_component_transform_x(component, tx, ty, tz, angle_rad=0.0):
     if transform is None:
         raise RuntimeError("组件没有可用 Transform2")
     transform.ArrayData = build_transform_data_x(tx, ty, tz, angle_rad)
-    #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `component.SetTransformAndSolve2(transform)`。
+    #: ★★★ 2026-10-03（接手轮）**换走后继入口** —— 原来是 `component.SetTransformAndSolv
+    #: e2(transform)`。
     #:   ★ 官方 `types/IComponent2/SetTransformAndSolve2.md` 逐字：
     #:     「**Obsolete. Superseded by [[IComponent2::SetTransformAndSolve3]].**」
-    #:   ★★ 后继多一个参数：`SetTransformAndSolve3(Xform, **ThisConfiguration**)`（★ 1 → 2 参）
-    #:   ★ 官方 `## Parameters` 逐字：★「**ThisConfiguration**: True to transform **this configuration**,
+    #: ★★ 后继多一个参数：`SetTransformAndSolve3(Xform, **ThisConfiguration**)`（★ 1 → 2
+    #:  参）
+    #: ★ 官方 `## Parameters` 逐字：★「**ThisConfiguration**: True to transform **this c
+    #: onfiguration**,
     #:     false to transform **all configurations**」
-    #:   ⇒ ★ 本函数的意图是"改**这个组件**的位姿"（★ 见函数名与 docstring）⇒ ★ **传 True** ✓
+    #: ⇒ ★ 本函数的意图是"改**这个组件**的位姿"（★ 见函数名与 docstring）⇒ ★ **传 True**
+    #:  ✓
     #:   ★★★ 真机证据（`tools/probe_add_component_three_paths.py` ·
     #:     `output/add-component-three-paths-evidence.json`）：
     #:     ★ 旧 `SetTransformAndSolve2(xf)` **能调（True）** ·
@@ -795,7 +800,8 @@ def get_interference_detection(asm_model):
         #: ⚠⚠⚠ **两处成员名都错**（2026-10-01 轮 159 查出）：
         #: ① 入口属性是 **`InterferenceDetectionManager`**（**带 `Manager`**）——
         #:    出厂反射的拼写是 `get_InterferenceDetectionManager()`；
-        #: ② 取结果用 **`GetInterferences()`**（**复数**），没有 `GetInterference(index)`。
+        #: ② 取结果用 **`GetInterferences()`**（**复数**），没有 `GetInterference(index)
+        #: `。
         #: ★ 两处都在 `try:` 里 ⇒ **此前静默降级**（不炸，但**永远拿不到数据**）。
         interference = asm_model.InterferenceDetectionManager
         interference.TreatSubAssembliesAsComponents = False
@@ -817,7 +823,8 @@ def get_interference_detection(asm_model):
                 #: ⚠⚠⚠ **第三处成员名错**（轮 159 真机暴露）：`IInterference` 上
                 #: **没有 `Name`**（`C:\swapi\types\IInterference\` 的成员是
                 #: `Components` / `GetComponentCount` / `GetInterferenceBody` /
-                #: `IGetComponents` / `Ignore` / `IsFastener` / `IsPossibleInterference` / **`Volume`**）。
+                #: `IGetComponents` / `Ignore` / `IsFastener` / `IsPossibleInterference`
+                #:  / **`Volume`**）。
                 #: ⇒ 改用**官方有的**两个：`Volume` 与 `GetComponentCount()`。
                 items.append({
                     "index": index,
@@ -915,9 +922,11 @@ def collect_mate_in_place_evidence(mate_in_place) -> dict:
     entities = []
     for index in range(count):
         entities.append({
-            #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同 `sw_equation.py` 那处）** ——
+            #: ★★ 2026-10-03（轮 470）**修正一次过度替换（同 `sw_equation.py` 那处）** —
+            #: —
             #:   这两行原本是 `get_com_member(...)`（★ **读**）：`MateEntityType` /
-            #:   `MateComponentName` 是**索引属性**，`index` 是**下标**，**返回值**是要取的值。
+            #: `MateComponentName` 是**索引属性**，`index` 是**下标**，**返回值**是要取
+            #: 的值。
             #:   ⚠ 同轮我把 98 处「写 COM 属性」批量改名为 `set_com_member` 时按形态匹配
             #:     ⇒ 把这两处也改了 ⇒ 于是变成"写下标"。
             #:   ★ 判据：**返回值被使用 ⇒ 读**。

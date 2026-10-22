@@ -19,11 +19,16 @@
 #
 # | 形态 | 例 | 为什么看不见 |
 # |---|---|---|
-# | a 模块别名 | `import sw_part as P` 后 `P._safe_com_member(..)` | 形态 ③ 要求基名**字面等于** `stem`，而这里是 `P` |
-# | b 名字别名 | `from sw_part import _safe_com_member as f` 后 `f(..)` | 形态 ② 要求裸名**等于** `fn.name` |
-# | c 点式基名 | `pkg.sw_part._safe_com_member(..)` | `f.value` 是 `Attribute`，不是 `Name` |
-# | d 同文件自限定 | `sw_part._safe_com_member(..)` **写在 `sw_part.py` 里** | 形态 ③ 硬要求 `p != path` |
-# | e `getattr` 动态 | `getattr(sw_part, "_safe_com_member")(..)` | 不是 `Attribute`/`Name` 调用 |
+# | a 模块别名 | `import sw_part as P` 后 `P._safe_com_member(..)` | 形态 ③ 要求基名**字
+# 面等于** `stem`，而这里是 `P` |
+# | b 名字别名 | `from sw_part import _safe_com_member as f` 后 `f(..)` | 形态 ② 要求裸
+# 名**等于** `fn.name` |
+# | c 点式基名 | `pkg.sw_part._safe_com_member(..)` | `f.value` 是 `Attribute`，不是 `Na
+# me` |
+# | d 同文件自限定 | `sw_part._safe_com_member(..)` **写在 `sw_part.py` 里** | 形态 ③ 硬
+# 要求 `p != path` |
+# | e `getattr` 动态 | `getattr(sw_part, "_safe_com_member")(..)` | 不是 `Attribute`/`Na
+# me` 调用 |
 #
 # ## ★★ 本切片的核心事实（真树实测 · 2026-10-09）
 # 5 种形态**全部 = 0**（`output/_probe232_blindspots.py`），

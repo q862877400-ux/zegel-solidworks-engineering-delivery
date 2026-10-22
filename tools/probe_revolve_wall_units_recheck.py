@@ -1,6 +1,7 @@
 """★ 真机：★ 建**薄壁旋转** ⇒ 用 `revolve_params` 读回 ⇒ 量 `GetWallThickness` 的口径。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + 官方 `C:\\swapi\\types\\IRevolveFeatureData2\\GetWallThickness.md` +
+# 仓库:   本项目自身 + 官方 `C:\\swapi\\types\\IRevolveFeatureData2\\GetWallThickness.md
+# ` +
 #         `C:\\swapi\\types\\IFeatureManager\\FeatureRevolve2.md` +
 #         `C:\\swapi\\enums\\swThinWallType_e.md`
 # 文件:   tools/probe_revolve_wall_units_recheck.py（★ 只报不动 —— 证据脚本 · 新）
@@ -12,7 +13,8 @@
 #     · ★ `FeatureRevolve2` 的签名**自带** `IsThin` / `ThinType` / `ThinThickness1` /
 #       `ThinThickness2` ⇒ ★ **不必走 `CreateDefinition`**（★ 与 `sweep` 不同）✓
 #     · ★★ `swThinWallType_e`：★ `OneDirection = **0**` · ★ `MidPlane = **2**` ✓
-#     · ★★★ 而 `MidPlane` 有一句**逐字限定**：★「(ThinThickness1)/2 is used for each direction」✓
+# · ★★★ 而 `MidPlane` 有一句**逐字限定**：★「(ThinThickness1)/2 is used for each directi
+# on」✓
 #   ★★★★ **判据（★ 几何、★ 独立、★ 三个候选分得开）**：
 #     ★ 轮廓：★ 矩形 x∈[10,20] · y∈[0,10] · ★ 中心线 x=0 ⇒ ★ **绕 x=0 转 30°** ⇒
 #       · ★ **实体**（★ 已知解析值）：★ `(30/360)·π·(20²−10²)·10 = **785.398**** ✓

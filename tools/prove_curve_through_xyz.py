@@ -9,11 +9,14 @@
 #   ★★ **官方四页（`C:\swapi\types\IModelDoc2\`，★ 四者全**未标废弃****）**：
 #     ```
 #     void InsertCurveFileBegin()
-#        Remarks \u9010\u5b57\uff1a"This method: - **is the first method called that create a curve**. "
+# Remarks \u9010\u5b57\uff1a"This method: - **is the first method called that create a c
+# urve**. "
 #        "This method **must precede** all calls to `InsertCurveFilePoint`; "
-#        "\u2605 **and `InsertCurveFileEnd` must enclose all of the calls to `InsertCurveFilePoint`**."
+# "\u2605 **and `InsertCurveFileEnd` must enclose all of the calls to `InsertCurveFilePo
+# int`**."
 #     bool InsertCurveFilePoint(double X, double Y, double Z)
-#        Remarks\uff1a"sets a point for a curve\uff1b\u2605 **called multiple times** after Begin and before End"
+# Remarks\uff1a"sets a point for a curve\uff1b\u2605 **called multiple times** after Beg
+# in and before End"
 #     bool InsertCurveFileEnd()
 #        Remarks\uff1a"**is the last method called to create a curve**"
 #     bool InsertCurveFile(string FileName)
@@ -44,7 +47,8 @@ sys.path.insert(0, str(R / "scripts"))
 from scripts import sw_connect as C                                   # noqa: E402
 import scripts.sw_feature_readback as FR                              # noqa: E402
 
-#: \u2605 \u8981\u7a7f\u8fc7\u7684\u70b9\uff08\u2605 **\u6beb\u7c73**\uff0c\u2605 \u672c\u4ed3\u7ea6\u5b9a\uff1a\u8fb9\u754c\u6362\u7b97\u4e00\u6b21\uff09
+#: \u2605 \u8981\u7a7f\u8fc7\u7684\u70b9\uff08\u2605 **\u6beb\u7c73**\uff0c\u2605 \u672c
+#: \u4ed3\u7ea6\u5b9a\uff1a\u8fb9\u754c\u6362\u7b97\u4e00\u6b21\uff09
 PTS_MM = [(0.0, 0.0, 0.0), (20.0, 10.0, 0.0), (40.0, 0.0, 10.0), (60.0, 10.0, 10.0)]
 
 
@@ -56,7 +60,9 @@ def _one(sw, tag, mode):
         before = list(FR.feature_names(doc) or [])
         row["before"] = len(before)
         if mode == "steps":
-            #: \u2605 **\u4e09\u6b65\u5f0f**\uff1aBegin \u2192 Point\u00d7N \u2192 End\uff08\u2605 \u800c\u5b98\u65b9\u8bf4 Begin/End \u5fc5\u987b**\u5939\u4f4f**\u6240\u6709 Point\uff09
+            #: \u2605 **\u4e09\u6b65\u5f0f**\uff1aBegin \u2192 Point\u00d7N \u2192 End\u
+            #: ff08\u2605 \u800c\u5b98\u65b9\u8bf4 Begin/End \u5fc5\u987b**\u5939\u4f4f*
+            #: *\u6240\u6709 Point\uff09
             steps = {}
             try:
                 C.get_com_member(doc, "InsertCurveFileBegin")
@@ -78,7 +84,8 @@ def _one(sw, tag, mode):
                 steps["End"] = "%s: %s" % (type(exc).__name__, str(exc)[:60])
             row["steps"] = steps
         else:
-            #: \u2605 **\u4ece\u6587\u4ef6**\uff08\u2605 \u5b98\u65b9\uff1a"The curve goes through the points in the specified file"\uff09
+            #: \u2605 **\u4ece\u6587\u4ef6**\uff08\u2605 \u5b98\u65b9\uff1a"The curve go
+            #: es through the points in the specified file"\uff09
             f = R / "output" / "_xyz_points.txt"
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text("\n".join("%.6f %.6f %.6f" % (x / 1000.0, y / 1000.0, z / 1000.0)

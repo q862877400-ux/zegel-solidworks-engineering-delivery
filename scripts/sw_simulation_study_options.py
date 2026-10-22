@@ -618,9 +618,12 @@ def set_option(options, family: str, name: str, value) -> bool:
             f"该族登记的 {len(STUDY_OPTION_SETTERS[family])} 项，"
             f"其中布尔型（推荐用）: {sorted(BOOLEAN_SETTERS.get(family, ()))[:8]} …"
         )
-    #: ★★★★★ 2026-10-01（轮 344）**设属性必须用 `set_com_member`，不能用 `get_com_member(…, value)`** ——
-    #:   真因（挖 `simulation_solver_options` 这条 `stitched` 时发现，★ 而它的 `limitations` 里
-    #:   **早就写着**「① `TypeError: 'bool' object is not callable` ⇒ 真机上该成员**已是 bool 值**」）：
+    #: ★★★★★ 2026-10-01（轮 344）**设属性必须用 `set_com_member`，不能用 `get_com_member
+    #: (…, value)`** ——
+    #: 真因（挖 `simulation_solver_options` 这条 `stitched` 时发现，★ 而它的 `limitation
+    #: s` 里
+    #: **早就写着**「① `TypeError: 'bool' object is not callable` ⇒ 真机上该成员**已是 b
+    #: ool 值**」）：
     #:   ★ `get_com_member(obj, "X", value)` 的语义是**「取或调」** —— ★ **传了实参**时它
     #:   **先无参调一次**拿到返回值、★ **再拿那个返回值去"调用"**（★ 事实 227）。
     #:   ⇒ ★ 对**属性**（值已是 `bool`）就会 `TypeError: 'bool' object is not callable`；
@@ -628,11 +631,13 @@ def set_option(options, family: str, name: str, value) -> bool:
     #:     · **属性** ⇒ `set_com_member`（★ 直接设）
     #:     · **方法** ⇒ `get_com_member(obj, name, *args)`（★ 调用）
     #:   ⚠ 本处 `name` 来自 `STUDY_OPTION_SETTERS` 登记表，★ 表里**既有属性也有方法** ⇒
-    #:     ★ 按"能不能设"分流：★ 先试 `set_com_member`，★ 失败再退回调用式（★ 两条路都记进返回值）。
+    #: ★ 按"能不能设"分流：★ 先试 `set_com_member`，★ 失败再退回调用式（★ 两条路都记进返
+    #: 回值）。
     #:   ⚠⚠ 而 `set_com_member` **必须在模块顶部 import**（★ 与 `get_com_member` 并列）——
     #:     ★ 我第一版把 `from sw_connect import set_com_member` **写在函数体内**，
     #:     ★★ 而测试里 `sw_connect` 是 **mock**（★ 只提供 `get_com_member`）⇒
-    #:     `ImportError: cannot import name 'set_com_member' from 'sw_connect' (unknown location)`
+    #: `ImportError: cannot import name 'set_com_member' from 'sw_connect' (unknown loca
+    #: tion)`
     #:     ⇒ **2 个契约测试当场失败**（★ 那就是"聚焦测试"抓到的）。
     coerced = _coerce(entry, value)
     try:
@@ -642,8 +647,10 @@ def set_option(options, family: str, name: str, value) -> bool:
     #:   ★ 第一版写的是 `except Exception`，★ 而我把 `_set_com_member` 那行 import 删掉后
     #:   **名字没跟着改** ⇒ ★ `NameError` **被这个宽 except 吞掉** ⇒ **静默退回调用式** ⇒
     #:   ★★ **我的修复根本没生效，而函数看起来"正常"**（★ 是本文件那个新加的测试抓到的）。
-    #:   ⇒ ★ 只捕获**"设不进去"那两种**：★ `AttributeError`（不是可设属性）· `TypeError`（不是可调方法）；
-    #:     ★ **其余的异常照旧抛出**（★ `NameError` / `KeyboardInterrupt` 之类**必须可见**）。
+    #: ⇒ ★ 只捕获**"设不进去"那两种**：★ `AttributeError`（不是可设属性）· `TypeError`（
+    #: 不是可调方法）；
+    #: ★ **其余的异常照旧抛出**（★ `NameError` / `KeyboardInterrupt` 之类**必须可见**）
+    #: 。
     except (AttributeError, TypeError) as exc:
         #: ★ 退回"当方法调"（★ 登记表里确实是方法的那些走这里）
         r = get_com_member(options, name, coerced)
@@ -780,9 +787,11 @@ def list_setter_summary() -> dict[str, Any]:
     }
 
 
-# ── 24h 计划 段 1 续（Spec Kit `154`）：**从 study 取 options 的求解器设置包装** ──────────
+# ── 24h 计划 段 1 续（Spec Kit `154`）：**从 study 取 options 的求解器设置包装** ──────
+# ────
 # ★★★★ 为什么包一层（★ 而不是加新的注入键）：
-#   · 底层 `configure_static_solver(options, …)` / `set_option(options, family, name, value)` 等
+# · 底层 `configure_static_solver(options, …)` / `set_option(options, family, name, valu
+# e)` 等
 #     **要一个 `options` 宿主对象**；★ 而那个对象**从 study 取**：
 #       `study_options_of(study, family)` → `get_com_member(study, accessor)`
 #   · ★★ 而 **`inject="study"` 早就存在**（`resolve_study`）⇒ ★★★ **所以包一层就够了**：
@@ -843,8 +852,10 @@ def configure_static_solver_report(study, family: str = "ICWStaticStudyOptions",
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
     #: ★★ 2026-10-01（轮 347）**"nothing to change" 不是失败** ——
     #:   ★ `set_options` 在 `kw` 为空时回 `{}`，而 `bool({})` 是 `False` ⇒
-    #:   ★★ 旧写法把「你没给参数」报成 `ok=False`，**让调用方以为能力坏了**（★ 我第一遍就这么误判）。
-    #:   ⚠ **本行必须在 `except` 块之外**（★ 我第一次按**行号**批量插入，把它插进了 `except` 里面 ⇒
+    #: ★★ 旧写法把「你没给参数」报成 `ok=False`，**让调用方以为能力坏了**（★ 我第一遍就
+    #: 这么误判）。
+    #: ⚠ **本行必须在 `except` 块之外**（★ 我第一次按**行号**批量插入，把它插进了 `excep
+    #: t` 里面 ⇒
     #:     正常路径落空、函数回 `None`）—— ★ 与事实 61 同型：**按行插入会挤坏控制流**。
     if not kw:
         return {"ok": True, "family": family, "changed": [], "returned": r,
@@ -865,7 +876,8 @@ def configure_frequency_solver_report(study, family: str = "ICWFrequencyStudyOpt
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "family": family, "changed": sorted(kw),
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
-    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 `except` 之外）。
+    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 
+    #: `except` 之外）。
     if not kw:
         return {"ok": True, "family": family, "changed": [], "returned": r,
                 "note": "没有要改的项（★ 未传任何参数并非失败）"}
@@ -886,7 +898,8 @@ def configure_buckling_solver_report(study, family: str = "ICWBucklingStudyOptio
     except Exception as exc:                                   # noqa: BLE001
         return {"ok": False, "family": family, "changed": sorted(kw),
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
-    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 `except` 之外）。
+    #: ★★ 同 `configure_static_solver_report`（轮 347）：★ **空 `kw` ⇒ 不是失败**（★ 在 
+    #: `except` 之外）。
     if not kw:
         return {"ok": True, "family": family, "changed": [], "returned": r,
                 "note": "没有要改的项（★ 未传任何参数并非失败）"}

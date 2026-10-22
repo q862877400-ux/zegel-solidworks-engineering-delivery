@@ -23,7 +23,8 @@ MANIFEST = REPO / "capabilities.yaml"
 ENTRY = {
     "id": "topology_optimization",
     "label": "拓扑优化（非参数化找形）",
-    # ⚠ level=stitched 是**如实**的：代码与契约测试都在，但**从未在 SolidWorks 上跑过**。
+    # ⚠ level=stitched 是**如实**的：代码与契约测试都在，但**从未在 SolidWorks 上跑过**
+    # 。
     #   按五级枚举，stitched = 「代码已并入，从未运行」；升 verified 必须补我们自己的
     #   运行证据（真机跑出 Material Mass 结果）。低报是对的，高报违反 A7。
     "level": "stitched",

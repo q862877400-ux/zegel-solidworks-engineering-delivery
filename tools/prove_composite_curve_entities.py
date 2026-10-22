@@ -16,7 +16,8 @@
 #     ★ 故**那部分是对的** —— ★ 真因只剩**前置（选什么实体）**。
 #
 #   ★ 本探针试**三种**（★ 每组新开一个文档）：
-#     ⓐ **同一草图里的两条相连段**（★ 用 `sw_sketch_edit_ops.select_sketch_segment` 按序号选）
+# ⓐ **同一草图里的两条相连段**（★ 用 `sw_sketch_edit_ops.select_sketch_segment` 按序号选
+# ）
 #     ⓑ **实体的两条边**（★ `IEntity.Select4` 按对象选）
 #     ⓒ **不选**（对照）
 #   ★ 判据（★ 规则 6）：**特征树增量** **或** **创建对象**。
@@ -61,7 +62,8 @@ def _one(sw, tag, mode):
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: \u2605 \u5148\u9020\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4f9b \u24d1 \u7ec4\u7528\uff09
+        #: \u2605 \u5148\u9020\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4f9b \u24d1 \u7ec4\
+        #: u7528\uff09
         P.start_sketch(doc, plane_name="Top Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
                          -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
@@ -84,7 +86,8 @@ def _one(sw, tag, mode):
             pass
         picked = 0
         if mode == "segments":
-            #: \u2605 \u24d0 **\u540c\u4e00\u8349\u56fe\u91cc\u7684\u4e24\u6761\u76f8\u8fde\u6bb5**\uff08\u2605 \u6309\u5e8f\u53f7\u9009\uff09
+            #: \u2605 \u24d0 **\u540c\u4e00\u8349\u56fe\u91cc\u7684\u4e24\u6761\u76f8\u8
+            #: fde\u6bb5**\uff08\u2605 \u6309\u5e8f\u53f7\u9009\uff09
             P.end_sketch(doc)          #: \u2605 \u9009\u6bb5\u8981\u5148\u79bb\u5f00\u8349\u56fe\u5417\uff1f\u2605 \u672c\u4ed3\u90a3\u4e2a helper \u81ea\u5df1\u4f1a\u5904\u7406
             for i in (0, 1):
                 try:

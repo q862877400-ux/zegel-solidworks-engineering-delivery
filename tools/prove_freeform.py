@@ -8,19 +8,26 @@
 #   ★★★ **为什么它有活路**（★ 事实 477）：★ 整条链**四个成员全在、且全未标废弃**
 #     —— ★ 而★ 那与四个阵列（全带 `AccessSelections`）**形成鲜明对比** ✓
 #
-#   ★★ **官方依据**：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` 的 **`## Remarks`**
+# ★★ **官方依据**：`C:\swapi\types\IFeatureManager\InsertFreeform2.md` 的 **`## Remarks`
+# **
 #     （★ **签名与参数都给不出那条链，★ 只有 Remarks 给得出**）——
 #     ★ 逐字给出**五步**：
 #     ```
-#     1. **Select the face to form.**        \u2605 \u800c\u4e14\u524d\u7f6e\u91cc\u5199\u7740
+# 1. **Select the face to form.**        \u2605 \u800c\u4e14\u524d\u7f6e\u91cc\u5199\u77
+# 40
 #                                            "**The face must have four sides**"
-#     2. Add curves on the selected face.    \u21d2 `SetFreeformCurveData`\uff08 **8 \u53c2**\uff09
-#     3. Add points on the curves.           \u21d2 `SetFreeformPointData`\uff08 **6 \u53c2**\uff09
-#     4. Specify boundary continuity.        \u21d2 `SetFreeformBoundaryContinuity`\uff08**2 \u53c2**\uff09
-#     5. Insert the Freeform feature.        \u21d2 `InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)`
+# 2. Add curves on the selected face.    \u21d2 `SetFreeformCurveData`\uff08 **8 \u53c2*
+# *\uff09
+# 3. Add points on the curves.           \u21d2 `SetFreeformPointData`\uff08 **6 \u53c2*
+# *\uff09
+# 4. Specify boundary continuity.        \u21d2 `SetFreeformBoundaryContinuity`\uff08**2
+#  \u53c2**\uff09
+# 5. Insert the Freeform feature.        \u21d2 `InsertFreeform2(Nsided, Symmetric0, Sym
+# metric1, Angle)`
 #     ```
 #   ★ 参数语义（★ 从同一页的 `## Parameters` 抄，★ 不猜）：
-#     · `Direction` = **0 或 1** · `CurveParameter` = 面上**何处**加曲线 · `ParameterOnCurve` = 曲线上何处加点
+# · `Direction` = **0 或 1** · `CurveParameter` = 面上**何处**加曲线 · `ParameterOnCurve
+# ` = 曲线上何处加点
 #     · `XOffset`/`YOffset` **典型为 0**（★ "point was not modified"）
 #     · `BoundaryIndex` = **0 基** · `Continuity` = **−1 Movable / 0 Contact / …**
 #     · `Nsided` = True 用新算法（★ **三边或超过四边的面必须 True**）· `Angle` 单位**弧度**
@@ -103,17 +110,20 @@ def _one(sw, tag, *, n_curves=1, n_points=1):
                              0.0, 1.0, 0.0,      #: \u2605 \u4e00\u7aef\u5207\u5411
                              0.0, 1.0, 0.0)      #: \u2605 \u53e6\u4e00\u7aef\u5207\u5411
         row["steps"]["2_curves"] = n_curves
-        #: \u2605 \u7b2c 3 \u6b65\uff1a\u5728\u66f2\u7ebf\u4e0a\u52a0**\u70b9**\uff08\u2605 6 \u53c2\uff0c\u2605 \u504f\u79fb\u5178\u578b\u4e3a 0\uff09
+        #: \u2605 \u7b2c 3 \u6b65\uff1a\u5728\u66f2\u7ebf\u4e0a\u52a0**\u70b9**\uff08\u2
+        #: 605 6 \u53c2\uff0c\u2605 \u504f\u79fb\u5178\u578b\u4e3a 0\uff09
         for j in range(n_points):
             C.get_com_member(fm, "SetFreeformPointData",
                              0, 0.25, 0.5 + 0.3 * j, 0.0, 0.0, 0.0)
         row["steps"]["3_points"] = n_points
-        #: \u2605 \u7b2c 4 \u6b65\uff1a\u8fb9\u754c\u8fde\u7eed\u6027\uff08\u2605 2 \u53c2\uff1b\u2605 `-1 = Movable`\uff09
+        #: \u2605 \u7b2c 4 \u6b65\uff1a\u8fb9\u754c\u8fde\u7eed\u6027\uff08\u2605 2 \u53
+        #: c2\uff1b\u2605 `-1 = Movable`\uff09
         C.get_com_member(fm, "SetFreeformBoundaryContinuity", 0, -1)
         row["steps"]["4_continuity"] = "-1 (Movable)"
         before = list(FR.feature_names(doc) or [])
         row["before"] = len(before)
-        #: \u2605 \u7b2c 5 \u6b65\uff1a\u63d2\u5165\uff08\u2605 4 \u53c2\uff1b\u2605 `Nsided=True` \u7528\u65b0\u7b97\u6cd5\uff09
+        #: \u2605 \u7b2c 5 \u6b65\uff1a\u63d2\u5165\uff08\u2605 4 \u53c2\uff1b\u2605 `Ns
+        #: ided=True` \u7528\u65b0\u7b97\u6cd5\uff09
         feat = C.get_com_member(fm, "InsertFreeform2", True, False, False, 0.0)
         row["returned"] = type(feat).__name__ if feat is not None else "None"
         after = list(FR.feature_names(doc) or [])

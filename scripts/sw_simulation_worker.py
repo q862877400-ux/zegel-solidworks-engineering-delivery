@@ -57,9 +57,11 @@ __all__ = ["mesh_size_by_name", "create_mesh_by_name", "run_analysis_by_name",
            "mesh_settings_by_name", "configure_mesh_settings_by_name",
            "create_mesh_safely_by_name"]
 
-#: ★★ 忙时**先等多久**再看一眼（秒）—— ★ 真机实测：★ 刚把 SolidWorks 拉起来那几秒它自己在忙，
+#: ★★ 忙时**先等多久**再看一眼（秒）—— ★ 真机实测：★ 刚把 SolidWorks 拉起来那几秒它自己
+#: 在忙，
   #: 忙检会把正常调用**全拒**（假警报）⇒ ★ 给一个**有界**的等待 ✓
-  #: ⚠ ★ **别调太大**：★ 每个入口都要等一次 ⇒ ★ 一次链上五个入口就会变成"五分钟"（实测过）✓
+  #: ⚠ ★ **别调太大**：★ 每个入口都要等一次 ⇒ ★ 一次链上五个入口就会变成"五分钟"（实测过
+  #: ）✓
   #: ⚠ ★ 也不许**无界**（★ 事实 526 的纪律）✓
 BUSY_IDLE_WAIT_S = 8.0
 

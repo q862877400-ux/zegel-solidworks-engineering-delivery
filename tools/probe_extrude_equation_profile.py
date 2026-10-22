@@ -117,7 +117,8 @@ def _main() -> int:
     #: ★ ④ 4 条方程式曲线（★ 全真曲线闭合的 10×10 方块）
     def d4(doc):
         sm = C.get_com_member(doc, "SketchManager")
-        #: 下边 y=0（x: 0→0.01）· 上边 y=0.01（x: 0.01→0）· 右边 x=0.01（y: 0→0.01）· 左边 x=0（y: 0.01→0）
+        #: 下边 y=0（x: 0→0.01）· 上边 y=0.01（x: 0.01→0）· 右边 x=0.01（y: 0→0.01）· 左
+        #: 边 x=0（y: 0.01→0）
         C.get_com_member(sm, "CreateEquationSpline2", "", "0.0", "",
                          "0.0", "0.01", False, 0.0, 0.0, 0.0, True, True)
         C.get_com_member(sm, "CreateEquationSpline2", "0.01", "t", "",

@@ -9,7 +9,8 @@
 #     ★ **`GetSelectedObjectsFace`** —— ★ **名字直接写着"取选中的面（复数）"**
 #     ⇒ ★★★ 那很可能就是"**一次拿到所有选中面**"的入口
 #       （★ 而不是"按序号一个一个取"）。
-#   ★ 另有 `GetSelectedObjectsComponent` / `GetSelectedObjectsDrawingView` 同族 —— ★ 一并登记。
+# ★ 另有 `GetSelectedObjectsComponent` / `GetSelectedObjectsDrawingView` 同族 —— ★ 一并
+# 登记。
 # 官方依据: `SolidWorks.Interop.sldworks.dll` 的元数据反射（★ 方法名与形参逐字）·
 #   `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md`（★ 序号语义那一节）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -72,7 +73,8 @@ def main() -> int:
             return rec.get("len")
 
         #: ★ **它们都是方法**（上一版我只读了属性、没调）—— 而形参是 `(AtIndex, Mark)`
-        #:   （★ 出厂类型库反射：`GetSelectedObjectsFace(AtIndex:Int32, Mark:Int32) -> Face2`）。
+        #: （★ 出厂类型库反射：`GetSelectedObjectsFace(AtIndex:Int32, Mark:Int32) -> Fac
+        #: e2`）。
         #:   ★ 而 `GetSelectedObjectMark(AtIndex) -> Int32` 能告诉我“按序号取”的序号体系。
         rows = []
         for i in (1, 2, 3):
@@ -93,7 +95,8 @@ def main() -> int:
         got = {k: sum(1 for r in rows if r.get(k) is True)
                for k in ("face(-1)", "face(0)", "mark", "obj6(-1)")}
         ev["got_counts"] = got
-        #: ★ 判据：★ **按序号取面**那一条能不能取到 **2 个**（★ 与 `Count2(-1)` 的 2 一致）
+        #: ★ 判据：★ **按序号取面**那一条能不能取到 **2 个**（★ 与 `Count2(-1)` 的 2 一
+        #: 致）
         winners = ["face(-1)"] if got.get("face(-1)", 0) >= 2 else []
         ev["entries_that_see_both"] = winners
         ev["verdict"] = "pass" if winners else "partial"

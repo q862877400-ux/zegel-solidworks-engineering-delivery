@@ -79,7 +79,8 @@ __all__ = [
 #         C:\swapi\enums\swFeaturesToPatternType_e.md
 # 定位:   阵列的端条件 / 阵列元素 / 可阵列特征类型。
 # 取值:   swPatternEndCondition_e 官方只有 2 项 —— **全量照录** ✓
-#         swPatternElementSelection_e 官方只有 3 项 —— **全量照录**（★ 2026-10-08 spec 223 订正）
+# swPatternElementSelection_e 官方只有 3 项 —— **全量照录**（★ 2026-10-08 spec 223 订正
+# ）
 #         swFeaturesToPatternType_e 官方只有 2 项 —— **全量照录**（★ 2026-10-08 spec 223 订正）
 # ⚑ 查证过程: 我先按印象写 `swPatternObjectType_e` / `swPatternDirection_e`，
 #   sw_know 两者都报无 ⇒ 真实名字是 swPatternElementSelection_e /
@@ -435,14 +436,18 @@ def collect_pattern_evidence(data) -> dict[str, Any]:
 
 
 #: ── 曲线驱动阵列（**参数式**那条）（★ 规格 213 · B2：★ 从探针
-#:    `tools/probe_spec211_curvedriven.py` **已证实**的调用序缝合进模块 ✓ —— 铁律 1 ✓）──────
-# ★★ **本模块里已有一条同名的路** —— :func:`configure_curve_driven_pattern`（★ **属性式** ✗）：
+#: `tools/probe_spec211_curvedriven.py` **已证实**的调用序缝合进模块 ✓ —— 铁律 1 ✓）────
+#: ──
+# ★★ **本模块里已有一条同名的路** —— :func:`configure_curve_driven_pattern`（★ **属性式*
+# * ✗）：
 #   ★ 它走 `edit_selection(..., "ICurveDrivenPatternFeatureData")` ⇒ ★ **那条 Data 带
 #     `AccessSelections`** ✗ ⇒ ★ **事实 47 一挡就到不了建成** ✓
 #   ★★★ **而本函数是**另一条**：参数式、★ 不需要 ACL** ✓ —— ★★ 两者**不是同一件事**，
 #     所以**分开两个函数**、★ 名字里带 `local` 以区别 ✓
-# ★★ 官方依据（`C:\swapi\types\IFeatureManager\FeatureLocalCurveDrivenPattern.md` 逐字）：
-#   · 签名 **13 参**：`FlipDir1, Num1, EqualSpacing1, Spacing1, ReferencePoint, CurveMethod,
+# ★★ 官方依据（`C:\swapi\types\IFeatureManager\FeatureLocalCurveDrivenPattern.md` 逐字）
+# ：
+# · 签名 **13 参**：`FlipDir1, Num1, EqualSpacing1, Spacing1, ReferencePoint, CurveMetho
+# d,
 #     AlignMethod, Direction2, FlipDir2, Num2, EqualSpacing2, Spacing2, PatternSeedOnly` ✓
 #   · `## Returns` = Local curve pattern feature ✓
 #   · `## Remarks` 的 mark 表逐字：★ **1 = Components to pattern** ·

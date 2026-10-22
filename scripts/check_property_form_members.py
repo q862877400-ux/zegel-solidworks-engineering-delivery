@@ -3,7 +3,8 @@
 （★ 处置事实 520：两处「成员名拼错被当成后端限制」的假阴性）
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 出厂类型库反射（`_raw/reflect_sldworks/iface_sldworks.txt`）
+# 仓库:   本项目自身 + SolidWorks 出厂类型库反射（`_raw/reflect_sldworks/iface_sldworks.
+# txt`）
 # 文件:   `scripts/check_member_names.py`（★ **同族的前一道闸** ——
 #         它只扫 `scripts/*.py` 的 `get_com_member("名字")` / 直接属性访问；
 #         ★★ 而本道管的是**另外两个盲区**：① 走 `getattr(obj, "名字", …)` 的；
@@ -23,9 +24,11 @@
 #     一个字符串字面量若形如 `get_<Name>` 或 `set_<Name>`，★ 而 `<Name>`
 #     **在全部反射清单里只以 `get_` / `set_` 前缀形出现**（即**没有**同名裸成员）
 #     ⇒ ★★ **那个字面量就是"把属性当方法叫"** ⇒ **报**。
-#     ★ 这条判据是**构造性**的：★ 它不需要知道哪个接口 —— ★ 那个名字**在任何接口上**都只有属性形 ✓
+# ★ 这条判据是**构造性**的：★ 它不需要知道哪个接口 —— ★ 那个名字**在任何接口上**都只有属
+# 性形 ✓
 #   ★★★★★ **两个盲区都封住**：
-#     ① 扫描根 = `scripts` / `mcp-server` / `subskills` / `tools` / `tests`（★ 前一道只管 `scripts`）；
+# ① 扫描根 = `scripts` / `mcp-server` / `subskills` / `tools` / `tests`（★ 前一道只管 `s
+# cripts`）；
 #     ② 形态   = `getattr` / `hasattr` / `get_com_member` / `call_com_member` /
 #                `safe_get_com_member` / `get_com_member_raw` **的字符串实参**（★ 前一道只管后四个）✓
 #   ★★★★★★ **不误伤**（★ 三条）：① 只认**可执行代码**里的字符串（`ast` 取 `ast.Constant`、
@@ -46,18 +49,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REFLECTIONS = sorted((ROOT / "_raw").rglob("iface_sldworks.txt"))
-#: ★ 官方结构化镜像（`C:\swapi\types\**\*.md`）—— ★ 判据的**第二源**，也是本门禁的**收敛器**：
+#: ★ 官方结构化镜像（`C:\swapi\types\**\*.md`）—— ★ 判据的**第二源**，也是本门禁的**收敛
+#: 器**：
 #:   它每页顶上带 `member:` / `kind:` 元数据 ⇒ ★★ 于是能分清两件**长得很像**的事：
-#:     · ★ `get_X` **是官方方法**（★ 它**有自己的页**，如 `GetCurrentSheet` / `GetBodies2`）⇒ **合法**；
-#:     · ★★ `get_X` **官方没有这个名字**（★ 它**没有页**，而 `X` **有** `kind: property` 的页）
+#: · ★ `get_X` **是官方方法**（★ 它**有自己的页**，如 `GetCurrentSheet` / `GetBodies2`）
+#: ⇒ **合法**；
+#: · ★★ `get_X` **官方没有这个名字**（★ 它**没有页**，而 `X` **有** `kind: property` 的
+#: 页）
 #:       ⇒ ★★★ **那才是"把属性当方法叫"** ✓
-#:   ⚠ 第一版只按「反射里有没有裸名」判 ⇒ ★ 实测**命中几百处**（`GetBodies2` / `GetTypeName2` …）
-#:     全是**合法方法** ⇒ ★★ 那不是门禁、是噪音 ⇒ ★ 加这一源收敛到 **1 条**（★ 而正是那条真 bug）✓
+#: ⚠ 第一版只按「反射里有没有裸名」判 ⇒ ★ 实测**命中几百处**（`GetBodies2` / `GetTypeNam
+#: e2` …）
+#: 全是**合法方法** ⇒ ★★ 那不是门禁、是噪音 ⇒ ★ 加这一源收敛到 **1 条**（★ 而正是那条真 
+#: bug）✓
 SWAPI_TYPES = Path(r"C:\swapi\types")
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-#: 名字位置的字面量会传给这些函数（★ 后四个与前一道闸同名，但本道**在所有扫描根**上都查）
+#: 名字位置的字面量会传给这些函数（★ 后四个与前一道闸同名，但本道**在所有扫描根**上都查
+#: ）
 NAME_ARG_FUNCS = {
     "getattr", "hasattr", "setattr", "delattr",
     "get_com_member", "get_com_member_raw", "call_com_member", "safe_get_com_member",
@@ -76,7 +85,8 @@ SIG = re.compile(r"^\s*(?:[\w\.\[\]<>,\s]+?\s+)?([A-Za-z_]\w*)\s*\(")
 #:   ⇒ ★ 故前缀用**正则**（`^(get|set)_?`，★ `IGNORECASE`）——
 #:     ★★ 前提是成员名本身是**驼峰**（★ 下一个字符是大写），这样 `getter` 这类词不会被误剥。
 _PREFIX_RE = re.compile(r"^(get|set)_?", re.IGNORECASE)
-#: ★ 成员名必须**驼峰开头**（★ 这是官方成员名的形态；★ 也是"别把 `getter` 当 `get_ter`"的护栏）
+#: ★ 成员名必须**驼峰开头**（★ 这是官方成员名的形态；★ 也是"别把 `getter` 当 `get_ter`"
+#: 的护栏）
 _MEMBER_RE = re.compile(r"^[A-Z]\w*$")
 
 
@@ -211,7 +221,8 @@ def scan() -> tuple[list[dict], int]:
             if p.name.startswith("test_") or ".venv" in p.parts or "node_modules" in p.parts:
                 continue
             #: ★★ 跳过**内嵌快照**（`apps/workbench-ui/src-tauri/resources/skill/**`）——
-            #:   ★ 它是 `scripts/sync_bundled_skill.py` 的**生成物**（在 `.gitignore` 里），
+            #: ★ 它是 `scripts/sync_bundled_skill.py` 的**生成物**（在 `.gitignore` 里）
+            #: ，
             #:   逐字是源码的副本 ⇒ ★ 扫它只会把同一处命中**报两遍**（★ 且它不在源码树里，
             #:   修不了也没意义）✓
             if "resources" in p.parts and "skill" in p.parts:

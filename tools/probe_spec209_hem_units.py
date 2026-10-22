@@ -3,11 +3,14 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_hem_units.py
 # 定位:   ★ 承 `tools/probe_spec209_hem_diag.py` 的读数：60×40 的板，**边长的集合是
-#   `{0.002, 40.0, 60.0}`** —— ★★ 也就是说**厚度棱只有 0.002**，而 `BaseFlangeSpec` 的 docstring
+# `{0.002, 40.0, 60.0}`** —— ★★ 也就是说**厚度棱只有 0.002**，而 `BaseFlangeSpec` 的 doc
+# string
 #   逐字写着「全部长度单位为**米**」（传的是 `thickness=0.002`）⇒ **两种可能**：
 #     ```
-#     H-A 文档单位就是米 ⇒ 0.002 m = 2 mm ⇒ 厚度棱应读 **0.002**（★ 与现读数一致）—— 而板宽 60 米？荒谬
-#     H-B 文档单位是毫米 ⇒ 传 0.002 被当成 **0.002 mm** ⇒ 我们一直在造**箔片**（厚度棱读 0.002 也一致）
+# H-A 文档单位就是米 ⇒ 0.002 m = 2 mm ⇒ 厚度棱应读 **0.002**（★ 与现读数一致）—— 而板宽 
+# 60 米？荒谬
+# H-B 文档单位是毫米 ⇒ 传 0.002 被当成 **0.002 mm** ⇒ 我们一直在造**箔片**（厚度棱读 0.0
+# 02 也一致）
 #     ```
 #   ⇒ ★★ **两条假设给出的厚度读数相同** ⇒ 必须换一个**能分开它们**的判据：
 #     **把 `thickness` 改成 `2.0` 再量一次** ——
@@ -17,7 +20,8 @@
 #   ★★ 另：`IEdge` 上**没有长度成员**（官方成员表逐条列过）⇒ 长度只能由 `GetStartVertex` /
 #     `GetEndVertex` → `IVertex::GetPoint()` 自己算 ✓
 # 官方依据: `C:\swapi\types\IEdge\{GetStartVertex,GetEndVertex}.md` ·
-#   `C:\swapi\types\IVertex\GetPoint.md` · `C:\swapi\types\IFeatureManager\InsertSheetMetalHem2.md`
+# `C:\swapi\types\IVertex\GetPoint.md` · `C:\swapi\types\IFeatureManager\InsertSheetMeta
+# lHem2.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -81,7 +85,8 @@ def main() -> int:
                                                          bend_radius=0.001, depth=0.05))
         return doc
 
-    #: ── 单位判定：同一个零件，传两个厚度，**量厚度棱** ─────────────────────────────────────
+    #: ── 单位判定：同一个零件，传两个厚度，**量厚度棱** ───────────────────────────────
+    #: ──────
     for th in (0.002, 2.0):
         try:
             doc = _plate(th)
@@ -118,7 +123,8 @@ def main() -> int:
     ev["★_unit_verdict"] = verdict
     print("  ★ 单位判定：%s" % verdict)
 
-    #: ── 在**真厚度**的板上重试 hem（★ 之前那张是 0.002 厚的箔片）──────────────────────────
+    #: ── 在**真厚度**的板上重试 hem（★ 之前那张是 0.002 厚的箔片）─────────────────────
+    #: ─────
     doc2 = globals().get("_LAST_DOC")
     if doc2 is not None:
         try:

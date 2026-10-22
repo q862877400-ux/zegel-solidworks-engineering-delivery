@@ -7,14 +7,18 @@
 #     ★ 旧签名 ⇒ `(int EntitiesToDimension, int HorizontalScheme, int HorizontalPlacement,
 #       int VerticalScheme, int VerticalPlacement)` ⇒ **5 参** ✓
 #   ★★ 后继逐字（★ `ISketchManager/FullyDefineSketch.md`）：★ **现行** ·
-#     ★ 签名 ⇒ **10 参**：`(bool EntitiesToFullyDefine, bool UseRelations, int RelationsToApply,
-#       bool UseDimensions, int HorizontalDimScheme, object HorizontalDatumDisp, int VerticalDimScheme,
+# ★ 签名 ⇒ **10 参**：`(bool EntitiesToFullyDefine, bool UseRelations, int RelationsToAp
+# ply,
+# bool UseDimensions, int HorizontalDimScheme, object HorizontalDatumDisp, int VerticalD
+# imScheme,
 #       object VerticalDatumDisp, int HorizontalDimPlacement, int VerticalDimPlacement)` ✓
-#     ★★ 参数语义官方逐字：★ `EntitiesToFullyDefine` = True ⇒ **all**、false ⇒ **only selected** ·
+# ★★ 参数语义官方逐字：★ `EntitiesToFullyDefine` = True ⇒ **all**、false ⇒ **only select
+# ed** ·
 #       ★ `HorizontalDimScheme` = **0=Chain / 1=Baseline / 2=Ordinate** ·
 #       ★ `HorizontalDatumDisp` = 「model edge, model vertex, sketch line, sketch point, or,
 #         if Nothing or null, **use entity with selection…**」✓
-#   ★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图的 `DisplayDimension` 数 +N**（★ 且 `status == 0`）✓
+# ★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图的 `DisplayDimension` 数 +N**（★ 且 `status == 
+# 0`）✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -70,15 +74,18 @@ def main() -> int:
                 act = get_com_member(sk, "ActiveSketch")
                 got = get_com_member(act, "AutoDimension2", 1, 1, -1, 1, -1)
             elif form == "new_nulls":
-                #: ★ 官方：★ `EntitiesToFullyDefine=True` · ★ 两个 DatumDisp **可传 Nothing** ⇒
-                #:   「use entity with selection…」⇒ ★ 本形态**不选**任何基准，★ 看它怎么反应
+                #: ★ 官方：★ `EntitiesToFullyDefine=True` · ★ 两个 DatumDisp **可传 Noth
+                #: ing** ⇒
+                #: 「use entity with selection…」⇒ ★ 本形态**不选**任何基准，★ 看它怎么
+                #: 反应
                 got = get_com_member(sk, "FullyDefineSketch", True, True, 0, True, 1, None, 1, None, -1, -1)
             elif form == "new_empty_dispatch":
                 got = get_com_member(sk, "FullyDefineSketch", True, True, 0, True, 1,
                                      create_empty_dispatch_variant(), 1,
                                      create_empty_dispatch_variant(), -1, -1)
             elif form == "new_selected_baseline":
-                #: ★★ 先**选基准线**（★ 官方 `HorizontalDatumDisp` 的 "use entity with selection"）
+                #: ★★ 先**选基准线**（★ 官方 `HorizontalDatumDisp` 的 "use entity with s
+                #: election"）
                 act = get_com_member(sk, "ActiveSketch")
                 segs = list(get_com_member(act, "GetSketchSegments") or [])
                 if segs:

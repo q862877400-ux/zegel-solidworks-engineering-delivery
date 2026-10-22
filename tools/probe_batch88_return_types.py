@@ -11,7 +11,8 @@
 #           d 的纪律）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
-# ★ 跑法：`python tools/sw_guard.py --timeout 420 -- python tools/probe_batch88_return_types.py`
+# ★ 跑法：`python tools/sw_guard.py --timeout 420 -- python tools/probe_batch88_return_t
+# ypes.py`
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -99,14 +100,16 @@ def main() -> int:
                 pass
             sel_mgr = sw_connect.get_com_member(model, "SelectionManager")
             if comps:
-                #: ★★ 先**清选区**再选（★ 独立探针里"清着选"时 `selected_count=1`，而这里没落上）
+                #: ★★ 先**清选区**再选（★ 独立探针里"清着选"时 `selected_count=1`，而这
+                #: 里没落上）
                 #: ★ 并**回读计数** —— ★ 判据是回读，不是 `Select` 的返回值（事实 8）✓
                 try:
                     sw_connect.get_com_member(model, "ClearSelection2", True)
                 except Exception:                                     # noqa: BLE001
                     pass
                 try:
-                    #: ★ 选实体一律走官方 `ISelectionMgr.AddSelectionListObject`（★ 不裸坐标 —— 规则 3）
+                    #: ★ 选实体一律走官方 `ISelectionMgr.AddSelectionListObject`（★ 不裸
+                    #: 坐标 —— 规则 3）
                     sw_connect.get_com_member(sel_mgr, "AddSelectionListObject", comps[0],
                                               sw_connect.create_empty_dispatch_variant())
                 except Exception as exc:                              # noqa: BLE001
@@ -117,7 +120,8 @@ def main() -> int:
                 except Exception:                                     # noqa: BLE001
                     ev["steps"]["_selected_count"] = -1
                 print("  ★ 回读选区计数:", ev["steps"]["_selected_count"])
-                #: ★★ `ISelectionMgr` 的 **Index 是 1 基**（实测：count=1 时 index 1 取得到、0 取不到）
+                #: ★★ `ISelectionMgr` 的 **Index 是 1 基**（实测：count=1 时 index 1 取
+                #: 得到、0 取不到）
                 comp = get_selected_component(sel_mgr, 1)
                 ev["steps"]["_component_selected"] = comp is not None
                 if comp is not None:

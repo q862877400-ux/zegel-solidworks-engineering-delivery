@@ -16,16 +16,19 @@
 #   ★★★ 而"先找后搓"（作业单 §五）已核：★ **本仓与四家 MIT 克隆都没有**现成实现
 #     ⇒ ★ 本工具是**自己搓的**（★ 也因此是**我们自己的**一块）。
 #   ★★ 判据的形态（★ 本工具定义的）：★ **`docs/judge-registry.json` 是一张显式登记表** ——
-#     每条记「判据是什么 / 它实现在哪 / 它的**已知成功场景** / 那份 evidence / 它在哪条路上**不可用**」。
+# 每条记「判据是什么 / 它实现在哪 / 它的**已知成功场景** / 那份 evidence / 它在哪条路上*
+# *不可用**」。
 # 官方依据: 不适用（本仓自有的判据纪律 —— 事实 320 / 323 / 329 / 330 / 332 / 333 / 334）
 #           。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 登记表**每条都完整**（id / what / where / 已知成功场景 / evidence 存在且 verdict=pass /
+# ★ 判据：★ 登记表**每条都完整**（id / what / where / 已知成功场景 / evidence 存在且 ver
+# dict=pass /
 #   usable_on 或 unusable_on 至少一项）★ 且**已知成功场景的文件真的存在**。
-# ⚠ 便携性：★ 拿不到工作区（`DSL_WORKSPACE` / 默认 `D:\\AI\\SW`）⇒ **[SKIP] 并 exit 0**。
+# ⚠ 便携性：★ 拿不到工作区（`DSL_WORKSPACE` / 默认 `D:\\AI\\SW`）⇒ **[SKIP] 并 exit 0**
+# 。
 
 from __future__ import annotations
 
@@ -35,10 +38,12 @@ import sys
 from pathlib import Path
 
 #: ★★★ 2026-10-03（接手轮）**必须强制 stdout 为 UTF-8** —— ★ 本工具会 `print` 中文，
-#:   而默认走 `locale.getpreferredencoding()`（★ 本机是 **GBK**）⇒ ★ 被父进程按 UTF-8 解时**全是乱码**。
+#: 而默认走 `locale.getpreferredencoding()`（★ 本机是 **GBK**）⇒ ★ 被父进程按 UTF-8 解时
+#: **全是乱码**。
 #:   ★★ 实测后果：`tests/test_judge_preflight_gate.py` 的 **5 条**全失败 ——
 #:     `assert "缺字段" in proc.stdout` 拿到的是 `'\ufffd\u043e\u0775\u01fc…'`
-#:     （★ 而那个测试**自己的** `subprocess.run` **是**带 `encoding="utf-8"` 的 ⇒ 错不在它）。
+#: （★ 而那个测试**自己的** `subprocess.run` **是**带 `encoding="utf-8"` 的 ⇒ 错不在它）
+#: 。
 #:   ★ 这正是 **known-facts 58** 那一族的**第三个实例**（前两个：测试里的 subprocess、
 #:     以及本仓 11 处缺 `encoding=`），★ 而这次的病灶在**子进程的输出侧**，不是解码侧。
 sys.stdout.reconfigure(encoding="utf-8")

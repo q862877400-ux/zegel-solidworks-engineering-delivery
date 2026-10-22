@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 579）★ 把**已证到不了**的成员固化成**静态门禁**。
 #
 #   ★★ **为什么需要它**：本仓已有两道与"名字"有关的门禁 ——
-#     · `check_member_names.py` —— ★ 判「名字在**某个**接口里存在」（★ 事实 36 说它**抓不到**"接口不对"）
+# · `check_member_names.py` —— ★ 判「名字在**某个**接口里存在」（★ 事实 36 说它**抓不到*
+# *"接口不对"）
 #     · `check_interface_member_ownership.py` —— ★ 判「成员属于**这个**接口」
 #     ★ ★★ **而两者都不判「这个名字在本机的迟到绑定下**调不调得动**」** ⚠
 #     ⇒ ★ 故本门禁补的正是**那一层**：★ **一份"已证到不了"的名单 + 逐条证据**。
@@ -14,18 +15,23 @@
 #   ★★★ **名单的每一条都来自真机证据**（★ 不许凭印象加）：
 #     | 成员 | 形态 | 证据 |
 #     |---|---|---|
-#     | `IMathUtility.CreatePoint` / `CreateVector` / `CreateTransform` | 不带 `I` ⇒ **找不到成员** | 事实 456 |
-#     | `IMathUtility.ICreatePoint` / `ICreateVector` | 带 `I` ⇒ **无法读只写属性** | 事实 456 |
-#     | `*FeatureData.AccessSelections`（**部分**接口，如 `ILinearPatternFeatureData`、`IProjectionCurveFeatureData`） | ⇒ **`0x80010105`** | 事实 425/426/446 |
+# | `IMathUtility.CreatePoint` / `CreateVector` / `CreateTransform` | 不带 `I` ⇒ **找不
+# 到成员** | 事实 456 |
+# | `IMathUtility.ICreatePoint` / `ICreateVector` | 带 `I` ⇒ **无法读只写属性** | 事实 4
+# 56 |
+# | `*FeatureData.AccessSelections`（**部分**接口，如 `ILinearPatternFeatureData`、`IPro
+# jectionCurveFeatureData`） | ⇒ **`0x80010105`** | 事实 425/426/446 |
 #     | `InsertWeldmentCutList2` | **成员不在对象上** | 事实 428 |
 #
 #   ★★ **而"带 `I` 前缀"这条规律本身**（事实 456）：★
 #     · **不带 `I`** 的名字 ⇒ `0x80020003` **找不到成员**
-#     · **带 `I`** 的名字 ⇒ `61836` **无法读只写属性**（★ 与事实 47 的"进程内 C++ 指针变体"同族）
+# · **带 `I`** 的名字 ⇒ `61836` **无法读只写属性**（★ 与事实 47 的"进程内 C++ 指针变体"
+# 同族）
 #     ⇒ ★ 故本门禁**对 `I` 前缀的成员给"提示级"告警**（★ 不拦 —— ★ 因为个例未必不成立）。
 #
 #   ★ 退出码：★ 命中 **deny 名单** ⇒ 1；★ 只有提示 ⇒ 0。
-#   ★ 配套负例：`tests/test_unreachable_members_gate.py`（★ 事实 62：门禁"写了"不等于"有效"）。
+# ★ 配套负例：`tests/test_unreachable_members_gate.py`（★ 事实 62：门禁"写了"不等于"有效
+# "）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -46,7 +52,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 R = Path(__file__).resolve().parent.parent
 
-#: \u2605\u2605 **已证到不了** \u2014\u2014 \u10e1\u6bcf\u6761\u5e26\u8bc1\u636e\uff08\u2605 \u4e0d\u8bb8\u51ed\u5370\u8c61\u52a0\uff09
+#: \u2605\u2605 **已证到不了** \u2014\u2014 \u10e1\u6bcf\u6761\u5e26\u8bc1\u636e\uff08\u
+#: 2605 \u4e0d\u8bb8\u51ed\u5370\u8c61\u52a0\uff09
 DENY: dict[str, str] = {
     # \u2605 \u4e8b\u5b9e 456\uff08\u8f6e 578\uff0c\u771f\u673a\uff09
     "CreatePoint": "\u4e8b\u5b9e 456\uff1a`IMathUtility.CreatePoint` \u21d2 `0x80020003` \u627e\u4e0d\u5230\u6210\u5458",
@@ -58,13 +65,20 @@ DENY: dict[str, str] = {
     "InsertWeldmentCutList2": "\u4e8b\u5b9e 428\uff1a\u6210\u5458**\u4e0d\u5728\u5bf9\u8c61\u4e0a**\uff08`getattr` \u56de `NoneType`\uff09",
 }
 
-#: \u2605 \u53ea\u63d0\u793a\u3001\u4e0d\u62e6\uff08\u2605 \u4e2a\u4f8b\u672a\u5fc5\u4e0d\u6210\u7acb\uff09
+#: \u2605 \u53ea\u63d0\u793a\u3001\u4e0d\u62e6\uff08\u2605 \u4e2a\u4f8b\u672a\u5fc5\u4e0
+#: d\u6210\u7acb\uff09
 WARN_PREFIX_I = True
 
-#: \u2605\u2605 **\u53d6\u8bc1\u8c41\u514d**\uff1a\u2605 \u6709\u4e9b\u7ad9\u70b9**\u6545\u610f\u53bb\u8c03**\u5b83\uff08\u2605 \u4e3a\u4e86\u62ff\u5230\u201c\u5230\u4e0d\u4e86\u201d\u7684\u8bc1\u636e\uff09
-#:   \u2014\u2014 \u2605 \u800c**\u8c41\u514d\u5fc5\u987b\u5e26\u7406\u7531**\uff1b\u2605 **\u65b0\u589e\u7684\u7ad9\u70b9\u4e0d\u4f1a\u81ea\u52a8\u8fdb\u6765**\uff08\u2605 \u90a3\u624d\u662f\u95e8\u7981\u7684\u4f5c\u7528\uff09\u3002
-#: \u2605 2026-10-03\uff08\u8f6e 579\uff09\uff1a**\u672c\u6761\u662f\u95e8\u7981\u7b2c\u4e00\u6b21\u8dd1\u5c31\u903c\u51fa\u6765\u7684** \u2014\u2014
-#:   \u2605 \u5b83\u547d\u4e2d\u4e86 3 \u5904\uff0c\u2605 \u800c\u90a3 3 \u5904**\u6b63\u662f\u4e8b\u5b9e 428 \u7684\u53d6\u8bc1\u4ee3\u7801** \u26a0
+#: \u2605\u2605 **\u53d6\u8bc1\u8c41\u514d**\uff1a\u2605 \u6709\u4e9b\u7ad9\u70b9**\u654
+#: 5\u610f\u53bb\u8c03**\u5b83\uff08\u2605 \u4e3a\u4e86\u62ff\u5230\u201c\u5230\u4e0d\u4
+#: e86\u201d\u7684\u8bc1\u636e\uff09
+#: \u2014\u2014 \u2605 \u800c**\u8c41\u514d\u5fc5\u987b\u5e26\u7406\u7531**\uff1b\u2605 
+#: **\u65b0\u589e\u7684\u7ad9\u70b9\u4e0d\u4f1a\u81ea\u52a8\u8fdb\u6765**\uff08\u2605 \u
+#: 90a3\u624d\u662f\u95e8\u7981\u7684\u4f5c\u7528\uff09\u3002
+#: \u2605 2026-10-03\uff08\u8f6e 579\uff09\uff1a**\u672c\u6761\u662f\u95e8\u7981\u7b2c\u
+#: 4e00\u6b21\u8dd1\u5c31\u903c\u51fa\u6765\u7684** \u2014\u2014
+#: \u2605 \u5b83\u547d\u4e2d\u4e86 3 \u5904\uff0c\u2605 \u800c\u90a3 3 \u5904**\u6b63\u6
+#: 62f\u4e8b\u5b9e 428 \u7684\u53d6\u8bc1\u4ee3\u7801** \u26a0
 ALLOWED: dict[tuple[str, str], str] = {
     ("scripts/sw_weldment.py", "InsertWeldmentCutList2"):
         "\u2605 **\u53d6\u8bc1\u7ad9\u70b9**\uff1a\u4e8b\u5b9e 428 \u5c31\u662f\u8dd1\u5b83\u5f97\u51fa\u7684"
@@ -76,7 +90,8 @@ ALLOWED: dict[tuple[str, str], str] = {
 #: \u2605 \u626b\u54ea\u4e9b\u76ee\u5f55
 ROOTS = ("scripts", "mcp-server", "tools")
 
-#: \u2605 **\u8fd9\u4e24\u4e2a\u6587\u4ef6\u662f\u6570\u636e\u8868 / \u672c\u8eab**\uff0c\u2605 \u4e0d\u626b
+#: \u2605 **\u8fd9\u4e24\u4e2a\u6587\u4ef6\u662f\u6570\u636e\u8868 / \u672c\u8eab**\uff0
+#: c\u2605 \u4e0d\u626b
 SKIP = {"sw_api_sldworks.py", "check_unreachable_members.py"}
 
 CALL_RE = re.compile(
@@ -107,12 +122,16 @@ def scan() -> tuple[list[tuple[str, int, str, str]], list[tuple[str, int, str]]]
             if path.name in SKIP:
                 continue
             for lineno, name in iter_calls(path):
-                #: \u2605\u2605 **\u5f52\u4e00\u5316\u5206\u9694\u7b26**\uff1a`str(Path)` \u5728 Windows \u4e0a\u7ed9**\u53cd\u659c\u6760**\uff0c
-                #:   \u2605 \u800c `ALLOWED` \u7684\u952e\u5199\u7684\u662f**\u6b63\u659c\u6760** \u21d2 \u2605 **\u952e\u6c38\u8fdc\u5bf9\u4e0d\u4e0a**\u3001
-                #:   \u8c41\u514d\u9759\u9ed8\u5931\u6548 \u26a0\uff08\u2605 **\u8f6e 579 \u8e29\u5230**\uff09
+                #: \u2605\u2605 **\u5f52\u4e00\u5316\u5206\u9694\u7b26**\uff1a`str(Path)
+                #: ` \u5728 Windows \u4e0a\u7ed9**\u53cd\u659c\u6760**\uff0c
+                #: \u2605 \u800c `ALLOWED` \u7684\u952e\u5199\u7684\u662f**\u6b63\u659c\
+                #: u6760** \u21d2 \u2605 **\u952e\u6c38\u8fdc\u5bf9\u4e0d\u4e0a**\u3001
+                #: \u8c41\u514d\u9759\u9ed8\u5931\u6548 \u26a0\uff08\u2605 **\u8f6e 579 
+                #: \u8e29\u5230**\uff09
                 rel = path.relative_to(R).as_posix()
                 if name in DENY:
-                    #: \u2605 \u53d6\u8bc1\u8c41\u514d\uff1a**\u5fc5\u987b\u5e26\u7406\u7531**\u624d\u8df3\u8fc7
+                    #: \u2605 \u53d6\u8bc1\u8c41\u514d\uff1a**\u5fc5\u987b\u5e26\u7406\u
+                    #: 7531**\u624d\u8df3\u8fc7
                     if (rel, name) in ALLOWED:
                         continue
                     deny_hits.append((rel, lineno, name, DENY[name]))

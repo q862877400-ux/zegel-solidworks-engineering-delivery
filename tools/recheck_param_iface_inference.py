@@ -64,7 +64,8 @@ def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
             if re.search(r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b):
                 out[pname] = cand
                 break
-    #: ⚠ 那条退路：没有 `:param` 时，若**恰好 1 个形参**且 docstring 里接口名**恰好 1 个** ⇒ 采纳
+    #: ⚠ 那条退路：没有 `:param` 时，若**恰好 1 个形参**且 docstring 里接口名**恰好 1 个
+    #: ** ⇒ 采纳
     args = [a.arg for a in fn.args.args if a.arg not in ("self", "cls")]
     if len(args) == 1:
         found = sorted({c for c in iface_names

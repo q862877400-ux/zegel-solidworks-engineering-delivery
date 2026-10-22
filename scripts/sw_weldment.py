@@ -5,7 +5,8 @@ import csv
 from pathlib import Path
 from typing import Any, Iterable
 
-#: ★ 2026-10-07（规格 211 · B3-1）：下表里 `sw_feature_readback` 与 `sw_connect` 的两个新名字
+#: ★ 2026-10-07（规格 211 · B3-1）：下表里 `sw_feature_readback` 与 `sw_connect` 的两个
+#: 新名字
 #:   （`mm` · `create_empty_dispatch_variant`）是 `insert_weldment_trim_report` 要用的 ✓
 #:   ★★ 注释**放在 `try:` 之外** —— 因为 `scripts/check_relative_imports.py` 的判据是
 #:     「相对导入必须**紧跟** `try:`」⇒ ★ 夹在导入之间会把连续块打断、被算成"无兜底" ✗ ✓
@@ -49,11 +50,14 @@ SW_SOLID_BODY = 0
 #   的独立 fm 条目 —— 那两个走 IFeatureManager 的 Insert* 方法（见文件末尾）。
 # ⚑ 现状（★ spec 240 后）：`SW_FM_MATE_PROFILE_CENTER` 与 `SW_FM_PROFILE_FEATURE` /
 #   `SW_FM_WELD_MEMBER_FEAT` **均无代码使用** —— 保留是因为它们记录了三条**证据锚点**：
-#   ① `swFmProfileFeature(65)` / `swFmWeldMemberFeat(72)`：「型材特征 / 构件成员在官方枚举里
+# ① `swFmProfileFeature(65)` / `swFmWeldMemberFeat(72)`：「型材特征 / 构件成员在官方枚举
+# 里
 #      确有独立 fm 条目」这一事实（我曾据 `swFmWeldMemberFeat` 误写过一个不成立的创建入口）；
 #   ② `swFmMateProfileCenter(101)`：★ **官方枚举里确有这个 fm 条目，但它不在任何官方
-#      `CreateDefinition` 宿主页的 `Type` 清单里** ⇒ 正是「枚举有 ≠ `CreateDefinition` 支持」的
-#      活样本；`create_profile_center_mate` 已改走官方入口（见下方 `SW_MATE_PROFILE_CENTER`）。
+# `CreateDefinition` 宿主页的 `Type` 清单里** ⇒ 正是「枚举有 ≠ `CreateDefinition` 支持」
+# 的
+# 活样本；`create_profile_center_mate` 已改走官方入口（见下方 `SW_MATE_PROFILE_CENTER`）
+# 。
 #   若后续无对应封装，可连同说明一并删除。
 # ⚠ 本组为静态反射结果，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
@@ -143,7 +147,8 @@ def _active_configuration_name(model) -> str:
 #        System.double GapValue, System.object BodiesToTrim, System.object BodiesOrFaces )`
 #     ★ `## Parameters` 逐字：
 #       · `EndCond`: as defined by `swSolidworksWeldmentEndCondOptions_e`
-#       · `Options`: **Logical sum** of values as defined by `swWeldmentTrimExtendOptionType_e`
+# · `Options`: **Logical sum** of values as defined by `swWeldmentTrimExtendOptionType_e
+# `
 #       · `GapValue`: **Length to trim**（★ ⚠ **没给单位**）
 #       · `BodiesToTrim`: Array of bodies to trim
 #       · `BodiesOrFaces`: Array of bodies or faces that define the trimming boundaries
@@ -163,7 +168,8 @@ def _active_configuration_name(model) -> str:
 #       ★ 而**本文件没有**、★ 本批**不发明它**（★ 铁律 1 + 只读优先 ✓）
 # ⚠ ★★ **`GapValue` 官方没给单位**（★ Parameters 只写 "Length to trim"）⇒
 #   ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合，不发明 ✓）
-# ⚠ ★ 官方**没有**标 `Obsolete`（★ 与 `InsertWeldmentTrimFeature` 老版并存 ⇒ 本包装用 `…2` ✓）
+# ⚠ ★ 官方**没有**标 `Obsolete`（★ 与 `InsertWeldmentTrimFeature` 老版并存 ⇒ 本包装用 `…
+# 2` ✓）
 #: enum-gate: member InsertWeldmentTrimFeature2
 WELDMENT_TRIM_MARKS = {"body_to_trim": 1, "trim_boundary": 2}
 
@@ -215,10 +221,12 @@ def insert_weldment_trim_report(model, *, end_cond: int = 0, options: int = 0,
     try:
         feat = get_com_member(fm, "InsertWeldmentTrimFeature2",
                              int(end_cond), int(options), float(mm(float(gap_mm))),
-                             #: ★★ 两个 `object` 数组形参**必须传空 VARIANT**（★ 事实 12/33）——
+                             #: ★★ 两个 `object` 数组形参**必须传空 VARIANT**（★ 事实 12
+                             #: /33）——
                              #:   ★ 实测：★ 传 Python `None` **调不通**；★ 传
                              #:   `VARIANT(VT_DISPATCH, None)` ⇒ **调用完成、回对象** ✓
-                             #:   ★（`sw_connect.create_empty_dispatch_variant()` 就是它 ✓）
+                             #: ★（`sw_connect.create_empty_dispatch_variant()` 就是它 ✓
+                             #: ）
                              create_empty_dispatch_variant(),
                              create_empty_dispatch_variant())
     except Exception as exc:                                            # noqa: BLE001
@@ -270,12 +278,14 @@ def create_weldment_profile(
     #:   `weldment_profile_and_curve` 这条 `stitched` 时发现）：
     #:   ★ 本函数**原先只回 `path` / `configuration_name` / `size_bytes` / `properties`，
     #:     没有 `ok`** ⇒ ★ 而**判据其实是"不抛即成功"**（★ `save_document` 回 falsy ⇒ 抛；
-    #:     产物不存在或 0 字节 ⇒ 抛）—— ★ **那是一种合法契约，★ 但与仓库里"回 `ok`"那套混着**，
+    #: 产物不存在或 0 字节 ⇒ 抛）—— ★ **那是一种合法契约，★ 但与仓库里"回 `ok`"那套混着*
+    #: *，
     #:     ★★ **调用方无从用统一方式判成败**（★ 实测：真机上文件**确实建成了 49287 字节**，
     #:     而按 `ok` 读会得到 `False`）。
     #:   ⇒ ★ 现在**两者并存**：★ 成功回 `ok=True`，★ **失败仍抛**（★ 不改变既有行为）。
     #: ⚠ 顺带记一条真机现象：★ 保存后目录里会多一个 **`~$<名字>.SLDLFP`（6 字节）** ——
-    #:   ★ 那是 **SolidWorks 的临时锁文件**，★ **不是产物**；★ 判"产物非空"时**要排除 `~$` 前缀**。
+    #: ★ 那是 **SolidWorks 的临时锁文件**，★ **不是产物**；★ 判"产物非空"时**要排除 `~$`
+    #:  前缀**。
     return {
         "ok": True,
         "path": str(target),
@@ -542,7 +552,8 @@ def _read_cut_list_folders(model) -> list:
             "name": feature_name,
             "type": type_name,
             "body_count": int(get_com_member(body_folder, "GetBodyCount") or 0) if body_folder else 0,
-            #: ★★★ **关键区别**：★ 这里**没有** `UpdateCutList` ⇒ ★ `update_ok` 如实记 `None`
+            #: ★★★ **关键区别**：★ 这里**没有** `UpdateCutList` ⇒ ★ `update_ok` 如实记 `
+            #: None`
             #:   （★ 而**不是** `False` —— ★ 因为"没做"与"做了但失败"是两件事）✓
             "update_ok": None,
             "update_attempted": False,
@@ -690,10 +701,13 @@ def export_cut_list_csv(evidence: dict[str, Any], output_path: str | Path) -> Pa
 # ══════════════════════════════════════════════════════════════════════
 
 
-# ⚑ 2026-10-09（spec 240）**墓碑**：此处原有 `_create_from_definition(model, fm_type, apply)`
+# ⚑ 2026-10-09（spec 240）**墓碑**：此处原有 `_create_from_definition(model, fm_type, ap
+# ply)`
 #   —— 取 `IFeatureManager.CreateDefinition(fm_type)` 的共用骨架。★ 已**整体删除**：
-#   它唯一的调用方是 `create_profile_center_mate`，而 `swFmMateProfileCenter(101)` **不在任何**
-#   官方 `CreateDefinition` 宿主页的 `Type` 清单里（只有枚举页收录）⇒ 官方**不支持**这条路。
+# 它唯一的调用方是 `create_profile_center_mate`，而 `swFmMateProfileCenter(101)` **不在
+# 任何**
+# 官方 `CreateDefinition` 宿主页的 `Type` 清单里（只有枚举页收录）⇒ 官方**不支持**这条路
+# 。
 #   ⇒ 该 `CreateDefinition` 站点**正当消失**（与 spec 239 的 `swFmDraft` 同族）。
 #   ★ **不保留**为死代码：无调用方时 `fm_type` 无法绑定 ⇒ 站点会退化成 `dynamic`
 #     （`check_create_definition_site_disposition` 的 `[reader-too-narrow]` 会红）。
@@ -703,7 +717,8 @@ def export_cut_list_csv(evidence: dict[str, Any], output_path: str | Path) -> Pa
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   SolidWorks 官方 API 签名（SolidWorks.Interop.sldworks.dll 纯元数据反射）
-# 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IStructureSystemMemberProfile 段
+# 文件:   D:\AI\SW\_raw\reflect_sldworks\iface_sldworks.txt → IStructureSystemMemberProf
+# ile 段
 # 定位:   **已建构件的型材定义对象的回读与调整**。
 # ⚠⚑ 重要更正 —— 本函数初稿被写成「创建构件前的型材配置」，并配了一个
 #   create_weld_member 去 ``CreateDefinition(swFmWeldMemberFeat=72)`` 后赋值
@@ -797,16 +812,25 @@ def configure_member_profile(
 # 文件:   scripts/sw_weldment.py —— 本函数
 # 定位:   ★★★ 2026-10-10（规格 285）**首次真机验证** ⇒ ★★ **本机建不出**（★ 且**静默**
 #           ）：
-#         ★ ① `IAssemblyDoc::CreateMateData(24)` ⇒ ★ **回对象** ✓（★ 与 280/281 的 `AccessSelections` **不同因**）；
-#         ★ ② `EntitiesToMate` 试了**三条实体路**（★ 随便两个面 / 两个圆柱面 / 另一对圆柱面）⇒ ★ **全回 None**；
-#         ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★ 与 263 同族）。
-#         ★ ④ 「预选 + Mark 1」那条臂 ⇒ ★ **选中 0 个**（★ 装配里选面**没选上**）⇒ ★★ **该臂不成立**（★ 不拿它当证据）。
-#         ★★ **官方依据**：`IProfileCenterMateFeatureData/_overview.md` 的创建三步 + ★ 它给的两条路
-#         （★ `EntitiesToMate` **或** `SelectByID2` + **Mark = 1**）；★ 而 `IAssemblyDoc::CreateMate.md` 说
-#         「★ **星号**才支持**预选**」⇒ ★ `IProfileCenterMateFeatureData` **无星号** ⇒ ★★ 两句话**不完全一致**。
-#         ★★★ **处置**：★ **代码路线是对的**（★ 官方三步逐条照做）⇒ ★ 结论记「**本机建不出**」而不是「写错了」；
+# ★ ① `IAssemblyDoc::CreateMateData(24)` ⇒ ★ **回对象** ✓（★ 与 280/281 的 `AccessSelect
+# ions` **不同因**）；
+# ★ ② `EntitiesToMate` 试了**三条实体路**（★ 随便两个面 / 两个圆柱面 / 另一对圆柱面）⇒ ★
+#  **全回 None**；
+# ★ ③ `CreateMate` 回 `None` 时★ **消息栈 n=0**（★ **空**）⇒ ★★★ **读不到任何原因**（★ 
+# 与 263 同族）。
+# ★ ④ 「预选 + Mark 1」那条臂 ⇒ ★ **选中 0 个**（★ 装配里选面**没选上**）⇒ ★★ **该臂不成
+# 立**（★ 不拿它当证据）。
+# ★★ **官方依据**：`IProfileCenterMateFeatureData/_overview.md` 的创建三步 + ★ 它给的两
+# 条路
+# （★ `EntitiesToMate` **或** `SelectByID2` + **Mark = 1**）；★ 而 `IAssemblyDoc::Create
+# Mate.md` 说
+# 「★ **星号**才支持**预选**」⇒ ★ `IProfileCenterMateFeatureData` **无星号** ⇒ ★★ 两句话
+# **不完全一致**。
+# ★★★ **处置**：★ **代码路线是对的**（★ 官方三步逐条照做）⇒ ★ 结论记「**本机建不出**」而
+# 不是「写错了」；
 #         ★ 与 `CreateMateData` **通**这一点也要记 —— ★ 它排除了「整条 API 不可用」。
-#         ★ 读数：`output/_probe285_mate.txt` · `_probe285_mate_cyl.txt` · `_probe285_mate_presel.txt`。
+# ★ 读数：`output/_probe285_mate.txt` · `_probe285_mate_cyl.txt` · `_probe285_mate_prese
+# l.txt`。
 # 官方依据: `C:/swapi/types/{IAssemblyDoc/CreateMate,IAssemblyDoc/CreateMateData,IProfil
 #           eCenterMateFeatureData/_overview}.md`
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -924,7 +948,8 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
                        bool(collect_identical_bodies))
     manager = get_com_member(model, "FeatureManager")
     # ⚑ **判空再调**：`get_com_member` 取不到时返回 `None`，
-    #   直接 `member(*args)` 会抛「'NoneType' object is not callable」——**看不出是成员取不到**。
+    # 直接 `member(*args)` 会抛「'NoneType' object is not callable」——**看不出是成员取不
+    # 到**。
     member = get_com_member(manager, "InsertWeldmentCutList2")
     if member is None:
         raise RuntimeError(
@@ -939,13 +964,15 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#3**（★ `E-3 #4`）—— ★ 裁判逐字：
     #:   「★ doc 承诺『**回切割清单文件夹**当证据』，★ 目标函数回的是 **COM 特征对象**」✓
     #:   ★★ **对外契约逐字**（`mcp-server/tool_specs_batch35.py`，★ 两处）：
-    #:     · 工具 doc：「Create the weldment cut list and **return the cut-list folders as evidence**.」
+    #: · 工具 doc：「Create the weldment cut list and **return the cut-list folders as e
+    #: vidence**.」
     #:     · 同文件判据段：「★ `read_property_manager` 与 `create_cut_list` 是**读数**
     #:       （★ 判『**回 dict / 非空**』）」✓
     #:   ★★★ **实测**：★ 原实现 `return feature` ⇒ ★★ **既不是 dict、也不是 folders** ✓
     #:     （★ 而"回切割清单文件夹"的那个函数是 `weldment_evidence` —— 它的返回里有
     #:      `"cut_list_folders": folders` ✓）
-    #:   ⇒ ★ 修法：★ **回 dict**（★ `ok` / `feature_name` / `cut_list_folders` / `verified_by`）✓
+    #: ⇒ ★ 修法：★ **回 dict**（★ `ok` / `feature_name` / `cut_list_folders` / `verified
+    #: _by`）✓
     #:     ★★ 而**特征对象本身也留在返回值里**（★ `feature` 键）—— ★ 免得调用方丢了它 ✓
     fname = None
     try:
@@ -958,7 +985,8 @@ def create_cut_list(model, sort_options=None, *, collect_identical_bodies: bool 
     except Exception:                                                     # noqa: BLE001
         folders = None
     return {
-        #: ★★ 判据 = **回对象非 None**（对象类）**且** **拿到了特征名**（读数类）⇒ ★ 跨种类 ⇒ `and` ✓
+        #: ★★ 判据 = **回对象非 None**（对象类）**且** **拿到了特征名**（读数类）⇒ ★ 跨
+        #: 种类 ⇒ `and` ✓
         #:   ★ 而"特征名取不到"⇒ 不算通过（★ 不静默成功）
         "ok": bool(fname),
         "op": "create_cut_list",
@@ -993,7 +1021,8 @@ def create_sub_weld_folder(model, folder=None):
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_weldment.py —— 追加 `create_structural_member_from_sketch`
 # 定位:   ★ 2026-10-03（轮 428）`plan-200r-v3` **段 2（焊件族）**的第一条。
-#   ★★ **为什么它以前没挂**：★ 而 `capabilities.yaml` 的 `weldment_cut_list` 条目**早就写着**
+# ★★ **为什么它以前没挂**：★ 而 `capabilities.yaml` 的 `weldment_cut_list` 条目**早就写
+# 着**
 #     「**2026-10-02（轮 364）真因查明：本机没装「焊件轮廓库」（Weldment Profiles）** ⇒
 #       所以报「没有可写入切割清单的结构构件实体」**不是代码问题**，而是**建不出结构构件**」。
 #   ★★★ **而本轮的侦察**推翻**了它**（★ 按 AGENTS.md 的顺序查第一现场时发现的）：
@@ -1005,10 +1034,12 @@ def create_sub_weld_folder(model, folder=None):
 #   ★★ **而本函数把那条链封成一步**：★ 给定**草图名**与**轮廓路径**，
 #     ★ 它自己取线段、建构件、**并用特征树回读**（★ 判据是**特征树**，★ 不是计数）✓
 #   ★ **取线段用的是现成物**（★ "先找后搓"）：`sw_sketch.get_sketch_segments` +
-#     `FeatureByName` → `GetSpecificFeature2`（★ `sw_part._select_revolve_axis` 里那条现成路）。
+# `FeatureByName` → `GetSpecificFeature2`（★ `sw_part._select_revolve_axis` 里那条现成路
+# ）。
 # 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `create_structural_member` 已
 #           在用）·
-#   `ISketch.GetSketchSegments()`（★ 出厂类型库：**0 参** → Object）· `IFeature.GetSpecificFeature2`
+# `ISketch.GetSketchSegments()`（★ 出厂类型库：**0 参** → Object）· `IFeature.GetSpecifi
+# cFeature2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1056,7 +1087,8 @@ def create_structural_member_from_sketch(model, sketch_name: str, profile_path, 
 #: ── 焊接符号（★ 规格 213 · B2：★ 从探针 `tools/probe_spec211_weldsymbol_real.py`
 #:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）──────────────────
 # ★★ 官方依据（`swapi` + CHM 逐字）：
-#   · `C:\swapi\types\IModelDoc2\InsertWeldSymbol3.md` ⇒ `System.object InsertWeldSymbol3()`
+# · `C:\swapi\types\IModelDoc2\InsertWeldSymbol3.md` ⇒ `System.object InsertWeldSymbol3(
+# )`
 #     ★★ **零参** ✓ · `## Returns` = **Newly created weld symbol** ✓
 #   · `IWeldSymbol::SetText` ⇒
 #     `System.bool SetText( System.bool Top, System.string Left, System.string Symbol,

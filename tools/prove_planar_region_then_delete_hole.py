@@ -10,7 +10,8 @@
 #
 #   ★★★★★ **官方逐字**（`C:\swapi\types\IModelDoc2\InsertPlanarRefSurface.md`）：
 #     ```
-#     System.bool InsertPlanarRefSurface()          \u2190 \u2605 **0 \u53c2** \u00b7 \u2605 **\u56de bool**
+# System.bool InsertPlanarRefSurface()          \u2190 \u2605 **0 \u53c2** \u00b7 \u2605
+#  **\u56de bool**
 #     Returns : True if the reference surface is created, false if not
 #     Remarks : Before calling this method, select the surface's boundary entities
 #               using IModelDocExtension::SelectByID2 with **Marks of 1**
@@ -114,13 +115,15 @@ def _one(sw, tag, then_delete_hole):
         after = list(FR.feature_names(doc) or [])
         row["new_after_planar"] = [n for n in after if n not in before]
         row["geom_after_planar"] = _geom(doc)
-        #: \u2605 \u5224\u636e \u2460\uff1a**\u771f\u7684\u5f97\u5230\u4e00\u5f20**\u5355\u9762\u7684**\u5e73\u9762\u66f2\u9762**\uff08\u2605 1 \u9762\uff09
+        #: \u2605 \u5224\u636e \u2460\uff1a**\u771f\u7684\u5f97\u5230\u4e00\u5f20**\u535
+        #: 5\u9762\u7684**\u5e73\u9762\u66f2\u9762**\uff08\u2605 1 \u9762\uff09
         g = row["geom_after_planar"]
         row["planar_ok"] = bool(row["new_after_planar"]) and g["faces"] == 1
         if not then_delete_hole:
             row["ok"] = row["planar_ok"]
             return row
-        #: \u2605 \u2461 **\u5220\u9664\u5b54**\uff08\u2605 \u5728\u90a3\u5f20\u5e73\u9762\u4e0a\u9009\u5b54\u7684\u8fb9\uff09
+        #: \u2605 \u2461 **\u5220\u9664\u5b54**\uff08\u2605 \u5728\u90a3\u5f20\u5e73\u97
+        #: 62\u4e0a\u9009\u5b54\u7684\u8fb9\uff09
         from sw_connect import get_com_member as _g
         from sw_part import _select_com_object as _sel
         try:
@@ -135,7 +138,9 @@ def _one(sw, tag, then_delete_hole):
                         es = list(_g(lp, "GetEdges") or [])
                     except Exception:                                     # noqa: BLE001
                         es = []
-                    #: \u2605 \u53ea\u9009**\u8fb9\u6570\u5c11\u7684\u90a3\u4e2a\u73af**\uff08\u2605 \u5b54\u7684\u5708\u8fb9\u6570 \u2264 \u5916\u6846\uff09
+                    #: \u2605 \u53ea\u9009**\u8fb9\u6570\u5c11\u7684\u90a3\u4e2a\u73af**
+                    #: \uff08\u2605 \u5b54\u7684\u5708\u8fb9\u6570 \u2264 \u5916\u6846\u
+                    #: ff09
                     if len(es) <= 1:
                         for e in es:
                             if _sel(e, append=(picked > 0), mark=0):

@@ -51,7 +51,8 @@ def main() -> int:
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: ★ 两个轮廓：★ 前视面一个圆、上视面一个圆 —— ★ **不同平面**（真机验过这种能建成）
+        #: ★ 两个轮廓：★ 前视面一个圆、上视面一个圆 —— ★ **不同平面**（真机验过这种能建
+        #: 成）
         P.start_sketch(doc, plane_name="Front Plane")
         _g(_g(doc, "SketchManager"), "CreateCircleByRadius", 0.0, 0.0, 0.0, 0.015)
         P.end_sketch(doc)

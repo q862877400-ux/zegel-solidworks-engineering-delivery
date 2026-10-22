@@ -93,7 +93,8 @@ def analyze(blocks: dict[str, list[str]], iface: str, fold: bool = False) -> dic
         else:
             # ⚑⚑ arity 口径 = **调用方要传的实参个数，排除 by-ref 出参**。
             #   反射里 `Void GetErrorMessages(Object&, Object&, Object&)` 是
-            #   **0 参** —— 三个全是 [out]。早先版本 `len([a for a in args.split(",") ...])`
+            # **0 参** —— 三个全是 [out]。早先版本 `len([a for a in args.split(",") ...]
+            # )`
             #   把它们都算成实参 ⇒ 本机实测 **1,566 条表项里 100 条口径错（6.4%）**，
             #   表现为「护栏按 3 参要求，调用方却一个都不该传」，运行必被自己拦下。
             #   ⇒ 口径统一为「非 & 结尾的参数个数」。

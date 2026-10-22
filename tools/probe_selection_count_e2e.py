@@ -3,7 +3,8 @@
 # 仓库:   本项目自身（真机验证）。规格 `specs/202-user-coverage-gaps` 的质量线。
 # 文件:   tools/probe_selection_count_e2e.py
 # 定位:   ★★★ 这是 `recon/preselect-family-merged.md` §四 提出的**洞察**：
-#   `selection_count` / `resolve_selection` / `selection_point` / `resolve_entity` / `current_selection`
+# `selection_count` / `resolve_selection` / `selection_point` / `resolve_entity` / `curr
+# ent_selection`
 #   **不是"缺 pre_call"**，而是 **`inject="model"` 本身会清空它们要读的选区**
 #   （★ 事实 503：`RESOLVERS["model"]` 经 `connect_solidworks()` 清选区）
 #   ⇒ ★★ **它们经工具层永远报 0** —— 而我的判据当时把它们归为"只报告 ⇒ 无关"（★ 漏了）。

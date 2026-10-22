@@ -15,8 +15,10 @@
 #     ⇒ ★ **"写明依据" = 每条必须能指到**依据****：★ 一个 `section`（★ 边界文档的小节）
 #       **且** 至少一个 `facts`（★ 事实编号）✓
 #
-#   ★ 另查：★ **不能是空名单**（★ 空名单就等于"什么都没单列"，★ 而那与任务书说的三族矛盾）；
-#     ★ 而 `toolbar` / `member` / `where` 三字段**必须非空**（★ 否则那一行读不出"哪里到不了"）。
+# ★ 另查：★ **不能是空名单**（★ 空名单就等于"什么都没单列"，★ 而那与任务书说的三族矛盾）
+# ；
+# ★ 而 `toolbar` / `member` / `where` 三字段**必须非空**（★ 否则那一行读不出"哪里到不了"
+# ）。
 #
 #   ★ 退出码：★ 违规 ⇒ 1。
 #   ★ 配套负例：`tests/test_backend_limited_evidence_gate.py`（★ 事实 62）。
@@ -64,7 +66,8 @@ def check(data: dict | None = None) -> list[str]:
         for k in REQUIRED:
             if not str(it.get(k) or "").strip():
                 bad.append("%s 的 `%s` 是空的（★ 任务书：**写明依据**）" % (tag, k))
-        #: \u2605 **\u4f9d\u636e\u4e4b\u4e00\uff1a\u81f3\u5c11\u4e00\u4e2a\u4e8b\u5b9e\u7f16\u53f7**
+        #: \u2605 **\u4f9d\u636e\u4e4b\u4e00\uff1a\u81f3\u5c11\u4e00\u4e2a\u4e8b\u5b9e\u
+        #: 7f16\u53f7**
         facts = it.get("facts")
         if not isinstance(facts, list) or not facts:
             bad.append("%s **没有 `facts`**（★ 至少指一个事实编号 —— 那才是\u201c写明依据\u201d）" % tag)
@@ -72,7 +75,8 @@ def check(data: dict | None = None) -> list[str]:
             for f in facts:
                 if not isinstance(f, int) or f <= 0:
                     bad.append("%s 的 `facts` 里有非法编号：%r" % (tag, f))
-        #: \u2605 **\u4f9d\u636e\u4e4b\u4e8c\uff1a`section` \u5f15\u7684\u5c0f\u8282\u771f\u5b58\u5728\u4e8e\u8fb9\u754c\u6587\u6863**
+        #: \u2605 **\u4f9d\u636e\u4e4b\u4e8c\uff1a`section` \u5f15\u7684\u5c0f\u8282\u77
+        #: 1f\u5b58\u5728\u4e8e\u8fb9\u754c\u6587\u6863**
         sec = str(it.get("section") or "").strip()
         if sec:
             try:

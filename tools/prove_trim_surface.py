@@ -15,9 +15,11 @@
 #
 #   ★ 三源分工（★ 铁律 4 的典型实例）：
 #     · swapi md ⇒ 只有签名，★ 四个参数**全是 `No description`** ⚠
-#     · **CHM** ⇒ ★★ 逐字给了四个参数的语义（mutual / splitSystem / splitLinear / removePicked）
+# · **CHM** ⇒ ★★ 逐字给了四个参数的语义（mutual / splitSystem / splitLinear / removePick
+# ed）
 #       + PostTrimSurface 的 sew
-#     · **类型库** ⇒ arity 与方向：`IFeatureManager.PreTrimSurface` 有 **4 个 in** + `Retval`
+# · **类型库** ⇒ arity 与方向：`IFeatureManager.PreTrimSurface` 有 **4 个 in** + `Retval
+# `
 #       （★ 而 `IModelDoc2` 那两个各**只有 1 个 in** ⇒ ★ 新版更全、本探针走新版）
 #
 #   ★ 前置：★ **两张相交曲面**（★ 一张被剪、一张作工具）。

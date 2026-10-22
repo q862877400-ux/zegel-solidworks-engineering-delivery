@@ -1,12 +1,14 @@
 """★ 真机验 `extrude_params`（★ 阶段 3 补能力 · 第 2 个）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`
+# ）
 # 文件:   `scripts/sw_feature_readback.py::extrude_params`（★ **刚补的能力**）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **判据（★ 可核、★ 逐个成员对官方 `## Returns`）**：
 #     · ★ `GetEndCondition` ⇒ ★ 盲拉 ⇒ **`swEndConditions_e` 的 `swEndCondBlind = 0`** ✓
 #     · ★★ `GetDraftAngle` ⇒ ★ **官方明写 `in radians`** ⇒ ★ 无拔模时应为 **0.0** ✓
-#     · ★ `GetContoursCount` ⇒ ★ 官方「Number of selected contours」⇒ ★ **一个闭合矩形 = 1** ✓
+# · ★ `GetContoursCount` ⇒ ★ 官方「Number of selected contours」⇒ ★ **一个闭合矩形 = 1**
+#  ✓
 #     · ★ `ReverseDirection` / ★ `BothDirections` ⇒ ★ 属性 ⇒ ★ **默认 False** ✓
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

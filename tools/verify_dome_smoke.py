@@ -122,7 +122,8 @@ def main() -> int:
         ok_sel = False
         try:
             #: ⚠⚠ **事实 33**：`SelectByID2` 的 `Callout` 参数**必须**传
-            #: `VARIANT(VT_DISPATCH, None)`；传 `None` 得到 `类型不匹配`（`0x80028CA0`），
+            #: `VARIANT(VT_DISPATCH, None)`；传 `None` 得到 `类型不匹配`（`0x80028CA0`）
+            #: ，
             #: 而该错误**看不出是 Callout 的问题**（本轮又踩一次）。
             callout = sw_part._empty_callout()
             #: ★★ 官方 `IModelDoc2.InsertDome` 的 Remarks 原文：
@@ -159,7 +160,8 @@ def main() -> int:
         grew = round(max(abs(b - a) for a, b in zip(size0, size1)), 4)
         ev["max_growth"] = grew
         #: 圆顶若真是"米"，增长会是 1000×8=8000 量级
-        #: ⚠ 两段式：**先证"几何变了"**（强证据），再**单独记"变多少"**（还没搞清语义）。
+        #: ⚠ 两段式：**先证"几何变了"**（强证据），再**单独记"变多少"**（还没搞清语义）
+        #: 。
         #: 首版把两件事合成一条判据 ⇒ 一旦"变多少"不符合预期，就连"变了"也报成 ✗。
         #: ⚠ 首版用 `max(size1) > max(size0)` —— **错**：变的那个方向（20→34.2）
         #: 在 `max` 里排不上号（最大是 X 的 100，没变）⇒ 判据报 ✗ 而几何明明变了。
@@ -178,7 +180,8 @@ def main() -> int:
 
         #: ④b ★★★ **证据 A2：官方示例那条路 —— 读回 `IDomeFeatureData2.Height`**
         #: 官方 C# 示例：
-        #:   `SelectByID2("Dome1","BODYFEATURE",…)` ⇒ `SelectionMgr.GetSelectedObject6(1,-1)`
+        #: `SelectByID2("Dome1","BODYFEATURE",…)` ⇒ `SelectionMgr.GetSelectedObject6(1,-
+        #: 1)`
         #:   ⇒ `(DomeFeatureData2)swFeature.GetDefinition()` ⇒ `Debug.Print(… .Height)`
         #: ⇒ ★ **这是"往返一致"级的证据**（写进去的高度能读回来），
         #:   比"边界框长了一点"强得多（已知事实 40 那一族：**void 返回要靠别的东西**）。
@@ -228,7 +231,8 @@ def main() -> int:
         new_feats = names[:max(0, len(names) - n_before)]
         ev["features_after"] = len(names)
         ev["new_features"] = new_feats
-        #: ⚠ 第三版试过"取列表最前面几个当新增" ⇒ 得到 `['凸台-拉伸1']`（**是那个拉伸**，
+        #: ⚠ 第三版试过"取列表最前面几个当新增" ⇒ 得到 `['凸台-拉伸1']`（**是那个拉伸**
+        #: ，
         #: 不是圆顶）⇒ ★ **顺序语义我还没查清** ⇒ 换成**不依赖顺序**的判据：
         #: **树的条数变多了**（这足以证明"多了一个东西"）。
         chk("★★ **证据 B**：特征树**条数变多**（不依赖顺序的判据）",

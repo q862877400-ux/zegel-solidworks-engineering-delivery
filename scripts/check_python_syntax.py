@@ -68,8 +68,10 @@ def scan() -> tuple[int, list[str]]:
                 #: ★★ 2026-10-02（轮 375）**用 `compile` 而不是 `ast.parse`** ——
                 #:   ★ 真例：某文件在 `from __future__ import annotations` **之前**
                 #:   写了一个裸字符串（空 docstring）⇒ `ast.parse` **说 OK**，
-                #:   而真跑报 `SyntaxError: from __future__ imports must occur at the beginning of the file`
-                #:   ⇒ ★ **门禁有盲区** ⇒ 改用 `compile(..., "exec")`（★ 它走完整的编译期检查）。
+                #: 而真跑报 `SyntaxError: from __future__ imports must occur at the begi
+                #: nning of the file`
+                #: ⇒ ★ **门禁有盲区** ⇒ 改用 `compile(..., "exec")`（★ 它走完整的编译期
+                #: 检查）。
                 compile(p.read_text(encoding="utf-8"), str(p), "exec")
             except SyntaxError as exc:
                 bad.append("%s:%s: %s" % (p.relative_to(REPO_ROOT), exc.lineno,

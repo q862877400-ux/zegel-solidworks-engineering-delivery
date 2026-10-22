@@ -7,7 +7,8 @@
 #   ★★★ **判据怎么定的（★ 这一步花了几次试错）**：
 #     ```
 #     ★ 一开始想用「文档级的草图尺寸计数」—— ★ **官方没有那个成员**
-#       （`GetDimensionCount*` 只在 `IView` / `IMacroFeatureData` / `ISketchBlockDefinition` 上）。
+# （`GetDimensionCount*` 只在 `IView` / `IMacroFeatureData` / `ISketchBlockDefinition` 
+# 上）。
 #     ★★ 换判据：**`IFeature.GetFirstDisplayDimension` + `IAnnotation.GetNext2`** ——
 #        ★ 从**草图特征**出发遍历它挂着的尺寸 ⇒ 数出来的就是这张草图的尺寸 ✓
 #     ★ 关系用 **`ISketchRelationManager.GetRelationsCount(-1)`**（`-1` = 全部）✓
@@ -17,7 +18,8 @@
 #     ★ 不拿"回了 0"当"全定义成功"（★ 那正是"看到数字就定性"的坑）。
 # 官方依据: `C:\swapi\types\` 的 `IModelDoc2` / `IModelDocExtension` / `ISketchManager` 
 #           /
-#   `ISketchRelationManager` / `IFeature` / `IAnnotation`（见 `sw_sketch_dimensions.py` 来源块）。
+# `ISketchRelationManager` / `IFeature` / `IAnnotation`（见 `sw_sketch_dimensions.py` 来
+# 源块）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -131,7 +133,8 @@ def main() -> int:
         #:   两个原因叠在一起：
         #:   ① 整批跑时**挂住并弹出「SOLIDWORKS Design 错误报告」**，而 stdout 是空的
         #:      （看不到跑到哪一步）⇒ ★ **隔离**必须能一次只跑一个 ✓
-        #:   ② ⚠ **第一版按中文名匹配 ⇒ 一次都没匹配上** —— 真因是 **PowerShell 传中文参数时
+        #: ② ⚠ **第一版按中文名匹配 ⇒ 一次都没匹配上** —— 真因是 **PowerShell 传中文参数
+        #: 时
         #:      编码坏了**（`_ONLY` 收到乱码）⇒ ★ 改用**序号**（ASCII）绕开它 ✓
         run.n += 1
         if _ONLY and int(_ONLY) != run.n:
@@ -146,13 +149,15 @@ def main() -> int:
             str(row.get("err") or "")[:52]))
         return row
 
-    #: ★ 计数器（★ 必须在 def run **之后** —— 否则 Python 把 run 当局部变量 ⇒ UnboundLocalError）
+    #: ★ 计数器（★ 必须在 def run **之后** —— 否则 Python 把 run 当局部变量 ⇒ UnboundLoc
+    #: alError）
     run.n = 0
 
     def box(d):
         P.sketch_corner_rectangle(d, -25.0, -20.0, 25.0, 20.0)
 
-    #: \u2460 \u6c34\u5e73\u5c3a\u5bf8\uff08\u2605 \u9700\u5148\u9009\u4e2d\u4e00\u6761\u7ebf\u6bb5\uff09
+    #: \u2460 \u6c34\u5e73\u5c3a\u5bf8\uff08\u2605 \u9700\u5148\u9009\u4e2d\u4e00\u6761\
+    #: u7ebf\u6bb5\uff09
     def s_h(d):
         box(d)
         D_sel = __import__("sw_sketch_edit_ops").select_sketch_segment
@@ -177,7 +182,8 @@ def main() -> int:
     #: \u2464 \u5b8c\u5168\u5b9a\u4e49\u8349\u56fe
     run("\u5b8c\u5168\u5b9a\u4e49\u8349\u56fe", box, lambda d: D.fully_define_sketch(d), "any_change",
         note="\u2605 \u679a\u4e3e\u53d6\u503c\u8868\u4e24\u5957\u6e90\u90fd\u6ca1\u67e5\u5230 \u21d2 \u53ea\u5982\u5b9e\u8bb0\u5b83\u56de\u4e86\u4ec0\u4e48\u6570")
-    #: \u2465 \u6dfb\u52a0\u51e0\u4f55\u5173\u7cfb\uff08\u2605 \u4ed3\u91cc\u5df2\u6709\uff0c\u672c\u8f6e\u9a8c\u5b83\u56de\u8bfb\u5f97\u5230\uff09
+    #: \u2465 \u6dfb\u52a0\u51e0\u4f55\u5173\u7cfb\uff08\u2605 \u4ed3\u91cc\u5df2\u6709\
+    #: uff0c\u672c\u8f6e\u9a8c\u5b83\u56de\u8bfb\u5f97\u5230\uff09
     def s_r(d):
         P.sketch_line(d, -20.0, 0.0, 20.0, 0.0)
         __import__("sw_sketch_edit_ops").select_sketch_segment(d, 0)

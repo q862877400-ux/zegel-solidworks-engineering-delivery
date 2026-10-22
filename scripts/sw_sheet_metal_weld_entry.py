@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（本任务新增的能力层）
 # 文件:   scripts/sw_sheet_metal_weld_entry.py
 # 定位:   ★ 2026-10-03 承 `specs/202-user-coverage-gaps` 的 **T-C2**：钣金/焊件 5 项
-#   **「直入法」**（★ 即"直接调一个方法把特征建出来"，★ **不是** `CreateDefinition`+`CreateFeature` 那条）。
+# **「直入法」**（★ 即"直接调一个方法把特征建出来"，★ **不是** `CreateDefinition`+`Creat
+# eFeature` 那条）。
 #
 #   ★★★ 为什么这一批**必须写直入法**、而不是走 `CreateDefinition`（事实 43 一族的反面）：
 #     本仓 `scripts/sw_sheet_metal.py` 已经有 `create_gusset` 走 `swFmSMGusset(118)` 那条，
@@ -12,62 +13,81 @@
 #     ★ 它们在官方只有 `IFeatureManager.InsertGussetFeature3` / `InsertEndCapFeature3`
 #     这类「一步到位」方法 ⇒ ★ **直入法是它们唯一的建模入口**。
 #
-#   ======================  ==============================  ==========================================
+# ======================  ==============================  ==============================
+# ============
 #   功能                    官方入口（★ 非废弃）                ★ 本批逐条核到的「前置」
-#   ======================  ==============================  ==========================================
-#   斜接法兰                `IFeatureManager.                  ★ **官方页无 `## Remarks` 段**
+# ======================  ==============================  ==============================
+# ============
+# 斜接法兰                `IFeatureManager.                  ★ **官方页无 `## Remarks` 
+# 段**
 #                            InsertSheetMetalMiterFlange`（14）  ⇒ ★ 前置**查不到**（铁律 5）★
 #                                                                  只回读选区计数，不编前置
-#   闭合角                  `IModelDoc2.                       ★ **官方页无 `## Remarks` 段** ⇒ 同上
+# 闭合角                  `IModelDoc2.                       ★ **官方页无 `## Remarks` 
+# 段** ⇒ 同上
 #                            InsertSheetMetalClosedCorner()`（0）
-#   焊件顶端盖              `IFeatureManager.                  ★「Before calling this method, **select
+# 焊件顶端盖              `IFeatureManager.                  ★「Before calling this meth
+# od, **select
 #                            InsertEndCapFeature3`（10）          one or more end faces of a structural
 #                                                                  member in the graphics area.」
-#   焊件角撑板              `IFeatureManager.                  ★「…you must call SelectByID2 to select
+# 焊件角撑板              `IFeatureManager.                  ★「…you must call SelectByI
+# D2 to select
 #                            InsertGussetFeature3`（20）         **two faces** that are the supporting legs
 #                                                                  of this gusset **with a Mark of 1**」
-#   曲面中面                `IFeatureManager.                  ★「The **pPartDocIn** parameter is the
+# 曲面中面                `IFeatureManager.                  ★「The **pPartDocIn** param
+# eter is the
 #                            InsertMidSurface`（4）              component's model document … and the
 #                                                                  **pBody** parameter is the body of that
 #                                                                  component.」
-#   ======================  ==============================  ==========================================
+# ======================  ==============================  ==============================
+# ============
 #
 #   ★★★★★ **本批逐条查到的「废弃链」**（★ 铁律 4 的核心工作，★ 也是本批最容易栽的地方）：
 #     ① `IModelDoc2.InsertSheetMetalMiterFlange` —— **Obsolete**，逐字
 #        「Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].」
-#        ★★ **同名两份页、参数完全不同**（那份 11 参且**回 void**；可用那份 **14 参、回 Feature**）
+# ★★ **同名两份页、参数完全不同**（那份 11 参且**回 void**；可用那份 **14 参、回 Feature
+# **）
 #          ★ ⇒ **用错接口 = 参数个数对不上**，★ 而不只是"没反应"。
-#     ② `IFeatureManager.InsertEndCapFeature` —— **Obsolete** → 后继 `InsertEndCapFeature3`（10 参）。
+# ② `IFeatureManager.InsertEndCapFeature` —— **Obsolete** → 后继 `InsertEndCapFeature3`
+# （10 参）。
 #        ⚠ 但 **`InsertEndCapFeature2`（7 参、末位是 `System.object Faces`）不在这条链上**
 #          —— ★ 官方页**无** Obsolete 句，★ 且其 Remarks 明写它是「用 Faces 数组」的**并列**入口
 #          ⇒ ★ **不是** `1 → 2 → 3` 的线性继承（★ 这一点极易想当然）。
-#     ③ `IFeatureManager.InsertGussetFeature` —— **Obsolete** → 后继 **`InsertGussetFeature3`**。
+# ③ `IFeatureManager.InsertGussetFeature` —— **Obsolete** → 后继 **`InsertGussetFeature3
+# `**。
 #        ⚠ ★★ **官方在此处断链**：`InsertGussetFeature2` 的页**没有** Obsolete 句
 #          ⇒ ★ 第 1 代**直接**指向第 3 代，★ 中间那代的废弃状态**官方没写**。
 #          ⇒ ★★ **别写「Gusset 有三代线性链」** —— ★ 那是想当然（★ 已踩过的形态：事实 53）。
-#     ④ `IModelDoc2.InsertMidSurfaceExt` —— **Obsolete** → 后继 `IFeatureManager::InsertMidSurface`（链闭合）。
-#     ⑤ `IModelDoc2.IInsertMidSurfaceExt` —— **Obsolete** → 后继点名 `IFeatureManager::IInsertMidSurface`，
+# ④ `IModelDoc2.InsertMidSurfaceExt` —— **Obsolete** → 后继 `IFeatureManager::InsertMidS
+# urface`（链闭合）。
+# ⑤ `IModelDoc2.IInsertMidSurfaceExt` —— **Obsolete** → 后继点名 `IFeatureManager::IInse
+# rtMidSurface`，
 #        ★★ **而那一页官方没写**（`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 文件）
-#        ⇒ ★★ **链 B 断在这里、无后继签名可抄** ⇒ ★ 本模块**只走 `InsertMidSurface`（非 `I` 前缀）**，
+# ⇒ ★★ **链 B 断在这里、无后继签名可抄** ⇒ ★ 本模块**只走 `InsertMidSurface`（非 `I` 前
+# 缀）**，
 #          ★ **不拿它顶替**（铁律 5）。
 #
-#   ★★ **Gusset 的两个同名接口，官方分类逐字抄自各自 front matter**（★ 已知事实 36 的原型）：
+# ★★ **Gusset 的两个同名接口，官方分类逐字抄自各自 front matter**（★ 已知事实 36 的原型
+# ）：
 #     | | `IGussetFeatureData` | `ISMGussetFeatureData` |
 #     |---|---|---|
 #     | category | Feature Interfaces/**Weldments** | Feature Interfaces/**Sheet Metal** |
-#     | 描述 | "Allows access to a **weldment** gusset feature." | "Allows access to a **sheet metal** gusset feature." |
+# | 描述 | "Allows access to a **weldment** gusset feature." | "Allows access to a **she
+# et metal** gusset feature." |
 #     | 属性数 | 14 | 28 |
 #     | 方法数 | 4 | 2 |
 #     ★⇒ 本模块的角撑板是**焊件**那个（`InsertGussetFeature3` + `IGussetFeatureData`）
-#       ⇒ ★ **不碰** `ISMGussetFeatureData`（★ 那个本仓 `sw_sheet_metal.create_gusset` 已经在走
+# ⇒ ★ **不碰** `ISMGussetFeatureData`（★ 那个本仓 `sw_sheet_metal.create_gusset` 已经在
+# 走
 #       ★ `CreateDefinition` 路线，★ **不是**本模块这条、★ 也不算本项的实现）。
 #
 #   ★★ **单位**（规则 2 · 逐条有官方例子佐证）：
-#     · **距离一律米**：官方例子 `InsertGussetFeature3(0.005, …, 0.025, 0.025, 0.015, …, 0.0125, …)`
+# · **距离一律米**：官方例子 `InsertGussetFeature3(0.005, …, 0.025, 0.025, 0.015, …, 0.0
+# 125, …)`
 #       ⇒ 5 mm / 25 mm / 12.5 mm；`Insert_Weldment_End_Cap_Example_VB` 读回时写
 #       `swEndCap.ChamferDistance * 1000# & " mm"` ⇒ ★ **官方自己乘 1000 才是 mm**。
 #       ⇒ 本模块**对外收毫米、只在边界除 1000**（`sw_connect.mm`）。
-#     · **角度一律弧度**：官方例子 `InsertGussetFeature3(…, 0.78539816339745, …, …, 0.785398163397452, …)`
+# · **角度一律弧度**：官方例子 `InsertGussetFeature3(…, 0.78539816339745, …, …, 0.785398
+# 163397452, …)`
 #       ⇒ **0.78539816339745 = π/4 = 45°** ⇒ ★ 官方吃**弧度** ⇒ 本模块**对外收度**、
 #       边界换算一次（`sw_connect.deg`）。
 #     · ⚠ **两个比例量不换算**：`WallThicknessRatio`（官方例子 `0.6`）与中面 `Placement`
@@ -78,30 +98,45 @@
 #       ⚠ **不要**自己拼 `GetFeatureCount`+`FeatureByPositionReverse`，★ 那条真机回 `None`）。
 #     · **回读刚建出的那个 `IFeature`**：`GetDefinition()` + 官方例子读的那些属性。
 #     · **体积 / 面数 / 曲面体数增量** —— 独立于特征树的第二判据。
-#       ⚠ 闭合角官方**回 `void`** ⇒ ★ 它**没有**返回对象可读 ⇒ ★ 树增量 + 面数/体积增量**是唯一判据**。
+# ⚠ 闭合角官方**回 `void`** ⇒ ★ 它**没有**返回对象可读 ⇒ ★ 树增量 + 面数/体积增量**是唯
+# 一判据**。
 #
 #   官方依据（三源互证 · 铁律 4）:
-#     · `C:\swapi\types\IFeatureManager\InsertSheetMetalMiterFlange.md`（14 参 · Returns `Feature`）
+# · `C:\swapi\types\IFeatureManager\InsertSheetMetalMiterFlange.md`（14 参 · Returns `Fe
+# ature`）
 #       ★★ 其 `PCBA` 形参的语义**逐字**是「**non-NULL** ⇒ Pointer to `ICustomBendAllowance`
-#         object for which required values have been set；**NULL** ⇒ Parent bend's bend allowance is used」
+# object for which required values have been set；**NULL** ⇒ Parent bend's bend allowanc
+# e is used」
 #         ⇒ ★ 本模块**传空 Dispatch（= NULL 语义）**，★ 用本仓事实 12 那条
-#         `create_empty_dispatch_variant()`，★ **不伪造一个没设过必需值的 ICustomBendAllowance**。
-#       ★ 对照废弃那份：`C:\swapi\types\IModelDoc2\InsertSheetMetalMiterFlange.md`（11 参 · 回 void · Obsolete）
-#     · `C:\swapi\types\IModelDoc2\InsertSheetMetalClosedCorner.md`（**零参 · 回 void** · 无 Remarks）
-#     · `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（10 参 · Returns `IFeature` · **有 Remarks**）
-#       + `C:\swapi\enums\swEndCapThicknessDirection_e.md`（Outward=0 / Inward=1 / **SpecifyInset=2**）
-#       + `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`（调用序 + 米制 + 读回写法）
-#     · `C:\swapi\types\IFeatureManager\InsertGussetFeature3.md`（20 参 · **有 Remarks** · mark=1 逐字）
+# `create_empty_dispatch_variant()`，★ **不伪造一个没设过必需值的 ICustomBendAllowance**
+# 。
+# ★ 对照废弃那份：`C:\swapi\types\IModelDoc2\InsertSheetMetalMiterFlange.md`（11 参 · 回
+#  void · Obsolete）
+# · `C:\swapi\types\IModelDoc2\InsertSheetMetalClosedCorner.md`（**零参 · 回 void** · 无
+#  Remarks）
+# · `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（10 参 · Returns `IFeature`
+#  · **有 Remarks**）
+# + `C:\swapi\enums\swEndCapThicknessDirection_e.md`（Outward=0 / Inward=1 / **SpecifyIn
+# set=2**）
+# + `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`（调用序 + 米制 + 读回写法
+# ）
+# · `C:\swapi\types\IFeatureManager\InsertGussetFeature3.md`（20 参 · **有 Remarks** · m
+# ark=1 逐字）
 #       + `C:\swapi\enums\swGussetThicknessType_e.md`（Inner=0 / BothSides=1 / Outer=2）
 #       + `C:\swapi\enums\swGussetProfileLocationType_e.md`（Start=0 / Center=1 / End=2）
-#       + `C:\swapi\examples\Insert_Gusset_Feature_Example_VB.md`（**`SelectByID2(..., True, 1, ...)`**
+# + `C:\swapi\examples\Insert_Gusset_Feature_Example_VB.md`（**`SelectByID2(..., True, 1
+# , ...)`**
 #         ⇒ ★ mark=1 与 Append=True 的**双证据**；★ 角度=弧度、距离=米的数值佐证）
-#     · `C:\swapi\types\IFeatureManager\InsertMidSurface.md`（4 参 · 前两位是 **`Body2` / `ModelDoc2` 对象**）
+# · `C:\swapi\types\IFeatureManager\InsertMidSurface.md`（4 参 · 前两位是 **`Body2` / `M
+# odelDoc2` 对象**）
 #       + `C:\swapi\types\IModelDoc2\InsertMidSurfaceExt.md`（Obsolete）
-#       + `C:\swapi\types\IModelDoc2\IInsertMidSurfaceExt.md`（Obsolete；★ 其后继页**官方没写**）
+# + `C:\swapi\types\IModelDoc2\IInsertMidSurfaceExt.md`（Obsolete；★ 其后继页**官方没写*
+# *）
 #     · ★ arity 与官方签名**逐条互证**（反射 dump `scripts/sw_api_sldworks.py`，第三源）：
-#       `'InsertSheetMetalMiterFlange': 14`（IFeatureManager）· `'InsertSheetMetalClosedCorner': 0`
-#       · `'InsertEndCapFeature3': 10` · `'InsertGussetFeature3': 20` · `'InsertMidSurface': 4` ✓✓✓✓✓
+# `'InsertSheetMetalMiterFlange': 14`（IFeatureManager）· `'InsertSheetMetalClosedCorner
+# ': 0`
+# · `'InsertEndCapFeature3': 10` · `'InsertGussetFeature3': 20` · `'InsertMidSurface': 4
+# ` ✓✓✓✓✓
 #   许可:   本仓库 MIT。★ **无第三方代码引入**（只照官方签名与官方示例写）。
 #   覆盖:   全文件
 # ⚠ 本文件为**静态签名比对后新写**，**未在本机实测**（铁律 2：真机由 Lead 独家执行）。
@@ -126,7 +161,8 @@ __all__ = [
 ]
 
 # ── 官方枚举（★ 逐字数值，来源写在每组后面的注释里）──────────────────────────────
-#: `swSheetMetalReliefTypes_e`（`C:\swapi\enums\swSheetMetalReliefTypes_e.md`，5 个成员）
+#: `swSheetMetalReliefTypes_e`（`C:\swapi\enums\swSheetMetalReliefTypes_e.md`，5 个成员
+#: ）
 SW_RELIEF_RECTANGULAR = 1      # swSheetMetalReliefRectangular = 1
 SW_RELIEF_TEAR = 2            # swSheetMetalReliefTear        = 2
 SW_RELIEF_OBROUND = 3         # swSheetMetalReliefObround     = 3
@@ -142,18 +178,21 @@ SW_FLANGE_BEND_SHARP = 5           # swFlangePositionTypeBendSharp       = 5（"
 SW_FLANGE_BEND_TANGENT = 6         # swFlangePositionTypeBendTangent     = 6（⚠ 官方注明对
                                     #   "Up To Edge And Merge" 长度终止条件无效）
 
-#: `swEndCapThicknessDirection_e`（`C:\swapi\enums\swEndCapThicknessDirection_e.md`，3 个成员）
+#: `swEndCapThicknessDirection_e`（`C:\swapi\enums\swEndCapThicknessDirection_e.md`，3 
+#: 个成员）
 SW_END_CAP_OUTWARD = 0         # swExtendOutward = 0
 SW_END_CAP_INWARD = 1          # swExtendInward  = 1
 SW_END_CAP_SPECIFY_INSET = 2   # swSpecifyInset  = 2 ★ 官方 `DepthOffset` 逐字「valid only if
-                                #   BIsEndCapInward **= 2**」⇒ ★★ 与官方例子传的 `2` 对得上 ✓
+                                # BIsEndCapInward **= 2**」⇒ ★★ 与官方例子传的 `2` 对得
+                                # 上 ✓
 
 #: `swGussetThicknessType_e`（`C:\swapi\enums\swGussetThicknessType_e.md`，3 个成员）
 SW_GUSSET_THICKNESS_INNER = 0       # swGussetThicknessInner      = 0
 SW_GUSSET_THICKNESS_BOTH_SIDES = 1  # swGussetThicknessBothSides = 1（★ 官方例子用的就是它）
 SW_GUSSET_THICKNESS_OUTER = 2       # swGussetThicknessOuter      = 2
 
-#: `swGussetProfileLocationType_e`（`C:\swapi\enums\swGussetProfileLocationType_e.md`，3 个成员）
+#: `swGussetProfileLocationType_e`（`C:\swapi\enums\swGussetProfileLocationType_e.md`，3
+#:  个成员）
 SW_GUSSET_PROFILE_START = 0     # swGussetProfileLocationStart  = 0
 SW_GUSSET_PROFILE_CENTER = 1    # swGussetProfileLocationCenter = 1（★ 官方例子用的就是它）
 SW_GUSSET_PROFILE_END = 2       # swGussetProfileLocationEnd    = 2
@@ -421,7 +460,8 @@ def insert_sheet_metal_miter_flange(model, *,
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 #1 · **E5-4**（★ 裁判逐字：「★ 仓内 doc：
     #:   `判据 = 特征树增量 + 返回对象非 None + 实体面数增量（**三个都要**）` ★ 而目标：
     #:   ★★ **三处 `ok` 完全相同**：`"ok": bool(added) and fea…`」· ★ 判定「**确认**」）✓
-    #:   ★★★ **病灶（★ 实测的更精确）**：★ 三处**都已经算了** `after_faces` / `face_count_delta`，
+    #: ★★★ **病灶（★ 实测的更精确）**：★ 三处**都已经算了** `after_faces` / `face_count_
+    #: delta`，
     #:     ★★ **只是没把它放进 `ok`** ⇒ ★★★ **doc 说"三个都要"、★ 实现只用了两个** ✓
     #:   ⇒ 修法：★ 把**已经算好的** `face_count_delta` 加进 `ok` —— ★ **不新算任何东西** ✓
     #:   ★★ 连接词：★ **跨种类 ⇒ `and`**（★ 树增量 / 返回对象 / 几何量，★ 三类都要）✓
@@ -473,7 +513,8 @@ def insert_sheet_metal_closed_corner(model) -> dict:
     before = _tree(model)
     before_faces = _body_face_count(model)
     before_vol = _volume_mm3(model)
-    #: ★ 官方**零参** ⇒ 一个实参都不传（★ 官方 Signature 逐字 `void InsertSheetMetalClosedCorner()`）
+    #: ★ 官方**零参** ⇒ 一个实参都不传（★ 官方 Signature 逐字 `void InsertSheetMetalClos
+    #: edCorner()`）
     get_com_member(model, "InsertSheetMetalClosedCorner")
     after = _tree(model)
     after_faces = _body_face_count(model)
@@ -483,23 +524,31 @@ def insert_sheet_metal_closed_corner(model) -> dict:
     vol_delta = _numeric_delta(before_vol, after_vol)
     #: ★★★★ 2026-10-04（接手轮）**修掉一个"把缺一不可写成有一个就行"的判据** ——
     #:   ★ 处置 `JUDGE-C_D_E.md` 的 🔴 #1（★ 裁判逐字：「★ doc 承诺的判据**没进 `ok`** ⇒
-    #:     **特征没建成也报成功**，★ 直接违反仓库规则 6（不静默成功）。★ 其中 **batch74 闭合角
+    #: **特征没建成也报成功**，★ 直接违反仓库规则 6（不静默成功）。★ 其中 **batch74 闭合
+    #: 角
     #:     用 `or` 把「缺一不可」写成「有一个就行」是最严重的一处**」）✓
     #:   ★★ **病灶（原文逐字）**：
     #:     ```python
-    #:     "ok": bool(changed and (bool(added) or (face_delta or 0) != 0 or (vol_delta or 0) != 0))
+    #: "ok": bool(changed and (bool(added) or (face_delta or 0) != 0 or (vol_delta or 0)
+    #:  != 0))
     #:     ```
     #:     而**本函数的 docstring 第 439 行**写的是「★ 判据**只能**是：**特征树增量** +
-    #:     **实体面数增量** + **体积增量**（★ 后两个互相独立）」⇒ ★★★ **doc 说"都"、代码写"或"** ✓
+    #: **实体面数增量** + **体积增量**（★ 后两个互相独立）」⇒ ★★★ **doc 说"都"、代码写"
+    #: 或"** ✓
     #:   ★★★ **为什么"或"在这里必然出错**：★ 官方回 `void` ⇒ **没有返回值可判** ⇒
-    #:     若只看到"某一项变了"就报 `ok`，★ 那么**调用了一个什么都没干的 entry point 也可能报成功**
+    #: 若只看到"某一项变了"就报 `ok`，★ 那么**调用了一个什么都没干的 entry point 也可能
+    #: 报成功**
     #:     （★ 例如选区恰好让某个计数抖动）⇒ ★★ **那正是"不静默成功"要防的** ✓
-    #:   ★★★★ **改成 `and` 的理由（可核）**：★ 一个真的建成的闭合角**必然同时**满足两件事 ——
+    #: ★★★★ **改成 `and` 的理由（可核）**：★ 一个真的建成的闭合角**必然同时**满足两件事 
+    #: ——
     #:     ① **特征树多一个特征**（★ 它是特征，不是几何操作）；② **至少一个几何量变**
-    #:     （★ 闭合角会改面 ⇒ 面数或体积至少一个动）⇒ ★ 所以 `bool(added) and (面变 or 体积变)` ✓
+    #: （★ 闭合角会改面 ⇒ 面数或体积至少一个动）⇒ ★ 所以 `bool(added) and (面变 or 体积
+    #: 变)` ✓
     #:     ⚠ 保留「面变 **或** 体积变」这一层 `or` —— ★ 因为**两者都是几何量**，
-    #:     ★★ **不存在"只看某一个"的理由**，★ 而**要求两个都变**会过严（★ 有些闭合角只改面不改体积）✓
-    #:   ★★ **判据的分层**（★ 这条最值得记）：★★★ **不同**种类**的量之间用 `and`（都必须满足）、
+    #: ★★ **不存在"只看某一个"的理由**，★ 而**要求两个都变**会过严（★ 有些闭合角只改面不
+    #: 改体积）✓
+    #: ★★ **判据的分层**（★ 这条最值得记）：★★★ **不同**种类**的量之间用 `and`（都必须满
+    #: 足）、
     #:     同一**种类**的两个量之间用 `or`（任一即可）** ✓
     ok_judgement = bool(added) and ((face_delta or 0) != 0 or (vol_delta or 0) != 0)
     return {
@@ -593,7 +642,8 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
     )
     after = _tree(model)
     added = new_features(before, after)
-    #: ★ 回读的成员名与单位换算**逐条照官方例子**（`swEndCap.X * 1000# & " mm"` ⇒ 官方回米）
+    #: ★ 回读的成员名与单位换算**逐条照官方例子**（`swEndCap.X * 1000# & " mm"` ⇒ 官方回
+    #: 米）
     definition, unreadable = ({}, [])
     if feature is not None:
         definition, unreadable = _read_definition(feature, [
@@ -609,8 +659,10 @@ def insert_weldment_end_cap(model, depth_mm: float, *,
             ("UseThicknessRatioForOffset", None),
         ])
     total_selected = (marks or {}).get("all", -1)
-    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`**（★ E5-4 · 与另两处同源同错）——
-    #:   ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` ✓
+    #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的第三个判据纳入 `ok`**（★ E5-4 · 与另两处
+    #: 同源同错）——
+    #: ★ doc 逐字：`判据 = 特征树增量 + 返回对象非 None + **实体面数增量**（三个都要）` 
+    #: ✓
     #:   ★★ 本处**早已算了** `face_count_delta`（★ 就在返回值里）、★ **只是没进 `ok`** ✓
     face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
@@ -740,9 +792,11 @@ def insert_weldment_gusset(model, depth_mm: float, *,
     #: ★★★★ 2026-10-04（接手轮）**把 doc 承诺的两个判据纳入 `ok`**（★ E5-4 · 第三处）——
     #:   ★ 本处的 doc 逐字多了两条：`… + **GetDefinition() 属性回读**（官方例子读法）` ／
     #:     `… + **mark-1 选区计数**` ✓
-    #:   ★★ 实测：★ `after_faces` **算了没用**、★ `mark1`（★ 即"mark-1 选区计数"）**也算了没用** ✓
+    #: ★★ 实测：★ `after_faces` **算了没用**、★ `mark1`（★ 即"mark-1 选区计数"）**也算了
+    #: 没用** ✓
     #:   ⇒ 修法：★ **两个已算好的量都纳入 `ok`**（★ 不新算）✓
-    #:   ★★★ 连接词：★ **跨种类 ⇒ `and`** —— ★ 树增量 / 返回对象 / 面数增量 / mark-1 计数，
+    #: ★★★ 连接词：★ **跨种类 ⇒ `and`** —— ★ 树增量 / 返回对象 / 面数增量 / mark-1 计数
+    #: ，
     #:     ★★ 四个**都必须成立**（★ doc 写的是"三个都要"+ 两条附加 ⇒ ★ **一路 `and`**）✓
     face_delta_here = _numeric_delta(before_faces, after_faces)
     return {
@@ -864,7 +918,8 @@ def insert_mid_surface(model, body, part_doc, *,
 # ① **`IModelDoc2.InsertSheetMetalMiterFlange`（11 参 · 回 void）**：
 #    ★ 官方逐字 `Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].`
 #    ⇒ 本模块**只走** `IFeatureManager` 那份（14 参 · 回 `Feature`）。
-#    ★ ⚠ 这两条**参数个数都不同**（11 vs 14）⇒ ★ 用错**不只是"没反应"**，而是**个数对不上**。
+# ★ ⚠ 这两条**参数个数都不同**（11 vs 14）⇒ ★ 用错**不只是"没反应"**，而是**个数对不上**
+# 。
 #
 # ② **`IFeatureManager.InsertEndCapFeature`（6 参）**：★ Obsolete → 后继 3 ⇒ 不做。
 #    ★⚠ 但 **`InsertEndCapFeature2`（7 参 · 末位 `System.object Faces`）不是废弃成员**
@@ -873,9 +928,11 @@ def insert_mid_surface(model, body, part_doc, *,
 #
 # ③ **`IFeatureManager.InsertGussetFeature`（15 参）**：★ Obsolete → 后继 3 ⇒ 不做。
 #    ★⚠ `InsertGussetFeature2`（16 参 · 末位 `System.object Faces`）同理 —— **不是废弃**，
-#      ★ 但**官方在此断链**（中间代页无 Obsolete 句）⇒ ★ 本模块**只做 3**，并把断链写进返回值。
+# ★ 但**官方在此断链**（中间代页无 Obsolete 句）⇒ ★ 本模块**只做 3**，并把断链写进返回值
+# 。
 #
-# ④ **`IModelDoc2.InsertMidSurfaceExt` / `IInsertMidSurfaceExt`**：★ 都 Obsolete ⇒ 不做。
+# ④ **`IModelDoc2.InsertMidSurfaceExt` / `IInsertMidSurfaceExt`**：★ 都 Obsolete ⇒ 不做
+# 。
 #    ★★ 而 `IInsertMidSurfaceExt` 点名的后继 `IFeatureManager::IInsertMidSurface`
 #      **官方没写**（全库只有 3 个 `*MidSurface*` 页）⇒ ★ **查不到** ⇒ ★ 不顶替（铁律 5）。
 #
@@ -894,23 +951,35 @@ def create_midsurface(model, *, body_index: int = 0, placement: float = 0.0,
                       knit: bool = False) -> dict:
     """★ **曲面中面（按体号给的入口）** —— 把 `insert_mid_surface` 那两个**对象形参**解析成可声明的入参。"""
     # ── 来源 ─────────────────────────────────────────────────────────
-    # 仓库:   本项目自身（**转接层** —— 实现仍在同文件的 `insert_mid_surface`，本函数不重写实现）
+    # 仓库:   本项目自身（**转接层** —— 实现仍在同文件的 `insert_mid_surface`，本函数不
+    # 重写实现）
     # 文件:   scripts/sw_sheet_metal_weld_entry.py
-    # 定位:   ★★ **为什么要这一层**：`insert_mid_surface(model, body, part_doc, …)` 的 `body` / `part_doc`
-    #   是 `IBody2` / `IModelDoc2` **对象** ⇒ ★ `ToolSpec.Param` 只能表达 str/float/int/bool
-    #   ⇒ ★ 没有这一层，中面**挂不上工具**。★ 而它是 `capabilities.yaml` 里 `level: verified`
-    #   却**没暴露成工具**的一条（见 `specs/202-user-coverage-gaps/recon/scan-S2b-ledger-vs-tools.md` 的 A 表）。
+    # 定位:   ★★ **为什么要这一层**：`insert_mid_surface(model, body, part_doc, …)` 的 `
+    # body` / `part_doc`
+    # 是 `IBody2` / `IModelDoc2` **对象** ⇒ ★ `ToolSpec.Param` 只能表达 str/float/int/bo
+    # ol
+    # ⇒ ★ 没有这一层，中面**挂不上工具**。★ 而它是 `capabilities.yaml` 里 `level: verifi
+    # ed`
+    # 却**没暴露成工具**的一条（见 `specs/202-user-coverage-gaps/recon/scan-S2b-ledger-v
+    # s-tools.md` 的 A 表）。
     #   ★ 做法（★ 与仓内既有"按序号给对象"同一手法）：
-    #     · `body_index` = **实体体号** ⇒ 用 **`IPartDoc.GetBodies2(Int32 Type, Boolean VisibleOnly)`**
-    #       （★ 仓内 `sw_hole_features.py:883` / `sw_curve_and_split.py:138` 用的就是这个形态，
+    # · `body_index` = **实体体号** ⇒ 用 **`IPartDoc.GetBodies2(Int32 Type, Boolean Visi
+    # bleOnly)`**
+    # （★ 仓内 `sw_hole_features.py:883` / `sw_curve_and_split.py:138` 用的就是这个形态
+    # ，
     #        `Type=0` = `swSolidBody`）
-    #     · `part_doc` = **同一个 `model`** —— ★ 官方 Remarks 逐字：`pPartDocIn` 是**该组件的模型文档**
-    #       ⇒ ★ 在本工具的口径下就是**当前活动文档** ⇒ ★ 本函数**要求活动文档是零件**，并**如实报告**取到几个体。
+    # · `part_doc` = **同一个 `model`** —— ★ 官方 Remarks 逐字：`pPartDocIn` 是**该组件
+    # 的模型文档**
+    # ⇒ ★ 在本工具的口径下就是**当前活动文档** ⇒ ★ 本函数**要求活动文档是零件**，并**如
+    # 实报告**取到几个体。
     # 官方依据: `C:\swapi\types\IFeatureManager\InsertMidSurface.md`
-    #   ★ 逐字前置：「The **pPartDocIn** parameter is the **component's model document** where you want to
-    #   add the midsurface feature, and the **pBody** parameter is the **body of that component**.」
+    # ★ 逐字前置：「The **pPartDocIn** parameter is the **component's model document** w
+    # here you want to
+    # add the midsurface feature, and the **pBody** parameter is the **body of that comp
+    # onent**.」
     #   ★ 逐字语义：「Each reference surface is considered a **sheet body**」·
-    #     「all the reference surfaces are **sewn** into a single reference surface if `knitFlag` is true」
+    # 「all the reference surfaces are **sewn** into a single reference surface if `knit
+    # Flag` is true」
     #   ★ `placement` 官方**既没说单位也没说量纲** ⇒ ★ 原样透传（铁律 5）。
     # 许可:   本仓库 MIT。★ 无第三方代码引入。
     # 覆盖:   全文件

@@ -48,10 +48,13 @@ CALL = re.compile(r"\b([A-Za-z_]\w*)\.([A-Z]\w{2,})\s*\(")
 
 #: ⚠⚠⚠ **第一版判据（"大驼峰 + 不在反射里"）实测假阳性率 ≈ 100%** ——
 #: 323 处里全是 **Python 标准库 / pywin32 / OCP / winreg / argparse** 的对象
-#: （`argparse.ArgumentParser` ×29 · `winreg.OpenKey` ×8 · `win32api.SetCursorPos` ×8 · …）
-#: ⇒ ★ 印证**事实 74 那一族**：**「名字形态」判不出"是不是 COM 成员"** ⇒ **不接那条判据**。
+#: （`argparse.ArgumentParser` ×29 · `winreg.OpenKey` ×8 · `win32api.SetCursorPos` ×8 · 
+#: …）
+#: ⇒ ★ 印证**事实 74 那一族**：**「名字形态」判不出"是不是 COM 成员"** ⇒ **不接那条判据*
+#: *。
 #:
-#: ★★ 第二版判据**有依据**（不是猜）：把对象名**限定到「已经被当作 COM 对象用过」的那些** ——
+#: ★★ 第二版判据**有依据**（不是猜）：把对象名**限定到「已经被当作 COM 对象用过」的那些*
+#: * ——
 #: 即 `get_com_member(<OBJ>, …)` / `call_com_member(<OBJ>, …)` /
 #: `safe_get_com_member(<OBJ>, …)` 的**第一个实参标识符**。
 #: ⇒ 那些 `<OBJ>` **确实是 COM 对象** ⇒ 在它们身上的大驼峰调用就**值得查**。
@@ -80,7 +83,8 @@ def members_from_reflection() -> set:
 #:   ① 第一版「大驼峰 + 不在反射里」⇒ 假阳性 ≈100%（标准库/pywin32/OCP 全都进来）；
 #:   ② 第二版「对象名从 `get_com_member(<OBJ>, …)` 推导」把假阳性降到 12 处，
 #:      但仍有 3 类噪音：**docstring 里的举例**、**COM 基础设施**（`QueryInterface`）、
-#:      **跨函数变量名重合**（OCP 的 `wire`/`surface` 与 COM 的 `wire`/`surface` 同名 —— 事实 51）。
+#: **跨函数变量名重合**（OCP 的 `wire`/`surface` 与 COM 的 `wire`/`surface` 同名 —— 事实
+#:  51）。
 #: ⇒ 第三版：**(a) 用 `ast` 只查代码** · **(b) COM 对象名按「所在函数」定作用域** ·
 #:            **(c) 加 COM 基础设施白名单**。
 COM_INFRA = {"QueryInterface", "AddRef", "Release", "GetTypeInfo", "GetIDsOfNames", "Invoke"}

@@ -78,7 +78,8 @@ def main() -> int:
         before = _feature_names(model)
         fm = get_com_member(model, "FeatureManager")
         #: ★★★★★ 官方 `FeatureLinearPattern3.md` 的 `## Remarks` **逐字给了 mark 表**：
-        #:   ★ 「Using `IModelDocExtension::SelectByID2` to select features and components,
+        #: ★ 「Using `IModelDocExtension::SelectByID2` to select features and components
+        #: ,
         #:      **ordered selection** of the features and components is required」
         #:   · ★ **`1 and 2 to mark the directions`** ⇒ **方向用 mark 1 / 2** ✓
         #:   · ★★ **`4 to mark the features to pattern`** ⇒ **要阵列的特征用 mark 4** ✓
@@ -114,7 +115,8 @@ def main() -> int:
                 got = get_com_member(fm, "FeatureCircularPattern4",
                                      4, 6.283185307179586, False, "", False, True, False)
             elif form == "circular5_14":
-                #: ★ 官方 14 参：★ `(Number, Spacing, FlipDirection, DName, GeometryPattern,
+                #: ★ 官方 14 参：★ `(Number, Spacing, FlipDirection, DName, GeometryPatt
+                #: ern,
                 #:   EqualSpacing, VaryInstance, SyncSubAssemblies, BDir2, BSymmetric,
                 #:   Number2, Spacing2, DName2, EqualSpacing2)` ✓
                 got = get_com_member(fm, "FeatureCircularPattern5",

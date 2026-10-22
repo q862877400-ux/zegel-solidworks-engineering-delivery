@@ -52,11 +52,14 @@ OUT = REPO / "output" / "operation-object-matrix.json"
 OPS: list = [
     ("建", r"Create|Insert|Add|New|Make|Build|Sketch|Feature(?!Data)|Extrud|Revolv|Loft|Sweep|"
            r"Fillet|Chamfer|Hole|Rib|Shell|Draft|Pattern|Mirror|Thicken|Wrap|"
-           #: ★★★★ 2026-10-04（轮 99）**补词**（★ 消解"无处可放" · ★ **阈值不动、★ 只加词**）——
+           #: ★★★★ 2026-10-04（轮 99）**补词**（★ 消解"无处可放" · ★ **阈值不动、★ 只加
+           #: 词**）——
            #:   依据：`output/unplaced-tools-analysis.json` 的**逐条**分析 ——
-           #:   ★ 35 个无处可放里 **28 个**是"`OPS` 一条规则都不命中"、★ **19 个**是对象轴同理、
+           #: ★ 35 个无处可放里 **28 个**是"`OPS` 一条规则都不命中"、★ **19 个**是对象轴
+           #: 同理、
            #:   ★★ **而"其余（★ 靠顺序截走）"是 0 个** ⇒ **全是缺词、★ 不是顺序问题** ✓
-           #:   加的词**都来自真实工具名**（★ 不是为凑数）：★ `Gear` / `Helix` / `Fastener` /
+           #: 加的词**都来自真实工具名**（★ 不是为凑数）：★ `Gear` / `Helix` / `Fastener
+           #: ` /
            #:   `Costing` / `Delivery` / `Motion` / `Flatten` / `Measure` / `Summary` ✓
            r"Gear|Helix|Fastener|Flatten|Dome|Bend|"
            r"Activate|Calibrate|Recalculate"),
@@ -81,7 +84,8 @@ OPS: list = [
     ("参数化", r"Equation|Config|DesignTable|Parameter|Global|Variable|Driven|Family"),
 ]
 
-#: ★★ 对象轴 —— ★ 取「官方接口族的 category」+ 名字兜底（★ 官方自己在 front-matter 里给了 category）
+#: ★★ 对象轴 —— ★ 取「官方接口族的 category」+ 名字兜底（★ 官方自己在 front-matter 里给
+#: 了 category）
 OBJ_RULES: list = [
     ("草图", r"Sketch"),
     ("特征", r"Feature|Boss|Cut|Extru|Revolv|Loft|Sweep|Fillet|Chamfer|Hole|Rib|Shell|Draft|"
@@ -99,8 +103,10 @@ OBJ_RULES: list = [
     ("视图/外观", r"View|Camera|Scene|Appearance|Render|Display|Color"),
     ("参考几何", r"RefPlane|RefAxis|CoordinateSystem|ReferencePoint|Plane|Axis"),
     ("Costing/交付", r"Cost|PackAndGo|Bom|Delivery"),
-    #: ★★★★ 2026-10-04（轮 99）**补两个对象**（★ 消解"无处可放" · ★ **阈值不动、★ 只加词**）——
-    #:   依据 `output/unplaced-tools-analysis.json`：★ 19 个工具在对象轴上**一条规则都不命中**、
+    #: ★★★★ 2026-10-04（轮 99）**补两个对象**（★ 消解"无处可放" · ★ **阈值不动、★ 只加词
+    #: **）——
+    #: 依据 `output/unplaced-tools-analysis.json`：★ 19 个工具在对象轴上**一条规则都不命
+    #: 中**、
     #:   ★★ 而**缺的正是"传动件"与"体/测量"这两类**（★ `Gear` / `Helix` / `Fastener` /
     #:   `CenterOfMass` / `BoundingBox` / `Entities`）✓
     #:   ★★★ **判据**：★ 新加的两个对象名**能从工具名反推**（★ 不是为凑数）✓
@@ -180,9 +186,12 @@ def main() -> int:
     for m in all_members:
         cell = (classify(m, OPS), classify(member_to_fam[m] + " " + m, OBJ_RULES))
         cell_members[cell].append(m)
-    #: ★★ 每个工具也分类（★ 用工具名 + 它的注入/模块名做不到 ⇒ 只用工具名，★ 如实标注这个局限）
-    #: ★★★ **⚠ 工具名要先经 `tool_text` 规范化** —— ★ 规则是 CamelCase、★ 工具名是 snake_case，
-    #:   ★★ 不规范化会**全落 `（未归类）`**（★ 轮 93 修；★ 证伪见 `output/_why_all_unplaced.py`）✓
+    #: ★★ 每个工具也分类（★ 用工具名 + 它的注入/模块名做不到 ⇒ 只用工具名，★ 如实标注这
+    #: 个局限）
+    #: ★★★ **⚠ 工具名要先经 `tool_text` 规范化** —— ★ 规则是 CamelCase、★ 工具名是 snake
+    #: _case，
+    #: ★★ 不规范化会**全落 `（未归类）`**（★ 轮 93 修；★ 证伪见 `output/_why_all_unplace
+    #: d.py`）✓
     tool_cells, tool_unplaced = {}, []
     for t in tools:
         text = tool_text(t)

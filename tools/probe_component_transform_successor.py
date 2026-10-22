@@ -58,7 +58,8 @@ def main() -> int:
     sw, _ = C.connect_solidworks(wait_seconds=30)
     doc = None
     try:
-        #: ★ ① 造一个零件并**用本仓的 save_document 保存**（★ 不再手拼 SaveAs3 的 6 个参数）
+        #: ★ ① 造一个零件并**用本仓的 save_document 保存**（★ 不再手拼 SaveAs3 的 6 个参
+        #: 数）
         pdoc = C.new_document(sw, "part")
         P.start_sketch(pdoc, plane_name="Front Plane")
         _g(_g(pdoc, "SketchManager"), "CreateCornerRectangle",

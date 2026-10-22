@@ -81,9 +81,12 @@ def _select(params, kind: str):
     return resolve_selection(_model(), params.selection, kind)
 
 
-#: ★★★ 2026-10-03（接手轮）**"按名选草图、并给 mark"的共用帮手** —— 放在这里（★ 本模块就是选择帮手之家）。
-#:   ★★ **为什么必须共用**（事实 60 的定则④：「写了一个好用的工具函数，就要在**所有**同类场合用它」）：
-#:     「显式拒」那一族（`part_sweep` / `part_loft` / `part_axis` / `part_wrap`）**都要**在 `pre_call` 里
+#: ★★★ 2026-10-03（接手轮）**"按名选草图、并给 mark"的共用帮手** —— 放在这里（★ 本模块就
+#: 是选择帮手之家）。
+#: ★★ **为什么必须共用**（事实 60 的定则④：「写了一个好用的工具函数，就要在**所有**同类
+#: 场合用它」）：
+#: 「显式拒」那一族（`part_sweep` / `part_loft` / `part_axis` / `part_wrap`）**都要**在 
+#: `pre_call` 里
 #:     按官方 mark 把**草图**选上 ⇒ ★ 帮手只写一份，★ 免得四条各写一遍、各错一遍。
 #:   ★ 官方 mark 依据逐条见各 spec 自己的 doc（本仓已回查过）。
 def _select_sketch_by_name(model, name: str, mark: int, append: bool) -> bool:
@@ -191,7 +194,8 @@ def _pre_gusset(params):
 #:   ★ 官方 mark 逐字（`C:\swapi\types\IFeatureManager\InsertMultiFaceDraft.md`）：
 #:     「direction **mark 1**, faces to draft **mark 2**, draft edges **mark 4**」。
 #:   ★ 方向项用**平面名**（★ 声明式，★ 规则 3：不收裸坐标）——
-#:     ★ 走 `SelectByID2(name, "PLANE", …, mark=1)`（★ 平面**是特征**，★ 事实 32 说按名字选只对特征成立 ⇒ 可行）。
+#: ★ 走 `SelectByID2(name, "PLANE", …, mark=1)`（★ 平面**是特征**，★ 事实 32 说按名字选
+#: 只对特征成立 ⇒ 可行）。
 #:   ★★ **前置没备齐就抛**（★ 不静默继续 —— 那会把「前置没上」记成「能力不成」）。
 def _face_object(params):
     """★ 取「待拔模面」的 COM 对象（★ **只取对象、不选择** —— 选择由调用方按 mark 做）。
@@ -351,8 +355,10 @@ def _swept_refs_and_spec(p):
 
 
 #: ⚠ 参数逐条照**真实签名 + dataclass 字段**抄，出处：
-#:   `Select-String scripts/sw_sheet_metal.py -Pattern '^def create_(edge_flange|gusset|draft|swept_flange)'`
-#:   `Select-String scripts/sw_sheet_metal.py -Pattern '^class (EdgeFlangeSpec|GussetSpec|DraftFeatureSpec|SweptFlangeSpec)'`
+#: `Select-String scripts/sw_sheet_metal.py -Pattern '^def create_(edge_flange|gusset|dr
+#: aft|swept_flange)'`
+#: `Select-String scripts/sw_sheet_metal.py -Pattern '^class (EdgeFlangeSpec|GussetSpec|
+#: DraftFeatureSpec|SweptFlangeSpec)'`
 SPECS_BATCH4: list[ToolSpec] = [
     # 签名: def create_edge_flange(model, spec: EdgeFlangeSpec)
     ToolSpec(
@@ -361,7 +367,8 @@ SPECS_BATCH4: list[ToolSpec] = [
         module="sw_sheet_metal", function="create_edge_flange",
         inject="model",
         # ⚠⚠ `selection` **不传给目标函数** —— 实现只收 `(model, spec)`，
-        #   多传一个 kwarg 会 `TypeError`（**这个错是守卫测试抓到的**）。它由 `pre_call` 消费。
+        # 多传一个 kwarg 会 `TypeError`（**这个错是守卫测试抓到的**）。它由 `pre_call` 
+        # 消费。
         param_alias=dict(
             {"selection": None},
             **_consumed("bend_radius_mm", "flange_length_mm", "angle_deg",
@@ -477,7 +484,8 @@ SPECS_BATCH4: list[ToolSpec] = [
         title="Create Sheet Metal Swept Flange",
         module="sw_sheet_metal", function="create_swept_flange",
         inject="model",
-        # ⚠ 两个 ref **都被真用了**（`data.Path` / `data.Profile`）⇒ 用 derived_args 解析成对象
+        # ⚠ 两个 ref **都被真用了**（`data.Path` / `data.Profile`）⇒ 用 derived_args 解
+        # 析成对象
         param_alias=dict(
             {"path_selection": None, "profile_selection": None},
             **_consumed(

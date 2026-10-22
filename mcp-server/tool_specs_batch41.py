@@ -58,7 +58,8 @@ SPECS_BATCH41 = [
     #:     ★ 齿轮是**渐开线齿形公式**（★ 模数/齿数/压力角 → 齿廓点）⇒
     #:     ★★ **齿形错了，回读几何查不出来**（★ 它看起来"就是个齿轮"）⇒ ★ **它是方法** ✗
     #:   ★ 已移出：★ `scripts/sw_gear.py` → `archive/inherited-methods/scripts/` ✓
-    #:   ★★ 移出的两个工具：★ `solidworks_gear_calculate_spur` · `solidworks_gear_create_spur`
+    #: ★★ 移出的两个工具：★ `solidworks_gear_calculate_spur` · `solidworks_gear_create_s
+    #: pur`
     #:   ⚠ **留在这里的 Toolbox 四个是工具**（★ 索引查询 ⇒ ★ 判据是数据，回读可查）✓
     #: ── Toolbox 索引（★ 空条目 `standard_parts_toolbox` 的填实）──────────
     ToolSpec(

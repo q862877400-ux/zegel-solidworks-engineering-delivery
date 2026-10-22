@@ -11,13 +11,15 @@ from sw_connect import get_com_member
 #   ★ 而四家并集（349）里正有 **`loft`**（★ 由 `Slacker-LLC` 提供）。
 #
 # ★★ **调用序与 mark 来自官方 Remarks**（★ §5.0：判据先找后搓）：
-#   `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`（**18 参** · 回 `Feature`）：
+# `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`（**18 参** · 回 `Feature`）
+# ：
 #   ```
 #   · 1 = profile selections          ← 轮廓（★ 要按期望的顺序选）
 #   · 2 = guide curve selections      （可选）
 #   · 4 = centerline selection        （可选）
 #   · 8 = start tangency vector selection
-#   ★ 原文：「you must select the profiles in an order consistent with the desired result」
+# ★ 原文：「you must select the profiles in an order consistent with the desired result
+# 」
 #   ★ 原文：「Selection of guide curves and centerline is optional」
 #   ```
 #
@@ -30,7 +32,8 @@ from sw_connect import get_com_member
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_loft.py —— 本文件（新）
 # 定位:   24h 段 6 续：放样（★ 补"四家有我们没有"的真缺）。
-# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`（18 参 · mark 1/2/4/8）·
+# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`（18 参 · mark
+#  1/2/4/8）·
 #   ★ 反射 arity 表 `scripts/sw_api_sldworks.py:4426` = **18**（★ 两源一致，铁律 4）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -163,11 +166,16 @@ def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: b
     """
     if model is None:
         return {"ok": False, "error": "model 为 None"}
-    #: \u2605 \u672c\u6a21\u5757**\u9876\u4e0a\u5df2\u7ecf\u5bfc\u597d**\uff08`from sw_feature_readback import feature_names`\u3001
-    #:   `from sw_connect import get_com_member`\uff09\u2014\u2014 \u2605 **\u4e0d\u8981\u518d\u5c40\u90e8\u91cd\u5bfc**\u3002
+    #: \u2605 \u672c\u6a21\u5757**\u9876\u4e0a\u5df2\u7ecf\u5bfc\u597d**\uff08`from sw_f
+    #: eature_readback import feature_names`\u3001
+    #: `from sw_connect import get_com_member`\uff09\u2014\u2014 \u2605 **\u4e0d\u8981\u
+    #: 518d\u5c40\u90e8\u91cd\u5bfc**\u3002
     #:   \u2605 2026-10-03\uff08\u8f6e 561\uff09\u6211\u7b2c\u4e00\u7248\u5199\u4e86
-    #:   `from sw_connect import get_com_member, feature_names` \u21d2 **`ImportError`** \u26a0
-    #:   \uff08\u2605 `feature_names` **\u4e0d\u5728 `sw_connect` \u91cc** \u2014\u2014 \u2605 \u800c\u90a3\u4e2a\u9519**\u770b\u4e0d\u51fa\u662f\u5bfc\u5165\u7684\u95ee\u9898**\uff09\u3002
+    #: `from sw_connect import get_com_member, feature_names` \u21d2 **`ImportError`** \
+    #: u26a0
+    #: \uff08\u2605 `feature_names` **\u4e0d\u5728 `sw_connect` \u91cc** \u2014\u2014 \u
+    #: 2605 \u800c\u90a3\u4e2a\u9519**\u770b\u4e0d\u51fa\u662f\u5bfc\u5165\u7684\u95ee\u
+    #: 9898**\uff09\u3002
     if not use_selected_profiles:
         return {"ok": False, "error": "本包装要求 use_selected_profiles=True（★ 官方 Remarks 要求先选）"}
     sel_n = 0
@@ -205,8 +213,10 @@ def create_loft_cut_report(model, closed: bool = False, use_selected_profiles: b
             tname = None
     #: ★★★ 2026-10-03（轮 561）**判据修正**：切与不切**类型名不同** ⚠
     #:   · 放样**凸台**（`InsertProtrusionBlend2`）⇒ 类型名 **`Blend`**
-    #:   · 放样**切除**（`InsertCutBlend`）        ⇒ 类型名 **`BlendCut`**  ← ★ **真机定的**
-    #:   ★ 我第一版照凸台抄成 `== "Blend"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`** ⚠
+    #: · 放样**切除**（`InsertCutBlend`）        ⇒ 类型名 **`BlendCut`**  ← ★ **真机定的
+    #: **
+    #: ★ 我第一版照凸台抄成 `== "Blend"` ⇒ ★ **对已建成的 `切除-放样1` 判了 `ok=False`**
+    #:  ⚠
     #:     （★ 而那正是**事实 420 / 431 那一类**：**失败在判据、不在 API**）
     #:   ★★★ 与**事实 429**（旋转切除用 `IsCut=True`）**同一族**：★ **"切"会换类型名**。
     ok_type = (tname in ("Blend", "BlendCut")) if tname else False

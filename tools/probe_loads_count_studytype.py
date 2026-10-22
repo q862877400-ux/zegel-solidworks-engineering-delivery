@@ -62,7 +62,8 @@ def main() -> int:
                     case["count_via_attr"] = repr(mgr.Count)
                 except Exception as exc:                       # noqa: BLE001
                     case["count_via_attr_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:130])
-                #: ★ 也试一下"取载荷对象"那条路（`GetLoadsAndRestraints`？）—— ★ 只试名字，不猜语义
+                #: ★ 也试一下"取载荷对象"那条路（`GetLoadsAndRestraints`？）—— ★ 只试名
+                #: 字，不猜语义
                 for attr in ("GetLoadsAndRestraints", "GetLoadCount"):
                     try:
                         case["%s" % attr] = repr(get_com_member(mgr, attr))[:70]

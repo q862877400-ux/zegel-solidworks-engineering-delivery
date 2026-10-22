@@ -11,11 +11,13 @@
 #      ★ 而那形态与**事实 40**（`IModeler.Create*Surface` 返回 `None` 而几何不变）同族。
 #
 #   ★★★ **本轮试的假设**（★ 上轮写在函数 docstring 里的）：★
-#     「试 `IModelDoc2.FeatureBossThicken` —— ★ 它标 `Obsolete`，而**废弃入口有时在 pywin32 上
+# 「试 `IModelDoc2.FeatureBossThicken` —— ★ 它标 `Obsolete`，而**废弃入口有时在 pywin32 
+# 上
 #      反而更顺** —— ★ 本仓在别处见过这种反转」⚠
 #
 #   官方签名（`C:\swapi\types\IModelDoc2\FeatureBossThicken.md`，`kind: method`）：
-#     `void FeatureBossThicken( System.double Thickness, System.int Direction, System.int FaceIndex )`
+# `void FeatureBossThicken( System.double Thickness, System.int Direction, System.int Fa
+# ceIndex )`
 #     —— ★ **3 参**（★ 而 `IFeatureManager` 那个是 7 参）
 #     ★★ 而 `Obsolete. Superseded by [[IFeatureManager::FeatureBossThicken]]`
 #
@@ -92,7 +94,8 @@ def main() -> int:
           "_": "\u8bd5**\u5e9f\u5f03\u5165\u53e3** IModelDoc2.FeatureBossThicken\uff083 \u53c2\uff09",
           "hypothesis": "\u4e0a\u4e00\u8f6e\u7559\u4e0b\u7684\uff1a\u5e9f\u5f03\u5165\u53e3\u6709\u65f6\u5728 pywin32 \u4e0a\u53cd\u800c\u66f4\u987a",
           "cases": []}
-    #: \u2605 \u4e09\u7ec4\uff1a\u2103 \u57fa\u51c6 \u00b7 \u2161 direction=1 \u00b7 \u2162 Thickness \u6362\u4e00\u4e2a
+    #: \u2605 \u4e09\u7ec4\uff1a\u2103 \u57fa\u51c6 \u00b7 \u2161 direction=1 \u00b7 \u2
+    #: 162 Thickness \u6362\u4e00\u4e2a
     ev["cases"].append(_one(sw, "\u5e9f\u5f03\u5165\u53e3\uff08\u57fa\u51c6\uff09",
                             lambda d: C.get_com_member(d, "FeatureBossThicken", 3.0 * 0.001, 0, 0)))
     ev["cases"].append(_one(sw, "\u5e9f\u5f03\u5165\u53e3 direction=1",

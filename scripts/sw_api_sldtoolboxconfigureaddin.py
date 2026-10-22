@@ -48,7 +48,8 @@ except ImportError:
     from sw_connect import get_com_member
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   官方 interop 程序集的纯元数据反射（SolidWorks.Interop.sldtoolboxconfigureaddin.dll）
+# 仓库:   官方 interop 程序集的纯元数据反射（SolidWorks.Interop.sldtoolboxconfigureaddin
+# .dll）
 # 文件:   D:\AI\SW\_raw\reflect\iface_sldtoolboxconfigureaddin.txt
 # 定位:   2 个接口族的**全量**能力登记表 {族: {能力名: 实参个数}}。
 # ⚑ 逐条机械生成，**不手抄、不折叠、不合并重载**。

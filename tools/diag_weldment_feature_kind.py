@@ -9,7 +9,8 @@
 #   ★ 正确做法逐字来自 `scripts/sw_feature_readback.py` 的来源块：
 #     「`IModelDoc2.FirstFeature` / `IFeature.GetNextFeature`（遍历特征树按名找）」
 #     以及「用 `GetTypeName2` 判它有没有特征类型（**结构性判据**，与 UI 语言无关）」。
-#   官方依据: `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（Remarks「end faces」）
+# 官方依据: `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（Remarks「end faces
+# 」）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

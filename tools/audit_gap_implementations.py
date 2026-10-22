@@ -1,12 +1,14 @@
 """★ 静态审计：`user-feature-coverage.md` 的缺口项，**本仓到底有没有真实现**（AST 为准）。"""
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（只读审计）· 规格 `specs/202-user-coverage-gaps`（T004 的机器可核那一半）
+# 仓库:   本项目自身（只读审计）· 规格 `specs/202-user-coverage-gaps`（T004 的机器可核那
+# 一半）
 # 文件:   tools/audit_gap_implementations.py
 # 定位:   ★ 2026-10-03（接手轮）★ 为「提升覆盖面」先量**最便宜的那一类待办**：
 #   ★★ **已经写好了、只是没挂成工具的** —— 那些**不用从零实现**（宪法 §I 缝合优先）。
 #
-#   ⚠★ **为什么不用 grep**（实测踩过）：★ 直接 grep 成员名会把**注释与来源块**也算成"有实现"
+# ⚠★ **为什么不用 grep**（实测踩过）：★ 直接 grep 成员名会把**注释与来源块**也算成"有实
+# 现"
 #     —— 本仓的来源块里**大量引用官方成员名**（那是它的用途）⇒ grep 会给出**假阳性**。
 #     ★ 实测：`CreateExplodedView` / `InsertProtrusionBlend2` / `InsertRevolvedRefSurface`
 #       在 grep 下"有实现"，★ 而**逐行看是在文档串里** ⚠
@@ -30,7 +32,8 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8")
 R = Path(__file__).resolve().parents[1]
 
-#: ★ **反射转储不算实现** —— 它是生成的 API 索引（本仓既有约定：`find_real_implementations` 排除它）
+#: ★ **反射转储不算实现** —— 它是生成的 API 索引（本仓既有约定：`find_real_implementatio
+#: ns` 排除它）
 EXCLUDE_PREFIX = ("sw_api_",)
 
 #: ★ 缺口项 ⇒ 候选官方成员名（★ 来自 `docs/user-feature-coverage.md` §八）

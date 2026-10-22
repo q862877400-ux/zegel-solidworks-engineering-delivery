@@ -6,14 +6,19 @@
 # 定位:   ★ 2026-10-03（轮 466）★ `specs/201-toolbar-gaps` 的 **B5 批**（草图尺寸与关
 #           系）。
 #   ★★ 起因：用户贴草图「智能尺寸/关系」下拉截图逐条问「能/不能」，这批当时全答「不能」。
-#   ★★★ **签名三源互证（铁律 4）**：逐条读自 `C:\\swapi\\types\\`，**含「成员属哪个接口」**：
+# ★★★ **签名三源互证（铁律 4）**：逐条读自 `C:\\swapi\\types\\`，**含「成员属哪个接口」*
+# *：
 #     ```
-#     IModelDoc2\\AddHorizontalDimension2.md   object AddHorizontalDimension2(double X, Y, Z)
+# IModelDoc2\\AddHorizontalDimension2.md   object AddHorizontalDimension2(double X, Y, Z
+# )
 #     IModelDoc2\\AddVerticalDimension2.md     object AddVerticalDimension2(double X, Y, Z)
-#     IModelDoc2\\SketchAddConstraints.md      void   SketchAddConstraints(string IdStr)   \u2605 \u4ed3\u91cc\u5df2\u6709
-#     IModelDocExtension\\InsertChainDimensions.md  object InsertChainDimensions(object Entities)
+# IModelDoc2\\SketchAddConstraints.md      void   SketchAddConstraints(string IdStr)   \
+# u2605 \u4ed3\u91cc\u5df2\u6709
+# IModelDocExtension\\InsertChainDimensions.md  object InsertChainDimensions(object Enti
+# ties)
 #     IModelDocExtension\\AddPathLengthDim.md       object AddPathLengthDim(double X, Y, Z)
-#     ISketchManager\\FullyDefineSketch.md          int FullyDefineSketch(bool EntitiesToFullyDefine,
+# ISketchManager\\FullyDefineSketch.md          int FullyDefineSketch(bool EntitiesToFul
+# lyDefine,
 #         bool UseRelations, int RelationsToApply, bool UseDimensions, int HorizontalDimScheme,
 #         object HorizontalDatumDisp, int VerticalDimScheme, object VerticalDatumDisp,
 #         int HorizontalDimPlacement, int VerticalDimPlacement)
@@ -21,13 +26,17 @@
 #     ISketchRelationManager\\GetRelations.md       object GetRelations(int Filter)
 #     ISketchRelationManager\\DeleteRelation.md     bool DeleteRelation(SketchRelation)
 #     ISketchRelationManager\\DeleteAllRelations.md bool DeleteAllRelations()
-#     ISketchRelationManager\\AddRelation.md        SketchRelation AddRelation(object Entities, int RelationType)
+# ISketchRelationManager\\AddRelation.md        SketchRelation AddRelation(object Entiti
+# es, int RelationType)
 #     ```
-#   ★★★ **「删除几何关系」的真名我原来猜错了** —— 我填的 `GetSketchRelations` / `DeleteSketchRelation`
+# ★★★ **「删除几何关系」的真名我原来猜错了** —— 我填的 `GetSketchRelations` / `DeleteSke
+# tchRelation`
 #     **两套源里都没有**（铁律 5 记「查不到」）；★ 真名是 **`ISketchRelationManager` 上的
 #     `GetRelations` / `GetRelationsCount` / `DeleteRelation` / `DeleteAllRelations`** ✓
-#     而关系管理器从**草图**上取：`ISketch.RelationManager`（★ 仓里 `sw_sketch.get_relation_manager` 已有）✓
-#   ⚠ **单位**：长度**毫米**；尺寸的 `X/Y/Z` 是**尺寸文字的放置点**（官方口径），本模块收毫米 ✓
+# 而关系管理器从**草图**上取：`ISketch.RelationManager`（★ 仓里 `sw_sketch.get_relation_
+# manager` 已有）✓
+# ⚠ **单位**：长度**毫米**；尺寸的 `X/Y/Z` 是**尺寸文字的放置点**（官方口径），本模块收
+# 毫米 ✓
 #   ★★ 2026-10-12（业主定「先做 A」的第 ② 步）：**`RelationsToApply` 的取值表找到了** ——
 #     ★ 官方 `swSketchFullyDefineRelationType_e`（**Bitmask**，★ 逐字）：
 #       `Equal=1  Horizontal=2  Vertical=4  Tangent=8  Perpendicular=16`

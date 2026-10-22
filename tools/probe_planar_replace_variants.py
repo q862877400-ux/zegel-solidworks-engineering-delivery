@@ -7,14 +7,16 @@
 #
 #   | 能力 | 上轮试的选法 | 上轮结果 | 本轮要试的 |
 #   |---|---|---|---|
-#   | T605 平面区域 | **曲面体的边**（12 条，mark=1） | 0 增量 | ★ **草图边界**（mark=1） |
+# | T605 平面区域 | **曲面体的边**（12 条，mark=1） | 0 增量 | ★ **草图边界**（mark=1） 
+# |
 #   | T609 替换面 | 实体面 mark=1 + 曲面面 mark=2 | 0 增量 | ★ **把两个 mark 调过来** |
 #
 #   官方 `Remarks`（逐字，只有它给了线索）：
 #   · `InsertPlanarRefSurface` ⇒ 「select the surface's **boundary entities** using
 #     `SelectByID2` with **Marks of 1**」⇒ ★ 「boundary **entities**」**没说是边还是草图**
 #     ⇒ ★ 故两种都试（★ 上轮试了边，本轮试草图）✓
-#   · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1** and
+# · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1**
+#  and
 #     select the re[placement face] …」⇒ ★★ **替换面那个 mark 官方句子被截断了** ⚠
 #     ⇒ ★ 故 mark 分工只能**两种都试** ✓
 #

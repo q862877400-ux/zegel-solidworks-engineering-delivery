@@ -1,5 +1,7 @@
-# ── 200 轮计划 v3 · 段 1：**B 组第一条**（刚性连接件）──────────────────────────────────
-# ★★★★ 2026-10-03（轮 425）★ 来源：**事实 336 / 337 / 338 / 339** —— 而这是那条链的**终点**。
+# ── 200 轮计划 v3 · 段 1：**B 组第一条**（刚性连接件）─────────────────────────────────
+# ─
+# ★★★★ 2026-10-03（轮 425）★ 来源：**事实 336 / 337 / 338 / 339** —— 而这是那条链的**终
+# 点**。
 #
 # ★★ **它为什么以前建不成**（★ 五次尝试、两个真因，★ 逐条都留了证据）：
 #   ```
@@ -24,8 +26,10 @@
 #     - `param_alias` 只该声明 `study_name`（★ 不含 `selection`）
 #     - **不该有 `pre_call`**（★ 那会去读一个本工具没有的 `selection` 参数）
 #   ⇒ ★ **故本文件改为直接声明 `ToolSpec`**（★ 而不再借 batch29 的骨架）✓
-#   ⚠ 那条违反是 `tool_registry` 的门禁报的：★「param_alias 指向未声明的参数 `selection`」——
-#     ★★ 而**它在 pytest 收集期就报**，★ 故**只跑 `release_check` 抓不到它**（★ 见事实 346）。
+# ⚠ 那条违反是 `tool_registry` 的门禁报的：★「param_alias 指向未声明的参数 `selection`」
+# ——
+# ★★ 而**它在 pytest 收集期就报**，★ 故**只跑 `release_check` 抓不到它**（★ 见事实 346）
+# 。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -40,11 +44,13 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 from tool_registry import Param, ToolSpec
-#: ★★ 复用 batch29 的**两个**助手（★ 而**不用**它的 `_spec` 骨架 —— ★ 那个骨架带 `selection` 契约）
+#: ★★ 复用 batch29 的**两个**助手（★ 而**不用**它的 `_spec` 骨架 —— ★ 那个骨架带 `select
+#: ion` 契约）
 from tool_specs_batch29 import _STUDY, _consumed, _derive_model
 
 SPECS_BATCH61 = [
-    # 签名: apply_rigid_connector_by_objects_report(manager, model, source_indices, target_indices,
+    # 签名: apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
+    # et_indices,
     #                                                *, kind="FACE", source_body_index=0, target_body_index=0)
     ToolSpec(
         name="solidworks_simulation_apply_rigid_connector",

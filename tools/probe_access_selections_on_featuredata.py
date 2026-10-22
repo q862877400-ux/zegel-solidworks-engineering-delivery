@@ -119,17 +119,23 @@ def _try_access(doc, feat, label):
     except Exception as exc:                                              # noqa: BLE001
         out["access_ok"] = False
         out["access_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
-        #: \u2605 \u628a\u9519\u7801\u62bd\u51fa\u6765\uff08\u2605 \u4e8b\u5b9e 47 \u7684\u6307\u7eb9\u662f 0x80010105\uff09
+        #: \u2605 \u628a\u9519\u7801\u62bd\u51fa\u6765\uff08\u2605 \u4e8b\u5b9e 47 \u768
+        #: 4\u6307\u7eb9\u662f 0x80010105\uff09
         s = str(exc)
         for tok in ("0x80010105", "0x80028CA0", "80010105", "80028CA0"):
             if tok in s:
                 out["error_code"] = tok
                 break
-        #: \u2605\u2605\u2605 2026-10-03\uff08\u8f6e 545\uff09**\u7b2c\u4e8c\u6b21\u8bd5**\uff1a
-        #:   \u7b2c\u4e00\u6b21\u4f20 `None` \u21d2 **\u7c7b\u578b\u4e0d\u5339\u914d\uff08\u4f4d\u7f6e 2\uff09**\uff08\u2605 \u4f4d\u7f6e 2 = `Component`\uff09
-        #:   \u21d2 \u2605 \u6539\u4f20**\u7a7a Dispatch \u53d8\u4f53**\uff08\u2605 \u4e8b\u5b9e 12/33 \u90a3\u5957\uff1a
-        #:   `VARIANT(VT_DISPATCH, None)`\uff09\u3002\u2605 \u800c\u8fd9\u6b63\u662f**\u672c\u4ed3\u73b0\u6210\u7684
-        #:   `create_empty_dispatch_variant()`** \u2014\u2014 \u2605 \u4e0d\u624b\u6413\uff08\u4e8b\u5b9e 418 \u7684\u6559\u8bad\uff09\u3002
+        #: \u2605\u2605\u2605 2026-10-03\uff08\u8f6e 545\uff09**\u7b2c\u4e8c\u6b21\u8bd5
+        #: **\uff1a
+        #: \u7b2c\u4e00\u6b21\u4f20 `None` \u21d2 **\u7c7b\u578b\u4e0d\u5339\u914d\uff08
+        #: \u4f4d\u7f6e 2\uff09**\uff08\u2605 \u4f4d\u7f6e 2 = `Component`\uff09
+        #: \u21d2 \u2605 \u6539\u4f20**\u7a7a Dispatch \u53d8\u4f53**\uff08\u2605 \u4e8b
+        #: \u5b9e 12/33 \u90a3\u5957\uff1a
+        #: `VARIANT(VT_DISPATCH, None)`\uff09\u3002\u2605 \u800c\u8fd9\u6b63\u662f**\u67
+        #: 2c\u4ed3\u73b0\u6210\u7684
+        #: `create_empty_dispatch_variant()`** \u2014\u2014 \u2605 \u4e0d\u624b\u6413\uf
+        #: f08\u4e8b\u5b9e 418 \u7684\u6559\u8bad\uff09\u3002
         try:
             r2 = C.get_com_member(fd, "AccessSelections", doc, _av())
             out["access2_returns"] = str(r2)

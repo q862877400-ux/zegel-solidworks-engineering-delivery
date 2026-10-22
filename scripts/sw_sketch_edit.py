@@ -52,7 +52,8 @@ from __future__ import annotations
 
 from pathlib import Path as _Path
 
-#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_active_sketch_segment_count` 按顶层路径 import `sw_sketch`）
+#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_active_sketch_segment_count` 按顶层路径 impor
+#: t `sw_sketch`）
 _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
@@ -267,7 +268,8 @@ def sketch_mirror(model):
 # 文件:   `scripts/sw_sketch_edit.py` 的 `convert_entities`
 # 定位:   补 `docs/union-gap-triage.md`「真缺」档里的 `convert_entities`。
 # 官方签名依据（**两源互证**）:
-#   ① 出厂反射 `iface_*.txt`：`Boolean SketchUseEdge3(Boolean, Boolean)`（在 `ISketchManager` 上）
+# ① 出厂反射 `iface_*.txt`：`Boolean SketchUseEdge3(Boolean, Boolean)`（在 `ISketchManag
+# er` 上）
 #   ② `C:\swapi\types\ISketchManager\SketchUseEdge3.md`：
 #        `System.bool SketchUseEdge3(System.bool Chain, System.bool InnerLoops)`
 #   ⇒ 两源一致。
@@ -324,7 +326,8 @@ def convert_entities(model, *, chain: bool = True, inner_loops: bool = False):
     else:
         geom_ok = bool(delta != 0)
     #: ★★ 跨种类 ⇒ `and`：★ 官方布尔（对象类）**且** 计数变化（结构类）✓
-    #:   ★ 而"计数取不到"（★ `geom_ok is None`）⇒ **不算通过**（★ 与 sketch_mirror 的三态一致）
+    #: ★ 而"计数取不到"（★ `geom_ok is None`）⇒ **不算通过**（★ 与 sketch_mirror 的三态
+    #: 一致）
     return {
         "ok": bool(bool(got) and geom_ok is True),
         "op": "convert_entities",

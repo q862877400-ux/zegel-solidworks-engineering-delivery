@@ -6,7 +6,8 @@
 #         与 §五 R11；AGENTS.md 铁律 1「每加一个能力必须能指认出处」。
 # 许可:   本仓库 MIT。本文件为原创实现，无第三方代码引入。
 # ⚠ 未在本机实测 SolidWorks（见 AGENTS.md 铁律 2）。本次是清单形状与授权判据的迁移，
-#   不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住。
+# 不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住
+# 。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
@@ -49,7 +50,8 @@ def load_capabilities(path: str | Path | None = None) -> dict[str, Any]:
         if not isinstance(item, dict) or not item.get("id") or item.get("level") not in VALID_LEVELS:
             raise ValueError(f"能力清单条目无效: {item!r}")
         # R11（docs/capabilities-schema-proposal.md §五）：
-        #   allowed_modes ⊆ {interactive, reviewed, unattended}；且 level != verified ⇒ 不含 unattended。
+        # allowed_modes ⊆ {interactive, reviewed, unattended}；且 level != verified ⇒ 不
+        # 含 unattended。
         #   后半条把「证据强度」与「授权」的关系钉死：没到 verified 就不许放开无人值守。
         modes = set(item.get("allowed_modes") or [])
         invalid_modes = modes - VALID_MODES

@@ -132,7 +132,8 @@ def main() -> int:
         _mk_surface(doc)
         ev["chain_before"] = _dump_chain(doc)
         ev["names_before"] = list(FR.feature_names(doc) or [])
-        #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762 + 6 \u53c2\u8c03\u7528
+        #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762 + 6 \u53c2\u8c03\u752
+        #: 8
         try:
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001

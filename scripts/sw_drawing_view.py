@@ -70,11 +70,15 @@ try:
 except ImportError:
     #: ★★★ 2026-10-03（轮 470）**这一支原先缺 `set_com_member`** ——
     #:   ★ 它那一行是 `from sw_connect import get_com_member, call_com_member`，
-    #:     **紧接着**就是 `# ── 来源 ──` 那条注释 ⇒ ★★ 我最初批量补名字时把它**追加到了注释之后**
-    #:     （`…call_com_member# ── 来源 ──, set_com_member`）⇒ **名字掉进注释里、从未生效** ⚠
+    #: **紧接着**就是 `# ── 来源 ──` 那条注释 ⇒ ★★ 我最初批量补名字时把它**追加到了注释
+    #: 之后**
+    #: （`…call_com_member# ── 来源 ──, set_com_member`）⇒ **名字掉进注释里、从未生效** 
+    #: ⚠
     #:   ★★ 而那意味着：★ 本模块被**顶层载入**时（脚本 / 探针 / pytest 的 prepend 模式），
-    #:     `set_view_scale_verified` 里那几处写会 `NameError` —— ★ **只在包内口径下才正常**。
-    #:   ★ 实测（轮 470）：16 个用 `set_com_member` 的模块里，**只有这一个**在顶层口径下取不到它。
+    #: `set_view_scale_verified` 里那几处写会 `NameError` —— ★ **只在包内口径下才正常**
+    #: 。
+    #: ★ 实测（轮 470）：16 个用 `set_com_member` 的模块里，**只有这一个**在顶层口径下取
+    #: 不到它。
     #:   ★ 修法：把它**插在注释之前**（★ 与另外 15 个一致）✓
     from sw_connect import get_com_member, call_com_member, set_com_member
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -436,7 +440,8 @@ def get_view_name(view) -> str:
             return str(got)
     except Exception:                                          # noqa: BLE001
         pass
-    #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`**（★ 同上，真机已证 `GetName2` 等价）。
+    #: ★★★ spec 256：**不再回落调废弃的 `IView::Name`**（★ 同上，真机已证 `GetName2` 等
+    #: 价）。
     return ""
 
 
@@ -495,7 +500,8 @@ def get_scale_decimal(view) -> int:
     return int(call_com_member(view, "ScaleDecimal") or 0)
 
 
-# ⚑⚑ **删掉了一个查不到的成员**：`get_orient_toward` 初稿调 ``IView.OrientToward(Object, Double, Double)``。
+# ⚑⚑ **删掉了一个查不到的成员**：`get_orient_toward` 初稿调 ``IView.OrientToward(Object,
+#  Double, Double)``。
 #   铁律 4 要求**两套官方源都查**：
 #     ① 对 sldworks.dll 的纯元数据反射 —— **全程序集无此成员名**
 #     ② CHM 全文检索 ``OrientToward`` —— **无结果**
@@ -530,12 +536,15 @@ def collect_view_evidence(view) -> dict[str, Any]:
 
 
 # ── 24h 计划 段 6 续（Spec Kit `160`）：**工程图视图读数的包装** ─────────────────────
-# ★★★★ 为什么包一层（★ 第四次同法）：`sw_drawing_view` 的 12 个函数**全部吃一个 `view` 对象**
-#   ⇒ ★★ 而工具层的入参只能是 `model`（★ 文档）⇒ ★ **所以要注入 `model` + 内部往下取 view**。
+# ★★★★ 为什么包一层（★ 第四次同法）：`sw_drawing_view` 的 12 个函数**全部吃一个 `view` 
+# 对象**
+# ⇒ ★★ 而工具层的入参只能是 `model`（★ 文档）⇒ ★ **所以要注入 `model` + 内部往下取 view*
+# *。
 #   ★ 入口链：`model` → `get_first_view(drawing)` → `get_next_view(view)` → 逐个读。
 #
 # ★ 判据：★ ① **取视图链成功**（★ 一个视图都没有 ⇒ 如实报"这不是工程图 / 图里没视图"）；
-#   ② ★ 每个视图的读数**如实回传**；③ ★ **按视图名查找失败时报出**已有的名字（★ 会列合法值）。
+# ② ★ 每个视图的读数**如实回传**；③ ★ **按视图名查找失败时报出**已有的名字（★ 会列合法值
+# ）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -557,7 +566,8 @@ def _iter_views(model):
     except Exception as exc:                                   # noqa: BLE001
         return [], "不是工程图文档：%s" % str(exc)[:160]
     #: ★★★ 2026-10-01（轮 291）：**先向 `sw_drawing_query.list_views` 取名单** ——
-    #:   它的 docstring 记着一条**真机实测的陷阱**：空图纸上 `GetFirstView()` 回的是**图纸本身**
+    #: 它的 docstring 记着一条**真机实测的陷阱**：空图纸上 `GetFirstView()` 回的是**图纸
+    #: 本身**
     #:   （`Type == 1`、名字等于图纸名）⇒ 不排除就会列出**假视图**。
     #:   ★★ 所以本处不自己判陷阱，而是**先取已验证的名单**，再按名对上 view 对象。
     #: ★★ 2026-10-03（轮 470）：**统一导入口径**（★ 同 `sw_sketch.py` 那一处）——
@@ -670,21 +680,27 @@ def collect_view_evidence_report(model) -> dict:
     return {"ok": True, "count": len(out), "evidence": out}
 
 
-# ── 24h 计划 段 6 续（Spec Kit `161`）：**比例成员名的更正（`Scale` → `ScaleRatio`）** ────
+# ── 24h 计划 段 6 续（Spec Kit `161`）：**比例成员名的更正（`Scale` → `ScaleRatio`）** 
+# ────
 # ★★★★★ 2026-10-01（轮 293）**真机抓到三处同类错**（而这是**三源互证**该抓的那种）：
-#   · `get_view_scale` / `set_view_scale` 都调 **`Scale`** —— ★ **而 `IView` 上**没有那个成员****
+# · `get_view_scale` / `set_view_scale` 都调 **`Scale`** —— ★ **而 `IView` 上**没有那个
+# 成员****
 #     （★ 真机表现：`AttributeError: <unknown>.Scale` ⇒ ★ **那是事实 36 的形态**）。
 #   · ★★ 而**同文件的 `get_scale_decimal` 的 docstring 早就写着**：
 #       「⚑⚑ **更正**：初稿调的是 `GetScaleDecimal`，该成员在 `IView` 上**不存在** ——
-#        反射实测的真实成员是 `ScaleDecimal`（零参属性），★ **与同族的 `ScaleRatio` / `UseSheetScale` /
-#        `UseParentScale` 同形**」⇒ ★★★ **即：真名 `ScaleRatio` 早就被记下，只是那两个函数没跟着改**。
+# 反射实测的真实成员是 `ScaleDecimal`（零参属性），★ **与同族的 `ScaleRatio` / `UseSheet
+# Scale` /
+# `UseParentScale` 同形**」⇒ ★★★ **即：真名 `ScaleRatio` 早就被记下，只是那两个函数没跟
+# 着改**。
 #   · ★★★ **官方（`C:\swapi\types\IView\ScaleRatio.md`）**：
-#       「Gets or sets the scale of the drawing view, **returning the results in ratio format (n:n)**」
+# 「Gets or sets the scale of the drawing view, **returning the results in ratio format 
+# (n:n)**」
 #       · **Returns: Array of 2 doubles** · ★「This property and `IView::ScaleDecimal` contain
 #       **the same information**, but use the value in a different way」
 #     ⇒ ★★ **所以**：① 真名是 **`ScaleRatio`**；② 它回**两个 double**（★ 不是单个 float）。
 #
-# ★ 判据：★ **`ScaleRatio` 回 2 个数 ⇒ 比例 = 第 1 个 / 第 2 个**；★ 取不到就**如实抛**（★ 原样）。
+# ★ 判据：★ **`ScaleRatio` 回 2 个数 ⇒ 比例 = 第 1 个 / 第 2 个**；★ 取不到就**如实抛**
+# （★ 原样）。
 # ★ ⚠ 本段**只更正成员名与取值形态**，★ **不改行为语义**（★ 不给默认值兜底）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
@@ -766,17 +782,20 @@ def set_view_scale(view, scale: float) -> bool:
 # ── 24h 计划 段 6 续（Spec Kit `162`）：**设视图比例的正确形态** ──────────────────────
 # ★★★★★ 2026-10-01（轮 294）真机把三件事一次查清：
 #   ① ★ **`ScaleRatio` 回的是**比例的两个数**** —— 真机 `(1.0, 500.0)`（★ 即 **1:500**）·
-#      而 `ScaleDecimal` 回 **`0.002`**（★ = 1/500）⇒ ★★ **官方那句** "contain the same information,
+# 而 `ScaleDecimal` 回 **`0.002`**（★ = 1/500）⇒ ★★ **官方那句** "contain the same infor
+# mation,
 #      but use the value in a different way" **正是此意**（★ 一个给"两个数"、一个给"小数"）。
 #   ② ★★★ **"写"失败的原因**：`get_com_member(v, "ScaleRatio", (2.0, 1.0))` 报
-#      `TypeError: 'tuple' object is not callable` —— ★★ **因为 `get_com_member(obj, name, *args)`
+# `TypeError: 'tuple' object is not callable` —— ★★ **因为 `get_com_member(obj, name, *a
+# rgs)`
 #      的语义是「取或调」：有实参就**一定调用****（★ 于是它在"调用"一个 tuple）。
 #      ⇒ ★★★ **正解是 `set_com_member(obj, name, value)`** —— 它的 docstring 写着
 #        「设置 COM 成员的**唯一被真机验证通过的形态**：**属性赋值**」。
 #   ③ ★ **`UseSheetScale` 真机回 `True`** ⇒ ★★ **该视图**跟随图纸比例**** ——
 #      ⇒ ★ **所以"设视图比例"之前要先把"跟随图纸"关掉**（★ 否则设了也可能被图纸覆盖）。
 #
-# ★ 判据：★ **设完**必须回读**，★ 并判"两个数真的变了"**（★ 规则 6 的精神 —— 不静默成功）。
+# ★ 判据：★ **设完**必须回读**，★ 并判"两个数真的变了"**（★ 规则 6 的精神 —— 不静默成功
+# ）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
@@ -800,13 +819,16 @@ def set_view_scale_verified(view, scale: float) -> dict:
     ★ 回 `{"ok", "before", "after", "asked", "use_sheet_scale_before"}`；★ **任一步失败都如实写 stage**。
     """
     #: ★★★ 2026-10-03（轮 470）**删掉这一行"函数内 import"** ——
-    #:   它写的是 `from sw_connect import set_com_member as _set`，★ 那会**直接绑到真模块**，
-    #:   ⇒ ★★ **契约测试对 `模块.set_com_member` 的猴补丁就补不到它**（★ 于是测试记录不到那次写，
+    #: 它写的是 `from sw_connect import set_com_member as _set`，★ 那会**直接绑到真模块*
+    #: *，
+    #: ⇒ ★★ **契约测试对 `模块.set_com_member` 的猴补丁就补不到它**（★ 于是测试记录不到
+    #: 那次写，
     #:      断言 `seen == [("ScaleRatio", ((2.0, 1.0),))]` 失败）。
     #:   ★ 而**模块顶部早就 import 了 `set_com_member`**（★ 就是那对 try/except）⇒
     #:     ★ 直接用**模块级名字**即可 —— ★ 这样猴补丁可补、测试可记录 ✓
     #:   ⚠ 与本仓 `sw_simulation_study_options.py` L631 记的教训**同源**（★ 那里逐字写着
-    #:     "`set_com_member` **必须在模块顶部 import** —— 我第一版写在函数体内 ⇒ 测试当场失败"）。
+    #: "`set_com_member` **必须在模块顶部 import** —— 我第一版写在函数体内 ⇒ 测试当场失
+    #: 败"）。
     #:   ★ 故下面把 `set_com_member(` 全部改成模块级的 `set_com_member(`。
     if view is None:
         return {"ok": False, "stage": "view", "error": "view 为 None"}

@@ -111,7 +111,8 @@ def main() -> int:
                         % (n_len, BASELINE_LENGTHISH))
 
     #: ★★★ ③ **「长度藏在 spec 里」那一族必须在视野里**（★ 回归守卫）
-    #:   ★ 依据：★ `create_external_spur_gear_report(model, spec, …)` 的形参是 `spec`（dict）⇒
+    #: ★ 依据：★ `create_external_spur_gear_report(model, spec, …)` 的形参是 `spec`（dic
+    #: t）⇒
     #:     ★ 只按形参名判 ⇒ **整族被跳过** ✗（★ 业主点破的就是这一族）
     #:   ★★ **2026-10-10 改为按「机制」断言，不按「具体工具名」**（★ 如实）：
     #:     ★ 齿轮**工具**已按业主架构指令移出（★ 它是方法）⇒ ★ 不能再要求它在工具面上 ✓

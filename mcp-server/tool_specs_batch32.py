@@ -118,10 +118,12 @@ SPECS_BATCH32 = [
             Param("reverse", bool, default=False, description="Reverse the dome direction."),
             Param("elliptic", bool, default=False, description="Make the dome elliptical."),
             #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**新增 `face_index`** ——
-            #:   ★ 起因：★ 官方 Remarks 要求"先选一个面 + **mark=1**"，★ 而注入解析器**会清空选区**
+            #: ★ 起因：★ 官方 Remarks 要求"先选一个面 + **mark=1**"，★ 而注入解析器**会
+            #: 清空选区**
             #:     （**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前把面选好 ✗
             #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 故用**声明式序号**，★ 由函数内自己选
-            #:     （`sw_part.select_face_by_index_mark1`，★ 形态由既有冒烟 9/9 证明、★ 已真机复验）✓
+            #: （`sw_part.select_face_by_index_mark1`，★ 形态由既有冒烟 9/9 证明、★ 已真
+            #: 机复验）✓
             Param("face_index", int, default=0,
                   description="★ 第几个面（从 0 起）。★ 声明式序号 —— 不信坐标（规则 3）。"
                               "越界或选不中会**响亮报错**，不会静默变成「圆顶建不出来」。"),

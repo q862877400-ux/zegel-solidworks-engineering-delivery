@@ -10,14 +10,16 @@
 #   `RuntimeError: CreateFeature(117) 创建失败` ⇒ ★★ **按事实 53**：「★ 同一个启发式
 #   **连续修补 ≥3 次**还没稳定，就该**停下回退**」⇒ ★★★ **本版**不改参数形态**，
 #   而**照官方例子的调用序**重造几何** ✓
-#   ★★★★ **官方例子（★ 逐行读的）**：`C:\swapi\examples\Create_Swept_Flange_Example_VBNET.md`
+# ★★★★ **官方例子（★ 逐行读的）**：`C:\swapi\examples\Create_Swept_Flange_Example_VBNET.
+# md`
 #     （★ 5202 B · ★ 另见 CHM `SldWorks~ISweptFlangeFeatureData*.html`）⇒ 它的调用序：
 #     ```
 #     ① Part.SketchManager.InsertSketch(True)
 #        SelectByID2("Front","PLANE", …) · CreateCornerRectangle(…)
 #        FeatureManager.InsertSheetMetalBaseFlange2(0.0007366, False, …)     ← ★ 基体法兰
 #     ② Part.SketchManager.InsertSketch(True)
-#        SelectByID2("", "FACE", 0.0441…, 0.0275…, -0.00025…)   ← ★★ **选一个面**（不是基准面！）
+# SelectByID2("", "FACE", 0.0441…, 0.0275…, -0.00025…)   ← ★★ **选一个面**（不是基准面！
+# ）
 #        CreateLine(0.047503, 0, 0, 0.047503, -0.015713, 0)     ← ★★ **在面草图里画线**
 #        Part.SketchManager.InsertSketch(True)                   ← ★ 退出
 #     ③ SelectByID2("Sketch6","SKETCH", …) ⇒ swProfileSketch = GetSelectedObject6(1,-1)
@@ -27,7 +29,8 @@
 #     ⑤ swFeatData = CreateDefinition(swFmSweptFlange) ⇒ … 15 个属性 …
 #        swFeat = CreateFeature(swFeatData)
 #     ```
-#     ★★★★★ **⇒ 与我前五版的关键差别**：★ **路径是"在**面上的草图里**画的线"所得的那条**边**、
+# ★★★★★ **⇒ 与我前五版的关键差别**：★ **路径是"在**面上的草图里**画的线"所得的那条**边**
+# 、
 #       而**不是**我随手取的"体上的第一条边"** ✓
 #   ★★★★★★ **判据（★ 含**几何读数**）**：★ ① 特征数增量 · ★ ② 实体数增量 ·
 #     ★ ③ 钣金读数 · ★ ④ 报的是哪一类错（★ 事实 517：★ 三类要分开）✓
@@ -102,7 +105,8 @@ def main() -> int:
         ext = get_com_member(model, "Extension")
         sm_ = get_com_member(model, "SketchManager")
 
-        #: ── ① 基体法兰（★ 照例子：先 InsertSketch ⇒ 选 **PLANE** ⇒ 画矩形 ⇒ 基体法兰）──
+        #: ── ① 基体法兰（★ 照例子：先 InsertSketch ⇒ 选 **PLANE** ⇒ 画矩形 ⇒ 基体法兰）
+        #: ──
         get_com_member(sm_, "InsertSketch", True)
         get_com_member(ext, "SelectByID2", "Front", "PLANE", -0.035, 0.0197, 0.0051,
                        False, 0, VAR0, 0)

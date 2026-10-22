@@ -8,7 +8,8 @@ from pathlib import Path
 try:
     from .sw_preflight import import_com_dependencies
     #: ★★ 2026-10-07（规格 211 · D 项）：★ 加 `save_document` 到**已有的**导入行 ——
-    #:   ★ 那是「受控临时另存」要用的（★ 用户授权，见 `export_flat_pattern_dxf` 的 docstring ✓）
+    #: ★ 那是「受控临时另存」要用的（★ 用户授权，见 `export_flat_pattern_dxf` 的 docstri
+    #: ng ✓）
     #:   ★★★ **加名字、不加行**：★ `check_relative_imports.py` 的棘轮数的是**行** ✓
     from .sw_connect import create_empty_dispatch_variant, get_com_member, open_document, save_document, set_com_member
     from .sw_connect import out_i4
@@ -23,7 +24,8 @@ try:
 except ImportError:
     from sw_preference_guard import Preference, preference_guard
 
-#: ★ 导出 STL 的精细度偏好号（★ 沿用既有字面量 `78` —— ★ 名字**未核实**，故见 `export_to_stl` 的 docstring）
+#: ★ 导出 STL 的精细度偏好号（★ 沿用既有字面量 `78` —— ★ 名字**未核实**，故见 `export_to
+#: _stl` 的 docstring）
 SW_STL_QUALITY_PREF = 78
 
 
@@ -148,10 +150,12 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     if pdf_data:
         #: ★★★★ 2026-10-04（接手轮）**修掉「传一个不存在的枚举值」** ——
         #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#6**（★ `C-dw-3 #20`）—— ★ 裁判逐字：
-        #:   「★ `SetSheets(0, …)` —— ★ `sw_export.py` 的 `pdf_data.SetSheets(0, sheet_names)`
+        #: 「★ `SetSheets(0, …)` —— ★ `sw_export.py` 的 `pdf_data.SetSheets(0, sheet_nam
+        #: es)`
         #:    → ★ en 的成员表只有 1/2/3（**无 0**），★ 官方 ex 传
         #:    `swExportData_ExportSpecifiedSheets`」✓
-        #:   ★★ **实测复核（★ 我读了官方枚举页）**：★ `swExportDataSheetsToExport_e` **只有 3 个成员**：
+        #: ★★ **实测复核（★ 我读了官方枚举页）**：★ `swExportDataSheetsToExport_e` **只
+        #: 有 3 个成员**：
         #:     · ★ `swExportData_ExportAllSheets = **1**`
         #:     · ★ `swExportData_ExportCurrentSheet = **2**`
         #:     · ★ `swExportData_ExportSpecifiedSheets = **3**`
@@ -175,8 +179,10 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     #:   「★ PDF 走**已标废弃**的 `IModelDocExtension.SaveAs`（★ 而**同仓自己写着**
     #:    「一律用 `SaveAs3`」）」✓
     #:   ★★ **实测复核（★ 我读了官方三个 md）**：
-    #:     · ★ `IModelDocExtension/SaveAs.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs2`**」✓
-    #:     · ★ `IModelDocExtension/SaveAs2.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs3`**」✓
+    #: · ★ `IModelDocExtension/SaveAs.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs2`**
+    #: 」✓
+    #: · ★ `IModelDocExtension/SaveAs2.md` 逐字 ⇒ 「**Obsolete. Superseded by `SaveAs3`*
+    #: *」✓
     #:     · ★★ `IModelDocExtension/SaveAs3.md` ⇒ **无 Obsolete 标记** ⇒ **现行入口** ✓
     #:     ⇒ ★★★ **所以 PDF 那条走的是**两级废弃**的成员** ✓
     #:   ★★★ **而正解就在本文件里**：★ `export_to_image` **用的就是** `SaveAs3` ——
@@ -187,7 +193,8 @@ def export_to_pdf(model, output_path, sheet_names=None, *, sw=None):
     #:     ★★★ 而**第 4 参放 `pdf_data`**（★ PDF 的导出数据）✓
     #: ★★★★ 2026-10-04（接手轮）**改成先建两个出参、再传进去** ——
     #:   因为 `SaveAs3` 用的是 `out_i4()`（★ 普通包装器），★ 而 `_print_result` 原来读
-    #:   `errors.value`（★ 那是 `VARIANT(VT_BYREF|VT_I4)` 的形态）⇒ ★★ **换入口后 `.value` 会 `AttributeError`** ✓
+    #: `errors.value`（★ 那是 `VARIANT(VT_BYREF|VT_I4)` 的形态）⇒ ★★ **换入口后 `.value`
+    #:  会 `AttributeError`** ✓
     #:   ★★★ 所以：★ **先建出参对象、传进调用、再把同一对象交给 `_print_result`** ✓
     errors = out_i4()
     warnings = out_i4()
@@ -304,7 +311,8 @@ def export_flat_pattern_dxf(
                 "★ 临时另存只允许落在仓库内（★ 收到 %r，★ 仓库根 %r）—— "
                 "「真机跑不许写到用户目录」那条硬约束在这一点上不放行" % (target_dir, repo_root))
         _ensure_parent_dir(os.path.join(target_dir, "x.sldprt"))
-        #: ★★ 判据②：**不许覆盖已有文件**（★ 用时间戳名 ✓ —— ★ 覆盖会毁掉上一次的证据 ✓）
+        #: ★★ 判据②：**不许覆盖已有文件**（★ 用时间戳名 ✓ —— ★ 覆盖会毁掉上一次的证据 ✓
+        #: ）
         import time as _time
         stamp = _time.strftime("%Y%m%d-%H%M%S")
         temp_path = os.path.join(target_dir, "flatpattern-%s.sldprt" % stamp)
@@ -542,15 +550,19 @@ def _export_generic(model, output_path):
 
     # ── 来源 ─────────────────────────────────────────────────────────────────
     # 仓库:   `Cai-aa/CAD-Agent-Hub`（★ **MIT**）—— 提供的是**判据**（见下「定位」）。
-    # 文件:   scripts/sw_export.py —— 本函数的**收尾检查段**（★ 2026-10-01 轮 322 新增的 17 行）。
+    # 文件:   scripts/sw_export.py —— 本函数的**收尾检查段**（★ 2026-10-01 轮 322 新增的
+    #  17 行）。
     # 定位:   抄的是它 `docs/compatibility-and-lessons.md` 的判据：
     #         「保存路由两条（原生 `SaveAs3` / 导出 `Extension.SaveAs`），★ **两条都
     #          「验证目标存在且非空」才报成功**」。★ 本处**只搬判据**，★ 代码是本仓库自写
     #          （复用本文件既有的 `_file_signature`，无新增帮助函数）。
     # 官方签名依据: 本段**不调用新的 COM 成员** —— 只用既有的
-    #         `IModelDocExtension.SaveAs(path, Int32, Int32, Object, Int32&, Int32&)`（本函数上方已引）。
-    # 许可:   本文件 MIT（本仓库自身）—— ★ **无第三方代码引入**；★ 思路来源为 MIT，按纪律保留声明。
-    # 覆盖:   `_export_generic` 的**收尾检查段**（`_file_signature` 调用 → `artifact_ok` → 打印 → 返回值）。
+    # `IModelDocExtension.SaveAs(path, Int32, Int32, Object, Int32&, Int32&)`（本函数上
+    # 方已引）。
+    # 许可:   本文件 MIT（本仓库自身）—— ★ **无第三方代码引入**；★ 思路来源为 MIT，按纪
+    # 律保留声明。
+    # 覆盖:   `_export_generic` 的**收尾检查段**（`_file_signature` 调用 → `artifact_ok`
+    #  → 打印 → 返回值）。
     # ─────────────────────────────────────────────────────────────────────────
     model.ClearSelection2(True)
     output_path = os.path.abspath(os.path.expandvars(os.path.expanduser(output_path)))
@@ -558,18 +570,26 @@ def _export_generic(model, output_path):
     errors = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
     warnings = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
 
-    #: ★★★★ 2026-10-04（接手轮）**同一处修正的**第二处****（★ 处置 `JUDGE-C_D_E` 🔴 #6 · `C-dw-3 #21`）——
-    #:   ★ 本段注释**自己**写着「★ 保存路由**两条**（原生 `SaveAs3` / 导出 `Extension.SaveAs`）」
+    #: ★★★★ 2026-10-04（接手轮）**同一处修正的**第二处****（★ 处置 `JUDGE-C_D_E` 🔴 #6 ·
+    #:  `C-dw-3 #21`）——
+    #: ★ 本段注释**自己**写着「★ 保存路由**两条**（原生 `SaveAs3` / 导出 `Extension.Save
+    #: As`）」
     #:   ⇒ ★★ 而**两条里有一条是废弃的** ✓
-    #:   ★★★ 官方逐字：★ `IModelDocExtension/SaveAs.md` ⇒「**Obsolete. Superseded by `SaveAs2`**」·
-    #:     `SaveAs2.md` ⇒「**Obsolete. Superseded by `SaveAs3`**」· ★ `SaveAs3.md` **无标记** ✓
-    #:   ★★ 修法：★ 与 `export_to_pdf` 同形 —— ★ **7 参 `SaveAs3`**，★ 而本条是**通用导出**
+    #: ★★★ 官方逐字：★ `IModelDocExtension/SaveAs.md` ⇒「**Obsolete. Superseded by `Save
+    #: As2`**」·
+    #: `SaveAs2.md` ⇒「**Obsolete. Superseded by `SaveAs3`**」· ★ `SaveAs3.md` **无标记*
+    #: * ✓
+    #: ★★ 修法：★ 与 `export_to_pdf` 同形 —— ★ **7 参 `SaveAs3`**，★ 而本条是**通用导出*
+    #: *
     #:     ⇒ **第 4 参（`ExportData`）仍给空 Dispatch** ✓
     #: ★★★★★ 2026-10-04（接手轮 · 真机实测）**补上**漏掉的那一参** —— ★★★★ 这是一处
-    #:   **真·缺陷**（★ 用户问"项目能不能用"时当场实测撞到的）：**STEP / STL / IGES / Parasolid
+    #: **真·缺陷**（★ 用户问"项目能不能用"时当场实测撞到的）：**STEP / STL / IGES / Para
+    #: solid
     #:   导出全部失败**，报 `com_error: (-2147352571, '类型不匹配。', None, **5**)` ✓
-    #:   ★ **根因（★ 四格对照实测，不是推断）**：官方 `SaveAs3.md` 的 `**Signature**:` 逐字是 **7 参** ⇒
-    #:     `(Name, Version, Options, ExportData, **AdvancedSaveAsOptions**, out Errors, out Warnings)`；
+    #: ★ **根因（★ 四格对照实测，不是推断）**：官方 `SaveAs3.md` 的 `**Signature**:` 逐
+    #: 字是 **7 参** ⇒
+    #: `(Name, Version, Options, ExportData, **AdvancedSaveAsOptions**, out Errors, out 
+    #: Warnings)`；
     #:     ★★ 而这里原来**只传 6 个** ⇒ `AdvancedSaveAsOptions` **整段缺席** ⇒
     #:     ★★★ `errors` 落到了**位置 5** ⇒ ★ 报错里那个「**位置 5**」正是它 ✓
     #:   ★★★ **实测证据**（`probe_export_saveas3_arity.py` · `sw_guard` · 零弹窗 ·
@@ -577,7 +597,8 @@ def _export_generic(model, output_path):
     #:     | ★ 写法 | ★ 结果 |
     #:     |---|---|
     #:     | ★ 现状 **6 参** | ★★ **`类型不匹配`（位置 5）· 无文件** ✓✗ |
-    #:     | ★★ **补空 Dispatch（7 参）** | ★★★ **`ok=True` · `errors=0` · STEP 16044 字节** ✓ |
+    #: | ★★ **补空 Dispatch（7 参）** | ★★★ **`ok=True` · `errors=0` · STEP 16044 字节**
+    #:  ✓ |
     #:     | ★ 位置 5 传 `None` | ★★ **`类型不匹配`（位置 5）** —— ★ 与**事实 12** 同族：
     #:       ★「空」必须是**空 Dispatch**，**不是** `None` ✓ |
     #:   ★★ 即：★ **同一文件里那个"能用"的 `export_to_image`（传 7 个）就是正解** ——
@@ -669,7 +690,8 @@ def get_mass_property_override_options(model, accuracy: float = 1.0):
         raise RuntimeError("IModelDoc2.Extension 为 None")
     # ⚑ 成员名更正: 本函数初稿写的是 `MassProperties` —— 由 audit_call_arity.py
     #   报「查不到」抓出，该成员在官方 API 中**不存在**。
-    #   权威类型库里有 `GetMassProperties(Double)` 与 `GetMassProperties2(acc, out, useSel)`，
+    # 权威类型库里有 `GetMassProperties(Double)` 与 `GetMassProperties2(acc, out, useSel
+    # )`，
     #   但**两者在当前后端都拿不到 `IMassProperty2`**（见 docstring 的实测）。
     try:
         mass_property = get_com_member(extension, "GetMassProperties", float(accuracy))
@@ -909,7 +931,8 @@ def export_bmp_report(model, output_path: str, pixel_width: int = 0,
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
-# 文件:   scripts/sw_export.py —— 追加 export_image_report / export_flat_pattern_dxf_report
+# 文件:   scripts/sw_export.py —— 追加 export_image_report / export_flat_pattern_dxf_rep
+# ort
 # 定位:   ★ 2026-10-03（轮 403）24h 计划 v2 段 6（导出）。
 #   ★★ **本模块的判据机器已经有了**：`_export_report(model, output_path, call, fmt)` ——
 #     ★ 它**回读文件**（`ok = 无异常 且 文件存在 且 size > 0`）★ 并记 `size_before` /
@@ -918,7 +941,8 @@ def export_bmp_report(model, output_path: str, pixel_width: int = 0,
 #   ★ 另有 `batch_export(sw, file_paths, output_dir, format_ext)` —— ★ 它吃 `ISldWorks`
 #     （`inject="sw_app"`）且回**一批**结果 ⇒ ★ 单独一批，本批不做。
 #   ★ 已核：`export_to_bmp` **不是缺口** —— ★ 它已由 `export_bmp_report`（工具
-#     `solidworks_export_bmp`）覆盖，★ 只是**基础名不同**（`export_bmp` vs `export_to_bmp`）。
+# `solidworks_export_bmp`）覆盖，★ 只是**基础名不同**（`export_bmp` vs `export_to_bmp`）
+# 。
 # 官方依据: `IModelDocExtension.SaveAs3`（★ `export_to_image` 走它）·
 #   `IModelDoc2.ExportToDWG2(..., swExportToDWG_e)`（★ `export_flat_pattern_dxf` 走它）
 # 许可:   本仓库 MIT。无第三方代码引入。

@@ -5,12 +5,14 @@
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2（写操作那一格）/ B3**。★ 本仓
 #           纪律原话：
 #   ★「写探针验能力时：**按 `ToolSpec` 的契约调，别手调内部实现**」——
-#   ★★ 而我在 B2 第一版**正是手调的**（直接调 `sw_part` 的公开函数）⇒ ★ 形状不对、抛 `TypeError` ✗
+# ★★ 而我在 B2 第一版**正是手调的**（直接调 `sw_part` 的公开函数）⇒ ★ 形状不对、抛 `Type
+# Error` ✗
 #   ★ 契约（读 `mcp-server/tool_registry.py` 的 `make_tool_function` 得知）：
 #     ① `kwargs[inject_as 或 spec.inject] = <宿主对象>`（★ 注册器负责解析，我们传现成的）
 #     ② `kwargs[形参名] = <该形参的值>` ✓
 # 判据:   ★★ `call(name, inject_objects={...}, **params)` ⇒ 回 `(ok, 说明)` ——
-#   ★ **拿不到 spec / 缺注入对象 / 参数缺失** ⇒ ★ 回 `False` 并把原因写清楚（★ 不假装调过）✓
+# ★ **拿不到 spec / 缺注入对象 / 参数缺失** ⇒ ★ 回 `False` 并把原因写清楚（★ 不假装调过
+# ）✓
 #   ★ 参数**没给且声明里有默认值** ⇒ 用默认值（★ 契约里就是这么填的）✓
 # 官方依据: 无（本仓契约）—— ★ 如实标注 ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -183,10 +185,12 @@ def call(tool_name: str, *, inject_objects=None, **params):
         if not callable(fn):
             return False, "★ 函数不存在：%s" % spec.function
         #: ★★★ 契约里有**两层映射**，`make_tool_function` 的注释写得很清楚
-        #:   （★ 我第一版**没实现这两层**，所以调用形状不对 —— ★ 那是我的缺陷，不是声明的）✓
+        #: （★ 我第一版**没实现这两层**，所以调用形状不对 —— ★ 那是我的缺陷，不是声明的
+        #: ）✓
         #:   ① `param_alias`：**对外参数名 → 目标函数形参名**；★ 值为 `None` ⇒
         #:      **该参数由解析器消费、不传给目标函数** ✓
-        #:   ② `derived_args`：`lambda params: {...}` —— ★ **从已声明的标量入参派生额外实参**，
+        #: ② `derived_args`：`lambda params: {...}` —— ★ **从已声明的标量入参派生额外实
+        #: 参**，
         #:      返回的字典**并进**调用关键字实参里 ✓（★ 单位换算也在这里做）
         vals = {}
         for pp in (spec.params or ()):
@@ -219,31 +223,40 @@ def call(tool_name: str, *, inject_objects=None, **params):
                 return False, "★ 声明注入 %r 但没给对应对象" % inject
             kwargs[inject] = obj
         #: ★★★★ 2026-10-12 **补 `pre_call`**（★ 阶段 1 真机验收抓到的真缺陷）：
-        #:   ★ 本仓有 **16 个**工具声明了 `pre_call=<fn>` —— 那是**声明式选择器**的解析钩子
-        #:     （例：`solidworks_chamfer` 的 `pre_call=_select_edge` ⇒ 把 `selection="index:0"`
+        #: ★ 本仓有 **16 个**工具声明了 `pre_call=<fn>` —— 那是**声明式选择器**的解析钩
+        #: 子
+        #: （例：`solidworks_chamfer` 的 `pre_call=_select_edge` ⇒ 把 `selection="index:
+        #: 0"`
         #:      解析成真的把那条边选中，因为官方 API **不收边对象、只认当前选择**）。
         #:   ★★ 而本函数**从来没跑过它**（`'pre_call' in 源码` = **False**）⇒
         #:     ★ 真机后果：`chamfer` 收到 `selection="index:0"` 却**没有选中任何东西**
-        #:     ⇒ `InsertFeatureChamfer` 回 `None` ⇒ **倒角没建出来**（体积 120000 = W×H×D，零损耗）。
+        #: ⇒ `InsertFeatureChamfer` 回 `None` ⇒ **倒角没建出来**（体积 120000 = W×H×D，
+        #: 零损耗）。
         #:   ⇒ ★ 修法：**在注入宿主之后、调用目标函数之前**跑 `pre_call`；
         #:     ★ 它抛异常 ⇒ **不静默**，如实带回（★ 前置没上就报错，不装作"建不出来"）。
         pre = getattr(spec, "pre_call", None)
         if callable(pre):
             import types as _t2
             try:
-                #: ★★ 实测（2026-10-12）：`pre_call` 的真实签名是 **`pre_call(params)`**，
+                #: ★★ 实测（2026-10-12）：`pre_call` 的真实签名是 **`pre_call(params)`**
+                #: ，
                 #:   收一个**命名空间**（不是 kwargs）—— 例：
-                #:   `def _select_edge(params): return resolve_selection(_model(), params.selection, "EDGE")`
-                #:   ⇒ ★ 必须传 `SimpleNamespace(**vals)`（★ 与 `derived_args` 同一形状）。
+                #: `def _select_edge(params): return resolve_selection(_model(), params.
+                #: selection, "EDGE")`
+                #: ⇒ ★ 必须传 `SimpleNamespace(**vals)`（★ 与 `derived_args` 同一形状）
+                #: 。
                 pre(_t2.SimpleNamespace(**vals))
             except Exception as exc:                                    # noqa: BLE001
                 return False, "★ pre_call（声明式选择器解析）抛 %s: %s" % (
                     type(exc).__name__, str(exc)[:120])
-        #: ★★ 声明里的形参**未必都被底层函数接受** —— ★ 真机实测：`solidworks_extrude_boss`
+        #: ★★ 声明里的形参**未必都被底层函数接受** —— ★ 真机实测：`solidworks_extrude_bo
+        #: ss`
         #:   ★ 抛 `TypeError: extrude_boss() got an unexpected keyword argument '...'` ⇒
-        #:   ★★ 说明**注册器另有一套映射**（`param_alias` / `derived_args` / `omitted_params`）✓
+        #: ★★ 说明**注册器另有一套映射**（`param_alias` / `derived_args` / `omitted_para
+        #: ms`）✓
         #:   ⇒ ★ 本函数只做**朴素投影**：★ 按底层函数的真实签名**过滤**掉它不接的那些，
-        #:     ★★ 并把被丢掉的形参名**如实带回**（★ 那是一条「声明与实现不一致」的线索，不许吞掉）✓
+        #: ★★ 并把被丢掉的形参名**如实带回**（★ 那是一条「声明与实现不一致」的线索，不许
+        #: 吞掉）✓
         try:
             import inspect as _ins
             allowed = set(_ins.signature(fn).parameters)
@@ -280,14 +293,16 @@ def call(tool_name: str, *, inject_objects=None, **params):
         #:   ★ 真机后果：`solidworks_part_mass_properties` 回的 dict 有 ~200 字符
         #:     ⇒ 被截在 `'mass': 0.01600` 处 ⇒ `literal_eval` 报
         #:     `SyntaxError: unterminated string literal` ⇒ **体积永远读不到**。
-        #:   ⇒ ★ 修法：**返回完整 `text`**；`note` 只用于**错误消息**（★ 那里截断是对的）。
+        #: ⇒ ★ 修法：**返回完整 `text`**；`note` 只用于**错误消息**（★ 那里截断是对的）
+        #: 。
         #:   ⚠ 这是「**返回体被截断**」这一类，★ 与「返回值不可信」（事实 8）**不同**：
         #:     那个说的是 bool 不可信，这个是**载荷被丢掉了**。
         note = text[:160]
         if dropped:
             note += "  ★（声明里有但底层不接的形参：%s）" % "、".join(dropped)
         if payload_ok is False:
-            #: ★ 工具**跑完了但说自己没成** ⇒ ★ 这**不是**"这一类不可见"，★ 而是"没调成" ✓
+            #: ★ 工具**跑完了但说自己没成** ⇒ ★ 这**不是**"这一类不可见"，★ 而是"没调成"
+            #:  ✓
             return False, "★ 工具返回体说失败：%s" % note[:140]
         return True, text
     except Exception as exc:                                            # noqa: BLE001

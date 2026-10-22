@@ -7,23 +7,27 @@
 #   ★★ ① 同一份选区（两个面），**两条读法给出不同的数**：
 #     ```
 #     SelectionManager.GetSelectedObjectCount2(-1)     ⇒ **2**
-#     SelectionManager.GetSelectedObject6(1..2, -1)    ⇒ **1**（★ 第 2 个如实回 `None`，★ 不是异常被吞）
+# SelectionManager.GetSelectedObject6(1..2, -1)    ⇒ **1**（★ 第 2 个如实回 `None`，★ 不
+# 是异常被吞）
 #     ```
 #     ⇒ ★ 而**传不完整的数组**给 `AddRigidConnector(SourceFaces, TargetFaces)` ⇒ SW 内部越界
 #       ⇒ **RPC 服务器不可用**（★ 那正是 B 组四次"崩"的真因嫌疑）。
 #   ★★ ② 而**出厂类型库**（铁律 4 的裁决者）给出**另一代入口**：
 #     ```
 #     GetSelectedObject6(Index:Int32, **Mark**:Int32) -> Object
-#     GetSelectedObject5(**AtIndex**:Int32)           -> Object   ← ★ 只有一个参数、**没有 Mark**
+# GetSelectedObject5(**AtIndex**:Int32)           -> Object   ← ★ 只有一个参数、**没有 M
+# ark**
 #     GetSelectedObject4(**AtIndex**:Int32)           -> Object
 #     ```
 #     ⇒ ★★★ **推断**：`GetSelectedObject6` 的 `Index` 是「**该 mark 的那个列表里**」的序号
 #       ⇒ ★ 所以 `(2, -1)` 越界 ⇒ 回 `None` ✓
-#     ⇒ ★★ 而 `GetSelectedObject5` **按位置取、不按 mark 分** ⇒ ★ 它才是"枚举整个选区"的入口。
+# ⇒ ★★ 而 `GetSelectedObject5` **按位置取、不按 mark 分** ⇒ ★ 它才是"枚举整个选区"的入口
+# 。
 #   ★ 本探针**逐个试**（★ 而每个都是**官方存在的方法**，★ 不是猜参数）。
 # 官方依据: `SolidWorks.Interop.sldworks.dll` 的元数据反射（★ 四个方法的形参名与类型逐字
 #           ）·
-#   `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md` · 事实 8（返回值不可信，以计数为准）
+# `C:\swapi\types\ISelectionMgr\GetSelectedObject6.md` · 事实 8（返回值不可信，以计数为
+# 准）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -73,7 +77,8 @@ def main() -> int:
             rows = []
             for i in (1, 2, 3):
                 try:
-                    #: ★ 参数顺序**按官方签名**：`GetSelectedObject6(Index, Mark)` ⇒ `(i, mark)`
+                    #: ★ 参数顺序**按官方签名**：`GetSelectedObject6(Index, Mark)` ⇒ `(i
+                    #: , mark)`
                     argmap = {"5": (int(i),), "4": (int(i),),
                               "6m-1": (int(i), -1), "6m0": (int(i), 0)}
                     obj = get_com_member(sm, member, *argmap[kind])

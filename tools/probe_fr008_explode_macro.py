@@ -7,7 +7,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（真机探针）
-# 文件:   `scripts/sw_assembly_doc.py`（本批新增的 9 个爆炸视图包装）· `scripts/sw_macro.py`（新建）
+# 文件:   `scripts/sw_assembly_doc.py`（本批新增的 9 个爆炸视图包装）· `scripts/sw_macro
+# .py`（新建）
 #         `C:\\swapi\\types\\IAssemblyDoc\\*.md` · `C:\\swapi\\types\\ISldWorks\\RunMacro2.md`
 # 定位:   规格 `specs/204-tool-ramp/spec.md` 的 **SC-005**（FR-008 两块各至少 1 个工具
 #           并**真机跑过**）
@@ -15,7 +16,8 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 真机脚本：跑之前确认只有一个 SolidWorks 实例（已知事实 24）；
-#   ★ 一律这样起：`python tools/sw_guard.py --timeout 600 -- python tools/probe_fr008_explode_macro.py`
+# ★ 一律这样起：`python tools/sw_guard.py --timeout 600 -- python tools/probe_fr008_expl
+# ode_macro.py`
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -79,8 +81,10 @@ def main() -> int:
         #: ── ② 打开副本（装配）────────────────────────────────────────
         #: ★★★ **用仓里既有的 `sw_connect.open_document`，不手写 `OpenDoc6`** ——
         #:   ★ 我第一版手写 `OpenDoc6(path, 1, 0, "", 0, 0)` ⇒
-        #:     `com_error: (-2147352571, '类型不匹配。', None, 5)` ⇒ ★ **末两个是 `out Int32`**
-        #:     （`ISldWorks.OpenDoc6(..., Int32&, Int32&)` 6 参 —— `sw_com_traps.py:113` 早就登记过）
+        #: `com_error: (-2147352571, '类型不匹配。', None, 5)` ⇒ ★ **末两个是 `out Int32
+        #: `**
+        #: （`ISldWorks.OpenDoc6(..., Int32&, Int32&)` 6 参 —— `sw_com_traps.py:113` 早
+        #: 就登记过）
         #:   ⇒ ★ 而 `sw_connect.open_document` 已经把那对 out 参、silent/read_only 选项、
         #:     **参考件加载的弹窗坑**（它注释里写着"SolidWorks 只能问用户要不要加载参考件"）
         #:     全部处理过了 ⇒ ★ 重写一遍就是把那些坑再踩一次（铁律 1：只缝合不发明）✓
@@ -144,7 +148,8 @@ def main() -> int:
             #: ★★★ 第一版这里踩了坑（**我自己的探针 bug，不是能力的问题**）：
             #:   我 `NewDocument(...)` 之后取 **`ActiveDoc`**，而那**仍是装配副本**
             #:   （★ 读数 `回 True · 计数 2` 与"装配上又建了一个"完全吻合：1 → 2）
-            #:   ⇒ ★★ 判据写"零件上也能建"会是**一条假事实** ⇒ 必须用 `NewDocument` 的**返回值** ✓
+            #: ⇒ ★★ 判据写"零件上也能建"会是**一条假事实** ⇒ 必须用 `NewDocument` 的**返
+            #: 回值** ✓
             try:
                 part = sw_connect.get_com_member(sw, "NewDocument", "", 0, 0.0, 0.0)
                 ptype = (sw_connect.get_com_member(part, "GetType")

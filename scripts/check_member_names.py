@@ -114,7 +114,8 @@ def scan() -> list[tuple[str, int, str]]:
 #   （`asm_model.InterferenceDetection` / `GetInterference`）**两个真缺陷都是这个形态**。
 #
 # ★ 判据的**三版演进**（每一版的教训都留在代码里）：
-#   ① 「大驼峰 + 不在反射里」⇒ 实测**假阳性 ≈100%**（`argparse` / `winreg` / OCP 全进来）⇒ 弃用；
+# ① 「大驼峰 + 不在反射里」⇒ 实测**假阳性 ≈100%**（`argparse` / `winreg` / OCP 全进来）⇒
+#  弃用；
 #   ② 「对象名从 `get_com_member(<OBJ>, …)` 推导」⇒ 12 处，但仍混着 docstring 举例、
 #      COM 基础设施、**跨函数同名变量**（事实 51）；
 #   ③ **本函数**：`ast` 只查代码 + **按函数定作用域** + COM 基础设施白名单 +

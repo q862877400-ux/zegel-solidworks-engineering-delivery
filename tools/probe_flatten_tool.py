@@ -70,7 +70,8 @@ def main() -> int:
             row["err"] = "★ 工具没注册"
         else:
             args = {"accuracy_factor": 4, "should_use_tears": False, "body_type": "surface"}
-            #: ★★ **按 ToolSpec 的契约调**（复刻 `tool_registry.make_tool_function` 的三步）
+            #: ★★ **按 ToolSpec 的契约调**（复刻 `tool_registry.make_tool_function` 的三
+            #: 步）
             mod = __import__("scripts.%s" % spec.module, fromlist=[spec.function])
             fn = getattr(mod, spec.function)
             kwargs = {}

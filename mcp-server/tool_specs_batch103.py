@@ -17,7 +17,8 @@
 #     ⇒ ★ 坐标是**标注放置位置**（规则 3 的书面例外），★ 但**要求先选中实体** ⇒
 #       ★ 必须配声明式选择 + 紧邻调用 ⇒ ★ **另立 T-217-01b** ✓
 #   · `fully_define_sketch` ⇒ ★ 8 个枚举参数须逐个查官方源（铁律 4）⇒ **另立 T-217-01c** ✓
-#   · `sw_selection_spec.entity_geometry` ⇒ ★ 其归属条目 `selection_helpers` 的 `mcp_tools`
+# · `sw_selection_spec.entity_geometry` ⇒ ★ 其归属条目 `selection_helpers` 的 `mcp_tools
+# `
 #     尾部**本轮未读到准确原文** ⇒ ★ **不猜**（事实 61 定则②）⇒ **挪到下一批** ✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -83,8 +84,10 @@ SPECS_BATCH103 = [
             "⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。",
     ),
 ]
-# ★★ 2026-10-07（规格 217 · T-217-01 第 3 轮）：**`sketch_intersect_curves` 撤出本批** ——
-#   ★ 本仓**预选族门禁**（`scripts/check_preselect_family.py`，已接进 `release_check`）实测判它：
+# ★★ 2026-10-07（规格 217 · T-217-01 第 3 轮）：**`sketch_intersect_curves` 撤出本批** —
+# —
+# ★ 本仓**预选族门禁**（`scripts/check_preselect_family.py`，已接进 `release_check`）实
+# 测判它：
 #     「★ 要求先选中相交的两条曲线，★ 而**没有任何选法**」⇒ ★★ **门禁是对的** ✓
 #   ★ 它与 `add_*_dimension` 三条**同类**（都要先选中实体）⇒ ★ 一并挪到 **T-217-01b**
 #     （★ 那一批统一配**声明式选择 + 紧邻调用**）✓

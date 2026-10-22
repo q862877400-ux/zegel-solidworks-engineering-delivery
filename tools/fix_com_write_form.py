@@ -51,7 +51,8 @@ def main() -> int:
         src = p.read_text(encoding="utf-8")
         tree = ast.parse(src)
         want = {(r["line"], r["member"]) for r in rows}
-        #: \u2605 \u6536\u96c6\u8981\u66ff\u6362\u7684 func \u8282\u70b9\uff08\u2605 \u53d6\u5b83\u7684**\u540d\u5b57**\u90a3\u4e00\u5c0f\u6bb5\uff09
+        #: \u2605 \u6536\u96c6\u8981\u66ff\u6362\u7684 func \u8282\u70b9\uff08\u2605 \u5
+        #: 3d6\u5b83\u7684**\u540d\u5b57**\u90a3\u4e00\u5c0f\u6bb5\uff09
         spans = []
         for n in ast.walk(tree):
             if not isinstance(n, ast.Call):
@@ -69,7 +70,8 @@ def main() -> int:
         if not spans:
             continue
         lines = src.splitlines(keepends=True)
-        #: \u2605 \u4ece**\u540e\u5f80\u524d**\u6362\uff08\u2605 \u4f4d\u7f6e\u4e0d\u4f1a\u56e0\u524d\u9762\u7684\u6539\u52a8\u800c\u504f\u79fb\uff09
+        #: \u2605 \u4ece**\u540e\u5f80\u524d**\u6362\uff08\u2605 \u4f4d\u7f6e\u4e0d\u4f1
+        #: a\u56e0\u524d\u9762\u7684\u6539\u52a8\u800c\u504f\u79fb\uff09
         for (l0, c0, l1, c1) in sorted(spans, reverse=True):
             if l0 != l1:
                 print("    \u26a0 \u8df3\u8fc7\u8de8\u884c\u8c03\u7528 %s:%d" % (rel, l0))

@@ -5,18 +5,22 @@
 # 定位:   ★ 规格 `specs/211-user-feature-gaps`。★ 第一批（`probe_spec211_curvedriven.p
 #           y`）
 #   把**前置**对上了（★ mark1 要阵列的特征 · mark2 方向曲线，★ 两条都 True、选区 2 ✓）
-#   ⇒ ★★ **而仍不建**（★ 回 None · 新增 [] ✓）—— ★ 我当时**不叫试死**，因为还有**第二处成因没追** ✓
+# ⇒ ★★ **而仍不建**（★ 回 None · 新增 [] ✓）—— ★ 我当时**不叫试死**，因为还有**第二处成
+# 因没追** ✓
 # 本批:   ★★★ **追「参数/档位」** —— ★ 关键发现（★ 官方枚举逐字读过）：
-#     `swLocalSketchPatternReferencePoint_e`：★ **SelectedPoint = 0** · **BoundingBoxCenter = 1** ·
+# `swLocalSketchPatternReferencePoint_e`：★ **SelectedPoint = 0** · **BoundingBoxCenter 
+# = 1** ·
 #       **ComponentOrigin = 2** ✓
 #     ★★ 而官方 `## Remarks` 的 NOTE 逐字：「If `ReferencePoint` is set to
-#       **`swLocalSketchPatternSelectedPoint`**, then the selected reference point **must be a vertex**」✗
+# **`swLocalSketchPatternSelectedPoint`**, then the selected reference point **must be a
+#  vertex**」✗
 #     ⇒ ★★★ **第一批我取的正是 0（SelectedPoint）、而 mark 32 没选顶点** ✗
 #       ⇒ ★★ **那很可能就是"前置没上"的第二处** ✓
 #   ★ 故本批**遍历 `ReferencePoint` ∈ {0, 1, 2}**（★ 各一个零件，★ 免得相互污染 ✓）——
 #     ★★ 1 / 2 两档**不需要选点** ✓
 # 判据:   ★★ 主判据一律**回读**：★ **特征树多了新特征**（★ 不看返回值 ✓）
-#   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 本规格已两次证明 ✓）
+# ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 本规格已两次证明 
+# ✓）
 #   ★★★ 三种结果三种记法（★ 与「扫描曲面」那条成功案例同型）：
 #     · ★ **建成** ⇒ ★★★ **翻案彻底成立** ✓
 #     · ★ **仍不建** ⇒ ★★ **那才够格叫「试死」**（★ 前置 ✓ + 档位 ✓ 两处都追过 ✓）

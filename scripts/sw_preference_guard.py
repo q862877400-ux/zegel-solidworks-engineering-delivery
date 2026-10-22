@@ -11,7 +11,8 @@
 #         `scripts/sw_connect.py`（`get_com_member` —— ★ 本项目「取或调」的统一入口）
 # 定位:   ★★★ **为什么需要它**（★ 2026-10-04 业主体检出的交付问题）：
 #   业主问「我们这个项目别人装上，是不是也要改他的 SolidWorks？」——
-#   ★ 核查结论：**本体零改动**（注册表写入 0 处、不写安装目录、不打补丁、不注入，全走官方 COM API）；
+# ★ 核查结论：**本体零改动**（注册表写入 0 处、不写安装目录、不打补丁、不注入，全走官方 
+# COM API）；
 #   ★★ 而**有一处真落点**：全仓 **8 处 `SetUserPreference*`** 会改用户的**全局用户偏好**
 #     （默认模板路径 / 新建提示 / STL 导出质量 / STL-VRML 导入选项 / 原点与三轴显示），
 #     且**多数不还原** ⇒ ★ 那等于"装一次我们的工具，用户的 SolidWorks 设置被改掉且回不去" ✓
@@ -41,7 +42,8 @@ if str(_REPO / "scripts") not in sys.path:
     sys.path.insert(0, str(_REPO / "scripts"))
 
 #: ★ 官方偏好号的取值集合见 `C:\swapi\enums\swUserPreference*_e.md`；
-#: ★ 本模块**不硬编码任何偏好号** —— 号由调用方给（★ 号写错 = 改错设置，故要显式、要可 grep）✓
+#: ★ 本模块**不硬编码任何偏好号** —— 号由调用方给（★ 号写错 = 改错设置，故要显式、要可 g
+#: rep）✓
 KINDS = ("string", "integer", "toggle", "double")
 _GET = {
     "string": "GetUserPreferenceStringValue",
@@ -142,7 +144,8 @@ def preference_guard(sw_app, preferences: Iterable[Preference], *,
     old: dict[int, tuple[str, Any]] = {}
 
     #: ① 记旧值 —— ★★ **连 `keep` 的那些也要读**（★ 报告要能说出"留下了什么"），
-    #:    这正是本模块**第一版**的 bug：`keep` 跳过读 ⇒ `kept` 分支永不触发、报告里旧值是 `None`。
+    #: 这正是本模块**第一版**的 bug：`keep` 跳过读 ⇒ `kept` 分支永不触发、报告里旧值是 `
+    #: None`。
     for pref in preferences:
         try:
             old[int(pref.pref_id)] = (pref.kind, read_preference(sw_app, pref.kind, pref.pref_id))

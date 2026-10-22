@@ -18,7 +18,8 @@
 # ─────────────────────────────────────────────────────────
 #
 # ## 为什么需要它
-# 「一句话不是守卫」（spec 229/236）：诊断**报了**「跳过 5」，但**没人查这 5 个是什么**。
+# 「一句话不是守卫」（spec 229/236）：诊断**报了**「跳过 5」，但**没人查这 5 个是什么**
+# 。
 # ★★ 而本规格「先量」当场量出真缺陷：`module_consts()` 的正则要求常量行**以数字结尾**
 #   ⇒ `SW_FM_MATE_PROFILE_CENTER = 101  # swFmMateProfileCenter` **读不到**
 #   ⇒ `scripts/sw_weldment.py` 的常量表成 `{}` ⇒ 它唯一的站点被静默判成 `dynamic`
@@ -32,18 +33,23 @@
 # #: cd-site: no-members-used         <理由>
 # #: cd-site: dynamic                 <理由>
 # ```
-# ★ 关联方式是**确定性**的（向上跳过空行取第一行非空行，与 227/228/234/235/236 同一方式），
+# ★ 关联方式是**确定性**的（向上跳过空行取第一行非空行，与 227/228/234/235/236 同一方式
+# ），
 #   **不用行窗口启发式**。
-# ★ `checked` 是**隐式默认**、**不需要**声明；在 `checked` 站点上写声明 ⇒ 红 `redundant-decl`
+# ★ `checked` 是**隐式默认**、**不需要**声明；在 `checked` 站点上写声明 ⇒ 红 `redundant-
+# decl`
 #   （多余声明是噪声，且会掩盖真回归）。
 #
 # ## 每个 code 的自证条件（**写错即红**）
 # | code | 自证 |
 # |---|---|
-# | `unmapped` | 列出的常量集合 **==** 该站点**实际**未映射常量集合（漏列 / 多列 ⇒ 红 `集合不符`） |
+# | `unmapped` | 列出的常量集合 **==** 该站点**实际**未映射常量集合（漏列 / 多列 ⇒ 红 `
+# 集合不符`） |
 # | `empty-members` | 该站点**确实**没有任何未映射常量，且期望接口成员集为空 |
 # | `no-members-used` | 该站点**确实** 0 个 `data.X` |
-# | `dynamic` | ★★ **读取器太窄的守卫**：`arg_texts` 里**每一个**实参文本必须 ① 不含 `swFm\\w+` ② 不是纯数字 ③ 其标识符**都不在**同文件模块常量表 —— 任一不满足 ⇒ 红 `reader-too-narrow` |
+# | `dynamic` | ★★ **读取器太窄的守卫**：`arg_texts` 里**每一个**实参文本必须 ① 不含 `sw
+# Fm\\w+` ② 不是纯数字 ③ 其标识符**都不在**同文件模块常量表 —— 任一不满足 ⇒ 红 `reader-t
+# oo-narrow` |
 #
 # ## 只增不减（下界冻结）
 # 站点数 / `checked` 数 / 各 code 计数都只允许**增**：减少 = 取点或读取器漏了
@@ -55,7 +61,8 @@
 # ## 便携性
 # 官方文档树不在 ⇒ `[SKIP]` + `exit 0`（缺数据源 ≠ 检查失败）。
 # 源开关：`DSH_CD_SITE_ROOT` · `DSH_CD_SITE_TYPES` · `DSH_CD_SITE_DUMPS` ·
-# `DSH_CD_SITE_BASELINE_MIN`（`sites,checked,unmapped,empty-members,no-members-used,dynamic`）。
+# `DSH_CD_SITE_BASELINE_MIN`（`sites,checked,unmapped,empty-members,no-members-used,dyna
+# mic`）。
 from __future__ import annotations
 
 import os
@@ -80,7 +87,8 @@ DETAIL_LIMIT = 25
 #: ⚠ **刻意写成 6 个独立常量而不是一张整数表**：① 与姊妹门禁（235 `BASELINE_SITES` /
 #:   `BASELINE_ENUM` / `BASELINE_VALUES`、236 `BASELINE_DECLS` …）同一形状；
 #:   ② 整数表会进 `check_enum_values_vs_reflection` 的盲区清单、要额外表态 ——
-#:   而这张表**不是**任何官方枚举的取值，本就不该走那条路（首跑 `release_check` 当场报了它）。
+#: 而这张表**不是**任何官方枚举的取值，本就不该走那条路（首跑 `release_check` 当场报了它
+#: ）。
 BASELINE_SITES = 8             # 站点总数（★ spec 239：10 → 9 —— `sw_sheet_metal.create_draft`
 #:                              改走官方入口 `IFeatureManager::InsertMultiFaceDraft` 后，
 #:                              它那个 `CreateDefinition(swFmDraft)` 站点**正当消失**；

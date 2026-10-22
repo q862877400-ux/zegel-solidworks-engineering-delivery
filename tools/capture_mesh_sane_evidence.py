@@ -103,7 +103,8 @@ def main() -> int:
               % (size, gate.get("ok"),
                  "**停下，不建网格不跑求解**" if not gate.get("ok") else "继续"))
 
-        #: ④ ★★★ 断言：不合理时**绝不**继续；且本脚本全程**未调** CreateMesh / RunAnalysis
+        #: ④ ★★★ 断言：不合理时**绝不**继续；且本脚本全程**未调** CreateMesh / RunAnalys
+        #: is
         executed_mesh = False
         executed_run = False
         if gate.get("ok"):

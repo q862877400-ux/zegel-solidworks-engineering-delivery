@@ -70,7 +70,8 @@ def main() -> int:
     rec("build_part", features=P.feature_names(model)[:8])
 
     #: ② `parameter_updates` —— 改尺寸 + 回读（★ 判据：等于新值 **且** 不等于旧值）
-    #: ★★★ 2026-10-04：★ **先把候选名字探明**（★ 上一版直接猜 `D1@草图1` ⇒ `LookupError` 崩了）——
+    #: ★★★ 2026-10-04：★ **先把候选名字探明**（★ 上一版直接猜 `D1@草图1` ⇒ `LookupError`
+    #:  崩了）——
     #:   ★ 所以这里**逐个试 + 每次都 try/except**，★ 并把**每一次尝试**都记进证据 ✓
     candidates = list(CANDIDATE_DIMS) + ["D1@草图2", "D2@草图2", "D3@草图1", "D4@草图1",
                                          "D1@Boss-Extrude1", "D1@凸台-拉伸1"]
@@ -84,7 +85,8 @@ def main() -> int:
         got = None
         if isinstance(res, dict):
             #: ★★ `update_dimension_mm` 回 `{"success":…, "before_mm": {"current": v},
-            #:   "after_mm": {"current": v}, "set_status": …}` ⇒ ★ 取 `after_mm["current"]` ✓
+            #: "after_mm": {"current": v}, "set_status": …}` ⇒ ★ 取 `after_mm["current"]
+            #: ` ✓
             am = res.get("after_mm")
             if isinstance(am, dict):
                 got = am.get("current") or next((v for v in am.values()), None)
@@ -105,7 +107,8 @@ def main() -> int:
     rec("parameter_updates", **para)
 
     #: ③ `custom_properties_and_bom` —— 写 3 条属性 + 逐条读回（★ 判据：逐条相等）
-    #: ★★★★ 2026-10-04（★ 实测修正）：★ **`set_custom_properties` 自己就带「写 + 回读」** ——
+    #: ★★★★ 2026-10-04（★ 实测修正）：★ **`set_custom_properties` 自己就带「写 + 回读」*
+    #: * ——
     #:   它的返回值里有 `properties[i].verified` 与 `properties[i].readback` ✓
     #:   ★★ 而**我第一版又用 `read_custom_property` 去读**（★ 那一路读到 `None`）⇒
     #:     ★★★ **那是探针读错了、★ 不是能力有问题** ⇒ 改成**用它自己的回读** ✓

@@ -7,7 +7,8 @@
 #   ★★★ **⇒ 本族做 `shell_params`** ✓
 #   ★★★★ **⚠ `IRevolveFeatureData` **查不到**** ⇒ 按**铁律 5** 停下、★ 不用相似名字蒙混 ✓
 #   **官方依据**（★ 逐条查过 `C:\\swapi\\types\\IShellFeatureData\\`）：
-#     · `Thickness` ⇒ `System.double Thickness {get; set;}` ⇒ `## Returns: Shell thickness`（★ **无单位**）
+# · `Thickness` ⇒ `System.double Thickness {get; set;}` ⇒ `## Returns: Shell thickness`
+# （★ **无单位**）
 #     · `Direction` ⇒ `System.int` ⇒「**0 for inward shell, 1 for outward shell**」
 #     · `FacesRemovedCount` ⇒ `System.int {get;}` ⇒ `Number of removed faces`
 #     · `GetMultipleThicknessFacesCount()` / `GetMultipleThicknessAtIndex(int)` ⇒ 有页
@@ -46,8 +47,10 @@ def main() -> int:
     #:   ★ 我第一版写 `sw_connect.connect()` / `new_part(sw)` ⇒ ★★ **两个都不存在** ⇒
     #:     `AttributeError: module 'sw_connect' has no attribute 'connect'` ✓
     #:   ★★★ **⇒ 正解**（★ `tools/probe_base_flange_params_recheck.py` L49 逐字）：
-    #:     `app, _ = connect_solidworks(visible=True)` · ★ `model = new_document(app, "part")` ✓
-    #:   ★★★★ **⇒ 又验证那条判据**：★★★ **"在仓里搜"要搜够 —— 搜一行 grep 的成本 < 猜错的成本** ✓
+    #: `app, _ = connect_solidworks(visible=True)` · ★ `model = new_document(app, "part"
+    #: )` ✓
+    #: ★★★★ **⇒ 又验证那条判据**：★★★ **"在仓里搜"要搜够 —— 搜一行 grep 的成本 < 猜错的
+    #: 成本** ✓
     from sw_connect import connect_solidworks, get_com_member, new_document
     import sw_feature_readback as R
     from sw_part import shell_report, sketch, extrude_boss
@@ -60,13 +63,15 @@ def main() -> int:
     #: ★ 建一块板 60×40×10（★ 毫米 —— 文档单位随文档，本项目按毫米）✓
     with sketch(model, "Front Plane") as sk:
         sm = get_com_member(model, "SketchManager")
-        #: ★★★★★ 2026-10-04（轮 122）**用 `CreateLine` ×4、★ 不用 `CreateCornerRectangle`** ✓
+        #: ★★★★★ 2026-10-04（轮 122）**用 `CreateLine` ×4、★ 不用 `CreateCornerRectangle
+        #: `** ✓
         #:   ★ **真机读数**：★ `CreateCornerRectangle(-30,-20,30,20)` ⇒
         #:     `com_error: (-2147352561, '非选择性的参数。', None, None)` ✓
         #:   ★★ **⇒ 那正是**本会话已记录过的那个****（★ 与 `output/` 里那几条探针同因）⇒
         #:     ★★★ **⇒ 正解：★ 四条 `CreateLine` 围成矩形** ✓
         #:   ★★★★ **⚠ 我第一版**在注释里写了"要兜底"、★ 却**没写兜底代码**** ⇒
-        #:     ★★ **⇒ 又验证那条**：★ **"写在注释里的打算"不等于"做了"**（★ 与**事实 62**同族）✓
+        #: ★★ **⇒ 又验证那条**：★ **"写在注释里的打算"不等于"做了"**（★ 与**事实 62**同
+        #: 族）✓
         for x1, y1, x2, y2 in ((-30.0, -20.0, 30.0, -20.0),
                                (30.0, -20.0, 30.0, 20.0),
                                (30.0, 20.0, -30.0, 20.0),

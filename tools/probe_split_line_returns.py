@@ -17,7 +17,8 @@
 #
 #   ★ 三条入口与前置（★ 照事实 417/418/419 已验的形态）：
 #     · 轮廓型 `IModelDoc2.InsertSplitLineSil()` —— ★ 选一个**基准面**
-#     · 投影型 `IModelDoc2.InsertSplitLineProject(True, True)` —— ★ 特征 + 草图(mark 4) + 面(mark 1)
+# · 投影型 `IModelDoc2.InsertSplitLineProject(True, True)` —— ★ 特征 + 草图(mark 4) + 面
+# (mark 1)
 #     · 交叉型 `IFeatureManager.InsertSplitLineIntersect(0)` —— ★ 全部面
 #
 #   ★ 并**同时读**：返回值类型 · `Name` · `GetTypeName2` · 树增量 · 递归链里的类型名。

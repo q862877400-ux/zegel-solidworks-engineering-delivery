@@ -232,7 +232,8 @@ _RE_CALL = re.compile(r"[.\s]([A-Z]\w+)\s*\(")
 #   它把示例里调用到的成员映射到域（取宜主接口域的并集），
 #   是**建库阶段**统计用的一次性助手。
 #   ★ 实测：全仓出现 **1** 次（就只有这一处定义）⇒ 真死代码。
-#   ★ 依据：本仓先例（`tools/propose_capability_sources.py` L136-137 对 `match_modules` 的处理）
+# ★ 依据：本仓先例（`tools/propose_capability_sources.py` L136-137 对 `match_modules` 的
+# 处理）
 #   与门禁 `tests/test_no_uncalled_helpers.py`。
 
 

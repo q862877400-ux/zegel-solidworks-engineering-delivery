@@ -101,7 +101,8 @@ def main(argv: list) -> int:
     bad: list = []
     skipped: list = []
     #: ① `_ERRORCODE_MEMBERS` —— ★ 应当是"带 ByRef/out 形参"的那些
-    #: ★ 只比 **`Add*`** —— ★ `_ERRORCODE_MEMBERS` 只服务 `Add*`（★ `_check` 只被它们用）；
+    #: ★ 只比 **`Add*`** —— ★ `_ERRORCODE_MEMBERS` 只服务 `Add*`（★ `_check` 只被它们用
+    #: ）；
     #:   ★ `Get*` 不在其职责范围内 ⇒ ★ **拿它们去比就是假阳性**。
     want_err = {n for n, ps in lib.items() if n.startswith("Add")
                 and any(pt.endswith("&") for _, pt in ps)}

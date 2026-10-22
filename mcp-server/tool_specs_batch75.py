@@ -4,40 +4,58 @@
 # 仓库:   本项目自身（ToolSpec 声明层）· 规格 `specs/202-user-coverage-gaps` 的 **R1**。
 # 文件:   mcp-server/tool_specs_batch75.py
 # 定位:   ★★ **本批与 batch72/73 的性质都不同**（★ 三批要分清）：
-#     · batch72：接的是「AST 量出**已有实现**」的几条（`tools/audit_gap_implementations.py`）；
+# · batch72：接的是「AST 量出**已有实现**」的几条（`tools/audit_gap_implementations.py`
+# ）；
 #     · batch73：接的是「**本仓一个都没有**」的工程图真缺口（先写了能力层）；
 #     · ★ **本批**：接的是「**早就实现了、却只挂出了 4 项**」的 8 项
 #       —— ★ 依据 `specs/202-user-coverage-gaps/recon/drawing-existing-coverage.md`：
-#       **工程图 13 项里本仓已实现 8 项、而挂成工具的只有 4 项（且全靠同一个 `solidworks_drawing`）**。
+# **工程图 13 项里本仓已实现 8 项、而挂成工具的只有 4 项（且全靠同一个 `solidworks_drawi
+# ng`）**。
 #       ⇒ ★★ **本批一行实现逻辑都不新写**（"缝合优先不发明"）⇒ 只做**转接 + 单位边界**。
 #   ★ 转接层 = `scripts/sw_drawing_expose.py`（★ 与 `scripts/sw_drawing.py` 的差别：
 #     后者是"按路径加载 subskill 再导出"的**兼容桥**，前者是**对外包装**：
 #     收**毫米**、只在边界换算一次、并把**前置回读**带回来）。
 #
-#   ==================================  =================================  =========================
-#   缺口项                              工具名                              覆盖率的计数关键词（逐字）
-#   ==================================  =================================  =========================
-#   投影视图                            solidworks_drawing_create_projected_view       projected_view
-#   剖面视图                            solidworks_drawing_create_section_view         section_view
-#   局部视图                            solidworks_drawing_create_detail_view          detail_view
-#   图纸格式/模板                       solidworks_drawing_set_sheet_format            sheet_format
-#   注释/文字                           solidworks_drawing_add_note                    add_note
-#   孔表                                solidworks_drawing_create_hole_table           hole_table
-#   修订表                              solidworks_drawing_create_revision_table       revision_table
-#   中心符号线                          solidworks_drawing_insert_center_marks         center_mark
-#   ==================================  =================================  =========================
+# ==================================  =================================  ===============
+# ==========
+# 缺口项                              工具名                              覆盖率的计数关
+# 键词（逐字）
+# ==================================  =================================  ===============
+# ==========
+# 投影视图                            solidworks_drawing_create_projected_view       pro
+# jected_view
+# 剖面视图                            solidworks_drawing_create_section_view         sec
+# tion_view
+# 局部视图                            solidworks_drawing_create_detail_view          det
+# ail_view
+# 图纸格式/模板                       solidworks_drawing_set_sheet_format            she
+# et_format
+# 注释/文字                           solidworks_drawing_add_note                    add
+# _note
+# 孔表                                solidworks_drawing_create_hole_table           hol
+# e_table
+# 修订表                              solidworks_drawing_create_revision_table       rev
+# ision_table
+# 中心符号线                          solidworks_drawing_insert_center_marks         cen
+# ter_mark
+# ==================================  =================================  ===============
+# ==========
 #   ★ 那些关键词逐字取自 `D:\SW-coverage-tool\gen_user_feature_coverage.py:130-148`
 #     ⇒ ★ **工具名必须含它们才会计数**（★ 而名字本身也要**准确** —— 计划里写明：
 #        **不许**把"改个名字让计数涨上去"当成"能力补上了"）。
 #
 #   ★★ 注入名：这 8 个包装函数的**首参都是 `drawing_model`** ⇒ `inject="drawing_model"`
 #     （★ 该键已在 `register_capabilities.RESOLVERS` 里 —— 见 known-facts 491）。
-#   ★★ 单位：对外收**毫米**（`x_mm`/`y_mm`），★ **换算只发生在 `scripts/sw_drawing_expose.py` 一处**。
+# ★★ 单位：对外收**毫米**（`x_mm`/`y_mm`），★ **换算只发生在 `scripts/sw_drawing_expose.
+# py` 一处**。
 #
 #   官方依据（★ 逐页读过；契约抄本在 `specs/202-user-coverage-gaps/recon/api/`）:
-#     · `IDrawingDoc.CreateDrawViewFromModelView3`（投影）· `IDrawingDoc.CreateSectionViewAt5`（剖面）
-#     · `IDrawingDoc.CreateDetailViewAt4`（局部，**12 参**）· `IDrawingDoc.SetupSheet6`（图纸格式）
-#     · `IModelDoc2.InsertNote`（注释）· `IView.InsertHoleTable3` / `ISheet.InsertRevisionTable2`（表）
+# · `IDrawingDoc.CreateDrawViewFromModelView3`（投影）· `IDrawingDoc.CreateSectionViewAt
+# 5`（剖面）
+# · `IDrawingDoc.CreateDetailViewAt4`（局部，**12 参**）· `IDrawingDoc.SetupSheet6`（图
+# 纸格式）
+# · `IModelDoc2.InsertNote`（注释）· `IView.InsertHoleTable3` / `ISheet.InsertRevisionTa
+# ble2`（表）
 #     · `IDrawingDoc.InsertCenterMark3` / `IView.AutoInsertCenterMarks2`（中心符号线）
 #   许可:   本仓库 MIT。★ **无第三方代码引入**。
 #   覆盖:   全文件

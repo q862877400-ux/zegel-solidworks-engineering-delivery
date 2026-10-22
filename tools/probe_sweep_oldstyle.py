@@ -9,10 +9,13 @@
 #   ★★ **本轮从类型库 dump 里发现的事**（★ 而它直接挑战一条既有结论）：
 #     `IModelDoc2` 上有一整族**旧式曲面入口** ——
 #     ```
-#     InsertSweepRefSurface2    arity=6  (Propagate, TwistCtrlOption, KeepTangency, ForceNonRational,
+# InsertSweepRefSurface2    arity=6  (Propagate, TwistCtrlOption, KeepTangency, ForceNon
+# Rational,
 #                                          StartMatchingType, EndMatchingType)   ← ★ T602 扫描曲面
-#     InsertRevolvedRefSurface  arity=4  (Angle, ReverseDir, Angle2, RevType)    ← ★ T601 旋转曲面
-#     PreTrimSurface            arity=1  (BMutualTrimIn)                         ← ★ T607 剪裁（两段式）
+# InsertRevolvedRefSurface  arity=4  (Angle, ReverseDir, Angle2, RevType)    ← ★ T601 旋
+# 转曲面
+# PreTrimSurface            arity=1  (BMutualTrimIn)                         ← ★ T607 剪
+# 裁（两段式）
 #     PostTrimSurface           arity=1  (BSewSurfaceIn)
 #     InsertRadiateSurface      arity=3  (Distance, FlipDir, TangentPropagate)   ← 辐射曲面
 #     ```
@@ -21,14 +24,18 @@
 #     依据是**新架构**那条路（`CreateDefinition(swFmRefSurface = 62)` → `CreateFeature`）
 #     在真机上**静默回 `None`**（★ 事实 391/393/396 那一串否证）。
 #     ⚠ 而**从没试过 `IModelDoc2` 上的旧式入口** —— ★ 而旧式那一侧**已经成了 3 条**
-#     （等距 `InsertOffsetSurface` · 平面区域 `InsertPlanarRefSurface` · 替换面 `InsertFeatureReplaceFace`）。
+# （等距 `InsertOffsetSurface` · 平面区域 `InsertPlanarRefSurface` · 替换面 `InsertFeatu
+# reReplaceFace`）。
 #   ⇒ ★★★ **故本探针要问**：★ **扫描曲面的旧式入口成不成？**
-#     · ★ 若**成** ⇒ ★★ **「扫描曲面到不了」这条结论要按事实 53 的口径修正**（★ 那是**推翻**）
+# · ★ 若**成** ⇒ ★★ **「扫描曲面到不了」这条结论要按事实 53 的口径修正**（★ 那是**推翻**
+# ）
 #     · ★ 若**不成** ⇒ ★ 那 6 条否证之上再添一条**更强的**（★ 旧式侧也不成）
 #
 #   官方：`IModelDoc2.InsertSweepRefSurface2` 标 **Obsolete. Superseded by
-#     `IFeatureManager::InsertProtrusionSwept3`** ⇒ ★ 而★ 本仓已有多处「废弃入口反而更顺」的反例。
-#   ★ 前置：★ 与实体扫描同款 —— **轮廓 mark=1 · 路径 mark=4**（★ 事实 384 的正解：`SelectByID2` 带 mark）。
+# `IFeatureManager::InsertProtrusionSwept3`** ⇒ ★ 而★ 本仓已有多处「废弃入口反而更顺」的
+# 反例。
+# ★ 前置：★ 与实体扫描同款 —— **轮廓 mark=1 · 路径 mark=4**（★ 事实 384 的正解：`SelectB
+# yID2` 带 mark）。
 #
 #   ⚠ 全程走 `tools/sw_guard.py`。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -139,11 +146,13 @@ def main() -> int:
           "why": "\u65b0\u67b6\u6784\u90a3\u6761\u8def\uff0862\uff09\u9759\u9ed8\u56de None\uff1b\u800c\u65e7\u5f0f\u4fa7\u5df2\u6210 3 \u6761 "
                  "\u21d2 \u95ee\uff1a\u626b\u63cf\u66f2\u9762\u7684**\u65e7\u5f0f**\u5165\u53e3\u6210\u4e0d\u6210\uff1f",
           "cases": []}
-    #: \u2605 \u2460 \u5168\u90e8\u9ed8\u8ba4\u53c2\uff08\u2605 \u6700\u5c0f\u5e72\u9884\uff09
+    #: \u2605 \u2460 \u5168\u90e8\u9ed8\u8ba4\u53c2\uff08\u2605 \u6700\u5c0f\u5e72\u9884
+    #: \uff09
     ev["cases"].append(_one(sw, "InsertSweepRefSurface2 \u9ed8\u8ba4\u53c2",
                             lambda d: C.get_com_member(d, "InsertSweepRefSurface2",
                                                        True, 0, True, False, 0, 0)))
-    #: \u2605 \u2461 \u53ea\u4f20 4 \u53c2\uff08\u2605 \u65e7\u4ee3\u7b7e\u540d\u7684\u5f62\u72b6\uff09
+    #: \u2605 \u2461 \u53ea\u4f20 4 \u53c2\uff08\u2605 \u65e7\u4ee3\u7b7e\u540d\u7684\u5
+    #: f62\u72b6\uff09
     ev["cases"].append(_one(sw, "InsertSweepRefSurface\uff084 \u53c2\uff09",
                             lambda d: C.get_com_member(d, "InsertSweepRefSurface",
                                                        True, 0, True, False)))

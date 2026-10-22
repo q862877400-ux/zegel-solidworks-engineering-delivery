@@ -10,14 +10,18 @@
 #     · `docs/toolbar-gaps-backend-limits.md` §2.2 说「本仓早已按新架构实现」；
 #     · ★ 而那个架构的机理（`scripts/sw_pattern.py::_SelectionAccess`）是
 #       ★ **`data.AccessSelections(model, **None**)`** + `ReleaseSelectionAccess()`；
-#     · ★ 而**事实 47** 记的是 `ISketchedBendFeatureData.AccessSelections(model, **空 Dispatch**)`
+# · ★ 而**事实 47** 记的是 `ISketchedBendFeatureData.AccessSelections(model, **空 Dispat
+# ch**)`
 #       ⇒ ★ **报 `类型不匹配`**。
 #     ⇒ ★★ **故两者只差第 2 参** —— ★ **而它直接决定"指针族能不能留条活路"** ⚠
 #
-#   ★ **怎么取到真的 FeatureData**：★ `IFeatureManager.CreateDefinition(swFmFillPattern = **105**)`
-#     （★ 值取自**本机反射 dump**，铁律 4；★ 那几个阵列的 FeatureData 都带 `AccessSelections`）。
+# ★ **怎么取到真的 FeatureData**：★ `IFeatureManager.CreateDefinition(swFmFillPattern = 
+# **105**)`
+# （★ 值取自**本机反射 dump**，铁律 4；★ 那几个阵列的 FeatureData 都带 `AccessSelections
+# `）。
 #
-#   ★ 判据：★ **回 `True` 且不报错** ⇒ 通过；★ 报错 ⇒ 记下**错误码与位置**（★ 那才是证据）。
+# ★ 判据：★ **回 `True` 且不报错** ⇒ 通过；★ 报错 ⇒ 记下**错误码与位置**（★ 那才是证据）
+# 。
 #   ⚠ 全程走 `tools/sw_guard.py`。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -84,7 +88,8 @@ def main() -> int:
                     except Exception as exc:                              # noqa: BLE001
                         r["err"] = "%s" % str(exc)[:130]
                         r["ok"] = False
-                    #: \u2605 \u82e5\u6210\u529f\uff0c**\u9a6c\u4e0a\u91ca\u653e**\uff08\u2605 \u4e0d\u8ba9\u4e8b\u52a1\u60ac\u7740\uff09
+                    #: \u2605 \u82e5\u6210\u529f\uff0c**\u9a6c\u4e0a\u91ca\u653e**\uff08
+                    #: \u2605 \u4e0d\u8ba9\u4e8b\u52a1\u60ac\u7740\uff09
                     if r.get("ok"):
                         try:
                             C.get_com_member(data, "ReleaseSelectionAccess")

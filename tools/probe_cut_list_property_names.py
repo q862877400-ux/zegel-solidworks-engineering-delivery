@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_cut_list_property_names.py
 # 定位:   ★ 2026-10-03（轮 429）承本轮的**链验证结果**。
-#   ★★ 真机（`tools/prove_cut_list_chain.py`，★ `verdict: pass`）走通了那条链，★ 而**一条**没过：
+# ★★ 真机（`tools/prove_cut_list_chain.py`，★ `verdict: pass`）走通了那条链，★ 而**一条*
+# *没过：
 #     ```
 #     set_cut_list_properties(doc, {"Description": …, "Material": …})
 #       ⇒ RuntimeError: 切割清单属性回读失败: 切割清单项目1 / **Material**

@@ -1,17 +1,21 @@
 
 # ── 200 轮计划 v3 · 段 1 收口：**连接件族的第三条（link）** ──────────────────────────
-# ★★★★★ 2026-10-03（轮 458–459）★ 来源：**事实 372 / 373 / 374** —— 而这是那条链的**终点**。
+# ★★★★★ 2026-10-03（轮 458–459）★ 来源：**事实 372 / 373 / 374** —— 而这是那条链的**终点
+# **。
 #
 # ★★ **它为什么此前建不成**（★ 五次全失败 ⇒ 而真因**两层**）：
 #   ```
-#   ① ★ **形态错**：★ `AddLinkConnector` 的形参名是 **`VertexPointforFirst/SecondLocation`**
+# ① ★ **形态错**：★ `AddLinkConnector` 的形参名是 **`VertexPointforFirst/SecondLocation`
+# **
 #      ⇒ ★★ 它要**顶点**，★ 而我此前传的是**面 / 组件** ⚠（★ 事实 341 那五种给法全 `0→0`）
 #   ② ★ **out 参数**：★ 官方是 **arity 3**（含 `ByRef ErrorCode`）⇒
 #      ★★ 而**本仓的 `_check` 早已统一补 `out_i4()`**（★ 轮 348 修的）✓
 #   ```
-# ★★★ **真机（事实 373）**：★ `Count` **0 → 1**（★ 而★ 带对照：**同一体**上的两个顶点**也成**）✓
+# ★★★ **真机（事实 373）**：★ `Count` **0 → 1**（★ 而★ 带对照：**同一体**上的两个顶点**
+# 也成**）✓
 #   ★★ 而★ **本仓的包装**（`add_link_connector`）**本来就是对的** ——
-#     ★ 我一度以为"它只传 2 个实参要修"，★ 而**读了 `_check` 的实现**才发现它自动补 out（★ 事实 374）✓
+# ★ 我一度以为"它只传 2 个实参要修"，★ 而**读了 `_check` 的实现**才发现它自动补 out（★ 
+# 事实 374）✓
 #
 # ★★ **本工具为什么收**声明式选择器****（★ 规则 3 的判断 · 事实 367 那条）：
 #   ```
@@ -26,8 +30,10 @@
 # 定位:   把 `add_link_connector_report` 挂成 MCP 工具（★ 段 1「救回 B 组两条连接件」
 #           的收口）。
 # 官方依据: `SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager.AddLinkConnector`
-#   （★ arity 3 · 形参名 `VertexPointforFirstLocation` / `VertexPointforSecondLocation` / `ByRef ErrorCode`）·
-#   本仓 `scripts/sw_simulation_loads.py` 的 `add_link_connector_report` / `add_link_connector` / `_check` ·
+# （★ arity 3 · 形参名 `VertexPointforFirstLocation` / `VertexPointforSecondLocation` / 
+# `ByRef ErrorCode`）·
+# 本仓 `scripts/sw_simulation_loads.py` 的 `add_link_connector_report` / `add_link_conne
+# ctor` / `_check` ·
 #   `scripts/sw_selection_spec.py` 的 `ENTITY_KINDS`（★ 含 `VERTEX`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -49,7 +55,8 @@ SPECS_BATCH64 = [
         title="Apply a Link Connector (between two vertices)",
         module="sw_simulation_loads", function="add_link_connector_report",
         inject="manager",
-        #: ★★ 只声明 `study_name` 被消费（★ 本工具**不读选区** —— 它用两个选择器自己解析）
+        #: ★★ 只声明 `study_name` 被消费（★ 本工具**不读选区** —— 它用两个选择器自己解析
+        #: ）
         param_alias=_consumed("study_name"),
         derived_args=_derive_model,
         params=[

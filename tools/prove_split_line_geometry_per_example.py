@@ -15,7 +15,8 @@
 #   ★★★★★ **官方例子的几何**（`Create_Projection_Split_Line_Example_VB.htm`，逐字）：
 #     ```
 #     ① CreateEllipse(center=(-21.25, 12.25, 0) mm, …)          ' ★ 在**前视面**（z = 0）
-#        InsertSketch True                                        ' ★ 收尾 ⇒ 草图1（★ **不被任何特征消耗**）
+# InsertSketch True                                        ' ★ 收尾 ⇒ 草图1（★ **不被任
+# 何特征消耗**）
 #     ② SelectByID2("Front Plane","PLANE",…,0) + InsertRefPlane(8, 0.01778, …)
 #        ⇒ 基准面1（★ 距前视面 **17.78 mm**）
 #     ③ 在基准面1 上 CreateCornerRectangle(…)  ⇒ 草图2 ⇒ FeatureExtrusion2(… 0.00254 …)
@@ -31,7 +32,8 @@
 #       (b) ★ **面的定位点是"投影落点"** —— z **恰好 = 0.01778**（＝目标面所在平面），
 #           ★ 而 (x, y) = (-18.18, 13.24) **落在椭圆内部**（椭圆中心 (-21.25, 12.25)）。
 #
-#   ★★ **上一轮探针（`probe_split_line_projection_per_example.py`）与例子的差异**（逐条比过）：
+# ★★ **上一轮探针（`probe_split_line_projection_per_example.py`）与例子的差异**（逐条比
+# 过）：
 #     · 实体：Top Plane 上画 -30..30 的矩形、拉 20 mm ⇒ 实体 **z∈[-30, 30]**，
 #       ★ 而投影草图在 **Front Plane（z=0）** ⇒ ★★ **草图被实体夹在中间**（(a) 不成立）；
 #     · 面：`list(body.GetFaces())[0]` —— ★ **第一张面，与投影落点无关**（(b) 不成立）。
@@ -46,7 +48,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据（★ 规则 6 + 事实 420）：**树增量** **或** **面数增量** **或** **返回对象非 None**。
+# ★ 判据（★ 规则 6 + 事实 420）：**树增量** **或** **面数增量** **或** **返回对象非 None
+# **。
 
 from __future__ import annotations
 
@@ -184,7 +187,8 @@ def _build(doc):
         info["err_geometry"] = ("实体未整体位于草图 +z 一侧（zmin=%.5f zmax=%.5f）"
                                 "\u21d2 草图被实体夹住，条件 (a) 不成立" % (zmin, zmax))
         return False, info
-    #: ★ 投影草图（★ 前视面 z=0）：圆心 = 目标面中心的 (x, y) ⇒ 落点必然在面内**且**在环内
+    #: ★ 投影草图（★ 前视面 z=0）：圆心 = 目标面中心的 (x, y) ⇒ 落点必然在面内**且**在环
+    #: 内
     cx, cy = (xmin + xmax) / 2.0, (ymin + ymax) / 2.0
     rad = min(0.008, 0.4 * min((xmax - xmin) / 2.0, (ymax - ymin) / 2.0))
     info["circle"] = {"center_m": [cx, cy, 0.0], "radius_m": rad}

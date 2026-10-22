@@ -97,7 +97,8 @@ def main() -> int:
     n_member = len(all_members)
 
     #: ★ 并集（★ 粗粒度口径）：UI 项 ∪ 候选功能族
-    #:   ★ 去重只能靠名字/词根近似 —— ★ 这里**只给出可复算的粗并集**，★ 精确去重需要判据（M3）
+    #: ★ 去重只能靠名字/词根近似 —— ★ 这里**只给出可复算的粗并集**，★ 精确去重需要判据（
+    #: M3）
     ui_tokens = set()
     for it in ui:
         ui_tokens |= set(re.findall(r"[\u4e00-\u9fff]{2,}|[A-Za-z]{3,}", it["feature"]))

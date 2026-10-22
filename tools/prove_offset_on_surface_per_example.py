@@ -8,27 +8,34 @@
 #
 #   ★★★ **官方依据**（★ 三样齐）：
 #     ① `C:\swapi\types\IModelDocExtension\SketchOffsetOnSurface.md`：
-#        · 签名 `(Offset, Reverse, UseFront, MakeConstruct)` · ★ `UseFront` **"must be set to true"**
+# · 签名 `(Offset, Reverse, UseFront, MakeConstruct)` · ★ `UseFront` **"must be set to t
+# rue"**
 #        · **`## Remarks` 三条**：
 #          ★ a) 要**测地线**偏移请用 `GeodesicSketchOffset`（★ 另一个方法）；
 #          ★ b) 「Before…call `SelectByID2` for **each edge** to offset and set
 #                **Append to true** and **Mark …**」；
-#          ★ c) 「After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D sketch」
+# ★ c) 「After…call **`ISketchManager::InsertSketch`** to rebuild the model with the 3D 
+# sketch」
 #     ② **`## Examples` 给了三个**（C# / VB.NET / VBA）—— ★ **本机都有**：
 #        `C:\swapi\examples\Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`
 #     ③ ★ **而那个例子的调用序是关键**（★ 而签名与 Remarks 都给不出"两遍选边"）：
 #        ```
 #        'Select the edges
-#        SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74   \u2190 \u2605 \u7b2c\u4e00\u904d mark=0
+# SelectByID2("", "EDGE", x,y,z, **True**, **0**, Nothing, 0)   \u00d74   \u2190 \u2605 
+# \u7b2c\u4e00\u904d mark=0
 #        ClearSelection2 True                                        \u2190 \u2605 \u6e05\u6389
-#        SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74   \u2190 \u2605 \u7b2c\u4e8c\u904d mark=1
+# SelectByID2("", "EDGE", x,y,z, **True**, **1**, Nothing, 0)   \u00d74   \u2190 \u2605 
+# \u7b2c\u4e8c\u904d mark=1
 #        'Create a 3D sketch
-#        SketchOffsetOnSurface(0.01, False, True, False)            \u2190 \u2605 **\u8c03\u7528**
+# SketchOffsetOnSurface(0.01, False, True, False)            \u2190 \u2605 **\u8c03\u752
+# 8**
 #        ClearSelection2 True
 #        'Close the sketch
-#        swSketchManager.InsertSketch True                          \u2190 \u2605 **\u6536\u5c3e**\uff08\u2605 \u800c\u6211\u4e0a\u4e00\u7248**\u6ca1\u505a**\uff09
+# swSketchManager.InsertSketch True                          \u2190 \u2605 **\u6536\u5c3
+# e**\uff08\u2605 \u800c\u6211\u4e0a\u4e00\u7248**\u6ca1\u505a**\uff09
 #        ```
-#   ⚠ 全程走 `tools/sw_guard.py`；★ 判据 = **3D 草图真的出现**（★ 规则 6：回读草图层数/特征树）。
+# ⚠ 全程走 `tools/sw_guard.py`；★ 判据 = **3D 草图真的出现**（★ 规则 6：回读草图层数/特
+# 征树）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -116,7 +123,8 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         doc = C.new_document(sw, "part")
         row["box"] = _box(doc)
         ext = C.get_com_member(doc, "Extension")
-        #: \u2605 \u4e00\u4e2a\u65b9\u4f53\u7684\u56db\u6761\u9876\u8fb9\uff08\u2605 \u6309\u5b98\u65b9\u4f8b\u5b50\u90a3\u6837\u7528\u5750\u6807\u5b9a\u4f4d\uff09
+        #: \u2605 \u4e00\u4e2a\u65b9\u4f53\u7684\u56db\u6761\u9876\u8fb9\uff08\u2605 \u6
+        #: 309\u5b98\u65b9\u4f8b\u5b50\u90a3\u6837\u7528\u5750\u6807\u5b9a\u4f4d\uff09
         #: ★★★ 2026-10-03（轮 612）**修了一个真因**（★ 事实 482）：
         #:   ★ 上一版给的是 `(±0.03, ±0.03, 0.06)` ——
         #:   ★ 而那是四条边的**角点**！★ 角点被两条边共享
@@ -132,7 +140,8 @@ def _one(sw, tag, *, offset, reverse, usefront, makeconstruct, do_insert_sketch)
         except Exception as exc:                                          # noqa: BLE001
             row["call_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:100])
             row["returned"] = "ERR"
-        #: \u2605 **\u7b2c 5 \u6b65**\uff1a\u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u5b50\u91cc\u6709\u3001\u800c\u6211\u4e0a\u4e00\u7248\u6ca1\u505a\uff09
+        #: \u2605 **\u7b2c 5 \u6b65**\uff1a\u6536\u5c3e\uff08\u2605 \u5b98\u65b9\u4f8b\u
+        #: 5b50\u91cc\u6709\u3001\u800c\u6211\u4e0a\u4e00\u7248\u6ca1\u505a\uff09
         if do_insert_sketch:
             try:
                 sk = C.get_com_member(doc, "SketchManager")
@@ -190,7 +199,8 @@ def main() -> int:
                       "**`## Examples` \u4e09\u4e2a**\uff09\u00d7 `C:\\swapi\\examples\\"
                       "Offset_Edges_to_Create_3D_Sketch_on_Surface_Example_VB.md`",
           "cases": []}
-    #: \u2605 \u4e09\u683c\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 \u5b98\u65b9\u53c2\u6570\u4e0d\u6536\u5c3e \u00b7 \u53cd\u5411
+    #: \u2605 \u4e09\u683c\uff1a\u5b98\u65b9\u53c2\u6570 \u00b7 \u5b98\u65b9\u53c2\u6570
+    #: \u4e0d\u6536\u5c3e \u00b7 \u53cd\u5411
     ev["cases"].append(_one(sw, "\u2605 \u5b98\u65b9\u53c2\u6570 + **\u6536\u5c3e InsertSketch**",
                             offset=0.01, reverse=False, usefront=True,
                             makeconstruct=False, do_insert_sketch=True))

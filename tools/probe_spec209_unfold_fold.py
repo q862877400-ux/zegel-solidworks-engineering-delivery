@@ -4,7 +4,8 @@
 # 文件:   tools/probe_spec209_unfold_fold.py
 # 定位:   ★ 规格 `specs/209-union-adopt-18/`：**B2-1（idx 336 unfold）** + **B4-4（idx
 #            155 fold）**。
-#   ★★ 两条**同一次跑**，因为官方示例 `Insert_and_Access_Fold_Feature_Example_VB.md` **就是同一条链**：
+# ★★ 两条**同一次跑**，因为官方示例 `Insert_and_Access_Fold_Feature_Example_VB.md` **就
+# 是同一条链**：
 #     先 `InsertSheetMetalUnfold`，**再**拿刚建出来的 `Unfold1` 去 `InsertSheetMetalFold` ✓
 #   ★★ 判据（规则 6，全回读）：
 #     ```
@@ -14,7 +15,8 @@
 #     ```
 # 官方依据: `C:\swapi\types\IModelDoc2\{InsertSheetMetalUnfold,InsertSheetMetalFold}.md`
 #            ·
-#   `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md`（★ mark 与调用序的唯一出处）·
+# `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md`（★ mark 与调用序的唯
+# 一出处）·
 #   `C:\swapi\types\ISelectionMgr\{SetSelectedObjectMark,GetSelectedObjectMark}.md` ·
 #   `C:\swapi\enums\swSelectionMarkAction_e.md`
 # 许可:   本仓库 MIT。无第三方代码引入。

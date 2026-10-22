@@ -32,19 +32,22 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH2", "CLASSIFICATION"]
 
 #: ⚠ 参数逐条照真实签名抄，签名出处：
-#:   `Select-String scripts/sw_weldment.py    -Pattern '^def (weldment_evidence|ensure_cut_list|update_cut_list|create_sub_weld_folder)'`
+#: `Select-String scripts/sw_weldment.py    -Pattern '^def (weldment_evidence|ensure_cut
+#: _list|update_cut_list|create_sub_weld_folder)'`
 #:   `Select-String scripts/sw_sheet_metal.py -Pattern '^def sheet_metal_evidence'`
 #:   `Select-String scripts/sw_surface.py     -Pattern '^def collect_surface_evidence'`
 SPECS_BATCH2: list[ToolSpec] = [
     # ── 焊件（A 类：只收 model + 标量）─────────────────────────────
     # 签名: def weldment_evidence(model, *, create_missing_cut_list: bool = False,
     #                             update_cut_list_too: bool | None = None) -> dict[str, Any]
-    #: ★★★★★★ 2026-10-04（轮 117）**补 `update_cut_list_too`** —— ★ 处置这条**存量失败** ✓
+    #: ★★★★★★ 2026-10-04（轮 117）**补 `update_cut_list_too`** —— ★ 处置这条**存量失败**
+    #:  ✓
     #:   ★ **真机读数**（★ `tests/test_tool_specs_batch2.py` 逐字）：
     #:     「工具 `solidworks_weldment_evidence` 折算后 `['create_missing_cut_list']`
     #:       ≠ `sw_weldment.weldment_evidence` 的真实形参
     #:       `['create_missing_cut_list', 'update_cut_list_too']`」✓
-    #:   ★★ **真因**：★ 实现**加了**带默认值的关键字参数 `update_cut_list_too: bool | None = None`、
+    #: ★★ **真因**：★ 实现**加了**带默认值的关键字参数 `update_cut_list_too: bool | None
+    #:  = None`、
     #:     而 **ToolSpec 没跟上** ⇒ ★★★ **⇒ 同一个病**（★ 与 `batch1` 那条同轮同因）✓
     #:   ★★★★ **⇒ 已补**（★ 默认值与实现一致 = `None`）✓
     ToolSpec(
@@ -122,7 +125,8 @@ SPECS_BATCH2: list[ToolSpec] = [
 ]
 
 
-#: 核心建模域的**函数分类**（供后续批次按类推进；**不是**「没做」，是「各需一层基础设施」）。
+#: 核心建模域的**函数分类**（供后续批次按类推进；**不是**「没做」，是「各需一层基础设施
+#: 」）。
 #:
 #: ⚠ 这张表是**判断**，不是机器判定的 —— 每一类的**判据**写在下面，可复核。
 CLASSIFICATION: dict[str, dict[str, list[str]]] = {

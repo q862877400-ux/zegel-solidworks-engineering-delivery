@@ -31,7 +31,8 @@ from check_union_conventions import (  # noqa: E402
 #:   而 stdout 是管道时（测试正是用管道抓输出）默认按 locale（本机 GBK）编码
 #:   ⇒ UnicodeEncodeError: 'gbk' codec can't encode character ... ⇒ 脚本自己崩掉。
 #:   known-facts 58 那一族（中文 Windows 上两侧默认编码不一致 —— 病灶在输出侧）。
-#:   ★ 插在**多行 import 的右括号之后**（第一版插在 `from ...(` 那行后面，把它劈开了 ⇒ SyntaxError）。
+#: ★ 插在**多行 import 的右括号之后**（第一版插在 `from ...(` 那行后面，把它劈开了 ⇒ Syn
+#: taxError）。
 sys.stdout.reconfigure(encoding="utf-8")
 
 #: 迁移前**真实存在**的授权推断（2026-10-01 实测的 4 条路径里的 2 条）+ 两种违规形状

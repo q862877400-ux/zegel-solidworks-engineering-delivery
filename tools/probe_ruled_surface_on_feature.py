@@ -16,7 +16,8 @@
 #
 #   ★ 两种读法（★ 本探针都试）：
 #     ⓐ ★ **先选一个特征**（让"this feature"有指代）+ 再选边
-#     ⓑ ★ **选"某个特定特征产生的边"**（★ 而前几轮选的是 `GetEdges()[0]` 那种**按索引**的边）
+# ⓑ ★ **选"某个特定特征产生的边"**（★ 而前几轮选的是 `GetEdges()[0]` 那种**按索引**的边
+# ）
 #
 #   ★ 试的组：
 #     ⓐ 只选边（★ 前几轮那组 —— 对照）
@@ -98,11 +99,14 @@ def _one(sw, tag, mode):
             pass
         ext = _get(doc, "Extension")
         picked = {}
-        #: \u2605 \u2460 \u5148\u9009\u4e00\u4e2a**\u7279\u5f81**\uff08\u2605 \u8ba9 "this feature" \u6709\u6307\u4ee3\uff09
+        #: \u2605 \u2460 \u5148\u9009\u4e00\u4e2a**\u7279\u5f81**\uff08\u2605 \u8ba9 "th
+        #: is feature" \u6709\u6307\u4ee3\uff09
         if mode in ("feature_then_edge", "surface_feature_then_edge"):
             want = "\u51f8\u53f0-\u62c9\u4f381" if mode == "feature_then_edge" else "\u66f2\u9762-\u62c9\u4f381"
-            #: ⚠ **修**：`_get_sketch_name_candidates` 回的是 **list** ⇒ ★ 不能直接 `+ (want,)`
-            #:   （★ 第一版就死在这 —— `TypeError: can only concatenate list (not "tuple") to list`，
+            #: ⚠ **修**：`_get_sketch_name_candidates` 回的是 **list** ⇒ ★ 不能直接 `+ (
+            #: want,)`
+            #: （★ 第一版就死在这 —— `TypeError: can only concatenate list (not "tuple")
+            #:  to list`，
             #:    ★ 而那两组**正是最关键的两组**）
             cands = list(P._get_sketch_name_candidates(want)) + [want]
             for cand in cands:

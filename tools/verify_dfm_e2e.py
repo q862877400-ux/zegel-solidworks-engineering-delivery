@@ -155,10 +155,13 @@ def main() -> int:
         print("=== SC-004 B-Rep 证据绑定 ===")
         # ⚠ **真形态是读实现得到的**（`dfm_review._load_brep_evidence` L284-365 +
         #   `_brep_size` L260-281），**不是猜的** —— 轮 79 我先猜了一版（只有
-        #   `{schemaVersion,kind,sourceSha256,measurements}`）⇒ 被当成 `available: false`。
-        #   真形态要求：`backend ∈ {solidworks_brep, headless_occt}` · `producedThisRun: true` ·
+        # `{schemaVersion,kind,sourceSha256,measurements}`）⇒ 被当成 `available: false`
+        # 。
+        # 真形态要求：`backend ∈ {solidworks_brep, headless_occt}` · `producedThisRun: t
+        # rue` ·
         #   `sourceArtifact` 存在且后缀匹配 · **`sourceSha256` == 该文件的真实 sha256** ·
-        #   三轴包络在 **`geometryEvidence.envelope_mm{length,width,height}`**（或 `bounds.size`）。
+        # 三轴包络在 **`geometryEvidence.envelope_mm{length,width,height}`**（或 `bounds
+        # .size`）。
         def _brep(td_: Path, *, tamper_hash: bool = False, tamper_artifact: bool = False) -> Path:
             art = td_ / "model.brep"
             art.write_text("BREP-PLACEHOLDER\n", encoding="utf-8")
@@ -244,7 +247,8 @@ def main() -> int:
 
         # ── SC-106 包络字段的**位置**（防止同类误判再发生）─────────
         # ⚠⚠ **这条是被一次误判逼出来的**（2026-10-01 轮 80→81）：
-        #   轮 80 我在 converge 里写了「给了合法 B-Rep 证据后 `bounds` 仍是 None ⇒ 怀疑时序 bug」。
+        # 轮 80 我在 converge 里写了「给了合法 B-Rep 证据后 `bounds` 仍是 None ⇒ 怀疑时
+        # 序 bug」。
         #   轮 81 查证发现：**报告顶层根本没有 `bounds` 这个字段** ——
         #   它的产物在 **`checks` 里的 `bounds_available`**，且**带着值**。
         #   ⇒ `r.get("bounds")` 返回 None 是「**键不存在**」，不是「值算错了」。

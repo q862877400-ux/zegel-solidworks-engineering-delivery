@@ -1,15 +1,18 @@
 """★ Bunny 扇出 → ToolSpec 批次 的**五步管线驱动**（collect → backfill → gate → remaining → build）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（把原先散在 gitignore 的 `output/_*.py` 里的工序**提升成入库工具**）
+# 仓库:   本项目自身（把原先散在 gitignore 的 `output/_*.py` 里的工序**提升成入库工具**
+# ）
 # 文件:   · `tools/collect_bunny_rows.py`（合并各路产物）
 #         · `tools/check_bunny_toolspec_rows.py`（8 条判据 + 3 条自相矛盾检查）
 #         · `tools/build_toolspec_batch_from_rows.py`（过门禁的行 → `tool_specs_batchNN.py`）
 # 定位:   ★★ **为什么要有这个文件**（2026-10-04 · 业主问「会不会有一次忘了提交」时查出
 #           来的）：
 #         批 80–88 的**工序写在提交信息里**，而其中的「回填 `source_kind`」「算可建未挂」
-#         「删不做项」三步原先只是 `output/_*.py` 里的一次性脚本 —— ★ 而 `output/` **被 gitignore**
+# 「删不做项」三步原先只是 `output/_*.py` 里的一次性脚本 —— ★ 而 `output/` **被 gitignor
+# e**
 #         ⇒ ★★ **别人克隆仓库后跑不出同样的批次**（管线不可复现）✓
-#         ⇒ 本文件把那条管线**收进入库工具**，并把"不做"**政策名单**放在这里（★ 它是政策，不是草稿）✓
+# ⇒ 本文件把那条管线**收进入库工具**，并把"不做"**政策名单**放在这里（★ 它是政策，不是草
+# 稿）✓
 # 官方依据: 不适用（本仓自研的批次管线）
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
@@ -92,7 +95,8 @@ def _spec_names() -> set[str]:
     return {getattr(s, "name", "") for s in rc.all_specs()}
 
 
-# ── 第 2 步 · 回填 source_kind（★ 本仓自研的函数没有官方页，必须如实标）────────────────
+# ── 第 2 步 · 回填 source_kind（★ 本仓自研的函数没有官方页，必须如实标）───────────────
+# ─
 def step_backfill(src: Path, out: Path) -> int:
     rows = _load(src)["rows"]
     n = 0
@@ -115,7 +119,8 @@ def step_backfill(src: Path, out: Path) -> int:
     return 0
 
 
-# ── 第 4 步 · 算"可建且未挂"（★ 门禁已过 ∧ exposable ∧ 不在 all_specs ∧ 不在政策名单）──
+# ── 第 4 步 · 算"可建且未挂"（★ 门禁已过 ∧ exposable ∧ 不在 all_specs ∧ 不在政策名单）─
+# ─
 def step_remaining(report: Path, out: Path) -> int:
     have = _spec_names()
     res = _load(report).get("results", [])

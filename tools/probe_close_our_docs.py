@@ -9,7 +9,8 @@
 #     **只关我方**的动作 ✓ —— ★ 而"我方"的判据**必须严格、且可自证** ✓
 # 现场读数（★ `tools/probe_list_open_docs.py` 用 `--skip-precheck` 跑出来的 ✓）：
 #   ★ 4 个文档**全是我建的**：★ 3 个有路径（都在 `output/spec211-b6-speedpak/` 下 ✓）
-#   ★★ 1 个**无路径**、标题 `装配体2`（★ SW 默认名 ⇒ ★ 我某个探针建了但**没保存**的顶层装配 ✓）
+# ★★ 1 个**无路径**、标题 `装配体2`（★ SW 默认名 ⇒ ★ 我某个探针建了但**没保存**的顶层装
+# 配 ✓）
 #   ★ 且那 3 个的 `saved = False` ⇒ ★ 说明 `save_document` 之后 SW **仍认为"未保存"** ✓
 # 判据（★ 严格 —— 本探针**只关**满足下面之一的文档）：
 #   ★ ① **路径以 `D:\AI\SW\output\` 开头**（★ 仓库内产物目录 ⇒ 确凿是我方 ✓）
@@ -34,7 +35,8 @@ for _p in (str(ROOT), str(ROOT / "tools"), str(ROOT / "scripts")):
 OURS_ROOT = (ROOT / "output")
 #: ★★ SW 默认名模式（★ "新建了没保存"的那种 ✓）
 DEFAULT_NAME = re.compile(r"^(零件|装配体|工程图|Part|Assembly|Drawing)\d*$", re.I)
-#: ★★★ 第三类（★ 2026-10-07 补，★ 并**当天加固**）：★ **无路径 + 标题形如 `<名字> - 图纸<N>`** ——
+#: ★★★ 第三类（★ 2026-10-07 补，★ 并**当天加固**）：★ **无路径 + 标题形如 `<名字> - 图纸
+#: <N>`** ——
 #:   ★ 那是我方**从零件/装配新建的工程图**（★ 未保存 `GetPathName` 为空 ✓）✓
 #:   ★★ 实测来源：★ `tools/probe_spec211_weldsymbol.py` 建的工程图标题就是 `ws1 - 图纸1` ✓
 #:   ★★★ **加固（★ 必须）**：★ 自证时发现 ★ **`user - 图纸3` 也会命中** ✗ ——
@@ -53,9 +55,11 @@ def _our_stems() -> set:
         return set()
 
 
-#: ★★★ **关闭顺序**（★ 本轮修的那一处）：★ **先关"无路径的"（工程图/默认名）· 再关"有路径的"** ✓
+#: ★★★ **关闭顺序**（★ 本轮修的那一处）：★ **先关"无路径的"（工程图/默认名）· 再关"有路
+#: 径的"** ✓
 #:   ★ 因为：★ **工程图/装配打开了那些零件** ⇒ ★ 先关引用方，★ 被引用方才关得掉 ✓
-#:   ★★ 实测（轮 42）：★ 按 `GetDocuments` 的原顺序关 ⇒ `ws1.SLDPRT` 报"关掉"而**回读仍在** ✗
+#: ★★ 实测（轮 42）：★ 按 `GetDocuments` 的原顺序关 ⇒ `ws1.SLDPRT` 报"关掉"而**回读仍在*
+#: * ✗
 def _priority(path: str) -> int:
     return 1 if path else 0
 
@@ -69,7 +73,8 @@ def _decide(path: str, title: str) -> tuple:
     if not p and DEFAULT_NAME.match(t):
         return True, "★ ② 无路径 + ★ SW 默认名 `%s`（★ 新建了没保存 ⇒ 我方 ✓）" % t
     if not p and SHEET_TITLE.match(t):
-        #: ★★★ 加固后的第三类：★ **标题必须含「我方前缀」** ✓（★ 前缀 = `output/` 下现存文件的主名 ✓）
+        #: ★★★ 加固后的第三类：★ **标题必须含「我方前缀」** ✓（★ 前缀 = `output/` 下现存
+        #: 文件的主名 ✓）
         _m = SHEET_TITLE.match(t)
         _stem = (_m.group(1) if _m else "").strip().lower()
         if _stem and _stem in _our_stems():

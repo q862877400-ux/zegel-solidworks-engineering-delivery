@@ -14,7 +14,8 @@
 #     ⇒ ★★ **教训：铁律 5 的「查不到」应当限定在查过的名字上** ——
 #       下一步该是「**拿后缀去类型库里加通配筛一遍**」✓
 #
-#   ★ 本轮照做（筛 `Surface` / `Trim` / `Radiate` / `Offset` / `Knit` / `Thicken` / `Ruled` / `Planar`），
+# ★ 本轮照做（筛 `Surface` / `Trim` / `Radiate` / `Offset` / `Knit` / `Thicken` / `Ruled
+# ` / `Planar`），
 #     ★★ **立刻抓到一个没试过的入口**：
 #     ```
 #     FeatureBossThicken   IModelDoc2       in=3   ← ★ 轮 504 试过（3 组，全 None）
@@ -107,7 +108,8 @@ def main() -> int:
     ev["cases"].append(_one(sw, "FeatureBossThicken2\uff084 \u53c2\uff09",
                             lambda d: C.get_com_member(d, "FeatureBossThicken2",
                                                        3.0 * 0.001, 0, 0, True)))
-    #: \u2605 \u2461 \u53ea\u4f20 3 \u53c2\uff08\u2605 \u56de\u9000\u5230 3 \u53c2\u5f62\u72b6\uff09
+    #: \u2605 \u2461 \u53ea\u4f20 3 \u53c2\uff08\u2605 \u56de\u9000\u5230 3 \u53c2\u5f62
+    #: \u72b6\uff09
     ev["cases"].append(_one(sw, "FeatureBossThicken2\uff083 \u53c2\uff09",
                             lambda d: C.get_com_member(d, "FeatureBossThicken2",
                                                        3.0 * 0.001, 0, 0)))

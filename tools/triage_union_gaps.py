@@ -49,7 +49,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 SOURCES = ROOT / "tools" / "union-sources.json"      # ⚠ 在 `tools/` 下，不是 `docs/`（读 `build_union_map.py` 得到）
 OUT = ROOT / "docs" / "union-gap-triage.md"
 
-#: **域词**（取自各域的关键词表 —— 不另造一套）。出现在缺口名**之前**的这类词，视为「域限定」而非「不同操作」。
+#: **域词**（取自各域的关键词表 —— 不另造一套）。出现在缺口名**之前**的这类词，视为「域
+#: 限定」而非「不同操作」。
 DOMAIN_WORDS = {
     "mold", "sketch", "part", "assembly", "asm", "drawing", "view", "sheet", "metal",
     "sheetmetal", "weldment", "weld", "surface", "simulation", "motion", "study",
@@ -133,7 +134,8 @@ def main() -> int:
     for g in gaps:
         kind, ev = _classify(g, ours)
         if kind == "真缺":
-            # ⚑ **第三口径**：能力在 `scripts/` 里、只是没暴露成 MCP 工具 ⇒ **不是"没实现"**
+            # ⚑ **第三口径**：能力在 `scripts/` 里、只是没暴露成 MCP 工具 ⇒ **不是"没实
+            # 现"**
             suffix = g.split("_")[-1]
             near = sorted(f for f in scripts if f.endswith("_" + suffix) or f == g)
             if near:

@@ -4,22 +4,27 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（★ 判据与处置**不新写**，全部复用既有护栏）
-# 文件:   `tools/sw_guard.py` —— ★ `scan_family_windows`（★ 家族 + 像弹窗，★ 与类名无关）·
-#           `classify_dialog`（★ 三级：auto / needs_llm / forbidden）· `dismiss` · `dismiss_via_input`
+# 文件:   `tools/sw_guard.py` —— ★ `scan_family_windows`（★ 家族 + 像弹窗，★ 与类名无关
+# ）·
+# `classify_dialog`（★ 三级：auto / needs_llm / forbidden）· `dismiss` · `dismiss_via_in
+# put`
 #         `tools/modal_dialog_forensics.py` —— ★ 复现与取证（★ 事实 292 为同一个框写的）
 #         `docs/known-facts.md` 事实 174 / 292 / 294 —— ★ 这个框的三次交手
 # 定位:   ★★★★ **为什么必须有它**（★ 2026-10-04 · 用户当场点破）：
 #   ```
-#   ★ 用户原话：★「**弹窗了你还不知道**，而且我刚刚说的弹窗检测诊断的东西，之前已经做好了，
+# ★ 用户原话：★「**弹窗了你还不知道**，而且我刚刚说的弹窗检测诊断的东西，之前已经做好了
+# ，
 #     你翻出来用，甚至**当时就是为了解决一模一样的这个弹窗而发明的**，你找一下，
 #     找出来之后**设置为这个项目运行期间一直监控**，就是别人把我们这个项目部署好之后，
 #     **一启用本项目，这个弹窗检测的功能也随之启动**」
 #   ```
 #   ★★ 而**真根因**（★ 我在本轮实测查清，且已修）：★ 既有护栏的判据里有一句
-#     `if pid is not None and p.value != pid: return True` —— ★ 而 `run_guarded` 传的**永远是**
+# `if pid is not None and p.value != pid: return True` —— ★ 而 `run_guarded` 传的**永远
+# 是**
 #     `SLDWORKS.exe` 的 pid ⇒ ★★ **`star.exe`（求解内核）拥有的弹窗被无条件跳过** ✓
 #     ★ 实测：那个 `[Simulation] 未定义载荷…` 框的 owner 是 **`star.exe`**（pid 46240），
-#     而修复前 `scan_family_windows(49384)` **回 0**、`modal_dialog_forensics` 也回 `count: 0` ✓
+# 而修复前 `scan_family_windows(49384)` **回 0**、`modal_dialog_forensics` 也回 `count: 
+# 0` ✓
 #   ★★★ 第二个原因：★ 护栏是**按条命令**开哨兵的（`run_guarded` 包一个子进程）——
 #     ★ 命令一结束哨兵就停；★ 而 `star.exe` 是 **SolidWorks 自己拉起来的**、会**在我们的命令
 #     结束之后**才弹框 ⇒ ★ **那一刻没有任何人在看** ✓
@@ -27,8 +32,10 @@
 # 官方依据: 不适用（纯 Win32 窗口枚举，★ **不碰 COM** ⇒ ★ 与"会话是否挂住"无关，永远能跑
 #           ）
 # 许可:   本仓库 MIT。★ 只用标准库 + 复用本仓既有模块。
-# ⚠ 安全：★ `auto` 档才自动点；★ `needs_llm` / `forbidden` **只记证不点**（★ 交 LLM/用户判）——
-#   ★ 与 `sw_guard.py` 同一条纪律（★ 事实 297：「点掉进度窗 = 中断一个正在跑的正常任务」）。
+# ⚠ 安全：★ `auto` 档才自动点；★ `needs_llm` / `forbidden` **只记证不点**（★ 交 LLM/用户
+# 判）——
+# ★ 与 `sw_guard.py` 同一条纪律（★ 事实 297：「点掉进度窗 = 中断一个正在跑的正常任务」）
+# 。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 

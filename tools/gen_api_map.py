@@ -73,7 +73,8 @@ DOMAIN_OF_MODULE = {
 #: （OCP/OCCT 的 `Get`、OCP 迭代器的 `Next` 等），置信度低，单独标注。
 #: 判定依据：这些模块走 OpenCascade / OCCT / 纯 Python 路线，不通过 COM。
 #: 首版生成器没做这层过滤，产出了一条
-#:   | `Get` | `ICustomPropertyManager` | ... | `advanced_geometry_ocp.py::_shape_evidence` |
+#: | `Get` | `ICustomPropertyManager` | ... | `advanced_geometry_ocp.py::_shape_evidence
+#: ` |
 #: 而该文件里根本没有 get_com_member —— 那是 `[.\s]([A-Z]\w+)\s*\(` 匹配到了 OCP 的
 #: `face.Get(0)`。与 docs/signature-audit.md 记录的假阳性同源。
 SUSPECT_MODULE_PATTERNS = (

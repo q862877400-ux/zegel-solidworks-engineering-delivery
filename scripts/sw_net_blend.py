@@ -15,11 +15,13 @@
 #   · 前置数据: `SetNetBlendDirectionData(short Direction, short InfluenceType,
 #              short TrimCurves, bool BlendClosed, bool SplitSurfaces)`
 #              —— Direction: 0 = Direction 1 / 1 = Direction 2
-#              —— InfluenceType: 0 = Global / 1 = To Next Curve / 2 = To Next Sharp / 3 = To Next Edge
+# —— InfluenceType: 0 = Global / 1 = To Next Curve / 2 = To Next Sharp / 3 = To Next Edg
+# e
 #              —— TrimCurves: 0 = False to trim / 1 = True to trim
 #              —— BlendClosed: true 闭合 · SplitSurfaces: Not used
 #   · ★★ **调用序（★ 只有官方示例给得出）**:
-#     `AI Solidworks\官方文档\…\Insert_Boundary_Feature_Example_VB.htm` 第 67–74 行逐行读出：
+# `AI Solidworks\官方文档\…\Insert_Boundary_Feature_Example_VB.htm` 第 67–74 行逐行读出
+# ：
 #       ① `ClearSelection2 True`
 #       ② `SelectByID2("", "FACE", x1,y1,z1, False, 0, Nothing, 0)` ← 第 1 个面
 #          `SelectByID2("", "FACE", x2,y2,z2, True,  0, Nothing, 0)` ← 第 2 个面（Append）
@@ -29,7 +31,8 @@
 #   ★ 单位: 官方示例的角度 `0.26179938779915` ≈ **15°** ⇒ ★ 该参数是**弧度** ✓
 #   ★ 选择: 面**没有可用的名字**（本仓事实 32）⇒ 只能**按面上的点**选 ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
-# 覆盖:   ★ 标注 `stitched` —— ★★ **本包装尚未真机验证**（红线⑥：`level` 只按真机证据变）✓
+# 覆盖:   ★ 标注 `stitched` —— ★★ **本包装尚未真机验证**（红线⑥：`level` 只按真机证据变
+# ）✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -52,18 +55,24 @@ def _select_face_by_index(model, face_index: int, append: bool):
     ★ 形态照 `scripts/sw_part.py::select_face_by_index_mark1`（2026-10-06 真机验过的那个：
       ★ 用 `IFace2::GetBox()` 取面上一点 ⇒ `SelectByID2("", "FACE", x,y,z, append, 0, callout, 0)`）✓
     """
-    #: ★★ 形态**照本仓真机验证过的** `sw_part.select_face_by_index_mark1`（规格 216 T-216-06b）：
+    #: ★★ 形态**照本仓真机验证过的** `sw_part.select_face_by_index_mark1`（规格 216 T-21
+    #: 6-06b）：
     #:   ★ **取面走 `sw_selection_spec.entities_on_body(model, "FACE", body_index=0)`** ✓
     #:   ★ **取盒走 `get_com_member(face, "GetBox")`** ✓
-    #: ★★ 为什么不能直接点属性：★ 2026-10-07 真机实测（`tools/probe_spec220_member_shape.py`）
-    #:   ★ `body.GetFaces` 报逐字「**没有这个成员**」✗ ⇒ ★ 迟到绑定的成员要走 `get_com_member` ✓
+    #: ★★ 为什么不能直接点属性：★ 2026-10-07 真机实测（`tools/probe_spec220_member_shape
+    #: .py`）
+    #: ★ `body.GetFaces` 报逐字「**没有这个成员**」✗ ⇒ ★ 迟到绑定的成员要走 `get_com_mem
+    #: ber` ✓
     import sw_selection_spec as _SS
     import sw_part                                                                  # 同目录模块
 
-    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=0`）✓
+    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=
+    #: 0`）✓
     #:   ★ 依据真机读数（第 38 轮）：★ **两次拉伸会建出两个独立的体** ✓ ——
-    #:   ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不齐"每体各取一面" ✗
-    #:   ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数**」✓
+    #: ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不
+    #: 齐"每体各取一面" ✗
+    #: ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数*
+    #: *」✓
     #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
     faces = []
     _bi = 0
@@ -88,9 +97,11 @@ def _select_face_by_index(model, face_index: int, append: bool):
     cy = (box[1] + box[4]) / 2.0
     cz = (box[2] + box[5]) / 2.0
     #: ★★ 2026-10-07（规格 220 T-220-01）：★ **mark 从 0 改成 1** ——
-    #:   ★ 依据本仓**真机验证过**的先例（`sw_part.select_face_by_index_mark1` 的 docstring 逐字）：
+    #: ★ 依据本仓**真机验证过**的先例（`sw_part.select_face_by_index_mark1` 的 docstring
+    #:  逐字）：
     #:   ★「先按面上的点 mark=0 选一次 ⇒ ClearSelection2(True) ⇒ ★★ 再 mark=1 选一次」
-    #:   ★ 且「传 **mark=0** 时 `InsertDome` 报 **0x8002000F**」⇒ ★ 这类特征要的是 **mark=1** ✓
+    #: ★ 且「传 **mark=0** 时 `InsertDome` 报 **0x8002000F**」⇒ ★ 这类特征要的是 **mark=
+    #: 1** ✓
     #:   ★ 真机读数（第 5 轮）：mark=0 时第 1 次选面回读计数 **0** ✗（第 2 次 1）
     ok = model.Extension.SelectByID2("", "FACE", cx, cy, cz, bool(append), 0,
                                      sw_part._empty_callout(), 1)
@@ -162,9 +173,12 @@ def insert_net_blend_report(
         steps.append({"step": "SetNetBlendDirectionData", "error": str(exc)})
 
     #: ⑤ 建特征 —— ★ 20 个实参**按官方顺序**（★ 别照抄示例的字面值，逐位对上）
-    #:   Type, NCurvesDir1, NCurvesDir2, HasCenterline, TessTolFactor, WantsSolid, MergeBody,
-    #:   FeatureScope, AutoSelect, Thin, Thickness1, Thickness2, ReverseThickness, ThinSolidType,
-    #:   UseSharedThickness, CapEnds, EndThickness, AutoFillet, FilletRadius, ForceNonRational
+    #: Type, NCurvesDir1, NCurvesDir2, HasCenterline, TessTolFactor, WantsSolid, MergeBo
+    #: dy,
+    #: FeatureScope, AutoSelect, Thin, Thickness1, Thickness2, ReverseThickness, ThinSol
+    #: idType,
+    #: UseSharedThickness, CapEnds, EndThickness, AutoFillet, FilletRadius, ForceNonRati
+    #: onal
     feat = fm.InsertNetBlend(
         int(blend_type), int(n_curves_dir1), int(n_curves_dir2), False, 0.0001,
         True, bool(merge_body), False, False, False,
@@ -179,7 +193,8 @@ def insert_net_blend_report(
     return {
         #: ★★★ 2026-10-07（规格 220 续 · 第 40 轮）★ **判据只留回读** ——
         #:   ★ 真机读数（第 39 轮）：★ **特征树 22 → 23**（★ 特征真建出来了 ✓）★ 而
-        #:   ★ `InsertNetBlend` 的**返回值是 `None`** ✗ ⇒ ★ 原来的 `feat is not None` 把它**误判为失败** ✗
+        #: ★ `InsertNetBlend` 的**返回值是 `None`** ✗ ⇒ ★ 原来的 `feat is not None` 把它
+        #: **误判为失败** ✗
         #:   ⇒ ★★ 这正是**事实 8**：★ **返回值/bool 不可信，只有回读的计数才算数** ✓
         "ok": after > before,                                                        # ★ 回读判据（事实 8）
         "blend_type": int(blend_type),
@@ -190,9 +205,12 @@ def insert_net_blend_report(
         "steps": steps,
         "official": "IFeatureManager::InsertNetBlend",
         "units": "★ 入参按毫米/度；COM 侧米/弧度（本仓事实 2）",
-        #: ★★★ 2026-10-07（规格 220 续 · 第 41 轮）★ **等级按真机证据提上来**（★ 红线⑥ 的正面用例）✓
-        #:   ★ 真机逐字（`tools/probe_spec220_boundary.py`）：★ **18.54 s** · ★ **0 弹窗** · ★
-        #:   `sw_alive: true` · ★★ **`surface ok=True 22→23`** · ★★ **`boss ok=True 22→23`** ✓
+        #: ★★★ 2026-10-07（规格 220 续 · 第 41 轮）★ **等级按真机证据提上来**（★ 红线⑥ 
+        #: 的正面用例）✓
+        #: ★ 真机逐字（`tools/probe_spec220_boundary.py`）：★ **18.54 s** · ★ **0 弹窗**
+        #:  · ★
+        #: `sw_alive: true` · ★★ **`surface ok=True 22→23`** · ★★ **`boss ok=True 22→23`
+        #: ** ✓
         #:   ⇒ ★ 两档**都在真机上建成**（★ 判据 = 特征树回读增量 ✓ 事实 8）✓
         "verification": "verified —— ★ 真机两档 ok=True（特征树 22→23 ×2 · 18.54 s · 0 弹窗）"
                         "（★ 规格 220 续 第 41 轮；判据 = 特征树回读增量，事实 8）",
@@ -235,7 +253,8 @@ def insert_boundary_surface_report(
         tangency_deg=tangency_deg, merge_body=merge_body,
     )
 
-#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` /
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` 
+#: /
 #:   `sw_weld_bead.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
 try:
     from .sw_feature_tree import feature_count as _feature_count
@@ -255,10 +274,13 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     import sw_part as _sp
     import sw_selection_spec as _SS
 
-    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=0`）✓
+    #: ★★★ 2026-10-07（规格 220 续 · 第 39 轮）★ **遍历所有体**（★ 不再只看 `body_index=
+    #: 0`）✓
     #:   ★ 依据真机读数（第 38 轮）：★ **两次拉伸会建出两个独立的体** ✓ ——
-    #:   ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不齐"每体各取一面" ✗
-    #:   ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数**」✓
+    #: ★ 而 `entities_on_body(..., body_index=0)` **只回第一块的 6 个面** ✗ ⇒ ★ 永远凑不
+    #: 齐"每体各取一面" ✗
+    #: ⇒ ★ 这里把**所有体**的面**串接**起来 ⇒ ★ `face_index` 的口径变成「**跨全部体计数*
+    #: *」✓
     #:   ★（★ 官方示例 `Postconditions` 逐字要"**一个面来自每个 boss-extrude**" ✓）
     faces = []
     _bi = 0
@@ -289,7 +311,8 @@ def select_face_with_fallback(model, face_index: int, append: bool,
     for (dx, dy, dz) in tries:
         model.ClearSelection2(True) if False else None       #: ★ 不清（append 语义由调用方定）
         #: ★★★ 2026-10-07（规格 220 T-220-01 第 9 轮**真机定案**）★ 选面改用
-        #:   `IEntity.Select4(Append, Callout)` ✓ —— ★ 实测（`tools/probe_spec220_append_arms.py`）：
+        #: `IEntity.Select4(Append, Callout)` ✓ —— ★ 实测（`tools/probe_spec220_append_a
+        #: rms.py`）：
         #:     ★ `SelectByID2` 按点对 0 号面**两次都是 0**（永远选不上）✗
         #:     ★ 而 `face.Select4(False)` 对**同一个面**回 **[True, 1]** ✓
         #:     ★ 且 `face.Select4(True)` 回 **[True, 2]** ⇒ **Append 正确累加** ✓

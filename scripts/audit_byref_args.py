@@ -90,7 +90,8 @@ BYREF_OK = re.compile(
     r"^\s*(?:[\w.]+\.)?_?out_\w*"        # out_i4() · _out_i4() · sw_connect.out_i4()
     r"|^\s*(?:[\w.]+\.)?_?VARIANT\s*\("  # VARIANT( · win32com.client.VARIANT(
 )
-# ⚠ 前导下划线是**必须**的：本项目既有 `out_i4`（`sw_connect`）也有 `_out_i4`（工具里的别名），
+# ⚠ 前导下划线是**必须**的：本项目既有 `out_i4`（`sw_connect`）也有 `_out_i4`（工具里的
+# 别名），
 #   第一版正则只认 `out_` 开头 ⇒ 把我自己正确的调用报成违规（**工具自己的假阳性**）。
 
 
@@ -169,7 +170,8 @@ def byref_variables(path: Path) -> set[str]:
     src = path.read_text(encoding="utf-8", errors="replace")
     tree = ast.parse(src)
     names: set[str] = set()
-    #: ★★ 2026-10-03（接手轮）：把**本文件里构造器的别名**（`import out_i4 as _oi4`）也算进去 ——
+    #: ★★ 2026-10-03（接手轮）：把**本文件里构造器的别名**（`import out_i4 as _oi4`）也
+    #: 算进去 ——
     #:   ★ 否则 `err_out = _oi4()` 这种"先构造后传出"会被漏记 ⇒ **假阳性**（实测 7 处）。
     _aliases = sorted(byref_alias_names(path))
     _alias_alt = ("|" + "|".join(re.escape(a) for a in _aliases)) if _aliases else ""
@@ -233,7 +235,8 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
     bad: list[dict] = []
     checked = 0
     byref_vars = byref_variables(path)          # 先构造后传出的合法 by-ref 变量
-    #: ★★ 2026-10-03（接手轮）：**内联**用别名构造的也算合法（如 `_oi4()` 直接写进实参）。
+    #: ★★ 2026-10-03（接手轮）：**内联**用别名构造的也算合法（如 `_oi4()` 直接写进实参）
+    #: 。
     _aliases = byref_alias_names(path)
     _alias_inline = ([re.compile(r"^\s*%s\s*\(" % re.escape(a)) for a in _aliases]
                      if _aliases else [])
@@ -249,7 +252,8 @@ def scan(path: Path, table) -> tuple[list[dict], int]:
             continue
         checked += 1
         # 任一候选签名认为「这位是 &」且实参没包 ⇒ 可疑
-        # ⚠ 每个调用点**只报一次**：第一版把 break 放在内层 ⇒ 两个候选签名会报两遍（重复）。
+        # ⚠ 每个调用点**只报一次**：第一版把 break 放在内层 ⇒ 两个候选签名会报两遍（重复
+        # ）。
         reported = False
         for sig_name, plist in cands:
             if reported:

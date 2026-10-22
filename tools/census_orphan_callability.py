@@ -120,7 +120,8 @@ def main() -> int:
                 first = str(exc).splitlines()[0][:120]
                 entry.update(result="raised", ms=round((time.time() - t0) * 1000),
                              exc_type=type(exc).__name__, detail=first)
-                # ⚠ 把 `needs selection / requires …` 一类**前置条件**与**真异常**分开记，
+                # ⚠ 把 `needs selection / requires …` 一类**前置条件**与**真异常**分开记
+                # ，
                 #   但**不自动判定**是缺陷（由人看）
                 print("   ✗ %-46s %s: %s" % (fn_name, type(exc).__name__, first[:52]))
             rows.append(entry)

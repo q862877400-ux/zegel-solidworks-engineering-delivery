@@ -12,13 +12,15 @@
 #     ★ `try: from .X import Y` / ★ `except ImportError: from X import Y` ✓
 #   ⇒ ★ 本门禁把这个写法**变成可执行的不变量** ✓
 # 判据:   ★★ **顶层 / 函数内的 `from .X import Y` 必须紧跟在 `try:` 之后** ✓
-#   ★★ **棘轮（ratchet）**：★ 存量欠账记在 `BASELINE_COUNT`（★ 只许**变少**、★ 不许变多）——
+# ★★ **棘轮（ratchet）**：★ 存量欠账记在 `BASELINE_COUNT`（★ 只许**变少**、★ 不许变多）—
+# —
 #     ★ 一次改 22 个文件风险太高（★ 事实 61：批量改动要先看 `deletions`）⇒
 #     ★ **先钉住不许增长**，★ 再逐个还 ✓
 #   ★★ **注意（我第一版栽在这）**：★ 判据必须用 `startswith("try:")` ——
 #     ★ 因为**我自己的修法**写的是 `try:   # noqa: SIM105`（**带注释**）⇒
 #     ★ 用 `== "try:"` 会把**已经修好的**也算成"没兜底" ✗（★ 真机现象：修完仍是 54 处）✓
-#   ★ 负例（★ 证明门禁真能抓到）：★ 用**修复前**的原文（`git show HEAD:<file>`）跑 ⇒ **必须命中** ✓
+# ★ 负例（★ 证明门禁真能抓到）：★ 用**修复前**的原文（`git show HEAD:<file>`）跑 ⇒ **必
+# 须命中** ✓
 # 官方依据: 无 —— ★ Python 语言语义（相对导入要求有父包），如实标注 ✓
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -32,12 +34,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: ★★ 中文 Windows 上打印 `⇒`（U+21D2）会 `UnicodeEncodeError: 'gbk' codec can't encode character` ✓
-#:   ★ 2026-10-07 实测：本门禁**逻辑上是绿的**（**35 = 基线 35**，加 `PYTHONIOENCODING=utf-8` 跑即 exit 0）✗
-#:   ★★ 而**控制台是 GBK 时它整个崩掉** ⇒ ★ `release_check` 那条子进程拿到的是**退出码 ≠ 0**
+#: ★★ 中文 Windows 上打印 `⇒`（U+21D2）会 `UnicodeEncodeError: 'gbk' codec can't encode 
+#: character` ✓
+#: ★ 2026-10-07 实测：本门禁**逻辑上是绿的**（**35 = 基线 35**，加 `PYTHONIOENCODING=utf
+#: -8` 跑即 exit 0）✗
+#: ★★ 而**控制台是 GBK 时它整个崩掉** ⇒ ★ `release_check` 那条子进程拿到的是**退出码 ≠ 0
+#: **
 #:     ⇒ ★★ 报成 FAIL —— ★ 那是**事实 58**（`subprocess` + GBK）**在门禁自己身上**的又一例 ✓
 #:   ⚠ `release_check.py` **不给子进程设** `PYTHONIOENCODING`/`PYTHONUTF8`（已核），
-#:     ★ 所以**必须在门禁自己这里兜住** —— 与 `check_refuted_patterns.py` 的既有修法逐字同型 ✓
+#: ★ 所以**必须在门禁自己这里兜住** —— 与 `check_refuted_patterns.py` 的既有修法逐字同型
+#:  ✓
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
 except Exception:                                                         # noqa: BLE001

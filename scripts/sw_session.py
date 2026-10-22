@@ -198,20 +198,24 @@ from sw_connect import get_com_member  # noqa: E402
 from sw_feature_readback import feature_names  # noqa: E402
 
 
-# ── objective② / 四家缺口 `undo`：**撤销（`IModelDoc2.EditUndo2`）** ─────────────────────
-# ★★★★ 2026-10-03（轮 395）**补 `undo`** —— objective② 三层证据判它是**真缺**（事实 311），
+# ── objective② / 四家缺口 `undo`：**撤销（`IModelDoc2.EditUndo2`）** ──────────────────
+# ───
+# ★★★★ 2026-10-03（轮 395）**补 `undo`** —— objective② 三层证据判它是**真缺**（事实 311
+# ），
 #   而官方入口明确：`C:\swapi\types\IModelDoc2\EditUndo2.md`
 #   ```
 #   void EditUndo2(int Steps)   —— 「Undoes the specified number of actions in the active
 #                                    SOLIDWORKS Design session」
-#   · EditUndo(uint NSteps)  **Obsolete**（★ 后继是 EditUndo2）· SketchUndo() 零参（★ 撤最后一条草图画线）
+# · EditUndo(uint NSteps)  **Obsolete**（★ 后继是 EditUndo2）· SketchUndo() 零参（★ 撤最
+# 后一条草图画线）
 #   ```
 # ★★ **为什么它对自动化 agent 特别有用**：★ 我们的工具会**改模型**；★ 一旦某一步改错，
 #   ★ **没有撤销就意味着只能重来**（★ 或留下脏状态）。★ 它是**我们自己的改动**的回退手段。
 # ★ 规则 2 / 6：★ 对外只暴露 `steps`（★ 个数，★ 不是长度 ⇒ 无单位）；★ 它回 **`void`**
 #   ⇒ ★★ 判据**不能是返回值**，只能是「**特征树退回了**」（★ 建完/撤完都要回读）。
 # ★ ⚠ **边界**：★ `EditUndo2` 撤的是「**会话里的动作**」—— ★ 它**不区分**是不是我们做的
-#   ⇒ ★ 所以本工具**只该在我们自己的改动之后调用**（★ 调用方负责；★ 这是**使用纪律**，不是本函数能强制的）。
+# ⇒ ★ 所以本工具**只该在我们自己的改动之后调用**（★ 调用方负责；★ 这是**使用纪律**，不是
+# 本函数能强制的）。
 
 
 def undo_report(model, steps: int = 1) -> dict:
@@ -254,32 +258,44 @@ def undo_report(model, steps: int = 1) -> dict:
                  "★ 官方 1 参 · 反射 arity 1 · `EditUndo` 已 Obsolete"}
 
 
-# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**重建**（三档 mode 一条工具）──────────────
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**重建**（三档 mode 一条工具）──────
+# ────────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_session.py —— 追加 `rebuild_report`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **235 `rebuil
 #           d_document`**
-#   + idx **236 `rebuild_model`**。★★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字要求：
-#   「与 236 **合并成一条工具**（三档 mode），**不建两条**」—— 理由是「两条工具做同一件事会在
+# + idx **236 `rebuild_model`**。★★ 裁决书（`docs/recon-207/adjudication.md` §一）逐字要
+# 求：
+# 「与 236 **合并成一条工具**（三档 mode），**不建两条**」—— 理由是「两条工具做同一件事
+# 会在
 #   能力清单里留下两条永远同进同退的条目」✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过 + 出厂类型库反射 arity 互证）：
-#   · `C:\swapi\types\IModelDoc2\EditRebuild3.md` —— `System.bool EditRebuild3()`（**零参**）
-#     ★★ `## Remarks` 逐字：「This method only works **in-context of the active document**.」
-#   · `C:\swapi\types\IModelDoc2\ForceRebuild3.md` —— `System.bool ForceRebuild3(System.bool TopOnly)`
-#     ★ `## Parameters` 逐字：TopOnly「True rebuilds the top-level assembly only; false rebuilds
+# · `C:\swapi\types\IModelDoc2\EditRebuild3.md` —— `System.bool EditRebuild3()`（**零参*
+# *）
+# ★★ `## Remarks` 逐字：「This method only works **in-context of the active document**.
+# 」
+# · `C:\swapi\types\IModelDoc2\ForceRebuild3.md` —— `System.bool ForceRebuild3(System.bo
+# ol TopOnly)`
+# ★ `## Parameters` 逐字：TopOnly「True rebuilds the top-level assembly only; false rebu
+# ilds
 #       the top-level assembly and all subassemblies」
-#   · `C:\swapi\types\IModelDocExtension\ForceRebuildAll.md` —— `System.bool ForceRebuildAll()`（**零参**）
-#     ★ 摘要逐字：「Forces a rebuild of all features in **all configurations without activating
+# · `C:\swapi\types\IModelDocExtension\ForceRebuildAll.md` —— `System.bool ForceRebuildA
+# ll()`（**零参**）
+# ★ 摘要逐字：「Forces a rebuild of all features in **all configurations without activat
+# ing
 #       each configuration**」（★ 这正是它与 `ForceRebuild3` 的**分工**：一个只动活动配置、
 #       一个**不动配置就能重建全部**）
-#   · `C:\swapi\types\IModelDocExtension\NeedsRebuild2.md` —— `System.int NeedsRebuild2 {get;}`
-#   · `C:\swapi\enums\swModelRebuildStatus_e.md` —— `FullyRebuilt=0` · `NonFrozenFeatureNeedsRebuild=1`
+# · `C:\swapi\types\IModelDocExtension\NeedsRebuild2.md` —— `System.int NeedsRebuild2 {g
+# et;}`
+# · `C:\swapi\enums\swModelRebuildStatus_e.md` —— `FullyRebuilt=0` · `NonFrozenFeatureNe
+# edsRebuild=1`
 #     · `FrozenFeatureNeedsRebuild=2`；★ 官方 `## Description` 逐字写 **Bitmask**
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
-# ★★★ **本函数最容易犯的错（裁决书点名的硬约束）**：★ `EditRebuild3` 是**方法**、不是**属性** ——
+# ★★★ **本函数最容易犯的错（裁决书点名的硬约束）**：★ `EditRebuild3` 是**方法**、不是**
+# 属性** ——
 #   三家外部项目都当属性读（`_get(doc, 'EditRebuild3')`）⇒ ★ 照抄会拿到 **bound method**，
 #   ★★ 而**拿它当判据会永远为真**（函数对象本身恒真）⇒ ★★ 本函数**必须真的调用它**，
 #   ★★ 且**判据一律用回读**（`NeedsRebuild2` + 特征树计数 + 包围盒），**不用那个返回值**✓
@@ -431,10 +447,12 @@ def rebuild_report(model, mode: str = "edit", *, top_only: bool = False) -> dict
 #   ★「**预检门禁**：真机跑开始前枚举已打开的文档，只要有不是我方的就拒绝开始」✓
 # ★ 官方依据（铁律 4 的第 0 步，已读）：`ISldWorks.GetDocuments` ——
 #   "Gets the open documents in this SOLIDWORKS Design session"（返回文档数组）；
-#   ★ 配套 `GetDocumentCount` 拿数量；★ 官方示例 `Get_Paths_of_Open_Documents` 给的调用序是
+# ★ 配套 `GetDocumentCount` 拿数量；★ 官方示例 `Get_Paths_of_Open_Documents` 给的调用序
+# 是
 #   `GetDocumentCount` → `GetDocuments` → 逐档 `IModelDoc2.GetPathName` ✓
 # ★ 为什么不用 `GetFirstDocument`：★ 它的官方 Remarks 明写「若最先打开的是装配体，
-#   则返回该装配体里**第一个组件**文档」⇒ ★ **它不是一次完整枚举**，不能用来判"有哪些开着" ✓
+# 则返回该装配体里**第一个组件**文档」⇒ ★ **它不是一次完整枚举**，不能用来判"有哪些开着"
+#  ✓
 # ⚠ 限度：★ path 为空（新建未存盘的文档）**按"非我方"处理**（保守）；
 #   ★ 真要放行未命名文档，得显式传 `allow_untitled=True` ✓
 
@@ -490,9 +508,11 @@ def open_documents(sw) -> dict:
             except Exception:                                           # noqa: BLE001
                 title = ""
             #: ★★ **未保存标记**用官方成员读（★ 不是从窗口标题抠 `*`）：
-            #:   `IModelDoc2.GetSaveFlag` 的官方原文 = "Gets whether the document is currently dirty
+            #: `IModelDoc2.GetSaveFlag` 的官方原文 = "Gets whether the document is curre
+            #: ntly dirty
             #:   and needs to be saved" ⇒ ★ 真 = **有未保存改动** ✓
-            #:   ★ 读不到时记 `None`（**未知**）—— ★ 绝不默认"没有未保存"（那会让人以为杀进程是安全的）✓
+            #: ★ 读不到时记 `None`（**未知**）—— ★ 绝不默认"没有未保存"（那会让人以为杀
+            #: 进程是安全的）✓
             try:
                 dirty = bool(get_com_member(item, "GetSaveFlag"))
             except Exception:                                           # noqa: BLE001
@@ -506,7 +526,8 @@ def open_documents(sw) -> dict:
         "documents": documents,
         "count_matches": (count is None or not documents or count == len(documents)),
         "readback_problem": problem,
-        #: ★★ 有未保存改动的文档数 —— ★ 它是"能不能安全杀进程/关会话"的依据（评审点名的风险）✓
+        #: ★★ 有未保存改动的文档数 —— ★ 它是"能不能安全杀进程/关会话"的依据（评审点名的
+        #: 风险）✓
         "dirty_count": sum(1 for d in documents if d.get("dirty") is True),
         "dirty_unknown": sum(1 for d in documents if d.get("dirty") is None),
     }

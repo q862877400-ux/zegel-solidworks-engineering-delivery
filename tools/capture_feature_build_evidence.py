@@ -157,7 +157,8 @@ def main() -> int:
                                                       "raised": type(exc).__name__,
                                                       "msg": str(exc)[:90]}
 
-        #: ★ 包围盒断言：结构已核过 —— `{"min": [...], "max": [...], "size": [dx,dy,dz]}`，**毫米**
+        #: ★ 包围盒断言：结构已核过 —— `{"min": [...], "max": [...], "size": [dx,dy,dz]}
+        #: `，**毫米**
         #:   （`sw_part.get_bounding_box` 的 docstring 明写；★ 该函数有一处**已知陷阱**：
         #:    第一版曾误用 `sw_connect.mm()`，被数值冒烟当场抓住 ⇒ 这里**必须断言数字**）
         def _size(bb):

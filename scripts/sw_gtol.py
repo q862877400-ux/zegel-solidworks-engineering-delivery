@@ -77,7 +77,8 @@ from __future__ import annotations
 
 from pathlib import Path as _Path
 
-#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_feature_names_snapshot` 按顶层路径 import `sw_part`）
+#: ★★ 本仓库 `scripts/` 的绝对路径（★ 供 `_feature_names_snapshot` 按顶层路径 import `sw
+#: _part`）
 _REPO_SCRIPTS = _Path(__file__).resolve().parent
 
 try:
@@ -85,7 +86,8 @@ try:
 except ImportError:      # pragma: no cover - 直接以 scripts/ 为根导入时
     from sw_connect import get_com_member, call_com_member# type: ignore
 
-#: `swGtolIndicatorBorderType_e` —— **取出厂反射**（与 `C:\swapi\enums\` 的同名 md 一致）。
+#: `swGtolIndicatorBorderType_e` —— **取出厂反射**（与 `C:\swapi\enums\` 的同名 md 一致
+#: ）。
 GTOL_INDICATOR_BORDER = {
     "orientation_plane": 0,     # swGtolIndicatorBorderType_OrientationPlane
     "intersection_plane": 1,    # swGtolIndicatorBorderType_IntersectionPlane
@@ -120,10 +122,13 @@ GTOL_GEOM_SYMBOL = {
 #: 官方 `GetFrame` 的 `FrameIndex` 是 **1 基**。
 FIRST_FRAME = 1
 
-#: ★★★ **官方限制**（轮 166 读 `C:/swapi/types/IGtolFrame/AddIndicator.md` 的 Remarks 读出）：
-#: `IGtolFrame.AddIndicator` 的 `TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e` 成员。
+#: ★★★ **官方限制**（轮 166 读 `C:/swapi/types/IGtolFrame/AddIndicator.md` 的 Remarks 读
+#: 出）：
+#: `IGtolFrame.AddIndicator` 的 `TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e` 成
+#: 员。
 #: ⚠ 而 `GTOL_GEOM_SYMBOL` 里另外 14 个（`flatness` / `position` / `straightness` …）
-#: **都不在清单里** ⇒ 传它们 `AddIndicator` **必然返回 `False`**（过去会被读成"到不了"）。
+#: **都不在清单里** ⇒ 传它们 `AddIndicator` **必然返回 `False`**（过去会被读成"到不了"）
+#: 。
 GTOL_INDICATOR_ALLOWED_TOL_TYPES = {
     20: "angularity", 22: "parallelism", 21: "perpendicularity",
     25: "circular_runout", 13: "symmetry",
@@ -224,11 +229,14 @@ def ensure_gtol_frame(gtol, frame: int = FIRST_FRAME):
     #:   新建后 AddFrame()【**旧顺序**，未转换】 ⇒ **False**   ← 轮 120 就是这么失败的
     #:   ConvertFormat()                          ⇒ 0（成功）
     #:   ★ AddFrame()【**转换之后**】              ⇒ **True**
-    #:   GetFrameCount                            ⇒ **2**，且 `GetFrame(1)/(2)` **拿到对象**
+    #: GetFrameCount                            ⇒ **2**，且 `GetFrame(1)/(2)` **拿到对象
+    #: **
     #: ```
     #: ★★★ 官方 `IGtol.AddFrame` 的 Remarks 原文：
-    #:   > This method is valid only if this Gtol was created in SOLIDWORKS **2022 or later**.
-    #:   ⇒ 新建的 Gtol **默认是旧格式** ⇒ **必须先 `ConvertFormat()` 升级到 2022 格式，再 `AddFrame()`**。
+    #: > This method is valid only if this Gtol was created in SOLIDWORKS **2022 or late
+    #: r**.
+    #: ⇒ 新建的 Gtol **默认是旧格式** ⇒ **必须先 `ConvertFormat()` 升级到 2022 格式，再 
+    #: `AddFrame()`**。
     #:   ⚠ 轮 120 的顺序是 `AddFrame()` **先于** `ConvertFormat()` ⇒ **必然 False**，
     #:     却被记成「2022 格式的帧路径**取不到帧**」⇒ ★ 那是**顺序问题**，不是「到不了」。
     try:
@@ -280,10 +288,14 @@ def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
     :returns: `True`。
     :raises RuntimeError: 取不到该帧，或官方返回 `False`（**不静默成功**）。
     """
-    #: ★★★ **官方限制**（轮 166 读 `C:/swapi/types/IGtolFrame/AddIndicator.md` 的 Remarks 读出）：
-    #: `IGtolFrame.AddIndicator` 的 `TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e` 成员：
-    #: `swGcsANG(20)` · `swGcsPARALLEL(22)` · `swGcsPERP(21)` · `swGcsCIRCRUNOUT(25)` · `swGcsSYMMETRY(13)`。
-    #: ⚠ 而 `GTOL_GEOM_SYMBOL` 里另外 14 个（`flatness` / `position` / `straightness` …）
+    #: ★★★ **官方限制**（轮 166 读 `C:/swapi/types/IGtolFrame/AddIndicator.md` 的 Remark
+    #: s 读出）：
+    #: `IGtolFrame.AddIndicator` 的 `TolType` **只能是这 5 个** `swGtolGeomCharSymbol_e`
+    #:  成员：
+    #: `swGcsANG(20)` · `swGcsPARALLEL(22)` · `swGcsPERP(21)` · `swGcsCIRCRUNOUT(25)` · 
+    #: `swGcsSYMMETRY(13)`。
+    #: ⚠ 而 `GTOL_GEOM_SYMBOL` 里另外 14 个（`flatness` / `position` / `straightness` …
+    #: ）
     #: **都不在清单里** ⇒ 传它们 `AddIndicator` **必然返回 `False`**。
     #: ★ 所以在这里加一道校验，让**错值当场说清楚**（过去会被读成"到不了"）。
     if int(tol_type) not in GTOL_INDICATOR_ALLOWED_TOL_TYPES:
@@ -323,7 +335,8 @@ def add_gtol_indicator(gtol, *, tol_type, datum: str = "",
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自建（**不是**从四家外部 MCP 项目移植）。
 # 依据:   ① 出厂类型库反射 `iface_sldworks.txt`：
-#            `Object InsertGtol()` · `Object GetFrame(Int32)` · `Boolean AddIndicator(Int32, Int32, String)`
+# `Object InsertGtol()` · `Object GetFrame(Int32)` · `Boolean AddIndicator(Int32, Int32,
+#  String)`
 #         ② `C:\swapi\types\IModelDoc2\InsertGtol.md`（引线/原点的 Remarks）
 #         ③ `C:\swapi\types\IGtol\GetFrame.md`（`FrameIndex` **1 基**）
 #         ④ `C:\swapi\types\IGtolFrame\AddIndicator.md`（三个参数的枚举出处）

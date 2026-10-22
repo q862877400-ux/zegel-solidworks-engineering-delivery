@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_structural_member.py
 # 定位:   ★ 2026-10-03（轮 428）`plan-200r-v3` **段 2（焊件族）**；★ 承段 1 的收口。
-#   ★★ **而本轮先做了一件侦察**（★ 按 AGENTS.md 的顺序：dead-ends → limitations → facts → 动手）：
+# ★★ **而本轮先做了一件侦察**（★ 按 AGENTS.md 的顺序：dead-ends → limitations → facts → 
+# 动手）：
 #     ★ 而 `capabilities.yaml` 的 `weldment_cut_list` 条目**早就写明**了卡点：
 #       「**2026-10-02（轮 364）真因查明：本机没装「焊件轮廓库」（Weldment Profiles）** ⇒
 #         所以报「没有可写入切割清单的结构构件实体」**不是代码问题**，而是**建不出结构构件**」
@@ -16,14 +17,16 @@
 #       ```
 #     ⇒ ★★ **即：★ 前置现在是**齐的****（★ 而轮 364 那条结论**要更新**）✓
 #   ★★ **而其余两件都是"先找后搓"找到的现成物**（★ 我差点自己写）：
-#     · ★ `sw_sketch.get_sketch_segments(sketch)` —— ★ **取草图线段**（★ `ISketch.GetSketchSegments`）✓
+# · ★ `sw_sketch.get_sketch_segments(sketch)` —— ★ **取草图线段**（★ `ISketch.GetSketchS
+# egments`）✓
 #     · ★ `sw_part` 里那条现成的取 `ISketch` 的路：`FeatureByName` → `GetSpecificFeature2` ✓
 #   ★★ **判据**：★ 这条用的是**特征树**（★ 与段 1 的 `Count` 完全不同的一条判据家族）——
 #     ★ 收集前后**特征类型名集合**，★ 判「多了 `WeldmentFeature` 与结构构件」✓
 #   ⚠ 只新建、**不保存**（★ 硬约束⑦；★ 轮廓是**已在盘上的**外部文件，★ 零件在内存里）。
 # 官方依据: `IFeatureManager.InsertStructuralWeldment5`（★ `sw_weldment.create_structura
 #           l_member` 已在用）·
-#   `ISketch.GetSketchSegments()`（★ 出厂类型库反射：**0 参** → Object）· `IFeature.GetSpecificFeature2`
+# `ISketch.GetSketchSegments()`（★ 出厂类型库反射：**0 参** → Object）· `IFeature.GetSpe
+# cificFeature2`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

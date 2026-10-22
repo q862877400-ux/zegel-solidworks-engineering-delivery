@@ -107,10 +107,14 @@ SPECS_BATCH22 = [
         title="Extrude a Boss (add material)",
         module="sw_part", function="extrude_boss",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
-        #: ★★★★ 2026-10-04（接手轮）**换算修正（真机定案）** —— 原为 `{"depth_mm": "depth"}`，
-        #:   那是**只改名、不换算**，而 `FeatureExtrusion3` 的 D1 吃**米** ⇒ 传 40（意图 40 mm）
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★★★★ 2026-10-04（接手轮）**换算修正（真机定案）** —— 原为 `{"depth_mm": "dept
+        #: h"}`，
+        #: 那是**只改名、不换算**，而 `FeatureExtrusion3` 的 D1 吃**米** ⇒ 传 40（意图 4
+        #: 0 mm）
         #:   会建出 **40 米**高的柱子（★ 真机：俯视图里就是"一根细柱"）✓✗
         #:   ★ 对照组：`create_basic_part` 每处都调 `mm()` ⇒ 它建的 40×40×10 盒是对的 ✓
         param_alias=dict(_consumed("depth_mm")),
@@ -135,7 +139,8 @@ SPECS_BATCH22 = [
         module="sw_part", function="extrude_cut",
         inject="model",
         #: ★ 2026-10-03（轮 461）**补漏掉的 inject** ✓
-        #: ★★★★ 2026-10-04（接手轮）**同样补换算**（与 boss / midplane 同一处根因、同一修法）✓
+        #: ★★★★ 2026-10-04（接手轮）**同样补换算**（与 boss / midplane 同一处根因、同一
+        #: 修法）✓
         param_alias=dict(_consumed("depth_mm")),
         derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
@@ -164,9 +169,11 @@ SPECS_BATCH22 = [
         #:   ★★★ **回退是错的，根因是我读错了单位**：`part_bounding_box` 返回的是**米** ——
         #:     由**标定实验**定死（建 40×40×10 的盒 ⇒ 该工具回 `[0.04, 0.04, 0.01]`）⇒
         #:     ★ 所以"盒 X = 84.3"意味着 **84.3 米**，不是 84.3 mm ✓
-        #:   ★★★★ **分辨性序列**（`SetSystemValue3` 依次写 0.0843 / 84.3 / 84300，每次读回包围盒）：
+        #: ★★★★ **分辨性序列**（`SetSystemValue3` 依次写 0.0843 / 84.3 / 84300，每次读回
+        #: 包围盒）：
         #:     只有 **0.0843** 让盒变成 0.0843 m（= 84.3 mm）⇒ ★★ **D1 的口径是米，定案** ✓
-        #:   ⇒ ★ 教训：**"两个读数一致"不等于"读对了单位"** —— 必须先做一个**已知尺寸的标定实验**，
+        #: ⇒ ★ 教训：**"两个读数一致"不等于"读对了单位"** —— 必须先做一个**已知尺寸的标
+        #: 定实验**，
         #:     再拿别的数去比（★ 与事实 517 同族：口径不清时先量、别推理）✓
         param_alias=dict(_consumed("total_depth_mm")),
         derived_args=lambda p: _m_of_mm(p, "total_depth_mm"),

@@ -5,11 +5,13 @@
 # 定位:   ★ 阶段 5 同族继续：★ `查 × 特征` 官方 **451**、★ 我们 **12** ⇒ ★ **本族做 `r
 #           evolve`** ✓
 #   **官方依据（★ 逐字）**：
-#     · ★ `GetRevolutionAngle(bool Forward)` ⇒ `## Returns: **Angle of revolution**`（★ **无单位**）
+# · ★ `GetRevolutionAngle(bool Forward)` ⇒ `## Returns: **Angle of revolution**`（★ **无
+# 单位**）
 #       ⇒ ★★ **而那要看是**度**还是**弧度**** ✓
 #     · ★ `GetWallThickness(bool Forward)` ⇒ `## Returns: Wall thickness`、
 #       ★ `## Remarks: **This method only affects thin features.**` ✓
-#     · ★ `GetAxisType()` ⇒ `swSelectType_e` ⇒「`swSelDATUMAXES` / `swSelEDGES` / `swSelSK…`」✓
+# · ★ `GetAxisType()` ⇒ `swSelectType_e` ⇒「`swSelDATUMAXES` / `swSelEDGES` / `swSelSK…`
+# 」✓
 #   ★★★ **判据（★ 可核）**：
 #     ★ 建一个**30°** 的旋转（★ 本仓 `revolve_boss` 收**度**）⇒
 #       · ★ 若 `GetRevolutionAngle` 回 **≈30.0** ⇒ **度** ✓
@@ -68,7 +70,8 @@ def main() -> int:
     step("new_part", title=str(get_com_member(model, "GetTitle")))
 
     #: ★ 轮廓：★ 一个**矩形**（★ 它绕一条中心线转 30° ⇒ 得到一段"扇形环"体）✓
-    #:   ★★ 用 `sketch_corner_rectangle` —— ★ 它在本仓**已改成 `get_com_member` 形态**（★ 轮 126）✓
+    #: ★★ 用 `sketch_corner_rectangle` —— ★ 它在本仓**已改成 `get_com_member` 形态**（★ 
+    #: 轮 126）✓
     with P.sketch(model, "Front Plane") as sk:
         P.sketch_corner_rectangle(model, 10.0, 0.0, 20.0, 10.0)
         #: ★ 中心线（★ 旋转轴）—— ★ 沿 Y 轴、★ 在 x=0 ✓

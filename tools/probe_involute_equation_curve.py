@@ -73,7 +73,8 @@ def _one(sw, tag, xexpr, yexpr, t0, t1):
         row["seg_after"] = after
         row["new_segments"] = (after - before) if (after >= 0 and before >= 0) else None
         row["ok"] = bool(row["new_segments"] and row["new_segments"] > 0)
-        #: ★★ 若是样条，★ 取回它的方程参数（★ 官方 `ISketchSpline::GetEquationParameters2`）——
+        #: ★★ 若是样条，★ 取回它的方程参数（★ 官方 `ISketchSpline::GetEquationParameters
+        #: 2`）——
         #:   ★ 那能证明「SolidWorks 认了这条方程」，★ 而不只是「画了点什么」✓
         try:
             sk = C.get_com_member(doc, "GetActiveSketch2")

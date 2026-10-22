@@ -10,13 +10,16 @@
 #       （**pywin32 迟到绑定**）上**取不到**（权威类型库里有该成员，但 CO…）」
 #       —— ★ 而那正是**事实 386/387 那一族的形态** ⚠
 #     · 事实 387 定了手法：**见到取不到，不要就定性为「到不了」** ——
-#       先走 `_oleobj_.GetIDsOfNames(名)` + `Invoke(dispid, 0, DISPATCH_METHOD, True, 参)` 试一次 ✓
+# 先走 `_oleobj_.GetIDsOfNames(名)` + `Invoke(dispid, 0, DISPATCH_METHOD, True, 参)` 试
+# 一次 ✓
 #
 #   ★★ **本轮先测到的两件事**（★ 已足以改变说法）：
-#     · `GetIDsOfNames("InsertWeldmentCutList2")` ⇒ **dispid = 174**（★ **不是 1** ⇒ 路径是对的）
+# · `GetIDsOfNames("InsertWeldmentCutList2")` ⇒ **dispid = 174**（★ **不是 1** ⇒ 路径是
+# 对的）
 #     · `GetIDsOfNames("InsertWeldmentCutList")`  ⇒ **dispid = 77**
 #     · 而 `getattr(fm, "InsertWeldmentCutList2")` ⇒ **`NoneType`**（★ 连 3 元组都不是）
-#     ⇒ ★ **故「取不到」这个说法要精确化**：★ 名字**是已知的**、★ `getattr` 那条**回 None**。
+# ⇒ ★ **故「取不到」这个说法要精确化**：★ 名字**是已知的**、★ `getattr` 那条**回 None**
+# 。
 #
 #   ★ 官方签名（`C:\swapi\types\IFeatureManager\`）：
 #     `Feature InsertWeldmentCutList2( System.object Bodies )` —— **1 参**
@@ -58,7 +61,8 @@ def main() -> int:
     doc = None
     try:
         doc = C.new_document(sw, "part")
-        #: ★ \u5efa\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4e0d\u662f\u710a\u4ef6 \u2014\u2014 \u672c\u63a2\u9488\u53ea\u95ee\u8def\u5f84\u901a\u4e0d\u901a\uff09
+        #: ★ \u5efa\u4e00\u4e2a\u5b9e\u4f53\uff08\u2605 \u4e0d\u662f\u710a\u4ef6 \u2014\
+        #: u2014 \u672c\u63a2\u9488\u53ea\u95ee\u8def\u5f84\u901a\u4e0d\u901a\uff09
         P.start_sketch(doc, plane_name="Front Plane")
         C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateCornerRectangle",
                          0.0, 0.0, 0.0, 0.04, 0.02, 0.0)
@@ -84,7 +88,8 @@ def main() -> int:
                                 "err": "%s: %s" % (type(exc).__name__, str(exc)[:120]),
                                 "code": getattr(exc, "args", (None,))[0]})
 
-        #: \u2605 \u2461 1 \u53c2\u90a3\u6761\uff08dispid 174\uff09\u2014\u2014 \u4e09\u79cd\u5305\u88c5
+        #: \u2605 \u2461 1 \u53c2\u90a3\u6761\uff08dispid 174\uff09\u2014\u2014 \u4e09\u
+        #: 79cd\u5305\u88c5
         bodies = list(C.get_com_member(doc, "GetBodies2", -1, True) or [])
         for tag, mk in (
             ("CutList2(\u7a7a\u6570\u7ec4)", lambda: VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, [])),

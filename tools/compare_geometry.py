@@ -47,13 +47,16 @@ import sys
 from pathlib import Path
 
 # ── 来源 ─────────────────────────────────────────────────────────────────────
-# 仓库:   `Bennyco86/q3ds-solidworks-mcp`（= `eyfel/mcp-server-solidworks` 即 **SolidPilot** 的 fork）
-#         ★ 该来源的许可是 **AGPL-3.0** ⇒ ★ **按铁律 6「只读思想」**：本文件**不抄**其代码、**不抄**其文本，
+# 仓库:   `Bennyco86/q3ds-solidworks-mcp`（= `eyfel/mcp-server-solidworks` 即 **SolidPil
+# ot** 的 fork）
+# ★ 该来源的许可是 **AGPL-3.0** ⇒ ★ **按铁律 6「只读思想」**：本文件**不抄**其代码、**不
+# 抄**其文本，
 #         ★ 只搬**判据与阈值**（拓扑全等 + |ΔV| ≤ 1% + |ΔA| ≤ 1% 这个公开的判据口径）。
 # 文件:   tools/compare_geometry.py —— 本文件（判据实现；★ **代码是本仓库自己写的**）
 # 定位:   真机证据的**几何等价判据**（★ 与「特征类型名」判据互补，事实 242）。
 # 官方签名依据: `C:\swapi\types\IMassProperty\`（`Volume` / `SurfaceArea`）·
-#   `C:\swapi\types\IModelDocExtension\CreateMassProperty.md` · `C:\swapi\types\IBody2\GetFaces.md`
+# `C:\swapi\types\IModelDocExtension\CreateMassProperty.md` · `C:\swapi\types\IBody2\Get
+# Faces.md`
 # 许可:   本文件 MIT（本仓库自身）—— ★ **本仓库全部代码均为 MIT**，无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -99,8 +102,10 @@ def collect_geometry(model) -> dict:
         #: ★★★ 2026-10-01（轮 321）**不要乘**：真机实测一块 40×20×10 mm 的板 ⇒
         #:   `Volume` 回 **8000**（★ 就是 **mm³**）· `SurfaceArea` 回 **2800**（mm²）
         #:   —— ★ 而我初版乘了 1e9 / 1e6（★ 以为它回 SI）⇒ 得到 8e12 / 2.8e9。
-        #:   ★ 即：**本机的 `IMassProperty` 按文档默认单位（mm）回值**（★ 与事实里「SW 默认单位 = mm」一致）。
-        #:   ★ 而**相对判据不受刻度影响** —— ★ 所以当时 ΔV=2% 仍然抓对了（★ 那是相对判据的鲁棒之处）。
+        #: ★ 即：**本机的 `IMassProperty` 按文档默认单位（mm）回值**（★ 与事实里「SW 默
+        #: 认单位 = mm」一致）。
+        #: ★ 而**相对判据不受刻度影响** —— ★ 所以当时 ΔV=2% 仍然抓对了（★ 那是相对判据的
+        #: 鲁棒之处）。
         out["volume_mm3"] = round(float(get_com_member(mp, "Volume")), 6)
         out["area_mm2"] = round(float(get_com_member(mp, "SurfaceArea")), 6)
     except Exception as exc:                                       # noqa: BLE001
@@ -141,7 +146,8 @@ def compare_geometry(a: dict, b: dict, rel_tol: float = REL_TOL) -> dict:
 #: ★ 判据来源：★ `Cai-aa/CAD-Agent-Hub`（**MIT**）的
 #:   `MCP/Solidworks/src/solidworks_mcp/native_features.py`（★ 本机已克隆，★ 逐行读过）：
 #:     · `L642` ⇒ `tolerance = float(selector.get("tolerance_mm", **0.05**)) * MM`
-#:     · `L647` ⇒ `radius_tolerance = float(selector.get("radius_tolerance_mm", **0.1**)) * MM`
+#: · `L647` ⇒ `radius_tolerance = float(selector.get("radius_tolerance_mm", **0.1**)) * 
+#: MM`
 #:     · `L655` ⇒ `axial`：`abs(dx) <= tol and abs(dy) <= tol and abs(dz) > tol`
 #:     · `L657` ⇒ `planar`：`abs(dz) <= tol`
 #:     · `L662` ⇒ 半径逐个判：`any(abs(v - radius) > radius_tolerance for v in radii)`
@@ -238,12 +244,15 @@ def main() -> int:
         if r["ok"]:
             bad += 1
         print("  %-16s \u21d2 ok=%-5s %s  %s" % (lab, r["ok"], verdict, (r["reasons"] or [""])[0][:52]))
-    #: \u2605 \u5bb9\u5dee\u8fb9\u754c\uff1a\u521a\u597d 1% \u8be5\u8fc7\u3001\u521a\u8d85\u4e00\u70b9\u8be5\u62d2
+    #: \u2605 \u5bb9\u5dee\u8fb9\u754c\uff1a\u521a\u597d 1% \u8be5\u8fc7\u3001\u521a\u8d
+    #: 85\u4e00\u70b9\u8be5\u62d2
     edge_ok = compare_geometry(same, dict(same, volume_mm3=8000.0 * 1.01))["ok"]
     edge_bad = compare_geometry(same, dict(same, volume_mm3=8000.0 * 1.011))["ok"]
     print("  容差边界: 1.0%%⇒%s（★ 应 True）· 1.1%%⇒%s（★ 应 False）" % (edge_ok, edge_bad))
-    #: ★★★ 2026-10-01（轮 326）**新增：绝对 mm 判据的自证** —— ★ 与上面的**相对**判据互补。
-    #:   ★ 每个用例都是 `(名字, 判据结果, 期望 ok)`；★ **期望 False 的就是负例**（事实 62）。
+    #: ★★★ 2026-10-01（轮 326）**新增：绝对 mm 判据的自证** —— ★ 与上面的**相对**判据互
+    #: 补。
+    #: ★ 每个用例都是 `(名字, 判据结果, 期望 ok)`；★ **期望 False 的就是负例**（事实 62
+    #: ）。
     print()
     print("  ── 绝对 mm · 逐轴 · 方位语义（★ 与相对判据互补）──")
     abs_cases = [

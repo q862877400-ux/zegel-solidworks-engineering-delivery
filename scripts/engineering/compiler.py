@@ -424,8 +424,10 @@ def score_elegance(plan: CompiledPlan) -> EleganceScore:
     risky = sum(1 for t in tools if any(k in t for k in ("delete", "replace", "thicken")))
     risk = min(1.0, risky / max(1, len(tools)))
     #: ★ **可制造性**：★ 有倒角/圆角后置 + 有孔阵列 ⇒ 好
-    #:   ⚠ 别把续行的 `+` 写成**行首** —— ★ 门禁 `check_diff_markers.py` 会把它当 **patch 记号**
-    #:     （★ 本会话就红了一次：★ 报「`scripts/engineering/compiler.py:428` 混入 diff 记号」）
+    #: ⚠ 别把续行的 `+` 写成**行首** —— ★ 门禁 `check_diff_markers.py` 会把它当 **patch 
+    #: 记号**
+    #: （★ 本会话就红了一次：★ 报「`scripts/engineering/compiler.py:428` 混入 diff 记号
+    #: 」）
     has_finish = any("chamfer" in t or "fillet" in t for t in tools)
     has_pattern = any("pattern" in t for t in tools)
     manuf = 0.5 + (0.25 if has_finish else 0.0) + (0.25 if has_pattern else 0.0)

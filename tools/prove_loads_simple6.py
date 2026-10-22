@@ -8,7 +8,8 @@
 #   ★★ **调用姿势照既有脚本 `capture_simulation_loads_evidence.py` 的 `call_via_tool`** ——
 #   ★ 它与注册器**同一顺序**（`inject` → `pre_call` → `derived_args`）⇒
 #   ★ 这才是 AGENTS.md 说的「**按 ToolSpec 的契约调**」。
-#   ★★ 而那条脚本里还留着一条**先例警告**：★「必须先 `ClearSelection2(True)` 再选下一个面」——
+# ★★ 而那条脚本里还留着一条**先例警告**：★「必须先 `ClearSelection2(True)` 再选下一个面
+# 」——
 #   ★ 因为 `select_face_at` 的 `append=False` **只表示"不追加"、不清空** ⇒ 漏了这步会让
 #   选区里**留着上一个面** ⇒ 回读计数变 2 ⇒ **判据假红**。★ 本探针照做。
 # 官方依据: `ICWLoadsAndRestraintsManager` 的 `AddConvection` / `AddElasticConnector` /
@@ -17,7 +18,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据（★ 定量）：★ 每个工具 ⇒ **回读的载荷计数恰好 +1**（★ 那正是 `_report` 的判据）。
+# ★ 判据（★ 定量）：★ 每个工具 ⇒ **回读的载荷计数恰好 +1**（★ 那正是 `_report` 的判据）
+# 。
 
 from __future__ import annotations
 

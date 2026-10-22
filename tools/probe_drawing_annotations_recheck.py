@@ -1,6 +1,7 @@
 """★ 真机：★ 建工程图 + 加注释 ⇒ 用 `view_annotations_report` 读回（★ 工程图读侧第一批）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + 官方 `IView\\GetAnnotations.md` / `GetAnnotationCount.md` / `GetArcCount.md` /
+# 仓库:   本项目自身 + 官方 `IView\\GetAnnotations.md` / `GetAnnotationCount.md` / `GetA
+# rcCount.md` /
 #         `GetDisplayDimensions.md` + 官方示例 `Get_Names_of_Annotations_Example_VB.md`
 # 文件:   tools/probe_drawing_annotations_recheck.py（★ 只报不动 —— 证据脚本 · 新）
 # 定位:   ★ 阶段 4/5：★ 本仓有 `add_note`（**能写注释**）★ 而**读不回来** ⇒
@@ -58,19 +59,24 @@ def main() -> int:
     P.extrude_boss(part, sk, 10.0)
     step("part", title=str(get_com_member(part, "GetTitle")))
 
-    #: ★★★★★★★ 2026-10-04（轮 139）**⚠ 那个"试装饰螺纹"的步骤**放在**最末****（★ 值记）：
-    #:   ★ **第一版我把它放在这里**（★ 存盘之前）⇒ ★★ **结果 `save_document` 回了 `False`**
+    #: ★★★★★★★ 2026-10-04（轮 139）**⚠ 那个"试装饰螺纹"的步骤**放在**最末****（★ 值记）
+    #: ：
+    #: ★ **第一版我把它放在这里**（★ 存盘之前）⇒ ★★ **结果 `save_document` 回了 `False`*
+    #: *
     #:     （★ 零件没存盘）⇒ 后面 `insert_views` 报「零件还没存盘 ⇒ 没有路径」⇒
     #:     **`view_count = 0`** ⇒ ★★★ **⇒ 把**上一轮已验通**的步骤**全带红了** ✗
     #:   ★★★★ **⇒ 真因**：★ 前面那个操作**前置未成立**（★ `ok: False`）⇒
     #:     ★ **它留下了未完成的操作状态** ⇒ **⇒ 污染了后面** ✓
-    #:   ★★★★★ **可复用判据**：★★★ **探针里"试探性的、★ 可能失败的前置操作"要放在**最后**、
+    #: ★★★★★ **可复用判据**：★★★ **探针里"试探性的、★ 可能失败的前置操作"要放在**最后**
+    #: 、
     #:     或者**单起一个探针** —— ★ 别让它污染后面**已验通**的步骤** ✓
     #:     ★★ 同族：★ 本仓既有纪律「**一次只证伪一个假设**」—— ★ 那是**增量**方向；
     #:       而这是**反过来**：★ **别让一个失败的试验回头毁掉已成立的结论** ✓
 
-    #: ★★★★ 2026-10-04（轮 136）**先让零件存盘** —— ★ 实测：★ 不存盘则 `GetPathName()` 是
-    #:   **空串** ⇒ ★★ **⇒ `create_three_standard_views` 插不了视图**（★ 它要 `part_path`）⇒
+    #: ★★★★ 2026-10-04（轮 136）**先让零件存盘** —— ★ 实测：★ 不存盘则 `GetPathName()` 
+    #: 是
+    #: **空串** ⇒ ★★ **⇒ `create_three_standard_views` 插不了视图**（★ 它要 `part_path`
+    #: ）⇒
     #:   ★★★ **⇒ 于是 `view_count = 0`**、★ **而那是**应然的**、★ 验不了读侧** ✗
     #:   ★ **⇒ 可复用判据**：★★★ **"零件/装配体要投影"的能力，前置是**那个文件有路径**** ✓
     saved = {"error": None}
@@ -80,7 +86,8 @@ def main() -> int:
         dst = str(Path(tempfile.gettempdir()) / "dsh_probe_drawing_annot_source.SLDPRT")
         saved["path"] = dst
         #: ★ `save_document` 在 **`sw_connect`**、★ **不在 `sw_part`** ——
-        #:   ★★ **⇒ 可复用判据**：★ **先问它在哪个模块**（★ 别猜 —— ★ 本会话已因此错过多次）✓
+        #: ★★ **⇒ 可复用判据**：★ **先问它在哪个模块**（★ 别猜 —— ★ 本会话已因此错过多次
+        #: ）✓
         saved["returned"] = str(save_document(part, dst))[:140]
     except Exception as exc:                                              # noqa: BLE001
         saved["error"] = "%s: %s" % (type(exc).__name__, str(exc)[:150])
@@ -89,13 +96,16 @@ def main() -> int:
     drw = new_document(app, "drawing")
     step("drawing", title=str(get_com_member(drw, "GetTitle")))
 
-    #: ★★★★ 2026-10-04（轮 136）**先插一个视图** —— ★ 空图纸上 `view_count = 0` 是**应然的**、
+    #: ★★★★ 2026-10-04（轮 136）**先插一个视图** —— ★ 空图纸上 `view_count = 0` 是**应然
+    #: 的**、
     #:   而**那样验不了读侧** ⇒ ★★ **⇒ 本探针插视图** ✓
     #:   ★★★★★ **⚠ 而真机实测：★ 「三视图」那条路在本机**是 blocked**** ——
     #:     ★ `create_three_standard_views` 的 `verified_by` 逐字：
-    #:       「★ 返回里有建成视图（★ **本机实测为 blocked**：`CreateFirstAngleViews2` 不可用）」✓
+    #: 「★ 返回里有建成视图（★ **本机实测为 blocked**：`CreateFirstAngleViews2` 不可用）
+    #: 」✓
     #:     ★★ **⇒ 所以本探针改走**已知能通的那条**：★ `create_projected_view`
-    #:       （★ 它的 docstring 逐字：★「本工具**经工具层**实测返回真实视图对象（`CDispatch`）、
+    #: （★ 它的 docstring 逐字：★「本工具**经工具层**实测返回真实视图对象（`CDispatch`）
+    #: 、
     #:         ★ **且正是靠本地化名回退建成**（`*Front` 失败 → `*前视` 成功）」）✓
     #:   ★★★ **可复用判据**：★★★ **同一件事有多条路时，先走**已知能通**的那条** ——
     #:     ★ 别在 blocked 的那条上反复试（★ 与**事实 53**同族）✓
@@ -113,7 +123,8 @@ def main() -> int:
             made["projected"] = str(E0.create_projected_view(
                 drw, part_path, view_name="*Front", x_mm=140.0, y_mm=120.0,
                 scale=0.0))[:170]
-            #: ★ 第 ② 条（★ 实测 blocked）：仍然试一次，★ **以便把"blocked"这件事记进证据** ✓
+            #: ★ 第 ② 条（★ 实测 blocked）：仍然试一次，★ **以便把"blocked"这件事记进证
+            #: 据** ✓
             made["tried"].append("create_three_standard_views")
             made["three_std"] = str(E0.create_three_standard_views(drw, part_path))[:150]
     except Exception as exc:                                              # noqa: BLE001
@@ -122,7 +133,8 @@ def main() -> int:
 
     #: ★★ 用**本仓的写侧**加一条注释（★ 那样"能写不能读"才是同一对）✓
     #:   ★★★★ **⚠ 它的契约是 keyword-only**（`*, x_mm, y_mm, text`）——
-    #:     我第一版传了**位置实参** ⇒ `TypeError: takes 1 positional argument but 4 were given` ✗
+    #: 我第一版传了**位置实参** ⇒ `TypeError: takes 1 positional argument but 4 were giv
+    #: en` ✗
     #:     ★★ **⇒ 可复用判据**：★ **调本仓能力前先看它的签名**（★ 别按"常识"传参）✓
     wrote = {"error": None}
     try:
@@ -152,8 +164,10 @@ def main() -> int:
     step("VERDICT", verdict=ev["★_结论"], mismatches=len(bad))
 
     #: ★★★★★★★ **非零场景的试探** —— ★ 放在**最后**（★ 它可能失败、★ 别污染前面的结论）✓
-    #:   ★ **为什么要试**：★ 上一批四个计数**全回 `0`**、★ 而那是**应然的**（★ 简单方板没有
-    #:     折弯线 / 装饰螺纹 / 基准原点 / 中心线）⇒ ★★ **⇒ 那样"能读"只到**成员可达**这一层** ⇒
+    #: ★ **为什么要试**：★ 上一批四个计数**全回 `0`**、★ 而那是**应然的**（★ 简单方板没
+    #: 有
+    #: 折弯线 / 装饰螺纹 / 基准原点 / 中心线）⇒ ★★ **⇒ 那样"能读"只到**成员可达**这一层*
+    #: * ⇒
     #:     ★★★ **⇒ 试一个**非零**场景** ⇒ ★ 官方依据：★ `IView::GetCThreadCount()` ⇒
     #:       `## Returns: Number of cosmetic threads` ✓
     thr = {"error": None}

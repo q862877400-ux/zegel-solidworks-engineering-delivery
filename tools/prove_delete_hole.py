@@ -7,11 +7,13 @@
 #           除孔」。
 #
 #   ★★ **静态已定**（★ 全接口查）：
-#     · 成员是 **`IModelDoc2.InsertDeleteHole()`** —— ★ **0 参**、★ 回 **`void`**（★ 无返回值）
+# · 成员是 **`IModelDoc2.InsertDeleteHole()`** —— ★ **0 参**、★ 回 **`void`**（★ 无返回
+# 值）
 #     · ★ 故**判据只能是几何量**（★ 事实 436 的教训：别只看树）
 #
 #   ★ 前置：★ 一个**带孔的实体**（★ 删除孔要有孔可删）。
-#     ★ 而"孔"从哪来？★ 本仓有 `solidworks_create_hole_feature`（★ 已 verified）⇒ ★ 用它打一个孔。
+# ★ 而"孔"从哪来？★ 本仓有 `solidworks_create_hole_feature`（★ 已 verified）⇒ ★ 用它打一
+# 个孔。
 #   ★ 判据（★ 三条一起记）：
 #     ① **面数** —— 删孔会让面数**减少**
 #     ② **体积** —— 删孔会把孔填上 ⇒ 体积**变大**
@@ -55,7 +57,8 @@ def _mk_solid_with_hole(doc, with_hole=True):
             continue
     if not with_hole:
         return ok
-    #: \u2605 \u6253\u4e00\u4e2a**\u901a\u5b54**\uff08\u2605 \u7528\u672c\u4ed3\u73b0\u6210\u7684\u58f0\u660e\u5f0f\u5b54\uff09
+    #: \u2605 \u6253\u4e00\u4e2a**\u901a\u5b54**\uff08\u2605 \u7528\u672c\u4ed3\u73b0\u6
+    #: 210\u7684\u58f0\u660e\u5f0f\u5b54\uff09
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001
@@ -117,7 +120,8 @@ def _one(sw, tag, with_hole):
         b, a = row["before"], row["after"]
         row["face_delta"] = (a["faces"] - b["faces"]) if (a["faces"] and b["faces"]) else None
         row["vol_delta"] = ((a["volume"] - b["volume"]) if (a["volume"] and b["volume"]) else None)
-        #: \u2605 \u5224\u636e\uff1a**\u51e0\u4f55\u91cf\u53d8\u4e86** \u6216 \u6811\u589e\u91cf
+        #: \u2605 \u5224\u636e\uff1a**\u51e0\u4f55\u91cf\u53d8\u4e86** \u6216 \u6811\u58
+        #: 9e\u91cf
         row["ok"] = bool(row["new"] or row["face_delta"] or row["vol_delta"])
     except Exception as exc:                                              # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])

@@ -44,8 +44,10 @@ sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(Path(__file__).resolve().parents[1] / "output" / "inout-array-params.json")
 SWDIR = Path(r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS")
 #: ⚠⚠ **2026-10-01（轮 190）从「单个 tlb」泛化成「多个」** ——
-#:   理由：轮 189 只扫了 `sldworks.tlb`，而**仿真域**（`ICW*`）是我们**真正大量调用**的那一块，
-#:   它在**另一个类型库**里。★ 只扫 sldworks 就报「0 命中」，覆盖面是**不够的**（轮 189 的限度①）。
+#: 理由：轮 189 只扫了 `sldworks.tlb`，而**仿真域**（`ICW*`）是我们**真正大量调用**的那
+#: 一块，
+#: 它在**另一个类型库**里。★ 只扫 sldworks 就报「0 命中」，覆盖面是**不够的**（轮 189 的
+#: 限度①）。
 #:   列的是**我们确实镜像的 12 个程序集**（`scripts/sw_api_*.py` 与之同名）+ 主库。
 TLBS = [
     SWDIR / "sldworks.tlb",
@@ -83,21 +85,27 @@ def scan_tlb(cc, path: Path) -> tuple:
                 mname, argtypes, flags = m[1], m[2], m[3]
             except Exception:      # noqa: BLE001
                 continue
-            #: ⚠⚠ **2026-10-01（轮 189）：`flags` 可能是 `None`**（有些方法条目没有方向信息）
-            #: ⇒ 不能直接迭代；**且要如实统计有多少条没有方向信息**（否则"扫了多少"是虚的）。
+            #: ⚠⚠ **2026-10-01（轮 189）：`flags` 可能是 `None`**（有些方法条目没有方向
+            #: 信息）
+            #: ⇒ 不能直接迭代；**且要如实统计有多少条没有方向信息**（否则"扫了多少"是虚
+            #: 的）。
             if not flags:
                 no_flags += 1
                 noflag_names.add(mname)
                 #: ⚠⚠⚠ **2026-10-01（轮 190）收窄「未判」这一档**：
-                #:   `flags` 没有 ⇒ **方向未知**；但 **`argtypes` 还在** ⇒ **能判"有没有数组类形参"**。
+                #: `flags` 没有 ⇒ **方向未知**；但 **`argtypes` 还在** ⇒ **能判"有没有数
+                #: 组类形参"**。
                 #:   ★ 本判据只关心「**数组类形参** + in,out」⇒
-                #:     连**数组类形参都没有**的成员 ⇒ **与本判据无关**（**正当排除**，不是"未判"）。
+                #: 连**数组类形参都没有**的成员 ⇒ **与本判据无关**（**正当排除**，不是"
+                #: 未判"）。
                 if any((getattr(t, "__name__", str(t)) in ARRAYISH) for t in (argtypes or ())):
                     noflag_array_names.add(mname)
                 continue
             for idx, fl in enumerate(flags):
-                #: ⚠⚠ **2026-10-01（轮 189）第一版这里崩了**：`flags` 的元组**不总是 2 元素** ——
-                #: 出参那条常带第 3 个字段（comtypes 的 faketype 标记）⇒ 必须**按下标取**，不能解包。
+                #: ⚠⚠ **2026-10-01（轮 189）第一版这里崩了**：`flags` 的元组**不总是 2 
+                #: 元素** ——
+                #: 出参那条常带第 3 个字段（comtypes 的 faketype 标记）⇒ 必须**按下标取*
+                #: *，不能解包。
                 #: 实测到的方向码：`1`=in · `3`=in,out · `10`=out（= 2 | 8）
                 if not fl:
                     continue
@@ -157,7 +165,8 @@ def main() -> int:
     #: ⚠⚠⚠ **2026-10-01（轮 190）补一道**覆盖面自检** —— 没有它，"0 命中"是不完整的：**
     #:   本轮发现「无方向信息」的条目有 **1008** 条（远多于 62 条有方向的）⇒
     #:   ★ **那 1008 条里若也有我们调用的成员，则它们**根本没被这条判据覆盖****。
-    #:   ⇒ 如实报出「无方向信息 ∩ 本仓库调用过」的成员名 —— 那是**未判**的部分，不是"没问题"。
+    #: ⇒ 如实报出「无方向信息 ∩ 本仓库调用过」的成员名 —— 那是**未判**的部分，不是"没问
+    #: 题"。
     unjudged_all = sorted(noflag_all & set(called))
     unjudged_arr = sorted(noflag_array_all & set(called))
     print("  ★ 其中**本仓库按字面量调用过**的: **%d** 个" % len(hits))

@@ -24,7 +24,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 用法：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contract.py <前缀>`
+# ★ 用法：`python tools/sw_guard.py --timeout 600 -- python tools/prove_tools_by_contrac
+# t.py <前缀>`
 #   ★ `<前缀>` 例如 `solidworks_sketch_` ⇒ 只跑名字以它开头的声明。
 
 from __future__ import annotations

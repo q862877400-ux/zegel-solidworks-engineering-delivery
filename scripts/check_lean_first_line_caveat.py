@@ -20,7 +20,8 @@ import sys
 from pathlib import Path
 
 #: 2026-10-07（规格 215）：本门禁会 print 中文与 `★`/`⇒` 这类符号，
-#: 而 stdout 是管道时默认按 locale（本机 GBK）编码 ⇒ `UnicodeEncodeError: 'gbk' codec …`。
+#: 而 stdout 是管道时默认按 locale（本机 GBK）编码 ⇒ `UnicodeEncodeError: 'gbk' codec …`
+#: 。
 #: known-facts 58 那一族（病灶在输出侧）⇒ 一律强制 UTF-8 ✓
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
@@ -32,9 +33,11 @@ LEAN_CHARS = 120
 
 #: ★★ 判据 ①：**强自指**的「本机不可用」标记。
 #: ⚠ **这两个标记不是拍的，是量出来的**（spec 215 §二-④ 的表）：
-#:   · `不可用`（宽）   ⇒ 命中 **12** 条，真阳性只有 **3** ⇒ ✗ 9 条假阳性（它们说的是"某条路不可用"）
+#: · `不可用`（宽）   ⇒ 命中 **12** 条，真阳性只有 **3** ⇒ ✗ 9 条假阳性（它们说的是"某条
+#: 路不可用"）
 #:   · `建不出`         ⇒ 命中 **7** 条，真阳性 **0** ⇒ ✗ 全是历史叙述
-#:   · ★ 本组          ⇒ 命中 **3** 条，真阳性 **3** ⇒ ★★ **零假阳性 ⇒ 可以做成无豁免的硬门禁** ✓
+#: · ★ 本组          ⇒ 命中 **3** 条，真阳性 **3** ⇒ ★★ **零假阳性 ⇒ 可以做成无豁免的硬
+#: 门禁** ✓
 UNAVAILABLE_MARKS = ("仍不可用", "NOT USABLE")
 
 #: ★ 判据 ②：**管线内部件**的指纹 —— 谁在文档里承认自己是这条管线的一步，
@@ -107,7 +110,8 @@ def main(argv=None) -> int:
         print("★ 无法读取 ToolSpec（%s: %s）⇒ 本门禁无法判定" % (type(exc).__name__, exc))
         return 2
 
-    #: ★ 防**假绿**：一条都没看就等于没判（与 `check_no_bare_byref_args` 的 `checked >= 300` 同型）✓
+    #: ★ 防**假绿**：一条都没看就等于没判（与 `check_no_bare_byref_args` 的 `checked >= 
+    #: 300` 同型）✓
     if checked < 300:
         print("★ 只看到 %d 条 spec（应 ≥300）⇒ 注册表可能没加载全，**这个绿不可信**" % checked)
         return 2

@@ -14,7 +14,8 @@
 #   （★ 挂柜台定则：暴露成功 / 可运行 / 返回语义已验证是**三件事**）✓
 # ★★ **开工前的预选族预检已做**（★ 规格 217 第 7 轮定的闸）：
 #   ★ 三个函数体**都无选区信号**（★ `linear_pattern_report` · `insert_mate_reference` ·
-#   ★ `iter_feature_tree` 各自查过：无 `GetSelectedObjectCount2`/`preconditions_held`/「先选中」）✓
+# ★ `iter_feature_tree` 各自查过：无 `GetSelectedObjectCount2`/`preconditions_held`/「先
+# 选中」）✓
 #   ⇒ ★ **可作纯暴露** ✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations

@@ -4,8 +4,10 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_selection_base.py
 # 定位:   ★ 2026-10-03（轮 397）24h 计划 v2 **段 1** 的真机探针。★ 被验的 6 个工具
-#   （见 `mcp-server/tool_specs_batch53.py`）：`get_selection_count` · `select_entity_by_index` ·
-#   `resolve_selection` · `selection_point` · `select_by_selector_report` · `resolve_entity_report`。
+# （见 `mcp-server/tool_specs_batch53.py`）：`get_selection_count` · `select_entity_by_i
+# ndex` ·
+# `resolve_selection` · `selection_point` · `select_by_selector_report` · `resolve_entit
+# y_report`。
 #   ★★ **按 ToolSpec 的契约调**（`inject="model"` ⇒ 传文档对象），**不手调内部实现**。
 # 官方依据: `ISelectionMgr.GetSelectedObjectCount2(-1)`（判据回读数）· `IEntity.Select4`
 #           （按对象选）·
@@ -98,9 +100,11 @@ def main() -> int:
         step("select_edge_index0", lambda: S.select_entity_by_index(doc, "EDGE", 0))
         #: ④ 读点 —— ★★ **必须先选中一个「点」**（VERTEX）：
         #:   ★ 先前我在选了**边**之后读点 ⇒ `GetSelectionPoint2` 回 **None**
-        #:   ★★ 而那**是正确的**（官方说 "selected **point**"）—— ★ 是**我的期望错了**，不是能力坏了。
+        #: ★★ 而那**是正确的**（官方说 "selected **point**"）—— ★ 是**我的期望错了**，不
+        #: 是能力坏了。
         #:   ★★ 而**穷举给出了答案**（轮 397 实测）：
-        #:   · 选 **VERTEX** ⇒ `GetSelectionPoint2` 的 **6 种 (Index, Mark) 组合全部回 None**
+        #: · 选 **VERTEX** ⇒ `GetSelectionPoint2` 的 **6 种 (Index, Mark) 组合全部回 Non
+        #: e**
         #:   · 选 **FACE**   ⇒ `(1, -1)` ⇒ **`[-20.0, 0.0, -5.0]`** ✓
         #:   ★ 即："selection point" 是**选择时鼠标落在「面」上的那个位置**；
         #:   ★ 而顶点选中时**没有面可投影** ⇒ None。

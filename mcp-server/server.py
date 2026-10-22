@@ -1061,7 +1061,8 @@ _KNOWN_UNIT_SUFFIXES = frozenset(
 #:   ⚠ ★ 与「**已知单位**」`_KNOWN_UNIT_SUFFIXES` 是**两件事**：
 #:     · 本表用来**发现**（★ 宽 ✓）· 那张表用来**放行**（★ 窄 ✓）
 #:   ★★ **修过一次**：★ 我第一版让 `_unit_suffix_of` **只认已知后缀** ⇒
-#:     ★★ 于是它**永远报不出"未知的后缀"** ✗（★ 六条判据里挂了三条：`_inch` / `_ft` / `_yd`）
+#: ★★ 于是它**永远报不出"未知的后缀"** ✗（★ 六条判据里挂了三条：`_inch` / `_ft` / `_yd`
+#: ）
 #:     ⇒ ★ 正解是**先判"像不像"、再判"在不在"** ✓
 _UNITLIKE_RE = re.compile(
     r"_(mm|cm|dm|km|m|um|nm|inch|in|ft|feet|yd|yard|mil|thou|"
@@ -1124,7 +1125,8 @@ def _result(payload: Any, response_format: ResponseFormat) -> str:
     ★ 2026-10-07（规格 212 · D-5）：★ 出口处跑一次**单位守卫**（★ 只报不拦）✓
     """
     if not isinstance(payload, dict):
-        #: ★★ 非 dict ⇒ **裹成 dict**（而不是让 `.get` / `json.dumps` 抛），★ 并**标明**原始类型。
+        #: ★★ 非 dict ⇒ **裹成 dict**（而不是让 `.get` / `json.dumps` 抛），★ 并**标明**
+        #: 原始类型。
         payload = {"status": "ok", "result": _jsonable(payload),
                    "result_type": type(payload).__name__,
                    "note": "★ 该能力返回的不是 dict ⇒ 已按对象/标量降级包装（事实 508）"}
@@ -2677,9 +2679,11 @@ _register_declarative_tools()
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
-# 文件:   `tools/sw_dialog_watch.py`（★ 常驻弹窗监控 —— 判据与处置**全部复用** `tools/sw_guard.py`）
+# 文件:   `tools/sw_dialog_watch.py`（★ 常驻弹窗监控 —— 判据与处置**全部复用** `tools/sw
+# _guard.py`）
 #         `tools/sw_guard.py`（★ `scan_family_windows` / `classify_dialog` / `dismiss`）
-#         `docs/known-facts.md` 事实 174 / 292 / 294（★ 这个框的三次交手）· 本轮的 527（★ 真根因）
+# `docs/known-facts.md` 事实 174 / 292 / 294（★ 这个框的三次交手）· 本轮的 527（★ 真根因
+# ）
 # 定位:   新增 `_start_dialog_watcher()`：★ **项目一启用就把弹窗监控拉起来**。
 #   ★★★★ **为什么**（★ 2026-10-04 · 用户当场点破）：
 #     ```
@@ -2693,9 +2697,11 @@ _register_declarative_tools()
 #   ⇒ ★ 本条接的是第 ② 条的补：★ **常驻**（不绑任何一条命令）✓
 # 官方依据: 不适用（纯 Win32 窗口枚举，**不碰 COM** ⇒ 与"会话是否挂住"无关，永远能跑）
 # 许可:   本仓库 MIT。无第三方代码引入。
-# ⚠ **安全**：★ 全有或全无地**不阻断启动** —— 起不来（没装、路径不对、权限）只**打一行日志**，
+# ⚠ **安全**：★ 全有或全无地**不阻断启动** —— 起不来（没装、路径不对、权限）只**打一行日
+# 志**，
 #    ★ **绝不让 MCP server 因此起不来**（★ 监控是"辅助"，不是"依赖"）。
-# ⚠ **幂等**：★ 已经有活着的 watcher（pidfile）就**不再起第二个**（★ 免得每次启用都叠一个）。
+# ⚠ **幂等**：★ 已经有活着的 watcher（pidfile）就**不再起第二个**（★ 免得每次启用都叠一
+# 个）。
 # 覆盖:   本函数
 # ─────────────────────────────────────────────────────────────────────
 def _start_dialog_watcher() -> None:

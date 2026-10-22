@@ -48,7 +48,8 @@ import sys                                                             # noqa: E
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-#: ⚠ **修**：`VARIANT` **不在 `pythoncom` 里** —— 本仓用的是 **`win32com.client.VARIANT`**
+#: ⚠ **修**：`VARIANT` **不在 `pythoncom` 里** —— 本仓用的是 **`win32com.client.VARIANT`
+#: **
 #:   （★ 轮 522 第一版我 `import pythoncom` 就取 `pythoncom.VARIANT` ⇒ 三组白跑、
 #:    ★ 报 `module 'pythoncom' has no attribute 'VARIANT'` —— ★ **那是探针的毛病**）
 from win32com.client import VARIANT as _V                            # noqa: E402
@@ -98,7 +99,8 @@ def _one(sw, tag, factory):
     try:
         doc = C.new_document(sw, "part")
         _mk_solid(doc)
-        #: \u2605 \u9009\u4e00\u4e2a\u57fa\u51c6\u9762\u4f5c\u5207\u9762\uff08\u2605 \u5b98\u65b9\uff1apreselected surface or plane\uff09
+        #: \u2605 \u9009\u4e00\u4e2a\u57fa\u51c6\u9762\u4f5c\u5207\u9762\uff08\u2605 \u5
+        #: b98\u65b9\uff1apreselected surface or plane\uff09
         try:
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001

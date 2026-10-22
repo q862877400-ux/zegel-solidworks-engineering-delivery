@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 413）承**事实 327**：★ 上一版 `add_view` 回 `None`，
 #   ★ 而**官方签名核对过是对的**（`CreateDrawViewFromModelView3` 5 参）⇒ ★ 卡点在别处。
 #   ★ 事实 327 给的**具体下一步**：★ **先给图纸上 A3 图框**（用行内现成的
-#     `setup_current_sheet_as_a3` —— ★ 它走官方 `IDrawingDoc.SetupSheet6`），★ 再 `add_view`。
+# `setup_current_sheet_as_a3` —— ★ 它走官方 `IDrawingDoc.SetupSheet6`），★ 再 `add_view`
+# 。
 #   ★ 图框文件在本机：`C:\ProgramData\SOLIDWORKS\SOLIDWORKS 2026\lang\Chinese-Simplified\
 #     sheetformat\**a3 - gb.slddrt**`（★ GB/T，★ 中文 UI 下的国标框）。
 #   ★ 零件仍用**已在盘上**的自带示例件（★ 硬约束⑦：★ 我**不保存任何东西**）。

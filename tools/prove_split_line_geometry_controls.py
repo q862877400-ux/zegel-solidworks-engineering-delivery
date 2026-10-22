@@ -14,10 +14,12 @@
 #     | A | **正例复核**：落点在环内 + 选**近面** | ★ 该成 |
 #     | B | **只**把落点移到**环外**（★ 仍在同一张面上 ⇒ mark 1 计数仍应为 1） | ★ 该不成 |
 #     | C | **只**把面换成**远面**（★ 投影落在近面，远面拿不到） | ★ 该不成 |
-#     | D | **复现上一会话的几何**：草图在实体**内部** + 取 `GetFaces()[0]` | ★ 该不成（★ 对照事实 419） |
+# | D | **复现上一会话的几何**：草图在实体**内部** + 取 `GetFaces()[0]` | ★ 该不成（★ 对
+# 照事实 419） |
 #
 #   ★★★ **结构判据**（★ 本轮新增，★ 比"树长了"硬）：
-#     · `IFace2.GetLoopCount()` —— ★ 闭合环投影到面上 ⇒ **该面从 1 个环变成 2 个环**（外环 + 内环）；
+# · `IFace2.GetLoopCount()` —— ★ 闭合环投影到面上 ⇒ **该面从 1 个环变成 2 个环**（外环 +
+#  内环）；
 #     · 新特征的 `GetTypeName2` —— ★ 直接读类型名，不靠中文名猜。
 #     ⇒ ★ 三条一起（树增量 · 面数 +1 · 有面出现 2 个环）才算"真切开"。
 #
@@ -87,7 +89,8 @@ def _run_case(sw, tag, mode):
     try:
         doc = C.new_document(sw, "part")
         if mode == "legacy":
-            #: ★ 复现上一会话的几何：Top Plane 拉 20 mm（实体 z∈[-30,30]）· 投影草图在 Front Plane（z=0，**在实体内部**）
+            #: ★ 复现上一会话的几何：Top Plane 拉 20 mm（实体 z∈[-30,30]）· 投影草图在 F
+            #: ront Plane（z=0，**在实体内部**）
             P.start_sketch(doc, plane_name="Top Plane")
             G._get(G._get(doc, "SketchManager"), "CreateCornerRectangle",
                    -0.03, -0.03, 0.0, 0.03, 0.03, 0.0)
@@ -145,7 +148,8 @@ def _run_case(sw, tag, mode):
         #: ★★★ **只改落点**：三种模式各自的落点
         xmin, ymin, zmin, xmax, ymax, zmax = info["bbox_m"]
         if mode == "near_outside":
-            #: ★ 仍在**同一张面**上，但落在投影环**之外**（★ 离圆心 ~43 mm >> 半径 8 mm）
+            #: ★ 仍在**同一张面**上，但落在投影环**之外**（★ 离圆心 ~43 mm >> 半径 8 mm
+            #: ）
             info["pick_m"] = [xmax - 0.005, ymax - 0.005, min(zmin, zmax)]
         elif mode == "far":
             #: ★ 换成**远面**（投影落在近面 ⇒ 远面拿不到）

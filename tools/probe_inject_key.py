@@ -1,12 +1,15 @@
 """★ 判定：注入键 `sw_app`/`manager` 与目标函数形参 `sw`/`cost_manager` 不符时，能不能调通。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（真机判定探针）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**。
+# 仓库:   本项目自身（真机判定探针）。规格 `specs/202-user-coverage-gaps` 的 **R3 收口**
+# 。
 # 文件:   tools/probe_inject_key.py
 # 定位:   ★★ `tools/check_tool_param_binding.py` 静态查出 **11 条**「声明注入键与目标
 #           函数形参不符」
-#   （`sw_app` vs `sw` · `manager` vs `cost_manager`）。★ 本探针**按注册器的真路径**调一条，
+# （`sw_app` vs `sw` · `manager` vs `cost_manager`）。★ 本探针**按注册器的真路径**调一条
+# ，
 #   用真机判定这 11 条**是真坏还是我的静态判据错**。
-#   依据: `mcp-server/tool_registry.py:507`「`kwargs[inject_as or inj] = resolver(params)`」
+# 依据: `mcp-server/tool_registry.py:507`「`kwargs[inject_as or inj] = resolver(params)`
+# 」
 #     + `register()`（`:559`）**不传 `inject_as`** ⇒ ★ 注入键字面上等于 `inject` 的值。
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -61,7 +64,8 @@ def main() -> int:
             if resolver is None:
                 r["err"] = "★ RESOLVERS 里没有 %r" % inj
             else:
-                #: ★★ **按注册器真路径注入**：键字面上等于 `inject` 的值（`inject_as` 未传）
+                #: ★★ **按注册器真路径注入**：键字面上等于 `inject` 的值（`inject_as` 未
+                #: 传）
                 kwargs[inj] = resolver(None)
                 r["injected_key"] = inj
                 r["ok"] = True

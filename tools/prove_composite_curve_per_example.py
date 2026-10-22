@@ -7,19 +7,26 @@
 #           ）。
 #
 #   ★★★★★ **官方例子（CHM）逐字**（`Insert_a_Composite_Curve_Example_VBNET.htm`）：
-#     > "This example shows how to insert a composite curve **using two sketches of splines**."
+# > "This example shows how to insert a composite curve **using two sketches of splines*
+# *."
 #     > "2. Creates a **sketch of a spline**.\n"
 #     > "3. Creates **another sketch of a spline**.\n"
 #     > "4. Inserts a composite curve **using the sketches** created in steps 2 and 3."
-#     ★ 而它的**调用序**：`CreateSpline2` ×2 \u2192 **`SelectByID2` ×2** \u2192 **`InsertCompositeCurve`**
-#       \u2192 \u518d\u7528 `SelectionMgr.Feature` \u53d6 `ICompositeCurveFeatureData` \u2192 `GetEntitiesToJoinCount` \u8bfb\u56de\u3002
+# ★ 而它的**调用序**：`CreateSpline2` ×2 \u2192 **`SelectByID2` ×2** \u2192 **`InsertCom
+# positeCurve`**
+# \u2192 \u518d\u7528 `SelectionMgr.Feature` \u53d6 `ICompositeCurveFeatureData` \u2192 
+# `GetEntitiesToJoinCount` \u8bfb\u56de\u3002
 #
 #   ★★ **故与上一轮（失败那轮）的区别**：
-#     · \u4e0a\u4e00\u8f6e\u9009\u7684\u662f**\u76f4\u7ebf\u6bb5 / \u4f53\u7684\u8272**\uff08\u2605 \u4e0d\u662f\u4f8b\u5b50\u91cc\u7684\u5f62\u6001\uff09
-#     · \u672c\u8f6e\u9009\u7684\u662f**\u6574\u6761**\u6837\u6761\u8349\u56fe****\uff0c\u2605 \u800c\u4e14\u7528
-#       **`SelectByID2` \u6309\u540d\u5b57\u9009**\uff08\u2605 \u8349\u56fe\u662f**\u7279\u5f81** \u2014\u2014 \u4e8b\u5b9e 32 \u8bf4\u7279\u5f81**\u6709\u540d\u5b57**\uff09
+# · \u4e0a\u4e00\u8f6e\u9009\u7684\u662f**\u76f4\u7ebf\u6bb5 / \u4f53\u7684\u8272**\uff0
+# 8\u2605 \u4e0d\u662f\u4f8b\u5b50\u91cc\u7684\u5f62\u6001\uff09
+# · \u672c\u8f6e\u9009\u7684\u662f**\u6574\u6761**\u6837\u6761\u8349\u56fe****\uff0c\u26
+# 05 \u800c\u4e14\u7528
+# **`SelectByID2` \u6309\u540d\u5b57\u9009**\uff08\u2605 \u8349\u56fe\u662f**\u7279\u5f8
+# 1** \u2014\u2014 \u4e8b\u5b9e 32 \u8bf4\u7279\u5f81**\u6709\u540d\u5b57**\uff09
 #
-#   ★ 判据（★ 规则 6）：**特征树增量** **或** **创建对象** **或** **`GetEntitiesToJoinCount` 读回 > 0**。
+# ★ 判据（★ 规则 6）：**特征树增量** **或** **创建对象** **或** **`GetEntitiesToJoinCoun
+# t` 读回 > 0**。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 两组：样条草图（照例子）/ 对照（直线草图）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -96,7 +103,8 @@ def _one(sw, tag, use_spline):
             s1 = _sketch_with_line(doc, "Front Plane")
             s2 = _sketch_with_line(doc, "Top Plane")
         row["sketches"] = [s1, s2]
-        #: \u2605 \u7167\u4f8b\u5b50\uff1a**`SelectByID2` \u00d72**\uff08\u2605 \u6309\u540d\u5b57\u9009\u8349\u56fe\uff09
+        #: \u2605 \u7167\u4f8b\u5b50\uff1a**`SelectByID2` \u00d72**\uff08\u2605 \u6309\u
+        #: 540d\u5b57\u9009\u8349\u56fe\uff09
         ext = C.get_com_member(doc, "Extension")
         picked = []
         for sk in (s1, s2):
@@ -118,7 +126,8 @@ def _one(sw, tag, use_spline):
         row["report"] = dict(r or {})
         after = list(FR.feature_names(doc) or [])
         row["new"] = [n for n in after if n not in before]
-        #: \u2605 \u7167\u4f8b\u5b50\u7684\u8bfb\u56de\uff1a`SelectionMgr.Feature` \u2192 `ICompositeCurveFeatureData`
+        #: \u2605 \u7167\u4f8b\u5b50\u7684\u8bfb\u56de\uff1a`SelectionMgr.Feature` \u219
+        #: 2 `ICompositeCurveFeatureData`
         if row["new"]:
             try:
                 from sw_connect import get_com_member as _g

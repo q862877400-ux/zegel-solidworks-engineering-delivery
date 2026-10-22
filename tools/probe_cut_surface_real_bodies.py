@@ -5,7 +5,8 @@
 # 文件:   tools/probe_cut_surface_real_bodies.py
 # 定位:   ★ 2026-10-03（轮 528）★ 试一个**从没动过的变量**。
 #
-#   ★★ **官方对 `Bodies` 的说法**（`C:\\swapi\\types\\IFeatureManager\\InsertCutSurface.md` 逐字）：
+# ★★ **官方对 `Bodies` 的说法**（`C:\\swapi\\types\\IFeatureManager\\InsertCutSurface.md
+# ` 逐字）：
 #     · 「Array of specific **bodies** that intersect with the cut」—— ★ 且分两种情况：
 #       `UseFeatScope = true` / `UseAutoSelect = false` 时**用传给 `Bodies` 的体**；
 #     · 「**Empty array indicating to cut all bodies that intersect with the cut**」
@@ -14,7 +15,8 @@
 #   ★ 为什么值得试（★ 有据的推理）：事实 407 说那个特征对象**浮在树外**
 #     （递归看不见 · `EditRebuild3` 也不让它进 · 而 `whats_wrong = 0`）。
 #     ⇒ ★★ **一个还没排除的解释**：★ **它没"认领到体"** ——
-#       ★ 而 `Bodies` 正是"要切哪些体"的那个参数 ⇒ ★ **传真的体 + `UseFeatScope=True`** 值得试 ✓
+# ★ 而 `Bodies` 正是"要切哪些体"的那个参数 ⇒ ★ **传真的体 + `UseFeatScope=True`** 值得试
+#  ✓
 #     ★ 这也**对得上官方那两条分支**：`UseFeatScope=True` 走"用 `Bodies`"，★ 而我一直是
 #       `UseFeatScope=False`（★ 那就落到"自动"那条，★ 而**空数组**又叠了一层模糊）。
 #
@@ -98,7 +100,8 @@ def _one(sw, tag, bodies_kind, feat_scope, auto_select):
         _mk_surface(doc)
         from sw_connect import get_com_member as _get, out_i4 as _oi4
         from sw_part import _select_com_object as _sel
-        #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762\uff08\u2605 \u4e8b\u5b9e 405\uff1a\u8fd9\u79cd\u9009\u6cd5\u56de\u5bf9\u8c61\uff09
+        #: \u2605 \u53ea\u9009\u7b2c\u4e00\u5f20\u66f2\u9762\u9762\uff08\u2605 \u4e8b\u5
+        #: b9e 405\uff1a\u8fd9\u79cd\u9009\u6cd5\u56de\u5bf9\u8c61\uff09
         try:
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001

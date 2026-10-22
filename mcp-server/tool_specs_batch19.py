@@ -67,8 +67,10 @@ SPECS_BATCH19 = [
         title="List Drawing Sheets",
         module="sw_drawing_query", function="sheets_summary",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Sheet overview of the active drawing: how many sheets, their names, and which one is "
             "current. " + _CURRENT_ONLY,
@@ -78,8 +80,10 @@ SPECS_BATCH19 = [
         title="Get Current Drawing Sheet",
         module="sw_drawing_query", function="current_sheet_info",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="Read the current sheet: paper size (name + code), WIDTH/HEIGHT IN MILLIMETRES, scale, "
             "projection angle and sheet-format name. ⚠ The API returns width/height in METRES; this "
@@ -90,8 +94,10 @@ SPECS_BATCH19 = [
         title="List Drawing Views",
         module="sw_drawing_query", function="list_views",
         inject="model",
-        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0 个实参 ⇒
-        #:   `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidworks_part_bounding_box` 写着 `inject='model'` ✓
+        #: ★ 2026-10-03（轮 461）**补漏掉的 inject** —— 真机证据：未声明注入时包装拿到 0
+        #:  个实参 ⇒
+        #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
+        #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
         doc="List the views on the CURRENT SHEET: name + type code. ⚠ The sheet itself is NOT "
             "reported as a view — the raw API returns it as a pseudo-view (Type == 1) and that is "

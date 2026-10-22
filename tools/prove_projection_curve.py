@@ -6,19 +6,23 @@
 # 定位:   ★ 2026-10-03（轮 566）★ 照新纪律（**官方文档是第 0 步**）攻「曲线-投影曲线」。
 #
 #   ★★★★ **本轮发现：这条的**两代都是废弃的****（★ 事实 433 那张地图只挖到第二代）：
-#     · `IModelDoc2.InsertProjectedSketch`  ⇒ md 逐字：Superseded by `InsertProjectedSketch2`
+# · `IModelDoc2.InsertProjectedSketch`  ⇒ md 逐字：Superseded by `InsertProjectedSketch2
+# `
 #     · `IModelDoc2.InsertProjectedSketch2` ⇒ ★ **它自己也是废弃的**：
-#       > "**Obsolete. See `IProjectionCurveFeatureData` and `IFeatureManager::CreateDefinition`.**"
+# > "**Obsolete. See `IProjectionCurveFeatureData` and `IFeatureManager::CreateDefinitio
+# n`.**"
 #     ⇒ ★★ **故正路是**第三代**** ✓
 #
-#   ★★★★★ **而官方把第三代给成了**一条五步配方**（`IProjectionCurveFeatureData` 的 `## Remarks` 逐字）**：
+# ★★★★★ **而官方把第三代给成了**一条五步配方**（`IProjectionCurveFeatureData` 的 `## Rem
+# arks` 逐字）**：
 #     ```
 #     1. \u7528 `SelectByID2` \u9884\u9009\u5b9e\u4f53\uff0cMarks\uff1a
 #        \u00b7 **target faces on which to project a sketch = 1**
 #        \u00b7 **sketch to project = 2**
 #        \u00b7 target sketch on which to project a sketch = 4
 #        \u00b7 projection direction entity = 8
-#     2. `IFeatureManager::CreateDefinition(swFmRefCurve)` \u21d2 \u62ff\u5230\u8fd9\u4e2a\u63a5\u53e3
+# 2. `IFeatureManager::CreateDefinition(swFmRefCurve)` \u21d2 \u62ff\u5230\u8fd9\u4e2a\u
+# 63a5\u53e3
 #     3. \u5728\u8be5\u63a5\u53e3\u4e0a\u8bbe**\u975e\u5b9e\u4f53**\u5c5e\u6027
 #     4. `IFeatureManager::CreateFeature` \u21d2 \u5efa\u51fa\u7279\u5f81
 #     ```
@@ -46,7 +50,8 @@ from scripts import sw_connect as C                                   # noqa: E4
 from scripts import sw_part as P                                      # noqa: E402
 import scripts.sw_feature_readback as FR                              # noqa: E402
 
-#: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u94c1\u5f8b 4\uff1a\u6570\u503c\u53bb\u53cd\u5c04\uff09
+#: \u2605 \u53cd\u5c04\u91cc\u7684\u503c\uff08\u2605 \u94c1\u5f8b 4\uff1a\u6570\u503c\u5
+#: 3bb\u53cd\u5c04\uff09
 SW_FM_REF_CURVE = 14
 
 
@@ -66,7 +71,8 @@ def _mk_target(doc):
             break
         except Exception:                                                 # noqa: BLE001
             continue
-    #: \u2605 \u8981\u6295\u5f71\u7684\u8349\u56fe\uff08\u2605 \u5728\u524d\u89c6\u9762\u4e0a\uff09
+    #: \u2605 \u8981\u6295\u5f71\u7684\u8349\u56fe\uff08\u2605 \u5728\u524d\u89c6\u9762\
+    #: u4e0a\uff09
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001
@@ -120,8 +126,10 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
             data = _g(fm, "CreateDefinition", SW_FM_REF_CURVE)
             row["data_type"] = type(data).__name__ if data is not None else "None"
             if data is not None:
-                #: \u2605 \u7b2c 3 \u6b65\uff1a\u8bbe**\u975e\u5b9e\u4f53**\u5c5e\u6027 \u2014\u2014
-                #:   \u2605 \u800c\u63a5\u53e3\u6b63\u597d\u6709 **3 \u4e2a**\uff1a`Bidirectional` \u00b7 `Reverse` \u00b7 **`Sketch`**
+                #: \u2605 \u7b2c 3 \u6b65\uff1a\u8bbe**\u975e\u5b9e\u4f53**\u5c5e\u6027 
+                #: \u2014\u2014
+                #: \u2605 \u800c\u63a5\u53e3\u6b63\u597d\u6709 **3 \u4e2a**\uff1a`Bidire
+                #: ctional` \u00b7 `Reverse` \u00b7 **`Sketch`**
                 setp = {}
                 for k, v in (("Bidirectional", False), ("Reverse", False)):
                     try:
@@ -129,7 +137,8 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                         setp[k] = "ok"
                     except Exception as exc:                              # noqa: BLE001
                         setp[k] = "%s" % type(exc).__name__
-                #: \u2605 **`Sketch`** \u2014\u2014 \u628a\u201c\u8981\u6295\u5f71\u7684\u90a3\u4e2a\u8349\u56fe\u201d\u8bbe\u8fdb\u53bb
+                #: \u2605 **`Sketch`** \u2014\u2014 \u628a\u201c\u8981\u6295\u5f71\u7684
+                #: \u90a3\u4e2a\u8349\u56fe\u201d\u8bbe\u8fdb\u53bb
                 if with_sketch_prop and sk:
                     try:
                         fobj = None
@@ -149,10 +158,14 @@ def _one(sw, tag, with_face, with_sketch_prop=True):
                     except Exception as exc:                              # noqa: BLE001
                         setp["Sketch"] = "%s" % type(exc).__name__
                 row["props_set"] = setp
-                #: \u2605\u2605\u2605 \u7b2c 98 \u8f6e\uff08\u8f6e 567\uff09\u8865\u7684\u90a3\u4e00\u6b65\uff1a
-                #:   **`AccessSelections` \u2192 \u8bbe\u5b9e\u4f53\u6570\u636e \u2192 `CreateFeature` \u2192 `ReleaseSelectionAccess`**
-                #:   \u2605 \u4f9d\u636e\uff1a\u4e8b\u5b9e 425/426\uff08\u2605 FeatureData \u90a3\u65cf\u7684 `AccessSelections`
-                #:   **6/6 \u901a**\uff1b\u2605 \u800c `Component` \u8981\u4f20**\u7a7a Dispatch \u53d8\u4f53**\uff09\u3002
+                #: \u2605\u2605\u2605 \u7b2c 98 \u8f6e\uff08\u8f6e 567\uff09\u8865\u7684
+                #: \u90a3\u4e00\u6b65\uff1a
+                #: **`AccessSelections` \u2192 \u8bbe\u5b9e\u4f53\u6570\u636e \u2192 `Cr
+                #: eateFeature` \u2192 `ReleaseSelectionAccess`**
+                #: \u2605 \u4f9d\u636e\uff1a\u4e8b\u5b9e 425/426\uff08\u2605 FeatureData
+                #:  \u90a3\u65cf\u7684 `AccessSelections`
+                #: **6/6 \u901a**\uff1b\u2605 \u800c `Component` \u8981\u4f20**\u7a7a Di
+                #: spatch \u53d8\u4f53**\uff09\u3002
                 try:
                     acc = C.get_com_member(data, "AccessSelections", doc,
                                            C.create_empty_dispatch_variant())

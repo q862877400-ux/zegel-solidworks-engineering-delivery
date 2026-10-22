@@ -84,7 +84,8 @@ def main() -> int:
             try:
                 d, sk2 = _plate_and_sketch()
                 before = FR.feature_names(d)
-                #: ★ 选法：A/B = 传草图名（能力层自己选草图特征）；C = 先选好再传 __current_selection__
+                #: ★ 选法：A/B = 传草图名（能力层自己选草图特征）；C = 先选好再传 __curr
+                #: ent_selection__
                 name_arg = "__current_selection__" if use_current_selection else sk2
                 if use_current_selection:
                     sw_connect.safe_get_com_member(d, "ClearSelection2", True)

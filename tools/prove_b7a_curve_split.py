@@ -90,7 +90,8 @@ def _pick_face(doc, idx=0, mark=0):
         #:     `TypeError: Object of type CDispatch is not JSON serializable`
         #:     ★ 而**4 个用例其实都跑完了**（★ 只是写文件时炸）⚠
         #:   ★ 本仓的纪律就是这条：★ **工具层要把 COM 对象挡在里面**
-        #:     （★ 见 `solidworks_resolve_entity` 的注释：「★ 只回 JSON —— 把 COM 对象挡在里面」）
+        #: （★ 见 `solidworks_resolve_entity` 的注释：「★ 只回 JSON —— 把 COM 对象挡在里
+        #: 面」）
         #:   ⇒ ★ 正解：★ 实体走**模块级中转**（`_LAST_ENTITY`），★ **不进 JSON** ✓
         _LAST_ENTITY.append(fs[idx])
         return ok, {"face": idx, "mark": int(mark), "sel": n, "n_faces": len(fs)}

@@ -1,25 +1,29 @@
 
 # ── 24h 计划 段 6 续（Spec Kit `172` 的批次声明）：**传感器（读）** ────────────────
 # ★★★★★ 2026-10-01（轮 338）真机（`output/sensor-evidence.json`）**PASS 3/3**：
-#   ★ 空零件 / 有几何的零件 / 带外部参考的示例图 —— 三处都 `ok=True` · `count=0` · `errors=[]`。
+# ★ 空零件 / 有几何的零件 / 带外部参考的示例图 —— 三处都 `ok=True` · `count=0` · `errors
+# =[]`。
 #   ★★ **即：遍历不炸、空路径正确** ⇒ ★ **而那正是这一批能验的那一半**。
 #
 # ⚠ **如实标注（★ 不写成"全支持"）**：
 #   ① ★ **非空路径未验** —— 那三个文档**都没有传感器**。
 #      ★ 根因：★ **官方 API 能读不能建**（★ 反射里搜不到 `AddXxxSensor` / `CreateXxxSensor`
 #      ⇒ ★ 建传感器是 **UI 功能**）⇒ ★ 要造一个非空场景**只能手工在 UI 里建**。
-#   ② ★ **单位**：★ `GetSensorValue(out double Value, out string Units)` 的 `Units` 是第二个 out，
+# ② ★ **单位**：★ `GetSensorValue(out double Value, out string Units)` 的 `Units` 是第二
+# 个 out，
 #      ★ 本模块先只取原样（★ 非空路径没验到 ⇒ **不声称单位已处理**）。
 #
 # ★★ **它补的是核实的真缺之三**：★ 全仓 grep `sensor` ⇒ **工具 0 · 函数 0**
-#   （★ 同批四条真缺：`wrap`（已补 · 187 个工具）· `vertices`（已补）· `sensor`（本条）· `units`（未补））。
+# （★ 同批四条真缺：`wrap`（已补 · 187 个工具）· `vertices`（已补）· `sensor`（本条）· `
+# units`（未补））。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch51.py —— 本文件
 # 定位:   段 6 续：传感器（读）（★ 补「四家有我们没有」的真缺）。
 # 官方签名依据: `C:\swapi\types\ISensor\`（10 个成员）· `ISensor/GetSensorValue.md`
-#   （`bool GetSensorValue(out double Value, out string Units)` · ★ 反射 arity 那行是 **0**）·
+# （`bool GetSensorValue(out double Value, out string Units)` · ★ 反射 arity 那行是 **0*
+# *）·
 #   `ISensor/SensorType.md`（属性 get/set）· `ISensor/GetSensorFeatureData.md`（0 参）·
 #   `ISensor/SensorAlertState.md`（**只读**）
 # 许可:   本仓库 MIT。无第三方代码引入。

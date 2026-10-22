@@ -66,7 +66,8 @@ def _build(doc):
             break
         except Exception:                                                 # noqa: BLE001
             continue
-    #: \u2605 \u7b2c\u4e8c\u4e2a\u8349\u56fe\uff08\u2605 \u5728\u524d\u89c6\u9762\u4e0a\uff0c\u2605 \u7528\u4f5c\u5206\u5272\u8f6e\u5ed3\uff09
+    #: \u2605 \u7b2c\u4e8c\u4e2a\u8349\u56fe\uff08\u2605 \u5728\u524d\u89c6\u9762\u4e0a\
+    #: uff0c\u2605 \u7528\u4f5c\u5206\u5272\u8f6e\u5ed3\uff09
     try:
         doc.ClearSelection2(True)
     except Exception:                                                     # noqa: BLE001
@@ -90,7 +91,8 @@ def _pick(doc):
         pass
     names = list(FR.feature_names(doc) or [])
     sk = [n for n in names if n.startswith("\u8349\u56fe") or n.lower().startswith("sketch")]
-    #: \u2605 \u2460 \u5b9e\u4f53\u7279\u5f81\uff08\u2605 \u6309\u540d\u5b57\uff1a\u7279\u5f81\u53ef\u6309\u540d\u9009 \u2014\u2014 \u4e8b\u5b9e 32\uff09
+    #: \u2605 \u2460 \u5b9e\u4f53\u7279\u5f81\uff08\u2605 \u6309\u540d\u5b57\uff1a\u7279
+    #: \u5f81\u53ef\u6309\u540d\u9009 \u2014\u2014 \u4e8b\u5b9e 32\uff09
     for nm in ("\u51f8\u53f0-\u62c9\u4f381", "Boss-Extrude1"):
         try:
             if _sel_id(ext, nm, "BODYFEATURE", append=False, mark=0):

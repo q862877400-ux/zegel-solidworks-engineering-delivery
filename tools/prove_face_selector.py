@@ -7,8 +7,10 @@
 #           具前的真机验。
 #   ★★★ **为什么它能当工具而隔壁两条不能**（★ 那是一个**规则 3** 的判断）：
 #     ```
-#     ★ `select_object(model, obj)`          ⇒ 吃 **COM 对象** ⇒ ★ **没法人参数表达** ⇒ **不做**
-#     ★ `resolve_face_selector(model, sel)`  ⇒ 回 **`(x, y, z)` 米** ⇒ ★★ **暴露它就是暴露裸坐标** ⇒ **不做**
+# ★ `select_object(model, obj)`          ⇒ 吃 **COM 对象** ⇒ ★ **没法人参数表达** ⇒ **不
+# 做**
+# ★ `resolve_face_selector(model, sel)`  ⇒ 回 **`(x, y, z)` 米** ⇒ ★★ **暴露它就是暴露裸
+# 坐标** ⇒ **不做**
 #     ★★ `select_face_by_selector(model, selection: str)` ⇒ ★ **对外的参数是**选择器****，
 #        ★ 而坐标**只在内部用** ⇒ ★★ **完全符合规则 3** ⇒ **可做** ✓✓✓
 #     ```
@@ -22,7 +24,8 @@
 #     ```
 # 官方依据: `IModelDocExtension.SelectByID2("", "FACE", x, y, z, …)`（★ 按**面上的点**定
 #           位 —— 事实 32）·
-#   本仓 `scripts/sw_simulation.py` 的 `select_face_by_selector` / `resolve_face_selector` / `select_face_at`
+# 本仓 `scripts/sw_simulation.py` 的 `select_face_by_selector` / `resolve_face_selector`
+#  / `select_face_at`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────

@@ -71,9 +71,11 @@ def main() -> int:
     doc = C.new_document(sw, "part")
     try:
         #: ① 轮廓：在**上视基准面**（XY · **Z=0**）画一个**圆**（★ 扫描最标准的轮廓）
-        #: ★★★ 2026-10-03（轮 487）**换成圆，并把两个草图都安排成"路径起点在轮廓平面上"** ——
+        #: ★★★ 2026-10-03（轮 487）**换成圆，并把两个草图都安排成"路径起点在轮廓平面上"*
+        #: * ——
         #:   ★ 官方逐字（`…\Sweep Features and SweepFeatureData Objects.md`）：
-        #:     > 「the **start point of the path must lie on the plane of the profile**」（1 方向扫描）
+        #: > 「the **start point of the path must lie on the plane of the profile**」（1
+        #:  方向扫描）
         #:   ★★ 而★ 轮廓在上视面（Z=0）⇒ ★ **路径的起点必须 Z=0** ⇒
         #:     路径画在**前视面**（XZ · Y=0）上、**从 (0,0) 沿 X** ⇒ 起点 (0,0,0) 的 Z=0 ✓
         P.start_sketch(doc, plane_name="Top Plane")
@@ -86,7 +88,8 @@ def main() -> int:
         #: ★★★ 2026-10-03（轮 486）**先清选区再开第二个草图** ——
         #:   ⚠ 真机第一次跑：`profile_sketch` 建出了 `草图1`，而 `path_sketch` 那一步
         #:     **树里没有「草图2」** ⇒ ★ 第二个草图**根本没建成** ⚠
-        #:   ★ 最可能的原因：★ `end_sketch` 之后**上一次的选区还在** ⇒ `start_sketch` 选不中基准面。
+        #: ★ 最可能的原因：★ `end_sketch` 之后**上一次的选区还在** ⇒ `start_sketch` 选不
+        #: 中基准面。
         #:   ⇒ ★ 故这里**显式清一次**、并把**开草图前后的选区数**记进证据（★ 不猜）✓
         for _lbl in ("path_sketch",):
             try:
@@ -105,16 +108,20 @@ def main() -> int:
         ev["steps"].append({"step": "path_sketch", "tree": P.feature_names(doc)})
 
         #: ③ ★ 选 **轮廓 mark=1** + **路径 mark=4**（★ 官方专文给的 mark）
-        #: ★★★★★ 2026-10-03（轮 487）**改用 `SelectByID2`（`sw_part._select_by_id`）** ——
+        #: ★★★★★ 2026-10-03（轮 487）**改用 `SelectByID2`（`sw_part._select_by_id`）** —
+        #: —
         #:   ★★ 真因（★ 前三版的 `sel_by_mark` 已经把线索给全了）：
         #:     `sw_part._select_com_object` 的实现是
         #:     ```
         #:     for method_name in ("Select2", "Select4"):
         #:         if method_name == "Select2":  method(append, mark)      # ★ 带 mark
-        #:         elif bool(method(append, _empty_callout())): ...        # ★★ **Select4 没有 mark** ⚠
+        #: elif bool(method(append, _empty_callout())): ...        # ★★ **Select4 没有 m
+        #: ark** ⚠
         #:     ```
-        #:     ⇒ ★★ **若 `Select2(append, mark)` 失败而 `Select4` 成功 ⇒ 那一次「没有 mark」** ⚠
-        #:     ⇒ ★ 那正是真机 `{1:1, 4:0}` 的形态（★ 轮廓进了，★ 而路径那次走了 `Select4`）。
+        #: ⇒ ★★ **若 `Select2(append, mark)` 失败而 `Select4` 成功 ⇒ 那一次「没有 mark」
+        #: ** ⚠
+        #: ⇒ ★ 那正是真机 `{1:1, 4:0}` 的形态（★ 轮廓进了，★ 而路径那次走了 `Select4`）
+        #: 。
         #:   ★★★ 而**特征是有名字的**（★ **事实 32**：「按名字选**只对特征成立**」）
         #:     ⇒ ★ 故正解是官方的 **`SelectByID2(名, "SKETCH", …, mark)`** ✓
         #:   ★ 官方专文给的 mark（★ `…\Sweep Features and SweepFeatureData Objects.md`）：

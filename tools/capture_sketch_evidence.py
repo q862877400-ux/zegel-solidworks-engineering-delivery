@@ -99,10 +99,12 @@ def main() -> int:
         got = {"count_lines": int(count_lines(sk)), "count_arcs": int(count_arcs(sk)),
                "count_segments": int(count_segments(sk)), "is_3d": bool(is_3d_sketch(sk))}
         #: ⚠⚠ 2026-10-01 轮 222：`count_arcs` 的期望**一开始写成 0 是错的** ——
-        #:   我画的是「1 条线 + 1 个圆」，而**一个圆在 SolidWorks 底层几何里就是一段弧（整圆）**
+        #: 我画的是「1 条线 + 1 个圆」，而**一个圆在 SolidWorks 底层几何里就是一段弧（整
+        #: 圆）**
         #:   ⇒ `GetArcs2` 会把它算进去 ⇒ **1 是对的**。
         #:   佐证：`count_segments == 2` 且 `count_lines == 1` ⇒ 剩下那 1 段就是这个圆。
-        #:   ★ 所以这里**不是放宽判据**，是改正一个事实性错误（错的在判据那边，不在代码那边）。
+        #: ★ 所以这里**不是放宽判据**，是改正一个事实性错误（错的在判据那边，不在代码那
+        #: 边）。
         want = {"count_lines": 1, "count_arcs": 1, "count_segments": 2, "is_3d": False}
         ev["steps"]["readings"] = {"ok": got == want, "got": got, "want": want}
         ok = ok and (got == want)

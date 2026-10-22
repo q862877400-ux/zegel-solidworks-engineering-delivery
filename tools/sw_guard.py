@@ -19,12 +19,15 @@
 # ```
 # ⇒ 所以本模块把三件事**绑在一起**（缺一件就退化成上面两种失败）：
 # ```
-# ① **进调用之前先扫一遍**（★ `pre_scan`）—— ★ 把**已经存在**的弹窗也列入（★ 对应失败一）
+# ① **进调用之前先扫一遍**（★ `pre_scan`）—— ★ 把**已经存在**的弹窗也列入（★ 对应失败一
+# ）
 # ② **哨兵线程边跑边扫**，发现即 **记证 + 点掉**（★ 对应失败二：处置不等 LLM）
-# ③ **主调用有硬超时** ⇒ 无论怎样都返回；★ 把 `dialogs_seen` 一并带回（★ 让 LLM 拿到根因线索）
+# ③ **主调用有硬超时** ⇒ 无论怎样都返回；★ 把 `dialogs_seen` 一并带回（★ 让 LLM 拿到根因
+# 线索）
 # ```
 # ★ 处置为什么可以"自动先点"（★ 与用户那条纪律的关系）：
-#   ★ 用户要的是「**先让 LLM 分析根因，再点，点完还得改**」；★ 而**点在 LLM 看到之前**是为了
+# ★ 用户要的是「**先让 LLM 分析根因，再点，点完还得改**」；★ 而**点在 LLM 看到之前**是为
+# 了
 #   ★ **不让调用冻死**（★ 否则 LLM 连"发生了什么"都拿不到）。
 #   ⇒ ★★ 所以**证据照留**（★ 标题 + 全部控件文本 + 时间 + 触发它的那个调用），
 #     ★ **根因与"改代码防复发"仍由 LLM 做** —— ★ 那一步**不能自动**，也**没被跳过**。
@@ -47,9 +50,11 @@ from pathlib import Path
 # ── ★★★ 2026-10-04（接手轮 · 真机实测撞出来的）**stdout 必须 reconfigure** ────────────
 # ★ 症状：本工具**干完了活**，却在**打印结果时自己崩** ——
 #   `UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2'`（`⇒`）✓✗
-# ★★ 根因：父进程是 pwsh ⇒ stdout 的编码 = 本机 **GBK**，而本工具打印的 JSON 里有 `⇒` / `★`
+# ★★ 根因：父进程是 pwsh ⇒ stdout 的编码 = 本机 **GBK**，而本工具打印的 JSON 里有 `⇒` / 
+# `★`
 #   ⇒ ★ 与**事实 58**（`subprocess` 不给 `encoding=` 就在中文 Windows 上炸）**同族** ✓
-# ★★★ 为什么这条值得修（★ 不是美观问题）：★ 崩在 `print` 上会让**调用方拿到非零退出码**，
+# ★★★ 为什么这条值得修（★ 不是美观问题）：★ 崩在 `print` 上会让**调用方拿到非零退出码**
+# ，
 #   而那一轮的**真结果已经在盘上了**（证据 JSON 已写）⇒ ★★ **"活干完了却报失败"** ——
 #   这正是本仓反复点名的**假信号**（★ 与事实 40「失败看起来像正常值」是一对反向的坑）✓
 # ⇒ ★ 处置：与全仓 40+ 个脚本同一条定则 —— **入口处 reconfigure 成 UTF-8** ✓
@@ -94,7 +99,8 @@ def dismiss_via_input(hwnd: int) -> bool:
       ★ 兜底再对"确定"按钮的中心发**真鼠标点击**（`SendInput` 的绝对坐标移动 + 左右键）。
     """
     ok = False
-    #: ① 置前（★ 真输入事件要求目标在前台；★ `SetForegroundWindow` 失败也不放弃，②还能试）
+    #: ① 置前（★ 真输入事件要求目标在前台；★ `SetForegroundWindow` 失败也不放弃，②还能试
+    #: ）
     try:
         _u.SetForegroundWindow(hwnd)
         time.sleep(0.15)
@@ -166,7 +172,8 @@ def _exe_of_window(hwnd: int) -> str:
     pid = wt.DWORD()
     _u.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
     k32 = ctypes.windll.kernel32
-    #: ★ `PROCESS_QUERY_LIMITED_INFORMATION = 0x1000`（★ 对更高完整性级别的进程也可能失败）
+    #: ★ `PROCESS_QUERY_LIMITED_INFORMATION = 0x1000`（★ 对更高完整性级别的进程也可能失
+    #: 败）
     h = k32.OpenProcess(0x1000, False, pid.value)
     if not h:
         return ""
@@ -211,7 +218,8 @@ def sw_family_window(hwnd: int) -> bool:
 #:   `标题` / `描述` / `Button1` / `Button2` / `Hyperlink Text 1` / `Hyperlink Text 2` ✓
 #:   ★★ 那是 SolidWorks 的**消息框模板**（占位符尚未填内容）⇒ 我原来的三条判据
 #:   （`#32770` / 有 Button / 有可读文本）**全中** ⇒ 被当成 `needs_llm` 弹窗**刷屏** ✓
-#:   ⇒ ★ 判据：★ **文本子控件全是占位符** ⇒ 判为模板、**不当弹窗**（★ 但仍记一条 `debug` 事件，
+#: ⇒ ★ 判据：★ **文本子控件全是占位符** ⇒ 判为模板、**不当弹窗**（★ 但仍记一条 `debug` 
+#: 事件，
 #:     免得"又变成静默失效" —— ★ 与事实 40 的老毛病保持距离）✓
 _TEMPLATE_TEXT = re.compile(r"^(标题|描述|Title|Description|Button\d+|Hyperlink Text \d+)$")
 
@@ -249,11 +257,15 @@ def classify_dialog(d: dict) -> dict:
     texts = " ".join(str(c.get("text", "")) for c in controls if c.get("class") != "Button")
     blobs = " ".join(buttons)
 
-    #: ★★★★★ 2026-10-04 **先判"这是**正常求解的进度窗**"**（★ 真机实测 · 用户那个框的旁边那个）——
-    #:   ★★★ 现场：`#32770` / `star.exe` / 按钮 `暂停·取消·更多>>·算例·解算器·收敛图表·求解器参数` +
-    #:   Static `当前任务: 建立刚度矩阵` · `已用时间:1s` · `自由度:3,636` · `节数:1,492` · `类型:Intel Direct Sparse` ✓
+    #: ★★★★★ 2026-10-04 **先判"这是**正常求解的进度窗**"**（★ 真机实测 · 用户那个框的旁
+    #: 边那个）——
+    #: ★★★ 现场：`#32770` / `star.exe` / 按钮 `暂停·取消·更多>>·算例·解算器·收敛图表·求
+    #: 解器参数` +
+    #: Static `当前任务: 建立刚度矩阵` · `已用时间:1s` · `自由度:3,636` · `节数:1,492` ·
+    #:  `类型:Intel Direct Sparse` ✓
     #:   ★★ 它**不是要我回答的框** —— ★ 它在**报告一个正在跑的正常任务** ✓
-    #:   ★★★ 而原判据只看按钮 ⇒ 撞上 `取消`/`暂停` ⇒ 判成 `needs_llm` ⇒ **外层据此中止了调用**
+    #: ★★★ 而原判据只看按钮 ⇒ 撞上 `取消`/`暂停` ⇒ 判成 `needs_llm` ⇒ **外层据此中止了调
+    #: 用**
     #:     ⇒ ★★ **那正是事实 297 明令禁止的"中断一个正在跑的正常任务"** ✓
     #:     （★ 实测代价：一次**已经成功**的求解被标记 `aborted_for_llm`、`ok=false`）
     #:   ⇒ ★ 判据：★ **Static 文本里同时出现"当前任务/已用时间/自由度"这类**运行态读数 ⇒
@@ -266,13 +278,15 @@ def classify_dialog(d: dict) -> dict:
 
     #: ★ **危险词**（★ 中英）—— 命中就**绝不自动点**（★ 哪怕只有一个"确定"）
     #:   ★★ 2026-10-02（轮 381）**自测抓到漏网**：★ 文本 "不可恢复" 被判成 `auto` ——
-    #:   因为表里只有"不可逆"、没有"不可恢复" ⇒ ★★ 而**"是否删除？不可恢复"恰好只有一个"确定"**
+    #: 因为表里只有"不可逆"、没有"不可恢复" ⇒ ★★ 而**"是否删除？不可恢复"恰好只有一个"确
+    #: 定"**
     #:   ⇒ ★ **会被自动点掉**（★ 后果不可逆）。⇒ 补词 + **加"提问信号"判据**（见下）。
     DANGER = ("删除", "覆盖", "替换", "丢失", "不可逆", "不可恢复", "无法恢复", "无法撤销",
               "撤销", "谨慎", "真的要", "确定要", "确认删除", "清空", "格式化", "永久", "风险",
               "delete", "overwrite", "replace", "discard", "lose", "permanent", "format",
               "reset all", "clear all", "cannot be undone", "irreversible")
-    #: ★★ **提问信号** —— ★ 弹窗在**问**（★ 问号/"是否"/"吗"/"要不要"）⇒ ★ **绝不自动点**：
+    #: ★★ **提问信号** —— ★ 弹窗在**问**（★ 问号/"是否"/"吗"/"要不要"）⇒ ★ **绝不自动点*
+    #: *：
     #:   ★ 因为"问"意味着**至少两条分支**，★ 而回答哪条**要看语义** —— ★ 那正是 LLM 的活。
     QUESTION = ("？", "?", "是否", "吗", "要不要", "确定要", "would you", "are you sure", "do you want")
     #: ★ **确认类**（★ 可以安全点的）
@@ -346,13 +360,17 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
         #: ★★★★★ 2026-10-04（接手轮）**修掉一个会让"整个机制静默失效"的过滤器** ——
         #:   ★★ 现场（用户当场截图 + 我窗口枚举复核）：
         #:     `[Simulation] 未定义载荷或规定的位移 … [请参阅知识库文章 QA00000299039]`
-        #:     ★ 它的 **owner 是 `star.exe`（pid 46240）**，而**不是** `SLDWORKS.exe`（pid 49384）✓
+        #: ★ 它的 **owner 是 `star.exe`（pid 46240）**，而**不是** `SLDWORKS.exe`（pid 4
+        #: 9384）✓
         #:   ★★★ 而原文这里写的是 `if pid is not None and p.value != pid: return True`
         #:     ⇒ ★★ 由于 `run_guarded` 传的是 `sw_pid()`（**永远是 SLDWORKS 的 pid**）
-        #:     ⇒ ★ **`star.exe` 的框被无条件跳过** ⇒ 取证工具当场回 `count: 0`（★ 我实测过）✓
+        #: ⇒ ★ **`star.exe` 的框被无条件跳过** ⇒ 取证工具当场回 `count: 0`（★ 我实测过）
+        #: ✓
         #:   ★★★★ **而 `sw_family_window()` 存在的理由恰恰是"框可能来自家族里任一进程"**
-        #:     （★ 见它 docstring 逐字：「★ 只认 `sldworks.exe` 会漏（★ 例如网格器的报错框）」）
-        #:     ⇒ ★ **那个过滤器把这条判据整个废掉了** —— 这就是"弹窗了你还不知道"的**真根因** ✓
+        #: （★ 见它 docstring 逐字：「★ 只认 `sldworks.exe` 会漏（★ 例如网格器的报错框）
+        #: 」）
+        #: ⇒ ★ **那个过滤器把这条判据整个废掉了** —— 这就是"弹窗了你还不知道"的**真根因*
+        #: * ✓
         #:   ★ 修法：★ **pid 只用来"聚焦"，不再用来"排除"** ——
         #:     ★ 同族进程的窗口**一律放行**，由 `sw_family_window()` + "像弹窗"去筛 ✓
         if pid is not None and p.value != pid and not sw_family_window(h):
@@ -366,10 +384,13 @@ def scan_family_windows(pid: int | None = None, *, known: set | None = None) -> 
         kids_buttons: list[int] = []
         kids_text = 0
         #: ★★★ 2026-10-02（轮 380）**必须把控件文本一并带出来** —— 真机上撞到的 bug：
-        #:   ★ 我先前只回 `buttons` / `text_children` 两个**计数**，★ 而 `classify_dialog` 读的是
+        #: ★ 我先前只回 `buttons` / `text_children` 两个**计数**，★ 而 `classify_dialog`
+        #:  读的是
         #:   `controls`（★ 类名 + 文本）⇒ ★★ **分级判据永远看到"没有按钮"** ⇒ 把
-        #:   一个只有"确定"的**安全弹窗**判成 `needs_llm` ⇒ **不点** ⇒ **调用冻死**（★ 120 s 超时）。
-        #:   ⇒ ★ 教训：★ **判据与数据源之间"字段不匹配"会让判据静默失效**（★ 事实 51 同族）。
+        #: 一个只有"确定"的**安全弹窗**判成 `needs_llm` ⇒ **不点** ⇒ **调用冻死**（★ 120
+        #:  s 超时）。
+        #: ⇒ ★ 教训：★ **判据与数据源之间"字段不匹配"会让判据静默失效**（★ 事实 51 同族
+        #: ）。
         controls: list[dict] = []
 
         def _ck(ch, _l2):
@@ -442,7 +463,8 @@ def scan_any_new_window(pid: int | None = None, *, known: set | None = None) -> 
         t = _txt(h)
         #: ★★★ 2026-10-02（轮 378）**兜底必须排除 `#32770`** —— 真机上撞到的误报：
         #:   ★ SolidWorks 弹下一个对话框时，**同一个类的窗口**会以**新 `hwnd`** 出现 ⇒
-        #:   兜底把它报成 `unknown-window` 并写"本机制无法点掉它"，★ **而它其实已被主路径点掉了**
+        #: 兜底把它报成 `unknown-window` 并写"本机制无法点掉它"，★ **而它其实已被主路径
+        #: 点掉了**
         #:   （★ `dismissed: true` 就在上一条记录里）⇒ ★★ **那种误报会让人以为机制失效**。
         if c == "#32770":
             return True
@@ -483,15 +505,18 @@ def scan(pid: int | None = None, *, visible_only: bool = True) -> list[dict]:
         _u.GetWindowThreadProcessId(h, ctypes.byref(p))
         #: ★★★★★ 2026-10-04 **同一个根因的第三处**（★ 前两处在 `scan_family_windows` /
         #:   `scan_any_new_window`）—— ★★ **这处是负例测试当场抓出来的**（我先前漏了它）：
-        #:   ★ 于是 `python tools/sw_guard.py --scan` / `--clear` **也看不见** `star.exe` 的框 ✓
+        #: ★ 于是 `python tools/sw_guard.py --scan` / `--clear` **也看不见** `star.exe` 
+        #: 的框 ✓
         if pid is not None and p.value != pid and not sw_family_window(h):
             return True
         if visible_only and not _u.IsWindowVisible(h):
             return True
         if _cls(h) != "#32770":
             return True
-        #: ★★★★ 2026-10-02（轮 376）**新增 `hung`** —— 真机撞出来的：僵尸窗口发消息也无效。
-        #:   ★ 判据：`IsHungAppWindow`（★ 再用 `SendMessageTimeout(WM_NULL)` 二次确认，防假阳）。
+        #: ★★★★ 2026-10-02（轮 376）**新增 `hung`** —— 真机撞出来的：僵尸窗口发消息也无
+        #: 效。
+        #: ★ 判据：`IsHungAppWindow`（★ 再用 `SendMessageTimeout(WM_NULL)` 二次确认，防
+        #: 假阳）。
         hung = bool(_u.IsHungAppWindow(h))
         if not hung:
             res = wt.DWORD(0)
@@ -577,7 +602,8 @@ def dismiss_button(hwnd: int, *, text: str) -> bool:
 # ── 墓碑（2026-10-07 接手轮）──────────────────────────────────────────────
 # ★ 这里原有 `list_buttons(hwnd)`：列出弹窗里每个按钮的**文本 + 控件 ID + hwnd**。
 # ★★ **已删** —— 依据是 `tests/test_no_uncalled_helpers.py` 的**死代码门禁**：
-#   逐个 grep 复核过 `tools/` · `scripts/` · `tests/`，它**只有 1 处 = 定义处** ⇒ 确实没人调 ✓
+# 逐个 grep 复核过 `tools/` · `scripts/` · `tests/`，它**只有 1 处 = 定义处** ⇒ 确实没人
+# 调 ✓
 # ⚠ 而它**够不上**那张 `UNCALLED_EXEMPT` 表的豁免条件 —— ★ 那条表由
 #   `tests/test_uncalled_exempt_has_reason.py` 守着，**只收私有辅助（`_` 开头的）**，
 #   ★ 而 `list_buttons` 是公开名 ✗ ⇒ 那个门禁自己给的两条路（「删掉 + 留墓碑」/
@@ -617,17 +643,24 @@ class Sentinel:
         self.pid = pid
         self.interval = interval
         self.auto_dismiss = auto_dismiss
-        #: ★★★★ 2026-10-04 **新增：`stuck_after`** —— ★ "**没弹窗但卡住了**"多少秒之后报警。
+        #: ★★★★ 2026-10-04 **新增：`stuck_after`** —— ★ "**没弹窗但卡住了**"多少秒之后报
+        #: 警。
         #:   ★★ 起因（★ 用户当场问：「**之前做好的弹窗检测 LLM 诊断怎么没有生效**」）：
-        #:     ★ 护栏的 LLM 档**只在"有一个像弹窗的框"时才分档**（`classify_dialog` ⇒ `needs_llm`）——
-        #:     ★★ 而真机上那两次的病是「**一个框都没有、调用就挂着**」⇒ `dialogs: []` **是对的**、
+        #: ★ 护栏的 LLM 档**只在"有一个像弹窗的框"时才分档**（`classify_dialog` ⇒ `needs
+        #: _llm`）——
+        #: ★★ 而真机上那两次的病是「**一个框都没有、调用就挂着**」⇒ `dialogs: []` **是对
+        #: 的**、
         #:     ★ **LLM 档根本无从进入** ✓
-        #:     ★ 另有两条窗也看不见：`swPM_GhostWindow`「Not Responding」**不满足"像弹窗"**三条
-        #:     （不是 `#32770`、无 `Button` 子控件、无文本子控件）；`进度` 窗**不属家族**（属 Explorer）✓
-        #:   ⇒ ★ 故补这一档：★ **不响应 + 没有任何求解内核进程** ⇒ `kind="stuck"` + `needs_llm=True`
+        #: ★ 另有两条窗也看不见：`swPM_GhostWindow`「Not Responding」**不满足"像弹窗"**
+        #: 三条
+        #: （不是 `#32770`、无 `Button` 子控件、无文本子控件）；`进度` 窗**不属家族**（
+        #: 属 Explorer）✓
+        #: ⇒ ★ 故补这一档：★ **不响应 + 没有任何求解内核进程** ⇒ `kind="stuck"` + `needs
+        #: _llm=True`
         #:     ⇒ ★★ **复用既有的"立刻终止子进程 + 把证据交回 LLM"那条路**（第 ④ 条）✓
         #:   ⚠ ★ **反证是必须的**：★ "不响应"在**正常长求解**里也会出现 ⇒
-        #:     ★ 判据要求"**没有** `cwbcbfmesh`/`star` 这类真在算的进程"（见 `scripts/sw_busy.py`）——
+        #: ★ 判据要求"**没有** `cwbcbfmesh`/`star` 这类真在算的进程"（见 `scripts/sw_bus
+        #: y.py`）——
         #:     ★★ 否则就会**误杀一个正在跑的正常任务**（★ 事实 297 明令禁止）✓
         self.stuck_after = float(stuck_after)
         #: ★ 卡住状态**从哪一刻开始**（★ `None` = 当前不卡）—— 用来算"持续了多久"
@@ -636,8 +669,10 @@ class Sentinel:
         self.events: list[dict] = []
         self._stop = threading.Event()
         self._seen: set[tuple] = set()
-        #: ★★ **兜底的"已见窗口"集合**（★ 类名不限）—— 见 `scan_any_new_window` 的 docstring：
-        #:   ★ 我的机制**只认 `#32770`**，而现代 UI 的弹窗类名五花八门（XAML/Qt/CEF/Unity…）⇒
+        #: ★★ **兜底的"已见窗口"集合**（★ 类名不限）—— 见 `scan_any_new_window` 的 docst
+        #: ring：
+        #: ★ 我的机制**只认 `#32770`**，而现代 UI 的弹窗类名五花八门（XAML/Qt/CEF/Unity…
+        #: ）⇒
         #:   ★★ **扫不到就等于静默失效**（★ 那正是"卡住一动不动"的病）⇒ 兜底让它**可见**。
         self._seen_any: set[tuple] = set()
         #: ★ 进调用前先记录一份"基线的非弹窗顶层窗口"（★ 之后只报**新增**的）
@@ -670,7 +705,8 @@ class Sentinel:
         except Exception as exc:                                # noqa: BLE001
             #: ⚠ ★ 判据自身坏了 ⇒ **如实记一条**（★ 不静默）——
             #:   ★★ 本处第一次写时用了**从未绑定**的 `SCRIPTS_DIR`，★ 而那个 `except` 会把
-            #:   `NameError` **吞掉** ⇒ ★ **"卡住检测"会静默永不生效**（★ 正是事实 40 的毛病）；
+            #: `NameError` **吞掉** ⇒ ★ **"卡住检测"会静默永不生效**（★ 正是事实 40 的毛
+            #: 病）；
             #:   是**未定义名门禁**当场抓出来的（★ 它比"运行时才炸"早一步）✓
             self.events.append({"at": datetime.now().isoformat(timespec="seconds"),
                                 "kind": "stuck-probe-error", "error": str(exc)[:160],
@@ -704,12 +740,15 @@ class Sentinel:
 
     def _sweep(self, *, first: bool = False) -> None:
         #: ★★★★ 2026-10-04 **先判"没弹窗但卡住了"** —— ★ 它不受"像弹窗"三条的约束，
-        #:   也**不依赖"窗口属于家族"**（★ 于是 Explorer 托管的 `进度` 窗那个盲区也一并跨过）✓
+        #: 也**不依赖"窗口属于家族"**（★ 于是 Explorer 托管的 `进度` 窗那个盲区也一并跨
+        #: 过）✓
         self._sweep_stuck()
         #: ★★★★ 2026-10-02（轮 379）**主路径换成放宽判据** —— 用户要求
         #:   「★ **只要是 SolidWorks 的弹窗，这个机制就应该 100% 能处理**」。
-        #:   ⇒ `scan_family_windows`：★ **属于 SolidWorks 家族**（★ 主进程 + `sldProcMon` /
-        #:     `swCefSubProc` / `cwbcbfmesh` / `sldsurfacing` / `sldworks_fs` … 靠 **exe 路径**判定）
+        #: ⇒ `scan_family_windows`：★ **属于 SolidWorks 家族**（★ 主进程 + `sldProcMon` 
+        #: /
+        #: `swCefSubProc` / `cwbcbfmesh` / `sldsurfacing` / `sldworks_fs` … 靠 **exe 路
+        #: 径**判定）
         #:     ★ 且 **像弹窗**（★ `#32770` **或** 有 `Button` 子控件 **或** 有可见文本子控件
         #:     ⇒ ★ **与类名无关**）。
         #:   ⇒ 于是"认类名"那个盲区（XAML/Qt/CEF 的自定义类名）**被消掉**了。
@@ -724,7 +763,8 @@ class Sentinel:
             if key in self._seen:
                 continue
             self._seen.add(key)
-            #: ★★★★ 2026-10-02（轮 380）**先分级，再决定点不点** —— ★ 这是"走 LLM"那一层的落点：
+            #: ★★★★ 2026-10-02（轮 380）**先分级，再决定点不点** —— ★ 这是"走 LLM"那一层
+            #: 的落点：
             #:   ★ `forbidden` / `needs_llm` ⇒ **不自动点**（★ 只记证）⇒ ★ 交给 LLM 研判。
             #:   ★ 诚实说明其代价：**不点就可能让调用继续冻着** ⇒ ★ 靠外层**硬超时**兜底
             #:   （★ 宁可超时返回并带着证据，★ 也不瞎点一个"是否覆盖？"）。
@@ -750,7 +790,8 @@ class Sentinel:
                 "still_present": bool(_u.IsWindow(d["hwnd"])),
             })
             self._write(self.events[-1])
-        #: ★★★★ **兜底**：★ 报出"新出现的、家族内但**不像弹窗**"的窗口 ⇒ ★ **让残余盲区可见**
+        #: ★★★★ **兜底**：★ 报出"新出现的、家族内但**不像弹窗**"的窗口 ⇒ ★ **让残余盲区
+        #: 可见**
         #:   （★ 正常运行时**零输出** —— 主窗口 / CEF 窗口都不满足"像弹窗"那三条）
         try:
             news = scan_family_windows(pid=None, known=None)
@@ -872,7 +913,8 @@ def precheck_before_run(allowed_paths=(), *, allow_untitled: bool = False,
         if not v.get("ok"):
             return {"ok": False, "refused": True, "rolls": rolls,
                     "why": "★ 第 %d 次点名（%s）不放行：%s" % (roll, label, v.get("why") or "")}
-    #: ★★★ **两次点名不一致 ⇒ 也拒绝**（★ 真机现场：标题路读到 1 个文档、COM 路读到 0 个 ⇒
+    #: ★★★ **两次点名不一致 ⇒ 也拒绝**（★ 真机现场：标题路读到 1 个文档、COM 路读到 0 个
+    #:  ⇒
     #:   ★ 当时**放行了** ✗）—— ★ 两次说法不同，说明**其中一次瞎了**；★ 我们不知道是哪次 ✓
     #:   ⇒ ★ 保守做法：★ **不放行**，把两次读数都交回给人看 ✓
     counts = [r["documents"] for r in rolls]
@@ -943,7 +985,8 @@ def run_guarded(argv: list[str], *, timeout: float = 120.0, pid: int | None = No
             except Exception:                                   # noqa: BLE001
                 pass
     #: ★★★★★ 2026-10-03（轮 466）**第 ⑤ 条：跑完必须回连一次 SolidWorks** ——
-    #:   ★★ 起因是**用户亲眼看到三个「SOLIDWORKS Design 意外关闭」窗口**而我的护栏全报 `ok: true`。
+    #: ★★ 起因是**用户亲眼看到三个「SOLIDWORKS Design 意外关闭」窗口**而我的护栏全报 `ok
+    #: : true`。
     #:   ⇒ ★★★ **根因：`ok` 只证明「子进程退出码 0」，不证明 SolidWorks 还活着。**
     #:     SW 会在**之后的**某个 COM 调用上崩 ⇒ ★ 单跑"通过"是**假象**，
     #:     而那让整批探针的判据**失效**（★ 8 个操作单独跑全 ok，而 SW 崩了三次）。
@@ -981,7 +1024,8 @@ def main() -> int:
     ap.add_argument("--scan", action="store_true", help="只扫一遍（不处置）")
     ap.add_argument("--clear", action="store_true", help="扫一遍并**点掉**所有弹窗")
     ap.add_argument("--report", action="store_true", help="打印已记录的事件")
-    #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-precheck` ✓
+    #: ★ B5-2b：默认**开**预检（★ 真机跑的安全前提）；★ 只有确实需要时才 `--skip-prechec
+    #: k` ✓
     ap.add_argument("--skip-doc-cleanup", action="store_true",
                     help="★ 跑完不关我方文档（★ 默认会关；★ 有非我方文档时本来就不碰）")
     ap.add_argument("--skip-sandbox-collect", action="store_true",
@@ -1005,7 +1049,8 @@ def main() -> int:
     if args.scan or args.clear:
         pid = sw_pid()
         #: ★★ **处置要循环** —— 真机观察到的：★ 弹窗是**逐个来的**
-        #:   （★ 点掉 `零件33-DSH-142 : 失败` ⇒ 又弹 `零件34-DSH-142 : 失败`）⇒ 只点一次不够。
+        #: （★ 点掉 `零件33-DSH-142 : 失败` ⇒ 又弹 `零件34-DSH-142 : 失败`）⇒ 只点一次不
+        #: 够。
         for rnd in range(1, 6):
             found = scan(pid)
             if not found:
@@ -1019,7 +1064,8 @@ def main() -> int:
                 if not args.clear:
                     continue
                 #: ★★ **两段式**：① `PostMessage`（快，★ 对 `hung=False` 够用）
-                #:   ② 若窗口**仍在** ⇒ **真实输入事件**（★ 对手动可点的 `hung=True` 窗口才有效）
+                #: ② 若窗口**仍在** ⇒ **真实输入事件**（★ 对手动可点的 `hung=True` 窗口
+                #: 才有效）
                 first = dismiss(d["hwnd"])
                 time.sleep(0.4)
                 gone = not _u.IsWindow(d["hwnd"])
@@ -1032,11 +1078,14 @@ def main() -> int:
                       % (second, not _u.IsWindow(d["hwnd"])))
         return 0
     if args.command:
-        #: ★★★ 2026-10-04（接手轮）**修一处真缺陷**：这里原来写 `run_guarded(args.command)`
+        #: ★★★ 2026-10-04（接手轮）**修一处真缺陷**：这里原来写 `run_guarded(args.comman
+        #: d)`
         #:   —— ★ `--timeout` **被解析了、却从没传进去** ⇒ **永远走 120 s 默认值**。
-        #:   ★★ 真机现场：`python tools/sw_guard.py --timeout 3000 -- python <长跑探针>.py`
+        #: ★★ 真机现场：`python tools/sw_guard.py --timeout 3000 -- python <长跑探针>.py
+        #: `
         #:     ⇒ 探针在 **120.43 s** 被杀，★ 而返回体里 `timed_out: true · dialogs: []`
-        #:     ⇒ ★ **看不出是"护栏自己的超时没生效"**，极容易被读成"探针挂了"（★ 事实 517 同族）。
+        #: ⇒ ★ **看不出是"护栏自己的超时没生效"**，极容易被读成"探针挂了"（★ 事实 517 同
+        #: 族）。
         #:   ★★★ **这条正是本仓自己的定则**（事实 40）：「★ **一个存在但没人用的参数，
         #:     与没有它等价**」—— ★ 而它比没有更糟：★ **文档与 `--help` 都写着它管用** ✓
         #: ★★ B5-2b：**放行探针之前先点名**（★ 两次：启动之前 · 连上之后）✓
@@ -1051,22 +1100,27 @@ def main() -> int:
                 print("  ★★ 预检拒绝开始：%s" % v["why"])
                 print("  ★ 去留由人定；★ 确认可以继续时才用 `--skip-precheck` ✓")
                 return 2
-        #: ★★ 跑**之前**给沙盒拍只读快照（★ 用来算跑完多了什么）—— ★ 注意作用域在**这里**，
-        #:   ★ 我第一版把它写进了 `run_guarded`、却在 `main` 里用 ⇒ **每次跑完都 NameError 崩掉** ✗
+        #: ★★ 跑**之前**给沙盒拍只读快照（★ 用来算跑完多了什么）—— ★ 注意作用域在**这里*
+        #: *，
+        #: ★ 我第一版把它写进了 `run_guarded`、却在 `main` 里用 ⇒ **每次跑完都 NameError
+        #:  崩掉** ✗
         sandbox_before = snapshot_sandbox()
         r = run_guarded(args.command, timeout=args.timeout,
                         precheck=not args.skip_precheck, allowed_paths=args.allow_path)
         #: ★ 顺带把**子进程的 stdout** 也带回来（★ 原来只回一个 ≤1200 字符的 JSON 且
         #:   **明确剔掉了 `stdout_tail`**）⇒ ★ 长跑探针的**过程读数**（每一步的 print）
-        #:   就全丢了 —— ★ 而"哪一步走完了"正是排查长跑失败时最需要的东西（★ 事实 293 同族）。
+        #: 就全丢了 —— ★ 而"哪一步走完了"正是排查长跑失败时最需要的东西（★ 事实 293 同族
+        #: ）。
         out = {k: v for k, v in r.items() if k != "stdout_tail"}
         print(json.dumps(out, ensure_ascii=False, indent=1)[:1200])
         tail = (r.get("stdout_tail") or "").strip()
         if tail:
             print("── 子进程 stdout（尾部 4000 字符）──")
             print(tail[-4000:])
-        #: ★★ **copy-out**（规格 210 · B5-3）：跑完把沙盒里的产物**拷到配置的输出根目录** ✓
-        #:   ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论** ✓
+        #: ★★ **copy-out**（规格 210 · B5-3）：跑完把沙盒里的产物**拷到配置的输出根目录*
+        #: * ✓
+        #: ★ 无论探针成功与否都收（★ 失败的现场往往更有用），★ 且**收集失败不影响结论** 
+        #: ✓
         if not args.skip_sandbox_collect:
             got = collect_sandbox_outputs(sandbox_before)
             if got["copied"]:
@@ -1090,7 +1144,8 @@ def main() -> int:
             if not args.skip_doc_cleanup:
                 try:
                     import close_our_docs as _cd
-                    #: ★★ 变量名**不能叫 `r`** —— ★ 真机踩过：★ 上面 `r` 是**探针结果**，
+                    #: ★★ 变量名**不能叫 `r`** —— ★ 真机踩过：★ 上面 `r` 是**探针结果**
+                    #: ，
                     #:   ★ 我复用它 ⇒ **覆盖掉探针结果** ⇒ 结尾 `r["ok"]` 抛 `KeyError` ✗
                     #:   （★ 这类遮蔽 bug 只在真机跑到结尾时才炸 ⇒ ★ 单测走不到那条路径）✓
                     _cl = _cd.close_our_documents()

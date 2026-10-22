@@ -7,7 +7,8 @@
 #           两个
 #         工具从 `stitched` 推向 `verified`（★ 或如实报"没验成"）✓
 # 官方依据: ★ 三样读过（★ 见 `scripts/sw_net_blend.py` 来源块）：
-#   · 签名 `C:\swapi\types\IFeatureManager\InsertNetBlend.md`（20 参）⇒ `Type` 1=Boss / 2=Surface
+# · 签名 `C:\swapi\types\IFeatureManager\InsertNetBlend.md`（20 参）⇒ `Type` 1=Boss / 2=
+# Surface
 #   · ★★ 调用序出自官方示例 `Insert_Boundary_Feature_Example_VB.htm` 第 67–74 行
 #     （★ 例子里是**两个拉伸各选一个面** ⇒ ★ 本探针照它）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -44,14 +45,18 @@ def _build_plate(sw, tool_caller) -> object:
     model = sw_connect.new_document(sw, "part")
     inj = {"model": model, "sw": sw}
     #: ★★★ 第 55 轮（规格 220 续）：★ **两块凸台改成"贴着"** ——
-    #:   ★ 依据官方 `InsertCosmeticWeldBead2` 第 12 行逐字：★「…also **fills the gap between the
+    #: ★ 依据官方 `InsertCosmeticWeldBead2` 第 12 行逐字：★「…also **fills the gap betwe
+    #: en the
     #:     pre-selected part bodies**, if any.」✓
-    #:   ★★ 第 55 轮真机：★ 两块隔 30 mm 时（★ 中间**没有缝** ✗）⇒ 选面全对（★ 12 面 / 选区 1→2 ✓）
+    #: ★★ 第 55 轮真机：★ 两块隔 30 mm 时（★ 中间**没有缝** ✗）⇒ 选面全对（★ 12 面 / 选
+    #: 区 1→2 ✓）
     #:      ★ 而 `InsertCosmeticWeldBead(12.95)` **`returned: false`**、★ 树 **22 → 22** ✗
     #:   ⇒ ★ 改成 **x 从 100 起（与第一块共面贴合 ✓）** ⇒ ★ 两个面成为**真正的焊缝接头** ✓
     RECT2 = {"x1_mm": 100.0, "y1_mm": 0.0, "x2_mm": 200.0, "y2_mm": 60.0}
-    #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extrude 特征**" ✓）
-    #:   ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了 ✓）
+    #: ★★★ 第 38 轮：★ **两次拉伸**（★ 官方示例 `Postconditions` 逐字要"**两个 boss-extr
+    #: ude 特征**" ✓）
+    #: ★ 第 37 轮的教训：★ **同一草图里两个矩形只会拉出一块** ✗（★ 第二个把第一个挤掉了 
+    #: ✓）
     #:   ⇒ ★ 改成两轮：★ ① 草图1 + 矩形1 + 拉伸 ② **草图2 + 矩形2 + 拉伸** ✓
     rounds = ((("solidworks_sketch_start", {}),
                ("solidworks_sketch_add_rectangle", RECT),
@@ -59,11 +64,16 @@ def _build_plate(sw, tool_caller) -> object:
               (("solidworks_sketch_start", {}),
                ("solidworks_sketch_add_rectangle", RECT2),
                ("solidworks_extrude_boss", {"sketch_name": "Sketch2", "depth_mm": DEPTH,
-                                             #: ★★★ 第 56 轮：★ **关掉"合并结果"** ⇒ ★★ **两个体：贴合但不合并** ✓
-                                             #:   ★ 依据第 55 轮真机：★ 隔 30 mm ⇒ 有体无"缝" ✗；
-                                             #:   ★ 贴合但**默认合并** ⇒ 并成一个体（★ 6 面 ✗）
-                                             #:   ⇒ ★ 官方 `FeatureExtrusion3` 有 **`Merge`** 形参 ✓
-                                             #:   ★ 而本仓 `solidworks_extrude_boss` **就暴露了它** ✓
+                                             #: ★★★ 第 56 轮：★ **关掉"合并结果"** ⇒ ★★ 
+                                             #: **两个体：贴合但不合并** ✓
+                                             #: ★ 依据第 55 轮真机：★ 隔 30 mm ⇒ 有体无"
+                                             #: 缝" ✗；
+                                             #: ★ 贴合但**默认合并** ⇒ 并成一个体（★ 6 
+                                             #: 面 ✗）
+                                             #: ⇒ ★ 官方 `FeatureExtrusion3` 有 **`Merge
+                                             #: `** 形参 ✓
+                                             #: ★ 而本仓 `solidworks_extrude_boss` **就
+                                             #: 暴露了它** ✓
                                              "merge": False})))
     for rnd in rounds:
         for step, params in rnd:
@@ -79,9 +89,12 @@ def _run_one(sw, tool_caller, net, kind: str, fn_name: str) -> dict:
     before = _fc(model)
     fn = getattr(net, fn_name)
     try:
-        #: ★★ 2026-10-07（规格 220 T-220-01）**swap test**：★ 交换两个面序号，★ 二分真因 ✓
-        #: ★★★ 第 39 轮：★ **两个面取不同的体**（★ 官方示例逐字「a face on **each** boss-extrude」✓）
-        #:   ★ 第 38 轮真机：★ 两块凸台 = **两个独立的体** ⇒ ★ 0 号体 6 个面 ⇒ ★ 7 号面（index 6）落在**第二块** ✓
+        #: ★★ 2026-10-07（规格 220 T-220-01）**swap test**：★ 交换两个面序号，★ 二分真因
+        #:  ✓
+        #: ★★★ 第 39 轮：★ **两个面取不同的体**（★ 官方示例逐字「a face on **each** boss
+        #: -extrude」✓）
+        #: ★ 第 38 轮真机：★ 两块凸台 = **两个独立的体** ⇒ ★ 0 号体 6 个面 ⇒ ★ 7 号面（i
+        #: ndex 6）落在**第二块** ✓
         rep = fn(model, face_index_1=0, face_index_2=6)
     except Exception as exc:                                                       # noqa: BLE001
         return {"kind": kind, "function": fn_name, "raised": str(exc)[:220],

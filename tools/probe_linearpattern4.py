@@ -71,7 +71,8 @@ def main() -> int:
     started = time.time()
     R: dict = {"at": time.strftime("%Y-%m-%d %H:%M:%S"), "试法": []}
     sw, _ = C.connect_solidworks(wait_seconds=30)
-    #: ★ 新入口要"定义方向的尺寸名" ⇒ ★ 用**带尺寸的现成件**（★ 上一轮验证过它带 `D1@凸台-拉伸1`）
+    #: ★ 新入口要"定义方向的尺寸名" ⇒ ★ 用**带尺寸的现成件**（★ 上一轮验证过它带 `D1@凸
+    #: 台-拉伸1`）
     EXIST = REPO / "output" / "_probe_drawing_part.SLDPRT"
     R["带尺寸的件存在"] = EXIST.exists()
     doc = None

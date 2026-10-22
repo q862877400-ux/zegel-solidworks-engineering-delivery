@@ -5,18 +5,24 @@
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2**。★★ 它是 **B3（存活普查）的
 #           量具** ——
 #   ★ B3 要「每次调用前后抓指纹差分」，★ 那**先得有一个可靠的指纹** ✓
-#   ★ 外部评审的原话：★「整套方案的**量具是指纹**，所以要**校准它**，与你们『**回读的量具要校准**』是同一个思路」✓
-# 判据:   ★★ **九类状态**（评审给的清单）：选区 · 编辑态 · 文档修改标志 · 特征数 · 体数 · 面数 ·
+# ★ 外部评审的原话：★「整套方案的**量具是指纹**，所以要**校准它**，与你们『**回读的量具
+# 要校准**』是同一个思路」✓
+# 判据:   ★★ **九类状态**（评审给的清单）：选区 · 编辑态 · 文档修改标志 · 特征数 · 体数 
+# · 面数 ·
 #     显示状态 · 活动配置 · 重建状态 ✓
-#   ★ 每一类的读数都**标明官方成员**（★ 铁律 4：不许凭印象）；★ **拿不到 ⇒ 记 `None` + 原因**，
+# ★ 每一类的读数都**标明官方成员**（★ 铁律 4：不许凭印象）；★ **拿不到 ⇒ 记 `None` + 原
+# 因**，
 #     ★★ **绝不假装读到了**（★ 那会让 B3 的差分把「读不到」当成「没变」）✓
 #   ⚠ **读数必须只读**：★ 本模块只调**读**类成员；★ 且 B2 的灵敏度测试里有一格专门验这件事
 #     （★ 「连读两次、中间不做任何事 ⇒ 两次必须相等」）✓
-# 官方依据（逐个已读页面）：`ISelectionMgr.GetSelectedObjectCount2` · `IModelDoc2.GetActiveSketch2` ·
-#   `IModelDoc2.GetSaveFlag`（「dirty and needs to be saved」）· `IModelDoc2.FirstFeature` +
+# 官方依据（逐个已读页面）：`ISelectionMgr.GetSelectedObjectCount2` · `IModelDoc2.GetAct
+# iveSketch2` ·
+# `IModelDoc2.GetSaveFlag`（「dirty and needs to be saved」）· `IModelDoc2.FirstFeature`
+#  +
 #   `IFeature.GetNextFeature` · `IPartDoc.GetBodies2` · `IBody2.GetFaceCount` ·
 #   `IModelDocExtension.GetDisplayStateSetting` · `IModelDoc2.GetActiveConfiguration` ·
-#   `IModelDoc2.GetBendState`? —— ★ 见 `needs_rebuild` 一格（★ 由 `sw_session.needs_rebuild_status` 提供）
+# `IModelDoc2.GetBendState`? —— ★ 见 `needs_rebuild` 一格（★ 由 `sw_session.needs_rebuil
+# d_status` 提供）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
@@ -45,8 +51,10 @@ OFFICIAL = {
 }
 
 #: ★★★ **已知不可用**的状态类（★ 有依据、有错误码 —— ★ 不是"还没试"）：
-#:   ★ `display`：★ `IModelDocExtension.GetDisplayStateSetting(1|2|3)` **三种 Option 全部**抛
-#:     `com_error (-2147417851, '服务器出现意外情况')` ⇒ ★ 与**事实 47**（`AccessSelections`）
+#: ★ `display`：★ `IModelDocExtension.GetDisplayStateSetting(1|2|3)` **三种 Option 全部*
+#: *抛
+#: `com_error (-2147417851, '服务器出现意外情况')` ⇒ ★ 与**事实 47**（`AccessSelections`
+#: ）
 #:     **同一个错误族**（服务端故障 / RPC）⇒ ★ 该成员在**本后端**上**不可用** ✓
 #:   ★★ 处置：★ 它**不该**把每一条差分都拖成"未判定" ——
 #:     那是**把"量具的盲区"当成"被测对象的未知"** ✗（★ 与"选不上当成能力不行"同族）
@@ -55,11 +63,13 @@ KNOWN_UNAVAILABLE = {
     "display": "★★ 后端限定：GetDisplayStateSetting 三种 Option 全抛 com_error -2147417851（与事实 47 同族）",
 }
 
-#: ★ 特征遍历的**上限**（★ 防病态文档把探针拖死；★ 到顶就记 `None` + 原因，★ 不假装数完）✓
+#: ★ 特征遍历的**上限**（★ 防病态文档把探针拖死；★ 到顶就记 `None` + 原因，★ 不假装数完
+#: ）✓
 FEATURE_CAP = 5000
 
 
-#: ★ `swBodyType_e.swAllBodies`（官方 `C:\\swapi\\enums\\swBodyType_e.md`：`-1 = All solid and sheet bodies`）✓
+#: ★ `swBodyType_e.swAllBodies`（官方 `C:\\swapi\\enums\\swBodyType_e.md`：`-1 = All sol
+#: id and sheet bodies`）✓
 SW_ALL_BODIES = -1
 #: ★ `swDisplayStateOpts_e.swAllDisplayState`（官方同页：`2 = All display states`）✓
 SW_ALL_DISPLAY_STATE = 2
@@ -122,7 +132,8 @@ NOT_APPLICABLE_BY_DOC = {
     #:   而**唯一读不到的格是 `config`** ⇒ ★★ 认识：★ **图纸没有零件那种"配置"** ⇒
     #:   ★ `config` 在图纸上**本来就不适用**，★ 而当时被记成"**读不到**" ⇒
     #:   ★★ 于是把七条**本该 `agree`** 的工具压成 `undecided` ✗
-    #:   ★★（★ 与 `display` 的"**后端限定**"同族：★ 两者都是**量具的边界**，★ 都该**单独成桶**）✓
+    #: ★★（★ 与 `display` 的"**后端限定**"同族：★ 两者都是**量具的边界**，★ 都该**单独成
+    #: 桶**）✓
     "drawing": ("config",),
 }
 
@@ -163,7 +174,8 @@ def read(model, sw=None) -> dict:
     else:
         #: ★★★ 真机踩过：★ `GetSelectedObjectCount2` **是方法、要吃 `-1` 实参**
         #:   （★ 事实 8 就是用 `-1` 表示"全部标记"）—— ★ 我**无参**调它 ⇒
-        #:   ★ `get_com_member` 的"无实参 ⇒ 先无参调一次、失败则**返回成员本身**"语义生效 ⇒
+        #: ★ `get_com_member` 的"无实参 ⇒ 先无参调一次、失败则**返回成员本身**"语义生效 
+        #: ⇒
         #:   ★★ 读出的是 **`<bound method ...>`**（★ 再被 `jsonable` 变成字符串）✗
         #:   ⇒ ★ 于是 `selection` 那一格**从来不是数字**，★ 差分自然"没动" ✓
         v, why2 = _read("GetSelectedObjectCount2", sel_mgr, -1)
@@ -184,12 +196,15 @@ def read(model, sw=None) -> dict:
     # ④ 特征数 / ⑤ 体数 / ⑥ 面数
     n, why = _count_features(model)
     put("features", n, why)
-    #: ★ 官方签名（已读页面）：`IPartDoc.GetBodies2(BodyType, BVisibleOnly)` —— **要两个实参** ⇒
+    #: ★ 官方签名（已读页面）：`IPartDoc.GetBodies2(BodyType, BVisibleOnly)` —— **要两个
+    #: 实参** ⇒
     #:   ★ 我第一版无参调它 ⇒ 抛异常 ⇒ ★ `bodies`/`faces` 两格一直是「读不到」✗
-    #:   ★ `swAllBodies = -1`（官方 `swBodyType_e` 页给的数值本页就有）；`False` = 含不可见的 ✓
+    #: ★ `swAllBodies = -1`（官方 `swBodyType_e` 页给的数值本页就有）；`False` = 含不可
+    #: 见的 ✓
     bodies, why = _read("GetBodies2", model, SW_ALL_BODIES, False)
     if bodies is None:
-        #: ★★★ 2026-10-06 **真机查明（这条很值）**：★ 在**空零件**上 `GetBodies2(-1, False)`
+        #: ★★★ 2026-10-06 **真机查明（这条很值）**：★ 在**空零件**上 `GetBodies2(-1, Fal
+        #: se)`
         #:   返回 **`None`** —— ★★ 那**不是"读不到"，是"本来就没有实体"** ✓
         #:   （★ 真机对照：★ 建出一个实体之后同一调用 ⇒ **`tuple(len=1)`** ✓）
         #:   ★★ 而我把两者混成了「读不到」⇒ `bodies`/`faces` 两格**一直 unreadable** ✗
@@ -220,19 +235,23 @@ def read(model, sw=None) -> dict:
     if ext is None:
         put("display", None, "Extension 取不到：%s" % (why or "返回 None"))
     else:
-        #: ★★★ 真机踩过（与 `selection` **同一个坑**）：★ `GetDisplayStateSetting` 是**方法、
+        #: ★★★ 真机踩过（与 `selection` **同一个坑**）：★ `GetDisplayStateSetting` 是**
+        #: 方法、
         #:   要吃一个 `swDisplayStateOpts_e` 实参** ⇒ ★ 我无参调它 ⇒ 拿到的是
         #:   ★★ **`<bound method ...>`**（★ 再被 `jsonable` 变成字符串）✗
-        #:   ★ 官方签名（已读）：`DisplayStateSetting GetDisplayStateSetting(int Option)`；
+        #: ★ 官方签名（已读）：`DisplayStateSetting GetDisplayStateSetting(int Option)`
+        #: ；
         #:     ★ `swAllDisplayState = 2`（官方 `swDisplayStateOpts_e` 页给了数值）✓
-        #:   ★ 而且要读的是它里面的**标量** —— ★ 返回的是 `IDisplayStateSetting` **对象**，
+        #: ★ 而且要读的是它里面的**标量** —— ★ 返回的是 `IDisplayStateSetting` **对象**
+        #: ，
         #:     ★ 直接存对象又会落回"不可比的字符串" ✗ ⇒ ★ 取它的 `Names` ✓
         setting, why2 = _read("GetDisplayStateSetting", ext, SW_ALL_DISPLAY_STATE)
         if setting is None:
             #: ★★★ 真机查明（★ 这**不是**"读不到"，是一条**可记录的限定**）：
             #:   ★ `GetDisplayStateSetting(1|2|3)` **三种 Option 全部**抛
             #:     `com_error (-2147417851, '服务器出现意外情况')` ⇒
-            #:   ★★ 与**事实 47**（`AccessSelections`）**同一个错误族**（服务端故障 / RPC）
+            #: ★★ 与**事实 47**（`AccessSelections`）**同一个错误族**（服务端故障 / RPC
+            #: ）
             #:     ⇒ ★ 该成员在**本后端**上**不可用** ✓
             #:   ⇒ ★ 于是 `display` 这一类**当前无法作为差分依据** ⇒
             #:     ★★ 按验收判据的第二种出口**明写出来**（★ 不是"没试"，也不是"看不见"）✓
@@ -241,7 +260,8 @@ def read(model, sw=None) -> dict:
         else:
             names, why3 = _read("Names", setting)
             if names is None:
-                #: ★★★ 与 `bodies` **同一条教训**：★ pywin32 对**空的 VARIANT 数组**回 `None` ⇒
+                #: ★★★ 与 `bodies` **同一条教训**：★ pywin32 对**空的 VARIANT 数组**回 `
+                #: None` ⇒
                 #:   ★★ 那是「**没有名字**」，★ **不是「读不到」** ✗
                 #:   ⇒ ★ 按**空**处理（★ 值 `"()"` 稳定可比）⇒ ★ 于是这一格**可读** ✓
                 put("display", str(()))

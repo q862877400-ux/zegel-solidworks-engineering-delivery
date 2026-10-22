@@ -5,10 +5,13 @@
 # 文件:   tools/probe_load_entity_kinds.py
 # 定位:   ★ 2026-10-03（轮 409）承事实 323 的**具体下一步**，并落实轮 408 新立的纪律：
 #   ★★ 「**判「未建成」之前，先穷举"调用前提"这一维**」—— 候选维度四选：
-#     ① 选区卫生 ✓（已排除）② **算例类型** ✓（已排除：thermal 让 4 条成了、temperature 仍不成）
-#     ③ **参数单位与个数** ✓（已排除：读了 `_check` 的实现 —— arity 校核对得上、`out_i4()` 也补了）
+# ① 选区卫生 ✓（已排除）② **算例类型** ✓（已排除：thermal 让 4 条成了、temperature 仍不
+# 成）
+# ③ **参数单位与个数** ✓（已排除：读了 `_check` 的实现 —— arity 校核对得上、`out_i4()` 
+# 也补了）
 #     ④ ★ **实体种类** ← **本表要穷举的就是它**。
-#   ★ 而**官方文本**正好指着这个维度：`ICWLoadsAndRestraintsManager` 各条的 Parameters 段写着
+# ★ 而**官方文本**正好指着这个维度：`ICWLoadsAndRestraintsManager` 各条的 Parameters 段
+# 写着
 #     · `AddConvection`「faces or **shell edges**」· `AddHeatFlux`「faces or shell edges」
 #     · `AddHeatPower`「bodies, faces, edges, and **vertices**」
 #     · `AddTemperature`「entities (**faces, edges, and vertices**)」

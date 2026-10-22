@@ -1,11 +1,13 @@
 # ── 24h 计划 v2 · 段 4：**孔族**（按孔位批量建孔）────────────────────────────────────
-# ★★★★ 2026-10-03（轮 401）来源：`tools/triage_real_gaps.py` 判定 `sw_hole_features` 的 3 条「该挂」里，
+# ★★★★ 2026-10-03（轮 401）来源：`tools/triage_real_gaps.py` 判定 `sw_hole_features` 的 
+# 3 条「该挂」里，
 #   ★ **只有 `create_hole_pattern` 挂得成** —— 另两条（`configure_straight_tap` /
 #   `configure_tapered_tap`）**吃 COM 元素对象**（`IStraightTapElementData` /
 #   `ITaperedTapElementData`），★★ 而本仓**没有任何路径能从孔特征拿到那个元素**
 #   （★ 它们只在 mock 测试里出现过）⇒ ★ MCP 层**给不出** ⇒ 记「内部件」并写清理由。
 #
-# ★★ **这一条为什么要包装**：`create_hole_pattern(model, positions, creator, **kwargs)` 收的是
+# ★★ **这一条为什么要包装**：`create_hole_pattern(model, positions, creator, **kwargs)` 
+# 收的是
 #   **一个可调用对象** —— ★ 而 MCP 层**给不出函数** ⇒ 包装把它换成**具名的种类** `kind`。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────

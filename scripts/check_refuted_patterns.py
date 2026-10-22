@@ -24,9 +24,12 @@ PATTERNS = ROOT / "docs" / "refuted-patterns.json"
 FACTS = ROOT / "docs" / "known-facts.md"
 REQUIRED_FIELDS = ("id", "claim", "refuted_by", "anchor_quote", "prevention")
 
-#: ★★ 2026-10-04（接手轮）：★ **中文 Windows 上打印 `✓` 会 `UnicodeEncodeError: 'gbk' codec`** ——
-#:   ★ 那是**事实 58** 那一族的又一例（★ 父进程用 `locale.getpreferredencoding()` = **GBK**）。
-#:   ★★ 修法：★ **把 stdout 切成 utf-8**（★ `errors="replace"` ⇒ 再遇到别的编码也不至于整条崩）✓
+#: ★★ 2026-10-04（接手轮）：★ **中文 Windows 上打印 `✓` 会 `UnicodeEncodeError: 'gbk' co
+#: dec`** ——
+#: ★ 那是**事实 58** 那一族的又一例（★ 父进程用 `locale.getpreferredencoding()` = **GBK*
+#: *）。
+#: ★★ 修法：★ **把 stdout 切成 utf-8**（★ `errors="replace"` ⇒ 再遇到别的编码也不至于整
+#: 条崩）✓
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
 except Exception:                                                         # noqa: BLE001

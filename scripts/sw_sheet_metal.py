@@ -124,17 +124,21 @@ SHEET_METAL_RUNTIME_STATUS = {
         "真机读回正确：thickness_m=0.002、has_base_flange=True、"
         "all_solid_bodies_are_sheet_metal=True"),
     # ✗ 实测失败（原因是真机报错原文）
-    # ⚠⚠ 以下 4 条的**根因层次**已由真机测清（2026-10-01，`probe_featuredata_access.py`）：
+    # ⚠⚠ 以下 4 条的**根因层次**已由真机测清（2026-10-01，`probe_featuredata_access.py`
+    # ）：
     #   ① `CreateDefinition(fm)` 实测：34/37/118 → 非 None；**3/33 → None**
     #      ⇒ **Draft 与 OneBend 不走 `CreateDefinition`**（反射里有专用入口
     #        `InsertSheetMetal3dBend` / `IInsertSheetMetalEdgeFlange2` 等，**均存在**）。
     #   ② `AccessSelections(model, Component)` **被否证**：三种 Component 形式
     #      （`None` / `VARIANT(VT_DISPATCH,None)` / `False`）全失败
     #      ⇒ 官方文档说它是「取得描述**该特征**的选区」= **编辑**用，不是创建用。
-    #   ③ `ReverseDirection` 的跨接口泄漏**已修复**（见 `create_edge_flange` 的 `_apply`）：
-    #      删掉后报错**从** `Property ... can not be set` **变为** `CreateFeature(37) 创建失败`
+    # ③ `ReverseDirection` 的跨接口泄漏**已修复**（见 `create_edge_flange` 的 `_apply`）
+    # ：
+    # 删掉后报错**从** `Property ... can not be set` **变为** `CreateFeature(37) 创建失
+    # 败`
     #      ⇒ **属性那一层确实通了**。
-    #   **⇒ 仍未查明**：`create_gusset` 在**能**拿到 FeatureData 时为何 `Thickness` 仍设不上；
+    # **⇒ 仍未查明**：`create_gusset` 在**能**拿到 FeatureData 时为何 `Thickness` 仍设不
+    # 上；
     #     以及这 4 个的**正确创建路径**（是否该改用专用 `Insert*` 入口）。**不猜、不硬改。**
     "create_one_bend": (False,
         "⚠ **真因已查明（2026-10-01，有官方依据）**：`swFmOneBend(33)` 是合法枚举成员，"
@@ -162,10 +166,13 @@ SHEET_METAL_RUNTIME_STATUS = {
     #: ★★★ 283 的**真机读数**（★ 2026-10-10 · SW 34.4.1）：
     #:   ① ★ **只给面**（★ 6 面 × 3 标记 = **18 臂**）⇒ ★ **全失败**，★ 且报文**恒定**：
     #:      ★「**此拔模方向尚未定义。**」⇒ ★ 排除「选错了面 / 选错了标记」。
-    #:   ② ★★ **方向项（`Front Plane` · mark 1）+ 待拔模面（mark 2）** ⇒ ★ **选中 2 个 · 建成 `拔模1`** ✓。
+    #: ② ★★ **方向项（`Front Plane` · mark 1）+ 待拔模面（mark 2）** ⇒ ★ **选中 2 个 · 
+    #: 建成 `拔模1`** ✓。
     #:   ⇒ ★★★ **规格 239 的路径改动是对的**，★ 缺的只是**方向项**这一选择。
-    #:   ★★ **顺带**：★ 这是 282 那条假说（★「特征创建 API 似乎吃不到「边 / 面」类选择」）的**反例**
-    #:     —— ★ `InsertMultiFaceDraft` **吃得到面选择** ⇒ ★ **「吃不到」不是普遍现象，是按 API 逐个看的** ✓
+    #: ★★ **顺带**：★ 这是 282 那条假说（★「特征创建 API 似乎吃不到「边 / 面」类选择」）
+    #: 的**反例**
+    #: —— ★ `InsertMultiFaceDraft` **吃得到面选择** ⇒ ★ **「吃不到」不是普遍现象，是按 A
+    #: PI 逐个看的** ✓
     #:   ★ 读数：`output/_probe283_draft.txt` · `output/_probe283_draft_dir.txt`
     "create_edge_flange": (False,
         "⚠ 属性层**已修**（原设的 `ReverseDirection` **不属于** `IEdgeFlangeFeatureData` —— "
@@ -214,7 +221,8 @@ SHEET_METAL_RUNTIME_STATUS = {
     #: ★★★ 2026-10-06（规格 209 · B4-2 · idx 173）：**`create_hem` 真机回 `None`** ——
     #:   ★ 而**成员名/16 参顺序/五个枚举全部逐条对上官方**（★ 不是"抄错"），四步前置照做
     #:   （★ 且**顺序已按官方 `## Remarks` 订正**：先建 CBA、**再**选边），
-    #:   ★★ **五种形态全部回 `None`**（★ 每一次都是一个**可证伪的假设**，不是"换个参数再试"）：
+    #: ★★ **五种形态全部回 `None`**（★ 每一次都是一个**可证伪的假设**，不是"换个参数再试
+    #: "）：
     #:   ```
     #:   ① 边 index:0（可能是厚度棱）              ② 边=最长边(index:4，60 mm 外缘)
     #:   ③ 长度参数整体 ×1000（毫米口径）          ④ UseDefaultRelief=True（默认卸料槽）
@@ -233,23 +241,34 @@ SHEET_METAL_RUNTIME_STATUS = {
         "⇒ ★ 正确前置**尚未查明**；见 `tools/probe_spec209_hem_diag.py` 与 "
         "`tools/probe_spec209_hem_units.py` 的读数（`output/spec209-hem-*.json`）"),
     #: ★★★ **订正（2026-10-10 · 规格 282 · 真机四形态 + 选择类型核查）**：
-    #:   ★★ **上面那句「尚未查明」可以撤了** —— ★ 用 276 的报错入口（`ISldWorks::GetErrorMessages`）
-    #:   把四形态**逐个读栈** ⇒ ★★ 报文**恒定**：★「**褶边N: 您必须选择一边线。**」（★ 而**选中数 = 1**）。
-    #:   ★★★ **再量一层**：★ `SelectionMgr.GetSelectedObjectType3(1, -1)` ⇒ ★ 边 = **`swSelEDGES`(1)** ·
-    #:     ★ 面 = **`swSelFACES`(2)**（★ 本仓 `select_entity_by_index` 与 `IEntity::Select4` **两条路都核过**）
+    #: ★★ **上面那句「尚未查明」可以撤了** —— ★ 用 276 的报错入口（`ISldWorks::GetErrorM
+    #: essages`）
+    #: 把四形态**逐个读栈** ⇒ ★★ 报文**恒定**：★「**褶边N: 您必须选择一边线。**」（★ 而*
+    #: *选中数 = 1**）。
+    #: ★★★ **再量一层**：★ `SelectionMgr.GetSelectedObjectType3(1, -1)` ⇒ ★ 边 = **`swSe
+    #: lEDGES`(1)** ·
+    #: ★ 面 = **`swSelFACES`(2)**（★ 本仓 `select_entity_by_index` 与 `IEntity::Select4`
+    #:  **两条路都核过**）
     #:     ⇒ ★★ **「选了却说没选」** ⇒ ★ 问题**不在选择登记**。
-    #:   ★★ **与 `create_edge_flange` 同形但不同因**：★ 两者都是「选择登记了、特征 API 吃不到」；
-    #:     ★ 但 hem 走 `InsertSheetMetalHem2`（★ **无** `AccessSelections`）· ★ edge_flange 卡在 `AccessSelections`。
-    #:   ★★ **假说（★ 只有 2 个样本 ⇒ 如实标成假说）**：★ 本机的特征创建 API **似乎吃不到「边 / 面」类选择**
+    #: ★★ **与 `create_edge_flange` 同形但不同因**：★ 两者都是「选择登记了、特征 API 吃
+    #: 不到」；
+    #: ★ 但 hem 走 `InsertSheetMetalHem2`（★ **无** `AccessSelections`）· ★ edge_flange 
+    #: 卡在 `AccessSelections`。
+    #: ★★ **假说（★ 只有 2 个样本 ⇒ 如实标成假说）**：★ 本机的特征创建 API **似乎吃不到
+    #: 「边 / 面」类选择**
     #:     （★ 吃**草图**的 `create_base_flange` **能建**）⇒ ★ **待验**，★ 不据此下结论。
-    #:   ⚠★ **为什么这条订正写成注释、不写进上面那条字符串**：★ 那条字符串**会进 MCP 工具说明**；
+    #: ⚠★ **为什么这条订正写成注释、不写进上面那条字符串**：★ 那条字符串**会进 MCP 工具
+    #: 说明**；
     #:     ★ 实测（规格 282 首跑）把它写进去后，**预选族门禁**的 ±160 字**否定窗口**被推移
-    #:     ⇒ ★ 冒出 **2 条假红**（`insert_form_tool` / `create_fold`）⇒ ★ **诊断细节放注释、说明留摘要** ✓
+    #: ⇒ ★ 冒出 **2 条假红**（`insert_form_tool` / `create_fold`）⇒ ★ **诊断细节放注释、
+    #: 说明留摘要** ✓
     #: ★★★ 2026-10-06（规格 209 · B2-1 · idx 336）：**`create_unfold` 真机建成了** ——
     #:   新特征 **`展开1`**（`output/spec209-unfold-contract.json`）✓
     #:   ★★ 关键在**选择契约**：固定面 **mark 1** + 一个 `BODYFEATURE` **mark 4**，
-    #:     且 `SetSelectedObjectMark` 第 3 参必须是 **`swSelectionMarkSet`(0)**（传 `-1` **静默不生效**）。
-    #:   ★ 而**"哪条折弯"没有被限死**：本仓真机用**基体-法兰1**（一个**不是折弯**的特征）当 mark 4
+    #: 且 `SetSelectedObjectMark` 第 3 参必须是 **`swSelectionMarkSet`(0)**（传 `-1` **
+    #: 静默不生效**）。
+    #: ★ 而**"哪条折弯"没有被限死**：本仓真机用**基体-法兰1**（一个**不是折弯**的特征）
+    #: 当 mark 4
     #:     的对象，`展开1` **照样建出来了** ⇒ ★★ **本表只记这一格的读数**，
     #:     ★ **不据此声称"任意特征都可以"**（★ 那需要另一组实验）✓
     "create_unfold": (True,
@@ -261,8 +280,10 @@ SHEET_METAL_RUNTIME_STATUS = {
         "⚠ 先前记录的「没建出来」是**我自己的 bug**：`SetSelectedObjectMark` 第 3 参传了 `-1`"
         "（官方要 `swSelectionMarkSet`(0)）⇒ mark 静默没设上 ✓"),
     #: ★★★ 2026-10-06（规格 209 · B4-4 · idx 155）：**`create_fold` 真机建成了** ——
-    #:   拿刚建出的 `展开1` 当**前置特征（mark 0）**，新特征 **`折叠1`**（`output/spec209-unfold-fold.json`）✓
-    #:   ★★ 关键同 unfold（mark 表 [1, 4]），★ 而**前置特征那一步必须在 `ClearSelection2` 之后** ——
+    #: 拿刚建出的 `展开1` 当**前置特征（mark 0）**，新特征 **`折叠1`**（`output/spec209-
+    #: unfold-fold.json`）✓
+    #: ★★ 关键同 unfold（mark 表 [1, 4]），★ 而**前置特征那一步必须在 `ClearSelection2` 
+    #: 之后** ——
     #:     我第一版把它塞在 `call()` 里 ⇒ 会被清选区**清掉**（顺序错、静默失效）✓
     "create_fold": (True,
         "★ 真机（2026-10-06）建成 **`折叠1`**：`unfold → fold` 一条链（★ 与官方示例同形），"
@@ -467,9 +488,12 @@ def sheet_metal_evidence(model) -> dict[str, Any]:
 #: （见 `create_draft` 的来源块）⇒ 该入口**不需要**本常量。
 SW_FM_DRAFT = 3
 SW_FM_ONE_BEND = 33
-#: ⚠ `swFmOneBend(33)` 是**合法枚举成员**，但**不在** `CreateDefinition` 接受的 35 个常量里
-#: ⇒ `CreateDefinition(33)` 返回 None **是应然的**（已知事实 34 的真因，2026-10-01 查明）。
-#: 「一个折弯」的**正确入口**是下面这个（官方名单里有，接口 `ISketchedBendFeatureData`）。
+#: ⚠ `swFmOneBend(33)` 是**合法枚举成员**，但**不在** `CreateDefinition` 接受的 35 个常
+#: 量里
+#: ⇒ `CreateDefinition(33)` 返回 None **是应然的**（已知事实 34 的真因，2026-10-01 查明
+#: ）。
+#: 「一个折弯」的**正确入口**是下面这个（官方名单里有，接口 `ISketchedBendFeatureData`）
+#: 。
 #: 数值来源：`D:\AI\SW\_raw\**\enum_values_sldworks.txt`（反射，130 个成员）。
 SW_FM_SKETCH_BEND = 35
 
@@ -502,7 +526,8 @@ def _create_from_definition(model, fm_type: int, apply_definition):
     """
     manager = get_com_member(model, "FeatureManager")
     #: ★ spec 239：拔模**不走** `CreateDefinition`（`swFmDraft` 不在任何官方宿主页的
-    #:   `Type` 清单里）⇒ 这里**没有** `cd-site` 声明，因为它**不再是** `CreateDefinition` 站点。
+    #: `Type` 清单里）⇒ 这里**没有** `cd-site` 声明，因为它**不再是** `CreateDefinition`
+    #:  站点。
     data = get_com_member(manager, "CreateDefinition", int(fm_type))
     if data is None:
         raise RuntimeError(f"CreateDefinition({fm_type}) 未返回特征数据")
@@ -589,9 +614,11 @@ class DraftFeatureSpec:
     angle: float
     depth: float
     reverse_direction: bool = False
-    #: 官方 `EdgeDraft`：True = **边拔模**（选边，软件自动取其两侧面）；False = **面拔模**。
+    #: 官方 `EdgeDraft`：True = **边拔模**（选边，软件自动取其两侧面）；False = **面拔模
+    #: **。
     edge_draft: bool = False
-    #: 官方 `PropType`：0 不传播 · 1 传播到共享基准面的下一组相切面 · 2 传播到基准面的所有相邻面
+    #: 官方 `PropType`：0 不传播 · 1 传播到共享基准面的下一组相切面 · 2 传播到基准面的所
+    #: 有相邻面
     #: · 3 所有内环上的相邻面 · 4 外环上的相邻面。★ 取值域取自官方该页 `## Parameters`。
     prop_type: int = 0
     is_step_draft: bool = False
@@ -720,14 +747,19 @@ def create_edge_flange(model, spec: EdgeFlangeSpec):
 #             ⇒ ★ **三源一致**（官方页 / 官方页的取代链 / 反射转储）：**6 参、顺序相同**
 # 定位:   ★★ 2026-10-09（规格 239）**把创建路径从 `CreateDefinition` 改到官方入口**。
 #         **改前**：本函数走 `CreateDefinition(swFmDraft=3)`，而
-#         ① `swFmDraft` **不在**任何官方 `CreateDefinition` 宿主页的 `Type` 清单里（spec 238 已证）；
-#         ② 本仓**真机证据**：`CreateDefinition(3)` 返回 `None`（同族 34/35/37/118 都正常返回）。
-#         ⇒ ★ 那不是「参数没调对」，是**这条路径官方不支持**（spec 239 的 `unsupported-path` 判据）。
+# ① `swFmDraft` **不在**任何官方 `CreateDefinition` 宿主页的 `Type` 清单里（spec 238 已
+# 证）；
+# ② 本仓**真机证据**：`CreateDefinition(3)` 返回 `None`（同族 34/35/37/118 都正常返回）
+# 。
+# ⇒ ★ 那不是「参数没调对」，是**这条路径官方不支持**（spec 239 的 `unsupported-path` 判
+# 据）。
 #         ★★ **不宣称它真机可用**：本规格是**离线切片**，**未跑 COM**（需业主另行授权）——
-#            `SHEET_METAL_RUNTIME_STATUS["create_draft"]` 因此写 `(None, …)`（未测），**不是** `True`。
+# `SHEET_METAL_RUNTIME_STATUS["create_draft"]` 因此写 `(None, …)`（未测），**不是** `Tru
+# e`。
 # 单位:   官方 `Angle` 是**弧度**（页里明写 "Draft angle in radians"）；
 #         本仓 spec 层一律用**度** ⇒ 在 COM 边界处 `math.radians()` 转换。
-# ⚠ `face_ref` 形参**仍未使用**（`mcp-server/tool_specs_batch4.py` 已把它登记为真实缺陷并显式省略）
+# ⚠ `face_ref` 形参**仍未使用**（`mcp-server/tool_specs_batch4.py` 已把它登记为真实缺陷
+# 并显式省略）
 #   ⇒ 选择由调用方在调用前完成，与本页 `## Remarks` 一致。
 # ⚠ 本函数为照官方页改写，未在本机实测（见 AGENTS.md 铁律 2）
 # ────────────────────────────────────────────────────────────────────
@@ -740,7 +772,8 @@ def create_draft(model, face_ref, spec: DraftFeatureSpec):
     spec.validate()
     manager = get_com_member(model, "FeatureManager")
     #: ★ `Angle` 官方单位是**弧度**；spec 层是度 ⇒ 边界处转换。
-    #: ★ `reverse_direction` ↔ 官方 `FlipDir`（「True to flip the direction of the draft」）。
+    #: ★ `reverse_direction` ↔ 官方 `FlipDir`（「True to flip the direction of the draft
+    #: 」）。
     feature = get_com_member(manager, "InsertMultiFaceDraft",
                              float(math.radians(spec.angle)),
                              bool(spec.reverse_direction),
@@ -973,45 +1006,61 @@ def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec):
 # 文件:   scripts/sw_sheet_metal.py —— 追加 `create_hem` / `create_unfold`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/`（候选来自规格 207 的逐条核实）：
 #   · **idx 173 `hem`** —— ★★ 裁决书说「dp5 的发现**比实现本身更值**」：别家调的
-#     `InsertHemFeature2` 在 `C:\swapi\types\` **全树零命中**（★ 我们按 `*InsertHem*` 全量扫过 ⇒ 零），
-#     **官方真名是 `IFeatureManager::InsertSheetMetalHem2`（16 形参）**；★ 且它的 `hem_type` 映射
+# `InsertHemFeature2` 在 `C:\swapi\types\` **全树零命中**（★ 我们按 `*InsertHem*` 全量扫
+# 过 ⇒ 零），
+# **官方真名是 `IFeatureManager::InsertSheetMetalHem2`（16 形参）**；★ 且它的 `hem_type`
+#  映射
 #     把官方 `swHemTypes_e`（**Open=0 / Closed=1**）**正好互换**、并**漏掉 `Double=4`**
 #     ⇒ ★★ 裁决书要求「这三处错误应做成 L2/L3 静态断言」（谁再照它抄就当场抓住）✓
 #   · **idx 336 `unfold`** —— 裁决书：官方**没给 mark** ⇒ 必须先真机定出"可建对象"，
 #     且前置判据用回读（事实 8），不许信返回值 ✓
-# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过；★★ 例子给的是**调用序**，签名与 Remarks 都给不出）：
+# 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过；★★ 例子给的是**调用序**，签名与 Remarks 都给
+# 不出）：
 #   · `C:\swapi\types\IFeatureManager\InsertSheetMetalHem2.md` ——
-#     `Feature InsertSheetMetalHem2(System.int Type, System.int Position, System.bool Reverse,
+# `Feature InsertSheetMetalHem2(System.int Type, System.int Position, System.bool Revers
+# e,
 #      System.double DLength, System.double DGap, System.double DAngle, System.double DRad,
 #      System.double DMiterGap, CustomBendAllowance PCBA, System.bool UseDefaultRelief,
 #      System.int ReliefType, System.int ReliefTearTypes, System.bool UseReliefRatio,
-#      System.double ReliefRatio, System.double ReliefWidth, System.double ReliefDepth)` —— **16 形参**
-#     ★★ `## Remarks` 逐字给了**四步前置**：「1. Call `IFeatureManager::CreateCustomBendAllowance`…
-#       2. Initialize the CustomBendAllowance object. 3. Assign PCBA… 4. **Select one or more edges**
+# System.double ReliefRatio, System.double ReliefWidth, System.double ReliefDepth)` —— *
+# *16 形参**
+# ★★ `## Remarks` 逐字给了**四步前置**：「1. Call `IFeatureManager::CreateCustomBendAllo
+# wance`…
+# 2. Initialize the CustomBendAllowance object. 3. Assign PCBA… 4. **Select one or more 
+# edges**
 #       in the sheet metal model to which to add the specified hem.」✓
 #   · `C:\swapi\examples\Insert_Sheet_Metal_Hem_Example_VB.md` —— ★★ **调用序**（逐字）：
 #     `CreateCustomBendAllowance()` → `CBA.Type = 2` · `CBA.KFactor = 0.5` →
-#     `InsertSheetMetalHem2(swHemTypeOpen, swHemPositionTypeOutside, False, 0.01, 0.01, 0, 0.005,
-#      0.0011, CBAObject, False, swSheetMetalReliefObround, 0, True, 1#, 0, 0)` → `GetDefinition` ✓
-#   · `C:\swapi\enums\swHemTypes_e.md` —— Open=**0** · Closed=**1** · TearDrop=2 · Rolled=3 · **Double=4**
+# `InsertSheetMetalHem2(swHemTypeOpen, swHemPositionTypeOutside, False, 0.01, 0.01, 0, 0
+# .005,
+# 0.0011, CBAObject, False, swSheetMetalReliefObround, 0, True, 1#, 0, 0)` → `GetDefinit
+# ion` ✓
+# · `C:\swapi\enums\swHemTypes_e.md` —— Open=**0** · Closed=**1** · TearDrop=2 · Rolled=
+# 3 · **Double=4**
 #   · `C:\swapi\enums\swHemPositionTypes_e.md` —— Inside=1 · Outside=2
-#   · `C:\swapi\enums\swSheetMetalReliefTypes_e.md` —— Rectangular=1 · Tear=2 · Obround=3 · None=4 · TearBend=5
+# · `C:\swapi\enums\swSheetMetalReliefTypes_e.md` —— Rectangular=1 · Tear=2 · Obround=3 
+# · None=4 · TearBend=5
 #   · `C:\swapi\enums\swReliefTearTypes_e.md` —— Rip=1 · Extend=2
-#   · `C:\swapi\types\IModelDoc2\InsertSheetMetalUnfold.md` —— `void InsertSheetMetalUnfold()`
-#     ★★ `## Remarks` 逐字：「**Select the objects for the unfold feature before calling this
+# · `C:\swapi\types\IModelDoc2\InsertSheetMetalUnfold.md` —— `void InsertSheetMetalUnfol
+# d()`
+# ★★ `## Remarks` 逐字：「**Select the objects for the unfold feature before calling thi
+# s
 #       method.**」（★ **没给 mark** ⇒ 见下面的示例）
-#   · ★★★ `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md` —— **Unfold 与 Fold 共用**这份示例，
+# · ★★★ `C:\swapi\examples\Insert_and_Access_Fold_Feature_Example_VB.md` —— **Unfold 与 
+# Fold 共用**这份示例，
 #     而它逐字给出了**调用序与 mark**（★ 这是"官方没给 mark"的唯一出处）：
 #     ```
 #     ClearSelection2 True
 #     SelectByID2("", "FACE", x,y,z, False, **1**, Nothing, 0)          ← 固定面 mark = 1
-#     SelectByID2("EdgeBend3", "BODYFEATURE", x,y,z, True, **4**, …)    ← 要展开的折弯 mark = 4
+# SelectByID2("EdgeBend3", "BODYFEATURE", x,y,z, True, **4**, …)    ← 要展开的折弯 mark 
+# = 4
 #     …（多条折弯，每条都 mark 4，Append=True）
 #     swModel.InsertSheetMetalUnfold
 #     ```
 #     ★ 同一份示例里 **Fold** 那一段多一步：先选已存在的 `Unfold1` 特征（**mark 0**），
 #       再是「固定面 mark 1 + 折弯 mark 4」⇒ ★★ **本模块的 mark 表就是从这里来的，不是猜的** ✓
-#   · `C:\swapi\types\IFeatureManager\GetFlatPatternFolder.md` → `IFlatPatternFolder::GetFlatPatternCount`
+# · `C:\swapi\types\IFeatureManager\GetFlatPatternFolder.md` → `IFlatPatternFolder::GetF
+# latPatternCount`
 #     （★ 读侧：展开结果的可回读判据 —— 裁决书点名要它）✓
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名与官方示例自建）。
 # 覆盖:   后续同级定义
@@ -1032,8 +1081,10 @@ HEM_TYPES = {"open": 0, "closed": 1, "teardrop": 2, "rolled": 3, "double": 4}
 #:     `swHemPositionTypeOutside = 1`。
 #:   ⇒ ★ 铁律 4「冲突以出厂类型库为准」⇒ 本表取 **0 / 1** ✓
 #:   ⚠ **未在真机复核** —— 而 `create_hem` 在本机**五种形态全部回 `None`**（事实 34 / 53）
-#:     ⇒ ★ 改它**不会回退任何已验证的路径**；★ 若将来真机证明反射有误，**这里就是那处待裁**。
-#:   ★ 每行补 `# sw<官方成员名>` ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py` 的覆盖面
+#: ⇒ ★ 改它**不会回退任何已验证的路径**；★ 若将来真机证明反射有误，**这里就是那处待裁**
+#: 。
+#: ★ 每行补 `# sw<官方成员名>` ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py` 
+#: 的覆盖面
 #:     （原先无注释 ⇒ 门禁看不见 ⇒ 值错了也没人抓）✓
 HEM_POSITIONS = {
     "inside": 0,     # swHemPositionTypeInside
@@ -1046,14 +1097,18 @@ HEM_RELIEFS = {"rectangular": 1, "tear": 2, "obround": 3, "none": 4, "tear_bend"
 #: enum-gate: enum swReliefTearTypes_e
 HEM_RELIEF_TEARS = {"rip": 1, "extend": 2}
 
-#: ★★ **Unfold / Fold 的 mark 表**（★ 逐字取自官方示例 `Insert_and_Access_Fold_Feature_Example_VB.md`；
-#:   ★★ **不许跨条复制** —— 本表只属于这两个成员，钣金其它成员的 mark 在本文件里各写各的）✓
+#: ★★ **Unfold / Fold 的 mark 表**（★ 逐字取自官方示例 `Insert_and_Access_Fold_Feature_E
+#: xample_VB.md`；
+#: ★★ **不许跨条复制** —— 本表只属于这两个成员，钣金其它成员的 mark 在本文件里各写各的）
+#: ✓
 #: enum-gate: member InsertSheetMetalFold
 UNFOLD_MARKS = {"fixed_face": 1, "bends": 4}
 
 #: ★ `swSelectionMarkAction_e`（★ 逐值抄自 `C:\swapi\enums\swSelectionMarkAction_e.md`）
-#: ★★ **`SetSelectedObjectMark` 的第 3 参是它，不是 `-1`** —— 我第一版传 `-1` ⇒ 真机回 **`false`**
-#:   而**它不报错**（★ 只是 mark 没设上）；★ 官方两份示例逐字都用 **`swSelectionMarkSet`(0)** ✓
+#: ★★ **`SetSelectedObjectMark` 的第 3 参是它，不是 `-1`** —— 我第一版传 `-1` ⇒ 真机回 *
+#: *`false`**
+#: 而**它不报错**（★ 只是 mark 没设上）；★ 官方两份示例逐字都用 **`swSelectionMarkSet`(0
+#: )** ✓
 #: enum-gate: enum swSelectionMarkAction_e
 SELECTION_MARK_ACTION = {"set": 0, "append": 1, "remove": 2, "clear": 3}
 
@@ -1131,7 +1186,8 @@ def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int =
             raise RuntimeError("face_index=%d 越界（共 %d 个面）" % (face_index, len(faces)))
         SS.select_object(model, faces[face_index])
         mgr = get_com_member(model, "SelectionManager")
-        #: ★★ 第 3 参必须是 `swSelectionMarkSet`(0) —— 传 `-1` 会**静默不生效**（真机回 false，无报错）
+        #: ★★ 第 3 参必须是 `swSelectionMarkSet`(0) —— 传 `-1` 会**静默不生效**（真机回 
+        #: false，无报错）
         info["mark_set"] = get_com_member(mgr, "SetSelectedObjectMark", 1,
                                           int(UNFOLD_MARKS["fixed_face"]),
                                           int(SELECTION_MARK_ACTION["set"]))
@@ -1157,7 +1213,8 @@ def _select_fixed_face_and_bends(model, bend_feature_names, *, face_index: int =
         info["total_count"] = SS.get_selection_count(model)
     except Exception as exc:                                            # noqa: BLE001
         info["errors"].append("回读计数：%s" % str(exc)[:100])
-    #: ★★ **逐条回读 mark**（★ 裁决书要求"前置判据用回读 `GetSelectedObjectCount2(-1)`"——
+    #: ★★ **逐条回读 mark**（★ 裁决书要求"前置判据用回读 `GetSelectedObjectCount2(-1)`"—
+    #: —
     #:   本函数把**计数与每一条的 mark** 都读回来，★ 调用方据此判"选择契约成立不成立"）✓
     marks = []
     try:
@@ -1366,21 +1423,26 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
         "ReliefDepth": float(relief_depth_mm), "KFactor": float(k_factor),
     }
     #: ★★ **顺序照官方 `## Remarks` 逐字的第 1–4 步**：
-    #:   ① `CreateCustomBendAllowance` → ② 初始化 → ③ 赋给 PCBA → ④ **然后**才「Select one or more
+    #: ① `CreateCustomBendAllowance` → ② 初始化 → ③ 赋给 PCBA → ④ **然后**才「Select one
+    #:  or more
     #:   edges」。★★ 我第一版把**选边放在建 CBA 之前**（顺序反了）⇒ 真机回 `None`
-    #:   —— ★ 与 unfold 那次同形：**失败的原因在我这边**（★ 教训：Remarks 的**步序**也是签名的一部分）✓
+    #: —— ★ 与 unfold 那次同形：**失败的原因在我这边**（★ 教训：Remarks 的**步序**也是签
+    #: 名的一部分）✓
     try:
         manager = get_com_member(model, "FeatureManager")
         cba = call_com_member(manager, "CreateCustomBendAllowance")
         if cba is None:
             out["error"] = "CreateCustomBendAllowance 未返回对象（官方 Remarks 第 1 步）"
             return out
-        #: ★ `ICustomBendAllowance::Type` 的 Remarks 逐字：「**use this property to set the value
+        #: ★ `ICustomBendAllowance::Type` 的 Remarks 逐字：「**use this property to set 
+        #: the value
         #:   for the type … 若你不把它放在最后设，最后设的那个属性会覆盖掉先前设的类型**」
-        #:   ⇒ ★ 本段**先设 KFactor、最后设 Type**（官方示例是反的，但 KFactor 恰好也等于 2 ⇒ 巧合）✓
+        #: ⇒ ★ 本段**先设 KFactor、最后设 Type**（官方示例是反的，但 KFactor 恰好也等于 
+        #: 2 ⇒ 巧合）✓
         cba.KFactor = float(k_factor)
         cba.Type = SW_BEND_ALLOWANCE_K_FACTOR
-        #: 第 4 步：**此时才选中边**（★ 事实 32：边不能按名字选 ⇒ 走 `Select4` 按对象选）
+        #: 第 4 步：**此时才选中边**（★ 事实 32：边不能按名字选 ⇒ 走 `Select4` 按对象选
+        #: ）
         sel = (str(edge_selector).strip() or SS.CURRENT_SELECTION)
         if sel.startswith("index:"):
             SS.select_entity_by_index(model, "EDGE", int(sel.split(":", 1)[1]))
@@ -1441,17 +1503,23 @@ def create_hem(model, edge_selector, *, hem_type: str = "open", position: str = 
 #:    **已证实**的调用序缝合进模块 ✓ —— ★ 铁律 1：只缝合、不发明 ✓）────────────────────
 # ★★ 官方依据（`swapi` 逐字）：
 #   · `C:\swapi\types\IFeatureManager\InsertFormToolFeature.md` ⇒
-#     `Feature InsertFormToolFeature( System.string Path, System.bool Flip, System.double RotAngle,
+# `Feature InsertFormToolFeature( System.string Path, System.bool Flip, System.double Ro
+# tAngle,
 #       System.string Config, System.bool OverrideDoc, System.bool ShowPunch,
 #       System.bool ShowProfile, System.bool ShowCenter, System.bool LinkToPart )`
 #     ⇒ ★ **9 参** ✓
-#   · ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or a
+# · ★★★ 官方 `## Remarks` 逐字：「**Before calling this method, select either a face or 
+# a
 #     2D sketch containing points**」✗ ⇒ ★★ **前置 = 先选一个面** ✓
-#     ★ 我第一版**没选** ⇒ 回 `None` ⇒ ★ 那正是「前置没上」、★ 与「工具建不出来」**长得一样** ✗
-#   · ★★ 另一个前置是**钣金件** ✓ —— ★ 本仓 `sw_sheet_metal.create_base_flange` 真机已验能建成 ✓
+# ★ 我第一版**没选** ⇒ 回 `None` ⇒ ★ 那正是「前置没上」、★ 与「工具建不出来」**长得一样*
+# * ✗
+# · ★★ 另一个前置是**钣金件** ✓ —— ★ 本仓 `sw_sheet_metal.create_base_flange` 真机已验能
+# 建成 ✓
 #     ⚠ 它的契约是 `create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗ ——
-#       ★ 不是 `(model, sketch, thickness, ...)`（★ 本会话在这上面栽过一次，★ 且它**不抛、只回 `None`**）✓
-#   · ★ **工具文件要落盘** —— `Path` 是磁盘路径 ⇒ ★ 落到**仓库内 `output/`**（★ 非用户目录 ✓）
+# ★ 不是 `(model, sketch, thickness, ...)`（★ 本会话在这上面栽过一次，★ 且它**不抛、只回
+#  `None`**）✓
+# · ★ **工具文件要落盘** —— `Path` 是磁盘路径 ⇒ ★ 落到**仓库内 `output/`**（★ 非用户目录
+#  ✓）
 # ★★ 判据 = **回读**（★ 特征树增量，★ 不看返回值 —— 事实 8）✓
 def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool = False,
                             rot_angle_deg: float = 0.0, config: str = "", override_doc: bool = False,
@@ -1513,22 +1581,27 @@ def insert_form_tool_report(model, tool_path, *, face_index: int = 0, flip: bool
     try:
         #: ★ 9 参逐位：★ Path · Flip · RotAngle · Config · OverrideDoc ·
         #:   ShowPunch · ShowProfile · ShowCenter · LinkToPart ✓
-        #: ★★ 2026-10-07（规格 213 · B2）—— ★★★ **度数换算的取法改过一次，★ 两次都栽了**：
+        #: ★★ 2026-10-07（规格 213 · B2）—— ★★★ **度数换算的取法改过一次，★ 两次都栽了**
+        #: ：
         #:   ★ **第一版**：★ 函数里裸写 `from .sw_connect import mm as _mm` ✗ ⇒
         #:     ★ 相对导入棘轮 **35 → 36** 被拦 ✓
         #:   ★★ **第二版**：★ 把 `deg` 加进**模块级**那行 ✓ ⇒ ★ **棘轮过了**，
         #:     而★ **`tests/test_sw_sheet_metal.py` 收集期炸** ✗ ——
-        #:     ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'` ✓
+        #: ★ 逐字：`ImportError: cannot import name 'deg' from '<unknown module name>'` 
+        #: ✓
         #:     ★★ 真因：★ 那个测试只往 `sys.path` 塞 `scripts/`（★ 不是包）⇒
         #:       `sw_sheet_metal` 的**模块级** `from .sw_connect import … deg` 走进
-        #:       **半初始化**路径 ✓；★ 而**别的名字在缓存里已有**、★ 只有**新加的 `deg`** 暴露了这个 ✗
-        #:   ⇒ ★★★ **正解（第三版）**：★ **放在函数内、★ 且写完整的 `try:/except ImportError:`** ✓ ——
+        #: **半初始化**路径 ✓；★ 而**别的名字在缓存里已有**、★ 只有**新加的 `deg`** 暴露
+        #: 了这个 ✗
+        #: ⇒ ★★★ **正解（第三版）**：★ **放在函数内、★ 且写完整的 `try:/except ImportErr
+        #: or:`** ✓ ——
         #:     ★ 既满足棘轮判据（★ 「紧跟 `try:` 的那一行」✓）、★ 又不碰模块级导入 ✓
         try:
             from .sw_connect import deg
         except ImportError:
             from sw_connect import deg
-        #: ★ 取 `FeatureManager` 用本模块既有的写法（★ 逐字：`get_com_member(model, "FeatureManager")` ✓）
+        #: ★ 取 `FeatureManager` 用本模块既有的写法（★ 逐字：`get_com_member(model, "Fea
+        #: tureManager")` ✓）
         _mgr = get_com_member(model, "FeatureManager")
         feat = get_com_member(_mgr, "InsertFormToolFeature",
                               str(tool_path), bool(flip), float(deg(rot_angle_deg)),

@@ -1,18 +1,23 @@
 """★ 圆角焊缝（官方 `IFeatureManager::InsertFilletBeadFeature2`，16 参）—— 选实体 + 回读判据。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
-# 仓库:   本项目自身（选实体沿用 scripts/sw_selection_spec.py；特征计数沿用 sw_net_blend 的助手）
+# 仓库:   本项目自身（选实体沿用 scripts/sw_selection_spec.py；特征计数沿用 sw_net_blend
+#  的助手）
 # 文件:   scripts/sw_weld_bead.py
 # 定位:   ★ 规格 220（续）第 46 轮 —— 补 **焊件/圆角焊缝**（生成器关键词 `("fillet_bea
 #           d","weld_bead")`）✓
 # 官方依据: ★★ **三样都读过**（★ 铁律 4）：
-#   · 签名 `C:\swapi\types\IFeatureManager\InsertFilletBeadFeature2.md` 第 14 行**逐字 16 参** ✓
-#   · 第 12 行**逐字**：★「…also fills the gap between the **pre-selected part bodies**, if any.」
+# · 签名 `C:\swapi\types\IFeatureManager\InsertFilletBeadFeature2.md` 第 14 行**逐字 16 
+# 参** ✓
+# · 第 12 行**逐字**：★「…also fills the gap between the **pre-selected part bodies**, i
+# f any.」
 #     ⇒ ★★ **前置 = 预先选中的实体** ✓（★ **不是"面集合"** ✗ —— ★ 台账那句二手概括是错的 ✓）
 #   · 参数语义（★ 逐字抄）：★ `Type1/2` 0=Full length·1=Intermittent·2=Staggered ·
 #     ★ `PenetrationType1/2` 0=Full·1=Partial·2=No penetration · ★ `Flag` 0/1/2/3 ·
-#     ★ `EdgeNum1/2` = 各侧**相交边条数** · ★ `DeSelEdge1/2` = 各侧相交边**选中(0)/取消(1) 的数组** ✓
-#   · ★★ **v1 已 `Obsolete`**（★ 官方第 12 行逐字「Superseded by …Feature2」）⇒ ★ 只用 **v2** ✓
+# ★ `EdgeNum1/2` = 各侧**相交边条数** · ★ `DeSelEdge1/2` = 各侧相交边**选中(0)/取消(1) 
+# 的数组** ✓
+# · ★★ **v1 已 `Obsolete`**（★ 官方第 12 行逐字「Superseded by …Feature2」）⇒ ★ 只用 **v
+# 2** ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 覆盖:   全文件
 # ★★ 判据：★ **特征树回读增量 ≥ 1**（★ 事实 8：★ 返回值不可信 —— ★ 边界特征上刚栽过 ✓）
@@ -33,7 +38,8 @@ FLAG = {"one_side": 0, "two_side": 1, "tangent": 2, "two_side_tangent": 3}
 _MM = 0.001                                                                        #: ★ 毫米 → 米（事实 2）
 
 
-#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` /
+#: ★ 2026-10-22（仓库统一化）：`_feature_count` 原在本文件与 `sw_cosmetic_weld_bead.py` 
+#: /
 #:   `sw_net_blend.py` 各有一份（逻辑逐字相同）⇒ 收敛到 `scripts/sw_feature_tree.py` ✓
 try:
     from .sw_feature_tree import feature_count as _feature_count
@@ -104,16 +110,20 @@ def insert_fillet_bead_report(
     before = _feature_count(model)
 
     #: ★★★ 2026-10-07（规格 220 续 · 第 51 轮）★ **先预选两个体** ——
-    #:   ★ 官方 `InsertFilletBeadFeature2` 第 12 行**逐字**：★「…also **fills the gap between the
+    #: ★ 官方 `InsertFilletBeadFeature2` 第 12 行**逐字**：★「…also **fills the gap betw
+    #: een the
     #:     pre-selected part bodies**, if any.」✓ ⇒ ★★ **前置是"体"** ✓
-    #:   ★ 第 49/50 轮真机：★ **只选边 ⇒ `returned: false`** ✗（★ 三组都是 ✗）★ 而**选实体本身是全稳的** ✓
-    #:   ★ 取体走 **`get_com_member(model, "GetBodies2")`** ✓（★ 迟到绑定 —— ★ 219 真机定案 ✓）
+    #: ★ 第 49/50 轮真机：★ **只选边 ⇒ `returned: false`** ✗（★ 三组都是 ✗）★ 而**选实体
+    #: 本身是全稳的** ✓
+    #: ★ 取体走 **`get_com_member(model, "GetBodies2")`** ✓（★ 迟到绑定 —— ★ 219 真机定
+    #: 案 ✓）
     import sw_part as _sp2
 
     bodies: list[Any] = []
     try:
         #: ★★ 第 51 轮真机订正：★ `GetBodies2` 是**绑定的方法**（★ 219 真机逐字
-        #:   `<bound method GetBodies2 of <COMObject …>>` ✓）⇒ ★ **要调用它**（★ `get_com_member`
+        #: `<bound method GetBodies2 of <COMObject …>>` ✓）⇒ ★ **要调用它**（★ `get_com_
+        #: member`
         #:   是给**属性**用的 ✗ —— ★ 我用错了 ⇒ 上一跑 `body_count = 0` ✗）✓
         bodies = list(model.GetBodies2(0, False) or [])                            #: ★ 0 = swSolidBody ✓
     except Exception as exc:                                                       # noqa: BLE001
@@ -162,7 +172,8 @@ def insert_fillet_bead_report(
                   "before": before, "after": after})
 
     return {
-        #: ★★ 判据**只留回读**（★ 事实 8）—— ★ 返回值 `None` **不代表失败** ✓（★ 边界特征实测 ✓）
+        #: ★★ 判据**只留回读**（★ 事实 8）—— ★ 返回值 `None` **不代表失败** ✓（★ 边界特
+        #: 征实测 ✓）
         "ok": after > before,
         "size_mm": float(size_mm),
         "flag": int(flag),

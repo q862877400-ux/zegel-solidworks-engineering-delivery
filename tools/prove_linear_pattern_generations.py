@@ -8,23 +8,28 @@
 #   ★★★ **所以本轮的维度是**换成员代 + 看返回值****（★ 而不是再调参数）：
 #     ```
 #     ★ 对照：`circular_pattern`（**能用**）用的是
-#        `model.FeatureManager.FeatureCircularPattern4(count, angle_rad, False, "None", False, eq, False)`
+# `model.FeatureManager.FeatureCircularPattern4(count, angle_rad, False, "None", False, 
+# eq, False)`
 #        ⇒ ★ **直接属性调用 + 7 参**
 #     ★★ 而 `linear_pattern` 用的是 `FeatureLinearPattern3`（★ **10 参**）
-#     ⇒ ★★★ **故本轮问的是**：★ 「**换一代**会不会成？」· ★ 「**它回的是 Feature 还是 None？**」✓
+# ⇒ ★★★ **故本轮问的是**：★ 「**换一代**会不会成？」· ★ 「**它回的是 Feature 还是 None？
+# **」✓
 #     ```
 #   ★★ 判据（★ 三条并列 + ★ **原始返回值**）：
 #     ```
 #     ① ★ **原始返回值**（★ None / Feature / 别的 —— ★ 那是最直接的一条线索）
 #     ② ★ 特征树增量 · ★ ③ ★★ **几何**（体数 + 包围盒 —— ★ 阵列**必须**改变它）
 #     ```
-#   ⚠ 选区**逐字照搬** `circular_pattern`（★ `_select_by_id(..., "BODYFEATURE", mark=4)`）——
+# ⚠ 选区**逐字照搬** `circular_pattern`（★ `_select_by_id(..., "BODYFEATURE", mark=4)`）
+# ——
 #     ★★ 因为★ 它**能用**，★ 故那是"已知可用的选区形态" ✓
 # 官方依据: `IFeatureManager.FeatureLinearPattern3/4/5`（★ 出厂程序集有**四代**：`Featur
 #           eLinearPattern` /
 #   `2` / `3` / `4` / `5`）· `FeatureLinearPattern3` 的 10 参
-#   （`Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern, VaryInstance`）·
-#   间距**单位是米**（事实 315）· 本仓 `scripts/sw_part.py` 的 `linear_pattern` / `circular_pattern`
+# （`Num1, Spacing1, Num2, Spacing2, FlipDir1, FlipDir2, DName1, DName2, GeometryPattern
+# , VaryInstance`）·
+# 间距**单位是米**（事实 315）· 本仓 `scripts/sw_part.py` 的 `linear_pattern` / `circula
+# r_pattern`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -90,8 +95,10 @@ def main() -> int:
             #:   ★ 从出厂程序集读到的 **arity 表**：
             #:     `FeatureLinearPattern` 8 · `2` 9 · **`3` 10**（★ 我用对了）·
             #:     **`4` 20** · **`5` 22** · `FeatureCircularPattern4` 7（对照，能用）
-            #:   ★★ 故上一版对 4/5 代传 10 个 ⇒ **报"非选择性的参数"**（★ 那正是 arity 信号）
-            #:   ★★★ 而本次**按 20 参填满**（★ 前 10 个同名，后 10 个取"不偏移、按数量控制、不从质心" 的常规值）✓
+            #: ★★ 故上一版对 4/5 代传 10 个 ⇒ **报"非选择性的参数"**（★ 那正是 arity 信
+            #: 号）
+            #: ★★★ 而本次**按 20 参填满**（★ 前 10 个同名，后 10 个取"不偏移、按数量控制
+            #: 、不从质心" 的常规值）✓
             ("FeatureLinearPattern4", 3,
              lambda: get_com_member(get_com_member(doc, "FeatureManager"), "FeatureLinearPattern4",
                                     3, 0.025, 1, 0.0, False, False, "", "", False, False,

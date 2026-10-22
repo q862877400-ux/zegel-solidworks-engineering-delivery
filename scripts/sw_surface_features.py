@@ -1,30 +1,39 @@
 
 
-# ── 24h 计划 段 6 续（Spec Kit `166`）：**曲面特征族（第一条已真机验证）** ──────────────
+# ── 24h 计划 段 6 续（Spec Kit `166`）：**曲面特征族（第一条已真机验证）** ────────────
+# ──
 # ★★★★★ 2026-10-01（轮 308）**本段改写了硬约束⑧的措辞**：
 #   ★ 官方建曲面有**两条完全不同的路**：
-#     · **`IModeler.Create*Surface`** —— ★ 造**曲面体**（body）⇒ ★★ **事实 40：返回值跨次都变**；
-#     · **`IFeatureManager.Insert*Surface` / `FeatureExtruRefSurface3`** —— ★ 造**曲面特征**（feature）
+# · **`IModeler.Create*Surface`** —— ★ 造**曲面体**（body）⇒ ★★ **事实 40：返回值跨次都
+# 变**；
+# · **`IFeatureManager.Insert*Surface` / `FeatureExtruRefSurface3`** —— ★ 造**曲面特征**
+# （feature）
 #       ⇒ ★★★★ **本会话首次试，一次成功**：真机特征树 `6 → 7`、特征名 **`曲面-拉伸1`**。
 #   ⇒ ★ **两条路的差别是本质的**：★ 前者把"曲面"当**几何**（要自己造 body），
-#     ★ 后者把它当**特征**（★ 与 UI 里点"曲面-拉伸"完全一致）⇒ ★ 属性上属于 `IFeatureManager`。
+# ★ 后者把它当**特征**（★ 与 UI 里点"曲面-拉伸"完全一致）⇒ ★ 属性上属于 `IFeatureManager
+# `。
 #
 # ★ **本段只包装已真机验证的那一个**（★ `FeatureExtruRefSurface3`）——
 #   ★ 其余（填充 / 缝合 / 裁剪 / 加厚）**需要选中面或边**，★ 留到选区那条链打通之后
-#   （★ 真机实测：`InsertSewRefSurface` 不抛、但**特征树不变** ⇒ ★ 它要求"先选中要缝合的曲面"）。
+# （★ 真机实测：`InsertSewRefSurface` 不抛、但**特征树不变** ⇒ ★ 它要求"先选中要缝合的曲
+# 面"）。
 #
-# ★ 规则 2 / 3：★ 对外只暴露 `depth_mm`（★ 22 个官方参数里的深度），★ 其余用**有据的默认**；
+# ★ 规则 2 / 3：★ 对外只暴露 `depth_mm`（★ 22 个官方参数里的深度），★ 其余用**有据的默认
+# **；
 #   ★ 草图**按名字**取（★ 不传坐标）。
-# ★ 判据（规则 6）：★ **它回 void** ⇒ ★★ 成败**只能看特征树**（★ 建完回读，不静默成功）。
+# ★ 判据（规则 6）：★ **它回 void** ⇒ ★★ 成败**只能看特征树**（★ 建完回读，不静默成功）
+# 。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_surface_features.py —— 本文件（新）
 # 定位:   24h 段 6 续：曲面**特征**族（★ 与 sw_surface.py 的"曲面体"族分开）。
 # 官方签名依据: `C:\swapi\types\IFeatureManager\FeatureExtruRefSurface3.md`
-#   （完整签名 **22 个参数**：Sd / Dir / StartCond / OffsetVal / T1 / T2 / D1 / D2 / Dchk1 / Dchk2 /
+# （完整签名 **22 个参数**：Sd / Dir / StartCond / OffsetVal / T1 / T2 / D1 / D2 / Dchk1
+#  / Dchk2 /
 #    Ddir1 / Ddir2 / Dang1 / Dang2 / OffsetReverse1 / OffsetReverse2 / TranslateSurface1 /
-#    TranslateSurface2 / CapEnd1 / CapEnd2 / DeleteOriginalFace / KnitResult · **返回 void**）·
+# TranslateSurface2 / CapEnd1 / CapEnd2 / DeleteOriginalFace / KnitResult · **返回 void*
+# *）·
 #   ★ 反射 arity 表 `scripts/sw_api_sldworks.py:4300` = **22**（★ 两源一致，铁律 4）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -84,11 +93,14 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
         d = 0.010             #: ★ 贯穿时深度无效，★ 给一个有限值免得 API 抱怨
     before_names = feature_names(model)
     before = len(before_names)
-    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 要求的第一步：按 `mark 0` 选中草图** ——
-    #:   处置：★ `tools/probe_surface_scale.py` 真机跑出 **`ok: False` · `new_features: []`** ⇒
+    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 要求的第一步：按 `mark 0` 选中草图** 
+    #: ——
+    #: 处置：★ `tools/probe_surface_scale.py` 真机跑出 **`ok: False` · `new_features: []
+    #: `** ⇒
     #:     ★★ 我**回原文**查到了真因（★ 那是"建不出来"的第一类可能：★ **前置没做**）✓
     #:   ★★★ **官方 `IFeatureManager.FeatureExtruRefSurface3` 的 `## Remarks` 逐字**：
-    #:     > ★ 「Before calling this method, **select the entities for the extruded surface**
+    #: > ★ 「Before calling this method, **select the entities for the extruded surface*
+    #: *
     #:     >   using `IModelDocExtension::SelectByID2`.」
     #:     ★★ 而 **Base** 的 **mark 表逐字**：★
     #:       · ★ **2D 或 3D 草图 ⇒ mark `0`** ✓
@@ -104,7 +116,8 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
         #:     ② `_find_cached_sketch_ref`（★ 缓存）·
         #:     ③ `_select_sketch_feature_by_name`（★ `FeatureByName`）·
         #:     ④ `_select_first_candidate(…, "SKETCH")`（★ **中英文候选名**）✓
-        #:   ★★★ **而我第一版只写了第 ④ 级的一种形式**（★ `SelectByID2("草图1","SKETCH",…)`）
+        #: ★★★ **而我第一版只写了第 ④ 级的一种形式**（★ `SelectByID2("草图1","SKETCH",…)
+        #: `）
         #:     ⇒ ★ 真机 **`select_returned: False` · `selection_count: **0**`** ⇒
         #:     ★★★★ **四级回退一次都没走** ✓
         #:   ★★ **这一课（★ 值记）**：★★★ **本仓已有的东西，先找、再写** ——
@@ -147,25 +160,33 @@ def create_extruded_surface_report(model, depth_mm: float, sketch_name: str = ""
             "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；★ 官方 22 参 · 反射 arity 22"}
 
 
-# ── 24h 计划 段 6 续（Spec Kit `166` 续）：**缝合曲面（真机打通）** ────────────────────
+# ── 24h 计划 段 6 续（Spec Kit `166` 续）：**缝合曲面（真机打通）** ───────────────────
+# ─
 # ★★★★★ 2026-10-01（轮 309）**真机**（`output/surface-sew-probe.json`）：
-#   · ★ **按对象选面**（`IEntity.Select4(Append, Callout)` —— ★ 事实 32：实体没有名字，只能按对象选）
-#     ⇒ 8 张面全选中（★ **回读 `GetSelectedObjectCount2(-1)` = 8** —— ★ 事实 8：不能信返回值）
+# · ★ **按对象选面**（`IEntity.Select4(Append, Callout)` —— ★ 事实 32：实体没有名字，只
+# 能按对象选）
+# ⇒ 8 张面全选中（★ **回读 `GetSelectedObjectCount2(-1)` = 8** —— ★ 事实 8：不能信返回值
+# ）
 #   · ★ **mark = 1**（★ 官方 `InsertSewRefSurface` 的 Remarks 明写 "mark number of 1"）
-#   · ★ `InsertSewRefSurface(False, False, True, 0.0001, 0.0001)` ⇒ **特征树出现 `曲面-缝合1`**
+# · ★ `InsertSewRefSurface(False, False, True, 0.0001, 0.0001)` ⇒ **特征树出现 `曲面-缝
+# 合1`**
 #   · ★★ **body 数 `2 → 1`** ⇒ ★★★ **两张曲面真的缝成了一张** ✓
-#   ★ 官方给的容差范围：★ **0.0001 mm ～ 0.1 mm**（★ 本包装按**毫米**收参数、在边界换算一次 —— ★ 规则 2）。
+# ★ 官方给的容差范围：★ **0.0001 mm ～ 0.1 mm**（★ 本包装按**毫米**收参数、在边界换算一
+# 次 —— ★ 规则 2）。
 #
-# ★ 判据（★ 规则 6）：★ **特征树出现新特征** **且** **body 数变少**（★ 两者都要 —— 只看返回值不够）。
+# ★ 判据（★ 规则 6）：★ **特征树出现新特征** **且** **body 数变少**（★ 两者都要 —— 只看
+# 返回值不够）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_surface_features.py —— 追加本段
 # 定位:   段 6 续：缝合曲面（★ 对应四家缺口名 `knit_surfaces`）。
 # 官方签名依据: `C:\swapi\types\IFeatureManager\InsertSewRefSurface.md`
-#   （`Feature InsertSewRefSurface(bool UseGapFilters, bool TryToFormSolid, bool MergeEntities,
+# （`Feature InsertSewRefSurface(bool UseGapFilters, bool TryToFormSolid, bool MergeEnti
+# ties,
 #     double KnitTolerance, double MaxValueForGapRange)` ·
-#    Remarks：「Make selections using `IModelDocExtension::SelectByID2` with a **mark number of 1**」·
+# Remarks：「Make selections using `IModelDocExtension::SelectByID2` with a **mark numbe
+# r of 1**」·
 #    「A knit tolerance's: lower limit is **0.0001 mm** · upper limit is **0.1 mm**」）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -278,16 +299,21 @@ def knit_surfaces_report(model, knit_tolerance_mm: float = 0.0001,
 #
 # 官方三源（★ 铁律 4）：
 #   · `C:\swapi\types\IFeatureManager\FeatureBossThicken.md`：
-#     `Feature FeatureBossThicken(System.double Thickness, System.int Direction, System.int FaceIndex,
-#      System.bool FillVolume, System.bool Merge, System.bool UseFeatScope, System.bool UseAutoSelect)`
+# `Feature FeatureBossThicken(System.double Thickness, System.int Direction, System.int 
+# FaceIndex,
+# System.bool FillVolume, System.bool Merge, System.bool UseFeatScope, System.bool UseAu
+# toSelect)`
 #     ★★ **参数表逐字**：`FaceIndex` ⇒ 「**Not used**」 ✓
 #     （★ 故本包装**不传面索引** —— ★ 那会误导调用方以为选了面在起作用）
 #     · `Direction` ⇒ `swThickenThicknessType_e`（★ 枚举值本机转储里有）
-#   · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**，继任者是 `IFeatureManager` 那个
-#     ⇒ ★ **故必须走 `IFeatureManager`**（★ 与 `InsertRuledSurfaceFromEdge` 的 `…2` 是同一类更正）
+# · `C:\swapi\types\IModelDoc2\FeatureBossThicken.md` ⇒ **Obsolete**，继任者是 `IFeature
+# Manager` 那个
+# ⇒ ★ **故必须走 `IFeatureManager`**（★ 与 `InsertRuledSurfaceFromEdge` 的 `…2` 是同一类
+# 更正）
 #
 # ★ 判据（★ 规则 6）：★ **特征树多了新特征** ——
-#   ★ 而**加厚的语义**是"曲面变实体" ⇒ 更贴的判据是 **实体数变多 / 曲面体数变少**（★ 一并记账）。
+# ★ 而**加厚的语义**是"曲面变实体" ⇒ 更贴的判据是 **实体数变多 / 曲面体数变少**（★ 一并
+# 记账）。
 
 
 def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
@@ -361,16 +387,21 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
     before_names = feature_names(model)
     before_solid = _solid_body_count(model)
     before_surf = _surface_body_count(model)
-    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 明确要求的一步：按 `mark 1` 选中曲面** ——
+    #: ★★★★ 2026-10-04（接手轮）**补上官方 Remarks 明确要求的一步：按 `mark 1` 选中曲面*
+    #: * ——
     #:   ★ 病灶：★ 本函数原来**取了 `before_*` 就直接调** `FeatureBossThicken` ⇒
-    #:     ★★ **中间没有任何选中步骤**（★ 与 `create_extruded_surface_report` **完全同型**）✓
+    #: ★★ **中间没有任何选中步骤**（★ 与 `create_extruded_surface_report` **完全同型**）
+    #: ✓
     #:   ★★★ **官方 `IFeatureManager.FeatureBossThicken` 的 `## Remarks` 逐字**：
-    #:     > ★ 「This method generates a boss feature by thickening a **selected reference surface**.
+    #: > ★ 「This method generates a boss feature by thickening a **selected reference s
+    #: urface**.
     #:     >   ★★ **The surface must be selected with a mark of 1.**」
-    #:   ★★ 而**本函数旧 docstring 写的前置是**「★ **文件里要有曲面体**（★ 而 `use_auto_select=True`
+    #: ★★ 而**本函数旧 docstring 写的前置是**「★ **文件里要有曲面体**（★ 而 `use_auto_se
+    #: lect=True`
     #:     时官方会『自动选所有体』）」⇒ ★★★ **那是**把"体在不在"当成了"选没选中"** ✓
     #:   ★★★ **为什么以前没发现**：★ 本函数此前 **11 组 · 两条入口全部 `None`、且不报错**
-    #:     （★ docstring 记着「★ 按事实 53 停手」）⇒ **那一停就把"前置是什么"留在猜的阶段** ✓
+    #: （★ docstring 记着「★ 按事实 53 停手」）⇒ **那一停就把"前置是什么"留在猜的阶段** 
+    #: ✓
     #:     ★ 而本轮**回原文**（★ 官方 `## Remarks`）⇒ **前置写得很清楚** ✓
     #:   ★★ 修法：★ **复用本仓既有的 `_select_all_surface_faces(model, mark=1)`** ✓
     sel_note = "★ 未代选"
@@ -408,15 +439,18 @@ def thicken_surface_report(model, thickness_mm: float, *, direction: int = 0,
             "★": "判据 = **特征树多了新特征**（规则 6）；★ 官方 `FaceIndex` 标注「Not used」故传 0；"
                  "★ 而**加厚的语义**看实体数/曲面体数的变化"}
 
-# ── objective② / 段 6 续：**延伸曲面（`IModelDoc2.InsertExtendSurface`）** ──────────────
-# ★★★★ 2026-10-02（轮 386）**补 `extend_surface`** —— 它是 objective② 重核后确认的**真缺**之一
+# ── objective② / 段 6 续：**延伸曲面（`IModelDoc2.InsertExtendSurface`）** ────────────
+# ──
+# ★★★★ 2026-10-02（轮 386）**补 `extend_surface`** —— 它是 objective② 重核后确认的**真缺
+# **之一
 #   （★ 另两条 `delete_feature` / `rename_feature` 是**高风险写**，按硬约束⑦不碰）。
 # 官方签名依据: `C:\swapi\types\IModelDoc2\InsertExtendSurface.md`
 #   `void InsertExtendSurface(bool ExtendLinear, int EndCondition, double Distance)`
 #   · **ExtendLinear**: True 线性延伸 / False 沿同一曲面延伸
 #   · **EndCondition**: **0 = 按给定距离** · **1 = 延伸到选定点**
 #   · ★ **它回 `void`** ⇒ ★★ 判据**不能是返回值**，只能是「**特征树多了**」（★ 规则 6）。
-# ★ 规则 2 / 3：★ 对外只暴露 `distance_mm`（毫米）；★ 面**按对象选中**（★ 声明式，事实 32）。
+# ★ 规则 2 / 3：★ 对外只暴露 `distance_mm`（毫米）；★ 面**按对象选中**（★ 声明式，事实 3
+# 2）。
 # ★ 与 `sw_surface.py` 的 `create_revolution_surface` 那族**不是一回事** ——
 #   ★ 那族是 `IModeler.Create*Surface`（造**曲面体**，事实 40 返回值不可靠），
 #   ★ 本条是 `IModelDoc2.InsertExtendSurface`（造**曲面特征**）。
@@ -451,7 +485,8 @@ def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bo
     before_names = feature_names(model)
     before = len(before_names)
     try:
-        #: ★ 毫米 ⇒ 米（★ 与同模块 `FeatureExtruRefSurface3` 的做法一致；★ 真机复验这一点）
+        #: ★ 毫米 ⇒ 米（★ 与同模块 `FeatureExtruRefSurface3` 的做法一致；★ 真机复验这一
+        #: 点）
         get_com_member(model, "InsertExtendSurface",
                        bool(extend_linear), int(end_condition), d * 0.001)
     except Exception as exc:                                    # noqa: BLE001
@@ -466,12 +501,14 @@ def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bo
             "★": "它回 void ⇒ 判据是**特征树真的多了**（★ 规则 6）；"
                  "★ 官方 3 参 · 反射 arity 3 · EndCondition 0=按距离 / 1=到选定点"}
 
-# ── objective② / 第二个真缺：**填充曲面（`IFeatureManager.InsertFillSurface2`）** ──────────
+# ── objective② / 第二个真缺：**填充曲面（`IFeatureManager.InsertFillSurface2`）** ─────
+# ─────
 # ★★★★★ 2026-10-02（轮 388）真机**打通的组合**（★ 事实 305）：
 #   ```
 #   ① SelectByID2("", "EDGE", <边的中点>, False, **mark = 1**, callout, 0)
 #        ⇒ ★ **回 true 且 GetSelectedObjectCount2(-1) = 4**（★ 计数对上 ⇒ 真选中了）✓
-#   ② InsertFillSurface2(Resolutions=2, **Options = 1**（swOptimizeSurface）, None, None, None, None)
+# ② InsertFillSurface2(Resolutions=2, **Options = 1**（swOptimizeSurface）, None, None, 
+# None, None)
 #        ⇒ ★ **回 Feature（非 None）且特征树多出 `曲面填充1`** ✓
 #   ```
 # ★★ **两个关键细节**（★ 都是真机撞出来的）：
@@ -479,15 +516,20 @@ def insert_extend_surface_report(model, distance_mm: float, *, extend_linear: bo
 #     ★ 我先前传 **mark = 4**（★ 那是"约束曲线"的 mark）⇒ `SelectByID2` **回 true 而计数 0**
 #     （★ **静默失败** —— 事实 8 那条；★ **mark 值决定成败**）。
 #   · **`Options = 1`（`swOptimizeSurface`）** —— 与官方示例一致；
-#     ★ 枚举是 **Bitmask**（`swOptimizeSurface=1` · `swTryToFormSolid=2` · `swMergeResult=4` ·
+# ★ 枚举是 **Bitmask**（`swOptimizeSurface=1` · `swTryToFormSolid=2` · `swMergeResult=4`
+#  ·
 #     `swReverseDirection=8` · `swReverseSurface=16`，★ md 表与反射两源一致）。
 # 官方签名依据: `C:\swapi\types\IFeatureManager\InsertFillSurface2.md`
-#   （**6 参** `int Resolutions, int Options, object VPatchBoundaries, object VCurvatureControlType,
+# （**6 参** `int Resolutions, int Options, object VPatchBoundaries, object VCurvatureCo
+# ntrolType,
 #     object VFaces, object VConstraintCurves`；★ `Resolutions` = 1/2/3；
-#     ★ Remarks 的 mark 表：Boundary = **1** · contact curvature = 257 · tangent = 513 · 约束曲线 = 4）·
+# ★ Remarks 的 mark 表：Boundary = **1** · contact curvature = 257 · tangent = 513 · 约
+# 束曲线 = 4）·
 #   官方示例 `Insert_Fill-surface_Feature_Example_CSharp`（★ 两平面各一圆 ⇒ 填充）。
-# ★ 规则 2 / 3 / 6：★ 对外只暴露 `resolutions` / `options`；★ 边界边**按中点 + mark 选中**（声明式）；
-#   ★ **判据 = 回 `Feature` 非 None 且特征树**增量**非空**（★ 两判据都要 —— 只看 diff 会踩"前面已建"）。
+# ★ 规则 2 / 3 / 6：★ 对外只暴露 `resolutions` / `options`；★ 边界边**按中点 + mark 选中
+# **（声明式）；
+# ★ **判据 = 回 `Feature` 非 None 且特征树**增量**非空**（★ 两判据都要 —— 只看 diff 会踩
+# "前面已建"）。
 
 _SW_OPTIMIZE_SURFACE = 1
 #: ★ 官方 Remarks 的 mark 表（★ 只列我们用的那个；★ 其余三个待真机验）
@@ -520,7 +562,8 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         return {"ok": False, "error": "options 超出 Bitmask 范围（1..31）：%r" % options}
     #: ★ 取全部边 ⇒ 按**起点/终点的中点**算 z ⇒ 选出一圈（★ 坐标单位是**米**，★ 不换算）
     #: ★★★ 2026-10-03（轮 434）**声明式分支** —— ★ 而后半段**两条路共用**：
-    #:   ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative = True`
+    #: ★ 给了 `selection` ⇒ **用它选**（★ 那是规则 3 要求的形态），★ 而 `_declarative = 
+    #: True`
     #:     ⇒ ★★ **跳过后面那个"按点选边"的循环**（已经选好了）；
     #:   ★ 否则走**原自动路**（按最高一圈边的 z 挑）——★ **行为不变**。
     _declarative = bool(str(selection or "").strip())
@@ -534,7 +577,8 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         #:     ⇒ ★ 真机：选中了 4 条而填充仍不成（树 `[7, 7]`）。
         #:   ★★ **正解**：★ **尊重调用方已选好的选区（含它的 mark）** ——
         #:     ★ 而那正是规则 3 的本意：**选择由调用方做**（★ 工具不越俣代庖）。
-        #:   ★ 而代价：★ **调用方选边时必须用 `mark = 1`** ⇒ ★★ 已写进工具文档与本函数的 docstring ✓
+        #: ★ 而代价：★ **调用方选边时必须用 `mark = 1`** ⇒ ★★ 已写进工具文档与本函数的 d
+        #: ocstring ✓
         try:
             _selected_readback = int(get_com_member(get_com_member(model, "SelectionManager"),
                                                     "GetSelectedObjectCount2", -1) or 0)
@@ -587,13 +631,15 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
     if not _declarative and len(picked) < 3:
         return {"ok": False, "stage": "pick_boundary", "at_z": z,
                 "error": "z=%.6f 上只找到 %d 条边（★ 封闭边界至少要 3 条）" % (z, len(picked))}
-    #: ★★ **按中点 + mark=1 选中**（★ 官方 Remarks 要的 mark；★ `Select4` 没有 mark 参数 —— 事实 32）
+    #: ★★ **按中点 + mark=1 选中**（★ 官方 Remarks 要的 mark；★ `Select4` 没有 mark 参数
+    #:  —— 事实 32）
     callout = _empty_callout()
     ext = get_com_member(model, "Extension")
     #: ★★★ 2026-10-03（轮 435）**这一句必须护住** —— ★ 它是**无条件**的，
     #:   ★★ 而它会把**调用方选好的边清掉** ⚠ ⇒ ★ 于是声明式路"回读计数 4、而选区是空的"
     #:   ⇒ ★ 填充**不建**（★ 真机：树 `[7, 7]`）✓
-    #:   ★ 而**这正是**"调用方做选择、工具不越俎代庖"那条契约（规则 3 的本意）的**必要条件**。
+    #: ★ 而**这正是**"调用方做选择、工具不越俎代庖"那条契约（规则 3 的本意）的**必要条件
+    #: **。
     if not _declarative:
         try:
             model.ClearSelection2(True)
@@ -611,7 +657,8 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
                                           "GetSelectedObjectCount2", -1) or 0)
         except Exception:                                      # noqa: BLE001
             selected = 0
-    #: ★★ **回读计数为零 ⇒ 选择其实没生效**（★ 事实 8：bool 返回值不可信）⇒ **早退，不假装成功**
+    #: ★★ **回读计数为零 ⇒ 选择其实没生效**（★ 事实 8：bool 返回值不可信）⇒ **早退，不假
+    #: 装成功**
     if selected <= 0:
         return {"ok": False, "stage": "select", "points_selected": 0, "boundary_z": z,
                 "error": "SelectByID2 选了 %d 条边而回读计数为 0（★ 事实 8：静默失败）" % len(picked),
@@ -625,7 +672,8 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
         _err = {"ok": False, "stage": "call", "points_selected": selected,
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:220])}
         if _fallback_note is not None:
-            #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一轮）。
+            #: ★ 早退也要带上回退标注（★ 否则调用方看不见"我回退过" —— 本轮就因此多查一
+            #: 轮）。
             _err["fallback_from_declarative"] = True
             _err["fallback_detail"] = _fallback_note
         return _err
@@ -639,7 +687,8 @@ def insert_fill_surface_report(model, resolutions: int = 2, *, options: int = _S
             "★": "判据 = **回 Feature 非 None** **且** **特征树增量非空**（★ 两判据都要）；"
                  "★ 边界按**中点 + mark=1** 选（★ 官方 Remarks；★ 传 mark=4 会静默失败）"}
     if _fallback_note is not None:
-        #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**。
+        #: ★★ 声明式选区拿不到（★ 事实 503）⇒ **回退到自动路**了 ⇒ **如实标注，不静默**
+        #: 。
         _out["fallback_from_declarative"] = True
         _out["fallback_detail"] = _fallback_note
     return _out
@@ -662,7 +711,8 @@ def _empty_callout():
 #     `swRuledSurfaceType_TangentToSurface = **1**` · `NormalToSurface = **2**` ·
 #     `TaperedToVector = **3**` · `PerpendicularToVector = **4**` · `Sweep = **5**`
 #     （★ **1-based** ⇒ ★ 与上面**整体差 1**）⚠
-#   · ★ `IModelDoc2.InsertRuledSurfaceFromEdge` ⇒ **Obsolete**，继任者是 `IFeatureManager` 的 `…2`
+# · ★ `IModelDoc2.InsertRuledSurfaceFromEdge` ⇒ **Obsolete**，继任者是 `IFeatureManager`
+#  的 `…2`
 #
 #   ⇒ ★★ **铁律 4 说：冲突以出厂类型库为准** ⇒ ★ 本包装**收枚举值 1..5**，
 #     ★ 并把**这张对照表**写进 docstring（★ 免得后人在同一处再撞一次）✓
@@ -734,17 +784,22 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
         #: ★ 调用序照官方签名：Type ⇒ Length(米) ⇒ FlipPullDir ⇒ FlipDir ⇒ TrimAndSew
         #:   ⇒ Angle(弧度) ⇒ CoordInput ⇒ **X ⇒ Y ⇒ Z ⇒ BConnectSurface**
         #:
-        #: ★★★★ 2026-10-03（轮 505）**真机第一次栽在这里 —— ★ 而它是本仓的一条可复用教训** ⚠
-        #:   我第一版只传了**前 7 个** ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTIONAL`，
+        #: ★★★★ 2026-10-03（轮 505）**真机第一次栽在这里 —— ★ 而它是本仓的一条可复用教训
+        #: ** ⚠
+        #: 我第一版只传了**前 7 个** ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTI
+        #: ONAL`，
         #:   ★ 它的意思就是"某个参数没给"）⚠
-        #:   ★★ 真因：**官方 md 的 `**Signature**` 行是 11 个**（★ 我读的时候只看了它前半），
+        #: ★★ 真因：**官方 md 的 `**Signature**` 行是 11 个**（★ 我读的时候只看了它前半
+        #: ），
         #:     而**反射也是 11**：
         #:     ```
-        #:     Feature InsertRuledSurfaceFromEdge2(Int32, Double, Boolean, Boolean, Boolean, Double,
+        #: Feature InsertRuledSurfaceFromEdge2(Int32, Double, Boolean, Boolean, Boolean,
+        #:  Double,
         #:                                         Boolean, Double, Double, Double, Boolean)
         #:     ```
         #:   ⇒ ★★ **教训：`**Signature**` 行一个字都别省** ——
-        #:     ★ **反射核 arity**（★ 快、无歧义）、★ **md 核每个参数的名字与语义**（★ 两源分工）✓
+        #: ★ **反射核 arity**（★ 快、无歧义）、★ **md 核每个参数的名字与语义**（★ 两源分
+        #: 工）✓
         feat = get_com_member(fm, "InsertRuledSurfaceFromEdge2",
                               t, ln * 0.001, bool(flip_pull_dir), bool(flip_dir),
                               bool(trim_and_sew),
@@ -771,20 +826,28 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
 #
 #   | 能力 | 官方入口 | 我们试了几组 | 前置 | 调用结果 | 特征 |
 #   |---|---|---|---|---|---|
-#   | **加厚** | `IFeatureManager.FeatureBossThicken`（7 参） | 7 组（官方开关主要组合） | ★ 完美（`solid=0 · surface=1`） | 回 `None` | **不建** |
-#   | 加厚 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 组 | ★ 完美 | 回 `None` | **不建** |
-#   | **直纹曲面** | `InsertRuledSurfaceFromEdge2`（11 参） | 侧棱 4 条 + **水平边 4 条** + 负例 | ★ 边**选上了**（`sel=True`） | ★ **回了对象** | **不建** |
+# | **加厚** | `IFeatureManager.FeatureBossThicken`（7 参） | 7 组（官方开关主要组合） |
+#  ★ 完美（`solid=0 · surface=1`） | 回 `None` | **不建** |
+# | 加厚 | `IModelDoc2.FeatureBossThicken`（3 参 · Obsolete） | 3 组 | ★ 完美 | 回 `None
+# ` | **不建** |
+# | **直纹曲面** | `InsertRuledSurfaceFromEdge2`（11 参） | 侧棱 4 条 + **水平边 4 条** 
+# + 负例 | ★ 边**选上了**（`sel=True`） | ★ **回了对象** | **不建** |
 #
 #   ★★ **两者的共同形态**：★ **调用不报错**（★ 或只回 `None`）、★ **而特征树一点都不动**。
-#     ⇒ ★ 这不是「参数没找对」（★ 加厚 11 组已穷尽；★ 直纹的 `非选择性的参数` 在补全 11 参后**已消失**），
+# ⇒ ★ 这不是「参数没找对」（★ 加厚 11 组已穷尽；★ 直纹的 `非选择性的参数` 在补全 11 参后
+# **已消失**），
 #     ★ 也**不是**「选择没选上」（★ 直纹的 `sel=True` 是**回读**出来的 —— 事实 8）。
 #
-#   ★★★ **与事实 40 同族**：`IModeler.Create*Surface` 那一族也是「返回 `None` 而几何不变」。
-#     ⇒ ★★ **故这三处该并成一类看**：★ **「pywin32 这条后端上，某些曲面类特征的调用会静默失效」**。
-#     ⚠ 而**为什么**静默（★ 是 COM 层吞了错误？★ 还是 SW 内部前置未满足而不报？）**尚未查明** ——
+# ★★★ **与事实 40 同族**：`IModeler.Create*Surface` 那一族也是「返回 `None` 而几何不变」
+# 。
+# ⇒ ★★ **故这三处该并成一类看**：★ **「pywin32 这条后端上，某些曲面类特征的调用会静默失
+# 效」**。
+# ⚠ 而**为什么**静默（★ 是 COM 层吞了错误？★ 还是 SW 内部前置未满足而不报？）**尚未查明*
+# * ——
 #       ★ 按**铁律 5** 写「查不到」，★ 而**不编一个理由** ✓
 #
-#   ★ 若要继续攻：★ 该换的是**观测手段**（★ 如查 SW 的"什么错"面板 / 试 `CreateDefinition` 新架构），
+# ★ 若要继续攻：★ 该换的是**观测手段**（★ 如查 SW 的"什么错"面板 / 试 `CreateDefinition`
+#  新架构），
 #     ★ **而不是**继续在同一入口上换参数 —— ★ 那已经证明不是参数问题。
 
 
@@ -793,23 +856,32 @@ def insert_ruled_surface_report(model, *, surface_type: int = 1, length_mm: floa
 #
 #   > ★ **旧式方法**那侧是成的（填充 `InsertFillSurface2` / 延伸 `InsertExtendSurface` /
 #   >   缝合 `InsertSewRefSurface` / 曲面-拉伸 `FeatureExtruRefSurface3`）——
-#   >   ★★ 而**新架构**（`CreateDefinition` + `CreateFeature`）那侧对扫描面/加厚/直纹**静默不成**。
+# >   ★★ 而**新架构**（`CreateDefinition` + `CreateFeature`）那侧对扫描面/加厚/直纹**静
+# 默不成**。
 #
-#   ★ 而 B6 里剩的几条**恰好都有 `IModelDoc2` 上的旧式入口**（★ 与**成过**的 `InsertExtendSurface` 同层）：
+# ★ 而 B6 里剩的几条**恰好都有 `IModelDoc2` 上的旧式入口**（★ 与**成过**的 `InsertExtend
+# Surface` 同层）：
 #   ```
-#   ✓ IModelDoc2.InsertPlanarRefSurface()                     0 参 · 回 bool  → T605 平面区域
-#   ✓ IModelDoc2.InsertOffsetSurface(Thickness, Reverse)      2 参 · void     → T606 等距曲面
-#   ✓ IModelDoc2.InsertFeatureReplaceFace()                   0 参 · void     → T609 替换面
-#   ✓ IModelDoc2.InsertRadiateSurface(Distance, FlipDir, TangentPropagate)    → 辐射曲面（★ 本轮不做）
-#   ✗ InsertTrimSurface                                       ★ **swapi 里查不到** → T607（★ 铁律 5）
+# ✓ IModelDoc2.InsertPlanarRefSurface()                     0 参 · 回 bool  → T605 平面
+# 区域
+# ✓ IModelDoc2.InsertOffsetSurface(Thickness, Reverse)      2 参 · void     → T606 等距
+# 曲面
+# ✓ IModelDoc2.InsertFeatureReplaceFace()                   0 参 · void     → T609 替换
+# 面
+# ✓ IModelDoc2.InsertRadiateSurface(Distance, FlipDir, TangentPropagate)    → 辐射曲面（
+# ★ 本轮不做）
+# ✗ InsertTrimSurface                                       ★ **swapi 里查不到** → T607
+# （★ 铁律 5）
 #   ```
 #
 # 官方前置（★ 三条 md 的 `Remarks` 逐字）：
 #   · `InsertPlanarRefSurface` ⇒ 「select the surface's **boundary entities** using
 #     `IModelDocExtension::SelectByID2` with **Marks of 1**」
-#   · `InsertOffsetSurface` ⇒ 「Make the selections using `IModelDocExtension::SelectByID2`
+# · `InsertOffsetSurface` ⇒ 「Make the selections using `IModelDocExtension::SelectByID2
+# `
 #     **before** calling this method」
-#   · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1** and
+# · `InsertFeatureReplaceFace` ⇒ 「select the faces to **replace** … with **Marks of 1**
+#  and
 #     select the re[placement face] …」（★ 两个 mark 分工）
 #
 # ★ 判据统一（★ 规则 6）：**特征树多了新特征**。
@@ -1019,11 +1091,14 @@ def _select_two_faces_for_replace(model) -> int:
     return n
 
 
-# ── B6 / T607：**剪裁曲面**（`IFeatureManager.PreTrimSurface` + `PostTrimSurface`） ──────
+# ── B6 / T607：**剪裁曲面**（`IFeatureManager.PreTrimSurface` + `PostTrimSurface`） ───
+# ───
 # ★★★★ 2026-10-03（轮 519）★ 补 T607 —— ★ 而**它的真名是上一轮才找到的** ⚠
 #
-# ★ **上一轮（518）的悬案与解答**：轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查不到**
-#   （★ 当时按铁律 5 记了「查不到」）。★ 而轮 518 从**类型库 dump** 里发现 `IModelDoc2` 上有：
+# ★ **上一轮（518）的悬案与解答**：轮 516/518 我按 `InsertTrimSurface` 查 ⇒ **swapi 里查
+# 不到**
+# （★ 当时按铁律 5 记了「查不到」）。★ 而轮 518 从**类型库 dump** 里发现 `IModelDoc2` 上
+# 有：
 #   ```
 #   PreTrimSurface   arity=1  (BMutualTrimIn)
 #   PostTrimSurface  arity=1  (BSewSurfaceIn)
@@ -1041,14 +1116,16 @@ def _select_two_faces_for_replace(model) -> int:
 #       **trim tool (standard)**"
 #     · `BSplitSystemIn` ⇒ "True to let SOLIDWORKS determine which surfaces to trim,
 #       false to trim all possible surfaces"
-#     · `BSplitLinearIn` ⇒ "False to naturally extend any trims along the intersecting surfaces,
+# · `BSplitLinearIn` ⇒ "False to naturally extend any trims along the intersecting surfa
+# ces,
 #       true to extend any trims **linearly**"
 #     · `BRemovePickedIn` ⇒ "True to **remove** the selected surfaces, false to **keep**"
 #     ⇒ ★★ 「**Sets the trimming options before trimming**」✓
 #   · `IFeatureManager.PostTrimSurface(BSewSurfaceIn)` ⇒ "True to **sew** the resulting
 #     trimmed surfaces, false to not"
 #   · 类型库（第 3 源）给 **arity 与方向**：`IFeatureManager.PreTrimSurface` ⇒
-#     `(BMutualTrimIn, BSplitSystemIn, BSplitLinearIn, BRemovePickedIn, Retval)` ⇒ **4 个 in**
+# `(BMutualTrimIn, BSplitSystemIn, BSplitLinearIn, BRemovePickedIn, Retval)` ⇒ **4 个 in
+# **
 #     ★（★ 而 `IModelDoc2` 那两个各**只有 1 个 in** ⇒ ★ 故**新版参数更全**、★ 本包装走新版）
 #
 # ★ 流程（★ 两段式）：**选中「要剪裁的面」+「剪裁工具」** ⇒ `PreTrimSurface(4 布尔)`
@@ -1056,14 +1133,18 @@ def _select_two_faces_for_replace(model) -> int:
 # ★ 判据（★ 规则 6）：**特征树多了新特征**。
 
 
-# ── 规格 211 · B2-1「剪裁曲面 · 取消剪裁」（`IFeatureManager::InsertUntrimSurface2`）──────
+# ── 规格 211 · B2-1「剪裁曲面 · 取消剪裁」（`IFeatureManager::InsertUntrimSurface2`）──
+# ────
 # 官方依据（★ 三样逐字读过）：
 #   · `C:\swapi\types\IFeatureManager\InsertUntrimSurface2.md`
 #       `Feature InsertUntrimSurface2( System.int FaceUntrimType, System.int EdgeUntrimType,
 #        System.double Distance, System.bool BMerge, System.bool BTrimOppositeSide )`
-#     ★ `## Parameters` 逐字：`FaceUntrimType`（`swFaceUntrimType_e`；**valid only if a face is
-#       selected**）· `EdgeUntrimType`（`swEdgeUntrimType_e`；**valid only of one or more edges are
-#       selected**）· `Distance`（★ **没给单位**）· `BMerge`（True ⇒ 与原面合并；false ⇒ 另建独立面体）·
+# ★ `## Parameters` 逐字：`FaceUntrimType`（`swFaceUntrimType_e`；**valid only if a face
+#  is
+# selected**）· `EdgeUntrimType`（`swEdgeUntrimType_e`；**valid only of one or more edge
+# s are
+# selected**）· `Distance`（★ **没给单位**）· `BMerge`（True ⇒ 与原面合并；false ⇒ 另建
+# 独立面体）·
 #       `BTrimOppositeSide`（**valid only if BMerge is false**）
 #     ★ `## Returns`：`Pointer to the IFeature object`
 #   · ★★★ `## Remarks` **两条**（★ 都是**官方写死的前置** ⇒ ★ 都能当"必然失败"的依据 ✓）：
@@ -1072,10 +1153,13 @@ def _select_two_faces_for_replace(model) -> int:
 # 判据（★ 规则 6 的回读）：
 #   ★★ 主判据 = **特征树多了新特征**（★ 与本文件 `trim_surface_report` **同一判据** ✓）
 #   ★★ **"选不上"与"选了没用"分开记**：★ 选择计数单独落在 `faces_selected` 字段 ✓
-# ⚠ ★★ **我**没有**把"是不是曲面零件"做成静态判据** —— ★ 理由：★ 那需要一个"体里有没有曲面"的
+# ⚠ ★★ **我**没有**把"是不是曲面零件"做成静态判据** —— ★ 理由：★ 那需要一个"体里有没有曲
+# 面"的
 #   判据，★ 而**官方没给现成的** ✗ ⇒ ★ 按**铁律 5**：★ **不发明判据** ✓
-#   ⇒ ★ 改为：★ **调用后特征树没变** ⇒ ★ 报错信息**逐字引用官方那两条前置**，★ 让读者知道该查什么 ✓
-# ⚠ ★ 官方对 `Distance` **没给单位** ⇒ ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合，不发明 ✓）
+# ⇒ ★ 改为：★ **调用后特征树没变** ⇒ ★ 报错信息**逐字引用官方那两条前置**，★ 让读者知道
+# 该查什么 ✓
+# ⚠ ★ 官方对 `Distance` **没给单位** ⇒ ★ 按仓里既有约定**加 `unit_assumption`**（★ 缝合
+# ，不发明 ✓）
 # ⚠ ★ **两个枚举**越界 ⇒ **必然非法**（★ 官方定义集合 ✓）
 UNT_FACE_UNTYPES = {0: "swFaceUntrimTypeAutomatic", 1: "swFaceUntrimTypeManual"}
 UNT_EDGE_UNTYPES = {0: "swEdgeUntrimTypeAutomatic", 1: "swEdgeUntrimTypeManual"}
@@ -1113,7 +1197,8 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
         out["error"] = ("edge_untrim_type=%r 不在官方 `swEdgeUntrimType_e` 内 ⇒ 必然非法（★ 合法：%s）"
                         % (edge_untrim_type, sorted(UNT_EDGE_UNTYPES)))
         return out
-    #: ★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 如实记、★ 不改语义 ✓
+    #: ★ `BTrimOppositeSide` **只在 `BMerge=False` 时有意义**（★ 官方逐字）⇒ ★ 如实记、★
+    #:  不改语义 ✓
     out["trim_opposite_side_valid"] = (not bool(merge))
     before = feature_names(model)
     try:
@@ -1160,23 +1245,28 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
 # ── 规格 211 · B2-2「扫描曲面」（`IFeatureManager::InsertSweepSurface2`）──────────────
 # 官方依据（★ 三样逐字读过）：
 #   · `C:\swapi\types\IFeatureManager\InsertSweepSurface2.md`
-#       `Feature InsertSweepSurface2( bool Propagate, short TwistCtrlOption, bool KeepTangency,
-#        bool BAdvancedSmoothing, short StartMatchingType, short EndMatchingType, int PathAlign,
+# `Feature InsertSweepSurface2( bool Propagate, short TwistCtrlOption, bool KeepTangency
+# ,
+# bool BAdvancedSmoothing, short StartMatchingType, short EndMatchingType, int PathAlign
+# ,
 #        bool UseFeatScope, bool UseAutoSelect, double TwistAngle, bool BMergeSmoothFaces )`
 #     ★ `## Returns`：`Pointer to the IFeature object`
-#     ★★★ `## Remarks` **给了完整「调用序」**（★ 正是 AGENTS.md 说的"示例/Remarks 给调用序"）：
+# ★★★ `## Remarks` **给了完整「调用序」**（★ 正是 AGENTS.md 说的"示例/Remarks 给调用序"
+# ）：
 #       「Because you are creating a surface, the sections can be open.」
 #       「Use `IModelDocExtension::SelectByID2` to select the profile and sweep curves.
 #        The mark for: **1 = Profile selection** · **2 = Guide curve selection, if provided** ·
 #        **4 = Sweep path**」✓
 #       「`PathAlign` available when `TwistCtrlOption = swTwistControlFollowPath`：
 #        **0 = None** · **2 = Direction vector** · **3 = All faces**」✓
-#       「When `UseAutoSelect` is **false**, the user **must select the bodies**」✓ ← ★ 官方写死的前置
+# 「When `UseAutoSelect` is **false**, the user **must select the bodies**」✓ ← ★ 官方写
+# 死的前置
 #   · ★★ **本仓的"两条路"（★ 先说清，★ 免得与既有结论打架）**：
 #       · **路 A**：`CreateDefinition(swFmSweepSurface)` + `CreateFeature` ⇒
 #         ★★ **事实 392**：★「`CreateFeature` 在这条后端上**静默回 `None`**」✗（★ **已试死** ✓）
 #       · **路 B**：★ **本函数**（★ 参数式 + mark 表）⇒ ★★ **从来没试过** ✓
-#         （★ 依据**事实 237**：「'不做曲面族'那条结论只覆盖了**半条路** —— 官方有**两条**建曲面的
+# （★ 依据**事实 237**：「'不做曲面族'那条结论只覆盖了**半条路** —— 官方有**两条**建曲面
+# 的
 #          入口，**而第二条从来没试过**」✓）
 #       ⇒ ★★★ **本包装只走路 B** —— ★ **不重复路 A、也不宣称路 A 可行** ✓
 # 判据（★ 规则 6 的回读）：
@@ -1187,7 +1277,8 @@ def untrim_surface_report(model, *, face_untrim_type: int = 0, edge_untrim_type:
 #     ★（★ 与本文件 `trim_surface_report` 同一风格：★ 前置由选择契约承载 ✓）
 #     ⚠ ★ 为什么不做自动选择：★ 那需要一个"按选择器 + mark 选草图"的 helper，
 #       ★ 而**本文件没有**、★ 本批**也不发明它**（★ 铁律 1 + 只读优先 ✓）
-# ⚠ ★ `TwistAngle` 只在 `TwistCtrlOption = swTwistControlConstantTwistAlongPath` 时有意义（官方逐字）✓
+# ⚠ ★ `TwistAngle` 只在 `TwistCtrlOption = swTwistControlConstantTwistAlongPath` 时有意
+# 义（官方逐字）✓
 #: ★ 官方 `## Remarks` 的 **mark 表**（★ 逐字）✓
 #: enum-gate: member InsertSweepSurface2
 SWEEP_MARKS = {"profile": 1, "guide": 2, "path": 4}
@@ -1315,7 +1406,8 @@ def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True
                  "⇒ PostTrimSurface(sew)；★ 参数语义取自 **CHM**（md 里四个参数都是 No description）"}
 
 
-# ── ★ 曲面**切除**（`IFeatureManager.InsertCutSurface`）—— 与"剪裁曲面"是**两件事** ──────
+# ── ★ 曲面**切除**（`IFeatureManager.InsertCutSurface`）—— 与"剪裁曲面"是**两件事** ───
+# ───
 # ★★★★ 2026-10-03（轮 521）★ 从**通配筛**（事实 401 那条手法）里抓到的第二个候选。
 #
 #   ★★ **先纠正一个容易混的地方**：它**不是**"剪裁曲面"（那是 B6/T607 的
@@ -1333,12 +1425,14 @@ def trim_surface_report(model, *, mutual: bool = True, split_system: bool = True
 #     · `UseFeatScope` ⇒ True 只切传给 `Bodies` 且与切面相交的体
 #     · `UseAutoSelect` ⇒ True 自动切**所有**与切面相交的体
 #     · `Bodies` ⇒ 具体体的数组；★「**Empty array indicating to cut all bodies**」
-#   · `C:\swapi\types\IModelDoc2\InsertCutSurface.md` ⇒ **Obsolete**，继任者是 `IFeatureManager` 那个
+# · `C:\swapi\types\IModelDoc2\InsertCutSurface.md` ⇒ **Obsolete**，继任者是 `IFeatureMa
+# nager` 那个
 #   · 类型库（第 3 源）给 arity 与方向：`IFeatureManager.InsertCutSurface` ⇒
 #     `(Flip, KeepPieceIndex, UseFeatScope, UseAutoSelect, Bodies, Error(out), Retval(out))`
 #     ⇒ ★ **5 个 in + 2 个 out**（★ 与 md 一致）✓
 #
-# ★ 前置：★ 官方说「using the **preselected** surface or plane」⇒ ★ **先选中一个面或基准面**。
+# ★ 前置：★ 官方说「using the **preselected** surface or plane」⇒ ★ **先选中一个面或基准
+# 面**。
 # ★ 判据（★ 规则 6）：**特征树多了新特征**。
 
 
@@ -1387,18 +1481,21 @@ def cut_surface_report(model, *, flip: bool = False, keep_piece_index: int = 0,
     fm = get_com_member(model, "FeatureManager")
     ret = None
     #: ★★ 2026-10-03（轮 521）**真机栽在这里、而它正是事实 390 那条定则的用例** ⚠
-    #:   我第一版按「**5 个 in**」调（★ 依据是事实 397：类型库的 arity 含末尾 out ⇒ pywin32 侧不传）
+    #: 我第一版按「**5 个 in**」调（★ 依据是事实 397：类型库的 arity 含末尾 out ⇒ pywin3
+    #: 2 侧不传）
     #:   ⇒ 真机回 **`非选择性的参数`**（`DISP_E_PARAMNOTOPTIONAL` = **"某个参数没给"**）。
     #:   ★★ **真因**：这条方法有 **两个 out**（`Error` 与 `Retval`）——
     #:     ★ 而**事实 397 那条"不传末尾 out"只适用于末尾只有 `Retval` 的情形**；
     #:     ★ 这里有 **中间那个 `Error`**，★ 它**必须占位** ⇒ ★★ **故要传 7 个** ✓
     #:   ★ 用 **`out_i4()`**（★ **`Error` 是错误码 ⇒ `VT_BYREF|VT_I4`**）与
-    #:     **`out_dispatch()`**（★ **`Retval` 是 Feature ⇒ `VT_BYREF|VT_DISPATCH`**）把两个 out 位置填上。
+    #: **`out_dispatch()`**（★ **`Retval` 是 Feature ⇒ `VT_BYREF|VT_DISPATCH`**）把两个 
+    #: out 位置填上。
     #:   ⚠ **我第一版两个都用了 `out_dispatch()`** ⇒ 真机回
     #:     **`类型不匹配`（位置 6）** —— ★★ **而那正好指在第 7 个参数（`Error`）上**：
     #:     ★ 一个**错误码**位置被塞了 Dispatch 容器 ⇒ ★ 两个错码**各说了一半**
     #:     （`非选择性的参数` 说"少给了"、`类型不匹配 位置 6` 说"第 7 个给错了"）✓
-    #:   ★ 而那是**事实 390 定则**（见 `DISP_E_PARAMNOTOPTIONAL` ⇒ **先数参数个数**）的正当执行。
+    #: ★ 而那是**事实 390 定则**（见 `DISP_E_PARAMNOTOPTIONAL` ⇒ **先数参数个数**）的正
+    #: 当执行。
     err_out = None
     ret_out = None
     try:

@@ -41,8 +41,10 @@ OUT = Path(Path(__file__).resolve().parents[1] / "output" / "verified-acceptance
 #: ⚠⚠⚠ **2026-10-01（轮 180）：本仓库的验收脚本有**三种**输出格式**（实测）：
 #: ```
 #:   ① `── 8/8 · verdict: pass ──`              （多数冒烟）
-#:   ② `── 15/15 项通过 · verdict: pass ──`      （`verify_dfm_e2e` / `verify_routing_e2e`）
-#:   ③ `verdict: pass`                          （`verify_costing_e2e`，**没有 N/M 计数**）
+#: ② `── 15/15 项通过 · verdict: pass ──`      （`verify_dfm_e2e` / `verify_routing_e2e`
+#: ）
+#: ③ `verdict: pass`                          （`verify_costing_e2e`，**没有 N/M 计数**
+#: ）
 #: ```
 #: ★ 我第一版**只认 ①** ⇒ 把 ②③ 报成了"**无 verdict**"（**3 个 pass 被误报**）。
 #: ⇒ ★ 教训（本会话第 N 次，事实 51 那一族）：**判据要与实现的**实际形态**对齐**，

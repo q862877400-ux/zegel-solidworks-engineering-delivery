@@ -1,12 +1,14 @@
 """★ 定案：`extrude_boss(20.0)` 建出来的实体，★ **真实的 bounding box 是多少毫米**。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
-# 文件:   `scripts/sw_part.py::extrude_boss`（★ docstring 写「毫米」、★ 而 `D1` 原样透传）·
+# 文件:   `scripts/sw_part.py::extrude_boss`（★ docstring 写「毫米」、★ 而 `D1` 原样透传
+# ）·
 #         `scripts/sw_part.py::get_bounding_box`（★ 量实体）
 # 定位:   ★★★★ **判据（★ 一个数就能定案）**：★ docstring 说 `depth` 是**毫米** ⇒
 #   ★ 若 `extrude_boss(model, "Sketch1", 20.0)` 建出来的板**厚 20 mm** ⇒ 函数对；
 #   ★★ **若厚 20000 mm（= 20 米）** ⇒ ★★★ **函数把毫米当米传了** ✓
-#   ★ **而上一轮的读数矛盾正是这么来的**：★ 尺寸值被读成 20000 ⇒ ★ 那是**真的 20000 毫米** ✓
+# ★ **而上一轮的读数矛盾正是这么来的**：★ 尺寸值被读成 20000 ⇒ ★ 那是**真的 20000 毫米**
+#  ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -31,7 +33,8 @@ def main() -> int:
 
     app, _ = connect_solidworks(visible=True)
     model = new_document(app, "part")
-    #: ★ 画一个 100×60 的矩形（★ 那两维走 `sketch_corner_rectangle`，★ 单位是**米**——见下）
+    #: ★ 画一个 100×60 的矩形（★ 那两维走 `sketch_corner_rectangle`，★ 单位是**米**——见
+    #: 下）
     P.sketch(model, "Front Plane")
     P.sketch_corner_rectangle(model, -50.0, -30.0, 50.0, 30.0)
     P.end_sketch(model)

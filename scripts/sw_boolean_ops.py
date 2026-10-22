@@ -1,7 +1,9 @@
 """★ 零件级**布尔 / 多体**操作 —— 相交（`PreIntersect2` → `PostIntersect`，官方两步）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」· 铁律 3（落在 `scripts/` 白名单内）
-# 文件:   scripts/sw_boolean_ops.py（**新建** —— 本仓既有零件特征模块里**没有多体/布尔这一族**；
+# 仓库:   本项目自身（能力实现）· ★ 铁律 1「只缝合不发明」· 铁律 3（落在 `scripts/` 白名
+# 单内）
+# 文件:   scripts/sw_boolean_ops.py（**新建** —— 本仓既有零件特征模块里**没有多体/布尔这
+# 一族**；
 #   ★ 裁决书 §九 指定的落点就是它）✓
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-3** · 外部项目 idx **181 `interse
 #           ct`**。
@@ -12,22 +14,29 @@
 #   · `C:\swapi\types\IFeatureManager\PreIntersect2.md` ——
 #     `System.object PreIntersect2(System.bool CapPlanar, System.int RegionType)`
 #     ★ `## Parameters` 逐字给出 **RegionType 三值**：
-#       `0 = Intersecting regions` · `1 = Internal regions` · `2 = Intersecting and internal regions`
+# `0 = Intersecting regions` · `1 = Internal regions` · `2 = Intersecting and internal r
+# egions`
 #     ★★ `## Remarks` 逐字：「**Before calling this method, you must select the intersecting
 #       surfaces, solids, or planes** that make up the intersect feature.」+
-#       「After calling this method, call `IFeatureManager::PostIntersect` to create the intersect feature.」
+# 「After calling this method, call `IFeatureManager::PostIntersect` to create the inter
+# sect feature.」
 #   · `C:\swapi\types\IFeatureManager\PostIntersect.md` ——
-#     `Feature PostIntersect(System.object IntersectionsToExclude, System.bool Merge, System.bool Consume)`
-#     ★ `## Parameters` 逐字：`IntersectionsToExclude` 是「**Array of booleans** indicating which
+# `Feature PostIntersect(System.object IntersectionsToExclude, System.bool Merge, System
+# .bool Consume)`
+# ★ `## Parameters` 逐字：`IntersectionsToExclude` 是「**Array of booleans** indicating 
+# which
 #       bodies returned by `PreIntersect` to **exclude**」· `Merge` = 合并成一个体 ·
 #       `Consume` = 把输入曲面从特征树里**移除**
-#   · `C:\swapi\types\IIntersectFeatureData\{GetIntersectionsCount,GetIntersections,CapPlanar,Merge,Consume}.md`
+# · `C:\swapi\types\IIntersectFeatureData\{GetIntersectionsCount,GetIntersections,CapPla
+# nar,Merge,Consume}.md`
 #     —— ★ 读侧（`GetIntersectionsCount()` **零参回 int** ⇒ 本模块拿它当回读判据；
 #       ⚠ `GetIntersections(out Excluded)` 有 **out 参** ⇒ 本模块**不用它**，见 limitations）✓
-#   · ★★ `C:\swapi\examples\Create_Intersect_Feature_Example_VB.md` —— **调用序**（逐字）：
+# · ★★ `C:\swapi\examples\Create_Intersect_Feature_Example_VB.md` —— **调用序**（逐字）
+# ：
 #     ```
 #     status = swModelDocExt.SelectByID2("Shell1", "SOLIDBODY", 0,0,0, True, 0, Nothing, 0)
-#     status = swModelDocExt.SelectByID2("Plane6", "PLANE",     0,0,0, True, 0, Nothing, 0)   ← 都 mark 0
+# status = swModelDocExt.SelectByID2("Plane6", "PLANE",     0,0,0, True, 0, Nothing, 0) 
+#   ← 都 mark 0
 #     bodyArray = swFeatureMgr.PreIntersect2(False, 1)          ← CapPlanar=False, 内部区域
 #     swModel.ClearSelection2 True
 #     nbrBodies = UBound(bodyArray)
@@ -45,7 +54,8 @@
 #   一律包 **`VARIANT(VT_ARRAY | VT_BOOL)`** ✓
 #   ⚠ 而 `PostIntersect` 的第 1 参是 **`System.object`** ⇒ ★★ **它到底吃不吃这个包装**，
 #     是**本轮唯一要真机验的东西**（裁决书原话）✓
-# ★★ **判据**（规则 6）：① `PreIntersect2` 回的**体数组长度**（★ 它回 `System.object`）；
+# ★★ **判据**（规则 6）：① `PreIntersect2` 回的**体数组长度**（★ 它回 `System.object`）
+# ；
 #   ② **特征树增量**（`PostIntersect` 回的 `IFeature` **不当判据**）；
 #   ③ ★ **`IIntersectFeatureData::GetIntersectionsCount()`**（零参回 int）✓
 
@@ -66,7 +76,8 @@ pythoncom, win32com, VARIANT = import_com_dependencies()
 
 __all__ = ["REGION_TYPES", "as_bool_variant", "create_intersect"]
 
-#: ★ 官方 `PreIntersect2` 的 `RegionType` **三值表**（★ 逐字抄自该页 `## Parameters`；★ **不许跨条复制**）
+#: ★ 官方 `PreIntersect2` 的 `RegionType` **三值表**（★ 逐字抄自该页 `## Parameters`；★ 
+#: **不许跨条复制**）
 #: enum-gate: member PreIntersect2
 REGION_TYPES = {
     "intersecting": 0,                 # Intersecting regions

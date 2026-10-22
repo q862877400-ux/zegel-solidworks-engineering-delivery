@@ -210,9 +210,11 @@ def add_constant_speed_rotary_motor(
     """
     # ⚑ 本站点**不再是 `unmapped`**（spec 238）：`swFmAEMRotationalMotor` 的官方宿主是
     #   **`IMotionStudy::CreateDefinition`**，该页 `## Parameters` **逐条点名**返回
-    #   `ISimulationMotorFeatureData` ⇒ 已由 `check_interface_member_ownership.host_pages()`
+    # `ISimulationMotorFeatureData` ⇒ 已由 `check_interface_member_ownership.host_pages(
+    # )`
     #   收进映射表（**官方断言**，不是人工确证）⇒ 本站点现在是 `checked`。
-    #   ★ 因此**不需要** `#: cd-site:` 声明（`checked` 是隐式默认，写了反而 `redundant-decl`）。
+    # ★ 因此**不需要** `#: cd-site:` 声明（`checked` 是隐式默认，写了反而 `redundant-dec
+    # l`）。
     motor_data = motion_member(motion_study, "CreateDefinition", SW_FM_AEM_ROTATIONAL_MOTOR)
     if motor_data is None:
         raise RuntimeError("创建旋转马达 FeatureData 失败")
@@ -520,9 +522,11 @@ def validate_motion_studies(asm_model, **requirements):
 #     「Saves the animation to a .**avi**, .**bmp**, or .**tga** file.」
 #     ⇒ 同一个成员也能出 **bmp / tga**（不是只能出 avi）。
 # ⚠⚠ **判据不看返回值**（真机实测 2026-10-01 轮 63/64）：
-#     • 空装配体**不 `Calculate`** ⇒ `SaveToAVI` **返回 `True` 而文件 0 字节**（**「返回码撒谎」**）；
+# • 空装配体**不 `Calculate`** ⇒ `SaveToAVI` **返回 `True` 而文件 0 字节**（**「返回码撒
+# 谎」**）；
 #     • 空装配体 + `Calculate` ⇒ 返回 `False`、文件不存在；
-#     • 有马达 + 挑对算例 + `ActivateMotionStudy` + 保存装配体 + 先 `Play` ⇒ **仍 `False`**（边界未定位）。
+# • 有马达 + 挑对算例 + `ActivateMotionStudy` + 保存装配体 + 先 `Play` ⇒ **仍 `False`**
+# （边界未定位）。
 #     ⇒ 本组以「**文件存在且大小 > 0**」为唯一判据。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
@@ -610,7 +614,8 @@ _AVI_PARAMETER_MEMBERS = frozenset((
 #   （★ 与轮 272 的 `configure_*_solver` **同一次教训**）⇒ ★★ **正解：显式形参** ——
 #   ★ 而**显式更好**：★ **形参即文档**（★ 调用方一眼看到能传什么）。
 #
-# ★ 判据：★ **不吞错**（★ 底层怎么报就怎么回）· ★ 并把 **`requirements` 里实际传了哪些**记进返回。
+# ★ 判据：★ **不吞错**（★ 底层怎么报就怎么回）· ★ 并把 **`requirements` 里实际传了哪些**
+# 记进返回。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）

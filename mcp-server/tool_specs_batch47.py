@@ -6,15 +6,18 @@
 #   · 未选中 ⇒ **显式拒绝**（★ 提示"至少 2 个轮廓 · mark=1"）✓
 #   ⚠ **未验**：★ `CreateMassProperty().Volume` 回 **0.0**（★ 所以"棱台体积 7000 mm³"那个
 #     几何推出的期望值**没有对上**）—— ★ **如实标"未真机验证体积"**，★ 不写成"通过"。
-# ★★ **它补的是核实的真缺**：★ 全仓 grep `loft` ⇒ **工具 0 · 函数 0**（`sweep` 同样 0），
-#   ★ 而**放样与扫描是 SolidWorks 最基本的两种特征**；★ 四家并集里有 **`loft`**（Slacker-LLC 提供）。
+# ★★ **它补的是核实的真缺**：★ 全仓 grep `loft` ⇒ **工具 0 · 函数 0**（`sweep` 同样 0）
+# ，
+# ★ 而**放样与扫描是 SolidWorks 最基本的两种特征**；★ 四家并集里有 **`loft`**（Slacker-L
+# LC 提供）。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch47.py —— 本文件
 # 定位:   段 6 续：放样（★ 补「四家有我们没有」的真缺）。
 # 官方签名依据: `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md`
-#   （**18 参** · 回 `Feature` · Remarks 给 mark：1=轮廓 / 2=引导线 / 4=中心线 / 8=起端相切向量）·
+# （**18 参** · 回 `Feature` · Remarks 给 mark：1=轮廓 / 2=引导线 / 4=中心线 / 8=起端相
+# 切向量）·
 #   ★ 反射 arity 表 `scripts/sw_api_sldworks.py:4426` = **18**（★ 两源一致）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -32,13 +35,18 @@ SPECS_BATCH47 = [
         module="sw_loft",
         function="create_loft_report",
         inject="model",
-        #: ★★★ 2026-10-03（接手轮）：`create_loft_report` 是**硬前置** —— 读到 `mark=1` 的选中数 < 2 就
-        #:   `return {"ok": False, "stage": "selection"}`。★ 而**原先这条 spec 没有"给选区"的入口**
-        #:   ⇒ ★★ **经工具层必然失败**（真机实测：`stage=selection` · 「`mark=1` 的选中数是 **0**」，
+        #: ★★★ 2026-10-03（接手轮）：`create_loft_report` 是**硬前置** —— 读到 `mark=1` 
+        #: 的选中数 < 2 就
+        #: `return {"ok": False, "stage": "selection"}`。★ 而**原先这条 spec 没有"给选区
+        #: "的入口**
+        #: ⇒ ★★ **经工具层必然失败**（真机实测：`stage=selection` · 「`mark=1` 的选中数
+        #: 是 **0**」，
         #:   证据 `output/explicit-reject-family-evidence.json`）。
-        #:   ★ 修法：★ 加 `profile_sketches`（**按顺序**给名字）+ `pre_call`（★ 它跑在注入**之后**）。
+        #: ★ 修法：★ 加 `profile_sketches`（**按顺序**给名字）+ `pre_call`（★ 它跑在注入
+        #: **之后**）。
         pre_call=_pre_loft_profiles,
-        #: ★ `None` = 「由 `pre_call` 消费、不进目标函数」（★ 仓内既有口径；★ 不标则**判据 ①** 会如实报）。
+        #: ★ `None` = 「由 `pre_call` 消费、不进目标函数」（★ 仓内既有口径；★ 不标则**判
+        #: 据 ①** 会如实报）。
         param_alias={"profile_sketches": None},
         params=[
             #: ★★ 新加：轮廓草图的**名字列表**（★ 只收名字、不收坐标 —— 规则 3）。

@@ -10,8 +10,10 @@
 # ① IModelDoc2.GetUnits()  —— **0 参**，回 `System.object`
 #    官方 Remarks 原话：★ 返回的是 **5 个 short 的数组** ——
 #      `[ LengthUnit, FractionBase, FractionValue, SignificantDigits, RoundToFraction ]`
-#    · LengthUnit ⇒ `swLengthUnit_e`（★ `swMM = 0` · `swCM = 1` · `swMETER = 2` · `swINCHES = 3` · …）
-# ② IModelDoc2.Extension.GetUserPreferenceInteger(swUserPreferenceIntegerValue_e.swUnitsLinear, "")
+# · LengthUnit ⇒ `swLengthUnit_e`（★ `swMM = 0` · `swCM = 1` · `swMETER = 2` · `swINCHES
+#  = 3` · …）
+# ② IModelDoc2.Extension.GetUserPreferenceInteger(swUserPreferenceIntegerValue_e.swUnits
+# Linear, "")
 #    —— ★ 同一件事的**用户偏好**读法。
 # ⇒ ★★ **两个入口给同一个答案才算坐实**（★ 本仓库"签名三源互证"的同精神）。
 # ```
@@ -24,8 +26,10 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_units.py —— 本文件（新）
 # 定位:   24h 段 6 续：文档单位（★ 补「四家有我们没有」的最后一条真缺）。
-# 官方签名依据: `C:\swapi\types\IModelDoc2\GetUnits.md`（0 参 · ★ Remarks 给了 5 元组格式）·
-#   `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 项）·
+# 官方签名依据: `C:\swapi\types\IModelDoc2\GetUnits.md`（0 参 · ★ Remarks 给了 5 元组格
+# 式）·
+# `IModelDoc2/SetUnits.md`（5 参）· `C:\swapi\enums\swLengthUnit_e.md`（`swMM=0` 等 11 
+# 项）·
 #   `C:\swapi\enums\swUserPreferenceIntegerValue_e.md`（`swUnitsLinear` 等）·
 #   ★ 反射 `scripts/sw_api_sldworks.py`（`GetUnits: 0` · `SetUnits: 5`）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -82,7 +86,8 @@ def read_units_report(model) -> dict:
         out["length_unit_name"] = LENGTH_UNIT_NAMES.get(seq[0], "?")
         out["is_mm"] = (seq[0] == 0)
     #: ★★ 第二源：用户偏好 `swUnitsLinear`（★ 与上面应给同一答案）
-    #: ★★★ 2026-10-01（轮 339）**对照源在 `ISldWorks` 上，不在 `IModelDocExtension` 上** ——
+    #: ★★★ 2026-10-01（轮 339）**对照源在 `ISldWorks` 上，不在 `IModelDocExtension` 上**
+    #:  ——
     #:   真机踩到：★ 我先试 `Extension.GetUserPreferenceInteger(47, "")` ⇒ 四个 code 全报
     #:   `(-2147352571, '类型不匹配')`（`0x80020005`）⇒ ★★ **那不是「code 猜错了」**
     #:   （★ 反射里 `swUnitsLinear = **47**` 正是我试的第一个），★ 而是**宿主对象不对**：
@@ -91,8 +96,10 @@ def read_units_report(model) -> dict:
     #:   ⇒ ★ 与事实 36 同形（★ 同名分属不同族 ⇒ 报「类型不匹配」而非「方法不存在」）。
     #: ★★ **而两条路是**不同层次**，不是「同一件事的两个源」**：
     #:   · `IModelDoc2.GetUnits()` ⇒ **这一个文档**的单位（★ 可被文档属性覆盖）
-    #:   · `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` ⇒ **系统默认**（★ 新建文档的默认）
-    #:   ⇒ ★★★ **所以它们**允许不同**** —— ★ 本函数把两者都报出来，★ **而不是断言「必须相等」**。
+    #: · `ISldWorks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` ⇒ **系统默认**（★
+    #:  新建文档的默认）
+    #: ⇒ ★★★ **所以它们**允许不同**** —— ★ 本函数把两者都报出来，★ **而不是断言「必须相
+    #: 等」**。
     pref, pref_sys = None, None
     try:
         ext = get_com_member(model, "Extension")
@@ -117,7 +124,8 @@ def read_units_report(model) -> dict:
             except Exception:                                  # noqa: BLE001
                 continue
         if app is None:
-            #: ★ 兜底：★ `IModelDoc2.GetSldWorks` 在迟到绑定下拿不到 ⇒ 直接连正在跑的那个实例。
+            #: ★ 兜底：★ `IModelDoc2.GetSldWorks` 在迟到绑定下拿不到 ⇒ 直接连正在跑的那
+            #: 个实例。
             #:   ★ 本仓库是**单源运行**（事实 24：多个进程抢同一 COM 连接会死锁）
             #:   ⇒ ★ `Dispatch("SldWorks.Application")` 拿到的是**同一个**实例，安全。
             try:
@@ -130,11 +138,15 @@ def read_units_report(model) -> dict:
             out["app_via"] = "IModelDoc2.GetSldWorks"
         if app is not None:
             #: ★★★★★ 2026-10-01（轮 339）**arity = 1，不是 2** —— 三源一致：
-            #:   · 官方签名 `System.int GetUserPreferenceIntegerValue( System.int UserPreferenceValue )`
+            #: · 官方签名 `System.int GetUserPreferenceIntegerValue( System.int UserPref
+            #: erenceValue )`
             #:   · 反射 `'GetUserPreferenceIntegerValue': 1`（★ 三处都是 1）
-            #:   · 官方示例 `swApp.GetUserPreferenceIntegerValue(swUserPreferenceIntegerValue_e.swViewRotationMouseSpeed)`
-            #:   ⇒ ★★ 我先前传 `(47, "")` 两个 ⇒ `DISP_E_BADPARAMCOUNT`（`0x8002000E`「无效的参数数目」）。
-            #:   ⚠ **别与 `IModelDocExtension.GetUserPreferenceInteger(UserPref, UserPrefOption)` 混** ——
+            #: · 官方示例 `swApp.GetUserPreferenceIntegerValue(swUserPreferenceIntegerVa
+            #: lue_e.swViewRotationMouseSpeed)`
+            #: ⇒ ★★ 我先前传 `(47, "")` 两个 ⇒ `DISP_E_BADPARAMCOUNT`（`0x8002000E`「无
+            #: 效的参数数目」）。
+            #: ⚠ **别与 `IModelDocExtension.GetUserPreferenceInteger(UserPref, UserPrefO
+            #: ption)` 混** ——
             #:     ★ 那是**另一个方法**（2 参、另一个宿主）⇒ ★ 两个同名前缀、不同 arity。
             pref_sys = get_com_member(app, "GetUserPreferenceIntegerValue", 47)
             if pref_sys is not None and pref is None:

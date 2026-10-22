@@ -3,7 +3,8 @@
 # 仓库:   本项目自身 + 另一个对话的 B2 扫描产物（只读复用）
 # 文件:   scripts/check_official_source_defects.py
 # 定位:   **规格 206 / T3-3 的交付物** —— 把官方源自身的机械缺陷接成可执行门禁。
-# 依据:   `specs/203-bunny-sideline-batches/recon/b2-defects.json`（**970 条**，其中 964 条
+# 依据:   `specs/203-bunny-sideline-batches/recon/b2-defects.json`（**970 条**，其中 964
+#  条
 #         `verified=True`；另一对话的 B2 穷举扫描：13086 份官页 / 60 路 Bunny / 两道闸）。
 #         ★ 其分类：spelling 554 · dead_link_candidate 212 · other 164 · undefined_item 24 ·
 #           number_mismatch 10 —— ★ 本门禁**只取能机械判的两类**（见下「不算什么」）。
@@ -24,7 +25,8 @@ DEFECTS = ROOT / "specs" / "203-bunny-sideline-batches" / "recon" / "b2-defects.
 SCAN_DIRS = ("scripts", "mcp-server", "tools")
 SKIP_FILES = {Path(__file__).name,
               #: ★★ 这两个是**诊断/测量工具** —— ★ 它们的**职责就是指名坏引用**，
-              #:   所以它们不是「引用了不存在的官方页」（★ 事实 528 家族：**提及 ≠ 使用**）✓
+              #: 所以它们不是「引用了不存在的官方页」（★ 事实 528 家族：**提及 ≠ 使用**
+              #: ）✓
               "judge_two_boundary_cases.py",
               "measure_official_defects_fp.py"}
 
@@ -69,16 +71,21 @@ def load_bad_names() -> tuple:
 #: ★★ 判据（★ 我第一版用错了，见下）：
 #:   错的版本：扫源码里**出现错拼标识符** ⇒ ★ 一跑就报 `FeatureManager` 一大片**误报** ✓✗
 #:   ★ 真因：`spelling` / `dead_link_candidate` 这两类缺陷说的是
-#:     **【官方页里的链接】指向不存在的页**（如 `[[FeatureManager::HoleWizard5]]` 少了 `I`），
-#:     ★ **不是**说「代码里不该出现 `FeatureManager`」—— 它是 `IModelDoc2` 上的**属性名**，正当 ✓
+#: **【官方页里的链接】指向不存在的页**（如 `[[FeatureManager::HoleWizard5]]` 少了 `I`）
+#: ，
+#: ★ **不是**说「代码里不该出现 `FeatureManager`」—— 它是 `IModelDoc2` 上的**属性名**，
+#: 正当 ✓
 #:   ⇒ ★★ 正确的判据是：**我们【自己引用的官方页】必须存在**。
 #:     我们引用官方页有两种写法：① `[[接口::成员]]` ② `C:\swapi\types\<接口>\<成员>.md`
-#:     ⇒ 逐个求值：接口目录在不在？成员页在不在？★ 不在 ⇒ 报（★ 这是"文件系统事实"，非判断力）
+#: ⇒ 逐个求值：接口目录在不在？成员页在不在？★ 不在 ⇒ 报（★ 这是"文件系统事实"，非判断力
+#: ）
 LINK_REF = re.compile(r"\[\[([A-Za-z0-9_]+)::([A-Za-z0-9_]+)\]\]")
-#: ★★ 必须带 `.md` 结尾（我第一版把它写成可选 ⇒ 匹到了 `C:\\swapi\\enums\\swUserPreference`
+#: ★★ 必须带 `.md` 结尾（我第一版把它写成可选 ⇒ 匹到了 `C:\\swapi\\enums\\swUserPreferen
+#: ce`
 #:   这种**前缀**，把真页 `swUserPreferenceIntegerValue.md` 误报成不存在）✓
 PATH_REF = re.compile(r"[Cc]:\\swapi\\(types|enums)\\([A-Za-z0-9_]+)(?:\\([A-Za-z0-9_]+)\.md)")
-#: ★ 归一：去 `Method`/`Property`/`Function` 后缀、忽略大小写（★ 与另一对话 §1.1 的判据同款）
+#: ★ 归一：去 `Method`/`Property`/`Function` 后缀、忽略大小写（★ 与另一对话 §1.1 的判据
+#: 同款）
 SUFFIX = re.compile(r"(Method|Property|Function)$", re.I)
 #: ★★★ 引文语境判据（第 29 轮加；**事实 544** 判出来的第 ③ 类）：
 #:   若该行是**引用官方原文**，则**不报** —— ★ 那时坏的链接是【官方的】，

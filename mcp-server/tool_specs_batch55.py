@@ -1,19 +1,28 @@
-# ── 24h 计划 v2 · 段 3：**零件/草图的读与自动标注**（`sw_part` 的 2 条真缺口）──────────
-# ★★★★ 2026-10-03（轮 399）来源：`tools/triage_real_gaps.py`（★ 已补到**五层证据**）判定 `sw_part`
-#   只剩 **4 条**「该挂」，本批先挂**无单位歧义**的 2 条；另 2 条（`add_dimension` / `linear_pattern`）
-#   ★★ **留到下一轮先测单位** —— 它们的包装**不做换算**而官方 API 吃**米**（★ 文档却说毫米）⇒
+# ── 24h 计划 v2 · 段 3：**零件/草图的读与自动标注**（`sw_part` 的 2 条真缺口）─────────
+# ─
+# ★★★★ 2026-10-03（轮 399）来源：`tools/triage_real_gaps.py`（★ 已补到**五层证据**）判定
+#  `sw_part`
+# 只剩 **4 条**「该挂」，本批先挂**无单位歧义**的 2 条；另 2 条（`add_dimension` / `line
+# ar_pattern`）
+# ★★ **留到下一轮先测单位** —— 它们的包装**不做换算**而官方 API 吃**米**（★ 文档却说毫米
+# ）⇒
 #   ★ 在测清楚之前挂出去会把"单位"这个错**固化进工具面**（★ 规则 2 的反面教材）。
 #
-# ★★ **本轮的第五层证据（空存根检测）抓到一条假能力**：`sw_part.hole_wizard` 有名字、有参数、
-#   有文档串（"异型孔向导（简化版）"），★ 而**函数体只有一个 `pass`** ⇒ ★★ 挂出去**必然什么都不发生**，
-#   而且比 `sketch_spline` 那种"会报错"的更糟 —— **它会静默成功** ⇒ 已标「不做」并写进证据。
+# ★★ **本轮的第五层证据（空存根检测）抓到一条假能力**：`sw_part.hole_wizard` 有名字、有
+# 参数、
+# 有文档串（"异型孔向导（简化版）"），★ 而**函数体只有一个 `pass`** ⇒ ★★ 挂出去**必然什
+# 么都不发生**，
+# 而且比 `sketch_spline` 那种"会报错"的更糟 —— **它会静默成功** ⇒ 已标「不做」并写进证据
+# 。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch55.py —— 本文件（新）
 # 定位:   24h 计划 v2 段 3：把 `sw_part` 的"读草图名"与"自动标注"挂成 MCP 工具。
-# 官方签名依据: `ISketch.AutoDimension2`（★ 5 参，见 `scripts/sw_part.auto_dimension_sketch`）·
-#   `IModelDoc2.GetActiveSketch2` / `ISketchManager.ActiveSketch`（★ 见 `current_sketch_name`）
+# 官方签名依据: `ISketch.AutoDimension2`（★ 5 参，见 `scripts/sw_part.auto_dimension_ske
+# tch`）·
+# `IModelDoc2.GetActiveSketch2` / `ISketchManager.ActiveSketch`（★ 见 `current_sketch_na
+# me`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────

@@ -150,7 +150,8 @@ def main() -> int:
     for label, _ in DOMAIN_KEYWORDS:
         n_fn = len(ours.get(label, ()))
         n_md = len({m for m, f in funcs if f in ours.get(label, ())})
-        # ⚠ 查询也要规范化（地图 §五 的域名带空格，本模块的常量不带）—— 见 `_norm_domain`
+        # ⚠ 查询也要规范化（地图 §五 的域名带空格，本模块的常量不带）—— 见 `_norm_domain
+        # `
         gap = gaps.get(_norm_domain(label))
         flag = ""
         if gap and gap > 0 and n_fn >= 5:

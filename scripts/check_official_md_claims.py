@@ -1,7 +1,8 @@
 """门禁：代码里「官方没有 X」的断言，必须在**官方页**里核过 —— 断言与官方页相反即拦。"""
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（与 check_member_names.py / check_interface_member_ownership.py 同为门禁）
+# 仓库:   本项目自身（与 check_member_names.py / check_interface_member_ownership.py 同
+# 为门禁）
 # 文件:   scripts/check_official_md_claims.py —— 本文件自身
 # 定位:   ★ 2026-10-03（接手轮）★ 由**一次真实误判**立起来的一道门禁。
 #
@@ -13,7 +14,8 @@
 #       > The sketch to project must be selected using IModelDocExtension::SelectByID2
 #       > with a mark value of **4**.
 #       > The faces to split must be … with mark values of **1**.
-#     ⇒ ★★ **后果很实**：真机失败被**归因成了"能力不成"**（台账里挂了 3 轮"待重查 mark 表"），
+# ⇒ ★★ **后果很实**：真机失败被**归因成了"能力不成"**（台账里挂了 3 轮"待重查 mark 表"）
+# ，
 #       ★ 而**真正的原因是我没照官方 Remarks 选**。
 #     ⇒ 于是立这条：★ **"官方没有 X"是可核对的断言** —— ★ 而它**必须真的核对过**。
 #
@@ -22,7 +24,8 @@
 #     ① 在 scripts/*.py 与 mcp-server/*.py 里找「否定词 + <token>」的断言
 #        （当前 token 集 = {"mark"}；★ 它是本轮实证的缺陷类别）
 #     ② 沿该行**向上**找最近的、**能解析到官方页**的成员名
-#        （解析 = C:\swapi\types\**\<name>.md 存在 **且** 其 front-matter 的 `member:` == <name>）
+# （解析 = C:\swapi\types\**\<name>.md 存在 **且** 其 front-matter 的 `member:` == <name
+# >）
 #     ③ 解析不到 ⇒ **跳过并在输出里计数**（★ 不静默、也不猜）
 #     ④ 解析到了 ⇒ 读那一页；★ 若页里**出现了该 token** ⇒ **违规**
 #     ```
@@ -31,9 +34,11 @@
 #
 #   ★ **为什么这道门禁自己可信**：★ 它**在门禁运行时读官方源**（不是读我们自己的转述），
 #     ⇒ ★ 官方页一改，门禁的判据跟着改（★ 与 check_member_names.py 同一个形态）。
-#   ⚠ ★ **限度（如实写）**：★ token 集目前只有 `mark` —— ★ 它**不是**"所有官方断言"的通用校验器；
+# ⚠ ★ **限度（如实写）**：★ token 集目前只有 `mark` —— ★ 它**不是**"所有官方断言"的通用
+# 校验器；
 #     ★ 扩 token 只需往 `CLAIM_TOKENS` 里加，★ 而**判据不动**。
-#   ⚠ 官方源不在本机 ⇒ `[SKIP]` 并**如实说明这是静默通过**（★ 与 check_member_names.py 同口径）。
+# ⚠ 官方源不在本机 ⇒ `[SKIP]` 并**如实说明这是静默通过**（★ 与 check_member_names.py 同
+# 口径）。
 # 官方依据: `C:\swapi\types\*\*.md` 的 YAML front-matter（`member:` 字段）+ 正文（`## Re
 #           marks`）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -102,9 +107,12 @@ WINDOW = 25
 #:   `scripts/sw_surface_ref_ops.py` 里那句"旋转曲面…没给 mark"，★ **真主语是
 #:   `InsertRevolvedRefSurface`**（★ 它只出现在**下方**的"官方依据"块里 ⇒ 向上找不到），
 #:   而门禁越过去认成了 `InsertProtrusionSwept3`。
-#:   ⇒ ★★ **我逐字核过** `C:\swapi\types\{IFeatureManager,IModelDoc2}\InsertRevolvedRefSurface.md`：
-#:     ★ 它的 `## Remarks` **确实一处 mark 都没有** ⇒ ★ **那句断言是对的**，★ 是门禁错、不是代码错。
-#:   ⚠ 豁免**按 (文件, 被认错的主语, token)** 给 ⇒ ★ 只挡这一处，★ 不挡住该文件里别的断言。
+#: ⇒ ★★ **我逐字核过** `C:\swapi\types\{IFeatureManager,IModelDoc2}\InsertRevolvedRefSur
+#: face.md`：
+#: ★ 它的 `## Remarks` **确实一处 mark 都没有** ⇒ ★ **那句断言是对的**，★ 是门禁错、不是
+#: 代码错。
+#: ⚠ 豁免**按 (文件, 被认错的主语, token)** 给 ⇒ ★ 只挡这一处，★ 不挡住该文件里别的断言
+#: 。
 ALLOWED = {
     ("scripts/sw_surface_ref_ops.py", "InsertProtrusionSwept3", "mark"):
         "主语认错：真主语是 InsertRevolvedRefSurface（官方页 Remarks 确实无 mark，已逐字核过）",

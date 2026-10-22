@@ -100,7 +100,8 @@ def main() -> int:
     #:     ★★ **它把字符串字面量也剥掉** ⇒ ★★★ 于是 `get_com_member(x, "SystemValue")`
     #:     里的**成员名也没了** ⇒ ★ **全部 ① 形态的命中被漏掉**，★ 只剩点调用被抓到。
     #:   ★ 实测证据：`IDimension.SystemValue` 是废弃的（★ 且只在 1 个接口上 ⇒ 属安全桶），
-    #:     而 `scripts/sw_document_data.py:221` 的 `get_com_member(dimension, "SystemValue")`
+    #: 而 `scripts/sw_document_data.py:221` 的 `get_com_member(dimension, "SystemValue")
+    #: `
     #:     **没出现在结果里**。
     #:   ⇒ ★ 本版改用 **tokenize 只丢 COMMENT**（★ 保留 STRING）——
     #:     ★ 与事实 61 定则④同精神：**工具函数用错场合就等于没有**。
@@ -129,7 +130,8 @@ def main() -> int:
         #:     —— ★★ "注释里的名字没被剥掉"；★★ **而实测那些行仍是带 `#` 与 `★` 的正文**
         #:     ⇒ ★★★ **它们是**模块/函数 docstring 的文本**，★ 不是注释** ⇒
         #:       ★ `tokenize` 正确地把它当 **STRING**（★ 而我的判据说"保留字符串"）⇒ 没剥 ✓
-        #:   ★★★★ **这与**事实 512** 的根因**一模一样**（★ 当时是 `sw_connect.get_com_member`
+        #: ★★★★ **这与**事实 512** 的根因**一模一样**（★ 当时是 `sw_connect.get_com_memb
+        #: er`
         #:     的 docstring 把 `InsertDome`/`RunAnalysis` 污染进了每个工具）✓
         #:   ⇒ ★ 修法两条并用：★ ① **剥注释**（按 tokenize 的位置挖）★ ② **剥 docstring**
         #:     （★ 用 AST 找"模块/类/函数体的第一条 string 表达式"⇒ 按位置挖掉）✓
@@ -164,7 +166,8 @@ def main() -> int:
             src2 = src
 
         lines = src2.splitlines(keepends=True)
-        #: ★ 收集每个 COMMENT 的 (行, 列起, 列止)（★ 在**剥掉 docstring 之后**的文本上做）
+        #: ★ 收集每个 COMMENT 的 (行, 列起, 列止)（★ 在**剥掉 docstring 之后**的文本上做
+        #: ）
         cuts: dict = {}
         try:
             for tok in _tk.generate_tokens(_io.StringIO(src2).readline):
@@ -199,12 +202,15 @@ def main() -> int:
 
     #: ★★★ 2026-10-03（接手轮）**新增"跨库存疑"档**（★ 由 OCP 的 `bounds.Get()` 暴露）：
     #:   ★ 病灶：★ `scripts/advanced_geometry_ocp.py` 与 `headless_occt_service.py` 里的
-    #:     `xmin, ymin, zmin, xmax, ymax, zmax = **bounds.Get()**` 是 **OCP/OpenCASCADE** 的调用
+    #: `xmin, ymin, zmin, xmax, ymax, zmax = **bounds.Get()**` 是 **OCP/OpenCASCADE** 的
+    #: 调用
     #:     （★ `Bnd_Box.Get()` 正是回 6 元组），★ 而本扫描器**按名字**把它算成了
     #:     SolidWorks 的 `ICustomPropertyManager.Get` ⇒ ★★ **跨库假阳性** ✓
-    #:   ★★★ 根因与**事实 511**同源：★ **点调用（`obj.M()`）的宿主是运行时的，静态判不出来**。
+    #: ★★★ 根因与**事实 511**同源：★ **点调用（`obj.M()`）的宿主是运行时的，静态判不出来
+    #: **。
     #:   ⇒ ★ 判据：★ **点调用** 且 **同文件里没有任何 SolidWorks 标志**（`sw_`/`SldWorks`/
-    #:     `get_com_member`/`IModelDoc`/`SolidWorks`…）⇒ ★★ **降级为「跨库存疑」，不计入真命中** ✓
+    #: `get_com_member`/`IModelDoc`/`SolidWorks`…）⇒ ★★ **降级为「跨库存疑」，不计入真命
+    #: 中** ✓
     #:   ⚠ 限度（★ 如实记）：★ 这是**启发式**（★ 同文件可能恰好没有那些词），
     #:     所以它**只降级、不删除** —— 存疑条目**仍会单独列出**供人看 ✓
     SW_MARKERS = ("get_com_member", "call_com_member", "set_com_member", "SldWorks",
@@ -233,16 +239,19 @@ def main() -> int:
         code_lines = code.splitlines()
         #: ★ E2 依据：本文件里出现过的官方**后继**名字集合
         #: ★★★★ 2026-10-03（接手轮）**第三次修法 —— 前两次都错，★ 这次找到了真因**：
-        #:   ★ 病灶：★ `AddComponent4` 明明是**刻意兜底**（`AddComponent5 → 返回 None → 退回 4`），
+        #: ★ 病灶：★ `AddComponent4` 明明是**刻意兜底**（`AddComponent5 → 返回 None → 退
+        #: 回 4`），
         #:     却一直被算成"真命中" ⇒ ★★ **生产里一条兜底都认不出来**（实测 0 条）✓
         #:   ★★ 第 1 版：★ `succ_short in succ_here` ⇒ 大小写敏感 ⇒ 漏。
         #:   ★★ 第 2 版：★ `.lower()` ⇒ **还是漏** —— 后继 `AddComponent5` 在本仓写作
         #:     **`add_component5`（蛇形 + 下划线）** = `事实 513` 那一族"名字形态不匹配"。
-        #:   ★★★ 第 3 版（本版）：★ **找到了真根因** —— ★ `succ_here` 原来**只从 `CALL_FORMS`
+        #: ★★★ 第 3 版（本版）：★ **找到了真根因** —— ★ `succ_here` 原来**只从 `CALL_FOR
+        #: MS`
         #:     里抽**（★ 即 `get_com_member(x,"M")` 与 `obj.M(` 两种形态）⇒
         #:     ★★ 而真正的兜底往往是**裸函数调用**：`_add_component5(...)` ——
         #:     ★★★ **它没有点、也不是 `get_com_member`** ⇒ **压根没进集合** ✓
-        #:   ⇒ ★ 修法：★ **改成"在后继名出现过的任何位置"都算**（★ 用裸标识符扫描 + 归一化：
+        #: ⇒ ★ 修法：★ **改成"在后继名出现过的任何位置"都算**（★ 用裸标识符扫描 + 归一化
+        #: ：
         #:     ★ 去下划线 + 小写），★ 不再依赖调用形态 ✓
         #:   ⚠ 代价（★ 如实记）：★ 这会让"兜底"这一类**更容易成立** ⇒ ★ 即**更保守**
         #:     （★ 宁少勿滥 —— ★ 把非兜底判成兜底，★ 后果是"少改一处废弃调用"，
@@ -252,13 +261,17 @@ def main() -> int:
         succ_here = {_norm(tok) for tok in re.findall(r"[A-Za-z_]\w*", code)}
         for i, cl in enumerate(code_lines):
             s = cl.strip()
-            #: ★★★ 2026-10-03（接手轮）**兜底过滤**：★ 剥注释/剥 docstring 之后**仍以 `#` 开头**的行
+            #: ★★★ 2026-10-03（接手轮）**兜底过滤**：★ 剥注释/剥 docstring 之后**仍以 `#
+            #: ` 开头**的行
             #:   ⇒ ★ **它一定是注释**（★ 合法 Python 代码行不以 `#` 开头）⇒ **跳过** ✓
-            #:   ★ 为什么需要兜底：★ 上面那套"AST 剥 docstring + tokenize 挖注释"已经**修好了主因**
-            #:     （★ 负例自检 `(True, True)`、★ 生产真命中 31 → 27），★ 但实测**仍有 17 条**残留
+            #: ★ 为什么需要兜底：★ 上面那套"AST 剥 docstring + tokenize 挖注释"已经**修
+            #: 好了主因**
+            #: （★ 负例自检 `(True, True)`、★ 生产真命中 31 → 27），★ 但实测**仍有 17 条
+            #: **残留
             #:     ⇒ ★★ 与其继续追那 17 条的真因（★ 事实 53：同一处 ≥3 次就该停），
             #:     ★ **加一道开销为零、判据无歧义的兜底**更划算 ✓
-            #:   ⚠ 它**不替代**上面那套（★ 那套负责保留真字符串字面量），★ 只做最后一道闸 ✓
+            #: ⚠ 它**不替代**上面那套（★ 那套负责保留真字符串字面量），★ 只做最后一道闸 
+            #: ✓
             if s.startswith("#"):
                 continue
             for how, pat in CALL_FORMS:
@@ -271,12 +284,16 @@ def main() -> int:
                     #: ★ E2：后继在本文件里出现过 ⇒ 这是兜底/回退分支
                     #: ★★★★ 2026-10-03（接手轮）**两次修法 —— 第二次才抓到真因**：
                     #:   ★ 第 1 版 `succ_short in succ_here` ⇒ 大小写敏感 ⇒ 漏。
-                    #:   ★★ 第 2 版 `.lower()` ⇒ ★★ **还是漏** —— 因为**本仓的内部帮手是蛇形命名**：
-                    #:     后继 `AddComponent5` ⇒ 源码里写的是 **`add_component5`（带下划线）**
+                    #: ★★ 第 2 版 `.lower()` ⇒ ★★ **还是漏** —— 因为**本仓的内部帮手是蛇
+                    #: 形命名**：
+                    #: 后继 `AddComponent5` ⇒ 源码里写的是 **`add_component5`（带下划线
+                    #: ）**
                     #:     ⇒ `'addcomponent5'` ≠ `'add_component5'` ✓
-                    #:   ★★★ 第 3 版（本版）：★ **两侧都"去下划线 + 小写"** ⇒ 归一化后比较 ✓
+                    #: ★★★ 第 3 版（本版）：★ **两侧都"去下划线 + 小写"** ⇒ 归一化后比较
+                    #:  ✓
                     #:   实证：`scripts/sw_assembly.py` 的 `AddComponent4` 是
-                    #:     「AddComponent5 → 返回 None → **退回 AddComponent4**」的**刻意兜底** ✓
+                    #: 「AddComponent5 → 返回 None → **退回 AddComponent4**」的**刻意兜
+                    #: 底** ✓
                     #: ★ `_norm` 与 `succ_here` 已在外层定义（★ 见文件上方的 E2 段）
                     fallback = bool(succ_short) and _norm(succ_short) in succ_here
                     #: ★ E3：该行只有字符串/登记，没有真正的调用括号
@@ -287,22 +304,26 @@ def main() -> int:
                         "how": how, "successor": succ, "fallback_branch": fallback,
                         "registry_like": registry,
                         #: ★★★ 2026-10-03（接手轮）**加"生产 vs 探针/证据"这一维**：
-                        #:   ★ 实测 `GetActiveSketch2` 的 17 处里 **只有 3 处在 `scripts/`**，
+                        #: ★ 实测 `GetActiveSketch2` 的 17 处里 **只有 3 处在 `scripts/`
+                        #: **，
                         #:   ★ 其余 14 处都在 `tools/`（★ 探针与历史证据脚本）。
                         #:   ★★ **探针是**历史证据**，改了会破坏"证据不可变"**
-                        #:   （★ 我在 `gate-cand/GATE-FINAL.md` 的 **C12 证据不可变**里也写了这条）
+                        #: （★ 我在 `gate-cand/GATE-FINAL.md` 的 **C12 证据不可变**里也
+                        #: 写了这条）
                         #:   ⇒ ★ **只改 `scripts/`（生产）**，★ `tools/` 的**只报不动** ✓
                         "scope": ("★ 生产（scripts/）" if str(f.relative_to(REPO)).startswith("scripts")
                                   else "★ 探针/证据（tools/，★ 只报不动）"
                                   if str(f.relative_to(REPO)).startswith("tools")
                                   else "★ 其它"),
-                        #: ★★★ 「跨库存疑」：★ **点调用** 且 **同文件没有 SolidWorks 标志**
+                        #: ★★★ 「跨库存疑」：★ **点调用** 且 **同文件没有 SolidWorks 标
+                        #: 志**
                         #:   ⇒ ★ 降级（★ 见上面 `_is_crosslib_suspect` 的说明）
                         "crosslib": bool(how != "get_com_member" and _is_crosslib_suspect(f, raw)),
                         #: ★★★ 2026-10-03（接手轮）**修 ctx 的行号错位**：
                         #:   ★ 原来 `ctx` 取 `lines[i]`（★ **剥前的原文**），
                         #:   ★★ 而**匹配是在 `cl`（剥后的行）上做的** ⇒ 两者**会错位**
-                        #:   ⇒ 实证：`AddMate5` / `SetTransformAndSolve2` 的 `ctx` 显示成 `"""` ✓
+                        #: ⇒ 实证：`AddMate5` / `SetTransformAndSolve2` 的 `ctx` 显示成 
+                        #: `"""` ✓
                         #:   ★ 修法：★ **ctx 就用 `cl`（剥后的那一行）** ——
                         #:     ★★ 它才是**匹配依据**；★ 展示依据 == 匹配依据，★ 就不会错位 ✓
                         "ctx": s[:160],
@@ -349,7 +370,8 @@ def main() -> int:
     #: ★★★ 新增档：★ 跨库存疑（★ 由 OCP 的 `bounds.Get()` 暴露 —— 与事实 511 同源）
     print("   ★ 跨库存疑（★ 点调用 + 无 SolidWorks 标志）**%d**  ← ★ 降级，不计入真命中"
           % len(crosslib))
-    #: ★★★ 生产 / 探针 分开报（★ 探针是**历史证据**，★ 改了会破坏"证据不可变" —— GATE-FINAL C12）
+    #: ★★★ 生产 / 探针 分开报（★ 探针是**历史证据**，★ 改了会破坏"证据不可变" —— GATE-FI
+    #: NAL C12）
     print("        ★ 其中**生产（scripts/）**  **%d**  ← ★★ **只有这批该改**"
           % len([r for r in real if str(r.get("scope", "")).startswith("★ 生产")]))
     print("        ★ 其中探针/证据（tools/）**%d**  ← ★ **只报不动**"

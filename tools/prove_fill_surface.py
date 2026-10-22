@@ -7,7 +7,8 @@
 #   ★ 真机打通的组合见 `scripts/sw_surface_features.insert_fill_surface_report` 的来源块。
 # 官方依据: `C:\swapi\types\IFeatureManager\InsertFillSurface2.md`（★ 6 参 · mark 表 · R
 #           esolutions 1/2/3）·
-#   `C:\swapi\enums\swFeatureFillSurfaceOptions_e.md`（★ `swOptimizeSurface = 1`，Bitmask）·
+# `C:\swapi\enums\swFeatureFillSurfaceOptions_e.md`（★ `swOptimizeSurface = 1`，Bitmask
+# ）·
 #   官方示例 `Insert_Fill-surface_Feature_Example_CSharp.htm`。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

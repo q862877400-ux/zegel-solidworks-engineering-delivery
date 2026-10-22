@@ -83,7 +83,8 @@ class ReferenceSolution:
     unit: str = ""
     #: ★★ **来源**（★ 如 `★ 材料力学闭式解 δ = FL³/(3EI)`）
     source: str = ""
-    #: ★★★ **是不是**独立**的**（★ `True` = 闭式解/手册；★ `False` = 从求解器读的 ⇒ **不算**）
+    #: ★★★ **是不是**独立**的**（★ `True` = 闭式解/手册；★ `False` = 从求解器读的 ⇒ **不
+    #: 算**）
     independent: bool = True
 
     def is_usable(self) -> dict:

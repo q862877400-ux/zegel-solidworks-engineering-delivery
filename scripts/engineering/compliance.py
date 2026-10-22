@@ -28,18 +28,22 @@ __all__ = [
 ]
 
 
-#: ★★★ **法定程序不可代办**（★ 逐字承 EC11-T08：★「★ **留足实体检验/第三方/法定程序接口，
+#: ★★★ **法定程序不可代办**（★ 逐字承 EC11-T08：★「★ **留足实体检验/第三方/法定程序接口
+#: ，
 #:   ★ 不宣称软件自动代办**」）
 STANDARD_NOT_SOFTWARE_DELEGABLE = (
     "★ 实体检验 / 第三方检验 / 法定程序**必须由人办**（★ 软件只留接口，★ 不代办）"
 )
 
-#: ★★★★★ **KS 实检条款登记**（★ 2026-10-10 —— ★ **全部来自本会话真调 `ks_answer` / `ks_resolve_clause`**）
+#: ★★★★★ **KS 实检条款登记**（★ 2026-10-10 —— ★ **全部来自本会话真调 `ks_answer` / `ks_r
+#: esolve_clause`**）
 #:
-#: ★★★ **纪律**：★ 每条**逐字**带 KS 给的 `doc_id` / `page_start` / `clause_revision_id` /
+#: ★★★ **纪律**：★ 每条**逐字**带 KS 给的 `doc_id` / `page_start` / `clause_revision_id`
+#:  /
 #:   `evidence_url` —— ★★ **本仓不编条款号**（★ 铁律 5）✓
 #: ★★★ **粒度实测（★ 本登记的核心价值）**：
-#:   · ★ 前 4 条**只回标题行**（★ `content_text` 是「4 使用与维护」那类）⇒ ★ `has_clause_body() = False`
+#: · ★ 前 4 条**只回标题行**（★ `content_text` 是「4 使用与维护」那类）⇒ ★ `has_clause_b
+#: ody() = False`
 #:   · ★★ 后 3 条**回完整正文**（★ 含「应」）⇒ ★ `has_clause_body() = True`
 #:   ⇒ ★★ **这份登记本身就是「KS 有两种粒度」的证据** ✓
 KS_VERIFIED_CLAUSES: tuple = (

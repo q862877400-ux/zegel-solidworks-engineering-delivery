@@ -175,7 +175,8 @@ def main() -> int:
     cases = [
         ("质心", True, lambda d: M.insert_center_of_mass(d)),
         #: ★★★ 2026-10-03（轮 479）**换成员**：台账 T701 给的 `Create3DBoundingBox`
-        #:   官方原话是「for a **cut list item in a weldment part**」⇒ ★ **焊件切割清单专用**，
+        #: 官方原话是「for a **cut list item in a weldment part**」⇒ ★ **焊件切割清单专
+        #: 用**，
         #:   ★ 普通零件上不成是**应然的**。★ 工具栏那个的真名是
         #:   **`IFeatureManager.InsertGlobalBoundingBox2`** ✓
         ("边界框", True, lambda d: M.insert_global_bounding_box(d, 1, 0, False, False)),
@@ -186,7 +187,8 @@ def main() -> int:
         ("基准面", True, lambda d: _after_pick(d, 0, 0,
                                               lambda: M.insert_ref_plane(d, 4, 0.0, 0, 0.0, 0, 0.0))),
         ("坐标系", False, lambda d: M.insert_coordinate_system(d, False, False, False)),
-        #: ★ 点：★ FaceCenter（★ 要有面）⇒ **在调用前一刻再选一次**（★ 诊断里就是这样成的）
+        #: ★ 点：★ FaceCenter（★ 要有面）⇒ **在调用前一刻再选一次**（★ 诊断里就是这样成
+        #: 的）
         ("点", True, lambda d: _after_pick(d, 0, 0,
                                           lambda: M.insert_reference_point(d, 4, 0, 0.0, 1))),
     ]

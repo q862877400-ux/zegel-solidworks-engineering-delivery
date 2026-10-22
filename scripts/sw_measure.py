@@ -2,8 +2,10 @@
 
 # ── 24h 计划 段 6 续（Spec Kit `167`）：**几何量测（IMeasure）** ──────────────────────
 # ★★★★★ 2026-10-01（轮 311）**这一族是"四家有我们没有"里核实的真缺**：
-#   ★ 我们有 `part_mass_properties`（**整体**质量属性）· ★ 而**逐几何量测**（两点距离 / 边长度 /
-#     面积 / 角度）**一个都没有** —— ★ 全仓 grep `measure` / `volume` / `area` / `distance` **均为 0**。
+# ★ 我们有 `part_mass_properties`（**整体**质量属性）· ★ 而**逐几何量测**（两点距离 / 边
+# 长度 /
+# 面积 / 角度）**一个都没有** —— ★ 全仓 grep `measure` / `volume` / `area` / `distance` 
+# **均为 0**。
 #   ★ 而四家强候选里正有 `measure` 与 `measure_distance`。
 #
 # ★★ **调用序来自官方示例**（★ §5.0：判据先找后搓 —— ★ 不自己搓）：
@@ -12,7 +14,8 @@
 #   ① ext = model.Extension
 #   ② ext.SelectByID2("", "FACE", x,y,z, …)      ← 先选中要量的实体
 #   ③ m = ext.CreateMeasure
-#   ④ m.ArcOption = 0                            （0=中心到中心 · 1=最小距离 · 2=最大距离）
+# ④ m.ArcOption = 0                            （0=中心到中心 · 1=最小距离 · 2=最大距离
+# ）
 #   ⑤ status = m.Calculate(Nothing)              ← 算
 #   ⑥ 读 m.Length / m.Area / …                    ← **-1 表示该项不适用**
 #   ```
@@ -26,10 +29,14 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_measure.py —— 本文件（新）
 # 定位:   24h 段 6 续：几何量测族（★ 补"四家有我们没有"的真缺）。
-# 官方签名依据: `C:\swapi\types\IModelDocExtension\CreateMeasure.md`（`Measure CreateMeasure()`）·
-#   `C:\swapi\types\IMeasure\`（33 个成员：`Distance` / `NormalDistance` / `CenterDistance` / `Angle` /
-#    `Length` / `TotalLength` / `ArcLength` / `ChordLength` / `Area` / `TotalArea` / `Perimeter` /
-#    `Diameter` / `Radius` / `DeltaX` / `DeltaY` / `DeltaZ` / `IsIntersect` / `IsParallel` /
+# 官方签名依据: `C:\swapi\types\IModelDocExtension\CreateMeasure.md`（`Measure CreateMea
+# sure()`）·
+# `C:\swapi\types\IMeasure\`（33 个成员：`Distance` / `NormalDistance` / `CenterDistance
+# ` / `Angle` /
+# `Length` / `TotalLength` / `ArcLength` / `ChordLength` / `Area` / `TotalArea` / `Perim
+# eter` /
+# `Diameter` / `Radius` / `DeltaX` / `DeltaY` / `DeltaZ` / `IsIntersect` / `IsParallel` 
+# /
 #    `IsPerpendicular` / `Calculate` / `ArcOption` …）+
 #   ★ 官方示例 `Measure_Selected_Entities_Example_VB.md`（★ 调用序）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -87,13 +94,17 @@ def measure_selection_report(model, arc_option: int = 1,
                 "error": "arc_option 只能是 **0 / 1 / 2**（★ 官方示例给的语义）；收到 %r" % arc_option}
     from sw_connect import get_com_member as _get
     #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-07）先按声明式选择器**重建**选区 ——
-    #:   ★ 起因：★ 本函数的语义**就是"量调用方选中的东西"**，★ 而**注入解析器会清空选区**（**事实 503**）
+    #: ★ 起因：★ 本函数的语义**就是"量调用方选中的东西"**，★ 而**注入解析器会清空选区**
+    #: （**事实 503**）
     #:     ⇒ ★ 模型**没有任何办法**把要量的东西选好 ⇒ ★ 经工具层**必然失败** ✗
-    #:     （★ 预选族基线把它归在「真危险·显式拒」—— ★ 而"显式拒"只是"失败**可见**"、★ **不是"能用"**）✓
+    #: （★ 预选族基线把它归在「真危险·显式拒」—— ★ 而"显式拒"只是"失败**可见**"、★ **不
+    #: 是"能用"**）✓
     #:   ★★ **与 `insert_dome` 那次不同**：★ 圆顶的"给哪个面"可以随便定，
-    #:     ★ 而这里"**量什么**"是**调用方的意图** ⇒ ★★ **绝不能由函数乱造**（★ 造了量出来的就不是你要的）✗
+    #: ★ 而这里"**量什么**"是**调用方的意图** ⇒ ★★ **绝不能由函数乱造**（★ 造了量出来的
+    #: 就不是你要的）✗
     #:     ⇒ ★ 正解：★ **让调用方声明**（★ 规则 3 的"声明式选择"）✓
-    #:   ★★ 选在**读计数之前** ⇒ ★ 后面那段"计数 0 就报错"**原样保留**（★ 它现在是一条**真实的回读判据**）✓
+    #: ★★ 选在**读计数之前** ⇒ ★ 后面那段"计数 0 就报错"**原样保留**（★ 它现在是一条**真
+    #: 实的回读判据**）✓
     if str(selection or "").strip():
         import sw_selection_spec as _SS
         try:

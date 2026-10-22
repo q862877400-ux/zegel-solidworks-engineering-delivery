@@ -10,7 +10,8 @@
 #     · `scripts/sw_review.py:174`
 #         `if item.get("type") in {2, 3} and same_sheet(note, item) ...`
 #   ⇒ ★ 同一份知识两个家 + **魔数**（2/3 是什么？没人能一眼看出来，改也没人敢改）⚠
-#   ★★ 而那个 subskill **本来就 import 顶层 `scripts/`**（`from scripts.sw_review import …`）
+# ★★ 而那个 subskill **本来就 import 顶层 `scripts/`**（`from scripts.sw_review import …
+# `）
 #     ⇒ ★ **可以共享一个家**，故把真源放这里、两处都改成引用。
 #
 #   官方依据（★ 铁律 4：枚举值不许猜，逐字核官方页）：
@@ -30,7 +31,8 @@
 #
 #   ★ `LABELLED_VIEW_TYPES` 的**语义依据**：剖面视图与局部视图**自带标签文字**
 #     （`A` / `A-A` 这种）—— 故「视图上那段没有文字的 note 其实是它的标签」只对这两型成立。
-#     ⚠ **如实标注限度**：★ 该语义是**从两处既有实现的用法反推**的（它们都把这两型当"带标签"用），
+# ⚠ **如实标注限度**：★ 该语义是**从两处既有实现的用法反推**的（它们都把这两型当"带标签"
+# 用），
 #       ★ **官方枚举页只给数值、不给这个语义** ⇒ ★ 不写成"官方规定"，写成**本仓的定义**。
 # 许可:   本仓库 MIT。★ **无第三方代码引入**（枚举值取自官方 API 文档，只作数值依据）。
 # 覆盖:   全文件
@@ -38,7 +40,8 @@
 
 from __future__ import annotations
 
-#: ★ 官方 `swDrawingViewTypes_e` 的**逐字数值**（`C:\swapi\enums\swDrawingViewTypes_e.md`）
+#: ★ 官方 `swDrawingViewTypes_e` 的**逐字数值**（`C:\swapi\enums\swDrawingViewTypes_e.md
+#: `）
 SW_DRAWING_SHEET = 1                       # swDrawingSheet                 = 1  Drawing sheet
 SW_DRAWING_SECTION_VIEW = 2                # swDrawingSectionView           = 2  Section view
 SW_DRAWING_DETAIL_VIEW = 3                 # swDrawingDetailView            = 3  Detail view

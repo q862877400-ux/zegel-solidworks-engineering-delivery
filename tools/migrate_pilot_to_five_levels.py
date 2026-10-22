@@ -22,7 +22,8 @@
 #         与 §五 R11；AGENTS.md 铁律 1「每加一个能力必须能指认出处」。
 # 许可:   本仓库 MIT。本文件为原创实现，无第三方代码引入。
 # ⚠ 未在本机实测 SolidWorks（见 AGENTS.md 铁律 2）。本次是清单形状与授权判据的迁移，
-#   不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住。
+# 不改变任何 COM 调用；授权等价性由 tests/test_unattended_equivalence.py 对冻结基线守住
+# 。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────
 
@@ -143,7 +144,8 @@ def main() -> int:
     apply = "--apply" in sys.argv
     payload = json.loads(MANIFEST.read_text(encoding="utf-8"))
 
-    # ⚠ 迁移「前」的授权要按**旧判据**算：那时的 unattended_allowed() 是 `level == "verified"`。
+    # ⚠ 迁移「前」的授权要按**旧判据**算：那时的 unattended_allowed() 是 `level == "veri
+    # fied"`。
     #   按 allowed_modes 算会得到 0 条（旧数据里根本没有 unattended 这个模式），
     #   那样比出来的是「0 → 8」，不是等价性。
     before_unattended = sorted(

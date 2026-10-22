@@ -61,7 +61,8 @@ def _mk_solid_and_profiles(doc):
             break
         except Exception:                                                 # noqa: BLE001
             continue
-    #: \u2605 \u4e24\u4e2a\u5256\u9762\uff08\u2605 \u524d\u89c6\u9762\u4e0a\u7684\u4e24\u4e2a\u4e0d\u540c\u5927\u5c0f\u7684\u5706\uff09
+    #: \u2605 \u4e24\u4e2a\u5256\u9762\uff08\u2605 \u524d\u89c6\u9762\u4e0a\u7684\u4e24\
+    #: u4e2a\u4e0d\u540c\u5927\u5c0f\u7684\u5706\uff09
     made = []
     for i, rad in enumerate((0.015, 0.008)):
         try:
@@ -139,8 +140,10 @@ def _one(sw, tag, cut):
         row["vol_after"] = _vol(doc)
         if row["vol_before"] and row["vol_after"]:
             row["vol_ratio"] = round(row["vol_after"] / row["vol_before"], 4)
-        #: \u2605 \u5224\u636e\uff1a**\u6811\u589e\u91cf + \u7c7b\u578b\u540d**\uff08\u2605 \u5207\u4e0e\u4e0d\u5207**\u7c7b\u578b\u540d\u4e0d\u540c**\uff09
-        #:   \u2605\u2605 `Blend` = \u653e\u6837**\u51f8\u53f0** \u00b7 `BlendCut` = \u653e\u6837**\u5207\u9664**\uff08\u2605 \u771f\u673a\u5b9a\u7684\uff09
+        #: \u2605 \u5224\u636e\uff1a**\u6811\u589e\u91cf + \u7c7b\u578b\u540d**\uff08\u2
+        #: 605 \u5207\u4e0e\u4e0d\u5207**\u7c7b\u578b\u540d\u4e0d\u540c**\uff09
+        #: \u2605\u2605 `Blend` = \u653e\u6837**\u51f8\u53f0** \u00b7 `BlendCut` = \u653
+        #: e\u6837**\u5207\u9664**\uff08\u2605 \u771f\u673a\u5b9a\u7684\uff09
         named = row.get("type_name") in ("Blend", "BlendCut")
         row["ok"] = bool(row["new"] and named)
         #: \u2605 \u800c\u5207\u9664\u8fd8\u8981**\u4f53\u79ef\u4e0d\u53d8\u5927**

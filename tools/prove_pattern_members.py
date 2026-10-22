@@ -13,7 +13,8 @@
 #   ★ 而**对照**是现成的：★ 同族的 `circular_pattern` **已挂且能用**
 #     （★ 而它用的 `FeatureCircularPattern4` 与 `linear_pattern` 用的是**同一套选区** ——
 #      ★ 都是 `_select_by_id(..., "BODYFEATURE", mark=4)`）⇒ ★★ **故两者只差那一个成员** ✓
-#   ★★ 判据（★ 与事实 362 同一口径）：★ `getattr(obj, 名, None)` 三态（可调 / 属性 / 取不到）。
+# ★★ 判据（★ 与事实 362 同一口径）：★ `getattr(obj, 名, None)` 三态（可调 / 属性 / 取不
+# 到）。
 #     ⚠ 而 `get_*` / `set_*` 是属性访问器（★ 迟到绑定下叫 `X`）⇒ 本探针**只查非访问器**。
 # 官方依据: `IFeatureManager` 的 330 个成员（★ 出厂程序集反射）· 本仓 `scripts/sw_part.p
 #           y` 的
@@ -59,7 +60,8 @@ def main() -> int:
         got = probe_members(fm, NAMES)
         ev["probed"] = len(NAMES)                                   # ★ 先报查了多少（事实 357）
         ev["states"] = got
-        #: ★ 对照：★ CircularPattern4 **已验能用** ⇒ 它必须是 callable（★ 否则本探针的判据有问题）
+        #: ★ 对照：★ CircularPattern4 **已验能用** ⇒ 它必须是 callable（★ 否则本探针的判
+        #: 据有问题）
         ev["control_ok"] = got.get("FeatureCircularPattern4") == "callable"
         lp = {n: got.get(n) for n in NAMES if n.startswith("FeatureLinearPattern")}
         ev["linear_pattern_states"] = lp

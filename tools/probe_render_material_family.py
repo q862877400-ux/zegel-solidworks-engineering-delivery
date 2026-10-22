@@ -27,7 +27,8 @@
 # 文件:   tools/probe_render_material_family.py
 # 定位:   ★ T1 的「渲染材质族」4 条（★ `sw_render_material.py`）。
 #   官方依据: `C:\\swapi\\types\\IModelDocExtension\\` 下 14 个渲染材质成员页 ·
-#     `C:\\swapi\\examples\\Add_and_Delete_Materials_from_Specific_Display_States_Example_VB.md` ·
+# `C:\\swapi\\examples\\Add_and_Delete_Materials_from_Specific_Display_States_Example_VB
+# .md` ·
 #     `C:\\swapi\\enums\\swDisplayStateOpts_e.md`
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
@@ -76,10 +77,12 @@ def main() -> int:
         ext = _g(doc, "Extension")
         R["extension_ok"] = ext is not None
 
-        #: ★ 需要一个 RenderMaterial 对象 —— 用官方的 `CreateRenderMaterial`（★ 无废弃）建
+        #: ★ 需要一个 RenderMaterial 对象 —— 用官方的 `CreateRenderMaterial`（★ 无废弃）
+        #: 建
         mat = _try(_g, ext, "CreateRenderMaterial", 0)
         R["CreateRenderMaterial"] = mat
-        #: ★★★ 2026-10-03 修：★ 上一版把 `None` 当材质传进去了（★ 我在调试时留的 `if False else None`）
+        #: ★★★ 2026-10-03 修：★ 上一版把 `None` 当材质传进去了（★ 我在调试时留的 `if Fal
+        #: se else None`）
         #:   ⇒ ★★ 两处"类型不匹配"其实**是我探针的错**，★ 不是 API 的问题 ✓
         mat_obj = None
         try:

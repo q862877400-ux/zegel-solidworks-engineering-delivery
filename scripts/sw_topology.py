@@ -122,7 +122,8 @@ try:
     #: ★★★★ 2026-10-04（接手轮）**补上 `delete_study`** ——
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #6`）：★ `create_topology_study` 要
     #:   **先删同名**（★ 官方示例逐字 `StudyManagerObj.DeleteStudy NewStudyName` ⇒
-    #:   `CreateNewStudy3(...)`）· ★ 而**删除能力本仓早有**（★ `sw_simulation_study.delete_study`）✓
+    #: `CreateNewStudy3(...)`）· ★ 而**删除能力本仓早有**（★ `sw_simulation_study.delete
+    #: _study`）✓
     from .sw_simulation_study import delete_study
 except ImportError:
     from sw_connect import get_com_member, call_com_member
@@ -148,7 +149,8 @@ SWS_ANALYSIS_STUDY_TYPES: dict[str, int] = {
 }
 
 #: ``ICWTopologyStudyManager.CreateGoal(Int32)`` 的目标类型
-#: 反射：swsTopologyGoalType_e —— MaximizeStiffness=0 / MinimizeMaximumDisplacement=1 / MinimizeMass=2
+#: 反射：swsTopologyGoalType_e —— MaximizeStiffness=0 / MinimizeMaximumDisplacement=1 / 
+#: MinimizeMass=2
 #: 官方教程「Best Stiffness to Weight ratio (default)」对应 MaximizeStiffness。
 #: enum-gate: enum swsTopologyStudyGoalType_e
 SWS_TOPOLOGY_GOAL_TYPES: dict[str, int] = {
@@ -286,13 +288,15 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
     #:   处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #6`）—— ★ 裁判逐字：
     #:   「★ `create_study` 的 Param 承诺「**同名先删**」★ 实则**把同名当错误码 2**
     #:    且**无任何删除调用**」✓
-    #:   ★★★★ **依据是官方示例（★ 我读了 `_raw/**/Create_Topology_Study_Example_VBA.txt`）**：
+    #: ★★★★ **依据是官方示例（★ 我读了 `_raw/**/Create_Topology_Study_Example_VBA.txt`）
+    #: **：
     #:     该文件 **L131-135 逐字**：
     #:       ```
     #:       ' Create Topology Study 1
     #:       NewStudyName = "Topology Study 1"
     #:       ★★ StudyManagerObj.DeleteStudy NewStudyName          ← ★ 先删同名
-    #:       ★★★ Set CWNewStudy = StudyManagerObj.CreateNewStudy3(NewStudyName, 13, 0, ErrorCodeObj)
+    #: ★★★ Set CWNewStudy = StudyManagerObj.CreateNewStudy3(NewStudyName, 13, 0, ErrorCo
+    #: deObj)
     #:       ```
     #:     ⇒ ★ **调用序就是 `DeleteStudy` ⇒ `CreateNewStudy3`** ✓
     #:     ★★ 而**研究类型传 `13`** ⇒ ★ 与本仓 `topology_static` 一致 ✓
@@ -306,7 +310,8 @@ def create_topology_study(sw_app, name: str, *, mesh_type: int = 0,
             delete_study(manager, str(name))
             delete_note = "★ 已按官方示例先删同名研究（★ DeleteStudy）"
         except Exception as exc:                                          # noqa: BLE001
-            #: ★★ 同名不存在 ⇒ 官方那个 `DeleteStudy` 会报错 —— ★ 那是**正常**的（★ 首次建）
+            #: ★★ 同名不存在 ⇒ 官方那个 `DeleteStudy` 会报错 —— ★ 那是**正常**的（★ 首次
+            #: 建）
             delete_note = ("★ 先删同名未成（★ %s）⇒ ★ 当作「本来没有同名」继续 ✓"
                            % type(exc).__name__)
 
@@ -484,7 +489,8 @@ def set_topology_goal(
                         "目标 2 不带；若此处为 None，先确认 goal_type 与研究的当前状态"
                     )
             else:
-                # 目标自带的那个 —— 直接改参数，不再 Create（Create 会造出第二个 ⇒ 错误码 7）
+                # 目标自带的那个 —— 直接改参数，不再 Create（Create 会造出第二个 ⇒ 错误
+                # 码 7）
                 constraint = existing
 
             def _configure():
@@ -496,11 +502,14 @@ def set_topology_goal(
             made["mass_constraint_reused"] = existing is not None
 
         if factor_of_safety is not None:
-            # ⚑ FOS 与 Stress 互斥（`swsTopoErrCode_CannotCreatFOSIfStressAlrdyPrsnt` = 18、
-            #   `CannotCreatStressIfFOSAlrdyPrsnt` = 19）⇒ 建 FOS 前须确认没有 Stress 约束。
+            # ⚑ FOS 与 Stress 互斥（`swsTopoErrCode_CannotCreatFOSIfStressAlrdyPrsnt` = 
+            # 18、
+            # `CannotCreatStressIfFOSAlrdyPrsnt` = 19）⇒ 建 FOS 前须确认没有 Stress 约束
+            # 。
             #   官方示例的做法就是先 `RemoveConstraint("Stress Constraint 1")`。
             _clear("stress")
-            # CreateFactorOfSafetyConstraint(Int32& Err) → CWTopologyFactorOfSafetyConstraint
+            # CreateFactorOfSafetyConstraint(Int32& Err) → CWTopologyFactorOfSafetyConst
+            # raint
             constraint = get_com_member(manager, "CreateFactorOfSafetyConstraint", out_i4())
             if constraint is None:
                 raise RuntimeError("CreateFactorOfSafetyConstraint 未返回对象")
@@ -513,7 +522,8 @@ def set_topology_goal(
 
         return made
 
-    # ⚑ 2026-10-01 真机：`RemoveConstraint` 的位置**试过两种，事务内可行、事务外不可行**：
+    # ⚑ 2026-10-01 真机：`RemoveConstraint` 的位置**试过两种，事务内可行、事务外不可行**
+    # ：
     #   - 事务**内**（即下面的 `_build`，当前实现）：干净研究上首次配置**成功**
     #     （`EndEdit` = 0；实测 `removed=['质量约束 1']`、`goal=0`、`mass=True`）。
     #   - 事务**外**（照官方示例的字面行序）：同一场景**首次即失败**（`EndEdit` 返回 7）。
@@ -663,7 +673,8 @@ def create_demold_control(study, *, direction: int = 0,
       ★ `selection` 非空时，由本函数在**紧邻 `SelectDemoldDirection` 之前**选上 ✓
     """
     manager = get_topology_study_manager(study)
-    #: ★★ 同 `create_symmetry_control`：★ 选区必须在 **`CreateDemoldControl` 之前**（★ 真机订正）✓
+    #: ★★ 同 `create_symmetry_control`：★ 选区必须在 **`CreateDemoldControl` 之前**（★ 
+    #: 真机订正）✓
     if str(selection or "").strip():
         _apply_declarative_selection(selection, selection_kind)
     control = get_com_member(manager, "CreateDemoldControl", out_i4())
@@ -876,25 +887,32 @@ def collect_topology_evidence(sw_app) -> dict[str, Any]:
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（**官方接口的只读包装**）+ `specs/001-topology-result-readout`
-# 文件:   `scripts/sw_topology.py` —— 追加 `collect_topology_numbers` 与 `TOPOLOGY_RESULTS_UNRESOLVED`
+# 文件:   `scripts/sw_topology.py` —— 追加 `collect_topology_numbers` 与 `TOPOLOGY_RESUL
+# TS_UNRESOLVED`
 # 官方签名依据: 反射 `D:\AI\SW\_raw\reflect\iface_cosworks.txt` 的 `## ICWResults` 段
 #         （**裁决者**，铁律 4）。本函数**只调无参数成员** —— 见下「为什么只包这三个」。
 # 定位:   做 `specs/001-topology-result-readout/tasks.md` 的 **T-007 / T-009**。
 #         spec 的验收要求：「每个返回值附带来源成员名（可复查）」；
 #         「未跑过 ⇒ 返回 `{"status": "no_results", …}`，**不抛未捕获异常、不静默空 dict**」。
 #
-#   ★★ **为什么只包这三个成员（`GetPlotCount` / `GetPlotNames` / `GetMaximumAvailableSteps`）**：
-#     反射里 `ICWResults` 共 **107 个成员**，但**官方文档源里没有任何一页解释它们的参数语义**
-#     （查过 `cosworks_pages` / `chm_cosworks` / `cworksapi` / 官方文档目录，**4 处 0 命中**）。
-#     例：`GetMinMaxDisplacement(Int32, Int32, Object, Int32, Int32&)` —— **4 个入参含义未定义**。
+# ★★ **为什么只包这三个成员（`GetPlotCount` / `GetPlotNames` / `GetMaximumAvailableSteps
+# `）**：
+# 反射里 `ICWResults` 共 **107 个成员**，但**官方文档源里没有任何一页解释它们的参数语义*
+# *
+# （查过 `cosworks_pages` / `chm_cosworks` / `cworksapi` / 官方文档目录，**4 处 0 命中**
+# ）。
+# 例：`GetMinMaxDisplacement(Int32, Int32, Object, Int32, Int32&)` —— **4 个入参含义未定
+# 义**。
 #     **⇒ 按铁律 5「查不到就说查不到」：不猜参数。**
 #     而这三个成员**无参数**、语义自明，且 `GetPlotCount`/`GetPlotNames`
 #     **已在真机上验证过**（003 的闭环正是靠它断言到「材料质量1」，见
 #     `output/topology-evidence.json` 的 `steps.material_mass_plot`）。
 #     ⇒ **可安全包装**；`GetMaximumAvailableSteps()` 无参数但**未运行期验过** ⇒ 按事实 30
-#       「**判据永远是「返回非 None」，不是「在可取名单里」**」处理：取到就报，取不到就 `None`。
+# 「**判据永远是「返回非 None」，不是「在可取名单里」**」处理：取到就报，取不到就 `None`
+# 。
 #
-#   ⚠ **参数语义未知的那几个成员**登记在 `TOPOLOGY_RESULTS_UNRESOLVED` 里（**不是实现**），
+# ⚠ **参数语义未知的那几个成员**登记在 `TOPOLOGY_RESULTS_UNRESOLVED` 里（**不是实现**）
+# ，
 #     连同「为什么没实现」与「要补什么才能实现」——**避免下一个人重踩**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 本函数**只读**，不改模型；不 `BeginEdit`/`EndEdit`，不弹窗。
@@ -1007,13 +1025,16 @@ def collect_topology_numbers(study) -> dict[str, Any]:
 #   上面 10 个拓扑工具已挂（create_* / run / evidence），但**读数与参数**这一组从未上柜：
 #     · `get_topology_study_manager`        ⇒ 回 **COM 对象**
 #     · `get_topology_study_options`        ⇒ 回 **COM 对象**
-#     · `set_topology_goal`                 ⇒ 回 **COM 对象**（★ 而它是"设置"⇒ 要**回读确认**）
+# · `set_topology_goal`                 ⇒ 回 **COM 对象**（★ 而它是"设置"⇒ 要**回读确认*
+# *）
 #     · `set_topology_iteration_options`    ⇒ 回 **COM 对象**
 #   ⇒ ★ MCP 回不了对象 ⇒ 必须翻成**可 JSON 化**的回读报告。
 # ★★ 判据（★ 按 §5.0：**先找自家仓库**）：
-#   · 取到了几个 kind ⇒ 用 `list_topology_constraints_and_controls`（★ **本模块自己的读取入口**）
+# · 取到了几个 kind ⇒ 用 `list_topology_constraints_and_controls`（★ **本模块自己的读取
+# 入口**）
 #     —— ★ 而它的注释里记着一条教训：曾因裸传 `0` 当出参而**永远返回全 None（假通过）**，
-#       改用 `out_i4()` 后才是真的。⇒ 本组一律**只回"哪个 kind 非 None"**（布尔，可 JSON 化）。
+# 改用 `out_i4()` 后才是真的。⇒ 本组一律**只回"哪个 kind 非 None"**（布尔，可 JSON 化）
+# 。
 #   · `collect_topology_numbers` 的 `material_mass_plot` 是**既有证据脚本**的核心判据
 #     （`tools/capture_topology_evidence.py`：「`GetPlotNames` 里出现 `材料质量*`」）——
 #     ★ 本组**不重复**造它，直接复用那个函数。

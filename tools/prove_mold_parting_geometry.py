@@ -18,10 +18,12 @@
 # ★ 判据（★ 定量，能被"什么都没发生"证伪）：
 # ```
 # ① 选好参考后 `insert_parting_line` **返回非空的名字**（★ 未选时它抛 RuntimeError）
-# ② **回读** `mold_evidence()` 的 `parting_lines` **从 0 变成 > 0**（★ 那才是"真插进去了"）
+# ② **回读** `mold_evidence()` 的 `parting_lines` **从 0 变成 > 0**（★ 那才是"真插进去了
+# "）
 # ③ ★ 反证：**不选参考**时它**必须失败**（★ 那证明判据 ① 不是"恒真"）
 # ```
-# ★ 全程走 `sw_guard` 护栏：★ 会弹框的那几步在子进程里 + 硬超时（AGENTS.md 的常驻纪律）。
+# ★ 全程走 `sw_guard` 护栏：★ 会弹框的那几步在子进程里 + 硬超时（AGENTS.md 的常驻纪律）
+# 。
 
 from __future__ import annotations
 
@@ -64,7 +66,8 @@ def main() -> int:
         before = counts(doc)
         ev["steps"]["counts_before"] = {"ok": True, "counts": before}
 
-        #: ② **反证**：**不选**参考 ⇒ 官方回 None ⇒ 我们的入口**必须**抛（★ 证明判据①不恒真）
+        #: ② **反证**：**不选**参考 ⇒ 官方回 None ⇒ 我们的入口**必须**抛（★ 证明判据①不
+        #: 恒真）
         doc.ClearSelection2(True)
         try:
             M.insert_parting_line(doc)
@@ -74,11 +77,14 @@ def main() -> int:
             ev["steps"]["negative_unprepared"] = {"ok": True,
                                                   "err": "%s: %s" % (type(exc).__name__, str(exc)[:90])}
 
-        #: ③ **准备**：★ ★★★★ 官方 Remarks 明写**两件都要带 mark 选**（★ 铁律 4 查到的原话）：
+        #: ③ **准备**：★ ★★★★ 官方 Remarks 明写**两件都要带 mark 选**（★ 铁律 4 查到的原
+        #: 话）：
         #:   ```
         #:   「Before calling this method, you must select **the direction of pull** and
-        #:     **the edges for the parting line** by calling `IModelDocExtension::SelectByID2`
-        #:     with the following Marks:  Direction of pull = **1** · Parting line edges = 4」
+        #: **the edges for the parting line** by calling `IModelDocExtension::SelectByID
+        #: 2`
+        #: with the following Marks:  Direction of pull = **1** · Parting line edges = 4
+        #: 」
         #:   ```
         #:   ★ 我第一版**两处都没做对**（★ mark 传 0、且**没选边线**）⇒ 官方回 None ✓
         doc.ClearSelection2(True)

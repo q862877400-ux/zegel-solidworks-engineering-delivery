@@ -1,7 +1,8 @@
 """★ 真机：工程图 13 项（视图族 5 + 标注族 8）—— 每格先回读前置，再调用。"""
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（真机探针）· 规格 `specs/202-user-coverage-gaps`（T-D · C 类工程图 13 项）
+# 仓库:   本项目自身（真机探针）· 规格 `specs/202-user-coverage-gaps`（T-D · C 类工程图 
+# 13 项）
 # 文件:   tools/prove_drawing_batch.py
 # 定位:   ★ 2026-10-03 ★ 为 `docs/user-feature-coverage.md` §八 的**工程图 13 项缺口**
 #   写真机探针骨架。★★ **本文件只写真机步骤，不替调用方下结论**：
@@ -10,23 +11,32 @@
 #       「能力不成」的证据（★ 本仓事实 484 的教训：前置没满足被误读成"做不到"）。
 #     · 判据**不只有特征树增量**：视图族数**视图数**、标注族数**注解数**（★ 规则 6）。
 #
-#   ============  ================================  ========================================
+# ============  ================================  ======================================
+# ==
 #   格            官方成员（★ 接口）                  判据（★ 官方回读成员）
-#   ============  ================================  ========================================
+# ============  ================================  ======================================
+# ==
 #   V1  投影视图   CreateDrawViewFromModelView3 (IDrawingDoc) 视图数 +1 · 返回值非 None
-#   V2  剖面视图   CreateSectionViewAt5 (IDrawingDoc)         视图数 +1（★ 前置＝先选剖面线）
+# V2  剖面视图   CreateSectionViewAt5 (IDrawingDoc)         视图数 +1（★ 前置＝先选剖面
+# 线）
 #   V3  局部视图   CreateDetailViewAt4 (IDrawingDoc)          视图数 +1
-#   V4  断裂视图   **InsertBreak3** (IView)                   GetBreakLineCount +1 · IsBroken
-#   V5  辅助视图   CreateAuxiliaryViewAt2 (IDrawingDoc)       视图数 +1（★ 前置＝选视图里一条边）
-#   A1  图纸格式   **SetupSheet6** (IDrawingDoc)              SetupSheet6 回真 · 回读图纸读数变了
+# V4  断裂视图   **InsertBreak3** (IView)                   GetBreakLineCount +1 · IsBro
+# ken
+# V5  辅助视图   CreateAuxiliaryViewAt2 (IDrawingDoc)       视图数 +1（★ 前置＝选视图里
+# 一条边）
+# A1  图纸格式   **SetupSheet6** (IDrawingDoc)              SetupSheet6 回真 · 回读图纸
+# 读数变了
 #   A2  表面粗糙度 InsertSurfaceFinishSymbol3 (IModelDocExtension)  GetSFSymbolCount +1
 #   A3  基准符号   InsertDatumTag2 (IModelDoc2)               GetDatumTagCount +1
 #   A4  注释文字   InsertNote (IModelDoc2)                    GetNoteCount +1
-#   A5  气泡序号   AutoBalloon5 (IDrawingDoc)                 GetNoteCount +1（★ 前置＝有 BOM 表）
+# A5  气泡序号   AutoBalloon5 (IDrawingDoc)                 GetNoteCount +1（★ 前置＝有 
+# BOM 表）
 #   A6  孔表       **InsertHoleTable3** (IView)               GetTableAnnotationCount +1
-#   A7  修订表     InsertRevisionTable2 (ISheet)              非 None · `ISheet.RevisionTable` 非 None
+# A7  修订表     InsertRevisionTable2 (ISheet)              非 None · `ISheet.RevisionTa
+# ble` 非 None
 #   A8  中心符号线 InsertCenterMark3 (IDrawingDoc)            GetCenterMarkCount2 +1
-#   ============  ================================  ========================================
+# ============  ================================  ======================================
+# ==
 #
 #   ★★★ **三条废弃链（★ 铁律 4「看后继」，官方页逐字）** —— 台账原先给的是**废弃入口**：
 #     · `IView.InsertBreak`     → `Obsolete. Superseded by [[IView::InsertBreak2]]`
@@ -40,11 +50,15 @@
 #
 #   ★★ **每格的"前置"都是从官方页 / 官方例子里读出来的**（★ 不是猜的；逐条写在各 case 的
 #     docstring 与 `note` 里）。★ 最关键的几条：
-#     · `CreateDrawViewFromModelView3`：`ModelName` 必须是**含 `.sldprt`/`.sldasm` 的完整路径**
-#       （官方 Remarks 逐字：Include the **.sldprt** or **.sldasm** extension in the pathname）；
+# · `CreateDrawViewFromModelView3`：`ModelName` 必须是**含 `.sldprt`/`.sldasm` 的完整路
+# 径**
+# （官方 Remarks 逐字：Include the **.sldprt** or **.sldasm** extension in the pathname
+# ）；
 #       `ViewName` 要**与模型视图名完全一致**，★ 标准视图名**带星号**（官方逐字：the names of
-#       the standard views begin with an asterisk … for example, "*Front"）；Loc* 单位官方写明 **meters**。
-#     · `CreateSectionViewAt5`：**先选剖面线**（官方 Remarks 逐字：Before calling this method,
+# the standard views begin with an asterisk … for example, "*Front"）；Loc* 单位官方写明
+#  **meters**。
+# · `CreateSectionViewAt5`：**先选剖面线**（官方 Remarks 逐字：Before calling this metho
+# d,
 #       select the section line or lines to use as a section line.）★ 官方例子
 #       `Create_Section_View_at_Specified_Location_Example_VB` 给的**调用序**是：
 #       `ActivateView` → `SelectByID2(视图名,"DRAWINGVIEW")` → `ClearSelection2` →
@@ -58,43 +72,62 @@
 #       ★ 官方 Remarks：Position1/Position2 **相对视图原点**，方向决定它们是 X 还是 Y 值。
 #     · `CreateAuxiliaryViewAt2`：官方摘要逐字 "Creates an auxiliary view based on a
 #       **selected edge in a drawing view**"（★ 该页**无 Remarks**）⇒ 前置＝视图里选中一条边。
-#     · `InsertSurfaceFinishSymbol3`：官方 Remarks 逐字 "uses the location parameters … only if
+# · `InsertSurfaceFinishSymbol3`：官方 Remarks 逐字 "uses the location parameters … only
+#  if
 #       the surface finish symbol has a leader **leaderType != swNO_LEADER**"。
-#     · `InsertDatumTag2`：官方摘要逐字 "at a **selected location**"；★ 且本仓**已有真机反例**
+# · `InsertDatumTag2`：官方摘要逐字 "at a **selected location**"；★ 且本仓**已有真机反例
+# **
 #       （`output/drawing-datum-tag-evidence.json`：**不先选**时它回 `None`、计数 0→0）
 #       ⇒ ★ 本探针把「选 / 不选」当**两个格子**（★ 单变量对照）。
-#     · `InsertNote`：官方 Remarks 逐字 "The leader attachment points for the new note come from
-#       the selections made before calling this method"；**没有选中时**：无引线、自由放置、在原点。
-#     · `AutoBalloon5` + `CreateAutoBalloonOptions`：官方 **4 步调用序**（选视图/图纸 → 建 options
-#       → 设属性 → 调 AutoBalloon5）；★ 前置是**图里有 BOM 表**（官方例子 precondition 逐字）。
-#     · `InsertHoleTable3`：官方 Remarks **明写 mark 表**：基准原点**顶点 mark 1** · 孔**边与面 mark 2**
+# · `InsertNote`：官方 Remarks 逐字 "The leader attachment points for the new note come 
+# from
+# the selections made before calling this method"；**没有选中时**：无引线、自由放置、在
+# 原点。
+# · `AutoBalloon5` + `CreateAutoBalloonOptions`：官方 **4 步调用序**（选视图/图纸 → 建 o
+# ptions
+# → 设属性 → 调 AutoBalloon5）；★ 前置是**图里有 BOM 表**（官方例子 precondition 逐字）
+# 。
+# · `InsertHoleTable3`：官方 Remarks **明写 mark 表**：基准原点**顶点 mark 1** · 孔**边
+# 与面 mark 2**
 #       · 基准原点 X 向参考 mark 4 · Y 向参考 mark 8；Template 是 `.sldholtbt`。
-#     · `InsertRevisionTable2`：官方 Returns 逐字 "[[Revision table]] **or null if a revision
+# · `InsertRevisionTable2`：官方 Returns 逐字 "[[Revision table]] **or null if a revisio
+# n
 #       table already exists**" ⇒ ★ 本探针把「插第二次」当**期望为 null** 的一格。
-#     · `InsertCenterMark3`：官方页**没有写前置**（Remarks 只说 `IView::AutoInsertCenterMarks`）
+# · `InsertCenterMark3`：官方页**没有写前置**（Remarks 只说 `IView::AutoInsertCenterMark
+# s`）
 #       ⇒ ★ 本探针用「选 / 不选」两格**如实测**，★ 不假装知道前置。
 #
 #   官方依据（三源之① —— `C:\swapi\`；★ 逐页核过）:
-#     · types: `IDrawingDoc\{CreateDrawViewFromModelView3,CreateSectionViewAt5,CreateDetailViewAt4,
+# · types: `IDrawingDoc\{CreateDrawViewFromModelView3,CreateSectionViewAt5,CreateDetailV
+# iewAt4,
 #       CreateAuxiliaryViewAt2,SetupSheet6,SetupSheet5,AutoBalloon5,CreateAutoBalloonOptions,
 #       InsertCenterMark3,ActivateView}.md` ·
-#       `IModelDocExtension\InsertSurfaceFinishSymbol3.md` · `IModelDoc2\{InsertDatumTag2,InsertNote}.md` ·
-#       `IView\{InsertBreak,InsertBreak2,InsertBreak3,InsertHoleTable2,InsertHoleTable3,GetOutline,
-#       GetBomTable,GetBreakLineCount,IsBroken}.md` · `ISheet\{InsertRevisionTable2,RevisionTable}.md`
+# `IModelDocExtension\InsertSurfaceFinishSymbol3.md` · `IModelDoc2\{InsertDatumTag2,Inse
+# rtNote}.md` ·
+# `IView\{InsertBreak,InsertBreak2,InsertBreak3,InsertHoleTable2,InsertHoleTable3,GetOut
+# line,
+# GetBomTable,GetBreakLineCount,IsBroken}.md` · `ISheet\{InsertRevisionTable2,RevisionTa
+# ble}.md`
 #     · enums（★ 本探针**在运行期读这些页**取值，不把枚举写死 —— 见 `_enum`）:
-#       `swDwgTemplates_e` · `swDwgPaperSizes_e` · `swBreakLineOrientation_e` · `swBreakLineStyle_e` ·
-#       `swDetViewStyle_e` · `swDetCircleShowType_e` · `swCreateSectionViewAtOptions_e`（**bitmask**）·
+# `swDwgTemplates_e` · `swDwgPaperSizes_e` · `swBreakLineOrientation_e` · `swBreakLineSt
+# yle_e` ·
+# `swDetViewStyle_e` · `swDetCircleShowType_e` · `swCreateSectionViewAtOptions_e`（**bit
+# mask**）·
 #       `swSFSymType_e` · `swLeaderStyle_e` · `swSFLaySym_e` · `swArrowStyle_e` ·
-#       `swBOMConfigurationAnchorType_e` · `swRevisionTableSymbolShape_e` · `swCenterMarkStyle_e` ·
-#       `swBalloonLayoutType_e` · `swBalloonStyle_e` · `swBalloonFit_e` · `swBalloonTextContent_e` ·
+# `swBOMConfigurationAnchorType_e` · `swRevisionTableSymbolShape_e` · `swCenterMarkStyle
+# _e` ·
+# `swBalloonLayoutType_e` · `swBalloonStyle_e` · `swBalloonFit_e` · `swBalloonTextConten
+# t_e` ·
 #       `swBalloonItemNumbersOrder_e` · `swEditBalloonOption_e`
 #     · examples（★ **调用序**只有例子给得出）: `Insert_Model_Annotations_Example_VB` ·
 #       `Create_Section_View_at_Specified_Location_Example_VB` ·
-#       `Create_Detail_Circle_and_Detail_View_Example_VB` · `Insert_Jagged_Cut_Break_Example_VB` ·
+# `Create_Detail_Circle_and_Detail_View_Example_VB` · `Insert_Jagged_Cut_Break_Example_V
+# B` ·
 #       `Add_Autoballoon_to_Face_Example_VB` · `Insert_Hole_Table_Example_VB` ·
 #       `Create_Drawing_Sheet_Zones_Example_VB` · `Get_Annotations_Array_Example_VB` ·
 #       `Insert_a_Note_Example_VB`
-#   许可:   本仓库 MIT。★ **无第三方代码引入**（不外抄任何项目文本；官方例子只用来核**调用序**）。
+# 许可:   本仓库 MIT。★ **无第三方代码引入**（不外抄任何项目文本；官方例子只用来核**调用
+# 序**）。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
@@ -102,7 +135,8 @@
 #     python tools/sw_guard.py --timeout 1800 -- python tools/prove_drawing_batch.py
 #   ★ 只跑某几格（★ 卡住时省时间）：把**标签子串**当参数传进去，例如
 #     python tools/sw_guard.py --timeout 900 -- python tools/prove_drawing_batch.py V4 A7
-# ★ 产物：`output/drawing-batch-evidence.json`；★ 临时零件 `output/_probe_drawing_part.SLDPRT`。
+# ★ 产物：`output/drawing-batch-evidence.json`；★ 临时零件 `output/_probe_drawing_part.S
+# LDPRT`。
 # ★ 收尾：★ 每格自己关掉自己开的文档（`CloseDoc`）· ★ `CommandInProgress` 复位 ·
 #   ★ **不保存任何已有文件**（★ 只在 `output/` 下新建临时零件）。
 
@@ -128,15 +162,18 @@ import scripts.sw_drawing_query as DQ                                  # noqa: E
 #:   （★ 工程图里按点选用的就是这个量级的 z；★ 不是我们编的数）。
 PICK_Z_M = -500.0075
 
-#: ★ 视图落位（**米** —— 官方对 `CreateDrawViewFromModelView3` 的 Loc* 逐字写着 "in meters"）。
+#: ★ 视图落位（**米** —— 官方对 `CreateDrawViewFromModelView3` 的 Loc* 逐字写着 "in mete
+#: rs"）。
 VIEW_LOC_M = (0.14, 0.12)
 
-#: ★ 官方对 `CreateSectionViewAt5` / `CreateDetailViewAt4` / `CreateAuxiliaryViewAt2` 的位置参数
+#: ★ 官方对 `CreateSectionViewAt5` / `CreateDetailViewAt4` / `CreateAuxiliaryViewAt2` 的
+#: 位置参数
 #:   **只说 "position"**、没写单位；★ 而官方例子里那些数（0.223 / 0.65）与**米**一致
 #:   ⇒ ★ 本探针按**米**传，并把这条**假设**记进返回值（★ 铁律 5：查不到就说清楚假设）。
 SHEET_POS_UNIT_ASSUMPTION = ("★ 官方只写 position、未给单位；官方例子的量级与**米**一致 ⇒ 本探针按米传")
 
-#: ★ `SectionDepth` = "Distance from the selected section line"（官方逐字），**单位与默认值官方都没给**
+#: ★ `SectionDepth` = "Distance from the selected section line"（官方逐字），**单位与默
+#: 认值官方都没给**
 #:   ⇒ ★ 本探针传 0.05 米并**如实标注这是假设**。
 SECTION_DEPTH_M = 0.05
 
@@ -308,9 +345,11 @@ _COUNTERS = (
 #:   ★ **必须传 by-ref 包装**（本仓 `sw_connect.out_i4()`；与 known-facts 47 同族）；
 #:   ★ 零参调用会 `类型不匹配`，而被 `except` 吃成 `None` ⇒ **判据静默降级**，
 #:     表面上只看到"量不到"，看不出是**调用形态错**。
-#:   ★ 2026-10-03：space-bunny 的 L5 档实测发现此处原先把 `GetBreakLineCount` 放进了上面那张零参表
+#: ★ 2026-10-03：space-bunny 的 L5 档实测发现此处原先把 `GetBreakLineCount` 放进了上面那
+#: 张零参表
 #:     （于是**两条路径都错**）；Lead 核官方页确认后分到这里。
-#:   ★ 格式：`(键, 带 out 的成员, 零参交叉核成员)` —— ★ **兼用零参 `GetBreakLines()` 数组长度做交叉核**，
+#: ★ 格式：`(键, 带 out 的成员, 零参交叉核成员)` —— ★ **兼用零参 `GetBreakLines()` 数组
+#: 长度做交叉核**，
 #:     两条独立读数一致才算稳（单条读数不可靠时不许当判据）。
 _OUT_COUNTERS = (
     ("breakline", "GetBreakLineCount", "GetBreakLines"),
@@ -335,7 +374,8 @@ def _anno_state(doc) -> dict:
                     row[key] = int(_get(v, member) or 0)
                 except Exception:                                      # noqa: BLE001
                     row[key] = None
-            # ★ 带 `out` 参数的成员走**另一条**通道（★ 零参调它会 `类型不匹配` ⇒ 见 `_OUT_COUNTERS`）
+            # ★ 带 `out` 参数的成员走**另一条**通道（★ 零参调它会 `类型不匹配` ⇒ 见 `_OU
+            # T_COUNTERS`）
             for key, member, member2 in _OUT_COUNTERS:
                 row[key] = _out_count_of(v, member)
                 row[key + "_crosscheck"] = _list_len_of(v, member2)
@@ -461,7 +501,8 @@ def _find_files(patterns, roots):
 
 #: ★ 表格/图纸格式模板的**官方规则**（逐字）：表格模板在 `install_dir\lang\<language>`
 #:   —— 孔表是 `.sldholtbt`（`InsertHoleTable3` 的 Remarks）· 修订表是 `.sldrevtbt`
-#:   （`InsertRevisionTable2` 的 Remarks）· 图纸格式是 `.slddrt`（SetupSheet6 的 Remarks + 官方例子）。
+#: （`InsertRevisionTable2` 的 Remarks）· 图纸格式是 `.slddrt`（SetupSheet6 的 Remarks +
+#:  官方例子）。
 TEMPLATE_ROOTS = (
     r"C:\ProgramData\SOLIDWORKS",
     r"D:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\lang",
@@ -687,7 +728,8 @@ def _prep_section_line(doc, view_name, row: dict, explicit_pick=False):
         return None, _sel_counts(doc), "CreateLine2 失败：%s: %s" % (type(exc).__name__, str(exc)[:140])
     counts = _sel_counts(doc)
     if explicit_pick and sum(v for v in counts.values() if v > 0) == 0:
-        #: ★★ 对照格：按点选那条草图线。⚠ 类型串 `SKETCHSEGMENT` 本探针**没在官方页里核过**
+        #: ★★ 对照格：按点选那条草图线。⚠ 类型串 `SKETCHSEGMENT` 本探针**没在官方页里核
+        #: 过**
         #:   ⇒ ★ 它**只是对照**：不成也不构成"剖面线选不上"的结论（★ 铁律 5）。
         hit, counts2, errs = _pick_any(doc, "SKETCHSEGMENT",
                                        [(xmin + 0.5 * (xmax - xmin), y_mid)], mark=0)
@@ -903,7 +945,8 @@ def case_v4_break_view(sw):
         row["breakline_delta"] = gained
         row["breakline_delta_crosscheck"] = gained2
         # ★ 判据：**主读数**（带 out 的 `GetBreakLineCount`）增量 ≥1；
-        #   ★ 交叉核（零参 `GetBreakLines()` 长度）**只作对照**，量不到不判失败（★ 不猜）。
+        # ★ 交叉核（零参 `GetBreakLines()` 长度）**只作对照**，量不到不判失败（★ 不猜）
+        # 。
         row["ok"] = bool(row["preconditions_held"] and (gained or 0) >= 1)
         row["verified_by"] = ("GetBreakLineCount_delta（★ 传 out_i4，官方带 out 参数）"
                               " + 交叉核 GetBreakLines() 数组长度 + IsBroken")
@@ -1060,7 +1103,8 @@ def case_a1_setup_sheet(sw):
         ret = _get(doc, "SetupSheet6", str(sheet_name), int(paper), int(tmpl_in),
                    1.0, 2.0, True, str(sheet_format), 0.2794, 0.2159, "", False,
                    0.0, 0.0, 0.0, 0.0, 0, 0)
-        #: ★ 官方 Remarks 逐字：After calling this method, call IModelDoc2::ForceRebuild3
+        #: ★ 官方 Remarks 逐字：After calling this method, call IModelDoc2::ForceRebuild
+        #: 3
         try:
             _get(doc, "ForceRebuild3", True)
             row["force_rebuild"] = True
@@ -1482,7 +1526,8 @@ def case_a7_revision_table(sw, second=False):
             row["note"] = "★ 前置未成立：取不到当前图纸（ISheet）"
             return row
         before = _anno_state(doc)
-        #: ★ 官方例子的实参序逐字：`(True, 0#, 0#, swBOMConfigurationAnchor_TopLeft, <模板>, swRevisionTable_CircleSymbol, True)`
+        #: ★ 官方例子的实参序逐字：`(True, 0#, 0#, swBOMConfigurationAnchor_TopLeft, <模
+        #: 板>, swRevisionTable_CircleSymbol, True)`
         try:
             ret1 = _get(sheet, "InsertRevisionTable2", True, 0.0, 0.0, int(anchor),
                         str(template), int(shape), True)

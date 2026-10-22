@@ -179,7 +179,8 @@ def main() -> int:
         td = Path(td)
         src = td / "cli.json"
         src.write_text(json.dumps(_clean_doc(), ensure_ascii=False), encoding="utf-8")
-        # ⚠ 它的 CLI 用 **`--input` / `--output`**（不是位置参数）—— 实测踩过：位置参数 ⇒ rc=2
+        # ⚠ 它的 CLI 用 **`--input` / `--output`**（不是位置参数）—— 实测踩过：位置参数 
+        # ⇒ rc=2
         proc = subprocess.run(
             [sys.executable, str(_REPO / "scripts" / "routing_review.py"),
              "--input", str(src), "--output", str(td / "cli-report.json")],

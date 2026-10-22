@@ -9,18 +9,23 @@
 #      因为来源块里大量引用官方成员名，grep 会把注释算成"有实现"）。
 #
 #   ★★★ **而 AST 只说"有代码"，不说"能用"** —— ★ 本轮就撞到一个反例：
-#     · **样条曲线**：AST 报"有实现"（`sw_part.sketch_spline`），★ 而**读那个函数的文档串**才发现
+# · **样条曲线**：AST 报"有实现"（`sw_part.sketch_spline`），★ 而**读那个函数的文档串**
+# 才发现
 #       它**2026-10-01 轮 141 已真机实测不达**：`CreateSpline2` 回 `None`，
-#       后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 迟到绑定到不了（事实 47/68）。
+# 后继 `CreateSpline3` 末参是 **BYREF `Object&`** ⇒ pywin32 迟到绑定到不了（事实 47/68）
+# 。
 #       ⇒ ★★ **故本探针不测样条** —— 它属「带依据的到不了」，★ 不假装做到。
 #     ⇒ ★ 教训：★ **"有实现" ≠ "能用"**，中间必须过"读它自己的文档串 + 真机"两关。
 #
 #   ★ 三格：
 #     | 格 | 能力 | 入口 | 判据 |
 #     |---|---|---|---|
-#     | B1 | 旋转曲面 | `sw_surface_ref_ops.insert_revolved_ref_surface`（`InsertRevolvedRefSurface`） | 树增量 + **曲面体数**增量 |
-#     | B2 | 孔向导 | `sw_hole_features.create_hole_wizard_at_selection_report`（`HoleWizard5`） | 树增量 + 回读报告 |
-#     | B3 | 完全定义检查 | `ISketch.GetConstrainedStatus()`（★ 新实现） | 调得动且回 **int**；★ 并试"改到完全定义后值是否变" |
+# | B1 | 旋转曲面 | `sw_surface_ref_ops.insert_revolved_ref_surface`（`InsertRevolvedRef
+# Surface`） | 树增量 + **曲面体数**增量 |
+# | B2 | 孔向导 | `sw_hole_features.create_hole_wizard_at_selection_report`（`HoleWizard
+# 5`） | 树增量 + 回读报告 |
+# | B3 | 完全定义检查 | `ISketch.GetConstrainedStatus()`（★ 新实现） | 调得动且回 **int*
+# *；★ 并试"改到完全定义后值是否变" |
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每格新开文档；★ 收尾关掉自己开的文档。
 # 许可:   本仓库 MIT。无第三方代码引入。

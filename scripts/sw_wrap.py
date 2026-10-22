@@ -2,8 +2,10 @@
 
 # ── 24h 计划 段 6 续（Spec Kit `171`）：**包覆（wrap）** ─────────────────────────────
 # ★★★★★ 2026-10-01（轮 329）**这是"四家有我们没有"里核实的真缺之一**：
-#   ★ 全仓 grep `wrap` ⇒ **工具 0 · 函数 0**（★ 同批核出的另外三条：`sensor` / `units` / `undo`）。
-#   ★★ 而**官方有明确入口**：`IFeatureManager.InsertWrapFeature2`（**5 参**，★ 反射 arity = 5）。
+# ★ 全仓 grep `wrap` ⇒ **工具 0 · 函数 0**（★ 同批核出的另外三条：`sensor` / `units` / `
+# undo`）。
+# ★★ 而**官方有明确入口**：`IFeatureManager.InsertWrapFeature2`（**5 参**，★ 反射 arity 
+# = 5）。
 #
 # ★★★ **调用序与 mark 来自官方**（★ §5.0：判据先找后搓）：
 #   `C:\swapi\types\IFeatureManager\InsertWrapFeature2.md` 的 Remarks + 官方示例
@@ -11,14 +13,17 @@
 #   ```
 #   ① 选中基准面 ⇒ SelectByID2("Plane8", "PLANE", …)
 #   ② SketchManager.InsertSketch True ⇒ CreateCircle(...) ⇒ InsertSketch True（收草图）
-#   ③ 选草图：★ SelectByID2("Sketch30", "SKETCH", 0,0,0, False, **4**, …)   ← 官网 mark = 4
-#   ④ 选面：  ★ 逐个 SelectByRay(...)                                        ← 官网 mark = 1
+# ③ 选草图：★ SelectByID2("Sketch30", "SKETCH", 0,0,0, False, **4**, …)   ← 官网 mark = 
+# 4
+# ④ 选面：  ★ 逐个 SelectByRay(...)                                        ← 官网 mark =
+#  1
 #      （★ 面**没有名字** ⇒ 官方示例用的是"射线选" —— 事实 32 的第三条路；
 #        ★ 本模块改用 `IEntity.Select4`（★ 事实 32 的第一条路，★ 我们更熟、更稳））
 #   ⑤ FeatureManager.InsertWrapFeature2(Type, Thickness, ReverseDir, Method, MeshFactor)
 #   ```
 # ★ `swWrapSketchType_e`（★ 官方枚举 × 反射**两源一致**）：
-#   **0 = `swWrapSketchType_Emboss`**（凸起）· **1 = `swWrapSketchType_Engrave`**（★ UI 叫 Deboss，凹陷）
+# **0 = `swWrapSketchType_Emboss`**（凸起）· **1 = `swWrapSketchType_Engrave`**（★ UI 叫
+#  Deboss，凹陷）
 #   · **2 = `swWrapSketchType_Scribe`**（划痕/印记）
 #
 # ★★★ **判据用**特征类型名**（事实 242：挑只依赖被测对象的那个）——
@@ -28,7 +33,8 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   scripts/sw_wrap.py —— 本文件（新）
 # 定位:   24h 段 6 续：包覆（★ 补「四家有我们没有」的真缺）。
-# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertWrapFeature2.md`（5 参 · mark 1/2/4）·
+# 官方签名依据: `C:\swapi\types\IFeatureManager\InsertWrapFeature2.md`（5 参 · mark 1/2/
+# 4）·
 #   `C:\swapi\enums\swWrapSketchType_e.md` + 反射 `enum_values_sldworks.txt`（0/1/2）·
 #   `C:\swapi\examples\Create_Wrap_Feature_on_Multiple_Faces_Example_VB.md`（★ 调用序）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -107,7 +113,8 @@ def create_wrap_report(model, wrap_type: str = "emboss", thickness_mm: float = 1
                 "error": "%s: %s" % (type(exc).__name__, str(exc)[:200]),
                 "★": "若报 DISP_E_BADPARAMCOUNT ⇒ 参数个数不对（官方 5 个）"}
     #: ★★★★★ 2026-10-01（轮 330）**判据改成「读返回对象」** —— 真机证明：
-    #:   ★ 包覆**真的建成了**（返回对象的 `Name` = `包覆1` · `GetTypeName2()` = **`Emboss`**），
+    #: ★ 包覆**真的建成了**（返回对象的 `Name` = `包覆1` · `GetTypeName2()` = **`Emboss`
+    #: **），
     #:   而 **`feature_names()` 的前后 diff 是空的**（before=8 / after=8 / new=[]）。
     #:   ⇒ ★★ **"树 diff"依赖遍历的完整性**；★ 而**返回值自带 Name 与类型名**，★ 更直接。
     #:   ⇒ ★★★ **顺带纠了一个错的预期**：★ 包覆的类型名是 **`Emboss`**（★ 与 `Type` 同名，

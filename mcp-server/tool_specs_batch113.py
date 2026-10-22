@@ -1,10 +1,13 @@
 """★ EC00 T017 批 113 —— 把 `sw_sketch_relations.apply_sketch_relations` **正式注册**成 MCP 工具。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
-# 文件:   `scripts/sw_sketch_relations.py`（★ 实现 · ★ 151 行 · ★ 判据 = `GetRelationsCount` 真 +1）
+# 文件:   `scripts/sw_sketch_relations.py`（★ 实现 · ★ 151 行 · ★ 判据 = `GetRelationsCo
+# unt` 真 +1）
 #         `tests/test_sw_sketch_relations_safety.py`（★ spec 221 的 **12 例**安全判据）
-#         `specs/221-sketch-relation-dispatch-safety/`（★ 离线安全切片 · ★ runtime/product=not_run）
-#         `specs/302-ec00-trustworthy-tool-base/research/T006-official-signature.md`（★ 官方签名核验）
+# `specs/221-sketch-relation-dispatch-safety/`（★ 离线安全切片 · ★ runtime/product=not_r
+# un）
+# `specs/302-ec00-trustworthy-tool-base/research/T006-official-signature.md`（★ 官方签名
+# 核验）
 #         `C:\swapi\types\ISketchRelationManager\AddRelation.md`（★ 官方逐字 · 2 参）
 # 定位:   ★★ **EC00 T017**（★ 逐字：「完成草图关系正式注册、参数注入/包装和类型/数量/
 #           上下文预检」）。
@@ -24,7 +27,8 @@ from tool_registry import Param, ToolSpec
 __all__ = ["SPECS_BATCH113"]
 
 #: ★★★ 关系类型（★ 官方枚举 `swConstraintType_e` · ★ 86 个成员）——
-#:   ★★ 本工具收**关系名**（★ 字符串），★ 由实现映射到枚举**数值**（★ 见 `RELATION_TYPES`）。
+#: ★★ 本工具收**关系名**（★ 字符串），★ 由实现映射到枚举**数值**（★ 见 `RELATION_TYPES`
+#: ）。
 #:   ★ 逐字依据：`C:\swapi\enums\swConstraintType_e.md`。
 RELATION_HELP = (
     "★ 关系名（★ 实现内部映射到官方 `swConstraintType_e` **数值**；"
@@ -33,11 +37,16 @@ RELATION_HELP = (
     "★★ 非法名 ⇒ **调用前拒绝**（★ 官方 `SketchAddConstraints` 会**静默回 True** 而不加任何关系）。"
 )
 
-#: ★★ 关系清单的格式：★ **分号分隔的多项**、★ 每项 `"<关系名>:<段序号>,<段序号>"`（★ 声明式 · ★ 规则 3）。
-#:   ★★★ **为什么用 `str` 而不用 `list`** —— ★ 依据 `mcp-server/tool_specs_batch15.py:21-25` 逐字：
-#:     「因为它们是 **`list` 型**，而实测：`tool_specs_batch*.py` 里**没有任何 `list` 型 `Param` 的先例**
-#:      ⇒ 记进队列 A10：若要暴露，先决定"list 怎么过 MCP 边界"（逗号串？JSON 串？），**并留下先例**」。
-#:   ★★ **本仓既有约定**（★ 多处先例）：★ **`str` + 分隔符**（★ 如 `tool_specs_batch81.py:118` 的
+#: ★★ 关系清单的格式：★ **分号分隔的多项**、★ 每项 `"<关系名>:<段序号>,<段序号>"`（★ 声
+#: 明式 · ★ 规则 3）。
+#: ★★★ **为什么用 `str` 而不用 `list`** —— ★ 依据 `mcp-server/tool_specs_batch15.py:21-2
+#: 5` 逐字：
+#: 「因为它们是 **`list` 型**，而实测：`tool_specs_batch*.py` 里**没有任何 `list` 型 `Pa
+#: ram` 的先例**
+#: ⇒ 记进队列 A10：若要暴露，先决定"list 怎么过 MCP 边界"（逗号串？JSON 串？），**并留下
+#: 先例**」。
+#: ★★ **本仓既有约定**（★ 多处先例）：★ **`str` + 分隔符**（★ 如 `tool_specs_batch81.py:
+#: 118` 的
 #:     「逗号分隔且**顺序即语义**」· ★ `tool_specs_batch93.py:36` 的「逗号分隔」）
 #:     ⇒ ★ **本批遵守既有约定**：★ 外层用 **`;`** 分隔多项、★ 内层用 `,` 分隔段序号
 #:     （★ 因为**关系名本身不含** `;`/`,` ⇒ ★ 无歧义）。

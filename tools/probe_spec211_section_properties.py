@@ -3,13 +3,17 @@
 # 仓库:   本项目自身（规格 211 · B1-1 的真机探针）
 # 文件:   tools/probe_spec211_section_properties.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B1-1**「截面属性」。★ 官方页
-#   `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` **逐字读过**，本探针按它写：
-#     · ① 「**This method clears the selection set**」+「objects in `Sections` **are added to**
+# `C:\swapi\types\IModelDocExtension\GetSectionProperties2.md` **逐字读过**，本探针按它
+# 写：
+# · ① 「**This method clears the selection set**」+「objects in `Sections` **are added t
+# o**
 #          the current selection set」⇒ ★ **先清空、再加进去** ⇒ ★★ 这是它的**副作用机制** ✓
-#     · ② ★★★ 「If the objects are **already in the current selection set, an error** is generated;
+# · ② ★★★ 「If the objects are **already in the current selection set, an error** is gen
+# erated;
 #          that is, **status code will be equal to 1**, which means invalid input」
 #          ⇒ ★★ **这是一条官方写死的「必然失败」负例** ✓
-#     · ③ ★★ **反例（本来会踩的坑）**：「The user selected a set of either **parallel planes or
+# · ③ ★★ **反例（本来会踩的坑）**：「The user selected a set of either **parallel planes
+#  or
 #          parallel faces** ⇒ **You can pass an empty sections array**」
 #          ⇒ ★★ 所以「**空数组**」**不是**必然失败 ✗（★ 我原先拟的负例是**假的**）✓
 #     · ④ 返回 **size 24** 数组；`retval[0]` = **status**：`0=success` · `1=invalid input` ·
@@ -66,7 +70,8 @@ def main() -> int:
         ("solidworks_sketch_start", {}),
         ("solidworks_sketch_add_rectangle", RECT),
         #: ★★★ **必须先拉伸造体** —— 只建草图**没有面可选**（★ 我第一版就漏了这步 ⇒
-        #:   选择器报 `解析失败`、而**选区计数是 4**（那是草图矩形留下的）⇒ ★ 误以为选到了面 ✗）
+        #: 选择器报 `解析失败`、而**选区计数是 4**（那是草图矩形留下的）⇒ ★ 误以为选到了
+        #: 面 ✗）
         ("solidworks_extrude_boss", {"sketch_name": "Sketch1", "depth_mm": 20.0}),
     ):
         ok, note = tool_caller.call(step, inject_objects=inj, **params)
@@ -116,10 +121,12 @@ def main() -> int:
     print("★ 正例（空数组 + 已选平行面）⇒ status=%r area=%r 选区 %r→%r（★ 官方说它会**清空**选区）"
           % (result.get("status"), result.get("area"), before, after))
 
-    #: ④ ★★ **官方写死的负例**：把**已在选择集里**的对象传进 `Sections` ⇒ status **必然 = 1** ✓
+    #: ④ ★★ **官方写死的负例**：把**已在选择集里**的对象传进 `Sections` ⇒ status **必然 
+    #: = 1** ✓
     neg = {"call": "GetSectionProperties2(already-selected)"}
     try:
-        #: ★ 先把刚选中的面取成对象，再传回去（★ 官方：「already in the current selection set ⇒ status=1」）✓
+        #: ★ 先把刚选中的面取成对象，再传回去（★ 官方：「already in the current selectio
+        #: n set ⇒ status=1」）✓
         sm = sw_connect.get_com_member(model, "SelectionManager")
         obj = sw_connect.get_com_member(sm, "GetSelectedObject6", 1, -1)
         neg["obj"] = "有" if obj is not None else "None"

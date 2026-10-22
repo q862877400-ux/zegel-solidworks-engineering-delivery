@@ -5,13 +5,16 @@
 # 文件:   tools/prove_mold_parting_line_marks.py
 # 定位:   ★ 2026-10-03（轮 389）**用新发现回头解旧死路**：轮 51 判 `mold_parting_geome
 #           try` 的写入那半
-#   "走死"（★ 因为 `IEntity.Select4` 没有 mark 参数、而官方 Remarks 要求**边线带 mark = 4**）。
-#   ★★ 而轮 388（事实 305）在 `filled_surface` 上证明：**用 `SelectByID2` + **边的中点** + mark 是有效的**
+# "走死"（★ 因为 `IEntity.Select4` 没有 mark 参数、而官方 Remarks 要求**边线带 mark = 4*
+# *）。
+# ★★ 而轮 388（事实 305）在 `filled_surface` 上证明：**用 `SelectByID2` + **边的中点** +
+#  mark 是有效的**
 #   （★ 对照：mark 给对 ⇒ 计数对得上；mark 给错 ⇒ 回 true 而计数 0）。
 #   ⇒ 本探针用那个手法重试 `insert_parting_line`。
 # 官方依据: `InsertMoldPartingLine` 的 Remarks —— 「you must select the direction of pul
 #           l and the edges
-#   for the parting line by calling `IModelDocExtension::SelectByID2` with the following Marks:
+# for the parting line by calling `IModelDocExtension::SelectByID2` with the following M
+# arks:
 #   **Direction of pull = 1** · **Parting line edges = 4**」。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

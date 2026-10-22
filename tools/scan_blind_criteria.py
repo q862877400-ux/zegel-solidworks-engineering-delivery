@@ -23,7 +23,8 @@
 #     ⇒ ★ 每条都要人看一眼，★ 而本工具**如实写出"这是候选不是结论"** ✓
 # 官方依据: 不适用（本仓自有的探针/包装写法）。
 # 许可:   本仓库 MIT。无第三方代码引入。
-# 覆盖:   `scripts/**` · `tools/**` · `tests/**` 的 `.py`（★ 跳过 `api_*` 清单与 `_raw`）。
+# 覆盖:   `scripts/**` · `tools/**` · `tests/**` 的 `.py`（★ 跳过 `api_*` 清单与 `_raw`
+# ）。
 # ─────────────────────────────────────────────────────────────────────
 #
 # ★ 判据：★ 见上（三族各一个 AST/文本判据）。
@@ -59,7 +60,9 @@ def family_a(tree: ast.AST, src: str) -> list[dict]:
         body_src = ast.get_source_segment(src, fn) or ""
         if "subprocess.run" not in body_src and "check_output" not in body_src:
             continue
-        #: \u2605 \u8be5\u51fd\u6570\u91cc\u6709\u6ca1\u6709\u300c\u56de\u8bfb\u300d\u6027\u7684\u4e1c\u897f\uff08\u2605 \u800c\u4e0d\u53ea\u662f\u9000\u51fa\u7801\uff09
+        #: \u2605 \u8be5\u51fd\u6570\u91cc\u6709\u6ca1\u6709\u300c\u56de\u8bfb\u300d\u60
+        #: 27\u7684\u4e1c\u897f\uff08\u2605 \u800c\u4e0d\u53ea\u662f\u9000\u51fa\u7801\u
+        #: ff09
         reads = any(k in body_src for k in (
             "GetTitle", "GetBodies", "GetFaces", "feature_names", "count_segments",
             "RevisionNumber", "GetDocuments", "collect_", "evidence", "json.loads",
@@ -93,7 +96,8 @@ def families_bc(tree: ast.AST) -> list[dict]:
         nm = getattr(n.func, "id", None) or getattr(n.func, "attr", None)
         if nm != "get_com_member":
             continue
-        #: \u2605 \u7b2c\u4e8c\u4e2a\u5b9e\u53c2\u662f\u6210\u5458\u540d\uff1b\u4ece\u7b2c\u4e09\u4e2a\u5f00\u59cb\u662f\u4f20\u7ed9 COM \u7684
+        #: \u2605 \u7b2c\u4e8c\u4e2a\u5b9e\u53c2\u662f\u6210\u5458\u540d\uff1b\u4ece\u7b
+        #: 2c\u4e09\u4e2a\u5f00\u59cb\u662f\u4f20\u7ed9 COM \u7684
         for a in n.args[2:]:
             why = _is_container(a)
             if why:
@@ -129,10 +133,12 @@ def family_d(tree: ast.AST, src: str) -> list[dict]:
         rets = [x for x in ast.walk(fn) if isinstance(x, ast.Return)]
         if not any(isinstance(r.value, ast.Constant) and r.value.value is True for r in rets):
             continue
-        #: \u2605 \u800c\u4f53\u5185**\u6ca1\u6709\u4efb\u4f55**\u56de\u8bfb/\u6bd4\u8f83
+        #: \u2605 \u800c\u4f53\u5185**\u6ca1\u6709\u4efb\u4f55**\u56de\u8bfb/\u6bd4\u8f8
+        #: 3
         if any(k in body for k in READBACK):
             continue
-        #: \u2605 \u800c\u5b83\u786e\u5b9e\u78b0\u4e86 COM\uff08\u2605 \u5426\u5219\u662f\u7eaf\u51fd\u6570\uff0c\u4e0d\u5728\u672c\u65cf\uff09
+        #: \u2605 \u800c\u5b83\u786e\u5b9e\u78b0\u4e86 COM\uff08\u2605 \u5426\u5219\u662
+        #: f\u7eaf\u51fd\u6570\uff0c\u4e0d\u5728\u672c\u65cf\uff09
         if "get_com_member(" not in body and "set_com_member(" not in body:
             continue
         out.append({"family": "D", "where": fn.name, "line": fn.lineno,

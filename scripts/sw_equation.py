@@ -103,7 +103,8 @@ def list_equations(model):
         #:     `set_com_member` 时，**按形态匹配 ⇒ 把这一处也改了** ⇒ 于是它变成"写下标"
         #:     并回 0/1/2 ⇒ 测试 `assert [0,1,2] == ['"A" = 1', …]` 当场失败。
         #:   ★ **判据（可静态判）**：**返回值被使用 ⇒ 那是读**；返回值被丢掉才是写。
-        #:     ★★ 同族共 3 处（此处 + `sw_assembly.py` 的 `MateEntityType` / `MateComponentName`），
+        #: ★★ 同族共 3 处（此处 + `sw_assembly.py` 的 `MateEntityType` / `MateComponentN
+        #: ame`），
         #:     已由「返回值被使用」这一条一次找全。
         out.append(get_com_member(mgr, "Equation", i))
     return out
@@ -129,9 +130,11 @@ def evaluate_equations(model):
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自建（**不是**从四家外部 MCP 项目移植）。
-# 依据:   ① 出厂类型库反射 `iface_sldworks.txt`（`GetEquationMgr` / `Add2` / `GetCount` /
+# 依据:   ① 出厂类型库反射 `iface_sldworks.txt`（`GetEquationMgr` / `Add2` / `GetCount` 
+# /
 #            `Delete` / `EvaluateAll` 逐条核过）
-#         ② `C:\swapi\types\IEquationMgr\*.md`（参数名 + **`Add` 已 Obsolete** + 字符串格式 Remarks）
+# ② `C:\swapi\types\IEquationMgr\*.md`（参数名 + **`Add` 已 Obsolete** + 字符串格式 Rema
+# rks）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ⚠ 等级 `stitched`：**无本机运行证据**，不得标 `verified`。

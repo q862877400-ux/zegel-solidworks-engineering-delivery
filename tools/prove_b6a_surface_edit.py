@@ -6,9 +6,11 @@
 # 定位:   ★ 2026-10-03（轮 473）★ 给 `scripts/sw_surface_edit_ops.py` 留真机证据。
 #
 #   ★ 结构照抄本仓**已被真机验证过**的两个骨架：
-#     · `tools/prove_b1_sketch_primitives.py`（★ `sw, _ = connect_solidworks(wait_seconds=30)` ·
+# · `tools/prove_b1_sketch_primitives.py`（★ `sw, _ = connect_solidworks(wait_seconds=30
+# )` ·
 #       **每个用例一个新文档** · 用本仓包装不裸调 · **判据 = 几何/树读数**）
-#     · `tools/prove_b4_sketch_modify.py`（★ 判据分级：量到了算量到，量不到就写 `no_exception`）
+# · `tools/prove_b4_sketch_modify.py`（★ 判据分级：量到了算量到，量不到就写 `no_exceptio
+# n`）
 #
 #   ★★ **判据 = 特征树增量**（★ 本批 3/5 的官方返回是 `void` 或 `bool` 不可信，事实 8）
 #     ⇒ ★ 用 `FeatureManager.GetFeatureCount(True)` + `FeatureByPositionReverse` 取叶子名，

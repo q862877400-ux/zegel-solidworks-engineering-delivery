@@ -9,7 +9,8 @@
 #     而「没有回读」**不等于**「一定会说谎」：★ 属性赋值若**要么成功要么抛**，
 #     那 `return True` 就是**对的**（★ 我的判据在这里会出假阳性）。
 #   ⇒ ★★★ **故本探针逐个真机验**：★ 调它 → **回读那个属性** → 判"值真的变了吗" ✓
-#     ★ 变了 = `return True` 是**诚实的**；★ 没变而回 True = **会说谎**（同 `set_view_scale`）✓
+# ★ 变了 = `return True` 是**诚实的**；★ 没变而回 True = **会说谎**（同 `set_view_scale`
+# ）✓
 #   ⚠ 只挑**安全可逆**的（★ 不碰 Costing / Simulation / 几何）：
 #     `CommandInProgress` · `EnableSelection` · `SelectionColor` · `EnableContourSelection`
 # 官方依据: 各成员在 `C:\\swapi\\types\\` 的签名（★ 属性 vs 方法）。
@@ -57,7 +58,9 @@ def main() -> int:
                 setter(v)
                 obs.append({"asked": v, "read_back": str(read(obj, prop))[:40]})
             row["obs"] = obs
-            #: \u2605 \u5224\uff1a\u2605 \u81f3\u5c11\u6709\u4e00\u6b21**\u8bfb\u56de\u4e0e\u8bf7\u6c42\u5bf9\u5e94**\uff08\u2605 \u800c\u4e0d\u662f\u6ca1\u53d8\uff09
+            #: \u2605 \u5224\uff1a\u2605 \u81f3\u5c11\u6709\u4e00\u6b21**\u8bfb\u56de\u4
+            #: e0e\u8bf7\u6c42\u5bf9\u5e94**\uff08\u2605 \u800c\u4e0d\u662f\u6ca1\u53d8\
+            #: uff09
             #: ★ ★ 2026-10-03（轮 468）**修我自己判据的一个 bug**：原来拿
             #:   `str(asked).lower() != str(read_back).lower()` 比较 ⇒ ★ 而 COM 回的是
             #:   `True` / `False`（首字母大写）而字典里存的是字符串
@@ -76,13 +79,15 @@ def main() -> int:
             row["verdict"] = "\u8bda\u5b9e" if row["changed"] else "**\u4f1a\u8bf4\u8c0e**"
         except Exception as e:                                    # noqa: BLE001
             row["err"] = "%s: %s" % (type(e).__name__, str(e)[:110])
-            #: \u2605 \u629b\u4e86\uff1d**\u4e0d\u9759\u9ed8** \u21d2 \u2605 \u90a3\u4e5f\u662f\u8bda\u5b9e\u7684\uff08\u2605 \u53ea\u662f\u96be\u7528\uff09
+            #: \u2605 \u629b\u4e86\uff1d**\u4e0d\u9759\u9ed8** \u21d2 \u2605 \u90a3\u4e5
+            #: f\u662f\u8bda\u5b9e\u7684\uff08\u2605 \u53ea\u662f\u96be\u7528\uff09
             row["verdict"] = "\u629b\u9519\uff08\u8bda\u5b9e\u4f46\u96be\u7528\uff09"
         ev["items"].append(row)
         print("  %-30s %-22s %s" % (label, row["verdict"], str(row.get("obs") or row.get("err") or "")[:76]))
         return row
 
-    #: \u2460 ISldWorks.CommandInProgress\uff08\u2605 \u94c1\u5f8b 2 \u91cc\u6700\u5e38\u7528\u7684\u90a3\u4e2a\uff09
+    #: \u2460 ISldWorks.CommandInProgress\uff08\u2605 \u94c1\u5f8b 2 \u91cc\u6700\u5e38\
+    #: u7528\u7684\u90a3\u4e2a\uff09
     one("CommandInProgress", sw, "CommandInProgress",
         lambda v: AK.enter_command_lock(sw) if v else AK.exit_command_lock(sw),
         [True, False])

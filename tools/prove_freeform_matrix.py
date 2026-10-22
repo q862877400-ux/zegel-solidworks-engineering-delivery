@@ -7,7 +7,8 @@
 #
 #   ★★ **矩阵的设计依据**（★ 每一条都从官方 md 的原文推出来，★ 不凭空铺）：
 #     · `InsertFreeform2(Nsided, Symmetric0, Symmetric1, Angle)`：
-#       ★ `Nsided` 官方逐字「**True to use the new Freeform algorithm, false to use the old one**」
+# ★ `Nsided` 官方逐字「**True to use the new Freeform algorithm, false to use the old on
+# e**」
 #         ⇒ ★ **故它有两个值可试**（★ 而"新算法"未必在本机可用）⚠
 #     · `SetFreeformBoundaryContinuity(BoundaryIndex, Continuity)`：
 #       ★ 官方给了取值表：`-1 = Movaeable`（★ 原文拼写）· `0 = Contact` · ★ 而上轮只试了 `-1`
@@ -108,12 +109,14 @@ def main() -> int:
                    "`Nsided` \u6709\u4e24\u4e2a\u503c\uff08\u65b0/\u65e7\u7b97\u6cd5\uff09\u00b7 "
                    "`Direction` \u53d6 0 \u6216 1 \u00b7 `Continuity` \u53d6\u503c\u8868 -1/0/1/2",
           "cases": []}
-    #: \u2605 \u77e9\u9635\uff1a`Nsided` \u00d7 `Continuity`\uff08\u2605 \u800c `Direction` \u53d6 0\uff09
+    #: \u2605 \u77e9\u9635\uff1a`Nsided` \u00d7 `Continuity`\uff08\u2605 \u800c `Directi
+    #: on` \u53d6 0\uff09
     for nsided in (True, False):
         for cont in (-1, 0, 1, 2):
             ev["cases"].append(_one(sw, "\u2605 Nsided=%-5s \u00b7 Continuity=%s" % (nsided, cont),
                                     nsided=nsided, continuity=cont, direction=0))
-    #: \u2605 \u800c `Direction=1` \u4e0e\u201c\u591a\u6761\u66f2\u7ebf\u201d\u5404\u4e00\u683c
+    #: \u2605 \u800c `Direction=1` \u4e0e\u201c\u591a\u6761\u66f2\u7ebf\u201d\u5404\u4e0
+    #: 0\u683c
     ev["cases"].append(_one(sw, "\u2605 Nsided=True \u00b7 Continuity=-1 \u00b7 **Direction=1**",
                             nsided=True, continuity=-1, direction=1))
     ev["cases"].append(_one(sw, "\u2605 Nsided=True \u00b7 Continuity=-1 \u00b7 **2 \u66f2\u7ebf 2 \u70b9**",

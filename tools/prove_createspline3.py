@@ -7,7 +7,8 @@
 #           线 / 曲面上的样条曲线」。
 #
 #   ★★★★★ **而本轮先把一条关系查清了**：
-#     `ISketchManager.CreateSpline2.md` 逐字：**Obsolete. Superseded by `ISketchManager::CreateSpline3`** ⚠
+# `ISketchManager.CreateSpline2.md` 逐字：**Obsolete. Superseded by `ISketchManager::Cre
+# ateSpline3`** ⚠
 #     ⇒ ★★ **故 `CreateSpline2`（我上一轮刚证的）**只是第一代****，
 #       ★ 而 `CreateSpline3` **未标废弃**、★ **且它才是"曲面上的样条"的正主** ✓
 #
@@ -16,15 +17,21 @@
 #     object CreateSpline3(object PointData, object Surfs, object Direction,
 #                          bool SimulateNaturalEnds, out object Status)      \u2190 **5 \u53c2**
 #
-#     \u2605 **2D \u6837\u6761**\uff1aPointData \u81f3\u5c11 **6 \u4e2a\u5750\u6807**\uff08\u9996\u5c3e\u4e24\u70b9\uff09\uff1b
-#        SimulateNaturalEnds = true/false\uff1b\u2605 **\u5176\u4f59\u53c2\u6570\u5168\u7ed9 `null`/`Nothing`**
-#     \u2605 **\u66f2\u9762\u4e0a\u7684\u6837\u6761**\uff1aPointData = \u4e24\u4e2a\u4ee5\u4e0a 3D \u70b9\uff1b
-#        **Surfs** = `ISurface` \u6570\u7ec4\uff1b**Direction** = `IMathVector` \u6570\u7ec4\uff1b
-#        **Status** = \u6bcf\u70b9\u7684\u72b6\u6001\u6570\u7ec4\uff08\u2605 \u4ec5 on-surface \u7528\uff09
+# \u2605 **2D \u6837\u6761**\uff1aPointData \u81f3\u5c11 **6 \u4e2a\u5750\u6807**\uff08\
+# u9996\u5c3e\u4e24\u70b9\uff09\uff1b
+# SimulateNaturalEnds = true/false\uff1b\u2605 **\u5176\u4f59\u53c2\u6570\u5168\u7ed9 `n
+# ull`/`Nothing`**
+# \u2605 **\u66f2\u9762\u4e0a\u7684\u6837\u6761**\uff1aPointData = \u4e24\u4e2a\u4ee5\u4
+# e0a 3D \u70b9\uff1b
+# **Surfs** = `ISurface` \u6570\u7ec4\uff1b**Direction** = `IMathVector` \u6570\u7ec4\uf
+# f1b
+# **Status** = \u6bcf\u70b9\u7684\u72b6\u6001\u6570\u7ec4\uff08\u2605 \u4ec5 on-surface 
+# \u7528\uff09
 #     ```
 #
 #   ★ 判据（★ 规则 6 + 事实 436）：**草图段数增加**。
-#   ⚠ 全程走 `tools/sw_guard.py`；★ 三格：2D（6 坐标）/ on-surface（曲面 + 方向）/ 对照（参数给错）。
+# ⚠ 全程走 `tools/sw_guard.py`；★ 三格：2D（6 坐标）/ on-surface（曲面 + 方向）/ 对照（
+# 参数给错）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -121,13 +128,19 @@ def _one(sw, tag, mode):
         ret = None
         try:
             if mode == "on_surface":
-                #: \u2605 **on-surface**\uff1aPointData(3D \u70b9) + Surfs + Direction + Status
+                #: \u2605 **on-surface**\uff1aPointData(3D \u70b9) + Surfs + Direction +
+                #:  Status
                 #: ★★ 2026-10-03\uff08\u8f6e 577\uff09**\u4fee\u6b63\u5165\u53e3**\uff1a
-                #:   `GetMathUtility` \u5728 **`ISldWorks`** \u4e0a\uff08\u2605 **0 \u53c2**\uff09\u3001
+                #: `GetMathUtility` \u5728 **`ISldWorks`** \u4e0a\uff08\u2605 **0 \u53c2
+                #: **\uff09\u3001
                 #:   \u2605 **\u800c\u4e0d\u5728 `IModelDoc2` \u4e0a** \u2014\u2014
-                #:   \u2605 \u4e0a\u4e00\u8f6e\u6211\u5728 doc \u4e0a\u53d6\u5b83 \u21d2 `AttributeError`\uff08**\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u3002
-                #: \u2605\u2605 **\u800c\u672c\u8f6e\u53c8\u628a\u6bcf\u4e00\u6b65\u5206\u5f00\u8bb0\u8d26** \u2014\u2014
-                #:   \u2605 \u4e0a\u4e00\u7248\u628a\u5b83\u4eec\u5305\u5728\u540c\u4e00\u4e2a `try` \u91cc \u21d2 **\u5206\u4e0d\u6e05\u662f\u54ea\u4e00\u6b65\u62a5\u7684** \u26a0
+                #: \u2605 \u4e0a\u4e00\u8f6e\u6211\u5728 doc \u4e0a\u53d6\u5b83 \u21d2 `
+                #: AttributeError`\uff08**\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u3002
+                #: \u2605\u2605 **\u800c\u672c\u8f6e\u53c8\u628a\u6bcf\u4e00\u6b65\u5206
+                #: \u5f00\u8bb0\u8d26** \u2014\u2014
+                #: \u2605 \u4e0a\u4e00\u7248\u628a\u5b83\u4eec\u5305\u5728\u540c\u4e00\u
+                #: 4e2a `try` \u91cc \u21d2 **\u5206\u4e0d\u6e05\u662f\u54ea\u4e00\u6b65
+                #: \u62a5\u7684** \u26a0
                 steps = {}
                 mv = None
                 try:
@@ -137,9 +150,13 @@ def _one(sw, tag, mode):
                     steps["GetMathUtility"] = "%s: %s" % (type(exc).__name__, str(exc)[:70])
                 v = None
                 if mv is not None:
-                    #: \u2605\u2605 2026-10-03\uff08\u8f6e 577\uff09\uff1a`CreateVector(object)` \u62a5**\u627e\u4e0d\u5230\u6210\u5458**
-                    #:   \uff08\u2605 **\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u21d2 \u2605 \u6539\u8bd5\u53cd\u5c04\u91cc\u90a3\u4e2a **`ICreateVector`**
-                    #:   \uff08\u2605 `MathVector ICreateVector(ref double ArrayDataIn)` \u2014\u2014 \u2605 \u4e0e `out_i4` \u90a3\u65cf**\u540c\u7406**\uff09
+                    #: \u2605\u2605 2026-10-03\uff08\u8f6e 577\uff09\uff1a`CreateVector(
+                    #: object)` \u62a5**\u627e\u4e0d\u5230\u6210\u5458**
+                    #: \uff08\u2605 **\u7b2c\u56db\u7c7b\u5f62\u6001**\uff09\u21d2 \u260
+                    #: 5 \u6539\u8bd5\u53cd\u5c04\u91cc\u90a3\u4e2a **`ICreateVector`**
+                    #: \uff08\u2605 `MathVector ICreateVector(ref double ArrayDataIn)` \
+                    #: u2014\u2014 \u2605 \u4e0e `out_i4` \u90a3\u65cf**\u540c\u7406**\u
+                    #: ff09
                     for nm in ("CreateVector", "ICreateVector"):
                         try:
                             v = C.call_com_member(mv, nm, _arr([0.0, 0.0, -1.0]))
@@ -156,11 +173,13 @@ def _one(sw, tag, mode):
                                            _arr([v, v], pythoncom.VT_DISPATCH),
                                            False, _byref())
             elif mode == "2d":
-                #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807\uff1b\u2605 \u5176\u4f59\u53c2\u6570 **null**
+                #: \u2605 **2D**\uff1a\u81f3\u5c11 6 \u4e2a\u5750\u6807\uff1b\u2605 \u51
+                #: 76\u4f59\u53c2\u6570 **null**
                 ret = C.get_com_member(sm, "CreateSpline3",
                                        _arr(PTS_2D), None, None, False, _byref())
             else:
-                #: \u2605 \u5bf9\u7167\uff1a\u2605 \u53c2\u6570\u7ed9**\u9519**\uff08\u2605 \u628a 2D \u7684\u5750\u6807\u7ed9\u6210\u4e00\u4e2a\u70b9\uff09
+                #: \u2605 \u5bf9\u7167\uff1a\u2605 \u53c2\u6570\u7ed9**\u9519**\uff08\u2
+                #: 605 \u628a 2D \u7684\u5750\u6807\u7ed9\u6210\u4e00\u4e2a\u70b9\uff09
                 ret = C.get_com_member(sm, "CreateSpline3",
                                        _arr([0.0, 0.0, 0.0]), None, None, False, _byref())
             row["returned"] = type(ret).__name__ if ret is not None else "None"

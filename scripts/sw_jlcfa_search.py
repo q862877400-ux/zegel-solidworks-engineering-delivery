@@ -120,7 +120,8 @@ def search(hwnd: int, win, code: str, log=S.log):
             log("      ValuePattern 与键盘都不可用")
             return False
         S.click((er.left + er.right) // 2, (er.top + er.bottom) // 2, 0.5)
-        # ⚠ 2026-10-01 轮 62：原来逐字符裸 `keybd_event`（按下 → sleep → 抬起，无 `finally`）
+        # ⚠ 2026-10-01 轮 62：原来逐字符裸 `keybd_event`（按下 → sleep → 抬起，无 `final
+        # ly`）
         #   ⇒ 中途异常会把**那个字符键卡在按下态**。⇒ 改走 `sw_gui_input._press`。
         import win32api
         from scripts import sw_gui_input as _gi

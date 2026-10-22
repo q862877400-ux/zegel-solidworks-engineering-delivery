@@ -47,7 +47,8 @@ def _specs_by_tool() -> dict:
         for m in re.finditer(r'name="(solidworks_[a-z0-9_]+)"', t):
             out.setdefault(m.group(1), {"file": f.name, "has_pre_call": False,
                                         "has_param_alias": False, "params": []})
-        #: ★ 粗略取该文件里的 spec 块（★ 够用于"有没有 pre_call / param_alias"这两个布尔）
+        #: ★ 粗略取该文件里的 spec 块（★ 够用于"有没有 pre_call / param_alias"这两个布尔
+        #: ）
         for blk in re.split(r"ToolSpec\(", t)[1:]:
             nm = re.search(r'name="(solidworks_[a-z0-9_]+)"', blk)
             if not nm:

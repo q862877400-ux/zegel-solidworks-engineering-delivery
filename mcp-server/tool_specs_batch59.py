@@ -1,19 +1,27 @@
-# ── 24h 计划 v2 · 段 6：**导出**（本批只注册一条）──────────────────────────────────────
-# ★★★★ 2026-10-03（轮 403）来源：`tools/triage_real_gaps.py` 的五层证据给出 `sw_export` 的 5 条「该挂」，
+# ── 24h 计划 v2 · 段 6：**导出**（本批只注册一条）─────────────────────────────────────
+# ─
+# ★★★★ 2026-10-03（轮 403）来源：`tools/triage_real_gaps.py` 的五层证据给出 `sw_export` 
+# 的 5 条「该挂」，
 #   ★ **逐个核过**（★ 不靠再加弱规则）：
-#     · `export_to_bmp`  ⇒ ★ **不是缺口** —— 已由 `export_bmp_report`（工具 `solidworks_export_bmp`）
+# · `export_to_bmp`  ⇒ ★ **不是缺口** —— 已由 `export_bmp_report`（工具 `solidworks_expo
+# rt_bmp`）
 #                          覆盖，★ 只是**基础名不同**（`export_bmp` vs `export_to_bmp`）。
-#     · `batch_export` / `set_mass_property_override` ⇒ ★ 各自需要 `sw_app` 注入 / COM 前置链 ⇒ **后批**。
+# · `batch_export` / `set_mass_property_override` ⇒ ★ 各自需要 `sw_app` 注入 / COM 前置
+# 链 ⇒ **后批**。
 #
-# ★★ **本批的 `export_image` 真机 PASS**（`exists=true` · `size_bytes=67997` · `grew_or_created=true`）
+# ★★ **本批的 `export_image` 真机 PASS**（`exists=true` · `size_bytes=67997` · `grew_or_
+# created=true`）
 #   —— ★ 而它**之所以能成，是因为本轮真机先抓到一个真 bug 并修掉了**：
 #   ★★ `export_to_image` 里用了 `out_i4()`（本项目的**标量出参包装**），
-#   ★ 而 `sw_export.py` **漏了导入它** ⇒ 一调就 `NameError: name 'out_i4' is not defined`。
-#   ★★ **静态语法门禁抓不到**（那是**运行期**的 NameError）—— ★ 而这也正是它**一直没被挂成工具**的原因：
+# ★ 而 `sw_export.py` **漏了导入它** ⇒ 一调就 `NameError: name 'out_i4' is not defined`
+# 。
+# ★★ **静态语法门禁抓不到**（那是**运行期**的 NameError）—— ★ 而这也正是它**一直没被挂成
+# 工具**的原因：
 #     ★ **谁碰谁崩**。★ 已补 `from sw_connect import … out_i4`。
 #
 # ★★ **`export_flat_pattern_dxf` 本批不注册**：★ 它的前置是**钣金件**，
-#   而真机在**非钣金件**上得到的是**正确的显式拒绝**（`ValueError: 导出展开 DXF 前必须先保存钣金零件`）
+# 而真机在**非钣金件**上得到的是**正确的显式拒绝**（`ValueError: 导出展开 DXF 前必须先保
+# 存钣金零件`）
 #   ⇒ ★ 按硬约束⑥「**验不过的回退、不许留在柜台上**」**不注册**；
 #   ★ 而**包装与探针保留**（★ 下次先造一个钣金件即可接上）。
 #

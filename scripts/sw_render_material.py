@@ -194,7 +194,8 @@ def create_render_material(model, name: str, spec: RenderMaterialSpec):
     material = get_com_member(extension, "CreateRenderMaterial", str(name))
     if material is None:
         raise RuntimeError(f"CreateRenderMaterial({name!r}) 未返回对象")
-    #: ★★★★ 2026-10-02（轮 373）**先绑 `.p2m`** —— 没有它，后面 `Add…` 会「回 true 而清单不增」。
+    #: ★★★★ 2026-10-02（轮 373）**先绑 `.p2m`** —— 没有它，后面 `Add…` 会「回 true 而清
+    #: 单不增」。
     #:   ★ 真机证据（四轮收窄，known-facts 287→290）：设了 `FileName` 之后
     #:   `GetMaterialIds` 才回 `id1=6`、`GetRenderMaterialsCount2` 才回 **2**；
     #:   而不设时两者分别是 `None` 与 `0`（★ 而 `Add…` 两种情况下**都回 true**）。
@@ -209,8 +210,10 @@ def create_render_material(model, name: str, spec: RenderMaterialSpec):
     for key, value in (spec.extra or {}).items():
         #: ★★★★ 2026-10-02（轮 367）**这一处漏了**：本轮之前这里是
         #:   `get_com_member(material, str(key), float(value))` —— ★★ **那是"取或调"**
-        #:   （★ 事实 227）⇒ **属性值不是可调用对象** ⇒ `TypeError: 'float' object is not callable`。
-        #: ★ 前人（轮 319）修了 **11 处**同类，**而这一处漏了** —— ★ 与 `add_force` / `add_torque`
+        #: （★ 事实 227）⇒ **属性值不是可调用对象** ⇒ `TypeError: 'float' object is not 
+        #: callable`。
+        #: ★ 前人（轮 319）修了 **11 处**同类，**而这一处漏了** —— ★ 与 `add_force` / `a
+        #: dd_torque`
         #:   那次（轮 349：修 `add_torque` 时漏了 `add_force`）**同一个形态**：
         #:   ★★ **"修了一处、漏了同类"**。
         set_com_member(material, str(key), float(value))
@@ -237,13 +240,15 @@ def create_render_material(model, name: str, spec: RenderMaterialSpec):
 #   ★★ 真机对照（`tools/probe_render_material_family.py` ·
 #     `output/render-material-family-evidence.json`）：
 #       · 旧 `AddRenderMaterial(mat, out)`          ⇒ ★ **能调（True）**
-#       · 新 `AddDisplayStateSpecificRenderMaterial(mat, 2, 空VARIANT, out, out)` ⇒ ★ **能调（True）** ✓
+# · 新 `AddDisplayStateSpecificRenderMaterial(mat, 2, 空VARIANT, out, out)` ⇒ ★ **能调（
+# True）** ✓
 #     ⇒ ★★★ **新的能调 ⇒ 换** ✓
 #   ★ 出参两个 id 本模块**不使用**（旧版也只用了一个），故仍不据此判成败。
 # ⚠ UpdateRenderMaterialsInSceneGraph 的 Boolean 语义未查到
 #   （两套官方源都未给参数说明），故默认传 True 并在此显式标注为待确认。
 # ────────────────────────────────────────────────────────────────────
-#: ★ 官方枚举 `swDisplayStateOpts_e` 的「所有显示状态」（★ `C:\swapi\enums\swDisplayStateOpts_e.md`）
+#: ★ 官方枚举 `swDisplayStateOpts_e` 的「所有显示状态」（★ `C:\swapi\enums\swDisplayStat
+#: eOpts_e.md`）
 SW_ALL_DISPLAY_STATE = 2
 
 
@@ -357,12 +362,14 @@ def delete_render_material(model, index: int, cascade: bool = False) -> bool:
 # ────────────────────────────────────────────────────────────────────
 # ★★★★★ 2026-10-04（接手轮）**记档：`AdvancedGraphics` 官方明写**无后继****
 #   处置阶段 2 · T1 · ★（★ **T1 的最后一条**）✓
-#   ★ **官方逐字**（★ `C:\swapi\types\IMaterialVisualPropertiesData\AdvancedGraphics.md`）：
+# ★ **官方逐字**（★ `C:\swapi\types\IMaterialVisualPropertiesData\AdvancedGraphics.md`）
+# ：
 #     > ★ 「**Obsolete. Not superseded.**」✓
 #     ★ 签名：★ `System.bool AdvancedGraphics {get; set;}` ⇒ ★ **属性**（★ 不是方法）✓
 #     ★★ 而 `## Returns` 逐字：★ 「True if the part is displayed with **shaded textures**,
 #       false if not」✓
-#     ★★★ 而 `## See Also` 逐字点名了 ★ **`IMaterialVisualPropertiesData::RealView Property`** ⇒
+# ★★★ 而 `## See Also` 逐字点名了 ★ **`IMaterialVisualPropertiesData::RealView Property`
+# ** ⇒
 #       ★ **那可能是"该往哪走"的线索**（★ 但**官方没说**它是后继）✓
 #   ★★ **⇒ 处置：★ 记档保留** —— ★ 官方说「**Not superseded**」⇒
 #     ★★★ **没有"新的一代"可换**（★ 与 `AutoDimension2` 那条"有后继但没验出来"**不同类**）✓
@@ -440,18 +447,23 @@ def collect_appearance_evidence(model) -> dict[str, Any]:
     }
 
 
-# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**显示状态**（读 + 激活）──────────────────
+# ── 规格 209（规格 207 的 18 条采纳候选 · B1 批）：**显示状态**（读 + 激活）───────────
+# ───────
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
-# 文件:   scripts/sw_render_material.py —— 追加 `list_display_states` / `apply_display_state`
+# 文件:   scripts/sw_render_material.py —— 追加 `list_display_states` / `apply_display_s
+# tate`
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批** · 外部项目 idx **97 `display
 #           _states`**。
 #   ★ 裁决书（`docs/recon-207/adjudication.md` §一 / §五）给的落点与理由：
-#   「读侧落 `sw_render_material.py`（那一族已摸过，**事实 286 真机 PASS**）；显示状态与外观 ID
+# 「读侧落 `sw_render_material.py`（那一族已摸过，**事实 286 真机 PASS**）；显示状态与外
+# 观 ID
 #    是同一条链」✓ ★ 且「一次真机可拿全 L1–L4」✓
 # 官方依据 （★ 铁律 4：`C:\swapi` 逐页读过）：
-#   · `C:\swapi\types\IConfiguration\GetDisplayStates.md` —— `System.object GetDisplayStates()`
-#     ★★ `## Remarks` 逐字 ①：「The **first name in the list is the active display state**.」
+# · `C:\swapi\types\IConfiguration\GetDisplayStates.md` —— `System.object GetDisplayStat
+# es()`
+# ★★ `## Remarks` 逐字 ①：「The **first name in the list is the active display state**.
+# 」
 #     ★★ ②：「**If more than one display state is active in the current model**, call
 #       `IComponent2::ReferencedDisplayState` to obtain the active display state for each
 #       component in the model that references this configuration.」
@@ -463,14 +475,16 @@ def collect_appearance_evidence(model) -> dict[str, Any]:
 #   · `C:\swapi\types\IConfigurationManager\ActiveConfiguration.md` —— ★★ **不是**
 #     `IModelDoc2::GetActiveConfiguration`（那一页逐字写着 **Obsolete. Superseded by
 #     `IConfigurationManager::ActiveConfiguration`**）⇒ 本函数走**后继**✓
-#   · `C:\swapi\enums\swDocumentTypes_e.md` —— `swDocPART=1` · `swDocASSEMBLY=2` · `swDocDRAWING=3`
+# · `C:\swapi\enums\swDocumentTypes_e.md` —— `swDocPART=1` · `swDocASSEMBLY=2` · `swDocD
+# RAWING=3`
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   后续同级定义
 # ─────────────────────────────────────────────────────────────────────────────
 # ★★★ **裁决书点名的硬约束（照做，否则会做出静默错的东西）**：
 #   「官方逐字「第一个名字是活动显示状态」**只在单配置、无引用显示状态时干净**
 #    ⇒ 输出**必须带 `ambiguous` 标记**，**不许替调用方猜**」✓
-#   ⇒ ★ 本模块的 `ambiguous` 判据**只取官方那句的条件本身**：**装配文档**（`swDocASSEMBLY=2`）
+# ⇒ ★ 本模块的 `ambiguous` 判据**只取官方那句的条件本身**：**装配文档**（`swDocASSEMBLY=
+# 2`）
 #     —— ★ 因为只有装配里的组件才会"引用配置"（官方原话 "each component in the model that
 #     **references this configuration**"）⇒ ★ 装配里"第一个即活动"**不保证成立** ✓
 #     ★ **零件 / 工程图**：官方那句的条件不出现 ⇒ `ambiguous=False`（★ 事实 286 的零件实测

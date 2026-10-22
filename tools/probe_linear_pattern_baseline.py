@@ -15,7 +15,8 @@
 #     ```
 #   ★★ **⇒ 调用序与两个 mark 都在示例里**（★ 签名与 Remarks 都给不全）✓
 #   ★★★ **与 Remarks 的关系**：★ Remarks 说 `4 to mark the features to pattern`、
-#     ★★ **而示例对 `SOLIDBODY` 用 `256`** ⇒ ★ **两种 mark 都对、★ 取决于选的是特征还是体** ✓
+# ★★ **而示例对 `SOLIDBODY` 用 `256`** ⇒ ★ **两种 mark 都对、★ 取决于选的是特征还是体** 
+# ✓
 #   ★★★★ **为什么要这个探针**：★ 上一轮真机上**四条形态全没建成**（★ **含基线**）⇒
 #     ★★ **本仓的"阵列"这条链**从未真机验证过** ⇒ ★ **先补基线、★ 再谈换代** ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -82,7 +83,8 @@ def main() -> int:
             #: ★★★ 官方调用序第 1 步 ✓
             get_com_member(model, "ClearSelection2", True)
             #: ★★★★ 官方调用序第 2 步：★ **方向用 `mark=1`** ✓
-            #:   示例用的是 `("", "EDGE", <点>)` —— ★ 本处换成**按面上的点选**（★ 事实 32：
+            #: 示例用的是 `("", "EDGE", <点>)` —— ★ 本处换成**按面上的点选**（★ 事实 32
+            #: ：
             #:   按名字选边**不行**）⇒ 但示例那样写在它那个模型上是成的 ⇒ **两种都试** ✓
             sel["dir_by_point"] = bool(get_com_member(
                 ext, "SelectByID2", "", "EDGE", -0.05, 0.0, 0.0, True, 1,
@@ -91,10 +93,12 @@ def main() -> int:
             sel["dir_by_point"] = "err: %s" % str(exc)[:60]
         try:
             #: ★★★★★ 官方调用序第 3 步：★ **要阵列的体用 `mark=256`**（★ 示例逐字）✓
-            #:   ★★ 而 `SOLIDBODY` 的"名字"—— ★ 真机物没有名字 ⇒ ★ **按对象选**（★ 事实 32）✓
+            #: ★★ 而 `SOLIDBODY` 的"名字"—— ★ 真机物没有名字 ⇒ ★ **按对象选**（★ 事实 32
+            #: ）✓
             #:   ★★★ **⚠ 选实体的成员是 `IBody2::Select`、★ 不是 `Select4`** ——
             #:     ★ 官方逐字（★ `C:\swapi\types\IBody2\Select.md`）：
-            #:       ★ `System.bool Select( System.bool Append, System.int Mark )` ⇒ **2 参、带 Mark** ✓
+            #: ★ `System.bool Select( System.bool Append, System.int Mark )` ⇒ **2 参、
+            #: 带 Mark** ✓
             #:     ★★ 而 `Select2(Append, SelectData)` 要一个 `SelectData` 对象 ✓
             #:     ⇒ ★★★ **我第一版写的 `Select4` 报 `err: GetBodies2.Select4`** ——
             #:       ★★ **那是"我调错了成员"、★ 不是"实体选不了"**（★ 事实 517 第 N 次）✓

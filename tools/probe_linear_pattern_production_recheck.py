@@ -1,7 +1,8 @@
 """★ 真机复验：★ 换代后**生产函数 `linear_pattern`** 还能不能建成（★ 阶段 2 · T1 · 改完必验）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身。
-# 文件:   `scripts/sw_part.py::linear_pattern`（★ 生产 · ★ 刚换成 `FeatureLinearPattern5`）
+# 文件:   `scripts/sw_part.py::linear_pattern`（★ 生产 · ★ 刚换成 `FeatureLinearPattern5
+# `）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 本探针调**生产函数本体**、
 #   ★★ 而**不是**我在探针里另写一遍调用（★ 否则验的是探针、★ 不是代码）✓
 #   ★★★ **判据（★ 本仓原有）**：★ `feature_names` 增量 ⇒ 新特征名 ✓
@@ -46,7 +47,8 @@ def main() -> int:
     d2 = bool(bodies[0].Select(True, 256)) if bodies else None
 
     before = feature_names(model)
-    #: ★★ 签名逐字：★ `(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count, …)` ✓
+    #: ★★ 签名逐字：★ `(model, feature_name, d1_x, d1_y, d1_z, d1_spacing, d1_count, …)`
+    #:  ✓
     result = P.linear_pattern(model, str(before[-1]) if before else "",
                               1.0, 0.0, 0.0, 20.0, 2)
     after = feature_names(model)

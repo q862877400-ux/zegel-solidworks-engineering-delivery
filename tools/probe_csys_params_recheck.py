@@ -1,6 +1,7 @@
 """★ 真机验 `csys_params`（★ 阶段 3 补能力 · 第 7 个 · 第 6 个族）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ICoordinateSystemFeatureData\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ICoordinateSystemFeatur
+# eData\`）
 # 文件:   `scripts/sw_feature_readback.py::csys_params`（★ 刚补的能力）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **前置签名**（★ **先在仓里搜出来的** —— ★ 而这次我**第一版又猜错了**：★ 猜成
@@ -8,7 +9,8 @@
 #     attribute 'insert_coordinate_system'`）⇒ ★★★ **真位置是**另一个模块****：
 #     ★ `scripts/sw_ref_geometry.py::insert_coordinate_system(model, x_flipped=False,
 #       y_flipped=False, z_flipped=False)` ✓
-#     ★★★★ **⇒ 这是那条判据的**第 5 次**生效**（★ 前 4 次：`hole_wizard` · `GetFeatureByName` ·
+# ★★★★ **⇒ 这是那条判据的**第 5 次**生效**（★ 前 4 次：`hole_wizard` · `GetFeatureByName
+# ` ·
 #       `fillet` 的参序 · 本次**跨模块**）✓
 #   ★★★ **判据（★ 对官方逐字）**：
 #     ★ 建一个坐标系 ⇒ ★ `GetOriginEntityType()` ⇒ ★ **一个 int**（★ `swSelectType_e`）·

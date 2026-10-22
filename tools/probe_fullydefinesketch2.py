@@ -39,7 +39,8 @@ OUT = REPO / "output" / "fullydefinesketch2-probe-evidence.json"
 #: ★ 官方枚举逐字（★ `swSketchFullyDefineRelationType_e.md`）：
 #:   `_Equal` = 1 · `_Horizontal` = 2 · `_Tangent` = 8 · `_Perpendicular` = 16 ·
 #:   `_Colinear` = 32 · `_Concentric` = 64 · `_Parallel` = 128 · `_Midpoint` = 256 ·
-#:   `_Coincident` = 512 ⇒ ★ **Vertical 不在我读到的前 9 行里**（★ 页里 `enum_member_count: 10`）
+#: `_Coincident` = 512 ⇒ ★ **Vertical 不在我读到的前 9 行里**（★ 页里 `enum_member_count
+#: : 10`）
 REL_H, REL_V = 2, 4                      #: ★ 那是 **mark**；关系值另外查
 
 
@@ -105,7 +106,8 @@ def main() -> int:
         mark = REL_H | REL_V
         sel = None
         if with_origin:
-            #: ★★ **官方逐字**：★ 选 `Point1@Origin`（`EXTSKETCHPOINT`）、★ **mark = 2|4 = 6** ✓
+            #: ★★ **官方逐字**：★ 选 `Point1@Origin`（`EXTSKETCHPOINT`）、★ **mark = 2|4
+            #:  = 6** ✓
             ext = get_com_member(model, "Extension")
             try:
                 sel = get_com_member(ext, "SelectByID2", "Point1@Origin", "EXTSKETCHPOINT",

@@ -47,7 +47,8 @@ def main() -> int:
         a.modules = [m for m, _ in mods.most_common()]
     print("★ 本批涉及的实现模块:", a.modules)
 
-    #: ★ 把能力条目与模块对上：看它的 `mcp_tools` / `evidence` / `source_evidence` 里有没有该模块
+    #: ★ 把能力条目与模块对上：看它的 `mcp_tools` / `evidence` / `source_evidence` 里有
+    #: 没有该模块
     hit: dict = {}
     for c in caps:
         blob = json.dumps(c, ensure_ascii=False)

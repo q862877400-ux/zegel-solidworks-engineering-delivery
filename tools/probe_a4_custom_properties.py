@@ -1,7 +1,8 @@
 """★ 真机补 `custom_properties_and_bom` 的运行证据（★ A4 的待补项）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身。
-# 文件:   `scripts/sw_document_data.py::set_custom_properties` / `read_custom_property` ·
+# 文件:   `scripts/sw_document_data.py::set_custom_properties` / `read_custom_property` 
+# ·
 #         `scripts/sw_connect.py`（`new_document`）
 # 定位:   ★ **为什么另写一个**：★ 轮 55 那个 `tools/probe_a4_runtime_evidence.py` **读
 #           错了键** ——
@@ -57,7 +58,8 @@ def main() -> int:
             "readback_exists": rb.get("exists"),
         }
 
-    #: ★★★ **独立回读**（★ 本探针**自己**再调一次，★ 不用 `set_custom_properties` 的回读）✓
+    #: ★★★ **独立回读**（★ 本探针**自己**再调一次，★ 不用 `set_custom_properties` 的回读
+    #: ）✓
     independent = {}
     for k in WANT:
         rr = D.read_custom_property(model, k)

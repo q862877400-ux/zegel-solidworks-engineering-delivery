@@ -187,7 +187,8 @@ def feature_readback(model, feature_name: str, *, do_rebuild: bool = True) -> di
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`
+# ）
 # 文件:   `scripts/sw_feature_readback.py::extrude_depth`（★ 新增）
 # 定位:   ★ 阶段 3（T2 缺口地图）⇒ ★★ 密度图算出 **查 × 特征 = 官方 451 · 我们 0** ⇒
 #   ★★★ 而那一格实际有 **1008 个成员 / 174 个族**（★ 现算）⇒ ★ 本函数是**第一个** ✓
@@ -236,11 +237,14 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
             #:     逐字见 `sw_assembly.py` L267 与 `sw_sweep.py` L165
             #:     （★ 后者还写明了「★ `IModelDoc2.FeatureByName(name)`（**方法**）」）✓
             #:   ★★★★ **可复用判据**：★★★ **"一个存在但没人用的守卫与没有守卫等价"**
-            #:     （★ 事实 40 那一族）—— ★★ **而这里反过来：★ 门禁**确实抓到了一个真错**** ✓
-            #:     ⇒ ★ **写新 COM 调用前，先在仓里搜**同名成员怎么用的**（★ 本仓 27 处现成例子）✓
+            #: （★ 事实 40 那一族）—— ★★ **而这里反过来：★ 门禁**确实抓到了一个真错**** 
+            #: ✓
+            #: ⇒ ★ **写新 COM 调用前，先在仓里搜**同名成员怎么用的**（★ 本仓 27 处现成例
+            #: 子）✓
             feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
         if feat is None:
-            #: ★ 兜底：★ 找**第一个**「凸台-拉伸」特征（★ 中文 UI 名含「凸台」、★ 也认 `Extrusion` 型）
+            #: ★ 兜底：★ 找**第一个**「凸台-拉伸」特征（★ 中文 UI 名含「凸台」、★ 也认 `
+            #: Extrusion` 型）
             f = safe_get_com_member(model, "FirstFeature")
             while f is not None:
                 try:
@@ -270,7 +274,8 @@ def extrude_depth(model, feature_name: str = "", *, forward: bool = True) -> dic
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IExtrudeFeatureData2\`
+# ）
 # 文件:   `scripts/sw_feature_readback.py::extrude_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力（★ `查 × 特征` 那一格）⇒ ★ 本函数是**第二个** ✓
 #   ★★ **官方逐字（★ 逐个成员读的 `## Returns`）**：
@@ -353,12 +358,14 @@ def extrude_params(model, feature_name: str = "") -> dict:
     return out
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureData\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ILinearPatternFeatureDa
+# ta\`）
 # 文件:   `scripts/sw_feature_readback.py::pattern_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ 本函数是**第三个** ✓
 #   ★★ **换了一个族**（★ 前两个都在 `IExtrudeFeatureData2`）⇒ ★ 覆盖面扩大 ✓
 #   ★★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
-#     · ★★ **`D1Spacing` / `D2Spacing`** ⇒ 「Distance **in meters** between pattern instances」
+# · ★★ **`D1Spacing` / `D2Spacing`** ⇒ 「Distance **in meters** between pattern instance
+# s」
 #       ⇒ ★★★ **官方**明写米**** ✓
 #     · ★ `D1TotalInstances` / `D2TotalInstances` ⇒ ★ `int`（★ 实例数）✓
 #     · ★ `GetPatternFeatureCount()` ⇒ 「Number of **seed features**」✓
@@ -441,10 +448,12 @@ def pattern_params(model, feature_name: str = "") -> dict:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IWizardHoleFeatureData2\\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IWizardHoleFeatureDa
+# ta2\\`）
 # 文件:   `scripts/sw_feature_readback.py::hole_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第四个**、★ **第三个族** ✓
-#   ★★ **这一族的官方 `## Returns` **没写单位****（★ 逐个读都是「Hole diameter」这种光名字）⇒
+# ★★ **这一族的官方 `## Returns` **没写单位****（★ 逐个读都是「Hole diameter」这种光名字
+# ）⇒
 #     ★★★ **铁律 5：★ 单位查不到 ⇒ ★ 返回值要**如实标 `unknown`**、★ 不猜** ✓
 #   ★★★ **单位口径的**第四层****（★ 本会话已见四层）：
 #     ★ ① `GetDepth` ⇒ **随文档** · ★★ ② `GetDraftAngle` ⇒ **写死 radians** ·
@@ -452,8 +461,10 @@ def pattern_params(model, feature_name: str = "") -> dict:
 #     ⇒ ★★★★★ **可复用判据**：★★★ **「没写单位」≠「随文档单位」** ——
 #       ★ 前者是**官方没说**（★ 要真机测 / 如实标未知）、★★ 后者是**实测确认过** ⇒
 #       ★★★ **两者在返回值里必须用不同的词** ✓
-#   ★★★★ **官方逐字**：★ `Type` ⇒ `swWzdHoleTypes_e` · ★ `EndCondition` ⇒ `swEndConditions_e` ·
-#     ★ `CosmeticThreadType` ⇒ `swWzdHoleCosmeticThreadTypes_e` · ★ `ThreadClass` ⇒ `1B`/`2B`/`3B` ·
+# ★★★★ **官方逐字**：★ `Type` ⇒ `swWzdHoleTypes_e` · ★ `EndCondition` ⇒ `swEndConditions
+# _e` ·
+# ★ `CosmeticThreadType` ⇒ `swWzdHoleCosmeticThreadTypes_e` · ★ `ThreadClass` ⇒ `1B`/`2B
+# `/`3B` ·
 #     ★ `GetSketchPointCount()` ⇒ 「Number of center-hole sketch points」·
 #     ★★ `FastenerType` ⇒ **已废弃** ⇒ **不读** ✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -547,8 +558,10 @@ def hole_params(model, feature_name: str = "") -> dict:
 #   ★★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
 #     · ★ `GetID()` ⇒ 「Feature ID of this feature」⇒ **unique within the document** ✓
 #     · ★ `GetFaceCount()` ⇒ 「Number of faces in this feature」✓
-#     · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e` ✓
-#     · ★ `GetMaterialIdName()` ⇒ 「Material name」· ★ `Description` / ★ `CreatedBy` ⇒ 字符串 ✓
+# · ★ `Visible` ⇒ `swVisibilityState_e` · ★ `GetEditStatus()` ⇒ `swFeatureEditStatus_e` 
+# ✓
+# · ★ `GetMaterialIdName()` ⇒ 「Material name」· ★ `Description` / ★ `CreatedBy` ⇒ 字符
+# 串 ✓
 #     · ★ `GetChildren()` ⇒ 「Array of child features」· ★ `GetParents()` ⇒ 父特征 ✓
 #     · ★★ **`GetBox(out BBox)`** ⇒ ★★★ **官方 `## Remarks` 逐字**：
 #       「**IMPORTANT:** The values returned are **approximate** and **should not be used for
@@ -588,9 +601,11 @@ def feature_info(model, feature_name: str = "") -> dict:
             feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
         if feat is None:
             #: ★★★★★ **兜底要过**两层**过滤**（★ 我第一版只过了第二层）——
-            #:   ★ 真机回的是 **`收藏`**（★ `GetTypeName2 = FavoriteFolder`）⇒ ★★ **`GetFaceCount = 0`** ✓
+            #: ★ 真机回的是 **`收藏`**（★ `GetTypeName2 = FavoriteFolder`）⇒ ★★ **`GetFa
+            #: ceCount = 0`** ✓
             #:   ★★★ **根因**：★ `_is_real_feature` 只判"**有没有类型名**" ⇒
-            #:     而 `收藏` 的 `FavoriteFolder` **是一个类型名** ⇒ **它漏了这类"有类型名的容器"** ✓
+            #: 而 `收藏` 的 `FavoriteFolder` **是一个类型名** ⇒ **它漏了这类"有类型名的
+            #: 容器"** ✓
             #:   ★★★★ **修法**：★ **照 `feature_names()` 的**两层过滤**** ——
             #:     ① 名字不在 `_CONTAINER_NODES` 里 · ★★ ② `_is_real_feature` ✓
             #:     （★ 第一层就是 `feature_names` 早就在用的那个）✓
@@ -631,12 +646,14 @@ def feature_info(model, feature_name: str = "") -> dict:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ISimpleFilletFeatureData2\\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ISimpleFilletFeature
+# Data2\\`）
 # 文件:   `scripts/sw_feature_readback.py::fillet_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第六个**、★ **第五个族** ✓
 #   ★★ **官方逐字（★ 逐个成员的 `## Returns`）**：
 #     · ★ `DefaultRadius {get;set}` ⇒ 「Default radius of the **symmetric** fillet」✓
-#     · ★ `Type {get;}` ⇒ `swSimpleFilletType_e` · ★ `OverflowType` ⇒ `swFilletOverFlowType_e` ✓
+# · ★ `Type {get;}` ⇒ `swSimpleFilletType_e` · ★ `OverflowType` ⇒ `swFilletOverFlowType_
+# e` ✓
 #     · ★ `GetEdgeCount()` ⇒ 「Number of edges」✓
 #     · ★ `GetSetbackVerticesCount()` ⇒ 「Number of setback vertices」✓
 #     · ★ `RoundCorners` / ★ `KeepFeatures` / ★ `ConstantWidth` /
@@ -644,7 +661,8 @@ def feature_info(model, feature_name: str = "") -> dict:
 #     · ★★ `GetRadius(PFilletItem)` / ★ `GetDistance` / ★ `GetConicRhoOrRadius` ⇒
 #       ★ **要一个 item 对象**（★ 得先 `IGetFilletEdgeAtIndex`）⇒ **本函数不碰**（★ 多一步）✓
 #   ★★★ **单位口径（★ 第六层）**：★ `DefaultRadius` 的 `## Returns` **没写单位** ⇒
-#     ★★ **按铁律 5：★ 如实标 `unknown`、★ 并真机测**（★ 见 `tools/probe_fillet_params_recheck.py`）✓
+# ★★ **按铁律 5：★ 如实标 `unknown`、★ 并真机测**（★ 见 `tools/probe_fillet_params_reche
+# ck.py`）✓
 #   ★★★★ **⚠ 前置**：★ 本仓 `fillet(model, selection, radius_mm)` 需要**先选中一条边**
 #     （★ 而边没有名字 ⇒ ★ 按 `index:<n>` 选 · ★ 见已知事实 32）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -707,7 +725,8 @@ def fillet_params(model, feature_name: str = "") -> dict:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ICoordinateSystemFeatureData\\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\ICoordinateSystemFea
+# tureData\\`）
 # 文件:   `scripts/sw_feature_readback.py::csys_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第七个**、★ **第六个族** ✓
 #   ★★ **本族先逐个读官方页**（★ `output/_read_csys_members.py`）⇒
@@ -775,7 +794,8 @@ def csys_params(model, feature_name: str = "") -> dict:
                 out[name] = get_com_member(fd, name)
             except Exception as exc:                                      # noqa: BLE001
                 out[name] = "err: %s" % str(exc)[:50]
-        #: ★★★ `Transform` 是**属性**、★ 回一个**对象** ⇒ ★ 取它的 `ArrayData`（★ 16 个数）✓
+        #: ★★★ `Transform` 是**属性**、★ 回一个**对象** ⇒ ★ 取它的 `ArrayData`（★ 16 个
+        #: 数）✓
         try:
             tr = get_com_member(fd, "Transform")
             out["Transform"] = type(tr).__name__ if tr is not None else None
@@ -791,14 +811,17 @@ def csys_params(model, feature_name: str = "") -> dict:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IBaseFlangeFeatureData\\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\\swapi\\types\\IBaseFlangeFeatureDa
+# ta\\`）
 # 文件:   `scripts/sw_feature_readback.py::base_flange_params`（★ 新增）
 # 定位:   ★ 阶段 3 · 按密度图补能力 ⇒ ★ **第八个**、★ **第七个族**、★ **钣金域** ✓
 #   ★★ **官方逐字（★ 逐个成员的 `## Returns`）** ⇒ ★ **七个长度量**都没写单位****：
-#     ★ `Thickness` ⇒ 「Value for thickness」· ★ `BendRadius` ⇒ 「Value of the bend radius」·
+# ★ `Thickness` ⇒ 「Value for thickness」· ★ `BendRadius` ⇒ 「Value of the bend radius」
+# ·
 #     ★ `TableRadius` ⇒ 「Bend radius」· ★ `TableThickness` ⇒ 「Thickness」·
 #     ★ `ReliefWidth` ⇒ 「Bend relief width」· ★ `ReliefDepth` ⇒ 「Bend relief depth」 ✓
-#     ★★ （★ 与 `IWizardHoleFeatureData2` **同型** ⇒ ★ **按铁律 5：如实标 `unknown`、★ 真机测**）✓
+# ★★ （★ 与 `IWizardHoleFeatureData2` **同型** ⇒ ★ **按铁律 5：如实标 `unknown`、★ 真机
+# 测**）✓
 #   ★★★ `KFactor` / ★ `TableKFactor` / ★ `ReliefRatio` ⇒ ★ **无量纲比例** ✓
 #     ★ `ReliefType` ⇒ `swSheetMetalReliefTypes_e` · ★ `D1EndConditionType` ⇒
 #       `swFlangeOffsetTypes_e` ✓
@@ -876,7 +899,8 @@ def base_flange_params(model, feature_name: str = "") -> dict:
 
 #: ★★★★★★★ **族 → **真机打出来的**类型名**（★ 2026-10-04 轮 131 建）——
 #:   ★ **为什么要这张表**：★ 本会话**连续两轮**栽在同一处 ——
-#:     · ★ 轮 130：★ 我猜 `Revolve`、★ 而真机是 **`Revolution`**（★ `Revol`+`ution` vs `Revol`+`ve`）✗
+#: · ★ 轮 130：★ 我猜 `Revolve`、★ 而真机是 **`Revolution`**（★ `Revol`+`ution` vs `Revo
+#: l`+`ve`）✗
 #:     · ★★ 轮 131：★ 我猜 `Loft`、★ 而真机是 **`Blend`** ✗
 #:   ★★★ **⇒ 两次都是"我以为类型名该叫什么"**（★ 而那**不是知识、是猜测**）⇒
 #:     ★★ **⇒ 所以每个名字都要**有证据引用****（★ 本表每一行都指到一份 `output/*.json`）✓
@@ -886,13 +910,17 @@ def base_flange_params(model, feature_name: str = "") -> dict:
 FEATURE_TYPE_NAMES = {
     #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ `圆顶1`）
     "dome": "Dome",
-    #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ **⚠ 还没打出过真名**）
+    #: ★ 证据：★ `output/rib-dome-params-capability-recheck.json`（★ **⚠ 还没打出过真名*
+    #: *）
     "rib": "unknown（★ 未核 —— ★ 那个族至今没在真机建成过）",
-    #: ★ 证据：★ `output/sweep-params-capability-recheck.json`（★ `扫描1` ⇒ `type_name=Sweep`）
+    #: ★ 证据：★ `output/sweep-params-capability-recheck.json`（★ `扫描1` ⇒ `type_name=S
+    #: weep`）
     "sweep": "Sweep",
-    #: ★ 证据：★ `output/revolve-params-capability-recheck.json`（★ `旋转1` ⇒ `Revolution`）
+    #: ★ 证据：★ `output/revolve-params-capability-recheck.json`（★ `旋转1` ⇒ `Revolutio
+    #: n`）
     "revolve": "Revolution",
-    #: ★ 证据：★ `output/loft-params-capability-recheck.json`（★ `放样1` ⇒ `type_name='Blend'`）
+    #: ★ 证据：★ `output/loft-params-capability-recheck.json`（★ `放样1` ⇒ `type_name='B
+    #: lend'`）
     "loft": "Blend",
 }
 
@@ -921,7 +949,8 @@ def _read_feature_params(model, feature_name: str, type_substring: str,
         if feature_name:
             feat = safe_get_com_member(model, "FeatureByName", str(feature_name))
         if feat is None:
-            #: ★★ 兜底：★ 找**最后一个**该类特征 —— ★★★ **两层过滤**（★ 容器也有类型名）✓
+            #: ★★ 兜底：★ 找**最后一个**该类特征 —— ★★★ **两层过滤**（★ 容器也有类型名）
+            #: ✓
             f = safe_get_com_member(model, "FirstFeature")
             while f is not None:
                 try:
@@ -1269,12 +1298,16 @@ def loft_params(model, feature_name: str = "") -> dict:
       · ★ **`GetGuideCurvesType()`** ⇒ ★ 官方 `## Returns` 是**数组** ⇒ ★ 本函数**不读** ✓
     """
     out = _read_feature_params(
-        #: ★★★★★★★ 2026-10-04（轮 131）**真机打出来的类型名是 `Blend`、★ 不是 `Loft`** ——
+        #: ★★★★★★★ 2026-10-04（轮 131）**真机打出来的类型名是 `Blend`、★ 不是 `Loft`** —
+        #: —
         #:   ★ 真机读数：★ `create_loft_report` ⇒ `ok=True · feature_name=**放样1** ·
-        #:     **type_name='Blend'** · tree 7→8`（★ `output/loft-params-capability-recheck.json`）✓
+        #: **type_name='Blend'** · tree 7→8`（★ `output/loft-params-capability-recheck.j
+        #: son`）✓
         #:   ★★ **⇒ 而与上一轮 `Revolve` vs `Revolution` **完全同型**** ——
-        #:     ★ 而那一次我**刚记过**「先打出真名、★ 不要猜」⇒ ★★★ **⇒ 我记了、★ 却没做成机制** ✗
-        #:   ★★★ **⇒ 机制见本模块的 `FEATURE_TYPE_NAMES`**（★ 每个名字都要有**证据引用**）✓
+        #: ★ 而那一次我**刚记过**「先打出真名、★ 不要猜」⇒ ★★★ **⇒ 我记了、★ 却没做成机
+        #: 制** ✗
+        #: ★★★ **⇒ 机制见本模块的 `FEATURE_TYPE_NAMES`**（★ 每个名字都要有**证据引用**）
+        #: ✓
         model, feature_name, FEATURE_TYPE_NAMES["loft"],
         ("GetProfileCount", "GetGuideCurvesCount", "GetFeatureScopeBodiesCount",
          "IsBossFeature", "IsThinFeature",
@@ -1352,10 +1385,12 @@ def revolve_params(model, feature_name: str = "") -> dict:
       · ★ **`AccessSelections` / ★ `IAccessSelections` / ★ `ReleaseSelectionAccess`** ⇒ **前置** ✓
     """
     out = _read_feature_params(
-        #: ★★★★★★★ 2026-10-04（轮 130）**真机打出来的是 `Revolution`、★ 不是 `Revolve`** ——
+        #: ★★★★★★★ 2026-10-04（轮 130）**真机打出来的是 `Revolution`、★ 不是 `Revolve`**
+        #:  ——
         #:   ★ 真机读数：★ `["旋转1", "Revolution", **false**]` ⇒
         #:     ★★ **⇒ 那个 `false` 是 `("Revolve" in "Revolution")` 的结果** ⇒
-        #:       ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol` 后分岔）✓
+        #: ★★★ **⇒ 它竟然是 `False`**（★ `Revol`+`ution` vs ★ `Revol`+`ve` ⇒ 在 `Revol` 
+        #: 后分岔）✓
         #:   ★★★★ **⇒ 而我先前**把它写成"本该是 True"**** ⇒ ★ **那正是"我以为"** ✗
         #:   ★★★★★ **⇒ 教训**：★★★ **"我以为一个子串在里面"不可靠 ⇒ 让机器判** ✓
         model, feature_name, FEATURE_TYPE_NAMES["revolve"],
@@ -1383,17 +1418,21 @@ def revolve_params(model, feature_name: str = "") -> dict:
          #:     "thickness": **0.002**})`）⇒ ★ 特征名 **`旋转-薄壁1`**、★ 读回
          #:     `IsThinFeature = **true**` · ★ `ThinWallType = **0**` ·
          #:     ★★ **`GetWallThickness = {forward: 0.002, backward: 0.002}`** ✓
-         #:   ★★ **而体积给出**精确判据****（★ **不是粗估** —— ★ 轮廓是折线 ⇒ 积分是初等的）：
+         #: ★★ **而体积给出**精确判据****（★ **不是粗估** —— ★ 轮廓是折线 ⇒ 积分是初等的
+         #: ）：
          #:     ★ 矩形周长 2×(10+10) = **40 mm** · ★ 绕 x=0 转 30°（θ=π/6）⇒
-         #:     ★ 扫掠面积 = ∫ r·θ ds = (10+20+15+15)·10·θ = **600θ = 100π = 314.159265 mm²** ⇒
+         #: ★ 扫掠面积 = ∫ r·θ ds = (10+20+15+15)·10·θ = **600θ = 100π = 314.159265 mm²*
+         #: * ⇒
          #:     ★★ 体积 = t × 314.159 ⇒ ★ **实测 `0.628444`** ⇒ **反推 t = 0.002000399** ✓
          #:     ★★★ **⇒ 与我写进去的 `0.002` 一致到 6 位**（★ 那 4e-7 偏差来自几何圆角化）✓
-         #:   ★★★ **对照组**：★ 若口径是**米**（★ `0.002 m = 2 mm`）⇒ 体积该是 **628.319** ⇒
+         #: ★★★ **对照组**：★ 若口径是**米**（★ `0.002 m = 2 mm`）⇒ 体积该是 **628.319**
+         #:  ⇒
          #:     ★★ **⇒ 与实测差** 1000 倍**** ⇒ **⇒ 毫无歧义** ✓
          #:   ★★★★ **⇒ 而它与 `ISweepFeatureData::GetWallThickness` **同口径**** ✓
          #:   ★★★★★ **⚠ 而**方法**也值得记**：★ 我第一版把薄壁那两条候选当**粗估**、
          #:     说「只到生效这一层」⇒ ★★ **⇒ 而其实**可以算准**** ⇒
-         #:     ★★★ **⇒ 判据**：★★★ **"估算不了"常常是**我没把几何写出来**、★ 而不是真估不了** ✓
+         #: ★★★ **⇒ 判据**：★★★ **"估算不了"常常是**我没把几何写出来**、★ 而不是真估不了
+         #: ** ✓
          "GetWallThickness": "**随文档单位（★ 毫米文档 ⇒ 毫米值）** —— ★ 官方**没写**；"
                              "★ 真机定案：★ 写 `0.002` ⇒ 读回 `0.002`、★ 而**反推壁厚 "
                              "= 0.002000399**（★ 体积 0.628444 ÷ 扫掠面积 314.159265）· "

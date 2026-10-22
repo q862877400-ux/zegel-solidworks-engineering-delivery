@@ -1,16 +1,20 @@
 """★ 真机验：`CreateSpline3`（★ 现行的那个）**到底能不能调**（★ 阶段 2 · T1 第 ② 步）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ISketchManager\CreateSpline3.md`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\ISketchManager\CreateSp
+# line3.md`）
 # 文件:   `scripts/sw_connect.py::out_dispatch` / `create_empty_dispatch_variant` ·
 #         `scripts/sw_part.py::sketch_spline`
 # 定位:   ★ `scripts/sw_part.py` 的 docstring 逐字说：
-#     「★ `CreateSpline2` 官方已标 **Obsolete**（★ 后继 `CreateSpline3` 末参是 **BYREF `Object&`**、
+# 「★ `CreateSpline2` 官方已标 **Obsolete**（★ 后继 `CreateSpline3` 末参是 **BYREF `Obje
+# ct&`**、
 #      ★ **pywin32 到不了**）⇒ ★ **能用的是这个已废弃的 `CreateSpline2`**」✓
 #   ★★ **而本仓**有 `out_dispatch()`** ⇒ ★★★ **那个说法**要验****（★ 逐条流程第 ② 步）✓
 #   ★★★ **官方逐字**（★ `CreateSpline3.md`）：
-#     `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalEnds,
+# `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalE
+# nds,
 #      out object Status)` ⇒ **5 参** ·
-#     ★★ Remarks 逐字：★ 「To create a **2D spline**… ★ **All other parameters with null or Nothing.**」✓
+# ★★ Remarks 逐字：★ 「To create a **2D spline**… ★ **All other parameters with null or 
+# Nothing.**」✓
 #   ★★★★ **判据（★ 可核）**：★ 建成 ⇒ **草图段数 +1**（★ 而那正是本仓既有的判据）✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件

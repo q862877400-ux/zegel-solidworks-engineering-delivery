@@ -4,7 +4,8 @@
 # 文件:   tools/probe_spec209_b4_macro_recording.py
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B4-1** · 外部项目 idx **211**。
 #   ★★★ 裁决书点名的**头号风险**：`swCommands_StopMacro`(31) **逐字会弹 Save As 对话框**
-#     ⇒ ★★ **本探针不点 31**，改用 `swCommands_RecordPauseMacro`(29) 这个**切换**来成对开关 ✓
+# ⇒ ★★ **本探针不点 31**，改用 `swCommands_RecordPauseMacro`(29) 这个**切换**来成对开关 
+# ✓
 #   ★★ 判据（规则 6）：★ 三个调用回的都是 `bool`（返回值）⇒ ★ 本探针**把三个都记下来**，
 #     并**明确写出限度**：★ **「宏文件真的落了盘」证不了**（那要弹 Save As 的 31）✓
 #   ⚠ 安全：★ 全程走 `tools/sw_guard.py`（弹窗哨兵 + 硬超时）；★ **绝不调 31**；

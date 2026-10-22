@@ -49,7 +49,8 @@ SPECS_BATCH1: list[ToolSpec] = [
     #                                 delete_existing: bool = True)
     #: ★★★★★★ 2026-10-04（轮 117）**补 `delete_existing`** —— ★ 处置这条**存量失败** ✓
     #:   ★ **真机读数**（★ `tests/test_tool_specs_batch1.py` 逐字）：
-    #:     「工具 `solidworks_topology_create_study` 折算后的目标参数 `['mesh_type', 'name']`
+    #: 「工具 `solidworks_topology_create_study` 折算后的目标参数 `['mesh_type', 'name']
+    #: `
     #:       与 `sw_topology.create_topology_study` 的真实形参
     #:       `['delete_existing', 'mesh_type', 'name']` 不一致」✓
     #:   ★★ **真因**：★ 实现**加了**带默认值的关键字参数 `delete_existing: bool = True`、
@@ -90,7 +91,8 @@ SPECS_BATCH1: list[ToolSpec] = [
              "and which constraints/controls exist. Read-only."),
     ),
     # 签名: def run_topology_study(study, *, units=0, element_size=0.0, tolerance=0.0)
-    # ⚠ element_size / tolerance 单位是**毫米**（真机实测，见 sw_simulation.create_mesh 来源块）
+    # ⚠ element_size / tolerance 单位是**毫米**（真机实测，见 sw_simulation.create_mesh 
+    # 来源块）
     ToolSpec(
         name="solidworks_topology_run",
         title="Run SOLIDWORKS Topology Study",
@@ -142,7 +144,8 @@ SPECS_BATCH1: list[ToolSpec] = [
         params=[],
         doc="Auto-create shut-off surfaces over holes for mold separation. Zero parameters.",
     ),
-    # 签名: def mold_draft_analysis(model, *, draft_angle_deg, analysis_type=0, colors=None, option=0)
+    # 签名: def mold_draft_analysis(model, *, draft_angle_deg, analysis_type=0, colors=N
+    # one, option=0)
     ToolSpec(
         name="solidworks_mold_draft_analysis",
         title="Run Mold Draft Analysis",
@@ -190,7 +193,8 @@ SPECS_BATCH1: list[ToolSpec] = [
     ),
 
     # ── 仿真：材料（真机修好的那条路）───────────────────────────────
-    # 签名: def set_material(model, material_name: str, database: str = SWS_MATERIAL_DATABASE) -> str
+    # 签名: def set_material(model, material_name: str, database: str = SWS_MATERIAL_DAT
+    # ABASE) -> str
     # ⚠ 返回的是**回读值**（`MaterialIdName`），空串表示没赋上
     ToolSpec(
         name="solidworks_simulation_set_material",

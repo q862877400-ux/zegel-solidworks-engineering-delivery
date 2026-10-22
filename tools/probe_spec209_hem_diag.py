@@ -164,7 +164,8 @@ def main() -> int:
             print("  %-22s FATAL %s" % (label, str(exc)[:100]))
         ev["variants"].append(row)
 
-    #: ── 若某个变体建出了 hem ⇒ **立刻**拿它当折弯验 unfold（★ 这一格才是 idx 336 的判据）──
+    #: ── 若某个变体建出了 hem ⇒ **立刻**拿它当折弯验 unfold（★ 这一格才是 idx 336 的判
+    #: 据）──
     if hem_feature:
         name, doc = hem_feature
         try:

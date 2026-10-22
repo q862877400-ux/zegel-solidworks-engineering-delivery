@@ -6,15 +6,20 @@
 # 定位:   ★ 2026-10-03（轮 464）★ 用户要求「把这几轮截图问过的**列出台账**，按 spec 的
 #           纪律全部攻关」。
 #   ★★ 台账数据在 `docs/toolbar-ledger.json`（★ 人工读图得来 = 需求原文）。
-#   ★★★ **本脚本的职责不是重复那份数据，而是核实它** —— 因为表里 `api` 一列是**凭记忆写的**，
-#     而**铁律 5**（查不到就说查不到）与**铁律 4**（签名三源互证）都要求它**逐条对官方源核过**。
+# ★★★ **本脚本的职责不是重复那份数据，而是核实它** —— 因为表里 `api` 一列是**凭记忆写的*
+# *，
+# 而**铁律 5**（查不到就说查不到）与**铁律 4**（签名三源互证）都要求它**逐条对官方源核过
+# **。
 #   ★ 三源（★ 本机可离线查的两套 + 一套结构化）：
 #     ```
-#     ① C:\swapi\types\<接口>\<成员>.md      ← ★ 结构化 markdown，查**精确成员名**（本脚本主用）
+# ① C:\swapi\types\<接口>\<成员>.md      ← ★ 结构化 markdown，查**精确成员名**（本脚本主
+# 用）
 #     ② C:\swapi\enums\*.md                  ← 枚举值
-#     ③ D:\AI\SW\AI Solidworks\官方文档\      ← CHM 解包，查语义与示例（本脚本只做存在性抽查）
+# ③ D:\AI\SW\AI Solidworks\官方文档\      ← CHM 解包，查语义与示例（本脚本只做存在性抽查
+# ）
 #     ```
-#   ⇒ ★ 输出：每条标 `api_verified`（★ 在①里找到的接口/成员）/ `api_missing`（★ 查不到 ⇒ 按铁律 5 记「查不到」）
+# ⇒ ★ 输出：每条标 `api_verified`（★ 在①里找到的接口/成员）/ `api_missing`（★ 查不到 ⇒ 
+# 按铁律 5 记「查不到」）
 #     并生成 `docs/toolbar-ledger.md`（★ 人看的台账）✓
 # 官方依据: 本机 `C:\swapi\`（结构化官方源）。
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -244,13 +249,15 @@ def main() -> int:
         ids = re.findall(r"[A-Za-z_][A-Za-z0-9_]{3,}", it.get("api", "") or "")
         it.update(check_repo(it, _IDX, set(ids)))
 
-    #: \u2605 \u5206\u6863\uff1a\u53ef\u505a = \u5f53\u524d"\u4e0d\u80fd/\u6ca1\u9a8c\u8fc7" \u4e14 api \u6838\u5b9e\u547d\u4e2d \u4e14 \u672c\u4ed3\u65e0\u5165\u53e3
+    #: \u2605 \u5206\u6863\uff1a\u53ef\u505a = \u5f53\u524d"\u4e0d\u80fd/\u6ca1\u9a8c\u8
+    #: fc7" \u4e14 api \u6838\u5b9e\u547d\u4e2d \u4e14 \u672c\u4ed3\u65e0\u5165\u53e3
     global VERIFIED_IDS
     VERIFIED_IDS = load_verified_capabilities()
 
     def tier(it: dict) -> str:
         #: ★★★ 2026-10-03（轮 549）**最先查 capabilities** —— ★ 修一个记账 bug：
-        #:   原判据只用**手填的 `level`**（★ 而本脚本 docstring 自己写着「之后从不自动更新」）
+        #: 原判据只用**手填的 `level`**（★ 而本脚本 docstring 自己写着「之后从不自动更新
+        #: 」）
         #:   ⇒ ★ 做成了的能力**永远不会被台账知道** ⚠
         #:   ★ 现在：条目若有 `capability_id` 且那条已 `verified` ⇒ **直接判「已能」** ✓
         #: ★ 改调**模块级函数**（★ 而不是内联 —— ★ 那样单测会 NameError）
@@ -261,14 +268,20 @@ def main() -> int:
             return "\u5df2\u80fd"
         if not it.get("api_verified"):
             return "\u5f85\u67e5"
-        #: \u2605\u2605 2026-10-03\uff08\u8f6e 599\uff09**\u7b2c\u4e94\u6876**\uff1a\u547d\u4e2d\u300c\u5df2\u77e5\u540e\u7aef\u5230\u4e0d\u4e86\u300d\u540d\u5355
-        #:   \u2014\u2014 \u2605 \u4efb\u52a1\u4e66\uff1a\u90a3\u4e09\u65cf\u8981\u300c\u5199\u660e\u4f9d\u636e\u5e76**\u5355\u5217**\u300d\uff08\u2605 \u800c\u539f\u5148\u65e0\u5904\u53ef\u5355\u5217\uff09
-        #: \u2605 \u6539\u8c03**\u6a21\u5757\u7ea7\u51fd\u6570**\uff08\u2605 \u800c\u4e0d\u662f\u5185\u8054 \u2014\u2014 \u2605 \u5426\u5219\u5355\u6d4b\u4f1a `NameError`\uff0c\u4e8b\u5b9e 549\uff09
+        #: \u2605\u2605 2026-10-03\uff08\u8f6e 599\uff09**\u7b2c\u4e94\u6876**\uff1a\u54
+        #: 7d\u4e2d\u300c\u5df2\u77e5\u540e\u7aef\u5230\u4e0d\u4e86\u300d\u540d\u5355
+        #: \u2014\u2014 \u2605 \u4efb\u52a1\u4e66\uff1a\u90a3\u4e09\u65cf\u8981\u300c\u5
+        #: 199\u660e\u4f9d\u636e\u5e76**\u5355\u5217**\u300d\uff08\u2605 \u800c\u539f\u5
+        #: 148\u65e0\u5904\u53ef\u5355\u5217\uff09
+        #: \u2605 \u6539\u8c03**\u6a21\u5757\u7ea7\u51fd\u6570**\uff08\u2605 \u800c\u4e0
+        #: d\u662f\u5185\u8054 \u2014\u2014 \u2605 \u5426\u5219\u5355\u6d4b\u4f1a `NameE
+        #: rror`\uff0c\u4e8b\u5b9e 549\uff09
         if is_backend_limited(it):
             return "\u540e\u7aef\u5230\u4e0d\u4e86"
         #: ★★★ 轮 483 修掉那个盲点（★ 事实 379）：★ 原判据是 `not it.get("entry")`，
         #:   而 `entry` 是**手填的**、且**没人查它真不真** ⇒ ★ **假入口**
-        #:   （如 `sw_part.linear_pattern`，真名其实在 `sw_pattern`）会让那条卡在“待验证”，
+        #: （如 `sw_part.linear_pattern`，真名其实在 `sw_pattern`）会让那条卡在“待验证”
+        #: ，
         #:   ★★ **永远轮不到被攻关** ⚠
         #:   ⇒ ★ 现在：**entry 不存在 ⇒ 按“无入口”算**（降为“可攻关”）✓
         real_entry = bool(it.get("entry")) and it.get("entry_exists") is not False

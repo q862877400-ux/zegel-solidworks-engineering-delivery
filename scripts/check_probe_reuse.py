@@ -12,7 +12,8 @@
 #           ② **调用证据**：该探针**确实调到了**那个工具的**实现函数**（`module.function`）。
 # 官方依据: 不适用（本项目内部口径；`ToolSpec` 见 `mcp-server/tool_registry.py`）。
 # 许可:   本仓库 MIT。无第三方代码引入。
-# 覆盖:   全文件（分析范围 = `tools/probe_*.py` + `tools/prove_*.py` + `mcp-server/server.py`）
+# 覆盖:   全文件（分析范围 = `tools/probe_*.py` + `tools/prove_*.py` + `mcp-server/serve
+# r.py`）
 # ─────────────────────────────────────────────────────────────────────────────
 #
 # ★★★ **为什么「两条都要」（★ 这是本文件最要紧的一段，★ 我第一版栽在这上面）**：
@@ -41,7 +42,8 @@ for _p in (str(ROOT), str(ROOT / "scripts"), str(ROOT / "mcp-server")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-#: ★ 中文 Windows 上打印 `✓` / `★` 会 `UnicodeEncodeError: 'gbk' codec`（已知事实 58 那一族）
+#: ★ 中文 Windows 上打印 `✓` / `★` 会 `UnicodeEncodeError: 'gbk' codec`（已知事实 58 那
+#: 一族）
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")            # type: ignore[attr-defined]
 except Exception:                                                         # noqa: BLE001
@@ -53,7 +55,8 @@ SERVER_PY = ROOT / "mcp-server" / "server.py"
 #:   （与 `docs/gate-wiring-exemptions.json` / `docs/union-not-doing.json` 同型 ——
 #    ★ **一个没有理由的豁免等于没写** ✓）。
 BASELINE = ROOT / "docs" / "probe-reuse-baseline.json"
-#: ★ 本仓的 scripts 模块（★ 模块白名单 —— ★ 第一版漏了它，把 `json` / `pathlib` 也算了进来 ✗）
+#: ★ 本仓的 scripts 模块（★ 模块白名单 —— ★ 第一版漏了它，把 `json` / `pathlib` 也算了进
+#: 来 ✗）
 SCRIPT_MODULES = {p.stem for p in (ROOT / "scripts").glob("*.py")}
 #: ★ 工具名前缀（★ 与 `tools/probe_mcp_stdio_handshake.py` 的 `KNOWN_PREFIXES` 同源）
 TOOL_PREFIXES = ("solidworks_", "cadstudio_", "mcp_")

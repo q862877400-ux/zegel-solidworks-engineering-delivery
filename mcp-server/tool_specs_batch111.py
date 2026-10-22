@@ -1,6 +1,7 @@
 '''★ 批次 111：规格 220 · 装配/性能分析 —— ★ 换路径：用现成真函数产出性能要素读数。'''
 # ── 来源 ─────────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（实现 = scripts/sw_assembly.py 的 collect_mate_feature_summary，**早已存在**）
+# 仓库:   本项目自身（实现 = scripts/sw_assembly.py 的 collect_mate_feature_summary，**
+# 早已存在**）
 # 文件:   mcp-server/tool_specs_batch111.py
 # 定位:   ★ 补一格用户可感知功能：★ **装配/装配体性能分析**
 #         ★ 生成器关键词（逐字）：`("performance_analysis", "assembly_performance")` ✓

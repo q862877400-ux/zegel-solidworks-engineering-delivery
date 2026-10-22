@@ -9,42 +9,54 @@
 #   ==================  ==============================================  ==================
 #   工具栏原文           官方成员（swapi 第一源 + 备注）                    判据
 #   ==================  ==============================================  ==================
-#   平面区域             `IModelDoc2.InsertPlanarRefSurface()` → **bool**   返回值 + 特征树增量
-#   等距曲面             `IModelDoc2.InsertOffsetSurface(Thickness, Reverse)` → void  特征树增量
-#   直纹曲面             `IFeatureManager.InsertRuledSurfaceFromEdge2(…)` → Feature   回 Feature + 树增量
-#   删除面               `IModelDoc2.InsertDeleteFace2(Refill)` → **bool**  返回值 + 树增量
+# 平面区域             `IModelDoc2.InsertPlanarRefSurface()` → **bool**   返回值 + 特征
+# 树增量
+# 等距曲面             `IModelDoc2.InsertOffsetSurface(Thickness, Reverse)` → void  特征
+# 树增量
+# 直纹曲面             `IFeatureManager.InsertRuledSurfaceFromEdge2(…)` → Feature   回 F
+# eature + 树增量
+# 删除面               `IModelDoc2.InsertDeleteFace2(Refill)` → **bool**  返回值 + 树增
+# 量
 #   替换面               `IModelDoc2.InsertFeatureReplaceFace()` → void    树增量
 #   ==================  ==============================================  ==================
 #
-#   ★★ **两个"台账给的名字是旧的"**（★ 铁律 5 的正当用法：查不到就换名字再查，查到了要写明）：
+# ★★ **两个"台账给的名字是旧的"**（★ 铁律 5 的正当用法：查不到就换名字再查，查到了要写明
+# ）：
 #     · 台账写 `InsertRuledSurface` ⇒ ★ **`IModelDoc2` 上没有它**；真名分两处：
 #       `IFeatureManager.InsertRuledSurfaceFromEdge`（★ **官方标 Obsolete**）
 #       与 **`InsertRuledSurfaceFromEdge2`**（★ 后继版）⇒ ★ **本模块用 `…2`**（铁律 4）
 #     · 台账写 `InsertReplaceFace` ⇒ ★ 真名是 **`IModelDoc2.InsertFeatureReplaceFace`** ✓
 #
 #   ★★★ **两个"要按 mark 选"的**（★ 铁律 3 的第三句：多引用特征读 mark，不读选择顺序）：
-#     · 替换面：官方 Remarks 逐字 —— "Before calling this method, **select the faces to replace**
+# · 替换面：官方 Remarks 逐字 —— "Before calling this method, **select the faces to repl
+# ace**
 #       by calling `IModelDocExtension::SelectByID2` with **Marks of 1** and 2"
-#     · 直纹曲面：官方 Remarks 逐字 —— "If you **select an edge with a selection mark of 4**,
+# · 直纹曲面：官方 Remarks 逐字 —— "If you **select an edge with a selection mark of 4**
+# ,
 #       the default face is used."
 #
-#   ⚠ **`InsertRuledSurfaceFromEdge2` 的 `Type` 取值表官方给了**（0..4），本模块**原样透传**并在
+# ⚠ **`InsertRuledSurfaceFromEdge2` 的 `Type` 取值表官方给了**（0..4），本模块**原样透传
+# **并在
 #     返回里带上语义 —— ★ 不替调用方收窄（★ 但也不假装知道未列出的值）。
 #
 # 官方依据（三源）:
 #   · `C:\swapi\types\IModelDoc2\InsertPlanarRefSurface.md`（`bool ()`）
-#   · `C:\swapi\types\IModelDoc2\InsertOffsetSurface.md`（`void (Thickness: double, Reverse: bool)`）
+# · `C:\swapi\types\IModelDoc2\InsertOffsetSurface.md`（`void (Thickness: double, Revers
+# e: bool)`）
 #   · `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge2.md`
 #     （11 参 · Type 0..4 · mark 4 的 Remarks）
-#   · `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge.md`（★ **Obsolete** 那一行）
+# · `C:\swapi\types\IFeatureManager\InsertRuledSurfaceFromEdge.md`（★ **Obsolete** 那一
+# 行）
 #   · `C:\swapi\types\IModelDoc2\InsertDeleteFace2.md`（`bool (Refill: int)`）
-#   · `C:\swapi\types\IModelDoc2\InsertFeatureReplaceFace.md`（`void ()` + mark 1/2 的 Remarks）
+# · `C:\swapi\types\IModelDoc2\InsertFeatureReplaceFace.md`（`void ()` + mark 1/2 的 Rem
+# arks）
 #   · CHM / 反射：见同轮的 `docs/toolbar-ledger.md` 逐条核验
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件（★ 逐函数另有来源块）。
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ `ok` 必须来自**特征树增量**或**回读**
+# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ `ok` 必须来自**特征树增量**或**
+# 回读**
 #   （★ 规则 6：不静默成功）。
 
 from __future__ import annotations
@@ -83,8 +95,10 @@ SURFACE_EDIT_STATUS = {
 }
 
 
-#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字相同）
-#:   ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`（★ 轮 473 那条教训的完整说明也搬过去了 ✓）
+#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字
+#: 相同）
+#: ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`（★ 轮 473 那条教训的完整说明也搬过去了 
+#: ✓）
 try:
     from .sw_feature_tree import tree_names as _tree_names
 except ImportError:

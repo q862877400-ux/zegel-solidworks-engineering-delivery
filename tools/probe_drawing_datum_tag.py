@@ -13,7 +13,8 @@
 #   ★★ **`balloon` / `datum` 在**：`IModelDoc2.InsertDatumTag2` 是**零参**（★ 与已能用的
 #     `gtol_insert` 同形），★ 而 **`IView.GetDatumTagCount()`** 是**现成的回读** ⇒
 #     ★ 判据可以**定量**（★ 那正是"规则 6"要的）。
-#   ★★ **夹具用法照 capabilities 里记的成法**：「用 SolidWorks 自带示例图当**有内容的测试夹具**」
+# ★★ **夹具用法照 capabilities 里记的成法**：「用 SolidWorks 自带示例图当**有内容的测试
+# 夹具**」
 #     （★ 那样不必先造工程图 + 视图）—— ★ 本探针用 `samples\introsw\box.slddrw`。
 #   ⚠ 只**打开并加注**、**不保存**（★ 硬约束⑦：不碰保存/另存/删除）⇒ 原文件不受影响。
 # 官方依据: `IModelDoc2.InsertDatumTag2()`（**零参** · `System.object`）·

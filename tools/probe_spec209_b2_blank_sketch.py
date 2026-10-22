@@ -10,12 +10,15 @@
 #   ★★ 判据（规则 6，全回读）：
 #     ```
 #     ① 选区计数           ★ 事实 8：不许信返回值
-#     ② IFeature::Visible  ★ swVisibilityState_e 的**前后读数**（Hide=1 · Shown=2 · Unknown=3）
-#     ③ 正反向              ★ blank=True 要变 hide · blank=False 要变 shown（★ 两个方向都验）
+# ② IFeature::Visible  ★ swVisibilityState_e 的**前后读数**（Hide=1 · Shown=2 · Unknown=
+# 3）
+# ③ 正反向              ★ blank=True 要变 hide · blank=False 要变 shown（★ 两个方向都验
+# ）
 #     ④ 负例                ★ 名字不存在 ⇒ 选区计数 0 ⇒ **必须大声报**（不静默当成功）
 #     ```
 # 官方依据: `C:\\swapi\\types\\IModelDoc2\\{BlankSketch,UnblankSketch}.md` ·
-#   `C:\\swapi\\types\\IFeature\\Visible.md` · `C:\\swapi\\enums\\swVisibilityState_e.md` ·
+# `C:\\swapi\\types\\IFeature\\Visible.md` · `C:\\swapi\\enums\\swVisibilityState_e.md` 
+# ·
 #   `C:\\swapi\\examples\\Hide_and_Show_Sketches_Example_VB.md`（★ 调用序）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

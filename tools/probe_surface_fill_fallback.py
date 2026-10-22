@@ -6,7 +6,8 @@
 #           明式分支**
 #   恰恰只回读选区 ⇒ ★ 上一版**只要传 `selection` 就必失败**。
 #   ★ 本轮把它改成「拿不到就**回退**到自动路」，★ 本探针验的就是这条回退。
-#   官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark 1**）
+# 官方依据: `C:\\swapi\\types\\IFeatureManager\\InsertFillSurface2.md`（边界边用 **mark 
+# 1**）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -56,7 +57,8 @@ def main() -> int:
     #:   ★★ 为什么必须这样：`RESOLVERS["model"]` 经 `connect_solidworks()` **会清空选区**
     #:     （事实 503，证据 `output/selection-lifetime-evidence.json`）。
     #:   ★ 而本探针**直接调能力层**、绕过了那个解析器 ⇒ 造零件留下的**残余选择**会骗过
-    #:     `_selected_readback`（★ 实测：第二例回读 > 0 ⇒ 回退不触发 ⇒ 拿到一圈**错的**边界）。
+    #: `_selected_readback`（★ 实测：第二例回读 > 0 ⇒ 回退不触发 ⇒ 拿到一圈**错的**边界
+    #: ）。
     #:   ⇒ ★ **清掉再调**，才是经工具层时真正会发生的样子。
     for label, sel, do_clear in (("selection 为空（自动路）", "", False),
                                  ("selection 非空 + 残余选择未清（对照）", "index:0", False),

@@ -4,9 +4,11 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_pattern_direction_marks2.py
 # 定位:   ★ 2026-10-03（轮 406）承 `probe_pattern_direction_marks.py`：
-#   ★★ 那一版已证实 **mark 机制对特征有效**（`SelectByID2(名, "BODYFEATURE", …, mark=4)` 回 True），
+# ★★ 那一版已证实 **mark 机制对特征有效**（`SelectByID2(名, "BODYFEATURE", …, mark=4)` 
+# 回 True），
 #      ★ 而**方向边没选上**（`SelectByID2("", "EDGE", 0, -0.015, 0, …, mark=1)` 回 False）——
-#      ★ 真因是我给的坐标**没落在边上**（★ 正是**事实 32** 警告的：实体没有名字 ⇒ 要按点选）。
+# ★ 真因是我给的坐标**没落在边上**（★ 正是**事实 32** 警告的：实体没有名字 ⇒ 要按点选）
+# 。
 #   ⇒ ★ 本版照**事实 53 的处方**：★ **把猜测变成一张穷举表** ——
 #      ★ 从 `entities_on_body` 取每条边，★ 用 `IEdge.GetStartVertex/GetEndVertex` →
 #      `IVertex.GetPoint` 算**中点**，★ 逐条试 `SelectByID2(…, mark=1)`，★ 直到选上。

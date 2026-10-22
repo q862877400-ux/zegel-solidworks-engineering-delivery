@@ -129,7 +129,8 @@ def _main() -> int:
             try:
                 ext = C.get_com_member(doc, "Extension")
                 doc.ClearSelection2(True)
-                #: ★ `ISketchPoint::Select4(Append, Callout)`（★ 事实 32：★ 点也没有名字）
+                #: ★ `ISketchPoint::Select4(Append, Callout)`（★ 事实 32：★ 点也没有名字
+                #: ）
                 ok_a = False
                 for s_i, e_i in ((jt["from_seg"], jt["end_a"]), (jt["to_seg"], jt["end_b"])):
                     try:

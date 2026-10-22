@@ -231,7 +231,8 @@ def resolve_step_name(step: str, reg: dict[str, ToolDescriptor]) -> str:
     hits = idx.get(step, [])
     if not hits:
         #: ★★ 先判「是不是另一个**方法 id**」—— 那是阶段 2 的「子方法展开」，
-        #:   ★ **不是**拼写错误 ⇒ 给**专属码**，免得后人按错字排查（★ 事实 102 那族的教训）
+        #: ★ **不是**拼写错误 ⇒ 给**专属码**，免得后人按错字排查（★ 事实 102 那族的教训
+        #: ）
         try:
             from .compiler import METHOD_LIBRARY as _ML
             if step in _ML:

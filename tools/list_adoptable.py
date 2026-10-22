@@ -3,7 +3,8 @@
 # 仓库:   本项目自身
 # 文件:   tools/list_adoptable.py
 # 定位:   ★ 规格 207 的 SC-3（②③档 76 条逐条学透 + 官方对照 ⇒ 产出候选）✓
-#         ★★ 输入是 `output/bunny-records-deep/<index>.json`（bunny 逐条手写，含 official/proposed/
+# ★★ 输入是 `output/bunny-records-deep/<index>.json`（bunny 逐条手写，含 official/propos
+# ed/
 #           recommendation）⇒ 本工具**只做汇总与排序**，**不替主裁判下结论** ✓
 #         ★★★ 判据口径：★ 采纳与否是**主裁判（Lead）的事**（spec.md 的 D-4）⇒ 本工具的输出是
 #           **给裁判看的一览**，不是裁决本身 ✓

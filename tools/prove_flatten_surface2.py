@@ -56,7 +56,9 @@ def _mk_surface(doc):
     except Exception:                                                     # noqa: BLE001
         pass
     P.start_sketch(doc, plane_name="Front Plane")
-    #: \u2605 \u7528**\u76f4\u7ebf**\u62c9\uff08\u2605 \u76f4\u7ebf\u62c9\u51fa\u7684\u66f2\u9762\u53ef\u5c55\u5e73\uff1b\u2605 \u800c\u5c01\u95ed\u77e9\u5f62\u62c9\u51fa\u7684\u662f\u7b52\u72b6\uff09
+    #: \u2605 \u7528**\u76f4\u7ebf**\u62c9\uff08\u2605 \u76f4\u7ebf\u62c9\u51fa\u7684\u6
+    #: 6f2\u9762\u53ef\u5c55\u5e73\uff1b\u2605 \u800c\u5c01\u95ed\u77e9\u5f62\u62c9\u51f
+    #: a\u7684\u662f\u7b52\u72b6\uff09
     C.get_com_member(C.get_com_member(doc, "SketchManager"), "CreateLine",
                      -0.03, 0.0, 0.0, 0.03, 0.0, 0.0)
     P.end_sketch(doc)
@@ -82,7 +84,8 @@ def _one(sw, tag, entry, accuracy, tears):
             doc.ClearSelection2(True)
         except Exception:                                                 # noqa: BLE001
             pass
-        #: \u2605 \u9009**\u66f2\u9762\u7684\u9762**\uff08\u2605 \u5b98\u65b9 mark = **1**\uff09
+        #: \u2605 \u9009**\u66f2\u9762\u7684\u9762**\uff08\u2605 \u5b98\u65b9 mark = **1
+        #: **\uff09
         picked = 0
         for b in list(_get(doc, "GetBodies2", 1, True) or []):
             for f in list(_get(b, "GetFaces") or [])[:1]:

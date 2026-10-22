@@ -107,8 +107,10 @@ class _LaunchGuard:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
-# 仓库:   本项目自身（**沿上游 `wzyn20051216/solidworks-automation-skill` 的写法**发展而来）。
-# 文件:   scripts/sw_connect.py —— 「成员读取」这一段（`get_com_member` / `safe_get_com_member`）。
+# 仓库:   本项目自身（**沿上游 `wzyn20051216/solidworks-automation-skill` 的写法**发展而
+# 来）。
+# 文件:   scripts/sw_connect.py —— 「成员读取」这一段（`get_com_member` / `safe_get_com_
+# member`）。
 # 定位:   2026-10-01（轮 143）**改了一处**：把 `DISP_E_PARAMNOTOPTIONAL`（`0x8002000F`）
 #         纳入「**返回成员、不调用**」的白名单。
 #         ★★ 起因：`get_com_member` 在**没有实参**时会「先试调一次」来分辨属性与方法
@@ -360,7 +362,8 @@ def count_residual_dialogs(target=None, *, settle_seconds=0.0, poll_ms=200):
     pid = _resolve_pid(target)
     best_n = 0
     #: ⚠ `scanned` **每一轮都更新**（不是只在发现对话框时）—— 否则"没发现"会报成
-    #: "**扫了 0 个窗口**"，读日志时无法区分「没弹框」与「根本没扫到」（事实 62/79/81 同族）。
+    #: "**扫了 0 个窗口**"，读日志时无法区分「没弹框」与「根本没扫到」（事实 62/79/81 同
+    #: 族）。
     scanned = 0
     deadline = time.time() + max(0.0, float(settle_seconds))
     while True:
@@ -503,7 +506,8 @@ def residual_dialogs(pid=None, *, only_visible=False, settle_seconds=1.0, poll_m
 
     #: ★★ **轮询**：模态框是**异步**弹出的（实测第 0.86 秒才出现）⇒
     #: 查一次**会漏**，而漏检的后果是「谎报无残留」+ 会话挂起。
-    #: 取**整个窗口期内见过的最大值**（弹窗可能已被别人点掉，但"**弹过**"这个事实更重要）。
+    #: 取**整个窗口期内见过的最大值**（弹窗可能已被别人点掉，但"**弹过**"这个事实更重要
+    #: ）。
     best: list = []
     scanned = 0
     deadline = time.time() + max(0.0, float(settle_seconds))
@@ -808,7 +812,8 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
             try:
                 sw = win32com_client.Dispatch(prog_id)
                 launched_here = True
-                #: 落「我们启动的实例」标记 —— 用户要求「不要误杀别的对话打开的 solidworks，
+                #: 落「我们启动的实例」标记 —— 用户要求「不要误杀别的对话打开的 solidwor
+                #: ks，
                 #: 只关闭你自己打开的窗口」。进程内的 launched_here 传不出本进程，
                 #: 所以把 PID 写进一个跨进程可读的标记文件；回收时只认这个标记。
                 _record_owned_instance(sw, prog_id)
@@ -841,11 +846,15 @@ def connect_solidworks(version=None, wait_seconds=5, visible=True, return_metada
 
     #: ★★ 2026-10-07（接手轮 · 规格 216）**补上 `revision`** ——
     #:   ★ 起因（**实测到的真缺陷**）：`tools/verify_costing_e2e.py` 写的是
-    #:     `str((meta or {}).get("revision", ""))`，★ 而**本字典里从来没有 `revision` 这个键** ✗
-    #:     ⇒ ★★ 证据文件 `output/costing-evidence.json` 的 `solidworks_revision` **恒为空串**
+    #: `str((meta or {}).get("revision", ""))`，★ 而**本字典里从来没有 `revision` 这个键
+    #: ** ✗
+    #: ⇒ ★★ 证据文件 `output/costing-evidence.json` 的 `solidworks_revision` **恒为空串*
+    #: *
     #:     （★ 实测：该文件里逐字 `"solidworks_revision": ""`）✓
-    #:     ⇒ ★ 连带 `capabilities.yaml` 的 costing 条目那句「证据文件…（含时间戳与版本）」**不成立** ✓
-    #:   ★ 复用既有函数：`get_sw_version(sw)`（★ 本文件里就有，回 `{"revision", "year", "major"}`）✓
+    #: ⇒ ★ 连带 `capabilities.yaml` 的 costing 条目那句「证据文件…（含时间戳与版本）」**
+    #: 不成立** ✓
+    #: ★ 复用既有函数：`get_sw_version(sw)`（★ 本文件里就有，回 `{"revision", "year", "m
+    #: ajor"}`）✓
     #:   ⚠ **防御式**：取版本要读 COM（`ISldWorks.RevisionNumber`）——
     #:     ★ 它**失败了也不该拖垮"连接"这件正事** ⇒ 包 try/except，★ 取不到就记 `None`
     #:     （★ 与"没这个键"区分开：★ **键一定在**、值可能是 `None`）✓
@@ -934,7 +943,8 @@ def ensure_default_templates(sw):
     """
     templates = {}
     restore: list[dict] = []
-    # preference-guard: 本函数只"设"，★ 旧值全记进 `restore` 并由 restore_default_templates
+    # preference-guard: 本函数只"设"，★ 旧值全记进 `restore` 并由 restore_default_templa
+    # tes
     #   在调用方的 `finally` 里还回去（★ 事实 525 —— 见 open_document 的 LoadFile4 分支）
     for doc_type, preference in DEFAULT_TEMPLATE_PREFS.items():
         template_path = find_template(sw, doc_type)
@@ -961,7 +971,8 @@ def restore_default_templates(sw, template_info):
     """
     info = template_info or {}
     restored, skipped, errors = [], [], []
-    # preference-guard: 本函数就是"还原那一步"（★ 写回 `ensure_default_templates` 记下的旧值 —— 事实 525）
+    # preference-guard: 本函数就是"还原那一步"（★ 写回 `ensure_default_templates` 记下的
+    # 旧值 —— 事实 525）
     for item in info.get("restore") or []:
         kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
         if old is None or (kind == "string" and old == ""):
@@ -1031,9 +1042,11 @@ def new_document(sw, doc_type="part", template_path=None):
 #         ② **兜底收尾**：`settle_residual_dialogs` 轮询 1.5 s，发现未知弹窗就按 Win32
 #            `WM_COMMAND`+`IDOK` 点掉（★ 零硬编码）—— ★ 按纪律（自我纠错 §9）它只是**兜底**，
 #            用完必须补根因修复。
-# 官方签名依据: `C:\swapi\enums\swOpenDocOptions_e.md`（512 = LoadExternalReferencesInMemory、
+# 官方签名依据: `C:\swapi\enums\swOpenDocOptions_e.md`（512 = LoadExternalReferencesInMe
+# mory、
 #   1 = Silent、2 = ReadOnly）· `ISldWorks/OpenDoc6.md` · `IFeatureManager` 不涉及。
-# 未在本机实测: 不适用 —— ★ 本函数**已真机实测**（`output/open-doc-rootfix-evidence.json`：
+# 未在本机实测: 不适用 —— ★ 本函数**已真机实测**（`output/open-doc-rootfix-evidence.json
+# `：
 #   ★ `external_ref_left = []` ⇒ 那个对话框**根本没有出现**）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   本函数整体（自本行至函数结束）
@@ -1053,8 +1066,10 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
         IModelDoc2 对象
     """
     file_path = _expand_path(file_path)
-    #: ★★★ **B5-3 的咽喉点**：会打开文档的调用**几乎都经过这里** ⇒ 沙盒策略就挂在这一处 ✓
-    #:   ★★ 评审的判决：要守的**不是**"输出不落在输入旁边"，而是「**打开的永远不是原件**」——
+    #: ★★★ **B5-3 的咽喉点**：会打开文档的调用**几乎都经过这里** ⇒ 沙盒策略就挂在这一处 
+    #: ✓
+    #: ★★ 评审的判决：要守的**不是**"输出不落在输入旁边"，而是「**打开的永远不是原件**」
+    #: ——
     #:     ★ 出事的根因正是"对**原件路径**直接开了分析"⇒ ★ 外部路径在这里被**复制进沙盒**，
     #:     ★ 后面 `OpenDoc6` 打开的是**副本** ✓
     #:   ★ 默认 `passthrough`（不改变既有行为）；★ **护栏**会给探针设 `enforce` ✓
@@ -1096,22 +1111,27 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     options = 2 if read_only else 0  # swOpenDocOptions_ReadOnly = 2
     if silent:
         options |= 1  # swOpenDocOptions_Silent = 1
-    #: ★★★★★ 2026-10-01（轮 335）**根因修复（★ 用户指出：光点弹窗没解决根因，点了还会再弹）**：
+    #: ★★★★★ 2026-10-01（轮 335）**根因修复（★ 用户指出：光点弹窗没解决根因，点了还会再
+    #: 弹）**：
     #:   ★ 现象：★ 打开**带外部参考**的工程图/装配体时，SolidWorks 每次都弹
     #:   「**打开外部参考的零件**」对话框 ⇒ ★ 机械点掉**只是把这一次糊过去**，
     #:   ★ **下一次再打开同一个文件还会弹**（★ 而某一次没人点 ⇒ 会话卡死）。
-    #:   ★ 根因：★ `OpenDoc6` 用的是**默认选项** ⇒ ★ SolidWorks 只能**问用户**要不要加载参考件。
+    #: ★ 根因：★ `OpenDoc6` 用的是**默认选项** ⇒ ★ SolidWorks 只能**问用户**要不要加载参
+    #: 考件。
     #:   ★★ 官方开关（★ `swOpenDocOptions_e` 枚举）：
     #:     **`swOpenDocOptions_LoadExternalReferencesInMemory = 512 (0x200)`**
     #:     —— 官方原话「**Open external references in memory only**」。
-    #:   ★★★ **而官方还明说**：「`swExtRefLoadRefDocsInMemory`（System Options → External References →
-    #:     Load documents in memory only）**is ignored when opening documents through the API**
+    #: ★★★ **而官方还明说**：「`swExtRefLoadRefDocsInMemory`（System Options → External 
+    #: References →
+    #: Load documents in memory only）**is ignored when opening documents through the AP
+    #: I**
     #:     because `IDocumentSpecification::LoadExternalReferencesInMemory` and
     #:     `ISldWorks::OpenDoc6`(`swOpenDocOptions_LoadExternalReferencesInMemory`)
     #:     **have sole control of reference loading**」
     #:     ⇒ ★★ **即：★ 通过 API 打开时**必须**用这个选项（★ 系统选项不管用）** ✓
     #:   ⚠ 官方前提：★「valid only if `swLoadExternalReferences` is not set to `None`」
-    #:     ⇒ ★ 若用户偏好设成"从不加载"，本选项不生效（★ 那时也不会弹框，★ 两种情形都不卡）。
+    #: ⇒ ★ 若用户偏好设成"从不加载"，本选项不生效（★ 那时也不会弹框，★ 两种情形都不卡）
+    #: 。
     options |= 512  # swOpenDocOptions_LoadExternalReferencesInMemory
 
     if ext in foreign_exts:
@@ -1119,13 +1139,16 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
             print("提示: LoadFile4 导入外来 CAD 文件时不支持 read_only，已忽略该参数")
         if silent:
             print("提示: LoadFile4 导入外来 CAD 文件时不支持 OpenDoc6 silent 选项，已忽略该参数")
-        #: ★★ 2026-10-04（接手轮）**这两条偏好用完立刻还回去**（★ 交付纪律 · 事实 525）：
+        #: ★★ 2026-10-04（接手轮）**这两条偏好用完立刻还回去**（★ 交付纪律 · 事实 525）
+        #: ：
         #:   原文是 `ensure_default_templates(sw)` **直接写全局用户偏好且永不还原**
         #:   ⇒ ★ 别人装一次我们的工具，他的**默认模板路径**与"新建提示"设置就被永久改掉 ✓
         #:   ★ 而官方 `ISldWorks.NewDocument(TemplateName, …)` 的 `TemplateName` 逐字就是
-        #:     「Fully qualified path and name of the template」—— ★ 我们自己的 `new_document`
+        #: 「Fully qualified path and name of the template」—— ★ 我们自己的 `new_documen
+        #: t`
         #:     也**已经直接传完整路径** ⇒ 这两条偏好**只在 SolidWorks 内部创建文档时才需要**
-        #:     （`LoadFile4` 导入外来 CAD 正是这种情形）⇒ ★ 故用 `try/finally` 只包住那一步 ✓
+        #: （`LoadFile4` 导入外来 CAD 正是这种情形）⇒ ★ 故用 `try/finally` 只包住那一步 
+        #: ✓
         template_info = ensure_default_templates(sw)
         try:
             import_data = sw.GetImportFileData(file_path)
@@ -1181,15 +1204,19 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
     #:   真因（★ 用户当场撞上）：★ `open_document` 这 96 行里
     #:   **`CommandInProgress` / `settle` / `dismiss` / `residual` 一个都没有** ⇒
     #:   ★★ **打开带外部参考的零件时，SolidWorks 会弹「打开外部参考的零件」对话框**，
-    #:   而**这条路径上没有任何人去处置它** ⇒ ★★★ **会话就挂在那儿**（★ 我上一轮的命令就是这么被中断的）。
-    #:   ★ 而**处置的通用解法本仓库早就有**（`settle_residual_dialogs`：按 Win32 类名 `#32770` 找，
+    #: 而**这条路径上没有任何人去处置它** ⇒ ★★★ **会话就挂在那儿**（★ 我上一轮的命令就是
+    #: 这么被中断的）。
+    #: ★ 而**处置的通用解法本仓库早就有**（`settle_residual_dialogs`：按 Win32 类名 `#32
+    #: 770` 找，
     #:   发 `WM_COMMAND` + `IDOK` 点掉 —— **不认按钮文本、不按坐标、零硬编码**）——
     #:   ★★ **只是没接在这里**（`settle_residual_dialogs` 的 docstring 自己写过：
     #:   「35 个脚本只查不点」「**"发现"和"处置"是两件事**」）。
-    #:   ★ 为什么 `CommandInProgress` 救不了它：★ 那个对话框是**文档加载时由 SolidWorks 自己弹的**，
+    #: ★ 为什么 `CommandInProgress` 救不了它：★ 那个对话框是**文档加载时由 SolidWorks 自
+    #: 己弹的**，
     #:   ★ **不是 COM 调用在等用户输入** ⇒ ★ 抑制标志管不到它。
     #:   ⚠ `settle_seconds` 取 **1.5 s**：★ 弹窗**不是**在 `OpenDoc6` 返回的那一刻出现
-    #:   （见 `dismiss_residual_dialogs` 的 docstring：★ 「查得太早 ⇒ 报无残留而屏幕上明明有一个」）。
+    #: （见 `dismiss_residual_dialogs` 的 docstring：★ 「查得太早 ⇒ 报无残留而屏幕上明明
+    #: 有一个」）。
     try:
         found, dismissed, _scanned = settle_residual_dialogs(sw, settle_seconds=1.5, poll_ms=250)
         if found:
@@ -1203,14 +1230,17 @@ def open_document(sw, file_path, read_only=False, silent=False, raise_on_error=F
 # 仓库:   本项目自身（本机实测结论的固化）
 # 文件:   scripts/sw_connect.py —— 本函数
 # 定位:   ★★★ 2026-10-10（规格 284）**本机实测：`SaveAs3` **不能换**** —— ★ 待办原话是
-#         「`Extension.SaveAs` → `SaveAs3`（★ **改错会直接坏掉写盘**）」⇒ ★★ **实测正好证明确实会**：
-#         真机（SW **34.4.1**）逐 `Options`（★ `GetAdvancedSaveAsOptions(0/1/2/3)`）⇒ ★ `SaveAs3`
+# 「`Extension.SaveAs` → `SaveAs3`（★ **改错会直接坏掉写盘**）」⇒ ★★ **实测正好证明确实
+# 会**：
+# 真机（SW **34.4.1**）逐 `Options`（★ `GetAdvancedSaveAsOptions(0/1/2/3)`）⇒ ★ `SaveAs3
+# `
 #         **四个都返回 `True`、`errors=0`**，★★ **而文件**一个都没写出来**** ⇒ ★★★ **静默失败**
 #         （★ 比「报错」更危险 —— ★ 调用方会以为存成功了）。
 #         ★ **对照**：★ `SaveAs` ⇒ ★ **文件真的写出来**（48696 B）⇒ ★ **现状是好的**。
 #         ★★ **官方链**（★ 逐字）：★ `SaveAs` → `Obsolete. Superseded by SaveAs2` →
 #         `Obsolete. Superseded by SaveAs3`（★ 链终点）⇒ ★ 官方**确实要我们换**；
-#         ★★ **而本机不能换** ⇒ ★★★ **处置：★ 保持 `SaveAs` + 把这条实测登记在此**（★ 不照链硬换）。
+# ★★ **而本机不能换** ⇒ ★★★ **处置：★ 保持 `SaveAs` + 把这条实测登记在此**（★ 不照链硬换
+# ）。
 #         ★ 读数：`output/_probe284_saveas3.txt` · `output/_probe284_saveas3_opt.txt`。
 # 官方依据: `C:/swapi/types/IModelDocExtension/{SaveAs,SaveAs2,SaveAs3}.md` · `…/GetAdva
 #           ncedSaveAsOptions.md`

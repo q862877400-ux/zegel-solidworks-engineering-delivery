@@ -4,7 +4,8 @@
 # 文件:   tools/probe_spec211_weldsymbol_real.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的「焊件 / 焊接符号」。★ 前四步的账：
 #   ★ ①②③ 前置全对上 · ★ 判据落到位（跳过图纸 + 逐视图 GetWeldSymbolCount）·
-#   ★④ **12 组形态 × 开关位** ⇒ 全部 `0 → 0` ✗ ⇒ ★ 我当时**明确说**"还有'选择前置'那一维没追" ✓
+# ★④ **12 组形态 × 开关位** ⇒ 全部 `0 → 0` ✗ ⇒ ★ 我当时**明确说**"还有'选择前置'那一维没
+# 追" ✓
 #   ⇒ ★★★★ **本批**搜官方示例**，真因找到了** —— ★ 我**走的是另一条 API** ✗✓
 # 官方依据（★★★ 第 ③ 样第四次救场，★ 而这次是最强的一次）：
 #   · ★★ `C:\swapi\examples\Insert_Weld_Symbol_Example_VB.md` 的 **Preconditions 逐字**：
@@ -14,19 +15,23 @@
 #       `Set swWeldSymbol = swModel.InsertWeldSymbol3` ⇒
 #       `swWeldSymbol.SetText True, "Left", "BUTT", "Right", "Stagger", swWeldContourNone` …
 #   · ★★★ `IModelDoc2::InsertWeldSymbol3` 的官方页：
-#       `System.object InsertWeldSymbol3()` ⇒ ★ **零参** ✓ · ★ `## Returns` = **Newly created weld symbol** ✓
-#       ★★ `## Remarks` 逐字：「★ To use this method, **insert the weld symbol into the model and
+# `System.object InsertWeldSymbol3()` ⇒ ★ **零参** ✓ · ★ `## Returns` = **Newly created 
+# weld symbol** ✓
+# ★★ `## Remarks` 逐字：「★ To use this method, **insert the weld symbol into the model 
+# and
 #         then manipulate the properties and methods on the `IWeldSymbol` object**.」✓✓
 #       ★★★ 且**符号名清单根本不在 `annotations\\*.sldweldfvt`** ✗ ——
 #         而是 **`C:\ProgramData\SolidWorks\SolidWorks 20*nn*\*lang*\*english*\gtol.sym`** ✓，
 #         且**官方逐条列了 16 个 ISO 符号名**：★ `BUTT` · `BUSQ` · `BUSV` · `BUSB` · `BUSVBR` ·
-#         `BUSBR` · `BUSU` · `BUSJ` · `BACK` · `FILL` · `PLUG` · `SPOT` · `SEAM` · `SEAMC` · `JSPT` · `JSM` ✓
+# `BUSBR` · `BUSU` · `BUSJ` · `BACK` · `FILL` · `PLUG` · `SPOT` · `SEAM` · `SEAMC` · `JS
+# PT` · `JSM` ✓
 #   · ★ `IWeldSymbol::SetText` 的签名：
 #       `System.bool SetText( System.bool Top, System.string Left, System.string Symbol,
 #        System.string Right, System.string Stagger, System.int Contour )` ✓
 # 判据:   ★★ **回读**（★ 第 38 轮定则：★ 判据落在"它真正改变的东西"上 ✓）——
 #     ★ `IWeldSymbol` **自带一整套读回**（★ 官方示例里逐个用过 ✓）：
-#       `GetTextCount` · `GetLineCount` · `GetArcCount` · `GetTriangleCount` · `GetArrowHeadCount` ·
+# `GetTextCount` · `GetLineCount` · `GetArcCount` · `GetTriangleCount` · `GetArrowHeadCo
+# unt` ·
 #       `GetLeaderCount` · `IsAttached` · `HasExtraLeader` ✓
 #     ★★ 且 `SetText` **回 `bool`** ⇒ ★ 旁证（★ **但主判据仍是读回** —— 事实 8 ✓）
 #   ★★ 前置逐条落布尔字段（★ 「读数无效」与「真的不建」长得一模一样 —— ★ 已五次 ✓）
@@ -77,7 +82,8 @@ def main() -> int:
     except Exception:                                                   # noqa: BLE001
         pass
 
-    #: ② **选一个面**（★ 官方示例 Preconditions 逐字：「Select a face, edge, or sketch segment」✓）
+    #: ② **选一个面**（★ 官方示例 Preconditions 逐字：「Select a face, edge, or sketch s
+    #: egment」✓）
     face_ok = False
     try:
         SS.select_entity_by_index(model, "FACE", 0)
@@ -99,7 +105,8 @@ def main() -> int:
     print("★ ② `InsertWeldSymbol3()` ⇒ %s"
           % ("None ✗" if ws_obj is None else "★ **回了对象** ✓"))
 
-    #: ④ **`SetText`**（★ 官方 6 参逐位：★ `Top` · `Left` · `Symbol` · `Right` · `Stagger` · `Contour` ✓）
+    #: ④ **`SetText`**（★ 官方 6 参逐位：★ `Top` · `Left` · `Symbol` · `Right` · `Stagge
+    #: r` · `Contour` ✓）
     set_ret = None
     set_exc = None
     symbol_used = None

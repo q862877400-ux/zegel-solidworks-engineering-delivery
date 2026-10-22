@@ -73,8 +73,10 @@ SPECS_BATCH27 = [
         #: ★★ `study_name` → `name`：能力层形参叫 `name`（不带前缀），对外名带域前缀
         #:   ⇒ **必须靠 `param_alias` 改名**。
         #:   ⚠ 第一版**漏了**，被"走工具路径"的证据脚本当场抓住
-        #:   （`TypeError: create_study_report() got an unexpected keyword argument 'study_name'`）
-        #:   —— ★ 这与 W7 的 `magnitude_n` 是**同一个 bug 家族**，★ 于是本批加了门禁 `check_param_binding`
+        #: （`TypeError: create_study_report() got an unexpected keyword argument 'study
+        #: _name'`）
+        #: —— ★ 这与 W7 的 `magnitude_n` 是**同一个 bug 家族**，★ 于是本批加了门禁 `chec
+        #: k_param_binding`
         #:   （见 `scripts/check_union_conventions.py`）**让这一类不再可能发生**。
         param_alias={"study_name": "name"},
         params=[
@@ -104,7 +106,8 @@ SPECS_BATCH27 = [
         title="Find a Simulation Study by Name",
         module="sw_simulation", function="find_study",
         inject="sw_app",
-        #: ★★ 同上的改名（能力层形参是 `name`）—— ★ 门禁 `check_param_binding` 现在会盯住这一类。
+        #: ★★ 同上的改名（能力层形参是 `name`）—— ★ 门禁 `check_param_binding` 现在会盯
+        #: 住这一类。
         param_alias={"study_name": "name"},
         params=[
             Param("study_name", str, description="Exact study name to look for."),

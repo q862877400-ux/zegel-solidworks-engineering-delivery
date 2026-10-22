@@ -7,10 +7,12 @@
 #           「复制实体」。
 #
 #   ★★★★ **而本轮先把那条台账的归因**纠正了****：
-#     台账写的是 `IModelDoc2.SketchModifyCopy` —— ★ **而按铁律 5 全接口查：那个名字不存在** ⚠
+# 台账写的是 `IModelDoc2.SketchModifyCopy` —— ★ **而按铁律 5 全接口查：那个名字不存在** 
+# ⚠
 #     （★ `SketchModify` 全族**只有四个**：`Flip` / `Rotate` / `Scale` / `Translate`）
 #
-#   ★★★★★ **而"复制"那半在别处**（★ 全 92 个 `ISketchManager` 成员里含 `Copy` 的只有两条）：
+# ★★★★★ **而"复制"那半在别处**（★ 全 92 个 `ISketchManager` 成员里含 `Copy` 的只有两条）
+# ：
 #     ```
 #     bool RotateOrCopy3DAboutXYZ(bool **Copy**, int NumCopies, bool KeepRelations,
 #                                 double BaseX, double BaseY, double BaseZ,
@@ -18,11 +20,13 @@
 #     bool RotateOrCopy3DAboutVector(bool **Copy**, int NumCopies, bool KeepRelations,
 #                                    double BaseX, BaseY, BaseZ, double VectorXCoord, \u2026)
 #     ```
-#     \u2605 \u800c\u5b98\u65b9\u5bf9 `Copy` \u7684\u9010\u5b57\uff1a**"True to copy 3D sketch entities, false to not"** \u2713
+# \u2605 \u800c\u5b98\u65b9\u5bf9 `Copy` \u7684\u9010\u5b57\uff1a**"True to copy 3D sket
+# ch entities, false to not"** \u2713
 #
 #   ★ 前置：★ **一个 3D 草图**（★ `ISketchManager.Insert3DSketch`）+ ★ 里面一条线。
 #   ★ 判据（★ 规则 6 + 事实 436）：**草图段数增加**（★ 复制一份 ⇒ 段数应变 2）。
-#   ⚠ 全程走 `tools/sw_guard.py`；★ 三格：`Copy=True` / `Copy=False`（对照：只转不复制）/ 不选对照。
+# ⚠ 全程走 `tools/sw_guard.py`；★ 三格：`Copy=True` / `Copy=False`（对照：只转不复制）/ 
+# 不选对照。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
@@ -69,11 +73,15 @@ def _one(sw, tag, do_copy):
         row["seg_before"] = before
         ret = None
         try:
-            #: \u2605 **9 \u53c2**\uff08\u2605 **\u53cd\u5c04\u4e0e swapi \u4e24\u6e90\u4e00\u81f4**\uff1a`'RotateOrCopy3DAboutXYZ': 9`\uff09\uff1a
+            #: \u2605 **9 \u53c2**\uff08\u2605 **\u53cd\u5c04\u4e0e swapi \u4e24\u6e90\u
+            #: 4e00\u81f4**\uff1a`'RotateOrCopy3DAboutXYZ': 9`\uff09\uff1a
             #:   `Copy` \u00b7 `NumCopies` \u00b7 `KeepRelations` \u00b7 `BaseXYZ` \u00b7
-            #:   `AngleAboutXDir` \u00b7 `AngleAboutYDir` \u00b7 **`AngleAboutZDir`** \u2190 \u2605 **\u6211\u7b2c\u4e00\u7248\u6f0f\u4e86\u8fd9\u4e2a**
-            #: \u2605 \u800c\u6f0f\u53c2\u6570\u62a5\u7684\u662f `DISP_E_PARAMNOTOPTIONAL`\uff08`0x8002000F`\uff09
-            #:   \u2014\u2014 \u2605 **\u5b83\u770b\u4e0d\u51fa\u662f\u54ea\u4e2a\u53c2\u6570\u6f0f\u4e86** \u26a0
+            #: `AngleAboutXDir` \u00b7 `AngleAboutYDir` \u00b7 **`AngleAboutZDir`** \u21
+            #: 90 \u2605 **\u6211\u7b2c\u4e00\u7248\u6f0f\u4e86\u8fd9\u4e2a**
+            #: \u2605 \u800c\u6f0f\u53c2\u6570\u62a5\u7684\u662f `DISP_E_PARAMNOTOPTIONA
+            #: L`\uff08`0x8002000F`\uff09
+            #: \u2014\u2014 \u2605 **\u5b83\u770b\u4e0d\u51fa\u662f\u54ea\u4e2a\u53c2\u6
+            #: 570\u6f0f\u4e86** \u26a0
             ret = C.get_com_member(sm, "RotateOrCopy3DAboutXYZ",
                                    bool(do_copy), 1, True,
                                    0.0, 0.0, 0.0,

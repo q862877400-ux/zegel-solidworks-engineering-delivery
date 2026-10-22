@@ -375,7 +375,8 @@ def involute_flank_expressions(base_radius_mm: float, half_tooth_angle_rad: floa
     """
     rb_m = float(base_radius_mm)            #: ★ **表达式单位是毫米**（★ 真机扫描法裁决）
     P = float(half_tooth_angle_rad) if right else -float(half_tooth_angle_rad)
-    #: ★ 用 `cos(t∓P)` 展开成 `cos t·cos P ± sin t·sin P`（★ 纯 cos/sin/乘/加 —— ★ 已证可用）
+    #: ★ 用 `cos(t∓P)` 展开成 `cos t·cos P ± sin t·sin P`（★ 纯 cos/sin/乘/加 —— ★ 已证
+    #: 可用）
     cp, sp = math.cos(P), math.sin(P)
     x = ("%.12f*((cos(t)*%.12f+sin(t)*%.12f)+t*(sin(t)*%.12f-cos(t)*%.12f))"
          % (rb_m, cp, sp, cp, sp))

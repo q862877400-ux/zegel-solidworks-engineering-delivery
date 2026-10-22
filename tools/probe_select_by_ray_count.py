@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 607）★ 执行**事实 478 留的下一步**。
 #
 #   ★★ **为什么**：★ 自由样式的五步链（★ 事实 478）里**第 1 步**是
-#     「Select the **face**」（★ **单数**），★ 而实测 `GetSelectedObjectCount2(-1)` 回 **2** ⚠
+# 「Select the **face**」（★ **单数**），★ 而实测 `GetSelectedObjectCount2(-1)` 回 **2**
+#  ⚠
 #     ⇒ ★ 故先弄清**那 2 个是什么**（★ 面 + 环？面 + 边？），★ 再决定怎么只留一个。
 #
 #   ★ 做法：① `ClearSelection2(True)` → ② `SelectByRay(..., Mark=0)` →
@@ -32,7 +33,8 @@ sys.path.insert(0, str(R / "scripts"))
 from scripts import sw_connect as C                                   # noqa: E402
 from scripts import sw_part as P                                      # noqa: E402
 
-#: \u2605 `swSelectType_e` \u91cc\u6700\u5e38\u89c1\u7684\u51e0\u4e2a\uff08\u2605 \u4ece\u53cd\u5c04\uff09
+#: \u2605 `swSelectType_e` \u91cc\u6700\u5e38\u89c1\u7684\u51e0\u4e2a\uff08\u2605 \u4ece
+#: \u53cd\u5c04\uff09
 SEL_TYPES = {0: "NOTHING", 1: "EDGE", 2: "FACE", 3: "VERTEX", 4: "DATUMPLANE",
              5: "DATUMAXIS", 6: "DATUMPOINT", 7: "BODY", 8: "SKETCH", 9: "COMPONENT",
              10: "SKETCHSEGMENT", 11: "SKETCHPOINT", 12: "REFCURVE", 39: "SURFACE"}
@@ -70,8 +72,11 @@ def _dump(doc, tag: str) -> dict:
             obj = C.get_com_member(mgr, "GetSelectedObject6", i, -1)
             row["obj"] = type(obj).__name__ if obj is not None else "None"
             if obj is not None:
-                #: \u2605 \u82e5\u662f\u9762\uff0c\u8bfb\u5b83\u81ea\u5df1\u7684\u6210\u5458\uff08\u2605 \u4e8b\u5b9e 163\uff1a"
-                #:   \u2605 \u4e24\u683c\u90fd\u56de\u540c\u4e00\u5bf9\u8c61\u65f6\u5fc5\u987b\u8bfb\u90a3\u4e2a\u5bf9\u8c61\u81ea\u5df1\u7684\u6210\u5458\u624d\u80fd\u533a\u5206\uff09
+                #: \u2605 \u82e5\u662f\u9762\uff0c\u8bfb\u5b83\u81ea\u5df1\u7684\u6210\u
+                #: 5458\uff08\u2605 \u4e8b\u5b9e 163\uff1a"
+                #: \u2605 \u4e24\u683c\u90fd\u56de\u540c\u4e00\u5bf9\u8c61\u65f6\u5fc5\u
+                #: 987b\u8bfb\u90a3\u4e2a\u5bf9\u8c61\u81ea\u5df1\u7684\u6210\u5458\u624
+                #: d\u80fd\u533a\u5206\uff09
                 for m in ("GetArea", "GetSurface", "Name"):
                     try:
                         v = C.get_com_member(obj, m)
@@ -107,7 +112,8 @@ def main() -> int:
             ok = C.get_com_member(ext, "SelectByRay", 0.0, 0.0, 0.2,
                                   0.0, 0.0, -1.0, 1e-4, 2, False, int(mark), 0)
             if tag.endswith("\u518d\u9009"):
-                #: \u2605 \u5148\u6e05\u4e00\u6b21\uff08\u2605 \u5206\u79bb\u201c\u4e0a\u4e00\u6b21\u7684\u6b8b\u7559\u201d\u8fd9\u4e2a\u53d8\u91cf\uff09
+                #: \u2605 \u5148\u6e05\u4e00\u6b21\uff08\u2605 \u5206\u79bb\u201c\u4e0a\
+                #: u4e00\u6b21\u7684\u6b8b\u7559\u201d\u8fd9\u4e2a\u53d8\u91cf\uff09
                 try:
                     doc.ClearSelection2(True)
                 except Exception:                                         # noqa: BLE001

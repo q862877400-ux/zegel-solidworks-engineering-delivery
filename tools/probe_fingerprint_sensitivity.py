@@ -4,13 +4,16 @@
 # 文件:   tools/probe_fingerprint_sensitivity.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B2**（★ 评审原话：「**量具是指纹
 #           ，所以要校准它**」）✓
-# 运行:   ★ **一律走护栏**：`python tools/sw_guard.py --timeout 900 -- python tools/probe_fingerprint_sensitivity.py`
+# 运行:   ★ **一律走护栏**：`python tools/sw_guard.py --timeout 900 -- python tools/prob
+# e_fingerprint_sensitivity.py`
 #   ★ 护栏现在会给子进程设 `SW_SANDBOX_MODE=enforce` ⇒ ★ 打开的**永远是副本** ✓
-# 判据:   ★★ **第 0 格（最要紧）**：★ 连读两次、**中间什么都不做** ⇒ ★ 两次必须**完全相等**
+# 判据:   ★★ **第 0 格（最要紧）**：★ 连读两次、**中间什么都不做** ⇒ ★ 两次必须**完全相
+# 等**
 #     —— ★ 这是"**读数本身只读**"的直接证据；★ 不等就说明**指纹自己有副作用** ✗
 #   ★ 其余每类：★ 跑一个已知会改它的写操作 ⇒ ★ 看该类读数有没有动 ✓
 #   ★★ 结论分**三档**（★ 不许把"没试"说成"看不见"）：
-#     `sensitive`（动了 ⇒ 有灵敏度证据）· `not_detected`（**跑了写操作**但没动 ⇒ 这一类**不可见**）·
+# `sensitive`（动了 ⇒ 有灵敏度证据）· `not_detected`（**跑了写操作**但没动 ⇒ 这一类**不
+# 可见**）·
 #     ★ **`untested`（这一轮**没跑**写操作 ⇒ 如实记「没试」，★ 不许混进前两档）** ✓
 # 官方依据: 读数出处见 `scripts/sw_fingerprint.py` 的 `OFFICIAL`；写操作用本仓既有工具层
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -30,8 +33,10 @@ for _p in (str(ROOT), str(ROOT / "scripts")):
 
 import sw_fingerprint as FP                                          # noqa: E402
 
-#: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空 ✓
-#: ★★ 每一类配一个**已知会改它**的写操作 —— ★ 值是 **MCP 工具名**（★ 按 `ToolSpec` 契约调）✓
+#: ★ 每一类配一个"**已知会改它**"的写操作 —— ★ 值是**动作名**；★ 没有廉价写法的类就留空 
+#: ✓
+#: ★★ 每一类配一个**已知会改它**的写操作 —— ★ 值是 **MCP 工具名**（★ 按 `ToolSpec` 契约
+#: 调）✓
 #:   ★ 我第一版是**手调能力层函数**（`sw_part.xxx`）⇒ ★ 形状不对、抛 `TypeError` ✗
 #:   ★★ 本仓纪律原话：「写探针验能力时：**按 `ToolSpec` 的契约调**，别手调内部实现」✓
 #:   ★ 空串 = 本轮**没给这一类配写操作** ⇒ ★ 记 `untested`（★ **不许**说成「看不见」）✓
@@ -46,7 +51,8 @@ KNOWN_WRITERS = {
     "features": "solidworks_extrude_boss",
     "bodies": "solidworks_extrude_boss",
     "faces": "solidworks_extrude_boss",
-    #: ★ `display` 这一格读的是**显示状态的名字**（配置级）；本仓**没有**"改显示状态"的工具 ⇒
+    #: ★ `display` 这一格读的是**显示状态的名字**（配置级）；本仓**没有**"改显示状态"的
+    #: 工具 ⇒
     #:   ★ 用一个**视图**写操作去试（★ `set_standard_view`）—— ★ **预期它不会动这一格** ⇒
     #:   ★★ 于是我们得到一条**明确的"这一类当前不可见"记录**（★ 比 `untested` 强）✓
     "display": "solidworks_set_standard_view",
@@ -60,7 +66,8 @@ KNOWN_WRITERS = {
 #:     · `rebuild` ⇒ `needs_rebuild_before=0 · after=0`（文档**本来就是重建好的**）
 #:     · `selection` ⇒ 选区**本来就是空的**
 #:   ⇒ ★★ 正解：★ **给每一类配前置**，★ 让它**从一个「变得了」的状态出发** ✓
-#:   ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`** ✓
+#: ★ 前置也**按契约调**（★ 同一个 `tool_caller`），★ 且**前置失败 ⇒ 该类记 `untested`** 
+#: ✓
 #:   ★★ 这正好与 B3 的「每组只建一次状态」是同一件事 —— ★ 两批在这里**接上**了 ✓
 _RECT = {"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": 40.0, "y2_mm": 30.0}
 #: ★ 造一个实体（★ 后续「选实体」与"重建"都要它）✓
@@ -73,7 +80,8 @@ _SELECT_ONE = ("solidworks_select_by_selector",
                {"selector": "index:0", "kind": "EDGE", "body_index": 0})
 
 WRITER_PRECONDITION = {
-    #: ★★ 真机查明：★ **画矩形并不会留下选中** ⇒ 选区仍是 0 ⇒ `clear_selection` 清不掉东西 ✗
+    #: ★★ 真机查明：★ **画矩形并不会留下选中** ⇒ 选区仍是 0 ⇒ `clear_selection` 清不掉东
+    #: 西 ✗
     #:   ⇒ ★ 前置改成：★ **先造体 → 再选一个实体**（★ 选区变成 1）⇒ 再清就有得清 ✓
     "selection": list(_BODY_CHAIN) + [_SELECT_ONE],
     #: ★ 先建草图、画矩形 ⇒ `extrude_boss` 才有 `Sketch1` 可拉 ✓
@@ -84,7 +92,8 @@ WRITER_PRECONDITION = {
     "faces": [("solidworks_sketch_start", {}),
               ("solidworks_sketch_add_rectangle", _RECT)],
     #: ★★ 真机查明：★ **新零件本来就是重建好的** ⇒ `session_rebuild` 不改变那个布尔 ✗
-    #:   ⇒ ★ 前置改成：★ **先造一个实体的改动**（★ 那会留下「需要重建」）⇒ 再重建就有得变 ✓
+    #: ⇒ ★ 前置改成：★ **先造一个实体的改动**（★ 那会留下「需要重建」）⇒ 再重建就有得变 
+    #: ✓
     "rebuild": list(_BODY_CHAIN),
 }
 
@@ -94,7 +103,8 @@ WRITER_PARAMS = {
     "solidworks_sketch_start": {},
     #: ★★ 真机实测出的一处**声明与实现不一致**：★ 声明写 `depth_mm`，
     #:   而底层函数签名是 `(model, sketch_name, depth, ...)` ⇒ ★ **名字对不上** ✗
-    #:   ⇒ ★ 查明：**不是声明的错** —— ★ `param_alias` 把 `depth_mm` 标成 `None`（解析器消费），
+    #: ⇒ ★ 查明：**不是声明的错** —— ★ `param_alias` 把 `depth_mm` 标成 `None`（解析器消
+    #: 费），
     #:     而真正的 `depth` 由 **`derived_args`** 派生 ⇒ ★ 是**我的调用器缺了那两层映射** ✗
     #:   ⇒ ★ 调用器已补上；★ 探针按**对外声明名**传即可 ✓
     "solidworks_extrude_boss": {"sketch_name": "Sketch1", "depth_mm": 10.0},
@@ -185,7 +195,8 @@ def main() -> int:
     #: ★★★ 第 0 格改成**三次读数、比第 2 与第 3 次** —— ★ 原因（真机现场）：
     #:   ★ 刚建好的零件**还在自行稳定**（首次读数会赶上正在变化的那一瞬）⇒
     #:   ★★ 只比第 1 与第 2 次会把"**文档自己没稳**"误判成"**读数有副作用**" ✗
-    #:   ★ 正解：★ 让第 1 次读数**当"加热"用**，★ **只比第 2 与第 3 次**（★ 期间不做任何事）✓
+    #: ★ 正解：★ 让第 1 次读数**当"加热"用**，★ **只比第 2 与第 3 次**（★ 期间不做任何事
+    #: ）✓
     r1 = FP.read(model, sw)
     r2 = FP.read(model, sw)
     r3 = FP.read(model, sw)
@@ -216,10 +227,13 @@ def main() -> int:
                                       "why": "★ 本轮没给这一类配廉价写操作 ⇒ 如实记「没试」"}
             print("   %-10s ⇒ ★ untested（没试）" % cls)
             continue
-        #: ★★★ 2026-10-06 **真机暴露的更根本的设计错**：★ 我原来把九类**在同一个文档上顺序标定**
+        #: ★★★ 2026-10-06 **真机暴露的更根本的设计错**：★ 我原来把九类**在同一个文档上顺
+        #: 序标定**
         #:   ⇒ ★★ 前面的类改过文档之后，**后面的类就"没得变了"** —— 现场：
-        #:     · `features` 的前置把文档弄脏 ⇒ ★ 轮到 `dirty` 时它**已经是脏的** ⇒ 记 `not_detected` ✗
-        #:     · `features` 用掉了 `Sketch1` ⇒ ★ 轮到 `bodies`/`faces` 时 `extrude` 没东西可拉 ⇒ 也没动 ✗
+        #: · `features` 的前置把文档弄脏 ⇒ ★ 轮到 `dirty` 时它**已经是脏的** ⇒ 记 `not_d
+        #: etected` ✗
+        #: · `features` 用掉了 `Sketch1` ⇒ ★ 轮到 `bodies`/`faces` 时 `extrude` 没东西可
+        #: 拉 ⇒ 也没动 ✗
         #:   ★ 这两条**都不是**"读数瞎" —— ★ 是**我的标定顺序污染了后面的样本** ✓
         #:   ⇒ ★★ 修法：★ **每一类各用一个新零件**（★ 前置也在新零件上重建）✓
         fresh = _new_part(sw)

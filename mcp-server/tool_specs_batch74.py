@@ -5,38 +5,51 @@
 # 文件:   mcp-server/tool_specs_batch74.py
 # 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的 **T-C2**：钣金/焊件
 #            5 项
-#   **「直入法」**（★ 即"直接调一个方法把特征建出来"，★ 不是 `CreateDefinition`+`CreateFeature`）。
-#   ★★ 承 `tool_specs_batch72.py`（第一批：接已有实现）与 `batch73.py`（第二批：工程图五项缺口）。
+# **「直入法」**（★ 即"直接调一个方法把特征建出来"，★ 不是 `CreateDefinition`+`CreateFea
+# ture`）。
+# ★★ 承 `tool_specs_batch72.py`（第一批：接已有实现）与 `batch73.py`（第二批：工程图五项
+# 缺口）。
 #
-#   ==============================  ============================================  ==================
+# ==============================  ============================================  ========
+# ==========
 #   缺口项                          工具名                                        官方入口
-#   ==============================  ============================================  ==================
-#   钣金/斜接法兰                  solidworks_sheet_metal_insert_miter_flange   IFeatureManager.
+# ==============================  ============================================  ========
+# ==========
+# 钣金/斜接法兰                  solidworks_sheet_metal_insert_miter_flange   IFeatureMa
+# nager.
 #                                                                    InsertSheetMetalMiterFlange
-#   钣金/闭合角转折褶边            solidworks_sheet_metal_insert_closed_corner  IModelDoc2.
+# 钣金/闭合角转折褶边            solidworks_sheet_metal_insert_closed_corner  IModelDoc2
+# .
 #                                                                    InsertSheetMetalClosedCorner
-#   焊件/顶端盖                    solidworks_weldment_insert_end_cap          IFeatureManager.
+# 焊件/顶端盖                    solidworks_weldment_insert_end_cap          IFeatureMan
+# ager.
 #                                                                    InsertEndCapFeature3
-#   焊件/角撑板                    solidworks_weldment_insert_gusset           IFeatureManager.
+# 焊件/角撑板                    solidworks_weldment_insert_gusset           IFeatureMan
+# ager.
 #                                                                    InsertGussetFeature3
-#   曲面/中面                      ★★ **不建 ToolSpec**（理由见文件尾）★★        IFeatureManager.
+# 曲面/中面                      ★★ **不建 ToolSpec**（理由见文件尾）★★        IFeatureM
+# anager.
 #                                                                    InsertMidSurface
-#   ==============================  ============================================  ==================
+# ==============================  ============================================  ========
+# ==========
 #
 #   ★★ **本批最核心的产出不是代码，是「废弃链」本身**（★ 铁律 4）—— ★ 逐条查证如下：
 #     · `IModelDoc2.InsertSheetMetalMiterFlange`（11 参 · 回 void）**Obsolete**
 #       → `IFeatureManager.InsertSheetMetalMiterFlange`（**14 参 · 回 Feature**）
 #       ★★ 两份**同名页**、★ **参数个数不同** ⇒ ★ 用错不只是"没反应"，★ 是**个数对不上**。
-#     · `IFeatureManager.InsertEndCapFeature`（6 参）**Obsolete** → `InsertEndCapFeature3`（10 参）。
+# · `IFeatureManager.InsertEndCapFeature`（6 参）**Obsolete** → `InsertEndCapFeature3`（
+# 10 参）。
 #       ⚠ ★★ `InsertEndCapFeature2`（7 参 · 末位 `System.object Faces`）**不在链上** ——
 #         官方页**无** Obsolete 句，★ 且 Remarks 明写它是「用 Faces 数组」的**并列**入口
 #         ⇒ ★ **不是** `1 → 2 → 3` 线性继承（★ 想当然就会写错入口）。
-#     · `IFeatureManager.InsertGussetFeature`（15 参）**Obsolete** → **`InsertGussetFeature3`**（20 参）。
+# · `IFeatureManager.InsertGussetFeature`（15 参）**Obsolete** → **`InsertGussetFeature3
+# `**（20 参）。
 #       ⚠ ★★ **官方在此断链**：`InsertGussetFeature2` 的页**没有** Obsolete 句
 #         ⇒ ★ 第 1 代**直接**指向第 3 代，★ 中间那代的废弃状态**官方没写**。
 #     · `IModelDoc2.InsertMidSurfaceExt` / `IInsertMidSurfaceExt` **都 Obsolete**；
 #       ★★ 后者点名的后继 **`IFeatureManager::IInsertMidSurface` 官方没写**
-#       （`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 页）⇒ ★ **查不到** ⇒ ★ 不顶替（铁律 5）。
+# （`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 页）⇒ ★ **查不到** ⇒ ★ 不顶替（铁律 5
+# ）。
 #
 #   ★★★ **接口别认错**（★ 已知事实 36 的原型，★ 本批的焊件角撑板尤其容易认错）：
 #     `IGussetFeatureData`（官方 category = `Feature Interfaces/**Weldments**`，描述逐字
@@ -50,12 +63,15 @@
 #   ★★ **官方前置（逐字来源）—— 已写进各工具 doc 与能力层返回值**：
 #     · 斜接法兰 / 闭合角：**官方页无 `## Remarks` 段 ⇒ 前置查不到** ⇒ ★ **不编前置**
 #       （铁律 5），★ 能力层如实报 `preconditions_held: None`（★ **不是** `False`）。
-#     · 顶端盖：「**select one or more end faces** of a structural member in the graphics area」
+# · 顶端盖：「**select one or more end faces** of a structural member in the graphics ar
+# ea」
 #       ⇒ ★ 官方**没给 mark**，★ 官方例子用的是 mark=**0**。
 #     · 角撑板：「**two faces** that are the supporting legs … **with a Mark of 1**」
-#       ⇒ ★★ **mark=1**，★ 且官方例子两次都 **Append=True** ⇒ ★ 与顶端盖**不一样**，★ 不能套用。
+# ⇒ ★★ **mark=1**，★ 且官方例子两次都 **Append=True** ⇒ ★ 与顶端盖**不一样**，★ 不能套用
+# 。
 #
-#   ★★ **单位**（规则 2）：距离官方吃**米**（官方例子 0.005 / 0.025 / 0.0125 ⇒ 5 / 25 / 12.5 mm）⇒
+# ★★ **单位**（规则 2）：距离官方吃**米**（官方例子 0.005 / 0.025 / 0.0125 ⇒ 5 / 25 / 12
+# .5 mm）⇒
 #     本工具**对外收 `_mm`**；★ 角度官方吃**弧度**（例子 `0.78539816339745 = π/4 = 45°`）⇒
 #     **对外收 `_deg`**；★ 换算**各只在边界做一次**（能力层 `sw_connect.mm` / `deg`）。
 #     ⚠ `WallThicknessRatio`（0.6）**是比例量、不换算** ⇒ 见下面那条 `param_alias`。
@@ -63,14 +79,19 @@
 #   官方依据（三源 · 铁律 4）:
 #     · `C:\swapi\types\IFeatureManager\InsertSheetMetalMiterFlange.md`（14 参）
 #       / `C:\swapi\types\IModelDoc2\InsertSheetMetalMiterFlange.md`（11 参 · **Obsolete**）
-#       + `C:\swapi\enums\swSheetMetalReliefTypes_e.md` + `C:\swapi\enums\swFlangePositionTypes_e.md`
+# + `C:\swapi\enums\swSheetMetalReliefTypes_e.md` + `C:\swapi\enums\swFlangePositionType
+# s_e.md`
 #     · `C:\swapi\types\IModelDoc2\InsertSheetMetalClosedCorner.md`（**零参 · 回 void**）
 #     · `C:\swapi\types\IFeatureManager\InsertEndCapFeature3.md`（10 参 · **有 Remarks**）
-#       + `C:\swapi\enums\swEndCapThicknessDirection_e.md`（Outward=0 / Inward=1 / **Inset=2**）
-#       + `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`（米制 + mark=0 + `GetDefinition` 读回）
+# + `C:\swapi\enums\swEndCapThicknessDirection_e.md`（Outward=0 / Inward=1 / **Inset=2**
+# ）
+# + `C:\swapi\examples\Insert_Weldment_End_Cap_Example_VB.md`（米制 + mark=0 + `GetDefin
+# ition` 读回）
 #     · `C:\swapi\types\IFeatureManager\InsertGussetFeature3.md`（20 参 · **mark=1 逐字**）
-#       + `C:\swapi\enums\swGussetThicknessType_e.md` + `C:\swapi\enums\swGussetProfileLocationType_e.md`
-#       + `C:\swapi\examples\Insert_Gusset_Feature_Example_VB.md`（Append=True + mark=1 + 弧度/米制佐证）
+# + `C:\swapi\enums\swGussetThicknessType_e.md` + `C:\swapi\enums\swGussetProfileLocatio
+# nType_e.md`
+# + `C:\swapi\examples\Insert_Gusset_Feature_Example_VB.md`（Append=True + mark=1 + 弧度
+# /米制佐证）
 #     · `C:\swapi\types\IFeatureManager\InsertMidSurface.md`（4 参 · 前两位是**对象形参**）
 #     · ★ arity 与官方签名**逐条互证**（反射 dump `scripts/sw_api_sldworks.py`，第三源）：
 #       `14 / 0 / 10 / 20 / 4` ✓✓✓✓✓
@@ -83,7 +104,8 @@ from __future__ import annotations
 
 from tool_registry import Param, ToolSpec
 
-#: ★★ 本批 5 项里**只有 4 项**在这里声明（第 5 项「曲面/中面」的**前两个形参是对象** ⇒ `Param` 表达不了
+#: ★★ 本批 5 项里**只有 4 项**在这里声明（第 5 项「曲面/中面」的**前两个形参是对象** ⇒ `
+#: Param` 表达不了
 #: ★ ⇒ 见文件尾那段理由）；★ 模块名在这里**只出现一次**，★ 便于 grep 核对。
 _MODULE = "sw_sheet_metal_weld_entry"
 
@@ -98,8 +120,10 @@ _MODULE = "sw_sheet_metal_weld_entry"
 #:     ⇒ ★★ 于是"指望调用方预选"的工具**经工具层永远拿不到选区**
 #:       （★ 而 MCP 客户端本来也没法预选）。
 #:   ★ **正确形态照本仓既有先例**：`solidworks_fillet` / `solidworks_chamfer` 用的是
-#:     `pre_call=_select_edge` —— ★ 在 `pre_call`（= 注入**之后**）解析成真实选区 ⇒ **能存活**。
-#:   ★ 官方 mark（逐字）：顶端盖「select one or more **end faces**」**没给 mark**（官方例子用 **0**）；
+#: `pre_call=_select_edge` —— ★ 在 `pre_call`（= 注入**之后**）解析成真实选区 ⇒ **能存活
+#: **。
+#: ★ 官方 mark（逐字）：顶端盖「select one or more **end faces**」**没给 mark**（官方例
+#: 子用 **0**）；
 #:     角撑板「**two faces** … with a **Mark of 1**」。
 def _select_faces_for(mark: int, count: int):
     """★ 造一个 `pre_call`：调目标函数前按官方 mark 选 `count` 个面。
@@ -237,11 +261,15 @@ _BATCH74: list[ToolSpec] = [
                      "is_given_offset": "is_given_offset",
                      "is_chamfer": "is_chamfer",
                      "offset_value_mm": "offset_value_mm",
-                     # ★★ 官方形参名是 `WallThicknessRatio`，★ 但它是**比例量（0.6）不是长度** ——
-                     # ★ 而 `tool_registry` 规则 2 按子串扫 `thickness` 会要求 `_mm` 后缀 ⇒
-                     # ★ 加 `_mm` 就是**说错话**（门禁自己的注记原话）。⇒ ★ 对外用 `wall_ratio`，
+                     # ★★ 官方形参名是 `WallThicknessRatio`，★ 但它是**比例量（0.6）不是
+                     # 长度** ——
+                     # ★ 而 `tool_registry` 规则 2 按子串扫 `thickness` 会要求 `_mm` 后
+                     # 缀 ⇒
+                     # ★ 加 `_mm` 就是**说错话**（门禁自己的注记原话）。⇒ ★ 对外用 `wall
+                     # _ratio`，
                      # ★ ★ 用 `param_alias` 显式指回真形参 `wall_thickness_ratio`
-                     # ★ （`ToolSpec.param_alias` 的用途逐字就是「MCP 表面…比…合规（规则 2），
+                     # ★ （`ToolSpec.param_alias` 的用途逐字就是「MCP 表面…比…合规（规则
+                     #  2），
                      # ★ 而实现里的名字不该为了对外好看去改」）。
                      "wall_ratio": "wall_thickness_ratio",
                      "chamfer_value_mm": "chamfer_value_mm",
@@ -385,30 +413,41 @@ _BATCH74: list[ToolSpec] = [
     ),
 ]
 
-#: ★★ **本批**刻意**不给「曲面/中面」建 ToolSpec** —— ★ 不是遗漏，是**形参形态表达不了**：
-#:   `IFeatureManager.InsertMidSurface( Body2 PBodyIn, ModelDoc2 PPartDocIn, double Placement,
+#: ★★ **本批**刻意**不给「曲面/中面」建 ToolSpec** —— ★ 不是遗漏，是**形参形态表达不了**
+#: ：
+#: `IFeatureManager.InsertMidSurface( Body2 PBodyIn, ModelDoc2 PPartDocIn, double Placem
+#: ent,
 #:   bool KnitFlag )` —— ★ **前两个形参是 COM 对象**，★ 而 `tool_registry.Param` 只能表达
 #:   **str / float / int / bool** ⇒ ★ **表达不了**。
 #:   ★ 那两个对象也**不该被换成标量**：★ 官方 `## Remarks` 逐字要求它们是
 #:   「the **component's model document**」与「the **body of that component**」
-#:   ⇒ ★ 它们是**身份**，★ 不是可以拿 id / 名字顶替的量（★ 铁律 5：不许用相近的东西代替）。
+#: ⇒ ★ 它们是**身份**，★ 不是可以拿 id / 名字顶替的量（★ 铁律 5：不许用相近的东西代替）
+#: 。
 #:   ⇒ ★ **能力层已实现**：`scripts/sw_sheet_metal_weld_entry.py::insert_mid_surface`
-#:     —— ★ 内部照官方 4 参原序传对象，★ 并回读**曲面体数增量**（★ 官方逐字「Each reference surface
+#: —— ★ 内部照官方 4 参原序传对象，★ 并回读**曲面体数增量**（★ 官方逐字「Each reference 
+#: surface
 #:     is considered a **sheet body**」⇒ ★ 它产出曲面体、★ 实体面数对它没有意义）。
-#:   ⇒ ★ 将来要暴露它，**正确形态是带 `extra_op` 的 ToolSpec**（`extra_op` 自己解析对象），
+#: ⇒ ★ 将来要暴露它，**正确形态是带 `extra_op` 的 ToolSpec**（`extra_op` 自己解析对象）
+#: ，
 #:     ★ 而**不是**把对象硬塞进 `Param`（★ 那会把它说成一个它不是的东西）。
 #:
-#: ★★ 顺带登记**一条本批查到的「查不到」**（铁律 5）：★ `IModelDoc2.IInsertMidSurfaceExt` 官方逐字标
-#:   `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]].`，★ 而 **`IFeatureManager::
-#:   IInsertMidSurface` 那一页官方没写**（`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 页）
-#:   ⇒ ★ **那条链断在这里、无后继签名可抄** ⇒ ★ **不拿**非 `I` 前缀的 `InsertMidSurface` 顶替它。
+#: ★★ 顺带登记**一条本批查到的「查不到」**（铁律 5）：★ `IModelDoc2.IInsertMidSurfaceExt
+#: ` 官方逐字标
+#: `Obsolete. Superseded by [[IFeatureManager::IInsertMidSurface]].`，★ 而 **`IFeatureMa
+#: nager::
+#: IInsertMidSurface` 那一页官方没写**（`C:\swapi\types\` 全库只有 3 个 `*MidSurface*` 
+#: 页）
+#: ⇒ ★ **那条链断在这里、无后继签名可抄** ⇒ ★ **不拿**非 `I` 前缀的 `InsertMidSurface` 
+#: 顶替它。
 
 #: ★ ★★ **第 5 条：中面**（★ 原先因两个对象形参挂不上，本轮补了**按体号解析**的转接层）
 #:   据 `recon/scan-S2b-ledger-vs-tools.md` 的 A 表：`surface_midsurface` 这类是
 #:   **`level: verified` 却没暴露成工具**的条目 ⇒ ★ 转接层 = `create_midsurface`（同模块，
 #:   ★ **不重写实现**，它转调既有 `insert_mid_surface`）。
-#:   ★ 做法：`body_index` 指体号 ⇒ `IPartDoc.GetBodies2(0, False)` 取体表；`part_doc` 用同一个 `model`。
-#:   ⚠⚠ **未真机验证**（★ 与同批其余条目同一纪律）⇒ ★ **在工具层 e2e 给出读数之前不许写 `verified`**。
+#: ★ 做法：`body_index` 指体号 ⇒ `IPartDoc.GetBodies2(0, False)` 取体表；`part_doc` 用同
+#: 一个 `model`。
+#: ⚠⚠ **未真机验证**（★ 与同批其余条目同一纪律）⇒ ★ **在工具层 e2e 给出读数之前不许写 `v
+#: erified`**。
 _BATCH74.append(
     ToolSpec(
         name="solidworks_surface_midsurface_create",

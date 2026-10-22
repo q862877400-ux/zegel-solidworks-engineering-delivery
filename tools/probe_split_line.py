@@ -9,8 +9,10 @@
 #   ★★ **三条入口**（★ 对应 SolidWorks 分割线对话框里的三个类型）：
 #     | 类型 | 入口 | 官方签名 |
 #     |---|---|---|
-#     | **轮廓** | `IModelDoc2.InsertSplitLineSil()` | `void InsertSplitLineSil()` ⇒ **0 参** |
-#     | **投影** | `IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` | ⇒ **2 参** |
+# | **轮廓** | `IModelDoc2.InsertSplitLineSil()` | `void InsertSplitLineSil()` ⇒ **0 参*
+# * |
+# | **投影** | `IModelDoc2.InsertSplitLineProject(IsDirectional, FlipDir)` | ⇒ **2 参** 
+# |
 #     | **交叉** | `IFeatureManager.InsertSplitLineIntersect(CompleteOption)` | ⇒ **1 in** |
 #     ★ 三者都取自**类型库**（第 3 源 · 冲突裁决者）✓
 #
@@ -18,7 +20,8 @@
 #     ⇒ ★★ **而那时我试的是哪个入口、什么前置，计划里没写清** ⚠
 #     ⇒ ★ 故本轮**三条都试、且前置写清**。
 #
-#   ★ 前置（★ 本轮统一）：★ 一个**实体盒** + ★ 一张**穿过它的曲面**（★ 分割线要"分割"某物）。
+# ★ 前置（★ 本轮统一）：★ 一个**实体盒** + ★ 一张**穿过它的曲面**（★ 分割线要"分割"某物
+# ）。
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -108,8 +111,10 @@ def _pick_plane(doc, names=("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane")):
     except Exception:                                                     # noqa: BLE001
         pass
     ext = _get(doc, "Extension")
-    #: ★★★★ 2026-10-03（轮 538）**修**：`Callout` **不能传 `None`** —— ★ 本仓要 `_empty_callout()`
-    #:   （★ **事实 33**：传 `None` 报 `类型不匹配`、★ 而那个错**看不出是 Callout 的问题**）。
+    #: ★★★★ 2026-10-03（轮 538）**修**：`Callout` **不能传 `None`** —— ★ 本仓要 `_empty_
+    #: callout()`
+    #: （★ **事实 33**：传 `None` 报 `类型不匹配`、★ 而那个错**看不出是 Callout 的问题**
+    #: ）。
     #:   ⚠ **轮 537 第一版就是踩在这**：★ 报错被 `except: continue` 吞掉 ⇒
     #:     `picked={"plane": null}` ⇒ ★ 两条**根本没真试到**，★ 而读起来像"前置不够"。
     from sw_part import _empty_callout as _ec
@@ -117,9 +122,11 @@ def _pick_plane(doc, names=("\u524d\u89c6\u57fa\u51c6\u9762", "Front Plane")):
     errs = []
     for nm in names:
         try:
-            #: ★★★★ 2026-10-03（轮 538）**第二次修** —— ★ 手搓的 `get_com_member(ext, "SelectByID2", …)`
+            #: ★★★★ 2026-10-03（轮 538）**第二次修** —— ★ 手搓的 `get_com_member(ext, "S
+            #: electByID2", …)`
             #:   即使传了 `_empty_callout()` **仍报 `类型不匹配`（位置 8）** ⚠
-            #:   ⇒ ★★ **改用本仓现成的 `sw_part._select_by_id`**（★ 它内部处理的形态才是对的）✓
+            #: ⇒ ★★ **改用本仓现成的 `sw_part._select_by_id`**（★ 它内部处理的形态才是对
+            #: 的）✓
             if _sel_id(ext, nm, "PLANE", append=False, mark=0):
                 return nm
         except Exception as exc:                                          # noqa: BLE001
@@ -141,11 +148,13 @@ def _one(sw, tag, kind):
         picked = {}
         ret = None
         if kind == "sil":
-            #: ★ \u8f6e\u5ed3\u578b\uff1a\u9009\u4e00\u4e2a**\u57fa\u51c6\u9762**\uff08\u2605 0 \u53c2\uff09
+            #: ★ \u8f6e\u5ed3\u578b\uff1a\u9009\u4e00\u4e2a**\u57fa\u51c6\u9762**\uff08\
+            #: u2605 0 \u53c2\uff09
             picked["plane"] = _pick_plane(doc)
             ret = C.get_com_member(doc, "InsertSplitLineSil")
         elif kind == "project":
-            #: ★ \u6295\u5f71\u578b\uff1a\u9009\u9762/\u57fa\u51c6\u9762\uff08\u2605 2 \u53c2\uff09
+            #: ★ \u6295\u5f71\u578b\uff1a\u9009\u9762/\u57fa\u51c6\u9762\uff08\u2605 2 \
+            #: u53c2\uff09
             picked["plane"] = _pick_plane(doc)
             ret = C.get_com_member(doc, "InsertSplitLineProject", False, False)
         else:

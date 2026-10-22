@@ -247,7 +247,8 @@ def _intent_steps(intent: str, text: str, geo: dict) -> list:
         ]
     if intent == "drawing":
         #: ★★ 2026-10-12 修：`part_path` **不能传空串** ——
-        #:   ⚠ 实测：`solidworks_drawing_create_projected_view` 的 `part_path` 是**必填**，
+        #: ⚠ 实测：`solidworks_drawing_create_projected_view` 的 `part_path` 是**必填**
+        #: ，
         #:     而 `param_alias` 里它**没有别名** ⇒ 空串会被绑成 `""`
         #:     ⇒ ★ 而 `""` **过不了**（★ 那会让 `NOT_COMPILABLE`）。
         #:   ⇒ ★ 判据：**传一个明确的占位路径**，并**在 `derive` 里写明由执行器换真值**。
@@ -525,7 +526,8 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
     #:   ⚠ 实测（2026-10-12）：`METHOD_LIBRARY` 只有 **4 个建模方法**，
     #:     而「加属性 / 出工程图 / 干涉检查 / 加方程」**一个都不命中**
     #:     ⇒ `no-method` ✗ —— ★ 而那些需求的工具**都已注册且准入**。
-    #:   ⇒ ★ 判据：**建模意图才检索方法**；非建模意图直接按意图生成（★ 见 `_intent_steps`）。
+    #: ⇒ ★ 判据：**建模意图才检索方法**；非建模意图直接按意图生成（★ 见 `_intent_steps`
+    #: ）。
     intent = detect_intent(text)
     #: ★★ **只有「真的靠 `METHOD_LIBRARY` 检索」的意图才检索** ——
     #:   ⚠ 实测（2026-10-12 第二次修正）：第一版把 `pin`/`keyway`/`shell` 也算

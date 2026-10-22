@@ -3,8 +3,10 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_spec209_b3_entities.py
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B3-1**：外部项目 idx **115 `edges`** +
-#   idx **145 `faces`**（★ 裁决书强制**合并成一条工具**、**扩**已有 `solidworks_entities_on_body`）。
-#   ★★ 裁决书点名的**真风险**是「**读属性读不到**」（事实 3x：`IModelDoc2.ActiveView.Name/Type`
+# idx **145 `faces`**（★ 裁决书强制**合并成一条工具**、**扩**已有 `solidworks_entities_o
+# n_body`）。
+# ★★ 裁决书点名的**真风险**是「**读属性读不到**」（事实 3x：`IModelDoc2.ActiveView.Name/
+# Type`
 #     报 `unknown.X`）⇒ ★ **先单独做一条小验证**再落 ⇒ 本探针就是那条验证 ✓
 #   ★★ 判据（规则 6，全回读）：
 #     ```
@@ -15,7 +17,8 @@
 #     ④ 负例         ★ 越界序号 / 非法 kind ⇒ 必须**大声报**（不静默回空）
 #     ```
 # 官方依据: `C:\\swapi\\types\\IBody2\\{GetEdges,GetFaces,GetVertices}.md` ·
-#   `IEdge\\{GetStartVertex,GetEndVertex}.md` · `IVertex\\GetPoint.md` · `IFace2\\GetArea.md` ·
+# `IEdge\\{GetStartVertex,GetEndVertex}.md` · `IVertex\\GetPoint.md` · `IFace2\\GetArea.
+# md` ·
 #   ★★ **`IEdge` 的成员表里没有 Length**（★ 这是"名字缺席 = 官方没有"的现场）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
@@ -87,8 +90,10 @@ def main() -> int:
         ev["verdict"]["all_ok"] = all(v is True for v in ev["verdict"].values())
         print("  verdict =", json.dumps(ev["verdict"], ensure_ascii=False))
 
-        #: ④ 负例：越界序号 / 非法 kind ⇒ **必须大声报**（★ 注意：`entity_geometry` 是**报告函数**，
-        #:   ★ 它**回字典不抛** ⇒ 判据是 `error` 非空，**不是"有没有抛"**（★ 我在 B2 批已栽过同一形态）✓
+        #: ④ 负例：越界序号 / 非法 kind ⇒ **必须大声报**（★ 注意：`entity_geometry` 是**
+        #: 报告函数**，
+        #: ★ 它**回字典不抛** ⇒ 判据是 `error` 非空，**不是"有没有抛"**（★ 我在 B2 批已
+        #: 栽过同一形态）✓
         bad_g = SS.entity_geometry(doc, "EDGE", 99)
         ev["negative"]["bad_index"] = {
             "error": bad_g.get("error"),

@@ -4,19 +4,25 @@
 # 文件:   tools/probe_spec211_curvedriven.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps`。★★ **本探针是一次翻案的兑现** ——
 #   ★ 我 B5 原判「曲线驱动阵列 = 不做」，★ 依据链是：★ ① `IModelDoc2::FeatureCurvePattern`
-#   **已 `Obsolete`** ✗ · ★ ② 现代入口 = `CreateFeature` + `ICurveDrivenPatternFeatureData`
-#   （**属性式**）✗ · ★ ③ 那个 Data **带 `AccessSelections`** ✗ · ★ ④ **事实 47** ⇒ 到不了建成 ✗
-#   ★★★ 而那四步**只覆盖了"别人家的入口"** ✗ —— ★★ **漏了这个名字里就写着 `CurveDriven` 的** ✓
-#   ⇒ ★★★★ **「曲线驱动阵列」与「零部件阵列」共用它**（★ 覆盖表却分在**特征域/装配域**两行 ✓）
+# **已 `Obsolete`** ✗ · ★ ② 现代入口 = `CreateFeature` + `ICurveDrivenPatternFeatureData
+# `
+# （**属性式**）✗ · ★ ③ 那个 Data **带 `AccessSelections`** ✗ · ★ ④ **事实 47** ⇒ 到不了
+# 建成 ✗
+# ★★★ 而那四步**只覆盖了"别人家的入口"** ✗ —— ★★ **漏了这个名字里就写着 `CurveDriven` 的
+# ** ✓
+# ⇒ ★★★★ **「曲线驱动阵列」与「零部件阵列」共用它**（★ 覆盖表却分在**特征域/装配域**两行
+#  ✓）
 # 官方依据（★ 三样逐字读过）：
 #   · `C:\swapi\types\IFeatureManager\FeatureLocalCurveDrivenPattern.md`
 #     `Feature FeatureLocalCurveDrivenPattern( bool FlipDir1, int Num1, bool EqualSpacing1,
-#      double Spacing1, int ReferencePoint, int CurveMethod, int AlignMethod, bool Direction2,
+# double Spacing1, int ReferencePoint, int CurveMethod, int AlignMethod, bool Direction2
+# ,
 #      bool FlipDir2, int Num2, bool EqualSpacing2, double Spacing2, bool PatternSeedOnly )`
 #     ★ **13 参 · 纯参数式 · 不带 `AccessSelections`** ✓
 #   · ★★★ 同页 `## Remarks` **给了完整 mark 表**（★ 第 ③ 样的价值）：
 #       **1 = Components to pattern** · **2 = Curve/edge/sketch for Direction 1** ·
-#       4 = …Direction 2 · **32 = Reference point for `ReferencePoint`** · 64 = Face on which a 3D curve lies
+# 4 = …Direction 2 · **32 = Reference point for `ReferencePoint`** · 64 = Face on which 
+# a 3D curve lies
 #     ★ 且 NOTE 逐字：★ 若 `ReferencePoint` 取 `swLocalSketchPatternSelectedPoint`，
 #       ★ **选中的参考点必须是 vertex** ✓
 #   · ★ 故本探针只按 **mark 1 + 2** 选（★ Direction2 关、ReferencePoint 取 0 档 ✓）
@@ -45,7 +51,8 @@ MARKS = {"components_to_pattern": 1, "direction1_curve": 2,
 
 
 #: ★★ 取特征名 —— **不要用 `sw_weldment.feature_names`** ✗（★ 它在 B8 收口时被移除了：
-#:   ★ 撞 `check_relative_imports` 的棘轮 ✓）；★ 也不用 `iter_features_recursive`（★ 实测它
+#: ★ 撞 `check_relative_imports` 的棘轮 ✓）；★ 也不用 `iter_features_recursive`（★ 实测
+#: 它
 #:   在这条链上**取不到任何特征** ✗ ⇒ 会让 `特征树 = []`、**读数整体无效** ✓）
 #:   ⇒ ★ 用 **B2-2 已验证可用**的 `sw_surface_features.feature_names` ✓
 def _fnames(model):

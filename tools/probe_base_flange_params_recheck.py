@@ -1,6 +1,7 @@
 """★ 真机验 `base_flange_params` 并**测出钣金族的单位口径**（★ 阶段 3 · 第 8 个能力）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IBaseFlangeFeatureData\`）
+# 仓库:   本项目自身 + SolidWorks 官方文档（本机 `C:\swapi\types\IBaseFlangeFeatureData\
+# `）
 # 文件:   `scripts/sw_feature_readback.py::base_flange_params`（★ 刚补的能力）
 # 定位:   ★ **改完必须跑一次验证**（★ 本仓纪律）⇒ 调**能力层本体** ✓
 #   ★★ **判据极干净**（★ 而它是**从仓里读出来的**，★ 不是猜的）：

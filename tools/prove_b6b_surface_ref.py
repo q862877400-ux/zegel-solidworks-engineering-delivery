@@ -8,7 +8,8 @@
 #   ★ 结构照抄**本仓已被真机验证过的**骨架（`tools/prove_b6a_surface_edit.py`）：
 #     · `sw, _ = connect_solidworks(wait_seconds=30)`（★ 它回元组）
 #     · **每个用例一个新文档** ⇒ 失败不拖累后续
-#     · `P.start_sketch` / `SP.sketch_3point_corner_rectangle` / `P.end_sketch`（★ 本仓包装）
+# · `P.start_sketch` / `SP.sketch_3point_corner_rectangle` / `P.end_sketch`（★ 本仓包装
+# ）
 #     · **判据 = 特征树叶子名增量**（`sw_part.feature_names`）
 #
 #   ★★ **两条各自的"前置"（官方 Remarks 要求先选）**：
@@ -129,7 +130,8 @@ def _case_revolve(doc):
     #:   ★ 上一轮量到 **`轴选中数 = 5`**：`sw_part._select_revolve_axis(doc, "草图1")`
     #:     是**按草图名取该草图里所有段**再全按 `mark=4` 选 ⇒ ★ 矩形 4 边也被选成"轴"了
     #:     ⇒ ★ **轴不唯一** ⇒ 这才是没建成的直接原因。
-    #:   ★★ 而官方签名给了更准的路（`C:\swapi\types\ISketchManager\CreateCenterLine.md`）：
+    #: ★★ 而官方签名给了更准的路（`C:\swapi\types\ISketchManager\CreateCenterLine.md`）
+    #: ：
     #:     > **Signature**: `SketchSegment CreateCenterLine(X1, Y1, Z1, …)`
     #:     ⇒ ★ **它回的就是那条中心线的 `SketchSegment`** ⇒ 捕获它 ⇒ **只选它** ✓
     #:   ★ 而顺序照 `sw_part.revolve_boss` 那条真机判据（★ 轮 360）：**先轴、后轮廓**。

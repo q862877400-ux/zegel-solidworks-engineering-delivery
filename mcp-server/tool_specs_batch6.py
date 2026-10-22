@@ -66,9 +66,11 @@ SPECS_BATCH6 = [
                   description="Include components excluded from the BOM; default false."),
         ],
     ),
-    # ⚠⚠ **`get_mass_property_override_options` 未纳入本批**（2026-10-01 轮 93 真机实测）：
+    # ⚠⚠ **`get_mass_property_override_options` 未纳入本批**（2026-10-01 轮 93 真机实测
+    # ）：
     #   它调 `IModelDocExtension.GetMassProperties(accuracy)`，而**任何参数数都报**
-    #   `(-2147352561, '非选择性的参数。')`；换 `GetMassProperties2(acc, outStatus, useSelected)`
+    # `(-2147352561, '非选择性的参数。')`；换 `GetMassProperties2(acc, outStatus, useSel
+    # ected)`
     #   **能跑但返回的是扁平浮点数组**（13+ 个 float），**拿不到 `IMassProperty2`**
     #   ⇒ 该函数里 `GetOverrideOptions()` 那一步**前提本身不成立**。
     #   ★ **它不是「参数没调对」，是「从没跑通过」** —— 而它是个**孤立函数**（没人调用）

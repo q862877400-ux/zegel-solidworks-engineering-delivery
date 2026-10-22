@@ -4,7 +4,8 @@
 # 文件:   scripts/check_fact_single_home.py
 # 定位:   **规格 206 / T5-1 的交付物** —— 治理线：`docs/known-facts.md` 是事实的家，
 #         别的文档**只许引用（给编号 + 链接），不许逐字复述** ⇒ 复述会**两处漂移** ✓
-# 依据:   另一对话的 `docs/recon/fact-single-home.md`（只读复用，其结论为 `conditional_pass`）·
+# 依据:   另一对话的 `docs/recon/fact-single-home.md`（只读复用，其结论为 `conditional_p
+# ass`）·
 #         本仓 `AGENTS.md` §六（它自己写明「查事实请读那个文件」，本节只留速查 21 条）·
 #         事实 538/539（同族定则：**两处写同一个数，就会漂**）✓
 # 官方依据: 不适用（本仓自身的文档治理）。

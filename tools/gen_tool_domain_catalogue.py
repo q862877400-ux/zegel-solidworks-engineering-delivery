@@ -51,7 +51,8 @@ def _domain_line(module: str, specs: list) -> str:
     """★ 每域一行：域名 · 工具数 · 干什么 · 常用注入键。"""
     #: 域名去掉 sw_ 前缀，更短
     name = module[3:] if module.startswith("sw_") else module
-    #: 一句话：取该域**最多 3 个**工具 title 的共同线索 —— ★ 不做花哨 NLP，直接给代表性能力
+    #: 一句话：取该域**最多 3 个**工具 title 的共同线索 —— ★ 不做花哨 NLP，直接给代表性
+    #: 能力
     titles = []
     for s in specs[:3]:
         t = (getattr(s, "title", "") or getattr(s, "name", "")).strip()

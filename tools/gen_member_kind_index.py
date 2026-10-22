@@ -5,14 +5,17 @@
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-7**（外部评审说的「第二路判据
 #           」）。
 #   ★★ 为什么需要它：B1-1 用**底层成员动词**只覆盖了 **88/448（20%）**，★ 因为成员里大量是
-#     **属性式访问**（`FeatureManager` / `FirstFeature` / `Extension` / `SelectionManager` 这类名词），
-#     动词表认不出它们。★ 评审的原话是「类型库能标出 `propget`/`propput`，但**普通方法没有读写标记**，
+# **属性式访问**（`FeatureManager` / `FirstFeature` / `Extension` / `SelectionManager` 
+# 这类名词），
+# 动词表认不出它们。★ 评审的原话是「类型库能标出 `propget`/`propput`，但**普通方法没有读
+# 写标记**，
 #     所以对方法仍只能靠名字」✓
 # 判据:   ★★ 官方成员页的 front matter 给 `kind: property | method`；
 #   ★ **属性**再看签名行里的 `{get; set;}`（可设 ⇒ **写**）vs `{get;}`（只读 ⇒ **读**）✓
 #   ★ **方法没有这个标记** ⇒ ★ 本索引对方法只记 `kind`，**不判读写**（★ 不冒充）✓
 # 官方依据: `C:\swapi\types\<接口>\<成员>.md`（结构化 markdown，官方离线源之一）
-# 许可:   本仓库 MIT。无第三方代码引入。★ 索引是从**本机官方源**派生的缓存 ⇒ 不入库（见 .gitignore）✓
+# 许可:   本仓库 MIT。无第三方代码引入。★ 索引是从**本机官方源**派生的缓存 ⇒ 不入库（见 
+# .gitignore）✓
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
@@ -25,7 +28,8 @@ SWAPI = Path(r"C:\swapi\types")
 ROOT = Path(Path(__file__).resolve().parents[1])
 OUT = ROOT / ".api-signatures" / "member-kinds.json"
 
-#: ★ 签名行形如：`**Signature**: `System.double BendAngle {get; set;}`` —— ★ 认 `set;` = 可写 ✓
+#: ★ 签名行形如：`**Signature**: `System.double BendAngle {get; set;}`` —— ★ 认 `set;` =
+#:  可写 ✓
 _SIG = re.compile(r"^\*\*Signature\*\*:\s*`(.+?)`\s*$", re.M)
 
 

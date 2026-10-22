@@ -7,20 +7,26 @@
 #           条）
 #   与 **T701**（边界框）。用户工具栏里判「不能」的那些，本模块收这 5 条。
 #
-#   ==================  ==================================================  ==================
+# ==================  ==================================================  ==============
+# ====
 #   工具栏原文           官方成员                                             判据
-#   ==================  ==================================================  ==================
-#   基准面               `IFeatureManager.InsertRefPlane`（6 参）→ object      回非 None + 树增量
+# ==================  ==================================================  ==============
+# ====
+# 基准面               `IFeatureManager.InsertRefPlane`（6 参）→ object      回非 None +
+#  树增量
 #   坐标系               `IFeatureManager.InsertCoordinateSystem`（3 参）→ Feature  同
 #   点                   `IFeatureManager.InsertReferencePoint`（4 参）→ object  同
 #   质心                 `IFeatureManager.InsertCenterOfMass()` → Feature        同
-#   边界框               `IModelDocExtension.Create3DBoundingBox()` → void       **只有树增量**
-#   ==================  ==================================================  ==================
+# 边界框               `IModelDocExtension.Create3DBoundingBox()` → void       **只有树
+# 增量**
+# ==================  ==================================================  ==============
+# ====
 #
 #   ★★ **代际**（★ 铁律 4：以后继版为准）：
 #     `IModelDoc2.InsertCoordinateSystem` **官方标 Obsolete**：
 #     > Obsolete. Superseded by [[IFeatureManager::InsertCoordinateSystem]].
-#     ⇒ ★ 本模块用 **`IFeatureManager` 那个**（★ 且它回 `Feature`，★ 比旧版的 `bool` 信息多）✓
+# ⇒ ★ 本模块用 **`IFeatureManager` 那个**（★ 且它回 `Feature`，★ 比旧版的 `bool` 信息多
+# ）✓
 #
 #   ★★★ **三张枚举表**（★ 全部从官方 swapi 的 `enums/` 取，**不凭记忆**）：
 #     · `swRefPlaneReferenceConstraints_e`：
@@ -36,14 +42,16 @@
 #     · 基准面：「Before calling this method, you must have selected the reference entities
 #       using these **marks** with `IModelDocExtension::SelectByID2`」
 #       ⇒ ★ **调用前要按 mark 选好参考实体**（★ 铁律 3 第三句）。
-#     · 点：「The **NumberOfRefPoints** argument **must contain a value of 1** to successfully
+# · 点：「The **NumberOfRefPoints** argument **must contain a value of 1** to successful
+# ly
 #       create one reference point feature.」⇒ ★ 本模块**默认 1**，且**拒绝其它值** ✓
 #
 # 官方依据（三源）:
 #   · `C:\swapi\types\IFeatureManager\InsertRefPlane.md`（6 参 · mark 的 Remarks）
 #   · `C:\swapi\types\IFeatureManager\InsertCoordinateSystem.md`（3 参 → Feature）
 #   · `C:\swapi\types\IModelDoc2\InsertCoordinateSystem.md`（★ **Obsolete** 那一行）
-#   · `C:\swapi\types\IFeatureManager\InsertReferencePoint.md`（4 参 · NumberOfRefPoints=1）
+# · `C:\swapi\types\IFeatureManager\InsertReferencePoint.md`（4 参 · NumberOfRefPoints=1
+# ）
 #   · `C:\swapi\types\IFeatureManager\InsertCenterOfMass.md`（`Feature ()`）
 #   · `C:\swapi\types\IModelDocExtension\Create3DBoundingBox.md`（`void ()`）
 #   · `C:\swapi\enums\swRefPlaneReferenceConstraints_e.md` / `swRefPointType_e.md` /
@@ -52,9 +60,11 @@
 # 覆盖:   全文件（★ 逐函数另有来源块）。
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回对象非 None** + **特征树增量**
+# ★ 判据：★ 每个函数回 `{"ok": …, "verified_by": …}`；★ 判据 = **回对象非 None** + **特
+# 征树增量**
 #   （★ 事实 8：COM 返回值单独不可信；★ 规则 6：不静默成功）。
-#   ★★ 树增量**必须**走 `sw_part.feature_names`（★ 轮 473 的教训：自己拼的那条路真机回 None）。
+# ★★ 树增量**必须**走 `sw_part.feature_names`（★ 轮 473 的教训：自己拼的那条路真机回 Non
+# e）。
 
 from __future__ import annotations
 
@@ -79,14 +89,17 @@ __all__ = [
 ]
 
 #: ★ 官方 `swRefPlaneReferenceConstraints_e`（★ 逐字抄自 `C:\swapi\enums\`）
-#: ★★ 2026-10-08（spec 223）**订正两个值**：`OptionProjectToNearestLocation` 1028 → **1024**、
+#: ★★ 2026-10-08（spec 223）**订正两个值**：`OptionProjectToNearestLocation` 1028 → **10
+#: 24**、
 #:   `OptionProjectAlongSketchNormal` 2056 → **2048**。
 #:   ★ 证据：官方 md 那一行**自己就矛盾** —— `| …NearestLocation | 1028 or 0x400 |`、
 #:     `| …AlongSketchNormal | 2056 or 0x800 |`，而 `0x400 = 1024`、`0x800 = 2048`
 #:     ⇒ ★ md 的**十进制列抄错了**，十六进制列与**出厂反射**一致 ⇒ 按铁律 4 取反射 ✓
-#:   ★ 并给每行补 `# sw<官方成员名>` 注释 ⇒ 本表**首次进入** `check_enum_values_vs_reflection.py`
+#: ★ 并给每行补 `# sw<官方成员名>` 注释 ⇒ 本表**首次进入** `check_enum_values_vs_reflect
+#: ion.py`
 #:     的覆盖面（★ 原先无注释 ⇒ 门禁看不见 ⇒ 值错了也没人抓）✓
-#:   ⚠ 本表是官方 14 项里的**子集 10 项**（未收 `Perpendicular`/`Tangent`/`Project`/`ParallelToScreen`）。
+#: ⚠ 本表是官方 14 项里的**子集 10 项**（未收 `Perpendicular`/`Tangent`/`Project`/`Paral
+#: lelToScreen`）。
 REF_PLANE_CONSTRAINTS = {
     "Parallel": 1,                                        # swRefPlaneReferenceConstraint_Parallel
     "Coincident": 4,                                      # swRefPlaneReferenceConstraint_Coincident
@@ -131,7 +144,8 @@ REF_GEOMETRY_STATUS = {
 }
 
 
-#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字相同）
+#: ★ 2026-10-22（仓库统一化）：`_tree_names` 原在本文件与另外 3 个模块各有一份（逻辑逐字
+#: 相同）
 #:   ⇒ 收敛到单一实现 `scripts/sw_feature_tree.py`，此处只做导入别名 ✓
 try:
     from .sw_feature_tree import tree_names as _tree_names
@@ -192,12 +206,17 @@ def insert_ref_plane(model, first_constraint: int, first_angle_or_dist: float = 
     return _judge(model, {"_before": before, "returned_is_none": obj is None,
                           "constraints": [int(first_constraint), int(second_constraint),
                                           int(third_constraint)],
-                          #: ★★ 2026-10-07（规格 212 · D）：★ 本键**已经把"官方未给单位"说出来了** ✓，
-                          #:   但它用的是**自己造的键名** ⇒ ★★ 仓里的既有约定是 **`unit_assumption`**
-                          #:   （★ 见 `sw_curve_and_split.py` / `sw_drawing_create_missing.py`，共 7 处）✓
-                          #:   ★ 依据**铁律 1「只缝合不发明」** —— ★ **该用既有约定的键名** ✓
+                          #: ★★ 2026-10-07（规格 212 · D）：★ 本键**已经把"官方未给单位"
+                          #: 说出来了** ✓，
+                          #: 但它用的是**自己造的键名** ⇒ ★★ 仓里的既有约定是 **`unit_as
+                          #: sumption`**
+                          #: （★ 见 `sw_curve_and_split.py` / `sw_drawing_create_missing
+                          #: .py`，共 7 处）✓
+                          #: ★ 依据**铁律 1「只缝合不发明」** —— ★ **该用既有约定的键名*
+                          #: * ✓
                           #:   ★ 故**两个键都留**：★ `unit_assumption` 承载**统一说法**，
-                          #:   ★ `angle_or_dist_unit` 保留**它比统一说法多出的信息**（★ 指明是哪个参数）✓
+                          #: ★ `angle_or_dist_unit` 保留**它比统一说法多出的信息**（★ 指
+                          #: 明是哪个参数）✓
                           "angle_or_dist_unit": "★ 官方未给单位 —— 按文档原样透传，本模块不换算",
                           "unit_assumption": "★ 官方未给单位 —— 按文档原样透传，本模块不换算；"
                                              "★ 该形参（`FirstConstraintAngleOrDistance` 族）在 "
@@ -265,13 +284,16 @@ def insert_reference_point(model, ref_point_type: int, along_curve_type: int = 0
     if fm is None:
         return {"ok": False, "error": "取不到 FeatureManager"}
     before = _tree_names(model)
-    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**声明式选区入口 + 紧邻调用才选** ——
+    #: ★★★ 2026-10-07（接手轮 · 规格 216 T-216-06b-2）**声明式选区入口 + 紧邻调用才选** 
+    #: ——
     #:   ★ 起因（★ 台账 `ref_geometry` 逐字）：「点（`InsertReferencePoint`）要先选实体，
     #:     **而选面必须紧接着调用**（★ 中间隔别的步骤会把选区清掉 —— ★ 这正是它
     #:     「在诊断里成、在探针里不成」的原因）」✓
-    #:   ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选好 ✗
+    #: ★★ 而**注入解析器会清空选区**（**事实 503**）⇒ ★ 模型**没有任何办法**在调工具前选
+    #: 好 ✗
     #:   ★ 规则 3 **不许收裸坐标** ⇒ ★ 故收**声明式选择器 + 实体种类**
-    #:     （`resolve_selection` 认的合法形式：`__current_selection__` / `index:<n>` / 一个 COM 对象）✓
+    #: （`resolve_selection` 认的合法形式：`__current_selection__` / `index:<n>` / 一个 
+    #: COM 对象）✓
     #:   ★★ 注意顺序：★ 这段**必须**紧贴下面那个 `InsertReferencePoint` 调用 ——
     #:     ★ 中间**不许**再插任何动选区的步骤（★ 上引台账那句就是这条约束的出处）✓
     if str(selection or "").strip():

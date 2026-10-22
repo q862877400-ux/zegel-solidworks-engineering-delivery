@@ -4,9 +4,11 @@
 # 文件:   `scripts/sw_automation_knowledge.py`（HRESULT 释义 · 命令锁 · 首选项开关）
 #         `scripts/sw_com_traps.py`（★ 本批只取 2 个**纯函数**：`deprecated_successor` /
 #          `find_real_implementations`）
-#         `scripts/sw_busy.py`（★ 本会话 2026-10-04 新建：SolidWorks 忙闲 / 卡死 / 求解器进程 / 等空闲）
+# `scripts/sw_busy.py`（★ 本会话 2026-10-04 新建：SolidWorks 忙闲 / 卡死 / 求解器进程 / 
+# 等空闲）
 # 定位:   ★ 规格 `specs/205-tool-ramp/` §8.3 的**批 80**（v3 批序第一坡）✓
-#         ★ 选域依据：机械预筛 `output/prescreen-deduped.json`（本批候选 16 ⇒ 预估可挂 ~14，实得 12）✓
+# ★ 选域依据：机械预筛 `output/prescreen-deduped.json`（本批候选 16 ⇒ 预估可挂 ~14，实得
+#  12）✓
 # 官方依据: ★ **本批多数是本仓自研**（`source_kind: repo_original`）——· `explain_hresult
 #           ` / `explain` 的释义表出自本仓（★ 不是官方枚举页）；  ★ 而 `sw_com_traps` 的
 #           来源块另记了第三方调研（andrewbartels1 / Millwright / chatsw，均 MIT）· `sw_
@@ -20,8 +22,10 @@
 # ★★ 本批**不做**的（FR-002/D-5 要求记"不做 + 原因"）：
 #     · `sw_automation_knowledge.send_message` —— ★ 它**自己弹一个模态提示框** ⇒
 #       与「无人值守」和「常驻弹窗监控」（事实 527）**直接冲突**：监控会把它记成 `needs_llm`，
-#       而没人去点它 ⇒ **会话就停在那儿**。★ 故不挂；要跟用户说话，用工具返回值/报告，不用弹框 ✓
-#     · `sw_com_traps.explain` —— ★ 与 `sw_automation_knowledge.explain_hresult` **同一件事**
+# 而没人去点它 ⇒ **会话就停在那儿**。★ 故不挂；要跟用户说话，用工具返回值/报告，不用弹框
+#  ✓
+# · `sw_com_traps.explain` —— ★ 与 `sw_automation_knowledge.explain_hresult` **同一件事*
+# *
 #       （FR-006 去重：换名不重挂）✓
 #     · `sw_com_traps.is_type_mismatch` —— ★ 等价于一次 `== 0x80020005`，**没有独立价值**；
 #       ★ 且 `tool_specs_batch7.py` 已有先例把同模块的 `byref_pair` 判为"内部用·不暴露" ✓

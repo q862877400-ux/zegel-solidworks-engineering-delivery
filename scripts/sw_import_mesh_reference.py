@@ -12,7 +12,8 @@
 # 文件:   scripts/sw_import_mesh_reference.py —— 本文件的**依赖导入块**（轮 145 改动）。
 # 定位:   2026-10-01（轮 145）：把「**故意要调**」的零参调用从 `get_com_member` 迁到
 #         **`call_com_member`**（名字即意图）⇒ 本文件的 try/except 两条导入路径都要加上它。
-#         ★ 起因见 `docs/known-facts.md` 事实 84/85 与 `tools/audit_get_com_member_semantics.py`。
+# ★ 起因见 `docs/known-facts.md` 事实 84/85 与 `tools/audit_get_com_member_semantics.py`
+# 。
 # 官方签名依据: 本块只改导入名，**不改任何 COM 调用**；各调用的依据在原函数处。
 # 许可:   本仓库 MIT。无第三方代码引用。
 # 覆盖:   全文件 —— ⚠ 本块是**轮 145 那次导入改动**的说明，
@@ -67,9 +68,12 @@ SW_IMPORT_SURFACE_BODY = 1
 SW_IMPORT_SOLID_BODY = 2
 
 #: 本表的取值集与官方枚举同源（spec 226 把它从「散文」升级为「可核」）：
-#: `C:\swapi\enums\swLengthUnit_e.md` 与 `_raw/enum_values_sldworks.txt` 第 959–970 行**逐条一致**
-#: （swMM=0 · swCM=1 · swMETER=2 · swINCHES=3 · swFEET=4 …）；本表值集 {0,1,2,3,4} ⊆ 官方取值集。
-#: ★ 键是**本地语义键**（`"mm"`/`"meter"`/`"in"`，且有意允许同义键）⇒ 不逐行补 `# swXxx`。
+#: `C:\swapi\enums\swLengthUnit_e.md` 与 `_raw/enum_values_sldworks.txt` 第 959–970 行**
+#: 逐条一致**
+#: （swMM=0 · swCM=1 · swMETER=2 · swINCHES=3 · swFEET=4 …）；本表值集 {0,1,2,3,4} ⊆ 官
+#: 方取值集。
+#: ★ 键是**本地语义键**（`"mm"`/`"meter"`/`"in"`，且有意允许同义键）⇒ 不逐行补 `# swXxx`
+#: 。
 #: enum-gate: enum swLengthUnit_e
 SW_LENGTH_UNITS = {
     "mm": 0,
@@ -130,7 +134,8 @@ def configure_mesh_import_preferences(
         (SW_IMPORT_STL_VRML_UNITS, SW_LENGTH_UNITS[unit_key]),
         (SW_IMPORT_UNIT_PREFERENCE, 0),
     ]
-    # preference-guard: 本函数只"设"，★ 旧值逐条记进 `restore`，由 restore_mesh_import_preferences
+    # preference-guard: 本函数只"设"，★ 旧值逐条记进 `restore`，由 restore_mesh_import_p
+    # references
     #   在 `import_mesh_reference` 的 `finally` 里还回去（★ 事实 525）
     for preference, value in int_preferences:
         old = _read_preference_quietly(sw, "integer", preference)
@@ -148,7 +153,8 @@ def configure_mesh_import_preferences(
     for preference, value in toggle_preferences:
         old = _read_preference_quietly(sw, "toggle", preference)
         report["restore"].append({"kind": "toggle", "preference": preference, "old": old})
-        # SetUserPreferenceToggle 在部分版本返回 void；没有 COM 异常即可继续，最终以导入和预览为准。
+        # SetUserPreferenceToggle 在部分版本返回 void；没有 COM 异常即可继续，最终以导入
+        # 和预览为准。
         returned = sw.SetUserPreferenceToggle(preference, value)
         report["operations"].append(
             {
@@ -180,7 +186,8 @@ def restore_mesh_import_preferences(sw, report: dict[str, Any]) -> dict[str, Any
       · ★ **读回校验**：写完再读一次，逐条给 `match` —— ★ 不把"设了"当成"还原了" ✓
     """
     restored, skipped, errors = [], [], []
-    # preference-guard: 本函数就是"还原那一步"（★ 写回 `configure_mesh_import_preferences` 记下的旧值 —— 事实 525）
+    # preference-guard: 本函数就是"还原那一步"（★ 写回 `configure_mesh_import_preference
+    # s` 记下的旧值 —— 事实 525）
     for item in report.get("restore") or []:
         kind, preference, old = item.get("kind"), item.get("preference"), item.get("old")
         if old is None:
@@ -280,13 +287,16 @@ def import_mesh_reference(
     model.ViewZoomtofit2()
     #: ★★★ 2026-10-03（接手轮）**换成后继入口** —— 原来是 `model.GraphicsRedraw2()`。
     #:   官方 `types/IModelDoc2/GraphicsRedraw2.md` 逐字：
-    #:     「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGraphicsRedraw]].**」
+    #: 「**Obsolete. Superseded by [[IModelView::GraphicsRedraw]] and [[IModelView::IGra
+    #: phicsRedraw]].**」
     #:   而 `types/IModelView/GraphicsRedraw.md` 的签名逐字是
     #:     `void GraphicsRedraw( System.object Rect )` —— ★ **比旧的多一个 `Rect`**。
-    #:   ★ `## Parameters` 逐字：「**Rect**: Array of four integers or longs indicating the boundary
+    #: ★ `## Parameters` 逐字：「**Rect**: Array of four integers or longs indicating th
+    #: e boundary
     #:     of the region in the SOLIDWORKS graphics window to redraw;」
     #:   ★★ 官方例子给的是**两种都合法**的用法：`modelview.GraphicsRedraw(null)`（C#）·
-    #:     `GraphicsRedraw (Empty)`（VB）· `swModelView.GraphicsRedraw(rect)`（4 元素数组）。
+    #: `GraphicsRedraw (Empty)`（VB）· `swModelView.GraphicsRedraw(rect)`（4 元素数组）
+    #: 。
     #:   ★★★ 真机已验（`tools/probe_graphicsredraw_successor.py` 与
     #:     `output/graphicsredraw-successor-evidence.json`）：★ `ActiveView` 拿得到 ·
     #:     `GraphicsRedraw(None)` 与 `GraphicsRedraw([0,0,800,600])` **都能调** ⇒ **PASS** ✓

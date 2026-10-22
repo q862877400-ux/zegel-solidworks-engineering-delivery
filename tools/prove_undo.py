@@ -6,7 +6,8 @@
 # 定位:   ★ 2026-10-03（轮 395）objective② 补真缺 `undo`：官方 `IModelDoc2.EditUndo2(i
 #           nt Steps)`
 #   （★ 1 参 · 回 `void`）⇒ 判据只能是**特征树退回了**。
-#   ★ 本探针：★ 先建一个特征（树 +1）⇒ 调 `undo_report(model, 1)` ⇒ **树应退回**（★ 定量）。
+# ★ 本探针：★ 先建一个特征（树 +1）⇒ 调 `undo_report(model, 1)` ⇒ **树应退回**（★ 定量）
+# 。
 # 官方依据: `C:\swapi\types\IModelDoc2\EditUndo2.md`（★ `void EditUndo2(int Steps)`；
 #   「Undoes the specified number of actions in the active SOLIDWORKS Design session」）·
 #   `EditUndo`（★ **Obsolete**）· `SketchUndo()`（★ 零参，撤最后一条草图画线）。
@@ -16,12 +17,14 @@
 #
 # ★ 判据（★ 定量、可被"什么都没发生"证伪）：
 # ```
-# ① 前置：★ 建一个**拉伸体** ⇒ 特征树 **+1**（★ 用 `create_basic_part` 那条太粗 ⇒ 直接用 sw_part）
+# ① 前置：★ 建一个**拉伸体** ⇒ 特征树 **+1**（★ 用 `create_basic_part` 那条太粗 ⇒ 直接用
+#  sw_part）
 # ② `undo_report(model, 1)` ⇒ **`tree_after < tree_before`** 且 `undone = True`
 # ③ ★ 负例：★ `steps = 0` ⇒ **必须被入口拒**（★ 官方要求 ≥ 1 个动作）
 # ```
 # ★ 全程走 `sw_guard` 护栏（AGENTS.md 的常驻纪律）。
-# ⚠ **调用纪律**：★ `EditUndo2` 撤的是**会话里的动作**、★ 不区分是不是我们做的 ⇒ ★ 本探针只在
+# ⚠ **调用纪律**：★ `EditUndo2` 撤的是**会话里的动作**、★ 不区分是不是我们做的 ⇒ ★ 本探
+# 针只在
 #   **自己刚建完特征之后**调用它 ✓
 
 from __future__ import annotations

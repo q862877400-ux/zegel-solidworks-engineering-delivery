@@ -6,18 +6,22 @@
 # 定位:   ★ 2026-10-03（轮 551）★ 照新纪律读文档后的**一个推论验证**。
 #
 #   ★★ **推论怎么来的**：
-#     · 官方 `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` 的 `## Remarks` 逐字：
+# · 官方 `C:\swapi\types\IFeatureManager\InsertProtrusionBlend2.md` 的 `## Remarks` 逐字
+# ：
 #       「Set the mark for: **1 = profile selections** · **2 = guide curve selections** ·
 #         **4 = centerline selection**」；★ 并强调
-#       「selection of the profiles **must be in an order consistent with** [the design intent]」
+# 「selection of the profiles **must be in an order consistent with** [the design intent
+# ]」
 #       与「**Use of guide curves is strongly recommended**」。
-#     · ★ 而**本仓 `scripts/sw_loft.py::create_loft_report` 走的**就是那个入口**（★ 18 参）、
+# · ★ 而**本仓 `scripts/sw_loft.py::create_loft_report` 走的**就是那个入口**（★ 18 参）
+# 、
 #       ★ 且它的 docstring 已经写着那条 mark=1 与"按顺序"。
 #     ⇒ ★★ **故推论**：★ 工具栏上的「**边界凸台/基体**」与「**放样凸台/基体**」
 #       ★ **在 API 上是同一个**（`InsertProtrusionBlend2`）——
 #       ★ 它们的差别是 **UI 层**的（★ 界面上是两个按钮）⚠
 #
-#   ★ 本探针就验这一件事：★ **同一个 `create_loft_report`，能不能建出「边界凸台」那样的特征**
+# ★ 本探针就验这一件事：★ **同一个 `create_loft_report`，能不能建出「边界凸台」那样的特
+# 征**
 #     —— ★ 判据用**本仓已定**的：★ 树增量 **且** 类型名 = **`Blend`** ✓
 #
 #   ⚠ 全程走 `tools/sw_guard.py`；★ 每组**新开一个文档**。
@@ -54,11 +58,13 @@ def _two_profiles(doc):
             doc.ClearSelection2(True)
         except Exception:                                                     # noqa: BLE001
             pass
-        #: \u2605 \u7b2c\u4e8c\u4e2a\u8349\u56fe\u8981\u5728**\u53e6\u4e00\u4e2a\u57fa\u51c6\u9762**\u4e0a\uff08\u2605 \u504f\u79fb\u4e00\u4e2a\uff09
+        #: \u2605 \u7b2c\u4e8c\u4e2a\u8349\u56fe\u8981\u5728**\u53e6\u4e00\u4e2a\u57fa\u
+        #: 51c6\u9762**\u4e0a\uff08\u2605 \u504f\u79fb\u4e00\u4e2a\uff09
         if i == 0:
             P.start_sketch(doc, plane_name=plane)
         else:
-            #: \u2605 \u7528 InsertRefPlane \u5efa\u4e00\u4e2a\u504f\u79fb\u57fa\u51c6\u9762\uff08\u2605 \u672c\u4ed3\u5df2\u6709 ref_geometry\uff09
+            #: \u2605 \u7528 InsertRefPlane \u5efa\u4e00\u4e2a\u504f\u79fb\u57fa\u51c6\u
+            #: 9762\uff08\u2605 \u672c\u4ed3\u5df2\u6709 ref_geometry\uff09
             from sw_connect import get_com_member as _get
             fm = _get(doc, "FeatureManager")
             ext = _get(doc, "Extension")

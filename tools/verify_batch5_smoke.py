@@ -103,9 +103,11 @@ def main() -> int:
 
         # ── ★ 强证据（2026-10-01 轮 92 补）──────────────────────────────
         # ⚠ 上面那两条**证据偏弱**：`list_render_materials` 在原文档上返回 **0 个材质**
-        #   ⇒ 只证明"不报错"，**没验到"有材质时"**；`collect_appearance_evidence` 只回 3 个键
+        # ⇒ 只证明"不报错"，**没验到"有材质时"**；`collect_appearance_evidence` 只回 3 
+        # 个键
         #   ⇒ **没核键的含义对不对**。
-        # ⇒ 本节**造一个带外观的新件**，再验一次：数量必须 > 0，且参数**必须不是恒定 0**。
+        # ⇒ 本节**造一个带外观的新件**，再验一次：数量必须 > 0，且参数**必须不是恒定 0**
+        # 。
         print()
         print("=== 强证据：造带外观的件，再验 ===")
         from scripts import sw_appearance
@@ -125,7 +127,8 @@ def main() -> int:
 
             evi = sw_render_material.collect_appearance_evidence(fresh)
             # ⚠ 键名是 **`appearances`**，不是 `rows`（第一版猜错了 ⇒ 断言取到 None）。
-            #   实测结构：{"appearance_count": int, "appearances": [{ambient,diffuse,…}], "has_appearance": bool}
+            # 实测结构：{"appearance_count": int, "appearances": [{ambient,diffuse,…}], 
+            # "has_appearance": bool}
             rows = evi.get("appearances") if isinstance(evi, dict) else None
             chk("★ `appearance_count` 与实际材质数一致",
                 isinstance(evi, dict) and evi.get("appearance_count") == len(mats),
@@ -152,7 +155,8 @@ def main() -> int:
             pass
         try:
             if created is not None and sw is not None:
-                # ⚠ `created.Close(False)` 在迟到绑定下报「**无效的参数数目**」（轮 92 实测）
+                # ⚠ `created.Close(False)` 在迟到绑定下报「**无效的参数数目**」（轮 92 
+                # 实测）
                 #   ⇒ 改用 `ISldWorks.CloseDoc(标题)`，**只在按标题能找到时**关。
                 # ⚠ 只关**我自己刚建的**那个（`created`），绝不按名单批量关。
                 _t = str(sw_connect.safe_get_com_member(created, "GetTitle") or "")

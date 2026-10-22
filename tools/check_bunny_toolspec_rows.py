@@ -107,10 +107,13 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         injected = row.get("inject") or ""
         #: ★ 注入的那个形参**不出现在** params 里（它由解析器供给）
         req_x = [a for a in req if a != injected]
-        #: ★★ 规则 2 的**合法改名**要认：★ `padding_m` → `padding_mm`（★ Bunny 在真产出里就这么做的）
+        #: ★★ 规则 2 的**合法改名**要认：★ `padding_m` → `padding_mm`（★ Bunny 在真产出
+        #: 里就这么做的）
         #: ★★ 且**行自带 `param_alias` 时一律认可** —— ★ 真产出里 `save_preview` 把
-        #:   `width/height` 改成 `pixel_width/pixel_height`（★ 与既有 `solidworks_export_bmp`
-        #:   同一手法：像素不是长度 ⇒ 不该叫 `width`）⇒ ★ 那是**做对了**，第一版却判它"盘上没这个形参" ✓
+        #: `width/height` 改成 `pixel_width/pixel_height`（★ 与既有 `solidworks_export_b
+        #: mp`
+        #: 同一手法：像素不是长度 ⇒ 不该叫 `width`）⇒ ★ 那是**做对了**，第一版却判它"盘
+        #: 上没这个形参" ✓
         alias = row.get("param_alias") or {}
         aliased = {str(k): str(v) for k, v in alias.items()} if isinstance(alias, dict) else {}
 
@@ -139,11 +142,15 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
             bad.append("② 形参**顺序**与盘上不一致（按盘上序取子序列应为 %r，草稿写 %r）"
                        % ([a for a in (req + opt) if a in order and a != injected], claimed))
     #: ③ 官方出处存在 + 引文逐字命中
-    #: ★★ 例外一：`exposable=False`（判"不做"）时**官方出处可以为空**，但**必须写原因**（铁律 5）✓
+    #: ★★ 例外一：`exposable=False`（判"不做"）时**官方出处可以为空**，但**必须写原因**
+    #: （铁律 5）✓
     #: ★★ 例外二（2026-10-04 补，★ 因真产出里 4 行被判"自相矛盾"而发现）：
-    #:   `source_kind == "repo_original"` —— ★ **本仓自研的纯计算/编排函数本来就没有官方页**
-    #:   （如 `sw_review.inspect_pdf_text_layout` / `collect_geometry_measurements` 这类聚合器）。
-    #:   ★ 那时**不要求** `official_file` 是官方 md 页，★ 但**要求它指向一个真实存在的仓库文件**
+    #: `source_kind == "repo_original"` —— ★ **本仓自研的纯计算/编排函数本来就没有官方页
+    #: **
+    #: （如 `sw_review.inspect_pdf_text_layout` / `collect_geometry_measurements` 这类聚
+    #: 合器）。
+    #: ★ 那时**不要求** `official_file` 是官方 md 页，★ 但**要求它指向一个真实存在的仓库
+    #: 文件**
     #:   （= 真源），★ 且**必须**在 `official_remarks_gist` 里说清"真源是本仓哪一段" ✓
     src_kind = str(row.get("source_kind") or "official_page")
     if row.get("exposable") is False:
@@ -189,22 +196,27 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
         if low in COORD_NAMES:
             bad.append("⑥ 参数 %r 是**裸坐标**（规则 3 禁）" % name)
         if any(w in low for w in LENGTH_WORDS) and not re.search(r"_(mm|m|inch|in)$", low):
-            #: ★★ 误伤修正（事实 51 同族）：`axis_tolerance` 这类**无量纲**容差被词表抓到
+            #: ★★ 误伤修正（事实 51 同族）：`axis_tolerance` 这类**无量纲**容差被词表抓
+            #: 到
             #:   —— ★ 真产出里 Bunny 的 desc 已写明「无量纲」⇒ ★ 尊重它，不报
             desc_low = str(p.get("desc") or "").lower()
             if not any(k in desc_low for k in ("无量纲", "dimensionless", "不是长度", "非长度")):
                 bad.append("⑤ 长度类参数 %r 缺 `_mm` 后缀（规则 2）" % name)
         if any(w in low for w in ANGLE_WORDS) and not low.endswith("_deg"):
-            #: ★★ 误伤修正（★ 第二坡真产出）：`lock_rotation` / `rotation_locked` 这类**布尔开关**
-            #:   名字里带 "rotation" 而**不是角度** ⇒ ★ 按 `type` 与 desc 放行（事实 51 同族）✓
+            #: ★★ 误伤修正（★ 第二坡真产出）：`lock_rotation` / `rotation_locked` 这类**
+            #: 布尔开关**
+            #: 名字里带 "rotation" 而**不是角度** ⇒ ★ 按 `type` 与 desc 放行（事实 51 同
+            #: 族）✓
             typ = str(p.get("type") or "").lower()
             d2 = str(p.get("desc") or "").lower()
             if typ not in ("bool", "boolean") and not any(
                     k in d2 for k in ("布尔", "开关", "bool", "flag", "是否")):
                 bad.append("⑤ 角度类参数 %r 缺 `_deg` 后缀（规则 2）" % name)
     #: ⑦ 注入键
-    #: ★★ 判据**以盘上 `RESOLVERS` 为准**（★ 与 ⑩ 同一原则）—— 第一版用**静态白名单** `INJECT_KEYS`
-    #:   ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉** ✓
+    #: ★★ 判据**以盘上 `RESOLVERS` 为准**（★ 与 ⑩ 同一原则）—— 第一版用**静态白名单** `I
+    #: NJECT_KEYS`
+    #: ⇒ ★ 我新加 `sldworks` 键之后，5 行本来能挂的被判"不是 RESOLVERS 的键" ⇒ **冤枉** 
+    #: ✓
     inj = str(row.get("inject") or "")
     keys = _resolver_keys()
     if inj and inj not in keys and inj not in INJECT_KEYS:
@@ -215,8 +227,10 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     elif inj and req and req[0] != inj:
         bad.append("⑦ ★ 注入键 %r ≠ 目标函数首参 %r（事实 502）" % (inj, req[0]))
     #: ⑧ 查重
-    #: ★★★ 2026-10-04 细分（★ 拿真产出校准时发现）：`tool_name` 已在 `all_specs()` 里有**两种**含义：
-    #:   · ★ **已建**（那条既有工具**就是从同一个 `module`+`function` 来的**）—— ★ 例如批 81 建完
+    #: ★★★ 2026-10-04 细分（★ 拿真产出校准时发现）：`tool_name` 已在 `all_specs()` 里有*
+    #: *两种**含义：
+    #: · ★ **已建**（那条既有工具**就是从同一个 `module`+`function` 来的**）—— ★ 例如批 
+    #: 81 建完
     #:     第一坡之后，24 行 exposable 全落进这一类 ✓
     #:   · ✗ **真撞名**（既有工具来自别的函数 ⇒ 两件不同的事抢同一个名字）✓
     #: ★★ **但两者都算失败** —— ★ 因为"再声明一次同名工具"会**在批次文件里重复** ⇒
@@ -234,7 +248,8 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     if row.get("exposable") is False and not str(row.get("reason_if_not") or "").strip():
         bad.append("⑧ 判 exposable=False 却**没写原因**（★ 铁律 5：说清为什么）")
     #: ⑨⑩ ★ 三问筛的**自相矛盾检查**
-    #: ★★ ⑩ 的关键：`q2_inject_key_available` **以盘上 `RESOLVERS` 为准**，不信行里的自述 ——
+    #: ★★ ⑩ 的关键：`q2_inject_key_available` **以盘上 `RESOLVERS` 为准**，不信行里的自
+    #: 述 ——
     #:   ★ 真产出里就有这种情形：Bunny 的快照**早于**我加 `sldworks` 键，于是它写 `false`
     #:   而在正文里说明"实际注册表里已有" ⇒ ★ 若照它自述判，就会**冤枉一行本来能挂的** ✓
     #:   ★ 这正是本门禁自己的原则：**判据从盘上重推** ✓
@@ -249,8 +264,10 @@ def check_row(row: dict, existing_tools: set[str]) -> list[str]:
     if row.get("exposable") is True and q2c is True and not disk_has_key:
         bad.append("⑩ ★ 自相矛盾：判可暴露，却自述**首参是 COM 对象且无注入键可用**"
                    "（★ 已按盘上 RESOLVERS 复核：键 %r 不在表里）" % inj_key)
-    #: ⑪ ★★ **对象族禁忌（可执行）**：★ `view` 这个注入键给的是 **`IModelView`（模型视图）**，
-    #:   而 `sw_drawing_view.py` 那些函数的首参**虽然也叫 `view`**，却是 **`IView`（图纸视图）**
+    #: ⑪ ★★ **对象族禁忌（可执行）**：★ `view` 这个注入键给的是 **`IModelView`（模型视图
+    #: ）**，
+    #: 而 `sw_drawing_view.py` 那些函数的首参**虽然也叫 `view`**，却是 **`IView`（图纸视
+    #: 图）**
     #:   ⇒ ★ 注错对象会**静默地"什么都没反应"**（★ 事实 36 那一族，最难查）
     #:   ⇒ ★ 判废，并写明正解是**另加一个按名字取 `IView` 的解析器** ✓
     if inj_key == "view" and str(row.get("module") or "") == "sw_drawing_view":
@@ -342,7 +359,8 @@ def _selftest() -> int:
     ★ 1 个正例（必须 PASS）+ 4 个反例（各自必须**因指定那条判据**而 FAIL）✓
     """
     #: ★ 正例：拿一个**真存在**的函数 + **真存在**的官方页与逐字签名
-    #:   （`sw_assembly_doc.auto_explode` 与 `IAssemblyDoc\\AutoExplode.md`；★ 注入键 = 首参 `doc`）
+    #: （`sw_assembly_doc.auto_explode` 与 `IAssemblyDoc\\AutoExplode.md`；★ 注入键 = 首
+    #: 参 `doc`）
     page = ROOT.parent / "swapi" / "types" / "IAssemblyDoc" / "AutoExplode.md"
     page = Path(r"C:\swapi\types\IAssemblyDoc\AutoExplode.md")
     sig = ""

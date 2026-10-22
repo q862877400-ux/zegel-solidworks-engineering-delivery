@@ -8,15 +8,18 @@
 #         `tools/verify_sketch_edit_smoke.py` · `tools/prove_b3_sketch_edit.py`（★ 既有探针）
 # 定位:   ★ 阶段 · SC-004（★ SPEC `spec.md` §五 逐字：「§五 那 13 条 `stitched`
 #   **至少转 `verified` 3 条**」）⇒ ★ **本探针供第 2 条用** ✓
-#   ★★ **为什么是这两项**：★ `capabilities.yaml` 的 `sketch_edit_ops.limitations[5]` **逐字**：
+# ★★ **为什么是这两项**：★ `capabilities.yaml` 的 `sketch_edit_ops.limitations[5]` **逐
+# 字**：
 #     「⚠ `convert_entities` / `sketch_mirror` **未实测**（前者要选中的边/环/面，
 #      ★ 后者要中心线 mark=2 的选中标记）—— **不得当成「验过了」**」✓
 #     ★★ 而该条目的 `mcp_tools` **恰是这两个**：
 #       `solidworks_sketch_convert_entities` · `solidworks_sketch_mirror` ✓
 #   ★★★ **官方依据（★ 三源，★ 逐条读的）**：
-#     · `convert_entities` ⇒ `ISketchManager.SketchUseEdge3(Boolean Chain, Boolean InnerLoops)`
+# · `convert_entities` ⇒ `ISketchManager.SketchUseEdge3(Boolean Chain, Boolean InnerLoop
+# s)`
 #       （★ 当前入口；★ 官方明写 `IModelDoc2.SketchUseEdge2` 是 **Obsolete**）⇒
-#       ★ 官方 Remarks 逐字：★ 它投影的是「**selected** edges/loops/faces/curves/external contours」
+# ★ 官方 Remarks 逐字：★ 它投影的是「**selected** edges/loops/faces/curves/external cont
+# ours」
 #       ⇒ **调用前必须先选中** ✓
 #     · `sketch_mirror` ⇒ ★ 官方标记：★ **线段 mark=1 / 中心线 mark=2** ——
 #       ★★ **标记是"选中时"定的、★ 不是传参定的**（★ 官方签名 0 参）✓
@@ -26,7 +29,8 @@
 #     「判据只认『树增量』会误判（事实 486：树会涨而几何没变）⇒ 判据要含**几何读数**」）**：
 #     · **① `convert_entities`** ⇒ ★ 进草图 → 画一条直线 → 退出 → 选中**边** → 再进草图 →
 #       ★ 调 `convert_entities` ⇒ ★ **判据：★ 草图段数 `0 → ≥1`**（★ 投影出来的线段是真的）✓
-#     · **② `sketch_mirror`** ⇒ ★ 进草图 → 画一条**中心线**（mark=2）+ 一条**直线**（mark=1）→
+# · **② `sketch_mirror`** ⇒ ★ 进草图 → 画一条**中心线**（mark=2）+ 一条**直线**（mark=1
+# ）→
 #       ★ 调 `sketch_mirror` ⇒ ★ **判据：★ 草图段数 `2 → 4`**（★ 镜像出来的那条是真的）✓
 #   ★★★★★ **只报不动**：★ 本脚本**不改仓**、★ 只写 `output/` ✓
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
@@ -141,7 +145,8 @@ def main() -> int:
             except Exception as exc:                                      # noqa: BLE001
                 picked.append("err: %s" % str(exc)[:60])
             try:
-                #: ★ `ISketchSegment.Select4(Append, Callout)` 不带 mark ⇒ 用 `SelectByID2` 的 mark 参数
+                #: ★ `ISketchSegment.Select4(Append, Callout)` 不带 mark ⇒ 用 `SelectByI
+                #: D2` 的 mark 参数
                 ext = get_com_member(model, "Extension")
                 picked.append(bool(get_com_member(
                     ext, "SelectByID2", "", "SKETCHSEGMENT", 0.0, 0.0, 0.0, True, 2,

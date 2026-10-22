@@ -132,7 +132,8 @@ def main() -> int:
             if spec is None or n not in by_name:
                 chk("schema · %s" % n, False, "声明或工具缺失")
                 continue
-            # ⚠⚠ **第一版判据错了（本轮当场发现）**：我去**顶层** `properties` 找**展平**的参数名，
+            # ⚠⚠ **第一版判据错了（本轮当场发现）**：我去**顶层** `properties` 找**展平*
+            # *的参数名，
             #   报「协议里只有一个 `params`」—— 但那是**设计**：
             #   每个工具统一收一个 `params` 对象（与 `server.py` 原生工具一致），
             #   **声明的参数是嵌在 `params` 的 `$ref` → `$defs.<Model>.properties` 里**。
@@ -143,7 +144,8 @@ def main() -> int:
             model_name = ref.rsplit("/", 1)[-1]
             inner = (((schema.get("$defs") or {}).get(model_name) or {}).get("properties") or {})
             declared = {p.name for p in spec.params}
-            #: ⚑ 框架会**统一补**一个 `response_format`（`json`/`markdown`）—— 声明里没有它
+            #: ⚑ 框架会**统一补**一个 `response_format`（`json`/`markdown`）—— 声明里没
+            #: 有它
             extra = set(inner) - declared
             missing = declared - set(inner)
             chk("★ schema 参数逐条对上（顺 `$ref` 走进去） · %s" % n,

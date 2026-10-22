@@ -5,7 +5,8 @@
 # 定位:   ★★ **为什么要有它**：R3 探针里，我选面后**回读为真**（`readback_mark=1/2`），
 #   而**工具自己读到全 0** ⇒ ★ 选区在两步之间消失。本脚本把中间那几步**逐个**试一遍，
 #   看**是哪一步清的**（★ 单变量，一次只加一步）。
-#   ★ 手续与探针一致：造结构构件（焊件）⇒ 选面 ⇒ 每步后回读 `GetSelectedObjectCount2(mark)`。
+# ★ 手续与探针一致：造结构构件（焊件）⇒ 选面 ⇒ 每步后回读 `GetSelectedObjectCount2(mark)
+# `。
 #   官方依据: `IFeatureManager.InsertEndCapFeature3`（「select one or more end faces」）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。
 #   覆盖:   全文件

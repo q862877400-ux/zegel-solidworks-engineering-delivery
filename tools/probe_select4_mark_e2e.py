@@ -4,11 +4,13 @@
 # 文件:   tools/probe_select4_mark_e2e.py
 # 定位:   ★★★ bunny 读官方文档指出：官方 `IEntity/Select2.md` 逐字「**Obsolete. Supers
 #           eded by
-#   [[IEntity::Select4]].**」，而 `Select4(bool Append, **SelectData** Data)` 的第 2 参是 `ISelectData`
+# [[IEntity::Select4]].**」，而 `Select4(bool Append, **SelectData** Data)` 的第 2 参是 
+# `ISelectData`
 #   —— ★★ 而仓内 `_select_com_object` 原先给 `Select4` 传的是**空 VARIANT**
 #   ⇒ **`Select4` 分支的 `Mark` 永远是 0**（靠 `Select2` 排前面才没暴露）。
 #   ★ 本探针验：★ 走**新路径**（`model=` 传进去）时，`mark` 是否真的落到选区上。
-#   官方依据: `C:\\swapi\\types\\IEntity\\Select4.md`（签名）· `IEntity/Select2.md`（Obsolete 那句）·
+# 官方依据: `C:\\swapi\\types\\IEntity\\Select4.md`（签名）· `IEntity/Select2.md`（Obsol
+# ete 那句）·
 #     `C:\\swapi\\examples\\Exclude_Faces_Before_Flattening_Example_CSharp.md`
 #     （`data.Mark = 1; entity.Select4(true, data);`）
 #   许可:   本仓库 MIT。★ 无第三方代码引入。

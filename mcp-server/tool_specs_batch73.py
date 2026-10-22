@@ -5,20 +5,30 @@
 # 文件:   mcp-server/tool_specs_batch73.py
 # 定位:   ★ 2026-10-03（接手轮）★ 规格 `202-user-coverage-gaps` 的**工程图 5 项真缺口*
 #           *。
-#   ★★ 承 `mcp-server/tool_specs_batch72.py`（第一批）：★ 那一批接的是"AST 量出**已有实现**"
+# ★★ 承 `mcp-server/tool_specs_batch72.py`（第一批）：★ 那一批接的是"AST 量出**已有实现*
+# *"
 #     的几个（`tools/audit_gap_implementations.py`），★ **这一批不一样** ——
 #     ★ 这 5 项**本仓一个都没有**，⇒ ★ 先写能力层 `scripts/sw_drawing_create_missing.py`，
 #     ★ 再在这里把它们声明成工具。
 #
-#   ==========================  ==================================================  ==============
-#   缺口项                      工具名                                               官方成员
-#   ==========================  ==================================================  ==============
-#   断裂视图                    solidworks_drawing_insert_break                      IView.InsertBreak3
-#   辅助视图                    solidworks_drawing_create_auxiliary_view             IDrawingDoc.CreateAuxiliaryViewAt2
-#   表面粗糙度符号              solidworks_drawing_insert_surface_finish_symbol      IModelDocExtension.InsertSurfaceFinishSymbol3
-#   基准符号                    solidworks_drawing_insert_datum_tag                 IModelDoc2.InsertDatumTag2
-#   气泡序号                    ★★ **不建 ToolSpec**（理由见文件尾）★★               IDrawingDoc.AutoBalloon5
-#   ==========================  ==================================================  ==============
+# ==========================  ==================================================  ======
+# ========
+# 缺口项                      工具名                                               官方
+# 成员
+# ==========================  ==================================================  ======
+# ========
+# 断裂视图                    solidworks_drawing_insert_break                      IView
+# .InsertBreak3
+# 辅助视图                    solidworks_drawing_create_auxiliary_view             IDraw
+# ingDoc.CreateAuxiliaryViewAt2
+# 表面粗糙度符号              solidworks_drawing_insert_surface_finish_symbol      IMode
+# lDocExtension.InsertSurfaceFinishSymbol3
+# 基准符号                    solidworks_drawing_insert_datum_tag                 IModel
+# Doc2.InsertDatumTag2
+# 气泡序号                    ★★ **不建 ToolSpec**（理由见文件尾）★★               IDraw
+# ingDoc.AutoBalloon5
+# ==========================  ==================================================  ======
+# ========
 #
 #   ★★ **工具名有意含功能关键词**（`break` / `auxiliary` / `surface_finish` / `datum`）——
 #     覆盖率脚本按"功能关键词**子串**命中工具名"计分，★ 而它们**确实就是那个功能**
@@ -44,7 +54,8 @@
 #     · `C:\swapi\types\IModelDoc2\InsertDatumTag2.md`（★ **零参**）
 #       ★ 摘要逐字「at a **selected location**」
 #     · 反射 dump `scripts/sw_api_sldworks.py`（★ 与上列官方页的 arity **逐条互证**）：
-#       `'InsertBreak3': 6` · `'CreateAuxiliaryViewAt2': 7` · `'InsertSurfaceFinishSymbol3': 14`
+# `'InsertBreak3': 6` · `'CreateAuxiliaryViewAt2': 7` · `'InsertSurfaceFinishSymbol3': 1
+# 4`
 #       · `'InsertDatumTag2': 0` · `'AutoBalloon5': 1` · `'CreateAutoBalloonOptions': 0`
 #   许可:   本仓库 MIT。★ **无第三方代码引入**。
 #   覆盖:   全文件
@@ -56,7 +67,8 @@ from __future__ import annotations
 from tool_registry import Param, ToolSpec
 
 #: ★★ 能力层 5 项里**只有 4 项**在这里声明（★ 第 5 项「气泡序号」的形参是 COM 对象，
-#: ★ `Param` 表达不了 ⇒ 见文件头那段理由）；★ 模块名在这里**只出现一次**，★ 便于 grep 核对。
+#: ★ `Param` 表达不了 ⇒ 见文件头那段理由）；★ 模块名在这里**只出现一次**，★ 便于 grep 核
+#: 对。
 _MODULE = "sw_drawing_create_missing"
 
 _BATCH73: list[ToolSpec] = [
@@ -153,7 +165,8 @@ _BATCH73: list[ToolSpec] = [
                      "prod_method": "prod_method", "sample_len": "sample_len",
                      "max_roughness": "max_roughness",
                      "min_roughness": "min_roughness"},
-        #: ★★★★ **`roughness_spacing` 是「故意不暴露」的**（★ 不是手抄漏了 —— ★ 登记在这里
+        #: ★★★★ **`roughness_spacing` 是「故意不暴露」的**（★ 不是手抄漏了 —— ★ 登记在这
+        #: 里
         #:   就是为了让「省略」与「漏抄」可区分，★ 照 `ToolSpec.omitted_params` 的用法）。
         #:   ★★ **为什么省略**（★ 一条**门禁实测**逼出来的，★ 不是我的偏好）：
         #:     `tool_registry.check_spec` 的规则 2 那一半按**子串**扫 `_LEN_WORDS`
@@ -161,9 +174,11 @@ _BATCH73: list[ToolSpec] = [
         #:     都会被要求以 `_mm` 结尾（实测报错，见本轮记录）。
         #:   ★★ **但我不能给它加 `_mm`** —— ★ 官方把它声明成 **`System.string`**，
         #:     且 `InsertSurfaceFinishSymbol3.md` 的 Parameters 只写「Roughness spacing」、
-        #:     ★ **既没给单位、也没说它是长度** ⇒ ★ 加 `_mm` 就是**替官方断言一个我查不到的事实**
+        #: ★ **既没给单位、也没说它是长度** ⇒ ★ 加 `_mm` 就是**替官方断言一个我查不到的
+        #: 事实**
         #:     （★ 铁律 5：查不到就说查不到；★ 而门禁自己那条豁免通道就是这么写的
-        #:     ——「**加 `_mm` 反而是说错话**」，见 `tool_registry._LEN_SUFFIX_EXEMPT` 的注记）。
+        #: ——「**加 `_mm` 反而是说错话**」，见 `tool_registry._LEN_SUFFIX_EXEMPT` 的注记
+        #: ）。
         #:   ⇒ ★ 正规解法是在 `tool_registry._LEN_SUFFIX_EXEMPT` 里登记一行
         #:     `("solidworks_drawing_insert_surface_finish_symbol", "roughness_spacing")`，
         #:     ★★ **而那个文件不在本任务的写入范围内** ⇒ ★ 本轮先**显式省略**，

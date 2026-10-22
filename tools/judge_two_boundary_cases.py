@@ -18,7 +18,8 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 TD = Path(r"C:\swapi\types")
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-#: ── 边界 ① `[[IFeatureManager::IInsertMidSurface]]`（mcp-server/tool_specs_batch74.py:401）
+#: ── 边界 ① `[[IFeatureManager::IInsertMidSurface]]`（mcp-server/tool_specs_batch74.py:
+#: 401）
 print("═══ 边界 ① `[[IFeatureManager::IInsertMidSurface]]` ═══")
 cand = ["IInsertMidSurface", "InsertMidSurface", "InsertMidSurface2"]
 for c in cand:

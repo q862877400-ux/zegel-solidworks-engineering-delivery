@@ -20,7 +20,8 @@
 #     ★ **不拿 `AutoBalloon5` 返回的数组当判据**（那正是别家错的地方）✓
 # 官方依据: `C:\\swapi\\types\\IDrawingDoc\\AutoBalloon5.md`（Returns = **Array of INote
 #           s**；
-#   `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IModelDocExtension\\InsertBOMBalloon2.md`
+# `## Remarks` 给**四步前置**）· `C:\\swapi\\types\\IModelDocExtension\\InsertBOMBalloon
+# 2.md`
 #   （单发气泡：`Note InsertBOMBalloon2(BalloonOptions)`，四步前置）·
 #   `C:\\swapi\\types\\IView\\GetNoteCount.md`（**判据来源**）·
 #   `C:\\swapi\\types\\IView\\InsertBomTable6.md`（12 参；★ 用来造「有 BOM 表」那个前置）·
@@ -118,9 +119,12 @@ def main() -> int:
                      r1.get("note_count_after"), r1.get("note_count_delta")))
 
             #: ── ② **另起一张**工程图 + 先插 BOM 表，再调 ─────────────────────────────
-            #: ★★ 第一版把这一格跑在**同一张图、同一个视图**上 —— ★ 而那时气泡**已经存在**了，
-            #:   `IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ Δ=0 **不能**当「有 BOM 表就不行」
-            #:   的证据（★★ 那是我探针的**设计缺陷**，已如实记进产物）⇒ ★ **换一张干净的图**重做 ✓
+            #: ★★ 第一版把这一格跑在**同一张图、同一个视图**上 —— ★ 而那时气泡**已经存在
+            #: **了，
+            #: `IgnoreMultiple=True` 很可能只是**没重复插** ⇒ ★ Δ=0 **不能**当「有 BOM 
+            #: 表就不行」
+            #: 的证据（★★ 那是我探针的**设计缺陷**，已如实记进产物）⇒ ★ **换一张干净的图
+            #: **重做 ✓
             _close(drw)
             drw2 = sw_connect.new_document(sw, "drawing")
             opened.append(drw2)

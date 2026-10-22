@@ -3,10 +3,13 @@
 # 仓库:   本项目自身（一次性诊断）
 # 文件:   tools/diag_read_exits_sketch.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B3 第三次拆解** ✓
-#   ★ 现象：★ 普查里三条 `sketch_*` 报 `没有活动草图` —— ★ 而 `apply_needs` 明明**先进了草图** ✓
+# ★ 现象：★ 普查里三条 `sketch_*` 报 `没有活动草图` —— ★ 而 `apply_needs` 明明**先进了草
+# 图** ✓
 #   ★★ 要判的就是一件事：★ **`sw_fingerprint.read()` 会不会把草图编辑态弄没** ✓
-# 判据:   ★ 顺序：★ `sketch_start` → **读 `edit_mode`** → **跑一次全指纹 `read`** → **再读 `edit_mode`** ✓
-#   ★★ 若第二次变了 ⇒ ★ **是量具有副作用**（★ 那必须记进 `KNOWN_UNAVAILABLE` 或改成不进草图）✓
+# 判据:   ★ 顺序：★ `sketch_start` → **读 `edit_mode`** → **跑一次全指纹 `read`** → **再
+# 读 `edit_mode`** ✓
+# ★★ 若第二次变了 ⇒ ★ **是量具有副作用**（★ 那必须记进 `KNOWN_UNAVAILABLE` 或改成不进草
+# 图）✓
 # 官方依据: `ISketchManager.ActiveSketch` / `IModelDoc2.GetActiveSketch2`（★ 见 `sw_fing
 #           erprint` 的 OFFICIAL）✓
 # 许可:   本仓库 MIT。无第三方代码引入。覆盖: 全文件

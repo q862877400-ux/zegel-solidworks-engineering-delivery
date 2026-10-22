@@ -17,7 +17,8 @@
 #
 #   ★★ **本轮用上的三条教训**（★ 都是这两轮刚挣来的）：
 #     ① ★ **前置要看官方原话的每个名词** —— 官方对旋转曲面逐字是
-#        「Creates a **revolved reference surface** by revolving a profile around a **centerline**」
+# 「Creates a **revolved reference surface** by revolving a profile around a **centerlin
+# e**」
 #        ⇒ ★★ **除了轮廓，还要有**中心线**（★ 而本仓旧实现只声明"要选好轮廓"）⚠
 #     ② ★ **arity 按类型库数**（★ 含中间 out、不含末尾 `Retval`）—— 事实 397/403
 #     ③ ★ **判据不能只看树** —— ★ 事实 406：返回对象可能带名字而树不动
@@ -61,7 +62,8 @@ def _mk_profile_with_centerline(doc, with_centerline=True):
     #: \u2605 \u4e2d\u5fc3\u7ebf\uff08\u2605 \u6cbf Y \u8f74\uff09
     if with_centerline:
         C.get_com_member(sm, "CreateCenterLine", 0.0, -0.03, 0.0, 0.0, 0.03, 0.0)
-    #: \u2605 \u8f6e\u5ed3\uff08\u77e9\u5f62\uff0c\u2605 \u4e0d\u8de8\u4e2d\u5fc3\u7ebf\uff09
+    #: \u2605 \u8f6e\u5ed3\uff08\u77e9\u5f62\uff0c\u2605 \u4e0d\u8de8\u4e2d\u5fc3\u7ebf\
+    #: uff09
     C.get_com_member(sm, "CreateCornerRectangle", 0.005, -0.02, 0.0, 0.02, 0.02, 0.0)
     P.end_sketch(doc)
 
@@ -134,7 +136,8 @@ def _one(sw, tag, entry, with_centerline):
         after = _tree(doc)
         row["new"] = [n for n in (after.get("names") or []) if n not in (before.get("names") or [])]
         row["new_types"] = [t for t in (after.get("types") or []) if t not in (before.get("types") or [])]
-        #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811**\u6216**\u8fd4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d
+        #: \u2605\u2605 \u5224\u636e\uff08\u4e8b\u5b9e 406\uff09\uff1a\u6811**\u6216**\u
+        #: 8fd4\u56de\u5bf9\u8c61\u5e26\u7c7b\u578b\u540d
         row["ok"] = bool(row["new"] or row["new_types"] or row.get("ret_type"))
     except Exception as exc:                                              # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])

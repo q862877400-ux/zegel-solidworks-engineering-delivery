@@ -3,8 +3,10 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/probe_union_adopt_b1.py
 # 定位:   ★ 规格 `specs/209-union-adopt-18/` 的 **B1 批**真机探针（候选来自规格 207 的
-#   `docs/recon-207/adjudication.md`）。★★ **本探针是那 4 件活拿到 `verified` 的唯一依据** ——
-#   裁决书 §四 逐字写着「**一条真机都没验** —— ★ 全程离线静态（D-3：几十个 bunny 并发抢单实例
+# `docs/recon-207/adjudication.md`）。★★ **本探针是那 4 件活拿到 `verified` 的唯一依据**
+#  ——
+# 裁决书 §四 逐字写着「**一条真机都没验** —— ★ 全程离线静态（D-3：几十个 bunny 并发抢单
+# 实例
 #   COM 会死锁）。所有『后端可达』都是**静态推断**，必须在真机复验后才能标 `verified`」✓
 # 官方依据: 见各能力函数的来源块（`scripts/sw_session.py` / `sw_sketch_edit_ops.py` /
 #   `sw_render_material.py` / `sw_document_data.py` 的本批追加段）。
@@ -112,7 +114,8 @@ def main() -> int:
         ev["T1_rebuild"].append({"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])})
         print("  T1 FATAL %s" % str(exc)[:120])
 
-    #: ── T2 · 构造几何（idx 79）★ 并回答「连调两次是切换还是置位」────────────────────────
+    #: ── T2 · 构造几何（idx 79）★ 并回答「连调两次是切换还是置位」─────────────────────
+    #: ───
     def _flags(d):
         sk = get_com_member(get_com_member(d, "SketchManager"), "ActiveSketch")
         out = []
@@ -136,7 +139,8 @@ def main() -> int:
                                       "target_after": r1.get("target_after"),
                                       "entry_used": r1.get("entry_used"),
                                       "error": r1.get("error"), "flags": _flags(doc)})
-        #: ★★ 裁决书要求先定的那一件事：**同一段上再调一次官方零参入口** ⇒ 切换 还是 置位？
+        #: ★★ 裁决书要求先定的那一件事：**同一段上再调一次官方零参入口** ⇒ 切换 还是 置
+        #: 位？
         before2 = _flags(doc)
         get_com_member(get_com_member(doc, "SketchManager"), "CreateConstructionGeometry")
         after2 = _flags(doc)
@@ -151,7 +155,8 @@ def main() -> int:
                                       "target_after": r3.get("target_after"),
                                       "entry_used": r3.get("entry_used"),
                                       "error": r3.get("error"), "flags": _flags(doc)})
-        #: 负例：越界下标必须被拒（★ 本函数**回字典**、不抛 —— 判据看 `ok`/`error`，不是"有没有抛"）
+        #: 负例：越界下标必须被拒（★ 本函数**回字典**、不抛 —— 判据看 `ok`/`error`，不是
+        #: "有没有抛"）
         neg = E.sketch_set_construction_geometry(doc, "index:99", construction=True)
         ev["T2_construction"].append({"step": "负例 index:99", "ok": neg.get("ok"),
                                       "error": neg.get("error"),
@@ -162,7 +167,8 @@ def main() -> int:
         ev["T2_construction"].append({"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])})
         print("  T2 FATAL %s" % str(exc)[:120])
 
-    #: ── T3 · 显示状态（idx 97）────────────────────────────────────────────────────────
+    #: ── T3 · 显示状态（idx 97）───────────────────────────────────────────────────────
+    #: ─
     try:
         doc = _make_box()
         l0 = RM.list_display_states(doc)
@@ -187,7 +193,8 @@ def main() -> int:
         ev["T3_display_states"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
         print("  T3 FATAL %s" % str(exc)[:120])
 
-    #: ── T4 · 引用文档（idx 244）★ 自建 零件 + 装配 ⇒ 依赖清单非空才叫有判据 ────────────────
+    #: ── T4 · 引用文档（idx 244）★ 自建 零件 + 装配 ⇒ 依赖清单非空才叫有判据 ──────────
+    #: ──────
     try:
         import sw_assembly as A
         outdir = R / "output" / "probe209"
@@ -205,8 +212,10 @@ def main() -> int:
         dep_ro = DD.document_dependencies(sw, asm_path, traverse=False, search=False,
                                           add_read_only_info=True)
         dep_missing = DD.document_dependencies(sw, str(outdir / "no_such_file.sldprt"))
-        #: ★★ 官方例子说非只读跟的是**空串**，★ 而本仓实测回的是 `"FALSE"` ⇒ ★ 取证原始**类型与 repr**
-        #:   （★ 不靠 `str()` 之后的样子下结论 —— 那会把「真的是这个串」与「被我们转出来的」混起来）
+        #: ★★ 官方例子说非只读跟的是**空串**，★ 而本仓实测回的是 `"FALSE"` ⇒ ★ 取证原始*
+        #: *类型与 repr**
+        #: （★ 不靠 `str()` 之后的样子下结论 —— 那会把「真的是这个串」与「被我们转出来的
+        #: 」混起来）
         raw_vals = get_com_member(sw, "GetDocumentDependencies2", asm_path, False, False, True)
         ev["T4_dependencies"] = {
             "part_saved": bool(save_part), "asm_saved": bool(save_asm),
@@ -228,16 +237,19 @@ def main() -> int:
         ev["T4_dependencies"] = {"fatal": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
         print("  T4 FATAL %s" % str(exc)[:120])
 
-    #: ── T5 · 移动 / 复制实体（idx 209）★ 判据 = 包围盒变（移动）/ 实体个数增（复制）────────────
+    #: ── T5 · 移动 / 复制实体（idx 209）★ 判据 = 包围盒变（移动）/ 实体个数增（复制）──
+    #: ──────────
     try:
         import sw_body_ops as BO
         doc = _make_box()
         r_move = BO.move_copy_body(doc, "all", translate_x_mm=25.0)
         r_copy = BO.move_copy_body(doc, "all", translate_x_mm=40.0, copy=True, num_copies=1)
-        #: ★★ 官方 Remarks 的坑：平移与旋转**同时给** ⇒ 官方只应用旋转 ⇒ 本工具必须**说出来**
+        #: ★★ 官方 Remarks 的坑：平移与旋转**同时给** ⇒ 官方只应用旋转 ⇒ 本工具必须**说
+        #: 出来**
         r_both = BO.move_copy_body(doc, "all", translate_x_mm=5.0, rotate_angle_z_deg=30.0)
         r_neg = BO.move_copy_body(doc, "index:99", translate_x_mm=1.0)
-        #: ★★ T5b · **用"旋转后的包围盒"定死角度单位与"哪根轴"**（★ 不是靠"没报错"当判据）：
+        #: ★★ T5b · **用"旋转后的包围盒"定死角度单位与"哪根轴"**（★ 不是靠"没报错"当判据
+        #: ）：
         #:   60×40×20（x ±30 / y ±20 / z ∈[-20,0]）分别只给 **X / Y / Z 一个角**，
         #:   再看**哪个平面被转了** —— 判据是**跨度的变化**，不是返回值：
         #:   ```
@@ -278,7 +290,8 @@ def main() -> int:
             _close(d_ax)
             print("  T5b 只给 %s 角 ⇒ %s" % (label, axes[label]["verdict"]))
         #: ★ 幅度判据：0.5236 rad = 30° ⇒ 绕 X 转 30° 后 y 跨度应为
-        #:   `20cos30+20sin30 = 27.3205`、z 跨度 `20cos30+20sin30 = 27.3205`（★ 与"按弧度解释"对不上）
+        #: `20cos30+20sin30 = 27.3205`、z 跨度 `20cos30+20sin30 = 27.3205`（★ 与"按弧度
+        #: 解释"对不上）
         ev["T5b_rotation_units"] = {
             "axes": axes,
             "expected_span_if_30deg": round(20.0 * _m.cos(_m.radians(30.0))

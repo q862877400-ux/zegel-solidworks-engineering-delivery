@@ -3,13 +3,15 @@
 # 仓库:   本项目自身（规格 211 · B3-1 的真机探针）
 # 文件:   tools/probe_spec211_weldtrim.py
 # 定位:   ★ 规格 `specs/211-user-feature-gaps` 的 **B3-1**「裁剪/延伸焊件」。
-#   ★ 官方页三样已读（★ `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`）✓：
+# ★ 官方页三样已读（★ `C:\swapi\types\IFeatureManager\InsertWeldmentTrimFeature2.md`）✓
+# ：
 #     `Feature InsertWeldmentTrimFeature2( int EndCond, int Options, double GapValue,
 #      object BodiesToTrim, object BodiesOrFaces )`
 #     ★★ `## Remarks` **给了完整 mark 表**：★ **1 = Body or bodies to trim** ·
 #       ★ **2 = Trimming boundaries (body or face)** ✓
 # 判据:   ★★★ **两步，★ 与"扫描曲面"那条路同型**（★ 那是成功案例，★ 照它走 ✓）：
-#     ★ **第一步（本探针）＝ 只"查行为"** —— ★ 不建复杂几何（★ 焊件体要 `create_structural_member`，
+# ★ **第一步（本探针）＝ 只"查行为"** —— ★ 不建复杂几何（★ 焊件体要 `create_structural_m
+# ember`，
 #       ★ 那本身有前置）⇒ ★★ **先量它的三种行为**：
 #       · ★ **抛异常** ⇒ 记下来（★ 形态被拒 ✓）
 #       · ★ **静默回 `None`** ⇒ ★★ **但这**还不算试死**（★ 因为前置没上 ✓ ——

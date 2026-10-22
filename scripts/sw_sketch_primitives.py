@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（能力实现）
 # 文件:   scripts/sw_sketch_primitives.py
 # 定位:   ★ 2026-10-03（轮 464）★ `specs/201-toolbar-gaps` 的 **B1 批**。
-#   ★★ 起因：用户贴草图工具条截图逐条问「能/不能」，这 9 个当时全答「不能」（本仓无入口）；
+# ★★ 起因：用户贴草图工具条截图逐条问「能/不能」，这 9 个当时全答「不能」（本仓无入口）
+# ；
 #     随后要求「把这些不能实现的都攻关好」。
 #   ★★★ **签名三源互证（铁律 4）**：本模块每个成员的**精确签名**都取自
 #     `C:\swapi\types\ISketchManager\<成员>.md`（★ 结构化官方源，逐条读过），
@@ -17,21 +18,27 @@
 #     Create3PointArc           (X1,Y1,Z1, X2,Y2,Z2, X3,Y3,Z3) -> SketchSegment
 #     CreateEllipticalArc       (XC,YC,Zc, XMajor,YMajor,ZMajor, XMinor,YMinor,ZMinor,
 #                                X1,Y1,Z1, X2,Y2,Z2, Direction:short) -> SketchSegment
-#     CreateParabola            (XFocus,YFocus,ZFocus, XApex,YApex,ZApex, X1,Y1,Z1, X2,Y2,Z2) -> SketchSegment
-#     CreateConic               (XFocus,YFocus,ZFocus, XApex,YApex,ZApex, X1,Y1,Z1, X2,Y2,Z2) -> SketchSegment
+# CreateParabola            (XFocus,YFocus,ZFocus, XApex,YApex,ZApex, X1,Y1,Z1, X2,Y2,Z2
+# ) -> SketchSegment
+# CreateConic               (XFocus,YFocus,ZFocus, XApex,YApex,ZApex, X1,Y1,Z1, X2,Y2,Z2
+# ) -> SketchSegment
 #     PerimeterCircle           (X1,Y1, X2,Y2, X3,Y3) -> object     ★ 注意：**没有 Z**
 #     ```
-#   ⚠ **单位**：一律**毫米**，与本仓 `sw_part.sketch_*` 那族一致（★ 不是官方文档里那个"米"，
+# ⚠ **单位**：一律**毫米**，与本仓 `sw_part.sketch_*` 那族一致（★ 不是官方文档里那个"米"
+# ，
 #     见已知事实 73 的实测）。★ 换算只在**工具层**边界做一次（规则 2）。
-#   ⚠ **返回值**：官方这族里 `Create3Point*` / `CreateParallelogram` / `PerimeterCircle` 声明回
+# ⚠ **返回值**：官方这族里 `Create3Point*` / `CreateParallelogram` / `PerimeterCircle` 
+# 声明回
 #     `System.object`，其余回 `SketchSegment`。★ 本模块**对 `None` 一律抛** ——
-#     ★ 因为"建了但返回 None"与"没建"在调用方看来是同一种失败（事实 40 的教训：让失败可见）。
+# ★ 因为"建了但返回 None"与"没建"在调用方看来是同一种失败（事实 40 的教训：让失败可见）
+# 。
 # 官方依据: `C:\swapi\types\ISketchManager\*.md`（9 个成员，逐条读签名）。
 # 许可:   本仓库 MIT。无第三方代码引入（★ 全部按官方签名自建）。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 #
-# ★ 判据：★ 每个函数在**返回值非 None** 之外，还要由调用方回读**草图实体计数**（规则 6）。
+# ★ 判据：★ 每个函数在**返回值非 None** 之外，还要由调用方回读**草图实体计数**（规则 6）
+# 。
 
 from __future__ import annotations
 

@@ -6,7 +6,8 @@
 #           准**：`verified` = 有我们自己的运行证据 · `stitched` = 代码写好但**没真机跑
 #           过** ·`not_implemented` = 没做 ✓（五级枚举见 `docs/union-conventions.md`）
 #         ★★ 教训：本文件第一版我用 `Select-String` 按 `level:\s*X` 找 —— **一条也没找到**，
-#           因为该文件是 **JSON**（`"level": "verified"`，**带引号**）⇒ 按 YAML 形态写判据 = 空转 ✓✗
+# 因为该文件是 **JSON**（`"level": "verified"`，**带引号**）⇒ 按 YAML 形态写判据 = 空转 
+# ✓✗
 # 官方依据: 不适用（本仓声明层）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

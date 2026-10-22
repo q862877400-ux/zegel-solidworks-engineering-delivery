@@ -4,7 +4,8 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/prove_fill_surface_selection.py
 # 定位:   ★ 2026-10-03（轮 434）承**事实 347** 那条**真欠账**的修复。
-#   ★★ 事实 347 查明：★ `solidworks_surface_fill` 的 `boundary_z` **是裸坐标**（★ 违反规则 3），
+# ★★ 事实 347 查明：★ `solidworks_surface_fill` 的 `boundary_z` **是裸坐标**（★ 违反规则
+#  3），
 #     ★ 而那条违反让 `tool_registry` 的声明门禁**整批不过** ⇒
 #     **4 个测试文件在收集期就 ERROR**（★ 一直在吃测试覆盖）。
 #   ★★ **修法**：★ 把那个坐标参数换成**声明式 `selection`** ——
@@ -50,7 +51,8 @@ def main() -> int:
     sw = sw_connect.connect_solidworks(wait_seconds=30)[0]
     doc = None
     try:
-        #: ★ 两条路**各用一个新的零件**（★ 事实 324：每格独立）—— ★ 不然第二条会被第一条污染
+        #: ★ 两条路**各用一个新的零件**（★ 事实 324：每格独立）—— ★ 不然第二条会被第一条
+        #: 污染
         for label, use_selection in (("auto_top_ring", False), ("declarative_selection", True)):
             doc = sw_connect.new_document(sw, "part")
             start_sketch(doc, plane_name="Front Plane")
@@ -63,8 +65,10 @@ def main() -> int:
                 if use_selection:
                     #: ★★ **声明式：先把"最高那一圈"的边选上** ——
                     #:   ★ 而选法**照自动路的口径**（★ 按中点 z 找最高一圈）
-                    #:   ⇒ ★ 这样才是**忠实地测那一支**（★ 而不是测"随便选一条边会怎样"）。
-                    #:   ⚠ 上一版只选了**1 条**（★ 而填充要**一圈**）⇒ ★ 那是**探针样本**的错，不是代码的错。
+                    #: ⇒ ★ 这样才是**忠实地测那一支**（★ 而不是测"随便选一条边会怎样"）
+                    #: 。
+                    #: ⚠ 上一版只选了**1 条**（★ 而填充要**一圈**）⇒ ★ 那是**探针样本**
+                    #: 的错，不是代码的错。
                     sw_connect.safe_get_com_member(doc, "ClearSelection2", True)
                     bodies = list(get_com_member(doc, "GetBodies2", -1, True) or [])
                     ring = []
@@ -78,8 +82,10 @@ def main() -> int:
                             except Exception:                      # noqa: BLE001
                                 continue
                             #: ★★ 用**中点** z（★ 与实现同一口径）——
-                            #:   ★ 上一版用 `max(a[2], c[2])` 而**竖边的顶点** z 也等于最高值
-                            #:   ⇒ 选了 **7** 条（顶圈 4 + 竖边 4，而不是一圈）⇒ 当然不成。
+                            #: ★ 上一版用 `max(a[2], c[2])` 而**竖边的顶点** z 也等于最
+                            #: 高值
+                            #: ⇒ 选了 **7** 条（顶圈 4 + 竖边 4，而不是一圈）⇒ 当然不成
+                            #: 。
                             ring.append(((a[2] + c[2]) / 2.0, e, ((a[0] + c[0]) / 2.0, (a[1] + c[1]) / 2.0,
                                                               (a[2] + c[2]) / 2.0)))
                     if ring:

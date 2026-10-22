@@ -9,9 +9,12 @@
 #   示例 mark=0 + 排除数组形状齐备；★ 读侧 `IIntersectFeatureData` **零指针族** ⇒
 #   ★ **唯一要实测的只有 `System.object` 布尔 SafeArray 的包装**」✓
 # 官方依据: `C:\\swapi\\types\\IFeatureManager\\{PreIntersect2,PostIntersect}.md` ·
-#   `C:\\swapi\\types\\IIntersectFeatureData\\{GetIntersectionsCount,CapPlanar,Merge,Consume}.md` ·
-#   ★★ `C:\\swapi\\examples\\Create_Intersect_Feature_Example_VB.md`（**调用序**：按**名字 + 类型**
-#   选 `SOLIDBODY` / `PLANE`，都 **mark 0** ⇒ `PreIntersect2` ⇒ 清选区 ⇒ 拼**与体数等长**的
+# `C:\\swapi\\types\\IIntersectFeatureData\\{GetIntersectionsCount,CapPlanar,Merge,Consu
+# me}.md` ·
+# ★★ `C:\\swapi\\examples\\Create_Intersect_Feature_Example_VB.md`（**调用序**：按**名字
+#  + 类型**
+# 选 `SOLIDBODY` / `PLANE`，都 **mark 0** ⇒ `PreIntersect2` ⇒ 清选区 ⇒ 拼**与体数等长**
+# 的
 #   布尔数组 ⇒ `PostIntersect(excludeArray, True, False)`）✓
 # 许可:   本仓库 MIT。★ 无第三方代码引入（全部按官方签名与官方示例自建）。
 # 规模:   **1 个工具** ⇒ 工具数 443 → **444**

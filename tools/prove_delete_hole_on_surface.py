@@ -107,7 +107,8 @@ def _one(sw, tag, pick):
                     if _sel(f, append=(picked > 0), mark=0):
                         picked += 1
             if pick in ("edge", "both"):
-                #: \u2605 \u5185\u73af\u90a3\u5708\u8fb9\uff08\u2605 \u5c31\u662f\u201c\u5b54\u7684\u8fb9\u201d\uff09
+                #: \u2605 \u5185\u73af\u90a3\u5708\u8fb9\uff08\u2605 \u5c31\u662f\u201c\
+                #: u5b54\u7684\u8fb9\u201d\uff09
                 for e in list(_g(b, "GetEdges") or []):
                     try:
                         if _sel(e, append=True, mark=0):
@@ -132,7 +133,8 @@ def _one(sw, tag, pick):
         b0 = row["before"]
         row["delta"] = {k: (d[k] - b0[k]) for k in ("faces", "loops", "edges")}
         row["area_delta"] = d["area"] - b0["area"]
-        #: \u2605 \u5224\u636e\uff1a**\u51e0\u4f55\u91cf\u53d8\u4e86** \u6216 \u6811\u589e\u91cf
+        #: \u2605 \u5224\u636e\uff1a**\u51e0\u4f55\u91cf\u53d8\u4e86** \u6216 \u6811\u58
+        #: 9e\u91cf
         row["ok"] = bool(row["new"] or any(row["delta"].values()) or abs(row["area_delta"]) > 1e-12)
     except Exception as exc:                                              # noqa: BLE001
         row["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:170])

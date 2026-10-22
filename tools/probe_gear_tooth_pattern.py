@@ -141,7 +141,8 @@ def _features(doc):
 
 
 def main() -> int:
-    #: ★★ 顶层兜底：★ 把 traceback **落盘**（★ guard 的 stderr_tail 会截断 ⇒ 看不到真因）✓
+    #: ★★ 顶层兜底：★ 把 traceback **落盘**（★ guard 的 stderr_tail 会截断 ⇒ 看不到真因
+    #: ）✓
     import traceback as _tb
     try:
         return _main()

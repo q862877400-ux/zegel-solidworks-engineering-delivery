@@ -1,5 +1,7 @@
-# ── 24h 计划 v2 · 段 5：**仿真载荷族**（轮 408 恢复 4 条）────────────────────────────────
-# ★★★★ 2026-10-03（轮 408）★ **本轮的起点是"抄官方声明"**（★ 收敛报告写的下一步，★ 不是继续试参数）：
+# ── 24h 计划 v2 · 段 5：**仿真载荷族**（轮 408 恢复 4 条）─────────────────────────────
+# ───
+# ★★★★ 2026-10-03（轮 408）★ **本轮的起点是"抄官方声明"**（★ 收敛报告写的下一步，★ 不是
+# 继续试参数）：
 #   从 CHM 抄出 `ICWLoadsAndRestraintsManager` 的六条 VB 声明 ——
 #   ```
 #   Function AddXxx(ByVal DispArray As System.Object, ByRef ErrorCode As System.Integer)
@@ -23,7 +25,8 @@
 #
 # ★★ **两条要写进文档的事实**：
 #   ① ★ **这 4 条要求算例是 `thermal`（`study_type=3`）** —— ★ 建算例请用
-#      `create_static_study(sw, name, study_type=3)`（★ 那个函数名是历史的，它收 `study_type`）。
+# `create_static_study(sw, name, study_type=3)`（★ 那个函数名是历史的，它收 `study_type`
+# ）。
 #   ② ★ **`elastic_connector` 相反：它在 `static` 下成、在 `thermal` 下不成** ⇒
 #      ★★ **各载荷对算例类型的要求不同，要分别记**（★ 不能一概而论）。
 #
@@ -51,15 +54,18 @@
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch58.py —— 本文件
 # 定位:   24h 计划 v2 段 5：把 4 条热载荷 + 弹性连接挂成 MCP 工具。
-# 官方签名依据: CHM `ICWLoadsAndRestraintsManager~Add{Convection,HeatFlux,HeatPower,Radiation,
-#   ElasticConnector}.html` 的 VB 声明（**逐字抄自**：`AddXxx(DispArray As Object, ByRef ErrorCode)`）·
+# 官方签名依据: CHM `ICWLoadsAndRestraintsManager~Add{Convection,HeatFlux,HeatPower,Radi
+# ation,
+# ElasticConnector}.html` 的 VB 声明（**逐字抄自**：`AddXxx(DispArray As Object, ByRef E
+# rrorCode)`）·
 #   `swsAnalysisStudyTypeThermal = 3`（`scripts/sw_simulation.SWS_ANALYSIS_STUDY_TYPES`）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
 from tool_registry import Param
-#: ★★ 复用 batch29 的骨架（`_spec` 里 `module="sw_simulation_loads"`、`inject="manager"`、
+#: ★★ 复用 batch29 的骨架（`_spec` 里 `module="sw_simulation_loads"`、`inject="manager"`
+#: 、
 #:   `pre_call=_select_face`、`derived_args=_derive_model` 一整套都在里面）。
 from tool_specs_batch29 import _SEL, _STUDY, _spec
 

@@ -4,10 +4,13 @@
 # 文件:   tools/gen_effect_declarations.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B1-2**。★ 产出 `docs/effect-decl
 #           arations.json`，
-#   由声明层（`mcp-server/tool_registry.py`）惰性读取 ⇒ ★ 于是 448 个工具**有了机器可读的 writes** ✓
-#   ★★ 为什么做成「生成物」而不是逐个改 99 个声明文件：★ 一处生成、一处读取、一处门禁守着新鲜度 ——
+# 由声明层（`mcp-server/tool_registry.py`）惰性读取 ⇒ ★ 于是 448 个工具**有了机器可读的 
+# writes** ✓
+# ★★ 为什么做成「生成物」而不是逐个改 99 个声明文件：★ 一处生成、一处读取、一处门禁守着
+# 新鲜度 ——
 #     这正是本仓已经用熟的形态（生成物 + 新鲜度门禁）✓
-# 判据:   ★★ **判不出 ⇒ `writes: null`（未知）**，★ 绝不是 `[]`（那意思是「确认无写」）；
+# 判据:   ★★ **判不出 ⇒ `writes: null`（未知）**，★ 绝不是 `[]`（那意思是「确认无写」）
+# ；
 #   ★ 声明层的 `effective_read_only` 对「未知」返回 **假**（★ 绝不因为判不出就宣称只读）✓
 # 官方依据: 动词规则在 `mcp-server/effect_rules.py`（★ 一处实现两处用）；七类状态由外部
 #           评审给出
@@ -29,7 +32,8 @@ sys.path.insert(0, str(ROOT / "mcp-server"))
 sys.path.insert(0, str(ROOT / "scripts"))
 OUT = ROOT / "docs" / "effect-declarations.json"
 
-#: ★ 只跟**同模块**助手几层（★ 跟太多会把不相干的成员算进来 —— ★ 本仓事实 51 的同一族教训）✓
+#: ★ 只跟**同模块**助手几层（★ 跟太多会把不相干的成员算进来 —— ★ 本仓事实 51 的同一族教
+#: 训）✓
 HELPER_DEPTH = 2
 
 
@@ -125,7 +129,8 @@ def build() -> dict:
     hist = collections.Counter()
     for s in specs:
         mod = None
-        #: ★ 本仓模块在 `scripts/` 下**按裸名**导入（★ 我第一版只试带前缀的名字 ⇒ 448 个全挂）✓
+        #: ★ 本仓模块在 `scripts/` 下**按裸名**导入（★ 我第一版只试带前缀的名字 ⇒ 448 个
+        #: 全挂）✓
         for cand in (s.module, "scripts.%s" % s.module):
             try:
                 mod = importlib.import_module(cand)
@@ -149,7 +154,8 @@ def build() -> dict:
         #: ★★ 第二路：显式把官方成员种类索引传进去（规格 210 · B1-7）✓
         verdict = classify_members(members, kinds=load_kind_index())
         tools[s.name] = {
-            #: ★★ `requires` —— ★ **机械初推**（★ 从 `inject` 的种类推，★ 见 `effect_rules`）✓
+            #: ★★ `requires` —— ★ **机械初推**（★ 从 `inject` 的种类推，★ 见 `effect_rul
+            #: es`）✓
             #:   ★ 起因（真机）：★ `nonempty` 组的失败**全**是「声明注入 X 但没给对象」✓
             "requires": derive_requires(_inj),
             #: ★★ `doc_type` —— ★ 从**工具源码里的类型检查**机械初推 ✓

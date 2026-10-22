@@ -52,13 +52,17 @@ SCAN = [ROOT / "scripts", ROOT / "tools"]
 #: ★ **已知的"管理器"根**：变量名 → 接口名。
 #:
 #: ⚠⚠⚠ **2026-10-01（轮 176）缩到只剩 `sw` 一个，理由是实测出的假阳性**：
-#: `sw_assembly_doc.py` 的 `call_assembly_doc(doc, member, *args)` 里 `doc` **就是 `IAssemblyDoc`**
-#: （它的 docstring 与自己的报错文本都写着「**IAssemblyDoc** 上没有名为 {member} 的能力」），
+#: `sw_assembly_doc.py` 的 `call_assembly_doc(doc, member, *args)` 里 `doc` **就是 `IAss
+#: emblyDoc`**
+#: （它的 docstring 与自己的报错文本都写着「**IAssemblyDoc** 上没有名为 {member} 的能力
+#: 」），
 #: 而这里把 `doc` 猜成 `IModelDoc2` ⇒ **8 处假阳性**。
 #: ⇒ ★★ **同一个变量名在不同模块里可以是不同接口** ⇒ 这张表**本质是"猜"** ⇒
-#: 按事实 113/114/115 的定则（**推不出就留白；不许把猜当依据**），**只留真正唯一的那个**：
+#: 按事实 113/114/115 的定则（**推不出就留白；不许把猜当依据**），**只留真正唯一的那个**
+#: ：
 #: `sw` 在本仓库**处处**都是 `ISldWorks`（由 `connect_solidworks` 的返回契约保证）。
-#: ★ 其余一律靠**有依据**的途径：函数内赋值（反射的返回类型）或 `:param <名>: <接口名>`。
+#: ★ 其余一律靠**有依据**的途径：函数内赋值（反射的返回类型）或 `:param <名>: <接口名>`
+#: 。
 ROOTS = {
     "sw": "ISldWorks",
 }
@@ -113,8 +117,10 @@ def owners_of(member: str, by_member: dict) -> set:
     return got
 
 
-#: ⚠⚠⚠ **2026-10-01（轮 174）：试过一条「从 prose docstring 猜形参接口」的退路 —— 它**不成立**，已回退。**
-#: 那条退路是「**没有 `:param` 段时，若 docstring 里出现的反射接口名恰好 1 个、且函数恰好 1 个形参 ⇒ 采纳它**」。
+#: ⚠⚠⚠ **2026-10-01（轮 174）：试过一条「从 prose docstring 猜形参接口」的退路 —— 它**不
+#: 成立**，已回退。**
+#: 那条退路是「**没有 `:param` 段时，若 docstring 里出现的反射接口名恰好 1 个、且函数恰
+#: 好 1 个形参 ⇒ 采纳它**」。
 #: ★ 实测（`tools/recheck_param_iface_inference.py`）**两处都推错**：
 #: ```
 #:   ① `insert_parting_line` 等 5 个 ⇒ 推成 **`Feature`**
@@ -123,7 +129,8 @@ def owners_of(member: str, by_member: dict) -> set:
 #:      ← docstring 提到的是**成员全名**，**不是形参的类型**
 #: ```
 #: ⇒ ★★★ 定则：**显式 = 有依据；推断 = 会错** ⇒ 本工具**只认** `:param <名>: <接口名>`。
-#: ⚠ 但**词法作用域**是**语言规则**（内层能看见外层的名字）⇒ 沿作用域链找变量**是有依据的**，
+#: ⚠ 但**词法作用域**是**语言规则**（内层能看见外层的名字）⇒ 沿作用域链找变量**是有依据
+#: 的**，
 #:   与上面那条"从散文猜"**性质不同**（轮 175 加）。
 
 
@@ -145,9 +152,12 @@ def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
             continue
         pname = m.group(1)
         #: ⚠⚠⚠ **取「冒号后第一个出现的接口名」，不是「最长的那个」**（**轮 175 修**）：
-        #: `:param model: **IModelDoc2** —— …（`FeatureManager` 从它取）。` 这一段**同时含两个接口名**，
-        #: 而按**长度倒序**会先配到更长的 `FeatureManager` ⇒ **推出错误类型**（实测报了假阳性）。
-        #: ★ 约定是「**冒号后紧跟的是类型**」⇒ 用**位置**判据（第一个匹配），**不是长度**。
+        #: `:param model: **IModelDoc2** —— …（`FeatureManager` 从它取）。` 这一段**同时
+        #: 含两个接口名**，
+        #: 而按**长度倒序**会先配到更长的 `FeatureManager` ⇒ **推出错误类型**（实测报了
+        #: 假阳性）。
+        #: ★ 约定是「**冒号后紧跟的是类型**」⇒ 用**位置**判据（第一个匹配），**不是长度*
+        #: *。
         first_pos, first_name = None, None
         for cand in iface_names:
             mm = re.search(r"(?<![A-Za-z0-9_])" + re.escape(cand) + r"(?![A-Za-z0-9_])", b)
@@ -158,21 +168,26 @@ def param_ifaces_from_docstring(fn, iface_names: set) -> dict:
     return out
 
 
-#: ⚠⚠⚠ **2026-10-01（轮 174）：试过一条「形参接口推断」的退路 —— 它**不成立**，已回退。**
-#: 那条退路是「**没有 `:param` 段时，若 docstring 里出现的反射接口名恰好 1 个、且函数恰好 1 个形参 ⇒ 采纳它**」。
+#: ⚠⚠⚠ **2026-10-01（轮 174）：试过一条「形参接口推断」的退路 —— 它**不成立**，已回退。*
+#: *
+#: 那条退路是「**没有 `:param` 段时，若 docstring 里出现的反射接口名恰好 1 个、且函数恰
+#: 好 1 个形参 ⇒ 采纳它**」。
 #: ★ 实测（`D:/AI/SW/_verify_param_infer.py`）**两处都推错**：
 #: ```
 #:   ① `insert_parting_line` / `insert_parting_surface` / `insert_shut_off_surface` /
 #:      `insert_core_cavity_solids` / `mold_draft_analysis`
-#:      ⇒ 推成 **`Feature`**　← ⚠ docstring 里的**散文词** `feature` 命中了**接口名 `Feature`**
+#: ⇒ 推成 **`Feature`**　← ⚠ docstring 里的**散文词** `feature` 命中了**接口名 `Feature`
+#: **
 #:        ⇒ 于是报「`Feature . FeatureManager` 不在 `IFeature` 上」（**荒谬但"技术上成立"**）
 #:   ② `mold_undercut_detect` ⇒ 推成 **`IFeatureManager`**　← ⚠ docstring 提到的是
 #:      **成员全名** `IFeatureManager.MoldUndercutDetect`，**不是形参的类型**
 #: ```
 #: ⇒ ★★★ **「恰好 1 个」不等于「它是形参的类型」** ⇒ 该退路**已回退**（事实 53 / 113）。
-#: ⇒ ★ 所以本工具**只认 `:param <名>: <接口名>` 这一种写法**（**显式 = 有依据；推断 = 会错**）。
+#: ⇒ ★ 所以本工具**只认 `:param <名>: <接口名>` 这一种写法**（**显式 = 有依据；推断 = 会
+#: 错**）。
 #: ⚠ **后果**：`mold_evidence` 那种「散文 docstring + 形参 owner」**仍然抓不到**
-#: （它是本工具的**动机**，见事实 113）—— ★ 要覆盖它，得走**从调用点推**那条路（**未做**）。
+#: （它是本工具的**动机**，见事实 113）—— ★ 要覆盖它，得走**从调用点推**那条路（**未做**
+#: ）。
 
 
 def helper_const_args(tree, iface_names: set) -> dict:
@@ -301,11 +316,14 @@ def main() -> int:
                     continue
                 #: ★ 由「持有者接口 + 成员名」查**返回类型** ⇒ 变量的接口
                 #: ⚠⚠⚠ **2026-10-01（轮 177）：这里**必须两种写法都试**** ——
-                #: 反射里**属性带 `get_` 前缀**（`FeatureManager get_FeatureManager()`），
+                #: 反射里**属性带 `get_` 前缀**（`FeatureManager get_FeatureManager()`）
+                #: ，
                 #: 而代码写的是裸名 `get_com_member(model, "FeatureManager")` ⇒
                 #: 只查裸名会**一律查不到** ⇒ 变量**进不了表** ⇒ 后续全推不出
-                #: （实测后果：`_count` 里的 `fm` 推不出 ⇒ `mold_evidence` 那 4 个计数**漏报**）。
-                #: ★ 我在**查询**那一处做了 `canon_member` 规范化，**却忘了建表这一处** —— 同一个坑。
+                #: （实测后果：`_count` 里的 `fm` 推不出 ⇒ `mold_evidence` 那 4 个计数**
+                #: 漏报**）。
+                #: ★ 我在**查询**那一处做了 `canon_member` 规范化，**却忘了建表这一处** 
+                #: —— 同一个坑。
                 ret = None
                 for cand in (owner_iface, owner_iface[1:] if owner_iface.startswith("I") else owner_iface):
                     d = ifaces.get(cand) or ifaces.get(norm(cand))
@@ -330,10 +348,14 @@ def main() -> int:
                 if fname not in ("get_com_member", "call_com_member", "safe_get_com_member"):
                     continue
                 if len(n.args) < 2 or not isinstance(n.args[1], ast.Constant):
-                    #: ⚠⚠⚠ **间接成员名**（轮 175 查明的**判据边界**）：`get_com_member(fm, name)`
-                    #: —— 成员名是**变量** ⇒ 静态**不知道**要查哪个成员 ⇒ **本判据覆盖不了**。
-                    #: ★ 不是"漏报"，是**信息不在源码里**（`mold_evidence` 的 4 个计数就是这种形态）。
-                    #: ⇒ **登记成"未检查项"**，让读的人知道哪儿没被覆盖（**比默默跳过诚实**）。
+                    #: ⚠⚠⚠ **间接成员名**（轮 175 查明的**判据边界**）：`get_com_member(
+                    #: fm, name)`
+                    #: —— 成员名是**变量** ⇒ 静态**不知道**要查哪个成员 ⇒ **本判据覆盖不
+                    #: 了**。
+                    #: ★ 不是"漏报"，是**信息不在源码里**（`mold_evidence` 的 4 个计数就
+                    #: 是这种形态）。
+                    #: ⇒ **登记成"未检查项"**，让读的人知道哪儿没被覆盖（**比默默跳过诚
+                    #: 实**）。
                     if len(n.args) >= 2:
                         indirect.append({"file": f.name, "line": n.lineno,
                                          "owner": ast.unparse(n.args[0]),
@@ -363,7 +385,8 @@ def main() -> int:
                                  "actually_on": sorted(owners_of_mem)[:4]})
 
             #: ★★★ ③ **把辅助函数的调用点常量代进去**（轮 176）——
-            #: 形状：`def _count(name): get_com_member(fm, name)` + 调用点 `_count("GetPartingLinesCount")`
+            #: 形状：`def _count(name): get_com_member(fm, name)` + 调用点 `_count("GetP
+            #: artingLinesCount")`
             #: ⇒ ★ 把常量代进形参 ⇒ **静态就能查**（此前这类被登记为"未检查项"）。
             #: ⚠ **仍然不猜**：只认**字符串常量**的调用点；一个都给不出 ⇒ 留白。
             hc = helper_const_args(tree, iface_names)

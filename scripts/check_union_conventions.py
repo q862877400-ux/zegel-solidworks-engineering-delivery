@@ -42,7 +42,8 @@ COPYABLE_LICENSES = {"MIT", "Apache-2.0"}
 #: 规则 4：验证等级枚举
 LEVELS = {"verified", "source_verified", "stitched", "indexed", "not_implemented"}
 
-#: ⚑ **R12（轮 58 加）：能力清单的 `source` 标记枚举** —— 回答「这条是**并入来的**还是**本项目自研的**」。
+#: ⚑ **R12（轮 58 加）：能力清单的 `source` 标记枚举** —— 回答「这条是**并入来的**还是**
+#: 本项目自研的**」。
 #: ⚠ 与 `level` **不是一回事**：`level: verified` 说的是「**有我们自己的运行证据**」，
 #: **不是**「代码是我们写的」（`AGENTS.md §一 A2` 明写这条）。
 #: ⚠ `undetermined` 是**合法且被鼓励**的值：
@@ -56,7 +57,8 @@ VALID_MODES = {"interactive", "reviewed", "unattended"}
 #: R1：五级枚举与 provenance 必填性挂在这个 schema 版本上
 SCHEMA_VERSION = "2.0"
 
-#: R3：能力 id 必须是稳定 slug（改 id 会断掉 operation_routes 的引用与既有 provenance 指向）
+#: R3：能力 id 必须是稳定 slug（改 id 会断掉 operation_routes 的引用与既有 provenance 指
+#: 向）
 ID_SLUG = re.compile(r"^[a-z][a-z0-9_]*$")
 
 #: R6：provenance.repo 必须是 owner/repo 全名，不是克隆目录名
@@ -162,7 +164,8 @@ def check_docs() -> list[str]:
     mp = ROOT / "docs" / "union-coverage-matrix.md"
     if mp.is_file() and "本文件是生成物" not in mp.read_text(encoding="utf-8")[:600]:
         bad.append("union-coverage-matrix.md 顶部缺少「本文件是生成物」声明")
-    # ⚑ **R8 的新鲜度（轮 60 加）**：`docs/union-level-audit.md` 必须是**能重生成出来的那份**。
+    # ⚑ **R8 的新鲜度（轮 60 加）**：`docs/union-level-audit.md` 必须是**能重生成出来的
+    # 那份**。
     #   ★ 这条是**实测逼出来的**：此前 R8 只在那句 docstring 里承诺过，
     #     **既没有生成器、也没有读者**，而文件**不存在** ⇒ 读文档的人会以为
     #     「等级已经审计过了」，**而审计根本没发生**（「文档串与代码不符比没有文档更糟」）。
@@ -270,8 +273,10 @@ def check_capabilities_schema() -> list[str]:
         # ⚑ **R12（2026-10-01 轮 58 加）：`source` 标记** ——
         #   把「并入来的」与「本项目自研的」分开。此前 schema **没有**这个字段 ⇒
         #   29 条里**无法区分**（例：`requirements_planning` 的 backend 是 `local-agent`，
-        #   显然是自研，却**没有地方这么说**）。见 `AGENTS.md §一 A2` 的「两层 provenance」。
-        #   ⚠ **`undetermined` 是合法值**（`THIRD-PARTY-NOTICES.md`：「把未并入的东西写成已并入，
+        # 显然是自研，却**没有地方这么说**）。见 `AGENTS.md §一 A2` 的「两层 provenance
+        # 」。
+        # ⚠ **`undetermined` 是合法值**（`THIRD-PARTY-NOTICES.md`：「把未并入的东西写成
+        # 已并入，
         #     是**归属造假**，比遗漏更严重」）⇒ 宁可留 `undetermined`，不猜。
         #   ⚠ `source_evidence` **必须非空** —— 一个没有依据的分类等于没分类。
         src = c.get("source")
@@ -282,7 +287,8 @@ def check_capabilities_schema() -> list[str]:
         # ⚑ **R13（轮 59 加）：`source` 与 `provenance` 必须**自洽**** ——
         #   `provenance` 非空 ⇒ 该能力**有第三方来源** ⇒ `source` **不能**是 `original`。
         #   ★ 这条是**实测逼出来的**：`mold_tools` 曾同时有
-        #     `source: "original"` 与一条指向 `Eduardof0nt/Solidworks-MCP-Server` 的 `provenance`
+        # `source: "original"` 与一条指向 `Eduardof0nt/Solidworks-MCP-Server` 的 `proven
+        # ance`
         #     —— **字段之间互相打架**，而 R12（只查枚举与依据非空）**看不见**。
         #     ⇒ 「原创」与「有来源」是互斥的陈述，机器能判。
         prov = c.get("provenance")
@@ -290,7 +296,8 @@ def check_capabilities_schema() -> list[str]:
             repos = ", ".join(str(p.get("repo")) for p in prov if isinstance(p, dict))
             bad.append("能力 %s 的 source='original' 与 provenance（%s）**自相矛盾** —— "
                        "有第三方来源就不能叫原创（应改 mixed 或 upstream）" % (cid, repos))
-        # ⚑ **R13b：反向** —— `provenance` 非空却写 `upstream` 也**不一定**对，但**无法机器判**
+        # ⚑ **R13b：反向** —— `provenance` 非空却写 `upstream` 也**不一定**对，但**无法
+        # 机器判**
         #   （「来源是上游还是四家」需要看 repo 名）⇒ 只在 repo 明确**不是**上游时提示。
         if src == "upstream" and prov:
             for p in prov:
@@ -331,7 +338,8 @@ def check_capabilities_schema() -> list[str]:
             for opt in ("commit", "tag"):
                 if opt in item and not isinstance(item[opt], str):
                     bad.append("能力 %s 的 provenance.%s 不是字符串：%r" % (cid, opt, item[opt]))
-            # R10：angelsix/solidworks-api 的 References/ 是达索财产，只能原样配 SolidDNA 用
+            # R10：angelsix/solidworks-api 的 References/ 是达索财产，只能原样配 SolidDN
+            # A 用
             if isinstance(files, list) and repo == ANGELSIX_REPO:
                 if any(str(p).replace("\\", "/").startswith("References/") for p in files):
                     bad.append("能力 %s 的 provenance 引用了 angelsix 的 References/ —— "
@@ -480,7 +488,8 @@ def check_capabilities_levels() -> list[str]:
 #: ⚑ **R14（2026-10-01 轮 67 加）：`docs/union-not-doing.json` 的形状** ——
 #: 承载 `AGENTS.md §一 A1` 的**另一半**：「域覆盖矩阵里本仓库每一格**都有来源，
 #: 或写明「不做 + 原因」」。
-#: ⚠ 此前**只有「有来源」那一半有机制**（`capabilities.yaml` 的 `source`/`source_evidence`，
+#: ⚠ 此前**只有「有来源」那一半有机制**（`capabilities.yaml` 的 `source`/`source_evidenc
+#: e`，
 #:   由 R12 守），而「不做 + 原因」**一格机制都没有** —— 矩阵里只有「缺 N」，
 #:   读者**无从知道哪些是「我们不做」、哪些是「还没做」**（轮 67 实测确认）。
 #: ⚠ 三条判据（每条都必须**非空**）：`subject` / `reason` / `evidence`。
@@ -572,20 +581,25 @@ def check_rule_registry(titles) -> list:
     for n in sorted(ref - reg):
         bad.append("段名引用了 **R%d**，但登记表里没有它 ⇒ 读代码的人查不到它代表什么" % n)
     #: ⚑⚑ **轮 194：覆盖面从「段名」扩到「**执行侧**」** ——
-    #:   ★ 轮 193 只查段名，而实测「引用 R 编号的文件」有 **17 个**（3 个门禁 + 4 个其它 scripts +
+    #: ★ 轮 193 只查段名，而实测「引用 R 编号的文件」有 **17 个**（3 个门禁 + 4 个其它 s
+    #: cripts +
     #:     5 个 tests + 5 个 docs）⇒ 段名只覆盖了其中**极小一块**。
-    #:   ★★ **范围为什么是 `scripts/*.py`（不含 `tests/`、不含 `docs/`）** —— 如实声明覆盖面：
+    #: ★★ **范围为什么是 `scripts/*.py`（不含 `tests/`、不含 `docs/`）** —— 如实声明覆盖
+    #: 面：
     #:     · `scripts/` = **执行侧**（谁在**执行**这些规则）⇒ 引错编号就是**执行错规则**
-    #:     · `tests/` **故意排除**：**负例测试必须能写出未登记的编号**（如 `R<n>` 那种**不存在的**编号）
+    #: · `tests/` **故意排除**：**负例测试必须能写出未登记的编号**（如 `R<n>` 那种**不存
+    #: 在的**编号）
     #:       来证明判据有牙 —— 把 tests 纳进来会**把负例判成违规**
-    #:       ⚠⚠ **这一行本身踩过一次（轮 194）**：第一版我在这里写了一个**具体的**未登记编号当例子，
+    #: ⚠⚠ **这一行本身踩过一次（轮 194）**：第一版我在这里写了一个**具体的**未登记编号当
+    #: 例子，
     #:       ★ 而新判据**立刻把它抓出来了**（"执行侧引用了未登记编号"）。
     #:       ⇒ ★ **定则**：**在本文件里举例，请用 `` R<n> `` 这种占位写法，不要写具体编号** ——
     #:         判据分不出「举例」与「引用」，所以**要让举例本身不构成引用**（比去剥注释更稳）。
     #:       —— 把 tests 纳进来会**把负例判成违规**
     #:     · `docs/`（含 ROADMAP / known-facts / specs）**故意排除**：那是**历史记录**，
     #:       记的是"当时引用过什么"，**不该被后来的登记表追着改**
-    #:   ⚠ 实测（轮 194）：执行侧 `scripts/*.py` 里引用 R 编号的共 **7 个文件**，**全部已在册** ⇒
+    #: ⚠ 实测（轮 194）：执行侧 `scripts/*.py` 里引用 R 编号的共 **7 个文件**，**全部已
+    #: 在册** ⇒
     #:     本扩展**当前不报任何东西**（★ 这是"扩了覆盖面而结论不变"，不是"没生效"）。
     for name, refs in sorted(unregistered_refs(RULE_SCAN_GLOB, reg).items()):
         bad.append("`scripts/%s` 引用了未登记的 %s ⇒ 执行侧引错编号 = **执行错规则**"

@@ -133,7 +133,8 @@ def main() -> int:
         size = (size_r.get("result") or {}) if isinstance(size_r.get("result"), dict) else {}
         mesh_r = iso("create_mesh_by_name", [STUDY],
                      {"units": 0,
-                      #: ⚠ 不写 `x or 默认值` —— **0.0 是合法值**（"让 SolidWorks 自己选"），
+                      #: ⚠ 不写 `x or 默认值` —— **0.0 是合法值**（"让 SolidWorks 自己选
+                      #: "），
                       #:   `0.0 or 4.9339` 会把它顶掉（★ 事实 178 同族，门禁抓的）。
                       "element_size": float(_v if (_v := size.get("element_size")) is not None else 4.9339),
                       "tolerance": float(_w if (_w := size.get("tolerance")) is not None else 0.2467)},

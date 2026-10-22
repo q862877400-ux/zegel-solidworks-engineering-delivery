@@ -13,7 +13,8 @@
 """
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（★ 不是第三方移植）
-# 文件:   `tools/sw_guard.py`（★ `classify_dialog(d: dict) -> dict` —— ★ **分级逻辑的真源**）
+# 文件:   `tools/sw_guard.py`（★ `classify_dialog(d: dict) -> dict` —— ★ **分级逻辑的真
+# 源**）
 #         `tests/test_sw_guard_dialog_tiers.py`（★ 三级的契约 + 负例）
 #         `mcp-server/tool_specs_batch114.py`（★ 本包装的 ToolSpec 声明）
 #         `AGENTS.md` §十五（★ 弹窗护栏的三级处置）

@@ -3,7 +3,8 @@
 # 仓库:   本项目自身
 # 文件:   `output/ENGINEERING_CONSTRUCTION_PLAN.md` **§5 EC02**（★ T01–T08 逐字）
 #         `specs/304-ec02-rules-and-standards/spec.md`（★ 8 FR · 8 V）
-#         `specs/304-ec02-rules-and-standards/baseline.md` §二（★ **KS 引擎实测**：★ LLM 401 ⇒ `is_valid: false`）
+# `specs/304-ec02-rules-and-standards/baseline.md` §二（★ **KS 引擎实测**：★ LLM 401 ⇒ `
+# is_valid: false`）
 # 定位:   ★ **EC02** 的确定性规则与计算层。★★★ 计划 §5 EC02 逐字要求：「★ **不让检索片
 #           段直接当规则执行**」
 #         ★★ 本会话实测（★ `baseline.md` §二）：★ KS 引擎 `healthy` 但 **LLM 不可用（401）**

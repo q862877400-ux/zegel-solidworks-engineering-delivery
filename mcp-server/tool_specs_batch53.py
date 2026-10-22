@@ -1,4 +1,5 @@
-# ── 24h 计划 v2 · 段 1：**选择底座**（`sw_selection_spec` 的 6 条真缺口）────────────────
+# ── 24h 计划 v2 · 段 1：**选择底座**（`sw_selection_spec` 的 6 条真缺口）──────────────
+# ──
 # ★★★★ 2026-10-03（轮 397）来源：`tools/triage_real_gaps.py` 判定的 **76 条「该挂」**里
 #   杠杆最高的一族 —— ★ **选择是每一次真机验证都要用的东西**（★ 与事实 32 / 8 直接相关）。
 #
@@ -16,14 +17,16 @@
 # ★★ **判据统一用回读计数**（★ 事实 8：`SelectByID2` / `Select4` 的 bool 返回值不可信，
 #    只有 `ISelectionMgr.GetSelectedObjectCount2(-1)` 的回读算数）。
 # ★ 规则 2：★ `selection_point` 回的是**毫米**（`point_mm`），★ 不在工具层再换算。
-# ★ 规则 3：★ 对外只暴露**声明式选择器字符串**（`__current_selection__` / `index:<n>`），
+# ★ 规则 3：★ 对外只暴露**声明式选择器字符串**（`__current_selection__` / `index:<n>`）
+# ，
 #   ★ **不传坐标、不传 COM 对象**。
 #
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（能力层）
 # 文件:   mcp-server/tool_specs_batch53.py —— 本文件（新）
 # 定位:   24h 计划 v2 段 1：把 `sw_selection_spec` 的选择底座族挂成 MCP 工具。
-# 官方签名依据: `ISelectionMgr.GetSelectedObjectCount2`（回读计数）· `IEntity.Select4`（按对象选）·
+# 官方签名依据: `ISelectionMgr.GetSelectedObjectCount2`（回读计数）· `IEntity.Select4`（
+# 按对象选）·
 #   `IModelDocExtension.SelectByID2`（★ 对边/面**按名字选不中** —— 事实 32）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件

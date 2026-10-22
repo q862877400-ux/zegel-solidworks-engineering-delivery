@@ -67,8 +67,10 @@ from audit_byref_args import (  # noqa: E402
 )
 
 #: ★ 下界（真树实测 · 2026-10-09 · spec 231）—— **只增不减**。
-#: `entries` = 至少有一个调用点被**真正判过签名**的分发口数；`sites` = 被真正判过的调用点数。
-#: ★ 实测 `311 + 16(arity) = 327` = spec 230 的 `resolved_sites` ⇒ **覆盖完整、无静默漏点**。
+#: `entries` = 至少有一个调用点被**真正判过签名**的分发口数；`sites` = 被真正判过的调用
+#: 点数。
+#: ★ 实测 `311 + 16(arity) = 327` = spec 230 的 `resolved_sites` ⇒ **覆盖完整、无静默漏
+#: 点**。
 BASELINE_BYREF_ENTRIES = 21
 BASELINE_BYREF_SITES = 311
 #: 明细打印上限。
@@ -128,9 +130,12 @@ def com_args(entry, call_file: Path, call, slots, srcs, table=None):
         if fixed is not None:
             out.append(_seg(def_src, fixed))
         elif name is not None and name.startswith("*"):
-            #: ★★★ spec 270 **试过「双条件」并已回滚** —— ★★ **它是空改动**（★ 门禁读数一字未变）。
-            #:   ★★ **为什么**：★ 那 3 处的 `slots` 是 `[('*args', None)]` 而 **`com = 1`**
-            #:   ⇒ ★ **`env.get("*args")` 不是空的**（★ 有 1 个元素）⇒ ★ `if not starred` **不成立**
+            #: ★★★ spec 270 **试过「双条件」并已回滚** —— ★★ **它是空改动**（★ 门禁读数
+            #: 一字未变）。
+            #: ★★ **为什么**：★ 那 3 处的 `slots` 是 `[('*args', None)]` 而 **`com = 1`*
+            #: *
+            #: ⇒ ★ **`env.get("*args")` 不是空的**（★ 有 1 个元素）⇒ ★ `if not starred` 
+            #: **不成立**
             #:   ⇒ ★ 那个早返回**从未触发**。
             #:   ★★★ **新认识（留给下一轮）**：★ 判据条件不该是「`*args` **为空**」，
             #:   而是「★ `*args` **恰好 1 个**（= 对象本身）」⇒ ★ **下一轮要按这个改**。
@@ -156,24 +161,32 @@ def judge(member: str, com: list[str], table, byref_vars: set[str], alias_inline
         return "unknown"
     cands = [v for v in variants if len(counted_positions(v[1])) == len(com)]
     if not cands:
-        #: ★★★ spec 271 的**判别规则**（★ 在 268 的窄规则上加一层，★ 分开了 `starargs` 与 `real-gap`）。
+        #: ★★★ spec 271 的**判别规则**（★ 在 268 的窄规则上加一层，★ 分开了 `starargs` 
+        #: 与 `real-gap`）。
         #:   ★★ **为什么还要再加一层**：★ 271 量出那两类在 AST 上**完全同形** ——
         #:   ★ `_checked(route_manager, "CreateFlattenRoute", *args)` 与
         #:   ★ `_checked(mesh, "GetNodeLocation", int(node_number))`
         #:   ★ **`slots` 都是 `[('*args', None)]`、`com` 都是 1** ⇒ ★ **AST 分不开**。
         #:   ★★★ **但形参表能分**：
-        #:     · `GetNodeLocation(Int32, Double&, Double&, Double&)` ⇒ 缺的 3 个**全是 `Double&`（by-ref 出参）**
+        #: · `GetNodeLocation(Int32, Double&, Double&, Double&)` ⇒ 缺的 3 个**全是 `Doub
+        #: le&`（by-ref 出参）**
         #:       ⇒ ★ 调用方**拿不到**它们 ⇒ ★ **真缺口**（★ 不该判 `starred`）
         #:     · `CreateFlattenRoute(Int32, Int32, Double, …)` ⇒ 缺的 10 个**全是普通入参**
         #:       ⇒ ★ `*args` **该补** ⇒ ★ `starred`
-        #:   ⇒ ★★ **规则：`len(com) == 1` 且 最少计入形参 ≥2 且「缺的形参**不全是 by-ref」** ⇒ `starred`。**
-        #:   ★★★ **spec 267 的教训**（★ `tests/test_starargs_narrow_rule.py` 逐字要求这句话**在窄规则旁边**）：
-        #:     ★ 267 **试过、已回滚** —— ★★ 它当时的做法是「**只要** `*args` 没传 ⇒ **单列一桶**」
+        #: ⇒ ★★ **规则：`len(com) == 1` 且 最少计入形参 ≥2 且「缺的形参**不全是 by-ref」
+        #: ** ⇒ `starred`。**
+        #: ★★★ **spec 267 的教训**（★ `tests/test_starargs_narrow_rule.py` 逐字要求这句
+        #: 话**在窄规则旁边**）：
+        #: ★ 267 **试过、已回滚** —— ★★ 它当时的做法是「**只要** `*args` 没传 ⇒ **单列一
+        #: 桶**」
         #:     ⇒ ★★ 那会**把 `*args` 吞掉的 `real-gap` 也一起算进 `starred`** ⇒
         #:       ★ **真缺口被掩盖**（★ 那正是「`starred` **不算已核**」这条纪律要防的）。
-        #:     ★★★ **⇒ 所以窄规则必须带「最少计入形参 ≥2」这一半** —— ★★ **去掉它就把规则改宽了**。
-        #:   ⚠ **判据**：`tests/test_starargs_narrow_rule.py::test_narrow_rule_is_in_the_source`
-        #:     逐字核 `len(com) == 1 and min(len(counted_positions(v[1])) for v in variants) >= 2`
+        #: ★★★ **⇒ 所以窄规则必须带「最少计入形参 ≥2」这一半** —— ★★ **去掉它就把规则改
+        #: 宽了**。
+        #: ⚠ **判据**：`tests/test_starargs_narrow_rule.py::test_narrow_rule_is_in_the_s
+        #: ource`
+        #: 逐字核 `len(com) == 1 and min(len(counted_positions(v[1])) for v in variants)
+        #:  >= 2`
         #:     与**本段里的「spec 267 的教训」** ⇒ ★ **改这段前先跑它** ✓
         if len(com) == 1 and min(len(counted_positions(v[1])) for v in variants) >= 2:
             missing_all_byref = all(
@@ -229,7 +242,8 @@ def main() -> int:
         cls = classes.get(key, ("", 0))[0]
         if cls == "no-callers":
             continue
-        #: ★ 判**所有可一级转发的入口**，不只 `resolved` —— `partial` 入口的**字面量调用点**
+        #: ★ 判**所有可一级转发的入口**，不只 `resolved` —— `partial` 入口的**字面量调用
+        #: 点**
         #:   同样可判（230 实测那 3 个 `partial` 入口贡献了 42 个可解析调用点）。
         inner = DEG.inner_wrapper_call(entry[1], entry[3])
         slots = DEG.forward_slots(entry[1], inner) if inner is not None else None
@@ -259,7 +273,8 @@ def main() -> int:
                 continue
             if res == "starred":
                 #: ★★★ spec 268：`*args` 该补而没补 ⇒ arity 不可判 ⇒ ★ 单列一桶，
-                #:   ★★ **但算「已核」** —— ★ 这正是 267 丢 189 个调用点的原因（★ 那时它不算）。
+                #: ★★ **但算「已核」** —— ★ 这正是 267 丢 189 个调用点的原因（★ 那时它不
+                #: 算）。
                 starred += 1
                 judged_sites += 1
                 hit += 1

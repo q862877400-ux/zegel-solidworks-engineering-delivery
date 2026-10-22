@@ -6,7 +6,8 @@
 #   `native_macro_recording`** —— 裁决书：正解是 `RecordLine` + `RunCommand` +
 #   `DSldWorksEvents::BeginRecordNotify`/`EndRecordNotify` ✓
 #   ★★★ 裁决书点名的**头号风险**：`swCommands_StopMacro`(31) **逐字会弹 Save As 对话框**
-#     ⇒ ★★ 本工具**永不调用 31**，改用 `swCommands_RecordPauseMacro`(29) 这个**切换**成对开关 ✓
+# ⇒ ★★ 本工具**永不调用 31**，改用 `swCommands_RecordPauseMacro`(29) 这个**切换**成对开
+# 关 ✓
 # 官方依据: `C:\\swapi\\types\\ISldWorks\\RecordLine.md`（★ `## Remarks` 逐字给两个硬事
 #           实）·
 #   `C:\\swapi\\types\\ISldWorks\\RunCommand.md` · `C:\\swapi\\enums\\swCommands_e.md`
@@ -14,8 +15,10 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **1 个工具** ⇒ 工具数 447 → **448**
 # ★★ **诚实边界**：★ 真机只到「**成对调用可达 + 逐行回 True**」，
-#   而 ★★ **`RecordLine` 在「未开录制」时也回 `True`** ⇒ ★ **返回值证明不了「写进去了」**；
-#   ★ 要真证得**落盘的宏文件**，那要 `StopMacro` 的 Save As ⇒ **本工具不去点** ⇒ 标 **`stitched`** ✓
+# 而 ★★ **`RecordLine` 在「未开录制」时也回 `True`** ⇒ ★ **返回值证明不了「写进去了」**
+# ；
+# ★ 要真证得**落盘的宏文件**，那要 `StopMacro` 的 Save As ⇒ **本工具不去点** ⇒ 标 **`sti
+# tched`** ✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 

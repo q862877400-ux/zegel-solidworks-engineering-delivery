@@ -1,7 +1,8 @@
 """★ 批次 79：**FR-008 的两半** —— 装配爆炸视图 9 个 + 宏/VBA 8 个（★ 规格 204 的 T-1）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植；被包装函数的来源块在其源码里）
-# 文件:   `scripts/sw_assembly_doc.py`（★ 本批新增的 9 个爆炸视图包装，官方依据见该段来源块）
+# 文件:   `scripts/sw_assembly_doc.py`（★ 本批新增的 9 个爆炸视图包装，官方依据见该段来
+# 源块）
 #         `scripts/sw_macro.py`（★ 新建：`ISldWorks.RunMacro2` + `swRunMacroOption_e` /
 #          `swRunMacroError_e` 两枚举）
 #         `scripts/sw_macro_guard.py`（既有：宏文本的生成 / 校验 / 落盘，**不执行**）
@@ -17,7 +18,8 @@
 # 许可:   本仓库 MIT。★ 无第三方代码引入。
 # 规模:   **17 个工具**（★ 9 + 8）—— 起点 296 ⇒ 本批后 313（SC-001 的第一段）
 # ★ 本批与既有工具**不重叠**（SC-004）：既有 296 个里没有一个爆炸视图或宏**执行**工具；
-#   ★ 唯一的相邻者 `solidworks_macro_*` 类**不存在**（`sw_macro_guard` 的 9 个公开函数此前**一个都没挂**）✓
+# ★ 唯一的相邻者 `solidworks_macro_*` 类**不存在**（`sw_macro_guard` 的 9 个公开函数此前
+# **一个都没挂**）✓
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations
 
@@ -25,7 +27,8 @@ from tool_registry import Param, ToolSpec
 
 __all__ = ["SPECS_BATCH79"]
 
-#: ★ 与既有多批同形：`asm_model` 走 `RESOLVERS["asm_model"]`（★ 解析成活动文档；装配也是 IModelDoc2）
+#: ★ 与既有多批同形：`asm_model` 走 `RESOLVERS["asm_model"]`（★ 解析成活动文档；装配也是
+#:  IModelDoc2）
 _ASM = "The ACTIVE assembly document (resolved for you; assembly docs are IModelDoc2 as well)."
 _CFG = ("Configuration name to inspect. ★ Official signature takes the configuration name "
         "(`GetExplodedViewNames2(String ConfigurationName)`), not an index.")
