@@ -45,6 +45,19 @@
 
 ## 一 · 游标（**唯一必须维护的字段**）
 
+2026-10-22 ★★★ **仓库统一化 · 第 29 轮：修掉⑤自己的一个 bug + 一处命名不一致**
+  ★★ **⑤ 的 `_AlphaRename` 会改写原始 AST**：`_dup_functions` 在同一棵树上 `ast.walk` 边走边算哈希，
+  外层函数算哈希时把**嵌套函数名改成 `@@F@@`** ⇒ 组名显示成 `@@F@@` ✗（已实测到）
+  ⇒ 修法：`_body_hash` 先 `deepcopy` 再处理。修后复核：哈希前后原树函数名**完全相同**、清单再无 `@@` ✓
+  ★ `add` / `add_case` 两个名字干同一件事（一行 `self.cases.append`）⇒ 统一叫 `add_case` + 抽
+  `engineering/_case_collector.CaseCollectorMixin`；★ 改名风险=0（实测两处**零调用点**）。
+  ★★ `_checked` 登记**否定裁决**：两份 11 行逐字相同、用导入别名可零改动——
+  但实测 `check_dispatch_entry_guard` 报**可解析调用点 327 → 317（−10）**、可解析分发口 18→16、
+  分发口 37→36、不可见 84→83 —— **四项全破棘轮** ⇒ 回滚。★ 原因：门禁靠「本地 def」才能把调用点
+  识别成分发口并核验成员名（19 处里有 10 处是字面量）。★★ 本会话**第二次**遇同族问题（首次是 `_safe_member`，−21）。
+  **读数**：⑤ **80 → 78**（基线收到 78、无余量；豁免 4 条）· ① ruff 439 · ②(信息项) 2,315。
+  **下一 WIP**：⑤ 待裁决剩 **2 组**（click/click_point · capture_front/screen_png，都是一次性 GUI 脚本，动前须查 import）。
+
 2026-10-22 ★★★ **仓库统一化 · 第 28 轮：CodedError 模式的漏网者收齐**
   ★★ **同一个模式应用不彻底 = 精神分裂**：第 14 轮收了 4 个 `*Error` 进 `CodedError`，
   但**同族还有 4 个漏网**（catalog.CatalogError · registry.RegistryError ·

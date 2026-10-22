@@ -37,6 +37,7 @@
 from __future__ import annotations
 
 import ast
+import copy
 import hashlib
 import io
 import json
@@ -435,8 +436,14 @@ def _body_hash(node: ast.AST) -> str:
         )
         if is_doc:
             body = body[1:]
-        tree = ast.Module(body=body, type_ignores=[])
-        mod = _AlphaRename(_bound_names(node)).visit(tree)
+        #: ★★ 2026-10-22（修 bug）：`_AlphaRename` 会**改写 `FunctionDef.name`**，
+        #:   而 `_dup_functions` 是在**同一棵树**上 `ast.walk` 并边走边算哈希 ⇒
+        #:   外层函数算哈希时会把**嵌套函数的名字改成 `@@F@@`**，
+        #:   等 `ast.walk` 走到那个嵌套函数时，`n.name` 已经被改掉 ⇒
+        #:   组名会显示成 `@@F@@`（实测果然如此）✗
+        #:   ⇒ 先 `deepcopy` 再处理，**不动调用方的树** ✓
+        copied = copy.deepcopy(ast.Module(body=body, type_ignores=[]))
+        mod = _AlphaRename(_bound_names(node)).visit(copied)
         ast.fix_missing_locations(mod)
         dumped = ast.dump(mod, annotate_fields=False, include_attributes=False)
         return hashlib.sha256(dumped.encode("utf-8")).hexdigest()[:16]

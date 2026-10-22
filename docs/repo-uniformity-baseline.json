@@ -277,9 +277,19 @@
     80
    ],
    "why": "四组收敛：① catalog/registry/manufacturing_rules/rule_service 的 *Error 继承 CodedError（第 14 轮同模式的漏网者，2 组）② load_baseline → gate_decl（参数化）③ applies_to → engineering/_applicability.ApplicabilityMixin"
+  },
+  {
+   "at": "2026-10-22v",
+   "from": [
+    79
+   ],
+   "to": [
+    78
+   ],
+   "why": "① 修掉指标⑤的一个真 bug（_AlphaRename 改写原树 ⇒ 组名显示成 @@F@@；已加 deepcopy）② add/add_case 统一成 add_case + 抽 CaseCollectorMixin（★ 同时修掉命名不一致）③ _checked 登记否定裁决（统一会丢 10 个可解析调用点的核验）"
   }
  ],
- "dup_function_groups_ceiling": 80,
+ "dup_function_groups_ceiling": 78,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
@@ -313,6 +323,18 @@
    "verdict": "★ 判定【不统一】—— 登记豁免",
    "reason": "这 12 个文件的文件头自述「**官方 API 的完整抄录**」、「⚡ 逐条机械生成，**不手抄、不折叠、不合并重载**」；`_require` 是**生成模板的一部分**（每个文件恰用 1 次）。⇒ 手改会被下次重生成覆盖，且给「纯抄录」文件引入运行期依赖 ✗",
    "evidence": "12 个 sw_api_*.py 各自 `def _require` + 1 处调用；文件头 L53 逐字写「⚡ 逐条机械生成」",
+   "date": "2026-10-22"
+  },
+  {
+   "functions": "_checked",
+   "files": [
+    "scripts/sw_pdm.py",
+    "scripts/sw_simulation_results.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留两份",
+   "reason": "两份 11 行逐字相同（签名表靠 `table` 参数传），锂看该收敛。★★ 但实测否决：把本地 `def` 换成导入别名（调用点零改动）后，`check_dispatch_entry_guard` 报【可解析调用点 327 → 317（**−10**）】、可解析分发口 18 → 16、分发口 37 → 36、不可见 84 → 83 —— 四项都破了「只增不减」的棘轮 ✗。★ 原因：那几道 dispatch 门禁**靠「本地 def」**才能把调用点识别成分发口、并逐条核验传进去的成员名（★ 两处各 9/10 处调用里有 10 处是字面量、可核）。⇒ ★★ **统一它就是拿掉 10 个调用点的核验面** ⇒ 验证能力 > 去重收益 ⇒ 回滚。",
+   "evidence": "回滚后六道门禁逐个复验回到基线：byref 323 · entry 37/37 可解析 18/37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371",
+   "note_same_family": "★ 与 `_optional_com_member/_safe_com_member` 同族（那组当时也是 −21 调用点）",
    "date": "2026-10-22"
   }
  ],

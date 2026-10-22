@@ -17,6 +17,12 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+
+try:
+    from ._case_collector import CaseCollectorMixin
+except ImportError:
+    from _case_collector import CaseCollectorMixin
+
 from dataclasses import dataclass, field
 
 __all__ = [
@@ -82,7 +88,7 @@ class EvalCase:
 
 
 @dataclass
-class EvalSet:
+class EvalSet(CaseCollectorMixin):
     """★★★★ **评测集**（★ 逐字承 EC12-T01/T05）。
 
     ★★★ **验收（★ 逐字）**：★「★ **留出集可重复**」+ ★「★ **冻结数据、模型版本、温度、
@@ -92,85 +98,6 @@ class EvalSet:
     cases: list = field(default_factory=list)
     #: ★★★ **冻结的运行条件**（★ 逐字承 EC12-T05）
     frozen: dict = field(default_factory=dict)
-
-    def add(self, case: EvalCase) -> None:
-        self.cases.append(case)
-
-    def holdout(self) -> list:
-        return [c for c in self.cases if c.split == SplitKind.HOLDOUT]
-
-    def duplicate_fingerprints(self) -> list:
-        """★★★★ **近似复制检测**（★ 逐字承 EC12-T01：★「★ **避免近似复制污染**」）。
-
-        ★★ 判据：★ 同指纹出现在**多个划分**里 ⇒ ★ **污染**（★ 留出集不独立了）✗
-        """
-        by_fp: dict = {}
-        for c in self.cases:
-            by_fp.setdefault(c.fingerprint(), []).append(c)
-        bad = []
-        for fp, items in by_fp.items():
-            splits = {c.split for c in items}
-            if len(splits) > 1:
-                bad.append(
-                    {
-                        "fingerprint": fp,
-                        "ids": [c.id for c in items],
-                        "splits": sorted(splits),
-                    }
-                )
-        return bad
-
-    def frozen_conditions_complete(self) -> dict:
-        """★★★ **冻结条件齐**（★ 逐字承 EC12-T05 的六项）。"""
-        need = (
-            "data",
-            "model_version",
-            "temperature",
-            "budget",
-            "allowed_tools",
-            "runtime",
-        )
-        missing = [k for k in need if k not in (self.frozen or {})]
-        return {
-            "ok": not missing,
-            "missing": missing,
-            "reason": (
-                "★ 六项冻结条件齐" if not missing else "★★ 缺 %r ⇒ ★ 不可重复" % missing
-            ),
-        }
-
-    def fingerprint(self) -> str:
-        """★★★ **留出集指纹**（★ 验收：「★ **留出集可重复**」）。
-
-        ★★ 判据：★ 同一批案例 + 同一冻结条件 ⇒ **同一指纹** ⇒ ★ 可复现。
-        """
-        ids = sorted(c.id for c in self.cases)
-        blob = json.dumps(
-            {"ids": ids, "frozen": self.frozen or {}},
-            ensure_ascii=False,
-            sort_keys=True,
-        )
-        return "sha256:" + hashlib.sha256(blob.encode("utf-8")).hexdigest()
-
-    def verdict(self) -> dict:
-        """★★★ **评测集判定**（★ 三条：★ 有留出集 · ★ 无污染 · ★ 条件冻结齐）。"""
-        h = self.holdout()
-        dup = self.duplicate_fingerprints()
-        fc = self.frozen_conditions_complete()
-        ok = bool(h) and not dup and fc["ok"]
-        return {
-            "ok": ok,
-            "holdout_count": len(h),
-            "contamination": dup,
-            "frozen": fc,
-            "fingerprint": self.fingerprint(),
-            "reason": (
-                "★ 留出集 %d 条 · ★ 无污染 · ★ 条件已冻结 ⇒ 可重复" % len(h)
-                if ok
-                else "★★ 留出集 %d / ★ 污染 %d / ★ 冻结 %s"
-                % (len(h), len(dup), fc["ok"])
-            ),
-        }
 
 
 # ══════════════════════════════════════════════════════════════════════
