@@ -628,6 +628,31 @@ def create_empty_dispatch_variant():
     return VARIANT(pythoncom.VT_DISPATCH, None)
 
 
+def select_by_id(extension, entity_name, entity_type, append=False, mark=0):
+    """★ 统一封装 `IModelDocExtension::SelectByID2`（★ 本仓**唯一**实现）。
+
+    参数:
+        extension:   `ModelDocExtension` 对象
+        entity_name: 实体名称（★ 实体没名字时传空串 + 坐标 —— 事实 32）
+        entity_type: 实体类型字符串
+        append:      是否追加选择
+        mark:        选择标记
+
+    返回: `bool`（★ 不可信 —— 事实 8：要用 `GetSelectedObjectCount2(-1)` 回读）。
+
+    ★★ 2026-10-22（仓库统一化）：本函数原在 `sw_part.py` 与
+      `sw_assembly.py` **各有一份**
+      （连 docstring 都逐字相同、各 19 行）⇒ 收敛到这里；
+      两处改为导入别名，调用点零改动。
+    ★ 参数序与类型照官方 `IModelDocExtension/SelectByID2.md`；
+    ★ 第 9 个 `Callout` **必须**传空 Dispatch（事实 33），否则报「类型不匹配」。
+    """
+    callout = create_empty_dispatch_variant()
+    return extension.SelectByID2(
+        entity_name, entity_type, 0, 0, 0, append, mark, callout, 0
+    )
+
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（本机实测结论的固化，非第三方移植）
 # 文件:   scripts/sw_connect.py —— 本文件自身的 out_i4 / create_empty_dispatch_variant

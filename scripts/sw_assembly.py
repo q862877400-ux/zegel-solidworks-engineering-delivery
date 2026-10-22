@@ -21,6 +21,14 @@ SolidWorks 装配体操作工具。
 #         它**不替代**本文件里原有的、更精确的逐函数来源块。
 # ─────────────────────────────────────────────────────────────────────
 
+#: ★★ 2026-10-22 统一化：本函数原与另一模块逐字相同（19 行）。
+#:   已收敛到 sw_connect.select_by_id（★ COM 接线的单一家）⇒ 此处保留旧名作别名。
+#:   ★ 空 Callout 也一并委托（同 sw_surface_features 模式）。
+try:
+    from .sw_connect import select_by_id as _select_by_id
+except ImportError:
+    from sw_connect import select_by_id as _select_by_id
+
 import math
 import os
 
@@ -68,28 +76,8 @@ PLANE_NAME_ALIASES = {
 }
 
 
-def _empty_callout():
-    """创建兼容 SelectByID2 的空 Callout 参数。"""
-    return VARIANT(pythoncom.VT_DISPATCH, None)
 
 
-def _select_by_id(extension, entity_name, entity_type, append=False, mark=0):
-    """
-    统一封装 SelectByID2，避免 None 在部分 SolidWorks 版本中触发类型不匹配。
-
-    参数:
-        extension: ModelDocExtension 对象
-        entity_name: 实体名称
-        entity_type: 实体类型字符串
-        append: 是否追加选择
-        mark: 选择标记
-
-    返回:
-        bool
-    """
-    return extension.SelectByID2(
-        entity_name, entity_type, 0, 0, 0, append, mark, _empty_callout(), 0
-    )
 
 
 def _as_alias_list(aliases):

@@ -247,9 +247,19 @@
     439
    ],
    "why": "192 处超宽单行字符串用【隐式拼接】折行（ast.dump 逐文件比对完全一致，内容零变化）；合并两个折行工具为一个（删 wrap_long_prose.py）"
+  },
+  {
+   "at": "2026-10-22s",
+   "from": [
+    101
+   ],
+   "to": [
+    99
+   ],
+   "why": "收敛 _select_by_id（sw_part/sw_assembly 各 19 行逐字相同）与 _empty_callout（同族）到 sw_connect 单一实现；★ dispatch 门禁计数逐个复验不变（byref 323 · entry 37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371）"
   }
  ],
- "dup_function_groups_ceiling": 101,
+ "dup_function_groups_ceiling": 99,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
