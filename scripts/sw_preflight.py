@@ -35,11 +35,13 @@ PIP_REQUIREMENTS = ("pywin32>=305", "comtypes>=1.2.0")
 DEPENDENCY_PROMPT = "检测到当前 Python 环境缺少 comtypes / win32com 库，是否授权 AI 自动为您配置本地环境？[Y/N]"
 
 
-def _configure_stdio_utf8() -> None:
-    """在 Windows 旧代码页下尽量使用 UTF-8 输出中文提示。"""
-    for stream in (sys.stdout, sys.stderr):
-        if hasattr(stream, "reconfigure"):
-            stream.reconfigure(encoding="utf-8", errors="replace")
+#: ★ 2026-10-22 统一化：本函数原在四个模块各有一份（逻辑逐字相同）
+#:   ⇒ 收敛到 scripts/sw_stdio.configure_stdio_utf8；此处保留旧名作别名
+try:
+    from .sw_stdio import configure_stdio_utf8 as _configure_stdio_utf8
+except ImportError:
+    from sw_stdio import configure_stdio_utf8 as _configure_stdio_utf8
+
 
 
 _configure_stdio_utf8()

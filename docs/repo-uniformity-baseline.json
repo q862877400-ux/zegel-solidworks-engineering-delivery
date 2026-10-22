@@ -101,9 +101,19 @@
     109
    ],
    "why": "收敛两组改名类重复：as_sequence/_as_list → sw_com_array.as_list；_load_simple_yaml/_load_yaml → engineering/_yaml_loader.load_yaml"
+  },
+  {
+   "at": "2026-10-22f",
+   "from": [
+    109
+   ],
+   "to": [
+    108
+   ],
+   "why": "收敛 _configure_stdio_utf8 ×4（sw_macro_guard/sw_preflight/validate_mcp/validate_skill）到 scripts/sw_stdio.py"
   }
  ],
- "dup_function_groups_ceiling": 109,
+ "dup_function_groups_ceiling": 108,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",
