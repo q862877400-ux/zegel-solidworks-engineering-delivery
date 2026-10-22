@@ -160,20 +160,12 @@ def _require(sketch):
     return sketch
 
 
-def as_sequence(value) -> list[Any]:
-    """把官方返回的 SAFEARRAY 转成 list。
-
-    ⚠ 转换**只保证拿到元素**，不保证顺序 —— 官方未定义 SAFEARRAY 的顺序保证。
-    需要按类型过滤请用 :data:`SKETCH_GETTERS` 里的分类型取法，别用这个。
-    """
-    if value is None:
-        return []
-    if isinstance(value, (list, tuple)):
-        return list(value)
-    try:
-        return list(value)
-    except TypeError:
-        return [value]
+#: ★ 2026-10-22 统一化：`as_sequence` 原与 `sw_drawing_create_missing._as_list` 两份逐字相同，
+#:   现收敛到 sw_com_array.as_list；★ 公开名 `as_sequence` 保持不变（外部有 5 处引用）
+try:
+    from .sw_com_array import as_list as as_sequence
+except ImportError:
+    from sw_com_array import as_list as as_sequence
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────

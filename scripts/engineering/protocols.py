@@ -137,9 +137,12 @@ class Protocol:
                 "source_refs": list(self.source_refs)}
 
 
-def _load_yaml(path: pathlib.Path) -> dict:
-    import yaml                                                         # noqa: PLC0415
-    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+#: ★ 2026-10-22 统一化：`_load_yaml` 原与 `catalog._load_simple_yaml` 两份逐字相同，
+#:   现收敛到 `engineering/_yaml_loader.load_yaml`；此处保留旧名作别名
+try:
+    from ._yaml_loader import load_yaml as _load_yaml
+except ImportError:
+    from _yaml_loader import load_yaml as _load_yaml
 
 
 def load_protocol(name: str) -> Protocol:

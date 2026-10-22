@@ -7,7 +7,7 @@
   "dup_filename": "AGENTS.md 铁律 3（结构按顶层白名单）引申：跨目录同名 .py 视为重复实现嫌疑"
  },
  "measured_at": "2026-10-21",
- "ruff_total_ceiling": 25859,
+ "ruff_total_ceiling": 25858,
  "clone_groups_ceiling": 2497,
  "no_source_block_ceiling": 0,
  "dup_filename_allow": [],
@@ -89,9 +89,21 @@
     111
    ],
    "why": "登记 1 组否定裁决豁免（_optional_com_member/_safe_com_member/_safe_member：统一会丢 21 个调用点的 dispatch 核验）"
+  },
+  {
+   "at": "2026-10-22e",
+   "from": [
+    25859,
+    111
+   ],
+   "to": [
+    25858,
+    109
+   ],
+   "why": "收敛两组改名类重复：as_sequence/_as_list → sw_com_array.as_list；_load_simple_yaml/_load_yaml → engineering/_yaml_loader.load_yaml"
   }
  ],
- "dup_function_groups_ceiling": 111,
+ "dup_function_groups_ceiling": 109,
  "dup_function_allow": [
   {
    "functions": "_optional_com_member/_safe_com_member",

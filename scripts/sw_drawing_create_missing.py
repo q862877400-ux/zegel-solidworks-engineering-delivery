@@ -167,16 +167,12 @@ DRAWING_CREATE_MISSING_STATUS = {
 
 # ── 小工具（★ 判据要能回读 ⇒ 这里只提供「读得到多少」，★ 读不到就回 None，不猜）──────
 
-def _as_list(value) -> list:
-    """★ COM 数组 → `list`；★ 单对象 → 单元素列表；★ `None` → 空列表。"""
-    if value is None:
-        return []
-    if isinstance(value, (list, tuple)):
-        return list(value)
-    try:
-        return list(value)
-    except TypeError:
-        return [value]
+#: ★ 2026-10-22 统一化：`_as_list` 原与 `sw_sketch.as_sequence` 两份逐字相同，
+#:   现收敛到 sw_com_array.as_list；此处保留旧名作别名
+try:
+    from .sw_com_array import as_list as _as_list
+except ImportError:
+    from sw_com_array import as_list as _as_list
 
 
 #: dispatch-guard: exempt internal-helper
