@@ -39,6 +39,7 @@
   },
   "cards": {
     "done": [
+      "adam-cad-copilot",
       "agentcad",
       "amagine3d",
       "autocad-mcp",
@@ -55,21 +56,31 @@
       "earthtojake-text-to-cad",
       "flexcad",
       "freecad-mcp",
+      "fusion-assistant",
       "fusion360-mcp-server",
       "hunyuan3d-2",
       "img2cad",
       "instantmesh",
+      "leo-ai",
       "mcp-cadquery",
+      "meshy",
       "multi-agent-cad",
+      "onshape-ai-advisor",
       "plankassembly",
+      "ptc-creo-generative",
+      "rodin",
+      "siemens-nx-ai",
       "sky-001",
       "spar3d",
+      "spline-ai",
       "stable-fast-3d",
       "step1x-3d",
       "text2cad",
       "trellis",
+      "tripo",
       "triposg",
-      "triposr"
+      "triposr",
+      "zoo-text-to-cad"
     ],
     "in_flight": [],
     "_note": "由 D:/ai3d-survey/sync_state.py 按目录实际重算。分类口径：class 按机制判、不按输入形态判（见 docs/ai-3d-survey-plan.md §9）。",
@@ -120,7 +131,7 @@
       "spline-ai",
       "leo-ai"
     ],
-    "done_count": 31
+    "done_count": 42
   },
   "intel": {
     "sky_001": "done: docs/survey/cards/sky-001.md（闭源工程世界模型，2026-10-19 发布）",

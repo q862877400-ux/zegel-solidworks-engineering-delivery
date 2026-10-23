@@ -168,11 +168,13 @@ issue/README 警告/实测到的失败。
 | 取值 | 何时加 | 为什么 | 依据 |
 |---|---|---|---|
 | `deliver=sequence` | 2026-10-24（R4 学术批次）| 学术序列模型（DeepCAD / Text2CAD / FlexCAD / Img2CAD / Drawing2CAD 一类）的交付物**就是命令序列本身**，STEP/STL 只是可选的下游脚本产物 ⇒ 记 `none` 失真、记 `STEP` 撒谎 | `docs/survey/cards/deepcad.md` · `docs/survey/cards/flexcad.md` |
+| `repr=none` | 2026-10-24（R6 商业批次）| Onshape AI Advisor **完全不碰几何**（只答问并给引用）⇒ 没有中间表示可言；用 `code`/`mesh` 任一都会失真 | `docs/survey/cards/onshape-ai-advisor.md` |
+| `class=G` 用于拓扑优化 | 2026-10-24（R6 商业批次）| PTC Creo Generative Design 的机制是「**给约束 → 求解器吐材料分布**」，A–J 里没有对位项；判词是「模板+规则+求解」族，暂寄 `G` 并在卡内注明 | `docs/survey/cards/ptc-creo-generative.md` |
 | `class=J`（世界模型） | 2026-10-23（R1 情报专项）| SKY-001 一族不是 LLM 也不是网格生成，而是**预测几何状态序列** | `docs/survey/cards/sky-001.md` |
 
 ### 分类口径裁决（2026-10-24，R4 提出的交叠问题）
 
-**规则：`class` 按「生成机制」判，不按「输入形态」判。**
+**规则 1：`class` 按「生成机制」判，不按「输入形态」判。**
 
 理由（来自 R4 的真实交叠）：PlankAssembly（三视图线稿 → 板件形状程序）与 Drawing2CAD（矢量四视图 → 命令序列）
 的**输入**都不是自然语言，但它们的**机制**是「让模型学一种形状/命令语言」= D 类；
@@ -181,3 +183,13 @@ issue/README 警告/实测到的失败。
 
 ⇒ 输入形态写进卡片 §2（技术路径的第一段），**不进 `class`**。
 ⇒ 需要跨卡统一改类时，必须在 R7 一次性改全部卡片并在此登记理由，**禁止单卡私改**。
+
+**规则 2：闭源产品的 `deliver=STEP` 表示「工程格式桶」，不是「已证实直出 STEP」。**
+
+背景（R6 的 LEO AI 案例）：它的官网/博客**没有公布导出格式清单**，但产品的定位与客户案例是
+「交付带特征树的参数化装配、进 SolidWorks/CATIA」。此时：
+- 记 `none` 会失真（它明明交付工程格式）；
+- 记 `STEP` 会过度断言（没人证实它直出 STEP）。
+
+⇒ 允许闭源产品用 `deliver=STEP` 表示「工程格式桶」，**但必须在卡片 §1 与 §9 明写「是否已证实直出 STEP」**，
+并在 §8 证据清单列出支撑链接。R7 汇总时这类条目要在矩阵里加脚注。

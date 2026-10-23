@@ -8,7 +8,7 @@
 | 许可 | **无 LICENSE**（克隆内按 `*LICEN*` 递归实测零命中；`gh api` 的 `license` 字段为 null）→ **只读思想**。`pyproject.toml:16` 的 classifier 自称 `License :: OSI Approved :: MIT License`，但同一行行尾写着 `# Choose appropriate license`，仓库内既无版权行也无许可正文 ⇒ 不构成授权 |
 | 元数据 | stars 19 · 最近推送 2025-04-07T12:15:23Z · 语言 Python（来源：https://api.github.com/repos/bertvanbrakel/mcp-cadquery ，取数日 2026-10-24） |
 | 克隆 | D:\ai3d-survey\repos\bertvanbrakel__mcp-cadquery （HEAD `eae44ca`，末次提交 2025-04-07 22:15 +1000，工作树干净） |
-| 证据等级 | 读码 |
+| 证据等级 | **实测**（把 `cadquery==2.5.2` 装进 CPython 3.10 并跑其自带测试套件，数字见 §4；但本仓今天在 PyPI 上**没有一套依赖能完整启动**，见 §5 第 1、2 条（`models.py:15`）。SSE/stdio 协议与真机 MCP 握手仍未实测，见 §9） |
 
 ## 1. 一句话定位
 
@@ -40,7 +40,9 @@
 
 - Python `>=3.10`（`pyproject.toml:13`）；依赖钉在 `cadquery==2.5.2` + `fastapi`/`uvicorn`/`sse-starlette`/`typer`（`pyproject.toml:20-28`、`requirements.txt`）。
 - 必须有 `uv`：缺失时直接抛错并给安装链接（`env_setup.py:77-80`）；它自建 venv 时写死 `PYTHON_VERSION = "3.11"`（`env_setup.py:10`）——这是**在 3.14 机器上仍能跑**的关键：venv 不跟宿主解释器版本走。
-- 本机（Windows / Python 3.14.7 / RTX 4080S 16GB）判断：**原则上能跑，但有两处要绕**——① 官方启动脚本是 `server_sse.sh`/`server_stdio.sh`（`README.md:5-10`），Windows 上得直接 `python server.py --mode stdio|sse`（`server.py:13-14`、`cli.py:29-34`）；② `cadquery==2.5.2` 有没有 cp314 的 Windows wheel **未确认**，而 `uv venv -p 3.11` 那条路不依赖宿主版本。GPU 无要求：依赖表里没有任何加速器包（`pyproject.toml:20-28`）。
+- 本机（Windows / Python 3.14.7 / RTX 4080S 16GB，本机实测）判断：**能跑，但宿主解释器要绕开 3.14**——① 官方启动脚本是 `server_sse.sh`/`server_stdio.sh`（`README.md:5-10`），Windows 上得直接 `python server.py --mode stdio|sse`（`server.py:13-14`、`cli.py:29-34`）；② `uv venv --python 3.10 .venv` + `uv pip install "cadquery==2.5.2"` 在本机装成（实测，解释器 CPython 3.10.21）⇒ 原先「cp314 wheel 未确认」这个坎被绕过：CAD 内核不跟宿主版本走（`env_setup.py:10` 自建 venv 也写死 3.11）。GPU 无要求：依赖表里没有任何加速器包（`pyproject.toml:20-28`）。
+- **测试套件实测**：在临时副本里（克隆本体只读、未落盘）用上述 venv 跑 `python -m pytest -q --ignore=tests/test_server_execution.py --ignore=tests/test_server_handlers.py` → **7 failed / 80 passed / 20.24 s**，共 87 项执行；`tests/` 下另有 136 处 `def test_`，其中 47 处落在两个**收集失败**的文件里（见下条）。
+- **今天装不出能完整启动的环境（实测）**：`requirements.txt` 不钉 pydantic——装 pydantic 2.14.1 时 `models.py:15` 的 v1 写法 `@root_validator` 直接抛 `PydanticUserError: ... you MUST specify skip_on_failure=True`（那 2 个测试文件收集失败，`python server.py --help` 退出码 1）；改装 pydantic 1.10.26 则现行 FastAPI 导入即 `ImportError: cannot import name 'IncEx' from 'pydantic.main'` ⇒ **两条路都断**，只有「pydantic v1 + 2023 年代的 FastAPI」这一组才跑得起来。
 
 ## 5. 失败模式与已知坑
 
@@ -51,6 +53,8 @@
 - **默认库目录不存在**：默认值 `part_library`（`state.py:32`），克隆内实测无此目录；README 举例的 `my_cq_workspace/`、`sample_house_workspace/` 又被 `.gitignore` 末行的 `*_workspace/` 排除 ⇒ 开箱扫描是空表。
 - **版本钉不住**：`requirements.txt` 写 `cadquery==2.5.2`，而 `env_setup.py:104` 装的是**未钉版本**的 `cadquery`。
 - **测试的真实覆盖面有限**：`tests/` 下 11 个文件（`tests/` 实测计数），只有 1 个真 import cadquery 的用例，几何断言只到「文件非空 / 含 `<svg`」（`tests/test_cadquery_core.py:48-56`），其余是 mock 单测 ⇒ 不能据它推断「几何对不对」。
+- **Windows 上 4 条测试必挂（实测，全是 POSIX 假设）**：`test_script_runner.py` 两条期望 `NotADirectoryError`，Windows 的 `os.makedirs` 实给 `FileNotFoundError [WinError 3]`（错误文本还是中文，子进程回读时又撞一个 `UnicodeDecodeError`）；`test_server_export.py` 一条 `DID NOT RAISE`；`test_environment.py:7` 把解释器路径写死成 POSIX 的 `bin/python`。⇒ 这 4 条不是本次环境造成的，是仓库自身未做平台分支。
+- **3 条 CLI 失败的真因不是 CLI**：`server.py --help` 在 pydantic 2 下退出码 1，`test_cli.py` 的三条用例因此断言失败（实测；根因见 §4 末条）。⇒ 用「测试有没有过」反推能力好坏之前，先排除依赖解析这一层。
 
 ## 6. 对我方目标的可用处（机制层面）
 
@@ -82,11 +86,12 @@ D:\ai3d-survey\repos\bertvanbrakel__mcp-cadquery\README.md:5-10,22-36,84-135,152
 ```
 - 元数据来源：https://api.github.com/repos/bertvanbrakel/mcp-cadquery （取数 2026-10-24）。
 - 计数实测（在克隆内跑 `Get-ChildItem`）：`tests/` 11 个 `test_*.py`；`src/mcp_cadquery_server/` 11 个模块；工具字典 10 条（`handlers.py:714-724`）。
+- 实测记录（本机 2026-10-24；克隆本体只读，所有动作在临时副本内）：`uv venv --python 3.10 .venv` + `uv pip install "cadquery==2.5.2" pytest pytest-timeout` → 装成（CPython 3.10.21）；随后 `python -m pytest -q --timeout=120 -p no:cacheprovider` → `7 failed, 80 passed in 20.24s`；不带 `--ignore` 时 `2 errors during collection`（`PydanticUserError: ... you MUST specify skip_on_failure=True`）。另跑 `python -c "import pydantic; print(pydantic.VERSION)"` → `2.14.1`；改装 `"pydantic<2"` 后 `import fastapi` 即失败（`ImportError: cannot import name 'IncEx'`）。
 
 ## 9. 未确认事项
 
-- 未安装、未运行（本机 Python 3.14.7，未建 venv）；本卡行为结论全部来自读码，等级 `读码`。
-- `cadquery==2.5.2` 是否有 cp314 的 Windows wheel **未确认**（未去 PyPI 核 wheel 文件名）。
+- **没跑的东西**：HTTP/SSE 端点、stdio 协议与真机 MCP 客户端的握手、`frontend/`、以及任何一次「模型→脚本→几何」的端到端。本卡的 `实测` 只覆盖「装上 `cadquery==2.5.2` + 跑其 pytest 套件 + 观察依赖解析失败」这三件事（见 §4），几何正确性与协议互通性仍是读码结论。
+- `cadquery==2.5.2` 的 **cp314 Windows wheel 不需要**：已用 CPython 3.10.21 装成（实测）；但**该 venv 能否端到端跑通一次 `execute_cadquery_script` 未验证**（我只跑到 import 与单测层）。
 - 机读 tag 取严格口径：`verify=run-only` 指服务端只回传构建成败与异常栈（`script_runner.py:111-120`），几何读数虽有（`core.py:124-190`）但无自动判据；`orchestration=loop` 指回环由调用方闭合——服务端本身单次调用、不重试。
 - 与标准 MCP 客户端的互通性**未实测**（§5 说协议目测不符）；`README.md:84-135` 的 RooCode 配置块能否真握手未验。
 - `frontend/`（React 前端）未读；`code_review.llm.md`、`research_log.llm.md`、`context.llm.md` 只取了个别段落。
