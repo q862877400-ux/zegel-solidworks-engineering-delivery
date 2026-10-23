@@ -147,3 +147,17 @@ Zoo / Fusion / Onshape / NX / Creo / Adam / Backflip / DriveWorks / Meshy / Rodi
 | R2（部分）| 2026-10-24 | 卡片落盘 **3 张**：`sky-001` / `earthtojake-text-to-cad` / `amagine3d`；★ 4 路 subagent 在会话中断后只剩 2 张（其余 9 张需重派）；★ 修门禁三处：新脚本补 §十八 来源块（统一化体检 ③ 归零）、`gate-wiring-exemptions.json` 登记 `check_survey_cards.py` 的暂缓接线（附 R7 到期条件）、派生文档重生成链跑完 ⇒ **`release_check` EXIT=0** |
 | R2 收口 | 2026-10-24 | **13 张卡片全部过门禁**（R2 的 12 张 + sky-001；其中 blender/autocad/freecad 属 R3 提前做完）；两次提交 `d0aba63c`、`3139788b`；**上线汇总生成器** `scripts/gen_survey_matrix.py` ⇒ 生成 `architecture-matrix.md`（13 行）与 `step-matrix.md`（四维计数）；门禁判据放宽一处：出处形态改「任意扩展名 + 可选行号」（`.lsp:1216` 原先不认，误报 16 处）；freecad 卡三处数据纠错（证据等级降读码、`include_screenshot` 7→8、tag 改 feature-tree/single/visual）|
 | R4 | 2026-10-24 | 派 3 路写学术批次 10 张：cad-recode / cadrille / CAD-Coder / FlexCAD / Text2CAD / DeepCAD / Img2CAD / CAD-Assistant / PlankAssembly / Drawing2CAD（全部已克隆）|
+| R5 | 2026-10-24 | 生成式网格 8 张（Hunyuan3D-2 / TRELLIS / TripoSG / TripoSR / InstantMesh / SF3D / SPAR3D / Step1X-3D）⇒ 31 张；**三处纠错**（Py3.14 已有 torch 轮、真正卡的是编译型 CUDA 扩展、许可不能一律当 MIT）；写了 `autofix_cards.py` 按门禁同一判据自动补出处 |
+| R6 | 2026-10-24 | 商业闭源 11 张（Zoo / Fusion / Onshape / NX / Creo / Adam / Meshy / Rodin / Tripo / Spline / Leo）⇒ 42 张；新增 `repr=none` 与规则 2（闭源 `deliver=STEP` 只表示工程格式桶）|
+| R3 收口 | 2026-10-24 | 桥接/约束 4 张 + **4 家 SolidWorks 直接竞品**（187/133/96/92 工具，实测）⇒ **50 张**；发现 3 条会改我方台账的事实（事实 24 的引文已过期、andrewbartels1 与 vespo92 同源、四家都无 operation 分派）|
+| R7 | 2026-10-24 | **总论升 v3**（50 张真实数据，10 类架构，六维分布，12 条可借鉴机制，9 条空白，逐条写改动理由）；合并删除重复的 `analysis.md`；**卡片门禁改为正式硬门禁**（`release_check` 新增 `survey_cards`，classification=release_static，删掉豁免）⇒ `release_check` EXIT 0 且逐张列 50 张 PASS；`state.json` 收官并写明 4 条偏差 |
+
+## 7. 收官状态与已知偏差
+
+**已完成**：50 张卡片 · 两张矩阵（脚本生成）· 总论 v3 · 交接文档 · 卡片门禁已接进 `release_check`。
+
+**已知偏差（不粉饰）**：
+1. **生成式模型一家都没真跑** —— 本机缺编译型 CUDA 扩展（flash-attn/spconv/kaolin/utils3d/diso/torch-cluster 无 Windows 轮；torchmcubes/nvdiffrast/diffoctreerast 连 PyPI 都没有）⇒ R5 全部标「读码」。
+2. **真跑过的只有 4 家的自带单测**（fusion360 367 passed / blender 494 / cadam 36 / mcp-cadquery 7 failed+80 passed）—— 那是「包能装、单测能跑」的证据，**不是建模能力验证**。
+3. **R6 商业产品只能「元数据」级**；3 个页面是 JS 应用，引文取自检索索引正文，逐字引用前需浏览器复核。
+4. **LEO AI 的导出格式官方未公布** ⇒ `deliver=STEP` 只表示「工程格式桶」，卡内已写明未证实。
