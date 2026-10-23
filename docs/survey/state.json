@@ -38,12 +38,9 @@
     "note": "全部 --depth 1；幂等，可重跑"
   },
   "cards": {
-    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d", "multi-agent-cad", "agentcad", "cadquery-llm-skill", "build123d-mcp"],
-    "in_flight": [
-      "mcp-cadquery", "cadam", "fusion360-mcp-server",
-      "freecad-mcp", "blender-mcp", "autocad-mcp"
-    ],
-    "_note": "2026-10-24：7 张卡片全部通过 check_survey_cards.py。R2 剩 6 张（mcp-cadquery / cadam / fusion360 / freecad / blender / autocad）待重派。subagent 不是 teammate，不能 send_message 追问 ⇒ 重派要一次把要求写全（含机读 tag 行）。",
+    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d", "multi-agent-cad", "agentcad", "cadquery-llm-skill", "build123d-mcp", "mcp-cadquery", "cadam", "fusion360-mcp-server", "freecad-mcp", "blender-mcp", "autocad-mcp", "cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
+    "in_flight": [],
+    "_note": "2026-10-24：23 张卡片全部通过 check_survey_cards.py。R4（学术 10 张）已完成。分类口径已裁决：class 按机制判、不按输入形态判（见 docs/ai-3d-survey-plan.md §9）。",
     "todo_r3": ["rhinoai", "openscad-mcp-server", "slvsx-cli", "freecad-ai", "sw-eduardof0nt", "sw-andrewbartels1", "sw-vespo92", "sw-slacker-llc"],
     "todo_r4": ["cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
     "todo_r5": ["hunyuan3d-2", "trellis", "triposg", "triposr", "instantmesh", "stable-fast-3d", "spar3d", "step1x-3d"],

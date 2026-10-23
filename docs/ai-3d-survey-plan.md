@@ -143,3 +143,41 @@ issue/README 警告/实测到的失败。
 3. 汇总表由脚本生成，且与卡片一致（脚本同时做一致性断言）；
 4. 情报专项有结论（查到写路径，查不到写关键词清单）；
 5. 总图 v3 与 v2 的差异处**逐条说明为什么变**。
+
+---
+
+## 9. 附：机读 tag 行的枚举（含**新增取值的登记**）
+
+卡片 H1 之下必须有一行：
+
+```html
+<!-- survey: class=B; repr=code; orchestration=loop; verify=geometry-gate; deliver=STEP; evidence=读码 -->
+```
+
+| 字段 | 允许取值 |
+|---|---|
+| `class` | A 代码单发 · B 代码回环 · C 多智能体 · D 序列/DSL 专模 · E 生成式网格 · F 逆向 · G 模板+规则 · H GUI/API 代理 · I 知识助手 · J 世界模型/几何状态 |
+| `repr` | code · sequence · dsl · feature-tree · mesh · constraint · params |
+| `orchestration` | single · loop · multi-agent · template · human-approve · none |
+| `verify` | none · run-only · geometry-gate · numeric · visual · solver · dfm-rules · export-readback |
+| `deliver` | STEP · mesh · drawing · gcode · **sequence** · none |
+| `evidence` | 实测 · 读码 · 元数据 |
+
+### 新增取值登记（★ 每次扩充都要在这里留一行，否则后人会以为是笔误）
+
+| 取值 | 何时加 | 为什么 | 依据 |
+|---|---|---|---|
+| `deliver=sequence` | 2026-10-24（R4 学术批次）| 学术序列模型（DeepCAD / Text2CAD / FlexCAD / Img2CAD / Drawing2CAD 一类）的交付物**就是命令序列本身**，STEP/STL 只是可选的下游脚本产物 ⇒ 记 `none` 失真、记 `STEP` 撒谎 | `docs/survey/cards/deepcad.md` · `docs/survey/cards/flexcad.md` |
+| `class=J`（世界模型） | 2026-10-23（R1 情报专项）| SKY-001 一族不是 LLM 也不是网格生成，而是**预测几何状态序列** | `docs/survey/cards/sky-001.md` |
+
+### 分类口径裁决（2026-10-24，R4 提出的交叠问题）
+
+**规则：`class` 按「生成机制」判，不按「输入形态」判。**
+
+理由（来自 R4 的真实交叠）：PlankAssembly（三视图线稿 → 板件形状程序）与 Drawing2CAD（矢量四视图 → 命令序列）
+的**输入**都不是自然语言，但它们的**机制**是「让模型学一种形状/命令语言」= D 类；
+若改按输入形态判，它们会和 Img2CAD（单图 → CAD，机制是**条件分解 + 参数回归**）一起塌进 F 类，
+**把三种完全不同的机制压成同一个标签**，汇总表就失去区分度。
+
+⇒ 输入形态写进卡片 §2（技术路径的第一段），**不进 `class`**。
+⇒ 需要跨卡统一改类时，必须在 R7 一次性改全部卡片并在此登记理由，**禁止单卡私改**。

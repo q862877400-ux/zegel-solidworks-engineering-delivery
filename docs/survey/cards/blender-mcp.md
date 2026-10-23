@@ -65,6 +65,7 @@
 - 语言 Python：`requires-python = ">=3.10"`，运行依赖只有 `mcp>=1.26.0,<2` 与 `httpx>=0.27.0`（`pyproject.toml`）；`.python-version` 钉 3.11。
 - 宿主：**Blender 3.0 或更新**（`README.md:236`）+ addon 协议 14（`addon_manager.py:23`）；`uv` 装包（`README.md:238`）。
 - 本机（Windows / Python 3.14.7 / RTX 4080S 16GB）：**服务端能装，真机跑不了**。① `python -V` 实测 3.14.7，`import mcp` 实测成功（本地探测），纯 Python 依赖不缺；② 但 `where.exe blender` 无命中、`C:\Program Files\Blender Foundation` 不存在（本地 Test-Path），⇒ 没有宿主可供 `execute_blender_code` 执行，9 个工具里除 `get_addon_status` 一类会直接报"连不上"。
+- ★ **纯 Python 单测在本机确实跑通了**（2026-10-23 实测）：`PYTHONPATH=src python -m pytest tests -q -p no:cacheprovider` 得 **494 通过 / 1 失败 / 55 跳过**，55.62 s（Python 3.14.7）。唯一失败 `tests/test_compat_matrix.py:225`：`Error checking addon status: No module named 'blender_mcp.config'`（把 `addon.py` 当独立模块导入时找不到随包模块）。⇒ 55 例跳过的正是需要 Blender 宿主 / 网络 / API key 的那些；**14 个工具本身一条都没跑过**，故本卡等级只能是读码，这条只作"依赖面确实极小"的旁证。
 - 与 529 工具对照：它的依赖面极小（2 个运行时库 + 1 个宿主），**工具数与依赖数无关**——这是它敢收敛到 9 个工具的前提。（来源：`pyproject.toml` 依赖段）
 
 ## 5. 失败模式与已知坑
@@ -112,6 +113,7 @@
 - `tests/test_consolidated_tools.py:10-18,28-31,34-39`；`tests/test_compat_matrix.py:30-37,41-53`（38 条老命令）
 - `gh api repos/ahujasid/mcp-for-blender`（stars / pushed_at / language，取数 2026-10-24）；`git remote -v`（同址）
 - 本地统计：`tests/*.py` 共 26 个测试文件、`def test_` 385 处；`src/blender_mcp/guides/` 7 篇 md
+- ★ 本机实测（2026-10-23，Python 3.14.7）：`python -m pytest tests -q -p no:cacheprovider`（`PYTHONPATH` 指向 `src`）→ 494 通过 / 1 失败 / 55 跳过，55.62 s；失败点 `tests/test_compat_matrix.py:225`（`No module named 'blender_mcp.config'`）
 
 ## 9. 未确认事项
 

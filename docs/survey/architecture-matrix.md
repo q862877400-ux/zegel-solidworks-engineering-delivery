@@ -1,15 +1,25 @@
 # 架构分类矩阵（由 `scripts/gen_survey_matrix.py` 生成，勿手改）
 
-卡片 13 张：带机读 tag 13 张 · 待补 0 张。
+卡片 23 张：带机读 tag 23 张 · 待补 0 张。
 
 | 项目 | 类 | 表示 | 编排 | 验证 | 交付 | 证据 | 卡片（出处）|
 |---|---|---|---|---|---|---|---|
 | agentcad | B | code | loop | numeric | STEP | 读码 | `docs/survey/cards/agentcad.md` |
 | Amagine3D（amagine-ai） | B | code | loop | export-readback | STEP | 读码 | `docs/survey/cards/amagine3d.md` |
+| CAD-Assistant | B | code | loop | visual | STEP | 读码 | `docs/survey/cards/cad-assistant.md` |
 | CADAM | B | code | loop | visual | mesh | 读码 | `docs/survey/cards/cadam.md` |
 | text-to-cad（earthtojake） | B | code | loop | dfm-rules | STEP | 读码 | `docs/survey/cards/earthtojake-text-to-cad.md` |
 | mcp-cadquery | B | code | loop | run-only | STEP | 读码 | `docs/survey/cards/mcp-cadquery.md` |
 | Multi-Agent-CAD / MAC（Pan-Chera） | C | code | multi-agent | visual | STEP | 读码 | `docs/survey/cards/multi-agent-cad.md` |
+| DeepCAD | D | sequence | single | numeric | sequence | 读码 | `docs/survey/cards/deepcad.md` |
+| Drawing2CAD | D | sequence | single | numeric | none | 读码 | `docs/survey/cards/drawing2cad.md` |
+| FlexCAD | D | sequence | single | numeric | sequence | 读码 | `docs/survey/cards/flexcad.md` |
+| PlankAssembly | D | sequence | single | geometry-gate | mesh | 读码 | `docs/survey/cards/plankassembly.md` |
+| Text2CAD | D | sequence | single | numeric | sequence | 读码 | `docs/survey/cards/text2cad.md` |
+| CAD-Coder（`anniedoris/CAD-Coder`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-coder.md` |
+| CAD-Recode（`filaPro/cad-recode`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-recode.md` |
+| cadrille（`AIRI-Institute/cadrille`） | F | code | single | numeric | mesh | 读码 | `docs/survey/cards/cadrille.md` |
+| Img2CAD | F | sequence | single | numeric | mesh | 读码 | `docs/survey/cards/img2cad.md` |
 | autocad-mcp（puran-water/autocad-mcp） | H | sequence | none | run-only | drawing | 读码 | `docs/survey/cards/autocad-mcp.md` |
 | mcp-for-blender（原名 blender-mcp） | H | code | loop | visual | mesh | 读码 | `docs/survey/cards/blender-mcp.md` |
 | build123d-mcp | H | code | loop | run-only | STEP | 读码 | `docs/survey/cards/build123d-mcp.md` |

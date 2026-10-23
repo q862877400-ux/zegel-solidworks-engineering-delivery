@@ -67,6 +67,7 @@
 - **ezdxf 后端**：任意平台、**不需要 AutoCAD**（`README.md:21`）。
 - 依赖（`pyproject.toml`）：`mcp[cli]>=1.2.1,<2.0`、`ezdxf>=0.18`、`matplotlib>=3.7`、`Pillow>=10.0.0`、`structlog>=24.0.0`、`pywin32>=305`（仅 win32）；`requires-python = ">=3.10"`。
 - 本机（Windows / Python 3.14.7 / RTX 4080S 16GB）：**ezdxf 后端能跑，file_ipc 不能**。① 实测 `import ezdxf` → 1.4.4，`import mcp` 成功，Python 3.14.7（本地探测）；② `C:\Program Files\Autodesk` 不存在、注册表无 `HKLM:\SOFTWARE\Autodesk\AutoCAD`（本地探测）⇒ 没有 AutoCAD LT 可驱动；③ `C:\PIDv4-CTO` 不存在 ⇒ 12 个 `pid` 操作即便装上 AutoCAD 也用不了（见 §5 第 6 条）。（来源：本机实测；软失败位置 `mcp_dispatch.lsp:338`）
+- ★ **但它的自带测试在本机跑不起来**（2026-10-23 实测，Python 3.14.7）：`python -m pytest tests -q -p no:cacheprovider`（`PYTHONPATH` 指向 `src`）**在收集阶段就中断**——`tests/test_ezdxf_backend.py` 与 `tests/test_screenshot.py` 都报 `ModuleNotFoundError: No module named 'structlog'`；只跑 `tests/test_ipc_protocol.py` 则得 **38 个 error**，根因全是 `PytestUnknownMarkWarning: Unknown pytest.mark.asyncio`（缺 `pytest-asyncio`）。⇒ **零测试通过**，故本卡对 8 个工具 / 72 个操作 / 双后端的全部结论都只有读码证据。
 - 这是两家样本里**唯一本机能真跑**的一家：因为它把"不需要宿主"当第一等公民（双后端），Blender 则把宿主当唯一执行面。
 
 ## 5. 失败模式与已知坑
@@ -113,6 +114,7 @@
 - `lisp-code/mcp_dispatch.lsp:172`（cond 起点）、`:338`（pid setup 缺库）、`:386-387`（block-define 拒绝）、`:672`（pid 缺库）、`:1216`（`C:/PIDv4-CTO/`）
 - `gh api repos/puran-water/autocad-mcp`（591 stars / 2026-02-20T17:36:20Z / Python，取数 2026-10-24）；`git remote -v`（同址）
 - 本地统计：`tests/` 3 个测试文件、`def test_` 共 123 处（76+38+9）；`backends/` 三个文件 282/497/748 行；`mcp_dispatch.lsp` 1378 行
+- ★ 本机实测（2026-10-23，Python 3.14.7）：`python -m pytest tests -q -p no:cacheprovider`（`PYTHONPATH` 指向 `src`）→ 收集中断（`structlog` 缺失，`tests/test_ezdxf_backend.py`、`tests/test_screenshot.py`）；单跑 `tests/test_ipc_protocol.py` → 38 error（`pytest.mark.asyncio` 未注册，缺 `pytest-asyncio`）
 
 ## 9. 未确认事项
 
