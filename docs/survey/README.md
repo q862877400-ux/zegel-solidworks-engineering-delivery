@@ -135,6 +135,7 @@ Zoo / Fusion / Onshape / NX / Creo / Adam / Backflip / DriveWorks / Meshy / Rodi
 | 4 | **不许把 README 宣称当事实**：跑不动的写「未实测」；官方未验证的数字标【宣称】|
 | 5 | 16 GB 显存 / Windows / Python 3.14 是硬环境；ML 依赖要独立环境 |
 | 6 | 克隆**幂等**：重跑 `D:\ai3d-survey\clone.py` 会跳过已存在目录 |
+| 7 | ★ **派单前先 `Get-ChildItem docs/survey/cards`**：2026-10-24 出现过**重复派单**（两路 subagent 被派到同一批仓库，其中一路到岗时发现卡已存在）。发现重复后**正确处置是定点增量（补实测/纠错），不是整文件覆盖** —— 覆盖会毁掉已过门禁的内容 |
 
 ---
 
