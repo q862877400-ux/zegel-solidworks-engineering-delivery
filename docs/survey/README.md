@@ -144,3 +144,5 @@ Zoo / Fusion / Onshape / NX / Creo / Adam / Backflip / DriveWorks / Meshy / Rodi
 |---|---|---|
 | R1 | 2026-10-23 | 立计划（`ai-3d-survey-plan.md`）；40 仓库全部克隆成功（1.0 GB）；SKY-001 情报专项查清并出卡；写卡片门禁 `check_survey_cards.py`；写本交接文档与 `state.json`；派 4 路写 R2 的 12 张卡 |
 | R2（部分）| 2026-10-24 | 卡片落盘 **3 张**：`sky-001` / `earthtojake-text-to-cad` / `amagine3d`；★ 4 路 subagent 在会话中断后只剩 2 张（其余 9 张需重派）；★ 修门禁三处：新脚本补 §十八 来源块（统一化体检 ③ 归零）、`gate-wiring-exemptions.json` 登记 `check_survey_cards.py` 的暂缓接线（附 R7 到期条件）、派生文档重生成链跑完 ⇒ **`release_check` EXIT=0** |
+| R2 收口 | 2026-10-24 | **13 张卡片全部过门禁**（R2 的 12 张 + sky-001；其中 blender/autocad/freecad 属 R3 提前做完）；两次提交 `d0aba63c`、`3139788b`；**上线汇总生成器** `scripts/gen_survey_matrix.py` ⇒ 生成 `architecture-matrix.md`（13 行）与 `step-matrix.md`（四维计数）；门禁判据放宽一处：出处形态改「任意扩展名 + 可选行号」（`.lsp:1216` 原先不认，误报 16 处）；freecad 卡三处数据纠错（证据等级降读码、`include_screenshot` 7→8、tag 改 feature-tree/single/visual）|
+| R4 | 2026-10-24 | 派 3 路写学术批次 10 张：cad-recode / cadrille / CAD-Coder / FlexCAD / Text2CAD / DeepCAD / Img2CAD / CAD-Assistant / PlankAssembly / Drawing2CAD（全部已克隆）|
