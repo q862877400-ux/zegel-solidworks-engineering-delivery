@@ -1,6 +1,6 @@
 # CADAM
 
-<!-- survey: class=B; repr=code; orchestration=loop; verify=visual; deliver=mesh; evidence=读码 -->
+<!-- survey: class=B; repr=code; orchestration=loop; verify=visual; deliver=mesh; evidence=实测 -->
 
 | 字段 | 值 |
 |---|---|
@@ -8,7 +8,7 @@
 | 许可 | **GPL-3.0**（读克隆内 `LICENSE` 原文首行「GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007」，全文 185 行）；README 自述是 **GPLv3 合成作品**——部分代码派生自 `openscad-web-gui`（GPLv3），并随发行携带 OpenSCAD WASM 未改二进制（GPL-2.0-or-later，`README.md:283-292`）；`src/vendor/openscad-wasm/SOURCE-OFFER.txt` 记版权方为 Adam AI Labs, Inc. → **只读思想**（不抄代码、不抄提示词文本） |
 | 元数据 | stars 5319 · forks 656 · 最近推送 2026-10-15T05:26:14Z · 语言 TypeScript（来源：https://api.github.com/repos/Adam-CAD/CADAM ，取数日 2026-10-24） |
 | 克隆 | D:\ai3d-survey\repos\Adam-CAD__CADAM （HEAD `e339e3a`，末次提交 2026-10-14 22:26 -0700，工作树干净） |
-| 证据等级 | 读码 |
+| 证据等级 | **实测**（跑通仓库自带的 5 个 `*.test.ts`：**36 tests / 13 suites / pass 36 / fail 0 / 152.0862 ms**，命令与解释器见 §4、§8；无用例失败。其余结论仍为读码——Supabase 栈与 AI key 未起，端到端未跑，见 §9） |
 
 ## 1. 一句话定位
 
@@ -40,6 +40,7 @@
 ## 4. 运行条件与依赖
 
 - Node `^20.19.0 || >=22.12.0`、npm `>=10`（`package.json:6-9`）；本机实测 Node v26.7.0 / npm 11.19.0，满足。
+- **自带单测可直接跑（实测，本次会话）**：仓库没写 `test` 脚本，但 5 个 `*.test.ts` 用 `node:test`，本机 Node v26.7.0 的类型剥离能直接吃 TS：`node --test --experimental-strip-types shared/parametricParts.test.ts shared/suggestions.test.ts src/server/modelCapabilities.test.ts src/server/chatToolPersistence.test.ts src/components/chat/stuckToolRecovery.test.ts` → **36 tests / 13 suites / pass 36 / fail 0 / 152.0862 ms**。只读执行，未在克隆里落任何文件（无 `node_modules`、无缓存）；覆盖面是参数文本清洗、建议词数上限、悬挂工具调用恢复、模型能力判定四块纯逻辑，**不含 OpenSCAD 编译与渲染路径**。
 - 前端：React 19 + TanStack Start/Router + Vite + three.js/R3F（`package.json:19-`、`README.md:257-266`）。
 - 后端：TanStack Start 的 server route（`src/server/aiChat.ts`）+ Supabase（Auth/Postgres/Storage，`supabase/schemas/*.sql`、`supabase/migrations/*.sql`）。
 - AI：至少一家 key——`ANTHROPIC_API_KEY`/`OPENROUTER_API_KEY`/`OPENAI_API_KEY`/`GOOGLE_API_KEY`，另有 `FAL_KEY` 供 creative 分支（`.env.local.template:16-20`）。
@@ -55,7 +56,7 @@
 - **参数解析器是正则且有截断**：只解析第一个 `module`/`function` 之前的行；若某个值不是字面量（是表达式），从该参数起**后面全部放弃**（`parseParameter.ts:9-16`、`parseParameter.ts:77-81`，作者自留 TODO「改用 AST」）⇒ 模型写 `w = base*2;` 会让面板大面积失灵。
 - **循环成本只由步数兜底**：60 步 × 64000 输出 token（`aiChat.ts:428`、`aiChat.ts:1343`），没有「图看起来没变化就别再试」的收敛判据。
 - **私有 vendored WASM 有版本耦合**：注释自述多输出（`-o /out.stl` + `-o /out.off`）只有 2025.03.25 playground 版支持，换旧版本会坏（`openSCAD.ts:217-235`）。
-- **测试没有跑法**：仓库里有 5 个 `*.test.ts`（`shared/parametricParts.test.ts`、`shared/suggestions.test.ts`、`src/server/chatToolPersistence.test.ts`、`src/server/modelCapabilities.test.ts`、`src/components/chat/stuckToolRecovery.test.ts`），但 `package.json:10-18` 的 scripts 里没有 `test`，devDependencies 里也没有 vitest/jest ⇒ 不能一键跑，只能当「作者写了断言」的旁证。
+- **测试跑法不在 `scripts` 里，但不等于跑不了**：仓库里有 5 个 `*.test.ts`（`shared/parametricParts.test.ts`、`shared/suggestions.test.ts`、`src/server/chatToolPersistence.test.ts`、`src/server/modelCapabilities.test.ts`、`src/components/chat/stuckToolRecovery.test.ts`），而 `package.json:10-18` 的 scripts 里没有 `test`、devDependencies 里也没有 vitest/jest——它们用的是 Node 内置 `node:test`，于是 `node --test`（配类型剥离）可直接跑通 36 项零失败（见 §4）。⇒ 风险不在「有一堆没跑过的断言语」，而在「没有把跑法接进 `scripts`/CI」：断言只在有人手工敲命令时才活着。
 - **产品耦合了整套外部服务**：Supabase Auth/RLS/Storage + 外部计费 + 多家 AI 供应商；剥掉这些之后剩下的只有「WASM 编译 + 七视角渲染」两块可独立复用（`aiChat.ts:1088-1110`、`.env.local.template:1-30`）。
 - **单文件体量**：`src/server/aiChat.ts` 1726 行、`src/components/chat/ChatSession.tsx` 1039 行（实测 `(Get-Content).Count`），搬运时只能按段读。
 
@@ -92,14 +93,15 @@ D:\ai3d-survey\repos\Adam-CAD__CADAM\LICENSE:1 · README.md:36-38,40-46,63-65,16
 ```
 - 元数据来源：https://api.github.com/repos/Adam-CAD/CADAM （取数 2026-10-24）。
 - 计数实测（在克隆内跑 `Get-ChildItem` / `(Get-Content).Count`）：`src/` 顶层 21 个条目（15 个目录 + 6 个文件）；`*.test.ts` 共 5 个；`benchmarks/` 下 13 组 `.scad`+`.md`+`.gif`（来源：`benchmarks/README.md`）；`src/vendor/openscad-wasm/openscad.wasm` 9,603,115 字节。
+- 实测记录（本机 2026-10-24，克隆内只读执行、未落盘）：`node --test --experimental-strip-types shared/parametricParts.test.ts shared/suggestions.test.ts src/server/modelCapabilities.test.ts src/server/chatToolPersistence.test.ts src/components/chat/stuckToolRecovery.test.ts` → `tests 36 / suites 13 / pass 36 / fail 0 / duration_ms 152.0862`；解释器 Node v26.7.0。
 - `benchmarks/` 的 13 份 `.scad` 是作者自述的「一句话出的模型」存档，未独立复现（见 §9）。
 
 ## 9. 未确认事项
 
-- 未安装、未启动、未跑任何构建（本卡等级 `读码`）；「能跑」仅是按 `package.json:6-9`、`README.md:161-177`、`.env.local.template` 与实测本机 Node/Docker 版本做的条件判断。
+- **未安装依赖、未启动应用、未跑任何构建**：本卡标 `实测` 只覆盖仓库自带单测（36 项零失败，见 §4）；Supabase 本地栈、AI key、OpenSCAD WASM 编译与七视角渲染都没跑，故「能跑」仍只是按 `package.json:6-9`、`README.md:161-177`、`.env.local.template` 与实测本机 Node/Docker 版本做的条件判断。
 - 提示词里点名的模型与价格表按代码现状记录（`aiChat.ts:100-198`），未核这些模型 ID 在供应商侧是否仍可用。
 - `benchmarks/` 的 13 组结果（含 V8、涡扇、行星齿轮）是真机还是挑选后产物 **未确认**，未复现。
-- 5 个 `*.test.ts` 的断言内容未读，只核了「没有可执行入口」（`package.json:10-18`）。
+- 5 个 `*.test.ts` 的断言内容**未逐条阅读**（只是跑过它们，36 项零失败）；跑法问题已由 §4/§5 更正，但「没有 `scripts.test` 入口」这一事实不变（`package.json:10-18`）。
 - `supabase/migrations/` 与 `supabase/schemas/` 只看了文件清单，未读 SQL；RLS 与存储策略的实际有效性未验。
 - creative 分支（`create_mesh` + `falWebhook.ts` + 图片/纹理回流）未细读，本卡只覆盖 parametric 主路径。
 - 视觉门禁对**普通模型**（非顶级 Claude/Gemini）的实际效果未做端到端实验——这是本卡最关键的未确认项。

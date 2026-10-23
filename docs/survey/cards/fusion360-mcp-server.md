@@ -8,7 +8,7 @@
 | 许可 | MIT（读克隆内 `LICENSE:1-3` 原文首行「MIT License」+ 版权行「Copyright (c) 2025 Faust Network, Inc.」；`pyproject.toml:7-8` 写 `license = "MIT"`）→ **可借鉴**（保留该版权行）；无 NOTICE 义务 |
 | 元数据 | stars 131 · 最近推送 2026-10-06T04:52:43Z · 语言 Python（来源：`gh api repos/faust-machines/fusion360-mcp-server`，取数日 2026-10-24）；同源读数 open issues 8 · forks 28 |
 | 克隆 | D:\ai3d-survey\repos\faust-machines__fusion360-mcp-server （HEAD `19b9f1e`，末次提交 2026-10-06T04:52:43Z，工作树干净；本次未改任何文件） |
-| 证据等级 | 实测（本机跑仓库自带单测套件：`PYTHONUTF8=1` 下 **367 passed / 15.69 s**；默认 GBK 环境下 **17 failed / 350 passed**，17 条全为同一个 `UnicodeDecodeError`——见 §5、§8。通道行为本身仍未实测，见 §9） |（来源：本卡 §4 的实测命令与输出）
+| 证据等级 | **实测**（本机跑仓库自带单测套件：`PYTHONUTF8=1` 下 **367 passed / 15.69 s**；默认 GBK 环境下 **17 failed / 350 passed**，17 条全为同一个 `UnicodeDecodeError`——见 §5、§8。通道行为本身仍未实测，见 §9；来源：本卡 §4 的实测命令与输出）
 
 ## 1. 一句话定位
 
@@ -66,7 +66,7 @@
 - **`execute_code` 没有沙箱**：命名空间里直接给了 `adsk`/`app`/`ui`/`design`/`component`，无过滤、无白名单，等于把宿主全权限交给模型（`addon/server/command_handler.py:3532-3564`）。
 - **静默失败曾是主 bug 族**：三个工具的失败被 `except: pass` 吞掉，工具报成功却什么都没做；修复后补的是 AST 门禁而不是返回值断言（`tests/test_addon_api_usage.py:6-8`、`tests/test_addon_api_usage.py:66-71`）。
 - **审核靠人眼的文档有漂移**：README 与 AGENTS.md 都自称 93 个工具，但 AGENTS.md 的表只列了 85 条（`AGENTS.md:5`、`AGENTS.md:21-164`）；README 用 17 个小标题覆盖 93 行（`README.md:130-289`）。代码侧由 `test_tools_match_addon_dispatch` 兜住，文档侧没有门禁（`tests/test_addon_sync.py:118-137`）。
-- **中文 Windows 上 17/367 条测试必挂（我方可直接复现的坑）**：这些测试读 UTF-8 源码时调用 `Path.read_text()` 却没传 `encoding=`，于是用了 locale 默认的 GBK，在 `pathlib.py:1028` 抛 `UnicodeDecodeError: 'gbk' codec can't decode byte 0x94 in position 9464`；分布是 `test_addon_api_usage` 9 条、`test_hole_geometry` 4 条、`test_addon_sync` 2 条、`test_parameter_units` 2 条（本机实测；`PYTHONUTF8=1` 后 367 全绿）。与我方已知事实 58 同一族问题——**门禁/测试"写了"但被环境静默打死**。
+- **中文 Windows 上 17/367 条测试必挂（我方可直接复现的坑）**：这些测试读 UTF-8 源码时调用 `Path.read_text()` 却没传 `encoding=`，于是用了 locale 默认的 GBK，在 `pathlib.py:1028` 抛 `UnicodeDecodeError: 'gbk' codec can't decode byte 0x94 in position 9464`；分布是 `test_addon_api_usage` 9 条、`test_hole_geometry` 4 条、`test_addon_sync` 2 条、`test_parameter_units` 2 条（本机实测；`PYTHONUTF8=1` 后 367 全绿）。与我方已知事实 58 同一族问题——**门禁/测试"写了"但被环境静默打死**。二次独立复现（本次会话另用临时副本 + CPython 3.12.14 + `uv run --python 3.12 --frozen pytest -q`）得到同一分布：**17 failed / 350 passed / 17.34 s**；字节级根因已定位——该文件是 UTF-8，非 ASCII 字符集只有 U+2014（em dash）、U+2192（→）、U+2500（─）三种，GBK 在第 9464 字节处撞上 U+2014 的首字节 0x94，全文 141067 字节（实测 `python -c` 读字节与码点统计）。
 - **"测试数"是自述且已过期**：README 写 363 个测试（`README.md:304`），本机实跑收集到 **367** 个用例（`tests/*.py` 里只有 245 个 `def test_`，差额来自参数化）——文档数字落后于代码。
 - **CI 不覆盖宿主**：CI 只有 ubuntu-latest + Python 3.12，跑 `ruff` 与 `pytest`，从不启动 Fusion（`.github/workflows/ci.yml:13-30`）⇒ 插件里所有 `adsk` 调用只能靠 AST 静态断言与 mock 兜（`tests/test_addon_sync.py:32-57`）。
 - **`render_view` 是重负载**：单次返回约 200 KB–2 MB base64，作者要求只在逻辑检查点用（`AGENTS.md:204`）；代码侧只做了尺寸夹取 16–4096（`addon/server/command_handler.py:3716-3717`）。
@@ -112,6 +112,8 @@ D:\ai3d-survey\repos\faust-machines__fusion360-mcp-server\README.md:11-20,39-48,
 - 计数实测（在克隆内跑 `pwsh`）：`tools.py` 中 `"name":`（8 空格缩进）93 处、`"title":` 93 处、分段注释 28 段；`_READ_ONLY` 16 / `_DESTRUCTIVE` 2 / `_IDEMPOTENT` 21；`tests/*.py` 中 `def test_` 245 处；`command_handler.py` 共 3819 行；`tools.py` 共 2501 行。
 - 元数据来源：`gh api repos/faust-machines/fusion360-mcp-server`（取数 2026-10-24，返回 stars 131 / pushed 2026-10-06T04:52:43Z / language Python / license MIT / open_issues 8 / forks 28）。
 - 实测记录（本机 2026-10-24，克隆内，未污染工作树）：`PYTHONUTF8=1 PYTHONPATH=src uv run --no-project --with "mcp>=1.0,<2" --with anyio --with click --with pytest python -m pytest tests -q -p no:cacheprovider` → `367 passed in 15.69s`；去掉 `PYTHONUTF8=1` 后 → `17 failed, 350 passed in 15.59s`，17 条 `UnicodeDecodeError` 全部来自 `pathlib.py:1028`（`read_text()` 未指定 encoding）。解释器：CPython 3.12.14（uv 管理）。
+
+- 二次独立复现（本次会话，另一条路径：整树复制到临时目录后 `uv run --python 3.12 --frozen pytest -q`）→ 默认 GBK 环境 `17 failed, 350 passed in 17.34s`（与上一条的 367 总数一致，仅耗时不同）。同批另跑 `python -c`（读 `addon/server/command_handler.py` 字节与码点）得：非 ASCII 字符集只有 U+2014/U+2192/U+2500 三种、文件 141067 字节、GBK 失败点在第 9464 字节。
 
 ## 9. 未确认事项
 

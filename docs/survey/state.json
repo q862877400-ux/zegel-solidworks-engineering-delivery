@@ -1,6 +1,6 @@
 {
   "_说明": "AI 自动建模调研的机器可读状态。每轮更新。接手者先读 docs/survey/README.md，再读本文件。",
-  "updated": "2026-10-23",
+  "updated": "2026-10-24",
   "goal_id": "goal-49e739eb-af32-4795-8b65-29dab388190d",
   "goal_rounds_max": 12,
   "current_phase": "R2",
@@ -9,7 +9,7 @@
     "R2": "done",
     "R3": "partial",
     "R4": "todo",
-    "R5": "todo",
+    "R5": "done",
     "R6": "todo",
     "R7": "partial"
   },
@@ -38,26 +38,115 @@
     "note": "全部 --depth 1；幂等，可重跑"
   },
   "cards": {
-    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d", "multi-agent-cad", "agentcad", "cadquery-llm-skill", "build123d-mcp", "mcp-cadquery", "cadam", "fusion360-mcp-server", "freecad-mcp", "blender-mcp", "autocad-mcp", "cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
+    "done": [
+      "agentcad",
+      "amagine3d",
+      "autocad-mcp",
+      "blender-mcp",
+      "build123d-mcp",
+      "cad-assistant",
+      "cad-coder",
+      "cad-recode",
+      "cadam",
+      "cadquery-llm-skill",
+      "cadrille",
+      "deepcad",
+      "drawing2cad",
+      "earthtojake-text-to-cad",
+      "flexcad",
+      "freecad-mcp",
+      "fusion360-mcp-server",
+      "hunyuan3d-2",
+      "img2cad",
+      "instantmesh",
+      "mcp-cadquery",
+      "multi-agent-cad",
+      "plankassembly",
+      "sky-001",
+      "spar3d",
+      "stable-fast-3d",
+      "step1x-3d",
+      "text2cad",
+      "trellis",
+      "triposg",
+      "triposr"
+    ],
     "in_flight": [],
-    "_note": "2026-10-24：23 张卡片全部通过 check_survey_cards.py。R4（学术 10 张）已完成。分类口径已裁决：class 按机制判、不按输入形态判（见 docs/ai-3d-survey-plan.md §9）。",
-    "todo_r3": ["rhinoai", "openscad-mcp-server", "slvsx-cli", "freecad-ai", "sw-eduardof0nt", "sw-andrewbartels1", "sw-vespo92", "sw-slacker-llc"],
-    "todo_r4": ["cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
-    "todo_r5": ["hunyuan3d-2", "trellis", "triposg", "triposr", "instantmesh", "stable-fast-3d", "spar3d", "step1x-3d"],
-    "todo_r6": ["zoo-text-to-cad", "fusion-assistant", "onshape-ai-advisor", "siemens-nx", "ptc-creo", "adam", "backflip", "driveworks", "meshy", "rodin", "tripo", "spline-ai", "leo-ai"]
+    "_note": "由 D:/ai3d-survey/sync_state.py 按目录实际重算。分类口径：class 按机制判、不按输入形态判（见 docs/ai-3d-survey-plan.md §9）。",
+    "todo_r3": [
+      "rhinoai",
+      "openscad-mcp-server",
+      "slvsx-cli",
+      "freecad-ai",
+      "sw-eduardof0nt",
+      "sw-andrewbartels1",
+      "sw-vespo92",
+      "sw-slacker-llc"
+    ],
+    "todo_r4": [
+      "cad-recode",
+      "cadrille",
+      "cad-coder",
+      "flexcad",
+      "text2cad",
+      "deepcad",
+      "img2cad",
+      "cad-assistant",
+      "plankassembly",
+      "drawing2cad"
+    ],
+    "todo_r5": [
+      "hunyuan3d-2",
+      "trellis",
+      "triposg",
+      "triposr",
+      "instantmesh",
+      "stable-fast-3d",
+      "spar3d",
+      "step1x-3d"
+    ],
+    "todo_r6": [
+      "zoo-text-to-cad",
+      "fusion-assistant",
+      "onshape-ai-advisor",
+      "siemens-nx",
+      "ptc-creo",
+      "adam",
+      "backflip",
+      "driveworks",
+      "meshy",
+      "rodin",
+      "tripo",
+      "spline-ai",
+      "leo-ai"
+    ],
+    "done_count": 31
   },
   "intel": {
     "sky_001": "done: docs/survey/cards/sky-001.md（闭源工程世界模型，2026-10-19 发布）",
     "new_architecture_class": "J=世界模型/几何状态（由 SKY-001 专项引入，R7 并入 v3）",
-    "other_non_llm_routes": ["Tripo P1.0", "Lux3D（群核科技）", "MoWorld-3D（魔芯+昇腾）"]
+    "other_non_llm_routes": [
+      "Tripo P1.0",
+      "Lux3D（群核科技）",
+      "MoWorld-3D（魔芯+昇腾）"
+    ]
   },
   "card_tag_convention": "<!-- survey: class=B; repr=code; orchestration=loop; verify=geometry-gate; deliver=STEP; evidence=读码 --> （写在 H1 之下；R2 派活时未要求，R7 前需补）",
   "resources": {
     "gpu": "RTX 4080 SUPER 16GB",
     "disk_free_d_gb": 2763,
     "python": "3.14.7",
-    "can_run_models": ["TripoSR", "TripoSG", "stable-fast-3d", "SPAR3D(low-vram)", "Hunyuan3D-2(shape)"],
-    "cannot_run_models": ["TRELLIS.2(>=24GB)", "Hunyuan3D-2.1(29GB)"]
+    "can_run_models": [
+      "TripoSR",
+      "TripoSG",
+      "stable-fast-3d",
+      "SPAR3D(low-vram)",
+      "Hunyuan3D-2(shape)"
+    ],
+    "cannot_run_models": [
+      "TRELLIS.2(>=24GB)",
+      "Hunyuan3D-2.1(29GB)"
+    ]
   },
   "hard_constraints": [
     "无 LICENSE / CC BY-NC / GPL / AGPL 只读思想，禁止复制代码入本仓",

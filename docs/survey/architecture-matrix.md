@@ -1,13 +1,13 @@
 # 架构分类矩阵（由 `scripts/gen_survey_matrix.py` 生成，勿手改）
 
-卡片 23 张：带机读 tag 23 张 · 待补 0 张。
+卡片 31 张：带机读 tag 31 张 · 待补 0 张。
 
 | 项目 | 类 | 表示 | 编排 | 验证 | 交付 | 证据 | 卡片（出处）|
 |---|---|---|---|---|---|---|---|
 | agentcad | B | code | loop | numeric | STEP | 读码 | `docs/survey/cards/agentcad.md` |
 | Amagine3D（amagine-ai） | B | code | loop | export-readback | STEP | 读码 | `docs/survey/cards/amagine3d.md` |
 | CAD-Assistant | B | code | loop | visual | STEP | 读码 | `docs/survey/cards/cad-assistant.md` |
-| CADAM | B | code | loop | visual | mesh | 读码 | `docs/survey/cards/cadam.md` |
+| CADAM | B | code | loop | visual | mesh | 实测 | `docs/survey/cards/cadam.md` |
 | text-to-cad（earthtojake） | B | code | loop | dfm-rules | STEP | 读码 | `docs/survey/cards/earthtojake-text-to-cad.md` |
 | mcp-cadquery | B | code | loop | run-only | STEP | 读码 | `docs/survey/cards/mcp-cadquery.md` |
 | Multi-Agent-CAD / MAC（Pan-Chera） | C | code | multi-agent | visual | STEP | 读码 | `docs/survey/cards/multi-agent-cad.md` |
@@ -16,6 +16,14 @@
 | FlexCAD | D | sequence | single | numeric | sequence | 读码 | `docs/survey/cards/flexcad.md` |
 | PlankAssembly | D | sequence | single | geometry-gate | mesh | 读码 | `docs/survey/cards/plankassembly.md` |
 | Text2CAD | D | sequence | single | numeric | sequence | 读码 | `docs/survey/cards/text2cad.md` |
+| Hunyuan3D-2 | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/hunyuan3d-2.md` |
+| InstantMesh | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/instantmesh.md` |
+| SPAR3D | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/spar3d.md` |
+| Stable Fast 3D | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/stable-fast-3d.md` |
+| Step1X-3D | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/step1x-3d.md` |
+| TRELLIS | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/trellis.md` |
+| TripoSG | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/triposg.md` |
+| TripoSR | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/triposr.md` |
 | CAD-Coder（`anniedoris/CAD-Coder`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-coder.md` |
 | CAD-Recode（`filaPro/cad-recode`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-recode.md` |
 | cadrille（`AIRI-Institute/cadrille`） | F | code | single | numeric | mesh | 读码 | `docs/survey/cards/cadrille.md` |

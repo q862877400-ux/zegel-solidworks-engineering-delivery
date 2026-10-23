@@ -1,6 +1,6 @@
 # mcp-cadquery
 
-<!-- survey: class=B; repr=code; orchestration=loop; verify=run-only; deliver=STEP; evidence=读码 -->
+<!-- survey: class=B; repr=code; orchestration=loop; verify=run-only; deliver=STEP; evidence=实测 -->
 
 | 字段 | 值 |
 |---|---|
