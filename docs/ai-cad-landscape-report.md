@@ -262,6 +262,12 @@ Zoo（KCL 程序 + 云引擎）· Fusion Assistant（批准后执行，**官方�
 | 93.4% | FlexCAD 可渲染有效率 | FlexCAD |
 | 79.7% / 3.9 秒 | SKY-001 自测 CAD IoU 与时延（**厂商自测，无第三方复现**）| `docs/survey/cards/sky-001.md` |
 | 187 / 133 / 96 / 93 / 92 | SolidWorks 系竞品工具数（实测）| `docs/survey/cards/sw-*.md` · `fusion360-mcp-server.md` |
+| **1,866.5 MB / 0.9 秒 / 3,001 顶点** | **TripoSR 真跑一次**：RTX 4080 SUPER 上峰值显存 1,866.5 MB（allocated）、前向 0.9 秒、输出 3001 顶点 / 5998 面且 watertight | `docs/survey/cards/triposr.md` §4「★★ 实测」· 原始 JSON `D:\ai3d-survey\logs\triposr-run.json` |
+
+★ **50 家里唯一真跑过模型的是 TripoSR**（2026-10-24 实测）。但这次是**打补丁后跑通**：
+`torchmcubes` 在本机编不过（构建隔离看不到 torch → 缺 `scikit-build-core` → CMake 探测 MSVC 失败，
+三层都实测过），改用 `skimage.measure.marching_cubes` 兜底 ⇒ 显存/耗时/能否出网格是真读数，
+**网格顶点顺序可能与原实现不同**。其余 7 家网格模型未跑，原因见 `docs/survey/state.json` 的 `deviations`。
 
 ---
 

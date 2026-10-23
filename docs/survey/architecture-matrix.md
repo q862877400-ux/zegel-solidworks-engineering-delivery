@@ -29,7 +29,7 @@
 | TRELLIS | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/trellis.md` |
 | Tripo（VAST） | E | mesh | single | visual | mesh | 元数据 | `docs/survey/cards/tripo.md` |
 | TripoSG | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/triposg.md` |
-| TripoSR | E | mesh | single | visual | mesh | 读码 | `docs/survey/cards/triposr.md` |
+| TripoSR | E | mesh | single | visual | mesh | 实测 | `docs/survey/cards/triposr.md` |
 | CAD-Coder（`anniedoris/CAD-Coder`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-coder.md` |
 | CAD-Recode（`filaPro/cad-recode`） | F | code | single | numeric | STEP | 读码 | `docs/survey/cards/cad-recode.md` |
 | cadrille（`AIRI-Institute/cadrille`） | F | code | single | numeric | mesh | 读码 | `docs/survey/cards/cadrille.md` |

@@ -1,6 +1,6 @@
 # TripoSR
 
-<!-- survey: class=E; repr=mesh; orchestration=single; verify=visual; deliver=mesh; evidence=读码 -->
+<!-- survey: class=E; repr=mesh; orchestration=single; verify=visual; deliver=mesh; evidence=实测 -->
 
 | 字段 | 值 |
 |---|---|
@@ -8,7 +8,7 @@
 | 许可 | **MIT**——`LICENSE:1-3` 原文「MIT License / Copyright (c) 2024 Tripo AI & Stability AI」；README 另明写「The model is released under the MIT license, which includes the source code, pretrained models, and an interactive online demo」（`README.md:27`）⇒ **含权重在内都是 MIT**，四家里最干净的一份许可；保留版权行即可，无 NOTICE 义务、无地域/规模限制。★注意：`tsr/` 下没有第二份 LICENSE（`Get-ChildItem -Recurse -Filter *LICENSE*` 只命中根一份） |
 | 元数据 | 7203 stars · 最近推送 2026-06-04T07:11:09Z · Python（来源：`gh api repos/VAST-AI-Research/TripoSR`，取数日 2026-10-24）|
 | 克隆 | D:\ai3d-survey\repos\VAST-AI-Research__TripoSR（HEAD `107cefd`「Update README.md」2026-06-04；shallow clone，`git rev-list --count HEAD` = 1）|
-| 证据等级 | 读码（通读 `README.md`（79 行）/ `LICENSE` / `requirements.txt` / `run.py` / `gradio_app.py` / `tsr/system.py` / `tsr/models/isosurface.py` / `tsr/models/tokenizers/{image,triplane}.py` / `tsr/utils.py` / `tsr/bake_texture.py`；**未装依赖、未下权重、未推理**）|
+| 证据等级 | **实测**（2026-10-24：真下了 1.68 GB 权重、真在 RTX 4080 SUPER 上跑完一次推理与抽面，读数见 §4「★★ 实测」；★ 条件：`torchmcubes` 编不过，改用 `skimage` 的 marching_cubes 兜底 ⇒ 是「打补丁后跑通」，不是原仓库原样跑通。代码侧仍通读 `README.md` / `LICENSE` / `requirements.txt` / `run.py` / `tsr/system.py` / `tsr/models/isosurface.py` 等）|
 
 ## 1. 一句话定位
 
@@ -82,7 +82,38 @@ Tripo AI 与 Stability AI 合作的**前馈式单图重建**模型：沿用 LRM 
 - `numpy` 未被钉版（`requirements.txt` 里没有 numpy 行），但 `transformers==4.35.0` 与新版 numpy 2.x 可能存在兼容问题（未验）。`torch` 2.14.1 已有 Windows `cp314` 轮（来源：https://pypi.org/pypi/torch/json）。
 - 结论：**四家里本机最可能真跑起来的一个，但未实测**。最小命令与预期：
   `python run.py examples/chair.png --output-dir output/`（`README.md:39`）⇒ 预期在 `output/0/mesh.obj` 得到网格（默认格式 obj，`run.py:91,176`）；要纹理加 `--bake-texture`（`run.py:96-100`）。
-- 盘开销：权重 1.56 GB（HF 列表 API）+ 依赖；本机 D: 余 2.76 TB（来源：本机 `Get-PSDrive D`）。**全程只读码，未下载、未安装。**
+- 盘开销：权重 1.56 GB（HF 列表 API）+ 依赖；本机 D: 余 2.76 TB（来源：本机 `Get-PSDrive D`）。
+
+### ★★ 实测（2026-10-24，**本卡是全 50 张里唯一真跑过模型的**）
+
+| 项 | 实测值 | 证据 |
+|---|---|---|
+| 环境 | Python **3.12.14**（venv `D:\ai3d-survey\venv-triposr`）+ **torch 2.6.0+cu124** | `D:\ai3d-survey\logs\triposr-setup.log` |
+| GPU | RTX 4080 SUPER，`cuda_available=true` | 同上自检行 |
+| 权重 | `stabilityai/TripoSR` `model.ckpt` **1.68 GB** 下载 **101 秒** | `D:\ai3d-survey\logs\triposr-run-stdout.txt` |
+| 加载 | **3.9 秒** | `D:\ai3d-survey\logs\triposr-run.json` |
+| 前向 | **0.9 秒**（chair.png，512×512） | `D:\ai3d-survey\logs\triposr-run.json` |
+| 抽面 | **0.2 秒**（marching cubes 分辨率 64） | `D:\ai3d-survey\logs\triposr-run.json` |
+| **峰值显存** | **1,866.5 MB**（allocated）/ 2,030 MB（reserved） | `D:\ai3d-survey\logs\triposr-run.json` 的 `peak_vram_mb` |
+| 产物 | `triposr-chair.obj` **303,946 B** · **3,001 顶点 / 5,998 面** · **watertight = true** | 同上 `output` |
+| 总耗时（不含下载/装依赖） | **5.0 秒** | `D:\ai3d-survey\logs\triposr-run.json` 的 `total_seconds` |
+
+★★ **但必须写明：这次不是「原仓库原样跑通」** —— `mc_backend = skimage-fallback`。
+`torchmcubes` 在本机**编不过**，失败链三层（每层都实测过）：
+
+1. `pip install git+…torchmcubes` ⇒ `RuntimeError: torchmcubes must be built against an installed PyTorch,
+   but the 'torch' package was not found in the build environment`（**构建隔离里看不到 torch**）；
+2. 加 `--no-build-isolation` ⇒ `BackendUnavailable: Cannot import 'scikit_build_core.build'`（缺构建后端）；
+3. 补 `scikit-build-core` + `pybind11` + `ninja` 后 ⇒ **CMake 发现 MSVC 14.44 但编译器探测失败**
+   （`CMakeDetermineCompiler…` 报错，配置不完整）。
+
+⇒ 兜底方案：把 `torchmcubes.marching_cubes` 换成 `skimage.measure.marching_cubes`（脚本
+`D:\ai3d-survey\run_triposr.py`），于是**显存/耗时/能否出网格**三项是真读数，
+**而网格顶点顺序与 torchmcubes 版可能不同**（未与原实现逐点比对）。
+
+⇒ 另一处**输入要求**是坑：`examples/chair.png` 是 **RGBA 4 通道**，直接喂会在
+`tsr/models/tokenizers/image.py:51` 的归一化处报「size of tensor a (4) must match tensor b (3)」
+⇒ 必须先 `.convert("RGB")`。
 
 ## 5. 失败模式与已知坑
 

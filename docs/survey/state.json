@@ -188,8 +188,9 @@
     "全部落盘后跑 python scripts\\release_check.py 过门禁，再 commit_mine 入库"
   ],
   "deviations": [
-    "生成式模型（R5 的 8 家）**没有一家真跑**：本机缺编译型 CUDA 扩展（flash-attn/spconv/kaolin/utils3d/diso/torch-cluster 无 Windows 轮；torchmcubes/nvdiffrast/diffoctreerast 连 PyPI 都没有）⇒ 一律标「读码」，未写「实测」。",
-    "真跑过的只有 4 家的**自带单测**（fusion360-mcp-server 367 passed / blender-mcp 494 passed / cadam 36 passed / mcp-cadquery 7 failed+80 passed），它们是「包能装、单测能跑」的证据，不是「建模能力验证」，各卡已按此定级。",
+    "★ **TripoSR 已真跑一次**（2026-10-24）：RTX 4080 SUPER / torch 2.6.0+cu124 / Python 3.12 venv，峰值显存 1866.5 MB、前向 0.9 s、输出 3001 顶点 5998 面且 watertight。★ 但那是**打补丁后跑通**：torchmcubes 本机编不过（三层失败链已实测记录），改用 skimage 的 marching_cubes ⇒ 网格顶点顺序可能与原实现不同，未逐点比对。",
+    "其余 7 家生成式模型（Hunyuan3D-2 / TRELLIS / TripoSG / InstantMesh / SF3D / SPAR3D / Step1X-3D）**未跑**：缺编译型 CUDA 扩展（flash-attn/spconv/kaolin/utils3d/diso/torch-cluster 无 Windows 轮；torchmcubes/nvdiffrast/diffoctreerast 连 PyPI 都没有）⇒ 一律标「读码」。",
+    "另有 4 家的**自带单测**真跑过（fusion360-mcp-server 367 passed / blender-mcp 494 passed / cadam 36 passed / mcp-cadquery 7 failed+80 passed）—— 那是「包能装、单测能跑」的证据，**不是建模能力验证**，各卡已按此定级。",
     "R6 商业产品无源码，证据等级只能是「元数据」；其中 3 个页面是 JS 应用，引文取自检索索引正文，逐字引用前建议浏览器复核（各卡 §9 已标注）。",
     "LEO AI 的导出格式清单官方未公布 ⇒ `deliver=STEP` 只表示「工程格式桶」，卡片 §1/§9 已写明未证实。"
   ],
@@ -202,5 +203,21 @@
     "landscape_report_v3": "docs/ai-cad-landscape-report.md",
     "handoff": "docs/survey/README.md",
     "gate": "scripts/check_survey_cards.py（已接进 release_check，classification=release_static）"
+  },
+  "measured_runs": {
+    "TripoSR": {
+      "date": "2026-10-24",
+      "hardware": "RTX 4080 SUPER 16GB",
+      "torch": "2.6.0+cu124",
+      "python": "3.12.14",
+      "peak_vram_mb": 1866.5,
+      "forward_seconds": 0.9,
+      "extract_seconds": 0.2,
+      "vertices": 3001,
+      "faces": 5998,
+      "watertight": true,
+      "mc_backend": "skimage-fallback（torchmcubes 编不过）",
+      "raw": "D:/ai3d-survey/logs/triposr-run.json"
+    }
   }
 }
