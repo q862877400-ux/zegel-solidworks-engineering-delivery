@@ -38,14 +38,12 @@
     "note": "全部 --depth 1；幂等，可重跑"
   },
   "cards": {
-    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d"],
+    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d", "multi-agent-cad", "agentcad", "cadquery-llm-skill", "build123d-mcp"],
     "in_flight": [
-      "multi-agent-cad",
-      "agentcad", "cadquery-llm-skill", "build123d-mcp",
       "mcp-cadquery", "cadam", "fusion360-mcp-server",
       "freecad-mcp", "blender-mcp", "autocad-mcp"
     ],
-    "_note": "2026-10-24：R2 派出的 4 路 subagent 在会话中断后只剩 2 张卡落盘（text-to-cad / amagine3d）；其余 9 张需重派或手写。subagent 不是 teammate，不能 send_message 追问 ⇒ 重派时要一次把要求写全。"
+    "_note": "2026-10-24：7 张卡片全部通过 check_survey_cards.py。R2 剩 6 张（mcp-cadquery / cadam / fusion360 / freecad / blender / autocad）待重派。subagent 不是 teammate，不能 send_message 追问 ⇒ 重派要一次把要求写全（含机读 tag 行）。",
     "todo_r3": ["rhinoai", "openscad-mcp-server", "slvsx-cli", "freecad-ai", "sw-eduardof0nt", "sw-andrewbartels1", "sw-vespo92", "sw-slacker-llc"],
     "todo_r4": ["cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
     "todo_r5": ["hunyuan3d-2", "trellis", "triposg", "triposr", "instantmesh", "stable-fast-3d", "spar3d", "step1x-3d"],
