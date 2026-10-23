@@ -1,5 +1,7 @@
 # cadquery-llm-skill
 
+<!-- survey: class=I; repr=code; orchestration=none; verify=none; deliver=none; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/jmwright/cadquery-llm-skill （无独立主页——API 里 `"homepage": null`；来源：https://api.github.com/repos/jmwright/cadquery-llm-skill ） |

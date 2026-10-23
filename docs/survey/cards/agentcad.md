@@ -1,5 +1,7 @@
 # agentcad
 
+<!-- survey: class=B; repr=code; orchestration=loop; verify=numeric; deliver=STEP; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/jdilla1277/agentcad · 主页 https://agentcad.dev |

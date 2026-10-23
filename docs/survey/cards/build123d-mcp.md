@@ -1,5 +1,7 @@
 # build123d-mcp
 
+<!-- survey: class=H; repr=code; orchestration=loop; verify=run-only; deliver=STEP; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/pzfreo/build123d-mcp （PyPI：https://pypi.org/project/build123d-mcp/ ；API 里 `"homepage": ""`） |

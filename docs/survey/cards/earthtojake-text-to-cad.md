@@ -1,5 +1,7 @@
 # text-to-cad（earthtojake）
 
+<!-- survey: class=B; repr=code; orchestration=loop; verify=dfm-rules; deliver=STEP; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/earthtojake/text-to-cad · 官网 https://www.texttocad.dev · PyPI 包名 `cadgen` |

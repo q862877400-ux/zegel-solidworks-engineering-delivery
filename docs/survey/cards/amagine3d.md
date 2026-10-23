@@ -1,5 +1,7 @@
 # Amagine3D（amagine-ai）
 
+<!-- survey: class=B; repr=code; orchestration=loop; verify=export-readback; deliver=STEP; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/amagine-ai/Amagine3D · 官网 https://amagine.ai · 中文说明 `docs/README.zh-CN.md` |

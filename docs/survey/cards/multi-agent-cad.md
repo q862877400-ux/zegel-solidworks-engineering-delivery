@@ -1,5 +1,7 @@
 # Multi-Agent-CAD / MAC（Pan-Chera）
 
+<!-- survey: class=C; repr=code; orchestration=multi-agent; verify=visual; deliver=STEP; evidence=读码 -->
+
 | 字段 | 值 |
 |---|---|
 | 仓库 / 主页 | https://github.com/Pan-Chera/Multi-Agent-CAD · 中文 README `README_cn.md` · 单零件/装配各有子说明（`multi_agent_cad/README.md`、`mac_assembly/README.md`） |

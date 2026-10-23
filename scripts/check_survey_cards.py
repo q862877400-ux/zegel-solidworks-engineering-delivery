@@ -29,14 +29,17 @@ QUANT = re.compile(
     r"(?<![\w.])(\d[\d,]*(?:\.\d+)?)\s*(条|个|处|次|行|秒|毫秒|MB|GB|KB|%|倍|档|级)"
 )
 #: 可追溯出处的形态（任一命中即算有出处）
+#: ★ 2026-10-24 放宽扩展名：`.lsp` / `.bpy` 之类同样是可以复核的源文件，
+#:   原先写死扩展名表会把「引了 `mcp_dispatch.lsp:1216` 的行」误判成没出处
+#:   （实测 15 行误报）⇒ 改为「任意扩展名 + 可选行号」。
 TRACE = [
-    re.compile(r"`[^`]*\.(?:py|json|md|txt|log|yaml|yml|ps1|sh|toml|ts|tsx|js|cpp|cs|rs)(?::\d+(?:-\d+)?)?`"),
+    re.compile(r"`[^`]*\.[A-Za-z0-9]{1,8}(?::\d+(?:-\d+)?)?`"),
     re.compile(r"`[^`]*(?:--|pytest |python |git |pwsh |Get-|Select-|npm |uv |pip )[^`]*`"),
     re.compile(r"\[[^\]]+\]\([^)]+\)"),
     re.compile(r"https?://\S+"),
     re.compile(r"(?:实测|核验|测得|跑过|依据|出处|来源)\s*[:：]"),
     re.compile(r"事实\s*\d+"),
-    re.compile(r"[A-Za-z0-9_./\\-]+\.(?:py|md|json|txt|toml|ts|cs|rs):\d+"),
+    re.compile(r"[A-Za-z0-9_./\\-]+\.[A-Za-z0-9]{1,8}:\d+"),
 ]
 
 REQUIRED_LEVELS = ("实测", "读码", "元数据")

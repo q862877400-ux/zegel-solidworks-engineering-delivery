@@ -6,12 +6,12 @@
   "current_phase": "R2",
   "phases": {
     "R1": "done",
-    "R2": "in_progress",
-    "R3": "todo",
+    "R2": "done",
+    "R3": "partial",
     "R4": "todo",
     "R5": "todo",
     "R6": "todo",
-    "R7": "todo"
+    "R7": "partial"
   },
   "paths": {
     "plan": "docs/ai-3d-survey-plan.md",
@@ -68,6 +68,11 @@
     "subagent 不是 teammate，send_message 找不到它",
     "跑不动的必须写「未实测」，宣称标【宣称】"
   ],
+  "matrix": {
+    "generator": "scripts/gen_survey_matrix.py",
+    "status": "available",
+    "note": "2026-10-24 已写出并对 7 张卡跑通；7 张卡的机读 tag 由 Lead 按卡片内容补（映射留档在 D:/ai3d-survey/backfill_tags.py）。新卡必须自带 tag 行。"
+  },
   "next_actions": [
     "等 R2 的 12 张卡落盘后跑 python scripts\\check_survey_cards.py 并修到全 PASS",
     "做 R3（桥接层 8 张卡，含 C:/swprojects 的 4 家 SW MCP）",
