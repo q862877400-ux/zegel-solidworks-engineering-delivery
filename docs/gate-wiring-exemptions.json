@@ -2,6 +2,15 @@
  "_comment": "★ 未接进 `release_check.py` 的门禁及其理由（`check_gate_wiring.py` 读这张表）。",
  "exemptions": [
   {
+   "gate": "check_survey_cards.py",
+   "reason": "★ **调研期工具，暂不接硬门禁（有明确到期条件）**：它检查 `docs/survey/cards/*.md` 的四条验收判据（12 字段齐全 / 量化断言同行带出处 / 证据等级在枚举内 / 有未确认段）。★ **不接的理由**：① 卡片是**逐项目调研的中间产物**，调研未收口前它会随每轮增删而红绿交替；② 现在只有 1 张卡（`sky-001.md`），把它接进发布门禁等于让 `release_check` 依赖调研进度；③ 若有人删掉 `docs/survey/`，发布门禁会因**与产品无关**的原因变红。★ **到期条件（R7）**：调研收口时（卡片齐 + 汇总矩阵生成 + 总论 v3 落盘）**改为正式接线**并从本表删除；届时应同时补 `tests/test_survey_cards_gate.py` 负例。★ 现状实测：`python scripts\\check_survey_cards.py` 在 1 张卡时 **exit 0 / PASS**。",
+   "evidence": [
+    "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/scripts/check_survey_cards.py",
+    "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/docs/ai-3d-survey-plan.md",
+    "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/docs/survey/README.md"
+   ]
+  },
+  {
    "gate": "check_member_owner_interface.py",
    "reason": "★ **诊断工具，不接硬门禁** —— 本轮**没验过**它的判据够不够准（无法机验那 20 处），且它**抓不到形参 owner**（含它的动机 `mold_evidence`）。接进去会变成「看起来在查、实际乱报/漏报」的那种门禁（事实 53 / 62 同族）。",
    "evidence": [

@@ -1,0 +1,82 @@
+{
+  "_说明": "AI 自动建模调研的机器可读状态。每轮更新。接手者先读 docs/survey/README.md，再读本文件。",
+  "updated": "2026-10-23",
+  "goal_id": "goal-49e739eb-af32-4795-8b65-29dab388190d",
+  "goal_rounds_max": 12,
+  "current_phase": "R2",
+  "phases": {
+    "R1": "done",
+    "R2": "in_progress",
+    "R3": "todo",
+    "R4": "todo",
+    "R5": "todo",
+    "R6": "todo",
+    "R7": "todo"
+  },
+  "paths": {
+    "plan": "docs/ai-3d-survey-plan.md",
+    "handoff": "docs/survey/README.md",
+    "state": "docs/survey/state.json",
+    "cards_dir": "docs/survey/cards",
+    "architecture_matrix": "docs/survey/architecture-matrix.md",
+    "step_matrix": "docs/survey/step-matrix.md",
+    "landscape_report": "docs/ai-cad-landscape-report.md",
+    "card_gate": "scripts/check_survey_cards.py",
+    "matrix_generator": "scripts/gen_survey_matrix.py",
+    "repos_dir": "D:/ai3d-survey/repos",
+    "repos_list": "D:/ai3d-survey/repos.txt",
+    "clone_log": "D:/ai3d-survey/logs/clone-log.tsv",
+    "clone_script": "D:/ai3d-survey/clone.py",
+    "sw_mcp_clones": "C:/swprojects"
+  },
+  "clone": {
+    "status": "done",
+    "ok": 40,
+    "total": 40,
+    "size_mb": 1024,
+    "done_at": "2026-10-23",
+    "note": "全部 --depth 1；幂等，可重跑"
+  },
+  "cards": {
+    "done": ["sky-001", "earthtojake-text-to-cad", "amagine3d"],
+    "in_flight": [
+      "multi-agent-cad",
+      "agentcad", "cadquery-llm-skill", "build123d-mcp",
+      "mcp-cadquery", "cadam", "fusion360-mcp-server",
+      "freecad-mcp", "blender-mcp", "autocad-mcp"
+    ],
+    "_note": "2026-10-24：R2 派出的 4 路 subagent 在会话中断后只剩 2 张卡落盘（text-to-cad / amagine3d）；其余 9 张需重派或手写。subagent 不是 teammate，不能 send_message 追问 ⇒ 重派时要一次把要求写全。"
+    "todo_r3": ["rhinoai", "openscad-mcp-server", "slvsx-cli", "freecad-ai", "sw-eduardof0nt", "sw-andrewbartels1", "sw-vespo92", "sw-slacker-llc"],
+    "todo_r4": ["cad-recode", "cadrille", "cad-coder", "flexcad", "text2cad", "deepcad", "img2cad", "cad-assistant", "plankassembly", "drawing2cad"],
+    "todo_r5": ["hunyuan3d-2", "trellis", "triposg", "triposr", "instantmesh", "stable-fast-3d", "spar3d", "step1x-3d"],
+    "todo_r6": ["zoo-text-to-cad", "fusion-assistant", "onshape-ai-advisor", "siemens-nx", "ptc-creo", "adam", "backflip", "driveworks", "meshy", "rodin", "tripo", "spline-ai", "leo-ai"]
+  },
+  "intel": {
+    "sky_001": "done: docs/survey/cards/sky-001.md（闭源工程世界模型，2026-10-19 发布）",
+    "new_architecture_class": "J=世界模型/几何状态（由 SKY-001 专项引入，R7 并入 v3）",
+    "other_non_llm_routes": ["Tripo P1.0", "Lux3D（群核科技）", "MoWorld-3D（魔芯+昇腾）"]
+  },
+  "card_tag_convention": "<!-- survey: class=B; repr=code; orchestration=loop; verify=geometry-gate; deliver=STEP; evidence=读码 --> （写在 H1 之下；R2 派活时未要求，R7 前需补）",
+  "resources": {
+    "gpu": "RTX 4080 SUPER 16GB",
+    "disk_free_d_gb": 2763,
+    "python": "3.14.7",
+    "can_run_models": ["TripoSR", "TripoSG", "stable-fast-3d", "SPAR3D(low-vram)", "Hunyuan3D-2(shape)"],
+    "cannot_run_models": ["TRELLIS.2(>=24GB)", "Hunyuan3D-2.1(29GB)"]
+  },
+  "hard_constraints": [
+    "无 LICENSE / CC BY-NC / GPL / AGPL 只读思想，禁止复制代码入本仓",
+    "docs/*.md 的量化断言必须同行带出处（文件:行 或 URL 或「来源：」）",
+    "subagent 不是 teammate，send_message 找不到它",
+    "跑不动的必须写「未实测」，宣称标【宣称】"
+  ],
+  "next_actions": [
+    "等 R2 的 12 张卡落盘后跑 python scripts\\check_survey_cards.py 并修到全 PASS",
+    "做 R3（桥接层 8 张卡，含 C:/swprojects 的 4 家 SW MCP）",
+    "做 R4（学术 10 张，注意 CC BY-NC 两家标只读思想）",
+    "做 R5（网格 8 张；先建独立 venv 再试跑 16GB 内可跑的）",
+    "做 R6（商业 13 张，黑盒，标【宣称】/【事实】）",
+    "R7：写 scripts/gen_survey_matrix.py 生成两张矩阵 + 给所有卡片补 tag 行 + 总论更新 v3（逐条写改动理由）",
+    "全部落盘后跑 python scripts\\release_check.py 过门禁，再 commit_mine 入库"
+  ]
+}
