@@ -390,7 +390,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_signature_audit_freshness.py` | ✅ |
 | `scripts/check_sketch_definition.py` | ✅ |
 | `scripts/check_spec_acceptance_paths.py` | ✅ |
-| `scripts/check_survey_cards.py` | — |
+| `scripts/check_survey_cards.py` | ✅ |
 | `scripts/check_tools_index_fresh.py` | ✅ |
 | `scripts/check_undefined_names.py` | ✅ |
 | `scripts/check_union_conventions.py` | ✅ |

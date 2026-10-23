@@ -20,6 +20,15 @@
  ],
  "classification": [
   {
+   "gate": "check_survey_cards.py",
+   "runner": "_run_survey_cards_gate",
+   "kind": "release_static",
+   "reason": "★ 硬门禁（2026-10-24 · 业主 2026-10-23「每个项目一张卡、全面分析」指令）：判 `docs/survey/cards/*.md` 的每张调研卡片是否满足四条验收判据 —— ① 12 字段齐全 ② 每条量化断言**同行**带可追溯出处 ③ 证据等级在枚举内（实测/读码/元数据）④ 有「未确认事项」段。★ 为什么必须是硬门禁：卡片由**最多 4 路 subagent 并行写**，无机检必然退化成「各写各的」；而卡片正是总论 `docs/ai-cad-landscape-report.md` 的数字来源 ⇒ 卡片松，总论就是编的。★ 判据的出处形态**故意不写死扩展名**（`.lsp` 之类也是可复核源文件）：写死扩展名表时实测误报 16 行（引 `mcp_dispatch.lsp:1216` 的行被判「无出处」）⇒ 已放宽为「任意扩展名 + 可选行号」，但**仍要求同行有指向**，没有变松。★ 现状实测：`python scripts/check_survey_cards.py` 在 50 张卡片上 exit 0。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
+  },
+  {
    "gate": "check_lean_first_line_caveat.py",
    "runner": "_run_lean_first_line_gate",
    "kind": "release_static",

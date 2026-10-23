@@ -914,6 +914,38 @@ def _run_repo_uniformity_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_survey_cards_gate() -> dict[str, object]:
+    """@brief 跑「调研卡片验收判据」门禁（scripts/check_survey_cards.py）。
+
+    ★ 来源：业主 2026-10-23 ——「每一个项目你都应该克隆下来做全面的分析，给出这个项目的
+      技术路径」+「再把多个项目放在一块儿做分类汇总」。
+    ★ 判据：`docs/survey/cards/*.md` 每张卡四条 ——
+      ① 12 字段齐全 ② 每条量化断言**同行**带可追溯出处 ③ 证据等级在枚举内
+      ④ 有「未确认事项」段。
+    ★ 为什么必须有：卡片由**最多 4 路 subagent 并行写**，无机检必然退化成「各写各的」；
+      而卡片正是总论 `docs/ai-cad-landscape-report.md` 的数字来源。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_survey_cards.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "调研卡片门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_tools_index_fresh_gate() -> dict[str, object]:
     """@brief 跑「tools 索引新鲜度」门禁（scripts/check_tools_index_fresh.py）。
 
@@ -2918,6 +2950,17 @@ def run_release_check() -> dict[str, object]:
             "仓库统一化体检未通过（局部整洁但整体可能已分裂）：\n"
             + str(ru.get("output", ""))
         )
+    # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
+    #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
+    #     证据等级在枚举内 / 有未确认段）。
+    #   ★ 为什么必须有：卡片是**多路并行**写的，没机检就退化成「各写各的」；而卡片正是
+    #     总论 `docs/ai-cad-landscape-report.md` 的数字来源。
+    sc = _run_survey_cards_gate()
+    if sc.get("status") == "fail":
+        raise AssertionError(
+            "调研卡片未过验收判据（多半是新增卡片缺同行出处）：\n"
+            + str(sc.get("output", ""))
+        )
     # ⚑ **tools 索引新鲜度门禁**（硬门禁）：★ 来源业主 2026-10-19「那么多工具怎么用是有
     # 文档吗」。
     #   ★ 判据：\docs/tools-index.md\ 的集合与描述都要与 \	ools/*.py\ 一致
@@ -3214,6 +3257,9 @@ def run_release_check() -> dict[str, object]:
         #: 登记
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "repo_uniformity": ru,
+        #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
+        #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓
+        "survey_cards": sc,
     }
     # ⚠ 容错：不是每个 `_run_*` 都保证返回 dict ⇒ 取不到就标 `unknown`（**不谎报 `pass`*
     # *）。
