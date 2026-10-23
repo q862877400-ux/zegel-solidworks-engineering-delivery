@@ -121,6 +121,6 @@ description: 当要求「把整个仓库从局部到整体统一化/规范化」
 
 - `references/metrics.md` —— 五条指标的实现要点、已知假阳性、裁决分类
 - `references/negative-verdicts.md` —— 两条否定裁决全文 + 复验命令
-- `references/postmortems.md` —— 8 个自己制造的回归与各自的规避点
+- `references/postmortems.md` —— 9 个自己制造的回归与各自的规避点
 
 SW 仓落地位置：尺子 `scripts/check_repo_uniformity.py`、基线 `docs/repo-uniformity-baseline.json`、留档 `docs/repo-uniformity-report.md`。
