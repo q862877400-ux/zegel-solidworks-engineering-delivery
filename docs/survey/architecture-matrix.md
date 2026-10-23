@@ -1,6 +1,6 @@
 # 架构分类矩阵（由 `scripts/gen_survey_matrix.py` 生成，勿手改）
 
-卡片 42 张：带机读 tag 42 张 · 待补 0 张。
+卡片 50 张：带机读 tag 50 张 · 待补 0 张。
 
 | 项目 | 类 | 表示 | 编排 | 验证 | 交付 | 证据 | 卡片（出处）|
 |---|---|---|---|---|---|---|---|
@@ -39,9 +39,17 @@
 | autocad-mcp（puran-water/autocad-mcp） | H | sequence | none | run-only | drawing | 读码 | `docs/survey/cards/autocad-mcp.md` |
 | mcp-for-blender（原名 blender-mcp） | H | code | loop | visual | mesh | 读码 | `docs/survey/cards/blender-mcp.md` |
 | build123d-mcp | H | code | loop | run-only | STEP | 读码 | `docs/survey/cards/build123d-mcp.md` |
+| freecad-ai（ghbalf/freecad-ai） | H | feature-tree | loop | numeric | STEP | 读码 | `docs/survey/cards/freecad-ai.md` |
 | FreeCAD MCP（neka-nat/freecad-mcp） | H | feature-tree | single | visual | none | 读码 | `docs/survey/cards/freecad-mcp.md` |
 | Autodesk Fusion 的 Autodesk Assistant | H | feature-tree | human-approve | visual | none | 元数据 | `docs/survey/cards/fusion-assistant.md` |
 | faust-machines/fusion360-mcp-server | H | feature-tree | single | numeric | STEP | 实测 | `docs/survey/cards/fusion360-mcp-server.md` |
+| OpenSCAD-MCP-Server（jhacksman） | H | dsl | single | run-only | mesh | 读码 | `docs/survey/cards/openscad-mcp-server.md` |
+| RhinoAI（McNeel 官方 Rhino MCP） | H | code | loop | visual | none | 读码 | `docs/survey/cards/rhinoai.md` |
+| slvsx-cli（snoble/slvsx-cli） | H | constraint | loop | solver | mesh | 读码 | `docs/survey/cards/slvsx-cli.md` |
+| andrewbartels1/SolidworksMCP-python | H | feature-tree | single | run-only | STEP | 读码 | `docs/survey/cards/sw-andrewbartels1.md` |
+| Eduardof0nt/Solidworks-MCP-Server | H | feature-tree | single | run-only | STEP | 读码 | `docs/survey/cards/sw-eduardof0nt.md` |
+| Slacker-LLC/solidworks-mcp | H | feature-tree | single | numeric | STEP | 读码 | `docs/survey/cards/sw-slacker-llc.md` |
+| vespo92/SolidworksMCP-TS | H | feature-tree | single | none | STEP | 读码 | `docs/survey/cards/sw-vespo92.md` |
 | cadquery-llm-skill | I | code | none | none | none | 读码 | `docs/survey/cards/cadquery-llm-skill.md` |
 | Onshape AI Advisor | I | none | none | none | none | 元数据 | `docs/survey/cards/onshape-ai-advisor.md` |
 | Siemens NX（Designcenter X NX）的 AI 功能：Copilot / Select Similar / PMI 预测 | I | feature-tree | none | none | none | 元数据 | `docs/survey/cards/siemens-nx-ai.md` |
