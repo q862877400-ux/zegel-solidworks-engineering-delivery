@@ -12,6 +12,7 @@
 
 | 我想知道 | 去哪 | 复现命令 |
 |---|---|---|
+| **项目为什么存在、成功长什么样、验收判据（E1–E7）** | **[`docs/PROJECT-CHARTER.md`](../PROJECT-CHARTER.md)** ← 顶层定义，高于本台账 | 无（定义文档，读即可）|
 | 仓库有几个顶层目录、各多大、哪些入库了 | `facts/A-structure.md` | `python docs\state\probes\probe_structure.py --json docs/state/inventory-a.json` |
 | MCP 工具声明现在是什么状态（501 条、命名、单位、doc、read_only） | `facts/B-tools.md` | `python docs\state\probes\probe_all_specs.py --json docs/state/inventory-b.json` |
 | 能力台账 140 条的 level 与字段齐全度 | `facts/C-capabilities.md` | `python docs\state\probes\probe_capabilities.py --json docs/state/inventory-c.json` |
