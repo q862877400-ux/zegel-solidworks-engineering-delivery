@@ -87,7 +87,58 @@ judge_reference_stability(obs, *, requirement_id) -> CheckResult
   这条会转红，那时应把断言反过来（缺陷已修）
 - `test_planner的倒角候选命中chamfer_step` —— 精确定位被抓的是 chamfer 步骤
 
-## 四、S3 要改什么（按优先级）
+## 四、T010 孔型/孔位逐项回读 —— 已落判据
+
+### 发现：既有能力覆盖了三分之二
+
+`scripts/sw_review.py:validate_hole_positions()` 已经逐孔给
+「孔径误差 / 孔位误差 / 是否通过」，且带独立参考基准
+（`part_loop.reference_hole_positions()` 手算孔坐标）。
+**不需要新造**，直接复用（铁律 1）。
+
+### 但它自己声明了一个缺口
+
+`validate_hole_positions` 的 docstring 逐字：
+
+> 该函数只证明孔径与轴线位置。盲孔深度、通孔状态和沉头类型必须继续使用
+> 特征参数回读或创建函数返回的 feature_evidence 交叉验证。
+
+⇒ **孔型（通孔 / 盲孔 / 沉头 / 螺纹）不在它覆盖范围**。
+
+### 新增判据补上这一项
+
+`e2_e3_solid.py` 新增：
+
+```
+collect_hole_readback(*, target, requested, measured, ...) -> Observation
+judge_hole_readback(obs, *, requirement_id) -> CheckResult
+```
+
+`check_id = "E2.hole_readback"`。判据：
+
+| 情形 | 结论 |
+|---|---|
+| 孔数不符 | **fail**（挡住「两个 φ12 换四个 φ6」这类聚合量代替） |
+| 孔径/孔位超差 | **fail**（复用 `validate_hole_positions`） |
+| B-Rep 给不出孔型 | **unknown**（★★ 没测到 ≠ 合格） |
+| 孔型不符 | **fail** |
+| 要求里的孔型不在词表 | **fail**（封闭词表五种） |
+| 全对 | pass |
+
+孔型词表：`through` / `blind` / `counterbore` / `countersink` / `threaded`。
+
+`tests/test_acceptance_e2_hole.py` 18 条，含：
+- 数量不对时拒绝（核心：不许用体积之类聚合量代替）
+- **孔型给不出时判 unknown 不是 pass**（最重要的一条）
+- 每种允许孔型都能通过
+
+### 孔型匹配为什么按孔位就近
+
+实测孔**没有 `id`** —— `collect_geometry_measurements()` 只给直径/位置/轴线。
+⇒ 按孔位就近配对。孔位已在前面通过容差校验，所以配对是明确的
+（除非两孔重合，而那本身是设计错误）。
+
+## 五、S3 要改什么（按优先级）
 
 | # | 改什么 | 判据 |
 |---|---|---|
@@ -95,11 +146,12 @@ judge_reference_stability(obs, *, requirement_id) -> CheckResult
 | 2 | `planner.py` 三处 chamfer 改成语义选择器 | `test_planner的倒角候选仍带下标` 转红后按新语义更新 |
 | 3 | 孔位也用语义引用（`near:` 锚点） | E5 的孔位标注能绑定到真实图纸对象 |
 | 4 | 计划里**不缓存**下标 | `reference_resolver.LIMITATIONS` 第 1 条 |
+| 5 | 孔型从特征参数回读接上 | `judge_hole_readback` 从 unknown 转 pass |
 
-⚠ 第 1 项要改 `mcp-server` 的工具层，**必须真机验证** —— 留 S3 真机部分。
+⚠ 第 1、5 项要改 `mcp-server` 的工具层与真机回读，**必须真机验证** —— 留 S3 真机部分。
    本文件交付的是判据（能让缺陷可见），不是修复。
 
-## 五、E1 的一条限制（不再叫「待查」）
+## 六、E1 的一条限制（不再叫「待查」）
 
 三源确认：SolidWorks API **没有数值自由度读取入口**
 （1032 接口 / 20627 成员零命中，见 `source-verification.md`）。
@@ -115,7 +167,7 @@ judge_reference_stability(obs, *, requirement_id) -> CheckResult
 所以「有意保留自由度」这一项**无法事后校验** —— 它必须写进需求冻结表，
 由工程负责人明示，不能在产检时反读。已记入 `requirements.md`。
 
-## 六、未做的（如实）
+## 七、未做的（如实）
 
 1. **未改 `planner.py`** —— 改它要同时改工具层并真机验证，属 S3 真机部分
 2. **未改工具层 `selection`** —— 同上
