@@ -22,6 +22,16 @@
 | 许可与来源：4 家来源、NOTICE、GPL 族声明 | `facts/I-license.md` | `python docs\state\probes\probe_license.py --json docs/state/inventory-i.json` |
 | 运行装配链：server/sw_connect/mcp.json 在哪 | `facts/J-runtime.md` | `python docs\state\probes\probe_runtime.py --json docs/state/inventory-j.json` |
 
+### 第二轮（K–O，深度对应关系）
+
+| 我想知道 | 去哪 | 复现命令 |
+|---|---|---|
+| 501 条声明是否指向真实函数、签名对不对得上 | `facts/K-signature.md` | `python docs\state\probes\probe_specs_vs_code.py --json docs/state/inventory-k.json` |
+| 100 条 `verified` 的 evidence 指向物是否存在 | `facts/L-evidence.md` | `python docs\state\probes\probe_evidence.py --json docs/state/inventory-l.json` |
+| 测试的**执行期**结果（门禁类 34 个文件） | `facts/M-tests-run.md` | `python docs\state\probes\probe_tests_run.py --json docs/state/inventory-m.json` |
+| 仓库外 26 个克隆的许可、五个未触碰目录的规模 | `facts/N-external.md` | `python docs\state\probes\probe_external.py --json docs/state/inventory-n.json` |
+| 文档归并（重复/断链的真实构成） | `facts/O-docs-merge.md` | `python docs\state\probes\probe_doc_consolidate.py --json docs/state/inventory-o.json` |
+
 ---
 
 ## 二、每个维度最承重的一条读数

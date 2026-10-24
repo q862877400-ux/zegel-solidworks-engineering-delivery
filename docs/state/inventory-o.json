@@ -1,0 +1,919 @@
+{
+  "md_scanned": 1880,
+  "duplicate_groups_total": 49,
+  "duplicate_groups_build_mirror": 3,
+  "duplicate_groups_other": 46,
+  "mirror_groups": [
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\README.md",
+      "README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "SKILL.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\SUBSKILLS.md",
+      "SUBSKILLS.md"
+    ]
+  ],
+  "other_groups": [
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\examples\\README.md",
+      "examples\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\mcp-server\\README.md",
+      "mcp-server\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\advanced.md",
+      "references\\advanced.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\agent-provider-architecture.md",
+      "references\\agent-provider-architecture.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\api-lookup.md",
+      "references\\api-lookup.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\appearance.md",
+      "references\\appearance.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\assembly.md",
+      "references\\assembly.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\complex-hole-features.md",
+      "references\\complex-hole-features.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\complex-mechanical-routing.md",
+      "references\\complex-mechanical-routing.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\deployment-boundary.md",
+      "references\\deployment-boundary.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\drawing.md",
+      "references\\drawing.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\enterprise-agent-rag.md",
+      "references\\enterprise-agent-rag.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\export.md",
+      "references\\export.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\gears.md",
+      "references\\gears.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\language-backend-routing.md",
+      "references\\language-backend-routing.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\mcp-server.md",
+      "references\\mcp-server.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\mesh-reference-import.md",
+      "references\\mesh-reference-import.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\motion-study.md",
+      "references\\motion-study.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\openclaw.md",
+      "references\\openclaw.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\part-modeling.md",
+      "references\\part-modeling.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\review.md",
+      "references\\review.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\simulation-performance-memory-gpu.md",
+      "references\\simulation-performance-memory-gpu.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\solidworks-addin-host.md",
+      "references\\solidworks-addin-host.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\troubleshooting.md",
+      "references\\troubleshooting.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\autocad-automation\\README.md",
+      "subskills\\autocad-automation\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\autocad-automation\\references\\api-lookup.md",
+      "subskills\\autocad-automation\\references\\api-lookup.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\autocad-automation\\references\\engineering-patterns.md",
+      "subskills\\autocad-automation\\references\\engineering-patterns.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\autocad-automation\\references\\troubleshooting.md",
+      "subskills\\autocad-automation\\references\\troubleshooting.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\autocad-automation\\SKILL.md",
+      "subskills\\autocad-automation\\SKILL.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-engineering-drawing\\README.md",
+      "subskills\\solidworks-engineering-drawing\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-engineering-drawing\\references\\api-lookup.md",
+      "subskills\\solidworks-engineering-drawing\\references\\api-lookup.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-engineering-drawing\\references\\drawing.md",
+      "subskills\\solidworks-engineering-drawing\\references\\drawing.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-engineering-drawing\\references\\review.md",
+      "subskills\\solidworks-engineering-drawing\\references\\review.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-engineering-drawing\\SKILL.md",
+      "subskills\\solidworks-engineering-drawing\\SKILL.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-fillet-chamfer-cnc\\README.md",
+      "subskills\\solidworks-fillet-chamfer-cnc\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-fillet-chamfer-cnc\\references\\cnc-fillet-chamfer-lessons.md",
+      "subskills\\solidworks-fillet-chamfer-cnc\\references\\cnc-fillet-chamfer-lessons.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-fillet-chamfer-cnc\\SKILL.md",
+      "subskills\\solidworks-fillet-chamfer-cnc\\SKILL.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-threaded-holes\\README.md",
+      "subskills\\solidworks-threaded-holes\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-threaded-holes\\references\\threaded-hole-lessons.md",
+      "subskills\\solidworks-threaded-holes\\references\\threaded-hole-lessons.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-threaded-holes\\references\\threaded-hole-roadmap.md",
+      "subskills\\solidworks-threaded-holes\\references\\threaded-hole-roadmap.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-threaded-holes\\SKILL.md",
+      "subskills\\solidworks-threaded-holes\\SKILL.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-vibecad\\examples\\motor_mount_execution.md",
+      "subskills\\solidworks-vibecad\\examples\\motor_mount_execution.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-vibecad\\prompts\\solidworks_parametric_planner.md",
+      "subskills\\solidworks-vibecad\\prompts\\solidworks_parametric_planner.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-vibecad\\README.md",
+      "subskills\\solidworks-vibecad\\README.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-vibecad\\references\\vibecad-roadmap.md",
+      "subskills\\solidworks-vibecad\\references\\vibecad-roadmap.md"
+    ],
+    [
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\subskills\\solidworks-vibecad\\SKILL.md",
+      "subskills\\solidworks-vibecad\\SKILL.md"
+    ]
+  ],
+  "broken_links_total": 110,
+  "broken_with_redirect": [
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\README.md",
+      "link_text": "CAD Studio 用户说明书",
+      "target": "docs/CAD_STUDIO_USER_MANUAL.md",
+      "found": [
+        "docs\\CAD_STUDIO_USER_MANUAL.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\README.md",
+      "link_text": "用户说明书",
+      "target": "docs/CAD_STUDIO_USER_MANUAL.md",
+      "found": [
+        "docs\\CAD_STUDIO_USER_MANUAL.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/usage-guide.md`",
+      "target": "docs/usage-guide.md",
+      "found": [
+        "docs\\usage-guide.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/api-map.md`",
+      "target": "docs/api-map.md",
+      "found": [
+        "docs\\api-map.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/family-coverage.md`",
+      "target": "docs/family-coverage.md",
+      "found": [
+        "docs\\family-coverage.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/capability-matrix.md`",
+      "target": "docs/capability-matrix.md",
+      "found": [
+        "docs\\capability-matrix.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/gap-analysis.md`",
+      "target": "docs/gap-analysis.md",
+      "found": [
+        "docs\\gap-analysis.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/signature-audit.md`",
+      "target": "docs/signature-audit.md",
+      "found": [
+        "docs\\signature-audit.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md",
+      "link_text": "`docs/harvest-report.md`",
+      "target": "docs/harvest-report.md",
+      "found": [
+        "docs\\harvest-report.md"
+      ]
+    },
+    {
+      "from": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SUBSKILLS.md",
+      "link_text": "`docs/usage-guide.md`",
+      "target": "docs/usage-guide.md",
+      "found": [
+        "docs\\usage-guide.md"
+      ]
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "link_text": "`references/simulation-performance-memor",
+      "target": "simulation-performance-memory-gpu.md",
+      "found": [
+        "references\\simulation-performance-memory-gpu.md",
+        "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\simulation-performance-memory-gpu.md"
+      ]
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "link_text": "`references/simulation-performance-memor",
+      "target": "simulation-performance-memory-gpu.md",
+      "found": [
+        "references\\simulation-performance-memory-gpu.md",
+        "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\simulation-performance-memory-gpu.md"
+      ]
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "link_text": "`references/deployment-boundary.md`",
+      "target": "deployment-boundary.md",
+      "found": [
+        "references\\deployment-boundary.md",
+        "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\deployment-boundary.md"
+      ]
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "link_text": "`references/deployment-boundary.md`",
+      "target": "deployment-boundary.md",
+      "found": [
+        "references\\deployment-boundary.md",
+        "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\deployment-boundary.md"
+      ]
+    },
+    {
+      "from": "specs\\201-toolbar-gaps\\tasks.md",
+      "link_text": "`docs/toolbar-gaps-backend-limits.md`",
+      "target": "../docs/toolbar-gaps-backend-limits.md",
+      "found": [
+        "docs\\toolbar-gaps-backend-limits.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/multiway-agreement.md`",
+      "target": "../docs/recon/multiway-agreement.md",
+      "found": [
+        "docs\\recon\\multiway-agreement.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/competitor-signature-crossch",
+      "target": "../docs/recon/competitor-signature-crosscheck.md",
+      "found": [
+        "docs\\recon\\competitor-signature-crosscheck.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/precondition-vs-evidence.md`",
+      "target": "../docs/recon/precondition-vs-evidence.md",
+      "found": [
+        "docs\\recon\\precondition-vs-evidence.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/official-internal-conflicts.",
+      "target": "../docs/recon/official-internal-conflicts.md",
+      "found": [
+        "docs\\recon\\official-internal-conflicts.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/union-gap-tristate.md`",
+      "target": "../docs/recon/union-gap-tristate.md",
+      "found": [
+        "docs\\recon\\union-gap-tristate.md"
+      ]
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "link_text": "`docs/recon/fact-single-home.md`",
+      "target": "../docs/recon/fact-single-home.md",
+      "found": [
+        "docs\\recon\\fact-single-home.md"
+      ]
+    },
+    {
+      "from": "specs\\206-c1c6-harvest\\tasks.md",
+      "link_text": "docs/recon-206/pre-code-conflict-lookup.",
+      "target": "docs/recon-206/pre-code-conflict-lookup.md",
+      "found": [
+        "docs\\recon-206\\pre-code-conflict-lookup.md"
+      ]
+    }
+  ],
+  "broken_unresolvable": [
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "[swAppPr … | `swPropSheetType_e.md` |\n| ",
+      "target": "../../examples/Insert_Cavity_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Set Bodies for Move/Copy (C#)",
+      "target": "../../examples/Set_Bodies_for_Move_Copy_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get Bodies in Componets (VB.NET)",
+      "target": "../../examples/Get_Bodies_in_Components_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get Bodies in Components (C#)",
+      "target": "../../examples/Get_Bodies_in_Components_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get Text Items in GTol Frame (VB. NET)",
+      "target": "../../examples/Get_Text_Items_in_GTol_Frame_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get Text Items in GTol Frame (VB.NET)",
+      "target": "../../examples/Get_Text_Items_in_GTol_Frame_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Create Plots and Get Values (C#)",
+      "target": "../../examples/Create_Plots_and_Get_Values_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Create Plots and Get Values (VBA)",
+      "target": "../../examples/Create_Plots_and_Get_Values_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get More DimXpert Feature Examples (VBA)",
+      "target": "../../examples/Get_DimXpert_Feature2_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Tolerance2 Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Tolerance2_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Feature Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Feature Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "[IVertex::IGetC …<br>`IGetClosestPointOn",
+      "target": "../../examples/Create_Motion_Studies_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Create Motion Studies (VBA)",
+      "target": "../../examples/Create_Motion_Studies_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Tolerance4 Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Tolerance4_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "G …<br>`_overview.md` | Examples 块整体重复：3",
+      "target": "../../examples/Get_DimXpert_Tolerance_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Tolerance1 Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Tolerance1_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Tolerance1 Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Tolerance1_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "G …<br>`_overview.md` | - [Get DimXpert ",
+      "target": "../../examples/Get_DimXpert_Tolerance1_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Tolerance1 Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Tolerance1_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "G …<br>`_overview.md` | - [Get DimXpert ",
+      "target": "../../examples/Get_DimXpert_Tolerance1_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get and Set Pattern (C#)",
+      "target": "../../examples/Get_and_Set_Pattern_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Feature Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get DimXpert Feature Example (VBA)",
+      "target": "../../examples/Get_DimXpert_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "docs\\recon\\official-source-defects-2.md",
+      "link_text": "Get Dim …<br>`_overview.md` | - [Get Dim",
+      "target": "../../examples/Get_DimXpert_Feature_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\assembly_explode.md",
+      "link_text": "Create Exploded Views of an Assembly (VB",
+      "target": "../../examples/Create_Exploded_Views_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\assembly_explode.md",
+      "link_text": "Create Exploded Views of an Assembly (VB",
+      "target": "../../examples/Create_Exploded_Views_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\assembly_explode.md",
+      "link_text": "Create Exploded Views of an Assembly (C#",
+      "target": "../../examples/Create_Exploded_Views_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_combine_intersect.md",
+      "link_text": "Combine Bodies (C#)",
+      "target": "../../examples/Combine_Bodies_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_combine_intersect.md",
+      "link_text": "Combine Bodies (VB.NET)",
+      "target": "../../examples/Combine_Bodies_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_combine_intersect.md",
+      "link_text": "Combine Bodies (VBA)",
+      "target": "../../examples/Combine_Bodies_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_scale.md",
+      "link_text": "Insert Scale Feature (VBA)",
+      "target": "../../examples/Insert_Scale_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_scale.md",
+      "link_text": "Get Data for Scale Feature (VBA)",
+      "target": "../../examples/Get_Data_for_Scale_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_scale.md",
+      "link_text": "Get Data for Scale Feature (VB.NET)",
+      "target": "../../examples/Get_Data_for_Scale_Feature_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\feature_scale.md",
+      "link_text": "Get Data for Scale Feature (C#)",
+      "target": "../../examples/Get_Data_for_Scale_Feature_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\InsertNote.md",
+      "link_text": "Insert Note (VBA)",
+      "target": "../../examples/Insert_a_Note_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\InsertNote.md",
+      "link_text": "Create Block Definition and Insert Block",
+      "target": "../../examples/Create_Block_Definition_and_Insert_Block_Instance_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\InsertNote.md",
+      "link_text": "Create Block Definition and Insert Block",
+      "target": "../../examples/Create_Block_Definition_and_Insert_Block_Instance_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\InsertNote.md",
+      "link_text": "Create Block Definition and Insert Block",
+      "target": "../../examples/Create_Block_Definition_and_Insert_Block_Instance_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_flat_dxf.md",
+      "link_text": "Export Part to DWG (VBA)",
+      "target": "../../examples/Export_Part_To_DWG_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_flat_dxf.md",
+      "link_text": "Export Part to DWG (VB.NET)",
+      "target": "../../examples/Export_Part_To_DWG_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_flat_dxf.md",
+      "link_text": "Export Part to DWG (C#)",
+      "target": "../../examples/Export_Part_To_DWG_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_jog.md",
+      "link_text": "Get All Sheet Metal Feature Data (VBA)",
+      "target": "../../examples/Get_All_Sheet_Metal_Feature_Data_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_jog.md",
+      "link_text": "Get All Sheet Metal Feature Data (VB.NET",
+      "target": "../../examples/Get_All_Sheet_Metal_Feature_Data_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_jog.md",
+      "link_text": "Get All Sheet Metal Feature Data (C#)",
+      "target": "../../examples/Get_All_Sheet_Metal_Feature_Data_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Insert and Access Fold Feature (C#)",
+      "target": "../../examples/Insert_and_Access_Fold_Feature_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Insert and Access Fold Feature (VB.NET)",
+      "target": "../../examples/Insert_and_Access_Fold_Feature_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Insert and Access Fold Feature (VBA)",
+      "target": "../../examples/Insert_and_Access_Fold_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Get Fixed Face of Flat-Pattern Feature (",
+      "target": "../../examples/Get_Fixed_Face_of_Flat-Pattern_Feature_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Exclude Faces Before Flattening (VBA)",
+      "target": "../../examples/Exclude_Faces_Before_Flattening_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Exclude Faces Before Flattening (VB.NET)",
+      "target": "../../examples/Exclude_Faces_Before_Flattening_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\sm_unfold.md",
+      "link_text": "Exclude Faces Before Flattening (C#)",
+      "target": "../../examples/Exclude_Faces_Before_Flattening_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Insert MidSurface in Component (C#)",
+      "target": "../../examples/Insert_MidSurface_in_Component_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Insert MidSurface in Component (VB.NET)",
+      "target": "../../examples/Insert_MidSurface_in_Component_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Insert MidSurface in Component (VBA)",
+      "target": "../../examples/Insert_MidSurface_in_Component_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Get Areas of Midsurface Faces (C#)",
+      "target": "../../examples/Get_Areas_of_MidSurface_Faces_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Get Areas of Midsurface Faces (VB.NET)",
+      "target": "../../examples/Get_Areas_of_MidSurface_FAces_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\surface_midsurface.md",
+      "link_text": "Get Areas of Midsurface Faces (VBA)",
+      "target": "../../examples/Get_Areas_of_MidSurface_Faces_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (VBA)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (VB.NET)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (C#)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment Features (VBA)",
+      "target": "../../examples/Insert_Weldment_Features_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment Features (VB.NET)",
+      "target": "../../examples/Insert_Weldment_Features_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment Features (C#)",
+      "target": "../../examples/Insert_Weldment_Features_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (VBA)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (VB.NET)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "Insert Weldment End Cap (C#)",
+      "target": "../../examples/Insert_Weldment_End_Cap_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_end_cap.md",
+      "link_text": "List End-cap Feature Properties (VBA)",
+      "target": "../../examples/List_End-Cap_Feature_Properties_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_symbol.md",
+      "link_text": "Insert Weld Symbol Example (VBA)",
+      "target": "../../examples/Insert_Weld_Symbol_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_symbol.md",
+      "link_text": "Insert Weld Symbol Example (VB.NET)",
+      "target": "../../examples/Insert_Weld_Symbol_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_symbol.md",
+      "link_text": "Insert Weld Symbol Example (C#)",
+      "target": "../../examples/Insert_Weld_Symbol_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Insert Weldment Features (VBA)",
+      "target": "../../examples/Insert_Weldment_Features_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Insert Weldment Features (VB.NET)",
+      "target": "../../examples/Insert_Weldment_Features_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Insert Weldment Features (C#)",
+      "target": "../../examples/Insert_Weldment_Features_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Get Weldment Trim Extend Corner Type (VB",
+      "target": "../../examples/Get_Weldment_Trim_Extend_Corner_Type_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Get Weldment Trim Extend Corner Type (VB",
+      "target": "../../examples/Get_Weldment_Trim_Extend_Corner_Type_Example_VBNET.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api\\weld_trim_extend.md",
+      "link_text": "Get Weldment Trim Extend Corner Type (C#",
+      "target": "../../examples/Get_Weldment_Trim_Extend_Corner_Type_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api-pre\\api-10-routing-pdm-anim.md",
+      "link_text": "ISldWorks::GetAddInObject",
+      "target": "../../types/ISldWorks/GetAddInObject.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api-pre\\api-10-routing-pdm-anim.md",
+      "link_text": "IPDMDocManager::SetManagedDocument",
+      "target": "../../types/IPDMDocManager/SetManagedDocument.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api-pre\\api-10-routing-pdm-anim.md",
+      "link_text": "IPDMDocManager::SetDocumentStatus",
+      "target": "../../types/IPDMDocManager/SetDocumentStatus.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\api-pre\\api-10-routing-pdm-anim.md",
+      "link_text": "swPDMStatus_e.swPDMStatusKnownAndAvailab",
+      "target": "../../enums/swPDMStatus_e.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\audit-vs-official\\audit-04-assembly-A.md",
+      "link_text": "Alignment",
+      "target": "../types/IMate2/Alignment.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\audit-vs-official\\audit-04-assembly-A.md",
+      "link_text": "Type",
+      "target": "../types/IMate2/Type.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\audit-vs-official\\audit-04-assembly-A.md",
+      "link_text": "MateEntity",
+      "target": "../types/IMate2/MateEntity.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\verify50\\vd50-H-3.md",
+      "link_text": "Insert and Access Fold Feature (C#)",
+      "target": "../../examples/Insert_and_Access_Fold_Feature_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\verify50\\vd50-H-4.md",
+      "link_text": "Capture 3D View (VBA)",
+      "target": "../../examples/Capture_3DView_Example_VB.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\verify50\\vd50-H-4.md",
+      "link_text": "Insert Camera (C#)",
+      "target": "../../examples/Insert_Camera_Example_CSharp.md",
+      "found": []
+    },
+    {
+      "from": "specs\\202-user-coverage-gaps\\recon\\verify50\\vd50-H-4.md",
+      "link_text": "Create, Unlink, and Purge Display States",
+      "target": "../../examples/Create,_Unlink,_and_Purge_Display_States_in_Part_Example_CSharp.md",
+      "found": []
+    }
+  ]
+}
