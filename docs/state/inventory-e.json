@@ -1,0 +1,513 @@
+{
+  "gate_files": 55,
+  "wired": 52,
+  "not_wired": [
+    "check_fact_single_home.py",
+    "check_member_owner_interface.py",
+    "check_official_source_defects.py"
+  ],
+  "kinds": {
+    "release_static": 51,
+    "diagnostic": 3,
+    "<未登记>": 1
+  },
+  "with_selftest": 7,
+  "classification_entries": 59,
+  "rows": [
+    {
+      "gate": "check_arity_tables_vs_reflection.py",
+      "lines": 343,
+      "doc": "★ 门禁：`*_ARITY` 表声明的实参个数，必须与**出厂反射转储**按**显式声明的 by-ref 约定**对得上。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_arity_tables_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_assembly_doc_call_shape.py",
+      "lines": 386,
+      "doc": "★ 门禁：`call_assembly_doc(doc, \"<成员>\", …)` 的**调用形状** —— arity + by-ref 占位。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_assembly_doc_call_shape_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_assumption_ledger.py",
+      "lines": 187,
+      "doc": "★ 门禁：`docs/assumption-ledger.md` 的假设状态必须自洽，且未验证假设不得充当证据。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_assumption_ledger_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_backend_limited_completeness.py",
+      "lines": 251,
+      "doc": "★ 门禁：**名单的完整性** —— ★ 该进「后端到不了」的，有没有漏。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_backend_limited_completeness_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_backend_limited_evidence.py",
+      "lines": 126,
+      "doc": "★ 门禁：**「后端到不了」名单**的每条都必须**写明依据**（★ 任务书那句的机器判据）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_backend_limited_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_cd_host_scope.py",
+      "lines": 461,
+      "doc": "★ 门禁：`CreateDefinition` 站点的常量必须落在**官方宿主页**的域内，且映射必须与官方点名一致。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_cd_host_scope_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_corpus_shape.py",
+      "lines": 121,
+      "doc": "★ 门禁：语料里的**列表字段**不许出现**嵌套列表**（★ 数据形状门禁）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_corpus_shape_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_create_definition_site_disposition.py",
+      "lines": 391,
+      "doc": "★ 门禁：`CreateDefinition` 站点的**逐站点处置**必须表态，且处置必须与事实相符。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_cd_site_disposition_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_diff_markers.py",
+      "lines": 183,
+      "doc": "检查新增/改动文件里是否混入了 diff 记号（`+` / `*` 前缀的注释行）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_marker_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_digest_freshness.py",
+      "lines": 109,
+      "doc": "@brief 门禁：`docs/harvest-digest.md` 必须与 `tools/gen_harvest_digest.py` 的输出一致。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_digest_freshness_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_arg_guard.py",
+      "lines": 639,
+      "doc": "★ 门禁：`local` 桶调用点的**候选值集**必须可枚举，且候选值要在官方两源里查得到。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_arg_guard_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_blindspot_guard.py",
+      "lines": 256,
+      "doc": "★ 门禁：分发口调用点的**解析盲区**（5 种解析器看不见的调用形态）**非 0 即红**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_blindspot_guard_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_byref_guard.py",
+      "lines": 398,
+      "doc": "★ 门禁：**分发口调用点**的标量 by-ref 占位（把 spec 230 的「可解析面」接进判据）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_byref_guard_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_entry_guard.py",
+      "lines": 818,
+      "doc": "★ 门禁：**分发口**（把「成员名」当参数转发给 COM 包装器的函数）必须逐个表态。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_entry_guard_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_forward_arg_guard.py",
+      "lines": 401,
+      "doc": "★ 门禁：分发口**调用点**的非字面量成员名实参必须可枚举，或显式表态。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_forward_arg_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_dispatch_upstream_guard.py",
+      "lines": 355,
+      "doc": "★ 门禁：分发口 `upstream` 声明的**上游覆盖**必须与事实相符（封闭桶 + 自证）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_dispatch_upstream_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_enum_values_vs_reflection.py",
+      "lines": 686,
+      "doc": "@brief 门禁：代码里写的**官方枚举值**，必须与**出厂反射**对得上。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_enum_values_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_env_pitfalls.py",
+      "lines": 528,
+      "doc": "@brief 环境坑静态检查：`subprocess` 缺 `encoding=` / `Path(\"<盘符>:\")` 当盘根。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_env_pitfalls_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_fact_provenance.py",
+      "lines": 204,
+      "doc": "★ 门禁：`docs/*.md` 里的量化断言必须能追溯到出处。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_fact_provenance_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_fact_single_home.py",
+      "lines": 117,
+      "doc": "★ 门禁（告警级）：一个事实一个家 —— 别的文档不该逐字复述 `known-facts.md` 的事实正文。",
+      "wired_in_release_check": false,
+      "kind": "diagnostic",
+      "runner": "_run_fact_single_home_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_gate_wiring.py",
+      "lines": 463,
+      "doc": "@brief 元门禁：`scripts/check_*.py` 每个都必须**被 `release_check.py` 调用**，或**显式豁免带理由**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_gate_wiring_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_interface_member_ownership.py",
+      "lines": 808,
+      "doc": "@brief 接口归属检查 —— 装上**可核验的 `CONST → 接口` 映射表**，补上已知事实 36 的盲点。",
+      "wired_in_release_check": true,
+      "kind": "diagnostic",
+      "runner": "_run_interface_ownership_probe",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_known_facts_triage.py",
+      "lines": 115,
+      "doc": "★ 门禁：`known-facts.md` 的每一条事实都要有处置（吸收 / 放过 + 理由）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_known_facts_triage_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_lean_first_line_caveat.py",
+      "lines": 158,
+      "doc": "★ 首句自证门禁：结论必须落在 **lean 投影看得见的第一句**里。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_lean_first_line_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_length_units_guard.py",
+      "lines": 169,
+      "doc": "★ 单位纪律**门禁**：有长度形参的工具，进 COM 前**必须**有换算痕迹。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_length_units_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_license_redlines.py",
+      "lines": 220,
+      "doc": "@brief **A6 许可红线门禁**：代码里声明的来源与许可必须在**白名单**内，且有据可查。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_license_redlines_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_member_names.py",
+      "lines": 295,
+      "doc": "门禁：所有 ``get_com_member(obj, \"X\")`` 的 X 必须在官方反射清单里查得到。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_member_name_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_member_owner_interface.py",
+      "lines": 578,
+      "doc": "@brief 检查器：`get_com_member(<owner>, \"X\")` 里的 `X` **在不在 `owner` 的接口上**。",
+      "wired_in_release_check": false,
+      "kind": "diagnostic",
+      "runner": "",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_negative_input_selfproof.py",
+      "lines": 172,
+      "doc": "@brief 审计：`tools/` 下探针里「**负例输入**」是否**自证**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_negative_input_selfproof_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_official_md_claims.py",
+      "lines": 281,
+      "doc": "门禁：代码里「官方没有 X」的断言，必须在**官方页**里核过 —— 断言与官方页相反即拦。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_official_md_claims_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_official_source_defects.py",
+      "lines": 264,
+      "doc": "★ 门禁：拦住「照官方源里的**错拼标识符**写代码」（★ 输入是另一个对话已核验的 964 条缺陷）。",
+      "wired_in_release_check": false,
+      "kind": "",
+      "runner": "",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_param_binding.py",
+      "lines": 321,
+      "doc": "门禁：**工具声明的参数必须\"有归属\"** —— 让「漏写 `param_alias`」这一类**不可能再发生**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_param_binding_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_preselect_family.py",
+      "lines": 343,
+      "doc": "★ 门禁：不许再挂「要求调用方先选、却没有任何入口能选」的工具（注册 ≠ 能跑）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_preselect_family_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_probe_reuse.py",
+      "lines": 338,
+      "doc": "★ 门禁：不许再手搓「已有工具的替代品」—— ★ 为某能力写的探针，若该能力已有工具，就报出来。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_probe_reuse_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_property_form_members.py",
+      "lines": 329,
+      "doc": "★ 门禁：代码里写 `get_X` / `set_X` 当**成员名**用 —— 而官方那个名字**只有属性形**（`X`）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_property_form_members_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_provenance.py",
+      "lines": 437,
+      "doc": "来源可追溯性静态门禁（AGENTS.md 铁律 1 / 验收 A2）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_provenance_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_python_syntax.py",
+      "lines": 111,
+      "doc": "★ 门禁：**每个 `.py` 必须能 `ast.parse`**（★ 本会话同一处踩了**四次** ⇒ 机械化）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_python_syntax_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_refuted_patterns.py",
+      "lines": 87,
+      "doc": "★ C8 · 台账分叉门禁 —— ★ 已证伪清单的锚点必须**逐字**命中 `docs/known-facts.md`。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_refuted_patterns_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_relative_imports.py",
+      "lines": 116,
+      "doc": "★ 门禁：函数内的相对导入必须带兜底（否则非包导入路径下必炸）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_relative_imports_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_repo_uniformity.py",
+      "lines": 565,
+      "doc": "仓库统一化体检：判据全部来自权威工具与既有规范，不自定义标准。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_repo_uniformity_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_report_criteria_alignment.py",
+      "lines": 188,
+      "doc": "@brief 门禁：**所有**逐条自评表的 A 编号必须与 `AGENTS.md §一` 的 A1–A10 一致。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_report_criteria_alignment_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_report_freshness.py",
+      "lines": 269,
+      "doc": "@brief 交付报告数字新鲜度门禁：`harvest-report.md` 声称的「偏离上游」必须与 git 实际一致。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_report_freshness_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_review_ids.py",
+      "lines": 184,
+      "doc": "★ 门禁：评审稿里引用的 `L1-/L2-/L3-` 编号必须**真的存在**，且括号里的描述要对得上。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_review_ids_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_signature_audit_freshness.py",
+      "lines": 374,
+      "doc": "@brief 签名审计表新鲜度门禁：`signature-audit.md` 的**逐模块调用点数**必须与实跑一致。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_signature_audit_freshness_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_sketch_definition.py",
+      "lines": 164,
+      "doc": "★ 门禁：有草图的语料条目必须写清「草图完全定义」三要素（位置/大小/形状关系）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_sketch_definition_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_spec_acceptance_paths.py",
+      "lines": 221,
+      "doc": "@brief 验收命令的可跑性门禁：`→ 验收:` 行点到的脚本必须**在仓库里**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_spec_acceptance_paths_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_survey_cards.py",
+      "lines": 112,
+      "doc": "★ 卡片门禁：`docs/survey/cards/*.md` 必须满足四条验收判据（判据见 `docs/ai-3d-survey-plan.md` §4）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_survey_cards_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_tools_index_fresh.py",
+      "lines": 187,
+      "doc": "★ 门禁：`docs/tools-index.md` 必须与 `tools/` 实际内容一致（防索引腐化）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_tools_index_fresh_gate",
+      "has_selftest": true
+    },
+    {
+      "gate": "check_undefined_names.py",
+      "lines": 266,
+      "doc": "★ 门禁：扫出**未定义名**（`NameError` 隐患）—— `compile()` 抓不到的那一类。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_undefined_names_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_union_conventions.py",
+      "lines": 783,
+      "doc": "并入规范门禁 —— 校验 docs/union-conventions.md 定义的五条硬规则。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_union_conventions_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_unit_conversion_count.py",
+      "lines": 288,
+      "doc": "★ 单位换算次数门禁：换算必须**恰好一次**。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_unit_conversion_count_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_unreachable_members.py",
+      "lines": 190,
+      "doc": "★ 门禁：**别去调那些\"已证到不了\"的成员**（★ 名单每条带证据）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_unreachable_members_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_user_preference_writes.py",
+      "lines": 246,
+      "doc": "★ 门禁：写 SolidWorks **全局用户偏好**的每一处都必须是\"可还原\"的（★ 事实 525）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_user_preference_writes_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_verified_evidence.py",
+      "lines": 138,
+      "doc": "★ 门禁：**`level: verified` 必须带我们自己的运行证据**（★ A4 的机器判据）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_verified_evidence_gate",
+      "has_selftest": false
+    },
+    {
+      "gate": "check_workspace_shadowing.py",
+      "lines": 175,
+      "doc": "@brief 检查**工作区根**有没有会遮蔽依赖包的模块（`mcp.py` 这类）。",
+      "wired_in_release_check": true,
+      "kind": "release_static",
+      "runner": "_run_workspace_shadowing_gate",
+      "has_selftest": false
+    }
+  ]
+}

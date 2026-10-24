@@ -1,0 +1,291 @@
+{
+  "top_dirs_total": 42,
+  "top_files_total": 29,
+  "top_files": [
+    ".gitignore",
+    ".mcpbignore",
+    "AGENTS.md",
+    "capabilities.yaml",
+    "CONTRIBUTING.md",
+    "ctl.py",
+    "golden-workflows.yaml",
+    "INPUT-ANOMALY-INVESTIGATION.md",
+    "install.js",
+    "LICENSE",
+    "manifest.json",
+    "package.json",
+    "project.yaml",
+    "pyproject.toml",
+    "README-workspace.md",
+    "README.md",
+    "REPORTING-STYLE-PROPOSAL.md",
+    "requirements-mesh.txt",
+    "requirements-occt.txt",
+    "requirements-pdf.txt",
+    "requirements.txt",
+    "RESTART-HANDOFF.md",
+    "SECURITY.md",
+    "shot.py",
+    "SKILL.md",
+    "SUBSKILLS.md",
+    "THIRD-PARTY-NOTICES.md",
+    "toolbox-research.md",
+    "uv.lock"
+  ],
+  "top_dirs": [
+    {
+      "name": ".api-signatures",
+      "files": 1,
+      "mb": 0.7,
+      "git_ignored": true
+    },
+    {
+      "name": ".codebase-memory",
+      "files": 3,
+      "mb": 28.2,
+      "git_ignored": true
+    },
+    {
+      "name": ".dsh",
+      "files": 2,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": ".github",
+      "files": 3,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": ".pytest_cache",
+      "files": 5,
+      "mb": 0.0,
+      "git_ignored": true
+    },
+    {
+      "name": ".ruff_cache",
+      "files": 9,
+      "mb": 0.1,
+      "git_ignored": true
+    },
+    {
+      "name": ".specify",
+      "files": 31,
+      "mb": 0.2,
+      "git_ignored": false
+    },
+    {
+      "name": ".workbuddy-ai",
+      "files": 8,
+      "mb": 0.5,
+      "git_ignored": true
+    },
+    {
+      "name": "_proof",
+      "files": 8,
+      "mb": 18.6,
+      "git_ignored": false
+    },
+    {
+      "name": "_raw",
+      "files": 150,
+      "mb": 23.2,
+      "git_ignored": true
+    },
+    {
+      "name": "agents",
+      "files": 1,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "AI Solidworks",
+      "files": 29749,
+      "mb": 314.7,
+      "git_ignored": true
+    },
+    {
+      "name": "ai_team",
+      "files": 8,
+      "mb": 0.1,
+      "git_ignored": false
+    },
+    {
+      "name": "apps",
+      "files": 652,
+      "mb": 30.3,
+      "git_ignored": false
+    },
+    {
+      "name": "archive",
+      "files": 2841,
+      "mb": 76.8,
+      "git_ignored": false
+    },
+    {
+      "name": "assets",
+      "files": 4,
+      "mb": 1.3,
+      "git_ignored": false
+    },
+    {
+      "name": "audit",
+      "files": 1,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "batch_evidence",
+      "files": 34,
+      "mb": 1.5,
+      "git_ignored": false
+    },
+    {
+      "name": "cadir",
+      "files": 4,
+      "mb": 10.7,
+      "git_ignored": true
+    },
+    {
+      "name": "commit-messages",
+      "files": 195,
+      "mb": 0.5,
+      "git_ignored": false
+    },
+    {
+      "name": "corpus",
+      "files": 3,
+      "mb": 0.8,
+      "git_ignored": false
+    },
+    {
+      "name": "docs",
+      "files": 286,
+      "mb": 9.1,
+      "git_ignored": false
+    },
+    {
+      "name": "dotnet",
+      "files": 7,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "evidence",
+      "files": 58,
+      "mb": 12.4,
+      "git_ignored": false
+    },
+    {
+      "name": "examples",
+      "files": 16,
+      "mb": 0.1,
+      "git_ignored": false
+    },
+    {
+      "name": "explore",
+      "files": 4,
+      "mb": 0.3,
+      "git_ignored": false
+    },
+    {
+      "name": "mcp-server",
+      "files": 245,
+      "mb": 2.3,
+      "git_ignored": false
+    },
+    {
+      "name": "mcp-tool-draft",
+      "files": 1,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "MCP_CALIB",
+      "files": 4,
+      "mb": 18.3,
+      "git_ignored": true
+    },
+    {
+      "name": "metadata",
+      "files": 10,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "net-guard",
+      "files": 5,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "output",
+      "files": 9604,
+      "mb": 510.9,
+      "git_ignored": false
+    },
+    {
+      "name": "references",
+      "files": 22,
+      "mb": 0.1,
+      "git_ignored": false
+    },
+    {
+      "name": "research",
+      "files": 7,
+      "mb": 6.1,
+      "git_ignored": false
+    },
+    {
+      "name": "scripts",
+      "files": 526,
+      "mb": 25.8,
+      "git_ignored": false
+    },
+    {
+      "name": "shots",
+      "files": 273,
+      "mb": 49.9,
+      "git_ignored": true
+    },
+    {
+      "name": "solidpilot-salvage",
+      "files": 241,
+      "mb": 11.0,
+      "git_ignored": false
+    },
+    {
+      "name": "specs",
+      "files": 2369,
+      "mb": 52.3,
+      "git_ignored": false
+    },
+    {
+      "name": "subskills",
+      "files": 80,
+      "mb": 1.1,
+      "git_ignored": false
+    },
+    {
+      "name": "swpublished",
+      "files": 2,
+      "mb": 0.0,
+      "git_ignored": false
+    },
+    {
+      "name": "tests",
+      "files": 980,
+      "mb": 14.7,
+      "git_ignored": false
+    },
+    {
+      "name": "tools",
+      "files": 1281,
+      "mb": 11.5,
+      "git_ignored": false
+    }
+  ],
+  "ignored_entries": 2696,
+  "tracked_files": 8293
+}
