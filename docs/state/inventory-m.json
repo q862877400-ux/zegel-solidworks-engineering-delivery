@@ -1,0 +1,303 @@
+{
+  "scope": "tests/test_*_gate.py",
+  "budget_seconds": 1200,
+  "per_file_timeout": 240,
+  "aggregate": {
+    "files_run": 34,
+    "passed": 258,
+    "warning": 112,
+    "skipped": 2,
+    "failed": 1
+  },
+  "files_with_nonzero_exit": [
+    {
+      "file": "test_spec212_rule2b_gate.py",
+      "exit": 1,
+      "counts": {
+        "passed": 6,
+        "failed": 1
+      }
+    }
+  ],
+  "skipped_for_budget": [],
+  "rows": [
+    {
+      "file": "test_assumption_ledger_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 10
+      }
+    },
+    {
+      "file": "test_backend_limited_completeness_gate.py",
+      "exit": 0,
+      "seconds": 0.4,
+      "counts": {
+        "passed": 8
+      }
+    },
+    {
+      "file": "test_backend_limited_evidence_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 6
+      }
+    },
+    {
+      "file": "test_ec00_legacy_entry_hard_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 8
+      }
+    },
+    {
+      "file": "test_enum_values_gate.py",
+      "exit": 0,
+      "seconds": 0.4,
+      "counts": {
+        "passed": 10
+      }
+    },
+    {
+      "file": "test_env_pitfalls_gate.py",
+      "exit": 0,
+      "seconds": 22.2,
+      "counts": {
+        "passed": 16,
+        "warning": 8
+      }
+    },
+    {
+      "file": "test_fact_provenance_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 9
+      }
+    },
+    {
+      "file": "test_fact_single_home_gate.py",
+      "exit": 0,
+      "seconds": 0.5,
+      "counts": {
+        "passed": 5
+      }
+    },
+    {
+      "file": "test_inject_binding_gate.py",
+      "exit": 0,
+      "seconds": 0.4,
+      "counts": {
+        "passed": 4
+      }
+    },
+    {
+      "file": "test_judge_preflight_gate.py",
+      "exit": 0,
+      "seconds": 0.8,
+      "counts": {
+        "passed": 6
+      }
+    },
+    {
+      "file": "test_lean_first_line_caveat_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 11
+      }
+    },
+    {
+      "file": "test_license_redlines_gate.py",
+      "exit": 0,
+      "seconds": 0.9,
+      "counts": {
+        "passed": 11
+      }
+    },
+    {
+      "file": "test_mesh_size_memory_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 16
+      }
+    },
+    {
+      "file": "test_negative_input_selfproof_gate.py",
+      "exit": 0,
+      "seconds": 0.5,
+      "counts": {
+        "passed": 5
+      }
+    },
+    {
+      "file": "test_official_md_claims_gate.py",
+      "exit": 0,
+      "seconds": 3.5,
+      "counts": {
+        "passed": 6
+      }
+    },
+    {
+      "file": "test_official_source_defects_gate.py",
+      "exit": 0,
+      "seconds": 0.6,
+      "counts": {
+        "passed": 4
+      }
+    },
+    {
+      "file": "test_preselect_family_gate.py",
+      "exit": 0,
+      "seconds": 0.9,
+      "counts": {
+        "passed": 7
+      }
+    },
+    {
+      "file": "test_probe_reuse_gate.py",
+      "exit": 0,
+      "seconds": 1.1,
+      "counts": {
+        "passed": 5
+      }
+    },
+    {
+      "file": "test_property_form_members_gate.py",
+      "exit": 0,
+      "seconds": 4.2,
+      "counts": {
+        "passed": 4,
+        "warning": 4
+      }
+    },
+    {
+      "file": "test_refuted_patterns_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 3
+      }
+    },
+    {
+      "file": "test_relative_imports_gate.py",
+      "exit": 0,
+      "seconds": 0.9,
+      "counts": {
+        "passed": 4
+      }
+    },
+    {
+      "file": "test_report_criteria_alignment_gate.py",
+      "exit": 0,
+      "seconds": 0.5,
+      "counts": {
+        "passed": 7
+      }
+    },
+    {
+      "file": "test_report_freshness_gate.py",
+      "exit": 0,
+      "seconds": 0.4,
+      "counts": {
+        "passed": 7,
+        "skipped": 2
+      }
+    },
+    {
+      "file": "test_review_ids_gate.py",
+      "exit": 0,
+      "seconds": 1.8,
+      "counts": {
+        "passed": 10
+      }
+    },
+    {
+      "file": "test_signature_audit_freshness_gate.py",
+      "exit": 0,
+      "seconds": 1.4,
+      "counts": {
+        "passed": 8
+      }
+    },
+    {
+      "file": "test_sketch_definition_gate.py",
+      "exit": 0,
+      "seconds": 2.2,
+      "counts": {
+        "passed": 13
+      }
+    },
+    {
+      "file": "test_spec212_rule2b_gate.py",
+      "exit": 1,
+      "seconds": 0.4,
+      "counts": {
+        "passed": 6,
+        "failed": 1
+      }
+    },
+    {
+      "file": "test_spec_acceptance_paths_gate.py",
+      "exit": 0,
+      "seconds": 1.0,
+      "counts": {
+        "passed": 9
+      }
+    },
+    {
+      "file": "test_tools_index_fresh_gate.py",
+      "exit": 0,
+      "seconds": 4.4,
+      "counts": {
+        "passed": 8
+      }
+    },
+    {
+      "file": "test_undefined_names_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 7
+      }
+    },
+    {
+      "file": "test_unit_conversion_count_gate.py",
+      "exit": 0,
+      "seconds": 1.7,
+      "counts": {
+        "passed": 6,
+        "warning": 92
+      }
+    },
+    {
+      "file": "test_unreachable_members_gate.py",
+      "exit": 0,
+      "seconds": 0.5,
+      "counts": {
+        "passed": 6
+      }
+    },
+    {
+      "file": "test_user_preference_writes_gate.py",
+      "exit": 0,
+      "seconds": 4.1,
+      "counts": {
+        "passed": 7,
+        "warning": 8
+      }
+    },
+    {
+      "file": "test_verified_evidence_gate.py",
+      "exit": 0,
+      "seconds": 0.3,
+      "counts": {
+        "passed": 6
+      }
+    }
+  ]
+}

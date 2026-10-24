@@ -102,8 +102,8 @@
 |---|---|---|
 | S7 | **K 声明 ↔ 实现签名** | ✅ 已提交（`facts/K-signature.md`）|
 | S8 | **L 能力 evidence 核验** | ✅ 已提交（`facts/L-evidence.md`）|
-| S9 | M 测试执行期结果 | ⬜ 下一轮 |
-| S10 | N 仓库外来源 + 未触碰目录 | ⬜ |
+| S9 | **M 测试执行期结果** | ✅ 已提交（`facts/M-tests-run.md`）|
+| S10 | N 仓库外来源 + 未触碰目录 | ⬜ 下一轮 |
 | S11 | O 文档归并 | ⬜ |
 
 **每轮收工**：① 事实写入对应 `facts/*.md`；② 更新本文件进度表；③ `python tools/commit_mine.py` 提交；
