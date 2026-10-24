@@ -32,3 +32,63 @@
 
 **为什么**：2026-10-01轮 24 我在主进程调`create_mesh`（还用了过大的`element_size`），把会话卡住；此后连续 7轮每轮开头只"再探一次"，一次也没处置⇒白等 7轮。轮 31 动手（清残留 python → `Stop-Process` → 重连）⇒立刻`connect: True · revision 34.4.1`。⇒★同一个状态反复观察 ≠ 处置（与事实 53 同族：连续修补 ≥3次就该停下换做法）。★脚本自带安全判定：先把 SW 主窗口标题里的打开文档逐个分类，只要有一个不是自己的就拒绝重启（依据：全局纪律「回收自己开的资源」与「不删用户数据」）。
 
+
+## <a id="mission-rationale"></a>mission-rationale
+
+选按需搬取、不整体继承的理由：整体继承会把上游的目录结构、命名与验证口径整套带进来，与同时要并入的四家外部项目在同一批文件里打架；搬一件过一遍六条规则，冲突在搬的那一刻解决，不留给后面。
+
+「引用各家」不等于不用上游代码：上游`mcp-server/server.py`（104 KB，45个工具的现成实现，我们一行没改）与 49个`scripts/*.py`是要用的，只是身份从「本仓库的历史基底」降为来源之一，与四家同等，MIT 版权声明照留。
+
+这仍是缝合项目，不是从零写：能力来自官方文档、外部开源项目与本仓库既有模式。
+
+## <a id="guard-design"></a>guard-design
+
+- 弹窗会让 COM 调用永久冻住⇒我先前的脚本"卡住一动不动"正是它。护栏给每个调用硬超时 + 子进程，最坏也会返回。
+- **`PrintWindow`会挂在模态框上**（它向目标窗口发消息请其自绘，而模态框正在自己的消息循环里等人）；⇒截图已改`BitBlt`（只从屏幕 DC 拷像素、不发消息，实测 0.01 s）。
+- **报信不等于处置**：护栏的哨兵进调用前先扫（旧弹窗也管）+ 执行中每 0.5 s 再扫，发现即记证 + 点掉，并把内容随返回值带回来（`dialogs`字段）⇒我每次都看得到根因线索。
+- **点是分两段的**：`PostMessage`（快）⇒验窗口是否真消失（`still_present`）⇒没消失才上 真实输入事件。★`hung=True`的窗口消息永远不被取出，只有真输入事件有效。
+- ★★处置要分级（`classify_dialog`）——这是"走 LLM"的落点：`auto`（唯一语义明确的确认按钮）⇒自动点；`needs_llm`（多义按钮/进度窗）·`forbidden`（危险词/在提问）⇒不点，★★并立刻`taskkill`掉那个被冻住的调用（`aborted_for_llm: true`）， 把证据交回我，我在下一次动作里判、我点。 "要 LLM 判" ≠ "原地等 LLM"——那个时刻我正阻塞在等工具返回，原地等就是死锁。
+- ★判据不许认类名（那是偶然的）：认 SolidWorks 家族进程（按 exe 路径：`sldworks`/`sldProcMon`/`swCefSubProc`/`cwbcbfmesh`/`sldsurfacing`/`sldworks_fs` …）+ 像弹窗（`#32770`或有`Button`或 有可读文本）+ 兜底（家族内"不像弹窗"的也报，不让盲区静默失效）。
+- ★配套测试：`tests/test_sw_guard_dialog_tiers.py`（★三级的契约 + 负例；★改判据必须让它继续绿）。
+
+## <a id="round-chain-detail"></a>round-chain-detail
+
+- **不要再单独跑** `check_union_conventions.py`/`check_param_binding.py`/`check_digest_freshness.py`/`check_report_freshness.py`——`release_check.py`内部已有 18 道门禁，含这四个（AST 扫出来的，非推测）。
+- **全量 pytest 只在两种情况跑**：① 发布前；② 改了`sw_connect.py`或门禁本体（被大量测试共用）。
+- 生成器（`sync_bundled_skill`/`gen_metrics`/`gen_harvest_digest`/`build_union_map`/`gen_level_audit`） 必须先跑：门禁查的是它们的产物。
+- 「偏离上游」那行已由脚本先算好预置，所以`release_check`一轮即绿（原先白花 31.5 s 跑第二轮）。
+
+## <a id="ironlaw1-sources"></a>ironlaw1-sources
+
+每加一个能力，要能指认出处。四种合法来源：
+| 来源 | 怎么用 | 例 |
+|---|---|---|
+| 官方 API 文档 | 决定接口选型与参数顺序 | Simulation 域（外部无人提供，只能照官方签名建） |
+| 其它开源项目 | 直接移植/改写，保留来源头注释 | 建视图 ← codestack；VBScript ← pengxiaoan |
+| 四家外部 MCP 项目 | 移植其能力广度，按`provenance`标注来源与许可 | `andrewbartels1`的草图完全定义探针；`Slacker-LLC`的声明式 selection |
+| 本项目自身既有模式 | 沿用`sw_part.py`/`sw_hole_features.py`的写法与命名 | 新`sw_xxx.py`沿用`_select_by_id`/`get_com_member` |
+
+## <a id="probe-howto"></a>probe-howto
+
+```
+① 从 mcp-server 的 ToolSpec 读它声明的 inject 与 params（`rc.all_specs()`）。
+② 按那个契约准备实参（inject='study' 就给 study、inject='sw_app' 就给 ISldWorks、inject='model' 就给文档）。
+③ 只有工具层本身有 bug 时才去调内部实现，并在记录里写明"这是内部函数，参数契约与工具层不同"。
+```
+
+## <a id="py-template-code"></a>py-template-code
+
+```python
+"""★ 一句话说清这个文件干什么。"""          # ← ★ 只一行，**不要多行**
+                                            #    空行
+# ── 来源 ─────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖     # ← ★ 六字段
+# ─────────────────────────────────────────
+from __future__ import annotations
+```
+
+## <a id="13-deadends-code"></a>13-deadends-code
+
+```
+docs/dead-ends.md      # ★ 由 tools/gen_dead_ends.py 生成（45 条 / 28 能力）
+```
