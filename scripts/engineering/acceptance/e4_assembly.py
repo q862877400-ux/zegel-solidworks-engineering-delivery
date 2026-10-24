@@ -77,8 +77,112 @@ def collect_assembly(
     )
 
 
+def judge_assembly_interference(
+    obs: Observation, *, requirement_id: str
+) -> CheckResult:
+    """★ 判定器：E4 的**真机可验**子项 —— 配合存在 + 干涉 0 + 间隙有依据。
+
+    ## ★★ 为什么拆出这一条
+
+    `specs/350-first-part-delivery/source-verification.md` 三源确认：
+    **SolidWorks API 没有数值自由度读取入口**（1032 接口 / 20627 成员零命中）。
+
+    ⇒ 若 E4 只有一个「DOF 必须等于目标」的判定器，它在真机上**永远拿不到数**
+      ⇒ E4 永远 `unknown` ⇒ 报告永远不绿 ⇒ 但产物可能完全合格。
+
+    ⇒ 拆成两条检查，各自独立出结论：
+
+    | check_id | 内容 | 真机可验 |
+    |---|---|---|
+    | `E4.interference` | 配合存在、干涉 0、间隙有依据 | ✅ 可验 |
+    | `E4.dof` | 剩余自由度符合意图 | ❌ 读不到 ⇒ `unknown` |
+
+    ★ 这不是放宽 E4 —— 拆分后**两条都要绿**才算 E4 成立。
+      拆分只是让报告能说清「是哪一项验不了」，而不是把整条判成不合格。
+    """
+    base = dict(
+        check_id="E4.interference",
+        requirement_id=requirement_id,
+        target=obs.target,
+        observation_complete=obs.complete,
+        basis="E4：配合有功能约束对象、无实体干涉、关键间隙有依据（真机可验子项）",
+        evidence=obs.evidence,
+        artifact_version=obs.values.get("version", ""),
+        checker_version=CHECKER_VERSION,
+    )
+    if not obs.complete:
+        return CheckResult(**base, status=Status.UNKNOWN, reason="采集不完整")
+
+    v = obs.values
+    mates = v["mates"]
+
+    #: ① 同一对组件上的重复配合 ⇒ fail（R-05 的伪造手法；真机能读到配合对象）
+    seen = {}
+    dup = 0
+    for m in mates:
+        pair = tuple(sorted((str(m.get("a", "")), str(m.get("b", "")))))
+        key = (pair, str(m.get("kind", "")))
+        if key in seen:
+            dup += 1
+        else:
+            seen[key] = m
+    if dup:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"duplicate_mates": dup, "mates_total": len(mates)},
+            expected={"duplicate_mates": 0},
+            reason=(
+                "★ 有 %d 条重复配合（同一对组件 + 同一配合类型）⇒ "
+                "按扣常数算出的 DOF 是**假的**（R-05 的伪造手法）" % dup
+            ),
+        )
+
+    #: ② 必须有真实功能配合（全固定不算）
+    if not mates:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"mates": 0}, expected={"mates": "≥1"},
+            reason="★ 没有功能配合 ⇒ 若靠「全固定」定位，不是配合约束表达",
+        )
+
+    #: ③ 干涉必须为 0（`IInterferenceDetectionMgr.GetInterferenceCount()` 真机可取）
+    if v["interference_count"] > 0:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"interference": v["interference_count"]}, expected=0,
+            reason="★ 有 %d 处实体干涉" % v["interference_count"],
+        )
+
+    #: ④ 间隙必须有依据
+    if not v["clearance_basis"]:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"clearance_mm": v["min_clearance_mm"]},
+            expected={"basis": "非空"},
+            reason="★ 最小间隙 %.2f mm 没有依据 ⇒ 不能判合规" % v["min_clearance_mm"],
+        )
+
+    return CheckResult(
+        **base, status=Status.PASS,
+        observed={
+            "mates": len(seen),
+            "interference": v["interference_count"],
+            "clearance_mm": v["min_clearance_mm"],
+        },
+        reason="配合无重复、无干涉、间隙有依据",
+    )
+
+
 def judge_assembly(obs: Observation, *, requirement_id: str) -> CheckResult:
-    """★ 判定器：E4 装配自由度闭合。"""
+    """★ 判定器：E4 装配自由度闭合（**完整版**，含 DOF 子项）。
+
+    ⚠ 本函数含「剩余 DOF 必须等于目标」——而真机**读不到** DOF
+      （三源确认，见 `source-verification.md`）。
+    ⇒ 真机报告请**同时**收 `judge_assembly_interference` 的结论，
+      让读者能区分「干涉/配合不合格」与「DOF 这一项验不了」。
+    ⇒ 只收本函数时，DOF 读不到会表现为 `unknown`，那是**如实**，
+      不是产物不合格。
+    """
     base = dict(
         check_id="E4.dof",
         requirement_id=requirement_id,
