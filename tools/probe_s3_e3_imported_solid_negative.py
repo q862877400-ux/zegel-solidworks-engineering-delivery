@@ -72,6 +72,73 @@ SRC = R / "output" / "stage2" / "板1_rev-1.SLDPRT"
 WORK = R / "output" / "e3-negative"
 
 
+
+def _doc_count(sw) -> int:
+    """★ 当前打开的文档数（`ISldWorks.GetDocuments`）。"""
+    ok, docs = _try(get_com_member, sw, "GetDocuments")
+    if not ok:
+        return -1
+    return len(list(docs)) if docs else 0
+
+
+def _close_doc(sw, doc, tag: str) -> dict:
+    """★ 关一个文档，并**回读文档数确认真的少了**。
+
+    ★ 只调 `CloseDoc` 不核对，失败了看不出来 —— 第 16/17 轮就是这样留的孤儿。
+    """
+    before = _doc_count(sw)
+    ok_t, title = _try(get_com_member, doc, "GetTitle")
+    title = str(title) if ok_t and title else ""
+    if not title:
+        return {"tag": tag, "closed": False, "reason": "取不到标题"}
+    ok_c, ret = _try(sw.CloseDoc, title)
+    after = _doc_count(sw)
+    return {
+        "tag": tag,
+        "title": title,
+        "close_call_ok": ok_c,
+        "returned": str(ret)[:40],
+        "doc_count": "%s → %s" % (before, after),
+        "closed": before >= 0 and after >= 0 and after < before,
+    }
+
+
+def _sweep_temp_docs(sw) -> dict:
+    """★ 收尾：**只清空路径 + 标题属于本次作业的临时件**。
+
+    判据（每条都打印，便于复核）：
+      1. `GetPathName()` 为空串（从未保存 ⇒ 磁盘上没有会丢的版本）
+      2. `GetTitle()` 以 `板1_rev-1` 开头（本次作业的底名）
+
+    ★ 任一条不满足 ⇒ **只报告不关**。只有在「**全部**剩余文档都满足这两条」时
+      才用 `CloseAllDocuments(True)` —— 官方语义是「含脏文档一并关掉」
+      （`types/ISldWorks/CloseAllDocuments.md`），不弹保存框。
+    """
+    out: dict = {"remaining": [], "closed_all": None}
+    ok, docs = _try(get_com_member, sw, "GetDocuments")
+    left = list(docs) if ok and docs else []
+    if not left:
+        out["closed_all"] = "无需清理"
+        return out
+    safe = True
+    for d in left:
+        ok_t, title = _try(get_com_member, d, "GetTitle")
+        ok_p, path = _try(get_com_member, d, "GetPathName")
+        title = str(title) if ok_t else ""
+        path = str(path) if ok_p else ""
+        mine = path == "" and title.startswith("板1_rev-1")
+        out["remaining"].append({"title": title, "path": path, "mine": mine})
+        if not mine:
+            safe = False
+    if safe:
+        ok_all, ret = _try(get_com_member, sw, "CloseAllDocuments", True)
+        out["closed_all"] = {"ok": ok_all, "returned": str(ret)[:40]}
+    else:
+        out["closed_all"] = "★ 有非临时件 ⇒ 不关，只报告"
+    out["left_after"] = _doc_count(sw)
+    return out
+
+
 def _tree(doc) -> list:
     rows = []
     for nm in feature_names(doc) or []:
@@ -90,6 +157,7 @@ def _tree(doc) -> list:
 
 def main() -> int:
     ev: dict = {"probe": "s3-e3-imported-solid-negative"}
+    opened: list = []
     sw = doc = None
     try:
         if not SRC.is_file():
@@ -112,6 +180,9 @@ def main() -> int:
         if not ok_o or doc is None:
             print("★ 打不开交付件副本：%s" % str(doc)[:120])
             return 2
+        ok_t0, t0 = _try(get_com_member, doc, "GetTitle")
+        opened.append(str(t0) if ok_t0 and t0 else "")
+        ev["source_title"] = opened[-1]
         ok_e, rep = _try(export_step_report, doc, str(step_path))
         ev["export"] = {"ok": ok_e, "report": str(rep)[:300]}
         print("① 导出 STEP：ok=%s" % ok_e)
@@ -123,9 +194,8 @@ def main() -> int:
         print("   STEP 大小 %d 字节" % ev["step_size"])
 
         #: 关掉源文档（只关自己开的）
-        ok_t, title = _try(get_com_member, doc, "GetTitle")
-        if ok_t and title:
-            _try(sw.CloseDoc, title)
+        ev["close_source"] = _close_doc(sw, doc, "源副本")
+        print("   关源副本：%s" % ev["close_source"])
         doc = None
 
         #: ② 把 STEP 作为**新文档**导入
@@ -135,7 +205,10 @@ def main() -> int:
             ev["conclusion"] = "★ STEP 导入失败：%s" % str(doc)[:160]
             print(ev["conclusion"])
             return 1
-        print("② STEP 已导入为新文档")
+        ok_t2, t2 = _try(get_com_member, doc, "GetTitle")
+        opened.append(str(t2) if ok_t2 and t2 else "")
+        ev["imported_title"] = opened[-1]
+        print("② STEP 已导入为新文档（title=%r）" % ev["imported_title"])
 
         #: ③ 量导入体的特征树（类型名要**实测**）
         tree = _tree(doc)
@@ -208,12 +281,17 @@ def main() -> int:
         print("★ 失败：", ev["err"])
         return 1
     finally:
-        if sw is not None and doc is not None:
-            try:
-                sw.CloseDoc(doc.GetTitle())
-            except Exception:  # noqa: BLE001
-                pass
         if sw is not None:
+            if doc is not None:
+                ev["close_imported"] = _close_doc(sw, doc, "导入文档")
+                print("   关导入文档：%s" % ev["close_imported"])
+            #: ★ 收尾必须**核对文档数** —— 第 16/17 轮就是没核对才留下孤儿
+            ev["sweep"] = _sweep_temp_docs(sw)
+            left = _doc_count(sw)
+            ev["docs_left"] = left
+            print("   收尾后剩余文档数：%s" % left)
+            if left:
+                print("   ⚠ 仍有残留：%s" % ev["sweep"])
             try:
                 sw.CommandInProgress = False
             except Exception:  # noqa: BLE001
