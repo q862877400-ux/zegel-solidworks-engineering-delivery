@@ -220,6 +220,23 @@ def resolve_entity(model, selector, kind: str, *, body_index: int = 0):
       * ``"__current_selection__"`` —— 用当前选区里的第一个（**不重选**）
       * ``"index:<n>"``            —— 体上第 n 个实体（从 0 开始）
       * 一个 **COM 对象**          —— 直接 `Select4` 它
+      * ★ **语义选择器**（2026-10-25 新增）——
+        ``"+z"`` / ``"-z"`` / ``"+x"`` / ``"-x"`` / ``"+y"`` / ``"-y"`` /
+        ``"top_face"`` / ``"near:<x>,<y>,<z>"``
+        ⇒ 见下方「为什么加语义选择器」。
+
+    ## 为什么加语义选择器
+
+    `docs/ENGINEERING-PATH.md` 第四节 E3 要求「跨重建**不依赖选区或下标**」。
+    而 `index:<n>` 与 `__current_selection__` **两者都不可跨重建**：
+
+      * `index:<n>` —— `reference_resolver.LIMITATIONS` 逐字：
+        「索引不跨编辑保持 …… 改完模型后，之前算出来的 face/edge index 全部作废」
+      * `__current_selection__` —— 取决于调用时选了什么，不是模型属性
+
+    ⇒ 语义选择器是**几何事实**（方向 / 语义名 / 几何锚点），改主参数后仍指同一类几何。
+      解析在**用时**做（`reference_collect.resolve_semantic`），
+      下标只是中间量，**不保存**。
 
     :raises EntitySelectionError: 选择器非法、越界、或合法但**选不中**（不静默返回 None）。
     """
@@ -234,6 +251,24 @@ def resolve_entity(model, selector, kind: str, *, body_index: int = 0):
                     % CURRENT_SELECTION
                 )
             return found[0]
+        #: ★ 语义选择器分流：先解析成下标，再走 `index:` 那条路
+        try:
+            from engineering.reference_collect import is_semantic_selector
+        except ImportError:  # 顶层载入
+            is_semantic_selector = lambda _x: False  # noqa: E731
+        if is_semantic_selector(s):
+            try:
+                from engineering.reference_collect import resolve_semantic
+            except ImportError:  # 顶层载入
+                from reference_collect import resolve_semantic  # type: ignore
+            try:
+                got = resolve_semantic(model, s, kind, body_index=body_index)
+            except Exception as exc:  # noqa: BLE001
+                raise EntitySelectionError(
+                    "语义选择器 %r 解析失败：%s: %s"
+                    % (s, type(exc).__name__, str(exc)[:140])
+                )
+            s = "index:%d" % int(got["index"])
         if s.startswith("index:"):
             try:
                 idx = int(s.split(":", 1)[1])

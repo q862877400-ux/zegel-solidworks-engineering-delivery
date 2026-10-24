@@ -99,6 +99,27 @@ S3 验的是**几何与参数化行为**；那八项（材料/载荷/安全等�
 
 ### 当前阻断（需要人回答，不是程序能决定）
 
+#### 阻断 S3 的（一条）
+
+**S3 第 ④ 段：板/轴的倒角该倒哪条边？**
+
+`planner.py` 三处 `chamfer` 的 `selection` 是 `index:0`（占位），
+`derive` 只写「倒角后置」「端部倒角」，**没说倒哪条边**。
+
+换成语义选择器之前必须先定：
+
+| # | 问题 | 谁能答 |
+|---|---|---|
+| 1 | 板的倒角是倒**外轮廓**、**四角竖边**、还是别的？轴类的「端部倒角」是哪一端？ | 工程负责人 |
+| 2 | 若是外轮廓（多条边），要不要给 `chamfer` 加**多选**能力？ | 需三源互证多选 API |
+| 3 | 若只需单边，`near:` 锚点坐标怎么由参数算（含米/毫米换算）？ | 可实现，但要定规则 |
+
+★ 在这一问有答案前，**不把 `index:0` 换成一个看似合理的方向语义** ——
+  那只是把「明显是占位」变成「看着像有依据的错」，比现在更危险。
+详见 [`specs/350-first-part-delivery/s3-prep.md`](../specs/350-first-part-delivery/s3-prep.md)「三之三」。
+
+#### 阻断 S4 的（S2 的八项冻结）
+
 按 [`ENGINEERING-PATH.md`](ENGINEERING-PATH.md) 第六节 S2 与
 [`specs/350-first-part-delivery/requirements.md`](../specs/350-first-part-delivery/requirements.md)：
 
