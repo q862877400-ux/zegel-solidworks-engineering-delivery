@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 628 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 629 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 251 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 252 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 68 | — |
 
-## 探针（251 个）
+## 探针（252 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -47,6 +47,7 @@
 |---|---|
 | `probe_a4_custom_properties.py` | ★ 真机补 `custom_properties_and_bom` 的运行证据（★ A4 的待补项） |
 | `probe_a4_runtime_evidence.py` | ★ 为 A4 的两个真缺口跑真机证据：`parameter_updates` + `custom_properties_and_bom` |
+| `probe_acceptance_report.py` | ★ 用现有样件生成一份真实报告 —— 证明报告链路能跑通 |
 | `probe_access_selections_matrix.py` | ★ 真机：**批量**测 `*FeatureData.AccessSelections` —— 给「指针族」画确定边界 |
 | `probe_access_selections_on_featuredata.py` | ★ 真机：对"静默 `None`"那几条试 `*FeatureData.AccessSelections`（事实 424 给的新路） |
 | `probe_access_selections_param2.py` | ★ 真机：`AccessSelections` 的**第 2 参**到底要什么 —— `None` 还是空 Dispatch？ |

@@ -6,6 +6,39 @@
 
 ---
 
+## 零、汇总层：report.py
+
+10 条检查彼此孤立，每条只回答「我这一项如何」。而 AGENTS.md 判据 A8 要的是
+「首件 E1–E7 **逐条状态与证据变化**」⇒ 需要一层汇总。
+
+scripts/engineering/acceptance/report.py：
+
+| 函数 | 作用 |
+|---|---|
+| build_report(checks) | 把一组 CheckResult 汇成 E1–E7 报告 |
+| render_markdown(report) | 渲染成 markdown（四种状态分列） |
+| deltas(prev, cur) | 两次报告的状态变化（A8 的「证据变化」） |
+
+### ★★ 三条汇总判据（不是简单数数）
+
+① **同一 E 下有多条检查时全部要绿** —— 拆分不放宽
+   （E4 = E4.dof + E4.interference，任一条不绿 E4 就不绿）
+② **unknown 与 fail 分开列** —— 前者是「我们没测到」，后者是「测到了且不合格」。
+   混成一个数字，就会把「测不了」说成「东西坏了」
+③ **空集合不得判绿** —— 没检查过 ≠ 合格；一条都没跑的判据标 not_checked
+
+### 端到端验证
+
+tools/probe_acceptance_report.py 与 tests/test_acceptance_pipeline_e2e.py
+跑**真实**的十对采集器/判定器（吃 samples.py 样件），再用 build_report() 汇总：
+
+| 组 | 结果 |
+|---|---|
+| 全绿组（语义选择器 + 孔型齐全） | **10/10 pass**，七条判据全绿 |
+| 混合组（新建文档冒充实改 / index:0 / 空 evidence / 缺孔型） | fail + unknown + not_checked 三种状态都正确出现 |
+
+这证明「采集 → 判定 → 汇总 → 渲染」整条链路通，不只是汇总逻辑对。
+
 ## 一、十条检查的落点
 
 ★ 七条判据拆成 **10 条检查**：有的判据含真机可验与不可验两部分，
@@ -131,7 +164,7 @@ python -B -m pytest tests/test_acceptance_e1_e7.py tests/test_acceptance_e1_enum
   tests/test_acceptance_e2_hole.py tests/test_acceptance_e3_reference.py \
   tests/test_acceptance_e4_split.py tests/test_acceptance_forgery.py \
   tests/test_acceptance_contract.py tests/test_source_verification_conclusions.py -q
-→ 211 passed
+→ 256 passed
 
 连同 S0 与 S2 的判据：
 python -B -m pytest tests/test_s0_official_path.py tests/test_first_part_requirements.py -q
@@ -149,7 +182,7 @@ python -B -m pytest tests/test_s0_official_path.py tests/test_first_part_require
 | `test_acceptance_forgery.py` | 12 | 四条伪造负例 + 四条反证（证明旧估算器真的会被骗） |
 | `test_source_verification_conclusions.py` | 11 | 官方枚举表 / 反射里有该成员 / **五个 DOF 候选名全部零命中** |
 
-★ 上面 211 是「验收判据」这一组；229 = 211 + S0 的 7 条 + S2 的 11 条。
+★ 上面这一组含汇总层与端到端，共 256 条（S0 的 7 条与 S2 的 11 条也在此数内）。
 
 ## 七、这一步到此为止：只叫「离线判据成立」
 
