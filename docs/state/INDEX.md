@@ -3,6 +3,8 @@
 > **这是入口。** 十条维度的事实文件在 `facts/`，探测器在 `probes/`，机器可读读数在 `inventory-*.json`。
 > 本索引只做两件事：**「想知道 X → 去哪看」** 与 **「每个维度最承重的一条读数」**。
 > 记录员口径不变：不含判断、不含优先级、不含修复建议。
+>
+> 三处入口互指：`AGENTS.md` 首段 → 本文件 · 项目级 skill [`sw-project-state`](../../.dsh/skills/sw-project-state/SKILL.md)（含读法/纪律/三个实测坑） → 本文件。
 
 ---
 
@@ -31,6 +33,15 @@
 | 测试的**执行期**结果（门禁类 34 个文件） | `facts/M-tests-run.md` | `python docs\state\probes\probe_tests_run.py --json docs/state/inventory-m.json` |
 | 仓库外 26 个克隆的许可、五个未触碰目录的规模 | `facts/N-external.md` | `python docs\state\probes\probe_external.py --json docs/state/inventory-n.json` |
 | 文档归并（重复/断链的真实构成） | `facts/O-docs-merge.md` | `python docs\state\probes\probe_doc_consolidate.py --json docs/state/inventory-o.json` |
+
+### 台账空白补记（Q 系列，`docs/state/facts/` 里原「未覆盖」段的收口）
+
+| 我想知道 | 去哪 | 复现命令 |
+|---|---|---|
+| `apps/` 447 .py 与 `subskills/` 23 .py 是什么 · 26 个克隆与来源清单的对应 · 两份 audit 重叠 · examples 存在率 · `.pyc` 是否入库 | `facts/Q-gaps.md` | `python docs\state\probes\probe_gaps.py --json docs/state/inventory-q.json` |
+| 100 条 `verified` 的证据**文本形态**（否定字样/点名测试/点名产物） | `facts/Q2-evidence-substance.md` | `python docs\state\probes\probe_evidence_substance.py --json docs/state/inventory-q3.json` |
+| **全量测试的执行期结果**（89 failed / 3944 passed / 63 errors / 20 分 38 秒） | `facts/Q3-tests-full.md` | 见该文件「复现」两条命令 |
+| 新旧文档冲突 P-01～P-07 的逐条处置 | `facts/P-doc-conflicts.md` | `python docs\state\probes\probe_docs.py` 等，见该文件 |
 
 ---
 
