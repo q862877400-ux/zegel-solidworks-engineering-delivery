@@ -591,7 +591,9 @@ def compile_contract(contract: Any, *, device_class: str = "") -> CompiledPlan:
             RejectCode.UNDERCONSTRAINED, "★ 契约没有任何 `parameter_domains` ⇒ 欠约束"
         )
     #: ★★ **越权检查**（★ 契约里的域必须在方法的**修改域**内）
-    over = [k for k in domains if not spec.allows(k)]
+    #: ⚠ 判据是 `modification_domain` 的成员资格 —— 不是设备适用域 `applies_to`。
+    #:   两者语义不同：前者问「这个方法能改哪些参数」，后者问「这个方法适用于哪类设备」。
+    over = [k for k in domains if k not in spec.modification_domain]
     if over:
         raise PlanError(
             RejectCode.OVERREACH,

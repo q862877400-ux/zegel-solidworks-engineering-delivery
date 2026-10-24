@@ -87,6 +87,12 @@ SPECS_BATCH17 = [
         module="sw_part",
         function="circular_pattern",
         inject="model",
+        #: ★ 显式声明为写：实现调 `FeatureManager.FeatureCircularPattern4` **创建特征**。
+        #: ⚠ 效应解析器按**成员名前缀**判（`effects.WRITE_VERBS`），而
+        #:   `FeatureCircularPattern4` 以 `Feature` 开头 ⇒ 前缀匹配不到 `Pattern`
+        #:   ⇒ 会判 `unknown` ⇒ 按 I5 不予准入。这是**判据盲区**，不是该工具真的效应未知
+        #:   ⇒ 在此显式声明，不靠解析器猜。
+        read_only=False,
         param_alias=dict(_consumed("angle_deg")),
         derived_args=_radians_of_deg,
         params=[

@@ -750,6 +750,16 @@ def plan_from_requirement(text: str, *, reg: dict | None = None) -> PlanSet:
         except Exception as exc:  # noqa: BLE001
             pc.compile_ok = False
             pc.compile_error = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+            #: ⚠ 编译失败的候选**不得带着未解析的步骤混进结果** ——
+            #:   它的 `PlanStep.tool` 全是空串（`expand_plan` 在解析阶段就抛了），
+            #:   下游若按「已编译计划」消费会拿到空工具名。
+            #:   ⇒ 保留候选以便报告失败原因，但**清空它的步骤**，
+            #:     使「有步骤 ⇒ 一定已解析」成为可断言的不变式。
+            pc.plan = r_.ExecutablePlan(
+                method_id=getattr(pc.plan, "method_id", ""),
+                steps=(),
+                device_class=getattr(pc.plan, "device_class", ""),
+            )
         ps.candidates.append(pc)
 
     if len(ps.candidates) < MIN_VARIANTS:

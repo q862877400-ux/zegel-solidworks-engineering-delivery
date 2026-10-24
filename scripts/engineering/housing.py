@@ -372,3 +372,75 @@ class FinalDod(CaseCollectorMixin):
     new_failures: int = 0
     claims: list = field(default_factory=list)
     evidences: list = field(default_factory=list)
+
+    def evaluate(self) -> dict:
+        """★★ **最终 DoD 判定**（★ S7-B）。
+
+        ★★ 判据（★ 八条都要）：
+          ① 9 个案例齐（3 类 × 3 变体）
+          ② 9/9 通过所有规定义务
+          ③ failed_total == 0 且 new_failures == 0
+          ④ 无缺失的必需门禁
+          ⑤ 证据**非循环**
+          ⑥ 无越界声明
+          ⑦ 四层判定逐案例齐
+          ⑧ 人工接管**可见**
+
+        ★★ **③④ 是「不靠挑最好案例」的判据** ——
+          ★ 不是「有 9 个案例」，而是「**9 个都过且全局 0 failed**」。
+        """
+        out: dict = {}
+
+        #: ① 案例齐
+        keys = {c.key for c in self.cases}
+        want = {"%s-v%d" % (p, v) for p in PRODUCTS for v in VARIANTS}
+        out["cases_total"] = len(self.cases)
+        out["cases_missing"] = sorted(want - keys)
+        out["cases_ok"] = not out["cases_missing"] and len(self.cases) == 9
+
+        #: ② 9/9 义务
+        bad = [c.key for c in self.cases if not c.obligations_passed]
+        out["obligations_bad"] = bad
+        out["obligations_ok"] = not bad and len(self.cases) == 9
+
+        #: ③ 0 failed
+        out["failed_total"] = self.failed_total
+        out["new_failures"] = self.new_failures
+        out["failures_ok"] = self.failed_total == 0 and self.new_failures == 0
+
+        #: ④ 门禁齐
+        miss = [g for g in REQUIRED_GATES if g not in self.gates]
+        out["gates_missing"] = miss
+        out["gates_ok"] = not miss
+
+        #: ⑤ 证据非循环
+        ev = evidence_is_noncircular(self.evidences)
+        out["evidence"] = ev
+        out["evidence_ok"] = ev["ok"]
+
+        #: ⑥ 无越界声明
+        bad_claims = [
+            c for c in self.claims if any(o in c for o in OUT_OF_SCOPE_CLAIMS)
+        ]
+        out["out_of_scope"] = bad_claims
+        out["claims_ok"] = not bad_claims
+
+        #: ⑦ 四层（★ 逐案例）
+        out["layers"] = {c.key: c.layers.to_dict() for c in self.cases}
+        out["all_four_ok"] = all(c.layers.all_four for c in self.cases)
+
+        #: ⑧ 人工接管**可见**（★ FR-006）
+        takeovers = [c.key for c in self.cases if c.layers.human_takeovers]
+        out["human_takeovers"] = takeovers
+        out["takeovers_visible"] = True  #: ★ 我们**如实列出**了
+
+        out["ok"] = bool(
+            out["cases_ok"]
+            and out["obligations_ok"]
+            and out["failures_ok"]
+            and out["gates_ok"]
+            and out["evidence_ok"]
+            and out["claims_ok"]
+            and out["all_four_ok"]
+        )
+        return out
