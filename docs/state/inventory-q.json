@@ -1,0 +1,145 @@
+{
+  "gap7_subskills_pyc": {
+    "on_disk": 12,
+    "tracked": 0,
+    "tracked_sample": [],
+    "subskills_ignored": false,
+    "gitignore_line": ""
+  },
+  "gap4_clones_vs_sources": {
+    "clones": 26,
+    "declared_sources": 4,
+    "declared": [
+      [
+        "Eduardof0nt/Solidworks-MCP-Server",
+        "",
+        "MIT"
+      ],
+      [
+        "andrewbartels1/SolidworksMCP-python",
+        "",
+        "MIT"
+      ],
+      [
+        "vespo92/SolidworksMCP-TS",
+        "",
+        "MIT"
+      ],
+      [
+        "Slacker-LLC/solidworks-mcp",
+        "",
+        "Apache-2.0"
+      ]
+    ],
+    "clones_mentioned_in_union_sources": [
+      "Eduardof0nt",
+      "Slacker-LLC",
+      "Solidworks-MCP",
+      "SolidworksMCP-TS",
+      "andrewbartels1"
+    ],
+    "clones_not_mentioned": [
+      "CSharpAndSolidWorks",
+      "Cai-aa__CAD-Agent-Hub",
+      "_tmp_mcp",
+      "codestack",
+      "ddeng-skills",
+      "deloarts__pyswx",
+      "just1step__solidworks-mcp",
+      "mcp-server-solidworks",
+      "offline-solidworks-api-docs",
+      "pySW",
+      "q3ds-solidworks-mcp",
+      "solidworks-api",
+      "solidworks-auto-modeling",
+      "solidworks-automation-skill",
+      "solidworks-build-mechanical-models",
+      "solidworks-com-automation-skill",
+      "solidworks-skills",
+      "sw-ai-bridge",
+      "sw-api-skill",
+      "sw-automation-skill",
+      "sw-skill-fork"
+    ]
+  },
+  "gap6_examples": {
+    "doc": "docs\\recon\\official-source-defects-2.md",
+    "distinct_names": 710,
+    "present_in_swapi_examples": 15,
+    "absent": 695,
+    "absent_sample": [
+      "AccessSelections.md",
+      "Action.md",
+      "ActivateFeatureMgrView.md",
+      "ActivateGroundPlane.md",
+      "Add2.md",
+      "AddCommandItem.md",
+      "AddControl.md",
+      "AddControl2.md",
+      "AddCustomButton.md",
+      "AddCustomButton2.md",
+      "AddFeatureMgrView3.md",
+      "AddFeatureMgrView3x64.md",
+      "AddMate5.md",
+      "AddMenuItem.md",
+      "AddMenuItem4.md"
+    ],
+    "swapi_examples_exists": true
+  },
+  "gap5_audit_overlap": {
+    "a1": {
+      "path": "docs\\verified-evidence-audit.md",
+      "bytes": 7968
+    },
+    "a2": {
+      "path": "docs\\recon\\verified-evidence-audit-2.md",
+      "bytes": 62036
+    },
+    "gram4_a1": 2488,
+    "gram4_a2": 15754,
+    "intersection": 483,
+    "jaccard": 0.027,
+    "containment_of_a1_in_a2": 0.194
+  },
+  "gap1_content_survey": {
+    "apps": {
+      "py_files": 447,
+      "no_docstring": 29,
+      "top_docstring_first_lines": {
+        "@brief CAD Studio 桌面执行包。": 2,
+        "CAD 自动化交付工作台。": 2,
+        "@brief 企业级 Agent 控制平面的任务契约与 prompt 编译器。": 2,
+        "@brief CAD Studio 多 Agent CLI Provider 发现、命令构建与结果归一化。": 2,
+        "@brief CAD 自动化交付工作台主界面。": 2,
+        "@brief CAD Studio 任务交付物账本。": 2,
+        "CAD Studio 双入口/双后端公共数据契约。": 2,
+        "@brief 桌面端项目数据与文件结构工具。": 2
+      },
+      "subdirs": [
+        "desktop",
+        "workbench-ui"
+      ]
+    },
+    "subskills": {
+      "py_files": 23,
+      "no_docstring": 0,
+      "top_docstring_first_lines": {
+        "@file draw_mounting_plate.py": 1,
+        "AutoCAD 混合后端前置检查。": 1,
+        "构建并回归 AutoCAD 2024 .NET 白名单插件。": 1,
+        "@file acad_draw.py": 1,
+        "@file acad_headless.py": 1,
+        "@file acad_preflight.py": 1,
+        "@file acad_preview.py": 1,
+        "@file acad_review.py": 1
+      },
+      "subdirs": [
+        "autocad-automation",
+        "solidworks-engineering-drawing",
+        "solidworks-fillet-chamfer-cnc",
+        "solidworks-threaded-holes",
+        "solidworks-vibecad"
+      ]
+    }
+  }
+}
