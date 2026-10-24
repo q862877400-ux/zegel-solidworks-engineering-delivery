@@ -209,43 +209,59 @@
 - **复现**：检索这两个文件名在全仓的出现位置并区分读/写/注释
 - **未确认**：无
 
-## R-19 T008 真机：交付板件零驱动尺寸；`AutoDimension2` 可行、`update_dimension_mm` 单位放大 1000 倍
+## R-19 交付板件零驱动尺寸；`AutoDimension2` 可行；`update_dimension_mm` 单位已修好
 
-- **观测方式**：两个真机探针（走 `tools/sw_guard.py` 护栏，`CommandInProgress` 抑制弹窗）
-  - `tools/probe_s3_dimensions_exist.py`（量现状）
-  - `tools/probe_s3_t008_dimension_driven.py`（量可行路径）
-- **读数一：现状是零驱动尺寸、草图欠约束**
-  - `ISketch.GetConstrainedStatus()` = **2**（`swUnderConstrained`）
-  - 驱动尺寸数 = **0**；特征树只有 `草图1` + `凸台-拉伸1`
+- **观测方式**：三个真机探针（走 `tools/sw_guard.py` 护栏，`CommandInProgress` 抑制弹窗）
+  - `tools/probe_s3_dimensions_exist.py`（量现状：有没有驱动尺寸）
+  - `tools/probe_s3_t008_dimension_driven.py`（量可行入口 + 改尺寸）
+  - `tools/probe_s3_dimension_units.py`（量单位契约）
+- **读数一：原状是零驱动尺寸、草图欠约束**
+  - `ISketch.GetConstrainedStatus()` = **2**（`swUnderConstrained`）；驱动尺寸数 = **0**
   - 根因：`tools/run_stage2_plate.py` 的 `build_plan()` 用 `x1_mm`/`x2_mm`/
-    `center_x_mm`/`radius_mm` 这类**坐标参数**建板，每轮重画一遍，模型里不留尺寸
-- **读数二：加驱动尺寸**有**两条**入口，一条死一条通
-  - ❌ `IModelDoc2.AddHorizontalDimension2` —— 本机实测**直接把 SolidWorks 崩掉**
-    （`com_error: RPC 服务器不可用`）。这与 `docs/dead-ends.md` 轮 400/153/154/155
-    记的 `AddDimension2` 死路**同族**，且症状更重
+    `center_x_mm`/`radius_mm` 这类**坐标参数**建板，每轮重画，模型里不留尺寸
+- **读数二：加驱动尺寸有两条入口，一条死一条通**
+  - ❌ `IModelDoc2.AddHorizontalDimension2` —— **不可调用**，直接崩进程
+    （`com_error: RPC 服务器不可用`，需重启）。与 `docs/dead-ends.md`
+    轮 400/153/154/155 记的 `AddDimension2` 死路**同族**，症状更重
   - ✅ `ISketch.AutoDimension2(1, 1, -1, 1, -1)` —— 回 `0`（success），
-    **建成 1 个尺寸** `D1@草图1`（值 = 100 mm = 板宽），草图 `2 → 3`（完全定义）
-  - ❌ `ISketchManager.FullyDefineSketch`（官方指它取代 `AutoDimension2`）——
-    按官方 **10 个参数**调用，第 6 参（`HorizontalDatumDisp`，`object`）报
-    `类型不匹配`。未查明正确的传法
-- **读数三：`update_dimension_mm` 写入的值放大约 1000 倍**
-  - 请求把 `D1@草图1` 从 100 mm 改成 120 mm（×1.2）
-  - `IDimension.SystemValue`：`0.1` → **`120.0`**（比例 **1200**，期望 **0.12**）
-  - 该函数**自报** `success: True`，且其 `after_mm` 回 `120.0`（与请求一致）
-    ⇒ **它的自我报告不能当证据**
-  - 依据：`scripts/sw_document_data.py` 的 `update_dimension_mm` 用
-    `_document_length_unit_scale(model)` 求 scale 后 `SetSystemValue3(value_mm / _scale, ...)`
-- **证据**：`tools/probe_s3_dimensions_exist.py` / `tools/probe_s3_t008_dimension_driven.py`；
-  产物 `output/s3-dimensions-exist.json` 与 `output/s3-t008-dimension-driven.json`
-  （`output/` 在 `.gitignore` 里，关键读数已抄进本节）
+    建成 `D1@草图1`（= 板宽），草图为 **3**（完全定义）
+    （参数 = `swAutodimEntitiesAll` / `swAutodimSchemeBaseline` / -1 / 同上 / -1）
+  - ❌ `ISketchManager.FullyDefineSketch`（官方说它取代 `AutoDimension2`）——
+    按官方 **10 参**调用，第 6 参（`HorizontalDatumDisp`，`object`）报「类型不匹配」
+- **读数三：`Get/SetSystemValue3` 的单位是**米**（不是文档单位）**
+  - 在**毫米**文档（`GetUnits() = [0, 1, 8, 2, 0]`）上实测：
+    ```
+    一条 100 mm 宽的驱动尺寸：SystemValue = 0.1 · GetSystemValue3(1, None) = [0.1]
+    SetSystemValue3(0.15, 1, None) → 返回 0（success）
+      改后：SystemValue = 0.15 · GetSystemValue3 = [0.15]
+      ★ 包围盒 X 跨度：100.0 mm → 150.0 mm     ← 几何证实
+    ```
+  - 官方 `types/IDimension/SetSystemValue3.md` 逐字：「Sets the value of this dimension
+    in **system units (meters)**」
+  - `GetSystemValue3(WhichConfigurations, Config_names)` 回**数组**；
+    `WhichConfigurations` 必须是 **1**（`swThisConfiguration`）—— 传 `0` 回 `null`
+- **读数四：可用的包围盒读法**
+  - `IPartDoc.GetBodies2(swSolidBody=0, BVisibleOnly=True)` → `IBody2.GetBodyBox()`
+    ⇒ 6 个 double，**单位米**
+  - ⚠ `GetBodies2` **两个参数都必填**（只传一个报「非选择性的参数」）；
+    `IModelDocExtension.GetBox` **不存在**；只有草图没有实体时 `GetBodies2` 回 `None`
+- **★ 由此修掉一个真缺陷**：`scripts/sw_document_data.py` 的 `update_dimension_mm` 与
+  `_dimension_value_mm` 原按 `GetUnits()` 推倍数（毫米文档得 `1.0`）⇒
+  **读** 100 mm 的尺寸得 `0.1`、**写** 120 mm 变成 `120 米`，读写两侧都差 1000 倍。
+  修法：新增常量 `SYSTEM_UNIT_MM = 1000.0`，读写都用它，**不再看文档单位**
+- **证据**：`output/s3-dimension-units.json`、`output/s3-t008-dimension-driven.json`、
+  `output/s3-dimensions-exist.json`（`output/` 在 `.gitignore` 里，关键读数已抄进本节）
 - **复现**：
   ```powershell
   python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_dimensions_exist.py
+  python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_dimension_units.py
   python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimension_driven.py
   ```
+  修好后 T008 探针的结论：
+  「用 AutoDimension2 加了 1 个尺寸，约束状态 3；改宽度后 X 跨度 **100.0 → 120.0 mm**」
 - **未确认**：
-  - `GetSystemValue3` 的正确调用形状 —— 传 `(0, None)` 回 `null`，未查明缺哪个参数
-  - 包围盒读法 —— `IPartDoc.GetBodies2(True)` 报「非选择性的参数」、
-    `IModelDocExtension.GetBox` 不存在 ⇒ **没有独立读数能证实几何真的变宽了**
-  - `update_dimension_mm` 的单位缺陷是「`_scale` 求错」还是「`SetSystemValue3` 吃米制」
-    未见分晓；两种解释都未被证据排除
+  - `FullyDefineSketch` 第 6 参（`object`）的正确传法
+  - `AutoDimension2` 只加了 **1** 个尺寸（宽），没加高度 ⇒ 全约束靠什么达成未查明
+  - `extrude_boss(model, name, 20.0)` 建出的实体 Z 跨度实测 **20 米**（`GetBodyBox` 原始
+    z = -20→0）⇒ 该函数似按**米**吃参数，而 `sketch_corner_rectangle` 按**毫米**
+    ⇒ **同仓两个生成函数单位口径不一致，尚未逐个体查清**

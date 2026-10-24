@@ -56,6 +56,16 @@ SET_VALUE_STATUS = {
     5: "frozen_feature_owner",
 }
 
+#: ★ 系统单位（米）→ 毫米 的固定倍数。
+#:
+#: ★★★ 2026-10-25 **这是一个「定义」而不是「探测」**：
+#:   `Get/SetSystemValue3` 官方逐字说的是 **system units (meters)** ——
+#:   「系统单位」按定义就是米，**与文档显示单位无关**。
+#:   ⇒ 不要再用 `GetUnits()` 去推这个倍数（原做法在毫米文档上得 1.0，读写都差 1000 倍）。
+#:   ★ 真机几何证据：写 `SetSystemValue3(0.15)` ⇒ 100 mm 宽的板变成 **150 mm**。
+#:     见 `tools/probe_s3_dimension_units.py` 与 `docs/state/facts/R-engineering-path.md` R-19。
+SYSTEM_UNIT_MM = 1000.0
+
 
 def _configuration_names(model) -> list[str]:
     """返回文档配置名，兼容 COM 返回 tuple/list/None。"""
@@ -323,21 +333,31 @@ def _dimension_value_mm(
     #: ★★ 新入口回**数组** ⇒ 取第一个（★ 官方例子也是这么取的：`dimValue_1(0)`）
     if isinstance(raw, (list, tuple)):
         raw = raw[0] if raw else 0.0
-    #: ★★★★ 2026-10-04（接手轮）**修掉「硬编码 ×1000」** —— ★★ 它假定文档单位是**米**、
-    #:   而**本机新建文档的单位是**毫米****（★ 真机实测 `GetUnits() = [0, 1, 8, 2, 0]`，
-    #:   ★ 第 1 个 `swLengthUnit_e = 0 = swMM`）✓
-    #:   ★★★ **真机证据（`tools/probe_dimension_unit.py`）**：★ 一个**厚 20 mm** 的板，
-    #: ★ `GetSystemValue3` 原始回 **`(20.0,)`** ⇒ ★★ **它回的是**文档单位**（毫米），★
-    #: 不是米** ✓
-    #:   ★★★ **而另一份证据**（`output/extrude-depth-unit-evidence.json`）**独立确认**：
-    #: ★ `extrude_boss(model, "Sketch1", 20.0)` 建出来的实体 **`size = [100, 60, **20**]
-    #: `**
-    #:    ⇒ ★★ **实体真的是 20 mm 厚** ⇒ ★ **`GetSystemValue3` 回 20.0 就是毫米** ✓
-    #:   ⇒ ★ 修法：★ **按文档单位换算**（★ 读一次 `GetUnits()`，★ 不再假定）✓
-    #: ★ 而 `model` 为 `None`（★ 老调用方）⇒ ★ **回退到旧行为 `× 1000`**（★ 不破坏既有调
-    #: 用）✓
-    scale = _document_length_unit_scale(model) if model is not None else 1000.0
-    return float(raw) * scale
+    #: ★★★★ 2026-10-25 **更正：`Get/SetSystemValue3` 吃的是「系统单位=米」，与文档单位无关**
+    #:
+    #:   ★ 2026-10-04 那次的结论（「它回的是文档单位/毫米，所以按 `GetUnits()` 换算」）
+    #:     **被真机几何证据推翻**。本轮实测（`tools/probe_s3_dimension_units.py`）：
+    #:
+    #:     ```
+    #:     文档：GetUnits() = [0, 1, 8, 2, 0]        ← 毫米文档（swLengthUnit_e = 0 = swMM）
+    #:     一条 100 mm 宽的驱动尺寸：
+    #:        IDimension.SystemValue   = 0.1        ← 米
+    #:        GetSystemValue3(1, None) = [0.1]      ← 米
+    #:     改：SetSystemValue3(0.15, 1, None) → 返回 0（success）
+    #:        IDimension.SystemValue   = 0.15
+    #:        GetSystemValue3(1, None) = [0.15]
+    #:        ★ 包围盒 X 跨度：100.0 mm → **150.0 mm**   ← 几何证实
+    #:     ```
+    #:
+    #:   ⇒ ★★ **写 0.15 得到 150 mm ⇒ 单位是米。** 官方文档也逐字这么写：
+    #:      `types/IDimension/SetSystemValue3.md`「Sets the value of this dimension in
+    #:      **system units (meters)**」
+    #:
+    #:   ★★★ 原来的错法：按 `GetUnits()` 得 1.0（毫米文档）后 `× 1.0` ⇒
+    #:     100 mm 的尺寸被读成 **0.1**（差 1000 倍），写 120 变成 **120 米**。
+    #:   ⇒ **读、写两侧都不该看 `GetUnits()`**；米 ↔ 毫米是固定 1000。
+    #:   ⚠ `_document_length_unit_scale` 保留（另有调用方与测试），但**本路径不再用它**。
+    return float(raw) * SYSTEM_UNIT_MM
 
 
 def update_dimension_mm(
@@ -379,13 +399,13 @@ def update_dimension_mm(
         evidence_names = []
 
     #: ★★★★ 2026-10-04（接手轮）**修正换算 —— 两处一起改**：
-    #:   ★ **病灶**：★ `_dimension_value_mm` 硬编码 `× 1000`、★ 而这里硬编码 `/ 1000` ⇒
-    #:     ★★ **两个相反方向的错、★ 互相掩盖**（★ 读回来的值**看起来对**）✓
-    #:   ★★★ **真机定案**：★ `GetSystemValue3` / `SetSystemValue3` **吃的就是文档单位**
-    #: （★ 实测：★ 毫米文档 + 厚 20mm 的板 ⇒ 回 `(20.0,)`；★ 而实体 `size=[100,60,**20**
-    #: ]`）✓
-    #:   ★★ 而 `model` 是**本函数已有**的入参 ⇒ ★ 用它读单位；★ `None` ⇒ 回退旧行为 ✓
-    _scale = _document_length_unit_scale(model)
+    #: ★★★★ 2026-10-25 **更正（与上面 `_dimension_value_mm` 同一处判据）**：
+    #:   `SetSystemValue3` 吃的是**系统单位 = 米**，与文档单位无关。
+    #:   ⇒ 毫米 → 米是**固定 /1000**，**不看 `GetUnits()`**。
+    #:   ⚠ 原来按文档单位换算：毫米文档得 `_scale = 1.0` ⇒ 写 120 变成 **120 米**
+    #:     （真机实测：`SystemValue` 从 0.1 跳到 120.0，几何上应为 0.12）。
+    #:     证据见 `docs/state/facts/R-engineering-path.md` R-19 与
+    #:     `tools/probe_s3_dimension_units.py`（写 0.15 ⇒ 包围盒 100mm → 150mm）。
     before = (
         {
             name: _dimension_value_mm(dimension, name, model=model)
@@ -401,7 +421,7 @@ def update_dimension_mm(
     )
     status_code = int(
         dimension.SetSystemValue3(
-            float(value_mm) / _scale,
+            float(value_mm) / SYSTEM_UNIT_MM,
             SET_VALUE_MODES[configuration_mode],
             names_variant,
         )

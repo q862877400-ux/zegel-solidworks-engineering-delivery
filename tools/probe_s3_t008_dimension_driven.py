@@ -60,6 +60,7 @@ sys.path.insert(0, str(R / "scripts"))
 from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_connect import get_com_member  # noqa: E402
+from scripts.sw_connect import try_call as _try  # noqa: E402
 from scripts.sw_feature_readback import feature_names  # noqa: E402
 from scripts.sw_sketch import active_sketch as _active_sketch  # noqa: E402
 
@@ -84,15 +85,11 @@ SCHEME_BASELINE = 1
 #: ★ 放置值 -1（既有证据用的就是它，实测能成）
 PLACEMENT_DEFAULT = -1
 
+#: ★ `swBodyType_e.swSolidBody`
+SW_SOLID_BODY = 0
+
 #: ★ 包围盒读不到时的错误详情（供证据 JSON 用）
 _bbox_error = ""
-
-
-def _try(fn, *a):
-    try:
-        return True, fn(*a)
-    except Exception as exc:  # noqa: BLE001
-        return False, "%s: %s" % (type(exc).__name__, str(exc)[:140])
 
 
 def _status(doc):
@@ -137,49 +134,35 @@ def _dimensions(doc) -> list:
 def _bbox_x_mm(doc):
     """★ 回读包围盒 X 跨度（毫米）。
 
-    ★ 两条路都试，**都失败才回 None**（并把错误留在 `_bbox_error` 里）：
-      ① `IPartDoc.GetBodies2(True)` → `IBody2.GetBodyBox()`  ← 首选
-      ② `IModelDocExtension.GetBox()`
-    ⚠ 上一版只用 ②，实测回 None ⇒ 判据把「读不到」误报成「几何没动」。
+    ★ 已验证的读法（`tools/probe_s3_dimension_units.py` 实测通过）：
+      `IPartDoc.GetBodies2(swSolidBody=0, BVisibleOnly=True)` → `IBody2.GetBodyBox()`
+      ⇒ 6 个 double，**单位米**。
+
+    ⚠ 三条走不通的旧写法（别再用）：
+      · `GetBodies2(True)` —— 只传一个参数 ⇒ 官方要**两个必填**，报「非选择性的参数」
+      · `IModelDocExtension.GetBox` —— **不存在**
+      · 只有草图、没有实体时 `GetBodies2` 回 None ⇒ **要先拉伸**
     """
     global _bbox_error
-    errs = []
-
-    ok, body = _try(get_com_member, doc, "GetBodies2", True)
-    if ok and body:
-        try:
-            b = body[0] if isinstance(body, (list, tuple)) else list(body)[0]
-        except (IndexError, TypeError):
-            b = None
-        if b is not None:
-            ok2, box = _try(get_com_member, b, "GetBodyBox")
-            if ok2 and box:
-                nums = [float(v) for v in list(box)]
-                if len(nums) >= 6:
-                    return round((nums[3] - nums[0]) * 1000.0, 6)
-                errs.append("GetBodyBox 只回 %d 个数" % len(nums))
-            else:
-                errs.append("IBody2.GetBodyBox: %s" % str(box)[:80])
-        else:
-            errs.append("GetBodies2 回空数组")
-    else:
-        errs.append("IPartDoc.GetBodies2: %s" % str(body)[:80])
-
-    ok3, ext = _try(get_com_member, doc, "Extension")
-    if ok3 and ext is not None:
-        ok4, box2 = _try(get_com_member, ext, "GetBox")
-        if ok4 and box2:
-            nums = [float(v) for v in list(box2)]
-            if len(nums) >= 6:
-                return round((nums[3] - nums[0]) * 1000.0, 6)
-            errs.append("Extension.GetBox 只回 %d 个数" % len(nums))
-        else:
-            errs.append("IModelDocExtension.GetBox: %s" % str(box2)[:80])
-    else:
-        errs.append("取 Extension 失败: %s" % str(ext)[:80])
-
-    _bbox_error = " | ".join(errs)
-    return None
+    ok, body = _try(get_com_member, doc, "GetBodies2", SW_SOLID_BODY, True)
+    if not ok or not body:
+        _bbox_error = "GetBodies2: %s" % str(body)[:100]
+        return None
+    try:
+        b = body[0] if isinstance(body, (list, tuple)) else list(body)[0]
+    except (IndexError, TypeError):
+        _bbox_error = "GetBodies2 回空"
+        return None
+    ok2, box = _try(get_com_member, b, "GetBodyBox")
+    if not ok2 or not box:
+        _bbox_error = "GetBodyBox: %s" % str(box)[:100]
+        return None
+    nums = [float(v) for v in list(box)]
+    if len(nums) < 6:
+        _bbox_error = "GetBodyBox 只回 %d 个数" % len(nums)
+        return None
+    _bbox_error = ""
+    return round((nums[3] - nums[0]) * 1000.0, 6)
 
 
 def _add_dims(doc, sk) -> dict:
@@ -321,6 +304,17 @@ def main() -> int:
         )
 
         #: ③ 改宽度 100 → 120，回读几何
+        #: ★ 必须先退出草图并拉伸 —— 只有草图时 `GetBodies2` 回 None（没有实体）
+        _try(p_.end_sketch, doc)
+        _sk_names = [
+            n
+            for n in feature_names(doc)
+            if n.startswith("草图") or n.lower().startswith("sketch")
+        ]
+        ev["extrude"] = _try(
+            p_.extrude_boss, doc, _sk_names[-1] if _sk_names else "草图1", 20.0
+        )
+
         ev["units_before_update"] = _unit_probe(doc)
         ev["bbox_x_before_mm"] = _bbox_x_mm(doc)
         width_dim = next(

@@ -628,6 +628,21 @@ def create_empty_dispatch_variant():
     return VARIANT(pythoncom.VT_DISPATCH, None)
 
 
+def try_call(fn, *args):
+    """★ 调一次，回 `(成功?, 值或错误串)` —— 探测用的**唯一**帮手。
+
+    ★ 为什么放在这里（而不是各探针各写一份）：同一段 `try/except` 在两处出现，
+      统一化体检的「跨文件同函数体组」就会把它算成一个克隆组。COM 探测是本仓
+      最常见的动作，它的判据值得有一个家。
+
+    ★ 只包**一次调用**，不吞多步逻辑 —— 调用方仍要自己判 `ok`。
+    """
+    try:
+        return True, fn(*args)
+    except Exception as exc:  # noqa: BLE001
+        return False, "%s: %s" % (type(exc).__name__, str(exc)[:140])
+
+
 def select_by_id(extension, entity_name, entity_type, append=False, mark=0):
     """★ 统一封装 `IModelDocExtension::SelectByID2`（★ 本仓**唯一**实现）。
 

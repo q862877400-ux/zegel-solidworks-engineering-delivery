@@ -1,136 +1,147 @@
-# S3 T008 真机验证 · 尺寸驱动可行，但 `update_dimension_mm` 有单位缺陷
+# S3 T008 真机验证 · 尺寸驱动已验成，`update_dimension_mm` 单位缺陷已修
 
 **日期**: 2026-10-25
 
-**探针**: `tools/probe_s3_t008_dimension_driven.py`
+**探针**: `tools/probe_s3_dimensions_exist.py` · `tools/probe_s3_dimension_units.py` ·
+`tools/probe_s3_t008_dimension_driven.py`
 
 **对应任务**: `specs/350-first-part-delivery/tasks.md` T008
 
 ---
 
-## 一、三句话结论
+## 一、结论
 
-1. **可行性已证**：`ISketch.AutoDimension2(1, 1, -1, 1, -1)` 能给板件加上**驱动尺寸**，
-   草图从读数 **2（欠约束）** 变成 **3（完全定义）**。
-2. **改尺寸这条路有缺陷**：`update_dimension_mm` 把 120 mm 写成了放大约 **1000 倍**的值
-   （`SystemValue` `0.1` → `120.0`，比例 **1200**，期望 **0.12**）。
-3. **所以「改板宽 → 孔位联动」这一步还没验成** —— 不是做不到，是**改值这一步的换算错**。
+**尺寸驱动这条路走通了，而且改尺寸真的改了几何。**
 
-## 二、读数（真机实测）
-
-### ① 现状（上一轮已记，本轮复核）
-
-| 项 | 值 |
+| 判据 | 结果 |
 |---|---|
-| `GetConstrainedStatus()` | **2**（`swUnderConstrained`） |
-| 驱动尺寸数 | **0** |
+| 原状草图欠约束 | ✅ `GetConstrainedStatus()` = 2 |
+| 能加上驱动尺寸 | ✅ `AutoDimension2(1,1,-1,1,-1)` 建成 `D1@草图1` |
+| 加完变全约束 | ✅ 读数 **2 → 3** |
+| 改尺寸能改几何 | ✅ 包围盒 X 跨度 **100.0 → 120.0 mm** |
+| 改动有独立读数证实 | ✅ `SystemValue` `0.1 → 0.12`（正好 ×1.2） |
 
-### ② 加尺寸：两条入口，一条死一条通
+探针结论逐字：
+
+```
+★ 板件可做成尺寸驱动：用 AutoDimension2 加了 1 个尺寸，约束状态 3；
+  改宽度后 X 跨度 100.0 → 120.0 mm
+```
+
+## 二、三个入口：一条死、一条通、一条没查明
 
 | 入口 | 结果 |
 |---|---|
-| ❌ `IModelDoc2.AddHorizontalDimension2` | **把 SolidWorks 崩掉**（`com_error: RPC 服务器不可用`） |
-| ✅ `ISketch.AutoDimension2(1, 1, -1, 1, -1)` | 回 `0`（success），建成 `D1@草图1` = 100 mm，`GetConstrainedStatus` **2 → 3** |
-| ❌ `ISketchManager.FullyDefineSketch`（10 参） | 第 6 参（`HorizontalDatumDisp`，`object`）报 `类型不匹配` |
+| ❌ `IModelDoc2.AddHorizontalDimension2` | **不可调用** —— 直接崩进程（`RPC 服务器不可用`，需重启） |
+| ✅ `ISketch.AutoDimension2(1, 1, -1, 1, -1)` | 回 `0`（success），建成驱动尺寸，草图转全约束 |
+| ❌ `ISketchManager.FullyDefineSketch`（官方 10 参） | 第 6 参（`HorizontalDatumDisp`，`object`）报「类型不匹配」 |
 
-`AutoDimension2` 的参数按官方枚举取值：
+`AutoDimension2` 参数按官方枚举取值：
 
 | 参数 | 值 | 枚举 |
 |---|---:|---|
 | `EntitiesToDimension` | 1 | `swAutodimEntitiesAll` |
 | `HorizontalScheme` | 1 | `swAutodimSchemeBaseline` |
 | `HorizontalPlacement` | -1 | 既有证据用的值 |
-| `VerticalScheme` | 1 | 同上 |
-| `VerticalPlacement` | -1 | 同上 |
+| `VerticalScheme` / `VerticalPlacement` | 1 / -1 | 同上 |
 
-### ③ 改尺寸：单位放大 1000 倍
+## 三、★ 修掉的那个真缺陷：`update_dimension_mm` 的单位
 
-请求把 `D1@草图1` 从 **100 mm** 改成 **120 mm**（×1.2）：
+### 原来错在哪
 
-| 读数 | 值 |
-|---|---|
-| `IDimension.SystemValue` **改前** | `0.1`（= 100 mm，米制，正确） |
-| `IDimension.SystemValue` **改后** | **`120.0`**（应为 `0.12`） |
-| 期望值 | `0.12` |
-| 比例 | **1200**（期望 1.2） |
-| `update_dimension_mm` 自报 | `success: True`，`after_mm: 120.0` |
+`scripts/sw_document_data.py` 原按 `GetUnits()` 推倍数：
 
-★★ **它的自我报告不能当证据**：正因为 `after_mm` 与请求一致，
-  才掩盖了 `SystemValue` 被放大 1000 倍这件事。
+- 毫米文档（`swLengthUnit_e = 0`）⇒ 倍数 **1.0**
+- **读**：`GetSystemValue3` 回的 `0.1`（米）`× 1.0` = `0.1` ⇒ 100 mm 的尺寸读成 `0.1`
+- **写**：`SetSystemValue3(120 / 1.0)` = `120` ⇒ 当成 **120 米**
 
-## 三、★ 我这一轮犯的一个流程错误
+读写两侧都差 **1000 倍**，而测试里的假文档特意声明自己是米文档（倍数 1000），
+两边相消 ⇒ **测试全绿，真实默认（毫米）从没被测过**。
 
-`docs/dead-ends.md` **早就记着** `AddDimension2` 是死路（轮 400 / 153 / 154 / 155，
-6 种选法全败）。而我从 `AddHorizontalDimension2` 开始试，
-**花了 3 次真机运行才发现它会把 SolidWorks 崩掉**。
+### 怎么定案的
 
-`AGENTS.md` 第十三节逐字：
+在**毫米**文档上做几何测量（`tools/probe_s3_dimension_units.py`）：
 
-> 动手核一条路之前：先扫「已走死的路」`docs/dead-ends.md`
-
-⇒ 我这轮没扫就动手，是流程错误。教训：**查"某能力是否可行"之前先扫 dead-ends。**
-
-## 四、这两个缺陷的性质
-
-### 缺陷 1：`update_dimension_mm` 的单位换算
-
-`scripts/sw_document_data.py` 的实现（逐字）：
-
-```python
-_scale = _document_length_unit_scale(model)
-...
-dimension.SetSystemValue3(float(value_mm) / _scale, ...)
+```
+文档：GetUnits() = [0, 1, 8, 2, 0]        ← swLengthUnit_e = 0 = swMM
+一条 100 mm 宽的驱动尺寸：SystemValue = 0.1 · GetSystemValue3(1, None) = [0.1]
+SetSystemValue3(0.15, 1, None) → 返回 0（success）
+  改后：SystemValue = 0.15 · GetSystemValue3 = [0.15]
+  ★ 包围盒 X 跨度：100.0 mm → 150.0 mm     ← 几何证实
 ```
 
-它自己在上方注释里写：
+⇒ 写 `0.15` 得到 **150 mm** ⇒ 单位是**米**，与文档单位无关。
+官方 `SetSystemValue3.md` 逐字也是这么写的：「system units (**meters**)」。
 
-> ★★★★ 2026-10-04（接手轮）**修正换算 —— 两处一起改**：
-> **病灶**：`_dimension_value_mm` 硬编码 `× 1000`、而这里硬编码 `/ 1000` ⇒
-> **两个相反方向的错、互相掩盖**（读回来的值**看起来对**）
+### 修法
 
-⇒ 本轮实测表明：**同类错误仍在**，只是换了位置 ——
-   `SetSystemValue3` 收到的是 `120.0`，而米制下应为 `0.12`。
+1. 新增常量 `SYSTEM_UNIT_MM = 1000.0`（并注明它是**定义**，不是从文档探出来的）
+2. `_dimension_value_mm`：`return float(raw) * SYSTEM_UNIT_MM`
+3. `update_dimension_mm`：`SetSystemValue3(float(value_mm) / SYSTEM_UNIT_MM, ...)`
+4. `_document_length_unit_scale` **保留**（另有测试直接测它），但**本路径不再用**
+5. 新增 `tests/test_system_value_units.py`（6 条）钉住这条契约，含
+   「毫米 / 厘米 / 米三种文档单位读数必须一致」与「不再把文档单位接回系统值换算」
 
-**⚠ 未查明**：是 `_document_length_unit_scale` 求错（回了 1 而不是 1000），
-还是 `SetSystemValue3` 在本机吃米制。两种解释**都未被证据排除**。
+### 修完的读数
 
-### 缺陷 2：`AddHorizontalDimension2` 崩进程
+```
+SystemValue:        0.1  →  0.12     （正好 ×1.2）
+update_width:       before_mm 100.0 → after_mm 120.0
+包围盒 X 跨度:       100.0 mm → 120.0 mm
+unit_defect_suspected: false
+```
 
-比 dead-ends 记的更重：那几轮记的是「回 None」，本轮是**进程崩**。
-⇒ dead-ends 该补这条症状。
+## 四、顺带查清的：可用的包围盒读法
 
-## 五、还没验成的（如实）
+```
+IPartDoc.GetBodies2(swSolidBody=0, BVisibleOnly=True) → IBody2.GetBodyBox()
+⇒ 6 个 double，单位米
+```
 
-「改板宽 100 → 120 后**孔位联动**」**没验成**，因为：
+三条走不通的旧写法（别再试）：
 
-| 原因 | 细节 |
+| 写法 | 症状 |
 |---|---|
-| 改值换算错 | 见上，`SystemValue` 放大 1000 倍 |
-| 没有独立读数能证实几何变宽 | `IPartDoc.GetBodies2(True)` 报「非选择性的参数」；`IModelDocExtension.GetBox` 不存在 |
-| 尺寸遍历只拿到 1 个 | `AutoDimension2` 只加了宽度（100 mm）；高度没加 ⇒ 改宽度后「孔位联动」无从观察 |
+| `GetBodies2(True)` | 只传一个参数 ⇒ 「非选择性的参数」（官方要**两个必填**） |
+| `IModelDocExtension.GetBox` | **不存在** |
+| 只有草图没实体时读 | `GetBodies2` 回 `None` ⇒ **要先拉伸** |
 
-★ 所以本节**不写**「尺寸驱动已验成」。写的是：
-  **加尺寸这一步验成了；改尺寸这一步因单位缺陷未验成。**
+## 五、我这一轮的流程错误
 
-## 六、下一步（按依赖顺序）
+`docs/dead-ends.md` **早就记着** `AddDimension2` 是死路（轮 400 / 153 / 154 / 155，
+6 种选法全败）。我没先扫就动手，**花了 3 次真机运行**才发现 `AddHorizontalDimension2`
+会把 SolidWorks 崩掉。
 
-| # | 做什么 | 前置 |
+`AGENTS.md` 第十三节逐字要求「动手核一条路之前：先扫『已走死的路』」。
+⇒ 已把「不可调用（崩进程）」补进 `capabilities.yaml` 并重生成 `dead-ends.md`（75 → 76 条）。
+
+## 六、还没做的
+
+| # | 事情 | 为什么 |
 |---|---|---|
-| 1 | 查明 `SetSystemValue3` 到底吃米制还是文档单位（**测量，不是猜**） | 无 |
-| 2 | 按查明结果修 `update_dimension_mm` 的换算 | 1 |
-| 3 | 查明 `GetSystemValue3` 的正确调用形状（本轮传 `(0, None)` 回 `null`） | 无 |
-| 4 | 找到可用的包围盒读法（三条都不通：`GetBodies2` / `Extension.GetBox` / `IBody2.GetBodyBox`） | 无 |
-| 5 | 让 `AutoDimension2` 同时加高度尺寸（或查明为何只加了 1 个） | 无 |
-| 6 | 孔位也用尺寸/约束表达，然后验「改板宽 → 孔位联动」 | 2 + 5 |
-| 7 | 把 `build_plan()` 从坐标参数改成「画 + 加尺寸」 | 6 |
+| 1 | `AutoDimension2` 只加了 **1** 个尺寸（宽度），高度没加 | **未查明**为何只加一个；全约束靠什么达成也未查明 |
+| 2 | 孔位也用尺寸/约束表达 | 依赖 `build_plan()` 改造 |
+| 3 | 把 `build_plan()` 从坐标参数改成「画 + 加尺寸」 | 依赖 2，且会牵动 `run_case` / `run_change` / `specs/317` / 阶段 322 |
+| 4 | 「改板宽 → **孔位联动**」 | 依赖 2；本轮验的是「改板宽 → 板变宽」，**孔位联动还没验** |
 
-★ 第 1、3、4 项都是**测量**，不需要决策，可以下一轮直接做。
+★ 第 1 项是 S3 下一步最该查的：**只有 1 个尺寸却能全约束**，说明还有关系在起作用，
+  那意味着「尺寸驱动」可能不完整 —— 需要单独量。
 
-## 七、可重跑
+## 七、一个尚未查清的疑点
+
+`extrude_boss(model, name, 20.0)` 建出的实体，`GetBodyBox` 原始 z 跨度是 **20 米**
+（`z = -20 → 0`），而 `sketch_corner_rectangle(0,0,100,60)` 建出的 X 跨度是 **100 mm**。
+
+⇒ **同一个仓库里两个生成函数的单位口径似乎不一致**（一个按米、一个按毫米）。
+   本轮**未逐个体查清**，只记录现象。这条会影响 T008 后续与 S4 的装配尺寸。
+
+## 八、可重跑
 
 ```powershell
 python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_dimensions_exist.py
+python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_dimension_units.py
 python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimension_driven.py
 ```
 
-★ 探针已设 `sw.CommandInProgress = True`（铁律 2），收尾恢复并只关**自己开的**文档。
+★ 三个探针都设 `sw.CommandInProgress = True`（铁律 2），收尾恢复并只关**自己开的**文档。
+★ 共用的 `try_call` 在 `scripts/sw_connect.py`（同一段 `try/except` 不在多处各写一份）。

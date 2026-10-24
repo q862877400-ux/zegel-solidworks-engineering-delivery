@@ -43,6 +43,7 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p_  # noqa: E402
+from scripts.sw_connect import try_call as _try  # noqa: E402
 
 #: ★ 复用既有共用帮手（`scripts/sw_sketch.py:585`）——
 #:   同一件事不在两个地方各写一份（统一化体检⑤）
@@ -79,14 +80,6 @@ def _g(obj, name, *args):
     return val
 
 
-
-
-def _try(fn, *a):
-    """★ 调一次，成功回 `(True, 值)`，失败回 `(False, 错误字符串)`。"""
-    try:
-        return True, fn(*a)
-    except Exception as exc:  # noqa: BLE001
-        return False, "%s: %s" % (type(exc).__name__, str(exc)[:120])
 
 
 def _walk_dimensions(doc) -> dict:
