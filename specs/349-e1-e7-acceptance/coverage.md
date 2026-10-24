@@ -69,6 +69,22 @@ tools/probe_acceptance_report.py 与 tests/test_acceptance_pipeline_e2e.py
 ★★ **拆分不放宽**：同一个 E 下的子项**全部**绿才算该 E 成立
 （有测试钉住，如 `test_全不绿才算E4不成立`）。
 
+### ★★ E1 的一条补充判据（第 9 轮真机倒逼出来的）
+
+真机实测：**把草图每段都加 sgFIXED、一条驱动尺寸都不加，GetConstrainedStatus() 也回 3（全约束）。**
+
+⇒ 只看枚举，「全固定」与「尺寸驱动」**分不开**。所以 E1 的枚举路径在状态 3 时
+   必须再核 driving_dimensions：
+
+| driving_dimensions | 结论 |
+|---|---|
+| >= 1 | pass（尺寸在驱动） |
+| == 0 | **fail**（全固定，不是尺寸驱动） |
+| None | **unknown**（没数过；不得判绿） |
+
+★ 这条是**第 4 轮加枚举路径时漏掉的负例**，第 9 轮补上。
+  样件 samples.bad_e1_all_fixed_by_relation / ad_e1_status3_no_dimension_count 钉住它。
+
 ### 「不能当替代品」逐条
 
 写在每个判定器的模块 docstring 里，并在代码里对应到具体分支：

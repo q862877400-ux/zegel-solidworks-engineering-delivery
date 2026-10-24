@@ -84,6 +84,41 @@ def bad_e1_all_fixed_no_dimension() -> Observation:
     )
 
 
+def bad_e1_all_fixed_by_relation() -> Observation:
+    """★★ **真机实测出来的坏样件**：全部用 sgFIXED 固定、零驱动尺寸。
+
+    出处：	ools/probe_s3_autodim_why_fully_defined.py ——
+    把草图每一段都加 sgFIXED 后，GetConstrainedStatus() 也回 **3（全约束）**。
+
+    ⇒ 只看枚举，「全固定」与「尺寸驱动」分不开。
+      而 E1 的负例明令包含「全部固定却无驱动参数」。
+    """
+    return collect_sketch_constraint(
+        target="sketch-all-fixed-no-dimension",
+        entities=0,
+        relations=(),
+        dimensions=(),
+        intentional_dof=0,
+        solver_state="from_api",
+        solver_status_int=3,
+        driving_dimensions=0,
+    )
+
+
+def bad_e1_status3_no_dimension_count() -> Observation:
+    """★ 状态 3 但**没数过**驱动尺寸 ⇒ 应判 unknown（不得当合格）。"""
+    return collect_sketch_constraint(
+        target="sketch-status3-unmeasured",
+        entities=0,
+        relations=(),
+        dimensions=(),
+        intentional_dof=0,
+        solver_state="from_api",
+        solver_status_int=3,
+        driving_dimensions=None,
+    )
+
+
 def unknown_e1() -> Observation:
     """采集不完整：没取到求解状态。"""
     return collect_sketch_constraint(

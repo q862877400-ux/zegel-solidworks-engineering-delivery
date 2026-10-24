@@ -145,3 +145,57 @@ python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimensio
 
 ★ 三个探针都设 `sw.CommandInProgress = True`（铁律 2），收尾恢复并只关**自己开的**文档。
 ★ 共用的 `try_call` 在 `scripts/sw_connect.py`（同一段 `try/except` 不在多处各写一份）。
+
+## 九、★ 查「只加 1 个尺寸却全约束」时，抓到自己判据的一个洞
+
+### 量到了什么
+
+	ools/probe_s3_autodim_why_fully_defined.py（真机）：
+
+| 时点 | 状态 | 尺寸（路线一 GetNext2） | 尺寸（路线二 EnumDisplayDimensions） | 关系数 |
+|---|---|---|---|---|
+| 矩形 100×60 | **2** | 0 | 取不到 | 0 |
+| 加 AutoDimension2 后 | **3** | **1** | 取不到 | **0** |
+
+**这份读数内部不自洽**：一个 100×60 矩形只被宽度尺寸驱动、
+一条关系都没有，按理高度仍自由 ⇒ 应为欠约束（2），可它报了 3。
+
+⚠ **本项未查清**：是关系读数不可靠（GetRelationsCount(-1) 回 0）、
+   还是 AutoDimension2 以某种方式同时定住了两个方向、还是
+   GetConstrainedStatus() 在「有基线尺寸」时语义与我想的不同 —— **三种解释都未被排除**。
+   已按「三次失败就停下质疑」的纪律停止继续试，记为未查明。
+
+### ★★★ 但这一轮抓到了我自己判据的一个真洞
+
+上面那个读数提示了一件事：**「状态 3」不等于「尺寸驱动」**。
+
+于是做了一个离线验证（不连真机）：
+
+`
+把草图的每一段都加 sgFIXED、一条驱动尺寸都不加 ⇒ 真机 GetConstrainedStatus() 回 3
+喂给 judge_sketch_constraint ⇒ 判 **pass**
+`
+
+而 docs/ENGINEERING-PATH.md 第四节 E1 的负例**明令包含**
+「**全部固定却无驱动参数**」；1_sketch.py 自己的 docstring 也把它列为必拒。
+
+⇒ **第 4 轮我加枚举路径时，把这条负例绕过去了**：枚举说 3 就直接 pass，
+   不再看有没有驱动尺寸。这正是 S1 要防的那类洞，而我自己漏了一个。
+
+### 修法
+
+采集器新增 driving_dimensions: int | None；判定器在状态 3 时**再看它**：
+
+| driving_dimensions | 结论 |
+|---|---|
+| >= 1 | pass（尺寸在驱动） |
+| == 0 | **fail**（全固定，不是尺寸驱动） |
+| None | **unknown**（没数过；按「unknown ≠ pass」不得判绿） |
+
+新增测试与样件：
+- samples.bad_e1_all_fixed_by_relation（3 + 0 尺寸）→ 期望 fail
+- samples.bad_e1_status3_no_dimension_count（3 + 没数过）→ 期望 unknown
+- 	est_全固定且零驱动尺寸必须判fail · 	est_状态3但没数过尺寸必须判unknown
+- 原来那 5 条把「状态 3 即 pass」写死的测试**按新契约更新**（它们编码了那个洞）
+
+⇒ E1 三态样件从 80 条增到 85 条，全部通过。

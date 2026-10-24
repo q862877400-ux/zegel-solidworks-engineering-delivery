@@ -42,6 +42,7 @@ def collect_sketch_constraint(
     *, target: str, entities: int, relations: tuple, dimensions: tuple,
     intentional_dof: int = 0, solver_state: str = "", version: str = "",
     solver_status_int: int | None = None,
+    driving_dimensions: int | None = None,
 ) -> Observation:
     """★ 采集器：只把数装进来，**不判断**。
 
@@ -60,6 +61,19 @@ def collect_sketch_constraint(
     ⇒ 有枚举就只判枚举（`swFullyConstrained = 3` 是权威结论）；
       没有枚举才退回数值路径；两者都没有 ⇒ `unknown`。
 
+    ## ★★★ `driving_dimensions`：枚举「全约束」时必须配套的数
+
+    ★ 真机实测（`tools/probe_s3_autodim_why_fully_defined.py`）暴露了一个洞：
+      把草图的每一段都加 `sgFIXED`（**一条驱动尺寸都没有**），
+      `GetConstrainedStatus()` 也回 **3（全约束）**。
+
+    ⇒ 只看枚举，「全固定」与「尺寸驱动」**无法区分**。
+      而 E1 明令的负例里就有「**全部固定却无驱动参数**」这一条。
+    ⇒ 所以枚举说 3 时，必须再给一个 `driving_dimensions`：
+      - `>= 1` ⇒ 尺寸在驱动，可以判 pass
+      - `== 0` ⇒ 判 **fail**（全固定）
+      - `None` ⇒ 判 **unknown**（没数过，不能当成合格）
+
     ⚠ **不要把数值路径当默认** —— 真机拿不到那三个数，
       填 0 就是「先填返回值」（`AGENTS.md` 环节条件第 7 条禁止）。
     """
@@ -76,6 +90,8 @@ def collect_sketch_constraint(
             "intentional_dof": intentional_dof,
             "solver_state": solver_state,
             "solver_status_int": solver_status_int,
+            #: ★ 枚举说「全约束」时必须配套：0 = 全固定，>=1 = 尺寸驱动，None = 没数过
+            "driving_dimensions": driving_dimensions,
         },
         unit={},
         note="" if complete else "缺 solver_state，或既没有枚举也没有数值 ⇒ 采集不完整",
@@ -119,7 +135,12 @@ def judge_sketch_constraint(obs: Observation, *, requirement_id: str) -> CheckRe
     #: ② ★★ 有枚举 ⇒ 只信枚举（真机权威信号）
     status_int = obs.values.get("solver_status_int")
     if status_int is not None:
-        return _judge_by_enum(base, status_int, obs.values.get("intentional_dof", 0))
+        return _judge_by_enum(
+        base,
+        status_int,
+        obs.values.get("intentional_dof", 0),
+        obs.values.get("driving_dimensions"),
+    )
 
     rels = obs.values["relations"]
     dims = obs.values["dimensions"]
@@ -186,14 +207,32 @@ _ENUM_UNJUDGEABLE = {
 }
 
 
-def _judge_by_enum(base: dict, status_int: object, intentional_dof: int) -> CheckResult:
+def _judge_by_enum(
+    base: dict,
+    status_int: object,
+    intentional_dof: int,
+    driving_dimensions: int | None = None,
+) -> CheckResult:
     """★ 按 GetConstrainedStatus() 的枚举判 E1。
 
     ★ 判据（真机唯一可得的信号）：
-      · 3 swFullyConstrained ⇒ **pass**
+      · 3 swFullyConstrained ⇒ **还要看 `driving_dimensions`**（见下）
       · 2 swUnderConstrained ⇒ 有 intentional_dof > 0 时 pass（**有意保留**），否则 fail
       · 4 swOverConstrained / 5 / 6 ⇒ **fail**
       · 1 / 7 / 表外 ⇒ **unknown**（判不了，不猜）
+
+    ## ★★★ 为什么 3 不能直接 pass
+
+    真机实测（`tools/probe_s3_autodim_why_fully_defined.py`）：
+    **把草图每一段都加 `sgFIXED`、一条驱动尺寸都不加，`GetConstrainedStatus()` 也回 3。**
+
+    ⇒ 只看枚举，「全固定」与「尺寸驱动」**分不开**。
+      而 E1 的负例明令包含「全部固定却无驱动参数」。
+
+    ⇒ 所以 3 要再看 `driving_dimensions`：
+      · `>= 1` ⇒ 尺寸在驱动 → pass
+      · `== 0` ⇒ **fail**（全固定，不是尺寸驱动）
+      · `None` ⇒ **unknown**（没数过；按「unknown ≠ pass」不得判绿）
     """
     try:
         n = int(status_int)  # type: ignore[arg-type]
@@ -209,6 +248,32 @@ def _judge_by_enum(base: dict, status_int: object, intentional_dof: int) -> Chec
             observed={"solver_status": n},
             reason="★ 状态 %d 不可判定：%s" % (n, _ENUM_UNJUDGEABLE[n]),
         )
+
+    #: ★★★ 状态 3（全约束）必须再核驱动尺寸数 —— 否则「全固定」会冒充「尺寸驱动」
+    if n == 3:
+        if driving_dimensions is None:
+            return CheckResult(
+                **base,
+                status=Status.UNKNOWN,
+                observed={"solver_status": 3, "driving_dimensions": None},
+                expected={"driving_dimensions": ">=1"},
+                reason=(
+                    "★ 状态 3（全约束），但**没数过驱动尺寸** ⇒ "
+                    "分不清「尺寸驱动」与「全靠 sgFIXED 固定」"
+                    "（真机实测：全固定且零尺寸时状态也是 3）"
+                ),
+            )
+        if int(driving_dimensions) <= 0:
+            return CheckResult(
+                **base,
+                status=Status.FAIL,
+                observed={"solver_status": 3, "driving_dimensions": 0},
+                expected={"driving_dimensions": ">=1"},
+                reason=(
+                    "★ 状态 3（全约束）但**一条驱动尺寸都没有** ⇒ "
+                    "这是「全部固定」，不是尺寸驱动（E1 明令的负例）"
+                ),
+            )
 
     kind, why = _ENUM_VERDICT.get(n, ("bad", "表外取值 ⇒ 不猜"))
     if kind == "ok":

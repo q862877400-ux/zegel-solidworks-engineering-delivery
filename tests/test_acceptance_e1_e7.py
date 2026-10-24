@@ -37,6 +37,19 @@ CASES = [
     ("e1_good", judge_sketch_constraint, S.good_e1, Status.PASS),
     ("e1_bad_dup", judge_sketch_constraint, S.bad_e1_duplicate_relation, Status.FAIL),
     ("e1_bad_fixed", judge_sketch_constraint, S.bad_e1_all_fixed_no_dimension, Status.FAIL),
+    #: ★★ 真机实测出来的：全用 sgFIXED 固定、零驱动尺寸，状态也是 3
+    (
+        "e1_bad_all_fixed_by_relation",
+        judge_sketch_constraint,
+        S.bad_e1_all_fixed_by_relation,
+        Status.FAIL,
+    ),
+    (
+        "e1_status3_unmeasured",
+        judge_sketch_constraint,
+        S.bad_e1_status3_no_dimension_count,
+        Status.UNKNOWN,
+    ),
     ("e1_unknown", judge_sketch_constraint, S.unknown_e1, Status.UNKNOWN),
     # ── E2 ──
     ("e2_good", judge_rebuild, S.good_e2, Status.PASS),

@@ -37,8 +37,21 @@ from engineering.acceptance.result import Status  # noqa: E402
 REQ = "R-enum"
 
 
-def _obs(status_int, *, intentional_dof=0, entities=0, relations=(), dimensions=()):
-    """★ 构造一个「只有枚举」的观测（真机的典型形态）。"""
+def _obs(
+    status_int,
+    *,
+    intentional_dof=0,
+    entities=0,
+    relations=(),
+    dimensions=(),
+    driving_dimensions=1,
+):
+    """★ 构造一个「只有枚举」的观测（真机的典型形态）。
+
+    ★ `driving_dimensions` 默认 **1** —— 因为「状态 3 + 零驱动尺寸」是**全固定**，
+      按 E1 应判 fail（见 `test_全固定且零驱动尺寸必须判fail`）。
+      要构造那种情形就显式传 0。
+    """
     return collect_sketch_constraint(
         target="sketch-under-test",
         entities=entities,
@@ -47,6 +60,7 @@ def _obs(status_int, *, intentional_dof=0, entities=0, relations=(), dimensions=
         intentional_dof=intentional_dof,
         solver_state="from_api",
         solver_status_int=status_int,
+        driving_dimensions=driving_dimensions,
     )
 
 
@@ -75,13 +89,36 @@ def test_枚举路径判定(status_int, want, why) -> None:
 
 
 def test_完全定义是唯一能让枚举路径判pass的值() -> None:
-    """★★ 防「宽松通过」：只有 3 能直接 pass（2 要另看有意自由度）。"""
+    """★★ 防「宽松通过」：只有 3 能 pass（2 要另看有意自由度）。"""
     passing = [
         s
         for s, want, _ in CASES
         if judge_sketch_constraint(_obs(s), requirement_id=REQ).status is Status.PASS
     ]
-    assert passing == [3], "★ 只有 swFullyConstrained 该直接 pass，实得 %r" % passing
+    assert passing == [3], "★ 只有 swFullyConstrained 该 pass，实得 %r" % passing
+
+
+def test_全固定且零驱动尺寸必须判fail() -> None:
+    """★★★ 这是本判据最容易漏的一个洞，真机实测出来的。
+
+    `tools/probe_s3_autodim_why_fully_defined.py` 量到：
+    **把草图每一段都加 `sgFIXED`、一条驱动尺寸都不加，`GetConstrainedStatus()` 也回 3。**
+
+    ⇒ 只看枚举，「全固定」与「尺寸驱动」分不开。
+      而 E1 的负例明令包含「全部固定却无驱动参数」。
+    """
+    res = judge_sketch_constraint(_obs(3, driving_dimensions=0), requirement_id=REQ)
+    assert res.status is Status.FAIL, "★ 全固定零尺寸必须 fail，实得 %s" % res.status.value
+    assert "全部固定" in res.reason or "驱动尺寸" in res.reason
+
+
+def test_状态3但没数过尺寸必须判unknown() -> None:
+    """★★ 「没数过」不等于「合格」—— unknown 不得判绿。"""
+    res = judge_sketch_constraint(
+        _obs(3, driving_dimensions=None), requirement_id=REQ
+    )
+    assert res.status is Status.UNKNOWN, "★ 没数过驱动尺寸应 unknown，实得 %s" % res.status.value
+    assert "没数过" in res.reason
 
 
 def test_欠定义加有意自由度算符合设计意图() -> None:
@@ -158,6 +195,13 @@ def test_枚举判定带出原始值() -> None:
     res = judge_sketch_constraint(_obs(3), requirement_id=REQ)
     assert res.observed["solver_status"] == 3
     assert res.expected["solver_status"] == 3
+
+
+def test_全固定时的证据里带出驱动尺寸0() -> None:
+    """★ 判 fail 时也要把读数留全，供报告指认。"""
+    res = judge_sketch_constraint(_obs(3, driving_dimensions=0), requirement_id=REQ)
+    assert res.observed["driving_dimensions"] == 0
+    assert res.expected["driving_dimensions"] == ">=1"
 
 
 def test_官方取值表归口在sw_sketch_status() -> None:
