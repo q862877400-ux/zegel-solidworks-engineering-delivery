@@ -1,0 +1,47 @@
+{
+  "union_sources": {
+    "count": 4,
+    "licenses": {
+      "MIT": 3,
+      "Apache-2.0": 1
+    },
+    "declared_verified": {
+      "": 3,
+      "SW 2026 SP3.2 简体中文": 1
+    },
+    "names": [
+      "Eduardof0nt/Solidworks-MCP-Server",
+      "andrewbartels1/SolidworksMCP-python",
+      "vespo92/SolidworksMCP-TS",
+      "Slacker-LLC/solidworks-mcp"
+    ]
+  },
+  "third_party_notices": {
+    "lines": 169,
+    "bytes": 8981,
+    "mentions_jiale": true,
+    "mentions_mit": 12,
+    "mentions_apache": 5
+  },
+  "repo_license": {
+    "exists": true,
+    "first_line": "MIT License"
+  },
+  "code_files_scanned": 1530,
+  "license_keywords_in_header": {
+    "MIT": 1245,
+    "GPL": 8,
+    "AGPL": 6,
+    "Apache": 5,
+    "Copyright": 3
+  },
+  "files_with_gpl_family_header": [
+    "scripts\\check_license_redlines.py",
+    "scripts\\engineering\\reference_resolver.py",
+    "tools\\compare_geometry.py",
+    "tools\\ec00_drafts_audit.py",
+    "tests\\test_license_redlines_gate.py",
+    "tests\\test_reference_resolver.py"
+  ],
+  "files_with_gpl_family_count": 6
+}

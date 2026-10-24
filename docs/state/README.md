@@ -86,7 +86,10 @@
 | S3 | **C 能力台账** + **J 运行装配** | ✅ 已提交（事实见 `facts/C-capabilities.md`、`facts/J-runtime.md`）|
 | S4 | **D 脚本层** + **F 测试层** | ✅ 已提交（事实见 `facts/D-scripts.md`、`facts/F-tests.md`）|
 | S5 | **G 文档层** + **H 规格层** + **文档地图** | ✅ 已提交（`facts/G-docs.md`、`facts/H-specs.md`、`doc-map.md`）|
-| S6 | I 许可来源 + 汇总索引 | ⬜ 下一轮 |
+| S6 | **I 许可来源** + **跨维度索引** | ✅ 已提交（`facts/I-license.md`、`INDEX.md`）|
+
+**收工状态**：A–J **十个维度全部落盘**；跨维度索引见 [`INDEX.md`](INDEX.md)；文档地图见 [`doc-map.md`](doc-map.md)。
+探测器 **11 个**（`probes/`），全部只读、可重跑；机器可读读数 `inventory-a..j.json` + `inventory-g-map.json`。
 
 **每轮收工**：① 事实写入对应 `facts/*.md`；② 更新本文件进度表；③ `python tools/commit_mine.py` 提交；
 ④ 跑 `release_check` 确认没有把仓库弄红。
