@@ -236,3 +236,69 @@ python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimensio
 
 ★ 改造前的探针把 ③ 当「好样件、应判 pass」—— **探针自己也编码了那个洞**。
   现在它成了第二个真实坏样件，读数更有信息量。
+
+## 十一、★★ 更正第九节的一个读数：那次的「关系 0 → 0」是**测量错误**
+
+第九节记的真机读数是「状态 2→3 · 尺寸 0→1 · **关系 0→0**」，
+并据此列出三种未排除的解释。
+
+**「关系 0→0」这个读数是错的。** 真因在 filter 参数：
+
+`ISketchRelationManager.GetRelationsCount(Filter)` 的官方枚举
+`swSketchRelationFilterType_e` 逐字：
+
+| 成员 | 值 |
+|---|---|
+| **swAll** | **0** |
+| swDangling | 1 |
+| swOverDefining | 2 |
+| swExternal | 3 |
+| swDefinedInContext | 4 |
+| swLocked | 5 |
+| swBroken | 6 |
+| swSelectedEntities | 7 |
+
+⇒ **`-1` 不在枚举里**。传它时 SolidWorks **回 0 而不报错**。
+⇒ 当时探针传的是 `-1`，所以「0 条关系」是**假读数**。
+
+### 正确的读数（同一张矩形 + 4 孔的草图）
+
+| 时点 | `GetRelationsCount(-1)` | `GetRelationsCount(0)` |
+|---|---|---|
+| 加关系前 | 0（非法值） | **5** |
+| `FullyDefineSketch`（全关系+全尺寸）后 | 0 | **21** |
+| `FullyDefineSketch`（只加尺寸）后 | 0 | **19** |
+
+### ★★ 由此得到两个结论
+
+**① `FullyDefineSketch` 主要靠「加关系」把草图定死，只加 1 个尺寸。**
+
+8 个实体（4 边 + 4 圆）→ 关系 5 → **21**，尺寸 0 → **1**，状态 2 → 3。
+
+⇒ 这正是 E1 要拒绝的形态（「关系堆出来」而非「尺寸驱动」）。
+  所以**它不能作为「让孔位参数化」的方案** —— 孔位并没有得到尺寸。
+
+**② 修掉了仓库里一个「永远回 0」的真缺陷。**
+
+`scripts/sw_sketch_dimensions.count_sketch_relations` 原默认 `filter=-1`
+⇒ 函数与它挂的工具 `solidworks_count_sketch_relations` **每次都报「0 条关系」**。
+
+修法：默认改 **0**（`swAll`），工具 `Param` 默认同步改，两个既有调用方
+（`tools/prove_b5_sketch_dimensions.py`）里显式传的 `-1` 也改 0。
+
+`tests/test_relation_filter_contract.py`（4 条）钉住：默认必须是 0、
+函数如实把 filter 传下去、工具声明同步、源码里不再把 -1 当全数。
+
+### 本节同时确认的好消息
+
+`ISketchManager.FullyDefineSketch` **现在能调通了**（第 6 轮那次失败是参数错）：
+
+| 参数 | 第 6 轮传的（错） | 正确值 |
+|---|---|---|
+| `HorizontalDimPlacement` | -1 | **0 = Above**（1 = Below） |
+| `VerticalDimPlacement` | -1 | **0 = Right**（1 = Left） |
+| `RelationsToApply` | -1 | `swSketchFullyDefineRelationType_e` **位掩码**（10 种全取 = 1023） |
+| `HorizontalDatumDisp` / `VerticalDatumDisp` | Python `None` | **VARIANT Nothing**（`create_empty_dispatch_variant()`） |
+
+两组参数都 `call_ok=True`、状态 2→3。
+但**尺寸仍只有 1 个** ⇒ 对「孔位参数化」没有帮助（见上）。

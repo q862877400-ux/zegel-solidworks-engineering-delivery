@@ -161,8 +161,26 @@ def fully_define_sketch(
     )
 
 
-def count_sketch_relations(model, filter: int = -1) -> int:
-    """★ 关系计数：`ISketchRelationManager.GetRelationsCount(Filter)`（★ `Filter=-1` = 全部）。"""
+def count_sketch_relations(model, filter: int = 0) -> int:
+    """★ 关系计数：`ISketchRelationManager.GetRelationsCount(Filter)`。
+
+    ## ★★★ 2026-10-25 修掉一个「永远回 0」的缺陷
+
+    原来默认 `filter=-1`（注释写「-1 = 全部」），但官方枚举里**没有 -1**：
+
+    `swSketchRelationFilterType_e` 逐字 ⇒ **`swAll = 0`**（1 Dangling · 2 OverDefining ·
+    3 External · 4 DefinedInContext · 5 Locked · 6 Broken · 7 SelectedEntities）。
+
+    ⇒ 传 -1 时 SolidWorks **回 0 而不报错** ⇒ 本函数与它挂的工具
+      `solidworks_count_sketch_relations` **每次都报「0 条关系」**。
+
+    ★ 真机证据（`tools/probe_s3_fully_define_sketch.py`，同一张草图）：
+      ```
+      GetRelationsCount(-1) = 0     ← 非法值，静默回 0
+      GetRelationsCount(0)  = 5     ← 矩形草图加关系前的真实条数
+      加 FullyDefineSketch 之后  = 21
+      ```
+    """
     return int(get_com_member(_relations(model), "GetRelationsCount", int(filter)) or 0)
 
 

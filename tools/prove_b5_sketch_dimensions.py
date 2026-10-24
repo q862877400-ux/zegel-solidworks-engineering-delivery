@@ -79,7 +79,7 @@ def main() -> int:
 
     def rel_count(model):
         try:
-            return int(d_.count_sketch_relations(model, -1))
+            return int(d_.count_sketch_relations(model, 0))
         except Exception:
             return -1
 
@@ -249,7 +249,7 @@ def main() -> int:
     run(
         "\u5173\u7cfb\u8ba1\u6570",
         s_r,
-        lambda d: d_.count_sketch_relations(d, -1),
+        lambda d: d_.count_sketch_relations(d, 0),
         "readable",
     )
 

@@ -38,13 +38,17 @@ SPECS_BATCH103 = [
             Param(
                 "filter",
                 int,
-                default=-1,
-                description="★ 关系类型过滤（-1 = 不过滤，数全部）；★ 取值表见源码块的官方枚举。",
+                default=0,
+                description="Relations to count: 0 = all (swAll), 1 = dangling, "
+                "2 = over-defining, 3 = external, 4 = defined-in-context, "
+                "5 = locked, 6 = broken, 7 = selected entities. "
+                "NOTE: -1 is NOT a valid value and silently returns 0.",
             ),
         ],
         doc="★ 数当前草图里的**几何关系**（★ 读侧，回一个整数）。"
-        "★★ `filter` 按关系类型筛（-1 = 全数）；★ 取值表以 `scripts/sw_sketch_dimensions.py` "
-        "来源块里的官方枚举为准。"
+        "★★ `filter` 按关系类型筛，**0 = 全数（`swAll`）**；★ 取值表以 "
+        "`scripts/sw_sketch_dimensions.py` 里的官方枚举为准。"
+        "⚠ **不要传 -1** —— 它不在枚举里，会静默回 0（2026-10-25 修）。"
         "★ 与既有 `solidworks_sketch_fully_defined_status` 的区别：那个读**完全定义状态码**，"
         "★ 这个读**关系条数** —— 两个是不同读数，不是重复工具。"
         "⚠ 需要**活动草图**（没有则报错，不静默回 0）。",
