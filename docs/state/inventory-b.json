@@ -1,0 +1,270 @@
+{
+  "total_specs": 501,
+  "tool_spec_fields": [
+    "name",
+    "title",
+    "module",
+    "function",
+    "params",
+    "inject",
+    "needs_model",
+    "read_only",
+    "writes",
+    "writes_source",
+    "requires",
+    "idempotent",
+    "idempotent_source",
+    "destructive",
+    "load_automation",
+    "extra_op",
+    "doc",
+    "omitted_params",
+    "param_alias",
+    "derived_args",
+    "pre_call"
+  ],
+  "name_rule_violations": [],
+  "name_segment_histogram": {
+    "2": 4,
+    "3": 110,
+    "4": 215,
+    "5": 137,
+    "6": 27,
+    "7": 8
+  },
+  "name_two_segment": [
+    "solidworks_chamfer",
+    "solidworks_fillet",
+    "solidworks_undo",
+    "solidworks_thicken"
+  ],
+  "param_total": 1186,
+  "param_mm": 255,
+  "param_deg": 37,
+  "param_suspect_no_unit": [
+    {
+      "tool": "solidworks_sheet_metal_create_base_flange",
+      "param": "reverse_thickness"
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_one_bend",
+      "param": "use_default_radius"
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_edge_flange",
+      "param": "use_default_radius"
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_swept_flange",
+      "param": "use_default_radius"
+    },
+    {
+      "tool": "solidworks_mold_core_cavity_split",
+      "param": "thickness"
+    },
+    {
+      "tool": "solidworks_mold_core_cavity_split",
+      "param": "offset"
+    },
+    {
+      "tool": "solidworks_mold_parting_surface",
+      "param": "angle"
+    },
+    {
+      "tool": "solidworks_export_bmp",
+      "param": "pixel_width"
+    },
+    {
+      "tool": "solidworks_export_bmp",
+      "param": "pixel_height"
+    },
+    {
+      "tool": "solidworks_drawing_set_sheet_scale",
+      "param": "scale_anno_text_height"
+    },
+    {
+      "tool": "solidworks_sheet_metal_insert_miter_flange",
+      "param": "use_default_radius"
+    },
+    {
+      "tool": "solidworks_weldment_insert_end_cap",
+      "param": "is_given_offset"
+    }
+  ],
+  "inject_histogram": {
+    "model": 274,
+    "": 58,
+    "study": 33,
+    "view": 23,
+    "manager": 17,
+    "sw_app": 13,
+    "doc": 13,
+    "asm_model": 12,
+    "cost_manager": 9,
+    "drawing_model": 9,
+    "selection": 9,
+    "sw": 5,
+    "sldworks": 5,
+    "defaults": 4,
+    "mesh": 3,
+    "results": 3,
+    "cost_part": 3,
+    "component": 2,
+    "motion_study": 2,
+    "cost_analysis": 2,
+    "options": 1,
+    "cost_body": 1
+  },
+  "doc_empty": [
+    "solidworks_catalog_domains",
+    "solidworks_catalog_retrieve",
+    "solidworks_catalog_contract",
+    "solidworks_catalog_exposure"
+  ],
+  "doc_length": {
+    "min": 0,
+    "median": 264,
+    "max": 1606
+  },
+  "doc_first_char_top5": [
+    [
+      "★",
+      225
+    ],
+    [
+      "R",
+      60
+    ],
+    [
+      "C",
+      49
+    ],
+    [
+      "A",
+      26
+    ],
+    [
+      "S",
+      20
+    ]
+  ],
+  "title_empty": 0,
+  "title_duplicates": {
+    "List Render Materials": 2,
+    "Rotate Sketch Entities": 2
+  },
+  "read_only_histogram": {
+    "None": 461,
+    "True": 39,
+    "False": 1
+  },
+  "writes_declared": 1,
+  "duplicate_tool_names": {
+    "solidworks_sketch_offset": 2,
+    "solidworks_feature_cosmetic_thread": 2,
+    "solidworks_sketch_spline": 2,
+    "solidworks_export_flat_pattern_dxf": 2
+  },
+  "impl_with_multiple_names": {
+    "sw_render_material.list_render_materials": [
+      "solidworks_list_render_materials",
+      "solidworks_render_material_list"
+    ],
+    "sw_delivery.collect_assembly_bom": [
+      "solidworks_collect_assembly_bom",
+      "solidworks_assembly_sequence_report"
+    ],
+    "sw_simulation_study_options.list_setter_summary": [
+      "solidworks_list_simulation_study_options",
+      "solidworks_simulation_list_setter_summary"
+    ],
+    "sw_drawing_query.sheets_summary": [
+      "solidworks_drawing_list_sheets",
+      "solidworks_drawing_sheets_summary"
+    ],
+    "sw_drawing_query.current_sheet_info": [
+      "solidworks_drawing_get_current_sheet",
+      "solidworks_drawing_current_sheet_info"
+    ],
+    "sw_assembly.collect_mate_feature_summary": [
+      "solidworks_assembly_list_mates",
+      "solidworks_assembly_performance_analysis_report"
+    ],
+    "sw_topology.topology_constraints_report": [
+      "solidworks_topology_list_constraints",
+      "solidworks_topology_constraints_report"
+    ],
+    "sw_sketch_edit_ops.sketch_offset": [
+      "solidworks_sketch_offset",
+      "solidworks_sketch_offset"
+    ],
+    "sw_sketch_modify_ops.sketch_rotate": [
+      "solidworks_sketch_rotate_entities",
+      "solidworks_sketch_rotate"
+    ],
+    "sw_surface_edit_ops.insert_planar_surface": [
+      "solidworks_insert_planar_surface",
+      "solidworks_surface_planar"
+    ],
+    "sw_surface_edit_ops.insert_offset_surface": [
+      "solidworks_insert_offset_surface",
+      "solidworks_surface_offset"
+    ],
+    "sw_surface_edit_ops.insert_replace_face": [
+      "solidworks_insert_replace_face",
+      "solidworks_surface_replace_face"
+    ],
+    "sw_curve_and_split.insert_curve_through_points": [
+      "solidworks_insert_curve_through_points",
+      "solidworks_curve_through_points"
+    ],
+    "sw_surface_ref_ops.insert_revolved_ref_surface": [
+      "solidworks_create_revolved_surface",
+      "solidworks_surface_revolved_ref"
+    ],
+    "sw_feature_entry_ops.insert_cosmetic_thread": [
+      "solidworks_feature_cosmetic_thread",
+      "solidworks_feature_cosmetic_thread"
+    ],
+    "sw_part.sketch_spline": [
+      "solidworks_sketch_spline",
+      "solidworks_sketch_spline"
+    ],
+    "sw_feature_entry_ops.create_flatten_surface": [
+      "solidworks_flatten_surface",
+      "solidworks_surface_flatten"
+    ],
+    "sw_part.revolve_cut": [
+      "solidworks_revolve_cut",
+      "solidworks_feature_revolve_cut"
+    ],
+    "sw_surface_features.untrim_surface_report": [
+      "solidworks_untrim_surface",
+      "solidworks_surface_untrim"
+    ],
+    "sw_export.export_flat_pattern_dxf": [
+      "solidworks_export_flat_pattern_dxf",
+      "solidworks_export_flat_pattern_dxf"
+    ],
+    "sw_weldment.insert_weld_symbol_report": [
+      "solidworks_insert_weld_symbol",
+      "solidworks_weld_symbol"
+    ],
+    "sw_assembly_doc.insert_explode_line_sketch_report": [
+      "solidworks_insert_explode_line_sketch",
+      "solidworks_assembly_explode_line_sketch"
+    ],
+    "sw_assembly.iter_feature_tree": [
+      "solidworks_assembly_iter_feature_tree",
+      "solidworks_assembly_component_pattern_report"
+    ]
+  },
+  "distinct_impls": 478,
+  "check_specs_problems": [
+    "规则 2 违反：工具 'solidworks_feature_revolve_cut' 的入参 'angle_rad' 像是**角度**，却不以 '_deg' 结尾 —— 要么改名（`angle_rad_deg`），要么在 `_ANGLE_SUFFIX_EXEMPT` 里**写明为什么它不是度**",
+    "工具名重复：'solidworks_sketch_spline'",
+    "工具名重复：'solidworks_sketch_offset'",
+    "工具名重复：'solidworks_feature_cosmetic_thread'",
+    "工具名重复：'solidworks_export_flat_pattern_dxf'"
+  ]
+}
