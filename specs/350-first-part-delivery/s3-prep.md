@@ -58,6 +58,56 @@ planner.py:578   params={"selection": "index:0", "distance_mm": 2.0}
 ⇒ **正确做法**：计划里存语义选择器，`resolve()` 在**用时**解析成下标。
    下标是**计算中间量**，不是要保存的引用。
 
+## 二之二、★★ 更严重的发现：语义选择器是孤岛
+
+上一节说「正确形态早就有，只是没接上」。核查后发现比这更严重。
+
+全仓引用 `reference_resolver` 的文件只有四个：
+
+```
+scripts/engineering/reference_resolver.py       ← 自己
+scripts/engineering/acceptance/e2_e3_solid.py   ← 只在 reason 文本里提名字，未 import
+tests/test_reference_resolver.py                ← 它自己的测试（18 条全绿）
+tests/test_acceptance_e3_reference.py           ← 同上，只在 docstring 提名字
+```
+
+⇒ **生产代码零引用。** 那套语义选择器（`+z` / `top_face` / `near:`）
+实现完整、测试齐全，但**没有任何调用方**。
+
+### 为什么接不上（这是关键，不是懒）
+
+`reference_resolver.resolve()` 需要 `list[FaceInfo]` / `list[EdgeInfo]`：
+
+```
+FaceInfo(index, normal, centroid, planar, bbox)   ← 需要法向与质心
+EdgeInfo(index, midpoint)                          ← 需要中点
+```
+
+而现成的取数函数给不出这些：
+
+| 函数 | 给什么 | 缺什么 |
+|---|---|---|
+| `sw_selection_spec.entities_on_body(model, kind)` | COM 对象列表 | — |
+| `sw_selection_spec.entity_geometry(model, kind, i)` | FACE 只给 `area_mm2` | **没有法向、没有质心** |
+
+⇒ 要接上，必须新增 COM 调用读面法向、面质心、边中点。
+
+★★ **这些成员名必须按铁律 4 先三源互证，不能随手写。**
+本轮**不做**这件事 —— 塞一个未核实的成员名进去，
+就是「凭印象写一个成员然后看着像对的」（铁律 1 明令不可接受）。
+
+### 所以 T009 的正确修法是五段，不是一段
+
+| 段 | 内容 | 状态 |
+|---|---|---|
+| ① | 三源互证查面法向 / 面质心 / 边中点的官方成员名 | ⬜ 待做 |
+| ② | 写 `collect_faces()` / `collect_edges()` 把模型读成 `FaceInfo` / `EdgeInfo` | ⬜ 待做 |
+| ③ | 让 `sw_selection_spec.resolve_entity()` 接受语义选择器 | ⬜ 待做 |
+| ④ | `planner.py` 三处 `index:0` 换成语义选择器 | ⬜ 待做 |
+| ⑤ | 真机验证：改主参数后语义选择器仍指同一条边 | ⬜ 待做 |
+
+★ 第 ① 段是硬前置。跳过它去写 ②③④，就是在没有官方依据的情况下猜成员名。
+
 ## 三、把这条缺陷做成了判据
 
 `scripts/engineering/acceptance/e2_e3_solid.py` 新增：
