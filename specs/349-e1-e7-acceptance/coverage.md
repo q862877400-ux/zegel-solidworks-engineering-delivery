@@ -6,20 +6,53 @@
 
 ---
 
-## 一、七条判据的落点
+## 一、十条检查的落点
 
-| 判据 | 采集器 | 判定器 | 必须能拒绝的负例 | 样件 |
+★ 七条判据拆成 **10 条检查**：有的判据含真机可验与不可验两部分，
+必须分开出结论（否则「我们测不了」会被误报成「东西不行」）。
+
+| check_id | 采集器 | 判定器 | 真机可验 | 必须能拒绝的负例 |
 |---|---|---|---|---|
-| **E1** 草图全约束 | `acceptance/e1_sketch.py:collect_sketch_constraint` | `judge_sketch_constraint` | 删定位关系 / 删尺寸 / 重复关系 / 全固定无驱动参数 / 采集失败 | `bad_e1_duplicate_relation` · `bad_e1_all_fixed_no_dimension` · `unknown_e1` |
-| **E2** 参数化可重建 | `acceptance/e2_e3_solid.py:collect_rebuild` | `judge_rebuild` | 只改属性没改模型 / 孔未随板宽变化 / 旧图纸 / 重建失败 / **新建文档冒充实改** | `bad_e2_new_document` · `bad_e2_no_downstream` · `unknown_e2` |
-| **E3** 特征树可编辑 | `collect_feature_tree` | `judge_feature_tree` | 导入死实体 / 悬空引用 / 错误配置 / 目标对象漂移 | `bad_e3_imported_solid` · `bad_e3_dangling` · `unknown_e3` |
-| **E4** 装配自由度闭合 | `acceptance/e4_assembly.py:collect_assembly` | `judge_assembly` | 重复同一配合 / 全固定冒充 / 错轴错向 / 漏配合 / 干涉 / 无间隙依据 | `bad_e4_duplicate_mate` · `bad_e4_interference` · `unknown_e4` |
-| **E5** 图样合规 | `acceptance/e5_e6_drawing.py:collect_drawing` | `judge_drawing` | 孔位标错 / 少关键尺寸 / 错误基准 / 旧模型视图 / 默认材料 / **空 evidence** | `bad_e5_empty_evidence` · `bad_e5_missing_item` · `bad_e5_stale_drawing` · `unknown_e5` |
-| **E6** 工艺可行 | `collect_process` | `judge_process` | 刀具进不去 / 无加工基准 / 越过已验证范围 / 删除必需检查 / **全不适用** | `bad_e6_tool_unreachable` · `bad_e6_all_not_applicable` · `unknown_e6` |
-| **E7** 结论可溯源 | `acceptance/e7_provenance.py:collect_provenance` | `judge_provenance` | 假引用 / 摘要冒原文 / 旧版本证据 / 随意填来源标签 / **空 citations** / 缺文件 | `bad_e7_no_citations` · `bad_e7_fake_source` · `bad_e7_stale_evidence` · `unknown_e7` |
+| `E1.dof` | `e1_sketch.collect_sketch_constraint` | `judge_sketch_constraint` | **部分**（枚举可验 / 数值读不到） | 删定位关系 / 删尺寸 / 重复关系 / 全固定无驱动参数 / 采集失败 |
+| `E2.rebuild` | `e2_e3_solid.collect_rebuild` | `judge_rebuild` | ✅ | 只改属性没改模型 / 孔未随板宽变化 / 旧图纸 / 重建失败 / **新建文档冒充实改** |
+| `E2.hole_readback` | `collect_hole_readback` | `judge_hole_readback` | **部分**（孔位孔径可验 / 孔型读不到） | 孔数不符（聚合量代替）/ 孔径超差 / 孔位偏 / 孔型不符 |
+| `E3.tree` | `collect_feature_tree` | `judge_feature_tree` | ✅ | 导入死实体 / 悬空引用 / 错误配置 / 目标对象漂移 |
+| `E3.reference_stability` | `collect_reference_stability` | `judge_reference_stability` | ✅（读计划，不需真机） | **`index:<n>` 下标** / `__current_selection__` |
+| `E4.dof` | `e4_assembly.collect_assembly` | `judge_assembly` | ❌ 数值 DOF 读不到 | 重复同一配合 / 全固定冒充 / 错轴错向 / 漏配合 / 干涉 / 无间隙依据 |
+| `E4.interference` | 同上 | `judge_assembly_interference` | ✅ | 重复配合 / 全固定冒充 / 实体干涉 / 间隙无依据 |
+| `E5.drawing` | `e5_e6_drawing.collect_drawing` | `judge_drawing` | ✅ | 孔位标错 / 少关键尺寸 / 错误基准 / 旧模型视图 / 默认材料 / **空 evidence** |
+| `E6.process` | `collect_process` | `judge_process` | ✅ | 刀具进不去 / 无加工基准 / 越过已验证范围 / 删除必需检查 / **全不适用** |
+| `E7.provenance` | `e7_provenance.collect_provenance` | `judge_provenance` | ✅ | 假引用 / 摘要冒原文 / 旧版本证据 / 随意填来源标签 / **空 citations** / 缺文件 |
 
-「不能当替代品」逐条写在每个判定器的模块 docstring 里，
-并在判定器代码里对应到具体分支（例如 E2 的 `opened_existing` 检查）。
+### 为什么有的判据要拆
+
+| 判据 | 拆的理由 | 出处 |
+|---|---|---|
+| `E1.dof` | `GetConstrainedStatus()` 只回枚举；数值 DOF 三源确认不存在 | `specs/350-first-part-delivery/source-verification.md` |
+| `E4` → `E4.dof` + `E4.interference` | 干涉可读、DOF 读不到 ⇒ 合成一条会让 E4 永远 `unknown`，而产物可能完全合格 | 同上 |
+| `E3` → `E3.tree` + `E3.reference_stability` | 特征树完整 ≠ 引用稳定；`index:0` 这类引用改参数后会漂 | `specs/350-first-part-delivery/s3-prep.md` |
+| `E2` → `E2.rebuild` + `E2.hole_readback` | 「重建没报错」≠「孔都对」；`validate_hole_positions` 自述不覆盖孔型 | `specs/350-first-part-delivery/s3-prep.md` |
+
+★★ **拆分不放宽**：同一个 E 下的子项**全部**绿才算该 E 成立
+（有测试钉住，如 `test_全不绿才算E4不成立`）。
+
+### 「不能当替代品」逐条
+
+写在每个判定器的模块 docstring 里，并在代码里对应到具体分支：
+
+| 替代品 | 在哪被挡住 |
+|---|---|
+| 「我已经检查过」代替观测 | 采集器返回 `Observation`，**没有 `status` 字段**——想说合格在类型上做不到 |
+| 数关系 / 预填 expected_status | `E1.dof` 的重复关系去重 |
+| 配合数扣常数 | `E4.*` 的「同组件对 + 同配合类型」重复检测 |
+| 注释数量达标 / 文件非空 | `E5.drawing` 要求每条 covered 有非空证据 |
+| 特征数大于零 / STEP 可打开 | `E3.tree` 要求 `native_features > 0` 且无悬空引用 |
+| 新建另一份相同外形模型 | `E2.rebuild` 的 `opened_existing` 检查 |
+| **总切除体积** | `E2.hole_readback` 的孔数逐项比对 |
+| 标准号字符串 / 台账 verified | `E7.provenance` 要求引用非空且可解析 |
+| 通用 DFM 分数 / 仅声明「机加工」 | `E6.process` 要求至少一条适用检查项 |
+| 下标 / 当前选区 | `E3.reference_stability` |
+
 
 ## 二、四类伪造手法（实测过的洞）
 
@@ -94,21 +127,29 @@
 ## 六、读数
 
 ```
-python -B -m pytest tests/test_acceptance_e1_e7.py \
-  tests/test_acceptance_forgery.py tests/test_acceptance_contract.py -q
-→ 134 passed
+python -B -m pytest tests/test_acceptance_e1_e7.py tests/test_acceptance_e1_enum.py \
+  tests/test_acceptance_e2_hole.py tests/test_acceptance_e3_reference.py \
+  tests/test_acceptance_e4_split.py tests/test_acceptance_forgery.py \
+  tests/test_acceptance_contract.py tests/test_source_verification_conclusions.py -q
+→ 211 passed
 
-连同既有工程层测试：
-python -B -m pytest tests/test_acceptance_*.py tests/test_stage2_rules.py \
-  tests/test_stage4_planner.py -q
-→ 182 passed
+连同 S0 与 S2 的判据：
+python -B -m pytest tests/test_s0_official_path.py tests/test_first_part_requirements.py -q
+→ 合计 229 passed
 ```
 
 | 测试文件 | 条数 | 覆盖什么 |
 |---|---:|---|
 | `test_acceptance_e1_e7.py` | 80 | 三态判定（每条 E 的 pass / fail / unknown）+ 11 字段齐 + 坏样件原因具体 + 七条都有三态 |
-| `test_acceptance_forgery.py` | 12 | 四条伪造负例 + 四条反证（证明旧估算器真的会被骗） |
 | `test_acceptance_contract.py` | 42 | 采集器不判断 / 判定器不取数 / 观测不完整必 unknown / 状态枚举 / 外部 verdict 映射 / rollup |
+| `test_acceptance_e1_enum.py` | 19 | 枚举路径（真机唯一可得信号）+ 只有 3 能直接 pass + 有枚举时不信数值 |
+| `test_acceptance_e2_hole.py` | 18 | 孔数逐项（挡聚合量代替）+ 孔径孔位 + **孔型给不出必 unknown** |
+| `test_acceptance_e3_reference.py` | 16 | `index:<n>` / `__current_selection__` 必拒 + 语义选择器接受 + 真实 planner 回归 |
+| `test_acceptance_e4_split.py` | 13 | 拆分子项后仍「两条都绿才算 E4 成立」 |
+| `test_acceptance_forgery.py` | 12 | 四条伪造负例 + 四条反证（证明旧估算器真的会被骗） |
+| `test_source_verification_conclusions.py` | 11 | 官方枚举表 / 反射里有该成员 / **五个 DOF 候选名全部零命中** |
+
+★ 上面 211 是「验收判据」这一组；229 = 211 + S0 的 7 条 + S2 的 11 条。
 
 ## 七、这一步到此为止：只叫「离线判据成立」
 
