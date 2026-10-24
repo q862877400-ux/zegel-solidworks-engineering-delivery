@@ -2,7 +2,7 @@
 
 本文件是 SolidWorks 工程交付系统的常驻指令；仓库根——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
-接手第一件事：读三份——[`docs/PROJECT-CHARTER.md`](docs/PROJECT-CHARTER.md)（目的与 E1–E7）、[`docs/ENGINEERING-PATH.md`](docs/ENGINEERING-PATH.md)（路线与 S0–S6 施工顺序）、[`docs/state/INDEX.md`](docs/state/INDEX.md)（实测台账，每条带复现命令；或调用 `sw-project-state` skill）。不要通读 55 万行；要报数字先跑 `docs/state/probes/` 里的探测器，别凭记忆。
+接手第一件事：读四份——[`docs/PROJECT-CHARTER.md`](docs/PROJECT-CHARTER.md)（目的与 E1–E7）、[`docs/ENGINEERING-PATH.md`](docs/ENGINEERING-PATH.md)（路线与 S0–S6 施工顺序）、[`docs/PLAN.md`](docs/PLAN.md)（当前游标与调整机制）、[`docs/state/INDEX.md`](docs/state/INDEX.md)（实测台账，每条带复现命令；或调用 `sw-project-state` skill）。不要通读 55 万行；要报数字先跑 `docs/state/probes/` 里的探测器，别凭记忆。
 
 ## 十二、仓库（第一件事，先确认你在哪）
 
