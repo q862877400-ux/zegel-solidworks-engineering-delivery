@@ -4,7 +4,7 @@
 # 文件:   `specs/302-ec00-trustworthy-tool-base/contracts/quantity.md`（★ 拒绝语义封闭词表）
 #         `specs/302-ec00-trustworthy-tool-base/data-model.md` §二（★ Quantity/NormalizedQuantity）
 #         `scripts/sw_part.py`（★ `_MM_TO_M` 局部修复 · ★ 六个草图图元）
-#         `docs/unit-conflicts.md`（★ 官方 vs 真机 单位冲突登记）
+#         `docs/history/unit-conflicts.md`（★ 官方 vs 真机 单位冲突登记）
 # 定位:   ★ EC00 **T012**（★ 逐字：「建单位等价/量纲错误/NaN 无穷/域边界/重复转换/旧入口对照测试」）。
 #         ★★★ **完成判据（★ 逐字）**：「★ 测试能捕获旧错误；★★ **非法输入修改调用计数为 0**」。
 #         ★★ 纪律：★ **不允许用测试文件存在性或关键词 grep 冒充**（★ T012 逐字）。

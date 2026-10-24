@@ -85,5 +85,5 @@ SPECS_BATCH6 = [
     #   ★ **它不是「参数没调对」，是「从没跑通过」** —— 而它是个**孤立函数**（没人调用）
     #     ⇒ **孤立恰好掩盖了它坏掉这件事**。
     #   ⇒ 本轮**不修**（需查官方 API 换路子，超出「暴露」范围）；**如实记为缺陷**，
-    #     见 `docs/orphan-functions-not-runnable.md`。
+    #     见 `docs/history/orphan-functions-not-runnable.md`。
 ]

@@ -27,7 +27,7 @@
 > ⚠⚠ **轮 103 追加**：**「真缺」132 条也反向核了**（每 6 取 1 ⇒ 22 条）。
 > 反向错误率 ≈ **18%**（4/22 其实我们有，如 `tooling_split`、`save_as`、`measure`）。
 > ⇒ 四轮合并：真匹配 ≈ **73** ⇒ **真实缺口 ≈ 265**（区间约 **245~265**）。
-> 证据与逐条判定见 [`docs/union-gap-triage-sample.md`](union-gap-triage-sample.md)。
+> 证据与逐条判定见 [`docs/union-gap-triage-sample.md`](history/union-gap-triage-sample.md)。
 > ★ **根因**：该档来自**后缀词**匹配，而 `sketch` / `view` / `template` / `macro` 是高频通用词
 > ⇒ **这一档不该由字符串匹配给结论，只能人工核**。
 

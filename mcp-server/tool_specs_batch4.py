@@ -34,7 +34,7 @@ def create_draft(model, face_ref, spec: DraftFeatureSpec):
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   mcp-server/tool_specs_batch4.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` §11.3 的 C2/C3 落地。
+# 定位:   `docs/history/T-011-expose-capabilities-assessment.md` §11.3 的 C2/C3 落地。
 #         参数**逐条照真实签名与 dataclass 字段抄**（守卫测试用
 #         `inspect.signature` + `dataclasses.fields` 核）。
 # 官方签名依据: 不适用（只做参数搬运；被搬运函数的依据在其源码来源块里）

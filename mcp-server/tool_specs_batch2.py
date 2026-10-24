@@ -22,7 +22,7 @@ B/C 两类**各自需要一层基础设施**，那是**独立的工作项**，�
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   mcp-server/tool_specs_batch2.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` 第二批。
+# 定位:   `docs/history/T-011-expose-capabilities-assessment.md` 第二批。
 #         参数**逐条照真实签名抄**（守卫测试用 `inspect.signature` 核）。
 # 官方签名依据: 不适用（只做参数搬运；被搬运函数的依据在其源码来源块里）
 # 许可:   本仓库 MIT。无第三方代码引入。

@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（测试，非第三方移植）
 # 文件:   tests/test_tool_registry.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` 的实现层测试；
+# 定位:   `docs/history/T-011-expose-capabilities-assessment.md` 的实现层测试；
 #         AGENTS.md 判据 A3（五统一门禁）在「注册期」的落地。
 # 官方签名依据: 不适用（纯 Python 层）
 # 许可:   本仓库 MIT。无第三方代码引入。

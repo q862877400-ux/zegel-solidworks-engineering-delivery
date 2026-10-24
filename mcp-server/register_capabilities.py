@@ -21,7 +21,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（接线层，非第三方移植）
 # 文件:   mcp-server/register_capabilities.py
-# 定位:   T-011 的**接入点**。`docs/T-011-expose-capabilities-assessment.md`
+# 定位:   T-011 的**接入点**。`docs/history/T-011-expose-capabilities-assessment.md`
 #         里 20 条声明从此**真的可用**（此前只是声明）。
 # 官方签名依据: 不适用（不引入新的 COM 调用；各批次声明的依据在其被搬运函数的源码块里）
 # 许可:   本仓库 MIT。无第三方代码引入。

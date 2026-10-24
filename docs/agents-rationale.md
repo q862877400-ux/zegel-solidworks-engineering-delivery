@@ -10,7 +10,7 @@
 
 ## <a id="14-official-first"></a>14-official-first
 
-**为什么**：2026-10-03轮 501–548 我在这件事上栽了六次（剪裁顺序反了、分割线 mark 全错、旋转曲面缺中心线 7轮、扫描曲面从没查过`InsertSweepSurface2`、指针族误判、"会挂"没读自己的弹窗落盘）——每一处官方都写着。详见 [docs/official-docs-first.md](docs/official-docs-first.md)。
+**为什么**：2026-10-03轮 501–548 我在这件事上栽了六次（剪裁顺序反了、分割线 mark 全错、旋转曲面缺中心线 7轮、扫描曲面从没查过`InsertSweepSurface2`、指针族误判、"会挂"没读自己的弹窗落盘）——每一处官方都写着。详见 [docs/official-docs-first.md](official-docs-first.md)。
 
 ## <a id="15-guard"></a>15-guard
 

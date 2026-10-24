@@ -13,7 +13,7 @@
 #   ③ ★ 判据**纯静态**（读我们自己的常量）⇒ ★ **不需要真机** ✓
 # 依据:   `scripts/sw_gtol.py` 的 `GTOL_INDICATOR_ALLOWED_TOL_TYPES` · 官方
 #         `IGtolFrame/AddIndicator.md` 的 Remarks · 事实 62（负例是唯一证明）·
-#         `docs/precondition-coverage-gaps.md` §三 ✓
+#         `docs/history/precondition-coverage-gaps.md` §三 ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@
 # 仓库:   本项目自身
 # 文件:   tests/test_mirror_precondition_marks.py
 # 定位:   规格 206 / **T2-4 的第一个样板** —— 治「官方示例揭示了前置、而我们的运行证据没覆盖」
-#         （`docs/precondition-coverage-gaps.md` 里 `part_and_features` 的那条：
+#         （`docs/history/precondition-coverage-gaps.md` 里 `part_and_features` 的那条：
 #          「镜像前先 ClearSelection2；被镜像特征 mark=1、镜像平面 mark=2」）✓
 # ★★ 为什么挑这一条：
 #   ① ★ 官方 `InsertMirrorFeature2.md` 的 `## Remarks` **给了完整 mark 表**（Features⇒1 · Planes⇒2）；
@@ -12,7 +12,7 @@
 #   ③ ★ 判据**纯静态**（读我们自己的源码）⇒ ★ **不需要真机**（D-3 的按批限制不适用）✓
 # 依据:   `scripts/sw_part.py` 的 `mirror_feature`（L1489-1498）· 官方 `InsertMirrorFeature2.md` 的
 #         Remarks mark 表 · 事实 8（mark 计数为准）· 事实 62（负例是唯一证明）·
-#         `docs/precondition-coverage-gaps.md` §三 ✓
+#         `docs/history/precondition-coverage-gaps.md` §三 ✓
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────

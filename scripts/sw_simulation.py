@@ -812,7 +812,7 @@ SWS_MATERIAL_DATABASE = "SOLIDWORKS Materials"
 #     `RunAnalysis` 仍报 19（MaterialNotDefined）。**不要走那条路。**
 # 许可:   本仓库 MIT；引用的两家用法仅作交叉印证，无代码移植。
 # 覆盖:   本函数整体（自本行至函数结束）
-# ⚠ 本函数的成功路径**已在本机实测**（见 `docs/A9-solve-attempts.md` §二之三），
+# ⚠ 本函数的成功路径**已在本机实测**（见 `docs/history/A9-solve-attempts.md` §二之三），
 #   但**失败分支**（库名/材料名拼错）未逐一实测。
 # ────────────────────────────────────────────────────────────────────
 def set_material(

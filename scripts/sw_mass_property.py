@@ -246,7 +246,7 @@ SECTION_UNIT_CAVEAT = (
 SECTION_UNIT_ASSUMPTION = (
     "★ 官方 `IFace2.GetArea` 的 `## Returns` 说 **square meters**，★ 而真机读数与之**不符**"
     " ⇒ ★ **本模块不断言单位**；★ 已登记为「官方声明 vs 真机读数」冲突、★ 未解决"
-    "（★ 见 `docs/unit-conflicts.md` 第 1 条）"
+    "（★ 见 `docs/history/unit-conflicts.md` 第 1 条）"
 )
 
 

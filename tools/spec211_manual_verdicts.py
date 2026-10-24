@@ -137,10 +137,10 @@ VERDICTS = {
     #: ★★★★★ 2026-10-07（B8 **实测纠正 + 查到理由**）：
     #:   ★★ **实现早就有**：`scripts/sw_export.py` 的 `export_flat_pattern_dxf` /
     #:     `export_flat_pattern_dxf_report`（★ 走 `ExportToDWG2` ✓）✓
-    #:   ★★★ **而理由查到了**（★ `docs/plan-24h-v2-convergence.md` 第 53 行**逐字**）：
+    #:   ★★★ **而理由查到了**（★ `docs/history/plan-24h-v2-convergence.md` 第 53 行**逐字**）：
     #:     「★★ **轮 407 真的造了一个钣金件**（回读三项全 true）而它**仍拒绝** ——
     #:      真前置是「**已保存**的钣金件」，★ 而**保存是硬约束⑦ 明禁**的 ⇒ …」✓✓
-    #:   ★★ 同型旁证：`docs/A9-solve-attempts.md:84`「所有脚本都**不保存**文档
+    #:   ★★ 同型旁证：`docs/history/A9-solve-attempts.md:84`「所有脚本都**不保存**文档
     #:     （`CloseDoc` 前未 `SaveAs`）」✓
     #:   ⇒ ★★★★ **故终判 = 不做**，★ 而**理由是**新的一类**：
     #:     ★★ **「官方前置要求保存文档、而本仓硬约束不许保存」** ✗ ——

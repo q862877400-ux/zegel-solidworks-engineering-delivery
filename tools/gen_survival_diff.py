@@ -4,7 +4,7 @@
 # 仓库:   本项目自身（生成器）
 # 文件:   tools/gen_survival_diff.py
 # 定位:   ★ 规格 `specs/210-declarative-effects` 的 **B3**。★ 产出
-#   `docs/spec210-survival-diff.md`：★ 把「**声明 vs 观察**」差异表落成可提交的产物 ✓
+#   `docs/history/spec210-survival-diff.md`：★ 把「**声明 vs 观察**」差异表落成可提交的产物 ✓
 # 判据:   ★★ **四类语义**（★ 严格区分，不许混）：
 #     `agree`        = 声明「无写」 ∩ 观察「没变」 ⇒ ★ **一致** ✓
 #     `conservative` = 声明「有写」 ∩ 观察「没变」 ⇒ ★ 声明**保守**（★ 无害）✓

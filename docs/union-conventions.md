@@ -88,7 +88,7 @@ Slacker-LLC 的原话：「No tool has ever silently taken metres.」
 **为什么不做"值里带单位字符串"**（如 `depth="20mm"`）：★ MCP **只传 JSON 值** ⇒ 值带单位就是字符串
 ⇒ ★ **失去类型检查**，★ 且单位**只在下游可见** ✗ ★★ 而后缀在**形参名/键名**上 ⇒ ★ **能被静态门禁强制** ✓
 
-**官方声明与真机读数冲突时**：★ **登记进 [`docs/unit-conflicts.md`](unit-conflicts.md)**（五要素：
+**官方声明与真机读数冲突时**：★ **登记进 [`docs/unit-conflicts.md`](history/unit-conflicts.md)**（五要素：
 官方页 / 官方原话 / 真机读数 / 证据文件 / 处置）⇒ ★ 处置只许"**让失败可见**"或"**如实标注未确证**" ✓
 
 **校验**：门禁在 `mcp-server/tool_registry.py`（输入侧）；★ 判据**一律是确定性的**（后缀名 / 白名单 /
@@ -212,7 +212,7 @@ provenance:
 **⚠ 另一个真实缺口（登记在此，不在 A2 名下）**：**「已有能力 → MCP 工具」的暴露**
 （`AGENTS.md` 已知事实 25：`mcp-server/server.py` 只引用 25 个 `scripts` 模块，
 本仓库后补的 61 个模块一个都没进）。评估见
-[T-011](T-011-expose-capabilities-assessment.md)（真实工作量 **~120 个函数**，不是 814）。
+[T-011](history/T-011-expose-capabilities-assessment.md)（真实工作量 **~120 个函数**，不是 814）。
 
 ### 规则 6 · 失败要响：**禁止静默成功**
 

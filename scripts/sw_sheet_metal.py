@@ -35,7 +35,7 @@ class BaseFlangeSpec:
     ⇒ ★★ **`IBaseFlangeFeatureData` 的长度按「文档长度单位」解释（本机 = 毫米）**，
       **不是米** ⇒ ★ 传 `0.002` 造出来的是 **0.002 mm 的箔片**（★ 本仓既有调用点用的正是 0.002）。
     ★ 证据：`tools/probe_spec209_hem_units.py` ⇒ `output/spec209-hem-units.json`。
-    ⚠ **本轮只更正文档、不改行为**（改行为要单开一轮并配判据 —— 见 `docs/HANDOFF.md` 的待办）；
+    ⚠ **本轮只更正文档、不改行为**（改行为要单开一轮并配判据 —— 见 `docs/history/HANDOFF.md` 的待办）；
       ★ 同族的先例：`InsertMoveCopyBody2` 的长度也是**文档单位**（同一轮实测）。
 
     ★★★★ **上面那条「按文档单位（毫米）解释」**已被推翻****（2026-10-10 · **规格 278** · 真机）：

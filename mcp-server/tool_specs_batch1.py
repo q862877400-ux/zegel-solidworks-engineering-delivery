@@ -22,7 +22,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   mcp-server/tool_specs_batch1.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` 第一批的实现。
+# 定位:   `docs/history/T-011-expose-capabilities-assessment.md` 第一批的实现。
 #         每条声明的 `module`/`function` 指向 `scripts/` 里**已存在**的函数；
 #         参数**逐条照真实签名抄**（守卫测试用 `inspect.signature` 核）。
 # 官方签名依据: 不适用（本文件只做参数搬运，不做 COM 调用；

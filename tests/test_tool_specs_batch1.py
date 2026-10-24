@@ -3,7 +3,7 @@
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（测试，非第三方移植）
 # 文件:   tests/test_tool_specs_batch1.py
-# 定位:   `docs/T-011-expose-capabilities-assessment.md` 第一批的守卫；
+# 定位:   `docs/history/T-011-expose-capabilities-assessment.md` 第一批的守卫；
 #         确保「声明里写的 module/function/参数」与 `scripts/` 里的**真实签名**一致。
 # 官方签名依据: 不适用（纯静态核对）
 # 许可:   本仓库 MIT。无第三方代码引入。

@@ -4,7 +4,7 @@
 # 仓库:   本项目自身（工具）
 # 文件:   tools/check_convergence_numbers.py
 # 定位:   ★ 2026-10-03（轮 438）`plan-200r-v3` **段 6**。
-# ★★ **为什么它存在**：★ `docs/plan-200r-v3-convergence.md` **自称**"数字全部来自生成物"
+# ★★ **为什么它存在**：★ `docs/history/plan-200r-v3-convergence.md` **自称**"数字全部来自生成物"
 #  ——
 #     ★ 而**那句话本身是判据** ⇒ ★★ **它得能被机器验**（★ 否则就是自说自话）✓
 # ★ 先例：★ `plan-24h-v2-convergence.md` 那次**手写过一份**同样的核对（★ 报告 6 项零偏差

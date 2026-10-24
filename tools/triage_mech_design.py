@@ -80,7 +80,7 @@ PASS_RULES: list = [
     (
         re.compile(r"(Simulation|仿真|拓扑|网格|求解|许可|CAE|静力|疲劳|焊缝|失效)"),
         "放过：★ Simulation 探路记录 —— ★ 已进 `known-facts.md` 与本仓 "
-        "`docs/A9-solve-attempts.md`",
+        "`docs/history/A9-solve-attempts.md`",
     ),
     (
         re.compile(

@@ -56,7 +56,7 @@ def modules() -> list:
 #   **本来就不写模块文件名**。
 #   ★ 而 **A1 的单位是「域」，不是「文件」** ⇒ 条目**已经在正确的粒度上**，
 #     「模块名没出现」**根本不是缺陷**。
-#   ⚠ 详见 docs/module-capability-coverage.md。**不要把它接进门禁。**
+#   ⚠ 详见 docs/history/module-capability-coverage.md。**不要把它接进门禁。**
 
 
 def main() -> int:

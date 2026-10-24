@@ -1,4 +1,4 @@
-"""★ 自校 `docs/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核。"""
+"""★ 自校 `docs/history/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身。
 # 文件:   tools/selfcheck_official_source_errors.py

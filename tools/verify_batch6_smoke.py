@@ -8,7 +8,7 @@
 # 官方依据: 不适用（调的是本仓库自己的包装函数）。
 # 许可:   本仓库 MIT。无第三方代码引入。
 # ⚠ 本文件诞生于一次**缺陷发现**：第 4 个候选 `get_mass_property_override_options`
-#   真机跑不通（见 `docs/orphan-functions-not-runnable.md`）⇒ 已不纳入本批。
+#   真机跑不通（见 `docs/history/orphan-functions-not-runnable.md`）⇒ 已不纳入本批。
 # 覆盖:   全文件
 # ────────────────────────────────────────────────────────────────────
 """

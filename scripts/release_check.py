@@ -602,7 +602,7 @@ def _run_spec_acceptance_paths_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把 2026-10-07 交接文档 §五-2 点名的门禁接进发布前检查）
 # 文件:   `scripts/check_probe_reuse.py`（本门禁的实现）
-#         `docs/HANDOFF-dsh-sw-engineer-preset.md` §五-2
+#         `docs/history/HANDOFF-dsh-sw-engineer-preset.md` §五-2
 # 定位:   新增 `_run_probe_reuse_gate`：**硬门禁** ——
 #         ★ 判「**是不是又手搓了一个已有工具的替代品**」：★ 对每个 `tools/probe_*.py` /
 #           `tools/prove_*.py`，若①**探针文件名词序列包含某工具名的词序列**（连续子段）、

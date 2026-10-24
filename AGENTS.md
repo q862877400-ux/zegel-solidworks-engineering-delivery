@@ -1,8 +1,8 @@
 # AGENTS.md
 
-本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；仓库根——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
+本文件是 SolidWorks 工程交付系统的常驻指令；仓库根——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
-接手第一件事：读 [`docs/state/INDEX.md`](docs/state/INDEX.md)（项目现状实测台账：A–J 结构信号 + K–O 可证伪的对应关系，每条带复现命令；或调用 `sw-project-state` skill）。不要通读 55 万行；要报数字先跑 `docs/state/probes/` 里的探测器，别凭记忆。
+接手第一件事：读三份——[`docs/PROJECT-CHARTER.md`](docs/PROJECT-CHARTER.md)（目的与 E1–E7）、[`docs/ENGINEERING-PATH.md`](docs/ENGINEERING-PATH.md)（路线与 S0–S6 施工顺序）、[`docs/state/INDEX.md`](docs/state/INDEX.md)（实测台账，每条带复现命令；或调用 `sw-project-state` skill）。不要通读 55 万行；要报数字先跑 `docs/state/probes/` 里的探测器，别凭记忆。
 
 ## 十二、仓库（第一件事，先确认你在哪）
 
@@ -30,8 +30,11 @@
 ## 〇、一句话任务
 
 > **项目目的见 [`docs/PROJECT-CHARTER.md`](docs/PROJECT-CHARTER.md)**：把中国机械设计的规范与判据编译成能力，使一条指令产出的模型达到可交付水准（全约束 · 参数化可重建 · 特征树可编辑 · 装配自由度闭合 · 图样合规 · 工艺可行 · 结论可溯源）。验收判据是 charter 第 4 节的 E1–E7，不是工具条数。
+> **怎么做到见 [`docs/ENGINEERING-PATH.md`](docs/ENGINEERING-PATH.md)**：四个选择、三类资产（规则包/方法包/验收包）、E1–E7 的采集器与判定器、施工顺序 S0–S6、首件范围、旧工作包迁移表。
 
 - 集大成 · 建护城河的定位是手段（取材地图 / 差异化参考），不是目的、不计分（依据见 charter 第 2 节）。
+- **先验收后能力**：S1（E1–E7 判据与坏样件）不成立就写新能力，等于继续用「条数」冒充进展。每个任务必须能回答：服务哪个首件要求、改善哪条 E、增加哪个可重复试验。
+- **采集器与判定器分开**：采集器从实际产物取数，判定器对冻结要求判断。规划器不能提交「我已经检查过」代替观测。
 - 正规军：命名/单位/选择/验证等级/出处五统一，机器门禁 docs/union-conventions.md + scripts/check_union_conventions.py。
 - 单源交付：运行时只能有一个 SolidWorks MCP——多个进程抢同一 COM 连接会死锁（已知事实 24）。
 
@@ -85,7 +88,7 @@ pwsh -File tools\round_chain.ps1 -Tests tests/<改过的>.py
 | **A5** | COM 调用参数顺序与类型对齐官方签名 |
 | **A6** | 许可无越界（AGPL/GPL/无许可不抄） |
 | **A7** | 全文无「把 `stitched` 写成 `verified`」 |
-| **A8** | 报告写明哪些能力过了 E1–E7、哪些没过、缺什么 |
+| **A8** | 进度按 S0–S6 报：走到哪步、该步完成标准是否满足、首件 E1–E7 逐条状态与证据变化 |
 | **A9** | 规范层（L2）可查、结论能指认标准条款 |
 | **A10** | 按需搬取，每件过「并入六条规则」 |
 
@@ -115,9 +118,9 @@ pwsh -File tools\round_chain.ps1 -Tests tests/<改过的>.py
 
 **产物/缓存目录**允许存在于工作树，但必须 gitignore、不入库：`.api-signatures`（签名索引）、`output`（构建产物）、`.pytest_cache`（pytest 缓存，须 ignore）。
 
-**归档目录 `archive/`**：`archive/root-scratch/{py,txt,md,json,logs,other}` 装的是仓库根曾经就地写的 2814 个草稿（草稿文件名模式见 [`docs/layout-registry.md`](docs/layout-registry.md)）。为什么放不进已有目录：它们是历史产物、不是活代码（`tools/` 只收「正式、会被反复用的工具」；`docs/` 只收知识文档），而根目录一直是草稿区（`README-workspace.md` §分类规矩）。归档后根只剩 29 个文件（打包器顶层文件 + 仓库门面 + 被 `scripts/sw_jlcfa_*.py` import 的 `shot.py`/`ctl.py`）。只搬不删；判据 `tests/test_workspace_tidy_294.py`（守恒断言：归档数 + 根数 == 整理前总数）。该目录不被任何门禁扫描（门禁扫描根是 `scripts`/`tools`/`tests`/`mcp-server`/`subskills`/`apps`/`dotnet`/`examples`），故是惰性的。
+**归档目录**：`archive/root-scratch/`（仓库根历史草稿 2814 个）与 `docs/history/`（历史文档与旧工程方案）都是只搬不删的追溯区，不被任何门禁扫描。两者的登记、判据与守恒断言见 [`docs/layout-registry.md`](docs/layout-registry.md)。
 
-**顶层目录实况**（磁盘 42 个 = 39 仓库目录 + 3 工具缓存；白名单外 25 个的逐个说明、产物/证据类清单，见 [`docs/layout-registry.md`](docs/layout-registry.md)）。新增白名单外目录仍须「先登记、再动手」。
+**顶层目录实况**（磁盘 42 个 = 39 仓库目录 + 3 工具缓存；白名单外 25 个的逐个说明见 [`docs/layout-registry.md`](docs/layout-registry.md)）。新增白名单外目录仍须「先登记、再动手」。
 
 新文件落进已有位置：实现进 `scripts/`，知识文档进 `references/`，测试进 `tests/`，说明与生成物进 `docs/`（上游目录树见 [docs/upstream-layout.md](docs/upstream-layout.md)，是参考不是约束）。
 
@@ -146,27 +149,15 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 ## 三、上游仓库结构（对照参考）
 
-上游的目录树、`scripts/`现有模块清单与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)。它是对照参考与取材地图，不是我们的结构约束——我们自己允许哪些顶层目录，看铁律 3。
+上游的目录树、`scripts/` 现有模块清单与新增模块的硬性要求见 [docs/upstream-layout.md](docs/upstream-layout.md)。它是对照参考与取材地图，不是我们的结构约束——我们自己允许哪些顶层目录，看铁律 3。
 
-## 四、素材库
+## 五、工作方法
 
-**两套官方离线源 + 反射**
+**施工按 S0–S6 的顺序推进，判据先行**（逐条见 [`docs/ENGINEERING-PATH.md`](docs/ENGINEERING-PATH.md) 第六节）：S0 恢复正式通路 → S1 先做 E1–E7 判据与坏样件 → S2 冻结首件需求与最小规则包 → S3 原生可编辑板件真过 E1–E3 → S4 接上装配/图样/工艺 → S5 真实 DeepSeek 端到端 → S6 限定发布与扩展。
 
-本机两套官方源都要查：`AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与`C:\swapi\`（结构化 markdown，查精确签名与枚举值）；检索入口是`手册\swdoc.ps1`与`mech-design` skill 的`sw_know.py`。出厂类型库的反射是第三套源，也是冲突时的裁决者。各源的文件量、检索子命令与覆盖缺口见 [docs/sources.md](docs/sources.md)。
+取材与归一五步（每个方法包的内部动作）：① 建全景与对差 → ② 找来源（上游 > MIT > Apache > 只读思想 > 照官方自建）→ ③ 归一（五统一）→ ④ 标 `level` 与 `provenance` → ⑤ 门禁与实测。每步的产出文件与判据见 [`docs/work-method.md`](docs/work-method.md)。
 
-**其它项目（`C:\swprojects\`）**
-
-四家与本项目重叠的外部 MCP 项目（`Eduardof0nt` 187 工具 MIT · `andrewbartels1` 128 MIT · `vespo92` 103 MIT · `Slacker-LLC` 92 Apache-2.0）：工具数、测试文件数、各自声明跑过的环境与逐条许可判定，见 [`docs/sources.md`](docs/sources.md) 与 [`docs/state/facts/N-external.md`](docs/state/facts/N-external.md)。
-
-其余 21个外部项目克隆的清单、逐项能补什么、许可判定表与 MIT 唯一例外，见 [docs/sources.md](docs/sources.md)。
-
-**来源标注制**（每个移植函数都要有）
-
-每个移植函数必须带来源头注释，并入`capabilities.yaml`的条目另带结构化`provenance`字段；格式模板、字段定义与「未实测」标注规则见 [docs/provenance-format.md](docs/provenance-format.md)。许可必须与来源表一致。
-
-## 五、工作方法（并入五步）
-
-① 建全景与对差 → ② 找来源（上游 > MIT > Apache > 只读思想 > 照官方自建）→ ③ 归一（五统一）→ ④ 标 `level` 与 `provenance` → ⑤ 门禁与实测。每步的产出文件与判据见 [`docs/work-method.md`](docs/work-method.md)。
+**每个任务开工前先回答三问**：服务哪个首件要求、改善哪条 E、增加哪个可重复试验。答不出就不进当前迭代。
 
 ## 六、已知事实（完整表在 [`docs/known-facts.md`](docs/known-facts.md)）
 
@@ -194,5 +185,8 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 4. 需要`git push`/建目标远端仓库/提 PR → 停下，等批准。
 5. 发现实际仓库结构与铁律 3 的顶层白名单不符 → 停下报告，以实际仓库为准并更新本文件。
 6. 来源没有测试、我们又无法本机实测 → 标`stitched`，不得标`verified`。
+7. 某项 E 判据没有可验证的采集方式 → 列为技术风险，不能先把返回值填上。
+8. 首件硬要求（孔数/孔型/位置、材料、图样、配合）在方案里没有承担节点 → 该方案是未完成方案，不能当候选。
+9. 需求、阈值或盲集已冻结，但为了通过而想改它们 → 停下，走批准的需求变更。
 
 常用路径/脚本/命令见 [docs/local-resources.md](docs/local-resources.md)；开工第一句话见 [docs/kickoff-template.md](docs/kickoff-template.md)。

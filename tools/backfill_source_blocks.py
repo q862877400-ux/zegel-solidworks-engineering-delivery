@@ -106,7 +106,7 @@ def classify(path: pathlib.Path, text: str) -> tuple[str, str]:
         )
     return (
         "todo",
-        "★ 待逐条回填（本文件早于 §十八；★ 不假装有依据 —— 见 `docs/repo-uniformity-report.md`）",
+        "★ 待逐条回填（本文件早于 §十八；★ 不假装有依据 —— 见 `docs/history/repo-uniformity-report.md`）",
     )
 
 

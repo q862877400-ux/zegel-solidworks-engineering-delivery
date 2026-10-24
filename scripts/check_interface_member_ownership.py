@@ -97,7 +97,7 @@ MANUAL_USED: set = set()
 #: **⚠ 每条都写明依据；没有依据的不许进来。**
 #: **⚠⚠ 本表与自动结果在输出里**分开统计**** —— 免得有人把人工条当成推断产物
 #: （第 40 轮正是这么错的：用启发式硬凑，连续改 6 版都不对，最后回退）。
-#: 证据与「待核」清单见 `docs/T-040-unmapped-constants-evidence.md`。
+#: 证据与「待核」清单见 `docs/history/T-040-unmapped-constants-evidence.md`。
 MANUAL_MAP: dict = {
     # 描述 `Allows access to a sweep feature.`
     "swFmSweep": "ISweepFeatureData",

@@ -832,7 +832,7 @@
 | `rename_pep8_names.py` | 把 ruff 报的 N812 / N806 改名成 PEP 8 口径（★ 每个名字全文件唯一才动） |
 | `repair_harvest_report_line.py` | ★ 恢复 docs/harvest-report.md 里被审计输出覆盖的那一行（★ 第二次发生 |
 | `sample_cold_tools_for_rag_test.py` | ★ 机械抽样：从全部工具清单里挑一批**冷门**的（★ 不靠我的口味） |
-| `selfcheck_official_source_errors.py` | ★ 自校 `docs/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核 |
+| `selfcheck_official_source_errors.py` | ★ 自校 `docs/history/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核 |
 | `session_verdict.py` | ★ 会话裁决：**一个裁决、两条探路** —— 会话干不干净、有没有未保存改动 |
 | `set_subagent_default_model.py` | ★ 把子代理的默认模型改成 bunny（写活配置 `profiles/web/cordis.patch.yml`，先备份） |
 | `spec211_manual_verdicts.py` | ★ 规格 211 · B0 的**人工终判表**（★ 每条注明依据 |

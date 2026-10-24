@@ -6,7 +6,7 @@
 `server.py` 只引用 **25** 个 `scripts` 模块，**本仓库后补的 61 个模块一个都没进**（交集 = 0）。
 
 按老办法补齐 ⇒ **~120 个函数 × 54 行 ≈ 4800 行**手写样板
-（评估见 `docs/T-011-expose-capabilities-assessment.md` —— 真实工作量是 ~120 个函数，不是 814）。
+（评估见 `docs/history/T-011-expose-capabilities-assessment.md` —— 真实工作量是 ~120 个函数，不是 814）。
 
 **⇒ 本模块把「简单工具」变成一条声明**：
 ```python
@@ -42,7 +42,7 @@ ToolSpec(
 # 仓库:   本项目自身（不是第三方移植）
 # 文件:   mcp-server/tool_registry.py
 # 定位:   AGENTS.md 已知事实 25「我们补的能力没被 MCP 暴露」的**工程解法**；
-#         `docs/T-011-expose-capabilities-assessment.md` 的实现层。
+#         `docs/history/T-011-expose-capabilities-assessment.md` 的实现层。
 #         写法照 `server.py` 既有 45 个工具的形状抽取（见该文件 1031/1045/1090 行附近）。
 # 官方签名依据: 不适用（本模块只做 Python 层注册，不直接调 COM）
 # 许可:   本仓库 MIT。无第三方代码引入。
@@ -236,13 +236,13 @@ _UNIT_DESC_EXEMPT: dict = {
     #:   ★★ 而代码实测（`scripts/sw_sheet_metal.py`）：★ `float(args["ReliefWidth"])`
     #:   **直接送进 `InsertSheetMetalHem2`**、★ **中途没有 `mm()` 换算** ✗
     #:   ⇒ ★★★ **所以"名字该不该留 `_mm`"取决于官方吃什么 —— 而官方没说** ✗
-    #:   ★ 已登记为 **`docs/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
+    #:   ★ 已登记为 **`docs/history/unit-conflicts.md` 第 2 条**（★ 含真机验证判据：
     #:   ★ 传 `1.0` ⇒ **回读几何**：≈1mm ⇒ 名字对；★ ≈1000mm ⇒ 名字说假话）✓
     #: ⚠ ★ **结论出来后要回到这里改**（★ 要么补描述、要么去掉后缀）—— ★ **不是永久豁
     #: 免** ✓
     "★ **挂起**（不是豁免）：★ 官方对该形参**未给单位**、★ 且官方 `ReliefWidth`/`ReliefDepth` "
     "两句自相矛盾 ⇒ ★ 『名字该不该留 `_mm`』**取决于官方吃什么，而官方没说** ✗ "
-    "★ 已登记 `docs/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
+    "★ 已登记 `docs/history/unit-conflicts.md` 第 2 条，★ **真机验完就回来改**（★ 非永久豁免）✓",
 }
 
 

@@ -11597,7 +11597,7 @@ python -c "import json;d=json.load(open('capabilities.yaml',encoding='utf-8'));p
 > **MCP 暴露面之差**、不是能力缺口（见 §二 的调整记录）。
 > 表里那些「域（真实缺口）」在本仓库**多数已有实现** —— 照它并入会**重复实现**。
 > **真正剩下的活是「把已有能力暴露成 MCP 工具」**，见
-> [T-011 评估](T-011-expose-capabilities-assessment.md)（~120 个函数，不是 814）。
+> [T-011 评估](history/T-011-expose-capabilities-assessment.md)（~120 个函数，不是 814）。
 >
 > 本节以下内容**一字未删**，因为它是「一个口径不清的数字如何污染整份计划」的标本。
 

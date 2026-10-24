@@ -221,7 +221,7 @@ def get_lines(sketch) -> list[Any]:
     要「线的几何」用 `ISketchSegment` 上的方法（本模块另有包装）。
 
     ⚑ 2026-10-01（轮 111）：改用**后继** `GetLines2(swCrossHatchFilter_e)` ——
-    官方已把 `GetLines` 标 **Obsolete**（见 `docs/obsolete-member-candidates.md`）。
+    官方已把 `GetLines` 标 **Obsolete**（见 `docs/history/obsolete-member-candidates.md`）。
     ⚠ 它是**唯一多一个参数**的后继：默认 `swCrossHatchInclude`（含剖面线），
     与旧 `GetLines()` 的「都取」语义一致。
     ⚠ 这条「12 个 float / 条」是**实测**的，**官方文档没写**返回结构。
