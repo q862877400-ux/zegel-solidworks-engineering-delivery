@@ -1,12 +1,12 @@
 # ⚠ 本文件是**合并前**的工作区 README（历史存档）
 
-> ★ 2026-10-03：`D:\AI\SW` 与 `C:\swprojects\sw-skill-fork` 已合并为一个仓库，
+> ★ 2026-10-03：`.` 与 `C:\swprojects\sw-skill-fork` 已合并为一个仓库，
 > 故下面这段原文里「代码本体在 `C:\swprojects\sw-skill-fork\`（独立 git 仓库）」**已过时** ——
 > 现在**代码与本工作区在同一个仓库里**。原文保留，作为当时的设计记录。
 
 ---
 
-# D:\AI\SW — SolidWorks 自动化 skill 工作区
+# 本仓库 — SolidWorks 自动化 skill 工作区
 
 > **这是工作日志，不是产品。** 代码本体在 `C:\swprojects\sw-skill-fork\`（独立 git 仓库）。
 > 本仓库存在的唯一理由：**把「做过什么、怎么做的、结果如何」版本化**，
@@ -16,9 +16,9 @@
 
 | 路径 | 是什么 | git |
 |---|---|---|
-| `D:\AI\SW\` | **本仓库** —— 工作区 + 草稿 + 日志 + 报告 | ← 你在这里 |
+| `.` | **本仓库** —— 工作区 + 草稿 + 日志 + 报告 | ← 你在这里 |
 | `C:\swprojects\sw-skill-fork\` | **代码工作副本** —— 唯一改代码的地方 | 独立 git（origin = 上游，只读锚点） |
-| `D:\AI\SW\AI Solidworks\` | 官方 API 文档（CHM 解包，285 MB） | 已 gitignore（第三方、只读） |
+| `AI Solidworks\` | 官方 API 文档（CHM 解包，285 MB） | 已 gitignore（第三方、只读） |
 
 ## 本仓库的内容
 
@@ -44,7 +44,7 @@
 | 截图证据 | `evidence/` / `batch_evidence/` |
 
 ⚠ 反面教材：`desc_caliber.py`（量 MCP 工具描述的三个口径）被 `cordis.patch.yml` 的注释
-按 `D:\AI\SW\desc_caliber.py` 引用 ⇒ **它必须留在根目录**，挪走要同步改那处引用。
+按 `desc_caliber.py` 引用 ⇒ **它必须留在根目录**，挪走要同步改那处引用。
 **有外部引用的草稿，路径就是它的契约。**
 
 ## 已排除（`.gitignore`）

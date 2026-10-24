@@ -419,7 +419,7 @@ python scripts\release_check.py                 # 发布前门禁
 > 禁词只对「相对锚点的新增/修改行」生效 —— 这正是它依赖 git 的原因。
 
 > ⚠ 反射清单（`iface_sldworks.txt` / `iface_cosworks.txt`）由
-> `D:\AI\SW\tools\reflect-interop.ps1` 对官方 interop DLL 做纯元数据反射生成，
+> `tools\reflect-interop.ps1` 对官方 interop DLL 做纯元数据反射生成，
 > **不在本仓库内**，需本地重跑。
 
 ## 结果自审查

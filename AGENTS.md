@@ -1,21 +1,21 @@
 # AGENTS.md
 
-本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；仓库`D:\AI\SW\`——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
+本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；仓库根——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
 ## 十二、仓库（第一件事，先确认你在哪）
 
 | 路径 | 是什么 | 能改吗 |
 |---|---|---|
-| `D:\AI\SW\` | 仓库根——代码（`scripts/` `mcp-server/` `tests/` `tools/` `apps/` …）与产物（草稿/日志/报告/证据）同在一处 | 改代码与放产物 |
+| `.` | 仓库根——代码（`scripts/` `mcp-server/` `tests/` `tools/` `apps/` …）与产物（草稿/日志/报告/证据）同在一处 | 改代码与放产物 |
 | `C:\swprojects\sw-skill-fork\` | 合并前的代码副本，只读归档（历史与上游对照在其中） | 只读 |
 | `C:\swprojects\<owner>\` | 四家外部 MCP 项目的克隆 | 只读对照 |
 | `C:\swprojects\sw-automation-skill\` | 上游的另一份克隆 | 只读对照 |
-| `D:\AI\SW\AI Solidworks\` | SolidWorks 工作区（官方文档/手册/模型/截图） | 只读 |
-| `D:\AI\SW\docs\` | 本文件里`docs/...`相对 AGENTS.md 解析到这里——知识文档与任务产出同在一处（合并后不再分家） | 可改 |
+| `AI Solidworks\` | SolidWorks 工作区（官方文档/手册/模型/截图） | 只读 |
+| `docs\` | 本文件里`docs/...`相对 AGENTS.md 解析到这里——知识文档与任务产出同在一处（合并后不再分家） | 可改 |
 
-`D:\AI\SW\`是 git 仓库（提交`1f86c5d`起；2026-10-03 并入代码后共 4820个入库文件）；`.gitignore`排除了 398 MB（官方文档/反射转储/探索截图/CAD 保真数据）。
+`仓库根`是 git 仓库（提交`1f86c5d`起；2026-10-03 并入代码后共 4820个入库文件）；`.gitignore`排除了 398 MB（官方文档/反射转储/探索截图/CAD 保真数据）。
 
-任务报告与代码都放`D:\AI\SW\`下。`D:\AI\SW\AI Solidworks\`是模型/截图/手册，不是代码落点。
+任务报告与代码都放`仓库根`下。`AI Solidworks\`是模型/截图/手册，不是代码落点。
 
 ## 十三、动手核一条路之前：先扫「已走死的路」
 
@@ -68,7 +68,7 @@ python tools/sw_guard.py --report                                  # 打印历�
 ## 十六、每轮收尾链（★一条命令）
 
 ```
-pwsh -File D:\AI\SW\tools\round_chain.ps1 -Tests tests/<改过的>.py
+pwsh -File tools\round_chain.ps1 -Tests tests/<改过的>.py
 ```
 
 **实测 34.8 s**（生成器 2.1 s + `release_check` 31 s + 聚焦测试）。不要再手打 6 步链、不要每轮跑全量 pytest。
@@ -196,7 +196,7 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 
 ### 铁律 4、签名三源互证，冲突以出厂类型库为准
 
-本机有两套官方离线源，各有长短，都要查：`D:\AI\SW\AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与`C:\swapi\`（结构化 markdown，查精确签名与枚举值）。各源覆盖范围与检索入口见 [docs/sources.md](docs/sources.md)。
+本机有两套官方离线源，各有长短，都要查：`AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与`C:\swapi\`（结构化 markdown，查精确签名与枚举值）。各源覆盖范围与检索入口见 [docs/sources.md](docs/sources.md)。
 
 出厂类型库是第三套源，也是冲突时的裁决者：`FeatureFillet3`在本机类型库里有 14个参数，官方文档写 7个。口径是三源互证——文档、反射、CHM；冲突时以出厂类型库的反射为准。不凭记忆、不凭反射猜参数、不照抄其它项目的注释。
 
@@ -225,7 +225,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 ### 4.1 两套官方离线源 + 反射（各管一头）
 
-本机两套官方源都要查：`D:\AI\SW\AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与`C:\swapi\`（结构化 markdown，查精确签名与枚举值）；检索入口是`手册\swdoc.ps1`与`mech-design` skill 的`sw_know.py`。出厂类型库的反射是第三套源，也是冲突时的裁决者。各源的文件量、检索子命令与覆盖缺口见 [docs/sources.md](docs/sources.md)。
+本机两套官方源都要查：`AI Solidworks\官方文档\`（CHM 解包，权威、带说明与示例，查语义与用法）与`C:\swapi\`（结构化 markdown，查精确签名与枚举值）；检索入口是`手册\swdoc.ps1`与`mech-design` skill 的`sw_know.py`。出厂类型库的反射是第三套源，也是冲突时的裁决者。各源的文件量、检索子命令与覆盖缺口见 [docs/sources.md](docs/sources.md)。
 
 ### 4.2 其它项目（`C:\swprojects\`）
 
@@ -271,13 +271,13 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 | 9 | 画草图前先`SelectByID2`选中基准面；基准面名随 UI 语言变（`"Front Plane"`/`"前视基准面"`）。不选面 → 特征返回 NULL 且几何零变化；沿上游`_get_plane_name_candidates` | 本机实测 + 上游`sw_part.py` |
 | 12 | 空 Dispatch 参数包`VARIANT(VT_DISPATCH, None)` | 上游`create_empty_dispatch_variant()` |
 | 24 | 运行时只能有一个 SolidWorks MCP：多个进程抢同一 COM 连接会死锁。`Eduardof0nt/Solidworks-MCP-Server`为此实现 Windows 命名互斥锁`Local\SolidWorksMCPServer_SingleInstance_v1`；`Slacker-LLC/solidworks-mcp`把「Two clients driving the same session at once will deadlock it.」写进已知限制 | 两家源码 + README |
-| 32 | 实体（边/面）没有可用的名字：`SelectByID2("Edge1","EDGE")`与`SelectByID2("Face1","FACE")`在真机上计数均为 0（100×60×20 mm 板，12 边/6 面）；`SelectByID2("","EDGE",0,0,0,…)`也是 0（原点不在边上）。选实体（边/面）的可行路径是`IEntity.Select4(Append, Callout)`（按对象选，计数 1），或按面上的点定位（`SelectByID2("","FACE",x,y,z,…)`，计数 1）。⇒「按名字选」只对特征成立（`sw_part._ensure_sketch_selected`走的就是那一路），对实体不成立 | 证据脚本`D:\AI\SW\probe_entity_select_by_name.py`；落地模块`scripts/sw_selection_spec.py`（端到端`probe_selection_spec_e2e.py` 12/12 通过）|
+| 32 | 实体（边/面）没有可用的名字：`SelectByID2("Edge1","EDGE")`与`SelectByID2("Face1","FACE")`在真机上计数均为 0（100×60×20 mm 板，12 边/6 面）；`SelectByID2("","EDGE",0,0,0,…)`也是 0（原点不在边上）。选实体（边/面）的可行路径是`IEntity.Select4(Append, Callout)`（按对象选，计数 1），或按面上的点定位（`SelectByID2("","FACE",x,y,z,…)`，计数 1）。⇒「按名字选」只对特征成立（`sw_part._ensure_sketch_selected`走的就是那一路），对实体不成立 | 证据脚本`archive\root-scratch\py\probe_entity_select_by_name.py`；落地模块`scripts/sw_selection_spec.py`（端到端`probe_selection_spec_e2e.py` 12/12 通过）|
 | 33 | `SelectByID2`/`Select4`的`Callout`参数必须传`VARIANT(VT_DISPATCH, None)`（`sw_part._empty_callout()`）；传`None`得到`'类型不匹配'`（`0x80028CA0`），而该错误看不出是 Callout 的问题。⇒这是已知事实 12 的一个具体后果，2026-10-01 又踩一次（差点据此得出「选择不可能」的错误结论）| 本机实测（同一探针的失败版 vs 修好版）|
-| 36 | 同名接口分属不同族——用错接口 = 对象对任何成员都没反应：官方类型表里 Gusset 有两个——`ISMGussetFeatureData`（`category: Feature Interfaces/Sheet Metal`，28 属性）与`IGussetFeatureData`（`category: .../Weldments`，19成员），共有成员只有 3个（`AccessSelections`/`ProfileType`/`ReleaseSelectionAccess`）。`swFmSMGusset`描述明写 "Sheet metal gusset"⇒必须用 SM 那个。用错时真机表现：连读都读不到（`read Thickness → ✗ <unknown>.Thickness`），写报`Property '<unknown>.X' can not be set`——看起来像「属性只读」，实际是「接口不对」。`scripts/check_member_names.py`抓不到这一类（它判「名字在某个接口里存在」，不判「在这个接口里存在」）| 官方类型表`C:\swapi\types\ISMGussetFeatureData\` vs `\IGussetFeatureData\`；真机证据`D:\AI\SW\probe_property_binding.py` |
-| 40 | `IModeler.Create*Surface`的返回值不可靠——同一个调用跨次也会变（2026-10-01 四轮探针）：第 13轮`CreateCylindricalSurface`成功；第 26轮`spherical`/`toroidal`成、`cylindrical`/`conical`返回`None`；第 27轮受控实验只`axis=(1,0,0)`成（已排除顺序与单例状态），且`*2`全`None`。官方该族 18个里 4个标`Obsolete`（`CreateConicalSurface`/`CreateCylindricalSurface`/`CreatePlanarSurface`/`CreateSphericalSurface`），各有`*2`后继、运行期可达（多一个`RefDirection`），但按正确 arity 调`*2`仍返回`None`⇒换一代解决不了。能修的只有让失败可见：`sw_surface._invoke`现对`None`抛带原因的`RuntimeError`；存在但没人用的守卫（`require_runtime_available`曾如此）与没有守卫等价、且更糟（让人以为防住了）——2026-10-01 才接进 13个公开包装器 | 证据`D:\AI\SW\probe_surface2_correct_arity.py`/`probe_cyl_order_vs_axis.py`/`probe_cyl_none_matrix.py`/`probe_surface_generations.py`；`scripts/sw_surface.py`的`_invoke`/`IMODELER_RUNTIME_*` |
-| 43 | `CreateDefinition`只接受官方列出的 35个常量，用前必须查那张名单：`swFmOneBend(33)`/`swFmDraft(3)`是合法枚举成员但非法类型（⇒返回`None`是应然，不是 COM/权限问题）。「一个折弯」的正确入口是`swFmSketchBend(35)`，接口`ISketchedBendFeatureData`（16个成员：`BendAngle`/`BendRadius`/`ReverseDirection`/`UseDefaultBendRadius`/`UseDefaultBendAllowance`/`SetFixedFace`/`GetFixedFace`/…；`FixedFace`/`BendLine`是方法不是属性）。两套官方源分工不同：`C:\swapi\enums\swFeatureNameID_e.md`的「Value」列装描述、不是数值⇒数值必须反射`D:\AI\SW\_raw\\enum_values_sldworks.txt`（130个成员）。可核验的`CONST → 接口`映射（不手写）：`CreateDefinition.md`的括注 × 接口`_overview.md`的 Description⇒20 唯一命中/4 歧义/11 未映射（`D:\AI\SW\gen_const_iface_map.py`）。2026-10-01 消歧：4条歧义全解⇒24 唯一/0 歧义/11 未映射，三条规则均从官方描述读出——①含`group`者是子项（两处`*GroupData`描述写着 "feature group" / "feature's cut-extrude face group"）⇒排除；②其余里含`feature`者优先（`ICornerReliefFeatureData` "…relief feature data" vs `ISMCornerReliefData` "…relief data"）；③兜底弱启发式：描述比常量括注多出的词最少者优先——`swFmLibraryFeature (library)`⇒`ILibraryFeatureData`（+2词）胜过`ILibraryFormToolFeatureData`（+4词），已在代码注释与提交信息标注为弱证据。2026-10-01轮 41：把逐条读官方描述确认的 7条写进显式`MANUAL_MAP`⇒31 唯一（自动 24 + 人工确证 7）/ 0 歧义/4 未映射。与轮 40 那次失败的关键区别：人工表、每条在代码里注明依据，不是启发式硬凑（轮 40 用名字回退连续改 6 版都不对，已回退并记进事实 53）。三条设计约束：①绝不覆盖自动结果（只补空）；②输出分开报（自动 + 人工确证）；③没有依据的不许进来（未确证的 4条留在`unmapped`，按铁律 5 写「查不到」）| `C:\swapi\types\IFeatureManager\CreateDefinition.md`（35个常量）；`enum_values_sldworks.txt`；`gen_const_iface_map.py`；`probe_sketch_bend_entry.py` |
-| 47 | `ISketchedBendFeatureData`的`AccessSelections`/`SetFixedFace`在 pywin32 迟到绑定下不可调用——这是架构性限制，不是参数没找对（2026-10-01，两轮 20+ 种形态实测）：`SetFixedFace(X,Y,Z,EdgeArray)`的七种数组包装 × 两个重载全部报`类型不匹配`（位置 1 或 4）；`AccessSelections(model, None)`报`类型不匹配`（位置 2）、改传`VARIANT(VT_DISPATCH, None)`则报`服务器出现意外情况`（`0x80010105`）——与已知事实 28 的`CreateBsplineSurface`同一个错误码。⇒这与`capabilities.yaml`里早已记录的后端限制吻合：「不能调用官方标记为仅进程内非托管 C++ 的指针接口」；反射里那对`IAccessSelections`/`IAccessSelections2`正是那种`I`前缀的指针变体。⇒结论：`create_one_bend`/`create_edge_flange`/`create_gusset`三条在 pywin32 这条后端上到不了「建成」（除非换`comtypes`或进程内 C++ 后端）。不要再用「换个参数试试」的方式继续试——20+ 种已穷尽 | `D:\AI\SW\probe_setfixedface_forms.py`/`probe_setfixedface_overloads.py`/`probe_access_selections.py`；`capabilities.yaml`的`backend_catalog`限制段 |
-| 48 | 长文本不要内联进 Python 源码——本会话在这一件事上踩了 6次：文档串里嵌同类引号/补丁脚本插真换行/`%`-格式串里的`100%`/`\A`之类坏转义/状态表字符串断行/以及`write`工具写的 Python 里字符串被真实换行截断（`SyntaxError: unterminated string literal`，连踩两次）。最坑的一次：脚本语法错⇒内容没写进去，而外面的`git add -A && commit`照跑⇒产生「提交信息说改了文档、实际只提交了那个坏脚本」的假提交（2026-10-01 连出两次）。⇒定则两条：① 长内容先写成独立文件（`.md`），再用最短脚本搬运；② 批量脚本跑完必须核对落盘（`grep`一下目标文件），不能只看脚本的 stdout。 | `D:\AI\SW\_t011_section28.md`（正确做法）；`doc_fact47.py`（错误做法的两次失败） |
+| 36 | 同名接口分属不同族——用错接口 = 对象对任何成员都没反应：官方类型表里 Gusset 有两个——`ISMGussetFeatureData`（`category: Feature Interfaces/Sheet Metal`，28 属性）与`IGussetFeatureData`（`category: .../Weldments`，19成员），共有成员只有 3个（`AccessSelections`/`ProfileType`/`ReleaseSelectionAccess`）。`swFmSMGusset`描述明写 "Sheet metal gusset"⇒必须用 SM 那个。用错时真机表现：连读都读不到（`read Thickness → ✗ <unknown>.Thickness`），写报`Property '<unknown>.X' can not be set`——看起来像「属性只读」，实际是「接口不对」。`scripts/check_member_names.py`抓不到这一类（它判「名字在某个接口里存在」，不判「在这个接口里存在」）| 官方类型表`C:\swapi\types\ISMGussetFeatureData\` vs `\IGussetFeatureData\`；真机证据`archive\root-scratch\py\probe_property_binding.py` |
+| 40 | `IModeler.Create*Surface`的返回值不可靠——同一个调用跨次也会变（2026-10-01 四轮探针）：第 13轮`CreateCylindricalSurface`成功；第 26轮`spherical`/`toroidal`成、`cylindrical`/`conical`返回`None`；第 27轮受控实验只`axis=(1,0,0)`成（已排除顺序与单例状态），且`*2`全`None`。官方该族 18个里 4个标`Obsolete`（`CreateConicalSurface`/`CreateCylindricalSurface`/`CreatePlanarSurface`/`CreateSphericalSurface`），各有`*2`后继、运行期可达（多一个`RefDirection`），但按正确 arity 调`*2`仍返回`None`⇒换一代解决不了。能修的只有让失败可见：`sw_surface._invoke`现对`None`抛带原因的`RuntimeError`；存在但没人用的守卫（`require_runtime_available`曾如此）与没有守卫等价、且更糟（让人以为防住了）——2026-10-01 才接进 13个公开包装器 | 证据`archive\root-scratch\py\probe_surface2_correct_arity.py`/`archive\root-scratch\py\probe_cyl_order_vs_axis.py`/`archive\root-scratch\py\probe_cyl_none_matrix.py`/`archive\root-scratch\py\probe_surface_generations.py`；`scripts/sw_surface.py`的`_invoke`/`IMODELER_RUNTIME_*` |
+| 43 | `CreateDefinition`只接受官方列出的 35个常量，用前必须查那张名单：`swFmOneBend(33)`/`swFmDraft(3)`是合法枚举成员但非法类型（⇒返回`None`是应然，不是 COM/权限问题）。「一个折弯」的正确入口是`swFmSketchBend(35)`，接口`ISketchedBendFeatureData`（16个成员：`BendAngle`/`BendRadius`/`ReverseDirection`/`UseDefaultBendRadius`/`UseDefaultBendAllowance`/`SetFixedFace`/`GetFixedFace`/…；`FixedFace`/`BendLine`是方法不是属性）。两套官方源分工不同：`C:\swapi\enums\swFeatureNameID_e.md`的「Value」列装描述、不是数值⇒数值必须反射`_raw\enum_values_sldworks.txt`（130个成员）。可核验的`CONST → 接口`映射（不手写）：`CreateDefinition.md`的括注 × 接口`_overview.md`的 Description⇒20 唯一命中/4 歧义/11 未映射（`archive\root-scratch\py\gen_const_iface_map.py`）。2026-10-01 消歧：4条歧义全解⇒24 唯一/0 歧义/11 未映射，三条规则均从官方描述读出——①含`group`者是子项（两处`*GroupData`描述写着 "feature group" / "feature's cut-extrude face group"）⇒排除；②其余里含`feature`者优先（`ICornerReliefFeatureData` "…relief feature data" vs `ISMCornerReliefData` "…relief data"）；③兜底弱启发式：描述比常量括注多出的词最少者优先——`swFmLibraryFeature (library)`⇒`ILibraryFeatureData`（+2词）胜过`ILibraryFormToolFeatureData`（+4词），已在代码注释与提交信息标注为弱证据。2026-10-01轮 41：把逐条读官方描述确认的 7条写进显式`MANUAL_MAP`⇒31 唯一（自动 24 + 人工确证 7）/ 0 歧义/4 未映射。与轮 40 那次失败的关键区别：人工表、每条在代码里注明依据，不是启发式硬凑（轮 40 用名字回退连续改 6 版都不对，已回退并记进事实 53）。三条设计约束：①绝不覆盖自动结果（只补空）；②输出分开报（自动 + 人工确证）；③没有依据的不许进来（未确证的 4条留在`unmapped`，按铁律 5 写「查不到」）| `C:\swapi\types\IFeatureManager\CreateDefinition.md`（35个常量）；`_raw\enum_values_sldworks.txt`；`archive\root-scratch\py\gen_const_iface_map.py`；`archive\root-scratch\py\probe_sketch_bend_entry.py` |
+| 47 | `ISketchedBendFeatureData`的`AccessSelections`/`SetFixedFace`在 pywin32 迟到绑定下不可调用——这是架构性限制，不是参数没找对（2026-10-01，两轮 20+ 种形态实测）：`SetFixedFace(X,Y,Z,EdgeArray)`的七种数组包装 × 两个重载全部报`类型不匹配`（位置 1 或 4）；`AccessSelections(model, None)`报`类型不匹配`（位置 2）、改传`VARIANT(VT_DISPATCH, None)`则报`服务器出现意外情况`（`0x80010105`）——与已知事实 28 的`CreateBsplineSurface`同一个错误码。⇒这与`capabilities.yaml`里早已记录的后端限制吻合：「不能调用官方标记为仅进程内非托管 C++ 的指针接口」；反射里那对`IAccessSelections`/`IAccessSelections2`正是那种`I`前缀的指针变体。⇒结论：`create_one_bend`/`create_edge_flange`/`create_gusset`三条在 pywin32 这条后端上到不了「建成」（除非换`comtypes`或进程内 C++ 后端）。不要再用「换个参数试试」的方式继续试——20+ 种已穷尽 | `archive\root-scratch\py\probe_setfixedface_forms.py`/`archive\root-scratch\py\probe_setfixedface_overloads.py`/`archive\root-scratch\py\probe_access_selections.py`；`capabilities.yaml`的`backend_catalog`限制段 |
+| 48 | 长文本不要内联进 Python 源码——本会话在这一件事上踩了 6次：文档串里嵌同类引号/补丁脚本插真换行/`%`-格式串里的`100%`/`\A`之类坏转义/状态表字符串断行/以及`write`工具写的 Python 里字符串被真实换行截断（`SyntaxError: unterminated string literal`，连踩两次）。最坑的一次：脚本语法错⇒内容没写进去，而外面的`git add -A && commit`照跑⇒产生「提交信息说改了文档、实际只提交了那个坏脚本」的假提交（2026-10-01 连出两次）。⇒定则两条：① 长内容先写成独立文件（`.md`），再用最短脚本搬运；② 批量脚本跑完必须核对落盘（`grep`一下目标文件），不能只看脚本的 stdout。 | `archive\root-scratch\md\_t011_section28.md`（正确做法）；`archive\root-scratch\py\doc_fact47.py`（错误做法的两次失败） |
 | 51 | 一个「抓不到目标类别」的检查，往往不是判据错，而是分析范围与代码的组织单元不匹配——2026-10-01 在第 38轮与第 29轮各踩一次同一处：用`WINDOW = 400`的行窗口去收集`data.X`的用法，而`data`这个变量名在多个`_apply(data)`嵌套函数里复用⇒把别的特征的成员也算了进来（实测：base flange 那个站点把 edge flange/draft/gusset 的成员全吞了，6个假阳性）。⇒范围必须贴合代码的组织单元（所在函数）。同轮的另两处：① 形参驱动的站点只解析了第一个调用点⇒5个站点只检查了 1个；② 实参文本是`int(fm_type`（带`int(...)`包装），而形参名查询直接拿它去查⇒一个都解析不到。⇒教训：静态分析先问「这段代码的组织单元是什么」，再决定收集范围。 | `scripts/check_interface_member_ownership.py`的`enclosing_range`/`calls_of`/`param_index`；第 29轮的同一处错误与第 38轮的反转 |
 | 53 | 「调到看起来对」的识别信号：同一个启发式连续修补 ≥3次还没稳定，就该停下回退——2026-10-01 实例：为攻掉`CONST → 接口`映射表的 11条未映射，我给检查器加「名字回退」，连续改了 6 版（30/4/1⇒词重叠过滤无效⇒末词过滤仍错⇒去首词变体跌到 29/0/6⇒改词级匹配回到 24/0/11⇒改名字子串又错成 29/6/0），每版都在同一处打补丁，最后回退到`e4794cc`的 24/0/11。⇒根因不是「还没调对」：① `swFmSweepThread`那类（"sweep thread" 是螺纹）需要领域知识，文本匹配永远得不到；② 名字匹配的假阳性（`swFmSolidToSheetMetal`⇒`ISheetMetalFeatureData`、`swFmMirrorComponent`⇒`IComponent2`）压不住。⇒正解：把证据留在文档里（`docs/T-040-unmapped-constants-evidence.md`，11条逐条带官方依据），不接进工具。⇒定则：启发式需要连续 ≥3次修补才「看起来对」时，回退 + 记证据，不要继续调。** | `docs/T-040-unmapped-constants-evidence.md`；`git log --oneline scripts/check_interface_member_ownership.py`（含回退）；已知事实 52（名字是弱信号）与 51（分析范围要贴合组织单元）|
 | 55 | 改了任何运行时文件之后必须重跑`python scripts/sync_bundled_skill.py`——`release_check.py`会比「仓库根的 Skill」与「桌面内嵌快照」（`apps/workbench-ui/src-tauri/resources/skill`），不一致就拦发布。而该快照在`.gitignore:23`里⇒它是构建产物、`git status`看不见它⇒这条纪律不会被 git 提醒你。★2026-10-01（轮 43）实测：修掉了一个基线失败`test_release_check_passes_current_tree`（回归从 6 failed/857 passed 变成 5 failed/858 passed）——真因是那一步构建没跑，不是代码 bug；跑一次`sync_bundled_skill.py`（276个文件）即通过，且`git status`仍然干净。★同轮还把报错改成可执行的：原来只报`桌面内嵌 Skill 与根 Skill 不一致: <bundled-skill-missing>`（看不出该怎么办），现在分开报两种情况并各给出可直接跑的命令；并且验证过它是对的——改完`release_check.py`再跑，它立刻报`与根 Skill 不一致: scripts/release_check.py`（检查在尽职），而提示给的命令正是解法。 | `scripts/sync_bundled_skill.py`；`scripts/release_check.py`的`find_bundled_skill_drift`；`.gitignore:23` |
@@ -301,7 +301,7 @@ Slacker-LLC     7    3    20    2    13    0    0    0     0     3    17     6  
 ## 七、Git 规则
 
 ```
-仓库：        D:\AI\SW\          ← **唯一的仓库**（2026-10-03 合并；代码 + 产物同仓）
+仓库：        .\                ← **唯一的仓库**（2026-10-03 合并；代码 + 产物同仓）
   upstream : https://github.com/wzyn20051216/solidworks-automation-skill   ← 来源与对照（**只读**）
   origin   : **故意留空** —— 自建远端的目标 URL 由用户给定后再 `git remote add origin <url>`
   MIT · 上游是来源之一，不是本仓库的历史基底
