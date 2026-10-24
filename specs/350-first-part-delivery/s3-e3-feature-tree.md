@@ -79,7 +79,7 @@ E3 的替代品栏写着「特征数大于零、STEP 可打开」—— 这两�
 
 | 项 | 说明 |
 |---|---|
-| **导入死实体负例（真机）** | 未做真机 STEP 导入。判定器侧有离线测试（`native_features=0, imported_solids=1 ⇒ fail`），但**没在真机上造出那个情形** |
+| ~~导入死实体负例（真机）~~ | ✅ **第 16 轮已补**，见第七节 |
 | 悬空引用负例（真机） | 同上，只有离线测试 |
 | 「目标对象漂移」负例 | 未验 |
 | 多配置下的编辑 | 未验（只在默认配置上做了） |
@@ -97,3 +97,89 @@ python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_e3_feature_tr
 
 证据：`output/s3-e3-feature-tree.json`（`output/` 在 `.gitignore` 里，
 关键读数已抄进本文件）。
+
+## 七、真机负例：导入死实体（第 16 轮补上）
+
+第 15 轮只验了正面 + 离线负例。本轮在真机上把负例造出来了。
+
+### 做法
+
+```
+交付件副本 ──导出──> STEP（ok=True）──作为新文档导入──> 导入体零件
+```
+
+### 真机读数
+
+导入后的零件特征树（`tools/probe_s3_e3_imported_solid_negative.py`）：
+
+| 特征 | `GetTypeName2` 实测值 | 面数 |
+|---|---|---:|
+| 前视基准面 | `RefPlane` | 0 |
+| 上视基准面 | `RefPlane` | 0 |
+| 右视基准面 | `RefPlane` | 0 |
+| 原点 | `OriginProfileFeature` | 0 |
+| Tables | `ConfigTableFolder` | 0 |
+| **`板1_rev-1.step<1>`** | **`MBimport`** | 14 |
+
+```
+原生 0 · 非原生 6
+④ 判定器：fail（★ 没有任何原生特征 ⇒ 只有导入实体，没有可编辑历史）
+★ 负例成立
+```
+
+### ★★ 两个必须实测、不能猜的类型名
+
+| 特征 | 实测值 | 容易猜错成 |
+|---|---|---|
+| 切除-拉伸 | **`ICE`** | `Cut` / `CutExtrude` |
+| **导入的 STEP 实体** | **`MBimport`** | `Import` / `Imported` |
+
+### ★★★ 一个关键陷阱：基准面不能算「原生」
+
+导入的 STEP 零件**也带**三个基准面、原点和 Tables —— 实测 6 个特征里 **5 个**是这类。
+
+⇒ 若把基准面算成「原生特征」，`native_features` 就不是 0，
+  判定器会跳过「没有原生特征」那条，**「导入死实体冒充原生」就会被判 pass** ——
+  而那正是 E3 明令要拒的伪造手法。
+
+⇒ 已把这套分类收成**单一真源** `scripts/engineering/acceptance/e3_feature_types.py`：
+
+| 组 | 类型（全部实测） | 算不算可编辑历史 |
+|---|---|---|
+| `NATIVE_GEOMETRY_TYPES` | `ProfileFeature` · `Extrusion` · `ICE` | **算** |
+| `INFRA_TYPES` | `RefPlane` · `OriginProfileFeature` · `ConfigTableFolder` | 不算 |
+| `IMPORT_TYPES` | `MBimport` | 不算，且是负例 |
+
+遇到没量过的类型，`classify()` 回 **`unknown`** 并单独列出 ——
+**不猜**（铁律 5），漏计会让伪造手法混过去。
+
+`tests/test_acceptance_e3_feature_types.py`（19 条）钉住：
+交付件分对（原生 10 / 基础设施 5）、导入体分对（原生 0 / 基础设施 5 / 导入 1）、
+基准面不算原生、凭印象的名字（`Cut`/`Import`/`Sketch`…）**不得**入表、未收录类型可被看见。
+
+## 八、★ 本轮一个真机操作障碍（如实）
+
+把两个探针改成共用词表之后想**复跑**一次负面探针，被 `sw_guard` 预检拒绝：
+
+```
+[预检 第1次] ★ 不放行 · 读到文档 1 个 · 非我方 1 个 · 未保存 1 个
+⇒ ★ 会话里有 1 个不是我们打开的文档 ⇒ 拒绝开始
+```
+
+查清了它是谁（`tools/probe_list_open_docs.py`）：
+
+```
+path='' · title='板1_rev-1.SLDPRT' · 未保存标记为真
+```
+
+- `path=''` ⇒ **从未保存过**的新文档，是**我这轮探针**留下的（标题与我的作业文件同名）
+- 但 `GetSaveFlag` 为真 ⇒ 有未保存改动 ⇒ `CloseDoc` 会弹「是否保存」
+
+**官方源确认没有安全出口**：`types/IModelDoc2/SetSaveFlag.md` 逐字是
+「**Flags the document as dirty**」—— 它是**标脏**，不是清脏。⇒ 没有 API 能安全清掉。
+
+⇒ 按「不硬推」的纪律：**本轮真机复跑搁置**，障碍如实记录，等人在 GUI 里关掉那个文档。
+
+★ 影响范围：只影响「用新词表复跑负面探针」这一件事。
+  负面判据本身的**真机读数已经拿到**（见第七节表格），
+  共用词表的分类也已在离线验证与那张表一致（原生 0 / 基础设施 5 / 导入 1）。

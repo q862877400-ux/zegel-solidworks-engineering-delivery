@@ -53,6 +53,7 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c_  # noqa: E402
+from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
 from scripts.sw_connect import get_com_member  # noqa: E402
 from scripts.sw_connect import try_call as _try  # noqa: E402
 from scripts.sw_document_data import update_dimension_mm  # noqa: E402
@@ -143,10 +144,13 @@ def main() -> int:
         before = _tree(doc)
         ev["tree_before"] = before
         ev["type_vocabulary"] = sorted({r.get("type") for r in before if r.get("type")})
+        #: ★ 按**实测词表**分类（不猜类型名）—— 基准面/原点/Tables 不算可编辑历史
+        ev["tally_before"] = _tally(before)
         ww0 = whats_wrong(doc)
         ev["whats_wrong_before"] = ww0
         ev["feature_count_before"] = len(before)
         print("① 特征 %d 个 · 类型词表 %s" % (len(before), ev["type_vocabulary"]))
+        print("   按实测词表分类：%s" % ev["tally_before"])
         for r in before:
             print("   %-14s type=%-18s faces=%s 父=%s 子=%s" % (
                 str(r["name"])[:14], str(r["type"])[:18],
