@@ -49,7 +49,11 @@
 [CmdletBinding()]
 param(
     [switch]$Full,
-    [string[]]$Tests = @()
+    [string[]]$Tests = @(),
+    #: ★ 只打印「将要做的写操作」，不真做。
+    #:   T010/T011：本脚本含 3 处 `git add -A` 与 1 步「关 SolidWorks」——
+    #:   它们都是**副作用**，而收尾链常被当成「只读检查」跑。
+    [switch]$DryRun
 )
 
 $ErrorActionPreference = 'Stop'
@@ -81,7 +85,13 @@ Step 'sync_bundled_skill²' { python scripts/sync_bundled_skill.py *> $null }
 
 Write-Output ''
 Write-Output '── ② release_check（★ 内部已含 18 道门禁，**不必再单独跑**它们）──'
-git add -A
+if ($DryRun) {
+    $n = @(git status --porcelain | Measure-Object -Line).Lines
+    Write-Output ("  [DryRun] 跳过 git add -A（原本会暂存 {0} 个改动）" -f $n)
+} else {
+    git add -A
+    Write-Output "  git add -A 已执行（暂存全部改动）"
+}
 #: ★★★ 2026-10-01（轮 342）**先自己算出「偏离上游」那行，让它一轮就绿** ——
 #:   实测：`release_check` 每轮 **31.5 s**，而它**第 1 轮总会因偏离数字不符而失败** ⇒
 #:   改一行再跑第 2 轮 ⇒ **白花 31.5 s**（★ 91.5 s 里有 63 s 是这个）。
@@ -114,7 +124,13 @@ if m and m.group(0) != '''$target''':
 else:
     print('  \u504f\u79bb\u884c\u5df2\u5bf9')
 "@
-    git add -A
+    if ($DryRun) {
+        $n = @(git status --porcelain | Measure-Object -Line).Lines
+        Write-Output ("  [DryRun] 跳过 git add -A（原本会暂存 {0} 个改动）" -f $n)
+    } else {
+        git add -A
+        Write-Output "  git add -A 已执行（暂存全部改动）"
+    }
     python tools/gen_harvest_digest.py *> $null
 } else {
     Write-Output "  （算不出偏离统计，交给 release_check 自己的修法提示）"
@@ -147,7 +163,13 @@ m = re.search(r'> 偏离上游：.*', t)
 if m and m.group(0) != '''$line''':
     p.write_text(t.replace(m.group(0), '''$line''', 1), encoding='utf-8')
 "@
-    git add -A
+    if ($DryRun) {
+        $n = @(git status --porcelain | Measure-Object -Line).Lines
+        Write-Output ("  [DryRun] 跳过 git add -A（原本会暂存 {0} 个改动）" -f $n)
+    } else {
+        git add -A
+        Write-Output "  git add -A 已执行（暂存全部改动）"
+    }
     python tools/gen_harvest_digest.py *> $null
 }
 if (-not $ok) { Write-Output '  ⚠ release_check 未在 4 轮内变绿' }
@@ -196,7 +218,11 @@ Write-Output ''
 #:   ★★★★★ **⚠ 安全**：★ `--close` **自带文档判定** —— ★ 只要有一个**不是自己开的**文档就**拒绝关闭** ✓
 Write-Output ''
 Write-Output '── ④ 关 SolidWorks（★ 纪律：跨轮不许留 · 收尾链跑完就关）──'
-python tools\reclaim_solidworks.py --close 2>&1 |
-    Select-String -Pattern 'BEFORE|AFTER|拒绝|关完' |
-    ForEach-Object { Write-Output ("  " + ([string]$_).Trim()) }
+if ($DryRun) {
+    Write-Output "  [DryRun] 跳过「关 SolidWorks」（原本会调 reclaim_solidworks.py --close）"
+} else {
+    python tools\reclaim_solidworks.py --close 2>&1 |
+        Select-String -Pattern 'BEFORE|AFTER|拒绝|关完' |
+        ForEach-Object { Write-Output ("  " + ([string]$_).Trim()) }
+}
 Write-Output '  ★ 关完**不要再调真机工具** —— 一调它就会被 `mcp-server` 拉起来。'

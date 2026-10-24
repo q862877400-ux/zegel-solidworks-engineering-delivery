@@ -49,8 +49,38 @@
 > 历史施工流水已归档到 [`history/roadmap-log.md`](history/roadmap-log.md)（11246 行）。
 > 本节只放**当前**该做什么；一轮做完就更新这里，别在下面接着写流水。
 
-**当前状态**：文档梳理已收口，施工路线见 [`ENGINEERING-PATH.md`](ENGINEERING-PATH.md)
-第六节的 S0–S6。下一步是 S0 剩余项与 S1。
+**当前状态**：S0 / S1 / S2 已收口，**S3 卡在需求冻结**。
+
+| 步 | 状态 | 证据 |
+|---|---|---|
+| **S0** 恢复正式通路 | ✅ 收口 | `specs/348-s0-restore-official-path/acceptance.md`；工程层测试 25 failed → 102 passed |
+| **S1** E1–E7 判据与坏样件 | ✅ 收口（**离线判据成立**）| `specs/349-e1-e7-acceptance/acceptance.md`；134 条测试 |
+| **S2** 冻结首件需求 | ⚠ **判据已建，输入未齐** | `specs/350-first-part-delivery/requirements.md` 八项全未定 |
+| **S3** 板件真过 E1–E3 | ⏸ 停线 | 见下 |
+| **S4–S6** | ⬜ 未开始 | 依赖 S3 |
+
+### 当前阻断（需要人回答，不是程序能决定）
+
+按 [`ENGINEERING-PATH.md`](ENGINEERING-PATH.md) 第六节 S2 与
+[`specs/350-first-part-delivery/requirements.md`](specs/350-first-part-delivery/requirements.md)：
+
+1. **首件是练习件还是真实设备件？** —— 决定 E6（工艺）与 E2（重建）的验证深度
+2. **材料、载荷、安全等级是什么？** —— 三项一组，缺一个就不能冻结
+3. **谁做工艺与图样的最终签核？**
+
+八项齐了才能 `freeze()`，之后才能进 S3。**不填默认值**。
+
+### S3 已完成的离线部分
+
+[`specs/350-first-part-delivery/source-verification.md`](specs/350-first-part-delivery/source-verification.md)：
+官方源核查完成，**关键发现是草图约束状态 API 只给状态枚举、不给数值自由度**
+⇒ E1 真机采集器分两层：判「是否全约束」可用枚举；判「剩几个自由度」必须返回 `unknown`。
+
+### 待补的技术风险（不阻断 S3，但要记账）
+
+- `_raw/reflect` 缺主程序集 `sldworks` 的转储 ⇒ E1 成员只有单一来源，不满足三源互证
+- `IInterferenceDetectionMgr.TreatCoincidenceAsInterference` 的默认值未核 ⇒ S4 开工前必须补
+- `IAssemblyDoc` 无「读剩余自由度」成员 ⇒ E4 的 DOF 判定同病
 
 ---
 
