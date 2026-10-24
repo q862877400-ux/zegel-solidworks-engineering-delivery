@@ -1,0 +1,600 @@
+{
+  "verified_capabilities": 100,
+  "evidence_items": 333,
+  "item_kinds": {
+    "path": 235,
+    "text": 78,
+    "command": 20
+  },
+  "path_tokens_checked": 235,
+  "path_tokens_unreachable": 13,
+  "classification": {
+    "移到仓库内他处": 9,
+    "全仓与外部源都找不到": 4
+  },
+  "missing_all": [
+    {
+      "capability": "part_and_features",
+      "token": "JUDGE-A_B.md",
+      "verdict": "elsewhere",
+      "found_elsewhere": "specs\\202-user-coverage-gaps\\recon\\verify50\\JUDGE-A_B.md"
+    },
+    {
+      "capability": "sheet_metal",
+      "token": "JUDGE-C_D_E.md",
+      "verdict": "elsewhere",
+      "found_elsewhere": "specs\\202-user-coverage-gaps\\recon\\verify50\\JUDGE-C_D_E.md"
+    },
+    {
+      "capability": "simulation_and_fea",
+      "token": "tests/test_fea_analysis.py",
+      "verdict": "elsewhere",
+      "found_elsewhere": "archive\\inherited-methods\\tests\\test_fea_analysis.py"
+    },
+    {
+      "capability": "simulation_and_fea",
+      "token": "output/simulation-evidence.json",
+      "verdict": "missing",
+      "found_elsewhere": ""
+    },
+    {
+      "capability": "topology_optimization",
+      "token": "output/topology-evidence.json",
+      "verdict": "missing",
+      "found_elsewhere": ""
+    },
+    {
+      "capability": "chamfer_fillet_on_selection",
+      "token": "tests/test_sw_chamfer_geometry.py",
+      "verdict": "elsewhere",
+      "found_elsewhere": "archive\\inherited-methods\\tests\\test_sw_chamfer_geometry.py"
+    },
+    {
+      "capability": "mesh_size_sanity_gate",
+      "token": "output/simulation-evidence.json",
+      "verdict": "missing",
+      "found_elsewhere": ""
+    },
+    {
+      "capability": "selection_helpers",
+      "token": "probe_selection_spec_e2e.py",
+      "verdict": "elsewhere",
+      "found_elsewhere": "archive\\root-scratch\\py\\probe_selection_spec_e2e.py"
+    },
+    {
+      "capability": "selection_helpers",
+      "token": "sw_selection_spec.py",
+      "verdict": "elsewhere",
+      "found_elsewhere": "scripts\\sw_selection_spec.py"
+    },
+    {
+      "capability": "costing_templates_and_defaults",
+      "token": "iface_sldcostingapi.txt",
+      "verdict": "elsewhere",
+      "found_elsewhere": "_raw\\reflect\\iface_sldcostingapi.txt"
+    },
+    {
+      "capability": "pattern_and_mirror",
+      "token": "InsertMirrorFeature2.md",
+      "verdict": "missing",
+      "found_elsewhere": ""
+    },
+    {
+      "capability": "drawing_view_operations",
+      "token": "capture_drawing_query_evidence.py",
+      "verdict": "elsewhere",
+      "found_elsewhere": "tools\\capture_drawing_query_evidence.py"
+    },
+    {
+      "capability": "drawing_bom_balloons",
+      "token": "spec.md",
+      "verdict": "elsewhere",
+      "found_elsewhere": "specs\\001-topology-result-readout\\spec.md"
+    }
+  ],
+  "caps_without_path_evidence": [],
+  "caps_evidence_all_free_text": [],
+  "caps_with_zero_evidence": [],
+  "per_cap": [
+    {
+      "id": "part_and_features",
+      "items": 23,
+      "path_hits_ok": 19
+    },
+    {
+      "id": "holes_and_finishing",
+      "items": 4,
+      "path_hits_ok": 4
+    },
+    {
+      "id": "parameter_updates",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "custom_properties_and_bom",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "export_delivery",
+      "items": 7,
+      "path_hits_ok": 7
+    },
+    {
+      "id": "sheet_metal",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "weldments",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "simulation_and_fea",
+      "items": 4,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "topology_optimization",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "costing",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "helix_and_spiral",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_edit_ops",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "equations",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_query",
+      "items": 6,
+      "path_hits_ok": 6
+    },
+    {
+      "id": "standard_parts_toolbox",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_chamfer",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "gtol_insert",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "drawing_current_sheet_query",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "file_custom_property_read",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_build",
+      "items": 5,
+      "path_hits_ok": 4
+    },
+    {
+      "id": "feature_build_extrude",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "chamfer_fillet_on_selection",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "mass_property_read",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "assembly_read",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "simulation_loads_wiring",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "simulation_study_create",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "mesh_create_readback",
+      "items": 3,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "analysis_run_readback",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "simulation_load_family_breadth",
+      "items": 9,
+      "path_hits_ok": 7
+    },
+    {
+      "id": "mesh_size_sanity_gate",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "feature_readback_criterion",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "config_and_export",
+      "items": 3,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "render_materials_and_appearance",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "selection_helpers",
+      "items": 7,
+      "path_hits_ok": 5
+    },
+    {
+      "id": "declarative_hole_creation",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "weldment_cut_list",
+      "items": 3,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "simulation_solver_options",
+      "items": 6,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "topology_constraints_and_controls",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "topology_readback",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "costing_readback",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "render_material_library",
+      "items": 4,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "mold_analysis",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "preview_and_review_report",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "motion_validation_and_preconditions",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "drawing_views_and_summary",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "weldment_profile_and_curve",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "costing_templates_and_defaults",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "pattern_and_mirror",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "drawing_view_operations",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "surface_features",
+      "items": 5,
+      "path_hits_ok": 5
+    },
+    {
+      "id": "geometry_measurement",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "loft_and_sweep",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "reference_axis",
+      "items": 1,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_modify_ops",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "surface_edit_ops",
+      "items": 4,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "surface_ref_ops",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "ref_geometry",
+      "items": 5,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "curve_and_split",
+      "items": 9,
+      "path_hits_ok": 4
+    },
+    {
+      "id": "surface_offset",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "surface_planar_region",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "replace_face",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "surface_revolve",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_dimension_horizontal",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_dimension_vertical",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "feature_revolve_cut",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_slot_types",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "surface_flatten",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "surface_untrim",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "feature_loft_cut",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "surface_delete_hole",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_line2",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "feature_cosmetic_thread",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_spline",
+      "items": 3,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_spline3_2d",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_rotate_or_copy_3d",
+      "items": 4,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "sketch_equation_curve",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "curve_through_xyz",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "select_by_ray",
+      "items": 4,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "feature_hole_wizard5",
+      "items": 7,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_offset_on_surface",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "coverage_gap_batch1",
+      "items": 4,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "assembly_exploded_views",
+      "items": 2,
+      "path_hits_ok": 1
+    },
+    {
+      "id": "macro_execution",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "session_rebuild",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_construction_geometry",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "display_states",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "document_dependencies",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "move_copy_body",
+      "items": 3,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "sheet_metal_unfold",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sheet_metal_fold",
+      "items": 2,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "sketch_visibility",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "part_intersect",
+      "items": 3,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "drawing_bom_balloons",
+      "items": 5,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "scale_feature",
+      "items": 5,
+      "path_hits_ok": 3
+    },
+    {
+      "id": "sweep_surface",
+      "items": 6,
+      "path_hits_ok": 5
+    },
+    {
+      "id": "forming_tool",
+      "items": 4,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "explode_line_sketch",
+      "items": 4,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "speedpak",
+      "items": 4,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "weld_symbol",
+      "items": 4,
+      "path_hits_ok": 2
+    },
+    {
+      "id": "flat_pattern_dxf",
+      "items": 4,
+      "path_hits_ok": 2
+    }
+  ]
+}
