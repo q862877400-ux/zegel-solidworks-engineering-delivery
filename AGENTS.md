@@ -2,6 +2,8 @@
 
 本文件是 SolidWorks Automation Skill「集大成 + 建护城河」任务的常驻指令；仓库根——2026-10-03 起代码与产物在同一个仓库里（原先的代码工作副本`C:\swprojects\sw-skill-fork\`已成只读归档，见 §七）。跨项目的通用纪律在`~/.dsh/AGENTS.md`（用户全局层，每轮自动注入）——缝合优先、签名以官方源为准、查不到就说查不到、许可红线、把验证责任转移到静态比对、验收判据写成可 grep 项；本文件只留 SolidWorks 专属的事实与规矩。
 
+★★ **接手第一件事**：读 [`docs/state/INDEX.md`](docs/state/INDEX.md)（项目现状实测台账：A–J 结构信号 + K–O 可证伪的对应关系，每条带复现命令；或调用 `sw-project-state` skill）。**不要通读 55 万行**；要报数字先跑 `docs/state/probes/` 里的探测器，别凭记忆。
+
 ## 十二、仓库（第一件事，先确认你在哪）
 
 | 路径 | 是什么 | 能改吗 |
