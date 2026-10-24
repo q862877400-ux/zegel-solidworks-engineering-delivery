@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **76** |
-| 涉及能力 | **46** |
+| 「死路」条目 | **77** |
+| 涉及能力 | **47** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -119,7 +119,7 @@
 
 ### `part_and_features`（verified）
 
-- ★★ 2026-10-25 **同族更重的症状 + 一条可行替代**：① `IModelDoc2.AddHorizontalDimension2` 在本机**不可调用** —— 直接崩进程（`com_error: RPC 服务器不可用`，需重启 SolidWorks），比轮 400 记的「回 None」更重；② ★ **可行的替代是 `ISketch.AutoDimension2(1, 1, -1, 1, -1)`**：实测回 `0`（success），建成 `D1@草图1` = 100 mm（板宽），`GetConstrainedStatus()` 由 **2 变 3**（欠约束 → 完全定义）（参数 = `swAutodimEntitiesAll` / `swAutodimSchemeBaseline` / -1 / 同上 / -1）；③ `ISketchManager.FullyDefineSketch` 按官方 **10 参**调用，第 6 参（`HorizontalDatumDisp`，`object`）报「类型不匹配」⇒ 正确传法未查明。★ 另记一条**别处的缺陷**：`scripts/sw_document_data.update_dimension_mm` 把 120 mm 写成放大约 **1000 倍**的值（`SystemValue` 0.1 → 120.0，期望 0.12），而其自我报告 `success: True`、`after_mm: 120.0` **掩盖**了这件事 ⇒ 它的 after 不能当证据。详见 `docs/state/facts/R-engineering-path.md` R-19。
+- ★★ 2026-10-25 **同族更重的症状 + 一条可行替代**：① ⚠**这一条已在 2026-10-25（第 13 轮）被更正**：此前记的「`AddHorizontalDimension2` 不可调用 / 崩进程」**是错的**。真因见事实 421：它在**没选中合适实体**时会弹「修改」数值输入框，护栏不点它 ⇒ 调用**永久等待**（看着像挂死）；而事实 422（轮 542）**选中实体后 H/V 两个方法都建成**（一条线段或两个端点都行，判据要用**尺寸计数**、不能看返回值）⇒ 已落成能力 `sketch_dimension_horizontal` / `sketch_dimension_vertical`；② ★ **可行的替代是 `ISketch.AutoDimension2(1, 1, -1, 1, -1)`**：实测回 `0`（success），建成 `D1@草图1` = 100 mm（板宽），`GetConstrainedStatus()` 由 **2 变 3**（欠约束 → 完全定义）（参数 = `swAutodimEntitiesAll` / `swAutodimSchemeBaseline` / -1 / 同上 / -1）；③ `ISketchManager.FullyDefineSketch` 按官方 **10 参**调用，第 6 参（`HorizontalDatumDisp`，`object`）报「类型不匹配」⇒ 正确传法未查明。★ 另记一条**别处的缺陷**：`scripts/sw_document_data.update_dimension_mm` 把 120 mm 写成放大约 **1000 倍**的值（`SystemValue` 0.1 → 120.0，期望 0.12），而其自我报告 `success: True`、`after_mm: 120.0` **掩盖**了这件事 ⇒ 它的 after 不能当证据。详见 `docs/state/facts/R-engineering-path.md` R-19。
 - ⚠ 2026-10-03（轮 400）**两条真缺口试过而未攻下**（★ 已回退工具注册，★ 而包装与探针保留）：① `add_dimension` —— 单位已查清（官方叫**米**）、前置已做（先选中实体），★ 而选中 **2 条边**后 `AddDimension2` **仍回 None**（★ 尺寸没建成）；② `linear_pattern` —— 参数个数已修对（**10 参**）、间距单位已换算正确，★ 而真机上**不报错而特征树不变**（9→9）。★ **下一次从这里接**（★ 事实 315 有完整卡点），★ 不从零重猜。
 - ⚠⚠ **2026-10-01（轮 155）按事实 53 强停止**：累计 **6 种选法全部失败**（草图整体 / 实体边 / 草图段 × 各两种选法）⇒ ★★★ **卡点查明**：`IEntity.Select4` **没有 mark 参数**（选完 mark 仍是 0），而 `SelectByID2` 需要**名字**、**边与草图段都没有名字**（草图段的 `GetID` 是**端点对** `'(0, 1)'`）。⇒ **「选中 2 个实体 + mark=1」这个官方前提，在这条后端上我没能同时满足**。⚑ **候选解释列为未验证**（如「该后端下结构性不可用」，与事实 47 同类）—— **没有证据，不写进结论**；⇒ `composite_curve` **不升级**、`insert_composite_curve` **已写但未取证**。
 - ⚠ **2026-10-01（轮 153）又试了 3 种选法（合计 4 种）**：① 整个草图 × 2（**官方示例原样**）· ② `IEntity.Select4` 选 2 条边（计数 2）· ③ 按面上的点 + **mark=1** · ④ 按名字选边（0，事实 32）—— **全部返回 `False`** ⇒ 按事实 53 **停止试**。★ 另记一个观察：`GetSelectedObjectCount2(-1)` = 2 而 **`GetSelectedObjectCount2(1)` = 0**★ **2026-10-01（轮 154）判别实验把它查清了**：`mark=1/2/0` 都能精确落到对应 mark 上（`GetSelectedObjectCount2(N)` = 1）⇒ **mark 与读法都没问题**；★★★ 真因是 **`SelectByID2` 返回 `True` 却什么都没选中**（事实 94）⇒ ★ **可复用判据**：判「选上没有」**一律回读** `GetSelectedObjectCount2(<mark>)`，**不要看 `SelectByID2` 的返回值**。⇒ ⚑ **真因未查明**，`composite_curve` **不升级**。
@@ -169,6 +169,10 @@
 ### `sketch_chamfer`（verified）
 
 - 轮 281 填实（空壳）：sw_sketch_edit.create_sketch_chamfer。★ 注意与特征倒角(solidworks_chamfer)不是一回事；★ 而事实 47 的后端限制说的是**特征**倒角，草图倒角另算。证据 tools/verify_sketch_edit_smoke.py（真机）
+
+### `sketch_dimension_horizontal`（verified）
+
+- ⚠⚠ 2026-10-25（第 13 轮）**跨实体选法会让 SolidWorks 进程崩** —— 本能力只在「**一条线段的两个端点**」这类选法上验过（事实 422）。本轮想给**孔心**加定位尺寸，试了两种跨实体选法，都**不可调用**：① 孔心（`ISketchPoint`）+ 边线（`ISketchLine`）→ `AddDimension2` ⇒ 尺寸没加成，随后进程崩（`com_error: RPC 服务器不可用`）；② 孔心 + 矩形角点（两个 `ISketchPoint`）→ `AddHorizontalDimension2` ⇒ 同样崩。★ 判据用**尺寸计数**（`count_sketch_dimensions`），不能看返回值 —— 两次调用返回值看着正常，尺寸计数却从 0 变 -1（文档已随进程丢失）。★ 结论：本能力给的是「**选中实体自身的长度**」，**不是任意两点之间的距离**。⇒ 孔位定位走不了它；候选替代见 `specs/350-first-part-delivery/s3-t011-edit-delivered.md` 第九节（用**构造线单段长度** + 端点重合，仍落在已验证选法内，尚未试）。
 
 ### `sketch_edit_ops`（verified）
 
