@@ -1,0 +1,88 @@
+{
+  "verified_total": 100,
+  "evidence_with_negation": 31,
+  "negation_word_histogram": {
+    "none": 20,
+    "失败": 14,
+    "报错": 5,
+    "✗": 3,
+    "limitation": 2
+  },
+  "evidence_naming_a_test_file": 20,
+  "evidence_naming_an_output_artifact": 93,
+  "negation_samples": [
+    {
+      "id": "part_and_features",
+      "hits": [
+        "None",
+        "失败"
+      ],
+      "sample": "python 真机（轮 405）★ **PASS** —— 24h 计划 v2 段 3 收尾：`solidworks_add_dimension`（`sw_part.add_dimension_report`）。★★ 判据用了事实 53 的处方：**把猜测变成一张穷举表** —— 对盒体 12 条边的**两两共 66 "
+    },
+    {
+      "id": "holes_and_finishing",
+      "hits": [
+        "失败"
+      ],
+      "sample": "python 真机（轮 401）★ **PASS 4/4** —— 24h 计划 v2 段 4（孔族）：`solidworks_hole_pattern`（`scripts/sw_hole_features.hole_pattern_report`）。它把 `create_hole_pattern` 的 **`crea"
+    },
+    {
+      "id": "custom_properties_and_bom",
+      "hits": [
+        "None"
+      ],
+      "sample": "pytest tests/test_cad_reliability.py（自定义属性与 BOM ⇒ ★⚠ **那是形状检查、不是运行证据** —— ★ 见下条） ★★★★ **真机运行证据（★ 2026-10-04 补 —— 这才是 A4 要的那一条）**：`python tools/sw_guard.py --tim"
+    },
+    {
+      "id": "export_delivery",
+      "hits": [
+        "失败"
+      ],
+      "sample": "python 真机（轮 403）★ **PASS** —— 24h 计划 v2 段 6（导出）：`solidworks_export_image`（`sw_export.export_image_report`）。真机（走 `sw_guard`，4.0 s 无弹窗）：一张 PNG ⇒ **`exists=true` ·"
+    },
+    {
+      "id": "sheet_metal",
+      "hits": [
+        "limitation",
+        "失败"
+      ],
+      "sample": "pytest tests/test_sw_sheet_metal.py（★ ⚠ 只覆盖 `dataclass` 与参数校验 —— ★ **不碰 COM**） pytest tests/solidworks_sheet_metal_regression.py（钣金） 🕓 **2026-10-04（接手轮）更正上两条 ——"
+    },
+    {
+      "id": "sketch_edit_ops",
+      "hits": [
+        "报错"
+      ],
+      "sample": "python tools/verify_sketch_edit_smoke.py（**真机**，SW 2026 SP4.1 / 34.4.1：新零件 → 进草图 → 画两条相接直线 → 选中两条 → 调 `create_sketch_chamfer`，**8/10** —— 选中前置成立，但倒角报错） pytest t"
+    },
+    {
+      "id": "sketch_query",
+      "hits": [
+        "None",
+        "失败"
+      ],
+      "sample": "python 真机（轮 399）★ **PASS** —— 24h 计划 v2 段 3：`solidworks_current_sketch_name`（读当前活动草图名）。真机（走 `sw_guard`）：草图打开时回 **「草图1」**（**真名**，不是 English fallback）；草图**关闭后** +"
+    },
+    {
+      "id": "simulation_study_create",
+      "hits": [
+        "None"
+      ],
+      "sample": "python tools/capture_simulation_study_evidence.py（真机，2026-10-01 轮 239 / 24h 段 1.1：★ **走工具真实路径** ⇒ 建研究 `DSH-141` 成功，★ `entry_name` = **CreateNewStudy3**、`error_c"
+    }
+  ],
+  "audit_doc": "docs\\recon\\verified-evidence-audit-2.md",
+  "audit_doc_bytes": 62036,
+  "audit_doc_headline_lines": [
+    "> **这份文件回答一个问题**：`capabilities.yaml` 里写 `level: verified` 的条目，",
+    "> **它自己点名的证据到底在不在、证据自己有没有说它失败**。",
+    "> **为什么值得做**：仓库**自己已经承认过一次**这类缺陷 —— 有一个条目**唯一真机证据顶层写着",
+    "> `verdict: fail`、`passed: 9 / total: 12`，而 `level` 仍写 `verified`**（后已降级）。",
+    "> - **条目侧**：`D:\\AI\\SW\\capabilities.yaml`（`yaml.safe_load` 解析）——",
+    ">   顶层键 `schema_version` / `verified_versions` / `backend_schema_version` /",
+    "> - **抄录与核查**：**Bunny（`opencode-zen` / `space-bunny-free`）一路一个条目**，",
+    ">   每路**只读那一条 + 它 evidence 点名的文件**，按固定 schema 写一份 JSON。",
+    ">   两波 **60 + 50 路**（实测零失败）。",
+    "> - **Lead 复核（第二道闸）**：① 每条 `path` 的**存在性**由 Lead **独立重查**；"
+  ]
+}
