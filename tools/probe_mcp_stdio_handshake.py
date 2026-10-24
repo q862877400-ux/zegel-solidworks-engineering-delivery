@@ -10,7 +10,7 @@
 #   ⇒ ★★★ **本探针就是那道前置闸**：★ 起进程 → `initialize` → `tools/list` → 数工具 ✓
 # 判据:   ★★ 三条，★ 全部要**读回来**（★ 不信"看起来起了" ✓）：
 #     ★ ① 进程能起、★ 且在超时内回 `initialize` ✓
-#     ★ ② `tools/list` 回的工具**条数**（★ 期望 **459** —— 规格 213 收口后的实测值 ✓）
+#     ★ ② `tools/list` 回的工具**条数**（★ 现算 = 声明式 + 45 装饰器，不钉死 ✓）
 #     ★ ③ 工具名**前缀**是 `solidworks_`（★ 抽查几个 ✓）
 #   ★★ **超时是硬要求**：★ 任何一步超时 ⇒ **判"挂"**、★ 并 `kill` 掉子进程 ✓
 #     （★ 不许留着 —— 留着会让后面的 DSH 抢同一个 stdio ✗）
@@ -48,20 +48,40 @@ ROOT = Path(Path(__file__).resolve().parents[1])
 SERVER = ROOT / "mcp-server" / "server.py"
 #: ★ 与 DSH 配置里将要写的那个 `command` **必须是同一个**（★ 否则验证的不是同一件事 ✗）
 PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"
-#: ★★★ 2026-10-07 **实测订正**：★ 期望值**不是** `all_specs()` 的 459 ✗ —— ★ 而是 **504*
-#: * ✓
-#:   ★ **对账**（★ 与记忆库里那条逐字吻合 ✓）：本仓有**两条注册路径** ——
-#: ★ ① **声明式**：`register_capabilities.all_specs()` = **459**（★ 规格 213 收口后的实
-#: 测值 ✓）
-#: ★ ② **继承的装饰器**：`mcp-server/server.py` 里那 **45** 个（★ 上游原样、我们一行没改
-#:  ✓）
-#:     ⇒ ★★★ **459 + 45 = 504** ✓ ✓
-#:   ★★ **顺带解释了那条长期红的门禁**：`tests/test_mcp_protocol_layer.py` 逐字说
-#:     「两条路径合计 **504** 条，而本测试上次实测 **339** 条」✗ ——
-#:     ★ 它是一个**钉死数量**的守卫（★ 加了工具就要同步改它 ✓），★ 而 504 就是**真值** ✓
+#: ★★★ 期望值 = **两条注册路径之和**，两边都必须现算，不钉死旧数：
+#: ★ ① **声明式**：`register_capabilities.all_specs()`（本次实测 **497** ——
+#: 修掉 4 组重名后从 501 降到 497 ✓）
+#: ★ ② **继承的装饰器**：`mcp-server/server.py` 里那 **45** 个（★ 上游原样、我们一行没改 ✓）
+#:     ⇒ **497 + 45 = 542**
 #:   ★★★ **教训（★ 本探针自己撞的）**：★ 我第一版拿 `all_specs()` 当地板 ✗ ⇒
 #:     ★★ **"服务器有几个工具"与"注册表里有几条"是两个分母** ✓（★ 本仓反复栽在这上面 ✓）
-EXPECTED_TOOLS = 504
+#:   ★★ 还栽过第二次：把 504 钉死 ✗ ⇒ 加/删工具就假红。故**现算**，不写常量。
+def _expected_tools() -> int:
+    """现算期望条数 = 声明式 + 装饰器，避免钉死数字随工具增减假红。"""
+    import subprocess
+
+    code = (
+        "import sys; sys.path.insert(0, 'mcp-server');"
+        " import register_capabilities as rc;"
+        " print(len(rc.all_specs()))"
+    )
+    p = subprocess.run(
+        [PYTHON, "-B", "-c", code],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        cwd=str(ROOT),
+        stdin=subprocess.DEVNULL,
+    )
+    if p.returncode != 0:
+        raise RuntimeError("现算 all_specs() 失败：%s" % (p.stderr or "")[-600:])
+    declarative = int((p.stdout or "0").strip().splitlines()[-1])
+    return declarative + DECORATOR_TOOLS
+
+
+#: `mcp-server/server.py` 里 `@mcp.tool` 的个数（★ 上游原样、我们没改 ⇒ 稳定 45）
+DECORATOR_TOOLS = 45
 #: ★★ 命名前缀**不止一个**（★ 我第一版只查 `solidworks_` ✗）：★ 还有 `cadstudio_*`（★ CA
 #: D Studio
 #:   DFM 一族 ✓）—— ★ 所以判据改成"**每个工具都属于已知前缀之一**" ✓
@@ -79,11 +99,12 @@ def _rpc(proc, obj, timeout=90):
 
 
 def main() -> int:
+    expected = _expected_tools()
     out: dict = {
         "purpose": "★ 改 DSH 配置前的**前置闸**：我们的 MCP 能不能起、有几个工具",
         "python": PYTHON,
         "server": str(SERVER),
-        "expected_tools": EXPECTED_TOOLS,
+        "expected_tools": expected,
     }
     if not SERVER.is_file():
         print("★ 服务器文件不存在：%s" % SERVER)
@@ -152,8 +173,8 @@ def main() -> int:
                     break
         out["by_prefix"] = by_prefix
         print(
-            "★ ② tools/list ⇒ **%d** 个工具（★ 期望 %d = 459 声明式 + 45 装饰器）"
-            % (len(names), EXPECTED_TOOLS)
+            "★ ② tools/list ⇒ **%d** 个工具（★ 期望 %d = 497 声明式 + 45 装饰器）"
+            % (len(names), expected)
         )
         print("     ★ 按前缀分：%r" % by_prefix)
         print("     样例 ⇒ %r" % names[:5])
@@ -161,12 +182,12 @@ def main() -> int:
         #: ── ③ 判据 ────────────────────────────────────────────────────────
         out["verdicts"] = {
             "initialize_ok": bool(out["initialize_ok"]),
-            "count_matches": len(names) == EXPECTED_TOOLS,
+            "count_matches": len(names) == expected,
             "prefixes_known": not out["unknown_prefix"],
         }
         ok = all(out["verdicts"].values())
         out["verdict"] = (
-            "★★★★★ **可以挂** —— ★ 服务器起得来 · ★ **%d 个工具**（★ 与 459+45 对账一致 ✓）· "
+            "★★★★★ **可以挂** —— ★ 服务器起得来 · ★ **%d 个工具**（★ 与 497+45 对账一致 ✓）· "
             "★ 命名前缀全部已知 ✓ ⇒ ★★ 改 DSH 配置**不会**卡住宿主 boot ✓" % len(names)
             if ok
             else "★★ **不要挂**：★ 判据 %r ⇒ ★ 先查清楚再动 DSH 配置（★ 卡 boot 是硬事故）✗"

@@ -36,6 +36,8 @@
 
 from __future__ import annotations
 
+import math
+
 from tool_registry import Param, ToolSpec
 
 
@@ -151,9 +153,14 @@ SPECS_BATCH116 = [
         module="sw_part",
         function="revolve_cut",
         inject="model",
+        #: ★ 目标形参是 `angle_rad`（弧度），工具面按规则 2 一律用 `_deg` 收度
+        #: ⇒ `angle_deg` 由 `derived_args` 消费（不进目标函数，故 alias 为 None），
+        #:   换算在工具层边界做一次，能力层签名不动。
+        param_alias={"angle_deg": None},
+        derived_args=lambda p: {"angle_rad": math.radians(float(p["angle_deg"]))},
         params=[
             Param("sketch_name", str, description="Sketch that defines the profile."),
-            Param("angle_rad", float, description="Revolve angle in RADIANS."),
+            Param("angle_deg", float, description="Revolve angle in DEGREES."),
             Param(
                 "axis_sketch_name",
                 str,
@@ -161,7 +168,7 @@ SPECS_BATCH116 = [
                 description="Sketch holding the axis (optional).",
             ),
         ],
-        doc="Revolve cut from a sketch. ★ angle in radians per the implementation signature.",
+        doc="Revolve cut from a sketch. ★ Angle is given in degrees; converted once at this boundary.",
     ),
     #: ⚠ 2026-10-18 未接：`sw_sketch.get_sketch_slots(sketch)` —— ★ 首参名是 `sketch`，
     #: 而 `register_capabilities.RESOLVERS` 的 21 个键里**没有** `sketch`（见该文件 L396
@@ -170,21 +177,6 @@ SPECS_BATCH116 = [
     #:   `TypeError: unexpected keyword argument 'model'`。
     #:   ★ 处置：本批**不接**它。要接需先在 RESOLVERS 里加一个 `resolve_sketch`，
     #:   那属于改注册器，须单独论证（★ 本轮不擅自改）。
-    ToolSpec(
-        name="solidworks_sketch_spline",
-        title="Create a Sketch Spline",
-        module="sw_part",
-        function="sketch_spline",
-        inject="model",
-        params=[
-            Param(
-                "points",
-                list,
-                description="Spline points (list of coordinate triples).",
-            )
-        ],
-        doc="Create a spline through the given points.",
-    ),
     ToolSpec(
         name="solidworks_sketch_rotate",
         title="Rotate Sketch Entities",
@@ -201,25 +193,6 @@ SPECS_BATCH116 = [
             Param("angle_deg", float, description="Rotation angle in DEGREES."),
         ],
         doc="Rotate the selected sketch entities about a centre.",
-    ),
-    ToolSpec(
-        name="solidworks_sketch_offset",
-        title="Offset Sketch Entities",
-        module="sw_sketch_edit_ops",
-        function="sketch_offset",
-        inject="model",
-        params=[
-            Param(
-                "selection",
-                str,
-                description="Declarative selection expression (rule 3).",
-            ),
-            Param("offset_mm", float, description="Offset distance in MILLIMETRES."),
-            Param(
-                "both_directions", bool, default=False, description="Offset both ways."
-            ),
-        ],
-        doc="Offset the selected sketch entities.",
     ),
     # ── 曲面族 ───────────────────────────────────────────────────
     ToolSpec(
@@ -350,26 +323,6 @@ SPECS_BATCH116 = [
         doc="Loft cut and report the outcome.",
     ),
     ToolSpec(
-        name="solidworks_feature_cosmetic_thread",
-        title="Cosmetic Thread",
-        module="sw_feature_entry_ops",
-        function="insert_cosmetic_thread",
-        inject="model",
-        params=[
-            Param(
-                "standard",
-                int,
-                default=1,
-                description="Thread standard enum (★ 1 = GB).",
-            ),
-            Param(
-                "standard_type", str, default="", description="Standard type string."
-            ),
-            Param("size", str, default="", description="Thread size, e.g. M8."),
-        ],
-        doc="Insert a cosmetic thread. ★ Must pass a standard first — omitting it is the known failure.",
-    ),
-    ToolSpec(
         name="solidworks_weld_symbol",
         title="Insert Weld Symbol",
         module="sw_weldment",
@@ -381,26 +334,6 @@ SPECS_BATCH116 = [
             Param("left", str, default="", description="Left-side text."),
         ],
         doc="Insert a weld symbol and report the outcome.",
-    ),
-    ToolSpec(
-        name="solidworks_export_flat_pattern_dxf",
-        title="Export Flat Pattern DXF",
-        module="sw_export",
-        function="export_flat_pattern_dxf",
-        inject="model",
-        params=[
-            Param("output_path", str, description="Destination .dxf path."),
-            Param(
-                "include_bend_lines",
-                bool,
-                default=True,
-                description="Include bend lines.",
-            ),
-            Param(
-                "include_sketches", bool, default=False, description="Include sketches."
-            ),
-        ],
-        doc="Export the flat pattern as DXF.",
     ),
     ToolSpec(
         name="solidworks_assembly_explode_line_sketch",
