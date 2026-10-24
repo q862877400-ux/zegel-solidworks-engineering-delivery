@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 634 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 635 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 257 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 258 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 68 | — |
 
-## 探针（257 个）
+## 探针（258 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -281,6 +281,7 @@
 | `probe_sweep_wall_units_via_hook.py` | ★ 真机：★ 用**新钩子**在 `CreateFeature` **之前**设薄壁 ⇒ 量 `GetWallThickness` 的口径 |
 | `probe_swept_flange_evidence.py` | ★ 真机验 `sheet_metal_creation` 里**唯一未取证**的那一项 —— `create_swept_flange` |
 | `probe_swept_flange_v6.py` | ★ 照**官方例子**的调用序重试 `create_swept_flange`（★ 第 6 版 —— ★ 换做法，不是再试参数） |
+| `probe_t011_edit_delivered_plate.py` | ★ S3 T011：在**已交付件的副本**上改板宽 100→120，验证下游联动、保存重开 |
 | `probe_t302_four_families.py` | ★ 真机预试 **T302 的四个「无 `IAccessSelections`」族** —— 判它们是「指针族」还是「能建」 |
 | `probe_t302_four_families_v2.py` | ★ 真机预试 **T302 的四个「无 `IAccessSelections`」族** —— ★ 第二版（★ 按官方签名逐参） |
 | `probe_testonly_candidates.py` | @brief 量第三个池子：**「未暴露 + 只被测试调用」** —— 前两个口径都漏了它 |

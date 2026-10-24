@@ -141,10 +141,18 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
         goal="★ 做一块安装板（★ 基准 + 主特征 + 倒角后置）",
         applicable_devices=("plate",),
         preconditions=("★ 外形尺寸与板厚已冻结", "★ 基准已定语义角色"),
-        postconditions=("★ 体数 = 1", "★ 厚度回读等于冻结值"),
+        postconditions=("★ 体数 = 1", "★ 厚度回读等于冻结值", "★ 草图有驱动尺寸"),
         steps=(
             "sketch_start",
             "sketch_add_rectangle",
+            #: ★★★ 2026-10-25 补：**加驱动尺寸**这一步以前缺失。
+            #:   真机实测（`specs/350-first-part-delivery/s3-t008-dimensions.md`）：
+            #:   按原步骤序列建出的板件**零个驱动尺寸**，`GetConstrainedStatus()` = 2（欠约束），
+            #:   即 `ENGINEERING-PATH` S3 第 1 条点名的「仅用初始坐标画对」。
+            #:   加这一步之后：尺寸 0 → 1、状态 2 → 3，且改尺寸真的改几何
+            #:   （包围盒 X 100.0 → 120.0 mm）。
+            #:   ⚠ 时点必须在 `sketch_end` **之前** —— `AutoDimension2` 要求草图处于编辑态。
+            "auto_dimension_sketch",
             "sketch_end",
             "extrude_boss",
             "chamfer",

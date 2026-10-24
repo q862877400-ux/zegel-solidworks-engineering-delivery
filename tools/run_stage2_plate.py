@@ -104,6 +104,16 @@ def build_plan(c: dict) -> r_.ExecutablePlan:
             params={"x1_mm": 0.0, "y1_mm": 0.0, "x2_mm": c["w"], "y2_mm": c["h"]},
             derive="★ 板 %g×%g mm" % (c["w"], c["h"]),
         ),
+        #: ★★★ 2026-10-25 补：**加驱动尺寸**（`ENGINEERING-PATH` S3 第 1 条）。
+        #:   真机实测：不加这一步时板件**零个驱动尺寸**、状态 2（欠约束）；
+        #:   加上之后 尺寸 0→1、状态 2→3，且改尺寸真的改几何（包围盒 X 100→120 mm）。
+        #:   ⚠ 必须在 `sketch_end` **之前** —— `AutoDimension2` 要求草图在编辑态。
+        #:   证据：`specs/350-first-part-delivery/s3-t008-dimension-driven.md`
+        r_.PlanStep(
+            step="auto_dimension_sketch",
+            params={},
+            derive="★ 给草图加驱动尺寸（★ 不只是画对坐标）",
+        ),
         r_.PlanStep(step="sketch_end", params={}, derive="★ 退出草图"),
         r_.PlanStep(
             step="extrude_boss",
