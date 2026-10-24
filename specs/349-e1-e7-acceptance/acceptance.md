@@ -22,7 +22,7 @@
 | `e7_provenance.py` | E7 采集器 + 判定器 |
 | `samples.py` | 七条判据 × 三态样件（好 / 坏 / 缺证据） |
 
-配套测试三个文件，共 134 条。
+配套测试十个文件，共 238 条（含汇总层与端到端）。
 
 ## 二、关键设计决定（逐条对应 spec 的 FR）
 
@@ -70,9 +70,12 @@
 ## 三、读数
 
 ```
-python -B -m pytest tests/test_acceptance_e1_e7.py \
-  tests/test_acceptance_forgery.py tests/test_acceptance_contract.py -q
-→ 134 passed
+python -B -m pytest tests/test_acceptance_e1_e7.py tests/test_acceptance_e1_enum.py \
+  tests/test_acceptance_e2_hole.py tests/test_acceptance_e3_reference.py \
+  tests/test_acceptance_e4_split.py tests/test_acceptance_forgery.py \
+  tests/test_acceptance_contract.py tests/test_acceptance_report.py \
+  tests/test_acceptance_pipeline_e2e.py tests/test_source_verification_conclusions.py -q
+→ 238 passed
 ```
 
 | 文件 | 条数 | 覆盖 |

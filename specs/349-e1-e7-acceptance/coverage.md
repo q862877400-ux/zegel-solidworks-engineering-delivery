@@ -182,7 +182,7 @@ python -B -m pytest tests/test_s0_official_path.py tests/test_first_part_require
 | `test_acceptance_forgery.py` | 12 | 四条伪造负例 + 四条反证（证明旧估算器真的会被骗） |
 | `test_source_verification_conclusions.py` | 11 | 官方枚举表 / 反射里有该成员 / **五个 DOF 候选名全部零命中** |
 
-★ 上面这一组含汇总层与端到端，共 256 条（S0 的 7 条与 S2 的 11 条也在此数内）。
+★ 上面这一组 238 条；再加 S0 的 7 条与 S2 的 11 条 = 256 条。
 
 ## 七、这一步到此为止：只叫「离线判据成立」
 
