@@ -1,0 +1,99 @@
+{
+  "md_files_scanned": 1864,
+  "per_dir": {
+    "specs": 1452,
+    "docs": 219,
+    "apps": 54,
+    "commit-messages": 28,
+    "solidpilot-salvage": 23,
+    "references": 22,
+    "subskills": 22,
+    ".specify": 16,
+    "<root>": 12,
+    ".workbuddy-ai": 8,
+    "_raw": 3,
+    ".pytest_cache": 1,
+    "examples": 1,
+    "mcp-server": 1,
+    "_proof": 1
+  },
+  "exact_duplicate_groups": 49,
+  "exact_duplicate_sample": [
+    [
+      "README.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\README.md"
+    ],
+    [
+      "SKILL.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md"
+    ],
+    [
+      "SUBSKILLS.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\SUBSKILLS.md"
+    ],
+    [
+      "examples\\README.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\examples\\README.md"
+    ],
+    [
+      "mcp-server\\README.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\mcp-server\\README.md"
+    ],
+    [
+      "references\\advanced.md",
+      "apps\\workbench-ui\\src-tauri\\resources\\skill\\references\\advanced.md"
+    ]
+  ],
+  "size_bytes": {
+    "min": 255,
+    "max": 1744604,
+    "total_mb": 19.2
+  },
+  "empty_or_tiny": [],
+  "md_links_checked": 453,
+  "md_links_broken": 110,
+  "md_links_broken_sample": [
+    {
+      "from": "docs\\known-facts.md",
+      "to": "simulation-performance-memory-gpu.md"
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "to": "simulation-performance-memory-gpu.md"
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "to": "deployment-boundary.md"
+    },
+    {
+      "from": "docs\\known-facts.md",
+      "to": "deployment-boundary.md"
+    },
+    {
+      "from": "specs\\201-toolbar-gaps\\tasks.md",
+      "to": "../docs/toolbar-gaps-backend-limits.md"
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "to": "../docs/recon/multiway-agreement.md"
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "to": "../docs/recon/competitor-signature-crosscheck.md"
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "to": "../docs/recon/precondition-vs-evidence.md"
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "to": "../docs/recon/official-internal-conflicts.md"
+    },
+    {
+      "from": "specs\\204-bunny-moat-batches\\goal-bar.md",
+      "to": "../docs/recon/union-gap-tristate.md"
+    }
+  ],
+  "core_docs_broken_links": 0,
+  "core_docs_broken_sample": []
+}

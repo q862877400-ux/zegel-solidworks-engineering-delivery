@@ -1,0 +1,1626 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 37862,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 1420,
+    "exact_twin": "apps\\workbench-ui\\src-tauri\\resources\\skill\\README.md"
+  },
+  {
+    "path": "AGENTS.md",
+    "bytes": 53156,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 1142,
+    "exact_twin": ""
+  },
+  {
+    "path": "SKILL.md",
+    "bytes": 38067,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 306,
+    "exact_twin": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SKILL.md"
+  },
+  {
+    "path": "docs\\known-facts.md",
+    "bytes": 1744604,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 232,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\ROADMAP.md",
+    "bytes": 1254575,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 182,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\dead-ends.md",
+    "bytes": 60427,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 89,
+    "exact_twin": ""
+  },
+  {
+    "path": "THIRD-PARTY-NOTICES.md",
+    "bytes": 9150,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 88,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\metrics.md",
+    "bytes": 5468,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 72,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-coverage-matrix.md",
+    "bytes": 45016,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 69,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-conventions.md",
+    "bytes": 22917,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 67,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\user-feature-coverage.md",
+    "bytes": 15474,
+    "last_commit": "2026-10-08",
+    "referenced_by_docs": 62,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\member-to-example-index.md",
+    "bytes": 668274,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 59,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\harvest-report.md",
+    "bytes": 45399,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 58,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\signature-audit.md",
+    "bytes": 36535,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 48,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\harvest-digest.md",
+    "bytes": 146500,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 37,
+    "exact_twin": ""
+  },
+  {
+    "path": "CONTRIBUTING.md",
+    "bytes": 3490,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 36,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\multiway-agreement.md",
+    "bytes": 11524,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 36,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\precondition-vs-evidence.md",
+    "bytes": 30767,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 35,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\verified-evidence-audit-2.md",
+    "bytes": 62036,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 32,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-level-audit.md",
+    "bytes": 11945,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 29,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-gap-triage.md",
+    "bytes": 20008,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 27,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\api-map.md",
+    "bytes": 63316,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 23,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\family-coverage.md",
+    "bytes": 258407,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 23,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\sources.md",
+    "bytes": 11521,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 23,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\usage-guide.md",
+    "bytes": 53636,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 22,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\phase2-obsolete-status.md",
+    "bytes": 11276,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 21,
+    "exact_twin": ""
+  },
+  {
+    "path": "SUBSKILLS.md",
+    "bytes": 4912,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 20,
+    "exact_twin": "apps\\workbench-ui\\src-tauri\\resources\\skill\\SUBSKILLS.md"
+  },
+  {
+    "path": "docs\\toolbar-gaps-backend-limits.md",
+    "bytes": 41427,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 19,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\HANDOFF.md",
+    "bytes": 65590,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 18,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\toolbar-ledger.md",
+    "bytes": 11459,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 18,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\acceptance-status.md",
+    "bytes": 5227,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 17,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\gap-analysis.md",
+    "bytes": 23477,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 17,
+    "exact_twin": ""
+  },
+  {
+    "path": "README-workspace.md",
+    "bytes": 4373,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 16,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\pre-code-conflict-lookup.md",
+    "bytes": 71789,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 16,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\iview-read-members.md",
+    "bytes": 104975,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 16,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\competitor-signature-crosscheck.md",
+    "bytes": 13038,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 15,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\backlog-8h.md",
+    "bytes": 8311,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 14,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\obsolete-member-candidates.md",
+    "bytes": 12886,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 14,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\unit-conflicts.md",
+    "bytes": 8599,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 14,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\capability-matrix.md",
+    "bytes": 16312,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 13,
+    "exact_twin": ""
+  },
+  {
+    "path": "RESTART-HANDOFF.md",
+    "bytes": 12897,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\official-source-errors.md",
+    "bytes": 9281,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-24h-convergence.md",
+    "bytes": 17144,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\README.md",
+    "bytes": 2845,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\drawingdoc-read-members.md",
+    "bytes": 80085,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\fact-single-home.md",
+    "bytes": 9950,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\official-internal-conflicts.md",
+    "bytes": 215027,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-gap-evidence-based.md",
+    "bytes": 9187,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 12,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-10h.md",
+    "bytes": 15960,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 11,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\union-gap-tristate.md",
+    "bytes": 17387,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 11,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\team-roles.md",
+    "bytes": 8892,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 11,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\capabilities-schema-proposal.md",
+    "bytes": 19966,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\orphan-functions-not-runnable.md",
+    "bytes": 3220,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-200r-v3-convergence.md",
+    "bytes": 19298,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-24h-v2-convergence.md",
+    "bytes": 16621,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\step-matrix.md",
+    "bytes": 3562,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\text-to-cad-lessons-verdict.md",
+    "bytes": 19660,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-gap-triage-sample.md",
+    "bytes": 16063,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 10,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\ai-3d-survey-plan.md",
+    "bytes": 13466,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\dead-guards.md",
+    "bytes": 14122,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\precondition-coverage-gaps.md",
+    "bytes": 11894,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\provenance-format.md",
+    "bytes": 5019,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\README.md",
+    "bytes": 5470,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\conflicts-25-crosscheck.md",
+    "bytes": 6388,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\isheet-read-members.md",
+    "bytes": 16441,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\official-source-defects-2.md",
+    "bytes": 145661,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\sky-001.md",
+    "bytes": 6572,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\tool-aliases.md",
+    "bytes": 10692,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\tools-index.md",
+    "bytes": 97132,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 9,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\ai-cad-landscape-report.md",
+    "bytes": 24059,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\assumption-ledger.md",
+    "bytes": 4025,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\module-capability-coverage.md",
+    "bytes": 4060,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-24h.md",
+    "bytes": 12212,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\proposal-r1-naming-redundancy.md",
+    "bytes": 7712,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\conflicts-25.md",
+    "bytes": 12529,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-207\\adjudication.md",
+    "bytes": 19284,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\script-layer-units.md",
+    "bytes": 4243,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\union-gap-batch-judgement.md",
+    "bytes": 10969,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 8,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\A9-solve-attempts.md",
+    "bytes": 18708,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\CAD_STUDIO_USER_MANUAL.md",
+    "bytes": 17185,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\final-report-24h.md",
+    "bytes": 12602,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\kickoff-bunny-sideline.md",
+    "bytes": 6085,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\official-docs-first.md",
+    "bytes": 4661,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-foundation.md",
+    "bytes": 7611,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\conflicts-8-judgement.md",
+    "bytes": 11605,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\spelling-pairs.md",
+    "bytes": 23084,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\architecture-matrix.md",
+    "bytes": 6490,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 7,
+    "exact_twin": ""
+  },
+  {
+    "path": "REPORTING-STYLE-PROPOSAL.md",
+    "bytes": 4819,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "SECURITY.md",
+    "bytes": 797,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\SUBAGENT-USAGE.md",
+    "bytes": 7452,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\more-specific-audit.md",
+    "bytes": 17753,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\agent-tool-routing-w-curve.md",
+    "bytes": 16672,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\doc-contradictions.md",
+    "bytes": 45079,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\family-scan-100-criteria-defects.md",
+    "bytes": 7556,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\member-inventory.md",
+    "bytes": 180908,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\research-community-sw-mcp-2026-10-02.md",
+    "bytes": 15343,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\rule-2-dead-guard.md",
+    "bytes": 6151,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\B-tools.md",
+    "bytes": 11898,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\README.md",
+    "bytes": 13321,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 6,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\T-011-expose-capabilities-assessment.md",
+    "bytes": 67206,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\T-040-unmapped-constants-evidence.md",
+    "bytes": 5384,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\final-audit.md",
+    "bytes": 9144,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\milestone-round100.md",
+    "bytes": 6013,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\t2-sample-vs-checkable.md",
+    "bytes": 3001,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-207\\union-verify-summary.md",
+    "bytes": 9877,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\interface-ledger.md",
+    "bytes": 48202,
+    "last_commit": "2026-10-12",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\review-external-tool-list-731.md",
+    "bytes": 14751,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\upstream-layout.md",
+    "bytes": 2805,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 5,
+    "exact_twin": ""
+  },
+  {
+    "path": "INPUT-ANOMALY-INVESTIGATION.md",
+    "bytes": 4557,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\evidence-first.md",
+    "bytes": 2877,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\local-resources.md",
+    "bytes": 3170,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\market-research-2026.md",
+    "bytes": 14808,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-24h-v2.md",
+    "bytes": 6897,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\competitor-crosscheck-archival.md",
+    "bytes": 5059,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\conflicts-8-judge-materials.md",
+    "bytes": 16274,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\more-specific-sample20.md",
+    "bytes": 24401,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\t2-intersect-past-errors.md",
+    "bytes": 4348,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\lean-tool-surface.md",
+    "bytes": 7343,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec211-entry-ledger.md",
+    "bytes": 22826,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\triposr.md",
+    "bytes": 18202,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\text-to-cad-borrowed.md",
+    "bytes": 7695,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\tools-removed-2026-10-19.md",
+    "bytes": 15271,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "toolbox-research.md",
+    "bytes": 21113,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 4,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-handoff.md",
+    "bytes": 13403,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-tasks-for-writer.md",
+    "bytes": 8064,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\HANDOFF-SPEC202-next-session.md",
+    "bytes": 9000,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\kickoff-template.md",
+    "bytes": 688,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-200r-v3.md",
+    "bytes": 6441,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\product-mvp-spec.md",
+    "bytes": 22335,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\mark-audit.md",
+    "bytes": 5049,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\number-selfcheck.md",
+    "bytes": 3569,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\unit-audit.md",
+    "bytes": 9012,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\repo-uniformity-report.md",
+    "bytes": 39224,
+    "last_commit": "2026-10-22",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\amagine3d.md",
+    "bytes": 16452,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\deepcad.md",
+    "bytes": 15732,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\earthtojake-text-to-cad.md",
+    "bytes": 15529,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\flexcad.md",
+    "bytes": 14350,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\onshape-ai-advisor.md",
+    "bytes": 12304,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\ptc-creo-generative.md",
+    "bytes": 16203,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\slvsx-cli.md",
+    "bytes": 20437,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\t003-spotcheck-l2-record.md",
+    "bytes": 7585,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\verified-evidence-audit.md",
+    "bytes": 7968,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 3,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-pilot-migration-report.md",
+    "bytes": 7670,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-schema-proposal-reply.md",
+    "bytes": 7897,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\agent-framework\\enterprise-agent-control-plane.md",
+    "bytes": 6348,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\design-transfer-archive\\2026-10-01-capability-gap-audit.md",
+    "bytes": 19653,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\design-transfer-archive\\2026-10-01-linear-module-test-plan.md",
+    "bytes": 46175,
+    "last_commit": "2026-10-21",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\external-crosscheck.md",
+    "bytes": 4061,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\phase3-convergence-status.md",
+    "bytes": 3311,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\plan-next.md",
+    "bytes": 9767,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\fact-single-home-fp.md",
+    "bytes": 1618,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon-206\\official-defects-fp.md",
+    "bytes": 1980,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\skill-map.md",
+    "bytes": 2300,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec210-b3-undecided-breakdown.md",
+    "bytes": 6709,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec210-fingerprint-calibration.md",
+    "bytes": 3648,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec210-survival-diff.md",
+    "bytes": 983,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\README.md",
+    "bytes": 6882,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\A-structure.md",
+    "bytes": 4885,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\C-capabilities.md",
+    "bytes": 4116,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\D-scripts.md",
+    "bytes": 4477,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\E-gates.md",
+    "bytes": 4752,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\F-tests.md",
+    "bytes": 3480,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\facts\\J-runtime.md",
+    "bytes": 4455,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\adam-cad-copilot.md",
+    "bytes": 17029,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\agentcad.md",
+    "bytes": 13797,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\autocad-mcp.md",
+    "bytes": 18020,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\blender-mcp.md",
+    "bytes": 17973,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\build123d-mcp.md",
+    "bytes": 15974,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cad-assistant.md",
+    "bytes": 16006,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cad-coder.md",
+    "bytes": 15670,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cad-recode.md",
+    "bytes": 11414,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cadam.md",
+    "bytes": 16663,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cadquery-llm-skill.md",
+    "bytes": 12066,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\cadrille.md",
+    "bytes": 12850,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\drawing2cad.md",
+    "bytes": 14051,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\freecad-ai.md",
+    "bytes": 19438,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\freecad-mcp.md",
+    "bytes": 16156,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\fusion-assistant.md",
+    "bytes": 15104,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\fusion360-mcp-server.md",
+    "bytes": 25753,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\hunyuan3d-2.md",
+    "bytes": 16270,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\img2cad.md",
+    "bytes": 13892,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\instantmesh.md",
+    "bytes": 16109,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\leo-ai.md",
+    "bytes": 10688,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\mcp-cadquery.md",
+    "bytes": 14806,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\meshy.md",
+    "bytes": 9490,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\multi-agent-cad.md",
+    "bytes": 19524,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\openscad-mcp-server.md",
+    "bytes": 14687,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\plankassembly.md",
+    "bytes": 16323,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\rhinoai.md",
+    "bytes": 17161,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\rodin.md",
+    "bytes": 9187,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\siemens-nx-ai.md",
+    "bytes": 17176,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\spar3d.md",
+    "bytes": 15318,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\spline-ai.md",
+    "bytes": 9979,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\stable-fast-3d.md",
+    "bytes": 16684,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\step1x-3d.md",
+    "bytes": 17163,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\sw-andrewbartels1.md",
+    "bytes": 18539,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\sw-eduardof0nt.md",
+    "bytes": 15696,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\sw-slacker-llc.md",
+    "bytes": 18500,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\sw-vespo92.md",
+    "bytes": 17193,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\text2cad.md",
+    "bytes": 15920,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\trellis.md",
+    "bytes": 16567,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\tripo.md",
+    "bytes": 10527,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\triposg.md",
+    "bytes": 16080,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\survey\\cards\\zoo-text-to-cad.md",
+    "bytes": 16944,
+    "last_commit": "2026-10-24",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\t003-spotcheck-l1-record.md",
+    "bytes": 4689,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\weekly-delivery-plan.md",
+    "bytes": 12255,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 2,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-handoff-v2.md",
+    "bytes": 11434,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-mcp-handoff-reply.md",
+    "bytes": 4763,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-pilot-blocker.md",
+    "bytes": 7159,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-pilot-migration-brief.md",
+    "bytes": 3181,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-pilot-verdict.md",
+    "bytes": 1510,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-r6-r11-done.md",
+    "bytes": 4026,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-review-v3-reply.md",
+    "bytes": 4680,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\AGENTS-review-v3.md",
+    "bytes": 10164,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\HANDOFF-PROMPT.md",
+    "bytes": 3956,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\HANDOFF-dsh-sw-engineer-preset.md",
+    "bytes": 28046,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\artifact-pipeline.md",
+    "bytes": 10859,
+    "last_commit": "2026-10-02",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\com-write-form-rootcause.md",
+    "bytes": 7685,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\consistency-family.md",
+    "bytes": 6962,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\mcp-tools.md",
+    "bytes": 82987,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\harvest-report-corruption-root-cause.md",
+    "bytes": 7889,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\recon\\tool-routing-gap-map-audit.md",
+    "bytes": 13777,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\reports\\answers-to-reviewer-questions.md",
+    "bytes": 5417,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\reports\\sw-project-briefing-for-external-review.md",
+    "bytes": 6354,
+    "last_commit": "2026-10-06",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\research-misumi-api.md",
+    "bytes": 29654,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\research\\week1-js-cad-viewers.md",
+    "bytes": 2290,
+    "last_commit": "2026-10-03",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec211-b8-host-verification.md",
+    "bytes": 8229,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\spec211-negative-conditions.md",
+    "bytes": 6232,
+    "last_commit": "2026-10-07",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\standard-parts-3d-sources.md",
+    "bytes": 22100,
+    "last_commit": "2026-10-01",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\tool-domains.md",
+    "bytes": 9415,
+    "last_commit": "2026-10-05",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\verified-level-disposition.md",
+    "bytes": 7127,
+    "last_commit": "2026-10-04",
+    "referenced_by_docs": 1,
+    "exact_twin": ""
+  },
+  {
+    "path": "docs\\state\\doc-map.md",
+    "bytes": 17182,
+    "last_commit": "<无提交记录>",
+    "referenced_by_docs": 0,
+    "exact_twin": ""
+  }
+]

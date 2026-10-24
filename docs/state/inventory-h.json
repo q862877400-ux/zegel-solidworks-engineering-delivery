@@ -1,0 +1,1765 @@
+{
+  "spec_dirs": 281,
+  "with_spec_md": 277,
+  "without_spec_md": [
+    "218-docs-consolidation",
+    "332-known-facts-triage",
+    "345-video-lectures",
+    "346-modeling-playbook"
+  ],
+  "status_histogram": {
+    "<无 Status 行>": 140,
+    "Draft": 19,
+    "Implemented（真机已验证）": 1,
+    "Implemented（本机可跑，无外部依赖）": 1,
+    "Implemented（轮 87）": 1,
+    "Implemented（轮 90）": 1,
+    "Implemented（轮 93）": 1,
+    "Implemented（轮 94）": 1,
+    "Implemented（轮 95）": 1,
+    "Implemented（轮 96）": 1,
+    "Implemented（轮 97）": 1,
+    "Implemented（轮 98–99）": 1
+  },
+  "acceptance_lines_total": 20,
+  "numbering": {
+    "min": 1,
+    "max": 346,
+    "count_numeric": 281,
+    "missing_in_range": [
+      80,
+      146,
+      147,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160,
+      161,
+      162,
+      163,
+      164,
+      165,
+      166,
+      167,
+      168,
+      169,
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177
+    ]
+  },
+  "specs_not_mentioned_in_docs": 168,
+  "specs_not_mentioned_sample": [
+    "006-criteria-alignment",
+    "007-skip-semantics",
+    "008-checked-zero",
+    "009-false-testcase",
+    "010-gap-triage",
+    "011-unexposed-panorama",
+    "012-expose-pilot",
+    "013-expose-pilot-2",
+    "014-callability-census",
+    "015-dead-capability-diagnostics",
+    "016-expose-pilot-3",
+    "017-candidate-pool"
+  ],
+  "rows": [
+    {
+      "name": "001-topology-result-readout",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "002-merge-template",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "003-topology-closed-loop",
+      "has_spec_md": true,
+      "status": "Implemented（真机已验证）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "004-dfm-verified",
+      "has_spec_md": true,
+      "status": "Implemented（本机可跑，无外部依赖）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "005-brep-evidence-binding",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "006-criteria-alignment",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "007-skip-semantics",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "008-checked-zero",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "009-false-testcase",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "010-gap-triage",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "011-unexposed-panorama",
+      "has_spec_md": true,
+      "status": "Implemented（轮 87）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "012-expose-pilot",
+      "has_spec_md": true,
+      "status": "Implemented（轮 90）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "013-expose-pilot-2",
+      "has_spec_md": true,
+      "status": "Implemented（轮 93）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "014-callability-census",
+      "has_spec_md": true,
+      "status": "Implemented（轮 94）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "015-dead-capability-diagnostics",
+      "has_spec_md": true,
+      "status": "Implemented（轮 95）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "016-expose-pilot-3",
+      "has_spec_md": true,
+      "status": "Implemented（轮 96）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "017-candidate-pool",
+      "has_spec_md": true,
+      "status": "Implemented（轮 97）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "018-batch9-mold-expose",
+      "has_spec_md": true,
+      "status": "Implemented（轮 98–99）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "019-criteria-alignment-scope",
+      "has_spec_md": true,
+      "status": "Implemented（轮 100）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "020-gap-triage-sample",
+      "has_spec_md": true,
+      "status": "Implemented（轮 101）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "021-alias-bucket-audit",
+      "has_spec_md": true,
+      "status": "Implemented（轮 102）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "022-true-missing-reverse-audit",
+      "has_spec_md": true,
+      "status": "Implemented（轮 103）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "023-helix-from-true-missing",
+      "has_spec_md": true,
+      "status": "Implemented（轮 104）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "024-sketch-edit-from-true-missing",
+      "has_spec_md": true,
+      "status": "Implemented（轮 105）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "025-enum-value-gate",
+      "has_spec_md": true,
+      "status": "Implemented（轮 106）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "026-enum-dump-coverage",
+      "has_spec_md": true,
+      "status": "Implemented（轮 107）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "027-enum-assembly-coverage",
+      "has_spec_md": true,
+      "status": "Implemented（轮 108）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "028-equations-from-true-missing",
+      "has_spec_md": true,
+      "status": "Implemented（轮 109）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "029-obsolete-member-ledger",
+      "has_spec_md": true,
+      "status": "Implemented（轮 110）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "030-sketch-getters-successors",
+      "has_spec_md": true,
+      "status": "Implemented（轮 111）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "031-obsolete-not-switching",
+      "has_spec_md": true,
+      "status": "Implemented（轮 112）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "032-obsolete-ledger-complete",
+      "has_spec_md": true,
+      "status": "Implemented（轮 113）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "033-obsolete-seven-not-switching",
+      "has_spec_md": true,
+      "status": "Implemented（轮 114）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "034-convert-entities",
+      "has_spec_md": true,
+      "status": "Implemented（轮 115）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "035-equations-promoted-to-verified",
+      "has_spec_md": true,
+      "status": "Implemented（轮 116）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "036-sketch-query-verified",
+      "has_spec_md": true,
+      "status": "Implemented（轮 117）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "037-module-capability-coverage",
+      "has_spec_md": true,
+      "status": "Implemented（轮 118）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "038-geometric-tolerance",
+      "has_spec_md": true,
+      "status": "Implemented（轮 119）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "039-gtol-smoke-found-it-broken",
+      "has_spec_md": true,
+      "status": "Implemented（轮 120）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "040-helix-smoke-found-and-fixed",
+      "has_spec_md": true,
+      "status": "Implemented（轮 121）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "041-sketch-edit-chamfer-unreachable",
+      "has_spec_md": true,
+      "status": "Implemented（轮 122）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "042-outparam-object-byref-verdict",
+      "has_spec_md": true,
+      "status": "Implemented（轮 123）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "043-hole-standards-orphans-connected",
+      "has_spec_md": true,
+      "status": "Implemented（轮 124）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "044-fastener-chain-and-warmup",
+      "has_spec_md": true,
+      "status": "Implemented（轮 125）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "045-provenance-coverage-documented",
+      "has_spec_md": true,
+      "status": "Implemented（轮 126）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "046-bbox-and-the-approximate-warning",
+      "has_spec_md": true,
+      "status": "Implemented（轮 127）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "047-batch10-expose-verified-entries",
+      "has_spec_md": true,
+      "status": "Implemented（轮 128）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "048-mcp-protocol-layer-verified",
+      "has_spec_md": true,
+      "status": "Implemented（轮 129）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "049-a5-closed-comtypes-classification",
+      "has_spec_md": true,
+      "status": "Implemented（轮 130）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "050-notice-and-audit-refresh",
+      "has_spec_md": true,
+      "status": "Implemented（轮 131）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "051-ellipse-and-the-unit-correction",
+      "has_spec_md": true,
+      "status": "Implemented（轮 132）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "052-script-layer-units-unguardable",
+      "has_spec_md": true,
+      "status": "Implemented（轮 133）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "053-rule2-dead-guard-revived",
+      "has_spec_md": true,
+      "status": "Implemented（轮 134）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "054-dead-guard-sweep-angle-half",
+      "has_spec_md": true,
+      "status": "Implemented（轮 135）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "055-dead-guards-function-form",
+      "has_spec_md": true,
+      "status": "Implemented（轮 136）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "056-dead-guard-registry-form",
+      "has_spec_md": true,
+      "status": "Implemented（轮 137）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "057-server-dispatch-wiring",
+      "has_spec_md": true,
+      "status": "Implemented（轮 138）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "058-dead-guard-subskills-and-sweep-end",
+      "has_spec_md": true,
+      "status": "Implemented（轮 139）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "059-centerline-and-getlines-shape",
+      "has_spec_md": true,
+      "status": "Implemented（轮 140）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "060-getter-shapes-and-spline-silent-noop",
+      "has_spec_md": true,
+      "status": "Implemented（轮 141）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "061-correcting-the-overclaim",
+      "has_spec_md": true,
+      "status": "Implemented（轮 142）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "062-dome-and-the-getter-that-calls",
+      "has_spec_md": true,
+      "status": "Implemented（轮 143）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "063-get-com-member-semantics-audit",
+      "has_spec_md": true,
+      "status": "Implemented（轮 144）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "064-call-com-member-migration",
+      "has_spec_md": true,
+      "status": "Implemented（轮 145）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "065-export-bmp-quantitative-roundtrip",
+      "has_spec_md": true,
+      "status": "Implemented（轮 146）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "066-export-image-png-jpg",
+      "has_spec_md": true,
+      "status": "Implemented（轮 147）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "067-modal-dialog-check-was-under-scanning",
+      "has_spec_md": true,
+      "status": "Implemented（轮 148）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "068-single-source-for-modal-dialog-check",
+      "has_spec_md": true,
+      "status": "Implemented（轮 149）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "069-prove-the-modal-check-can-fire",
+      "has_spec_md": true,
+      "status": "Implemented（轮 150）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "070-composite-curve-negative-result",
+      "has_spec_md": true,
+      "status": "Implemented（轮 151）· ⚠ **能力未升级**（未取证）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "071-the-lagging-enumeration",
+      "has_spec_md": true,
+      "status": "Implemented（轮 152）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "072-composite-curve-four-selection-ways",
+      "has_spec_md": true,
+      "status": "Implemented（轮 153）· ⚠ **能力不升级**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "073-does-mark-land",
+      "has_spec_md": true,
+      "status": "Implemented（轮 154）· ⚠ **能力仍不升级**（但失败点更清楚了）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "074-composite-curve-stop-and-the-real-blocker",
+      "has_spec_md": true,
+      "status": "Implemented（轮 155）· ⚠ **能力不升级**（但卡点已查明）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "075-is-dwg-really-dwg",
+      "has_spec_md": true,
+      "status": "Implemented（轮 156）· ✅ **实现了既有能力的取证**（无新代码）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "076-export-magic-matrix",
+      "has_spec_md": true,
+      "status": "Implemented（轮 157）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "077-export-to-pdf-never-worked",
+      "has_spec_md": true,
+      "status": "Implemented（轮 158）· ✅ **修好了一个用户可见的坏函数**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "078-direct-member-access-blind-spot",
+      "has_spec_md": true,
+      "status": "Implemented（轮 159）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "079-close-the-direct-access-blind-spot",
+      "has_spec_md": true,
+      "status": "Implemented（轮 160）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "081-add-relation-safearray",
+      "has_spec_md": true,
+      "status": "Implemented（轮 161）· ✅ **修好了一个「真机从没跑通」的函数**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "082-in-context-chain-four-exclusions",
+      "has_spec_md": true,
+      "status": "Implemented（轮 162）· ⚠ **判据①②仍未绿，真因未查明**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "083-standard-parts-toolbox-entry",
+      "has_spec_md": true,
+      "status": "Implemented（轮 163）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "084-chamfer-was-misjudged",
+      "has_spec_md": true,
+      "status": "Implemented（轮 164）· ✅ **`sketch_chamfer` 升 `verified`**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "085-gtol-frame-order",
+      "has_spec_md": true,
+      "status": "Implemented（轮 165）· ⚠ `geometric_tolerance` 仍为 `stitched`（3/5）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "086-gtol-indicator-exhaustive",
+      "has_spec_md": true,
+      "status": "Implemented（轮 166）· ✅ `gtol_insert` 升 `verified`",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "087-modal-dialog-root-cause",
+      "has_spec_md": true,
+      "status": "Implemented（轮 167）· 由**用户截图**发现（我卡住不动）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "088-modal-polling-blind-spot",
+      "has_spec_md": true,
+      "status": "Implemented（轮 168）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "089-detect-without-dispose",
+      "has_spec_md": true,
+      "status": "Implemented（轮 169）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "090-migrated-smokes-all-run",
+      "has_spec_md": true,
+      "status": "Implemented（轮 170）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "091-gtol-xml-path",
+      "has_spec_md": true,
+      "status": "Implemented（轮 171）· ⚠ **未打通**，只留下素材与解释 · `geometric_tolerance` 仍 `stitched`",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "092-mold-evidence-wrong-interface",
+      "has_spec_md": true,
+      "status": "Implemented（轮 172）· ⚠ **未修功能**（只更正了文档 + 补了负例）· `mold_tools` 仍 `stitched`",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "093-member-owner-interface-checker",
+      "has_spec_md": true,
+      "status": "Implemented（轮 173）· ⚠ **诊断工具，不接门禁**",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "094-param-iface-inference-reverted",
+      "has_spec_md": true,
+      "status": "Implemented（轮 174）· ⚠ **负结果**（这本身就是产出）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "095-checker-boundary-quantified",
+      "has_spec_md": true,
+      "status": "Implemented（轮 175）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "096-checker-converged-to-all-true",
+      "has_spec_md": true,
+      "status": "Implemented（轮 176）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "097-checker-validated-by-real-machine",
+      "has_spec_md": true,
+      "status": "Implemented（轮 177）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "098-mold-draft-analysis-two-defects",
+      "has_spec_md": true,
+      "status": "Implemented（轮 178）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "099-topology-acceptance-red-environment",
+      "has_spec_md": true,
+      "status": "Implemented（轮 179）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "100-acceptance-status-swept",
+      "has_spec_md": true,
+      "status": "Implemented（轮 180）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "101-composite-curve-is-a-real-failure",
+      "has_spec_md": true,
+      "status": "Implemented（轮 181）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "102-composite-curve-precondition-unreachable",
+      "has_spec_md": true,
+      "status": "Implemented（轮 182）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "103-spline-can-now-be-created",
+      "has_spec_md": true,
+      "status": "Implemented（轮 183）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "104-composite-curve-still-fails",
+      "has_spec_md": true,
+      "status": "Implemented（轮 184）· ⚠ **负结果**（含一个**无效实验**的如实记录）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "105-bare-array-args-scan",
+      "has_spec_md": true,
+      "status": "Implemented（轮 185）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "106-safearray-utility-is-cpp-only",
+      "has_spec_md": true,
+      "status": "Implemented（轮 186）· ⚠ **负结果**（含一个**被证伪的静态信号**）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "107-gap-section-is-generated",
+      "has_spec_md": true,
+      "status": "Implemented（轮 187）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "108-reachability-needs-binding-layer",
+      "has_spec_md": true,
+      "status": "Implemented（轮 188）· ★ **本轮是对**上一轮自己的更正****",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "109-inout-direction-audit",
+      "has_spec_md": true,
+      "status": "Implemented（轮 189）· ⚠ **负结果**（假设成立、但在调用面上不命中）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "110-multi-tlb-and-coverage-selfcheck",
+      "has_spec_md": true,
+      "status": "Implemented（轮 190）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "111-gate-details-in-return-body",
+      "has_spec_md": true,
+      "status": "Implemented（轮 191）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "112-gate-first-line-carries-denominator",
+      "has_spec_md": true,
+      "status": "Implemented（轮 192）",
+      "acceptance_lines": 1
+    },
+    {
+      "name": "113-r-rule-registry",
+      "has_spec_md": true,
+      "status": "Implemented（轮 193）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "114-rule-refs-enforcement-side",
+      "has_spec_md": true,
+      "status": "Implemented（轮 194）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "115-notice-refresh",
+      "has_spec_md": true,
+      "status": "Implemented（轮 195）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "116-notice-name-claims-are-verifiable",
+      "has_spec_md": true,
+      "status": "Implemented（轮 196）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "117-missing-source-must-raise",
+      "has_spec_md": true,
+      "status": "Implemented（轮 197）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "118-silent-source-fallback-scan",
+      "has_spec_md": true,
+      "status": "Implemented（轮 198）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "119-gap-number-two-readings",
+      "has_spec_md": true,
+      "status": "Implemented（轮 199）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "120-gap-number-single-home",
+      "has_spec_md": true,
+      "status": "Implemented（轮 200）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "121-simulation-addin-attribution",
+      "has_spec_md": true,
+      "status": "Implemented（轮 202）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "122-topology-chain-reverified",
+      "has_spec_md": true,
+      "status": "Implemented（轮 203）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "123-expose-orphan-capabilities",
+      "has_spec_md": true,
+      "status": "Implemented（轮 204）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "124-topology-batch2",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "125-simulation-study-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "126-view-selection-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "127-review-report-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "128-sketch-relation-mirror-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "129-official-category-column",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "130-angle-deg-boundary",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "131-sketch-query-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "132-drawing-current-sheet-query",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "133-file-custom-property-read",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "134-static-simulation-reverified",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "135-sketch-build-batch",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "136-extrude-family",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "137-chamfer-fillet-selection",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "138-mass-property-read",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "139-assembly-read",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "140-simulation-loads-moat",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "141-simulation-study-create",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "142-mesh-solve-readback",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "143-simulation-load-family",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "144-topology-readback-parameters",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "145-mesh-size-sanity-gate",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "148-segment6-convergence",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "149-real-gap-rollout",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 2
+    },
+    {
+      "name": "150-judge-first-rollout",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 16
+    },
+    {
+      "name": "201-toolbar-gaps",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "202-user-coverage-gaps",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "203-bunny-sideline-batches",
+      "has_spec_md": true,
+      "status": "Planning（2026-10-04 立）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "204-bunny-moat-batches",
+      "has_spec_md": true,
+      "status": "Planning（2026-10-04 立，待用户确认）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "205-tool-ramp",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "206-c1c6-harvest",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "207-agent-team-tool-routing",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "207-union-gap-verify",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "208-lean-tool-surface",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "209-union-adopt-18",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "210-declarative-effects",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "211-user-feature-gaps",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "212-unit-discipline",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "213-hook-up-tools",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "214-test-green",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "215-tool-surface-decisions",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "216-real-machine-closeout",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "217-expose-orphans",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "218-docs-consolidation",
+      "has_spec_md": false,
+      "status": "<无 spec.md>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "219-user-coverage-100",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "220-user-coverage-closeout",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "221-sketch-relation-dispatch-safety",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "222-relation-enum-and-public-contract",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "223-enum-fabrication-and-gate-boundaries",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "224-enum-table-disposition",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "225-blind-spot-claim-detector",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "226-prose-provenance-claim",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "227-arity-reflect-gate",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "228-assembly-doc-call-shape",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "229-dispatch-entry-guard",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "230-dispatch-resolution",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "231-dispatch-byref-guard",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "232-dispatch-blindspot-census",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "233-dispatch-callsite-dedup",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "234-local-bucket-candidate-gate",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "235-dispatch-forward-arg-guard",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "236-dispatch-upstream-guard",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "237-create-definition-site-disposition",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "238-cd-host-scope",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "239-draft-official-entry",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "240-mate-official-entry",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "241-deprecated-entry-interlock-coverage",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "242-deprecated-table-admission",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "243-admission-gate-tightening",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "244-multi-successor-rule",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "245-multi-successor-host-review",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "246-admissible-candidates",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "247-multi-successor-adjudication",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "248-name-host-adjudication",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "249-multi-successor-both-needed-census",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "250-host-review-family",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "251-index-successor-rule",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "252-hem-positions-machine-verify",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "253-arity-mismatch-triage",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "254-iview-name-routing",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "255-multi-view-drawing-evidence",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "256-iview-name-routing-done",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "257-iview-name-routing-reverified",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "258-todo-premise-audit",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "259-todo-premise-audit-full",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "260-routing-plan-real-hits",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "261-routing-batch1-adapt-args",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "262-base-flange-creation-regression",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "263-base-flange-failure-layers",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "264-base-flange-two-paths",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "265-base-flange-family-phenomenon",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "266-counted-positions-impact",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "267-starargs-fix-rollback",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "268-starargs-narrow-rule",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "269-arity-retriage-new-rule",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "270-starargs-move-back-noop",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "271-real-gap-visible-again",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "272-twelve-share-one-cause",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "273-out-params-three-types",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "274-double-out-param-form",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "275-existing-red-ownership",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "276-createfeature-error-entry",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "277-base-flange-root-cause",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "278-base-flange-regression-units",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "279-sheet-metal-family-retest",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "280-edge-flange-backend-limit",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "281-sheet-metal-family-backend-limit",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "282-hem-cause-readable",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "283-create-draft-machine-verified",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "284-saveas3-not-swappable",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "285-profile-center-mate-machine",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "286-bundle-sync-is-automatic",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "287-double-out-cosworks-positive",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "288-study-arity-change-surface",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "289-arity-change-route-decision",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "290-twelve-wiring-not-worth-it",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "291-addmate5-dispatch-semantics",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "292-evidence-table-line-free",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "293-route-change-viability",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "294-workspace-tidy",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 1
+    },
+    {
+      "name": "295-r8-crossday-false-red",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "296-create-draft-pre-call",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "297-b1-b5-ownership-closeout",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "298-phase2-doc-alignment",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "299-delete-render-material-recheck",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "300-comtypes-table-name-keyed",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "301-fifteen-existing-reds",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "302-ec00-trustworthy-tool-base",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "303-ec01-engineering-contract",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "304-ec02-rules-and-standards",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "305-ec03-method-library-and-ir",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "306-ec04-safe-jobs-and-evidence",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "307-ec05-first-part-loop",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "308-ec06-assembly-and-mechanism",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "309-ec07-automation-slice",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "310-ec08-drawing-and-processes",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "311-ec09-cae-and-topology",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "312-ec10-install-and-nodes",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "313-ec11-compliance-and-release",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "314-ec12-capability-package-and-eval",
+      "has_spec_md": true,
+      "status": "<无 Status 行>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "315-eval-corpus",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "316-stage1-parameter-plate",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "317-stage2-real-holes",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "318-stage3-crash-recovery",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "319-stage4-constrained-planning",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "320-stage5-bench-vise",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "321-stage6-adjustable-linkage",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "322-stage7-housing-final-dod",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "323-task-domains-and-faceted-retrieval",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "324-gate-inventory-and-meta-coverage",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "325-declarative-protocols-and-decisions",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "326-question-persistence-and-boundaries",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "327-release-manifest-rules-and-runs",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "328-cloud-whitelist-and-degradation",
+      "has_spec_md": true,
+      "status": "Draft",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "330-sketch-relation-generator",
+      "has_spec_md": true,
+      "status": "已交付",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "332-known-facts-triage",
+      "has_spec_md": false,
+      "status": "<无 spec.md>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "335-design-rules-lib",
+      "has_spec_md": true,
+      "status": "已交付（★ 含**诚实失败路径**）",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "345-video-lectures",
+      "has_spec_md": false,
+      "status": "<无 spec.md>",
+      "acceptance_lines": 0
+    },
+    {
+      "name": "346-modeling-playbook",
+      "has_spec_md": false,
+      "status": "<无 spec.md>",
+      "acceptance_lines": 0
+    }
+  ]
+}
