@@ -64,6 +64,7 @@ for _p in (_HERE.parent, _HERE.parent.parent):
 
 import sw_sketch as _sk  # noqa: E402
 from sw_connect import get_com_member  # noqa: E402
+from sw_feature_readback import feature_names  # noqa: E402
 from sw_part import _empty_callout  # noqa: E402
 from sw_sketch import require_sketch as _sketch  # noqa: E402
 
@@ -163,6 +164,60 @@ def fully_define_sketch(
 def count_sketch_relations(model, filter: int = -1) -> int:
     """★ 关系计数：`ISketchRelationManager.GetRelationsCount(Filter)`（★ `Filter=-1` = 全部）。"""
     return int(get_com_member(_relations(model), "GetRelationsCount", int(filter)) or 0)
+
+
+def count_sketch_dimensions(model) -> int:
+    """★ **草图上的驱动尺寸数** —— 走草图特征的显示尺寸。
+
+    实现：对每个名字像草图的特征取 `IFeature.GetFirstDisplayDimension`，
+    再用 `IDisplayDimension.GetNext2` 迭代。
+
+    ## ★★ 为什么需要它（2026-10-25，真机倒逼）
+
+    真机实测：**把草图每段都加 `sgFIXED`、一条驱动尺寸都不加，
+    `ISketch.GetConstrainedStatus()` 也回 3（全约束）**。
+
+    ⇒ 只看约束状态枚举，「全固定」与「尺寸驱动」**分不开**。
+      `docs/ENGINEERING-PATH.md` 第四节 E1 的负例明令含「全部固定却无驱动参数」
+      ⇒ E1 的判定器必须拿到这个数才能判对。
+
+    ⚠ 迭代成员是 `IDisplayDimension.GetNext2`，**不是**
+      `IFeature.GetNextDisplayDimension`（后者在 pywin32 下报「找不到成员」）。
+
+    ⚠ 拿不到时回 `-1`（**不是 0**）—— 「没数到」与「确实是 0 个」必须分开，
+      否则调用方会把「没测」当成「全固定」。
+    """
+    try:
+        feat_names = [str(n) for n in (feature_names(model) or [])]
+    except Exception:  # noqa: BLE001
+        return -1
+
+    total = 0
+    found_any_feature = False
+    for nm in feat_names:
+        if not (nm.startswith("草图") or nm.lower().startswith("sketch")):
+            continue
+        try:
+            feat = get_com_member(model, "FeatureByName", nm)
+        except Exception:  # noqa: BLE001
+            continue
+        if feat is None:
+            continue
+        found_any_feature = True
+        try:
+            dd = get_com_member(feat, "GetFirstDisplayDimension")
+        except Exception:  # noqa: BLE001
+            continue
+        guard = 0
+        while dd is not None and guard < 500:
+            guard += 1
+            total += 1
+            try:
+                dd = get_com_member(dd, "GetNext2")
+            except Exception:  # noqa: BLE001
+                break
+    #: ★ 一个草图特征都没找到 ⇒ 不是「0 个尺寸」，是「没数到」
+    return total if found_any_feature else -1
 
 
 def delete_all_sketch_relations(model) -> bool:

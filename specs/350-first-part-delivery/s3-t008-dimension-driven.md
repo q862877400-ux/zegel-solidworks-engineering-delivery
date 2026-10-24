@@ -199,3 +199,40 @@ python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimensio
 - 原来那 5 条把「状态 3 即 pass」写死的测试**按新契约更新**（它们编码了那个洞）
 
 ⇒ E1 三态样件从 80 条增到 85 条，全部通过。
+
+## 十、收紧契约后，把调用方都补齐了（第 10 轮）
+
+第 9 轮给 E1 加了 `driving_dimensions` 之后，**所有调用方都必须补这个字段**，
+否则状态 3 会被判成 `unknown`（没数过）。这一轮把三处补齐。
+
+### 新增共用能力：`sw_sketch_dimensions.count_sketch_dimensions`
+
+`-1`（没数到）与 `0`（确实零个）**必须分开** —— 否则调用方会把「没测」当成「全固定」。
+实现走 `IFeature.GetFirstDisplayDimension` + `IDisplayDimension.GetNext2`。
+
+`tests/test_sketch_dimension_count.py`（9 条）钉住这条契约，含
+「有草图无尺寸回 0」「无草图特征回 -1」「取不到特征名回 -1」。
+
+★ 写测试时自己踩了一个坑并记在注释里：`get_com_member` 对**无实参**成员是
+  「先无参调一次」的语义，替身若只 `getattr` 不调用，`GetNext2` 会回**方法对象**，
+  计数全错。替身已照正式语义写。
+
+### E1 真机探针改了两处
+
+`tools/probe_s3_e1_real_machine.py`：
+
+| 改动 | 原因 |
+|---|---|
+| 两处 `collect_sketch_constraint` 补 `driving_dimensions` | 契约收紧 |
+| 「加 sgFIXED 造全约束」从**好样件**改成**坏样件** | 它正是被堵掉的那个洞 |
+
+新读数：
+
+```
+① 欠约束草图：GetConstrainedStatus = 2 · 驱动尺寸 = 0 → 判据 fail
+③ 全固定后（sgFIXED，零驱动尺寸）：GetConstrainedStatus = 3 · 驱动尺寸 = 0 → 判据 fail
+★ 真机两种坏样件都被拒
+```
+
+★ 改造前的探针把 ③ 当「好样件、应判 pass」—— **探针自己也编码了那个洞**。
+  现在它成了第二个真实坏样件，读数更有信息量。

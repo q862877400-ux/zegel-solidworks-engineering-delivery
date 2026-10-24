@@ -53,6 +53,7 @@ from scripts import sw_part as p_  # noqa: E402
 #: ★ 复用既有共用帮手（`scripts/sw_sketch.py:585`）——
 #:   同一件事不在两个地方各写一份（统一化体检⑤）
 from scripts.sw_sketch import active_sketch as _active_sketch  # noqa: E402
+from scripts.sw_sketch_dimensions import count_sketch_dimensions  # noqa: E402
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
@@ -122,7 +123,11 @@ def main() -> int:
             return 2
 
         st_under = _status(sk)
-        print("① 欠约束草图：GetConstrainedStatus = %d" % st_under)
+        dims_under = count_sketch_dimensions(doc)
+        print(
+            "① 欠约束草图：GetConstrainedStatus = %d · 驱动尺寸 = %d"
+            % (st_under, dims_under)
+        )
         obs_bad = collect_sketch_constraint(
             target="real-machine-under-constrained",
             entities=0,
@@ -130,6 +135,8 @@ def main() -> int:
             dimensions=(),
             solver_state="from_api",
             solver_status_int=st_under,
+            #: ★ 负数（没数到）按「没测」处理，不传下去当 0
+            driving_dimensions=dims_under if dims_under >= 0 else None,
         )
         res_bad = judge_sketch_constraint(obs_bad, requirement_id=REQ)
         print(
@@ -163,14 +170,22 @@ def main() -> int:
             p_.add_sketch_relation(doc, "sgFIXED")
 
         st_full = _status(sk)
-        print("③ 全固定后：GetConstrainedStatus = %d" % st_full)
+        dims_full = count_sketch_dimensions(doc)
+        print(
+            "③ 全固定后（sgFIXED，零驱动尺寸）：GetConstrainedStatus = %d · 驱动尺寸 = %d"
+            % (st_full, dims_full)
+        )
+        #: ★★★ 这一例**不再当「好样件」** ——
+        #:   真机证明「全固定」也能让状态回 3，而 E1 明令拒绝「全部固定却无驱动参数」
+        #:   ⇒ 它现在是**第二个真实坏样件**。
         obs_good = collect_sketch_constraint(
-            target="real-machine-fully-defined",
+            target="real-machine-all-fixed",
             entities=0,
             relations=(),
             dimensions=(),
             solver_state="from_api",
             solver_status_int=st_full,
+            driving_dimensions=dims_full if dims_full >= 0 else None,
         )
         res_good = judge_sketch_constraint(obs_good, requirement_id=REQ)
         print(
@@ -186,20 +201,30 @@ def main() -> int:
                 "segments_selected": n_sel,
                 "judge": res_good.status.value,
                 "judge_reason": res_good.reason,
-                "expect_judge": "pass",
+                #: ★ 全固定零尺寸 ⇒ 应判 fail（E1 的负例）
+                "expect_judge": "fail",
             }
         )
 
         # ── ④ 总判 ──
         ok_int = st_under == 2 and st_full == 3
-        ok_judge = res_bad.status.value == "fail" and res_good.status.value == "pass"
+        ok_judge = (
+            res_bad.status.value == "fail" and res_good.status.value == "fail"
+        )
         out["status_int_matches_official"] = ok_int
         out["judge_sees_both"] = ok_judge
         out["ok"] = bool(ok_int and ok_judge and st_under != st_full)
         out["conclusion"] = (
-            "★ 真机两个状态读数分别为 %d / %d，与官方表 2=欠定义、3=完全定义吻合；"
-            "判据对两者分别给出 fail / pass ⇒ 判据能看见真实坏样件"
-            % (st_under, st_full)
+            "★ 真机两种坏样件都被拒：欠约束（状态 %d，尺寸 %d）→ %s；"
+            "全固定（状态 %d，尺寸 %d）→ %s ⇒ 判据能看见真实坏样件"
+            % (
+                st_under,
+                dims_under,
+                res_bad.status.value,
+                st_full,
+                dims_full,
+                res_good.status.value,
+            )
             if out["ok"]
             else "★ 未达预期：读数 %d / %d，判据 %s / %s"
             % (st_under, st_full, res_bad.status.value, res_good.status.value)
