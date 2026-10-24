@@ -147,6 +147,69 @@ def feature_present(model, feature_name: str) -> bool:
     return str(feature_name) in feature_names(model)
 
 
+def solid_body_extent_mm(doc) -> dict:
+    """★ 实体的包围盒 **X/Y/Z 三个跨度（毫米）**。
+
+    ## ★★ 回读路径（真机验过，第 13/14 轮）
+
+    ```
+    IPartDoc.GetBodies2(swSolidBody=0, BVisibleOnly=True)
+      → IBody2.GetBodyBox()      # 6 个 double，**单位米**
+    ```
+
+    ⚠ 三条走不通的写法（别再试）：
+      · `GetBodies2(True)` —— 只传一个参数 ⇒ 「非选择性的参数」（官方要**两个必填**）
+      · `IModelDocExtension.GetBox` —— **不存在**
+      · 只有草图、没有实体时 `GetBodies2` 回 `None` ⇒ **要先拉伸**
+
+    ⚠ 判据**不要**用 `IFeature.GetBox()` —— 官方 Remarks 逐字：
+      「The values returned are **approximate** and **should not be used for
+      comparison or calculation purposes**」。
+
+    返回 `{"ok": bool, "x_mm", "y_mm", "z_mm", "raw"}`；失败时带 `error`。
+    """
+    out: dict = {"ok": False}
+    try:
+        body = get_com_member(doc, "GetBodies2", 0, True)  #: swSolidBody = 0
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = "GetBodies2: %s: %s" % (type(exc).__name__, str(exc)[:100])
+        return out
+    if not body:
+        out["error"] = "GetBodies2 回空（可能还没有实体）"
+        return out
+    try:
+        b = body[0] if isinstance(body, (list, tuple)) else list(body)[0]
+    except (IndexError, TypeError):
+        out["error"] = "GetBodies2 的返回值不是数组"
+        return out
+    try:
+        box = get_com_member(b, "GetBodyBox")
+    except Exception as exc:  # noqa: BLE001
+        out["error"] = "GetBodyBox: %s: %s" % (type(exc).__name__, str(exc)[:100])
+        return out
+    if not box:
+        out["error"] = "GetBodyBox 回空"
+        return out
+    try:
+        n = [float(v) for v in list(box)]
+    except (TypeError, ValueError):
+        out["error"] = "GetBodyBox 的返回值不能转成数字"
+        return out
+    if len(n) < 6:
+        out["error"] = "GetBodyBox 只回 %d 个数" % len(n)
+        return out
+    out.update(
+        {
+            "ok": True,
+            "x_mm": round((n[3] - n[0]) * 1000.0, 6),
+            "y_mm": round((n[4] - n[1]) * 1000.0, 6),
+            "z_mm": round((n[5] - n[2]) * 1000.0, 6),
+            "raw": n,
+        }
+    )
+    return out
+
+
 def whats_wrong(model) -> dict[str, Any]:
     """取 「What's Wrong」的条目数（★ 数 0 才是好）。
 

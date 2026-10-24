@@ -643,11 +643,29 @@ def try_call(fn, *args):
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:140])
 
 
+def open_doc_count(sw) -> int:
+    """★ 当前打开的文档数（`ISldWorks.GetDocuments`）。
+
+    ★ 取不到时回 **-1**（不是 0）—— 「没读到」与「确实 0 个」必须分开，
+      否则调用方会把「没测」当成「已关干净」。
+    """
+    try:
+        docs = get_com_member(sw, "GetDocuments")
+    except Exception:  # noqa: BLE001
+        return -1
+    if docs is None:
+        return 0
+    try:
+        return len(list(docs))
+    except TypeError:
+        return -1
+
+
 #: dispatch-guard: covered-wrappers
 def try_member(obj, name, *args):
     """★ 取一个 COM 成员；**取不到回 None，不抛**。
 
-    ★ 与 	ry_call 成对：那个包「调一次」，这个包「取或调一次」。
+    ★ 与 `try_call 成对：那个包「调一次」，这个包「取或调一次」。
     ★ 顺手把两个探针里重复的 _member 收成一个家
       （不然统一化体检会把它算成克隆组）。
     """

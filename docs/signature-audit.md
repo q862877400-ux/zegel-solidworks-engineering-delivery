@@ -190,6 +190,10 @@ sw_know.py find InsertBomTable                  → 命中 11 个成员：
 > ★ 2026-10-22（仓库统一化）：`sw_connect.py` **29 → 30** —— 新增唯一实现 `select_by_id()`
 >   （`IModelDocExtension::SelectByID2` 的封装，原先在 `sw_part.py` / `sw_assembly.py` 各有一份 19 行逐字相同的副本，
 >   已收敛到这里）。★ 表里那个数是**实跑 `actual_calls()` 得到的 30**，不是手写估算。
+> ★ 2026-10-25（第 18 轮）：`sw_connect.py` **30 → 31** —— 新增 `open_doc_count()`
+> （读 `ISldWorks.GetDocuments`，用于「关完文档核数」，见 S3 的孤儿文档问题）。
+> 同类历史：2026-10-22 因新增 `select_by_id()` 曾从 29 → 30。
+
 > ⚠ **本表已按 2026-10-01（轮 55）实跑刷新** —— 原写
 > `drawing_workflow.py` **140/137/0/0/3**、`sw_simulation.py` **34/34/0/0/0**。
 > **⇒ 两者都随代码增长而变了**（这是**应该**的；门禁要的是「文档跟得上代码」）。
@@ -510,7 +514,7 @@ SW 2026 SP4.1 / 34.4.1）：
 | `sw_topology.py` | 52 | **52** | 0 | 0 |
 | `sw_simulation.py` | 58 | **58** | 0 | 0 |
 | `sw_weldment.py` | 66 | **66** | 0 | 0 |
-| `sw_connect.py` | 30 | **30** | 0 | 0 |
+| `sw_connect.py` | 31 | **31** | 0 | 0 |
 
 > ⚠ **本表已按 2026-10-01（轮 55）实跑刷新**（原写 `sw_topology` **45**、`sw_simulation` **34**）。
 > **⇒ 两个数随代码增长而变了**（`sw_topology` +4 = 轮 51 新增的 `collect_topology_numbers`

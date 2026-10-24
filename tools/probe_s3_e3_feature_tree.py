@@ -56,8 +56,14 @@ from scripts import sw_connect as c_  # noqa: E402
 from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
 from scripts.sw_connect import get_com_member  # noqa: E402
 from scripts.sw_connect import try_call as _try  # noqa: E402
+from scripts.sw_connect import try_member as _member  # noqa: E402
 from scripts.sw_document_data import update_dimension_mm  # noqa: E402
-from scripts.sw_feature_readback import feature_info, feature_names, whats_wrong  # noqa: E402
+from scripts.sw_feature_readback import (  # noqa: E402
+    feature_info,
+    feature_names,
+    solid_body_extent_mm,  # noqa: E402
+    whats_wrong,
+)
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
@@ -77,26 +83,6 @@ from scripts.sw_feature_readback import feature_info, feature_names, whats_wrong
 SRC = R / "output" / "stage2" / "板1_rev-1.SLDPRT"
 COPY_DIR = R / "output" / "e3-copy"
 SW_SOLID_BODY = 0
-
-
-def _member(obj, name):
-    ok, v = _try(get_com_member, obj, name)
-    return v if ok and v is not None else None
-
-
-def _bbox_x_mm(doc) -> float | None:
-    ok, body = _try(get_com_member, doc, "GetBodies2", SW_SOLID_BODY, True)
-    if not ok or not body:
-        return None
-    try:
-        b = body[0] if isinstance(body, (list, tuple)) else list(body)[0]
-    except (IndexError, TypeError):
-        return None
-    ok2, box = _try(get_com_member, b, "GetBodyBox")
-    if not ok2 or not box:
-        return None
-    n = [float(v) for v in list(box)]
-    return round((n[3] - n[0]) * 1000.0, 4) if len(n) >= 6 else None
 
 
 def _tree(doc) -> list:
@@ -199,14 +185,14 @@ def main() -> int:
             print(ev["conclusion"])
             return 1
 
-        bbox0 = _bbox_x_mm(doc)
+        bbox0 = (solid_body_extent_mm(doc).get("x_mm"))
         ok_u, upd = _try(update_dimension_mm, doc, target["full_name"], 120.0)
         ev["update"] = {"ok": ok_u, "detail": str(upd)[:200]}
 
         #: ③ 验后续
         after = _tree(doc)
         ww1 = whats_wrong(doc)
-        bbox1 = _bbox_x_mm(doc)
+        bbox1 = (solid_body_extent_mm(doc).get("x_mm"))
         ev["tree_after"] = after
         ev["whats_wrong_after"] = ww1
         ev["feature_count_after"] = len(after)

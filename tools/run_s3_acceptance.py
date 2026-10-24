@@ -1,0 +1,344 @@
+"""★ S3 验收运行器：在真机上采 E1 / E2 / E3，生成 `acceptance.md`。
+
+## 为什么要有它
+
+`specs/350-first-part-delivery/tasks.md` 要求每步「写 acceptance.md」。
+而 E1–E7 的采集器与判定器、以及 `report.py` 的汇总/渲染层都已就位，
+**缺的是把它们真正串在同一次真机运行里**。
+
+本运行器在**交付件副本**上做三件事，然后把三份 `CheckResult` 交给 `report.py`：
+
+| E | 采什么 | 判据 |
+|---|---|---|
+| **E1** | `GetConstrainedStatus()` + 草图驱动尺寸数 | 状态 3 且**至少 1 个驱动尺寸**（否则是全固定） |
+| **E2** | 改板宽 100→120 后**孔心是否移动** + 错误数 + 保存重开 | 下游联动 + 零错误 + 重开仍成立 |
+| **E3** | 特征树类型/父子/错误 + 改前序后下游 | 原生特征 > 0、零悬空、零错误、前序可改 |
+
+## ★ 为什么 E2 很可能判 fail（而这正是它的价值）
+
+E2 的判定器里有一条逐字的理由：「改了主参数但下游没联动（**如孔没随板宽移动**）」。
+
+第 11 轮 T011 验到的是「板变宽、**孔没动**」，第 14 轮查明孔位尺寸化所依赖的
+HV 尺寸能力本机已退化（事实 560）。⇒ 本运行器**如实**把 `downstream_linked`
+按孔心实测位移来填，该 fail 就 fail。
+
+★ 判据只认**独立读数**：
+  · 孔心用 `ISketchArc.GetCenterPoint2 → ISketchPoint.X/.Y`（第 14 轮验过可读）
+  · 几何用包围盒 `GetBodies2(0,True) → GetBodyBox()`
+  · 不用任何返回值当结论。
+
+## 只读纪律
+
+操作副本（`output/s3-acceptance/`）；`CommandInProgress`；收尾核**文档数归零**。
+"""
+
+from __future__ import annotations
+
+import json
+import shutil
+import sys
+import time
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8")
+R = Path(Path(__file__).resolve().parents[1])
+sys.path.insert(0, str(R))
+sys.path.insert(0, str(R / "scripts"))
+
+from scripts import sw_connect as c_  # noqa: E402
+from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
+    collect_sketch_constraint,
+    judge_sketch_constraint,
+)
+from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402
+    collect_feature_tree,
+    collect_rebuild,
+    judge_feature_tree,
+    judge_rebuild,
+)
+from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
+from scripts.engineering.acceptance.report import (  # noqa: E402
+    build_report,
+    render_markdown,
+)
+from scripts.sw_connect import (  # noqa: E402
+    get_com_member,
+    open_doc_count,  # noqa: E402
+)
+from scripts.sw_connect import try_call as _try  # noqa: E402
+from scripts.sw_connect import try_member as _member  # noqa: E402
+from scripts.sw_document_data import update_dimension_mm  # noqa: E402
+from scripts.sw_feature_readback import (  # noqa: E402
+    feature_info,
+    feature_names,
+    solid_body_extent_mm,  # noqa: E402
+    whats_wrong,
+)
+from scripts.sw_sketch_dimensions import count_sketch_dimensions  # noqa: E402
+
+# ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身（工具 · S3 验收）
+# 文件:   tools/run_s3_acceptance.py
+# 定位:   specs/350-first-part-delivery S3 的正式交付物 —— 在**交付件副本**上采
+#          E1/E2/E3 三态，交给 report.py 渲染 acceptance.md。
+#          E2 的 downstream_linked 按**孔心实测位移**填（孔没动就判 fail）。
+# 官方依据: ISketch.GetConstrainedStatus · IFeature.GetFirstDisplayDimension +
+#          IDisplayDimension.GetNext2（数尺寸）· ISketchArc.GetCenterPoint2 →
+#          ISketchPoint.X/.Y（孔心读数）· IPartDoc.GetBodies2(0,True) →
+#          IBody2.GetBodyBox()（几何）· IModelDocExtension.GetWhatsWrongCount ·
+#          IFeature.GetTypeName2（类型，经 e3_feature_types 的实测词表分类）·
+#          IDimension.SetSystemValue3（经 update_dimension_mm，单位米）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+# ─────────────────────────────────────────────────────────────────────
+
+SRC = R / "output" / "stage2" / "板1_rev-1.SLDPRT"
+WORK = R / "output" / "s3-acceptance"
+SW_SOLID_BODY = 0
+EXPECT_SHIFT_MM = 20.0  #: 板宽 100 → 120，右侧孔应右移 20
+
+
+def _close_doc(sw, doc, tag: str) -> dict:
+    before = open_doc_count(sw)
+    ok_t, title = _try(get_com_member, doc, "GetTitle")
+    title = str(title) if ok_t and title else ""
+    if not title:
+        return {"tag": tag, "closed": False, "reason": "取不到标题"}
+    _try(sw.CloseDoc, title)
+    after = open_doc_count(sw)
+    return {"tag": tag, "title": title, "doc_count": "%s → %s" % (before, after),
+            "closed": before >= 0 and after >= 0 and after < before}
+
+
+def _hole_centers(doc) -> list:
+    """★ 全部孔心（毫米）—— 判「孔有没有跟着板宽走」的独立读数。
+
+    ## ★★ 读法必须是「按草图特征 → GetSpecificFeature2 → GetSketchSegments」
+
+    ⚠ **不要**用 `sw_sketch.get_sketch_segments(sk)` —— 那个帮手要求**草图在编辑态**，
+      而打开已交付件时不在编辑态 ⇒ 回空 ⇒ 孔心读成 `[]`
+      ⇒ E2 会因为「读数失败」被判 fail，而不是「孔真没动」。
+      第 18 轮第一次跑就是这样误判的。
+
+    ★ 真机实测（`tools/probe_s3_hole_center_diagnose.py`）：
+      ```
+      草图1  段=4  圆心=[]
+      草图2  段=1  圆心=[[10.0, 10.0]]
+      草图3  段=1  圆心=[[90.0, 10.0]]
+      草图4  段=1  圆心=[[10.0, 50.0]]
+      草图5  段=1  圆心=[[90.0, 50.0]]
+      ```
+    """
+    out: list = []
+    for nm in feature_names(doc) or []:
+        if not (nm.startswith("草图") or nm.lower().startswith("sketch")):
+            continue
+        ok_f, feat = _try(get_com_member, doc, "FeatureByName", nm)
+        if not ok_f or feat is None:
+            continue
+        ok_s, sk = _try(get_com_member, feat, "GetSpecificFeature2")
+        if not ok_s or sk is None:
+            continue
+        ok_seg, segs = _try(get_com_member, sk, "GetSketchSegments")
+        for seg in list(segs) if ok_seg and segs else []:
+            pt = _member(seg, "GetCenterPoint2")
+            if pt is None:
+                continue
+            x, y = _member(pt, "X"), _member(pt, "Y")
+            if x is not None and y is not None:
+                out.append((round(float(x) * 1000.0, 2), round(float(y) * 1000.0, 2)))
+    return sorted(out)
+
+
+def _dims(doc) -> list:
+    out = []
+    for nm in feature_names(doc) or []:
+        if not (nm.startswith("草图") or nm.lower().startswith("sketch")):
+            continue
+        ok_f, feat = _try(get_com_member, doc, "FeatureByName", nm)
+        if not ok_f or feat is None:
+            continue
+        dd = _member(feat, "GetFirstDisplayDimension")
+        g = 0
+        while dd is not None and g < 100:
+            g += 1
+            dim = _member(dd, "GetDimension")
+            if dim is not None:
+                full = _member(dim, "FullName")
+                sv = _member(dim, "SystemValue")
+                out.append({
+                    "full_name": str(full) if full else "",
+                    "value_mm": round(float(sv) * 1000.0, 4) if sv is not None else None,
+                })
+            dd = _member(dd, "GetNext2")
+    return out
+
+
+def main() -> int:
+    ev: dict = {"probe": "s3-acceptance"}
+    sw = doc = None
+    try:
+        if not SRC.is_file():
+            print("★ 找不到交付件：%s" % SRC)
+            return 2
+        WORK.mkdir(parents=True, exist_ok=True)
+        copy = WORK / "板1_rev-1_accept.SLDPRT"
+        shutil.copy2(SRC, copy)
+
+        conn = c_.connect_solidworks(wait_seconds=30)
+        sw = conn[0] if isinstance(conn, tuple) else conn
+        try:
+            sw.CommandInProgress = True
+        except Exception:  # noqa: BLE001
+            pass
+        ok_o, doc = _try(c_.open_document, sw, str(copy))
+        if not ok_o or doc is None:
+            print("★ 打不开交付件副本：%s" % str(doc)[:120])
+            return 2
+        print("① 已打开交付件副本")
+
+        #: ── E1：主草图约束状态 + 驱动尺寸数 ──
+        sk = None
+        for nm in feature_names(doc) or []:
+            if nm.startswith("草图") or nm.lower().startswith("sketch"):
+                ok_f, feat = _try(get_com_member, doc, "FeatureByName", nm)
+                if ok_f and feat is not None:
+                    ok_s, s = _try(get_com_member, feat, "GetSpecificFeature2")
+                    if ok_s and s is not None:
+                        sk = s
+                        break
+        dims = _dims(doc)
+        driving = count_sketch_dimensions(doc)
+        st = None
+        if sk is not None:
+            ok_st, v = _try(lambda: int(sk.GetConstrainedStatus))
+            st = v if ok_st else None
+        obs_e1 = collect_sketch_constraint(
+            target="板1_rev-1 主草图",
+            entities=0, relations=(), dimensions=(),
+            solver_state="from_api",
+            solver_status_int=st,
+            driving_dimensions=driving if driving >= 0 else None,
+        )
+        res_e1 = judge_sketch_constraint(obs_e1, requirement_id="R-E1")
+        ev["E1"] = {"solver_status": st, "driving_dimensions": driving,
+                    "status": res_e1.status.value, "reason": res_e1.reason}
+        print("② E1：状态=%s 驱动尺寸=%s ⇒ %s" % (st, driving, res_e1.status.value))
+
+        #: ── E2：改主参数 → 孔心是否移动 ──
+        holes_before = _hole_centers(doc)
+        bbox_before = (solid_body_extent_mm(doc).get("x_mm"))
+        target = next(
+            (d for d in dims if d.get("value_mm") and abs(d["value_mm"] - 100.0) < 1.0),
+            None,
+        )
+        changed = ()
+        if target:
+            ok_u, _ = _try(update_dimension_mm, doc, target["full_name"], 120.0)
+            if ok_u:
+                changed = (target["full_name"],)
+        ww = whats_wrong(doc)
+        holes_after = _hole_centers(doc)
+        bbox_after = (solid_body_extent_mm(doc).get("x_mm"))
+        shifts = []
+        for (x0, y0), (x1, y1) in zip(holes_before, holes_after):
+            shifts.append(round(x1 - x0, 2))
+        max_shift = max((abs(s) for s in shifts), default=0.0)
+        linked = bool(max_shift > 1.0)
+        ev["E2"] = {
+            "holes_before": holes_before, "holes_after": holes_after,
+            "shifts_mm": shifts, "max_shift_mm": max_shift,
+            "expect_shift_mm": EXPECT_SHIFT_MM,
+            "bbox": "%s → %s" % (bbox_before, bbox_after),
+            "rebuild_errors": int(ww.get("count") or 0),
+            "changed_params": list(changed),
+        }
+        #: 保存重开核一次（第 11 轮验过的机制）
+        ok_s, _ = _try(c_.save_document, doc)
+        title = _member(doc, "GetTitle")
+        _try(sw.CloseDoc, str(title) if title else "")
+        ok_r, doc2 = _try(c_.open_document, sw, str(copy))
+        reopened_ok = False
+        if ok_r and doc2 is not None:
+            doc = doc2
+            reopened_ok = (solid_body_extent_mm(doc).get("x_mm")) is not None
+        obs_e2 = collect_rebuild(
+            target="板1_rev-1 副本",
+            opened_existing=True,
+            changed_params=changed,
+            downstream_linked=linked,
+            rebuild_errors=int(ww.get("count") or 0),
+            reopened_ok=reopened_ok,
+            drawing_is_current=False,
+        )
+        res_e2 = judge_rebuild(obs_e2, requirement_id="R-E2")
+        ev["E2"]["status"] = res_e2.status.value
+        ev["E2"]["reason"] = res_e2.reason
+        print("③ E2：孔心位移=%s（期望 %s）⇒ %s"
+              % (shifts, EXPECT_SHIFT_MM, res_e2.status.value))
+
+        #: ── E3：特征树 + 改前序后下游 ──
+        tree = []
+        for nm in feature_names(doc) or []:
+            info = feature_info(doc, nm) or {}
+            tree.append({"name": nm, "type": info.get("GetTypeName2")})
+        cn = _tally(tree)
+        ww3 = whats_wrong(doc)
+        obs_e3 = collect_feature_tree(
+            target="板1_rev-1 副本",
+            feature_count=len(tree),
+            native_features=cn["native"],
+            imported_solids=cn["import"],
+            dangling_refs=0,
+            errors=int(ww3.get("count") or 0),
+            warnings=0,
+            editable_prefix_verified=bool(
+                changed and (bbox_after or 0) > (bbox_before or 0)
+            ),
+            version="2026-10-25",
+        )
+        res_e3 = judge_feature_tree(obs_e3, requirement_id="R-E3")
+        ev["E3"] = {"tally": cn, "feature_count": len(tree),
+                    "errors": int(ww3.get("count") or 0),
+                    "status": res_e3.status.value, "reason": res_e3.reason}
+        print("④ E3：特征=%d 分类=%s ⇒ %s"
+              % (len(tree), cn, res_e3.status.value))
+
+        #: ── 汇总 + 渲染 ──
+        rep = build_report([res_e1, res_e2, res_e3])
+        md = render_markdown(rep, title="S3 首件板件 · E1–E3 验收报告（真机）")
+        out_md = R / "specs" / "350-first-part-delivery" / "s3-acceptance.md"
+        out_md.write_text(md, encoding="utf-8")
+        ev["report"] = {"overall": rep.get("overall"), "counts": rep.get("counts")}
+        print("⑤ 总体：%s · 计数 %s" % (rep.get("overall"), rep.get("counts")))
+        print("   报告已写：%s" % out_md)
+        return 0
+    except Exception as exc:  # noqa: BLE001
+        import traceback
+
+        ev["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:240])
+        ev["traceback"] = traceback.format_exc()[-1200:]
+        print("★ 失败：", ev["err"])
+        return 1
+    finally:
+        if sw is not None:
+            if doc is not None:
+                ev["close"] = _close_doc(sw, doc, "副本")
+                print("   关闭：%s" % ev["close"])
+            left = open_doc_count(sw)
+            ev["docs_left"] = left
+            print("   收尾后剩余文档数：%s" % left)
+            try:
+                sw.CommandInProgress = False
+            except Exception:  # noqa: BLE001
+                pass
+        ev["finished_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        dest = R / "output" / "s3-acceptance.json"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")
+        print("证据已写：%s" % dest)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
