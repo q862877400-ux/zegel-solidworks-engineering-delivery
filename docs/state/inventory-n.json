@@ -1,0 +1,605 @@
+{
+  "swprojects": {
+    "path": "C:\\swprojects",
+    "dirs": 26,
+    "with_git": 25,
+    "with_license": 23,
+    "without_license": [
+      "_tmp_mcp",
+      "offline-solidworks-api-docs",
+      "solidworks-build-mechanical-models"
+    ],
+    "license_heads": {
+      "MIT License": 18,
+      "<无 LICENSE>": 3,
+      "GNU AFFERO GENERAL PUBLIC LICENSE Versio": 2,
+      "Copyright (c) 2026 walterkken": 1,
+      "GNU GENERAL PUBLIC LICENSE Version 2, Ju": 1,
+      "Apache License": 1
+    },
+    "rows": [
+      {
+        "name": "_tmp_mcp",
+        "is_git": false,
+        "files": 1,
+        "ext_top": {
+          ".py": 1
+        },
+        "license": {
+          "file": "",
+          "first": "<无 LICENSE>"
+        },
+        "last_commit": "<非 git 检出>"
+      },
+      {
+        "name": "andrewbartels1",
+        "is_git": true,
+        "files": 479,
+        "ext_top": {
+          ".py": 257,
+          ".md": 95,
+          ".png": 38,
+          "<无扩展名>": 18,
+          ".sample": 14,
+          ".yml": 10,
+          ".svg": 9,
+          ".ps1": 8
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-22"
+      },
+      {
+        "name": "Cai-aa__CAD-Agent-Hub",
+        "is_git": true,
+        "files": 205,
+        "ext_top": {
+          ".py": 117,
+          ".md": 25,
+          "<无扩展名>": 17,
+          ".sample": 14,
+          ".json": 8,
+          ".ps1": 5,
+          ".toml": 4,
+          ".txt": 3
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-07"
+      },
+      {
+        "name": "codestack",
+        "is_git": true,
+        "files": 2474,
+        "ext_top": {
+          ".png": 909,
+          ".md": 646,
+          ".vba": 439,
+          ".cs": 152,
+          ".svg": 139,
+          ".vb": 88,
+          ".gif": 14,
+          ".sample": 14
+        },
+        "license": {
+          "file": "LICENSE.md",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-05-07"
+      },
+      {
+        "name": "CSharpAndSolidWorks",
+        "is_git": true,
+        "files": 270,
+        "ext_top": {
+          ".cs": 59,
+          ".sldprt": 38,
+          ".resx": 17,
+          "<无扩展名>": 16,
+          ".png": 16,
+          ".vb": 15,
+          ".dll": 14,
+          ".sample": 14
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-05-23"
+      },
+      {
+        "name": "ddeng-skills",
+        "is_git": true,
+        "files": 78,
+        "ext_top": {
+          ".md": 33,
+          "<无扩展名>": 19,
+          ".sample": 14,
+          ".yaml": 7,
+          ".py": 2,
+          ".idx": 1,
+          ".pack": 1,
+          ".rev": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "Copyright (c) 2026 walterkken"
+        },
+        "last_commit": "2026-09-11"
+      },
+      {
+        "name": "deloarts__pyswx",
+        "is_git": true,
+        "files": 169,
+        "ext_top": {
+          ".py": 107,
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".whl": 9,
+          ".gz": 9,
+          ".md": 3,
+          ".png": 2,
+          ".yaml": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2025-12-12"
+      },
+      {
+        "name": "Eduardof0nt",
+        "is_git": true,
+        "files": 36,
+        "ext_top": {
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".py": 2,
+          ".md": 1,
+          ".txt": 1,
+          ".idx": 1,
+          ".pack": 1,
+          ".rev": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-05-22"
+      },
+      {
+        "name": "just1step__solidworks-mcp",
+        "is_git": true,
+        "files": 119,
+        "ext_top": {
+          ".cs": 69,
+          "<无扩展名>": 14,
+          ".sample": 14,
+          ".md": 6,
+          ".csproj": 4,
+          ".yml": 4,
+          ".bat": 2,
+          ".sln": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-04-10"
+      },
+      {
+        "name": "mcp-server-solidworks",
+        "is_git": true,
+        "files": 128,
+        "ext_top": {
+          ".py": 29,
+          ".cs": 17,
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".json": 13,
+          ".md": 9,
+          ".dll": 9,
+          ".xml": 7
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007"
+        },
+        "last_commit": "2026-09-28"
+      },
+      {
+        "name": "offline-solidworks-api-docs",
+        "is_git": true,
+        "files": 240,
+        "ext_top": {
+          ".py": 127,
+          ".json": 33,
+          ".md": 22,
+          "<无扩展名>": 21,
+          ".sample": 14,
+          ".jsonl": 7,
+          ".cfg": 5,
+          ".xml": 3
+        },
+        "license": {
+          "file": "",
+          "first": "<无 LICENSE>"
+        },
+        "last_commit": "2026-08-03"
+      },
+      {
+        "name": "pySW",
+        "is_git": true,
+        "files": 38,
+        "ext_top": {
+          ".sample": 14,
+          "<无扩展名>": 13,
+          ".py": 4,
+          ".md": 1,
+          ".cfg": 1,
+          ".yml": 1,
+          ".sldprt": 1,
+          ".idx": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "GNU GENERAL PUBLIC LICENSE Version 2, June 1991"
+        },
+        "last_commit": "2023-04-24"
+      },
+      {
+        "name": "q3ds-solidworks-mcp",
+        "is_git": true,
+        "files": 105,
+        "ext_top": {
+          ".py": 33,
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".cs": 12,
+          ".md": 8,
+          ".json": 5,
+          ".txt": 3,
+          ".lock": 2
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007"
+        },
+        "last_commit": "2026-08-24"
+      },
+      {
+        "name": "Slacker-LLC",
+        "is_git": true,
+        "files": 55,
+        "ext_top": {
+          "<无扩展名>": 15,
+          ".py": 15,
+          ".sample": 14,
+          ".md": 3,
+          ".yml": 3,
+          ".toml": 1,
+          ".json": 1,
+          ".idx": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "Apache License"
+        },
+        "last_commit": "2026-08-16"
+      },
+      {
+        "name": "solidworks-api",
+        "is_git": true,
+        "files": 582,
+        "ext_top": {
+          ".cs": 315,
+          ".dll": 109,
+          ".png": 25,
+          ".md": 22,
+          "<无扩展名>": 17,
+          ".csproj": 17,
+          ".sln": 16,
+          ".sample": 14
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-14"
+      },
+      {
+        "name": "solidworks-auto-modeling",
+        "is_git": true,
+        "files": 50,
+        "ext_top": {
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".md": 9,
+          ".py": 5,
+          ".vbs": 2,
+          ".txt": 1,
+          ".yaml": 1,
+          ".idx": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-07-14"
+      },
+      {
+        "name": "solidworks-automation-skill",
+        "is_git": true,
+        "files": 43,
+        "ext_top": {
+          "<无扩展名>": 16,
+          ".sample": 14,
+          ".md": 6,
+          ".py": 2,
+          ".yml": 1,
+          ".code-workspace": 1,
+          ".idx": 1,
+          ".pack": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-08-22"
+      },
+      {
+        "name": "solidworks-build-mechanical-models",
+        "is_git": true,
+        "files": 39,
+        "ext_top": {
+          "<无扩展名>": 14,
+          ".sample": 14,
+          ".md": 5,
+          ".yaml": 1,
+          ".vbs": 1,
+          ".ps1": 1,
+          ".idx": 1,
+          ".pack": 1
+        },
+        "license": {
+          "file": "",
+          "first": "<无 LICENSE>"
+        },
+        "last_commit": "2026-07-13"
+      },
+      {
+        "name": "solidworks-com-automation-skill",
+        "is_git": true,
+        "files": 51,
+        "ext_top": {
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".md": 8,
+          ".py": 4,
+          ".cmd": 3,
+          ".command": 1,
+          ".yaml": 1,
+          ".yml": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-08-04"
+      },
+      {
+        "name": "Solidworks-MCP",
+        "is_git": true,
+        "files": 86,
+        "ext_top": {
+          ".vbs": 27,
+          ".py": 22,
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".md": 2,
+          ".example": 1,
+          ".txt": 1,
+          ".json": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-03-23"
+      },
+      {
+        "name": "solidworks-skills",
+        "is_git": true,
+        "files": 118,
+        "ext_top": {
+          ".py": 37,
+          ".cs": 30,
+          ".md": 17,
+          "<无扩展名>": 14,
+          ".sample": 14,
+          ".txt": 1,
+          ".json": 1,
+          ".toml": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-17"
+      },
+      {
+        "name": "SolidworksMCP-TS",
+        "is_git": true,
+        "files": 123,
+        "ext_top": {
+          ".ts": 58,
+          ".md": 16,
+          "<无扩展名>": 15,
+          ".sample": 14,
+          ".vba": 5,
+          ".json": 4,
+          ".yml": 3,
+          ".mjs": 2
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-19"
+      },
+      {
+        "name": "sw-ai-bridge",
+        "is_git": true,
+        "files": 40,
+        "ext_top": {
+          "<无扩展名>": 16,
+          ".sample": 14,
+          ".md": 3,
+          ".py": 2,
+          ".txt": 1,
+          ".png": 1,
+          ".idx": 1,
+          ".pack": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-07-06"
+      },
+      {
+        "name": "sw-api-skill",
+        "is_git": true,
+        "files": 36,
+        "ext_top": {
+          "<无扩展名>": 16,
+          ".sample": 14,
+          ".md": 3,
+          ".idx": 1,
+          ".pack": 1,
+          ".rev": 1
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-05-20"
+      },
+      {
+        "name": "sw-automation-skill",
+        "is_git": true,
+        "files": 451,
+        "ext_top": {
+          ".py": 177,
+          ".md": 61,
+          ".pyc": 31,
+          ".json": 25,
+          "<无扩展名>": 18,
+          ".png": 18,
+          ".tsx": 17,
+          ".ts": 14
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-09-28"
+      },
+      {
+        "name": "sw-skill-fork",
+        "is_git": true,
+        "files": 2268,
+        "ext_top": {
+          ".py": 930,
+          ".pyc": 678,
+          "<无扩展名>": 260,
+          ".md": 136,
+          ".json": 70,
+          ".yaml": 23,
+          ".txt": 19,
+          ".png": 18
+        },
+        "license": {
+          "file": "LICENSE",
+          "first": "MIT License"
+        },
+        "last_commit": "2026-10-03"
+      }
+    ]
+  },
+  "untouched_dirs": {
+    "apps": {
+      "exists": true,
+      "files": 652,
+      "ext_top": {
+        ".py": 447,
+        ".md": 54,
+        ".json": 33,
+        ".png": 18,
+        ".tsx": 17,
+        ".ts": 14,
+        ".pyc": 13,
+        ".yaml": 11
+      },
+      "subdirs": [
+        "desktop",
+        "workbench-ui"
+      ]
+    },
+    "dotnet": {
+      "exists": true,
+      "files": 7,
+      "ext_top": {
+        ".cs": 5,
+        ".base64": 1,
+        ".csproj": 1
+      },
+      "subdirs": [
+        "CadStudio.SolidWorks.AddinHost"
+      ]
+    },
+    "ai_team": {
+      "exists": true,
+      "files": 8,
+      "ext_top": {
+        ".cjs": 6,
+        ".json": 1,
+        ".ps1": 1
+      },
+      "subdirs": []
+    },
+    "subskills": {
+      "exists": true,
+      "files": 80,
+      "ext_top": {
+        ".py": 23,
+        ".md": 22,
+        ".pyc": 12,
+        ".yaml": 8,
+        ".json": 7,
+        ".cs": 2,
+        ".txt": 1,
+        ".cpp": 1
+      },
+      "subdirs": [
+        "autocad-automation",
+        "solidworks-engineering-drawing",
+        "solidworks-fillet-chamfer-cnc",
+        "solidworks-threaded-holes",
+        "solidworks-vibecad"
+      ]
+    },
+    "references": {
+      "exists": true,
+      "files": 22,
+      "ext_top": {
+        ".md": 22
+      },
+      "subdirs": []
+    }
+  }
+}
