@@ -76,11 +76,27 @@
 官方源核查完成，**关键发现是草图约束状态 API 只给状态枚举、不给数值自由度**
 ⇒ E1 真机采集器分两层：判「是否全约束」可用枚举；判「剩几个自由度」必须返回 `unknown`。
 
-### 待补的技术风险（不阻断 S3，但要记账）
+### 已关闭的技术风险
 
-- `_raw/reflect` 缺主程序集 `sldworks` 的转储 ⇒ E1 成员只有单一来源，不满足三源互证
-- `IInterferenceDetectionMgr.TreatCoincidenceAsInterference` 的默认值未核 ⇒ S4 开工前必须补
-- `IAssemblyDoc` 无「读剩余自由度」成员 ⇒ E4 的 DOF 判定同病
+- ~~`_raw/reflect` 缺主程序集 `sldworks` 的转储~~ ⇒ **已补**：
+  `pwsh -File tools\reflect-interop.ps1 -Targets sldworks -Out <仓库根>\_raw\reflect`
+  → `ifaces=1032 members=20627`。E1/E4 的成员现在**三源互证**成立
+- ~~`IAssemblyDoc` 无「读剩余自由度」成员~~ ⇒ **升级为三源确认的否定结论**：
+  20627 个成员里 `DegreesOfFreedom` / `GetDof` / `RemainingDof` 等**全部零命中**
+  ⇒ 不是「我没查到」，是**确认不存在**
+
+### 仍然开着的技术风险
+
+| 风险 | 影响 | 处置 |
+|---|---|---|
+| **E1「有意保留自由度」无法从模型反读** | 只能靠需求声明 `intentional_dof`，不能事后校验 | 记入需求冻结表，由工程负责人明示 |
+| **E4 的 `E4.dof` 子项真机永远 `unknown`** | 整条 E4 在真机上不可能全绿 | 已拆出 `E4.interference`（配合/干涉/间隙，真机可验）；两条都绿才算 E4 成立 |
+| `TreatCoincidenceAsInterference` 默认值官方没写 | 同一个模型在不同会话可能给出不同干涉计数 | S4 必须**显式设置**该属性并把取值写进证据链 |
+
+★★ **上面第 2 条是计划级风险，需要业主知情**：
+「装配自由度闭合」这条判据，在现有 API 下只能验一半。
+要么接受「E4 部分可验」，要么把 E4 的表述改成「配合约束表达 + 无干涉 + 间隙合规」。
+**改判据需要批准**（`AGENTS.md` 停止条件第 9 条），不能在施工里自行调整。
 
 ---
 
