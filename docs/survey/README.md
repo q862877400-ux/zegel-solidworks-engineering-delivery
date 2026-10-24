@@ -29,6 +29,9 @@ Get-ChildItem docs\survey\cards               # 看已产出的卡片
 - `docs/survey/state.json` —— **机器可读状态**（已完成/进行中/待办、路径、下一步动作）
 - `docs/ai-3d-survey-plan.md` —— 分档（T1/T2/T3）、卡片模板、验收判据、分批计划
 
+**只想快速拿到「结论层」而不读 50 张卡**：读 [`docs/survey/SYNTHESIS.md`](SYNTHESIS.md)
+（技术路径与现有效果的分析汇总，只汇总不下判断）；要完整技术细节再回 `docs/ai-cad-landscape-report.md`（v3）。
+
 ---
 
 ## 2. 目录地图（东西都在哪）
@@ -37,13 +40,14 @@ Get-ChildItem docs\survey\cards               # 看已产出的卡片
 |---|---|
 | `docs/survey/README.md` | **本文件**：交接与索引 |
 | `docs/survey/state.json` | 机器可读状态（每轮更新）|
+| `docs/survey/SYNTHESIS.md` | **技术路径与现有效果的分析汇总**（只汇总、不下判断：证据等级分布 / 十类架构分布 / 唯一真跑读数 / 厂商自述数字与复现状态 / 12 条机制 / 9 处无对应实现 / 许可四档 / 查不到清单 / 调研自身偏差）|
 | `docs/survey/cards/*.md` | **逐项目卡片**（核心产出，每项目一张）|
-| `docs/survey/architecture-matrix.md` | 架构分类汇总（**由脚本生成，不许手写**；R7 出）|
-| `docs/survey/step-matrix.md` | 步骤做法矩阵（**由脚本生成**；R7 出）|
+| `docs/survey/architecture-matrix.md` | 架构分类汇总（**由脚本生成，不许手写**）|
+| `docs/survey/step-matrix.md` | 步骤做法矩阵（**由脚本生成**）|
 | `docs/ai-3d-survey-plan.md` | 调研计划：分档判据、卡片模板、验收判据、R1–R7 分批 |
-| `docs/ai-cad-landscape-report.md` | 总论报告（v2，九类架构 + E1–E9 环节 + 数字索引；R7 更新为 v3）|
-| `scripts/check_survey_cards.py` | 卡片门禁（结构 + 出处检查）|
-| `scripts/gen_survey_matrix.py` | 汇总矩阵生成器（R7 写，**尚未创建**）|
+| `docs/ai-cad-landscape-report.md` | 总论报告（**v3**：10 类架构 + 六维分布 + E1–E9 环节 + 12 条机制 + 9 处空白 + 数字索引）|
+| `scripts/check_survey_cards.py` | 卡片门禁（结构 + 出处检查；已接进 `release_check`）|
+| `scripts/gen_survey_matrix.py` | 汇总矩阵生成器（已创建；两个矩阵由它从卡片 tag 重算）|
 | `D:\ai3d-survey\repos\` | **40 个克隆**（`<owner>__<name>` 命名，总 1.0 GB）|
 | `D:\ai3d-survey\repos.txt` | 克隆清单（40 行，owner/repo）|
 | `D:\ai3d-survey\logs\clone-log.tsv` | 克隆日志（repo / status / 秒 / MB）|
