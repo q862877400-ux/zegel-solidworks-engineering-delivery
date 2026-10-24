@@ -178,6 +178,16 @@ METHOD_LIBRARY: dict[str, MethodSpec] = {
             "extrude_cut",
             "circular_pattern",
         ),
+        #: ★★★ 2026-10-25（第 19 轮）**孔位参数化的硬前置**（真机实测）：
+
+        #:   · 孔心必须**先是尺寸**，否则改主参数时孔不会动 ⇒ E2 的负例
+        #:     「孔未随板宽变化」。
+        #:   · ⚠ **不要把孔和板轮廓放同一张草图**：真机实测矩形 + 4 孔圆同草图时，
+        #:     `FullyDefineSketch` 只加 1 个尺寸，而那 1 个是**孔直径 6.0 mm**、
+        #:     **板宽不在尺寸里** ⇒ 主参数丢失（对照「矩形单独」它给的是 100 mm＝板宽）。
+        #:   · ⚠ 给孔心**新建**尺寸的方法族本机已退化（`known-facts.md` 事实 560）
+        #:     ⇒ 当前 E2 阻塞，四条替代路已排除。
+        #:   详见 `specs/350-first-part-delivery/s3-closeout.md` 第三节与事实 561。
         forbidden=("★ 禁止逐孔单独建（★ 应为阵列）", "★ 禁止边距未验就开孔"),
         complexity=Complexity.MEDIUM,
         modification_domain=("hole_diameter", "hole_spacing", "hole_count", "datum"),

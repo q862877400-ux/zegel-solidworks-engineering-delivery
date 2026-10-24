@@ -7150,6 +7150,20 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 561 | **★★ 孔与板轮廓放同一张草图 ⇒ `FullyDefineSketch` 把**孔直径**尺寸化、**板宽反而丢了**（主参数丢失）** —— 2026-10-25（第 19 轮）。
+     ★ 起因：E2 要「孔随板宽联动」，而给孔心加尺寸的方法族本机已退化（事实 560）。故试一条不依赖它的路：把孔与轮廓放**同一张草图**，靠 `FullyDefineSketch` 加的**关系**把孔绑到边上。
+     ★★ 真机（`tools/probe_s3_hole_linkage_fully_define.py`）：
+     ```
+     一张草图：矩形 100×60 + 4 个孔圆(r=3)
+     FullyDefineSketch(True, 1023, 1023, True, 1, Nothing, 1, Nothing, 0, 0)
+       ⇒ ok=True · 状态 2 → 3 · 尺寸 0 → 1
+       ⇒ 尺寸清单：D1@草图1 = **6.0 mm**（孔直径）
+       ⇒ **板宽不在尺寸里** ⇒ 改不了主参数
+     ```
+     ★ 对照：矩形**单独**时 `AutoDimension2` 给的是 **100 mm = 板宽**（第 7 轮）。
+     ⇒ ★★ **故这条路比原路更差**：不仅没让孔联动，连板宽这个主参数都丢了，而 E1 的「驱动尺寸」还会指向孔的直径。
+     ★ 结论：孔位参数化的硬前置是「**孔心必须先是尺寸**」，三条替代路（特征阵列 / 方程式 / 同草图加关系）都绕不过它。详见 `specs/350-first-part-delivery/s3-closeout.md` 第三、五节。|真机：`tools/probe_s3_hole_linkage_fully_define.py`；证据 `output/s3-hole-linkage-fully-define.json` |
+
 | 560 | **★★★ 环境退化：`sketch_dimension_horizontal` / `sketch_dimension_vertical` 在本机已不可用（复跑自己那个已验探针就失败）** —— 2026-10-25（第 14 轮）。
      ★ 事实 422（轮 542）当年验成：选一条线段或两个端点后 `AddHorizontalDimension2` / `AddVerticalDimension2` 能让草图尺寸 0 → 1。
      ★★ 本轮为做「孔位联动」复跑 `tools/probe_hv_dimension_with_selection.py`（**同一个探针，一字未改**）：
