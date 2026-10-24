@@ -97,7 +97,7 @@ def test_only_named_files_stay_staged(monkeypatch):
     """★★ 主断言：索引里先塞满「别人的文件」⇒ 护栏后**只剩点名的那一个** ✓"""
     mine = "tools/commit_mine.py"
     fake = _FakeIndex()
-    fake.preload("docs/ROADMAP.md", 56, 0)             #: ★ 别人的
+    fake.preload("docs/PLAN.md", 56, 0)             #: ★ 别人的
     fake.preload("docs/metrics.md", 5, 5)              #: ★ 别人的（含删除）
     monkeypatch.setattr(MOD, "_git", fake)
     #: ★ 删除预载会先触发第 0 步 ⇒ 这里给它放行权限，专测「只留点名的」

@@ -1,6 +1,6 @@
 """★ 守「方法↔属性」那一维（★ 任务书阶段 2 要的那一类 · 轮 135）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + `docs/phase2-obsolete-status.md` §六 + `tools/annotate_obsolete_form.py`
+# 仓库:   本项目自身 + `docs/history/phase2-obsolete-status.md` §六 + `tools/annotate_obsolete_form.py`
 # 文件:   tests/test_obsolete_form_annotation.py（★ 新）
 # 定位:   ★★★★★★ 2026-10-04（轮 135）**补上任务书要的那一类**：
 #     ★ 「**方法↔属性**」= 旧成员与它后继的 **kind 不同** ✓
@@ -26,7 +26,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 ANN = REPO / "tools" / "annotate_obsolete_form.py"
-DOC = REPO / "docs" / "phase2-obsolete-status.md"
+DOC = REPO / "docs" / "history" / "phase2-obsolete-status.md"
 OUT = REPO / "output" / "obsolete-form-annotation.json"
 SCAN = REPO / "tools" / "scan_obsolete_safe.py"
 

@@ -30,6 +30,16 @@
 | `./` | 旧交接（`HANDOFF-*`、`AGENTS-*`）· 旧计划（`plan-*`）· 旧报告（`milestone-*`、`final-*`、`weekly-*`）· 旧提案与调研（`proposal-*`、`research-*`、`market-*`）· 一次性盘点（`spec2xx-*`、`t003-*`） |
 | `engineering/` | 2026-10-08 那一批工程系统施工方案：原架构方案、EC00–EC12 施工总计划、P0 五份草案、40 路并行准备三份 |
 
+## 大件归档（本轮拆分产物）
+
+| 文件 | 是什么 |
+|---|---|
+| `roadmap-log.md` | `docs/PLAN.md` 前身里「§一 游标」累积的**逐轮施工流水**（按时间倒序，最新在上） |
+| `plan-legacy-stages.md` | 旧阶段体系 **P0–P9** 的阶段总览与详情（已被 `ENGINEERING-PATH.md` 的 S0–S6 取代）+ Bunny 支线记录 + 旧「关键事实」段 |
+| `final-audit.md` | 一次性终局验收（A1–A8 逐条），判据已并入 `acceptance-criteria.md` |
+| `final-report-24h.md` | 2026-10-04 的 24 小时任务收口报告 |
+| `phase2-obsolete-status.md` / `phase3-convergence-status.md` | 2026-10-04 的阶段核对快照 |
+
 ## 引用约定
 
 - 归档文件**仍可被引用**，但引用路径要写成 `docs/history/<file>`。

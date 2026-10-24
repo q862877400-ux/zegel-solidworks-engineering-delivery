@@ -1,6 +1,6 @@
 """★ 守「24h 收口报告」这份文档 —— ★ 核心是**数字不许手写**（★ 轮 137）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + `docs/final-report-24h.md` + `output/final-report-facts.json`
+# 仓库:   本项目自身 + `docs/history/final-report-24h.md` + `output/final-report-facts.json`
 # 文件:   tests/test_final_report_24h.py（★ 新）
 # 定位:   ★★★★ 任务书**阶段 6**：★「写收口报告（★ 做成了什么 / 没做成什么 / 为什么 / 下一步）」⇒
 #     ★★ **⇒ 报告的四节都要在** ⇒ ★★ **而本测试把它变成可核的** ✓
@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-DOC = REPO / "docs" / "final-report-24h.md"
+DOC = REPO / "docs" / "history" / "final-report-24h.md"
 FACTS = REPO / "output" / "final-report-facts.json"
 COLLECT = REPO / "output" / "_collect_final_report_facts.py"
 

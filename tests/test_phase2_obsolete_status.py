@@ -1,6 +1,6 @@
 """★ 守「阶段 2 · T1 生产侧现状」这份文档（★ 含两条判据 · 轮 134）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + `docs/phase2-obsolete-status.md` + `tools/scan_obsolete_safe.py`（★ 判据**不改**）
+# 仓库:   本项目自身 + `docs/history/phase2-obsolete-status.md` + `tools/scan_obsolete_safe.py`（★ 判据**不改**）
 # 文件:   tests/test_phase2_obsolete_status.py（★ 新）
 # 定位:   ★★★★★★ 2026-10-04（轮 134）**生产侧从 35 降到 6、★ 而 6 条**全部已处置**** ⇒
 #     ★★ **⇒ **生产侧待办 = 0**** ✓
@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-DOC = REPO / "docs" / "phase2-obsolete-status.md"
+DOC = REPO / "docs" / "history" / "phase2-obsolete-status.md"
 SCAN = REPO / "tools" / "scan_obsolete_safe.py"
 
 #: ★ 那 6 条（★ 文件, 成员, ★ 真调用点所在的**成员名**必须在文件里出现）

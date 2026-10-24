@@ -143,17 +143,17 @@ def check(spec_dir: Path):
     else:
         f.append(("PASS", "不许写·进度", "spec.md 里没有数值候选（覆盖率/百分数/x→y）"))
 
-    #: 宪法 §SDD 接口表 —— tasks.md 必须接到 ROADMAP 的**一个阶段**
-    roadmap = _read(R / "docs" / "ROADMAP.md")
+    #: 宪法 §SDD 接口表 —— tasks.md 必须接到 PLAN 的**一个阶段**
+    roadmap = _read(R / "docs" / "PLAN.md")
     sid = spec_dir.name
     if sid in roadmap:
-        f.append(("PASS", "接口·ROADMAP", "`docs/ROADMAP.md` 里点名了 `%s`" % sid))
+        f.append(("PASS", "接口·ROADMAP", "`docs/PLAN.md` 里点名了 `%s`" % sid))
     else:
         f.append(
             (
                 "FAIL",
                 "接口·ROADMAP",
-                "`docs/ROADMAP.md` **没有**提到 `%s` ⇒ **另起了体系**" % sid,
+                "`docs/PLAN.md` **没有**提到 `%s` ⇒ **另起了体系**" % sid,
             )
         )
 

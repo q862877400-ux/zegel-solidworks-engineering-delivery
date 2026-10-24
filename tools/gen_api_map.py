@@ -31,7 +31,6 @@
 from __future__ import annotations
 
 import ast
-import json
 import re
 import sys
 from collections import defaultdict
@@ -361,26 +360,9 @@ def main() -> int:
     )
 
     OUT.write_text("\n".join(item), encoding="utf-8")
-    side = OUT.with_suffix(".json")
-    side.write_text(
-        json.dumps(
-            {
-                "scanned_files": files_scanned,
-                "members": len(usage),
-                "calls": total_calls,
-                "by_shape": by_shape,
-                "member_to_ifaces": {m: members[m][0] for m in sorted(usage)},
-                "member_to_sites": {
-                    m: dict(sorted(usage[m].items())) for m in sorted(usage)
-                },
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-        encoding="utf-8",
-    )
     print(f"已生成 {OUT}  ({OUT.stat().st_size} 字节, {len(item)} 行)")
-    print(f"  完整接口清单 -> {side.name}")
+    print("  统计：扫描 %d 文件 · 成员 %d · 调用点 %d"
+          % (files_scanned, len(usage), total_calls))
     print(f"  扫描 .py 文件 {files_scanned} 个")
     print(f"  对撞到官方成员 {len(usage)} 个 / 调用点 {total_calls} 处")
     for dom in sorted(domain_members, key=lambda d: -len(domain_members[d])):

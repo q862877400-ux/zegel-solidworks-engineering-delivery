@@ -52,6 +52,10 @@ BUNDLED_SKILL = ROOT / "apps/workbench-ui/src-tauri/resources/skill"
 # ────────────────────────────────────────────────────────────────────
 
 #: 本任务新增/扩展的发布必需文件（新增即纳入清单，防被静默丢弃）
+#: ⚠ `docs/provenance-index.json` 已从清单移除：它的生成器
+#:   `scripts/check_provenance.py --index` **需要 `origin/main`**，而本仓
+#:   `origin` 故意留空 ⇒ 本地**永远无法重算** ⇒ 它只能是「存在即通过」的空壳。
+#:   按「一个门禁写了不等于它有效」的判据，删掉该文件与这条断言。
 REQUIRED_ABILITY_FILES = (
     "docs/capability-matrix.md",
     "docs/gap-analysis.md",
@@ -60,7 +64,6 @@ REQUIRED_ABILITY_FILES = (
     "docs/usage-guide.md",
     "docs/api-map.md",
     "docs/family-coverage.md",
-    "docs/provenance-index.json",
     "scripts/sw_simulation.py",
     "scripts/sw_surface.py",
     "scripts/sw_render_material.py",
@@ -563,7 +566,7 @@ def _run_refuted_patterns_gate() -> dict[str, object]:
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把验收命令可跑性接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_spec_acceptance_paths.py`（本门禁的实现）
-# `D:\AI\SW\docs\ROADMAP.md` §〇 纪律三「**验收必须是可跑的命令** —— 『我检查过了』不算
+# `docs/PLAN.md` 的纪律三「**验收必须是可跑的命令** —— 『我检查过了』不算
 # 」
 # 定位:   新增 `_run_spec_acceptance_paths_gate`：**硬门禁** ——
 #         它查的是 `specs/**/*.md` 的 `→ 验收:` 行点到的脚本**在不在仓库里**。
@@ -644,7 +647,7 @@ def _run_probe_reuse_gate() -> dict[str, object]:
 # 文件:   `scripts/check_preselect_family.py`（本门禁的实现）
 # `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §四「通用建议 3」（点
 # 名要建）
-#         `docs/ROADMAP.md` §一 游标「下一步候选 ①」
+#         `docs/history/roadmap-log.md`「下一步候选 ①」
 # 定位:   新增 `_run_preselect_family_gate`：**硬门禁** ——
 #         ★ 判「**要求调用方先选、而模型没有任何办法选**」：① spec 文档**明写**要先选；
 #           ② 没有 `pre_call` 也没有 `derived_args`；③ 没有 `selection` 形态入参；
@@ -2846,7 +2849,7 @@ def run_release_check() -> dict[str, object]:
             + str(rel_imports.get("output", ""))
         )
     # ⚑ **验收命令可跑性门禁**（硬门禁）：`specs/**/*.md` 的 `→ 验收:` 行点到的脚本
-    #   必须在**仓库里**（ROADMAP §〇 纪律三「验收必须是可跑的命令」）。
+    #   必须在**仓库里**（PLAN 的纪律三「验收必须是可跑的命令」）。
     #   触发它的是 2026-10-01 实测到的 **2 例仓库外验收脚本**。
     # ⚠ **便携性**：specs 目录不在本机时它**自己 SKIP 并 exit 0** ⇒ 别的机器上不会无条件
     # 红。

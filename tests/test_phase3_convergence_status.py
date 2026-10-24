@@ -1,6 +1,6 @@
 """★ 守「阶段 3 收敛判据的现状」这份文档（★ 含**重跑核对** · 轮 133）。"""
 # ── 来源 ─────────────────────────────────────────────────────────────────
-# 仓库:   本项目自身 + `docs/phase3-convergence-status.md` +
+# 仓库:   本项目自身 + `docs/history/phase3-convergence-status.md` +
 #         `tools/build_capability_matrix.py`（★ **阈值写死在那里**）
 # 文件:   tests/test_phase3_convergence_status.py（★ 新）
 # 定位:   ★★★★★★ 2026-10-04（轮 133）**阶段 3 的三条判据实测**：
@@ -24,7 +24,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 MATRIX = REPO / "tools" / "build_capability_matrix.py"
-DOC = REPO / "docs" / "phase3-convergence-status.md"
+DOC = REPO / "docs" / "history" / "phase3-convergence-status.md"
 
 
 def test_the_three_thresholds_are_still_frozen() -> None:

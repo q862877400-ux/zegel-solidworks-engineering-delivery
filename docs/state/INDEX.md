@@ -16,6 +16,7 @@
 |---|---|---|
 | **项目为什么存在、成功长什么样、验收判据（E1–E7）** | **[`docs/PROJECT-CHARTER.md`](../PROJECT-CHARTER.md)** ← 顶层定义，高于本台账 | 无（定义文档，读即可）|
 | **怎么做到、按什么顺序做（路线 + S0–S6 施工顺序 + 首件范围）** | **[`docs/ENGINEERING-PATH.md`](../ENGINEERING-PATH.md)** ← 路线定义，高于本台账 | 无（定义文档，读即可）|
+| **当前游标：现在该做什么、调整机制、反模式、收工动作** | **[`docs/PLAN.md`](../PLAN.md)** ← 计划层，高于本台账 | 无（定义文档，读即可）|
 | **这些路线判断依据的读数与反例** | `facts/R-engineering-path.md`（R-01～R-18，每条带 file:line 与复现命令） | 见该文件各条「复现」 |
 | 仓库有几个顶层目录、各多大、哪些入库了 | `facts/A-structure.md` | `python docs\state\probes\probe_structure.py --json docs/state/inventory-a.json` |
 | MCP 工具声明现在是什么状态（501 条、命名、单位、doc、read_only） | `facts/B-tools.md` | `python docs\state\probes\probe_all_specs.py --json docs/state/inventory-b.json` |

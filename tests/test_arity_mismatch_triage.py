@@ -5,7 +5,7 @@
 #         scripts/check_dispatch_entry_guard.py（`scan` / `resolution` / `_entry_sites` …）
 #         output/_probe253_arity_sites.py（★ 导出 16 条明细）
 #         output/_probe253_whatswrong.py（★ 真机只读复核：3 参 by-ref 能调通）
-# 定位:   门禁只**计数**「arity 不符 16」而**不列明细**；★ `docs/ROADMAP.md` 断言「**16 处全部是**
+# 定位:   门禁只**计数**「arity 不符 16」而**不列明细**；★ `docs/PLAN.md` 断言「**16 处全部是**
 #         「实参 = 反射计数 − 1」⇒ 约定问题、不是缺陷」—— ★★ **本文件实测推翻它**。
 # 官方依据: 反射转储 `_raw/**/iface_*.txt` · 真机 `SldWorks.Application` rev 34.4.1（★ 只读）
 # 许可:   本仓自产（无外部来源）
@@ -52,7 +52,7 @@ _TRIAGE: dict[tuple[str, int], tuple[str, int, int, str]] = {
     ("sw_simulation_study.py", 395): ("ExportSimulationStudy", 1, 7, STARARGS),
 }
 
-#: ★★ **旧结论**（`docs/ROADMAP.md`）：「16 处**全部**是『实参 = 反射计数 − 1』」。
+#: ★★ **旧结论**（`docs/PLAN.md`）：「16 处**全部**是『实参 = 反射计数 − 1』」。
 #: ★★ 本文件用 `BYREF_TAIL` 的**实测条数**证明它**错**。
 OLD_CLAIM_ALL_MINUS_ONE = 16
 #: ★ 下界（★ 只允许增不允许减）。
@@ -99,7 +99,7 @@ def test_every_arity_site_is_triaged():
 
 # ── ② ★★★ 推翻旧结论：−1 的**只有 10 条**，不是 16 条 ─────────────────
 def test_old_claim_all_minus_one_is_falsified():
-    """★★★ `docs/ROADMAP.md` 断言「16 处**全部**是『实参 = 反射 − 1』」⇒ ★ **实测只有 10 条**。
+    """★★★ `docs/PLAN.md` 断言「16 处**全部**是『实参 = 反射 − 1』」⇒ ★ **实测只有 10 条**。
 
     ★ 能红的判据：★ 把任意一条 `STARARGS`/`REAL_GAP`/`ALL_BYREF` 改判成 `BYREF_TAIL` ⇒ 当场红。
     """

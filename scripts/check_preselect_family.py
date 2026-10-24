@@ -9,7 +9,7 @@
 #         原文逐字：「★ **补一条静态门禁**：现状是『只有 `batch4`/`batch23`/`batch26`/
 #         `batch29`/`batch58`/`batch60`/`batch74` 记得写 `pre_call`』… ★ 这条门禁一次就会
 #         抓住本表 **30 条**」✓
-#         ★★ 也是 `docs/ROADMAP.md` §一 游标「下一步候选 ①」的落点（按该 recon 继续扫同族）✓
+#         ★★ 也是 `docs/history/roadmap-log.md`「下一步候选 ①」的落点（按该 recon 继续扫同族）✓
 # 机制前提（★ 复核者逐字核过，不是转述）：
 #   `mcp-server/tool_registry.py` 的调用序是 **注入解析器 → `extra_op` → `pre_call` →
 #   `derived_args` → 目标函数** ⇒ ★ **「建立选区」只有 `pre_call`（第 2 步）与

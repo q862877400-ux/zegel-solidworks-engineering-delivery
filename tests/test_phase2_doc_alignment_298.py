@@ -1,11 +1,11 @@
 """★ 规格 298 判据：二级文档 `phase2-obsolete-status.md` 的旧措辞必须与 `sw_part.py` 的订正对齐。"""
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身
-# 文件:   `docs/phase2-obsolete-status.md`（★ 二级文档 · 那份「处置阶段 2」的状态表）
+# 文件:   `docs/history/phase2-obsolete-status.md`（★ 二级文档 · 那份「处置阶段 2」的状态表）
 #         `scripts/sw_part.py:1457-1466`（★ spec 293 的**订正块** —— 一级真源）
 #         `C:\swapi\types\IFeatureManager\FeatureLinearPattern5.md:12`（★ 官方逐字给了后继）
 # 定位:   ★★ 起因：`AUTO_HANDOFF.md` ④ 段登记项 **⑥** 逐字 ——
-#         「★ `docs/phase2-obsolete-status.md:36` 的旧措辞（「`5` 就是现行那代」）★ 与 `sw_part.py` 的订正对齐」。
+#         「★ `docs/history/phase2-obsolete-status.md:36` 的旧措辞（「`5` 就是现行那代」）★ 与 `sw_part.py` 的订正对齐」。
 #         ★★★ 为什么必须修：★★ `MEMORY.md` 规则 30 逐字 ——
 #         「**「同一事实被写在 N 处」⇒ 必须有一条判据把 N 处串起来** ——
 #          ★ 291 实测：`AddMate5` 的分流语义被写在 **5 处** ⇒ ★ 前 3 处改了、后 2 处漏了
@@ -19,7 +19,7 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOC = ROOT / "docs" / "phase2-obsolete-status.md"
+DOC = ROOT / "docs" / "history" / "phase2-obsolete-status.md"
 SRC = ROOT / "scripts" / "sw_part.py"
 
 #: ★★ 官方逐字（★ `FeatureLinearPattern5.md:12`）
@@ -71,7 +71,7 @@ def test_doc_carries_the_official_successor():
 def test_the_two_places_agree_on_the_verdict():
     """★★★ **两处必须一致**（★ 规则 30 的形态：把 N 处串起来）。
 
-    ★ 一级真源 = `scripts/sw_part.py` 的订正块；★ 二级文档 = `docs/phase2-obsolete-status.md`。
+    ★ 一级真源 = `scripts/sw_part.py` 的订正块；★ 二级文档 = `docs/history/phase2-obsolete-status.md`。
     """
     src = SRC.read_text(encoding="utf-8", errors="replace")
     doc = DOC.read_text(encoding="utf-8", errors="replace")

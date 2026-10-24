@@ -1,7 +1,7 @@
 r"""@brief 精确枚举验收判据 **A2（provenance）** 与 **A4（level/evidence）** 的实际覆盖。
 
 ## 为什么要这个脚本
-`docs/ROADMAP.md` 与 `AGENTS.md` 都写着「进度看 capabilities.yaml」，
+`docs/PLAN.md` 与 `AGENTS.md` 都写着「进度看 capabilities.yaml」，
 而 **A2 的判据是「grep 抽查 10 条，100% 命中」**、**A4 是「逐条核对」**。
 **⇒ 那就要能**枚举出确切数字**，而不是靠印象说「大致齐了」。**
 
@@ -22,7 +22,7 @@ operation_routes, capabilities}`，**内容是 JSON（YAML 扩展名）** ⇒ �
 # ── 来源 ──
 # 仓库:   本项目自身（静态核对工具）
 # 文件:   capabilities.yaml（44.8 KB，`schema_version` 2.0）
-#         docs/ROADMAP.md 的验收判据 A2 / A4
+#         docs/PLAN.md 的验收判据 A2 / A4
 # 定位:   把 A2 / A4 的「逐条核对」做成**可重跑、给确切数字**的命令。
 # 官方签名依据: 不适用（纯静态核对）
 # 许可:   本仓库 MIT。无第三方代码引入。
