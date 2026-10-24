@@ -49,30 +49,68 @@
 > 历史施工流水已归档到 [`history/roadmap-log.md`](history/roadmap-log.md)（11246 行）。
 > 本节只放**当前**该做什么；一轮做完就更新这里，别在下面接着写流水。
 
-**当前状态**：S0 / S1 / S2 已收口，**S3 卡在需求冻结**。
+**当前状态**：S0 / S1 已收口；**S3 进行中**（真机 E1 已验）；
+S2 的**判据已建、输入未齐**，但它**不阻断 S3**。
 
 | 步 | 状态 | 证据 |
 |---|---|---|
-| **S0** 恢复正式通路 | ✅ 收口 | `specs/348-s0-restore-official-path/acceptance.md`；工程层测试 25 failed → 102 passed |
-| **S1** E1–E7 判据与坏样件 | ✅ 收口（**离线判据成立**）| `specs/349-e1-e7-acceptance/acceptance.md`；134 条测试 |
-| **S2** 冻结首件需求 | ⚠ **判据已建，输入未齐** | `specs/350-first-part-delivery/requirements.md` 八项全未定 |
-| **S3** 板件真过 E1–E3 | ⏸ 停线 | 见下 |
+| **S0** 恢复正式通路 | ✅ 收口 | [`specs/348-s0-restore-official-path/acceptance.md`](../specs/348-s0-restore-official-path/acceptance.md)；工程层测试 25 failed → 102 passed |
+| **S1** E1–E7 判据与坏样件 | ✅ 离线收口 | [`specs/349-e1-e7-acceptance/acceptance.md`](../specs/349-e1-e7-acceptance/acceptance.md)；10 条判据 + 汇总层，256 passed |
+| **S3** 板件真过 E1–E3 | 🔄 **进行中** | 真机 E1 已验：欠约束草图读数 2 → 判据 fail；全固定读数 3 → 判据 pass。见下 |
+| **S2** 冻结首件需求 | ⚠ 判据已建、输入未齐 | [`specs/350-first-part-delivery/requirements.md`](../specs/350-first-part-delivery/requirements.md) 八项未定 |
 | **S4–S6** | ⬜ 未开始 | 依赖 S3 |
+
+### ★ S3 与 S2 的关系（更正一次判断）
+
+**先前我把 S3 判成「被 S2 需求冻结阻断」，这是错的。**
+
+`ENGINEERING-PATH.md` 第六节 S3 的五步逐条核对：
+
+| S3 步 | 需要 S2 的八项吗 |
+|---|---|
+| 1 尺寸与关系驱动（位置/方向/大小完整约束） | ❌ 不需要 |
+| 2 稳定语义引用 + 孔型孔位逐项回读 | ❌ 不需要 |
+| 3 官方签名 → 限定真机试验 | ❌ 不需要 |
+| 4 同一交付件副本改主参数 | ❌ 不需要 |
+| 5 E5 最难的一个必需尺寸/基准标注小验证 | ❌ 不需要 |
+
+S3 验的是**几何与参数化行为**；那八项（材料/载荷/安全等级/工艺/基准/接口/图样范围/交付目的）
+影响的是 **E6 工艺**、**E4 基准**、**E5 图样**、以及**强度** —— 属 S4 及以后。
+
+⇒ 阻断 S4 而非 S3。**已在第 4 轮更正，并据此推进 S3 真机。**
+
+### S3 真机已完成的一步
+
+`tools/probe_s3_e1_real_machine.py`（走 `sw_guard` 护栏）：
+
+```
+① 欠约束草图（Rectangle，4 段）：GetConstrainedStatus = 2
+   → judge_sketch_constraint = fail（状态 2：欠定义）
+② 对 4 段全加 sgFIXED
+③ 全固定后：GetConstrainedStatus = 3
+   → judge_sketch_constraint = pass（状态 3：完全定义）
+```
+
+证据：`output/s3-e1-real-machine-evidence.json`（`ok: true`）
+
+这满足 S3 第 3 条的前半句「**先验证检查器能看见真实坏样件**」——
+不是构造假输入让判据说 fail，而是让 SolidWorks 自己产生欠约束草图、
+读它真实的状态枚举、再让判据判。
 
 ### 当前阻断（需要人回答，不是程序能决定）
 
 按 [`ENGINEERING-PATH.md`](ENGINEERING-PATH.md) 第六节 S2 与
-[`specs/350-first-part-delivery/requirements.md`](specs/350-first-part-delivery/requirements.md)：
+[`specs/350-first-part-delivery/requirements.md`](../specs/350-first-part-delivery/requirements.md)：
 
-1. **首件是练习件还是真实设备件？** —— 决定 E6（工艺）与 E2（重建）的验证深度
+1. **首件是练习件还是真实设备件？** —— 决定验证深度
 2. **材料、载荷、安全等级是什么？** —— 三项一组，缺一个就不能冻结
 3. **谁做工艺与图样的最终签核？**
 
-八项齐了才能 `freeze()`，之后才能进 S3。**不填默认值**。
+八项齐了才能 `freeze()`。**不填默认值**。这些阻断的是 **S4**（工艺/图样），不是 S3。
 
 ### S3 已完成的离线部分
 
-[`specs/350-first-part-delivery/source-verification.md`](specs/350-first-part-delivery/source-verification.md)：
+[`specs/350-first-part-delivery/source-verification.md`](../specs/350-first-part-delivery/source-verification.md)：
 官方源核查完成，**关键发现是草图约束状态 API 只给状态枚举、不给数值自由度**
 ⇒ E1 真机采集器分两层：判「是否全约束」可用枚举；判「剩几个自由度」必须返回 `unknown`。
 
