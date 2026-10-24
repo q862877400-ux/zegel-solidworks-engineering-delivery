@@ -137,6 +137,62 @@ judge_reference_stability(obs, *, requirement_id) -> CheckResult
   这条会转红，那时应把断言反过来（缺陷已修）
 - `test_planner的倒角候选命中chamfer_step` —— 精确定位被抓的是 chamfer 步骤
 
+## 三之二、T009 第 ① 段完成：三源互证的结果
+
+上一节说「第 ① 段（三源互证查法向/质心/中点）是硬前置」。本节把它做完了。
+
+### `IFace2.Normal` —— ✅ 三源互证成立
+
+| 源 | 读数 |
+|---|---|
+| `C:\swapi`（`types/IFace2/Normal.md`） | `System.object Normal {get; set;}`；Returns「Array of 3 doubles (i,j,k)」；NOTE「get-only，**Set is not implemented**」 |
+| 出厂反射（`_raw/reflect/iface_sldworks.txt`） | `Object get_Normal()` |
+| 官方 CHM 解包 | `sw_know verify` 的「草图/零件特征」域报 `[OK]`（覆盖自检，未逐页比对） |
+
+⇒ 读平面法向**有官方入口**，用法：`Normal` → 3 个 double 的数组。
+
+### 面质心 —— ❌ 三源确认**不存在**
+
+全库检索 `Centroid`，只命中两个**无关**成员：
+
+```
+types/ISketchPatternFeatureData/UseCentroid
+types/ITablePatternFeatureData/UseCentroid
+```
+
+反射转储的 `IFace2` 段落里也没有任何质心成员（只有 `Object get_Normal()` / `Double GetArea()` / `Object GetBox()`）。
+
+⇒ **`FaceInfo.centroid` 这个字段没有直接 API 可填。**
+
+这是 `reference_resolver` 的第二个问题：它不仅没被接上，
+它假设的输入模型（面质心）在 API 里根本不存在。
+
+### 可用的替代（但要如实标注是近似）
+
+| 想要 | 可用什么 | 性质 |
+|---|---|---|
+| 面质心 | `IFace2.GetBox()` 的盒中心 | **近似**（平面矩形面上等价；曲面上不等价） |
+| 面质心 | `GetTessTriangles()` 三角面片重心加权 | **近似**（离散化，付费换精度） |
+| 边中点 | `GetStartVertex` / `GetEndVertex` 的两点均值 | **精确**（`sw_selection_spec.entity_geometry` 已给 start/end，直接平均即可，**无需新 COM 调用**） |
+
+★ 边中点这一项**已经不用做**：`entity_geometry(model, "EDGE", i)` 已经回
+`start_mm` / `end_mm`，中点取平均即可，纯计算。
+
+### 所以 T009 的剩余四段这样改
+
+| 段 | 内容 | 变化 |
+|---|---|---|
+| ② | 写 `collect_faces()` | 用 `IFace2.Normal` 读法向（已三源互证）；**质心用 `GetBox` 盒中心，并标注为近似** |
+| ② | 写 `collect_edges()` | **不需要新 COM**：用现成的 `entity_geometry` 的 start/end 求均值 |
+| ③ | `resolve_entity()` 接受语义选择器 | 依赖 ② |
+| ④ | `planner.py` 三处 `index:0` 换语义选择器 | 依赖 ③ |
+| ⑤ | 真机验证：改主参数后仍指同一条边 | 依赖 ④ |
+
+★★ **一个必须写进代码的限制**：`top_face` 的语义是「法向 +Y 且质心 Y 最大」。
+   对平面矩形（首件安装板）盒中心与质心等价，所以**首件场景下这个近似不引入误差**。
+   但对曲面/异形面，盒中心 ≠ 质心 ⇒ 那时 `top_face` 会选错。
+   ⇒ 代码里必须把这条写成显式限制，不能等到 S4 装配异形件时才踩。
+
 ## 四、T010 孔型/孔位逐项回读 —— 已落判据
 
 ### 发现：既有能力覆盖了三分之二

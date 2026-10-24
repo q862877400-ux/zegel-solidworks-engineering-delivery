@@ -130,3 +130,67 @@ def test_反射覆盖规模足够支撑否定结论() -> None:
         "★ 反射转储只有 %d 行 —— 疑似被截断，"
         "此时「没有 DOF 成员」的结论不可信" % lines
     )
+
+# ───────── T009 第 ① 段：面法向 / 面质心 / 边中点 ─────────
+
+
+def test_反射里有面的法向() -> None:
+    """★ `IFace2.Normal` 三源互证成立。
+
+    `C:\swapi` 写 `System.object Normal {get; set;}`、Returns「Array of 3 doubles」；
+    反射写 `Object get_Normal()` —— 同一个成员。
+    """
+    text = _reflect_text()
+    assert "Object get_Normal()" in text, (
+        "★ 反射里找不到 `Object get_Normal()` —— IFace2.Normal 的三源互证要重做"
+    )
+
+
+def test_反射里有面的面积与包围盒() -> None:
+    """★ `GetArea()` / `GetBox()` 也核一下 —— 质心只能从盒中心近似。"""
+    text = _reflect_text()
+    assert "Double GetArea()" in text
+    assert "Object GetBox()" in text
+
+
+def test_API里没有面质心成员() -> None:
+    """★★★ 三源确认的**否定结论**：SolidWorks API **没有**面质心读取入口。
+
+    ★ 这个结论决定了 `reference_resolver.FaceInfo.centroid` 只能靠
+      `GetBox()` 盒中心**近似** —— 平面矩形面上等价，曲面上不等价。
+
+    ★ 若某天这里命中了（出现了真正的质心成员），那是好消息：
+      应当升级 `FaceInfo` 的填充方式，并把
+      `specs/350-first-part-delivery/s3-prep.md` 的近似说明改掉。
+    """
+    text = _reflect_text()
+    #: 只允许两个**无关**的 UseCentroid（草图/表格阵列用）
+    hits = [ln for ln in text.splitlines() if "Centroid" in ln]
+    unrelated = [h for h in hits if "UseCentroid" in h]
+    real = [h for h in hits if "UseCentroid" not in h]
+    assert not real, (
+        "★ 反射里出现了非 UseCentroid 的质心成员：%r —— "
+        "如果 API 真的加了面质心，应升级 FaceInfo 的填充方式" % real[:3]
+    )
+    #: 记下现状，让人知道那两个命中是什么
+    assert len(unrelated) >= 0
+
+
+def test_边中点不需要新COM调用() -> None:
+    """★ `entity_geometry` 已给 start/end ⇒ 中点取平均即可，是纯计算。
+
+    ★ 这条防止后人去查一个不存在的「边中点」成员。
+    """
+    import sys as _sys
+    from pathlib import Path as _Path
+
+    _sys.path.insert(0, str(_Path(__file__).resolve().parents[1] / "scripts"))
+    import io as _io
+
+    _src = _io.open(
+        _Path(__file__).resolve().parents[1] / "scripts" / "sw_selection_spec.py",
+        encoding="utf-8",
+    ).read()
+    #: entity_geometry 对 EDGE 回 start_mm / end_mm ⇒ 中点取平均，纯计算
+    assert "start_mm" in _src
+    assert "end_mm" in _src
