@@ -1,0 +1,4412 @@
+{
+  "stats": {
+    "total": 501,
+    "resolved": 501,
+    "has_undeclared_params": 79
+  },
+  "module_file_missing": [],
+  "function_missing": [],
+  "inject_not_in_signature": [],
+  "declared_param_not_in_signature": [],
+  "counts": {
+    "module_file_missing": 0,
+    "function_missing": 0,
+    "inject_not_in_signature": 0,
+    "declared_param_not_in_signature": 0
+  },
+  "rows": [
+    {
+      "tool": "solidworks_topology_create_study",
+      "module": "sw_topology",
+      "function": "create_topology_study",
+      "inject": "sw_app",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_topology_evidence",
+      "module": "sw_topology",
+      "function": "collect_topology_evidence",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_run",
+      "module": "sw_topology",
+      "function": "run_topology_study",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_mold_parting_line",
+      "module": "sw_mold",
+      "function": "insert_parting_line",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_mold_shut_off_surface",
+      "module": "sw_mold",
+      "function": "insert_shut_off_surface",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_mold_draft_analysis",
+      "module": "sw_mold",
+      "function": "mold_draft_analysis",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_mold_evidence",
+      "module": "sw_mold",
+      "function": "mold_evidence",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_set_material",
+      "module": "sw_simulation",
+      "function": "set_material",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_weldment_evidence",
+      "module": "sw_weldment",
+      "function": "weldment_evidence",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_weldment_ensure_cut_list",
+      "module": "sw_weldment",
+      "function": "ensure_cut_list",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_weldment_update_cut_list",
+      "module": "sw_weldment",
+      "function": "update_cut_list",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_weldment_create_sub_weld_folder",
+      "module": "sw_weldment",
+      "function": "create_sub_weld_folder",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sheet_metal_evidence",
+      "module": "sw_sheet_metal",
+      "function": "sheet_metal_evidence",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_surface_evidence",
+      "module": "sw_surface",
+      "function": "collect_surface_evidence",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_base_flange",
+      "module": "sw_sheet_metal",
+      "function": "create_base_flange",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "spec"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_one_bend",
+      "module": "sw_sheet_metal",
+      "function": "create_one_bend",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "spec"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_edge_flange",
+      "module": "sw_sheet_metal",
+      "function": "create_edge_flange",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "spec"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_gusset",
+      "module": "sw_sheet_metal",
+      "function": "create_gusset",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "spec"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_draft",
+      "module": "sw_sheet_metal",
+      "function": "create_draft",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "spec"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_swept_flange",
+      "module": "sw_sheet_metal",
+      "function": "create_swept_flange",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 4,
+      "undeclared": [
+        "path_ref",
+        "profile_ref",
+        "spec"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_current_selection",
+      "module": "sw_selection_spec",
+      "function": "current_selection",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_clear_selection",
+      "module": "sw_selection_spec",
+      "function": "clear_selection",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_set_standard_view",
+      "module": "sw_review",
+      "function": "set_standard_view",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_list_render_materials",
+      "module": "sw_render_material",
+      "function": "list_render_materials",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_collect_appearance_evidence",
+      "module": "sw_render_material",
+      "function": "collect_appearance_evidence",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_available_point_selectors",
+      "module": "sw_geometry_selectors",
+      "function": "available_point_selectors",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_available_direction_selectors",
+      "module": "sw_geometry_selectors",
+      "function": "available_direction_selectors",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_collect_assembly_bom",
+      "module": "sw_delivery",
+      "function": "collect_assembly_bom",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_activate_model_for_preview",
+      "module": "sw_review",
+      "function": "activate_model_for_preview",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_clear_selection_for_preview",
+      "module": "sw_review",
+      "function": "clear_selection_for_preview",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_refresh_scene_graph",
+      "module": "sw_render_material",
+      "function": "refresh_scene_graph",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_collect_model_summary",
+      "module": "sw_review",
+      "function": "collect_model_summary",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_get_costing_manager",
+      "module": "sw_costing",
+      "function": "get_costing_manager",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_list_simulation_study_options",
+      "module": "sw_simulation_study_options",
+      "function": "list_setter_summary",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_mold_core_cavity_split",
+      "module": "sw_mold",
+      "function": "insert_core_cavity_solids",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_mold_parting_surface",
+      "module": "sw_mold",
+      "function": "insert_parting_surface",
+      "inject": "model",
+      "declared": 8,
+      "fn_params": 9
+    },
+    {
+      "tool": "solidworks_mold_undercut_detect",
+      "module": "sw_mold",
+      "function": "mold_undercut_detect",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_part_bounding_box",
+      "module": "sw_part",
+      "function": "get_bounding_box",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_hole_standards",
+      "module": "sw_hole_features",
+      "function": "list_hole_standards",
+      "inject": "sw",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_fastener_types",
+      "module": "sw_hole_features",
+      "function": "list_fastener_types",
+      "inject": "sw",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_fastener_table_types",
+      "module": "sw_hole_features",
+      "function": "list_fastener_table_types",
+      "inject": "sw",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_topology_create_mass_constraint",
+      "module": "sw_topology",
+      "function": "create_mass_constraint",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_topology_create_factor_of_safety_constraint",
+      "module": "sw_topology",
+      "function": "create_factor_of_safety_constraint",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_topology_create_preserved_region",
+      "module": "sw_topology",
+      "function": "create_preserved_region",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_topology_create_thickness_control",
+      "module": "sw_topology",
+      "function": "create_thickness_control",
+      "inject": "study",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_topology_create_demold_control",
+      "module": "sw_topology",
+      "function": "create_demold_control",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 4,
+      "undeclared": [
+        "selection",
+        "selection_kind"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_topology_create_stress_constraint",
+      "module": "sw_topology",
+      "function": "create_stress_constraint",
+      "inject": "study",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_topology_create_symmetry_control",
+      "module": "sw_topology",
+      "function": "create_symmetry_control",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 4,
+      "undeclared": [
+        "selection",
+        "selection_kind"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_simulation_generate_report",
+      "module": "sw_simulation_study",
+      "function": "generate_report",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_create_mesh_for_control",
+      "module": "sw_simulation_study",
+      "function": "create_mesh_for_control",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_simulation_default_element_size_and_tolerance",
+      "module": "sw_simulation",
+      "function": "default_element_size_and_tolerance",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_get_active_view",
+      "module": "sw_view",
+      "function": "get_active_view",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_entities_on_body",
+      "module": "sw_selection_spec",
+      "function": "entities_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_build_review_report",
+      "module": "sw_review",
+      "function": "build_review_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 5,
+      "undeclared": [
+        "views",
+        "expected_outputs"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_add_sketch_relation",
+      "module": "sw_part",
+      "function": "add_sketch_relation",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_mirror_feature",
+      "module": "sw_part",
+      "function": "mirror_feature",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_circular_pattern",
+      "module": "sw_part",
+      "function": "circular_pattern",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 6,
+      "undeclared": [
+        "angle_rad"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_revolve_boss",
+      "module": "sw_part",
+      "function": "revolve_boss",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 5,
+      "undeclared": [
+        "angle_rad",
+        "axis_sketch_name",
+        "thin"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_sketch_count_lines",
+      "module": "sw_sketch",
+      "function": "count_lines",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 1,
+      "undeclared": [
+        "sketch"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_count_arcs",
+      "module": "sw_sketch",
+      "function": "count_arcs",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 1,
+      "undeclared": [
+        "sketch"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_count_segments",
+      "module": "sw_sketch",
+      "function": "count_segments",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 1,
+      "undeclared": [
+        "sketch"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_is_3d",
+      "module": "sw_sketch",
+      "function": "is_3d_sketch",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 1,
+      "undeclared": [
+        "sketch"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_drawing_list_sheets",
+      "module": "sw_drawing_query",
+      "function": "sheets_summary",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_get_current_sheet",
+      "module": "sw_drawing_query",
+      "function": "current_sheet_info",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_list_views",
+      "module": "sw_drawing_query",
+      "function": "list_views",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_custom_property_get",
+      "module": "sw_custom_property",
+      "function": "custom_property",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_custom_property_list",
+      "module": "sw_custom_property",
+      "function": "custom_properties",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sketch_start",
+      "module": "sw_part",
+      "function": "start_sketch",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sketch_end",
+      "module": "sw_part",
+      "function": "end_sketch",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sketch_add_line",
+      "module": "sw_part",
+      "function": "sketch_line",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_sketch_add_circle",
+      "module": "sw_part",
+      "function": "sketch_circle",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_add_rectangle",
+      "module": "sw_part",
+      "function": "sketch_corner_rectangle",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_extrude_boss",
+      "module": "sw_part",
+      "function": "extrude_boss",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 5,
+      "undeclared": [
+        "depth"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_extrude_cut",
+      "module": "sw_part",
+      "function": "extrude_cut",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 5,
+      "undeclared": [
+        "depth"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_extrude_midplane",
+      "module": "sw_part",
+      "function": "extrude_midplane",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "total_depth"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_chamfer",
+      "module": "sw_part",
+      "function": "chamfer",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_fillet",
+      "module": "sw_part",
+      "function": "fillet",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "edges"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_feature_suppress",
+      "module": "sw_part",
+      "function": "feature_suppress",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_unsuppress",
+      "module": "sw_part",
+      "function": "feature_unsuppress",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_delete",
+      "module": "sw_part",
+      "function": "feature_delete",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_part_mass_properties",
+      "module": "sw_mass_property",
+      "function": "mass_properties",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_list_components",
+      "module": "sw_assembly",
+      "function": "get_components",
+      "inject": "asm_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_list_mates",
+      "module": "sw_assembly",
+      "function": "collect_mate_feature_summary",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_check_interference",
+      "module": "sw_assembly",
+      "function": "get_interference_detection",
+      "inject": "asm_model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_fixed_restraint",
+      "module": "sw_simulation",
+      "function": "apply_fixed_restraint",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 4,
+      "undeclared": [
+        "model",
+        "face_selector",
+        "restraint_type"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_simulation_apply_normal_force",
+      "module": "sw_simulation",
+      "function": "apply_normal_force",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 6,
+      "undeclared": [
+        "model",
+        "face_selector",
+        "force_type",
+        "unit"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_simulation_create_study",
+      "module": "sw_simulation",
+      "function": "create_study_report",
+      "inject": "sw_app",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_simulation_list_studies",
+      "module": "sw_simulation",
+      "function": "list_studies",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_find_study",
+      "module": "sw_simulation",
+      "function": "find_study",
+      "inject": "sw_app",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_simulation_mesh_size",
+      "module": "sw_simulation",
+      "function": "mesh_size_report",
+      "inject": "study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_simulation_create_mesh",
+      "module": "sw_simulation",
+      "function": "create_mesh_report",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_run_analysis",
+      "module": "sw_simulation",
+      "function": "run_analysis_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_collect_evidence",
+      "module": "sw_simulation",
+      "function": "collect_study_evidence",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_pressure",
+      "module": "sw_simulation_loads",
+      "function": "apply_pressure_report",
+      "inject": "manager",
+      "declared": 1,
+      "fn_params": 4,
+      "undeclared": [
+        "model",
+        "reg_geom"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_simulation_apply_torque",
+      "module": "sw_simulation_loads",
+      "function": "apply_torque_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "model",
+        "ref_geom"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_simulation_apply_gravity",
+      "module": "sw_simulation_loads",
+      "function": "apply_gravity_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_centrifugal_force",
+      "module": "sw_simulation_loads",
+      "function": "apply_centrifugal_force_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_topology_collect_numbers",
+      "module": "sw_topology",
+      "function": "collect_topology_numbers",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_list_constraints",
+      "module": "sw_topology",
+      "function": "topology_constraints_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_manager_report",
+      "module": "sw_topology",
+      "function": "topology_manager_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_options_report",
+      "module": "sw_topology",
+      "function": "topology_options_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_set_goal",
+      "module": "sw_topology",
+      "function": "set_topology_goal_report",
+      "inject": "study",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_topology_set_iteration_options",
+      "module": "sw_topology",
+      "function": "set_topology_iteration_options_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "iteration_option",
+        "iteration_limit"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_simulation_check_mesh_size",
+      "module": "sw_simulation",
+      "function": "check_mesh_size_sane",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 3,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_part_shell",
+      "module": "sw_part",
+      "function": "shell_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_part_rib",
+      "module": "sw_part",
+      "function": "rib_report",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_part_insert_dome",
+      "module": "sw_part",
+      "function": "insert_dome_report",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_part_insert_composite_curve",
+      "module": "sw_part",
+      "function": "insert_composite_curve_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_config_inspect",
+      "module": "sw_document_data",
+      "function": "inspect_configurations",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_config_create",
+      "module": "sw_document_data",
+      "function": "create_configuration",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 9,
+      "undeclared": [
+        "options",
+        "if_exists",
+        "save"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_config_activate",
+      "module": "sw_document_data",
+      "function": "activate_configuration",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 4,
+      "undeclared": [
+        "save"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_config_read_custom_property",
+      "module": "sw_document_data",
+      "function": "read_custom_property",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_config_set_custom_properties",
+      "module": "sw_document_data",
+      "function": "set_custom_properties",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 5,
+      "undeclared": [
+        "property_type",
+        "save"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_config_update_dimension",
+      "module": "sw_document_data",
+      "function": "update_dimension_mm",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 7,
+      "undeclared": [
+        "save"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_export_step",
+      "module": "sw_export",
+      "function": "export_step_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_export_stl",
+      "module": "sw_export",
+      "function": "export_stl_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_export_iges",
+      "module": "sw_export",
+      "function": "export_iges_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_export_parasolid",
+      "module": "sw_export",
+      "function": "export_parasolid_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_export_dxf",
+      "module": "sw_export",
+      "function": "export_dxf_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_export_bmp",
+      "module": "sw_export",
+      "function": "export_bmp_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_hole_through_by_selection",
+      "module": "sw_hole_features",
+      "function": "create_through_hole_at_selection_report",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_hole_blind_by_selection",
+      "module": "sw_hole_features",
+      "function": "create_blind_hole_at_selection_report",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_hole_counterbore_by_selection",
+      "module": "sw_hole_features",
+      "function": "create_counterbore_hole_at_selection_report",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_hole_countersink_by_selection",
+      "module": "sw_hole_features",
+      "function": "create_countersink_hole_at_selection_report",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_slot_semicircular_by_selection",
+      "module": "sw_hole_features",
+      "function": "create_semicircular_slot_at_selection_report",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_weldment_create_cut_list",
+      "module": "sw_weldment",
+      "function": "create_cut_list",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_weldment_set_cut_list_properties",
+      "module": "sw_weldment",
+      "function": "set_cut_list_properties",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_weldment_export_cut_list_csv",
+      "module": "sw_weldment",
+      "function": "export_cut_list_csv",
+      "inject": null,
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_weldment_read_property_manager",
+      "module": "sw_weldment",
+      "function": "read_property_manager",
+      "inject": "manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_weldment_create_profile_center_mate",
+      "module": "sw_weldment",
+      "function": "create_profile_center_mate",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 6,
+      "undeclared": [
+        "lock_rotation"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_weldment_create_weldment_profile",
+      "module": "sw_weldment",
+      "function": "create_weldment_profile",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_custom_property_count",
+      "module": "sw_custom_property",
+      "function": "custom_property_count",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_custom_property_names",
+      "module": "sw_custom_property",
+      "function": "custom_property_names",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_selector_resolve_direction",
+      "module": "sw_geometry_selectors",
+      "function": "resolve_direction",
+      "inject": null,
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_selector_resolve_point",
+      "module": "sw_geometry_selectors",
+      "function": "resolve_point",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_drawing_sheet_count",
+      "module": "sw_drawing_query",
+      "function": "sheet_count",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_sheet_names",
+      "module": "sw_drawing_query",
+      "function": "sheet_names",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_current_sheet_name",
+      "module": "sw_drawing_query",
+      "function": "current_sheet_name",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_delivery_bom_traceability",
+      "module": "sw_delivery",
+      "function": "build_bom_traceability",
+      "inject": null,
+      "declared": 4,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_delivery_pack_and_go_audit_matrix",
+      "module": "sw_delivery",
+      "function": "build_pack_and_go_audit_matrix",
+      "inject": null,
+      "declared": 8,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_delivery_export_bom_csv",
+      "module": "sw_delivery",
+      "function": "export_assembly_bom_csv",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_list_setter_summary",
+      "module": "sw_simulation_study_options",
+      "function": "list_setter_summary",
+      "inject": null,
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_simulation_configure_static_solver",
+      "module": "sw_simulation_study_options",
+      "function": "configure_static_solver_report",
+      "inject": "study",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_simulation_configure_frequency_solver",
+      "module": "sw_simulation_study_options",
+      "function": "configure_frequency_solver_report",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_configure_buckling_solver",
+      "module": "sw_simulation_study_options",
+      "function": "configure_buckling_solver_report",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 5,
+      "undeclared": [
+        "reference_pressure"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_set_study_option",
+      "module": "sw_simulation_study_options",
+      "function": "set_study_option_report",
+      "inject": "study",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_set_study_options",
+      "module": "sw_simulation_study_options",
+      "function": "set_study_options_report",
+      "inject": "study",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_evidence",
+      "module": "sw_costing",
+      "function": "collect_costing_evidence_report",
+      "inject": "cost_manager",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_costing_read_analysis",
+      "module": "sw_costing",
+      "function": "read_cost_analysis_report",
+      "inject": "cost_manager",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_costing_body_count",
+      "module": "sw_costing",
+      "function": "get_body_count_report",
+      "inject": "cost_manager",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_costing_list_bodies",
+      "module": "sw_costing",
+      "function": "list_cost_bodies_report",
+      "inject": "cost_manager",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_costing_read_body",
+      "module": "sw_costing",
+      "function": "read_cost_body_report",
+      "inject": "cost_manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_costing_list_templates",
+      "module": "sw_costing",
+      "function": "list_costing_templates_report",
+      "inject": "cost_manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_costing_default_template",
+      "module": "sw_costing",
+      "function": "get_default_template_report",
+      "inject": "cost_manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_costing_method_value",
+      "module": "sw_costing",
+      "function": "get_costing_method_report",
+      "inject": "cost_manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_equation_add",
+      "module": "sw_equation",
+      "function": "add_equation",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_equation_list",
+      "module": "sw_equation",
+      "function": "list_equations",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_equation_evaluate",
+      "module": "sw_equation",
+      "function": "evaluate_equations",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_equation_delete",
+      "module": "sw_equation",
+      "function": "delete_equation",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_helix_insert",
+      "module": "sw_helix",
+      "function": "insert_helix",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 11,
+      "undeclared": [
+        "helix_def",
+        "reversed",
+        "clockwise",
+        "tapered",
+        "outward",
+        "taper_angle_deg"
+      ],
+      "undeclared_n": 7
+    },
+    {
+      "tool": "solidworks_gtol_insert",
+      "module": "sw_gtol",
+      "function": "insert_gtol",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_motion_create_study",
+      "module": "sw_motion",
+      "function": "create_motion_study",
+      "inject": "asm_model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_motion_collect_summary",
+      "module": "sw_motion",
+      "function": "collect_motion_study_summary",
+      "inject": "asm_model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_motion_validate_studies",
+      "module": "sw_motion",
+      "function": "validate_motion_studies_report",
+      "inject": "asm_model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_motion_study_manager",
+      "module": "sw_motion",
+      "function": "get_motion_study_manager",
+      "inject": "asm_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_motion_ensure_type_library",
+      "module": "sw_motion",
+      "function": "ensure_motion_type_library",
+      "inject": null,
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_motion_validate_summary",
+      "module": "sw_motion",
+      "function": "validate_motion_study_summary",
+      "inject": null,
+      "declared": 6,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_toolbox_list_standards",
+      "module": "sw_toolbox_index",
+      "function": "list_standards",
+      "inject": null,
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_toolbox_load_index",
+      "module": "sw_toolbox_index",
+      "function": "load_index",
+      "inject": null,
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_toolbox_search",
+      "module": "sw_toolbox_index",
+      "function": "search",
+      "inject": null,
+      "declared": 3,
+      "fn_params": 4,
+      "undeclared": [
+        "index"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_toolbox_part_path",
+      "module": "sw_toolbox_index",
+      "function": "part_path",
+      "inject": null,
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_sketch_create_chamfer",
+      "module": "sw_sketch_edit",
+      "function": "create_sketch_chamfer",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 4,
+      "undeclared": [
+        "angle_or_distance"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_mirror",
+      "module": "sw_sketch_edit",
+      "function": "sketch_mirror",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sketch_convert_entities",
+      "module": "sw_sketch_edit",
+      "function": "convert_entities",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_drawing_sheets_summary",
+      "module": "sw_drawing_query",
+      "function": "sheets_summary",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_current_sheet_info",
+      "module": "sw_drawing_query",
+      "function": "current_sheet_info",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_view_scale",
+      "module": "sw_drawing_view",
+      "function": "get_view_scale_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_drawing_view_set_scale",
+      "module": "sw_drawing_view",
+      "function": "set_view_scale_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_drawing_collect_view_evidence",
+      "module": "sw_drawing_view",
+      "function": "collect_view_evidence_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_sheet_scale",
+      "module": "sw_drawing_query",
+      "function": "get_sheet_scale_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_drawing_set_sheet_scale",
+      "module": "sw_drawing_query",
+      "function": "set_sheet_scale_report",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_surface_create_extruded",
+      "module": "sw_surface_features",
+      "function": "create_extruded_surface_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_surface_knit",
+      "module": "sw_surface_features",
+      "function": "knit_surfaces_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_surface_extend",
+      "module": "sw_surface_features",
+      "function": "insert_extend_surface_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_surface_fill",
+      "module": "sw_surface_features",
+      "function": "insert_fill_surface_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_measure_selection",
+      "module": "sw_measure",
+      "function": "measure_selection_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_part_loft",
+      "module": "sw_loft",
+      "function": "create_loft_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_part_sweep",
+      "module": "sw_sweep",
+      "function": "create_sweep_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "mutate"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_part_axis",
+      "module": "sw_part",
+      "function": "create_axis_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_part_wrap",
+      "module": "sw_wrap",
+      "function": "create_wrap_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_read_sensors",
+      "module": "sw_sensor",
+      "function": "read_sensors_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_read_document_units",
+      "module": "sw_units",
+      "function": "read_units_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_undo",
+      "module": "sw_session",
+      "function": "undo_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_selection_count",
+      "module": "sw_selection_spec",
+      "function": "get_selection_count",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_select_entity_by_index",
+      "module": "sw_selection_spec",
+      "function": "select_entity_by_index",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_resolve_selection",
+      "module": "sw_selection_spec",
+      "function": "resolve_selection",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_selection_point",
+      "module": "sw_selection_spec",
+      "function": "selection_point",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "selection",
+        "selection_kind"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_select_by_selector",
+      "module": "sw_selection_spec",
+      "function": "select_by_selector_report",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_resolve_entity",
+      "module": "sw_selection_spec",
+      "function": "resolve_entity_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_add_arc",
+      "module": "sw_part",
+      "function": "sketch_arc",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_sketch_add_ellipse",
+      "module": "sw_part",
+      "function": "sketch_ellipse",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_sketch_add_polygon",
+      "module": "sw_part",
+      "function": "sketch_polygon",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_sketch_add_slot",
+      "module": "sw_part",
+      "function": "sketch_slot",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_sketch_add_centerline",
+      "module": "sw_part",
+      "function": "sketch_centerline",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_current_sketch_name",
+      "module": "sw_part",
+      "function": "current_sketch_name",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_auto_dimension_sketch",
+      "module": "sw_part",
+      "function": "auto_dimension_sketch",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "sketch",
+        "sketch_segments"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_hole_pattern",
+      "module": "sw_hole_features",
+      "function": "hole_pattern_report",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_simulation_apply_convection",
+      "module": "sw_simulation_loads",
+      "function": "apply_convection_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_heat_flux",
+      "module": "sw_simulation_loads",
+      "function": "apply_heat_flux_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_heat_power",
+      "module": "sw_simulation_loads",
+      "function": "apply_heat_power_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_radiation",
+      "module": "sw_simulation_loads",
+      "function": "apply_radiation_report",
+      "inject": "manager",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_elastic_connector",
+      "module": "sw_simulation_loads",
+      "function": "apply_elastic_connector_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_temperature",
+      "module": "sw_simulation_loads",
+      "function": "apply_temperature_report",
+      "inject": "manager",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_export_image",
+      "module": "sw_export",
+      "function": "export_image_report",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_add_dimension",
+      "module": "sw_part",
+      "function": "add_dimension_report",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_simulation_apply_distributed_mass",
+      "module": "sw_simulation_loads",
+      "function": "apply_distributed_mass_report",
+      "inject": "manager",
+      "declared": 2,
+      "fn_params": 4,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_force",
+      "module": "sw_simulation_loads",
+      "function": "apply_force_report",
+      "inject": "manager",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_remote_load",
+      "module": "sw_simulation_loads",
+      "function": "apply_remote_load_report",
+      "inject": "manager",
+      "declared": 5,
+      "fn_params": 7,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_simulation_apply_rigid_connector",
+      "module": "sw_simulation_loads",
+      "function": "apply_rigid_connector_by_objects_report",
+      "inject": "manager",
+      "declared": 5,
+      "fn_params": 7,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_weldment_create_structural_member",
+      "module": "sw_weldment",
+      "function": "create_structural_member_from_sketch",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_select_face_selector",
+      "module": "sw_simulation",
+      "function": "select_face_by_selector_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_apply_link_connector",
+      "module": "sw_simulation_loads",
+      "function": "add_link_connector_report",
+      "inject": "manager",
+      "declared": 4,
+      "fn_params": 6,
+      "undeclared": [
+        "model"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_add_3point_rectangle",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_3point_corner_rectangle",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_sketch_add_3point_center_rectangle",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_3point_center_rectangle",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_sketch_add_parallelogram",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_parallelogram",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_sketch_add_tangent_arc",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_tangent_arc",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_sketch_add_3point_arc",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_3point_arc",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_sketch_add_partial_ellipse",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_elliptical_arc",
+      "inject": "model",
+      "declared": 11,
+      "fn_params": 12
+    },
+    {
+      "tool": "solidworks_sketch_add_parabola",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_parabola",
+      "inject": "model",
+      "declared": 8,
+      "fn_params": 9
+    },
+    {
+      "tool": "solidworks_sketch_add_conic",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_conic",
+      "inject": "model",
+      "declared": 8,
+      "fn_params": 9
+    },
+    {
+      "tool": "solidworks_sketch_add_perimeter_circle",
+      "module": "sw_sketch_primitives",
+      "function": "sketch_perimeter_circle",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_sketch_trim",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_trim",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_sketch_extend",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_extend",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_offset",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_offset",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_sketch_fillet",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_fillet",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_linear_pattern",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_linear_pattern",
+      "inject": "model",
+      "declared": 8,
+      "fn_params": 14,
+      "undeclared": [
+        "spacing_dim_x",
+        "spacing_dim_y",
+        "angle_dim",
+        "count_dim_x",
+        "count_dim_y"
+      ],
+      "undeclared_n": 5
+    },
+    {
+      "tool": "solidworks_sketch_circular_pattern",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_circular_pattern",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 11,
+      "undeclared": [
+        "radius_dim",
+        "angle_dim",
+        "count_dim"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_sketch_move_entities",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_move",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_sketch_rotate_entities",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_rotate",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_scale_entities",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_scale",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sketch_stretch_entities",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_stretch",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 7,
+      "undeclared": [
+        "select_all"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_flip_entities",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_flip",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_insert_planar_surface",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_planar_surface",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_insert_offset_surface",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_offset_surface",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_insert_ruled_surface",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_ruled_surface",
+      "inject": "model",
+      "declared": 11,
+      "fn_params": 12
+    },
+    {
+      "tool": "solidworks_insert_delete_face",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_delete_face",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_insert_replace_face",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_replace_face",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_insert_lofted_ref_surface",
+      "module": "sw_surface_ref_ops",
+      "function": "insert_lofted_ref_surface",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_insert_center_of_mass",
+      "module": "sw_ref_geometry",
+      "function": "insert_center_of_mass",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_insert_global_bounding_box",
+      "module": "sw_ref_geometry",
+      "function": "insert_global_bounding_box",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_insert_coordinate_system",
+      "module": "sw_ref_geometry",
+      "function": "insert_coordinate_system",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_insert_ref_plane",
+      "module": "sw_ref_geometry",
+      "function": "insert_ref_plane",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_insert_reference_point",
+      "module": "sw_ref_geometry",
+      "function": "insert_reference_point",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_insert_curve_through_points",
+      "module": "sw_curve_and_split",
+      "function": "insert_curve_through_points",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_create_revolved_surface",
+      "module": "sw_surface_ref_ops",
+      "function": "insert_revolved_ref_surface",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_hole_wizard",
+      "module": "sw_hole_features",
+      "function": "create_hole_wizard_at_selection_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 12,
+      "undeclared": [
+        "diameter_mm",
+        "depth_mm",
+        "through",
+        "fastener_index",
+        "standard_index",
+        "generic_type"
+      ],
+      "undeclared_n": 9
+    },
+    {
+      "tool": "solidworks_sketch_fully_defined_status",
+      "module": "sw_sketch_status",
+      "function": "get_constrained_status",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "raise_on_no_sketch"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_drawing_create_broken_view",
+      "module": "sw_drawing_create_missing",
+      "function": "insert_break_lines",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_drawing_create_auxiliary_view",
+      "module": "sw_drawing_create_missing",
+      "function": "create_auxiliary_view",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_drawing_insert_surface_finish_symbol",
+      "module": "sw_drawing_create_missing",
+      "function": "insert_surface_finish_symbol",
+      "inject": "model",
+      "declared": 13,
+      "fn_params": 15
+    },
+    {
+      "tool": "solidworks_drawing_insert_datum_tag",
+      "module": "sw_drawing_create_missing",
+      "function": "insert_datum_tag",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_create_projected_view",
+      "module": "sw_drawing_expose",
+      "function": "create_projected_view",
+      "inject": "drawing_model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_drawing_create_section_view",
+      "module": "sw_drawing_expose",
+      "function": "create_section_view",
+      "inject": "drawing_model",
+      "declared": 2,
+      "fn_params": 4,
+      "undeclared": [
+        "label"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_drawing_create_detail_view",
+      "module": "sw_drawing_expose",
+      "function": "create_detail_view",
+      "inject": "drawing_model",
+      "declared": 5,
+      "fn_params": 11,
+      "undeclared": [
+        "style",
+        "show_type",
+        "full_outline",
+        "jagged_outline",
+        "no_outline"
+      ],
+      "undeclared_n": 5
+    },
+    {
+      "tool": "solidworks_drawing_set_sheet_format",
+      "module": "sw_drawing_expose",
+      "function": "set_sheet_format",
+      "inject": "drawing_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_drawing_add_note",
+      "module": "sw_drawing_expose",
+      "function": "add_drawing_note",
+      "inject": "drawing_model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_drawing_create_hole_table",
+      "module": "sw_drawing_expose",
+      "function": "create_hole_table",
+      "inject": "drawing_model",
+      "declared": 8,
+      "fn_params": 9
+    },
+    {
+      "tool": "solidworks_drawing_create_revision_table",
+      "module": "sw_drawing_expose",
+      "function": "create_revision_table",
+      "inject": "drawing_model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_drawing_insert_center_marks",
+      "module": "sw_drawing_expose",
+      "function": "insert_center_marks",
+      "inject": "drawing_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sheet_metal_insert_miter_flange",
+      "module": "sw_sheet_metal_weld_entry",
+      "function": "insert_sheet_metal_miter_flange",
+      "inject": "model",
+      "declared": 13,
+      "fn_params": 14
+    },
+    {
+      "tool": "solidworks_sheet_metal_insert_closed_corner",
+      "module": "sw_sheet_metal_weld_entry",
+      "function": "insert_sheet_metal_closed_corner",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_weldment_insert_end_cap",
+      "module": "sw_sheet_metal_weld_entry",
+      "function": "insert_weldment_end_cap",
+      "inject": "model",
+      "declared": 10,
+      "fn_params": 11
+    },
+    {
+      "tool": "solidworks_weldment_gusset_create",
+      "module": "sw_sheet_metal_weld_entry",
+      "function": "insert_weldment_gusset",
+      "inject": "model",
+      "declared": 20,
+      "fn_params": 21
+    },
+    {
+      "tool": "solidworks_surface_midsurface_create",
+      "module": "sw_sheet_metal_weld_entry",
+      "function": "create_midsurface",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_feature_cosmetic_thread",
+      "module": "sw_feature_entry_ops",
+      "function": "insert_cosmetic_thread",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_sketch_spline",
+      "module": "sw_part",
+      "function": "sketch_spline",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_flatten_surface",
+      "module": "sw_feature_entry_ops",
+      "function": "create_flatten_surface",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_thicken",
+      "module": "sw_feature_entry_ops",
+      "function": "thicken_surface",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_extrude_depth",
+      "module": "sw_feature_readback",
+      "function": "extrude_depth",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_extrude_params",
+      "module": "sw_feature_readback",
+      "function": "extrude_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_pattern_params",
+      "module": "sw_feature_readback",
+      "function": "pattern_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_hole_params",
+      "module": "sw_feature_readback",
+      "function": "hole_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_info",
+      "module": "sw_feature_readback",
+      "function": "feature_info",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_fillet_params",
+      "module": "sw_feature_readback",
+      "function": "fillet_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_csys_params",
+      "module": "sw_feature_readback",
+      "function": "csys_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_base_flange_params",
+      "module": "sw_feature_readback",
+      "function": "base_flange_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_shell_params",
+      "module": "sw_feature_readback",
+      "function": "shell_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_dome_params",
+      "module": "sw_feature_readback",
+      "function": "dome_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sweep_params",
+      "module": "sw_feature_readback",
+      "function": "sweep_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_revolve_params",
+      "module": "sw_feature_readback",
+      "function": "revolve_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_loft_params",
+      "module": "sw_feature_readback",
+      "function": "loft_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_drawing_view_annotations",
+      "module": "sw_drawing_query",
+      "function": "view_annotations_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_create_mesh_safely",
+      "module": "sw_simulation",
+      "function": "create_mesh_safely",
+      "inject": "study",
+      "declared": 4,
+      "fn_params": 9,
+      "undeclared": [
+        "model",
+        "quality",
+        "mesher_type",
+        "keep_profile"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_simulation_solver_type",
+      "module": "sw_simulation",
+      "function": "static_solver_type_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_create_exploded_view",
+      "module": "sw_assembly_doc",
+      "function": "create_exploded_view",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_auto_explode",
+      "module": "sw_assembly_doc",
+      "function": "auto_explode",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_view_explode",
+      "module": "sw_assembly_doc",
+      "function": "view_explode_assembly",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_view_collapse",
+      "module": "sw_assembly_doc",
+      "function": "view_collapse_assembly",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_show_exploded",
+      "module": "sw_assembly_doc",
+      "function": "show_exploded",
+      "inject": "doc",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_assembly_get_exploded_view_names",
+      "module": "sw_assembly_doc",
+      "function": "get_exploded_view_names",
+      "inject": "doc",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_get_exploded_view_count",
+      "module": "sw_assembly_doc",
+      "function": "get_exploded_view_count",
+      "inject": "doc",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_exploded_view_configuration",
+      "module": "sw_assembly_doc",
+      "function": "get_exploded_view_configuration_name",
+      "inject": "doc",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_edit_explode_parameters",
+      "module": "sw_assembly_doc",
+      "function": "edit_explode_parameters",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_run",
+      "module": "sw_macro",
+      "function": "run_macro",
+      "inject": "sw_app",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_macro_normalize_model_family",
+      "module": "sw_macro_guard",
+      "function": "normalize_model_family",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_build_prompt",
+      "module": "sw_macro_guard",
+      "function": "build_prompt",
+      "inject": "",
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_macro_extract_vba_code",
+      "module": "sw_macro_guard",
+      "function": "extract_vba_code",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_validate_vba_code",
+      "module": "sw_macro_guard",
+      "function": "validate_vba_macro",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_select_template",
+      "module": "sw_macro_guard",
+      "function": "select_template_key",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_fallback_template",
+      "module": "sw_macro_guard",
+      "function": "fallback_macro_for_request",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_macro_write_file",
+      "module": "sw_macro_guard",
+      "function": "write_macro_file",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_automation_explain_hresult",
+      "module": "sw_automation_knowledge",
+      "function": "explain_hresult",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_automation_enter_command_lock",
+      "module": "sw_automation_knowledge",
+      "function": "enter_command_lock",
+      "inject": "sldworks",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_automation_exit_command_lock",
+      "module": "sw_automation_knowledge",
+      "function": "exit_command_lock",
+      "inject": "sldworks",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_automation_is_command_locked",
+      "module": "sw_automation_knowledge",
+      "function": "is_command_locked",
+      "inject": "sldworks",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_automation_set_flag",
+      "module": "sw_automation_knowledge",
+      "function": "set_flag",
+      "inject": "sldworks",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_automation_get_flag",
+      "module": "sw_automation_knowledge",
+      "function": "get_flag",
+      "inject": "sldworks",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_api_deprecated_successor",
+      "module": "sw_com_traps",
+      "function": "deprecated_successor",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_repo_find_real_implementations",
+      "module": "sw_com_traps",
+      "function": "find_real_implementations",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_session_busy_status",
+      "module": "sw_busy",
+      "function": "solidworks_busy",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 1,
+      "undeclared": [
+        "windows"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_session_stuck_status",
+      "module": "sw_busy",
+      "function": "solidworks_stuck",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "windows",
+        "processes"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_session_solver_processes",
+      "module": "sw_busy",
+      "function": "solver_processes",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_session_wait_until_idle",
+      "module": "sw_busy",
+      "function": "wait_until_idle",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 3,
+      "undeclared": [
+        "sleeper"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_review_drawing_layout",
+      "module": "sw_review",
+      "function": "review_drawing_layout",
+      "inject": "",
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_review_export_previews",
+      "module": "sw_review",
+      "function": "save_review_previews",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_review_write_report",
+      "module": "sw_review",
+      "function": "write_review_report",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_review_write_summary",
+      "module": "sw_review",
+      "function": "write_markdown_summary",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_review_run",
+      "module": "sw_review",
+      "function": "run_review",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_preflight_check_com_dependencies",
+      "module": "sw_preflight",
+      "function": "missing_com_dependencies",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_mesh_configure_import_preferences",
+      "module": "sw_import_mesh_reference",
+      "function": "configure_mesh_import_preferences",
+      "inject": "sw",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_mesh_restore_import_preferences",
+      "module": "sw_import_mesh_reference",
+      "function": "restore_mesh_import_preferences",
+      "inject": "sw",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sketch_insert_chain_dimensions",
+      "module": "sw_sketch_dimensions",
+      "function": "insert_chain_dimensions",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_list_names",
+      "module": "sw_feature_readback",
+      "function": "feature_names",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_present",
+      "module": "sw_feature_readback",
+      "function": "feature_present",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_whats_wrong",
+      "module": "sw_feature_readback",
+      "function": "whats_wrong",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_misumi_suggest_part",
+      "module": "sw_misumi",
+      "function": "suggest_part",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 3,
+      "undeclared": [
+        "sess"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_review_pdf_text_layout",
+      "module": "sw_review",
+      "function": "inspect_pdf_text_layout",
+      "inject": "",
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_review_inspect_bmp",
+      "module": "sw_review",
+      "function": "inspect_bmp_preview",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_zoom_to_fit",
+      "module": "sw_review",
+      "function": "zoom_to_fit",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_review_collect_geometry_measurements",
+      "module": "sw_review",
+      "function": "collect_geometry_measurements",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_review_evaluate_report",
+      "module": "sw_review",
+      "function": "evaluate_review_report",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_add_mate_checked",
+      "module": "sw_assembly",
+      "function": "add_mate5_checked",
+      "inject": "asm_model",
+      "declared": 16,
+      "fn_params": 17
+    },
+    {
+      "tool": "solidworks_assembly_suppress_component",
+      "module": "sw_assembly",
+      "function": "suppress_component",
+      "inject": "asm_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_unsuppress_component",
+      "module": "sw_assembly",
+      "function": "unsuppress_component",
+      "inject": "asm_model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_replace_component",
+      "module": "sw_assembly",
+      "function": "replace_component",
+      "inject": "asm_model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_assembly_dissolve",
+      "module": "sw_assembly_doc",
+      "function": "dissolve_assembly",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "component_name"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_assembly_exit_edit_part_in_context",
+      "module": "sw_assembly_doc",
+      "function": "exit_edit_part_in_context",
+      "inject": "asm_model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_appearance_delete_render_material",
+      "module": "sw_render_material",
+      "function": "delete_render_material",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_simulation_ensure_addin",
+      "module": "sw_simulation",
+      "function": "ensure_simulation_addin",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_get_study_manager",
+      "module": "sw_simulation",
+      "function": "get_study_manager",
+      "inject": "sw_app",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_create_study_by_type",
+      "module": "sw_simulation",
+      "function": "create_static_study",
+      "inject": "sw_app",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_default_solve_memory_budget_gb",
+      "module": "sw_simulation",
+      "function": "default_solve_memory_budget_gb",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_simulation_mesh_settings_report",
+      "module": "sw_simulation",
+      "function": "mesh_settings_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_add_parallel_mate",
+      "module": "sw_assembly",
+      "function": "add_mate_parallel",
+      "inject": "asm_model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_simulation_get_loads_manager",
+      "module": "sw_simulation_study",
+      "function": "get_loads_manager_of",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_get_results",
+      "module": "sw_simulation_study",
+      "function": "get_results_of",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_solve_memory_preflight",
+      "module": "sw_simulation",
+      "function": "solve_memory_preflight",
+      "inject": "",
+      "declared": 4,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_simulation_get_edge_weld_connector",
+      "module": "sw_simulation_loads",
+      "function": "get_edge_weld_connector",
+      "inject": "manager",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_gui_get_foreground_window",
+      "module": "sw_gui_focus",
+      "function": "foreground",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_gui_screen_png",
+      "module": "sw_gui_modal",
+      "function": "screen_png",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_revolve_cut",
+      "module": "sw_part",
+      "function": "revolve_cut",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_ref_geometry_create_3d_bounding_box",
+      "module": "sw_ref_geometry",
+      "function": "create_3d_bounding_box",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sketch_select_segment",
+      "module": "sw_sketch_edit_ops",
+      "function": "select_sketch_segment",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_surface_cut",
+      "module": "sw_surface_features",
+      "function": "cut_surface_report",
+      "inject": "model",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_weldment_iter_features",
+      "module": "sw_weldment",
+      "function": "iter_features_recursive",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_drawing_create_three_standard_views",
+      "module": "sw_drawing_expose",
+      "function": "create_three_standard_views",
+      "inject": "drawing_model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_defaults",
+      "module": "sw_costing",
+      "function": "get_costing_defaults",
+      "inject": "cost_manager",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_collect_mesh_evidence",
+      "module": "sw_simulation_results",
+      "function": "collect_mesh_evidence",
+      "inject": "mesh",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_set_registered_study_option",
+      "module": "sw_simulation_study_options",
+      "function": "set_option",
+      "inject": "options",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_view_activate",
+      "module": "sw_view",
+      "function": "activate_view",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_redraw",
+      "module": "sw_view",
+      "function": "redraw_view",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_initialize_shading",
+      "module": "sw_view",
+      "function": "initialize_shading",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_get_frame",
+      "module": "sw_view",
+      "function": "get_view_frame",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_activate_plot",
+      "module": "sw_simulation_results",
+      "function": "activate_plot",
+      "inject": "results",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_simulation_delete_plot",
+      "module": "sw_simulation_results",
+      "function": "delete_plot",
+      "inject": "results",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_set_frame",
+      "module": "sw_view",
+      "function": "set_view_frame",
+      "inject": "view",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_view_get_display_mode",
+      "module": "sw_view",
+      "function": "get_display_mode",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_set_display_mode",
+      "module": "sw_view",
+      "function": "set_display_mode",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_get_scale",
+      "module": "sw_view",
+      "function": "get_view_scale",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_set_scale",
+      "module": "sw_view",
+      "function": "set_view_scale",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_zoom_by_factor",
+      "module": "sw_view",
+      "function": "zoom_view",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_translate_view",
+      "module": "sw_view",
+      "function": "translate_view",
+      "inject": "view",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_view_rotate_about_center",
+      "module": "sw_view",
+      "function": "rotate_about_center",
+      "inject": "view",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_view_roll_view",
+      "module": "sw_view",
+      "function": "roll_view",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_get_camera",
+      "module": "sw_view",
+      "function": "get_view_camera",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_set_camera_by_name",
+      "module": "sw_view",
+      "function": "set_view_camera_by_name",
+      "inject": "view",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_view_has_perspective",
+      "module": "sw_view",
+      "function": "has_perspective",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_add_perspective",
+      "module": "sw_view",
+      "function": "add_perspective",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_remove_perspective",
+      "module": "sw_view",
+      "function": "remove_perspective",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_start_dynamics",
+      "module": "sw_view",
+      "function": "start_dynamics",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_stop_dynamics",
+      "module": "sw_view",
+      "function": "stop_dynamics",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_view_get_next",
+      "module": "sw_view",
+      "function": "get_next_view",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_get_buckling_load_factors",
+      "module": "sw_simulation_results",
+      "function": "get_buckling_load_factors",
+      "inject": "results",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_get_view_model_doc",
+      "module": "sw_view",
+      "function": "get_view_model_doc",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_collect_view_evidence",
+      "module": "sw_view",
+      "function": "collect_view_evidence",
+      "inject": "view",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_get_worst_jacobian_ratio",
+      "module": "sw_simulation_results",
+      "function": "get_worst_jacobian_ratio",
+      "inject": "mesh",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_simulation_is_component_failed",
+      "module": "sw_simulation_results",
+      "function": "is_component_failed",
+      "inject": "mesh",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_selection_clear_colors",
+      "module": "sw_selection",
+      "function": "clear_selection_colors",
+      "inject": "selection",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_costing_set_default_template",
+      "module": "sw_costing",
+      "function": "set_default_template",
+      "inject": "defaults",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_selection_suspend_list",
+      "module": "sw_selection",
+      "function": "suspend_selection_list",
+      "inject": "selection",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_selection_set_object_mark",
+      "module": "sw_selection",
+      "function": "set_selected_object_mark",
+      "inject": "selection",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_selection_enable",
+      "module": "sw_selection",
+      "function": "set_enable_selection",
+      "inject": "selection",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_selection_enable_contour",
+      "module": "sw_selection",
+      "function": "set_enable_contour_selection",
+      "inject": "selection",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_selection_is_coord_sys_element_selected",
+      "module": "sw_selection",
+      "function": "is_coord_sys_element_selected",
+      "inject": "selection",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_selection_is_in_edit_target",
+      "module": "sw_selection",
+      "function": "is_in_edit_target",
+      "inject": "selection",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_selection_collect_evidence",
+      "module": "sw_selection",
+      "function": "collect_selection_evidence",
+      "inject": "selection",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_assembly_apply_component_transform_x",
+      "module": "sw_assembly",
+      "function": "apply_component_transform_x",
+      "inject": "component",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_assembly_external_reference_count",
+      "module": "sw_assembly_doc",
+      "function": "list_external_file_references_count",
+      "inject": "component",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "include_hidden"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_costing_set_default_lot_size",
+      "module": "sw_costing",
+      "function": "set_default_lot_size",
+      "inject": "defaults",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_set_default_material",
+      "module": "sw_costing",
+      "function": "set_default_material",
+      "inject": "defaults",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_set_default_manufacturing_method",
+      "module": "sw_costing",
+      "function": "set_default_manufacturing_method",
+      "inject": "defaults",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_selection_deselect",
+      "module": "sw_selection",
+      "function": "deselect",
+      "inject": "selection",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_include_body",
+      "module": "sw_costing",
+      "function": "include_body",
+      "inject": "cost_part",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_set_method",
+      "module": "sw_costing",
+      "function": "set_costing_method",
+      "inject": "cost_part",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_update_cost_for_all_bodies",
+      "module": "sw_costing",
+      "function": "update_cost_for_all_bodies",
+      "inject": "cost_part",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_motion_calculate_and_play",
+      "module": "sw_motion",
+      "function": "calculate_and_play",
+      "inject": "motion_study",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_motion_export_avi",
+      "module": "sw_motion",
+      "function": "export_motion_study_avi",
+      "inject": "motion_study",
+      "declared": 1,
+      "fn_params": 3,
+      "undeclared": [
+        "avi_parameter"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_costing_set_lot_size",
+      "module": "sw_costing",
+      "function": "set_lot_size",
+      "inject": "cost_analysis",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_costing_set_markup",
+      "module": "sw_costing",
+      "function": "set_markup",
+      "inject": "cost_analysis",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_costing_assign_custom_cost",
+      "module": "sw_costing",
+      "function": "assign_custom_cost",
+      "inject": "cost_body",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_gui_find_modals",
+      "module": "sw_gui_modal",
+      "function": "find_modals",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_gui_modal_report",
+      "module": "sw_gui_modal",
+      "function": "modal_report",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_gui_assert_no_modal",
+      "module": "sw_gui_modal",
+      "function": "assert_no_modal",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_gui_close_modals",
+      "module": "sw_gui_modal",
+      "function": "close_modals",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_gui_focus_state",
+      "module": "sw_gui_focus",
+      "function": "focus_state",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_gui_ensure_focus",
+      "module": "sw_gui_focus",
+      "function": "ensure_focus",
+      "inject": "",
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_gui_assert_focus",
+      "module": "sw_gui_focus",
+      "function": "assert_focus",
+      "inject": "",
+      "declared": 2,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_surface_runtime_available",
+      "module": "sw_surface",
+      "function": "runtime_available",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_session_rebuild",
+      "module": "sw_session",
+      "function": "rebuild_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_sketch_set_construction_geometry",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_set_construction_geometry",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_config_list_display_states",
+      "module": "sw_render_material",
+      "function": "list_display_states",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_config_apply_display_state",
+      "module": "sw_render_material",
+      "function": "apply_display_state",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_document_dependencies",
+      "module": "sw_document_data",
+      "function": "document_dependencies",
+      "inject": "sw_app",
+      "declared": 4,
+      "fn_params": 5
+    },
+    {
+      "tool": "solidworks_part_move_copy_body",
+      "module": "sw_body_ops",
+      "function": "move_copy_body",
+      "inject": "model",
+      "declared": 13,
+      "fn_params": 14
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_unfold",
+      "module": "sw_sheet_metal",
+      "function": "create_unfold",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_fold",
+      "module": "sw_sheet_metal",
+      "function": "create_fold",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sheet_metal_create_hem",
+      "module": "sw_sheet_metal",
+      "function": "create_hem",
+      "inject": "model",
+      "declared": 17,
+      "fn_params": 19,
+      "undeclared": [
+        "allow_unverified"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_sketch_set_blanked",
+      "module": "sw_sketch",
+      "function": "set_sketch_blanked",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_part_intersect",
+      "module": "sw_boolean_ops",
+      "function": "create_intersect",
+      "inject": "model",
+      "declared": 6,
+      "fn_params": 7
+    },
+    {
+      "tool": "solidworks_drawing_insert_model_items",
+      "module": "sw_drawing_create_missing",
+      "function": "insert_model_annotations",
+      "inject": "model",
+      "declared": 9,
+      "fn_params": 10
+    },
+    {
+      "tool": "solidworks_drawing_insert_balloons",
+      "module": "sw_drawing_create_missing",
+      "function": "auto_insert_balloons",
+      "inject": "model",
+      "declared": 15,
+      "fn_params": 17,
+      "undeclared": [
+        "view_name"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_drawing_insert_center_lines",
+      "module": "sw_drawing_create_missing",
+      "function": "insert_center_lines",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_macro_record_lines",
+      "module": "sw_macro",
+      "function": "record_macro_lines",
+      "inject": "sw_app",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_section_properties",
+      "module": "sw_mass_property",
+      "function": "section_properties",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 3,
+      "undeclared": [
+        "selection",
+        "selection_kind"
+      ],
+      "undeclared_n": 2
+    },
+    {
+      "tool": "solidworks_scale_feature",
+      "module": "sw_part",
+      "function": "insert_scale",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_untrim_surface",
+      "module": "sw_surface_features",
+      "function": "untrim_surface_report",
+      "inject": "model",
+      "declared": 5,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_sweep_surface",
+      "module": "sw_surface_features",
+      "function": "sweep_surface_report",
+      "inject": "model",
+      "declared": 11,
+      "fn_params": 12
+    },
+    {
+      "tool": "solidworks_weldment_trim",
+      "module": "sw_weldment",
+      "function": "insert_weldment_trim_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_export_flat_pattern_dxf",
+      "module": "sw_export",
+      "function": "export_flat_pattern_dxf",
+      "inject": "model",
+      "declared": 8,
+      "fn_params": 10,
+      "undeclared": [
+        "alignment"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_insert_weld_symbol",
+      "module": "sw_weldment",
+      "function": "insert_weld_symbol_report",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_insert_form_tool",
+      "module": "sw_sheet_metal",
+      "function": "insert_form_tool_report",
+      "inject": "model",
+      "declared": 10,
+      "fn_params": 11
+    },
+    {
+      "tool": "solidworks_insert_explode_line_sketch",
+      "module": "sw_assembly_doc",
+      "function": "insert_explode_line_sketch_report",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_create_speedpak",
+      "module": "sw_assembly_doc",
+      "function": "create_speedpak_report",
+      "inject": "doc",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_insert_local_curve_driven_pattern",
+      "module": "sw_pattern",
+      "function": "insert_local_curve_driven_pattern_report",
+      "inject": "model",
+      "declared": 15,
+      "fn_params": 16
+    },
+    {
+      "tool": "solidworks_count_sketch_relations",
+      "module": "sw_sketch_dimensions",
+      "function": "count_sketch_relations",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_delete_all_sketch_relations",
+      "module": "sw_sketch_dimensions",
+      "function": "delete_all_sketch_relations",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_delete_sketch_relation",
+      "module": "sw_sketch_dimensions",
+      "function": "delete_sketch_relation",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_sketch_by_name",
+      "module": "sw_sketch",
+      "function": "sketch_by_name",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_drawing_list_views_report",
+      "module": "sw_drawing_view",
+      "function": "list_drawing_views_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_mass_property_object",
+      "module": "sw_mass_property",
+      "function": "mass_property_object",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_section_area_crosscheck",
+      "module": "sw_mass_property",
+      "function": "section_area_crosscheck",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_rib_params",
+      "module": "sw_feature_readback",
+      "function": "rib_params",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sheet_metal_iter_features",
+      "module": "sw_sheet_metal",
+      "function": "iter_features",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_topology_constraints_report",
+      "module": "sw_topology",
+      "function": "topology_constraints_report",
+      "inject": "study",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_linear_pattern_report",
+      "module": "sw_part",
+      "function": "linear_pattern_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 12,
+      "undeclared": [
+        "d1_x",
+        "d1_y",
+        "d1_z",
+        "spacing2_mm",
+        "count2",
+        "d2_x"
+      ],
+      "undeclared_n": 8
+    },
+    {
+      "tool": "solidworks_insert_mate_reference",
+      "module": "sw_curve_and_split",
+      "function": "insert_mate_reference",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 6,
+      "undeclared": [
+        "primary_entity",
+        "primary_type",
+        "primary_alignment",
+        "primary_align_axes"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_assembly_iter_feature_tree",
+      "module": "sw_assembly",
+      "function": "iter_feature_tree",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 2,
+      "undeclared": [
+        "include_subfeatures"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_boundary_boss_report",
+      "module": "sw_net_blend",
+      "function": "insert_boundary_boss_report",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_boundary_surface_report",
+      "module": "sw_net_blend",
+      "function": "insert_boundary_surface_report",
+      "inject": "model",
+      "declared": 7,
+      "fn_params": 8
+    },
+    {
+      "tool": "solidworks_assembly_sequence_report",
+      "module": "sw_delivery",
+      "function": "collect_assembly_bom",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_component_pattern_report",
+      "module": "sw_assembly",
+      "function": "iter_feature_tree",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_assembly_performance_analysis_report",
+      "module": "sw_assembly",
+      "function": "collect_mate_feature_summary",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_weld_fillet_bead_report",
+      "module": "sw_weld_bead",
+      "function": "insert_fillet_bead_report",
+      "inject": "model",
+      "declared": 12,
+      "fn_params": 13
+    },
+    {
+      "tool": "solidworks_pdm_evidence_report",
+      "module": "sw_pdm_report",
+      "function": "collect_pdm_evidence_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sketch_apply_relations",
+      "module": "sw_sketch_relations",
+      "function": "apply_sketch_relations",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_gui_classify_dialog",
+      "module": "sw_gui_dialog_classify",
+      "function": "classify_dialog",
+      "inject": "",
+      "declared": 3,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_catalog_domains",
+      "module": "engineering.catalog",
+      "function": "catalog_domains",
+      "inject": "",
+      "declared": 0,
+      "fn_params": 0
+    },
+    {
+      "tool": "solidworks_catalog_retrieve",
+      "module": "engineering.catalog",
+      "function": "catalog_retrieve",
+      "inject": "",
+      "declared": 6,
+      "fn_params": 6
+    },
+    {
+      "tool": "solidworks_catalog_contract",
+      "module": "engineering.catalog",
+      "function": "catalog_contract",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_catalog_exposure",
+      "module": "engineering.catalog",
+      "function": "catalog_exposure",
+      "inject": "",
+      "declared": 1,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_feature_readback",
+      "module": "sw_feature_readback",
+      "function": "feature_readback",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_render_material_list",
+      "module": "sw_render_material",
+      "function": "list_render_materials",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_sketch_dimension_horizontal",
+      "module": "sw_sketch_dimensions",
+      "function": "add_horizontal_dimension",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_sketch_dimension_vertical",
+      "module": "sw_sketch_dimensions",
+      "function": "add_vertical_dimension",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_feature_revolve_cut",
+      "module": "sw_part",
+      "function": "revolve_cut",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_spline",
+      "module": "sw_part",
+      "function": "sketch_spline",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_sketch_rotate",
+      "module": "sw_sketch_modify_ops",
+      "function": "sketch_rotate",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 4
+    },
+    {
+      "tool": "solidworks_sketch_offset",
+      "module": "sw_sketch_edit_ops",
+      "function": "sketch_offset",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 8,
+      "undeclared": [
+        "chain",
+        "cap_ends",
+        "make_construction",
+        "add_dimensions"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_surface_offset",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_offset_surface",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_surface_planar",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_planar_surface",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_surface_replace_face",
+      "module": "sw_surface_edit_ops",
+      "function": "insert_replace_face",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_surface_untrim",
+      "module": "sw_surface_features",
+      "function": "untrim_surface_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 6,
+      "undeclared": [
+        "distance_mm",
+        "merge",
+        "trim_opposite_side"
+      ],
+      "undeclared_n": 3
+    },
+    {
+      "tool": "solidworks_surface_flatten",
+      "module": "sw_feature_entry_ops",
+      "function": "create_flatten_surface",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 4,
+      "undeclared": [
+        "body_type"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_surface_sweep",
+      "module": "sw_sweep",
+      "function": "create_sweep_surface_report",
+      "inject": "model",
+      "declared": 0,
+      "fn_params": 1
+    },
+    {
+      "tool": "solidworks_surface_revolved_ref",
+      "module": "sw_surface_ref_ops",
+      "function": "insert_revolved_ref_surface",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 5,
+      "undeclared": [
+        "angle2_deg"
+      ],
+      "undeclared_n": 1
+    },
+    {
+      "tool": "solidworks_curve_through_points",
+      "module": "sw_curve_and_split",
+      "function": "insert_curve_through_points",
+      "inject": "model",
+      "declared": 1,
+      "fn_params": 2
+    },
+    {
+      "tool": "solidworks_feature_loft_cut",
+      "module": "sw_loft",
+      "function": "create_loft_cut_report",
+      "inject": "model",
+      "declared": 2,
+      "fn_params": 3
+    },
+    {
+      "tool": "solidworks_feature_cosmetic_thread",
+      "module": "sw_feature_entry_ops",
+      "function": "insert_cosmetic_thread",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 8,
+      "undeclared": [
+        "diameter_mm",
+        "end_type",
+        "depth_mm",
+        "note"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_weld_symbol",
+      "module": "sw_weldment",
+      "function": "insert_weld_symbol_report",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 8,
+      "undeclared": [
+        "symbol",
+        "right",
+        "stagger",
+        "contour"
+      ],
+      "undeclared_n": 4
+    },
+    {
+      "tool": "solidworks_export_flat_pattern_dxf",
+      "module": "sw_export",
+      "function": "export_flat_pattern_dxf",
+      "inject": "model",
+      "declared": 3,
+      "fn_params": 10,
+      "undeclared": [
+        "include_hidden_edges",
+        "include_bounding_box",
+        "merge_coplanar_faces",
+        "alignment",
+        "allow_temporary_save",
+        "temporary_save_dir"
+      ],
+      "undeclared_n": 6
+    },
+    {
+      "tool": "solidworks_assembly_explode_line_sketch",
+      "module": "sw_assembly_doc",
+      "function": "insert_explode_line_sketch_report",
+      "inject": "doc",
+      "declared": 0,
+      "fn_params": 1
+    }
+  ]
+}

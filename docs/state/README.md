@@ -88,8 +88,23 @@
 | S5 | **G 文档层** + **H 规格层** + **文档地图** | ✅ 已提交（`facts/G-docs.md`、`facts/H-specs.md`、`doc-map.md`）|
 | S6 | **I 许可来源** + **跨维度索引** | ✅ 已提交（`facts/I-license.md`、`INDEX.md`）|
 
-**收工状态**：A–J **十个维度全部落盘**；跨维度索引见 [`INDEX.md`](INDEX.md)；文档地图见 [`doc-map.md`](doc-map.md)。
+**收工状态（第一轮）**：A–J **十个维度全部落盘**；跨维度索引见 [`INDEX.md`](INDEX.md)；文档地图见 [`doc-map.md`](doc-map.md)。
 探测器 **11 个**（`probes/`），全部只读、可重跑；机器可读读数 `inventory-a..j.json` + `inventory-g-map.json`。
+
+---
+
+## 六之补、第二轮：深度对应关系（规格 347）
+
+第一轮记的是**结构信号**（多少条、多大、断没断）；第二轮只记**可证伪的对应关系**。
+规格：`specs/347-state-dossier-round2/spec.md`
+
+| 轮 | 维度 | 状态 |
+|---|---|---|
+| S7 | **K 声明 ↔ 实现签名** | ✅ 已提交（`facts/K-signature.md`）|
+| S8 | L 能力 evidence 抽样核验 | ⬜ |
+| S9 | M 测试执行期结果 | ⬜ |
+| S10 | N 仓库外来源 + 未触碰目录 | ⬜ |
+| S11 | O 文档归并 | ⬜ |
 
 **每轮收工**：① 事实写入对应 `facts/*.md`；② 更新本文件进度表；③ `python tools/commit_mine.py` 提交；
 ④ 跑 `release_check` 确认没有把仓库弄红。
