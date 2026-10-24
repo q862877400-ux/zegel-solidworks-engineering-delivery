@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 631 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 632 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 254 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 255 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 68 | — |
 
-## 探针（254 个）
+## 探针（255 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -194,6 +194,7 @@
 | `probe_ruled_whats_wrong.py` | ★ 真机：直纹曲面失败后读 **What's Wrong**（★ 上轮留的"换观测手段"） |
 | `probe_s3_dimensions_exist.py` | ★ S3 T008 前置核查：交付的板件到底有没有**驱动尺寸** |
 | `probe_s3_e1_real_machine.py` | ★ S3 第 3 条：先验证**检查器能看见真实坏样件** |
+| `probe_s3_t008_dimension_driven.py` | ★ S3 T008：把板件做成尺寸驱动 —— 用**可行的**那两个入口 |
 | `probe_safearray_comtypes.py` | @brief 探针：换 **comtypes 早绑定**后端，`ISafeArrayUtility` 能不能驱动（含 `out` 形参） |
 | `probe_safearray_utility.py` | @brief 探针：`ISldWorks.GetSafeArrayUtility()` 在 pywin32 上**可达吗**，`out` 形参能不能驱动 |
 | `probe_select4_mark_e2e.py` | ★ 真机验证 `_select_com_object` 的 **Select4 + ISelectData** 新路径：mark 真的写得进去吗 |

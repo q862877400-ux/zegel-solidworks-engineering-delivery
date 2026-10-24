@@ -208,3 +208,44 @@
 - **证据**：上述两处
 - **复现**：检索这两个文件名在全仓的出现位置并区分读/写/注释
 - **未确认**：无
+
+## R-19 T008 真机：交付板件零驱动尺寸；`AutoDimension2` 可行、`update_dimension_mm` 单位放大 1000 倍
+
+- **观测方式**：两个真机探针（走 `tools/sw_guard.py` 护栏，`CommandInProgress` 抑制弹窗）
+  - `tools/probe_s3_dimensions_exist.py`（量现状）
+  - `tools/probe_s3_t008_dimension_driven.py`（量可行路径）
+- **读数一：现状是零驱动尺寸、草图欠约束**
+  - `ISketch.GetConstrainedStatus()` = **2**（`swUnderConstrained`）
+  - 驱动尺寸数 = **0**；特征树只有 `草图1` + `凸台-拉伸1`
+  - 根因：`tools/run_stage2_plate.py` 的 `build_plan()` 用 `x1_mm`/`x2_mm`/
+    `center_x_mm`/`radius_mm` 这类**坐标参数**建板，每轮重画一遍，模型里不留尺寸
+- **读数二：加驱动尺寸**有**两条**入口，一条死一条通
+  - ❌ `IModelDoc2.AddHorizontalDimension2` —— 本机实测**直接把 SolidWorks 崩掉**
+    （`com_error: RPC 服务器不可用`）。这与 `docs/dead-ends.md` 轮 400/153/154/155
+    记的 `AddDimension2` 死路**同族**，且症状更重
+  - ✅ `ISketch.AutoDimension2(1, 1, -1, 1, -1)` —— 回 `0`（success），
+    **建成 1 个尺寸** `D1@草图1`（值 = 100 mm = 板宽），草图 `2 → 3`（完全定义）
+  - ❌ `ISketchManager.FullyDefineSketch`（官方指它取代 `AutoDimension2`）——
+    按官方 **10 个参数**调用，第 6 参（`HorizontalDatumDisp`，`object`）报
+    `类型不匹配`。未查明正确的传法
+- **读数三：`update_dimension_mm` 写入的值放大约 1000 倍**
+  - 请求把 `D1@草图1` 从 100 mm 改成 120 mm（×1.2）
+  - `IDimension.SystemValue`：`0.1` → **`120.0`**（比例 **1200**，期望 **0.12**）
+  - 该函数**自报** `success: True`，且其 `after_mm` 回 `120.0`（与请求一致）
+    ⇒ **它的自我报告不能当证据**
+  - 依据：`scripts/sw_document_data.py` 的 `update_dimension_mm` 用
+    `_document_length_unit_scale(model)` 求 scale 后 `SetSystemValue3(value_mm / _scale, ...)`
+- **证据**：`tools/probe_s3_dimensions_exist.py` / `tools/probe_s3_t008_dimension_driven.py`；
+  产物 `output/s3-dimensions-exist.json` 与 `output/s3-t008-dimension-driven.json`
+  （`output/` 在 `.gitignore` 里，关键读数已抄进本节）
+- **复现**：
+  ```powershell
+  python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_dimensions_exist.py
+  python -B tools\sw_guard.py --timeout 300 -- python tools\probe_s3_t008_dimension_driven.py
+  ```
+- **未确认**：
+  - `GetSystemValue3` 的正确调用形状 —— 传 `(0, None)` 回 `null`，未查明缺哪个参数
+  - 包围盒读法 —— `IPartDoc.GetBodies2(True)` 报「非选择性的参数」、
+    `IModelDocExtension.GetBox` 不存在 ⇒ **没有独立读数能证实几何真的变宽了**
+  - `update_dimension_mm` 的单位缺陷是「`_scale` 求错」还是「`SetSystemValue3` 吃米制」
+    未见分晓；两种解释都未被证据排除
