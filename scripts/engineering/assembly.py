@@ -121,7 +121,16 @@ class ConstraintGraph:
     expected_motions: list = field(default_factory=list)
 
     def total_dof(self) -> int:
-        """★ 自由度 = ★ Σ(组件自由度) − Σ(配合消去的)（★ 地件算 0）。"""
+        """★ 自由度 = ★ Σ(组件自由度) − Σ(配合消去的)（★ 地件算 0）。
+
+        ⚠⚠ **预检用途 —— 不得直接授权交付**（`docs/ENGINEERING-PATH.md` S1）。
+
+        ★ 本式**按配合类型扣常数**，且只跳过调用方自报 `redundant=True` 的配合
+          ⇒ 同一对组件重复贴 6 次 coincident 也能算出 DOF=0、判 `fully_constrained`。
+          实测出处：`docs/state/facts/R-engineering-path.md` R-05。
+        ★ 交付判定必须走 `engineering.acceptance.e4_assembly.judge_assembly`
+          （它检查同一对组件 + 同一配合类型的重复）。
+        """
         base = sum(c.dof for c in self.components if not c.is_ground)
         removed = 0
         for m in self.mates:

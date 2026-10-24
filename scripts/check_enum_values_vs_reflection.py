@@ -176,7 +176,11 @@ def parse_code() -> list:
             if m:
                 out.append(
                     (
-                        p.name,
+                        #: ★ 用**相对 `scripts/` 的路径**，不是 basename ——
+                        #:   子目录（`engineering/acceptance/` 等）里的同名文件
+                        #:   会互相覆盖 `covered` 字典，且下游 `ROOT/"scripts"/fname`
+                        #:   读不到。
+                        str(p.relative_to(ROOT / "scripts")).replace("\\", "/"),
                         i,
                         m.group("key"),
                         int(m.group("value")),
@@ -286,7 +290,16 @@ def find_int_tables() -> list:
             if n:
                 lo = node.lineno
                 hi = max(getattr(node, "end_lineno", lo) or lo, lo)
-                out.append((p.name, lo, hi, names[0], n))
+                #: ★ 同 `parse_code`：相对路径，子目录文件才读得到
+                out.append(
+                    (
+                        str(p.relative_to(ROOT / "scripts")).replace("\\", "/"),
+                        lo,
+                        hi,
+                        names[0],
+                        n,
+                    )
+                )
     return out
 
 

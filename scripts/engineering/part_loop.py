@@ -283,7 +283,15 @@ class DofPlan:
     intentional_dof: list = field(default_factory=list)
 
     def total_dof(self) -> int:
-        """★ 自由度 = ★ `2 × 实体数 − 关系数 − 尺寸数`（★ 平面草图粗算）。"""
+        """★ 自由度 = ★ `2 × 实体数 − 关系数 − 尺寸数`（★ 平面草图粗算）。
+
+        ⚠⚠ **预检用途 —— 不得直接授权交付**（`docs/ENGINEERING-PATH.md` S1）。
+
+        ★ 本公式**按数量算、不看关系是否重复** ⇒ 同一条关系重复贴 8 次也能算出 DOF=0。
+          实测出处：`docs/state/facts/R-engineering-path.md` R-04。
+        ★ 交付判定必须走 `engineering.acceptance.e1_sketch.judge_sketch_constraint`
+          （它按关系唯一性去重，并拒绝含重复的输入）。
+        """
         return max(
             0, 2 * int(self.entities) - len(self.relations) - len(self.dimensions)
         )

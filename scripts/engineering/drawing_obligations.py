@@ -60,7 +60,16 @@ def obligations_from_method(method_id: str) -> list[DrawingObligation]:
 
 
 def coverage(obls: list[DrawingObligation]) -> dict:
-    """★ 覆盖率（★ SC-005 要求 **1.0**）。"""
+    """★ 覆盖率（★ SC-005 要求 **1.0**）。
+
+    ⚠⚠ **预检用途 —— 不得直接授权交付**（`docs/ENGINEERING-PATH.md` S1）。
+
+    ★ 本函数**只数 `covered` 布尔，不看 `evidence`** ⇒ `mark_covered(obls, name)`
+      用默认空串也能把覆盖率刷到 1.0。
+      实测出处：`docs/state/facts/R-engineering-path.md` R-06。
+    ★ 交付判定必须走 `engineering.acceptance.e5_e6_drawing.judge_drawing`
+      （它要求每条 covered 都有非空证据）。
+    """
     n = len(obls)
     c = sum(1 for o in obls if o.covered)
     return {

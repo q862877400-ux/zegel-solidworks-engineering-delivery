@@ -299,6 +299,15 @@ def evaluate_rule(
 ) -> RuleResult:
     """★★ **规则裁决**（★ T7 —— ★ Q13 L235 逐字）。
 
+    ⚠⚠ **预检用途 —— 不得直接授权交付**（`docs/ENGINEERING-PATH.md` S1）。
+
+    ★ `formula_ok` / `applicability_ok` 是**调用方传进来的两个布尔**，
+      本函数不计算任何输入；PASS 分支也不写 `outputs` 与 `citations`
+      ⇒ 一条 PASS 可以不含任何数字和任何条款。
+      实测出处：`docs/state/facts/R-engineering-path.md` R-09。
+    ★ 交付判定必须走 `engineering.acceptance.e7_provenance.judge_provenance`
+      （它要求引用非空且可解析、有可复算输出、版本一致）。
+
     ★★ Q13 L235 逐字：「**一个公式能运行，不表示它对当前材料、工况和
       标准版本适用**」。
 
