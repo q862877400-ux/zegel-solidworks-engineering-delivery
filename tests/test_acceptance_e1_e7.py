@@ -81,6 +81,9 @@ CASES = [
     ("e7_good", judge_provenance, S.good_e7, Status.PASS),
     ("e7_bad_nocite", judge_provenance, S.bad_e7_no_citations, Status.FAIL),
     ("e7_bad_fakesrc", judge_provenance, S.bad_e7_fake_source, Status.FAIL),
+    #: ★★ 假引用：resolved=True 自己声明，locator 填占位符
+    ("e7_bad_placeholder_locator", judge_provenance,
+     S.bad_e7_placeholder_locator, Status.FAIL),
     ("e7_bad_stale", judge_provenance, S.bad_e7_stale_evidence, Status.FAIL),
     ("e7_unknown", judge_provenance, S.unknown_e7, Status.UNKNOWN),
 ]

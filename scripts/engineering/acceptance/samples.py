@@ -441,6 +441,28 @@ def good_e7() -> Observation:
     )
 
 
+def bad_e7_placeholder_locator() -> Observation:
+    """★★ **假引用**的最省事形态：`resolved=True` 是调用方自己声明的，
+    `locator` 填个占位符（`见上` / `x` / `待补`）就能声称「解析得到」。
+
+    ★ E7 的负例清单第一条就是「假引用」。判定器现在要求
+      `locator` 至少命中一种可指认形态（表/图/条/§/标准号/点分条款号）。
+
+    ⚠ 这条判据只拦「明显不是出处」的占位符，**不能**证明条款真实存在 ——
+      真正的核对要靠本地知识库（`ks_*`）。见 `tests/test_acceptance_e7_locator.py`。
+    """
+    return collect_provenance(
+        target="plate-rev1",
+        claims=({"id": "C1", "text": "板厚 20 mm 满足刚度要求"},),
+        citations=({"claim_id": "C1", "locator": "见上", "resolved": True},),
+        outputs={"deflection_mm": 0.03},
+        source_kind="standard_clause",
+        source_ref="GB/T 1804-2000 表1",
+        artifact_version="rev1",
+        evidence_version="rev1",
+    )
+
+
 def bad_e7_no_citations() -> Observation:
     """★★ R-09 的伪造手法：两个布尔 + 来源标签，citations 为空。"""
     return collect_provenance(

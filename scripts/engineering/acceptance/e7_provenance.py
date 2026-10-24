@@ -35,9 +35,74 @@
 
 from __future__ import annotations
 
+import re
+
 from .result import CheckResult, Observation, Status
 
 CHECKER_VERSION = "s1-1"
+
+
+#: ★ 明确不是出处的一批占位符（**归一化后完全相等**才拒 —— 不做模糊匹配，免得误伤真词）
+PLACEHOLDER_LOCATORS = frozenset(
+    {
+        "",
+        "-",
+        "--",
+        "?",
+        "x",
+        "n/a",
+        "na",
+        "none",
+        "null",
+        "无",
+        "略",
+        "见上",
+        "见前",
+        "见下",
+        "同上",
+        "同前",
+        "同上文",
+        "见附件",
+        "见原文",
+        "待补",
+        "待定",
+        "tbd",
+        "todo",
+        "placeholder",
+    }
+)
+
+#: ★ 可指认的定位形态（命中任一即算「像出处」）
+_LOCATOR_PATTERNS = (
+    r"[表图]\s*\d",                                  # 表1 / 图3
+    r"第\s*[0-9一二三四五六七八九十百.]+\s*[条款节项]",
+    r"§\s*\d",
+    r"(?i)\b(annex|appendix|clause|section|chapter)\s*[A-Z0-9]",
+    r"\b[A-Z]{2,}(?:/[A-Z]{1,2})?\s*\d",             # GB/T 1804 · GB 30871 · ISO 2768
+    r"\d+\s*\.\s*\d+",                            # 5.2 · 4.1.3
+)
+
+
+def locator_looks_cited(locator: object) -> tuple[bool, str]:
+    """★ 判一个 `locator` 是不是**可指认的出处**，回 `(是否像, 理由)`。
+
+    ★ 只拦「明显不是出处」的占位符 —— **不能**证明那个条款真的存在。
+      真正核对要靠本地知识库（`ks_*`）。这是硬边界的如实陈述。
+
+    返回 `(True, "")` 或 `(False, 原因)`。
+    """
+    raw = str(locator or "")
+    norm = raw.strip().lower()
+    if norm in PLACEHOLDER_LOCATORS:
+        return False, "占位符 %r 不是可指认的出处" % raw.strip()
+    for pat in _LOCATOR_PATTERNS:
+        if re.search(pat, raw):
+            return True, ""
+    return False, (
+        "定位串 %r 里没有任何可指认的形态（表/图/条/§/标准号/点分条款号）"
+        % raw.strip()
+    )
+
 
 #: ★ 允许的来源标签（封闭词表 —— 表外一律不算有效来源）
 VALID_SOURCES = (
@@ -130,6 +195,29 @@ def judge_provenance(obs: Observation, *, requirement_id: str) -> CheckResult:
             observed={"uncovered_claims": uncovered[:8], "count": len(uncovered)},
             expected={"uncovered_claims": 0},
             reason="★ %d 条判断没有解析到引用：%s" % (len(uncovered), uncovered[:5]),
+        )
+
+    #: ★★ ④b 每条引用的 `locator` 必须像真出处（**假引用**是 E7 的第一条负例）
+    #:
+    #:   ★ 为什么需要：`resolved=True` 是**调用方自己声明**的，
+    #:     「解析得到」这件事没有第三方校验 ⇒ 填 `locator="见上"` + `resolved=True` 就能过。
+    #:   ⚠ 本判据只能拦「明显不是出处」的占位符，**不能**证明条款真实存在。
+    bad_locators = []
+    for c in cites:
+        if not c.get("resolved"):
+            continue
+        ok_loc, why = locator_looks_cited(c.get("locator"))
+        if not ok_loc:
+            bad_locators.append({"claim_id": c.get("claim_id"), "why": why})
+    if bad_locators:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"bad_locators": bad_locators[:8], "count": len(bad_locators)},
+            expected={"locator": "表/图/条/§/标准号/点分条款号 任一形态"},
+            reason=(
+                "★ %d 条引用声明 resolved=True 但 locator 不是可指认的出处：%s"
+                % (len(bad_locators), [b["why"] for b in bad_locators[:3]])
+            ),
         )
 
     #: ⑤ 证据版本必须与产物版本绑定（「旧版本证据」是负例）
