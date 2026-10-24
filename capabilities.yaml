@@ -3994,6 +3994,7 @@
     "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
    ],
    "limitations": [
+    "⚠⚠⚠ 2026-10-25（第 14 轮）**本机已退化，当前不可用** —— 复跑 `tools/probe_hv_dimension_with_selection.py`（**一字未改**）：选一条线段 ⇒ 尺寸 0 → H:-1、`h_err=远程过程调用失败`、`AddVerticalDimension2` 报 `<unknown>` 已不存在；选两个端点与**对照组**都 `RPC 服务器不可用`（进程崩）⇒ 判别 `still_no_dimension`（成 0 / 3）。★ 故 `level = verified` 记录的是 **2026-10-03 的历史**，**不代表现在能用**。★ 连带：E2 的「孔随板宽联动」目前**没有可用机制**。详见事实 560。",
     "⚠⚠ 2026-10-25（第 13 轮）**跨实体选法会让 SolidWorks 进程崩** —— 本能力只在「**一条线段的两个端点**」这类选法上验过（事实 422）。本轮想给**孔心**加定位尺寸，试了两种跨实体选法，都**不可调用**：① 孔心（`ISketchPoint`）+ 边线（`ISketchLine`）→ `AddDimension2` ⇒ 尺寸没加成，随后进程崩（`com_error: RPC 服务器不可用`）；② 孔心 + 矩形角点（两个 `ISketchPoint`）→ `AddHorizontalDimension2` ⇒ 同样崩。★ 判据用**尺寸计数**（`count_sketch_dimensions`），不能看返回值 —— 两次调用返回值看着正常，尺寸计数却从 0 变 -1（文档已随进程丢失）。★ 结论：本能力给的是「**选中实体自身的长度**」，**不是任意两点之间的距离**。⇒ 孔位定位走不了它；候选替代见 `specs/350-first-part-delivery/s3-t011-edit-delivered.md` 第九节（用**构造线单段长度** + 端点重合，仍落在已验证选法内，尚未试）。",
     "★ 2026-10-18 写回工具：solidworks_sketch_dimension_horizontal（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
@@ -4028,6 +4029,7 @@
     "★★★ **而它顺手推翻了一条旧定性**：这两条此前被记作「**会挂**」（`sw_alive: null`）—— ★ 而真相是它弹了一个「修改」**数值输入框**（★ 事实 421：`hung = false`，控件树 `SLIDER×3 + THUMB WHEEL×3`）。**选中实体后它就不弹了** ✓"
    ],
    "limitations": [
+    "⚠⚠⚠ 2026-10-25（第 14 轮）**本机已退化，当前不可用** —— 复跑 `tools/probe_hv_dimension_with_selection.py`（**一字未改**）：选一条线段 ⇒ 尺寸 0 → H:-1、`h_err=远程过程调用失败`、`AddVerticalDimension2` 报 `<unknown>` 已不存在；选两个端点与**对照组**都 `RPC 服务器不可用`（进程崩）⇒ 判别 `still_no_dimension`（成 0 / 3）。★ 故 `level = verified` 记录的是 **2026-10-03 的历史**，**不代表现在能用**。★ 连带：E2 的「孔随板宽联动」目前**没有可用机制**。详见事实 560。",
     "★ 2026-10-18 写回工具：solidworks_sketch_dimension_vertical（batch116）—— ★ 只是【暴露】，本条 level 未变；工具可用不代表新增真机证据。",
     "★ 2026-10-18 修订：本条 level=verified 但 mcp_tools 为 0 ⇒ 上层无工具可用，「已验证」仅表示底层实现有运行证据，不代表对外可用。",
     "★★ 2026-10-04（接手轮 · 主线回填）**该条证据自己写的读数**：`output/hv-dimension-with-selection-evidence.json` 顶层逐字 `verdict='hv_dimension_works'` · `passed=2/3`（采集于 2026-10-03T15:30:25）⇒ ★ **只过了 2 项**。★ 本行是**主线按自有证据回填**的（★ 原 `limitations` 没提这个比值）；⚠ **该证据文件的 `cases` 只记 `ok` 布尔、没记是哪个变体失败** ⇒ ★ 要追问「哪一步没成」，得回到产它的探针重跑（★ 那本身是证据侧的缺口，如实记）✓",

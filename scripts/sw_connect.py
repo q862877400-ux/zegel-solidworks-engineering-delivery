@@ -643,6 +643,20 @@ def try_call(fn, *args):
         return False, "%s: %s" % (type(exc).__name__, str(exc)[:140])
 
 
+#: dispatch-guard: covered-wrappers
+def try_member(obj, name, *args):
+    """★ 取一个 COM 成员；**取不到回 None，不抛**。
+
+    ★ 与 	ry_call 成对：那个包「调一次」，这个包「取或调一次」。
+    ★ 顺手把两个探针里重复的 _member 收成一个家
+      （不然统一化体检会把它算成克隆组）。
+    """
+    try:
+        return get_com_member(obj, name, *args)
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def select_by_id(extension, entity_name, entity_type, append=False, mark=0):
     """★ 统一封装 `IModelDocExtension::SelectByID2`（★ 本仓**唯一**实现）。
 

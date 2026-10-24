@@ -46,6 +46,7 @@ from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p_  # noqa: E402
 from scripts.sw_connect import get_com_member  # noqa: E402
 from scripts.sw_connect import try_call as _try  # noqa: E402
+from scripts.sw_connect import try_member as _member  # noqa: E402
 from scripts.sw_sketch import active_sketch as _active_sketch  # noqa: E402
 from scripts.sw_sketch import get_sketch_segments as _get_segments  # noqa: E402
 from scripts.sw_sketch_dimensions import (  # noqa: E402
@@ -69,15 +70,6 @@ from scripts.sw_sketch_dimensions import (  # noqa: E402
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
 
-
-def _member(obj, name):
-    """★ 取一个无参 COM 成员的返回值（取不到回 None）。
-
-    用到的两个：`ISketchArc.GetCenterPoint2`（圆弧 → 圆心）·
-    `ISketchLine.GetStartPoint2`（直线 → 起点）。两个都是 `ISketchPoint`。
-    """
-    ok, v = _try(get_com_member, obj, name)
-    return v if ok and v is not None else None
 
 
 def _pick(obj) -> bool:

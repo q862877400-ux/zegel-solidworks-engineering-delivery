@@ -55,7 +55,16 @@ for _stream in (sys.stdout, sys.stderr):
 #:      "有几个取成员的同义词"没有单一真源）。
 #:   ⚑ 本轮再加 `call_com_member`（轮 145 为"故意要调"的站点新起的名字）。
 #:   ⇒ 这三种**都是**"取/调 COM 成员"的调用点，都要算。
-WRAPPERS = {"_safe_member", "get_com_member", "safe_get_com_member", "call_com_member"}
+#:   ⚑⚑ 2026-10-25（第 14 轮）：再加 	ry_member —— 它也是「取或调一次 COM 成员」
+#:   的别名（取不到回 None）。★ 加它不只是为了让门禁变绿：**不加就等于它的调用点被漏计**，
+#:   而那正是上面那条「有几个取成员的同义词没有单一真源」的老毛病。
+WRAPPERS = {
+    "_safe_member",
+    "get_com_member",
+    "safe_get_com_member",
+    "call_com_member",
+    "try_member",
+}
 
 IFACE_HEAD = __import__("re").compile(r"^##\s+(\w+)\s*$")
 IFACE_SIG = __import__("re").compile(r"^\s+(\S+)\s+(\w+)\((.*)\)\s*$")

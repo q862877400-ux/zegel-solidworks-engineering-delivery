@@ -56,7 +56,7 @@ S2 的**判据已建、输入未齐**，但它**不阻断 S3**。
 |---|---|---|
 | **S0** 恢复正式通路 | ✅ 收口 | [`specs/348-s0-restore-official-path/acceptance.md`](../specs/348-s0-restore-official-path/acceptance.md)；工程层测试 25 failed → 102 passed |
 | **S1** E1–E7 判据与坏样件 | ✅ 离线收口 | [`specs/349-e1-e7-acceptance/acceptance.md`](../specs/349-e1-e7-acceptance/acceptance.md)；10 条判据 + 汇总层，256 passed |
-| **S3** 板件真过 E1–E3 | 🔄 **进行中** | 真机已验：E1 两态都拒 · 生成路径补了加尺寸步骤 · **在交付件副本上改板宽 100→120 且保存重开仍成立**。见下 |
+| **S3** 板件真过 E1–E3 | 🔄 **进行中（E2 在孔位联动上停线）** | 真机已验：E1 两态都拒 · 改已交付件/保存落盘/保存重开三条机制成立。★ 而 **E2 的「孔未随板宽变化」不合格**，且孔位尺寸化所依赖的 HV 尺寸能力本机已退化（事实 560）⇒ 停线，不硬推 |
 | **S2** 冻结首件需求 | ⚠ 判据已建、输入未齐 | [`specs/350-first-part-delivery/requirements.md`](../specs/350-first-part-delivery/requirements.md) 八项未定 |
 | **S4–S6** | ⬜ 未开始 | 依赖 S3 |
 

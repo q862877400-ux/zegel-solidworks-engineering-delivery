@@ -7150,6 +7150,26 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 560 | **★★★ 环境退化：`sketch_dimension_horizontal` / `sketch_dimension_vertical` 在本机已不可用（复跑自己那个已验探针就失败）** —— 2026-10-25（第 14 轮）。
+     ★ 事实 422（轮 542）当年验成：选一条线段或两个端点后 `AddHorizontalDimension2` / `AddVerticalDimension2` 能让草图尺寸 0 → 1。
+     ★★ 本轮为做「孔位联动」复跑 `tools/probe_hv_dimension_with_selection.py`（**同一个探针，一字未改**）：
+     ```
+     ★ 选一条线段  ok=False  尺寸 0 → H:-1 → V:-1
+                  h_err=com_error: (-2147023170, '远程过程调用失败。')
+                  v_err=AttributeError: <unknown>.AddVerticalDimension2   ← 文档对象已坏
+     ★ 选两个端点  → com_error: (-2147023174, 'RPC 服务器不可用。')   ← 进程崩
+     对照：不选    → com_error: (-2147023174, 'RPC 服务器不可用。')   ← 连对照都跑不完
+     判别：still_no_dimension（成 0 / 3）
+     ```
+     ⇒ ★★★ **故这不是「我的探针写法不对」，而是能力退化**（连对照组都崩）。
+     ★ 连带影响：**E2 的「孔随板宽联动」目前没有可用机制** —— 孔位定位只能靠尺寸，
+       而尺寸这条路（单段 / 两点 / 跨实体点-点 / 点-线）本轮与第 13 轮共 **4 次**让进程崩。
+     ★ 处置：两个能力的 `limitations` 首项写入本条，★ `level` 保留 `verified`
+       （**那是 2026-10-03 的历史**，`evidence` 字段仍指向当日日志），
+       但**不得再被当作「现在能用」的依据**。
+     ★★ 方法论：★ **`level = verified` 有保质期** —— 环境（SolidWorks 版本/热修/机器状态）
+       变了，昨天的 verified 今天就是 stitched。**复跑成本远低于据此继续施工的成本。**|真机：`tools/probe_hv_dimension_with_selection.py`（一字未改）· `tools/probe_s3_hole_linkage_construction_line.py`；证据 `output/hv-dimension-with-selection-evidence.json` · `output/s3-hole-linkage-construction-line.json` |
+
 | 559 | **★★★★ Union「缺口」分类器的「已有等价物」标**错判率实测 23.0%，且**单向乐观** —— 而它的两个方向都会错** |
 |---|
 
