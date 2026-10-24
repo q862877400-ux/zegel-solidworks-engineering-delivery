@@ -331,15 +331,11 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
     #:     ★★ **在已经过定义（4）的草图上还继续加** ✗ ⇒ **越加越坏** ✓
     #: ★★★ 正确规则：★★ **只有 `status == 2`（欠定义）才允许加关系** ✓ —— ★ 其余全部**拒
     #: 加并说明** ✗
-    _status_name = {
-        1: "swUnknownConstraint",
-        2: "swUnderConstrained",
-        3: "swFullyConstrained",
-        4: "swOverConstrained",
-        5: "swNoSolution",
-        6: "swInvalidSolution",
-        7: "swAutosolveOff",
-    }
+    #: ★ 2026-10-25：取值表**归口**到 `sw_sketch_status.CONSTRAINED_STATUS`
+    #:   （一个事实一个家）。本处不再复制一份 —— 两处各写一份时已经出现过
+    #:   「一个模块说查得到、另一个说查不到」的分歧。
+    from sw_sketch_status import CONSTRAINED_STATUS
+
     addable_status_ = 2  #: ★★ **唯一允许加关系的状态** ✓
     # State validation is mandatory even when optional post-verification is disabled.
     st0 = _status(model)
@@ -352,11 +348,11 @@ def apply_sketch_relations(model, *, relations, verify: bool = True) -> dict[str
         }.get(st0, "★ 非欠定义状态 ⇒ 不擅自加 ✗")
         return {
             "ok": False,
-            "refused": _status_name.get(st0, "status=%r" % (st0,)),
+            "refused": CONSTRAINED_STATUS.get(st0, "status=%r" % (st0,)),
             "status_before": st0,
             "addable_status": addable_status_,
             "error": "草图状态为 **%s（%r）**：%s —— ★ **只有 `status == 2`（欠定义）才允许加关系** ✓"
-            % (_status_name.get(st0, "未知"), st0, why),
+            % (CONSTRAINED_STATUS.get(st0, "未知"), st0, why),
             "applied": 0,
             "total": len(plan),
             "results": [],

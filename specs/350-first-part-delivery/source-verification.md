@@ -114,8 +114,27 @@ IInterferenceDetectionMgr.GetInterferenceCount()
 同族还有 `GetInterferences()` / `GetInterferenceComponents()` / `IgnoreHiddenBodies` /
 `IncludeMultibodyPartInterferences` / `TreatCoincidenceAsInterference`。
 
-⚠ `TreatCoincidenceAsInterference` 的默认值**未核** —— 它决定「面重合」算不算干涉，
-直接影响 E4 的判定。**S4 开工前必须先查清它的默认值与语义。**
+#### `TreatCoincidenceAsInterference` 的默认值：**官方没写**
+
+签名：`System.bool TreatCoincidenceAsInterference {get; set;}`
+
+Returns 段逐字：「True to treat coincident entities as interference, false to not」
+
+`## Remarks` 逐字（只讲生命周期，**不讲默认值**）：
+
+> Currently, the value set for this property:
+> - exists only while the InterferenceDetectionMgr object is in scope; i.e., setting this property is temporary.
+> - does not persist across SOLIDWORKS Design sessions.
+> - does not persist into the next invocation of interference detection in the user interface.
+
+★★ **结论**：默认值**查不到**（铁律 5：查不到就说查不到）。
+
+★★ **但这不影响正确做法** —— 正因为它是「临时、不跨会话、不进下一次 UI 调用」，
+S4 的采集器**必须显式设置它**，不能依赖默认值。设成哪个值要由需求定：
+- 「面重合」算不算干涉，决定了 `GetInterferenceCount()` 的读数含义
+- 若按默认（未知）取数，同一个模型在不同会话里可能给出不同计数
+
+⇒ 列入 S4 开工前的必做项：**显式设置并记录该属性的取值**，且把取值写进 E4 的证据链。
 
 ### 配合剩余自由度（❌ 没查到）
 
@@ -127,21 +146,42 @@ IInterferenceDetectionMgr.GetInterferenceCount()
 
 ## 五、这批发现怎么落到代码
 
-| 落点 | 要改什么 |
-|---|---|
-| `e1_sketch.collect_sketch_constraint` | 真机版只填 `solver_state`；`entities/relations/dimensions` 取不到时留空并标 `complete=False` |
-| `e1_sketch.judge_sketch_constraint` | 已支持 `solver_state` 分支前先判枚举；数值 DOF 分支仅在三个数都真取到时走 |
-| `e4_assembly.collect_assembly` | 干涉数可填真值；DOF 相关字段取不到时标 `complete=False` |
+| 落点 | 改了什么 | 状态 |
+|---|---|---|
+| `e1_sketch.collect_sketch_constraint` | 新增 `solver_status_int` 参数；`complete` 改为「枚举或数值任一可得」 | ✅ 已改 |
+| `e1_sketch.judge_sketch_constraint` | 新增枚举分支：有枚举**只信枚举**，无枚举才退回数值 | ✅ 已改 |
+| `sw_sketch_status.py` | 取值表 `CONSTRAINED_STATUS` + `status_meaning()` 归口于此；COM 依赖改为函数内 import | ✅ 已改 |
+| `sw_sketch_relations.py` | 删除本地复制的取值表，改为复用 `sw_sketch_status` | ✅ 已改 |
+| `e4_assembly.collect_assembly` | 干涉数可填真值；DOF 相关字段取不到时标 `complete=False` | ⬜ 留 S4 |
 
-⚠ **本次未改这三个采集器** —— 改它们必须同时有真机证据，
-否则就是「先填返回值」（`AGENTS.md` 环节条件第 7 条明确禁止）。
+### ★★ 为什么这不算「先填返回值」
+
+`AGENTS.md` 环节条件第 7 条禁止「某项 E 判据没有可验证的采集方式时先把返回值填上」。
+本次改的是**采集方式本身**：枚举路径是 API **真支持**的信号，
+所以按枚举判定是**正确采集**，不是填返回值。
+
+相反，数值 DOF 路径在真机上取不到 —— 它保留给合成与诊断场景，
+**且只在没有枚举时才走**（有测试钉住 `test_有枚举时不信数值`）。
+
+## 五之二、顺带修掉的一处「同一事实两个说法」
+
+`sw_sketch_status.py` 原写「查不到官方取值表」，
+而 `sw_sketch_relations.py` 里**照录着** `swConstrainedStatus_e` 的 7 个成员，
+还带真机铁证（读出 `status = 4` 时截图有红「项目无法解出」+ 黄「项目冲突」）。
+
+⇒ 同一件事在两个模块里说法相反。已**归口**到 `sw_sketch_status.CONSTRAINED_STATUS`，
+`sw_sketch_relations.py` 改为复用。
+
+★ 附带收获：`sw_sketch_status.py` 早先的真机读数（未约束 = 2、全加 `sgFIXED` = 3）
+现在**可以解释了** —— 与官方表的 `2 = swUnderConstrained`、`3 = swFullyConstrained`
+完全吻合，构成**交叉验证**而非猜测。
 
 ## 六、未做的事（如实）
 
 1. **未做第二源（CHM）逐页比对** —— 只核了 `C:\swapi` 与反射（后者缺主程序集）
-2. **未查 `TreatCoincidenceAsInterference` 的默认值** —— S4 开工前必须补
-3. **未改任何采集器** —— 见第五节
-4. **未接真机** —— 本记录全部是离线查源
+2. **`TreatCoincidenceAsInterference` 的默认值查不到** —— 已改为「S4 必须显式设置」
+3. **未接真机** —— 本记录全部是离线查源
+4. **`e4_assembly` 未改** —— 干涉读取留 S4（需要真机才能验证读数含义）
 
 ## 七、下一步（S3 真机部分的停线条件）
 

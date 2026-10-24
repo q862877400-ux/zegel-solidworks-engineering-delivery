@@ -41,13 +41,31 @@ CHECKER_VERSION = "s1-1"
 def collect_sketch_constraint(
     *, target: str, entities: int, relations: tuple, dimensions: tuple,
     intentional_dof: int = 0, solver_state: str = "", version: str = "",
+    solver_status_int: int | None = None,
 ) -> Observation:
     """★ 采集器：只把数装进来，**不判断**。
 
     `relations` 与 `dimensions` 是**原始清单**（可能含重复），
     去重是判定器的事 —— 采集器不做任何「看起来合理」的清洗。
+
+    ## ★★ 两条采集路径（`specs/350-first-part-delivery/source-verification.md`）
+
+    真机 API 与合成数据能给出的信号**不同**：
+
+    | 路径 | 信号 | 来源 |
+    |---|---|---|
+    | 枚举 | `solver_status_int` = `ISketch.GetConstrainedStatus()` 的返回值 | **真机可取** |
+    | 数值 | `entities` / `relations` / `dimensions` | 真机**取不到**，只能合成 |
+
+    ⇒ 有枚举就只判枚举（`swFullyConstrained = 3` 是权威结论）；
+      没有枚举才退回数值路径；两者都没有 ⇒ `unknown`。
+
+    ⚠ **不要把数值路径当默认** —— 真机拿不到那三个数，
+      填 0 就是「先填返回值」（`AGENTS.md` 环节条件第 7 条禁止）。
     """
-    complete = bool(solver_state) and entities > 0
+    has_enum = solver_status_int is not None
+    has_numeric = entities > 0
+    complete = bool(solver_state) and (has_enum or has_numeric)
     return Observation(
         target=target,
         complete=complete,
@@ -57,9 +75,10 @@ def collect_sketch_constraint(
             "dimensions": list(dimensions),
             "intentional_dof": intentional_dof,
             "solver_state": solver_state,
+            "solver_status_int": solver_status_int,
         },
         unit={},
-        note="" if complete else "缺 solver_state 或 entities=0 ⇒ 采集不完整",
+        note="" if complete else "缺 solver_state，或既没有枚举也没有数值 ⇒ 采集不完整",
     )
 
 
@@ -68,10 +87,15 @@ def judge_sketch_constraint(obs: Observation, *, requirement_id: str) -> CheckRe
 
     判据顺序：
       ① 采集不完整 ⇒ `unknown`（不是 fail —— 我们没测到，不等于产品坏了）
-      ② 重复关系 / 重复尺寸 ⇒ `fail`（★★ 这是 R-04 的伪造手法）
-      ③ 去重后 DOF ≠ 有意自由度 ⇒ `fail`
-      ④ 全固定但无驱动尺寸 ⇒ `fail`（设计意图检查）
-      ⑤ 其余 ⇒ `pass`
+      ② ★ 有枚举 ⇒ **只信枚举**（真机权威信号），按 `swConstrainedStatus_e` 判
+      ③ 重复关系 / 重复尺寸 ⇒ `fail`（★★ 这是 R-04 的伪造手法）
+      ④ 去重后 DOF ≠ 有意自由度 ⇒ `fail`
+      ⑤ 全固定但无驱动尺寸 ⇒ `fail`（设计意图检查）
+      ⑥ 其余 ⇒ `pass`
+
+    ⚠ ② 为什么优先：真机只能拿到枚举
+      （`source-verification.md`：`GetConstrainedStatus()` 回状态枚举、非数值 DOF）。
+      有枚举时再用数值去「补算」只会引入合成数据的误差。
     """
     base = dict(
         check_id="E1.dof",
@@ -91,6 +115,11 @@ def judge_sketch_constraint(obs: Observation, *, requirement_id: str) -> CheckRe
             **base, status=Status.UNKNOWN,
             reason="采集不完整：%s" % (obs.note or "缺必要读数"),
         )
+
+    #: ② ★★ 有枚举 ⇒ 只信枚举（真机权威信号）
+    status_int = obs.values.get("solver_status_int")
+    if status_int is not None:
+        return _judge_by_enum(base, status_int, obs.values.get("intentional_dof", 0))
 
     rels = obs.values["relations"]
     dims = obs.values["dimensions"]
@@ -137,4 +166,74 @@ def judge_sketch_constraint(obs: Observation, *, requirement_id: str) -> CheckRe
         observed={"dof": dof, "relations": len(uniq_rels), "dimensions": len(uniq_dims)},
         expected={"dof": want},
         reason="自由度符合设计意图，且约束无重复、有驱动尺寸",
+    )
+
+#: ★ swConstrainedStatus_e 的官方取值 → 判定结论。
+#:   出处：C:\\swapi\\enums\\swConstrainedStatus_e.md（7 个成员），
+#:   归口在 scripts/sw_sketch_status.py:CONSTRAINED_STATUS。
+#:   ⚠ 本表**不复制**那个 enum 表 —— 只写「这个值对 E1 意味着什么」。
+_ENUM_VERDICT = {
+    2: ("under", "欠定义 ⇒ 未满足 E1"),
+    3: ("ok", "完全定义 ⇒ 满足 E1"),
+    4: ("over", "过定义 ⇒ 不是「刚好约束」，而是约束过头"),
+    5: ("bad", "无解"),
+    6: ("bad", "无效解"),
+}
+#: ★ 1 = swUnknownConstraint、7 = swAutosolveOff ⇒ **判不了**（不是 pass、也不是 fail）
+_ENUM_UNJUDGEABLE = {
+    1: "swUnknownConstraint —— 求解器自己都不知道状态",
+    7: "swAutosolveOff —— 自动求解关着，状态没意义",
+}
+
+
+def _judge_by_enum(base: dict, status_int: object, intentional_dof: int) -> CheckResult:
+    """★ 按 GetConstrainedStatus() 的枚举判 E1。
+
+    ★ 判据（真机唯一可得的信号）：
+      · 3 swFullyConstrained ⇒ **pass**
+      · 2 swUnderConstrained ⇒ 有 intentional_dof > 0 时 pass（**有意保留**），否则 fail
+      · 4 swOverConstrained / 5 / 6 ⇒ **fail**
+      · 1 / 7 / 表外 ⇒ **unknown**（判不了，不猜）
+    """
+    try:
+        n = int(status_int)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return CheckResult(
+            **base, status=Status.UNKNOWN,
+            reason="★ 枚举值 %r 不是整数 ⇒ 判不了" % (status_int,),
+        )
+
+    if n in _ENUM_UNJUDGEABLE:
+        return CheckResult(
+            **base, status=Status.UNKNOWN,
+            observed={"solver_status": n},
+            reason="★ 状态 %d 不可判定：%s" % (n, _ENUM_UNJUDGEABLE[n]),
+        )
+
+    kind, why = _ENUM_VERDICT.get(n, ("bad", "表外取值 ⇒ 不猜"))
+    if kind == "ok":
+        return CheckResult(
+            **base, status=Status.PASS,
+            observed={"solver_status": n}, expected={"solver_status": 3},
+            reason="★ 状态 %d：%s" % (n, why),
+        )
+    if kind == "under":
+        #: ★ 有意保留自由度时，欠定义是**设计意图**，不是缺陷
+        if intentional_dof > 0:
+            return CheckResult(
+                **base, status=Status.PASS,
+                observed={"solver_status": n, "intentional_dof": intentional_dof},
+                expected={"solver_status": "2 且有意保留 %d" % intentional_dof},
+                reason="★ 状态 %d（欠定义），但已声明有意保留 %d 个自由度 ⇒ 符合设计意图"
+                % (n, intentional_dof),
+            )
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"solver_status": n}, expected={"solver_status": 3},
+            reason="★ 状态 %d：%s" % (n, why),
+        )
+    return CheckResult(
+        **base, status=Status.FAIL,
+        observed={"solver_status": n}, expected={"solver_status": 3},
+        reason="★ 状态 %d：%s" % (n, why),
     )
