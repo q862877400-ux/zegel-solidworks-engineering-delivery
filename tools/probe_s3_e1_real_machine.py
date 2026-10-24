@@ -50,6 +50,10 @@ from engineering.acceptance.e1_sketch import (  # noqa: E402
 from scripts import sw_connect as c_  # noqa: E402
 from scripts import sw_part as p_  # noqa: E402
 
+#: ★ 复用既有共用帮手（`scripts/sw_sketch.py:585`）——
+#:   同一件事不在两个地方各写一份（统一化体检⑤）
+from scripts.sw_sketch import active_sketch as _active_sketch  # noqa: E402
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
 # 仓库:   本项目自身（工具）
@@ -77,12 +81,6 @@ def _get(obj, name, *args):
     return fn(*args) if args else fn
 
 
-def _active_sketch(doc):
-    """★ 走后继入口 `ISketchManager.ActiveSketch`（`GetActiveSketch2` 已废弃）。"""
-    sk = getattr(doc.SketchManager, "ActiveSketch", None)
-    if sk is not None:
-        return sk
-    return getattr(doc, "GetActiveSketch2", lambda: None)()
 
 
 def _status(sk) -> int:
