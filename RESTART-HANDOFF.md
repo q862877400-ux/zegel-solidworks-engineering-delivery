@@ -1,5 +1,7 @@
 # 重启交接（RESTART-HANDOFF）
 
+> ★ **本文件是 2026-10 的历史快照**，内含的条数/读数可能与现状不同 —— 当前实测读数以 [`docs/state/`](state/README.md) 为准（差异清单见 [`docs/state/facts/P-doc-conflicts.md`](state/facts/P-doc-conflicts.md)）。
+
 > 写于：2026-10-01 · **轮 60 收工后** · 用户要求重启会话
 > 用途：重启后**先读这一份**，不必翻长会话历史。
 >

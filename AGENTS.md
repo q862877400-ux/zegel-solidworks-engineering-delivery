@@ -13,7 +13,7 @@
 | `AI Solidworks\` | SolidWorks 工作区（官方文档/手册/模型/截图） | 只读 |
 | `docs\` | 本文件里`docs/...`相对 AGENTS.md 解析到这里——知识文档与任务产出同在一处（合并后不再分家） | 可改 |
 
-`仓库根`是 git 仓库（提交`1f86c5d`起；2026-10-03 并入代码后共 4820个入库文件）；`.gitignore`排除了 398 MB（官方文档/反射转储/探索截图/CAD 保真数据）。
+`仓库根`是 git 仓库（提交`1f86c5d`起；2026-10-03 并入代码（入库文件数见 docs/state/facts/A-structure.md A-02））；`.gitignore`排除了 398 MB（官方文档/反射转储/探索截图/CAD 保真数据）。
 
 任务报告与代码都放`仓库根`下。`AI Solidworks\`是模型/截图/手册，不是代码落点。
 
@@ -182,7 +182,7 @@ python tools/reclaim_solidworks.py --restart    # 探不通且打开的文档都
 | `.dsh/` | ★ DSH 宿主侧项目配置（★ 角色表等 ✓）| ★ **宿主约定目录**（★ 名字由宿主定，★ 不能改 ✗）|
 | `.workbuddy-ai/` | ★ 旧宿主留下的**历史开发记忆**（★ 4 份 memory · 420 KB ✓）| ★ 是**史料**不是活代码；★ 已登记在 `output/LEGACY_LOOP_REFERENCES.md` ✓ |
 | `AI Solidworks/` | ★ SolidWorks 官方文档/手册/模型/截图（★ **29749 文件** ✓）| ★ **只读外部素材**（★ 与 `references/`＝本仓知识文档**性质不同** ✗）· ★ **不得写入** ✗ |
-| `specs/` | ★★ **Spec Kit 规格**（★ **280 个 `NNN-<slug>/`** · 编号 1–345 ✓）| ★ **规格的落点**（★ 不是代码、★ 不是 `docs/` 知识文档、★ 不是 `output/` 产物 ✗）—— ★★ **且门禁 `check_spec_acceptance_paths` 读它们的 `→ 验收:` 行（866 处）** ⇒ ★ **删了会断门禁** ✗ |
+| `specs/` | ★★ **Spec Kit 规格**（★ 规格数与编号范围见 docs/state/facts/H-specs.md H-01/H-02）| ★ **规格的落点**（★ 不是代码、★ 不是 `docs/` 知识文档、★ 不是 `output/` 产物 ✗）—— ★★ **且门禁 `check_spec_acceptance_paths` 读它们的 `→ 验收:` 行（处数见 docs/state/facts/H-specs.md H-03）** ⇒ ★ **删了会断门禁** ✗ |
 
 ★ **产物 / 证据 / 侦察类（★ 均不承载活代码；★ 应 gitignore 或已 ignore ✓）**：
 `_proof` · `_raw` · `audit` · `batch_evidence` · `cadir` · `commit-messages` · `corpus` ·
@@ -239,7 +239,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 - 工具最多的那家（187）测试文件数为 0：README 写着「Verified on SolidWorks 2024」，仓库里没有任何测试文件——README 说验过不等于验过。
 - 四家里只有`Slacker-LLC`声明全工具真机跑过，而它的工具数最少（92）；它的 92个里没有仿真/动画/拓扑/钣金/焊件/公差。
-- `Slacker-LLC`是 Apache-2.0：可抄，但要保留`NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送任何远端时产生硬性义务，`THIRD-PARTY-NOTICES.md`已存在（153行/6.5 KB，已入库）。
+- `Slacker-LLC`是 Apache-2.0：可抄，但要保留`NOTICE`（`Copyright 2026 JIALE LIU`）并声明改动了哪些文件；推送任何远端时产生硬性义务，`THIRD-PARTY-NOTICES.md`已存在（规模见 docs/state/facts/I-license.md I-02）。
 
 其余 21个外部项目克隆的清单、逐项能补什么、许可判定表与 MIT 唯一例外，见 [docs/sources.md](docs/sources.md)。
 
@@ -259,7 +259,7 @@ Apache-2.0 的 NOTICE 义务跟着分发走：一旦入库，推送任何远端�
 
 ## 六、已知事实（完整表在 [`docs/known-facts.md`](docs/known-facts.md)）
 
-**共 560条**，全文在 [`docs/known-facts.md`](docs/known-facts.md)；本节只留最常查的 21条速查。事实 560 是三条方法论——中文引号一律用「」、探针先关护栏沙盒那一层、「入口修好 ≠ 效果验证」与「一直是红的验收脚本可能只是它自己建错了试件」成对——动台账/源码的长字符串、或写"先写文件再把路径交给 COM"的探针之前先读它。分开的原因：该表曾占 AGENTS.md 的 ~71%，而本文件受 65536字节指令预算限制，超预算会静默截断末尾最新条目。新增事实：最常查的留这里，其余追加进那个文件并同步条数。
+**全文在** [`docs/known-facts.md`](docs/known-facts.md)（条数以该文件为准）；本节只留最常查的 21条速查。事实 560 是三条方法论——中文引号一律用「」、探针先关护栏沙盒那一层、「入口修好 ≠ 效果验证」与「一直是红的验收脚本可能只是它自己建错了试件」成对——动台账/源码的长字符串、或写"先写文件再把路径交给 COM"的探针之前先读它。分开的原因：该表曾占 AGENTS.md 的 ~71%，而本文件受 65536字节指令预算限制，超预算会静默截断末尾最新条目。新增事实：最常查的留这里，其余追加进那个文件并同步条数。
 
 ### 速查（最常查的 21条）
 

@@ -55,7 +55,8 @@
 
 | 日期 | 动作 | 对象 | 落到哪 | 依据 |
 |---|---|---|---|---|
-| — | （无动作）| — | — | 见 O-04 |
+| 2026-10-24 | **改写** 5 处写死数字 → 指向本记录 | `AGENTS.md` 的 L16（入库文件数）/ L185（specs 规模 + `→ 验收` 处数）/ L242（NOTICE 规模）/ L262（事实条数） | 指向 `docs/state/facts/A-structure.md` · `H-specs.md` · `I-license.md` · `P-doc-conflicts.md` | 冲突见 `facts/P-doc-conflicts.md` P-01～P-04 |
+| 2026-10-24 | **加历史快照横幅** | `RESTART-HANDOFF.md` 顶部 | 原文件顶部加一行，指向 `docs/state/` | P-06（该文件写「已知事实 63 条」，与实测 560 差近一个数量级） |
 
 ---
 
