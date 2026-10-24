@@ -4487,7 +4487,7 @@ units= 2  element_size=   4.930501659457232   tolerance=  0.24652508297286163 �
 
 **发现时间**：2026-10-04（接手轮 · 业主追问「别人 64 GB 都没有，怎么配」与「有没有第三方办法跑 GPU」）
 
-★ **全文（带逐条引用）**：[`references/simulation-performance-memory-gpu.md`](simulation-performance-memory-gpu.md)
+★ **全文（带逐条引用）**：[`references/simulation-performance-memory-gpu.md`](../references/simulation-performance-memory-gpu.md)
 
 ### 一 · ★★★★ 三条结论
 
@@ -4528,7 +4528,7 @@ coordinator + worker agent、static/nonlinear），★★ **而同一页逐字�
 ② 把 `Quality` / `SolverType` 做成可传参数；③ 真机试 `OffLoad` 到底还能不能用 ✓
 
 ### 四 · ★ 依据
-★ 全文与逐条引用：[`references/simulation-performance-memory-gpu.md`](simulation-performance-memory-gpu.md)（★ 本机官方与网上来源**分开标注**）✓
+★ 全文与逐条引用：[`references/simulation-performance-memory-gpu.md`](../references/simulation-performance-memory-gpu.md)（★ 本机官方与网上来源**分开标注**）✓
 ★ 本机官方：`c_Analysis_Solvers.htm` · `IDC_HELP_PRESTATIC_OPTIONS.htm` · `swsSolverType_e.html` ·
 `swsStudyExportOption_e.html` · `CWStudy~OffLoad.html` · `ManageDistributedSimulation2.html` ·
 `swsMeshQuality_e.html` · `_raw/reflect/iface_cosworks.txt`（`ICWMesh.Quality` / `NodeCount`）✓
@@ -4541,7 +4541,7 @@ Dassault HPC 专题 · Ansys release notes（GPU Acceleration）· Supermicro/An
 
 **发现时间**：2026-10-04（接手轮 · 业主问「我们这个项目别人装上，是不是也要改他的软件？」）
 
-★ **全文（逐条证据 + 部署清单）**：[`references/deployment-boundary.md`](deployment-boundary.md)
+★ **全文（逐条证据 + 部署清单）**：[`references/deployment-boundary.md`](../references/deployment-boundary.md)
 
 ### 一 · ★★★ 结论（先回答业主那一问）
 
@@ -4605,7 +4605,7 @@ Dassault HPC 专题 · Ansys release notes（GPU Acceleration）· Supermicro/An
 ★ 有 **`/unregister`** 卸载路径，读侧检查 `solidworks_addin_host_status` 是**只读**的 ✓
 
 ### 六 · ★ 依据
-★ 全文：[`references/deployment-boundary.md`](deployment-boundary.md)（★ 含"别人装上必须/不需要什么"清单）✓
+★ 全文：[`references/deployment-boundary.md`](../references/deployment-boundary.md)（★ 含"别人装上必须/不需要什么"清单）✓
 ★ 代码：`scripts/sw_preference_guard.py` · `scripts/check_user_preference_writes.py` ·
 `docs/preference-write-exemptions.json` · `scripts/release_check.py`（第 28 道）·
 `docs/gate-classification.json`（33 条）✓
