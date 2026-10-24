@@ -84,8 +84,8 @@
 | S1 | 计划 + **B 工具声明** | ✅ 已提交（`53990b15`）|
 | S2 | **A 结构** + **E 门禁** | ✅ 已提交（事实见 `facts/A-structure.md`、`facts/E-gates.md`）|
 | S3 | **C 能力台账** + **J 运行装配** | ✅ 已提交（事实见 `facts/C-capabilities.md`、`facts/J-runtime.md`）|
-| S4 | D 脚本层 + F 测试层 | ⬜ 下一轮 |
-| S5 | G 文档层 + H 规格层 | ⬜ |
+| S4 | **D 脚本层** + **F 测试层** | ✅ 已提交（事实见 `facts/D-scripts.md`、`facts/F-tests.md`）|
+| S5 | G 文档层 + H 规格层 | ⬜ 下一轮 |
 | S6 | I 许可来源 + 汇总索引 | ⬜ |
 
 **每轮收工**：① 事实写入对应 `facts/*.md`；② 更新本文件进度表；③ `python tools/commit_mine.py` 提交；

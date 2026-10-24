@@ -1,0 +1,41 @@
+{
+  "test_files": 478,
+  "test_functions_total": 3977,
+  "files_without_test_functions": [],
+  "files_using_asyncio_mark": 0,
+  "pytest_mark_skip_occurrences": 4,
+  "collect_exit": 2,
+  "collected": 4111,
+  "collect_errors": 5,
+  "collect_error_sample": [
+    [
+      "tests/test_mcp_backend_router.py",
+      "tool_registry.GateError: 声明未过门..."
+    ],
+    [
+      "tests/test_mcp_configuration_tools.py",
+      "tool_registry.GateError: 声明未..."
+    ],
+    [
+      "tests/test_mcp_drawing_tools.py",
+      "tool_registry.GateError: 声明未过门禁..."
+    ],
+    [
+      "tests/test_mcp_headless_open_format.py",
+      "tool_registry.GateError: 声明..."
+    ],
+    [
+      "tests/test_spec212_unit_guard.py",
+      "tool_registry.GateError: 声明未过门..."
+    ]
+  ],
+  "collect_error_kinds": {
+    "tool_registry.GateError": 5
+  },
+  "collect_tail": [
+    "ERROR tests/test_spec212_unit_guard.py - tool_registry.GateError: 声明未过门...",
+    "!!!!!!!!!!!!!!!!!!! Interrupted: 5 errors during collection !!!!!!!!!!!!!!!!!!!",
+    "4111 tests collected, 5 errors in 47.05s"
+  ],
+  "per_file": []
+}
