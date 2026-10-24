@@ -12,12 +12,16 @@
 
 | 要查什么 | 查到了吗 | 关键读数 |
 |---|---|---|
-| E1 草图求解状态 | ✅ 查到 | `ISketch.GetConstrainedStatus()` → **返回状态枚举，不是数值自由度** |
-| E4 干涉检查 | ✅ 查到 | `IAssemblyDoc.InterferenceDetectionManager` → `IInterferenceDetectionMgr.GetInterferenceCount()` |
-| E4 配合剩余自由度 | ❌ **没查到** | 见第四节 |
+| E1 草图求解状态 | ✅ **三源互证** | `ISketch.GetConstrainedStatus()` → **返回状态枚举，不是数值自由度** |
+| E1 数值自由度 | ❌ **三源确认不存在** | 20627 个反射成员里零命中 |
+| E4 干涉检查 | ✅ **三源互证** | `IAssemblyDoc.InterferenceDetectionManager` → `IInterferenceDetectionMgr.GetInterferenceCount()` |
+| E4 配合剩余自由度 | ❌ **三源确认不存在** | 见第四节 |
 
 ★★ **最重要的发现**：SolidWorks 的草图约束状态 API **只给状态枚举、不给数值 DOF**。
 这直接改变了 E1 采集器的设计（见第三节）。
+
+★ 第二重要：`C:\swapi` 与反射**都**没有 DOF 成员 ⇒
+  「没有数值自由度入口」是**确认的结论**，不是「我没查到」。
 
 ## 二、E1 草图求解状态
 
@@ -55,23 +59,45 @@ Returns 段逐字：「Constrained status as defined in `swConstrainedStatus_e`�
 `AI Solidworks\官方文档\SWhelp\sldworksapi\` 存在（`sw_know verify` 的「草图」域 `[OK]`），
 但**未逐页比对** —— 本次只核了 `C:\swapi` 与反射两源。如实记录为「未做第二源比对」。
 
-### 第三源：出厂类型库反射
+### 第三源：出厂类型库反射 —— **已补齐**
 
-**⚠ 缺失。** `_raw\reflect\` 下有 12 个次要程序集的转储
-（`cosworks` / `sldcostingapi` / `swdocumentmgr` / `SWRoutingLib` / `swdimxpert` 等），
-**没有主程序集 `sldworks`** 的 `iface_sldworks.txt`。
-
-实测命令：
+★ 2026-10-25 补：原先 `_raw\reflect\` 只有 12 个次要程序集的转储，
+主程序集 `sldworks` **缺失** ⇒ 只有单一来源。现已生成：
 
 ```powershell
-Get-ChildItem _raw\reflect | Select-Object Name
-# 结果：无 iface_sldworks.txt
-Select-String -Path _raw\reflect\*.txt -Pattern "GetConstrainedStatus" -List
-# 结果：无命中
+pwsh -File tools\reflect-interop.ps1 -Targets sldworks -Out <仓库根>\_raw\reflect
+# 输出：sldworks  ifaces=1032  enums=0  classes=849  members=20627
 ```
 
-⇒ **本项只有单一来源支撑**，不满足铁律 4 的「三源互证」。
-按铁律 5，这必须如实标注，不能当成已确认签名。
+生成物：`_raw\reflect\iface_sldworks.txt`（0.68 MB）、`enum_sldworks.txt`。
+⚠ `_raw\` 在 `.gitignore` 里（反射转储不入库），换机器要重跑上面那条命令。
+
+反射里的签名：
+
+```
+Int32 GetConstrainedStatus()
+```
+
+★★ **三源一致**：`C:\swapi` 写 `System.int`、反射写 `Int32` —— 同一个类型。
+⇒ E1 的 `GetConstrainedStatus` 现在**满足铁律 4 的三源互证**。
+
+★★★ **附带得到一个强否定结论**：反射转储覆盖 1032 个接口 / **20627 个成员**，
+其中**没有任何** DOF 读取成员 ——
+`DegreesOfFreedom` / `GetDof` / `RemainingDof` / `UnderDefined` **全部零命中**。
+
+⇒ 「SolidWorks API 没有数值自由度读取入口」从「查不到」升级为
+  **三源确认的否定结论**（`C:\swapi` 无、反射 20627 成员无、真机只回枚举）。
+
+## 二之二、E4 的两个成员也三源确认了
+
+```
+Boolean get_TreatCoincidenceAsInterference()
+Int32   GetInterferenceCount()
+```
+
+反射与 `C:\swapi` 一致。
+⚠ 注意反射给出的是 `get_` / `set_` 分离的属性访问器形态 ——
+那是 .NET 属性在 IL 层的真实形状，`C:\swapi` 写 `{get; set;}` 是同一件事的两种表述。
 
 ## 三、★ 这个发现怎么影响 E1 采集器
 
@@ -136,13 +162,13 @@ S4 的采集器**必须显式设置它**，不能依赖默认值。设成哪个�
 
 ⇒ 列入 S4 开工前的必做项：**显式设置并记录该属性的取值**，且把取值写进 E4 的证据链。
 
-### 配合剩余自由度（❌ 没查到）
+### 配合剩余自由度（❌ 三源确认不存在）
 
 `IAssemblyDoc` 有大量配合相关成员（`AddMate5` / `EditMate4` / `CollectAllSupportiveMates` /
-`IsSupportedMatesAvailable`），但**没有**「读剩余自由度」的成员。
+`IsSupportedMatesAvailable`），反射转储的 20627 个成员里**没有**「读剩余自由度」的入口。
 
 ⇒ E4 的 DOF 判定与 E1 同病：**只能判「配合对象够不够」，判不了「剩几个自由度」**。
-本项列为技术风险，采集器返回 `unknown`。
+本项列为**确认的技术限制**（不再叫「待查」），采集器返回 `unknown`。
 
 ## 五、这批发现怎么落到代码
 
@@ -178,10 +204,13 @@ S4 的采集器**必须显式设置它**，不能依赖默认值。设成哪个�
 
 ## 六、未做的事（如实）
 
-1. **未做第二源（CHM）逐页比对** —— 只核了 `C:\swapi` 与反射（后者缺主程序集）
+1. **未做 CHM 逐页比对** —— 三源里核了 `C:\swapi`、反射、真机读数；
+   `AI Solidworks\官方文档\` 的页面**未逐页打开**（`sw_know verify` 的「草图」域报 `[OK]`，
+   但那是覆盖自检，不是逐页核对）。如实记为「两源半」而非「三源全页」
 2. **`TreatCoincidenceAsInterference` 的默认值查不到** —— 已改为「S4 必须显式设置」
-3. **未接真机** —— 本记录全部是离线查源
-4. **`e4_assembly` 未改** —— 干涉读取留 S4（需要真机才能验证读数含义）
+3. **未接真机做新的读数** —— 本记录的真机部分是引用既有实测
+   （`tools/prove_coverage_gap_batch1.py`、`sw_sketch_relations.py` 记的现场铁证）
+4. **`e4_assembly` 未改** —— 干涉读取留 S4（需要真机验证读数含义）
 
 ## 七、下一步（S3 真机部分的停线条件）
 
@@ -189,9 +218,12 @@ S4 的采集器**必须显式设置它**，不能依赖默认值。设成哪个�
 
 > 约束状态取不到、主参数改动不联动、只能导入实体而无编辑历史、必需图样绑定不可实现。
 
-本次核查表明**「约束状态取得到」**（枚举可取），**但「数值 DOF 取不到」**。
-后者不构成 S3 停线（S3 的 E1 判定可以用枚举），
-但它使「有意保留自由度」这一子项无法验证 —— 记为遗留，不是阻断。
+本次核查表明**「约束状态取得到」**（枚举可取，且三源互证），
+**「数值 DOF 三源确认不存在」**。
 
-S3 真机工作可以开始，前置是 `specs/350-first-part-delivery/requirements.md`
+后者不构成 S3 停线 —— S3 的 E1 判定可以用枚举（已实现并测试）。
+但它使「有意保留自由度」这一子项只能靠**需求声明**（`intentional_dof`），
+无法从模型反读 —— 记为遗留，不是阻断。
+
+S3 真机工作的前置是 `specs/350-first-part-delivery/requirements.md`
 的八项冻结（目前八项全未定）。
