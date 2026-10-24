@@ -1,0 +1,124 @@
+# S3 施工准备 · 三条 E3 缺陷与一条 E1 限制
+
+**日期**: 2026-10-25
+
+**对应任务**: `specs/350-first-part-delivery/tasks.md` T009 / T010
+
+**依据**: `docs/ENGINEERING-PATH.md` 第四节 E3「必须读什么」
+
+---
+
+## 一、E3 的判据原文
+
+> **必须读什么**：回读特征类型、错误/警告、引用与父子依赖；
+> 实际编辑前序草图或参数并验证后续。
+> **主尺寸/基准/孔位必须有稳定语义引用，跨重建不依赖选区或下标。**
+
+## 二、★ 发现的真实缺陷：计划里存了下标
+
+`scripts/engineering/planner.py` 有三处 chamfer 步骤写的是下标：
+
+```
+planner.py:270   params={"selection": "index:0", "distance_mm": 1.0, "angle_deg": 45.0}
+planner.py:568   params={"selection": "index:0", "distance_mm": 2.0}
+planner.py:578   params={"selection": "index:0", "distance_mm": 2.0}
+```
+
+### 为什么这是缺陷（不是风格问题）
+
+`scripts/engineering/reference_resolver.py` 的 `LIMITATIONS` 自己逐字写着：
+
+> **索引不跨编辑保持** —— 「Anchors are exact for **fresh-doc replay**…
+> but **NOT durable across edits**」⇒ 改完模型后，之前算出来的
+> face/edge index 全部作废，必须重查
+
+⇒ 计划里存 `index:0`，改板宽之后「第 0 条边」可能已经是另一条边。
+   这正好违反 E3 那句「跨重建不依赖选区或下标」。
+
+### 工具层也只给了两种都不可跨编辑的形态
+
+`mcp-server/tool_registry.py` 的 `_SEL` 逐字：
+
+> Declarative EDGE selection: `'__current_selection__'` (use whatever is already selected)
+> or `'index:<n>'` (the n-th edge on the body, 0-based).
+
+- `index:<n>` —— 下标会漂
+- `__current_selection__` —— 取决于调用时选了什么，不是模型属性
+
+### 已经有现成的正确形态，只是没接上
+
+`reference_resolver.resolve()` 支持三种**几何事实**形态：
+
+| 形态 | 例 | 为什么稳定 |
+|---|---|---|
+| 方向语义 | `+z` / `-z` / `+x` / `-x` / `+y` / `-y` | 法向 + 质心，改参数后仍是同一方向的面 |
+| 语义名 | `top_face` | 法向 +Y 且质心 Y 最大 |
+| 几何锚点 | `near:x,y,z` | 取离该点最近的边/面，`resolve()` 明确说「跨重建稳定」 |
+
+⇒ **正确做法**：计划里存语义选择器，`resolve()` 在**用时**解析成下标。
+   下标是**计算中间量**，不是要保存的引用。
+
+## 三、把这条缺陷做成了判据
+
+`scripts/engineering/acceptance/e2_e3_solid.py` 新增：
+
+```
+collect_reference_stability(*, target, steps) -> Observation
+judge_reference_stability(obs, *, requirement_id) -> CheckResult
+```
+
+`check_id = "E3.reference_stability"`。
+
+判据：
+
+| 计划里的形态 | 结论 |
+|---|---|
+| `index:<n>` | **fail** |
+| `__current_selection__` | **fail** |
+| `+z` / `top_face` / `near:x,y,z` | pass |
+| 不涉及选区 | pass |
+| 没有步骤 | unknown |
+
+实测：拿真实 `plan_from_requirement()` 的输出跑，**`plate_chamfer` 那条候选被判 fail**，
+其余四条 pass。这证明判据不是纸面上的，它抓到了当前实现的具体缺陷。
+
+`tests/test_acceptance_e3_reference.py` 16 条测试，其中两条用真实 planner 输出做回归：
+- `test_planner的倒角候选仍带下标` —— **记录现状**。一旦 planner 改成语义选择器，
+  这条会转红，那时应把断言反过来（缺陷已修）
+- `test_planner的倒角候选命中chamfer_step` —— 精确定位被抓的是 chamfer 步骤
+
+## 四、S3 要改什么（按优先级）
+
+| # | 改什么 | 判据 |
+|---|---|---|
+| 1 | 工具层 `selection` 接受语义选择器 | `judge_reference_stability` 对 `+z` / `near:` 判 pass |
+| 2 | `planner.py` 三处 chamfer 改成语义选择器 | `test_planner的倒角候选仍带下标` 转红后按新语义更新 |
+| 3 | 孔位也用语义引用（`near:` 锚点） | E5 的孔位标注能绑定到真实图纸对象 |
+| 4 | 计划里**不缓存**下标 | `reference_resolver.LIMITATIONS` 第 1 条 |
+
+⚠ 第 1 项要改 `mcp-server` 的工具层，**必须真机验证** —— 留 S3 真机部分。
+   本文件交付的是判据（能让缺陷可见），不是修复。
+
+## 五、E1 的一条限制（不再叫「待查」）
+
+三源确认：SolidWorks API **没有数值自由度读取入口**
+（1032 接口 / 20627 成员零命中，见 `source-verification.md`）。
+
+⇒ E1 有两层：
+
+| 层 | 信号 | 能判吗 |
+|---|---|---|
+| 是否全约束 | `GetConstrainedStatus()` 枚举 | ✅ 能 |
+| 剩几个自由度 | 无 API | ❌ 不能 |
+| 有意保留的自由度 | 无 API | ❌ 不能（只能靠需求声明） |
+
+所以「有意保留自由度」这一项**无法事后校验** —— 它必须写进需求冻结表，
+由工程负责人明示，不能在产检时反读。已记入 `requirements.md`。
+
+## 六、未做的（如实）
+
+1. **未改 `planner.py`** —— 改它要同时改工具层并真机验证，属 S3 真机部分
+2. **未改工具层 `selection`** —— 同上
+3. **未接真机** —— 本文件全部离线
+4. **T010（孔型/孔位逐项回读）未做** —— 它需要真机才能验证读回值对不对；
+   离线能做的是判据本身，已并入第 4 项

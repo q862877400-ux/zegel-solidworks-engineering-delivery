@@ -224,3 +224,100 @@ def judge_feature_tree(obs: Observation, *, requirement_id: str) -> CheckResult:
         observed={"native_features": v["native_features"], "warnings": v["warnings"]},
         reason="原生特征齐、无悬空引用与错误、前序编辑已验证",
     )
+
+# ────────────────────── E3 子项：引用稳定性 ──────────────────────
+
+#: ★ 不可跨重建的选区形态（下标 / 当前选区）。
+#:   出处：`scripts/engineering/reference_resolver.py:LIMITATIONS` 逐字 ——
+#:     「索引不跨编辑保持 …… 改完模型后，之前算出来的 face/edge index 全部作废」
+#:   ⇒ 计划里若**存**下标，改一个主参数后「第 0 条边」可能是另一条边。
+_FRAGILE_PATTERNS = (
+    ("index:", "下标（第 n 条边/面）—— 改几何后可能指到别处"),
+    ("__current_selection__", "依赖当前选区 —— 不是模型里的稳定事实"),
+)
+
+
+def collect_reference_stability(
+    *, target: str, steps: tuple, version: str = ""
+) -> Observation:
+    """★ 采集器：记录计划里**存的**选区形态。
+
+    `steps` 每项形如 `{"step": str, "params": dict}`。
+    采集器只原样装进来，**不判断**哪个形态对不对。
+    """
+    return Observation(
+        target=target,
+        complete=bool(steps),
+        values={"steps": list(steps), "version": version},
+        note="" if steps else "没有步骤记录 ⇒ 采集不完整",
+    )
+
+
+def judge_reference_stability(
+    obs: Observation, *, requirement_id: str
+) -> CheckResult:
+    """★ 判定器：E3 的引用稳定性 —— **跨重建不依赖选区或下标**。
+
+    ★ 判据（`docs/ENGINEERING-PATH.md` 第四节 E3「必须读什么」）：
+      「主尺寸/基准/孔位必须有稳定语义引用，跨重建不依赖选区或下标」
+
+    ★ 接受的形态（`reference_resolver.resolve()` 支持的）：
+      `+x` / `-x` / `+y` / `-y` / `+z` / `-z` · `top_face` · `near:<x>,<y>,<z>`
+      —— 这些是**几何事实**，改主参数后仍然指同一类几何。
+
+    ★ 拒绝的形态：
+      `index:<n>` —— 下标会漂
+      `__current_selection__` —— 取决于调用时选了什么，不是模型属性
+    """
+    base = dict(
+        check_id="E3.reference_stability",
+        requirement_id=requirement_id,
+        target=obs.target,
+        observation_complete=obs.complete,
+        basis="E3：主尺寸/基准/孔位用稳定语义引用，跨重建不依赖选区或下标",
+        evidence=obs.evidence,
+        artifact_version=obs.values.get("version", ""),
+        checker_version=CHECKER_VERSION,
+    )
+    if not obs.complete:
+        return CheckResult(**base, status=Status.UNKNOWN, reason="采集不完整")
+
+    fragile: list = []
+    for st in obs.values["steps"]:
+        name = str(st.get("step", ""))
+        for key, val in (st.get("params") or {}).items():
+            sval = str(val)
+            for pat, why in _FRAGILE_PATTERNS:
+                if pat in sval:
+                    fragile.append(
+                        {"step": name, "param": key, "value": sval, "why": why}
+                    )
+                    break
+
+    if fragile:
+        first = fragile[0]
+        return CheckResult(
+            **base,
+            status=Status.FAIL,
+            observed={"fragile": fragile[:6], "count": len(fragile)},
+            expected={"fragile": 0},
+            reason=(
+                "★ %d 处选区是**不可跨重建**的形态。首例：步骤 %r 的 %s=%r —— %s。"
+                "应改用语义选择器（`+z` / `top_face` / `near:x,y,z`），"
+                "由 `reference_resolver.resolve()` 在**用时**解析成下标"
+                % (
+                    len(fragile),
+                    first["step"],
+                    first["param"],
+                    first["value"],
+                    first["why"],
+                )
+            ),
+        )
+
+    return CheckResult(
+        **base,
+        status=Status.PASS,
+        observed={"steps": len(obs.values["steps"]), "fragile": 0},
+        reason="计划里没有下标或当前选区形态的引用",
+    )
