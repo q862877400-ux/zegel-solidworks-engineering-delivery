@@ -62,3 +62,16 @@
 - 规格的**实际完成度**与 `Status` 的自述是否一致
 - 规格与 `capabilities.yaml` 的对应关系
 - 连续缺号段 `151~177` 的历史成因
+
+---
+
+## 证据索引（每个事实号 → `inventory-h.json` 的键）
+
+| 事实 | 证据载体 |
+|---|---|
+| H-01 | `inventory-h.json` 的 `spec_dirs` / `with_spec_md` / `without_spec_md` |
+| H-02 | `inventory-h.json` 的 `numbering.min/max/missing_in_range` |
+| H-03 | `inventory-h.json` 的 `acceptance_lines_total`（20，仅 spec.md）；935 由仓库级 `Select-String` 得 |
+| H-04 | `inventory-h.json` 的 `status_histogram` |
+| H-05 | `inventory-h.json` 的 `specs_not_mentioned_in_docs` / `specs_not_mentioned_sample` |
+| H-06 | `facts/G-docs.md` G-02（specs 1,452 份）÷ `spec_dirs`（281） |

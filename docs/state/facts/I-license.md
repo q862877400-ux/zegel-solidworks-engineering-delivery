@@ -61,3 +61,15 @@
 - 能力级 `provenance` 与来源级清单的对应（C 维度记 `provenance` 只有 1/140 条）
 - 仓库外克隆（`C:\swprojects\` 26 个）的许可现状
 - 是否存在从 AGPL 项目「代码级」搬运——需逐文件比对，本次未做
+
+---
+
+## 证据索引（每个事实号 → `inventory-i.json` 的键）
+
+| 事实 | 证据载体 |
+|---|---|
+| I-01 | `inventory-i.json` 的 `union_sources.count` / `union_sources.licenses` |
+| I-02 | `inventory-i.json` 的 `third_party_notices` |
+| I-03 | `inventory-i.json` 的 `repo_license` |
+| I-04 | `inventory-i.json` 的 `code_files_scanned` / `license_keywords_in_header` |
+| I-05 | `inventory-i.json` 的 `files_with_gpl_family_header`（6 个）+ 逐行摘录 |

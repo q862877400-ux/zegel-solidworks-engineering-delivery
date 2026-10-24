@@ -65,3 +65,15 @@
 - 哪 5 个被阻断文件里各有多少用例
 - `conftest.py` 提供了哪些 fixture、是否有自动 skip 逻辑
 - 测试与 `capabilities.yaml` 里 100 条 `verified` 的对应关系
+
+---
+
+## 证据索引（每个事实号 → `inventory-f.json` 的键）
+
+| 事实 | 证据载体 |
+|---|---|
+| F-01 | `inventory-f.json` 的 `test_files` + `tests/*.py` 目录计数（496/478/18 由 `Get-ChildItem -Filter` 得） |
+| F-02 | `inventory-f.json` 的 `test_functions_total`（3977）与 `collected`（4111） |
+| F-03 | `inventory-f.json` 的 `collect_exit` / `collect_errors` / `collect_error_sample` / `collect_error_kinds` |
+| F-04 | `inventory-f.json` 的 `files_using_asyncio_mark` / `pytest_mark_skip_occurrences` |
+| F-05 | 同上 `collected` 与 `collect_errors` 相减得出 |
