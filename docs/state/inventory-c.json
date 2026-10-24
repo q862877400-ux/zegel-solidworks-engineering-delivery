@@ -1,0 +1,89 @@
+{
+  "schema_version": "2.0",
+  "total": 140,
+  "top_level_keys": [
+    "backend_catalog",
+    "backend_schema_version",
+    "capabilities",
+    "operation_routes",
+    "schema_version",
+    "verified_versions"
+  ],
+  "level_histogram": {
+    "verified": 100,
+    "stitched": 37,
+    "not_implemented": 3
+  },
+  "field_presence": {
+    "id": 140,
+    "label": 140,
+    "level": 140,
+    "backends": 140,
+    "limitations": 140,
+    "source": 140,
+    "source_evidence": 140,
+    "evidence": 137,
+    "verified_versions": 132,
+    "dependencies": 126,
+    "allowed_modes": 109,
+    "mcp_tools": 105,
+    "title": 4,
+    "★_2026-10-04_降级说明": 1,
+    "★_allowed_modes_说明": 1,
+    "skills": 1,
+    "provenance": 1
+  },
+  "verified_evidence": {
+    "count": 100,
+    "kind_histogram": {
+      "list[2]": 32,
+      "list[3]": 28,
+      "list[4]": 18,
+      "list[1]": 8,
+      "list[5]": 5,
+      "list[7]": 3,
+      "list[6]": 3,
+      "list[9]": 2,
+      "list[23]": 1
+    },
+    "missing": [],
+    "shortest": [
+      {
+        "name": null,
+        "kind": "list[1]",
+        "chars": 69
+      },
+      {
+        "name": null,
+        "kind": "list[1]",
+        "chars": 78
+      },
+      {
+        "name": null,
+        "kind": "list[1]",
+        "chars": 102
+      },
+      {
+        "name": null,
+        "kind": "list[1]",
+        "chars": 175
+      },
+      {
+        "name": null,
+        "kind": "list[1]",
+        "chars": 183
+      }
+    ]
+  },
+  "limitations_present": 140,
+  "provenance_present": 1,
+  "name_match_tool": {
+    "hit": 0,
+    "of": 140
+  },
+  "name_match_module": {
+    "hit": 140,
+    "of": 140
+  },
+  "capabilities_without_any_name_hit": []
+}

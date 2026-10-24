@@ -1,0 +1,24 @@
+{
+  "server": {
+    "lines": 3537,
+    "decorator_tool_count": 45,
+    "register_capabilities_calls": 1,
+    "has_fastmcp": true,
+    "run_hints": [
+      "destructive",
+      "idempotent"
+    ]
+  },
+  "sw_connect": {
+    "lines": 1466,
+    "mutex_hits": 3,
+    "command_in_progress": 2,
+    "timeout_hits": 5,
+    "dispatch_ex": 7,
+    "has_mm_helper": true
+  },
+  "tools_present": {
+    "sw_guard.py": true,
+    "reclaim_solidworks.py": true
+  }
+}
