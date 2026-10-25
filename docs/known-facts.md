@@ -7167,9 +7167,25 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
        ① 加 `ActivateDoc3` ② 改从 `ActiveDoc` 重取 ③ 记录步骤 ④ 段前清空文档
        ⇒ 最后一次错误变成 `com_error (-2147023174, 'RPC 服务器不可用。')`（0x800706BA）
          = 会话在退化 ⇒ **停手**（「三次失败就停下质疑架构」）。
-     ★★★ 结论与下一步：**E4 采集要单独一个进程跑**（干净会话），
+     ★★★ 结论：**E4 采集要单独一个进程跑**（干净会话），
        不要和 E1/E2/E3 挤在同一个进程里，也不要靠调整段内顺序去修。
-       诊断信息已固化在运行器的 `E4.steps`（含 `components_err`），下次一眼能看出断连。|真机：`tools/run_s3_acceptance.py` · 证据 `output/s3-acceptance.json`（`E4.steps`）· 对照 `tools/probe_e4_assembly.py` |
+     ★★★★ **已实施（同轮验成）**：拆成**串行两段**，靠**文件接缝**连起来：
+       ```
+       python -B tools/collect_e4_standalone.py   # ① 采集（此时无别的 COM 客户端）
+       python -B tools/run_s3_acceptance.py       # ② 判定（只读 output/e4-standalone.json）
+       ```
+       真机读数：`④c E4：组件 2 · 干涉 0`（改之前是 `-1 · -1`）。
+     ★★★★★ **为什么「拆进程」还不够 —— 三种摆法实测对比**（同一轮内，只差一处）：
+     ```
+     采集器单独跑（无别的 COM 客户端）   → components 2 · interference 0   ✓
+     运行器**起子进程**跑采集器          → -1（RPC_E_DISCONNECTED）
+     运行器**进程内**采集                → -1（同一原因）
+     ```
+     ⇒ **两个进程同时持有到同一个 SolidWorks 实例的 COM 连接 ⇒ 后连的被断连。**
+       ★ 这是本仓事实 24「多个进程抢同一 COM 连接」的另一副面孔：
+         那条记的是**死锁**，这条记的是**断连**。
+       ⇒ 结论：E4 的采集与判定必须**串行**，用**文件**交接，不能并发。
+     ★ 附带好处：采集可单独复跑（不重跑 E1–E3）；采集器写 `finished_at` 供判新鲜度。|真机：`tools/run_s3_acceptance.py` · 证据 `output/s3-acceptance.json`（`E4.steps`）· 对照 `tools/probe_e4_assembly.py` |
 
 | 568 | **★★★★★ 孔心随板宽联动**机制**验证成功**（位移 +20.0 mm × 4） —— `AddHorizontalDimension2` + 同进程 ESC 线程**可用** | 2026-10-26（第 54 轮）。
      ★★★ 真机读数（`tools/probe_e2_hole_dimension_link.py --hv`，证据 `output/e2-hole-dimension-link.json`）：

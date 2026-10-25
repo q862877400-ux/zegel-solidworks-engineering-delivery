@@ -45,7 +45,6 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
-import scripts.sw_assembly as asm_  # noqa: E402
 from scripts import sw_connect as c_  # noqa: E402
 from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
     collect_sketch_constraint,
@@ -216,6 +215,30 @@ def main() -> int:
             sw.CommandInProgress = True
         except Exception:  # noqa: BLE001
             pass
+
+        #: ── E4：采集结果从**文件**读（第 57 轮改为串行两段）──
+        #:
+        #:   ★★★ 为什么不在本进程里做、也不起子进程：实测两种都拿到
+        #:     `RPC_E_DISCONNECTED` —— 因为本进程**自己也连着 COM**，
+        #:     两个客户端抢同一个 SolidWorks 实例，后连的被断连
+        #:     （本仓事实 24「多个进程抢同一 COM 连接」的另一副面孔）。
+        #:
+        #:   ⇒ 正确摆法是**串行两段**：
+        #:       python -B tools/collect_e4_standalone.py    # 先采集（此时无别的客户端）
+        #:       python -B tools/run_s3_acceptance.py        # 再判（只读本文件）
+        #:
+        #:   ⚠ 文件缺失 / 过期 ⇒ 如实记 err，**不静默当成 0 个组件**。
+        e4_early: dict = {}
+        _e4_path = R / "output" / "e4-standalone.json"
+        if _e4_path.is_file():
+            try:
+                e4_early = json.loads(_e4_path.read_text(encoding="utf-8"))
+            except Exception as exc:  # noqa: BLE001
+                e4_early = {"err": "读采集证据失败：%s" % (type(exc).__name__,)}
+        else:
+            e4_early = {
+                "err": "没有采集证据：请先跑 `python -B tools/collect_e4_standalone.py`",
+            }
         ok_o, doc = _try(c_.open_document, sw, str(copy))
         if not ok_o or doc is None:
             print("★ 打不开交付件副本：%s" % str(doc)[:120])
@@ -479,118 +502,53 @@ def main() -> int:
             )
         )
 
-        #: ── E4：装配（组件数 + 干涉；配合仍建不出来，见事实 565）──
+        #: ── E4：装配（**独立进程采集** —— 事实 569）──
         #:
-        #:   ★ 为什么现在能跑：第 43 轮解除了加组件阻塞（官方前置 + GetPathName 兜底）。
-        #:   ★ 预期结论：E4.interference / E4.dof 都会是 **unknown** ——
-        #:     · 配合建不出来 ⇒ 没搭起「可判」的装配 ⇒ 采集不完整
-        #:     · SolidWorks 无数值自由度读取入口（三源确认）
-        #:   ⚠ `unknown` 不是 fail：那是我方没搭起测试，不是产物不合格。
+        #:   ★★ 为什么不在本进程里做：实测 E2 反复开关文档之后，`NewDocument` 返回 True
+        #:     但拿到的 doc 对象 `RPC_E_DISCONNECTED`（0x80010108），`GetComponents` 抛
+        #:     ⇒ 读数变 -1。而**独立进程**里组件 0 → 2 通。
+        #:   ★ 好处：E4 采集可单独复跑（不重跑 E1–E3），也不受本进程会话状态影响。
+        #:   ⚠ `components = -1` 表示「没读到」，**不是**「0 个组件」。
         res_e4 = res_e4i = None
         try:
-            #: ★ 同一个坑：E4 段也要用**实际路径**（沙箱会改名）——第 55 轮实测
-            ok_pa, part_doc = _try(c_.open_document, sw, real_path)
-            loaded = (
-                str(_member(part_doc, "GetPathName") or "") if ok_pa else ""
+            #: ★ 第 57 轮：读数来自**开文档之前**那次采集（`e4_early`）——
+            #:   见本段上方的实测对比与「独立进程 ≠ 独立 SolidWorks 实例」。
+            e4 = e4_early
+            n_comp = int(e4.get("components", -1))
+            n_interf = int(e4.get("interference_count", -1))
+            ev["E4"] = {
+                "components": n_comp,
+                "interference_count": n_interf,
+                "collector_ok": bool(e4.get("ok")),
+                "collector_steps": e4.get("steps"),
+                "collector_err": e4.get("err", ""),
+                "collector_docs_left": e4.get("docs_left"),
+                #: ★ 串行两段：证据的新鲜度从采集器自己写的 inished_at 看
+                "collector_finished_at": e4.get("finished_at"),
+            }
+
+            obs_e4 = collect_assembly(
+                target="板1 + 板1（两组件 · 开文档前独立采集）",
+                components=tuple("板1-%d" % (k + 1) for k in range(max(n_comp, 0))),
+                #: ★ 配合建不出来 ⇒ 空元组（事实 565/568）
+                mates=(),
+                target_dof=0,
+                interference_count=n_interf,
+                min_clearance_mm=-1.0,
+                clearance_basis="",
+                configuration="默认",
+                version="2026-10-26",
             )
-            ok_na, asm_raw = _try(c_.new_document, sw, "assembly")
-            #: ★★★ 第 56 轮：`new_document` **返回 True 不等于对象还能用** ——
-            #:   实测 `asm_title` 为空且 `GetComponents` 报
-            #:   `com_error (-2147417848, '被调用的对象已与其客户端断开连接。')`
-            #:   (`0x80010108` = `RPC_E_DISCONNECTED`)。
-            #:   ⇒ **不信任返回的对象**：改从 `ActiveDoc` 重取，并用标题非空验证它是活的。
-            asm_doc = asm_raw
-            if asm_raw is not None:
-                _try(
-                    sw.ActivateDoc3,
-                    str(_member(asm_raw, "GetTitle") or ""), 0, False,
-                )
-            try:
-                cand = get_com_member(sw, "ActiveDoc")
-                if cand is not None and str(_member(cand, "GetTitle") or ""):
-                    asm_doc = cand
-            except Exception:  # noqa: BLE001
-                pass
-            if ok_na and asm_doc is not None:
-                for dx in (0.0, 30.0):
-                    _try(
-                        asm_.add_component, asm_doc, str(SRC), dx, 0.0, 0.0, "", sw
-                    )
-                n_comp = 0
-                components_err = ""
-                try:
-                    n_comp = len(
-                        list(get_com_member(asm_doc, "GetComponents", False) or [])
-                    )
-                except Exception as exc:  # noqa: BLE001
-                    n_comp = -1
-                    #: ★ 先存局部变量 —— `ev["E4"]` 此时还没建（上一版直接写进去 ⇒ KeyError）
-                    components_err = "%s: %s" % (
-                        type(exc).__name__,
-                        str(exc)[:120],
-                    )
-
-
-                ok_i2, interf = _try(asm_.get_interference_detection, asm_doc)
-                n_interf = -1
-                if ok_i2 and isinstance(interf, dict):
-                    v = interf.get("interference_count")
-                    n_interf = int(v) if v is not None else -1
-
-                obs_e4 = collect_assembly(
-                    target="板1 + 板1（两组件）",
-                    components=tuple("板1-%d" % (i + 1) for i in range(max(n_comp, 0))),
-                    #: ★ 配合建不出来 ⇒ 空元组（这是**事实**，不是我方漏填）
-                    mates=(),
-                    target_dof=0,
-                    interference_count=n_interf,
-                    min_clearance_mm=-1.0,
-                    clearance_basis="",
-                    configuration="默认",
-                    version="2026-10-26",
-                )
-                res_e4 = judge_assembly(obs_e4, requirement_id="R-E4")
-                res_e4i = judge_assembly_interference(obs_e4, requirement_id="R-E4")
-                ev["E4"] = {
-                    "components": n_comp,
-                    "interference_count": n_interf,
-                    "dof_status": res_e4.status.value,
-                    "interference_status": res_e4i.status.value,
-                    "note": "配合建不出来（事实 565）⇒ mates 空 ⇒ 采集不完整",
-                }
-                #: ★ 第 56 轮：把每一步的返回值都记下来 —— `-1` 没有上下文时无从下手。
-                #:   ★ 必须放在 `ev["E4"]` 建好**之后**（第一版写在前面 ⇒ KeyError）。
-                ev["E4"]["steps"] = {
-                    "open_part": bool(ok_pa),
-                    "new_assembly": bool(ok_na),
-                    "asm_is_none": asm_doc is None,
-                    "asm_title": str(_member(asm_doc, "GetTitle") or "")
-                    if asm_doc is not None
-                    else "",
-                    "part_path": loaded,
-                    "components_err": components_err,
-                }
-                print(
-                    "④c E4：组件 %s · 干涉 %s · E4.dof=%s · E4.interference=%s"
-                    % (n_comp, n_interf, res_e4.status.value, res_e4i.status.value)
-                )
-                #: ★★ 第 48 轮：装配是**脏**的（`new_document` 后从未保存）
-                #:   ⇒ `CloseDoc` 关不掉（`CommandInProgress=True` 下弹窗还被抑制）
-                #:   ⇒ 实测留了 2 个孤儿文档。修法：**先 SaveAs 到 output/ 再关**。
-                #:   ★ 不用 `CloseAllDocuments(IncludeUnsaved=True)` —— 那会连别人的文档一起关。
-                asm_out = WORK / "e4_assembly.SLDASM"
-                _try(c_.save_document, asm_doc, str(asm_out))
-                ttl = str(_member(asm_doc, "GetTitle") or "")
-                if ttl:
-                    _try(sw.CloseDoc, ttl)
-                ev["E4"]["assembly_closed"] = True
-            if ok_pa and loaded:
-                ttl2 = str(_member(part_doc, "GetTitle") or "")
-                if ttl2:
-                    _try(sw.CloseDoc, ttl2)
-                ev["E4"]["part_closed"] = True
+            res_e4 = judge_assembly(obs_e4, requirement_id="R-E4")
+            res_e4i = judge_assembly_interference(obs_e4, requirement_id="R-E4")
+            ev["E4"]["dof_status"] = res_e4.status.value
+            ev["E4"]["interference_status"] = res_e4i.status.value
+            print(
+                "④c E4：组件 %s · 干涉 %s · E4.dof=%s · E4.interference=%s"
+                % (n_comp, n_interf, res_e4.status.value, res_e4i.status.value)
+            )
         except Exception as exc:  # noqa: BLE001
-            ev["E4"] = {"err": "%s: %s" % (type(exc).__name__, str(exc)[:160])}
+            ev["E4"] = {"err": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
             print("④c E4 段异常：%s" % ev["E4"])
 
         #: ── 汇总 + 渲染 ──
