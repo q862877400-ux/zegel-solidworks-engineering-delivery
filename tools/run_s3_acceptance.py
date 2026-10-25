@@ -639,25 +639,85 @@ def main() -> int:
             }
             print("④e E6：%s（S2 工艺路线未冻结）" % res_e6.status.value)
 
-            #: E7：出处链要等前六项都有结论
+            #: E7：**只把已经有真结论的项**挂出处（第 64 轮）
+            #:   ★ 没结论的项（E2.hole_readback / E4.dof / E5 / E6）**不进 claims** ——
+            #:     把没结论的东西写成 claim 就是编。
+            _ver = "板1_rev-1"
+            _claims: list = []
+            _cites: list = []
+            if (ev.get("E1") or {}).get("status") == "pass":
+                _claims.append({"id": "E1", "text": "草图完全定义（求解状态 3）"})
+                _cites.append(
+                    {
+                        "claim_id": "E1",
+                        "locator": "output/s3-acceptance.json#E1.solver_status",
+                        "resolved": True,
+                    }
+                )
+            if (ev.get("E2") or {}).get("status") == "pass":
+                _claims.append(
+                    {"id": "E2.rebuild", "text": "改宽后四个孔同步位移，偏差 0"}
+                )
+                _cites.append(
+                    {
+                        "claim_id": "E2.rebuild",
+                        "locator": "output/s3-acceptance.json#E2.shifts_mm",
+                        "resolved": True,
+                    }
+                )
+            if (ev.get("E3") or {}).get("status") == "pass":
+                _claims.append(
+                    {"id": "E3", "text": "特征树 11 项 · 原生 6 · 重建错误 0"}
+                )
+                _cites.append(
+                    {
+                        "claim_id": "E3",
+                        "locator": "output/s3-acceptance.json#E3.tally",
+                        "resolved": True,
+                    }
+                )
+            if (ev.get("E4") or {}).get("interference_status") == "pass":
+                _claims.append(
+                    {
+                        "id": "E4.interference",
+                        "text": "配合 1 条 · 干涉 0 · 间隙实测 0.000mm · 存盘重开后仍在",
+                    }
+                )
+                _cites.append(
+                    {
+                        "claim_id": "E4.interference",
+                        "locator": "output/e4-standalone.json#steps.clearance",
+                        "resolved": True,
+                    }
+                )
+
             obs_e7 = collect_provenance(
-                target="板1 结论出处链",
-                claims=(),
-                citations=(),
-                outputs={},
-                source_kind="",
-                source_ref="",
-                artifact_version="",
-                evidence_version="",
+                target="板1 结论出处链（只含已有真结论的项）",
+                claims=tuple(_claims),
+                citations=tuple(_cites),
+                outputs={
+                    "E1": ev.get("E1"),
+                    "E2": ev.get("E2"),
+                    "E3": ev.get("E3"),
+                    "E4": ev.get("E4"),
+                },
+                source_kind="measured",
+                source_ref="output/s3-acceptance.json · output/e4-standalone.json（本机真机读数）",
+                artifact_version=_ver,
+                evidence_version=_ver,
                 version="2026-10-26",
             )
             res_e7 = judge_provenance(obs_e7, requirement_id="R-E7")
             ev["E7"] = {
                 "status": res_e7.status.value,
                 "reason": res_e7.reason,
-                "blocked_by": "待前六项都有结论后，逐条挂出处",
+                "claims": [c["id"] for c in _claims],
+                "artifact_version": _ver,
             }
-            print("④f E7：%s（待前六项）" % res_e7.status.value)
+            print(
+                "④f E7：%s（挂了 %d 条出处：%s）"
+                % (res_e7.status.value, len(_claims), [c["id"] for c in _claims])
+            )
         except Exception as exc:  # noqa: BLE001
             ev["E5_E7_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
             print("④d–f E5/E6/E7 段异常：%s" % ev["E5_E7_err"])

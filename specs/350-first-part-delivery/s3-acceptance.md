@@ -2,7 +2,7 @@
 
 **总体**：❌ fail
 
-检查共 10 条：pass 4 · fail 1 · unknown 5 · not_applicable 0
+检查共 10 条：pass 5 · fail 1 · unknown 4 · not_applicable 0
 
 ## 逐条状态
 
@@ -14,7 +14,7 @@
 | **E4** | 装配自由度闭合 | ⚠️ unknown | 2 | — | E4.dof |
 | **E5** | 图样合规 | ⚠️ unknown | 1 | — | E5.drawing |
 | **E6** | 工艺可行 | ⚠️ unknown | 1 | — | E6.process |
-| **E7** | 结论可溯源 | ⚠️ unknown | 1 | — | E7.provenance |
+| **E7** | 结论可溯源 | ✅ pass | 1 | — | — |
 
 ## 未测到的项（不等于合格）
 
@@ -22,7 +22,6 @@
 - `E4.dof`：★ 剩余自由度**没有实测入口**（本机 API 无数值 DOF 读取）⇒ 这一项验不了。按配合数推算约为 9，但**估算不作为观测**
 - `E5.drawing`：采集不完整
 - `E6.process`：采集不完整
-- `E7.provenance`：采集不完整
 
 ## 不合格的项
 

@@ -7150,6 +7150,33 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 574 | **E7 出处链接通**（4 条实测结论各挂出处）—— 判据原缺 `measured` 的 locator 形态 | 2026-10-26（第 64 轮）。
+     ★★ 发现的问题（**判据与它要抓的对象不贴合**）：
+     `e7_provenance.py` 的 `VALID_SOURCES` 有 `measured`（本机实测读数），
+     而 `_LOCATOR_PATTERNS` 只认「表 1 / 图 3 / 第 5 条 / § 2 / GB 30871 / 5.2」这些
+     **文档形态** ⇒ 实测结论的自然出处 `output/e3-feature-tree.json#features` **过不了**。
+     ⇒ 二选一：编一个「第 3 条」的假 locator（伪造），或这条证据永远进不了 E7。
+     ★ 改判据（不是改数据）：加一类 **仓库相对路径 + 字段标记**（`#` / `::` / `→`）。
+     ```
+     output/x.json#features   ✓
+     output/x.json → features ✓
+     output/x.json            ✗ 只给文件名等于「去看那个文件」，与「见附件」同类
+     见上 / 待补 / tbd        ✗ 占位符照旧拦
+     表 1 / 第 5 条 / 5.2     ✓ 文档形态不受影响
+     ```
+     ★ 边界（如实）：这条判据仍**不能**证明文件里真有那个字段 —— 它只拦「明显不是出处」。
+       真核对要把文件打开比对。
+     ★★ 实测结果（`output/s3-acceptance.json` → `E7`）：
+     ```
+     E7.provenance = pass · 挂了 4 条出处 ['E1','E2.rebuild','E3','E4.interference']
+     source_kind = measured · artifact_version = evidence_version = 板1_rev-1
+     ```
+     ★ 只把**已经有真结论**的项写进 claims：E2.hole_readback（fail）、E4.dof（unknown）、
+       E5/E6（没采集）**都不进** —— 把没结论的东西写成 claim 就是编。
+     ★ 判据还有一条「有计算输出才可复算」：`outputs` 为空 ⇒ fail（理由「无复算依据」）✓
+     ★ 验收总账：pass **5** · fail 1 · unknown **4**（E4.interference 与 E7 本轮前后转绿）。
+|真机：`tools/run_s3_acceptance.py`（`E7` 段）· 测试 `tests/test_e7_measured_locator.py`（9 条）· 报告 `specs/350-first-part-delivery/s3-acceptance.md` |
+
 | 573 | **配合/间隙**存盘后仍在**（`SaveAs` → 关文档 → 重开 → 再数一遍）—— `IModelDocExtension.SaveAs` 是 **6 参**，且 `ExportData` **不能传 None** | 2026-10-26（第 63 轮）。
      ★★ 官方签名（`C:\swapi\types\IModelDocExtension\SaveAs.md`）：
      ```
