@@ -7150,6 +7150,32 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 593 | **记录器必须复用仓库既有的元素/关系命名表**（业主 2026-10-26 纠正） | 业主原话：「你做这个记录器的时候，记得要复用我们现在已经有的东西，不要完全手搓。我们各种元素叫什么名字，我们现在肯定是已经有了。」
+     ★★★ 查证属实，仓库里早有两张**权威表**：
+     ```
+     scripts/sketch_relations.py
+       SKETCH_RELATION_ENTITY_TYPES = {point:2, line:3, arc:4, ellipse:5,
+           parabola:6, spline:7, text:9, plane:10, cylinder:11, sphere:12,
+           surface:13, dimension:14, sub_sketch:1, hatch:8, unknown:0}
+                                      ← 官方 swSketchRelationEntityTypes_e 的映射
+       SKETCH_CONSTRAINT_TYPES = {distance:1, angle:2, horizontal:4, vertical:5,
+           tangent:6, parallel:7, perpendicular:8, coincident:9, concentric:10, …}
+     scripts/sw_selection_spec.py
+       ENTITY_KINDS = ('EDGE', 'FACE', 'VERTEX')
+     ```
+     而我手写了「草图点 / 草图线段 / 实体边 / 面」——**无官方名、与上表对不上**，
+     同一个东西三处不同名字。
+     ⇒ 修：`describe_entity.kind` 用**官方名**（`point`/`line`/`arc`/`EDGE`/`FACE`…），
+       `kind_zh` 另存中文；`ELEMENT_KIND_BY_ID` 直接引用既有表。
+     ★★ 并加两条**防漂移**测试（用**显式同义词映射**，不做模糊匹配 —— 模糊会掩盖真漂移）：
+       · `test_existing_relation_table_matches_official`：既有表每项与官方生成表同值；
+       · `test_element_kind_names_come_from_existing_tables`：元素名必须来自既有表。
+     ★★★ 顺带更正一条**我自己的错误断言**：曾写「`5`/`26` 在官方枚举里不存在」，
+     实际**是第一次解析漏项** —— 官方确有 `VERTICAL = 5`、`VERTPOINTS = 26`；
+     现在生成表有 **86** 个取值（手抄版只有 69）。已加
+     `test_official_table_completeness` 锁住 4/5/6/7/8/9/10/26/32。
+|真机：`output/teach/20261025-235416/装配体14.SLDASM.md`（六边形阵列+构造圆，`DIAMETER = 80.0 mm`）|
+
 | 591 | **「草图引用了外部实体的边」怎么机读** —— 关系类型 **32 = USEEDGE** | 2026-10-26。
      业主点名要记：「引用这个基准面上已有实体的某个边或某个点；装配体里编辑零件时
      引用别的零件的边或点」。

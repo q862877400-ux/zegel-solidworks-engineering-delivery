@@ -239,6 +239,38 @@ scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
 ★ 枚举生成的解析**不假设格式统一**（实测：`swMateANGLE` / `swAlignAGAINST` /
   `swDocASSEMBLY` 前缀各不相同；值列还有 `64 = Datetime value` 与 `Obsolete`）。
 
+#### 两次更正（都在 2026-10-26 实操后）
+
+**更正 1：`swConstraintType_e` 的 `5` 与 `26` 是存在的。**
+我曾断言「`5` / `26` 在官方枚举里不存在」——**错了，是第一次解析漏项**。
+官方确有 `VERTICAL = 5`、`VERTPOINTS = 26`。
+⇒ 现在的生成表有 **86** 个取值（旧的手抄表只有 69 个）。
+⇒ 已加测试 `test_official_table_completeness` 锁住关键值，防止再漏。
+
+**更正 2：元素类型名**必须复用仓库既有表，不许另造。
+业主原话：「你做这个记录器的时候，记得要复用我们现在已经有的东西，不要完全手搓。
+我们各种元素叫什么名字，我们现在肯定是已经有了。」
+
+查证属实 —— 仓库里早有：
+
+```
+scripts/sketch_relations.py
+  SKETCH_RELATION_ENTITY_TYPES = {point:2, line:3, arc:4, ellipse:5,
+      parabola:6, spline:7, text:9, plane:10, cylinder:11, sphere:12,
+      surface:13, dimension:14, ...}      ← 官方 swSketchRelationEntityTypes_e
+  SKETCH_CONSTRAINT_TYPES = {distance:1, angle:2, horizontal:4, vertical:5, ...}
+scripts/sw_selection_spec.py
+  ENTITY_KINDS = ('EDGE', 'FACE', 'VERTEX')
+```
+
+而我手写了 `"草图点" / "草图线段" / "实体边" / "面"`，无官方名、与上表对不上，
+同一个东西三处不同名字。
+
+⇒ 现在 `describe_entity` 的 `kind` 用**官方名**（`point`/`line`/`arc`/`EDGE`/`FACE`…），
+   `kind_zh` 另存中文供人读；`ELEMENT_KIND_BY_ID` 直接引用既有表。
+⇒ 已加测试 `test_element_kind_names_come_from_existing_tables` 与
+   `test_existing_relation_table_matches_official`（用显式同义词映射，防两张表漂移）。
+
 ### 交付前质检（2026-10-26 · 因 provider 切换而起）
 
 业主提示：开发中途把 provider 从第三方中转站换成官方 API，怀疑此前成果有瑕疵。

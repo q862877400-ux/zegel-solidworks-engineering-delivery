@@ -355,3 +355,77 @@ def test_no_escape_residue_in_teach_sources() -> None:
             if "\t" in line.lstrip("\t"):
                 bad.append(f"{f.name}:{i}")
     assert not bad, "发现行内 TAB（写入转义残留）：" + ", ".join(bad)
+
+
+#: 仓库既有小写名 → 官方成员名的**显式同义词**（不做模糊匹配，模糊会掩盖真漂移）
+_RELATION_SYNONYMS = {
+    "distance": "DISTANCE",
+    "angle": "ANGLE",
+    "horizontal": "HORIZONTAL",
+    "vertical": "VERTICAL",
+    "tangent": "TANGENT",
+    "parallel": "PARALLEL",
+    "perpendicular": "PERPENDICULAR",
+    "coincident": "COINCIDENT",
+    "concentric": "CONCENTRIC",
+    "symmetric": "SYMMETRIC",
+    "midpoint": "ATMIDDLE",       #: 同义
+    "intersect": "ATINTERSECT",   #: 同义
+    "equal": "SAMELENGTH",        #: 同义
+    "fix": "FIXED",               #: 同义
+    "collinear": "COLINEAR",      #: 同义
+    "coradial": "CORADIAL",
+    "pierce": "ATPIERCE",         #: 同义
+}
+
+
+def test_existing_relation_table_matches_official() -> None:
+    """★ 仓库既有表与官方生成表**必须同值** —— 两套名字、一个数值。
+
+    2026-10-26：我手抄枚举把 7/8 抄错，业主的「平行/垂直」被记成「相切/同心」。
+    根因不是抄错那一次，而是**允许两套表各自演化**。本测试锁住它们。
+    """
+    from sketch_relations import SKETCH_CONSTRAINT_TYPES
+    from sw_enums import CONSTRAINT_TYPE
+
+    bad = []
+    for py_name, value in SKETCH_CONSTRAINT_TYPES.items():
+        official = _RELATION_SYNONYMS.get(py_name)
+        if official is None:
+            bad.append(f"{py_name}：没有登记同义词")
+            continue
+        real = CONSTRAINT_TYPE.get(value)
+        if real is None:
+            bad.append(f"{py_name}={value}：官方枚举里没有这个数值")
+        elif real != f"swConstraintType_{official}":
+            bad.append(
+                f"{py_name}={value}：既有表说是 {official}，官方是 {real}")
+    assert not bad, "两张关系表已漂移：\n" + "\n".join(bad)
+
+
+def test_official_table_completeness() -> None:
+    """★ 官方生成表要**完整**（曾被解析漏项，导致说「5/26 不存在」）。"""
+    from sw_enums import CONSTRAINT_TYPE
+
+    #: 这些是实测用到、必须存在的值
+    for value, name in ((4, "HORIZONTAL"), (5, "VERTICAL"), (6, "TANGENT"),
+                        (7, "PARALLEL"), (8, "PERPENDICULAR"), (9, "COINCIDENT"),
+                        (10, "CONCENTRIC"), (26, "VERTPOINTS"), (32, "USEEDGE")):
+        got = CONSTRAINT_TYPE.get(value)
+        assert got == f"swConstraintType_{name}", (
+            f"{value} 应为 {name}，实际 {got}")
+
+
+def test_element_kind_names_come_from_existing_tables() -> None:
+    """★ 元素类型名必须**复用仓库既有表**，不许另造一套。
+
+    既有：`SKETCH_RELATION_ENTITY_TYPES`（point/line/arc/…）与
+    `ENTITY_KINDS`（EDGE/FACE/VERTEX）。
+    """
+    import sw_model_snapshot as M
+    from sketch_relations import SKETCH_RELATION_ENTITY_TYPES
+
+    assert M.ELEMENT_KIND_BY_ID == SKETCH_RELATION_ENTITY_TYPES
+    #: 常用元素的中文标签要在，别让记录变回英文
+    for name in ("point", "line", "arc", "FACE", "EDGE", "VERTEX"):
+        assert name in M.ELEMENT_KIND_ZH, f"{name} 缺中文标签"

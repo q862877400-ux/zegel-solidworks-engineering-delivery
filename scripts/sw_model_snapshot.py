@@ -39,6 +39,12 @@
 """
 from __future__ import annotations
 
+#: `swMateType_e`（官方枚举，逐条核过 `C:\swapi\enums\swMateType_e.md`）
+#: ★★★ 枚举一律来自 scripts/sw_enums.py（由 tools/gen_sw_enums.py 从
+#:   C:/swapi/enums/*.md **生成**），这里**不再手抄任何表**。
+#:   教训：手抄 swConstraintType_e 把 7/8 抄错 ⇒ 业主的「平行/垂直」被记成
+#:   「相切/同心」，是**假事实**。见 AGENTS.md 与事实 592。
+from sketch_relations import SKETCH_RELATION_ENTITY_TYPES
 from sw_enums import (
     CONSTRAINT_TYPE as _CONSTRAINT_RAW,
 )
@@ -72,12 +78,7 @@ from sw_enums import (
 from sw_enums import (
     SKETCH_POINT_TYPE as _SPT_RAW,
 )
-
-#: `swMateType_e`（官方枚举，逐条核过 `C:\swapi\enums\swMateType_e.md`）
-#: ★★★ 枚举一律来自 scripts/sw_enums.py（由 tools/gen_sw_enums.py 从
-#:   C:/swapi/enums/*.md **生成**），这里**不再手抄任何表**。
-#:   教训：手抄 swConstraintType_e 把 7/8 抄错 ⇒ 业主的「平行/垂直」被记成
-#:   「相切/同心」，是**假事实**。见 AGENTS.md 与事实 592。
+from sw_selection_spec import ENTITY_KINDS
 from sw_units import dimension_reading
 
 
@@ -135,6 +136,27 @@ NA = "读不到"
 #: ★ 文档类型中文（人读版要用中文；生成表给的是英文成员名）
 DOC_KIND = {1: "零件", 2: "装配", 3: "图样"}
 
+#: ★★★ 元素类型名——**复用仓库既有表**，不再自造（业主 2026-10-26 指出）：
+#:   · 草图类：`SKETCH_RELATION_ENTITY_TYPES`（官方 swSketchRelationEntityTypes_e）
+#:   · 非草图元素：`ENTITY_KINDS`（`EDGE` / `FACE` / `VERTEX`）
+#: 值是官方名（`point`/`line`/`arc`/…），中文只用于人读。
+ELEMENT_KIND_BY_ID = dict(SKETCH_RELATION_ENTITY_TYPES)
+_ELEMENT_KIND_ZH_SKETCH = {
+    "point": "草图点", "line": "草图线段", "arc": "圆弧", "ellipse": "椭圆",
+    "parabola": "抛物线", "spline": "样条", "text": "文字", "plane": "基准面",
+    "cylinder": "圆柱面", "sphere": "球面", "surface": "曲面",
+    "dimension": "尺寸", "sub_sketch": "子草图", "hatch": "剖面线",
+    "unknown": "未识别",
+}
+#: 非草图元素的中文标签 —— 键必须覆盖 `ENTITY_KINDS`（既有表的权威元素类型）
+_ELEMENT_KIND_ZH_NON_SKETCH = {"EDGE": "实体边", "FACE": "面", "VERTEX": "顶点"}
+#: ★ 缺一个就当场报错：静默缺标签会让人读版冒出英文，等于记录没说清
+assert set(ENTITY_KINDS) <= set(_ELEMENT_KIND_ZH_NON_SKETCH), (
+    "非草图元素的中文标签没覆盖 ENTITY_KINDS："
+    f"{set(ENTITY_KINDS) - set(_ELEMENT_KIND_ZH_NON_SKETCH)}"
+)
+ELEMENT_KIND_ZH = {**_ELEMENT_KIND_ZH_SKETCH, **_ELEMENT_KIND_ZH_NON_SKETCH}
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
@@ -189,14 +211,26 @@ def _int(v):
 
 # ── 实体描述（核心：把「你选了什么」记清楚）─────────────────────────
 def describe_entity(ent) -> dict:
-    """实体描述：类型 / 坐标或端点 / 构造标记 / 曲线信息。**判不出就如实说**。"""
-    d: dict = {"kind": "未识别"}
+    """实体描述：类型 / 坐标或端点 / 构造标记 / 曲线信息。**判不出就如实说**。
+
+    ★ `kind` 用**官方类型名**（`point`/`line`/`arc`/`EDGE`/`FACE`/`VERTEX`…），
+      取自仓库既有 `SKETCH_RELATION_ENTITY_TYPES` 与 `ENTITY_KINDS`；
+      `kind_zh` 是中文标签，仅供人读。**不要在这里另造命名体系**（业主 2026-10-26）。
+    """
+    _d = _describe_entity_inner(ent)
+    _d["kind_zh"] = ELEMENT_KIND_ZH.get(str(_d.get("kind")), _d.get("kind"))
+    return _d
+
+
+def _describe_entity_inner(ent) -> dict:
+    """`describe_entity` 的实现体（负责判类型与取几何）。"""
+    d: dict = {"kind": "unknown"}
 
     #: ① 草图点（有 X/Y）
     x = _g(ent, "X")
     y = _g(ent, "Y")
     if x is not None and y is not None:
-        d["kind"] = "草图点"
+        d["kind"] = "point"
         z = _g(ent, "Z")
         d["point_mm"] = [_mm(x), _mm(y), _mm(z) if z is not None else None]
         t = _g(ent, "Type")
@@ -208,7 +242,7 @@ def describe_entity(ent) -> dict:
     sp = _g(ent, "GetStartPoint2")
     ep = _g(ent, "GetEndPoint2")
     if sp is not None and ep is not None:
-        d["kind"] = "草图线段"
+        d["kind"] = "line_or_arc"
         d["endpoints_mm"] = [
             [_mm(_g(sp, "X")), _mm(_g(sp, "Y"))],
             [_mm(_g(ep, "X")), _mm(_g(ep, "Y"))],
@@ -217,13 +251,25 @@ def describe_entity(ent) -> dict:
         if cg is not None:
             d["construction"] = bool(cg)
         d.update(_segment_shape(ent))
+        #: ★ 用**官方类型名**细化：`line`/`arc`/`ellipse`/`spline`/`text`/`parabola`
+        #:   （名字来自既有 `SKETCH_RELATION_ENTITY_TYPES`，不是编的）
+        #: ⚠ `shape_official` 已**去掉 `swSketch` 前缀**（是 `LINE` 不是 `swSketchLINE`），
+        #:   第一版按带前缀比对 ⇒ 匹配不上，`kind` 停在中间态 `line_or_arc`。
+        _official = str(d.get("shape_official") or "").upper()
+        _map = (("LINE", "line"), ("ARC", "arc"),
+                ("ELLIPSE", "ellipse"), ("SPLINE", "spline"),
+                ("TEXT", "text"), ("PARABOLA", "parabola"))
+        for needle, name in _map:
+            if needle in _official:
+                d["kind"] = name
+                break
         return d
 
     #: ③ 实体边（有 GetStartVertex / GetEndVertex）
     vs = _g(ent, "GetStartVertex")
     ve = _g(ent, "GetEndVertex")
     if vs is not None or ve is not None:
-        d["kind"] = "实体边"
+        d["kind"] = "EDGE"
         for tag, vtx in (("start", vs), ("end", ve)):
             if vtx is None:
                 continue
@@ -236,7 +282,7 @@ def describe_entity(ent) -> dict:
 
     #: ④ 面（有 GetEdges）
     if _g(ent, "GetEdges") is not None:
-        d["kind"] = "面"
+        d["kind"] = "FACE"
         return d
 
     #: ⑤ 顶点（有 GetPoint）
@@ -257,6 +303,58 @@ def describe_entity(ent) -> dict:
     return d
 
 
+#: 与 `_g` 同性质的**内部取值器**第二形态：`_g` 取成员、`_call` 取并调用。
+#: 成员名全部来自本文件内部的字面量（`GetRadius`/`GetCenterPoint2` 等），
+#: 不接受外部输入 ⇒ 不逐个登记候选值。
+#: dispatch-guard: exempt internal-helper
+def _call(obj, name, *args):
+    """取成员**并调用它**（明确表示这是方法，不是属性）。
+
+    ★ 根因（2026-10-26 实操暴露）：`_g()` 只按名字取成员，**不区分属性与方法**。
+      取到方法却没调用，得到的是 method 对象 —— 写进记录就是空值。
+      实测：`ISketchArc.GetCenterPoint2` 是方法，我直接 `_g(seg, "GetCenterPoint2")`
+      ⇒ `center_mm` 永远空；`Radius` 名字根本不存在（真名是 `GetRadius`）
+      ⇒ `radius_mm` 永远 None ⇒ **圆没有半径和圆心，等于没记**。
+    """
+    #: 二级转发：成员名是 `_call` 的形参，而 `_call` 的**每个调用点都传字面量**
+    #: （`_call(seg, "GetRadius")` 等）⇒ 声明 `sites` 桶（上游有 AST 调用点且全字面量）。
+    #: dispatch-fwd: upstream _call sites 成员名来自本文件内部的字面量调用
+    fn = _g(obj, name)
+    if fn is None or not callable(fn):
+        return fn
+    try:
+        return fn(*args)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _arc_geometry(seg) -> dict:
+    """圆弧/整圆的**半径与圆心**（以及它是不是整圆）。
+
+    实测可用成员（对 `ISketchSegment` 直接可调，无需 cast）：
+      `GetRadius()`（米）· `IsCircle`（属性，1=整圆）· `GetCenterPoint()`（直接回坐标）
+    注意 `Radius` **不存在**（是 `GetRadius` 方法）；`GetCenterPoint2` 是方法。
+    """
+    out: dict = {}
+    r = _call(seg, "GetRadius")
+    if isinstance(r, (int, float)):
+        out["radius_mm"] = _mm(r)
+    is_circle = _g(seg, "IsCircle")
+    if is_circle is not None:
+        out["is_circle"] = bool(is_circle)
+    c = _g(seg, "GetCenterPoint")
+    if c is None:
+        c = _call(seg, "GetCenterPoint2")
+    if c is not None:
+        try:
+            vals = list(c)
+            if len(vals) >= 2:
+                out["center_mm"] = [_mm(vals[0]), _mm(vals[1])]
+        except Exception:  # noqa: BLE001
+            pass
+    return out
+
+
 def _segment_shape(seg) -> dict:
     """线段再细分：直线 / 圆弧 / 椭圆 / 样条（按可用成员判断，不猜）。"""
     out: dict = {}
@@ -265,6 +363,12 @@ def _segment_shape(seg) -> dict:
         #: 官方成员名（LINE/ARC…）+ 中文标签都给，人读用中文、机器用英文
         out["shape"] = SEGMENT_KIND_ZH.get(t) or SEGMENT_KIND[t]
         out["shape_official"] = SEGMENT_KIND[t]
+        if t == 1:      #: swSketchARC —— 还要分「整圆」与「圆弧」
+            geo = _arc_geometry(seg)
+            out.update(geo)
+            if geo.get("is_circle"):
+                out["shape"] = "圆"
+                out["shape_official"] = "swSketchARC(IsCircle=1) 整圆"
     c = _g(seg, "GetCenterPoint2")
     if c is not None:
         out["center_mm"] = [_mm(_g(c, "X")), _mm(_g(c, "Y"))]
@@ -753,7 +857,7 @@ def _mate_detail(feature) -> dict:
     t = _int(_g(mate, "Type"))
     if t is not None:
         item["type_int"] = t
-        item["type"] = MATE_TYPE.get(t, "未知(%d)" % t)
+        item["type"] = MATE_TYPE.get(t, f"未知({t})")
     a = _int(_g(mate, "Alignment"))
     if a is not None:
         item["align"] = MATE_ALIGN.get(a, str(a))

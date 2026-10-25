@@ -171,6 +171,11 @@ def start() -> int:
     p1 = subprocess.Popen(  # noqa: S603
         ["psr.exe", "/start", "/output", str(zip_path), "/sc", "1"],
         creationflags=_no_window(),
+        #: ★ 长驻子进程**不许继承**父进程的 stdout/stderr：
+        #:   继承了就永远不关写端，调用方读不到 EOF ⇒ `--start` 永不返回
+        #:   （2026-10-26 实测挂死 120 秒）。
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
 
     #: ② ffmpeg 录屏（记下开始墙钟，供后面抽帧对齐）
@@ -193,6 +198,10 @@ def start() -> int:
          "-movflags", "+frag_keyframe+empty_moov+default_base_moof",
          str(mp4)],
         stdin=subprocess.PIPE, creationflags=_no_window(),
+        #: ★ 同上：ffmpeg 长驻，继承 stdout/stderr 会让管道永不关闭。
+        #:   （这里只要 stdin=PIPE 备用；日志不需要，报告不依赖它。）
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     #: ③ 拉起**轨迹轮询进程**（根因 C：录制期持续采样，不只拍终态）
     p3 = subprocess.Popen(  # noqa: S603
@@ -298,6 +307,21 @@ def stop() -> int:
         print("★ 没有正在进行的捕获")
         return 0
     d = Path(st["dir"])
+    #: ★★★ 第 0 步：**先让轨迹轮询进程收尾**（删 pid + 等进程退出），
+    #:   再停 PSR / ffmpeg。顺序反了会误报：轮询进程在最后几轮发现 psr.exe
+    #:   不见了（其实是我自己刚停的）⇒ 记一条假的 `psr-stopped`
+    #:   「可能被手动点了停止记录」（2026-10-26 实测踩到）。
+    pid_file0 = d / "running.pid"
+    tl_pid0 = st.get("timeline_pid")
+    try:
+        pid_file0.unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001
+        pass
+    if tl_pid0:
+        for _ in range(50):
+            if not _pid_alive(int(tl_pid0)):
+                break
+            time.sleep(0.2)
     #: ① 停 PSR（必须 /stop 它才会写 zip）
     subprocess.run(["psr.exe", "/stop"], creationflags=_no_window(), timeout=60,
                    check=False)
@@ -338,13 +362,15 @@ def stop() -> int:
         pid_file.unlink(missing_ok=True)
     except Exception:  # noqa: BLE001
         pass
-    #: ★★★ 缺陷 1（质检 2026-10-26 发现）：pid 文件刚被自己删掉，
-    #:   原来 `if not pid_file.exists(): break` **第一次就成立** ⇒ 等于没等，
-    #:   可能读到 `run()` 还没写完的 timeline.jsonl。
-    #:   现在按 **timeline_pid** 等进程真正退出（最多 10 秒）。
+    #: （轮询进程已在**开头**收尾完毕；这里只兜底确认一次，防止它异常滞留）
+    pid_file = d / "running.pid"
+    try:
+        pid_file.unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001
+        pass
     tl_pid = st.get("timeline_pid")
-    if tl_pid:
-        for _ in range(50):
+    if tl_pid and _pid_alive(int(tl_pid)):
+        for _ in range(25):
             if not _pid_alive(int(tl_pid)):
                 break
             time.sleep(0.2)
@@ -638,6 +664,27 @@ def _write_report(d: Path, st: dict, steps, snap) -> None:
                              ("mates", "配合数")):
                 if k in ch:
                     bits.append(f"{label} {ch[k][0]}→{ch[k][1]}")
+            #: ★ 按 kind 分派显示：doc-switch / psr-stopped / dialog 各有各的说法。
+            #:   原来只处理 dialog，其余落进「（首次）」—— 报告会让人看不出
+            #:   「他切换了文档」「PSR 被停了」这两件关键事实。
+            if rec.get("kind") == "psr-stopped":
+                #: ★ 区分两种成因：**收尾时检测到**（正常） vs **中途手动停**（缺口）
+                total = max((r.get("elapsed_s") or 0) for r in tl) if tl else 0
+                at_end = (rec.get("elapsed_s") or 0) >= (total - 10)
+                if at_end:
+                    lines.append(
+                        "| %s | %s | +%.0fs | ✓ PSR 在**收尾时**停止（正常，非手动中断） | — |"
+                        % (rec.get("i"), rec.get("t"), rec.get("elapsed_s") or 0))
+                else:
+                    lines.append(
+                        "| %s | %s | +%.0fs | ⚠ **PSR 中途被停止**（此后只有模型轨迹与录屏） | — |"
+                        % (rec.get("i"), rec.get("t"), rec.get("elapsed_s") or 0))
+                continue
+            if rec.get("kind") == "doc-switch":
+                lines.append("| %s | %s | +%.0fs | ⇄ 切换文档 → `%s` | — |" % (
+                    rec.get("i"), rec.get("t"), rec.get("elapsed_s") or 0,
+                    (rec.get("summary") or {}).get("title")))
+                continue
             if rec.get("kind") == "dialog":
                 #: ★ 对话框文字（尤其「修改」框里的数值）—— PSR 记不到这些
                 dl = rec.get("dialogs") or []

@@ -119,6 +119,24 @@ def summary_line(data: dict) -> str:
     return "%s：特征 %d" % (kind, len(data.get("features") or []))
 
 
+def _kind_zh(entity: dict) -> str:
+    """一个实体的**中文**类型名（缺中文就用官方名，不丢信息）。
+
+    ★ `kind` 是官方名（`point`/`line`/`arc`/`FACE`…，来自仓库既有
+      `SKETCH_RELATION_ENTITY_TYPES` / `ENTITY_KINDS`）；
+      `kind_zh` 是记录器附的中文标签。人读版用中文，机器版仍看 `kind`。
+    """
+    k = entity.get("kind_zh") or entity.get("kind") or "?"
+    if entity.get("construction"):
+        k += "(构造)"
+    return str(k)
+
+
+def _kinds_zh(relation: dict) -> list:
+    """一条关系的参与实体 → 中文类型名列表。"""
+    return [_kind_zh(e) for e in (relation.get("entities") or [])]
+
+
 def render_md(data: dict) -> str:
     """把记录渲染成人读 md。**只陈述记录到的事实，不做判断。**"""
     lines = ["# 记录：%s" % data.get("document"), "",
@@ -167,13 +185,8 @@ def render_md(data: dict) -> str:
                     val = " = %s°" % r["value_deg"]
                 else:
                     val = ""
-                kinds = []
-                for e in r.get("entities") or []:
-                    k = e.get("kind")
-                    if k == "草图线段":
-                        k += "(构造)" if e.get("construction") else ""
-                    kinds.append(k)
-                lines.append("    - **%s**%s ← %s" % (r.get("type"), val, kinds))
+                lines.append("    - **%s**%s ← %s"
+                             % (r.get("type"), val, _kinds_zh(r)))
         lines.append("")
 
     if data.get("bodies"):
@@ -223,12 +236,7 @@ def render_md(data: dict) -> str:
                     val = " = %s°" % r["value_deg"]
                 else:
                     val = ""
-                kinds = []
-                for e in r.get("entities") or []:
-                    k = e.get("kind") or ""
-                    if k == "草图线段":
-                        k += "(构造)" if e.get("construction") else ""
-                    kinds.append(k)
+                kinds = [_kind_zh(e) for e in (r.get("entities") or [])]
                 lines.append("        - **%s**%s ← %s"
                              % (r.get("type"), val, kinds))
 
