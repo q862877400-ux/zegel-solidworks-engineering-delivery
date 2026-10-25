@@ -55,6 +55,9 @@ blockers:
         缺第 4 参 `Direction` 抛 `DISP_E_PARAMNOTOPTIONAL`；补上后返回真 `IDisplayDimension`。
         ★ 且发现**圆能标尺寸、裸点不能** ⇒ 孔位改用圆。
         下一步：4 个圆 × 两向位置尺寸 + 半径 + 一次 HoleWizard(GB)。
+      ★★ 第 77 轮：**孔标准已修为 GB**（`standard_index=13` + `fastener_index=356`），
+        `板1_rev-4` 四个孔全部 `标准=GB · 螺钉间隙 · M6`；但**孔位草图仍状态 2**，
+        「一个特征多孔位」三条 API 路线全失败（事实 585）。
       ★ 第 75 轮实况（事实 584）：圆建了 4 个、`add_dimension` 能返回真尺寸对象，
         但连做 8 次**只落地 1 个**（圆单独选中只能标直径）⇒ **位置尺寸缺参照实体**；
         草图内 `SelectByID2("Origin"/"" ,"SKETCHPOINT")` 都回 False，
