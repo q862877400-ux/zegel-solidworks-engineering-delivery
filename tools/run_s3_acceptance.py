@@ -555,6 +555,8 @@ def main() -> int:
                 "collector_docs_left": e4.get("docs_left"),
                 #: ★ 串行两段：证据的新鲜度从采集器自己写的 `finished_at` 看
                 "collector_finished_at": e4.get("finished_at"),
+                #: ★ 第 63 轮：配合/间隙**存盘重开**是否还在（只在内存里成立的配合没有价值）
+                "persisted": (e4.get("steps") or {}).get("persisted"),
             }
 
             obs_e4 = collect_assembly(

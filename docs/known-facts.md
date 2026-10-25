@@ -7150,6 +7150,29 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 573 | **配合/间隙**存盘后仍在**（`SaveAs` → 关文档 → 重开 → 再数一遍）—— `IModelDocExtension.SaveAs` 是 **6 参**，且 `ExportData` **不能传 None** | 2026-10-26（第 63 轮）。
+     ★★ 官方签名（`C:\swapi\types\IModelDocExtension\SaveAs.md`）：
+     ```
+     bool SaveAs(string Name, int Version, int Options, object ExportData,
+                 out int Errors, out int Warnings)
+     ```
+     ★★★ 两个坑（各空跑一次）：
+     ① **只有 6 个参数**（我第一版按 7 个写：把 `True` 塞进 Options、少一个出参）
+        ⇒ `com_error (-2147352571, 类型不匹配., None, 4)` —— ★ 错误只说「第 4 参」，
+          而真因是**实参个数错位**。出参用 `sw_connect.out_i4()` 两个都要给。
+     ② `ExportData` 传 `None` **不行**（同上错误），要用
+        `sw_connect.create_empty_dispatch_variant()`（空 Dispatch，与事实 33 同族）。
+     ★ `Options` 实测用 `5` = `swSaveAsOptions_Silent(1) | SaveReferenced(4)`。
+     ★★ 实测读数（`output/e4-standalone.json` → `steps.persisted`）：
+     ```
+     save_ok true · reopen_ok true
+     mates_before_save 1 → mates_after_reopen 1
+     mate_names_after_reopen ['重合1']
+     落盘 output/stage2/首件装配_rev-1.SLDASM（66 408 字节）
+     ```
+     ⇒ 证明「配合只在内存里成立」这个常见失败模式**不成立**：配合是**写进文件**的。
+|真机：`tools/collect_e4_standalone.py`（`steps.persisted`）· 产物 `output/stage2/首件装配_rev-1.SLDASM` |
+
 | 572 | **★★★★ 间隙可以实测** —— `IAssemblyDoc.ClearanceVerificationManager` → `IClearanceVerificationMgr`（三源确认）。E4.interference **首次 pass** | 2026-10-26（第 62 轮）。
      ★★★ 官方链路（`C:\swapi\types\` 逐页读过）：
      ```

@@ -367,6 +367,58 @@ def main() -> int:
         ev["interference_count"] = n_i
         ev["steps"]["interference_ok"] = bool(ok_i)
 
+        #: ⑤ **存盘 + 重开**：证明配合/间隙写进了文件（第 63 轮）
+        persisted: dict = {"ok": False}
+        try:
+            save_path = str(R / "output" / "stage2" / "首件装配_rev-1.SLDASM")
+            ok_s, s_ret = c_.try_call(
+                c_.get_com_member,
+                c_.get_com_member(asm_doc, "Extension"),
+                "SaveAs",
+                save_path,
+                0,   #: Version = swSaveAsCurrentVersion（swSaveAsVersion_e.0）
+                #: Options = swSaveAsOptions_Silent(1) | SaveReferenced(4) = 5
+                5,
+                #: ★ ExportData 是 `System.object` 且**不能传 None** ——
+                #:   实测 `None` 得到 `com_error (-2147352571, 类型不匹配, 4)`。
+                #:   ⇒ 用仓库的 `create_empty_dispatch_variant()`（空 Dispatch，事实 33 同一族）。
+                c_.create_empty_dispatch_variant(),
+                #: ★ 官方签名 6 参：Name, Version, Options, ExportData, **out** Errors,
+                #:   **out** Warnings ⇒ 两个出参都要 out_i4() 占位。
+                #:   ★ 我第一版传了 7 个实参（`True` 当 Options、少一个出参）⇒
+                #:     `com_error (-2147352571, 类型不匹配, 4)`，错误里只说「第 4 参」。
+                c_.out_i4(),
+                c_.out_i4(),
+            )
+            persisted["save_ok"] = bool(ok_s)
+            persisted["save_ret"] = str(s_ret)[:80]
+            persisted["path"] = save_path
+            persisted["mates_before_save"] = len(mates)
+
+            #: 关掉当前装配，再从磁盘打开刚存的文件
+            asm_doc.ClearSelection2(True)
+            asm_.collect_mate_feature_summary(asm_doc)
+            sw.CloseDoc(str(get_com_member(asm_doc, "GetTitle") or ""))
+            ok_r, reopened = c_.try_call(c_.open_document, sw, save_path)
+            persisted["reopen_ok"] = bool(ok_r) and reopened is not None
+            if persisted["reopen_ok"]:
+                again = [
+                    r
+                    for r in (asm_.collect_mate_feature_summary(reopened) or ())
+                    if str(r.get("type") or "") != "MateGroup"
+                    and str(r.get("type") or "").startswith("Mate")
+                ]
+                persisted["mates_after_reopen"] = len(again)
+                persisted["mate_names_after_reopen"] = [r.get("name") for r in again]
+                persisted["ok"] = (
+                    bool(persisted["save_ok"])
+                    and persisted["mates_after_reopen"] == persisted["mates_before_save"]
+                    and len(again) > 0
+                )
+        except Exception as exc:  # noqa: BLE001
+            persisted["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:140])
+        ev["steps"]["persisted"] = persisted
+
         ev["ok"] = bool(n >= 2)
         return 0 if ev["ok"] else 1
     except Exception as exc:  # noqa: BLE001
