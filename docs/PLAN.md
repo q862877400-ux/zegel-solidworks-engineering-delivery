@@ -49,7 +49,8 @@
 > 历史施工流水已归档到 [`history/roadmap-log.md`](history/roadmap-log.md)（11246 行）。
 > 本节只放**当前**该做什么；一轮做完就更新这里，别在下面接着写流水。
 
-**当前状态**：S0 / S1 已收口；**S3 边界已定**（E1/E3 真机通过、E2 停线，见 specs/350-first-part-delivery/s3-closeout.md）；
+**当前状态**：S0 / S1 已收口；**S3 边界已定**（E1/E3 真机通过、E2 两个子项 fail，E4 开不了工）；
+★ **一页看清状态与阻塞点：specs/350-first-part-delivery/STATUS.md**；
 S2 的**判据已建、输入未齐**，但它**不阻断 S3**。
 
 | 步 | 状态 | 证据 |
