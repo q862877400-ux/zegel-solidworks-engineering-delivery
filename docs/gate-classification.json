@@ -549,6 +549,15 @@
    "environment": "offline-static",
    "owner": "executing-agent",
    "runs_in": "release_check"
+  },
+  {
+   "gate": "check_s3_blockers.py",
+   "runner": "_run_s3_blockers_gate",
+   "kind": "release_static",
+   "reason": "★ 阻塞台账必须与**机器生成**的 s3-acceptance.md 双向一致 —— 有不合格项没登记会被当成「没跑」；登记了但已不阻塞则是**陈旧断言**（事实 422 就是这样陈旧了 22 天）。两者都拦发布。",
+   "environment": "offline-static",
+   "owner": "executing-agent",
+   "runs_in": "release_check"
   }
  ]
 }

@@ -1,0 +1,47 @@
+# S3 阻塞台账（**机器可校验**，不是散文）
+#
+# 用途: scripts/check_s3_blockers.py 拿这份台账与机器生成的
+#       specs/350-first-part-delivery/s3-acceptance.md 做**双向校验**。
+#
+# ## 为什么需要它
+#
+# 第 20–31 轮之间反复出现同一类失效：**一条断言（不管是「已验成」还是「已阻塞」）
+# 写进文档后就不再被核对**，于是可能长期陈旧：
+#   · 事实 422 说 AddHorizontalDimension2 已验成 —— 22 天后复跑失败（事实 560）
+#   · 第 26 轮报「异型孔向导单点通过」，第 27 轮同一段实参复现不出来
+#   · 第 28 轮孔型合并把枚举当词表，被「要求为空」掩盖到第 31 轮
+#
+# ⇒ 把「阻塞」也变成机器可判的双向契约：
+#   · 报告里有不合格项、台账里没写 ⇒ 红（会被当成「没跑」）
+#   · 台账里写了、报告里已不在不合格项 ⇒ 红（陈旧阻塞，问题解决却没删）
+#
+# ## 字段
+#   check_id: 必须与 s3-acceptance.md 里的 check_id 逐字一致
+#   cause:    封闭词表 —— toolchain（工具链退化）/ requirement（缺需求输入）/ environment
+#   owner:    谁能解 —— agent（我可试）/ user（只有用户能给）
+#   summary:  一句话说清卡在哪
+#   evidence: 证据文件路径（仓库相对，必须存在）
+
+blockers:
+  - check_id: E2.rebuild
+    cause: toolchain
+    owner: agent
+    summary: >-
+      孔位不随板宽联动。改板宽 100→120 时包围盒 100→120 而四个孔心位移全为 0。
+      硬前置是「孔心必须先是尺寸」，而新建尺寸的方法族本机退化
+      （AddDimension2 / AddHorizontalDimension2 崩进程），四条替代路已排除。
+    evidence:
+      - specs/350-first-part-delivery/s3-closeout.md
+      - docs/state/facts/R-engineering-path.md
+      - tools/probe_s3_hole_center_diagnose.py
+
+  - check_id: E2.hole_readback
+    cause: requirement
+    owner: user
+    summary: >-
+      要求里的孔型为空。孔型现在测得出来（hole_params → through），
+      但「要求什么孔型」没冻结 —— 属 S2 的 interface 项。
+      拿实测值回填 requested 是循环论证（产物当要求），不做。
+    evidence:
+      - specs/350-first-part-delivery/s2-question-sheet.md
+      - specs/350-first-part-delivery/requirements.md

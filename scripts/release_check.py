@@ -602,6 +602,34 @@ def _run_spec_acceptance_paths_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_s3_blockers_gate() -> dict[str, object]:
+    """@brief 跑 S3 阻塞台账双向校验（`scripts/check_s3_blockers.py`）。
+
+    ★ 为什么接进门禁：阻塞台账若只是「又一份文档」，就会像事实 422 那样陈旧下去
+      （那条记的能力 22 天后复跑失败）。接进来 ⇒ 每次发版前都与机器生成的
+      `specs/350-first-part-delivery/s3-acceptance.md` 双向核对一次。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_s3_blockers.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=120,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "S3 阻塞台账门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把 2026-10-07 交接文档 §五-2 点名的门禁接进发布前检查）
 # 文件:   `scripts/check_probe_reuse.py`（本门禁的实现）
@@ -2859,6 +2887,16 @@ def run_release_check() -> dict[str, object]:
             "验收命令可跑性门禁未通过（→ 验收: 行点到了仓库外的脚本）：\n"
             + str(spec_paths.get("output", ""))
         )
+    # ⚑ **S3 阻塞台账门禁**（硬门禁）：`docs/s3-blockers.yaml` 必须与**机器生成**的
+    #   `specs/350-first-part-delivery/s3-acceptance.md` 双向一致 ——
+    #   有不合格项没登记（读者会当成「没跑」）或登记了却已不阻塞（陈旧断言）都拦。
+    #   ★ 赋值与它的 fail 检查必须**相邻**：元门禁按「下一个兄弟语句」判硬/诊断。
+    s3_blockers = _run_s3_blockers_gate()
+    if s3_blockers.get("status") == "fail":
+        raise AssertionError(
+            "S3 阻塞台账门禁未通过（台账与验收报告不一致，或证据断了）：\n"
+            + str(s3_blockers.get("output", ""))
+        )
     # ⚑ **交付报告数字新鲜度门禁**（硬门禁）：`docs/harvest-report.md` 声称的
     #   「偏离上游：N 个文件 / +N 行 / -N 行 · N 个 commit」必须与 git 实际相符。
     #   触发它的是 2026-10-01（轮 54）实测的**8 倍/20 倍/10 倍**偏差 ——
@@ -3160,6 +3198,7 @@ def run_release_check() -> dict[str, object]:
         "env_pitfalls": env_pitfalls,
         "relative_imports": rel_imports,
         "spec_acceptance_paths": spec_paths,
+        "s3_blockers": s3_blockers,
         "report_freshness": report_fresh,
         "signature_audit_freshness": sig_fresh,
         "license_redlines": license_rl,
