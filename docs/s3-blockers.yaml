@@ -28,13 +28,15 @@ blockers:
     owner: agent
     summary: >-
       孔位不随板宽联动。改板宽 100→120 时包围盒 100→120 而四个孔心位移全为 0。
-      ★ 第 52 轮进展（事实 567）：硬前置「孔心必须是尺寸」**已恢复可达** ——
-      可用入口是 `IModelDocExtension.AddDimension`（实测尺寸 0 → 1），
-      不是会崩的 `IModelDoc2.AddDimension2` / `AddHorizontalDimension2`。
-      ★ 它建完尺寸会弹「修改」属性框（占位符控件、needs_llm）并**同步阻塞**
-      ⇒ 必须从另一个进程按 ESC 才返回（见 `tools/close_modify_box_and_count.py`）。
-      ⚠ 剩余：把四个孔心真的接上尺寸、再验证改板宽时孔心位移非零；
-      联动建成之前本条仍为阻断。
+      ★★ 第 54 轮（事实 568）：**机制已验证成功** —— 在副本上给四个孔心建
+      「孔心 → 右板边」水平尺寸后，改宽 100→120 得到孔心 X 位移
+      **[20.0, 20.0, 20.0, 20.0] mm**（正是判据要求的 ≈ +20）。
+      做法三步：进 `M6 间隙孔N` 的子特征里只含 1 点的位置草图 →
+      选孔心点 + 右板边（`SelectByID2` 的 `Callout` 必须传空 Dispatch，事实 33）→
+      `AddHorizontalDimension2(X, Y, Z)` + **同进程 ESC 线程**清「修改」框。
+      ⚠ **仍未通过**：上述只在 `output/link54/板1_link.SLDPRT`（副本）上验成，
+      **交付件 `output/stage2/板1_rev-1.SLDPRT` 还没加这四个尺寸** ⇒
+      验收报告里 E2.rebuild 仍是 fail。把尺寸落到交付件是下一步。
     evidence:
       - specs/350-first-part-delivery/s3-closeout.md
       - docs/state/facts/R-engineering-path.md

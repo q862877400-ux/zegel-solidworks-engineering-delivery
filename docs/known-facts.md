@@ -7150,6 +7150,35 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 568 | **★★★★★ 孔心随板宽联动**机制**验证成功**（位移 +20.0 mm × 4） —— `AddHorizontalDimension2` + 同进程 ESC 线程**可用** | 2026-10-26（第 54 轮）。
+     ★★★ 真机读数（`tools/probe_e2_hole_dimension_link.py --hv`，证据 `output/e2-hole-dimension-link.json`）：
+     ```
+     板宽            100.0 mm
+     四个孔心        (10,10) (90,10) (10,50) (90,50) mm
+     建尺寸          四个孔全部 dims 0 → 1
+     改板宽          100 → 120 · ok=True · 改后板宽 120.0 mm
+     孔心 X 位移     [20.0, 20.0, 20.0, 20.0] mm   ← ★★ 判据要求的 ≈ +20
+     ```
+     ★★★ **怎么成的（三步缺一不可）**：
+     ① 进孔的位置草图：`M6 间隙孔N`（`HoleWzd`）的**子特征**里，只含 1 个点的那张草图就是位置草图
+        （实测子特征各 2 张：`草图3/草图2`…，位置草图只含 1 点）
+     ② 选**孔心点 + 右板边**：`点.Select2(True, 0)` 与 `SelectByID2("", "EDGE", x, y, z, True, 0, callout, 0)` ——
+        ★ `Callout` **必须传空 Dispatch**（事实 33），传 `None` 报「类型不匹配」（本轮又撞一次）
+     ③ 用 `IModelDoc2.**AddHorizontalDimension2**(X, Y, Z)`（3 参）——
+        ★★ 事实 560 把它记成「会崩」，**实际是被「修改」属性框阻塞**；
+        本探针在**同进程起一个线程**轮询那个框（控件含 `SLIDER`+`THUMB WHEEL` 即它）
+        并 `PostMessage` ESC ⇒ 调用正常返回、尺寸真的建成。
+        ★ `PostMessage` **不需要 COM** ⇒ 线程里发是安全的，不必另起进程。
+     ★ 对比：`IModelDocExtension.AddDimension`（事实 567）在**点+边**这种组合上
+       `add_ok=True` 但**返回 None、尺寸 0 → 0**（文本坐标已在草图平面内、也在右侧）；
+       换成 `AddHorizontalDimension2` 就成 ⇒ **两个入口适用的实体组合不同**。
+     ★ 另一处别踩：`_dim_count(doc)` 是按**名字**取最后一个草图特征的尺寸数 ⇒
+       在孔的位置草图里调它会读到别处的数（实测 `1→1` 假读数）；
+       要数**正在编辑的那个子特征**（`GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。
+     ⚠ **未完成**：上述只在 `output/link54/板1_link.SLDPRT`（副本）上验成；
+       **交付件 `output/stage2/板1_rev-1.SLDPRT` 还没加这四个尺寸** ⇒
+       `E2.rebuild` 在验收报告里**仍是 fail**。把尺寸落到交付件是下一步。|真机：`tools/probe_e2_hole_dimension_link.py`（`--hv`）· 证据 `output/e2-hole-dimension-link.json` · 勘察 `output/e2-hole-sketch-survey.json` |
+
 | 567 | **★★★★★ `IModelDocExtension.AddDimension` **可用** —— 「尺寸能力整体退化」（事实 560）**不成立**，退化的只是 `IModelDoc2` 那两个入口** —— 2026-10-26（第 52 轮）。
      ★★★ 真机读数（`tools/probe_extension_add_dimension.py`，证据 `output/extension-add-dimension.json`）：
      ```

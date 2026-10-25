@@ -354,3 +354,45 @@ after             1                               ← ★ 尺寸 0 → 1
 - **没有**在本轮建任何尺寸（本轮只勘察）
 - **没有**声称孔位联动已成立 —— 现状仍是 **fail**
 - **没有**降低判据：位移必须真的 ≈ 20mm，不接受"看起来动了"
+
+---
+
+## 十一、第 54 轮：孔心联动**机制验证成功**（副本上）
+
+**探针**：`tools/probe_e2_hole_dimension_link.py --hv`
+**证据**：`output/e2-hole-dimension-link.json`
+
+### 读数
+
+```
+板宽            100.0 mm
+四个孔心        (10,10) (90,10) (10,50) (90,50) mm
+建尺寸          四个孔全部 dims 0 → 1
+改板宽          100 → 120 · ok=True · 改后板宽 120.0 mm
+孔心 X 位移     [20.0, 20.0, 20.0, 20.0] mm      ← 判据要求的 ≈ +20
+```
+
+### 三步缺一不可
+
+| # | 做法 | 关键点 |
+|---|---|---|
+| ① | 进孔的位置草图 | `M6 间隙孔N`（`HoleWzd`）的**子特征**里，只含 1 个点的那张 |
+| ② | 选孔心点 + 右板边 | `SelectByID2` 的 `Callout` **必须传空 Dispatch**（事实 33），传 `None` 报「类型不匹配」 |
+| ③ | `IModelDoc2.AddHorizontalDimension2(X, Y, Z)` | 事实 560 记它「会崩」——**实际是被「修改」属性框阻塞**；同进程 ESC 线程清掉即可 |
+
+★ ESC 线程用 `PostMessage`（**不需要 COM**）⇒ 线程里发安全，不必另起进程。
+
+### 两个入口的适用面不同（实测对比）
+
+| 入口 | 点 + 边 | 一条草图线段 |
+|---|---|---|
+| `IModelDocExtension.AddDimension`（事实 567） | `add_ok=True` 但返 None、尺寸 **0→0** | ✅ 0 → 1 |
+| `IModelDoc2.AddHorizontalDimension2` | ✅ **0 → 1** | — |
+
+### 仍未完成（**不许写成熟了**）
+
+上述全部在 `output/link54/板1_link.SLDPRT`（**副本**）上验成。
+**交付件 `output/stage2/板1_rev-1.SLDPRT` 还没加这四个尺寸**
+⇒ `specs/350-first-part-delivery/s3-acceptance.md` 里 `E2.rebuild` **仍是 fail**。
+
+下一步：把同一套三步落到交付件，再跑 `tools/run_s3_acceptance.py` 复核。

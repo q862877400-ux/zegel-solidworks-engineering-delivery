@@ -126,6 +126,53 @@ def main() -> int:
                 c_.get_com_member(doc, "SketchManager").InsertSketch(True)
             except Exception as exc:  # noqa: BLE001
                 sketches[nm] = {"err": "%s" % (type(exc).__name__,)}
+
+        #: ④ 每个孔特征的**子特征**（定位草图藏在子特征里）
+        #:   ★ 照仓库 `feature_names` 的方式平铺遍历（`FirstFeature` + `GetNextFeature`）；
+        #:     上一版用 `SelectByID2` 取特征对象拿到 None ⇒ "子特征 0 个"是**假读数**。
+        holes = {}
+        try:
+            f0 = c_.get_com_member(doc, "FirstFeature")
+        except Exception:  # noqa: BLE001
+            f0 = None
+        f = f0
+        while f is not None:
+            try:
+                fname = str(c_.get_com_member(f, "Name") or "")
+                ftype = str(c_.get_com_member(f, "GetTypeName2") or "")
+            except Exception:  # noqa: BLE001
+                break
+            if ftype == "HoleWzd" or "孔" in fname:
+                subs = []
+                try:
+                    sf = c_.get_com_member(f, "GetFirstSubFeature")
+                except Exception:  # noqa: BLE001
+                    sf = None
+                while sf is not None:
+                    try:
+                        subs.append(
+                            {
+                                "name": str(c_.get_com_member(sf, "Name") or ""),
+                                "type": str(c_.get_com_member(sf, "GetTypeName2") or ""),
+                            }
+                        )
+                    except Exception:  # noqa: BLE001
+                        pass
+                    try:
+                        sf = c_.get_com_member(sf, "GetNextSubFeature")
+                    except Exception:  # noqa: BLE001
+                        break
+                holes[fname] = {"type": ftype, "subfeatures": subs}
+                print("   %-16s type=%-10s 子特征 %d 个 %s"
+                      % (fname[:16], ftype, len(subs),
+                         [(s["name"], s["type"]) for s in subs][:4]))
+            try:
+                f = c_.get_com_member(f, "GetNextFeature")
+            except Exception:  # noqa: BLE001
+                break
+
+        ev["holes"] = holes
+
         ev["sketches"] = sketches
         print("③ 草图勘察：")
         for k, v in sketches.items():
