@@ -1,3 +1,14 @@
+# S4 · 装配创建被 `AddComponent5` 阻塞（**2026-10-26 已解除**）
+
+> ★★★ **本条已被第 43 轮推翻**：不是能力缺失，是**缺官方前置** + **传错路径**。
+> 官方 `AddComponent5.md` Remarks 逐字：「The specified file must be loaded in memory.」
+> 按前置重测 ⇒ 组件数 **0 → 1**，封装也通。完整证据链见 `docs/known-facts.md` 事实 564 与
+> `tools/probe_e4_addcomponent5_precondition.py`。
+> ★ 下面保留当时的排查过程 —— **结果仍然有效**（`AddComponent5` 回 None 是真的），
+> 失效的是从它推出的**结论**（「装配建不出来」）。
+
+---
+
 # S4 前置：装配创建被 `AddComponent5` 阻塞（真机实测）
 
 **日期**: 2026-10-25

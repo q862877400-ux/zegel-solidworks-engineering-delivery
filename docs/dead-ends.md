@@ -10,8 +10,8 @@
 
 | 口径 | 数 |
 |---|---|
-| 「死路」条目 | **78** |
-| 涉及能力 | **48** |
+| 「死路」条目 | **77** |
+| 涉及能力 | **47** |
 
 ## 逐条（★ 按能力分组；等级 = 该能力当前等级）
 
@@ -19,10 +19,6 @@
 
 - ★★ 而**旧证据本身是有效的**（★ 保留其**事实**、更正其**推论**）：过去探过 `CMotionswapi.CMOTIONSWAddin` 等 **4 个 ProgID**，**全返 `None`** —— ★ 那条**事实仍成立**（★ `GetAddInObject(ProgID)` 取不到 Motion 加载项对象）；★★ **而"所以 AVI 导不了"那个**推论**已被轮 285 的探测推翻**（★ AVI 三环全通 ⇒ 导出**不依赖**那个 ProgID 路径，★ 它走的是 `IMotionStudyManager` / `IMotionStudy` 那一族）。 ★ ⇒ ★★★ **教训（事实 212 的同一形态）**：★ **一个探测的**结果**与从它推出的**结论**要分开记** —— ★ 结果可以长期有效，★ 而**结论会随新探测失效**；★ 把两者写在一起、结论错了就连结果一起删掉，**那是丢证据**。
 - ⚠ **`AGENTS.md §九.4`：需要用户提供的东西 ⇒ 停下报告，不自行拍板。**
-
-### `assembly_and_mates`（stitched）
-
-- ⚠⚠⚠ 2026-10-25（第 22 轮）**真机实测：`IAssemblyDoc.AddComponent5` 回 `None`，三种前置都排除了** —— ①零件路径在子进程可见（`os.path.exists`=True、78351 字节）；②装配文档 `GetType`=**2**（`swDocASSEMBLY`）且是**活动文档**；③装配**已保存**（`SaveAs` 成功、`GetPathName` 有值）后**仍回 `None`**。`ConfigOption=0` 也已核为合法值（`swAddComponentConfigOptions_CurrentSelectedConfig`），不是枚举错。⇒ 按「三次失败就停下质疑架构」**停止试变体**，组件加不进去，故 `assembly_and_mates` 仍为 `stitched`，E4 的真机验证**开不了工**。★ 另记一条 API 契约：`sw_assembly.add_component()` 失败时**回 `None` 而不抛异常** ⇒ 用 `try_call` 包会得到 `(True, None)` 看着像成功 ⇒ **判据必须回读组件数**，不能看返回值（与事实 560/561 同族）。
 
 ### `costing`（verified）
 

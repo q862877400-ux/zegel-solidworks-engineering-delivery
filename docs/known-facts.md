@@ -7150,6 +7150,30 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 564 | **★★★ E4 解除：加组件不是能力缺失，是缺官方前置 + 传错了路径** —— 2026-10-26（第 43 轮）。
+     ★★ 官方 `AddComponent5.md` 的 Remarks 逐字：
+     > **The specified file must be loaded in memory.** A file is loaded into memory
+     > when you load the file in your SOLIDWORKS Design session (`ISldWorks::OpenDoc6`)
+     > or open an assembly that already contains the file.
+     ★ 第 22 轮（走**裸成员**、绕过封装三级兜底）与第 42 轮（走封装但**缺前置**）都栽在这一条。
+     ★★★ 按前置重测（`tools/probe_e4_addcomponent5_precondition.py`）：
+     ```
+     · open_part {'ok': True, 'loaded_path': '...\\output\\sandbox\\inputs\\板1_rev-1__12.SLDPRT'}
+     · new_assembly {'ok': True, 'title': '装配体6'}
+     · activate {'ret': False, 'active_is_asm': True}
+     · addcomponent5 {'call_ok': True, 'ret_none': False, 'after': 1, 'added': 1}
+     ⇒ 组件数 0 → 1，返回真实 IComponent2
+     ```
+     ★★★★ **第二层根因**：`sw_guard` 沙箱会**复制改名**零件
+     （`板1_rev-1__12.SLDPRT`），而封装兜底把**调用方原始路径**传给 `AddComponent5`
+     ⇒ 原路径**不在内存里** ⇒ 回 `None`。改用 `opened.GetPathName()`（实际打开那份）后
+     **封装也通了**（`tools/probe_e4_add_component_via_wrapper.py`：组件数 0 → 1，返回 CDispatch）。
+     ⇒ ★ **「输入 ≠ 实际」的又一例**：输入是**我想要什么**，`GetPathName()` 是**实际发生了什么**。
+     ★★ 方法论（三条，都是本仓反复付学费才学会的）：
+       ① **调封装，不调裸成员** —— 兜底/重试/路径换算都在封装里（第 42 轮教训）；
+       ② **动手前读官方 Remarks** —— 前置条件写在那里，不在签名里（铁律 4）；
+       ③ **沙箱会改名** —— 凡「先写文件再把路径交给 COM」的地方，都要用 `GetPathName()` 回读。|真机：`tools/probe_e4_addcomponent5_precondition.py` · `tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-addcomponent5-precondition.json` · `output/e4-add-component-via-wrapper.json` |
+
 | 563 | **★★ E4 的加组件阻塞经**三层兜底**验证成立；而 `add_component` 失败时**静默回 None**（第 42 轮自我纠错）** —— 2026-10-26。
      ★ 第 22 轮我报「`AddComponent5` 回 None ⇒ 装配建不出来」时，调的是**裸成员**，
        绕过了本仓 `sw_assembly.add_component` 的既有三级兜底：

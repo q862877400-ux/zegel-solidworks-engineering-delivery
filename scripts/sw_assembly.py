@@ -209,16 +209,28 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
                 if opened is None:
                     errors.append("OpenDoc6: 返回 None")
                 elif _activate_model_document(sw, asm_model):
+                    #: ★★★ 第 43 轮：**用实际打开那份的路径**，不是调用方原始路径。
+                    #:
+                    #:   官方 Remarks：「The specified file must be loaded in memory.」
+                    #:   而 `sw_guard` 沙箱会**复制改名**零件
+                    #:   （`板1_rev-1__12.SLDPRT`）⇒ `open_document(component_path)`
+                    #:   打开的是副本，原路径**不在内存里** ⇒ AddComponent5 回 None。
+                    #:   ⇒ 取 `GetPathName()` 才是「内存里那份」的真实路径。
+                    #:   ★ 这是「输入 ≠ 实际」的又一例：输入是我想要什么，GetPathName 是实际发生了什么。
+                    real_path = str(safe_get_com_member(opened, "GetPathName") or "")
+                    in_memory = real_path or component_path
                     component = _add_component5(
                         asm_model,
-                        component_path,
+                        in_memory,
                         config_name,
                         x,
                         y,
                         z,
                     )
                     if component is None:
-                        errors.append("open_then_AddComponent5: 返回 None")
+                        errors.append(
+                            "open_then_AddComponent5: 返回 None（试过路径 %r）" % in_memory
+                        )
                 else:
                     errors.append("ActivateDoc: 无法重新激活装配体")
             except Exception as exc:
