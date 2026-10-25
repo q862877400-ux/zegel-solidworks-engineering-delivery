@@ -114,7 +114,19 @@ def judge_assembly_interference(
         return CheckResult(**base, status=Status.UNKNOWN, reason="采集不完整")
 
     v = obs.values
-    mates = v["mates"]
+    #: ★★★ 第 44 轮：**配合文件夹不能冒充配合**。
+    #:
+    #:   仓库自己的 `collect_mate_feature_summary` 把 `MateGroup` 文件夹也收进列表
+    #:   ⇒ 零个真实配合时它的长度也是 1 ⇒ 原判据 `if not mates:` 被绕过 ⇒ 假绿。
+    #:   真机佐证：同一个装配里 `AddMate5` 报 `error_status=4`
+    #:   （`swAddMateError_e` 逐字：4 = IncorrectSelections）⇒ 配合没建成，而 `mates` 读成 1。
+    #:   ⇒ 只认**有配合对象**（`a` 与 `b` 都非空）的条目。
+    _all_mates = list(v["mates"])
+    mates = [
+        m
+        for m in _all_mates
+        if str(m.get("a", "")).strip() and str(m.get("b", "")).strip()
+    ]
 
     #: ① 同一对组件上的重复配合 ⇒ fail（R-05 的伪造手法；真机能读到配合对象）
     seen = {}
@@ -139,6 +151,22 @@ def judge_assembly_interference(
 
     #: ② 必须有真实功能配合（全固定不算）
     if not mates:
+        #: ★ 分清两种「没有」：列表空 vs 只有文件夹/无对象条目
+        if _all_mates:
+            return CheckResult(
+                **base, status=Status.FAIL,
+                observed={
+                    "mates_entries": len(_all_mates),
+                    "mates_with_objects": 0,
+                    "sample": str(_all_mates[0])[:160],
+                },
+                expected={"mates_with_objects": "≥1"},
+                reason=(
+                    "★ 读到 %d 条「配合类」条目，但**没有一条带配合对象**"
+                    "（`a`/`b` 都空，典型是 `MateGroup` 配合文件夹）"
+                    "⇒ 这不叫功能配合，不能靠它通过 E4" % len(_all_mates)
+                ),
+            )
         return CheckResult(
             **base, status=Status.FAIL,
             observed={"mates": 0}, expected={"mates": "≥1"},

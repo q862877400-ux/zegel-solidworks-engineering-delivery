@@ -7156,7 +7156,7 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
      > when you load the file in your SOLIDWORKS Design session (`ISldWorks::OpenDoc6`)
      > or open an assembly that already contains the file.
      ★ 第 22 轮（走**裸成员**、绕过封装三级兜底）与第 42 轮（走封装但**缺前置**）都栽在这一条。
-     ★★★ 按前置重测（`tools/probe_e4_addcomponent5_precondition.py`）：
+     ★★★ 按前置重测（`tools/probe_e4_build_assembly.py`）：
      ```
      · open_part {'ok': True, 'loaded_path': '...\\output\\sandbox\\inputs\\板1_rev-1__12.SLDPRT'}
      · new_assembly {'ok': True, 'title': '装配体6'}
@@ -7172,7 +7172,7 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
      ★★ 方法论（三条，都是本仓反复付学费才学会的）：
        ① **调封装，不调裸成员** —— 兜底/重试/路径换算都在封装里（第 42 轮教训）；
        ② **动手前读官方 Remarks** —— 前置条件写在那里，不在签名里（铁律 4）；
-       ③ **沙箱会改名** —— 凡「先写文件再把路径交给 COM」的地方，都要用 `GetPathName()` 回读。|真机：`tools/probe_e4_addcomponent5_precondition.py` · `tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-addcomponent5-precondition.json` · `output/e4-add-component-via-wrapper.json` |
+       ③ **沙箱会改名** —— 凡「先写文件再把路径交给 COM」的地方，都要用 `GetPathName()` 回读。|真机：`tools/probe_e4_build_assembly.py` · `tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-addcomponent5-precondition.json` · `output/e4-add-component-via-wrapper.json` |
 
 | 563 | **★★ E4 的加组件阻塞经**三层兜底**验证成立；而 `add_component` 失败时**静默回 None**（第 42 轮自我纠错）** —— 2026-10-26。
      ★ 第 22 轮我报「`AddComponent5` 回 None ⇒ 装配建不出来」时，调的是**裸成员**，

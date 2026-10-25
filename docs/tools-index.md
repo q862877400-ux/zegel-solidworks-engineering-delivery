@@ -95,7 +95,7 @@
 | `probe_drawing_tools_e2e.py` | ★ 工具层端到端探针：8 条工程图工具**按 ToolSpec 契约**能否经注册器跑通 |
 | `probe_dwg_magic.py` | @brief 探针：`.dwg` 导出来的**到底是 DWG 还是 DXF**？—— **读魔数说话** |
 | `probe_e4_add_component_via_wrapper.py` | ★ 重测 E4 的加组件：走**高层封装** `sw_assembly.add_component`（含兜底），不走裸成员 |
-| `probe_e4_addcomponent5_precondition.py` | ★ 单测 A：`AddComponent5`（8 参）+ 官方前置「零件必须在内存里」 |
+| `probe_e4_build_assembly.py` | ★ E4 第一次真机装配：两个组件 + 试一次配合 + 干涉 + 判定器 |
 | `probe_endcap_face_matrix.py` | ★ 逐面矩阵：顶端盖到底要**哪一张面**才建得出来（★ 单变量：一次只换选中的面） |
 | `probe_endcap_feature2.py` | ★ 照**官方例子**走 `InsertEndCapFeature2`（★ 7 参 · 面**当参数传** · 不需要预选） |
 | `probe_endcap_official_args.py` | ★ 按**官方例子的实参**重测 `InsertEndCapFeature3`（★ 铁律：例子给的是调用序与配方） |
