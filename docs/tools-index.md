@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 645 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 648 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 265 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 268 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 70 | — |
 
-## 探针（265 个）
+## 探针（268 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -52,6 +52,7 @@
 | `probe_access_selections_on_featuredata.py` | ★ 真机：对"静默 `None`"那几条试 `*FeatureData.AccessSelections`（事实 424 给的新路） |
 | `probe_access_selections_param2.py` | ★ 真机：`AccessSelections` 的**第 2 参**到底要什么 —— `None` 还是空 Dispatch？ |
 | `probe_activesketch_successor.py` | ★ 真机验证 `GetActiveSketch2` 的后继 `ISketchManager.ActiveSketch`（★ 属性）能不能替代 |
+| `probe_add_component_diagnose.py` | ★ 诊断：为什么 `AddComponent5` 回 None |
 | `probe_add_component_three_paths.py` | ★ 真机验证：用**本仓自己那条三步路**（`sw_assembly.add_component`）能不能建成组件 |
 | `probe_add_relation_forms.py` | @brief 探针：`ISketchRelationManager.AddRelation` 的**调用形态** —— 拿完整 traceback，不猜 |
 | `probe_add_view_two_trials.py` | ★ 真机：`add_view` 的两个独立试验 —— ★「模型先打开 vs 只给路径」（事实 324：每格独立） |
@@ -85,6 +86,7 @@
 | `probe_dimension_edge_pairs.py` | ★ 真机：`AddDimension2` 的**边对穷举表** —— 找出"哪一类边对能定义出尺寸" |
 | `probe_dimension_unit.py` | ★ 核：「`GetSystemValue3` 的单位随文档单位变」—— ★ 上一轮真机顺带量到的可疑 ① |
 | `probe_direct_member_access.py` | @brief 探针：扫**直接属性访问**形态的疑似不存在 COM 成员 —— ★ 先量**假阳性率** |
+| `probe_doc_count_crosscheck.py` | ★ 核对 `open_doc_count` 与已验证的 `probe_list_open_docs` 是否一致 |
 | `probe_document_units.py` | @brief 探针：**文档的单位设置** —— 它是不是"两次 `units=-1` 差 1000 倍"的源头 |
 | `probe_drawing_annotations_recheck.py` | ★ 真机：★ 建工程图 + 加注释 ⇒ 用 `view_annotations_report` 读回（★ 工程图读侧第一批） |
 | `probe_drawing_datum_tag.py` | ★ 真机：工程图**标注的写操作**第一枪 —— `InsertDatumTag2()` + `GetDatumTagCount()` 回读 |
@@ -204,6 +206,7 @@
 | `probe_s3_hole_linkage_construction_line.py` | ★ S3 测量：用**构造线单段长度**把孔位绑到板边，让孔随板宽联动 |
 | `probe_s3_hole_linkage_fully_define.py` | ★ S3 测量：孔与板轮廓放**同一张草图** + `FullyDefineSketch`，孔会不会随板宽联动？ ## 为什么值得试 E2 的硬要求是「孔随板宽变化」（`ENGINEERING-PATH` 第四节 E2 的负例逐字） |
 | `probe_s3_t008_dimension_driven.py` | ★ S3 T008：把板件做成尺寸驱动 —— 用**可行的**那两个入口 |
+| `probe_s4_assembly_create_and_interference.py` | ★ S3/E4 真机：装配创建与干涉检测 —— `assembly_and_mates` 从 `stitched` 往前推 |
 | `probe_safearray_comtypes.py` | @brief 探针：换 **comtypes 早绑定**后端，`ISafeArrayUtility` 能不能驱动（含 `out` 形参） |
 | `probe_safearray_utility.py` | @brief 探针：`ISldWorks.GetSafeArrayUtility()` 在 pywin32 上**可达吗**，`out` 形参能不能驱动 |
 | `probe_select4_mark_e2e.py` | ★ 真机验证 `_select_com_object` 的 **Select4 + ISelectData** 新路径：mark 真的写得进去吗 |

@@ -223,7 +223,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `solidworks_addin_host` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `external_spur_gear_geometry` | `stitched` | `upstream` | ★ 2026-10-18 修订：mcp_tools 由 2 个清空 —— 按业主架构指令（tool_specs_batch41.py L52–L61）齿轮属【方法】不属【工具】，两个工具已移除、scripts/sw_gear.py 已移入 archive/inherited-methods/。本条保留为「方法能力」记录，不再对外暴露工具。 |
 | `pack_and_go` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录（无 sw_guard / 轮次 / PASS 字样）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `assembly_and_mates` | `stitched` | `mixed` | ★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\AI\SW-transfer\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_refe |
+| `assembly_and_mates` | `stitched` | `mixed` | ⚠⚠⚠ 2026-10-25（第 22 轮）**真机实测：`IAssemblyDoc.AddComponent5` 回 `None`，三种前置都排除了** —— ①零件路径在子进程可见（`os.path.exists`=True、78351 字节）；②装配文档 `GetType`=**2**（`swDocASSEMBLY`）且是**活动文档**；③装配**已保存**（`SaveAs` 成功、`Ge |
 | `motion_study` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_sw_motion_audit.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `drawing_dimension_insertion` | `not_implemented` | `mixed` | ★★ 2026-10-01（轮 290）**核了实现在哪 —— 结论是"实现层没有对应函数"**：
 ★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**，

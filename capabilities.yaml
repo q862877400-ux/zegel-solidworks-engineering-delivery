@@ -758,6 +758,7 @@
     "comtypes"
    ],
    "limitations": [
+    "⚠⚠⚠ 2026-10-25（第 22 轮）**真机实测：`IAssemblyDoc.AddComponent5` 回 `None`，三种前置都排除了** —— ①零件路径在子进程可见（`os.path.exists`=True、78351 字节）；②装配文档 `GetType`=**2**（`swDocASSEMBLY`）且是**活动文档**；③装配**已保存**（`SaveAs` 成功、`GetPathName` 有值）后**仍回 `None`**。`ConfigOption=0` 也已核为合法值（`swAddComponentConfigOptions_CurrentSelectedConfig`），不是枚举错。⇒ 按「三次失败就停下质疑架构」**停止试变体**，组件加不进去，故 `assembly_and_mates` 仍为 `stitched`，E4 的真机验证**开不了工**。★ 另记一条 API 契约：`sw_assembly.add_component()` 失败时**回 `None` 而不抛异常** ⇒ 用 `try_call` 包会得到 `(True, None)` 看着像成功 ⇒ **判据必须回读组件数**，不能看返回值（与事实 560/561 同族）。",
     "★★ **2026-10-01（轮 161）补了「在上下文编辑」与「外部参考计数」两个封装**（来源：`D:\\AI\\SW-transfer\\in-context-reference-proposal.md`）：`sw_assembly_doc.edit_part_in_context` · `exit_edit_part_in_context` · `list_external_file_references_count`。**真机**：`EditPart2` 返回 `-1` 且 `GetEditTarget` **非空** ⇒ **进入在上下文编辑态确实生效**。⚠⚠ **未取证**：外部参考**还没真的建立** —— 判据①②（`GetRelationsCount` N→N+1 · `ListExternalFileReferencesCount` 0→≥1）**还没绿**（`add_relation` 的调用形态未解决）。★ 顺带查实两个调用形态的坑：**`IComponent2.Select4` 的第二参是 `SelectData` 不是 `Callout`**（传空 Dispatch 报 `DISP_E_PARAMNOTOPTIONAL`）⇒ 改用 **`Select2(Boolean, Int32)`**；**`ListExternalFileReferencesCount` 在 pywin32 下表现为属性**（按 1 参调会 `'int' object is not callable`）。⚠ 官方取内容的 `ListExternalFileReferences2` 有 **7 个 `Object&` 出参** ⇒ **本轮没去啃**（事实 47/68）。",
     "必须回读配合特征和自由度；不等于完整干涉或受力分析",
     "★ 轮 280 填实：★ 三个装配工具**本来就在**（list_components / list_mates / check_interference），★ 只是条目没认领。★ 证据 pytest tests/test_sw_assembly_doc_contract.py",
