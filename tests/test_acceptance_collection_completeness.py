@@ -60,7 +60,7 @@ def _tree(**kw):
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=True,
+        feature_count_before_edit=11,
     )
     base.update(kw)
     obs = collect_feature_tree(**base)

@@ -54,7 +54,7 @@ def _obs(**kw):
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=True,
+        feature_count_before_edit=15,
         version="2026-10-25",
     )
     base.update(kw)
@@ -103,7 +103,7 @@ def test_采集不完整判unknown() -> None:
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=False,
+        feature_count_before_edit=3,
     )
     res = judge_feature_tree(obs, requirement_id=REQ)
     assert res.status is not Status.PASS, "★ 采集不完整不得判 pass"

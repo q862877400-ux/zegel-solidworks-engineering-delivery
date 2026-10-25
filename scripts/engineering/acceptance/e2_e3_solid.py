@@ -190,7 +190,7 @@ def judge_rebuild(obs: Observation, *, requirement_id: str) -> CheckResult:
 def collect_feature_tree(
     *, target: str, feature_count: int, native_features: int,
     imported_solids: int, dangling_refs: int, errors: int, warnings: int,
-    editable_prefix_verified: bool, version: str = "",
+    feature_count_before_edit: int = -1, version: str = "",
 ) -> Observation:
     """★ 采集器：回读特征树。
 
@@ -201,9 +201,15 @@ def collect_feature_tree(
     """
     _counts = (feature_count, native_features, imported_solids, dangling_refs)
     _readable = all(int(c) >= 0 for c in _counts)
+    #: ★★ 第 39 轮：`editable_prefix_verified` 不再收布尔。
+    #:   判据 = 改前序前后**特征数不变** 且 **无错误**（"可编辑"就是这个意思）。
+    #:   ★ 原来真机运行器用「包围盒变大」当代理 —— 只说明几何变了，
+    #:     没证明特征树没坏（可能掉特征、或有重建错误）。
+    _n_before = int(feature_count_before_edit)
+    _prefix_ok = _n_before >= 0 and int(feature_count) == _n_before and int(errors) == 0
     return Observation(
         target=target,
-        complete=feature_count > 0 and _readable,
+        complete=feature_count > 0 and _readable and _n_before >= 0,
         values={
             "feature_count": feature_count,
             "native_features": native_features,
@@ -211,12 +217,14 @@ def collect_feature_tree(
             "dangling_refs": dangling_refs,
             "errors": errors,
             "warnings": warnings,
-            "editable_prefix_verified": editable_prefix_verified,
+            #: ★ 第 39 轮：改由**两次实测**推导（原来是调用方断言）
+            "editable_prefix_verified": _prefix_ok,
+            "feature_count_before_edit": _n_before,
             "version": version,
         },
         note=(
             ""
-            if (feature_count > 0 and _readable)
+            if (feature_count > 0 and _readable and _n_before >= 0)
             else (
                 "特征数为 0 ⇒ 采集不完整"
                 if feature_count <= 0

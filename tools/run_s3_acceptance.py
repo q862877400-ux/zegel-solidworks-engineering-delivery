@@ -244,6 +244,9 @@ def main() -> int:
         print("② E1：状态=%s 驱动尺寸=%s ⇒ %s" % (st, driving, res_e1.status.value))
 
         #: ── E2：改主参数 → 孔心是否移动 ──
+        #: ★ 第 39 轮：改参数**之前**记一次特征清单 ——
+        #:   E3 的「前序可编辑」要用它推「特征数不变」，不再靠调用方断言布尔。
+        features_before_edit = [str(n) for n in (feature_names(doc) or [])]
         holes_before = _hole_centers(doc)
         bbox_before = (solid_body_extent_mm(doc).get("x_mm"))
         target = next(
@@ -316,9 +319,10 @@ def main() -> int:
             dangling_refs=0,
             errors=int(ww3.get("count") or 0),
             warnings=0,
-            editable_prefix_verified=bool(
-                changed and (bbox_after or 0) > (bbox_before or 0)
-            ),
+            #: ★ 第 39 轮：不再传布尔断言 —— 给「改前序前的特征数」，
+            #:   由采集器推「特征数不变 + 无错误」。
+            #:   ★ 原代理是「包围盒变大」：只说明几何变了，没证明特征树没坏。
+            feature_count_before_edit=len(features_before_edit),
             version="2026-10-25",
         )
         res_e3 = judge_feature_tree(obs_e3, requirement_id="R-E3")

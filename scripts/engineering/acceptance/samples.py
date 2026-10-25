@@ -202,7 +202,7 @@ def good_e3() -> Observation:
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=True,
+        feature_count_before_edit=6,
     )
 
 
@@ -216,7 +216,7 @@ def bad_e3_imported_solid() -> Observation:
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=False,
+        feature_count_before_edit=6,
     )
 
 
@@ -229,7 +229,7 @@ def bad_e3_dangling() -> Observation:
         dangling_refs=2,
         errors=0,
         warnings=0,
-        editable_prefix_verified=True,
+        feature_count_before_edit=6,
     )
 
 
@@ -242,7 +242,7 @@ def unknown_e3() -> Observation:
         dangling_refs=0,
         errors=0,
         warnings=0,
-        editable_prefix_verified=False,
+        feature_count_before_edit=-1,
     )
 
 
