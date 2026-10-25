@@ -52,23 +52,79 @@ MATE_TYPE = {
 #: `swMateAlign_e`
 MATE_ALIGN = {0: "ALIGNED", 1: "ANTI_ALIGNED", 2: "CLOSEST"}
 
-#: `swConstraintType_e`（草图关系；1 = DISTANCE 即尺寸）
+#: swConstraintType_e —— **整表来自官方枚举文件**（69 个值，脚本生成，不手填）。
+#: ★ 手填过一版，把 6/7/8 记错（真值 6=TANGENT · 7=PARALLEL · 8=PERPENDICULAR），
+#:   于是业主的「平行/垂直」被写成「相切/同心」—— **假事实**，故整表重建。
 CONSTRAINT = {
-    1: "DISTANCE", 2: "ANGLE", 3: "RADIUS", 4: "HORIZONTAL", 5: "VERTICAL",
-    6: "PERPENDICULAR", 7: "TANGENT", 8: "CONCENTRIC", 9: "COINCIDENT",
-    10: "CONCENTRIC", 11: "SYMMETRIC", 12: "ATMIDDLE", 13: "INTERSECTION",
-    14: "SAMELENGTH", 15: "DIAMETER", 17: "FIXED", 25: "HORIZPOINTS",
-    26: "VERPOINTS", 27: "COLINEAR", 40: "ATPIERCE", 41: "DOUBLEDISTANCE",
-    42: "MERGEPOINTS", 45: "NORMAL", 46: "NORMALPOINTS", 48: "ALONGX",
-    49: "ALONGY", 50: "ALONGZ", 51: "ALONGXPOINTS", 52: "ALONGYPOINTS",
-    53: "ALONGZPOINTS", 54: "PARALLELYZ", 55: "PARALLELZX",
-    56: "INTERSECTION", 57: "PATTERNED", 58: "ISOBYPOINT",
-    60: "FITSPLINE",
-    #: ★★★ 32 = **USEEDGE** —— 「转换/投影实体」。
-    #:   实测：给零件 InsertPart 插入另一个零件后，用 SketchUseEdge3 转换它的边，
-    #:   草图里就多出一条 RelationType=32 的关系，两端都是草图线段。
-    #:   ⇒ **这是「草图引用了外部实体的边」唯一可机读的判据**。
+    0: "INVALIDCTYPE",
+    1: "DISTANCE",
+    2: "ANGLE",
+    3: "RADIUS",
+    4: "HORIZONTAL",
+    6: "TANGENT",
+    7: "PARALLEL",
+    8: "PERPENDICULAR",
+    9: "COINCIDENT",
+    10: "CONCENTRIC",
+    11: "SYMMETRIC",
+    12: "ATMIDDLE",
+    13: "ATINTERSECT",
+    14: "SAMELENGTH",
+    15: "DIAMETER",
+    16: "OFFSETEDGE",
+    17: "FIXED",
+    18: "ARCANG90",
+    19: "ARCANG180",
+    20: "ARCANG270",
+    21: "ARCANGTOP",
+    22: "ARCANGBOTTOM",
+    23: "ARCANGLEFT",
+    24: "ARCANGRIGHT",
+    25: "HORIZPOINTS",
+    27: "COLINEAR",
+    28: "CORADIAL",
+    29: "SNAPGRID",
+    30: "SNAPLENGTH",
+    31: "SNAPANGLE",
     32: "USEEDGE",
+    33: "ELLIPSEANG90",
+    34: "ELLIPSEANG180",
+    35: "ELLIPSEANG270",
+    36: "ELLIPSEANGTOP",
+    37: "ELLIPSEANGBOTTOM",
+    38: "ELLIPSEANGLEFT",
+    39: "ELLIPSEANGRIGHT",
+    40: "ATPIERCE",
+    41: "DOUBLEDISTANCE",
+    42: "MERGEPOINTS",
+    43: "ANGLE3P",
+    44: "ARCLENGTH",
+    45: "NORMAL",
+    46: "NORMALPOINTS",
+    48: "ALONGX",
+    49: "ALONGY",
+    50: "ALONGZ",
+    51: "ALONGXPOINTS",
+    52: "ALONGYPOINTS",
+    53: "ALONGZPOINTS",
+    54: "PARALLELYZ",
+    55: "PARALLELZX",
+    56: "INTERSECTION",
+    57: "PATTERNED",
+    60: "FITSPLINE",
+    61: "EQUALCURVATURE",
+    62: "EQUALTANGENT",
+    63: "TANGENTFACE",
+    64: "ALONGX3D",
+    65: "ALONGY3D",
+    66: "ALONGXPOINTS3D",
+    67: "ALONGYPOINTS3D",
+    68: "TRACTION",
+    69: "BELTTRACTION",
+    76: "LINEARPATTCNT",
+    77: "CIRCULARPATTCNT",
+    82: "CONICRHO",
+    83: "C3TOUCH",
 }
 
 #: `swSketchSegments_e`
@@ -270,7 +326,7 @@ def sketch_detail(sketch_feature) -> dict:
             item: dict = {}
             rt = _int(_g(rel, "GetRelationType"))
             item["type_int"] = rt
-            item["type"] = CONSTRAINT.get(rt, str(rt))
+            item["type"] = CONSTRAINT.get(rt, "未登记(%s)" % rt)
             item["entities"] = [describe_entity(e)
                                 for e in list(_g(rel, "GetEntities") or ())]
             dd = _g(rel, "GetDisplayDimension")
