@@ -1294,6 +1294,13 @@
       "interface": "SketchRelationManager"
     }
   ],
+  "AddDimension": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "add_dimension",
+      "interface": "ModelDocExtension"
+    }
+  ],
   "ConstructionGeometry": [
     {
       "module": "scripts/sw_sketch_edit_ops.py",

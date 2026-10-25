@@ -267,3 +267,47 @@ B5_MEMBERS = (
     "delete_all_sketch_relations",
     "delete_sketch_relation",
 )
+
+#: `swSmartDimensionDirection_e`（官方枚举，本机 `_raw/enum_values_sldworks.txt` 核过）
+SW_SMART_DIM_RIGHT = 0
+SW_SMART_DIM_UP = 1
+SW_SMART_DIM_LEFT = 2
+SW_SMART_DIM_DOWN = 3
+
+
+def add_dimension(model, x_mm: float, y_mm: float, direction: int = 0):
+    """★ 加一个尺寸：`IModelDocExtension.AddDimension(X, Y, Z, Direction)`。
+
+    ★★★ **必须传第 4 参 `Direction`** —— 它是 `swSmartDimensionDirection_e`：
+      `0=Right` · `1=Up` · `2=Left` · `3=Down`。
+      只传三个坐标会抛
+      `com_error (-2147352561, '非选择性的参数。')`（= `DISP_E_PARAMNOTOPTIONAL`）。
+
+    ★ 为什么要这个封装（2026-10-26）：本仓 140 条能力里**没有**它，
+      而 `IModelDoc2` 上那三条同类成员（`AddDimension2` /
+      `AddHorizontalDimension2` / `AddVerticalDimension2`）**静默回 `None`**
+      ⇒ 我连续四轮以为「这台机器建不出尺寸」，其实只是少了一个参数。
+
+    ★ 调用前**必须先选中要标的实体**（`Extension.AddDimension` 作用于当前选择）。
+      圆能标（回 `IDisplayDimension`）；**孤立的裸点不能**（回 `None`）。
+
+    参数:
+        model: IModelDoc2
+        x_mm: 尺寸文字放置点 X（毫米）
+        y_mm: 尺寸文字放置点 Y（毫米）
+        direction: `swSmartDimensionDirection_e`，默认 0 = Right
+
+    返回:
+        `IDisplayDimension`（成功）或 `None`（该选择无法标尺寸）
+    """
+    extension = get_com_member(model, "Extension")
+    if extension is None:
+        raise RuntimeError("取不到 IModelDocExtension")
+    return get_com_member(
+        extension,
+        "AddDimension",
+        float(x_mm) * 0.001,
+        float(y_mm) * 0.001,
+        0.0,
+        int(direction),
+    )

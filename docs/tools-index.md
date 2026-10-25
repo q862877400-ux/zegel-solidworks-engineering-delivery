@@ -608,7 +608,7 @@
 | `build_capability_matrix.py` | ★ 画「操作 × 对象」矩阵并跑**三个预先写死的可数判据**（★ 业主 2026-10-03 批准） |
 | `build_capability_matrix_v2.py` | ★ **第二版矩阵**：用**真实映射**（工具 → COM 成员）填充，★ 重跑三个预先写死的判据 |
 | `build_enum_scale.py` | ★ 抽**官方枚举的规模** —— ★ 矩阵第三轴「种类」的官方来源（★ 不是猜的） |
-| `build_first_part.py` | ★ 首件重建（**唯一**入口）：一个孔特征 + 四点全约束 + GB 标准 |
+| `build_first_part.py` | ★ 首件重建（唯一入口）：**4 个圆 + 两向尺寸 + 半径 + 一次 HoleWizard(GB)** |
 | `build_judge_inputs.py` | ★ 组装**盲判**输入：把 48 路挑出来的工具，配上它**真实的 title/描述**，给独立裁判判「能不能做这件事」 |
 | `build_members_index.py` | ★ 建**全量成员索引**（接口 × 成员），并统计"同名成员分布在几个接口上" |
 | `build_obsolete_index.py` | ★ 建**官方废弃成员索引**：把 `C:\swapi\types\**\*.md` 里带 `Obsolete` 的都收进来 |

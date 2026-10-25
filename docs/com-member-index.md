@@ -53,6 +53,7 @@
 | `ModelDocExtension.Stretch` | `scripts/sw_sketch_modify_ops.py::sketch_stretch` … |
 | `SldWorks.ActiveDoc` | `scripts/sw_simulation_worker.py::create_mesh_safely_by_name` |
 | `AssemblyDoc.AddComponent5` | `scripts/sw_toolbox_index.py::part_path` |
+| `ModelDocExtension.AddDimension` | `scripts/sw_sketch_dimensions.py::add_dimension` |
 | `ModelDoc2.AddDimension2` | `scripts/sw_part.py::add_dimension_report` |
 | `ModelDoc2.AddHorizontalDimension2` | `scripts/sw_sketch_dimensions.py::add_horizontal_dimension` |
 | `GtolFrame.AddIndicator` | `scripts/sw_gtol.py::add_gtol_indicator` |
