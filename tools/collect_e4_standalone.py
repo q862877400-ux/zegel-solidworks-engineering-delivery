@@ -157,7 +157,10 @@ def main() -> int:
         n = -1
         adds: list = []
         if asm_doc is not None:
-            for dx in (0.0, 30.0):
+            #: ★★★ 第 60 轮修：这里原来是 `(0.0, 30.0)` —— 而 `add_component` 的 x 单位是**米**
+            #:   ⇒ 第二个组件被放到 **30 米**外。业主原话：「这个米和毫米的问题已经出现过
+            #:   非常非常多次了」。改用 `0.030` 米（= 30mm），并在下面回读变换矩阵验证量级。
+            for dx in (0.0, 0.030):
                 ok_a, a_ret = c_.try_call(
                     asm_.add_component, asm_doc, str(SRC), dx, 0.0, 0.0, "", sw
                 )
@@ -174,6 +177,29 @@ def main() -> int:
                 )
         ev["steps"]["add_component"] = adds
         ev["components"] = n
+
+        #: ★★★ 单位校验（独立读数）：回读每个组件的**平移分量**（毫米）。
+        #:   `add_component` 的 x/y/z 单位是**米** ⇒ 传 30 会得到 30000mm；
+        #:   量级判据：全部 < 1000mm。这一层把「米当毫米」当场抓住。
+        translations: list = []
+        try:
+            for cp in list(get_com_member(asm_doc, "GetComponents", False) or ()):
+                tr = get_com_member(cp, "Transform2")
+                data = list(get_com_member(tr, "ArrayData") or ())
+                if len(data) >= 12:
+                    translations.append(
+                        [
+                            round(data[9] * 1000.0, 3),
+                            round(data[10] * 1000.0, 3),
+                            round(data[11] * 1000.0, 3),
+                        ]
+                    )
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["translation_err"] = type(exc).__name__
+        ev["translation_mm"] = translations
+        ev["magnitude_ok"] = bool(
+            translations and all(abs(v) < 1000.0 for tr in translations for v in tr)
+        )
 
         #: ④ 干涉
         ok_i, interf = (

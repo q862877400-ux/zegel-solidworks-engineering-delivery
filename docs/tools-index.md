@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 669 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 673 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -15,7 +15,7 @@
 |---|---|---|---|
 | 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 282 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
-| 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
+| 验证某能力端到端仍然可用 | **冒烟/回归** | 34 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
 | 从真源生成文档/索引（跑完要提交生成物） | **生成器** | 21 | `gen_*` |
 | 对账/查缺口，只读不改 | **审计** | 11 | `audit_*` |
@@ -36,8 +36,8 @@
 | 对别人的结论再核一遍 | **复核** | 2 | `recheck_*` |
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
-| 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 75 | — |
+| 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 5 | `sw_*` |
+| （未归入上面任何一类） | 其他 | 76 | — |
 
 ## 探针（282 个）
 
@@ -445,7 +445,7 @@
 | `prove_weldment_cut_list.py` | ★ 真机：`sw_weldment.ensure_cut_list`（★ 它早已实现 dispid 兜底，★ 而没被接进工具层） |
 | `prove_weldment_tools_e2e.py` | ★ 真机：**按工具层契约**跑焊件切割清单那条链（`create → ensure → evidence → csv`） |
 
-## 冒烟/回归（33 个）
+## 冒烟/回归（34 个）
 
 > 用途：验证某能力端到端仍然可用
 
@@ -460,6 +460,7 @@
 | `verify_bbox_smoke.py` | @brief 真机冒烟：`sw_part.get_bounding_box`（边界框） |
 | `verify_bmp_smoke.py` | @brief 真机冒烟：`sw_export.export_to_bmp` —— ★★ **读 BMP 头核对尺寸（定量往返）** |
 | `verify_centerline_smoke.py` | @brief 真机冒烟：`sw_part.sketch_centerline` + **再测一次长度单位** |
+| `verify_component_units.py` | ★ 真机验证单位纪律：按**米**放组件，回读变换矩阵必须是对应的**毫米**数 |
 | `verify_composite_curve_smoke.py` | @brief 真机冒烟：`sw_part.insert_composite_curve` —— ★★ **定量往返**（选 2 个 ⇒ 读回 2） |
 | `verify_costing_e2e.py` | @brief 验收命令：`costing` 的端到端真机闭环（**A9 的可跑工程实现**） |
 | `verify_dfm_e2e.py` | @brief 验收命令：`dfm_checks` 的**端到端**（离线，**不碰 SolidWorks / OCP**） |
@@ -790,7 +791,7 @@
 | `modal_dialog_forensics.py` | ★ **弹窗取证**：发现弹窗 ⇒ 截图 + 抓结构 ⇒ 落盘 ⇒ **交给 LLM 判根因**（★ 不自动点） |
 | `modal_dialog_safe.py` | ★ **不阻塞的弹窗检测**：在**有硬时限的子进程**里跑 `collect_dialogs`，超时也能报出"发现弹窗" |
 
-## 真机运行器（3 个）
+## 真机运行器（5 个）
 
 > 用途：直接连 SolidWorks 的执行器/护栏
 
@@ -799,6 +800,8 @@
 | `sw_dialog_watch.py` | ★ 常驻弹窗监控：**本项目一启用就跟着起来**，一直盯着 SolidWorks 家族的弹窗 |
 | `sw_dialog_watchdog.py` | @brief SolidWorks 系窗口**看门狗** —— ⚠⚠⚠ 【已被否决 —— 不是正解】（见 known-facts 176） ## ⚠⚠⚠ **用户 2026-10-01 明确否决了这个方案，它不是正解** ``` 用户原话： |
 | `sw_guard.py` | ★ **带弹窗哨兵的调用护栏**：真机调用从它走 ⇒ **弹窗被主动发现、主动点掉、内容随返回值上来** |
+| `sw_screenshot.py` | 把 SolidWorks 主窗口截成 PNG —— 用视觉看它**实际**显示了什么 |
+| `sw_snapshot_loop.py` | 后台连拍：每隔几秒给 SolidWorks 窗口截一张 —— 录下用户人工操作的**过程** |
 
 ## 按轮次临时（1 个）
 
@@ -808,7 +811,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（75 个）
+## 其他（76 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -876,6 +879,7 @@
 | `selfcheck_official_source_errors.py` | ★ 自校 `docs/history/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核 |
 | `session_verdict.py` | ★ 会话裁决：**一个裁决、两条探路** —— 会话干不干净、有没有未保存改动 |
 | `set_subagent_default_model.py` | ★ 把子代理的默认模型改成 bunny（写活配置 `profiles/web/cordis.patch.yml`，先备份） |
+| `setup_mate_demo.py` | 摆好「人工做一个配合」的现场：装配里放两块板（第二块抬高 50mm），**保持打开** |
 | `spec211_manual_verdicts.py` | ★ 规格 211 · B0 的**人工终判表**（★ 每条注明依据 |
 | `splice_section.py` | ★ 把一段 .md 文本拼接进目标文件（★ 结构性绕开"长中文串 + 引号嵌套"这个反复踩的坑） |
 | `split_rag_sample_for_fanout.py` | ★ 把抽样切成 60 份（每份 2 个工具），给 60 路 Bunny 各读一份 —— ★ 避免在提示里内联 105 条记录 |

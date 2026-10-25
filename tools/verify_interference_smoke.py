@@ -86,8 +86,8 @@ def main() -> int:
 
         #: ② 装配：第二个沿 X 偏 20mm ⇒ **重叠** ⇒ 干涉必然存在
         asm = sw_connect.new_document(sw, "assembly")
-        sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        sw_assembly.add_component(asm, paths[1], x=20, y=0, z=0)
+        sw_assembly.add_component(asm, paths[0], x_m=0, y_m=0, z_m=0)
+        sw_assembly.add_component(asm, paths[1], x_m=0.02, y_m=0, z_m=0)
         chk("装配里放两个块（第二个偏 +20mm ⇒ **重叠**）", True, "ok")
 
         #: ③ ★★ 定量：干涉数应当 > 0

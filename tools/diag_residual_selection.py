@@ -104,8 +104,8 @@ def main() -> int:
 
         asm = sw_connect.new_document(sw, "assembly")
         docs.append(asm)
-        c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        c1 = sw_assembly.add_component(asm, paths[1], x=60, y=40, z=10)
+        c0 = sw_assembly.add_component(asm, paths[0], x_m=0, y_m=0, z_m=0)
+        c1 = sw_assembly.add_component(asm, paths[1], x_m=0.06, y_m=0.04, z_m=0.01)
         step("② 装配", comps=len([c for c in (c0, c1) if c]))
 
         dump_sel("装配态·未做任何事")

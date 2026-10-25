@@ -112,8 +112,8 @@ def main() -> int:
         #: 明写）
         #: ⇒ 直接用它，**别去 `asm.GetComponents(True)` 再猜返回的是哪个接口族**
         #: （轮 161 就是这么卡住的：那批对象上**没有 `GetBody2`**）。
-        c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        c1 = sw_assembly.add_component(asm, paths[1], x=140, y=0, z=0)  #: 挨着但不重叠
+        c0 = sw_assembly.add_component(asm, paths[0], x_m=0, y_m=0, z_m=0)
+        c1 = sw_assembly.add_component(asm, paths[1], x_m=0.14, y_m=0, z_m=0)  #: 挨着但不重叠
         comps = [c for c in (c0, c1) if c is not None]
         chk(
             "装配里 2 个组件（**用 add_component 的返回值**）",

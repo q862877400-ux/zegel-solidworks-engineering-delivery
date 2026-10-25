@@ -38,6 +38,30 @@
 - 正规军：命名/单位/选择/验证等级/出处五统一，机器门禁 docs/union-conventions.md + scripts/check_union_conventions.py。
 - 单源交付：运行时只能有一个 SolidWorks MCP——多个进程抢同一 COM 连接会死锁（已知事实 24）。
 
+## 十四之二、单位必须出现在名字里（米/毫米反复出错的根治）
+
+**★★★ 一句话：任何带量纲的形参，名字里必须有单位后缀。**
+
+```bash
+python -B scripts/check_internal_length_units.py --inventory   # 看全量纲清单
+```
+
+- **硬门禁**已接进 `release_check`（`_run_unit_naming_gate`），基线
+  `docs/unit-naming-baseline.json` **只许降不许升**。
+- 追的是**这个根因**：本仓两套约定并存、形参都是裸名 ——
+  `sw_part.sketch_circle(cx, cy, radius)` 收**毫米**，
+  而 `sw_assembly.add_component(x, y, z)` 收**米**（工具层已 `mm()` 换算过）
+  ⇒ **调用方无从分辨**。实测：探针传 `30.0` 想表达 30mm，组件被放到 **30 米**外；
+  更糟的是射线选中的两个面因此都落在同一个组件上，
+  「两组件配合」这个前提从未成立 —— 我在一个**假问题**上排除了 12 个候选。
+- 后缀白名单按量纲分开：`_mm`/`_m`（长度）、`_deg`/`_rad`/`_degminsec`（角度）、
+  `_s`/`_ms`（时间）、`_n`/`_kn`（力）、`_mpa`（应力）、`_nm`（力矩）、
+  `_hz`（频率）、`_g`/`_kg`（质量）、`_mm2`/`_mm3`（面积/体积）等。
+- ★ **选择器不算量值**：`force_type` / `length_unit` / `draft_analysis` 是「选哪个」，
+  不是「多少」⇒ 门禁不报（否则误报会让人把门禁整条关掉）。
+- ★ **改形参名必须跑一次真机**：只改签名不改函数体会得到
+  `NameError`，静态检查抓不到（第 60 轮实测踩过）。
+
 ## 十五、真机命令一律走弹窗护栏
 
 **★★★ 弹窗监控必须常驻（2026-10-26 用户要求）**

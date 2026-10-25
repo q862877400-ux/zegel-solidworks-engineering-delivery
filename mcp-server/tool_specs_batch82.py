@@ -41,10 +41,15 @@ SPECS_BATCH82 = [
         #: ⚠★ **兼容性**：★ 这两个名字**原先就带错后缀** ⇒ ★ 改后**旧的传参名不再被接受*
         #: * ✓
         #:     ★ 这是**有意为之** —— ★★ 留着假后缀比破坏一次兼容更糟（★ 它会持续骗人）✓
+        #: ★★ 第 60 轮：实现层形参加了单位后缀（`distance` → `distance_m`，见事实 570），
+        #:   所以别名目标名跟着改。★ 对外仍叫 `*_mm`（用户看毫米），
+        #:   换算在工具层做**一次**（规则 2），到实现层就是米 ⇒ 后缀 `_m`。
+        #: ⚠ `angle_deg` → `angle` **没动**：角度这一类本轮**没有**迁移，
+        #:   它仍在棘轮基线里（234 处之一）。一次只迁一类，不混。
         param_alias={
-            "distance_mm": "distance",
-            "distance_upper_mm": "distance_upper",
-            "distance_lower_mm": "distance_lower",
+            "distance_mm": "distance_m",
+            "distance_upper_mm": "distance_upper_m",
+            "distance_lower_mm": "distance_lower_m",
             "angle_deg": "angle",
             "angle_upper_deg": "angle_upper",
             "angle_lower_deg": "angle_lower",

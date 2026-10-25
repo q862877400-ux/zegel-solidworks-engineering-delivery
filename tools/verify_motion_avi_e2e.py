@@ -161,12 +161,12 @@ def main() -> int:
         opened.append(atitle)
         ev["steps"]["assembly"] = {"title": str(atitle)}
         c1 = step(
-            "sw_assembly.add_component(第 1 个, x=0)",
-            lambda: sw_assembly.add_component(asm, part_path, x=0.0, sw=sw),
+            "sw_assembly.add_component(第 1 个, x_m=0)",
+            lambda: sw_assembly.add_component(asm, part_path, x_m=0, sw=sw),
         )
         c2 = step(
-            "sw_assembly.add_component(第 2 个, x=0.06)",
-            lambda: sw_assembly.add_component(asm, part_path, x=0.06, sw=sw),
+            "sw_assembly.add_component(第 2 个, x_m=6e-05)",
+            lambda: sw_assembly.add_component(asm, part_path, x_m=6e-05, sw=sw),
         )
 
         # ③ Motion

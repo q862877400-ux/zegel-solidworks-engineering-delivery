@@ -503,6 +503,47 @@ def _run_relative_imports_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_unit_naming_gate() -> dict[str, object]:
+    """@brief 跑「全量纲单位命名」门禁（scripts/check_internal_length_units.py）。
+
+    ★ 来源：业主 2026-10-26 指令 ——「这个米和毫米的问题已经出现过非常非常多次了，
+      你研究一下到底从根本上解决……任何涉及到尺寸的地方都有这种单位转换的问题」。
+
+    ★ 真因：本仓**两套约定并存、形参都是裸名** ——
+      `sw_part.sketch_circle(cx, cy, radius)` 收**毫米**、
+      `sw_assembly.add_component(x, y, z)` 收**米**（工具层已换算）⇒ 调用方无从分辨。
+      实测后果：组件被放到 30 **米**外，且射线选中的两个面都落在同一个组件上，
+      于是在一个**假问题**上排除了 12 个配合候选。
+
+    ★ 判据：形参名命中**有界量纲词表**且**没有该量纲的后缀** ⇒ 违规。
+      量纲表覆盖官方枚举（`swLengthUnit_e` / `swAngleUnit_e` / `swNumberboxUnitType_e` /
+      `swUnitsForce_e` / `swUnitsEnergyUnit_e` / `swUnitsPowerUnit_e` /
+      `swUnitsTimeUnit_e` / `swUnitsMassPropMass_e` / `swUnitsMassPropVolume_e`）
+      + 仿真常见量。
+
+    ★ 基线：`docs/unit-naming-baseline.json`，**只许降不许升**。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_internal_length_units.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "单位命名门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_env_pitfalls_gate() -> dict[str, object]:
     """@brief 跑环境坑门禁（`scripts/check_env_pitfalls.py`）。"""
     try:
@@ -2991,6 +3032,18 @@ def run_release_check() -> dict[str, object]:
             "仓库统一化体检未通过（局部整洁但整体可能已分裂）：\n"
             + str(ru.get("output", ""))
         )
+    #: ⚑ **全量纲单位命名门禁**（硬门禁）：★ 来源业主 2026-10-26
+    #:   「米和毫米的问题反复出现，从根本上解决」。
+    #:   ★ 判据：形参名命中量纲词表却没有单位后缀 ⇒ 违规（基线只许降不许升）。
+    #:   ★ 必须先赋值、**紧跟**它的 fail 检查 —— 元门禁按「赋值语句的下一个兄弟语句」
+    #:     判 hard/diagnostic（`scripts/check_gate_wiring.py` 的 `actual_runners`），
+    #:     中间插一句别的就会把硬门禁误判成「诊断」⇒ 静默放行。
+    un = _run_unit_naming_gate()
+    if un.get("status") == "fail":
+        raise AssertionError(
+            "单位命名门禁未通过（米/毫米这类量纲混用会静默产生错模型）：\n"
+            + str(un.get("output", ""))
+        )
     # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
     #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
     #     证据等级在枚举内 / 有未确认段）。
@@ -3299,6 +3352,7 @@ def run_release_check() -> dict[str, object]:
         #: 登记
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "repo_uniformity": ru,
+        "unit_naming": un,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓
         "survey_cards": sc,

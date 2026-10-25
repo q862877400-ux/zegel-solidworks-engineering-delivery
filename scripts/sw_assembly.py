@@ -116,7 +116,7 @@ def _activate_model_document(sw, model):
             return False
 
 
-def _add_component5(asm_model, component_path, config_name, x, y, z):
+def _add_component5(asm_model, component_path, config_name, x_m, y_m, z_m):
     """调用 AddComponent5 的 SW2024 兼容签名。"""
     add_component5 = getattr(asm_model, "AddComponent5", None)
     if not add_component5:
@@ -127,20 +127,20 @@ def _add_component5(asm_model, component_path, config_name, x, y, z):
         "",
         False,
         config_name or "",
-        float(x),
-        float(y),
-        float(z),
+        float(x_m),
+        float(y_m),
+        float(z_m),
     )
 
 
-def _add_component4(asm_model, component_path, config_name, x, y, z):
+def _add_component4(asm_model, component_path, config_name, x_m, y_m, z_m):
     """调用 AddComponent4。"""
     return asm_model.AddComponent4(
         component_path,
         config_name or "",
-        float(x),
-        float(y),
-        float(z),
+        float(x_m),
+        float(y_m),
+        float(z_m),
     )
 
 
@@ -160,7 +160,9 @@ def _component_count(asm_model) -> int:
         return -1
 
 
-def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
+def add_component(
+    asm_model, part_path, x_m=0, y_m=0, z_m=0, config_name="", sw=None
+):
     """
     向装配体添加零部件
 
@@ -191,13 +193,17 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
     try:
         # SW2024 中文版 + pywin32 下 AddComponent4 可能返回 None；
         # AddComponent5 的 8 参数签名更稳定。
-        component = _add_component5(asm_model, component_path, config_name, x, y, z)
+        component = _add_component5(
+            asm_model, component_path, config_name, x_m, y_m, z_m
+        )
     except Exception as exc:
         errors.append(f"AddComponent5: {exc}")
 
     if component is None:
         try:
-            component = _add_component4(asm_model, component_path, config_name, x, y, z)
+            component = _add_component4(
+                asm_model, component_path, config_name, x_m, y_m, z_m
+            )
         except Exception as exc:
             errors.append(f"AddComponent4: {exc}")
 
@@ -223,9 +229,9 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
                         asm_model,
                         in_memory,
                         config_name,
-                        x,
-                        y,
-                        z,
+                        x_m,
+                        y_m,
+                        z_m,
                     )
                     if component is None:
                         errors.append(
@@ -419,9 +425,9 @@ def add_mate5_checked(
     mate_type,
     align=0,
     flip=False,
-    distance=0.0,
-    distance_upper=None,
-    distance_lower=None,
+    distance_m=0.0,
+    distance_upper_m=None,
+    distance_lower_m=None,
     gear_num=0.0,
     gear_den=0.0,
     angle=0.0,
@@ -470,8 +476,8 @@ def add_mate5_checked(
     @param name 可选 Mate 名称。
     @return Mate2 对象。
     """
-    distance_upper = distance if distance_upper is None else distance_upper
-    distance_lower = distance if distance_lower is None else distance_lower
+    distance_upper_m = distance_m if distance_upper_m is None else distance_upper_m
+    distance_lower_m = distance_m if distance_lower_m is None else distance_lower_m
     angle_upper = angle if angle_upper is None else angle_upper
     angle_lower = angle if angle_lower is None else angle_lower
     error_status = VARIANT(pythoncom.VT_BYREF | pythoncom.VT_I4, 0)
@@ -479,9 +485,9 @@ def add_mate5_checked(
         int(mate_type),
         int(align),
         bool(flip),
-        float(distance),
-        float(distance_upper),
-        float(distance_lower),
+        float(distance_m),
+        float(distance_upper_m),
+        float(distance_lower_m),
         float(gear_num),
         float(gear_den),
         float(angle),
@@ -515,8 +521,8 @@ def add_concentric_mate_by_cylinders(
     asm_model,
     component_a,
     component_b,
-    radius_a=None,
-    radius_b=None,
+    radius_a_m=None,
+    radius_b_m=None,
     name=None,
     lock_rotation=False,
 ):
@@ -525,16 +531,16 @@ def add_concentric_mate_by_cylinders(
     @param asm_model IAssemblyDoc/IModelDoc2 装配体对象。
     @param component_a 第一个组件。
     @param component_b 第二个组件。
-    @param radius_a 第一个组件圆柱半径范围 (min, max)，单位米；None 表示任意。
-    @param radius_b 第二个组件圆柱半径范围 (min, max)，单位米；None 表示任意。
+    @param radius_a_m 第一个组件圆柱半径范围 (min, max)，单位米；None 表示任意。
+    @param radius_b_m 第二个组件圆柱半径范围 (min, max)，单位米；None 表示任意。
     @param name 可选 Mate 名称。
     @param lock_rotation 是否锁定同心旋转；运动装配应保持 False。
     @return Mate2 对象。
     """
-    radius_a = radius_a or (0.0, None)
-    radius_b = radius_b or (0.0, None)
-    face_a = find_largest_cylinder_face(component_a, radius_a[0], radius_a[1])
-    face_b = find_largest_cylinder_face(component_b, radius_b[0], radius_b[1])
+    radius_a_m = radius_a_m or (0.0, None)
+    radius_b_m = radius_b_m or (0.0, None)
+    face_a = find_largest_cylinder_face(component_a, radius_a_m[0], radius_a_m[1])
+    face_b = find_largest_cylinder_face(component_b, radius_b_m[0], radius_b_m[1])
     select_entities_for_mate(asm_model, face_a, face_b, mark=1)
     return add_mate5_checked(
         asm_model,
@@ -550,8 +556,8 @@ def add_gear_mate_by_cylinders(
     component_b,
     teeth_a,
     teeth_b,
-    radius_a=None,
-    radius_b=None,
+    radius_a_m=None,
+    radius_b_m=None,
     name=None,
 ):
     """
@@ -561,17 +567,17 @@ def add_gear_mate_by_cylinders(
     @param component_b 第二个齿轮组件。
     @param teeth_a 第一个齿轮齿数或等效节圆比。
     @param teeth_b 第二个齿轮齿数或等效节圆比。
-    @param radius_a 第一个齿轮轴/孔圆柱半径范围，单位米。
-    @param radius_b 第二个齿轮轴/孔圆柱半径范围，单位米。
+    @param radius_a_m 第一个齿轮轴/孔圆柱半径范围，单位米。
+    @param radius_b_m 第二个齿轮轴/孔圆柱半径范围，单位米。
     @param name 可选 Mate 名称。
     @return Mate2 对象。
     """
     if float(teeth_a) == 0 or float(teeth_b) == 0:
         raise ValueError("Gear Mate 的齿数/传动比不能为 0")
-    radius_a = radius_a or (0.0, None)
-    radius_b = radius_b or (0.0, None)
-    face_a = find_largest_cylinder_face(component_a, radius_a[0], radius_a[1])
-    face_b = find_largest_cylinder_face(component_b, radius_b[0], radius_b[1])
+    radius_a_m = radius_a_m or (0.0, None)
+    radius_b_m = radius_b_m or (0.0, None)
+    face_a = find_largest_cylinder_face(component_a, radius_a_m[0], radius_a_m[1])
+    face_b = find_largest_cylinder_face(component_b, radius_b_m[0], radius_b_m[1])
     select_entities_for_mate(asm_model, face_a, face_b, mark=1)
     return add_mate5_checked(
         asm_model,
@@ -586,8 +592,8 @@ def add_revolute_joint_by_cylinders(
     asm_model,
     component_a,
     component_b,
-    radius_a=None,
-    radius_b=None,
+    radius_a_m=None,
+    radius_b_m=None,
     name=None,
 ):
     """
@@ -600,8 +606,8 @@ def add_revolute_joint_by_cylinders(
         asm_model,
         component_a,
         component_b,
-        radius_a=radius_a,
-        radius_b=radius_b,
+        radius_a_m=radius_a_m,
+        radius_b_m=radius_b_m,
         name=name,
         lock_rotation=False,
     )
@@ -756,18 +762,18 @@ def add_mate_concentric(asm_model, face1_name, face2_name):
 
 
 def add_mate_distance(
-    asm_model, entity1_name, entity1_type, entity2_name, entity2_type, distance
+    asm_model, entity1_name, entity1_type, entity2_name, entity2_type, distance_m
 ):
     """
     添加距离配合
 
     参数:
-        distance: 配合距离（米）
+        distance_m: 配合距离（米）
     """
     asm_model.ClearSelection2(True)
     _select_by_id(asm_model.Extension, entity1_name, entity1_type, mark=1)
     _select_by_id(asm_model.Extension, entity2_name, entity2_type, append=True, mark=1)
-    return add_mate5_checked(asm_model, SW_MATE_DISTANCE, distance=distance)
+    return add_mate5_checked(asm_model, SW_MATE_DISTANCE, distance_m=distance_m)
 
 
 def add_mate_parallel(asm_model, face1_name, face2_name):

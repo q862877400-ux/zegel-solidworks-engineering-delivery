@@ -2,7 +2,7 @@
 
 **总体**：❌ fail
 
-检查共 7 条：pass 3 · fail 1 · unknown 3 · not_applicable 0
+检查共 10 条：pass 3 · fail 1 · unknown 6 · not_applicable 0
 
 ## 逐条状态
 
@@ -12,20 +12,19 @@
 | **E2** | 参数化可重建 | ❌ fail | 3 | E2.hole_readback | E2.drawing_current |
 | **E3** | 特征树可编辑 | ✅ pass | 1 | — | — |
 | **E4** | 装配自由度闭合 | ⚠️ unknown | 2 | — | E4.dof、E4.interference |
-| **E5** | 图样合规 | ⬜ 未检查 | 0 | — | — |
-| **E6** | 工艺可行 | ⬜ 未检查 | 0 | — | — |
-| **E7** | 结论可溯源 | ⬜ 未检查 | 0 | — | — |
+| **E5** | 图样合规 | ⚠️ unknown | 1 | — | E5.drawing |
+| **E6** | 工艺可行 | ⚠️ unknown | 1 | — | E6.process |
+| **E7** | 结论可溯源 | ⚠️ unknown | 1 | — | E7.provenance |
 
 ## 未测到的项（不等于合格）
 
 - `E2.drawing_current`：★ 没有图纸修订号或模型修订号 ⇒ 这一项**还没验**（首件当前还没有图时就是这个状态，如实报 unknown）
 - `E4.dof`：采集不完整
 - `E4.interference`：采集不完整
+- `E5.drawing`：采集不完整
+- `E6.process`：采集不完整
+- `E7.provenance`：采集不完整
 
 ## 不合格的项
 
 - `E2.hole_readback`：★ 4 个孔的孔径或孔位超差。首例 'H1'：孔径误差 0.0 mm、孔位误差 20.0 mm（容差 0.050 / 0.100）
-
-## 未检查的判据
-
-- E5、E6、E7 —— 一条检查都没跑过，不能当成通过

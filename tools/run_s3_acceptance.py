@@ -65,6 +65,16 @@ from scripts.engineering.acceptance.e4_assembly import (  # noqa: E402
     judge_assembly,
     judge_assembly_interference,
 )
+from scripts.engineering.acceptance.e5_e6_drawing import (  # noqa: E402
+    collect_drawing,
+    collect_process,
+    judge_drawing,
+    judge_process,
+)
+from scripts.engineering.acceptance.e7_provenance import (  # noqa: E402
+    collect_provenance,
+    judge_provenance,
+)
 from scripts.engineering.acceptance.report import (  # noqa: E402
     build_report,
     render_markdown,
@@ -523,7 +533,7 @@ def main() -> int:
                 "collector_steps": e4.get("steps"),
                 "collector_err": e4.get("err", ""),
                 "collector_docs_left": e4.get("docs_left"),
-                #: ★ 串行两段：证据的新鲜度从采集器自己写的 inished_at 看
+                #: ★ 串行两段：证据的新鲜度从采集器自己写的 `finished_at` 看
                 "collector_finished_at": e4.get("finished_at"),
             }
 
@@ -551,10 +561,82 @@ def main() -> int:
             ev["E4"] = {"err": "%s: %s" % (type(exc).__name__, str(exc)[:200])}
             print("④c E4 段异常：%s" % ev["E4"])
 
+        #: ── E5 / E6 / E7：如实报 unknown，并把**原因**写清 ──
+        #:
+        #:   ★ 为什么值得接：`docs/PROJECT-CHARTER.md` 的 A8 要求「E1–E7 逐条状态」。
+        #:     原来这三条在报告里是「⬜ 未检查」，**没有原因的分类等于没分类** ——
+        #:     读者分不出「还没做」和「做了但不适用」。
+        #:   ★ 全部走**采集器 → 判定器**（`complete=False` ⇒ `unknown`），
+        #:     不是手工塞字符串：以后真做了，改的是入参，不是判据。
+        res_e5 = res_e6 = res_e7 = None
+        try:
+            #: E5：首件还没有图 ⇒ 必备项与装订项都是空、两个修订号都空
+            obs_e5 = collect_drawing(
+                target="板1 工程图",
+                required_items=(),
+                bound_items=(),
+                model_revision="",
+                drawing_revision="",
+                material_from_requirement=False,
+                template_ok=False,
+                version="2026-10-26",
+            )
+            res_e5 = judge_drawing(obs_e5, requirement_id="R-E5")
+            ev["E5"] = {
+                "status": res_e5.status.value,
+                "reason": res_e5.reason,
+                "blocked_by": "S2 drawing_scope（图样范围未冻结）+ 首件还没有图",
+            }
+            print("④d E5：%s（%s）" % (res_e5.status.value,
+                                      "首件还没有图 / S2 未冻结"))
+
+            #: E6：工艺路线未冻结 ⇒ `required_checks` 无从给 ⇒ 采集 complete=False
+            obs_e6 = collect_process(
+                target="板1 工艺",
+                route="",
+                checks=(),
+                verified_scope=(),
+                required_checks=(),
+                version="2026-10-26",
+            )
+            res_e6 = judge_process(obs_e6, requirement_id="R-E6")
+            ev["E6"] = {
+                "status": res_e6.status.value,
+                "reason": res_e6.reason,
+                "blocked_by": "S2 process（工艺路线未冻结）",
+            }
+            print("④e E6：%s（S2 工艺路线未冻结）" % res_e6.status.value)
+
+            #: E7：出处链要等前六项都有结论
+            obs_e7 = collect_provenance(
+                target="板1 结论出处链",
+                claims=(),
+                citations=(),
+                outputs={},
+                source_kind="",
+                source_ref="",
+                artifact_version="",
+                evidence_version="",
+                version="2026-10-26",
+            )
+            res_e7 = judge_provenance(obs_e7, requirement_id="R-E7")
+            ev["E7"] = {
+                "status": res_e7.status.value,
+                "reason": res_e7.reason,
+                "blocked_by": "待前六项都有结论后，逐条挂出处",
+            }
+            print("④f E7：%s（待前六项）" % res_e7.status.value)
+        except Exception as exc:  # noqa: BLE001
+            ev["E5_E7_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:200])
+            print("④d–f E5/E6/E7 段异常：%s" % ev["E5_E7_err"])
+
         #: ── 汇总 + 渲染 ──
         _checks = [res_e1, res_e2, res_draw, res_e3, res_h]
         #: ★ 第 48 轮：E4 两条也进报告（预期 unknown，如实呈现「没搭起可判的装配」）
         _checks.extend(c for c in (res_e4, res_e4i) if c is not None)
+        #: ★ 第 60 轮：E5/E6/E7 也进报告（如实 unknown + 原因），
+        #:   让「七条判据逐条有位置」这条契约成立（charter A8）。
+        _checks.extend(c for c in (res_e5, res_e6, res_e7) if c is not None)
         rep = build_report(_checks)
         md = render_markdown(rep, title="S3 首件板件 · E1–E3 验收报告（真机）")
         out_md = R / "specs" / "350-first-part-delivery" / "s3-acceptance.md"

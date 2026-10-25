@@ -114,8 +114,8 @@ def main() -> int:
         #: ══ ② 装配 ═══════════════════════════════════════════
         asm = sw_connect.new_document(sw, "assembly")
         docs.append(asm)
-        c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        c1 = sw_assembly.add_component(asm, paths[1], x=60, y=40, z=10)
+        c0 = sw_assembly.add_component(asm, paths[0], x_m=0, y_m=0, z_m=0)
+        c1 = sw_assembly.add_component(asm, paths[1], x_m=0.06, y_m=0.04, z_m=0.01)
         comps = [c for c in (c0, c1) if c is not None]
         step("② 装配 2 个组件", comps=len(comps))
         if len(comps) < 2:

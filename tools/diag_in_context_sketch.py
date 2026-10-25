@@ -105,8 +105,8 @@ def main() -> int:
             paths.append(str(p))
         asm = sw_connect.new_document(sw, "assembly")
         docs.append(asm)
-        c0 = sw_assembly.add_component(asm, paths[0], x=0, y=0, z=0)
-        c1 = sw_assembly.add_component(asm, paths[1], x=140, y=0, z=0)
+        c0 = sw_assembly.add_component(asm, paths[0], x_m=0, y_m=0, z_m=0)
+        c1 = sw_assembly.add_component(asm, paths[1], x_m=0.14, y_m=0, z_m=0)
 
         #: ① 进入前后分别看活动文档
         before = sw_connect.safe_get_com_member(sw, "ActiveDoc")

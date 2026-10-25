@@ -71,3 +71,38 @@ blockers:
       - docs/known-facts.md
       - specs/350-first-part-delivery/s4-assembly-blocked.md
       - tools/probe_e4_assembly.py
+
+  - check_id: E5.drawing
+    cause: requirement
+    owner: user
+    summary: >-
+      首件**还没有工程图** ⇒ `collect_drawing` 的必备项与装订项都是空、两个修订号都空
+      ⇒ 采集不完整 ⇒ unknown（不是 fail）。
+      另外「图样应该包含哪些视图/标注」属 S2 的 `drawing_scope`，未冻结前判据无法定阈值。
+    evidence:
+      - specs/350-first-part-delivery/STATUS.md
+      - specs/350-first-part-delivery/s2-question-sheet.md
+      - scripts/engineering/acceptance/e5_e6_drawing.py
+
+  - check_id: E6.process
+    cause: requirement
+    owner: user
+    summary: >-
+      工艺路线未冻结（S2 的 `process`）⇒ `required_checks` 无从给 ⇒ 采集 complete=False
+      ⇒ unknown（不是 fail）。
+      ★ `judge_process` 已有「一条适用项都没有就不通过」，不得靠列「不适用」绕过。
+    evidence:
+      - specs/350-first-part-delivery/s2-question-sheet.md
+      - scripts/engineering/acceptance/e5_e6_drawing.py
+
+  - check_id: E7.provenance
+    cause: requirement
+    owner: agent
+    summary: >-
+      出处链要等前六项都有结论才能「逐条挂」⇒ 现在 claims/citations 都是空 ⇒ unknown。
+      这不是工具缺口：`check_fact_provenance.py` 与两道棘轮已在跑，
+      缺的是**待挂的结论**本身。
+    evidence:
+      - docs/known-facts.md
+      - scripts/check_fact_provenance.py
+      - scripts/engineering/acceptance/e7_provenance.py

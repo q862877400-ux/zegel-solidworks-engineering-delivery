@@ -7150,6 +7150,42 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 570 | **★★★★★ 米/毫米反复出错的**根因**：本仓两套约定并存、形参都是**裸名**（`sw_part` 收毫米、`sw_assembly.add_component` 收米）⇒ 调用方无从分辨** —— 2026-10-26（第 60 轮，业主：「这个米和毫米的问题已经出现过非常非常多次了……你给我解决清楚」）。
+     ★★★ 实测后果（不是「不好看」，是**错模型 + 假结论**）：
+     ```
+     探针按惯性给 add_component 传 30.0（想表达 30mm）
+     ⇒ 组件被放到 30 **米**外（平移读数 29950mm）
+     ⇒ 用射线选的两个面**都落在同一个组件上**
+     ⇒ 「两组件之间的配合」这个前提**从未成立**
+     ⇒ 我在一个**假问题**上排除了 12 个配合候选 ✗
+     ```
+     ★ 这个坑**不是第一次**：`tools/diag_*` / `tools/verify_*` 里还有 6 个文件
+       同样把毫米喂给收米的 `add_component`（`x=60` ⇒ 60 米）。
+     ★★★ 三道治法（缺一不可，已全部落地）：
+     ① **单位进名字**：`x,y,z` → `x_m,y_m,z_m`（`add_component` 家族）、
+        `distance` → `distance_m`、`radius_a/b` → `radius_a_m/b_m`。
+        ★ 只改**形参名**，位置参数调用不受影响 ⇒ 只有**关键字**调用会断，
+          而那正是必须被人看一眼的地方（那 6 个 bug 全在关键字调用里）。
+     ② **门禁**：`scripts/check_internal_length_units.py`，扫 `scripts/` + `tools/` 的
+        函数形参 —— 命中**有界量纲词表**却没有该量纲后缀即违规，接进 `release_check`
+        作**硬门禁**，基线 `docs/unit-naming-baseline.json` **只许降不许升**。
+        量纲表覆盖官方枚举（`swLengthUnit_e` / `swAngleUnit_e` / `swNumberboxUnitType_e` /
+        `swUnitsForce_e` / `swUnitsEnergyUnit_e` / `swUnitsPowerUnit_e` / `swUnitsTimeUnit_e` /
+        `swUnitsMassPropMass_e` / `swUnitsMassPropVolume_e`）+ 仿真常见量。
+     ③ **真机验证**：`tools/collect_e4_standalone.py` 回读每个组件的**变换矩阵平移量**，
+        判据是**量级**（全部 < 1000mm）。改后读数：
+        `translation_mm = [[-50.0,-30.0,10.0], [-20.0,-30.0,10.0]]`（X 差正好 30mm）。
+     ★★ 首轮基线：**234 处**裸量纲形参 / 10 个实际出现的量纲
+        （长度 180 · 角度 20 · 时间 18 · 频率 5 · 质量 4 · 力 3 · 力矩/体积/应力/能量 各 1）。
+        棘轮从此只许降。
+     ★★★ **踩过的两个坑，写下来免得重犯**：
+       · 改形参名时**函数体里的旧名字没跟着改** ⇒ `NameError: name 'x' is not defined`
+         （签名改了、体没改，`add_component` 三级兜底全失败）。
+         ⇒ 教训：**改名必须跑一次真机**，静态检查抓不到这种。
+       · 量纲词表里收 `r/d/w/h/l` 这类单字母 ⇒ 误报 122 处（`h` 是窗口句柄、`d` 是字典）。
+         ⇒ 教训：**语义词收进词表 = 门禁会被关掉**（与本文件里那条自述一致）。
+|真机：`tools/collect_e4_standalone.py`（`translation_mm`）· 门禁 `scripts/check_internal_length_units.py` · 测试 `tests/test_unit_discipline_root_cause.py` · 证据 `output/e4-standalone.json` |
+
 | 569 | **★★ `ISldWorks.NewDocument` 返回 True，但返回的 doc 对象可能**已断连**；`ActiveDoc` 也可能拿不到标题** —— 2026-10-26（第 56 轮）。
      ★★★ 现场（验收运行器 E4 段的实测证据，`output/s3-acceptance.json` 的 `E4.steps`）：
      ```
