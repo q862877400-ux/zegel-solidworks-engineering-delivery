@@ -69,6 +69,20 @@ def _tc(*args, **kwargs):
     return try_call(*args, **kwargs)
 
 
+def relations_needed(dimension_style: str) -> bool:
+    """该风格是否要加「点对点关系」。
+
+    ★★★ 实测三组对照（output/probe_isolate2.py，同一套 4 个孔位）：
+    `
+    无关系 + 4 点 FIXED ⇒ 圆柱面 4 · 状态 3   ✓
+    有关系 + 4 点 FIXED ⇒ 圆柱面 1 · 状态 3   ✗ 孔被挤到一起
+    `
+    ⇒ 「逐点绝对固定」与「点关系」是**冗余且冲突**的：SW 只能靠移动点同时满足两者。
+      所以 ixed_points 风格**不加关系**；	o_edge 靠尺寸定位置，才需要关系。
+    """
+    return str(dimension_style) != "fixed_points"
+
+
 def _features(doc, type_name: str) -> list:
     out = []
     f = _g(doc, "FirstFeature")
@@ -203,6 +217,13 @@ def build_plate_with_holes(
         if trace is not None:
             trace.append((step, kw))
 
+    #: ★★ 风格必须在**加关系之前**归一化：上一版把降级写在后面，结果先按 to_edge
+    #:   加了 4 条关系、再降级 ⇒ 关系与 FIXED 冲突，圆柱面只剩 2。
+    if dimension_style != "fixed_points":
+        note("风格降级", 请求=dimension_style, 实际="fixed_points",
+             原因="AddDimension 对本机成对实体返回 None（实测）")
+        dimension_style = "fixed_points"
+
     try:
         ok, doc = _tc(c_.new_document, sw, "part")
         if not ok or doc is None:
@@ -256,7 +277,16 @@ def build_plate_with_holes(
              坐标=[_point_xy_mm(p) for p in pts])
 
         #: ④ 四条点关系（组成矩形）—— 用坐标挑点，不依赖顺序
-        if len(pts) >= 4:
+        #:   ★★★ 只在 	o_edge（靠尺寸定位置）时才加关系：
+        #:     实测三组对照（output/probe_isolate2.py）——
+        #:       无关系 + 4 点 FIXED ⇒ 圆柱面 **4**、状态 3
+        #:       有关系 + 4 点 FIXED ⇒ 圆柱面 **1**、状态 3（孔被挤到一起）
+        #:     关系与「逐点绝对固定」冗余且冲突，SW 靠移动点去同时满足两者。
+        #:   ⇒ ixed_points 风格**不加关系**。
+        if not relations_needed(dimension_style):
+            note("点关系", 跳过=True,
+                 原因="fixed_points 与点关系冗余冲突（实测圆柱面 4→1）")
+        elif len(pts) >= 4:
             p1 = _pick(pts, *holes_mm[0])
             p2 = _pick(pts, *holes_mm[1])
             p3 = _pick(pts, *holes_mm[2])
@@ -282,10 +312,6 @@ def build_plate_with_holes(
         #:   ★ 	o_edge：本应标「点到板边」尺寸，但实测 AddDimension 在本机对
         #:     **成对实体**（点+线、线+线）一律返回 None ⇒ 该风格当前不可用，
         #:     代码保留但会走 ixed_points 并在报告里说明。
-        style = dimension_style
-        if style != "fixed_points":
-            note("风格降级", 请求=style, 实际="fixed_points",
-                 原因="AddDimension 对本机成对实体返回 None（实测）")
         fixed = 0
         for p in pts:
             doc.ClearSelection2(True)

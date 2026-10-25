@@ -116,3 +116,58 @@ ote() 记录
 
 ⇒ 判据：跑一个只改「首个孔位」的对照，看圆柱面数是否跟着变。
    这是可复算的取证，不靠猜。
+
+
+---
+
+## 第 3 轮：**6/6 达成**（2026-10-26）
+
+### 定因（三组对照，一次探针）
+
+| 组 | 首孔 | 点关系 | 点/FIXED | 状态 | 圆柱面 |
+|---|---|---|---|---|---|
+| A | (10,10) | **无** | 4/4 | 3 | **4** ✓ |
+| B | (10,10) | **有** | 4/4 | 3 | **1** ✗ |
+| C | (10,50) | **无** | 4/4 | 3 | **4** ✓ |
+
+⇒ 真因**不是**首孔位置，而是「**点关系与逐点 FIXED 冲突**」：
+  两者都在约束同样的事，SW 只能靠移动点去同时满足 ⇒ 孔被挤到一起。
+
+### 修法
+
+ixed_points 风格**不加点关系**（
+elations_needed() 纯函数 + 测试锁住）；
+	o_edge 风格靠尺寸定位置，才需要关系。
+
+★ 上一版还把「风格降级」写在加关系**之后** ⇒ 先按 to_edge 加了 4 条关系、再降级，
+  于是也踩了同一个冲突（圆柱面 2）。降级必须前移到加关系之前 —— 这条也写进注释。
+
+### 最终真机读数（连跑 3 次，全部通过）
+
+`
+feature_count_hole      PASS (1)
+hole_standard_gb        PASS (GB)
+hole_sketch_constrained PASS (3)
+cylinder_count          PASS (4)
+hole_size               PASS (M6)
+hole_fastener           PASS (螺钉间隙)
+★ 结论：全部通过
+`
+
+### 现状：L1–L4 全部可用
+
+`ash
+python -B tools/teach.py capture --start/--stop      # L1 捕获
+python -B tools/teach.py derive --snapshot … --out … # L2 提炼
+python -B tools/teach.py profile --id owner --set …  # L4 个人化
+python -B tools/teach.py run --recipe … --profile …  # L3 执行（6/6）
+`
+
+### 未尽事项（如实）
+
+- 	o_edge 风格（点到边尺寸，参数化更好）**仍被 AddDimension 阻塞**：
+  实测本机对「点+线」「线+线」一律返回 None ⇒ 保留代码，降级并记录。
+  一旦尺寸 API 可用，切 habits.yaml 的 dimension_style: to_edge 即可。
+- solid_body_extent_mm 的 
+aw **单位不一致**（x/y 米、z 毫米）—— 已记录，
+  未修（不在本目标范围，但影响任何靠 bbox 推尺寸的代码）。

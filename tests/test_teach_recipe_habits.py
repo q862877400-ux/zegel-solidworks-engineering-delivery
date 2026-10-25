@@ -191,3 +191,20 @@ def test_apply_to_recipe_fills_dimension_style() -> None:
 def test_type_mismatch_is_rejected() -> None:
     problems = sw_habits.validate({"prefer_pattern_over_points": "yes"})
     assert problems and "bool" in problems[0]
+
+
+def test_relations_skipped_for_fixed_points() -> None:
+    """★ 实测：fixed_points + 点关系冲突 ⇒ 圆柱面 4→1。故该风格**不加**关系。"""
+    sys.path.insert(0, str(REPO / "scripts"))
+    import sw_recipe_exec as E
+
+    assert E.relations_needed("fixed_points") is False
+    assert E.relations_needed("to_edge") is True
+
+
+def test_derived_assertions_are_all_whitelisted() -> None:
+    """提炼出来的 assertion 键必须都在白名单里（否则等于没验）。"""
+    r = sw_recipe.derive_from_snapshot(_snapshot())
+    unknown = [k for k in r["assertions"] if k not in sw_recipe.ALLOWED_ASSERTIONS]
+    assert unknown == []
+    assert len(r["assertions"]) >= 4
