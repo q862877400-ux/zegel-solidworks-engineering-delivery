@@ -51,24 +51,69 @@ CHECKER_VERSION = "s1-1"
 
 
 def collect_rebuild(
-    *, target: str, opened_existing: bool, changed_params: tuple,
-    downstream_linked: bool, rebuild_errors: int, reopened_ok: bool,
-    drawing_is_current: bool, version: str = "",
+    *,
+    target: str,
+    opened_existing: bool,
+    changed_params: tuple,
+    positions_before: tuple = (),
+    positions_after: tuple = (),
+    position_tol_mm: float = 0.1,
+    rebuild_errors: int = 0,
+    reopened_ok: bool = False,
+    drawing_is_current: bool = False,
+    version: str = "",
 ) -> Observation:
-    """★ 采集器：记录「重建这件事是怎么做的」。"""
+    """★ 采集器：记录「重建这件事是怎么做的」，并**从实测孔位推导**下游是否联动。
+
+    ## ★★ `downstream_linked` 为什么不再收参数（第 38 轮）
+
+    它原来是一个调用方传进来的布尔 ⇒ **声明 True 就能让 E2 通过，不需要任何实测**，
+    与 `AGENTS.md`「采集器从实际产物取数」直接冲突。
+
+    现在改成收 `positions_before` / `positions_after`（改前/改后的孔心，毫米），
+    由本函数自己比：
+
+    | 输入 | `downstream_linked` |
+    |---|---|
+    | 有一对位置位移 > `position_tol_mm` | `True` |
+    | 所有位置都没动 | `False` |
+    | **没给位置 / 数量对不上** | 采集不完整 ⇒ `unknown` |
+
+    ★ 为什么「有任何位移」就算联动，而不是「位移等于某个值」：
+      「该动多少」取决于冻结的需求（S2），判据层不该自己编一个数。
+      实测位移量记进 `values["shifts_mm"]`，等 S2 冻结后可以再加严。
+    ★ 为什么没给位置判 `unknown` 不是 `fail`：没量过 ≠ 没联动。判 fail 是编事实。
+    """
+    before = [tuple(float(v) for v in p[:2]) for p in (positions_before or ())]
+    after = [tuple(float(v) for v in p[:2]) for p in (positions_after or ())]
+    pairs = list(zip(before, after)) if len(before) == len(after) else []
+    shifts = [max(abs(a[0] - b[0]), abs(a[1] - b[1])) for a, b in pairs]
+    linked = any(s > position_tol_mm for s in shifts)
     return Observation(
         target=target,
-        complete=bool(changed_params) and bool(target),
+        complete=bool(changed_params) and bool(target) and bool(pairs),
         values={
             "opened_existing": opened_existing,
             "changed_params": list(changed_params),
-            "downstream_linked": downstream_linked,
+            "downstream_linked": linked,
+            #: ★ 实测位移量（等 S2 冻结「该动多少」后可以再加严判据）
+            "shifts_mm": shifts,
+            "position_tol_mm": position_tol_mm,
+            "positions_paired": len(pairs),
             "rebuild_errors": rebuild_errors,
             "reopened_ok": reopened_ok,
             "drawing_is_current": drawing_is_current,
             "version": version,
         },
-        note="" if changed_params else "没记录任何改动的参数 ⇒ 采集不完整",
+        note=(
+            ""
+            if (changed_params and target and pairs)
+            else (
+                "没给改前/改后的孔位 ⇒ 无法判「下游联动」（不给就判 unknown）"
+                if changed_params and target
+                else "没记录任何改动的参数 ⇒ 采集不完整"
+            )
+        ),
     )
 
 

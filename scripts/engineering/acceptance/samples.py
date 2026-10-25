@@ -134,11 +134,13 @@ def unknown_e1() -> Observation:
 
 
 def good_e2() -> Observation:
+    #: ★ 板宽 100→120，四个孔各右移 20mm ⇒ 下游确有联动（实测孔位由调用方给）
     return collect_rebuild(
         target="plate-rev1",
         opened_existing=True,
         changed_params=("w",),
-        downstream_linked=True,
+        positions_before=((10.0, 10.0), (90.0, 10.0), (10.0, 50.0), (90.0, 50.0)),
+        positions_after=((30.0, 10.0), (110.0, 10.0), (30.0, 50.0), (110.0, 50.0)),
         rebuild_errors=0,
         reopened_ok=True,
         drawing_is_current=True,
@@ -146,12 +148,16 @@ def good_e2() -> Observation:
 
 
 def bad_e2_new_document() -> Observation:
-    """★ R-10 的替代品：新建文档重跑冒充「改已交付件」。"""
+    """★ R-10 的替代品：新建文档重跑冒充「改已交付件」。
+
+    ★ 位置给一对错开的 —— 让「opened_existing=False」成为**唯一的**失败原因。
+    """
     return collect_rebuild(
         target="plate-rev2-new",
         opened_existing=False,
         changed_params=("w",),
-        downstream_linked=True,
+        positions_before=((10.0, 10.0), (90.0, 10.0)),
+        positions_after=((30.0, 10.0), (110.0, 10.0)),
         rebuild_errors=0,
         reopened_ok=True,
         drawing_is_current=True,
@@ -159,12 +165,13 @@ def bad_e2_new_document() -> Observation:
 
 
 def bad_e2_no_downstream() -> Observation:
-    """改了主参数但孔没跟着动。"""
+    """改了主参数但孔没跟着动（实测：孔位前后完全相同）。"""
     return collect_rebuild(
         target="plate-rev1",
         opened_existing=True,
         changed_params=("w",),
-        downstream_linked=False,
+        positions_before=((10.0, 10.0), (90.0, 10.0)),
+        positions_after=((10.0, 10.0), (90.0, 10.0)),
         rebuild_errors=0,
         reopened_ok=True,
         drawing_is_current=True,
@@ -172,11 +179,11 @@ def bad_e2_no_downstream() -> Observation:
 
 
 def unknown_e2() -> Observation:
+    #: ★ 没给改动参数（也没给位置）⇒ 采集不完整
     return collect_rebuild(
         target="plate-rev1",
         opened_existing=True,
         changed_params=(),
-        downstream_linked=True,
         rebuild_errors=0,
         reopened_ok=True,
         drawing_is_current=True,

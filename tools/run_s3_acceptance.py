@@ -262,7 +262,10 @@ def main() -> int:
         for (x0, y0), (x1, y1) in zip(holes_before, holes_after):
             shifts.append(round(x1 - x0, 2))
         max_shift = max((abs(s) for s in shifts), default=0.0)
-        linked = bool(max_shift > 1.0)
+        #: ★ 第 38 轮：这里原先有 `linked = bool(max_shift > 1.0)` 传给采集器 ——
+        #:   现在联动由 `collect_rebuild` 从**实测孔位**自己推导
+        #:   （`downstream_linked` 已不是形参）⇒ 那行没有去向了，删掉。
+        #:   `max_shift` 保留：仍写进证据供人看。
         ev["E2"] = {
             "holes_before": holes_before, "holes_after": holes_after,
             "shifts_mm": shifts, "max_shift_mm": max_shift,
@@ -284,7 +287,10 @@ def main() -> int:
             target="板1_rev-1 副本",
             opened_existing=True,
             changed_params=changed,
-            downstream_linked=linked,
+            #: ★ 第 38 轮：不再传 `downstream_linked` 布尔 ——
+            #:   改为给**实测孔位**，由采集器自己推导（声明 True 已经不算数了）
+            positions_before=tuple(tuple(p[:2]) for p in (holes_before or ())),
+            positions_after=tuple(tuple(p[:2]) for p in (holes_after or ())),
             rebuild_errors=int(ww.get("count") or 0),
             reopened_ok=reopened_ok,
             drawing_is_current=False,
