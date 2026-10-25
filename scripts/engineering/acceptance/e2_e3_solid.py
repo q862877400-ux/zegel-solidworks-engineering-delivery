@@ -147,10 +147,18 @@ def collect_feature_tree(
     imported_solids: int, dangling_refs: int, errors: int, warnings: int,
     editable_prefix_verified: bool, version: str = "",
 ) -> Observation:
-    """★ 采集器：回读特征树。"""
+    """★ 采集器：回读特征树。
+
+    ★★★ 第 33 轮修：`complete` 原来只看 `feature_count > 0` ——
+      `native_features=-1`（本仓惯用 `-1` 表示「读不出」）时仍然 complete=True
+      ⇒ 判定器报「没有任何原生特征 ⇒ fail」，把「**读不出**」说成了「**一个都没有**」。
+      ⇒ 任一计数为负即视为采集不完整。
+    """
+    _counts = (feature_count, native_features, imported_solids, dangling_refs)
+    _readable = all(int(c) >= 0 for c in _counts)
     return Observation(
         target=target,
-        complete=feature_count > 0,
+        complete=feature_count > 0 and _readable,
         values={
             "feature_count": feature_count,
             "native_features": native_features,
@@ -161,7 +169,15 @@ def collect_feature_tree(
             "editable_prefix_verified": editable_prefix_verified,
             "version": version,
         },
-        note="" if feature_count > 0 else "特征数为 0 ⇒ 采集不完整",
+        note=(
+            ""
+            if (feature_count > 0 and _readable)
+            else (
+                "特征数为 0 ⇒ 采集不完整"
+                if feature_count <= 0
+                else "有计数为负（读不出）⇒ 采集不完整：%r" % (_counts,)
+            )
+        ),
     )
 
 
@@ -355,9 +371,18 @@ def collect_hole_readback(
       ⇒ 若 `measured` 里没有 `kind` 字段，采集器如实标 `unknown_kind`。
     """
     holes = list((measured or {}).get("holes") or ())
+    #: ★★★ 第 33 轮修：`complete` 原来只看 `bool(requested)` ——
+    #:   `measured={}` 时仍然 complete=True ⇒ 判定器报「B-Rep 里有 0 个孔 ⇒ fail」，
+    #:   把「**没量过**」说成了「**量到 0 个**」。
+    #:
+    #:   ★ 两种情况必须分开：
+    #:     · 零件真的没孔 ⇒ `{"holes": [], "errors": []}` ⇒ complete=True ⇒ fail（正确）
+    #:     · 量测失败   ⇒ `{}` 或 `{"holes": [], "errors": [...]}` ⇒ complete=False ⇒ unknown
+    _errs = list((measured or {}).get("errors") or ())
+    _usable = bool(measured) and not (_errs and not holes)
     return Observation(
         target=target,
-        complete=bool(requested),
+        complete=bool(requested) and _usable,
         values={
             "requested": list(requested),
             "measured": measured or {},
