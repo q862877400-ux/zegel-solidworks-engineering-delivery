@@ -208,6 +208,26 @@ def _dims(doc) -> list:
     return out
 
 
+def _mate_records(e4: dict) -> tuple:
+    """把采集器证据里的配合转成 `collect_assembly` 要的 `{"kind","a","b"}`。
+
+    ★ 只有**同时**拿到「配合特征」与「两个面的归属组件」时才产出记录 ——
+      缺任一侧就不产出（宁可不完整，也不编配合对象）。
+    """
+    steps = e4.get("steps") or {}
+    owners = [str(o) for o in (steps.get("mate_owners") or ()) if o]
+    if len(owners) < 2:
+        return ()
+    out = []
+    for m in e4.get("mates") or ():
+        if not isinstance(m, dict):
+            continue
+        name = str(m.get("name") or "")
+        kind = str(m.get("type") or "")
+        if name:
+            out.append({"kind": kind or name, "a": owners[0], "b": owners[1]})
+    return tuple(out)
+
 def main() -> int:
     ev: dict = {"probe": "s3-acceptance"}
     sw = doc = None
@@ -540,8 +560,13 @@ def main() -> int:
             obs_e4 = collect_assembly(
                 target="板1 + 板1（两组件 · 开文档前独立采集）",
                 components=tuple("板1-%d" % (k + 1) for k in range(max(n_comp, 0))),
-                #: ★ 配合建不出来 ⇒ 空元组（事实 565/568）
-                mates=(),
+                #: ★★★ 第 61 轮：配合**第一次真建成**（事实 571）——
+                #:   把真实配合特征喂进去，E4 的 `complete` 才成立。
+                #: ★★★ 第 61 轮：`mates` 每项必须是 `{"kind","a","b"}`
+                #:   （`judge_assembly_interference` 按 a/b 双非空过滤 —— 第 44 轮口径）。
+                #:   `a`/`b` 用采集器**实测**的 `mate_owners`（那个配合由哪两个面建的、
+                #:   各自归属哪个组件），不是编的。
+                mates=_mate_records(e4),
                 target_dof=0,
                 interference_count=n_interf,
                 min_clearance_mm=-1.0,

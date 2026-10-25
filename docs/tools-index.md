@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 673 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 675 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -29,7 +29,7 @@
 | 列出某类条目 | **清单** | 4 | `list_*` |
 | 对某类数据做分析 | **分析** | 2 | `analyze_*` |
 | 对候选做判定 | **裁判** | 6 | `judge_*` |
-| 查某现象为什么发生（不改任何东西） | **诊断** | 10 | `diag_*` |
+| 查某现象为什么发生（不改任何东西） | **诊断** | 12 | `diag_*` |
 | 按已知根因批量改文件 | **修复** | 3 | `fix_*` |
 | 从官方源或日志里抽出结构 | **提取** | 3 | `extract_*` |
 | 抽几条核对 | **抽检** | 3 | `spotcheck_*` |
@@ -717,7 +717,7 @@
 | `judge_naked_batch2.py` | ★ objective② 批量判定：把 naked 清单里的条目按**两层证据**判「真缺 vs 已有」 |
 | `judge_two_boundary_cases.py` | ★ 判 `check_official_source_defects` 那 2 处边界：哪个是误报、哪个是真漏 |
 
-## 诊断（10 个）
+## 诊断（12 个）
 
 > 用途：查某现象为什么发生（不改任何东西）
 
@@ -729,6 +729,8 @@
 | `diag_in_context_projection.py` | ★ 诊断探针：定位「SketchUseEdge3 返回 ok 但投影出 0 个实体」的真因 |
 | `diag_in_context_sketch.py` | @brief 诊断：`convert_entities` 之后**到底哪个草图里有几个实体** —— 换读数法，不再改写法 |
 | `diag_insert_dome.py` | @brief 诊断：`InsertDome` 到底该怎么调？（轮 143，第 3 次终于对了之前先诊断） ## 已知 * 官方签名 `void IModelDoc2.InsertDome(double Height, bool Revers |
+| `diag_mate_face_owner.py` | 聚焦诊断：**一束一束**射线地看归属，并打印每束命中点的坐标 |
+| `diag_mate_two_faces.py` | 补一步：**同时选中两个面**后再读归属 —— 隔离「两项选择」这个情形 |
 | `diag_read_exits_sketch.py` | ★ 诊断：抓指纹会不会把「草图编辑态」弄没（★ 决定三条 sketch_* 能不能跑） |
 | `diag_residual_selection.py` | ★ 诊断探针 2：查「开草图后 selection=1」那个残留选择是什么 |
 | `diag_selection_lifetime.py` | ★ 单变量隔离：选区在 `_pick_faces` 之后、工具读取之前，**到底被哪一步清掉** |

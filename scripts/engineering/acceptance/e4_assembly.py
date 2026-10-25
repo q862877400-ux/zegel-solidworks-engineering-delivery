@@ -42,6 +42,23 @@ CHECKER_VERSION = "s1-1"
 
 #: ★ 与 `assembly.MateKind.REMOVES` 同源（只读引用，不改它的语义）
 #: enum-gate: not-enum derived
+def _mate_kind_key(kind) -> str:
+    """把配合类型归一化成 `_DOF_REMOVED` 的键。
+
+    ★ 第 61 轮：真机读到的是**特征类型名** `MateCoincident`，
+      而表里写的是 `coincident` ⇒ 查不到 ⇒ 扣常数算成 0。
+      归一化：去前缀 `Mate`、转小写、去掉非字母。
+    """
+    s = str(kind or "").strip().lower()
+    if s.startswith("mate"):
+        s = s[4:]
+    return "".join(ch for ch in s if ch.isalpha())
+
+
+#: enum-gate: not-enum derived
+#: ★ 这张表**不是官方枚举值**，是「每种配合约束掉几个自由度」的**推算常数**
+#:   （coincident 3 / concentric 4 / distance 1 / parallel 2 / perpendicular 2）。
+#:   它只在 dof_measured=True 时参与计算；本机读不到 DOF ⇒ 默认走 unknown。
 _DOF_REMOVED = {
     "coincident": 3,
     "concentric": 4,
@@ -55,6 +72,9 @@ def collect_assembly(
     *, target: str, components: tuple, mates: tuple, target_dof: int,
     interference_count: int, min_clearance_mm: float,
     clearance_basis: str, configuration: str = "", version: str = "",
+    #: ★★ 第 61 轮：DOF 是否**实测**。本机没有数值 DOF 读取入口（三源确认）
+    #:   ⇒ 默认 False ⇒ 判定器必须给 `unknown`，**不许**拿配合数估算去判 fail。
+    dof_measured: bool = False,
 ) -> Observation:
     """★ 采集器：记录组件、配合（原始清单，含重复）、干涉与间隙。
 
@@ -67,6 +87,7 @@ def collect_assembly(
             "components": list(components),
             "mates": list(mates),
             "target_dof": target_dof,
+            "dof_measured": bool(dof_measured),
             "interference_count": interference_count,
             "min_clearance_mm": min_clearance_mm,
             "clearance_basis": clearance_basis,
@@ -182,12 +203,19 @@ def judge_assembly_interference(
         )
 
     #: ④ 间隙必须有依据
+    #:   ★★ 第 61 轮改 `fail` → `unknown`：**「没量过」不是「不合格」**
+    #:     （第 33 轮定下的口径）。间隙 -1 表示没测，不是间隙为负。
+    #:     判 fail 会把「我方没测」说成「产物坏了」，那是编事实。
     if not v["clearance_basis"]:
         return CheckResult(
-            **base, status=Status.FAIL,
+            **base, status=Status.UNKNOWN,
             observed={"clearance_mm": v["min_clearance_mm"]},
-            expected={"basis": "非空"},
-            reason="★ 最小间隙 %.2f mm 没有依据 ⇒ 不能判合规" % v["min_clearance_mm"],
+            expected={"basis": "非空（实测间隙 + 依据）"},
+            reason=(
+                "★ 最小间隙**没有实测依据**（读数 %s）⇒ 这一项没量过，"
+                "不是不合格。要判它得先量出关键间隙并写明依据"
+                % v["min_clearance_mm"]
+            ),
         )
 
     return CheckResult(
@@ -258,10 +286,42 @@ def judge_assembly(obs: Observation, *, requirement_id: str) -> CheckResult:
             reason="★ 没有功能配合 ⇒ 若靠「全固定」定位，不是配合约束表达",
         )
 
+    #: ★★★ 第 61 轮：**干涉 = 0 是可直接判的事实**，放在 DOF 之前 ——
+    #:   否则「DOF 没实测 ⇒ unknown」会把确凿的实体干涉挡住。
+    #:   ★ 原则：**能判的先判，不能判的才 unknown**。
+    if v["interference_count"] > 0:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"interference": v["interference_count"]}, expected=0,
+            reason="★ 有 %d 处实体干涉" % v["interference_count"],
+        )
+
+    #: ★★★ 第 61 轮：**DOF 没实测 ⇒ 直接 unknown**，不许拿估算判 fail。
+    #:   本机没有数值 DOF 读取入口（`source-verification.md` 三源确认），
+    #:   下面的 `base_dof - removed` 是**模型推算**，不是观测值。
+    #:   ⇒ 拿它判 `fail` 就是「拿估算当观测」（本项目红线）。
+    if not v.get("dof_measured"):
+        moving0 = [c for c in v["components"] if not str(c).startswith("ground:")]
+        est = 6 * len(moving0) - sum(
+            _DOF_REMOVED.get(_mate_kind_key(m.get("kind")), 0) for m in seen.values()
+        )
+        return CheckResult(
+            **base,
+            status=Status.UNKNOWN,
+            observed={"mates": len(seen), "estimated_dof": max(0, est)},
+            expected={"target_dof": v["target_dof"]},
+            reason=(
+                "★ 剩余自由度**没有实测入口**（本机 API 无数值 DOF 读取）⇒ "
+                "这一项验不了。按配合数推算约为 %d，但**估算不作为观测**" % max(0, est)
+            ),
+        )
+
     #: ③ 算剩余 DOF（去重后）
     moving = [c for c in v["components"] if not str(c).startswith("ground:")]
     base_dof = 6 * len(moving)
-    removed = sum(_DOF_REMOVED.get(str(m.get("kind", "")), 0) for m in seen.values())
+    removed = sum(
+        _DOF_REMOVED.get(_mate_kind_key(m.get("kind")), 0) for m in seen.values()
+    )
     dof = max(0, base_dof - removed)
     want = v["target_dof"]
     if dof != want:
@@ -271,13 +331,6 @@ def judge_assembly(obs: Observation, *, requirement_id: str) -> CheckResult:
             reason="★ 剩余自由度 %d ≠ 目标 %d ⇒ 过约束或欠约束" % (dof, want),
         )
 
-    #: ④ 干涉必须为 0
-    if v["interference_count"] > 0:
-        return CheckResult(
-            **base, status=Status.FAIL,
-            observed={"interference": v["interference_count"]}, expected=0,
-            reason="★ 有 %d 处实体干涉" % v["interference_count"],
-        )
 
     #: ⑤ 间隙必须有依据（不能「看着够」）
     if not v["clearance_basis"]:

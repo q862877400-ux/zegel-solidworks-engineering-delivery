@@ -278,6 +278,9 @@ def good_e4() -> Observation:
         min_clearance_mm=0.5,
         clearance_basis="图纸标注 0.5 mm 配合间隙",
         configuration="默认",
+        #: ★★ 第 61 轮：正例代表「DOF 已实测」的情形 —— 不声明的话
+        #:   `judge_assembly` 会如实回 `unknown`（本机没有数值 DOF 读取入口）。
+        dof_measured=True,
     )
 
 

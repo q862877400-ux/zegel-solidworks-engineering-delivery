@@ -101,14 +101,29 @@ def _select_two_faces(doc, *, nonplanar: bool = False) -> dict:
     #: ★ 第 48 轮修：两条**都从上方**打（`-z` 方向已验证可用），只改起射高度。
     #:   组件 2 抬到 z=50mm 后其顶面在 z=70mm ⇒ 射线起点要高于 70mm。
     #:   ⇒ 两面平行但不共面（z=20 与 z=70）⇒ 重合配合若成立会把组件 2 拉下来。
+    #: ★★★ 第 61 轮：按**实测几何**选面 —— 必须一块板一个。
+    #:   实测：组件1 占 x −50…+50mm、组件2 占 x −20…+80mm ⇒ **X 方向重叠**，
+    #:   所以「都从上方打」会**两个面都落在组件2 上**（实测 `distinct: 1`）
+    #:   ⇒ `CreateMate` 拿「一个面和它自己」建配合 ⇒ 必然回 None。
+    #:
+    #:   新选法各取一块**独占**的 x：
+    #:     · 组件1 顶面（z=30mm）：x=−40mm，起点 z=70mm，方向 −z
+    #:     · 组件2 底面（z=60mm）：x=+70mm，起点 z=40mm，**方向 +z**
+    #:   ⇒ 重合配合会把组件2 拉下来 30mm 贴住组件1（有意义的几何）。
+    #:   ★ `SelectByRay` 收**米**：−40mm = −0.040。
     rays = (
-        (5.0, 5.0, 0.070, -1.0),
-        (35.0, 5.0, 0.090, -1.0) if nonplanar else (35.0, 5.0, 0.070, -1.0),
+        (-0.040, 0.0, 0.070, -1.0),
+        (0.070, 0.0, 0.040, 1.0) if nonplanar else (5.0, 5.0, 0.070, -1.0),
     )
-    for idx, (x_mm, y_mm, z_m, dz) in enumerate(rays):
+    for idx, (x_m, y_m, z_m, dz) in enumerate(rays):
         get_com_member(
             ext, "SelectByRay",
-            x_mm / 1000.0, y_mm / 1000.0, z_m,
+            #: ★★★ 第 61 轮修：这些值**已经是米**，不能再 `/1000`。
+            #:   原文是 `x_mm / 1000.0` —— 对旧的毫米值是对的；
+            #:   我把射线换成米之后忘了去掉除法 ⇒ 两束都打在原点附近
+            #:   ⇒ **都命中组件 2** ⇒ `distinct: 1` ⇒ `CreateMate` 拿「面和它自己」建配合。
+            #:   ★ 同一个单位病，出现在**我自己的诊断代码**里。
+            x_m, y_m, z_m,
             0.0, 0.0, dz, 1e-4,
             2,                                      #: swSelFACES
             bool(idx),
@@ -156,18 +171,48 @@ def main() -> int:
         EV.mark("new_assembly", ok=ok_n)
 
         before = _count(asm_doc)
-        #: ★ 第 46 轮：把第二个组件**抬到 z=50mm**，让两块的接触面不共面、法向相反
-        #:   —— 用来验第 45 轮那个「共面导致冗余、所以 CreateMate 回 None」的假设。
+        #: ★★★ 第 61 轮修（事实 570）：`add_component` 的 x/y/z 单位是**米**。
+        #:   这里原来写 `30.0` / `50.0` —— 那是 **30 米 / 50 米**！
+        #:   ⇒ 两束 `SelectByRay` **都命中同一个组件**
+        #:   ⇒ 「两组件之间的重合配合」这个前提**从未成立**
+        #:   ⇒ 第 45–59 轮那 12 个「排除」里，有一批是在拿同一零件的两个面建配合。
+        #:   改为米：右移 30mm、抬高 50mm（`NONPLANAR` 时）。
         _try(asm_.add_component, asm_doc, str(PART), 0.0, 0.0, 0.0, "", sw)
         _try(
-            asm_.add_component, asm_doc, str(PART), 30.0, 0.0,
-            (50.0 if NONPLANAR else 0.0), "", sw,
+            asm_.add_component, asm_doc, str(PART), 0.030, 0.0,
+            (0.050 if NONPLANAR else 0.0), "", sw,
         )
         after = _count(asm_doc)
         EV.mark("components", before=before, after=after, added=after - before)
 
         sel = _select_two_faces(asm_doc, nonplanar=NONPLANAR)
         EV.mark("select_faces", **sel)
+
+        #: ★★★ 第 61 轮：**证明两个面分属不同组件** —— 这一步以前从没做过。
+        #:   官方 `ISelectionMgr.GetSelectedObjectsComponent4(Index, Mark)` 回每个选中项所属组件。
+        owners: list = []
+        try:
+            sm = c_.get_com_member(asm_doc, "SelectionManager")
+            for k in (1, 2):
+                ok_o, comp = _try(
+                    #: ★ GetSelectedObjectsComponent4(Index, Mark) —— 射线是用 **mark=1** 选的，
+                    #:   所以这里必须查 mark=1。★ 第一版传 -1（那是「忽略 Mark 取动态高亮」），
+                    #:   结果两次都回同一个组件 ⇒ 是**诊断写错**，不是选面错。
+                    c_.get_com_member, sm, "GetSelectedObjectsComponent4", k, 1
+                )
+                if ok_o and comp is not None:
+                    owners.append(
+                        str(c_.get_com_member(comp, "Name2") or comp)
+                    )
+                else:
+                    owners.append(None)
+        except Exception as exc:  # noqa: BLE001
+            EV.data["owners_err"] = type(exc).__name__
+        EV.mark(
+            "face_owners",
+            owners=owners,
+            distinct=len({o for o in owners if o}) if all(owners) else None,
+        )
 
         m_before = len(_real_mates(asm_doc))
         ok_d, data = _try(

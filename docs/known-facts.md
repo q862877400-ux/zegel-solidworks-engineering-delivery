@@ -7150,6 +7150,42 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 571 | **★★★★★ 配合**建成了**（`重合1` / `MateCoincident`）—— 第 45–59 轮那 **12 个「排除」全部作废**，它们跑在一个假前提上** | 2026-10-26（第 61 轮）。
+     ★★★ 真机读数（`tools/probe_e4_assembly.py --nonplanar`）：
+     ```
+     components    {'before': 0, 'after': 2, 'added': 2}
+     face_owners   ['板1_rev-1-1', '板1_rev-1-2']   distinct: 2   ← ★ 两块板各一个面
+     try_mate      create_ok=True · feat_none=False · mates 0 → 1
+     E4 采集器     mates = [{'name': '重合1', 'type': 'MateCoincident'}]
+     ```
+     ★★★ **为什么以前全是「建不出来」（两层单位错，叠在一起）**：
+     ```
+     ① 组件位置  add_component(..., 30.0, 0.0, 50.0) —— 单位是**米**
+                ⇒ 两块板相距 30 米（事实 570）
+     ② 射线坐标  SelectByRay 调用里写 `x_mm / 1000.0` —— 而值**已经是米**
+                ⇒ 两束射线都打在原点附近 ⇒ **都命中组件2**
+     ⇒ distinct: 1 ⇒ CreateMate 拿「一个面和它自己」建配合 ⇒ 必然回 None
+     ```
+     ★★ 决定性的一步是**加了一条归属检查**（`ISelectionMgr.GetSelectedObjectsComponent4`）：
+       它第一次把「两个面属于哪个组件」变成读数 ⇒ 一眼看出 `distinct: 1` ⇒
+       才知道前 12 次「排除」测的根本不是配合。
+       ★ 教训：**排除一个候选之前，先证明测试设置有效**
+         （与事实 566/568 同族；那次是 `setattr` 静默失败，这次是选面选错对象）。
+     ★ 几何要点（实测）：`add_component` 的 x 是**组件原点**平移，而零件自身原点在角上
+       （实测偏移 −50/−30/+10 mm）⇒ 两块板在 X 方向**会重叠**，
+       所以选面必须各取一块**独占**的 x（−40mm 只属组件1、+70mm 只属组件2）。
+     ★★★ 同轮暴露并修掉的**判据诚实性**问题（配合建成后 `complete` 才成立，才看得出来）：
+     ```
+     E4.dof  原：拿 `6×组件数 − 配合扣常数` 的**估算**去判 fail
+             ⇒ 改：`dof_measured` 未声明 ⇒ unknown（估算不是观测，本项目红线）
+             顺带把配合类型归一化（MateCoincident → coincident），扣常数表才用得上
+     E4.interference 原：间隙没依据判 fail
+             ⇒ 改：unknown（「没量过 ≠ 不合格」，第 33 轮口径）
+     ★ 但「干涉 > 0」**提到 DOF 之前**判 —— 能判的先判，不能判的才 unknown
+     ```
+     ❌ 仍**未**成立：`E4.dof` 与 `E4.interference` 现在都是 unknown，理由是
+        「DOF 无读取入口」与「关键间隙没实测」。⇒ E4 要绿，还差**间隙实测**这一条。|真机：`tools/probe_e4_assembly.py`（`face_owners`）· `tools/collect_e4_standalone.py`（`mates`）· 证据 `output/e4-assembly.json` / `output/e4-standalone.json` |
+
 | 570 | **★★★★★ 米/毫米反复出错的**根因**：本仓两套约定并存、形参都是**裸名**（`sw_part` 收毫米、`sw_assembly.add_component` 收米）⇒ 调用方无从分辨** —— 2026-10-26（第 60 轮，业主：「这个米和毫米的问题已经出现过非常非常多次了……你给我解决清楚」）。
      ★★★ 实测后果（不是「不好看」，是**错模型 + 假结论**）：
      ```

@@ -160,9 +160,11 @@ def main() -> int:
             #: ★★★ 第 60 轮修：这里原来是 `(0.0, 30.0)` —— 而 `add_component` 的 x 单位是**米**
             #:   ⇒ 第二个组件被放到 **30 米**外。业主原话：「这个米和毫米的问题已经出现过
             #:   非常非常多次了」。改用 `0.030` 米（= 30mm），并在下面回读变换矩阵验证量级。
-            for dx in (0.0, 0.030):
+            #: ★ 第二块**抬高 50mm**（`z_m=0.050`）：配合才有事可做，
+            #:   而且选面那组射线（自下而上打组件2 底面）才打得中。
+            for dx, dz in ((0.0, 0.0), (0.030, 0.050)):
                 ok_a, a_ret = c_.try_call(
-                    asm_.add_component, asm_doc, str(SRC), dx, 0.0, 0.0, "", sw
+                    asm_.add_component, asm_doc, str(SRC), dx, 0.0, dz, "", sw
                 )
                 adds.append(
                     {"ok": bool(ok_a), "err": "" if ok_a else str(a_ret)[:100]}
@@ -200,6 +202,72 @@ def main() -> int:
         ev["magnitude_ok"] = bool(
             translations and all(abs(v) < 1000.0 for tr in translations for v in tr)
         )
+
+        #: ③b **建一个重合配合**（第 61 轮：两处单位修好后第一次真能建成）
+        #:   ★ 选了面之后 `CreateMate` 才可能成功；细节见事实 566（VARIANT 对象数组）。
+        mates: list = []
+        try:
+            import pythoncom
+            from win32com.client import VARIANT
+
+            sm = get_com_member(asm_doc, "SelectionManager")
+            #: ★ 复用探针里**已跑通**的那份选面实现（实测能选到两个不同组件）。
+            #:   采集器自己再写一份 ⇒ 实测第二个面选不到（第 61 轮踩到）。
+            from probe_e4_assembly import _select_two_faces
+
+            sel = _select_two_faces(asm_doc, nonplanar=True)
+            ev["steps"]["mate_select"] = sel
+
+            owners = []
+            for k in (1, 2):
+                ok_o, comp = c_.try_call(
+                    c_.get_com_member, sm, "GetSelectedObjectsComponent4", k, 1
+                )
+                if ok_o and comp is not None:
+                    owners.append(str(get_com_member(comp, "Name2") or ""))
+            ev["steps"]["mate_owners"] = owners
+            ev["steps"]["mate_owners_distinct"] = len({o for o in owners if o})
+
+            ok_d, data = c_.try_call(
+                lambda: get_com_member(asm_doc, "CreateMateData", 0)
+            )
+            ok_set = False
+            if ok_d and data is not None:
+                faces = []
+                for k in (1, 2):
+                    ok_f, f = c_.try_call(
+                        c_.get_com_member, sm, "GetSelectedObject6", k, -1
+                    )
+                    faces.append(f if ok_f else None)
+                if all(f is not None for f in faces):
+                    ok_set, _ = c_.try_call(
+                        lambda: setattr(
+                            data,
+                            "EntitiesToMate",
+                            VARIANT(
+                                pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH,
+                                [faces[0], faces[1]],
+                            ),
+                        )
+                    )
+                c_.try_call(lambda: setattr(data, "MateAlignment", 2))
+                c_.try_call(lambda: get_com_member(asm_doc, "CreateMate", data))
+
+            #: 数**真实配合特征**：复用仓库的 `collect_mate_feature_summary`
+            #: （它走**含子特征**的遍历 —— 配合在「配合」文件夹下面，顶层遍历数不到）。
+            #: ★ 第 44 轮口径：类型以 `Mate` 开头且**不是** `MateGroup`
+            #:   （`MateGroup` 是文件夹，不是配合）。
+            for rec in asm_.collect_mate_feature_summary(asm_doc) or ():
+                tn = str(rec.get("type") or "")
+                if tn != "MateGroup" and tn.startswith("Mate"):
+                    mates.append({"name": rec.get("name"), "type": tn})
+            ev["steps"]["mate_set_entities"] = bool(ok_set)
+        except Exception as exc:  # noqa: BLE001
+            ev["steps"]["mate_err"] = "%s: %s" % (
+                type(exc).__name__,
+                str(exc)[:120],
+            )
+        ev["mates"] = mates
 
         #: ④ 干涉
         ok_i, interf = (

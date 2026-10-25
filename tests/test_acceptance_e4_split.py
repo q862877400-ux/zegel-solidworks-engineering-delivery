@@ -132,8 +132,11 @@ def test_全不绿才算E4不成立() -> None:
     assert mixed["ok"] is False
 
 
-def test_间隙无依据被拒() -> None:
-    """★ 真机能读到间隙值，但「值有依据」这件事必须显式声明。"""
+def test_间隙无依据判未知() -> None:
+    """★★ 第 61 轮行为变更：间隙没依据 ⇒ `unknown`（原为 `fail`）。
+
+    「没量过 ≠ 不合格」（第 33 轮口径）。间隙 -1 表示没测，判 fail 是编事实。
+    """
     obs = collect_assembly(
         target="asm",
         components=("ground:base", "moving:pin"),
@@ -147,8 +150,10 @@ def test_间隙无依据被拒() -> None:
         configuration="默认",
     )
     res = judge_assembly_interference(obs, requirement_id=REQ)
-    assert res.status is Status.FAIL
-    assert "依据" in res.reason
+    assert res.status is Status.UNKNOWN, (
+        "★ 间隙没实测依据应判 unknown（没量过 ≠ 不合格）"
+    )
+    assert "依据" in res.reason or "没量过" in res.reason
 
 
 def test_无功能配合被拒() -> None:
