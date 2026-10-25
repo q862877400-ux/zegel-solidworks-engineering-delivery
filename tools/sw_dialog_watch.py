@@ -72,7 +72,76 @@ def _write_status(state: dict) -> None:
     STATUS.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
+#: ★★★ 这些进程是**崩溃/遥测报告器** —— 对我们的工作没有任何用处，
+#:   而它们弹的框「点掉即重弹」（CEIP 发送失败会重试）⇒ **结束进程**才是正确处置。
+#:   实测依据：`SLDEXITAPP.exe` 的 `SOLIDWORKS Design 错误报告` 在 2 分钟内被点了
+#:   13 万余次仍在弹（`output/dialog-watch/events.jsonl`）。
+_REPORTER_EXES = frozenset({"sldexitapp.exe"})
+
+#: 同一弹窗的去重窗口（秒）—— 同一 `(exe, class, title, 首文本)` 期间只记一次
+_DEDUPE_WINDOW_S = 60.0
+_recent: dict = {}
+
+
+def _signature(row: dict) -> str:
+    """★ 去重用的签名：进程 + 类 + 标题 + 第一个非按钮静态文本。
+
+    ★ 不把 `hwnd` 放进去 —— 重弹时 `hwnd` 会变，但那显然是同一个框。
+    """
+    texts = [
+        str(c.get("text") or "").strip()
+        for c in (row.get("controls") or [])
+        if str(c.get("class") or "").lower() != "button"
+    ]
+    first = next((x for x in texts if x), "")
+    parts = [
+        str(row.get("exe") or "").lower(),
+        str(row.get("class") or ""),
+        str(row.get("title") or ""),
+        first,
+    ]
+    return "|".join(parts)
+
+
+def _should_log(row: dict) -> bool:
+    """★ 同一签名在窗口期内只记第一次；之后只累加记录里的 `repeat`。"""
+    import time as _t
+
+    sig = _signature(row)
+    now = _t.time()
+    hit = _recent.get(sig)
+    if hit and (now - hit["at"]) <= _DEDUPE_WINDOW_S:
+        hit["repeat"] += 1
+        hit["row"]["repeat"] = hit["repeat"]
+        return False
+    _recent[sig] = {"at": now, "repeat": 0, "row": row}
+    return True
+
+
+def _terminate_process(pid: int) -> bool:
+    """★ 结束一个**报告器**进程（`SLDEXITAPP.exe`）。它的框点不干净，只能让它走。"""
+    import ctypes
+
+    process_terminate = 0x0001
+    if not pid or int(pid) <= 0:
+        return False
+    h = ctypes.windll.kernel32.OpenProcess(process_terminate, False, int(pid))
+    if not h:
+        return False
+    try:
+        return bool(ctypes.windll.kernel32.TerminateProcess(h, 1))
+    finally:
+        ctypes.windll.kernel32.CloseHandle(h)
+
+
 def _append(ev: dict) -> None:
+    """★ 写一条事件（**带去重**）—— 同一弹窗 60 秒内只落一行。
+
+    ★ 去重是为了修 254 MB 那个问题：同一框每 2 秒一行完整 JSON，
+      两分钟就上千行，十小时就 16 万行。现在只记第一次，之后累加 `repeat`。
+    """
+    if not _should_log(ev):
+        return
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with EVENTS.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(ev, ensure_ascii=False) + "\n")
@@ -105,6 +174,20 @@ def scan_now(*, dismiss: bool = True) -> dict:
             "needs_llm": mode != "auto",
             "dismissed": False,
         }
+        #: ★★★ 报告器（`SLDEXITAPP.exe`）**不点，直接结束进程** ——
+        #:   它的框点掉即重弹（CEIP 遥测重试），实测 13 万次仍在弹。
+        #:   ★ 它对我们没有任何用处：不读它的报告、不依赖它。
+        if (
+            dismiss
+            and str(row.get("exe") or "").lower() in _REPORTER_EXES
+            and _terminate_process(int(row.get("pid") or 0))
+        ):
+            row["dismissed"] = True
+            row["action"] = "terminated-reporter"
+            rows.append(row)
+            _append(row)
+            continue
+
         #: ★★ **只有 `auto` 档才点** —— ★ `needs_llm` / `forbidden` 一律**只记证**
         if dismiss and mode == "auto":
             fired = False
@@ -248,6 +331,40 @@ def _pid_alive(pid: int) -> bool:
     return True
 
 
+def _ensure_running() -> int:
+    """★ 幂等：监控在跑 ⇒ 返回 0；没跑 ⇒ 后台起一个再返回 0。
+
+    ★ 给 `round_chain.ps1` 每轮调用 —— 这样「常驻」不靠人记得手动起。
+    """
+    import subprocess
+    import sys as _sys
+
+    pid_file = OUT_DIR / "watcher.pid"
+    try:
+        pid = int(pid_file.read_text(encoding="utf-8").strip())
+    except (FileNotFoundError, ValueError):
+        pid = 0
+    if pid and _pid_alive(pid):
+        print("★ 弹窗监控已在跑（PID %d）⇒ 不需要重启" % pid)
+        return 0
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    flags = 0
+    if _sys.platform == "win32":
+        #: ★ 脱离当前控制台，收尾链退出后监控继续活着
+        flags = 0x00000008 | 0x00000200  # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+    proc = subprocess.Popen(
+        [_sys.executable, "-B", str(Path(__file__).resolve()), "--quiet"],
+        cwd=str(Path(__file__).resolve().parents[1]),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        creationflags=flags,
+    )
+    pid_file.write_text(str(proc.pid), encoding="utf-8")
+    print("★ 弹窗监控已后台启动（PID %d）" % proc.pid)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="常驻弹窗监控（复用 sw_guard 的判据与处置）"
@@ -259,8 +376,15 @@ def main() -> int:
     ap.add_argument("--interval", type=float, default=1.0)
     ap.add_argument("--no-dismiss", action="store_true", help="只记证、一个都不点")
     ap.add_argument("--status", action="store_true", help="打印状态后退出")
+    ap.add_argument(
+        "--ensure",
+        action="store_true",
+        help="★ 幂等：已在跑就返回 0，没跑就后台起一个（给每轮收尾链调用）",
+    )
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
+    if a.ensure:
+        return _ensure_running()
     if a.status:
         print(json.dumps(status(), ensure_ascii=False, indent=1)[:2500])
         return 0

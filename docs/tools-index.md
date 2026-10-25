@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 656 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 659 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 273 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 276 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 71 | — |
 
-## 探针（273 个）
+## 探针（276 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -83,6 +83,9 @@
 | `probe_datum_tag_selfcontained2.py` | ★ 真机：**先上 A3 图框**再 `add_view` —— ★ 承事实 327 的具体下一步 |
 | `probe_dead_guards.py` | @brief 探针：找「**定义了却没人用**」的门禁常量（**死守卫**的通用形态） |
 | `probe_deps_bom_undercut.py` | ★ 真机验证三条：`ExcludeFromBOM` · `GetDependencies2` · `MoldUndercutDetect` |
+| `probe_dialog_guard_selftest.py` | ★ 弹窗监控的自测：让 SolidWorks **自己弹一个真消息框**，看常驻监控能否点掉 |
+| `probe_dialog_guard_visible.py` | 把 SolidWorks 设为可见，然后再弹一次消息框 —— 这次它应该真的出现在屏幕上 |
+| `probe_dialog_watch_fixes.py` | ★ 验证第 46 轮两个修复：日志去重 + 报告器结束进程 |
 | `probe_dimension_edge_pairs.py` | ★ 真机：`AddDimension2` 的**边对穷举表** —— 找出"哪一类边对能定义出尺寸" |
 | `probe_dimension_unit.py` | ★ 核：「`GetSystemValue3` 的单位随文档单位变」—— ★ 上一轮真机顺带量到的可疑 ① |
 | `probe_direct_member_access.py` | @brief 探针：扫**直接属性访问**形态的疑似不存在 COM 成员 —— ★ 先量**假阳性率** |

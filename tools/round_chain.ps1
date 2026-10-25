@@ -63,6 +63,16 @@ $R = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $R
 $env:PYTHONPATH = "$R;$R\scripts;$R\mcp-server;$R\tools"
 $env:PYTHONIOENCODING = 'utf-8'
+#: ★★★ 2026-10-26（第 46 轮）**弹窗监控必须常驻** —— 每轮先确保它在跑。
+#:   用户要求：「开发这个项目的时候必须这个弹窗的监控要一直常驻」。
+#:   `--ensure` 是幂等的：已在跑就打印 PID 并返回 0，不会起第二份。
+#:   ★ 为什么值得占这一步：`SLDEXITAPP.exe` 的 CEIP 错误框**点掉即重弹**，
+#:     2 分钟就刷出 13 万行日志、用户看到一堆 Rx 窗口（第 46 轮查证）。
+try {
+    & python -B tools\sw_dialog_watch.py --ensure 2>&1 | ForEach-Object { "  $_" }
+} catch {
+    Write-Host "  ⚠ 弹窗监控 --ensure 失败（不因此中断收尾链）：$_"
+}
 
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 function Step([string]$Name, [scriptblock]$Body) {

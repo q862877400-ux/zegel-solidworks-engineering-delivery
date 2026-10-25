@@ -65,6 +65,8 @@ PART = R / "output" / "stage2" / "板1_rev-1.SLDPRT"
 DEST = R / "output" / "e4-assembly.json"
 EV = Evidence(DEST, {"probe": "e4-assembly", "part": str(PART)})
 SW_MATE_COINCIDENT = 0
+#: ★ `--nonplanar` ⇒ 组件 2 抬到 z=50mm（验「共面冗余」假设用；第 46 轮该变体射线打空）
+NONPLANAR = "--nonplanar" in sys.argv
 
 
 def _count(asm_doc) -> int:
@@ -84,16 +86,26 @@ def _real_mates(model) -> list:
     return out
 
 
-def _select_two_top_faces(doc) -> dict:
+def _select_two_faces(doc, *, nonplanar: bool = False) -> dict:
     """★ 用 `SelectByRay` 选两块板的顶面（`IComponent2` 取实体的两条路都不可用）。"""
     ext = get_com_member(doc, "Extension")
     doc.ClearSelection2(True)
     rows = []
-    for idx, (x_mm, y_mm) in enumerate(((5.0, 5.0), (35.0, 5.0))):
+    #: ★ 第 46 轮：两条射线方向不同 —— 一条自上而下打组件 1 的顶面（z=20mm），
+    #:   一条自下而上打组件 2 的底面（z=50mm）⇒ 两面不共面、法向相反。
+    #: ★ 两种几何都留着：
+    #:   · 默认（共面）：两块都在 z 0..20 ⇒ 顶面都在 z=20mm（第 45 轮用过）
+    #:   · `nonplanar`：组件 2 抬到 z=50mm ⇒ 打它的底面（z=50mm）
+    #:     ⚠ 第 46 轮实测：这条射线**打空**（选中数没从 1 变 2）⇒ 该变体尚未成功设置
+    rays = (
+        (5.0, 5.0, 0.070, -1.0),
+        (35.0, 5.0, 0.030, 1.0) if nonplanar else (35.0, 5.0, 0.070, -1.0),
+    )
+    for idx, (x_mm, y_mm, z_m, dz) in enumerate(rays):
         get_com_member(
             ext, "SelectByRay",
-            x_mm / 1000.0, y_mm / 1000.0, 0.070,   #: 顶面 z=20mm，上方 50mm 起射
-            0.0, 0.0, -1.0, 1e-4,
+            x_mm / 1000.0, y_mm / 1000.0, z_m,
+            0.0, 0.0, dz, 1e-4,
             2,                                      #: swSelFACES
             bool(idx), 0, 0,
         )
@@ -136,12 +148,17 @@ def main() -> int:
         EV.mark("new_assembly", ok=ok_n)
 
         before = _count(asm_doc)
-        for dx in (0.0, 30.0):
-            _try(asm_.add_component, asm_doc, str(PART), dx, 0.0, 0.0, "", sw)
+        #: ★ 第 46 轮：把第二个组件**抬到 z=50mm**，让两块的接触面不共面、法向相反
+        #:   —— 用来验第 45 轮那个「共面导致冗余、所以 CreateMate 回 None」的假设。
+        _try(asm_.add_component, asm_doc, str(PART), 0.0, 0.0, 0.0, "", sw)
+        _try(
+            asm_.add_component, asm_doc, str(PART), 30.0, 0.0,
+            (50.0 if NONPLANAR else 0.0), "", sw,
+        )
         after = _count(asm_doc)
         EV.mark("components", before=before, after=after, added=after - before)
 
-        sel = _select_two_top_faces(asm_doc)
+        sel = _select_two_faces(asm_doc, nonplanar=NONPLANAR)
         EV.mark("select_faces", **sel)
 
         m_before = len(_real_mates(asm_doc))

@@ -40,6 +40,24 @@
 
 ## 十五、真机命令一律走弹窗护栏
 
+**★★★ 弹窗监控必须常驻（2026-10-26 用户要求）**
+
+```bash
+python -B tools/sw_dialog_watch.py --ensure   # 幂等：在跑就返回 0，没跑就后台起
+python -B tools/sw_dialog_watch.py --status   # 看它活着没、最近扫到什么
+```
+
+- **每轮收尾链会调 `--ensure`**（`tools/round_chain.ps1`），所以正常开发时它一直在。
+- ★ 为什么必须常驻而不是「碰到了再点」：`SLDEXITAPP.exe` 的
+  `SOLIDWORKS Design 错误报告`（CEIP 遥测发送失败）**点掉即重弹** ——
+  第 45 轮实测 2 分钟内被点了 **13 万余次**仍在弹，用户看到一堆 `SOLIDWORKS Rx` 窗口。
+  ⇒ 现在的处置是**结束报告器进程**（`_REPORTER_EXES`），不是反复点它。
+- ★ 日志去重：同一弹窗（同 exe/类/标题/首文本）**60 秒内只记一行**，之后累加 `repeat`。
+  去重前 `output/dialog-watch/events.jsonl` 长到 **254 MB**。
+- ⚠ 实机观察：`ISldWorks.Visible=False` 时消息框**根本显示不出来**，
+  `SendMsgToUser2` 会直接回 `swMbHitOk`（0.4 秒）—— 别把它当「监控没工作」。
+
+
 ```
 python tools/sw_guard.py --timeout 600 -- python <你的脚本>.py     # ★ 以后真机命令都这样起
 python tools/sw_guard.py --scan                                    # 只看现有弹窗（不点）
