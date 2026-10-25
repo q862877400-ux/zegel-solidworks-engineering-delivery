@@ -118,6 +118,160 @@ def _should_log(row: dict) -> bool:
     return True
 
 
+#: ★★★ 文档（窗口）数上限 —— 超过 _DOCS_MAX 就清掉我方多余的，只留 _DOCS_KEEP 个。
+#:
+#:   动机（用户原话）：「如果一次性开了超过 3 个窗口，那么就强制关掉没有用的窗口，
+#:   只保留 1 个正在用的窗口。否则无限制地开窗口会导致内存/显存被占满，
+#:   真正要测试的东西反而跑不起来。」
+#:
+#:   ★ 实测背景：第 50 轮 SolidWorks 里堆了 **7 个**文档（1 零件 + 6 未保存装配体），
+#:     全是探针收尾失效留下的。
+_DOCS_MAX_DEFAULT = 3
+_DOCS_KEEP_DEFAULT = 1
+
+#: `output/` 根 —— 归属判据之一（我方产物都落在这儿）
+OUTPUT_ROOT = ""
+
+
+def _doc_owner_ok(info: dict) -> tuple:
+    """★ 归属判据（与 `tools/close_my_orphans.py` 同口径）。
+
+    | 情形 | 归属 |
+    |---|---|
+    | 路径在 `<仓库根>/output/` 下 | 我方 |
+    | 无路径且 `type == 2`（装配体） | 我方（探针 `new_document` 建的） |
+    | 无路径零件 / 非 output 路径 | **不是我方** ⇒ 不碰 |
+    """
+    p = str(info.get("path") or "")
+    if p:
+        root = OUTPUT_ROOT or str(Path(__file__).resolve().parents[1] / "output")
+        if p.lower().startswith(root.lower()):
+            return True, "路径在 output/ 下"
+        return False, "路径不在 output/ 下"
+    if int(info.get("type") or 0) == 2:
+        return True, "无路径且是装配体"
+    return False, "无路径且不是装配体"
+
+
+def enforce_doc_cap(
+    *,
+    max_docs: int = _DOCS_MAX_DEFAULT,
+    keep: int = _DOCS_KEEP_DEFAULT,
+    keep_active: bool = True,
+) -> dict:
+    """★ 文档数超过 `max_docs` ⇒ 关掉我方多余的，只留 `keep` 个（含正在用的那个）。
+
+    ★ 三条纪律：
+      ① 正在用的那个（`ActiveDoc`）**永不关**
+      ② **不是我的一个都不碰**（用户可能正在编辑真件）
+      ③ 脏文档**先落盘再关**（`CloseDoc` 关不掉 dirty）
+
+    :returns: {before, after, closed, kept_active, skipped_not_ours} 或跳过原因
+    """
+
+    out: dict = {"enabled": True}
+    try:
+        import sw_connect as _sc
+        from sw_connect import get_com_member as _gcm
+
+        conn = _sc.connect_solidworks(wait_seconds=8)
+        sw = conn[0] if isinstance(conn, tuple) else conn
+        if sw is None:
+            return {"enabled": True, "skipped": "连不上 SolidWorks"}
+    except Exception as exc:  # noqa: BLE001
+        return {"enabled": True, "skipped": "连不上：%s" % str(exc)[:80]}
+
+    try:
+        docs = list(_gcm(sw, "GetDocuments") or ())
+    except Exception as exc:  # noqa: BLE001
+        return {"enabled": True, "skipped": "读文档失败：%s" % str(exc)[:80]}
+
+    out["before"] = len(docs)
+    if len(docs) <= max_docs:
+        out["after"] = len(docs)
+        out["action"] = "noop"
+        return out
+
+    #: 正在用的那个（标题）
+    active_title = ""
+    try:
+        ad = _gcm(sw, "ActiveDoc")
+        if ad is not None:
+            active_title = str(_gcm(ad, "GetTitle") or "")
+    except Exception:  # noqa: BLE001
+        active_title = ""
+    out["kept_active"] = active_title
+
+    closed: list = []
+    skipped: list = []
+    #: ★ `keep` 是「**总共**保留几个」，**含**正在用的那个。
+    #:   所以活动文档存在时 `kept` 的初值就是 1 —— 否则会多留一个
+    #:   （第 50 轮真机实测：`keep=1` 却剩下 2 个）。
+    kept = 1 if (keep_active and active_title) else 0
+    for d in docs:
+        try:
+            title = str(_gcm(d, "GetTitle") or "")
+            info = {
+                "title": title,
+                "type": int(_gcm(d, "GetType") or 0),
+                "dirty": bool(_gcm(d, "GetSaveFlag")),
+                "path": str(_gcm(d, "GetPathName") or ""),
+            }
+        except Exception:  # noqa: BLE001
+            continue
+
+        #: ★ `keep_active=True`（默认）：正在用的那个**永不关**。
+        #:   收尾场景（`max_docs=0, keep=0, keep_active=False`）才允许关它。
+        if keep_active and title and title == active_title:
+            #: ★ 已算进 `kept` 初值，这里**不再 +1**
+            continue
+        if kept < keep:
+            kept += 1
+            continue
+
+        mine, why = _doc_owner_ok(info)
+        if not mine:
+            skipped.append({"title": title, "why": why})
+            continue
+
+        #: ★ 脏文档先落盘再关（`CloseDoc` 关不掉 dirty）
+        if info["dirty"]:
+            try:
+                _root = OUTPUT_ROOT or str(
+                    Path(__file__).resolve().parents[1] / "output"
+                )
+                dest = Path(_root) / "dialog-watch" / "docs"
+                dest.mkdir(parents=True, exist_ok=True)
+                safe = "".join(
+                    c if c.isalnum() or c in "-_" else "_" for c in title
+                )[:40]
+                _sc.save_document(d, str(dest / (safe or "doc") + ".SLDASM"))
+            except Exception:  # noqa: BLE001
+                pass
+        try:
+            sw.CloseDoc(title)
+        except Exception as exc:  # noqa: BLE001
+            closed.append({"title": title, "ok": False, "err": str(exc)[:60]})
+        else:
+            closed.append({"title": title, "ok": True})
+
+    try:
+        left = len(list(_gcm(sw, "GetDocuments") or ()))
+    except Exception:  # noqa: BLE001
+        left = -1
+    out.update(
+        {
+            "after": left,
+            "closed": closed,
+            "skipped_not_ours": skipped,
+            "action": "capped",
+            "max_docs": max_docs,
+            "keep": keep,
+        }
+    )
+    return out
+
+
 def _terminate_process(pid: int) -> bool:
     """★ 结束一个**报告器**进程（`SLDEXITAPP.exe`）。它的框点不干净，只能让它走。"""
     import ctypes
@@ -220,6 +374,9 @@ def run(
     seconds: float | None = None,
     dismiss: bool = True,
     quiet: bool = False,
+    doc_cap: bool = True,
+    max_docs: int = _DOCS_MAX_DEFAULT,
+    keep_docs: int = _DOCS_KEEP_DEFAULT,
 ) -> dict:
     """★ **常驻循环**：每 `interval` 秒扫一遍；`seconds` 给了就是有界跑（★ 测试/CI 用）。
 
@@ -239,6 +396,13 @@ def run(
         "dismissed": 0,
         "pending_needs_llm": 0,
         "last": None,
+        #: ★ 文档（窗口）数上限的累计读数
+        "doc_cap_enabled": bool(doc_cap),
+        "doc_cap_max": int(max_docs),
+        "doc_cap_triggers": 0,
+        "doc_cap_closed": 0,
+        "doc_cap_skipped_not_ours": 0,
+        "doc_cap_last": None,
     }
     stop = {"flag": False}
 
@@ -253,6 +417,51 @@ def run(
     t0 = time.time()
     try:
         while not stop["flag"]:
+            #: ★★★ 每轮先做「文档数上限」—— 超过就关掉我方多余的，只留正在用的那个。
+            #:   放在弹窗扫描**之前**：窗口越少，扫描也越快。
+            if doc_cap:
+                try:
+                    cap = enforce_doc_cap(max_docs=max_docs, keep=keep_docs)
+                except Exception as exc:  # noqa: BLE001
+                    cap = {"enabled": True, "err": "%s: %s" % (type(exc).__name__,
+                                                              str(exc)[:80])}
+                state["doc_cap_last"] = cap
+                if cap.get("action") == "capped":
+                    state["doc_cap_triggers"] += 1
+                    state["doc_cap_closed"] += len(
+                        [c for c in (cap.get("closed") or ()) if c.get("ok")]
+                    )
+                    state["doc_cap_skipped_not_ours"] += len(
+                        cap.get("skipped_not_ours") or ()
+                    )
+                    if not quiet:
+                        print(
+                            "★ 文档数 %s → %s（> %s）· 关了我方 %d 个%s"
+                            % (
+                                cap.get("before"),
+                                cap.get("after"),
+                                max_docs,
+                                len([c for c in (cap.get("closed") or ())
+                                     if c.get("ok")]),
+                                (
+                                    "；★ 跳过 %d 个不是我的"
+                                    % len(cap.get("skipped_not_ours") or ())
+                                    if cap.get("skipped_not_ours")
+                                    else ""
+                                ),
+                            )
+                        )
+                    _append(
+                        {
+                            "at": _now(),
+                            "kind": "doc-cap",
+                            "before": cap.get("before"),
+                            "after": cap.get("after"),
+                            "closed": cap.get("closed"),
+                            "skipped_not_ours": cap.get("skipped_not_ours"),
+                            "kept_active": cap.get("kept_active"),
+                        }
+                    )
             snap = scan_now(dismiss=dismiss)
             state["scans"] += 1
             state["dialogs_seen"] += snap["dialogs"]
@@ -382,6 +591,23 @@ def main() -> int:
         help="★ 幂等：已在跑就返回 0，没跑就后台起一个（给每轮收尾链调用）",
     )
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument(
+        "--no-doc-cap",
+        action="store_true",
+        help="★ 关掉「文档数上限」（默认开：超过 --max-docs 就清掉我方多余的窗口）",
+    )
+    ap.add_argument(
+        "--max-docs",
+        type=int,
+        default=_DOCS_MAX_DEFAULT,
+        help="★ 文档数超过这个值才清理（默认 %d）" % _DOCS_MAX_DEFAULT,
+    )
+    ap.add_argument(
+        "--keep-docs",
+        type=int,
+        default=_DOCS_KEEP_DEFAULT,
+        help="★ 清理后保留几个（含正在用的那个，默认 %d）" % _DOCS_KEEP_DEFAULT,
+    )
     a = ap.parse_args()
     if a.ensure:
         return _ensure_running()
@@ -389,6 +615,14 @@ def main() -> int:
         print(json.dumps(status(), ensure_ascii=False, indent=1)[:2500])
         return 0
     if a.once:
+        if not a.no_doc_cap:
+            print(
+                json.dumps(
+                    enforce_doc_cap(max_docs=int(a.max_docs), keep=int(a.keep_docs)),
+                    ensure_ascii=False,
+                    indent=1,
+                )[:1500]
+            )
         print(
             json.dumps(
                 scan_now(dismiss=not a.no_dismiss), ensure_ascii=False, indent=1
@@ -396,7 +630,13 @@ def main() -> int:
         )
         return 0
     st = run(
-        interval=a.interval, seconds=a.seconds, dismiss=not a.no_dismiss, quiet=a.quiet
+        interval=a.interval,
+        seconds=a.seconds,
+        dismiss=not a.no_dismiss,
+        quiet=a.quiet,
+        doc_cap=not a.no_doc_cap,
+        max_docs=int(a.max_docs),
+        keep_docs=int(a.keep_docs),
     )
     print(
         json.dumps(
@@ -409,6 +649,9 @@ def main() -> int:
                     "dialogs_seen",
                     "dismissed",
                     "pending_needs_llm",
+                    "doc_cap_triggers",
+                    "doc_cap_closed",
+                    "doc_cap_skipped_not_ours",
                 )
             },
             ensure_ascii=False,

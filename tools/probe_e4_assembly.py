@@ -111,7 +111,11 @@ def _select_two_faces(doc, *, nonplanar: bool = False) -> dict:
             x_mm / 1000.0, y_mm / 1000.0, z_m,
             0.0, 0.0, dz, 1e-4,
             2,                                      #: swSelFACES
-            bool(idx), 0, 0,
+            bool(idx),
+            #: ★★ 第 50 轮：`Mark` 从 0 改成 **1** ——
+            #:   官方签名第 10 参就是 Mark；仓库既有配合封装用的都是 mark=1。
+            1,
+            0,
         )
         try:
             n = int(
@@ -182,6 +186,11 @@ def main() -> int:
                         get_com_member, sel_mgr, "GetSelectedObject6", k, -1
                     )
                     faces_back.append(fobj if ok_f else None)
+
+            #: ★ 第 50 轮删掉了「用 select_entities_for_mate 重选」那条路 ——
+            #:   实测报 `selected=1, expected=2`：对 `SelectByRay` 取回的面对象
+            #:   再 `Select2(Append, 1)` 并没有追加成功。
+            #:   ⇒ 改由**射线本身**带 `Mark=1` 选出两个面（见 `_select_two_faces`）。
             ok_set = False
             if all(f is not None for f in faces_back):
                 #: ★★ 第 49 轮：`EntitiesToMate` 是 `System.object`（VARIANT 里的对象数组）。
@@ -261,14 +270,39 @@ def main() -> int:
         EV.mark("exception", err=EV.data["err"])
         return 1
     finally:
+        #: ★★★ 第 50 轮（用户当场指出「每次开一个新窗口，两块板离得特别远」）：
+        #:   `sw.GetDocuments()` 在本机是**属性**不是方法 ⇒ 抛
+        #:   `TypeError: 'tuple' object is not callable` ⇒ **`finally` 一开头就炸**,
+        #:   关文档那句从来没执行 ⇒ 实测堆了 6 个未保存装配体（装配体8…13）。
+        #:   ★ 这是「清理代码写了 ≠ 清理执行过」，且**从不报错给人看**。
         if sw is not None:
-            for d in list(sw.GetDocuments() or []):
-                _try(sw.CloseDoc, str(_member(d, "GetTitle") or ""))
+            closed: list = []
+            try:
+                #: ① 属性访问（不要加 `()`）
+                docs = list(get_com_member(sw, "GetDocuments") or ())
+                for d in docs:
+                    title = str(_member(d, "GetTitle") or "")
+                    ok, _ = _try(sw.CloseDoc, title)
+                    closed.append({"title": title, "ok": ok})
+            except Exception as exc:  # noqa: BLE001
+                closed.append({"err": "%s: %s" % (type(exc).__name__, str(exc)[:100])})
+            EV.data["closed"] = closed
+
+            #: ② 回读计数；仍 >0 ⇒ 这些全是本次探针建的 ⇒ 直接丢
+            left = open_doc_count(sw)
+            if left > 0:
+                try:
+                    get_com_member(sw, "CloseAllDocuments", True)
+                except Exception:  # noqa: BLE001
+                    pass
+                left = open_doc_count(sw)
+            EV.data["docs_left"] = left
+            print("   收尾后剩余文档数：%s" % left)
+
             try:
                 sw.CommandInProgress = False
             except Exception:  # noqa: BLE001
                 pass
-            EV.data["docs_left"] = open_doc_count(sw)
         EV.flush()
         print("   证据已写：output/e4-assembly.json")
 

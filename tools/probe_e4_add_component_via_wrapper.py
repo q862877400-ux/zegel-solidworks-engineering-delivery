@@ -140,7 +140,9 @@ def main() -> int:
         return 1
     finally:
         if sw is not None:
-            for d in list(sw.GetDocuments() or []):
+            #: ★ 本机 `ISldWorks.GetDocuments` 是**属性**不是方法 —— 带括号会
+            #:   `TypeError`，清理代码会整段失效（第 50 轮实测：堆了 6 个装配体）
+            for d in list(get_com_member(sw, "GetDocuments") or ()):
                 _try(sw.CloseDoc, str(_member(d, "GetTitle") or ""))
             ev["docs_left"] = open_doc_count(sw)
             print("   收尾后剩余文档数：%s" % ev["docs_left"])

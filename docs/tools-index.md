@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 660 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 661 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 276 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 277 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 72 | — |
 
-## 探针（276 个）
+## 探针（277 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -89,6 +89,7 @@
 | `probe_dimension_edge_pairs.py` | ★ 真机：`AddDimension2` 的**边对穷举表** —— 找出"哪一类边对能定义出尺寸" |
 | `probe_dimension_unit.py` | ★ 核：「`GetSystemValue3` 的单位随文档单位变」—— ★ 上一轮真机顺带量到的可疑 ① |
 | `probe_direct_member_access.py` | @brief 探针：扫**直接属性访问**形态的疑似不存在 COM 成员 —— ★ 先量**假阳性率** |
+| `probe_doc_cap_live.py` | ★ 真机验证「文档数上限」：故意开 5 个我方文档，看它是否只留 1 个 |
 | `probe_doc_count_crosscheck.py` | ★ 核对 `open_doc_count` 与已验证的 `probe_list_open_docs` 是否一致 |
 | `probe_document_units.py` | @brief 探针：**文档的单位设置** —— 它是不是"两次 `units=-1` 差 1000 倍"的源头 |
 | `probe_drawing_annotations_recheck.py` | ★ 真机：★ 建工程图 + 加注释 ⇒ 用 `view_annotations_report` 读回（★ 工程图读侧第一批） |
