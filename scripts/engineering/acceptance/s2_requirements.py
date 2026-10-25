@@ -27,7 +27,7 @@ S2 不新造一套字段，直接在既有的 `EngineeringContract` 上判：
 # 仓库:   本项目自身
 # 文件:   scripts/engineering/acceptance/s2_requirements.py
 # 定位:   docs/ENGINEERING-PATH.md 第六节 S2 的落地 —— 首件需求冻结。
-#          ★ 以既有的 ngineering_contract.LEGACY_ALWAYS_MISSING 为基准，
+#          ★ 以既有的 engineering_contract.LEGACY_ALWAYS_MISSING 为基准，
 #            不新造字段：那五项 material/load_case/safety_level/process/datums
 #            是本仓早已认定的「旧版永远缺」项。
 #          ★ 缺项只**报出**、**不给默认值** —— 给默认值就是替工程负责人拍板。
@@ -39,6 +39,7 @@ S2 不新造一套字段，直接在既有的 `EngineeringContract` 上判：
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -96,6 +97,77 @@ def missing_confirmations(contract: object) -> list:
     for name in ADDITIONAL_REQUIRED:
         if name not in confirmed:
             out.append(name)
+
+    return out
+
+
+#: ★ 标准号形态（与 E7 的 locator 判据同一族：只判「像不像依据」，不判真伪）
+#: ★ 允许编号前有一个字母（`ASTM A36`），但机构前缀必须≥2 个字母（所以 `Q235` 不算）
+_STANDARD_NO = re.compile(r"\b[A-Z]{2,}(?:/[A-Z]{1,2})?\s*[A-Z]?\d")
+#: ★ 数值 + 量纲（如 `500 N` · `12.5 kN` · `2 MPa` · `0.03 mm`）
+_MAGNITUDE = re.compile(r"\d+(?:\.\d+)?\s*[A-Za-z%\u00b0/]+")
+
+
+def shape_problems(contract: object) -> list[dict]:
+    """★ 报出**形状不合格**的必填项 —— 只报「能不能作为依据」，**不判值对不对**。
+
+    返回 `[{"field": ..., "problem": ..., "hint": ...}, ...]`，空列表表示形状都合格。
+
+    ## 判据（每条都只要求「可核对」，不要求「正确」）
+
+    | 字段 | 要求 |
+    |---|---|
+    | `material` | `name` 非空 **且** ≥1 个标准号形态（`GB/T 700-2006` / `ASTM A36` …） |
+    | `load_case` | 每个 `LoadCase` 都有**数值 + 量纲**（`500 N` / `2 MPa`） |
+    | `datums` | 每个基准都有**非空语义角色** |
+    | `process` | `kind` 非空（首件路线限定为机加工，但本函数不替人填） |
+    | `safety_level` | 非空（取值口径由工程负责人定，本函数**不预设枚举**） |
+
+    ⚠ **不含**的判据：材料是否合适、载荷是否合理、安全等级取几级 ——
+      那些是工程判断，本函数一律不做。
+    """
+    out: list[dict] = []
+
+    material = getattr(contract, "material", None)
+    if material is not None:
+        name = str(getattr(material, "name", "") or "").strip()
+        std = str(getattr(material, "standard", "") or "").strip()
+        if name and not _STANDARD_NO.search(name) and not _STANDARD_NO.search(std):
+            out.append(
+                {
+                    "field": "material",
+                    "problem": "材料没有标准号形态 ⇒ 无法核对",
+                    "hint": "牌号要能追到标准（如 `Q235B / GB/T 700-2006`），"
+                    "只写「钢」「45 钢」不可判",
+                }
+            )
+
+    for lc in list(getattr(contract, "load_cases", ()) or ()):
+        mag = getattr(lc, "magnitude", None)
+        text = str(mag or "").strip()
+        #: ★ **空也要报** —— 「有载荷项但没填数值」就是不可判，
+        #:   不能因为它为空就当作「还没填」丢给缺项检查
+        #:   （缺项检查只看列表是否为空，看不到单个项里的值）。
+        if not text or not _MAGNITUDE.search(text):
+            out.append(
+                {
+                    "field": "load_case",
+                    "problem": "载荷 %r 没有「数值 + 量纲」形态" % (getattr(lc, "name", ""),),
+                    "hint": "写成 `500 N` / `2 MPa` / `0.03 mm`，量纲要明写",
+                }
+            )
+
+    for dt in list(getattr(contract, "datums", ()) or ()):
+        #: ★ 字段名是 semantic_role（engineering_contract.Datum 实测），不是 role
+        role = str(getattr(dt, "semantic_role", "") or "").strip()
+        if not role:
+            out.append(
+                {
+                    "field": "datums",
+                    "problem": "基准没有语义角色",
+                    "hint": "写清它是主基准/导向/测量基准，后续图样与装配都要绑它",
+                }
+            )
 
     return out
 
