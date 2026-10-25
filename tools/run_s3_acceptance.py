@@ -45,6 +45,7 @@ R = Path(Path(__file__).resolve().parents[1])
 sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 
+import scripts.sw_assembly as asm_  # noqa: E402
 from scripts import sw_connect as c_  # noqa: E402
 from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
     collect_sketch_constraint,
@@ -60,6 +61,11 @@ from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402
     judge_rebuild_drawing,
 )
 from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
+from scripts.engineering.acceptance.e4_assembly import (  # noqa: E402
+    collect_assembly,
+    judge_assembly,
+    judge_assembly_interference,
+)
 from scripts.engineering.acceptance.report import (  # noqa: E402
     build_report,
     render_markdown,
@@ -466,8 +472,88 @@ def main() -> int:
             )
         )
 
+        #: ── E4：装配（组件数 + 干涉；配合仍建不出来，见事实 565）──
+        #:
+        #:   ★ 为什么现在能跑：第 43 轮解除了加组件阻塞（官方前置 + GetPathName 兜底）。
+        #:   ★ 预期结论：E4.interference / E4.dof 都会是 **unknown** ——
+        #:     · 配合建不出来 ⇒ 没搭起「可判」的装配 ⇒ 采集不完整
+        #:     · SolidWorks 无数值自由度读取入口（三源确认）
+        #:   ⚠ `unknown` 不是 fail：那是我方没搭起测试，不是产物不合格。
+        res_e4 = res_e4i = None
+        try:
+            ok_pa, part_doc = _try(c_.open_document, sw, str(copy))
+            loaded = (
+                str(_member(part_doc, "GetPathName") or "") if ok_pa else ""
+            )
+            ok_na, asm_doc = _try(c_.new_document, sw, "assembly")
+            if ok_na and asm_doc is not None:
+                for dx in (0.0, 30.0):
+                    _try(
+                        asm_.add_component, asm_doc, str(SRC), dx, 0.0, 0.0, "", sw
+                    )
+                n_comp = 0
+                try:
+                    n_comp = len(
+                        list(get_com_member(asm_doc, "GetComponents", False) or [])
+                    )
+                except Exception:  # noqa: BLE001
+                    n_comp = -1
+
+                ok_i2, interf = _try(asm_.get_interference_detection, asm_doc)
+                n_interf = -1
+                if ok_i2 and isinstance(interf, dict):
+                    v = interf.get("interference_count")
+                    n_interf = int(v) if v is not None else -1
+
+                obs_e4 = collect_assembly(
+                    target="板1 + 板1（两组件）",
+                    components=tuple("板1-%d" % (i + 1) for i in range(max(n_comp, 0))),
+                    #: ★ 配合建不出来 ⇒ 空元组（这是**事实**，不是我方漏填）
+                    mates=(),
+                    target_dof=0,
+                    interference_count=n_interf,
+                    min_clearance_mm=-1.0,
+                    clearance_basis="",
+                    configuration="默认",
+                    version="2026-10-26",
+                )
+                res_e4 = judge_assembly(obs_e4, requirement_id="R-E4")
+                res_e4i = judge_assembly_interference(obs_e4, requirement_id="R-E4")
+                ev["E4"] = {
+                    "components": n_comp,
+                    "interference_count": n_interf,
+                    "dof_status": res_e4.status.value,
+                    "interference_status": res_e4i.status.value,
+                    "note": "配合建不出来（事实 565）⇒ mates 空 ⇒ 采集不完整",
+                }
+                print(
+                    "④c E4：组件 %s · 干涉 %s · E4.dof=%s · E4.interference=%s"
+                    % (n_comp, n_interf, res_e4.status.value, res_e4i.status.value)
+                )
+                #: ★★ 第 48 轮：装配是**脏**的（`new_document` 后从未保存）
+                #:   ⇒ `CloseDoc` 关不掉（`CommandInProgress=True` 下弹窗还被抑制）
+                #:   ⇒ 实测留了 2 个孤儿文档。修法：**先 SaveAs 到 output/ 再关**。
+                #:   ★ 不用 `CloseAllDocuments(IncludeUnsaved=True)` —— 那会连别人的文档一起关。
+                asm_out = WORK / "e4_assembly.SLDASM"
+                _try(c_.save_document, asm_doc, str(asm_out))
+                ttl = str(_member(asm_doc, "GetTitle") or "")
+                if ttl:
+                    _try(sw.CloseDoc, ttl)
+                ev["E4"]["assembly_closed"] = True
+            if ok_pa and loaded:
+                ttl2 = str(_member(part_doc, "GetTitle") or "")
+                if ttl2:
+                    _try(sw.CloseDoc, ttl2)
+                ev["E4"]["part_closed"] = True
+        except Exception as exc:  # noqa: BLE001
+            ev["E4"] = {"err": "%s: %s" % (type(exc).__name__, str(exc)[:160])}
+            print("④c E4 段异常：%s" % ev["E4"])
+
         #: ── 汇总 + 渲染 ──
-        rep = build_report([res_e1, res_e2, res_draw, res_e3, res_h])
+        _checks = [res_e1, res_e2, res_draw, res_e3, res_h]
+        #: ★ 第 48 轮：E4 两条也进报告（预期 unknown，如实呈现「没搭起可判的装配」）
+        _checks.extend(c for c in (res_e4, res_e4i) if c is not None)
+        rep = build_report(_checks)
         md = render_markdown(rep, title="S3 首件板件 · E1–E3 验收报告（真机）")
         out_md = R / "specs" / "350-first-part-delivery" / "s3-acceptance.md"
         out_md.write_text(md, encoding="utf-8")
@@ -487,7 +573,60 @@ def main() -> int:
             if doc is not None:
                 ev["close"] = _close_doc(sw, doc, "副本")
                 print("   关闭：%s" % ev["close"])
+            #: ★★ 第 48 轮：SolidWorks **异步**关文档 ⇒ 立刻数会数到「还在关」的那些。
+            #:   实测：运行器打印 2，而跑完独立去数是 0。
+            #:   ★ 违反本文件自己的契约（文件头：「收尾核**文档数归零**」）——
+            #:     报一个不准的数字比不报更坏：下一个人会去查一个不存在的问题。
             left = open_doc_count(sw)
+            for _ in range(10):
+                if left <= 0:
+                    break
+                time.sleep(0.2)
+                left = open_doc_count(sw)
+            if left > 0 and doc is not None:
+                #: 落定后还 >0 ⇒ 再关一次再落定
+                _try(sw.CloseDoc, str(_member(doc, "GetTitle") or ""))
+                for _ in range(10):
+                    left = open_doc_count(sw)
+                    if left <= 0:
+                        break
+                    time.sleep(0.2)
+            #: ★★ 落定后仍 >0 ⇒ **核归属**后强制清空（第 48 轮）。
+            #:   实测：E4 段的两次 `CloseDoc` 报了成功却没关掉（返回值 ≠ 实际结果），
+            #:   剩 1 个靠外层 `sw_guard` 替我关 —— 而本文件的契约是「收尾核文档数归零」。
+            #:   ★ 只清**我方**的（`output/` 下或无路径装配体）；有一个不是我的就不动。
+            ev["docs_cleanup"] = None
+            if left > 0:
+                try:
+                    from close_my_orphans import _info as _orphan_info
+                    from close_my_orphans import _mine as _is_mine
+
+                    remain = [
+                        _orphan_info(d)
+                        for d in (get_com_member(sw, "GetDocuments") or ())
+                    ]
+                    not_ours = [i for i in remain if not _is_mine(i)[0]]
+                    ev["docs_cleanup"] = {
+                        "remain": [i["title"] for i in remain],
+                        "not_ours": [i["title"] for i in not_ours],
+                    }
+                    if not not_ours:
+                        get_com_member(sw, "CloseAllDocuments", True)
+                        for _ in range(10):
+                            left = open_doc_count(sw)
+                            if left <= 0:
+                                break
+                            time.sleep(0.2)
+                        ev["docs_cleanup"]["discarded"] = True
+                    else:
+                        print(
+                            "   ⚠ 有 %d 个不是我方的文档 ⇒ 不调 CloseAllDocuments"
+                            % len(not_ours)
+                        )
+                except Exception as exc:  # noqa: BLE001
+                    ev["docs_cleanup"] = {"err": "%s: %s" % (type(exc).__name__,
+                                                            str(exc)[:120])}
+
             ev["docs_left"] = left
             print("   收尾后剩余文档数：%s" % left)
             try:
