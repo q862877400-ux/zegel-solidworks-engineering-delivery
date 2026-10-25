@@ -171,3 +171,34 @@ python -B tools/teach.py run --recipe … --profile …  # L3 执行（6/6）
 - solid_body_extent_mm 的 
 aw **单位不一致**（x/y 米、z 毫米）—— 已记录，
   未修（不在本目标范围，但影响任何靠 bbox 推尺寸的代码）。
+
+
+---
+
+## 第 4 轮：尺寸机制查清（	o_edge 判死因）
+
+### 新发现（事实 587）
+
+`
+普通草图，两条竖线，前后数 DISTANCE 关系：
+  CIP=True   3→4 · DISTANCE 0→1 · AddDimension 返回 None
+  CIP=False  3→4 · DISTANCE 0→1 · AddDimension 返回 None
+`
+⇒ **尺寸建成了，只是 AddDimension 不返回对象**。判成败必须数关系，不能看返回值。
+
+### 但「点到线」建不出（这才是 	o_edge 的死因）
+
+`
+点 + 线  → DISTANCE 0→0   建不出
+线 + 线  → DISTANCE 0→1   能建
+`
+⇒ 业主示范的「点到边」标注方式在 API 上**不成立**；
+  要参数化只能「线到线」+ 重合关系（工作量大、且非示范做法）。
+
+### 决定
+
+- **交付走 ixed_points**（已 6/6，连跑 3 次稳定）
+- **	o_edge 暂不实现**：不是没试，是「点到线」这条路被 API 关掉；
+  若将来要走参数化，路径是「过孔点画构造线 → 线到线尺寸 → 重合关系」，
+  代价与收益需业主确认（recipe 里 hints.dimension_style 已留开关）
+- 正确设值链路已写进事实 587，供将来直接复用

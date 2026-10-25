@@ -7150,6 +7150,31 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 587 | **尺寸能建成，但 AddDimension 不返回对象；且「点到线」建不出、「线到线」能建** | 2026-10-26（示教器轮）。
+     ★★★ 单变量对照（output/probe_dim_count.py，普通草图两条竖线）：
+     `
+     CommandInProgress=True    关系数 3→4 · DISTANCE 0→1 · 返回 NoneType
+     CommandInProgress=False   关系数 3→4 · DISTANCE 0→1 · 返回 NoneType
+     `
+     ⇒ **尺寸确实建出来了**，IModelDocExtension.AddDimension 只是**拿不到返回值**。
+       所以别用返回值判断成败 —— 数草图里的 DISTANCE 关系（RelationType=1）。
+     ★★ 但也有限制（output/probe_to_edge.py，孔位草图里点+构造线）：
+     `
+     点 + 线  → 尺寸数 0→0（**建不出**）
+     线 + 线  → 尺寸数 0→1（能建）   ← 上一行对照
+     `
+     ⇒ 「点到边」这种标注方式在 API 上**不成立**；要参数化只能用「线到线」再配重合关系。
+     ★ 正确用法（拿不到返回值时的设值链路）：
+     `
+     RelationManager.GetRelations(0) → 取最后一条 RelationType=1
+     → ISketchRelation.GetDisplayDimension → IDisplayDimension.GetDimension2(0)
+     → IDimension.SetSystemValue2(值, 2)     （2 = 当前配置）
+     `
+     ★ 另：CommandInProgress=True 时「修改」框会被护栏抓到（NECSPIN/BUTTON/SLIDER），
+       说明它确实进了修改框；但**是否抑制尺寸创建**：上表显示不影响（两组都建成）。
+|真机：output/probe_dim_count.py · output/probe_to_edge.py · 交付判据见
+specs/351-teach-mode/implementation-status.md |
+
 | 585 | **★★★ GB 孔建成**：`standard_index=13` + **`fastener_index=356`** —— 旧件的 40 是 ANSI 口径；扫 0..90 得出的「GB 建不出孔」是**假结论** | 2026-10-26（第 77 轮）。
      ★★★ 业主截图证明 GB 下拉里有「螺钉间隙」⇒ 数据没缺，是我参数错。
      ★ 真机读数（`tools/build_first_part.py` 重建 `板1_rev-4`）：
