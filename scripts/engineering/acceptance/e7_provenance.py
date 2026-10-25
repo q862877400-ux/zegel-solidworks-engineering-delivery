@@ -125,7 +125,19 @@ def collect_provenance(
     """
     return Observation(
         target=target,
-        complete=bool(claims) and bool(source_kind),
+        #: ★★★ 第 36 轮修：版本必须**两边都声明**。
+        #:
+        #:   原判据 `if v["evidence_version"] and v["artifact_version"]:`
+        #:   ⇒ 任一为空就整条跳过 ⇒ 「旧版本证据」可靠「不声明产物版本」绕过
+        #:   （实测三种为空情形全部 pass）。
+        #:   ⇒ 把义务提到采集层：没声明 = 没取到必要输入 = 采集不完整 ⇒ unknown。
+        #:   ★ 不是放宽：修之前是**静默 pass**（最糟），现在是明确的 unknown。
+        complete=(
+            bool(claims)
+            and bool(source_kind)
+            and bool(str(artifact_version or "").strip())
+            and bool(str(evidence_version or "").strip())
+        ),
         values={
             "claims": list(claims),
             "citations": list(citations),
@@ -136,7 +148,20 @@ def collect_provenance(
             "evidence_version": evidence_version,
             "version": version,
         },
-        note="" if claims else "没有任何工程判断 ⇒ 采集不完整",
+        note=(
+            ""
+            if (
+                claims
+                and source_kind
+                and str(artifact_version or "").strip()
+                and str(evidence_version or "").strip()
+            )
+            else (
+                "没声明产物或证据版本 ⇒ 无法判「旧版本证据」"
+                if claims and source_kind
+                else "没有判断或来源标签 ⇒ 采集不完整"
+            )
+        ),
     )
 
 
