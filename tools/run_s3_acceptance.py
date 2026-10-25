@@ -73,6 +73,7 @@ from scripts.sw_document_data import update_dimension_mm  # noqa: E402
 from scripts.sw_feature_readback import (  # noqa: E402
     feature_info,
     feature_names,
+    hole_params,
     solid_body_extent_mm,  # noqa: E402
     whats_wrong,
 )
@@ -133,6 +134,19 @@ def _hole_centers(doc) -> list:
       草图5  段=1  圆心=[[90.0, 50.0]]
       ```
     """
+    #: ★★★ 第 28 轮：**优先从 B-Rep 取孔心** ——
+    #:   换成异型孔向导后孔没有草图圆，旧的草图圆弧读法会回空
+    #:   ⇒ E2 的 fail 会变成「读数失败」（第 18 轮同一个陷阱）。
+    ok_m, measured = _try(collect_geometry_measurements, doc)
+    if ok_m and isinstance(measured, dict):
+        bho = [
+            tuple(round(float(v), 2) for v in (h.get("position_mm") or [])[:2])
+            for h in (measured.get("holes") or [])
+            if len(h.get("position_mm") or []) >= 2
+        ]
+        if bho:
+            return sorted(bho)
+
     out: list = []
     for nm in feature_names(doc) or []:
         if not (nm.startswith("草图") or nm.lower().startswith("sketch")):
@@ -329,7 +343,41 @@ def main() -> int:
             "ok": ok_g,
             "detail": str(measured)[:200] if not ok_g else "ok",
         }
+        #: ★★ 把**孔特征参数**里的孔型合并进 measured ——
+        #:   B-Rep 结构上分辨不了通孔/盲孔（量测里 `through_evidence` 自己写着），
+        #:   孔型只在 `hole_params` 里。★ 仅在所有孔特征口径**一致**时合并，否则不猜。
         if ok_g and isinstance(measured, dict):
+            hole_feats = [
+                n
+                for n in (feature_names(doc) or [])
+                if str((feature_info(doc, n) or {}).get("GetTypeName2") or "")
+                == "HoleWzd"
+            ]
+            kinds = {}
+            for n in hole_feats:
+                okp, prm = _try(hole_params, doc, n)
+                if not okp or not isinstance(prm, dict):
+                    continue
+                kinds[n] = "%s/%s" % (prm.get("Type"), prm.get("EndCondition"))
+            uniq = {v for v in kinds.values()}
+            nholes = len(measured.get("holes") or ())
+            ev["kind_merge"] = {
+                "hole_features": hole_feats,
+                "kinds": kinds,
+                "unique_kinds": sorted(uniq),
+                "measured_holes": nholes,
+            }
+            #: 无歧义条件：孔特征数 == 孔数，且所有孔特征的 Type/EndCondition 一致
+            if len(hole_feats) == nholes and len(uniq) == 1:
+                kind = uniq.pop()
+                for h in measured.get("holes") or []:
+                    h["kind"] = kind
+                print("   ★ 孔型已合并（%d 个孔特征口径一致）：%s" % (len(hole_feats), kind))
+            else:
+                print(
+                    "   ⚠ 孔型不合并（孔特征 %d / 孔 %d / 口径 %s）⇒ 保持 unknown"
+                    % (len(hole_feats), nholes, sorted(uniq))
+                )
             obs_h = collect_hole_readback(
                 target="板1_rev-1 副本",
                 requested=tuple(requested),

@@ -1419,6 +1419,10 @@ BATCH_MODULES = (
     #:   ★ 另有 1 条（sw_sketch.get_sketch_slots）**未接**：其首参叫 sketch，而 RESOLVERS
     #:     没有该键，挂上去会在运行期 TypeError（详见 batch116 文件内注释）。
     "tool_specs_batch116",
+    #: ★ 2026-10-26（第 28 轮）：把「按坐标建异型孔向导孔」接出来。
+    #:   既有 solidworks_hole_wizard 只能放**面中心**（孔位由面选择器决定），
+    #:   而首件板要 4 个孔在指定坐标 ⇒ 新增 solidworks_hole_wizard_at_point。
+    "tool_specs_batch117",
 )
 
 

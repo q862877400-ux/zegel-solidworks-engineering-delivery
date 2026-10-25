@@ -121,32 +121,33 @@ def build_plan(c: dict) -> r_.ExecutablePlan:
             derive="★ 拉伸 %g mm" % c["d"],
         ),
     ]
-    #: ★ 孔组：每孔一个「画圆 + 切除」
+    #: ★★★ 孔组：每孔**一步**异型孔向导（第 28 轮换）
+    #:
+    #:   **为什么换**：切除-拉伸做的孔在 B-Rep 与特征树里都**没有孔型信息**
+    #:   （E3 读到 `type=ICE`）⇒ E2 的「孔型」子项只能判 `unknown`。
+    #:   换成异型孔向导后特征类型是 `HoleWzd`、`hole_params` 能回出
+    #:   `ThruHoleDiameter` / `Type` / `EndCondition`（第 26/27 轮真机验成）。
+    #:
+    #:   **孔位**靠射线穿过指定坐标打面（`create_hole_wizard_at_point_report`），
+    #:   所以一个面能放多个孔 —— 旧路径用面选择器只能放面中心。
+    #:
+    #:   ⚠ `size` 与 `diameter_mm` 是两套口径：`size` 决定标准孔径（`M6` 的间隙孔 ≈ ⌀6），
+    #:     `diameter_mm` 是 `HoleWizard5` 的 `Diameter` 参数。两者都传，真机读数说了算。
     for i, (hx, hy) in enumerate(c["holes"], 1):
         steps.append(
             r_.PlanStep(
-                step="sketch_start",
-                params={"plane_name": "Front Plane"},
-                derive="★ 孔 %d 的草图（孔位 %g,%g —— ★ 受 holes 影响）" % (i, hx, hy),
-            )
-        )
-        steps.append(
-            r_.PlanStep(
-                step="sketch_add_circle",
+                step="hole_wizard_at_point",
                 params={
-                    "center_x_mm": hx,
-                    "center_y_mm": hy,
-                    "radius_mm": c["dia"] / 2.0,
+                    "x_mm": hx,
+                    "y_mm": hy,
+                    "z_mm": c["d"],
+                    "size": "M%d" % int(round(c["dia"])),
+                    "diameter_mm": c["dia"],
+                    "depth_mm": c["d"],
+                    "through": True,
                 },
-                derive="★ 孔 %d：φ%g @ (%g,%g)" % (i, c["dia"], hx, hy),
-            )
-        )
-        steps.append(r_.PlanStep(step="sketch_end", params={}, derive="★ 退出孔草图"))
-        steps.append(
-            r_.PlanStep(
-                step="extrude_cut",
-                params={"sketch_name": "草图%d" % (i + 1), "depth_mm": 0.0},
-                derive="★ 贯穿切（★ 0 = through all）",
+                derive="★ 孔 %d：M%d @ (%g,%g)（★ 受 holes 影响）"
+                % (i, int(round(c["dia"])), hx, hy),
             )
         )
     return r_.ExecutablePlan(method_id="plate_holes", steps=tuple(steps))

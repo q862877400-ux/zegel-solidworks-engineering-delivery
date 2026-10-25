@@ -82,7 +82,11 @@
   → 验收: `python -B -m pytest tests/test_acceptance_e1_e7.py -q` + 真机 `tools/run_s3_acceptance.py`
   → **部分完成**。已接进验收运行器并真机跑通：
     **孔数 4/4 相符**、**孔径与孔位 4/4 逐项通过**（位置容差 0.1mm、孔径容差 0.05mm）。
-    **未达**：`孔型` 取不到 ⇒ 整体判 `unknown`（不是 pass）。
+    **第 28 轮更新**：孔已换成**异型孔向导**生成 ⇒ 孔型**测到了**
+    （`hole_params` → `Type=25 / EndCondition=1`）⇒ 判据从 `unknown` 变成 **`fail`**，
+    原因不再是「测不到」，而是「**要求里的孔型为空**」。
+    ★ 真正的缺口因此变成 **S2 的 `interface` 未冻结**（要求什么孔型未知）。
+      拿实测值回填 `requested` 是循环论证（产物当要求），不做。
   → 根因是**生成方式**不是 API：孔是**切除-拉伸**做的（E3 读到 `type=ICE`），
     而孔型只存在于**异型孔向导**特征的参数里。`hole_wizard` / `feature_hole_wizard5`
     都是 verified ⇒ 有路，但要改 `build_plan()` 并重跑 E1/E2/E3 三条证据（单列一轮）。
