@@ -159,7 +159,14 @@ def render_md(data: dict) -> str:
         if rels:
             lines.append("- 关系/尺寸 %d 条：" % len(rels))
             for r in rels:
-                val = (" = %s mm" % r["value_mm"]) if "value_mm" in r else ""
+                #: ★ 长度用 mm、**角度用度**（角度尺寸的 GetSystemValue2 回弧度，
+                #:   记录器已分开成 value_rad / value_deg，这里不再混成 mm）
+                if "value_mm" in r:
+                    val = " = %s mm" % r["value_mm"]
+                elif "value_deg" in r:
+                    val = " = %s°" % r["value_deg"]
+                else:
+                    val = ""
                 kinds = []
                 for e in r.get("entities") or []:
                     k = e.get("kind")
@@ -193,12 +200,46 @@ def render_md(data: dict) -> str:
         lines.append("- 组件 `%s` 压缩=%s 变换=%s" % (
             cp.get("name"), cp.get("suppressed"),
             ("16 个数" if isinstance(tr, list) and len(tr) == 16 else tr)))
+        #: ★ 组件**内部内容**（在位零件 / 独立零件都记）：特征、草图、尺寸
+        inner = cp.get("model") or {}
+        if inner.get("error"):
+            lines.append("    - ⚠ 内部模型读取失败：%s" % inner["error"])
+            continue
+        if not inner:
+            continue
+        lines.append("    - 内部文档：`%s`" % (inner.get("document") or ""))
+        lines.append("    - 特征 %d 个" % len(inner.get("features") or []))
+        for sk in inner.get("sketches") or []:
+            lines.append("    - 草图 `%s`（状态 %s）%s" % (
+                sk.get("name"), sk.get("constrained"),
+                (" also_owned_by=%s" % sk["also_owned_by"])
+                if sk.get("also_owned_by") else ""))
+            lines.append("        - 点 %d · 线段 %d" % (
+                len(sk.get("points") or []), len(sk.get("segments") or [])))
+            for r in sk.get("relations") or []:
+                if "value_mm" in r:
+                    val = " = %s mm" % r["value_mm"]
+                elif "value_deg" in r:
+                    val = " = %s°" % r["value_deg"]
+                else:
+                    val = ""
+                kinds = []
+                for e in r.get("entities") or []:
+                    k = e.get("kind") or ""
+                    if k == "草图线段":
+                        k += "(构造)" if e.get("construction") else ""
+                    kinds.append(k)
+                lines.append("        - **%s**%s ← %s"
+                             % (r.get("type"), val, kinds))
 
     for m in data.get("mates") or []:
         lines += ["## 配合 `%s`" % m.get("name"), "",
               "- 类型=**%s** 对齐=%s 特征类型=%s%s"
               % (m.get("type"), m.get("align"), m.get("feature_type"),
                  (" 值=%s mm" % m["value_mm"]) if "value_mm" in m else "")]
+        if m.get("entities_unreadable"):
+            lines.append("- ⚠ 参与实体**读不到**（该配合类型 API 不返回 Reference）"
+                         " · 实体数=%s" % m.get("entity_count"))
         for e in m.get("entities") or []:
             ent = e.get("entity") or {}
             lines.append("- 实体=%s 组件=`%s` 参照类型=%s"

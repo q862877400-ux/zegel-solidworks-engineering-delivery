@@ -79,6 +79,9 @@ DOC_KIND = {1: "零件", 2: "装配", 3: "图样"}
 
 NA = "读不到"
 
+#: 角度类关系（GetSystemValue2 对它们回的是**弧度**，不能按长度 ×1000）
+ANGLE_TYPES = {2, 43}   #: swConstraintType_ANGLE(2) · ANGLE3P(43)
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
@@ -277,10 +280,20 @@ def sketch_detail(sketch_feature) -> dict:
                     #: ★ 官方 `GetSystemValue2(ConfigName)` 要传配置名，空串=当前配置
                     v = _g(dim, "GetSystemValue2", "")
                     if v is not None:
+                        #: ★★★ 角度尺寸回的是**弧度**：实测 ANGLE 被当长度 ×1000
+                        #:   记成 "785.398 mm"（= 0.7854 rad ×1000），属于**假数值**。
+    #:   都回 None ⇒ 如实标「实体读不到」，别让下游误以为没有实体。
                         try:
-                            item["value_mm"] = _mm(v)
+                            if item.get("type_int") in ANGLE_TYPES:
+                                item["value_rad"] = round(float(v), 6)
+                                import math as _math
+
+                                item["value_deg"] = round(
+                                    _math.degrees(float(v)), 3)
+                            else:
+                                item["value_mm"] = _mm(v)
                         except Exception:  # noqa: BLE001
-                            item["value_mm"] = None
+                            pass
             rels.append(item)
     out["relations"] = rels
     #: ★ 草图级「外部/投影引用」计数：关系类型 32 = USEEDGE（转换实体）
@@ -298,7 +311,8 @@ def feature_params(doc, feature) -> dict:
     """特征的**关键参数**（拉伸深度 / 孔规格 / 阵列间距 / 圆角半径…）。
 
     ★ 复用本仓既有 typed readers（sw_feature_readback 里的
-      xtrude_params/hole_params/pattern_params/illet_params），不重造；
+      xtrude_params/hole_params/pattern_params/
+illet_params），不重造；
       读不到就返回空 dict（**不编数值**）。
     """
     name = str(_g(feature, "Name") or "")
@@ -340,6 +354,38 @@ def feature_params(doc, feature) -> dict:
     return out
 
 
+def _sketch_key(sk: dict) -> tuple:
+    """草图的**内容指纹**（用于识别「同一张草图在特征树里出现两次」）。"""
+    return (str(sk.get("name")),
+            sk.get("constrained"),
+            len(sk.get("points") or []),
+            len(sk.get("segments") or []),
+            len(sk.get("relations") or []))
+
+
+def _merge_sketch_duplicate(acc: list, sk: dict) -> None:
+    """★ SolidWorks 会把**同一张草图**同时作为顶层特征和某个特征的子特征暴露出来
+    （实测：草图1 顶层一次 + 凸台-拉伸1 下再一次，内容完全相同）。
+
+    这不是数据错，但下游会误当成两张草图 ⇒ 这里合并：
+    保留**顶层那份**（owner 为空），把另一处的 owner 记进 lso_owned_by。
+    """
+    key = _sketch_key(sk)
+    for i, prev in enumerate(acc):
+        if prev is sk or _sketch_key(prev) != key:
+            continue
+        #: 同一张：优先保留 owner 为空的（顶层）
+        keep, drop = (prev, sk) if not prev.get("owner") else (sk, prev)
+        others = list(keep.get("also_owned_by") or [])
+        if drop.get("owner") and drop["owner"] not in others:
+            others.append(drop["owner"])
+        keep["also_owned_by"] = others or None
+        acc[acc.index(drop)] = keep
+        if drop is sk:
+            acc.pop()
+        return
+
+
 def dump_part(doc) -> dict:
     """零件：特征树 + 每张草图 + 实体统计 + 自定义属性 + 参考几何。"""
     out: dict = {"features": [], "sketches": [], "bodies": []}
@@ -358,6 +404,7 @@ def dump_part(doc) -> dict:
             sk = sketch_detail(feat)
             sk["owner"] = owner or None      #: 孔内草图要能看出挂在哪个孔特征下
             out["sketches"].append(sk)
+            _merge_sketch_duplicate(out["sketches"], sk)
 
     for body in list(_g(doc, "GetBodies2", 0, False) or ()):
         faces = list(_g(body, "GetFaces") or ())
@@ -456,6 +503,16 @@ def _custom_properties(doc) -> dict:
 
 
 # ── 装配 ─────────────────────────────────────────────────────────────
+def _same_doc(a, b) -> bool:
+    """两个 COM 文档对象是否同一份（比标题 + 路径，避免拿到同一个对象却判不出）。"""
+    try:
+        ta, tb = str(_g(a, "GetTitle") or ""), str(_g(b, "GetTitle") or "")
+        pa, pb = str(_g(a, "GetPathName") or ""), str(_g(b, "GetPathName") or "")
+        return ta == tb and pa == pb
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def dump_assembly(doc) -> dict:
     """装配：组件（位置/朝向/压缩/路径）+ 配合（类型/对齐/参与实体）。"""
     out: dict = {"components": [], "mates": []}
@@ -478,6 +535,23 @@ def dump_assembly(doc) -> dict:
                     item["transform"] = [round(float(v), 6) for v in list(arr)]
                 except Exception:  # noqa: BLE001
                     item["transform"] = NA
+        #: ★★★ 组件的**内部内容**也要记 —— 实测踩过：业主在装配体里对「在位零件」
+        #:   建草图并标了 3 个尺寸，而 dump_assembly 只记组件名与变换 ⇒ 快照里
+        #:   sketches: 0，那 3 个尺寸全丢了。装配记录不递归进组件 = 记录不全。
+        sub = _g(cp, "GetModelDoc2")
+        if sub is not None and not _same_doc(sub, doc):
+            try:
+                inner = dump_part(sub)
+                item["model"] = {
+                    "document": str(_g(sub, "GetTitle") or ""),
+                    "path": str(_g(sub, "GetPathName") or ""),
+                    "features": inner.get("features"),
+                    "sketches": inner.get("sketches"),
+                    "bodies": inner.get("bodies"),
+                }
+            except Exception as exc:  # noqa: BLE001
+                item["model"] = {"error": "%s: %s"
+                                 % (type(exc).__name__, str(exc)[:120])}
         out["components"].append(item)
 
     #: 特征树（配合也在里面）—— ★ 第一版这里**没填 features**，于是配合永远找不到。
@@ -529,7 +603,16 @@ def _mate_detail(feature) -> dict:
         #:   （第一版写了 Entity ⇒ 参与实体永远是空）。
         ent_obj = _g(me, "Reference")
         if ent_obj is not None:
-            e["entity"] = describe_entity(ent_obj)
+            desc = describe_entity(ent_obj)
+            #: ★ 在位配合（MateInPlace）的 Reference 常常不是几何实体，
+            #:   而是**组件/特征** ⇒ 几何描述判不出时，退回记「它到底是什么对象」。
+            if desc.get("kind") == "未识别":
+                for attr, tag in (("Name2", "component"), ("Name", "feature")):
+                    nm = _g(ent_obj, attr)
+                    if nm:
+                        desc = {"kind": tag, "name": str(nm)[:120]}
+                        break
+            e["entity"] = desc
         comp = _g(me, "ReferenceComponent")
         if comp is not None:
             e["reference_component"] = str(_g(comp, "Name2") or "")
@@ -546,6 +629,10 @@ def _mate_detail(feature) -> dict:
         i += 1
     item["entities"] = ents
     item["entity_count"] = len(ents)
+    #: ★ 在位配合（MateInPlace）实测 MateEntity(i).Reference 与 ReferenceComponent
+    #:   都回 None ⇒ 如实标「实体读不到」，而不是让下游以为「这个配合没有实体」。
+    if ents and all(not e.get("entity") for e in ents):
+        item["entities_unreadable"] = True
 
     #: ★ 配合的**数值参数**（距离/角度）在配合特征的**显示尺寸**上：
     #:   IFeature.GetFirstDisplayDimension() → IDisplayDimension.GetDimension2(0)

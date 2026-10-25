@@ -153,3 +153,42 @@ def test_useedge_marks_external_sketch_reference() -> None:
     md = render_md(doc)
     assert "USEEDGE" in md
     assert "外部" in md
+
+
+def test_angle_value_not_misread_as_length() -> None:
+    """★★ 实测 bug：角度尺寸 GetSystemValue2 回的是**弧度**，
+    按长度 ×1000 会记成 "785.398 mm"（假数值）⇒ 必须分开记 value_deg。"""
+    import sw_model_snapshot
+
+    assert 2 in sw_model_snapshot.ANGLE_TYPES
+    doc = _part_doc()
+    doc["sketches"][0]["relations"] = [
+        {"type": "DISTANCE", "type_int": 1, "value_mm": 100.0,
+         "entities": [{"kind": "草图点"}, {"kind": "草图点"}]},
+        {"type": "ANGLE", "type_int": 2, "value_rad": 0.785398,
+         "value_deg": 45.0,
+         "entities": [{"kind": "草图线段"}, {"kind": "草图线段"}]},
+    ]
+    md = render_md(doc)
+    assert "100.0 mm" in md
+    assert "45.0°" in md
+    #: 角度不许以 mm 出现
+    assert "0.785398" not in md
+    assert "785" not in md
+
+
+def test_duplicate_sketch_merged() -> None:
+    """★ 同一张草图既是顶层特征又是某特征子特征 ⇒ 合并，不许记成两张。"""
+    import sw_model_snapshot
+
+    acc: list = []
+    sk1 = {"name": "草图1", "constrained": 3, "owner": None,
+           "points": [], "segments": [], "relations": []}
+    acc.append(sk1)
+    sw_model_snapshot._merge_sketch_duplicate(acc, sk1)
+    sk2 = {"name": "草图1", "constrained": 3, "owner": "凸台-拉伸1",
+           "points": [], "segments": [], "relations": []}
+    acc.append(sk2)
+    sw_model_snapshot._merge_sketch_duplicate(acc, sk2)
+    assert len(acc) == 1
+    assert acc[0].get("also_owned_by") == ["凸台-拉伸1"]
