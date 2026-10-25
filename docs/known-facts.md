@@ -7150,13 +7150,38 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 565 | **配合（mate）三条路径都建不成；装配本体已通** —— 2026-10-26（第 45 轮）。
+     ★ 前提：第 44 轮已能搭出**两组件装配**（组件数 0 → 2）。
+     ★★ 三条路径的真机读数：
+     ```
+     ① 仓库封装 add_mate_coincident（走 AddMate5 + 按实体名选）
+        ⇒ 'AddMate5 失败: type=0, error_status=4'
+           swAddMateError_e 逐字：4 = swAddMateError_IncorrectSelections（选择不正确）
+     ② CreateMateData(swMateCOINCIDENT=0) + **仅预选** + CreateMate
+        ⇒ 面选到了（SelectByRay，选中数 1 → 2），但 CreateMate 回 None，配合特征 0 → 0
+     ③ 同上 + 显式 data.EntitiesToMate = (face1, face2)
+        ⇒ faces_back 取回 2 个 CDispatch 面、setattr 成功，CreateMate 仍回 None，0 → 0
+     ```
+     ★★★ **按「三次失败就停下质疑架构」停手**，不再试第 4 个变体。
+     ★★ **一个未验证的具体假设**（不许当成结论）：
+       本探针选的是两块板的**顶面**（都在 z=20mm、互相平行）⇒
+       重合配合**本来就已满足** ⇒ SolidWorks 可能因为「冗余/已定义」而不建特征。
+       要验它得换**不共面**的两面（如一块的底面 + 另一块的顶面），**本轮没试**。
+     ★ 另记两条 API 事实：
+       · `IComponent2.GetBody()` 报 com_error **0x80020003（成员未找到）**；
+         `IComponent2.IGetBody()` 报 **「无法读只写属性」** ⇒ 本机晚绑定下都不可用。
+       · `IAssemblyDoc.CreateMate(data)` 失败时**回 None 而不抛**（`try_call` 会给 `(True, None)`）
+         ⇒ 又与「返回值 ≠ 实际结果」同族（事实 561 族），**判据必须读特征树**。
+     ★ 有用地记下来：`SelectByRay` 在**装配**里也有效（选中数 1 → 2），面能选、配合建不出，
+       所以卡点**不在选择**，而在 `CreateMate` 那一步（或本例的面组合本身不成立）。|真机：`tools/probe_e4_assembly.py`；证据 `output/e4-mate-by-faces.json` |
+
 | 564 | **★★★ E4 解除：加组件不是能力缺失，是缺官方前置 + 传错了路径** —— 2026-10-26（第 43 轮）。
      ★★ 官方 `AddComponent5.md` 的 Remarks 逐字：
      > **The specified file must be loaded in memory.** A file is loaded into memory
      > when you load the file in your SOLIDWORKS Design session (`ISldWorks::OpenDoc6`)
      > or open an assembly that already contains the file.
      ★ 第 22 轮（走**裸成员**、绕过封装三级兜底）与第 42 轮（走封装但**缺前置**）都栽在这一条。
-     ★★★ 按前置重测（`tools/probe_e4_build_assembly.py`）：
+     ★★★ 按前置重测（`tools/probe_e4_assembly.py`）：
      ```
      · open_part {'ok': True, 'loaded_path': '...\\output\\sandbox\\inputs\\板1_rev-1__12.SLDPRT'}
      · new_assembly {'ok': True, 'title': '装配体6'}
@@ -7172,7 +7197,7 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
      ★★ 方法论（三条，都是本仓反复付学费才学会的）：
        ① **调封装，不调裸成员** —— 兜底/重试/路径换算都在封装里（第 42 轮教训）；
        ② **动手前读官方 Remarks** —— 前置条件写在那里，不在签名里（铁律 4）；
-       ③ **沙箱会改名** —— 凡「先写文件再把路径交给 COM」的地方，都要用 `GetPathName()` 回读。|真机：`tools/probe_e4_build_assembly.py` · `tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-addcomponent5-precondition.json` · `output/e4-add-component-via-wrapper.json` |
+       ③ **沙箱会改名** —— 凡「先写文件再把路径交给 COM」的地方，都要用 `GetPathName()` 回读。|真机：`tools/probe_e4_assembly.py` · `tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-addcomponent5-precondition.json` · `output/e4-add-component-via-wrapper.json` |
 
 | 563 | **★★ E4 的加组件阻塞经**三层兜底**验证成立；而 `add_component` 失败时**静默回 None**（第 42 轮自我纠错）** —— 2026-10-26。
      ★ 第 22 轮我报「`AddComponent5` 回 None ⇒ 装配建不出来」时，调的是**裸成员**，

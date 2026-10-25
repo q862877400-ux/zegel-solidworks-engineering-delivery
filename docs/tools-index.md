@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 655 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 656 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 70 | — |
+| （未归入上面任何一类） | 其他 | 71 | — |
 
 ## 探针（273 个）
 
@@ -95,7 +95,7 @@
 | `probe_drawing_tools_e2e.py` | ★ 工具层端到端探针：8 条工程图工具**按 ToolSpec 契约**能否经注册器跑通 |
 | `probe_dwg_magic.py` | @brief 探针：`.dwg` 导出来的**到底是 DWG 还是 DXF**？—— **读魔数说话** |
 | `probe_e4_add_component_via_wrapper.py` | ★ 重测 E4 的加组件：走**高层封装** `sw_assembly.add_component`（含兜底），不走裸成员 |
-| `probe_e4_build_assembly.py` | ★ E4 第一次真机装配：两个组件 + 试一次配合 + 干涉 + 判定器 |
+| `probe_e4_assembly.py` | E4 真机装配探针（**唯一一份**）：搭两组件 → 试配合 → 读干涉 |
 | `probe_endcap_face_matrix.py` | ★ 逐面矩阵：顶端盖到底要**哪一张面**才建得出来（★ 单变量：一次只换选中的面） |
 | `probe_endcap_feature2.py` | ★ 照**官方例子**走 `InsertEndCapFeature2`（★ 7 参 · 面**当参数传** · 不需要预选） |
 | `probe_endcap_official_args.py` | ★ 按**官方例子的实参**重测 `InsertEndCapFeature3`（★ 铁律：例子给的是调用序与配方） |
@@ -799,7 +799,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（70 个）
+## 其他（71 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -829,6 +829,7 @@
 | `compare_geometry.py` | ★ **几何等价判据**（拓扑 + \|ΔV\| + \|ΔA\|）—— 2026-10-01 · 轮 321 |
 | `diagnose_fact_gate_recall.py` | ★ T5-1 的 recall 诊断：查那 2 例「真复述」为什么没被报出来 |
 | `discard_orphan_via_closeall.py` | ★ 按官方语义丢弃那个孤儿文档：`ISldWorks.CloseAllDocuments(True)` |
+| `e4_probe_common.py` | E4 证据探针的共用小件：**边跑边写**的证据收集器 |
 | `ec00_drafts_audit.py` | ★ EC00 残留 ③ 审计 —— 逐份核 `output/ENGINEERING_*.md` 的「来源+许可+可运行验收」三项 |
 | `ec00_scope_inventory.py` | ★ EC00 范围清单：静态盘点代表工具集的**注入/参数/单位/风险/效果/来源/等级**（★ **不连接 COM**） |
 | `emit_iview_module.py` | 生成 scripts/sw_drawing_view.py（IView 成员登记表 + 通用访问器） |
