@@ -191,11 +191,31 @@ def main() -> int:
             print(ev["conclusion"])
             return 1
 
+        #: ★★ 第 53 轮：`SetAddToDB(True)` —— 官方 Remarks 说它「绕过交互、直接进数据库」。
+        #:   假设：尺寸创建因此不再弹「修改」框（那样就不必每个尺寸都外部 ESC）。
+        addtodb = "--addtodb" in sys.argv
+        if addtodb:
+            try:
+                c_.get_com_member(doc, "SetAddToDB", True)
+                ev["addtodb"] = True
+                print("   SetAddToDB(True) 已设")
+            except Exception as exc:  # noqa: BLE001
+                ev["addtodb_err"] = "%s" % (type(exc).__name__,)
+                print("   ★ SetAddToDB 失败：%s" % ev["addtodb_err"])
+
         ext = c_.get_com_member(doc, "Extension")
         ok_d, dim = c_.try_call(
             c_.get_com_member, ext, "AddDimension",
             -0.02, 0.0, 0.005, SW_DIR_RIGHT,
         )
+        if addtodb:
+            try:
+                #: ★ 官方逐字：「you must set it back to false to restore SOLIDWORKS to its normal operating mode」
+                c_.get_com_member(doc, "SetAddToDB", False)
+                ev["addtodb_restored"] = True
+            except Exception:  # noqa: BLE001
+                pass
+
         after = _dim_count(doc)
         ev["call"] = {"ok": bool(ok_d), "dim_none": dim is None}
         ev["after"] = after
