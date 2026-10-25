@@ -810,6 +810,16 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 pass
         ev["finished_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        #: ★★ 第 66 轮（FR-014）：把**证据指纹**随证据一起写入。
+        #:   指纹 = 判定器版本 × 支持域版本 × 交付件 sha256 —— 三者任一变化即旧证据失效。
+        #:   ★ 时间戳**不进指纹**（时间变了不代表证据失效，否则指纹天天变，就没人看了）。
+        try:
+            sys.path.insert(0, str(R / "scripts"))
+            from check_evidence_freshness import compute_fingerprint
+
+            ev["fingerprint"] = compute_fingerprint()
+        except Exception as exc:  # noqa: BLE001
+            ev["fingerprint_err"] = "%s: %s" % (type(exc).__name__, str(exc)[:120])
         dest = R / "output" / "s3-acceptance.json"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(json.dumps(ev, ensure_ascii=False, indent=2), encoding="utf-8")

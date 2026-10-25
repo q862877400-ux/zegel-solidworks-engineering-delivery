@@ -570,6 +570,12 @@
       "runner": "_run_support_domain_gate",
       "kind": "release_static",
       "reason": "★ 硬门禁（2026-10-26 · spec 350 User Story 5 / FR-013 / FR-014）：判 docs/support-domain.yaml 的每条 evidence 文件存在且 JSON 字段可达、limits 区间 min<=max、unsupported 每项有 reason 与 match。起因：「不限定范围的『全支持』是虚假承诺」，而域外请求必须被拒绝而不是勉强生成。"
+    },
+    {
+      "gate": "check_evidence_freshness.py",
+      "runner": "_run_evidence_freshness_gate",
+      "kind": "diagnostic",
+      "reason": "★ 诊断门禁（2026-10-26 · spec 350 FR-014「规则/方法升级必须识别受影响交付并使旧证据失效」）：判 output/s3-acceptance.json 里记的指纹（判定器版本 × 支持域版本 × 交付件 sha256）与当前是否一致，不一致即 STALE 并逐条给出差异。★ 为什么是诊断不是硬拦：开发轮次里改了判定器，证据必然过期，硬拦会让每轮都红；它的用途是**发布前**检查 —— 发布前必须 FRESH。"
     }
   ]
 }

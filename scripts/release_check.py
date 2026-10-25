@@ -544,6 +544,38 @@ def _run_unit_naming_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_evidence_freshness_gate() -> dict[str, object]:
+    """@brief 判验收证据是否已过期（scripts/check_evidence_freshness.py）。
+
+    ★ 来源：spec 350 · FR-014 ——
+      「规则/方法升级必须能识别受影响交付并使旧证据失效」。
+
+    ★ 判据：证据里记的指纹（判定器版本 × 支持域版本 × 交付件 sha256）与当前不一致 ⇒ STALE。
+
+    ★★ 分类为**诊断**（不拦发布）：开发轮次里改了判定器，证据必然过期；
+      硬拦会让每轮都红。它的用途是**发布前**检查 —— 发布前必须 FRESH。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_evidence_freshness.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "证据新鲜度检查无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_support_domain_gate() -> dict[str, object]:
     """@brief 跑「支持参数域」门禁（scripts/check_support_domain.py --self-check）。
 
@@ -3238,6 +3270,8 @@ def run_release_check() -> dict[str, object]:
     #     更关键的是 **没有任何地方统计 `skipped`** ⇒ **「跳过了」是隐形的**。
     #   ★ 一个**静默跳过**的门禁与**没跑**等价（本项目已记录的第三种面孔）。
     #   ⇒ 把 13 个状态一次全列出来，并**单独列出被跳过的**（**显式**，不靠人去翻各段）。
+    #: ★ 诊断门禁：证据新鲜度（不拦发布，发布前才要求 FRESH）
+    ef = _run_evidence_freshness_gate()
     _gate_results = {
         "provenance": provenance,
         #: ★ 2026-10-05（规格 206 / T5-1 接线）★ **诊断**门禁：一个事实一个家
@@ -3392,6 +3426,7 @@ def run_release_check() -> dict[str, object]:
         "repo_uniformity": ru,
         "unit_naming": un,
         "support_domain": sd,
+        "evidence_freshness": ef,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓
         "survey_cards": sc,
