@@ -62,7 +62,39 @@ python -B scripts/check_internal_length_units.py --inventory   # 看全量纲清
 - ★ **改形参名必须跑一次真机**：只改签名不改函数体会得到
   `NameError`，静态检查抓不到（第 60 轮实测踩过）。
 
+## 十四之三、人工验收：四步协议（业主 2026-10-26 指令）
+
+**机器判据绿 ≠ 人工验收过。两者都要，缺一不算。**
+
+业主原话：「很多操作你还是做一遍给我看，然后我人工确认一下吧，免得你机器判据问题，
+你以为验收了实际上不对。」
+
+四步（**阶段之间必须停顿等人**）：① 计划（做什么 + 怎么判定）② 准备（摆好场景、
+说明「你现在应该看到什么」、**停下等人说对**）③ 执行 ④ 结果确认（说明「现在应该是什么样」、
+给前后读数对照、**停下等人说确实**）。
+
+全文与判据盲区实录：[docs/human-acceptance-protocol.md](docs/human-acceptance-protocol.md)。
+工具：tools/coop_step2_prepare_mate.py / tools/coop_step3_execute_mate.py /
+tools/sw_screenshot.py。
+★ 不许替业主说「他确认了」；他没答就在报告里写「待人工确认」。
+
 ## 十五、真机命令一律走弹窗护栏
+
+**★★★★★ 通用护栏：`tools/guard_run.py`（2026-10-26 用户要求，长效机制）**
+
+```bash
+python -B tools/guard_run.py --timeout 300 -- <任意命令…>
+python -B tools/guard_run.py --since        # 只看「上一轮之后还开着的弹窗」
+```
+
+- **任何工具都可能弹窗**（不只 SolidWorks）：我用 `psr.exe` 时因上一个实例还在跑，
+  它弹了「步骤记录器的某个实例正在运行中。」——**命令不输出也不退出，我就干等超时**。
+- 护栏把这件事变成**输出的一部分**：开跑先报遗留弹窗；运行中每 300ms 扫新 `#32770`，
+  一出现就抓**文字 + 截图**并杀掉子进程树；结束**必打** `VERDICT:` 行
+  （`OK` / `EXIT n` / `DIALOG <弹窗文字>`）。
+- ★★ 纪律：**命令没有输出或眼看要超时 ⇒ 第一件事是查弹窗台账**
+  （`python -B tools/guard_run.py --since`），不是继续等。
+- ★ 证据落在 `output/dialogs/`（`events.jsonl` + 截图）。
 
 **★★★ 弹窗监控必须常驻（2026-10-26 用户要求）**
 

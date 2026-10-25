@@ -356,6 +356,15 @@
    "evidence": "回滚后六道门禁逐个复验回到基线：byref 323 · entry 37/37 可解析 18/37 · arg 45/41/131 · forward 8/4/12 · upstream 3/10/5 · blindspot 371",
    "note_same_family": "★ 与 `_optional_com_member/_safe_com_member` 同族（那组当时也是 −21 调用点）",
    "date": "2026-10-22"
+  },
+  {
+   "functions": "_g/_member",
+   "files": [
+    "scripts/sw_model_snapshot.py",
+    "scripts/sw_preference_guard.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留两份实现",
+   "reason": "两个模块各需一个私有 COM 访问器，逐字相同。★ 但实测：改成导入别名后，`check_dispatch_*` 的『分发口调用点』识别不到（本轮实测在该处报「形态 (b) 名字别名 25 处解析器看不见的调用点」，release_check 直接红）。⇒ ★★ 统一它就是拿掉分发口的可核性 —— 与基线里 `_optional_com_member/_safe_com_member` 那条同因，故同样保留。"
   }
  ],
  "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"
