@@ -77,16 +77,28 @@ def collect_sketch_constraint(
     ⚠ **不要把数值路径当默认** —— 真机拿不到那三个数，
       填 0 就是「先填返回值」（`AGENTS.md` 环节条件第 7 条禁止）。
     """
+    #: ★★★ 第 34 轮修：三个数值路径字段接受 `None`，语义是「**没量过**」。
+    #:
+    #:   原实现 `entities > 0` 在 `entities=None` 时崩
+    #:   （`TypeError: '>' not supported between NoneType and int`），
+    #:   而 docstring 又禁止填 0（那是「先填返回值」）
+    #:   ⇒ 真机调用方**没有合法表达方式**。这是设计缺口。
+    _entities = 0 if entities is None else int(entities)
+    _relations = [] if relations is None else list(relations)
+    _dimensions = [] if dimensions is None else list(dimensions)
+    numeric_measured = entities is not None
     has_enum = solver_status_int is not None
-    has_numeric = entities > 0
+    has_numeric = numeric_measured and _entities > 0
     complete = bool(solver_state) and (has_enum or has_numeric)
     return Observation(
         target=target,
         complete=complete,
         values={
-            "entities": entities,
-            "relations": list(relations),
-            "dimensions": list(dimensions),
+            "entities": _entities,
+            "relations": _relations,
+            "dimensions": _dimensions,
+            #: ★ 数值路径是否真的量过 —— 没有它就分不清「量到 0」与「没量」
+            "numeric_measured": numeric_measured,
             "intentional_dof": intentional_dof,
             "solver_state": solver_state,
             "solver_status_int": solver_status_int,
