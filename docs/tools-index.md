@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 667 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 669 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 280 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 282 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 75 | — |
 
-## 探针（280 个）
+## 探针（282 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -173,6 +173,8 @@
 | `probe_mass_property_reads.py` | @brief 探针：**读质量属性** —— 怎么取 `IMassProperty2`、成员可达性、以及**单位** |
 | `probe_mass_units_controlled.py` | @brief **D3 对照实验**：`IMassProperty2.Mass` 的物理单位 —— 用**已知密度材料**定死它 |
 | `probe_mate5_vs_createmate.py` | ★ 决定性对照：`AddMate5` 与后继 `CreateMate(MateData)` **谁真能建成 mate** |
+| `probe_mate_after_save.py` | 候选 12：**先把装配存盘**再 `CreateMate` |
+| `probe_mate_pickpoints.py` | 候选 13（最后一个）：`ICoincidentMateFeatureData.PickPoints` 显式给坐标 |
 | `probe_mcp_stdio_handshake.py` | ★ 探针：对我们自己的 MCP 服务器做一次**真 JSON-RPC 握手**（★ 不连 SolidWorks） |
 | `probe_mesh_settings_readonly.py` | ★ 只读：造零件+算例，然后**只读**网格设置那组数（★ 不写一个字节）—— 用来定单位口径 |
 | `probe_mesh_units.py` | @brief 探针：`default_element_size_and_tolerance` 的 **`units` 口径** —— 父进程 vs 子进程 |

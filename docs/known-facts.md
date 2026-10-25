@@ -7279,9 +7279,25 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
                   'mates_before': 0, 'mates_after': 0}
        ```
        ⇒ `CreateMate` **仍回 None** ⇒ **UI 抑制不是原因**。
-     ★★ **剩余未试**（从这两条开始，别重走上面 11 条）：
-       · `PickPoints` 显式给坐标（6 个 double：两个实体各一组 x,y,z）
-       · **先把装配存盘再建配合**（`CreateMate` 是否需要文档落盘，未知）
+     ★★★ **第 59 轮把剩下两条一次做完，结论不同**：
+     ```
+     候选 12「先把装配存盘再建配合」（tools/probe_mate_after_save.py）
+       装配已存盘 True → output/mate_save/with_mate.SLDASM
+       选面 max_selected=2 · CreateMate ok=True · 真实配合特征 0 → 0
+       ⇒ **排除**（存盘不是缺的前提）
+
+     候选 13「PickPoints 显式给坐标」（tools/probe_mate_pickpoints.py）
+       PickPoints[VARIANT(VT_ARRAY|VT_R8)] set=False · 读回 0
+       PickPoints[tuple]                    set=False · 读回 0
+       PickPoints[array.array(d)]           set=False · 读回 0
+       ⇒ ★★ **写不进去** ⇒ 这个候选**验不了**（不是无效）
+     ```
+     ★★★ 「验不了」与「排除」必须分开写：
+       排除 = 设置已验证生效但结果仍不成立；验不了 = 设置根本没生效。
+       混为一谈会让下一个人以为这条路已经走到头了，其实还有一个未知。
+     ⇒ **配合这条路整体挂起**：12 条已排除、1 条验不了。
+       已知可用的相邻事实：**孔位尺寸**那条已经通了（事实 568，`E2.rebuild` 已 pass），
+       那用的是 `IModelDoc2.AddHorizontalDimension2` + ESC 线程，不是配合这条。
      ★ 另：本机 `ISldWorks.GetDocuments` 是**属性**不是方法 —— `sw.GetDocuments()` 会
        `TypeError: 'tuple' object is not callable`（同一轮两次踩到）。|真机：`tools/probe_e4_assembly.py`（`--nonplanar` 变体）；证据 `output/e4-assembly.json` |
 
