@@ -205,7 +205,7 @@ python -B tools/teach.py record [--out 目录]         # 把当前文档状态�
 scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
 	ests/test_teach_recipe_habits.py —— 那是「工具替 agent 干活」，与上面的纠正相反。
 
-### 全场景真机验收：**21 项判据全过**（output/verify_all_scenes.py）
+### 全场景真机验收：**24 项判据全过**（output/verify_all_scenes.py）
 
 `
 零件  特征树(递归) 33 项 · 草图 4 张（含孔内）· 构造线 1 条
@@ -215,6 +215,8 @@ scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
       配合参与实体 2 个（面, 面）· 参照组件 [参考案例-1, 参考案例-2]
 图样  视图 4 个（DrSheet + AbsoluteView×3）· 特征 38 项 · 图样草图 8 张
 外部引用 3 条（STEP AP214 导入件）· 每条含 特征 / 被引对象 / 数据类型 / 状态
+特征参数 拉伸深度/孔规格等（复用既有 typed readers）· 配合数值 10.0mm
+图样标注 视图尺寸数与注释数（工程图视图1：尺寸 2 / 注释 8）
 `
 
 ### 已知限制（如实）

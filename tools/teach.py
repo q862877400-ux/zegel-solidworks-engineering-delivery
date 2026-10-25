@@ -125,6 +125,16 @@ def render_md(data: dict) -> str:
          "- 类型：%s" % data.get("doc_type"),
          "- 路径：`%s`" % (data.get("path") or "（未保存）"), ""]
 
+    feats = data.get("features") or []
+    withpar = [f for f in feats if f.get("params")]
+    if withpar:
+        lines += ["## 特征参数", ""]
+        for f in withpar:
+            lines.append("- %s（%s）" % (f.get("name"), f.get("type")))
+            for k, v in (f.get("params") or {}).items():
+                lines.append("    - %s = %s" % (k, v))
+        lines.append("")
+
     for sk in data.get("sketches") or []:
         owner = sk.get("owner")
         lines.append("## 草图 %s%s（状态 %s = %s）" % (
@@ -163,6 +173,18 @@ def render_md(data: dict) -> str:
                      % (b.get("face_count"), b.get("cylinder_faces")))
         lines.append("")
 
+    for v in data.get("views") or []:
+        extra = []
+        if "dimension_count" in v:
+            extra.append("尺寸 %d" % v["dimension_count"])
+        if "annotation_count" in v:
+            extra.append("注释 %d" % v["annotation_count"])
+        if v.get("dimension_values_mm"):
+            extra.append("值 %s" % v["dimension_values_mm"])
+        lines.append("- 视图 %s（%s）%s"
+                     % (v.get("name"), v.get("type"),
+                        (" · " + " · ".join(extra)) if extra else ""))
+
     for cp in data.get("components") or []:
         tr = cp.get("transform")
         lines.append("- 组件 `%s` 压缩=%s 变换=%s" % (
@@ -171,8 +193,9 @@ def render_md(data: dict) -> str:
 
     for m in data.get("mates") or []:
         lines += ["## 配合 `%s`" % m.get("name"), "",
-              "- 类型=**%s** 对齐=%s 特征类型=%s"
-              % (m.get("type"), m.get("align"), m.get("feature_type"))]
+              "- 类型=**%s** 对齐=%s 特征类型=%s%s"
+              % (m.get("type"), m.get("align"), m.get("feature_type"),
+                 (" 值=%s mm" % m["value_mm"]) if "value_mm" in m else "")]
         for e in m.get("entities") or []:
             ent = e.get("entity") or {}
             lines.append("- 实体=%s 组件=`%s` 参照类型=%s"

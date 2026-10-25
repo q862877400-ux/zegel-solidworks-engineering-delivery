@@ -279,16 +279,66 @@ def sketch_detail(sketch_feature) -> dict:
 
 
 # ── 零件 ─────────────────────────────────────────────────────────────
+def feature_params(doc, feature) -> dict:
+    """特征的**关键参数**（拉伸深度 / 孔规格 / 阵列间距 / 圆角半径…）。
+
+    ★ 复用本仓既有 typed readers（sw_feature_readback 里的
+      xtrude_params/hole_params/pattern_params/illet_params），不重造；
+      读不到就返回空 dict（**不编数值**）。
+    """
+    name = str(_g(feature, "Name") or "")
+    tp = str(_g(feature, "GetTypeName2") or "")
+    try:
+        from sw_feature_readback import (
+            extrude_params,
+            fillet_params,
+            hole_params,
+            pattern_params,
+        )
+    except Exception:  # noqa: BLE001
+        return {}
+    reader = None
+    if tp in ("Extrusion", "ExtrusionThin", "BossThin", "Cut", "CutThin"):
+        reader = extrude_params
+    elif tp == "HoleWzd":
+        reader = hole_params
+    elif "Pattern" in tp:
+        reader = pattern_params
+    elif tp in ("Fillet", "Chamfer"):
+        reader = fillet_params
+    if reader is None:
+        return {}
+    try:
+        raw = reader(doc, name) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+    #: 去掉与「记录」无关的内部键，保留可判读参数
+    out = {}
+    for k, v in raw.items():
+        if str(k).startswith("_"):
+            continue
+        if k in ("definition", "feature"):
+            continue
+        if v in (None, "", [], {}):
+            continue
+        out[str(k)] = v if isinstance(v, (int, float, bool, str)) else str(v)[:120]
+    return out
+
+
 def dump_part(doc) -> dict:
     """零件：特征树 + 每张草图 + 实体统计 + 自定义属性 + 参考几何。"""
     out: dict = {"features": [], "sketches": [], "bodies": []}
 
     for feat, owner, level in walk_features(doc):
         tp = str(_g(feat, "GetTypeName2") or "")
-        out["features"].append({
+        item = {
             "name": str(_g(feat, "Name") or ""), "type": tp,
             "owner": owner or None, "level": level,
-        })
+        }
+        params = feature_params(doc, feat)
+        if params:
+            item["params"] = params
+        out["features"].append(item)
         if tp == "ProfileFeature":
             sk = sketch_detail(feat)
             sk["owner"] = owner or None      #: 孔内草图要能看出挂在哪个孔特征下
@@ -481,10 +531,56 @@ def _mate_detail(feature) -> dict:
         i += 1
     item["entities"] = ents
     item["entity_count"] = len(ents)
+
+    #: ★ 配合的**数值参数**（距离/角度）在配合特征的**显示尺寸**上：
+    #:   IFeature.GetFirstDisplayDimension() → IDisplayDimension.GetDimension2(0)
+    #:   → IDimension.GetSystemValue2("")（米）。实测距离配合回 0.01 米 = 10mm。
+    okd, dd = _tc(_g, feature, "GetFirstDisplayDimension")
+    if okd and dd is not None:
+        okr, dim = _tc(_g, dd, "GetDimension2", 0)
+        if okr and dim is not None:
+            v = _g(dim, "GetSystemValue2", "")
+            if v is not None:
+                try:
+                    item["value_mm"] = _mm(v)
+                except Exception:  # noqa: BLE001
+                    item["value_mm"] = None
     return item
 
 
 # ── 图样 ─────────────────────────────────────────────────────────────
+def _view_detail(feature, base: dict) -> dict:
+    """图样视图的**标注信息**：尺寸个数与数值、注释个数。
+
+    ★ 实测入口（IView）：GetDisplayDimensionCount() / GetDisplayDimensions() /
+      GetAnnotationCount() / GetAnnotations()。
+    """
+    view = _g(feature, "GetSpecificFeature2")
+    if view is None:
+        return base
+    n_dim = _int(_g(view, "GetDisplayDimensionCount"))
+    if n_dim is not None:
+        base["dimension_count"] = n_dim
+    n_ann = _int(_g(view, "GetAnnotationCount"))
+    if n_ann is not None:
+        base["annotation_count"] = n_ann
+    vals = []
+    for dd in list(_g(view, "GetDisplayDimensions") or ()):
+        dim = _g(dd, "GetDimension2", 0)
+        if dim is None:
+            continue
+        v = _g(dim, "GetSystemValue2", "")
+        if v is None:
+            continue
+        try:
+            vals.append(_mm(v))
+        except Exception:  # noqa: BLE001
+            continue
+    if vals:
+        base["dimension_values_mm"] = vals
+    return base
+
+
 def dump_drawing(doc) -> dict:
     """图样：特征树 + 视图 + 各视图里的草图（图样几何）。
 
@@ -509,8 +605,9 @@ def dump_drawing(doc) -> dict:
             "owner": owner or None, "level": level,
         })
         if tp in view_types:
-            out["views"].append({"name": str(_g(feat, "Name") or ""),
-                                  "type": tp, "owner": owner or None})
+            v = {"name": str(_g(feat, "Name") or ""), "type": tp,
+                 "owner": owner or None}
+            out["views"].append(_view_detail(feat, v))
         elif tp == "ProfileFeature":
             sk = sketch_detail(feat)
             sk["owner"] = owner or None      #: 图样里草图挂在某个视图下
