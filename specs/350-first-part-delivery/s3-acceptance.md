@@ -2,14 +2,14 @@
 
 **总体**：❌ fail
 
-检查共 7 条：pass 2 · fail 2 · unknown 3 · not_applicable 0
+检查共 7 条：pass 3 · fail 1 · unknown 3 · not_applicable 0
 
 ## 逐条状态
 
 | 判据 | 名称 | 状态 | 检查 | 不合格 | 未测到 |
 |---|---|---|---|---|---|
 | **E1** | 草图全约束 | ✅ pass | 1 | — | — |
-| **E2** | 参数化可重建 | ❌ fail | 3 | E2.rebuild、E2.hole_readback | E2.drawing_current |
+| **E2** | 参数化可重建 | ❌ fail | 3 | E2.hole_readback | E2.drawing_current |
 | **E3** | 特征树可编辑 | ✅ pass | 1 | — | — |
 | **E4** | 装配自由度闭合 | ⚠️ unknown | 2 | — | E4.dof、E4.interference |
 | **E5** | 图样合规 | ⬜ 未检查 | 0 | — | — |
@@ -24,8 +24,7 @@
 
 ## 不合格的项
 
-- `E2.rebuild`：★ 改了主参数但下游没联动（如孔没随板宽移动）
-- `E2.hole_readback`：★ 4 个孔的**孔型**不符。首例 'H1'：要求 "要求里的孔型 '' 不在允许词表"，实测 None
+- `E2.hole_readback`：★ 4 个孔的孔径或孔位超差。首例 'H1'：孔径误差 0.0 mm、孔位误差 20.0 mm（容差 0.050 / 0.100）
 
 ## 未检查的判据
 

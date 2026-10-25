@@ -7175,9 +7175,15 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
      ★ 另一处别踩：`_dim_count(doc)` 是按**名字**取最后一个草图特征的尺寸数 ⇒
        在孔的位置草图里调它会读到别处的数（实测 `1→1` 假读数）；
        要数**正在编辑的那个子特征**（`GetFirstDisplayDimension` + `IAnnotation.GetNext2`）。
-     ⚠ **未完成**：上述只在 `output/link54/板1_link.SLDPRT`（副本）上验成；
-       **交付件 `output/stage2/板1_rev-1.SLDPRT` 还没加这四个尺寸** ⇒
-       `E2.rebuild` 在验收报告里**仍是 fail**。把尺寸落到交付件是下一步。|真机：`tools/probe_e2_hole_dimension_link.py`（`--hv`）· 证据 `output/e2-hole-dimension-link.json` · 勘察 `output/e2-hole-sketch-survey.json` |
+     ★★★ **已完成（同轮）**：四个尺寸已落到交付件 `output/stage2/板1_rev-1.SLDPRT`
+       并保存（`--target … --save`），随后把板宽**复位到设计值 100mm** 再保存
+       （`tools/restore_deliverable_width.py`：探针为验证联动曾把它改成 120 并落盘）。
+       ⇒ 验收报告 `specs/350-first-part-delivery/s3-acceptance.md`：
+       `E2.rebuild` **fail → pass**（孔心位移 [20.0]×4、重建错误 0）。
+     ★★ 同一轮还修掉验收运行器的一个真 bug：**保存后重开必须用 `GetPathName()` 的实际路径** ——
+       `sw_guard` 会把输入文件改名（形如 `板1_rev-1__44.SLDPRT`），按沙箱前的 `copy` 路径
+       重开读到的是**另一个文件**（仍 100mm 宽）⇒ 会误判成「参数关系没落盘」。
+       这个坑本仓早有记载，我第 55 轮又踩了一次。|真机：`tools/probe_e2_hole_dimension_link.py`（`--hv`）· 证据 `output/e2-hole-dimension-link.json` · 勘察 `output/e2-hole-sketch-survey.json` |
 
 | 567 | **★★★★★ `IModelDocExtension.AddDimension` **可用** —— 「尺寸能力整体退化」（事实 560）**不成立**，退化的只是 `IModelDoc2` 那两个入口** —— 2026-10-26（第 52 轮）。
      ★★★ 真机读数（`tools/probe_extension_add_dimension.py`，证据 `output/extension-add-dimension.json`）：

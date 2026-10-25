@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 665 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 666 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 73 | — |
+| （未归入上面任何一类） | 其他 | 74 | — |
 
 ## 探针（280 个）
 
@@ -806,7 +806,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（73 个）
+## 其他（74 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -868,6 +868,7 @@
 | `register_topology_capability.py` | @brief 把拓扑优化登记进 capabilities.yaml（护城河域） |
 | `rename_pep8_names.py` | 把 ruff 报的 N812 / N806 改名成 PEP 8 口径（★ 每个名字全文件唯一才动） |
 | `repair_harvest_report_line.py` | ★ 恢复 docs/harvest-report.md 里被审计输出覆盖的那一行（★ 第二次发生 |
+| `restore_deliverable_width.py` | 把交付件的板宽改回设计值（100mm）并保存 —— 探针验证时把它改成 120 了 |
 | `sample_cold_tools_for_rag_test.py` | ★ 机械抽样：从全部工具清单里挑一批**冷门**的（★ 不靠我的口味） |
 | `selfcheck_official_source_errors.py` | ★ 自校 `docs/history/official-source-errors.md` 里写的"真名"—— ★ 逐个去官方核 |
 | `session_verdict.py` | ★ 会话裁决：**一个裁决、两条探路** —— 会话干不干净、有没有未保存改动 |

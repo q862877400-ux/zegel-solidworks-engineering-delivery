@@ -285,6 +285,11 @@ def main() -> int:
             "changed_params": list(changed),
         }
         #: 保存重开核一次（第 11 轮验过的机制）
+        #: ★★★ 第 55 轮修：**必须用实际路径** —— `sw_guard` 会把输入文件改名
+        #:   （实测形如 `板1_rev-1__44.SLDPRT`），按沙箱前的 `copy` 路径重开的
+        #:   是**另一个文件**（仍是 100mm 宽）⇒ 会误判成「参数关系没落盘」。
+        real_path = str(_member(doc, "GetPathName") or "") or str(copy)
+        ev["E2"]["real_path"] = real_path
         ok_s, _ = _try(c_.save_document, doc)
         title = _member(doc, "GetTitle")
         _try(sw.CloseDoc, str(title) if title else "")
@@ -293,7 +298,7 @@ def main() -> int:
         #:   ⇒ 改为把**保存前**与**重开后**的实测尺寸都交给采集器，由它比对。
         extent_before_save = bbox_after if bbox_after is not None else -1.0
         extent_after_reopen = -1.0
-        ok_r, doc2 = _try(c_.open_document, sw, str(copy))
+        ok_r, doc2 = _try(c_.open_document, sw, real_path)
         if ok_r and doc2 is not None:
             doc = doc2
             _ext = solid_body_extent_mm(doc).get("x_mm")
@@ -316,6 +321,8 @@ def main() -> int:
             model_revision="",
         )
         res_e2 = judge_rebuild(obs_e2, requirement_id="R-E2")
+        ev["E2"]["extent_before_save_mm"] = float(extent_before_save)
+        ev["E2"]["extent_after_reopen_mm"] = float(extent_after_reopen)
         ev["E2"]["status"] = res_e2.status.value
         ev["E2"]["reason"] = res_e2.reason
         print("③ E2：孔心位移=%s（期望 %s）⇒ %s"
@@ -481,7 +488,8 @@ def main() -> int:
         #:   ⚠ `unknown` 不是 fail：那是我方没搭起测试，不是产物不合格。
         res_e4 = res_e4i = None
         try:
-            ok_pa, part_doc = _try(c_.open_document, sw, str(copy))
+            #: ★ 同一个坑：E4 段也要用**实际路径**（沙箱会改名）——第 55 轮实测
+            ok_pa, part_doc = _try(c_.open_document, sw, real_path)
             loaded = (
                 str(_member(part_doc, "GetPathName") or "") if ok_pa else ""
             )

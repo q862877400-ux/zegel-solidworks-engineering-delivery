@@ -180,11 +180,30 @@ def main() -> int:
 
         import shutil
 
-        work = R / "output" / "link54"
-        work.mkdir(parents=True, exist_ok=True)
-        copy = work / "板1_link.SLDPRT"
-        shutil.copy2(SRC, copy)
-        ok_o, doc = c_.try_call(c_.open_document, sw, str(copy))
+        #: ★ `--target PATH`：作用于指定零件（默认仍是副本，安全）；
+        #:   `--save`：建完尺寸后保存（默认不保存）。
+        target_arg = ""
+        if "--target" in sys.argv:
+            k = sys.argv.index("--target")
+            if k + 1 < len(sys.argv):
+                target_arg = sys.argv[k + 1]
+        save_after = "--save" in sys.argv
+        ev["target"] = target_arg or str(SRC)
+        ev["save_after"] = bool(save_after)
+
+        if target_arg:
+            tgt = Path(target_arg)
+            if not tgt.is_file():
+                ev["err"] = "目标文件不存在：%s" % tgt
+                print("★ " + ev["err"])
+                return 2
+            open_path = tgt
+        else:
+            work = R / "output" / "link54"
+            work.mkdir(parents=True, exist_ok=True)
+            open_path = work / "板1_link.SLDPRT"
+            shutil.copy2(SRC, open_path)
+        ok_o, doc = c_.try_call(c_.open_document, sw, str(open_path))
         ev["open"] = {"ok": bool(ok_o)}
         print("① 打开：%s" % ok_o)
 
@@ -382,6 +401,14 @@ def main() -> int:
         return 1
     finally:
         _stop.set()
+        if doc is not None and ev.get("save_after"):
+            try:
+                ok_sv, sv_ret = c_.try_call(c_.save_document, doc)
+                ev["saved"] = bool(ok_sv)
+                ev["save_err"] = "" if ok_sv else str(sv_ret)[:100]
+                print("   已保存：%s" % ev["saved"])
+            except Exception as exc:  # noqa: BLE001
+                ev["save_err"] = "%s" % (type(exc).__name__,)
         if doc is not None:
             try:
                 c_.get_com_member(doc, "SketchManager").InsertSketch(True)
