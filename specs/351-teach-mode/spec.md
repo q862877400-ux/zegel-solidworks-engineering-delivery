@@ -205,7 +205,7 @@ python -B tools/teach.py record [--out 目录]         # 把当前文档状态�
 scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
 	ests/test_teach_recipe_habits.py —— 那是「工具替 agent 干活」，与上面的纠正相反。
 
-### 全场景真机验收：**18 项判据全过**（output/verify_all_scenes.py）
+### 全场景真机验收：**21 项判据全过**（output/verify_all_scenes.py）
 
 `
 零件  特征树(递归) 33 项 · 草图 4 张（含孔内）· 构造线 1 条
@@ -214,12 +214,14 @@ scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
 装配  组件 2 · 变换矩阵 16 元 · 配合 1 条（DISTANCE / ALIGNED / MateDistanceDim）
       配合参与实体 2 个（面, 面）· 参照组件 [参考案例-1, 参考案例-2]
 图样  视图 4 个（DrSheet + AbsoluteView×3）· 特征 38 项 · 图样草图 8 张
+外部引用 3 条（STEP AP214 导入件）· 每条含 特征 / 被引对象 / 数据类型 / 状态
 `
 
 ### 已知限制（如实）
 
-- **跨零件引用**（装配体内编辑零件时引用别的零件）：已能记录配合里的**参照组件**，
-  但「零件文档内引用外部实体」尚未做专项验证。
+- **外部引用**：已用 IModelDocExtension.ListExternalFileReferences2(9 个 out) 记录
+  组件/派生件级引用（实测 3 条 STEP 导入件）。★ 但「**草图里**引用另一个零件的边/点」
+  这种 in-context 草图引用**尚未单独造样本验证**（事实 590 已注明边界）。
 - 图样只记**视图与草图几何**，未记录视图的**尺寸标注/形位公差**内容。
 - 界面动作靠 PSR（微软已弃用但本机可用）；它能记动作与控件名，
   记不到输入框里的**具体数值**（数值靠模型快照还原）。

@@ -117,3 +117,26 @@ def test_mate_and_view_constants_present() -> None:
     assert sw_model_snapshot.CONSTRAINT[1] == "DISTANCE"
     assert sw_model_snapshot.CONSTRAINT[25] == "HORIZPOINTS"
     assert sw_model_snapshot.DOC_KIND[2] == "装配"
+
+
+def test_render_external_references() -> None:
+    """外部引用必须在人读版里写清「哪个特征 → 引用哪个实体的哪个对象」。"""
+    doc = _part_doc()
+    doc["external_references"] = [
+        {"feature": "凸台-拉伸1", "model_path": "D:/a.SLDPRT",
+         "component_path": "D:/b.SLDPRT", "data_type": "EDGE", "status": "5",
+         "ref_entity": "边(0,0,0)-(1,0,0)", "ref_component": "零件B-1"},
+        {"error": "ListExternalFileReferences2 调用失败"},
+    ]
+    md = render_md(doc)
+    assert "外部引用" in md
+    assert "凸台-拉伸1" in md
+    assert "边(0,0,0)-(1,0,0)" in md
+    assert "零件B-1" in md
+    #: 失败也要如实写出来，不许静默
+    assert "读取失败" in md
+
+
+def test_render_no_external_section_when_empty() -> None:
+    md = render_md(_part_doc())
+    assert "外部引用" not in md

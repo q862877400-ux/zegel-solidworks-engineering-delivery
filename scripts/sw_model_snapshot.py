@@ -519,6 +519,62 @@ def dump_drawing(doc) -> dict:
 
 
 # ── 入口 ─────────────────────────────────────────────────────────────
+def external_references(doc) -> list:
+    """**外部引用**：本文件里哪些特征引用了别的文档/别的零件的实体。
+
+    ### 为什么单独做（业主 2026-10-26 点名要求）
+
+    > 我在画图的时候，可能引用这个基准面上已有的一个实体的某个边或者某个点；
+    > 或者是在装配体中编辑零件的时候，可能还会选择或者引用别的零件的这个边或者点。
+
+    ### 官方路（实测）
+
+    `
+    IModelDocExtension.ListExternalFileReferencesCount()        # 0 参
+    IModelDocExtension.ListExternalFileReferences2(9 个 out)     # 见下
+    `
+    ★ 别用 IModelDoc2.ListExternalFileReferences2（**已废弃**），也别用
+      IModelDoc2.ListExternalFileReferencesCount(UseSearchRules) —— 实测它在
+      有 3 条外部引用的装配上仍回 **0**；只有 ...Count2() / 扩展版是对的。
+
+    9 个 out 数组：ModelPathName / ComponentPathName / Feature / DataType /
+    Status / RefEntity / FeatCom / ConfigOptions / ConfigNames。
+    其中 DataType 会写清「转换的边或面」这类具体来源，RefEntity 是被引用的实际对象，
+    FeatCom 是它所在**哪个组件**（装配内引用别的零件时才有）。
+    """
+    out: list = []
+    ext = _g(doc, "Extension")
+    if ext is None:
+        return out
+    cnt = _g(ext, "ListExternalFileReferencesCount")
+    if not isinstance(cnt, int) or cnt <= 0:
+        return out
+    try:
+        import pythoncom
+        from win32com.client import VARIANT
+
+        def _byref():
+            return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_VARIANT, None)
+
+        holders = [_byref() for _ in range(9)]
+        ok, _ = _tc(lambda: ext.ListExternalFileReferences2(*holders))
+        if not ok:
+            return [{"error": "ListExternalFileReferences2 调用失败"}]
+        arrs = [list(getattr(h, "value", None) or ()) for h in holders]
+        keys = ("model_path", "component_path", "feature", "data_type", "status",
+                "ref_entity", "ref_component", "config_options", "config_names")
+        for i in range(cnt):
+            item = {}
+            for k, arr in zip(keys, arrs):
+                if i < len(arr) and arr[i] not in (None, ""):
+                    item[k] = str(arr[i])[:200]
+            if item:
+                out.append(item)
+    except Exception as exc:  # noqa: BLE001
+        out.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:160])})
+    return out
+
+
 def dump_document(doc) -> dict:
     """整份文档的记录（按类型分发）。**只记录，不推断。**"""
     dtype = _int(_g(doc, "GetType"))
@@ -529,6 +585,8 @@ def dump_document(doc) -> dict:
         "doc_type": kind,
         "doc_type_int": dtype,
     }
+    #: 外部引用：任何文档类型都可能存在（零件引用别的零件 / 装配内 in-context）
+    out["external_references"] = external_references(doc)
     if kind == "零件":
         out.update(dump_part(doc))
     elif kind == "装配":

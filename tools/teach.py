@@ -180,6 +180,24 @@ def render_md(data: dict) -> str:
                         e.get("referencetype")))
 
     #: ★ 元键（_count / _error / _resolved）只留在 JSON 里，人读版不混进去
+    refs = data.get("external_references") or []
+    if refs:
+        lines += ["## 外部引用", ""]
+        for r in refs:
+            if r.get("error"):
+                lines.append("- ⚠ 读取失败：%s" % r["error"])
+                continue
+            lines.append("- 特征 `%s` → 引用 `%s`"
+                         % (r.get("feature"),
+                            r.get("ref_entity") or r.get("model_path")))
+            lines.append("    - 类型 %s · 状态 %s"
+                         % (r.get("data_type"), r.get("status")))
+            if r.get("component_path"):
+                lines.append("    - 组件路径：%s" % r["component_path"])
+            if r.get("ref_component"):
+                lines.append("    - 引用所在组件：%s" % r["ref_component"])
+        lines.append("")
+
     cp = {k: v for k, v in (data.get("custom_properties") or {}).items()
           if not k.startswith("_")}
     if cp:

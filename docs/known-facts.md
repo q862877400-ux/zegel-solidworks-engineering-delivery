@@ -7150,6 +7150,32 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 590 | **外部引用怎么读**（业主点名要求的场景） | 2026-10-26。
+     业主原话：「可能引用这个基准面上已有的实体的某个边或者某个点；或者是在装配体中
+     编辑零件的时候，可能还会选择或者引用别的零件的这个边或者点。」
+     ★★★ 官方正确入口是 **IModelDocExtension**：
+     `
+     ext.ListExternalFileReferencesCount()          # 0 参 → 条数
+     ext.ListExternalFileReferences2(9 个 out 数组)  # 见下
+     `
+     ★★ 走过弯路（都实测）：IModelDoc2.ListExternalFileReferences2 **已废弃**（官方页写明
+     superseded by IModelDocExtension::ListExternalReferences）；
+     而 IModelDoc2.ListExternalFileReferencesCount(UseSearchRules) 在有 **3 条**外部引用的
+     装配上仍回 **0** ⇒ **只有扩展版 / Count2 是对的**。
+     9 个 out 数组：ModelPathName / ComponentPathName / Feature / DataType /
+     Status / RefEntity / FeatCom / ConfigOptions / ConfigNames。
+     其中 DataType 写明来源种类（如「转换的边/面」、STEP AP214），
+     RefEntity 是被引用的实际对象，FeatCom 是它所在**组件**（装配内引用别的零件时）。
+     ★ 真机读数（output/verify_extref.py · BT30 装配）：
+     `
+     3 条 · 均为 STEP AP214 导入件
+       feature=六角螺母_M12_ISO4032.step<1>  ref_entity=.../六角螺母_M12_ISO4032.step
+       feature=内六角螺钉_M12x40_ISO4762.step<1> …  feature=平垫圈_M12_ISO7089.step<1> …
+     `
+     ★ 边界（如实）：本条验的是**组件/派生件级**外部引用（STEP 导入）；
+       「草图里引用另一个零件的边/点」这种 in-context 草图引用**尚未单独造样本验证**。
+|真机：output/verify_extref.py · output/record/asm_extref.json |
+
 | 589 | **自定义属性与图样/配合记录的四个硬事实**（示教器全场景） | 2026-10-26。
      ★★★ ① IModelDocExtension.CustomPropertyManager 是**可调用的延迟属性**：
      必须 ("") 调用才拿到对象；**而拿到的 CDispatch 本身也可能 callable**
