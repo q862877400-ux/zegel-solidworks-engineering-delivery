@@ -8,7 +8,8 @@
 #          **内部类型名**，凭印象写必错。全部实测（第 15/16 轮）：
 #            ProfileFeature(草图) · Extrusion(凸台-拉伸) · ICE(**切除-拉伸**) ·
 #            RefPlane(基准面) · OriginProfileFeature(原点) ·
-#            ConfigTableFolder(Tables) · MBimport(**导入的 STEP 实体**)。
+#            ConfigTableFolder(Tables) · MBimport(**导入的 STEP 实体**) ·
+#            HoleWzd(**异型孔向导**，第 26 轮实测)。
 #          ★ 基准面/原点/Tables **导入件也带** ⇒ 不能算「原生」，
 #            否则「导入死实体冒充原生」会判 pass（那正是 E3 明令要拒的伪造手法）。
 # 官方依据: IFeature.GetTypeName2（经 sw_feature_readback.feature_info 读回）
@@ -24,6 +25,7 @@ NATIVE_GEOMETRY_TYPES = frozenset(
         "ProfileFeature",  # 草图
         "Extrusion",       # 凸台-拉伸
         "ICE",             # 切除-拉伸（★ 不是 Cut/CutExtrude）
+        "HoleWzd",         # 异型孔向导（★ 第 26 轮实测，不是 HoleWizard / WizardHole）
     }
 )
 

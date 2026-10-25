@@ -79,6 +79,8 @@ def test_基准面不算原生几何() -> None:
         ("ProfileFeature", "native"),
         ("Extrusion", "native"),
         ("ICE", "native"),
+        #: ★ 第 26 轮实测：异型孔向导的类型名是 HoleWzd
+        ("HoleWzd", "native"),
         ("RefPlane", "infra"),
         ("OriginProfileFeature", "infra"),
         ("ConfigTableFolder", "infra"),
@@ -89,7 +91,11 @@ def test_每个实测类型归对类(name: str, kind: str) -> None:
     assert T.classify(name) == kind
 
 
-@pytest.mark.parametrize("guess", ["Cut", "CutExtrude", "Extrude", "Sketch", "Import", "Imported"])
+@pytest.mark.parametrize(
+    "guess",
+    ["Cut", "CutExtrude", "Extrude", "Sketch", "Import", "Imported",
+     "HoleWizard", "WizardHole", "HoleWizard5"],
+)
 def test_凭印象的名字不入表(guess: str) -> None:
     """★★ 防后人「顺手」把猜出来的名字加进词表。
 

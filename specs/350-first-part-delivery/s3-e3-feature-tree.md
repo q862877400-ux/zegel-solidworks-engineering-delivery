@@ -236,3 +236,71 @@ except Exception:
 ```
 
 ⇒ 第 16 轮那个「真机复跑搁置」的缺口**已补齐**，且分类口径与离线测试一致。
+
+## 九、异型孔向导单点验证：**可用，孔型完整可读**（第 26 轮）
+
+第 25 轮查明 E2 的 `孔型` 子项判 `unknown`，根因是孔用**切除-拉伸**做的。
+本轮先只建**一个**异型孔向导孔，验证「建得出 + 孔型读得回」——
+不先验这个就改生成路径，等于拿整条证据链赌一个没验过的前提。
+
+### 真机读数（`tools/probe_s3_holewizard_single.py`）
+
+```
+① 板 100×60×20 已建：草图1 + 凸台-拉伸1
+② create_hole_wizard_at_selection_report(doc, "+z", "M8") ⇒ ok=True
+③ 新特征 ['异型孔向导'] · GetTypeName2 = **HoleWzd**
+④ hole_params 完整可读：
+     ThruHoleDiameter  0.008    （米 ⇒ M8）✓
+     ThruHoleDepth     20.0     （毫米 ⇒ 板厚）✓
+     另有 Standard / FastenerSize / Type / EndCondition / ThreadClass / CounterBore* / CounterSink*
+★ 异型孔向导可用且孔型读得回 ⇒ 改生成路径可行
+```
+
+★★ **两个必须实测的类型名/口径**（第 15/26 轮累计）：
+
+| 特征 | `GetTypeName2` 实测 | 容易猜错成 |
+|---|---|---|
+| 切除-拉伸 | `ICE` | `Cut` / `CutExtrude` |
+| **异型孔向导** | **`HoleWzd`** | `HoleWizard` / `WizardHole` / `HoleWizard5` |
+| 导入的 STEP 实体 | `MBimport` | `Import` / `Imported` |
+
+`HoleWzd` 已补进 `e3_feature_types.NATIVE_GEOMETRY_TYPES`（含两条测试：
+正向必须归 `native`，且 `HoleWizard` / `WizardHole` / `HoleWizard5` 这些**猜出来的名字不得入表**）。
+
+★ **为什么必须补**：`HoleWzd` 不在词表里 ⇒ 迁移后异型孔向导做的孔会被算成 `unknown`
+⇒ `native_features` 少算 ⇒ **自家判据（`native_features <= 0` ⇒ fail）会把自家产物判死**。
+
+迁移预演：
+
+```
+3 基准面 + 原点 + Tables + 草图 + 凸台-拉伸 + 4 个 HoleWzd
+⇒ native 6 · infra 5 · import 0 · unknown 0
+```
+
+### ★ 还没解决的：**多孔定位**
+
+异型孔向导这个封装的孔位是**面选择器 + 射线**决定的 ——
+`create_hole_wizard_at_selection_report(model, "+z", "M8")` 把孔放在**那个面的中心**。
+
+而 `create_hole_pattern(model, positions, creator)` 要求 `creator(model, position, ...)` 收坐标，
+与 wizard 的「收选择器」签名不匹配 ⇒ **不能直接用它摆四个孔**。
+
+三条候选路（都没试）：
+
+| # | 路 | 风险 |
+|---|---|---|
+| 1 | 扩展封装，让它接受**草图点**作为选择（SolidWorks 里异型孔向导本就靠草图点定位） | 要点选草图点 —— 回到本仓那个「边/点没名字」的老坑，但**按对象选**第 15 轮验过可行 |
+| 2 | 每个孔位造一个局部平面再选它 | 特征树被污染，E3 证据变复杂 |
+| 3 | 不用 HoleWizard，改从 B-Rep 推断孔型（两个开口环=通孔） | 属于**新造判据**，与判定器 docstring「孔型要从特征参数读」冲突 |
+
+★ 我倾向 #1（最贴近 SolidWorks 的本来用法），但那是改 `sw_hole_features` 的封装，
+  要单独一轮做，并重跑 E1/E2/E3 三条证据。
+
+### 与 E2 两个子项的关系（更新）
+
+| 子项 | 状态 | 卡在哪 | 本轮的进展 |
+|---|---|---|---|
+| `E2.rebuild` | ❌ fail | 孔位不随板宽联动（事实 560：HV 尺寸能力退化） | 无变化 —— **异型孔向导解决不了它** |
+| `E2.hole_readback` | ⬜ unknown | 孔型取不到（生成方式是 extrude-cut） | ★ **有了明确可行的路**：异型孔向导孔型完整可读，只差多孔定位 |
+
+★ 仍然不能混为一谈：前者是工具链退化，后者是生成方式 + 定位封装。
