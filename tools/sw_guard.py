@@ -482,6 +482,12 @@ def scan_family_windows(
         if not sw_family_window(h):
             return True
         c, t = _cls(h), _txt(h)
+        #: ★★★ 2026-10-26（第 47 轮）加 `swWelcomeScreen`：
+        #:   实测那是 SolidWorks 的**启动欢迎页**（「新建 零件/装配体/工程图」那个面板），
+        #:   有 20+ 个 Button ⇒ 被 `classify_dialog` 判成 `needs_llm`
+        #:   ⇒ `pending_needs_llm` **永远停在 1** ⇒ 那个信号等于废掉：
+        #:   真来一个 `needs_llm` 弹窗时，人和脚本都分不出「又是欢迎页」还是「真有事」。
+        #:   ★ 它不是弹窗 ⇒ 不该进这张表（不改 `auto`：欢迎页上万一有操作，碰不得）。
         if c.startswith(
             (
                 "Afx:",
@@ -489,6 +495,7 @@ def scan_family_windows(
                 "ThumbnailDeviceHelperWnd",
                 "Shell_TrayWnd",
                 "ToolbarWindow32",
+                "swWelcomeScreen",
             )
         ):
             return True
