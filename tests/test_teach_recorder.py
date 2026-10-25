@@ -140,3 +140,16 @@ def test_render_external_references() -> None:
 def test_render_no_external_section_when_empty() -> None:
     md = render_md(_part_doc())
     assert "外部引用" not in md
+
+
+def test_useedge_marks_external_sketch_reference() -> None:
+    """★ 草图级外部引用：关系类型 32 = USEEDGE，必须在枚举表里且被人读版标出。"""
+    import sw_model_snapshot
+
+    assert sw_model_snapshot.CONSTRAINT[32] == "USEEDGE"
+    doc = _part_doc()
+    doc["sketches"][0]["use_edge_count"] = 1
+    doc["sketches"][0]["use_edge_entities"] = [["草图线段", "草图线段"]]
+    md = render_md(doc)
+    assert "USEEDGE" in md
+    assert "外部" in md

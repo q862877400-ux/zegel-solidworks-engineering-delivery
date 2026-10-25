@@ -152,6 +152,9 @@ def render_md(data: dict) -> str:
                 tag = "构造" if s.get("construction") else "普通"
                 lines.append("    - %s %s %s"
                          % (s.get("shape"), tag, s.get("endpoints_mm")))
+        if sk.get("use_edge_count"):
+            lines.append("- ★ **外部/投影引用（USEEDGE）%d 条**：%s"
+                         % (sk["use_edge_count"], sk.get("use_edge_entities")))
         rels = sk.get("relations") or []
         if rels:
             lines.append("- 关系/尺寸 %d 条：" % len(rels))

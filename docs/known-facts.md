@@ -7150,6 +7150,27 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 591 | **「草图引用了外部实体的边」怎么机读** —— 关系类型 **32 = USEEDGE** | 2026-10-26。
+     业主点名要记：「引用这个基准面上已有实体的某个边或某个点；装配体里编辑零件时
+     引用别的零件的边或点」。
+     ★★★ 结论：ISketchRelation.GetRelationType() == **32**（swConstraintType_USEEDGE）
+     就是**转换/投影实体**的机读判据；关系两端都是草图线段。
+     ★ 怎么造样本（IAssemblyDoc.EditPart2 在本机**走不通**）：
+     `
+     ❌ asm.EditPart2(True, False, out) → 恒回 **-1**（swEditPartFailure）
+        已试「先存盘 + 选中组件 + 官方 3 参调用序」三次，都是 -1
+     ✅ 改用 IPartDoc.InsertPart(FileName, False, False, False)        # 插入派生体
+        → 文档级外部引用 1 条：data_type=**实体**, feature=参考案例, status=3
+        → 再 SketchManager.SketchUseEdge3(True, False) 转换它的边
+        → 草图里出现 **RelationType=32**、线段按草图线段记下
+     `
+     ★ 补：swEditPartCommandStatus_e 的取值**不在 C:/swapi/enums/**，
+     只在官方示例正文里：-1 Failure / -2 AsmMustBeSaved / -3 CompMustBeSelected /
+     -4 CompMustBeResolved / -5 CompMustHaveWriteAccess / 0 Successful（铁律 5 的实例）。
+     ★ 实测仓库全量扫描：只有 STEP 派生引用（4 个文档，data_type=STEP AP214），
+     没有任何现成的「草图级跨零件引用」样本 ⇒ 必须自己造。
+|真机：output/make_derived.py · output/scan_extref.py · output/record/derived_sketch.json |
+
 | 590 | **外部引用怎么读**（业主点名要求的场景） | 2026-10-26。
      业主原话：「可能引用这个基准面上已有的实体的某个边或者某个点；或者是在装配体中
      编辑零件的时候，可能还会选择或者引用别的零件的这个边或者点。」

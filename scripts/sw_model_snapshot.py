@@ -59,8 +59,16 @@ CONSTRAINT = {
     10: "CONCENTRIC", 11: "SYMMETRIC", 12: "ATMIDDLE", 13: "INTERSECTION",
     14: "SAMELENGTH", 15: "DIAMETER", 17: "FIXED", 25: "HORIZPOINTS",
     26: "VERPOINTS", 27: "COLINEAR", 40: "ATPIERCE", 41: "DOUBLEDISTANCE",
-    42: "MERGEPOINTS", 45: "NORMAL", 46: "NORMALPOINTS", 51: "ALONGXPOINTS",
-    52: "ALONGYPOINTS", 53: "ALONGZPOINTS",
+    42: "MERGEPOINTS", 45: "NORMAL", 46: "NORMALPOINTS", 48: "ALONGX",
+    49: "ALONGY", 50: "ALONGZ", 51: "ALONGXPOINTS", 52: "ALONGYPOINTS",
+    53: "ALONGZPOINTS", 54: "PARALLELYZ", 55: "PARALLELZX",
+    56: "INTERSECTION", 57: "PATTERNED", 58: "ISOBYPOINT",
+    60: "FITSPLINE",
+    #: ★★★ 32 = **USEEDGE** —— 「转换/投影实体」。
+    #:   实测：给零件 InsertPart 插入另一个零件后，用 SketchUseEdge3 转换它的边，
+    #:   草图里就多出一条 RelationType=32 的关系，两端都是草图线段。
+    #:   ⇒ **这是「草图引用了外部实体的边」唯一可机读的判据**。
+    32: "USEEDGE",
 }
 
 #: `swSketchSegments_e`
@@ -275,6 +283,13 @@ def sketch_detail(sketch_feature) -> dict:
                             item["value_mm"] = None
             rels.append(item)
     out["relations"] = rels
+    #: ★ 草图级「外部/投影引用」计数：关系类型 32 = USEEDGE（转换实体）
+    use_edge = [r for r in rels if r.get("type_int") == 32]
+    out["use_edge_count"] = len(use_edge)
+    if use_edge:
+        out["use_edge_entities"] = [
+            [e.get("kind") for e in (r.get("entities") or [])] for r in use_edge
+        ]
     return out
 
 
