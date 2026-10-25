@@ -34,6 +34,8 @@
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────────────
 
+import math
+
 from sw_connect import get_com_member
 
 #: ★ `swLengthUnit_e`（★ 官方枚举文本给的名字与数值；★ 数值以官方类型表为准）
@@ -180,3 +182,62 @@ def read_units_report(model) -> dict:
         "★ 期望 `LengthUnit == 0`（`swMM`）—— ★ 因为本仓库建模一律按毫米"
     )
     return out
+
+
+# ── 数值的**量纲分派**（2026-10-26 起：杜绝「万能 ×1000」）──────────────────────
+#
+# 事故：示教器把 `IDimension.GetSystemValue2` 的返回值一律 ×1000 当成毫米，
+# 于是业主草图的 `ANGLE` 被记成 `785.398 mm`（= 0.7854 rad × 1000）——
+# **假数值**，比读不到更危险（读不到会去查，读错会照着做）。
+#
+# 根因不是「这次算错了」，而是**存在一个不分量纲的换算函数**。⇒ 现在只提供
+#   ① `m_to_mm` / `rad_to_deg`：名字写明「从什么到什么」，传错量纲是调用方的错；
+#   ② `dimension_reading(dim, relation_type)`：**按关系类型决定量纲**，
+#      未实测的关系类型原样保留并标 `unit_unverified`，**不猜单位**。
+
+#: 长度类关系（`GetSystemValue2` 回**米**）—— 只收已真机实测的
+LENGTH_RELATION_TYPES = frozenset({1, 3, 15})     #: DISTANCE / RADIUS / DIAMETER
+#: 角度类关系（回**弧度**）—— 只收已真机实测的
+ANGLE_RELATION_TYPES = frozenset({2})             #: ANGLE（实测 0.785398 ⇒ 45°）
+
+
+def m_to_mm(value_m: float) -> float:
+    """**米 → 毫米**。只接受米；调用方负责保证传进来的是长度。"""
+    return round(float(value_m) * 1000.0, 4)
+
+
+def rad_to_deg(value_rad: float) -> float:
+    """**弧度 → 度**。"""
+    return round(math.degrees(float(value_rad)), 4)
+
+
+def dimension_reading(dim, relation_type_int) -> dict:
+    """读一个尺寸的数值，**按关系类型决定量纲**，一次取全。
+
+    :param dim: `IDimension`（`IDisplayDimension.GetDimension2(0)` 得到）
+    :param relation_type_int: `ISketchRelation.GetRelationType()` 的原始整数
+    :returns: `{"value_mm": 100.0}`（长度）· `{"value_rad": 0.7854, "value_deg": 45.0}`
+              （角度）· `{"raw_system_value": …, "unit_unverified": True}`（未实测量纲）；
+              读不到回 `{}`，**不编数值**。
+
+    ⚠ `ARCANG*` / `ANGLE3P` 等虽然名字含 ANGLE，但**未实测其 GetSystemValue2 的量纲**
+      ⇒ 落到 `unit_unverified` 分支，原样保留 + 标注，而不是当成弧度。
+    """
+    if dim is None:
+        return {}
+    try:
+        raw = dim.GetSystemValue2("")
+    except Exception:  # noqa: BLE001
+        return {}
+    if raw is None:
+        return {}
+    try:
+        v = float(raw)
+    except (TypeError, ValueError):
+        return {}
+
+    if relation_type_int in LENGTH_RELATION_TYPES:
+        return {"value_mm": m_to_mm(v)}
+    if relation_type_int in ANGLE_RELATION_TYPES:
+        return {"value_rad": round(v, 6), "value_deg": rad_to_deg(v)}
+    return {"raw_system_value": round(v, 6), "unit_unverified": True}

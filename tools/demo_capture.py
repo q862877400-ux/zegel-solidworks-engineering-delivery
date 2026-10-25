@@ -39,6 +39,7 @@ python -B tools/demo_capture.py --frame 12:34:56      # 按墙钟时间抽一帧
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import time
@@ -51,7 +52,9 @@ sys.path.insert(0, str(R / "scripts"))
 
 ROOT = R / "output" / "teach"
 STATE = ROOT / "session.json"
-#: 录屏帧率（8 fps 足够看清操作，文件又不会太大）
+
+#: 轨迹采样间隔（秒）—— 录制期轮询模型摘要的节奏（根因 C）
+MIN_INTERVAL_S = 2.0
 FPS = 8
 #: 录屏最长时长（分钟）—— 防忘了停
 MAX_MINUTES = 30
@@ -133,7 +136,7 @@ def _psr_running() -> bool:
 def start() -> int:
     st = _read_state()
     if st.get("running"):
-        print("★ 已在录（会话 %s）" % st.get("session"))
+        print("★ 已在录（会话 {}）".format(st.get("session")))
         return 0
     sid = time.strftime("%Y%m%d-%H%M%S")
     d = ROOT / sid
@@ -161,17 +164,90 @@ def start() -> int:
          str(mp4)],
         stdin=subprocess.PIPE, creationflags=_no_window(),
     )
+    #: ③ 拉起**轨迹轮询进程**（根因 C：录制期持续采样，不只拍终态）
+    p3 = subprocess.Popen(  # noqa: S603
+        [sys.executable, "-B", str(Path(__file__).resolve()), "--run"],
+        creationflags=_no_window(),
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
     _write_state({
         "running": True, "session": sid, "dir": str(d),
+        "timeline_pid": p3.pid,
         "psr_pid": p1.pid, "ffmpeg_pid": p2.pid,
         "started_epoch": t0,
         "started_wall": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t0)),
         "zip": str(zip_path), "mp4": str(mp4),
     })
     print("① 示范捕获已开始")
-    print("   会话目录：%s" % d)
+    print(f"   会话目录：{d}")
     print("   屏幕上应能看到「步骤记录器 - 现在正在录制」")
     print("   做完请说一声，我执行 --stop")
+    return 0
+
+
+def run() -> int:
+    """**常驻录制进程**：轮询模型摘要，变化就落一条轨迹（由 --start 拉起）。
+
+    ★ 为什么要有它（根因 C：录制是「录音」不是「拍照」）
+      原来只在 --stop 时抓**一次**终态快照。业主实操暴露：步骤 66 草图还是**欠定义**
+      （蓝色、没有 45° 尺寸），收工时是**完全定义** —— 中间怎么调出来的全丢了。
+      ⇒ 录制期必须持续采样，形成时间轴。
+
+    ★ COM 纪律：本进程是唯一的读取客户端；只读，且 CommandInProgress=False
+      （否则会抑制用户的模态交互）。摘要很轻（只读计数与状态），高频安全。
+    """
+    st = _read_state()
+    if not st.get("running"):
+        print("★ 没有进行中的会话")
+        return 0
+    d = Path(st["dir"])
+    pid_file = d / "running.pid"
+    pid_file.write_text(str(os.getpid()), encoding="utf-8")
+    t0 = float(st.get("started_epoch") or time.time())
+    import sw_connect
+    from sw_connect import get_com_member as g
+    from sw_model_timeline import Timeline, summary_line
+
+    tl = Timeline(d, t0)
+    doc = None
+    sw = None
+    print(f"▶ 轨迹轮询已启动（每 {MIN_INTERVAL_S:.1f} 秒采样一次）")
+    try:
+        while pid_file.is_file():
+            try:
+                if sw is None:
+                    conn = sw_connect.connect_solidworks(wait_seconds=10)
+                    sw = conn[0] if isinstance(conn, tuple) else conn
+                    try:
+                        sw.CommandInProgress = False
+                    except Exception:  # noqa: BLE001
+                        pass
+                doc = g(sw, "ActiveDoc") if sw is not None else None
+                rec = tl.poll(doc)
+                if rec:
+                    print("   " + summary_line(rec))
+                #: ★ 根因 D：顺带读「修改」框里的**实际数值**（PSR 记不到这些）
+                try:
+                    from sw_dialog_text import snapshot as _dlg_snapshot
+
+                    drec = tl.note_dialog(_dlg_snapshot())
+                    if drec:
+                        nums = [n["text"] for dlg in drec["dialogs"]
+                                for n in dlg.get("numbers") or []]
+                        print("   #%03d %s 对话框 %s：%s" % (
+                            drec["i"], drec["t"],
+                            drec["dialogs"][0].get("title"),
+                            ", ".join(nums[:4]) or "（无数值）"))
+                except Exception:  # noqa: BLE001
+                    pass
+            except Exception as exc:  # noqa: BLE001
+                #: 掉线就丢引用重连；不因为一次读失败就退出录制
+                sw = None
+                print(f"   （采样失败，重连：{type(exc).__name__}）")
+            time.sleep(MIN_INTERVAL_S)
+    except KeyboardInterrupt:
+        pass
+    print("■ 轨迹轮询结束，共 %d 条" % tl.n)
     return 0
 
 
@@ -200,10 +276,10 @@ def stop() -> int:
     st["stopped_wall"] = time.strftime("%Y-%m-%d %H:%M:%S")
     _write_state(st)
     print("① 已停止")
-    print("   PSR 包：%s %s" % (Path(st["zip"]).name,
+    print("   PSR 包：{} {}".format(Path(st["zip"]).name,
                               Path(st["zip"]).stat().st_size
                               if Path(st["zip"]).is_file() else "（未生成）"))
-    print("   录屏：  %s %s" % (Path(st["mp4"]).name,
+    print("   录屏：  {} {}".format(Path(st["mp4"]).name,
                               Path(st["mp4"]).stat().st_size
                               if Path(st["mp4"]).is_file() else "（未生成）"))
 
@@ -215,12 +291,57 @@ def stop() -> int:
     steps = _steps_from_psr(Path(st["zip"]), d)
     if steps is not None:
         print("   步骤表：steps.md（%d 步）" % len(steps))
+    #: ★ 让轨迹轮询进程收尾（删 pid 文件 → 它退出），并等它把 jsonl 写完
+    pid_file = d / "running.pid"
+    try:
+        pid_file.unlink(missing_ok=True)
+    except Exception:  # noqa: BLE001
+        pass
+    for _ in range(20):
+        if not pid_file.exists():
+            break
+        time.sleep(0.2)
+    tl = _timeline_rows(d)
+    st["timeline_rows"] = len(tl)
+    if tl:
+        print("   轨迹：%d 条（timeline.jsonl）" % len(tl))
+    #: ★ 自动把 PSR 里的截图抽出来（根因 H：以前手写解析两次提取 0 张，
+    #:   于是「看图核对」从来没做成）——现在用标准库 email 解析，一次就成。
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from extract_psr_shots import extract as _extract
+
+        shots = _extract(Path(st["zip"]), d / "shots")
+        st["shot_count"] = len(shots)
+        if shots:
+            print("   截图：%d 张（shots/，含步号索引）" % len(shots))
+    except Exception as exc:  # noqa: BLE001
+        st["shot_count"] = 0
+        print(f"   （截图提取失败：{type(exc).__name__}）")
+
     st["dialog_events"] = _dialog_events(float(st.get("started_epoch") or 0))
     if st["dialog_events"]:
         print("   弹窗事件：%d 条" % len(st["dialog_events"]))
     _write_report(d, st, steps, snap)
     print("② 报告：%s" % (d / "REPORT.md"))
     return 0
+
+
+def _timeline_rows(d: Path) -> list:
+    """读 	imeline.jsonl（录制期的模型变化轨迹）。"""
+    f = Path(d) / "timeline.jsonl"
+    if not f.is_file():
+        return []
+    rows = []
+    for line in open(f, encoding="utf-8", errors="replace"):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except Exception:  # noqa: BLE001
+            continue
+    return rows
 
 
 def _dialog_events(started_epoch: float) -> list:
@@ -273,21 +394,20 @@ def _model_snapshot(d: Path) -> dict:
             except Exception:  # noqa: BLE001
                 pass
     except Exception as exc:  # noqa: BLE001
-        print("   ★ 模型快照失败：%s: %s" % (type(exc).__name__, str(exc)[:80]))
+        print(f"   ★ 模型快照失败：{type(exc).__name__}: {str(exc)[:80]}")
         return {}
 
     (d / "model.json").write_text(
         json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
     lines = ["# 模型语义快照", "",
-             "- 文档：`%s`" % data.get("document"),
+             "- 文档：`{}`".format(data.get("document")),
              "- 路径：`%s`" % (data.get("path") or "（未保存）"), "",
              "## 特征", ""]
     for f in data.get("features", []):
-        lines.append("- `%s` — %s" % (f.get("name"), f.get("type")))
+        lines.append("- `{}` — {}".format(f.get("name"), f.get("type")))
     for h in data.get("holes", []):
-        lines += ["", "## 孔 `%s`" % h.get("name"), "",
-                  "- 标准：**%s** · 类型：%s · 规格：%s"
-                  % (h.get("standard"), h.get("fastener"), h.get("size"))]
+        lines += ["", "## 孔 `{}`".format(h.get("name")), "",
+                  "- 标准：**{}** · 类型：{} · 规格：{}".format(h.get("standard"), h.get("fastener"), h.get("size"))]
         for sk in h.get("sketches", []):
             lines += _sketch_lines(sk, "   ")
     for sk in data.get("sketches", []):
@@ -297,15 +417,14 @@ def _model_snapshot(d: Path) -> dict:
 
 
 def _sketch_lines(sk: dict, indent: str) -> list:
-    out = ["", "%s### %s（状态 %s）" % (indent, sk.get("name"), sk.get("constrained")),
-           "", "%s- 点：%s" % (indent, sk.get("points"))]
+    out = ["", "{}### {}（状态 {}）".format(indent, sk.get("name"), sk.get("constrained")),
+           "", "{}- 点：{}".format(indent, sk.get("points"))]
     rels = sk.get("relations") or []
     if rels:
         out.append("%s- 关系/尺寸 %d 条：" % (indent, len(rels)))
         for r in rels:
-            val = (" = %s mm" % r["value_mm"]) if r.get("value_mm") is not None else ""
-            out.append("%s  - **%s**%s  ← %s"
-                       % (indent, r.get("type"), val, " + ".join(r.get("refs") or [])))
+            val = (" = {} mm".format(r["value_mm"])) if r.get("value_mm") is not None else ""
+            out.append("{}  - **{}**{}  ← {}".format(indent, r.get("type"), val, " + ".join(r.get("refs") or [])))
     return out
 
 
@@ -344,16 +463,16 @@ def _steps_from_psr(zip_path: Path, d: Path):
         (d / "steps.md").write_text("\n".join(md) + "\n", encoding="utf-8")
         return steps
     except Exception as exc:  # noqa: BLE001
-        print("   ★ 解析 PSR 失败：%s" % type(exc).__name__)
+        print(f"   ★ 解析 PSR 失败：{type(exc).__name__}")
         return None
 
 
 def _write_report(d: Path, st: dict, steps, snap) -> None:
     lines = ["# 示范捕获报告", "",
-             "- 会话：`%s`" % st.get("session"),
-             "- 开始：%s" % st.get("started_wall"),
-             "- 结束：%s" % st.get("stopped_wall", ""),
-             "- PSR：`%s`" % Path(st["zip"]).name,
+             "- 会话：`{}`".format(st.get("session")),
+             "- 开始：{}".format(st.get("started_wall")),
+             "- 结束：{}".format(st.get("stopped_wall", "")),
+             "- PSR：`{}`".format(Path(st["zip"]).name),
              "- 录屏：`%s`（%d fps）" % (Path(st["mp4"]).name, FPS),
              "",
              "## 怎么用这份报告",
@@ -364,18 +483,63 @@ def _write_report(d: Path, st: dict, steps, snap) -> None:
              "   `python -B tools/demo_capture.py --frame <步骤时间>`",
              "", "## 步骤数", ""]
     lines.append("- %d 步" % (len(steps) if steps else 0))
+    #: ★★★ 模型变化**轨迹**（根因 C）：这是「怎么一步步做出来的」，不是终态
+    tl = _timeline_rows(d)
+    lines += ["", "## 模型变化轨迹（录制期采样）", ""]
+    if tl:
+        lines.append("共 **%d** 条变化记录（	imeline.jsonl）；" % len(tl))
+        if (d / "snaps").is_dir():
+            lines.append("snaps/ 下是对应的完整快照。")
+        lines.append("")
+        lines.append("| # | 时刻 | 相对秒 | 变化 | 完整快照 |")
+        lines.append("|---|---|---|---|---|")
+        for rec in tl:
+            ch = rec.get("changed") or {}
+            bits = []
+            for k, label in (("sketch_states", "草图状态"),
+                             ("dimensions", "尺寸数"),
+                             ("relations", "关系数"),
+                             ("features", "特征数"),
+                             ("sketches", "草图数"),
+                             ("holes", "孔数"),
+                             ("mates", "配合数")):
+                if k in ch:
+                    bits.append(f"{label} {ch[k][0]}→{ch[k][1]}")
+            if rec.get("kind") == "dialog":
+                #: ★ 对话框文字（尤其「修改」框里的数值）—— PSR 记不到这些
+                dl = rec.get("dialogs") or []
+                shown = []
+                for dg in dl:
+                    nums = [n["text"] for n in dg.get("numbers") or []]
+                    shown.append("**{}**：{}".format(
+                        dg.get("title"), " / ".join(nums) or
+                        " / ".join(dg.get("fields") or [])[:1]))
+                lines.append("| {} | {} | +{:.0f}s | 🗔 {} | — |".format(
+                    rec.get("i"), rec.get("t"), rec.get("elapsed_s") or 0,
+                    "；".join(shown)[:120]))
+                continue
+            lines.append("| {} | {} | +{:.0f}s | {} | {} |".format(
+                rec.get("i"), rec.get("t"), rec.get("elapsed_s") or 0,
+                " · ".join(bits) or "（首次）", rec.get("snapshot") or ""))
+    else:
+        lines.append("- 无（录制期间模型没变化，或未采到）")
+
     dialogs = st.get("dialog_events") or []
+    if st.get("shot_count"):
+        lines += ["", "## 截图", "",
+                  "共 **%d** 张，在 shots/；"
+                  "shots/index.tsv 给出「步号 → 文件」对照。" % st["shot_count"]]
+
     lines += ["", "## 弹窗事件（本次录制期间）", ""]
     if dialogs:
         for dg in dialogs:
-            lines.append("- %s 「%s」：%s"
-                         % (dg.get("t"), dg.get("title"),
+            lines.append("- {} 「{}」：{}".format(dg.get("t"), dg.get("title"),
                             " / ".join(dg.get("kids") or [])[:120]))
     else:
         lines.append("- 无（或护栏日志里没有该时段记录）")
     if snap:
         lines += ["", "## 模型", "",
-                  "- 文档：`%s`" % snap.get("document"),
+                  "- 文档：`{}`".format(snap.get("document")),
                   "- 特征 %d 个 · 孔 %d 个 · 草图 %d 张"
                   % (len(snap.get("features", [])), len(snap.get("holes", [])),
                      len(snap.get("sketches", [])))]
@@ -399,14 +563,14 @@ def frame(at: str) -> int:
     target = time.mktime(time.strptime("%s %02d:%02d:%02d" % (today, hh, mm, ss),
                                        "%Y-%m-%d %H:%M:%S"))
     rel = max(0.0, target - t0)
-    out = Path(st["dir"]) / "frames" / ("f_%s.png" % at.replace(":", ""))
+    out = Path(st["dir"]) / "frames" / ("f_{}.png".format(at.replace(":", "")))
     out.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-         "-ss", "%.3f" % rel, "-i", str(mp4), "-frames:v", "1", str(out)],
+         "-ss", f"{rel:.3f}", "-i", str(mp4), "-frames:v", "1", str(out)],
         creationflags=_no_window(), timeout=120, check=False)
     if out.is_file():
-        print("① 已抽帧：%s（距开始 %.1f 秒）" % (out, rel))
+        print(f"① 已抽帧：{out}（距开始 {rel:.1f} 秒）")
         return 0
     print("★ 抽帧失败")
     return 1
@@ -415,8 +579,7 @@ def frame(at: str) -> int:
 def status() -> int:
     st = _read_state()
     if st.get("running"):
-        print("① 捕获中（会话 %s，开始 %s）"
-              % (st.get("session"), st.get("started_wall")))
+        print("① 捕获中（会话 {}，开始 {}）".format(st.get("session"), st.get("started_wall")))
     else:
         print("① 未捕获。最近会话：%s" % (st.get("session") or "（无）"))
     d = Path(st.get("dir") or "")
@@ -440,6 +603,8 @@ def report() -> int:
 
 
 def main() -> int:
+    if "--run" in sys.argv:
+        return run()
     if "--start" in sys.argv:
         return start()
     if "--stop" in sys.argv:

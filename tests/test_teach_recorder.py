@@ -113,7 +113,9 @@ def test_mate_and_view_constants_present() -> None:
 
     assert sw_model_snapshot.MATE_TYPE[5] == "DISTANCE"       #: 实测距离配合
     assert sw_model_snapshot.MATE_ALIGN[0] == "ALIGNED"
-    assert sw_model_snapshot.SEGMENT_KIND[0] == "直线"
+    #: 枚举**保留官方成员名**（LINE/ARC…），中文在 SEGMENT_KIND_ZH —— 两者都要在
+    assert sw_model_snapshot.SEGMENT_KIND[0] == "LINE"
+    assert sw_model_snapshot.SEGMENT_KIND_ZH[0] == "直线"
     assert sw_model_snapshot.CONSTRAINT[1] == "DISTANCE"
     assert sw_model_snapshot.CONSTRAINT[25] == "HORIZPOINTS"
     assert sw_model_snapshot.DOC_KIND[2] == "装配"
@@ -192,3 +194,63 @@ def test_duplicate_sketch_merged() -> None:
     sw_model_snapshot._merge_sketch_duplicate(acc, sk2)
     assert len(acc) == 1
     assert acc[0].get("also_owned_by") == ["凸台-拉伸1"]
+
+
+def test_enums_not_handwritten() -> None:
+    """★ 根因 A：枚举必须来自生成表，且关键值正确（手抄曾把 7/8 抄错）。"""
+    import sw_enums
+
+    assert sw_enums.CONSTRAINT_TYPE[7] == "swConstraintType_PARALLEL"
+    assert sw_enums.CONSTRAINT_TYPE[8] == "swConstraintType_PERPENDICULAR"
+    assert sw_enums.CONSTRAINT_TYPE[6] == "swConstraintType_TANGENT"
+    assert sw_enums.CONSTRAINT_TYPE[32] == "swConstraintType_USEEDGE"
+    #: 生成表规模（官方文件有 80+ 项；手抄版只有 30 出头）
+    assert len(sw_enums.CONSTRAINT_TYPE) >= 60
+
+
+def test_dimension_units_dispatch() -> None:
+    """★ 根因 B：长度回 mm、角度回 rad+deg、未知量纲标 unit_unverified。"""
+
+    class _D:
+        def __init__(self, v):
+            self.v = v
+
+        #: N802：替身方法用小写名；被测代码按原属性名调用，故同时挂一个别名
+        def get_system_value2(self, _cfg):
+            return self.v
+
+        GetSystemValue2 = get_system_value2
+
+    import sw_units
+
+    length = sw_units.dimension_reading(_D(0.1), 1)
+    assert length["value_mm"] == 100.0
+    ang = sw_units.dimension_reading(_D(0.7853981634), 2)
+    assert abs(ang["value_deg"] - 45.0) < 1e-6
+    assert "value_mm" not in ang          #: 角度**不许**以 mm 出现
+    other = sw_units.dimension_reading(_D(3.5), 43)
+    assert other.get("unit_unverified") is True
+    assert "value_mm" not in other
+
+
+def test_sketch_point_does_not_conflate_user_and_all() -> None:
+    """★ 根因 F：用户点与全部点必须分开记（曾是 6 个点里混 5 个线段端点）。"""
+    doc = _part_doc()
+    sk = doc["sketches"][0]
+    sk["all_point_count"] = 6
+    sk["user_points"] = [{"x_mm": 0.0, "y_mm": 0.0}]
+    sk["user_point_count"] = 1
+    md = render_md(doc)
+    assert "1" in md
+
+
+def test_feature_params_no_annotation_in_data() -> None:
+    """★ 根因 G：口径说明不许混进数据；长度值必须带 _mm 后缀。"""
+    import sw_model_snapshot
+
+    out = sw_model_snapshot._param_with_unit("GetDepth", 0.025)
+    assert out == {"depth_mm": 25.0}
+    #: 嵌套 dict 要递归（forward/reverse 就是嵌套的）
+    nested = sw_model_snapshot._param_with_unit("forward", {"GetDepth": 0.025, "GetEndCondition": 0})
+    assert nested["forward"]["depth_mm"] == 25.0
+    assert "GetDepth" not in nested["forward"]

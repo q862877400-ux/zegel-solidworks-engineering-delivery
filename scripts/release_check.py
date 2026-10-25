@@ -544,6 +544,45 @@ def _run_unit_naming_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_dimension_units_gate() -> dict[str, object]:
+    """@brief 跑「尺寸量纲」门禁（scripts/check_dimension_units.py）。
+
+    ★ 来源：业主 2026-10-26 ——「你那个角度按长度 ×1000，你需要根因修复
+      而不是只修改这一个地方」。
+
+    ★ 根因：`IDimension.GetSystemValue2` 的返回值**单位取决于量的类型**
+      （长度=米、角度=弧度），而我只有一个「万能 ×1000」的换算函数。
+      只改出错那一处不算根因修复 —— 只要还允许"取出数值就直接乘"，
+      换个地方又会犯。⇒ 本门禁要求**每个调用点**都做完量纲判断。
+
+    ★ 判据：调用点必须满足其一 ——
+      ① 位于 `scripts/sw_units.py`（量纲分派的唯一实现处）；
+      ② 所在函数里出现分派标记（`dimension_reading` / `m_to_mm` / `rad_to_deg` /
+         `unit_unverified` / `value_deg` / `value_rad` / `raw_system_value`）；
+      ③ 正上方 3 行内有 `#: unit-dispatch:` 注释（人工判过、写明理由）。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_dimension_units.py"),
+                "--check",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "尺寸量纲门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_evidence_freshness_gate() -> dict[str, object]:
     """@brief 判验收证据是否已过期（scripts/check_evidence_freshness.py）。
 
@@ -3209,6 +3248,17 @@ def run_release_check() -> dict[str, object]:
             "单位命名门禁未通过（米/毫米这类量纲混用会静默产生错模型）：\n"
             + str(un.get("output", ""))
         )
+    #: ⚑ **尺寸量纲门禁**（硬门禁）：★ 业主 2026-10-26「根因修复，不是只改一处」。
+    #:   ★ 判据：每个 `GetSystemValue2` 调用点都要做完量纲判断
+    #:     （长度→mm、角度→rad/deg、未实测→unit_unverified），否则失败。
+    #:   ★ 起因：示教器把角度按长度 ×1000 记成 `785.398 mm`（假数值）——
+    #:     只改那一处不算根因修复，允许"取出就乘"才是根因。
+    du = _run_dimension_units_gate()
+    if du.get("status") == "fail":
+        raise AssertionError(
+            "尺寸量纲门禁未通过（角度/长度混淆会写出假数值）：\n"
+            + str(du.get("output", ""))
+        )
     #: ⚑ **支持参数域门禁**（硬门禁）：★ spec 350 FR-013/FR-014 ——
     #:   「不限定范围的『全支持』是虚假承诺」；域外请求必须被拒绝而不是勉强生成。
     sd = _run_support_domain_gate()
@@ -3552,6 +3602,9 @@ def run_release_check() -> dict[str, object]:
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "repo_uniformity": ru,
         "unit_naming": un,
+        #: ★ 2026-10-26（业主「根因修复，不是只改一处」）：尺寸量纲门禁 ——
+        #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 暴露）✓
+        "dimension_units": du,
         "support_domain": sd,
         "repro_manifest": rp,
         "user_decisions": ud,

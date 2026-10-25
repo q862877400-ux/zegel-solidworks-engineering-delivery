@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 687 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 689 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -17,7 +17,7 @@
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 34 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
-| 从真源生成文档/索引（跑完要提交生成物） | **生成器** | 22 | `gen_*` |
+| 从真源生成文档/索引（跑完要提交生成物） | **生成器** | 23 | `gen_*` |
 | 对账/查缺口，只读不改 | **审计** | 11 | `audit_*` |
 | 真机跑一遍并把结果落盘成证据 | **证据采集** | 19 | `capture_*` |
 | 量一个数（覆盖率/误报率/成本） | **度量** | 9 | `measure_*` |
@@ -31,7 +31,7 @@
 | 对候选做判定 | **裁判** | 6 | `judge_*` |
 | 查某现象为什么发生（不改任何东西） | **诊断** | 12 | `diag_*` |
 | 按已知根因批量改文件 | **修复** | 3 | `fix_*` |
-| 从官方源或日志里抽出结构 | **提取** | 3 | `extract_*` |
+| 从官方源或日志里抽出结构 | **提取** | 4 | `extract_*` |
 | 抽几条核对 | **抽检** | 3 | `spotcheck_*` |
 | 对别人的结论再核一遍 | **复核** | 2 | `recheck_*` |
 | 统计判定结果 | **计票** | 2 | `tally_*` |
@@ -510,7 +510,7 @@
 | `check_unit_suffix_consistency.py` | ★ 规格 212 · C 改版：**名字后缀 ↔ 描述单位词** 的一致性检查（★ 只报不拦） |
 | `check_unit_suffix_reverse.py` | ★ 规格 212 · C：规则 2 的**逆向一半**（描述声明单位 ⇒ 名字必须有对应后缀）—— **只报不拦** |
 
-## 生成器（22 个）
+## 生成器（23 个）
 
 > 用途：从真源生成文档/索引（跑完要提交生成物）
 
@@ -535,6 +535,7 @@
 | `gen_spec211_ledger.py` | ★ 规格 211 · B0 台账生成器：逐项查官方入口 + 判可做性（★ 只读，不碰真机） |
 | `gen_study_options_registry.py` | 从 cosworks 反射清单里机械生成各 StudyOptions 族的 setter 登记表 |
 | `gen_survival_diff.py` | ★ 把存活普查结果落成记录（规格 210 · B3 的产物） |
+| `gen_sw_enums.py` | 从官方枚举文件生成 `scripts/sw_enums.py` |
 | `gen_tool_domain_catalogue.py` | ★ 生成"工具域目录"（供 AGENTS.md 引用 + 独立索引文档）—— ★ 判据全从 `all_specs()` 重推 |
 | `gen_tools_index.py` | ★ 生成 `docs/tools-index.md`：709 个开发工具的**可检索索引**（按 lean 口径） |
 | `gen_usage_guide.py` | 生成 docs/usage-guide.md —— 「某个功能该看哪个官方示例、对应本仓库哪个函数」 |
@@ -748,7 +749,7 @@
 | `fix_com_write_form.py` | ★ 批量修：把「用 get_com_member 写**属性**」改成 `set_com_member`（★ 按 AST span，不用正则） |
 | `fix_exemption_escapes.py` | ★ 定点修 JSON：把我刚写进豁免理由里的 `C:\swapi` 补上转义（★ 用 json.load 自证） |
 
-## 提取（3 个）
+## 提取（4 个）
 
 > 用途：从官方源或日志里抽出结构
 
@@ -757,6 +758,7 @@
 | `extract_cosworks_docs.py` | 从 CHM 解包出的 cosworks 官方文档页里提取正文 |
 | `extract_exclusive_ops.py` | ★ 抽出四家的「独家操作」（只出现在**一家**的操作名）⇒ 带编号的清单文件 |
 | `extract_operation_descriptions.py` | ★ 从四家仓库抽「操作名 → 描述」表，给分诊表里的"缺口操作"取**判据依据** |
+| `extract_psr_shots.py` | 把 PSR 的 `.mht` / `.zip` 里的截图按步骤顺序拆成图片（用标准库 `email` 解析） |
 
 ## 抽检（3 个）
 

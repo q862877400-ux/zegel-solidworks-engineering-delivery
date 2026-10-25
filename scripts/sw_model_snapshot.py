@@ -39,104 +39,101 @@
 """
 from __future__ import annotations
 
+from sw_enums import (
+    CONSTRAINT_TYPE as _CONSTRAINT_RAW,
+)
+from sw_enums import (
+    CONSTRAINT_TYPE_ZH as _CONSTRAINT_ZH,
+)
+from sw_enums import (
+    DOC_KIND as _DOC_RAW,
+)
+from sw_enums import (
+    DOC_KIND_ZH as _DOC_ZH,
+)
+from sw_enums import (
+    MATE_ALIGN as _MATE_ALIGN_RAW,
+)
+from sw_enums import (
+    MATE_ALIGN_ZH as _MATE_ALIGN_ZH,
+)
+from sw_enums import (
+    MATE_TYPE as _MATE_TYPE_RAW,
+)
+from sw_enums import (
+    MATE_TYPE_ZH as _MATE_TYPE_ZH,
+)
+from sw_enums import (
+    SEGMENT_KIND as _SEG_RAW,
+)
+from sw_enums import (
+    SEGMENT_KIND_ZH as _SEG_ZH,
+)
+from sw_enums import (
+    SKETCH_POINT_TYPE as _SPT_RAW,
+)
+
 #: `swMateType_e`（官方枚举，逐条核过 `C:\swapi\enums\swMateType_e.md`）
-MATE_TYPE = {
-    0: "COINCIDENT", 1: "CONCENTRIC", 2: "PERPENDICULAR", 3: "PARALLEL",
-    4: "TANGENT", 5: "DISTANCE", 6: "ANGLE", 7: "UNKNOWN", 8: "SYMMETRIC",
-    9: "CAMFOLLOWER", 10: "GEAR", 11: "WIDTH", 12: "LOCKTOSKETCH",
-    13: "RACKPINION", 14: "MAXMATES", 15: "PATH", 16: "LOCK", 17: "SCREW",
-    18: "LINEARCOUPLER", 19: "UNIVERSALJOINT", 20: "COORDINATE", 21: "SLOT",
-    22: "HINGE", 23: "SLIDER",
-}
+#: ★★★ 枚举一律来自 scripts/sw_enums.py（由 	ools/gen_sw_enums.py 从
+#:   C:/swapi/enums/*.md **生成**），这里**不再手抄任何表**。
+#:   教训：手抄 swConstraintType_e 把 7/8 抄错 ⇒ 业主的「平行/垂直」被记成
+#:   「相切/同心」，是**假事实**。见 AGENTS.md 与事实 592。
+from sw_units import dimension_reading
 
-#: `swMateAlign_e`
-MATE_ALIGN = {0: "ALIGNED", 1: "ANTI_ALIGNED", 2: "CLOSEST"}
 
-#: swConstraintType_e —— **整表来自官方枚举文件**（69 个值，脚本生成，不手填）。
-#: ★ 手填过一版，把 6/7/8 记错（真值 6=TANGENT · 7=PARALLEL · 8=PERPENDICULAR），
-#:   于是业主的「平行/垂直」被写成「相切/同心」—— **假事实**，故整表重建。
-CONSTRAINT = {
-    0: "INVALIDCTYPE",
-    1: "DISTANCE",
-    2: "ANGLE",
-    3: "RADIUS",
-    4: "HORIZONTAL",
-    6: "TANGENT",
-    7: "PARALLEL",
-    8: "PERPENDICULAR",
-    9: "COINCIDENT",
-    10: "CONCENTRIC",
-    11: "SYMMETRIC",
-    12: "ATMIDDLE",
-    13: "ATINTERSECT",
-    14: "SAMELENGTH",
-    15: "DIAMETER",
-    16: "OFFSETEDGE",
-    17: "FIXED",
-    18: "ARCANG90",
-    19: "ARCANG180",
-    20: "ARCANG270",
-    21: "ARCANGTOP",
-    22: "ARCANGBOTTOM",
-    23: "ARCANGLEFT",
-    24: "ARCANGRIGHT",
-    25: "HORIZPOINTS",
-    27: "COLINEAR",
-    28: "CORADIAL",
-    29: "SNAPGRID",
-    30: "SNAPLENGTH",
-    31: "SNAPANGLE",
-    32: "USEEDGE",
-    33: "ELLIPSEANG90",
-    34: "ELLIPSEANG180",
-    35: "ELLIPSEANG270",
-    36: "ELLIPSEANGTOP",
-    37: "ELLIPSEANGBOTTOM",
-    38: "ELLIPSEANGLEFT",
-    39: "ELLIPSEANGRIGHT",
-    40: "ATPIERCE",
-    41: "DOUBLEDISTANCE",
-    42: "MERGEPOINTS",
-    43: "ANGLE3P",
-    44: "ARCLENGTH",
-    45: "NORMAL",
-    46: "NORMALPOINTS",
-    48: "ALONGX",
-    49: "ALONGY",
-    50: "ALONGZ",
-    51: "ALONGXPOINTS",
-    52: "ALONGYPOINTS",
-    53: "ALONGZPOINTS",
-    54: "PARALLELYZ",
-    55: "PARALLELZX",
-    56: "INTERSECTION",
-    57: "PATTERNED",
-    60: "FITSPLINE",
-    61: "EQUALCURVATURE",
-    62: "EQUALTANGENT",
-    63: "TANGENTFACE",
-    64: "ALONGX3D",
-    65: "ALONGY3D",
-    66: "ALONGXPOINTS3D",
-    67: "ALONGYPOINTS3D",
-    68: "TRACTION",
-    69: "BELTTRACTION",
-    76: "LINEARPATTCNT",
-    77: "CIRCULARPATTCNT",
-    82: "CONICRHO",
-    83: "C3TOUCH",
-}
+def _strip(d: dict, *prefixes: str) -> dict:
+    """把生成表的成员名去掉前缀，只留值名（便于人读）。
 
-#: `swSketchSegments_e`
-SEGMENT_KIND = {0: "直线", 1: "圆弧", 2: "椭圆", 3: "样条", 4: "文字", 5: "抛物线"}
+    ★ 前缀**不统一**，必须多给几个候选（实测）：
+      swConstraintType_PARALLEL → 前缀 swConstraintType
+      swMateAlignALIGNED        → 前缀 swMateAlign（**不是** swAlign）
+      swSketchLINE              → 前缀 swSketch
+      swDocPART                 → 前缀 swDoc
+    只给一个前缀会剥不掉，值名原样带着前缀（实测踩过：MATE_ALIGN[0] 成了
+    swMateAlignALIGNED）。
+    """
+    out = {}
+    for k, v in d.items():
+        name = v
+        #: 长的优先，避免 swMate 先命中 swMateAlignXXX
+        for cand in sorted(prefixes, key=len, reverse=True):
+            if name.startswith(cand):
+                name = name[len(cand):]
+                break
+        out[k] = name.lstrip("_")
+    return out
 
-#: `swDocumentTypes_e`
-DOC_KIND = {1: "零件", 2: "装配", 3: "图样"}
 
+CONSTRAINT = _strip(_CONSTRAINT_RAW, "swConstraintType_", "swConstraintType")
+MATE_TYPE = _strip(_MATE_TYPE_RAW, "swMateType_", "swMateType", "swMate")
+MATE_ALIGN = _strip(_MATE_ALIGN_RAW, "swMateAlign", "swAlign")
+SEGMENT_KIND = _strip(_SEG_RAW, "swSketchSegments_", "swSketch")
+DOC_KIND = _strip(_DOC_RAW, "swDoc")
+SKETCH_POINT_KIND = _strip(_SPT_RAW, "swSketchPointType_", "swSketchPointType")
+
+#: 中文标签（只给已真机核过的值；缺的不猜）
+CONSTRAINT_ZH = dict(_CONSTRAINT_ZH)
+MATE_TYPE_ZH = dict(_MATE_TYPE_ZH)
+MATE_ALIGN_ZH = dict(_MATE_ALIGN_ZH)
+SEGMENT_KIND_ZH = dict(_SEG_ZH)
+DOC_KIND_ZH = dict(_DOC_ZH)
+
+#: ★★★ 角度类关系 —— **量纲不同**：GetSystemValue2 对它们回**弧度**，不是米。
+#:   ⚠ 只收**已真机实测**的：2 = ANGLE（实测 0.785398 ⇒ 45°，事实 587/592）。
+#:   ARCANG* / ANGLE3P 等虽然名字里有 ANGLE，但**未实测其 GetSystemValue2 的量纲**
+#:   ⇒ 不放进本集合，改用 ANGLE_TYPES_UNVERIFIED 标出来，取到值时同时标「单位未验证」。
+ANGLE_TYPES = {2}
+ANGLE_TYPES_UNVERIFIED = {k for k, v in CONSTRAINT.items()
+                          if "ANGLE" in v and k not in ANGLE_TYPES}
+#: 长度类（GetSystemValue2 回**米**）—— 只收已实测的三种
+LENGTH_TYPES = {1, 3, 15}     #: DISTANCE / RADIUS / DIAMETER
+
+#: 「读不到」的统一写法 —— **不许**用空值/0 冒充「读到了」。
 NA = "读不到"
+#: 长度换算：**米 → 毫米**（只用于长度；角度走 sw_units.rad_to_deg）
 
-#: 角度类关系（GetSystemValue2 对它们回的是**弧度**，不能按长度 ×1000）
-ANGLE_TYPES = {2, 43}   #: swConstraintType_ANGLE(2) · ANGLE3P(43)
+#: ★ 文档类型中文（人读版要用中文；生成表给的是英文成员名）
+DOC_KIND = {1: "零件", 2: "装配", 3: "图样"}
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -234,7 +231,7 @@ def describe_entity(ent) -> dict:
             if p is not None:
                 q = list(p)
                 if len(q) >= 3:
-                    d["%s_mm" % tag] = [_mm(q[0]), _mm(q[1]), _mm(q[2])]
+                    d[f"{tag}_mm"] = [_mm(q[0]), _mm(q[1]), _mm(q[2])]
         return d
 
     #: ④ 面（有 GetEdges）
@@ -265,7 +262,9 @@ def _segment_shape(seg) -> dict:
     out: dict = {}
     t = _g(seg, "GetType")
     if isinstance(t, int) and t in SEGMENT_KIND:
-        out["shape"] = SEGMENT_KIND[t]
+        #: 官方成员名（LINE/ARC…）+ 中文标签都给，人读用中文、机器用英文
+        out["shape"] = SEGMENT_KIND_ZH.get(t) or SEGMENT_KIND[t]
+        out["shape_official"] = SEGMENT_KIND[t]
     c = _g(seg, "GetCenterPoint2")
     if c is not None:
         out["center_mm"] = [_mm(_g(c, "X")), _mm(_g(c, "Y"))]
@@ -294,14 +293,51 @@ def sketch_detail(sketch_feature) -> dict:
     out["constrained"] = st
     out["constrained_meaning"] = {2: "欠定义", 3: "完全定义"}.get(st, "其它/未知")
 
+    #: ★★★ 根因 F：**「草图点」有两种，不能混**
+    #:   · GetUserPoints2()  ⇒ **用户显式画的点**（真正的「点」实体）
+    #:   · GetSketchPoints2() ⇒ **全部点**，含每条线段的端点（内部点）
+    #:   实测业主那张草图：GetSketchPoints2 回 6 个（其中 5 个 Internal=线段端点），
+    #:   GetUserPoints2 只回 1 个 ⇒ 说「6 个点」是错的，
+    #: ⚠ GetUserPoints2 **不返回点对象**，它返回 **doubles 数组**，
+    #:   每 7 个一组（官方 Remarks 逐字）：
+    #:   [Color, Line Font, Line Width, Layer ID, Layer Override, ptLoc[3]]
+    #:   ⇒ 坐标从每组第 6~8 个取。第一版当它是点对象，直接崩了。
+    raw_pts = list(_g(sk, "GetUserPoints2") or ())
+    user_pts = []
+    step = 7
+    for i in range(0, len(raw_pts) - step + 1, step):
+        xyz = raw_pts[i + 5:i + 8]
+        try:
+            user_pts.append({"x_mm": _mm(float(xyz[0])),
+                             "y_mm": _mm(float(xyz[1])),
+                             "z_mm": _mm(float(xyz[2])) if len(xyz) > 2 else None})
+        except (TypeError, ValueError, IndexError):
+            continue
+    out["user_point_count"] = len(user_pts)
+    out["user_points"] = user_pts
+
     pts = []
     for sp in list(_g(sk, "GetSketchPoints2") or ()):
         item = {"x_mm": _mm(_g(sp, "X")), "y_mm": _mm(_g(sp, "Y"))}
         t = _int(_g(sp, "Type"))
         if t is not None:
             item["type_int"] = t
+            #: ★★★ 根因 F：**区分系统元素与用户元素**，不让下游去猜。
+            #:   `ISketchPoint.Type` 回 `swSketchPointType_e`（由生成表提供）：
+            #:   1 = User（用户）· 8 = Origin（原点）· 10 = External（外部）
+            #:   ⇒ 业主那张草图有 6 个点，其中 1 个是**原点**，只有 5 个是他自己画的。
+            #:     不标出来，下游会把点数数错（实测踩过）。
+            item["kind"] = SKETCH_POINT_KIND.get(t, f"未登记({t})")
+            item["is_user"] = t == 1
+            item["is_origin"] = t == 8
+            item["is_external"] = t == 10
         pts.append(item)
     out["points"] = pts
+    out["all_point_count"] = len(pts)
+    out["points_note"] = (
+        "points = GetSketchPoints2 的**全部点**（含线段端点）；"
+        "user_points = GetUserPoints2 的**用户画点**。别把两者混算。")
+    out["has_origin"] = any(p.get("is_origin") for p in pts)
 
     segs = []
     for seg in list(_g(sk, "GetSketchSegments") or ()):
@@ -326,30 +362,19 @@ def sketch_detail(sketch_feature) -> dict:
             item: dict = {}
             rt = _int(_g(rel, "GetRelationType"))
             item["type_int"] = rt
-            item["type"] = CONSTRAINT.get(rt, "未登记(%s)" % rt)
+            item["type"] = CONSTRAINT.get(rt, f"未登记({rt})")
             item["entities"] = [describe_entity(e)
                                 for e in list(_g(rel, "GetEntities") or ())]
             dd = _g(rel, "GetDisplayDimension")
             if dd is not None:
                 dim = _g(dd, "GetDimension2", 0)
                 if dim is not None:
-                    #: ★ 官方 `GetSystemValue2(ConfigName)` 要传配置名，空串=当前配置
-                    v = _g(dim, "GetSystemValue2", "")
-                    if v is not None:
-                        #: ★★★ 角度尺寸回的是**弧度**：实测 ANGLE 被当长度 ×1000
-                        #:   记成 "785.398 mm"（= 0.7854 rad ×1000），属于**假数值**。
-    #:   都回 None ⇒ 如实标「实体读不到」，别让下游误以为没有实体。
-                        try:
-                            if item.get("type_int") in ANGLE_TYPES:
-                                item["value_rad"] = round(float(v), 6)
-                                import math as _math
-
-                                item["value_deg"] = round(
-                                    _math.degrees(float(v)), 3)
-                            else:
-                                item["value_mm"] = _mm(v)
-                        except Exception:  # noqa: BLE001
-                            pass
+                    #: ★★★ 数值一律走 sw_units.dimension_reading —— 它**按关系类型
+                    #:   决定量纲**（长度 → value_mm；角度 → value_rad/value_deg；
+                    #:   未实测 → unit_unverified）。本文件**不允许**自己写
+                    #:   GetSystemValue2 + 乘 1000：那正是「角度被当长度」那个
+                    #:   假数值事故的根因（事实 592）。
+                    item.update(dimension_reading(dim, item.get("type_int")))
             rels.append(item)
     out["relations"] = rels
     #: ★ 草图级「外部/投影引用」计数：关系类型 32 = USEEDGE（转换实体）
@@ -397,17 +422,67 @@ illet_params），不重造；
         raw = reader(doc, name) or {}
     except Exception:  # noqa: BLE001
         return {}
-    #: 去掉与「记录」无关的内部键，保留可判读参数
+    #: ★★★ 根因 G：**「口径说明」不许混进数据里**。
+    #:   原来我把上游返回的东西整个塞进来，其中既有**值**（GetDepth: 0.025）又有
+    #:   **手写的口径字符串**（★_单位口径: 'document（真机：20mm ⇒ 20.0）'）——
+    #:   两者不同步就成了**假标注**：值是 0.025 米，口径却说「20mm ⇒ 20.0」。
+    #:   现在：① 所有 ★* / _* 内部说明键一律丢掉（口径写进本函数 docstring）；
+    #:        ② 长度类数值**按官方口径换算后改名带单位**。
     out = {}
     for k, v in raw.items():
-        if str(k).startswith("_"):
+        key = str(k)
+        if key.startswith(("_", "★")):
             continue
-        if k in ("definition", "feature"):
+        if key in ("definition", "feature"):
             continue
         if v in (None, "", [], {}):
             continue
-        out[str(k)] = v if isinstance(v, (int, float, bool, str)) else str(v)[:120]
+        out.update(_param_with_unit(key, v))
     return out
+
+
+#: 上游返回的**长度类**键名（值单位是米，官方口径）→ 换成带 _mm 后缀的键名
+_LENGTH_KEYS = {
+    "GetDepth": "depth_mm",
+    "GetDraftAngle": "draft_angle_deg",
+}
+
+
+def _param_with_unit(key: str, value):
+    """把一个上游参数**按量纲改名并换算**，回 {新键: 值}。
+
+    ★ 只管**已知道量纲**的键（见 _LENGTH_KEYS，其口径来自
+      IExtrudeFeatureData2.GetDepth 的官方 Remarks：**米**）。
+      不认识的键**原样保留、不加单位后缀**，因为不知道量纲时加后缀就等于猜。
+
+    ★ 嵌套 dict 要**递归**：实测上游把拉伸参数装成
+      `forward = {"GetDepth": 0.025, "GetDraftAngle": 0.0, ...}`；
+      第一版只处理顶层，嵌套里的 `GetDepth` 依旧以米出现 —— 等于没修。
+    """
+    if isinstance(value, dict):
+        nested = {}
+        for kk, vv in value.items():
+            nested.update(_param_with_unit(kk, vv))
+        return {key: nested}
+    target = _LENGTH_KEYS.get(key)
+    if target is None:
+        return {key: value if isinstance(value, (int, float, bool, str))
+                else str(value)[:120]}
+    if not isinstance(value, (int, float)):
+        return {target: str(value)[:120]}
+    if target.endswith("_mm"):
+        try:
+            return {target: round(float(value) * 1000.0, 4)}
+        except (TypeError, ValueError):
+            return {target: None}
+    if target.endswith("_deg"):
+        try:
+            import math as _math
+
+            return {target: round(_math.degrees(float(value)), 4)}
+        except (TypeError, ValueError):
+            return {target: None}
+    return {target: value}
 
 
 def _sketch_key(sk: dict) -> tuple:
@@ -442,8 +517,42 @@ def _merge_sketch_duplicate(acc: list, sk: dict) -> None:
         return
 
 
-def dump_part(doc) -> dict:
-    """零件：特征树 + 每张草图 + 实体统计 + 自定义属性 + 参考几何。"""
+def _bodies_of(doc, component=None) -> tuple:
+    """回 (实体列表, 取数来源说明)。
+
+    ★ 顺序即优先级：
+      ① 传了组件 ⇒ IComponent2.GetBodies2(BodyType)（**1 参**）；
+      ② 否则 IPartDoc.GetBodies2(BodyType, BVisibleOnly)（**2 参**）；
+      ③ 再退 IBody2 单实体入口 GetBody()。
+    两次都失败时**如实写来源=读不到**，不写空数组冒充「没有实体」。
+    """
+    if component is not None:
+        got = _g(component, "GetBodies2", 0)
+        if got is not None:
+            return list(got), "IComponent2.GetBodies2(1 参)"
+    try:
+        got = doc.GetBodies2(0, False)
+        if got is not None:
+            return list(got), "IPartDoc.GetBodies2(2 参)"
+    except Exception:  # noqa: BLE001
+        pass
+    one = _g(doc, "GetBody")
+    if one is not None:
+        return [one], "GetBody() 单实体兜底"
+    return [], "读不到（该上下文下 GetBodies2 不可用且无 GetBody）"
+
+
+def dump_part(doc, component=None) -> dict:
+    """零件：特征树 + 每张草图 + 实体统计 + 自定义属性 + 参考几何。
+
+    :param component: 若这份零件是**装配里的组件**，传 IComponent2 进来。
+
+    ★★★ 为什么需要它（根因 E：几何取数要区分上下文）
+      在装配体里，组件内零件文档的 IPartDoc.GetBodies2(0, False) 会**抛异常**
+      （实测 com_error），于是 odies 记成空数组 —— 下游看到「没有实体」，
+      而实际有实体。同一份几何只能从**组件**问：
+      IComponent2.GetBodies2(BodyType)（注意：**1 个参数**，与 IPartDoc 的 2 个不同）。
+    """
     out: dict = {"features": [], "sketches": [], "bodies": []}
 
     for feat, owner, level in walk_features(doc):
@@ -462,7 +571,9 @@ def dump_part(doc) -> dict:
             out["sketches"].append(sk)
             _merge_sketch_duplicate(out["sketches"], sk)
 
-    for body in list(_g(doc, "GetBodies2", 0, False) or ()):
+    bodies, bodies_source = _bodies_of(doc, component)
+    out["bodies_source"] = bodies_source
+    for body in bodies:
         faces = list(_g(body, "GetFaces") or ())
         cyl = 0
         for face in faces:
@@ -554,7 +665,7 @@ def _custom_properties(doc) -> dict:
         out["_count"] = int(ret) if isinstance(ret, int) else len(nl)
         out["_resolved"] = [str(x) for x in rl]
     except Exception as exc:  # noqa: BLE001
-        out["_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
+        out["_error"] = f"{type(exc).__name__}: {str(exc)[:160]}"
     return out
 
 
@@ -597,17 +708,18 @@ def dump_assembly(doc) -> dict:
         sub = _g(cp, "GetModelDoc2")
         if sub is not None and not _same_doc(sub, doc):
             try:
-                inner = dump_part(sub)
+                inner = dump_part(sub, component=cp)
                 item["model"] = {
                     "document": str(_g(sub, "GetTitle") or ""),
                     "path": str(_g(sub, "GetPathName") or ""),
                     "features": inner.get("features"),
                     "sketches": inner.get("sketches"),
                     "bodies": inner.get("bodies"),
+                    "bodies_source": inner.get("bodies_source"),
+                    "custom_properties": inner.get("custom_properties"),
                 }
             except Exception as exc:  # noqa: BLE001
-                item["model"] = {"error": "%s: %s"
-                                 % (type(exc).__name__, str(exc)[:120])}
+                item["model"] = {"error": f"{type(exc).__name__}: {str(exc)[:120]}"}
         out["components"].append(item)
 
     #: 特征树（配合也在里面）—— ★ 第一版这里**没填 features**，于是配合永远找不到。
@@ -690,20 +802,39 @@ def _mate_detail(feature) -> dict:
     if ents and all(not e.get("entity") for e in ents):
         item["entities_unreadable"] = True
 
-    #: ★ 配合的**数值参数**（距离/角度）在配合特征的**显示尺寸**上：
-    #:   IFeature.GetFirstDisplayDimension() → IDisplayDimension.GetDimension2(0)
-    #:   → IDimension.GetSystemValue2("")（米）。实测距离配合回 0.01 米 = 10mm。
+    #: ★ 配合的数值参数（距离/角度）在配合特征的**显示尺寸**上：
+    #:   IFeature.GetFirstDisplayDimension() → IDisplayDimension.GetDimension2(0)。
+    #: ★ 量纲按**配合类型**分派，不能一律当长度：MATE_TYPE_RAW[6] = swMateANGLE
+    #:   ⇒ 角度配合的 GetSystemValue2 回**弧度**（与草图 ANGLE 同理，事实 592）。
     okd, dd = _tc(_g, feature, "GetFirstDisplayDimension")
     if okd and dd is not None:
         okr, dim = _tc(_g, dd, "GetDimension2", 0)
         if okr and dim is not None:
-            v = _g(dim, "GetSystemValue2", "")
-            if v is not None:
-                try:
-                    item["value_mm"] = _mm(v)
-                except Exception:  # noqa: BLE001
-                    item["value_mm"] = None
+            #: 用 `t`（配合类型整数，上面 `_int(_g(mate, "Type"))` 得到的）
+            item.update(_mate_reading(dim, t))
     return item
+
+
+def _mate_reading(dim, mate_type_int) -> dict:
+    """配合的数值：**按配合类型决定量纲**（距离 → mm；角度 → rad/deg）。"""
+    if dim is None:
+        return {}
+    v = _g(dim, "GetSystemValue2", "")
+    if v is None:
+        return {}
+    try:
+        raw = float(v)
+    except (TypeError, ValueError):
+        return {}
+    if mate_type_int == 6:            #: swMateANGLE
+        from sw_units import rad_to_deg
+
+        return {"value_rad": round(raw, 6), "value_deg": rad_to_deg(raw)}
+    if mate_type_int == 5:            #: swMateDISTANCE
+        from sw_units import m_to_mm
+
+        return {"value_mm": m_to_mm(raw)}
+    return {"raw_system_value": round(raw, 6), "unit_unverified": True}
 
 
 # ── 图样 ─────────────────────────────────────────────────────────────
@@ -722,7 +853,12 @@ def _view_detail(feature, base: dict) -> dict:
     n_ann = _int(_g(view, "GetAnnotationCount"))
     if n_ann is not None:
         base["annotation_count"] = n_ann
-    vals = []
+    #: ★ 图样视图里的尺寸**量纲不能一概当成长度**（可能是角度标注）。
+    #:   判据：IDisplayDimension.Type2 回 swDimensionType_e；
+    #:   ★ 但本机**未实测**该枚举在各标注类型上的取值 ⇒ 不猜：
+    #:   能判出量纲才写 value_mm / value_deg，判不出就标 unit_unverified。
+    #:   图样尺寸的**真实数值**留给下游按标注类型解读，本记录器只如实交原始值。
+    raw_vals = []
     for dd in list(_g(view, "GetDisplayDimensions") or ()):
         dim = _g(dd, "GetDimension2", 0)
         if dim is None:
@@ -731,11 +867,13 @@ def _view_detail(feature, base: dict) -> dict:
         if v is None:
             continue
         try:
-            vals.append(_mm(v))
-        except Exception:  # noqa: BLE001
+            raw_vals.append(round(float(v), 6))
+        except (TypeError, ValueError):
             continue
-    if vals:
-        base["dimension_values_mm"] = vals
+    if raw_vals:
+        base["dimension_values_raw"] = raw_vals
+        base["dimension_unit_note"] = (
+            "图样标注未实测量纲，不代换算")
     return base
 
 
@@ -826,14 +964,14 @@ def external_references(doc) -> list:
             if item:
                 out.append(item)
     except Exception as exc:  # noqa: BLE001
-        out.append({"error": "%s: %s" % (type(exc).__name__, str(exc)[:160])})
+        out.append({"error": f"{type(exc).__name__}: {str(exc)[:160]}"})
     return out
 
 
 def dump_document(doc) -> dict:
     """整份文档的记录（按类型分发）。**只记录，不推断。**"""
     dtype = _int(_g(doc, "GetType"))
-    kind = DOC_KIND.get(dtype, "未知(%s)" % (dtype,))
+    kind = DOC_KIND.get(dtype, f"未知({dtype})")
     out: dict = {
         "document": str(_g(doc, "GetTitle") or ""),
         "path": str(_g(doc, "GetPathName") or ""),
