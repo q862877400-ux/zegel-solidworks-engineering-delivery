@@ -7150,6 +7150,35 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 583 | **★★★ 尺寸创建这道墙的**根因**：`IModelDocExtension.AddDimension` 是 **4 个参数**，我一直只传 3 个** | 2026-10-26（第 74 轮）。
+     ★★★ 官方签名（`C:\swapi\types\IModelDocExtension\AddDimension.md`）：
+     ```
+     object AddDimension(double X, double Y, double Z, int Direction)
+     Direction = swSmartDimensionDirection_e
+                  Right=0 · Up=1 · Left=2 · Down=3
+     ```
+     ★ 只传 3 个 ⇒ `com_error (-2147352561, '非选择性的参数。', None, None)`
+       （= `DISP_E_PARAMNOTOPTIONAL`，**参数没给**，不是类型错）；
+       而 `IModelDoc2` 上那三条同类成员（`AddDimension2` / `AddHorizontalDimension2` /
+       `AddVerticalDimension2`）则**静默回 None** —— 四轮里我一直在这三条上打转。
+     ★★ 补上第 4 参后：`Extension.AddDimension(x,y,z,0)` 返回 **CDispatch**（真 `IDisplayDimension`）。
+       实测（圆，`output/probe_extension_dimension.py`）：
+       ```
+       3 参调用 → ok=False 错误=DISP_E_PARAMNOTOPTIONAL
+       4 参调用 → ok=True  返回=CDispatch   ← 尺寸**建出来了**
+       ```
+     ★★★ 另一条同轮发现（**实体类型差别**）：
+     ```
+     圆（circle）：AddDimension → CDispatch（建出尺寸）
+     裸点（point）：AddDimension → **None**（SW 无法把孤立点标成尺寸）
+     ```
+     ⇒ 「孔位全约束」要用**圆**当孔位（Hole Wizard 也收圆），不要用裸点。
+       一个圆 3 个自由度（X·Y·R），实测两次位置尺寸后 `count_sketch_dimensions` = **2**、
+       状态仍 2 ⇒ **还差半径那一个**；且四次调用只落 2 个尺寸（另两次是重复方向 ⇒ 无新增）。
+     ★ 教训（跨轮）：错误文本 `DISP_E_PARAMNOTOPTIONAL` 比「返回 None」有用得多 ——
+       下一步应当**优先走会抛异常的那条路**（能读错误），而不是走静默返回 None 的那条。
+|真机：`output/probe_extension_dimension.py` · `output/probe_point_direction.py` · `output/probe_circle_dimension.py`（临时探针，不入库） |
+
 | 582 | **用 API 给草图点加尺寸**在**本机所有已试路径上都回 `None`** —— `AddHorizontalDimension2` / `AddVerticalDimension2` / `AddDimension2` 三条成员、四种选择写法，草图始终停状态 2 | 2026-10-26（第 73 轮）。
      ★★★ 试过的四组（每组都有读数，不是猜）：
      ```
@@ -7171,7 +7200,10 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
         **To dimension, make selections based on location and not name** …
         if you are using `SelectByID2` … you should specify the X, Y, and Z
         selection coordinates」—— 第③组就是照这句做的，仍然失败。
-     ★ 结论（如实）：**这道墙我没打通**，按仓库停止规则记录下来，不硬推。
+     ★★ **第 74 轮已定位根因并打通**（见事实 583）：`IModelDocExtension.AddDimension`
+       是 **4 个参数**，缺第 4 参 `Direction` 会抛 `DISP_E_PARAMNOTOPTIONAL`；
+       补上之后返回真 `IDisplayDimension`。上面四组失败**全部**发生在
+       `IModelDoc2` 那三条**静默返回 None** 的成员上。
        ⇒ 「孔点两向全约束」这条**未完成**；`fully_define_sketch` 也不能当证据
          （它回 True 但草图仍是 2，其 docstring 自己写着取值表未核实）。
      ★ 下一步候选（按可行性排序，下一轮试）：

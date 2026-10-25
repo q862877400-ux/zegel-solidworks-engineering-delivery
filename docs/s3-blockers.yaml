@@ -50,8 +50,11 @@ blockers:
         回 0 条 ⇒ 疑点在我的调用方式，**不能据此断言 GB 没装**。详见事实 581。
       ★ 第 73 轮：**尺寸创建这道墙没打通** —— 三条尺寸成员 × 四种选择写法（含按位置选、
         含 ESC 线程、含不设 CommandInProgress）**一律回 None**，草图停在状态 2。
-        ⇒ 「孔点两向全约束」仍未实现；`fully_define_sketch` 也不能当证据
-          （回 True 但状态仍 2）。详见事实 582，下一步候选也写在那里。
+        ⇒ 「孔点两向全约束」当时未实现。
+      ★★ 第 74 轮**已定位根因**（事实 583）：`IModelDocExtension.AddDimension` 是 **4 参**，
+        缺第 4 参 `Direction` 抛 `DISP_E_PARAMNOTOPTIONAL`；补上后返回真 `IDisplayDimension`。
+        ★ 且发现**圆能标尺寸、裸点不能** ⇒ 孔位改用圆。
+        下一步：4 个圆 × 两向位置尺寸 + 半径（或 `sgSAMEAS` 等半径）+ 一次 HoleWizard(GB)。
     evidence:
       - output/s3-acceptance.json
       - docs/known-facts.md
