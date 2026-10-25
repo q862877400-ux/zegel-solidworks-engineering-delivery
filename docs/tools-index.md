@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 661 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 663 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 277 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 278 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -37,9 +37,9 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 72 | — |
+| （未归入上面任何一类） | 其他 | 73 | — |
 
-## 探针（277 个）
+## 探针（278 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -110,6 +110,7 @@
 | `probe_export_magic_matrix.py` | @brief 探针：**导出格式矩阵** —— 逐个格式**读魔数**，判「名实相符」与否 |
 | `probe_expose_candidates.py` | @brief 换口径找暴露候选：**「未暴露 + 被生产代码调用」** 比「孤立」更靠得住 |
 | `probe_exposure_surface.py` | @brief 探针：量清「本仓库 MCP 暴露面」的**两个来源**，判断「缺 339」是否被低估 |
+| `probe_extension_add_dimension.py` | ★ 试一条**没试过**的建尺寸路径：`IModelDocExtension.AddDimension` |
 | `probe_extrude_depth_recheck.py` | ★ 真机验新能力 `extrude_depth`（★ 阶段 3 补能力 · 复查） |
 | `probe_extrude_depth_unit.py` | ★ 定案：`extrude_boss(20.0)` 建出来的实体，★ **真实的 bounding box 是多少毫米** |
 | `probe_extrude_equation_profile.py` | ★ 真机：★ **最小闭合轮廓能不能拉伸** —— 隔离「方程式曲线」与「拉伸」两件事 |
@@ -803,7 +804,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（72 个）
+## 其他（73 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -820,6 +821,7 @@
 | `census_pre_calls.py` | ★ 普查 2.0：**跟调用图**再判 pre_call 有没有回读（★ 上一版只看一个函数的文本 ⇒ 假阳性 3 个） |
 | `classify_audit_divergences.py` | ★ 把 bunny 对比稿里的**分歧点**抽出来分类 —— 找"批量推进"的规律（★ 业主指令） |
 | `classify_unplaced_tools.py` | ★ 把「无处可放」的 30 个**分类**：★ 哪些是"纯数据/纯计算工具"（★ 本来就不该有 COM 成员） |
+| `close_modify_box_and_count.py` | 关掉「修改尺寸」框（ESC），然后**复核尺寸数** —— 判 `Extension.AddDimension` 是否真建成了 |
 | `close_my_orphans.py` | 清掉我这两轮 E4 探针留下的 3 个孤儿文档（**先逐条核归属，再关**） |
 | `close_orphan_plate_doc.py` | ★ 极窄清理：只关「**路径为空** 且标题以 `板1_rev-1` 开头」的文档 |
 | `close_our_docs.py` | ★ 关掉**我方**打开的文档（★ 一个都不碰别人的 |

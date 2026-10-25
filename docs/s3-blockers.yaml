@@ -28,12 +28,19 @@ blockers:
     owner: agent
     summary: >-
       孔位不随板宽联动。改板宽 100→120 时包围盒 100→120 而四个孔心位移全为 0。
-      硬前置是「孔心必须先是尺寸」，而新建尺寸的方法族本机退化
-      （AddDimension2 / AddHorizontalDimension2 崩进程），四条替代路已排除。
+      ★ 第 52 轮进展（事实 567）：硬前置「孔心必须是尺寸」**已恢复可达** ——
+      可用入口是 `IModelDocExtension.AddDimension`（实测尺寸 0 → 1），
+      不是会崩的 `IModelDoc2.AddDimension2` / `AddHorizontalDimension2`。
+      ★ 它建完尺寸会弹「修改」属性框（占位符控件、needs_llm）并**同步阻塞**
+      ⇒ 必须从另一个进程按 ESC 才返回（见 `tools/close_modify_box_and_count.py`）。
+      ⚠ 剩余：把四个孔心真的接上尺寸、再验证改板宽时孔心位移非零；
+      联动建成之前本条仍为阻断。
     evidence:
       - specs/350-first-part-delivery/s3-closeout.md
       - docs/state/facts/R-engineering-path.md
       - tools/probe_s3_hole_center_diagnose.py
+      - tools/probe_extension_add_dimension.py
+      - output/extension-add-dimension.json
 
   - check_id: E2.hole_readback
     cause: requirement

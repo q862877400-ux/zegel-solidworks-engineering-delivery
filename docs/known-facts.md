@@ -7150,6 +7150,33 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 567 | **★★★★★ `IModelDocExtension.AddDimension` **可用** —— 「尺寸能力整体退化」（事实 560）**不成立**，退化的只是 `IModelDoc2` 那两个入口** —— 2026-10-26（第 52 轮）。
+     ★★★ 真机读数（`tools/probe_extension_add_dimension.py`，证据 `output/extension-add-dimension.json`）：
+     ```
+     before          0
+     sketch          {'active_is_none': False, 'segments': 1, 'points': 2}
+     select_Select4  {'err': 'com_error'}          ← IEntity.Select4 失败
+     select_Select2  {'ret': True, 'selected': 1}  ← ★ 只有 Select2 选得中
+     call            {'ok': True, 'dim_none': False}  ← 返回真实 DisplayDimension
+     after           1                              ← ★★ 尺寸 0 → 1
+     ```
+     ★★ 怎么找到它的：把官方源里所有建尺寸的成员**枚举**一遍
+       （`C:\swapi\types\*\*Dimension*.md` 且名字含 Add/Insert/Create）⇒ 24 个，
+       其中 `IModelDocExtension.AddDimension` / `AddSpecificDimension` / `AddSymmetricDimension`
+       **从未试过**；`ISketchManager.AddAlongX/Y/ZDimension` 的 Remarks 逐字说只适用 3D 草图 ⇒ 不适用。
+     ★★★ **关键机制**：`Extension.AddDimension` 建完尺寸会弹 SolidWorks 的「修改」属性框
+       （控件树 `BUTTON×3 · SLIDER · THUMB WHEEL`，全是资源占位符 ⇒ 分级 `needs_llm`），
+       而**方法本身同步阻塞** ⇒ 同一线程里看不到返回。
+       ★ 必须**从另一个进程按 ESC**（`PostMessage WM_KEYDOWN/WM_KEYUP VK_ESCAPE` 到那个 `#32770`）
+         才能让调用返回。实测这样做之后 `after = 1`。
+     ★★ 这**重新解释**了事实 560 的那次「崩」：`RPC 服务器不可用` + 连对照组都崩
+       = 进程被那个模态框拖住后被杀，**不是 API 崩**。
+       ⇒ ★ 教训：**「崩」与「被模态框拖住」在 RPC 错误码上长得一样**；
+         区分办法是看**有没有那个占位符控件树**（`SLIDER` / `THUMB WHEEL` 是数值框的特征）。
+     ★ 连带：E2「孔位随板宽联动」的硬前置（**孔心必须是尺寸**）**恢复可达**。
+     ★ 另两条实测：`IEntity.Select4(Append, Callout)` 对草图段**失败**（com_error），
+       `IEntity.Select2(Append, 0)` 成功；`ISldWorks.GetActiveWindow` **不存在**（AttributeError）。|真机：`tools/probe_extension_add_dimension.py`（配 `tools/close_modify_box_and_count.py` 的 ESC 手法）· 证据 `output/extension-add-dimension.json` |
+
 | 566 | **★★★ `EntitiesToMate` 直接赋 Python 元组会**静默存成 0**（回 True 但读回 0）⇒ 必须用 `VARIANT(VT_ARRAY｜VT_DISPATCH, [f1, f2])`** —— 2026-10-26（第 49 轮）。
      ★★ 现场（同一个 `ICoincidentMateFeatureData` 对象上，两种赋法对比）：
      ```
@@ -7322,7 +7349,11 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
      判别：still_no_dimension（成 0 / 3）
      ```
      ⇒ ★★★ **故这不是「我的探针写法不对」，而是能力退化**（连对照组都崩）。
-     ★ 连带影响：**E2 的「孔随板宽联动」目前没有可用机制** —— 孔位定位只能靠尺寸，
+     ⚠⚠⚠ **本条「没有可用机制」已被事实 567 推翻**（第 52 轮）：
+       本机尺寸能力**没整体退化**，退化的只是 `IModelDoc2` 那两个入口；
+       `IModelDocExtension.AddDimension` 实测可用（尺寸 0 → 1），
+       只是它会弹「修改」框阻塞，需要另一个进程按 ESC 才返回。
+     ★ 连带影响（**原文，保留作历史**）：**E2 的「孔随板宽联动」当时没有可用机制** —— 孔位定位只能靠尺寸，
        而尺寸这条路（单段 / 两点 / 跨实体点-点 / 点-线）本轮与第 13 轮共 **4 次**让进程崩。
      ★ 处置：两个能力的 `limitations` 首项写入本条，★ `level` 保留 `verified`
        （**那是 2026-10-03 的历史**，`evidence` 字段仍指向当日日志），
