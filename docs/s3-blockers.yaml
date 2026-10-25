@@ -43,6 +43,11 @@ blockers:
       ⇒ 原来的 `E1` 只读**主草图**、判了 pass，**看不见孔草图**；
         已补 `E1.sketches` 逐个草图判（本项就是它暴露出来的）。
       修法：重建板件 —— 一个孔特征 + 四个**两向都定位**的孔点（+ 标准改 GB）。
+      ★ 第 72 轮进展：删旧孔（`sw_part.feature_delete`，4→0）· 建点（新封装
+        `sw_part.sketch_point`）· 选中四点 都已验证；
+        **卡在两处**：`fully_define_sketch` 回 True 但草图仍状态 2（该封装取值表未核实）；
+        `HoleWizard5` 用 GB(13)+fastener 40 没建出特征，而 `GetFastenerTypes` 对所有标准
+        回 0 条 ⇒ 疑点在我的调用方式，**不能据此断言 GB 没装**。详见事实 581。
     evidence:
       - output/s3-acceptance.json
       - docs/known-facts.md

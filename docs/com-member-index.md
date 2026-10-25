@@ -22,6 +22,7 @@
 | `ModelDocExtension.GetBox` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
 | `Sketch.GetConstrainedStatus` | `scripts/engineering/acceptance/e1_sketch.py::collect_sketch_constraint` … |
 | `HoleStandardsData.GetFastenerTable` | `scripts/sw_connect.py::out_dispatch` … |
+| `HoleStandardsData.GetHoleStandards` | `scripts/audit_call_arity.py::load_signatures` … |
 | `ModelDoc2.ActiveView` | `scripts/sw_review.py::set_standard_view` … |
 | `Gtol.AddFrame` | `scripts/sw_gtol.py::add_gtol_frame` … |
 | `CustomPropertyManager.Count` | `scripts/sw_custom_property.py::custom_property_count` … |
@@ -31,7 +32,6 @@
 | `SldWorks.GetAddInObject` | `scripts/sw_costing.py::get_costing_manager` … |
 | `Face2.GetArea` | `scripts/sw_mass_property.py::section_properties` … |
 | `Body2.GetBodyBox` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
-| `HoleStandardsData.GetHoleStandards` | `scripts/audit_call_arity.py::load_signatures` … |
 | `SldWorks.GetHoleStandardsData` | `scripts/sw_hole_features.py::_hole_standards_data` … |
 | `SldWorks.GetProcessID` | `scripts/sw_connect.py::solidworks_process_id` … |
 | `Body2.GetVertices` | `scripts/sw_selection_spec.py::entities_on_body` … |
@@ -72,6 +72,7 @@
 | `CWTopologyStudyManager.CreateMassConstraint` | `scripts/sw_topology.py::set_topology_goal` |
 | `ModelDocExtension.CreateMeasure` | `scripts/sw_measure.py::measure_selection_report` |
 | `CWStudyManager.CreateNewStudy3` | `scripts/sw_connect.py::out_i4` |
+| `SketchManager.CreatePoint` | `scripts/sw_part.py::sketch_point` |
 | `SketchManager.CreatePolygon` | `scripts/sw_part.py::sketch_polygon` |
 | `SelectionMgr.CreateSelectData` | `scripts/sw_part.py::_select_com_object` |
 | `AssemblyDoc.CreateSpeedPak` | `scripts/sw_assembly_doc.py::create_speedpak_report` |

@@ -586,6 +586,32 @@ def current_sketch_name(model, fallback="Sketch1"):
 _MM_TO_M = 1.0 / 1000.0  #: ★ 毫米 → 米（★ 事实 2 的换算口径 ✓）
 
 
+def sketch_point(model, x_mm, y_mm):
+    """在**当前草图**里放一个点（单位: **毫米**）。
+
+    ★ 封 `ISketchManager.CreatePoint(X, Y, Z)`；本模块契约是毫米
+      ⇒ 内部乘 `_MM_TO_M` 换成米（★ 不在这里写 `mm()`，那是另一种换算入口）。
+
+    ★ 为什么要它：`tools/find_com_wrapper.py CreatePoint` 反查结果是**无封装**
+      ⇒ 之前每处用点都要手写 COM 调用（2026-10-26 业主质问「我们有工具为什么不用」）。
+
+    参数:
+        model: IModelDoc2（**必须已进入草图**，见 `start_sketch`）
+        x_mm: 点的 X 坐标（毫米）
+        y_mm: 点的 Y 坐标（毫米）
+
+    返回:
+        SketchPoint 对象
+    """
+    return get_com_member(
+        get_com_member(model, "SketchManager"),
+        "CreatePoint",
+        float(x_mm) * _MM_TO_M,
+        float(y_mm) * _MM_TO_M,
+        0.0,
+    )
+
+
 def sketch_line(model, x1, y1, x2, y2):
     """画直线（单位: **毫米**）"""
     return get_com_member(

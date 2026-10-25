@@ -9,6 +9,11 @@
       "module": "scripts/sw_hole_features.py",
       "function": "list_hole_standards",
       "interface": "HoleStandardsData"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "create_hole_wizard_multi_point",
+      "interface": "HoleStandardsData"
     }
   ],
   "GetConstrainedStatus": [
@@ -838,6 +843,13 @@
       "module": "scripts/sw_part.py",
       "function": "_select_com_object",
       "interface": "SelectionMgr"
+    }
+  ],
+  "CreatePoint": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_point",
+      "interface": "SketchManager"
     }
   ],
   "CreatePolygon": [

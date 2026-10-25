@@ -1739,3 +1739,52 @@ def create_hole_wizard_at_selection_report(
         "selected_count": sel_n,
         "point_mm": [x * 1000.0, y * 1000.0, z * 1000.0],
     }
+
+def create_hole_wizard_multi_point(
+    model,
+    size,
+    *,
+    diameter_mm: float = 8.0,
+    depth_mm: float = 20.0,
+    through: bool = True,
+    fastener_index: int = 40,
+    standard_index: int = 13,
+    generic_type: int = -1,
+):
+    """**一个**异型孔特征吃掉**多个已选孔点**（`HoleWizard5` 的多点入口）。
+
+    ★ 与 `create_hole_wizard_at_point_report` 的区别：
+      · 那个**每次建一个**孔（多个孔位就多个特征）；
+      · 本函数要求调用方**先选中多个草图点**，然后**只调一次** `HoleWizard5`
+        ⇒ 特征树里是**一个**孔特征含多个孔位（SolidWorks 界面里也是这么做的）。
+      ★ 业主 2026-10-26：「一个孔特征它可以画好多个点的…你搞了四个异型孔特征，
+        我觉得这不够优雅」。
+
+    ★ `standard_index` 默认 **13 = GB**（本机 `IHoleStandardsData.GetHoleStandards`
+      实测序列：0 ANSI Inch · 1 ANSI Metric · … · 13 GB · …）。
+      国内出图应打 GB 标签；孔径按 GB/T 5277-1985（等同采用 ISO 273:1979）。
+
+    :param model: `IModelDoc2`（**已选好孔点**）
+    :param size: 规格串（如 "M6"）
+    :param generic_type: `swWzdHoleTypes_e`；`-1` = 用本模块的 `SW_WZD_HOLE`
+    :raises RuntimeError: 特征没建出来（回 `None`）—— 不静默
+    :returns: 新建的特征对象
+    """
+    #: ★ 不能 rom .sw_hole_features import … 导入**自己**（自导入会失败）；
+    #:   同模块常量直接用（它在本文件顶部已定义）。
+    gtype = SW_WZD_HOLE if generic_type < 0 else int(generic_type)
+    feature = _holewizard5_call(
+        model,
+        size=size,
+        diameter_mm=diameter_mm,
+        depth_mm=depth_mm,
+        through=through,
+        fastener_index=fastener_index,
+        standard_index=standard_index,
+        generic_type=gtype,
+    )
+    if feature is None:
+        raise RuntimeError(
+            "HoleWizard5 没建出特征（多半是**没选孔点**或标准/紧固索引不匹配）"
+        )
+    return feature

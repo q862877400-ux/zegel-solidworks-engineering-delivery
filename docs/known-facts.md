@@ -7150,6 +7150,30 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 581 | **多点孔特征**（一个 `HoleWzd` 吃多个孔点）**还没打通** —— 已补两个真缺口封装，卡在 `HoleWizard5` 的 GB 标准与紧固索引 | 2026-10-26（第 72 轮）。
+     ★ 业主三条批评（第 71 轮确认）：四个孔特征不优雅 · 孔点未两向约束 · 标准用了 ANSI Metric。
+     ★★ 本轮**已做成**的（都用本仓封装，先过 `tools/find_com_wrapper.py` 反查）：
+     ```
+     ✅ 删旧孔特征      sw_part.feature_delete          → 4 个删到 **0 个**（不再手写 EditDelete）
+     ✅ 放孔点          sw_part.sketch_point            ← **本轮新补**（封 ISketchManager.CreatePoint）
+     ✅ 一个特征多点    sw_hole_features.create_hole_wizard_multi_point
+                                                         ← **本轮新补**（封 HoleWizard5，复用 28 参表）
+     ✅ 四点全部选中    ISketchPoint.Select4 + 空 Dispatch → 4/4
+     ```
+     ★★★ **卡点（三处，都有读数）**：
+     ```
+     ① fully_define_sketch 回 True 但**草图仍是状态 2**
+        ⇒ 该封装自己 docstring 就写着「取值表未核实、默认全 0」⇒ 静默无效，
+          不能用它当「已完全定义」的证据。
+     ② HoleWizard5(standard_index=13=GB, fastener_index=40) → 没建出特征
+        （旧件的 ANSI Metric 也是 fastener_index=40 ⇒ 40 是 ANSI 的口径）
+     ③ `GetFastenerTypes(name, …)` 对**所有**标准都回 **0 条**
+        （含 UI 里明明能用的 ANSI Metric）⇒ **是我的调用方式不对**，
+          不是数据库没有 GB。★ 所以「GB 没装」这个结论**目前无证据**，不能写。
+     ```
+     ★ 结论（如实）：\n       · 「删旧孔 + 建点 + 选中」这条链**已验证可行**；\n       · 「完全定义」与「一次建多点孔」两步**未验证**，且各自都有一个未解的 API 疑点；\n       · 交付件 `板1_rev-3` 已经把旧孔删掉但**没有新孔** ⇒ **不是可用件**，不得用于验收。
+|真机：`python -B tools/build_first_part.py`（②–⑥ 步读数见输出）· 两个新封装在 `scripts/sw_part.py` / `scripts/sw_hole_features.py` |
+
 | 580 | **★★★ 动 COM 成员前先反查「我们封过没」** —— 我手写了 3 个本仓早就封过的成员 | 2026-10-26（第 71 轮，业主质问）。
      ★★★ 业主原话：
      ```
