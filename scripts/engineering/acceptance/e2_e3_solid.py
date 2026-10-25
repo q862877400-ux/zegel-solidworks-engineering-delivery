@@ -62,7 +62,8 @@ def collect_rebuild(
     extent_before_save_mm: float = -1.0,
     extent_after_reopen_mm: float = -1.0,
     reopen_tol_mm: float = 0.01,
-    drawing_is_current: bool = False,
+    drawing_revision: str = "",
+    model_revision: str = "",
     version: str = "",
 ) -> Observation:
     """★ 采集器：记录「重建这件事是怎么做的」，并**从实测孔位推导**下游是否联动。
@@ -120,7 +121,10 @@ def collect_rebuild(
             "extent_before_save_mm": _ext_b,
             "extent_after_reopen_mm": _ext_a,
             "reopen_tol_mm": float(reopen_tol_mm),
-            "drawing_is_current": drawing_is_current,
+            #: ★ 第 41 轮拆出：原来是 `drawing_is_current: bool`（调用方断言），
+            #:   现改为两个修订号，由 `judge_rebuild_drawing` 独立判。
+            "drawing_revision": str(drawing_revision or ""),
+            "model_revision": str(model_revision or ""),
             "version": version,
         },
         note=(
@@ -191,18 +195,10 @@ def judge_rebuild(obs: Observation, *, requirement_id: str) -> CheckResult:
             reason="★ 保存后重开不成立 ⇒ 参数化关系没有真正落进文件",
         )
 
-    #: ⑤ 图纸必须与同一修订绑定
-    if not v["drawing_is_current"]:
-        return CheckResult(
-            **base, status=Status.FAIL,
-            observed={"drawing_is_current": False}, expected=True,
-            reason="★ 图纸还是旧的（未随模型修订更新）",
-        )
-
     return CheckResult(
         **base, status=Status.PASS,
         observed={"changed": v["changed_params"]},
-        reason="在已交付件上改主参数，下游联动、无重建错误、重开成立、图纸同步",
+        reason="在已交付件上改主参数，下游联动、无重建错误、重开成立",
     )
 
 
@@ -253,6 +249,71 @@ def collect_feature_tree(
                 else "有计数为负（读不出）⇒ 采集不完整：%r" % (_counts,)
             )
         ),
+    )
+
+
+
+def judge_rebuild_drawing(obs: Observation, *, requirement_id: str) -> CheckResult:
+    """★ 判定器：E2 的**独立子项** —— 图纸修订必须与模型修订一致。
+
+    ## 为什么单独一条 check_id（第 41 轮拆）
+
+    「图纸是否随模型更新」与「改参数后下游是否联动」是**两件独立的事**。
+    合成一条时，任一件缺数据就污染另一件：
+
+    - 首件当前**还没有图** ⇒ 两个修订号都空
+    - 若把「必须声明修订号」放进 `obs.complete` ⇒ `E2.rebuild` 直接 `unknown`
+      ⇒ **把「下游没联动」这个真 fail 吞掉**
+
+    ⇒ 照 E4 的拆法（`E4.dof` / `E4.interference`）：**一个采集器、两个判定器**。
+
+    | 情形 | 结论 |
+    |---|---|
+    | 两个修订号都有且相同 | `pass` |
+    | 两个修订号都有但不同 | `fail`（旧图） |
+    | 任一为空（还没图 / 没声明） | `unknown`（如实） |
+
+    ★ `unknown` 不是合格：它说的是「这一项还没验」。
+    """
+    v = obs.values
+    base = dict(
+        check_id="E2.drawing_current",
+        requirement_id=requirement_id,
+        target=obs.target,
+        observation_complete=obs.complete,
+        basis="E2：图纸必须与模型同一修订（旧图不算可重建）",
+        evidence=obs.evidence,
+        artifact_version=v.get("version", ""),
+        checker_version=CHECKER_VERSION,
+    )
+    if not obs.complete:
+        return CheckResult(**base, status=Status.UNKNOWN, reason="采集不完整")
+
+    draw = str(v.get("drawing_revision") or "").strip()
+    model = str(v.get("model_revision") or "").strip()
+    if not draw or not model:
+        return CheckResult(
+            **base,
+            status=Status.UNKNOWN,
+            observed={"drawing_revision": draw, "model_revision": model},
+            expected={"both": "非空"},
+            reason=(
+                "★ 没有图纸修订号或模型修订号 ⇒ 这一项**还没验**"
+                "（首件当前还没有图时就是这个状态，如实报 unknown）"
+            ),
+        )
+    if draw != model:
+        return CheckResult(
+            **base,
+            status=Status.FAIL,
+            observed={"drawing_revision": draw, "model_revision": model},
+            reason="★ 图纸修订 %r ≠ 模型修订 %r ⇒ 是旧图" % (draw, model),
+        )
+    return CheckResult(
+        **base,
+        status=Status.PASS,
+        observed={"drawing_revision": draw, "model_revision": model},
+        reason="图纸与模型同一修订",
     )
 
 

@@ -145,7 +145,9 @@ def good_e2() -> Observation:
         extent_before_save_mm=120.0,
         extent_after_reopen_mm=120.0,
 
-        drawing_is_current=True,
+        drawing_revision='rev1',
+
+         model_revision='rev1',
     )
 
 
@@ -164,7 +166,9 @@ def bad_e2_new_document() -> Observation:
         extent_before_save_mm=120.0,
         extent_after_reopen_mm=120.0,
 
-        drawing_is_current=True,
+        drawing_revision='rev1',
+
+         model_revision='rev1',
     )
 
 
@@ -180,7 +184,9 @@ def bad_e2_no_downstream() -> Observation:
         extent_before_save_mm=120.0,
         extent_after_reopen_mm=120.0,
 
-        drawing_is_current=True,
+        drawing_revision='rev1',
+
+         model_revision='rev1',
     )
 
 
@@ -194,7 +200,9 @@ def unknown_e2() -> Observation:
         extent_before_save_mm=120.0,
         extent_after_reopen_mm=120.0,
 
-        drawing_is_current=True,
+        drawing_revision='rev1',
+
+         model_revision='rev1',
     )
 
 

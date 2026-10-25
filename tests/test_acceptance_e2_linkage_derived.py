@@ -58,7 +58,9 @@ _FULL = dict(
     extent_before_save_mm=120.0,
     extent_after_reopen_mm=120.0,
 
-    drawing_is_current=True,
+    drawing_revision='rev1',
+
+     model_revision='rev1',
 )
 
 
@@ -169,7 +171,6 @@ def test_全绿仍然pass() -> None:
             {"extent_before_save_mm": 120.0, "extent_after_reopen_mm": 100.0},
             "保存后重开",
         ),
-        ({"drawing_is_current": False}, "图纸"),
     ],
 )
 def test_其余四条判据仍生效(kw, want) -> None:

@@ -45,3 +45,16 @@ blockers:
     evidence:
       - specs/350-first-part-delivery/s2-question-sheet.md
       - specs/350-first-part-delivery/requirements.md
+
+  - check_id: E2.drawing_current
+    cause: requirement
+    owner: user
+    summary: >-
+      图纸修订与模型修订一致这一项**还没验**：首件当前还没有图。
+      第 41 轮把这条从 E2 主判据里拆成独立 check_id
+      （原来它是调用方布尔，且被「下游没联动」的 fail 遮住），
+      现在如实报 unknown。要判它需要先出图，而出图范围属 S2 的 drawing_scope（未冻结）。
+    evidence:
+      - specs/350-first-part-delivery/s2-question-sheet.md
+      - specs/350-first-part-delivery/requirements.md
+      - tests/test_acceptance_e2_drawing_split.py

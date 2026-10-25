@@ -40,6 +40,7 @@ from engineering.acceptance.e2_e3_solid import (  # noqa: E402
     judge_feature_tree,
     judge_hole_readback,
     judge_rebuild,
+    judge_rebuild_drawing,
     judge_reference_stability,
 )
 from engineering.acceptance.e4_assembly import (  # noqa: E402
@@ -91,6 +92,8 @@ def good_checks() -> list:
     return [
         judge_sketch_constraint(smp.good_e1(), requirement_id=REQ),
         judge_rebuild(smp.good_e2(), requirement_id=REQ),
+        #: ★ 第 41 轮拆出的独立子项（图纸修订 vs 模型修订）
+        judge_rebuild_drawing(smp.good_e2(), requirement_id=REQ),
         judge_hole_readback(
             collect_hole_readback(
                 target="plate", requested=_HOLE_REQ, measured=_HOLE_MEAS
@@ -115,6 +118,7 @@ def mixed_checks() -> list:
     return [
         judge_sketch_constraint(smp.good_e1(), requirement_id=REQ),
         judge_rebuild(smp.bad_e2_new_document(), requirement_id=REQ),
+        judge_rebuild_drawing(smp.bad_e2_new_document(), requirement_id=REQ),
         judge_hole_readback(
             collect_hole_readback(
                 target="plate",

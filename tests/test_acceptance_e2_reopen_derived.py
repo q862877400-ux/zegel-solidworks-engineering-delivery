@@ -58,7 +58,8 @@ _FULL = dict(
     #: ★ drawing_is_current 本轮**未**推导（理由见 commit）：它需要把这条拆成独立
     #:   check_id，否则 complete 要求修订号会把下游联动的真 fail 吞掉。
     #:   ⇒ 本文件只测重开推导，给它 True 以免挡住其他用例。
-    drawing_is_current=True,
+    drawing_revision='rev1',
+     model_revision='rev1',
 )
 
 

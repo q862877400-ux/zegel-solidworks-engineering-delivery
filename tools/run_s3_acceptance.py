@@ -50,13 +50,14 @@ from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
     collect_sketch_constraint,
     judge_sketch_constraint,
 )
-from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402  # noqa: E402
+from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402
     collect_feature_tree,
     collect_hole_readback,
     collect_rebuild,
     judge_feature_tree,
     judge_hole_readback,
     judge_rebuild,
+    judge_rebuild_drawing,
 )
 from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
 from scripts.engineering.acceptance.report import (  # noqa: E402
@@ -302,13 +303,24 @@ def main() -> int:
             rebuild_errors=int(ww.get("count") or 0),
             extent_before_save_mm=float(extent_before_save),
             extent_after_reopen_mm=float(extent_after_reopen),
-            drawing_is_current=False,
+            #: ★ 第 41 轮：图纸与模型修订同步已拆成独立判据 `E2.drawing_current`。
+            #:   首件当前**还没有图** ⇒ 两个修订号都空 ⇒ 那一条如实报 unknown，
+            #:   而不是被这里的 fail 遮住。
+            drawing_revision="",
+            model_revision="",
         )
         res_e2 = judge_rebuild(obs_e2, requirement_id="R-E2")
         ev["E2"]["status"] = res_e2.status.value
         ev["E2"]["reason"] = res_e2.reason
         print("③ E2：孔心位移=%s（期望 %s）⇒ %s"
               % (shifts, EXPECT_SHIFT_MM, res_e2.status.value))
+        #: ★ 第 41 轮：图纸与模型修订同步已拆成独立判据。
+        #:   首件当前**还没有图** ⇒ 两个修订号都空 ⇒ 如实报 unknown，
+        #:   而不是被上面的 fail 遮住（读者能看到「这一项还没验」）。
+        res_draw = judge_rebuild_drawing(obs_e2, requirement_id="R-E2")
+        ev["E2"]["drawing_status"] = res_draw.status.value
+        ev["E2"]["drawing_reason"] = res_draw.reason
+        print("③b E2.drawing_current：⇒ %s" % res_draw.status.value)
 
         #: ── E3：特征树 + 改前序后下游 ──
         tree = []
@@ -455,7 +467,7 @@ def main() -> int:
         )
 
         #: ── 汇总 + 渲染 ──
-        rep = build_report([res_e1, res_e2, res_e3, res_h])
+        rep = build_report([res_e1, res_e2, res_draw, res_e3, res_h])
         md = render_markdown(rep, title="S3 首件板件 · E1–E3 验收报告（真机）")
         out_md = R / "specs" / "350-first-part-delivery" / "s3-acceptance.md"
         out_md.write_text(md, encoding="utf-8")

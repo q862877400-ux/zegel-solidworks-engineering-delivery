@@ -54,9 +54,6 @@ _BASELINE = {
     "scripts/engineering/acceptance/e2_e3_solid.py::judge_rebuild"
     "::not v['reopened_ok']":
         "fail ⇒ 本来就该 fail（重开失败就是不可重建）",
-    "scripts/engineering/acceptance/e2_e3_solid.py::judge_rebuild"
-    "::not v['drawing_is_current']":
-        "fail ⇒ 本来就该 fail（图纸与模型不同步）",
     "scripts/engineering/acceptance/e2_e3_solid.py::judge_feature_tree"
     "::not v['editable_prefix_verified']":
         "fail ⇒ 本来就该 fail（前序不可编辑）",

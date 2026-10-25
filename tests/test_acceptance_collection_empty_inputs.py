@@ -76,7 +76,8 @@ def _empty_cases():
                 collect_rebuild(
                     target="板1", opened_existing=False, changed_params=(),
                     rebuild_errors=0,
-                    drawing_is_current=False,
+                    drawing_revision='rev1',
+                     model_revision='rev2',
                 ),
                 requirement_id=REQ,
             ),

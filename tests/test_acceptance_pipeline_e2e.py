@@ -34,7 +34,7 @@ def test_全绿组十项全过() -> None:
     ★ 若这条红了，先看是哪个 check_id 变了 —— 不要直接改断言。
     """
     checks = good_checks()
-    assert len(checks) == 10, "★ 检查条数应为 10，实得 %d" % len(checks)
+    assert len(checks) == 11, "★ 检查条数应为 11（第 41 轮拆出 E2.drawing_current），实得 %d" % len(checks)
     assert all(isinstance(c, CheckResult) for c in checks), (
         "★ 有判定器没返回 CheckResult：%r"
         % [type(c).__name__ for c in checks if not isinstance(c, CheckResult)]
@@ -52,7 +52,7 @@ def test_全绿组十项全过() -> None:
             },
         )
     )
-    assert rep["counts"]["pass"] == 10
+    assert rep["counts"]["pass"] == 11
     assert not rep["not_checked"], "★ 不该有未检查的判据：%r" % rep["not_checked"]
 
 
@@ -65,14 +65,20 @@ def test_全绿组的check_id覆盖七个判据() -> None:
         )
 
 
-def test_全绿组里有四条判据是多检查() -> None:
-    """★ E2 / E3 / E4 各两条 —— 这是拆分后的形态，必须真的跑到。"""
+def test_多检查判据的条数() -> None:
+    """★ 拆分后的形态，必须真的跑到。
+
+    | 判据 | 条数 | 拆出来的子项 |
+    |---|---|---|
+    | E2 | **3** | rebuild · hole_readback · **drawing_current**（第 41 轮拆） |
+    | E3 | 2 | tree · reference_stability |
+    | E4 | 2 | dof · interference |
+    """
     rep = build_report(good_checks())
-    for crit in ("E2", "E3", "E4"):
-        assert len(rep["criteria"][crit]["checks"]) == 2, (
-            "★ %s 应有 2 条检查，实得 %d"
-            % (crit, len(rep["criteria"][crit]["checks"]))
-        )
+    want = {"E2": 3, "E3": 2, "E4": 2}
+    for crit, n in want.items():
+        got = len(rep["criteria"][crit]["checks"])
+        assert got == n, "★ %s 应有 %d 条检查，实得 %d" % (crit, n, got)
 
 
 def test_混合组三种状态都出现() -> None:

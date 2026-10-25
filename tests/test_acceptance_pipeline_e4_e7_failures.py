@@ -197,6 +197,6 @@ def test_全绿组仍然覆盖十条() -> None:
     from probe_acceptance_report import good_checks  # noqa: E402
 
     ids = {c.check_id for c in good_checks()}
-    assert len(ids) == 10, "★ 全绿组应覆盖 10 条，实得 %d：%r" % (len(ids), sorted(ids))
+    assert len(ids) == 11, "★ 全绿组应覆盖 11 条，实得 %d：%r" % (len(ids), sorted(ids))
     for needed in ("E4.dof", "E4.interference", "E5.drawing", "E6.process", "E7.provenance"):
         assert needed in ids, "★ 全绿组缺 %s" % needed
