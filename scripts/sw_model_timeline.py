@@ -259,6 +259,27 @@ class Timeline:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
         return rec
 
+    def note_event(self, kind: str, detail: str) -> dict | None:
+        """记一条**环境事件**（不是模型变化，但影响「记录全不全」）。
+
+        ★ 典型：`psr-stopped` —— 步骤记录器被手动停了，此后动作没有步骤文字。
+          不记这个，报告会让人误以为「那段时间什么都没发生」。
+        """
+        self.n += 1
+        rec = {
+            "i": self.n,
+            "t": time.strftime("%H:%M:%S"),
+            "elapsed_s": round(time.time() - self.t0, 1),
+            "kind": kind,
+            "detail": detail,
+            "summary": {},
+            "changed": {},
+            "snapshot": None,
+        }
+        with self.jsonl.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        return rec
+
     def _full_snapshot(self, doc) -> str:
         try:
             from sw_model_snapshot import dump_document

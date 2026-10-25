@@ -120,6 +120,25 @@ def _kill_stale_psr() -> int:
     return n
 
 
+def _psr_alive() -> bool:
+    """`psr.exe` 是否还在跑。
+
+    ★ 2026-10-26 实操暴露：业主在 PSR 窗口点「停止记录」后，`psr.zip` 就在那一刻
+      定稿，之后的操作**没有任何步骤文字**，而系统照旧以为在录。
+      ⇒ 轮询进程必须能察觉这件事，并把它记进时间轴 + 报告。
+    """
+    try:
+        r = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq psr.exe", "/NH"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=10, creationflags=_no_window(), check=False,
+            stdin=subprocess.DEVNULL,
+        )
+        return "psr.exe" in (r.stdout or "")
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _psr_running() -> bool:
     try:
         out = subprocess.run(
@@ -161,6 +180,17 @@ def start() -> int:
          "-f", "gdigrab", "-framerate", str(FPS), "-i", "desktop",
          "-t", str(MAX_MINUTES * 60),
          "-c:v", "libx264", "-preset", "ultrafast", "-crf", "28",
+         #: ★★★ 抗中断分片 MP4（2026-10-26 实操暴露）：原来用默认 MP4，
+         #:   `stop()` 强杀 ffmpeg ⇒ `moov atom` 没写 ⇒ **整段录屏播不了**
+         #:   （37MB 白录，`ffprobe` 报 "moov atom not found"）。
+         #:   ★ 只加 `-movflags` **不够**：`frag_keyframe` 要等关键帧才写分片，
+         #:   而 libx264 默认 GOP ≈31 秒 ⇒ 实测 12 秒后强杀只得到 **28 字节**。
+         #:   必须配 `-g <小>`。实测（`output/test_frag_mp4.py`）：
+         #:     无 movflags        → 播不了
+         #:     分片但无 -g        → 28 字节（等于没录）
+         #:     **分片 + -g 8**    → 能读 duration=6.0 · 能抽帧 ✓
+         "-g", str(FPS),          #: 每秒一个关键帧 ⇒ 分片才写得出去
+         "-movflags", "+frag_keyframe+empty_moov+default_base_moof",
          str(mp4)],
         stdin=subprocess.PIPE, creationflags=_no_window(),
     )
@@ -226,6 +256,17 @@ def run() -> int:
                 rec = tl.poll(doc)
                 if rec:
                     print("   " + summary_line(rec))
+                #: ★ 缺陷 2：PSR 被人手动停掉时，必须察觉并留证
+                if not getattr(run, "_psr_gone", False) and not _psr_alive():
+                    run._psr_gone = True
+                    ev = tl.note_event(
+                        "psr-stopped",
+                        "psr.exe 已退出（可能被手动点了「停止记录」）；"
+                        "此后的动作**没有步骤文字**，只有模型轨迹与录屏",
+                    )
+                    if ev:
+                        print(f"   ⚠ #{ev['i']:03d} PSR 已停止 —— 之后的动作只有轨迹没有步骤")
+
                 #: ★ 根因 D：顺带读「修改」框里的**实际数值**（PSR 记不到这些）
                 try:
                     from sw_dialog_text import snapshot as _dlg_snapshot
@@ -489,6 +530,69 @@ def _steps_from_psr(zip_path: Path, d: Path):
         return None
 
 
+def _coverage_gaps(d: Path, steps: list, st: dict) -> list:
+    """回「覆盖缺口」的文字说明列表（供报告显著位置展示）。
+
+    ★ 判据全基于**文件事实**，不看运行时状态 ⇒ 对已经录完的会话也成立。
+    """
+    out = []
+    started = st.get("started_wall") or ""
+    zip_p = Path(st.get("zip") or "")
+    psr_stop = ""
+    if zip_p.is_file():
+        import datetime as _dt
+
+        psr_stop = _dt.datetime.fromtimestamp(zip_p.stat().st_mtime).strftime(
+            "%Y-%m-%d %H:%M:%S")
+    last_step = ""
+    if steps:
+        #: ★ `_steps_from_psr` 回的是 `{"n","time","text"}` 的 dict
+        #:   （不是 `when`）。原来只认 `when`，于是"步骤覆盖到几点"永远算不出来，
+        #:   连带「缺口多少秒」也判不出 —— 实测踩过。
+        try:
+            last = steps[-1]
+            if isinstance(last, dict):
+                last_step = str(
+                    last.get("time") or last.get("when") or "")
+            else:
+                last_step = str(last[1])
+        except Exception:  # noqa: BLE001
+            last_step = ""
+    tl_rows = _timeline_rows(d)
+    last_tl = ""
+    if tl_rows:
+        last_tl = f"{tl_rows[-1].get('t')}（+{tl_rows[-1].get('elapsed_s')}s）"
+
+    if started and last_step:
+        out.append(
+            f"步骤文字（PSR）覆盖：**{started} → {last_step}**，共 {len(steps)} 步。")
+    if psr_stop:
+        out.append(f"PSR 包定稿时刻：**{psr_stop}**（此后 PSR 不再记录任何动作）。")
+    if last_tl:
+        out.append(f"模型轨迹覆盖到：**{last_tl}**，共 {len(tl_rows)} 条。")
+    #: 缺口判定：轨迹比步骤晚得多，就说明步骤丢了
+    if last_step and tl_rows:
+        try:
+            import datetime as _dt
+
+            fmt = "%Y/%m/%d %H:%M:%S"
+            try:
+                t_step = _dt.datetime.strptime(last_step, fmt)
+            except ValueError:
+                t_step = _dt.datetime.strptime(last_step, "%Y-%m-%d %H:%M:%S")
+            t_tl = _dt.datetime.strptime(
+                f"{st.get('started_wall', '')[:10].replace('-', '/')} "
+                f"{tl_rows[-1].get('t')}", fmt)
+            gap = (t_tl - t_step).total_seconds()
+            if gap > 30:
+                out.append(
+                    f"⚠ **缺口 {gap:.0f} 秒**：这段时间**只有模型轨迹和录屏，"
+                    "没有步骤文字** —— 通常是因为在 PSR 窗口点了「停止记录」。")
+        except Exception:  # noqa: BLE001
+            pass
+    return out
+
+
 def _write_report(d: Path, st: dict, steps, snap) -> None:
     lines = ["# 示范捕获报告", "",
              "- 会话：`{}`".format(st.get("session")),
@@ -505,6 +609,13 @@ def _write_report(d: Path, st: dict, steps, snap) -> None:
              "   `python -B tools/demo_capture.py --frame <步骤时间>`",
              "", "## 步骤数", ""]
     lines.append("- %d 步" % (len(steps) if steps else 0))
+    #: ★ 覆盖缺口（2026-10-26 实操教训）：必须在**开头**就说清"哪段没有步骤"
+    gaps = _coverage_gaps(d, steps or [], st)
+    if gaps:
+        lines += ["", "## ⚠ 记录覆盖范围（先看这个）", ""]
+        lines += [f"- {x}" for x in gaps]
+        lines.append("")
+
     #: ★★★ 模型变化**轨迹**（根因 C）：这是「怎么一步步做出来的」，不是终态
     tl = _timeline_rows(d)
     lines += ["", "## 模型变化轨迹（录制期采样）", ""]
@@ -613,6 +724,47 @@ def status() -> int:
     return 0
 
 
+def rebuild() -> int:
+    """用当前代码**重新生成**报告（不改动原始证据，只重排 REPORT.md）。
+
+    参数：`--rebuild [会话目录]`；省略则用 `session.json` 指向的会话。
+    """
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if args:
+        d = Path(args[0])
+        st = _read_state()
+    else:
+        st = _read_state()
+        d = Path(st.get("dir") or "")
+    if not d.is_dir():
+        print("★ 会话目录不存在：", d)
+        return 1
+    #: 补全会话级字段（老会话可能缺）
+    st = dict(st)
+    st.setdefault("session", d.name)
+    st.setdefault("dir", str(d))
+    for key, name in (("zip", "psr.zip"), ("mp4", "screen.mp4")):
+        if not st.get(key):
+            cand = d / name
+            if cand.is_file():
+                st[key] = str(cand)
+    zip_p = Path(st.get("zip") or d / "psr.zip")
+    steps = _steps_from_psr(zip_p, d) if zip_p.is_file() else []
+    snap = {}
+    snap_file = d / "model.json"
+    if snap_file.is_file():
+        try:
+            import json as _json
+
+            snap = _json.loads(snap_file.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            snap = {}
+    _write_report(d, st, steps, snap)
+    print("已重生成：", d / "REPORT.md")
+    print("  步骤 %d · 轨迹 %d 条" % (len(steps or []), len(_timeline_rows(d))))
+    return 0
+
+
 def report() -> int:
     st = _read_state()
     d = Path(st.get("dir") or "")
@@ -633,6 +785,8 @@ def main() -> int:
         return stop()
     if "--status" in sys.argv:
         return status()
+    if "--rebuild" in sys.argv:
+        return rebuild()
     if "--report" in sys.argv:
         return report()
     if "--frame" in sys.argv:
