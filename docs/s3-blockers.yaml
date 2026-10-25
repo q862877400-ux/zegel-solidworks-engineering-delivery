@@ -48,6 +48,10 @@ blockers:
         **卡在两处**：`fully_define_sketch` 回 True 但草图仍状态 2（该封装取值表未核实）；
         `HoleWizard5` 用 GB(13)+fastener 40 没建出特征，而 `GetFastenerTypes` 对所有标准
         回 0 条 ⇒ 疑点在我的调用方式，**不能据此断言 GB 没装**。详见事实 581。
+      ★ 第 73 轮：**尺寸创建这道墙没打通** —— 三条尺寸成员 × 四种选择写法（含按位置选、
+        含 ESC 线程、含不设 CommandInProgress）**一律回 None**，草图停在状态 2。
+        ⇒ 「孔点两向全约束」仍未实现；`fully_define_sketch` 也不能当证据
+          （回 True 但状态仍 2）。详见事实 582，下一步候选也写在那里。
     evidence:
       - output/s3-acceptance.json
       - docs/known-facts.md

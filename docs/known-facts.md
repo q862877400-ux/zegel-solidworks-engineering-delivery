@@ -7150,6 +7150,41 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 582 | **用 API 给草图点加尺寸**在**本机所有已试路径上都回 `None`** —— `AddHorizontalDimension2` / `AddVerticalDimension2` / `AddDimension2` 三条成员、四种选择写法，草图始终停状态 2 | 2026-10-26（第 73 轮）。
+     ★★★ 试过的四组（每组都有读数，不是猜）：
+     ```
+     ① 只选孔点              → 返回 None · 状态 2
+     ② 选点 + SelectByID2("Origin","SKETCHPOINT",0,0,0)
+                             → 选原点 True · 返回 None · 状态 2
+     ③ 按官方 Remarks「按位置选」：
+        两点都用 SelectByID2("","SKETCHPOINT", X,Y,Z, …)
+                             → 两次都 True · 返回 None · 状态 2
+     ④ 加**ESC 线程**（复用 probe_e2_hole_dimension_link 的 `_esc_loop`）
+        且 **不设** `CommandInProgress`（怀疑它抑制「修改」框）
+                             → 仍返回 None · 状态 2
+     ```
+     ★ 已排除的两个解释：
+       · 不是「没选中」——`Select4` / `SelectByID2` 都回 True；
+       · 不是「弹窗被抑制」——关掉 `CommandInProgress` + ESC 线程同样无效。
+     ★★ 官方 Remarks 读到的关键句（`IModelDoc2.AddDimension2`）：
+       「Before calling this method, you must select the entities …
+        **To dimension, make selections based on location and not name** …
+        if you are using `SelectByID2` … you should specify the X, Y, and Z
+        selection coordinates」—— 第③组就是照这句做的，仍然失败。
+     ★ 结论（如实）：**这道墙我没打通**，按仓库停止规则记录下来，不硬推。
+       ⇒ 「孔点两向全约束」这条**未完成**；`fully_define_sketch` 也不能当证据
+         （它回 True 但草图仍是 2，其 docstring 自己写着取值表未核实）。
+     ★ 下一步候选（按可行性排序，下一轮试）：
+     ```
+     A. 用 **几何关系**代替尺寸：把孔点用 `SketchAddConstraints` 约束到
+        矩形边/构造线（本轮建矩形角点与原点重合时该方法回 True）
+     B. 让 Hole Wizard 先生成它自己的草图，再给**那张草图**里的点标尺寸
+        （可能与手建草图的行为不同）
+     C. `IModelDocExtension.AddDimension`（第 52 轮验证过它能建，但会弹「修改」框）
+        + ESC 线程组合，尚未在孔点上试过
+     ```
+|真机：`output/probe_esc_dimension.py` · `output/probe_select_origin.py` · `output/probe_one_point.py`（临时探针，不入库） |
+
 | 581 | **多点孔特征**（一个 `HoleWzd` 吃多个孔点）**还没打通** —— 已补两个真缺口封装，卡在 `HoleWizard5` 的 GB 标准与紧固索引 | 2026-10-26（第 72 轮）。
      ★ 业主三条批评（第 71 轮确认）：四个孔特征不优雅 · 孔点未两向约束 · 标准用了 ANSI Metric。
      ★★ 本轮**已做成**的（都用本仓封装，先过 `tools/find_com_wrapper.py` 反查）：
