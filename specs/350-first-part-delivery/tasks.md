@@ -78,10 +78,15 @@
   → **阻塞在需要你定的那件事**：倒角倒**哪条**边（外轮廓 / 四条竖边 / 其他）；轴类倒**哪端**。
     多边支持也要定（`resolve_entity` 只选一个实体，而板有 12 条边）。
 
-- [ ] **T010** [US2] 孔型/孔位逐项回读，不只比较总切除体积
-  → 验收: `python -B -m pytest tests/test_acceptance_e1_e7.py -q`
-  → 判定器已有 `judge_hole_readback`；真机孔心读数已验（`GetCenterPoint2` 读到 (10,10)/(90,10)/(10,50)/(90,50)），
-    但**逐项回读尚未接进验收运行器**
+- [~] **T010** [US2] 孔型/孔位逐项回读，不只比较总切除体积
+  → 验收: `python -B -m pytest tests/test_acceptance_e1_e7.py -q` + 真机 `tools/run_s3_acceptance.py`
+  → **部分完成**。已接进验收运行器并真机跑通：
+    **孔数 4/4 相符**、**孔径与孔位 4/4 逐项通过**（位置容差 0.1mm、孔径容差 0.05mm）。
+    **未达**：`孔型` 取不到 ⇒ 整体判 `unknown`（不是 pass）。
+  → 根因是**生成方式**不是 API：孔是**切除-拉伸**做的（E3 读到 `type=ICE`），
+    而孔型只存在于**异型孔向导**特征的参数里。`hole_wizard` / `feature_hole_wizard5`
+    都是 verified ⇒ 有路，但要改 `build_plan()` 并重跑 E1/E2/E3 三条证据（单列一轮）。
+  → 证据：`specs/350-first-part-delivery/s3-t011-edit-delivered.md` 第九节
 
 - [~] **T011** [US2] 在**已交付件副本**上改板宽 100→120，孔位联动、特征无错、保存重开仍成立
   → 验收: `python tools\sw_guard.py --timeout 300 -- python tools\probe_t011_edit_delivered_plate.py`

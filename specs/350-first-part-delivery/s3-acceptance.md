@@ -2,19 +2,23 @@
 
 **总体**：❌ fail
 
-检查共 3 条：pass 2 · fail 1 · unknown 0 · not_applicable 0
+检查共 4 条：pass 2 · fail 1 · unknown 1 · not_applicable 0
 
 ## 逐条状态
 
 | 判据 | 名称 | 状态 | 检查 | 不合格 | 未测到 |
 |---|---|---|---|---|---|
 | **E1** | 草图全约束 | ✅ pass | 1 | — | — |
-| **E2** | 参数化可重建 | ❌ fail | 1 | E2.rebuild | — |
+| **E2** | 参数化可重建 | ❌ fail | 2 | E2.rebuild | E2.hole_readback |
 | **E3** | 特征树可编辑 | ✅ pass | 1 | — | — |
 | **E4** | 装配自由度闭合 | ⬜ 未检查 | 0 | — | — |
 | **E5** | 图样合规 | ⬜ 未检查 | 0 | — | — |
 | **E6** | 工艺可行 | ⬜ 未检查 | 0 | — | — |
 | **E7** | 结论可溯源 | ⬜ 未检查 | 0 | — | — |
+
+## 未测到的项（不等于合格）
+
+- `E2.hole_readback`：★ 孔径与孔位逐项通过，但 B-Rep **没有给出孔型** ⇒ 「通孔 / 盲孔 / 沉头 / 螺纹」这一项没测到（`sw_review.validate_hole_positions` 的 docstring 自述该限制）
 
 ## 不合格的项
 

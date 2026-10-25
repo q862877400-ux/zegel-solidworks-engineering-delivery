@@ -50,10 +50,12 @@ from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
     collect_sketch_constraint,
     judge_sketch_constraint,
 )
-from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402
+from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402  # noqa: E402
     collect_feature_tree,
+    collect_hole_readback,
     collect_rebuild,
     judge_feature_tree,
+    judge_hole_readback,
     judge_rebuild,
 )
 from scripts.engineering.acceptance.e3_feature_types import tally as _tally  # noqa: E402
@@ -74,6 +76,7 @@ from scripts.sw_feature_readback import (  # noqa: E402
     solid_body_extent_mm,  # noqa: E402
     whats_wrong,
 )
+from scripts.sw_review import collect_geometry_measurements  # noqa: E402
 from scripts.sw_sketch_dimensions import count_sketch_dimensions  # noqa: E402
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -305,8 +308,63 @@ def main() -> int:
         print("④ E3：特征=%d 分类=%s ⇒ %s"
               % (len(tree), cn, res_e3.status.value))
 
+        #: ── E2 子项：孔位逐项回读（T010）──
+        #:
+        #:   ★ 为什么单独一条：`ENGINEERING-PATH` E2 的「不能当替代品」里写着
+        #:     「比较总切除体积」也能通过（四个 φ6 换成两个 φ12 体积一样但需求是四个孔）
+        #:   ★ `requested` 用**生成计划**（`run_stage2_plate.CASES[1]`），
+        #:     验的是「模型是否与计划一致」，不是「计划是否符合业务要求」（那属 S2）。
+        requested = [
+            {
+                "id": "H%d" % (i + 1),
+                "diameter_mm": 6.0,
+                "position_mm": [hx, hy, 0.0],
+            }
+            for i, (hx, hy) in enumerate(
+                [(10.0, 10.0), (90.0, 10.0), (10.0, 50.0), (90.0, 50.0)]
+            )
+        ]
+        ok_g, measured = _try(collect_geometry_measurements, doc)
+        ev["hole_measure"] = {
+            "ok": ok_g,
+            "detail": str(measured)[:200] if not ok_g else "ok",
+        }
+        if ok_g and isinstance(measured, dict):
+            obs_h = collect_hole_readback(
+                target="板1_rev-1 副本",
+                requested=tuple(requested),
+                measured=measured,
+                version="2026-10-25",
+            )
+            res_h = judge_hole_readback(obs_h, requirement_id="R-E2")
+        else:
+            #: ★ 取不到 B-Rep 证据 ⇒ unknown，不得当通过
+            obs_h = collect_hole_readback(
+                target="板1_rev-1 副本",
+                requested=(),
+                measured={},
+                version="2026-10-25",
+            )
+            res_h = judge_hole_readback(obs_h, requirement_id="R-E2")
+        ev["E2_hole_readback"] = {
+            "status": res_h.status.value,
+            "reason": res_h.reason,
+            "measured_holes": len((measured or {}).get("holes") or ())
+            if isinstance(measured, dict)
+            else 0,
+            "requested_holes": len(requested),
+        }
+        print(
+            "④b E2.hole_readback：要求 %d 孔 · 量到 %s 孔 ⇒ %s"
+            % (
+                len(requested),
+                ev["E2_hole_readback"]["measured_holes"],
+                res_h.status.value,
+            )
+        )
+
         #: ── 汇总 + 渲染 ──
-        rep = build_report([res_e1, res_e2, res_e3])
+        rep = build_report([res_e1, res_e2, res_e3, res_h])
         md = render_markdown(rep, title="S3 首件板件 · E1–E3 验收报告（真机）")
         out_md = R / "specs" / "350-first-part-delivery" / "s3-acceptance.md"
         out_md.write_text(md, encoding="utf-8")
