@@ -2,7 +2,7 @@
 
 **总体**：❌ fail
 
-检查共 10 条：pass 3 · fail 1 · unknown 6 · not_applicable 0
+检查共 10 条：pass 4 · fail 1 · unknown 5 · not_applicable 0
 
 ## 逐条状态
 
@@ -11,7 +11,7 @@
 | **E1** | 草图全约束 | ✅ pass | 1 | — | — |
 | **E2** | 参数化可重建 | ❌ fail | 3 | E2.hole_readback | E2.drawing_current |
 | **E3** | 特征树可编辑 | ✅ pass | 1 | — | — |
-| **E4** | 装配自由度闭合 | ⚠️ unknown | 2 | — | E4.dof、E4.interference |
+| **E4** | 装配自由度闭合 | ⚠️ unknown | 2 | — | E4.dof |
 | **E5** | 图样合规 | ⚠️ unknown | 1 | — | E5.drawing |
 | **E6** | 工艺可行 | ⚠️ unknown | 1 | — | E6.process |
 | **E7** | 结论可溯源 | ⚠️ unknown | 1 | — | E7.provenance |
@@ -20,7 +20,6 @@
 
 - `E2.drawing_current`：★ 没有图纸修订号或模型修订号 ⇒ 这一项**还没验**（首件当前还没有图时就是这个状态，如实报 unknown）
 - `E4.dof`：★ 剩余自由度**没有实测入口**（本机 API 无数值 DOF 读取）⇒ 这一项验不了。按配合数推算约为 9，但**估算不作为观测**
-- `E4.interference`：★ 最小间隙**没有实测依据**（读数 -1.0）⇒ 这一项没量过，不是不合格。要判它得先量出关键间隙并写明依据
 - `E5.drawing`：采集不完整
 - `E6.process`：采集不完整
 - `E7.provenance`：采集不完整

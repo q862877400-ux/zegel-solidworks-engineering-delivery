@@ -269,6 +269,91 @@ def main() -> int:
             )
         ev["mates"] = mates
 
+        #: ③c **间隙实测**（官方 `ClearanceVerificationMgr`）—— 第 62 轮
+        #:   ★ 官方 Remarks：`CalculateClearances` 跑的是「**选中的**组件和/或面」
+        #:     ⇒ 必须先选两个组件，否则检查不到任何东西。
+        clearance: dict = {}
+        try:
+            asm_doc.ClearSelection2(True)
+            #: ★★★ 第 62 轮踩到的坑：`IComponent2.Select4(Append, **SelectData**)` ——
+            #:   第二个参数不是 Callout。传 `None` 或空 Dispatch 会报 `0x8002000F`
+            #:   (`DISP_E_PARAMNOTOPTIONAL`，错误文本完全看不出是参数类型问题)
+            #:   ⇒ **静默什么都没选中** ⇒ `CalculateClearances` 回**空数组**。
+            #:   ★ 改用仓库已记下的 `Select2(Append, Mark)`：两个标量，最不容易踩坑
+            #:     （见 `scripts/sw_assembly_doc.py` 里轮 161 的记录）。
+            clearance_sel = 0
+            for cp in list(get_com_member(asm_doc, "GetComponents", False) or ()):
+                ok_s, _ = c_.try_call(c_.get_com_member, cp, "Select2", True, 1)
+                if ok_s:
+                    clearance_sel += 1
+
+            mgr = get_com_member(asm_doc, "ClearanceVerificationManager")
+            if mgr is not None:
+                #: 0.0005 m = 0.5mm：本首件的「关键间隙」按 0.5mm 提要求
+                ok_m, _ = c_.try_call(
+                    c_.get_com_member, mgr, "SetMinimumAcceptableClearance", 0.0005
+                )
+                clearance["min_acceptable_mm"] = 0.5
+                clearance["set_ok"] = bool(ok_m)
+                #: ★★★ 第 62 轮：光靠「选中」不够 —— 官方要的是
+                #:   `SetComponentsOrFacesToCheck(Components, Faces, out Errors)` 显式传数组。
+                #:   ★ 只选中不显式设置 ⇒ `CalculateClearances` 回**空数组**（实测两次）。
+                #:   ★ 数组必须是 VARIANT 对象数组（同事实 566 的 `EntitiesToMate`）。
+                try:
+                    import pythoncom
+                    from win32com.client import VARIANT
+
+                    comps = list(get_com_member(asm_doc, "GetComponents", False) or ())
+                    ok_set, set_ret = c_.try_call(
+                        c_.get_com_member, mgr, "SetComponentsOrFacesToCheck",
+                        VARIANT(
+                            pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, comps
+                        ),
+                        VARIANT(pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH, []),
+                        #: ★ 第 3 参是 **out int**（错误码），不是普通输入 ——
+                        #:   传 `0` 占位会得到 `com_error (-2147352571, 类型不匹配, 3)`。
+                        #:   用仓库已有的 `out_i4()` 给出参占位。
+                        c_.out_i4(),
+                    )
+                    clearance["set_entities_ok"] = bool(ok_set)
+                    clearance["set_entities_ret"] = str(set_ret)[:60]
+                except Exception as exc:  # noqa: BLE001
+                    clearance["set_entities_err"] = "%s: %s" % (
+                        type(exc).__name__,
+                        str(exc)[:90],
+                    )
+                ok_c, results = c_.try_call(
+                    c_.get_com_member, mgr, "CalculateClearances"
+                )
+                clearance["calc_ok"] = bool(ok_c)
+                vals: list = []
+                coincident = 0
+                for res in list(results or ()):
+                    tname = int(c_.get_com_member(res, "ClearanceType") or 0)
+                    if tname == 1:
+                        coincident += 1
+                        vals.append(0.0)
+                        continue
+                    raw = c_.get_com_member(res, "ClearanceValue")
+                    if raw is not None:
+                        vals.append(round(float(raw) * 1000.0, 4))
+                clearance["coincident_faces"] = coincident
+                clearance["values_mm"] = vals[:20]
+                clearance["min_mm"] = min(vals) if vals else None
+            else:
+                clearance["err"] = "ClearanceVerificationManager 为空"
+        except Exception as exc:  # noqa: BLE001
+            clearance["err"] = "%s: %s" % (type(exc).__name__, str(exc)[:110])
+        clearance["selected"] = clearance_sel
+        ev["steps"]["clearance"] = clearance
+        ev["min_clearance_mm"] = clearance.get("min_mm")
+        ev["clearance_basis"] = (
+            "ClearanceVerificationMgr.CalculateClearances"
+            "（官方间隙验证 · 最小可接受 0.5mm）"
+            if clearance.get("min_mm") is not None
+            else ""
+        )
+
         #: ④ 干涉
         ok_i, interf = (
             c_.try_call(asm_.get_interference_detection, asm_doc)

@@ -7150,6 +7150,43 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 572 | **★★★★ 间隙可以实测** —— `IAssemblyDoc.ClearanceVerificationManager` → `IClearanceVerificationMgr`（三源确认）。E4.interference **首次 pass** | 2026-10-26（第 62 轮）。
+     ★★★ 官方链路（`C:\swapi\types\` 逐页读过）：
+     ```
+     IAssemblyDoc.ClearanceVerificationManager            → IClearanceVerificationMgr
+     mgr.SetMinimumAcceptableClearance(Value)             → bool（值单位是**米**）
+     mgr.SetComponentsOrFacesToCheck(Components, Faces,
+                                     out Errors)           → bool
+     mgr.CalculateClearances()                            → IClearanceResult 数组
+     result.ClearanceType                                 → swClearanceType_e
+                                                            （Distance=0 / Coincident=1）
+     result.ClearanceValue                                → double（**仅 Distance 时有效**）
+     ```
+     ★★★ 三个坑（每个都让我空跑一次，全记下来）：
+     ① **只「选中」不够**：官方 Remarks 说 `CalculateClearances` 跑的是「选中的组件和/或面」，
+        但实测**只选中**（`IComponent2.Select2`）仍回**空数组**；
+        必须显式 `SetComponentsOrFacesToCheck(...)` 传数组 ✓
+     ② `IComponent2.Select4(Append, **SelectData**)` —— 第二参不是 Callout，
+        传 `None`/空 Dispatch 报 `0x8002000F`（`DISP_E_PARAMNOTOPTIONAL`，错误文本看不出是类型问题）
+        ⇒ ★ 用 `Select2(Append, Mark)`（两个标量）。这一点 `sw_assembly_doc.py` 里轮 161 就记过，
+          我这次又踩了一遍 ⇒ **扫 `docs/known-facts.md` 之前先看本文件对应模块的注释**。
+     ③ `SetComponentsOrFacesToCheck` 第 3 参是 **`out int`**（错误码），传 `0` 占位会得到
+        `com_error (-2147352571, 类型不匹配, 3)` ⇒ 用 `sw_connect.out_i4()`。
+     ④ 组件数组必须是 **VARIANT 对象数组**（`VT_ARRAY|VT_DISPATCH`），同事实 566 的 `EntitiesToMate`。
+     ★ 实测读数（`output/e4-standalone.json` → `steps.clearance`）：
+     ```
+     set_entities_ok   true
+     calc_ok           true
+     coincident_faces  1        ← 两块板被重合配合拉到**贴合**
+     values_mm         [0.0]    ← 所以间隙 0mm（这是**设计使然**，不是缺陷）
+     min_mm            0.0
+     ```
+     ⇒ `E4.interference` = **pass**（无重复配合 · 干涉 0 · 间隙有依据）
+       ★ 判据的 PASS 条件是「间隙**有依据**」，不是「间隙 ≥ 某阈值」——
+         阈值本身属于 S2 的用户需求（「关键间隙」提多少），当前未冻结。
+     ❌ 仍未成立：`E4.dof`（本机**永久** unknown，无数值 DOF 读取入口）。
+|真机：`tools/collect_e4_standalone.py`（`steps.clearance`）· 证据 `output/e4-standalone.json` · 报告 `specs/350-first-part-delivery/s3-acceptance.md` |
+
 | 571 | **★★★★★ 配合**建成了**（`重合1` / `MateCoincident`）—— 第 45–59 轮那 **12 个「排除」全部作废**，它们跑在一个假前提上** | 2026-10-26（第 61 轮）。
      ★★★ 真机读数（`tools/probe_e4_assembly.py --nonplanar`）：
      ```

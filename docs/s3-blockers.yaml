@@ -59,19 +59,6 @@ blockers:
       - specs/350-first-part-delivery/STATUS.md
       - tests/test_acceptance_e4_split.py
 
-  - check_id: E4.interference
-    cause: toolchain
-    owner: agent
-    summary: >-
-      配合（mate）**建不出来** ⇒ `collect_assembly` 的 complete 要求 mates 非空
-      ⇒ 没搭起「可判」的装配 ⇒ 采集不完整 ⇒ unknown（不是 fail）。
-      已排除 6 个候选（含实体名选择、仅预选、显式 EntitiesToMate、共面冗余、
-      弹窗干扰、CommandInProgress）。事实 565。
-    evidence:
-      - docs/known-facts.md
-      - specs/350-first-part-delivery/s4-assembly-blocked.md
-      - tools/probe_e4_assembly.py
-
   - check_id: E5.drawing
     cause: requirement
     owner: user

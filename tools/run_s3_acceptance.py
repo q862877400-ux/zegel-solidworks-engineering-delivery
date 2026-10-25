@@ -569,8 +569,13 @@ def main() -> int:
                 mates=_mate_records(e4),
                 target_dof=0,
                 interference_count=n_interf,
-                min_clearance_mm=-1.0,
-                clearance_basis="",
+                #: ★★★ 第 62 轮：间隙现在**能实测**了（官方 ClearanceVerificationMgr）
+                min_clearance_mm=(
+                    float(e4["min_clearance_mm"])
+                    if e4.get("min_clearance_mm") is not None
+                    else -1.0
+                ),
+                clearance_basis=str(e4.get("clearance_basis") or ""),
                 configuration="默认",
                 version="2026-10-26",
             )
