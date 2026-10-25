@@ -353,12 +353,35 @@ def main() -> int:
                 if str((feature_info(doc, n) or {}).get("GetTypeName2") or "")
                 == "HoleWzd"
             ]
+            #: ★★★ 枚举 → 判定器词表的映射（词表在 `e2_e3_solid.HOLE_TYPES`，是唯一真源）
+            #:
+            #:   出处：`sw_hole_features` 的模块常量逐字 ——
+            #:     `SW_END_THROUGH_ALL = 1`（`swEndCondThroughAll`）⇒ `through`
+            #:     `SW_END_BLIND = 0`（`swEndCondBlind`）⇒ `blind`
+            #:   ⚠ 沉头/锥沉/螺纹的枚举组合**未查清** ⇒ 认不出就**不合并**，
+            #:     保持 `unknown`（判据那边会说「没测到」，而不是给一个假词）。
+            def _map_kind(prm: dict) -> str:
+                end = prm.get("EndCondition")
+                try:
+                    end_i = int(end)
+                except (TypeError, ValueError):
+                    return ""
+                if end_i == 1:      #: swEndCondThroughAll
+                    return "through"
+                if end_i == 0:      #: swEndCondBlind
+                    return "blind"
+                return ""
+
             kinds = {}
             for n in hole_feats:
                 okp, prm = _try(hole_params, doc, n)
                 if not okp or not isinstance(prm, dict):
                     continue
-                kinds[n] = "%s/%s" % (prm.get("Type"), prm.get("EndCondition"))
+                mapped = _map_kind(prm)
+                kinds[n] = mapped or "unmapped:%s/%s" % (
+                    prm.get("Type"),
+                    prm.get("EndCondition"),
+                )
             uniq = {v for v in kinds.values()}
             nholes = len(measured.get("holes") or ())
             ev["kind_merge"] = {
@@ -368,7 +391,11 @@ def main() -> int:
                 "measured_holes": nholes,
             }
             #: 无歧义条件：孔特征数 == 孔数，且所有孔特征的 Type/EndCondition 一致
-            if len(hole_feats) == nholes and len(uniq) == 1:
+            in_vocab = uniq and all(
+                v in ("through", "blind", "counterbore", "countersink", "threaded")
+                for v in uniq
+            )
+            if len(hole_feats) == nholes and len(uniq) == 1 and in_vocab:
                 kind = uniq.pop()
                 for h in measured.get("holes") or []:
                     h["kind"] = kind
