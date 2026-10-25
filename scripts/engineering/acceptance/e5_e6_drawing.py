@@ -177,7 +177,12 @@ def judge_drawing(obs: Observation, *, requirement_id: str) -> CheckResult:
 
 
 def collect_process(
-    *, target: str, route: str, checks: tuple, verified_scope: tuple,
+    *,
+    target: str,
+    route: str,
+    checks: tuple,
+    verified_scope: tuple,
+    required_checks: tuple = (),
     version: str = "",
 ) -> Observation:
     """★ 采集器：记录已确认工艺路线与各适用项的实际读数。
@@ -186,14 +191,26 @@ def collect_process(
     """
     return Observation(
         target=target,
-        complete=bool(route) and bool(checks),
+        #: ★★ 第 35 轮：`required_checks` 为空 ⇒ 采集不完整（判 unknown）。
+        #:   否则「删除必需检查」这条负例无法判 —— 少传一个参数就绕过了。
+        #:   ★ 不声明 ≠ 声明为空（与 `missing_confirmations` 同一口径）。
+        complete=bool(route) and bool(checks) and bool(required_checks),
         values={
             "route": route,
             "checks": list(checks),
             "verified_scope": list(verified_scope),
+            "required_checks": list(required_checks),
             "version": version,
         },
-        note="" if route and checks else "缺工艺路线或检查项 ⇒ 采集不完整",
+        note=(
+            ""
+            if (route and checks and required_checks)
+            else (
+                "没声明必要检查项（required_checks）⇒ 无法判「删除必需检查」"
+                if not required_checks
+                else "缺工艺路线或检查项 ⇒ 采集不完整"
+            )
+        ),
     )
 
 
@@ -221,6 +238,22 @@ def judge_process(obs: Observation, *, requirement_id: str) -> CheckResult:
             observed={"route": v["route"]},
             expected={"in": v["verified_scope"]},
             reason="★ 工艺路线 %r 不在已验证范围 %r 内" % (v["route"], v["verified_scope"]),
+        )
+
+    #: ★★ ①b 必要检查项必须齐（挡「**删除必需检查**」——`ENGINEERING-PATH` 点名的负例）
+    #:
+    #:   ★ 与 E5 的 `required_items` 对称：调用方声明必要项，本模块只判有没有漏。
+    #:   ★ 空 `required_checks` 已在采集层判成不完整 ⇒ 到这里一定非空。
+    required_ck = set(v.get("required_checks") or ())
+    given_ck = {str(c.get("name", "")) for c in v["checks"]}
+    missing_ck = sorted(required_ck - given_ck)
+    if missing_ck:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"missing_checks": missing_ck[:8], "count": len(missing_ck)},
+            expected={"missing_checks": 0},
+            reason="★ 少了 %d 项必要工艺检查：%s（挡「删除必需检查」）"
+            % (len(missing_ck), missing_ck[:5]),
         )
 
     #: ② 必须有真正适用的检查项（不能全是「不适用」）

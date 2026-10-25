@@ -389,6 +389,8 @@ def good_e6() -> Observation:
             {"name": "壁厚余量", "applicable": True, "passed": True, "value": "8 mm"},
         ),
         verified_scope=("machined",),
+        #: ★ 必要检查项：调用方声明，判定器只判有没有漏
+        required_checks=("刀具可达", "壁厚余量"),
     )
 
 
@@ -400,6 +402,8 @@ def bad_e6_tool_unreachable() -> Observation:
             {"name": "刀具可达", "applicable": True, "passed": False, "value": "φ2 深 40"},
         ),
         verified_scope=("machined",),
+        #: ★ 必要检查项：调用方声明，判定器只判有没有漏
+        required_checks=("刀具可达", "壁厚余量"),
     )
 
 
@@ -413,6 +417,8 @@ def bad_e6_all_not_applicable() -> Observation:
             {"name": "壁厚余量", "applicable": False, "passed": True, "value": None},
         ),
         verified_scope=("machined",),
+        #: ★ 必要检查项：调用方声明，判定器只判有没有漏
+        required_checks=("刀具可达", "壁厚余量"),
     )
 
 

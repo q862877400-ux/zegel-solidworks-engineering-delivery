@@ -124,7 +124,10 @@ def _empty_cases():
         (
             "E6.process",
             lambda: judge_process(
-                collect_process(target="工艺", route="", checks=(), verified_scope=()),
+                collect_process(
+                target="工艺", route="", checks=(), verified_scope=(),
+                required_checks=("刀具可达",),
+            ),
                 requirement_id=REQ,
             ),
         ),

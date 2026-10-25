@@ -111,7 +111,8 @@ def _fail_checks() -> list:
                     {"name": "刀具可达", "applicable": True, "passed": False,
                      "evidence": "⌀6 深 20，长径比 3.3 超刀具"},
                 ),
-                verified_scope=("刀具可达",),
+                verified_scope=("machined",),
+                required_checks=("刀具可达",),
             ),
             requirement_id=REQ,
         )
