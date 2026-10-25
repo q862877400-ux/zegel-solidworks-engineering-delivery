@@ -21,7 +21,7 @@
 | ├ `E2.drawing_current` | ⚠️ unknown | 首件还没有图 | **你**（S2 `drawing_scope`） |
 | └ `E2.hole_readback` | ❌ fail | 要求里没有孔型 | **你**（S2 `interface`） |
 | **E3** 特征树可编辑 | ✅ **真机 pass** | — | — |
-| **E4** 装配自由度闭合 | ⚠️ **能测，两条 `unknown`**；读数已恢复（组件 **2** · 干涉 **0**，第 57 轮**串行两段**：采集独立跑、判定只读证据） | 配合建不出来（已排除 10 个候选，事实 565/566） | **工具链**（剩余两候选见下） |
+| **E4** 装配自由度闭合 | ⚠️ **一半绿**：`E4.interference` = **pass**（配合 `重合1` · 干涉 0 · 间隙实测 0.000mm）· `E4.dof` = **unknown（永久）** | ★ 第 61 轮**配合建成**（两层单位错修完，事实 571；那 12 个「排除」全部作废）；★ 第 62 轮**间隙实测**接通（`ClearanceVerificationMgr`，事实 572）；`E4.dof` 本机没有数值自由度读取入口（三源确认）⇒ 永久 unknown，不是产物问题 | `output/e4-standalone.json` · `s3-acceptance.md` · 事实 571/572 |
 | **E5** 图样合规 | ⚠️ **unknown（已接入）** | 首件还没有图；图样范围未冻结 | **你**（S2 `drawing_scope`） |
 | **E6** 工艺可行 | ⚠️ **unknown（已接入）** | 工艺路线未冻结，`required_checks` 无从给 | **你**（S2 `process`） |
 | **E7** 结论可溯源 | ⚠️ **unknown（已接入）** | 出处链要等前六项都有结论 | 待前六项 |
@@ -202,3 +202,18 @@ fail 的原因逐字：
 ## 七、一句话
 
 **判据侧已经做好；卡住的是三样东西 —— 两样工具链退化、一样等你填八个框。**
+
+## 六、第 61–62 轮：E4 的两个卡点都通了
+
+| 卡点 | 怎么通的 | 证据 |
+|---|---|---|
+| 配合建不出来（12 个候选被排除） | **两层单位错**：组件放在 30 **米**外 + 射线坐标 `/1000` 把米当毫米 ⇒ 两束射线都命中同一组件 ⇒ `CreateMate` 拿「一个面和它自己」建配合 | 事实 571 · `tools/probe_e4_assembly.py` 的 `face_owners`（`distinct: 2`）· mates `0 → 1` |
+| 间隙没实测 | 官方 `IAssemblyDoc.ClearanceVerificationManager` 三源确认后接通（`SetComponentsOrFacesToCheck` + `CalculateClearances`） | 事实 572 · `steps.clearance`（`coincident_faces: 1` · `values_mm: [0.0]`） |
+
+★ **教训（已写进事实 571）**：排除一个候选之前，先证明**测试设置有效** ——
+  加一条归属检查（`GetSelectedObjectsComponent4`）就把「两个面属于同一个组件」变成读数，
+  而这个事实前 12 轮从未被观测过。
+
+★ **仍未成立**：`E4.dof`（本机永久 unknown）。
+  另：`E4.interference` 的 PASS 口径是「间隙**有依据**」，不是「间隙 ≥ 阈值」——
+  **阈值属于 S2 的用户需求**，当前未冻结 ⇒ 不替用户定。
