@@ -576,6 +576,39 @@ def _run_evidence_freshness_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_repro_manifest_gate() -> dict[str, object]:
+    """@brief 跑复现清单门禁（scripts/check_repro_manifest.py）。
+
+    ★ 来源：spec 350 · T030「干净环境复现（安装/恢复/交付）」。
+
+    ★ 判据：Python/包版本可核；声明 in_repo 的输入真在仓库里且 sha256 一致；
+      每条 steps 指向的脚本存在；每个 known_gaps 都有 impact/owner/remedy。
+
+    ★★ 「有 known_gaps」**不算失败** —— 缺口写清楚是诚实，写不清才是问题。
+      当前 3 条缺口（输入 STEP 未入库 / SolidWorks 不可复现 / 模板与材料库）
+      全部 owner=user，属**用户决定**，不擅自替用户处置。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_repro_manifest.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "复现清单门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_support_domain_gate() -> dict[str, object]:
     """@brief 跑「支持参数域」门禁（scripts/check_support_domain.py --self-check）。
 
@@ -3114,6 +3147,14 @@ def run_release_check() -> dict[str, object]:
             "支持参数域门禁未通过（声明的证据不可核 / 域外拒绝器失效）：\n"
             + str(sd.get("output", ""))
         )
+    #: ⚑ **复现清单门禁**（硬门禁）：★ spec 350 T030 —— 干净环境能不能重造。
+    #:   ★ 缺口（known_gaps）不判失败；**可核项**（哈希/脚本路径/缺口三要素）不齐才失败。
+    rp = _run_repro_manifest_gate()
+    if rp.get("status") == "fail":
+        raise AssertionError(
+            "复现清单门禁未通过（可核项与声明不符）：\n"
+            + str(rp.get("output", ""))
+        )
     # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
     #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
     #     证据等级在枚举内 / 有未确认段）。
@@ -3426,6 +3467,7 @@ def run_release_check() -> dict[str, object]:
         "repo_uniformity": ru,
         "unit_naming": un,
         "support_domain": sd,
+        "repro_manifest": rp,
         "evidence_freshness": ef,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓

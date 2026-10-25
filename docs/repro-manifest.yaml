@@ -1,0 +1,96 @@
+# ★ 干净环境复现清单（Repro Manifest）—— 第 67 轮 · 规格 350 · T030
+
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身（复现清单 · 规格 350 T030「干净环境复现」）
+# 文件:   docs/repro-manifest.yaml
+# 定位:   ★ 「换一台机器能不能把这个交付件和它的证据重造出来」的唯一声明处。
+#           `scripts/check_repro_manifest.py` 逐条核验；**不核的项必须写在 known_gaps**。
+# 官方依据: 不适用（本仓自定口径）；版本与哈希都是**实测取值**
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+
+schema: repro-manifest/1
+declared_at: "2026-10-26"
+
+#: ── 运行环境 ────────────────────────────────────────────────────────
+runtime:
+  python:
+    version: "3.14.7"
+    check: exact
+  os:
+    family: Windows
+    arch: AMD64
+  packages:
+    - name: pywin32
+      import_as: win32com
+      why: COM 调用；没有它一行都跑不了
+    - name: PyYAML
+      import_as: yaml
+      version: "6.0.3"
+    - name: pytest
+      import_as: pytest
+      version: "9.1.1"
+
+#: ── 商业软件（**仓库无法复现**，必须如实写在 known_gaps）────────────────
+solidworks:
+  version: "SolidWorks 2026 SP4.1"
+  check: com          #: 只能通过 COM 读，装没装本脚本判不了
+  why: 商业软件，安装介质与许可都不在仓库
+
+#: ── 输入资产（复现链的起点）──────────────────────────────────────────
+inputs:
+  - path: output/stage2/板1_rev-1.step
+    sha256: "046203635a41d990c75f8f3c1288e0d87d8e0988a78ab449403b272fca0cd1a7"
+    bytes: 37031
+    in_repo: false
+    note: >-
+      ★★ **这个文件当前不在仓库里**（`output/stage2/` 未被 git 跟踪）。
+      ⇒ 干净检出**无法**重造交付件 —— 这是 T030 的真缺口，不是笔误。
+      ⚠ 是否把它提交进仓库属**用户决定**（它可能来自用户的模型库），
+        不能替用户拍板 ⇒ 记进 `known_gaps`。
+
+#: ── 复现步骤（每条都指向仓库里真实存在的脚本）────────────────────────
+steps:
+  - id: gates
+    cmd: python -B scripts/release_check.py
+    expects: "输出 status=pass 且 missing 为空"
+  - id: accept
+    cmd: python -B tools/collect_e4_standalone.py
+    then: python -B tools/run_s3_acceptance.py
+    expects: "生成 output/s3-acceptance.json 与 specs/350-first-part-delivery/s3-acceptance.md"
+  - id: freshness
+    cmd: python -B scripts/check_evidence_freshness.py
+    expects: 输出 [FRESH]
+  - id: domain
+    cmd: python -B scripts/check_support_domain.py
+    expects: 输出 [PASS]
+
+#: ── 校验产物的哈希（重造后应一致；不一致说明环境或步骤有差）─────────────
+artifacts:
+  - path: output/stage2/板1_rev-1.SLDPRT
+    sha256: "8ab41914d8809c19907df2f3a02dbee833f3d4af8b4611a1b932db6a4f130b4e"
+    note: >-
+      ★ 只在**同一 SolidWorks 版本**上才应逐字节一致；换 SP 后允许不同，
+        但那时 `check_evidence_freshness` 会因交付件哈希变化判旧证据失效（FR-014）。
+
+#: ── 已知缺口（**必须**逐条写清缺什么、谁能解、怎么解）──────────────────
+known_gaps:
+  - key: input_step_not_committed
+    what: 输入 `板1_rev-1.step` 不在仓库里
+    impact: 干净检出无法重造交付件 ⇒ §T030 只能算「部分可复现」
+    owner: user
+    remedy: >-
+      由用户决定是否把该 STEP 提交进仓库（例如放到 `assets/first-part/`）。
+      ★ 不擅自提交：它可能是用户的模型资产。
+
+  - key: solidworks_not_reproducible
+    what: SolidWorks 2026 SP4.1 无法从仓库安装
+    impact: 任何依赖 COM 的步骤（验收、装配、图样）在干净机器上都需要先把商业软件装好
+    owner: user
+    remedy: 在发布说明里声明「需要 SolidWorks 2026 SP4.1 及有效许可」
+
+  - key: template_and_material_db
+    what: 文档模板与材料库随安装包，不在仓库
+    impact: 重建后的特征树可能因模板差异不同（如基准面命名）
+    owner: user
+    remedy: 发布说明声明模板版本；或在 `docs/` 记录模板指纹

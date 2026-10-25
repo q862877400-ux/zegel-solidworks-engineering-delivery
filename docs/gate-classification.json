@@ -576,6 +576,12 @@
       "runner": "_run_evidence_freshness_gate",
       "kind": "diagnostic",
       "reason": "★ 诊断门禁（2026-10-26 · spec 350 FR-014「规则/方法升级必须识别受影响交付并使旧证据失效」）：判 output/s3-acceptance.json 里记的指纹（判定器版本 × 支持域版本 × 交付件 sha256）与当前是否一致，不一致即 STALE 并逐条给出差异。★ 为什么是诊断不是硬拦：开发轮次里改了判定器，证据必然过期，硬拦会让每轮都红；它的用途是**发布前**检查 —— 发布前必须 FRESH。"
+    },
+    {
+      "gate": "check_repro_manifest.py",
+      "runner": "_run_repro_manifest_gate",
+      "kind": "release_static",
+      "reason": "★ 硬门禁（2026-10-26 · spec 350 T030「干净环境复现」）：判 docs/repro-manifest.yaml —— Python/包版本可核、声明 in_repo 的输入真在仓库里且 sha256 一致、每条 steps 指向的脚本存在、每个 known_gaps 都有impact/owner/remedy。★ 缺口本身不判失败（写清楚是诚实）；当前 3 条缺口 owner 全是 user，属用户决定。"
     }
   ]
 }

@@ -7150,6 +7150,30 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 577 | **T030 干净环境复现：清单可核，但复现链有**真缺口**（输入 STEP 不在仓库）** | 2026-10-26（第 67 轮）。
+     ★ 新件：docs/repro-manifest.yaml（复现清单）+ scripts/check_repro_manifest.py（硬门禁，第 64 条）。
+     ★★ **判什么 / 不判什么**（边界写在脚本 docstring 里）：
+     `
+     判    Python/包版本 · 声明 in_repo 的输入真在仓库且 sha256 一致 ·
+           steps 里每个 .py 脚本存在 · known_gaps 四要素（what/impact/owner/remedy）
+     不判  SolidWorks 装没装（只能 COM 读）· 换台机器产物是否逐字节一致
+     `
+     ★★★ **查出的真缺口（T030 只能算「部分可复现」）**：
+     `
+     ① output/stage2/ 未被 git 跟踪 ⇒ 干净检出**既没有交付件，也没有它的 STEP 输入**
+        sha256(板1_rev-1.step) = 046203635a41d990c75f8f3c1288e0d87d8e0988a78ab449403b272fca0cd1a7
+        ⇒ 复现链在**第一步**就断了。★ 是否入库属**用户决定**（可能是用户的模型资产）
+     ② SolidWorks 2026 SP4.1 无法从仓库安装（商业软件）
+     ③ 文档模板与材料库随安装包，不在仓库（可能影响基准面命名等）
+     `
+     三条全 owner: user ⇒ **不擅自处置**，写进 known_gaps 并在发布说明里声明。
+     ★★ 「有缺口」**不判失败** —— 缺口写清楚是诚实，写不清才是问题。
+       门禁只拦「可核项与声明不符」（如声明 in_repo 却查不到、脚本路径不存在、哈希不符）。
+     ★ 实测：python -B scripts/check_repro_manifest.py ⇒ [PASS] 可核项全过 + 3 条缺口列出。
+     ★ 踩到的小坑：YAML 里 xpects: 输出 status: pass 且 missing: [] **未加引号**
+       ⇒ mapping values are not allowed here（值里的冒号被当成键分隔）⇒ 加引号即过。
+|真机：python -B scripts/check_repro_manifest.py · 测试 	ests/test_repro_manifest.py（6 条）· 清单 docs/repro-manifest.yaml |
+
 | 576 | **FR-014 落地：证据指纹 + 失效判定** —— scripts/check_evidence_freshness.py（诊断门禁）| 2026-10-26（第 66 轮）。
      ★ 义务原文（spec 350 FR-014）：「规则/方法升级必须能**识别受影响交付**并使**旧证据失效**」。
      ★★ 为什么必须机器保证：验收证据是「某一时刻 · 某一版产物 · 某一版判定器」跑出来的；
