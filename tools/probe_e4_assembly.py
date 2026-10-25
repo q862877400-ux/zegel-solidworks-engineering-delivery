@@ -39,6 +39,7 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
+import pythoncom  # noqa: E402
 from e4_probe_common import Evidence  # noqa: E402
 
 from scripts import sw_assembly as asm_  # noqa: E402
@@ -170,6 +171,58 @@ def main() -> int:
         )
         ok_m, feat = False, None
         if ok_d and data is not None:
+            #: ★★ 第 49 轮：**只加一个变量** —— `MateAlignment`（官方成员，之前没设过）。
+            #:   `swMateAlign_e` 逐字：ALIGNED=0 / ANTI_ALIGNED=1 / **CLOSEST=2**。
+            #:   用 CLOSEST 让 SolidWorks 自己定朝向，避免因「朝向反了」被拒。
+            ok_sel, sel_mgr = _try(lambda: get_com_member(asm_doc, "SelectionManager"))
+            faces_back = []
+            if ok_sel and sel_mgr is not None:
+                for k in (1, 2):
+                    ok_f, fobj = _try(
+                        get_com_member, sel_mgr, "GetSelectedObject6", k, -1
+                    )
+                    faces_back.append(fobj if ok_f else None)
+            ok_set = False
+            if all(f is not None for f in faces_back):
+                #: ★★ 第 49 轮：`EntitiesToMate` 是 `System.object`（VARIANT 里的对象数组）。
+                #:   直接 `setattr(data, "EntitiesToMate", (f1, f2))` 在真机上
+                #:   **回 True 但读回 0** ⇒ 值没进去。改用显式 VARIANT 对象数组。
+                from win32com.client import VARIANT
+
+                ok_set, _ = _try(
+                    lambda: setattr(
+                        data,
+                        "EntitiesToMate",
+                        VARIANT(
+                            pythoncom.VT_ARRAY | pythoncom.VT_DISPATCH,
+                            [faces_back[0], faces_back[1]],
+                        ),
+                    )
+                )
+            ok_align, _ = _try(lambda: setattr(data, "MateAlignment", 2))
+
+            #: ★★★ 读回 —— `setattr` 回 True **不等于**值进去了（返回值 ≠ 实际结果）。
+            #:   ★ 第 46 轮的教训：测试设置无效时得出的「排除」不算数。
+            back = {}
+            ok_rb1, rb_ent = _try(lambda: data.EntitiesToMate)
+            try:
+                back["entities"] = len(list(rb_ent or ())) if ok_rb1 else -1
+            except TypeError:
+                back["entities"] = -1
+            ok_rb2, rb_align = _try(lambda: data.MateAlignment)
+            back["alignment"] = int(rb_align) if (ok_rb2 and rb_align is not None) else -1
+
+            EV.mark(
+                "mate_data",
+                faces=len([f for f in faces_back if f is not None]),
+                set_entities=ok_set,
+                set_alignment=ok_align,
+                #: ★ 读回为证：`entities==2 and alignment==2` 才能说「设置生效」
+                readback=back,
+                setup_effective=bool(
+                    back["entities"] == 2 and back["alignment"] == 2
+                ),
+            )
             ok_m, feat = _try(lambda: get_com_member(asm_doc, "CreateMate", data))
         m_after = len(_real_mates(asm_doc))
         EV.mark(

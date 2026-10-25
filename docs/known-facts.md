@@ -7150,6 +7150,29 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 566 | **★★★ `EntitiesToMate` 直接赋 Python 元组会**静默存成 0**（回 True 但读回 0）⇒ 必须用 `VARIANT(VT_ARRAY｜VT_DISPATCH, [f1, f2])`** —— 2026-10-26（第 49 轮）。
+     ★★ 现场（同一个 `ICoincidentMateFeatureData` 对象上，两种赋法对比）：
+     ```
+     ① setattr(data, "EntitiesToMate", (f1, f2))
+        ⇒ set_entities=True，但 **readback entities = 0** ⇒ 值根本没进去
+     ② setattr(data, "EntitiesToMate", VARIANT(VT_ARRAY|VT_DISPATCH, [f1, f2]))
+        ⇒ set_entities=True，**readback entities = 2** ⇒ 真的进去了 ✓
+     ```
+     ★ 旁证：同一轮里 `data.MateAlignment = 2`（`int`）**读回就是 2** ⇒
+       差别在**类型**：`MateAlignment` 是 `System.int`，`EntitiesToMate` 是 `System.object`
+       （VARIANT 里的**对象数组**）。
+     ★★★ **本条推翻了一个此前的「排除」**：第 45 / 48 轮记过
+       「显式设 `EntitiesToMate` 也没用」—— 那次设置**从未生效**
+       （正是本条的「静默存成 0」），所以那个结论**不算数**。
+       ★ 与第 46 轮那条教训同族：**先证明测试设置有效，才谈得上排除**。
+       ⇒ 现在每次设多值 COM 参数后都要**读回**（`setup_effective`）。
+     ★★ 但「设置生效」之后 `CreateMate` **仍回 `None`**（配合特征 0 → 0），
+       且这一轮两面是**不共面**的（组件 2 抬到 z=50mm，顶面 z=20 vs z=70）
+       ⇒ 「共面冗余」也已排除。`ICoincidentMateFeatureData` 的第三个成员
+       `PickPoints` **尚未试**；「先把装配存盘再建配合」也**尚未试**。
+     ★ 另：本机 `ISldWorks.GetDocuments` 是**属性**不是方法 —— `sw.GetDocuments()` 会
+       `TypeError: 'tuple' object is not callable`（同一轮两次踩到）。|真机：`tools/probe_e4_assembly.py`（`--nonplanar` 变体）；证据 `output/e4-assembly.json` |
+
 | 565 | **配合（mate）三条路径都建不成；装配本体已通** —— 2026-10-26（第 45 轮）。
      ★ 前提：第 44 轮已能搭出**两组件装配**（组件数 0 → 2）。
      ★★ 三条路径的真机读数：
@@ -7183,6 +7206,9 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
         ⇒ CreateMate **仍回 None**、配合特征 0 → 0 ⇒ 共面不是原因
      ```
      ★ 于是「配合建不出来」这一条已排除 6 个候选（含第 45 轮那三个）。
+     ⚠⚠⚠ **其中「显式设 `EntitiesToMate`」那一条已被第 49 轮推翻**：
+       那次 `setattr` **静默存成 0**（回 True、读回 0）⇒ 设置从未生效 ⇒ 那个「排除」不算数。
+       修法见**事实 566**（必须用 `VARIANT(VT_ARRAY|VT_DISPATCH, [...])`）。
        **尚未试的具体候选**（记下来，不猜）：`ICoincidentMateFeatureData.MateAlignment` 未设；
        以及「先建 data 再选面」与「选面后建 data」的顺序差异 —— 本轮都是先选面再建 data。
      ★★ 方法论：排除假设要**一次只改一个变量**，且**先证明测试设置有效**
