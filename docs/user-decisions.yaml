@@ -1,0 +1,121 @@
+# ★ 只有业主能定的决定（User Decisions）—— 唯一索引
+
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身（用户决定索引）
+# 文件:   docs/user-decisions.yaml
+# 定位:   ★ **所有「我不能自己拍板」的事**的唯一登记处。
+#           起因：这些事散在 `s3-blockers.yaml`（owner=user）、`repro-manifest.yaml`
+#           的 `known_gaps`（owner=user）、以及 S2 问卷里 ⇒ 轮次一多就会漏。
+#           `scripts/check_user_decisions.py` 双向核对：**漏登记就红**。
+# 官方依据: 不适用（本仓自定口径）
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+
+schema: user-decisions/1
+declared_at: "2026-10-26"
+
+#: ★★★ 规矩：本文件**只写问题与格式，不写答案**。
+#:   `value` 字段**必须为空**——一旦有人填了默认值，
+#:   就等于替业主决定了材料/载荷/工艺这些「不得偷偷填默认值」的东西。
+decisions:
+  #: ── S2 八项（首件需求）────────────────────────────────────────────
+  - id: UD-01
+    topic: material
+    cstr: S2
+    question: 首件用**什么材料**？牌号 + 标准号 + 版本
+    format: "\"Q235B / GB/T 700-2006\" 这样的三段式"
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+    blocks: [E2.hole_readback]
+
+  - id: UD-02
+    topic: load_case
+    cstr: S2
+    question: 承受**什么载荷**？（类型、量级、方向、工况组合）
+    format: "\"静载 500N 垂直板面\" 或 \"无承载要求\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+    blocks: [E6.process]
+
+  - id: UD-03
+    topic: safety_level
+    cstr: S2
+    question: '**安全等级**与许用应力/安全系数'
+    format: "如 \"一般结构 · 安全系数 1.5\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+
+  - id: UD-04
+    topic: process
+    cstr: S2
+    question: 允许的**工艺路线**（下料/加工/表面处理）
+    format: "有序工序列表，或 \"不限\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+    blocks: [E6.process]
+
+  - id: UD-05
+    topic: datums
+    cstr: S2
+    question: 基准与关键尺寸的选择（哪个面是主基准）
+    format: "如 \"底面 A 为主基准，右侧面 B 为次基准\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+
+  - id: UD-06
+    topic: interface
+    cstr: S2
+    question: 与其它件的**接口**（配合尺寸、公差、螺栓规格）
+    format: "如 \"4×M8 通孔，与板2 用 M8 螺栓连接\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+    blocks: [E2.hole_readback]
+
+  - id: UD-07
+    topic: drawing_scope
+    cstr: S2
+    question: 要不要**出图**？出到什么程度（视图/标注/公差）
+    format: "\"出图 + 全标注\" / \"出图仅外形\" / \"不出图\""
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+    blocks: [E5.drawing, E2.drawing_current]
+
+  - id: UD-08
+    topic: delivery_purpose
+    cstr: S2
+    question: 交付**用途**（样件验证 / 小批试制 / 正式生产）
+    format: "三选一"
+    source: specs/350-first-part-delivery/s2-question-sheet.md
+
+  #: ── T030 复现缺口（不影响判据，但影响「能不能重造」）────────────────
+  - id: UD-09
+    topic: commit_input_step
+    cstr: T030
+    question: 是否把输入 `板1_rev-1.step` 提交进仓库（例如 `assets/first-part/`）？
+    format: "是 / 否；若否，说明该资产由谁保管"
+    source: docs/repro-manifest.yaml
+    default_stance: >-
+      ★ 不擅自提交：它可能是业主的模型资产。当前 `in_repo: false`，
+      干净检出因此无法重造交付件。
+
+  - id: UD-10
+    topic: solidworks_availability
+    cstr: T030
+    question: 交付/复现环境如何获得 SolidWorks 2026 SP4.1 与许可？
+    format: "一句话说明（或引用已有许可流程）"
+    source: docs/repro-manifest.yaml
+    default_stance: ★ 商业软件，仓库无法提供；发布说明必须声明。
+
+  - id: UD-11
+    topic: template_and_material_db
+    cstr: T030
+    question: 文档模板与材料库以哪一版为准？
+    format: "模板名 + 版本，或 \"用安装默认\""
+    source: docs/repro-manifest.yaml
+    default_stance: ★ 模板差异可能改变基准面命名，进而影响重建一致性判据。
+
+#: ── 不需要业主回答、但**必须让业主看见**的事（记录用）────────────────────
+for_information:
+  - key: E4.dof_never_measurable
+    what: >-
+      `E4.dof` 在本机**永久 unknown**：SolidWorks API 没有数值自由度读取入口（三源确认）。
+    who_decides: agent
+    why_recorded: 这条会一直出现在验收报告里，业主应知道它**不是**待办事项。
+
+  - key: acceptance_overall_fail
+    what: 验收总体当前是 fail（`E2.hole_readback` 超差 20mm）。
+    who_decides: agent
+    why_recorded: 在 UD-01/UD-06（材料与接口）回答前，孔位公差没有依据可判。

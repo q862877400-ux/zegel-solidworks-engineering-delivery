@@ -609,6 +609,42 @@ def _run_repro_manifest_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_user_decisions_gate() -> dict[str, object]:
+    """@brief 跑用户决定索引门禁（scripts/check_user_decisions.py）。
+
+    ★ 来源：`docs/ENGINEERING-PATH.md` 第 85 行 ——
+      「尺寸缺失就问；**材料、功能孔型、配合、制造约束、影响承载的工况不得偷偷填默认值**」。
+      `AGENTS.md` 停止条件第 8 条同族。
+
+    ★ 判据（双向）：
+      · 每个 `owner: user` 的阻塞项 / 复现缺口**都必须**在 `docs/user-decisions.yaml` 里有条目
+      · 决定里 `blocks` 指向的 check_id 必须真在阻塞台账里
+      · **任何决定都不得被填上 `value`** —— 填了就是替业主决定
+
+    ★ 为什么必须有：这类事散在三处，轮次一多就漏；而漏掉的后果是
+      **它悄悄从报告里消失，看起来像解决了**。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_user_decisions.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "用户决定门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_support_domain_gate() -> dict[str, object]:
     """@brief 跑「支持参数域」门禁（scripts/check_support_domain.py --self-check）。
 
@@ -3155,6 +3191,13 @@ def run_release_check() -> dict[str, object]:
             "复现清单门禁未通过（可核项与声明不符）：\n"
             + str(rp.get("output", ""))
         )
+    #: ⚑ **用户决定索引门禁**（硬门禁）：★ 防止「只有业主能定」的事在轮次里被忘掉。
+    ud = _run_user_decisions_gate()
+    if ud.get("status") == "fail":
+        raise AssertionError(
+            "用户决定索引门禁未通过（有待用户决定的事没登记，或有人替业主填了值）：\n"
+            + str(ud.get("output", ""))
+        )
     # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
     #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
     #     证据等级在枚举内 / 有未确认段）。
@@ -3468,6 +3511,7 @@ def run_release_check() -> dict[str, object]:
         "unit_naming": un,
         "support_domain": sd,
         "repro_manifest": rp,
+        "user_decisions": ud,
         "evidence_freshness": ef,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓

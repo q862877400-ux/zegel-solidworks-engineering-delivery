@@ -582,6 +582,12 @@
       "runner": "_run_repro_manifest_gate",
       "kind": "release_static",
       "reason": "★ 硬门禁（2026-10-26 · spec 350 T030「干净环境复现」）：判 docs/repro-manifest.yaml —— Python/包版本可核、声明 in_repo 的输入真在仓库里且 sha256 一致、每条 steps 指向的脚本存在、每个 known_gaps 都有impact/owner/remedy。★ 缺口本身不判失败（写清楚是诚实）；当前 3 条缺口 owner 全是 user，属用户决定。"
+    },
+    {
+      "gate": "check_user_decisions.py",
+      "runner": "_run_user_decisions_gate",
+      "kind": "release_static",
+      "reason": "★ 硬门禁（2026-10-26）：双向核对 docs/user-decisions.yaml 与 s3-blockers.yaml(owner=user) / repro-manifest.yaml(known_gaps, owner=user)；并禁止任何决定被填上 value（ENGINEERING-PATH 第 85 行「不得偷偷填默认值」）。起因：这类事散在三处，轮次一多就漏，漏掉后它悄悄从报告里消失、看起来像解决了。"
     }
   ]
 }

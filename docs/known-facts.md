@@ -7150,6 +7150,29 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 578 | **用户决定索引**：docs/user-decisions.yaml（11 条）+ scripts/check_user_decisions.py（硬门禁，第 65 条）—— 防止「只有业主能定」的事在轮次里被忘掉 | 2026-10-26（第 68 轮）。
+     ★ 为什么需要：这类事**散在三处** —— docs/s3-blockers.yaml（owner=user 4 条）、
+       docs/repro-manifest.yaml 的 known_gaps（owner=user 3 条）、S2 问卷（8 项）。
+       轮次一多必然漏，而漏掉的后果是：**它悄悄从报告里消失，看起来像解决了**。
+     ★★ 两条钉子（各有阴性对照测试）：
+     `
+     ① 不漏    每个 owner=user 的阻塞项/缺口都必须在索引里有条目；blocks 指向的
+               check_id 必须真在阻塞台账里（双向）
+     ② 不替填  ENGINEERING-PATH 第 85 行「材料、功能孔型、配合、制造约束、
+               影响承载的工况不得偷偷填默认值」⇒ 决定的 value 一被填就判失败
+     `
+     ★ 索引内容：S2 八项（material / load_case / safety_level / process / datums /
+       interface / drawing_scope / delivery_purpose）+ T030 三条缺口（UD-09 是否提交输入 STEP /
+       UD-10 SolidWorks 许可 / UD-11 模板与材料库）+ 2 条**仅供知会**的记录项
+       （E4.dof 永久 unknown · 验收总体当前 fail）。
+     ★ 每条决定都带 ormat（回答格式）—— 问「材料用什么」却不给格式，等于要人猜怎么答。
+     ★ 踩到的两个坑：
+       · YAML 里以 ** 开头的值被当成**别名**（xpected alphabetic or numeric character）
+         ⇒ 加引号。同族坑：值里含 :  也要加引号（第 67 轮踩过）。
+       · 我写了个 _load() 助手 ⇒ 撞上「跨文件同函数体组」棘轮（76 → 77）
+         ⇒ 内联掉，回到 76。★ 统一化门禁确实在管新增重复。
+|真机：python -B scripts/check_user_decisions.py · 测试 	ests/test_user_decisions.py（7 条）· 索引 docs/user-decisions.yaml |
+
 | 577 | **T030 干净环境复现：清单可核，但复现链有**真缺口**（输入 STEP 不在仓库）** | 2026-10-26（第 67 轮）。
      ★ 新件：docs/repro-manifest.yaml（复现清单）+ scripts/check_repro_manifest.py（硬门禁，第 64 条）。
      ★★ **判什么 / 不判什么**（边界写在脚本 docstring 里）：
