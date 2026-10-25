@@ -142,7 +142,9 @@ def good_e2() -> Observation:
         positions_before=((10.0, 10.0), (90.0, 10.0), (10.0, 50.0), (90.0, 50.0)),
         positions_after=((30.0, 10.0), (110.0, 10.0), (30.0, 50.0), (110.0, 50.0)),
         rebuild_errors=0,
-        reopened_ok=True,
+        extent_before_save_mm=120.0,
+        extent_after_reopen_mm=120.0,
+
         drawing_is_current=True,
     )
 
@@ -159,7 +161,9 @@ def bad_e2_new_document() -> Observation:
         positions_before=((10.0, 10.0), (90.0, 10.0)),
         positions_after=((30.0, 10.0), (110.0, 10.0)),
         rebuild_errors=0,
-        reopened_ok=True,
+        extent_before_save_mm=120.0,
+        extent_after_reopen_mm=120.0,
+
         drawing_is_current=True,
     )
 
@@ -173,7 +177,9 @@ def bad_e2_no_downstream() -> Observation:
         positions_before=((10.0, 10.0), (90.0, 10.0)),
         positions_after=((10.0, 10.0), (90.0, 10.0)),
         rebuild_errors=0,
-        reopened_ok=True,
+        extent_before_save_mm=120.0,
+        extent_after_reopen_mm=120.0,
+
         drawing_is_current=True,
     )
 
@@ -185,7 +191,9 @@ def unknown_e2() -> Observation:
         opened_existing=True,
         changed_params=(),
         rebuild_errors=0,
-        reopened_ok=True,
+        extent_before_save_mm=120.0,
+        extent_after_reopen_mm=120.0,
+
         drawing_is_current=True,
     )
 

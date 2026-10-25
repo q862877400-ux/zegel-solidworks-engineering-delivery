@@ -59,7 +59,9 @@ def collect_rebuild(
     positions_after: tuple = (),
     position_tol_mm: float = 0.1,
     rebuild_errors: int = 0,
-    reopened_ok: bool = False,
+    extent_before_save_mm: float = -1.0,
+    extent_after_reopen_mm: float = -1.0,
+    reopen_tol_mm: float = 0.01,
     drawing_is_current: bool = False,
     version: str = "",
 ) -> Observation:
@@ -89,9 +91,21 @@ def collect_rebuild(
     pairs = list(zip(before, after)) if len(before) == len(after) else []
     shifts = [max(abs(a[0] - b[0]), abs(a[1] - b[1])) for a, b in pairs]
     linked = any(s > position_tol_mm for s in shifts)
+    #: ★★ 第 40 轮：`reopened_ok` 不再收布尔。
+    #:   判据 = **保存前的尺寸与重开后的尺寸一致**（差 <= reopen_tol_mm）。
+    #:   ★ 原来真机运行器只判「重开后读得到数」⇒ 重开后又变回 100mm 也算 True，
+    #:     而那正是要抓的坏（参数关系没落进文件）。
+    _ext_b, _ext_a = float(extent_before_save_mm), float(extent_after_reopen_mm)
+    _reopen_measured = _ext_b >= 0.0 and _ext_a >= 0.0
+    reopened_ok = _reopen_measured and abs(_ext_a - _ext_b) <= float(reopen_tol_mm)
     return Observation(
         target=target,
-        complete=bool(changed_params) and bool(target) and bool(pairs),
+        complete=(
+            bool(changed_params)
+            and bool(target)
+            and bool(pairs)
+            and _reopen_measured
+        ),
         values={
             "opened_existing": opened_existing,
             "changed_params": list(changed_params),
@@ -101,17 +115,25 @@ def collect_rebuild(
             "position_tol_mm": position_tol_mm,
             "positions_paired": len(pairs),
             "rebuild_errors": rebuild_errors,
+            #: ★ 第 40 轮：由**两次实测尺寸**推导（原来是调用方断言）
             "reopened_ok": reopened_ok,
+            "extent_before_save_mm": _ext_b,
+            "extent_after_reopen_mm": _ext_a,
+            "reopen_tol_mm": float(reopen_tol_mm),
             "drawing_is_current": drawing_is_current,
             "version": version,
         },
         note=(
             ""
-            if (changed_params and target and pairs)
+            if (changed_params and target and pairs and _reopen_measured)
             else (
-                "没给改前/改后的孔位 ⇒ 无法判「下游联动」（不给就判 unknown）"
-                if changed_params and target
-                else "没记录任何改动的参数 ⇒ 采集不完整"
+                "没量保存前/重开后的尺寸 ⇒ 无法判「保存重开仍成立」"
+                if (changed_params and target and pairs)
+                else (
+                    "没给改前/改后的孔位 ⇒ 无法判「下游联动」"
+                    if (changed_params and target)
+                    else "没记录任何改动的参数 ⇒ 采集不完整"
+                )
             )
         ),
     )

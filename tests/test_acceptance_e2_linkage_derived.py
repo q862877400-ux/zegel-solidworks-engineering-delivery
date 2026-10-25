@@ -55,7 +55,9 @@ _FULL = dict(
     opened_existing=True,
     changed_params=("w",),
     rebuild_errors=0,
-    reopened_ok=True,
+    extent_before_save_mm=120.0,
+    extent_after_reopen_mm=120.0,
+
     drawing_is_current=True,
 )
 
@@ -132,7 +134,9 @@ def test_没给位置判unknown不是fail() -> None:
     assert res.status is Status.UNKNOWN, (
         "★ 没给位置应判 unknown，实得 %s" % res.status.value
     )
-    assert "孔位" in obs.note and "unknown" in obs.note
+    #: ★ 钉语义：note 要说清「缺什么」和「因此无法判哪件事」
+    assert "孔位" in obs.note, "★ note 应指出缺孔位：%r" % obs.note
+    assert "无法判" in obs.note, "★ note 应说清无法判什么：%r" % obs.note
 
 
 def test_位置数量对不上判unknown() -> None:
@@ -161,7 +165,10 @@ def test_全绿仍然pass() -> None:
     [
         ({"opened_existing": False}, "新建文档重跑"),
         ({"rebuild_errors": 2}, "特征错误"),
-        ({"reopened_ok": False}, "保存后重开"),
+        (
+            {"extent_before_save_mm": 120.0, "extent_after_reopen_mm": 100.0},
+            "保存后重开",
+        ),
         ({"drawing_is_current": False}, "图纸"),
     ],
 )

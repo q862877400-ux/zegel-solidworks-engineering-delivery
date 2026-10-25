@@ -281,11 +281,16 @@ def main() -> int:
         ok_s, _ = _try(c_.save_document, doc)
         title = _member(doc, "GetTitle")
         _try(sw.CloseDoc, str(title) if title else "")
+        #: ★ 第 40 轮：这里原先算 `reopened_ok = 重开后读得到数` 的布尔 ——
+        #:   只判「读得到」抓不到「重开后又变回 100mm」（参数关系没落盘）。
+        #:   ⇒ 改为把**保存前**与**重开后**的实测尺寸都交给采集器，由它比对。
+        extent_before_save = bbox_after if bbox_after is not None else -1.0
+        extent_after_reopen = -1.0
         ok_r, doc2 = _try(c_.open_document, sw, str(copy))
-        reopened_ok = False
         if ok_r and doc2 is not None:
             doc = doc2
-            reopened_ok = (solid_body_extent_mm(doc).get("x_mm")) is not None
+            _ext = solid_body_extent_mm(doc).get("x_mm")
+            extent_after_reopen = float(_ext) if _ext is not None else -1.0
         obs_e2 = collect_rebuild(
             target="板1_rev-1 副本",
             opened_existing=True,
@@ -295,7 +300,8 @@ def main() -> int:
             positions_before=tuple(tuple(p[:2]) for p in (holes_before or ())),
             positions_after=tuple(tuple(p[:2]) for p in (holes_after or ())),
             rebuild_errors=int(ww.get("count") or 0),
-            reopened_ok=reopened_ok,
+            extent_before_save_mm=float(extent_before_save),
+            extent_after_reopen_mm=float(extent_after_reopen),
             drawing_is_current=False,
         )
         res_e2 = judge_rebuild(obs_e2, requirement_id="R-E2")

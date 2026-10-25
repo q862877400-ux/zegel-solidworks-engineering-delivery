@@ -75,7 +75,7 @@ def _empty_cases():
             lambda: judge_rebuild(
                 collect_rebuild(
                     target="板1", opened_existing=False, changed_params=(),
-                    rebuild_errors=0, reopened_ok=False,
+                    rebuild_errors=0,
                     drawing_is_current=False,
                 ),
                 requirement_id=REQ,
