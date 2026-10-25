@@ -7150,6 +7150,27 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 588 | **装配/配合记录的四个硬事实**（示教器全场景记录用） | 2026-10-26。
+     ★★★ ① **配合特征的类型名不是 Mate** —— 实测加的距离配合是 **MateDistanceDim**
+     （挂在 MateGroup 下，按配合种类命名，同族还有 MateCoincident 等）。
+     `
+     配合                MateGroup
+       距离1              MateDistanceDim      ← GetTypeName2() 就是这个
+     `
+     ⇒ 只认 == "Mate" 会把配合永远记成 0。判据应为「以 Mate 开头且 != MateGroup」。
+     ★★★ ② **IMateEntity2 取实体用 Reference，不是 Entity** —— 写 Entity 会一直拿到 None。
+     成员实测：Reference / ReferenceComponent / ReferenceType / ReferenceType2 /
+     EntityParams / GetEntityParamsSize。
+     ★★ ③ **IComponent2.GetBodies2(BodyType) 是 1 个参数**（传 2 个报「无效的参数数目」）；
+     退路 GetBody()。组件的面 = 体 → IBody2.GetFaces()。
+     ★★ ④ 官方**没有** IAssemblyDoc.GetMates（已核实 197 个成员里无此名）；
+     配合只能「枚举特征 → GetSpecificFeature2 → IMate2」。
+     ★ 附带：IAssemblyDoc.GetFirstMember() 在本机返回 None，不可用；
+     而 IModelDoc2.FirstFeature 在装配上**可用**（能拿到 CDispatch）。
+     ★ 另：打开大装配时会弹**进度框**（「打开文件 … 已用时间：0 秒」），
+       护栏曾把它当故障杀掉 ⇒ 已在 guard_run 里区分「瞬时框」（放行、不杀）。
+|真机：output/verify_mate2.py · output/verify_recorder.py · 记录产物 output/record/*.json |
+
 | 587 | **尺寸能建成，但 AddDimension 不返回对象；且「点到线」建不出、「线到线」能建** | 2026-10-26（示教器轮）。
      ★★★ 单变量对照（output/probe_dim_count.py，普通草图两条竖线）：
      `

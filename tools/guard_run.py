@@ -53,6 +53,20 @@ sys.path.insert(0, str(R / "tools"))
 u = ctypes.windll.user32
 _pol = 0.3
 
+#: ★ 瞬时对话框（进度/加载/更新）：**不该判故障**，试着点掉让它自己走完。
+#:   实测踩过：打开大装配时弹「打开文件 … 已用时间：0 秒」，旧版护栏把它当故障杀掉，
+#:   于是「打开文件」这件正常事被误判成失败。
+_TRANSIENT_HINTS = (
+    "已用时间", "打开文件", "正在", "请稍候", "更新", "加载",
+    "Progress", "Loading", "Please wait",
+)
+
+
+def _is_transient(dlg: dict) -> bool:
+    text = " ".join([str(dlg.get("title") or "")]
+                     + [str(x) for x in (dlg.get("kids") or [])])
+    return any(h in text for h in _TRANSIENT_HINTS)
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
@@ -189,6 +203,15 @@ def run(cmd: list, timeout_s: float, kill_on_dialog: bool = True) -> int:
         new = {h: d for h, d in _dialogs().items() if h not in base}
         if new:
             h, d = next(iter(new.items()))
+            if _is_transient(d):
+                #: 瞬时框：发 Esc/Enter 让它走完，**不杀子进程、不计故障**
+                u.PostMessageW(h, 0x0100, 0x1B, 0)
+                u.PostMessageW(h, 0x0101, 0x1B, 0)
+                u.PostMessageW(h, 0x0100, 0x0D, 0)
+                u.PostMessageW(h, 0x0101, 0x0D, 0)
+                base.add(h)
+                print("   （瞬时框已放行：「%s」）" % (d.get("title") or ""))
+                continue
             _record("during", d)
             hit = d
             print("★ 检测到弹窗：「%s」" % d.get("title"))

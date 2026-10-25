@@ -898,7 +898,7 @@
 | `survey_effect_declarations.py` | ★ 只读普查：为 448 个工具机械初判「效应声明」（改哪些状态类别），产出报告而不改声明 |
 | `survive_sweep.py` | ★ 存活普查：逐工具「调一次 + 前后抓指纹」，输出「声明 vs 观察」差异表 |
 | `swdoc_search.py` | ★ 三源检索入口：官方 CHM 正文树（.html + .htm）+ 我们解出来的 `_raw` 文本 |
-| `teach.py` | 示教器统一入口：L1 捕获 / L2 提炼 / L3 执行 / L4 个人化 |
+| `teach.py` | 示教器：**记录**操作与当前模型状态 |
 | `tool_caller.py` | ★ 按 `ToolSpec` 契约调一个工具（★ 给 B2 的灵敏度标定与 B3 的存活普查共用） |
 | `trigger_analysis_dialogs.py` | ★ 触发用：建件 → 设材料 → 建网格 → **跑求解**（★ 没有夹具/载荷 ⇒ 求解失败 ⇒ 会弹那两级弹窗） |
 | `typelib_iids.py` | ★ 从出厂 interop 程序集读**接口 IID**，并对 COM 对象做 QueryInterface |

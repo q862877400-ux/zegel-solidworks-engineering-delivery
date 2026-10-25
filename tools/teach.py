@@ -1,17 +1,22 @@
-"""示教器统一入口：L1 捕获 / L2 提炼 / L3 执行 / L4 个人化。
+"""示教器：**记录**操作与当前模型状态。只记录，不提炼、不推断。
+
+## 职责（业主 2026-10-26 纠正）
+
+> 它就是一个动作的记录，而且要记录得特别特别全，各种场景都能记录，
+> 而提炼这一步就交给使用这个工具的 agent 进行，你千万不要把我们这个示教器越搞越复杂。
+
+⇒ 本工具只有两件事：
+
+```
+capture   录业主的界面操作（PSR 步骤 + 录屏 + 弹窗事件 + 关键节点模型快照）
+record    把当前打开文档的状态原样导出（JSON + 人读 md）
+```
+
+## 用法
 
 ```bash
-# L1 捕获（业主示范一次）
-python -B tools/teach.py capture --start
-python -B tools/teach.py capture --stop          # 落 model.json / steps.md / 录屏
-# L2 提炼（语义快照 → 配方）
-python -B tools/teach.py derive --snapshot output/teach/<会话>/model.json \
-                                --out teach/recipes/hole-4x.yaml
-# L4 个人化
-python -B tools/teach.py profile --id owner --set hole_standard=ISO
-python -B tools/teach.py profile --id owner            # 看当前生效值
-# L3 执行（配方 → 纯 API 建模 + 按 assertions 核对）
-python -B tools/teach.py run --recipe teach/recipes/hole-4x.yaml --profile owner
+python -B tools/teach.py capture --start / --stop / --status / --frame HH:MM:SS
+python -B tools/teach.py record  [--out 目录]
 ```
 """
 from __future__ import annotations
@@ -26,169 +31,20 @@ sys.path.insert(0, str(R))
 sys.path.insert(0, str(R / "scripts"))
 sys.path.insert(0, str(R / "tools"))
 
+DEFAULT_OUT = R / "output" / "record"
+
 
 # ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
-# 仓库:   本项目自身（示教器统一入口）
+# 仓库:   本项目自身（示教器入口 · 只做记录）
 # 文件:   tools/teach.py
-# 定位:   把 L1 捕获 / L2 提炼 / L3 执行 / L4 个人化收成一个命令，
-#          让「业主示范一次 → agent 照做」成为常规流程（业主比作机械臂试教）。
-# 官方依据: 复用本仓 demo_capture（PSR+ffmpeg+模型快照）· sw_recipe（L2）·
-#          sw_recipe_exec（L3）· sw_habits（L4）；实机调用走 HoleWizard5 等既有封装
+# 定位:   示教器的两个动作：`capture`（录界面操作）与 `record`（导出当前文档状态）。
+#          **不提炼规则、不建配方、不建档案** —— 业主 2026-10-26 明确要求保持单一职责。
+# 官方依据: 复用 tools/demo_capture.py（PSR + ffmpeg + 模型快照）与
+#          scripts/sw_model_snapshot.py（全场景记录器）
 # 许可:   本仓库 MIT。无第三方代码引入。
 # 覆盖:   全文件
 # ─────────────────────────────────────────────────────────────────────
-
-
-def _capture(argv: list) -> int:
-    """L1：转给 `demo_capture`。"""
-    import demo_capture
-
-    saved = sys.argv
-    try:
-        sys.argv = ["demo_capture"] + argv
-        return demo_capture.main()
-    finally:
-        sys.argv = saved
-
-
-def _derive(argv: list) -> int:
-    """L2：语义快照 → 配方。"""
-    import sw_recipe
-
-    snap_p = _arg(argv, "--snapshot")
-    out_p = _arg(argv, "--out")
-    if not snap_p or not out_p:
-        print("用法：teach.py derive --snapshot <model.json> --out <recipe.yaml>")
-        return 2
-    snap = json.loads(Path(snap_p).read_text(encoding="utf-8"))
-    recipe = sw_recipe.derive_from_snapshot(snap, capture=str(Path(snap_p).parent))
-    p = sw_recipe.save(recipe, out_p)
-    print("① 配方已生成：%s" % p)
-    print("   id=%s · 孔位 %d 个 · assertions %d 条"
-          % (recipe["id"], len(recipe["inputs"].get("positions_mm") or []),
-             len(recipe["assertions"])))
-    for note in recipe.get("notes") or []:
-        print("   ⚠ %s" % note)
-    return 0
-
-
-def _profile(argv: list) -> int:
-    """L4：读写个人化档案。"""
-    import sw_habits
-
-    pid = _arg(argv, "--id")
-    if not pid:
-        print("用法：teach.py profile --id <profile> [--set k=v ...]")
-        return 2
-    sets = [a for a in argv if "=" in a and not a.startswith("--")]
-    if sets:
-        cur = {}
-        p = sw_habits.habits_path(pid)
-        if p.is_file():
-            from sw_recipe import _mini_yaml_load
-
-            cur = _mini_yaml_load(p.read_text(encoding="utf-8"))
-        for item in sets:
-            k, _, v = item.partition("=")
-            k, v = k.strip(), v.strip()
-            ref = sw_habits.DEFAULT_HABITS.get(k)
-            if isinstance(ref, bool):
-                cur[k] = v.lower() in ("1", "true", "yes", "on")
-            elif isinstance(ref, float):
-                cur[k] = float(v)
-            elif isinstance(ref, int):
-                cur[k] = int(v)
-            else:
-                cur[k] = v
-        path = sw_habits.save(pid, cur)
-        print("① 已写：%s" % path)
-    eff = sw_habits.load(pid)
-    print("② %s 当前生效：" % pid)
-    for k in sorted(eff):
-        mark = "" if eff[k] == sw_habits.DEFAULT_HABITS[k] else "  ← 已改"
-        print("   %-28s %s%s" % (k, eff[k], mark))
-    return 0
-
-
-def _run(argv: list) -> int:
-    """L3：配方 → 纯 API 建模 + 核对 assertions。"""
-    import sw_connect as c_
-    import sw_habits
-    import sw_recipe
-    import sw_recipe_exec
-    from sw_connect import get_com_member as g
-
-    rp = _arg(argv, "--recipe")
-    if not rp:
-        print("用法：teach.py run --recipe <recipe.yaml> [--profile <id>]")
-        return 2
-    recipe = sw_recipe.load(rp)
-    pid = _arg(argv, "--profile")
-    if pid:
-        recipe = sw_habits.apply_to_recipe(recipe, sw_habits.load(pid))
-        print("① 已套用档案：%s" % pid)
-
-    inp = recipe.get("inputs") or {}
-    plate = inp.get("plate") or {}
-    hole = inp.get("hole") or {}
-    pos = inp.get("positions_mm") or []
-    miss = [k for k in ("width_mm", "height_mm", "thickness_mm") if not plate.get(k)]
-    if miss or not pos:
-        print("★ 配方缺参数，执行不了：plate 缺 %s · 孔位 %d 个" % (miss, len(pos)))
-        print("  ⇒ 用 `teach.py profile --id <id> --set ...` 补默认值，或手改配方")
-        return 1
-
-    conn = c_.connect_solidworks(wait_seconds=30)
-    sw = conn[0] if isinstance(conn, tuple) else conn
-    try:
-        sw.CommandInProgress = True
-    except Exception:  # noqa: BLE001
-        pass
-    try:
-        for d in list(g(sw, "GetDocuments") or ()):
-            c_.try_call(sw.CloseDoc, str(g(d, "GetTitle") or ""))
-        #: ★ 不用 or 6.6 兜底：环境坑门禁把它当「隐式默认值」回归（实测抓到）。
-        #:   显式判空，缺就报错，别静默塞一个数。
-        diam = hole.get("diameter_mm")
-        if diam is None:
-            print("★ 配方缺 inputs.hole.diameter_mm ⇒ 不猜，请补上")
-            return 1
-        doc, rep = sw_recipe_exec.build_plate_with_holes(
-            sw,
-            width_mm=float(plate["width_mm"]),
-            height_mm=float(plate["height_mm"]),
-            thickness_mm=float(plate["thickness_mm"]),
-            holes_mm=tuple(tuple(p) for p in pos),
-            size=str(hole.get("size") or "M6"),
-            diameter_mm=float(diam),
-            dimension_style=str((recipe.get("hints") or {}).get("dimension_style") or "fixed_points"),
-        )
-        if doc is None:
-            print("★ 建模失败：%s" % rep.get("error"))
-            return 1
-        print("② 建模完成，逐步读数：")
-        for s in rep["steps"]:
-            step = s.pop("step")
-            print("   %-12s %s" % (step, s))
-        res = sw_recipe_exec.assert_recipe(doc)
-        print("③ assertions：")
-        bad = []
-        for k, v in res.items():
-            if k == "all_ok":
-                continue
-            print("   %-26s %s  实测=%s 期望=%s"
-                  % (k, "PASS" if v["ok"] else "FAIL", v["observed"],
-                     v["expected"]))
-            if not v["ok"]:
-                bad.append(k)
-        print("★ 结论：%s" % ("全部通过" if not bad else "未通过：%s" % bad))
-        return 0 if not bad else 1
-    finally:
-        try:
-            sw.CommandInProgress = False
-        except Exception:  # noqa: BLE001
-            pass
 
 
 def _arg(argv: list, flag: str) -> str:
@@ -199,20 +55,152 @@ def _arg(argv: list, flag: str) -> str:
     return ""
 
 
+def _capture(argv: list) -> int:
+    """录界面操作（转给 demo_capture）。"""
+    import demo_capture
+
+    saved = sys.argv
+    try:
+        sys.argv = ["demo_capture"] + argv
+        return demo_capture.main()
+    finally:
+        sys.argv = saved
+
+
+def _record(argv: list) -> int:
+    """把当前打开文档的状态原样导出（JSON + 人读 md）。"""
+    import sw_connect as c_
+    from sw_connect import get_com_member as g  # noqa: N812
+    from sw_model_snapshot import dump_document  #: ★ 不用别名
+
+    out_dir = Path(_arg(argv, "--out") or DEFAULT_OUT)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    conn = c_.connect_solidworks(wait_seconds=30)
+    sw = conn[0] if isinstance(conn, tuple) else conn
+    try:
+        sw.CommandInProgress = True
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        doc = g(sw, "ActiveDoc")
+        if doc is None:
+            print("★ 没有打开的文档")
+            return 1
+        data = dump_document(doc)
+        title = (data.get("document") or "document").replace(" ", "_")
+        title = "".join(ch for ch in title if ch not in '\\/:*?"<>|')
+        js = out_dir / ("%s.json" % title)
+        md = out_dir / ("%s.md" % title)
+        js.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+        md.write_text(render_md(data), encoding="utf-8", newline="\n")
+        print("① 已记录：%s" % js)
+        print("② 人读版：%s" % md)
+        print("   %s" % summary_line(data))
+        return 0
+    finally:
+        try:
+            sw.CommandInProgress = False
+        except Exception:  # noqa: BLE001
+            pass
+
+
+def summary_line(data: dict) -> str:
+    """一句话摘要（只报数量，不下结论）。"""
+    kind = data.get("doc_type")
+    if kind == "零件":
+        return "零件：特征 %d · 草图 %d · 实体 %d" % (
+            len(data.get("features") or []), len(data.get("sketches") or []),
+            len(data.get("bodies") or []))
+    if kind == "装配":
+        return "装配：组件 %d · 配合 %d · 特征 %d" % (
+            len(data.get("components") or []), len(data.get("mates") or []),
+            len(data.get("features") or []))
+    return "%s：特征 %d" % (kind, len(data.get("features") or []))
+
+
+def render_md(data: dict) -> str:
+    """把记录渲染成人读 md。**只陈述记录到的事实，不做判断。**"""
+    lines = ["# 记录：%s" % data.get("document"), "",
+         "- 类型：%s" % data.get("doc_type"),
+         "- 路径：`%s`" % (data.get("path") or "（未保存）"), ""]
+
+    for sk in data.get("sketches") or []:
+        owner = sk.get("owner")
+        lines.append("## 草图 %s%s（状态 %s = %s）" % (
+            sk.get("name"), (" ← %s" % owner) if owner else "",
+            sk.get("constrained"), sk.get("constrained_meaning")))
+        lines.append("")
+        lines.append("- 点 %d 个：%s" % (
+            len(sk.get("points") or []),
+            [(p.get("x_mm"), p.get("y_mm")) for p in (sk.get("points") or [])]))
+        segs = sk.get("segments") or []
+        if segs:
+            cons = [s for s in segs if s.get("construction")]
+            lines.append("- 线段 %d 条（其中**构造线 %d**）：" % (len(segs), len(cons)))
+            for s in segs:
+                tag = "构造" if s.get("construction") else "普通"
+                lines.append("    - %s %s %s"
+                         % (s.get("shape"), tag, s.get("endpoints_mm")))
+        rels = sk.get("relations") or []
+        if rels:
+            lines.append("- 关系/尺寸 %d 条：" % len(rels))
+            for r in rels:
+                val = (" = %s mm" % r["value_mm"]) if "value_mm" in r else ""
+                kinds = []
+                for e in r.get("entities") or []:
+                    k = e.get("kind")
+                    if k == "草图线段":
+                        k += "(构造)" if e.get("construction") else ""
+                    kinds.append(k)
+                lines.append("    - **%s**%s ← %s" % (r.get("type"), val, kinds))
+        lines.append("")
+
+    if data.get("bodies"):
+        lines += ["## 实体", ""]
+        for b in data["bodies"]:
+            lines.append("- 面 %d · 圆柱面 %d"
+                     % (b.get("face_count"), b.get("cylinder_faces")))
+        lines.append("")
+
+    for cp in data.get("components") or []:
+        tr = cp.get("transform")
+        lines.append("- 组件 `%s` 压缩=%s 变换=%s" % (
+            cp.get("name"), cp.get("suppressed"),
+            ("16 个数" if isinstance(tr, list) and len(tr) == 16 else tr)))
+
+    for m in data.get("mates") or []:
+        lines += ["## 配合 `%s`" % m.get("name"), "",
+              "- 类型=**%s** 对齐=%s 特征类型=%s"
+              % (m.get("type"), m.get("align"), m.get("feature_type"))]
+        for e in m.get("entities") or []:
+            ent = e.get("entity") or {}
+            lines.append("- 实体=%s 组件=`%s` 参照类型=%s"
+                     % (ent.get("kind"), e.get("reference_component"),
+                        e.get("referencetype")))
+
+    cp = data.get("custom_properties") or {}
+    if cp:
+        lines += ["", "## 自定义属性", ""]
+        for k, v in cp.items():
+            lines.append("- `%s` = %s" % (k, v))
+
+    lines.append("")
+    lines.append("---")
+    lines.append("★ 本文件只记录读到的原始事实；提炼规则由使用它的 agent 负责。")
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     argv = sys.argv[1:]
     if not argv:
         print(__doc__)
         return 0
     sub, rest = argv[0], argv[1:]
-    if sub in ("capture", "--start", "--stop", "--status", "--report", "--frame"):
+    if sub == "capture" or sub in ("--start", "--stop", "--status", "--frame"):
         return _capture(argv if sub == "capture" else argv)
-    if sub == "derive":
-        return _derive(rest)
-    if sub == "profile":
-        return _profile(rest)
-    if sub == "run":
-        return _run(rest)
+    if sub == "record":
+        return _record(rest)
     print(__doc__)
     return 2
 
