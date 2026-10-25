@@ -7150,6 +7150,27 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 589 | **自定义属性与图样/配合记录的四个硬事实**（示教器全场景） | 2026-10-26。
+     ★★★ ① IModelDocExtension.CustomPropertyManager 是**可调用的延迟属性**：
+     必须 ("") 调用才拿到对象；**而拿到的 CDispatch 本身也可能 callable**
+     ⇒ ★ 用 callable() 判空会把属性永远读成 0 条（第一版就这么错的）。
+     ★★★ ② ICustomPropertyManager.GetAll3 有 **5 个 out 参数**
+     （PropNames/PropTypes/PropValues/Resolved/**PropLink**）；
+     只传 4 个报 非选择性的参数（DISP_E_PARAMNOTOPTIONAL）。
+     `
+     实测：GetAll3(5 参) → 返回 29 条 · 每条 [值, 类型30, 是否链接]
+     而 Get/Get2/Get3/Get4/Get5/Get6 在本机**全部报错** ⇒ 只有 GetAll3 能用
+     GetNames() 可单独用（回 28~29 个属性名）
+     `
+     ★★★ ③ IMate2.MateEntity(i) 是 **0 基**：MateEntity(0) 与 (1) 都有值、(2) 起为 None。
+     从 1 开始取 ⇒ 距离配合只记到 **1** 个实体（应为 2）。
+     ★★ ④ 图样里**视图特征的 GetTypeName2() 是 AbsoluteView**（不是 DrawingView）；
+     图纸是 DrSheet；视图下还挂 ProfileFeature（图样几何草图）。
+     只认 DrawingView 会记成「0 视图」。
+     ★ 附：装配 IModelDocExtension.SaveAs(名, 0, **1**, 空Dispatch, out, out) 实测 ok=True 且文件生成
+     （Options 传 5 会失败 —— 与本仓事实 573 一致）。
+|真机：output/verify_all_scenes.py（18 项判据全过）· 产物 output/record/final_*.json |
+
 | 588 | **装配/配合记录的四个硬事实**（示教器全场景记录用） | 2026-10-26。
      ★★★ ① **配合特征的类型名不是 Mate** —— 实测加的距离配合是 **MateDistanceDim**
      （挂在 MateGroup 下，按配合种类命名，同族还有 MateCoincident 等）。

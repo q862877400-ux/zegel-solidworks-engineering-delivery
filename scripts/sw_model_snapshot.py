@@ -107,6 +107,13 @@ def _g(obj, name, *args):
         return None
 
 
+def _tc(*args, **kwargs):
+    """调本仓 	ry_call（失败不抛，回 (ok, 值)）。"""
+    from sw_connect import try_call
+
+    return try_call(*args, **kwargs)
+
+
 def _mm(v) -> float:
     """米 → 毫米（COM 长度一律米）。"""
     return round(float(v) * 1000.0, 3)
@@ -335,18 +342,51 @@ def walk_features(doc) -> list:
 
 
 def _custom_properties(doc) -> dict:
-    """自定义属性（名称 → 值）。读不到就空字典，不编。"""
+    """自定义属性（名称 → [解析值, 类型, 是否链接]）。
+
+    ★★★ 实测三个坑（本机 2026-10-26）：
+      ① CustomPropertyManager 是可调用的延迟属性，必须 ("") 调用；
+         且返回的 CDispatch 本身也可能 callable ⇒ **不能用 callable() 判空**。
+      ② GetAll3 有 **5 个 out 参数**（含 **PropLink**）；
+         只传 4 个会报 非选择性的参数（DISP_E_PARAMNOTOPTIONAL）。
+      ③ Get/Get2/Get3/Get4/Get5/Get6 在本机全部报错
+         （参数个数或类型不匹配）⇒ **只有 GetAll3 能用**，GetNames 可单独用。
+    """
     out: dict = {}
     ext = _g(doc, "Extension")
-    cpm = _g(ext, "CustomPropertyManager")
+    if ext is None:
+        return out
+    cpm = _g(ext, "CustomPropertyManager", "")
     if cpm is None:
         return out
-    for nm in list(_g(cpm, "GetNames") or ()):
-        val = _g(cpm, "Get5", str(nm), "", False)
-        if isinstance(val, (list, tuple)) and val:
-            out[str(nm)] = [str(x) for x in val[:2]]
-        elif val is not None:
-            out[str(nm)] = str(val)[:200]
+    try:
+        import pythoncom
+        from win32com.client import VARIANT
+
+        def _byref():
+            return VARIANT(pythoncom.VT_BYREF | pythoncom.VT_VARIANT, None)
+
+        names, types, values, resolved, link = (
+            _byref(), _byref(), _byref(), _byref(), _byref())
+        ok, ret = _tc(lambda: cpm.GetAll3(names, types, values, resolved, link))
+        if not ok:
+            out["_error"] = str(ret)[:200]
+            return out
+        nl = list(getattr(names, "value", None) or ())
+        tl = list(getattr(types, "value", None) or ())
+        vl = list(getattr(values, "value", None) or ())
+        rl = list(getattr(resolved, "value", None) or ())
+        ll = list(getattr(link, "value", None) or ())
+        for i, nm in enumerate(nl):
+            out[str(nm)] = [
+                str(vl[i]) if i < len(vl) else None,
+                str(tl[i]) if i < len(tl) else None,
+                bool(ll[i]) if i < len(ll) else None,
+            ]
+        out["_count"] = int(ret) if isinstance(ret, int) else len(nl)
+        out["_resolved"] = [str(x) for x in rl]
+    except Exception as exc:  # noqa: BLE001
+        out["_error"] = "%s: %s" % (type(exc).__name__, str(exc)[:160])
     return out
 
 
@@ -412,8 +452,10 @@ def _mate_detail(feature) -> dict:
         item["align"] = MATE_ALIGN.get(a, str(a))
 
     ents = []
-    i = 1
-    while i <= 12:  #: 官方没有 MateEntityCount ⇒ 逐个试到空
+    i = 0
+    while i < 12:  #: 官方没有 MateEntityCount ⇒ 逐个试到空
+        #: ★ 实测 MateEntity 是 **0 基**（0 与 1 都有值、2 起为 None）；
+        #:   第一版从 1 开始 ⇒ 距离配合只记到 1 个实体（应为 2）。
         me = _g(mate, "MateEntity", i)
         if me is None:
             break
@@ -444,14 +486,35 @@ def _mate_detail(feature) -> dict:
 
 # ── 图样 ─────────────────────────────────────────────────────────────
 def dump_drawing(doc) -> dict:
-    """图样：视图清单（最小集，够判断文档是什么）。"""
-    out: dict = {"views": []}
-    f = _g(doc, "FirstFeature")
-    while f is not None:
-        tp = str(_g(f, "GetTypeName2") or "")
-        if tp in ("DrawingView", "DrSheet"):
-            out["views"].append({"name": str(_g(f, "Name") or ""), "type": tp})
-        f = _g(f, "GetNextFeature")
+    """图样：特征树 + 视图 + 各视图里的草图（图样几何）。
+
+    ★ 实测（output/stage2/drawing_板1_rev-1/板1_rev-1.SLDDRW）：
+      视图特征的类型名是 **AbsoluteView**（不是 DrawingView），
+      图纸是 DrSheet；视图里还挂着 ProfileFeature（图样几何草图）。
+      第一版只认 DrawingView/DrSheet ⇒ 只记到 1 个图纸、0 个视图、0 条特征。
+    """
+    out: dict = {"features": [], "views": [], "sketches": []}
+
+    #: 视图类特征的类型名（实测 + 常见同族；命中即记为视图）
+    view_types = (
+        "DrSheet", "AbsoluteView", "DrawingView", "SectionView", "DetailView",
+        "ProjectedView", "AuxiliaryView", "StandardView", "NamedView",
+        "ModelView", "UnfoldedView", "RelativeView",
+    )
+
+    for feat, owner, level in walk_features(doc):
+        tp = str(_g(feat, "GetTypeName2") or "")
+        out["features"].append({
+            "name": str(_g(feat, "Name") or ""), "type": tp,
+            "owner": owner or None, "level": level,
+        })
+        if tp in view_types:
+            out["views"].append({"name": str(_g(feat, "Name") or ""),
+                                  "type": tp, "owner": owner or None})
+        elif tp == "ProfileFeature":
+            sk = sketch_detail(feat)
+            sk["owner"] = owner or None      #: 图样里草图挂在某个视图下
+            out["sketches"].append(sk)
     return out
 
 

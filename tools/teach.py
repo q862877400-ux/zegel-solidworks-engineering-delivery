@@ -179,7 +179,9 @@ def render_md(data: dict) -> str:
                      % (ent.get("kind"), e.get("reference_component"),
                         e.get("referencetype")))
 
-    cp = data.get("custom_properties") or {}
+    #: ★ 元键（_count / _error / _resolved）只留在 JSON 里，人读版不混进去
+    cp = {k: v for k, v in (data.get("custom_properties") or {}).items()
+          if not k.startswith("_")}
     if cp:
         lines += ["", "## 自定义属性", ""]
         for k, v in cp.items():
