@@ -1,0 +1,33 @@
+# 示教器配方（L2）：意图 + 判据。由 tools/teach.py 读写。
+id: derived-参考案例.SLDPRT
+title: 由示范自动提炼：参考案例.SLDPRT
+version: 1
+provenance:
+  demonstrated_by: owner
+  capture: "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\output\\teach"
+  document: 参考案例.SLDPRT
+intent: 照示范复现：孔位的相对关系 + 到参照的距离尺寸做到全定义。
+inputs:
+  plate:
+    width_mm: 100.0
+    height_mm: 60.0
+    thickness_mm: 20.0
+  hole:
+    standard: GB
+    fastener: 螺钉间隙
+    size: M6
+    through: true
+  positions_mm:
+    - [10.0, 50.0]
+    - [90.0, 50.0]
+    - [90.0, 10.0]
+    - [10.0, 10.0]
+hints:
+  relations: [HORIZPOINTS, VERPOINTS, HORIZPOINTS, VERPOINTS]
+  dimension_style: to_edge
+assertions:
+  feature_count_hole: 1
+  hole_sketch_constrained: 3
+  hole_standard: GB
+  cylinder_count: 4
+notes: []

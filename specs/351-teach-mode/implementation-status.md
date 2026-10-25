@@ -1,0 +1,70 @@
+# 示教器 L1–L4 实现状态（2026-10-26）
+
+**一句话**：L1/L2/L4 已实现并有测试；**L3 打通 4/6 断言**，剩两条卡在同一个前提
+（孔位草图缺可标注的参照），已定位、未伪装。
+
+## 各层状态
+
+| 层 | 文件 | 状态 | 判据 |
+|---|---|---|---|
+| L1 捕获 | `tools/demo_capture.py` + `scripts/sw_model_snapshot.py` | ✅ 完成 | 真机：PSR 276 步 + 录屏 + 模型语义（含关系/尺寸参照） |
+| L2 提炼 | `scripts/sw_recipe.py` | ✅ 完成 | 16 条离线测试；真机从示范件提炼出配方 |
+| L3 执行 | `scripts/sw_recipe_exec.py` | ⚠ **4/6** | 见下表 |
+| L4 个人化 | `scripts/sw_habits.py` | ✅ 完成 | 未知键/类型错报错、不覆盖配方、id 防穿越 |
+| 统一入口 | `tools/teach.py` | ✅ 完成 | `capture/derive/profile/run` 四子命令 |
+
+## L3 真机读数（`teach/recipes/hole-4x-m6-gb.yaml`）
+
+```
+board      凸台-拉伸1                          ✓
+孔特征      ok=True 数量=1                     ✓
+进孔位草图  草图3                              ✓
+加点后      4 点 (10,50)(90,50)(90,10)(10,10)  ✓
+点关系      水平25 / 竖直26 / 水平25 / 竖直26    ✓ 四条全成
+```
+
+| 断言 | 结果 | 实测 | 期望 |
+|---|---|---|---|
+| `feature_count_hole` | **PASS** | 1 | 1 |
+| `hole_standard_gb` | **PASS** | GB | 含 GB |
+| `hole_size` | **PASS** | M6 | 非空 |
+| `hole_fastener` | **PASS** | 螺钉间隙 | 非空 |
+| `hole_sketch_constrained` | **FAIL** | 2 | 3 |
+| `cylinder_count` | **FAIL** | 2 | 4 |
+
+## 剩下的缺口（定位清楚，含证据）
+
+**共同前提**：孔位草图里只有「点」，没有可标注的**线/边**。
+
+实测证据：
+- `IModelDocExtension.AddDimension(x,y,z,dir)` 对**圆**返回真 `IDisplayDimension`，
+  对**草图点**返回 `None`（`output/probe_circle_dimension.py`、`probe_dims.py`）
+- 只选点、或选「点 + 原点」都拿不到尺寸；`SelectByID2("Origin","SKETCHPOINT")` 在孔位草图里
+  回 `False`（该草图**没有原点实体**）
+- 参考案例的做法是「点到**板边**」，即那张草图里有板边（投影/转换实体）
+
+⇒ 缺的一步是：**把板边投影进孔位草图**（`ISketchManager.SketchUseEdge3`）。
+  已试两次：`SketchUseEdge3` 回 `True` 但草图线段数 = 0，射线选边的坐标基准还没校准
+  （`solid_body_extent_mm.raw` 的单位在两次读数里不一致：一次米、一次毫米 ⇒ 必须先自证单位，
+  不能靠猜）。
+
+⇒ 一旦投影成功，补 4 个「点到边」尺寸（`AddDimension` + `SetSystemValue2(v, 2)` 直接设值，
+  **不必碰界面**）⇒ 状态应到 3 ⇒ 圆柱面数随之到 4。
+
+## 我这一轮踩到并修掉的（都写了注释与测试）
+
+| 坑 | 后果 | 修法 |
+|---|---|---|
+| 孔特征取**最后**一张草图 | 那是轮廓草图 ⇒ 状态 3 是**假绿** | 取**第一**张（定位草图） |
+| bbox `raw` 当毫米用 | 板厚写成 0.02mm ⇒ 建出一张纸片 | ×1000，并加测试锁住 |
+| 孔位没归一化 | 示范件负 Y ⇒ 射线打空、孔建不出 | 减掉板草图最小角，并加测试 |
+| 配方 YAML 回读不认 `- ` 列表 | 孔位读成 `{}`，配方静默丢数据 | 解析器加 `pending` 记录 |
+| `_g(obj,name)` 不转发 `*args` | 带参调用全被静默吞掉 ⇒ 关系读成 0 | 转发 `*args` |
+| `GetSystemValue2` 漏配置名 | 抛 `DISP_E_PARAMNOTOPTIONAL` | 传空串（当前配置） |
+
+## 下一步（按顺序，不跳）
+
+1. 校准 `solid_body_extent_mm` 单位：写一个自证探针（建已知 100×60×20 的板，读 bbox，比对）
+2. 用校准后的坐标选 4 条板边 → `SketchUseEdge3(True, False)` → 断言草图线段 = 4
+3. 逐点标「点到边」尺寸 → `SetSystemValue2` 设 10 → 断言状态 3
+4. 复跑 `teach.py run` ⇒ 6/6

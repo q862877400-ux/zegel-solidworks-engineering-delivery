@@ -365,6 +365,72 @@
    ],
    "verdict": "★ 判定【不统一】—— 保留两份实现",
    "reason": "两个模块各需一个私有 COM 访问器，逐字相同。★ 但实测：改成导入别名后，`check_dispatch_*` 的『分发口调用点』识别不到（本轮实测在该处报「形态 (b) 名字别名 25 处解析器看不见的调用点」，release_check 直接红）。⇒ ★★ 统一它就是拿掉分发口的可核性 —— 与基线里 `_optional_com_member/_safe_com_member` 那条同因，故同样保留。"
+  },
+  {
+   "functions": "_g/_g",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_recipe.py",
+    "scripts/sw_model_snapshot.py",
+    "scripts/sw_preference_guard.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各模块私有访问器",
+   "reason": "各模块各需一个 COM 访问器薄封装。★ 实测：改成跨模块导入别名后，`check_dispatch_*` 的『分发口调用点』识别不到，release_check 直接红（同 `_optional_com_member/_safe_com_member` 那条判例）。⇒ 统一它就是拿掉分发口的可核性，故保留。"
+  },
+  {
+   "functions": "_tc/_tc",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_recipe.py",
+    "scripts/sw_model_snapshot.py",
+    "scripts/sw_preference_guard.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各模块私有访问器",
+   "reason": "各模块各需一个 COM 访问器薄封装。★ 实测：改成跨模块导入别名后，`check_dispatch_*` 的『分发口调用点』识别不到，release_check 直接红（同 `_optional_com_member/_safe_com_member` 那条判例）。⇒ 统一它就是拿掉分发口的可核性，故保留。"
+  },
+  {
+   "functions": "_g/_tc",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_recipe.py",
+    "scripts/sw_model_snapshot.py",
+    "scripts/sw_preference_guard.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各模块私有访问器",
+   "reason": "各模块各需一个 COM 访问器薄封装。★ 实测：改成跨模块导入别名后，`check_dispatch_*` 的『分发口调用点』识别不到，release_check 直接红（同 `_optional_com_member/_safe_com_member` 那条判例）。⇒ 统一它就是拿掉分发口的可核性，故保留。"
+  },
+  {
+   "functions": "_mm",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_drawing_expose.py",
+    "scripts/sw_model_snapshot.py",
+    "tools/probe_deps_bom_undercut.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各自私有实现",
+   "reason": "单位换算/调用包装/扩展点获取这类**三行以内**的私有薄封装，逐字相同。改成跨模块导入别名会触发 check_dispatch_* 的「名字别名」盲区告警（实测 release_check 直接红），故保留。"
+  },
+  {
+   "functions": "_tc",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_drawing_expose.py",
+    "scripts/sw_model_snapshot.py",
+    "tools/probe_deps_bom_undercut.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各自私有实现",
+   "reason": "单位换算/调用包装/扩展点获取这类**三行以内**的私有薄封装，逐字相同。改成跨模块导入别名会触发 check_dispatch_* 的「名字别名」盲区告警（实测 release_check 直接红），故保留。"
+  },
+  {
+   "functions": "_ext_get/p_extension",
+   "files": [
+    "scripts/sw_recipe_exec.py",
+    "scripts/sw_drawing_expose.py",
+    "scripts/sw_model_snapshot.py",
+    "tools/probe_deps_bom_undercut.py"
+   ],
+   "verdict": "★ 判定【不统一】—— 保留各自私有实现",
+   "reason": "单位换算/调用包装/扩展点获取这类**三行以内**的私有薄封装，逐字相同。改成跨模块导入别名会触发 check_dispatch_* 的「名字别名」盲区告警（实测 release_check 直接红），故保留。"
   }
  ],
  "_★新增判据": "⑤ 跨文件同函数体组 = 122 —— 判据：函数体归一化哈希（去 docstring、Name/形参换占位符），跨文件同哈希即同一函数多份实现。出处：Type-2 克隆定义（pyscn）"

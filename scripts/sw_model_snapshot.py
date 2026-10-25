@@ -193,6 +193,16 @@ def dump_model(doc) -> dict:
         "sketches": [],
         "holes": [],
     }
+    #: ★ 包围盒：板厚只能从几何读（拉伸深度在定义对象上读不稳），
+    #:   没有它配方就缺 thickness_mm，L3 直接跑不了。
+    try:
+        from sw_feature_readback import solid_body_extent_mm
+
+        box = solid_body_extent_mm(doc) or {}
+        if box.get("ok"):
+            out["bbox_mm"] = box.get("raw")
+    except Exception:  # noqa: BLE001
+        pass
     f = _g(doc, "FirstFeature")
     while f is not None:
         nm = str(_g(f, "Name") or "")
