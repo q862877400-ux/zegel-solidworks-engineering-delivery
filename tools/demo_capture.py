@@ -17,6 +17,10 @@
 ```
 
 ★ 为什么不用 Game Bar：它的开始时刻拿不到，视频时间轴与步骤时间戳无法稳定对齐。
+
+⚠ 用法注意：本命令是**长驻录制**（会拉起 ffmpeg 子进程），
+  **不要**把它套在 	ools/guard_run.py 里跑 —— 子进程会继承护栏的输出管道，
+  护栏会一直等管道关闭而挂住（2026-10-26 实测踩过）。直接跑即可。
 ★ 为什么坚持第 3 层：截图能看「改了没有」，但看不出「这条尺寸量的是点到哪条边」。
 
 ## 用法
@@ -211,9 +215,38 @@ def stop() -> int:
     steps = _steps_from_psr(Path(st["zip"]), d)
     if steps is not None:
         print("   步骤表：steps.md（%d 步）" % len(steps))
+    st["dialog_events"] = _dialog_events(float(st.get("started_epoch") or 0))
+    if st["dialog_events"]:
+        print("   弹窗事件：%d 条" % len(st["dialog_events"]))
     _write_report(d, st, steps, snap)
     print("② 报告：%s" % (d / "REPORT.md"))
     return 0
+
+
+def _dialog_events(started_epoch: float) -> list:
+    """本次录制期间**护栏抓到的弹窗事件**（output/dialogs/events.jsonl）。
+
+    ★ 业主 2026-10-26 要求「记录得特别全」⇒ 弹窗也是操作环境的一部分：
+      它常常是「命令为什么没生效」的唯一线索，必须进同一份报告。
+    """
+    import json as _json
+
+    log = R / "output" / "dialogs" / "events.jsonl"
+    if not log.is_file():
+        return []
+    out = []
+    cutoff = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(started_epoch - 5))
+    try:
+        for line in log.open(encoding="utf-8"):
+            try:
+                rec = _json.loads(line)
+            except Exception:  # noqa: BLE001
+                continue
+            if str(rec.get("t") or "") >= cutoff:
+                out.append(rec)
+    except Exception:  # noqa: BLE001
+        return out
+    return out
 
 
 def _model_snapshot(d: Path) -> dict:
@@ -331,6 +364,15 @@ def _write_report(d: Path, st: dict, steps, snap) -> None:
              "   `python -B tools/demo_capture.py --frame <步骤时间>`",
              "", "## 步骤数", ""]
     lines.append("- %d 步" % (len(steps) if steps else 0))
+    dialogs = st.get("dialog_events") or []
+    lines += ["", "## 弹窗事件（本次录制期间）", ""]
+    if dialogs:
+        for dg in dialogs:
+            lines.append("- %s 「%s」：%s"
+                         % (dg.get("t"), dg.get("title"),
+                            " / ".join(dg.get("kids") or [])[:120]))
+    else:
+        lines.append("- 无（或护栏日志里没有该时段记录）")
     if snap:
         lines += ["", "## 模型", "",
                   "- 文档：`%s`" % snap.get("document"),
