@@ -162,6 +162,7 @@ def _run(argv: list) -> int:
             holes_mm=tuple(tuple(p) for p in pos),
             size=str(hole.get("size") or "M6"),
             diameter_mm=float(diam),
+            dimension_style=str((recipe.get("hints") or {}).get("dimension_style") or "fixed_points"),
         )
         if doc is None:
             print("★ 建模失败：%s" % rep.get("error"))

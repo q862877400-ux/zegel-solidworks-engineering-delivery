@@ -144,7 +144,8 @@ def test_profile_defaults_when_missing(tmp_path, monkeypatch) -> None:
     monkeypatch.setenv("SW_PROFILES_DIR", str(tmp_path))
     eff = sw_habits.load("owner")
     assert eff["hole_standard"] == "GB"
-    assert eff["dimension_style"] == "to_edge"
+    #: ★ 本机实测：AddDimension 对成对实体返回 None ⇒ 默认走 fixed_points
+    assert eff["dimension_style"] == "fixed_points"
 
 
 def test_profile_save_load_and_unknown_key(tmp_path, monkeypatch) -> None:

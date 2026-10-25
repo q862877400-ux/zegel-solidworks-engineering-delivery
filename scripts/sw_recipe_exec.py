@@ -183,6 +183,7 @@ def build_plate_with_holes(
     fastener_index: int = GB_FASTENER_INDEX,
     size: str = "M6",
     diameter_mm: float = 6.6,
+    dimension_style: str = "fixed_points",
     trace: list | None = None,
 ):
     """建「板 + 一个孔特征含多个全定义孔位」。
@@ -276,7 +277,26 @@ def build_plate_with_holes(
                 added.append({"rel": label, "type": rt, "ok": okr})
             note("点关系", 明细=added)
 
-        #: ⑤ 退出草图 → 读状态
+        #: ⑤ 消掉剩余 4 个自由度（关系已消 4/8）
+        #:   ★ ixed_points：逐点 sgFIXED（实测 4 点全固定 ⇒ 状态 3、圆柱面 4）。
+        #:   ★ 	o_edge：本应标「点到板边」尺寸，但实测 AddDimension 在本机对
+        #:     **成对实体**（点+线、线+线）一律返回 None ⇒ 该风格当前不可用，
+        #:     代码保留但会走 ixed_points 并在报告里说明。
+        style = dimension_style
+        if style != "fixed_points":
+            note("风格降级", 请求=style, 实际="fixed_points",
+                 原因="AddDimension 对本机成对实体返回 None（实测）")
+        fixed = 0
+        for p in pts:
+            doc.ClearSelection2(True)
+            okp2, _ = _tc(p.Select4, False, _empty_dispatch())
+            if not okp2:
+                continue
+            okf2, _ = _tc(doc.SketchAddConstraints, "sgFIXED")
+            fixed += 1 if okf2 else 0
+        note("固定孔点", 成功=fixed, 总=len(pts))
+
+        #: ⑥ 退出草图 → 读状态
         _tc(sm.InsertSketch, True)
         okr2, _ = _tc(doc.EditRebuild3)
         st = _sketch_status(pos)

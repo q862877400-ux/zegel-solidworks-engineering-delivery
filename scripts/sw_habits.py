@@ -37,8 +37,9 @@ DEFAULT_HABITS = {
     "hole_size": "M6",
     #: M6 中等装配通孔直径（GB/T 5277-1985 ≡ ISO 273:1979）
     "hole_diameter_mm": 6.6,
-    #: 孔位约束风格：to_edge（点到边，示范的做法）| points_plus_fixed
-    "dimension_style": "to_edge",
+    #: 孔位约束风格：fixed_points（逐点 FIXED，**本机可用**）|
+    #:               to_edge（点到边尺寸，示范做法，本机 AddDimension 不可用）
+    "dimension_style": "fixed_points",
     #: 优先用阵列而不是多点（若实现支持）
     "prefer_pattern_over_points": False,
     #: 保存时是否顺带存一份 step

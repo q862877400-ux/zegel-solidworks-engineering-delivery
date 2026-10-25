@@ -68,3 +68,51 @@ board      凸台-拉伸1                          ✓
 2. 用校准后的坐标选 4 条板边 → `SketchUseEdge3(True, False)` → 断言草图线段 = 4
 3. 逐点标「点到边」尺寸 → `SetSystemValue2` 设 10 → 断言状态 3
 4. 复跑 `teach.py run` ⇒ 6/6
+
+
+---
+
+## 第 2 轮进展（2026-10-26 后半）
+
+### 决定性判别（两条，都有读数）
+
+`
+① AddDimension 在**普通草图**里：
+   点+线 → None   线+线 → None
+   ⇒ 本机「成对实体」的尺寸创建**整体不可用**，与「点不能标」无关
+② 孔位草图里 4 个点**逐个 sgFIXED**：
+   点1→状态2  点2→状态2  点3→状态2  点4→**状态3**，圆柱面 = 4
+   ⇒ 这是本机可用的全定义路径
+`
+
+### 因此实现的两种风格（hints.dimension_style）
+
+| 风格 | 说明 | 状态 |
+|---|---|---|
+| ixed_points | 逐点 sgFIXED（等价于给绝对坐标） | ✅ **本机可用**，默认 |
+| 	o_edge | 点到板边尺寸（业主示范的做法，参数化更好） | ❌ 被 AddDimension 阻塞 |
+
+★ 取舍如实写进报告：ixed_points 拿不到参数化（改不了「10」这个尺寸），
+  一旦尺寸 API 可用就应切回 	o_edge。habits.yaml 里可随时切换。
+
+### 当前真机读数（	each.py run）
+
+`
+feature_count_hole      PASS (1)
+hole_standard_gb        PASS (GB)
+hole_sketch_constrained PASS (3)     ← 本轮打通
+hole_size               PASS (M6)
+hole_fastener           PASS (螺钉间隙)
+cylinder_count          FAIL (2/4)   ← 仅剩这一条
+`
+
+### 仅剩的缺口：cylinder_count = 2
+
+事实：同一套 4 个点，probe_isolate.py 里算到 **4** 个圆柱面，
+而 	each.py run 里只有 **2**。两处差异待查（下一步，一次探针即可定）：
+- 两处**首个孔位不同**：isolate 用 (10,10)，recipe 用 (10,50)
+- recipe 路径多了一层 dimension_style 分支与 
+ote() 记录
+
+⇒ 判据：跑一个只改「首个孔位」的对照，看圆柱面数是否跟着变。
+   这是可复算的取证，不靠猜。
