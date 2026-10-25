@@ -80,6 +80,10 @@ _LOCATOR_PATTERNS = (
     r"(?i)\b(annex|appendix|clause|section|chapter)\s*[A-Z0-9]",
     r"\b[A-Z]{2,}(?:/[A-Z]{1,2})?\s*\d",             # GB/T 1804 · GB 30871 · ISO 2768
     r"\d+\s*\.\s*\d+",                            # 5.2 · 4.1.3
+    #: ★★★ 第 64 轮：`measured` 类证据的自然出处是「**文件 + 字段**」。
+    #:   `output/e3-feature-tree.json#features` / `output/x.json → features`
+    #:   ★ 只给文件名**不算**（没有指认到哪一条读数，与「见附件」同类）。
+    r"\S+\.(?:json|md|csv|txt|yaml|yml)\s*(?:#|::|→)\s*\S+",
 )
 
 

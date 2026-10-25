@@ -1,0 +1,105 @@
+# ★ 已发布的**支持参数域**（Support Domain）—— 第 65 轮
+
+# 仓库 / 文件 / 定位 / 官方依据 / 许可 / 覆盖
+# 仓库:   本项目自身（发布范围声明 · 规格 350 FR-013 / FR-014）
+# 文件:   docs/support-domain.yaml
+# 定位:   ★ 「这个系统支持什么、不支持什么」的**唯一**声明处。
+#           `scripts/check_support_domain.py` 读它做两件事：
+#           ① 校验**每条声明都有可核证据**（文件 + 字段必须真存在）
+#           ② 判定一个请求是否在域内（域外必须拒绝，不勉强生成）
+#           ★ 起因（spec 350 · User Story 5）：「不限定范围的『全支持』是虚假承诺」。
+# 官方依据: 不适用（本仓自定口径），但每条 limits 的 evidence 指向**真机读数**
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   全文件
+
+schema: support-domain/1
+#: ★ 声明的有效期起点：改动本文件必须同步改这个值，
+#:   且**旧证据在域变更后不再代表新域**（FR-014 的第一步）。
+declared_at: "2026-10-26"
+
+#: ── 运行环境（不是「支持任意版本」，是**只在这版上验过**）────────────────
+environment:
+  solidworks:
+    version: "SolidWorks 2026 SP4.1"
+    evidence: output/s3-acceptance.json#E4.components
+    note: >-
+      本域只在**本机这一版**上验证过。换 SP/版本必须重跑 E1–E7，
+      旧证据不代表新环境（FR-014）。
+
+#: ── 支持的对象（零件类型）────────────────────────────────────────────
+part_types:
+  - key: plate_rect_holes
+    name: 矩形平板 + 通孔
+    evidence: output/s3-acceptance.json#E3.tally
+    note: >-
+      特征树 11 项、原生 6 项、重建错误 0（真机读数）。
+      ★ 这是**当前唯一**验证过的零件类型。
+
+#: ── 参数域（每条都要有可核证据）──────────────────────────────────────
+limits:
+  plate_width_mm:
+    min: 40
+    max: 160
+    evidence: output/s3-acceptance.json#E2.bbox
+    note: >-
+      实测改动 100 → 120mm 成立（孔径与孔位随动）。上下界取「已验证值再留一格余量」，
+      ★ **不是**理论能力上限。
+
+  hole_count:
+    min: 4
+    max: 4
+    evidence: output/s3-acceptance.json#E2.holes_after
+    note: >-
+      只验过 4 孔矩形阵列。★ 孔数变化属于超出本域，必须拒绝而不是硬生成。
+
+  sketch_solver_state:
+    allowed: [3]
+    evidence: output/s3-acceptance.json#E1.solver_status
+    note: >-
+      只接受「完全定义」（求解状态 3）。欠定义/过定义一律超域。
+
+#: ── 已验过的装配能力 ────────────────────────────────────────────────
+assembly:
+  components:
+    min: 2
+    max: 2
+    evidence: output/e4-standalone.json#steps.persisted
+    note: >-
+      两组件 + 一条重合配合，配合与间隙**存盘重开后仍在**（`persisted.ok=true`）。
+      ★ 更多组件、更多配合类型**未验证**。
+
+#: ── **明确不支持**的请求（这些必须被拒绝，不是「尽力而为」）────────────
+unsupported:
+  - key: drawing
+    match: ["图样", "工程图", "图纸", "出图", "标注", "drawing", "GD&T"]
+    reason: >-
+      E5（图样合规）未成立：采集器与判定器在、但**没有图纸产物**，也没有必需的标注清单。
+
+  - key: process_plan
+    match: ["工艺", "工序", "加工路线", "刀具", "process"]
+    reason: >-
+      E6（工艺可行）未成立：S2 的工艺路线**未冻结**（等用户给需求），
+      不能凭猜测出工艺卡。
+
+  - key: dof_closure
+    match: ["自由度", "完全约束装配", "dof"]
+    reason: >-
+      E4.dof 在本机**永久 unknown**：SolidWorks API 没有数值自由度读取入口（三源确认）。
+      ★ 不能拿「按配合数推算的估算值」冒充实测。
+
+  - key: material_selection
+    match: ["选材", "材料牌号", "热处理", "material"]
+    reason: >-
+      S2 的材料需求未冻结 ⇒ 没有任何经批准的选材依据。
+
+  - key: load_analysis
+    match: ["载荷", "强度校核", "疲劳", "仿真", "FEA"]
+    reason: >-
+      S2 的载荷与安全等级未冻结；且仿真链未纳入 E1–E7 验收。
+
+#: ── 人工审核条件（发布说明必须写清，FR-013）──────────────────────────
+manual_review:
+  - condition: 任何进入交付的模型
+    why: 首件只过了 E1/E2.rebuild/E3/E4.interference/E7，E2.hole_readback 仍 fail
+  - condition: 间隙与配合的**工程合理性**
+    why: 判据只认「有实测依据」，**阈值未冻结**（属 S2 用户需求）

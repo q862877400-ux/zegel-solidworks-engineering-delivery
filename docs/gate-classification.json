@@ -564,6 +564,12 @@
       "runner": "_run_unit_naming_gate",
       "kind": "release_static",
       "reason": "★ 硬门禁（2026-10-26 · 业主「米和毫米的问题反复出现，从根本上解决」）：判 `scripts/` 与 `tools/` 里所有函数的形参 —— 命中量纲词表却没有单位后缀（`_mm`/`_m`/`_deg`/`_rad`/`_mpa`/`_n`/`_s`…）即违规。量纲表覆盖官方枚举 swLengthUnit_e / swAngleUnit_e / swNumberboxUnitType_e / swUnitsForce_e / swUnitsEnergyUnit_e / swUnitsPowerUnit_e / swUnitsTimeUnit_e / swUnitsMassPropMass_e / swUnitsMassPropVolume_e，加仿真常见量（力矩/速度/加速度/刚度/应变/温度/百分比）。基线 docs/unit-naming-baseline.json 只许降不许升。真因：sw_part 收毫米、sw_assembly.add_component 收米，形参都是裸名 ⇒ 调用方无从分辨（实测把组件放到 30 米外）。"
+    },
+    {
+      "gate": "check_support_domain.py",
+      "runner": "_run_support_domain_gate",
+      "kind": "release_static",
+      "reason": "★ 硬门禁（2026-10-26 · spec 350 User Story 5 / FR-013 / FR-014）：判 docs/support-domain.yaml 的每条 evidence 文件存在且 JSON 字段可达、limits 区间 min<=max、unsupported 每项有 reason 与 match。起因：「不限定范围的『全支持』是虚假承诺」，而域外请求必须被拒绝而不是勉强生成。"
     }
   ]
 }

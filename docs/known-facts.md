@@ -7150,6 +7150,36 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 575 | **支持参数域**落地：`docs/support-domain.yaml` + `scripts/check_support_domain.py`（声明可核 + 域外拒绝），接进 `release_check` 作**硬门禁** | 2026-10-26（第 65 轮）。
+     ★ 依据：spec 350 · User Story 5 / FR-013 / FR-014 ——
+       「**不限定范围的『全支持』是虚假承诺**」，且「超出已发布参数域的请求被拒绝而不是勉强生成」。
+     ★★ 设计要点：**「声明支持什么」这件事本身要能被机器查**，否则它就退化成一段好话。
+     三条判据（`--self-check`）：
+     ```
+     ① 每条 evidence 指向的**文件必须存在**、`#字段` 在 JSON 里**真能找到**
+        （6 条 evidence 全核；不存在的文件/字段一律 FAIL）
+     ② limits 每个区间 min ≤ max
+     ③ unsupported 每项必须有 reason **与** match 词表（只写「不支持」不说为什么 = 空话）
+     ```
+     ★ 域外拒绝（`--request req.json`，非 0 退出）：
+     零件类型不在列表 / 数值超界 / `asks` 命中 unsupported 的 match ——
+     **哪怕数值全合格**，只要要图样/工艺/自由度证明/选材/载荷分析就必须拒。
+     ★★ 当前声明的域（诚实版，只含**验过的**）：
+     ```
+     零件类型   plate_rect_holes（矩形平板 + 通孔）1 种
+     参数域     plate_width_mm 40–160 · hole_count 只 4 · solver_state 只 3（完全定义）
+     装配       两组件 + 一条重合配合（存盘重开后仍在）
+     不支持     图样 · 工艺 · 自由度闭合 · 选材 · 载荷分析（5 条，各带 reason）
+     人工审核   ① 任何进入交付的模型（E2.hole_readback 仍 fail）
+                ② 间隙与配合的工程合理性（阈值属 S2，未冻结）
+     ```
+     ★ 踩到的真缺口：测试用 `asks: ["出图"]` 时**没被拒** ——
+       `drawing` 的 match 词只有 图样/工程图/标注/drawing/GD&T，漏了「**出图**」「图纸」。
+       ⇒ 补词后通过。★ 这正是「域外拒绝器必须被测」的理由：
+         一个永不返回 False 的 `classify` 看起来和正常的一样。
+     ★ 门禁登记：`docs/gate-classification.json` 第 62 条，`release_static`（硬拦）。
+|真机：不适用（本项是规则/门禁，不是真机读数）· 测试 `tests/test_support_domain.py`（15 条）· `python -B scripts/check_support_domain.py --self-check` |
+
 | 574 | **E7 出处链接通**（4 条实测结论各挂出处）—— 判据原缺 `measured` 的 locator 形态 | 2026-10-26（第 64 轮）。
      ★★ 发现的问题（**判据与它要抓的对象不贴合**）：
      `e7_provenance.py` 的 `VALID_SOURCES` 有 `measured`（本机实测读数），

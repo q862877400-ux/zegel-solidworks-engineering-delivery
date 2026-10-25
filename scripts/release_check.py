@@ -544,6 +544,36 @@ def _run_unit_naming_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_support_domain_gate() -> dict[str, object]:
+    """@brief 跑「支持参数域」门禁（scripts/check_support_domain.py --self-check）。
+
+    ★ 来源：spec 350 · User Story 5 / FR-013 / FR-014 ——
+      「不限定范围的『全支持』是虚假承诺」，且域外请求必须被拒绝而不是勉强生成。
+
+    ★ 判据：`docs/support-domain.yaml` 每条 evidence 的
+      文件存在 + JSON 字段可达；limits 区间 min≤max；unsupported 每项有 reason 与 match。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_support_domain.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "支持域门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_env_pitfalls_gate() -> dict[str, object]:
     """@brief 跑环境坑门禁（`scripts/check_env_pitfalls.py`）。"""
     try:
@@ -3044,6 +3074,14 @@ def run_release_check() -> dict[str, object]:
             "单位命名门禁未通过（米/毫米这类量纲混用会静默产生错模型）：\n"
             + str(un.get("output", ""))
         )
+    #: ⚑ **支持参数域门禁**（硬门禁）：★ spec 350 FR-013/FR-014 ——
+    #:   「不限定范围的『全支持』是虚假承诺」；域外请求必须被拒绝而不是勉强生成。
+    sd = _run_support_domain_gate()
+    if sd.get("status") == "fail":
+        raise AssertionError(
+            "支持参数域门禁未通过（声明的证据不可核 / 域外拒绝器失效）：\n"
+            + str(sd.get("output", ""))
+        )
     # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
     #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
     #     证据等级在枚举内 / 有未确认段）。
@@ -3353,6 +3391,7 @@ def run_release_check() -> dict[str, object]:
         #:   （`_gate_results` ⇒ 由 `gates` / `gate_details` 统一暴露给外面）✓
         "repo_uniformity": ru,
         "unit_naming": un,
+        "support_domain": sd,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓
         "survey_cards": sc,
