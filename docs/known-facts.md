@@ -7267,8 +7267,21 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
        ⇒ 现在每次设多值 COM 参数后都要**读回**（`setup_effective`）。
      ★★ 但「设置生效」之后 `CreateMate` **仍回 `None`**（配合特征 0 → 0），
        且这一轮两面是**不共面**的（组件 2 抬到 z=50mm，顶面 z=20 vs z=70）
-       ⇒ 「共面冗余」也已排除。`ICoincidentMateFeatureData` 的第三个成员
-       `PickPoints` **尚未试**；「先把装配存盘再建配合」也**尚未试**。
+       ⇒ 「共面冗余」也已排除。
+     ★★★ **第 58 轮再排除一个（最后一个「显而易见」的候选）**：
+       `--no-cip`（**不**置 `CommandInProgress`，改起同进程 ESC 线程兜框）。
+       依据是第 52–55 轮的一条硬事实：`CommandInProgress=True` 时 UI 被抑制，
+       API 会**静默返回默认值而不报错**（`SendMsgToUser2` 0.4 秒回 `swMbHitOk` 即此）。
+       本轮实测（设置已验证生效：`entities` 读回 2、`alignment` 读回 2）：
+       ```
+       --no-cip：不抑制 UI，并起了 ESC 线程兜框
+       try_mate  {'data_ok': True, 'create_ok': True, 'feat_none': True,
+                  'mates_before': 0, 'mates_after': 0}
+       ```
+       ⇒ `CreateMate` **仍回 None** ⇒ **UI 抑制不是原因**。
+     ★★ **剩余未试**（从这两条开始，别重走上面 11 条）：
+       · `PickPoints` 显式给坐标（6 个 double：两个实体各一组 x,y,z）
+       · **先把装配存盘再建配合**（`CreateMate` 是否需要文档落盘，未知）
      ★ 另：本机 `ISldWorks.GetDocuments` 是**属性**不是方法 —— `sw.GetDocuments()` 会
        `TypeError: 'tuple' object is not callable`（同一轮两次踩到）。|真机：`tools/probe_e4_assembly.py`（`--nonplanar` 变体）；证据 `output/e4-assembly.json` |
 
