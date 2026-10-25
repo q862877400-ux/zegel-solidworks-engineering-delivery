@@ -90,6 +90,7 @@ Step 'build_union_map'    { python tools/build_union_map.py       *> $null }
 #: ★ 2026-10-02（轮 363）新增：把「已走死的路」清单重算一遍
 #:   （★ 来源：轮 359–362 我重走了前人早已走死的 `revolve_boss` 轴路径）
 Step 'gen_dead_ends'      { python tools/gen_dead_ends.py          *> $null }
+Step 'gen_com_member_index' { python tools/gen_com_member_index.py *> $null }
 # ★ 生成器可能有副作用（重写 metrics 等）⇒ 再同步一次快照（★ 0.3 s，便宜且必要）
 Step 'sync_bundled_skill²' { python scripts/sync_bundled_skill.py *> $null }
 

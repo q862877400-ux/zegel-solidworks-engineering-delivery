@@ -7150,6 +7150,39 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 580 | **★★★ 动 COM 成员前先反查「我们封过没」** —— 我手写了 3 个本仓早就封过的成员 | 2026-10-26（第 71 轮，业主质问）。
+     ★★★ 业主原话：
+     ```
+     「你怎么又开始查官方 API 了？…我们自己不是有草图阵列的这个 MCP 工具吗？
+       就是我们自己之前不是做过了吗？…你是不是选择了直接去查官方文档，
+       而不是去利用我们之前已经梳理过的 API 工具呢？」
+     ```
+     ★ 实情（反查表当场证实）：
+     ```
+     IModelDoc2.AddDimension2          → scripts/sw_part.py::add_dimension_report     ✅ 有
+     IModelDoc2.AddVerticalDimension2  → scripts/sw_sketch_dimensions.py::add_vertical_dimension ✅
+     IModelDoc2.EditDelete             → scripts/sw_part.py::feature_delete           ✅ 有
+     IModelDoc2.SelectByID2            → 无封装（真缺口）
+     ISketchManager.CreatePoint        → 无封装（真缺口）
+     ISketchManager.CreateLinearSketchStepAndRepeat → 无封装（真缺口）
+     ```
+     ⇒ 3/6 白写了一遍。★ 更糟的是**我手写的那版还错了**：
+       `AddDimension2` 在 `IModelDoc2` 上、不在 `ISketchManager` 上（`AttributeError`），
+       而现成封装早就知道这件事。
+     ★★★ 真因与治法：本仓 140 条能力 / 数百 ToolSpec，但**没有「COM 成员 → 我们的封装」
+       反查表** ⇒ 只记得官方成员名，不记得自己封过。
+       ⇒ 新增 `tools/gen_com_member_index.py`（从 `scripts/*.py` 的 docstring 抽
+          `I<接口>.<成员>`，按所在函数归集成 `docs/com-member-index.{md,json}`）
+          + `tools/find_com_wrapper.py <成员>`（反查）。
+          索引规模：**182 个成员**有封装记录。
+     ★ 纪律：**动任何 COM 成员前**先跑反查；只在「无封装」时才自己写，并把缺口写进报告。
+       （AGENTS.md §十七 原本就要求「按 ToolSpec 契约调，别手调内部实现」——
+         本轮违反了它。）
+     ★ 另一条同源的错：我临时写了 `build_first_part_v3.py` / `v4.py` 两个重叠工具，
+       克隆组从 76 涨到 **78** ⇒ 已删除。**新工具不是临时脚手架** ——
+       要么并进既有模块，要么先查有没有现成的。
+|真机：`python -B tools/find_com_wrapper.py AddDimension2` · 索引 `docs/com-member-index.md` |
+
 | 579 | **★★★ 轴语义：Y 才是「上下」，Z 是「前后（深度）」** —— 我把 `z_m` 当抬高，业主一眼看出两块一样高 | 2026-10-26（第 69 轮）。
      ★★★ 业主原话（这次纠正的方式本身也是方法论）：
      ```

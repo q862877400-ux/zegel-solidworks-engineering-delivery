@@ -1,0 +1,1541 @@
+{
+  "GetHoleStandards": [
+    {
+      "module": "scripts/audit_call_arity.py",
+      "function": "load_signatures",
+      "interface": "HoleStandardsData"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "list_hole_standards",
+      "interface": "HoleStandardsData"
+    }
+  ],
+  "GetConstrainedStatus": [
+    {
+      "module": "scripts/engineering/acceptance/e1_sketch.py",
+      "function": "collect_sketch_constraint",
+      "interface": "Sketch"
+    },
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_dimensions",
+      "interface": "Sketch"
+    },
+    {
+      "module": "scripts/sw_sketch_status.py",
+      "function": "get_constrained_status",
+      "interface": "Sketch"
+    }
+  ],
+  "GetInterferenceCount": [
+    {
+      "module": "scripts/engineering/acceptance/e4_assembly.py",
+      "function": "judge_assembly_interference",
+      "interface": "InterferenceDetectionMgr"
+    }
+  ],
+  "AddRelation": [
+    {
+      "module": "scripts/sketch_relations.py",
+      "function": "create_spline",
+      "interface": "SketchRelationManager"
+    }
+  ],
+  "GetInterferences": [
+    {
+      "module": "scripts/sw_assembly.py",
+      "function": "get_interference_detection",
+      "interface": "InterferenceDetectionMgr"
+    }
+  ],
+  "EditPart2": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "edit_part_in_context",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "Select4": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "edit_part_in_context",
+      "interface": "Component2"
+    },
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "create_speedpak_report",
+      "interface": "Component2"
+    },
+    {
+      "module": "scripts/sw_net_blend.py",
+      "function": "select_face_with_fallback",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "_select_revolve_axis",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_selection_spec.py",
+      "function": "select_object",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_sheet_metal.py",
+      "function": "_select_fixed_face_and_bends",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_sheet_metal.py",
+      "function": "create_hem",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_sketch_relations.py",
+      "function": "apply_sketch_relations",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_fill_surface_report",
+      "interface": "Entity"
+    },
+    {
+      "module": "scripts/sw_weld_bead.py",
+      "function": "_select_edge_by_index",
+      "interface": "Entity"
+    }
+  ],
+  "Select2": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "edit_part_in_context",
+      "interface": "Component2"
+    }
+  ],
+  "EditAssembly": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "exit_edit_part_in_context",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "ListExternalFileReferencesCount": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "list_external_file_references_count",
+      "interface": "Component2"
+    }
+  ],
+  "CreateExplodedView": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "create_exploded_view",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "AutoExplode": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "auto_explode",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "ViewExplodeAssembly": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "view_explode_assembly",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "ViewCollapseAssembly": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "view_collapse_assembly",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "ShowExploded2": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "show_exploded",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "GetExplodedViewConfigurationName": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "get_exploded_view_configuration_name",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "EditExplodeParameters": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "edit_explode_parameters",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "InsertExplodeLineSketch": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "insert_explode_line_sketch_report",
+      "interface": "SketchManager"
+    }
+  ],
+  "CreateSpeedPak": [
+    {
+      "module": "scripts/sw_assembly_doc.py",
+      "function": "create_speedpak_report",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "InsertChainDimensions": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "get_com_member",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "insert_chain_dimensions",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetProcessID": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "solidworks_process_id",
+      "interface": "SldWorks"
+    },
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "residual_dialogs",
+      "interface": "SldWorks"
+    }
+  ],
+  "GetDocuments": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "open_doc_count",
+      "interface": "SldWorks"
+    }
+  ],
+  "CreateNewStudy3": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "out_i4",
+      "interface": "CWStudyManager"
+    }
+  ],
+  "GetFastenerTable": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "out_dispatch",
+      "interface": "HoleStandardsData"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "get_fastener_table",
+      "interface": "HoleStandardsData"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "_out_container",
+      "interface": "HoleStandardsData"
+    }
+  ],
+  "RevisionNumber": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "connect_solidworks",
+      "interface": "SldWorks"
+    }
+  ],
+  "NewDocument": [
+    {
+      "module": "scripts/sw_connect.py",
+      "function": "open_document",
+      "interface": "SldWorks"
+    }
+  ],
+  "GetAddInObject": [
+    {
+      "module": "scripts/sw_costing.py",
+      "function": "get_costing_manager",
+      "interface": "SldWorks"
+    },
+    {
+      "module": "scripts/sw_simulation.py",
+      "function": "ensure_simulation_addin",
+      "interface": "SldWorks"
+    }
+  ],
+  "GetFaces": [
+    {
+      "module": "scripts/sw_curve_and_split.py",
+      "function": "_face_loop_stats",
+      "interface": "Body2"
+    }
+  ],
+  "GetLoopCount": [
+    {
+      "module": "scripts/sw_curve_and_split.py",
+      "function": "_face_loop_stats",
+      "interface": "Face2"
+    }
+  ],
+  "InsertSplitLineProject": [
+    {
+      "module": "scripts/sw_curve_and_split.py",
+      "function": "insert_split_line_project",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertSplitLineSil": [
+    {
+      "module": "scripts/sw_curve_and_split.py",
+      "function": "insert_split_line_silhouette",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertMateReference2": [
+    {
+      "module": "scripts/sw_curve_and_split.py",
+      "function": "insert_mate_reference",
+      "interface": "FeatureManager"
+    }
+  ],
+  "CustomPropertyManager": [
+    {
+      "module": "scripts/sw_custom_property.py",
+      "function": "custom_property_manager",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "Count": [
+    {
+      "module": "scripts/sw_custom_property.py",
+      "function": "custom_property_count",
+      "interface": "CustomPropertyManager"
+    },
+    {
+      "module": "scripts/sw_simulation_loads.py",
+      "function": "_loads_count",
+      "interface": "CWLoadsAndRestraintsManager"
+    }
+  ],
+  "Get6": [
+    {
+      "module": "scripts/sw_custom_property.py",
+      "function": "_read_value_via_get6",
+      "interface": "CustomPropertyManager"
+    }
+  ],
+  "SystemValue": [
+    {
+      "module": "scripts/sw_document_data.py",
+      "function": "_dimension_value_mm",
+      "interface": "Dimension"
+    }
+  ],
+  "InsertBreak3": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "_find_view",
+      "interface": "View"
+    },
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "insert_break_lines",
+      "interface": "View"
+    }
+  ],
+  "CreateAuxiliaryViewAt2": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "create_auxiliary_view",
+      "interface": "DrawingDoc"
+    }
+  ],
+  "InsertSurfaceFinishSymbol3": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "insert_surface_finish_symbol",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetSFSymbolCount": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "insert_surface_finish_symbol",
+      "interface": "View"
+    }
+  ],
+  "InsertDatumTag2": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "insert_datum_tag",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "GetDatumTagCount": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "insert_datum_tag",
+      "interface": "View"
+    }
+  ],
+  "AutoBalloon5": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "auto_insert_balloons",
+      "interface": "DrawingDoc"
+    }
+  ],
+  "GetNoteCount": [
+    {
+      "module": "scripts/sw_drawing_create_missing.py",
+      "function": "auto_insert_balloons",
+      "interface": "View"
+    }
+  ],
+  "SetLabel2": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "create_section_view",
+      "interface": "DrSection"
+    }
+  ],
+  "GetSection": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "create_section_view",
+      "interface": "View"
+    }
+  ],
+  "SetTemplateName": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "set_sheet_format",
+      "interface": "Sheet"
+    }
+  ],
+  "InsertHoleTable3": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "create_hole_table",
+      "interface": "View"
+    }
+  ],
+  "InsertTableAnnotation": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "create_hole_table",
+      "interface": "DrawingDoc"
+    }
+  ],
+  "InsertRevisionTable2": [
+    {
+      "module": "scripts/sw_drawing_expose.py",
+      "function": "create_revision_table",
+      "interface": "Sheet"
+    }
+  ],
+  "GetSheetCount": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "sheet_count",
+      "interface": "DrawingDoc"
+    }
+  ],
+  "GetSheetNames": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "sheet_names",
+      "interface": "DrawingDoc"
+    }
+  ],
+  "GetName": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "current_sheet_name",
+      "interface": "Sheet"
+    }
+  ],
+  "GetProperties2": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "current_sheet_info",
+      "interface": "Sheet"
+    }
+  ],
+  "GetProperties": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "get_sheet_scale_report",
+      "interface": "Sheet"
+    }
+  ],
+  "SetScale": [
+    {
+      "module": "scripts/sw_drawing_query.py",
+      "function": "set_sheet_scale_report",
+      "interface": "Sheet"
+    }
+  ],
+  "ScaleRatio": [
+    {
+      "module": "scripts/sw_drawing_view.py",
+      "function": "get_view_scale_ratio",
+      "interface": "View"
+    },
+    {
+      "module": "scripts/sw_drawing_view.py",
+      "function": "set_view_scale",
+      "interface": "View"
+    }
+  ],
+  "GetEquationMgr": [
+    {
+      "module": "scripts/sw_equation.py",
+      "function": "_manager",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "SaveAs": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "export_to_pdf",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_export.py",
+      "function": "_export_generic",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetMassProperties": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "get_mass_property_override_options",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetMassProperties2": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "get_mass_property_override_options",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "Create": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "get_mass_property_override_options",
+      "interface": "Modeler"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "thicken_surface_report",
+      "interface": "Modeler"
+    },
+    {
+      "module": "scripts/sw_weldment.py",
+      "function": "create_cut_list",
+      "interface": "Modeler"
+    }
+  ],
+  "SaveBMP": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "export_to_bmp",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "SaveAs3": [
+    {
+      "module": "scripts/sw_export.py",
+      "function": "export_to_image",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "IsCylinder": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "find_cylindrical_face",
+      "interface": "Surface"
+    },
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "insert_cosmetic_thread",
+      "interface": "Surface"
+    }
+  ],
+  "InsertCosmeticThread3": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "insert_cosmetic_thread",
+      "interface": "FeatureManager"
+    }
+  ],
+  "FeatureBossThicken": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "thicken_surface",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "thicken_surface",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "thicken_surface_report",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "thicken_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "FeatureCutThicken": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "thicken_surface",
+      "interface": "FeatureManager"
+    }
+  ],
+  "ThickenSheet": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "thicken_surface",
+      "interface": "Modeler"
+    }
+  ],
+  "InsertFlattenSurface2": [
+    {
+      "module": "scripts/sw_feature_entry_ops.py",
+      "function": "create_flatten_surface",
+      "interface": "FeatureManager"
+    }
+  ],
+  "GetBodies2": [
+    {
+      "module": "scripts/sw_feature_readback.py",
+      "function": "solid_body_extent_mm",
+      "interface": "PartDoc"
+    },
+    {
+      "module": "scripts/sw_fingerprint.py",
+      "function": "read",
+      "interface": "PartDoc"
+    },
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "create_midsurface",
+      "interface": "PartDoc"
+    }
+  ],
+  "GetBodyBox": [
+    {
+      "module": "scripts/sw_feature_readback.py",
+      "function": "solid_body_extent_mm",
+      "interface": "Body2"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "get_bounding_box",
+      "interface": "Body2"
+    }
+  ],
+  "GetBox": [
+    {
+      "module": "scripts/sw_feature_readback.py",
+      "function": "solid_body_extent_mm",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_feature_readback.py",
+      "function": "solid_body_extent_mm",
+      "interface": "Feature"
+    },
+    {
+      "module": "scripts/sw_scene.py",
+      "function": "component_boxes",
+      "interface": "Component2"
+    }
+  ],
+  "FeatureByName": [
+    {
+      "module": "scripts/sw_feature_readback.py",
+      "function": "extrude_depth",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_sweep.py",
+      "function": "create_sweep_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "GetDisplayStateSetting": [
+    {
+      "module": "scripts/sw_fingerprint.py",
+      "function": "read",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetActiveConfiguration": [
+    {
+      "module": "scripts/sw_fingerprint.py",
+      "function": "read",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertGtol": [
+    {
+      "module": "scripts/sw_gtol.py",
+      "function": "insert_gtol",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "AddFrame": [
+    {
+      "module": "scripts/sw_gtol.py",
+      "function": "add_gtol_frame",
+      "interface": "Gtol"
+    },
+    {
+      "module": "scripts/sw_gtol.py",
+      "function": "ensure_gtol_frame",
+      "interface": "Gtol"
+    }
+  ],
+  "AddIndicator": [
+    {
+      "module": "scripts/sw_gtol.py",
+      "function": "add_gtol_indicator",
+      "interface": "GtolFrame"
+    }
+  ],
+  "GetFrame": [
+    {
+      "module": "scripts/sw_gtol.py",
+      "function": "add_gtol_indicator",
+      "interface": "Gtol"
+    }
+  ],
+  "GetLastFeatureAdded": [
+    {
+      "module": "scripts/sw_helix.py",
+      "function": "_newest_feature_name",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetFastenerTypes": [
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "list_fastener_types",
+      "interface": "HoleStandardsData"
+    }
+  ],
+  "GetFastenerTableTypes": [
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "list_fastener_table_types",
+      "interface": "HoleStandardsData"
+    }
+  ],
+  "GetHoleStandardsData": [
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "_hole_standards_data",
+      "interface": "SldWorks"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "list_hole_standards",
+      "interface": "SldWorks"
+    }
+  ],
+  "HoleWizard5": [
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "_holewizard5_call",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "create_hole_wizard_at_point_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "SelectByRay": [
+    {
+      "module": "scripts/sw_hole_features.py",
+      "function": "create_hole_wizard_at_point_report",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetArea": [
+    {
+      "module": "scripts/sw_mass_property.py",
+      "function": "section_properties",
+      "interface": "Face2"
+    },
+    {
+      "module": "scripts/sw_mass_property.py",
+      "function": "section_area_crosscheck",
+      "interface": "Face2"
+    }
+  ],
+  "CreateMeasure": [
+    {
+      "module": "scripts/sw_measure.py",
+      "function": "measure_selection_report",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "MoldDraftAnalysis": [
+    {
+      "module": "scripts/sw_mold.py",
+      "function": "mold_draft_analysis",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_mold.py",
+      "function": "mold_draft_analysis",
+      "interface": "FeatureManager"
+    }
+  ],
+  "MoldUndercutDetect": [
+    {
+      "module": "scripts/sw_mold.py",
+      "function": "mold_undercut_detect",
+      "interface": "FeatureManager"
+    }
+  ],
+  "GetPartingLinesCount": [
+    {
+      "module": "scripts/sw_mold.py",
+      "function": "mold_evidence",
+      "interface": "FeatureManager"
+    }
+  ],
+  "PartingType": [
+    {
+      "module": "scripts/sw_mold.py",
+      "function": "mold_evidence",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "CreateSelectData": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "_select_com_object",
+      "interface": "SelectionMgr"
+    }
+  ],
+  "CreatePolygon": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_polygon",
+      "interface": "SketchManager"
+    }
+  ],
+  "AutoDimension2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "auto_dimension_sketch",
+      "interface": "Sketch"
+    }
+  ],
+  "FeatureRevolve2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "revolve_cut",
+      "interface": "FeatureManager"
+    }
+  ],
+  "FeatureFillet": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "fillet",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "EditSuppress2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "feature_suppress",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "EditUnsuppress2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "feature_unsuppress",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "EditDelete": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "feature_delete",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertRib": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "rib",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "rib",
+      "interface": "ModelDoc"
+    }
+  ],
+  "CreateEllipse": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_ellipse",
+      "interface": "SketchManager"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_ellipse",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "CreateCenterLine": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_centerline",
+      "interface": "SketchManager"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "sketch_centerline",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertDome": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "insert_dome",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_part.py",
+      "function": "select_face_by_index_mark1",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertCompositeCurve": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "insert_composite_curve",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertAxis2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "create_axis_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "AddDimension2": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "add_dimension_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "FeatureLinearPattern3": [
+    {
+      "module": "scripts/sw_part.py",
+      "function": "linear_pattern_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "FeatureLocalCurveDrivenPattern": [
+    {
+      "module": "scripts/sw_pattern.py",
+      "function": "insert_local_curve_driven_pattern_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertRefPlane": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_ref_plane",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertCoordinateSystem": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_coordinate_system",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_coordinate_system",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertReferencePoint": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_reference_point",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertCenterOfMass": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_center_of_mass",
+      "interface": "FeatureManager"
+    }
+  ],
+  "Create3DBoundingBox": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "create_3d_bounding_box",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "InsertGlobalBoundingBox2": [
+    {
+      "module": "scripts/sw_ref_geometry.py",
+      "function": "insert_global_bounding_box",
+      "interface": "FeatureManager"
+    }
+  ],
+  "ActiveView": [
+    {
+      "module": "scripts/sw_review.py",
+      "function": "set_standard_view",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_view.py",
+      "function": "get_active_view",
+      "interface": "ModelDoc"
+    }
+  ],
+  "SelectionManager": [
+    {
+      "module": "scripts/sw_selection.py",
+      "function": "get_selection_manager",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "ClearSelection2": [
+    {
+      "module": "scripts/sw_selection_spec.py",
+      "function": "clear_selection",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "GetVertices": [
+    {
+      "module": "scripts/sw_selection_spec.py",
+      "function": "entities_on_body",
+      "interface": "Body2"
+    },
+    {
+      "module": "scripts/sw_selection_spec.py",
+      "function": "entities_on_body",
+      "interface": "Loop2"
+    }
+  ],
+  "GetFeatureCount": [
+    {
+      "module": "scripts/sw_sensor.py",
+      "function": "_iter_features",
+      "interface": "FeatureManager"
+    }
+  ],
+  "GetNextFeature": [
+    {
+      "module": "scripts/sw_sensor.py",
+      "function": "_iter_features",
+      "interface": "Feature"
+    }
+  ],
+  "EditUndo2": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "undo_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "NeedsRebuild2": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "needs_rebuild_status",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "EditRebuild3": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "rebuild_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "ForceRebuild3": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "rebuild_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "ForceRebuildAll": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "rebuild_report",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetSaveFlag": [
+    {
+      "module": "scripts/sw_session.py",
+      "function": "open_documents",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertSheetMetalMiterFlange": [
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "insert_sheet_metal_miter_flange",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertSheetMetalClosedCorner": [
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "insert_sheet_metal_closed_corner",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertEndCapFeature3": [
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "insert_weldment_end_cap",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertGussetFeature3": [
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "insert_weldment_gusset",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertMidSurface": [
+    {
+      "module": "scripts/sw_sheet_metal_weld_entry.py",
+      "function": "insert_mid_surface",
+      "interface": "FeatureManager"
+    }
+  ],
+  "GetSelectedObjectCount2": [
+    {
+      "module": "scripts/sw_simulation.py",
+      "function": "select_face_at",
+      "interface": "SelectionManager"
+    }
+  ],
+  "SolverType": [
+    {
+      "module": "scripts/sw_simulation.py",
+      "function": "static_solver_type_report",
+      "interface": "CWStaticStudyOptions"
+    }
+  ],
+  "ElementCount": [
+    {
+      "module": "scripts/sw_simulation.py",
+      "function": "solve_memory_preflight",
+      "interface": "CWMesh"
+    }
+  ],
+  "NodeCount": [
+    {
+      "module": "scripts/sw_simulation.py",
+      "function": "solve_memory_preflight",
+      "interface": "CWMesh"
+    }
+  ],
+  "GetComponents": [
+    {
+      "module": "scripts/sw_simulation_loads.py",
+      "function": "apply_pin_connector_report",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "ActiveDoc": [
+    {
+      "module": "scripts/sw_simulation_worker.py",
+      "function": "create_mesh_safely_by_name",
+      "interface": "SldWorks"
+    }
+  ],
+  "ActiveSketch": [
+    {
+      "module": "scripts/sw_sketch.py",
+      "function": "active_sketch",
+      "interface": "SketchManager"
+    },
+    {
+      "module": "scripts/sw_sketch_edit.py",
+      "function": "_active_sketch_segment_count",
+      "interface": "SketchManager"
+    },
+    {
+      "module": "scripts/sw_sketch_status.py",
+      "function": "_active_sketch",
+      "interface": "SketchManager"
+    }
+  ],
+  "RelationManager": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "_relations",
+      "interface": "Sketch"
+    },
+    {
+      "module": "scripts/sw_sketch_relations.py",
+      "function": "_val",
+      "interface": "Sketch"
+    }
+  ],
+  "AddHorizontalDimension2": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "add_horizontal_dimension",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "AddVerticalDimension2": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "add_vertical_dimension",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "AddPathLengthDim": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "add_path_length_dimension",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "FullyDefineSketch": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "fully_define_sketch",
+      "interface": "SketchManager"
+    }
+  ],
+  "GetRelationsCount": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_relations",
+      "interface": "SketchRelationManager"
+    }
+  ],
+  "GetFirstDisplayDimension": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_dimensions",
+      "interface": "Feature"
+    }
+  ],
+  "GetNext2": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_dimensions",
+      "interface": "DisplayDimension"
+    }
+  ],
+  "GetNextDisplayDimension": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_dimensions",
+      "interface": "Feature"
+    }
+  ],
+  "DeleteAllRelations": [
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "delete_all_sketch_relations",
+      "interface": "SketchRelationManager"
+    }
+  ],
+  "ConstructionGeometry": [
+    {
+      "module": "scripts/sw_sketch_edit_ops.py",
+      "function": "_construction_flags",
+      "interface": "SketchSegment"
+    }
+  ],
+  "ArrayData": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "_sketch_transform_translation",
+      "interface": "MathTransform"
+    }
+  ],
+  "SketchModifyTranslate": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "sketch_move",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "SketchModifyRotate": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "sketch_rotate",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "SketchModifyScale": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "sketch_scale",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "Stretch": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "sketch_stretch",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "select_active_sketch_segments",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "SketchModifyFlip": [
+    {
+      "module": "scripts/sw_sketch_modify_ops.py",
+      "function": "sketch_flip",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "AddRela": [
+    {
+      "module": "scripts/sw_sketch_relations.py",
+      "function": "apply_sketch_relations",
+      "interface": "SketchRelationManager"
+    }
+  ],
+  "InsertPlanarRefSurface": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_planar_surface",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_planar_ref_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertOffsetSurface": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_offset_surface",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_offset_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertRuledSurfaceFromEdge2": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_ruled_surface",
+      "interface": "FeatureManager"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_ruled_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertDeleteFace": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_delete_face",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "InsertDeleteFace2": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_delete_face",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertFeatureReplaceFace": [
+    {
+      "module": "scripts/sw_surface_edit_ops.py",
+      "function": "insert_replace_face",
+      "interface": "ModelDoc2"
+    },
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_replace_face_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "FeatureExtruRefSurface3": [
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "create_extruded_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertExtendSurface": [
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_extend_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "InsertFillSurface2": [
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "insert_fill_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "PreTrimSurface": [
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "trim_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertCutSurface": [
+    {
+      "module": "scripts/sw_surface_features.py",
+      "function": "cut_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertRevolvedRefSurface": [
+    {
+      "module": "scripts/sw_surface_ref_ops.py",
+      "function": "insert_revolved_ref_surface",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertLoftRefSurface2": [
+    {
+      "module": "scripts/sw_surface_ref_ops.py",
+      "function": "insert_lofted_ref_surface",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "SweepType": [
+    {
+      "module": "scripts/sw_sweep.py",
+      "function": "create_sweep_surface_report",
+      "interface": "SweepFeatureData"
+    }
+  ],
+  "InsertSweepRefSurface": [
+    {
+      "module": "scripts/sw_sweep.py",
+      "function": "create_sweep_surface_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "FeatureName": [
+    {
+      "module": "scripts/sw_sweep.py",
+      "function": "create_sweep_surface_report",
+      "interface": "FeatureManager"
+    }
+  ],
+  "AddComponent5": [
+    {
+      "module": "scripts/sw_toolbox_index.py",
+      "function": "part_path",
+      "interface": "AssemblyDoc"
+    }
+  ],
+  "CreateMassConstraint": [
+    {
+      "module": "scripts/sw_topology.py",
+      "function": "set_topology_goal",
+      "interface": "CWTopologyStudyManager"
+    }
+  ],
+  "GetUnits": [
+    {
+      "module": "scripts/sw_units.py",
+      "function": "read_units_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "GetUserPreferenceIntegerValue": [
+    {
+      "module": "scripts/sw_units.py",
+      "function": "read_units_report",
+      "interface": "SldWorks"
+    }
+  ],
+  "GetSldWorks": [
+    {
+      "module": "scripts/sw_units.py",
+      "function": "read_units_report",
+      "interface": "ModelDoc2"
+    }
+  ],
+  "GetUserPreferenceInteger": [
+    {
+      "module": "scripts/sw_units.py",
+      "function": "read_units_report",
+      "interface": "ModelDocExtension"
+    }
+  ],
+  "GetSplitMember": [
+    {
+      "module": "scripts/sw_weldment.py",
+      "function": "configure_split_member",
+      "interface": "StructureSystemMemberFeatureData"
+    }
+  ],
+  "InsertWeldmentCutList": [
+    {
+      "module": "scripts/sw_weldment.py",
+      "function": "create_cut_list",
+      "interface": "FeatureManager"
+    }
+  ],
+  "InsertWrapFeature2": [
+    {
+      "module": "scripts/sw_wrap.py",
+      "function": "create_wrap_report",
+      "interface": "FeatureManager"
+    }
+  ]
+}
