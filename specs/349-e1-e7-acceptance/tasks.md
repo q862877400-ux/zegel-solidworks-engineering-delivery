@@ -76,8 +76,9 @@
 - [x] **T020** 全量验收测试绿，且确认只叫「离线判据成立」
   → 验收: `python -B -m pytest tests/test_ec03_compiler.py tests/test_stage2_rules.py tests/test_ec03_compiler.py -q`
 
-- [ ] **T021** 发布门禁仍绿
+- [x] **T021** 发布门禁仍绿
   → 验收: `python -B scripts/release_check.py`
+  → 结果（2026-10-26 重跑）：exit 0 · "status": "pass" · "missing": []
 
 ## Dependencies & Execution Order
 
