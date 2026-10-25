@@ -169,12 +169,21 @@ def add_component(
     参数:
         asm_model: IAssemblyDoc (装配体文档)
         part_path: 零件/子装配体文件路径
-        x, y, z: 放置位置（米）
+        x_m: 沿 **X 轴**的放置位置（**米**）。★ 默认前视图里 X 是**左右**（+ = 右）
+        y_m: 沿 **Y 轴**的放置位置（**米**）。★ 默认前视图里 Y 是**上下**（+ = 上）
+             ⇒ **「抬高」要用 y_m，不是 z_m**
+        z_m: 沿 **Z 轴**的放置位置（**米**）。★ 默认前视图里 Z 是**深度**（+ = 朝观察者）
+             ⇒ 写 z_m 不会让零件「变高」，只会让它**前后移动**（前视图里看不出来高矮）
         config_name: 配置名称，空字符串使用默认配置
         sw: 可选 SolidWorks 应用对象；用于 AddComponent 失败后自动打开零件并切回装配体。
 
     返回:
         IComponent2 对象
+
+    ★★★ 轴语义的来历（2026-10-26）：我把 `z_m=0.050` 说成「抬高 50mm」，
+      业主看屏是「两块一样高」—— 因为 **Y 才是竖直方向**。
+      ⇒ 方向现在写进文档；**描述场景一律走 `scripts/sw_scene.py` 的
+        `describe_scene()`**（按轴说人话），不再手推坐标。
     """
     component_path = os.path.abspath(
         os.path.expandvars(os.path.expanduser(str(part_path)))

@@ -47,7 +47,9 @@ sys.path.insert(0, str(R / "scripts"))
 
 from scripts import sw_connect as c_  # noqa: E402
 from scripts.engineering.acceptance.e1_sketch import (  # noqa: E402
+    collect_all_sketches,
     collect_sketch_constraint,
+    judge_all_sketches,
     judge_sketch_constraint,
 )
 from scripts.engineering.acceptance.e2_e3_solid import (  # noqa: E402
@@ -202,7 +204,9 @@ def _dims(doc) -> list:
                 sv = _member(dim, "SystemValue")
                 out.append({
                     "full_name": str(full) if full else "",
-                    "value_mm": round(float(sv) * 1000.0, 4) if sv is not None else None,
+                    "value_mm": (
+                        round(float(sv) * 1000.0, 4) if sv is not None else None
+                    ),
                 })
             dd = _member(dd, "GetNext2")
     return out
@@ -227,6 +231,42 @@ def _mate_records(e4: dict) -> tuple:
         if name:
             out.append({"kind": kind or name, "a": owners[0], "b": owners[1]})
     return tuple(out)
+
+def _all_sketch_rows(doc) -> list:
+    """枚举**所有**草图特征（含孔特征内的子草图）的名字与求解状态。
+
+    ★ 必须走**子特征**：孔特征（`HoleWzd`）的草图挂在它下面，顶层遍历看不见
+      —— 这正是 E1 原先漏掉孔草图的原因（业主 2026-10-26 指出）。
+    """
+    rows: list = []
+    f = _try(get_com_member, doc, "FirstFeature")
+    f = f[1] if isinstance(f, tuple) else f
+    while f is not None:
+        stack = [(f, "")]
+        while stack:
+            feat, owner = stack.pop()
+            tn = str(_member(feat, "GetTypeName2") or "")
+            if tn == "ProfileFeature":
+                sk = _member(feat, "GetSpecificFeature2")
+                st = None
+                if sk is not None:
+                    ok, v = _try(lambda: int(sk.GetConstrainedStatus))
+                    st = v if ok else None
+                rows.append(
+                    {
+                        "name": str(_member(feat, "Name") or ""),
+                        "owner": owner,
+                        "solver_status_int": st,
+                    }
+                )
+            sub = _member(feat, "GetFirstSubFeature")
+            while sub is not None:
+                stack.append((sub, str(_member(feat, "Name") or "")))
+                sub = _member(sub, "GetNextSubFeature")
+        nxt = _member(f, "GetNextFeature")
+        f = nxt
+    return rows
+
 
 def main() -> int:
     ev: dict = {"probe": "s3-acceptance"}
@@ -254,7 +294,8 @@ def main() -> int:
         #:     （本仓事实 24「多个进程抢同一 COM 连接」的另一副面孔）。
         #:
         #:   ⇒ 正确摆法是**串行两段**：
-        #:       python -B tools/collect_e4_standalone.py    # 先采集（此时无别的客户端）
+        #:       python -B tools/collect_e4_standalone.py    #
+        #: 先采集（此时无别的客户端）
         #:       python -B tools/run_s3_acceptance.py        # 再判（只读本文件）
         #:
         #:   ⚠ 文件缺失 / 过期 ⇒ 如实记 err，**不静默当成 0 个组件**。
@@ -302,6 +343,33 @@ def main() -> int:
         ev["E1"] = {"solver_status": st, "driving_dimensions": driving,
                     "status": res_e1.status.value, "reason": res_e1.reason}
         print("② E1：状态=%s 驱动尺寸=%s ⇒ %s" % (st, driving, res_e1.status.value))
+
+        #: ── E1.sketches：**所有**草图都要完全定义（含孔特征内的子草图）──
+        #:   ★ 业主 2026-10-26：「孔的那个点，另一个方向的距离没有约束，能拖动」
+        #:     ⇒ 原 E1 只读主草图，看不见这个问题。
+        sk_rows = _all_sketch_rows(doc)
+        obs_sk = collect_all_sketches(
+            target="板1_rev-1 全部草图", sketches=tuple(sk_rows)
+        )
+        res_sk = judge_all_sketches(obs_sk, requirement_id="R-E1")
+        ev["E1_sketches"] = {
+            "status": res_sk.status.value,
+            "reason": res_sk.reason,
+            "sketches": [
+                {
+                    "name": r["name"],
+                    "owner": r["owner"],
+                    "status": r["solver_status_int"],
+                }
+                for r in sk_rows
+            ],
+        }
+        print(
+            "②b E1.sketches：%d 张草图 ⇒ %s"
+            % (len(sk_rows), res_sk.status.value)
+        )
+        if res_sk.status.value != "pass":
+            print("     %s" % res_sk.reason[:160])
 
         #: ── E2：改主参数 → 孔心是否移动 ──
         #: ★ 第 39 轮：改参数**之前**记一次特征清单 ——
@@ -447,7 +515,8 @@ def main() -> int:
                 if str((feature_info(doc, n) or {}).get("GetTypeName2") or "")
                 == "HoleWzd"
             ]
-            #: ★★★ 枚举 → 判定器词表的映射（词表在 `e2_e3_solid.HOLE_TYPES`，是唯一真源）
+            #: ★★★ 枚举 → 判定器词表的映射（词表在 `e2_e3_solid.HOLE_TYPES`
+            #: ，是唯一真源）
             #:
             #:   出处：`sw_hole_features` 的模块常量逐字 ——
             #:     `SW_END_THROUGH_ALL = 1`（`swEndCondThroughAll`）⇒ `through`
@@ -555,7 +624,8 @@ def main() -> int:
                 "collector_docs_left": e4.get("docs_left"),
                 #: ★ 串行两段：证据的新鲜度从采集器自己写的 `finished_at` 看
                 "collector_finished_at": e4.get("finished_at"),
-                #: ★ 第 63 轮：配合/间隙**存盘重开**是否还在（只在内存里成立的配合没有价值）
+                #: ★ 第 63
+                #: 轮：配合/间隙**存盘重开**是否还在（只在内存里成立的配合没有价值）
                 "persisted": (e4.get("steps") or {}).get("persisted"),
             }
 
@@ -565,7 +635,8 @@ def main() -> int:
                 #: ★★★ 第 61 轮：配合**第一次真建成**（事实 571）——
                 #:   把真实配合特征喂进去，E4 的 `complete` 才成立。
                 #: ★★★ 第 61 轮：`mates` 每项必须是 `{"kind","a","b"}`
-                #:   （`judge_assembly_interference` 按 a/b 双非空过滤 —— 第 44 轮口径）。
+                #:   （`judge_assembly_interference` 按 a/b 双非空过滤 —— 第 44 轮口径）
+                #: 。
                 #:   `a`/`b` 用采集器**实测**的 `mate_owners`（那个配合由哪两个面建的、
                 #:   各自归属哪个组件），不是编的。
                 mates=_mate_records(e4),
@@ -702,7 +773,10 @@ def main() -> int:
                     "E4": ev.get("E4"),
                 },
                 source_kind="measured",
-                source_ref="output/s3-acceptance.json · output/e4-standalone.json（本机真机读数）",
+                source_ref=(
+                    "output/s3-acceptance.json · "
+                    "output/e4-standalone.json（本机真机读数）"
+                ),
                 artifact_version=_ver,
                 evidence_version=_ver,
                 version="2026-10-26",
@@ -723,7 +797,7 @@ def main() -> int:
             print("④d–f E5/E6/E7 段异常：%s" % ev["E5_E7_err"])
 
         #: ── 汇总 + 渲染 ──
-        _checks = [res_e1, res_e2, res_draw, res_e3, res_h]
+        _checks = [res_e1, res_sk, res_e2, res_draw, res_e3, res_h]
         #: ★ 第 48 轮：E4 两条也进报告（预期 unknown，如实呈现「没搭起可判的装配」）
         _checks.extend(c for c in (res_e4, res_e4i) if c is not None)
         #: ★ 第 60 轮：E5/E6/E7 也进报告（如实 unknown + 原因），
@@ -769,7 +843,8 @@ def main() -> int:
                     time.sleep(0.2)
             #: ★★ 落定后仍 >0 ⇒ **核归属**后强制清空（第 48 轮）。
             #:   实测：E4 段的两次 `CloseDoc` 报了成功却没关掉（返回值 ≠ 实际结果），
-            #:   剩 1 个靠外层 `sw_guard` 替我关 —— 而本文件的契约是「收尾核文档数归零」。
+            #:   剩 1 个靠外层 `sw_guard` 替我关 —— 而本文件的契约是「收尾核文档数归零」
+            #: 。
             #:   ★ 只清**我方**的（`output/` 下或无路径装配体）；有一个不是我的就不动。
             ev["docs_cleanup"] = None
             if left > 0:
@@ -811,8 +886,10 @@ def main() -> int:
                 pass
         ev["finished_at"] = time.strftime("%Y-%m-%dT%H:%M:%S")
         #: ★★ 第 66 轮（FR-014）：把**证据指纹**随证据一起写入。
-        #:   指纹 = 判定器版本 × 支持域版本 × 交付件 sha256 —— 三者任一变化即旧证据失效。
-        #:   ★ 时间戳**不进指纹**（时间变了不代表证据失效，否则指纹天天变，就没人看了）。
+        #:   指纹 = 判定器版本 × 支持域版本 × 交付件 sha256
+        #:   —— 三者任一变化即旧证据失效。
+        #:   ★ 时间戳**不进指纹**
+        #:   （时间变了不代表证据失效，否则指纹天天变，就没人看了）。
         try:
             sys.path.insert(0, str(R / "scripts"))
             from check_evidence_freshness import compute_fingerprint

@@ -588,6 +588,12 @@
       "runner": "_run_user_decisions_gate",
       "kind": "release_static",
       "reason": "★ 硬门禁（2026-10-26）：双向核对 docs/user-decisions.yaml 与 s3-blockers.yaml(owner=user) / repro-manifest.yaml(known_gaps, owner=user)；并禁止任何决定被填上 value（ENGINEERING-PATH 第 85 行「不得偷偷填默认值」）。起因：这类事散在三处，轮次一多就漏，漏掉后它悄悄从报告里消失、看起来像解决了。"
+    },
+    {
+      "gate": "check_docstrings_match_signatures.py",
+      "runner": "_run_docstring_params_gate",
+      "kind": "release_static",
+      "reason": "★ 硬门禁（2026-10-26 · 业主「从根本上去修复问题」）：查 scripts/ 里含「参数:」块的函数，声明名与真实形参是否逐个对得上。根因：add_component 形参已改名 x_m/y_m/z_m 而 docstring 仍写 x,y,z「放置位置（米）」⇒ 我据此把 +Z 说成「抬高」，业主从屏幕看出两块一样高。这类分叉代码能跑、ruff 不管，而人是靠文档理解参数的。"
     }
   ]
 }

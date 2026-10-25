@@ -12,7 +12,8 @@
 ## ★★ 关键：重复关系必须被拒
 
 `part_loop.DofPlan.total_dof` 的公式是 `2×实体数 − 关系数 − 尺寸数`，
-**同一条关系重复 8 次会算出 DOF = 0**（出处：`docs/state/facts/R-engineering-path.md` R-04）。
+**同一条关系重复 8 次会算出 DOF = 0**（出处：`docs/state/facts/R-engineering-path.md`
+R-04）。
 
 判定器必须**按关系的唯一性**去重后再算，而不是直接吃公式的结果。
 """
@@ -55,7 +56,8 @@ def collect_sketch_constraint(
 
     | 路径 | 信号 | 来源 |
     |---|---|---|
-    | 枚举 | `solver_status_int` = `ISketch.GetConstrainedStatus()` 的返回值 | **真机可取** |
+    | 枚举 | `solver_status_int` = `ISketch.GetConstrainedStatus()` 的返回值 |
+    **真机可取** |
     | 数值 | `entities` / `relations` / `dimensions` | 真机**取不到**，只能合成 |
 
     ⇒ 有枚举就只判枚举（`swFullyConstrained = 3` 是权威结论）；
@@ -196,7 +198,11 @@ def judge_sketch_constraint(obs: Observation, *, requirement_id: str) -> CheckRe
 
     return CheckResult(
         **base, status=Status.PASS,
-        observed={"dof": dof, "relations": len(uniq_rels), "dimensions": len(uniq_dims)},
+        observed={
+            "dof": dof,
+            "relations": len(uniq_rels),
+            "dimensions": len(uniq_dims),
+        },
         expected={"dof": want},
         reason="自由度符合设计意图，且约束无重复、有驱动尺寸",
     )
@@ -236,7 +242,8 @@ def _judge_by_enum(
     ## ★★★ 为什么 3 不能直接 pass
 
     真机实测（`tools/probe_s3_autodim_why_fully_defined.py`）：
-    **把草图每一段都加 `sgFIXED`、一条驱动尺寸都不加，`GetConstrainedStatus()` 也回 3。**
+    **把草图每一段都加 `sgFIXED`、一条驱动尺寸都不加，`GetConstrainedStatus()` 也回 3
+    。**
 
     ⇒ 只看枚举，「全固定」与「尺寸驱动」**分不开**。
       而 E1 的负例明令包含「全部固定却无驱动参数」。
@@ -301,8 +308,10 @@ def _judge_by_enum(
                 **base, status=Status.PASS,
                 observed={"solver_status": n, "intentional_dof": intentional_dof},
                 expected={"solver_status": "2 且有意保留 %d" % intentional_dof},
-                reason="★ 状态 %d（欠定义），但已声明有意保留 %d 个自由度 ⇒ 符合设计意图"
-                % (n, intentional_dof),
+                reason=(
+                    "★ 状态 %d（欠定义），但已声明有意保留 %d 个自由度 ⇒ 符合设计意图"
+                    % (n, intentional_dof)
+                ),
             )
         return CheckResult(
             **base, status=Status.FAIL,
@@ -313,4 +322,122 @@ def _judge_by_enum(
         **base, status=Status.FAIL,
         observed={"solver_status": n}, expected={"solver_status": 3},
         reason="★ 状态 %d：%s" % (n, why),
+    )
+
+#: `swConstrainedStatus_e`：3 = 完全定义（本仓事实里已三源核过）
+_FULLY_DEFINED = 3
+
+#: 状态码 → 人话
+_STATUS_TEXT = {
+    0: "未知",
+    1: "无解",
+    2: "欠定义",
+    3: "完全定义",
+    4: "过定义",
+    5: "无解/冲突",
+}
+
+
+def collect_all_sketches(*, target: str, sketches: tuple) -> Observation:
+    """★ 采集器：把**每一张草图**的名字与求解状态原样装进来。
+
+    `sketches` 每项形如 `{"name": str, "solver_status_int": int|None, "owner": str}`，
+    `owner` 是它挂在哪个特征下（主草图是 `""`，孔特征是 `M6 间隙孔1` 之类）。
+
+    ★ 采集器**不判断**：状态读不到就装 `None`，由判定器决定 unknown。
+    """
+    return Observation(
+        target=target,
+        complete=bool(sketches),
+        values={"sketches": list(sketches)},
+        note="" if sketches else "一张草图都没枚举到",
+    )
+
+
+def judge_all_sketches(obs: Observation, *, requirement_id: str) -> CheckResult:
+    """★ 判定器：**所有**草图都必须完全定义（`swFullyConstrained = 3`）。
+
+    ## 为什么与 `judge_sketch_constraint` 并存
+
+    | check_id | 覆盖 | 判什么 |
+    |---|---|---|
+    | `E1` | 主草图 | 约束状态 + **驱动尺寸数**（防空约束） |
+    | `E1.sketches` | **全部草图** | 每张都完全定义（防「孔点只约束一个方向」） |
+
+    ★ 两条都要绿才算 E1 成立 —— 加这条**不是放宽**，是补覆盖面。
+
+    ## 三态
+
+    - 有任何一张**读不到状态** ⇒ `unknown`（没测到 ≠ 不合格）
+    - 有任何一张**不是 3** ⇒ `fail`，并逐张列出（名字 + 状态 + 挂在哪个特征下）
+    - 全部 == 3 ⇒ `pass`
+    """
+    base = dict(
+        check_id="E1.sketches",
+        requirement_id=requirement_id,
+        target=obs.target,
+        observation_complete=obs.complete,
+        unit="草图",
+        basis="E1：**每一张**草图都必须完全定义（含孔特征内的草图）",
+        evidence=obs.evidence,
+        artifact_version=obs.values.get("version", ""),
+        checker_version=CHECKER_VERSION,
+    )
+    if not obs.complete:
+        return CheckResult(
+            **base, status=Status.UNKNOWN, reason="采集不完整：没枚举到草图"
+        )
+
+    rows = list(obs.values["sketches"])
+    unknown = [r for r in rows if r.get("solver_status_int") is None]
+    if unknown:
+        return CheckResult(
+            **base,
+            status=Status.UNKNOWN,
+            observed={"unknown_sketches": [r.get("name") for r in unknown]},
+            reason=(
+                "★ %d 张草图读不到求解状态 ⇒ 这一项没测到（不等于合格）：%s"
+                % (len(unknown), [r.get("name") for r in unknown][:6])
+            ),
+        )
+
+    bad = [r for r in rows if int(r["solver_status_int"]) != _FULLY_DEFINED]
+    if bad:
+        detail = [
+            {
+                "name": r.get("name"),
+                "owner": r.get("owner") or "（主特征）",
+                "status": r["solver_status_int"],
+                "text": _STATUS_TEXT.get(int(r["solver_status_int"]), "?"),
+            }
+            for r in bad
+        ]
+        return CheckResult(
+            **base,
+            status=Status.FAIL,
+            observed={"sketch_total": len(rows), "not_fully_defined": detail},
+            expected={"every_sketch_status": _FULLY_DEFINED},
+            reason=(
+                "★ %d/%d 张草图**没有完全定义**（含孔特征内的草图）：%s"
+                % (
+                    len(bad),
+                    len(rows),
+                    "；".join(
+                        "%s[%s]=%s(%s)"
+                        % (d["name"], d["owner"], d["status"], d["text"])
+                        for d in detail[:6]
+                    ),
+                )
+            ),
+        )
+
+    return CheckResult(
+        **base,
+        status=Status.PASS,
+        observed={
+            "sketch_total": len(rows),
+            "names": [r.get("name") for r in rows][:12],
+        },
+        expected={"every_sketch_status": _FULLY_DEFINED},
+        reason="%d 张草图全部完全定义（含孔特征内的草图）" % len(rows),
     )

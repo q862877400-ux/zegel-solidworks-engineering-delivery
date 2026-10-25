@@ -645,6 +645,40 @@ def _run_user_decisions_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_docstring_params_gate() -> dict[str, object]:
+    """@brief 跑「docstring 参数块 ↔ 函数签名」一致门禁。
+
+    ★ 来源：业主 2026-10-26 ——
+      「你通过视觉检查出来的错误，不能够打个补丁就了事儿，你要从根本上去修复问题」。
+
+    ★ 追的根因：`add_component` 形参已改名 `x_m,y_m,z_m`，而 docstring 仍写
+      `x, y, z: 放置位置（米）` ⇒ 我据此把 +Z 说成「抬高」，业主从屏幕看出两块一样高。
+      ★ 这类 bug 代码能跑、ruff 不管，而**人是靠文档理解参数的**。
+
+    ★ 判据：`scripts/` 里含「参数:」块的函数，声明名必须与真实形参逐个对得上。
+      基线 `docs/docstring-params-baseline.json` 只许降不许升。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_docstrings_match_signatures.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "文档/签名门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_support_domain_gate() -> dict[str, object]:
     """@brief 跑「支持参数域」门禁（scripts/check_support_domain.py --self-check）。
 
@@ -3198,6 +3232,15 @@ def run_release_check() -> dict[str, object]:
             "用户决定索引门禁未通过（有待用户决定的事没登记，或有人替业主填了值）：\n"
             + str(ud.get("output", ""))
         )
+    #: ⚑ **文档/签名一致门禁**（硬门禁）：★ 业主 2026-10-26「从根本上去修复问题」。
+    #:   追的是「签名改了、docstring 没改」这类分叉 —— 代码能跑、ruff 不管，
+    #:   而人是靠文档理解参数的（本轮我正是被过时文档误导）。
+    dp = _run_docstring_params_gate()
+    if dp.get("status") == "fail":
+        raise AssertionError(
+            "文档参数块与函数签名不一致（改了形参就要改文档）：\n"
+            + str(dp.get("output", ""))
+        )
     # ⚑ **调研卡片验收判据门禁**（硬门禁）：★ 来源业主 2026-10-23「每个项目一张卡、全面分析」。
     #   ★ 判据：`scripts/check_survey_cards.py` 四条（12 字段齐 / 断言同行带出处 /
     #     证据等级在枚举内 / 有未确认段）。
@@ -3512,6 +3555,7 @@ def run_release_check() -> dict[str, object]:
         "support_domain": sd,
         "repro_manifest": rp,
         "user_decisions": ud,
+        "docstring_params": dp,
         "evidence_freshness": ef,
         #: ★ 2026-10-24（业主 2026-10-23「每个项目一张卡」指令）：调研卡片验收判据 ——
         #:   与其余硬门禁同处登记（`_gate_results` ⇒ 由 `gates`/`gate_details` 统一暴露）✓

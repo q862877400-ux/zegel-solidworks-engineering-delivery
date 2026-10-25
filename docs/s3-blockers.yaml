@@ -34,6 +34,20 @@ blockers:
       - specs/350-first-part-delivery/s2-question-sheet.md
       - specs/350-first-part-delivery/requirements.md
 
+  - check_id: E1.sketches
+    cause: toolchain
+    owner: agent
+    summary: >-
+      ★ 10 张草图里有 **4 张欠定义**（状态 2）—— 正好是四个孔特征各自的「孔点草图」。
+      孔点只被约束了一个方向，另一个方向可以拖动（业主 2026-10-26 当场指出）。
+      ⇒ 原来的 `E1` 只读**主草图**、判了 pass，**看不见孔草图**；
+        已补 `E1.sketches` 逐个草图判（本项就是它暴露出来的）。
+      修法：重建板件 —— 一个孔特征 + 四个**两向都定位**的孔点（+ 标准改 GB）。
+    evidence:
+      - output/s3-acceptance.json
+      - docs/known-facts.md
+      - tools/run_s3_acceptance.py
+
   - check_id: E2.drawing_current
     cause: requirement
     owner: user
