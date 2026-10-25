@@ -78,6 +78,25 @@ python -B scripts/check_internal_length_units.py --inventory   # 看全量纲清
 tools/sw_screenshot.py。
 ★ 不许替业主说「他确认了」；他没答就在报告里写「待人工确认」。
 
+## 十四之四、动手前先查「已有资产名单」（业主 2026-10-26 指令）
+
+**★★★★★ 凡涉及项目已有的东西，用现成的，不要纯手搓。**
+
+业主原话：「但凡是涉及到我们项目已有的东西，就得用现成的……我们各种元素叫什么名字，
+我们现在肯定是已经有了。」
+
+- **名单**：[docs/existing-assets.md](docs/existing-assets.md) —— 元素名 / 定义状态 / 单位 /
+  几何读取 / 特征参数 / 选择 / 装配 / 图样分别落在哪个模块，以及先看哪几个名字。
+  只挂名单，正文留在各模块 docstring。
+- **同一个东西只许有一个名字**：草图元素与关系用 `SKETCH_RELATION_ENTITY_TYPES` /
+  `SKETCH_CONSTRAINT_TYPES`，非草图元素用 `ENTITY_KINDS`，定义状态用 `sw_sketch_status`，
+  官方枚举用 `scripts/sw_enums.py`（生成物），数值换算用 `sw_units.dimension_reading`。
+- **要扩展就改原模块**；两张表并存时必须加**同值一致性测试**（用显式同义词映射，
+  模糊匹配会掩盖真漂移）。
+- 实测代价（2026-10-26，三处均为「手搓替代既有」）：手写「草图点/草图线段」对不上
+  `point/line`；手写 `{2:欠定义,3:完全定义}` 漏掉过定义(4)/无解(5)/无效解(6)；
+  `ISketchArc` 的半径真名是 `GetRadius` 而 `Radius` 根本不存在 ⇒ 圆没有半径。
+
 ## 十五、真机命令一律走弹窗护栏
 
 **★★★★★ 通用护栏：`tools/guard_run.py`（2026-10-26 用户要求，长效机制）**

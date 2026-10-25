@@ -79,6 +79,7 @@ from sw_enums import (
     SKETCH_POINT_TYPE as _SPT_RAW,
 )
 from sw_selection_spec import ENTITY_KINDS
+from sw_sketch_status import CONSTRAINED_STATUS, status_meaning
 from sw_units import dimension_reading
 
 
@@ -328,6 +329,97 @@ def _call(obj, name, *args):
         return None
 
 
+def _pt_values_mm(p):
+    """把点对象/坐标元组 → `[x_mm, y_mm]`；取不到回 None。"""
+    if p is None:
+        return None
+    try:
+        vals = list(p)
+        if len(vals) >= 2:
+            return [_mm(vals[0]), _mm(vals[1])]
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
+#: ★ 下面三个函数把成员名写成**字面量**（不再用形参转发）——
+#:   泛型转发会让 `_call`/`_g` 的 `sites` 声明不成立（门禁实测报 invalid-claim）。
+def _center_of(seg):
+    """圆心（`GetCenterPoint`，取不到退 `GetCenterPoint2`）。"""
+    v = _pt_values_mm(_g(seg, "GetCenterPoint"))
+    if v is None:
+        v = _pt_values_mm(_call(seg, "GetCenterPoint2"))
+    return v
+
+
+def _major_of(seg):
+    """椭圆长轴端点（`GetMajorPoint`）。"""
+    return _pt_values_mm(_g(seg, "GetMajorPoint"))
+
+
+def _minor_of(seg):
+    """椭圆短轴端点（`GetMinorPoint`）。"""
+    return _pt_values_mm(_g(seg, "GetMinorPoint"))
+
+
+def _dist_mm(a, b):
+    """两点距离（mm）；任一为空回 None。"""
+    if not a or not b:
+        return None
+    try:
+        return round(((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5, 4)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _ellipse_geometry(seg) -> dict:
+    """椭圆的圆心与**两轴半径**。
+
+    ★ 官方 `ISketchEllipse` **没有** `Radius`/`MajorRadius`/`MinorRadius`
+      （成员见 `C:/swapi/types/ISketchEllipse/`：GetCenterPoint / GetMajorPoint /
+      GetMinorPoint，各带 `2` 版与 `I` 前缀版）。
+      ⇒ 两轴长度由**端点到圆心的距离**算出，不编。
+    """
+    out: dict = {}
+    c = _center_of(seg)
+    if c is not None:
+        out["center_mm"] = c
+    major = _major_of(seg)
+    minor = _minor_of(seg)
+    if major is not None:
+        out["major_point_mm"] = major
+        r = _dist_mm(c, major)
+        if r is not None:
+            out["major_radius_mm"] = r
+    if minor is not None:
+        out["minor_point_mm"] = minor
+        r = _dist_mm(c, minor)
+        if r is not None:
+            out["minor_radius_mm"] = r
+    return out
+
+
+def _spline_geometry(seg) -> dict:
+    """样条：控制点数 / 是否闭合 / 曲线类型（都来自官方成员）。"""
+    out: dict = {}
+    n = _call(seg, "GetPointCount")
+    if isinstance(n, int):
+        out["control_point_count"] = n
+    for attr in ("IsClosed", "Closed"):
+        #: 试名探测：`ISketchSpline` 官方成员里**没有** `IsClosed`/`Closed`
+        #: （只有 `IsRationalCurve`/`IsStyleSpline`）⇒ 两个候选都允许查不到。
+        #: ⚠ 标注必须紧贴**调用点**（在循环内），放循环上方不生效（实测踩过）。
+        #: dispatch-fwd: probe 试名找"是否闭合"，官方无此成员，查不到属正常
+        v = _g(seg, attr)
+        if v is not None:
+            out["is_closed"] = bool(v)
+            break
+    ct = _g(seg, "CurveType")
+    if isinstance(ct, int):
+        out["curve_type_int"] = ct
+    return out
+
+
 def _arc_geometry(seg) -> dict:
     """圆弧/整圆的**半径与圆心**（以及它是不是整圆）。
 
@@ -363,12 +455,17 @@ def _segment_shape(seg) -> dict:
         #: 官方成员名（LINE/ARC…）+ 中文标签都给，人读用中文、机器用英文
         out["shape"] = SEGMENT_KIND_ZH.get(t) or SEGMENT_KIND[t]
         out["shape_official"] = SEGMENT_KIND[t]
+        #: ★ 按类型分派几何读取（椭圆**没有** GetRadius，硬调必 AttributeError）
         if t == 1:      #: swSketchARC —— 还要分「整圆」与「圆弧」
             geo = _arc_geometry(seg)
             out.update(geo)
             if geo.get("is_circle"):
                 out["shape"] = "圆"
                 out["shape_official"] = "swSketchARC(IsCircle=1) 整圆"
+        elif t == 2:    #: swSketchELLIPSE
+            out.update(_ellipse_geometry(seg))
+        elif t == 3:    #: swSketchSPLINE
+            out.update(_spline_geometry(seg))
     c = _g(seg, "GetCenterPoint2")
     if c is not None:
         out["center_mm"] = [_mm(_g(c, "X")), _mm(_g(c, "Y"))]
@@ -395,7 +492,12 @@ def sketch_detail(sketch_feature) -> dict:
 
     st = _int(_g(sk, "GetConstrainedStatus"))
     out["constrained"] = st
-    out["constrained_meaning"] = {2: "欠定义", 3: "完全定义"}.get(st, "其它/未知")
+    #: ★ 复用 `sw_sketch_status`（**完整 7 个值**）——我手写的只有 {2,3}，
+    #:   过定义(4)/无解(5)/无效解(6) 会被错记成「其它/未知」，而这些正是要报警的。
+    out["constrained_meaning"] = status_meaning(st)
+    if isinstance(st, int):
+        out["constrained_official"] = CONSTRAINED_STATUS.get(
+            st, f"unknown({st})")
 
     #: ★★★ 根因 F：**「草图点」有两种，不能混**
     #:   · GetUserPoints2()  ⇒ **用户显式画的点**（真正的「点」实体）
@@ -469,6 +571,11 @@ def sketch_detail(sketch_feature) -> dict:
             item["type"] = CONSTRAINT.get(rt, f"未登记({rt})")
             item["entities"] = [describe_entity(e)
                                 for e in list(_g(rel, "GetEntities") or ())]
+            #: ★ 关系是否被**抑制** —— 「取消一个阵列/约束」在草图层面常表现为
+            #:   `Suppressed=True` 而实体仍在。不记它就无法区分「在用」与「已停用」。
+            sup = _g(rel, "Suppressed")
+            if sup is not None:
+                item["suppressed"] = bool(sup)
             dd = _g(rel, "GetDisplayDimension")
             if dd is not None:
                 dim = _g(dd, "GetDimension2", 0)
@@ -479,6 +586,21 @@ def sketch_detail(sketch_feature) -> dict:
                     #:   GetSystemValue2 + 乘 1000：那正是「角度被当长度」那个
                     #:   假数值事故的根因（事实 592）。
                     item.update(dimension_reading(dim, item.get("type_int")))
+                    #: ★ 参数型关系（`LINEARPATTCNT`=76 / `CIRCULARPATTCNT`=77）
+                    #:   的尺寸是**计数**，不是长度/角度 ⇒ 上面会标 `unit_unverified`，
+                    #:   这里再补一个语义明确的字段，免得下游以为它是长度。
+                    if item.get("type_int") in (76, 77):
+                        raw = item.get("raw_system_value")
+                        if isinstance(raw, (int, float)):
+                            item["pattern_count"] = int(round(float(raw)))
+                            item["pattern_kind"] = (
+                                "circular" if item["type_int"] == 77 else "linear")
+                        name = _g(dim, "Name")
+                        full = _g(dim, "FullName")
+                        if name:
+                            item["dimension_name"] = str(name)
+                        if full:
+                            item["dimension_full_name"] = str(full)[:120]
             rels.append(item)
     out["relations"] = rels
     #: ★ 草图级「外部/投影引用」计数：关系类型 32 = USEEDGE（转换实体）
