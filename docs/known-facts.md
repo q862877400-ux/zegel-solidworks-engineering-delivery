@@ -7150,6 +7150,28 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 563 | **★★ E4 的加组件阻塞经**三层兜底**验证成立；而 `add_component` 失败时**静默回 None**（第 42 轮自我纠错）** —— 2026-10-26。
+     ★ 第 22 轮我报「`AddComponent5` 回 None ⇒ 装配建不出来」时，调的是**裸成员**，
+       绕过了本仓 `sw_assembly.add_component` 的既有三级兜底：
+       ```
+       ① _add_component5 → ② 若 None ⇒ _add_component4 → ③ 若仍 None ⇒ 打开零件、切回装配、再试
+       ```
+       ⇒ 结论当时**证据不足**（`docs/known-facts.md` 早写着「AddComponent5 → None → 退回 4」）。
+     ★★ 本轮走高层封装重测（`tools/probe_e4_add_component_via_wrapper.py`）：
+       ```
+       ① 零件存在=True（89018 字节）· ② 装配 GetType=2
+       ③ 三级兜底全试过 ⇒ 组件数 0 → 0 ⇒ **加不进去**
+       ```
+       ⇒ 阻塞**成立**，且现在排除了兜底这一层。
+     ★★★ 同时抓到 `add_component` 的真缺陷：三层全失败时它只 `print` 然后
+       `return component`（None）⇒ 调用方拿到 None 但**调用成功返回** ⇒
+       用 `try_call` 包会得 `(True, None)` ⇒ **看起来成功了**。
+       与 `save_document` 报 True 没落盘、`CloseDoc` 调了没关同一族（事实 561 族）。
+       ★ 第 22 轮就是被它误导的。
+       ⇒ 已修：加完**回读组件数**，`0 → 0` 即 `raise RuntimeError`（带计数证据）。
+     ★ 方法论：**调封装，不调裸成员** —— 本仓的兜底、重试、路径换算都在封装里；
+       绕过去测出来的「阻塞」可能只是绕过了它自己的兜底。|真机：`tools/probe_e4_add_component_via_wrapper.py`；证据 `output/e4-add-component-via-wrapper.json` |
+
 | 562 | **★★★ `HoleWizard5` 实参多写了一个 `0.0` ⇒ 异型孔向导路径**一直是坏的**（`类型不匹配, None, 22`）** —— 2026-10-26（第 27 轮）。
      ★ 官方签名（`C:\swapi\types\IFeatureManager\HoleWizard5.md`，逐字 **27 参**）：
      ```

@@ -144,6 +144,22 @@ def _add_component4(asm_model, component_path, config_name, x, y, z):
     )
 
 
+def _component_count(asm_model) -> int:
+    """★ 回读装配的组件条数（**独立读数**，不信 AddComponent 的返回值）。
+
+    ★ 返回 `-1` 表示读不出 —— 与 `open_doc_count` / `count_sketch_dimensions` 同一约定。
+      调用方据 `-1` 判「没法用计数下结论」，不得当成 0。
+    """
+    try:
+        comps = asm_model.GetComponents(False)
+    except Exception:  # noqa: BLE001
+        return -1
+    try:
+        return len(list(comps or []))
+    except TypeError:
+        return -1
+
+
 def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
     """
     向装配体添加零部件
@@ -166,6 +182,11 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
 
     component = None
     errors = []
+
+    #: ★★ 第 42 轮：加之前记一次组件数 —— 后面用它做**独立判据**。
+    #:   不信返回值：`AddComponent5` 真机可以回非空但并未加入，
+    #:   也可能回 None 却已加入（事实族 561）。只有数条数是硬读数。
+    _before = _component_count(asm_model)
 
     try:
         # SW2024 中文版 + pywin32 下 AddComponent4 可能返回 None；
@@ -205,13 +226,28 @@ def add_component(asm_model, part_path, x=0, y=0, z=0, config_name="", sw=None):
         else:
             errors.append("GetActiveObject(SldWorks.Application): 返回 None")
 
-    if component:
-        print(f"已添加组件: {component_path}")
-    else:
+    #: ★★★ 第 42 轮：**回读组件数**再决定成败 —— 不再拿返回值当结论。
+    _after = _component_count(asm_model)
+    _added = (_after - _before) if (_before >= 0 and _after >= 0) else -1
+
+    if _added == 0:
         detail = (
             "；".join(errors) if errors else "AddComponent5/AddComponent4 均返回 None"
         )
-        print(f"添加组件失败: {component_path} ({detail})")
+        raise RuntimeError(
+            "添加组件失败: %s（组件数 %s → %s，三级兜底 5/4/开零件再切回 都没加进去；"
+            "明细：%s）" % (component_path, _before, _after, detail)
+        )
+
+    if component is None and _added > 0:
+        #: ★ 兜底成功但没拿到对象 —— 如实说，不假装拿到了。
+        print(
+            "★ 组件已加入（计数 %s → %s）但 AddComponent 没回对象；"
+            "需按名称回查 IComponent2" % (_before, _after)
+        )
+        return None
+
+    print(f"已添加组件: {component_path}（计数 {_before} → {_after}）")
     return component
 
 
