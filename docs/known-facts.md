@@ -7150,6 +7150,27 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 569 | **★★ `ISldWorks.NewDocument` 返回 True，但返回的 doc 对象可能**已断连**；`ActiveDoc` 也可能拿不到标题** —— 2026-10-26（第 56 轮）。
+     ★★★ 现场（验收运行器 E4 段的实测证据，`output/s3-acceptance.json` 的 `E4.steps`）：
+     ```
+     new_assembly   : true
+     asm_is_none    : false
+     asm_title      : ""                                    ← ★ 空标题：对象已废
+     components_err : com_error (-2147417848, '被调用的对象已与其客户端断开连接。')
+                      ^ 0x80010108 = RPC_E_DISCONNECTED
+     ```
+     ⇒ ★ `ok=True` **不等于**拿到的对象还能用 —— 「返回值 ≠ 实际结果」的又一例。
+     ★ 对照：**独立探针 `tools/probe_e4_assembly.py` 在干净会话里组件 0 → 2 是通的**。
+       差别在**会话状态**：运行器里 E4 段排在 E2 之后，而 E2 反复开关文档
+       （含一次保存 + 重开），之后 `new_document` 的对象就断连了。
+     ★★ 第 56 轮试了 4 次都没救回来（各自改一个变量）：
+       ① 加 `ActivateDoc3` ② 改从 `ActiveDoc` 重取 ③ 记录步骤 ④ 段前清空文档
+       ⇒ 最后一次错误变成 `com_error (-2147023174, 'RPC 服务器不可用。')`（0x800706BA）
+         = 会话在退化 ⇒ **停手**（「三次失败就停下质疑架构」）。
+     ★★★ 结论与下一步：**E4 采集要单独一个进程跑**（干净会话），
+       不要和 E1/E2/E3 挤在同一个进程里，也不要靠调整段内顺序去修。
+       诊断信息已固化在运行器的 `E4.steps`（含 `components_err`），下次一眼能看出断连。|真机：`tools/run_s3_acceptance.py` · 证据 `output/s3-acceptance.json`（`E4.steps`）· 对照 `tools/probe_e4_assembly.py` |
+
 | 568 | **★★★★★ 孔心随板宽联动**机制**验证成功**（位移 +20.0 mm × 4） —— `AddHorizontalDimension2` + 同进程 ESC 线程**可用** | 2026-10-26（第 54 轮）。
      ★★★ 真机读数（`tools/probe_e2_hole_dimension_link.py --hv`，证据 `output/e2-hole-dimension-link.json`）：
      ```

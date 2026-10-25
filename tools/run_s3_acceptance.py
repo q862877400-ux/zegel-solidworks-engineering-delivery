@@ -493,19 +493,43 @@ def main() -> int:
             loaded = (
                 str(_member(part_doc, "GetPathName") or "") if ok_pa else ""
             )
-            ok_na, asm_doc = _try(c_.new_document, sw, "assembly")
+            ok_na, asm_raw = _try(c_.new_document, sw, "assembly")
+            #: ★★★ 第 56 轮：`new_document` **返回 True 不等于对象还能用** ——
+            #:   实测 `asm_title` 为空且 `GetComponents` 报
+            #:   `com_error (-2147417848, '被调用的对象已与其客户端断开连接。')`
+            #:   (`0x80010108` = `RPC_E_DISCONNECTED`)。
+            #:   ⇒ **不信任返回的对象**：改从 `ActiveDoc` 重取，并用标题非空验证它是活的。
+            asm_doc = asm_raw
+            if asm_raw is not None:
+                _try(
+                    sw.ActivateDoc3,
+                    str(_member(asm_raw, "GetTitle") or ""), 0, False,
+                )
+            try:
+                cand = get_com_member(sw, "ActiveDoc")
+                if cand is not None and str(_member(cand, "GetTitle") or ""):
+                    asm_doc = cand
+            except Exception:  # noqa: BLE001
+                pass
             if ok_na and asm_doc is not None:
                 for dx in (0.0, 30.0):
                     _try(
                         asm_.add_component, asm_doc, str(SRC), dx, 0.0, 0.0, "", sw
                     )
                 n_comp = 0
+                components_err = ""
                 try:
                     n_comp = len(
                         list(get_com_member(asm_doc, "GetComponents", False) or [])
                     )
-                except Exception:  # noqa: BLE001
+                except Exception as exc:  # noqa: BLE001
                     n_comp = -1
+                    #: ★ 先存局部变量 —— `ev["E4"]` 此时还没建（上一版直接写进去 ⇒ KeyError）
+                    components_err = "%s: %s" % (
+                        type(exc).__name__,
+                        str(exc)[:120],
+                    )
+
 
                 ok_i2, interf = _try(asm_.get_interference_detection, asm_doc)
                 n_interf = -1
@@ -533,6 +557,18 @@ def main() -> int:
                     "dof_status": res_e4.status.value,
                     "interference_status": res_e4i.status.value,
                     "note": "配合建不出来（事实 565）⇒ mates 空 ⇒ 采集不完整",
+                }
+                #: ★ 第 56 轮：把每一步的返回值都记下来 —— `-1` 没有上下文时无从下手。
+                #:   ★ 必须放在 `ev["E4"]` 建好**之后**（第一版写在前面 ⇒ KeyError）。
+                ev["E4"]["steps"] = {
+                    "open_part": bool(ok_pa),
+                    "new_assembly": bool(ok_na),
+                    "asm_is_none": asm_doc is None,
+                    "asm_title": str(_member(asm_doc, "GetTitle") or "")
+                    if asm_doc is not None
+                    else "",
+                    "part_path": loaded,
+                    "components_err": components_err,
                 }
                 print(
                     "④c E4：组件 %s · 干涉 %s · E4.dof=%s · E4.interference=%s"
