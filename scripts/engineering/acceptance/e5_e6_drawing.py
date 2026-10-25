@@ -140,6 +140,24 @@ def judge_drawing(obs: Observation, *, requirement_id: str) -> CheckResult:
             % (v["drawing_revision"], v["model_revision"]),
         )
 
+    #: ★★ ④b 模板必须合格
+    #:
+    #:   ★ 为什么需要：`template_ok` 一直在采集，但判定器从没读过它 ——
+    #:     实测一张 `template_ok=False` 的图纸照样判 **pass**（真洞，第 21 轮修）。
+    #:   ⚠ **别矫枉**：E5 的「不能当替代品」栏逐字写着「**模板名带 GB**」不算理由
+    #:     ⇒ `template_ok=True` 只是必要条件，不是通过的理由；
+    #:       真正的通过还要下面那几条一起满足。
+    if v.get("template_ok") is not True:
+        return CheckResult(
+            **base, status=Status.FAIL,
+            observed={"template_ok": v.get("template_ok")},
+            expected={"template_ok": True},
+            reason=(
+                "★ 图框模板不合格 ⇒ 整张图不合规"
+                "（⚠ 注意：模板名带 GB 也**不是**通过的理由，见本模块「不能当替代品」）"
+            ),
+        )
+
     #: ⑤ 材料必须来自批准需求，不能是默认值
     if not v["material_from_requirement"]:
         return CheckResult(

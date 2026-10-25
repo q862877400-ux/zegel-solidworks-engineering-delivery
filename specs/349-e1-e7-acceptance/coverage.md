@@ -69,6 +69,19 @@ tools/probe_acceptance_report.py 与 tests/test_acceptance_pipeline_e2e.py
 ★★ **拆分不放宽**：同一个 E 下的子项**全部**绿才算该 E 成立
 （有测试钉住，如 `test_全不绿才算E4不成立`）。
 
+### ★★ E5 的一条补充判据（第 21 轮补的「采了不判」缺口）
+
+collect_drawing 一直在采集 	emplate_ok，而 judge_drawing **从没读过它**。
+实测：其余全对、	emplate_ok=False 的图纸照样判 **pass**。
+
+⇒ 补：	emplate_ok is not True ⇒ **fail**。
+
+★ **别矫枉**：E5 的「不能当替代品」栏逐字写着「**模板名带 GB**」不算理由
+  ⇒ 	emplate_ok=True 只是**必要条件**，不是通过的理由。
+  	ests/test_acceptance_e5_template.py 两侧都钉：
+  - 该拒的：模板不合格 ⇒ fail
+  - 不该当理由的：模板合格但材料默认 / 证据空 / 必填为空 ⇒ **仍然 fail**
+
 ### ★★ E7 的一条补充判据（第 20 轮补的「假引用」缺口）
 
 现有判定器要求引用「非空 + 

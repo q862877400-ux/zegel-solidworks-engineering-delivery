@@ -441,6 +441,30 @@ def good_e7() -> Observation:
     )
 
 
+def bad_e5_bad_template() -> Observation:
+    """★ 模板不合格，但**其余全对** —— 第 21 轮修的那个洞。
+
+    `template_ok` 一直在采集，判定器却从没读过它 ⇒
+    实测一张 `template_ok=False` 的图纸照样判 **pass**（真洞）。
+
+    ⚠ 别矫枉：E5 的「不能当替代品」栏逐字写着「**模板名带 GB**」不算理由
+      ⇒ `template_ok=True` 只是必要条件，不是通过的理由。
+      见 `tests/test_acceptance_e5_template.py` 里那两条反向断言。
+    """
+    return collect_drawing(
+        target="plate-rev1-drawing",
+        required_items=("孔径", "孔位"),
+        bound_items=(
+            {"name": "孔径", "evidence": "D1@图纸1", "value_ok": True},
+            {"name": "孔位", "evidence": "D2@图纸1", "value_ok": True},
+        ),
+        model_revision="rev1",
+        drawing_revision="rev1",
+        material_from_requirement=True,
+        template_ok=False,
+    )
+
+
 def bad_e7_placeholder_locator() -> Observation:
     """★★ **假引用**的最省事形态：`resolved=True` 是调用方自己声明的，
     `locator` 填个占位符（`见上` / `x` / `待补`）就能声称「解析得到」。

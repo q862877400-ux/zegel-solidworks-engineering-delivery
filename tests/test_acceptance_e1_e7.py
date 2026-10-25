@@ -79,7 +79,9 @@ CASES = [
     ("e6_unknown", judge_process, S.unknown_e6, Status.UNKNOWN),
     # ── E7 ──
     ("e7_good", judge_provenance, S.good_e7, Status.PASS),
-    ("e7_bad_nocite", judge_provenance, S.bad_e7_no_citations, Status.FAIL),
+        #: ★ 模板不合格，但其余全对（第 21 轮修的洞）
+    ("e5_bad_template", judge_drawing, S.bad_e5_bad_template, Status.FAIL),
+("e7_bad_nocite", judge_provenance, S.bad_e7_no_citations, Status.FAIL),
     ("e7_bad_fakesrc", judge_provenance, S.bad_e7_fake_source, Status.FAIL),
     #: ★★ 假引用：resolved=True 自己声明，locator 填占位符
     ("e7_bad_placeholder_locator", judge_provenance,
