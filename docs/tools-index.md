@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 649 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 651 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -13,7 +13,7 @@
 
 | 我想… | 分类 | 条数 | 目录内文件前缀 |
 |---|---|---|---|
-| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 269 | `probe_*` |
+| 真机验证某个 API 到底能不能用 / 怎么调 | **探针** | 271 | `probe_*` |
 | 把探针结论落成可复现的证据 | **取证** | 110 | `prove_*` |
 | 验证某能力端到端仍然可用 | **冒烟/回归** | 33 | `verify_*` |
 | 静态检查，违反即红（部分在 scripts/ 下） | **门禁** | 17 | `check_*` |
@@ -39,7 +39,7 @@
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 3 | `sw_*` |
 | （未归入上面任何一类） | 其他 | 70 | — |
 
-## 探针（269 个）
+## 探针（271 个）
 
 > 用途：真机验证某个 API 到底能不能用 / 怎么调
 
@@ -139,6 +139,7 @@
 | `probe_gtol_symbol_xml.py` | @brief 探针：绕开不通的 `AddIndicator`，试 **`IGtolFrame.SetSymbolXml`（XML 路径）** |
 | `probe_gtol_xml_schema.py` | @brief 探针：拿官方 `ISldWorks.GetGtolFrameXMLSchema()`，看它要求什么结构 |
 | `probe_hole_params_recheck.py` | ★ 真机验 `hole_params` 并**测出那一族的单位口径**（★ 阶段 3 补能力 · 第 4 个） |
+| `probe_holewizard_arity.py` | ★ 决定性测量：`HoleWizard5` 在 Depth 之后要 **13** 个 double 还是 **14** 个？ ## 已知 - 官方 27 参：`… EndType, Diameter, Depth, Length, Valu |
 | `probe_hv_dimension_with_selection.py` | ★ 真机：水平/竖直尺寸 —— **选中实体后**再试（★ 事实 421 留的下一步） |
 | `probe_imathutility_family.py` | ★ 真机：**`IMathUtility` 那一族的可达性** —— ★ 逐个试它的成员 |
 | `probe_inject_key.py` | ★ 判定：注入键 `sw_app`/`manager` 与目标函数形参 `sw`/`cost_manager` 不符时，能不能调通 |
@@ -205,6 +206,7 @@
 | `probe_s3_hole_dimension_point_to_point.py` | ★ S3 测量：孔心用**点-点尺寸**约束到板角（同行已验证的选法范围内） |
 | `probe_s3_hole_linkage_construction_line.py` | ★ S3 测量：用**构造线单段长度**把孔位绑到板边，让孔随板宽联动 |
 | `probe_s3_hole_linkage_fully_define.py` | ★ S3 测量：孔与板轮廓放**同一张草图** + `FullyDefineSketch`，孔会不会随板宽联动？ ## 为什么值得试 E2 的硬要求是「孔随板宽变化」（`ENGINEERING-PATH` 第四节 E2 的负例逐字） |
+| `probe_s3_holewizard_four_holes.py` | ★ 验证：按指定坐标建 4 个异型孔向导孔，孔位与孔型都读得回 |
 | `probe_s3_holewizard_single.py` | ★ 单点验证：异型孔向导建一个孔，`hole_params` 能否读到孔型 |
 | `probe_s3_t008_dimension_driven.py` | ★ S3 T008：把板件做成尺寸驱动 —— 用**可行的**那两个入口 |
 | `probe_s4_assembly_create_and_interference.py` | ★ S3/E4 真机：装配创建与干涉检测 —— `assembly_and_mates` 从 `stitched` 往前推 |

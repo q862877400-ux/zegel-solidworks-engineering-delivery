@@ -1439,6 +1439,167 @@ WZD_FASTENER_ANSI_METRIC_SIMPLE = {
 }
 
 
+def _holewizard5_call(
+    model,
+    *,
+    size,
+    diameter_mm,
+    depth_mm,
+    through,
+    fastener_index,
+    standard_index,
+    generic_type,
+):
+    """★ **唯一一份** `IFeatureManager.HoleWizard5` 调用（28 个实参，逐字照已验证写法）。
+
+    ⚠ **不要在任何地方再手打一遍这些实参** ——
+      第 27 轮我照抄时数错一个 `0.0`，真机报
+      `com_error: (-2147352571, '类型不匹配。', None, 22)`。
+      ⇒ 新增入口（如按坐标定位）**必须调本函数**，不许复制实参表。
+    """
+    end_type = SW_END_THROUGH_ALL if through else SW_END_BLIND
+    feature = get_com_member(
+        get_com_member(model, "FeatureManager"),
+        "HoleWizard5",
+        int(generic_type),
+        int(standard_index),
+        int(fastener_index),
+        str(size),
+        int(end_type),
+        float(diameter_mm) / 1000.0,
+        float(depth_mm) / 1000.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        "",
+        False,
+        True,
+        False,
+        False,
+        False,
+        False,
+    )
+    return feature
+
+
+def create_hole_wizard_at_point_report(
+    model,
+    x_mm: float,
+    y_mm: float,
+    z_mm: float,
+    size: str,
+    *,
+    diameter_mm: float = 8.0,
+    depth_mm: float = 20.0,
+    through: bool = True,
+    fastener_index: int = 40,
+    standard_index: int = SW_WZD_ANSI_METRIC,
+    generic_type: int = SW_WZD_HOLE,
+    ray_dir=(0.0, 0.0, -1.0),
+    plane_offset_mm: float = 50.0,
+    name: str = "",
+) -> dict:
+    """★ 按**显式坐标**建异型孔向导孔，并回读孔型参数。
+
+    ## 与 `create_hole_wizard_at_selection_report` 的唯一区别
+
+    那条路的孔位来自 `resolve_face_selector`（**面中心**）⇒ 一个面只能放一个孔。
+    本函数把射线起点换成**调用方给的坐标** ⇒ 孔位可指定。
+
+    ## 调用序（逐字照抄已验通的那条路）
+
+    ① `ClearSelection2(True)`
+    ② 从 `(x,y,z)` 沿 `ray_dir` **反方向**抬起 `plane_offset_mm`，再朝 `ray_dir` 打射线
+       —— 保证射线从实体外进入，命中点落在 `(x, y)` 处的面上
+    ③ `IModelDocExtension.SelectByRay`（12 参，`Mark = 0`，选面）
+    ④ 核**选中数**（为 0 就不开工）
+    ⑤ `IFeatureManager.HoleWizard5`（27 参）
+
+    ★ 官方 Remarks 要求孔位用 `SelectByRay` 且 `Mark = 0` —— 本函数照做。
+
+    :param x_mm: 孔心 X（**毫米**，调用方口径）
+    :param y_mm: 孔心 Y（**毫米**）
+    :param z_mm: 孔心所在面的 Z（**毫米**）—— 射线从这里抬出去再打回来
+    :param size: 规格串（如 `"M8"`）；★ 空串或纯数字会让 `HoleWizard5` 回 `None`（事实 469）
+    :raises RuntimeError: 射线没命中或特征没建出来
+    """
+    ext = get_com_member(model, "Extension")
+    #: ★ 入参毫米 → COM 米（只在本边界换算一次）
+    x = float(x_mm) / 1000.0
+    y = float(y_mm) / 1000.0
+    z = float(z_mm) / 1000.0
+    before = _feature_names_here(model)
+    sx = x - float(ray_dir[0]) * (plane_offset_mm / 1000.0)
+    sy = y - float(ray_dir[1]) * (plane_offset_mm / 1000.0)
+    sz = z - float(ray_dir[2]) * (plane_offset_mm / 1000.0)
+    model.ClearSelection2(True)
+    ok_ray = get_com_member(
+        ext,
+        "SelectByRay",
+        sx,
+        sy,
+        sz,
+        float(ray_dir[0]),
+        float(ray_dir[1]),
+        float(ray_dir[2]),
+        1e-4,
+        int(SW_SEL_FACES),
+        False,
+        0,
+        0,
+    )
+    try:
+        sel_n = int(
+            get_com_member(
+                get_com_member(model, "SelectionManager"), "GetSelectedObjectCount2", -1
+            )
+            or 0
+        )
+    except Exception:  # noqa: BLE001
+        sel_n = -1
+    if not ok_ray or sel_n < 1:
+        raise RuntimeError(
+            "射线在 (%g, %g, %g) mm 处没命中面（SelectByRay 回 %r，选中数 %s）"
+            " ⇒ 坐标可能不在实体表面上" % (x_mm, y_mm, z_mm, ok_ray, sel_n)
+        )
+
+    feature = _holewizard5_call(
+        model,
+        size=size,
+        diameter_mm=diameter_mm,
+        depth_mm=depth_mm,
+        through=through,
+        fastener_index=fastener_index,
+        standard_index=standard_index,
+        generic_type=generic_type,
+    )
+    if feature is None:
+        raise RuntimeError(
+            "HoleWizard5 回 None ⇒ 孔没建出来（尺 %r / 标准 %s / 紧固件 %s）"
+            % (size, standard_index, fastener_index)
+        )
+    after = _feature_names_here(model)
+    new = [n for n in after if n not in before]
+    return {
+        "feature": new[-1] if new else "",
+        "new_features": new,
+        "size": str(size),
+        "at_mm": [float(x_mm), float(y_mm), float(z_mm)],
+        "through": bool(through),
+        "ray_selected": sel_n,
+    }
+
+
 def create_hole_wizard_at_selection_report(
     model,
     selection: str,
@@ -1515,37 +1676,15 @@ def create_hole_wizard_at_selection_report(
             "官方 Remarks：孔位要用 `SelectByRay` 且 `Mark = 0`。" % (ok_ray, sel_n)
         )
     #: 前置 ② ③：27 参（顺序照官方签名）
-    end_type = SW_END_THROUGH_ALL if through else SW_END_BLIND
-    feature = get_com_member(
-        get_com_member(model, "FeatureManager"),
-        "HoleWizard5",
-        int(generic_type),
-        int(standard_index),
-        int(fastener_index),
-        str(size),
-        int(end_type),
-        float(diameter_mm) / 1000.0,
-        float(depth_mm) / 1000.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        "",
-        False,
-        True,
-        False,
-        False,
-        False,
-        False,
+    feature = _holewizard5_call(
+        model,
+        size=size,
+        diameter_mm=diameter_mm,
+        depth_mm=depth_mm,
+        through=through,
+        fastener_index=fastener_index,
+        standard_index=standard_index,
+        generic_type=generic_type,
     )
     if feature is None:
         raise RuntimeError(

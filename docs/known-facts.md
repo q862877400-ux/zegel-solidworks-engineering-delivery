@@ -7150,6 +7150,31 @@ ShowNamedView2("*上下二等角轴测", 8) ⇒ 235056 字节  ★ 变了
 ★ **本表的下限**：★ 只说「**我的**探针不幂等」—— 仓库里别的探针是否也有这个形态**没普查**；★ 也没
 去修那些探针（本轮只在自己的收口探针上加了断言）✓
 
+| 562 | **★★★ `HoleWizard5` 实参多写了一个 `0.0` ⇒ 异型孔向导路径**一直是坏的**（`类型不匹配, None, 22`）** —— 2026-10-26（第 27 轮）。
+     ★ 官方签名（`C:\swapi\types\IFeatureManager\HoleWizard5.md`，逐字 **27 参**）：
+     ```
+     GenericHoleType, StandardIndex, FastenerTypeIndex, SSize, EndType,
+     Diameter, Depth, Length, Value1..Value12,   ← Depth 之后 **13** 个 double
+     ThreadClass(str), RevDir, FeatureScope, AutoSelect,
+     AssemblyFeatureScope, AutoSelectComponents, PropagateFeatureToParts
+     ```
+     ★ 而本仓实参表在 Depth 之后写了 **14** 个 `0.0` ⇒ 多 1 个 ⇒ 全部后移一位
+       ⇒ `ThreadClass` 落到 `RevDir` 的 bool 位 ⇒ `com_error: (-2147352571, '类型不匹配。', None, 22)`（第 22 参正是第一个 bool）。
+     ★★ 真机对照（`tools/probe_holewizard_arity.py`）：
+     ```
+     zeros=13（27 实参）⇒ built=True   new=['M8 间隙孔1']
+     zeros=14（28 实参）⇒ built=False  com_error: 类型不匹配, None, 22
+     ```
+     ⇒ 改成 13 个后，按坐标建 **4/4 孔成功**、类型 `HoleWzd`、`hole_params` 可读 4/4、
+       B-Rep 量到 4 个孔（`tools/probe_s3_holewizard_four_holes.py`）。
+     ⚠ **第 26 轮我曾报「异型孔向导单点验证通过（ok=True，`HoleWzd` 建出来）」——
+       同一段 28 参实参现在复现不出来。两个读数冲突，我**不能解释**。
+       当前能确定的只有：**27 参能建、28 参不能**。**据此改代码，不据此编解释。**
+     ★ 方法论：★ 一长串同值实参（`0.0` × N）**不能手抄** —— 数错一个就整体后移，
+       而报错位置（第 22 参）离出错位置（第 8~21 参）很远，看不出是「多了一个」。
+       ⇒ 这类调用要**抽成唯一一份**（本轮已抽 `_holewizard5_call`），并在真机上
+       用「N 与 N±1 各跑一次」的对照定案。|真机：`tools/probe_holewizard_arity.py` · `tools/probe_s3_holewizard_four_holes.py`；证据 `output/holewizard-arity.json` · `output/s3-holewizard-four-holes.json` |
+
 | 561 | **★★ 孔与板轮廓放同一张草图 ⇒ `FullyDefineSketch` 把**孔直径**尺寸化、**板宽反而丢了**（主参数丢失）** —— 2026-10-25（第 19 轮）。
      ★ 起因：E2 要「孔随板宽联动」，而给孔心加尺寸的方法族本机已退化（事实 560）。故试一条不依赖它的路：把孔与轮廓放**同一张草图**，靠 `FullyDefineSketch` 加的**关系**把孔绑到边上。
      ★★ 真机（`tools/probe_s3_hole_linkage_fully_define.py`）：
