@@ -254,3 +254,104 @@ def test_feature_params_no_annotation_in_data() -> None:
     nested = sw_model_snapshot._param_with_unit("forward", {"GetDepth": 0.025, "GetEndCondition": 0})
     assert nested["forward"]["depth_mm"] == 25.0
     assert "GetDepth" not in nested["forward"]
+
+
+def _fake_summary(title: str, path: str, states: list) -> dict:
+    return {
+        "title": title, "path": path, "doc_type": 1,
+        "features": 5, "sketches": 1, "sketch_states": states,
+        "relations": 3, "dimensions": 1, "holes": 0, "mates": 0,
+    }
+
+
+def test_timeline_first_poll_records(tmp_path) -> None:
+    """★ 首次采样**必须**记一条。
+
+    2026-10-26 质检抓到我自己引入的回归：修 doc-switch 时把首次的 `last`
+    也设成了当前摘要 ⇒ `changed_fields(摘要, 摘要)` 为空 ⇒ **一条都不记**。
+    """
+    import sw_model_timeline as T
+
+    real = T.loudness
+    T.loudness = lambda _d: _fake_summary("A", "/a", [2])
+    try:
+        tl = T.Timeline(tmp_path, 0.0)
+        rec = tl.poll(object())
+    finally:
+        T.loudness = real
+    assert rec is not None, "首次必须记一条"
+    assert "features" in (rec.get("changed") or {})
+
+
+def test_timeline_doc_switch_records_once(tmp_path) -> None:
+    """★ 切换文档只记**一条** `doc-switch`。
+
+    曾产生 2 条（切换 + 首次），下游会误以为发生了两次变化。
+    """
+    import sw_model_timeline as T
+
+    real = T.loudness
+    tl = T.Timeline(tmp_path, 0.0)
+    try:
+        T.loudness = lambda _d: _fake_summary("A", "/a", [2])
+        r1 = tl.poll(object())          #: 首次
+        r2 = tl.poll(object())          #: 同文档重复
+        T.loudness = lambda _d: _fake_summary("B", "/b", [3])
+        r3 = tl.poll(object())          #: 切文档
+        r4 = tl.poll(object())          #: 切后重复
+    finally:
+        T.loudness = real
+    assert r1 is not None, "首次要记"
+    assert r2 is None, "同文档重复不记"
+    assert r3 is not None and r3.get("kind") == "doc-switch", "切换要记 doc-switch"
+    assert r4 is None, "切后同文档重复不记"
+    lines = [x for x in (tmp_path / "timeline.jsonl").read_text(
+        encoding="utf-8").splitlines() if x.strip()]
+    assert len(lines) == 2, f"应共 2 条，实际 {len(lines)}"
+
+
+def test_timeline_snapshot_on_sketch_state_change(tmp_path) -> None:
+    """★ 草图状态变化（欠定义→完全定义）**必须**留完整快照。"""
+    import sw_model_timeline as T
+
+    real = T.loudness
+    tl = T.Timeline(tmp_path, 0.0)
+    try:
+        T.loudness = lambda _d: _fake_summary("A", "/a", [2])
+        tl.poll(object())
+        T.loudness = lambda _d: _fake_summary("A", "/a", [3])
+        r = tl.poll(object())
+    finally:
+        T.loudness = real
+    assert r is not None
+    assert "sketch_states" in (r.get("changed") or {})
+    assert r.get("snapshot"), "状态变化必须留快照（业主最关心的中间态）"
+
+
+def test_no_escape_residue_in_teach_sources() -> None:
+    """★ 源码不许有「行内 TAB」——那是写入转义残留的指纹。
+
+    实测踩过：`\\timeline.jsonl` 被写成 TAB+`imeline.jsonl`，
+    其中一处还在**字符串里**，会直接把乱码输出到报告。
+    """
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    files = [
+        root / "scripts" / "sw_model_timeline.py",
+        root / "scripts" / "sw_dialog_text.py",
+        root / "scripts" / "sw_model_snapshot.py",
+        root / "scripts" / "sw_units.py",
+        root / "tools" / "demo_capture.py",
+        root / "tools" / "extract_psr_shots.py",
+        root / "tools" / "gen_sw_enums.py",
+        root / "tools" / "teach.py",
+    ]
+    bad = []
+    for f in files:
+        if not f.is_file():
+            continue
+        for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            if "\t" in line.lstrip("\t"):
+                bad.append(f"{f.name}:{i}")
+    assert not bad, "发现行内 TAB（写入转义残留）：" + ", ".join(bad)

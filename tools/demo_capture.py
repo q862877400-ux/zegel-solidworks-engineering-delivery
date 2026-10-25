@@ -19,7 +19,7 @@
 ★ 为什么不用 Game Bar：它的开始时刻拿不到，视频时间轴与步骤时间戳无法稳定对齐。
 
 ⚠ 用法注意：本命令是**长驻录制**（会拉起 ffmpeg 子进程），
-  **不要**把它套在 	ools/guard_run.py 里跑 —— 子进程会继承护栏的输出管道，
+  **不要**把它套在 tools/guard_run.py 里跑 —— 子进程会继承护栏的输出管道，
   护栏会一直等管道关闭而挂住（2026-10-26 实测踩过）。直接跑即可。
 ★ 为什么坚持第 3 层：截图能看「改了没有」，但看不出「这条尺寸量的是点到哪条边」。
 
@@ -297,10 +297,16 @@ def stop() -> int:
         pid_file.unlink(missing_ok=True)
     except Exception:  # noqa: BLE001
         pass
-    for _ in range(20):
-        if not pid_file.exists():
-            break
-        time.sleep(0.2)
+    #: ★★★ 缺陷 1（质检 2026-10-26 发现）：pid 文件刚被自己删掉，
+    #:   原来 `if not pid_file.exists(): break` **第一次就成立** ⇒ 等于没等，
+    #:   可能读到 `run()` 还没写完的 timeline.jsonl。
+    #:   现在按 **timeline_pid** 等进程真正退出（最多 10 秒）。
+    tl_pid = st.get("timeline_pid")
+    if tl_pid:
+        for _ in range(50):
+            if not _pid_alive(int(tl_pid)):
+                break
+            time.sleep(0.2)
     tl = _timeline_rows(d)
     st["timeline_rows"] = len(tl)
     if tl:
@@ -327,8 +333,24 @@ def stop() -> int:
     return 0
 
 
+def _pid_alive(pid: int) -> bool:
+    """进程是否还活着（用 `tasklist` 查，不依赖 psutil）。"""
+    try:
+        r = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}", "/NH"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=15, creationflags=_no_window(), check=False,
+            stdin=subprocess.DEVNULL,
+        )
+        out = (r.stdout or "").strip()
+        #: 找不到时 tasklist 回「信息: 没有运行的任务…」或空 ⇒ 判死
+        return str(pid) in out
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _timeline_rows(d: Path) -> list:
-    """读 	imeline.jsonl（录制期的模型变化轨迹）。"""
+    """读 timeline.jsonl（录制期的模型变化轨迹）。"""
     f = Path(d) / "timeline.jsonl"
     if not f.is_file():
         return []
@@ -487,7 +509,7 @@ def _write_report(d: Path, st: dict, steps, snap) -> None:
     tl = _timeline_rows(d)
     lines += ["", "## 模型变化轨迹（录制期采样）", ""]
     if tl:
-        lines.append("共 **%d** 条变化记录（	imeline.jsonl）；" % len(tl))
+        lines.append("共 **%d** 条变化记录（timeline.jsonl）；" % len(tl))
         if (d / "snaps").is_dir():
             lines.append("snaps/ 下是对应的完整快照。")
         lines.append("")

@@ -74,6 +74,7 @@ def loudness(doc) -> dict:
     if doc is None:
         return {}
     out: dict = {"title": str(_g(doc, "GetTitle") or ""),
+                 "path": str(_g(doc, "GetPathName") or ""),
                  "doc_type": _int(_g(doc, "GetType"))}
     feats = sketches = relations = dims = holes = mates = 0
     states: list = []
@@ -165,10 +166,42 @@ class Timeline:
         self.jsonl.write_text("", encoding="utf-8")
 
     def poll(self, doc) -> dict | None:
-        """读一次摘要；**有变化**就落一条并回该记录，否则回 None。"""
+        """读一次摘要；**有变化**就落一条并回该记录，否则回 None。
+
+        ★ 摘要状态按**文档**分开存：用户切换文档时，若拿"上个文档"的摘要去比，
+          会产生**假变化**（切走一次、切回一次，各一次）。
+        """
         summary = loudness(doc)
         if not summary:
             return None
+        doc_key = f"{summary.get('title')}|{summary.get('path')}"
+        prev_doc_key = getattr(self, "_doc_key", None)
+        if prev_doc_key != doc_key:
+            self._doc_key = doc_key
+            if prev_doc_key is None:
+                #: ★ 开头第一次：`self.last` **保持空**，让下面的 `changed_fields({}, …)`
+                #:   返回全部字段 ⇒ 正常记一条「首次」。
+                #:   （曾在这里把 last 设成 summary ⇒ 首次变成"无变化"、一条不记 —— 回归）
+                self.last = {}
+            else:
+                #: ★ 文档切换：**只记一条** `doc-switch` 并把当前摘要立为新基线，
+                #:   然后**直接返回**，不再往下走 —— 否则会再记一条「首次」，
+                #:   一次切换产生 2 条，下游会误以为发生了两次变化。
+                self.last = summary
+                self.n += 1
+                sw_rec = {
+                    "i": self.n,
+                    "t": time.strftime("%H:%M:%S"),
+                    "elapsed_s": round(time.time() - self.t0, 1),
+                    "kind": "doc-switch",
+                    "summary": summary,
+                    "changed": {},
+                    "switched_from": prev_doc_key,
+                    "snapshot": None,
+                }
+                with self.jsonl.open("a", encoding="utf-8") as f:
+                    f.write(json.dumps(sw_rec, ensure_ascii=False) + "\n")
+                return sw_rec
         diff = changed_fields(self.last, summary)
         #: 状态里的「欠定义→完全定义」也要算变化（已在 sketch_states 里）
         if not diff:
@@ -183,8 +216,14 @@ class Timeline:
             "changed": diff,
             "snapshot": None,
         }
-        #: 特征数变了（新增特征）或尺寸数变了 ⇒ 值得存一份完整快照
-        big = any(k in diff for k in ("features", "dimensions", "mates", "holes"))
+        #: ★ 哪些变化值得存一份**完整快照**。
+        #:   ★★★ `sketch_states` 必须在列：业主最关心的「欠定义 → 完全定义」那一刻，
+        #:   在摘要里只体现为 sketch_states 变化；漏掉它就等于中间态没有证据
+        #:   （质检 2026-10-26 发现，原条件只有 features/dimensions/mates/holes）。
+        big = any(k in diff for k in (
+            "features", "dimensions", "mates", "holes", "sketch_states",
+            "relations", "sketches",
+        ))
         if big and self.full_snaps < MAX_FULL_SNAPSHOTS:
             self.full_snaps += 1
             rec["snapshot"] = self._full_snapshot(doc)

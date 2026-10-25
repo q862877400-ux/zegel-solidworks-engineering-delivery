@@ -220,6 +220,44 @@ scripts/sw_recipe.py · scripts/sw_habits.py · scripts/sw_recipe_exec.py ·
 草图级外部引用 INSERTPART 派生体 + Convert Entities ⇒ 草图里出现 **USEEDGE(32)** 关系
 `
 
+### 根因修复（2026-10-26）
+
+业主指出：「角度按长度 ×1000，你需要**根因修复**而不是只修改这一个地方」。
+逐条追到根因，共 8 类 —— **每条都改机制，不是改那一处**。
+
+| # | 根因（不是症状） | 修法 | 落点 |
+|---|---|---|---|
+| A | **允许手抄枚举** | 从 `C:/swapi/enums/*.md` **生成**常量；`--check` 拦手改 | `tools/gen_sw_enums.py` → `scripts/sw_enums.py` |
+| B | **存在不分量纲的万能换算** | `dimension_reading(dim, relation_type)` 按类型分派 + 硬门禁扫每个调用点 | `scripts/sw_units.py` · `scripts/check_dimension_units.py` |
+| C | **录制是「拍照」不是「录音」** | 录制期常驻轮询摘要，变化即记 + 存快照 | `scripts/sw_model_timeline.py` · `capture --run` |
+| D | **把「记内容」外包给不记内容的工具** | 自己轮询读对话框控件文本（含 RichEdit `WM_GETTEXT`） | `scripts/sw_dialog_text.py` |
+| E | **几何取数不分上下文** | 装配内走 `IComponent2.GetBodies2(1 参)`，并记来源 | `sw_model_snapshot._bodies_of` |
+| F | **把页面元素当用户元素** | `GetUserPoints2`（7 元组）与 `GetSketchPoints2` 分开 | `sw_model_snapshot.sketch_detail` |
+| G | **口径说明混进数据** | 说明键不进数据；长度值换算后**改名带单位** | `sw_model_snapshot._param_with_unit` |
+| H | **手写格式解析** | MHT 改用标准库 `email` 解析 | `tools/extract_psr_shots.py` |
+
+★ 枚举生成的解析**不假设格式统一**（实测：`swMateANGLE` / `swAlignAGAINST` /
+  `swDocASSEMBLY` 前缀各不相同；值列还有 `64 = Datetime value` 与 `Obsolete`）。
+
+### 交付前质检（2026-10-26 · 因 provider 切换而起）
+
+业主提示：开发中途把 provider 从第三方中转站换成官方 API，怀疑此前成果有瑕疵。
+全面质检（语法 / 导入 / 半成品 / 转义残留 / 函数存在性 / 文档一致性 / 测试覆盖）
+抓出并修掉 **5 类真问题**：
+
+| 类别 | 问题 | 证据 |
+|---|---|---|
+| 功能 | `stop()` 删掉 pid 文件后**立刻 break**，等于没等轮询进程，可能读到半个 jsonl | 改为按 pid 等进程真正退出（最多 10 秒） |
+| 功能 | `Timeline` **跨文档状态混淆**：切文档时拿上个文档比这个 ⇒ 假变化 | `last` 按 `标题\|路径` 分文档；切换记 `doc-switch` 并**只记一条** |
+| 功能 | 草图**状态变化**（欠定义→完全定义）**不留快照** —— 恰恰是最该留证的中间态 | 快照条件加上 `sketch_states`/`relations`/`sketches` |
+| 显示 | 5 处**写入转义残留**：`\timeline.jsonl`、`\tools/`、`\try_call` 被写成 TAB 字符 | 其中 1 处在**字符串里**，会直接输出到报告 |
+| 运行 | 两个 `NameError`：`_mate_detail` 用了未定义的 `mate_type_int`；`capture.run` 用了未导入的 `g`/`io` | 读任何配合都会崩 |
+
+★ 质检中我自己引入过一个回归并被测试抓住：修 `doc-switch` 时把首次的
+  `self.last` 也设成摘要，导致**首次一条都不记**。已修，并有复验脚本覆盖。
+
+复验：`output/verify_qc_fixes.py` —— 11 项判据全过。
+
 ### 已知限制（如实）
 
 - **外部引用**：两级都已验证 ——

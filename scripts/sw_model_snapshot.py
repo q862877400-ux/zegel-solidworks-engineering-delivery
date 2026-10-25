@@ -74,7 +74,7 @@ from sw_enums import (
 )
 
 #: `swMateType_e`（官方枚举，逐条核过 `C:\swapi\enums\swMateType_e.md`）
-#: ★★★ 枚举一律来自 scripts/sw_enums.py（由 	ools/gen_sw_enums.py 从
+#: ★★★ 枚举一律来自 scripts/sw_enums.py（由 tools/gen_sw_enums.py 从
 #:   C:/swapi/enums/*.md **生成**），这里**不再手抄任何表**。
 #:   教训：手抄 swConstraintType_e 把 7/8 抄错 ⇒ 业主的「平行/垂直」被记成
 #:   「相切/同心」，是**假事实**。见 AGENTS.md 与事实 592。
@@ -172,7 +172,7 @@ def _g(obj, name, *args):
 
 
 def _tc(*args, **kwargs):
-    """调本仓 	ry_call（失败不抛，回 (ok, 值)）。"""
+    """调本仓 try_call（失败不抛，回 (ok, 值)）。"""
     from sw_connect import try_call
 
     return try_call(*args, **kwargs)
