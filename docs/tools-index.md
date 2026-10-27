@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 690 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 694 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 7 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 85 | — |
+| （未归入上面任何一类） | 其他 | 89 | — |
 
 ## 探针（282 个）
 
@@ -819,7 +819,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（85 个）
+## 其他（89 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -861,6 +861,8 @@
 | `ec00_scope_inventory.py` | ★ EC00 范围清单：静态盘点代表工具集的**注入/参数/单位/风险/效果/来源/等级**（★ **不连接 COM**） |
 | `emit_iview_module.py` | 生成 scripts/sw_drawing_view.py（IView 成员登记表 + 通用访问器） |
 | `emit_study_options_module.py` | 生成 scripts/sw_simulation_study_options.py（含 setter 登记表） |
+| `eval_lean_comprehension.py` | ★ lean 首句**可懂性**评测：模型只看到「首句（≤120 字符）+ 参数名」，能不能答对 |
+| `eval_tool_selection.py` | ★ 工具选择评测：真实 `tools/list` → 拼题面 → 调模型 → 按 **specs/208 D-9** 口径判 |
 | `experiment_subprocess_com.py` | @brief 小实验：**子进程能否安全地连到**同一个** SolidWorks 实例**（进程隔离方案的前提） |
 | `fake_modal_dialog.py` | @brief 假模态框：造一个 **类名 `#32770`** 的窗口并停住（给判据当**靶子**） |
 | `fetch_api_signature.py` | @brief 取官方 API 参考的**成员签名**（在线优先，本地 CHM 兜底），并落本地缓存 |
@@ -879,8 +881,10 @@
 | `make_fixture_library.py` | ★ 建/校验夹具库：真实件一次性复制进来、冻结哈希清单 |
 | `make_union_workload_349.py` | ★ 编全 349 条的工作量清单（tier-aware）：①档只验证，②③档深调 |
 | `map_tools_to_members.py` | ★ **筛选器**：把 277 个工具映射到「它真正调的 COM 成员」⇒ 再投影到官方结构上 |
+| `mcp_tools_list.py` | ★ 一次**真 MCP 握手**取 `tools/list` —— 那是宿主**真正看得见**的那一份工具面 |
 | `metric_scope.py` | ★ 指标的「口径」注册表 —— 口径必须落成可复现代码，不能只写在散文里 |
 | `migrate_pilot_to_five_levels.py` | @brief `pilot` → 五级迁移（`docs/capabilities-schema-proposal.md` §1.2，裁断走选项 A） |
+| `migrate_tool_evidence.py` | ★ 把每条 `ToolSpec.doc` 的**原文**搬进新字段 `evidence=`（★ 只搬运、不改写 doc） |
 | `parse_cosworks_signatures.py` | 从提取出的 cosworks 官方文档页里解析出全部方法签名与参数说明 |
 | `plan_obsolete_fixes.py` | ★ T1a 第一步：把**每一条废弃调用**与它**后继的官方签名**逐个对照 ⇒ 分清"纯改名"与"要改参数" |
 | `propose_capability_sources.py` | @brief 为 `capabilities[].source` 生成**有证据的提案**（不写文件，只打印） |

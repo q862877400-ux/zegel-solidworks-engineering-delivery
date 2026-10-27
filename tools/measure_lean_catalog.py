@@ -19,12 +19,12 @@
 from __future__ import annotations
 
 import json
-import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(Path(__file__).resolve().parents[1])
-SERVER = ROOT / "mcp-server" / "server.py"
-PYTHON = r"C:\Users\Zegel\AppData\Local\Python\pythoncore-3.14-64\python.exe"
+#: ★ MCP 握手已抽到 `tools/mcp_tools_list.py`（一个事实一个家）⇒ 本文件不再需要
+#:   `SERVER` / `PYTHON` / `subprocess`（★ 留着会被 ruff F401 记成新增问题）✓
 #: ★★ 与 lean 插件**逐字相同**的上限（★ 见 `index.mjs` 的 `firstLine` ✓）
 FIRST_LINE_CAP = 120
 #: ★ 经验换算（★ 与记忆库里那条实测同源：76 KB ≈ 19k token ⇒ **≈ 4 字符/token** ✓）
@@ -44,54 +44,13 @@ def first_line(desc) -> str:
 
 
 def main() -> int:
-    proc = subprocess.Popen(
-        [PYTHON, str(SERVER)],
-        cwd=str(ROOT),
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        bufsize=1,
-    )
-    try:
+    #: ★ 真 MCP 握手已抽到 `tools/mcp_tools_list.py`（★ 一个事实一个家 ——
+    #:   `eval_tool_selection.py` 也要同一份工具面；两处各写一遍会被
+    #:   `check_repo_uniformity.py` 的「跨文件同函数体」判据抓出来）✓
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from mcp_tools_list import tools_list  # noqa: PLC0415
 
-        def rpc(o):
-            proc.stdin.write(json.dumps(o) + "\n")
-            proc.stdin.flush()
-            return json.loads(proc.stdout.readline())
-
-        rpc(
-            {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "initialize",
-                "params": {
-                    "protocolVersion": "2024-11-05",
-                    "capabilities": {},
-                    "clientInfo": {"name": "lean-measure", "version": "0"},
-                },
-            }
-        )
-        proc.stdin.write(
-            json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}) + "\n"
-        )
-        proc.stdin.flush()
-        tools = (
-            (
-                rpc(
-                    {"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}
-                ).get("result")
-                or {}
-            ).get("tools")
-        ) or []
-    finally:
-        try:
-            proc.kill()
-            proc.wait(timeout=10)
-        except Exception:  # noqa: BLE001
-            pass
+    tools = tools_list("lean-measure")
 
     rows = []
     for t in tools:

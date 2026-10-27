@@ -1002,6 +1002,47 @@ def _run_lean_first_line_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「工具描述写成变更日志」接成发布前硬门禁）
+# 文件:   `scripts/check_tool_contract.py`（本门禁的实现）
+#         `tests/test_tool_contract_gate.py`（双侧负例）
+#         `specs/352-tool-definition-contract/spec.md` §二（判据 K1–K5）
+# 定位:   新增 `_run_tool_contract_gate`：**硬门禁** ——
+#         ★ 业主 2026-10-26：「你现在都是半成品…**光看一下里面的参数，
+#           你可能不懂它到底是干什么的**」⇒ 把「描述能不能让人调对」写成判据 ✓
+#         ★★ 判据依据：`@local/dsh-lean-mode/index.mjs` L130-131 逐字
+#           `description: firstLine(t.description)` ⇒ lean 下模型只看得到 ≤120 字符首句；
+#           native / index 档看整段 ⇒ **两档都要治** ✓
+#         ★ 为什么是硬门禁：这是业主**第三次**提同一件事（前两次只改首句，
+#           doc 主体仍是考古记录）⇒ 只靠人记就会再犯 ✓
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_tool_contract_gate() -> dict[str, object]:
+    """@brief 跑工具定义契约门禁（`scripts/check_tool_contract.py`）。"""
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_tool_contract.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "工具定义契约门禁无法执行: %s" % exc}
+    #: ★ 退出码 2 = **无法判定**（注册表没加载全 / 读不到 ToolSpec / 基线读不出）——
+    #:   ★ 那**不能算过**（宁可拦发布，也不要一个说不清的绿）✓
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
@@ -2821,6 +2862,20 @@ def run_release_check() -> dict[str, object]:
             "不改写原有文字；★ 见 specs/215-tool-surface-decisions/spec.md §二）：\n"
             + str(lean_first.get("output", ""))
         )
+    # ⚑ **工具定义契约门禁**（硬门禁，2026-10-26 接进；★ 规格 352 §二）：
+    #   ★★ lean 档下 `description = firstLine(doc)`（`index.mjs` L130-131）⇒ 模型只看得到
+    #      ≤120 字符的首句；★ native / index 档看整段 ⇒ **两档都要治** ✓
+    #   ★ 判据：首句自足（英文 / 动词开头 / ≤120 / 无 ★ 元数据）· 整段 ≤600 且 ≥2 句 ·
+    #     每个参数有英文说明且句号收尾 · 副作用必须在描述里说
+    #     （DSH **不转发** MCP annotations ⇒ 注解对模型隐形，副作用只能写进描述）✓
+    tool_contract = _run_tool_contract_gate()
+    if tool_contract.get("status") == "fail":
+        raise AssertionError(
+            "工具定义契约门禁未通过（★ 有工具的模型可见描述不是成品：首句是元数据 / 首句超长 / "
+            "整段是考古记录 / 参数没说明；★ 判据与修法见 "
+            "specs/352-tool-definition-contract/spec.md §二）：\n"
+            + str(tool_contract.get("output", ""))
+        )
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -3472,6 +3527,9 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-07（接手轮 · 规格 215）★ **第六次**同一课：首句自证门禁
         #:   ★ 也必须**两处同时加**（★ `check_gate_wiring.py` 会拦"没进返回体"）✓
         "lean_first_line": lean_first,
+        #: ★ 2026-10-26（规格 352）★ **第七次**同一课：工具定义契约门禁
+        #:   ★ 也必须**两处同时加**（★ 元门禁在守）✓
+        "tool_contract": tool_contract,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #: `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价
         #: 」⚠
@@ -3673,6 +3731,8 @@ def run_release_check() -> dict[str, object]:
         "preselect_family": preselect_family,
         #: ★ 2026-10-07（接手轮 · 规格 215）★ 首句自证门禁的**第二处**（★ 元门禁要的）✓
         "lean_first_line": lean_first,
+        #: ★ 2026-10-26（规格 352）★ 工具定义契约门禁的**第二处**（★ 元门禁要的）✓
+        "tool_contract": tool_contract,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点*
         #: * ⚠
         "unreachable": unreachable,

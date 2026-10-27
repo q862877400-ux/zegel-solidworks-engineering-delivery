@@ -1,0 +1,156 @@
+{
+ "_comment": [
+  "规格 352 P3 试点：21 条工具的定义改写（英文）。",
+  "★ 写法：首句 = <动词> <对象> <关键限定>，≤120 字符、不用中文句号、不带 ★ 元数据；",
+  "  第二/三句 = 何时用 / 前置 / 副作用 / 返回什么；整段 ≤600 字符。",
+  "★ 参数说明：<它是什么>[; <取值域>][; defaults to <默认值>].（句号必须）",
+  "★ 每条都只压缩 `evidence` 或目标函数 docstring 里已有的事实 —— 不新增语义。"
+ ],
+ "tools": {
+  "solidworks_macro_build_prompt": {
+   "doc": "Build the prompt that asks a model to write SolidWorks VBA for user_request. Internal step of the sw_macro_guard generate_macro_with_guard pipeline, not meant to be called on its own; it is a pure string function and never calls SolidWorks.",
+   "params": {
+    "user_request": "What the user wants the macro to do, in natural language.",
+    "model_name": "Model name mapped onto a prompt family by solidworks_macro_normalize_model_family; empty means the generic family. Defaults to empty.",
+    "strict": "Whether to emit the strict variant of the prompt. Defaults to true."
+   }
+  },
+  "solidworks_macro_extract_vba_code": {
+   "doc": "Pull the VBA source out of a model reply that mixes prose and code fences. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure text handling, no SolidWorks call. Feed the result to solidworks_macro_validate_vba_code before anything runs.",
+   "params": {
+    "text": "Raw model output, which may contain prose and Markdown code fences around the code."
+   }
+  },
+  "solidworks_macro_fallback_template": {
+   "doc": "Return the local fallback VBA template for user_request, used when model generation fails. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure function with no SolidWorks call and no network access.",
+   "params": {
+    "user_request": "The user's request text, used to pick the closest template."
+   }
+  },
+  "solidworks_macro_normalize_model_family": {
+   "doc": "Map a concrete model name onto one of the prompt families this repo uses (gpt, kimi, claude, generic). Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure string function with no SolidWorks call and no COM.",
+   "params": {
+    "model_name": "Model name exactly as written by the caller, for example gpt-4o or claude-3.5-sonnet."
+   }
+  },
+  "solidworks_macro_select_template": {
+   "doc": "Choose the local VBA template whose keywords match user_request. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure function, and the template bodies live in this repo under the MIT licence.",
+   "params": {
+    "user_request": "The user's request text, matched against template keywords."
+   }
+  },
+  "solidworks_sheet_metal_create_edge_flange": {
+   "doc": "NOT USABLE on this machine: the official call needs SetFixedFace and process-internal access-selection pointers that pywin32 cannot reach. Creates a native edge flange on one selected edge; the edge is selected for you from selection before the call, and the tool writes a feature into the active part without saving it.",
+   "params": {
+    "selection": "Declarative EDGE selection: '__current_selection__' to reuse the current selection, or 'index:<n>' for the n-th edge on the body.",
+    "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",
+    "flange_length_mm": "Flange length in millimetres.",
+    "angle_deg": "Flange angle in degrees. Defaults to 90.",
+    "use_default_radius": "Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true.",
+    "reverse_direction": "Whether to flip which side the flange grows from. Defaults to false."
+   }
+  },
+  "solidworks_sheet_metal_create_gusset": {
+   "doc": "NOT USABLE on this machine: ISMGussetFeatureData needs process-internal access-selection pointers that pywin32 cannot reach, and the feature is not created even though every property writes back. Would create a sheet-metal gusset on a selected supporting face.",
+   "params": {
+    "selection": "Declarative FACE selection: '__current_selection__' or 'index:<n>' for the n-th face on the body.",
+    "thickness_mm": "Gusset wall thickness in millimetres.",
+    "profile_distance_1_mm": "First leg length of the gusset profile in millimetres.",
+    "profile_distance_2_mm": "Second leg length of the gusset profile in millimetres. Defaults to 0.",
+    "profile_angle_deg": "Angle of the gusset profile in degrees. Defaults to 0."
+   }
+  },
+  "solidworks_sheet_metal_create_one_bend": {
+   "doc": "NOT USABLE on this machine: the CreateDefinition(35) sketch-bend entry point is correct and returns an object, but selecting the bend line and fixed face is still unsolved. Would create a single sheet-metal bend from an existing sketch.",
+   "params": {
+    "sketch_name": "Name of the sketch holding the bend line; '__current_selection__' reuses the current selection.",
+    "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",
+    "angle_deg": "Bend angle in degrees.",
+    "reverse_direction": "Whether to flip the bend direction. Defaults to false.",
+    "use_default_radius": "Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true."
+   }
+  },
+  "solidworks_assembly_component_pattern_report": {
+   "doc": "List the assembly feature tree node by node, including any component-pattern nodes. Read-only, and it reports the whole tree rather than isolating pattern readings: there is no dedicated pattern-count measurement behind it.",
+   "params": {
+    "include_subfeatures": "Whether to descend into sub-features while walking the tree. Defaults to true."
+   }
+  },
+  "solidworks_assembly_iter_feature_tree": {
+   "doc": "List the assembly feature tree node by node, covering components, features and mates. Read-only. Use solidworks_assembly_list_components instead when you only need the component list.",
+   "params": {}
+  },
+  "solidworks_assembly_performance_analysis_report": {
+   "doc": "Summarise the mates and features of the active assembly as per-item counts. Read-only; it reports real counts read from the mate group and feature tree, not a call to an official performance-analysis member.",
+   "params": {}
+  },
+  "solidworks_assembly_sequence_report": {
+   "doc": "Report the assembly components as ordered rows that read like an assembly instruction sheet. Read-only; it is built from the real bills-of-materials rows, and SolidWorks has no member that produces an assembly sequence.",
+   "params": {
+    "include_excluded": "Whether to include components excluded from the bill of materials. Defaults to false."
+   }
+  },
+  "solidworks_available_direction_selectors": {
+   "doc": "List the direction-selector names usable when specifying geometry. Read-only and needs no open document; pass one of the returned names wherever a tool takes a direction selector.",
+   "params": {}
+  },
+  "solidworks_available_point_selectors": {
+   "doc": "List the point-selector names usable when specifying geometry. Read-only and needs no open document; pass one of the returned names wherever a tool takes a point selector.",
+   "params": {}
+  },
+  "solidworks_catalog_contract": {
+   "doc": "Read the full contract of one tool from the catalog: name, domain, parameters, availability and preconditions. Read-only; omit tool_name to get the catalog summary instead of a single card.",
+   "params": {
+    "tool_name": "Canonical tool name such as solidworks_extrude_boss; empty returns the catalog summary. Defaults to empty."
+   }
+  },
+  "solidworks_catalog_domains": {
+   "doc": "List the eight task domains and the seven controlled multi-labels used to classify tools. Read-only; use the returned domain names as the domain filter of solidworks_catalog_retrieve.",
+   "params": {}
+  },
+  "solidworks_catalog_exposure": {
+   "doc": "Report which tools a given exposure mode would present to the model. Read-only; autonomous mode keeps only planning entry points and the necessary query tools, compat mode keeps every tool.",
+   "params": {
+    "mode": "Exposure mode: 'autonomous' for planning entry points plus query tools, or 'compat' for every tool. Defaults to 'compat'."
+   }
+  },
+  "solidworks_catalog_retrieve": {
+   "doc": "Search the tool catalog by free text and facets and return the matching tool cards. Read-only; every filter is optional and an omitted filter means no restriction on that facet.",
+   "params": {
+    "query": "Natural-language query in Chinese or English; empty means no text filter. Defaults to empty.",
+    "domain": "Task domain to restrict to; see solidworks_catalog_domains for the valid names. Defaults to empty.",
+    "doc_state": "Required document state to restrict to, for example an open document or a selection. Defaults to empty.",
+    "backend": "Backend reachability to restrict to, for example com_pywin32 or file_io. Defaults to empty.",
+    "capability": "Availability label to restrict to. Defaults to empty.",
+    "budget": "Upper bound on candidate tokens returned. Defaults to 4096."
+   }
+  },
+  "solidworks_circular_pattern": {
+   "doc": "Create a circular pattern of one feature about an axis. Writes a pattern feature into the active part and does not save the document; count counts the instances including the seed, and the total angle is spread over equal spacing when that is enabled.",
+   "params": {
+    "feature_name": "Name of the feature to pattern, as it appears in the feature tree.",
+    "axis_name": "Name of the axis or circular edge to revolve around.",
+    "angle_deg": "Total pattern angle in degrees.",
+    "count": "Number of instances including the seed feature.",
+    "equal_spacing": "Whether to space the instances equally across the angle. Defaults to true."
+   }
+  },
+  "solidworks_export_flat_pattern_dxf": {
+   "doc": "Export the sheet-metal flat pattern of the active part to a DXF file for cutting. Writes the file, and refuses to run unless the part is already saved or allow_temporary_save is true.",
+   "params": {
+    "output_path": "Absolute target DXF path.",
+    "include_bend_lines": "Whether to write the bend lines. Defaults to true.",
+    "include_sketches": "Whether to write the sketches. Defaults to false.",
+    "include_hidden_edges": "Whether to write hidden edges. Defaults to false.",
+    "include_bounding_box": "Whether to write the bounding box. Defaults to false.",
+    "merge_coplanar_faces": "Whether to merge coplanar faces. Defaults to false.",
+    "allow_temporary_save": "Whether to save the unsaved part into temporary_save_dir first so the official precondition holds. Defaults to false, which keeps the previous behaviour.",
+    "temporary_save_dir": "Directory for that temporary save; must stay inside this repository. Defaults to output/_temp_save."
+   }
+  },
+  "solidworks_section_properties": {
+   "doc": "Read the section properties of the current selection. Not read-only: the official member clears and rewrites the selection set, and the returned area unit is unverified, so treat it as a number without a unit.",
+   "params": {}
+  }
+ }
+}

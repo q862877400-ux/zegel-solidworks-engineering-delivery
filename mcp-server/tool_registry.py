@@ -468,6 +468,15 @@ class ToolSpec:
     load_automation: bool = True
     extra_op: Callable[[Any], Any] | None = None
     doc: str = ""
+    #: ★★ **工程证据**（规格 352 · D3/D4）：**非模型可见**。
+    #:   装旧的 `doc` 原文：`★ 官方签名（逐字…）` / `查不到` / `事实 47` / 真机读数 / 废弃链。
+    #:   ★ 为什么不放在 `doc` 里：DSH `agent-experience` 逐字要求
+    #:     「**Describe behavior, not implementation.** …omit internal mechanisms and
+    #:     enforcement details」—— 那些是**实现与执法细节**，不该占模型的第一眼 ✗
+    #:   ★ 为什么不删掉：**五统一 / A2 两层 provenance** 要求证据可追溯 ⇒ 搬家、不丢 ✓
+    #:   ★ 注册路径**只读 `doc`**（`make_tool_function` 里 `_impl.__doc__ = spec.doc`）
+    #:     ⇒ 本字段**不会**进 `tools/list` ✓
+    evidence: str = ""
     omitted_params: tuple[str, ...] = ()
     param_alias: dict[str, str | None] = field(default_factory=dict)
     derived_args: Callable[[Any], dict] | None = None

@@ -600,6 +600,15 @@
       "environment": "offline-static",
       "owner": "executing-agent",
       "runs_in": "release_check"
+    },
+    {
+      "gate": "check_tool_contract.py",
+      "runner": "_run_tool_contract_gate",
+      "kind": "release_static",
+      "reason": "**硬门禁**（2026-10-26 · 规格 352）：判「**模型可见的工具定义是不是成品**」。★★ 判据来自两条实测口径：① `@local/dsh-lean-mode/index.mjs` L130-131 逐字 `description: firstLine(t.description)` ⇒ lean 档下模型**只看得到 ≤120 字符那段**；native / index 档看**整段** ⇒ **两档都要治**。② DSH 官方 72 工具实测（`docs/tool-description-style.md` 第 1 节）：82% 动词开头、99% 句号收尾、参数描述 100% 句号收尾。★★ 业主 2026-10-26：「你现在都是**半成品**…光看一下里面的参数，你可能不懂它到底是干什么的」—— 这是同一诉求的**第三次**（前两次 2026-10-07 只改首句，doc 主体仍是变更日志 + 证据链 ⇒ 没治好）⇒ 本次把「描述能不能让人调对」写成判据。★★ 判据：K1 整段纯英文 / 无 `。` / 无换行 / 句号收尾 · K2 首句非空、≤120、无 ★ 元数据 · K3 首句动词开头 · K4 整段 ≤600 且 ≥2 句 · K5 每个参数有英文说明且句号收尾 · K9 副作用必须在描述里说（**DSH 不转发 MCP annotations**，`mcp-client/src/tools.ts` 只转 name/description/parameters/output）· K10 有默认值的参数要写 defaults to。★★ **迁移期形态 = 棘轮**：基线 `docs/tool-contract-baseline.json` 承载「还没改到的那些」，判据是「**一处都没多**」，改完的条目从基线删掉 ⇒ **只降不升**；收敛完成时基线应为**空**，用 `--strict` 复核（A1：498/498 零违反）。★ 落地：`scripts/check_tool_contract.py`（实现）+ 本表 + `release_check` 两处登记 + `tests/test_tool_contract_gate.py`（25 例双侧负例）。⚠ **覆盖边界**：只扫 `all_specs()` 的 `ToolSpec.doc` 与 `Param.description`；★ `server.py` 里 45 个装饰器工具的 docstring **不在其内**（它们不经过 `ToolSpec`）⇒ ★ 那一半同类问题本道**看不到**（已记进 352 的 tasks T-352-23）。",
+      "environment": "offline-static",
+      "owner": "executing-agent",
+      "runs_in": "release_check"
     }
   ]
 }

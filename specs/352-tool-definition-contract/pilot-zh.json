@@ -1,0 +1,31 @@
+{
+ "_comment": [
+  "规格 352 P3 试点的**中文版首句**（对照臂）。",
+  "★ 只写首句：本试点要回答的是「同一信息量下，lean 只保留 120 字符 vs 第一个中文句号」",
+  "  哪个活得更长；★ 所以中文版**不用 `。`**（换了就变成在测断句，不是在测语言）。",
+  "★ 每条都是 pilot-en.json 那条英文首句的逐义压缩，不新增事实。"
+ ],
+ "tools": {
+  "solidworks_macro_build_prompt": "生成一个让模型写 SolidWorks VBA 的提示词：内部件，sw_macro_guard 管线的一步，纯字符串函数不调 SolidWorks",
+  "solidworks_macro_extract_vba_code": "从模型回复里抽出 VBA 代码：内部件，sw_macro_guard 管线的一步，纯文本处理，先把结果交给 validate 再跑",
+  "solidworks_macro_fallback_template": "取本地兜底 VBA 模板（生成失败时用）：内部件，sw_macro_guard 管线的一步，不调 SolidWorks 也不联网",
+  "solidworks_macro_normalize_model_family": "把具体模型名映射到本仓的提示词族（gpt/kimi/claude/generic）：内部件，纯字符串函数不调 COM",
+  "solidworks_macro_select_template": "按键词挑一个本地 VBA 模板：内部件，sw_macro_guard 管线的一步，纯函数，模板正文在本仓内",
+  "solidworks_sheet_metal_create_edge_flange": "本机不可用：需要 SetFixedFace 与进程内指针族，pywin32 到不了，其余见参数与证据",
+  "solidworks_sheet_metal_create_gusset": "本机不可用：ISMGussetFeatureData 要进程内指针族，属性全写回但特征建不出来",
+  "solidworks_sheet_metal_create_one_bend": "本机不可用：CreateDefinition(35) 入口对了，选折弯线与固定面这步还没解决",
+  "solidworks_assembly_component_pattern_report": "逐节点列装配特征树（含零部件阵列节点）：只读，给的是整棵树不是阵列专项读数",
+  "solidworks_assembly_iter_feature_tree": "逐节点列装配特征树（组件+特征+配合）：只读；只要组件清单请用 list_components",
+  "solidworks_assembly_performance_analysis_report": "把活动装配体的配合与特征汇总成逐项计数：只读，是真实读数而不是官方性能分析接口",
+  "solidworks_assembly_sequence_report": "把装配体组件按行序列成装配说明书：只读，取自真实 BOM，官方没有「装配序列」成员",
+  "solidworks_available_direction_selectors": "列出可用的方向选择器名字：只读、不需要打开文档，返回值可直接喂给需要方向的工具",
+  "solidworks_available_point_selectors": "列出可用的点选择器名字：只读、不需要打开文档，返回值可直接喂给需要点的工具",
+  "solidworks_catalog_contract": "读单个工具的完整契约（名字/域/参数/可用性/前置）：只读；不传 tool_name 就回目录摘要",
+  "solidworks_catalog_domains": "列出八个任务域与七个受控多标签：只读；返回的域名可直接当 catalog_retrieve 的 domain 过滤",
+  "solidworks_catalog_exposure": "看某个暴露模式会给模型看哪些工具：只读；autonomous 只留规划入口与必要查询，compat 全给",
+  "solidworks_catalog_retrieve": "按自由文本与分面检索工具卡片：只读；每个过滤都可省略，省略即不限制该分面",
+  "solidworks_circular_pattern": "绕轴给一个特征做圆周阵列：会写特征、不保存文档；count 含种子件，等间距时角度均分",
+  "solidworks_export_flat_pattern_dxf": "把钣金展开图导成 DXF 供切割：会写文件；零件未保存又没授权临时另存时直接拒绝",
+  "solidworks_section_properties": "读当前选择集的截面属性：不是只读，官方成员会清空并重写选择集，面积单位未确证"
+ }
+}
