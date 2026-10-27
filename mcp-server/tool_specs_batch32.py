@@ -92,6 +92,11 @@ SPECS_BATCH32 = [
             Param("thickness_mm", float, description=_THICK),
             Param("feature_name", str, default="", description=_FEAT),
         ],
+        evidence=(
+            "Hollow the part with a wall thickness and return a READ-BACK report: whether the feature is in the tree, w"
+            "hether EditRebuild3 succeeded, and the What's Wrong item count (★ rule 6 — feature creation must not succe"
+            "ed silently). ⚠ Does NOT save the document."
+        ),
         doc="Hollow the part with a wall thickness and return a READ-BACK report: whether the "
         "feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item "
         "count (★ rule 6 — feature creation must not succeed silently). "
@@ -115,6 +120,10 @@ SPECS_BATCH32 = [
                 description="Rib direction flag (official InsertRib arg 4).",
             ),
         ],
+        evidence=(
+            "Create a rib from an existing sketch and return a READ-BACK report (feature in tree + rebuild + What's Wro"
+            "ng count). ★ Rule 6. ⚠ Does NOT save the document."
+        ),
         doc="Create a rib from an existing sketch and return a READ-BACK report (feature in "
         "tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.",
     ),
@@ -152,6 +161,12 @@ SPECS_BATCH32 = [
                 "越界或选不中会**响亮报错**，不会静默变成「圆顶建不出来」。",
             ),
         ],
+        evidence=(
+            "★ Add a dome on the face at `face_index` (0-based) and return a READ-BACK report. ★★ The tool selects that"
+            " face itself with **selection mark 1** (the official Remarks require it) — so the caller does NOT need to "
+            "pre-select anything, and a pre-selection would be cleared anyway. ★ Read-back confirmed (rule 6); does NOT"
+            " save the document."
+        ),
         doc="★ Add a dome on the face at `face_index` (0-based) and return a READ-BACK report. "
         "★★ The tool selects that face itself with **selection mark 1** (the official Remarks "
         "require it) — so the caller does NOT need to pre-select anything, and a pre-selection "
@@ -166,6 +181,12 @@ SPECS_BATCH32 = [
         params=[
             Param("feature_name", str, default="", description=_FEAT),
         ],
+        evidence=(
+            "Join the selected entities into a composite curve and return a READ-BACK report (★ rule 6). The capability"
+            " layer already raises when the official call returns False — this adds the tree/rebuild/What's Wrong read-"
+            "back on top. ⚠ The official Remarks require the entities to be selected with mark = 1 first. ⚠ Does NOT sa"
+            "ve the document."
+        ),
         doc="Join the selected entities into a composite curve and return a READ-BACK report "
         "(★ rule 6). The capability layer already raises when the official call returns "
         "False — this adds the tree/rebuild/What's Wrong read-back on top. "

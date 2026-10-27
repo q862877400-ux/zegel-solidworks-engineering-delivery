@@ -45,6 +45,13 @@ SPECS_BATCH79 = [
         function="create_exploded_view",
         inject="doc",
         params=[],
+        evidence=(
+            "Create an explode view of the active assembly configuration (official `System.bool CreateExplodedView()`, "
+            "**zero arguments**). ★ Official Remarks: call it MULTIPLE times to add multiple explode views to the same "
+            "configuration; and \"Perfect explode views often require user interaction\" — it does its best from the CU"
+            "RRENT MATE CONDITIONS. ⚠ Judged by the returned bool, but do NOT trust that alone: read back with `solidwo"
+            "rks_assembly_get_exploded_view_count` (this repo's rule: read-back proves it)."
+        ),
         doc="Create an explode view of the active assembly configuration (official "
         "`System.bool CreateExplodedView()`, **zero arguments**). "
         "★ Official Remarks: call it MULTIPLE times to add multiple explode views to the same "
@@ -60,6 +67,11 @@ SPECS_BATCH79 = [
         function="auto_explode",
         inject="doc",
         params=[],
+        evidence=(
+            "Automatically generate an exploded view of the current configuration (official `System.bool AutoExplode()`"
+            ", zero arguments). ★ Official Remarks: it creates only ONE exploded view per configuration — for several, "
+            "use `solidworks_assembly_create_exploded_view`."
+        ),
         doc="Automatically generate an exploded view of the current configuration (official "
         "`System.bool AutoExplode()`, zero arguments). "
         "★ Official Remarks: it creates only ONE exploded view per configuration — for several, "
@@ -72,6 +84,10 @@ SPECS_BATCH79 = [
         function="view_explode_assembly",
         inject="doc",
         params=[],
+        evidence=(
+            "Explode the selected exploded view in the display (official `void ViewExplodeAssembly()`, zero arguments)."
+            " ★ Official Remarks: pair it with `solidworks_assembly_view_collapse` to TOGGLE the display."
+        ),
         doc="Explode the selected exploded view in the display (official `void "
         "ViewExplodeAssembly()`, zero arguments). ★ Official Remarks: pair it with "
         "`solidworks_assembly_view_collapse` to TOGGLE the display.",
@@ -83,6 +99,10 @@ SPECS_BATCH79 = [
         function="view_collapse_assembly",
         inject="doc",
         params=[],
+        evidence=(
+            "Collapse the display back (official `void ViewCollapseAssembly()`, zero arguments). ★ The pair of `solidwo"
+            "rks_assembly_view_explode` (official Remarks name them together)."
+        ),
         doc="Collapse the display back (official `void ViewCollapseAssembly()`, zero arguments). "
         "★ The pair of `solidworks_assembly_view_explode` (official Remarks name them together).",
     ),
@@ -108,6 +128,10 @@ SPECS_BATCH79 = [
                 "`solidworks_assembly_get_exploded_view_names`).",
             ),
         ],
+        evidence=(
+            "Display the named exploded view (official `System.bool ShowExploded2(Boolean ShowIt, String ExplodeViewNam"
+            "e)` — **two arguments**, and note the trailing `2`)."
+        ),
         doc="Display the named exploded view (official `System.bool ShowExploded2(Boolean ShowIt, "
         "String ExplodeViewName)` — **two arguments**, and note the trailing `2`).",
     ),
@@ -118,6 +142,11 @@ SPECS_BATCH79 = [
         function="get_exploded_view_names",
         inject="doc",
         params=[Param("configuration_name", str, description=_CFG)],
+        evidence=(
+            "Return the exploded-view NAMES of a configuration as a list of strings (official `System.object GetExplode"
+            "dViewNames2(String ConfigurationName)`). ★ `None` comes back as an EMPTY LIST here — never as \"one namele"
+            "ss view\"."
+        ),
         doc="Return the exploded-view NAMES of a configuration as a list of strings (official "
         "`System.object GetExplodedViewNames2(String ConfigurationName)`). "
         '★ `None` comes back as an EMPTY LIST here — never as "one nameless view".',
@@ -129,6 +158,10 @@ SPECS_BATCH79 = [
         function="get_exploded_view_count",
         inject="doc",
         params=[Param("configuration_name", str, description=_CFG)],
+        evidence=(
+            "Return the number of exploded views in a configuration (official `System.int GetExplodedViewCount2(String "
+            "ConfigurationName)`). ★ This is the READ-BACK that proves a create actually happened."
+        ),
         doc="Return the number of exploded views in a configuration (official `System.int "
         "GetExplodedViewCount2(String ConfigurationName)`). ★ This is the READ-BACK that proves "
         "a create actually happened.",
@@ -150,6 +183,11 @@ SPECS_BATCH79 = [
                 "an index or a name (repo rule: say 'not determined').",
             )
         ],
+        evidence=(
+            "Thin wrapper over `IAssemblyDoc.GetExplodedViewConfigurationName` (one argument). ⚠ **The meaning of that "
+            "argument is not documented** on the official page — passed through as-is, and the returned value is echoed"
+            " with no interpretation."
+        ),
         doc="Thin wrapper over `IAssemblyDoc.GetExplodedViewConfigurationName` (one argument). "
         "⚠ **The meaning of that argument is not documented** on the official page — passed "
         "through as-is, and the returned value is echoed with no interpretation.",
@@ -161,6 +199,11 @@ SPECS_BATCH79 = [
         function="edit_explode_parameters",
         inject="doc",
         params=[],
+        evidence=(
+            "Call `IAssemblyDoc.EditExplodeParameters` (zero arguments). ⚠ The official page carries NO Remarks, so whe"
+            "ther it opens an INTERACTIVE dialog is NOT determined here — run it through the dialog guard (`python tool"
+            "s/sw_guard.py --timeout N -- python <script>`) as the repo requires."
+        ),
         doc="Call `IAssemblyDoc.EditExplodeParameters` (zero arguments). "
         "⚠ The official page carries NO Remarks, so whether it opens an INTERACTIVE dialog is "
         "NOT determined here — run it through the dialog guard "
@@ -198,6 +241,14 @@ SPECS_BATCH79 = [
                 "page and factory reflection agree).",
             ),
         ],
+        evidence=(
+            "Run a macro from a project file (official `System.bool RunMacro2(String FilePathName, String ModuleName, S"
+            "tring ProcedureName, Int32 Options, out Int32 Error)` — **4 in + 1 out**). ★ Returns `{ok, return_value, e"
+            "rror_code, error_name, file, file_exists, module, procedure, options}`. ★★ The out-parameter is the useful"
+            " part: `error_name` maps the code through `swRunMacroError_e` (all 28 members; official page and factory r"
+            "eflection agree member-by-member). ⚠ On failure also check `file_exists` — a bogus path is the commonest c"
+            "ause and yields `error_code` 28 (`OpenFileFailed`)."
+        ),
         doc="Run a macro from a project file (official `System.bool RunMacro2(String FilePathName, "
         "String ModuleName, String ProcedureName, Int32 Options, out Int32 Error)` — **4 in + 1 "
         "out**). ★ Returns `{ok, return_value, error_code, error_name, file, file_exists, module, "
@@ -214,6 +265,11 @@ SPECS_BATCH79 = [
         params=[
             Param("model_name", str, description="Model name as written by the caller.")
         ],
+        evidence=(
+            "★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。Map "
+            "a concrete model name onto one of the prompt families this repo uses (gpt / kimi / claude / generic). ★ Pu"
+            "re string function — no SolidWorks, no COM."
+        ),
         doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
         "Map a concrete model name onto one of the prompt families this repo uses "
         "(gpt / kimi / claude / generic). ★ Pure string function — no SolidWorks, no COM.",
@@ -240,6 +296,11 @@ SPECS_BATCH79 = [
                 description="Emit the strict variant of the prompt.",
             ),
         ],
+        evidence=(
+            "★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。Buil"
+            "d the prompt that asks a model to write SolidWorks VBA for `user_request`. ★ Pure string function (no Soli"
+            "dWorks call), so it is safe to call anywhere."
+        ),
         doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
         "Build the prompt that asks a model to write SolidWorks VBA for `user_request`. "
         "★ Pure string function (no SolidWorks call), so it is safe to call anywhere.",
@@ -256,6 +317,11 @@ SPECS_BATCH79 = [
                 description="Raw model output (may contain prose + fences).",
             )
         ],
+        evidence=(
+            "★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。Pull"
+            " the VBA code out of a model's reply (official-free helper: pure text). ★ Returns the extracted code; use "
+            "`solidworks_macro_validate_vba_code` next."
+        ),
         doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
         "Pull the VBA code out of a model's reply (official-free helper: pure text). "
         "★ Returns the extracted code; use `solidworks_macro_validate_vba_code` next.",
@@ -266,6 +332,10 @@ SPECS_BATCH79 = [
         module="sw_macro_guard",
         function="validate_vba_macro",
         params=[Param("code", str, description="VBA source to check.")],
+        evidence=(
+            "Check a VBA macro against the minimum this repo requires before it may be handed to SolidWorks. ★ Pure fun"
+            "ction: a static pre-flight, not an execution."
+        ),
         doc="Check a VBA macro against the minimum this repo requires before it may be handed to "
         "SolidWorks. ★ Pure function: a static pre-flight, not an execution.",
     ),
@@ -275,6 +345,11 @@ SPECS_BATCH79 = [
         module="sw_macro_guard",
         function="select_template_key",
         params=[Param("user_request", str, description="The user's request text.")],
+        evidence=(
+            "★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。Choo"
+            "se the local VBA template key whose keywords match `user_request`. ★ Pure function; the template bodies li"
+            "ve in this repo (MIT)."
+        ),
         doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
         "Choose the local VBA template key whose keywords match `user_request`. "
         "★ Pure function; the template bodies live in this repo (MIT).",
@@ -285,6 +360,11 @@ SPECS_BATCH79 = [
         module="sw_macro_guard",
         function="fallback_macro_for_request",
         params=[Param("user_request", str, description="The user's request text.")],
+        evidence=(
+            "★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。Retu"
+            "rn the local fallback VBA template for `user_request` — used when generation fails. ★ Pure function; no So"
+            "lidWorks call, no network."
+        ),
         doc="★ **内部件（模型不必直接调用）**：本工具是 `sw_macro_guard.generate_macro_with_guard` 管线的**一步**。"
         "Return the local fallback VBA template for `user_request` — used when generation fails. "
         "★ Pure function; no SolidWorks call, no network.",
@@ -304,6 +384,10 @@ SPECS_BATCH79 = [
                 "geometry coordinates).",
             ),
         ],
+        evidence=(
+            "Write VBA source to a file so a human or an agent can load it into SolidWorks. ★ Returns the write report;"
+            " it does NOT run the macro (use `solidworks_macro_run`)."
+        ),
         doc="Write VBA source to a file so a human or an agent can load it into SolidWorks. "
         "★ Returns the write report; it does NOT run the macro (use `solidworks_macro_run`).",
     ),

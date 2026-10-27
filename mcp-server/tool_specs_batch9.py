@@ -43,6 +43,10 @@ SPECS_BATCH9 = [
         module="sw_mold",
         function="insert_core_cavity_solids",
         inject="model",
+        evidence=(
+            "Split the mold into core and cavity solids (this is the tooling split). ⚠ 0.0 means 'use the document defa"
+            "ult' for scale/thickness/offset."
+        ),
         doc="Split the mold into core and cavity solids (this is the tooling split). "
         "⚠ 0.0 means 'use the document default' for scale/thickness/offset.",
         param_alias={},
@@ -76,6 +80,9 @@ SPECS_BATCH9 = [
         module="sw_mold",
         function="insert_parting_surface",
         inject="model",
+        evidence=(
+            "Insert the mold parting surface."
+        ),
         doc="Insert the mold parting surface.",
         param_alias={},
         params=[
@@ -122,6 +129,14 @@ SPECS_BATCH9 = [
         module="sw_mold",
         function="mold_undercut_detect",
         inject="model",
+        evidence=(
+            "Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked Obs"
+            "olete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is verif"
+            "ied. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md (ColUndercut/Co"
+            "lBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did not, so the thi"
+            "rd argument BCoordInput received False — which drops back to 'use the model's own draft direction' and pop"
+            "s the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session."
+        ),
         doc="Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked "
              "Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is "
              "verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md "

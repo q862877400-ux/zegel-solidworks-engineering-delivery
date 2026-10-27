@@ -120,6 +120,11 @@ _BATCH69: list[ToolSpec] = [
                 default=0,
             ),
         ],
+        evidence=(
+            "★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。⚠ 官方 Remarks 逐字：「The mark for:"
+            " **profile selections should be 1**」⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。★ 真机"
+            "建成：树 7→8，新增 `曲面-放样1`。★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。"
+        ),
         doc="★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。"
         "⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」"
         "⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。"

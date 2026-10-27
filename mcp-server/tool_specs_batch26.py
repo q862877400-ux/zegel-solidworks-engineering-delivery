@@ -143,6 +143,11 @@ SPECS_BATCH26 = [
             Param("study_name", str, default="", description=_STUDY),
             Param("selection", str, description=_SEL),
         ],
+        evidence=(
+            "Apply a FIXED restraint (fixture) to the selected face(s) of a static study and return the ICWRestraint. ★"
+            " The faces come from `selection` (declarative) because the capability layer assembles them into the offici"
+            "al DispArray. ⚠ Requires the Simulation add-in; the first call loads it automatically."
+        ),
         doc="Apply a FIXED restraint (fixture) to the selected face(s) of a static study and "
         "return the ICWRestraint. ★ The faces come from `selection` (declarative) because the "
         "capability layer assembles them into the official DispArray. "
@@ -177,6 +182,10 @@ SPECS_BATCH26 = [
                 "layer uses force unit 0 = n_or_nm).",
             ),
         ],
+        evidence=(
+            "Apply a NORMAL force to the selected face(s) of a static study and return the ICWForce. ★ The faces come f"
+            "rom `selection` (declarative). ⚠ The magnitude is in NEWTONS — it is not converted."
+        ),
         doc="Apply a NORMAL force to the selected face(s) of a static study and return the "
         "ICWForce. ★ The faces come from `selection` (declarative). "
         "⚠ The magnitude is in NEWTONS — it is not converted.",

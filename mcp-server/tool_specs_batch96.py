@@ -101,6 +101,16 @@ SPECS_BATCH96 = [
                 description="官方 `InsertAllReferenceGeometry`：`True` 插**全部参考几何**（忽略 `Types`）。",
             ),
         ],
+        evidence=(
+            "★ **把模型标注插进工程图视图**（官方 `IDrawingDoc::InsertModelAnnotations4`，**8 参**）—— ★★ **状态：`stit"
+            "ched`**（真机只验到**可达 + 回读可用**，★ **没能产出非空插入**）—— 原因**已查明且如实**：我们的零件是**纯"
+            "坐标画出来的**（**一个尺寸都没有**），★ 而本仓的 `add_horizontal_dimension` 等助手**需要先选中实体**才建得"
+            "出尺寸（官方 `AddDimension2` 摘要逐字「for **selected entities**」）⇒ ★ 那份夹具里**根本没有可插的东西** ✓"
+            " —— ★ 这是**数据相关**的失败，**不是**后端到不了。★ 调用序**照官方示例**：选中视图（`DRAWINGVIEW`）⇒ **`Ac"
+            "tivateView`**（★ 这一步签名里看不出来）⇒（`AllViews=True` 时）清选区 ⇒ 调它 ✓ ★★ **判据（规则 6）**：它回"
+            "的是 **COM 标注对象数组**（**过不了 JSON 边界**）⇒ 判据是 **`IView::GetAnnotationCount()` 的前后回读**（★ "
+            "本模块既有 `_sum_over_views` + `_delta`）—— ★ **不拿返回数组长度当唯一判据** ✓"
+        ),
         doc="★ **把模型标注插进工程图视图**（官方 `IDrawingDoc::InsertModelAnnotations4`，**8 参**）—— "
         "★★ **状态：`stitched`**（真机只验到**可达 + 回读可用**，★ **没能产出非空插入**）—— "
         "原因**已查明且如实**：我们的零件是**纯坐标画出来的**（**一个尺寸都没有**），"

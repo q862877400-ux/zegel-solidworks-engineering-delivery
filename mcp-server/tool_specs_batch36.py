@@ -52,6 +52,9 @@ SPECS_BATCH36 = [
         function="custom_property_count",
         inject="model",
         params=[Param("config_name", str, default="", description=_CFG)],
+        evidence=(
+            "Return how many custom properties the document (or one configuration) has. ★ Read-only."
+        ),
         doc="Return how many custom properties the document (or one configuration) has. "
         "★ Read-only.",
     ),
@@ -62,6 +65,9 @@ SPECS_BATCH36 = [
         function="custom_property_names",
         inject="model",
         params=[Param("config_name", str, default="", description=_CFG)],
+        evidence=(
+            "Return the custom property names as a list. ★ Read-only."
+        ),
         doc="Return the custom property names as a list. ★ Read-only.",
     ),
     #: ── 几何选择器（★ resolve）──────────────────────────────────────────
@@ -79,6 +85,9 @@ SPECS_BATCH36 = [
                 "solidworks_available_direction_selectors).",
             )
         ],
+        evidence=(
+            "Resolve a named direction selector to its (x, y, z) vector. ★ Pure lookup — no SolidWorks call."
+        ),
         doc="Resolve a named direction selector to its (x, y, z) vector. "
         "★ Pure lookup — no SolidWorks call.",
     ),
@@ -102,6 +111,10 @@ SPECS_BATCH36 = [
                 description="Zero-based solid-body index. ⚠ Not a persistent reference.",
             ),
         ],
+        evidence=(
+            "Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. ★ No coordinates are passed in"
+            " (rule 3)."
+        ),
         doc="Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. "
         "★ No coordinates are passed in (rule 3).",
     ),
@@ -113,6 +126,9 @@ SPECS_BATCH36 = [
         function="sheet_count",
         inject="model",
         params=[],
+        evidence=(
+            "Return the number of sheets in the active drawing. ★ Read-only."
+        ),
         doc="Return the number of sheets in the active drawing. ★ Read-only.",
     ),
     ToolSpec(
@@ -122,6 +138,9 @@ SPECS_BATCH36 = [
         function="sheet_names",
         inject="model",
         params=[],
+        evidence=(
+            "Return the drawing's sheet names as a list. ★ Read-only."
+        ),
         doc="Return the drawing's sheet names as a list. ★ Read-only.",
     ),
     ToolSpec(
@@ -131,6 +150,9 @@ SPECS_BATCH36 = [
         function="current_sheet_name",
         inject="model",
         params=[],
+        evidence=(
+            "Return the name of the sheet currently being edited. ★ Read-only."
+        ),
         doc="Return the name of the sheet currently being edited. ★ Read-only.",
     ),
     #: ── 交付（★ 纯数据 + 一个导出）──────────────────────────────────────
@@ -165,6 +187,9 @@ SPECS_BATCH36 = [
                 description="Optional review report path.",
             ),
         ],
+        evidence=(
+            "Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call."
+        ),
         doc="Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call.",
     ),
     ToolSpec(
@@ -203,6 +228,9 @@ SPECS_BATCH36 = [
                 "include_suppressed", bool, description="Include suppressed components."
             ),
         ],
+        evidence=(
+            "Build the audit matrix that a Pack-and-Go hand-off is reviewed against. ★ Pure data — no SolidWorks call."
+        ),
         doc="Build the audit matrix that a Pack-and-Go hand-off is reviewed against. "
         "★ Pure data — no SolidWorks call.",
     ),
@@ -227,6 +255,10 @@ SPECS_BATCH36 = [
                 description="Allow replacing an existing file.",
             ),
         ],
+        evidence=(
+            "Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). ⚠ Does NOT save the do"
+            "cument."
+        ),
         doc="Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). "
         "⚠ Does NOT save the document.",
     ),
@@ -238,6 +270,10 @@ SPECS_BATCH36 = [
         function="list_setter_summary",
         inject=None,
         params=[],
+        evidence=(
+            "Return the catalogue of simulation study-option setters (family / name / type) as a dict. ★ Zero-argument,"
+            " no SolidWorks call — use it to discover valid family/name pairs before calling set_option."
+        ),
         doc="Return the catalogue of simulation study-option setters (family / name / type) as a "
         "dict. ★ Zero-argument, no SolidWorks call — use it to discover valid "
         "family/name pairs before calling set_option.",

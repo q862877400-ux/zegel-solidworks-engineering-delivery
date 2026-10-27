@@ -77,6 +77,15 @@ SPECS_BATCH49 = [
                 default="FACE",
             ),
         ],
+        evidence=(
+            "★ **从声明式选区建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`（★ **注意入口在 `IModelDoc2` 上**，不在 `IFe"
+            "atureManager` 上；★ 真机调后者报`AttributeError: <unknown>.InsertAxis2`）。★★ 用 `selection` + `selection_"
+            "kind` 说明用哪个几何（★ 规则 3：**不收坐标**；★ 函数会在**注入之后**自己重建选区 —— ★ 事实 503：注入解析器"
+            "会清空选区）。★★ 判据（★ 事实 242 挑只依赖被测对象的那个）：**它回 `True`** **且** **特征树出现新特征**（★"
+            " 真机：`基准轴1`）—— ⚠ **不要读返回值的 `.Name`**：真机证明它回的是 **`bool`**，读 `.Name` 会报 `'bool' ob"
+            "ject has no attribute 'Name'`（★ 差点据此误判「轴没建成」）。★ 环形阵列的前置：官方 `FeatureCircularPatter"
+            "n4` 的 mark 表要求 `1 = 方向轴`。"
+        ),
         doc="★ **从声明式选区建一条参考轴** —— 走 `IModelDoc2.InsertAxis2`"
         "（★ **注意入口在 `IModelDoc2` 上**，不在 `IFeatureManager` 上；★ 真机调后者报"
         "`AttributeError: <unknown>.InsertAxis2`）。"

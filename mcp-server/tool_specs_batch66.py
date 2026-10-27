@@ -69,6 +69,10 @@ SPECS_BATCH66 = [
                 default=0.0,
             ),
         ],
+        evidence=(
+            "Trim the selected sketch entities. ⚠ How many segments must be selected DEPENDS on the option (official Re"
+            "marks: closest = exactly one, corner = exactly two)."
+        ),
         doc=(
             "Trim the selected sketch entities. ⚠ How many segments must be selected DEPENDS on "
             "the option (official Remarks: closest = exactly one, corner = exactly two)."
@@ -98,6 +102,9 @@ SPECS_BATCH66 = [
                 default=0.0,
             ),
         ],
+        evidence=(
+            "Extend the selected sketch entity to the nearest entity."
+        ),
         doc="Extend the selected sketch entity to the nearest entity.",
     ),
     ToolSpec(
@@ -153,6 +160,10 @@ SPECS_BATCH66 = [
                 default=False,
             ),
         ],
+        evidence=(
+            "Offset the selected sketch entities (official swSkOffsetCapEndType_e / swSkOffsetMakeConstructionType_e va"
+            "lues are used verbatim)."
+        ),
         doc="Offset the selected sketch entities (official swSkOffsetCapEndType_e / "
         "swSkOffsetMakeConstructionType_e values are used verbatim).",
     ),
@@ -181,6 +192,9 @@ SPECS_BATCH66 = [
                 default=0,
             ),
         ],
+        evidence=(
+            "Create a SKETCH fillet on two selected, intersecting sketch segments."
+        ),
         doc="Create a SKETCH fillet on two selected, intersecting sketch segments.",
     ),
     ToolSpec(
@@ -250,6 +264,9 @@ SPECS_BATCH66 = [
                 default="",
             ),
         ],
+        evidence=(
+            "Create a LINEAR sketch pattern of the selected entities (official 12-arg call)."
+        ),
         doc="Create a LINEAR sketch pattern of the selected entities (official 12-arg call).",
     ),
     ToolSpec(
@@ -311,6 +328,9 @@ SPECS_BATCH66 = [
                 default="",
             ),
         ],
+        evidence=(
+            "Create a CIRCULAR sketch pattern of the selected entities (official 9-arg call)."
+        ),
         doc="Create a CIRCULAR sketch pattern of the selected entities (official 9-arg call).",
     ),
 ]

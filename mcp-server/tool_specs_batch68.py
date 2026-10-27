@@ -61,6 +61,10 @@ _BATCH68: list[ToolSpec] = [
         inject="model",
         param_alias={},
         params=[],
+        evidence=(
+            "★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。★ 官方语义：用**当前选中的封闭"
+            "边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。★ 真机：树 6→7，新增 `曲面-基准面1`。"
+        ),
         doc="★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。"
         "★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。"
         "★ 真机：树 6→7，新增 `曲面-基准面1`。",
@@ -82,6 +86,10 @@ _BATCH68: list[ToolSpec] = [
                 default=False,
             ),
         ],
+        evidence=(
+            "★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。★ 真机：树 7→8，新增 `曲面-"
+            "等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。"
+        ),
         doc="★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。"
         "★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
     ),
@@ -185,6 +193,12 @@ _BATCH68: list[ToolSpec] = [
                 default=False,
             ),
         ],
+        evidence=(
+            "★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。⚠ 官方 Remarks 逐"
+            "字：「If you select an edge with a **selection mark of 4**, the default face is used.」⇒ ★ **调用前先把边"
+            "按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsole"
+            "te**，铁律 4）。"
+        ),
         doc="★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。"
         "⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default "
         "face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。"
@@ -207,6 +221,11 @@ _BATCH68: list[ToolSpec] = [
                 default=0,
             ),
         ],
+        evidence=(
+            "★ 删除面：**`IModelDocExtension.InsertDeleteFace(Option)`**（回 `bool`）。⚠ ★ 入口在 **Extension** 上；★ `"
+            "IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。★ 真机（`option=0`）：树 7→8，新增 "
+            "`删除面1`。⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。"
+        ),
         doc="★ 删除面：**`IModelDocExtension.InsertDeleteFace(Option)`**（回 `bool`）。"
         "⚠ ★ 入口在 **Extension** 上；★ `IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。"
         "★ 真机（`option=0`）：树 7→8，新增 `删除面1`。"
@@ -220,6 +239,11 @@ _BATCH68: list[ToolSpec] = [
         inject="model",
         param_alias={},
         params=[],
+        evidence=(
+            "★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。⚠ 官方 Remarks 逐字：调用前要*"
+            "*选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实"
+            "体**的面，不是曲面体的面）。"
+        ),
         doc="★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。"
         "⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。"
         "★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实体**的面，不是曲面体的面）。",

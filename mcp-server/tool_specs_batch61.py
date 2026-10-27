@@ -94,6 +94,13 @@ SPECS_BATCH61 = [
                 description="目标侧取第几个**体**（★ 0 基）",
             ),
         ],
+        evidence=(
+            "Add a **RIGID CONNECTOR** between two bodies and return a READ-BACK report. ★★ **本工具不读选区** —— 它自"
+            "己按**序号**把两组实体装好（`entities_as_array`）。⚠★ **它要在「两个体」上才建得出来**：★ 在**单体零件**上"
+            "会**成功返回但不建**（计数不涨、也不报错）—— ★ 那是**应然的**（同族形参名写着 `Comp1`/`Comp2` ⇒ **连接件连"
+            "的是两个东西**）。★ 所以请**两侧体号指向不同的体**（多体零件即用；装配体属另一条链）。★ `ok` 的判据是**回"
+            "读**：载荷计数**恰好 +1**，★ **不是**返回值。"
+        ),
         doc=(
             "Add a **RIGID CONNECTOR** between two bodies and return a READ-BACK report. "
             "★★ **本工具不读选区** —— 它自己按**序号**把两组实体装好（`entities_as_array`）。"

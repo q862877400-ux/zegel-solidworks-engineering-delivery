@@ -80,6 +80,11 @@ _BATCH71: list[ToolSpec] = [
                 "（规则 2），★ 并把该假设写进返回值。",
             ),
         ],
+        evidence=(
+            "★ 通过参考点的曲线：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → `InsertCurveFileEnd()`（★"
+            " **三步式**，★ 别只调中间那个）。★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。★ "
+            "判据 = `Point`/`End` 的返回值 **且** 特征树增量。"
+        ),
         doc="★ 通过参考点的曲线：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → "
         "`InsertCurveFileEnd()`（★ **三步式**，★ 别只调中间那个）。"
         "★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。"

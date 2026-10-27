@@ -138,6 +138,13 @@ _BATCH73: list[ToolSpec] = [
                 description="官方 `BreakSketchBlocks` —— True 连草图块一起断开。",
             ),
         ],
+        evidence=(
+            "★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参"
+            "）**官方都标 Obsolete** ⇒ ★ 只走 3。★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值"
+            "；★ 都相对视图原点。★ **判据 = `GetBreakLines()` 的数组长度 + `IView.IsBroken()`**（★ 两个都要）——★ 官方把"
+            "这两件事**定义成了两件**：有断裂线**不等于**断开了。⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传"
+            "、只在边界换算一次。"
+        ),
         doc="★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。"
         "★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参）**官方都标 Obsolete** ⇒ ★ 只走 3。"
         "★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值；★ 都相对视图原点。"
@@ -204,6 +211,13 @@ _BATCH73: list[ToolSpec] = [
                 description="官方 `Flip` —— True 翻转辅助视图所显示的那一侧。",
             ),
         ],
+        evidence=(
+            "★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。★★★ **官方前置（摘要逐字）**：「Creates an aux"
+            "iliary view **based on a selected edge in a drawing view**」⇒ ★★ **调用前必须先选中视图里的一条边**。★ 而*"
+            "*边没有可用的名字**（本仓事实 32）⇒ ★ 本工具**不代选**，★ 只**回读当前选区计数**并写进 `preconditions_held"
+            "` ⇒ 失败时能看见原因。★ **判据 = 视图数增量 + 新视图 `Type == 5`（`swDrawingAuxiliaryView`）**，★ 不是「返"
+            "回非 None」。⚠ `NotAligned` 的官方说明与形参名矛盾，见该参数说明。"
+        ),
         doc="★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。"
         "★★★ **官方前置（摘要逐字）**："
         "「Creates an auxiliary view **based on a selected edge in a drawing view**」"
@@ -345,6 +359,15 @@ _BATCH73: list[ToolSpec] = [
                 description="官方 `MinRoughness`（最小粗糙度）。★ 同上。",
             ),
         ],
+        evidence=(
+            "★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)`。★★ **官方 `## Remarks` 逐字*"
+            "*：「The SOLIDWORKS Design software uses the location parameters for this method **only if** the surface f"
+            "inish symbol has a leader leaderType **!= swNO_LEADER**.」⇒ ★★ `leader_type = 0` 时**三个位置参数被官方无"
+            "视**⇒ ★ 本工具在那一档**主动传 0** 并把原坐标回在 `ignored_location_mm`。★ **另一条前置**：官方摘要逐字「b"
+            "ased on the **last selection**」⇒ ★ 调用前必须有选区；★ 本工具**不代选**（★ 规则 3 禁裸坐标），只回读选区"
+            "计数写进 `preconditions_held`。★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**，★ 不是「返回非 Non"
+            "e」。"
+        ),
         doc="★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)`。"
         "★★ **官方 `## Remarks` 逐字**：「The SOLIDWORKS Design software uses the location "
         "parameters for this method **only if** the surface finish symbol has a leader "
@@ -361,6 +384,14 @@ _BATCH73: list[ToolSpec] = [
         function="insert_datum_tag",
         inject="model",
         params=[],
+        evidence=(
+            "★ **基准符号**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **官方零参数**）。★★ **官方前置**（摘要逐字"
+            "）：「Inserts a datum tag symbol **at a selected location**.」⇒ ★ 调用前必须先选中一个位置（★ 官方示例用 `"
+            "SelectByID2` 选 EDGE）。★ 因为官方**零参数**，★ 落点**完全由选区决定** ⇒ 本工具**没有坐标入口**（★ 这既由"
+            "官方签名决定，★ 也正好合上规则 3 的「禁裸坐标」）。★ 入口是 `IModelDoc2`（**不是** `IModelDocExtension`）—"
+            "— ★ 与表面粗糙度符号那 14 参**不是同一个宿主对象**。★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量*"
+            "*，★ 不是「返回非 None」。 ★ 别名: annotation, balloon, datum, gdt, gtol, note, tolerance"
+        ),
         doc="★ **基准符号**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **官方零参数**）。"
         "★★ **官方前置**（摘要逐字）：「Inserts a datum tag symbol **at a selected "
         "location**.」⇒ ★ 调用前必须先选中一个位置（★ 官方示例用 `SelectByID2` 选 EDGE）。"

@@ -112,6 +112,9 @@ SPECS_BATCH17 = [
                 description="Space the instances equally.",
             ),
         ],
+        evidence=(
+            "Create a circular pattern about an axis."
+        ),
         doc="Create a circular pattern about an axis.",
     ),
     # 签名: def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None)
@@ -142,6 +145,10 @@ SPECS_BATCH17 = [
                 description='Axis sketch name; omit ("") to use the function default (None).',
             ),
         ],
+        evidence=(
+            "Revolve a profile sketch into a boss feature. ⚠ This call is routed through a closed-source COM backend — "
+            "see docs/known-facts.md."
+        ),
         doc="Revolve a profile sketch into a boss feature. ⚠ This call is routed through a "
         "closed-source COM backend — see docs/known-facts.md.",
     ),

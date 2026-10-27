@@ -74,6 +74,13 @@ SPECS_BATCH54 = [
                 description="弧的方向（官方 CreateArc 的参数：顺时针 / 逆时针）",
             ),
         ],
+        evidence=(
+            "★ **在当前草图里画一段圆弧**（圆心 + 起点 + 终点）。⚠ Sketch geometry MUST be given as in-plane coordinate"
+            "s — this is the documented exception in rule 3 (a *drawing primitive* has no named entity to select). Coor"
+            "dinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidwo"
+            "rks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_"
+            "* tools."
+        ),
         doc="★ **在当前草图里画一段圆弧**（圆心 + 起点 + 终点）。" + _GEOM_NOTE,
     ),
     ToolSpec(
@@ -102,6 +109,13 @@ SPECS_BATCH54 = [
                 "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
             ),
         ],
+        evidence=(
+            "★ **在当前草图里画一个整椭圆**（官方 `ISketchManager.CreateEllipse`）。★ 官方那族另有**椭圆弧**（`CreateEl"
+            "lipticalArc`）—— 本工具只画整椭圆。⚠ Sketch geometry MUST be given as in-plane coordinates — this is the d"
+            "ocumented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordinates are milli"
+            "metres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start "
+            "first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
+        ),
         doc="★ **在当前草图里画一个整椭圆**（官方 `ISketchManager.CreateEllipse`）。"
         "★ 官方那族另有**椭圆弧**（`CreateEllipticalArc`）—— 本工具只画整椭圆。"
         + _GEOM_NOTE,
@@ -119,6 +133,13 @@ SPECS_BATCH54 = [
             Param("radius_mm", float, description="内切圆半径，毫米"),
             Param("sides", int, default=6, description="边数（默认 6；至少 3）"),
         ],
+        evidence=(
+            "★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。⚠ Sketch geometry MUST be g"
+            "iven as in-plane coordinates — this is the documented exception in rule 3 (a *drawing primitive* has no na"
+            "med entity to select). Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ "
+            "Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_end; read back with t"
+            "he solidworks_sketch_count_* tools."
+        ),
         doc="★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。"
         + _GEOM_NOTE,
     ),
@@ -142,6 +163,13 @@ SPECS_BATCH54 = [
             Param("end_y_mm", float, description="槽口终点 Y，毫米"),
             Param("radius_mm", float, description="槽口半径（即宽度的一半），毫米"),
         ],
+        evidence=(
+            "★ **在当前草图里画槽口**（直槽 / 腰形孔 —— 两点 + 半径）。⚠ Sketch geometry MUST be given as in-plane coor"
+            "dinates — this is the documented exception in rule 3 (a *drawing primitive* has no named entity to select)"
+            ". Coordinates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with s"
+            "olidworks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_"
+            "count_* tools."
+        ),
         doc="★ **在当前草图里画槽口**（直槽 / 腰形孔 —— 两点 + 半径）。" + _GEOM_NOTE,
     ),
     ToolSpec(
@@ -166,6 +194,14 @@ SPECS_BATCH54 = [
                 "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
             ),
         ],
+        evidence=(
+            "★ **在当前草图里画一条中心线**（官方 `ISketchManager.CreateCenterLine`）。★★ 用途：中心线可以**当旋转轴**"
+            "（见 `solidworks_revolve_boss` 那族对轴的要求）——所以它不只是画一条虚线，而是**建旋转特征的前置**。⚠ Sketc"
+            "h geometry MUST be given as in-plane coordinates — this is the documented exception in rule 3 (a *drawing "
+            "primitive* has no named entity to select). Coordinates are millimetres, relative to the SKETCH ORIGIN, in "
+            "the sketch plane. ★ Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_e"
+            "nd; read back with the solidworks_sketch_count_* tools."
+        ),
         doc="★ **在当前草图里画一条中心线**（官方 `ISketchManager.CreateCenterLine`）。"
         "★★ 用途：中心线可以**当旋转轴**（见 `solidworks_revolve_boss` 那族对轴的要求）——"
         "所以它不只是画一条虚线，而是**建旋转特征的前置**。" + _GEOM_NOTE,

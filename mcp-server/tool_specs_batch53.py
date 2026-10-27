@@ -42,6 +42,11 @@ SPECS_BATCH53 = [
         function="get_selection_count",
         inject="model",
         read_only=True,
+        evidence=(
+            "★ **回读当前选区计数**（`ISelectionMgr.GetSelectedObjectCount2(-1)`）。★★ 它是**选择类判据的唯一来源** —— "
+            "事实 8：`SelectByID2` / `Select4` 的 bool 返回值不可信（实测 12 次全 false 而计数 = 12）⇒ ★ **判「选没选中"
+            "」永远看本工具的回读数**。"
+        ),
         doc="★ **回读当前选区计数**（`ISelectionMgr.GetSelectedObjectCount2(-1)`）。"
         "★★ 它是**选择类判据的唯一来源** —— 事实 8：`SelectByID2` / `Select4` 的 bool 返回值"
         "不可信（实测 12 次全 false 而计数 = 12）⇒ ★ **判「选没选中」永远看本工具的回读数**。",
@@ -54,6 +59,11 @@ SPECS_BATCH53 = [
         module="sw_selection_spec",
         function="select_entity_by_index",
         inject="model",
+        evidence=(
+            "★ **按序号选中体上的一个实体**（`kind` = `EDGE` / `FACE` / `VERTEX`，`index` 从 0 起）。★ 走 `IEntity.Sele"
+            "ct4`（★ 事实 32：对边/面**按名字选不中**，按**对象**选才行）。★ 返回**回读到的选区计数**。⚠ 序号顺序官方**"
+            "未承诺稳定**（★ 见 `entities_on_body`）⇒ 不要把它当跨重建的持久引用。"
+        ),
         doc="★ **按序号选中体上的一个实体**（`kind` = `EDGE` / `FACE` / `VERTEX`，`index` 从 0 起）。"
         "★ 走 `IEntity.Select4`（★ 事实 32：对边/面**按名字选不中**，按**对象**选才行）。"
         "★ 返回**回读到的选区计数**。"
@@ -72,6 +82,11 @@ SPECS_BATCH53 = [
         module="sw_selection_spec",
         function="resolve_selection",
         inject="model",
+        evidence=(
+            "★ **把声明式选择器解析并选中**，只回报**回读到的选区计数**。★ 选择器：`__current_selection__`（用当前选区"
+            "第一个，**不重选**）· `index:<n>`（体上第 n 个）。★ 计数为 0 时**抛错**（★ 本项目一贯纪律：选不中就报错，"
+            "不静默继续）。"
+        ),
         doc="★ **把声明式选择器解析并选中**，只回报**回读到的选区计数**。"
         "★ 选择器：`__current_selection__`（用当前选区第一个，**不重选**）· `index:<n>`（体上第 n 个）。"
         "★ 计数为 0 时**抛错**（★ 本项目一贯纪律：选不中就报错，不静默继续）。",
@@ -98,6 +113,11 @@ SPECS_BATCH53 = [
         function="selection_point",
         inject="model",
         read_only=True,
+        evidence=(
+            "★ **读当前选区那个点的坐标**（★ **毫米**，规则 2）。★★ 用途：★ 孔族吃 `center`（一个坐标元组）⇒ 包一层「**"
+            "先选点、再建孔**」⇒ ★ **工具层的参数里就没有坐标了**（★ 规则 3 的精神）。★ 回 `{ok, point_mm, selection_co"
+            "unt, error}`；⚠ **不猜**：★ `GetSelectionPoint` 取不到就 `ok=False` 并写明原因（★ 铁律 5）。"
+        ),
         doc="★ **读当前选区那个点的坐标**（★ **毫米**，规则 2）。"
         "★★ 用途：★ 孔族吃 `center`（一个坐标元组）⇒ 包一层「**先选点、再建孔**」"
         "⇒ ★ **工具层的参数里就没有坐标了**（★ 规则 3 的精神）。"
@@ -112,6 +132,11 @@ SPECS_BATCH53 = [
         module="sw_selection_spec",
         function="select_by_selector_report",
         inject="model",
+        evidence=(
+            "★ **用声明式选择器选中一个实体** —— ★ MCP 可用的形态（★ 只回 JSON，**不回 COM 对象**）。★ 它把 `select_obj"
+            "ect`（吃 COM 对象）与 `resolve_entity`（吐 COM 对象）**接起来**。★★ 判据是 `count`（★ 事实 8：`Select4` 的"
+            "返回值不可信，只有回读算数）；★ 计数为 0 时 `ok=False` **并写明原因**。"
+        ),
         doc="★ **用声明式选择器选中一个实体** —— ★ MCP 可用的形态（★ 只回 JSON，**不回 COM 对象**）。"
         "★ 它把 `select_object`（吃 COM 对象）与 `resolve_entity`（吐 COM 对象）**接起来**。"
         "★★ 判据是 `count`（★ 事实 8：`Select4` 的返回值不可信，只有回读算数）；"
@@ -140,6 +165,12 @@ SPECS_BATCH53 = [
         function="resolve_entity_report",
         inject="model",
         read_only=True,
+        evidence=(
+            "★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。★ `resolve_entity` 本身**返回 COM "
+            "对象** ⇒ MCP 层过不去 ⇒ 本工具换成可核对的描述。★ 回 `{ok, selector, kind, count, resolved}`：★ `resolved`"
+            " = 解析出了对象；★★ 而**是否真的在选区里**看 `count`（★ **解析出来 ≠ 选中**）；★ 而 `__current_selection__"
+            "` 是**不重选**的 ⇒ 那种情况下 `resolved=True` 而 `count=0` 是正常的。"
+        ),
         doc="★ **解析声明式选择器并回报结果**（★ 只回 JSON —— 把 COM 对象挡在里面）。"
         "★ `resolve_entity` 本身**返回 COM 对象** ⇒ MCP 层过不去 ⇒ 本工具换成可核对的描述。"
         "★ 回 `{ok, selector, kind, count, resolved}`：★ `resolved` = 解析出了对象；"

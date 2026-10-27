@@ -77,6 +77,9 @@ SPECS_BATCH35 = [
                 description="Collect identical bodies into one cut-list item.",
             ),
         ],
+        evidence=(
+            "Create the weldment cut list and return the cut-list folders as evidence."
+        ),
         doc="Create the weldment cut list and return the cut-list folders as evidence.",
     ),
     ToolSpec(
@@ -92,6 +95,11 @@ SPECS_BATCH35 = [
                 description='Mapping of property name to value (e.g. {"Description": "tube"}).',
             ),
         ],
+        evidence=(
+            "Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. ★★ **属性名用中文（本"
+            "地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`（真机：后者报「切割清单属性回读失败」，"
+            "而前者写入并回读得到）。"
+        ),
         doc=(
             "Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. "
             "★★ **属性名用中文（本地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`"
@@ -113,6 +121,10 @@ SPECS_BATCH35 = [
             ),
             Param("output_path", str, description="Absolute CSV output path."),
         ],
+        evidence=(
+            "Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-emp"
+            "ty), not the return value."
+        ),
         doc="Write a cut-list evidence dict to CSV and return the path. "
         "★ The criterion is the FILE (exists and non-empty), not the return value.",
     ),
@@ -130,6 +142,9 @@ SPECS_BATCH35 = [
                 description="Only the core properties (★ False reads everything).",
             ),
         ],
+        evidence=(
+            "Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only."
+        ),
         doc="Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only.",
     ),
     ToolSpec(
@@ -163,6 +178,11 @@ SPECS_BATCH35 = [
         #:   工具层的 `offset_distance_mm` 映过去 —— ★ 那正是本项目的统一形态
         #:   （★ 工具层带 `_mm`、能力层不带；★ 由 `check_param_binding.py` 盯着）。
         param_alias={"offset_distance_mm": "offset_distance"},
+        evidence=(
+            "Create a profile-center mate between declaratively selected structural members. ★ Uses the official entry "
+            "IAssemblyDoc::CreateMateData(swMatePROFILECENTER=24) + IAssemblyDoc::CreateMate (spec 240); the deprecated"
+            " AddMate* family is NOT used."
+        ),
         doc="Create a profile-center mate between declaratively selected structural members. "
         "★ Uses the official entry IAssemblyDoc::CreateMateData(swMatePROFILECENTER=24) + "
         "IAssemblyDoc::CreateMate (spec 240); the deprecated AddMate* family is NOT used.",
@@ -189,6 +209,10 @@ SPECS_BATCH35 = [
                 description="Optional profile properties (★ omit for none).",
             ),
         ],
+        evidence=(
+            "Create a weldment profile from a declaratively selected sketch and write it to output_path. ★ The criterio"
+            "n is the FILE."
+        ),
         doc="Create a weldment profile from a declaratively selected sketch and write it to "
         "output_path. ★ The criterion is the FILE.",
     ),

@@ -81,6 +81,17 @@ SPECS_BATCH95 = [
                 "（⚠ 有副作用 ⇒ 默认 False）。",
             ),
         ],
+        evidence=(
+            "★ **相交特征**（官方**两步**：`IFeatureManager::PreIntersect2` → `PostIntersect`）—— ★★ 状态：**真机建成 `"
+            "相交1`**（2026-10-06 · SW 2026 SP4.1）✓ ★★ **裁决书点名「唯一要实测」的那件事已验**：`PostIntersect` 第 1 "
+            "参是 `System.object`（**布尔 SafeArray**）—— ★ 本工具包 **`VARIANT(VT_ARRAY | VT_BOOL)`**，★ 真机**双向都"
+            "成立**：不排除 ⇒ 建出 `相交1`；**排除唯一的体** ⇒ `PostIntersect` 回 `None`、**特征没建出来** ⇒ ★★ **说明"
+            "那个 `True` 真被 SW 读走了**（不是「没报错」）✓ ★ 另两条本仓既有纪律也照做：★ 数组实参**必须包 `VARIANT`**"
+            "（裸 list 会**静默回 None** —— 见 `scripts/sketch_relations.py` 的真机教训）；★ 选择走官方示例的**名字 + "
+            "类型**（`SOLIDBODY` / `PLANE`，都 **mark 0**）✓ ★ 判据（规则 6，全回读）：**`PreIntersect2` 回的体数** + *"
+            "*特征树增量** + **`IIntersectFeatureData::GetIntersectionsCount()`**（零参回 int）—— ★ **不拿** `PostInter"
+            "sect` 回的那个 `IFeature` 当判据 ✓"
+        ),
         doc="★ **相交特征**（官方**两步**：`IFeatureManager::PreIntersect2` → `PostIntersect`）—— "
         "★★ 状态：**真机建成 `相交1`**（2026-10-06 · SW 2026 SP4.1）✓ "
         "★★ **裁决书点名「唯一要实测」的那件事已验**：`PostIntersect` 第 1 参是 `System.object`"

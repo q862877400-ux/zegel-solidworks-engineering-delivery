@@ -79,6 +79,15 @@ _BATCH76: list[ToolSpec] = [
             ),
             Param("note", str, description="注释文字（官方 `Note`；例子传空串）。"),
         ],
+        evidence=(
+            "★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（**7 参** · 官方 md **未标 Obsolete**）。★★ **官"
+            "方前置（台账逐字）：选圆柱面的**一条边**（★ 不是那个面）** ⇒ ★ 本工具**自己找**：先用官方 `ISurface.IsCyli"
+            "nder()` 定位圆柱面、取它的第一条边并按 `mark=0` 选中 ⇒ ★ 调用方**不必**先选；★ 找不到圆柱面时**如实报** `p"
+            "reconditions_held=False` + 原因。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`C"
+            "osmeticThread`**、名 `装饰螺纹线1`）。★★ **真机证据**（已建成过，★ 但那是在**探针**里的读数）：`output/cos"
+            "metic-thread-evidence.json`（2026-10-03 轮 568，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未"
+            "跑** ⇒ ★ 在那之前**不许**把它写成「经工具层已验证」。"
+        ),
         doc="★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（**7 参** · 官方 md **未标 Obsolete**）。"
         "★★ **官方前置（台账逐字）：选圆柱面的**一条边**（★ 不是那个面）** ⇒ ★ 本工具**自己找**："
         "先用官方 `ISurface.IsCylinder()` 定位圆柱面、取它的第一条边并按 `mark=0` 选中 "
@@ -108,6 +117,24 @@ _BATCH76.append(
                 "官方 Remarks 要求至少两组 X,Y,Z）⇒ ★ 换算只在能力层边界做一次。",
             ),
         ],
+        evidence=(
+            "★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。★★★ **本条修掉了一个真 bug（★ 且是一处「"
+            "被误记成架构限制」的假阴性）**：能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 docstring 断言"
+            "「**本机实测建不出来**」并把原因归给 **事实 47/68 的 pywin32 架构限制**。★ 而真因是 **数组的包装形态**：✗ "
+            "`array.array('d')` ⇒ **静默回 `None`**；✓ **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** ⇒ **建成**（草图段数 0→"
+            "1）。★ 证据：`output/spline-with-variant-evidence.json`（四格对照，`form=spline2` ⇒ `ok=true`）。★★ 而**正"
+            "解早在本仓**：`scripts/sketch_relations.create_spline:272-273` 逐字写着「★★★ 必须包 `VARIANT(VT_ARRAY|VT_R"
+            "8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」⇒ ★ **同一个仓里两条路，一条修了、另一条从没跟上*"
+            "*。★ 前置（**官方 `## Remarks` 逐字**）：「This method creates a spline in the active 2D sketch. ★★ If a s"
+            "ketch is not active, then a new sketch is created.」⇒ ★★★ **即：★ 没有活动草图时它**会新建一个**、★ 不会失"
+            "败** ✓⚠⚠ **2026-10-04（接手轮）更正 —— 这里原来写的是**假引用****（★ 处置 `JUDGE-C_D_E.md` 🔴 **#5** · `E-"
+            "6 #1`）：★ 原句逐字「★ 前置（官方 Remarks）：**必须先有活动草图**」· ★★ 而**官方 `CreateSpline2` 写的是**"
+            "反面**** —— ★ 那一句其实是 **`ISketchManager.CreateLine` 的 Remarks**，逐字「If a sketch is not active, th"
+            "en the line is **not created and NULL is returned**.」（★ 我读了两个 md 逐字比对；★ 另注：`CreateLine2` **"
+            "不存在**，★ 只有 `CreateLine`）⇒ ★★★ **把 `CreateLine` 的前置搬到 `CreateSpline2` 上、还冠以「官方 Remarks"
+            "」，是一处**假引用** —— ★ 它比「没写依据」更坏：★ 后人照它排查会**停在死路上** ✓⚠ 经**本工具**的端到端读数"
+            "**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。"
+        ),
         doc="★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。"
         "★★★ **本条修掉了一个真 bug（★ 且是一处「被误记成架构限制」的假阴性）**："
         "能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 docstring 断言"
@@ -163,6 +190,16 @@ _BATCH76.append(
                 "或 `solid`（取 `GetBodies2(0, …)`）。",
             ),
         ],
+        evidence=(
+            "★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。★★★ *"
+            "*官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；★ 另可选 2 = 引导边 · 4 = "
+            "映射边 · 8 = 撕裂边。★★ 台账还逐字记着那组**四格对照**的结论：「**面-only（mark=1）不够**」⇒ ★ 本工具**自"
+            "己两个都选**（面按 1、该体第一条边的一个顶点按 16）；★ 锚点没选上时**如实报** `preconditions_held=False` "
+            "并**指明**那正是失败原因。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`FlattenS"
+            "urface`**、名 `曲面-展平1`）。★★ **真机证据（探针级）**：`output/flatten-with-anchor-evidence.json`（2026-"
+            "10-03 轮 556，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层"
+            "已验证」。"
+        ),
         doc="★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。"
         "★★★ **官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；"
         "★ 另可选 2 = 引导边 · 4 = 映射边 · 8 = 撕裂边。"
@@ -219,6 +256,16 @@ _BATCH76.append(
                 "the user must **select the bodies** that the feature will affect.」",
             ),
         ],
+        evidence=(
+            "★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / **`IFeatureManager.FeatureCutThi"
+            "cken`（6 参）** —— ★★ **两个都未废弃**。★★★ **为什么是这两个成员**（★ 本条的来历）：`IModelDoc2` 那份**同"
+            "名**成员已废弃（`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`）"
+            "，★ 而另一族 `IModeler.ThickenSheet` 造的是**片体、不是特征** ⇒ ★ 入口只有这两个。★★ **官方前置（Remarks "
+            "逐字）**：参考面**必须按 `mark=1` 选中**；`FillVolume=true` 时**其余参数被忽略**、且**必须闭合曲面**；切减"
+            "时 `UseAutoSelect=false` 要**先选实体** ⇒ ★ 本工具**自己把第一张面按 `mark=1` 选上**，选不上就**如实报前置"
+            "**。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 两条都报）。⚠ **尚未真机验证**（★ 由 `tools/pr"
+            "obe_thicken_tool.py` 单独验）⇒ ★ 在那之前不许把它写成 `verified`。"
+        ),
         doc="★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / "
         "**`IFeatureManager.FeatureCutThicken`（6 参）** —— ★★ **两个都未废弃**。"
         "★★★ **为什么是这两个成员**（★ 本条的来历）：`IModelDoc2` 那份**同名**成员已废弃"

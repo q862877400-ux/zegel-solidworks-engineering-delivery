@@ -65,6 +65,10 @@ SPECS_BATCH13 = [
         function="generate_report",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Generate a study report to a file. ⚠ `template` valid values were NOT found in the local sources (see the "
+            "batch header); pass the template name your SolidWorks installation provides."
+        ),
         doc="Generate a study report to a file. ⚠ `template` valid values were NOT found in the "
         "local sources (see the batch header); pass the template name your SolidWorks "
         "installation provides.",
@@ -99,6 +103,9 @@ SPECS_BATCH13 = [
         function="create_mesh_for_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Mesh the study using a named mesh control."
+        ),
         doc="Mesh the study using a named mesh control.",
         params=[
             Param(
@@ -122,6 +129,9 @@ SPECS_BATCH13 = [
         function="default_element_size_and_tolerance",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Get the suggested element size and tolerance (millimetre-scale when units=-1)."
+        ),
         doc="Get the suggested element size and tolerance (millimetre-scale when units=-1).",
         params=[
             Param(

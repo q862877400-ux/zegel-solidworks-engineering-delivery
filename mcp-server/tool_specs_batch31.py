@@ -94,6 +94,14 @@ SPECS_BATCH31 = [
                 "「每 2,000,000 自由度需 1 GB RAM」。",
             ),
         ],
+        evidence=(
+            "Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, and return `{ok, element_"
+            "size, max_dim, volume_mm3, est_elements, est_dof, est_ram_gb, memory_budget_gb, reason}`. ★ Call this befo"
+            "re solidworks_simulation_create_mesh. ★★ **判据是双侧的**：① 单元尺寸**大于零件最大边** ⇒ 网格退化 ⇒ 后续"
+            "求解会弹模态框挂住会话；② 单元尺寸**小得离谱** ⇒ 按包围盒估的求解内存超过 `memory_budget_gb` ⇒ **会把整机"
+            "内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；★ `ok` 为 false 时**不要建网"
+            "格、更不要跑求解**。★ It does NOT create a mesh and does NOT run the solver."
+        ),
         doc="Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, "
         "and return `{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, "
         "est_ram_gb, memory_budget_gb, reason}`. ★ Call this before "

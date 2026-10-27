@@ -76,6 +76,10 @@ SPECS_BATCH11 = [
         function="create_mass_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a mass constraint for a topology study (mass-reduction percent semantics). Returns the constraint o"
+            "bject."
+        ),
         doc="Create a mass constraint for a topology study (mass-reduction percent "
         "semantics). Returns the constraint object.",
         params=[
@@ -100,6 +104,10 @@ SPECS_BATCH11 = [
         function="create_factor_of_safety_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a factor-of-safety constraint for a topology study (stress must stay below that percentage of yield"
+            " strength)."
+        ),
         doc="Create a factor-of-safety constraint for a topology study (stress must "
         "stay below that percentage of yield strength).",
         params=[
@@ -122,6 +130,10 @@ SPECS_BATCH11 = [
         function="create_preserved_region",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a preserved region for a topology study (material that must not be removed). ⚠ `option` is an offic"
+            "ial enum value; omit to use the default."
+        ),
         doc="Create a preserved region for a topology study (material that must not "
         "be removed). ⚠ `option` is an official enum value; omit to use the default.",
         params=[
@@ -146,6 +158,10 @@ SPECS_BATCH11 = [
         module="sw_topology",
         function="create_thickness_control",
         inject="study",
+        evidence=(
+            "Create a thickness control for a topology study (minimum/maximum thickness). Units are millimetres (rule 2"
+            ")."
+        ),
         doc="Create a thickness control for a topology study (minimum/maximum "
         "thickness). Units are millimetres (rule 2).",
         param_alias={

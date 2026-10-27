@@ -118,6 +118,10 @@ SPECS_BATCH18 = [
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
+        evidence=(
+            "Count the straight LINES in a sketch. ⚠ Use this rather than the raw getter: the underlying ISketch call r"
+            "eturns a NUMBER array (12 floats per line), which cannot answer \"how many lines\"."
+        ),
         doc="Count the straight LINES in a sketch. ⚠ Use this rather than the raw getter: "
         "the underlying ISketch call returns a NUMBER array (12 floats per line), which "
         'cannot answer "how many lines".',
@@ -130,6 +134,11 @@ SPECS_BATCH18 = [
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
+        evidence=(
+            "Count the ARCS in a sketch (the underlying call returns 16 floats per arc). ⚠ A full CIRCLE counts as ONE "
+            "arc — verified on a real machine (2026-10-01): a sketch with 1 line + 1 circle reports count_lines=1, coun"
+            "t_arcs=1, count_segments=2."
+        ),
         doc="Count the ARCS in a sketch (the underlying call returns 16 floats per arc). "
         "⚠ A full CIRCLE counts as ONE arc — verified on a real machine (2026-10-01): a sketch "
         "with 1 line + 1 circle reports count_lines=1, count_arcs=1, count_segments=2.",
@@ -142,6 +151,10 @@ SPECS_BATCH18 = [
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
+        evidence=(
+            "Count ALL segments in a sketch. ⚠ Not the same as the line count: segments are the total geometry units; l"
+            "ines are one kind among them."
+        ),
         doc="Count ALL segments in a sketch. ⚠ Not the same as the line count: segments are the "
         "total geometry units; lines are one kind among them.",
     ),
@@ -153,6 +166,9 @@ SPECS_BATCH18 = [
         param_alias=_ALIAS(),
         derived_args=_sketch_args,
         params=_PARAMS(),
+        evidence=(
+            "Whether the sketch is a 3D sketch (ISketch.Is3D)."
+        ),
         doc="Whether the sketch is a 3D sketch (ISketch.Is3D).",
     ),
 ]

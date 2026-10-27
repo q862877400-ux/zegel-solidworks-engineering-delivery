@@ -71,6 +71,9 @@ SPECS_BATCH16 = [
         module="sw_part",
         function="add_sketch_relation",
         inject="model",
+        evidence=(
+            "Add a sketch geometric relation to the current selection."
+        ),
         doc="Add a sketch geometric relation to the current selection.",
         params=[
             Param(
@@ -94,6 +97,9 @@ SPECS_BATCH16 = [
         module="sw_part",
         function="mirror_feature",
         inject="model",
+        evidence=(
+            "Mirror an existing feature about a plane."
+        ),
         doc="Mirror an existing feature about a plane.",
         params=[
             Param("feature_name", str, description="Name of the feature to mirror."),

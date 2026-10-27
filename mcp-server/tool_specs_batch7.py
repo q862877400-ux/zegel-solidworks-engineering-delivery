@@ -42,6 +42,10 @@ SPECS_BATCH7 = [
         module="sw_review",
         function="activate_model_for_preview",
         inject="model",
+        evidence=(
+            "Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as modi"
+            "fied (view/selection state changes count)."
+        ),
         doc="Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as "
              "modified (view/selection state changes count).",
         param_alias={},
@@ -53,6 +57,10 @@ SPECS_BATCH7 = [
         module="sw_review",
         function="clear_selection_for_preview",
         inject="model",
+        evidence=(
+            "Clear the selection so the preview does not show highlighted entities. ⚠ May mark the document as modified"
+            " (view/selection state changes count)."
+        ),
         doc="Clear the selection so the preview does not show highlighted entities. ⚠ May mark the document as "
              "modified (view/selection state changes count).",
         param_alias={},
@@ -64,6 +72,10 @@ SPECS_BATCH7 = [
         module="sw_render_material",
         function="refresh_scene_graph",
         inject="model",
+        evidence=(
+            "Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified (vi"
+            "ew/selection state changes count)."
+        ),
         doc="Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified "
              "(view/selection state changes count).",
         param_alias={},

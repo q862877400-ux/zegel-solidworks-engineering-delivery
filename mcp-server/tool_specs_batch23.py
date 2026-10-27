@@ -128,6 +128,10 @@ SPECS_BATCH23 = [
                 "requests swChamferAngleDistance).",
             ),
         ],
+        evidence=(
+            "Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), because the API takes no ed"
+            "ge object — it acts on the current selection."
+        ),
         doc="Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), "
         "because the API takes no edge object — it acts on the current selection.",
     ),
@@ -147,6 +151,10 @@ SPECS_BATCH23 = [
             Param("selection", str, description=_SEL),
             Param("radius_mm", float, description="Fillet radius in MILLIMETRES."),
         ],
+        evidence=(
+            "Round the selected edge(s) with the given radius. ★ The edge comes from `selection` (declarative) — the ca"
+            "pability layer passes edges=None, i.e. it acts on the current selection."
+        ),
         doc="Round the selected edge(s) with the given radius. ★ The edge comes from `selection` "
         "(declarative) — the capability layer passes edges=None, i.e. it acts on the "
         "current selection.",
@@ -179,6 +187,11 @@ SPECS_BATCH23 = [
                 "name (unlike edges/faces — known fact 32).",
             ),
         ],
+        evidence=(
+            "Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` (0 params). ★ It acts on t"
+            "he CURRENT SELECTION, so the capability layer selects the named feature first and REFUSES to call when the"
+            " selection read-back is 0 (an empty selection would silently do nothing)."
+        ),
         doc="Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` "
         "(0 params). ★ It acts on the CURRENT SELECTION, so the capability layer selects "
         "the named feature first and REFUSES to call when the selection read-back is 0 "
@@ -199,6 +212,10 @@ SPECS_BATCH23 = [
                 "(Chinese UI: e.g. 「凸台-拉伸1」).",
             ),
         ],
+        evidence=(
+            "Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` (0 params). ★ Same sel"
+            "ection contract and same refusal guard as `solidworks_feature_suppress`."
+        ),
         doc="Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` "
         "(0 params). ★ Same selection contract and same refusal guard as "
         "`solidworks_feature_suppress`.",
@@ -232,6 +249,12 @@ SPECS_BATCH23 = [
                 "name (unlike edges/faces — known fact 32).",
             ),
         ],
+        evidence=(
+            "Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). ★ It acts on the CURRENT SELE"
+            "CTION, so the capability layer selects the named feature first and REFUSES to call when the selection read"
+            "-back is 0. ★ The official return is `void`, so success is observed as the feature disappearing from the t"
+            "ree."
+        ),
         doc="Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). "
         "★ It acts on the CURRENT SELECTION, so the capability layer selects the named "
         "feature first and REFUSES to call when the selection read-back is 0. "

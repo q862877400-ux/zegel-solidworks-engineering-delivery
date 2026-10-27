@@ -171,6 +171,14 @@ SPECS_BATCH82 = [
                 description="建完配合后是否调 ClearSelection2 清选区（无量纲布尔）。★ 官方调用序第 4 步。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 AddMate5.md）：`**Signature**: `Mate2 AddMate5( System.int MateTypeFromEnum, System"
+            ".int AlignFromEnum, System.bool Flip, System.double Distance, System.double DistanceAbsUpperLimit, System."
+            "double DistanceAbsLowerLimi`。官方页第 12 行逐字：『Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]'"
+            "'⇒ ★ **已废弃但当前仍可调**（废弃 ≠ 不可达）。Remarks 逐字给了三条分流：『Standard, advanced, and mechanic"
+            "al mates, use [[IAssemblyDoc::CreateMate]]. / Misaligned concentric mates, use [[IAssemblyDoc::AddConcentr"
+            "icMateWithTolerance]]. / Cylindrical distance ma"
+        ),
         doc="★ 官方签名（逐字，来自 AddMate5.md）：`**Signature**: `Mate2 AddMate5( System.int MateTypeFromEnum, "
              "System.int AlignFromEnum, System.bool Flip, System.double Distance, System.double DistanceAbsUpperLimit, "
              "System.double DistanceAbsLowerLimi`。官方页第 12 行逐字：『Obsolete. Superseded by [[IAssemblyDoc::"
@@ -196,6 +204,13 @@ SPECS_BATCH82 = [
                              "调用方须填 SelectByID2 能认的那个名字，不是零件文件名。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 EditSuppress2.md）：``System.bool EditSuppress2()``。本函数的动作本体就是官方成员 I"
+            "ModelDoc2.EditSuppress2（零参、回 System.bool），源码 scripts\\sw_assembly.py:755 只有一句 `asm_model.Edit"
+            "Suppress2()`，前面那步选组件是本仓补的前置、不属于该成员。官方页 C:\\swapi\\types\\IModelDoc2\\EditSuppres"
+            "s2.md 首句逐字「Suppresses the selected feature, the selected component, or the owning feature of the sele"
+            "cted face.」⇒ ★ "
+        ),
         doc="★ 官方签名（逐字，来自 EditSuppress2.md）：``System.bool EditSuppress2()``。本函数的动作本体就是官方成员 "
              "IModelDoc2.EditSuppress2（零参、回 System.bool），源码 scripts\\sw_assembly.py:755 只有一句 `asm_model."
              "EditSuppress2()`，前面那步选组件是本仓补的前置、不属于该成员。官方页 C:"
@@ -219,6 +234,12 @@ SPECS_BATCH82 = [
                              "坐标 0,0,0 是辅助函数内部固定的，不出现在工具签名里）。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 EditUnsuppress2.md）：`System.bool EditUnsuppress2()`。官方页 IModelDoc2/EditUnsupp"
+            "ress2.md 的 ## Remarks 逐字：「This routine is identical to the obsoleted IModelDoc2::EditUnsuppress. The "
+            "version number was incremented to allow VB applications to take advantage of information not available in "
+            "the obsoleted IPartDoc::EditUnsuppress.」⇒ 零参、作用在**当前选择**上、只是纯改名（调用序："
+        ),
         doc="★ 官方签名（逐字，来自 EditUnsuppress2.md）：`System.bool EditUnsuppress2()`。官方页 "
              "IModelDoc2/EditUnsuppress2.md 的 ## Remarks 逐字：「This routine is identical to the obsoleted IModelDoc2:"
              ":EditUnsuppress. The version number was incremented to allow VB applications to take advantage of "
@@ -249,6 +270,14 @@ SPECS_BATCH82 = [
                              "component）。★ 不是坐标、无量纲，不带 _mm 后缀。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 ReplaceComponents2.md）：`System.bool ReplaceComponents2( System.string FileName, S"
+            "ystem.string ConfigName, System.bool ReplaceAllInstance, System.int UseConfigChoice, System.bool ReAttachM"
+            "ates )`。★ 成员归属：官方页在 **IAssemblyDoc**（不是 IModelDoc2）—— C:\\swapi\\types\\IAssemblyDoc\\Replac"
+            "eComponents2.md；旧一代 IAssemblyDoc::ReplaceComponents 官方页逐字标「Obsolete. Superseded by [[IAssemblyD"
+            "oc::ReplaceComponents2]].」。## Returns：「True if the selected components are replaced, false if not」。#"
+            "# Remarks 逐字三条硬约束：(1)「You"
+        ),
         doc="★ 官方签名（逐字，来自 ReplaceComponents2.md）：`System.bool ReplaceComponents2( System.string FileName, "
              "System.string ConfigName, System.bool ReplaceAllInstance, System.int UseConfigChoice, System.bool "
              "ReAttachMates )`。★ 成员归属：官方页在 **IAssemblyDoc**（不是 IModelDoc2）—— C:"
@@ -263,6 +292,14 @@ SPECS_BATCH82 = [
         function="dissolve_assembly",
         inject="doc",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 DissolveSubAssembly.md）：`**Signature**: `System.bool DissolveSubAssembly()``。官"
+            "方 Remarks 逐字：「You must preselect the subassembly to dissolve when you run this method.」⇒ ★ 硬前置："
+            "调用前必须已选中要解散的子装配。同页另两句：解散会自动删除因此需要删除的特征、不向用户询问；在装配中调用会"
+            "关闭组件文件，组件若已修改**不会自动保存**，须在关闭前自行保存。★ 本函数（scripts/sw_assembly_doc.py:370-3"
+            "75）不接收任何选择参数、不代做选择 ⇒ 暴露为工具时必须由调用方先用声明式选择器族选中（solidworks_select_by_"
+            "selector / so"
+        ),
         doc="★ 官方签名（逐字，来自 DissolveSubAssembly.md）：`**Signature**: `System.bool DissolveSubAssembly()``。"
              "官方 Remarks 逐字：「You must preselect the subassembly to dissolve when you run this method.」⇒ ★ "
              "硬前置：调用前必须已选中要解散的子装配。同页另两句：解散会自动删除因此需要删除的特征、不向用户询问；"
@@ -277,6 +314,13 @@ SPECS_BATCH82 = [
         function="exit_edit_part_in_context",
         inject="asm_model",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 EditAssembly.md）：``void EditAssembly()``。官方该页没有 Parameters / Returns 段（"
+            "零参、回 void），## Remarks 逐字只有一句：「This method is used with [[IAssemblyDoc::EditPart2]], which al"
+            "lows you to edit a part within the context of an assembly.」——★ 即官方把它定位成 EditPart2 的**配对回退**"
+            "（正是上一行那一对）。调用序：docs\\recon\\member-to-example-index.md 第 427 行把 EditAssembly 归到 Create"
+            "_Pl"
+        ),
         doc="★ 官方签名（逐字，来自 EditAssembly.md）：``void EditAssembly()``。官方该页没有 Parameters / Returns "
              "段（零参、回 void），## Remarks 逐字只有一句：「This method is used with [[IAssemblyDoc::EditPart2]], "
              "which allows you to edit a part within the context of an assembly.」——★ 即官方把它定位成 EditPart2 "
@@ -312,6 +356,13 @@ SPECS_BATCH82 = [
                              "is i",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 DeleteRenderMaterial.md）：``System.bool DeleteRenderMaterial( System.int PwMateria"
+            "lId, System.bool BReassignIdsAndInvalidate )``。★ 首段（成员摘要，**不是** Remarks 段）逐字：「Not support"
+            "ed in SOLIDWORKS 2011 and later. Superseded by [[IModelDocExtension::DeleteDisplayStateSpecificRenderMater"
+            "ial]] and [[IModelDocExtension::IDeleteDisplayStateSpecificRenderMaterial]]。」⇒ 官方自 **2011 起不支持**"
+            "本成员（比 Obsolete 更强的一类措辞）。## Returns 逐字「True if the appear"
+        ),
         doc="★ 官方签名（逐字，来自 DeleteRenderMaterial.md）：``System.bool DeleteRenderMaterial( System.int "
              "PwMaterialId, System.bool BReassignIdsAndInvalidate )``。★ 首段（成员摘要，**不是** Remarks 段）逐字："
              "「Not supported in SOLIDWORKS 2011 and later. Superseded by [[IModelDocExtension::"
@@ -326,6 +377,15 @@ SPECS_BATCH82 = [
         function="ensure_simulation_addin",
         inject="sw_app",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`查不到（repo_original —— ensure_simulation_addin 本身**不是** "
+            "SolidWorks API 成员；它是编排两个官方成员的包装）。它逐字调用的两个官方成员签名如下）: `System.object GetA"
+            "ddInObject( System.string Clsid )` | `System.int LoadAddIn( System.string F`。★ 真源是本仓两段：① 源码 scr"
+            "ipts\\sw_simulation.py:225-265（:248 `GetAddInObject(sw_app, SIMULATION_ADDIN_PROGID)` → 非 None 就直接返"
+            "回；为 None 则 :253 先确认 SIMULATION_ADDIN_DLL 存在、:257 `LoadAddIn(str(dll))`、:259 再 `GetAddInObject`"
+            "；第二次仍 None 就抛 RuntimeError 并把返回码按 swLoadAddinError_e 译成 0=成功·2=已加载·3=文件没找到·4=被禁"
+            "用·7=许可错）；② "
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`查不到（repo_original —— ensure_simulation_addin 本身**不是** "
              "SolidWorks API 成员；它是编排两个官方成员的包装）。它逐字调用的两个官方成员签名如下）: `System.object "
              "GetAddInObject( System.string Clsid )` | `System.int LoadAddIn( System.string F`。★ 真源是本仓两段：① "
@@ -341,6 +401,13 @@ SPECS_BATCH82 = [
         function="get_study_manager",
         inject="sw_app",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`ICWModelDoc.get_StudyManager() → CWStudyManager（属性，非方法"
+            "）`。★ source_kind=repo_original：本函数是本仓自研的**编排层**，不是 SolidWorks API 成员（成员真名是 ICWMo"
+            "delDoc.StudyManager）。真源 = D:\\AI\\SW\\scripts\\sw_simulation.py 第 297-305 行的来源块 + 函数体：先 get"
+            "_cw_document(sw_app) 拿 ICWModelDoc，再 get_com_member(doc, 'StudyManager')。--- (1) 官方页：q1=false。C:"
+            "\\swapi\\types 下**不存在** ICWModelDoc / ICWS"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`ICWModelDoc.get_StudyManager() → CWStudyManager（属性，"
              "非方法）`。★ source_kind=repo_original：本函数是本仓自研的**编排层**，不是 SolidWorks API "
              "成员（成员真名是 ICWModelDoc.StudyManager）。真源 = D:\\AI\\SW\\scripts\\sw_simulation.py 第 297-305 "
@@ -380,6 +447,13 @@ SPECS_BATCH82 = [
                              "源码默认 SWS_MESH_TYPES['solid'] 即 0。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`CWStudy CreateNewStudy3( String Name,`。★ source_kind=repo_ori"
+            "ginal：本函数是本仓自研的**编排层**（CreateNewStudy3 → CreateNewStudy2 → CreateNewStudy 三级降级 + swsStud"
+            "yError_e 报错 + 不拿 error_code 当成功判据），不是 SolidWorks API 成员。真源 = D:\\AI\\SW\\scripts\\sw_sim"
+            "ulation.py 第 308-374 行的来源块 + 函数体（该来源块把官方 4 参签名整段抄进了文件，见下）。--- (1) 官方页："
+            "q1=false。C:\\swapi\\types 下**不存在 ICWSt"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`CWStudy CreateNewStudy3( String Name,`。★ "
              "source_kind=repo_original：本函数是本仓自研的**编排层**（CreateNewStudy3 → CreateNewStudy2 → "
              "CreateNewStudy 三级降级 + swsStudyError_e 报错 + 不拿 error_code 当成功判据），不是 SolidWorks API 成员。"
@@ -393,6 +467,13 @@ SPECS_BATCH82 = [
         function="default_solve_memory_budget_gb",
         inject="",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`查不到 —— 它不是 SolidWorks API 成员（源码 sw_simulation.py:12"
+            "64，纯 Python/ctypes）`。★ 真源是**本仓** `scripts/sw_simulation.py` 的 `default_solve_memory_budget_gb`（"
+            "★ 它不是 SolidWorks API 成员，故无官方页）—— source_kind=repo_original。真源有三处、都不是 SolidWorks API"
+            "：① Windows kernel32 GlobalMemoryStatusEx（ctypes.Structure _MemStatus，读 ullTotalPhys，源码 1272-1287）"
+            "；② 模块常量 DOF_PER_GB = 2_000_000（源码 1248），逐字来自本机"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`查不到 —— 它不是 SolidWorks API 成员（源码 sw_simulation.py:"
              "1264，纯 Python/ctypes）`。★ 真源是**本仓** `scripts/sw_simulation.py` 的 "
              "`default_solve_memory_budget_gb`（★ 它不是 SolidWorks API 成员，故无官方页）—— source_kind=repo_original。"
@@ -406,6 +487,15 @@ SPECS_BATCH82 = [
         function="mesh_settings_report",
         inject="study",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`查不到 —— C:\\swapi\\types\\ 下**没有 ICWMesh\\ 目录**（Test-P"
+            "ath 返回 False）；对整个 C:\\swapi grep 'ICWMesh|MinElementSize|MesherType|AutomaticLooping' **0 命中**；t"
+            "ypes 下仅有 IMeshBody（另一个族）。CW 系接口属另一程序集 SolidWorks.Interop`。★ 真源是**本仓** `scripts/sw"
+            "_simulation.py` 的 `mesh_settings_report`（★ 它不是 SolidWorks API 成员，故无官方页）—— source_kind=repo_o"
+            "riginal —— 本函数**不是单个 API 成员**，而是 scripts/sw_simulation.py:1292 的只读报告：① get_com_member(st"
+            "udy, 'Mesh') 取 ICWMesh，取不到就回 {ok: False, reason: 'study 上取不到 Mesh 对象'}（1307-1309）；② 逐个读"
+            " Quality /"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`查不到 —— C:\\swapi\\types\\ 下**没有 ICWMesh\\ "
              "目录**（Test-Path 返回 False）；对整个 C:\\swapi grep "
              "'ICWMesh|MinElementSize|MesherType|AutomaticLooping' **0 命中**；types 下仅有 IMeshBody（另一个族）。CW "
@@ -441,6 +531,13 @@ SPECS_BATCH82 = [
                              "face1_name。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_assembly.py）：`def add_mate_parallel(asm_model, face1_name, face2_name):`。查不"
+            "到同名官方成员（source_kind=repo_original）—— 本函数不是 SolidWorks API 成员。★ 真源 = D:\\AI\\SW\\scripts"
+            "\\sw_assembly.py:688-693（本仓自研编排函数；文件级来源块在同文件第 7 行写明『仓库: 本项目自身』，**本函数"
+            "上方没有逐函数来源块** —— 该文件只有 3 处 `# ── 来源 ──`：行 7 / 842 / 872）。★ 它编排三个官方成员，逐字签"
+            "名如下（三个官方页均已确认存在，各页第 14 行的 `**Signature**:` 行）：① `IModelDoc2.ClearSelection2`"
+        ),
         doc="★ 官方签名（逐字，来自 sw_assembly.py）：`def add_mate_parallel(asm_model, face1_name, face2_name):`。"
              "查不到同名官方成员（source_kind=repo_original）—— 本函数不是 SolidWorks API 成员。★ 真源 = D:"
              "\\AI\\SW\\scripts\\sw_assembly.py:688-693（本仓自研编排函数；文件级来源块在同文件第 7 行写明『仓库: "

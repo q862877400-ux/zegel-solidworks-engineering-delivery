@@ -49,6 +49,12 @@ SPECS_BATCH91 = [
         function="find_modals",
         inject="",
         params=[Param("main_hwnd", int, default=0, description=_HWND)],
+        evidence=(
+            "找出**同进程、与主窗口分离的可见顶层对话框**（★ 判据：Win32 类 `#32770` **或** 有 Button **或** 有可读文本"
+            " —— ★ 本仓刻意**不认类名**，因为那是偶然的）✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`，pywin32"
+            " + Win32 API，**不是** SolidWorks API 成员）⇒ ★ 真源是源码本身 ✓ ★★ 为什么它值得挂：弹窗会让 COM 调用**永"
+            "久冻住**（本仓多轮实测）⇒ **先看有没有弹窗**是无人值守的第一步 ✓ 返回 `[{hwnd, cls, title, rect}, …]`。"
+        ),
         doc="找出**同进程、与主窗口分离的可见顶层对话框**（★ 判据：Win32 类 `#32770` **或** 有 Button "
         "**或** 有可读文本 —— ★ 本仓刻意**不认类名**，因为那是偶然的）✓ "
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`，pywin32 + Win32 API，"
@@ -63,6 +69,11 @@ SPECS_BATCH91 = [
         function="modal_report",
         inject="",
         params=[Param("main_hwnd", int, default=0, description=_HWND)],
+        evidence=(
+            "把当前弹窗状况打成一份**可判的报告**（★ 给「要不要点 / 能不能继续」提供判据）✓ ★ 官方依据：**本仓自研**（`"
+            "scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓ ★ 与 `solidworks_gui_find_modals` 的分工：那个只列句柄，这个给**"
+            "可读的判据** ✓"
+        ),
         doc="把当前弹窗状况打成一份**可判的报告**（★ 给「要不要点 / 能不能继续」提供判据）✓ "
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓ "
         "★ 与 `solidworks_gui_find_modals` 的分工：那个只列句柄，这个给**可读的判据** ✓",
@@ -83,6 +94,10 @@ SPECS_BATCH91 = [
                 "（便于定位）—— 留空则用默认措辞。",
             ),
         ],
+        evidence=(
+            "★ **每个动作之前调用**：发现弹窗就**抛**，不让它吃掉后续输入 ✓ ★★ 本仓的死因里，「弹窗把 COM 调用冻住」是"
+            "头号 ⇒ ★ 这条断言就是那个前置闸 ✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓"
+        ),
         doc="★ **每个动作之前调用**：发现弹窗就**抛**，不让它吃掉后续输入 ✓ "
         "★★ 本仓的死因里，「弹窗把 COM 调用冻住」是头号 ⇒ ★ 这条断言就是那个前置闸 ✓ "
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓",
@@ -103,6 +118,11 @@ SPECS_BATCH91 = [
                 "每轮「扫 → 点 → 验窗口是否真消失」✓",
             ),
         ],
+        evidence=(
+            "关掉所有模态框并**回读**，返回关掉几个 ✓ ★★ 本仓的两段式处置：先 `PostMessage`（快）⇒ **验窗口是否真消失**"
+            " ⇒ 没消失才上**真实输入事件**；★ 因为 `hung=True` 的窗口**消息永远不被取出**，只有真输入事件有效 ✓ ★ 官方"
+            "依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓"
+        ),
         doc="关掉所有模态框并**回读**，返回关掉几个 ✓ ★★ 本仓的两段式处置："
         "先 `PostMessage`（快）⇒ **验窗口是否真消失** ⇒ 没消失才上**真实输入事件**；"
         "★ 因为 `hung=True` 的窗口**消息永远不被取出**，只有真输入事件有效 ✓ "
@@ -135,6 +155,10 @@ SPECS_BATCH91 = [
                 "★ 先用 `solidworks_gui_get_foreground_window` 取。",
             )
         ],
+        evidence=(
+            "读当前焦点状态（★ 期望窗口是否真的在前台）✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`，pywin32 `"
+            "GetForegroundWindow`）⇒ 真源是源码 ✓ ★ 本仓的焦点三规则之一：**每次动作前断言前台窗口**，不是就修复 ✓"
+        ),
         doc="读当前焦点状态（★ 期望窗口是否真的在前台）✓ "
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`，pywin32 `GetForegroundWindow`）"
         "⇒ 真源是源码 ✓ ★ 本仓的焦点三规则之一：**每次动作前断言前台窗口**，不是就修复 ✓",
@@ -160,6 +184,10 @@ SPECS_BATCH91 = [
                 description="每次尝试之间等多少**秒**（★ 时长 ⇒ 用 `_seconds`，不是 `_mm`）。",
             ),
         ],
+        evidence=(
+            "把 `hwnd` 置为前台并**回读确认**，返回**是否真的成功** ✓（★ 判据是回读，不是调用返回）★ 官方依据：**本仓自"
+            "研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓"
+        ),
         doc="把 `hwnd` 置为前台并**回读确认**，返回**是否真的成功** ✓（★ 判据是回读，不是调用返回）"
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓",
     ),
@@ -180,6 +208,10 @@ SPECS_BATCH91 = [
                 description="出错信息里写「在哪个动作前发现焦点不对」。",
             ),
         ],
+        evidence=(
+            "★ **每个动作之前调用**：焦点不对就**修复**，**修不好就抛** ✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_foc"
+            "us.py`）⇒ 真源是源码 ✓"
+        ),
         doc="★ **每个动作之前调用**：焦点不对就**修复**，**修不好就抛** ✓ "
         "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓",
     ),
@@ -198,6 +230,12 @@ SPECS_BATCH91 = [
                 description="成员名（如 `CreateCylindricalSurface` / `…2`）。",
             )
         ],
+        evidence=(
+            "★ 查某方法在**本机实测**里是否可取（`True` = 可取；**未实测的返回 `False`**）✓ ★★ 为什么它重要：`IModeler."
+            "Create*Surface` 那一族**返回值不可靠**（事实 40：**同一个调用跨次也会变**）⇒ ★ 本仓把实测结果做成表，而 `_"
+            "invoke` 对 `None` **抛带原因的 `RuntimeError`** ✓ ★ 官方依据：**本仓自研**（读自己的 `IMODELER_RUNTIME_*` "
+            "实测表）⇒ 真源是源码；⚠ **未在本机实测本工具**（铁律 2）✓"
+        ),
         doc="★ 查某方法在**本机实测**里是否可取（`True` = 可取；**未实测的返回 `False`**）✓ "
         "★★ 为什么它重要：`IModeler.Create*Surface` 那一族**返回值不可靠**"
         "（事实 40：**同一个调用跨次也会变**）⇒ ★ 本仓把实测结果做成表，"

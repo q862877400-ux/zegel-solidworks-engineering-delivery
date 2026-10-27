@@ -47,6 +47,11 @@ SPECS_BATCH55 = [
                 "★ 要**稳健取草图**请用 `solidworks_sketch_*` 那族（它们走中英文候选 + 特征树兜底））",
             ),
         ],
+        evidence=(
+            "★ **读当前活动草图的特征名**。⚠ 它**在草图已关闭时**会回 `fallback`（★ 默认 `Sketch1`）—— ★ 那**不是**真名"
+            "（中文 UI 是「草图1」）。★★ 所以：**要按名字去取草图对象时，不要用本工具的返回值** —— ★ 用 `scripts/sw_ske"
+            "tch.resolve_sketch`（中英文候选 + 特征树兜底，语言无关）。"
+        ),
         doc="★ **读当前活动草图的特征名**。⚠ 它**在草图已关闭时**会回 `fallback`（★ 默认 "
         "`Sketch1`）—— ★ 那**不是**真名（中文 UI 是「草图1」）。"
         "★★ 所以：**要按名字去取草图对象时，不要用本工具的返回值** —— "
@@ -58,6 +63,12 @@ SPECS_BATCH55 = [
         module="sw_part",
         inject="model",
         function="auto_dimension_sketch",
+        evidence=(
+            "★ **按官方 `ISketch.AutoDimension2` 流程给当前草图建真实模型尺寸** ——★ 生成的尺寸是**真实的 `DisplayDimens"
+            "ion`**（★ 可被工程图导入并复核），★ 不是草图里画几条线。★ 回 `{status, status_code, error_code, selected}`"
+            "：★ `status` = `pass` / `blocked` / `failed`；★★ `blocked` + `SKETCH_NOT_ACTIVE` = **没有活动草图**（★ 先 "
+            "`solidworks_sketch_start`）。"
+        ),
         doc="★ **按官方 `ISketch.AutoDimension2` 流程给当前草图建真实模型尺寸** ——"
         "★ 生成的尺寸是**真实的 `DisplayDimension`**（★ 可被工程图导入并复核），"
         "★ 不是草图里画几条线。"

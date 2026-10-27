@@ -50,6 +50,9 @@ SPECS_BATCH14 = [
         module="sw_view",
         function="get_active_view",
         inject="model",
+        evidence=(
+            "Get the currently active 3D view (the official member is IModelDoc.ActiveView)."
+        ),
         doc="Get the currently active 3D view (the official member is IModelDoc.ActiveView).",
         params=[],
     ),
@@ -66,6 +69,13 @@ SPECS_BATCH14 = [
         module="sw_selection_spec",
         function="entities_report",
         inject="model",
+        evidence=(
+            "List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). ★ 每条带可 JSON 化的读数：ED"
+            "GE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` **没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ "
+            "`IVertex.GetPoint()`。★★ 同时回 **欧拉校验 `V−E+F=2`**（★ 本仓既有判据，不需新 API）✓ ⚠ Index order is NOT"
+            " promised stable by the official API — do not treat body_index as a persistent reference across rebuilds. "
+            "★ 别名: body, edge, edges, entit, vertex, vertices"
+        ),
         doc="List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). "
         "★ 每条带可 JSON 化的读数：EDGE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` "
         "**没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ `IVertex.GetPoint()`。"

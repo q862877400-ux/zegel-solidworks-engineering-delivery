@@ -90,6 +90,18 @@ SPECS_BATCH48 = [
                 description="True 建**扫描切除**（swFmSweepCut=18）· False 建**扫描凸台**（swFmSweep=17）",
             ),
         ],
+        evidence=(
+            "★ **用「轮廓 + 路径」建扫描特征** —— 走官方**现代入口** `IFeatureManager.CreateDefinition(swFmSweep=17)` →"
+            " `ISweepFeatureData` → `CreateFeature`（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolet"
+            "e**）。★ 官方专文给的 mark：**轮廓 = 1** · **路径 = 4** · 引导线 = 2 · 方向向量 = 128。★★ **`profile_sketc"
+            "h` 与 `path_sketch` 是必填的**：★ 本工具**不预选任何东西**，而是由 `pre_call` 在**注入之后**按上表把这两个"
+            "草图选上并**回读计数**（★ 事实 8）。⚠ 早先版本**没有**这两个参数、也没有 `pre_call` ⇒ **经工具层必然失败**"
+            "（真机报 `stage: selection`，证据 `output/explicit-reject-family-evidence.json`）。⚠ 官方硬约束：**路径的"
+            "起点必须落在轮廓所在平面上**（1 方向扫描）—— 真机上违反它就会建不成。★★ 判据（事实 242：挑只依赖被测对象的"
+            "那个）：**特征树多了新特征** **且** **类型名 = `Sweep`**。★ 真机证据：建成 `扫描1`（type=`Sweep`）。⚠ `Acc"
+            "essSelections` 在本机报 `0x80010105`（事实 47 的后端限制）——★ 而**它非必需**：真机上它报错时特征仍建成，所"
+            "以本工具**不拿它当判据**。"
+        ),
         doc="★ **用「轮廓 + 路径」建扫描特征** —— 走官方**现代入口** "
         "`IFeatureManager.CreateDefinition(swFmSweep=17)` → `ISweepFeatureData` → `CreateFeature`"
         "（★ `InsertProtrusionSwept*` 整族已被 SOLIDWORKS 2018 标为 **obsolete**）。"

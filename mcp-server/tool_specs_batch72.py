@@ -82,6 +82,13 @@ _BATCH72: list[ToolSpec] = [
                 description="第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。",
             ),
         ],
+        evidence=(
+            "★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。★ 官方逐字「Creates a revolved"
+            " reference surface by revolving a profile around a centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出"
+            "**曲面**。⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using `IModelDocExtension::Select"
+            "ByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。★ 官方另注「does not support **3D sketch"
+            "es**」。★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。"
+        ),
         doc="★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。"
         "★ 官方逐字「Creates a revolved reference surface by revolving a profile around a "
         "centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。"
@@ -111,6 +118,11 @@ _BATCH72: list[ToolSpec] = [
                 description='**规格串**（如 `"M8"`）—— ★ 真机实测：空串或纯数字**全回 None**。',
             ),
         ],
+        evidence=(
+            "★ **孔向导 / 异型孔**：`IFeatureManager.HoleWizard5`（★ 官方 24+ 参，本工具已把前置配好）。★ 判据 = **特征"
+            "树增量**（★ 真机新增 `异型孔向导`）。★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`"
+            "）选出来；② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。"
+        ),
         doc="★ **孔向导 / 异型孔**：`IFeatureManager.HoleWizard5`（★ 官方 24+ 参，本工具已把前置配好）。"
         "★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）。"
         "★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`）选出来；"
@@ -123,6 +135,12 @@ _BATCH72: list[ToolSpec] = [
         function="get_constrained_status",
         inject="model",
         params=[],
+        evidence=(
+            "★ **草图完全定义状态**：`ISketch.GetConstrainedStatus()` → `System.int`（官方零参数、只读）。⚠ **前置**：*"
+            "*必须有一个正在编辑的草图**（关掉的草图取不到 `ISketch`）⇒ 没有就**抛**，不静默。★ 真机：欠定义矩形回 **2*"
+            "*、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。⚠ **官方没给取值表** ⇒ 本工具**如实回原始 int**，★ *"
+            "*不把它解释成「欠定义/完全定义」**（★ 铁律 5：查不到就说查不到）。"
+        ),
         doc="★ **草图完全定义状态**：`ISketch.GetConstrainedStatus()` → `System.int`（官方零参数、只读）。"
         "⚠ **前置**：**必须有一个正在编辑的草图**（关掉的草图取不到 `ISketch`）⇒ 没有就**抛**，不静默。"
         "★ 真机：欠定义矩形回 **2**、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。"

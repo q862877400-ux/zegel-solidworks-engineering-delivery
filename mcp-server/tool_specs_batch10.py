@@ -48,6 +48,12 @@ SPECS_BATCH10 = [
         function="get_bounding_box",
         read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="model",
+        evidence=(
+            "Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE a"
+            "nd says they 'should not be used for comparison or calculation purposes'; the box may also vary after a re"
+            "build. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an 80x60x50"
+            " mm box returns 80/60/50, not 0.08/0.06/0.05)."
+        ),
         doc="Get the bounding box of the first solid body. ⚠⚠ SOLIDWORKS documents the returned values as APPROXIMATE "
              "and says they 'should not be used for comparison or calculation purposes'; the box may also vary after a "
              "rebuild. Use this for a rough overview only. ⚠ Units are MILLIMETRES (measured on SW 2026 SP4.1: an "
@@ -72,6 +78,11 @@ SPECS_BATCH10 = [
         function="list_hole_standards",
         read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
+        evidence=(
+            "List the Hole Wizard standards available for a hole type (official ISldWorks.GetHoleStandardsData + IHoleS"
+            "tandardsData.GetHoleStandards). Returns [{id, name}, ...]; the two out parameters are paired positionally."
+            " ⚠ Officially returns null when hole_type_id is 5 (swWzdLegacy)."
+        ),
         doc="List the Hole Wizard standards available for a hole type "
         "(official ISldWorks.GetHoleStandardsData + IHoleStandardsData.GetHoleStandards). "
         "Returns [{id, name}, ...]; the two out parameters are paired positionally. "
@@ -93,6 +104,12 @@ SPECS_BATCH10 = [
         function="list_fastener_types",
         read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
+        evidence=(
+            "List the fastener types under a Hole Wizard standard. Returns [{id, name}, ...]. ⚠ The names follow the SO"
+            "LIDWORKS UI language (a Chinese UI returns Chinese names); do not assume English. Use an id from this list"
+            " as fastener_id elsewhere. ⚠ Internally the IHoleStandardsData object must be primed with GetHoleStandards"
+            " first, otherwise SOLIDWORKS returns False (measured); this function does that."
+        ),
         doc="List the fastener types under a Hole Wizard standard. "
         "Returns [{id, name}, ...]. "
         "⚠ The names follow the SOLIDWORKS UI language (a Chinese UI returns Chinese names); "
@@ -122,6 +139,11 @@ SPECS_BATCH10 = [
         function="list_fastener_table_types",
         read_only=True,  # ⚑ 本批 4 条**都是查询**（不改几何、不改文档）
         inject="sw",
+        evidence=(
+            "List the fastener table type ids for one fastener (official IHoleStandardsData.GetFastenerTableTypes). ⚠ T"
+            "he official second parameter is an Int32 FASTENER ID (from solidworks_fastener_types), not a size name - p"
+            "assing a size name raises a type-mismatch error. Returns a list of ints."
+        ),
         doc="List the fastener table type ids for one fastener "
         "(official IHoleStandardsData.GetFastenerTableTypes). "
         "⚠ The official second parameter is an Int32 FASTENER ID (from "

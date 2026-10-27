@@ -26,6 +26,15 @@ SPECS_BATCH83 = [
         function="get_loads_manager_of",
         inject="study",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\\swapi\\types\\ 下 566 个接口目录里没有任何"
+            " cosworks 接口（无 ICWStudy / ICWLoadsAndRestraintsManager 目录），故 ICWStudy 的成员页不存在，本函数没有"
+            "可逐字抄的官方 **Signature** 行。真源逐字（D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt:2556，## `。★ 真"
+            "源是**本仓** `scripts/sw_simulation_study.py` 的 `get_loads_manager_of`（★ 它不是 SolidWorks API 成员，故"
+            "无官方页）—— 本函数是 repo_original 的**纯别名**：sw_simulation_study.py:360-362 函数体只有一行 `return ge"
+            "t_study_manager_of(study)`，真正实现是同文件 :353-357 的 `get_com_member(study, 'LoadsAndRestraintsManager"
+            "')`。其上方来源块 :337-352 逐字写着"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\\swapi\\types\\ 下 566 "
              "个接口目录里没有任何 cosworks 接口（无 ICWStudy / ICWLoadsAndRestraintsManager 目录），故 ICWStudy "
              "的成员页不存在，本函数没有可逐字抄的官方 **Signature** 行。真源逐字（D:"
@@ -42,6 +51,15 @@ SPECS_BATCH83 = [
         function="get_results_of",
         inject="study",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\\swapi\\types\\ 下无 ICWStudy 目录（C:\\swa"
+            "pi 未收录 cosworks 任何接口），故没有 ICWStudy 成员页可抄。真源逐字（D:\\AI\\SW\\_raw\\reflect\\iface_cosw"
+            "orks.txt:2565，## ICWStudy 段，出厂程序集纯元数据反射）：「 CWResults get_Results()」—— 零参属性 ge`。★ 真"
+            "源是**本仓** `scripts/sw_simulation_study.py` 的 `get_results_of`（★ 它不是 SolidWorks API 成员，故无官方"
+            "页）—— repo_original：sw_simulation_study.py:365-369 函数体只做 `get_com_member(study, 'Results')`，外加一"
+            "道 `study is None → ValueError` 守卫。来源块 :337-352 逐字「CWResults get_Results()」并带 ⚠「这些属性在**"
+            "有求解结果后**才有意义；**未求解时取 Results"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation_study.py）：`查不到 —— C:\\swapi\\types\\ 下无 ICWStudy 目录（C:"
              "\\swapi 未收录 cosworks 任何接口），故没有 ICWStudy 成员页可抄。真源逐字（D:"
              "\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt:2565，## ICWStudy 段，出厂程序集纯元数据反射）：「 CWResults "
@@ -96,6 +114,13 @@ SPECS_BATCH83 = [
                              "''` —— `SolverType = 0`（automatic）是**合法值**，而 `0 or ''` ⇒ `'",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_simulation.py）：`查不到（非 SolidWorks API 成员）`。★ 官方签名：查不到，且**不"
+            "该**查到 —— 这是本仓自研的纯计算闸（无 COM、无 sw_connect、无 select），`C:\\cworks_vb6` 与 `C:\\swapi` 下"
+            "都没有 MeshSafetyRestore / SolveMemoryPreflight 这样的成员。★ 官方只对**换算规则**发言，且**作用域极窄**："
+            "那句「1GB per 2,000,000 dof」在手册里写的主语是 **iterative FFEPlus solver**，源码 :1652-1682 已把这层限制"
+            "做成返回值里的 `★_适用性` 字段（automatic / FFEPlus / 直"
+        ),
         doc="★ 官方签名（逐字，来自 sw_simulation.py）：`查不到（非 SolidWorks API 成员）`。★ 官方签名：查不到，"
              "且**不该**查到 —— 这是本仓自研的纯计算闸（无 COM、无 sw_connect、无 select），`C:\\cworks_vb6` 与 `C:"
              "\\swapi` 下都没有 MeshSafetyRestore / SolveMemoryPreflight 这样的成员。★ 官方只对**换算规则**发言，"
@@ -120,6 +145,14 @@ SPECS_BATCH83 = [
                              "本工具不替调用方枚举。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 ICWLoadsAndRestraintsManager~GetEdgeWeldConnector.txt）：`Function GetEdgeWeldConne"
+            "ctor( _ ByVal NIndex As System.Integer, _ ByRef ErrorCode As System.Integer _ ) As CWEdgeWeldConnector`。★"
+            " 官方页**不在 C:\\swapi\\types\\ 下**（该树只收录 SolidWorks 核心 API；实测 Get-ChildItem 'C:\\swapi\\type"
+            "s' 无任何 ICW* 接口目录 ⇒ Simulation/CosWorks 加载项接口族查不到，故 q1 的路径形态与常见条目不同）；本页在"
+            " CHM cosworks 册里，正文以 JSON 转义嵌在 <script> 标签中（模块 docstring L8-L15 记载这一坑），official_fil"
+            "e 指向本仓已抽好的纯文本副本（工具 tools\\extract_cosworks_docs.py），签名在该文件里逐字可"
+        ),
         doc="★ 官方签名（逐字，来自 ICWLoadsAndRestraintsManager~GetEdgeWeldConnector.txt）：`Function "
              "GetEdgeWeldConnector( _ ByVal NIndex As System.Integer, _ ByRef ErrorCode As System.Integer _ ) As "
              "CWEdgeWeldConnector`。★ 官方页**不在 C:\\swapi\\types\\ 下**（该树只收录 SolidWorks 核心 API；实测 "

@@ -67,6 +67,12 @@ SPECS_BATCH63 = [
                 "（★ 回读 1 → 2）⇒ ★★ **要换一个面就自己先 `ClearSelection2`**",
             ),
         ],
+        evidence=(
+            "Select ONE face by a **declarative selector** and return a READ-BACK report. ★★ 这是「**按面上的点定位**」"
+            "那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，而**按点可行**）—— ★ 而本工具把它包成**声明式**"
+            "（★ 规则 3）。★ `ok` 的判据是**回读计数 == 1**（★ **不是**返回值 —— 事实 8）。★★ **不接受裸坐标**：★ 坐标"
+            "在能力层内部算，★ 对外的参数**只有选择器**。"
+        ),
         doc=(
             "Select ONE face by a **declarative selector** and return a READ-BACK report. "
             "★★ 这是「**按面上的点定位**」那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，"

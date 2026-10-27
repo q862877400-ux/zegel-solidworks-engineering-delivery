@@ -79,6 +79,10 @@ SPECS_BATCH2: list[ToolSpec] = [
                 "(★ 默认 None = 沿用实现默认)。",
             ),
         ],
+        evidence=(
+            "Read back the weldment state: structural members, cut-list folders, and their quantity/length/angle/source"
+            " properties. Read-only when create_missing_cut_list is False."
+        ),
         doc=(
             "Read back the weldment state: structural members, cut-list folders, and their "
             "quantity/length/angle/source properties. Read-only when "
@@ -93,6 +97,9 @@ SPECS_BATCH2: list[ToolSpec] = [
         function="ensure_cut_list",
         inject="model",
         params=[],
+        evidence=(
+            "Create the cut list if it is missing, and return the cut-list folders."
+        ),
         doc="Create the cut list if it is missing, and return the cut-list folders.",
     ),
     # 签名: def update_cut_list(model) -> list[dict[str, Any]]
@@ -103,6 +110,9 @@ SPECS_BATCH2: list[ToolSpec] = [
         function="update_cut_list",
         inject="model",
         params=[],
+        evidence=(
+            "Refresh the cut list and return the updated folders."
+        ),
         doc="Refresh the cut list and return the updated folders.",
     ),
     # 签名: def create_sub_weld_folder(model, folder=None)
@@ -116,6 +126,9 @@ SPECS_BATCH2: list[ToolSpec] = [
         inject="model",
         omitted_params=("folder",),
         params=[],
+        evidence=(
+            "Create a sub-weldment folder in the active weldment part."
+        ),
         doc="Create a sub-weldment folder in the active weldment part.",
     ),
     # ── 钣金（A 类：只收 model）────────────────────────────────────
@@ -128,6 +141,11 @@ SPECS_BATCH2: list[ToolSpec] = [
         inject="model",
         params=[],
         read_only=True,
+        evidence=(
+            "Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-"
+            "pattern state. Read-only. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it read back cor"
+            "rectly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."
+        ),
         doc=(
             "Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it read back correctly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."
         ),
@@ -142,6 +160,9 @@ SPECS_BATCH2: list[ToolSpec] = [
         inject="sw_app",
         params=[],
         read_only=True,
+        evidence=(
+            "Read back the surface bodies on the active document: counts and types. Read-only."
+        ),
         doc=(
             "Read back the surface bodies on the active document: counts and types. Read-only."
         ),

@@ -83,6 +83,16 @@ SPECS_BATCH101 = [
                 description="`swWeldContour*` 档位（★ **枚举** ⇒ ★ 无量纲 ✓）。",
             ),
         ],
+        evidence=(
+            "焊接符号：在零件上按面插入焊接符号并设文字。★ **焊接符号**（官方 `IModelDoc2::InsertWeldSymbol3`，★ **零参"
+            "**）—— ★★★ **本能力是「真入口是另一条 API」的实证**：★ 我原先走 `IDrawingDoc::InsertWeldSymbol`（**10 参、"
+            "静默无效** —— ★ 12 组试完读数全 **0→0**）✗；★★ 而**官方示例**走的是 **`InsertWeldSymbol3()`（零参）** + `I"
+            "WeldSymbol::SetText(Top, Left, Symbol, Right, Stagger, Contour)` ✓ ⇒ ★ **建成** ✓ ★★ **判据 = 回读**（★ 不"
+            "看 `SetText` 的 bool —— 事实 8）：★ `GetLineCount` / `GetTextCount` / `IsAttached` 三项 ✓ ★★★ **前置是硬性"
+            "的**：★ 官方 Preconditions 逐字「select a face, edge, or sketch segment」—— ★ 没选时 `InsertWeldSymbol3()`"
+            " **静默回 `None`** ⇒ ★ 本工具**把前置是否有效单独回报**（`selection_count`），★ 免得把「前置没上」记成「符"
+            "号建不出来」 ✓"
+        ),
         doc="焊接符号：在零件上按面插入焊接符号并设文字。"
         "★ **焊接符号**（官方 `IModelDoc2::InsertWeldSymbol3`，★ **零参**）—— "
         "★★★ **本能力是「真入口是另一条 API」的实证**："
@@ -134,6 +144,16 @@ SPECS_BATCH101 = [
             Param("show_center", bool, default=True, description="`ShowCenter` 档。"),
             Param("link_to_part", bool, default=True, description="`LinkToPart` 档。"),
         ],
+        evidence=(
+            "成形工具：在钣金面上压出成形特征（需先选面）。★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature"
+            "`，★ **9 参**）—— ★★ **会新建特征**（非只读）✓ ★★★ **前置有两处，★ 而它们都会「静默失败」**（★ 本仓栽过的"
+            "形态）：★ **① 官方 `## Remarks` 逐字要求先选一个面** —— ★ 我第一版没选 ⇒ 回 `None` ✗，★ **而「没选」与「建"
+            "不出来」长得一模一样** ✓；★ **② 前置是钣金件** —— ★ 而建钣金件的契约是 `create_base_flange(model, sketch_r"
+            "ef, spec: BaseFlangeSpec)` ✗，★ **不是** `(model, sketch, thickness, …)`，★ 且它**不抛、只回 `None`** ✓ ★★"
+            " **判据 = 回读**：★ 特征树增量（★ 不看返回值 —— 事实 8）✓；★ 且**两处前置各自单列布尔**（`tool_file_exists"
+            "` / `selection_count`）—— ★★ 因为「读数无效」与「真的不建」长得一样 ✓ ★ 真机建成读数：★ `circular emboss1`"
+            " ✓"
+        ),
         doc="成形工具：在钣金面上压出成形特征（需先选面）。"
         "★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature`，★ **9 参**）—— "
         "★★ **会新建特征**（非只读）✓ "

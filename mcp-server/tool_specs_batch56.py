@@ -79,6 +79,15 @@ SPECS_BATCH56 = [
                 description="实体种类：EDGE / FACE / VERTEX",
             ),
         ],
+        evidence=(
+            "★ **给已选中的实体加一个显示尺寸**（官方 `IModelDoc2.AddDimension2`，**3 参**）。★★ **单位**：官方原话是 “"
+            "Dimension text location in **meters**” ⇒ ★ 本工具对外收**毫米**并在此换算。★★ **前置**：官方 Remarks 明写"
+            "「Before calling this method, you must **select the entities**」⇒ ★ 本工具**先用声明式选择器选中**（★ 选不"
+            "中就**不开工**并说明原因）。★ 真机证据：纯盒体上 **8/8 个边对**都建出了尺寸（`output/dimension-edge-pairs-"
+            "evidence.json`）。⚠★ **已知限制（未隔离）**：同一个包装在**板 + 凸台**的模型上失败 —— ★ 连试 3 次后按事实 "
+            "53 停止隔离；★ 官方另注「**only use on visible documents**」且尺寸**按位置**放置（★ 位置不落在可见模型上时"
+            "可能建不出来）。"
+        ),
         doc="★ **给已选中的实体加一个显示尺寸**（官方 `IModelDoc2.AddDimension2`，**3 参**）。"
         "★★ **单位**：官方原话是 “Dimension text location in **meters**” ⇒ ★ 本工具对外收"
         "**毫米**并在此换算。"

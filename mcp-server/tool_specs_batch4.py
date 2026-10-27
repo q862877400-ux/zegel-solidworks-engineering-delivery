@@ -449,6 +449,17 @@ SPECS_BATCH4: list[ToolSpec] = [
                 description="Reverse the flange direction.",
             ),
         ],
+        evidence=(
+            "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`SetFixedFace` / `AccessSelections` 属**进程内指针族**，py"
+            "win32 迟到绑定下调不动（事实 47，20+ 形态已穷尽）。Create a native edge flange on a SELECTED edge. The edg"
+            "e is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selecti"
+            "on). ⚠ **仍不可用，但报错已前移**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #2）。★★ **旧描述（已作"
+            "废）**：`setting \\`ReverseDirection\\` gave \\`Property ... can not be set\\`` ——★ 那条**属性层**的错**已"
+            "修掉**：`ReverseDirection` **不属于** `IEdgeFlangeFeatureData`（★ 跨接口泄漏），★★ **代码里已删除**该设置"
+            "（★ 原处只剩一条说明性注释）。★★★ **现在的事实**：★ 报错已从「属性设不上」**前移到** `CreateFeature(37) 创"
+            "建失败` ⇒ **卡点在创建、不在属性**。⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准*"
+            "*（★ 第一现场）；★ 按旧描述排查会**停在一条已经不存在的死路上**。"
+        ),
         doc=(
             "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`SetFixedFace` / `AccessSelections` 属**进程内指针族**，pywin32 迟到绑定下调不动（事实 47，20+ 形态已穷尽）。"
             "Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). "
@@ -506,6 +517,18 @@ SPECS_BATCH4: list[ToolSpec] = [
                 description="Profile angle in DEGREES.",
             ),
         ],
+        evidence=(
+            "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`ISMGussetFeatureData` 的 `AccessSelections` 属**进程内指"
+            "针族**（事实 47）；★ 属性层已修好，但**特征建不出来**。Create a native sheet-metal gusset on a SELECTED su"
+            "pporting face. The face is selected for you from `selection` BEFORE the call. ⚠ **仍不可用，但属性层已修好"
+            "**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #3）。★★ **旧描述（已作废）**：`setting \\`Thickness\\"
+            "` gave \\`Property ... can not be set\\`` ——★ **真因不是「属性只读」，是接口不对**：`Thickness` 是**焊件族"
+            "**的名字，★ 本工具要走的是**钣金族**的 `ISMGussetFeatureData` ⇒ ★ 已改设 `GussetThickness`（★ 源码里注明「"
+            "原 Thickness（焊件名）」）。★★★ **现在的事实**：★ 改用 `GussetThickness` / `ProfileHeightDim` / `ProfileLe"
+            "ngthDim` / `ProfileAngleDim` 后**真机属性层读回全部成功**（0.002 / 0.01 / 0.01 / 45.0）；★ 报错已变为 `Cre"
+            "ateFeature(118) 创建失败` ⇒ **卡点在创建、不在属性**。⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUN"
+            "TIME_STATUS` 为准**（★ 第一现场）；★ 按旧描述排查会**以为属性设不上而去找别的属性名**。"
+        ),
         doc=(
             "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`ISMGussetFeatureData` 的 `AccessSelections` 属**进程内指针族**（事实 47）；★ 属性层已修好，但**特征建不出来**。"
             "Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. "
@@ -562,6 +585,20 @@ SPECS_BATCH4: list[ToolSpec] = [
                 description="Reverse the draft direction.",
             ),
         ],
+        evidence=(
+            "★★ **2026-10-09（规格 239）创建路径已按官方页改写**：**旧描述（已作废）** —— `CreateDefinition(3)`（`swFmD"
+            "raft`）**不是合法类型** ⇒ 回 `None`；★ 那是**真机事实**，但**根因**是「`swFmDraft` 不在任何官方 `CreateDef"
+            "inition` 宿主页的 `Type` 清单里」（规格 238 已证）⇒ **这条路径官方根本不支持**，不是参数没调对。★★ **现在"
+            "的路径**：官方入口 **`IFeatureManager::InsertMultiFaceDraft`**（★ 其前代 `IModelDoc2::InsertMfDraft` / `In"
+            "sertMfDraft2` 两页都写着 `Obsolete. Superseded by IFeatureManager::InsertMultifaceDraft`）。Create a nativ"
+            "e draft on a SELECTED face. The face is selected for you from `selection` BEFORE the call; per the officia"
+            "l `## Remarks` the selections must be made with `IModelDocExtension::SelectByID2` (direction mark 1, faces"
+            " to draft mark 2, draft edges mark 4). NOTE: the implementation's own `face_ref` parameter is accepted but"
+            " NEVER USED (verified by reading the body); this tool therefore omits it and selects from `selection` inst"
+            "ead, matching the docstring ('on the already-selected face'). *** NOT VERIFIED ON THE TEST MACHINE *** The"
+            " path was rewritten from the official page in an OFFLINE slice (no COM run) - see scripts/sw_sheet_metal.p"
+            "y::SHEET_METAL_RUNTIME_STATUS (still `None` = untested)."
+        ),
         doc=(
             "★★ **2026-10-09（规格 239）创建路径已按官方页改写**：**旧描述（已作废）** —— "
             "`CreateDefinition(3)`（`swFmDraft`）**不是合法类型** ⇒ 回 `None`；★ 那是**真机事实**，"
@@ -695,6 +732,12 @@ SPECS_BATCH4: list[ToolSpec] = [
                 description="Reverse the direction.",
             ),
         ],
+        evidence=(
+            "Create a native swept flange along a path. REQUIRES an existing base flange first (the official example bu"
+            "ilds one before the swept flange) - otherwise there is no thickness to inherit. NOT YET TESTED ON A REAL M"
+            "ACHINE: it needs both a sweep path and a profile selection, which the 2026-10-01 probe did not build. See "
+            "scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS before relying on it."
+        ),
         doc=(
             "Create a native swept flange along a path. REQUIRES an existing base flange first (the official example builds one before the swept flange) - otherwise there is no thickness to inherit. NOT YET TESTED ON A REAL MACHINE: it needs both a sweep path and a profile selection, which the 2026-10-01 probe did not build. See scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS before relying on it."
         ),

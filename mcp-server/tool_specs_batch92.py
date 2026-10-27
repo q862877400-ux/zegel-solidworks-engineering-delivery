@@ -73,6 +73,15 @@ SPECS_BATCH92 = [
                 "★ 另外两档**忽略它**，返回值里会写明。",
             ),
         ],
+        evidence=(
+            "★ **重建模型** —— 三档 `mode` 一条工具（★ 官方三个入口：`EditRebuild3` / `ForceRebuild3` / `ForceRebuildAl"
+            "l`；★ **不建三条**，因为它们是同一件事的三档，合并才不会在能力清单里留下同进同退的条目）✓ ★★ **判据是回读"
+            "，不是返回值**：① 回读 `IModelDocExtension::NeedsRebuild2` 须为 `fully_rebuilt`；② 特征树计数**不变**（重"
+            "建改的是状态、不是树的形状）；③ 包围盒**不变**（同参数下重建不该改几何）。★★ 为什么返回值不能当判据：★ `Ed"
+            "itRebuild3` 是**方法**、不是属性 —— 三家外部项目都把它当属性读（`_get(doc, 'EditRebuild3')`），★ 那样拿到"
+            "的是 **bound method**，**恒为真**。⚠ **边界（官方 Remarks 逐字）**：`EditRebuild3` 「only works **in-conte"
+            "xt of the active document**」⇒ 对未激活的文档调用没有意义（本工具不替调用方激活文档）。"
+        ),
         doc="★ **重建模型** —— 三档 `mode` 一条工具（★ 官方三个入口：`EditRebuild3` / `ForceRebuild3` / "
         "`ForceRebuildAll`；★ **不建三条**，因为它们是同一件事的三档，合并才不会在能力清单里"
         "留下同进同退的条目）✓ "
@@ -108,6 +117,14 @@ SPECS_BATCH92 = [
                 description="`True` = 置为**构造几何**· `False` = **变回实体线**。",
             ),
         ],
+        evidence=(
+            "★ **把选中的草图段置为 / 复位为构造几何**（合并工具：方向由 `construction` 定，★ 不建两条）✓ ★ 官方两个入"
+            "口分工**已在注释里定死**：置位走零参 `ISketchManager::CreateConstructionGeometry()`（官方摘要逐字「**Sets*"
+            "* … **instead of**」，★ 是**置位**不是 toggle）；复位走 `ISketchSegment::ConstructionGeometry` 属性 setter"
+            "（★ 官方唯一的回程）✓ ★★ **判据 = 回读属性**：调用后逐段读 `ConstructionGeometry`，要求**目标段读数 == 请"
+            "求值**；读回不等于请求 ⇒ `ok=False` 并**如实报哪几段没对上**（★ 不静默 —— 这正是「再调一次是切换还是置位」"
+            "那件事会暴露的地方）✓"
+        ),
         doc="★ **把选中的草图段置为 / 复位为构造几何**（合并工具：方向由 `construction` 定，"
         "★ 不建两条）✓ ★ 官方两个入口分工**已在注释里定死**：置位走零参 "
         "`ISketchManager::CreateConstructionGeometry()`（官方摘要逐字「**Sets** … **instead of**」，"
@@ -127,6 +144,14 @@ SPECS_BATCH92 = [
         inject="model",
         read_only=True,
         params=[],
+        evidence=(
+            "★ **列出当前配置的显示状态**（官方 `IConfiguration::GetDisplayStates()`）✓ ★★ **结果里必须看 `ambiguous`**"
+            "：官方 Remarks 逐字「The **first name in the list is the active display state**. **If more than one displa"
+            "y state is active** in the current model, call `IComponent2::ReferencedDisplayState` …」⇒ ★ **装配**里「第"
+            "一个即活动」**不保证成立** ⇒ ★ 本工具在装配里给 `ambiguous=True` 并写明理由，**不替调用方猜**（裁决书硬约"
+            "束）✓ ★ 判据 = `GetDisplayStates()` 与 `GetDisplayStatesCount()` **两个官方入口**读数一致（规则 6：不用被"
+            "调成员自己的返回值当判据）。"
+        ),
         doc="★ **列出当前配置的显示状态**（官方 `IConfiguration::GetDisplayStates()`）✓ "
         "★★ **结果里必须看 `ambiguous`**：官方 Remarks 逐字「The **first name in the list is the "
         "active display state**. **If more than one display state is active** in the current model, "
@@ -150,6 +175,12 @@ SPECS_BATCH92 = [
                 "★ 名字不在清单里 ⇒ 本工具**报错不猜**，也不会替你新建）。",
             ),
         ],
+        evidence=(
+            "★ **激活指定显示状态**（官方 `IConfiguration::ApplyDisplayState(Name)`，回 `bool`）✓ ★★ **判据（规则 6）**"
+            "：① 返回 `True`（官方 Returns 逐字）；② **回读** `GetDisplayStates()` —— 第一个名字变成请求的那个。★ 而 `a"
+            "mbiguous=True`（装配）时**只认①**、不做②（★ 官方那句在装配里不成立）—— 返回值里会写明「②不可用」✓ ⚠ 本工具"
+            "**不做**「新建显示状态」—— 那是 `IConfiguration::CreateDisplayState` 的事，不属于本规格的候选。"
+        ),
         doc="★ **激活指定显示状态**（官方 `IConfiguration::ApplyDisplayState(Name)`，回 `bool`）✓ "
         "★★ **判据（规则 6）**：① 返回 `True`（官方 Returns 逐字）；"
         "② **回读** `GetDisplayStates()` —— 第一个名字变成请求的那个。"
@@ -198,6 +229,15 @@ SPECS_BATCH92 = [
                 "★ 官方例子里**非只读**的那个是**空串**（不是「未知」）。",
             ),
         ],
+        evidence=(
+            "★ **列出一个文档的引用（依赖）清单**（官方 `ISldWorks::GetDocumentDependencies2`）—— ★ 补上 `solidworks_pa"
+            "ck_and_go` **一直枚举却不暴露的读侧** ✓ ★ 返回值按官方 `## Returns` 的**步长**还原成记录（每个文档 2 个串"
+            "：名字 + 全路径；开了 `add_read_only_info` 再加 1 个），★ **数组长度除不尽就报错**、不硬凑 ✓ ★★ **已知盲区"
+            "（官方 Remarks 逐字）**：**库特征（Library features）不会返回** —— 「Library features are completely unass"
+            "ociated … Therefore, this method would not return Library features.」⇒ ★ 该盲区**随返回值一起**回给调用方"
+            "，★ **把这份清单当「完整依赖」是错的** ✓ ⚠ 另两条官方逐字已写进返回值：★ **被压缩的组件也会出现**（别把「"
+            "出现了」当「生效了」）· ★ `search=True` 会**改当前目录**。"
+        ),
         doc="★ **列出一个文档的引用（依赖）清单**（官方 `ISldWorks::GetDocumentDependencies2`）—— "
         "★ 补上 `solidworks_pack_and_go` **一直枚举却不暴露的读侧** ✓ "
         "★ 返回值按官方 `## Returns` 的**步长**还原成记录（每个文档 2 个串：名字 + 全路径；"
@@ -291,6 +331,22 @@ SPECS_BATCH92 = [
                 description="复制几个（官方 `NumCopies`，须 ≥ 1）。",
             ),
         ],
+        evidence=(
+            "★ **移动或复制实体**（官方 `IFeatureManager::InsertMoveCopyBody2`，**12 参**）—— ★ 官方页 **signature + 逐"
+            "字 mark 表（1/2/4/8）+ 官方示例调用序**全齐 ✓ ★★ **判据（规则 6）**：① **移动** ⇒ **包围盒必须变**；② **复"
+            "制** ⇒ **实体个数必须增** —— 两者都用 `IBody2.GetBodyBox` / `GetBodies2` **回读**，★ **不用**它回的 `IFeat"
+            "ure` 指针 ✓ ★★ **官方 Remarks 的坑已编码**：**平移与旋转不能同时生效**，**同时给则只应用旋转** ⇒ 本工具检"
+            "测到两者都给时**置 `both_given=True` 并写明**（★ 不静默）✓ ★ **mark 不在 `Select2` 的形参里** —— 它设在 `I"
+            "SelectData` 对象上 （官方示例调用序：`CreateSelectData` → `Mark = 1` → `body.Select2(True, data)`）✓ ★★ **"
+            "单位是个坑，且本工具已按实测定死**：官方页**没写**这几个长度参数的单位，真机实测**按文档长度单位（本机 mm"
+            "）解释、不是米** —— 传 25 就挪 25 mm；★ 因此本工具**原样收毫米、不做换算**（⚠ 与本仓绝大多数 COM 几何接口*"
+            "*相反**）✓ ★ 角度则收**度**、在边界换算成**弧度**（真机实测 COM 侧是弧度）—— ★ 也就是说**同一个调用里长度"
+            "是 mm、角度是 rad** ✓ ★★ **还有一件官方没写的事**：**参数名与实际作用轴不一致（`RotAngleX` 实际绕 Z、`RotA"
+            "ngleZ` 实际绕 X，`Y` 是对的）** —— 真机由「只给一个角、看哪一轴跨度不变」的三格互证定出 ⇒ ★ 本工具**已按单"
+            "源常量 `ROTATION_AXIS_MAP` 补偿**，对外的 `rotate_angle_x/y/z_deg` **含义就是「绕该轴转」** ✓ ⚠ **已知限制"
+            "**：★ 只验了**单实体 / 全部实体**两种选择器；★ 旋转只验了「**只给一个轴、30°、RotPoint=(0,0,0)**」（★ **三"
+            "轴同时给的合成顺序未验**）；★ 非原点旋转与「绕选定参考实体」（mark 2/4/8）**未验**。"
+        ),
         doc="★ **移动或复制实体**（官方 `IFeatureManager::InsertMoveCopyBody2`，**12 参**）—— "
         "★ 官方页 **signature + 逐字 mark 表（1/2/4/8）+ 官方示例调用序**全齐 ✓ "
         "★★ **判据（规则 6）**：① **移动** ⇒ **包围盒必须变**；② **复制** ⇒ **实体个数必须增** —— "

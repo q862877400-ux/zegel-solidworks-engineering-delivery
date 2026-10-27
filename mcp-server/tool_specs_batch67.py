@@ -67,6 +67,10 @@ _BATCH67: list[ToolSpec] = [
             Param("end_x_mm", float, description="终点的 X（毫米）。"),
             Param("end_y_mm", float, description="终点的 Y（毫米）。"),
         ],
+        evidence=(
+            "★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。★ 判据 = `ModelToSketchTransform"
+            ".ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。"
+        ),
         doc="★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。"
         "★ 判据 = `ModelToSketchTransform.ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。",
     ),
@@ -90,6 +94,10 @@ _BATCH67: list[ToolSpec] = [
                 description="旋转角（**度**；★ 只在边界换算成弧度一次）。",
             ),
         ],
+        evidence=(
+            "★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。★ 真机验证：30° ⇒ 3×3 旋转矩阵首行"
+            "变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。"
+        ),
         doc="★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。"
         "★ 真机验证：30° ⇒ 3×3 旋转矩阵首行变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。",
     ),
@@ -107,6 +115,10 @@ _BATCH67: list[ToolSpec] = [
                 description="缩放比例（★ 必须 > 0；★ 它**不是长度**，故不带 `_mm`）。",
             ),
         ],
+        evidence=(
+            "★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。★ 真机验证：1.5 ⇒ 草"
+            "图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。"
+        ),
         doc="★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。"
         "★ 真机验证：1.5 ⇒ 草图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。",
     ),
@@ -134,6 +146,10 @@ _BATCH67: list[ToolSpec] = [
                 description="保留草图几何关系（★ 布尔是**标志**，不是长度）。",
             ),
         ],
+        evidence=(
+            "★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。⚠ 官方说明「"
+            "Stretch the **selected** entities」⇒ ★ **要求先选中实体**。"
+        ),
         doc="★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。"
         "⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
     ),
@@ -152,6 +168,10 @@ _BATCH67: list[ToolSpec] = [
                 "原样透传，语义不下断言）。",
             ),
         ],
+        evidence=(
+            "★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0"
+            ",0]` 变成 **`[-1,0,0]`**（X 符号翻转）。⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。"
+        ),
         doc="★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。"
         "★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。"
         "⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。",

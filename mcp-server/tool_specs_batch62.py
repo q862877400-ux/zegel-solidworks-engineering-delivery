@@ -61,6 +61,11 @@ SPECS_BATCH62 = [
                 "（★ **111 个**，★ 中文 UI 用 `GB\\` 那一支，★ 如 `GB\\square-rods.sldlfp`）。",
             ),
         ],
+        evidence=(
+            "Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment profile, and return a READ-B"
+            "ACK report. ★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 `WeldMemberFeat`"
+            "。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。"
+        ),
         doc=(
             "Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment "
             "profile, and return a READ-BACK report. "

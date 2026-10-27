@@ -105,6 +105,18 @@ SPECS_BATCH78 = [
             ),
         ],
         derived_args=_derive_model,
+        evidence=(
+            "**THE RECOMMENDED WAY to mesh a study.** One call does seven things, all measured: ① element-size sanity g"
+            "ate (two-sided: too big = degenerate, too small = memory blow-up) → ② **mesh safety profile** (`Quality=Dr"
+            "aft` + `MesherType=Standard`, i.e. turns OFF the curvature-based mesher that refines without a lower bound"
+            ") → ③ build the mesh → ④ read the REAL `ElementCount`/`NodeCount` → ⑤ **pre-solve memory gate** → ⑥ **rest"
+            "ore the study's mesh settings** → ⑦ return an evidence-ready report. ★★ Measured on a real machine (100x60"
+            "x20 mm plate): the factory settings gave 11301 nodes, the safety profile gave **1492 nodes (7.6x fewer)** "
+            "and meshed in 0.3-0.8 s. ⚠ The estimate uses the official **FFEPlus** rule (1 GB per 2,000,000 DOF); if th"
+            "e study solves with a direct solver that rule does not apply — check `solidworks_simulation_solver_type`. "
+            "★★ Read `blocked` when `ok` is false: it says WHICH gate refused (`MESH_SIZE_UNSANE` / `MESH_SAFETY_APPLY_"
+            "FAILED` / `MESH_FAILED` / `SOLVE_MEMORY_BUDGET`)."
+        ),
         doc="**THE RECOMMENDED WAY to mesh a study.** One call does seven things, all measured: "
         "① element-size sanity gate (two-sided: too big = degenerate, too small = memory blow-up) "
         "→ ② **mesh safety profile** (`Quality=Draft` + `MesherType=Standard`, i.e. turns OFF the "
@@ -129,6 +141,15 @@ SPECS_BATCH78 = [
         params=[
             Param("study_name", str, default="", description=_STUDY),
         ],
+        evidence=(
+            "Return `{ok, value, name, reason}` for `ICWStaticStudyOptions.SolverType` (`swsSolverType_e`: automatic 0 "
+            "/ direct_sparse 1 / ffeplus 2 / casi 5 / abaqus 6 / intel 7 / intel_cluster 8). ★★ **Why it matters**: the"
+            " repo's solve-memory estimate uses the official **FFEPlus** rule (\"1 GB per 2,000,000 degrees of freedom"
+            "\"), and that rule is FFEPlus-specific. Measured here: `SolverType` read back as `automatic (0)` while the"
+            " solver actually chosen at solve time was **Intel Direct Sparse** — a direct solver, for which this repo h"
+            "as NO official memory rule. ⚠ When the read fails, `ok` is false with a reason — it never guesses a defaul"
+            "t."
+        ),
         doc="Return `{ok, value, name, reason}` for `ICWStaticStudyOptions.SolverType` "
         "(`swsSolverType_e`: automatic 0 / direct_sparse 1 / ffeplus 2 / casi 5 / abaqus 6 / "
         "intel 7 / intel_cluster 8). "

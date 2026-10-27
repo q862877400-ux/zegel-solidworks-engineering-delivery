@@ -61,6 +61,13 @@ SPECS_BATCH57 = [
                 description="孔特征名前缀（每个孔会带序号后缀）",
             ),
         ],
+        evidence=(
+            "★ **按显式孔位一次创建一组孔**（★ 官方走 `HoleWizard5` 那族）。★★ 它把 `create_hole_pattern` 的 **`creator"
+            "` 可调用对象**换成**具名的 `kind`** ——★ 因为 MCP 层给不出函数对象。★★ 判据**两条都要**：★ 每个孔位都回了证"
+            "据 **且** **特征树真的长了**（★ 规则 6）——★ 只回证据而树不动 ⇒ `ok=false` 并写明（★ 本会话已见过「回对象而"
+            "什么都没发生」的空存根）。⚠ 本工具只支持 `through` / `blind`：★ `counterbore` / `countersink` 另有必填参数"
+            "，未暴露。"
+        ),
         doc="★ **按显式孔位一次创建一组孔**（★ 官方走 `HoleWizard5` 那族）。"
         "★★ 它把 `create_hole_pattern` 的 **`creator` 可调用对象**换成**具名的 `kind`** ——"
         "★ 因为 MCP 层给不出函数对象。"

@@ -42,6 +42,11 @@ SPECS_BATCH44 = [
                 description="图纸名；留空 = 当前图纸（★ 声明式：不传坐标）",
             ),
         ],
+        evidence=(
+            "★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，取其中两个数作为比例的分子/分母 "
+            "⇒ 回 `ratio_text`（如 `1:5`）。⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Nu"
+            "merator。"
+        ),
         doc="★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，"
         "取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。"
         "⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。",
@@ -73,6 +78,11 @@ SPECS_BATCH44 = [
             ),
             Param("sheet_name", str, default="", description="图纸名；留空 = 当前图纸"),
         ],
+        evidence=(
+            "★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, scale_anno_position, scale_a"
+            "nno_text_height)`（官方 4 参 · 回 bool）。★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）"
+            "。⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。"
+        ),
         doc="★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, "
         "scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。"
         "★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。"

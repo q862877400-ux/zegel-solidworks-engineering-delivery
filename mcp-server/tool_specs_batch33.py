@@ -67,6 +67,9 @@ SPECS_BATCH33 = [
         function="inspect_configurations",
         inject="model",
         params=[],
+        evidence=(
+            "List the document's configurations and the active one as a JSON-able dict. ★ Read-only."
+        ),
         doc="List the document's configurations and the active one as a JSON-able dict. "
         "★ Read-only.",
     ),
@@ -97,6 +100,10 @@ SPECS_BATCH33 = [
             ),
             Param("rebuild", bool, default=True, description="Rebuild after creating."),
         ],
+        evidence=(
+            "Create a configuration, optionally activate and rebuild, then read the result back. ⚠ Does NOT save the do"
+            "cument."
+        ),
         doc="Create a configuration, optionally activate and rebuild, then read the result "
         "back. ⚠ Does NOT save the document.",
     ),
@@ -112,6 +119,9 @@ SPECS_BATCH33 = [
                 "rebuild", bool, default=True, description="Rebuild after activating."
             ),
         ],
+        evidence=(
+            "Activate a configuration and verify it by read-back. ⚠ Does NOT save the document."
+        ),
         doc="Activate a configuration and verify it by read-back. ⚠ Does NOT save the document.",
     ),
     ToolSpec(
@@ -124,6 +134,9 @@ SPECS_BATCH33 = [
             Param("name", str, description="Custom property name."),
             Param("configuration_name", str, default="", description=_CFG),
         ],
+        evidence=(
+            "Read one custom property as a JSON-able dict. ★ Read-only."
+        ),
         doc="Read one custom property as a JSON-able dict. ★ Read-only.",
     ),
     ToolSpec(
@@ -140,6 +153,9 @@ SPECS_BATCH33 = [
             ),
             Param("configuration_name", str, default="", description=_CFG),
         ],
+        evidence=(
+            "Set several custom properties and return the read-back list. ⚠ Does NOT save the document."
+        ),
         doc="Set several custom properties and return the read-back list. "
         "⚠ Does NOT save the document.",
     ),
@@ -177,6 +193,10 @@ SPECS_BATCH33 = [
                 "rebuild", bool, default=True, description="Rebuild after the change."
             ),
         ],
+        evidence=(
+            "Update an exact named dimension and return a read-back report (before/after). ⚠ Does NOT save the document"
+            "."
+        ),
         doc="Update an exact named dimension and return a read-back report (before/after). "
         "⚠ Does NOT save the document.",
     ),
@@ -188,6 +208,10 @@ SPECS_BATCH33 = [
         function="export_step_report",
         inject="model",
         params=[Param("output_path", str, description=_PATH)],
+        evidence=(
+            "Export the active document to STEP and return a READ-BACK report: the file must exist and be non-empty. ★ "
+            "Rule: the criterion is the FILE, not the return value."
+        ),
         doc="Export the active document to STEP and return a READ-BACK report: the file must "
         "exist and be non-empty. ★ Rule: the criterion is the FILE, not the return value.",
     ),
@@ -206,6 +230,9 @@ SPECS_BATCH33 = [
                 description="STL quality: 'coarse' or 'fine'.",
             ),
         ],
+        evidence=(
+            "Export to STL and return a READ-BACK report (file exists and is non-empty). ★ The criterion is the FILE."
+        ),
         doc="Export to STL and return a READ-BACK report (file exists and is non-empty). "
         "★ The criterion is the FILE.",
     ),
@@ -216,6 +243,9 @@ SPECS_BATCH33 = [
         function="export_iges_report",
         inject="model",
         params=[Param("output_path", str, description=_PATH)],
+        evidence=(
+            "Export to IGES and return a READ-BACK report (file exists and is non-empty)."
+        ),
         doc="Export to IGES and return a READ-BACK report (file exists and is non-empty).",
     ),
     ToolSpec(
@@ -225,6 +255,9 @@ SPECS_BATCH33 = [
         function="export_parasolid_report",
         inject="model",
         params=[Param("output_path", str, description=_PATH)],
+        evidence=(
+            "Export to Parasolid and return a READ-BACK report (file exists and is non-empty)."
+        ),
         doc="Export to Parasolid and return a READ-BACK report (file exists and is non-empty).",
     ),
     ToolSpec(
@@ -234,6 +267,12 @@ SPECS_BATCH33 = [
         function="export_dxf_report",
         inject="model",
         params=[Param("output_path", str, description=_PATH)],
+        evidence=(
+            "Export to DXF and return a READ-BACK report (file exists and is non-empty). ⚠⚠ THIS IS A SHEET-METAL FLAT-"
+            "PATTERN EXPORT, not a general DXF export: on a non-sheet-metal part the capability layer refuses with 「导"
+            "出展开 DXF 前必须先保存钣金零件」. ★ That refusal is deliberate — it is a readable, actionable failure rat"
+            "her than a silent one."
+        ),
         doc="Export to DXF and return a READ-BACK report (file exists and is non-empty). "
         "⚠⚠ THIS IS A SHEET-METAL FLAT-PATTERN EXPORT, not a general DXF export: on a "
         "non-sheet-metal part the capability layer refuses with "
@@ -264,6 +303,10 @@ SPECS_BATCH33 = [
                              "use the document default.",
             ),
         ],
+        evidence=(
+            "Export a BMP image of the active document and return a READ-BACK report (file exists and is non-empty). ★ "
+            "Covered by the existing smoke tools/verify_bmp_smoke.py."
+        ),
         doc="Export a BMP image of the active document and return a READ-BACK report "
         "(file exists and is non-empty). ★ Covered by the existing smoke "
         "tools/verify_bmp_smoke.py.",

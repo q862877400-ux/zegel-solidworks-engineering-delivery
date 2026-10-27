@@ -69,6 +69,13 @@ SPECS_BATCH107 = [
         function="insert_boundary_boss_report",
         inject="model",
         params=_COMMON,
+        evidence=(
+            "★ **边界凸台**：★ 用两个面建一个边界特征（官方 IFeatureManager::InsertNetBlend，Type=1 Boss）⇒ ★ 回一份回"
+            "读报告 ✓ ★ 面由 face_index_1 / face_index_2（**面序号**）指定 —— ★ 声明式，★ 不收坐标（规则 3）✓ ★ 调用序"
+            "照官方示例：清选区 ⇒ 选两个面（第 2 个 Append）⇒ 设曲线数据 x2 ⇒ 设方向数据 x2 ⇒ InsertNetBlend ✓ ★ 判据是"
+            "**回读**：特征树计数前后 + 选区计数（事实 8：布尔返回值不可信）✓ ★★ 等级 stitched —— ★ 尚未真机验证（红线⑥"
+            "）✓"
+        ),
         doc="★ **边界凸台**：★ 用两个面建一个边界特征（官方 IFeatureManager::InsertNetBlend，Type=1 Boss）⇒ ★ "
              "回一份回读报告 ✓ "
         + "★ 面由 face_index_1 / face_index_2（**面序号**）指定 —— ★ 声明式，★ 不收坐标（规则 3）✓ ★ 调用序照官方示例：清选区 ⇒ 选两个面（第 2 个 Append）⇒ 设曲线数据 x2 ⇒ 设方向数据 x2 ⇒ InsertNetBlend ✓ ★ 判据是**回读**：特征树计数前后 + 选区计数（事实 8：布尔返回值不可信）✓ ★★ 等级 stitched —— ★ 尚未真机验证（红线⑥）✓",
@@ -80,6 +87,12 @@ SPECS_BATCH107 = [
         function="insert_boundary_surface_report",
         inject="model",
         params=_COMMON,
+        evidence=(
+            "★ **边界曲面**：★ 与凸台同一个官方入口，★ 区别只在 Type=2 Surface ⇒ ★ 建出的是曲面体 ✓ ★ 面由 face_index_1"
+            " / face_index_2（**面序号**）指定 —— ★ 声明式，★ 不收坐标（规则 3）✓ ★ 调用序照官方示例：清选区 ⇒ 选两个面"
+            "（第 2 个 Append）⇒ 设曲线数据 x2 ⇒ 设方向数据 x2 ⇒ InsertNetBlend ✓ ★ 判据是**回读**：特征树计数前后 + 选"
+            "区计数（事实 8：布尔返回值不可信）✓ ★★ 等级 stitched —— ★ 尚未真机验证（红线⑥）✓"
+        ),
         doc="★ **边界曲面**：★ 与凸台同一个官方入口，★ 区别只在 Type=2 Surface ⇒ ★ 建出的是曲面体 ✓ "
         + "★ 面由 face_index_1 / face_index_2（**面序号**）指定 —— ★ 声明式，★ 不收坐标（规则 3）✓ ★ 调用序照官方示例：清选区 ⇒ 选两个面（第 2 个 Append）⇒ 设曲线数据 x2 ⇒ 设方向数据 x2 ⇒ InsertNetBlend ✓ ★ 判据是**回读**：特征树计数前后 + 选区计数（事实 8：布尔返回值不可信）✓ ★★ 等级 stitched —— ★ 尚未真机验证（红线⑥）✓",
     ),

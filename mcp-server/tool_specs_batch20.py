@@ -89,6 +89,12 @@ SPECS_BATCH20 = [
             ),
             Param("config_name", str, default="", description=_CONFIG),
         ],
+        evidence=(
+            "Read ONE file custom property: its value, its type (swCustomInfoType_e) and whether it is editable. ★ Read"
+            "ing only — writing is solidworks_set_custom_properties. The API's by-ref getters (Get2..Get6) do NOT work "
+            "under pywin32 (they raise a type-mismatch error), so these tools use the single-return Get(name); that sha"
+            "pe is verified on a real machine."
+        ),
         doc="Read ONE file custom property: its value, its type (swCustomInfoType_e) and whether "
         "it is editable. " + _WHY,
     ),
@@ -103,6 +109,12 @@ SPECS_BATCH20 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[Param("config_name", str, default="", description=_CONFIG)],
+        evidence=(
+            "Read ALL file custom properties of the active document: every name with its value and type, plus how many "
+            "were read. ★ Reading only — writing is solidworks_set_custom_properties. The API's by-ref getters (Get2..G"
+            "et6) do NOT work under pywin32 (they raise a type-mismatch error), so these tools use the single-return Ge"
+            "t(name); that shape is verified on a real machine."
+        ),
         doc="Read ALL file custom properties of the active document: every name with its value and "
         "type, plus how many were read. " + _WHY,
     ),

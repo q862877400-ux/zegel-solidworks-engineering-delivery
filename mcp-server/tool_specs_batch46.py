@@ -63,6 +63,16 @@ SPECS_BATCH46 = [
                 default="FACE",
             ),
         ],
+        evidence=(
+            "★ **量声明式选区里的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。★★ **用 `se"
+            "lection` + `selection_kind` 说明量什么**（★ 规则 3：**不收坐标**；★ 函数在**注入之后**自己重建选区 —— ★ 事"
+            "实 503：注入解析器会清空选区）。★ 调用序照官方示例：`Extension` → `CreateMeasure` → 设 `ArcOption` → `Calc"
+            "ulate` → 读数。★ 回的 `values` 含 `distance` / `normal_distance` / `angle` / `length` / `area` / `perimete"
+            "r` / `delta_x` / `delta_y` / `delta_z` 等；判定含 `is_intersect` / `is_parallel` / `is_perpendicular`。★★ "
+            "约定：**-1 表示「这项对当前选择不适用」** —— 本工具如实保留 -1，并另给 `applicable` 列出真量到的项。★ 真机"
+            "期望（几何推出，全部对上）：两面 ⇒ `distance` 10.0mm · 单面 ⇒ `area` 400mm² · `perimeter` 80mm。★ 未选中 ⇒"
+            " 显式拒绝。⚠ 量测要先选中（规则 3：本工具不传坐标，选中由声明式选择那族负责）。"
+        ),
         doc="★ **量声明式选区里的实体**（逐几何量测）—— 走 `IModelDocExtension.CreateMeasure` → `IMeasure`。"
         "★★ **用 `selection` + `selection_kind` 说明量什么**（★ 规则 3：**不收坐标**；"
         "★ 函数在**注入之后**自己重建选区 —— ★ 事实 503：注入解析器会清空选区）。"

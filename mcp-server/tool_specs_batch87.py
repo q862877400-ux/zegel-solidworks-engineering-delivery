@@ -26,6 +26,13 @@ SPECS_BATCH87 = [
         function="clear_selection_colors",
         inject="selection",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 ClearSelectionColors.md）：`void ClearSelectionColors()`。官方页正文只有一句描述逐"
+            "字「Cleans all of selection color settings.」；★ 该页**没有 `## Remarks` 段**（`## See Also` 里逐字两条：`"
+            "[[ISelectionMgr Interface]]` · `[[ISelectionMgr Members]]` · `[[ISelectionMgr::SelectionColor Property]]` "
+            "⇒ ★ 官方自己把它和 `SelectionColor` 属性配成一对）。★ CHM VB6 页 `SldWorks~SelectionMgr~ClearSelectionColo"
+            "rs"
+        ),
         doc="★ 官方签名（逐字，来自 ClearSelectionColors.md）：`void ClearSelectionColors()`。"
              "官方页正文只有一句描述逐字「Cleans all of selection color settings.」；★ 该页**没有 `## Remarks` "
              "段**（`## See Also` 里逐字两条：`[[ISelectionMgr Interface]]` · `[[ISelectionMgr Members]]` · "
@@ -42,6 +49,15 @@ SPECS_BATCH87 = [
             Param("category", int, default=0, description=""),
             Param("template_name", str, default="", description=""),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_costing.py）：`查不到（C:\\swapi\\types\\ICostingDefaults\\SetTemplateName.md 不"
+            "存在 ⇒ 无 **Signature**: 行可抄）。★ 第三源（出厂程序集纯元数据反射）逐字：`Void SetTemplateName(Int32, St"
+            "ring)` —— D:\\AI\\SW\\_raw\\reflect\\iface_sldcostingapi.txt:288（位于 `#`。★ 真源是**本仓** `scripts/sw_c"
+            "osting.py` 的 `set_default_template`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到官方 ## Remarks（"
+            "四册 CHM 无 costing 册 + C:\\swapi 无该接口页）。★ 出厂反射只给签名、**没有参数语义**。⚠ 首参 Int32 的语义"
+            "（「页签序号」还是「模板类别」？）两套官方源都查不到 ⇒ 本工具原样透传、**不解释**（铁律 5）。⚠ 返回类型是 "
+            "Void ⇒ 源码 `set_default_template` 用 `_checked(...)` 的**异常*"
+        ),
         doc="★ 官方签名（逐字，来自 sw_costing.py）：`查不到（C:\\swapi\\types\\ICostingDefaults\\SetTemplateName.md "
              "不存在 ⇒ 无 **Signature**: 行可抄）。★ 第三源（出厂程序集纯元数据反射）逐字：`Void SetTemplateName(Int32, "
              "String)` —— D:\\AI\\SW\\_raw\\reflect\\iface_sldcostingapi.txt:288（位于 `#`。★ 真源是**本仓** "

@@ -77,6 +77,10 @@ _BATCH70: list[ToolSpec] = [
         inject="model",
         param_alias={},
         params=[],
+        evidence=(
+            "★ 质心：`IFeatureManager.InsertCenterOfMass()`（**零参数**，回 `Feature`）。★ 真机建成（★ 判据 = 回对象非 "
+            "None + 特征树增量）。"
+        ),
         doc="★ 质心：`IFeatureManager.InsertCenterOfMass()`（**零参数**，回 `Feature`）。"
         "★ 真机建成（★ 判据 = 回对象非 None + 特征树增量）。",
     ),
@@ -129,6 +133,12 @@ _BATCH70: list[ToolSpec] = [
                 default=False,
             ),
         ],
+        evidence=(
+            "★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 `Creat"
+            "e3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 **out**（`swGloba"
+            "lBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位"
+            "置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。"
+        ),
         doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 "
              "`Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 "
              "**out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 "
@@ -164,6 +174,11 @@ _BATCH70: list[ToolSpec] = [
                 default=False,
             ),
         ],
+        evidence=(
+            "★ 坐标系：`IFeatureManager.InsertCoordinateSystem(…)`（3 参，回 `Feature`）。★ 用的是 `IFeatureManager` 那"
+            "个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**（铁律 4），★ 且新版回 `Feature`、旧版回 `boo"
+            "l`。★ 真机建成。"
+        ),
         doc="★ 坐标系：`IFeatureManager.InsertCoordinateSystem(…)`（3 参，回 `Feature`）。"
         "★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**"
         "（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
@@ -229,6 +244,11 @@ _BATCH70: list[ToolSpec] = [
                 default=0.0,
             ),
         ],
+        evidence=(
+            "★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。⚠⚠ **调用前必须按 mark 选参考"
+            "实体** —— 官方 Remarks 逐字给了表：**0 = First reference entity · 1 = Second · 2 = Third**。★ 真机：选一个"
+            "面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。"
+        ),
         doc="★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。"
         "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
         "**0 = First reference entity · 1 = Second · 2 = Third**。"
@@ -307,6 +327,11 @@ _BATCH70: list[ToolSpec] = [
                 default="FACE",
             ),
         ],
+        evidence=(
+            "★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。⚠ 官方 Remarks：`NumberOfRefPoints`"
+            " **必须是 1**。★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。★★ 而选面**必须紧接着调用"
+            "** —— 中间隔别的步骤会把选区清掉。"
+        ),
         doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
         "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
         "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"

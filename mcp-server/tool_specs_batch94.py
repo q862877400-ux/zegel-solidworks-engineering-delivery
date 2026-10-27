@@ -58,6 +58,15 @@ SPECS_BATCH94 = [
                 "`False` ⇒ `IModelDoc2::UnblankSketch()`（显示）。",
             ),
         ],
+        evidence=(
+            "★ **隐藏 / 显示选中的草图**（官方 `IModelDoc2::BlankSketch` / `UnblankSketch`，★ **两个都零参、都回 `void`"
+            "**）—— ★★ **官方摘要逐字是「Hides the *selected* sketches」** ⇒ ★ **官方没有「全部」这个语义** ⇒ ★ 本工具*"
+            "*不叫 `hide_all_sketches`、也不实现它** ✓ ★★ **判据（规则 6）**：★ 它回 `void` ⇒ 只能回读 ⇒ ① **选区计数**"
+            "（事实 8：不许信返回值）② ★★ **`IFeature::Visible` 的前后读数**（`swVisibilityState_e`：Hide=1 · Shown=2 ·"
+            " Unknown=3）—— ★ 要求**真的变了**才判 `ok`；★ **读不到 ≠ 没变**（两者在返回值里分开）✓ ⚠ 官方示例的判据只"
+            "有肉眼（「Examine the graphics area」）⇒ ★ 本条的价值就是**把那个回读入口定出来**（★ 这正是裁决书点名的真"
+            "风险）✓"
+        ),
         doc="★ **隐藏 / 显示选中的草图**（官方 `IModelDoc2::BlankSketch` / `UnblankSketch`，"
         "★ **两个都零参、都回 `void`**）—— "
         "★★ **官方摘要逐字是「Hides the *selected* sketches」** ⇒ "

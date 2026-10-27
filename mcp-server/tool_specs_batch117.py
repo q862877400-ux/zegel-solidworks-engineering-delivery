@@ -64,6 +64,10 @@ SPECS_BATCH117 = [
             Param("through", bool, default=True,
                   description="True = through all, False = blind (uses depth_mm)."),
         ],
+        evidence=(
+            "Create a HoleWizard hole at an explicit (x, y, z) point and report it. Unlike solidworks_hole_wizard, the "
+            "position is not limited to the face centre. Criterion is the feature-tree increment, not the return value."
+        ),
         doc="Create a HoleWizard hole at an explicit (x, y, z) point and report it. "
         "Unlike solidworks_hole_wizard, the position is not limited to the "
         "face centre. "

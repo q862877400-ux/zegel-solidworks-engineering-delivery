@@ -49,6 +49,9 @@ SPECS_BATCH8 = [
         function="collect_model_summary",
         inject="model",
         read_only=True,
+        evidence=(
+            "Summarise the model: title, type, feature tree (name + type), save path."
+        ),
         doc="Summarise the model: title, type, feature tree (name + type), save path.",
         param_alias={},
         params=[],
@@ -60,6 +63,9 @@ SPECS_BATCH8 = [
         function="get_costing_manager",
         inject="model",
         read_only=True,
+        evidence=(
+            "Get the SOLIDWORKS Costing manager object for the active document."
+        ),
         doc="Get the SOLIDWORKS Costing manager object for the active document.",
         param_alias={},
         params=[],
@@ -70,6 +76,9 @@ SPECS_BATCH8 = [
         module="sw_simulation_study_options",
         function="list_setter_summary",
         read_only=True,
+        evidence=(
+            "List the simulation study option setters available (no document needed)."
+        ),
         doc="List the simulation study option setters available (no document needed).",
         param_alias={},
         params=[],

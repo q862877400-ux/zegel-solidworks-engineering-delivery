@@ -60,6 +60,10 @@ SPECS_BATCH12 = [
         function="create_demold_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a de-mold (manufacturing) control for a topology study. The caller must first select the pull-direc"
+            "tion face/edge/plane, then choose the direction option."
+        ),
         doc="Create a de-mold (manufacturing) control for a topology study. "
         "The caller must first select the pull-direction face/edge/plane, "
         "then choose the direction option.",
@@ -87,6 +91,9 @@ SPECS_BATCH12 = [
         function="create_stress_constraint",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a stress constraint for a topology study."
+        ),
         doc="Create a stress constraint for a topology study.",
         params=[
             Param(
@@ -113,6 +120,9 @@ SPECS_BATCH12 = [
         function="create_symmetry_control",
         inject="study",
         param_alias=dict(_STUDY_ALIAS),
+        evidence=(
+            "Create a symmetry control for a topology study. The caller must first select the symmetry plane(s)."
+        ),
         doc="Create a symmetry control for a topology study. The caller must first select the "
         "symmetry plane(s).",
         params=[

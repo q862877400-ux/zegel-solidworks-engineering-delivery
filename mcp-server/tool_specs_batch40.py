@@ -83,6 +83,10 @@ SPECS_BATCH40 = [
                 description="Study type enum value (omit for the default).",
             ),
         ],
+        evidence=(
+            "Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY document — the capability "
+            "layer reports it if the active document is not one. ⚠ Does NOT save the document."
+        ),
         doc="Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY "
         "document — the capability layer reports it if the active document is not one. "
         "⚠ Does NOT save the document.",
@@ -94,6 +98,9 @@ SPECS_BATCH40 = [
         function="collect_motion_study_summary",
         inject="asm_model",
         params=[],
+        evidence=(
+            "Return a JSON-able summary of the assembly's motion studies. ★ Read-only."
+        ),
         doc="Return a JSON-able summary of the assembly's motion studies. ★ Read-only.",
     ),
     ToolSpec(
@@ -131,6 +138,10 @@ SPECS_BATCH40 = [
                 description="Require computed results.",
             ),
         ],
+        evidence=(
+            "Validate the motion studies against the given requirements and return the result. ★ Read-only (★ it report"
+            "s, it does not fix)."
+        ),
         doc="Validate the motion studies against the given requirements and return the result. "
         "★ Read-only (★ it reports, it does not fix).",
     ),
@@ -148,6 +159,9 @@ SPECS_BATCH40 = [
                 description="Load the Motion type library first (★ needed on a fresh session).",
             ),
         ],
+        evidence=(
+            "Return the assembly's motion study manager (★ the entry point for the rest). ★ Read-only."
+        ),
         doc="Return the assembly's motion study manager (★ the entry point for the rest). "
         "★ Read-only.",
     ),
@@ -165,6 +179,11 @@ SPECS_BATCH40 = [
                 description="Raise instead of reporting a boolean when loading fails.",
             ),
         ],
+        evidence=(
+            "Check (and load) the Motion type library. ★ Zero-argument apart from the flag — use it to find out whether"
+            " Motion is usable BEFORE asking for anything else. ★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 M"
+            "otion 加载项就是那条的原因。"
+        ),
         doc="Check (and load) the Motion type library. ★ Zero-argument apart from the flag — "
         "use it to find out whether Motion is usable BEFORE asking for anything else. "
         "★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。",
@@ -209,6 +228,10 @@ SPECS_BATCH40 = [
                 description="Require computed results.",
             ),
         ],
+        evidence=(
+            "Validate a motion-study summary dict (★ pure data — no SolidWorks call). ★ Useful to re-check a summary re"
+            "corded earlier."
+        ),
         doc="Validate a motion-study summary dict (★ pure data — no SolidWorks call). "
         "★ Useful to re-check a summary recorded earlier.",
     ),

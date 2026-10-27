@@ -52,6 +52,11 @@ SPECS_BATCH15 = [
         module="sw_review",
         function="build_review_report",
         inject="model",
+        evidence=(
+            "Build structured review-report data (exports preview images and writes a report into output_dir). ⚠ The op"
+            "tional `views` / `expected_outputs` list parameters are NOT exposed in this tool — see the batch header fo"
+            "r why."
+        ),
         doc="Build structured review-report data (exports preview images and writes a report "
         "into output_dir). ⚠ The optional `views` / `expected_outputs` list parameters are "
         "NOT exposed in this tool — see the batch header for why.",

@@ -59,6 +59,11 @@ SPECS_BATCH80 = [
                 "raises, not only the unsigned hex form.",
             )
         ],
+        evidence=(
+            "Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: when"
+            " the code is not in the table it says so — it does NOT invent a meaning (repo rule 5). ★ Source is the rep"
+            "o's own table, NOT an official enum page, so treat the text as a repo-authored hint."
+        ),
         doc="Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: "
              "when the code is not in the table it says so — it does NOT invent a meaning (repo rule 5). ★ Source is "
              "the repo's own table, NOT an official enum page, so treat the text as a repo-authored hint.",
@@ -70,6 +75,11 @@ SPECS_BATCH80 = [
         function="enter_command_lock",
         inject="sldworks",
         params=[],
+        evidence=(
+            "Set `ISldWorks.CommandInProgress = True` to stop the operations that pop modal dialogs. ★ This is the repo"
+            "'s prescribed pre-flight before risky COM work (rule 2). ⚠ Official note from this repo: an unreleased loc"
+            "k makes SolidWorks keep refusing operations — pair it with `solidworks_automation_exit_command_lock`."
+        ),
         doc="Set `ISldWorks.CommandInProgress = True` to stop the operations that pop modal dialogs. "
         "★ This is the repo's prescribed pre-flight before risky COM work (rule 2). "
         "⚠ Official note from this repo: an unreleased lock makes SolidWorks keep refusing "
@@ -82,6 +92,10 @@ SPECS_BATCH80 = [
         function="exit_command_lock",
         inject="sldworks",
         params=[],
+        evidence=(
+            "Release the lock set by `solidworks_automation_enter_command_lock`. ⚠ The wrapped function's own docstring"
+            " warns: forgetting this call leaves SolidWorks refusing operations."
+        ),
         doc="Release the lock set by `solidworks_automation_enter_command_lock`. "
         "⚠ The wrapped function's own docstring warns: forgetting this call leaves SolidWorks "
         "refusing operations.",
@@ -93,6 +107,10 @@ SPECS_BATCH80 = [
         function="is_command_locked",
         inject="sldworks",
         params=[],
+        evidence=(
+            "Read whether `CommandInProgress` is currently set. ★ The wrapped function notes the official member is a *"
+            "*zero-argument property** on `ISldWorks`."
+        ),
         doc="Read whether `CommandInProgress` is currently set. ★ The wrapped function notes the "
         "official member is a **zero-argument property** on `ISldWorks`.",
     ),
@@ -116,6 +134,11 @@ SPECS_BATCH80 = [
                 description="True to enable the flag, False to disable it.",
             ),
         ],
+        evidence=(
+            "Set a preference switch on `ISldWorks`. ★ Use it to mute the dialogs a given operation would otherwise rai"
+            "se. ⚠ This repo's non-invasiveness contract applies: these are the documented, restorable preferences (see"
+            " `references/deployment-boundary.md`) — the repo's preference-write gate covers every such site."
+        ),
         doc="Set a preference switch on `ISldWorks`. ★ Use it to mute the dialogs a given operation "
         "would otherwise raise. ⚠ This repo's non-invasiveness contract applies: these are "
         "the documented, restorable preferences (see `references/deployment-boundary.md`) — "
@@ -135,6 +158,10 @@ SPECS_BATCH80 = [
                 "`solidworks_automation_set_flag`).",
             )
         ],
+        evidence=(
+            "Read a preference switch back from `ISldWorks`. ★ The wrapped function notes the official member takes **o"
+            "ne argument**."
+        ),
         doc="Read a preference switch back from `ISldWorks`. ★ The wrapped function notes the "
         "official member takes **one argument**.",
     ),
@@ -162,6 +189,13 @@ SPECS_BATCH80 = [
                 "(the tool refuses to guess). Pass the interface to get the exact answer.",
             ),
         ],
+        evidence=(
+            "Given a member name, return the successor this repo maps it to — and `None` when it does not know it (★ th"
+            "e wrapped function's docstring is explicit: it does NOT guess, repo rule 5). ★★ `None` also means \"ambigu"
+            "ous by name\": some members share a name across interfaces with DIFFERENT successors (e.g. `Select2` — 6 d"
+            "ifferent endpoints), so an unqualified lookup has no single right answer. Pass `interface` to disambiguate"
+            ". ★ Pure function: no SolidWorks call, no COM."
+        ),
         doc="Given a member name, return the successor this repo maps it to — and `None` when it "
         "does not know it (★ the wrapped function's docstring is explicit: it does NOT guess, "
         'repo rule 5). ★★ `None` also means "ambiguous by name": some members share a name '
@@ -189,6 +223,13 @@ SPECS_BATCH80 = [
                 "repo's `scripts/` directory.",
             ),
         ],
+        evidence=(
+            "Search the repo for real implementations and return `[\"file:line\", …]`. ★★ **Why this exists**: the repo"
+            "'s `sw_api_*.py` files are machine-generated reflection dumps that mention every member name — a naive gre"
+            "p matches those and tells you nothing. This function excludes them, so the answer is \"where is it actuall"
+            "y USED\". ★ Pure function (filesystem only, no SolidWorks). ⚠ `root` empty means the repo default, not the"
+            " current directory."
+        ),
         doc='Search the repo for real implementations and return `["file:line", …]`. '
         "★★ **Why this exists**: the repo's `sw_api_*.py` files are machine-generated reflection "
         "dumps that mention every member name — a naive grep matches those and tells you nothing. "
@@ -204,6 +245,13 @@ SPECS_BATCH80 = [
         function="solidworks_busy",
         inject="",
         params=[],
+        evidence=(
+            "Report whether SolidWorks is busy, with the evidence that decided it. ★★ The judgement is deliberately str"
+            "ict (fact 526): a progress window counts only when it is **attributable to the SolidWorks process family**"
+            " (matched by executable path), because an ORPHAN `OperationStatusWindow` left behind by Explorer otherwise"
+            " produces a false 'busy'. ★ Also requires `SLDWORKS.exe` to be present. ★ Reads only: it inspects windows,"
+            " it does not touch the model."
+        ),
         doc="Report whether SolidWorks is busy, with the evidence that decided it. "
         "★★ The judgement is deliberately strict (fact 526): a progress window counts only when "
         "it is **attributable to the SolidWorks process family** (matched by executable path), "
@@ -218,6 +266,12 @@ SPECS_BATCH80 = [
         function="solidworks_stuck",
         inject="",
         params=[],
+        evidence=(
+            "Report whether SolidWorks looks stuck, using BOTH signals: it is not responding **and** no solver process "
+            "is alive. ★★ That second half matters — during a long solve the main window can look 'not responding' whil"
+            "e `star.exe` is happily working, and calling that 'stuck' is how a normal solve gets killed (facts 293/526"
+            ")."
+        ),
         doc="Report whether SolidWorks looks stuck, using BOTH signals: it is not responding **and** "
         "no solver process is alive. ★★ That second half matters — during a long solve the main "
         "window can look 'not responding' while `star.exe` is happily working, and calling that "
@@ -230,6 +284,11 @@ SPECS_BATCH80 = [
         function="solver_processes",
         inject="",
         params=[],
+        evidence=(
+            "List the solver kernels currently running (the COSMOS/M family, enumerated via the Toolhelp32 snapshot — n"
+            "o `tasklist` parsing). ★ Use it to tell 'still solving' from 'crashed', and to confirm a solver actually e"
+            "xited."
+        ),
         doc="List the solver kernels currently running (the COSMOS/M family, enumerated via the "
         "Toolhelp32 snapshot — no `tasklist` parsing). ★ Use it to tell 'still solving' from "
         "'crashed', and to confirm a solver actually exited.",
@@ -251,6 +310,11 @@ SPECS_BATCH80 = [
                 "interval", float, default=3.0, description="Poll interval in SECONDS."
             ),
         ],
+        evidence=(
+            "Block until `solidworks_session_busy_status` reports idle, or until the timeout — ★ it always returns, and"
+            " says whether it actually reached idle. ★★ Use it before driving COM: landing a call while SolidWorks is b"
+            "usy is the documented route to a hung session (fact 526). ⚠ It polls; it does not touch the model."
+        ),
         doc="Block until `solidworks_session_busy_status` reports idle, or until the timeout — "
         "★ it always returns, and says whether it actually reached idle. "
         "★★ Use it before driving COM: landing a call while SolidWorks is busy is the documented "

@@ -279,6 +279,17 @@ _BATCH74: list[ToolSpec] = [
                 description="部分法兰的**结束**偏移距离（**毫米**）。",
             ),
         ],
+        evidence=(
+            "★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。★★★ **同名两份页、★ "
+            "参数个数不同**：★ `IModelDoc2` 那份（11 参 · 回 void）官方逐字标 `Obsolete. Superseded by [[IFeatureManage"
+            "r::InsertSheetMetalMiterFlange]].` ⇒ ★ **本工具走 IFeatureManager 那份**，★ 而用错的后果是**参数个数对不上"
+            "**、★ 不只是「没反应」。⚠ 末位 `PCBA` 是**对象形参**：★ 官方把它写成二选一 —— **non-NULL** ⇒ \"Pointer to "
+            "`ICustomBendAllowance` object **for which required values have been set**\"；**NULL** ⇒ \"Parent bend's be"
+            "nd allowance is used\" ⇒ ★ 本工具传**空 Dispatch**（＝ NULL 语义）★★ **不伪造一个没设过必需值的 PCBA**，★ "
+            "因此**不接受自定义 PCBA**。★★ **前置查不到**：★ 该官方页**无 `## Remarks` 段**（逐字段核过）⇒ ★ 本工具**不"
+            "编前置**（铁律 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**（★ 不是 False）。★ 判据 = **"
+            "特征树增量** + 返回对象非 None + **实体面数增量**（三个都要）。"
+        ),
         doc="★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。"
         "★★★ **同名两份页、★ 参数个数不同**：★ `IModelDoc2` 那份（11 参 · 回 void）官方逐字标 "
         "`Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].` ⇒ ★ **本工具走 "
@@ -298,6 +309,15 @@ _BATCH74: list[ToolSpec] = [
         function="insert_sheet_metal_closed_corner",
         inject="model",
         params=[],
+        evidence=(
+            "★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ **零参**）。⚠⚠★ **这是本批判"
+            "据最紧的一条**，★ 因为官方**同时**给了「零参数」与「回 `void`」：⇒ ★ **没有返回对象可读** ⇒ ★「返回非 None"
+            "」这条判据在本工具上**根本不存在** ⇒ ★ 判据**只能**是 **特征树增量** + **实体面数增量** + **体积增量**（★ "
+            "后两个互相独立、缺一不可）。★★ **前置查不到**：★ 官方页**无 `## Remarks` 段** ⇒ ★ 本工具**不编前置**（铁律"
+            " 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**。⚠ 该族另有 `IClosedCornerFeatureData` 指针"
+            "路：★ 其 `IAccessSelections` 官方已标 `Obsolete` → 后继 `IAccessSelections2`；★ ★ 而该族是**进程内指针接口"
+            "**，★ 本仓 pywin32 后端到不了（已知事实 47）⇒ ★ 本工具**只走直入法**、★ 不碰指针族。"
+        ),
         doc="★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ **零参**）。"
         "⚠⚠★ **这是本批判据最紧的一条**，★ 因为官方**同时**给了「零参数」与「回 `void`」："
         "⇒ ★ **没有返回对象可读** ⇒ ★「返回非 None」这条判据在本工具上**根本不存在** ⇒ ★ 判据**只能**是 "
@@ -410,6 +430,17 @@ _BATCH74: list[ToolSpec] = [
                 "1=swExtendInward · 2=swSpecifyInset**（★ 逐字核官方枚举页）。",
             ),
         ],
+        evidence=(
+            "★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字"
+            "）**：\"Before calling this method, **select one or more end faces** of a structural member in the graphic"
+            "s area.\" ⇒ ★ 调用前必须在图形区选中端面；★ 本工具**不代选**（★ 面没有可用名字 —— 已知事实 32；★ 且规则 3 "
+            "禁裸坐标），★ 只**回读选区计数**写进 `preconditions_held`。★ ★ 官方**这一句没给 mark**，★ 官方例子用的是 m"
+            "ark=**0** ⇒ ★ **与角撑板的 mark=1 不一样**，★ 两个入口的 mark 不能互相套用。⚠ ★★ `InsertEndCapFeature2`（7"
+            " 参 · 末位 `System.object Faces`）**不是**废弃成员 —— ★ 官方页无 Obsolete 句、★ 且 Remarks 明写它是「用 Fa"
+            "ces 数组」的**并列**入口 ⇒ ★★ **不是** `1 → 2 → 3` 的线性继承；★ 而它末位是**数组形参** ⇒ `Param` 表达不了"
+            " ⇒ 本工具不做。★ 判据 = **特征树增量** + 返回对象非 None + **`GetDefinition()` 属性回读**（官方例子读法）"
+            "。"
+        ),
         doc="★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。"
         '★★★ **官方前置（Remarks 逐字）**："Before calling this method, **select one or more end '
         'faces** of a structural member in the graphics area." ⇒ ★ 调用前必须在图形区选中端面；'
@@ -585,6 +616,20 @@ _BATCH74: list[ToolSpec] = [
                 "under the gusset」。",
             ),
         ],
+        evidence=(
+            "★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。★★★ **官方前置（Remarks 逐字"
+            "，本批最硬的一条）**：\"Before calling this method, you must call `SelectByID2` to select **two faces** th"
+            "at are the supporting legs of this gusset **with a Mark of 1**.\" ⇒ ★★ 必须选**两个面**、★ **mark = 1**（★"
+            " **不是 0**）；★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ ★ 本工具照抄这个组合、★ `preconditions_held`"
+            " 判的是「**mark 1 上 ≥ 2 个**」⇒ ★ 调用者能一眼看见「mark 1 上只有 1 个面」这种失败。⚠★ **接口别认错**：★ "
+            "这是**焊件**角撑板（`IGussetFeatureData`，官方描述 \"Allows access to a **weldment** gusset feature.\"，14"
+            " 属性 / 4 方法）⇒ ★ **不是**钣金那个 `ISMGussetFeatureData`（\"Allows access to a **sheet metal** gusset f"
+            "eature.\"，28 属性 / 2 方法）⇒ ★★ 两者共有成员**只有 3 个**、★ 用错时**连读都读不到**（已知事实 36）。⚠ ★★"
+            " **官方在废弃链上断了一节**：`InsertGussetFeature`（15 参）**Obsolete** → 直接指向 `InsertGussetFeature3`"
+            "；★ 而中间的 `InsertGussetFeature2` 的页**没有** Obsolete 句 ⇒ ★★ **别写「Gusset 三代线性链」** —— ★ 官方*"
+            "*没写**中间那代的废弃状态。★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量** + **mark-1 选区计"
+            "数**。"
+        ),
         doc="★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。"
         '★★★ **官方前置（Remarks 逐字，本批最硬的一条）**："Before calling this method, you must '
         "call `SelectByID2` to select **two faces** that are the supporting legs of this gusset "
@@ -663,6 +708,13 @@ _BATCH74.append(
                 description="True = 所有参考面**缝合成一张**（官方逐字 `sewn`）。",
             ),
         ],
+        evidence=(
+            "★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。★★ **官方前置（Remarks 逐字）*"
+            "*：`pPartDocIn` 是**该组件的模型文档**、`pBody` 是**该组件的体** ⇒ ★ 本工具**要求活动文档是零件**；★ 取不"
+            "到体时**如实报** `preconditions_held=False` 并写明原因，★ **不猜**。判据 = **曲面体数增量**（官方逐字：每"
+            "张参考面都算一个 **`sheet body`**）+ 返回对象非 None + 树增量（★ 后者单独**不足以**当判据）。⚠ 本工具**尚"
+            "未真机验证**；★ 同批其余 4 条同样只是**已注册**，不是**已验证**。"
+        ),
         doc="★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。"
         "★★ **官方前置（Remarks 逐字）**：`pPartDocIn` 是**该组件的模型文档**、`pBody` 是**该组件的体** "
         "⇒ ★ 本工具**要求活动文档是零件**；★ 取不到体时**如实报** `preconditions_held=False` 并写明原因，"

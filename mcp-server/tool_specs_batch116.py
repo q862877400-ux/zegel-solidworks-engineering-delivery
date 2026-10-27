@@ -99,6 +99,9 @@ SPECS_BATCH116 = [
                 description="Rebuild before reading back.",
             ),
         ],
+        evidence=(
+            "Read a feature back from the tree. ★ Criterion = the returned dict, not a guess."
+        ),
         doc="Read a feature back from the tree. ★ Criterion = the returned dict, not a guess.",
     ),
     ToolSpec(
@@ -108,6 +111,9 @@ SPECS_BATCH116 = [
         function="list_render_materials",
         inject="model",
         params=[],
+        evidence=(
+            "List the render materials applied in the active document."
+        ),
         doc="List the render materials applied in the active document.",
     ),
     # ── 草图尺寸 / 实体 ────────────────────────────────────────────
@@ -128,6 +134,9 @@ SPECS_BATCH116 = [
             Param("x_mm", float, description="Pick point X in MILLIMETRES."),
             Param("y_mm", float, description="Pick point Y in MILLIMETRES."),
         ],
+        evidence=(
+            "Add a horizontal dimension at the given pick point. ★ Needs a sketch open."
+        ),
         doc="Add a horizontal dimension at the given pick point. ★ Needs a sketch open.",
     ),
     ToolSpec(
@@ -145,6 +154,9 @@ SPECS_BATCH116 = [
             Param("x_mm", float, description="Pick point X in MILLIMETRES."),
             Param("y_mm", float, description="Pick point Y in MILLIMETRES."),
         ],
+        evidence=(
+            "Add a vertical dimension at the given pick point. ★ Needs a sketch open."
+        ),
         doc="Add a vertical dimension at the given pick point. ★ Needs a sketch open.",
     ),
     ToolSpec(
@@ -168,6 +180,9 @@ SPECS_BATCH116 = [
                 description="Sketch holding the axis (optional).",
             ),
         ],
+        evidence=(
+            "Revolve cut from a sketch. ★ Angle is given in degrees; converted once at this boundary."
+        ),
         doc="Revolve cut from a sketch. ★ Angle is given in degrees; converted once at this boundary.",
     ),
     #: ⚠ 2026-10-18 未接：`sw_sketch.get_sketch_slots(sketch)` —— ★ 首参名是 `sketch`，
@@ -192,6 +207,9 @@ SPECS_BATCH116 = [
             ),
             Param("angle_deg", float, description="Rotation angle in DEGREES."),
         ],
+        evidence=(
+            "Rotate the selected sketch entities about a centre."
+        ),
         doc="Rotate the selected sketch entities about a centre.",
     ),
     # ── 曲面族 ───────────────────────────────────────────────────
@@ -214,6 +232,9 @@ SPECS_BATCH116 = [
                 description="Reverse the offset direction.",
             ),
         ],
+        evidence=(
+            "Insert an offset surface from the selected face(s). ★ Selects one face itself via pre_call."
+        ),
         doc="Insert an offset surface from the selected face(s). ★ Selects one face itself via pre_call.",
     ),
     ToolSpec(
@@ -223,6 +244,9 @@ SPECS_BATCH116 = [
         function="insert_planar_surface",
         inject="model",
         params=[],
+        evidence=(
+            "Insert a planar surface from the selected closed sketch / edges."
+        ),
         doc="Insert a planar surface from the selected closed sketch / edges.",
     ),
     ToolSpec(
@@ -232,6 +256,9 @@ SPECS_BATCH116 = [
         function="insert_replace_face",
         inject="model",
         params=[],
+        evidence=(
+            "Replace a solid face with a surface face. ★ Select declaratively first."
+        ),
         doc="Replace a solid face with a surface face. ★ Select declaratively first.",
     ),
     ToolSpec(
@@ -248,6 +275,9 @@ SPECS_BATCH116 = [
                 "edge_untrim_type", int, default=0, description="Edge untrim type enum."
             ),
         ],
+        evidence=(
+            "Untrim a surface and report what happened."
+        ),
         doc="Untrim a surface and report what happened.",
     ),
     ToolSpec(
@@ -265,6 +295,9 @@ SPECS_BATCH116 = [
             ),
             Param("should_use_tears", bool, default=False, description="Allow tears."),
         ],
+        evidence=(
+            "Flatten a surface. ★ Criterion = the feature tree gained a feature."
+        ),
         doc="Flatten a surface. ★ Criterion = the feature tree gained a feature.",
     ),
     ToolSpec(
@@ -274,6 +307,9 @@ SPECS_BATCH116 = [
         function="create_sweep_surface_report",
         inject="model",
         params=[],
+        evidence=(
+            "Sweep a surface from the selected profile and path."
+        ),
         doc="Sweep a surface from the selected profile and path.",
     ),
     ToolSpec(
@@ -287,6 +323,9 @@ SPECS_BATCH116 = [
             Param("rev_type", int, default=0, description="Revolve type enum."),
             Param("reverse_dir", bool, default=False, description="Reverse direction."),
         ],
+        evidence=(
+            "Insert a revolved reference surface."
+        ),
         doc="Insert a revolved reference surface.",
     ),
     ToolSpec(
@@ -302,6 +341,9 @@ SPECS_BATCH116 = [
                 description="Points in MILLIMETRES (list of triples).",
             )
         ],
+        evidence=(
+            "Insert a curve through the given XYZ points."
+        ),
         doc="Insert a curve through the given XYZ points.",
     ),
     # ── 特征 / 焊件 / 导出 ────────────────────────────────────────
@@ -320,6 +362,9 @@ SPECS_BATCH116 = [
                 description="Use the selected profiles.",
             ),
         ],
+        evidence=(
+            "Loft cut and report the outcome."
+        ),
         doc="Loft cut and report the outcome.",
     ),
     ToolSpec(
@@ -333,6 +378,9 @@ SPECS_BATCH116 = [
             Param("top", bool, default=False, description="Place on top."),
             Param("left", str, default="", description="Left-side text."),
         ],
+        evidence=(
+            "Insert a weld symbol and report the outcome."
+        ),
         doc="Insert a weld symbol and report the outcome.",
     ),
     ToolSpec(
@@ -342,6 +390,9 @@ SPECS_BATCH116 = [
         function="insert_explode_line_sketch_report",
         inject="doc",
         params=[],
+        evidence=(
+            "Insert an explode line sketch in an assembly and report the outcome."
+        ),
         doc="Insert an explode line sketch in an assembly and report the outcome.",
     ),
 ]

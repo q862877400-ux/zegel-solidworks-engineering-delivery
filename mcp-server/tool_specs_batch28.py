@@ -88,6 +88,11 @@ SPECS_BATCH28 = [
             Param("study_name", str, default="", description=_STUDY),
             Param("units", int, default=-1, description=_UNITS),
         ],
+        evidence=(
+            "Return the suggested mesh `{element_size, tolerance, units}` for a study. ★ The default units = -1 yields "
+            "MILLIMETRE-scale values (verified in this repo) and nothing is converted — the `units` value is echoed bac"
+            "k so the caller can tell."
+        ),
         doc="Return the suggested mesh `{element_size, tolerance, units}` for a study. "
         "★ The default units = -1 yields MILLIMETRE-scale values (verified in this repo) and "
         "nothing is converted — the `units` value is echoed back so the caller can tell.",
@@ -120,6 +125,12 @@ SPECS_BATCH28 = [
                 "the official default is 5% of the element size).",
             ),
         ],
+        evidence=(
+            "Mesh the study and return a READ-BACK report `{ok, return_code, return_is_trustworthy, element_count}`. ★★"
+            " Judge success by `ok`, which is derived from `element_count > 0` — NOT from the return code (this repo's "
+            "rule: COM return values that cannot prove themselves are never trusted; `return_is_trustworthy` is always "
+            "false)."
+        ),
         doc="Mesh the study and return a READ-BACK report "
         "`{ok, return_code, return_is_trustworthy, element_count}`. "
         "★★ Judge success by `ok`, which is derived from `element_count > 0` — NOT from the "
@@ -136,6 +147,11 @@ SPECS_BATCH28 = [
         params=[
             Param("study_name", str, default="", description=_STUDY),
         ],
+        evidence=(
+            "Run the study and return a READ-BACK report `{ok, return_code, return_is_trustworthy, results_present, plo"
+            "t_count, plot_names}`. ★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
+            "code — this repo has documented four separate cases of a COM return code lying."
+        ),
         doc="Run the study and return a READ-BACK report "
         "`{ok, return_code, return_is_trustworthy, results_present, plot_count, plot_names}`. "
         "★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
@@ -148,6 +164,11 @@ SPECS_BATCH28 = [
         function="collect_study_evidence",
         inject="sw_app",
         params=[],
+        evidence=(
+            "Return a JSON-able summary of every study in the active document: per-study `name / type / state / entity_"
+            "count / analysis_type / mesh_type / configuration / is_active / loads_and_restraints`, plus `cosmos_versio"
+            "n`, `study_count` and `active_study_index`. ★ Reading only."
+        ),
         doc="Return a JSON-able summary of every study in the active document: per-study "
         "`name / type / state / entity_count / analysis_type / mesh_type / configuration / "
         "is_active / loads_and_restraints`, plus `cosmos_version`, `study_count` and "

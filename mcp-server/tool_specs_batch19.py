@@ -76,6 +76,12 @@ SPECS_BATCH19 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
+        evidence=(
+            "Sheet overview of the active drawing: how many sheets, their names, and which one is current. ★ Works on t"
+            "he CURRENTLY ACTIVE document only — no path needed. This is the difference from solidworks_inspect_drawing"
+            ", which takes a drawing_path, opens the file itself and writes previews + a report. Raises if the active d"
+            "ocument is not a drawing (GetType() != 3)."
+        ),
         doc="Sheet overview of the active drawing: how many sheets, their names, and which one is "
         "current. " + _CURRENT_ONLY,
     ),
@@ -90,6 +96,13 @@ SPECS_BATCH19 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
+        evidence=(
+            "Read the current sheet: paper size (name + code), WIDTH/HEIGHT IN MILLIMETRES, scale, projection angle and"
+            " sheet-format name. ⚠ The API returns width/height in METRES; this tool converts once, at the boundary, an"
+            "d reports millimetres. ★ Works on the CURRENTLY ACTIVE document only — no path needed. This is the differe"
+            "nce from solidworks_inspect_drawing, which takes a drawing_path, opens the file itself and writes previews"
+            " + a report. Raises if the active document is not a drawing (GetType() != 3)."
+        ),
         doc="Read the current sheet: paper size (name + code), WIDTH/HEIGHT IN MILLIMETRES, scale, "
         "projection angle and sheet-format name. ⚠ The API returns width/height in METRES; this "
         "tool converts once, at the boundary, and reports millimetres. "
@@ -106,6 +119,13 @@ SPECS_BATCH19 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
+        evidence=(
+            "List the views on the CURRENT SHEET: name + type code. ⚠ The sheet itself is NOT reported as a view — the "
+            "raw API returns it as a pseudo-view (Type == 1) and that is filtered out here. ★ Works on the CURRENTLY AC"
+            "TIVE document only — no path needed. This is the difference from solidworks_inspect_drawing, which takes a"
+            " drawing_path, opens the file itself and writes previews + a report. Raises if the active document is not "
+            "a drawing (GetType() != 3)."
+        ),
         doc="List the views on the CURRENT SHEET: name + type code. ⚠ The sheet itself is NOT "
         "reported as a view — the raw API returns it as a pseudo-view (Type == 1) and that is "
         "filtered out here. " + _CURRENT_ONLY,

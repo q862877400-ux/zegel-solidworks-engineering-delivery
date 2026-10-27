@@ -52,6 +52,17 @@ SPECS_BATCH52 = [
         function="read_units_report",
         inject="model",
         params=[],
+        evidence=(
+            "★ **读文档单位**（★ 两条路：主源 + 对照源，★ 它们是**不同层次**、**允许不同**）。★ 主源 `IModelDoc2.GetUni"
+            "ts()`（**0 参**）—— 官方 Remarks 原话：返回 **5 个 short 的数组** `[LengthUnit, FractionBase, FractionValu"
+            "e, SignificantDigits, RoundToFraction]`，`LengthUnit` 取 `swLengthUnit_e`（`swMM = 0`）。★ 对照源 `ISldWor"
+            "ks.GetUserPreferenceIntegerValue(swUnitsLinear = 47)` —— ★ **1 参**（★ 三源一致：官方签名 / 反射 / 官方示"
+            "例），★ 它是**系统默认**（★ 新建文档的默认），**不是**文档级。★★ 判据：**`LengthUnit` 应为 0（`swMM`）** —"
+            "— ★ 因为本仓库**建模一律按毫米**；★ 不是 0 就说明该文档单位不是毫米，★ 而那时「我们的 mm 参数」与文档单位"
+            "之间存在**未声明的换算**。★ 真机证据（PASS 4/4）：`GetUnits()` ⇒ `(0, 1, 8, 2, 0)` ⇒ `LengthUnit = 0` = `s"
+            "wMM` · `is_mm = true`；系统默认也 = 0；`doc_matches_system_default = true`。⚠ **未真机验证**：`SetUnits`（"
+            "★ 5 参，★ 本工具只读不写）· 非毫米文档下的读数（★ 本机文档都是毫米）。"
+        ),
         doc="★ **读文档单位**（★ 两条路：主源 + 对照源，★ 它们是**不同层次**、**允许不同**）。"
         "★ 主源 `IModelDoc2.GetUnits()`（**0 参**）—— 官方 Remarks 原话：返回 **5 个 short 的数组** "
         "`[LengthUnit, FractionBase, FractionValue, SignificantDigits, RoundToFraction]`，"
@@ -104,6 +115,11 @@ _SPEC_UNDO = ToolSpec(
             description="要撤的动作数（★ 必须 ≥ 1；★ 它**不通**单位，只是个数）",
         ),
     ],
+    evidence=(
+        "★ **撤销** —— 走 `IModelDoc2.EditUndo2`（官方 **1 参** · ★★ **返回 `void`**）。★★ 判据（规则 6）：**特征树真的"
+        "退回了**（真机：7 → 6 · 撤掉 `凸台-拉伸1`）。★ 负例 `steps = 0` ⇒ 显式拒绝。⚠ **调用纪律**：★ 它撤的是**会话里"
+        "的动作**、**不区分是不是我们做的** ⇒ ★ **只在我们自己的改动之后调用**（★ 例如「建完发现参数错 ⇒ 撕掉重来」）。"
+    ),
     doc="★ **撤销** —— 走 `IModelDoc2.EditUndo2`（官方 **1 参** · ★★ **返回 `void`**）。"
     "★★ 判据（规则 6）：**特征树真的退回了**（真机：7 → 6 · 撤掉 `凸台-拉伸1`）。"
     "★ 负例 `steps = 0` ⇒ 显式拒绝。"

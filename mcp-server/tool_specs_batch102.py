@@ -46,6 +46,15 @@ SPECS_BATCH102 = [
         #: `）✓
         inject="doc",
         params=[],
+        evidence=(
+            "爆炸直线：在当前爆炸视图里插入/关闭爆炸直线草图。★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSk"
+            "etch`，★ **零参**）—— ★★ **会插入或关闭爆炸直线草图**（★ 同一个零参调用是**切换** ✓）★★★ **入口在 `ISketch"
+            "Manager` 上、★ 不在装配文档上** ✗ —— ★ 本工具内部先取 `SketchManager` 再调 ✓ ★★ **判据 = 回读**（★ 不是那"
+            "个 `bool` ✓）：★ 官方 `## Returns` 逐字说的是「True if the explode line sketch is **inserted or closed**」"
+            "⇒ ★★ **两种结果都回真，那个 bool 分辨不了它们** ✓ ⇒ ★ 本工具用 **特征树增量 + `ISketchManager::ActiveSketc"
+            "h`** 两条腿判 ✓ ★★★ **前置是爆炸状态**：★ 装配体没有爆炸视图时它没有可依附的对象 ⇒ ★ 返回体里带 `explode_v"
+            "iew_count`，★ **没有爆炸视图就先别下「建不出来」的结论** ✓"
+        ),
         doc="爆炸直线：在当前爆炸视图里插入/关闭爆炸直线草图。"
         "★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSketch`，★ **零参**）—— "
         "★★ **会插入或关闭爆炸直线草图**（★ 同一个零参调用是**切换** ✓）"
@@ -92,6 +101,15 @@ SPECS_BATCH102 = [
                 description="取第几个组件（★ 仅在没给 `component_name` 时用 ✓）。",
             ),
         ],
+        evidence=(
+            "SpeedPak：对选中的子装配建立 SpeedPak 简化配置。★ **SpeedPak**（官方 `IAssemblyDoc::CreateSpeedPak`，★ **"
+            "参数式 1 参**）—— ★★ **会改装配的组件状态** ✓ ★★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** "
+            "✗ ⇒ ★ 本工具回读 **`IComponent2::IsSpeedPak` 的**前后对比**」✓ —— ★★ 「这次建成了」与「它一直是开的」**要"
+            "分开记**（★ 返回体里 `is_speedpak_before` / `is_speedpak_after` 两个字段 ✓）✓ ★★ **前置是「选中的子装配」*"
+            "*，★ 用官方示例的调用序：`SelectByID2(<组件名>, \"COMPONENT\", 0,0,0, append, mark, callout, 0)` ✓；★ 本工"
+            "具**逐个前置单列布尔**（组件数 · 名字访问器 · 选中 · 初始状态）—— ★★ 因为「读数无效」与「真的不建」长得一"
+            "样 ✓"
+        ),
         doc="SpeedPak：对选中的子装配建立 SpeedPak 简化配置。"
         "★ **SpeedPak**（官方 `IAssemblyDoc::CreateSpeedPak`，★ **参数式 1 参**）—— "
         "★★ **会改装配的组件状态** ✓ "
@@ -202,6 +220,16 @@ SPECS_BATCH102 = [
                 "sketch, or sketch entity for Direction 1** ✓（★ **前置**）。",
             ),
         ],
+        evidence=(
+            "曲线驱动阵列（参数式入口；官方标记 Obsolete）。★★★ **曲线驱动阵列的**参数式**入口**（官方 `IFeatureManager"
+            ".FeatureLocalCurveDrivenPattern`）—— ★★ **状态：`stitched`** ✗ ★★★★ **为什么只到 `stitched`（★ 两条独立理"
+            "由、★ 都要说）**：★ **① 官方页第一行就写着 `Obsolete`** ✗ —— 逐字：「Obsolete. See `IFeatureManager::Creat"
+            "eFeature` and the Remarks in `ILocalCurvePatternFeatureData`.」⇒ ★★ **官方自己指向属性式那条** ✓；★★ **② "
+            "真机两档有效读数皆不建** ✗（★ 第 0 / 1 档：`mark1=True · mark2=True · 选区=2` 而特征树新增 `[]`）✓ ★★★ **"
+            "而本工具仍有价值**：★ 它把那条路的**两处前置（mark 1 / mark 2）与返回值单列回报**，★ 让「前置没上」与「真"
+            "的不建」**分得开** ✓ ★⚠ **别与 `configure_curve_driven_pattern` 混淆**：★ 那条是**属性式**（走 `AccessSele"
+            "ctions` ✗）—— ★ **两者不是同一件事** ✓"
+        ),
         doc="曲线驱动阵列（参数式入口；官方标记 Obsolete）。"
         "★★★ **曲线驱动阵列的**参数式**入口**（官方 `IFeatureManager.FeatureLocalCurveDrivenPattern`）"
         "—— ★★ **状态：`stitched`** ✗ "

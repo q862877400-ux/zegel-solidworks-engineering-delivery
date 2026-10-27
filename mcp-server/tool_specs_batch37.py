@@ -75,6 +75,10 @@ SPECS_BATCH37 = [
                 description="Reference pressure (omit = leave unchanged).",
             ),
         ],
+        evidence=(
+            "Configure the static solver options of the injected study and return a report. ⚠ Only the non-None options"
+            " are applied. Does NOT save the document."
+        ),
         doc="Configure the static solver options of the injected study and return a report. "
         "⚠ Only the non-None options are applied. Does NOT save the document.",
     ),
@@ -99,6 +103,9 @@ SPECS_BATCH37 = [
                 description="Reference pressure (omit = unchanged).",
             ),
         ],
+        evidence=(
+            "Configure the frequency solver options of the injected study. ⚠ Only the non-None options are applied."
+        ),
         doc="Configure the frequency solver options of the injected study. "
         "⚠ Only the non-None options are applied.",
     ),
@@ -123,6 +130,9 @@ SPECS_BATCH37 = [
                 description="Only positive eigenvalues (omit = unchanged).",
             ),
         ],
+        evidence=(
+            "Configure the buckling solver options of the injected study. ⚠ Only the non-None options are applied."
+        ),
         doc="Configure the buckling solver options of the injected study. "
         "⚠ Only the non-None options are applied.",
     ),
@@ -145,6 +155,14 @@ SPECS_BATCH37 = [
                 description="The value as TEXT (★ the registry decides the type).",
             ),
         ],
+        evidence=(
+            "Set one study option by its registered family/name and return a report. ★★ **未知的 family/name 会返回 `{"
+            "\"ok\": false, \"error\": …}` —— 不抛异常**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。★ 旧描"
+            "述（已作废）：「Unknown family/name **raises** instead of being silently ignored.」——★ 那半句「**不静默忽"
+            "略**」成立、「**raises**」不成立：包装层用 `except Exception` 把 `KeyError` 捕获并回成结构化失败（★ 那是**"
+            "更好**的行为 —— 失败可见且带原因，而 MCP 层不该把异常当正常返回）。⇒ ★ 判据：★ **`ok` 为假且有 `error` 字"
+            "段** ⇒ 未登记的名字**一定看得见**，只是**以返回值而非异常的形式**。"
+        ),
         doc="Set one study option by its registered family/name and return a report. "
         '★★ **未知的 family/name 会返回 `{"ok": false, "error": …}` —— 不抛异常**'
         "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"
@@ -168,6 +186,12 @@ SPECS_BATCH37 = [
                 description="Mapping of setter name → value (★ each must be registered).",
             ),
         ],
+        evidence=(
+            "Set several study options and return the read-back dict. ★★ **未知的 family/name 会返回 `{\"ok\": false, "
+            "\"error\": …}` —— 不抛异常**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。★ 旧描述（已作废）：「"
+            "Unknown family/name **raises** instead of being silently ignored.」——★ 同上：★「**不静默忽略**」成立、「**"
+            "raises**」不成立（★ 异常被包装成结构化失败）✓"
+        ),
         doc="Set several study options and return the read-back dict. "
         '★★ **未知的 family/name 会返回 `{"ok": false, "error": …}` —— 不抛异常**'
         "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"

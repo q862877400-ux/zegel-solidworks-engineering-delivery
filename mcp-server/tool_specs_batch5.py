@@ -46,6 +46,9 @@ SPECS_BATCH5 = [
         function="current_selection",
         inject="model",
         read_only=True,
+        evidence=(
+            "Read the current selection set (optionally filtered to one selection mark)."
+        ),
         doc="Read the current selection set (optionally filtered to one selection mark).",
         param_alias={},
         params=[
@@ -63,6 +66,9 @@ SPECS_BATCH5 = [
         module="sw_selection_spec",
         function="clear_selection",
         inject="model",
+        evidence=(
+            "Clear the current selection set."
+        ),
         doc="Clear the current selection set.",
         param_alias={},
         params=[],
@@ -73,6 +79,9 @@ SPECS_BATCH5 = [
         module="sw_review",
         function="set_standard_view",
         inject="model",
+        evidence=(
+            "Switch the model to a named standard view (e.g. isometric, front, top)."
+        ),
         doc="Switch the model to a named standard view (e.g. isometric, front, top).",
         param_alias={},
         params=[
@@ -91,6 +100,9 @@ SPECS_BATCH5 = [
         function="list_render_materials",
         inject="model",
         read_only=True,
+        evidence=(
+            "List the render materials available in the active document."
+        ),
         doc="List the render materials available in the active document.",
         param_alias={},
         params=[],
@@ -102,6 +114,10 @@ SPECS_BATCH5 = [
         function="collect_appearance_evidence",
         inject="model",
         read_only=True,
+        evidence=(
+            "Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, bac"
+            "kground, scene"
+        ),
         doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, "
              "background, scene",
         param_alias={},

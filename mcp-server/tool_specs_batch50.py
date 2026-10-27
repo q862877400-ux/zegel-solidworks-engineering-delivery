@@ -49,6 +49,14 @@ SPECS_BATCH50 = [
             Param("thickness_mm", float, default=1.0, description="厚度（**毫米**）"),
             Param("reverse", bool, default=False, description="反向"),
         ],
+        evidence=(
+            "★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 `IFeatureManager.InsertWrapFeature2`"
+            "（**5 参**）。★ 官方要求：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话 「3D sketches are invalid"
+            "」）· ★ **面 mark = 1** · ★ 拔模方向 mark = 2（仅 Emboss/Engrave 用）。★★ 判据 = **读返回对象的 `Name` 与 "
+            "`GetTypeName2`** —— ★ 真机：返回 `包覆1` · 类型名 **`Emboss`**；⚠ 而 `feature_names()` 的**前后 diff 是空"
+            "的**（★ 所以「树 diff」不是可靠判据）。⚠ **未验**：`Type` 传非 emboss 时**类型名不变**（★ 参数被静默忽略）"
+            "· `Method` / `MeshFactor`（第 4/5 参）**取值表没查到**（用 0）。"
+        ),
         doc="★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 "
         "`IFeatureManager.InsertWrapFeature2`（**5 参**）。"
         "★ 官方要求：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话 「3D sketches are invalid」）· "

@@ -41,6 +41,9 @@ SPECS_BATCH42 = [
         function="sheets_summary",
         inject="model",
         params=[],
+        evidence=(
+            "Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). ★ Read-only."
+        ),
         doc="Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). "
         "★ Read-only.",
     ),
@@ -51,6 +54,9 @@ SPECS_BATCH42 = [
         function="current_sheet_info",
         inject="model",
         params=[],
+        evidence=(
+            "Return info about the sheet currently being edited as a dict. ★ Read-only."
+        ),
         doc="Return info about the sheet currently being edited as a dict. ★ Read-only.",
     ),
 ]

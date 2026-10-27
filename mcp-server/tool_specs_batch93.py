@@ -67,6 +67,15 @@ SPECS_BATCH93 = [
             ),
             Param("face_index", int, default=0, description=_FACE_INDEX),
         ],
+        evidence=(
+            "★ **插入展开特征**（官方 `IModelDoc2::InsertSheetMetalUnfold()`，**零参**）—— ★★ **真机建成 `展开1`**（202"
+            "6-10-06 · SW 2026 SP4.1）✓ ★★ **选择契约（照官方示例，不是猜的）**：固定面 **mark 1** + 实体特征 **mark 4*"
+            "*；★ 而**面不能按名字选**（事实 32）⇒ 面走 `IEntity.Select4` **再补 mark**（★ `Select4` 没有 mark 形参 ⇒ "
+            "用 `ISelectionMgr::SetSelectedObjectMark`）✓ ★★ **一个必须知道的坑**：`SetSelectedObjectMark` 的第 3 参是 "
+            "`swSelectionMarkAction_e`，**要传 `swSelectionMarkSet`(0)** —— 传 `-1` 会**静默不生效**（返回 `false`、**"
+            "不报错**）⇒ ★ 那正是本仓第一轮「没建出来」的原因 ✓ ★ 判据（规则 6，全回读）：**特征树增量 + 平展型式个数 +"
+            " 逐条 mark** —— ★ 它回 `void`，**只能靠回读** ✓"
+        ),
         doc="★ **插入展开特征**（官方 `IModelDoc2::InsertSheetMetalUnfold()`，**零参**）—— "
         "★★ **真机建成 `展开1`**（2026-10-06 · SW 2026 SP4.1）✓ "
         "★★ **选择契约（照官方示例，不是猜的）**：固定面 **mark 1** + 实体特征 **mark 4**；"
@@ -96,6 +105,12 @@ SPECS_BATCH93 = [
                 "★ 留空表示不选它（★ 本工具**不替调用方猜**，选不选都以回读为准）✓",
             ),
         ],
+        evidence=(
+            "★ **插入折叠特征**（官方 `IModelDoc2::InsertSheetMetalFold()`，**零参**）—— ★★ **真机建成 `折叠1`**（`unfo"
+            "ld → fold` 一条链，★ 与官方示例同形）✓ ★★ 选 `unfold_feature_name` 的那一步**必须在 `ClearSelection2` 之后"
+            "** —— ★ 本仓第一版把它放在调用前 ⇒ 会被选择函数开头的清选区**清掉**（★ 顺序错、静默失效）✓ ★ 其余同 `solid"
+            "works_sheet_metal_create_unfold`（mark 表 / 判据 / 坑）✓"
+        ),
         doc="★ **插入折叠特征**（官方 `IModelDoc2::InsertSheetMetalFold()`，**零参**）—— "
         "★★ **真机建成 `折叠1`**（`unfold → fold` 一条链，★ 与官方示例同形）✓ "
         "★★ 选 `unfold_feature_name` 的那一步**必须在 `ClearSelection2` 之后** —— "
@@ -215,6 +230,16 @@ SPECS_BATCH93 = [
                 description="自定义折弯系数的 K 因子（官方示例用 0.5）。",
             ),
         ],
+        evidence=(
+            "★★★ **本工具在本机（SW 2026 SP4.1 + pywin32）建不出折边** —— **五种形态全部回 `None`**：边选择（`index:0` "
+            "/ 最长边）× 长度口径（0.01 / 10.0）× 卸料槽（自定义 / 默认）× 板厚（0.002 箔片 / **2.0 真厚度**）⇒ ★ 按事"
+            "实 53 **停止**、**不当场继续凑形态** ✓ ★ 而**成员名与 16 参顺序、五个枚举值已逐条核对官方无误**；官方 `## "
+            "Remarks` 的四步前置（`CreateCustomBendAllowance` → 初始化 → 赋 `PCBA` → **再**选边）**已照做**，仍 `None` "
+            "✓ ★★ **它的价值在别处**（裁决书原话：「dp5 的发现**比实现本身更值**」）：别家调的 `InsertHemFeature2` 在官"
+            "方全树**零命中**（真名 `InsertSheetMetalHem2`）、且把 `Open=0`/`Closed=1` **正好互换**、**漏掉 `Double=4`*"
+            "* —— ★ 这三处已做成**常量表 + 静态断言**（见 `tests/test_tool_specs_batch93.py`）✓ ⚠ **调用它会抛 `Runtime"
+            "Error` 并写明原因**（`require_verified`）—— ★ 那不是缺陷，是**不让用户吃裸 COM 错误**的设计 ✓"
+        ),
         doc="★★★ **本工具在本机（SW 2026 SP4.1 + pywin32）建不出折边** —— "
         "**五种形态全部回 `None`**：边选择（`index:0` / 最长边）× 长度口径（0.01 / 10.0）× "
         "卸料槽（自定义 / 默认）× 板厚（0.002 箔片 / **2.0 真厚度**）⇒ ★ 按事实 53 **停止**、"

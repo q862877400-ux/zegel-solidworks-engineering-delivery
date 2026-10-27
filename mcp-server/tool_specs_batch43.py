@@ -57,6 +57,9 @@ SPECS_BATCH43 = [
                 description="A view name (★ see solidworks_drawing_list_views).",
             )
         ],
+        evidence=(
+            "Get one view's scale by name. ★ An unknown name fails with the list of valid names. ★ Read-only."
+        ),
         doc="Get one view's scale by name. ★ An unknown name fails with the list of valid names. "
         "★ Read-only.",
     ),
@@ -78,6 +81,10 @@ SPECS_BATCH43 = [
                 description="The new view scale (★ not a length, not an angle).",
             ),
         ],
+        evidence=(
+            "Set one view's scale and return before/after. ★ The criterion is that the READ-BACK scale actually changed"
+            " (rule 6 — never a silent success). ⚠ Does NOT save the document."
+        ),
         doc="Set one view's scale and return before/after. ★ The criterion is that the READ-BACK "
         "scale actually changed (rule 6 — never a silent success). "
         "⚠ Does NOT save the document.",
@@ -89,6 +96,9 @@ SPECS_BATCH43 = [
         function="collect_view_evidence_report",
         inject="model",
         params=[],
+        evidence=(
+            "Collect the capability layer's per-view evidence for every view on the drawing. ★ Read-only."
+        ),
         doc="Collect the capability layer's per-view evidence for every view on the drawing. "
         "★ Read-only.",
     ),

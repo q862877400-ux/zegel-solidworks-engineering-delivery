@@ -61,6 +61,10 @@ SPECS_BATCH34 = [
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="通孔", description="Feature name."),
         ],
+        evidence=(
+            "Create a fully-through circular hole whose position comes from a declarative selection (★ rule 3: no coord"
+            "inates in the tool signature). Returns the read-back evidence plus the point that was actually used."
+        ),
         doc="Create a fully-through circular hole whose position comes from a declarative "
         "selection (★ rule 3: no coordinates in the tool signature). Returns the read-back "
         "evidence plus the point that was actually used.",
@@ -78,6 +82,10 @@ SPECS_BATCH34 = [
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="盲孔", description="Feature name."),
         ],
+        evidence=(
+            "Create a blind circular hole at a declaratively selected point (★ rule 3). Returns the read-back evidence "
+            "plus the point used."
+        ),
         doc="Create a blind circular hole at a declaratively selected point (★ rule 3). "
         "Returns the read-back evidence plus the point used.",
     ),
@@ -107,6 +115,9 @@ SPECS_BATCH34 = [
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="沉头孔", description="Feature name."),
         ],
+        evidence=(
+            "Create a counterbore hole at a declaratively selected point (★ rule 3)."
+        ),
         doc="Create a counterbore hole at a declaratively selected point (★ rule 3).",
     ),
     ToolSpec(
@@ -136,6 +147,9 @@ SPECS_BATCH34 = [
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="锥沉孔", description="Feature name."),
         ],
+        evidence=(
+            "Create a countersink hole at a declaratively selected point (★ rule 3)."
+        ),
         doc="Create a countersink hole at a declaratively selected point (★ rule 3).",
     ),
     ToolSpec(
@@ -165,6 +179,10 @@ SPECS_BATCH34 = [
             Param("plane_name", str, default="Front Plane", description=_PLANE),
             Param("name", str, default="半圆端槽", description="Feature name."),
         ],
+        evidence=(
+            "Create a semicircular-end slot spanning two declaratively selected points (★ rule 3: **both** endpoints co"
+            "me from selections, not coordinates)."
+        ),
         doc="Create a semicircular-end slot spanning two declaratively selected points "
         "(★ rule 3: **both** endpoints come from selections, not coordinates).",
     ),

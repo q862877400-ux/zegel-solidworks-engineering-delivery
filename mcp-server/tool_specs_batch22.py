@@ -144,6 +144,10 @@ SPECS_BATCH22 = [
                 description="True = merge the result into the body; False = keep it as a new body.",
             ),
         ],
+        evidence=(
+            "Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the repo that turns a sket"
+            "ch into a solid body. ★ depth_mm is in MILLIMETRES and is converted to metres at this boundary."
+        ),
         doc="Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the "
         "repo that turns a sketch into a solid body. ★ depth_mm is in MILLIMETRES and is "
         "converted to metres at this boundary.",
@@ -176,6 +180,11 @@ SPECS_BATCH22 = [
                 description="True = flip the cut direction.",
             ),
         ],
+        evidence=(
+            "Extrude a sketch as a CUT (removes material). ★ depth_mm = 0 means through-all. ⚠ The correct entry point "
+            "for a cut is FeatureCut4, not FeatureExtrusion3 with flip=True — the capability layer already handles that"
+            "."
+        ),
         doc="Extrude a sketch as a CUT (removes material). ★ depth_mm = 0 means through-all. "
         "⚠ The correct entry point for a cut is FeatureCut4, not FeatureExtrusion3 with "
         "flip=True — the capability layer already handles that.",
@@ -212,6 +221,11 @@ SPECS_BATCH22 = [
                 "(total_depth_mm / 2). ★ Converted to metres at this boundary.",
             ),
         ],
+        evidence=(
+            "Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, not the per-side depth"
+            ". ★ The value is in MILLIMETRES and is converted to the metres that IFeatureManager.FeatureExtrusion3 expe"
+            "cts — the conversion happens here, once."
+        ),
         doc="Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, "
         "not the per-side depth. ★ The value is in MILLIMETRES and is converted to the metres "
         "that IFeatureManager.FeatureExtrusion3 expects — the conversion happens here, once.",

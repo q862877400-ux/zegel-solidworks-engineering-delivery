@@ -69,6 +69,10 @@ SPECS_BATCH39 = [
                 description="Solve the equations after adding.",
             ),
         ],
+        evidence=(
+            "Add a global equation. ★ Verify by reading the equations back (the criterion the existing smoke uses). ⚠ D"
+            "oes NOT save the document."
+        ),
         doc="Add a global equation. ★ Verify by reading the equations back (the criterion the "
         "existing smoke uses). ⚠ Does NOT save the document.",
     ),
@@ -79,6 +83,9 @@ SPECS_BATCH39 = [
         function="list_equations",
         inject="model",
         params=[],
+        evidence=(
+            "Return the document's global equations as a list. ★ Read-only."
+        ),
         doc="Return the document's global equations as a list. ★ Read-only.",
     ),
     ToolSpec(
@@ -88,6 +95,9 @@ SPECS_BATCH39 = [
         function="evaluate_equations",
         inject="model",
         params=[],
+        evidence=(
+            "Solve the global equations and return the result. ⚠ Does NOT save the document."
+        ),
         doc="Solve the global equations and return the result. ⚠ Does NOT save the document.",
     ),
     ToolSpec(
@@ -103,6 +113,9 @@ SPECS_BATCH39 = [
                 description="Zero-based equation index (★ see the list tool).",
             )
         ],
+        evidence=(
+            "Delete one global equation by index. ⚠ Does NOT save the document."
+        ),
         doc="Delete one global equation by index. ⚠ Does NOT save the document.",
     ),
     #: ── 螺旋（★ 空条目 `helix_and_spiral` 的填实）───────────────────────
@@ -128,6 +141,10 @@ SPECS_BATCH39 = [
                 "⚠ 0.0 = leave it to the document default.",
             ),
         ],
+        evidence=(
+            "Insert a helix/spiral. ★ Needs the document state the official API requires (a circular sketch to revolve "
+            "about) — the capability layer reports it if not."
+        ),
         doc="Insert a helix/spiral. ★ Needs the document state the official API requires "
         "(a circular sketch to revolve about) — the capability layer reports it if not.",
     ),
@@ -139,6 +156,10 @@ SPECS_BATCH39 = [
         function="insert_gtol",
         inject="model",
         params=[],
+        evidence=(
+            "Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an"
+            " object and the feature tree changes. ⚠ Does NOT save the document."
+        ),
         doc="Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns "
              "an object and the feature tree changes. ⚠ Does NOT save the document.",
     ),

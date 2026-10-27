@@ -79,6 +79,12 @@ SPECS_BATCH64 = [
                 "（★ 真机验过 · 事实 373）",
             ),
         ],
+        evidence=(
+            "Add a **LINK CONNECTOR** between two **vertices** and return a READ-BACK report. ★★ **它要的是「顶点」** —"
+            "— ★ 官方形参名就是 `VertexPointforFirst/SecondLocation`。⚠★ **不要传面 / 组件**（★ 那一族是 `AddRigidConne"
+            "ctor` 收面、`AddPinConnector` 收组件）——★ 传错会**静默不建**（★ 事实 341 那五次就是这么来的）。★ `ok` 的判"
+            "据是**回读**：载荷与约束计数 **恰好 +1**（★ **不是**返回值 —— 事实 8）。"
+        ),
         doc=(
             "Add a **LINK CONNECTOR** between two **vertices** and return a READ-BACK report. "
             "★★ **它要的是「顶点」** —— ★ 官方形参名就是 `VertexPointforFirst/SecondLocation`。"

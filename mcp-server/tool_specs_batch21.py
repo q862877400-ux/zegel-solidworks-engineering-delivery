@@ -91,6 +91,10 @@ SPECS_BATCH21 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[Param("plane_name", str, default="Front Plane", description=_PLANE)],
+        evidence=(
+            "Enter a new sketch on a reference plane. ★ This is the prerequisite for every sketch-based feature (extrud"
+            "e, revolve, hole, sheet-metal flange)."
+        ),
         doc="Enter a new sketch on a reference plane. ★ This is the prerequisite for every "
         "sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
     ),
@@ -105,6 +109,10 @@ SPECS_BATCH21 = [
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         params=[],
+        evidence=(
+            "Leave the current sketch. ★ The resulting sketch reference is reusable by solidworks_extrude_* and other f"
+            "eature tools, so features can be built right after."
+        ),
         doc="Leave the current sketch. ★ The resulting sketch reference is reusable by "
         "solidworks_extrude_* and other feature tools, so features can be built right after.",
     ),
@@ -130,6 +138,12 @@ SPECS_BATCH21 = [
             Param("end_x_mm", float, description="End point X, mm."),
             Param("end_y_mm", float, description="End point Y, mm."),
         ],
+        evidence=(
+            "Draw a straight LINE in the open sketch. ⚠ Sketch geometry MUST be given as in-plane coordinates — this is"
+            " the documented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordinates are"
+            " millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_"
+            "start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
+        ),
         doc="Draw a straight LINE in the open sketch. " + _GEOM_NOTE,
     ),
     ToolSpec(
@@ -148,6 +162,12 @@ SPECS_BATCH21 = [
             Param("center_y_mm", float, description="Centre Y, mm."),
             Param("radius_mm", float, description="Radius, mm (must be > 0)."),
         ],
+        evidence=(
+            "Draw a CIRCLE in the open sketch. ⚠ Sketch geometry MUST be given as in-plane coordinates — this is the do"
+            "cumented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordinates are millim"
+            "etres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start f"
+            "irst, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
+        ),
         doc="Draw a CIRCLE in the open sketch. " + _GEOM_NOTE,
     ),
     ToolSpec(
@@ -167,6 +187,14 @@ SPECS_BATCH21 = [
             Param("x2_mm", float, description="Opposite corner X, mm."),
             Param("y2_mm", float, description="Opposite corner Y, mm."),
         ],
+        evidence=(
+            "Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. ⚠ Not the same as a centre+size rectangle"
+            " — this tool takes corners, which is unambiguous. ⚠ Sketch geometry MUST be given as in-plane coordinates "
+            "— this is the documented exception in rule 3 (a *drawing primitive* has no named entity to select). Coordi"
+            "nates are millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidwork"
+            "s_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* "
+            "tools."
+        ),
         doc="Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. "
         "⚠ Not the same as a centre+size rectangle — this tool takes corners, which is "
         "unambiguous. " + _GEOM_NOTE,

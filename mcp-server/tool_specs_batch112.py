@@ -119,6 +119,15 @@ SPECS_BATCH112 = [
                 description="官方 Flag：0=单边无相切传播 · 1=双边 · 2=相切传播 · 3=双边且相切传播",
             ),
         ],
+        evidence=(
+            "★ **圆角焊缝**（★ 官方 `IFeatureManager::InsertFilletBeadFeature2`，★ **16 参**）⇒ ★ 回一份**回读报告** ✓ "
+            "★★ **如实标注**：★ 官方 **v1（`InsertFilletBeadFeature`）已 `Obsolete`** ✗ ⇒ ★ 本工具只用 **v2** ✓；★ 前置"
+            "是**预先选中的实体**（★ 官方第 12 行逐字 `pre-selected part bodies` ✓）—— ★ 而选**边**的动作用 **`IEntity."
+            "Select4`**（★ 事实 32：★ 按点 `SelectByID2` 对某些实体**永远选不上** ✗）；★ 且**由函数自己选**（★ 事实 503"
+            "：★ 注入解析器**会清空选区** ⇒ ★\"调用方先选好\"**不成立** ✓）★★ **判据 = 特征树回读增量 ≥ 1**（★ 事实 8："
+            "★ **不看返回值** —— ★ 返回值 `None` **不代表失败** ✓）★ 单位：★ 入参**毫米**，★ 内部转米（★ 事实 2）✓ ★★ "
+            "等级 `stitched` —— ★ **尚未真机验证**（★ 红线⑥）✓"
+        ),
         doc="★ **圆角焊缝**（★ 官方 `IFeatureManager::InsertFilletBeadFeature2`，★ **16 参**）⇒ ★ 回一份**回读报告** ✓ "
         "★★ **如实标注**：★ 官方 **v1（`InsertFilletBeadFeature`）已 `Obsolete`** ✗ ⇒ ★ 本工具只用 **v2** ✓；"
         "★ 前置是**预先选中的实体**（★ 官方第 12 行逐字 `pre-selected part bodies` ✓）"

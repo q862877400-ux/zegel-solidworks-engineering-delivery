@@ -84,6 +84,10 @@ SPECS_BATCH25 = [
                 "sub-assemblies.",
             ),
         ],
+        evidence=(
+            "List the components of the ACTIVE assembly: for each one its name, file path, whether it is suppressed and"
+            " whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations"
+        ),
         doc="List the components of the ACTIVE assembly: for each one its name, file path, "
         "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
     ),
@@ -94,6 +98,10 @@ SPECS_BATCH25 = [
         function="collect_mate_feature_summary",
         inject="model",
         params=[],
+        evidence=(
+            "List the MateGroup and mate features of the active assembly (name, type, tree depth). ★ Use it to check th"
+            "at real mates were actually written into the feature tree — it does NOT report degrees of freedom."
+        ),
         doc="List the MateGroup and mate features of the active assembly (name, type, tree depth). "
         "★ Use it to check that real mates were actually written into the feature tree — "
         "it does NOT report degrees of freedom.",
@@ -105,6 +113,12 @@ SPECS_BATCH25 = [
         function="get_interference_detection",
         inject="asm_model",
         params=[],
+        evidence=(
+            "Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when noth"
+            "ing interferes / warn when something does / blocked when the check itself failed), `interference_count`, a"
+            "nd per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK failed — do not read it as '"
+            "no interference'. ★ Reading only (it runs the detector, it does not change the model)."
+        ),
         doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when "
              "nothing interferes / warn when something does / blocked when the check itself failed), "
              "`interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK "

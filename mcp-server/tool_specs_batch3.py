@@ -159,6 +159,15 @@ SPECS_BATCH3: list[ToolSpec] = [
                 description="Reverse which side the thickness is added to.",
             ),
         ],
+        evidence=(
+            "Create a native base flange (swFmBaseFlange) from an open or closed sketch. Returns the real IFeature; fai"
+            "lures raise instead of returning empty. ⚠⚠ **正确性边界（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #"
+            "4）**：★ **只有闭轮廓**真机跑通（2026-10-01，SW 2026 SP4.1，特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）"
+            "；★★ **开放折线（轮廓法兰）真机失败** —— `CreateFeature(IBaseFlangeFeatureData) 创建失败`（2026-10-01 补测"
+            "）。★★★ **旧描述（已作废）**：本节此前写「An open polyline path produces a profile flange … VERIFIED ON A "
+            "REAL MACHINE … and it WORKED」，那是把**闭轮廓**的成功**外推**到了开放折线上 —— 而状态表明写 **`True` 仅对"
+            "闭轮廓成立**。⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 它是第一现场）。"
+        ),
         doc=(
             "Create a native base flange (swFmBaseFlange) from an open or closed sketch. Returns the real IFeature; failures raise instead of returning empty. "
             "⚠⚠ **正确性边界（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #4）**："
@@ -209,6 +218,15 @@ SPECS_BATCH3: list[ToolSpec] = [
                 description="Use the part default bend radius instead of bend_radius_mm.",
             ),
         ],
+        evidence=(
+            "Create a single sheet-metal bend on the selected sketch. ⚠ **仍不可用，但原因已具体化**（2026-10-04 更正，"
+            "★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #1）。★★ **旧描述（已作废）**：`CreateDefinition(33) returned None` · 「The"
+            " correct call shape has not been determined yet」——★ 那是**旧结论**：状态表把它标为「原记法」。★★★ **现在"
+            "的事实**：正确入口**已查明并已改用** —— `swFmSketchBend(35)`（接口 `ISketchedBendFeatureData`），真机已验"
+            "证 `CreateDefinition(35)` 返回**非 None**；⚠ 仍缺「选中折弯线 / 固定面」这一步 ⇒ **仍标不可用**，但**卡点"
+            "不是「形状未查明」**。⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场"
+            "）。★ 本工具保留，是为了让失败**可诊断**，不是因为能用。"
+        ),
         doc=(
             "Create a single sheet-metal bend on the selected sketch. ⚠ **仍不可用，但原因已具体化**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #1）。"
             "★★ **旧描述（已作废）**：`CreateDefinition(33) returned None` · 「The correct call shape has not been determined yet」——"

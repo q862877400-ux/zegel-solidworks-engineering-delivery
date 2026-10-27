@@ -79,6 +79,9 @@ SPECS_BATCH41 = [
                 description="A pre-loaded index (omit to load the local one).",
             )
         ],
+        evidence=(
+            "List the Toolbox standards available in the local index. ★ Pure data — no SolidWorks call."
+        ),
         doc="List the Toolbox standards available in the local index. ★ Pure data — no "
         "SolidWorks call.",
     ),
@@ -96,6 +99,9 @@ SPECS_BATCH41 = [
                 description="Index path (omit for the default local index).",
             )
         ],
+        evidence=(
+            "Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call."
+        ),
         doc="Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call.",
     ),
     ToolSpec(
@@ -109,6 +115,9 @@ SPECS_BATCH41 = [
             Param("standard", str, default="", description=_STD),
             Param("category", str, default="", description="Optional category filter."),
         ],
+        evidence=(
+            "Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call."
+        ),
         doc="Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call.",
     ),
     ToolSpec(
@@ -131,6 +140,10 @@ SPECS_BATCH41 = [
                 description="A pre-loaded index (optional).",
             ),
         ],
+        evidence=(
+            "Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. ★ An unknown name fails wi"
+            "th what is available instead of returning nothing."
+        ),
         doc="Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. "
         "★ An unknown name fails with what is available instead of returning nothing.",
     ),
@@ -147,6 +160,11 @@ SPECS_BATCH41 = [
             ),
             Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
         ],
+        evidence=(
+            "Create a chamfer on the selected sketch entities. ★ Needs entities selected first (★ rule 3: select declar"
+            "atively, do not pass coordinates). ⚠ The backend limit in known-facts 47 applies to the *feature* chamfer;"
+            " this is the sketch one — the layer reports what actually happened."
+        ),
         doc="Create a chamfer on the selected sketch entities. ★ Needs entities selected first "
         "(★ rule 3: select declaratively, do not pass coordinates). "
         "⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the "
@@ -159,6 +177,10 @@ SPECS_BATCH41 = [
         function="sketch_mirror",
         inject="model",
         params=[],
+        evidence=(
+            "Mirror the selected sketch entities about the selected centerline. ★ The criterion is that the sketch enti"
+            "ty count changes."
+        ),
         doc="Mirror the selected sketch entities about the selected centerline. "
         "★ The criterion is that the sketch entity count changes.",
     ),
@@ -174,6 +196,10 @@ SPECS_BATCH41 = [
                 "inner_loops", bool, default=False, description="Include inner loops."
             ),
         ],
+        evidence=(
+            "Convert the selected model edges into the active sketch. ★ The criterion is that the sketch entity count c"
+            "hanges."
+        ),
         doc="Convert the selected model edges into the active sketch. ★ The criterion is that the "
         "sketch entity count changes.",
     ),

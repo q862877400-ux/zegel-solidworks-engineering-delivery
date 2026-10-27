@@ -93,6 +93,20 @@ SPECS_BATCH113: list[ToolSpec] = [
             ),
         ],
         derived_args=_relations_list,
+        evidence=(
+            "★ **一次把一整张几何关系清单加全**（★ 与画圆/画线同级）。★★ **官方入口**：`ISketchRelationManager::AddRela"
+            "tion`（★ 官方签名逐字：`SketchRelation AddRelation( System.object Entities, System.int RelationType )` —— "
+            "★ **2 参**；⚠ **不要**与指针变体 `IAddRelation(Int32, Object&, Int32)`（**3 参**）混用 ⇒ 传错个数报 `0x800"
+            "2000E`）。★★ **官方 `## Remarks` 逐字**：「A sketch must be active for this method to have any effect.」⇒ "
+            "★ **必须有活动草图**（★ 实现已查：`_active(model)` 为 None 即拒绝）。★★★ **判据（规则 6 · 全回读）**：★ **"
+            "不看返回码**（★ 事实 8）—— ★ 每条关系 ⇒ 该段 `GetRelationsCount` **真的 +1** ✓；★ 前态读不到 ⇒ `rejected`"
+            "（★ **不做任何修改**）；★ 调用抛异常 ⇒ `uncertain`（★ **不重放**，★ 批内后续项 `not_started`）。★★ **防过"
+            "定义**：★ 草图已完全定义 ⇒ **整批拒加**。★★ **选段**：`index:N` + `IEntity::Select4`（★ 事实 32：实体**不"
+            "能按名字选**）。⚠ **验证等级**：★ 本工具的实现由 `tests/test_sw_sketch_relations_safety.py`（**12 例**）在"
+            "**假宿主**上验过（★ **离线**）；★★ **真机未在本特性内验证** ⇒ ★ `runtime` = **`not_run`**（★ 依据 `specs/2"
+            "21-*/acceptance.md`：「限定离线行为回归通过；runtime/product=not_run」）。★ 见 `specs/302-ec00-trustworthy"
+            "-tool-base/`（EC00 T017/T018）。"
+        ),
         doc=(
             "★ **一次把一整张几何关系清单加全**（★ 与画圆/画线同级）。"
             "★★ **官方入口**：`ISketchRelationManager::AddRelation`"

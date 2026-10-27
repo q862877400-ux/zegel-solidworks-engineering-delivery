@@ -86,6 +86,13 @@ SPECS_BATCH27 = [
         params=[
             Param("study_name", str, description=_NAME),
         ],
+        evidence=(
+            "Create a STATIC simulation study and return a JSON-able report: `{ok, requested_name, study_name, entry_na"
+            "me, error_code}`. ★★ Read `entry_name`: it names the entry point that actually succeeded (CreateNewStudy3 "
+            "/ 2 / 1), so an EMPTY value means the study was NOT created — this is the only evidence of whether a fallb"
+            "ack path was used. ⚠ Only static studies are supported (other study types are not verified). ⚠ Requires th"
+            "e Simulation add-in; it is loaded automatically on first use."
+        ),
         doc="Create a STATIC simulation study and return a JSON-able report: "
         "`{ok, requested_name, study_name, entry_name, error_code}`. "
         "★★ Read `entry_name`: it names the entry point that actually succeeded "
@@ -101,6 +108,11 @@ SPECS_BATCH27 = [
         function="list_studies",
         inject="sw_app",
         params=[],
+        evidence=(
+            "List every simulation study in the active document as `[{index, name}, …]`. ★ Returns names only, never CO"
+            "M objects. ★ A study whose name cannot be read is still listed with an empty name — it is not skipped, so "
+            "an empty list really means 'no studies'."
+        ),
         doc="List every simulation study in the active document as "
         "`[{index, name}, …]`. ★ Returns names only, never COM objects. "
         "★ A study whose name cannot be read is still listed with an empty name — "
@@ -118,6 +130,11 @@ SPECS_BATCH27 = [
         params=[
             Param("study_name", str, description="Exact study name to look for."),
         ],
+        evidence=(
+            "Look up a simulation study by name and return `{found, requested_name, study_name}`. ★★ The capability lay"
+            "er returns None when the name does not exist (it does not raise), so this tool exposes an explicit `found`"
+            " flag instead — never read a missing study as present."
+        ),
         doc="Look up a simulation study by name and return `{found, requested_name, study_name}`. "
         "★★ The capability layer returns None when the name does not exist (it does not "
         "raise), so this tool exposes an explicit `found` flag instead — never read a "

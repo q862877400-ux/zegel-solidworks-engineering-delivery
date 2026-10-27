@@ -53,6 +53,14 @@ SPECS_BATCH81 = [
                              "pass/fail on its own.",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到（非 API 成员，无官方 **Signature**: 行；源码签名 `review_dr"
+            "awing_layout(structure, *, padding_m=0.001, preview_evidence=None) -> dict`）`。★ 真源是**本仓** `scripts/"
+            "sw_review.py` 的 `review_drawing_layout`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到（无官方 ## R"
+            "emarks）。★ 函数 docstring 自述（scripts/sw_review.py:91）：「该规则只能依据 SolidWorks 返回的包围盒筛出风"
+            "险，不能替代 PDF/PNG 目视复核。」⇒ 返回里 `manual_review_required` / `retryable` 在 status != 'pass' 时为 "
+            "true（scripts/sw_review.py:"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到（非 API 成员，无官方 **Signature**: 行；源码签名 "
              "`review_drawing_layout(structure, *, padding_m=0.001, preview_evidence=None) -> dict`）`。★ "
              "真源是**本仓** `scripts/sw_review.py` 的 `review_drawing_layout`（★ 它不是 SolidWorks API 成员，"
@@ -83,6 +91,13 @@ SPECS_BATCH81 = [
                              '是**名字**不是坐标 ⇒ 不违反规则 3。',
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 SaveBMP.md）：`System.bool SaveBMP( System.string FileNameIn, System.int WidthIn, S"
+            "ystem.int HeightIn )`。★ 本函数**本身不是 SolidWorks API 成员** —— scripts/sw_review.py:677-695 是纯 Pytho"
+            "n 编排（`[save_preview(model, output_dir / f'{basename}_{view}.bmp', view) for view in views]`），来源是本"
+            "仓库自身既有模式，不是官方成员、不是第三方项目。所驱动的官方成员是 `IModelDoc2::SaveBMP`，其官方页存在且签"
+            "名逐字为上面那一行（FileNameIn 须含完整路径 + .bmp；Width/Height <=0 时按窗口大小；True = 成"
+        ),
         doc="★ 官方签名（逐字，来自 SaveBMP.md）：`System.bool SaveBMP( System.string FileNameIn, System.int WidthIn, "
              "System.int HeightIn )`。★ 本函数**本身不是 SolidWorks API 成员** —— scripts/sw_review.py:677-695 是纯 "
              "Python 编排（`[save_preview(model, output_dir / f'{basename}_{view}.bmp', view) for view in views]`），"
@@ -113,6 +128,12 @@ SPECS_BATCH81 = [
                              "不是裸坐标。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到`。查不到 —— 该函数**不是 SolidWorks API 成员**。它是本仓库 "
+            "scripts/sw_review.py:1116-1127 的纯 Python 文件写出辅助：`_expand_path` → `mkdir(parents=True, exist_ok=Tr"
+            "ue)` → `json.dump(report, file, ensure_ascii=False, indent=2)` → 返回路径字符串。★ 全程零 COM 调用，故不存"
+            "在官方文档页；同理 docs/recon/member-to-example-index.md 里查不到该成员（无任何调用序可摘）。模块头只有 D"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。查不到 —— 该函数**不是 SolidWorks API 成员**。它是本仓库 "
              "scripts/sw_review.py:1116-1127 的纯 Python 文件写出辅助：`_expand_path` → `mkdir(parents=True, "
              "exist_ok=True)` → `json.dump(report, file, ensure_ascii=False, indent=2)` → 返回路径字符串。★ 全程零 COM "
@@ -140,6 +161,14 @@ SPECS_BATCH81 = [
                 description="Markdown 摘要输出路径（内部经 _expand_path 展开并自动建父目录）。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— write_markdown_summary 不是 SolidWorks API 成员：scripts"
+            "/sw_review.py:1130 是本仓库自写的纯 Python 写文件函数（open() + str.join()），C:\\swapi\\types 下无同名成"
+            "员页（已用 glob 核过 run_review / write_markdown_summary / write_re`。★ 真源是**本仓** `scripts/sw_review."
+            "py` 的 `write_markdown_summary`（★ 它不是 SolidWorks API 成员，故无官方页）—— 不适用 —— 无官方页可引，故无"
+            " Remarks。该函数自身不碰 COM；它消费的是 build_review_report（:924）/ evaluate_review_report（:979）产出的"
+            "纯 dict。"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— write_markdown_summary 不是 SolidWorks API 成员："
              "scripts/sw_review.py:1130 是本仓库自写的纯 Python 写文件函数（open() + str.join()），C:\\swapi\\types "
              "下无同名成员页（已用 glob 核过 run_review / write_markdown_summary / write_re`。★ 真源是**本仓** "
@@ -189,6 +218,12 @@ SPECS_BATCH81 = [
                              "1042-1049）。⚠ 同上的 list 型先例问题（tool_specs_batch15.py:20-25）。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 `run_review`（"
+            "★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ 该函数**不是 SolidWorks API 成员**，是本项目自身"
+            "的纯 Python 编排层（C:\\swapi\\types 下 566 个接口目录里既无 RunReview.md，全量 Select-String 也 0 命中；s"
+            "cripts/sw_review.py:1247-1248 的 `if __name__ == '__main__': raise SystemExit(main())` 也表明它是脚"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 "
              "`run_review`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ 该函数**不是 SolidWorks API "
              "成员**，是本项目自身的纯 Python 编排层（C:\\swapi\\types 下 566 个接口目录里既无 RunReview.md，全量 "
@@ -202,6 +237,13 @@ SPECS_BATCH81 = [
         function="missing_com_dependencies",
         inject="",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_preflight.py）：`查不到（非 SolidWorks API 成员）`。★ 官方页查不到，且**不该**查"
+            "到：这是纯 Python 函数，不碰任何 SolidWorks API（无 COM 形参、无 sw_connect 调用），只有 importlib.import_"
+            "module + 一张三元组检查表。★ 真源是**本仓** scripts/sw_preflight.py:68-79（依赖项常量 PIP_REQUIREMENTS 在 "
+            ":25，检查项三元组在 :70-74，逐项判定 helper `_module_available` 在 :56-65）。★ 出处可指认（铁律 1）：该文"
+            "件与上游 MIT 归档 C:\\swprojects\\sw-skill-fork"
+        ),
         doc="★ 官方签名（逐字，来自 sw_preflight.py）：`查不到（非 SolidWorks API 成员）`。★ 官方页查不到，"
              "且**不该**查到：这是纯 Python 函数，不碰任何 SolidWorks API（无 COM 形参、无 sw_connect 调用），只有 "
              "importlib.import_module + 一张三元组检查表。★ 真源是**本仓** scripts/sw_preflight.py:68-79（依赖项常量 "
@@ -248,6 +290,13 @@ SPECS_BATCH81 = [
                 description="是否分段导入网格（swVrmlStlImportSegmented 开关）",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( Sys"
+            "tem.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 ISldWorks "
+            "成员的批量包装：源码 sw_import_mesh_reference.py:133/147 调 SetUserPreferenceIntegerValue（3 次）与 SetUse"
+            "rPreferenceToggle（3 次）。主成员页的 Remarks 逐字两句：「This method is intended for user preferences of "
+            "type integer.」+「This method is equivalent to interactively setting system options "
+        ),
         doc="★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( "
              "System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 "
              "ISldWorks 成员的批量包装：源码 sw_import_mesh_reference.py:133/147 调 SetUserPreferenceIntegerValue（3 "
@@ -269,6 +318,13 @@ SPECS_BATCH81 = [
                              "；★ 旧值为 null 的条目一律跳过不写回，写完再读一次给 match",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( Sys"
+            "tem.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 ISldWorks "
+            "成员的批量还原包装：源码 sw_import_mesh_reference.py:189/191 按 kind 分别调 SetUserPreferenceIntegerValue("
+            "preference, int(old)) 与 SetUserPreferenceToggle(preference, bool(old))，随后用 sw_preference_guard.read_p"
+            "reference 读回并逐条比对。主成员页的 Returns 逐字「True if UserPreferenceValue is set, fa"
+        ),
         doc="★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( "
              "System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 "
              "ISldWorks 成员的批量还原包装：源码 sw_import_mesh_reference.py:189/191 按 kind 分别调 "
@@ -293,6 +349,13 @@ SPECS_BATCH81 = [
                              "；源码 scripts/sw_sketch_dimensions.py:98-105 已实现该解析，越界与非 index: 前缀都会抛错。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 InsertChainDimensions.md）：`System.object InsertChainDimensions( System.object Ent"
+            "ities )`。官方 Remarks（InsertChainDimensions.md:23-27）：Entities 是边/顶点/圆/中点等实体数组，**第一个元"
+            "素是起始实体**、依次向后标注；Entities 为 Nothing/null 时改用**预选中的实体**建链；★ 返回的尺寸数组比 Enti"
+            "ties **少一个**（N 个实体 ⇒ N-1 个 IDisplayDimension）。调用序见 docs/recon/member-to-example-index.md:308"
+            "1（2 个示例）；官方 C# 例（Insert_Chain_Dimensions_Example_CSharp.md:54-7"
+        ),
         doc="★ 官方签名（逐字，来自 InsertChainDimensions.md）：`System.object InsertChainDimensions( System.object "
              "Entities )`。官方 Remarks（InsertChainDimensions.md:23-27）：Entities 是边/顶点/圆/中点等实体数组，"
              "**第一个元素是起始实体**、依次向后标注；Entities 为 Nothing/null 时改用**预选中的实体**建链；★ "
@@ -315,6 +378,14 @@ SPECS_BATCH81 = [
                              "`scripts/sw_feature_readback.py:78` 默认 400）",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ 被包装成员"
+            "的官方 `**Signature**:` 逐字如下：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· `System.objec"
+            "t GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2`。★ 真源是**本仓** `scripts/sw"
+            "_feature_readback.py` 的 `feature_names`（★ 它不是 SolidWorks API 成员，故无官方页）—— ★ 官方 `IModelDoc2:"
+            ":FirstFeature` 的 `## Remarks` 逐字：「When traversing the FeatureManager design tree, your application sh"
+            "ould use [[IFeature::GetTypeName2]] and [[IFeature::GetSpecificFeature2]] to identify "
+        ),
         doc="★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ "
              "被包装成员的官方 `**Signature**:` 逐字如下：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· "
              "`System.object GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2`。★ "
@@ -339,6 +410,14 @@ SPECS_BATCH81 = [
                              "空串直接回 False（`sw_feature_readback.py:101-102`）",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ 间接触达的"
+            "成员官方 `**Signature**:` 逐字：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· `System.object "
+            "GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2(`。★ 真源是**本仓** `scripts/sw_"
+            "feature_readback.py` 的 `feature_present`（★ 它不是 SolidWorks API 成员，故无官方页）—— ★ 官方 `IFeature::"
+            "Name` 的 `## Remarks` 逐字：「Feature names can be seen in the FeatureManager design tree of any part or a"
+            "ssembly.」以及「Any change to a feature name is **not visible to the user until a rebuild"
+        ),
         doc="★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ "
              "间接触达的成员官方 `**Signature**:` 逐字：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· "
              "`System.object GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2(`。★ "
@@ -354,6 +433,13 @@ SPECS_BATCH81 = [
         function="whats_wrong",
         inject="model",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 GetWhatsWrongCount.md）：`System.int GetWhatsWrongCount()`。★ 本函数**不是官方成员*"
+            "*，而是本仓库的只读判据助手（来源块 sw_feature_readback.py:29-38）。主成员页 C:\\swapi\\types\\IModelDocEx"
+            "tension\\GetWhatsWrongCount.md 的 Signature 逐字 `System.int GetWhatsWrongCount()`、Returns 逐字「Number o"
+            "f items in the What's Wrong dialog」。明细成员页 C:\\swapi\\types\\IModelDocExtension\\GetWhatsWrong.md 的"
+            " Signature 逐字 "
+        ),
         doc="★ 官方签名（逐字，来自 GetWhatsWrongCount.md）：`System.int GetWhatsWrongCount()`。★ "
              "本函数**不是官方成员**，而是本仓库的只读判据助手（来源块 sw_feature_readback.py:29-38）。主成员页 C:"
              "\\swapi\\types\\IModelDocExtension\\GetWhatsWrongCount.md 的 Signature 逐字 `System.int "
@@ -381,6 +467,13 @@ SPECS_BATCH81 = [
                 description="返回条数上限（数量，非长度，故不带 _mm）。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_misumi.py）：`查不到（非 SolidWorks API 成员 —— 本函数是仓库自写的纯 Python HTTP"
+            " 辅助；C:\\swapi\\types 下无对应页面，glob C:\\swapi\\**\\*suggest* 零命中）`。★ 真源是**本仓** `scripts/s"
+            "w_misumi.py` 的 `suggest_part`（★ 它不是 SolidWorks API 成员，故无官方页）—— 无官方 Remarks（非 SW API）。"
+            "实际契约见 sw_misumi.py 源码与 docs/research-misumi-api.md:233：GET https://api.cn.misumi.com.cn/api/v1/pa"
+            "rtNumber/suggest?keyword=<kw>&count=<n>&field=@default,partNumberList.innerCode&applicationId=77"
+        ),
         doc="★ 官方签名（逐字，来自 sw_misumi.py）：`查不到（非 SolidWorks API 成员 —— 本函数是仓库自写的纯 Python "
              "HTTP 辅助；C:\\swapi\\types 下无对应页面，glob C:\\swapi\\**\\*suggest* 零命中）`。★ 真源是**本仓** "
              "`scripts/sw_misumi.py` 的 `suggest_part`（★ 它不是 SolidWorks API 成员，故无官方页）—— 无官方 Remarks（非 "
@@ -419,6 +512,15 @@ SPECS_BATCH81 = [
                              "的面积单位，不是 point 坐标）。★ 它是判定阈值而非位置 ⇒ 不构成规则 3 的裸坐标。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— 本函数不是 SolidWorks API 成员，是本仓纯 Python 函数（第"
+            "三方库 PyMuPDF/fitz），无官方签名可抄。源码逐字（scripts/sw_review.py:355）：def inspect_pdf_text_layout(p"
+            "ath, *, maximum_spans=20000, minimum_overlap_area_pt2=0.5):`。★ 真源是**本仓** `scripts/sw_review.py` 的 `"
+            "inspect_pdf_text_layout`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— 非官方成员，无官方 Remark"
+            "s。源码 docstring 逐字：「@brief 读取 SolidWorks PDF 矢量文字边界并筛查文字重叠。／该证据来自 SolidWorks "
+            "官方 PDF 导出的渲染文字，不是 COM 原生尺寸包围盒；扫描 PDF 或被轮廓化的字体可能没有可提取文字，此时必须继"
+            "续使用 BMP/PNG 目视复核。」函数返回值自带两条 limitations 字段，逐字"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— 本函数不是 SolidWorks API 成员，是本仓纯 Python "
              "函数（第三方库 PyMuPDF/fitz），无官方签名可抄。源码逐字（scripts/sw_review.py:355）：def "
              "inspect_pdf_text_layout(path, *, maximum_spans=20000, minimum_overlap_area_pt2=0.5):`。★ 真源是**本仓** "
@@ -450,6 +552,13 @@ SPECS_BATCH81 = [
                              "是一个计数不是长度，故不带 _mm。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 该函数不是 SolidWorks API 成员，是纯 Python 文件检查（o"
+            "pen() + int.from_bytes 手工解析 BI_RGB BMP 头与像素网格），不碰 COM ⇒ 官方页无从查起。来源：本仓 D:\\AI\\S"
+            "W\\scripts\\sw_review.py:465 自身，辅助 _file_info(:326) / _read_bmp_size(:336)；模块最近的「── 来源 ──」"
+            "块在 :593、只覆盖 set_standard_view 之后，不覆盖本函数。返回值判据：unique_sample_values（<8 判空白）、dar"
+            "k_pixel_ratio（<"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 该函数不是 SolidWorks API 成员，是纯 Python "
              "文件检查（open() + int.from_bytes 手工解析 BI_RGB BMP 头与像素网格），不碰 COM ⇒ 官方页无从查起。来源："
              "本仓 D:\\AI\\SW\\scripts\\sw_review.py:465 自身，辅助 _file_info(:326) / _read_bmp_size(:336)；"
@@ -463,6 +572,12 @@ SPECS_BATCH81 = [
         function="zoom_to_fit",
         inject="model",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 铁律 5：C:\\swapi\\types\\IModelDoc2\\ 下无 ViewZoomtof"
+            "it2.md（Get-ChildItem -Recurse -Filter '*oomtofit' 全 types 零命中；内容检索 ViewZoomtofit 只命中 IModelDo"
+            "cExtension\\ViewZoomToSheet.md 与 IView\\*PolyLine* 的交叉引用；带/不带前导 I 的目录都查了，Test-Path 全 F"
+            "alse）⇒ 不编签名。唯一官方证据：① C:\\swapi\\types\\IModelDocExtension\\ViewZoomToSheet.md:4"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 铁律 5：C:\\swapi\\types\\IModelDoc2\\ 下无 "
              "ViewZoomtofit2.md（Get-ChildItem -Recurse -Filter '*oomtofit' 全 types 零命中；内容检索 ViewZoomtofit "
              "只命中 IModelDocExtension\\ViewZoomToSheet.md 与 IView\\*PolyLine* 的交叉引用；带/不带前导 I "
@@ -476,6 +591,13 @@ SPECS_BATCH81 = [
         function="collect_geometry_measurements",
         inject="model",
         params=[],
+        evidence=(
+            "★ 官方签名（逐字，来自 GetPartBox.md）：`**Signature**: `System.object GetPartBox( System.bool NoConversio"
+            "n )``。★ 重要前提：**本函数本身不是一个官方成员**，它是能力层对多个官方成员的**聚合**（scripts/sw_review.p"
+            "y:835-921）。它自己**没有 `# ── 来源 ──` 块** —— 全文件只有一处来源块（sw_review.py:593），属于 `set_stand"
+            "ard_view`；按铁律 5 如实报「该函数无来源块」，不借用邻居的。函数 docstring 自述依据是 'SolidWorks API GetP"
+            "artBox(True) + B-Rep cylindrical faces'（sw_review.py:846）⇒ 主成员取 `IPartDoc.GetPar"
+        ),
         doc="★ 官方签名（逐字，来自 GetPartBox.md）：`**Signature**: `System.object GetPartBox( System.bool "
              "NoConversion )``。★ 重要前提：**本函数本身不是一个官方成员**，"
              "它是能力层对多个官方成员的**聚合**（scripts/sw_review.py:835-921）。它自己**没有 `# ── 来源 ──` 块** —— "
@@ -498,6 +620,13 @@ SPECS_BATCH81 = [
                              "review_report.json 回读而来）。★ 本函数是纯数据规则评分，不碰 SolidWorks。",
             ),
         ],
+        evidence=(
+            "★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 `evaluate_revi"
+            "ew_report`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ **本函数不是 SolidWorks API 成员**，"
+            "是本项目自写的纯 Python 规则评分器（scripts/sw_review.py:979-1115）。逐行读过函数体：只做 `report.get(...)"
+            "` 取值、整数加减（`score -= penalty`）、字符串字面量与一个内嵌闭包 `add_issue(code, severity, message, rec"
+            "ommen"
+        ),
         doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 "
              "`evaluate_review_report`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ **本函数不是 "
              "SolidWorks API 成员**，是本项目自写的纯 Python 规则评分器（scripts/sw_review.py:979-1115）。"

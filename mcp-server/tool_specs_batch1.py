@@ -89,6 +89,11 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "(★ 与实现默认值一致 = True)。",
             ),
         ],
+        evidence=(
+            "Create a topology optimization study (analysis type 13) on the ACTIVE part. Topology optimization works on"
+            " ONE single-body part at a time (official limit). Returns which entry point was used (CreateNewStudy3, or "
+            "a fallback)."
+        ),
         doc=(
             "Create a topology optimization study (analysis type 13) on the ACTIVE part. "
             "Topology optimization works on ONE single-body part at a time (official limit). "
@@ -104,6 +109,10 @@ SPECS_BATCH1: list[ToolSpec] = [
         inject="sw_app",
         params=[],
         read_only=True,
+        evidence=(
+            "Read back the topology studies on the active document: names, analysis types, and which constraints/contro"
+            "ls exist. Read-only."
+        ),
         doc=(
             "Read back the topology studies on the active document: names, analysis types, "
             "and which constraints/controls exist. Read-only."
@@ -154,6 +163,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "Official default is 5% of the element size.",
             ),
         ],
+        evidence=(
+            "Mesh and solve the topology study and report whether results exist. A zero RunAnalysis return code does NO"
+            "T mean success - judge by study results."
+        ),
         doc=(
             "Mesh and solve the topology study and report whether results exist. "
             "A zero RunAnalysis return code does NOT mean success - judge by study results."
@@ -176,6 +189,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "kept True to match the reference usage.",
             ),
         ],
+        evidence=(
+            "Insert a mold parting line. Select the draft-direction reference first (edge/plane/axis); without it the c"
+            "all inserts nothing."
+        ),
         doc=(
             "Insert a mold parting line. Select the draft-direction reference first "
             "(edge/plane/axis); without it the call inserts nothing."
@@ -189,6 +206,9 @@ SPECS_BATCH1: list[ToolSpec] = [
         function="insert_shut_off_surface",
         inject="model",
         params=[],
+        evidence=(
+            "Auto-create shut-off surfaces over holes for mold separation. Zero parameters."
+        ),
         doc="Auto-create shut-off surfaces over holes for mold separation. Zero parameters.",
     ),
     # 签名: def mold_draft_analysis(model, *, draft_angle_deg, analysis_type=0, colors=N
@@ -217,6 +237,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                 description="Official arg 4 (Int32). Its meaning is UNVERIFIED.",
             ),
         ],
+        evidence=(
+            "Run mold draft analysis. Returns the official return code as-is: that code has NO published enum, so this "
+            "tool does NOT judge success from it."
+        ),
         doc=(
             "Run mold draft analysis. Returns the official return code as-is: that code has "
             "NO published enum, so this tool does NOT judge success from it."
@@ -231,6 +255,20 @@ SPECS_BATCH1: list[ToolSpec] = [
         inject="model",
         params=[],
         read_only=True,
+        evidence=(
+            "★ **当前这条在真机上**读不到东西**、★ 如实说明** —— 处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）：★ "
+            "原 doc 逐字写「Read back the mold state of the active part: parting-line/surface and cavity/core surface c"
+            "ounts, parting type, core-cavity split. **Read-only.**」⇒ ★★ 而**能力层自己的 docstring 逐字**写着「⚠ **本"
+            "函数当前仍从旧位置读** ⇒ ★ **它在真机上只会返回全 `None`**」（★ `scripts/sw_mold.py::mold_evidence`）⇒ ★★★"
+            " **两处说法相反** ✓ ★★ **真因（★ 轮 172 真机 + 反射复核）**：★ 那些计数**不在 `IFeatureManager` / `IModelD"
+            "oc2` 上**（★ 实测全 `AttributeError: <unknown>.X`），★ 而在 **`I*FeatureData`** 上（★ `GetPartingLinesCoun"
+            "t` ⇒ `IPartingLineFeatureData` · `PartingType` ⇒ `IPartingSurfaceFeatureData` · `CoreCavitySplit` ⇒ `IPart"
+            "ingLineFeatureData` —— ★ 事实 36 那一族：**成员在别的接口上**）✓ ★★★ **⇒ 要真读到，必须先拿到对应的 `I*Fea"
+            "tureData`**（★ 从**已存在的**分型线/分型面特征上取）⇒ ★ **前提是零件上**已经有那些特征**；★ 空零件上**本来"
+            "就取不到**（★ **两者表象相同、别混**）✓ ★★★★ **∴ 现在**：★ `read_only=True` 仍然成立（★ 它确实不改模型）· "
+            "★★ 但**读到的计数会全是 `None`** ⇒ ★ 请按返回值里的 **`readable`** 字段判（★ `false` = 本机读不到、★ **不"
+            "是**「没有分型」）✓"
+        ),
         doc=(
             "★ **当前这条在真机上**读不到东西**、★ 如实说明** —— "
             "处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）："
@@ -276,6 +314,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                 description="Library DISPLAY name (NOT the .sldmat file name).",
             ),
         ],
+        evidence=(
+            "Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. An empty string means it did"
+            " NOT take effect (the API itself returns void)."
+        ),
         doc=(
             "Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. "
             "An empty string means it did NOT take effect (the API itself returns void)."

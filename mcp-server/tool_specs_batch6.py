@@ -43,6 +43,9 @@ SPECS_BATCH6 = [
         module="sw_geometry_selectors",
         function="available_point_selectors",
         read_only=True,
+        evidence=(
+            "List the point-selector names usable when specifying geometry (no document needed)."
+        ),
         doc="List the point-selector names usable when specifying geometry (no document needed).",
         param_alias={},
         params=[],
@@ -53,6 +56,9 @@ SPECS_BATCH6 = [
         module="sw_geometry_selectors",
         function="available_direction_selectors",
         read_only=True,
+        evidence=(
+            "List the direction-selector names usable when specifying geometry (no document needed)."
+        ),
         doc="List the direction-selector names usable when specifying geometry (no document needed).",
         param_alias={},
         params=[],
@@ -64,6 +70,9 @@ SPECS_BATCH6 = [
         function="collect_assembly_bom",
         inject="model",
         read_only=True,
+        evidence=(
+            "Read the assembly BOM as structured rows (the CSV-export tool is a different one)."
+        ),
         doc="Read the assembly BOM as structured rows (the CSV-export tool is a different one).",
         param_alias={},
         params=[

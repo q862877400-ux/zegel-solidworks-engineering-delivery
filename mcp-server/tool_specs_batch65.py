@@ -52,6 +52,11 @@ SPECS_BATCH65 = [
             ),
             Param("y3_mm", float, description="Third point Y, mm."),
         ],
+        evidence=(
+            "Draw a 3-point corner rectangle at any angle.  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的"
+            "具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `"
+            "solidworks_sketch_end`。"
+        ),
         doc="Draw a 3-point corner rectangle at any angle. " + _GEOM,
     ),
     ToolSpec(
@@ -76,6 +81,11 @@ SPECS_BATCH65 = [
             Param("x3_mm", float, description="Third point X (sets the height), mm."),
             Param("y3_mm", float, description="Third point Y, mm."),
         ],
+        evidence=(
+            "Draw a 3-point CENTER rectangle (first point is the centre).  ★ 草图图元按官方文档属**规则 3 的书面例外**"
+            "（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_star"
+            "t`，再画，最后 `solidworks_sketch_end`。"
+        ),
         doc="Draw a 3-point CENTER rectangle (first point is the centre). " + _GEOM,
     ),
     ToolSpec(
@@ -100,6 +110,11 @@ SPECS_BATCH65 = [
             Param("x3_mm", float, description="End of the other adjacent edge, X, mm."),
             Param("y3_mm", float, description="End of the other adjacent edge, Y, mm."),
         ],
+        evidence=(
+            "Draw a parallelogram (a corner plus the two adjacent edge endpoints).  ★ 草图图元按官方文档属**规则 3 的书"
+            "面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_ske"
+            "tch_start`，再画，最后 `solidworks_sketch_end`。"
+        ),
         doc="Draw a parallelogram (a corner plus the two adjacent edge endpoints). "
         + _GEOM,
     ),
@@ -136,6 +151,11 @@ SPECS_BATCH65 = [
                 default=1,
             ),
         ],
+        evidence=(
+            "Draw an arc TANGENT to the last sketch segment. ⚠ The sketch must already contain a segment to be tangent "
+            "to. ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原"
+            "点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
+        ),
         doc=(
             "Draw an arc TANGENT to the last sketch segment. ⚠ The sketch must already contain a "
             "segment to be tangent to." + _GEOM
@@ -163,6 +183,11 @@ SPECS_BATCH65 = [
             Param("through_x_mm", float, description="A point on the arc, X, mm."),
             Param("through_y_mm", float, description="A point on the arc, Y, mm."),
         ],
+        evidence=(
+            "Draw a 3-point arc (start / end / a point on the arc).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元"
+            "没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再"
+            "画，最后 `solidworks_sketch_end`。"
+        ),
         doc="Draw a 3-point arc (start / end / a point on the arc). " + _GEOM,
     ),
     ToolSpec(
@@ -202,6 +227,11 @@ SPECS_BATCH65 = [
                 default=1,
             ),
         ],
+        evidence=(
+            "Draw a PARTIAL ellipse (elliptical arc).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名"
+            "实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `soli"
+            "dworks_sketch_end`。"
+        ),
         doc="Draw a PARTIAL ellipse (elliptical arc). " + _GEOM,
     ),
     ToolSpec(
@@ -230,6 +260,11 @@ SPECS_BATCH65 = [
             Param("end_x_mm", float, description="End X, mm."),
             Param("end_y_mm", float, description="End Y, mm."),
         ],
+        evidence=(
+            "Draw a parabola (focus + apex + two endpoints).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选"
+            "的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后"
+            " `solidworks_sketch_end`。"
+        ),
         doc="Draw a parabola (focus + apex + two endpoints). " + _GEOM,
     ),
     ToolSpec(
@@ -258,6 +293,11 @@ SPECS_BATCH65 = [
             Param("end_x_mm", float, description="End X, mm."),
             Param("end_y_mm", float, description="End Y, mm."),
         ],
+        evidence=(
+            "Draw a conic curve. ⚠ Official signature is IDENTICAL in shape to CreateParabola (focus + apex + two endpo"
+            "ints). ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图"
+            "原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
+        ),
         doc=(
             "Draw a conic curve. ⚠ Official signature is IDENTICAL in shape to CreateParabola "
             "(focus + apex + two endpoints)." + _GEOM
@@ -285,6 +325,11 @@ SPECS_BATCH65 = [
             Param("x3_mm", float, description="Point 3 X, mm."),
             Param("y3_mm", float, description="Point 3 Y, mm."),
         ],
+        evidence=(
+            "Draw a 3-point PERIMETER circle. ⚠ Official signature has NO Z argument (6 doubles only) — unlike its sibl"
+            "ings. ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图"
+            "原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
+        ),
         doc=(
             "Draw a 3-point PERIMETER circle. ⚠ Official signature has NO Z argument "
             "(6 doubles only) — unlike its siblings." + _GEOM
