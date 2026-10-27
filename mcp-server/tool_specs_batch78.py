@@ -81,27 +81,34 @@ SPECS_BATCH78 = [
             "tolerance_mm": "tolerance",
         },
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("units", int, default=2, description=_UNITS),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study, for example Study 1; empty uses the fi"
+                                                     "rst study in the document. Defaults to empty."
+                                                 )),
+            Param("units", int, default=2, description=(
+                                               "Unit system: 0=SI metre, 1=English, 2=Metric millimetre, and the value "
+                                               "must match the unit of element_size_mm. Defaults to 2."
+                                           )),
             Param(
                 "element_size_mm",
                 float,
                 default=0.0,
-                description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose). "
-                "★ Pair it with `units=2`; measured: 4.93 mm gave 6541 elements.",
+                description="Global element size in millimetres, where 0 lets SolidWorks choose. Defaults to 0.0.",
             ),
             Param(
                 "tolerance_mm",
                 float,
                 default=0.0,
-                description="Mesh tolerance in MILLIMETRES (0.0 = document default).",
+                description="Mesh tolerance in millimetres, where 0 uses the document default. Defaults to 0.0.",
             ),
             Param(
                 "memory_budget_gb",
                 float,
                 default=None,
-                description="Refuse to build the mesh if the ESTIMATED solve memory exceeds this "
-                "many GB. Omit for the document default.",
+                description=(
+                    "Refuse to build the mesh when the estimated solve memory exceeds this many gigabytes. Defaults to "
+                    "unset, which uses the document default."
+                ),
             ),
         ],
         derived_args=_derive_model,
@@ -117,19 +124,11 @@ SPECS_BATCH78 = [
             "★★ Read `blocked` when `ok` is false: it says WHICH gate refused (`MESH_SIZE_UNSANE` / `MESH_SAFETY_APPLY_"
             "FAILED` / `MESH_FAILED` / `SOLVE_MEMORY_BUDGET`)."
         ),
-        doc="**THE RECOMMENDED WAY to mesh a study.** One call does seven things, all measured: "
-        "① element-size sanity gate (two-sided: too big = degenerate, too small = memory blow-up) "
-        "→ ② **mesh safety profile** (`Quality=Draft` + `MesherType=Standard`, i.e. turns OFF the "
-        "curvature-based mesher that refines without a lower bound) → ③ build the mesh → "
-        "④ read the REAL `ElementCount`/`NodeCount` → ⑤ **pre-solve memory gate** "
-        "→ ⑥ **restore the study's mesh settings** → ⑦ return an evidence-ready report. "
-        "★★ Measured on a real machine (100x60x20 mm plate): the factory settings gave "
-        "11301 nodes, the safety profile gave **1492 nodes (7.6x fewer)** and meshed in 0.3-0.8 s. "
-        "⚠ The estimate uses the official **FFEPlus** rule (1 GB per 2,000,000 DOF); "
-        "if the study solves with a direct solver that rule does not apply — check "
-        "`solidworks_simulation_solver_type`. "
-        "★★ Read `blocked` when `ok` is false: it says WHICH gate refused "
-        "(`MESH_SIZE_UNSANE` / `MESH_SAFETY_APPLY_FAILED` / `MESH_FAILED` / `SOLVE_MEMORY_BUDGET`).",
+        doc=(
+            "Mesh a study behind an element-size gate and a pre-solve memory gate. Modifies the study's mesh and then r"
+            "estores its mesh settings; read blocked when ok is false, since it names the gate that refused, and the me"
+            "mory estimate assumes the FFEPlus rule."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_solver_type",
@@ -139,7 +138,10 @@ SPECS_BATCH78 = [
         inject="study",
         param_alias={"study_name": None},
         params=[
-            Param("study_name", str, default="", description=_STUDY),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty uses the first study in the docu"
+                                                     "ment. Defaults to empty."
+                                                 )),
         ],
         evidence=(
             "Return `{ok, value, name, reason}` for `ICWStaticStudyOptions.SolverType` (`swsSolverType_e`: automatic 0 "
@@ -150,14 +152,10 @@ SPECS_BATCH78 = [
             "as NO official memory rule. ⚠ When the read fails, `ok` is false with a reason — it never guesses a defaul"
             "t."
         ),
-        doc="Return `{ok, value, name, reason}` for `ICWStaticStudyOptions.SolverType` "
-        "(`swsSolverType_e`: automatic 0 / direct_sparse 1 / ffeplus 2 / casi 5 / abaqus 6 / "
-        "intel 7 / intel_cluster 8). "
-        "★★ **Why it matters**: the repo's solve-memory estimate uses the official **FFEPlus** "
-        'rule ("1 GB per 2,000,000 degrees of freedom"), and that rule is FFEPlus-specific. '
-        "Measured here: `SolverType` read back as `automatic (0)` while the solver actually "
-        "chosen at solve time was **Intel Direct Sparse** — a direct solver, for which this "
-        "repo has NO official memory rule. "
-        "⚠ When the read fails, `ok` is false with a reason — it never guesses a default.",
+        doc=(
+            "Read which solver a static study will use, for example FFEPlus or a direct solver. Read-only; the value ca"
+            "n read back as automatic while a direct solver is chosen at solve time, and when the read fails ok is fals"
+            "e with a reason instead of a guessed default."
+        ),
     ),
 ]

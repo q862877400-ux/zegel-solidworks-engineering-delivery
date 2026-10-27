@@ -1,0 +1,134 @@
+{
+ "tools": {
+  "solidworks_config_list_display_states": {
+   "doc": "List the display states of the current configuration. Read-only; the first name is the active state only when the model is a part, so the returned ambiguous flag marks the assemblies where that rule does not hold.",
+   "params": {}
+  },
+  "solidworks_config_apply_display_state": {
+   "doc": "Activate one display state by name in the current configuration. Modifies the active display state; the name must already exist because this tool never creates one, and the first-name read-back is skipped for assemblies, where the returned ambiguous flag says so.",
+   "params": {
+    "display_state_name": "Display state name to activate; take it from solidworks_config_list_display_states, since a name that is not listed is rejected instead of created."
+   }
+  },
+  "solidworks_document_dependencies": {
+   "doc": "List the external references of a document as name and path records. Read-only; library features are never returned and suppressed components do appear, so do not read this list as the complete dependency set.",
+   "params": {
+    "document": "Document name or full path, passed through to the official call unchanged; the official examples use a full path.",
+    "traverse": "Whether to recurse into every depended-on file; false reports only the top level. Defaults to true.",
+    "search": "Whether to find dependencies with the search rules, which also changes the current directory afterwards. Defaults to false.",
+    "add_read_only_info": "Whether to add a read-only information string after each document, where an empty string means the file is not read-only. Defaults to false."
+   }
+  },
+  "solidworks_part_move_copy_body": {
+   "doc": "Move or copy solid bodies by translation and rotation about a point, for all bodies or one body index. Modifies the body set: a translate displaces the body, a copy adds bodies, and translation and rotation do not both take effect, with rotation winning when both are given.",
+   "params": {
+    "selection": "Which bodies to move or copy: 'all' for every body in the part, or 'index:<n>' for the n-th body. Defaults to 'all'.",
+    "translate_x_mm": "Translation increment along X in millimetres, taken as document units and not converted. Defaults to 0.0.",
+    "translate_y_mm": "Translation increment along Y in millimetres, taken as document units and not converted. Defaults to 0.0.",
+    "translate_z_mm": "Translation increment along Z in millimetres, taken as document units and not converted. Defaults to 0.0.",
+    "translate_dist_mm": "Translation distance in millimetres, taken as document units and not converted. Defaults to 0.0.",
+    "rotate_point_x_mm": "X of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
+    "rotate_point_y_mm": "Y of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
+    "rotate_point_z_mm": "Z of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
+    "rotate_angle_x_deg": "Rotation angle about X in degrees, converted to radians once at this boundary; the axis mapping is compensated, so this value really turns about X. Defaults to 0.0.",
+    "rotate_angle_y_deg": "Rotation angle about Y in degrees, converted to radians once at this boundary. Defaults to 0.0.",
+    "rotate_angle_z_deg": "Rotation angle about Z in degrees, converted to radians once at this boundary; the axis mapping is compensated, so this value really turns about Z. Defaults to 0.0.",
+    "copy": "Whether to copy the bodies instead of moving them, which adds bodies rather than displacing them. Defaults to false.",
+    "num_copies": "How many copies to create, at least 1. Defaults to 1."
+   }
+  },
+  "solidworks_insert_center_of_mass": {
+   "doc": "Insert a center-of-mass feature into the active document. Creates one reference feature, and the criterion is the returned feature object together with the growth of the feature tree.",
+   "params": {}
+  },
+  "solidworks_insert_global_bounding_box": {
+   "doc": "Insert a global bounding box feature for the active model and report its status. Creates a reference feature; bbox_type 2 needs a face or plane selected first, and the returned status is 0 for success.",
+   "params": {
+    "bbox_type": "Bounding box fit option: 1=best fit, 2=custom plane, 3=custom coordinate system; only 2 needs a face or plane selected first. Defaults to 1.",
+    "lwta_direction_type": "Length-width-thickness-along direction: 0=unspecified, 1=XYZ, 2=YXZ, 3=YZX, 6=XZY, and 7, 8, 9 for the X, Y and Z axis directions. Defaults to 0.",
+    "include_hidden_bodies": "Whether hidden bodies are included in the box. Defaults to false.",
+    "include_surface_bodies": "Whether surface bodies are included in the box. Defaults to false."
+   }
+  },
+  "solidworks_insert_coordinate_system": {
+   "doc": "Insert a coordinate system feature into the active part and return it. Creates a reference feature; each flip flag reverses one axis, and this uses the feature-manager entry point rather than the obsolete document one.",
+   "params": {
+    "x_flipped": "Whether to flip the X axis direction. Defaults to false.",
+    "y_flipped": "Whether to flip the Y axis direction. Defaults to false.",
+    "z_flipped": "Whether to flip the Z axis direction. Defaults to false."
+   }
+  },
+  "solidworks_insert_ref_plane": {
+   "doc": "Insert a reference plane from the preselected entities, using constraint codes such as 4=coincident or 8=distance. Creates a reference plane feature; select the entities first with marks 0, 1 and 2 for the first, second and third constraint, and the angle or distance values pass through without unit conversion.",
+   "params": {
+    "first_constraint": "First constraint type: 1=parallel, 4=coincident, 8=distance, 16=angle, 128=mid-plane, and option bits such as 256=flip or 512=origin-on-curve may be added.",
+    "first_angle_or_dist": "Angle or distance for the first constraint, passed through in document units because the official call documents no unit. Defaults to 0.0.",
+    "second_constraint": "Second constraint type from the same table; 0 means unused. Defaults to 0.",
+    "second_angle_or_dist": "Angle or distance for the second constraint. Defaults to 0.0.",
+    "third_constraint": "Third constraint type from the same table; 0 means unused. Defaults to 0.",
+    "third_angle_or_dist": "Angle or distance for the third constraint. Defaults to 0.0."
+   }
+  },
+  "solidworks_insert_reference_point": {
+   "doc": "Insert a reference point on the selected entity, for example 4=face center or 3=edge center. Creates a point feature; the selection has to be made immediately before the call because any step in between clears it, and only the value 1 for the point count is accepted.",
+   "params": {
+    "ref_point_type": "Reference point type: 0=invalid, 1=undefined, 2=along curve, 3=center of edge, 4=face center, 5=face vertex projection, 6=intersection, 7=sketch point.",
+    "along_curve_type": "Along-curve placement rule: 0=distance, 1=percentage, 2=evenly distributed. Defaults to 0.",
+    "distance_or_percent": "Distance along the curve or percentage of it, depending on along_curve_type. Defaults to 0.0.",
+    "number_of_ref_points": "Number of reference points to create; the official call requires exactly 1 and rejects any other value. Defaults to 1.",
+    "selection": "Declarative selection of the entity named above, as index:<n> or __current_selection__; empty selects nothing. Defaults to empty.",
+    "selection_kind": "Entity kind to select: FACE, EDGE or VERTEX, matched to ref_point_type so that 4 pairs with FACE and 3 pairs with EDGE. Defaults to FACE."
+   }
+  },
+  "solidworks_simulation_apply_pressure": {
+   "doc": "Apply a pressure load to the selected faces of a static study and report the load count before and after. Modifies the study by adding one load, the pass criterion is that the count grows by exactly one, and it needs the Simulation add-in, which loads on first use.",
+   "params": {
+    "study_name": "Name of an existing study, for example Study 1; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face or entity selection the load applies to: __current_selection__, or index:<n> for the n-th face of the body.",
+    "pressure_type": "Pressure type: 0 presses normal to each face, 1 uses reference geometry. Defaults to 0."
+   }
+  },
+  "solidworks_simulation_apply_torque": {
+   "doc": "Apply a torque load to the selected faces of a static study and report the load count before and after. Modifies the study by adding one load of the torque force type, and the pass criterion is that the count grows by exactly one.",
+   "params": {
+    "study_name": "Name of an existing study, for example Study 1; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face or entity selection the load applies to: __current_selection__, or index:<n> for the n-th face of the body."
+   }
+  },
+  "solidworks_simulation_apply_gravity": {
+   "doc": "Apply a gravity load to the selected entity of a static study and report the load count before and after. Modifies the study by adding one load; only the first selected entity is used, because the official parameter takes a single entity.",
+   "params": {
+    "study_name": "Name of an existing study, for example Study 1; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face or entity selection the load applies to: __current_selection__, or index:<n> for the n-th face of the body."
+   }
+  },
+  "solidworks_simulation_apply_centrifugal_force": {
+   "doc": "Apply a centrifugal force to the selected entity of a static study and report the load count before and after. Modifies the study by adding one load; only the first selected entity is used, because the official parameter takes a single entity.",
+   "params": {
+    "study_name": "Name of an existing study, for example Study 1; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face or entity selection the load applies to: __current_selection__, or index:<n> for the n-th face of the body."
+   }
+  },
+  "solidworks_catalog_domains": {
+   "doc": "List the eight task domains and the seven controlled multi-labels used to classify tools. Read-only; use the returned domain names as the domain filter of solidworks_catalog_retrieve.",
+   "params": {}
+  },
+  "solidworks_catalog_retrieve": {
+   "doc": "Search the tool catalog by free text and facets and return the matching tool cards. Read-only; every filter is optional and an omitted filter means no restriction on that facet.",
+   "params": {
+    "query": "Natural-language query in Chinese or English; empty means no text filter. Defaults to empty.",
+    "domain": "Task domain to restrict to; see solidworks_catalog_domains for the valid names. Defaults to empty.",
+    "doc_state": "Required document state to restrict to, for example an open document or a selection. Defaults to empty.",
+    "backend": "Backend reachability to restrict to, for example com_pywin32 or file_io. Defaults to empty.",
+    "capability": "Availability label to restrict to. Defaults to empty.",
+    "budget": "Upper bound on candidate tokens returned. Defaults to 4096."
+   }
+  },
+  "solidworks_catalog_contract": {
+   "doc": "Read the full contract of one tool from the catalog: name, domain, parameters, availability and preconditions. Read-only; omit tool_name to get the catalog summary instead of a single card.",
+   "params": {
+    "tool_name": "Canonical tool name such as solidworks_extrude_boss; empty returns the catalog summary. Defaults to empty."
+   }
+  }
+ }
+}

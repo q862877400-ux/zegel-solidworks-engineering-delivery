@@ -1,0 +1,174 @@
+{
+ "tools": {
+  "solidworks_selection_point": {
+   "doc": "Read the coordinates in millimetres of the point that the current selection marks. Read-only. The hole tools take a point, so select the point first and this reading keeps coordinates out of their signatures. When no point can be read it returns ok=false with the reason written out instead of guessing.",
+   "params": {}
+  },
+  "solidworks_select_by_selector": {
+   "doc": "Select one entity through a declarative selector and return the readback selection count. Modifies the current selection set. The selector is __current_selection__ or index:<n>, and a count of 0 comes back as ok=false with the reason written out.",
+   "params": {
+    "selector": "Declarative selector: __current_selection__ to reuse the current selection, or index:<n> for the n-th entity on the body.",
+    "kind": "Entity kind to select: EDGE, FACE or VERTEX. Defaults to EDGE.",
+    "body_index": "Zero-based index of the solid body. Defaults to 0.",
+    "append": "Whether to append to the current selection instead of replacing it. Defaults to false."
+   }
+  },
+  "solidworks_resolve_entity": {
+   "doc": "Resolve a declarative selector and report what it names, without claiming that it is selected. Read-only, so the selection set is untouched. The count is the real answer, and it stays 0 for __current_selection__ because that case does not select again.",
+   "params": {
+    "selector": "Declarative selector: __current_selection__ to reuse the current selection, or index:<n> for the n-th entity on the body.",
+    "kind": "Entity kind to resolve: EDGE, FACE or VERTEX. Defaults to EDGE.",
+    "body_index": "Zero-based index of the solid body. Defaults to 0."
+   }
+  },
+  "solidworks_hole_through_by_selection": {
+   "doc": "Create a fully through circular hole at the point that a declarative selection marks. Writes a hole feature into the active part. The selection is index:<n> or __current_selection__, so no coordinates are passed, and the reply carries the resolved point plus the readback evidence.",
+   "params": {
+    "selection": "Declarative selection that supplies the hole position: index:<n> or __current_selection__.",
+    "diameter_mm": "Hole diameter in millimetres.",
+    "plane_name": "Name of the sketch plane, in English or Chinese. Defaults to 'Front Plane'.",
+    "name": "Name of the created feature; defaults to the localised default name for a through hole."
+   }
+  },
+  "solidworks_hole_blind_by_selection": {
+   "doc": "Create a blind circular hole of one depth at the point that a declarative selection marks. Writes a hole feature into the active part. The selection is index:<n> or __current_selection__, and the reply carries the resolved point plus the readback evidence.",
+   "params": {
+    "selection": "Declarative selection that supplies the hole position: index:<n> or __current_selection__.",
+    "diameter_mm": "Hole diameter in millimetres.",
+    "depth_mm": "Blind depth in millimetres.",
+    "plane_name": "Name of the sketch plane, in English or Chinese. Defaults to 'Front Plane'.",
+    "name": "Name of the created feature; defaults to the localised default name for a blind hole."
+   }
+  },
+  "solidworks_hole_counterbore_by_selection": {
+   "doc": "Create a counterbore hole at the point that a declarative selection marks. Writes a hole feature into the active part. The selection is index:<n> or __current_selection__, and the counterbore needs both its diameter and its depth.",
+   "params": {
+    "selection": "Declarative selection that supplies the hole position: index:<n> or __current_selection__.",
+    "hole_diameter_mm": "Main hole diameter in millimetres.",
+    "counterbore_diameter_mm": "Counterbore diameter in millimetres.",
+    "counterbore_depth_mm": "Counterbore depth in millimetres.",
+    "plane_name": "Name of the sketch plane, in English or Chinese. Defaults to 'Front Plane'.",
+    "name": "Name of the created feature; defaults to the localised default name for a counterbore hole."
+   }
+  },
+  "solidworks_hole_countersink_by_selection": {
+   "doc": "Create a countersink hole at the point that a declarative selection marks. Writes a hole feature into the active part. The selection is index:<n> or __current_selection__, and the included angle is given in degrees.",
+   "params": {
+    "selection": "Declarative selection that supplies the hole position: index:<n> or __current_selection__.",
+    "hole_diameter_mm": "Main hole diameter in millimetres.",
+    "countersink_diameter_mm": "Countersink diameter in millimetres.",
+    "included_angle_deg": "Countersink included angle in degrees. Defaults to 90.0.",
+    "plane_name": "Name of the sketch plane, in English or Chinese. Defaults to 'Front Plane'.",
+    "name": "Name of the created feature; defaults to the localised default name for a countersink hole."
+   }
+  },
+  "solidworks_slot_semicircular_by_selection": {
+   "doc": "Create a semicircular-end slot between two points that separate declarative selections mark. Writes a slot feature into the active part. Both endpoints come from selections rather than coordinates, so pass a selector for each end.",
+   "params": {
+    "start_selection": "Declarative selection that supplies the start point: index:<n> or __current_selection__.",
+    "end_selection": "Declarative selection that supplies the end point: index:<n> or __current_selection__.",
+    "width_mm": "Slot width in millimetres.",
+    "depth_mm": "Slot depth in millimetres; defaults to 0.0, which cuts through.",
+    "plane_name": "Name of the sketch plane, in English or Chinese. Defaults to 'Front Plane'.",
+    "name": "Name of the created feature; defaults to the localised default name for a semicircular-end slot."
+   }
+  },
+  "solidworks_sheet_metal_create_edge_flange": {
+   "doc": "Skip this tool, NOT USABLE on this machine: pywin32 cannot reach the process-internal pointers the official call needs. It would create an edge flange on one selected edge and write a feature into the active part without saving it.",
+   "params": {
+    "selection": "Declarative EDGE selection: '__current_selection__' to reuse the current selection, or 'index:<n>' for the n-th edge on the body.",
+    "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",
+    "flange_length_mm": "Flange length in millimetres.",
+    "angle_deg": "Flange angle in degrees. Defaults to 90.",
+    "use_default_radius": "Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true.",
+    "reverse_direction": "Whether to flip which side the flange grows from. Defaults to false."
+   }
+  },
+  "solidworks_sheet_metal_create_gusset": {
+   "doc": "Skip this tool, NOT USABLE on this machine: ISMGussetFeatureData needs process-internal pointers and creates no feature. Every property writes back, which hides the failure.",
+   "params": {
+    "selection": "Declarative FACE selection: '__current_selection__' or 'index:<n>' for the n-th face on the body.",
+    "thickness_mm": "Gusset wall thickness in millimetres.",
+    "profile_distance_1_mm": "First leg length of the gusset profile in millimetres.",
+    "profile_distance_2_mm": "Second leg length of the gusset profile in millimetres. Defaults to 0.",
+    "profile_angle_deg": "Angle of the gusset profile in degrees. Defaults to 0."
+   }
+  },
+  "solidworks_sheet_metal_create_draft": {
+   "doc": "Create a native face draft on one selected face, untested on this machine. Creates a draft feature in the active part; the path was rewritten from the official page offline and no run has confirmed it. The selection must already hold the face to draft, and a datum plane supplies the pull direction.",
+   "params": {
+    "selection": "Declarative FACE selection: __current_selection__ or index:<n>.",
+    "direction_plane": "Name of the datum plane used as the draft direction; without it the call refuses because no pull direction is defined. Defaults to 'Front Plane'.",
+    "angle_deg": "Draft angle in degrees.",
+    "depth_mm": "Draft depth in millimetres.",
+    "reverse_direction": "Whether to reverse the draft direction. Defaults to false."
+   }
+  },
+  "solidworks_sheet_metal_create_swept_flange": {
+   "doc": "Create a native swept flange along a path selection, untested on this machine. Creates a flange feature in the active part from one profile selection. It needs an existing base flange first, because there is no thickness to inherit otherwise.",
+   "params": {
+    "path_selection": "Declarative EDGE selection for the sweep path: __current_selection__ or index:<n>.",
+    "profile_selection": "Declarative SKETCH selection for the sweep profile: __current_selection__ or index:<n>.",
+    "start_offset_mm": "Start offset in millimetres.",
+    "end_offset_mm": "End offset in millimetres. Defaults to 0.0.",
+    "thickness_mm": "Thickness in millimetres; defaults to null, which inherits the thickness from the base flange.",
+    "bend_radius_mm": "Bend radius in millimetres. Defaults to 0.0.",
+    "use_default_radius": "Whether to use the default bend radius, in which case bend_radius_mm does not apply. Defaults to true.",
+    "flange_position": "Flange position: 1=material inside, 2=material outside, 3=bend outside. Defaults to 1.",
+    "flatten_along_path": "Whether to flatten along the path. Defaults to false.",
+    "trim_side_bends": "Whether to trim the side bends. Defaults to false.",
+    "use_default_bend_relief": "Whether to use the default bend relief. Defaults to true.",
+    "use_gauge_table": "Whether to use a gauge table. Defaults to false.",
+    "use_material_parameters": "Whether to take the sheet-metal parameters from the material. Defaults to false.",
+    "override_default_sheet_metal_parameters": "Whether to override the default sheet-metal parameters. Defaults to false.",
+    "reverse_direction": "Whether to reverse the direction. Defaults to false."
+   }
+  },
+  "solidworks_drawing_create_broken_view": {
+   "doc": "Create a break in one drawing view between two break-line positions. Creates break lines in that view. The positions are in millimetres and relative to the view origin, read on Y for a horizontal break and on X for a vertical one; a view can hold break lines without being broken, so check the break-line count and the broken state both.",
+   "params": {
+    "view_name": "Name of the drawing view on the current sheet, for example Drawing View1.",
+    "position1_mm": "Position of the first break line in millimetres, relative to the view origin.",
+    "position2_mm": "Position of the second break line in millimetres, relative to the view origin.",
+    "orientation": "Break-line orientation: 1=horizontal, 2=vertical. Defaults to 2.",
+    "style": "Break-line style: 1=straight, 2=zigzag, 3=curve, 4=small zigzag, 5=jagged. Defaults to 5.",
+    "shape_intensity": "Shape intensity from 1 (most) to 5 (least), used only for jagged break lines. Defaults to 2.",
+    "break_sketch_blocks": "Whether to break sketch blocks as well. Defaults to true."
+   }
+  },
+  "solidworks_drawing_create_auxiliary_view": {
+   "doc": "Create an auxiliary drawing view from the edge that is already selected in a drawing view. Creates a view on the current sheet. Edges have no usable names, so the tool does not select one for you; it only reports the selection count it found, which tells you why it failed.",
+   "params": {
+    "x_mm": "X position of the new view in millimetres.",
+    "y_mm": "Y position of the new view in millimetres.",
+    "z_mm": "Z position of the new view in millimetres, normally 0 on a drawing. Defaults to 0.0.",
+    "label": "Label text of the auxiliary view. Defaults to empty.",
+    "not_aligned": "The official NotAligned flag, passed through unchanged; the official description says true aligns the view from its owner, which contradicts the parameter name. Defaults to true.",
+    "show_arrow": "Whether to show the projection arrow. Defaults to true.",
+    "flip": "Whether to flip the side that the auxiliary view shows. Defaults to false."
+   }
+  },
+  "solidworks_drawing_insert_surface_finish_symbol": {
+   "doc": "Insert a surface finish symbol into the active drawing at the last selection. Creates an annotation in the drawing. A selection must exist first, and a leader_type of 0 makes the official call ignore all three position arguments, so place a leader when the position matters.",
+   "params": {
+    "sym_type": "Surface finish symbol type: 0=basic, 1=JIS machining required, 2=do not machine, 3..6=JIS surface texture 1..4, 7=JIS no machining, 8=JIS basic, 9=machining required. Defaults to 0.",
+    "leader_type": "Leader style: 0=no leader, 1=straight, 2=bent, 3=underlined, 4=spline, 8=VDA, and 256..4100 are bit flags to combine with one of those. Defaults to 1.",
+    "x_mm": "X position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0.",
+    "y_mm": "Y position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0.",
+    "z_mm": "Z position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0.",
+    "lay_symbol": "Lay direction symbol, passed through unchanged because its value table was not verified. Defaults to 0.",
+    "arrow_type": "Arrow style, passed through unchanged because its value table was not verified. Defaults to 0.",
+    "mach_allowance": "Machining allowance text, passed through unchanged without parsing or checking. Defaults to empty.",
+    "other_vals": "Other roughness values, passed through unchanged. Defaults to empty.",
+    "prod_method": "Production method and treatment text, passed through unchanged. Defaults to empty.",
+    "sample_len": "Sampling length text, passed through unchanged. Defaults to empty.",
+    "max_roughness": "Maximum roughness text, passed through unchanged. Defaults to empty.",
+    "min_roughness": "Minimum roughness text, passed through unchanged. Defaults to empty."
+   }
+  },
+  "solidworks_drawing_insert_datum_tag": {
+   "doc": "Insert a datum tag symbol at the location that is already selected. Creates a datum tag annotation in the drawing. The official member takes no arguments, so the anchor point comes entirely from the selection and no coordinates are accepted.",
+   "params": {}
+  }
+ }
+}

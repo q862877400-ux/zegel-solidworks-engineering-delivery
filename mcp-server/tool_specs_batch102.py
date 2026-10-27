@@ -55,17 +55,12 @@ SPECS_BATCH102 = [
             "h`** 两条腿判 ✓ ★★★ **前置是爆炸状态**：★ 装配体没有爆炸视图时它没有可依附的对象 ⇒ ★ 返回体里带 `explode_v"
             "iew_count`，★ **没有爆炸视图就先别下「建不出来」的结论** ✓"
         ),
-        doc="爆炸直线：在当前爆炸视图里插入/关闭爆炸直线草图。"
-        "★ **爆炸直线**（官方 `ISketchManager::InsertExplodeLineSketch`，★ **零参**）—— "
-        "★★ **会插入或关闭爆炸直线草图**（★ 同一个零参调用是**切换** ✓）"
-        "★★★ **入口在 `ISketchManager` 上、★ 不在装配文档上** ✗ —— "
-        "★ 本工具内部先取 `SketchManager` 再调 ✓ "
-        "★★ **判据 = 回读**（★ 不是那个 `bool` ✓）：★ 官方 `## Returns` 逐字说的是"
-        "「True if the explode line sketch is **inserted or closed**」⇒ "
-        "★★ **两种结果都回真，那个 bool 分辨不了它们** ✓ ⇒ "
-        "★ 本工具用 **特征树增量 + `ISketchManager::ActiveSketch`** 两条腿判 ✓ "
-        "★★★ **前置是爆炸状态**：★ 装配体没有爆炸视图时它没有可依附的对象 ⇒ "
-        "★ 返回体里带 `explode_view_count`，★ **没有爆炸视图就先别下「建不出来」的结论** ✓",
+        doc=(
+            "Insert or close the explode-line sketch of the active assembly. It toggles the sketch on each call, writes"
+            " a sketch into the assembly and does not save the document. The assembly must already have an exploded vie"
+            "w, and the feature tree plus the active sketch are read back because the boolean return cannot tell insert"
+            " from close."
+        ),
     ),
     #: ── ② SpeedPak（★ 规格 211 B6 · ★ 真机建成）────────────────────────────────
     ToolSpec(
@@ -84,21 +79,22 @@ SPECS_BATCH102 = [
                 "speedpak_type",
                 int,
                 default=1,
-                description="SpeedPak 类型 —— ★ 官方 `## Parameters` 逐字："
-                "**1 = Mated** · **2 = Graphics** ✓（★ **枚举** ⇒ 无量纲 ✓）",
+                description="SpeedPak type: 1=Mated, 2=Graphics. Defaults to 1.",
             ),
             Param(
                 "component_name",
                 str,
                 default=None,
-                description="要选中的**子装配名**（★ 官方示例按名字选 ✓）；"
-                "★ 缺省时本工具**自行从组件列表解析名字** ✓",
+                description=(
+                    "Name of the sub-assembly component to select. Defaults to None, in which case the tool resolves th"
+                    "e name from the component list itself."
+                ),
             ),
             Param(
                 "component_index",
                 int,
                 default=0,
-                description="取第几个组件（★ 仅在没给 `component_name` 时用 ✓）。",
+                description="Index of the component to use when component_name is empty. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -110,17 +106,12 @@ SPECS_BATCH102 = [
             "具**逐个前置单列布尔**（组件数 · 名字访问器 · 选中 · 初始状态）—— ★★ 因为「读数无效」与「真的不建」长得一"
             "样 ✓"
         ),
-        doc="SpeedPak：对选中的子装配建立 SpeedPak 简化配置。"
-        "★ **SpeedPak**（官方 `IAssemblyDoc::CreateSpeedPak`，★ **参数式 1 参**）—— "
-        "★★ **会改装配的组件状态** ✓ "
-        "★★★ **判据只能落在回读上**：★ 顶层**特征树看不见 SpeedPak** ✗ ⇒ "
-        "★ 本工具回读 **`IComponent2::IsSpeedPak` 的**前后对比**」✓ —— "
-        "★★ 「这次建成了」与「它一直是开的」**要分开记**（★ 返回体里 `is_speedpak_before` / "
-        "`is_speedpak_after` 两个字段 ✓）✓ "
-        "★★ **前置是「选中的子装配」**，★ 用官方示例的调用序："
-        '`SelectByID2(<组件名>, "COMPONENT", 0,0,0, append, mark, callout, 0)` ✓；'
-        "★ 本工具**逐个前置单列布尔**（组件数 · 名字访问器 · 选中 · 初始状态）—— "
-        "★★ 因为「读数无效」与「真的不建」长得一样 ✓",
+        doc=(
+            "Create a SpeedPak simplified configuration on a selected sub-assembly. Writes the component state and does"
+            " not save the document; the top-level feature tree does not show SpeedPak, so the component SpeedPak flag "
+            "is read before and after. Each precondition is reported as its own boolean, because an invalid reading loo"
+            "ks the same as a feature that was not built."
+        ),
     ),
     #: ── ③ 曲线驱动阵列（★ **`stitched`** —— ★ 官方已宣布 Obsolete）────────────────
     ToolSpec(
@@ -134,90 +125,94 @@ SPECS_BATCH102 = [
                 "flip_dir1",
                 bool,
                 default=False,
-                description="★ 官方 `FlipDir1` ✓（方向 1 是否翻转）。",
+                description="Whether to flip direction 1. Defaults to false.",
             ),
             Param(
                 "num1",
                 int,
                 default=3,
-                description="★ 官方 `Num1` —— ★ 方向 1 的实例数**含原始实例** ✓",
+                description="Number of instances in direction 1, including the seed. Defaults to 3.",
             ),
             Param(
                 "equal_spacing1",
                 bool,
                 default=False,
-                description="★ 官方 `EqualSpacing1` ✓（方向 1 是否等间距）。",
+                description="Whether to space direction 1 equally. Defaults to false.",
             ),
             Param(
                 "spacing1_mm",
                 float,
                 default=30.0,
-                description="方向 1 的间距（**毫米**）—— ★ 官方 `## Parameters` 逐字"
-                "「Distance between pattern instances along the curve」⇒ ★ **是长度** ✓；"
-                "★ 仅在 `equal_spacing1` 为真时有意义。",
+                description=(
+                    "Spacing between instances along the curve in millimetres; it only matters when equal_spacing1 is t"
+                    "rue. Defaults to 30.0."
+                ),
             ),
             Param(
                 "reference_point",
                 int,
                 default=0,
-                description="★ 官方 `ReferencePoint`（`swLocalCurvePatternReferencePoint_e`）"
-                "—— ★ **枚举** ⇒ 无量纲 ✓",
+                description="Reference point enum for the curve pattern. Defaults to 0.",
             ),
             Param(
                 "curve_method",
                 int,
                 default=0,
-                description="★ 官方 `CurveMethod`（`swLocalCurvePatternCurveMethod_e`）—— ★ 枚举 ✓",
+                description="Curve method enum for direction 1. Defaults to 0.",
             ),
             Param(
                 "align_method",
                 int,
                 default=0,
-                description="★ 官方 `AlignMethod`（`swLocalCurvePatternAlignment_e`）—— ★ 枚举 ✓",
+                description="Alignment enum for the pattern. Defaults to 0.",
             ),
             Param(
-                "direction2", bool, default=False, description="★ 官方 `Direction2` ✓。"
+                "direction2", bool, default=False, description="Whether to use a second direction. Defaults to false."
             ),
             Param(
-                "flip_dir2", bool, default=False, description="★ 官方 `FlipDir2` ✓。"
+                "flip_dir2", bool, default=False, description="Whether to flip direction 2. Defaults to false."
             ),
             Param(
                 "num2",
                 int,
                 default=1,
-                description="★ 官方 `Num2` ✓（方向 2 的实例数）。",
+                description="Number of instances in direction 2. Defaults to 1.",
             ),
             Param(
                 "equal_spacing2",
                 bool,
                 default=False,
-                description="★ 官方 `EqualSpacing2` ✓。",
+                description="Whether to space direction 2 equally. Defaults to false.",
             ),
             Param(
                 "spacing2_mm",
                 float,
                 default=0.0,
-                description="方向 2 的间距（**毫米**）—— ★ 同上、★ 是长度 ✓。",
+                description="Spacing between instances in direction 2 in millimetres. Defaults to 0.0.",
             ),
             Param(
                 "pattern_seed_only",
                 bool,
                 default=False,
-                description="★ 官方 `PatternSeedOnly` ✓（方向 2 是否只复制方向 1 的种子）。",
+                description="Whether direction 2 copies only the seeds of direction 1. Defaults to false.",
             ),
             Param(
                 "seed_feature",
                 str,
                 default=None,
-                description="要阵列的**体/特征名** —— ★ 官方 mark 表逐字 **1 = Components to "
-                "pattern** ✓（★ **前置**）。",
+                description=(
+                    "Name of the body or feature to pattern, selected with mark 1. Defaults to None, which fails the fi"
+                    "rst precondition."
+                ),
             ),
             Param(
                 "curve_sketch",
                 str,
                 default=None,
-                description="方向 1 的**曲线草图名** —— ★ 官方 mark 表逐字 **2 = Curve, edge, "
-                "sketch, or sketch entity for Direction 1** ✓（★ **前置**）。",
+                description=(
+                    "Name of the curve, edge or sketch entity for direction 1, selected with mark 2. Defaults to None, "
+                    "which fails the second precondition."
+                ),
             ),
         ],
         evidence=(
@@ -230,18 +225,11 @@ SPECS_BATCH102 = [
             "的不建」**分得开** ✓ ★⚠ **别与 `configure_curve_driven_pattern` 混淆**：★ 那条是**属性式**（走 `AccessSele"
             "ctions` ✗）—— ★ **两者不是同一件事** ✓"
         ),
-        doc="曲线驱动阵列（参数式入口；官方标记 Obsolete）。"
-        "★★★ **曲线驱动阵列的**参数式**入口**（官方 `IFeatureManager.FeatureLocalCurveDrivenPattern`）"
-        "—— ★★ **状态：`stitched`** ✗ "
-        "★★★★ **为什么只到 `stitched`（★ 两条独立理由、★ 都要说）**："
-        "★ **① 官方页第一行就写着 `Obsolete`** ✗ —— 逐字："
-        "「Obsolete. See `IFeatureManager::CreateFeature` and the Remarks in "
-        "`ILocalCurvePatternFeatureData`.」⇒ ★★ **官方自己指向属性式那条** ✓；"
-        "★★ **② 真机两档有效读数皆不建** ✗（★ 第 0 / 1 档：`mark1=True · mark2=True · 选区=2` "
-        "而特征树新增 `[]`）✓ "
-        "★★★ **而本工具仍有价值**：★ 它把那条路的**两处前置（mark 1 / mark 2）与返回值"
-        "单列回报**，★ 让「前置没上」与「真的不建」**分得开** ✓ "
-        "★⚠ **别与 `configure_curve_driven_pattern` 混淆**：★ 那条是**属性式**（走 "
-        "`AccessSelections` ✗）—— ★ **两者不是同一件事** ✓",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: both valid runs created no feature. The entry point is obsolet"
+            "e as well; both selection marks were held while the feature tree gained nothing, so the remaining value is"
+            " diagnosis, since the mark-1 and mark-2 preconditions are reported separately. Do not confuse it with the "
+            "property-based curve-driven pattern, which is a different path."
+        ),
     ),
 ]

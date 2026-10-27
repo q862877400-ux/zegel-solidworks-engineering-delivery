@@ -195,88 +195,89 @@ _BATCH74: list[ToolSpec] = [
                 "use_default_radius",
                 bool,
                 default=True,
-                description="官方逐字「True to use **default bend radius**, false to use GlobalRadius」。",
+                description="Whether to use the default bend radius instead of global_radius_mm; defaults to true.",
             ),
             Param(
                 "global_radius_mm",
                 float,
                 default=0.0,
-                description="全局折弯半径（**毫米**）—— ★ 仅 `use_default_radius=False` 时有意义。"
-                "★ 官方**没给单位**；本工具按 SolidWorks 惯例当**米**、边界换算一次。",
+                description=(
+                    "Global bend radius in millimetres, used only when use_default_radius is false; defaults to 0.0."
+                ),
             ),
             Param(
                 "rip_gap_mm",
                 float,
                 default=0.0,
-                description="切口间隙（**毫米**；★ 单位约定同 `global_radius_mm`）。",
+                description="Rip gap in millimetres; defaults to 0.0.",
             ),
             Param(
                 "use_default_relief",
                 bool,
                 default=True,
-                description="官方逐字「True to use **parent bend's ratio**」。",
+                description="Whether to use the parent bend relief ratio; defaults to true.",
             ),
             Param(
                 "use_relief_ratio",
                 bool,
                 default=False,
-                description="True 用**自定义让位比**、False 不用（官方 `UseReliefRatio`）。",
+                description="Whether to use a custom relief ratio; defaults to false.",
             ),
             Param(
                 "relief_ratio",
                 float,
                 default=0.0,
-                description="让位比 —— ★ **比例量、不换算**（官方逐字「If useReliefRatio is True, "
-                "then specify relief ratio」⇒ 官方例子是 `0.6` 那类无量纲值）。",
+                description="Custom relief ratio, a dimensionless fraction such as 0.6; defaults to 0.0.",
             ),
             Param(
                 "relief_width_mm",
                 float,
                 default=0.0,
-                description="★ 官方对 `ReliefWidth` 与 `ReliefDepth` **写的是同一句**"
-                "「…specify relief **depth**」⇒ ★ **官方这两句自相矛盾** ⇒ 本工具"
-                "**原样透传、不替官方调和**（铁律 5）。★ 仅当 `use_relief_ratio=True` "
-                "且 `relief_type` ∈ {Rectangular, Obround} 时有意义。",
+                description=(
+                    "Relief width in millimetres, used only with a custom relief ratio and a rectangular or obround rel"
+                    "ief; defaults to 0.0."
+                ),
             ),
             Param(
                 "relief_depth_mm",
                 float,
                 default=0.0,
-                description="让位深度（**毫米**）—— ★ 与 `relief_width_mm` 同一条官方矛盾。",
+                description=(
+                    "Relief depth in millimetres, used under the same conditions as relief_width_mm; defaults to 0.0."
+                ),
             ),
             Param(
                 "relief_type",
                 int,
                 default=1,
-                description="官方 `swSheetMetalReliefTypes_e`（逐字核官方枚举页）："
-                "**1=Rectangular · 2=Tear · 3=Obround · 4=None · 5=TearBend**。",
+                description="Relief type: 1=rectangular, 2=tear, 3=obround, 4=none, 5=tear bend. Defaults to 1.",
             ),
             Param(
                 "trim_side_bends",
                 bool,
                 default=False,
-                description="官方 `TrimSideBends` —— True 裁剪侧折弯。",
+                description="Whether to trim the side bends; defaults to false.",
             ),
             Param(
                 "flange_pos",
                 int,
                 default=1,
-                description="官方 `swFlangePositionTypes_e`：**1=MaterialInside · 2=MaterialOutside · "
-                '3=BendOutside · 4=BendCenterLine · 5=BendSharp（"Bend from virtual sharp"）'
-                ' · 6=BendTangent**。⚠ 官方注明 **BendTangent** 对 "Up To Edge And Merge" '
-                "长度终止条件**无效**。",
+                description=(
+                    "Flange position: 1=material inside, 2=material outside, 3=bend outside, 4=bend centerline, 5=bend "
+                    "sharp, 6=bend tangent. Defaults to 1."
+                ),
             ),
             Param(
                 "offset_dist1_mm",
                 float,
                 default=0.0,
-                description="部分法兰的**起始**偏移距离（**毫米**）。",
+                description="Start offset of a partial flange in millimetres; defaults to 0.0.",
             ),
             Param(
                 "offset_dist2_mm",
                 float,
                 default=0.0,
-                description="部分法兰的**结束**偏移距离（**毫米**）。",
+                description="End offset of a partial flange in millimetres; defaults to 0.0.",
             ),
         ],
         evidence=(
@@ -290,17 +291,11 @@ _BATCH74: list[ToolSpec] = [
             "编前置**（铁律 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**（★ 不是 False）。★ 判据 = **"
             "特征树增量** + 返回对象非 None + **实体面数增量**（三个都要）。"
         ),
-        doc="★ **钣金斜接法兰**：`IFeatureManager.InsertSheetMetalMiterFlange(14 参)` → `Feature`。"
-        "★★★ **同名两份页、★ 参数个数不同**：★ `IModelDoc2` 那份（11 参 · 回 void）官方逐字标 "
-        "`Obsolete. Superseded by [[IFeatureManager::InsertSheetMetalMiterFlange]].` ⇒ ★ **本工具走 "
-        "IFeatureManager 那份**，★ 而用错的后果是**参数个数对不上**、★ 不只是「没反应」。"
-        '⚠ 末位 `PCBA` 是**对象形参**：★ 官方把它写成二选一 —— **non-NULL** ⇒ "Pointer to '
-        '`ICustomBendAllowance` object **for which required values have been set**"；'
-        '**NULL** ⇒ "Parent bend\'s bend allowance is used" ⇒ ★ 本工具传**空 Dispatch**'
-        "（＝ NULL 语义）★★ **不伪造一个没设过必需值的 PCBA**，★ 因此**不接受自定义 PCBA**。"
-        "★★ **前置查不到**：★ 该官方页**无 `## Remarks` 段**（逐字段核过）⇒ ★ 本工具**不编前置**"
-        "（铁律 5），★ 只回读选区计数、★ `preconditions_held` 如实报 **None**（★ 不是 False）。"
-        "★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量**（三个都要）。",
+        doc=(
+            "Insert a sheet-metal miter flange and report the new feature. It writes a feature into the active part; th"
+            "e custom bend allowance is passed as null so the parent bend allowance is used, and no official preconditi"
+            "on is documented, so the selection count is reported as unknown."
+        ),
     ),
     ToolSpec(
         name="solidworks_sheet_metal_insert_closed_corner",
@@ -318,15 +313,11 @@ _BATCH74: list[ToolSpec] = [
             "路：★ 其 `IAccessSelections` 官方已标 `Obsolete` → 后继 `IAccessSelections2`；★ ★ 而该族是**进程内指针接口"
             "**，★ 本仓 pywin32 后端到不了（已知事实 47）⇒ ★ 本工具**只走直入法**、★ 不碰指针族。"
         ),
-        doc="★ **钣金闭合角**：`IModelDoc2.InsertSheetMetalClosedCorner()` → **`void`**（★ **零参**）。"
-        "⚠⚠★ **这是本批判据最紧的一条**，★ 因为官方**同时**给了「零参数」与「回 `void`」："
-        "⇒ ★ **没有返回对象可读** ⇒ ★「返回非 None」这条判据在本工具上**根本不存在** ⇒ ★ 判据**只能**是 "
-        "**特征树增量** + **实体面数增量** + **体积增量**（★ 后两个互相独立、缺一不可）。"
-        "★★ **前置查不到**：★ 官方页**无 `## Remarks` 段** ⇒ ★ 本工具**不编前置**（铁律 5），"
-        "★ 只回读选区计数、★ `preconditions_held` 如实报 **None**。"
-        "⚠ 该族另有 `IClosedCornerFeatureData` 指针路：★ 其 `IAccessSelections` 官方已标 "
-        "`Obsolete` → 后继 `IAccessSelections2`；★ ★ 而该族是**进程内指针接口**，"
-        "★ 本仓 pywin32 后端到不了（已知事实 47）⇒ ★ 本工具**只走直入法**、★ 不碰指针族。",
+        doc=(
+            "Insert a closed corner on the sheet-metal corners and report the tree, face-count and volume change. It wr"
+            "ites a feature into the active part; the official call returns nothing and documents no precondition, so t"
+            "he selection count is reported as unknown rather than as satisfied."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_insert_end_cap",
@@ -362,72 +353,70 @@ _BATCH74: list[ToolSpec] = [
             Param(
                 "depth_mm",
                 float,
-                description="顶端盖厚度（**毫米**；★ 官方未给单位，按米收、边界换算一次）。",
+                description="End cap thickness in millimetres.",
             ),
             Param(
                 "is_given_offset",
                 bool,
                 default=False,
-                description="官方逐字「True to provide an **offset value**, false to provide a "
-                "**thickness ratio**」⇒ ★ 它决定下面两个形参**哪一个有效**。",
+                description="True to give an offset value, false to give a thickness ratio; defaults to false.",
             ),
             Param(
                 "is_chamfer",
                 bool,
                 default=False,
-                description="官方逐字「True if end cap feature is **chamfered**, false if "
-                "**filleted**」⇒ ★ 决定 `chamfer_value_mm` 的含义。",
+                description="True to chamfer the end cap, false to fillet it; defaults to false.",
             ),
             Param(
                 "offset_value_mm",
                 float,
                 default=0.0,
-                description="边偏移值（**毫米**；★ 官方逐字「valid **only if** `BIsGivenOffset` "
-                "is true」）。",
+                description="Edge offset in millimetres, used only when is_given_offset is true; defaults to 0.0.",
             ),
             Param(
                 "wall_ratio",
                 float,
                 default=0.0,
-                description="壁厚比 —— ★ 对应官方形参 **`WallThicknessRatio`**，★ 是**比例量**"
-                "（官方例子 `0.6`）⇒ **不换算**。⚠ ★ 官方形参名含 `Thickness`，"
-                "★ 而本工具**故意不叫** `wall_thickness_*`：★ 规则 2 的长度词表里有 "
-                "`thickness`、★ 会要求 `_mm` 后缀，★ 而给一个**比例量**加 `_mm` 是"
-                "**说错话** ⇒ ★ 故对外叫 `wall_ratio`、★ 由 `param_alias` 指回真形参。",
+                description=(
+                    "Wall thickness ratio, a dimensionless fraction such as 0.6, used only when is_given_offset is fals"
+                    "e; defaults to 0.0."
+                ),
             ),
             Param(
                 "chamfer_value_mm",
                 float,
                 default=0.0,
-                description="倒角距离（`is_chamfer=True`）/ 圆角半径（`False`）（**毫米**）。",
+                description=(
+                    "Chamfer distance when is_chamfer is true, otherwise the fillet radius, in millimetres; defaults to"
+                    " 0.0."
+                ),
             ),
             Param(
                 "is_corner_treatment",
                 bool,
                 default=False,
-                description="官方逐字「…chamfer or fillet the end cap corners … valid **only if** "
-                "`BIsGivenOffset` is false」。",
+                description=(
+                    "Whether to chamfer or fillet the end cap corners, valid only when is_given_offset is false; defaul"
+                    "ts to false."
+                ),
             ),
             Param(
                 "depth_offset_mm",
                 float,
                 default=0.0,
-                description="内插距离（**毫米**）—— ★ 官方逐字「valid **only if** `BIsEndCapInward` "
-                "**= 2**」⇒ ★ 与枚举 `swSpecifyInset = 2` **对得上**"
-                "（★ 官方例子也确实传 `2`）✓。",
+                description="Inset distance in millimetres, valid only when is_end_cap_inward is 2; defaults to 0.0.",
             ),
             Param(
                 "is_reverse",
                 bool,
                 default=False,
-                description="官方 `BIsReverse` —— 反转偏移或厚度比。",
+                description="Whether to reverse the offset or the thickness ratio; defaults to false.",
             ),
             Param(
                 "is_end_cap_inward",
                 int,
                 default=0,
-                description="官方 `swEndCapThicknessDirection_e`：**0=swExtendOutward · "
-                "1=swExtendInward · 2=swSpecifyInset**（★ 逐字核官方枚举页）。",
+                description="Thickness direction: 0=extend outward, 1=extend inward, 2=specify inset. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -441,17 +430,11 @@ _BATCH74: list[ToolSpec] = [
             " ⇒ 本工具不做。★ 判据 = **特征树增量** + 返回对象非 None + **`GetDefinition()` 属性回读**（官方例子读法）"
             "。"
         ),
-        doc="★ **焊件顶端盖**：`IFeatureManager.InsertEndCapFeature3(10 参)` → `IFeature`。"
-        '★★★ **官方前置（Remarks 逐字）**："Before calling this method, **select one or more end '
-        'faces** of a structural member in the graphics area." ⇒ ★ 调用前必须在图形区选中端面；'
-        "★ 本工具**不代选**（★ 面没有可用名字 —— 已知事实 32；★ 且规则 3 禁裸坐标），"
-        "★ 只**回读选区计数**写进 `preconditions_held`。"
-        "★ ★ 官方**这一句没给 mark**，★ 官方例子用的是 mark=**0** ⇒ ★ **与角撑板的 mark=1 不一样**，"
-        "★ 两个入口的 mark 不能互相套用。"
-        "⚠ ★★ `InsertEndCapFeature2`（7 参 · 末位 `System.object Faces`）**不是**废弃成员 —— "
-        "★ 官方页无 Obsolete 句、★ 且 Remarks 明写它是「用 Faces 数组」的**并列**入口 ⇒ ★★ "
-        "**不是** `1 → 2 → 3` 的线性继承；★ 而它末位是**数组形参** ⇒ `Param` 表达不了 ⇒ 本工具不做。"
-        "★ 判据 = **特征树增量** + 返回对象非 None + **`GetDefinition()` 属性回读**（官方例子读法）。",
+        doc=(
+            "Insert a weldment end cap on the end faces you select first, and report the new feature. It writes a featu"
+            "re into the active part and does not pick the faces for you; this entry reads selections with mark 0, unli"
+            "ke the gusset entry that needs mark 1."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_gusset_create",
@@ -484,136 +467,136 @@ _BATCH74: list[ToolSpec] = [
             "need_chamfer_in_gusset": "need_chamfer_in_gusset",
         },
         params=[
-            Param("depth_mm", float, description="角撑板厚度（**毫米**）。"),
+            Param("depth_mm", float, description="Gusset thickness in millimetres."),
             Param(
                 "dir_type",
                 int,
                 default=1,
-                description="官方 `DirType`（**`System.short`**）—— `swGussetThicknessType_e`："
-                "**0=Inner · 1=BothSides · 2=Outer**（★ 官方例子用 1）。",
+                description="Thickness direction: 0=inner, 1=both sides, 2=outer. Defaults to 1.",
             ),
             Param(
                 "loc_type",
                 int,
                 default=1,
-                description="官方 `LocType`（**`System.short`**）—— `swGussetProfileLocationType_e`："
-                "**0=Start · 1=Center · 2=End**（★ 官方例子用 1）。"
-                '★ 官方逐字："Location of the reference plane for the **sketch** of the gusset"。',
+                description="Profile location along the reference plane: 0=start, 1=center, 2=end. Defaults to 1.",
             ),
             Param(
                 "is_profile",
                 bool,
                 default=False,
-                description="官方逐字「True to use a **polygon** profile, false to use a "
-                "**triangle** profile」。",
+                description="Whether to use a polygon profile instead of a triangle profile; defaults to false.",
             ),
             Param(
                 "profile_d1_mm",
                 float,
                 default=0.0,
-                description="轮廓距离 1（**毫米**）。",
+                description="First profile distance in millimetres; defaults to 0.0.",
             ),
             Param(
                 "profile_d2_mm",
                 float,
                 default=0.0,
-                description="轮廓距离 2（**毫米**）。",
+                description="Second profile distance in millimetres; defaults to 0.0.",
             ),
             Param(
                 "profile_d3_mm",
                 float,
                 default=0.0,
-                description="轮廓距离 3（**毫米**）。",
+                description="Third profile distance in millimetres; defaults to 0.0.",
             ),
             Param(
                 "profile_angle_deg",
                 float,
                 default=45.0,
-                description="轮廓角（**度**）—— ★ 官方吃**弧度**（★ 例子 `0.78539816339745` = π/4 = 45°），"
-                "★ 本工具**边界换算一次**。★ 官方逐字：valid **only if** `BUseLenDim` is "
-                "**false**。★ 官方把 `ProfileD1..D4` 的精确语义指向 SOLIDWORKS Help"
-                "（「See the SOLIDWORKS Help for more information about profile and chamfer "
-                "distances and angles」）⇒ ★ 本工具**不代官方释义**。",
+                description="Profile angle in degrees, valid only when use_len_dim is false; defaults to 45.0.",
             ),
             Param(
                 "profile_d4_mm",
                 float,
                 default=0.0,
-                description="轮廓距离 4（**毫米**）—— ★ 官方逐字：valid **only if** `BUseLenDim` is **true**。",
+                description=(
+                    "Fourth profile distance in millimetres, valid only when use_len_dim is true; defaults to 0.0."
+                ),
             ),
             Param(
                 "offset_reference_plane",
                 bool,
                 default=False,
-                description="官方 `BOffset` —— 偏置角撑板草图的参考平面。",
+                description="Whether to offset the reference plane of the gusset sketch; defaults to false.",
             ),
             Param(
                 "d_profile_offset_mm",
                 float,
                 default=0.0,
-                description="参考平面的偏置值（**毫米**；官方 `DProfileOffset`）。",
+                description="Offset of that reference plane in millimetres; defaults to 0.0.",
             ),
             Param(
                 "crv_index",
                 int,
                 default=0,
-                description="官方 `CrvIndex` —— 「Index of the edge to use if **multiple intersecting "
-                "edges** exist」。",
+                description="Index of the edge to use when several edges intersect; defaults to 0.",
             ),
             Param(
                 "reverse_dir",
                 bool,
                 default=False,
-                description='官方 `BReverseDir` —— ★ 官方逐字："**If `BOffset` set to true**, then true '
-                'to reverse direction"。',
+                description="Whether to reverse the offset direction; defaults to false.",
             ),
             Param(
                 "reverse_face",
                 bool,
                 default=False,
-                description="官方 `BReverseFace` —— 三角形轮廓时反转 d1/d2；多边形轮廓时还反转 d3/d4。",
+                description="Whether to reverse the profile distances; defaults to false.",
             ),
             Param(
                 "use_len_dim",
                 bool,
                 default=False,
-                description="官方 `BUseLenDim` —— True 用 `profile_d4_mm`、False 用 `profile_angle_deg`。",
+                description="True to dimension with profile_d4_mm, false to use profile_angle_deg; defaults to false.",
             ),
             Param(
                 "profile_d5_mm",
                 float,
                 default=0.0,
-                description="倒角距离 5（**毫米**）—— ★ 官方逐字：valid **only if** "
-                "`BNeedChamferInGusset` is **true**。",
+                description=(
+                    "First chamfer distance in millimetres, used only when need_chamfer_in_gusset is true; defaults to "
+                    "0.0."
+                ),
             ),
             Param(
                 "profile_d6_mm",
                 float,
                 default=0.0,
-                description="倒角距离 6（**毫米**）—— ★ 官方逐字：valid **only if** "
-                "`BNeedChamferInGusset` **and** `BUseLenDimForChamfer` are **both** true。",
+                description=(
+                    "Second chamfer distance in millimetres, used only when the chamfer flags allow it; defaults to 0.0"
+                    "."
+                ),
             ),
             Param(
                 "profile_chamfer_angle_deg",
                 float,
                 default=45.0,
-                description="倒角角（**度**；★ 官方吃**弧度**，★ 边界换算一次）。★ 官方逐字：valid "
-                "only if `BUseLenDimForChamfer` is **false** **and** "
-                "`BNeedChamferInGusset` is **true**。",
+                description=(
+                    "Chamfer angle in degrees, used instead of profile_d6_mm when use_len_dim_for_chamfer is false; def"
+                    "aults to 45.0."
+                ),
             ),
             Param(
                 "use_len_dim_for_chamfer",
                 bool,
                 default=False,
-                description="官方 `BUseLenDimForChamfer` —— True 用 `profile_d6_mm`、"
-                "False 用 `profile_chamfer_angle_deg`。",
+                description=(
+                    "True to dimension the chamfer with profile_d6_mm, false to use the chamfer angle; defaults to fals"
+                    "e."
+                ),
             ),
             Param(
                 "need_chamfer_in_gusset",
                 bool,
                 default=False,
-                description="官方 `BNeedChamferInGusset` —— 逐字「…to allow room for a **weld bead** "
-                "under the gusset」。",
+                description=(
+                    "Whether to chamfer the gusset to leave room for a weld bead underneath; defaults to false."
+                ),
             ),
         ],
         evidence=(
@@ -630,20 +613,11 @@ _BATCH74: list[ToolSpec] = [
             "*没写**中间那代的废弃状态。★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量** + **mark-1 选区计"
             "数**。"
         ),
-        doc="★ **焊件角撑板**：`IFeatureManager.InsertGussetFeature3(20 参)` → `IFeature`。"
-        '★★★ **官方前置（Remarks 逐字，本批最硬的一条）**："Before calling this method, you must '
-        "call `SelectByID2` to select **two faces** that are the supporting legs of this gusset "
-        '**with a Mark of 1**." ⇒ ★★ 必须选**两个面**、★ **mark = 1**（★ **不是 0**）；'
-        "★ ★ 官方例子两次都 **Append=True 且 mark=1** ⇒ ★ 本工具照抄这个组合、★ `preconditions_held` "
-        "判的是「**mark 1 上 ≥ 2 个**」⇒ ★ 调用者能一眼看见「mark 1 上只有 1 个面」这种失败。"
-        '⚠★ **接口别认错**：★ 这是**焊件**角撑板（`IGussetFeatureData`，官方描述 "Allows access to a '
-        '**weldment** gusset feature."，14 属性 / 4 方法）⇒ ★ **不是**钣金那个 '
-        '`ISMGussetFeatureData`（"Allows access to a **sheet metal** gusset feature."，'
-        "28 属性 / 2 方法）⇒ ★★ 两者共有成员**只有 3 个**、★ 用错时**连读都读不到**（已知事实 36）。"
-        "⚠ ★★ **官方在废弃链上断了一节**：`InsertGussetFeature`（15 参）**Obsolete** → 直接指向 "
-        "`InsertGussetFeature3`；★ 而中间的 `InsertGussetFeature2` 的页**没有** Obsolete 句 ⇒ "
-        "★★ **别写「Gusset 三代线性链」** —— ★ 官方**没写**中间那代的废弃状态。"
-        "★ 判据 = **特征树增量** + 返回对象非 None + **实体面数增量** + **mark-1 选区计数**。",
+        doc=(
+            "Insert a weldment gusset between two faces you select with mark 1, and report the new feature. It writes a"
+            " feature into the active part and reports how many selections sit on mark 1, so a single-face selection sh"
+            "ows up instead of looking like a failed feature."
+        ),
     ),
 ]
 
@@ -693,19 +667,20 @@ _BATCH74.append(
             Param(
                 "body_index",
                 int,
-                description="★ **实体体号**（0 基）—— 由 "
-                "`IPartDoc.GetBodies2(0, False)` 取体表后按序号取（★ 参数里**不收对象**）。",
+                description="Zero-based index of the body, taken from the part solid-body list.",
             ),
             Param(
                 "placement",
                 float,
-                description="参考面位置（★ 官方**既没给单位也没给量纲** ⇒ "
-                "★ 原样透传、不换算，铁律 5）。",
+                description=(
+                    "Reference surface position, passed through unchanged because the official parameter states neither"
+                    " a unit nor a dimension."
+                ),
             ),
             Param(
                 "knit",
                 bool,
-                description="True = 所有参考面**缝合成一张**（官方逐字 `sewn`）。",
+                description="True to sew all reference surfaces into one.",
             ),
         ],
         evidence=(
@@ -715,12 +690,11 @@ _BATCH74.append(
             "张参考面都算一个 **`sheet body`**）+ 返回对象非 None + 树增量（★ 后者单独**不足以**当判据）。⚠ 本工具**尚"
             "未真机验证**；★ 同批其余 4 条同样只是**已注册**，不是**已验证**。"
         ),
-        doc="★ **曲面中面**：`IFeatureManager.InsertMidSurface(4 参)` → `System.object`。"
-        "★★ **官方前置（Remarks 逐字）**：`pPartDocIn` 是**该组件的模型文档**、`pBody` 是**该组件的体** "
-        "⇒ ★ 本工具**要求活动文档是零件**；★ 取不到体时**如实报** `preconditions_held=False` 并写明原因，"
-        "★ **不猜**。判据 = **曲面体数增量**（官方逐字：每张参考面都算一个 **`sheet body`**）+ "
-        "返回对象非 None + 树增量（★ 后者单独**不足以**当判据）。"
-        "⚠ 本工具**尚未真机验证**；★ 同批其余 4 条同样只是**已注册**，不是**已验证**。",
+        doc=(
+            "Create surface midsurfaces for one body of the active part and report the new sheet bodies. It writes surf"
+            "ace features into the part; the active document must be a part, both body and placement are passed through"
+            " unchanged, and the tool is registered but not verified on this machine."
+        ),
     )
 )
 

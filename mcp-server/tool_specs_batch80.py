@@ -53,10 +53,7 @@ SPECS_BATCH80 = [
             Param(
                 "code",
                 int,
-                description="The HRESULT as an integer (e.g. -2147352571 for "
-                "the classic 'type mismatch' / DISP_E_TYPEMISMATCH). "
-                "★ Accepts the signed value Python's COM layer "
-                "raises, not only the unsigned hex form.",
+                description="The HRESULT as a signed integer, for example -2147352571 for a type mismatch.",
             )
         ],
         evidence=(
@@ -64,9 +61,10 @@ SPECS_BATCH80 = [
             " the code is not in the table it says so — it does NOT invent a meaning (repo rule 5). ★ Source is the rep"
             "o's own table, NOT an official enum page, so treat the text as a repo-authored hint."
         ),
-        doc="Turn an HRESULT into plain words using THIS REPO's table. ★★ Its own docstring states the discipline: "
-             "when the code is not in the table it says so — it does NOT invent a meaning (repo rule 5). ★ Source is "
-             "the repo's own table, NOT an official enum page, so treat the text as a repo-authored hint.",
+        doc=(
+            "Turn an HRESULT integer into plain words using this repository's own table. Read-only and pure: it calls n"
+            "o SolidWorks, and when the code is not in the table it says so instead of inventing a meaning."
+        ),
     ),
     ToolSpec(
         name="solidworks_automation_enter_command_lock",
@@ -80,10 +78,11 @@ SPECS_BATCH80 = [
             "'s prescribed pre-flight before risky COM work (rule 2). ⚠ Official note from this repo: an unreleased loc"
             "k makes SolidWorks keep refusing operations — pair it with `solidworks_automation_exit_command_lock`."
         ),
-        doc="Set `ISldWorks.CommandInProgress = True` to stop the operations that pop modal dialogs. "
-        "★ This is the repo's prescribed pre-flight before risky COM work (rule 2). "
-        "⚠ Official note from this repo: an unreleased lock makes SolidWorks keep refusing "
-        "operations — pair it with `solidworks_automation_exit_command_lock`.",
+        doc=(
+            "Set the SolidWorks CommandInProgress flag so operations that would pop a modal dialog are blocked. It modi"
+            "fies session state only, and an unreleased lock keeps SolidWorks refusing operations, so always pair it wi"
+            "th solidworks_automation_exit_command_lock."
+        ),
     ),
     ToolSpec(
         name="solidworks_automation_exit_command_lock",
@@ -96,9 +95,10 @@ SPECS_BATCH80 = [
             "Release the lock set by `solidworks_automation_enter_command_lock`. ⚠ The wrapped function's own docstring"
             " warns: forgetting this call leaves SolidWorks refusing operations."
         ),
-        doc="Release the lock set by `solidworks_automation_enter_command_lock`. "
-        "⚠ The wrapped function's own docstring warns: forgetting this call leaves SolidWorks "
-        "refusing operations.",
+        doc=(
+            "Release the command lock that solidworks_automation_enter_command_lock set. It modifies session state back"
+            " to normal; skipping this call leaves SolidWorks refusing operations."
+        ),
     ),
     ToolSpec(
         name="solidworks_automation_is_command_locked",
@@ -111,8 +111,10 @@ SPECS_BATCH80 = [
             "Read whether `CommandInProgress` is currently set. ★ The wrapped function notes the official member is a *"
             "*zero-argument property** on `ISldWorks`."
         ),
-        doc="Read whether `CommandInProgress` is currently set. ★ The wrapped function notes the "
-        "official member is a **zero-argument property** on `ISldWorks`.",
+        doc=(
+            "Read whether the CommandInProgress flag is currently set. Read-only: it inspects the flag and changes noth"
+            "ing, so use it to check whether a command lock is still outstanding."
+        ),
     ),
     ToolSpec(
         name="solidworks_automation_set_flag",
@@ -124,9 +126,10 @@ SPECS_BATCH80 = [
             Param(
                 "pref",
                 str,
-                description="Flag name. ★ Prefer the names in this repo's "
-                "`DIALOG_SUPPRESSORS` table — they are the ones the repo "
-                "has mapped to real preference ids.",
+                description=(
+                    "Preference flag name; prefer a name from the repository dialog-suppressor table, which maps to rea"
+                    "l preference ids."
+                ),
             ),
             Param(
                 "value",
@@ -139,10 +142,11 @@ SPECS_BATCH80 = [
             "se. ⚠ This repo's non-invasiveness contract applies: these are the documented, restorable preferences (see"
             " `references/deployment-boundary.md`) — the repo's preference-write gate covers every such site."
         ),
-        doc="Set a preference switch on `ISldWorks`. ★ Use it to mute the dialogs a given operation "
-        "would otherwise raise. ⚠ This repo's non-invasiveness contract applies: these are "
-        "the documented, restorable preferences (see `references/deployment-boundary.md`) — "
-        "the repo's preference-write gate covers every such site.",
+        doc=(
+            "Set one SolidWorks preference switch, typically to mute a dialog that an operation would raise. It modifie"
+            "s a documented preference that can be restored, so prefer the flag names this repository already maps to r"
+            "eal preference ids."
+        ),
     ),
     ToolSpec(
         name="solidworks_automation_get_flag",
@@ -154,16 +158,17 @@ SPECS_BATCH80 = [
             Param(
                 "pref",
                 str,
-                description="Flag name (same table as "
-                "`solidworks_automation_set_flag`).",
+                description="Preference flag name, using the same table as solidworks_automation_set_flag.",
             )
         ],
         evidence=(
             "Read a preference switch back from `ISldWorks`. ★ The wrapped function notes the official member takes **o"
             "ne argument**."
         ),
-        doc="Read a preference switch back from `ISldWorks`. ★ The wrapped function notes the "
-        "official member takes **one argument**.",
+        doc=(
+            "Read one SolidWorks preference switch back by name. Read-only; pass the same flag name that solidworks_aut"
+            "omation_set_flag accepts."
+        ),
     ),
     # ── ② COM 陷阱的纯函数判定（2）────────────────────────────────────────
     ToolSpec(
@@ -176,17 +181,16 @@ SPECS_BATCH80 = [
             Param(
                 "member",
                 str,
-                description="An official member name, e.g. `CreateDefinition` "
-                "or a numbered variant like `AddMate2`.",
+                description="Official member name, for example CreateDefinition or AddMate2.",
             ),
             Param(
                 "interface",
                 str,
                 default="",
-                description="Optional interface name (e.g. "
-                "`IEntity`). ★ Leave EMPTY to look up by member name alone — which returns "
-                "`None` when that name maps to different successors on different interfaces "
-                "(the tool refuses to guess). Pass the interface to get the exact answer.",
+                description=(
+                    "Interface name such as IEntity, needed when one member name maps to different successors; defaults"
+                    " to empty, which answers only unambiguous names."
+                ),
             ),
         ],
         evidence=(
@@ -196,12 +200,11 @@ SPECS_BATCH80 = [
             "ifferent endpoints), so an unqualified lookup has no single right answer. Pass `interface` to disambiguate"
             ". ★ Pure function: no SolidWorks call, no COM."
         ),
-        doc="Given a member name, return the successor this repo maps it to — and `None` when it "
-        "does not know it (★ the wrapped function's docstring is explicit: it does NOT guess, "
-        'repo rule 5). ★★ `None` also means "ambiguous by name": some members share a name '
-        "across interfaces with DIFFERENT successors (e.g. `Select2` — 6 different endpoints), "
-        "so an unqualified lookup has no single right answer. Pass `interface` to disambiguate. "
-        "★ Pure function: no SolidWorks call, no COM.",
+        doc=(
+            "Map an official member name to the successor this repository knows, and return null when it knows none. Re"
+            "ad-only and pure: it never guesses, and null also means the name maps to different successors on different"
+            " interfaces, so pass the interface then."
+        ),
     ),
     ToolSpec(
         name="solidworks_repo_find_real_implementations",
@@ -213,14 +216,16 @@ SPECS_BATCH80 = [
             Param(
                 "needle",
                 str,
-                description="Member name or fragment to look for, e.g. `HoleWizard5`.",
+                description="Member name or fragment to search for, for example HoleWizard5.",
             ),
             Param(
                 "root",
                 str,
                 default="",
-                description="Directory to search. Leave EMPTY to use the "
-                "repo's `scripts/` directory.",
+                description=(
+                    "Directory to search; defaults to empty, which means this repository's scripts directory rather tha"
+                    "n the current directory."
+                ),
             ),
         ],
         evidence=(
@@ -230,12 +235,11 @@ SPECS_BATCH80 = [
             "y USED\". ★ Pure function (filesystem only, no SolidWorks). ⚠ `root` empty means the repo default, not the"
             " current directory."
         ),
-        doc='Search the repo for real implementations and return `["file:line", …]`. '
-        "★★ **Why this exists**: the repo's `sw_api_*.py` files are machine-generated reflection "
-        "dumps that mention every member name — a naive grep matches those and tells you nothing. "
-        'This function excludes them, so the answer is "where is it actually USED". '
-        "★ Pure function (filesystem only, no SolidWorks). ⚠ `root` empty means the repo default, "
-        "not the current directory.",
+        doc=(
+            "Search the repository for real implementations of a member and return file and line hits. Read-only and fi"
+            "lesystem-only: the machine-generated reflection dumps are excluded, so a hit marks where the member is act"
+            "ually used rather than merely mentioned."
+        ),
     ),
     # ── ③ 会话忙闲 / 卡死 / 求解器进程 / 等空闲（4）───────────────────────
     ToolSpec(
@@ -252,12 +256,11 @@ SPECS_BATCH80 = [
             " produces a false 'busy'. ★ Also requires `SLDWORKS.exe` to be present. ★ Reads only: it inspects windows,"
             " it does not touch the model."
         ),
-        doc="Report whether SolidWorks is busy, with the evidence that decided it. "
-        "★★ The judgement is deliberately strict (fact 526): a progress window counts only when "
-        "it is **attributable to the SolidWorks process family** (matched by executable path), "
-        "because an ORPHAN `OperationStatusWindow` left behind by Explorer otherwise produces a "
-        "false 'busy'. ★ Also requires `SLDWORKS.exe` to be present. "
-        "★ Reads only: it inspects windows, it does not touch the model.",
+        doc=(
+            "Report whether SolidWorks is busy, with the evidence that decided it. Read-only: it inspects windows and n"
+            "ever touches the model, and a progress window counts only when it belongs to the SolidWorks process family"
+            "."
+        ),
     ),
     ToolSpec(
         name="solidworks_session_stuck_status",
@@ -272,10 +275,11 @@ SPECS_BATCH80 = [
             "e `star.exe` is happily working, and calling that 'stuck' is how a normal solve gets killed (facts 293/526"
             ")."
         ),
-        doc="Report whether SolidWorks looks stuck, using BOTH signals: it is not responding **and** "
-        "no solver process is alive. ★★ That second half matters — during a long solve the main "
-        "window can look 'not responding' while `star.exe` is happily working, and calling that "
-        "'stuck' is how a normal solve gets killed (facts 293/526).",
+        doc=(
+            "Report whether SolidWorks looks stuck, requiring both a missing response and no live solver process. Read-"
+            "only; it stays conservative on purpose, because a long solve also looks unresponsive and killing it would "
+            "interrupt real work."
+        ),
     ),
     ToolSpec(
         name="solidworks_session_solver_processes",
@@ -289,9 +293,10 @@ SPECS_BATCH80 = [
             "o `tasklist` parsing). ★ Use it to tell 'still solving' from 'crashed', and to confirm a solver actually e"
             "xited."
         ),
-        doc="List the solver kernels currently running (the COSMOS/M family, enumerated via the "
-        "Toolhelp32 snapshot — no `tasklist` parsing). ★ Use it to tell 'still solving' from "
-        "'crashed', and to confirm a solver actually exited.",
+        doc=(
+            "List the solver and mesher kernel processes that are running right now. Read-only; use it to tell a solve "
+            "that is still working from one that crashed, and to confirm that a solver really exited."
+        ),
     ),
     ToolSpec(
         name="solidworks_session_wait_until_idle",
@@ -304,10 +309,10 @@ SPECS_BATCH80 = [
                 "timeout",
                 float,
                 default=60.0,
-                description="Give up after this many SECONDS (★ this is a duration, not a length).",
+                description="Maximum wait in seconds before giving up; defaults to 60.0.",
             ),
             Param(
-                "interval", float, default=3.0, description="Poll interval in SECONDS."
+                "interval", float, default=3.0, description="Seconds between two busy checks; defaults to 3.0."
             ),
         ],
         evidence=(
@@ -315,9 +320,9 @@ SPECS_BATCH80 = [
             " says whether it actually reached idle. ★★ Use it before driving COM: landing a call while SolidWorks is b"
             "usy is the documented route to a hung session (fact 526). ⚠ It polls; it does not touch the model."
         ),
-        doc="Block until `solidworks_session_busy_status` reports idle, or until the timeout — "
-        "★ it always returns, and says whether it actually reached idle. "
-        "★★ Use it before driving COM: landing a call while SolidWorks is busy is the documented "
-        "route to a hung session (fact 526). ⚠ It polls; it does not touch the model.",
+        doc=(
+            "Wait until SolidWorks reports idle or the timeout expires, and say whether idle was reached. Read-only pol"
+            "ling: it never touches the model, and it always returns instead of waiting forever."
+        ),
     ),
 ]

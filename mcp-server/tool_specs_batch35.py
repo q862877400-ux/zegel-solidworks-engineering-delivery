@@ -68,19 +68,25 @@ SPECS_BATCH35 = [
                 "sort_options",
                 int,
                 default=None,
-                description="swCutListSortOptions_e value; omit for the document default.",
+                description=(
+                    "swCutListSortOptions_e value; defaults to None, which leaves the document sort default in place."
+                ),
             ),
             Param(
                 "collect_identical_bodies",
                 bool,
                 default=False,
-                description="Collect identical bodies into one cut-list item.",
+                description="Whether to collect identical bodies into one cut-list item. Defaults to false.",
             ),
         ],
         evidence=(
             "Create the weldment cut list and return the cut-list folders as evidence."
         ),
-        doc="Create the weldment cut list and return the cut-list folders as evidence.",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: the cut-list insert member resolves to None on this backend. U"
+            "nder pywin32 late binding InsertWeldmentCutList2 resolves to None, so the call raises instead of creating "
+            "a cut list, and the sort and identical-body options only shape a feature this backend cannot build."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_set_cut_list_properties",
@@ -92,7 +98,7 @@ SPECS_BATCH35 = [
             Param(
                 "properties",
                 dict,
-                description='Mapping of property name to value (e.g. {"Description": "tube"}).',
+                description="Mapping of property name to value; the names must be the localized ones the UI shows.",
             ),
         ],
         evidence=(
@@ -101,9 +107,10 @@ SPECS_BATCH35 = [
             "而前者写入并回读得到）。"
         ),
         doc=(
-            "Set cut-list properties and return the read-back list. ⚠ Does NOT save the document. "
-            "★★ **属性名用中文（本地化）名**：`说明` / `材料`，★ **不是** `Description` / `Material`"
-            "（真机：后者报「切割清单属性回读失败」，而前者写入并回读得到）。"
+            "Set cut-list properties on every cut-list item and return the read-back list. Writes the values into each "
+            "item, creates the cut list first when it is missing, and does not save the document; a value that does not"
+            " read back raises. Pass the localized property names the UI shows, not the English Description or Material"
+            " keys, which fail the read-back."
         ),
     ),
     ToolSpec(
@@ -116,8 +123,10 @@ SPECS_BATCH35 = [
             Param(
                 "evidence",
                 dict,
-                description="The cut-list evidence dict (★ as returned by "
-                "solidworks_weldment_evidence / create_cut_list).",
+                description=(
+                    "The cut-list evidence dict, as returned by solidworks_weldment_evidence or solidworks_weldment_cre"
+                    "ate_cut_list."
+                ),
             ),
             Param("output_path", str, description="Absolute CSV output path."),
         ],
@@ -125,8 +134,11 @@ SPECS_BATCH35 = [
             "Write a cut-list evidence dict to CSV and return the path. ★ The criterion is the FILE (exists and non-emp"
             "ty), not the return value."
         ),
-        doc="Write a cut-list evidence dict to CSV and return the path. "
-        "★ The criterion is the FILE (exists and non-empty), not the return value.",
+        doc=(
+            "Export a cut-list evidence dict to a UTF-8 CSV file and return the path. Writes the file and creates its p"
+            "arent directory when missing; the criterion is the file existing and being non-empty, not the return value"
+            ". Columns are index, name, body_count and every property name found in the rows."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_read_property_manager",
@@ -139,13 +151,20 @@ SPECS_BATCH35 = [
                 "core_only",
                 bool,
                 default=True,
-                description="Only the core properties (★ False reads everything).",
+                description=(
+                    "Whether to keep only the core cut-list property names and drop template title-block noise; false r"
+                    "eads every name. Defaults to true."
+                ),
             ),
         ],
         evidence=(
             "Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only."
         ),
-        doc="Read the active PropertyManager page's controls as a JSON-able dict. ★ Read-only.",
+        doc=(
+            "Read the manufacturing properties of the active PropertyManager page as a dict. Read-only; by default it k"
+            "eeps only the core cut-list property names and drops template title-block noise. Set core_only to false to"
+            " read every property name the page exposes."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_create_profile_center_mate",
@@ -154,24 +173,29 @@ SPECS_BATCH35 = [
         function="create_profile_center_mate",
         inject="model",
         params=[
-            Param("entities", str, default="__current_selection__", description=_PICK),
+            Param("entities", str, default="__current_selection__", description=(
+                                                                        "Declarative selection of the entities to mate,"
+                                                                        " for example 'index:0' or '__current_selection"
+                                                                        "__'; no coordinates are passed. Defaults to '_"
+                                                                        "_current_selection__'."
+                                                                    )),
             Param(
                 "mate_alignment",
                 int,
                 default=0,
-                description="Mate alignment enum value.",
+                description="Mate alignment enum value. Defaults to 0.",
             ),
             Param(
                 "offset_distance_mm",
                 float,
                 default=0.0,
-                description="Offset distance in MILLIMETRES (★ rule 2).",
+                description="Offset distance in millimetres. Defaults to 0.0.",
             ),
             Param(
                 "flip_dimension",
                 bool,
                 default=False,
-                description="Flip the mate dimensions.",
+                description="Whether to flip the mate dimensions. Defaults to false.",
             ),
         ],
         #: ★★ 能力层的形参是 `offset_distance`（**不带** `_mm`）⇒ 用 `param_alias` 把
@@ -183,9 +207,11 @@ SPECS_BATCH35 = [
             "IAssemblyDoc::CreateMateData(swMatePROFILECENTER=24) + IAssemblyDoc::CreateMate (spec 240); the deprecated"
             " AddMate* family is NOT used."
         ),
-        doc="Create a profile-center mate between declaratively selected structural members. "
-        "★ Uses the official entry IAssemblyDoc::CreateMateData(swMatePROFILECENTER=24) + "
-        "IAssemblyDoc::CreateMate (spec 240); the deprecated AddMate* family is NOT used.",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: the mate data is created but the mate call returns None. It ta"
+            "kes the entities, alignment, offset and flip settings below, yet CreateMate returns None on this build, so"
+            " no mate appears in the assembly; use ordinary mates instead."
+        ),
     ),
     ToolSpec(
         name="solidworks_weldment_create_weldment_profile",
@@ -195,25 +221,35 @@ SPECS_BATCH35 = [
         inject="model",
         params=[
             Param(
-                "sketch_ref", str, default="__current_selection__", description=_PICK
+                "sketch_ref", str, default="__current_selection__", description=(
+                                                                        "Declarative selection of the profile sketch, f"
+                                                                        "or example 'index:0' or '__current_selection__"
+                                                                        "'; no coordinates are passed. Defaults to '__c"
+                                                                        "urrent_selection__'."
+                                                                    )
             ),
             Param(
                 "output_path",
                 str,
-                description="Absolute path for the saved .sldlfp profile.",
+                description="Absolute path for the saved .sldlfp profile; the suffix must be .sldlfp.",
             ),
             Param(
                 "properties",
                 dict,
                 default=None,
-                description="Optional profile properties (★ omit for none).",
+                description=(
+                    "Optional custom properties written before saving. Defaults to None, which writes no properties."
+                ),
             ),
         ],
         evidence=(
             "Create a weldment profile from a declaratively selected sketch and write it to output_path. ★ The criterio"
             "n is the FILE."
         ),
-        doc="Create a weldment profile from a declaratively selected sketch and write it to "
-        "output_path. ★ The criterion is the FILE.",
+        doc=(
+            "Create a weldment profile file from a declaratively selected sketch and save it as .sldlfp. Writes the fil"
+            "e plus any custom properties you pass, creates the parent directory, and raises when the save fails or the"
+            " produced file is empty. The output path must end in .sldlfp."
+        ),
     ),
 ]

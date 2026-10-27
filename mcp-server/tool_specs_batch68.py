@@ -65,9 +65,11 @@ _BATCH68: list[ToolSpec] = [
             "★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。★ 官方语义：用**当前选中的封闭"
             "边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。★ 真机：树 6→7，新增 `曲面-基准面1`。"
         ),
-        doc="★ 平面区域：`IModelDoc2.InsertPlanarRefSurface()`（**零参数**，回 `bool`）。"
-        "★ 官方语义：用**当前选中的封闭边界**（草图 / 边）生成一张平面曲面 ⇒ ★ **调用前要选好边界**。"
-        "★ 真机：树 6→7，新增 `曲面-基准面1`。",
+        doc=(
+            "Insert a planar surface from the closed boundary selected in the active part. It writes a surface feature "
+            "and does not save the document; select the sketch or edge loop that closes the surface first, and success "
+            "needs both a non-false return and a new feature in the tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_offset_surface",
@@ -77,11 +79,14 @@ _BATCH68: list[ToolSpec] = [
         inject="model",
         param_alias={"thickness_mm": "thickness_mm", "reverse": "reverse"},
         params=[
-            Param("thickness_mm", float, description="与参考面的距离（毫米）。"),
+            Param("thickness_mm", float, description=(
+                                             "Distance from the reference face in millimetres, converted to metres once"
+                                             " at this boundary."
+                                         )),
             Param(
                 "reverse",
                 bool,
-                description="反向偏移（★ 布尔是标志，不是长度）。",
+                description="Whether to offset to the other side. Defaults to false.",
                 required=False,
                 default=False,
             ),
@@ -90,8 +95,11 @@ _BATCH68: list[ToolSpec] = [
             "★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。★ 真机：树 7→8，新增 `曲面-"
             "等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。"
         ),
-        doc="★ 等距曲面：`IModelDoc2.InsertOffsetSurface(Thickness, Reverse)`（回 `void`）。"
-        "★ 真机：树 7→8，新增 `曲面-等距1`。⚠ 官方回 `void` ⇒ 判据只能是**特征树增量**。",
+        doc=(
+            "Insert an offset surface at a distance from a reference face. It writes a surface feature and does not sav"
+            "e the document; the API returns nothing, so the only proof of success is a new feature in the tree, and th"
+            "e caller must select the reference face first."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_ruled_surface",
@@ -119,76 +127,88 @@ _BATCH68: list[ToolSpec] = [
             Param(
                 "ruled_type",
                 int,
-                description="官方 `Type`：0=Tangent to Surface · 1=Normal to Surface · "
-                "2=Tapered to Vector · 3=Perpendicular to Vector · 4=Sweep。",
+                description=(
+                    "Ruled surface type: 0=Tangent to Surface, 1=Normal to Surface, 2=Tapered to Vector, 3=Perpendicula"
+                    "r to Vector, 4=Sweep."
+                ),
             ),
             Param(
                 "length_mm",
                 float,
-                description="距离（毫米；★ 官方说只对 Tangent/Tapered/Perpendicular 有效）。",
+                description=(
+                    "Distance in millimetres; it applies only to the Tangent, Tapered and Perpendicular types. Defaults"
+                    " to 0."
+                ),
                 required=False,
                 default=0.0,
             ),
             Param(
                 "flip_pull_dir",
                 bool,
-                description="翻转拉伸方向（★ 官方说只对 Normal/Tapered 有效）。",
+                description=(
+                    "Whether to flip the pull direction; it applies only to the Normal and Tapered types. Defaults to f"
+                    "alse."
+                ),
                 required=False,
                 default=False,
             ),
             Param(
                 "flip_dir",
                 bool,
-                description="翻转方向（★ 官方说只对 Perpendicular 有效）。",
+                description=(
+                    "Whether to flip the direction; it applies only to the Perpendicular type. Defaults to false."
+                ),
                 required=False,
                 default=False,
             ),
             Param(
                 "trim_and_sew",
                 bool,
-                description="裁剪并缝合（★ 布尔是标志）。",
+                description="Whether to trim and sew the result. Defaults to true.",
                 required=False,
                 default=True,
             ),
             Param(
                 "angle_deg",
                 float,
-                description="角度（度；★ 官方说只对 Tapered to Vector 有效）。",
+                description="Angle in degrees; it applies only to the Tapered to Vector type. Defaults to 0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "coord_input",
                 bool,
-                description="启用坐标输入（★ 官方说只对 Sweep 有效）。",
+                description=(
+                    "Whether to use the coordinate input; it applies only to the Sweep type. Defaults to false."
+                ),
                 required=False,
                 default=False,
             ),
             Param(
                 "x_mm",
                 float,
-                description="X 坐标（毫米）。",
+                description="X coordinate in millimetres. Defaults to 0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "y_mm",
                 float,
-                description="Y 坐标（毫米）。",
+                description="Y coordinate in millimetres. Defaults to 0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "z_mm",
                 float,
-                description="Z 坐标（毫米）。",
+                description="Z coordinate in millimetres. Defaults to 0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "b_connect_surface",
                 bool,
-                description="移除连接曲面（★ 布尔是标志）。",
+                description="Whether to remove the connecting surface. Defaults to false.",
                 required=False,
                 default=False,
             ),
@@ -199,10 +219,10 @@ _BATCH68: list[ToolSpec] = [
             "按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsole"
             "te**，铁律 4）。"
         ),
-        doc="★ 直纹曲面：`IFeatureManager.InsertRuledSurfaceFromEdge2(…)`（**11 参**，回 `Feature`）。"
-        "⚠ 官方 Remarks 逐字：「If you select an edge with a **selection mark of 4**, the default "
-        "face is used.」⇒ ★ **调用前先把边按 `mark=4` 选中**。★ 真机：树 7→8，新增 `直纹曲面1`。"
-        "★ 用的是 `…FromEdge2`（★ `…FromEdge` 官方标 **Obsolete**，铁律 4）。",
+        doc=(
+            "Insert a ruled surface from a selected edge. It writes a surface feature and does not save the document; s"
+            "elect the edge with mark 4 before calling, and ruled_type picks which flavour of ruled surface is built."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_delete_face",
@@ -215,8 +235,7 @@ _BATCH68: list[ToolSpec] = [
             Param(
                 "option",
                 int,
-                description="`swFaceDeleteOption_e`：0=Default · 1=Patch · 2=Fill · "
-                "3=FillWithTangent（★ 默认 0）。",
+                description="Delete-face option: 0=Default, 1=Patch, 2=Fill, 3=FillWithTangent. Defaults to 0.",
                 required=False,
                 default=0,
             ),
@@ -226,10 +245,11 @@ _BATCH68: list[ToolSpec] = [
             "IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。★ 真机（`option=0`）：树 7→8，新增 "
             "`删除面1`。⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。"
         ),
-        doc="★ 删除面：**`IModelDocExtension.InsertDeleteFace(Option)`**（回 `bool`）。"
-        "⚠ ★ 入口在 **Extension** 上；★ `IModelDoc2.InsertDeleteFace2` 官方标 **Obsolete**（铁律 4）⇒ 用后继版。"
-        "★ 真机（`option=0`）：树 7→8，新增 `删除面1`。"
-        "⚠ 官方 Returns 逐字：True 表示**插入了 DeleteFace 特征**。",
+        doc=(
+            "Insert a delete-face feature for the selected face. It writes a feature and does not save the document; se"
+            "lect the face first, and option picks how the opening is handled, with success needing a new feature in th"
+            "e tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_replace_face",
@@ -244,9 +264,11 @@ _BATCH68: list[ToolSpec] = [
             "*选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实"
             "体**的面，不是曲面体的面）。"
         ),
-        doc="★ 替换面：`IModelDoc2.InsertFeatureReplaceFace()`（**零参数**，回 `void`）。"
-        "⚠ 官方 Remarks 逐字：调用前要**选中面** —— 要被替换的面 **mark=1**、替换面 **mark=2**。"
-        "★ 真机：树 7→8，新增 `替换面1`（★ 而前置要用**实体**的面，不是曲面体的面）。",
+        doc=(
+            "Replace a face with a surface face in the active part. It writes a replace-face feature and does not save "
+            "the document; select the face to replace with mark 1 and the replacement with mark 2, using solid faces ra"
+            "ther than surface bodies."
+        ),
     ),
 ]
 

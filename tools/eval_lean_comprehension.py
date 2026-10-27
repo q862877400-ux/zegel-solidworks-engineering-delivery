@@ -84,7 +84,7 @@ def _pool() -> dict:
     return {s.name: s for s in rc.all_specs()}
 
 
-def build(arm: str = "current") -> int:
+def build(arm: str = "current", pin: str = "") -> int:
     """★ 机械生成题集：每个维度取若干条，答案键从结构化字段取（不经人工）。"""
     specs = _pool()
     sys.path.insert(0, str(ROOT / "scripts"))
@@ -95,24 +95,35 @@ def build(arm: str = "current") -> int:
         if not p.exists():
             print("★ 没有候选首句文件 %s" % p.relative_to(ROOT))
             return 2
-        overrides = json.loads(p.read_text(encoding="utf-8"))
+        #: ★ 映射文件的外层是 `{"_comment": […], "tools": {...}}` ⇒ 必须取 `tools`
+        #:   （不取就会「一条都没覆盖上」而**看不出来** —— 实测踩过：ZH 臂量成了 EN）✓
+        _m = json.loads(p.read_text(encoding="utf-8"))
+        overrides = _m.get("tools", _m)
 
     items = []
+    #: ★★ `--pin <文件>`：把题集**钉死**在之前那一版（`{"rows":[{"tool","dim"}]}`）——
+    #:   否则改写后文档里新增的 `NOT USABLE` 标记会让题集变长，
+    #:   ★ 前后两版就**不是同一批题**，准确率不可比 ✗
+    if pin:
+        pinned = json.loads(Path(pin).read_text(encoding="utf-8")).get("rows") or []
+        for r in pinned:
+            items.append((r["tool"], r["dim"]))
+        items = [x for x in items if x[0] in specs]
     #: ★ 内部件/不可用两组**全部**收（它们本来就被规格 215 修过 ⇒ 用作「对照组」，
     #:   分数应当**保持高**；若掉下来说明改写把既有结论弄丢了）✓
-    for name, s in sorted(specs.items()):
+    for name, s in ([] if pin else sorted(specs.items())):
         doc = str(getattr(s, "doc", "") or "")
         if "generate_macro_with_guard" in doc:
             items.append((name, "internal"))
         if "仍不可用" in doc or "NOT USABLE" in doc:
             items.append((name, "available"))
     #: ★ 读写两组按名字排序取前若干条（确定性抽样，可复现）✓
-    ro = sorted(
+    ro = [] if pin else sorted(
         n
         for n, s in specs.items()
         if getattr(s, "read_only", None) is True or getattr(s, "writes", None) == ()
     )
-    wr = sorted(
+    wr = [] if pin else sorted(
         n
         for n, s in specs.items()
         if getattr(s, "read_only", None) is False
@@ -241,12 +252,13 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="lean 首句可懂性评测（规格 352 主判据）")
     ap.add_argument("--build", action="store_true")
     ap.add_argument("--arm", default="current", help="current / en / zh（试点用候选首句文件）")
+    ap.add_argument("--pin", default="", help="把题集钉死在这一版（保证前后可比）")
     ap.add_argument("--prompt", action="store_true")
     ap.add_argument("--judge", default="")
     ap.add_argument("--tag", default="baseline")
     args = ap.parse_args(argv)
     if args.build:
-        return build(args.arm)
+        return build(args.arm, args.pin)
     if args.prompt:
         return prompt()
     if args.judge:

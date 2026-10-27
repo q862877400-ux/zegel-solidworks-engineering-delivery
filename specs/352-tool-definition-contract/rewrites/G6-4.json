@@ -1,0 +1,123 @@
+{
+ "tools": {
+  "solidworks_catalog_exposure": {
+   "doc": "Report which tools a given exposure mode would present to the model. Read-only; autonomous mode keeps only planning entry points and the necessary query tools, compat mode keeps every tool.",
+   "params": {
+    "mode": "Exposure mode: 'autonomous' for planning entry points plus query tools, or 'compat' for every tool. Defaults to 'compat'."
+   }
+  },
+  "solidworks_simulation_create_study": {
+   "doc": "Create a static simulation study with a given name and report which entry point ran. Creates the study in the active document; an empty entry_name means no study was created, only static studies are supported, and the add-in loads on first use.",
+   "params": {
+    "study_name": "Name of the study to create; duplicates are not checked, so re-read with solidworks_simulation_list_studies to confirm what happened."
+   }
+  },
+  "solidworks_simulation_list_studies": {
+   "doc": "List every simulation study in the active document as index and name pairs. Read-only; it returns names only and never COM objects, and a study whose name cannot be read still appears with an empty name, so an empty list really means there are no studies.",
+   "params": {}
+  },
+  "solidworks_simulation_find_study": {
+   "doc": "Find one simulation study by its exact name. Read-only; a missing name returns found false instead of raising, so test the found flag rather than the presence of a name.",
+   "params": {
+    "study_name": "Exact study name to look for."
+   }
+  },
+  "solidworks_sheet_metal_create_base_flange": {
+   "doc": "Create a native base flange from a sketch, given thickness, bend radius and depth in millimetres. Creates a sheet-metal feature in the active part and raises instead of returning an empty object; only a closed contour is verified on this machine, because an open polyline path fails here.",
+   "params": {
+    "sketch_name": "Sketch name, or __current_selection__ to reuse the current selection instead of selecting by name.",
+    "thickness_mm": "Sheet thickness in millimetres, which must be greater than 0.",
+    "bend_radius_mm": "Bend radius in millimetres, which must be 0 or greater.",
+    "depth_mm": "Base flange depth in millimetres, which must be greater than 0.",
+    "k_factor": "K factor for the bend allowance, which must lie strictly between 0 and 1. Defaults to 0.42.",
+    "relief_ratio": "Relief ratio, which must be greater than 0. Defaults to 0.5.",
+    "reverse_direction": "Whether to reverse the depth direction. Defaults to false.",
+    "reverse_thickness": "Whether to reverse which side the thickness is added to. Defaults to false."
+   }
+  },
+  "solidworks_sheet_metal_create_one_bend": {
+   "doc": "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved. The CreateDefinition(35) sketch-bend entry point itself is correct, but the call never gets as far as writing, so it modifies nothing in the part.",
+   "params": {
+    "sketch_name": "Name of the sketch holding the bend line; '__current_selection__' reuses the current selection.",
+    "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",
+    "angle_deg": "Bend angle in degrees.",
+    "reverse_direction": "Whether to flip the bend direction. Defaults to false.",
+    "use_default_radius": "Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true."
+   }
+  },
+  "solidworks_add_sketch_relation": {
+   "doc": "Add one geometric relation such as sgHORIZONTAL or sgCOINCIDENT to the current sketch selection. Modifies the active sketch; the sg prefix is optional and matching ignores case, and sgEQUAL or sgMIDPOINT do not exist and are rejected.",
+   "params": {
+    "relation_type": "Relation name: sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, sgATMIDDLE or sgCOINCIDENT, where the sg prefix is optional and matching ignores case."
+   }
+  },
+  "solidworks_mirror_feature": {
+   "doc": "Mirror an existing feature about a named plane. Creates a mirrored feature in the active part; both names must match the feature tree exactly, and plane names follow the SolidWorks UI language, so on a localised install they are not the English names.",
+   "params": {
+    "feature_name": "Name of the feature to mirror, as it appears in the feature tree.",
+    "mirror_plane_name": "Name of the mirror plane in the language of the SolidWorks UI, which on a localised install is not the English name."
+   }
+  },
+  "solidworks_simulation_create_mesh_safely": {
+   "doc": "Mesh a study behind an element-size gate and a pre-solve memory gate. Modifies the study's mesh and then restores its mesh settings; read blocked when ok is false, since it names the gate that refused, and the memory estimate assumes the FFEPlus rule.",
+   "params": {
+    "study_name": "Name of an existing study, for example Study 1; empty uses the first study in the document. Defaults to empty.",
+    "units": "Unit system: 0=SI metre, 1=English, 2=Metric millimetre, and the value must match the unit of element_size_mm. Defaults to 2.",
+    "element_size_mm": "Global element size in millimetres, where 0 lets SolidWorks choose. Defaults to 0.0.",
+    "tolerance_mm": "Mesh tolerance in millimetres, where 0 uses the document default. Defaults to 0.0.",
+    "memory_budget_gb": "Refuse to build the mesh when the estimated solve memory exceeds this many gigabytes. Defaults to unset, which uses the document default."
+   }
+  },
+  "solidworks_simulation_solver_type": {
+   "doc": "Read which solver a static study will use, for example FFEPlus or a direct solver. Read-only; the value can read back as automatic while a direct solver is chosen at solve time, and when the read fails ok is false with a reason instead of a guessed default.",
+   "params": {
+    "study_name": "Name of an existing study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_measure_selection": {
+   "doc": "Measure the entities in a declarative selection and return the measured values. Read-only apart from rebuilding the selection before measuring; minus one means that measure does not apply to the current selection, and a selection that is empty is refused.",
+   "params": {
+    "arc_option": "How an arc distance is measured: 0=center to center, 1=minimum distance, 2=maximum distance. Defaults to 1.",
+    "selection": "Declarative selector: index:<n> for the n-th entity of the kind below, or __current_selection__; empty selects nothing and the call is refused. Defaults to empty.",
+    "selection_kind": "Entity kind to measure: FACE, EDGE or VERTEX, matching the entity you want measured. Defaults to FACE."
+   }
+  },
+  "solidworks_add_dimension": {
+   "doc": "Add one display dimension at the given text position to an entity chosen by a declarative selector. Creates a dimension in the active part; the position is given in millimetres and converted to metres, it works only on visible documents, and it is verified on a plain box but fails on a plate with a boss.",
+   "params": {
+    "x_mm": "X of the dimension text in millimetres; the official call takes metres and the conversion happens once here.",
+    "y_mm": "Y of the dimension text in millimetres.",
+    "selector": "Which entity to dimension: __current_selection__ for the existing selection, or index:<n> for the n-th entity of the kind below. Defaults to __current_selection__.",
+    "kind": "Entity kind to select: EDGE, FACE or VERTEX. Defaults to EDGE."
+   }
+  },
+  "solidworks_part_intersect": {
+   "doc": "Create an intersect feature from the selected solid bodies and planes in two official steps. Creates a feature in the active part; exclude takes comma-separated body indices, excluding the only body creates no feature, and the criterion is the body count plus the feature-tree growth.",
+   "params": {
+    "selection": "Declarative selection: __current_selection__, or comma-separated type:name pairs such as SOLIDBODY:Shell1 or PLANE:Plane6, where a missing type means SOLIDBODY. Defaults to __current_selection__.",
+    "cap_planar": "Whether to cap the planar openings of a surface into a closed volume. Defaults to false.",
+    "region_type": "Region type: intersecting (0), internal (1) or intersecting_and_internal (2). Defaults to intersecting_and_internal.",
+    "exclude": "Zero-based body indices to exclude, comma separated; the tool pads the boolean array to the body count. Defaults to empty, which excludes nothing.",
+    "merge": "Whether to merge all intersecting regions into one body. Defaults to true.",
+    "consume": "Whether to remove the input surfaces from the feature tree, which changes the tree beyond adding the new feature. Defaults to false."
+   }
+  },
+  "solidworks_weld_fillet_bead_report": {
+   "doc": "Insert a fillet weld bead and report whether the feature tree grew. Creates a weldment feature; the two edge indices select the intersecting edges, sizes are in millimetres and converted to metres, and it is not yet verified on a real machine, so a returned None does not prove failure.",
+   "params": {
+    "edge_index_1": "Zero-based index of the first intersecting edge. Defaults to 0.",
+    "edge_index_2": "Zero-based index of the second intersecting edge. Defaults to 1.",
+    "size_mm": "Weld leg size in millimetres, used for both sides. Defaults to 5.0.",
+    "length_mm": "Weld length in millimetres, where 0 means the whole edge. Defaults to 0.0.",
+    "bead_type_1": "First-side bead type: 0=full length, 1=intermittent, 2=staggered. Defaults to 0.",
+    "bead_type_2": "Second-side bead type: 0=full length, 1=intermittent, 2=staggered. Defaults to 0.",
+    "penetration_type_1": "First-side penetration: 0=full, 1=partial, 2=none. Defaults to 0.",
+    "penetration_type_2": "Second-side penetration: 0=full, 1=partial, 2=none. Defaults to 0.",
+    "penetration_value_1": "First-side penetration value in millimetres, used only when penetration_type_1 is 1. Defaults to 0.0.",
+    "penetration_value_2": "Second-side penetration value in millimetres, used only when penetration_type_2 is 1. Defaults to 0.0.",
+    "pitch_mm": "Pitch in millimetres, used for intermittent or staggered beads. Defaults to 0.0.",
+    "flag": "Weld flag: 0=single side without tangent propagation, 1=both sides, 2=tangent propagation, 3=both sides with tangent propagation. Defaults to 1."
+   }
+  }
+ }
+}

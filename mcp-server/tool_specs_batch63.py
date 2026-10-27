@@ -52,19 +52,24 @@ SPECS_BATCH63 = [
         function="select_face_by_selector_report",
         inject="model",
         params=[
-            Param("selection", str, description=_SEL),
+            Param("selection", str, description=(
+                                        "Face selector naming the direction the face faces: +x, -x, +y, -y, +z or -z. A"
+                                        "n illegal value raises rather than selecting nothing."
+                                    )),
             Param(
                 "mark",
                 int,
                 default=0,
-                description="★ 选择标记（★ 多引用特征读 mark 0/1/2 —— 规则 3 的第三句）",
+                description="Selection mark to attach to the face. Defaults to 0.",
             ),
             Param(
                 "append",
                 bool,
                 default=False,
-                description="★ 传给底层的 `Append`。⚠★ **真机：`append=False` 时它并没清掉上一次的选区**"
-                "（★ 回读 1 → 2）⇒ ★★ **要换一个面就自己先 `ClearSelection2`**",
+                description=(
+                    "Whether to append to the current selection; false does not clear a previous selection, so clear it"
+                    " yourself before picking a different face. Defaults to false."
+                ),
             ),
         ],
         evidence=(
@@ -74,11 +79,9 @@ SPECS_BATCH63 = [
             "在能力层内部算，★ 对外的参数**只有选择器**。"
         ),
         doc=(
-            "Select ONE face by a **declarative selector** and return a READ-BACK report. "
-            "★★ 这是「**按面上的点定位**」那条路（★ 事实 32：`SelectByID2` 对边/面**按名字不可行**，"
-            "而**按点可行**）—— ★ 而本工具把它包成**声明式**（★ 规则 3）。"
-            "★ `ok` 的判据是**回读计数 == 1**（★ **不是**返回值 —— 事实 8）。"
-            "★★ **不接受裸坐标**：★ 坐标在能力层内部算，★ 对外的参数**只有选择器**。"
+            "Select one face by a declarative direction selector and report the selection count. It modifies the select"
+            "ion set; it finds the face by a point on it rather than by name, and an illegal selector raises with the v"
+            "alid values listed."
         ),
     ),
 ]

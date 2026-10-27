@@ -1,0 +1,108 @@
+{
+ "tools": {
+  "solidworks_assembly_add_mate_checked": {
+   "doc": "Add a mate between two preselected entities with the 15-parameter AddMate5 call. Obsolete in the official API, where standard, advanced and mechanical mates should use CreateMate instead; both entities must already be selected with their marks, otherwise the call returns Nothing with an IncorrectSelections error. Creates the mate in the active assembly and clears the selection afterwards by default.",
+   "params": {
+    "mate_type": "Mate type as an official swMateType_e enum value, for example the parallel or distance type. Defaults to 0.",
+    "align": "Alignment as an official swMateAlign_e enum value. Defaults to 0.",
+    "flip": "Whether to flip the mated entities; the value only takes effect for a distance mate. Defaults to false.",
+    "distance_mm": "Distance of a distance mate in millimetres; converted to metres once at this boundary. Defaults to 0.0.",
+    "distance_upper_mm": "Absolute upper distance limit in millimetres; empty falls back to distance_mm, which means no limit. Defaults to empty.",
+    "distance_lower_mm": "Absolute lower distance limit in millimetres; empty falls back to distance_mm, which means no limit. Defaults to empty.",
+    "gear_num": "Numerator of the gear ratio for a gear mate, a dimensionless ratio. Defaults to 0.0.",
+    "gear_den": "Denominator of the gear ratio for a gear mate, a dimensionless ratio. Defaults to 0.0.",
+    "angle_deg": "Angle of an angle mate in degrees; converted to radians once at this boundary. Defaults to 0.0.",
+    "angle_upper_deg": "Absolute upper angle limit in degrees; empty falls back to angle_deg. Defaults to empty.",
+    "angle_lower_deg": "Absolute lower angle limit in degrees; empty falls back to angle_deg. Defaults to empty.",
+    "for_positioning_only": "Whether to place the entities by the mate relationship without returning a mate object. Defaults to false.",
+    "lock_rotation": "Whether to lock the component rotation; keep it false for concentric mates that feed a motion study. Defaults to false.",
+    "width_mate_option": "Width mate option as an official swMateWidthOptions_e enum value; this is the one argument AddMate5 adds over AddMate4. Defaults to 0.",
+    "name": "Optional mate name written onto the created mate; the write is best effort. Defaults to empty.",
+    "clear_selection": "Whether to clear the selection with ClearSelection2 once the mate is created. Defaults to true."
+   }
+  },
+  "solidworks_assembly_suppress_component": {
+   "doc": "Suppress one component of the active assembly by its feature-tree name. Modifies the component state of that assembly; pass the instance name shown in the tree, for example Part1-1, and not the part file name.",
+   "params": {
+    "component_name": "Component name as it appears in the feature tree, including the instance suffix, passed straight to the name-based selection. Defaults to empty, which selects nothing, so always pass a real name."
+   }
+  },
+  "solidworks_assembly_unsuppress_component": {
+   "doc": "Unsuppress one component of the active assembly by its feature-tree name. Modifies the component state of that assembly; pass the instance name shown in the tree, for example Part1-1, and not the part file name.",
+   "params": {
+    "component_name": "Component name as it appears in the feature tree, including the instance suffix such as <1>, passed straight to the name-based selection. Defaults to a literal placeholder string, so always pass a real name."
+   }
+  },
+  "solidworks_assembly_replace_component": {
+   "doc": "Replace one selected assembly component with another part file and reattach its mates. Modifies the component list of the active assembly; only the selected instance is replaced, the default configuration choice is used, and mates are reattached.",
+   "params": {
+    "old_component_name": "Component name of the instance to replace, including the instance suffix, selected by name before the call. Defaults to a literal placeholder string, so always pass a real name.",
+    "new_part_path": "Absolute path of the replacement part file passed as the official file-name argument. Defaults to a literal placeholder string, so always pass a real path."
+   }
+  },
+  "solidworks_assembly_dissolve": {
+   "doc": "Delete the selected subassembly by dissolving it. You must preselect the subassembly before the call; dissolving deletes the features it needs without asking, and it closes the component files without saving them, so save any modified component first.",
+   "params": {}
+  },
+  "solidworks_assembly_exit_edit_part_in_context": {
+   "doc": "Leave the in-context part editing state and return to the assembly. Modifies only the editing state of the active document; it is the counterpart of the call that starts editing a part inside an assembly.",
+   "params": {}
+  },
+  "solidworks_appearance_delete_render_material": {
+   "doc": "Delete one appearance definition from the active document by its appearance ID. The official member is documented as not supported since SolidWorks 2011 and its named successor cannot be called through this machine's binding, so this older entry point is kept; it modifies document appearances and returns the flag the call produced.",
+   "params": {
+    "index": "Appearance ID of the definition to delete, an identifier rather than a list position. Defaults to empty, so pass the ID read from the appearance listing.",
+    "cascade": "Whether to reassign and invalidate the remaining appearance IDs after the delete. Defaults to False."
+   }
+  },
+  "solidworks_simulation_ensure_addin": {
+   "doc": "Load the SolidWorks Simulation add-in and return its add-in object. Loading modifies the current session only and does not change the registry or the startup list, so a later session loads it again; it raises a RuntimeError carrying the LoadAddIn return code when the add-in still cannot be obtained.",
+   "params": {}
+  },
+  "solidworks_simulation_get_study_manager": {
+   "doc": "Get the Simulation study manager of the active document as a COM object. Read-only: it only fetches the manager and changes nothing, and the result is a COM object rather than JSON, so use the study listing tools when you need names you can read.",
+   "params": {}
+  },
+  "solidworks_simulation_create_study_by_type": {
+   "doc": "Create a simulation study of the given analysis type and mesh type and report which entry point ran. Creates the study in the active document and falls back from CreateNewStudy3 to the older entry points; an empty entry_name means no study was created, and only the static type is verified on this machine.",
+   "params": {
+    "name": "Study name handed to the official create call; the source treats it as required, so always pass a real name. Defaults to empty.",
+    "study_type": "Analysis study type: 0=static, 1=frequency, 2=buckling, 3=thermal, 4=optimization, 5=nonlinear, 6=drop test, 7=fatigue, 8=dynamic, 9=pressure vessel. Defaults to 0, the only type verified on this machine.",
+    "mesh_type": "Mesh type: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam. Defaults to 0."
+   }
+  },
+  "solidworks_simulation_default_solve_memory_budget_gb": {
+   "doc": "Get the default solve memory budget in gigabytes used by the pre-solve gate. Read-only and pure arithmetic with no SolidWorks call; the value is half the physical memory capped at 16 GB, and it falls back to a fixed constant when the physical memory cannot be read.",
+   "params": {}
+  },
+  "solidworks_simulation_mesh_settings_report": {
+   "doc": "Read the mesh settings that decide the size of a study's mesh. Read-only; it reports quality, mesher type, element size limits, looping options and the current element and node counts, and returns ok false with a reason when the study has no mesh object to read.",
+   "params": {}
+  },
+  "solidworks_assembly_add_parallel_mate": {
+   "doc": "Add a parallel mate between two named faces of the active assembly. It clears the selection, selects both faces by name with mark 1 and then creates the mate, so each name must be one the name-based selection accepts, for example Boss-Extrude1@Part1-1.",
+   "params": {
+    "face1_name": "Name of the first face to mate, selected by name before the second one. Defaults to empty, which selects nothing, so always pass a real face name.",
+    "face2_name": "Name of the second face, appended to the same selection with mark 1 after the first one. Defaults to empty, so always pass a real face name."
+   }
+  },
+  "solidworks_custom_property_count": {
+   "doc": "Return how many custom properties the document or one configuration has. Read-only; pass an empty configuration name to count the active configuration.",
+   "params": {
+    "config_name": "Configuration name to count in; empty reads the active configuration. Defaults to empty."
+   }
+  },
+  "solidworks_custom_property_names": {
+   "doc": "Return the custom property names of the document or one configuration as a list. Read-only; pass an empty configuration name to read the active configuration.",
+   "params": {
+    "config_name": "Configuration name to read from; empty reads the active configuration. Defaults to empty."
+   }
+  },
+  "solidworks_selector_resolve_direction": {
+   "doc": "Resolve a named direction selector to its x, y and z unit vector. Read-only and needs no SolidWorks call and no open document; take the accepted names from solidworks_available_direction_selectors, and it raises a selector error on an unknown name.",
+   "params": {
+    "selector": "Direction selector name, using the same outward-normal naming as the face selectors; see solidworks_available_direction_selectors for the accepted values."
+   }
+  }
+ }
+}

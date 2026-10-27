@@ -44,8 +44,10 @@ SPECS_BATCH42 = [
         evidence=(
             "Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). ★ Read-only."
         ),
-        doc="Return a per-sheet summary dict for the active drawing (★ 页名 / 视图数 等). "
-        "★ Read-only.",
+        doc=(
+            "Return a per-sheet summary of the active drawing, including sheet names and view counts. Read-only; it ans"
+            "wers several sheet questions in one call so the caller does not need two round trips."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_current_sheet_info",
@@ -57,6 +59,9 @@ SPECS_BATCH42 = [
         evidence=(
             "Return info about the sheet currently being edited as a dict. ★ Read-only."
         ),
-        doc="Return info about the sheet currently being edited as a dict. ★ Read-only.",
+        doc=(
+            "Return information about the sheet currently being edited as a dict. Read-only; use it when only the curre"
+            "nt sheet matters, and solidworks_drawing_list_sheets when every sheet is wanted."
+        ),
     ),
 ]

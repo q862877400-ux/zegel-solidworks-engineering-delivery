@@ -49,14 +49,17 @@ SPECS_BATCH5 = [
         evidence=(
             "Read the current selection set (optionally filtered to one selection mark)."
         ),
-        doc="Read the current selection set (optionally filtered to one selection mark).",
+        doc=(
+            "Read the current selection set as a list of objects. Read-only; an empty selection returns an empty list, "
+            "and mark restricts which selection marks are returned."
+        ),
         param_alias={},
         params=[
             Param(
                 "mark",
                 int,
                 default=-1,
-                description="Selection mark to read; -1 = all marks.",
+                description="Selection mark to read; -1 means all marks. Defaults to -1.",
             ),
         ],
     ),
@@ -69,7 +72,10 @@ SPECS_BATCH5 = [
         evidence=(
             "Clear the current selection set."
         ),
-        doc="Clear the current selection set.",
+        doc=(
+            "Clear the current selection set of the active document. Clears every selected entity, changes no geometry,"
+            " and does not save the document."
+        ),
         param_alias={},
         params=[],
     ),
@@ -82,14 +88,21 @@ SPECS_BATCH5 = [
         evidence=(
             "Switch the model to a named standard view (e.g. isometric, front, top)."
         ),
-        doc="Switch the model to a named standard view (e.g. isometric, front, top).",
+        doc=(
+            "Switch the model to a named standard view such as isometric, front or top. It changes the display orientat"
+            "ion and zooms to fit; a name it does not recognize is passed to SolidWorks as a view name. It changes no g"
+            "eometry and does not save the document."
+        ),
         param_alias={},
         params=[
             Param(
                 "view_name",
                 str,
                 default="isometric",
-                description="Standard view name; defaults to 'isometric'.",
+                description=(
+                    "Standard view name such as isometric, front or top; an unrecognized name is passed to SolidWorks a"
+                    "s a view name. Defaults to 'isometric'."
+                ),
             ),
         ],
     ),
@@ -103,7 +116,10 @@ SPECS_BATCH5 = [
         evidence=(
             "List the render materials available in the active document."
         ),
-        doc="List the render materials available in the active document.",
+        doc=(
+            "List the render-material appearance objects defined in the active document. Read-only; an empty document r"
+            "eturns an empty list, and the count is read separately to trim the returned array."
+        ),
         param_alias={},
         params=[],
     ),
@@ -118,8 +134,11 @@ SPECS_BATCH5 = [
             "Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, bac"
             "kground, scene"
         ),
-        doc="Collect appearance evidence for the active document (read-only, for verification). ★ 别名: appearance, "
-             "background, scene",
+        doc=(
+            "Collect appearance evidence for the active document as one row per appearance. Each row carries ambient, d"
+            "iffuse, specular, roughness, transparency and emission. Read-only; use it to verify that an appearance cha"
+            "nge actually landed."
+        ),
         param_alias={},
         params=[],
     ),

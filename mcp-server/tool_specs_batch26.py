@@ -140,18 +140,25 @@ SPECS_BATCH26 = [
         pre_call=_select_face,
         derived_args=_derive_model,
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty uses the first study "
+                                                     "in the document. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection for the restraint: '__current_selection__' or 'inde"
+                                        "x:<n>' for the n-th face on the body; the faces are read into the reference ar"
+                                        "ray, so the selection has to be the one this argument drives."
+                                    )),
         ],
         evidence=(
             "Apply a FIXED restraint (fixture) to the selected face(s) of a static study and return the ICWRestraint. ★"
             " The faces come from `selection` (declarative) because the capability layer assembles them into the offici"
             "al DispArray. ⚠ Requires the Simulation add-in; the first call loads it automatically."
         ),
-        doc="Apply a FIXED restraint (fixture) to the selected face(s) of a static study and "
-        "return the ICWRestraint. ★ The faces come from `selection` (declarative) because the "
-        "capability layer assembles them into the official DispArray. "
-        "⚠ Requires the Simulation add-in; the first call loads it automatically.",
+        doc=(
+            "Apply a fixed restraint to the faces of a static study. It creates the restraint and returns it; the faces"
+            " come from the declarative selection, and the Simulation add-in is loaded automatically on the first call."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_apply_normal_force",
@@ -173,21 +180,31 @@ SPECS_BATCH26 = [
         pre_call=_select_face,
         derived_args=_derive_model,
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty uses the first study "
+                                                     "in the document. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection for the force: '__current_selection__' or 'index:<n"
+                                        ">' for the n-th face on the body; the faces are read into the reference array,"
+                                        " so the selection has to be the one this argument drives."
+                                    )),
             Param(
                 "magnitude_n",
                 float,
-                description="Force magnitude in NEWTONS (the capability "
-                "layer uses force unit 0 = n_or_nm).",
+                description=(
+                    "Force magnitude in newtons, passed to the reference with force unit 0, which is newtons or newton-"
+                    "metres."
+                ),
             ),
         ],
         evidence=(
             "Apply a NORMAL force to the selected face(s) of a static study and return the ICWForce. ★ The faces come f"
             "rom `selection` (declarative). ⚠ The magnitude is in NEWTONS — it is not converted."
         ),
-        doc="Apply a NORMAL force to the selected face(s) of a static study and return the "
-        "ICWForce. ★ The faces come from `selection` (declarative). "
-        "⚠ The magnitude is in NEWTONS — it is not converted.",
+        doc=(
+            "Apply a normal force to the faces of a static study. It creates the force and returns it; the magnitude is"
+            " in newtons and is not converted, and the faces come from the declarative selection."
+        ),
     ),
 ]

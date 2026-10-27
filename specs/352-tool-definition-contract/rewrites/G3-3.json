@@ -1,0 +1,158 @@
+{
+ "tools": {
+  "solidworks_sketch_flip_entities": {
+   "doc": "Mirror the active sketch about an axis selected by axis_flag. Writes the sketch geometry and does not save the document; the axis_flag value table is documented in neither official source, so it is passed through as an integer without interpretation.",
+   "params": {
+    "axis_flag": "Axis flag passed through as an integer; the official sources document no value table for it."
+   }
+  },
+  "solidworks_sketch_count_lines": {
+   "doc": "Count the straight lines in a sketch. Read-only; it turns the raw number array of 12 floats per line into a count, so use it instead of the raw getter. Leave sketch_name empty for the current sketch, and name it for a sketch that is already closed.",
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty uses the current sketch, and a closed sketch is only reachable by name. Defaults to ''."
+   }
+  },
+  "solidworks_sketch_count_arcs": {
+   "doc": "Count the arcs in a sketch, where a full circle counts as one arc. Read-only; it turns the raw number array of 16 floats per arc into a count. One line plus one circle reports one line, one arc and two segments.",
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty uses the current sketch, and a closed sketch is only reachable by name. Defaults to ''."
+   }
+  },
+  "solidworks_sketch_count_segments": {
+   "doc": "Count every geometry segment in a sketch. Read-only; segments are all geometry units together, so this is not the line count and lines are only one kind among them. It takes the same sketch_name argument as the other count tools.",
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty uses the current sketch, and a closed sketch is only reachable by name. Defaults to ''."
+   }
+  },
+  "solidworks_sketch_is_3d": {
+   "doc": "Report whether a sketch is a 3D sketch. Read-only; it answers one boolean and takes sketch_name empty for the current sketch or set to a named sketch.",
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty uses the current sketch, and a closed sketch is only reachable by name. Defaults to ''."
+   }
+  },
+  "solidworks_count_sketch_relations": {
+   "doc": "Count the geometric relations in the active sketch, optionally restricted by relation type. Read-only; 0 counts all relations, and -1 is not a valid value because it silently returns 0. It needs an active sketch and raises when there is none.",
+   "params": {
+    "filter": "Relation types to count: 0=all, 1=dangling, 2=over-defining, 3=external, 4=defined-in-context, 5=locked, 6=broken, 7=selected entities; -1 is invalid and silently returns 0. Defaults to 0."
+   }
+  },
+  "solidworks_delete_all_sketch_relations": {
+   "doc": "Delete every geometric relation in the active sketch. Deletes the sketch constraints, leaves the dimensions untouched, and does not save the document; count the relations before and after, because the boolean return value is not trustworthy.",
+   "params": {}
+  },
+  "solidworks_delete_sketch_relation": {
+   "doc": "Delete one geometric relation from the active sketch by its index. Deletes that constraint and does not save the document; read the relation count back to prove it, and an out-of-range index raises instead of doing nothing.",
+   "params": {
+    "index": "Relation index inside the relation array built with filter; an out-of-range index raises.",
+    "filter": "Relation type filter used to build the array the index points into; -1 means no filter. Defaults to -1."
+   }
+  },
+  "solidworks_sketch_by_name": {
+   "doc": "Get a sketch object from its sketch feature name. Read-only; it is the only reliable route once a sketch is closed, because both active-sketch getters return nothing then. A name that does not exist raises instead of returning an empty object.",
+   "params": {
+    "name": "Sketch feature name as it appears in the feature tree; the name follows the UI language, so read it from the tree."
+   }
+  },
+  "solidworks_extrude_boss": {
+   "doc": "Create a solid boss by extruding an existing sketch. Writes a boss feature, adds material and does not save the document; the sketch is selected for you and must already exist in the feature tree.",
+   "params": {
+    "sketch_name": "Name of an existing sketch such as Sketch1; create it first with solidworks_sketch_start, the sketch add tools and solidworks_sketch_end.",
+    "depth_mm": "Extrusion depth in millimetres, which must be greater than 0; converted to metres once at this boundary.",
+    "direction": "Whether to extrude along the sketch normal; false reverses it. Defaults to true.",
+    "merge": "Whether to merge the result into the existing body; false keeps it as a new body. Defaults to true."
+   }
+  },
+  "solidworks_extrude_cut": {
+   "doc": "Create a cut by extruding an existing sketch into or through the part. Writes a cut feature, removes material and does not save the document; a depth of 0 means through all.",
+   "params": {
+    "sketch_name": "Name of an existing sketch such as Sketch1; create it first with solidworks_sketch_start, the sketch add tools and solidworks_sketch_end.",
+    "depth_mm": "Cut depth in millimetres; 0 means through all, and the value is converted to metres at this boundary.",
+    "direction": "Whether to extrude along the sketch normal; false reverses it. Defaults to true.",
+    "flip": "Whether to flip the cut direction. Defaults to false."
+   }
+  },
+  "solidworks_extrude_midplane": {
+   "doc": "Create a boss by extruding a sketch symmetrically about its plane. Writes a boss feature and does not save the document; total_depth_mm is split equally, so each side gets half of it.",
+   "params": {
+    "sketch_name": "Name of an existing sketch such as Sketch1; create it first with solidworks_sketch_start, the sketch add tools and solidworks_sketch_end.",
+    "total_depth_mm": "Total depth in millimetres, split equally so each side gets half of it; converted to metres at this boundary."
+   }
+  },
+  "solidworks_insert_explode_line_sketch": {
+   "doc": "Insert or close the explode-line sketch of the active assembly. It toggles the sketch on each call, writes a sketch into the assembly and does not save the document. The assembly must already have an exploded view, and the feature tree plus the active sketch are read back because the boolean return cannot tell insert from close.",
+   "params": {}
+  },
+  "solidworks_create_speedpak": {
+   "doc": "Create a SpeedPak simplified configuration on a selected sub-assembly. Writes the component state and does not save the document; the top-level feature tree does not show SpeedPak, so the component SpeedPak flag is read before and after. Each precondition is reported as its own boolean, because an invalid reading looks the same as a feature that was not built.",
+   "params": {
+    "speedpak_type": "SpeedPak type: 1=Mated, 2=Graphics. Defaults to 1.",
+    "component_name": "Name of the sub-assembly component to select. Defaults to None, in which case the tool resolves the name from the component list itself.",
+    "component_index": "Index of the component to use when component_name is empty. Defaults to 0."
+   }
+  },
+  "solidworks_insert_local_curve_driven_pattern": {
+   "doc": "Skip this tool, NOT USABLE on this machine: both valid runs created no feature. The entry point is obsolete as well; both selection marks were held while the feature tree gained nothing, so the remaining value is diagnosis, since the mark-1 and mark-2 preconditions are reported separately. Do not confuse it with the property-based curve-driven pattern, which is a different path.",
+   "params": {
+    "flip_dir1": "Whether to flip direction 1. Defaults to false.",
+    "num1": "Number of instances in direction 1, including the seed. Defaults to 3.",
+    "equal_spacing1": "Whether to space direction 1 equally. Defaults to false.",
+    "spacing1_mm": "Spacing between instances along the curve in millimetres; it only matters when equal_spacing1 is true. Defaults to 30.0.",
+    "reference_point": "Reference point enum for the curve pattern. Defaults to 0.",
+    "curve_method": "Curve method enum for direction 1. Defaults to 0.",
+    "align_method": "Alignment enum for the pattern. Defaults to 0.",
+    "direction2": "Whether to use a second direction. Defaults to false.",
+    "flip_dir2": "Whether to flip direction 2. Defaults to false.",
+    "num2": "Number of instances in direction 2. Defaults to 1.",
+    "equal_spacing2": "Whether to space direction 2 equally. Defaults to false.",
+    "spacing2_mm": "Spacing between instances in direction 2 in millimetres. Defaults to 0.0.",
+    "pattern_seed_only": "Whether direction 2 copies only the seeds of direction 1. Defaults to false.",
+    "seed_feature": "Name of the body or feature to pattern, selected with mark 1. Defaults to None, which fails the first precondition.",
+    "curve_sketch": "Name of the curve, edge or sketch entity for direction 1, selected with mark 2. Defaults to None, which fails the second precondition."
+   }
+  },
+  "solidworks_drawing_sheet_scale": {
+   "doc": "Read the scale of a drawing sheet and return it as a ratio such as 1:5. Read-only; it reads the sheet properties and reports the two scale numbers, and an empty sheet_name means the current sheet.",
+   "params": {
+    "sheet_name": "Name of the drawing sheet; empty means the current sheet. Defaults to ''."
+   }
+  },
+  "solidworks_drawing_set_sheet_scale": {
+   "doc": "Set a drawing sheet scale and read it back. Modifies the sheet scale and does not save the document; ok is true only when the call returns true and the read-back scale really changed. The numerator must be 1, because this build forces it and ignores any other value.",
+   "params": {
+    "numerator": "Scale numerator; only 1 is accepted, because this build forces 1 and ignores any other value.",
+    "denominator": "Scale denominator, which must be greater than 0.",
+    "scale_anno_position": "Whether to also scale annotation positions. Defaults to false.",
+    "scale_anno_text_height": "Whether to also scale annotation text height. Defaults to false.",
+    "sheet_name": "Name of the drawing sheet; empty means the current sheet. Defaults to ''."
+   }
+  },
+  "solidworks_boundary_boss_report": {
+   "doc": "Create a boundary boss feature from two faces and return a read-back report. Writes a solid feature into the active part and does not save the document; the faces are chosen by face index and both are selected for you after the selection is cleared.",
+   "params": {
+    "face_index_1": "Index of the first face on the body. Defaults to 0.",
+    "face_index_2": "Index of the second face on the body. Defaults to 1.",
+    "influence_type": "Influence type: 0=Global, 1=To Next Curve, 2=To Next Sharp, 3=To Next Edge. Defaults to 0.",
+    "trim_curves": "Whether to trim the curves. Defaults to false.",
+    "blend_closed": "Whether to close the blend. Defaults to false.",
+    "tangency_deg": "Tangency angle in degrees, converted to radians inside. Defaults to 15.0.",
+    "merge_body": "Whether to merge into the existing bodies of a multibody part. Defaults to true."
+   }
+  },
+  "solidworks_boundary_surface_report": {
+   "doc": "Create a boundary surface from two faces and return a read-back report. Writes a surface body into the active part and does not save the document; it is the same entry point as the boundary boss with the surface type, so no solid is added. The faces are chosen by face index and both are selected for you after the selection is cleared.",
+   "params": {
+    "face_index_1": "Index of the first face on the body. Defaults to 0.",
+    "face_index_2": "Index of the second face on the body. Defaults to 1.",
+    "influence_type": "Influence type: 0=Global, 1=To Next Curve, 2=To Next Sharp, 3=To Next Edge. Defaults to 0.",
+    "trim_curves": "Whether to trim the curves. Defaults to false.",
+    "blend_closed": "Whether to close the blend. Defaults to false.",
+    "tangency_deg": "Tangency angle in degrees, converted to radians inside. Defaults to 15.0.",
+    "merge_body": "Whether to merge into the existing bodies of a multibody part. Defaults to true."
+   }
+  },
+  "solidworks_read_sensors": {
+   "doc": "List the sensors in the active document and read their current values. Read-only; it walks the feature tree because SolidWorks has no member that lists all sensors, and an empty document correctly returns a count of 0.",
+   "params": {}
+  }
+ }
+}

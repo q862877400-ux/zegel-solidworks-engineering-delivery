@@ -1,0 +1,137 @@
+{
+ "tools": {
+  "solidworks_config_inspect": {
+   "doc": "List the document's configurations and the active one as a JSON-able dict. Read-only: it reports what exists and changes nothing, so call it before creating, activating or updating a configuration.",
+   "params": {}
+  },
+  "solidworks_config_create": {
+   "doc": "Create a configuration and read the configuration list back. It writes the new configuration into the open document and does not save it, so the configuration exists only in that document until you save.",
+   "params": {
+    "configuration_name": "Name of the configuration to create.",
+    "comment": "Optional comment stored with the configuration; defaults to an empty string.",
+    "alternate_name": "Optional alternate name for the configuration; defaults to an empty string.",
+    "activate": "Whether to activate the new configuration after creating it; defaults to true.",
+    "rebuild": "Whether to rebuild the model after creating it; defaults to true."
+   }
+  },
+  "solidworks_config_activate": {
+   "doc": "Activate an existing configuration and verify the switch by reading the active configuration back. It changes the active configuration and does not save the document, so the switch reaches disk only when you save.",
+   "params": {
+    "configuration_name": "Name of an existing configuration to activate.",
+    "rebuild": "Whether to rebuild after activating; defaults to true."
+   }
+  },
+  "solidworks_config_read_custom_property": {
+   "doc": "Read one custom property value together with its type and whether it is editable. Read-only: writing is solidworks_config_set_custom_properties, and an empty configuration name reads the default configuration.",
+   "params": {
+    "name": "Exact custom property name as stored; property names follow the UI language and are case sensitive.",
+    "configuration_name": "Configuration to read from; empty reads the default configuration. Defaults to empty."
+   }
+  },
+  "solidworks_config_set_custom_properties": {
+   "doc": "Set several custom properties and return the read-back list. It writes the values into the open document and does not save it, so call the save tool afterwards when the values must persist.",
+   "params": {
+    "properties": "Mapping of property name to value; every value must be a string.",
+    "configuration_name": "Configuration to write to; empty writes the default configuration. Defaults to empty."
+   }
+  },
+  "solidworks_config_update_dimension": {
+   "doc": "Update one exact named dimension to a new millimetre value and report before and after. It writes the value and rebuilds by default while leaving the document unsaved, so an unwanted change can still be dropped by not saving.",
+   "params": {
+    "dimension_name": "Exact dimension name as it appears in the tree, for example D1@Sketch1.",
+    "value_mm": "New dimension value in millimetres.",
+    "configuration_mode": "Which configurations to change: 'current' for the active configuration, 'all' for every configuration, or 'specific' for the names in configuration_names. Defaults to 'current'.",
+    "configuration_names": "Configuration names to change when configuration_mode is 'specific'; defaults to null, which names no configuration.",
+    "rebuild": "Whether to rebuild after the change; defaults to true."
+   }
+  },
+  "solidworks_export_step": {
+   "doc": "Export the active document to a STEP file at output_path and confirm the file exists and is not empty. It writes the file, and the file itself is the criterion of success rather than the return value.",
+   "params": {
+    "output_path": "Absolute path of the STEP file to write, for example D:/work/part.step."
+   }
+  },
+  "solidworks_export_stl": {
+   "doc": "Export the active document to an STL mesh at output_path and confirm the file exists and is not empty. It writes the file; quality chooses the tessellation, and the file itself is the criterion of success.",
+   "params": {
+    "output_path": "Absolute path of the STL file to write, for example D:/work/part.stl.",
+    "quality": "Mesh quality: 'coarse' or 'fine'. Defaults to 'fine'."
+   }
+  },
+  "solidworks_export_iges": {
+   "doc": "Export the active document to an IGES file at output_path and confirm the file exists and is not empty. It writes the file, and the file itself is the criterion of success rather than the return value.",
+   "params": {
+    "output_path": "Absolute path of the IGES file to write, for example D:/work/part.igs."
+   }
+  },
+  "solidworks_export_parasolid": {
+   "doc": "Export the active document to a Parasolid file at output_path and confirm the file exists and is not empty. It writes the file, and the file itself is the criterion of success rather than the return value.",
+   "params": {
+    "output_path": "Absolute path of the Parasolid file to write, for example D:/work/part.x_t."
+   }
+  },
+  "solidworks_export_dxf": {
+   "doc": "Export the active document to a DXF file at output_path and confirm the file exists and is not empty. It writes the file; a drawing goes out as a drawing DXF, while a part takes the sheet-metal flat-pattern path and is refused unless it is a saved sheet-metal part.",
+   "params": {
+    "output_path": "Absolute path of the DXF file to write, for example D:/work/flat.dxf."
+   }
+  },
+  "solidworks_export_bmp": {
+   "doc": "Export a BMP image of the active document to output_path and confirm the file exists and is not empty. It writes the image from the current view; the pixel sizes are counts rather than lengths, and zero means the document default.",
+   "params": {
+    "output_path": "Absolute path of the BMP file to write, for example D:/work/view.bmp.",
+    "pixel_width": "Image width in pixels; 0 uses the document default. Defaults to 0.",
+    "pixel_height": "Image height in pixels; 0 uses the document default. Defaults to 0."
+   }
+  },
+  "solidworks_automation_explain_hresult": {
+   "doc": "Turn an HRESULT integer into plain words using this repository's own table. Read-only and pure: it calls no SolidWorks, and when the code is not in the table it says so instead of inventing a meaning.",
+   "params": {
+    "code": "The HRESULT as a signed integer, for example -2147352571 for a type mismatch."
+   }
+  },
+  "solidworks_automation_enter_command_lock": {
+   "doc": "Set the SolidWorks CommandInProgress flag so operations that would pop a modal dialog are blocked. It modifies session state only, and an unreleased lock keeps SolidWorks refusing operations, so always pair it with solidworks_automation_exit_command_lock.",
+   "params": {}
+  },
+  "solidworks_automation_exit_command_lock": {
+   "doc": "Release the command lock that solidworks_automation_enter_command_lock set. It modifies session state back to normal; skipping this call leaves SolidWorks refusing operations.",
+   "params": {}
+  },
+  "solidworks_automation_is_command_locked": {
+   "doc": "Read whether the CommandInProgress flag is currently set. Read-only: it inspects the flag and changes nothing, so use it to check whether a command lock is still outstanding.",
+   "params": {}
+  },
+  "solidworks_automation_set_flag": {
+   "doc": "Set one SolidWorks preference switch, typically to mute a dialog that an operation would raise. It modifies a documented preference that can be restored, so prefer the flag names this repository already maps to real preference ids.",
+   "params": {
+    "pref": "Preference flag name; prefer a name from the repository dialog-suppressor table, which maps to real preference ids.",
+    "value": "True to enable the flag, False to disable it."
+   }
+  },
+  "solidworks_automation_get_flag": {
+   "doc": "Read one SolidWorks preference switch back by name. Read-only; pass the same flag name that solidworks_automation_set_flag accepts.",
+   "params": {
+    "pref": "Preference flag name, using the same table as solidworks_automation_set_flag."
+   }
+  },
+  "solidworks_api_deprecated_successor": {
+   "doc": "Map an official member name to the successor this repository knows, and return null when it knows none. Read-only and pure: it never guesses, and null also means the name maps to different successors on different interfaces, so pass the interface then.",
+   "params": {
+    "member": "Official member name, for example CreateDefinition or AddMate2.",
+    "interface": "Interface name such as IEntity, needed when one member name maps to different successors; defaults to empty, which answers only unambiguous names."
+   }
+  },
+  "solidworks_repo_find_real_implementations": {
+   "doc": "Search the repository for real implementations of a member and return file and line hits. Read-only and filesystem-only: the machine-generated reflection dumps are excluded, so a hit marks where the member is actually used rather than merely mentioned.",
+   "params": {
+    "needle": "Member name or fragment to search for, for example HoleWizard5.",
+    "root": "Directory to search; defaults to empty, which means this repository's scripts directory rather than the current directory."
+   }
+  },
+  "solidworks_session_busy_status": {
+   "doc": "Report whether SolidWorks is busy, with the evidence that decided it. Read-only: it inspects windows and never touches the model, and a progress window counts only when it belongs to the SolidWorks process family.",
+   "params": {}
+  }
+ }
+}

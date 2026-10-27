@@ -125,52 +125,84 @@ SPECS_BATCH29 = [
         "solidworks_simulation_apply_pressure",
         "Apply a Pressure Load to the Selected Faces",
         "apply_pressure_report",
-        "Apply a PRESSURE load to the selected face(s) of a static study and return a "
-        "READ-BACK report (`count_before` / `count_after`), not a COM object. "
-        "★ `ok` means the load/restraint count went up by exactly one — the criterion is "
-        "read-back, never the return value. "
-        "⚠ Requires the Simulation add-in; the first call loads it automatically.",
+        (
+                            "Apply a pressure load to the selected faces of a static study and report the load count be"
+                            "fore and after. Modifies the study by adding one load, the pass criterion is that the coun"
+                            "t grows by exactly one, and it needs the Simulation add-in, which loads on first use."
+                        ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
-            Param("pressure_type", int, default=0, description=_PTYPE),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face or entity selection the load applies to: __current_selection_"
+                                        "_, or index:<n> for the n-th face of the body."
+                                    )),
+            Param("pressure_type", int, default=0, description=(
+                                                       "Pressure type: swsPressureType_e, 0 = normal to each face, 1 = "
+                                                       "use reference geometry. Defaults to 0."
+                                                   )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_torque",
         "Apply a Torque Load to the Selected Faces",
         "apply_torque_report",
-        "Apply a TORQUE load (`AddForce` with swsForceTypeTorque) to the selected face(s) of a "
-        "static study and return a READ-BACK report (`count_before` / `count_after`). "
-        "★ The result is judged by read-back, not by a return object. "
-        "⚠ Requires the Simulation add-in.",
+        (
+                            "Apply a torque load to the selected faces of a static study and report the load count befo"
+                            "re and after. Modifies the study by adding one load of the torque force type, and the pass"
+                            " criterion is that the count grows by exactly one."
+                        ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face or entity selection the load applies to: __current_selection_"
+                                        "_, or index:<n> for the n-th face of the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_gravity",
         "Apply a Gravity Load to the Selected Entity",
         "apply_gravity_report",
-        "Apply a GRAVITY load to the selected entity of a static study and return a READ-BACK "
-        "report. ⚠ The official parameter is a SINGLE entity (DispEntity), so only the FIRST "
-        "entity of the selection is used. ★ Judged by read-back, not by a return object.",
+        (
+                            "Apply a gravity load to the selected entity of a static study and report the load count be"
+                            "fore and after. Modifies the study by adding one load; only the first selected entity is u"
+                            "sed, because the official parameter takes a single entity."
+                        ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face or entity selection the load applies to: __current_selection_"
+                                        "_, or index:<n> for the n-th face of the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_centrifugal_force",
         "Apply a Centrifugal Force to the Selected Entity",
         "apply_centrifugal_force_report",
-        "Apply a CENTRIFUGAL FORCE to the selected entity of a static study and return a "
-        "READ-BACK report. ⚠ The official parameter is a SINGLE entity, so only the FIRST "
-        "entity of the selection is used. ★ Judged by read-back, not by a return object.",
+        (
+                            "Apply a centrifugal force to the selected entity of a static study and report the load cou"
+                            "nt before and after. Modifies the study by adding one load; only the first selected entity"
+                            " is used, because the official parameter takes a single entity."
+                        ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face or entity selection the load applies to: __current_selection_"
+                                        "_, or index:<n> for the n-th face of the body."
+                                    )),
         ],
     ),
 ]

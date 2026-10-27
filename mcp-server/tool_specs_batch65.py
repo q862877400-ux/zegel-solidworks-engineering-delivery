@@ -43,21 +43,27 @@ SPECS_BATCH65 = [
             "y3_mm": "y3",
         },
         params=[
-            Param("x1_mm", float, description="Corner 1 X, mm."),
-            Param("y1_mm", float, description="Corner 1 Y, mm."),
-            Param("x2_mm", float, description="Corner 2 X, mm."),
-            Param("y2_mm", float, description="Corner 2 Y, mm."),
+            Param("x1_mm", float, description="X of the first corner in millimetres, from the sketch origin."),
+            Param("y1_mm", float, description="Y of the first corner in millimetres."),
+            Param("x2_mm", float, description="X of the second corner in millimetres."),
+            Param("y2_mm", float, description="Y of the second corner in millimetres."),
             Param(
-                "x3_mm", float, description="Third point X (sets the angle/height), mm."
+                "x3_mm", float, description=(
+                                    "X of the third point in millimetres, which sets the rectangle angle and height."
+                                )
             ),
-            Param("y3_mm", float, description="Third point Y, mm."),
+            Param("y3_mm", float, description="Y of the third point in millimetres."),
         ],
         evidence=(
             "Draw a 3-point corner rectangle at any angle.  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选的"
             "具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `"
             "solidworks_sketch_end`。"
         ),
-        doc="Draw a 3-point corner rectangle at any angle. " + _GEOM,
+        doc=(
+            "Draw a corner rectangle at any angle from three points in the open sketch. Creates sketch geometry in mill"
+            "imetres measured from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then c"
+            "all solidworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_3point_center_rectangle",
@@ -74,19 +80,23 @@ SPECS_BATCH65 = [
             "y3_mm": "y3",
         },
         params=[
-            Param("center_x_mm", float, description="Centre X, mm."),
-            Param("center_y_mm", float, description="Centre Y, mm."),
-            Param("x2_mm", float, description="A corner X, mm."),
-            Param("y2_mm", float, description="A corner Y, mm."),
-            Param("x3_mm", float, description="Third point X (sets the height), mm."),
-            Param("y3_mm", float, description="Third point Y, mm."),
+            Param("center_x_mm", float, description="X of the rectangle centre in millimetres, from the sketch origin."),
+            Param("center_y_mm", float, description="Y of the rectangle centre in millimetres."),
+            Param("x2_mm", float, description="X of a corner in millimetres."),
+            Param("y2_mm", float, description="Y of that corner in millimetres."),
+            Param("x3_mm", float, description="X of the third point in millimetres, which sets the rectangle height."),
+            Param("y3_mm", float, description="Y of the third point in millimetres."),
         ],
         evidence=(
             "Draw a 3-point CENTER rectangle (first point is the centre).  ★ 草图图元按官方文档属**规则 3 的书面例外**"
             "（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_star"
             "t`，再画，最后 `solidworks_sketch_end`。"
         ),
-        doc="Draw a 3-point CENTER rectangle (first point is the centre). " + _GEOM,
+        doc=(
+            "Draw a centre rectangle from its centre point, one corner and one more point. Creates sketch geometry in m"
+            "illimetres from the sketch origin; the first point is the centre, and the sketch must be open, so start it"
+            " with solidworks_sketch_start and finish with solidworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_parallelogram",
@@ -103,20 +113,23 @@ SPECS_BATCH65 = [
             "y3_mm": "y3",
         },
         params=[
-            Param("x1_mm", float, description="Corner X, mm."),
-            Param("y1_mm", float, description="Corner Y, mm."),
-            Param("x2_mm", float, description="End of one adjacent edge, X, mm."),
-            Param("y2_mm", float, description="End of one adjacent edge, Y, mm."),
-            Param("x3_mm", float, description="End of the other adjacent edge, X, mm."),
-            Param("y3_mm", float, description="End of the other adjacent edge, Y, mm."),
+            Param("x1_mm", float, description="X of the corner in millimetres, from the sketch origin."),
+            Param("y1_mm", float, description="Y of the corner in millimetres."),
+            Param("x2_mm", float, description="X of the end of the first adjacent edge in millimetres."),
+            Param("y2_mm", float, description="Y of the end of the first adjacent edge in millimetres."),
+            Param("x3_mm", float, description="X of the end of the second adjacent edge in millimetres."),
+            Param("y3_mm", float, description="Y of the end of the second adjacent edge in millimetres."),
         ],
         evidence=(
             "Draw a parallelogram (a corner plus the two adjacent edge endpoints).  ★ 草图图元按官方文档属**规则 3 的书"
             "面例外**（图元没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_ske"
             "tch_start`，再画，最后 `solidworks_sketch_end`。"
         ),
-        doc="Draw a parallelogram (a corner plus the two adjacent edge endpoints). "
-        + _GEOM,
+        doc=(
+            "Draw a parallelogram from one corner and the ends of its two adjacent edges. Creates sketch geometry in mi"
+            "llimetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call sol"
+            "idworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_tangent_arc",
@@ -131,22 +144,25 @@ SPECS_BATCH65 = [
             "through_y_mm": "y2",
         },
         params=[
-            Param("end_x_mm", float, description="Arc end X, mm."),
-            Param("end_y_mm", float, description="Arc end Y, mm."),
+            Param("end_x_mm", float, description="X of the arc end in millimetres, from the sketch origin."),
+            Param("end_y_mm", float, description="Y of the arc end in millimetres."),
             Param(
                 "through_x_mm",
                 float,
-                description="A point the arc passes through, X, mm.",
+                description="X of a point the arc passes through, in millimetres.",
             ),
             Param(
                 "through_y_mm",
                 float,
-                description="A point the arc passes through, Y, mm.",
+                description="Y of that point the arc passes through, in millimetres.",
             ),
             Param(
                 "arc_type",
                 int,
-                description="Official ArcType (int). ⚠ 取值表未在官方源查到 ⇒ 默认 1，未核实。",
+                description=(
+                    "Arc type as an integer passed through unchanged, because its value table could not be found in the"
+                    " available sources; defaults to 1."
+                ),
                 required=False,
                 default=1,
             ),
@@ -157,8 +173,9 @@ SPECS_BATCH65 = [
             "点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
         ),
         doc=(
-            "Draw an arc TANGENT to the last sketch segment. ⚠ The sketch must already contain a "
-            "segment to be tangent to." + _GEOM
+            "Draw an arc tangent to the last sketch segment, through one point and ending at another. Creates sketch ge"
+            "ometry in millimetres from the sketch origin; the open sketch must already hold the segment the arc stays "
+            "tangent to, and arc_type is an integer whose value table no available source documents."
         ),
     ),
     ToolSpec(
@@ -176,19 +193,23 @@ SPECS_BATCH65 = [
             "through_y_mm": "y3",
         },
         params=[
-            Param("start_x_mm", float, description="Start X, mm."),
-            Param("start_y_mm", float, description="Start Y, mm."),
-            Param("end_x_mm", float, description="End X, mm."),
-            Param("end_y_mm", float, description="End Y, mm."),
-            Param("through_x_mm", float, description="A point on the arc, X, mm."),
-            Param("through_y_mm", float, description="A point on the arc, Y, mm."),
+            Param("start_x_mm", float, description="X of the arc start in millimetres, from the sketch origin."),
+            Param("start_y_mm", float, description="Y of the arc start in millimetres."),
+            Param("end_x_mm", float, description="X of the arc end in millimetres."),
+            Param("end_y_mm", float, description="Y of the arc end in millimetres."),
+            Param("through_x_mm", float, description="X of a point on the arc, in millimetres."),
+            Param("through_y_mm", float, description="Y of that point on the arc, in millimetres."),
         ],
         evidence=(
             "Draw a 3-point arc (start / end / a point on the arc).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元"
             "没有可选的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再"
             "画，最后 `solidworks_sketch_end`。"
         ),
-        doc="Draw a 3-point arc (start / end / a point on the arc). " + _GEOM,
+        doc=(
+            "Draw an arc through three points: its start, its end and one point on the arc. Creates sketch geometry in "
+            "millimetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call s"
+            "olidworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_partial_ellipse",
@@ -209,20 +230,20 @@ SPECS_BATCH65 = [
             "end_y_mm": "y2",
         },
         params=[
-            Param("center_x_mm", float, description="Ellipse centre X, mm."),
-            Param("center_y_mm", float, description="Ellipse centre Y, mm."),
-            Param("major_x_mm", float, description="A point on the MAJOR axis, X, mm."),
-            Param("major_y_mm", float, description="A point on the MAJOR axis, Y, mm."),
-            Param("minor_x_mm", float, description="A point on the MINOR axis, X, mm."),
-            Param("minor_y_mm", float, description="A point on the MINOR axis, Y, mm."),
-            Param("start_x_mm", float, description="Arc start X, mm."),
-            Param("start_y_mm", float, description="Arc start Y, mm."),
-            Param("end_x_mm", float, description="Arc end X, mm."),
-            Param("end_y_mm", float, description="Arc end Y, mm."),
+            Param("center_x_mm", float, description="X of the ellipse centre in millimetres, from the sketch origin."),
+            Param("center_y_mm", float, description="Y of the ellipse centre in millimetres."),
+            Param("major_x_mm", float, description="X of a point on the major axis in millimetres."),
+            Param("major_y_mm", float, description="Y of that point on the major axis in millimetres."),
+            Param("minor_x_mm", float, description="X of a point on the minor axis in millimetres."),
+            Param("minor_y_mm", float, description="Y of that point on the minor axis in millimetres."),
+            Param("start_x_mm", float, description="X of the arc start in millimetres."),
+            Param("start_y_mm", float, description="Y of the arc start in millimetres."),
+            Param("end_x_mm", float, description="X of the arc end in millimetres."),
+            Param("end_y_mm", float, description="Y of the arc end in millimetres."),
             Param(
                 "direction",
                 int,
-                description="1 = counter-clockwise, -1 = clockwise.",
+                description="Sweep direction: 1 = counter-clockwise, -1 = clockwise; defaults to 1.",
                 required=False,
                 default=1,
             ),
@@ -232,7 +253,11 @@ SPECS_BATCH65 = [
             "实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `soli"
             "dworks_sketch_end`。"
         ),
-        doc="Draw a PARTIAL ellipse (elliptical arc). " + _GEOM,
+        doc=(
+            "Draw a partial ellipse from its centre, a point on each axis and the arc start and end. Creates sketch geo"
+            "metry in millimetres from the sketch origin; direction sets the sweep sense, so start the sketch first wit"
+            "h solidworks_sketch_start and finish with solidworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_parabola",
@@ -251,21 +276,25 @@ SPECS_BATCH65 = [
             "end_y_mm": "y2",
         },
         params=[
-            Param("focus_x_mm", float, description="Focus X, mm."),
-            Param("focus_y_mm", float, description="Focus Y, mm."),
-            Param("apex_x_mm", float, description="Apex X, mm."),
-            Param("apex_y_mm", float, description="Apex Y, mm."),
-            Param("start_x_mm", float, description="Start X, mm."),
-            Param("start_y_mm", float, description="Start Y, mm."),
-            Param("end_x_mm", float, description="End X, mm."),
-            Param("end_y_mm", float, description="End Y, mm."),
+            Param("focus_x_mm", float, description="X of the focus in millimetres, from the sketch origin."),
+            Param("focus_y_mm", float, description="Y of the focus in millimetres."),
+            Param("apex_x_mm", float, description="X of the apex in millimetres."),
+            Param("apex_y_mm", float, description="Y of the apex in millimetres."),
+            Param("start_x_mm", float, description="X of the start point in millimetres."),
+            Param("start_y_mm", float, description="Y of the start point in millimetres."),
+            Param("end_x_mm", float, description="X of the end point in millimetres."),
+            Param("end_y_mm", float, description="Y of the end point in millimetres."),
         ],
         evidence=(
             "Draw a parabola (focus + apex + two endpoints).  ★ 草图图元按官方文档属**规则 3 的书面例外**（图元没有可选"
             "的具名实体）⇒ 坐标在草图平面内、**相对草图原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后"
             " `solidworks_sketch_end`。"
         ),
-        doc="Draw a parabola (focus + apex + two endpoints). " + _GEOM,
+        doc=(
+            "Draw a parabola from its focus, its apex and two points that set its ends. Creates sketch geometry in mill"
+            "imetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call solid"
+            "works_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_conic",
@@ -284,14 +313,14 @@ SPECS_BATCH65 = [
             "end_y_mm": "y2",
         },
         params=[
-            Param("focus_x_mm", float, description="Focus X, mm."),
-            Param("focus_y_mm", float, description="Focus Y, mm."),
-            Param("apex_x_mm", float, description="Apex X, mm."),
-            Param("apex_y_mm", float, description="Apex Y, mm."),
-            Param("start_x_mm", float, description="Start X, mm."),
-            Param("start_y_mm", float, description="Start Y, mm."),
-            Param("end_x_mm", float, description="End X, mm."),
-            Param("end_y_mm", float, description="End Y, mm."),
+            Param("focus_x_mm", float, description="X of the focus in millimetres, from the sketch origin."),
+            Param("focus_y_mm", float, description="Y of the focus in millimetres."),
+            Param("apex_x_mm", float, description="X of the apex in millimetres."),
+            Param("apex_y_mm", float, description="Y of the apex in millimetres."),
+            Param("start_x_mm", float, description="X of the start point in millimetres."),
+            Param("start_y_mm", float, description="Y of the start point in millimetres."),
+            Param("end_x_mm", float, description="X of the end point in millimetres."),
+            Param("end_y_mm", float, description="Y of the end point in millimetres."),
         ],
         evidence=(
             "Draw a conic curve. ⚠ Official signature is IDENTICAL in shape to CreateParabola (focus + apex + two endpo"
@@ -299,8 +328,9 @@ SPECS_BATCH65 = [
             "原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
         ),
         doc=(
-            "Draw a conic curve. ⚠ Official signature is IDENTICAL in shape to CreateParabola "
-            "(focus + apex + two endpoints)." + _GEOM
+            "Draw a conic curve from its focus, its apex and two points that set its ends. Creates sketch geometry in m"
+            "illimetres from the sketch origin; the argument layout is identical in shape to the parabola one, so start"
+            " the sketch first and finish with solidworks_sketch_end."
         ),
     ),
     ToolSpec(
@@ -318,12 +348,12 @@ SPECS_BATCH65 = [
             "y3_mm": "y3",
         },
         params=[
-            Param("x1_mm", float, description="Point 1 X, mm."),
-            Param("y1_mm", float, description="Point 1 Y, mm."),
-            Param("x2_mm", float, description="Point 2 X, mm."),
-            Param("y2_mm", float, description="Point 2 Y, mm."),
-            Param("x3_mm", float, description="Point 3 X, mm."),
-            Param("y3_mm", float, description="Point 3 Y, mm."),
+            Param("x1_mm", float, description="X of the first point in millimetres, from the sketch origin."),
+            Param("y1_mm", float, description="Y of the first point in millimetres."),
+            Param("x2_mm", float, description="X of the second point in millimetres."),
+            Param("y2_mm", float, description="Y of the second point in millimetres."),
+            Param("x3_mm", float, description="X of the third point in millimetres."),
+            Param("y3_mm", float, description="Y of the third point in millimetres."),
         ],
         evidence=(
             "Draw a 3-point PERIMETER circle. ⚠ Official signature has NO Z argument (6 doubles only) — unlike its sibl"
@@ -331,8 +361,9 @@ SPECS_BATCH65 = [
             "原点**、单位**毫米**。★ 先 `solidworks_sketch_start`，再画，最后 `solidworks_sketch_end`。"
         ),
         doc=(
-            "Draw a 3-point PERIMETER circle. ⚠ Official signature has NO Z argument "
-            "(6 doubles only) — unlike its siblings." + _GEOM
+            "Draw a circle that passes through three points in the open sketch. Creates sketch geometry in millimetres "
+            "from the sketch origin; this call takes six numbers and no Z value, unlike its sibling primitives, so star"
+            "t the sketch first and finish with solidworks_sketch_end."
         ),
     ),
 ]

@@ -1,0 +1,141 @@
+{
+ "tools": {
+  "solidworks_sketch_add_tangent_arc": {
+   "doc": "Draw an arc tangent to the last sketch segment, through one point and ending at another. Creates sketch geometry in millimetres from the sketch origin; the open sketch must already hold the segment the arc stays tangent to, and arc_type is an integer whose value table no available source documents.",
+   "params": {
+    "end_x_mm": "X of the arc end in millimetres, from the sketch origin.",
+    "end_y_mm": "Y of the arc end in millimetres.",
+    "through_x_mm": "X of a point the arc passes through, in millimetres.",
+    "through_y_mm": "Y of that point the arc passes through, in millimetres.",
+    "arc_type": "Arc type as an integer passed through unchanged, because its value table could not be found in the available sources; defaults to 1."
+   }
+  },
+  "solidworks_sketch_add_3point_arc": {
+   "doc": "Draw an arc through three points: its start, its end and one point on the arc. Creates sketch geometry in millimetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call solidworks_sketch_end.",
+   "params": {
+    "start_x_mm": "X of the arc start in millimetres, from the sketch origin.",
+    "start_y_mm": "Y of the arc start in millimetres.",
+    "end_x_mm": "X of the arc end in millimetres.",
+    "end_y_mm": "Y of the arc end in millimetres.",
+    "through_x_mm": "X of a point on the arc, in millimetres.",
+    "through_y_mm": "Y of that point on the arc, in millimetres."
+   }
+  },
+  "solidworks_sketch_add_partial_ellipse": {
+   "doc": "Draw a partial ellipse from its centre, a point on each axis and the arc start and end. Creates sketch geometry in millimetres from the sketch origin; direction sets the sweep sense, so start the sketch first with solidworks_sketch_start and finish with solidworks_sketch_end.",
+   "params": {
+    "center_x_mm": "X of the ellipse centre in millimetres, from the sketch origin.",
+    "center_y_mm": "Y of the ellipse centre in millimetres.",
+    "major_x_mm": "X of a point on the major axis in millimetres.",
+    "major_y_mm": "Y of that point on the major axis in millimetres.",
+    "minor_x_mm": "X of a point on the minor axis in millimetres.",
+    "minor_y_mm": "Y of that point on the minor axis in millimetres.",
+    "start_x_mm": "X of the arc start in millimetres.",
+    "start_y_mm": "Y of the arc start in millimetres.",
+    "end_x_mm": "X of the arc end in millimetres.",
+    "end_y_mm": "Y of the arc end in millimetres.",
+    "direction": "Sweep direction: 1 = counter-clockwise, -1 = clockwise; defaults to 1."
+   }
+  },
+  "solidworks_sketch_add_parabola": {
+   "doc": "Draw a parabola from its focus, its apex and two points that set its ends. Creates sketch geometry in millimetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call solidworks_sketch_end.",
+   "params": {
+    "focus_x_mm": "X of the focus in millimetres, from the sketch origin.",
+    "focus_y_mm": "Y of the focus in millimetres.",
+    "apex_x_mm": "X of the apex in millimetres.",
+    "apex_y_mm": "Y of the apex in millimetres.",
+    "start_x_mm": "X of the start point in millimetres.",
+    "start_y_mm": "Y of the start point in millimetres.",
+    "end_x_mm": "X of the end point in millimetres.",
+    "end_y_mm": "Y of the end point in millimetres."
+   }
+  },
+  "solidworks_sketch_add_conic": {
+   "doc": "Draw a conic curve from its focus, its apex and two points that set its ends. Creates sketch geometry in millimetres from the sketch origin; the argument layout is identical in shape to the parabola one, so start the sketch first and finish with solidworks_sketch_end.",
+   "params": {
+    "focus_x_mm": "X of the focus in millimetres, from the sketch origin.",
+    "focus_y_mm": "Y of the focus in millimetres.",
+    "apex_x_mm": "X of the apex in millimetres.",
+    "apex_y_mm": "Y of the apex in millimetres.",
+    "start_x_mm": "X of the start point in millimetres.",
+    "start_y_mm": "Y of the start point in millimetres.",
+    "end_x_mm": "X of the end point in millimetres.",
+    "end_y_mm": "Y of the end point in millimetres."
+   }
+  },
+  "solidworks_sketch_add_perimeter_circle": {
+   "doc": "Draw a circle that passes through three points in the open sketch. Creates sketch geometry in millimetres from the sketch origin; this call takes six numbers and no Z value, unlike its sibling primitives, so start the sketch first and finish with solidworks_sketch_end.",
+   "params": {
+    "x1_mm": "X of the first point in millimetres, from the sketch origin.",
+    "y1_mm": "Y of the first point in millimetres.",
+    "x2_mm": "X of the second point in millimetres.",
+    "y2_mm": "Y of the second point in millimetres.",
+    "x3_mm": "X of the third point in millimetres.",
+    "y3_mm": "Y of the third point in millimetres."
+   }
+  },
+  "solidworks_gui_get_foreground_window": {
+   "doc": "Get the window handle of whatever currently holds foreground focus. Read-only and model-free; call it before driving the GUI so the next keys or clicks land in the intended window instead of in whichever one had focus.",
+   "params": {}
+  },
+  "solidworks_gui_screen_png": {
+   "doc": "Write a full-screen PNG capture to path as evidence of what the SolidWorks window showed. Writes the image file and never touches SolidWorks itself, so it still works while a modal dialog blocks the COM session; it grabs the whole screen because a window-only capture loses the floating windows outside the client area.",
+   "params": {
+    "path": "Absolute path of the PNG file to write; the source has no usable default, so always pass a real path. Defaults to an empty string."
+   }
+  },
+  "solidworks_revolve_cut": {
+   "doc": "Revolve a profile sketch into a cut feature around an axis, removing material from the part. Creates a cut feature and does not save the document; the axis has to enter the selection set before the profile, and an omitted axis name means the sketch centreline is used.",
+   "params": {
+    "sketch_name": "Name of the profile sketch exactly as it appears in the feature tree. Defaults to empty.",
+    "angle_deg": "Revolve angle in degrees, converted once to the radians the official call takes. Defaults to 0.0.",
+    "axis_sketch_name": "Name of the axis sketch to revolve about, selected before the profile; empty selects no axis and uses the centreline in the profile sketch. Defaults to empty."
+   }
+  },
+  "solidworks_ref_geometry_create_3d_bounding_box": {
+   "doc": "Create a 3D bounding box for a cut list item of a weldment part. Creates a sketch that becomes the box and does not save the document; on an ordinary part, or on a part without a selected cut list item, nothing is created and the feature tree not growing is the expected result.",
+   "params": {}
+  },
+  "solidworks_sketch_select_segment": {
+   "doc": "Select one sketch segment by its position in the active sketch so later sketch commands act on it. Modifies the selection list and returns the read-back selection count rather than the call's own success flag; selecting the segment that is already selected deselects it.",
+   "params": {
+    "index": "Zero-based position of the segment in the active sketch; the order is not promised to stay stable across a rebuild. Defaults to 0.",
+    "append": "True appends the segment to the existing selection, false replaces the selection with it; a running PropertyManager command ignores this and always appends. Defaults to false."
+   }
+  },
+  "solidworks_surface_cut": {
+   "doc": "Create a surface-cut feature that cuts solids with a preselected surface or plane. Writes a feature into the active part and does not save the document; select the cutting surface or plane first, and keep_piece_index chooses which piece survives when the cut is ambiguous.",
+   "params": {
+    "flip": "True reverses the side the cut is taken from, false keeps it; defaults to false.",
+    "keep_piece_index": "Which resulting piece to keep when the cut is ambiguous, as a zero-based result index; -1 means the result is unambiguous. Defaults to 0.",
+    "use_feat_scope": "True cuts only the bodies in this feature's scope that the surface intersects, false cuts every intersecting body; defaults to false.",
+    "use_auto_select": "True cuts every body the surface intersects, false cuts only the bodies given explicitly; defaults to true."
+   }
+  },
+  "solidworks_weldment_iter_features": {
+   "doc": "Walk the weldment feature folders and list the cut list folders with their sub-features. Read-only; it recurses through sub-features instead of reporting only top-level nodes, so the result is the whole tree below the weldment folder.",
+   "params": {}
+  },
+  "solidworks_simulation_apply_convection": {
+   "doc": "Apply a convection load to the selected faces of a thermal simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and a static study leaves the count unchanged, so create a thermal study first.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body."
+   }
+  },
+  "solidworks_simulation_apply_heat_flux": {
+   "doc": "Apply a heat flux load to the selected faces of a thermal simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and a static study leaves the count unchanged, so create a thermal study first.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body."
+   }
+  },
+  "solidworks_simulation_apply_heat_power": {
+   "doc": "Apply a heat power load to the selected faces of a thermal simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and a static study leaves the count unchanged, so create a thermal study first.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body."
+   }
+  }
+ }
+}

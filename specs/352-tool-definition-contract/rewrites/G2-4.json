@@ -1,0 +1,32 @@
+{
+ "tools": {
+  "solidworks_simulation_apply_link_connector": {
+   "doc": "Add a link connector between two vertices of a simulation study and return a read-back report. Writes a load into the study and judges success by the load and restraint counts rising by exactly one; pass vertices, because faces or components silently build nothing here.",
+   "params": {
+    "study_name": "Name of an existing simulation study; leaving it empty uses the first study in the document. Defaults to empty.",
+    "first": "Declarative selector for the first vertex: 'index:<n>' for the n-th vertex on the body, or '__current_selection__' to take the first current selection; bare coordinates are rejected and an unparseable selector raises.",
+    "second": "Declarative selector for the second vertex, using the same 'index:<n>' or '__current_selection__' forms as first.",
+    "first_body_index": "Zero-based index of the body that the first selector indexes into. Defaults to 0.",
+    "second_body_index": "Zero-based index of the body for the second selector; both vertices may live on the same body. Defaults to 0."
+   }
+  },
+  "solidworks_macro_record_lines": {
+   "doc": "Write a few lines into a macro by turning recording on, writing each line and turning it off again. Writes recording state and returns the individual booleans; whether the macro file was really written cannot be proven, because the closing command opens a Save As dialog and is never used.",
+   "params": {
+    "lines": "Code lines to write, either a list or one newline-separated string, where blank lines are dropped. Defaults to empty."
+   }
+  },
+  "solidworks_hole_wizard_at_point": {
+   "doc": "Create a Hole Wizard hole at an explicit point and read the hole parameters back. Writes a hole feature and does not save the document; the ray starts above the given point and goes down, and the feature tree growing is the success criterion rather than the return value.",
+   "params": {
+    "x_mm": "Hole centre X in millimetres.",
+    "y_mm": "Hole centre Y in millimetres.",
+    "z_mm": "Z of the face the hole is drilled into, in millimetres; the ray is lifted from here and fired back down.",
+    "size": "Fastener size string such as 'M8'; an empty string or a bare number makes the wizard return nothing.",
+    "diameter_mm": "Hole diameter in millimetres. Defaults to 8.",
+    "depth_mm": "Hole depth in millimetres when the hole is not through all geometry. Defaults to 20.",
+    "through": "Whether the hole goes through all geometry, in which case the depth is ignored. Defaults to true."
+   }
+  }
+ }
+}

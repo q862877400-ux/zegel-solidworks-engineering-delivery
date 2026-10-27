@@ -55,32 +55,42 @@ SPECS_BATCH37 = [
         function="configure_static_solver_report",
         inject="study",
         params=[
-            Param("family", str, default="ICWStaticStudyOptions", description=_FAM),
+            Param("family", str, default="ICWStaticStudyOptions", description=(
+                                                                      "Study-options family name to write into; discove"
+                                                                      "r the valid names with solidworks_simulation_lis"
+                                                                      "t_setter_summary. Defaults to ICWStaticStudyOpti"
+                                                                      "ons."
+                                                                  )),
             Param(
                 "free_body_force",
                 bool,
                 default=None,
-                description="Use the free-body-force approach (omit = leave unchanged).",
+                description=(
+                    "Whether to use the free-body-force approach; omitted leaves it unchanged. Defaults to unset."
+                ),
             ),
             Param(
                 "contact_penalty",
                 float,
                 default=None,
-                description="Contact penalty stiffness (omit = leave unchanged).",
+                description="Contact penalty stiffness; omitted leaves it unchanged. Defaults to unset.",
             ),
             Param(
                 "reference_pressure",
                 float,
                 default=None,
-                description="Reference pressure (omit = leave unchanged).",
+                description="Reference pressure; omitted leaves it unchanged. Defaults to unset.",
             ),
         ],
         evidence=(
             "Configure the static solver options of the injected study and return a report. ⚠ Only the non-None options"
             " are applied. Does NOT save the document."
         ),
-        doc="Configure the static solver options of the injected study and return a report. "
-        "⚠ Only the non-None options are applied. Does NOT save the document.",
+        doc=(
+            "Set static solver options on the simulation study and report what was applied. Modifies the study options "
+            "and does not save the document; an option left unset is not applied at all, so the study keeps whatever va"
+            "lue it already had."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_configure_frequency_solver",
@@ -89,25 +99,33 @@ SPECS_BATCH37 = [
         function="configure_frequency_solver_report",
         inject="study",
         params=[
-            Param("family", str, default="ICWFrequencyStudyOptions", description=_FAM),
+            Param("family", str, default="ICWFrequencyStudyOptions", description=(
+                                                                         "Study-options family name to write into; disc"
+                                                                         "over the valid names with solidworks_simulati"
+                                                                         "on_list_setter_summary. Defaults to ICWFreque"
+                                                                         "ncyStudyOptions."
+                                                                     )),
             Param(
                 "decouple",
                 bool,
                 default=None,
-                description="Decouple (omit = unchanged).",
+                description="Whether the frequency solve is decoupled; omitted leaves it unchanged. Defaults to unset.",
             ),
             Param(
                 "reference_pressure",
                 float,
                 default=None,
-                description="Reference pressure (omit = unchanged).",
+                description="Reference pressure; omitted leaves it unchanged. Defaults to unset.",
             ),
         ],
         evidence=(
             "Configure the frequency solver options of the injected study. ⚠ Only the non-None options are applied."
         ),
-        doc="Configure the frequency solver options of the injected study. "
-        "⚠ Only the non-None options are applied.",
+        doc=(
+            "Set frequency solver options on the simulation study and report what was applied. Modifies the study optio"
+            "ns and does not save the document; an option left unset is not applied at all, so the study keeps whatever"
+            " value it already had."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_configure_buckling_solver",
@@ -116,25 +134,35 @@ SPECS_BATCH37 = [
         function="configure_buckling_solver_report",
         inject="study",
         params=[
-            Param("family", str, default="ICWBucklingStudyOptions", description=_FAM),
+            Param("family", str, default="ICWBucklingStudyOptions", description=(
+                                                                        "Study-options family name to write into; disco"
+                                                                        "ver the valid names with solidworks_simulation"
+                                                                        "_list_setter_summary. Defaults to ICWBucklingS"
+                                                                        "tudyOptions."
+                                                                    )),
             Param(
                 "modes",
                 int,
                 default=None,
-                description="Number of modes (omit = unchanged).",
+                description="Number of buckling modes to extract; omitted leaves it unchanged. Defaults to unset.",
             ),
             Param(
                 "positive_only",
                 bool,
                 default=None,
-                description="Only positive eigenvalues (omit = unchanged).",
+                description=(
+                    "Whether only positive eigenvalues are kept; omitted leaves it unchanged. Defaults to unset."
+                ),
             ),
         ],
         evidence=(
             "Configure the buckling solver options of the injected study. ⚠ Only the non-None options are applied."
         ),
-        doc="Configure the buckling solver options of the injected study. "
-        "⚠ Only the non-None options are applied.",
+        doc=(
+            "Set buckling solver options on the simulation study and report what was applied. Modifies the study option"
+            "s and does not save the document; an option left unset is not applied at all, so the study keeps whatever "
+            "value it already had."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_set_study_option",
@@ -143,16 +171,19 @@ SPECS_BATCH37 = [
         function="set_study_option_report",
         inject="study",
         params=[
-            Param("family", str, description=_FAM),
+            Param("family", str, description=(
+                                     "Study-options family name; discover the valid families and names with solidworks_"
+                                     "simulation_list_setter_summary."
+                                 )),
             Param(
                 "name",
                 str,
-                description="The setter name (★ must exist in the registry).",
+                description="Setter name, which must exist in the registry for that family.",
             ),
             Param(
                 "value",
                 str,
-                description="The value as TEXT (★ the registry decides the type).",
+                description="New value as text; the registry decides the type it is converted to.",
             ),
         ],
         evidence=(
@@ -163,14 +194,11 @@ SPECS_BATCH37 = [
             "更好**的行为 —— 失败可见且带原因，而 MCP 层不该把异常当正常返回）。⇒ ★ 判据：★ **`ok` 为假且有 `error` 字"
             "段** ⇒ 未登记的名字**一定看得见**，只是**以返回值而非异常的形式**。"
         ),
-        doc="Set one study option by its registered family/name and return a report. "
-        '★★ **未知的 family/name 会返回 `{"ok": false, "error": …}` —— 不抛异常**'
-        "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"
-        "★ 旧描述（已作废）：「Unknown family/name **raises** instead of being silently ignored.」——"
-        "★ 那半句「**不静默忽略**」成立、「**raises**」不成立：包装层用 `except Exception` 把 "
-        "`KeyError` 捕获并回成结构化失败（★ 那是**更好**的行为 —— 失败可见且带原因，"
-        "而 MCP 层不该把异常当正常返回）。"
-        "⇒ ★ 判据：★ **`ok` 为假且有 `error` 字段** ⇒ 未登记的名字**一定看得见**，只是**以返回值而非异常的形式**。",
+        doc=(
+            "Set one registered simulation study option by family and name and return a report of the result. Modifies "
+            "the study options; the value is text that the registry converts to the declared type, and an unknown famil"
+            "y or name comes back as a failed report with an error field instead of being silently skipped."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_set_study_options",
@@ -179,11 +207,16 @@ SPECS_BATCH37 = [
         function="set_study_options_report",
         inject="study",
         params=[
-            Param("family", str, description=_FAM),
+            Param("family", str, description=(
+                                     "Study-options family name; discover the valid families and names with solidworks_"
+                                     "simulation_list_setter_summary."
+                                 )),
             Param(
                 "values",
                 dict,
-                description="Mapping of setter name → value (★ each must be registered).",
+                description=(
+                    "Mapping of setter name to value, each value as text; every name must be registered for the family."
+                ),
             ),
         ],
         evidence=(
@@ -192,10 +225,10 @@ SPECS_BATCH37 = [
             "Unknown family/name **raises** instead of being silently ignored.」——★ 同上：★「**不静默忽略**」成立、「**"
             "raises**」不成立（★ 异常被包装成结构化失败）✓"
         ),
-        doc="Set several study options and return the read-back dict. "
-        '★★ **未知的 family/name 会返回 `{"ok": false, "error": …}` —— 不抛异常**'
-        "（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #3 · E-3 #6）。"
-        "★ 旧描述（已作废）：「Unknown family/name **raises** instead of being silently ignored.」——"
-        "★ 同上：★「**不静默忽略**」成立、「**raises**」不成立（★ 异常被包装成结构化失败）✓",
+        doc=(
+            "Set several registered simulation study options at once and return the read-back values. Modifies the stud"
+            "y options; every name must be registered for the family, and an unknown family or name comes back as a fai"
+            "led report with an error field instead of being silently skipped."
+        ),
     ),
 ]

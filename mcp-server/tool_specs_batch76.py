@@ -51,33 +51,38 @@ _BATCH76: list[ToolSpec] = [
             Param(
                 "standard",
                 int,
-                description="螺纹标准：**1 = ANSI Metric**（官方 `Standard`，逐字）。",
+                description="Thread standard as an integer; 1 is ANSI Metric.",
             ),
             Param(
                 "standard_type",
                 str,
-                description="标准细分（官方 `StandardType`；例子传空串）。",
+                description=(
+                    "Standard subdivision string handed to the official call; the reference example passes an empty str"
+                    "ing."
+                ),
             ),
-            Param("size", str, description="规格串（官方 `Size`；例子传空串）。"),
+            Param("size", str, description=(
+                                   "Size string handed to the official call; the reference example passes an empty stri"
+                                   "ng."
+                               )),
             Param(
                 "diameter_mm",
                 float,
-                description="公称直径（**毫米**）—— ★ 官方 `Diameter` 是 "
-                "`System.double` 且**未写单位** ⇒ ★ 本工具收毫米、"
-                "**只在边界换算一次**（真机那次传 `0.008` = 8 mm，口径一致）。",
+                description="Nominal diameter in millimetres, converted once to the units the official call takes.",
             ),
             Param(
                 "end_type",
                 int,
-                description="末端条件（官方 `EndType`）：**0 = Blind**（此时 `depth_mm` 有效）"
-                "· **2 = Through**。",
+                description="End condition: 0 = blind, where depth_mm applies, or 2 = through.",
             ),
             Param(
                 "depth_mm",
                 float,
-                description="深度（**毫米**）—— ★ **仅 Blind 类有效**（官方逐字）。",
+                description="Thread depth in millimetres, used only for a blind end.",
             ),
-            Param("note", str, description="注释文字（官方 `Note`；例子传空串）。"),
+            Param("note", str, description=(
+                                   "Note text stored with the thread; the reference example passes an empty string."
+                               )),
         ],
         evidence=(
             "★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（**7 参** · 官方 md **未标 Obsolete**）。★★ **官"
@@ -88,15 +93,12 @@ _BATCH76: list[ToolSpec] = [
             "metic-thread-evidence.json`（2026-10-03 轮 568，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未"
             "跑** ⇒ ★ 在那之前**不许**把它写成「经工具层已验证」。"
         ),
-        doc="★ **装饰螺纹线**：`IFeatureManager.InsertCosmeticThread3`（**7 参** · 官方 md **未标 Obsolete**）。"
-        "★★ **官方前置（台账逐字）：选圆柱面的**一条边**（★ 不是那个面）** ⇒ ★ 本工具**自己找**："
-        "先用官方 `ISurface.IsCylinder()` 定位圆柱面、取它的第一条边并按 `mark=0` 选中 "
-        "⇒ ★ 调用方**不必**先选；★ 找不到圆柱面时**如实报** `preconditions_held=False` + 原因。"
-        "★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`CosmeticThread`**、"
-        "名 `装饰螺纹线1`）。"
-        "★★ **真机证据**（已建成过，★ 但那是在**探针**里的读数）："
-        "`output/cosmetic-thread-evidence.json`（2026-10-03 轮 568，走 `sw_guard`、零弹窗）。"
-        "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前**不许**把它写成「经工具层已验证」。",
+        doc=(
+            "Insert a cosmetic thread on a cylindrical face, finding that face and its edge without a preselection. Cre"
+            "ates a cosmetic-thread feature and does not save the document; the diameter is given in millimetres, the e"
+            "nd type is 0 for a blind thread that uses the depth or 2 for a through thread, and the end-to-end read thr"
+            "ough this tool has not been run yet."
+        ),
     ),
 ]
 
@@ -113,8 +115,7 @@ _BATCH76.append(
             Param(
                 "points",
                 list,
-                description="控制点列表 `[[x, y], …]`（**毫米**，★ 至少 2 组 —— "
-                "官方 Remarks 要求至少两组 X,Y,Z）⇒ ★ 换算只在能力层边界做一次。",
+                description="Control points as a list of [x, y] pairs in millimetres; at least two are required.",
             ),
         ],
         evidence=(
@@ -135,30 +136,12 @@ _BATCH76.append(
             "」，是一处**假引用** —— ★ 它比「没写依据」更坏：★ 后人照它排查会**停在死路上** ✓⚠ 经**本工具**的端到端读数"
             "**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。"
         ),
-        doc="★ **草图样条曲线**：`ISketchManager.CreateSpline2(data, False)`。"
-        "★★★ **本条修掉了一个真 bug（★ 且是一处「被误记成架构限制」的假阴性）**："
-        "能力层 `scripts/sw_part.sketch_spline` **此前每次都抛**，其 docstring 断言"
-        "「**本机实测建不出来**」并把原因归给 **事实 47/68 的 pywin32 架构限制**。"
-        "★ 而真因是 **数组的包装形态**：✗ `array.array('d')` ⇒ **静默回 `None`**；"
-        "✓ **`VARIANT(VT_ARRAY|VT_R8, 扁平 list)`** ⇒ **建成**（草图段数 0→1）。"
-        "★ 证据：`output/spline-with-variant-evidence.json`（四格对照，`form=spline2` ⇒ `ok=true`）。"
-        "★★ 而**正解早在本仓**：`scripts/sketch_relations.create_spline:272-273` 逐字写着"
-        "「★★★ 必须包 `VARIANT(VT_ARRAY|VT_R8)` —— 裸 list/tuple 会**静默返回 None**（轮 183 实测）」"
-        "⇒ ★ **同一个仓里两条路，一条修了、另一条从没跟上**。"
-        "★ 前置（**官方 `## Remarks` 逐字**）："
-        "「This method creates a spline in the active 2D sketch. "
-        "★★ If a sketch is not active, then a new sketch is created.」"
-        "⇒ ★★★ **即：★ 没有活动草图时它**会新建一个**、★ 不会失败** ✓"
-        "⚠⚠ **2026-10-04（接手轮）更正 —— 这里原来写的是**假引用****"
-        "（★ 处置 `JUDGE-C_D_E.md` 🔴 **#5** · `E-6 #1`）："
-        "★ 原句逐字「★ 前置（官方 Remarks）：**必须先有活动草图**」· "
-        "★★ 而**官方 `CreateSpline2` 写的是**反面**** —— ★ 那一句其实是 "
-        "**`ISketchManager.CreateLine` 的 Remarks**，逐字「If a sketch is not active, then the line "
-        "is **not created and NULL is returned**.」（★ 我读了两个 md 逐字比对；"
-        "★ 另注：`CreateLine2` **不存在**，★ 只有 `CreateLine`）⇒ "
-        "★★★ **把 `CreateLine` 的前置搬到 `CreateSpline2` 上、还冠以「官方 Remarks」，"
-        "是一处**假引用** —— ★ 它比「没写依据」更坏：★ 后人照它排查会**停在死路上** ✓"
-        "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
+        doc=(
+            "Draw a spline through the given points in the active 2D sketch, creating a new sketch when none is active."
+            " Creates sketch geometry in millimetres from the sketch origin; it raises when the call produces nothing i"
+            "nstead of reporting a silent success, and an end-to-end read of the result through this tool has not been "
+            "run yet."
+        ),
     )
 )
 
@@ -174,20 +157,20 @@ _BATCH76.append(
             Param(
                 "accuracy_factor",
                 int,
-                description="精度因子（官方第 1 参）：**10 ≥ 精度 ≥ 1**（1 = 最高）；"
-                "★ 真机用 **4** 成（台账逐字）。",
+                description="Accuracy factor from 1 to 10, where 1 is the most accurate; the measured run used 4.",
             ),
             Param(
                 "should_use_tears",
                 bool,
-                description="是否使用撕裂（官方第 2 参）—— ★ 台账标注**未查**，"
-                "★ 本工具原样透传。",
+                description="Whether the flattening may tear the surface, passed through unchanged.",
             ),
             Param(
                 "body_type",
                 str,
-                description="`surface`（默认，取 `GetBodies2(1, …)` 曲面体）"
-                "或 `solid`（取 `GetBodies2(0, …)`）。",
+                description=(
+                    "Which body list supplies the face: surface takes the surface bodies, solid takes the solid bodies."
+                    " The default is surface."
+                ),
             ),
         ],
         evidence=(
@@ -200,17 +183,12 @@ _BATCH76.append(
             "10-03 轮 556，走 `sw_guard`、零弹窗）。⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层"
             "已验证」。"
         ),
-        doc="★ **曲面展平**：`IFeatureManager.InsertFlattenSurface2(AccuracyFactor, ShouldUseTears)`（**2 参**）。"
-        "★★★ **官方前置（台账逐字）**：必须选中 **面（mark = 1）** 与 **锚点（mark = 16）**；"
-        "★ 另可选 2 = 引导边 · 4 = 映射边 · 8 = 撕裂边。"
-        "★★ 台账还逐字记着那组**四格对照**的结论：「**面-only（mark=1）不够**」"
-        "⇒ ★ 本工具**自己两个都选**（面按 1、该体第一条边的一个顶点按 16）；"
-        "★ 锚点没选上时**如实报** `preconditions_held=False` 并**指明**那正是失败原因。"
-        "★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 真机建成时是 **`FlattenSurface`**、"
-        "名 `曲面-展平1`）。"
-        "★★ **真机证据（探针级）**：`output/flatten-with-anchor-evidence.json`"
-        "（2026-10-03 轮 556，走 `sw_guard`、零弹窗）。"
-        "⚠ 经**本工具**的端到端读数**尚未跑** ⇒ ★ 在那之前不许写成「经工具层已验证」。",
+        doc=(
+            "Flatten a surface body into a flat surface feature, selecting the face and its anchor itself. Creates a fl"
+            "atten-surface feature and does not save the document; the accuracy factor runs from 1 to 10 with 1 the mos"
+            "t accurate, an anchor that cannot be selected is reported as a failed precondition, and the end-to-end rea"
+            "d through this tool has not been run yet."
+        ),
     )
 )
 
@@ -229,31 +207,33 @@ _BATCH76.append(
             Param(
                 "thickness_mm",
                 float,
-                description="厚度（**毫米**）—— ★ 官方 `Thickness` 是 `System.double`，"
-                "★ 本工具收毫米、**只在边界换算一次**（COM 吃米）。",
+                description="Thickness in millimetres, converted once to the metres the official call takes.",
             ),
             Param(
                 "cut",
                 bool,
-                description="True = **加厚切除**（`FeatureCutThicken`）；"
-                "False = **加厚凸台**（`FeatureBossThicken`）。",
+                description="True makes a thicken cut, false makes a thicken boss.",
             ),
-            Param("direction", int, description="方向（官方 `Direction`）。"),
+            Param("direction", int, description="Direction flag handed to the official call as an integer."),
             Param(
                 "fill_volume",
                 bool,
-                description="★ 官方逐字：「If FillVolume is true, **other arguments are "
-                "ignored**. A **closed surface is required** when FillVolume is true.」",
+                description="True fills the volume and ignores every other argument, which requires a closed surface.",
             ),
             Param(
-                "merge", bool, description="★ **仅加厚凸台**有此参（官方 `Merge`）。"
+                "merge", bool, description=(
+                                   "Whether the result merges into the existing body; this argument exists only on the "
+                                   "boss form."
+                               )
             ),
-            Param("use_feat_scope", bool, description="官方 `UseFeatScope`。"),
+            Param("use_feat_scope", bool, description=(
+                                              "Feature-scope flag handed to the official call, which limits the feature"
+                                              " to its own scope body list."
+                                          )),
             Param(
                 "use_auto_select",
                 bool,
-                description="★ 官方（切减）逐字：「When `UseAutoSelect` is **false**, "
-                "the user must **select the bodies** that the feature will affect.」",
+                description="For a cut, false means the target bodies must be selected before the call.",
             ),
         ],
         evidence=(
@@ -266,17 +246,12 @@ _BATCH76.append(
             "**。★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 两条都报）。⚠ **尚未真机验证**（★ 由 `tools/pr"
             "obe_thicken_tool.py` 单独验）⇒ ★ 在那之前不许把它写成 `verified`。"
         ),
-        doc="★ **加厚 / 加厚切除**：**`IFeatureManager.FeatureBossThicken`（7 参）** / "
-        "**`IFeatureManager.FeatureCutThicken`（6 参）** —— ★★ **两个都未废弃**。"
-        "★★★ **为什么是这两个成员**（★ 本条的来历）：`IModelDoc2` 那份**同名**成员已废弃"
-        "（`FeatureBossThicken2` 头顶逐字：`Superseded by [[IFeatureManager::FeatureBossThicken]].`），"
-        "★ 而另一族 `IModeler.ThickenSheet` 造的是**片体、不是特征** ⇒ ★ 入口只有这两个。"
-        "★★ **官方前置（Remarks 逐字）**：参考面**必须按 `mark=1` 选中**；"
-        "`FillVolume=true` 时**其余参数被忽略**、且**必须闭合曲面**；切减时 `UseAutoSelect=false` "
-        "要**先选实体** ⇒ ★ 本工具**自己把第一张面按 `mark=1` 选上**，选不上就**如实报前置**。"
-        "★ **判据**：特征树**新增** + 返回对象 `GetTypeName2`（★ 两条都报）。"
-        "⚠ **尚未真机验证**（★ 由 `tools/probe_thicken_tool.py` 单独验）⇒ "
-        "★ 在那之前不许把它写成 `verified`。",
+        doc=(
+            "Create a solid from a surface by thickening it, marking the reference face itself. Creates a thicken featu"
+            "re and does not save the document; a fill-volume thicken ignores every other argument and needs a closed s"
+            "urface, a cut with use_auto_select off needs the target bodies selected first, and the tool is not verifie"
+            "d on a real machine yet."
+        ),
     )
 )
 

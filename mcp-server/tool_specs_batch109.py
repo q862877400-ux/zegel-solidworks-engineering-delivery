@@ -35,7 +35,7 @@ SPECS_BATCH109 = [
                 bool,
                 default=False,
                 required=False,
-                description="是否把被排除的件也算进件表（默认 false）",
+                description="Whether to include components excluded from the bill of materials. Defaults to false.",
             ),
         ],
         read_only=True,
@@ -47,13 +47,10 @@ SPECS_BATCH109 = [
             "不存在的功能 ✓ ★ 判据：★ 回的是**结构化行**（★ 读不到就回空表，★ 不假装有内容 ✓）★★ 等级 `stitched` —— ★ "
             "尚未真机验证（★ 红线⑥）✓"
         ),
-        doc="★ **装配说明书（装配序列）**—— ★ 回一份**按行序排列的装配件表**（★ 每行 = 一个装配步骤）✓ "
-        "★ 真实来源：★ `sw_delivery.collect_assembly_bom`（**真实 BOM**，★ 早已在本仓且可用 ✓）"
-        "★★ **如实标注（不许冒充）**：★ **官方 API 里没有「装配序列」这个成员** —— "
-        "★ `C:\\swapi\\types` 里只查到**序号**类成员（★ 那是 **BOM 行号** ✗）"
-        "⇒ ★ 本工具给的是**用户心智里的「装配说明书」**（件表 + 行序 + 数量 + 配置），"
-        "★ **不是** SolidWorks 那个不存在的功能 ✓ "
-        "★ 判据：★ 回的是**结构化行**（★ 读不到就回空表，★ 不假装有内容 ✓）"
-        "★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓",
+        doc=(
+            "Report the assembly components as ordered rows that read like an assembly instruction sheet. Read-only; it"
+            " is built from the real bills-of-materials rows, and SolidWorks has no member that produces an assembly se"
+            "quence."
+        ),
     ),
 ]

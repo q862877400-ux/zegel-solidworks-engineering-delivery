@@ -1,0 +1,132 @@
+{
+ "tools": {
+  "solidworks_simulation_apply_radiation": {
+   "doc": "Apply a radiation load to the selected faces of a thermal simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and a static study leaves the count unchanged, so create a thermal study first.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body.",
+    "radiation_type": "Radiation kind as an integer enum passed through to the official call; defaults to 0."
+   }
+  },
+  "solidworks_simulation_apply_elastic_connector": {
+   "doc": "Add an elastic connector between the selected faces of a static simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and unlike the thermal loads this one takes a static study and not a thermal one.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body."
+   }
+  },
+  "solidworks_simulation_apply_temperature": {
+   "doc": "Apply a temperature load to the selected faces of a thermal simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and a static study leaves the count unchanged, so create a thermal study first.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body."
+   }
+  },
+  "solidworks_simulation_configure_static_solver": {
+   "doc": "Set static solver options on the simulation study and report what was applied. Modifies the study options and does not save the document; an option left unset is not applied at all, so the study keeps whatever value it already had.",
+   "params": {
+    "family": "Study-options family name to write into; discover the valid names with solidworks_simulation_list_setter_summary. Defaults to ICWStaticStudyOptions.",
+    "free_body_force": "Whether to use the free-body-force approach; omitted leaves it unchanged. Defaults to unset.",
+    "contact_penalty": "Contact penalty stiffness; omitted leaves it unchanged. Defaults to unset.",
+    "reference_pressure": "Reference pressure; omitted leaves it unchanged. Defaults to unset."
+   }
+  },
+  "solidworks_simulation_configure_frequency_solver": {
+   "doc": "Set frequency solver options on the simulation study and report what was applied. Modifies the study options and does not save the document; an option left unset is not applied at all, so the study keeps whatever value it already had.",
+   "params": {
+    "family": "Study-options family name to write into; discover the valid names with solidworks_simulation_list_setter_summary. Defaults to ICWFrequencyStudyOptions.",
+    "decouple": "Whether the frequency solve is decoupled; omitted leaves it unchanged. Defaults to unset.",
+    "reference_pressure": "Reference pressure; omitted leaves it unchanged. Defaults to unset."
+   }
+  },
+  "solidworks_simulation_configure_buckling_solver": {
+   "doc": "Set buckling solver options on the simulation study and report what was applied. Modifies the study options and does not save the document; an option left unset is not applied at all, so the study keeps whatever value it already had.",
+   "params": {
+    "family": "Study-options family name to write into; discover the valid names with solidworks_simulation_list_setter_summary. Defaults to ICWBucklingStudyOptions.",
+    "modes": "Number of buckling modes to extract; omitted leaves it unchanged. Defaults to unset.",
+    "positive_only": "Whether only positive eigenvalues are kept; omitted leaves it unchanged. Defaults to unset."
+   }
+  },
+  "solidworks_simulation_set_study_option": {
+   "doc": "Set one registered simulation study option by family and name and return a report of the result. Modifies the study options; the value is text that the registry converts to the declared type, and an unknown family or name comes back as a failed report with an error field instead of being silently skipped.",
+   "params": {
+    "family": "Study-options family name; discover the valid families and names with solidworks_simulation_list_setter_summary.",
+    "name": "Setter name, which must exist in the registry for that family.",
+    "value": "New value as text; the registry decides the type it is converted to."
+   }
+  },
+  "solidworks_simulation_set_study_options": {
+   "doc": "Set several registered simulation study options at once and return the read-back values. Modifies the study options; every name must be registered for the family, and an unknown family or name comes back as a failed report with an error field instead of being silently skipped.",
+   "params": {
+    "family": "Study-options family name; discover the valid families and names with solidworks_simulation_list_setter_summary.",
+    "values": "Mapping of setter name to value, each value as text; every name must be registered for the family."
+   }
+  },
+  "solidworks_part_bounding_box": {
+   "doc": "Get the bounding box of one solid body in millimetres. Read-only; the values are approximate and SolidWorks states they must not be used for comparison or calculation, and the box can change after a rebuild, so treat it as a rough overview only.",
+   "params": {
+    "body_index": "Zero-based index of the solid body; defaults to 0.",
+    "include_hidden": "Whether hidden bodies are included; defaults to false."
+   }
+  },
+  "solidworks_hole_standards": {
+   "doc": "List the Hole Wizard standards available for one hole type, as id and name pairs. Read-only; the two output lists are paired by position, and hole type 5, the legacy type, officially returns nothing.",
+   "params": {
+    "hole_type_id": "Hole type from the general hole type enum; 5 is the legacy type and yields no data. Defaults to 0."
+   }
+  },
+  "solidworks_fastener_types": {
+   "doc": "List the fastener types available under one Hole Wizard standard, as id and name pairs. Read-only; the names follow the SolidWorks interface language, so a Chinese interface returns Chinese names, and an id from this list is the fastener id the table-type tool expects.",
+   "params": {
+    "standard_name": "Standard name taken from solidworks_hole_standards, for example ANSI Inch. Defaults to empty.",
+    "hole_type_id": "Hole type from the general hole type enum; 5 is the legacy type and yields no data. Defaults to 0."
+   }
+  },
+  "solidworks_fastener_table_types": {
+   "doc": "List the fastener table type ids for one fastener under a Hole Wizard standard. Read-only; the second argument must be a fastener id from solidworks_fastener_types and not a size name, because a size name raises a type-mismatch error.",
+   "params": {
+    "standard_name": "Standard name taken from solidworks_hole_standards. Defaults to empty.",
+    "fastener_id": "Fastener id from solidworks_fastener_types, as a number and not a size name; defaults to 0.",
+    "hole_type_id": "Hole type from the general hole type enum. Defaults to 0."
+   }
+  },
+  "solidworks_feature_cosmetic_thread": {
+   "doc": "Insert a cosmetic thread on a cylindrical face, finding that face and its edge without a preselection. Creates a cosmetic-thread feature and does not save the document; the diameter is given in millimetres, the end type is 0 for a blind thread that uses the depth or 2 for a through thread, and the end-to-end read through this tool has not been run yet.",
+   "params": {
+    "standard": "Thread standard as an integer; 1 is ANSI Metric.",
+    "standard_type": "Standard subdivision string handed to the official call; the reference example passes an empty string.",
+    "size": "Size string handed to the official call; the reference example passes an empty string.",
+    "diameter_mm": "Nominal diameter in millimetres, converted once to the units the official call takes.",
+    "end_type": "End condition: 0 = blind, where depth_mm applies, or 2 = through.",
+    "depth_mm": "Thread depth in millimetres, used only for a blind end.",
+    "note": "Note text stored with the thread; the reference example passes an empty string."
+   }
+  },
+  "solidworks_sketch_spline": {
+   "doc": "Draw a spline through the given points in the active 2D sketch, creating a new sketch when none is active. Creates sketch geometry in millimetres from the sketch origin; it raises when the call produces nothing instead of reporting a silent success, and an end-to-end read of the result through this tool has not been run yet.",
+   "params": {
+    "points": "Control points as a list of [x, y] pairs in millimetres; at least two are required."
+   }
+  },
+  "solidworks_flatten_surface": {
+   "doc": "Flatten a surface body into a flat surface feature, selecting the face and its anchor itself. Creates a flatten-surface feature and does not save the document; the accuracy factor runs from 1 to 10 with 1 the most accurate, an anchor that cannot be selected is reported as a failed precondition, and the end-to-end read through this tool has not been run yet.",
+   "params": {
+    "accuracy_factor": "Accuracy factor from 1 to 10, where 1 is the most accurate; the measured run used 4.",
+    "should_use_tears": "Whether the flattening may tear the surface, passed through unchanged.",
+    "body_type": "Which body list supplies the face: surface takes the surface bodies, solid takes the solid bodies. The default is surface."
+   }
+  },
+  "solidworks_thicken": {
+   "doc": "Create a solid from a surface by thickening it, marking the reference face itself. Creates a thicken feature and does not save the document; a fill-volume thicken ignores every other argument and needs a closed surface, a cut with use_auto_select off needs the target bodies selected first, and the tool is not verified on a real machine yet.",
+   "params": {
+    "thickness_mm": "Thickness in millimetres, converted once to the metres the official call takes.",
+    "cut": "True makes a thicken cut, false makes a thicken boss.",
+    "direction": "Direction flag handed to the official call as an integer.",
+    "fill_volume": "True fills the volume and ignores every other argument, which requires a closed surface.",
+    "merge": "Whether the result merges into the existing body; this argument exists only on the boss form.",
+    "use_feat_scope": "Feature-scope flag handed to the official call, which limits the feature to its own scope body list.",
+    "use_auto_select": "For a cut, false means the target bodies must be selected before the call."
+   }
+  }
+ }
+}

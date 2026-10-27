@@ -46,7 +46,7 @@ from tool_registry import Param
 
 #: ★★ 复用 batch29 的骨架（`module="sw_simulation_loads"` · `inject="manager"` ·
 #:   `pre_call=_select_face` · `derived_args=_derive_model` 一整套都在里面）。
-from tool_specs_batch29 import _SEL, _STUDY, _spec
+from tool_specs_batch29 import _spec
 
 _READBACK = (
     "★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
@@ -63,23 +63,31 @@ SPECS_BATCH60 = [
         "solidworks_simulation_apply_distributed_mass",
         "Apply a Distributed Mass",
         "apply_distributed_mass_report",
-        "Add a **DISTRIBUTED MASS** to the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _STATIC,
+        (
+                        "Add a distributed mass load to the selected faces of a static simulation study. Creates one lo"
+                        "ad in the study and does not save the document; the ok flag comes from the load count rising b"
+                        "y exactly one rather than from the return value, and the study should have a unique name becau"
+                        "se a duplicate study name makes the count read back as nothing."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
             Param(
                 "mass",
                 float,
-                description="质量（★ 官方 `DMass` 入参，★ 单位随 `units`）",
+                description="Distributed mass value in the unit selected by units. Required.",
             ),
             Param(
                 "units",
                 int,
                 default=0,
-                description="官方 `NUnits` 枚举（★ 反射 dump 未收录 ⇒ 只做 int 透传，默认 0）",
+                description="Unit enum passed straight to the load member, 0 = SI. Defaults to 0.",
             ),
         ],
     ),
@@ -87,18 +95,26 @@ SPECS_BATCH60 = [
         "solidworks_simulation_apply_force",
         "Apply a Force or Moment",
         "apply_force_report",
-        "Add a **FORCE / MOMENT** to the selected face(s) and return a READ-BACK report. "
-        "★ `force_type` 是官方的种类枚举（★ 默认 1）。"
-        "⚠★ 本包装**显式补 `ref_geom`**（空 Dispatch）—— ★ 裸函数的默认 `None` 会"
-        "`类型不匹配`（事实 12）。" + _READBACK + " " + _STATIC,
+        (
+                        "Add a force or moment load to the selected faces of a static simulation study. Creates one loa"
+                        "d in the study and does not save the document; the ok flag comes from the load count rising by"
+                        " exactly one rather than from the return value, and force_type picks which kind of load is add"
+                        "ed."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
             Param(
                 "force_type",
                 int,
                 default=1,
-                description="官方 `AddForce` 的种类枚举（默认 1）",
+                description="Force type enum passed straight to AddForce. Defaults to 1.",
             ),
         ],
     ),
@@ -106,19 +122,29 @@ SPECS_BATCH60 = [
         "solidworks_simulation_apply_remote_load",
         "Apply a Remote Load",
         "apply_remote_load_report",
-        "Add a **REMOTE LOAD** (location + direction + magnitude) to the selected face(s) "
-        + "and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _STATIC,
+        (
+                        "Add a remote load with a location, a direction and a magnitude to the selected faces of a stat"
+                        "ic study. Creates one load in the study and does not save the document; the ok flag comes from"
+                        " the load count rising by exactly one, and the load type and location unit enums are passed th"
+                        "rough as integers with no documented value table."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
-            Param("load_type", int, description="官方 `NLoadType` 枚举"),
-            Param("units", int, description="官方 `NLocationUnits` 枚举"),
-            Param("dx", float, description="方向 X 分量"),
-            Param("dy", float, description="方向 Y 分量"),
-            Param("dz", float, description="方向 Z 分量"),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
+            Param("load_type", int, description=(
+                                        "Remote load type enum; the numeric values are not published in the local sourc"
+                                        "es. Required."
+                                    )),
+            Param("units", int, description="Unit enum passed straight to the load member, 0 = SI. Defaults to 0."),
+            Param("dx", float, description="X coordinate of the remote load location. Required."),
+            Param("dy", float, description="Y coordinate of the remote load location. Required."),
+            Param("dz", float, description="Z coordinate of the remote load location. Required."),
         ],
     ),
 ]

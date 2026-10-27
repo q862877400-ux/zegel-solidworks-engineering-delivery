@@ -51,14 +51,17 @@ SPECS_BATCH62 = [
             Param(
                 "sketch_name",
                 str,
-                description="**路径草图**的名字（★ 如 `草图1`）—— ★ 结构构件沿它扫出。",
+                description=(
+                    "Name of the path sketch that the member is swept along, exactly as it appears in the feature tree."
+                ),
             ),
             Param(
                 "profile_path",
                 str,
-                description="`.sldlfp` **焊件轮廓**的绝对路径。★ 本机在 "
-                "`C:\\ProgramData\\SOLIDWORKS\\SOLIDWORKS 2026\\weldment profiles\\` 下"
-                "（★ **111 个**，★ 中文 UI 用 `GB\\` 那一支，★ 如 `GB\\square-rods.sldlfp`）。",
+                description=(
+                    "Absolute path of a .sldlfp weldment profile; this machine keeps 111 profiles under the SOLIDWORKS "
+                    "weldment profiles folder."
+                ),
             ),
         ],
         evidence=(
@@ -67,10 +70,9 @@ SPECS_BATCH62 = [
             "。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。"
         ),
         doc=(
-            "Create a **STRUCTURAL MEMBER** (weldment) along a path sketch with a weldment "
-            "profile, and return a READ-BACK report. "
-            "★★ **判据是特征树**（★ 不是计数）：`new_type_names` 应含 `WeldmentFeature` 与 "
-            "`WeldMemberFeat`。⚠ 本机需要装「焊件轮廓库」—— ★ 本机**有**（111 个 `.sldlfp`）。"
+            "Create a structural member along a path sketch with a weldment profile, then read the feature tree back. I"
+            "t writes a weldment feature into the active part; the profile is an absolute .sldlfp path, and this machin"
+            "e has the weldment profile library installed."
         ),
     ),
 ]

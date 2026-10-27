@@ -33,11 +33,10 @@ SPECS_BATCH87 = [
             "⇒ ★ 官方自己把它和 `SelectionColor` 属性配成一对）。★ CHM VB6 页 `SldWorks~SelectionMgr~ClearSelectionColo"
             "rs"
         ),
-        doc="★ 官方签名（逐字，来自 ClearSelectionColors.md）：`void ClearSelectionColors()`。"
-             "官方页正文只有一句描述逐字「Cleans all of selection color settings.」；★ 该页**没有 `## Remarks` "
-             "段**（`## See Also` 里逐字两条：`[[ISelectionMgr Interface]]` · `[[ISelectionMgr Members]]` · "
-             "`[[ISelectionMgr::SelectionColor Property]]` ⇒ ★ 官方自己把它和 `SelectionColor` 属性配成一对）。★ CHM "
-             "VB6 页 `SldWorks~SelectionMgr~ClearSelectionColors",
+        doc=(
+            "Clear every selection colour setting held by the selection manager. It modifies the selection manager stat"
+            "e and returns nothing; the official member states no precondition of its own."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_set_default_template",
@@ -46,8 +45,14 @@ SPECS_BATCH87 = [
         function="set_default_template",
         inject="defaults",
         params=[
-            Param("category", int, default=0, description=""),
-            Param("template_name", str, default="", description=""),
+            Param("category", int, default=0, description=(
+                                                  "Integer category passed through unchanged; no official source docume"
+                                                  "nts its meaning. Defaults to 0."
+                                              )),
+            Param("template_name", str, default="", description=(
+                                                        "Template name string passed through to the official member. De"
+                                                        "faults to empty."
+                                                    )),
         ],
         evidence=(
             "★ 官方签名（逐字，来自 sw_costing.py）：`查不到（C:\\swapi\\types\\ICostingDefaults\\SetTemplateName.md 不"
@@ -58,13 +63,10 @@ SPECS_BATCH87 = [
             "（「页签序号」还是「模板类别」？）两套官方源都查不到 ⇒ 本工具原样透传、**不解释**（铁律 5）。⚠ 返回类型是 "
             "Void ⇒ 源码 `set_default_template` 用 `_checked(...)` 的**异常*"
         ),
-        doc="★ 官方签名（逐字，来自 sw_costing.py）：`查不到（C:\\swapi\\types\\ICostingDefaults\\SetTemplateName.md "
-             "不存在 ⇒ 无 **Signature**: 行可抄）。★ 第三源（出厂程序集纯元数据反射）逐字：`Void SetTemplateName(Int32, "
-             "String)` —— D:\\AI\\SW\\_raw\\reflect\\iface_sldcostingapi.txt:288（位于 `#`。★ 真源是**本仓** "
-             "`scripts/sw_costing.py` 的 `set_default_template`（★ 它不是 SolidWorks API 成员，故无官方页）—— "
-             "查不到官方 ## Remarks（四册 CHM 无 costing 册 + C:\\swapi 无该接口页）。★ 出厂反射只给签名、"
-             "**没有参数语义**。⚠ 首参 Int32 的语义（「页签序号」还是「模板类别」？）两套官方源都查不到 ⇒ "
-             "本工具原样透传、**不解释**（铁律 5）。⚠ 返回类型是 Void ⇒ 源码 `set_default_template` 用 `_checked(...)` "
-             "的**异常*",
+        doc=(
+            "Set the default costing template name for a costing category. It modifies the costing defaults; the intege"
+            "r category is passed through unchanged because no official source says whether it is a tab index or a temp"
+            "late category."
+        ),
     ),
 ]

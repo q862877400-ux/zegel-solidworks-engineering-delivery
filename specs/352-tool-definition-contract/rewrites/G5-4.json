@@ -1,0 +1,78 @@
+{
+ "tools": {
+  "solidworks_collect_model_summary": {
+   "doc": "Read a summary of the active model: title, type, feature tree entries and save path. Read-only, so it walks the feature tree without changing anything. Use it to confirm which model is open before acting on it.",
+   "params": {}
+  },
+  "solidworks_get_costing_manager": {
+   "doc": "Get the Costing manager object of the active document, which every other cost call is built on. Read-only, and the manager is reachable even when the Costing add-in is not loaded, so do not probe for the add-in first.",
+   "params": {}
+  },
+  "solidworks_list_simulation_study_options": {
+   "doc": "List the simulation study option setters that are available, grouped by study-options family. Read-only and it needs no open document, so call it to discover the valid family and name pairs before setting an option.",
+   "params": {}
+  },
+  "solidworks_drawing_view_scale": {
+   "doc": "Get the scale of one drawing view by its name. Read-only. An unknown name fails and lists the valid view names, so a failed call still tells you what to pass next.",
+   "params": {
+    "view_name": "Name of the drawing view, as listed by solidworks_drawing_list_views."
+   }
+  },
+  "solidworks_drawing_view_set_scale": {
+   "doc": "Set the scale of one drawing view and return the scale before and after. Modifies the view scale and does not save the document. The criterion is that the read-back scale really changed, so a returned call is not proof on its own.",
+   "params": {
+    "view_name": "Name of the drawing view, as listed by solidworks_drawing_list_views.",
+    "scale": "New view scale, which is neither a length nor an angle."
+   }
+  },
+  "solidworks_drawing_collect_view_evidence": {
+   "doc": "Collect the per-view evidence that the capability layer records for every view on the drawing. Read-only, so it reports what each view holds and changes nothing.",
+   "params": {}
+  },
+  "solidworks_get_active_view": {
+   "doc": "Get the currently active three-dimensional model view. Read-only; it reads the view of the active document and changes nothing, so it is the handle that later view operations address.",
+   "params": {}
+  },
+  "solidworks_entities_on_body": {
+   "doc": "List the edges, faces or vertices of one solid body with their geometry readings. Read-only. An edge reports its two end points and a computed length, a face reports its area, a vertex reports its point, and the reply also carries the V minus E plus F check. The index order is not promised stable, so never use it as a reference across rebuilds.",
+   "params": {
+    "kind": "Entity kind to list: EDGE, FACE or VERTEX.",
+    "body_index": "Zero-based index of the solid body, not a persistent reference across rebuilds. Defaults to 0."
+   }
+  },
+  "solidworks_current_sketch_name": {
+   "doc": "Read the feature name of the current active sketch. Read-only. When the sketch is closed it returns the fallback name, which is not the real name, so do not use this value to look the sketch up; call solidworks_sketch_by_name instead.",
+   "params": {
+    "fallback": "Name returned when the current sketch cannot be read; it is not the real name, so fetch sketches through the solidworks_sketch tools instead of using it. Defaults to 'Sketch1'."
+   }
+  },
+  "solidworks_auto_dimension_sketch": {
+   "doc": "Create real model dimensions on the active sketch through the official automatic dimensioning flow. Writes display dimensions into the model so a drawing can import and verify them. It returns status pass, blocked or failed, and blocked with SKETCH_NOT_ACTIVE means no sketch is open.",
+   "params": {}
+  },
+  "solidworks_simulation_check_mesh_size": {
+   "doc": "Check whether a global element size in millimetres is sane for the active part before meshing. Read-only, so it neither meshes nor solves. It refuses a size larger than the part, and a size whose estimated solve memory exceeds memory_budget_gb, so stop when ok is false.",
+   "params": {
+    "element_size_mm": "Global element size in millimetres, the value you would pass to solidworks_simulation_create_mesh.",
+    "memory_budget_gb": "Memory limit in gigabytes for the coming solve; omit it to use half the physical memory capped at 16 GB."
+   }
+  },
+  "solidworks_export_image": {
+   "doc": "Export the current view to a PNG or JPG image file. Writes the image file to output_path. The criterion is that the file exists and is not empty, and the image size cannot be chosen because the current view is captured as it is.",
+   "params": {
+    "output_path": "Absolute output path; the file extension selects PNG or JPG."
+   }
+  },
+  "solidworks_sketch_set_blanked": {
+   "doc": "Hide or show the sketches named by the current selection. Modifies the visibility of the selected sketches. The official member has no all-sketches meaning, so select the sketches first and check that the visible state really changed.",
+   "params": {
+    "selection": "Declarative selector: __current_selection__ to reuse the current selection, or comma-separated sketch feature names. Defaults to '__current_selection__'.",
+    "blank": "Whether to hide the selected sketches instead of showing them. Defaults to true."
+   }
+  },
+  "solidworks_assembly_performance_analysis_report": {
+   "doc": "Summarise the mates and features of the active assembly as per-item counts. Read-only; it reports real counts read from the mate group and feature tree, not a call to an official performance-analysis member.",
+   "params": {}
+  }
+ }
+}

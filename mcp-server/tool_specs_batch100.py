@@ -76,15 +76,10 @@ SPECS_BATCH100 = [
             "fied` / `unit_caveat`），★★ 与 `docs/history/unit-conflicts.md` 第 1 条、第 3 条同源 ✓ ★ 用法：★ 先选面（"
             "或让它在整件上求值）⇒ ★ 读回截面属性 ✓"
         ),
-        doc="★★ **⚠ 不是只读**：★ 官方 Remarks 逐字「**This method clears the selection set**」"
-        "⇒ ★ 它会**清空并重写当前选择集**（★ 按规格 210 的效应体系，`selection` 也是状态类之一）。"
-        "★ **截面属性**（官方 `IModelDocExtension::GetSectionProperties2`，★ 以**当前选择集**求值）—— "
-        "★★★ **单位那件事已查实并登记在册**：官方 `## Returns` 说 `square meters`，"
-        "★ 而**真机读数相反** —— 20×20×20 正方体端面读 **400**（= 20×20 的 **mm²**）、"
-        "★ 侧面读 **0.4**（差 1000 倍）⇒ ★★ **不是面积换算** ✓ "
-        "★ 本工具因此**把单位未确证这件事如实带在返回里**（`units_verified` / `unit_caveat`），"
-        "★★ 与 `docs/history/unit-conflicts.md` 第 1 条、第 3 条同源 ✓ "
-        "★ 用法：★ 先选面（或让它在整件上求值）⇒ ★ 读回截面属性 ✓",
+        doc=(
+            "Read the section properties of the current selection. Not read-only: the official member clears and rewrit"
+            "es the selection set, and the returned area unit is unverified, so treat it as a number without a unit."
+        ),
     ),
     #: ── ② 缩放 / 变形（★ 规格 211 B1-2 · 写）────────────────────────────────
     ToolSpec(
@@ -109,34 +104,34 @@ SPECS_BATCH100 = [
                 "scale_type",
                 int,
                 default=1,
-                description="缩放类型（★ 官方 `InsertScale(short Type, …)` 的 `Type`）—— "
-                "★ 本仓实测的合法档："
-                "`0` / `1` / `2`（★ 见 `scripts/sw_part.py` 的 `SCALE_TYPES`）。",
+                description=(
+                    "Scale type passed to the official call; 0, 1 and 2 are the values this repository has verified. De"
+                    "faults to 1."
+                ),
             ),
             Param(
                 "uniform",
                 bool,
                 default=True,
-                description="是否**等比**缩放（★ True ⇒ 三个方向同一个比例）。",
+                description="Whether the three directions share one factor; true uses only x_factor. Defaults to true.",
             ),
             Param(
                 "x_factor",
                 float,
                 default=2.0,
-                description="★ **X 方向的缩放比例（无量纲）** —— ★ **不是长度** ✗；"
-                "★ 1.0 表示不变、2.0 表示放大一倍。",
+                description="Scale ratio along X, dimensionless, where 2.0 doubles the body. Defaults to 2.0.",
             ),
             Param(
                 "y_factor",
                 float,
                 default=2.0,
-                description="★ **Y 方向的缩放比例（无量纲）** —— ★ **不是长度** ✗。",
+                description="Scale ratio along Y, dimensionless. Defaults to 2.0.",
             ),
             Param(
                 "z_factor",
                 float,
                 default=2.0,
-                description="★ **Z 方向的缩放比例（无量纲）** —— ★ **不是长度** ✗。",
+                description="Scale ratio along Z, dimensionless. Defaults to 2.0.",
             ),
         ],
         evidence=(
@@ -146,14 +141,10 @@ SPECS_BATCH100 = [
             "那是设计选择被实证的结果 ✓ ★ 默认特征名 **`缩放比例1`**（★ 官方/UI 惯例）✓ ⚠ ★ **三个 `_factor` 语义的参数"
             "**：★ 它们是**无量纲比例**、★ 不是坐标 ⇒ ★ 别按毫米传（★ 传 1000 得 1000 倍）✓"
         ),
-        doc="缩放/变形：按比例缩放实体，新建一个缩放特征。"
-        "★ **缩放 / 变形**（官方 `IFeatureManager::InsertScale`，**参数式、无 ACL**）—— "
-        "★★ **会新建一个缩放特征**（非只读）✓ "
-        "★★★ **判据用体积比、★ 不是查返回值**：★ 因子 3.0 ⇒ 真机回读 **`volume_ratio = 27.0`**、"
-        "★ `volume_ok = True` ✓ —— ★★ 比值**无量纲** ⇒ ★ **不受单位影响**，★ 那是设计选择被实证的结果 ✓ "
-        "★ 默认特征名 **`缩放比例1`**（★ 官方/UI 惯例）✓ "
-        "⚠ ★ **三个 `_factor` 语义的参数**：★ 它们是**无量纲比例**、★ 不是坐标 ⇒ "
-        "★ 别按毫米传（★ 传 1000 得 1000 倍）✓",
+        doc=(
+            "Create a scale feature that scales the body by the given factors. It writes a new feature into the active "
+            "part; the factors are dimensionless ratios, so 2.0 doubles the body and 0.5 halves it."
+        ),
     ),
     #: ── ③ 取消剪裁（★ 规格 211 B2-1 · 写）──────────────────────────────────
     ToolSpec(
@@ -167,26 +158,35 @@ SPECS_BATCH100 = [
                 "face_untrim_type",
                 int,
                 default=0,
-                description="面取消剪裁的档位（★ 官方枚举，★ 详见返回里的 `face_untrim_types`）。",
+                description=(
+                    "Face untrim option from the official enum, listed in the returned face_untrim_types table; default"
+                    "s to 0."
+                ),
             ),
             Param(
                 "edge_untrim_type",
                 int,
                 default=0,
-                description="边取消剪裁的档位（★ 官方枚举，★ 详见返回里的 `edge_untrim_types`）。",
+                description=(
+                    "Edge untrim option from the official enum, listed in the returned edge_untrim_types table; default"
+                    "s to 0."
+                ),
             ),
             Param(
                 "distance_mm",
                 float,
                 default=0.0,
-                description="延展距离（**毫米**）—— ★ 按参数名后缀，★ 边界处换算一次。",
+                description=(
+                    "Extension distance in millimetres; the official parameter gives no unit, so the millimetre reading"
+                    " is an assumption reported back. Defaults to 0.0."
+                ),
             ),
-            Param("merge", bool, default=True, description="是否合并结果曲面。"),
+            Param("merge", bool, default=True, description="Whether to merge the resulting surfaces; defaults to true."),
             Param(
                 "trim_opposite_side",
                 bool,
                 default=False,
-                description="是否对另一侧做取消剪裁。",
+                description="Whether to untrim the opposite side as well; defaults to false.",
             ),
         ],
         evidence=(
@@ -196,13 +196,11 @@ SPECS_BATCH100 = [
             "两个枚举表 + 特征树增量** ✓ ⚠ ★ 本工具的**正例（真的建出被取消剪裁的曲面）尚未做** —— ★ 需要先有一条「造出"
             "被剪裁的曲面」的链 ✓ ⇒ ★★ 如实标 `stitched`、★ 不许写成 `verified` ✓"
         ),
-        doc="取消剪裁：把被剪裁的曲面还原回原始范围，新建特征。"
-        "★ **取消剪裁**（官方 `IFeatureManager::InsertUntrimSurface`）—— ★★ **会新建特征**（非只读）✓ "
-        "★★ **它是「剪裁曲面」的另一半**：★ 剪裁曲面判「不做（后端受限，事实 419）」，"
-        "★ 而取消剪裁**补了包装**并有真机读数 ⇒ ★ 登记 **`stitched`** ✓ "
-        "★ 判据：★ **返回体里带 `unt_type` 两个枚举表 + 特征树增量** ✓ "
-        "⚠ ★ 本工具的**正例（真的建出被取消剪裁的曲面）尚未做** —— ★ 需要先有一条"
-        "「造出被剪裁的曲面」的链 ✓ ⇒ ★★ 如实标 `stitched`、★ 不许写成 `verified` ✓",
+        doc=(
+            "Untrim a surface so a trimmed face or edge grows back, adding that as a new feature. It writes a feature i"
+            "nto the active part, works only on surface parts with the face or edges preselected, and its positive case"
+            " has not been built on this machine yet."
+        ),
     ),
     #: ── ④ 扫描曲面（★ 规格 211 B2-2 · 写 · 本规格里唯一 verified 的曲面项）──
     ToolSpec(
@@ -212,63 +210,67 @@ SPECS_BATCH100 = [
         function="sweep_surface_report",
         inject="model",
         params=[
-            Param("propagate", bool, default=True, description="官方 `Propagate` 档。"),
+            Param("propagate", bool, default=True, description="Official propagate flag; defaults to true."),
             Param(
-                "twist_ctrl", int, default=0, description="官方 `TwistCtrlOption` 档。"
+                "twist_ctrl", int, default=0, description="Official twist control option value; defaults to 0."
             ),
             Param(
                 "keep_tangency",
                 bool,
                 default=True,
-                description="官方 `KeepTangency` 档。",
+                description="Official keep-tangency flag; defaults to true.",
             ),
             Param(
                 "advanced_smoothing",
                 bool,
                 default=False,
-                description="官方 `BAdvancedSmoothing` 档。",
+                description="Official advanced-smoothing flag; defaults to false.",
             ),
             Param(
                 "start_matching",
                 int,
                 default=0,
-                description="官方 `StartMatchingType` 档。",
+                description="Official start matching type value; defaults to 0.",
             ),
             Param(
                 "end_matching",
                 int,
                 default=0,
-                description="官方 `EndMatchingType` 档。",
+                description="Official end matching type value; defaults to 0.",
             ),
             Param(
                 "path_align",
                 int,
                 default=0,
-                description="官方 `PathAlign` 档 —— ★ 只在 `twist_ctrl` 为「沿路径」类档位时可用。",
+                description=(
+                    "Official path alignment value, meaningful only with certain twist control options; defaults to 0."
+                ),
             ),
             Param(
                 "use_feat_scope",
                 bool,
                 default=False,
-                description="官方 `UseFeatScope` 档。",
+                description="Official feature scope flag; defaults to false.",
             ),
             Param(
                 "use_auto_select",
                 bool,
                 default=True,
-                description="官方 `UseAutoSelect` —— ★ False 时调用方须自行选体。",
+                description=(
+                    "Official auto-select flag; false means the caller must select the bodies. Defaults to true."
+                ),
             ),
             Param(
                 "twist_angle_deg",
                 float,
                 default=0.0,
-                description="扭转角度（**度**）—— ★ 只在该扭转档位下有意义。",
+                description="Twist angle in degrees, meaningful only with a twist option; defaults to 0.0.",
             ),
             Param(
                 "merge_smooth_faces",
                 bool,
                 default=False,
-                description="官方 `BMergeSmoothFaces` 档。",
+                description="Official merge-smooth-faces flag; defaults to false.",
             ),
         ],
         evidence=(
@@ -283,19 +285,11 @@ SPECS_BATCH100 = [
             "*闭合路径**（圆作路径，前置已完全对上仍静默回 `None`）✗ ★ 仍未试：`twist_ctrl` 各档 · `path_align` 各档 · "
             "多引导线 · 开放轮廓 · `propagate` 档 ✓"
         ),
-        doc="扫描曲面：按轮廓 + 路径生成一张曲面（参数式，不需 ACL）。"
-        "★★★ **扫描曲面**（官方 `IFeatureManager::InsertSweepSurface2`，"
-        "**参数式 11 参、不要求 `AccessSelections`**）—— ★★ **会新建曲面体**（非只读）✓ "
-        "★★★★ **本能力是实证「事实 237」的那一条**：★「**不做曲面族**」那条结论**只覆盖半条路** —— "
-        "官方有**两条**建曲面的入口，★ 而**第二条从没试过** ✓ ⇒ "
-        "★★ **路 A**（`CreateDefinition` + `CreateFeature`）★ 静默回 `None` ✗；"
-        "★ **路 B（本工具）真机建成 `曲面-扫描1`** ✓✓ "
-        "★★★ **前置是硬性的、★ 且只有官方 `## Remarks` 说得清**：★ 调之前**必须**用 "
-        "`SelectByID2` 按 mark 选 —— ★ **1 = Profile** · ★ 2 = Guide（有才给）· ★ **4 = Sweep path** ✓；"
-        "★ **没选时静默回 `None`**（★ 不抛、★ 特征树不变）⇒ ★ 调用方拿到 `None` 时**先查 mark** ✓ "
-        "★★ **已试形态的边界**（★ 逐条带读数、★ 不许推广）：★ **可做** —— 直线路径（无引导线）✓ · "
-        "**带引导线（mark 2）**✓；★ **试死** —— **闭合路径**（圆作路径，前置已完全对上仍静默回 `None`）✗ "
-        "★ 仍未试：`twist_ctrl` 各档 · `path_align` 各档 · 多引导线 · 开放轮廓 · `propagate` 档 ✓",
+        doc=(
+            "Create a swept surface from a profile and a path, and report the new feature. It writes a surface feature "
+            "into the active part; the profile must be selected with mark 1 and the path with mark 4, a closed path is "
+            "known to fail, and a missing selection returns nothing without raising."
+        ),
     ),
     #: ── ⑤ 裁剪 / 延伸焊件（★ 规格 211 B3-1 · 写）────────────────────────────
     ToolSpec(
@@ -309,23 +303,25 @@ SPECS_BATCH100 = [
                 "end_cond",
                 int,
                 default=0,
-                description="端条件（★ 官方 `swSolidworksWeldmentEndCondOptions_e`）—— "
-                "★ 合法档：`0`=None · `1`=Miter · `2`=Butt1 · `3`=Butt2 · `4`=**Trim** · `5`=UseDefault。",
+                description=(
+                    "End condition from the weldment end-condition enum: 0=none, 1=miter, 2=butt1, 3=butt2, 4=trim, 5=u"
+                    "se default. Defaults to 0."
+                ),
             ),
             Param(
                 "options",
                 int,
                 default=0,
-                description="选项（★ 官方逐字说是 `swWeldmentTrimExtendOptionType_e` 的 "
-                "**Logical sum**）—— ★ 按位或叠：`1` / `2` / `4` / `8`。",
+                description="Option bits combined as a logical sum: 1, 2, 4 and 8. Defaults to 0.",
             ),
             Param(
                 "gap_mm",
                 float,
                 default=0.0,
-                description="裁剪间隙（**毫米**）—— ⚠ ★ 官方 `GapValue` **没给单位**"
-                "（`## Parameters` 只写 `Length to trim`）⇒ ★ 本工具按**毫米**收、"
-                "★ 并在返回里带 `unit_assumption` ✓",
+                description=(
+                    "Trim gap in millimetres; the official parameter gives no unit, so the millimetre reading is an ass"
+                    "umption reported back. Defaults to 0.0."
+                ),
             ),
         ],
         evidence=(
@@ -339,19 +335,11 @@ SPECS_BATCH100 = [
             "e`**，★ **它清空了 mark 1 的体** ✗；★★ **而「读数无效」的样子与「真的不建」一模一样** ✗ ⇒ ★ **若没为每处前"
             "置单独落布尔字段，就会把无效读数当结论写进登记表** ✓"
         ),
-        doc="裁剪/延伸焊件：按 mark 选体与边界，修整焊件体。"
-        "★ **裁剪/延伸焊件**（官方 `IFeatureManager::InsertWeldmentTrimFeature2`，**参数式 5 参**）—— "
-        "★ **会改/新建焊件体**（非只读）✓ "
-        "★★ **前置只有官方 `## Remarks` 说得清**：★ `SelectByID2` 按 mark 选 —— "
-        "★ **1 = Body or bodies to trim** · ★ **2 = Trimming boundaries (body **or face**)** ✓ "
-        "★★★ **真机读数（★ 三处成因逐条追过）**：★ ① 前置 ✓（焊件特征建了 · 两个相交体在）· "
-        "★ ② mark ✓（1 = 体[按生成体的特征名] · 2 = 面，两条都 `True`）· "
-        "★ ③ 档位 ✓（`end_cond` 四档 × `options` 两档 = **8 组全试**）⇒ "
-        "★★ **而特征树一次都没变** ✗ ⇒ ★ **判「在后端到不了建成」** ✓ "
-        "★★★★ **本批最值钱的教训就在这条里**：★ 第三步**第一次跑**的八组读数**全部无效** ✗ —— "
-        "因为 `select_entity_by_index` 的 `append` **默认 `False`**，★ **它清空了 mark 1 的体** ✗；"
-        "★★ **而「读数无效」的样子与「真的不建」一模一样** ✗ ⇒ "
-        "★ **若没为每处前置单独落布尔字段，就会把无效读数当结论写进登记表** ✓",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: trimming or extending weldment bodies adds no feature. It woul"
+            "d write a weldment trim feature after you select the bodies with mark 1 and the boundaries with mark 2, bu"
+            "t eight measured option combinations left the feature tree unchanged."
+        ),
     ),
     #: ── ⑥ 展开图导出 DXF（★ 规格 211 D 项 · 用户授权 · 写文件）──────────────
     ToolSpec(
@@ -362,48 +350,52 @@ SPECS_BATCH100 = [
         inject="model",
         writes=[("file", "dxf")],
         params=[
-            Param("output_path", str, description="目标 DXF 路径。"),
+            Param("output_path", str, description="Absolute target DXF path."),
             Param(
-                "include_bend_lines", bool, default=True, description="是否输出折弯线。"
+                "include_bend_lines", bool, default=True, description=(
+                                                              "Whether to write the bend lines. Defaults to true."
+                                                          )
             ),
             Param(
-                "include_sketches", bool, default=False, description="是否输出草图。"
+                "include_sketches", bool, default=False, description=(
+                                                             "Whether to write the sketches. Defaults to false."
+                                                         )
             ),
             Param(
                 "include_hidden_edges",
                 bool,
                 default=False,
-                description="是否输出隐藏边。",
+                description="Whether to write hidden edges. Defaults to false.",
             ),
             Param(
                 "include_bounding_box",
                 bool,
                 default=False,
-                description="是否输出包围盒。",
+                description="Whether to write the bounding box. Defaults to false.",
             ),
             Param(
                 "merge_coplanar_faces",
                 bool,
                 default=False,
-                description="是否合并共面。",
+                description="Whether to merge coplanar faces. Defaults to false.",
             ),
             Param(
                 "allow_temporary_save",
                 bool,
                 default=False,
-                description="★★ **受控例外**（★ 默认 `False` ⇒ ★ **行为与从前完全一致** ✓）—— "
-                "★ 官方的真前置是「**已保存**的钣金件」✗；★ 而本仓硬约束⑦原先是"
-                "「**一律不保存文档**」⇒ ★ 默认下**显式拒绝** ✓。"
-                "★★ 用户 2026-10-07 授权「**D 我允许你做**」⇒ ★ 传 `True` 会先"
-                "**临时另存**到 `temporary_save_dir`（★ **只允许仓库内** ✓）再导出 ✓。"
-                "★ 授权是**场景性的**、★ **不是**全仓废止硬约束⑦ ✓",
+                description=(
+                    "Whether to save the unsaved part into temporary_save_dir first so the official precondition holds."
+                    " Defaults to false, which keeps the previous behaviour."
+                ),
             ),
             Param(
                 "temporary_save_dir",
                 str,
                 default=None,
-                description="临时另存的落点（★ 默认仓库内 `output\\_temp_save`）—— "
-                "★★ **非仓库内路径一律拒绝**（★ 那是「真机跑不许写到用户目录」那条硬约束的落点 ✓）。",
+                description=(
+                    "Directory for that temporary save; must stay inside this repository. Defaults to output/_temp_save"
+                    "."
+                ),
             ),
         ],
         evidence=(
@@ -415,14 +407,9 @@ SPECS_BATCH100 = [
             "授权 + 仓库内目录 ⇒ 临时另存 + 导出成功，★ **回读 DXF 存在且 20219 字节** ✓ ★ 临时零件**不删** —— ★ 删数据"
             "是红线；★ 用完的去留由人决定 ✓"
         ),
-        doc="导出钣金展开图 DXF（可临时另存以补齐官方前置）。"
-        "★ **钣金展开图导出 DXF**（官方 `IModelDoc2::ExportToDWG2` + `swExportToDWG_SHEET_METAL`）—— "
-        "★★ **会写文件**；★ 在 `allow_temporary_save=True` 且零件未保存时**还会临时另存一个零件** ✓ "
-        "★★★ **判据 = 一正两负**（★ 事实 62：★ 门禁只靠负例证明 ✓）："
-        "★ **负例①** 默认 ⇒ **抛 `ValueError`**、★ 且**错误里点名那个开关** ✓；"
-        "★★ **负例②** 授权了、★ 但目录**在仓库外** ⇒ **抛 `ValueError`**、"
-        "★ **且拒绝发生在另存之前**（`_save_as` 一次都没被调）✓ · ★ 且**没在用户目录建任何东西** ✓；"
-        "★★★ **正例** 授权 + 仓库内目录 ⇒ 临时另存 + 导出成功，★ **回读 DXF 存在且 20219 字节** ✓ "
-        "★ 临时零件**不删** —— ★ 删数据是红线；★ 用完的去留由人决定 ✓",
+        doc=(
+            "Export the sheet-metal flat pattern of the active part to a DXF file for cutting. Writes the file, and ref"
+            "uses to run unless the part is already saved or allow_temporary_save is true."
+        ),
     ),
 ]

@@ -82,14 +82,18 @@ SPECS_BATCH113: list[ToolSpec] = [
         function="apply_sketch_relations",
         inject="model",
         params=[
-            Param("relations", str, description=RELATIONS_HELP),
+            Param("relations", str, description=(
+                                        "Relation list separated by semicolons, each item a relation name and segment i"
+                                        "ndices, such as horizontal:0 or coincident:0,1."
+                                    )),
             Param(
                 "verify",
                 bool,
                 default=True,
-                description="★ 是否取前/后态关系数（★ **默认 True**）。"
-                "⚠ 设 `False` **不绕过状态门**（★ 实现仍查活动草图与约束状态）"
-                "—— ★ 它只是省掉一次回读 ⇒ ★ 那样 `effect_status` 只能是 `unknown`。",
+                description=(
+                    "Whether to read the relation counts before and after; defaults to true, while false only skips the"
+                    " read-back and leaves the effect unknown."
+                ),
             ),
         ],
         derived_args=_relations_list,
@@ -108,25 +112,9 @@ SPECS_BATCH113: list[ToolSpec] = [
             "-tool-base/`（EC00 T017/T018）。"
         ),
         doc=(
-            "★ **一次把一整张几何关系清单加全**（★ 与画圆/画线同级）。"
-            "★★ **官方入口**：`ISketchRelationManager::AddRelation`"
-            "（★ 官方签名逐字：`SketchRelation AddRelation( System.object Entities, "
-            "System.int RelationType )` —— ★ **2 参**；"
-            "⚠ **不要**与指针变体 `IAddRelation(Int32, Object&, Int32)`（**3 参**）混用 ⇒ "
-            "传错个数报 `0x8002000E`）。"
-            "★★ **官方 `## Remarks` 逐字**：「A sketch must be active for this method to have "
-            "any effect.」⇒ ★ **必须有活动草图**（★ 实现已查：`_active(model)` 为 None 即拒绝）。"
-            "★★★ **判据（规则 6 · 全回读）**：★ **不看返回码**（★ 事实 8）—— "
-            "★ 每条关系 ⇒ 该段 `GetRelationsCount` **真的 +1** ✓；"
-            "★ 前态读不到 ⇒ `rejected`（★ **不做任何修改**）；"
-            "★ 调用抛异常 ⇒ `uncertain`（★ **不重放**，★ 批内后续项 `not_started`）。"
-            "★★ **防过定义**：★ 草图已完全定义 ⇒ **整批拒加**。"
-            "★★ **选段**：`index:N` + `IEntity::Select4`（★ 事实 32：实体**不能按名字选**）。"
-            "⚠ **验证等级**：★ 本工具的实现由 `tests/test_sw_sketch_relations_safety.py`（**12 例**）"
-            "在**假宿主**上验过（★ **离线**）；★★ **真机未在本特性内验证** ⇒ "
-            "★ `runtime` = **`not_run`**（★ 依据 `specs/221-*/acceptance.md`："
-            "「限定离线行为回归通过；runtime/product=not_run」）。"
-            "★ 见 `specs/302-ec00-trustworthy-tool-base/`（EC00 T017/T018）。"
+            "Apply a list of sketch relations at once to the segments named by index. It writes relations into the open"
+            " sketch and refuses when no sketch is active or the sketch is already fully defined; each relation is veri"
+            "fied by counting it back, and its behaviour was so far checked offline only."
         ),
     ),
 ]

@@ -96,26 +96,29 @@ SPECS_BATCH17 = [
         param_alias=dict(_consumed("angle_deg")),
         derived_args=_radians_of_deg,
         params=[
-            Param("feature_name", str, description="Name of the feature to pattern."),
+            Param("feature_name", str, description="Name of the feature to pattern, as it appears in the feature tree."),
             Param("axis_name", str, description="Name of the axis to revolve around."),
             Param(
                 "angle_deg",
                 float,
-                description="Total pattern angle in DEGREES (rule 2). Converted to radians "
-                "exactly once at this boundary via sw_connect.deg().",
+                description="Total pattern angle in degrees.",
             ),
-            Param("count", int, description="Number of pattern instances."),
+            Param("count", int, description="Number of instances including the seed feature."),
             Param(
                 "equal_spacing",
                 bool,
                 default=True,
-                description="Space the instances equally.",
+                description="Whether the instances are spaced equally across the angle. Defaults to true.",
             ),
         ],
         evidence=(
             "Create a circular pattern about an axis."
         ),
-        doc="Create a circular pattern about an axis.",
+        doc=(
+            "Create a circular pattern of one feature about an axis. Writes a pattern feature into the active part and "
+            "does not save the document; count counts the instances including the seed, and the total angle is spread o"
+            "ver equal spacing when that is enabled."
+        ),
     ),
     # 签名: def revolve_boss(model, sketch_name, angle_rad, axis_sketch_name=None)
     ToolSpec(
@@ -131,25 +134,32 @@ SPECS_BATCH17 = [
             axis_sketch_name=(str(p.axis_sketch_name) or None),
         ),
         params=[
-            Param("sketch_name", str, description="Profile sketch NAME."),
+            Param("sketch_name", str, description=(
+                                          "Name of the profile sketch exactly as it appears in the feature tree."
+                                      )),
             Param(
                 "angle_deg",
                 float,
-                description="Revolve angle in DEGREES (rule 2). Converted to radians exactly "
-                "once at this boundary via sw_connect.deg().",
+                description="Revolve angle in degrees, converted once to radians.",
             ),
             Param(
                 "axis_sketch_name",
                 str,
                 default="",
-                description='Axis sketch name; omit ("") to use the function default (None).',
+                description=(
+                    "Name of the axis sketch to revolve about; empty selects no axis, so one must already be selected i"
+                    "n the model. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
             "Revolve a profile sketch into a boss feature. ⚠ This call is routed through a closed-source COM backend — "
             "see docs/known-facts.md."
         ),
-        doc="Revolve a profile sketch into a boss feature. ⚠ This call is routed through a "
-        "closed-source COM backend — see docs/known-facts.md.",
+        doc=(
+            "Revolve a profile sketch into a solid boss about an axis. Creates a boss feature in the active part and do"
+            "es not save the document; the axis has to enter the selection set before the profile, and an omitted axis "
+            "name means an axis must already be selected."
+        ),
     ),
 ]

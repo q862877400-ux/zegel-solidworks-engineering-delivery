@@ -80,11 +80,8 @@ SPECS_BATCH114: list[ToolSpec] = [
                 "buttons",
                 str,
                 description=(
-                    '★ **按钮文本**（★ **逗号 `,` 分隔**）。★ 例：`"确定"` / '
-                    '`"是,否,确定"` / `"暂停,取消,更多>>"`。'
-                    "★★ **这是分级的关键** —— 分级器先看按钮："
-                    "★ 只有一个语义明确的确认按钮 ⇒ `auto`（**可自动点**）；"
-                    "★ 有 否/取消/暂停/上一步/下一步，或**多个同权按钮** ⇒ `needs_llm`（**不点**）。"
+                    "Dialog button text separated by commas; a single unambiguous confirm button yields auto, while can"
+                    "cel, pause, back, next or several equal-weight buttons yield needs_llm."
                 ),
             ),
             Param(
@@ -92,17 +89,15 @@ SPECS_BATCH114: list[ToolSpec] = [
                 str,
                 default="",
                 description=(
-                    "★ **弹窗正文**（★ **竖线 `|` 分隔** —— ★ 因为正文里常含逗号）。"
-                    '★ 例：`"未定义载荷或规定的位移|固定-刚性零件上的载荷将不处于活动状态。"`。'
-                    "★★ 正文含**危险词**（删除/覆盖/替换/丢失/不可逆/remove/overwrite/delete…）"
-                    "⇒ ★ **`forbidden`**（★ **绝不自动点**）。"
+                    "Dialog body text separated by vertical bars, because the body often contains commas; a body holdin"
+                    "g a dangerous word such as delete, overwrite or remove yields forbidden. Defaults to empty."
                 ),
             ),
             Param(
                 "title",
                 str,
                 default="",
-                description="★ 弹窗标题（★ 如 `Simulation`）。",
+                description="Dialog title, for example Simulation. Defaults to empty.",
             ),
         ],
         derived_args=_classify_from_text,
@@ -120,23 +115,9 @@ SPECS_BATCH114: list[ToolSpec] = [
             "log_tiers.py`（★ 三级 + 负例）。"
         ),
         doc=(
-            "★ **读一个弹窗，判「能不能自动点」**（★ 本仓弹窗护栏的**大脑**）。\n\n"
-            "★★★ **为什么该主动用它**（★ 业主 2026-10-10 点破）："
-            "工具面已有 9 个 `solidworks_gui_*`，★ 但**只有这一个**能回答"
-            "「★ 这个弹窗**该不该**点、★ 点了**会不会出事**」。"
-            "★ 以前它只在 `tools/sw_guard.py` 里 ⇒ ★ **每次都想不到用** "
-            "（★ 我本会话就因此把「求解失败」误读成「求解很慢」）。\n\n"
-            "★★ **四级结论**（★ 逐字承 `tools/sw_guard.py::classify_dialog`）：\n"
-            "· `auto` —— ★ 只有一个语义明确的确认按钮 ⇒ **可自动点**；\n"
-            "· `needs_llm` —— ★ 有 否/取消/暂停/上一步/下一步，或多同权按钮 "
-            "⇒ **不点**，把文本交给人/LLM 判；\n"
-            "· `forbidden` —— ★ 正文含危险词（删除/覆盖/替换/丢失/不可逆…）⇒ **绝不自动点**；\n"
-            "· `progress` —— ★★ **正常求解的进度窗**（含 `当前任务`/`已用时间`/`自由度`/`单元数`）"
-            "⇒ ★ **既不点、也不中止**（★ 事实 297：点掉 = **中断一个正在跑的正常任务**）。\n\n"
-            "★★ **配套工具（一起用）**：`solidworks_gui_find_modals`（找出来）→ "
-            "**本工具**（判该不该点）→ `solidworks_gui_close_modals`（真去点）。\n"
-            "★★ **纯离线**（★ 只读文本 ⇒ ★ **不碰窗口、不点任何东西**）。\n"
-            "★ 契约测试：`tests/test_sw_guard_dialog_tiers.py`（★ 三级 + 负例）。"
+            "Decide whether a dialog may be dismissed automatically from its title, text and buttons. Read-only and ful"
+            "ly offline: it reads only the strings you pass, touches no window and clicks nothing, and answers with aut"
+            "o, needs_llm, forbidden or progress."
         ),
     ),
 ]

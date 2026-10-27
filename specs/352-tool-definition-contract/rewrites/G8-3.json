@@ -1,0 +1,151 @@
+{
+ "tools": {
+  "solidworks_part_rib": {
+   "doc": "Create a rib from an existing sketch and report the feature, rebuild and error read-back. It writes a feature into the active part and does not save it; the sketch must already exist in the tree.",
+   "params": {
+    "sketch_name": "Name of an existing sketch used as the rib profile; the sketch must already be in the tree.",
+    "thickness_mm": "Rib wall thickness in millimetres, following the document unit.",
+    "feature_name": "Expected feature name used by the read-back; defaults to empty, which falls back to the default rib name.",
+    "direction": "Rib direction flag passed to the official call; defaults to true."
+   }
+  },
+  "solidworks_part_insert_dome": {
+   "doc": "Add a dome on the face at face_index and report the feature, rebuild and error read-back. It writes a feature into the active part, selects that face itself with mark 1, and does not save it; an out-of-range index raises instead of failing quietly.",
+   "params": {
+    "height_mm": "Dome height in millimetres.",
+    "feature_name": "Expected feature name used by the read-back; defaults to empty, which falls back to the default dome name.",
+    "reverse": "Whether to reverse the dome direction; defaults to false.",
+    "elliptic": "Whether to make the dome elliptical; defaults to false.",
+    "face_index": "Zero-based index of the face to dome; defaults to 0, and an index that cannot be selected raises."
+   }
+  },
+  "solidworks_part_insert_composite_curve": {
+   "doc": "Join the selected entities into a composite curve and report the feature, rebuild and error read-back. It writes a feature into the active part and does not save it; the entities must already be selected with mark 1.",
+   "params": {
+    "feature_name": "Expected feature name used by the read-back; defaults to empty, which falls back to the default composite-curve name."
+   }
+  },
+  "solidworks_available_point_selectors": {
+   "doc": "List the point-selector names usable when specifying geometry. Read-only and needs no open document; pass one of the returned names wherever a tool takes a point selector.",
+   "params": {}
+  },
+  "solidworks_available_direction_selectors": {
+   "doc": "List the direction-selector names usable when specifying geometry. Read-only and needs no open document; pass one of the returned names wherever a tool takes a direction selector.",
+   "params": {}
+  },
+  "solidworks_collect_assembly_bom": {
+   "doc": "Read the top-level assembly components as bill-of-materials rows, grouped by file path and configuration. Read-only; use the CSV export tool instead when a file is wanted rather than rows.",
+   "params": {
+    "include_excluded": "Whether to include components excluded from the bill of materials; defaults to false."
+   }
+  },
+  "solidworks_topology_create_demold_control": {
+   "doc": "Create a de-mold control on a topology study after you select the pull-direction face, edge or plane. It modifies the study only and never runs the solver; choose the direction option to match that selection.",
+   "params": {
+    "study_name": "Target study name; empty uses the active study. Defaults to empty.",
+    "direction": "Pull direction option: 0=two-direction mid-plane, 1=pull direction only, 2=stamping. Defaults to 0."
+   }
+  },
+  "solidworks_topology_create_stress_constraint": {
+   "doc": "Create a stress constraint on a topology study at a given stress value. It modifies the study only and never runs the solver; comparator comes from the topology comparator enum.",
+   "params": {
+    "study_name": "Target study name; empty uses the active study. Defaults to empty.",
+    "value": "Constraint stress value.",
+    "comparator": "Comparator from the topology constraint comparator enum: 0=is less than, 1=is greater than, 2=is in between. Defaults to 0."
+   }
+  },
+  "solidworks_topology_create_symmetry_control": {
+   "doc": "Create a symmetry control on a topology study after you select the symmetry plane. It modifies the study only and never runs the solver; the type values follow the official example, whose per-value names are not confirmed.",
+   "params": {
+    "study_name": "Target study name; empty uses the active study. Defaults to empty.",
+    "symmetry_type": "Symmetry type value: 0, 1 or 2 as used by the official example, whose per-value meaning is not confirmed. Defaults to 0."
+   }
+  },
+  "solidworks_create_revolved_surface": {
+   "doc": "Create a revolved reference surface by revolving the selected profile about a centerline. It writes a surface feature into the active part; select the profile before calling, 3D sketches are not supported, and no selection mark is assumed.",
+   "params": {
+    "angle_deg": "Revolve angle in degrees, converted once; for the mid-plane type it is the total angle.",
+    "rev_type": "Revolve type: 0=one direction, 1=mid-plane, 2=two directions; any other value is rejected.",
+    "reverse_dir": "Whether to reverse the revolve direction.",
+    "angle2_deg": "Second-direction angle in degrees, meaningful only when rev_type is 2."
+   }
+  },
+  "solidworks_hole_wizard": {
+   "doc": "Create a hole-wizard hole on an axis-aligned face named by a direction selector and a size string. It writes a hole feature into the active part; the size must be a standard string such as M8, because an empty string or a bare number returns nothing.",
+   "params": {
+    "selection": "Declarative face selector: +x, -x, +y, -y, +z or -z, resolved to a point and a ray; reliable only on axis-aligned bodies.",
+    "size": "Fastener size string such as M8; an empty string or a bare number returns nothing."
+   }
+  },
+  "solidworks_sketch_fully_defined_status": {
+   "doc": "Read the constrained-status integer of the sketch being edited. Read-only; it raises when no sketch is being edited, and this repository does not interpret the value, so treat the number as raw and unlabelled.",
+   "params": {}
+  },
+  "solidworks_custom_property_get": {
+   "doc": "Read one file custom property value together with its type and whether it is editable. Read-only; writing is a different tool, and property names follow the UI language and are case sensitive.",
+   "params": {
+    "name": "Exact custom property name as stored; names follow the UI language and are case sensitive.",
+    "config_name": "Configuration to read from; empty reads the default configuration. Defaults to empty."
+   }
+  },
+  "solidworks_custom_property_list": {
+   "doc": "Read every file custom property of the active document with its value and type. Read-only; writing is a different tool, and the reply also says how many properties were read.",
+   "params": {
+    "config_name": "Configuration to read from; empty reads the default configuration. Defaults to empty."
+   }
+  },
+  "solidworks_selection_clear_colors": {
+   "doc": "Clear every selection colour setting held by the selection manager. It modifies the selection manager state and returns nothing; the official member states no precondition of its own.",
+   "params": {}
+  },
+  "solidworks_costing_set_default_template": {
+   "doc": "Set the default costing template name for a costing category. It modifies the costing defaults; the integer category is passed through unchanged because no official source says whether it is a tab index or a template category.",
+   "params": {
+    "category": "Integer category passed through unchanged; no official source documents its meaning. Defaults to 0.",
+    "template_name": "Template name string passed through to the official member. Defaults to empty."
+   }
+  },
+  "solidworks_part_sweep": {
+   "doc": "Create a sweep from a profile sketch and a path sketch that the tool selects and counts for you. It writes a feature into the active part; the path must start on the profile plane, and the read-back requires the new type name to be Sweep.",
+   "params": {
+    "profile_sketch": "Profile sketch name exactly as it appears in the feature tree, selected with mark 1; defaults to empty, which selects nothing.",
+    "path_sketch": "Path sketch name selected with mark 4; its start must lie on the profile plane, and it defaults to empty, which selects nothing.",
+    "cut": "True to build a swept cut, false to build a swept boss. Defaults to false."
+   }
+  },
+  "solidworks_weldment_create_structural_member": {
+   "doc": "Create a structural member along a path sketch with a weldment profile, then read the feature tree back. It writes a weldment feature into the active part; the profile is an absolute .sldlfp path, and this machine has the weldment profile library installed.",
+   "params": {
+    "sketch_name": "Name of the path sketch that the member is swept along, exactly as it appears in the feature tree.",
+    "profile_path": "Absolute path of a .sldlfp weldment profile; this machine keeps 111 profiles under the SOLIDWORKS weldment profiles folder."
+   }
+  },
+  "solidworks_drawing_insert_balloons": {
+   "doc": "Insert BOM balloons into the views or sheet you selected first and report the note-count increase. It writes annotations into the active drawing; a drawing without a BOM table still accepts balloons, so a missing table is not a blocker.",
+   "params": {
+    "layout": "Balloon layout type from the balloon layout enum; defaults to 1, the square layout.",
+    "style": "Balloon style from the balloon style enum; defaults to 1, the circular style.",
+    "size": "Balloon fit from the balloon fit enum; defaults to 5, five characters.",
+    "upper_text_content": "What the balloon shows in its upper text; defaults to 1, the item number.",
+    "upper_text": "Custom text placed above the balloon; defaults to empty.",
+    "layername": "Layer name for the balloons; defaults to '-None-', following the official example.",
+    "item_number_start": "First item number used; defaults to 1.",
+    "item_number_increment": "Increment between item numbers; defaults to 1.",
+    "item_order": "Item-number ordering rule from its enum; defaults to 1, which keeps the existing item numbers.",
+    "edit_balloons": "Official edit-balloons flag; defaults to true.",
+    "edit_balloon_option": "Edit option from the edit-balloon enum; defaults to 1, resequence.",
+    "reverse_direction": "Whether to reverse the balloon direction; defaults to false.",
+    "ignore_multiple": "Whether to ignore multiple instances; defaults to true.",
+    "insert_magnetic_line": "Whether to insert a magnetic line; defaults to true.",
+    "leader_attachment_to_faces": "Whether the leaders attach to faces; defaults to true."
+   }
+  },
+  "solidworks_sketch_apply_relations": {
+   "doc": "Apply a list of sketch relations at once to the segments named by index. It writes relations into the open sketch and refuses when no sketch is active or the sketch is already fully defined; each relation is verified by counting it back, and its behaviour was so far checked offline only.",
+   "params": {
+    "relations": "Relation list separated by semicolons, each item a relation name and segment indices, such as horizontal:0 or coincident:0,1.",
+    "verify": "Whether to read the relation counts before and after; defaults to true, while false only skips the read-back and leaves the effect unknown."
+   }
+  }
+ }
+}

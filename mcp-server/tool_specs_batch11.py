@@ -80,20 +80,24 @@ SPECS_BATCH11 = [
             "Create a mass constraint for a topology study (mass-reduction percent semantics). Returns the constraint o"
             "bject."
         ),
-        doc="Create a mass constraint for a topology study (mass-reduction percent "
-        "semantics). Returns the constraint object.",
+        doc=(
+            "Create a mass constraint on a topology study as a target mass-reduction percentage. It creates the constra"
+            "int on the study and returns it, and the study must already be a topology study."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing topology study; empty uses the active study, and the name is resolved before t"
+                    "he call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "reduce_percent",
                 float,
-                description="Target mass reduction in percent (e.g. 75 means -75%).",
+                description="Target mass reduction in percent, so 75 means minus 75 percent.",
             ),
         ],
     ),
@@ -108,18 +112,23 @@ SPECS_BATCH11 = [
             "Create a factor-of-safety constraint for a topology study (stress must stay below that percentage of yield"
             " strength)."
         ),
-        doc="Create a factor-of-safety constraint for a topology study (stress must "
-        "stay below that percentage of yield strength).",
+        doc=(
+            "Create a factor-of-safety constraint on a topology study. It creates the constraint on the study; stress h"
+            "as to stay below the yield strength divided by that factor, and the study must already be a topology study"
+            "."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing topology study; empty uses the active study, and the name is resolved before t"
+                    "he call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
-                "specified_factor", float, description="Factor of safety (e.g. 1.5)."
+                "specified_factor", float, description="Factor of safety, for example 1.5."
             ),
         ],
     ),
@@ -134,21 +143,27 @@ SPECS_BATCH11 = [
             "Create a preserved region for a topology study (material that must not be removed). ⚠ `option` is an offic"
             "ial enum value; omit to use the default."
         ),
-        doc="Create a preserved region for a topology study (material that must not "
-        "be removed). ⚠ `option` is an official enum value; omit to use the default.",
+        doc=(
+            "Create a preserved region on a topology study for material that must not be removed. It creates the constr"
+            "aint on the study, and the option value is passed through unchanged as the reference enum value."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing topology study; empty uses the active study, and the name is resolved before t"
+                    "he call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "option",
                 int,
                 default=0,
-                description="Official option enum value; 0 means the module default.",
+                description=(
+                    "Reference option enum value passed through unchanged; 0 means the module default. Defaults to 0."
+                ),
             ),
         ],
     ),
@@ -162,8 +177,10 @@ SPECS_BATCH11 = [
             "Create a thickness control for a topology study (minimum/maximum thickness). Units are millimetres (rule 2"
             ")."
         ),
-        doc="Create a thickness control for a topology study (minimum/maximum "
-        "thickness). Units are millimetres (rule 2).",
+        doc=(
+            "Create a thickness control on a topology study with a minimum and a maximum thickness. It creates the cont"
+            "rol on the study, and both thicknesses are millimetres."
+        ),
         param_alias={
             "study_name": None,  # 由解析器消费，不进目标函数
             "min_thickness_mm": "min_thickness",
@@ -174,20 +191,22 @@ SPECS_BATCH11 = [
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing topology study; empty uses the active study, and the name is resolved before t"
+                    "he call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "min_thickness_mm",
                 float,
                 default=0.0,
-                description="Minimum thickness in millimetres; 0 means the module default.",
+                description="Minimum thickness in millimetres; 0 means the module default. Defaults to 0.0.",
             ),
             Param(
                 "max_thickness_mm",
                 float,
                 default=0.0,
-                description="Maximum thickness in millimetres; 0 means the module default.",
+                description="Maximum thickness in millimetres; 0 means the module default. Defaults to 0.0.",
             ),
         ],
     ),

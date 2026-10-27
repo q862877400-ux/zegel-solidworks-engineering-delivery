@@ -52,7 +52,10 @@ SPECS_BATCH8 = [
         evidence=(
             "Summarise the model: title, type, feature tree (name + type), save path."
         ),
-        doc="Summarise the model: title, type, feature tree (name + type), save path.",
+        doc=(
+            "Read a summary of the active model: title, type, feature tree entries and save path. Read-only, so it walk"
+            "s the feature tree without changing anything. Use it to confirm which model is open before acting on it."
+        ),
         param_alias={},
         params=[],
     ),
@@ -66,7 +69,11 @@ SPECS_BATCH8 = [
         evidence=(
             "Get the SOLIDWORKS Costing manager object for the active document."
         ),
-        doc="Get the SOLIDWORKS Costing manager object for the active document.",
+        doc=(
+            "Get the Costing manager object of the active document, which every other cost call is built on. Read-only,"
+            " and the manager is reachable even when the Costing add-in is not loaded, so do not probe for the add-in f"
+            "irst."
+        ),
         param_alias={},
         params=[],
     ),
@@ -79,7 +86,11 @@ SPECS_BATCH8 = [
         evidence=(
             "List the simulation study option setters available (no document needed)."
         ),
-        doc="List the simulation study option setters available (no document needed).",
+        doc=(
+            "List the simulation study option setters that are available, grouped by study-options family. Read-only an"
+            "d it needs no open document, so call it to discover the valid family and name pairs before setting an opti"
+            "on."
+        ),
         param_alias={},
         params=[],
     ),

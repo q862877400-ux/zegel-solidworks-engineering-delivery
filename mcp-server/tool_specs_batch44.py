@@ -39,7 +39,7 @@ SPECS_BATCH44 = [
                 "sheet_name",
                 str,
                 default="",
-                description="图纸名；留空 = 当前图纸（★ 声明式：不传坐标）",
+                description="Name of the drawing sheet; empty means the current sheet. Defaults to ''.",
             ),
         ],
         evidence=(
@@ -47,9 +47,10 @@ SPECS_BATCH44 = [
             "⇒ 回 `ratio_text`（如 `1:5`）。⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Nu"
             "merator。"
         ),
-        doc="★ **读工程图图纸的比例** —— 走官方 Remarks 指定的 `ISheet.GetProperties`，"
-        "取其中两个数作为比例的分子/分母 ⇒ 回 `ratio_text`（如 `1:5`）。"
-        "⚠ 顺序是真机定的：`GetProperties` 的第 4 个元素是 Denominator、第 5 个是 Numerator。",
+        doc=(
+            "Read the scale of a drawing sheet and return it as a ratio such as 1:5. Read-only; it reads the sheet prop"
+            "erties and reports the two scale numbers, and an empty sheet_name means the current sheet."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_set_sheet_scale",
@@ -61,31 +62,37 @@ SPECS_BATCH44 = [
             Param(
                 "numerator",
                 float,
-                description="比例前项 —— ★ 真机限制：**只接受 1**（图纸比例只能是 1:n）",
+                description=(
+                    "Scale numerator; only 1 is accepted, because this build forces 1 and ignores any other value."
+                ),
             ),
-            Param("denominator", float, description="比例后项，必须 > 0"),
+            Param("denominator", float, description="Scale denominator, which must be greater than 0."),
             Param(
                 "scale_anno_position",
                 bool,
                 default=False,
-                description="是否同时缩放注释位置",
+                description="Whether to also scale annotation positions. Defaults to false.",
             ),
             Param(
                 "scale_anno_text_height",
                 bool,
                 default=False,
-                description="是否同时缩放注释字高",
+                description="Whether to also scale annotation text height. Defaults to false.",
             ),
-            Param("sheet_name", str, default="", description="图纸名；留空 = 当前图纸"),
+            Param("sheet_name", str, default="", description=(
+                                                     "Name of the drawing sheet; empty means the current sheet. Default"
+                                                     "s to ''."
+                                                 )),
         ],
         evidence=(
             "★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, scale_anno_position, scale_a"
             "nno_text_height)`（官方 4 参 · 回 bool）。★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）"
             "。⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。"
         ),
-        doc="★ **设工程图图纸的比例并回读** —— 走 `ISheet.SetScale(numerator, denominator, "
-        "scale_anno_position, scale_anno_text_height)`（官方 4 参 · 回 bool）。"
-        "★ 判据：**它回真、且回读的两个数真的变了**（规则 6：不静默成功）。"
-        "⚠ `numerator != 1` 会被**显式拒绝**（★ 真机三组证据：`(1,5)→1:5` · `(3,7)→1:7` · `(2,1)→1:1`）。",
+        doc=(
+            "Set a drawing sheet scale and read it back. Modifies the sheet scale and does not save the document; ok is"
+            " true only when the call returns true and the read-back scale really changed. The numerator must be 1, bec"
+            "ause this build forces it and ignores any other value."
+        ),
     ),
 ]

@@ -64,6 +64,8 @@ VERBS = frozenset(
     Extrude Resolve Configure Collect Revolve Assign Switch Summarise Summarize Detect
     Enter Leave Chamfer Round Look Decide Hollow Join Explode Collapse Display Call Turn
     Release Block Replace Untrim Flatten Sweep Loft
+    Skip Map Pull Choose Reuse Avoid Prefer Wrap Reset Normalize Scan Walk Stamp Derive
+    Project Press
     """.split()
 )
 

@@ -32,33 +32,41 @@ SPECS_BATCH57 = [
             Param(
                 "positions",
                 list,
-                description="孔位列表，每项 `[x_mm, y_mm]`（**毫米**，在草图平面内）——"
-                "★ 坐标是规则 3 的书面例外（草图图元没有可选的具名实体）",
+                description=(
+                    "Hole centres as [x_mm, y_mm] pairs in millimetres on the sketch plane; coordinates are the documen"
+                    "ted exception for sketch geometry."
+                ),
             ),
             Param(
                 "kind",
                 str,
                 default="through",
-                description="孔种类：`through`（通孔）/ `blind`（盲孔）",
+                description="Hole kind: through for a through hole or blind for a blind hole. Defaults to through.",
             ),
-            Param("diameter_mm", float, default=8.0, description="孔径（毫米）"),
+            Param("diameter_mm", float, default=8.0, description="Hole diameter in millimetres. Defaults to 8."),
             Param(
                 "depth_mm",
                 float,
                 default=None,
-                description='盲孔深度（毫米）—— ★ `kind="blind"` 时**必填**',
+                description=(
+                    "Blind-hole depth in millimetres, required when kind is blind. Defaults to unset, which means no de"
+                    "pth is given."
+                ),
             ),
             Param(
                 "plane_name",
                 str,
                 default="Front Plane",
-                description="草图平面（中英文皆可：Front Plane / 前视基准面）",
+                description="Sketch plane name, in English or in the localized names. Defaults to Front Plane.",
             ),
             Param(
                 "name",
                 str,
                 default="孔",
-                description="孔特征名前缀（每个孔会带序号后缀）",
+                description=(
+                    "Prefix for the hole feature names, with a number suffix added per hole; it defaults to this interf"
+                    "ace's word for hole."
+                ),
             ),
         ],
         evidence=(
@@ -68,11 +76,10 @@ SPECS_BATCH57 = [
             "什么都没发生」的空存根）。⚠ 本工具只支持 `through` / `blind`：★ `counterbore` / `countersink` 另有必填参数"
             "，未暴露。"
         ),
-        doc="★ **按显式孔位一次创建一组孔**（★ 官方走 `HoleWizard5` 那族）。"
-        "★★ 它把 `create_hole_pattern` 的 **`creator` 可调用对象**换成**具名的 `kind`** ——"
-        "★ 因为 MCP 层给不出函数对象。"
-        "★★ 判据**两条都要**：★ 每个孔位都回了证据 **且** **特征树真的长了**（★ 规则 6）——"
-        "★ 只回证据而树不动 ⇒ `ok=false` 并写明（★ 本会话已见过「回对象而什么都没发生」的空存根）。"
-        "⚠ 本工具只支持 `through` / `blind`：★ `counterbore` / `countersink` 另有必填参数，未暴露。",
+        doc=(
+            "Create one hole per explicit position in the active part. It writes hole features and does not save the do"
+            "cument; both criteria must hold, meaning every position returns evidence and the feature tree really grows"
+            ", and only through and blind holes are supported."
+        ),
     ),
 ]

@@ -40,80 +40,80 @@ SPECS_BATCH97 = [
                 "layout",
                 int,
                 default=1,
-                description="`swBalloonLayoutType_e`（默认 `swDetailingBalloonLayout_Square = 1`）。",
+                description="Balloon layout type from the balloon layout enum; defaults to 1, the square layout.",
             ),
             Param(
                 "style",
                 int,
                 default=1,
-                description="`swBalloonStyle_e`（默认 `swBS_Circular = 1`）。",
+                description="Balloon style from the balloon style enum; defaults to 1, the circular style.",
             ),
             Param(
                 "size",
                 int,
                 default=5,
-                description="`swBalloonFit_e`（默认 `swBF_5Chars = 5`）。",
+                description="Balloon fit from the balloon fit enum; defaults to 5, five characters.",
             ),
             Param(
                 "upper_text_content",
                 int,
                 default=1,
-                description="`swBalloonTextContent_e`（默认 `swBalloonTextItemNumber = 1`"
-                " ⇒ 气泡里显示**件号**）。",
+                description="What the balloon shows in its upper text; defaults to 1, the item number.",
             ),
             Param(
                 "upper_text",
                 str,
                 default="",
-                description="气泡上方的自定义文字（默认空）。",
+                description="Custom text placed above the balloon; defaults to empty.",
             ),
             Param(
                 "layername",
                 str,
                 default="-None-",
-                description="图层名（★ 默认值逐条照**官方示例**，★ 不声称是出厂默认）。",
+                description="Layer name for the balloons; defaults to '-None-', following the official example.",
             ),
-            Param("item_number_start", int, default=1, description="件号起始值。"),
-            Param("item_number_increment", int, default=1, description="件号增量。"),
+            Param("item_number_start", int, default=1, description="First item number used; defaults to 1."),
+            Param("item_number_increment", int, default=1, description="Increment between item numbers; defaults to 1."),
             Param(
                 "item_order",
                 int,
                 default=1,
-                description="`swBalloonItemNumbersOrder_e`"
-                "（默认 `DoNotChangeItemNumbers = 1`）。",
+                description=(
+                    "Item-number ordering rule from its enum; defaults to 1, which keeps the existing item numbers."
+                ),
             ),
             Param(
-                "edit_balloons", bool, default=True, description="官方 `EditBalloons`。"
+                "edit_balloons", bool, default=True, description="Official edit-balloons flag; defaults to true."
             ),
             Param(
                 "edit_balloon_option",
                 int,
                 default=1,
-                description="`swEditBalloonOption_e`（默认 `Resequence = 1`）。",
+                description="Edit option from the edit-balloon enum; defaults to 1, resequence.",
             ),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="官方 `ReverseDirection`。",
+                description="Whether to reverse the balloon direction; defaults to false.",
             ),
             Param(
                 "ignore_multiple",
                 bool,
                 default=True,
-                description="官方 `IgnoreMultiple`。",
+                description="Whether to ignore multiple instances; defaults to true.",
             ),
             Param(
                 "insert_magnetic_line",
                 bool,
                 default=True,
-                description="官方 `InsertMagneticLine`。",
+                description="Whether to insert a magnetic line; defaults to true.",
             ),
             Param(
                 "leader_attachment_to_faces",
                 bool,
                 default=True,
-                description="官方 `LeaderAttachmentToFaces`。",
+                description="Whether the leaders attach to faces; defaults to true.",
             ),
         ],
         evidence=(
@@ -127,19 +127,10 @@ SPECS_BATCH97 = [
             "属性 ④ 调它 —— ★ ②③ **由本工具内部完成** ✓ ⚠ 官方示例的 Preconditions 写着「a drawing **with a BOM table**"
             "」—— ★★ **而真机实测没有 BOM 表照样能插** ⇒ ★ 那句是**例子的环境**、**不是方法的硬前置** ✓"
         ),
-        doc="★ **往选中的视图/图纸里插 BOM 气泡**（官方 `IDrawingDoc::AutoBalloon5`）—— "
-        "★★ **本条是裁决书点名要「真机定案」的那一件**（两家外部项目结论互相矛盾）⇒ "
-        "★★ **定案（2026-10-06 真机，两格独立对照）**：装配工程图上 "
-        "**有没有 BOM 表都插得进去**（各 **Δ=1**、返回数组长度 1）⇒ "
-        "★ **Slacker-LLC 的「静默无效」不成立**；★ **Eduardof0nt 的 `bool(result)` 也不能当判据**"
-        "（它只是「返回数组非空」）✓ "
-        "★★ **判据（规则 6）**：**`sum(IView::GetNoteCount)` 的增量 > 0** —— "
-        "★ 返回的数组长度**只回报、不当判据** ✓（★ 本批就为此**收紧了原函数的 `ok`**："
-        "它原先依赖返回数组、且 `delta >= 0` 太松）✓ "
-        "★★ **前置照官方四步**：① **先选中一个或多个视图 / 图纸** "
-        "（★ 官方 Remarks 逐字；★ 若选的是**图纸**，它会插到该图纸的**所有**视图上）"
-        "② `CreateAutoBalloonOptions()` ③ 设属性 ④ 调它 —— ★ ②③ **由本工具内部完成** ✓ "
-        "⚠ 官方示例的 Preconditions 写着「a drawing **with a BOM table**」—— ★★ **而真机实测"
-        "没有 BOM 表照样能插** ⇒ ★ 那句是**例子的环境**、**不是方法的硬前置** ✓",
+        doc=(
+            "Insert BOM balloons into the views or sheet you selected first and report the note-count increase. It writ"
+            "es annotations into the active drawing; a drawing without a BOM table still accepts balloons, so a missing"
+            " table is not a blocker."
+        ),
     ),
 ]

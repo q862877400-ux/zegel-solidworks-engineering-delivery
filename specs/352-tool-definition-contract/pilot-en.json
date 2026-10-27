@@ -40,7 +40,7 @@
    }
   },
   "solidworks_sheet_metal_create_edge_flange": {
-   "doc": "NOT USABLE on this machine: the official call needs SetFixedFace and process-internal access-selection pointers that pywin32 cannot reach. Creates a native edge flange on one selected edge; the edge is selected for you from selection before the call, and the tool writes a feature into the active part without saving it.",
+   "doc": "Skip this tool, NOT USABLE on this machine: pywin32 cannot reach the process-internal pointers the official call needs. It would create an edge flange on one selected edge and write a feature into the active part without saving it.",
    "params": {
     "selection": "Declarative EDGE selection: '__current_selection__' to reuse the current selection, or 'index:<n>' for the n-th edge on the body.",
     "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",
@@ -51,7 +51,7 @@
    }
   },
   "solidworks_sheet_metal_create_gusset": {
-   "doc": "NOT USABLE on this machine: ISMGussetFeatureData needs process-internal access-selection pointers that pywin32 cannot reach, and the feature is not created even though every property writes back. Would create a sheet-metal gusset on a selected supporting face.",
+   "doc": "Skip this tool, NOT USABLE on this machine: ISMGussetFeatureData needs process-internal pointers and creates no feature. Every property writes back, which hides the failure.",
    "params": {
     "selection": "Declarative FACE selection: '__current_selection__' or 'index:<n>' for the n-th face on the body.",
     "thickness_mm": "Gusset wall thickness in millimetres.",
@@ -61,7 +61,7 @@
    }
   },
   "solidworks_sheet_metal_create_one_bend": {
-   "doc": "NOT USABLE on this machine: the CreateDefinition(35) sketch-bend entry point is correct and returns an object, but selecting the bend line and fixed face is still unsolved. Would create a single sheet-metal bend from an existing sketch.",
+   "doc": "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved. The CreateDefinition(35) sketch-bend entry point itself is correct, so nothing is written to the part.",
    "params": {
     "sketch_name": "Name of the sketch holding the bend line; '__current_selection__' reuses the current selection.",
     "bend_radius_mm": "Bend radius in millimetres; ignored when use_default_radius is true.",

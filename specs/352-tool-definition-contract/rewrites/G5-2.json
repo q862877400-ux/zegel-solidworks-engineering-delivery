@@ -1,0 +1,109 @@
+{
+ "tools": {
+  "solidworks_topology_run": {
+   "doc": "Run the mesh and the solve of one topology study and report whether results exist. Creates mesh and result data inside the study. A zero return code does not mean success, so judge by whether result plots exist afterwards.",
+   "params": {
+    "study_name": "Name of the study to mesh and solve; empty uses the active study. Defaults to empty.",
+    "units": "Unit system handed to the mesher: 0=SI, 1=English, 2=Metric; any other value is rejected by the API. Defaults to 0.",
+    "element_size_mm": "Global element size in millimetres and must be greater than 0; defaults to 0.0, so pass a real size such as the one from solidworks_simulation_default_mesh_size.",
+    "tolerance_mm": "Mesh tolerance in millimetres and must be greater than 0; defaults to 0.0, which leaves the official 5 percent of the element size."
+   }
+  },
+  "solidworks_mold_parting_line": {
+   "doc": "Insert a mold parting line from the draft-direction reference that is already selected. Creates a parting line feature in the active part. Select an edge, plane or axis first, because without one the call inserts nothing and just returns nothing.",
+   "params": {
+    "draft_analysis": "The single official parameter; whose exact meaning is unverified, and true matches the reference usage that sets the draft angle first. Defaults to true."
+   }
+  },
+  "solidworks_mold_shut_off_surface": {
+   "doc": "Create shut-off surfaces over holes so the mold can separate. Creates them as a new feature and takes no parameters. It needs holes to patch and a parting line to build on, and the call returns nothing instead of failing loudly when it cannot build.",
+   "params": {}
+  },
+  "solidworks_mold_draft_analysis": {
+   "doc": "Run mold draft analysis at one draft angle and return the official return code unchanged. It modifies the face display of the model to show the draft result. No enum is published for that code, so this tool does not judge success from it; read the model instead.",
+   "params": {
+    "draft_angle_deg": "Reference draft angle in degrees.",
+    "analysis_type": "Official second argument, an integer whose meaning is unverified. Defaults to 0.",
+    "option": "Official fourth argument, an integer whose meaning is unverified. Defaults to 0."
+   }
+  },
+  "solidworks_mold_evidence": {
+   "doc": "Read the mold state of the active part, which this machine cannot actually read. Read-only; the counts come back as null because the members live on the feature-data objects instead of on the model. Judge by the readable field, where false means the reading failed rather than that no parting line exists.",
+   "params": {}
+  },
+  "solidworks_simulation_set_material": {
+   "doc": "Assign a material from a named library to the active part and return the material name read back. Writes the part material onto the model. An empty result means the assignment did not take effect, and a name that is not in the library fails silently.",
+   "params": {
+    "material_name": "Material name inside the library, for example AISI 1020; Plain Carbon Steel is not in that library.",
+    "database": "Library display name, not the .sldmat file name. Defaults to 'SOLIDWORKS Materials'."
+   }
+  },
+  "solidworks_toolbox_list_standards": {
+   "doc": "List the Toolbox standards in the local index with the part count of each. Read-only pure data with no SolidWorks call, so it needs no open document and cannot affect the model.",
+   "params": {
+    "index": "A pre-loaded index; defaults to null, which loads the local index."
+   }
+  },
+  "solidworks_toolbox_load_index": {
+   "doc": "Load the Toolbox index as a dictionary that can be passed straight to the other Toolbox tools. Read-only pure data with no SolidWorks call. A missing file is reported as an error instead of coming back as an empty index.",
+   "params": {
+    "path": "Path of the index file; defaults to null, which uses the default local index."
+   }
+  },
+  "solidworks_toolbox_search": {
+   "doc": "Search the Toolbox index for parts by keyword, standard and category. Read-only pure data with no SolidWorks call. The keyword matches part names only and is not spelling-corrected, and sizes are not in those names, so query a name such as hex head rather than a diameter.",
+   "params": {
+    "keyword": "Search keyword, matched against part names only.",
+    "standard": "Toolbox standard name to restrict the search to; empty means every standard. Defaults to empty.",
+    "category": "Category to restrict the search to; empty means no category filter. Defaults to empty."
+   }
+  },
+  "solidworks_toolbox_part_path": {
+   "doc": "Resolve one Toolbox part name to its full file path, ready for an assembly insert. Read-only pure data with no SolidWorks call. An unknown name fails and lists what is available instead of returning a guessed path, because a guessed path inserts silently wrong.",
+   "params": {
+    "standard": "Toolbox standard that contains the part.",
+    "part_name": "Part name inside that standard.",
+    "index": "A pre-loaded index; defaults to null, which loads the local index."
+   }
+  },
+  "solidworks_sketch_create_chamfer": {
+   "doc": "Create a chamfer between exactly two selected sketch segments at one distance. Writes a new segment into the active sketch, and nothing happens unless both segments are already selected. Only the equal-distance chamfer type was observed to build, and the tool can return no object even when the chamfer was built, because reading that object is what fails.",
+   "params": {
+    "chamfer_type": "Sketch chamfer type; only 2, the equal-distance type, was observed to build. Defaults to 0.",
+    "distance_mm": "Chamfer distance in millimetres."
+   }
+  },
+  "solidworks_sketch_mirror": {
+   "doc": "Mirror the selected sketch segments about the selected centerline into new sketch entities. Writes new segments into the active sketch. Segments to mirror are selected with mark 1 and the centerline with mark 2, and the tool reports whether the entity count really changed instead of claiming success.",
+   "params": {}
+  },
+  "solidworks_sketch_convert_entities": {
+   "doc": "Convert the selected model edges into entities of the active sketch. Writes new sketch entities, so you must be in sketch edit mode with the edges already selected. The result reports whether the sketch entity count really changed.",
+   "params": {
+    "chain": "Whether to convert the whole chain of adjacent geometry instead of only the selected items. Defaults to true.",
+    "inner_loops": "Whether to convert the inner loops of the selected faces as well. Defaults to false."
+   }
+  },
+  "solidworks_selection_count": {
+   "doc": "Read the number of objects in the current selection set. Read-only, and it is the only trustworthy selection criterion: the boolean returned by the selection calls is not, so always confirm a selection with this count.",
+   "params": {}
+  },
+  "solidworks_select_entity_by_index": {
+   "doc": "Select one edge, face or vertex of a solid body by its zero-based index. Modifies the current selection set. Edges and faces cannot be selected by name, which is why the index route exists, and that index order is not promised stable across rebuilds.",
+   "params": {
+    "kind": "Entity kind to select: EDGE, FACE or VERTEX.",
+    "index": "Zero-based index of the entity on that body.",
+    "body_index": "Zero-based index of the solid body. Defaults to 0.",
+    "append": "Whether to append to the current selection instead of replacing it. Defaults to false."
+   }
+  },
+  "solidworks_resolve_selection": {
+   "doc": "Resolve a declarative selector and select the entity it names, then report the selection count. Modifies the current selection set. The selector is __current_selection__ or index:<n>, and it raises when the count stays 0 instead of continuing silently.",
+   "params": {
+    "selector": "Declarative selector: __current_selection__ to reuse the current selection, or index:<n> for the n-th entity on the body.",
+    "kind": "Entity kind to resolve: EDGE, FACE or VERTEX. Defaults to EDGE.",
+    "body_index": "Zero-based index of the solid body. Defaults to 0."
+   }
+  }
+ }
+}

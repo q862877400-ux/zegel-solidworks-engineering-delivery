@@ -1,0 +1,99 @@
+{
+ "tools": {
+  "solidworks_extrude_depth": {
+   "doc": "Read the depth of one extrude feature together with the unit that value is expressed in. Read-only. The depth follows the document unit, not metres, and this tool does not convert it, so convert it yourself after reading the document units. forward picks the forward or the reverse side of the feature.",
+   "params": {
+    "feature_name": "Name of the extrude feature to read; empty picks the first or the last feature of that type. Defaults to empty.",
+    "forward": "Whether to read the forward side instead of the reverse side. Defaults to true."
+   }
+  },
+  "solidworks_extrude_params": {
+   "doc": "Read the end condition, draft angle, contour count and both-direction flags of one extrude feature. Read-only. The depth follows the document unit while the draft angle is in radians, so the two are not on the same scale, and every field comes back with its own unit label.",
+   "params": {
+    "feature_name": "Name of the extrude feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_pattern_params": {
+   "doc": "Read the instance counts, spacings and flags of one linear pattern feature. Read-only. Both spacings are fixed in metres as the official member documents them, while the total instance count is a plain count with no unit.",
+   "params": {
+    "feature_name": "Name of the linear pattern feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_hole_params": {
+   "doc": "Read the size, standard, type and end condition of one hole wizard feature. Read-only. The through hole diameter comes back in metres while the through hole depth comes back in millimetres, so the two fields in this one interface are not on the same scale; each field is labelled with its unit.",
+   "params": {
+    "feature_name": "Name of the hole wizard feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_feature_info": {
+   "doc": "Read the metadata, face count, visibility and parent and child features of one feature. Read-only. It does not read the bounding box, whose official values are approximate, so use part_bounding_box instead. An empty feature_name takes the first feature left after filtering by name and type, which is usually a datum plane with zero faces.",
+   "params": {
+    "feature_name": "Name of the feature to read; empty takes the first feature left after filtering by name and type, which is usually a datum plane and has no faces. Defaults to empty."
+   }
+  },
+  "solidworks_fillet_params": {
+   "doc": "Read the default radius, type, edge count and flags of one simple fillet feature. Read-only. The radius follows the document unit. Per-edge readings are not returned because they need an item object the backend cannot pass, so ask for the default radius rather than one edge radius.",
+   "params": {
+    "feature_name": "Name of the fillet feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_csys_params": {
+   "doc": "Read the origin entity type, the three axis entity counts and the transform of one coordinate system feature. Read-only. No value in this family is a length, so no unit question arises. The eleven members this build cannot reach are listed back rather than guessed.",
+   "params": {
+    "feature_name": "Name of the coordinate system feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_base_flange_params": {
+   "doc": "Read the thickness, bend radius, K factor, relief and flags of one sheet-metal base flange feature. Read-only. All lengths are reported in metres, and the three gauge-table values read 0.0 whenever no gauge table is used.",
+   "params": {
+    "feature_name": "Name of the base flange feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_shell_params": {
+   "doc": "Read the thickness, direction, removed face count and per-face thicknesses of one shell feature. Read-only. The thickness follows the document unit. The pointer-based removed-face and multi-thickness members are not read, so the per-face values come from the safe members only.",
+   "params": {
+    "feature_name": "Name of the shell feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_dome_params": {
+   "doc": "Read the height, ellipticity, direction and face count of one dome feature. Read-only. The height follows the document unit. The direction flag means a concave dome when true and a convex dome when false, so read the returned meaning instead of guessing from the parameter name.",
+   "params": {
+    "feature_name": "Name of the dome feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_sweep_params": {
+   "doc": "Read the type, thin-feature flags, twist angles, path type and guide count of one sweep feature. Read-only. Both twist angles are in radians. The circular profile diameter and the wall thickness stay 0.0 unless the feature really is a thin circular profile, so a 0.0 there means the precondition is off, not a measured zero.",
+   "params": {
+    "feature_name": "Name of the sweep feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_revolve_params": {
+   "doc": "Read the angle, axis type, direction, thin-feature flag and contour count of one revolve feature. Read-only. The angle is in radians. The wall thickness stays unread for a feature that is not thin, so report it as unknown rather than as zero.",
+   "params": {
+    "feature_name": "Name of the revolve feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_loft_params": {
+   "doc": "Read the profile count, guide count, tangency types, draft angle and closed flag of one loft feature. Read-only. Section count and profile count are two different quantities, so a section count of 1.0 next to a profile count of 2 is not a contradiction. The draft angle, tangent length and wall thickness only mean something when the matching constraint is on.",
+   "params": {
+    "feature_name": "Name of the loft feature to read; empty picks the first or the last feature of that type. Defaults to empty."
+   }
+  },
+  "solidworks_drawing_view_annotations": {
+   "doc": "Read the annotations, display dimensions and arc counts of every view on the active drawing. Read-only. The first view is the sheet itself and is skipped, so the counts belong to real views only. The part must be saved before projected views can exist, otherwise the view count is 0 because there was nothing to project.",
+   "params": {}
+  },
+  "solidworks_topology_create_study": {
+   "doc": "Create a topology optimization study of analysis type 13 on the active part. Creates a study in the document. Only one single-body part is supported at a time, and an existing study with the same name is deleted first, so name the study deliberately.",
+   "params": {
+    "study_name": "Name of the study to create. Defaults to 'Topology Study 1'.",
+    "mesh_type": "Mesh type of the study: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam. Defaults to 0.",
+    "delete_existing": "Whether to delete an existing study with the same name before creating it. Defaults to true."
+   }
+  },
+  "solidworks_topology_evidence": {
+   "doc": "Read the topology studies on the active document with their names, analysis types and existing constraints. Read-only, so it changes nothing. Use it to see what a study already holds before adding more constraints or controls.",
+   "params": {}
+  }
+ }
+}

@@ -42,7 +42,7 @@ SPECS_BATCH90 = [
             Param(
                 "lot_size",
                 int,
-                description="批量大小（**件数** —— ★ 是计数、不是长度，故不加 `_mm`）。",
+                description="Batch size in parts, a count rather than a length.",
             ),
         ],
         evidence=(
@@ -51,11 +51,10 @@ SPECS_BATCH90 = [
             "写**那条路 ✓。★ 注入键 `cost_analysis` 给的是该零件的**成本分析对象**（取法 `cost_part` → `GetCostAnalysis"
             "`，不是猜的）✓ ⚠ **未在本机实测**（铁律 2）。"
         ),
-        doc="设成本分析的**批量大小**。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-        "★ 真源是**本仓** `scripts/sw_costing.py:292-297`，其 docstring 逐字标注"
-        "「⚑ 官方是**属性**（`set_LotSize`），不是方法」⇒ ★ 本工具走**属性写**那条路 ✓。"
-        "★ 注入键 `cost_analysis` 给的是该零件的**成本分析对象**"
-        "（取法 `cost_part` → `GetCostAnalysis`，不是猜的）✓ ⚠ **未在本机实测**（铁律 2）。",
+        doc=(
+            "Set the lot size of the part cost analysis. It modifies the cost analysis to the batch count the cost is c"
+            "omputed for; run the cost-update tool afterwards so the cost is recomputed."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_set_markup",
@@ -68,14 +67,16 @@ SPECS_BATCH90 = [
                 "markup_type",
                 int,
                 default=None,
-                description="加价类型（`System.int`）。⚠ **取值两套官方源都查不到** ——"
-                "★ 本工具**不猜**、原样透传。",
+                description=(
+                    "Markup type as an integer, passed through unchanged because the valid values are not documented in"
+                    " the local sources. Defaults to null."
+                ),
             ),
             Param(
                 "markup_percent",
                 float,
                 default=None,
-                description="加价百分比（★ 是**比例量**、无量纲 ⇒ 不加 `_mm`/`_deg`）。",
+                description="Markup percentage as a plain ratio with no unit. Defaults to null.",
             ),
         ],
         evidence=(
@@ -84,11 +85,11 @@ SPECS_BATCH90 = [
             "「⚠ `MarkUpType` 的取值（按成本/按价格/按数量？）**两套源都查不到**」⇒ ★ 如实照抄，不编 ✓ ★ 两个参数都有默"
             "认值 ⇒ **只传一个也行**（未传的那个走函数默认）✓ ⚠ **未在本机实测**（铁律 2）。"
         ),
-        doc="设成本分析的**加价**（类型 + 百分比）。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-        "★ 真源是**本仓** `scripts/sw_costing.py:300-...`，其 docstring 逐字标注"
-        "「⚑ `MarkUpType` / `MarkUpPercent` 都是**属性**」且"
-        "「⚠ `MarkUpType` 的取值（按成本/按价格/按数量？）**两套源都查不到**」⇒ ★ 如实照抄，不编 ✓ "
-        "★ 两个参数都有默认值 ⇒ **只传一个也行**（未传的那个走函数默认）✓ ⚠ **未在本机实测**（铁律 2）。",
+        doc=(
+            "Set the markup type and the markup percentage of the part cost analysis. It modifies the cost analysis; bo"
+            "th arguments are optional, so you may pass only one, and the markup type values are not documented in the "
+            "local sources."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_assign_custom_cost",
@@ -105,15 +106,16 @@ SPECS_BATCH90 = [
             Param(
                 "amount",
                 float,
-                description="自定义成本金额（★ 数值；★ 单位随文档 ——"
-                "本工具**不换算**，如实透传）。",
+                description="Custom cost amount, passed through in document units without conversion.",
             ),
             Param(
                 "body_name",
                 str,
                 default="",
-                description="★ 成本实体名。**留空**时：清单长度 == 1 就用那一个；"
-                "0 个或 **>1 个 ⇒ 报错并要求点名**（★ 本工具**不替你猜**）✓",
+                description=(
+                    "Cost body name; empty uses the only body when the list holds exactly one, and otherwise the call a"
+                    "sks for a name. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -122,11 +124,10 @@ SPECS_BATCH90 = [
             "字标注「⚠ 与哪些费用项相加/相抵，**官方无说明**」⇒ ★ 如实照抄，不替官方解释 ✓ ★ 改完通常要 `solidworks_cos"
             "ting_update_cost_for_all_bodies` 让成本刷新 ✓ ⚠ **未在本机实测**（铁律 2）。"
         ),
-        doc="给**一个成本实体**指定自定义成本。★ 官方依据：`C:\\swapi\\types` **无该成员的页** ⇒ "
-        "★ 真源是**本仓** `scripts/sw_costing.py:439-442`（`_checked(cost_body, "
-        '"AssignCustomCost", float(amount))`），其 docstring 逐字标注'
-        "「⚠ 与哪些费用项相加/相抵，**官方无说明**」⇒ ★ 如实照抄，不替官方解释 ✓ "
-        "★ 改完通常要 `solidworks_costing_update_cost_for_all_bodies` 让成本刷新 ✓ "
-        "⚠ **未在本机实测**（铁律 2）。",
+        doc=(
+            "Assign a custom cost to one cost body of the part. It modifies the cost analysis; the reference does not s"
+            "ay which cost items the amount adds to or offsets, and the amount is passed through in document units with"
+            "out conversion."
+        ),
     ),
 ]

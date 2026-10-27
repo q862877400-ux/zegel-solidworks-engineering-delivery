@@ -39,10 +39,10 @@ SPECS_BATCH103 = [
                 "filter",
                 int,
                 default=0,
-                description="Relations to count: 0 = all (swAll), 1 = dangling, "
-                "2 = over-defining, 3 = external, 4 = defined-in-context, "
-                "5 = locked, 6 = broken, 7 = selected entities. "
-                "NOTE: -1 is NOT a valid value and silently returns 0.",
+                description=(
+                    "Relation types to count: 0=all, 1=dangling, 2=over-defining, 3=external, 4=defined-in-context, 5=l"
+                    "ocked, 6=broken, 7=selected entities; -1 is invalid and silently returns 0. Defaults to 0."
+                ),
             ),
         ],
         evidence=(
@@ -51,13 +51,11 @@ SPECS_BATCH103 = [
             "2026-10-25 修）。★ 与既有 `solidworks_sketch_fully_defined_status` 的区别：那个读**完全定义状态码**，★ 这"
             "个读**关系条数** —— 两个是不同读数，不是重复工具。⚠ 需要**活动草图**（没有则报错，不静默回 0）。"
         ),
-        doc="★ 数当前草图里的**几何关系**（★ 读侧，回一个整数）。"
-        "★★ `filter` 按关系类型筛，**0 = 全数（`swAll`）**；★ 取值表以 "
-        "`scripts/sw_sketch_dimensions.py` 里的官方枚举为准。"
-        "⚠ **不要传 -1** —— 它不在枚举里，会静默回 0（2026-10-25 修）。"
-        "★ 与既有 `solidworks_sketch_fully_defined_status` 的区别：那个读**完全定义状态码**，"
-        "★ 这个读**关系条数** —— 两个是不同读数，不是重复工具。"
-        "⚠ 需要**活动草图**（没有则报错，不静默回 0）。",
+        doc=(
+            "Count the geometric relations in the active sketch, optionally restricted by relation type. Read-only; 0 c"
+            "ounts all relations, and -1 is not a valid value because it silently returns 0. It needs an active sketch "
+            "and raises when there is none."
+        ),
     ),
     ToolSpec(
         name="solidworks_delete_all_sketch_relations",
@@ -71,10 +69,11 @@ SPECS_BATCH103 = [
             "relations` 记数、删后再数一次 （★ 本仓事实 8：布尔返回值不可信，判据只有回读）。⚠ 破坏性动作：★ 会**清掉草"
             "图的几何关系**（尺寸不受影响，但草图的约束没了）。"
         ),
-        doc="★ **删掉当前草图里的全部几何关系**（★ 动作，回 `bool`）。"
-        "★★ **判据请回读**：★ 先 `solidworks_count_sketch_relations` 记数、删后再数一次 "
-        "（★ 本仓事实 8：布尔返回值不可信，判据只有回读）。"
-        "⚠ 破坏性动作：★ 会**清掉草图的几何关系**（尺寸不受影响，但草图的约束没了）。",
+        doc=(
+            "Delete every geometric relation in the active sketch. Deletes the sketch constraints, leaves the dimension"
+            "s untouched, and does not save the document; count the relations before and after, because the boolean ret"
+            "urn value is not trustworthy."
+        ),
     ),
     ToolSpec(
         name="solidworks_delete_sketch_relation",
@@ -86,13 +85,16 @@ SPECS_BATCH103 = [
             Param(
                 "index",
                 int,
-                description="★ 关系序号（★ 口径以源码块/官方 `GetSketchRelations` 为准）。",
+                description="Relation index inside the relation array built with filter; an out-of-range index raises.",
             ),
             Param(
                 "filter",
                 int,
                 default=-1,
-                description="★ 关系类型过滤（-1 = 不过滤）。",
+                description=(
+                    "Relation type filter used to build the array the index points into; -1 means no filter. Defaults t"
+                    "o -1."
+                ),
                 required=False,
             ),
         ],
@@ -100,10 +102,11 @@ SPECS_BATCH103 = [
             "★ **按序号删掉一条几何关系**（★ 动作，回 `bool`）。★★ 判据同 `delete_all`：**回读计数**（★ 事实 8）。★ 声"
             "明式：★ 参数是**序号**，不是坐标（规则 3）✓。⚠ 序号越界应报错，不静默。"
         ),
-        doc="★ **按序号删掉一条几何关系**（★ 动作，回 `bool`）。"
-        "★★ 判据同 `delete_all`：**回读计数**（★ 事实 8）。"
-        "★ 声明式：★ 参数是**序号**，不是坐标（规则 3）✓。"
-        "⚠ 序号越界应报错，不静默。",
+        doc=(
+            "Delete one geometric relation from the active sketch by its index. Deletes that constraint and does not sa"
+            "ve the document; read the relation count back to prove it, and an out-of-range index raises instead of doi"
+            "ng nothing."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_by_name",
@@ -116,17 +119,21 @@ SPECS_BATCH103 = [
             Param(
                 "name",
                 str,
-                description="★ 草图特征名（★ 名字不是坐标 ⇒ 规则 3 合规）。",
+                description=(
+                    "Sketch feature name as it appears in the feature tree; the name follows the UI language, so read i"
+                    "t from the tree."
+                ),
             ),
         ],
         evidence=(
             "★ **按名字取一张草图**（★ 读侧）。★ 用法：★ 先拿到草图特征名（如 `草图1` / `Sketch1`，★ **随 UI 语言变**，"
             "见已知事实 9）⇒ ★ 再喂给需要草图的动作。⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。"
         ),
-        doc="★ **按名字取一张草图**（★ 读侧）。"
-        "★ 用法：★ 先拿到草图特征名（如 `草图1` / `Sketch1`，★ **随 UI 语言变**，见已知事实 9）⇒ "
-        "★ 再喂给需要草图的动作。"
-        "⚠ 名字不存在时应报错（★ 不返回空对象让人误以为成功）。",
+        doc=(
+            "Get a sketch object from its sketch feature name. Read-only; it is the only reliable route once a sketch i"
+            "s closed, because both active-sketch getters return nothing then. A name that does not exist raises instea"
+            "d of returning an empty object."
+        ),
     ),
 ]
 # ★★ 2026-10-07（规格 217 · T-217-01 第 3 轮）：**`sketch_intersect_curves` 撤出本批** —

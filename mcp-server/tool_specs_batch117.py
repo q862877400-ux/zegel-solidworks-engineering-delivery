@@ -43,34 +43,42 @@ SPECS_BATCH117 = [
         function="create_hole_wizard_at_point_report",
         inject="model",
         params=[
-            Param("x_mm", float, description="Hole centre X " + _MM),
-            Param("y_mm", float, description="Hole centre Y " + _MM),
+            Param("x_mm", float, description="Hole centre X in millimetres."),
+            Param("y_mm", float, description="Hole centre Y in millimetres."),
             Param(
                 "z_mm",
                 float,
-                description="Z of the face the hole is drilled into " + _MM
-                + " (the ray starts above this and goes down).",
+                description=(
+                    "Z of the face the hole is drilled into, in millimetres; the ray is lifted from here and fired back"
+                    " down."
+                ),
             ),
             Param(
                 "size",
                 str,
-                description='Fastener size string such as "M8". '
-                "An empty string or a bare number returns None on the real machine.",
+                description=(
+                    "Fastener size string such as 'M8'; an empty string or a bare number makes the wizard return nothin"
+                    "g."
+                ),
             ),
             Param("diameter_mm", float, default=8.0,
-                  description="Hole diameter " + _MM),
+                  description="Hole diameter in millimetres. Defaults to 8."),
             Param("depth_mm", float, default=20.0,
-                  description="Hole depth when not through-all " + _MM),
+                  description="Hole depth in millimetres when the hole is not through all geometry. Defaults to 20."),
             Param("through", bool, default=True,
-                  description="True = through all, False = blind (uses depth_mm)."),
+                  description=(
+                      "Whether the hole goes through all geometry, in which case the depth is ignored. Defaults to true"
+                      "."
+                  )),
         ],
         evidence=(
             "Create a HoleWizard hole at an explicit (x, y, z) point and report it. Unlike solidworks_hole_wizard, the "
             "position is not limited to the face centre. Criterion is the feature-tree increment, not the return value."
         ),
-        doc="Create a HoleWizard hole at an explicit (x, y, z) point and report it. "
-        "Unlike solidworks_hole_wizard, the position is not limited to the "
-        "face centre. "
-        "Criterion is the feature-tree increment, not the return value.",
+        doc=(
+            "Create a Hole Wizard hole at an explicit point and read the hole parameters back. Writes a hole feature an"
+            "d does not save the document; the ray starts above the given point and goes down, and the feature tree gro"
+            "wing is the success criterion rather than the return value."
+        ),
     ),
 ]

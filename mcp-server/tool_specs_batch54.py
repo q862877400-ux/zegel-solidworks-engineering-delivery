@@ -61,17 +61,19 @@ SPECS_BATCH54 = [
             "end_y_mm": "y2",
         },
         params=[
-            Param("center_x_mm", float, description="圆心 X，毫米"),
-            Param("center_y_mm", float, description="圆心 Y，毫米"),
-            Param("start_x_mm", float, description="起点 X，毫米"),
-            Param("start_y_mm", float, description="起点 Y，毫米"),
-            Param("end_x_mm", float, description="终点 X，毫米"),
-            Param("end_y_mm", float, description="终点 Y，毫米"),
+            Param("center_x_mm", float, description="Centre X in millimetres, measured from the sketch origin."),
+            Param("center_y_mm", float, description="Centre Y in millimetres, measured from the sketch origin."),
+            Param("start_x_mm", float, description="Arc start X in millimetres."),
+            Param("start_y_mm", float, description="Arc start Y in millimetres."),
+            Param("end_x_mm", float, description="Arc end X in millimetres."),
+            Param("end_y_mm", float, description="Arc end Y in millimetres."),
             Param(
                 "direction",
                 int,
                 default=1,
-                description="弧的方向（官方 CreateArc 的参数：顺时针 / 逆时针）",
+                description=(
+                    "Arc direction as the reference parameter takes it, clockwise or counter-clockwise. Defaults to 1."
+                ),
             ),
         ],
         evidence=(
@@ -81,7 +83,11 @@ SPECS_BATCH54 = [
             "rks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_"
             "* tools."
         ),
-        doc="★ **在当前草图里画一段圆弧**（圆心 + 起点 + 终点）。" + _GEOM_NOTE,
+        doc=(
+            "Draw an arc in the active sketch from a centre, a start point and an end point. It modifies the sketch; th"
+            "e coordinates are millimetres from the sketch origin in the sketch plane, which is the documented exceptio"
+            "n to naming geometry for selection."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_ellipse",
@@ -99,14 +105,14 @@ SPECS_BATCH54 = [
             "z_mm": "z",
         },
         params=[
-            Param("center_x_mm", float, description="中心 X，毫米"),
-            Param("center_y_mm", float, description="中心 Y，毫米"),
-            Param("major_x_mm", float, description="主轴端点 X，毫米"),
-            Param("major_y_mm", float, description="主轴端点 Y，毫米"),
-            Param("minor_x_mm", float, description="副轴端点 X，毫米"),
-            Param("minor_y_mm", float, description="副轴端点 Y，毫米"),
+            Param("center_x_mm", float, description="Ellipse centre X in millimetres."),
+            Param("center_y_mm", float, description="Ellipse centre Y in millimetres."),
+            Param("major_x_mm", float, description="Major-axis point X in millimetres."),
+            Param("major_y_mm", float, description="Major-axis point Y in millimetres."),
+            Param("minor_x_mm", float, description="Minor-axis point X in millimetres."),
+            Param("minor_y_mm", float, description="Minor-axis point Y in millimetres."),
             Param(
-                "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
+                "z_mm", float, default=0.0, description="Sketch plane Z in millimetres. Defaults to 0.0."
             ),
         ],
         evidence=(
@@ -116,9 +122,11 @@ SPECS_BATCH54 = [
             "metres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start "
             "first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
         ),
-        doc="★ **在当前草图里画一个整椭圆**（官方 `ISketchManager.CreateEllipse`）。"
-        "★ 官方那族另有**椭圆弧**（`CreateEllipticalArc`）—— 本工具只画整椭圆。"
-        + _GEOM_NOTE,
+        doc=(
+            "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point. It mo"
+            "difies the sketch; it draws the full ellipse and never an elliptical arc, and the coordinates are millimet"
+            "res in the sketch plane."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_polygon",
@@ -128,10 +136,10 @@ SPECS_BATCH54 = [
         function="sketch_polygon",
         param_alias={"center_x_mm": "cx", "center_y_mm": "cy", "radius_mm": "radius"},
         params=[
-            Param("center_x_mm", float, description="中心 X，毫米"),
-            Param("center_y_mm", float, description="中心 Y，毫米"),
-            Param("radius_mm", float, description="内切圆半径，毫米"),
-            Param("sides", int, default=6, description="边数（默认 6；至少 3）"),
+            Param("center_x_mm", float, description="Polygon centre X in millimetres."),
+            Param("center_y_mm", float, description="Polygon centre Y in millimetres."),
+            Param("radius_mm", float, description="Inscribed-circle radius in millimetres."),
+            Param("sides", int, default=6, description="Number of sides, at least 3. Defaults to 6."),
         ],
         evidence=(
             "★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。⚠ Sketch geometry MUST be g"
@@ -140,8 +148,10 @@ SPECS_BATCH54 = [
             "Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_end; read back with t"
             "he solidworks_sketch_count_* tools."
         ),
-        doc="★ **在当前草图里画正多边形**（**内切圆**方式 —— 官方 `CreatePolygon` 的口径）。"
-        + _GEOM_NOTE,
+        doc=(
+            "Draw a regular polygon in the active sketch, sized by its inscribed-circle radius. It modifies the sketch;"
+            " the coordinates are millimetres from the sketch origin, and the side count must be at least three."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_slot",
@@ -157,11 +167,11 @@ SPECS_BATCH54 = [
             "radius_mm": "radius",
         },
         params=[
-            Param("start_x_mm", float, description="槽口起点 X，毫米"),
-            Param("start_y_mm", float, description="槽口起点 Y，毫米"),
-            Param("end_x_mm", float, description="槽口终点 X，毫米"),
-            Param("end_y_mm", float, description="槽口终点 Y，毫米"),
-            Param("radius_mm", float, description="槽口半径（即宽度的一半），毫米"),
+            Param("start_x_mm", float, description="Slot start X in millimetres."),
+            Param("start_y_mm", float, description="Slot start Y in millimetres."),
+            Param("end_x_mm", float, description="Slot end X in millimetres."),
+            Param("end_y_mm", float, description="Slot end Y in millimetres."),
+            Param("radius_mm", float, description="Slot radius, which is half the slot width, in millimetres."),
         ],
         evidence=(
             "★ **在当前草图里画槽口**（直槽 / 腰形孔 —— 两点 + 半径）。⚠ Sketch geometry MUST be given as in-plane coor"
@@ -170,7 +180,10 @@ SPECS_BATCH54 = [
             "olidworks_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_"
             "count_* tools."
         ),
-        doc="★ **在当前草图里画槽口**（直槽 / 腰形孔 —— 两点 + 半径）。" + _GEOM_NOTE,
+        doc=(
+            "Draw a straight slot in the active sketch from two centre points plus a radius. It modifies the sketch; th"
+            "e coordinates are millimetres from the sketch origin, and the radius is half the slot width."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_centerline",
@@ -186,12 +199,12 @@ SPECS_BATCH54 = [
             "z_mm": "z",
         },
         params=[
-            Param("start_x_mm", float, description="起点 X，毫米"),
-            Param("start_y_mm", float, description="起点 Y，毫米"),
-            Param("end_x_mm", float, description="终点 X，毫米"),
-            Param("end_y_mm", float, description="终点 Y，毫米"),
+            Param("start_x_mm", float, description="Centreline start X in millimetres."),
+            Param("start_y_mm", float, description="Centreline start Y in millimetres."),
+            Param("end_x_mm", float, description="Centreline end X in millimetres."),
+            Param("end_y_mm", float, description="Centreline end Y in millimetres."),
             Param(
-                "z_mm", float, default=0.0, description="草图平面的 z，毫米（默认 0）"
+                "z_mm", float, default=0.0, description="Sketch plane Z in millimetres. Defaults to 0.0."
             ),
         ],
         evidence=(
@@ -202,8 +215,10 @@ SPECS_BATCH54 = [
             "the sketch plane. ★ Start a sketch with solidworks_sketch_start first, and finish with solidworks_sketch_e"
             "nd; read back with the solidworks_sketch_count_* tools."
         ),
-        doc="★ **在当前草图里画一条中心线**（官方 `ISketchManager.CreateCenterLine`）。"
-        "★★ 用途：中心线可以**当旋转轴**（见 `solidworks_revolve_boss` 那族对轴的要求）——"
-        "所以它不只是画一条虚线，而是**建旋转特征的前置**。" + _GEOM_NOTE,
+        doc=(
+            "Draw a centreline in the active sketch. It modifies the sketch; a centreline can act as the axis of a revo"
+            "lve, so this call is a prerequisite for revolve features and not only a construction line, and the coordin"
+            "ates are millimetres from the sketch origin."
+        ),
     ),
 ]

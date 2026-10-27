@@ -46,7 +46,10 @@ SPECS_BATCH6 = [
         evidence=(
             "List the point-selector names usable when specifying geometry (no document needed)."
         ),
-        doc="List the point-selector names usable when specifying geometry (no document needed).",
+        doc=(
+            "List the point-selector names usable when specifying geometry. Read-only and needs no open document; pass "
+            "one of the returned names wherever a tool takes a point selector."
+        ),
         param_alias={},
         params=[],
     ),
@@ -59,7 +62,10 @@ SPECS_BATCH6 = [
         evidence=(
             "List the direction-selector names usable when specifying geometry (no document needed)."
         ),
-        doc="List the direction-selector names usable when specifying geometry (no document needed).",
+        doc=(
+            "List the direction-selector names usable when specifying geometry. Read-only and needs no open document; p"
+            "ass one of the returned names wherever a tool takes a direction selector."
+        ),
         param_alias={},
         params=[],
     ),
@@ -73,14 +79,17 @@ SPECS_BATCH6 = [
         evidence=(
             "Read the assembly BOM as structured rows (the CSV-export tool is a different one)."
         ),
-        doc="Read the assembly BOM as structured rows (the CSV-export tool is a different one).",
+        doc=(
+            "Read the top-level assembly components as bill-of-materials rows, grouped by file path and configuration. "
+            "Read-only; use the CSV export tool instead when a file is wanted rather than rows."
+        ),
         param_alias={},
         params=[
             Param(
                 "include_excluded",
                 bool,
                 default=False,
-                description="Include components excluded from the BOM; default false.",
+                description="Whether to include components excluded from the bill of materials; defaults to false.",
             ),
         ],
     ),

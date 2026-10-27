@@ -118,22 +118,27 @@ SPECS_BATCH23 = [
         param_alias={**_ALIAS_SEL(), "distance_mm": "distance"},
         pre_call=_select_edge,
         params=[
-            Param("selection", str, description=_SEL),
-            Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
+            Param("selection", str, description=(
+                                        "Declarative edge selection: '__current_selection__' to keep what is already se"
+                                        "lected, or 'index:<n>' for the n-th edge on the body, counted from 0."
+                                    )),
+            Param("distance_mm", float, description="Chamfer distance in millimetres."),
             Param(
                 "angle_deg",
                 float,
                 default=45.0,
-                description="Chamfer angle in DEGREES (used because the capability layer "
-                "requests swChamferAngleDistance).",
+                description="Chamfer angle in degrees. Defaults to 45.",
             ),
         ],
         evidence=(
             "Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), because the API takes no ed"
             "ge object — it acts on the current selection."
         ),
-        doc="Chamfer the selected edge(s). ★ The edge comes from `selection` (declarative), "
-        "because the API takes no edge object — it acts on the current selection.",
+        doc=(
+            "Chamfer the selected edges of the active part with a distance and angle pair. Writes a chamfer feature and"
+            " does not save the document; the edge comes from the selection argument because the API acts on the curren"
+            "t selection only."
+        ),
     ),
     ToolSpec(
         name="solidworks_fillet",
@@ -148,16 +153,21 @@ SPECS_BATCH23 = [
         param_alias={**_ALIAS_SEL(), "radius_mm": "radius"},
         pre_call=_select_edge,
         params=[
-            Param("selection", str, description=_SEL),
-            Param("radius_mm", float, description="Fillet radius in MILLIMETRES."),
+            Param("selection", str, description=(
+                                        "Declarative edge selection: '__current_selection__' to keep what is already se"
+                                        "lected, or 'index:<n>' for the n-th edge on the body, counted from 0."
+                                    )),
+            Param("radius_mm", float, description="Fillet radius in millimetres."),
         ],
         evidence=(
             "Round the selected edge(s) with the given radius. ★ The edge comes from `selection` (declarative) — the ca"
             "pability layer passes edges=None, i.e. it acts on the current selection."
         ),
-        doc="Round the selected edge(s) with the given radius. ★ The edge comes from `selection` "
-        "(declarative) — the capability layer passes edges=None, i.e. it acts on the "
-        "current selection.",
+        doc=(
+            "Round the selected edges of the active part with a fillet radius. Writes a fillet feature and does not sav"
+            "e the document; the edge comes from the selection argument because the API acts on the current selection o"
+            "nly."
+        ),
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**补「改 × 特征」格** ——
     #: ★ 那一格是本仓**密度最低**的：★ 官方 **275** 个成员、★ 我们原有 **2** 个工具（**0
@@ -182,9 +192,9 @@ SPECS_BATCH23 = [
             Param(
                 "feature_name",
                 str,
-                description="Feature name as it appears in the FeatureManager tree "
-                "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
-                "name (unlike edges/faces — known fact 32).",
+                description=(
+                    "Feature name exactly as it appears in the FeatureManager tree, for example the boss-extrude entry."
+                ),
             ),
         ],
         evidence=(
@@ -192,10 +202,10 @@ SPECS_BATCH23 = [
             "he CURRENT SELECTION, so the capability layer selects the named feature first and REFUSES to call when the"
             " selection read-back is 0 (an empty selection would silently do nothing)."
         ),
-        doc="Suppress one FEATURE via the successor entry point `IModelDoc2.EditSuppress2()` "
-        "(0 params). ★ It acts on the CURRENT SELECTION, so the capability layer selects "
-        "the named feature first and REFUSES to call when the selection read-back is 0 "
-        "(an empty selection would silently do nothing).",
+        doc=(
+            "Suppress one named feature of the active document. Writes the suppression into the model and does not save"
+            "; the feature is selected by name first and an empty selection raises instead of silently doing nothing."
+        ),
     ),
     ToolSpec(
         name="solidworks_feature_unsuppress",
@@ -208,17 +218,17 @@ SPECS_BATCH23 = [
             Param(
                 "feature_name",
                 str,
-                description="Feature name as it appears in the FeatureManager tree "
-                "(Chinese UI: e.g. 「凸台-拉伸1」).",
+                description="Feature name exactly as it appears in the FeatureManager tree.",
             ),
         ],
         evidence=(
             "Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` (0 params). ★ Same sel"
             "ection contract and same refusal guard as `solidworks_feature_suppress`."
         ),
-        doc="Unsuppress one FEATURE via the successor entry point `IModelDoc2.EditUnsuppress2()` "
-        "(0 params). ★ Same selection contract and same refusal guard as "
-        "`solidworks_feature_suppress`.",
+        doc=(
+            "Unsuppress one named feature of the active document. Writes the model back to its unsuppressed state and d"
+            "oes not save; it uses the same selection contract and refusal guard as solidworks_feature_suppress."
+        ),
     ),
     #: ★★★★★ 2026-10-03（接手轮，★ 阶段 5）**继续补「改 × 特征」格** ——
     #:   ★ 与上两条**同族**：★ `EditDelete()` 也是**文档级**、★ **作用在当前选择上** ✓
@@ -244,9 +254,9 @@ SPECS_BATCH23 = [
             Param(
                 "feature_name",
                 str,
-                description="Feature name as it appears in the FeatureManager tree "
-                "(Chinese UI: e.g. 「凸台-拉伸1」). ★ Features CAN be selected by "
-                "name (unlike edges/faces — known fact 32).",
+                description=(
+                    "Feature name exactly as it appears in the FeatureManager tree, for example the boss-extrude entry."
+                ),
             ),
         ],
         evidence=(
@@ -255,10 +265,10 @@ SPECS_BATCH23 = [
             "-back is 0. ★ The official return is `void`, so success is observed as the feature disappearing from the t"
             "ree."
         ),
-        doc="Delete one FEATURE via `IModelDoc2.EditDelete()` (0 params, NOT deprecated). "
-        "★ It acts on the CURRENT SELECTION, so the capability layer selects the named "
-        "feature first and REFUSES to call when the selection read-back is 0. "
-        "★ The official return is `void`, so success is observed as the feature "
-        "disappearing from the tree.",
+        doc=(
+            "Delete one named feature of the active document. Writes the deletion into the model and does not save; the"
+            " call returns nothing, so success shows as the feature disappearing from the tree, and an empty selection "
+            "is refused."
+        ),
     ),
 ]

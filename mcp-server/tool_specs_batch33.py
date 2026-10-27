@@ -70,8 +70,10 @@ SPECS_BATCH33 = [
         evidence=(
             "List the document's configurations and the active one as a JSON-able dict. ★ Read-only."
         ),
-        doc="List the document's configurations and the active one as a JSON-able dict. "
-        "★ Read-only.",
+        doc=(
+            "List the document's configurations and the active one as a JSON-able dict. Read-only: it reports what exis"
+            "ts and changes nothing, so call it before creating, activating or updating a configuration."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_create",
@@ -85,27 +87,34 @@ SPECS_BATCH33 = [
                 str,
                 description="Name of the configuration to create.",
             ),
-            Param("comment", str, default="", description="Optional comment."),
+            Param("comment", str, default="", description=(
+                                                  "Optional comment stored with the configuration; defaults to an empty"
+                                                  " string."
+                                              )),
             Param(
                 "alternate_name",
                 str,
                 default="",
-                description="Optional alternate name.",
+                description="Optional alternate name for the configuration; defaults to an empty string.",
             ),
             Param(
                 "activate",
                 bool,
                 default=True,
-                description="Activate it after creating.",
+                description="Whether to activate the new configuration after creating it; defaults to true.",
             ),
-            Param("rebuild", bool, default=True, description="Rebuild after creating."),
+            Param("rebuild", bool, default=True, description=(
+                                                     "Whether to rebuild the model after creating it; defaults to true."
+                                                 )),
         ],
         evidence=(
             "Create a configuration, optionally activate and rebuild, then read the result back. ⚠ Does NOT save the do"
             "cument."
         ),
-        doc="Create a configuration, optionally activate and rebuild, then read the result "
-        "back. ⚠ Does NOT save the document.",
+        doc=(
+            "Create a configuration and read the configuration list back. It writes the new configuration into the open"
+            " document and does not save it, so the configuration exists only in that document until you save."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_activate",
@@ -114,15 +123,19 @@ SPECS_BATCH33 = [
         function="activate_configuration",
         inject="model",
         params=[
-            Param("configuration_name", str, description="Configuration to activate."),
+            Param("configuration_name", str, description="Name of an existing configuration to activate."),
             Param(
-                "rebuild", bool, default=True, description="Rebuild after activating."
+                "rebuild", bool, default=True, description="Whether to rebuild after activating; defaults to true."
             ),
         ],
         evidence=(
             "Activate a configuration and verify it by read-back. ⚠ Does NOT save the document."
         ),
-        doc="Activate a configuration and verify it by read-back. ⚠ Does NOT save the document.",
+        doc=(
+            "Activate an existing configuration and verify the switch by reading the active configuration back. It chan"
+            "ges the active configuration and does not save the document, so the switch reaches disk only when you save"
+            "."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_read_custom_property",
@@ -131,13 +144,22 @@ SPECS_BATCH33 = [
         function="read_custom_property",
         inject="model",
         params=[
-            Param("name", str, description="Custom property name."),
-            Param("configuration_name", str, default="", description=_CFG),
+            Param("name", str, description=(
+                                   "Exact custom property name as stored; property names follow the UI language and are"
+                                   " case sensitive."
+                               )),
+            Param("configuration_name", str, default="", description=(
+                                                             "Configuration to read from; empty reads the default confi"
+                                                             "guration. Defaults to empty."
+                                                         )),
         ],
         evidence=(
             "Read one custom property as a JSON-able dict. ★ Read-only."
         ),
-        doc="Read one custom property as a JSON-able dict. ★ Read-only.",
+        doc=(
+            "Read one custom property value together with its type and whether it is editable. Read-only: writing is so"
+            "lidworks_config_set_custom_properties, and an empty configuration name reads the default configuration."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_set_custom_properties",
@@ -149,15 +171,20 @@ SPECS_BATCH33 = [
             Param(
                 "properties",
                 dict,
-                description="Mapping of property name to value. ★ Values are strings.",
+                description="Mapping of property name to value; every value must be a string.",
             ),
-            Param("configuration_name", str, default="", description=_CFG),
+            Param("configuration_name", str, default="", description=(
+                                                             "Configuration to write to; empty writes the default confi"
+                                                             "guration. Defaults to empty."
+                                                         )),
         ],
         evidence=(
             "Set several custom properties and return the read-back list. ⚠ Does NOT save the document."
         ),
-        doc="Set several custom properties and return the read-back list. "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Set several custom properties and return the read-back list. It writes the values into the open document a"
+            "nd does not save it, so call the save tool afterwards when the values must persist."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_update_dimension",
@@ -169,9 +196,9 @@ SPECS_BATCH33 = [
             Param(
                 "dimension_name",
                 str,
-                description="Exact dimension name, e.g. D1@草图1 or D1@凸台-拉伸1.",
+                description="Exact dimension name as it appears in the tree, for example D1@Sketch1.",
             ),
-            Param("value_mm", float, description="New value in MILLIMETRES."),
+            Param("value_mm", float, description="New dimension value in millimetres."),
             #: ★ 能力层的形参是 **`configuration_mode`**（+ `configuration_names`），**
             #: 不是**
             #: `configuration_name` —— ★ 初版写错，被 `scripts/check_param_binding.py`
@@ -181,24 +208,33 @@ SPECS_BATCH33 = [
                 "configuration_mode",
                 str,
                 default="current",
-                description="'current' (active configuration only) / 'all' / 'specific'.",
+                description=(
+                    "Which configurations to change: 'current' for the active configuration, 'all' for every configurat"
+                    "ion, or 'specific' for the names in configuration_names. Defaults to 'current'."
+                ),
             ),
             Param(
                 "configuration_names",
                 list,
                 default=None,
-                description="Only for configuration_mode='specific': the configuration names.",
+                description=(
+                    "Configuration names to change when configuration_mode is 'specific'; defaults to null, which names"
+                    " no configuration."
+                ),
             ),
             Param(
-                "rebuild", bool, default=True, description="Rebuild after the change."
+                "rebuild", bool, default=True, description="Whether to rebuild after the change; defaults to true."
             ),
         ],
         evidence=(
             "Update an exact named dimension and return a read-back report (before/after). ⚠ Does NOT save the document"
             "."
         ),
-        doc="Update an exact named dimension and return a read-back report (before/after). "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Update one exact named dimension to a new millimetre value and report before and after. It writes the valu"
+            "e and rebuilds by default while leaving the document unsaved, so an unwanted change can still be dropped b"
+            "y not saving."
+        ),
     ),
     #: ── 导出族（★ 能力层已包成"回读报告"：判据 = 文件存在且非空）────────
     ToolSpec(
@@ -207,13 +243,17 @@ SPECS_BATCH33 = [
         module="sw_export",
         function="export_step_report",
         inject="model",
-        params=[Param("output_path", str, description=_PATH)],
+        params=[Param("output_path", str, description=(
+                                              "Absolute path of the STEP file to write, for example D:/work/part.step."
+                                          ))],
         evidence=(
             "Export the active document to STEP and return a READ-BACK report: the file must exist and be non-empty. ★ "
             "Rule: the criterion is the FILE, not the return value."
         ),
-        doc="Export the active document to STEP and return a READ-BACK report: the file must "
-        "exist and be non-empty. ★ Rule: the criterion is the FILE, not the return value.",
+        doc=(
+            "Export the active document to a STEP file at output_path and confirm the file exists and is not empty. It "
+            "writes the file, and the file itself is the criterion of success rather than the return value."
+        ),
     ),
     ToolSpec(
         name="solidworks_export_stl",
@@ -222,19 +262,23 @@ SPECS_BATCH33 = [
         function="export_stl_report",
         inject="model",
         params=[
-            Param("output_path", str, description=_PATH),
+            Param("output_path", str, description=(
+                                          "Absolute path of the STL file to write, for example D:/work/part.stl."
+                                      )),
             Param(
                 "quality",
                 str,
                 default="fine",
-                description="STL quality: 'coarse' or 'fine'.",
+                description="Mesh quality: 'coarse' or 'fine'. Defaults to 'fine'.",
             ),
         ],
         evidence=(
             "Export to STL and return a READ-BACK report (file exists and is non-empty). ★ The criterion is the FILE."
         ),
-        doc="Export to STL and return a READ-BACK report (file exists and is non-empty). "
-        "★ The criterion is the FILE.",
+        doc=(
+            "Export the active document to an STL mesh at output_path and confirm the file exists and is not empty. It "
+            "writes the file; quality chooses the tessellation, and the file itself is the criterion of success."
+        ),
     ),
     ToolSpec(
         name="solidworks_export_iges",
@@ -242,11 +286,16 @@ SPECS_BATCH33 = [
         module="sw_export",
         function="export_iges_report",
         inject="model",
-        params=[Param("output_path", str, description=_PATH)],
+        params=[Param("output_path", str, description=(
+                                              "Absolute path of the IGES file to write, for example D:/work/part.igs."
+                                          ))],
         evidence=(
             "Export to IGES and return a READ-BACK report (file exists and is non-empty)."
         ),
-        doc="Export to IGES and return a READ-BACK report (file exists and is non-empty).",
+        doc=(
+            "Export the active document to an IGES file at output_path and confirm the file exists and is not empty. It"
+            " writes the file, and the file itself is the criterion of success rather than the return value."
+        ),
     ),
     ToolSpec(
         name="solidworks_export_parasolid",
@@ -254,11 +303,17 @@ SPECS_BATCH33 = [
         module="sw_export",
         function="export_parasolid_report",
         inject="model",
-        params=[Param("output_path", str, description=_PATH)],
+        params=[Param("output_path", str, description=(
+                                              "Absolute path of the Parasolid file to write, for example D:/work/part.x"
+                                              "_t."
+                                          ))],
         evidence=(
             "Export to Parasolid and return a READ-BACK report (file exists and is non-empty)."
         ),
-        doc="Export to Parasolid and return a READ-BACK report (file exists and is non-empty).",
+        doc=(
+            "Export the active document to a Parasolid file at output_path and confirm the file exists and is not empty"
+            ". It writes the file, and the file itself is the criterion of success rather than the return value."
+        ),
     ),
     ToolSpec(
         name="solidworks_export_dxf",
@@ -266,18 +321,20 @@ SPECS_BATCH33 = [
         module="sw_export",
         function="export_dxf_report",
         inject="model",
-        params=[Param("output_path", str, description=_PATH)],
+        params=[Param("output_path", str, description=(
+                                              "Absolute path of the DXF file to write, for example D:/work/flat.dxf."
+                                          ))],
         evidence=(
             "Export to DXF and return a READ-BACK report (file exists and is non-empty). ⚠⚠ THIS IS A SHEET-METAL FLAT-"
             "PATTERN EXPORT, not a general DXF export: on a non-sheet-metal part the capability layer refuses with 「导"
             "出展开 DXF 前必须先保存钣金零件」. ★ That refusal is deliberate — it is a readable, actionable failure rat"
             "her than a silent one."
         ),
-        doc="Export to DXF and return a READ-BACK report (file exists and is non-empty). "
-        "⚠⚠ THIS IS A SHEET-METAL FLAT-PATTERN EXPORT, not a general DXF export: on a "
-        "non-sheet-metal part the capability layer refuses with "
-        "「导出展开 DXF 前必须先保存钣金零件」. ★ That refusal is deliberate — it is a "
-        "readable, actionable failure rather than a silent one.",
+        doc=(
+            "Export the active document to a DXF file at output_path and confirm the file exists and is not empty. It w"
+            "rites the file; a drawing goes out as a drawing DXF, while a part takes the sheet-metal flat-pattern path "
+            "and is refused unless it is a saved sheet-metal part."
+        ),
     ),
     ToolSpec(
         name="solidworks_export_bmp",
@@ -286,29 +343,30 @@ SPECS_BATCH33 = [
         function="export_bmp_report",
         inject="model",
         params=[
-            Param("output_path", str, description=_PATH),
+            Param("output_path", str, description=(
+                                          "Absolute path of the BMP file to write, for example D:/work/view.bmp."
+                                      )),
             Param(
                 "pixel_width",
                 int,
                 default=0,
-                description="Image width in PIXELS (★ PIXELS, not a length ⇒ named pixel_width (rule 2: no _mm for a "
-                             "non-length)). "
-                "⚠ 0 = use the document default.",
+                description="Image width in pixels; 0 uses the document default. Defaults to 0.",
             ),
             Param(
                 "pixel_height",
                 int,
                 default=0,
-                description="Image height in PIXELS. ★ Named pixel_height because it is NOT a length (rule 2). ⚠ 0 = "
-                             "use the document default.",
+                description="Image height in pixels; 0 uses the document default. Defaults to 0.",
             ),
         ],
         evidence=(
             "Export a BMP image of the active document and return a READ-BACK report (file exists and is non-empty). ★ "
             "Covered by the existing smoke tools/verify_bmp_smoke.py."
         ),
-        doc="Export a BMP image of the active document and return a READ-BACK report "
-        "(file exists and is non-empty). ★ Covered by the existing smoke "
-        "tools/verify_bmp_smoke.py.",
+        doc=(
+            "Export a BMP image of the active document to output_path and confirm the file exists and is not empty. It "
+            "writes the image from the current view; the pixel sizes are counts rather than lengths, and zero means the"
+            " document default."
+        ),
     ),
 ]

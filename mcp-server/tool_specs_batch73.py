@@ -91,51 +91,43 @@ _BATCH73: list[ToolSpec] = [
             Param(
                 "view_name",
                 str,
-                description="★ **当前图纸上**的视图名（如 `Drawing View1` / `视图1`）。"
-                "★ 官方示例要先选中视图、★ 那只是为了**拿到 IView 对象** ⇒ "
-                "★ 本工具改成**按名字解析**，★ **不要求调用者先备选区**。",
+                description="Name of the drawing view on the current sheet, for example Drawing View1.",
             ),
             Param(
                 "position1_mm",
                 float,
-                description="★ 第一条断裂线的位置（**毫米**）。⚠ **官方没给单位**，"
-                "★ 本工具按 SolidWorks API 惯例当**米**、只在边界换算一次 —— "
-                "★ 官方示例 `InsertBreak3(2, -2.91950859897372E-02, …)` = "
-                "-29.195 mm，**佐证了米制**。★ 落在哪根轴上由 `orientation` 决定。",
+                description="Position of the first break line in millimetres, relative to the view origin.",
             ),
             Param(
                 "position2_mm",
                 float,
-                description="★ 第二条断裂线的位置（**毫米**；★ 同 `position1_mm` 的单位约定）"
-                "—— ★ 官方逐字：一次断裂**由一对线**组成。",
+                description="Position of the second break line in millimetres, relative to the view origin.",
             ),
             Param(
                 "orientation",
                 int,
                 default=2,
-                description="官方 `swBreakLineOrientation_e`：**1=Horizontal · 2=Vertical**。"
-                "★★ 官方 `## Remarks` 逐字：Horizontal 时 Position1/2 是**Y** 值、"
-                "Vertical 时是**X** 值，★ **两者都相对视图原点**。",
+                description="Break-line orientation: 1=horizontal, 2=vertical. Defaults to 2.",
             ),
             Param(
                 "style",
                 int,
                 default=5,
-                description="官方 `swBreakLineStyle_e`：**1=Straight · 2=ZigZag · 3=Curve · "
-                "4=SmallZigZag · 5=Jagged**（★ 逐字核 `swBreakLineStyle_e.md`）。",
+                description="Break-line style: 1=straight, 2=zigzag, 3=curve, 4=small zigzag, 5=jagged. Defaults to 5.",
             ),
             Param(
                 "shape_intensity",
                 int,
                 default=2,
-                description="★ 官方逐字「valid range is **1 (most) through 5 (least)**」；"
-                "★ **只对锯齿（jagged）断裂线生效**。",
+                description=(
+                    "Shape intensity from 1 (most) to 5 (least), used only for jagged break lines. Defaults to 2."
+                ),
             ),
             Param(
                 "break_sketch_blocks",
                 bool,
                 default=True,
-                description="官方 `BreakSketchBlocks` —— True 连草图块一起断开。",
+                description="Whether to break sketch blocks as well. Defaults to true.",
             ),
         ],
         evidence=(
@@ -145,12 +137,12 @@ _BATCH73: list[ToolSpec] = [
             "这两件事**定义成了两件**：有断裂线**不等于**断开了。⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传"
             "、只在边界换算一次。"
         ),
-        doc="★ **断裂视图**：`IView.InsertBreak3(6 参)` → `BreakLine`。"
-        "★★ `InsertBreak`（4 参）与 `InsertBreak2`（5 参）**官方都标 Obsolete** ⇒ ★ 只走 3。"
-        "★ 官方 `## Remarks`：Horizontal ⇒ 位置是 **Y** 值；Vertical ⇒ **X** 值；★ 都相对视图原点。"
-        "★ **判据 = `GetBreakLines()` 的数组长度 + `IView.IsBroken()`**（★ 两个都要）——"
-        "★ 官方把这两件事**定义成了两件**：有断裂线**不等于**断开了。"
-        "⚠ 官方**没给位置参数的单位** ⇒ 本工具按米收、按毫米传、只在边界换算一次。",
+        doc=(
+            "Create a break in one drawing view between two break-line positions. Creates break lines in that view. The"
+            " positions are in millimetres and relative to the view origin, read on Y for a horizontal break and on X f"
+            "or a vertical one; a view can hold break lines without being broken, so check the break-line count and the"
+            " broken state both."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_create_auxiliary_view",
@@ -171,44 +163,43 @@ _BATCH73: list[ToolSpec] = [
             Param(
                 "x_mm",
                 float,
-                description="★ 辅助视图落位 X（**毫米**）。⚠ **官方没给单位** ⇒ 按米收、"
-                "边界换算一次；★ ⚠ **该假设未由官方示例佐证**，须真机复核。",
+                description="X position of the new view in millimetres.",
             ),
             Param(
-                "y_mm", float, description="★ 落位 Y（**毫米**；★ 单位约定同 `x_mm`）。"
+                "y_mm", float, description="Y position of the new view in millimetres."
             ),
             Param(
                 "z_mm",
                 float,
                 default=0.0,
-                description="★ 落位 Z（**毫米**；★ 工程图上通常留 0）。",
+                description="Z position of the new view in millimetres, normally 0 on a drawing. Defaults to 0.0.",
             ),
             Param(
                 "label",
                 str,
                 default="",
-                description="官方 `Label` —— 辅助视图的标签文字。",
+                description="Label text of the auxiliary view. Defaults to empty.",
             ),
             Param(
                 "not_aligned",
                 bool,
                 default=True,
-                description="官方形参 `NotAligned`。⚠★ **官方说明与形参名自相矛盾**："
-                "官方 Parameters 逐字写「True **aligns** the view from its owner」——"
-                "★ 名字说「不对齐」、说明说「对齐」⇒ ★ **原样透传、不替官方解释**，"
-                "★ 默认取形参名的读法（True）。",
+                description=(
+                    "The official NotAligned flag, passed through unchanged; the official description says true aligns "
+                    "the view from its owner, which contradicts the parameter name. Defaults to true."
+                ),
             ),
             Param(
                 "show_arrow",
                 bool,
                 default=True,
-                description="官方 `Showarrow` —— True 显示投影箭头。",
+                description="Whether to show the projection arrow. Defaults to true.",
             ),
             Param(
                 "flip",
                 bool,
                 default=False,
-                description="官方 `Flip` —— True 翻转辅助视图所显示的那一侧。",
+                description="Whether to flip the side that the auxiliary view shows. Defaults to false.",
             ),
         ],
         evidence=(
@@ -218,14 +209,11 @@ _BATCH73: list[ToolSpec] = [
             "` ⇒ 失败时能看见原因。★ **判据 = 视图数增量 + 新视图 `Type == 5`（`swDrawingAuxiliaryView`）**，★ 不是「返"
             "回非 None」。⚠ `NotAligned` 的官方说明与形参名矛盾，见该参数说明。"
         ),
-        doc="★ **辅助视图**：`IDrawingDoc.CreateAuxiliaryViewAt2(7 参)`。"
-        "★★★ **官方前置（摘要逐字）**："
-        "「Creates an auxiliary view **based on a selected edge in a drawing view**」"
-        "⇒ ★★ **调用前必须先选中视图里的一条边**。"
-        "★ 而**边没有可用的名字**（本仓事实 32）⇒ ★ 本工具**不代选**，"
-        "★ 只**回读当前选区计数**并写进 `preconditions_held` ⇒ 失败时能看见原因。"
-        "★ **判据 = 视图数增量 + 新视图 `Type == 5`（`swDrawingAuxiliaryView`）**，"
-        "★ 不是「返回非 None」。⚠ `NotAligned` 的官方说明与形参名矛盾，见该参数说明。",
+        doc=(
+            "Create an auxiliary drawing view from the edge that is already selected in a drawing view. Creates a view "
+            "on the current sheet. Edges have no usable names, so the tool does not select one for you; it only reports"
+            " the selection count it found, which tells you why it failed."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_insert_surface_finish_symbol",
@@ -273,90 +261,98 @@ _BATCH73: list[ToolSpec] = [
                 "sym_type",
                 int,
                 default=0,
-                description="官方 `swSFSymType_e`（★ 10 个成员）："
-                "**0=Basic · 1=JIS_Machining_Req · 2=Dont_Machine · "
-                "3..6=JIS_Surface_Texture_1..4 · 7=JIS_No_Machining · "
-                "8=JIS_Basic · 9=Machining_Req**（★ 逐字核 `swSFSymType_e.md`）。",
+                description=(
+                    "Surface finish symbol type: 0=basic, 1=JIS machining required, 2=do not machine, 3..6=JIS surface "
+                    "texture 1..4, 7=JIS no machining, 8=JIS basic, 9=machining required. Defaults to 0."
+                ),
             ),
             Param(
                 "leader_type",
                 int,
                 default=1,
-                description="★ 官方 `swLeaderStyle_e`：**0=NO_LEADER · 1=STRAIGHT · 2=BENT · "
-                "3=UNDERLINED · 4=SPLINE · 8=VDA**；★ 256..4100 那几个是"
-                "**位掩码**、要**与** 1/2/3/4/8 之一**合用**。"
-                "★★ **它决定那三个位置参数用不用**（见工具说明的官方 Remarks 逐字）。",
+                description=(
+                    "Leader style: 0=no leader, 1=straight, 2=bent, 3=underlined, 4=spline, 8=VDA, and 256..4100 are bi"
+                    "t flags to combine with one of those. Defaults to 1."
+                ),
             ),
             Param(
                 "x_mm",
                 float,
                 default=0.0,
-                description="★ 符号位置 X（**毫米**）—— ★★ **仅当 `leader_type != 0` 时被官方使用**；"
-                "★ 取 0（`swNO_LEADER`）时本工具**主动传 0** 并把原值回在 "
-                "`ignored_location_mm` 里。",
+                description=(
+                    "X position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0."
+                ),
             ),
             Param(
                 "y_mm",
                 float,
                 default=0.0,
-                description="★ 符号位置 Y（**毫米**；★ 条件同 `x_mm`）。",
+                description=(
+                    "Y position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0."
+                ),
             ),
             Param(
                 "z_mm",
                 float,
                 default=0.0,
-                description="★ 符号位置 Z（**毫米**；★ 条件同 `x_mm`）。",
+                description=(
+                    "Z position of the symbol in millimetres, used only when leader_type is not 0. Defaults to 0.0."
+                ),
             ),
             Param(
                 "lay_symbol",
                 int,
                 default=0,
-                description="官方 `swSFLaySym_e`（纹理方向）。★ ★ **本轮没查 `0` 是什么** ⇒ "
-                "本工具**原样透传、不作断言**（★ 铁律 5：查不到就说查不到）。",
+                description=(
+                    "Lay direction symbol, passed through unchanged because its value table was not verified. Defaults "
+                    "to 0."
+                ),
             ),
             Param(
                 "arrow_type",
                 int,
                 default=0,
-                description="官方 `swArrowStyle_e`（箭头样式）。★ 同 `lay_symbol`："
-                "**默认值 0 的语义未查**，原样透传。",
+                description=(
+                    "Arrow style, passed through unchanged because its value table was not verified. Defaults to 0."
+                ),
             ),
             Param(
                 "mach_allowance",
                 str,
                 default="",
-                description="官方 `MachAllowance`（材料去除余量）。★ 官方类型是 `System.string` "
-                "**且没给格式** ⇒ 本工具**原样透传、不解析、不校验**。",
+                description=(
+                    "Machining allowance text, passed through unchanged without parsing or checking. Defaults to empty."
+                ),
             ),
             Param(
                 "other_vals",
                 str,
                 default="",
-                description="官方 `OtherVals`（其它粗糙度值）。★ 同上：字符串、原样透传。",
+                description="Other roughness values, passed through unchanged. Defaults to empty.",
             ),
             Param(
                 "prod_method",
                 str,
                 default="",
-                description="官方 `ProdMethod`（生产方法与处理）。★ 同上。",
+                description="Production method and treatment text, passed through unchanged. Defaults to empty.",
             ),
             Param(
                 "sample_len",
                 str,
                 default="",
-                description="官方 `SampleLen`（取样长度）。★ 同上。",
+                description="Sampling length text, passed through unchanged. Defaults to empty.",
             ),
             Param(
                 "max_roughness",
                 str,
                 default="",
-                description="官方 `MaxRoughness`（最大粗糙度）。★ 同上。",
+                description="Maximum roughness text, passed through unchanged. Defaults to empty.",
             ),
             Param(
                 "min_roughness",
                 str,
                 default="",
-                description="官方 `MinRoughness`（最小粗糙度）。★ 同上。",
+                description="Minimum roughness text, passed through unchanged. Defaults to empty.",
             ),
         ],
         evidence=(
@@ -368,14 +364,11 @@ _BATCH73: list[ToolSpec] = [
             "计数写进 `preconditions_held`。★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**，★ 不是「返回非 Non"
             "e」。"
         ),
-        doc="★ **表面粗糙度符号**：`IModelDocExtension.InsertSurfaceFinishSymbol3(14 参)`。"
-        "★★ **官方 `## Remarks` 逐字**：「The SOLIDWORKS Design software uses the location "
-        "parameters for this method **only if** the surface finish symbol has a leader "
-        "leaderType **!= swNO_LEADER**.」⇒ ★★ `leader_type = 0` 时**三个位置参数被官方无视**"
-        "⇒ ★ 本工具在那一档**主动传 0** 并把原坐标回在 `ignored_location_mm`。"
-        "★ **另一条前置**：官方摘要逐字「based on the **last selection**」⇒ ★ 调用前必须有选区；"
-        "★ 本工具**不代选**（★ 规则 3 禁裸坐标），只回读选区计数写进 `preconditions_held`。"
-        "★ **判据 = 全图纸 `IView.GetSFSymbolCount` 求和的增量**，★ 不是「返回非 None」。",
+        doc=(
+            "Insert a surface finish symbol into the active drawing at the last selection. Creates an annotation in the"
+            " drawing. A selection must exist first, and a leader_type of 0 makes the official call ignore all three po"
+            "sition arguments, so place a leader when the position matters."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_insert_datum_tag",
@@ -392,14 +385,11 @@ _BATCH73: list[ToolSpec] = [
             "— ★ 与表面粗糙度符号那 14 参**不是同一个宿主对象**。★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量*"
             "*，★ 不是「返回非 None」。 ★ 别名: annotation, balloon, datum, gdt, gtol, note, tolerance"
         ),
-        doc="★ **基准符号**：`IModelDoc2.InsertDatumTag2()` → `DatumTag`（★ **官方零参数**）。"
-        "★★ **官方前置**（摘要逐字）：「Inserts a datum tag symbol **at a selected "
-        "location**.」⇒ ★ 调用前必须先选中一个位置（★ 官方示例用 `SelectByID2` 选 EDGE）。"
-        "★ 因为官方**零参数**，★ 落点**完全由选区决定** ⇒ 本工具**没有坐标入口**"
-        "（★ 这既由官方签名决定，★ 也正好合上规则 3 的「禁裸坐标」）。"
-        "★ 入口是 `IModelDoc2`（**不是** `IModelDocExtension`）—— ★ 与表面粗糙度符号那 14 参"
-        "**不是同一个宿主对象**。"
-        "★ **判据 = 全图纸 `IView.GetDatumTagCount` 求和的增量**，★ 不是「返回非 None」。 ★ 别名: annotation, balloon, datum, gdt, gtol, note, tolerance",
+        doc=(
+            "Insert a datum tag symbol at the location that is already selected. Creates a datum tag annotation in the "
+            "drawing. The official member takes no arguments, so the anchor point comes entirely from the selection and"
+            " no coordinates are accepted."
+        ),
     ),
 ]
 

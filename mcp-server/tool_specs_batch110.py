@@ -34,7 +34,7 @@ SPECS_BATCH110 = [
                 bool,
                 default=True,
                 required=False,
-                description="是否连子特征一起遍历（默认 true）",
+                description="Whether to descend into sub-features while walking the tree. Defaults to true.",
             ),
         ],
         read_only=True,
@@ -46,13 +46,10 @@ SPECS_BATCH110 = [
             "官方签名加 ✓）★ 判据：★ 回的是**结构化节点清单**（★ 读不到就回空，★ 不假装有内容 ✓）★★ 等级 `stitched` —— "
             "★ 尚未真机验证（★ 红线⑥）✓"
         ),
-        doc="★ **零部件阵列（读侧）**—— ★ 遍历**装配特征树**，★ **零部件阵列节点就在其中** ✓ "
-        "★ 真实来源：★ `sw_assembly.iter_feature_tree`（**早已在本仓且可用** ✓）"
-        "★★ **如实标注（不许冒充）**：★ 本工具给的是**整棵装配特征树的逐节点清单**"
-        "（★ **含**零部件阵列节点 ✓），★ **不是**只挑阵列出来的专项读数 ✗ —— "
-        "★ 官方的 `GetPatternComponentCount` / `DissolveComponentPattern` 是**另一条路**，"
-        "★ 本批**没有**用它们（★ 若将来要做专项读数，★ 再照官方签名加 ✓）"
-        "★ 判据：★ 回的是**结构化节点清单**（★ 读不到就回空，★ 不假装有内容 ✓）"
-        "★★ 等级 `stitched` —— ★ 尚未真机验证（★ 红线⑥）✓",
+        doc=(
+            "List the assembly feature tree node by node, including any component-pattern nodes. Read-only; it reports "
+            "the whole tree rather than isolating pattern readings, so there is no dedicated pattern count behind it, a"
+            "nd this path has not been verified on a real machine yet."
+        ),
     ),
 ]

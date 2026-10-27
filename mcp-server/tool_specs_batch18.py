@@ -100,10 +100,7 @@ _PARAMS = lambda: [  # noqa: E731
         "sketch_name",
         str,
         default="",
-        description='Sketch feature name (e.g. "Sketch1" / "草图1"). ★ Leave empty to use '
-        "the CURRENT sketch. ⚠ A CLOSED sketch is still reachable by name — that is "
-        "the only reliable route (the probe showed GetActiveSketch2 / ActiveSketch "
-        "both return None once the sketch is closed).",
+        description="Sketch feature name such as Sketch1; empty means the current sketch. Defaults to empty.",
     ),
 ]
 
@@ -122,9 +119,11 @@ SPECS_BATCH18 = [
             "Count the straight LINES in a sketch. ⚠ Use this rather than the raw getter: the underlying ISketch call r"
             "eturns a NUMBER array (12 floats per line), which cannot answer \"how many lines\"."
         ),
-        doc="Count the straight LINES in a sketch. ⚠ Use this rather than the raw getter: "
-        "the underlying ISketch call returns a NUMBER array (12 floats per line), which "
-        'cannot answer "how many lines".',
+        doc=(
+            "Count the straight lines in a sketch. Read-only; it turns the raw number array of 12 floats per line into "
+            "a count, so use it instead of the raw getter. Leave sketch_name empty for the current sketch, and name it "
+            "for a sketch that is already closed."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_count_arcs",
@@ -139,9 +138,10 @@ SPECS_BATCH18 = [
             "arc — verified on a real machine (2026-10-01): a sketch with 1 line + 1 circle reports count_lines=1, coun"
             "t_arcs=1, count_segments=2."
         ),
-        doc="Count the ARCS in a sketch (the underlying call returns 16 floats per arc). "
-        "⚠ A full CIRCLE counts as ONE arc — verified on a real machine (2026-10-01): a sketch "
-        "with 1 line + 1 circle reports count_lines=1, count_arcs=1, count_segments=2.",
+        doc=(
+            "Count the arcs in a sketch, where a full circle counts as one arc. Read-only; it turns the raw number arra"
+            "y of 16 floats per arc into a count. One line plus one circle reports one line, one arc and two segments."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_count_segments",
@@ -155,8 +155,11 @@ SPECS_BATCH18 = [
             "Count ALL segments in a sketch. ⚠ Not the same as the line count: segments are the total geometry units; l"
             "ines are one kind among them."
         ),
-        doc="Count ALL segments in a sketch. ⚠ Not the same as the line count: segments are the "
-        "total geometry units; lines are one kind among them.",
+        doc=(
+            "Count every geometry segment in a sketch. Read-only; segments are all geometry units together, so this is "
+            "not the line count and lines are only one kind among them. It takes the same sketch_name argument as the o"
+            "ther count tools."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_is_3d",
@@ -169,6 +172,9 @@ SPECS_BATCH18 = [
         evidence=(
             "Whether the sketch is a 3D sketch (ISketch.Is3D)."
         ),
-        doc="Whether the sketch is a 3D sketch (ISketch.Is3D).",
+        doc=(
+            "Report whether a sketch is a 3D sketch. Read-only; it answers one boolean and takes sketch_name empty for "
+            "the current sketch or set to a named sketch."
+        ),
     ),
 ]

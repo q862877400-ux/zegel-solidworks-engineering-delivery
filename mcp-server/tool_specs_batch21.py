@@ -90,13 +90,20 @@ SPECS_BATCH21 = [
         #:  个实参 ⇒
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
-        params=[Param("plane_name", str, default="Front Plane", description=_PLANE)],
+        params=[Param("plane_name", str, default="Front Plane", description=(
+                                                                    "Name of the reference plane, in English or in the "
+                                                                    "localized names, for example Front Plane or Top Pl"
+                                                                    "ane. Defaults to Front Plane."
+                                                                ))],
         evidence=(
             "Enter a new sketch on a reference plane. ★ This is the prerequisite for every sketch-based feature (extrud"
             "e, revolve, hole, sheet-metal flange)."
         ),
-        doc="Enter a new sketch on a reference plane. ★ This is the prerequisite for every "
-        "sketch-based feature (extrude, revolve, hole, sheet-metal flange).",
+        doc=(
+            "Enter a new sketch on a reference plane. It writes an open sketch into the active part and is the prerequi"
+            "site for every sketch-based feature such as extrude, revolve, hole or sheet-metal flange; pair it with sol"
+            "idworks_sketch_end."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_end",
@@ -113,8 +120,11 @@ SPECS_BATCH21 = [
             "Leave the current sketch. ★ The resulting sketch reference is reusable by solidworks_extrude_* and other f"
             "eature tools, so features can be built right after."
         ),
-        doc="Leave the current sketch. ★ The resulting sketch reference is reusable by "
-        "solidworks_extrude_* and other feature tools, so features can be built right after.",
+        doc=(
+            "Leave the current sketch and return a sketch reference that feature tools can reuse. It writes the finishe"
+            "d sketch into the active part and does not save it; pass the returned reference to extrude and similar too"
+            "ls when you need a stable selection."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_line",
@@ -133,10 +143,10 @@ SPECS_BATCH21 = [
             "end_y_mm": "y2",
         },
         params=[
-            Param("start_x_mm", float, description="Start point X, mm."),
-            Param("start_y_mm", float, description="Start point Y, mm."),
-            Param("end_x_mm", float, description="End point X, mm."),
-            Param("end_y_mm", float, description="End point Y, mm."),
+            Param("start_x_mm", float, description="Start point X in millimetres."),
+            Param("start_y_mm", float, description="Start point Y in millimetres."),
+            Param("end_x_mm", float, description="End point X in millimetres."),
+            Param("end_y_mm", float, description="End point Y in millimetres."),
         ],
         evidence=(
             "Draw a straight LINE in the open sketch. ⚠ Sketch geometry MUST be given as in-plane coordinates — this is"
@@ -144,7 +154,11 @@ SPECS_BATCH21 = [
             " millimetres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_"
             "start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
         ),
-        doc="Draw a straight LINE in the open sketch. " + _GEOM_NOTE,
+        doc=(
+            "Draw a straight line in the open sketch from one point to another. Coordinates are millimetres relative to"
+            " the sketch origin, which is the documented exception to the named-entity rule for sketch geometry; start "
+            "a sketch first and read back with the sketch count tools."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_circle",
@@ -158,9 +172,9 @@ SPECS_BATCH21 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"center_x_mm": "cx", "center_y_mm": "cy", "radius_mm": "radius"},
         params=[
-            Param("center_x_mm", float, description="Centre X, mm."),
-            Param("center_y_mm", float, description="Centre Y, mm."),
-            Param("radius_mm", float, description="Radius, mm (must be > 0)."),
+            Param("center_x_mm", float, description="Centre X in millimetres."),
+            Param("center_y_mm", float, description="Centre Y in millimetres."),
+            Param("radius_mm", float, description="Circle radius in millimetres; it must be greater than 0."),
         ],
         evidence=(
             "Draw a CIRCLE in the open sketch. ⚠ Sketch geometry MUST be given as in-plane coordinates — this is the do"
@@ -168,7 +182,11 @@ SPECS_BATCH21 = [
             "etres, relative to the SKETCH ORIGIN, in the sketch plane. ★ Start a sketch with solidworks_sketch_start f"
             "irst, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* tools."
         ),
-        doc="Draw a CIRCLE in the open sketch. " + _GEOM_NOTE,
+        doc=(
+            "Draw a circle in the open sketch from a centre and a radius. Coordinates are millimetres relative to the s"
+            "ketch origin, which is the documented exception to the named-entity rule for sketch geometry; read it back"
+            " with the sketch count tools."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_add_rectangle",
@@ -182,10 +200,10 @@ SPECS_BATCH21 = [
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
         param_alias={"x1_mm": "x1", "y1_mm": "y1", "x2_mm": "x2", "y2_mm": "y2"},
         params=[
-            Param("x1_mm", float, description="First corner X, mm."),
-            Param("y1_mm", float, description="First corner Y, mm."),
-            Param("x2_mm", float, description="Opposite corner X, mm."),
-            Param("y2_mm", float, description="Opposite corner Y, mm."),
+            Param("x1_mm", float, description="First corner X in millimetres."),
+            Param("y1_mm", float, description="First corner Y in millimetres."),
+            Param("x2_mm", float, description="Opposite corner X in millimetres."),
+            Param("y2_mm", float, description="Opposite corner Y in millimetres."),
         ],
         evidence=(
             "Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. ⚠ Not the same as a centre+size rectangle"
@@ -195,8 +213,10 @@ SPECS_BATCH21 = [
             "s_sketch_start first, and finish with solidworks_sketch_end; read back with the solidworks_sketch_count_* "
             "tools."
         ),
-        doc="Draw a RECTANGLE in the open sketch, given TWO OPPOSITE CORNERS. "
-        "⚠ Not the same as a centre+size rectangle — this tool takes corners, which is "
-        "unambiguous. " + _GEOM_NOTE,
+        doc=(
+            "Draw a rectangle in the open sketch from two opposite corners. This is a corner-to-corner rectangle rather"
+            " than a centre-plus-size one, and the corners are millimetres relative to the sketch origin, so start a sk"
+            "etch first."
+        ),
     ),
 ]

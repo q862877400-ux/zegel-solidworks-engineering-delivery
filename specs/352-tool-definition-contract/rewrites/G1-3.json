@@ -1,0 +1,175 @@
+{
+ "_group": "G1",
+ "_part": "3/3",
+ "tools": {
+  "solidworks_topology_create_mass_constraint": {
+   "doc": "Create a mass constraint on a topology study as a target mass-reduction percentage. It creates the constraint on the study and returns it, and the study must already be a topology study.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "reduce_percent": "Target mass reduction in percent, so 75 means minus 75 percent."
+   }
+  },
+  "solidworks_topology_create_factor_of_safety_constraint": {
+   "doc": "Create a factor-of-safety constraint on a topology study. It creates the constraint on the study; stress has to stay below the yield strength divided by that factor, and the study must already be a topology study.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "specified_factor": "Factor of safety, for example 1.5."
+   }
+  },
+  "solidworks_topology_create_preserved_region": {
+   "doc": "Create a preserved region on a topology study for material that must not be removed. It creates the constraint on the study, and the option value is passed through unchanged as the reference enum value.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "option": "Reference option enum value passed through unchanged; 0 means the module default. Defaults to 0."
+   }
+  },
+  "solidworks_topology_create_thickness_control": {
+   "doc": "Create a thickness control on a topology study with a minimum and a maximum thickness. It creates the control on the study, and both thicknesses are millimetres.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "min_thickness_mm": "Minimum thickness in millimetres; 0 means the module default. Defaults to 0.0.",
+    "max_thickness_mm": "Maximum thickness in millimetres; 0 means the module default. Defaults to 0.0."
+   }
+  },
+  "solidworks_simulation_get_loads_manager": {
+   "doc": "Get the loads and restraints manager of a simulation study. Read-only; the load and restraint tools act through this manager, so it is the entry point to them, and it is only meaningful once the study exists.",
+   "params": {}
+  },
+  "solidworks_simulation_get_results": {
+   "doc": "Get the results object of a simulation study. Read-only; the results object only carries data after the study has been solved, and a missing study raises instead of returning nothing.",
+   "params": {}
+  },
+  "solidworks_simulation_solve_memory_preflight": {
+   "doc": "Check whether a solve would fit in memory before running the solver. Read-only and needs no SolidWorks session; it estimates degrees of freedom from the node count, falling back to the element count, and reports refusal when the estimate exceeds the budget.",
+   "params": {
+    "element_count": "Element count read back from the mesh; a non-positive value here and in node_count together mean no mesh was built. Defaults to 0.",
+    "node_count": "Node count read back from the mesh; when it is positive it drives the estimate, counting three translational degrees of freedom per node. Defaults to 0.",
+    "memory_budget_gb": "Memory budget in gigabytes; the fallback to half the physical memory capped at 16 GB applies only when no value is passed at all, so pass a real budget here. Defaults to 0.0.",
+    "solver_name": "Solver name such as FFEPlus or Intel Direct Sparse; it only changes the applicability note in the result and is matched as a substring. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_get_edge_weld_connector": {
+   "doc": "Get one edge weld connector of a simulation study by index. Read-only; the index is the connector's place in the loads and restraints manager, which does not match its place in the study tree.",
+   "params": {
+    "index": "Connector index in the loads and restraints manager; count the connectors first, and note that the study tree order does not correspond to it. Defaults to 0."
+   }
+  },
+  "solidworks_simulation_generate_report": {
+   "doc": "Generate a report for a simulation study into a file. It writes the file and can append to an existing report instead of replacing it; the template name has to come from your own installation, because no local source lists valid values.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "template": "Report template name from your own SolidWorks installation; no local source lists valid values.",
+    "path": "Output file path for the generated report.",
+    "append": "Whether to append to an existing report instead of replacing it. Defaults to false."
+   }
+  },
+  "solidworks_simulation_create_mesh_for_control": {
+   "doc": "Mesh a simulation study using a named mesh control. It creates the mesh on the study and needs a mesh control that already exists under that name; use the plain mesh tool when no control applies.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "control_name": "Name of the existing mesh control to mesh with."
+   }
+  },
+  "solidworks_simulation_default_element_size_and_tolerance": {
+   "doc": "Get the element size and tolerance the study suggests for meshing. Read-only; with units at -1 the values come back at millimetre scale, and nothing is converted.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the active study, and the name is resolved before the call rather than passed to it. Defaults to empty.",
+    "units": "Unit code passed to the reference call; -1 returns millimetre-scale values on a real machine, while the enumeration documents 0 for SI, 1 for English and 2 for Metric. Defaults to -1."
+   }
+  },
+  "solidworks_costing_set_lot_size": {
+   "doc": "Set the lot size of the part cost analysis. It modifies the cost analysis to the batch count the cost is computed for; run the cost-update tool afterwards so the cost is recomputed.",
+   "params": {
+    "lot_size": "Batch size in parts, a count rather than a length."
+   }
+  },
+  "solidworks_costing_set_markup": {
+   "doc": "Set the markup type and the markup percentage of the part cost analysis. It modifies the cost analysis; both arguments are optional, so you may pass only one, and the markup type values are not documented in the local sources.",
+   "params": {
+    "markup_type": "Markup type as an integer, passed through unchanged because the valid values are not documented in the local sources. Defaults to null.",
+    "markup_percent": "Markup percentage as a plain ratio with no unit. Defaults to null."
+   }
+  },
+  "solidworks_costing_assign_custom_cost": {
+   "doc": "Assign a custom cost to one cost body of the part. It modifies the cost analysis; the reference does not say which cost items the amount adds to or offsets, and the amount is passed through in document units without conversion.",
+   "params": {
+    "amount": "Custom cost amount, passed through in document units without conversion.",
+    "body_name": "Cost body name; empty uses the only body when the list holds exactly one, and otherwise the call asks for a name. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_fixed_restraint": {
+   "doc": "Apply a fixed restraint to the faces of a static study. It creates the restraint and returns it; the faces come from the declarative selection, and the Simulation add-in is loaded automatically on the first call.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection for the restraint: '__current_selection__' or 'index:<n>' for the n-th face on the body; the faces are read into the reference array, so the selection has to be the one this argument drives."
+   }
+  },
+  "solidworks_simulation_apply_normal_force": {
+   "doc": "Apply a normal force to the faces of a static study. It creates the force and returns it; the magnitude is in newtons and is not converted, and the faces come from the declarative selection.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection for the force: '__current_selection__' or 'index:<n>' for the n-th face on the body; the faces are read into the reference array, so the selection has to be the one this argument drives.",
+    "magnitude_n": "Force magnitude in newtons, passed to the reference with force unit 0, which is newtons or newton-metres."
+   }
+  },
+  "solidworks_insert_weld_symbol": {
+   "doc": "Insert a weld symbol on a face of a part and set its text. It creates the symbol annotation; an attachable entity has to be available to select, and a missing selection makes the insert return nothing rather than fail loudly.",
+   "params": {
+    "face_index": "Index of the face to select as the attachment point, which is the precondition of the insert. Defaults to 0.",
+    "top": "Whether to draw the symbol above the line instead of below it. Defaults to false.",
+    "left": "Left-side text; the default is a placeholder rather than a real annotation. Defaults to 'Left'.",
+    "symbol": "Symbol short name from the gtol.sym list, for example BUTT, FILL or PLUG; the first few names may raise, so retry with another one. Defaults to 'BUTT'.",
+    "right": "Right-side text; the default is a placeholder. Defaults to 'Right'.",
+    "stagger": "Stagger text; the default is a placeholder. Defaults to 'Stagger'.",
+    "contour": "Weld contour option code, an enum with no unit. Defaults to 0."
+   }
+  },
+  "solidworks_insert_form_tool": {
+   "doc": "Press a forming tool into a sheet-metal face and create the form feature. It creates a feature in the active part; it needs a sheet-metal part and a face to select, and either precondition failing returns nothing instead of an error, so check both readings before concluding the feature cannot be built.",
+   "params": {
+    "tool_path": "Path of the forming tool file on disk; the reference takes a file path and not a tool name.",
+    "face_index": "Index of the face to press the tool on, which is one of the two preconditions. Defaults to 0.",
+    "flip": "Whether to flip the tool. Defaults to false.",
+    "rot_angle_deg": "Rotation angle in degrees, converted once at the boundary. Defaults to 0.0.",
+    "config": "Configuration name; empty means the default configuration. Defaults to empty.",
+    "override_doc": "Override-document option as the reference takes it. Defaults to false.",
+    "show_punch": "Show-punch option as the reference takes it. Defaults to true.",
+    "show_profile": "Show-profile option as the reference takes it. Defaults to true.",
+    "show_center": "Show-centre option as the reference takes it. Defaults to true.",
+    "link_to_part": "Link-to-part option as the reference takes it. Defaults to true."
+   }
+  },
+  "solidworks_part_axis": {
+   "doc": "Create a reference axis from a selected cylindrical face, conical face or pair of points. It creates an axis feature in the active part; the axis is what a circular pattern needs as its direction.",
+   "params": {
+    "reverse": "Reverse flag of the reference call; true is the value that works on a real machine. Defaults to true.",
+    "selection": "Declarative selector with no coordinates: 'index:<n>' or '__current_selection__'; empty means no selection is made here. Defaults to empty.",
+    "selection_kind": "Kind of geometry to select: FACE, EDGE or VERTEX. Defaults to 'FACE'."
+   }
+  },
+  "solidworks_select_face_selector": {
+   "doc": "Select one face by a declarative direction selector and report the selection count. It modifies the selection set; it finds the face by a point on it rather than by name, and an illegal selector raises with the valid values listed.",
+   "params": {
+    "selection": "Face selector naming the direction the face faces: +x, -x, +y, -y, +z or -z. An illegal value raises rather than selecting nothing.",
+    "mark": "Selection mark to attach to the face. Defaults to 0.",
+    "append": "Whether to append to the current selection; false does not clear a previous selection, so clear it yourself before picking a different face. Defaults to false."
+   }
+  },
+  "solidworks_drawing_insert_center_lines": {
+   "doc": "Skip this tool, NOT USABLE on this machine: a selected view entity produced no centre line. It would write centre lines into a drawing view from the entities visible in that view, and nothing was written because the centre-line count stayed at zero before and after the call.",
+   "params": {
+    "view_name": "Name of the drawing view to work on; empty uses the first view on the current sheet. Defaults to empty.",
+    "entity_type": "Kind of visible view entity to select: edge, vertex, face or silhouette_edge. Defaults to 'edge'.",
+    "entity_index": "Index of the view entity to select, counted from zero. Defaults to 0."
+   }
+  },
+  "solidworks_gui_classify_dialog": {
+   "doc": "Decide whether a dialog may be dismissed automatically from its title, text and buttons. Read-only and fully offline: it reads only the strings you pass, touches no window and clicks nothing, and answers with auto, needs_llm, forbidden or progress.",
+   "params": {
+    "buttons": "Dialog button text separated by commas; a single unambiguous confirm button yields auto, while cancel, pause, back, next or several equal-weight buttons yield needs_llm.",
+    "texts": "Dialog body text separated by vertical bars, because the body often contains commas; a body holding a dangerous word such as delete, overwrite or remove yields forbidden. Defaults to empty.",
+    "title": "Dialog title, for example Simulation. Defaults to empty."
+   }
+  }
+ }
+}

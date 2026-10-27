@@ -72,21 +72,24 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "study_name",
                 str,
                 default="Topology Study 1",
-                description="Study name; a study with the same name is deleted first.",
+                description="Name of the study to create. Defaults to 'Topology Study 1'.",
             ),
             Param(
                 "mesh_type",
                 int,
                 default=0,
-                description="swsMeshType: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam.",
+                description=(
+                    "Mesh type of the study: 0=solid, 1=midsurface, 2=surfaces, 3=mixed, 4=beam. Defaults to 0."
+                ),
             ),
             #: ★ 新增（★ 与实现同步）：★ 同名研究是否先删掉重建 ✓
             Param(
                 "delete_existing",
                 bool,
                 default=True,
-                description="Delete an existing study with the same name before creating "
-                "(★ 与实现默认值一致 = True)。",
+                description=(
+                    "Whether to delete an existing study with the same name before creating it. Defaults to true."
+                ),
             ),
         ],
         evidence=(
@@ -95,9 +98,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "a fallback)."
         ),
         doc=(
-            "Create a topology optimization study (analysis type 13) on the ACTIVE part. "
-            "Topology optimization works on ONE single-body part at a time (official limit). "
-            "Returns which entry point was used (CreateNewStudy3, or a fallback)."
+            "Create a topology optimization study of analysis type 13 on the active part. Creates a study in the docume"
+            "nt. Only one single-body part is supported at a time, and an existing study with the same name is deleted "
+            "first, so name the study deliberately."
         ),
     ),
     # 签名: def collect_topology_evidence(sw_app) -> dict[str, Any]
@@ -114,8 +117,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "ls exist. Read-only."
         ),
         doc=(
-            "Read back the topology studies on the active document: names, analysis types, "
-            "and which constraints/controls exist. Read-only."
+            "Read the topology studies on the active document with their names, analysis types and existing constraints"
+            ". Read-only, so it changes nothing. Use it to see what a study already holds before adding more constraint"
+            "s or controls."
         ),
     ),
     # 签名: def run_topology_study(study, *, units=0, element_size=0.0, tolerance=0.0)
@@ -138,29 +142,34 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description="Name of the study to mesh and solve; empty uses the active study. Defaults to empty.",
             ),
             Param(
                 "units",
                 int,
                 default=0,
-                description="swsUnit_e: 0=SI, 1=English, 2=Metric. "
-                "Must be a VALID value (-1 is rejected by the API).",
+                description=(
+                    "Unit system handed to the mesher: 0=SI, 1=English, 2=Metric; any other value is rejected by the AP"
+                    "I. Defaults to 0."
+                ),
             ),
             Param(
                 "element_size_mm",
                 float,
                 default=0.0,
-                description="Global element size in MILLIMETRES, must be > 0. "
-                "Use solidworks_simulation_default_mesh_size for the official value.",
+                description=(
+                    "Global element size in millimetres and must be greater than 0; defaults to 0.0, so pass a real siz"
+                    "e such as the one from solidworks_simulation_default_mesh_size."
+                ),
             ),
             Param(
                 "tolerance_mm",
                 float,
                 default=0.0,
-                description="Mesh tolerance in MILLIMETRES, must be > 0. "
-                "Official default is 5% of the element size.",
+                description=(
+                    "Mesh tolerance in millimetres and must be greater than 0; defaults to 0.0, which leaves the offici"
+                    "al 5 percent of the element size."
+                ),
             ),
         ],
         evidence=(
@@ -168,8 +177,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "T mean success - judge by study results."
         ),
         doc=(
-            "Mesh and solve the topology study and report whether results exist. "
-            "A zero RunAnalysis return code does NOT mean success - judge by study results."
+            "Run the mesh and the solve of one topology study and report whether results exist. Creates mesh and result"
+            " data inside the study. A zero return code does not mean success, so judge by whether result plots exist a"
+            "fterwards."
         ),
     ),
     # ── 模具（本轮并入的新域）───────────────────────────────────────
@@ -185,8 +195,10 @@ SPECS_BATCH1: list[ToolSpec] = [
                 "draft_analysis",
                 bool,
                 default=True,
-                description="The official single parameter. Its exact meaning is UNVERIFIED; "
-                "kept True to match the reference usage.",
+                description=(
+                    "The single official parameter; whose exact meaning is unverified, and true matches the reference u"
+                    "sage that sets the draft angle first. Defaults to true."
+                ),
             ),
         ],
         evidence=(
@@ -194,8 +206,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "all inserts nothing."
         ),
         doc=(
-            "Insert a mold parting line. Select the draft-direction reference first "
-            "(edge/plane/axis); without it the call inserts nothing."
+            "Insert a mold parting line from the draft-direction reference that is already selected. Creates a parting "
+            "line feature in the active part. Select an edge, plane or axis first, because without one the call inserts"
+            " nothing and just returns nothing."
         ),
     ),
     # 签名: def insert_shut_off_surface(model)
@@ -209,7 +222,11 @@ SPECS_BATCH1: list[ToolSpec] = [
         evidence=(
             "Auto-create shut-off surfaces over holes for mold separation. Zero parameters."
         ),
-        doc="Auto-create shut-off surfaces over holes for mold separation. Zero parameters.",
+        doc=(
+            "Create shut-off surfaces over holes so the mold can separate. Creates them as a new feature and takes no p"
+            "arameters. It needs holes to patch and a parting line to build on, and the call returns nothing instead of"
+            " failing loudly when it cannot build."
+        ),
     ),
     # 签名: def mold_draft_analysis(model, *, draft_angle_deg, analysis_type=0, colors=N
     # one, option=0)
@@ -223,18 +240,18 @@ SPECS_BATCH1: list[ToolSpec] = [
         #   它在 MCP 表面无法表达。**显式声明省略**，否则与「手抄漏了」无法区分。
         omitted_params=("colors",),
         params=[
-            Param("draft_angle_deg", float, description="Draft angle in DEGREES."),
+            Param("draft_angle_deg", float, description="Reference draft angle in degrees."),
             Param(
                 "analysis_type",
                 int,
                 default=0,
-                description="Official arg 2 (Int32). Its meaning is UNVERIFIED.",
+                description="Official second argument, an integer whose meaning is unverified. Defaults to 0.",
             ),
             Param(
                 "option",
                 int,
                 default=0,
-                description="Official arg 4 (Int32). Its meaning is UNVERIFIED.",
+                description="Official fourth argument, an integer whose meaning is unverified. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -242,8 +259,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "tool does NOT judge success from it."
         ),
         doc=(
-            "Run mold draft analysis. Returns the official return code as-is: that code has "
-            "NO published enum, so this tool does NOT judge success from it."
+            "Run mold draft analysis at one draft angle and return the official return code unchanged. It modifies the "
+            "face display of the model to show the draft result. No enum is published for that code, so this tool does "
+            "not judge success from it; read the model instead."
         ),
     ),
     # 签名: def mold_evidence(model) -> dict
@@ -270,24 +288,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             "是**「没有分型」）✓"
         ),
         doc=(
-            "★ **当前这条在真机上**读不到东西**、★ 如实说明** —— "
-            "处置 `JUDGE-C_D_E.md` 的 🔴 **#14**（★ `E-1 #9`）："
-            "★ 原 doc 逐字写「Read back the mold state of the active part: parting-line/surface "
-            "and cavity/core surface counts, parting type, core-cavity split. **Read-only.**」"
-            "⇒ ★★ 而**能力层自己的 docstring 逐字**写着"
-            "「⚠ **本函数当前仍从旧位置读** ⇒ ★ **它在真机上只会返回全 `None`**」"
-            "（★ `scripts/sw_mold.py::mold_evidence`）⇒ ★★★ **两处说法相反** ✓ "
-            "★★ **真因（★ 轮 172 真机 + 反射复核）**：★ 那些计数**不在 `IFeatureManager` / "
-            "`IModelDoc2` 上**（★ 实测全 `AttributeError: <unknown>.X`），★ 而在 "
-            "**`I*FeatureData`** 上（★ `GetPartingLinesCount` ⇒ `IPartingLineFeatureData` · "
-            "`PartingType` ⇒ `IPartingSurfaceFeatureData` · `CoreCavitySplit` ⇒ "
-            "`IPartingLineFeatureData` —— ★ 事实 36 那一族：**成员在别的接口上**）✓ "
-            "★★★ **⇒ 要真读到，必须先拿到对应的 `I*FeatureData`**（★ 从**已存在的**分型线/分型面"
-            "特征上取）⇒ ★ **前提是零件上**已经有那些特征**；★ 空零件上**本来就取不到**"
-            "（★ **两者表象相同、别混**）✓ "
-            "★★★★ **∴ 现在**：★ `read_only=True` 仍然成立（★ 它确实不改模型）· "
-            "★★ 但**读到的计数会全是 `None`** ⇒ ★ 请按返回值里的 **`readable`** 字段判"
-            "（★ `false` = 本机读不到、★ **不是**「没有分型」）✓"
+            "Read the mold state of the active part, which this machine cannot actually read. Read-only; the counts com"
+            "e back as null because the members live on the feature-data objects instead of on the model. Judge by the "
+            "readable field, where false means the reading failed rather than that no parting line exists."
         ),
     ),
     # ── 仿真：材料（真机修好的那条路）───────────────────────────────
@@ -304,14 +307,16 @@ SPECS_BATCH1: list[ToolSpec] = [
             Param(
                 "material_name",
                 str,
-                description='Material name inside the library, e.g. "AISI 1020". '
-                '"Plain Carbon Steel" is NOT in that library.',
+                description=(
+                    "Material name inside the library, for example AISI 1020; Plain Carbon Steel is not in that library"
+                    "."
+                ),
             ),
             Param(
                 "database",
                 str,
                 default="SOLIDWORKS Materials",
-                description="Library DISPLAY name (NOT the .sldmat file name).",
+                description="Library display name, not the .sldmat file name. Defaults to 'SOLIDWORKS Materials'.",
             ),
         ],
         evidence=(
@@ -319,8 +324,9 @@ SPECS_BATCH1: list[ToolSpec] = [
             " NOT take effect (the API itself returns void)."
         ),
         doc=(
-            "Assign a material to the active part and RETURN THE READ-BACK MaterialIdName. "
-            "An empty string means it did NOT take effect (the API itself returns void)."
+            "Assign a material from a named library to the active part and return the material name read back. Writes t"
+            "he part material onto the model. An empty result means the assignment did not take effect, and a name that"
+            " is not in the library fails silently."
         ),
     ),
 ]

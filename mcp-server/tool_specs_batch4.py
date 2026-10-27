@@ -426,27 +426,31 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param(
                 "selection",
                 str,
-                description="Declarative EDGE selection: '__current_selection__' "
-                "(use what is already selected) or 'index:<n>'.",
+                description=(
+                    "Declarative EDGE selection: '__current_selection__' to reuse the current selection, or 'index:<n>'"
+                    " for the n-th edge on the body."
+                ),
             ),
-            Param("bend_radius_mm", float, description="Bend radius in MILLIMETRES."),
+            Param("bend_radius_mm", float, description=(
+                                               "Bend radius in millimetres; ignored when use_default_radius is true."
+                                           )),
             Param(
-                "flange_length_mm", float, description="Flange length in MILLIMETRES."
+                "flange_length_mm", float, description="Flange length in millimetres."
             ),
             Param(
-                "angle_deg", float, default=90.0, description="Flange angle in DEGREES."
+                "angle_deg", float, default=90.0, description="Flange angle in degrees. Defaults to 90."
             ),
             Param(
                 "use_default_radius",
                 bool,
                 default=True,
-                description="Use the part default bend radius instead of bend_radius_mm.",
+                description="Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true.",
             ),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="Reverse the flange direction.",
+                description="Whether to flip which side the flange grows from. Defaults to false.",
             ),
         ],
         evidence=(
@@ -461,15 +465,9 @@ SPECS_BATCH4: list[ToolSpec] = [
             "*（★ 第一现场）；★ 按旧描述排查会**停在一条已经不存在的死路上**。"
         ),
         doc=(
-            "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`SetFixedFace` / `AccessSelections` 属**进程内指针族**，pywin32 迟到绑定下调不动（事实 47，20+ 形态已穷尽）。"
-            "Create a native edge flange on a SELECTED edge. The edge is selected for you from `selection` BEFORE the call (the implementation requires a pre-existing selection). "
-            "⚠ **仍不可用，但报错已前移**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #2）。"
-            "★★ **旧描述（已作废）**：`setting \\`ReverseDirection\\` gave \\`Property ... can not be set\\`` ——"
-            "★ 那条**属性层**的错**已修掉**：`ReverseDirection` **不属于** `IEdgeFlangeFeatureData`（★ 跨接口泄漏），"
-            "★★ **代码里已删除**该设置（★ 原处只剩一条说明性注释）。"
-            "★★★ **现在的事实**：★ 报错已从「属性设不上」**前移到** `CreateFeature(37) 创建失败` ⇒ **卡点在创建、不在属性**。"
-            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）；"
-            "★ 按旧描述排查会**停在一条已经不存在的死路上**。"
+            "Skip this tool, NOT USABLE on this machine: pywin32 cannot reach the process-internal pointers the officia"
+            "l call needs. It would create an edge flange on one selected edge and write a feature into the active part"
+            " without saving it."
         ),
     ),
     # 签名: def create_gusset(model, spec: GussetSpec)
@@ -494,27 +492,29 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param(
                 "selection",
                 str,
-                description="Declarative FACE selection: '__current_selection__' or 'index:<n>'.",
+                description=(
+                    "Declarative FACE selection: '__current_selection__' or 'index:<n>' for the n-th face on the body."
+                ),
             ),
             Param(
-                "thickness_mm", float, description="Gusset thickness in MILLIMETRES."
+                "thickness_mm", float, description="Gusset wall thickness in millimetres."
             ),
             Param(
                 "profile_distance_1_mm",
                 float,
-                description="Profile distance 1 in MILLIMETRES.",
+                description="First leg length of the gusset profile in millimetres.",
             ),
             Param(
                 "profile_distance_2_mm",
                 float,
                 default=0.0,
-                description="Profile distance 2 in MILLIMETRES.",
+                description="Second leg length of the gusset profile in millimetres. Defaults to 0.",
             ),
             Param(
                 "profile_angle_deg",
                 float,
                 default=0.0,
-                description="Profile angle in DEGREES.",
+                description="Angle of the gusset profile in degrees. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -530,16 +530,8 @@ SPECS_BATCH4: list[ToolSpec] = [
             "TIME_STATUS` 为准**（★ 第一现场）；★ 按旧描述排查会**以为属性设不上而去找别的属性名**。"
         ),
         doc=(
-            "★★ **本机（SW 2026 SP4.1 + pywin32）仍不可用**：`ISMGussetFeatureData` 的 `AccessSelections` 属**进程内指针族**（事实 47）；★ 属性层已修好，但**特征建不出来**。"
-            "Create a native sheet-metal gusset on a SELECTED supporting face. The face is selected for you from `selection` BEFORE the call. "
-            "⚠ **仍不可用，但属性层已修好**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #3）。"
-            "★★ **旧描述（已作废）**：`setting \\`Thickness\\` gave \\`Property ... can not be set\\`` ——"
-            "★ **真因不是「属性只读」，是接口不对**：`Thickness` 是**焊件族**的名字，★ 本工具要走的是**钣金族**的 "
-            "`ISMGussetFeatureData` ⇒ ★ 已改设 `GussetThickness`（★ 源码里注明「原 Thickness（焊件名）」）。"
-            "★★★ **现在的事实**：★ 改用 `GussetThickness` / `ProfileHeightDim` / `ProfileLengthDim` / `ProfileAngleDim` 后"
-            "**真机属性层读回全部成功**（0.002 / 0.01 / 0.01 / 45.0）；★ 报错已变为 `CreateFeature(118) 创建失败` ⇒ **卡点在创建、不在属性**。"
-            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）；"
-            "★ 按旧描述排查会**以为属性设不上而去找别的属性名**。"
+            "Skip this tool, NOT USABLE on this machine: ISMGussetFeatureData needs process-internal pointers and creat"
+            "es no feature. Every property writes back, which hides the failure."
         ),
     ),
     # 签名: def create_draft(model, face_ref, spec: DraftFeatureSpec)
@@ -565,24 +557,24 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param(
                 "selection",
                 str,
-                description="Declarative FACE selection: '__current_selection__' or 'index:<n>'.",
+                description="Declarative FACE selection: __current_selection__ or index:<n>.",
             ),
             Param(
                 "direction_plane",
                 str,
                 default="Front Plane",
-                description="★★ 方向项（官方 mark 1）。一个**基准面名**（如 `Front Plane` / `前视基准面`）"
-                "—— ★ 是**名字**不是坐标 ⇒ 不违反规则 3。"
-                "★★ 283 真机：**缺它必报「此拔模方向尚未定义。」**（18 臂全失败），"
-                "★ 给了它（`Front Plane`）+ 面 ⇒ **建成 `拔模1`**。",
+                description=(
+                    "Name of the datum plane used as the draft direction; without it the call refuses because no pull d"
+                    "irection is defined. Defaults to 'Front Plane'."
+                ),
             ),
-            Param("angle_deg", float, description="Draft angle in DEGREES."),
-            Param("depth_mm", float, description="Draft depth in MILLIMETRES."),
+            Param("angle_deg", float, description="Draft angle in degrees."),
+            Param("depth_mm", float, description="Draft depth in millimetres."),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="Reverse the draft direction.",
+                description="Whether to reverse the draft direction. Defaults to false.",
             ),
         ],
         evidence=(
@@ -600,21 +592,9 @@ SPECS_BATCH4: list[ToolSpec] = [
             "y::SHEET_METAL_RUNTIME_STATUS (still `None` = untested)."
         ),
         doc=(
-            "★★ **2026-10-09（规格 239）创建路径已按官方页改写**：**旧描述（已作废）** —— "
-            "`CreateDefinition(3)`（`swFmDraft`）**不是合法类型** ⇒ 回 `None`；★ 那是**真机事实**，"
-            "但**根因**是「`swFmDraft` 不在任何官方 `CreateDefinition` 宿主页的 `Type` 清单里」"
-            "（规格 238 已证）⇒ **这条路径官方根本不支持**，不是参数没调对。"
-            "★★ **现在的路径**：官方入口 **`IFeatureManager::InsertMultiFaceDraft`**"
-            "（★ 其前代 `IModelDoc2::InsertMfDraft` / `InsertMfDraft2` 两页都写着 "
-            "`Obsolete. Superseded by IFeatureManager::InsertMultifaceDraft`）。"
-            "Create a native draft on a SELECTED face. The face is selected for you from `selection` "
-            "BEFORE the call; per the official `## Remarks` the selections must be made with "
-            "`IModelDocExtension::SelectByID2` (direction mark 1, faces to draft mark 2, draft edges mark 4). "
-            "NOTE: the implementation's own `face_ref` parameter is accepted but NEVER USED (verified by "
-            "reading the body); this tool therefore omits it and selects from `selection` instead, matching "
-            "the docstring ('on the already-selected face'). *** NOT VERIFIED ON THE TEST MACHINE *** "
-            "The path was rewritten from the official page in an OFFLINE slice (no COM run) - see "
-            "scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS (still `None` = untested)."
+            "Create a native face draft on one selected face, untested on this machine. Creates a draft feature in the "
+            "active part; the path was rewritten from the official page offline and no run has confirmed it. The select"
+            "ion must already hold the face to draft, and a datum plane supplies the pull direction."
         ),
     ),
     # 签名: def create_swept_flange(model, path_ref, profile_ref, spec: SweptFlangeSpec)
@@ -649,87 +629,89 @@ SPECS_BATCH4: list[ToolSpec] = [
             Param(
                 "path_selection",
                 str,
-                description="Declarative EDGE selection for the sweep path: "
-                "'__current_selection__' or 'index:<n>'.",
+                description="Declarative EDGE selection for the sweep path: __current_selection__ or index:<n>.",
             ),
             Param(
                 "profile_selection",
                 str,
-                description="Declarative SKETCH selection for the sweep profile: "
-                "'__current_selection__' or 'index:<n>'.",
+                description="Declarative SKETCH selection for the sweep profile: __current_selection__ or index:<n>.",
             ),
-            Param("start_offset_mm", float, description="Start offset in MILLIMETRES."),
+            Param("start_offset_mm", float, description="Start offset in millimetres."),
             Param(
                 "end_offset_mm",
                 float,
                 default=0.0,
-                description="End offset in MILLIMETRES.",
+                description="End offset in millimetres. Defaults to 0.0.",
             ),
             Param(
                 "thickness_mm",
                 float,
                 default=None,
-                description="Thickness in MILLIMETRES. Leave UNSET (null) to inherit from the "
-                "base flange - that reproduces the official example, which does not "
-                "set Thickness at all.",
+                description=(
+                    "Thickness in millimetres; defaults to null, which inherits the thickness from the base flange."
+                ),
             ),
             Param(
                 "bend_radius_mm",
                 float,
                 default=0.0,
-                description="Bend radius in MILLIMETRES.",
+                description="Bend radius in millimetres. Defaults to 0.0.",
             ),
             Param(
                 "use_default_radius",
                 bool,
                 default=True,
-                description="Use the default bend radius; when False, bend_radius_mm applies.",
+                description=(
+                    "Whether to use the default bend radius, in which case bend_radius_mm does not apply. Defaults to t"
+                    "rue."
+                ),
             ),
             Param(
                 "flange_position",
                 int,
                 default=1,
-                description="swSweptFlangePositionTypes_e: 1=material inside, 2=material outside, "
-                "3=bend outside.",
+                description="Flange position: 1=material inside, 2=material outside, 3=bend outside. Defaults to 1.",
             ),
             Param(
                 "flatten_along_path",
                 bool,
                 default=False,
-                description="Flatten along the path.",
+                description="Whether to flatten along the path. Defaults to false.",
             ),
             Param(
-                "trim_side_bends", bool, default=False, description="Trim side bends."
+                "trim_side_bends", bool, default=False, description=(
+                                                            "Whether to trim the side bends. Defaults to false."
+                                                        )
             ),
             Param(
                 "use_default_bend_relief",
                 bool,
                 default=True,
-                description="Use the default bend relief.",
+                description="Whether to use the default bend relief. Defaults to true.",
             ),
             Param(
                 "use_gauge_table",
                 bool,
                 default=False,
-                description="Use the gauge table.",
+                description="Whether to use a gauge table. Defaults to false.",
             ),
             Param(
                 "use_material_parameters",
                 bool,
                 default=False,
-                description="Use material sheet-metal parameters.",
+                description="Whether to take the sheet-metal parameters from the material. Defaults to false.",
             ),
             Param(
                 "override_default_sheet_metal_parameters",
                 bool,
                 default=False,
-                description="Override the default sheet-metal parameters.",
+                description="Whether to override the default sheet-metal parameters. Defaults to false.",
             ),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="Reverse the direction.",
+                description="Whether to reverse the direction. Defaults to false.",
             ),
         ],
         evidence=(
@@ -739,7 +721,9 @@ SPECS_BATCH4: list[ToolSpec] = [
             "scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS before relying on it."
         ),
         doc=(
-            "Create a native swept flange along a path. REQUIRES an existing base flange first (the official example builds one before the swept flange) - otherwise there is no thickness to inherit. NOT YET TESTED ON A REAL MACHINE: it needs both a sweep path and a profile selection, which the 2026-10-01 probe did not build. See scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS before relying on it."
+            "Create a native swept flange along a path selection, untested on this machine. Creates a flange feature in"
+            " the active part from one profile selection. It needs an existing base flange first, because there is no t"
+            "hickness to inherit otherwise."
         ),
     ),
 ]

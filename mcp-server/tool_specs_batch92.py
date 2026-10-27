@@ -58,19 +58,20 @@ SPECS_BATCH92 = [
                 "mode",
                 str,
                 default="edit",
-                description="`edit` = 只重建**需要重建**的特征（官方 `IModelDoc2.EditRebuild3()`，零参）· "
-                "`force` = **强制**重建活动配置的全部特征"
-                "（官方 `IModelDoc2.ForceRebuild3(TopOnly)`）· "
-                "`all` = **不动配置**就重建**全部配置**"
-                "（官方 `IModelDocExtension.ForceRebuildAll()`，零参）。",
+                description=(
+                    "Rebuild mode: 'edit' rebuilds only the features that need it, 'force' rebuilds every feature of th"
+                    "e active configuration, and 'all' rebuilds every configuration without switching. Defaults to 'edi"
+                    "t'."
+                ),
             ),
             Param(
                 "top_only",
                 bool,
                 default=False,
-                description='★ **只对 `mode="force"` 有意义**（官方 `ForceRebuild3` 的 `TopOnly`）：'
-                "`True` 只重建顶层装配、`False` 连子装配一起。"
-                "★ 另外两档**忽略它**，返回值里会写明。",
+                description=(
+                    "Whether a force rebuild covers only the top level and leaves subassemblies alone; the other two mo"
+                    "des ignore it. Defaults to false."
+                ),
             ),
         ],
         evidence=(
@@ -82,17 +83,11 @@ SPECS_BATCH92 = [
             "的是 **bound method**，**恒为真**。⚠ **边界（官方 Remarks 逐字）**：`EditRebuild3` 「only works **in-conte"
             "xt of the active document**」⇒ 对未激活的文档调用没有意义（本工具不替调用方激活文档）。"
         ),
-        doc="★ **重建模型** —— 三档 `mode` 一条工具（★ 官方三个入口：`EditRebuild3` / `ForceRebuild3` / "
-        "`ForceRebuildAll`；★ **不建三条**，因为它们是同一件事的三档，合并才不会在能力清单里"
-        "留下同进同退的条目）✓ "
-        "★★ **判据是回读，不是返回值**：① 回读 `IModelDocExtension::NeedsRebuild2` 须为 "
-        "`fully_rebuilt`；② 特征树计数**不变**（重建改的是状态、不是树的形状）；"
-        "③ 包围盒**不变**（同参数下重建不该改几何）。"
-        "★★ 为什么返回值不能当判据：★ `EditRebuild3` 是**方法**、不是属性 —— "
-        "三家外部项目都把它当属性读（`_get(doc, 'EditRebuild3')`），★ 那样拿到的是 **bound method**，"
-        "**恒为真**。"
-        "⚠ **边界（官方 Remarks 逐字）**：`EditRebuild3` 「only works **in-context of the active "
-        "document**」⇒ 对未激活的文档调用没有意义（本工具不替调用方激活文档）。",
+        doc=(
+            "Refresh the active document by rebuilding it in one of three modes and report the read-back state. Modifie"
+            "s the document state, leaves the feature tree and geometry alone, and only works on the active document; j"
+            "udge the result by the read-back, not by the return value."
+        ),
     ),
     # ── ② 构造几何（1）—— ★ 复用该文件已有的声明式选段包装（裁决书指定）───────────────
     # ─────
@@ -106,15 +101,19 @@ SPECS_BATCH92 = [
             Param(
                 "selection",
                 str,
-                description='**声明式选择器**（★ 规则 3：不收坐标）—— `"__current_selection__"` '
-                '或 `"index:0"` / `"index:0,index:1"`（★ 草图段下标，0 基）。'
-                "★ 事实 32：草图段**按名字选不中** ⇒ 只能用这两条路。",
+                description=(
+                    "Declarative segment selection: __current_selection__ for the existing selection, or index:0 and in"
+                    "dex:0,index:1 for zero-based segment positions."
+                ),
             ),
             Param(
                 "construction",
                 bool,
                 default=True,
-                description="`True` = 置为**构造几何**· `False` = **变回实体线**。",
+                description=(
+                    "Whether to make the segments construction geometry; false turns them back into normal sketch geome"
+                    "try. Defaults to true."
+                ),
             ),
         ],
         evidence=(
@@ -125,14 +124,11 @@ SPECS_BATCH92 = [
             "求值**；读回不等于请求 ⇒ `ok=False` 并**如实报哪几段没对上**（★ 不静默 —— 这正是「再调一次是切换还是置位」"
             "那件事会暴露的地方）✓"
         ),
-        doc="★ **把选中的草图段置为 / 复位为构造几何**（合并工具：方向由 `construction` 定，"
-        "★ 不建两条）✓ ★ 官方两个入口分工**已在注释里定死**：置位走零参 "
-        "`ISketchManager::CreateConstructionGeometry()`（官方摘要逐字「**Sets** … **instead of**」，"
-        "★ 是**置位**不是 toggle）；复位走 `ISketchSegment::ConstructionGeometry` 属性 setter"
-        "（★ 官方唯一的回程）✓ "
-        "★★ **判据 = 回读属性**：调用后逐段读 `ConstructionGeometry`，要求**目标段读数 == 请求值**；"
-        "读回不等于请求 ⇒ `ok=False` 并**如实报哪几段没对上**（★ 不静默 —— "
-        "这正是「再调一次是切换还是置位」那件事会暴露的地方）✓",
+        doc=(
+            "Set or clear construction geometry on the selected sketch segments. Modifies the active sketch: the segmen"
+            "t property is read back afterwards and a mismatch is reported, because the set call assigns the state inst"
+            "ead of toggling it."
+        ),
     ),
     # ── ③ 显示状态（2）—— ★★ `ambiguous` 是裁决书点名的硬约束 ─────────────────────────
     # ────
@@ -152,13 +148,11 @@ SPECS_BATCH92 = [
             "束）✓ ★ 判据 = `GetDisplayStates()` 与 `GetDisplayStatesCount()` **两个官方入口**读数一致（规则 6：不用被"
             "调成员自己的返回值当判据）。"
         ),
-        doc="★ **列出当前配置的显示状态**（官方 `IConfiguration::GetDisplayStates()`）✓ "
-        "★★ **结果里必须看 `ambiguous`**：官方 Remarks 逐字「The **first name in the list is the "
-        "active display state**. **If more than one display state is active** in the current model, "
-        "call `IComponent2::ReferencedDisplayState` …」⇒ ★ **装配**里「第一个即活动」**不保证成立** "
-        "⇒ ★ 本工具在装配里给 `ambiguous=True` 并写明理由，**不替调用方猜**（裁决书硬约束）✓ "
-        "★ 判据 = `GetDisplayStates()` 与 `GetDisplayStatesCount()` **两个官方入口**读数一致"
-        "（规则 6：不用被调成员自己的返回值当判据）。",
+        doc=(
+            "List the display states of the current configuration. Read-only; the first name is the active state only w"
+            "hen the model is a part, so the returned ambiguous flag marks the assemblies where that rule does not hold"
+            "."
+        ),
     ),
     ToolSpec(
         name="solidworks_config_apply_display_state",
@@ -170,9 +164,10 @@ SPECS_BATCH92 = [
             Param(
                 "display_state_name",
                 str,
-                description="要激活的显示状态名（★ 先用 "
-                "`solidworks_config_list_display_states` 取名字；"
-                "★ 名字不在清单里 ⇒ 本工具**报错不猜**，也不会替你新建）。",
+                description=(
+                    "Display state name to activate; take it from solidworks_config_list_display_states, since a name t"
+                    "hat is not listed is rejected instead of created."
+                ),
             ),
         ],
         evidence=(
@@ -181,13 +176,11 @@ SPECS_BATCH92 = [
             "mbiguous=True`（装配）时**只认①**、不做②（★ 官方那句在装配里不成立）—— 返回值里会写明「②不可用」✓ ⚠ 本工具"
             "**不做**「新建显示状态」—— 那是 `IConfiguration::CreateDisplayState` 的事，不属于本规格的候选。"
         ),
-        doc="★ **激活指定显示状态**（官方 `IConfiguration::ApplyDisplayState(Name)`，回 `bool`）✓ "
-        "★★ **判据（规则 6）**：① 返回 `True`（官方 Returns 逐字）；"
-        "② **回读** `GetDisplayStates()` —— 第一个名字变成请求的那个。"
-        "★ 而 `ambiguous=True`（装配）时**只认①**、不做②（★ 官方那句在装配里不成立）—— "
-        "返回值里会写明「②不可用」✓ "
-        "⚠ 本工具**不做**「新建显示状态」—— 那是 `IConfiguration::CreateDisplayState` 的事，"
-        "不属于本规格的候选。",
+        doc=(
+            "Activate one display state by name in the current configuration. Modifies the active display state; the na"
+            "me must already exist because this tool never creates one, and the first-name read-back is skipped for ass"
+            "emblies, where the returned ambiguous flag says so."
+        ),
     ),
     # ── ④ 引用文档（1）—— ★ 补 pack_and_go 的读侧 ─────────────────────────────────────
     # ───
@@ -202,31 +195,37 @@ SPECS_BATCH92 = [
             Param(
                 "document",
                 str,
-                description="文档名或**全路径** —— ★ 官方示例用的是**全路径**"
-                "（`swModel.GetPathName`）✓ 官方 `Parameters` 只写「Name of the document」，"
-                "本工具**原样透传**（★ 不替它猜）。",
+                description=(
+                    "Document name or full path, passed through to the official call unchanged; the official examples u"
+                    "se a full path."
+                ),
             ),
             Param(
                 "traverse",
                 bool,
                 default=True,
-                description="`True` = **递归**进所有被依赖的文件；`False` = 只回最上一层"
-                "（官方 `Traverseflag`）。",
+                description=(
+                    "Whether to recurse into every depended-on file; false reports only the top level. Defaults to true"
+                    "."
+                ),
             ),
             Param(
                 "search",
                 bool,
                 default=False,
-                description="`True` = 用搜索规则找依赖（官方 `Searchflag`）。"
-                "⚠ **有副作用**：官方 NOTE 逐字「the current directory is set to the "
-                "directory of the document file」⇒ 默认 `False`。",
+                description=(
+                    "Whether to find dependencies with the search rules, which also changes the current directory after"
+                    "wards. Defaults to false."
+                ),
             ),
             Param(
                 "add_read_only_info",
                 bool,
                 default=False,
-                description="`True` = 每个文档后**多一个**只读信息串（官方 `AddReadOnlyInfo`）；"
-                "★ 官方例子里**非只读**的那个是**空串**（不是「未知」）。",
+                description=(
+                    "Whether to add a read-only information string after each document, where an empty string means the"
+                    " file is not read-only. Defaults to false."
+                ),
             ),
         ],
         evidence=(
@@ -238,16 +237,10 @@ SPECS_BATCH92 = [
             "，★ **把这份清单当「完整依赖」是错的** ✓ ⚠ 另两条官方逐字已写进返回值：★ **被压缩的组件也会出现**（别把「"
             "出现了」当「生效了」）· ★ `search=True` 会**改当前目录**。"
         ),
-        doc="★ **列出一个文档的引用（依赖）清单**（官方 `ISldWorks::GetDocumentDependencies2`）—— "
-        "★ 补上 `solidworks_pack_and_go` **一直枚举却不暴露的读侧** ✓ "
-        "★ 返回值按官方 `## Returns` 的**步长**还原成记录（每个文档 2 个串：名字 + 全路径；"
-        "开了 `add_read_only_info` 再加 1 个），★ **数组长度除不尽就报错**、不硬凑 ✓ "
-        "★★ **已知盲区（官方 Remarks 逐字）**：**库特征（Library features）不会返回** —— "
-        "「Library features are completely unassociated … Therefore, this method would not "
-        "return Library features.」⇒ ★ 该盲区**随返回值一起**回给调用方，"
-        "★ **把这份清单当「完整依赖」是错的** ✓ "
-        "⚠ 另两条官方逐字已写进返回值：★ **被压缩的组件也会出现**（别把「出现了」当「生效了」）· "
-        "★ `search=True` 会**改当前目录**。",
+        doc=(
+            "List the external references of a document as name and path records. Read-only; library features are never"
+            " returned and suppressed components do appear, so do not read this list as the complete dependency set."
+        ),
     ),
     # ── ⑤ 移动/复制实体（1）—— ★ 裁决书 §九 称它是「本批最干净的一条」─────────────────
     # ───
@@ -262,73 +255,95 @@ SPECS_BATCH92 = [
                 "selection",
                 str,
                 default="all",
-                description='声明式选择器（★ 规则 3：不收坐标）—— `"all"`（全部实体，'
-                '★ 与官方示例同）或 `"index:<n>"`（第 n 个实体）。',
+                description=(
+                    "Which bodies to move or copy: 'all' for every body in the part, or 'index:<n>' for the n-th body. "
+                    "Defaults to 'all'."
+                ),
             ),
             Param(
-                "translate_x_mm", float, default=0.0, description="平移增量 X（毫米）。"
+                "translate_x_mm", float, default=0.0, description=(
+                                                          "Translation increment along X in millimetres, taken as docum"
+                                                          "ent units and not converted. Defaults to 0.0."
+                                                      )
             ),
             Param(
-                "translate_y_mm", float, default=0.0, description="平移增量 Y（毫米）。"
+                "translate_y_mm", float, default=0.0, description=(
+                                                          "Translation increment along Y in millimetres, taken as docum"
+                                                          "ent units and not converted. Defaults to 0.0."
+                                                      )
             ),
             Param(
-                "translate_z_mm", float, default=0.0, description="平移增量 Z（毫米）。"
+                "translate_z_mm", float, default=0.0, description=(
+                                                          "Translation increment along Z in millimetres, taken as docum"
+                                                          "ent units and not converted. Defaults to 0.0."
+                                                      )
             ),
             Param(
                 "translate_dist_mm",
                 float,
                 default=0.0,
-                description="平移**距离**（毫米；官方 `TransDist`）。",
+                description=(
+                    "Translation distance in millimetres, taken as document units and not converted. Defaults to 0.0."
+                ),
             ),
             Param(
                 "rotate_point_x_mm",
                 float,
                 default=0.0,
-                description="旋转原点 X（毫米）。",
+                description="X of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
             ),
             Param(
                 "rotate_point_y_mm",
                 float,
                 default=0.0,
-                description="旋转原点 Y（毫米）。",
+                description="Y of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
             ),
             Param(
                 "rotate_point_z_mm",
                 float,
                 default=0.0,
-                description="旋转原点 Z（毫米）。",
+                description="Z of the rotation origin in millimetres, taken as document units. Defaults to 0.0.",
             ),
             Param(
                 "rotate_angle_x_deg",
                 float,
                 default=0.0,
-                description="**绕 X 轴**的旋转角（**度**）—— ⚠ 官方页**没写单位**（真机实测 COM 侧是"
-                "**弧度**）⇒ 本工具收度、在边界换算一次；★★ 且官方参数名与实际作用轴"
-                "**不一致（X↔Z 互换）** ⇒ 本工具**已补偿**，此参数**真的绕 X**。",
+                description=(
+                    "Rotation angle about X in degrees, converted to radians once at this boundary; the axis mapping is"
+                    " compensated, so this value really turns about X. Defaults to 0.0."
+                ),
             ),
             Param(
                 "rotate_angle_y_deg",
                 float,
                 default=0.0,
-                description="绕 Y 的旋转角（度）。",
+                description=(
+                    "Rotation angle about Y in degrees, converted to radians once at this boundary. Defaults to 0.0."
+                ),
             ),
             Param(
                 "rotate_angle_z_deg",
                 float,
                 default=0.0,
-                description="绕 Z 的旋转角（度）。",
+                description=(
+                    "Rotation angle about Z in degrees, converted to radians once at this boundary; the axis mapping is"
+                    " compensated, so this value really turns about Z. Defaults to 0.0."
+                ),
             ),
             Param(
                 "copy",
                 bool,
                 default=False,
-                description="`True` = **复制**、`False` = **移动**（官方 `BCopy`）。",
+                description=(
+                    "Whether to copy the bodies instead of moving them, which adds bodies rather than displacing them. "
+                    "Defaults to false."
+                ),
             ),
             Param(
                 "num_copies",
                 int,
                 default=1,
-                description="复制几个（官方 `NumCopies`，须 ≥ 1）。",
+                description="How many copies to create, at least 1. Defaults to 1.",
             ),
         ],
         evidence=(
@@ -347,26 +362,10 @@ SPECS_BATCH92 = [
             "**：★ 只验了**单实体 / 全部实体**两种选择器；★ 旋转只验了「**只给一个轴、30°、RotPoint=(0,0,0)**」（★ **三"
             "轴同时给的合成顺序未验**）；★ 非原点旋转与「绕选定参考实体」（mark 2/4/8）**未验**。"
         ),
-        doc="★ **移动或复制实体**（官方 `IFeatureManager::InsertMoveCopyBody2`，**12 参**）—— "
-        "★ 官方页 **signature + 逐字 mark 表（1/2/4/8）+ 官方示例调用序**全齐 ✓ "
-        "★★ **判据（规则 6）**：① **移动** ⇒ **包围盒必须变**；② **复制** ⇒ **实体个数必须增** —— "
-        "两者都用 `IBody2.GetBodyBox` / `GetBodies2` **回读**，"
-        "★ **不用**它回的 `IFeature` 指针 ✓ "
-        "★★ **官方 Remarks 的坑已编码**：**平移与旋转不能同时生效**，**同时给则只应用旋转** ⇒ "
-        "本工具检测到两者都给时**置 `both_given=True` 并写明**（★ 不静默）✓ "
-        "★ **mark 不在 `Select2` 的形参里** —— 它设在 `ISelectData` 对象上 "
-        "（官方示例调用序：`CreateSelectData` → `Mark = 1` → `body.Select2(True, data)`）✓ "
-        "★★ **单位是个坑，且本工具已按实测定死**：官方页**没写**这几个长度参数的单位，"
-        "真机实测**按文档长度单位（本机 mm）解释、不是米** —— 传 25 就挪 25 mm；"
-        "★ 因此本工具**原样收毫米、不做换算**（⚠ 与本仓绝大多数 COM 几何接口**相反**）✓ "
-        "★ 角度则收**度**、在边界换算成**弧度**（真机实测 COM 侧是弧度）—— "
-        "★ 也就是说**同一个调用里长度是 mm、角度是 rad** ✓ "
-        "★★ **还有一件官方没写的事**：**参数名与实际作用轴不一致（`RotAngleX` 实际绕 Z、"
-        "`RotAngleZ` 实际绕 X，`Y` 是对的）** —— 真机由「只给一个角、看哪一轴跨度不变」"
-        "的三格互证定出 ⇒ ★ 本工具**已按单源常量 `ROTATION_AXIS_MAP` 补偿**，"
-        "对外的 `rotate_angle_x/y/z_deg` **含义就是「绕该轴转」** ✓ "
-        "⚠ **已知限制**：★ 只验了**单实体 / 全部实体**两种选择器；"
-        "★ 旋转只验了「**只给一个轴、30°、RotPoint=(0,0,0)**」（★ **三轴同时给的合成顺序未验**）；"
-        "★ 非原点旋转与「绕选定参考实体」（mark 2/4/8）**未验**。",
+        doc=(
+            "Move or copy solid bodies by translation and rotation about a point, for all bodies or one body index. Mod"
+            "ifies the body set: a translate displaces the body, a copy adds bodies, and translation and rotation do no"
+            "t both take effect, with rotation winning when both are given."
+        ),
     ),
 ]

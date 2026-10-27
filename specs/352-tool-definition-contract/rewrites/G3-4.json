@@ -1,0 +1,21 @@
+{
+ "tools": {
+  "solidworks_insert_lofted_ref_surface": {
+   "doc": "Create a lofted reference surface from profiles that are already selected. Writes a surface feature into the active part and does not save the document; select the profiles with selection mark 1 and in the order you want them lofted. The call returns void, so success is judged by the feature tree gaining a feature.",
+   "params": {
+    "closed": "Whether to close the loft; a closed loft needs at least three profiles. Defaults to false.",
+    "keep_tangency": "Whether to keep tangency where the section curves are tangent. Defaults to true.",
+    "force_non_rational": "Whether to force a non-rational surface. Defaults to false.",
+    "tess_tolerance_factor": "Tessellation tolerance factor for a centerline loft; 0.0 uses the default. Defaults to 0.0.",
+    "start_matching_type": "Tangency matching type for the start profile; the official page gives no value table, so it is passed through as an integer. Defaults to 0.",
+    "end_matching_type": "Tangency matching type for the end profile, passed through the same way as start_matching_type. Defaults to 0."
+   }
+  },
+  "solidworks_assembly_sequence_report": {
+   "doc": "Report the assembly components as ordered rows that read like an assembly instruction sheet. Read-only; it is built from the real bills-of-materials rows, and SolidWorks has no member that produces an assembly sequence.",
+   "params": {
+    "include_excluded": "Whether to include components excluded from the bill of materials. Defaults to false."
+   }
+  }
+ }
+}

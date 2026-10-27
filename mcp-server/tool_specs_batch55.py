@@ -42,9 +42,10 @@ SPECS_BATCH55 = [
                 "fallback",
                 str,
                 default="Sketch1",
-                description="取不到时的回退名（⚠ ★ 中文 UI 下真名是「草图1」而回退是"
-                "「Sketch1」—— ★ 所以**回退值不等于真名**，用它去找草图会找不到；"
-                "★ 要**稳健取草图**请用 `solidworks_sketch_*` 那族（它们走中英文候选 + 特征树兜底））",
+                description=(
+                    "Name returned when the current sketch cannot be read; it is not the real name, so fetch sketches t"
+                    "hrough the solidworks_sketch tools instead of using it. Defaults to 'Sketch1'."
+                ),
             ),
         ],
         evidence=(
@@ -52,10 +53,11 @@ SPECS_BATCH55 = [
             "（中文 UI 是「草图1」）。★★ 所以：**要按名字去取草图对象时，不要用本工具的返回值** —— ★ 用 `scripts/sw_ske"
             "tch.resolve_sketch`（中英文候选 + 特征树兜底，语言无关）。"
         ),
-        doc="★ **读当前活动草图的特征名**。⚠ 它**在草图已关闭时**会回 `fallback`（★ 默认 "
-        "`Sketch1`）—— ★ 那**不是**真名（中文 UI 是「草图1」）。"
-        "★★ 所以：**要按名字去取草图对象时，不要用本工具的返回值** —— "
-        "★ 用 `scripts/sw_sketch.resolve_sketch`（中英文候选 + 特征树兜底，语言无关）。",
+        doc=(
+            "Read the feature name of the current active sketch. Read-only. When the sketch is closed it returns the fa"
+            "llback name, which is not the real name, so do not use this value to look the sketch up; call solidworks_s"
+            "ketch_by_name instead."
+        ),
     ),
     ToolSpec(
         name="solidworks_auto_dimension_sketch",
@@ -69,10 +71,10 @@ SPECS_BATCH55 = [
             "：★ `status` = `pass` / `blocked` / `failed`；★★ `blocked` + `SKETCH_NOT_ACTIVE` = **没有活动草图**（★ 先 "
             "`solidworks_sketch_start`）。"
         ),
-        doc="★ **按官方 `ISketch.AutoDimension2` 流程给当前草图建真实模型尺寸** ——"
-        "★ 生成的尺寸是**真实的 `DisplayDimension`**（★ 可被工程图导入并复核），"
-        "★ 不是草图里画几条线。"
-        "★ 回 `{status, status_code, error_code, selected}`：★ `status` = `pass` / `blocked` / `failed`；"
-        "★★ `blocked` + `SKETCH_NOT_ACTIVE` = **没有活动草图**（★ 先 `solidworks_sketch_start`）。",
+        doc=(
+            "Create real model dimensions on the active sketch through the official automatic dimensioning flow. Writes"
+            " display dimensions into the model so a drawing can import and verify them. It returns status pass, blocke"
+            "d or failed, and blocked with SKETCH_NOT_ACTIVE means no sketch is open."
+        ),
     ),
 ]

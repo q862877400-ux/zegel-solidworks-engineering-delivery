@@ -54,20 +54,28 @@ SPECS_BATCH47 = [
                 "profile_sketches",
                 list,
                 default=None,
-                description="★ 轮廓草图名**列表**（**mark=1**；★★ **顺序即语义** —— "
-                "官方 Remarks：轮廓要**按期望的顺序**选中）· 至少 2 个",
+                description=(
+                    "Profile sketch names in the order the loft should run through them, at least two, each selected wi"
+                    "th mark 1. Defaults to unset."
+                ),
             ),
             Param(
                 "closed",
                 bool,
                 default=False,
-                description="闭合放样（★ 首尾相连成一个环；★ 少于 3 个轮廓时引导线必须闭合）",
+                description=(
+                    "Whether the loft closes back on itself into a ring, which needs a closed guide curve when there ar"
+                    "e fewer than three profiles. Defaults to false."
+                ),
             ),
             Param(
                 "use_selected_profiles",
                 bool,
                 default=True,
-                description="用当前选中的轮廓（★ 官方要求 mark=1，且**顺序**决定结果）",
+                description=(
+                    "Whether to loft the profiles already selected with mark 1, where the order decides the result. Def"
+                    "aults to true."
+                ),
             ),
         ],
         evidence=(
@@ -80,17 +88,10 @@ SPECS_BATCH47 = [
             "两平面两种情形都建成 `放样1`。⚠ **未真机验证**：质量属性里的**体积**（★ 真机上回 0.0，所以「棱台体积 7000 "
             "mm³」那个期望值没有对上）—— ★ 不要把本工具的体积当可靠读数。"
         ),
-        doc="★ **用「轮廓草图」放样** —— 走 `IFeatureManager.InsertProtrusionBlend2`（官方 **18 参**）。"
-        "★ 官方 Remarks：轮廓要**按期望的顺序**先选中，mark=**1**（引导线 mark=2 · 中心线 mark=4 · "
-        "起端相切向量 mark=8）；★ 引导线与中心线**可选**。"
-        "★★ **`profile_sketches` 是必填的**：★ 本工具**不预选任何东西**，而是由 `pre_call` "
-        "在**注入之后**按名把每个轮廓选上（**mark=1**）并**回读计数**（★ 事实 8）—— "
-        "★ 名字**按顺序**给（顺序即语义）。"
-        "⚠ 早先版本**没有**这个参数、也没有 `pre_call` ⇒ **经工具层必然失败**"
-        "（真机报 `stage: selection`，证据 `output/explicit-reject-family-evidence.json`）。"
-        "★★ 判据（规则 6）：**特征树多了新特征**。"
-        "★ 真机证据：同平面与两平面两种情形都建成 `放样1`。"
-        "⚠ **未真机验证**：质量属性里的**体积**（★ 真机上回 0.0，所以「棱台体积 7000 mm³」那个"
-        "期望值没有对上）—— ★ 不要把本工具的体积当可靠读数。",
+        doc=(
+            "Create a loft from an ordered list of profile sketches. Creates a loft feature in the active part and does"
+            " not save the document; the sketches are selected in the order given because that order defines the loft, "
+            "and the volume this tool reports is not a reliable reading."
+        ),
     ),
 ]

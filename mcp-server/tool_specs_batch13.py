@@ -69,21 +69,27 @@ SPECS_BATCH13 = [
             "Generate a study report to a file. ⚠ `template` valid values were NOT found in the local sources (see the "
             "batch header); pass the template name your SolidWorks installation provides."
         ),
-        doc="Generate a study report to a file. ⚠ `template` valid values were NOT found in the "
-        "local sources (see the batch header); pass the template name your SolidWorks "
-        "installation provides.",
+        doc=(
+            "Generate a report for a simulation study into a file. It writes the file and can append to an existing rep"
+            "ort instead of replacing it; the template name has to come from your own installation, because no local so"
+            "urce lists valid values."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing simulation study; empty uses the active study, and the name is resolved before"
+                    " the call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "template",
                 str,
-                description="Report template name. ⚠ Valid values not found in local sources.",
+                description=(
+                    "Report template name from your own SolidWorks installation; no local source lists valid values."
+                ),
             ),
             Param(
                 "path", str, description="Output file path for the generated report."
@@ -92,7 +98,7 @@ SPECS_BATCH13 = [
                 "append",
                 bool,
                 default=False,
-                description="Append to an existing report instead of replacing it.",
+                description="Whether to append to an existing report instead of replacing it. Defaults to false.",
             ),
         ],
     ),
@@ -106,19 +112,24 @@ SPECS_BATCH13 = [
         evidence=(
             "Mesh the study using a named mesh control."
         ),
-        doc="Mesh the study using a named mesh control.",
+        doc=(
+            "Mesh a simulation study using a named mesh control. It creates the mesh on the study and needs a mesh cont"
+            "rol that already exists under that name; use the plain mesh tool when no control applies."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing simulation study; empty uses the active study, and the name is resolved before"
+                    " the call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "control_name",
                 str,
-                description="Name of the mesh control to mesh with.",
+                description="Name of the existing mesh control to mesh with.",
             ),
         ],
     ),
@@ -132,25 +143,28 @@ SPECS_BATCH13 = [
         evidence=(
             "Get the suggested element size and tolerance (millimetre-scale when units=-1)."
         ),
-        doc="Get the suggested element size and tolerance (millimetre-scale when units=-1).",
+        doc=(
+            "Get the element size and tolerance the study suggests for meshing. Read-only; with units at -1 the values "
+            "come back at millimetre scale, and nothing is converted."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description=(
+                    "Name of an existing simulation study; empty uses the active study, and the name is resolved before"
+                    " the call rather than passed to it. Defaults to empty."
+                ),
             ),
             Param(
                 "units",
                 int,
                 default=-1,
-                description="swsUnit_e. ⚠ TWO LOCAL SOURCES DISAGREE: the existing "
-                '`solidworks_topology_run` tool says "0=SI, 1=English, 2=Metric; '
-                "-1 is rejected by the API\", while this function's own docstring "
-                "records a REAL-MACHINE result that `units=-1` returns "
-                "millimetre-scale values. This tool keeps the -1 default (per the "
-                "real-machine note) and does not merge the two statements.",
+                description=(
+                    "Unit code passed to the reference call; -1 returns millimetre-scale values on a real machine, whil"
+                    "e the enumeration documents 0 for SI, 1 for English and 2 for Metric. Defaults to -1."
+                ),
             ),
         ],
     ),

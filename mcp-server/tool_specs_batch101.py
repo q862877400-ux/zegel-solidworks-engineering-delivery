@@ -41,46 +41,51 @@ SPECS_BATCH101 = [
                 "face_index",
                 int,
                 default=0,
-                description="要选的面序号（★ **前置** —— ★ 官方 Preconditions 逐字要求"
-                "「select a face, edge, or sketch segment」✓）。",
+                description=(
+                    "Index of the face to select as the attachment point, which is the precondition of the insert. Defa"
+                    "ults to 0."
+                ),
             ),
             Param(
                 "top",
                 bool,
                 default=False,
-                description="符号画在横线的上方（True）还是下方（False）。",
+                description="Whether to draw the symbol above the line instead of below it. Defaults to false.",
             ),
             Param(
                 "left",
                 str,
                 default="Left",
-                description="左侧文字（★ 缺省是**占位符** `Left`，★ 不是真实标注 ✓）。",
+                description=(
+                    "Left-side text; the default is a placeholder rather than a real annotation. Defaults to 'Left'."
+                ),
             ),
             Param(
                 "symbol",
                 str,
                 default="BUTT",
-                description="**符号短名** —— ★ 来自 `…\\english\\gtol.sym` 的短名表"
-                "（`BUTT` / `FILL` / `PLUG` …）✓；★ 前几个名字**可能抛**（探针实测）"
-                "⇒ ★ 换一个重试 ✓。",
+                description=(
+                    "Symbol short name from the gtol.sym list, for example BUTT, FILL or PLUG; the first few names may "
+                    "raise, so retry with another one. Defaults to 'BUTT'."
+                ),
             ),
             Param(
                 "right",
                 str,
                 default="Right",
-                description="右侧文字（★ 同样缺省是**占位符** ✓）。",
+                description="Right-side text; the default is a placeholder. Defaults to 'Right'.",
             ),
             Param(
                 "stagger",
                 str,
                 default="Stagger",
-                description="交错文字（★ 缺省是**占位符** `Stagger` ✓）。",
+                description="Stagger text; the default is a placeholder. Defaults to 'Stagger'.",
             ),
             Param(
                 "contour",
                 int,
                 default=0,
-                description="`swWeldContour*` 档位（★ **枚举** ⇒ ★ 无量纲 ✓）。",
+                description="Weld contour option code, an enum with no unit. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -93,18 +98,11 @@ SPECS_BATCH101 = [
             " **静默回 `None`** ⇒ ★ 本工具**把前置是否有效单独回报**（`selection_count`），★ 免得把「前置没上」记成「符"
             "号建不出来」 ✓"
         ),
-        doc="焊接符号：在零件上按面插入焊接符号并设文字。"
-        "★ **焊接符号**（官方 `IModelDoc2::InsertWeldSymbol3`，★ **零参**）—— "
-        "★★★ **本能力是「真入口是另一条 API」的实证**："
-        "★ 我原先走 `IDrawingDoc::InsertWeldSymbol`（**10 参、静默无效** —— "
-        "★ 12 组试完读数全 **0→0**）✗；"
-        "★★ 而**官方示例**走的是 **`InsertWeldSymbol3()`（零参）** + "
-        "`IWeldSymbol::SetText(Top, Left, Symbol, Right, Stagger, Contour)` ✓ ⇒ ★ **建成** ✓ "
-        "★★ **判据 = 回读**（★ 不看 `SetText` 的 bool —— 事实 8）："
-        "★ `GetLineCount` / `GetTextCount` / `IsAttached` 三项 ✓ "
-        "★★★ **前置是硬性的**：★ 官方 Preconditions 逐字「select a face, edge, or sketch segment」"
-        "—— ★ 没选时 `InsertWeldSymbol3()` **静默回 `None`** ⇒ ★ 本工具**把前置是否有效"
-        "单独回报**（`selection_count`），★ 免得把「前置没上」记成「符号建不出来」 ✓",
+        doc=(
+            "Insert a weld symbol on a face of a part and set its text. It creates the symbol annotation; an attachable"
+            " entity has to be available to select, and a missing selection makes the insert return nothing rather than"
+            " fail loudly."
+        ),
     ),
     #: ── ② 成形工具（★ 规格 211 B1-1 批 · ★ `verified`）────────────────────────
     ToolSpec(
@@ -117,32 +115,50 @@ SPECS_BATCH101 = [
             Param(
                 "tool_path",
                 str,
-                description="成形工具文件（`*.sldftp`）在**磁盘上的路径** —— ★ 官方 `Path` "
-                "参数是**文件路径**、★ 不是名字 ✓（★ 建议落仓库内 `output/`）。",
+                description=(
+                    "Path of the forming tool file on disk; the reference takes a file path and not a tool name."
+                ),
             ),
             Param(
                 "face_index",
                 int,
                 default=0,
-                description="要选的面序号（★ **前置** —— ★ 官方 `## Remarks` 逐字要求"
-                "「select either a face or a 2D sketch containing points」✓）。",
+                description=(
+                    "Index of the face to press the tool on, which is one of the two preconditions. Defaults to 0."
+                ),
             ),
-            Param("flip", bool, default=False, description="是否翻转。"),
+            Param("flip", bool, default=False, description="Whether to flip the tool. Defaults to false."),
             Param(
                 "rot_angle_deg",
                 float,
                 default=0.0,
-                description="旋转角（**度**）—— ★ 按参数名后缀；★ 换算只在边界一次"
-                "（仓里既有的 `sw_connect.deg` ✓）。",
+                description="Rotation angle in degrees, converted once at the boundary. Defaults to 0.0.",
             ),
-            Param("config", str, default="", description="配置名（★ 空串即缺省 ✓）。"),
+            Param("config", str, default="", description=(
+                                                 "Configuration name; empty means the default configuration. Defaults t"
+                                                 "o empty."
+                                             )),
             Param(
-                "override_doc", bool, default=False, description="`OverrideDoc` 档。"
+                "override_doc", bool, default=False, description=(
+                                                         "Override-document option as the reference takes it. Defaults "
+                                                         "to false."
+                                                     )
             ),
-            Param("show_punch", bool, default=True, description="`ShowPunch` 档。"),
-            Param("show_profile", bool, default=True, description="`ShowProfile` 档。"),
-            Param("show_center", bool, default=True, description="`ShowCenter` 档。"),
-            Param("link_to_part", bool, default=True, description="`LinkToPart` 档。"),
+            Param("show_punch", bool, default=True, description=(
+                                                        "Show-punch option as the reference takes it. Defaults to true."
+                                                    )),
+            Param("show_profile", bool, default=True, description=(
+                                                          "Show-profile option as the reference takes it. Defaults to t"
+                                                          "rue."
+                                                      )),
+            Param("show_center", bool, default=True, description=(
+                                                         "Show-centre option as the reference takes it. Defaults to tru"
+                                                         "e."
+                                                     )),
+            Param("link_to_part", bool, default=True, description=(
+                                                          "Link-to-part option as the reference takes it. Defaults to t"
+                                                          "rue."
+                                                      )),
         ],
         evidence=(
             "成形工具：在钣金面上压出成形特征（需先选面）。★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature"
@@ -154,18 +170,10 @@ SPECS_BATCH101 = [
             "` / `selection_count`）—— ★★ 因为「读数无效」与「真的不建」长得一样 ✓ ★ 真机建成读数：★ `circular emboss1`"
             " ✓"
         ),
-        doc="成形工具：在钣金面上压出成形特征（需先选面）。"
-        "★ **成形工具**（官方 `IFeatureManager::InsertFormToolFeature`，★ **9 参**）—— "
-        "★★ **会新建特征**（非只读）✓ "
-        "★★★ **前置有两处，★ 而它们都会「静默失败」**（★ 本仓栽过的形态）："
-        "★ **① 官方 `## Remarks` 逐字要求先选一个面** —— ★ 我第一版没选 ⇒ 回 `None` ✗，"
-        "★ **而「没选」与「建不出来」长得一模一样** ✓；"
-        "★ **② 前置是钣金件** —— ★ 而建钣金件的契约是 "
-        "`create_base_flange(model, sketch_ref, spec: BaseFlangeSpec)` ✗，"
-        "★ **不是** `(model, sketch, thickness, …)`，★ 且它**不抛、只回 `None`** ✓ "
-        "★★ **判据 = 回读**：★ 特征树增量（★ 不看返回值 —— 事实 8）✓；"
-        "★ 且**两处前置各自单列布尔**（`tool_file_exists` / `selection_count`）—— "
-        "★★ 因为「读数无效」与「真的不建」长得一样 ✓ "
-        "★ 真机建成读数：★ `circular emboss1` ✓",
+        doc=(
+            "Press a forming tool into a sheet-metal face and create the form feature. It creates a feature in the acti"
+            "ve part; it needs a sheet-metal part and a face to select, and either precondition failing returns nothing"
+            " instead of an error, so check both readings before concluding the feature cannot be built."
+        ),
     ),
 ]

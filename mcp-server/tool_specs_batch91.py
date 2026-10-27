@@ -48,19 +48,21 @@ SPECS_BATCH91 = [
         module="sw_gui_modal",
         function="find_modals",
         inject="",
-        params=[Param("main_hwnd", int, default=0, description=_HWND)],
+        params=[Param("main_hwnd", int, default=0, description=(
+                                                       "Main window handle to scan around; 0 lets the tool find the Sol"
+                                                       "idWorks window itself. Defaults to 0."
+                                                   ))],
         evidence=(
             "找出**同进程、与主窗口分离的可见顶层对话框**（★ 判据：Win32 类 `#32770` **或** 有 Button **或** 有可读文本"
             " —— ★ 本仓刻意**不认类名**，因为那是偶然的）✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`，pywin32"
             " + Win32 API，**不是** SolidWorks API 成员）⇒ ★ 真源是源码本身 ✓ ★★ 为什么它值得挂：弹窗会让 COM 调用**永"
             "久冻住**（本仓多轮实测）⇒ **先看有没有弹窗**是无人值守的第一步 ✓ 返回 `[{hwnd, cls, title, rect}, …]`。"
         ),
-        doc="找出**同进程、与主窗口分离的可见顶层对话框**（★ 判据：Win32 类 `#32770` **或** 有 Button "
-        "**或** 有可读文本 —— ★ 本仓刻意**不认类名**，因为那是偶然的）✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`，pywin32 + Win32 API，"
-        "**不是** SolidWorks API 成员）⇒ ★ 真源是源码本身 ✓ "
-        "★★ 为什么它值得挂：弹窗会让 COM 调用**永久冻住**（本仓多轮实测）⇒ "
-        "**先看有没有弹窗**是无人值守的第一步 ✓ 返回 `[{hwnd, cls, title, rect}, …]`。",
+        doc=(
+            "List the visible top-level dialog windows that belong to the SolidWorks process and would freeze COM calls"
+            ". Read-only Win32 window scan, not a SolidWorks member; it ignores window class and titles, and returns hw"
+            "nd, class, title and rect for each dialog."
+        ),
     ),
     ToolSpec(
         name="solidworks_gui_modal_report",
@@ -68,15 +70,20 @@ SPECS_BATCH91 = [
         module="sw_gui_modal",
         function="modal_report",
         inject="",
-        params=[Param("main_hwnd", int, default=0, description=_HWND)],
+        params=[Param("main_hwnd", int, default=0, description=(
+                                                       "Main window handle to inspect; 0 lets the tool find the SolidWo"
+                                                       "rks window itself. Defaults to 0."
+                                                   ))],
         evidence=(
             "把当前弹窗状况打成一份**可判的报告**（★ 给「要不要点 / 能不能继续」提供判据）✓ ★ 官方依据：**本仓自研**（`"
             "scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓ ★ 与 `solidworks_gui_find_modals` 的分工：那个只列句柄，这个给**"
             "可读的判据** ✓"
         ),
-        doc="把当前弹窗状况打成一份**可判的报告**（★ 给「要不要点 / 能不能继续」提供判据）✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓ "
-        "★ 与 `solidworks_gui_find_modals` 的分工：那个只列句柄，这个给**可读的判据** ✓",
+        doc=(
+            "Report the current modal-dialog situation in a form that decides whether to click or to stop. Read-only sc"
+            "an; use it to judge whether an operation may continue, while solidworks_gui_find_modals only lists the han"
+            "dles."
+        ),
     ),
     ToolSpec(
         name="solidworks_gui_assert_no_modal",
@@ -85,22 +92,27 @@ SPECS_BATCH91 = [
         function="assert_no_modal",
         inject="",
         params=[
-            Param("main_hwnd", int, default=0, description=_HWND),
+            Param("main_hwnd", int, default=0, description=(
+                                                   "Main window handle to inspect; 0 lets the tool find the SolidWorks "
+                                                   "window itself. Defaults to 0."
+                                               )),
             Param(
                 "where",
                 str,
                 default="",
-                description="★ 出错信息里写「在哪个动作前发现弹窗」"
-                "（便于定位）—— 留空则用默认措辞。",
+                description=(
+                    "Text written into the error message to say which action found the dialog. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
             "★ **每个动作之前调用**：发现弹窗就**抛**，不让它吃掉后续输入 ✓ ★★ 本仓的死因里，「弹窗把 COM 调用冻住」是"
             "头号 ⇒ ★ 这条断言就是那个前置闸 ✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓"
         ),
-        doc="★ **每个动作之前调用**：发现弹窗就**抛**，不让它吃掉后续输入 ✓ "
-        "★★ 本仓的死因里，「弹窗把 COM 调用冻住」是头号 ⇒ ★ 这条断言就是那个前置闸 ✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓",
+        doc=(
+            "Check that no modal dialog is open and raise if one is, so it cannot swallow the next input. Read-only, an"
+            "d it neither clicks nor closes anything; call it before every action."
+        ),
     ),
     ToolSpec(
         name="solidworks_gui_close_modals",
@@ -109,13 +121,15 @@ SPECS_BATCH91 = [
         function="close_modals",
         inject="",
         params=[
-            Param("main_hwnd", int, default=0, description=_HWND),
+            Param("main_hwnd", int, default=0, description=(
+                                                   "Main window handle to inspect; 0 lets the tool find the SolidWorks "
+                                                   "window itself. Defaults to 0."
+                                               )),
             Param(
                 "rounds",
                 int,
                 default=1,
-                description="最多循环几**轮**（★ 计数，不是长度）—— "
-                "每轮「扫 → 点 → 验窗口是否真消失」✓",
+                description="Maximum number of scan, click and verify rounds. Defaults to 1.",
             ),
         ],
         evidence=(
@@ -123,10 +137,11 @@ SPECS_BATCH91 = [
             " ⇒ 没消失才上**真实输入事件**；★ 因为 `hung=True` 的窗口**消息永远不被取出**，只有真输入事件有效 ✓ ★ 官方"
             "依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓"
         ),
-        doc="关掉所有模态框并**回读**，返回关掉几个 ✓ ★★ 本仓的两段式处置："
-        "先 `PostMessage`（快）⇒ **验窗口是否真消失** ⇒ 没消失才上**真实输入事件**；"
-        "★ 因为 `hung=True` 的窗口**消息永远不被取出**，只有真输入事件有效 ✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_modal.py`）⇒ 真源是源码 ✓",
+        doc=(
+            "Close every modal dialog and report how many were closed after verifying that each window really disappear"
+            "ed. Modifies the desktop, not the model: a hanging window never consumes its messages, so a message is pos"
+            "ted first and real input events are the fallback."
+        ),
     ),
     #: ★★★ 2026-10-10 **倒角几何三个工具已移除**（★ 业主架构指令）：
     #:   ★ 业主原话：「★ **我想让你继承上游的是工具，只是单纯的工具。**
@@ -151,17 +166,17 @@ SPECS_BATCH91 = [
             Param(
                 "want",
                 int,
-                description="期望处于前台的窗口句柄（★ 句柄，不是坐标）。"
-                "★ 先用 `solidworks_gui_get_foreground_window` 取。",
+                description="Window handle that is expected to be in the foreground.",
             )
         ],
         evidence=(
             "读当前焦点状态（★ 期望窗口是否真的在前台）✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`，pywin32 `"
             "GetForegroundWindow`）⇒ 真源是源码 ✓ ★ 本仓的焦点三规则之一：**每次动作前断言前台窗口**，不是就修复 ✓"
         ),
-        doc="读当前焦点状态（★ 期望窗口是否真的在前台）✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`，pywin32 `GetForegroundWindow`）"
-        "⇒ 真源是源码 ✓ ★ 本仓的焦点三规则之一：**每次动作前断言前台窗口**，不是就修复 ✓",
+        doc=(
+            "Report whether the wanted window is really in the foreground. Read-only state check through the Win32 fore"
+            "ground window, so use it before an action instead of assuming the window took focus."
+        ),
     ),
     ToolSpec(
         name="solidworks_gui_ensure_focus",
@@ -175,21 +190,23 @@ SPECS_BATCH91 = [
         #: 到）✓
         param_alias={"settle_seconds": "settle"},
         params=[
-            Param("hwnd", int, description="要置前的窗口句柄（★ 句柄，不是坐标）。"),
-            Param("retries", int, default=5, description="重试次数（★ 计数）。"),
+            Param("hwnd", int, description="Window handle to put in the foreground."),
+            Param("retries", int, default=5, description="Number of focus attempts. Defaults to 5."),
             Param(
                 "settle_seconds",
                 float,
                 default=0.2,
-                description="每次尝试之间等多少**秒**（★ 时长 ⇒ 用 `_seconds`，不是 `_mm`）。",
+                description="Seconds to wait between attempts. Defaults to 0.2.",
             ),
         ],
         evidence=(
             "把 `hwnd` 置为前台并**回读确认**，返回**是否真的成功** ✓（★ 判据是回读，不是调用返回）★ 官方依据：**本仓自"
             "研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓"
         ),
-        doc="把 `hwnd` 置为前台并**回读确认**，返回**是否真的成功** ✓（★ 判据是回读，不是调用返回）"
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓",
+        doc=(
+            "Set a window as the foreground window, then read the foreground window back to confirm it really happened."
+            " Modifies desktop focus only, not the model, and reports failure instead of assuming success."
+        ),
     ),
     ToolSpec(
         name="solidworks_gui_assert_focus",
@@ -199,21 +216,25 @@ SPECS_BATCH91 = [
         inject="",
         params=[
             Param(
-                "hwnd", int, description="应当处于前台的窗口句柄（★ 句柄，不是坐标）。"
+                "hwnd", int, description="Window handle that should be in the foreground."
             ),
             Param(
                 "where",
                 str,
                 default="",
-                description="出错信息里写「在哪个动作前发现焦点不对」。",
+                description=(
+                    "Text written into the error message to say which action found the wrong focus. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
             "★ **每个动作之前调用**：焦点不对就**修复**，**修不好就抛** ✓ ★ 官方依据：**本仓自研**（`scripts/sw_gui_foc"
             "us.py`）⇒ 真源是源码 ✓"
         ),
-        doc="★ **每个动作之前调用**：焦点不对就**修复**，**修不好就抛** ✓ "
-        "★ 官方依据：**本仓自研**（`scripts/sw_gui_focus.py`）⇒ 真源是源码 ✓",
+        doc=(
+            "Check that the wanted window has focus, repair it when it does not, and raise when the repair fails. Call "
+            "it before every action; a silent continue would drop every later keystroke with no visible sign."
+        ),
     ),
     # ── ④ 曲面运行时（1）—— ★ 只读前置检查 ────────────────────────────────────────────
     # ─
@@ -227,7 +248,7 @@ SPECS_BATCH91 = [
             Param(
                 "method",
                 str,
-                description="成员名（如 `CreateCylindricalSurface` / `…2`）。",
+                description="Member name to look up, for example CreateCylindricalSurface or its numbered variant.",
             )
         ],
         evidence=(
@@ -236,11 +257,9 @@ SPECS_BATCH91 = [
             "invoke` 对 `None` **抛带原因的 `RuntimeError`** ✓ ★ 官方依据：**本仓自研**（读自己的 `IMODELER_RUNTIME_*` "
             "实测表）⇒ 真源是源码；⚠ **未在本机实测本工具**（铁律 2）✓"
         ),
-        doc="★ 查某方法在**本机实测**里是否可取（`True` = 可取；**未实测的返回 `False`**）✓ "
-        "★★ 为什么它重要：`IModeler.Create*Surface` 那一族**返回值不可靠**"
-        "（事实 40：**同一个调用跨次也会变**）⇒ ★ 本仓把实测结果做成表，"
-        "而 `_invoke` 对 `None` **抛带原因的 `RuntimeError`** ✓ "
-        "★ 官方依据：**本仓自研**（读自己的 `IMODELER_RUNTIME_*` 实测表）⇒ 真源是源码；"
-        "⚠ **未在本机实测本工具**（铁律 2）✓",
+        doc=(
+            "Report whether one IModeler surface method is proven usable on this machine, where unmeasured methods retu"
+            "rn false. Read-only lookup in this repo's measured runtime table, not a live SolidWorks call."
+        ),
     ),
 ]

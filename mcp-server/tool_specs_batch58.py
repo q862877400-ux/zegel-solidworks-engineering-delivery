@@ -68,7 +68,7 @@ from tool_registry import Param
 #: ★★ 复用 batch29 的骨架（`_spec` 里 `module="sw_simulation_loads"`、`inject="manager"`
 #: 、
 #:   `pre_call=_select_face`、`derived_args=_derive_model` 一整套都在里面）。
-from tool_specs_batch29 import _SEL, _STUDY, _spec
+from tool_specs_batch29 import _spec
 
 _READBACK = (
     "★ `ok` 的判据是**回读**：载荷/约束计数**恰好 +1**，★ **不是**返回值。"
@@ -85,58 +85,91 @@ SPECS_BATCH58 = [
         "solidworks_simulation_apply_convection",
         "Apply a Convection Load",
         "apply_convection_report",
-        "Apply a **CONVECTION** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _THERMAL,
+        (
+                        "Apply a convection load to the selected faces of a thermal simulation study. Creates one load "
+                        "in the study and does not save the document; the ok flag comes from the load count rising by e"
+                        "xactly one rather than from the return value, and a static study leaves the count unchanged, s"
+                        "o create a thermal study first."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_heat_flux",
         "Apply a Heat Flux Load",
         "apply_heat_flux_report",
-        "Apply a **HEAT FLUX** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _THERMAL,
+        (
+                        "Apply a heat flux load to the selected faces of a thermal simulation study. Creates one load i"
+                        "n the study and does not save the document; the ok flag comes from the load count rising by ex"
+                        "actly one rather than from the return value, and a static study leaves the count unchanged, so"
+                        " create a thermal study first."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_heat_power",
         "Apply a Heat Power Load",
         "apply_heat_power_report",
-        "Apply a **HEAT POWER** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _THERMAL,
+        (
+                        "Apply a heat power load to the selected faces of a thermal simulation study. Creates one load "
+                        "in the study and does not save the document; the ok flag comes from the load count rising by e"
+                        "xactly one rather than from the return value, and a static study leaves the count unchanged, s"
+                        "o create a thermal study first."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_radiation",
         "Apply a Radiation Load",
         "apply_radiation_report",
-        "Apply a **RADIATION** load to the selected face(s) and return a READ-BACK report. "
-        "★ `radiation_type` 是官方的种类枚举（★ 默认 0）。"
-        + _READBACK
-        + " "
-        + _THERMAL,
+        (
+                        "Apply a radiation load to the selected faces of a thermal simulation study. Creates one load i"
+                        "n the study and does not save the document; the ok flag comes from the load count rising by ex"
+                        "actly one rather than from the return value, and a static study leaves the count unchanged, so"
+                        " create a thermal study first."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
             Param(
                 "radiation_type",
                 int,
                 default=0,
-                description="官方 `AddRadiation` 的种类枚举（默认 0）",
+                description=(
+                    "Radiation type enum; the numeric values are not published in the local sources. Defaults to 0."
+                ),
             ),
         ],
     ),
@@ -144,26 +177,42 @@ SPECS_BATCH58 = [
         "solidworks_simulation_apply_elastic_connector",
         "Add an Elastic Connector",
         "apply_elastic_connector_report",
-        "Add an **ELASTIC CONNECTOR** between the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " ⚠★ **与上面 4 条相反：本载荷在「静力算例」下成、在「热算例」下不成**"
-        "（★ 真机对照：轮 408）⇒ ★ 建算例时请用默认的 `static`。",
+        (
+                        "Add an elastic connector between the selected faces of a static simulation study. Creates one "
+                        "load in the study and does not save the document; the ok flag comes from the load count rising"
+                        " by exactly one rather than from the return value, and unlike the thermal loads this one takes"
+                        " a static study and not a thermal one."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
         ],
     ),
     _spec(
         "solidworks_simulation_apply_temperature",
         "Apply a Temperature Load",
         "apply_temperature_report",
-        "Apply a **TEMPERATURE** load to the selected face(s) and return a READ-BACK report. "
-        + _READBACK
-        + " "
-        + _THERMAL,
+        (
+                        "Apply a temperature load to the selected faces of a thermal simulation study. Creates one load"
+                        " in the study and does not save the document; the ok flag comes from the load count rising by "
+                        "exactly one rather than from the return value, and a static study leaves the count unchanged, "
+                        "so create a thermal study first."
+                    ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("selection", str, description=_SEL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("selection", str, description=(
+                                        "Declarative face selection the load applies to: '__current_selection__' for th"
+                                        "e current selection or 'index:<n>' for the n-th face on the body."
+                                    )),
         ],
     ),
 ]

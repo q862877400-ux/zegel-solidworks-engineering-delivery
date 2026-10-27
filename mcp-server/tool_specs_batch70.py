@@ -81,8 +81,10 @@ _BATCH70: list[ToolSpec] = [
             "★ 质心：`IFeatureManager.InsertCenterOfMass()`（**零参数**，回 `Feature`）。★ 真机建成（★ 判据 = 回对象非 "
             "None + 特征树增量）。"
         ),
-        doc="★ 质心：`IFeatureManager.InsertCenterOfMass()`（**零参数**，回 `Feature`）。"
-        "★ 真机建成（★ 判据 = 回对象非 None + 特征树增量）。",
+        doc=(
+            "Insert a center-of-mass feature into the active document. Creates one reference feature, and the criterion"
+            " is the returned feature object together with the growth of the feature tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_global_bounding_box",
@@ -103,32 +105,34 @@ _BATCH70: list[ToolSpec] = [
             Param(
                 "bbox_type",
                 int,
-                description="`swGlobalBoundingBoxFitOptions_e`："
-                "1=BestFit · 2=CustomPlane · 3=CustomCoordSys（默认 1）。"
-                "⚠ 只有 **2=CustomPlane** 才要先选面/基准面。",
+                description=(
+                    "Bounding box fit option: 1=best fit, 2=custom plane, 3=custom coordinate system; only 2 needs a fa"
+                    "ce or plane selected first. Defaults to 1."
+                ),
                 required=False,
                 default=1,
             ),
             Param(
                 "lwta_direction_type",
                 int,
-                description="`swGlobalBBoxLWTADirectionType_e`："
-                "0=Unspecified · 1=LWTDir_XYZ · 2=YXZ · 3=YZX · 6=XZY · "
-                "7/8/9=AxisDir_X/Y/Z（默认 0）。",
+                description=(
+                    "Length-width-thickness-along direction: 0=unspecified, 1=XYZ, 2=YXZ, 3=YZX, 6=XZY, and 7, 8, 9 for"
+                    " the X, Y and Z axis directions. Defaults to 0."
+                ),
                 required=False,
                 default=0,
             ),
             Param(
                 "include_hidden_bodies",
                 bool,
-                description="是否含隐藏体（★ 布尔是标志）。",
+                description="Whether hidden bodies are included in the box. Defaults to false.",
                 required=False,
                 default=False,
             ),
             Param(
                 "include_surface_bodies",
                 bool,
-                description="是否含曲面体（★ 布尔是标志）。",
+                description="Whether surface bodies are included in the box. Defaults to false.",
                 required=False,
                 default=False,
             ),
@@ -139,10 +143,10 @@ _BATCH70: list[ToolSpec] = [
             "lBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 `类型不匹配`，位"
             "置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。"
         ),
-        doc="★ 边界框：`IFeatureManager.InsertGlobalBoundingBox2(…)`（5 参，回 `IFeature`）。★★ **台账 T701 给的 "
-             "`Create3DBoundingBox` 是焊件切割清单专用的另一个** ——官方的才是这条。★ 第 5 个形参 `Status` 是 "
-             "**out**（`swGlobalBoundingBoxResult_e`，**Success=0**）⇒ 实现层用 `sw_connect.out_i4()` 包（★ 裸传 int 会 "
-             "`类型不匹配`，位置 5）。★ 真机建成：**`Status=0 (Success)`** + 特征树增量。",
+        doc=(
+            "Insert a global bounding box feature for the active model and report its status. Creates a reference featu"
+            "re; bbox_type 2 needs a face or plane selected first, and the returned status is 0 for success."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_coordinate_system",
@@ -155,21 +159,21 @@ _BATCH70: list[ToolSpec] = [
             Param(
                 "x_flipped",
                 bool,
-                description="X 轴翻转（★ 官方形参名 `XFlippedIn`）。",
+                description="Whether to flip the X axis direction. Defaults to false.",
                 required=False,
                 default=False,
             ),
             Param(
                 "y_flipped",
                 bool,
-                description="Y 轴翻转。",
+                description="Whether to flip the Y axis direction. Defaults to false.",
                 required=False,
                 default=False,
             ),
             Param(
                 "z_flipped",
                 bool,
-                description="Z 轴翻转。",
+                description="Whether to flip the Z axis direction. Defaults to false.",
                 required=False,
                 default=False,
             ),
@@ -179,9 +183,11 @@ _BATCH70: list[ToolSpec] = [
             "个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**（铁律 4），★ 且新版回 `Feature`、旧版回 `boo"
             "l`。★ 真机建成。"
         ),
-        doc="★ 坐标系：`IFeatureManager.InsertCoordinateSystem(…)`（3 参，回 `Feature`）。"
-        "★ 用的是 `IFeatureManager` 那个 —— `IModelDoc2.InsertCoordinateSystem` 官方标 **Obsolete**"
-        "（铁律 4），★ 且新版回 `Feature`、旧版回 `bool`。★ 真机建成。",
+        doc=(
+            "Insert a coordinate system feature into the active part and return it. Creates a reference feature; each f"
+            "lip flag reverses one axis, and this uses the feature-manager entry point rather than the obsolete documen"
+            "t one."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_ref_plane",
@@ -204,42 +210,46 @@ _BATCH70: list[ToolSpec] = [
             Param(
                 "first_constraint",
                 int,
-                description="`swRefPlaneReferenceConstraints_e`："
-                "1=Parallel · 4=Coincident · 8=Distance · 16=Angle · 128=MidPlane"
-                "（★ 另有 Option* 位：256=OptionFlip · 512=OptionOriginOnCurve …）。",
+                description=(
+                    "First constraint type: 1=parallel, 4=coincident, 8=distance, 16=angle, 128=mid-plane, and option b"
+                    "its such as 256=flip or 512=origin-on-curve may be added."
+                ),
             ),
             Param(
                 "first_angle_or_dist",
                 float,
-                description="第一约束的角度或距离（★ 官方**未给单位** ⇒ 原样透传）。",
+                description=(
+                    "Angle or distance for the first constraint, passed through in document units because the official "
+                    "call documents no unit. Defaults to 0.0."
+                ),
                 required=False,
                 default=0.0,
             ),
             Param(
                 "second_constraint",
                 int,
-                description="第二约束（同上表；0 = 不用）。",
+                description="Second constraint type from the same table; 0 means unused. Defaults to 0.",
                 required=False,
                 default=0,
             ),
             Param(
                 "second_angle_or_dist",
                 float,
-                description="第二约束的角度或距离。",
+                description="Angle or distance for the second constraint. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "third_constraint",
                 int,
-                description="第三约束（0 = 不用）。",
+                description="Third constraint type from the same table; 0 means unused. Defaults to 0.",
                 required=False,
                 default=0,
             ),
             Param(
                 "third_angle_or_dist",
                 float,
-                description="第三约束的角度或距离。",
+                description="Angle or distance for the third constraint. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
@@ -249,10 +259,11 @@ _BATCH70: list[ToolSpec] = [
             "实体** —— 官方 Remarks 逐字给了表：**0 = First reference entity · 1 = Second · 2 = Third**。★ 真机：选一个"
             "面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。"
         ),
-        doc="★ 基准面：`IFeatureManager.InsertRefPlane`（6 参，回 [[Reference plane]]）。"
-        "⚠⚠ **调用前必须按 mark 选参考实体** —— 官方 Remarks 逐字给了表："
-        "**0 = First reference entity · 1 = Second · 2 = Third**。"
-        "★ 真机：选一个面（**mark=0**）+ `Coincident(4)` ⇒ 树新增 `基准面1`。",
+        doc=(
+            "Insert a reference plane from the preselected entities, using constraint codes such as 4=coincident or 8=d"
+            "istance. Creates a reference plane feature; select the entities first with marks 0, 1 and 2 for the first,"
+            " second and third constraint, and the angle or distance values pass through without unit conversion."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_reference_point",
@@ -275,29 +286,36 @@ _BATCH70: list[ToolSpec] = [
             Param(
                 "ref_point_type",
                 int,
-                description="`swRefPointType_e`："
-                "0=Invalid · 1=Undefined · 2=AlongCurve · 3=CenterEdge · "
-                "4=FaceCenter · 5=FaceVertexProjection · 6=Intersection · 7=SketchPoint。",
+                description=(
+                    "Reference point type: 0=invalid, 1=undefined, 2=along curve, 3=center of edge, 4=face center, 5=fa"
+                    "ce vertex projection, 6=intersection, 7=sketch point."
+                ),
             ),
             Param(
                 "along_curve_type",
                 int,
-                description="`swRefPointAlongCurveType_e`："
-                "0=Distance · 1=Percentage · 2=EvenlyDistributed。",
+                description=(
+                    "Along-curve placement rule: 0=distance, 1=percentage, 2=evenly distributed. Defaults to 0."
+                ),
                 required=False,
                 default=0,
             ),
             Param(
                 "distance_or_percent",
                 float,
-                description="沿曲线的距离或百分比。",
+                description=(
+                    "Distance along the curve or percentage of it, depending on along_curve_type. Defaults to 0.0."
+                ),
                 required=False,
                 default=0.0,
             ),
             Param(
                 "number_of_ref_points",
                 int,
-                description="★ 官方 Remarks：**必须是 1**（否则拒绝）。",
+                description=(
+                    "Number of reference points to create; the official call requires exactly 1 and rejects any other v"
+                    "alue. Defaults to 1."
+                ),
                 required=False,
                 default=1,
             ),
@@ -313,16 +331,20 @@ _BATCH70: list[ToolSpec] = [
             Param(
                 "selection",
                 str,
-                description="★ 声明式选择器（规则 3：不收坐标）："
-                "`index:<n>` 或 `__current_selection__`；★ 空串=不选。",
+                description=(
+                    "Declarative selection of the entity named above, as index:<n> or __current_selection__; empty sele"
+                    "cts nothing. Defaults to empty."
+                ),
                 required=False,
                 default="",
             ),
             Param(
                 "selection_kind",
                 str,
-                description="`FACE` / `EDGE` / `VERTEX` —— ★ 与 `ref_point_type` 配套："
-                "4=FaceCenter 配 FACE · 3=CenterEdge 配 EDGE。",
+                description=(
+                    "Entity kind to select: FACE, EDGE or VERTEX, matched to ref_point_type so that 4 pairs with FACE a"
+                    "nd 3 pairs with EDGE. Defaults to FACE."
+                ),
                 required=False,
                 default="FACE",
             ),
@@ -332,10 +354,11 @@ _BATCH70: list[ToolSpec] = [
             " **必须是 1**。★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。★★ 而选面**必须紧接着调用"
             "** —— 中间隔别的步骤会把选区清掉。"
         ),
-        doc="★ 点：`IFeatureManager.InsertReferencePoint`（4 参，回 [[IFeature]]）。"
-        "⚠ 官方 Remarks：`NumberOfRefPoints` **必须是 1**。"
-        "★ 真机：先选一个面（**mark=0**）+ `FaceCenter(4)` ⇒ 树新增 `点1`。"
-        "★★ 而选面**必须紧接着调用** —— 中间隔别的步骤会把选区清掉。",
+        doc=(
+            "Insert a reference point on the selected entity, for example 4=face center or 3=edge center. Creates a poi"
+            "nt feature; the selection has to be made immediately before the call because any step in between clears it"
+            ", and only the value 1 for the point count is accepted."
+        ),
     ),
 ]
 

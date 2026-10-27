@@ -57,17 +57,19 @@ SPECS_BATCH15 = [
             "tional `views` / `expected_outputs` list parameters are NOT exposed in this tool — see the batch header fo"
             "r why."
         ),
-        doc="Build structured review-report data (exports preview images and writes a report "
-        "into output_dir). ⚠ The optional `views` / `expected_outputs` list parameters are "
-        "NOT exposed in this tool — see the batch header for why.",
+        doc=(
+            "Build structured review-report data, export preview images and write a report into output_dir. It writes f"
+            "iles and does not save the document; the optional view list and expected-output list are not exposed here,"
+            " so the tool uses its own fixed defaults."
+        ),
         params=[
             Param(
                 "output_dir",
                 str,
-                description="Directory for preview images and the report.",
+                description="Directory that receives the preview images and the report file.",
             ),
             Param(
-                "basename", str, default="review", description="Output filename prefix."
+                "basename", str, default="review", description="Filename prefix for the outputs. Defaults to review."
             ),
         ],
     ),

@@ -34,14 +34,14 @@ SPECS_BATCH106 = [
             Param(
                 "feature_name",
                 str,
-                description="★ 被阵列的特征名（★ 名字不是坐标 ⇒ 规则 3 合规）。",
+                description="Name of the feature to pattern.",
             ),
             Param(
                 "spacing_mm",
                 float,
-                description="★ 实例间距（**毫米**，★ 本仓单位口径见事实 2）。",
+                description="Spacing between instances in millimetres; the API takes metres, so it is converted here.",
             ),
-            Param("count", int, description="★ 实例总数（★ 含源特征）。"),
+            Param("count", int, description="Total number of instances including the original feature."),
         ],
         evidence=(
             "★ **读线性阵列特征的参数**（★ 读侧）✓★★ 与既有两个阵列工具的区别（★ 逐字比对过）：★ `solidworks_sketch_lin"
@@ -49,12 +49,11 @@ SPECS_BATCH106 = [
             "）；★ 本工具是**特征**级线性阵列的**读数** ⇒ ★ **建 / 读、线性 / 圆周，三者都不同** ✓★ 判据：★ 回的是**逐"
             "项参数读数**（★ 读不到就如实报，不假装有值）✓"
         ),
-        doc="★ **读线性阵列特征的参数**（★ 读侧）✓"
-        "★★ 与既有两个阵列工具的区别（★ 逐字比对过）："
-        "★ `solidworks_sketch_linear_pattern` 是**草图**里的线性阵列（**动作**）；"
-        "★ `solidworks_circular_pattern` 是**圆周**阵列（**动作**）；"
-        "★ 本工具是**特征**级线性阵列的**读数** ⇒ ★ **建 / 读、线性 / 圆周，三者都不同** ✓"
-        "★ 判据：★ 回的是**逐项参数读数**（★ 读不到就如实报，不假装有值）✓",
+        doc=(
+            "Create a linear pattern of one feature and read the feature tree back. It writes a pattern feature and doe"
+            "s not save the document; count includes the original feature, spacing is given in millimetres and converte"
+            "d here, and success means the tree really gained a feature."
+        ),
     ),
     ToolSpec(
         name="solidworks_insert_mate_reference",
@@ -66,7 +65,7 @@ SPECS_BATCH106 = [
             Param(
                 "name",
                 str,
-                description="★ 配合参考的名字（★ 名字不是坐标 ⇒ 规则 3 合规）。",
+                description="Name of the mate reference.",
             ),
         ],
         evidence=(
@@ -74,11 +73,11 @@ SPECS_BATCH106 = [
             "里加配合**；★ 本工具是在**零件**上**定义配合参考**（★ 为后续装配做准备）⇒ ★ **作用对象不同**，不是重复 ✓★ "
             "判据：★ **回读**（★ 本仓事实 8：布尔返回值不可信）—— ★ 用特征树/配合参考的读侧工具复核。"
         ),
-        doc="★ **插入配合参考**（★ 动作）。"
-        "★★ 与既有配合工具的区别：★ `solidworks_assembly_add_*_mate` 那族是"
-        "**在装配体里加配合**；★ 本工具是在**零件**上**定义配合参考**（★ 为后续装配做准备）"
-        "⇒ ★ **作用对象不同**，不是重复 ✓"
-        "★ 判据：★ **回读**（★ 本仓事实 8：布尔返回值不可信）—— ★ 用特征树/配合参考的读侧工具复核。",
+        doc=(
+            "Insert a mate reference on a part as preparation for a later assembly. It writes a mate-reference feature "
+            "and does not save the document; only the primary reference group of the official call is exposed, and succ"
+            "ess is judged by read-back because boolean returns are not trustworthy."
+        ),
     ),
     ToolSpec(
         name="solidworks_assembly_iter_feature_tree",
@@ -93,9 +92,9 @@ SPECS_BATCH106 = [
             "ts` 的区别：★ 那个只列**组件**；★ 这个遍历**整棵树**（★ 组件 + 特征 + 配合都在其中）⇒ ★ **范围更宽** ✓★ 判"
             "据：★ 回的是 JSON 化清单（★ 读不到就如实报，不假装有内容）✓"
         ),
-        doc="★ **遍历装配体的特征树**（★ 读侧）：★ 回一份**逐节点**的清单 ✓"
-        "★★ 与既有 `solidworks_assembly_list_components` 的区别：★ 那个只列**组件**；"
-        "★ 这个遍历**整棵树**（★ 组件 + 特征 + 配合都在其中）⇒ ★ **范围更宽** ✓"
-        "★ 判据：★ 回的是 JSON 化清单（★ 读不到就如实报，不假装有内容）✓",
+        doc=(
+            "List the active assembly feature tree node by node, covering components, features and mates. Read-only; us"
+            "e solidworks_assembly_list_components instead when you only need the component list."
+        ),
     ),
 ]

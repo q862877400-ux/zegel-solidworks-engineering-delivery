@@ -51,12 +51,17 @@ SPECS_BATCH36 = [
         module="sw_custom_property",
         function="custom_property_count",
         inject="model",
-        params=[Param("config_name", str, default="", description=_CFG)],
+        params=[Param("config_name", str, default="", description=(
+                                                          "Configuration name to count in; empty reads the active confi"
+                                                          "guration. Defaults to empty."
+                                                      ))],
         evidence=(
             "Return how many custom properties the document (or one configuration) has. ★ Read-only."
         ),
-        doc="Return how many custom properties the document (or one configuration) has. "
-        "★ Read-only.",
+        doc=(
+            "Return how many custom properties the document or one configuration has. Read-only; pass an empty configur"
+            "ation name to count the active configuration."
+        ),
     ),
     ToolSpec(
         name="solidworks_custom_property_names",
@@ -64,11 +69,17 @@ SPECS_BATCH36 = [
         module="sw_custom_property",
         function="custom_property_names",
         inject="model",
-        params=[Param("config_name", str, default="", description=_CFG)],
+        params=[Param("config_name", str, default="", description=(
+                                                          "Configuration name to read from; empty reads the active conf"
+                                                          "iguration. Defaults to empty."
+                                                      ))],
         evidence=(
             "Return the custom property names as a list. ★ Read-only."
         ),
-        doc="Return the custom property names as a list. ★ Read-only.",
+        doc=(
+            "Return the custom property names of the document or one configuration as a list. Read-only; pass an empty "
+            "configuration name to read the active configuration."
+        ),
     ),
     #: ── 几何选择器（★ resolve）──────────────────────────────────────────
     ToolSpec(
@@ -81,15 +92,20 @@ SPECS_BATCH36 = [
             Param(
                 "selector",
                 str,
-                description="A direction selector name (★ see "
-                "solidworks_available_direction_selectors).",
+                description=(
+                    "Direction selector name, using the same outward-normal naming as the face selectors; see solidwork"
+                    "s_available_direction_selectors for the accepted values."
+                ),
             )
         ],
         evidence=(
             "Resolve a named direction selector to its (x, y, z) vector. ★ Pure lookup — no SolidWorks call."
         ),
-        doc="Resolve a named direction selector to its (x, y, z) vector. "
-        "★ Pure lookup — no SolidWorks call.",
+        doc=(
+            "Resolve a named direction selector to its x, y and z unit vector. Read-only and needs no SolidWorks call a"
+            "nd no open document; take the accepted names from solidworks_available_direction_selectors, and it raises "
+            "a selector error on an unknown name."
+        ),
     ),
     ToolSpec(
         name="solidworks_selector_resolve_point",
@@ -101,22 +117,30 @@ SPECS_BATCH36 = [
             Param(
                 "selector",
                 str,
-                description="A point selector name (★ see "
-                'solidworks_available_point_selectors), or "__current_selection__".',
+                description=(
+                    "Point selector name, or __current_selection__ to use whatever is already selected; see solidworks_"
+                    "available_point_selectors for the accepted values."
+                ),
             ),
             Param(
                 "body_index",
                 int,
                 default=0,
-                description="Zero-based solid-body index. ⚠ Not a persistent reference.",
+                description=(
+                    "Zero-based index of the solid body the selector is resolved on; the index is not a persistent refe"
+                    "rence across rebuilds. Defaults to 0."
+                ),
             ),
         ],
         evidence=(
             "Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. ★ No coordinates are passed in"
             " (rule 3)."
         ),
-        doc="Resolve a named point selector to its (x, y, z) coordinates in MILLIMETRES. "
-        "★ No coordinates are passed in (rule 3).",
+        doc=(
+            "Resolve a named point selector to its x, y and z coordinates in millimetres. Read-only and needs no SolidW"
+            "orks call, and it takes no coordinates because the selector itself names the point; take the accepted name"
+            "s from solidworks_available_point_selectors."
+        ),
     ),
     #: ── 工程图读数（★ 轻量）──────────────────────────────────────────────
     ToolSpec(
@@ -129,7 +153,10 @@ SPECS_BATCH36 = [
         evidence=(
             "Return the number of sheets in the active drawing. ★ Read-only."
         ),
-        doc="Return the number of sheets in the active drawing. ★ Read-only.",
+        doc=(
+            "Return the number of sheets in the active drawing. Read-only; the count comes straight from the drawing do"
+            "cument, so call it while the drawing is the active document."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_sheet_names",
@@ -141,7 +168,10 @@ SPECS_BATCH36 = [
         evidence=(
             "Return the drawing's sheet names as a list. ★ Read-only."
         ),
-        doc="Return the drawing's sheet names as a list. ★ Read-only.",
+        doc=(
+            "Return the names of every sheet in the active drawing. Read-only; call it while the drawing is the active "
+            "document, and use solidworks_drawing_current_sheet_name when you only need the sheet being edited."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_current_sheet_name",
@@ -153,7 +183,10 @@ SPECS_BATCH36 = [
         evidence=(
             "Return the name of the sheet currently being edited. ★ Read-only."
         ),
-        doc="Return the name of the sheet currently being edited. ★ Read-only.",
+        doc=(
+            "Return the name of the sheet currently being edited. Read-only, and it reads the current sheet object of t"
+            "he active drawing; pass the returned name to any tool that takes a sheet name."
+        ),
     ),
     #: ── 交付（★ 纯数据 + 一个导出）──────────────────────────────────────
     ToolSpec(
@@ -166,31 +199,35 @@ SPECS_BATCH36 = [
             Param(
                 "bom_rows",
                 list,
-                description="The BOM rows (★ as returned by a BOM tool).",
+                description="Bill-of-materials rows, in the form a bill-of-materials tool returns them.",
             ),
             Param(
                 "model_path",
                 str,
                 default="",
-                description="Optional model path to record.",
+                description="Model path to record in the traceability entry. Defaults to empty.",
             ),
             Param(
                 "drawing_path",
                 str,
                 default="",
-                description="Optional drawing path to record.",
+                description="Drawing path to record in the traceability entry. Defaults to empty.",
             ),
             Param(
                 "review_path",
                 str,
                 default="",
-                description="Optional review report path.",
+                description="Review report path to record in the traceability entry. Defaults to empty.",
             ),
         ],
         evidence=(
             "Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call."
         ),
-        doc="Build a traceability record from BOM rows. ★ Pure data — no SolidWorks call.",
+        doc=(
+            "Build a traceability record linking bill-of-materials rows to the model, drawing and review paths. Read-on"
+            "ly and pure data with no SolidWorks call, so it needs no open document; an empty path is simply left out o"
+            "f the record."
+        ),
     ),
     ToolSpec(
         name="solidworks_delivery_pack_and_go_audit_matrix",
@@ -199,9 +236,9 @@ SPECS_BATCH36 = [
         function="build_pack_and_go_audit_matrix",
         inject=None,
         params=[
-            Param("source_path", str, description="The source document path."),
-            Param("dependencies", list, description="The dependency paths found."),
-            Param("component_records", list, description="Per-component records."),
+            Param("source_path", str, description="Path of the source document the hand-off starts from."),
+            Param("dependencies", list, description="Dependency paths that were found for that source document."),
+            Param("component_records", list, description="Per-component records to audit."),
             #: ★★★ 2026-10-03（接手轮）**补上 5 个必填形参** —— ★ 原先一个都没声明 ⇒
             #:   ★ 经工具层必 `TypeError`：真机实测
             #: `build_pack_and_go_audit_matrix() missing 2 required positional arguments
@@ -213,26 +250,28 @@ SPECS_BATCH36 = [
             #: 没有去处"，
             #:   ★ 只有 ⑤ 反过来问「**函数要的东西，spec 给没给**」。
             Param("associated_drawings", list, description="Associated drawing paths."),
-            Param("outputs", list, description="Output artifact paths."),
+            Param("outputs", list, description="Output artifact paths to audit."),
             Param(
                 "include_drawings",
                 bool,
-                description="Include drawings in the audit matrix.",
+                description="Whether drawings are covered by the matrix.",
             ),
             Param(
                 "include_toolbox_components",
                 bool,
-                description="Include Toolbox components in the audit matrix.",
+                description="Whether Toolbox components are covered by the matrix.",
             ),
             Param(
-                "include_suppressed", bool, description="Include suppressed components."
+                "include_suppressed", bool, description="Whether suppressed components are covered by the matrix."
             ),
         ],
         evidence=(
             "Build the audit matrix that a Pack-and-Go hand-off is reviewed against. ★ Pure data — no SolidWorks call."
         ),
-        doc="Build the audit matrix that a Pack-and-Go hand-off is reviewed against. "
-        "★ Pure data — no SolidWorks call.",
+        doc=(
+            "Build the audit matrix that a Pack and Go hand-off is reviewed against. Read-only and pure data with no So"
+            "lidWorks call; each include flag decides which dependency kind the matrix covers."
+        ),
     ),
     ToolSpec(
         name="solidworks_delivery_export_bom_csv",
@@ -241,26 +280,28 @@ SPECS_BATCH36 = [
         function="export_assembly_bom_csv",
         inject="model",
         params=[
-            Param("output_path", str, description="Absolute CSV output path."),
+            Param("output_path", str, description="Absolute path of the CSV file to write."),
             Param(
                 "include_excluded",
                 bool,
                 default=False,
-                description="Include components excluded from the BOM.",
+                description="Whether to include components excluded from the bill of materials. Defaults to false.",
             ),
             Param(
                 "overwrite",
                 bool,
                 default=False,
-                description="Allow replacing an existing file.",
+                description="Whether to replace a file that already exists at that path. Defaults to false.",
             ),
         ],
         evidence=(
             "Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). ⚠ Does NOT save the do"
             "cument."
         ),
-        doc="Export the assembly BOM to CSV. ★ The criterion is the FILE (exists and non-empty). "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Export the assembly bill of materials to a UTF-8 CSV file. Writes the file and returns its size and SHA-25"
+            "6, and does not save the document; the file is the criterion, so check that it exists and is non-empty."
+        ),
     ),
     #: ── 仿真选项（★ 零参那个）──────────────────────────────────────────
     ToolSpec(
@@ -274,8 +315,10 @@ SPECS_BATCH36 = [
             "Return the catalogue of simulation study-option setters (family / name / type) as a dict. ★ Zero-argument,"
             " no SolidWorks call — use it to discover valid family/name pairs before calling set_option."
         ),
-        doc="Return the catalogue of simulation study-option setters (family / name / type) as a "
-        "dict. ★ Zero-argument, no SolidWorks call — use it to discover valid "
-        "family/name pairs before calling set_option.",
+        doc=(
+            "Return the catalogue of simulation study-option setters per family with their names and counts. Read-only "
+            "and needs no SolidWorks call, and it takes no arguments; read it before setting a study option so that the"
+            " family and name you pass are registered ones."
+        ),
     ),
 ]

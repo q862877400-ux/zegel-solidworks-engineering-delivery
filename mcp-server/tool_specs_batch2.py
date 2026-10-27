@@ -67,16 +67,20 @@ SPECS_BATCH2: list[ToolSpec] = [
                 "create_missing_cut_list",
                 bool,
                 default=False,
-                description="Create a missing cut list before reading. Side-effecting: "
-                "leave False for a pure read-back.",
+                description=(
+                    "Whether to create a missing cut list before reading, which creates cut-list folders in the model. "
+                    "Defaults to false, which keeps the call read-only."
+                ),
             ),
             #: ★ 新增（★ 与实现同步）：★ 只读回读时是否**顺带刷新**切割清单 ✓
             Param(
                 "update_cut_list_too",
                 bool,
                 default=None,
-                description="Also refresh the cut list when create_missing_cut_list is used "
-                "(★ 默认 None = 沿用实现默认)。",
+                description=(
+                    "Whether to refresh the cut list as well, a write operation; unset follows create_missing_cut_list."
+                    " Defaults to unset."
+                ),
             ),
         ],
         evidence=(
@@ -84,9 +88,9 @@ SPECS_BATCH2: list[ToolSpec] = [
             " properties. Read-only when create_missing_cut_list is False."
         ),
         doc=(
-            "Read back the weldment state: structural members, cut-list folders, and their "
-            "quantity/length/angle/source properties. Read-only when "
-            "create_missing_cut_list is False."
+            "Read back the weldment state: features, cut-list folders and their properties. Read-only by default, and i"
+            "t writes to the model only when create_missing_cut_list or update_cut_list_too asks for a cut-list update,"
+            " which the returned wrote_model flag reports."
         ),
     ),
     # 签名: def ensure_cut_list(model) -> list[Any]
@@ -100,7 +104,11 @@ SPECS_BATCH2: list[ToolSpec] = [
         evidence=(
             "Create the cut list if it is missing, and return the cut-list folders."
         ),
-        doc="Create the cut list if it is missing, and return the cut-list folders.",
+        doc=(
+            "Create native cut-list folders for a weldment that has none, grouping bodies by their longest bounding-box"
+            " edge. Creates the folders in the active part; when cut-list folders already exist it returns them unchang"
+            "ed instead of recreating them."
+        ),
     ),
     # 签名: def update_cut_list(model) -> list[dict[str, Any]]
     ToolSpec(
@@ -113,7 +121,11 @@ SPECS_BATCH2: list[ToolSpec] = [
         evidence=(
             "Refresh the cut list and return the updated folders."
         ),
-        doc="Refresh the cut list and return the updated folders.",
+        doc=(
+            "Refresh every native cut-list folder and return folder-level geometry evidence. Modifies the cut list in t"
+            "he active part, because the official call updates the automatically generated list; each returned row carr"
+            "ies the update flag and the folder properties."
+        ),
     ),
     # 签名: def create_sub_weld_folder(model, folder=None)
     # ⚠ `folder` 是 `Object`（一个已有的切割清单文件夹）⇒ **故意不暴露**
@@ -129,7 +141,11 @@ SPECS_BATCH2: list[ToolSpec] = [
         evidence=(
             "Create a sub-weldment folder in the active weldment part."
         ),
-        doc="Create a sub-weldment folder in the active weldment part.",
+        doc=(
+            "Create a weldment sub-folder in the feature tree of the active document. Modifies that feature tree by ins"
+            "erting the folder, and it raises when the insert call returns no feature, so read the tree back to confirm"
+            "."
+        ),
     ),
     # ── 钣金（A 类：只收 model）────────────────────────────────────
     # 签名: def sheet_metal_evidence(model) -> dict[str, Any]
@@ -147,7 +163,9 @@ SPECS_BATCH2: list[ToolSpec] = [
             "rectly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."
         ),
         doc=(
-            "Read back the sheet-metal state of the active part: thickness, bend radius, bend allowance settings, flat-pattern state. Read-only. VERIFIED ON A REAL MACHINE: run 2026-10-01 on SW 2026 SP4.1 and it read back correctly (thickness_m=0.002, has_base_flange=True, all_solid_bodies_are_sheet_metal=True)."
+            "Read the sheet-metal evidence of the active part: feature list, base flange parameters and per-body flags."
+            " Read-only, and the base flange lengths come back in metres; use the all_solid_bodies_are_sheet_metal flag"
+            " to check that the part really is a sheet-metal part."
         ),
     ),
     # ── 曲面（A 类：收 sw_app）─────────────────────────────────────
@@ -164,7 +182,9 @@ SPECS_BATCH2: list[ToolSpec] = [
             "Read back the surface bodies on the active document: counts and types. Read-only."
         ),
         doc=(
-            "Read back the surface bodies on the active document: counts and types. Read-only."
+            "Read the surface evidence: whether the Modeler object is reachable and which surface creation methods are "
+            "registered. Read-only; it reports reachability and the registered entry points, not surface body counts, a"
+            "nd it records that the process-internal pointer variants are unavailable to this binding."
         ),
     ),
 ]

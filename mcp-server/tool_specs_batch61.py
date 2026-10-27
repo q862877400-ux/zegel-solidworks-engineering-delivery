@@ -47,7 +47,7 @@ from tool_registry import Param, ToolSpec
 
 #: ★★ 复用 batch29 的**两个**助手（★ 而**不用**它的 `_spec` 骨架 —— ★ 那个骨架带 `select
 #: ion` 契约）
-from tool_specs_batch29 import _STUDY, _consumed, _derive_model
+from tool_specs_batch29 import _consumed, _derive_model
 
 SPECS_BATCH61 = [
     # 签名: apply_rigid_connector_by_objects_report(manager, model, source_indices, targ
@@ -64,34 +64,40 @@ SPECS_BATCH61 = [
         #: ★★ **没有 `pre_call`** —— ★ 本工具**不读选区**，★ 它自己按序号把两组实体装好
         derived_args=_derive_model,
         params=[
-            Param("study_name", str, default="", description=_STUDY),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty means the first study"
+                                                     " in the document. Defaults to empty."
+                                                 )),
             Param(
                 "source_indices",
                 list,
-                description="源侧要取的实体**序号**（★ **0 基**，★ 一个列表）",
+                description="Zero-based indices of the entities on the source side, as a list.",
             ),
             Param(
                 "target_indices",
                 list,
-                description="目标侧要取的实体**序号**（★ **0 基**，★ 一个列表）",
+                description="Zero-based indices of the entities on the target side, as a list.",
             ),
             Param(
                 "kind",
                 str,
                 default="FACE",
-                description="实体种类：`FACE` / `EDGE` / `VERTEX`（★ 两侧同一类）",
+                description="Entity kind used on both sides: FACE, EDGE or VERTEX. Defaults to FACE.",
             ),
             Param(
                 "source_body_index",
                 int,
                 default=0,
-                description="源侧取第几个**体**（★ 0 基）—— ★ **要与目标侧不同**",
+                description=(
+                    "Zero-based index of the body the source entities come from; it must differ from the target body in"
+                    "dex. Defaults to 0."
+                ),
             ),
             Param(
                 "target_body_index",
                 int,
                 default=0,
-                description="目标侧取第几个**体**（★ 0 基）",
+                description="Zero-based index of the body the target entities come from. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -102,13 +108,9 @@ SPECS_BATCH61 = [
             "读**：载荷计数**恰好 +1**，★ **不是**返回值。"
         ),
         doc=(
-            "Add a **RIGID CONNECTOR** between two bodies and return a READ-BACK report. "
-            "★★ **本工具不读选区** —— 它自己按**序号**把两组实体装好（`entities_as_array`）。"
-            "⚠★ **它要在「两个体」上才建得出来**："
-            "★ 在**单体零件**上会**成功返回但不建**（计数不涨、也不报错）—— ★ 那是**应然的**"
-            "（同族形参名写着 `Comp1`/`Comp2` ⇒ **连接件连的是两个东西**）。"
-            "★ 所以请**两侧体号指向不同的体**（多体零件即用；装配体属另一条链）。"
-            "★ `ok` 的判据是**回读**：载荷计数**恰好 +1**，★ **不是**返回值。"
+            "Add a rigid connector between two bodies of a simulation study, building both entity arrays itself. Create"
+            "s one load in the study and does not save the document; on a single-body part it reports success while cre"
+            "ating nothing, so point the two body indices at different bodies."
         ),
     ),
 ]

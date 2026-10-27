@@ -84,7 +84,10 @@ SPECS_BATCH27 = [
         #:   （见 `scripts/check_union_conventions.py`）**让这一类不再可能发生**。
         param_alias={"study_name": "name"},
         params=[
-            Param("study_name", str, description=_NAME),
+            Param("study_name", str, description=(
+                                         "Name of the study to create; duplicates are not checked, so re-read with soli"
+                                         "dworks_simulation_list_studies to confirm what happened."
+                                     )),
         ],
         evidence=(
             "Create a STATIC simulation study and return a JSON-able report: `{ok, requested_name, study_name, entry_na"
@@ -93,13 +96,11 @@ SPECS_BATCH27 = [
             "ack path was used. ⚠ Only static studies are supported (other study types are not verified). ⚠ Requires th"
             "e Simulation add-in; it is loaded automatically on first use."
         ),
-        doc="Create a STATIC simulation study and return a JSON-able report: "
-        "`{ok, requested_name, study_name, entry_name, error_code}`. "
-        "★★ Read `entry_name`: it names the entry point that actually succeeded "
-        "(CreateNewStudy3 / 2 / 1), so an EMPTY value means the study was NOT created — "
-        "this is the only evidence of whether a fallback path was used. "
-        "⚠ Only static studies are supported (other study types are not verified). "
-        "⚠ Requires the Simulation add-in; it is loaded automatically on first use.",
+        doc=(
+            "Create a static simulation study with a given name and report which entry point ran. Creates the study in "
+            "the active document; an empty entry_name means no study was created, only static studies are supported, an"
+            "d the add-in loads on first use."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_list_studies",
@@ -113,10 +114,11 @@ SPECS_BATCH27 = [
             "M objects. ★ A study whose name cannot be read is still listed with an empty name — it is not skipped, so "
             "an empty list really means 'no studies'."
         ),
-        doc="List every simulation study in the active document as "
-        "`[{index, name}, …]`. ★ Returns names only, never COM objects. "
-        "★ A study whose name cannot be read is still listed with an empty name — "
-        "it is not skipped, so an empty list really means 'no studies'.",
+        doc=(
+            "List every simulation study in the active document as index and name pairs. Read-only; it returns names on"
+            "ly and never COM objects, and a study whose name cannot be read still appears with an empty name, so an em"
+            "pty list really means there are no studies."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_find_study",
@@ -135,9 +137,9 @@ SPECS_BATCH27 = [
             "er returns None when the name does not exist (it does not raise), so this tool exposes an explicit `found`"
             " flag instead — never read a missing study as present."
         ),
-        doc="Look up a simulation study by name and return `{found, requested_name, study_name}`. "
-        "★★ The capability layer returns None when the name does not exist (it does not "
-        "raise), so this tool exposes an explicit `found` flag instead — never read a "
-        "missing study as present.",
+        doc=(
+            "Find one simulation study by its exact name. Read-only; a missing name returns found false instead of rais"
+            "ing, so test the found flag rather than the presence of a name."
+        ),
     ),
 ]

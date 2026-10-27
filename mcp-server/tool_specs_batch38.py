@@ -59,8 +59,10 @@ SPECS_BATCH38 = [
         evidence=(
             "Return the Costing overview (body count + whether a cost analysis exists). ★ Read-only."
         ),
-        doc="Return the Costing overview (body count + whether a cost analysis exists). "
-        "★ Read-only.",
+        doc=(
+            "Return the Costing overview of the active part: the body count and whether a cost analysis exists. Read-on"
+            "ly; it fails with a reason when the Costing manager or its defaults cannot be read."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_read_analysis",
@@ -73,8 +75,10 @@ SPECS_BATCH38 = [
             "Read every readable field of the part's cost analysis as a dict. ★ Use it to discover the valid cost-metho"
             "d names. ★ Read-only."
         ),
-        doc="Read every readable field of the part's cost analysis as a dict. "
-        "★ Use it to discover the valid cost-method names. ★ Read-only.",
+        doc=(
+            "Read every readable field of the part cost analysis as a dict. Read-only; use it to discover the valid cos"
+            "t-method names, and expect an error when the part has no cost analysis yet."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_body_count",
@@ -86,7 +90,7 @@ SPECS_BATCH38 = [
         evidence=(
             "Return how many bodies Costing sees (★ cost is computed per body). ★ Read-only."
         ),
-        doc="Return how many bodies Costing sees (★ cost is computed per body). ★ Read-only.",
+        doc="Return how many bodies Costing sees for the active part. Read-only; cost is computed per body.",
     ),
     ToolSpec(
         name="solidworks_costing_list_bodies",
@@ -98,8 +102,10 @@ SPECS_BATCH38 = [
         evidence=(
             "Return the Costing body names (★ feed one to solidworks_costing_read_body). ★ Read-only."
         ),
-        doc="Return the Costing body names (★ feed one to solidworks_costing_read_body). "
-        "★ Read-only.",
+        doc=(
+            "List the Costing body names of the active part. Read-only; feed one of the returned names to solidworks_co"
+            "sting_read_body."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_read_body",
@@ -117,8 +123,10 @@ SPECS_BATCH38 = [
         evidence=(
             "Read one body's cost data. ★ An unknown body name fails with the list of valid names. ★ Read-only."
         ),
-        doc="Read one body's cost data. ★ An unknown body name fails with the list of valid "
-        "names. ★ Read-only.",
+        doc=(
+            "Read the cost data of one Costing body by name. Read-only; an unknown body_name fails and the error messag"
+            "e lists the valid names."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_list_templates",
@@ -126,11 +134,17 @@ SPECS_BATCH38 = [
         module="sw_costing",
         function="list_costing_templates_report",
         inject="cost_manager",
-        params=[Param("category", int, default=0, description=_CATM)],
+        params=[Param("category", int, default=0, description=(
+                                                      "Costing category enum value; the returned template list is how y"
+                                                      "ou discover which categories exist. Defaults to 0."
+                                                  ))],
         evidence=(
             "Return the Costing template names available for a category. ★ Read-only."
         ),
-        doc="Return the Costing template names available for a category. ★ Read-only.",
+        doc=(
+            "List the Costing template names available for a category. Read-only; the returned list is how you discover"
+            " which categories and templates exist."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_default_template",
@@ -138,11 +152,17 @@ SPECS_BATCH38 = [
         module="sw_costing",
         function="get_default_template_report",
         inject="cost_manager",
-        params=[Param("category", int, description=_CATM)],
+        params=[Param("category", int, description=(
+                                           "Costing category enum value; list the templates for a category to see which"
+                                           " values exist."
+                                       ))],
         evidence=(
             "Return the default Costing template name for a category. ★ Read-only."
         ),
-        doc="Return the default Costing template name for a category. ★ Read-only.",
+        doc=(
+            "Return the default Costing template name for a category. Read-only; it reads the Costing defaults object a"
+            "nd fails when that object cannot be obtained."
+        ),
     ),
     ToolSpec(
         name="solidworks_costing_method_value",
@@ -154,12 +174,15 @@ SPECS_BATCH38 = [
             Param(
                 "method_name",
                 str,
-                description="A cost-method name (★ see solidworks_costing_read_analysis).",
+                description="A cost-method name, as listed by solidworks_costing_read_analysis.",
             ),
         ],
         evidence=(
             "Return the current value of one cost method. ★ Read-only."
         ),
-        doc="Return the current value of one cost method. ★ Read-only.",
+        doc=(
+            "Return the current value of one cost method. Read-only; take the method_name from the method list that sol"
+            "idworks_costing_read_analysis returns."
+        ),
     ),
 ]

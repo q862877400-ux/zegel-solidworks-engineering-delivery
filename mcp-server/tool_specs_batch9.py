@@ -47,30 +47,45 @@ SPECS_BATCH9 = [
             "Split the mold into core and cavity solids (this is the tooling split). ⚠ 0.0 means 'use the document defa"
             "ult' for scale/thickness/offset."
         ),
-        doc="Split the mold into core and cavity solids (this is the tooling split). "
-        "⚠ 0.0 means 'use the document default' for scale/thickness/offset.",
+        doc=(
+            "Split the mold into core and cavity solids along the parting surface. Creates the tooling-split feature an"
+            "d returns its name; it raises when SolidWorks returns nothing, which usually means no parting surface exis"
+            "ts yet, and a value of 0.0 means the document default."
+        ),
         param_alias={},
         params=[
             Param(
                 "scale",
                 float,
                 default=0.0,
-                description="Scale factor; 0.0 = document default.",
+                description=(
+                    "First numeric argument; by position it is a scale factor, but its meaning is unverified and 0.0 me"
+                    "ans the document default. Defaults to 0.0."
+                ),
             ),
             Param(
                 "thickness",
                 float,
                 default=0.0,
-                description="Wall thickness; 0.0 = document default.",
+                description=(
+                    "Second numeric argument; by position it is a wall thickness, but its meaning is unverified. Defaul"
+                    "ts to 0.0, which means the document default."
+                ),
             ),
             Param(
-                "flip", bool, default=False, description="Reverse the split direction."
+                "flip", bool, default=False, description=(
+                                                 "Boolean argument at the third position, taken as a direction reversal"
+                                                 " but unverified; defaults to false."
+                                             )
             ),
             Param(
                 "offset",
                 float,
                 default=0.0,
-                description="Offset; 0.0 = document default.",
+                description=(
+                    "Fourth argument, by position an offset, unverified. Defaults to 0.0, which means the document defa"
+                    "ult."
+                ),
             ),
         ],
     ),
@@ -83,43 +98,65 @@ SPECS_BATCH9 = [
         evidence=(
             "Insert the mold parting surface."
         ),
-        doc="Insert the mold parting surface.",
+        doc=(
+            "Insert the mold parting surface so the tooling split has a surface to cut along. Creates a parting-surface"
+            " feature and returns its name; it raises when SolidWorks returns nothing, which usually means the parting "
+            "line does not exist yet or no face is selected, and most of the eight arguments have no documented meaning"
+            "."
+        ),
         param_alias={},
         params=[
             Param(
                 "surface_type",
                 int,
                 default=0,
-                description="Official surface type enum value.",
+                description=(
+                    "Surface type enum value passed through by position without documented meaning; defaults to 0."
+                ),
             ),
             Param(
                 "flip",
                 bool,
                 default=False,
-                description="Reverse the surface direction.",
+                description="Whether to reverse the surface direction; the meaning is unverified. Defaults to false.",
             ),
-            Param("use_trim", bool, default=False, description="Trim the surface."),
+            Param("use_trim", bool, default=False, description=(
+                                                       "Whether the surface is trimmed; the meaning is unverified. Defa"
+                                                       "ults to false."
+                                                   )),
             Param(
                 "distance",
                 float,
                 default=0.0,
-                description="Distance parameter; 0.0 = default.",
+                description=(
+                    "Distance value whose name suggests a length, though its position and unit are unverified. Defaults"
+                    " to 0.0, meaning the default."
+                ),
             ),
             Param(
                 "angle",
                 float,
                 default=0.0,
-                description="Angle parameter; 0.0 = default.",
+                description=(
+                    "Angle value whose name suggests an angle, though its unit is unverified. Defaults to 0.0, meaning "
+                    "the default."
+                ),
             ),
-            Param("option", int, default=0, description="Official option enum value."),
+            Param("option", int, default=0, description=(
+                                                "Option enum value passed through by position without documented meanin"
+                                                "g; defaults to 0."
+                                            )),
             Param(
-                "tolerance", float, default=0.0, description="Tolerance; 0.0 = default."
+                "tolerance", float, default=0.0, description=(
+                                                     "Tolerance value whose unit is unverified. Defaults to 0.0, meanin"
+                                                     "g the default."
+                                                 )
             ),
             Param(
                 "alternate",
                 bool,
                 default=False,
-                description="Use the alternate direction.",
+                description="Whether to use the alternate direction; the meaning is unverified. Defaults to false.",
             ),
         ],
     ),
@@ -137,51 +174,57 @@ SPECS_BATCH9 = [
             "rd argument BCoordInput received False — which drops back to 'use the model's own draft direction' and pop"
             "s the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session."
         ),
-        doc="Detect mold undercuts along a direction. ⚠ The underlying IFeatureManager.MoldUndercutDetect is marked "
-             "Obsolete by SOLIDWORKS (successor: MoldUndercutDetect2); kept deliberately until the successor shape is "
-             "verified. See docs/obsolete-member-candidates.md. ★★ Parameter names now follow the official md "
-             "(ColUndercut/ColBase/BCoordInput/Dx/Dy/Dz); the earlier names (direction/option/include_hidden/a/b/c) did "
-             "not, so the third argument BCoordInput received False — which drops back to 'use the model's own draft "
-             "direction' and pops the modal 「此拔模方向尚未定义。」 on a part without one, stalling the session.",
+        doc=(
+            "Detect mold undercuts along a pull direction and paint the faces that form them. Modifies the display colo"
+            "rs of the faces and returns nothing, because the detection result is not in the return value; an all-zero "
+            "pull direction is rejected before the call since it would fall back to a draft direction the part may not "
+            "have."
+        ),
         param_alias={},
         params=[
             Param(
                 "col_undercut",
                 int,
                 default=0,
-                description="COLORREF for the faces invisible from one direction that form an undercut.",
+                description=(
+                    "Color reference value for the faces that are invisible from the pull direction and form an undercu"
+                    "t; defaults to 0."
+                ),
             ),
             Param(
                 "col_base",
                 int,
                 default=0,
-                description="COLORREF for the faces that do not form undercuts.",
+                description="Color reference value for the faces that do not form undercuts; defaults to 0.",
             ),
             Param(
                 "b_coord_input",
                 bool,
                 default=True,
-                description="True to use the coordinate input (Dx/Dy/Dz) as the pull direction; "
-                "false to use the model's already-defined direction (which pops a modal "
-                "dialog when the model has none).",
+                description=(
+                    "True uses dx, dy and dz as the pull direction, false uses the draft direction already defined in t"
+                    "he model and can raise a modal dialog when the part has none. Defaults to true."
+                ),
             ),
             Param(
                 "dx",
                 float,
                 default=0.0,
-                description="X component of the pull direction.",
+                description="X component of the pull direction, used only when b_coord_input is true; defaults to 0.0.",
             ),
             Param(
                 "dy",
                 float,
                 default=0.0,
-                description="Y component of the pull direction.",
+                description="Y component of the pull direction, used only when b_coord_input is true; defaults to 0.0.",
             ),
             Param(
                 "dz",
                 float,
                 default=1.0,
-                description="Z component of the pull direction.",
+                description=(
+                    "Z component of the pull direction; defaults to 1.0, so the default pull direction runs along Z."
+                ),
             ),
         ],
     ),

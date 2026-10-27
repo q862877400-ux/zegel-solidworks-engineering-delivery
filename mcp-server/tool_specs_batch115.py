@@ -34,6 +34,10 @@ SPECS_115 = [
         module="engineering.catalog",
         function="catalog_domains",
         read_only=True,
+        doc=(
+            "List the eight task domains and the seven controlled multi-labels used to classify tools. Read-only; use t"
+            "he returned domain names as the domain filter of solidworks_catalog_retrieve."
+        ),
         params=[],
     ),
     ToolSpec(
@@ -42,37 +46,51 @@ SPECS_115 = [
         module="engineering.catalog",
         function="catalog_retrieve",
         read_only=True,
+        doc=(
+            "Search the tool catalog by free text and facets and return the matching tool cards. Read-only; every filte"
+            "r is optional and an omitted filter means no restriction on that facet."
+        ),
         params=[
-            Param("query", str, default="", description="自然语言查询（中文或英文）。"),
+            Param("query", str, default="", description=(
+                                                "Natural-language query in Chinese or English; empty means no text filt"
+                                                "er. Defaults to empty."
+                                            )),
             Param(
                 "domain",
                 str,
                 default="",
-                description="按任务域过滤（见 cadstudio_catalog_domains）。",
+                description=(
+                    "Task domain to restrict to; see solidworks_catalog_domains for the valid names. Defaults to empty."
+                ),
             ),
             Param(
                 "doc_state",
                 str,
                 default="",
-                description="按文档状态过滤（precondition 标签值）。",
+                description=(
+                    "Required document state to restrict to, for example an open document or a selection. Defaults to e"
+                    "mpty."
+                ),
             ),
             Param(
                 "backend",
                 str,
                 default="",
-                description="按后端可达性过滤（com_pywin32/file_io/…）。",
+                description=(
+                    "Backend reachability to restrict to, for example com_pywin32 or file_io. Defaults to empty."
+                ),
             ),
             Param(
                 "capability",
                 str,
                 default="",
-                description="按能力范围过滤（availability 标签值）。",
+                description="Availability label to restrict to. Defaults to empty.",
             ),
             Param(
                 "budget",
                 int,
                 default=4096,
-                description="候选 token 上限；默认 4096（Q6 L98）。",
+                description="Upper bound on candidate tokens returned. Defaults to 4096.",
             ),
         ],
     ),
@@ -82,12 +100,19 @@ SPECS_115 = [
         module="engineering.catalog",
         function="catalog_contract",
         read_only=True,
+        doc=(
+            "Read the full contract of one tool from the catalog: name, domain, parameters, availability and preconditi"
+            "ons. Read-only; omit tool_name to get the catalog summary instead of a single card."
+        ),
         params=[
             Param(
                 "tool_name",
                 str,
                 default="",
-                description="规范工具名，如 solidworks_extrude_boss。",
+                description=(
+                    "Canonical tool name such as solidworks_extrude_boss; empty returns the catalog summary. Defaults t"
+                    "o empty."
+                ),
             ),
         ],
     ),
@@ -97,12 +122,19 @@ SPECS_115 = [
         module="engineering.catalog",
         function="catalog_exposure",
         read_only=True,
+        doc=(
+            "Report which tools a given exposure mode would present to the model. Read-only; autonomous mode keeps only"
+            " planning entry points and the necessary query tools, compat mode keeps every tool."
+        ),
         params=[
             Param(
                 "mode",
                 str,
                 default="compat",
-                description="autonomous（只规划入口+必要查询）或 compat（全部）。",
+                description=(
+                    "Exposure mode: 'autonomous' for planning entry points plus query tools, or 'compat' for every tool"
+                    ". Defaults to 'compat'."
+                ),
             ),
         ],
     ),

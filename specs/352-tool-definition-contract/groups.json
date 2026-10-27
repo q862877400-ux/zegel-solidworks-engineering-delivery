@@ -1,0 +1,169 @@
+{
+ "groups": [
+  {
+   "id": "G1",
+   "modules": [
+    "tool_specs_batch86",
+    "tool_specs_batch66",
+    "tool_specs_batch54",
+    "tool_specs_batch11",
+    "tool_specs_batch83",
+    "tool_specs_batch13",
+    "tool_specs_batch90",
+    "tool_specs_batch26",
+    "tool_specs_batch101",
+    "tool_specs_batch49",
+    "tool_specs_batch63",
+    "tool_specs_batch98",
+    "tool_specs_batch114"
+   ],
+   "tools": 63
+  },
+  {
+   "id": "G2",
+   "modules": [
+    "tool_specs_batch81",
+    "tool_specs_batch91",
+    "tool_specs_batch40",
+    "tool_specs_batch23",
+    "tool_specs_batch89",
+    "tool_specs_batch45",
+    "tool_specs_batch7",
+    "tool_specs_batch19",
+    "tool_specs_batch93",
+    "tool_specs_batch42",
+    "tool_specs_batch105",
+    "tool_specs_batch50",
+    "tool_specs_batch64",
+    "tool_specs_batch99",
+    "tool_specs_batch117"
+   ],
+   "tools": 63
+  },
+  {
+   "id": "G3",
+   "modules": [
+    "tool_specs_batch79",
+    "tool_specs_batch38",
+    "tool_specs_batch35",
+    "tool_specs_batch5",
+    "tool_specs_batch67",
+    "tool_specs_batch18",
+    "tool_specs_batch103",
+    "tool_specs_batch22",
+    "tool_specs_batch102",
+    "tool_specs_batch44",
+    "tool_specs_batch107",
+    "tool_specs_batch51",
+    "tool_specs_batch69",
+    "tool_specs_batch109"
+   ],
+   "tools": 62
+  },
+  {
+   "id": "G4",
+   "modules": [
+    "tool_specs_batch116",
+    "tool_specs_batch75",
+    "tool_specs_batch39",
+    "tool_specs_batch21",
+    "tool_specs_batch68",
+    "tool_specs_batch28",
+    "tool_specs_batch104",
+    "tool_specs_batch25",
+    "tool_specs_batch106",
+    "tool_specs_batch52",
+    "tool_specs_batch15",
+    "tool_specs_batch24",
+    "tool_specs_batch57",
+    "tool_specs_batch71",
+    "tool_specs_batch110"
+   ],
+   "tools": 62
+  },
+  {
+   "id": "G5",
+   "modules": [
+    "tool_specs_batch77",
+    "tool_specs_batch1",
+    "tool_specs_batch41",
+    "tool_specs_batch53",
+    "tool_specs_batch34",
+    "tool_specs_batch4",
+    "tool_specs_batch73",
+    "tool_specs_batch8",
+    "tool_specs_batch43",
+    "tool_specs_batch14",
+    "tool_specs_batch55",
+    "tool_specs_batch31",
+    "tool_specs_batch59",
+    "tool_specs_batch94",
+    "tool_specs_batch111"
+   ],
+   "tools": 62
+  },
+  {
+   "id": "G6",
+   "modules": [
+    "tool_specs_batch82",
+    "tool_specs_batch36",
+    "tool_specs_batch2",
+    "tool_specs_batch92",
+    "tool_specs_batch70",
+    "tool_specs_batch29",
+    "tool_specs_batch115",
+    "tool_specs_batch27",
+    "tool_specs_batch3",
+    "tool_specs_batch16",
+    "tool_specs_batch78",
+    "tool_specs_batch46",
+    "tool_specs_batch56",
+    "tool_specs_batch95",
+    "tool_specs_batch112"
+   ],
+   "tools": 62
+  },
+  {
+   "id": "G7",
+   "modules": [
+    "tool_specs_batch88",
+    "tool_specs_batch65",
+    "tool_specs_batch84",
+    "tool_specs_batch58",
+    "tool_specs_batch37",
+    "tool_specs_batch10",
+    "tool_specs_batch76",
+    "tool_specs_batch9",
+    "tool_specs_batch60",
+    "tool_specs_batch17",
+    "tool_specs_batch85",
+    "tool_specs_batch47",
+    "tool_specs_batch61",
+    "tool_specs_batch96",
+    "tool_specs_batch108"
+   ],
+   "tools": 62
+  },
+  {
+   "id": "G8",
+   "modules": [
+    "tool_specs_batch33",
+    "tool_specs_batch80",
+    "tool_specs_batch30",
+    "tool_specs_batch100",
+    "tool_specs_batch74",
+    "tool_specs_batch32",
+    "tool_specs_batch6",
+    "tool_specs_batch12",
+    "tool_specs_batch72",
+    "tool_specs_batch20",
+    "tool_specs_batch87",
+    "tool_specs_batch48",
+    "tool_specs_batch62",
+    "tool_specs_batch97",
+    "tool_specs_batch113"
+   ],
+   "tools": 62
+  }
+ ]
+}

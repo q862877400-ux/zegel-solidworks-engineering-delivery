@@ -39,7 +39,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 from tool_registry import Param, ToolSpec
-from tool_specs_batch29 import _STUDY, _consumed, _derive_model
+from tool_specs_batch29 import _consumed, _derive_model
 
 __all__ = ["SPECS_BATCH64"]
 
@@ -62,21 +62,33 @@ SPECS_BATCH64 = [
         param_alias=_consumed("study_name"),
         derived_args=_derive_model,
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("first", str, description="★ 第一个顶点的选择器。" + _VERT),
-            Param("second", str, description="★ 第二个顶点的选择器。" + _VERT),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; leaving it empty uses the f"
+                                                     "irst study in the document. Defaults to empty."
+                                                 )),
+            Param("first", str, description=(
+                                    "Declarative selector for the first vertex: 'index:<n>' for the n-th vertex on the "
+                                    "body, or '__current_selection__' to take the first current selection; bare coordin"
+                                    "ates are rejected and an unparseable selector raises."
+                                )),
+            Param("second", str, description=(
+                                     "Declarative selector for the second vertex, using the same 'index:<n>' or '__curr"
+                                     "ent_selection__' forms as first."
+                                 )),
             Param(
                 "first_body_index",
                 int,
                 default=0,
-                description="★ 第一个选择器里的 `index:<n>` 落在**第几个体**上（★ 0 基）",
+                description="Zero-based index of the body that the first selector indexes into. Defaults to 0.",
             ),
             Param(
                 "second_body_index",
                 int,
                 default=0,
-                description="★ 同上（★ 第二个）—— ★★ 而两个顶点**可以在同一个体上**"
-                "（★ 真机验过 · 事实 373）",
+                description=(
+                    "Zero-based index of the body for the second selector; both vertices may live on the same body. Def"
+                    "aults to 0."
+                ),
             ),
         ],
         evidence=(
@@ -86,11 +98,9 @@ SPECS_BATCH64 = [
             "据是**回读**：载荷与约束计数 **恰好 +1**（★ **不是**返回值 —— 事实 8）。"
         ),
         doc=(
-            "Add a **LINK CONNECTOR** between two **vertices** and return a READ-BACK report. "
-            "★★ **它要的是「顶点」** —— ★ 官方形参名就是 `VertexPointforFirst/SecondLocation`。"
-            "⚠★ **不要传面 / 组件**（★ 那一族是 `AddRigidConnector` 收面、`AddPinConnector` 收组件）——"
-            "★ 传错会**静默不建**（★ 事实 341 那五次就是这么来的）。"
-            "★ `ok` 的判据是**回读**：载荷与约束计数 **恰好 +1**（★ **不是**返回值 —— 事实 8）。"
+            "Add a link connector between two vertices of a simulation study and return a read-back report. Writes a lo"
+            "ad into the study and judges success by the load and restraint counts rising by exactly one; pass vertices"
+            ", because faces or components silently build nothing here."
         ),
     ),
 ]

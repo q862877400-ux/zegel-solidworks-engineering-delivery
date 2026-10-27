@@ -1,0 +1,132 @@
+{
+ "tools": {
+  "solidworks_costing_list_bodies": {
+   "doc": "List the Costing body names of the active part. Read-only; feed one of the returned names to solidworks_costing_read_body.",
+   "params": {}
+  },
+  "solidworks_costing_read_body": {
+   "doc": "Read the cost data of one Costing body by name. Read-only; an unknown body_name fails and the error message lists the valid names.",
+   "params": {
+    "body_name": "A body name from solidworks_costing_list_bodies."
+   }
+  },
+  "solidworks_costing_list_templates": {
+   "doc": "List the Costing template names available for a category. Read-only; the returned list is how you discover which categories and templates exist.",
+   "params": {
+    "category": "Costing category enum value; the returned template list is how you discover which categories exist. Defaults to 0."
+   }
+  },
+  "solidworks_costing_default_template": {
+   "doc": "Return the default Costing template name for a category. Read-only; it reads the Costing defaults object and fails when that object cannot be obtained.",
+   "params": {
+    "category": "Costing category enum value; list the templates for a category to see which values exist."
+   }
+  },
+  "solidworks_costing_method_value": {
+   "doc": "Return the current value of one cost method. Read-only; take the method_name from the method list that solidworks_costing_read_analysis returns.",
+   "params": {
+    "method_name": "A cost-method name, as listed by solidworks_costing_read_analysis."
+   }
+  },
+  "solidworks_weldment_create_cut_list": {
+   "doc": "Skip this tool, NOT USABLE on this machine: the cut-list insert member resolves to None on this backend. Under pywin32 late binding InsertWeldmentCutList2 resolves to None, so the call raises instead of creating a cut list, and the sort and identical-body options only shape a feature this backend cannot build.",
+   "params": {
+    "sort_options": "swCutListSortOptions_e value; defaults to None, which leaves the document sort default in place.",
+    "collect_identical_bodies": "Whether to collect identical bodies into one cut-list item. Defaults to false."
+   }
+  },
+  "solidworks_weldment_set_cut_list_properties": {
+   "doc": "Set cut-list properties on every cut-list item and return the read-back list. Writes the values into each item, creates the cut list first when it is missing, and does not save the document; a value that does not read back raises. Pass the localized property names the UI shows, not the English Description or Material keys, which fail the read-back.",
+   "params": {
+    "properties": "Mapping of property name to value; the names must be the localized ones the UI shows."
+   }
+  },
+  "solidworks_weldment_export_cut_list_csv": {
+   "doc": "Export a cut-list evidence dict to a UTF-8 CSV file and return the path. Writes the file and creates its parent directory when missing; the criterion is the file existing and being non-empty, not the return value. Columns are index, name, body_count and every property name found in the rows.",
+   "params": {
+    "evidence": "The cut-list evidence dict, as returned by solidworks_weldment_evidence or solidworks_weldment_create_cut_list.",
+    "output_path": "Absolute CSV output path."
+   }
+  },
+  "solidworks_weldment_read_property_manager": {
+   "doc": "Read the manufacturing properties of the active PropertyManager page as a dict. Read-only; by default it keeps only the core cut-list property names and drops template title-block noise. Set core_only to false to read every property name the page exposes.",
+   "params": {
+    "core_only": "Whether to keep only the core cut-list property names and drop template title-block noise; false reads every name. Defaults to true."
+   }
+  },
+  "solidworks_weldment_create_profile_center_mate": {
+   "doc": "Skip this tool, NOT USABLE on this machine: the mate data is created but the mate call returns None. It takes the entities, alignment, offset and flip settings below, yet CreateMate returns None on this build, so no mate appears in the assembly; use ordinary mates instead.",
+   "params": {
+    "entities": "Declarative selection of the entities to mate, for example 'index:0' or '__current_selection__'; no coordinates are passed. Defaults to '__current_selection__'.",
+    "mate_alignment": "Mate alignment enum value. Defaults to 0.",
+    "offset_distance_mm": "Offset distance in millimetres. Defaults to 0.0.",
+    "flip_dimension": "Whether to flip the mate dimensions. Defaults to false."
+   }
+  },
+  "solidworks_weldment_create_weldment_profile": {
+   "doc": "Create a weldment profile file from a declaratively selected sketch and save it as .sldlfp. Writes the file plus any custom properties you pass, creates the parent directory, and raises when the save fails or the produced file is empty. The output path must end in .sldlfp.",
+   "params": {
+    "sketch_ref": "Declarative selection of the profile sketch, for example 'index:0' or '__current_selection__'; no coordinates are passed. Defaults to '__current_selection__'.",
+    "output_path": "Absolute path for the saved .sldlfp profile; the suffix must be .sldlfp.",
+    "properties": "Optional custom properties written before saving. Defaults to None, which writes no properties."
+   }
+  },
+  "solidworks_current_selection": {
+   "doc": "Read the current selection set as a list of objects. Read-only; an empty selection returns an empty list, and mark restricts which selection marks are returned.",
+   "params": {
+    "mark": "Selection mark to read; -1 means all marks. Defaults to -1."
+   }
+  },
+  "solidworks_clear_selection": {
+   "doc": "Clear the current selection set of the active document. Clears every selected entity, changes no geometry, and does not save the document.",
+   "params": {}
+  },
+  "solidworks_set_standard_view": {
+   "doc": "Switch the model to a named standard view such as isometric, front or top. It changes the display orientation and zooms to fit; a name it does not recognize is passed to SolidWorks as a view name. It changes no geometry and does not save the document.",
+   "params": {
+    "view_name": "Standard view name such as isometric, front or top; an unrecognized name is passed to SolidWorks as a view name. Defaults to 'isometric'."
+   }
+  },
+  "solidworks_list_render_materials": {
+   "doc": "List the render-material appearance objects defined in the active document. Read-only; an empty document returns an empty list, and the count is read separately to trim the returned array.",
+   "params": {}
+  },
+  "solidworks_collect_appearance_evidence": {
+   "doc": "Collect appearance evidence for the active document as one row per appearance. Each row carries ambient, diffuse, specular, roughness, transparency and emission. Read-only; use it to verify that an appearance change actually landed.",
+   "params": {}
+  },
+  "solidworks_sketch_move_entities": {
+   "doc": "Move the active sketch by the vector from a start point to an end point. Writes the sketch transform and does not save the document; the result carries a geometry read-back, so do not read it as a bare success flag.",
+   "params": {
+    "start_x_mm": "Start point X in millimetres.",
+    "start_y_mm": "Start point Y in millimetres.",
+    "end_x_mm": "End point X in millimetres.",
+    "end_y_mm": "End point Y in millimetres."
+   }
+  },
+  "solidworks_sketch_rotate_entities": {
+   "doc": "Rotate the active sketch about a centre point by an angle. Writes the sketch transform and does not save the document; the angle is given in degrees and converted to radians once at this boundary.",
+   "params": {
+    "center_x_mm": "Centre X in millimetres.",
+    "center_y_mm": "Centre Y in millimetres.",
+    "angle_deg": "Rotation angle in degrees, converted to radians once at this boundary."
+   }
+  },
+  "solidworks_sketch_scale_entities": {
+   "doc": "Apply a scale factor to the active sketch. Writes the sketch geometry and does not save the document; ok is true only when the call returns non-false and the geometry read-back changes as well.",
+   "params": {
+    "factor": "Scale factor, which must be greater than 0; it is a ratio, not a length, so it carries no unit suffix."
+   }
+  },
+  "solidworks_sketch_stretch_entities": {
+   "doc": "Apply a stretch from a base point to a destination point on the sketch. Writes the sketch geometry and does not save the document; it selects the active sketch segments for you, because the official call only acts on a selection.",
+   "params": {
+    "base_x_mm": "Base point X in millimetres.",
+    "base_y_mm": "Base point Y in millimetres.",
+    "dest_x_mm": "Destination point X in millimetres.",
+    "dest_y_mm": "Destination point Y in millimetres.",
+    "keep_relations": "Whether to keep the sketch relations while stretching."
+   }
+  }
+ }
+}

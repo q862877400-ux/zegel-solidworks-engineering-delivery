@@ -1,0 +1,154 @@
+{
+ "_comment": [
+  "规格 352 G4 批第 2/4 部分（20 条）。",
+  "★ 事实来源：output/_briefs/G4.json 的 evidence / current_doc，以及 impl 函数的 docstring。",
+  "★ 首句 = <动词> <对象> <关键限定>，≤120 字符；整段 ≤600 字符；参数说明英文句号收尾。"
+ ],
+ "tools": {
+  "solidworks_drawing_add_note": {
+   "doc": "Insert a text note at the given position on the active drawing. It writes a note and does not save the document; the leader attachment point comes from whatever is selected before the call, and with nothing selected the note is free-standing at the origin.",
+   "params": {
+    "x_mm": "X where the note is placed, in millimetres.",
+    "y_mm": "Y where the note is placed, in millimetres.",
+    "text": "Note text; symbols must be written in the <*library-symbol*> form."
+   }
+  },
+  "solidworks_drawing_create_hole_table": {
+   "doc": "Insert a hole table on a drawing view. It writes a table and does not save the document; the base-origin vertex must be selected with mark 1 and the hole edges or faces with mark 2 first, because this tool selects nothing, and it reports preconditions_held.",
+   "params": {
+    "view_name": "Name of the drawing view that carries the hole table.",
+    "x_mm": "X where the table is placed, in millimetres; the API takes metres, so it is converted here.",
+    "y_mm": "Y where the table is placed, in millimetres.",
+    "anchor_type": "Anchor type, one of the swBOMConfigurationAnchorType_e values.",
+    "start_value": "First item number in the table, for example A.",
+    "template": "Hole table template file ending in .sldholtbt, found under the language folder of the install directory.",
+    "tag_order": "Tag order value; the official example uses 1.",
+    "tag_type": "Tag type value; the official example uses 1."
+   }
+  },
+  "solidworks_drawing_create_revision_table": {
+   "doc": "Insert a revision table on the active drawing sheet. It writes a table and does not save the document; the template and the table must be the same type, and a null return means a revision table already exists, which is the documented result rather than a failure.",
+   "params": {
+    "x_mm": "X where the table is placed, in millimetres.",
+    "y_mm": "Y where the table is placed, in millimetres.",
+    "anchor_type": "Anchor type, one of the swBOMConfigurationAnchorType_e values.",
+    "template": "Revision table template path ending in .sldrevtbt; the template and the table must be the same type.",
+    "shape": "Table shape value.",
+    "auto_update_zoom_cells": "Whether to update the zoom cells automatically."
+   }
+  },
+  "solidworks_drawing_insert_center_marks": {
+   "doc": "Insert centre marks on drawing views through the batch entry point. It writes marks and does not save the document, it passes the requirements list straight to the capability layer, and this batch path has not yet been verified on its own on this machine.",
+   "params": {
+    "requirements": "List of views or centre-mark requirements, passed unchanged to the capability layer."
+   }
+  },
+  "solidworks_equation_add": {
+   "doc": "Add one global equation to the active document. It writes an equation and does not save the document; it throws instead of succeeding silently when the string is empty or the call returns -1, and the index of the new equation comes back in the report.",
+   "params": {
+    "equation": "Equation text as written in the user interface, with dimension names in double quotes, for example \"D2@Sketch1\" = 2 * \"D1@Sketch1\".",
+    "index": "Zero-based position to insert at, where -1 appends at the end. Defaults to -1.",
+    "solve": "Whether to solve the equations immediately after adding. Defaults to true."
+   }
+  },
+  "solidworks_equation_list": {
+   "doc": "List every global equation in the active document. Read-only; it reads the equation count and then each equation by index, and it changes nothing in the model.",
+   "params": {}
+  },
+  "solidworks_equation_evaluate": {
+   "doc": "Solve all global equations and return the result. It re-evaluates the equations in the active document and does not save it; use solidworks_equation_list when you only need the equation text.",
+   "params": {}
+  },
+  "solidworks_equation_delete": {
+   "doc": "Delete one global equation by its zero-based index. It writes the deletion into the active document and does not save it; read solidworks_equation_list first so the index points at the equation you mean.",
+   "params": {
+    "index": "Zero-based index of the equation to delete, as listed by solidworks_equation_list."
+   }
+  },
+  "solidworks_helix_insert": {
+   "doc": "Insert a fixed-pitch helix or spiral as a curve feature. It writes the feature and does not save the document; it throws when the call returns nothing, which usually means the defining circle was not selected before calling.",
+   "params": {
+    "height_mm": "Helix height in millimetres; the API takes metres, so it is converted here.",
+    "pitch_mm": "Pitch in millimetres; 0 leaves it to the document default. Defaults to 0.",
+    "revolution": "Number of revolutions; 0 leaves it to the document default. Defaults to 0."
+   }
+  },
+  "solidworks_gtol_insert": {
+   "doc": "Insert an empty geometric tolerance symbol. It writes an annotation and does not save the document; the leader attaches to whatever is selected before the call, and with no selection the symbol sits at the origin without a leader.",
+   "params": {}
+  },
+  "solidworks_sketch_start": {
+   "doc": "Enter a new sketch on a reference plane. It writes an open sketch into the active part and is the prerequisite for every sketch-based feature such as extrude, revolve, hole or sheet-metal flange; pair it with solidworks_sketch_end.",
+   "params": {
+    "plane_name": "Name of the reference plane, in English or in the localized names, for example Front Plane or Top Plane. Defaults to Front Plane."
+   }
+  },
+  "solidworks_sketch_end": {
+   "doc": "Leave the current sketch and return a sketch reference that feature tools can reuse. It writes the finished sketch into the active part and does not save it; pass the returned reference to extrude and similar tools when you need a stable selection.",
+   "params": {}
+  },
+  "solidworks_sketch_add_line": {
+   "doc": "Draw a straight line in the open sketch from one point to another. Coordinates are millimetres relative to the sketch origin, which is the documented exception to the named-entity rule for sketch geometry; start a sketch first and read back with the sketch count tools.",
+   "params": {
+    "start_x_mm": "Start point X in millimetres.",
+    "start_y_mm": "Start point Y in millimetres.",
+    "end_x_mm": "End point X in millimetres.",
+    "end_y_mm": "End point Y in millimetres."
+   }
+  },
+  "solidworks_sketch_add_circle": {
+   "doc": "Draw a circle in the open sketch from a centre and a radius. Coordinates are millimetres relative to the sketch origin, which is the documented exception to the named-entity rule for sketch geometry; read it back with the sketch count tools.",
+   "params": {
+    "center_x_mm": "Centre X in millimetres.",
+    "center_y_mm": "Centre Y in millimetres.",
+    "radius_mm": "Circle radius in millimetres; it must be greater than 0."
+   }
+  },
+  "solidworks_sketch_add_rectangle": {
+   "doc": "Draw a rectangle in the open sketch from two opposite corners. This is a corner-to-corner rectangle rather than a centre-plus-size one, and the corners are millimetres relative to the sketch origin, so start a sketch first.",
+   "params": {
+    "x1_mm": "First corner X in millimetres.",
+    "y1_mm": "First corner Y in millimetres.",
+    "x2_mm": "Opposite corner X in millimetres.",
+    "y2_mm": "Opposite corner Y in millimetres."
+   }
+  },
+  "solidworks_insert_planar_surface": {
+   "doc": "Insert a planar surface from the closed boundary selected in the active part. It writes a surface feature and does not save the document; select the sketch or edge loop that closes the surface first, and success needs both a non-false return and a new feature in the tree.",
+   "params": {}
+  },
+  "solidworks_insert_offset_surface": {
+   "doc": "Insert an offset surface at a distance from a reference face. It writes a surface feature and does not save the document; the API returns nothing, so the only proof of success is a new feature in the tree, and the caller must select the reference face first.",
+   "params": {
+    "thickness_mm": "Distance from the reference face in millimetres, converted to metres once at this boundary.",
+    "reverse": "Whether to offset to the other side. Defaults to false."
+   }
+  },
+  "solidworks_insert_ruled_surface": {
+   "doc": "Insert a ruled surface from a selected edge. It writes a surface feature and does not save the document; select the edge with mark 4 before calling, and ruled_type picks which flavour of ruled surface is built.",
+   "params": {
+    "ruled_type": "Ruled surface type: 0=Tangent to Surface, 1=Normal to Surface, 2=Tapered to Vector, 3=Perpendicular to Vector, 4=Sweep.",
+    "length_mm": "Distance in millimetres; it applies only to the Tangent, Tapered and Perpendicular types. Defaults to 0.",
+    "flip_pull_dir": "Whether to flip the pull direction; it applies only to the Normal and Tapered types. Defaults to false.",
+    "flip_dir": "Whether to flip the direction; it applies only to the Perpendicular type. Defaults to false.",
+    "trim_and_sew": "Whether to trim and sew the result. Defaults to true.",
+    "angle_deg": "Angle in degrees; it applies only to the Tapered to Vector type. Defaults to 0.",
+    "coord_input": "Whether to use the coordinate input; it applies only to the Sweep type. Defaults to false.",
+    "x_mm": "X coordinate in millimetres. Defaults to 0.",
+    "y_mm": "Y coordinate in millimetres. Defaults to 0.",
+    "z_mm": "Z coordinate in millimetres. Defaults to 0.",
+    "b_connect_surface": "Whether to remove the connecting surface. Defaults to false."
+   }
+  },
+  "solidworks_insert_delete_face": {
+   "doc": "Insert a delete-face feature for the selected face. It writes a feature and does not save the document; select the face first, and option picks how the opening is handled, with success needing a new feature in the tree.",
+   "params": {
+    "option": "Delete-face option: 0=Default, 1=Patch, 2=Fill, 3=FillWithTangent. Defaults to 0."
+   }
+  },
+  "solidworks_insert_replace_face": {
+   "doc": "Replace a face with a surface face in the active part. It writes a replace-face feature and does not save the document; select the face to replace with mark 1 and the replacement with mark 2, using solid faces rather than surface bodies.",
+   "params": {}
+  }
+ }
+}

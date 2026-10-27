@@ -1,0 +1,98 @@
+{
+ "tools": {
+  "solidworks_selector_resolve_point": {
+   "doc": "Resolve a named point selector to its x, y and z coordinates in millimetres. Read-only and needs no SolidWorks call, and it takes no coordinates because the selector itself names the point; take the accepted names from solidworks_available_point_selectors.",
+   "params": {
+    "selector": "Point selector name, or __current_selection__ to use whatever is already selected; see solidworks_available_point_selectors for the accepted values.",
+    "body_index": "Zero-based index of the solid body the selector is resolved on; the index is not a persistent reference across rebuilds. Defaults to 0."
+   }
+  },
+  "solidworks_drawing_sheet_count": {
+   "doc": "Return the number of sheets in the active drawing. Read-only; the count comes straight from the drawing document, so call it while the drawing is the active document.",
+   "params": {}
+  },
+  "solidworks_drawing_sheet_names": {
+   "doc": "Return the names of every sheet in the active drawing. Read-only; call it while the drawing is the active document, and use solidworks_drawing_current_sheet_name when you only need the sheet being edited.",
+   "params": {}
+  },
+  "solidworks_drawing_current_sheet_name": {
+   "doc": "Return the name of the sheet currently being edited. Read-only, and it reads the current sheet object of the active drawing; pass the returned name to any tool that takes a sheet name.",
+   "params": {}
+  },
+  "solidworks_delivery_bom_traceability": {
+   "doc": "Build a traceability record linking bill-of-materials rows to the model, drawing and review paths. Read-only and pure data with no SolidWorks call, so it needs no open document; an empty path is simply left out of the record.",
+   "params": {
+    "bom_rows": "Bill-of-materials rows, in the form a bill-of-materials tool returns them.",
+    "model_path": "Model path to record in the traceability entry. Defaults to empty.",
+    "drawing_path": "Drawing path to record in the traceability entry. Defaults to empty.",
+    "review_path": "Review report path to record in the traceability entry. Defaults to empty."
+   }
+  },
+  "solidworks_delivery_pack_and_go_audit_matrix": {
+   "doc": "Build the audit matrix that a Pack and Go hand-off is reviewed against. Read-only and pure data with no SolidWorks call; each include flag decides which dependency kind the matrix covers.",
+   "params": {
+    "source_path": "Path of the source document the hand-off starts from.",
+    "dependencies": "Dependency paths that were found for that source document.",
+    "component_records": "Per-component records to audit.",
+    "associated_drawings": "Associated drawing paths.",
+    "outputs": "Output artifact paths to audit.",
+    "include_drawings": "Whether drawings are covered by the matrix.",
+    "include_toolbox_components": "Whether Toolbox components are covered by the matrix.",
+    "include_suppressed": "Whether suppressed components are covered by the matrix."
+   }
+  },
+  "solidworks_delivery_export_bom_csv": {
+   "doc": "Export the assembly bill of materials to a UTF-8 CSV file. Writes the file and returns its size and SHA-256, and does not save the document; the file is the criterion, so check that it exists and is non-empty.",
+   "params": {
+    "output_path": "Absolute path of the CSV file to write.",
+    "include_excluded": "Whether to include components excluded from the bill of materials. Defaults to false.",
+    "overwrite": "Whether to replace a file that already exists at that path. Defaults to false."
+   }
+  },
+  "solidworks_simulation_list_setter_summary": {
+   "doc": "Return the catalogue of simulation study-option setters per family with their names and counts. Read-only and needs no SolidWorks call, and it takes no arguments; read it before setting a study option so that the family and name you pass are registered ones.",
+   "params": {}
+  },
+  "solidworks_weldment_evidence": {
+   "doc": "Read back the weldment state: features, cut-list folders and their properties. Read-only by default, and it writes to the model only when create_missing_cut_list or update_cut_list_too asks for a cut-list update, which the returned wrote_model flag reports.",
+   "params": {
+    "create_missing_cut_list": "Whether to create a missing cut list before reading, which creates cut-list folders in the model. Defaults to false, which keeps the call read-only.",
+    "update_cut_list_too": "Whether to refresh the cut list as well, a write operation; unset follows create_missing_cut_list. Defaults to unset."
+   }
+  },
+  "solidworks_weldment_ensure_cut_list": {
+   "doc": "Create native cut-list folders for a weldment that has none, grouping bodies by their longest bounding-box edge. Creates the folders in the active part; when cut-list folders already exist it returns them unchanged instead of recreating them.",
+   "params": {}
+  },
+  "solidworks_weldment_update_cut_list": {
+   "doc": "Refresh every native cut-list folder and return folder-level geometry evidence. Modifies the cut list in the active part, because the official call updates the automatically generated list; each returned row carries the update flag and the folder properties.",
+   "params": {}
+  },
+  "solidworks_weldment_create_sub_weld_folder": {
+   "doc": "Create a weldment sub-folder in the feature tree of the active document. Modifies that feature tree by inserting the folder, and it raises when the insert call returns no feature, so read the tree back to confirm.",
+   "params": {}
+  },
+  "solidworks_sheet_metal_evidence": {
+   "doc": "Read the sheet-metal evidence of the active part: feature list, base flange parameters and per-body flags. Read-only, and the base flange lengths come back in metres; use the all_solid_bodies_are_sheet_metal flag to check that the part really is a sheet-metal part.",
+   "params": {}
+  },
+  "solidworks_surface_evidence": {
+   "doc": "Read the surface evidence: whether the Modeler object is reachable and which surface creation methods are registered. Read-only; it reports reachability and the registered entry points, not surface body counts, and it records that the process-internal pointer variants are unavailable to this binding.",
+   "params": {}
+  },
+  "solidworks_session_rebuild": {
+   "doc": "Refresh the active document by rebuilding it in one of three modes and report the read-back state. Modifies the document state, leaves the feature tree and geometry alone, and only works on the active document; judge the result by the read-back, not by the return value.",
+   "params": {
+    "mode": "Rebuild mode: 'edit' rebuilds only the features that need it, 'force' rebuilds every feature of the active configuration, and 'all' rebuilds every configuration without switching. Defaults to 'edit'.",
+    "top_only": "Whether a force rebuild covers only the top level and leaves subassemblies alone; the other two modes ignore it. Defaults to false."
+   }
+  },
+  "solidworks_sketch_set_construction_geometry": {
+   "doc": "Set or clear construction geometry on the selected sketch segments. Modifies the active sketch: the segment property is read back afterwards and a mismatch is reported, because the set call assigns the state instead of toggling it.",
+   "params": {
+    "selection": "Declarative segment selection: __current_selection__ for the existing selection, or index:0 and index:0,index:1 for zero-based segment positions.",
+    "construction": "Whether to make the segments construction geometry; false turns them back into normal sketch geometry. Defaults to true."
+   }
+  }
+ }
+}

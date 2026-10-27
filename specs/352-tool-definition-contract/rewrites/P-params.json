@@ -1,0 +1,217 @@
+{
+ "tools": {
+  "solidworks_sketch_count_lines": {
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty means the current sketch. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_count_arcs": {
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty means the current sketch. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_count_segments": {
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty means the current sketch. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_is_3d": {
+   "params": {
+    "sketch_name": "Sketch feature name such as Sketch1; empty means the current sketch. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_pressure": {
+   "params": {
+    "pressure_type": "Pressure type: swsPressureType_e, 0 = normal to each face, 1 = use reference geometry. Defaults to 0.",
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_torque": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_gravity": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_centrifugal_force": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_collect_numbers": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_list_constraints": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_manager_report": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_options_report": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_set_goal": {
+   "params": {
+    "goal_type": "Topology goal type enum; the numeric values are not published in the local sources. Defaults to 0.",
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_set_iteration_options": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_convection": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_heat_flux": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_heat_power": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_radiation": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty.",
+    "radiation_type": "Radiation type enum; the numeric values are not published in the local sources. Defaults to 0."
+   }
+  },
+  "solidworks_simulation_apply_elastic_connector": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_temperature": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_distributed_mass": {
+   "params": {
+    "units": "Unit enum passed straight to the load member, 0 = SI. Defaults to 0.",
+    "mass": "Distributed mass value in the unit selected by units. Required.",
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_apply_force": {
+   "params": {
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty.",
+    "force_type": "Force type enum passed straight to AddForce. Defaults to 1."
+   }
+  },
+  "solidworks_simulation_apply_remote_load": {
+   "params": {
+    "dz": "Z coordinate of the remote load location. Required.",
+    "dy": "Y coordinate of the remote load location. Required.",
+    "study_name": "Name of an existing study; empty means the first study in the document. Defaults to empty.",
+    "dx": "X coordinate of the remote load location. Required.",
+    "units": "Unit enum passed straight to the load member, 0 = SI. Defaults to 0.",
+    "load_type": "Remote load type enum; the numeric values are not published in the local sources. Required."
+   }
+  },
+  "solidworks_extrude_depth": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_extrude_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_pattern_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_hole_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_feature_info": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_fillet_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_csys_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_base_flange_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_shell_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_dome_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_sweep_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_revolve_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_loft_params": {
+   "params": {
+    "feature_name": "Feature name as it appears in the feature tree; empty means the first feature of the expected type. Defaults to empty."
+   }
+  },
+  "solidworks_boundary_boss_report": {
+   "params": {
+    "influence_type": "Influence type: 0 = global, 1 = to next curve, 2 = to next sharp, 3 = to next edge. Defaults to 0.",
+    "merge_body": "Whether to merge the result into a single body in a multibody part. Defaults to true.",
+    "tangency_deg": "Tangency angle in degrees. Defaults to 15.",
+    "face_index_2": "Zero-based index of the second face on the body. Defaults to 1.",
+    "blend_closed": "Whether to close the boundary blend. Defaults to false.",
+    "face_index_1": "Zero-based index of the first face on the body. Defaults to 0.",
+    "trim_curves": "Whether to trim the curves. Defaults to false."
+   }
+  },
+  "solidworks_boundary_surface_report": {
+   "params": {
+    "influence_type": "Influence type: 0 = global, 1 = to next curve, 2 = to next sharp, 3 = to next edge. Defaults to 0.",
+    "merge_body": "Whether to merge the result into a single body in a multibody part. Defaults to true.",
+    "tangency_deg": "Tangency angle in degrees. Defaults to 15.",
+    "face_index_2": "Zero-based index of the second face on the body. Defaults to 1.",
+    "blend_closed": "Whether to close the boundary blend. Defaults to false.",
+    "face_index_1": "Zero-based index of the first face on the body. Defaults to 0.",
+    "trim_curves": "Whether to trim the curves. Defaults to false."
+   }
+  }
+ }
+}

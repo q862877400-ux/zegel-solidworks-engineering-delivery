@@ -116,47 +116,50 @@ SPECS_BATCH3: list[ToolSpec] = [
             Param(
                 "sketch_name",
                 str,
-                description="Sketch NAME. The special value '__current_selection__' reuses the "
-                "current selection instead of selecting by name.",
+                description=(
+                    "Sketch name, or __current_selection__ to reuse the current selection instead of selecting by name."
+                ),
             ),
             Param(
                 "thickness_mm",
                 float,
-                description="Sheet thickness in MILLIMETRES (must be > 0).",
+                description="Sheet thickness in millimetres, which must be greater than 0.",
             ),
             Param(
                 "bend_radius_mm",
                 float,
-                description="Bend radius in MILLIMETRES (>= 0).",
+                description="Bend radius in millimetres, which must be 0 or greater.",
             ),
             Param(
                 "depth_mm",
                 float,
-                description="Base flange depth in MILLIMETRES (must be > 0).",
+                description="Base flange depth in millimetres, which must be greater than 0.",
             ),
             Param(
                 "k_factor",
                 float,
                 default=0.42,
-                description="K-factor for the bend allowance (must be strictly between 0 and 1).",
+                description=(
+                    "K factor for the bend allowance, which must lie strictly between 0 and 1. Defaults to 0.42."
+                ),
             ),
             Param(
                 "relief_ratio",
                 float,
                 default=0.5,
-                description="Relief ratio (must be > 0).",
+                description="Relief ratio, which must be greater than 0. Defaults to 0.5.",
             ),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="Reverse the depth direction.",
+                description="Whether to reverse the depth direction. Defaults to false.",
             ),
             Param(
                 "reverse_thickness",
                 bool,
                 default=False,
-                description="Reverse which side the thickness is added to.",
+                description="Whether to reverse which side the thickness is added to. Defaults to false.",
             ),
         ],
         evidence=(
@@ -169,13 +172,9 @@ SPECS_BATCH3: list[ToolSpec] = [
             "闭轮廓成立**。⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 它是第一现场）。"
         ),
         doc=(
-            "Create a native base flange (swFmBaseFlange) from an open or closed sketch. Returns the real IFeature; failures raise instead of returning empty. "
-            "⚠⚠ **正确性边界（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #4）**："
-            "★ **只有闭轮廓**真机跑通（2026-10-01，SW 2026 SP4.1，特征树出现「钣金6 / 基体-法兰1 / 平展型式6」）；"
-            "★★ **开放折线（轮廓法兰）真机失败** —— `CreateFeature(IBaseFlangeFeatureData) 创建失败`（2026-10-01 补测）。"
-            "★★★ **旧描述（已作废）**：本节此前写「An open polyline path produces a profile flange … VERIFIED ON A REAL MACHINE … and it WORKED」，"
-            "那是把**闭轮廓**的成功**外推**到了开放折线上 —— 而状态表明写 **`True` 仅对闭轮廓成立**。"
-            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 它是第一现场）。"
+            "Create a native base flange from a sketch, given thickness, bend radius and depth in millimetres. Creates "
+            "a sheet-metal feature in the active part and raises instead of returning an empty object; only a closed co"
+            "ntour is verified on this machine, because an open polyline path fails here."
         ),
     ),
     # 签名: def create_one_bend(model, sketch_ref, spec: OneBendSpec)
@@ -197,25 +196,29 @@ SPECS_BATCH3: list[ToolSpec] = [
             Param(
                 "sketch_name",
                 str,
-                description="Sketch NAME; '__current_selection__' reuses the current selection.",
+                description=(
+                    "Name of the sketch holding the bend line; '__current_selection__' reuses the current selection."
+                ),
             ),
-            Param("bend_radius_mm", float, description="Bend radius in MILLIMETRES."),
+            Param("bend_radius_mm", float, description=(
+                                               "Bend radius in millimetres; ignored when use_default_radius is true."
+                                           )),
             Param(
                 "angle_deg",
                 float,
-                description="Bend angle in DEGREES (the spec is already in degrees).",
+                description="Bend angle in degrees.",
             ),
             Param(
                 "reverse_direction",
                 bool,
                 default=False,
-                description="Reverse the bend direction.",
+                description="Whether to flip the bend direction. Defaults to false.",
             ),
             Param(
                 "use_default_radius",
                 bool,
                 default=True,
-                description="Use the part default bend radius instead of bend_radius_mm.",
+                description="Whether to use the part default bend radius instead of bend_radius_mm. Defaults to true.",
             ),
         ],
         evidence=(
@@ -228,14 +231,9 @@ SPECS_BATCH3: list[ToolSpec] = [
             "）。★ 本工具保留，是为了让失败**可诊断**，不是因为能用。"
         ),
         doc=(
-            "Create a single sheet-metal bend on the selected sketch. ⚠ **仍不可用，但原因已具体化**（2026-10-04 更正，★ 处置 JUDGE-C_D_E 🔴 #2 · E-1 #1）。"
-            "★★ **旧描述（已作废）**：`CreateDefinition(33) returned None` · 「The correct call shape has not been determined yet」——"
-            "★ 那是**旧结论**：状态表把它标为「原记法」。"
-            "★★★ **现在的事实**：正确入口**已查明并已改用** —— `swFmSketchBend(35)`（接口 `ISketchedBendFeatureData`），"
-            "真机已验证 `CreateDefinition(35)` 返回**非 None**；"
-            "⚠ 仍缺「选中折弯线 / 固定面」这一步 ⇒ **仍标不可用**，但**卡点不是「形状未查明」**。"
-            "⇒ ★ **以 `scripts/sw_sheet_metal.py::SHEET_METAL_RUNTIME_STATUS` 为准**（★ 第一现场）。"
-            "★ 本工具保留，是为了让失败**可诊断**，不是因为能用。"
+            "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved. The Crea"
+            "teDefinition(35) sketch-bend entry point itself is correct, but the call never gets as far as writing, so "
+            "it modifies nothing in the part."
         ),
     ),
 ]

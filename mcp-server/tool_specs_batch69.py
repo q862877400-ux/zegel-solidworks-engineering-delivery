@@ -78,44 +78,52 @@ _BATCH69: list[ToolSpec] = [
             Param(
                 "closed",
                 bool,
-                description="闭合放样（★ 官方：True 时**至少要 3 个轮廓**）。",
+                description=(
+                    "Whether to close the loft; a closed loft needs at least three profiles. Defaults to false."
+                ),
                 required=False,
                 default=False,
             ),
             Param(
                 "keep_tangency",
                 bool,
-                description="相切时保持相切（★ 布尔是标志）。",
+                description="Whether to keep tangency where the section curves are tangent. Defaults to true.",
                 required=False,
                 default=True,
             ),
             Param(
                 "force_non_rational",
                 bool,
-                description="强制非有理曲面（★ 布尔是标志）。",
+                description="Whether to force a non-rational surface. Defaults to false.",
                 required=False,
                 default=False,
             ),
             Param(
                 "tess_tolerance_factor",
                 float,
-                description="带中心线放样时控制中间截面数"
-                "（★ 官方给了默认值 ⇒ 0.0 = 用默认；★ 不是长度）。",
+                description=(
+                    "Tessellation tolerance factor for a centerline loft; 0.0 uses the default. Defaults to 0.0."
+                ),
                 required=False,
                 default=0.0,
             ),
             Param(
                 "start_matching_type",
                 int,
-                description="起始轮廓的相切类型"
-                "（★ 官方「see Remarks」，本工具原样透传、不编造取值表）。",
+                description=(
+                    "Tangency matching type for the start profile; the official page gives no value table, so it is pas"
+                    "sed through as an integer. Defaults to 0."
+                ),
                 required=False,
                 default=0,
             ),
             Param(
                 "end_matching_type",
                 int,
-                description="末端轮廓的相切类型（★ 同上，原样透传）。",
+                description=(
+                    "Tangency matching type for the end profile, passed through the same way as start_matching_type. De"
+                    "faults to 0."
+                ),
                 required=False,
                 default=0,
             ),
@@ -125,11 +133,11 @@ _BATCH69: list[ToolSpec] = [
             " **profile selections should be 1**」⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。★ 真机"
             "建成：树 7→8，新增 `曲面-放样1`。★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。"
         ),
-        doc="★ 放样曲面：`IModelDoc2.InsertLoftRefSurface2(…)`（6 参，回 `void`）。"
-        "⚠ 官方 Remarks 逐字：「The mark for: **profile selections should be 1**」"
-        "⇒ ★ **调用前把轮廓按 `mark=1` 选好**（★ 且**按期望的顺序**）。"
-        "★ 真机建成：树 7→8，新增 `曲面-放样1`。"
-        "★ 用的是 `…RefSurface2`（★ `…RefSurface` 官方标 **Obsolete**，铁律 4）。",
+        doc=(
+            "Create a lofted reference surface from profiles that are already selected. Writes a surface feature into t"
+            "he active part and does not save the document; select the profiles with selection mark 1 and in the order "
+            "you want them lofted. The call returns void, so success is judged by the feature tree gaining a feature."
+        ),
     ),
 ]
 

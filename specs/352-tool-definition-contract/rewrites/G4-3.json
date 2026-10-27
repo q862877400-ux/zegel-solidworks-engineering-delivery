@@ -1,0 +1,129 @@
+{
+ "_comment": [
+  "规格 352 G4 批第 3/4 部分（21 条）。",
+  "★ 事实来源：output/_briefs/G4.json 的 evidence / current_doc，以及 impl 函数的 docstring。",
+  "★ 首句 = <动词> <对象> <关键限定>，≤120 字符；整段 ≤600 字符；参数说明英文句号收尾。"
+ ],
+ "tools": {
+  "solidworks_simulation_mesh_size": {
+   "doc": "Read the suggested element size and tolerance for a simulation study. Read-only; units defaults to -1, which yields millimetre-scale values, and nothing is converted, so the units value is echoed back for the caller to check.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the first study in the document. Defaults to empty.",
+    "units": "Unit code: 0=SI, 1=English, 2=Metric, and -1 yields millimetre-scale values. Defaults to -1."
+   }
+  },
+  "solidworks_simulation_create_mesh": {
+   "doc": "Mesh a simulation study and report the read-back result. It creates the mesh on the study and does not save the document; judge success by ok, which comes from a positive element count, never by the return code, because that code cannot prove itself.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the first study in the document. Defaults to empty.",
+    "units": "Unit code: 0=SI, 1=English, 2=Metric. Defaults to 0.",
+    "element_size_mm": "Global element size in millimetres; 0 lets SolidWorks choose. Defaults to 0.",
+    "tolerance_mm": "Mesh tolerance in millimetres; 0 lets SolidWorks choose, and the official default is 5 percent of the element size. Defaults to 0."
+   }
+  },
+  "solidworks_simulation_run_analysis": {
+   "doc": "Run the solver for a simulation study and report the read-back result. It creates results and plots on the study and does not save the document; judge success by ok, which means results exist and the plot count is above zero, never by the return code.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_collect_evidence": {
+   "doc": "Read every simulation study in the active document into an audit summary. Read-only; each study reports its name, type, state, entity count, analysis type, mesh type, configuration, active flag and load counts, and the document reports the cosmos version, study count and active index. It deliberately does not read result values.",
+   "params": {}
+  },
+  "solidworks_drawing_list_views_report": {
+   "doc": "List every view on the active drawing with its name, scale, annotation count and visible entity count. Read-only, and it covers the whole drawing rather than only the current sheet; it works on drawings only, so parts and assemblies fail instead of returning an empty list.",
+   "params": {}
+  },
+  "solidworks_mass_property_object": {
+   "doc": "Read the mass property object of the active document for item-by-item density, volume and inertia reads. Read-only; use solidworks_part_mass_properties when you want the computed summary instead, and it throws when the object cannot be read rather than returning nothing.",
+   "params": {}
+  },
+  "solidworks_section_area_crosscheck": {
+   "doc": "Measure the section area against the area of the selected face and report both readings. Read-only; the two independent readings agreed in every real-machine run, but agreement does not verify the unit, so do not assume one.",
+   "params": {}
+  },
+  "solidworks_rib_params": {
+   "doc": "Read the parameters of a rib feature, such as thickness, type, extrusion direction and draft settings. Read-only; readings that cannot be obtained are reported as such instead of being filled with guesses, and both the thickness and the draft-angle units are recorded as unknown.",
+   "params": {
+    "feature_name": "Rib feature name; empty lets the capability layer pick one. Defaults to empty."
+   }
+  },
+  "solidworks_assembly_list_components": {
+   "doc": "List the components of the active assembly with name, file path, suppression state and visibility. Read-only; it reports top-level components only unless top_level_only is false, which also descends into sub-assemblies.",
+   "params": {
+    "top_level_only": "Whether to list top-level components only; false also descends into sub-assemblies. Defaults to true."
+   }
+  },
+  "solidworks_assembly_list_mates": {
+   "doc": "List the mate group and its mate features with name, type and tree depth. Read-only; use it to check that real mates were written into the feature tree, and note that it does not report degrees of freedom.",
+   "params": {}
+  },
+  "solidworks_assembly_check_interference": {
+   "doc": "Run interference detection on the active assembly and return an auditable report. Read-only, it runs the detector but changes no geometry; status is pass when nothing interferes, warn when something does, and blocked when the check itself failed, which must not be read as no interference.",
+   "params": {}
+  },
+  "solidworks_linear_pattern_report": {
+   "doc": "Create a linear pattern of one feature and read the feature tree back. It writes a pattern feature and does not save the document; count includes the original feature, spacing is given in millimetres and converted here, and success means the tree really gained a feature.",
+   "params": {
+    "feature_name": "Name of the feature to pattern.",
+    "spacing_mm": "Spacing between instances in millimetres; the API takes metres, so it is converted here.",
+    "count": "Total number of instances including the original feature."
+   }
+  },
+  "solidworks_insert_mate_reference": {
+   "doc": "Insert a mate reference on a part as preparation for a later assembly. It writes a mate-reference feature and does not save the document; only the primary reference group of the official call is exposed, and success is judged by read-back because boolean returns are not trustworthy.",
+   "params": {
+    "name": "Name of the mate reference."
+   }
+  },
+  "solidworks_assembly_iter_feature_tree": {
+   "doc": "List the active assembly feature tree node by node, covering components, features and mates. Read-only; use solidworks_assembly_list_components instead when you only need the component list.",
+   "params": {}
+  },
+  "solidworks_read_document_units": {
+   "doc": "Read the length unit of the active document and compare it with the system default. Read-only; length_unit should be 0 for millimetres, and any other value means the millimetre arguments used elsewhere in this server sit on an undeclared conversion.",
+   "params": {}
+  },
+  "solidworks_undo": {
+   "doc": "Undo model actions in the active document and report the feature tree before and after. It modifies the document and does not save it; use it only after your own edits, because it undoes whatever happened last in the session without knowing whose change it was.",
+   "params": {
+    "steps": "Number of actions to undo; it must be at least 1. Defaults to 1."
+   }
+  },
+  "solidworks_build_review_report": {
+   "doc": "Build structured review-report data, export preview images and write a report into output_dir. It writes files and does not save the document; the optional view list and expected-output list are not exposed here, so the tool uses its own fixed defaults.",
+   "params": {
+    "output_dir": "Directory that receives the preview images and the report file.",
+    "basename": "Filename prefix for the outputs. Defaults to review."
+   }
+  },
+  "solidworks_part_mass_properties": {
+   "doc": "Read the mass properties of the active part without any conversion: volume, surface area, centre of mass and density. Read-only; the API returns millimetre-based values, and the physical unit of mass is not verified, so treat that number as a bare reading.",
+   "params": {}
+  },
+  "solidworks_hole_pattern": {
+   "doc": "Create one hole per explicit position in the active part. It writes hole features and does not save the document; both criteria must hold, meaning every position returns evidence and the feature tree really grows, and only through and blind holes are supported.",
+   "params": {
+    "positions": "Hole centres as [x_mm, y_mm] pairs in millimetres on the sketch plane; coordinates are the documented exception for sketch geometry.",
+    "kind": "Hole kind: through for a through hole or blind for a blind hole. Defaults to through.",
+    "diameter_mm": "Hole diameter in millimetres. Defaults to 8.",
+    "depth_mm": "Blind-hole depth in millimetres, required when kind is blind. Defaults to unset, which means no depth is given.",
+    "plane_name": "Sketch plane name, in English or in the localized names. Defaults to Front Plane.",
+    "name": "Prefix for the hole feature names, with a number suffix added per hole; it defaults to this interface's word for hole."
+   }
+  },
+  "solidworks_insert_curve_through_points": {
+   "doc": "Insert a curve through a list of XYZ points using the begin, point, end call sequence. It writes a curve feature and does not save the document; all three calls run, and success needs both their returns and a new feature in the tree.",
+   "params": {
+    "points_mm": "Points as [x, y, z] triples in millimetres; the API coordinate unit is assumed to be metres, converted once here and echoed back in the report."
+   }
+  },
+  "solidworks_assembly_component_pattern_report": {
+   "doc": "List the assembly feature tree node by node, including any component-pattern nodes. Read-only; it reports the whole tree rather than isolating pattern readings, so there is no dedicated pattern count behind it, and this path has not been verified on a real machine yet.",
+   "params": {
+    "include_subfeatures": "Whether to descend into sub-features while walking the tree. Defaults to true."
+   }
+  }
+ }
+}

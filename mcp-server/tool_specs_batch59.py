@@ -50,7 +50,7 @@ SPECS_BATCH59 = [
         function="export_image_report",
         params=[
             Param(
-                "output_path", str, description=_PATH + " ★ 后缀决定格式（PNG / JPG）。"
+                "output_path", str, description="Absolute output path; the file extension selects PNG or JPG."
             ),
         ],
         evidence=(
@@ -60,11 +60,10 @@ SPECS_BATCH59 = [
             "。⚠ 尺寸**不可指定**（`SaveAs3` 没有尺寸入参）⇒ ★ 按**当前视图**。（★ 要指定像素尺寸请用 `solidworks_expor"
             "t_bmp`。）"
         ),
-        doc="★ **把当前视图存成图片**（PNG / JPG，走官方 `IModelDocExtension.SaveAs3`）。"
-        "★★ 判据**不是返回值**而是**文件**：`ok = 无异常 且 文件存在 且 size > 0`。"
-        "★ 另回 `size_before` / `grew_or_created` —— ★ 免得把「旧文件本来就在」当成导出成功。"
-        "★ 真机证据：一张 PNG ⇒ `exists=true` · `size_bytes=67997` · `grew_or_created=true`。"
-        "⚠ 尺寸**不可指定**（`SaveAs3` 没有尺寸入参）⇒ ★ 按**当前视图**。"
-        "（★ 要指定像素尺寸请用 `solidworks_export_bmp`。）",
+        doc=(
+            "Export the current view to a PNG or JPG image file. Writes the image file to output_path. The criterion is"
+            " that the file exists and is not empty, and the image size cannot be chosen because the current view is ca"
+            "ptured as it is."
+        ),
     ),
 ]

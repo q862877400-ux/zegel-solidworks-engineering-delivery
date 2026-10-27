@@ -1,0 +1,195 @@
+{
+ "tools": {
+  "solidworks_session_stuck_status": {
+   "doc": "Report whether SolidWorks looks stuck, requiring both a missing response and no live solver process. Read-only; it stays conservative on purpose, because a long solve also looks unresponsive and killing it would interrupt real work.",
+   "params": {}
+  },
+  "solidworks_session_solver_processes": {
+   "doc": "List the solver and mesher kernel processes that are running right now. Read-only; use it to tell a solve that is still working from one that crashed, and to confirm that a solver really exited.",
+   "params": {}
+  },
+  "solidworks_session_wait_until_idle": {
+   "doc": "Wait until SolidWorks reports idle or the timeout expires, and say whether idle was reached. Read-only polling: it never touches the model, and it always returns instead of waiting forever.",
+   "params": {
+    "timeout": "Maximum wait in seconds before giving up; defaults to 60.0.",
+    "interval": "Seconds between two busy checks; defaults to 3.0."
+   }
+  },
+  "solidworks_topology_collect_numbers": {
+   "doc": "Read a solved topology study's result numbers, including the plot names and the material-mass plot. Read-only; a study that has not been solved reports no results instead of raising.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_list_constraints": {
+   "doc": "Report which constraints and controls already exist on a topology study, as booleans plus a count. Read-only, and it never returns COM objects; a kind counts as present only when it was actually retrieved.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_manager_report": {
+   "doc": "Report whether the topology study manager exists, what object type it is and which constraint kinds are retrievable. Read-only, and the COM object itself is never returned.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_options_report": {
+   "doc": "Report whether the topology study options object exists and what type it is. Read-only, and the COM object itself is never returned.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_topology_set_goal": {
+   "doc": "Set the topology study goal and report the retrievable constraint count before and after. It modifies study parameters only and never runs the solver; ok means the call did not raise and the count did not drop.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty.",
+    "goal_type": "Topology goal type value taken from the topology goal enum; defaults to 0.",
+    "mass_reduce_percent": "Target mass reduction in percent, where 75 means a 75 percent reduction; defaults to 0.0, which keeps the document default."
+   }
+  },
+  "solidworks_topology_set_iteration_options": {
+   "doc": "Set the topology iteration options and report the retrievable constraint count before and after. It modifies study parameters only and never runs the solver; the option values stay at the capability layer defaults because their enum is not verified here.",
+   "params": {
+    "study_name": "Name of an existing topology study; empty uses the first study in the document. Defaults to empty."
+   }
+  },
+  "solidworks_section_properties": {
+   "doc": "Read the section properties of the current selection. Not read-only: the official member clears and rewrites the selection set, and the returned area unit is unverified, so treat it as a number without a unit.",
+   "params": {}
+  },
+  "solidworks_scale_feature": {
+   "doc": "Create a scale feature that scales the body by the given factors. It writes a new feature into the active part; the factors are dimensionless ratios, so 2.0 doubles the body and 0.5 halves it.",
+   "params": {
+    "scale_type": "Scale type passed to the official call; 0, 1 and 2 are the values this repository has verified. Defaults to 1.",
+    "uniform": "Whether the three directions share one factor; true uses only x_factor. Defaults to true.",
+    "x_factor": "Scale ratio along X, dimensionless, where 2.0 doubles the body. Defaults to 2.0.",
+    "y_factor": "Scale ratio along Y, dimensionless. Defaults to 2.0.",
+    "z_factor": "Scale ratio along Z, dimensionless. Defaults to 2.0."
+   }
+  },
+  "solidworks_untrim_surface": {
+   "doc": "Untrim a surface so a trimmed face or edge grows back, adding that as a new feature. It writes a feature into the active part, works only on surface parts with the face or edges preselected, and its positive case has not been built on this machine yet.",
+   "params": {
+    "face_untrim_type": "Face untrim option from the official enum, listed in the returned face_untrim_types table; defaults to 0.",
+    "edge_untrim_type": "Edge untrim option from the official enum, listed in the returned edge_untrim_types table; defaults to 0.",
+    "distance_mm": "Extension distance in millimetres; the official parameter gives no unit, so the millimetre reading is an assumption reported back. Defaults to 0.0.",
+    "merge": "Whether to merge the resulting surfaces; defaults to true.",
+    "trim_opposite_side": "Whether to untrim the opposite side as well; defaults to false."
+   }
+  },
+  "solidworks_sweep_surface": {
+   "doc": "Create a swept surface from a profile and a path, and report the new feature. It writes a surface feature into the active part; the profile must be selected with mark 1 and the path with mark 4, a closed path is known to fail, and a missing selection returns nothing without raising.",
+   "params": {
+    "propagate": "Official propagate flag; defaults to true.",
+    "twist_ctrl": "Official twist control option value; defaults to 0.",
+    "keep_tangency": "Official keep-tangency flag; defaults to true.",
+    "advanced_smoothing": "Official advanced-smoothing flag; defaults to false.",
+    "start_matching": "Official start matching type value; defaults to 0.",
+    "end_matching": "Official end matching type value; defaults to 0.",
+    "path_align": "Official path alignment value, meaningful only with certain twist control options; defaults to 0.",
+    "use_feat_scope": "Official feature scope flag; defaults to false.",
+    "use_auto_select": "Official auto-select flag; false means the caller must select the bodies. Defaults to true.",
+    "twist_angle_deg": "Twist angle in degrees, meaningful only with a twist option; defaults to 0.0.",
+    "merge_smooth_faces": "Official merge-smooth-faces flag; defaults to false."
+   }
+  },
+  "solidworks_weldment_trim": {
+   "doc": "Skip this tool, NOT USABLE on this machine: trimming or extending weldment bodies adds no feature. It would write a weldment trim feature after you select the bodies with mark 1 and the boundaries with mark 2, but eight measured option combinations left the feature tree unchanged.",
+   "params": {
+    "end_cond": "End condition from the weldment end-condition enum: 0=none, 1=miter, 2=butt1, 3=butt2, 4=trim, 5=use default. Defaults to 0.",
+    "options": "Option bits combined as a logical sum: 1, 2, 4 and 8. Defaults to 0.",
+    "gap_mm": "Trim gap in millimetres; the official parameter gives no unit, so the millimetre reading is an assumption reported back. Defaults to 0.0."
+   }
+  },
+  "solidworks_export_flat_pattern_dxf": {
+   "doc": "Export the sheet-metal flat pattern of the active part to a DXF file for cutting. Writes the file, and refuses to run unless the part is already saved or allow_temporary_save is true.",
+   "params": {
+    "output_path": "Absolute target DXF path.",
+    "include_bend_lines": "Whether to write the bend lines. Defaults to true.",
+    "include_sketches": "Whether to write the sketches. Defaults to false.",
+    "include_hidden_edges": "Whether to write hidden edges. Defaults to false.",
+    "include_bounding_box": "Whether to write the bounding box. Defaults to false.",
+    "merge_coplanar_faces": "Whether to merge coplanar faces. Defaults to false.",
+    "allow_temporary_save": "Whether to save the unsaved part into temporary_save_dir first so the official precondition holds. Defaults to false, which keeps the previous behaviour.",
+    "temporary_save_dir": "Directory for that temporary save; must stay inside this repository. Defaults to output/_temp_save."
+   }
+  },
+  "solidworks_sheet_metal_insert_miter_flange": {
+   "doc": "Insert a sheet-metal miter flange and report the new feature. It writes a feature into the active part; the custom bend allowance is passed as null so the parent bend allowance is used, and no official precondition is documented, so the selection count is reported as unknown.",
+   "params": {
+    "use_default_radius": "Whether to use the default bend radius instead of global_radius_mm; defaults to true.",
+    "global_radius_mm": "Global bend radius in millimetres, used only when use_default_radius is false; defaults to 0.0.",
+    "rip_gap_mm": "Rip gap in millimetres; defaults to 0.0.",
+    "use_default_relief": "Whether to use the parent bend relief ratio; defaults to true.",
+    "use_relief_ratio": "Whether to use a custom relief ratio; defaults to false.",
+    "relief_ratio": "Custom relief ratio, a dimensionless fraction such as 0.6; defaults to 0.0.",
+    "relief_width_mm": "Relief width in millimetres, used only with a custom relief ratio and a rectangular or obround relief; defaults to 0.0.",
+    "relief_depth_mm": "Relief depth in millimetres, used under the same conditions as relief_width_mm; defaults to 0.0.",
+    "relief_type": "Relief type: 1=rectangular, 2=tear, 3=obround, 4=none, 5=tear bend. Defaults to 1.",
+    "trim_side_bends": "Whether to trim the side bends; defaults to false.",
+    "flange_pos": "Flange position: 1=material inside, 2=material outside, 3=bend outside, 4=bend centerline, 5=bend sharp, 6=bend tangent. Defaults to 1.",
+    "offset_dist1_mm": "Start offset of a partial flange in millimetres; defaults to 0.0.",
+    "offset_dist2_mm": "End offset of a partial flange in millimetres; defaults to 0.0."
+   }
+  },
+  "solidworks_sheet_metal_insert_closed_corner": {
+   "doc": "Insert a closed corner on the sheet-metal corners and report the tree, face-count and volume change. It writes a feature into the active part; the official call returns nothing and documents no precondition, so the selection count is reported as unknown rather than as satisfied.",
+   "params": {}
+  },
+  "solidworks_weldment_insert_end_cap": {
+   "doc": "Insert a weldment end cap on the end faces you select first, and report the new feature. It writes a feature into the active part and does not pick the faces for you; this entry reads selections with mark 0, unlike the gusset entry that needs mark 1.",
+   "params": {
+    "depth_mm": "End cap thickness in millimetres.",
+    "is_given_offset": "True to give an offset value, false to give a thickness ratio; defaults to false.",
+    "is_chamfer": "True to chamfer the end cap, false to fillet it; defaults to false.",
+    "offset_value_mm": "Edge offset in millimetres, used only when is_given_offset is true; defaults to 0.0.",
+    "wall_ratio": "Wall thickness ratio, a dimensionless fraction such as 0.6, used only when is_given_offset is false; defaults to 0.0.",
+    "chamfer_value_mm": "Chamfer distance when is_chamfer is true, otherwise the fillet radius, in millimetres; defaults to 0.0.",
+    "is_corner_treatment": "Whether to chamfer or fillet the end cap corners, valid only when is_given_offset is false; defaults to false.",
+    "depth_offset_mm": "Inset distance in millimetres, valid only when is_end_cap_inward is 2; defaults to 0.0.",
+    "is_reverse": "Whether to reverse the offset or the thickness ratio; defaults to false.",
+    "is_end_cap_inward": "Thickness direction: 0=extend outward, 1=extend inward, 2=specify inset. Defaults to 0."
+   }
+  },
+  "solidworks_weldment_gusset_create": {
+   "doc": "Insert a weldment gusset between two faces you select with mark 1, and report the new feature. It writes a feature into the active part and reports how many selections sit on mark 1, so a single-face selection shows up instead of looking like a failed feature.",
+   "params": {
+    "depth_mm": "Gusset thickness in millimetres.",
+    "dir_type": "Thickness direction: 0=inner, 1=both sides, 2=outer. Defaults to 1.",
+    "loc_type": "Profile location along the reference plane: 0=start, 1=center, 2=end. Defaults to 1.",
+    "is_profile": "Whether to use a polygon profile instead of a triangle profile; defaults to false.",
+    "profile_d1_mm": "First profile distance in millimetres; defaults to 0.0.",
+    "profile_d2_mm": "Second profile distance in millimetres; defaults to 0.0.",
+    "profile_d3_mm": "Third profile distance in millimetres; defaults to 0.0.",
+    "profile_angle_deg": "Profile angle in degrees, valid only when use_len_dim is false; defaults to 45.0.",
+    "profile_d4_mm": "Fourth profile distance in millimetres, valid only when use_len_dim is true; defaults to 0.0.",
+    "offset_reference_plane": "Whether to offset the reference plane of the gusset sketch; defaults to false.",
+    "d_profile_offset_mm": "Offset of that reference plane in millimetres; defaults to 0.0.",
+    "crv_index": "Index of the edge to use when several edges intersect; defaults to 0.",
+    "reverse_dir": "Whether to reverse the offset direction; defaults to false.",
+    "reverse_face": "Whether to reverse the profile distances; defaults to false.",
+    "use_len_dim": "True to dimension with profile_d4_mm, false to use profile_angle_deg; defaults to false.",
+    "profile_d5_mm": "First chamfer distance in millimetres, used only when need_chamfer_in_gusset is true; defaults to 0.0.",
+    "profile_d6_mm": "Second chamfer distance in millimetres, used only when the chamfer flags allow it; defaults to 0.0.",
+    "profile_chamfer_angle_deg": "Chamfer angle in degrees, used instead of profile_d6_mm when use_len_dim_for_chamfer is false; defaults to 45.0.",
+    "use_len_dim_for_chamfer": "True to dimension the chamfer with profile_d6_mm, false to use the chamfer angle; defaults to false.",
+    "need_chamfer_in_gusset": "Whether to chamfer the gusset to leave room for a weld bead underneath; defaults to false."
+   }
+  },
+  "solidworks_surface_midsurface_create": {
+   "doc": "Create surface midsurfaces for one body of the active part and report the new sheet bodies. It writes surface features into the part; the active document must be a part, both body and placement are passed through unchanged, and the tool is registered but not verified on this machine.",
+   "params": {
+    "body_index": "Zero-based index of the body, taken from the part solid-body list.",
+    "placement": "Reference surface position, passed through unchanged because the official parameter states neither a unit nor a dimension.",
+    "knit": "True to sew all reference surfaces into one."
+   }
+  },
+  "solidworks_part_shell": {
+   "doc": "Hollow the part with a wall thickness and report the feature, rebuild and error read-back. It writes a feature into the active part and does not save it; an empty feature_name falls back to the default shell name, and a wrong name reports the feature as absent.",
+   "params": {
+    "thickness_mm": "Wall thickness in millimetres, following the document unit.",
+    "feature_name": "Expected feature name used by the read-back; defaults to empty, which falls back to the default shell name, and a wrong name reports the feature as absent."
+   }
+  }
+ }
+}

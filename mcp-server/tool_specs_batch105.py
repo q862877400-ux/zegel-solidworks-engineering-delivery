@@ -36,10 +36,10 @@ SPECS_BATCH105 = [
             "别：★ 那个遍历**焊件**特征；★ 这个遍历**钣金**特征 —— ★ **不是同一族**（★ 已逐字比对过）✓★ 判据：★ 回的是"
             "一份 JSON 化清单（★ 读不到就如实报，★ 不假装有内容）。"
         ),
-        doc="★ **遍历钣金特征**（★ 读侧）：★ 回一份**逐特征**的清单 ✓"
-        "★★ 与既有 `solidworks_weldment_iter_features` 的区别：★ 那个遍历**焊件**特征；"
-        "★ 这个遍历**钣金**特征 —— ★ **不是同一族**（★ 已逐字比对过）✓"
-        "★ 判据：★ 回的是一份 JSON 化清单（★ 读不到就如实报，★ 不假装有内容）。",
+        doc=(
+            "List the sheet-metal features of the active part by walking the feature tree in order. Read-only; use soli"
+            "dworks_weldment_iter_features instead for weldment features, which are a different family."
+        ),
     ),
     ToolSpec(
         name="solidworks_topology_constraints_report",
@@ -56,11 +56,10 @@ SPECS_BATCH105 = [
             "，★ 用来**观察**那种边界（★ 不是绕过它）✓⚠ 需要**拓扑研究对象**（★ 注入器给 `study`；★ 没有研究时应报错）"
             "。"
         ),
-        doc="★ **读拓扑研究里的约束与控制**（★ 读侧）✓"
-        "★ 与既有 `solidworks_topology_list_constraints` 的区别：★ 那个回**布尔清单**"
-        "（哪几类**有/没有**）；★ 这个回**逐条的读数**（★ 哪些约束、什么参数）⇒ ★ 更细 ✓"
-        "★★ 本仓在规格 216 已定性：★ **建侧**那一族（对称/脱模/质量约束）在本机**整体回 `None`**"
-        "（★ 族级边界）⇒ ★ 本工具是**读侧**，★ 用来**观察**那种边界（★ 不是绕过它）✓"
-        "⚠ 需要**拓扑研究对象**（★ 注入器给 `study`；★ 没有研究时应报错）。",
+        doc=(
+            "Report the constraints and controls already built in a topology study, one entry per constraint with its p"
+            "arameters. Read-only and JSON-able; it needs a topology study object, and the list variant reports boolean"
+            "s instead."
+        ),
     ),
 ]

@@ -79,14 +79,10 @@ SPECS_BATCH24 = [
             " treat the number as unverified rather than assume a unit. ⚠ `AccuracyLevel` is not exposed (the member is"
             " not readable on this build). ★ Reading only; writing overrides is a different capability."
         ),
-        doc="Read the mass properties of the ACTIVE part, without any conversion: volume (mm^3), "
-        "surface area (mm^2), centre of mass (mm, three components) and density. "
-        "★★ IMPORTANT: the API is measured to return MILLIMETRE-based values (a 40x20x10 mm box "
-        "reports volume 8000 and surface area 2800), NOT SI metres — so nothing here is scaled. "
-        "⚠★ `mass` is passed through as reported, but ITS PHYSICAL UNIT IS NOT VERIFIED: on the "
-        "test box its value equals volume(mm^3) x density, which does not form a consistent "
-        "unit with either mm^3 or m^3 — treat the number as unverified rather than assume a unit. "
-        "⚠ `AccuracyLevel` is not exposed (the member is not readable on this build). "
-        "★ Reading only; writing overrides is a different capability.",
+        doc=(
+            "Read the mass properties of the active part without any conversion: volume, surface area, centre of mass a"
+            "nd density. Read-only; the API returns millimetre-based values, and the physical unit of mass is not verif"
+            "ied, so treat that number as a bare reading."
+        ),
     ),
 ]

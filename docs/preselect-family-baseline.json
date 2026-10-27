@@ -25,18 +25,32 @@
    "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-06c）**改判：这一条不修** —— ★ 原来它被登记为「待修工作项」，★ 而**读台账之后结论变了**：★ 不是「没找到修法」，★ 而是**这条路在本后端上被证明走不通** ✗ ⇒ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓ ★★ **改判依据（台账 `part_and_features` 逐字，已按事实 53 强停）**：「累计 **6 种选法全部失败**（草图整体 / 实体边 / 草图段 × 各两种选法）⇒ ★★★ **卡点查明**：`IEntity.Select4` **没有 mark 参数**（选完 mark 仍是 0），而 `SelectByID2` 需要**名字**、**边与草图段都没有名字** ⇒ ★★ 「选中 2 个实体 + mark=1」这个官方前提，**在这条后端上我没能同时满足**」；★ 另：「官方入口 `IModelDoc2.InsertCompositeCurve()`（**零参**、回 Boolean，Remarks 要求用 **mark=1** 选实体），★ 真机上它返回 **False**」✓ ⇒ ★★ 故**它的修法不是「补选区」** —— ★ 补了也过不去（★ 同一堵墙）✗ ⇒ ★ 处置：★ **如实记为能力缺口**（★ 与 `animation_export` 的 AVI 同型：★ 边界已定位、★ 记 limitations、★ 保留工具以便诊断）✓"
   },
   {
-   "tool": "solidworks_topology_create_demold_control",
-   "module": "sw_topology",
-   "function": "create_demold_control",
-   "verdict": "已定性·族级边界（★ 不修 —— 不是「待修」）",
-   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-11）**改判为边界：`Create*` 那一族在本机**整体**回 `None`** —— ★ 已逐个测掉前置候选：★ ① **赋材料**（真机 `MaterialIdName` 回读 `solidworks materials|AISI 1020|2`）⇒ 仍 `None` ✗；★ ② **按名取研究**（`get_study_by_name` 回 `True` 而非用返回值）⇒ 仍 `None` ✗；★ ③ **先建目标**（`set_topology_goal`）⇒ ★★ 它**自己**就报 「`CreateMassConstraint 未返回对象`」⇒ ★★ 即**同一个 `Create*` 族**里**质量约束也回 `None`** ✓ ｜ ★★ 于是本机失败的是**整个族**（质量约束 · 对称控制 · 脱模控制），★ 而**不是**某一条缺前置 ⇒ 这是**族级/边界**现象，★ 不是「再补一步就能通」✗ ｜ ★ 反例仍证明**我的选区代码是通的**（`index:99` ⇒ `EntitySelectionError: FACE 序号 99 越界`）✓ ｜ ⚠ 台账 `topology_constraints_and_controls` 是 `verified`（8 项过 7）—— ★ 而那 7 项**未包含**对称/脱模这两个控制（★ 待核它的逐项清单）；★ 故**不是**「台账与实测矛盾」，★ 而是「**这两个控制从来没人验过**」✓ ｜ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "tool": "solidworks_section_area_crosscheck",
+   "module": "sw_mass_property",
+   "function": "section_properties",
+   "verdict": "已定性·描述改写后新暴露（★ 待修：无选择入口）",
+   "reason": "★★ 2026-10-26（规格 352 P4）：该工具读的是**当前选择集**的截面属性，本规格只改描述 —— 改写后它**第一次把这条前置写在描述里**（原文没写 ⇒ 旧描述**遮住了**这个前置）。★ 工具签名 `section_properties(model, selection='', selection_kind='FACE')` 在能力层**有**选择入口，但对外 `ToolSpec` **没有暴露** `selection` 入参 ⇒ ★ 按事实 503（解析器会清空选区），MCP 表面**无法**满足「先选好」⇒ **真缺口**。★ 处置：登记待修（对外补 `selection` 入参或加 `pre_call`），**不在本规格修**（本规格不动实现）。"
   },
   {
-   "tool": "solidworks_topology_create_symmetry_control",
-   "module": "sw_topology",
-   "function": "create_symmetry_control",
-   "verdict": "已定性·族级边界（★ 不修 —— 不是「待修」）",
-   "reason": "★★★ 2026-10-07（接手轮 · 规格 216 T-216-11）**改判为边界：`Create*` 那一族在本机**整体**回 `None`** —— ★ 已逐个测掉前置候选：★ ① **赋材料**（真机 `MaterialIdName` 回读 `solidworks materials|AISI 1020|2`）⇒ 仍 `None` ✗；★ ② **按名取研究**（`get_study_by_name` 回 `True` 而非用返回值）⇒ 仍 `None` ✗；★ ③ **先建目标**（`set_topology_goal`）⇒ ★★ 它**自己**就报 「`CreateMassConstraint 未返回对象`」⇒ ★★ 即**同一个 `Create*` 族**里**质量约束也回 `None`** ✓ ｜ ★★ 于是本机失败的是**整个族**（质量约束 · 对称控制 · 脱模控制），★ 而**不是**某一条缺前置 ⇒ 这是**族级/边界**现象，★ 不是「再补一步就能通」✗ ｜ ★ 反例仍证明**我的选区代码是通的**（`index:99` ⇒ `EntitySelectionError: FACE 序号 99 越界`）✓ ｜ ⚠ 台账 `topology_constraints_and_controls` 是 `verified`（8 项过 7）—— ★ 而那 7 项**未包含**对称/脱模这两个控制（★ 待核它的逐项清单）；★ 故**不是**「台账与实测矛盾」，★ 而是「**这两个控制从来没人验过**」✓ ｜ ★★ **待修工作项（不是「已认可」）**：★ 函数体**零选区 token** ⇒ 选区由 SolidWorks 自己隐式吃 ⇒ ★ 缺选区时**静默失败**（返回 None / 无树增量），★ 最隐蔽的一档 ✗ ｜ 档位口径照 `specs/202-user-coverage-gaps/recon/preselect-family-merged.md` §三（三路并集 + 41 条逐条复核）；★ 修法见该文件 §四：复用 `tool_specs_batch74.py::_select_faces_for` 的 `pre_call` 形状。⚠ **本轮未真机复核**（SolidWorks 未启动）⇒ ★ 只按**静态三信号**落档，★ 真机复核是修它时的第一步 ✓"
+   "tool": "solidworks_sketch_mirror",
+   "module": "sw_sketch_edit",
+   "function": "sketch_mirror",
+   "verdict": "已定性·描述改写后新暴露（★ 待修：无选择入口）",
+   "reason": "★★ 2026-10-26（规格 352 P4）：镜像作用于**选中的草图段 + 选中的中心线**，而对外 `ToolSpec` 没有任何 `selection` 入参、也没有 `pre_call` ⇒ ★ 模型**无法**指定要镜像什么。改写只是把原文含混的「镜像选中的实体」讲清楚了，缺口本身**早已存在**。★ 处置：待修（补声明式选择入参 + 调用前重建选区），**不在本规格修**。"
+  },
+  {
+   "tool": "solidworks_insert_delete_face",
+   "module": "sw_surface_edit_ops",
+   "function": "insert_delete_face",
+   "verdict": "已定性·描述改写后新暴露（★ 待修：无选择入口）",
+   "reason": "★★ 2026-10-26（规格 352 P4）：官方语义是「删**选中的那一个面**」，而对外只有 `option` 一个入参、无 `selection`、无 `pre_call` ⇒ ★ 模型无法指定删哪个面。★ 旧描述没写这条前置（**遮住了**），改写后写明。★ 处置：待修（补声明式面选择 + `pre_call`），**不在本规格修**。"
+  },
+  {
+   "tool": "solidworks_insert_offset_surface",
+   "module": "sw_surface_edit_ops",
+   "function": "insert_offset_surface",
+   "verdict": "已定性·描述改写后新暴露（★ 待修：无选择入口）",
+   "reason": "★★ 2026-10-26（规格 352 P4）：等距曲面的参考面必须**先选中**，而对外只有 `thickness_mm` / `reverse`、无 `selection`、无 `pre_call` ⇒ ★ 模型无法指定参考面。★ 旧描述未写这条前置，改写后写明。★ 处置：待修（补声明式面选择 + `pre_call`），**不在本规格修**。"
   }
  ]
 }

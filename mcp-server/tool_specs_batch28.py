@@ -85,17 +85,25 @@ SPECS_BATCH28 = [
         inject="study",
         param_alias={"study_name": None},
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("units", int, default=-1, description=_UNITS),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty uses the first study "
+                                                     "in the document. Defaults to empty."
+                                                 )),
+            Param("units", int, default=-1, description=(
+                                                "Unit code: 0=SI, 1=English, 2=Metric; -1 returns values in the documen"
+                                                "t length unit. Defaults to -1."
+                                            )),
         ],
         evidence=(
             "Return the suggested mesh `{element_size, tolerance, units}` for a study. ★ The default units = -1 yields "
             "MILLIMETRE-scale values (verified in this repo) and nothing is converted — the `units` value is echoed bac"
             "k so the caller can tell."
         ),
-        doc="Return the suggested mesh `{element_size, tolerance, units}` for a study. "
-        "★ The default units = -1 yields MILLIMETRE-scale values (verified in this repo) and "
-        "nothing is converted — the `units` value is echoed back so the caller can tell.",
+        doc=(
+            "Read the suggested element size and tolerance for a simulation study. Read-only; units defaults to -1, whi"
+            "ch yields millimetre-scale values, and nothing is converted, so the units value is echoed back for the cal"
+            "ler to check."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_create_mesh",
@@ -109,20 +117,25 @@ SPECS_BATCH28 = [
             "tolerance_mm": "tolerance",
         },
         params=[
-            Param("study_name", str, default="", description=_STUDY),
-            Param("units", int, default=0, description=_UNITS),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty uses the first study "
+                                                     "in the document. Defaults to empty."
+                                                 )),
+            Param("units", int, default=0, description="Unit code: 0=SI, 1=English, 2=Metric. Defaults to 0."),
             Param(
                 "element_size_mm",
                 float,
                 default=0.0,
-                description="Global element size in MILLIMETRES (0.0 = let SolidWorks choose).",
+                description="Global element size in millimetres; 0 lets SolidWorks choose. Defaults to 0.",
             ),
             Param(
                 "tolerance_mm",
                 float,
                 default=0.0,
-                description="Mesh tolerance in MILLIMETRES (0.0 = let SolidWorks choose; "
-                "the official default is 5% of the element size).",
+                description=(
+                    "Mesh tolerance in millimetres; 0 lets SolidWorks choose, and the official default is 5 percent of "
+                    "the element size. Defaults to 0."
+                ),
             ),
         ],
         evidence=(
@@ -131,11 +144,11 @@ SPECS_BATCH28 = [
             "rule: COM return values that cannot prove themselves are never trusted; `return_is_trustworthy` is always "
             "false)."
         ),
-        doc="Mesh the study and return a READ-BACK report "
-        "`{ok, return_code, return_is_trustworthy, element_count}`. "
-        "★★ Judge success by `ok`, which is derived from `element_count > 0` — NOT from the "
-        "return code (this repo's rule: COM return values that cannot prove themselves are "
-        "never trusted; `return_is_trustworthy` is always false).",
+        doc=(
+            "Mesh a simulation study and report the read-back result. It creates the mesh on the study and does not sav"
+            "e the document; judge success by ok, which comes from a positive element count, never by the return code, "
+            "because that code cannot prove itself."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_run_analysis",
@@ -145,17 +158,21 @@ SPECS_BATCH28 = [
         inject="study",
         param_alias={"study_name": None},
         params=[
-            Param("study_name", str, default="", description=_STUDY),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing simulation study; empty uses the first study "
+                                                     "in the document. Defaults to empty."
+                                                 )),
         ],
         evidence=(
             "Run the study and return a READ-BACK report `{ok, return_code, return_is_trustworthy, results_present, plo"
             "t_count, plot_names}`. ★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
             "code — this repo has documented four separate cases of a COM return code lying."
         ),
-        doc="Run the study and return a READ-BACK report "
-        "`{ok, return_code, return_is_trustworthy, results_present, plot_count, plot_names}`. "
-        "★★ Judge success by `ok` (= results present AND plot_count > 0), NOT by the return "
-        "code — this repo has documented four separate cases of a COM return code lying.",
+        doc=(
+            "Run the solver for a simulation study and report the read-back result. It creates results and plots on the"
+            " study and does not save the document; judge success by ok, which means results exist and the plot count i"
+            "s above zero, never by the return code."
+        ),
     ),
     ToolSpec(
         name="solidworks_simulation_collect_evidence",
@@ -169,9 +186,11 @@ SPECS_BATCH28 = [
             "count / analysis_type / mesh_type / configuration / is_active / loads_and_restraints`, plus `cosmos_versio"
             "n`, `study_count` and `active_study_index`. ★ Reading only."
         ),
-        doc="Return a JSON-able summary of every study in the active document: per-study "
-        "`name / type / state / entity_count / analysis_type / mesh_type / configuration / "
-        "is_active / loads_and_restraints`, plus `cosmos_version`, `study_count` and "
-        "`active_study_index`. ★ Reading only.",
+        doc=(
+            "Read every simulation study in the active document into an audit summary. Read-only; each study reports it"
+            "s name, type, state, entity count, analysis type, mesh type, configuration, active flag and load counts, a"
+            "nd the document reports the cosmos version, study count and active index. It deliberately does not read re"
+            "sult values."
+        ),
     ),
 ]

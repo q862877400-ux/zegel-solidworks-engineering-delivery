@@ -43,7 +43,11 @@ UNAVAILABLE_MARKS = ("仍不可用", "NOT USABLE")
 #: ★ 判据 ②：**管线内部件**的指纹 —— 谁在文档里承认自己是这条管线的一步，
 #:   谁的首句就必须自证身份（★ 同样实测过：5 条、零假阳性）✓
 PIPELINE_FINGERPRINT = "generate_macro_with_guard"
-INTERNAL_MARK = "内部件"
+#: ★★ 2026-10-26（规格 352 D2）：模型可见文本统一改英文 ⇒ 本标记集**加英文等价词**。
+#:   ★ 这是**扩词表、不是放宽判据**：中文标记原样保留，命中面只增不减
+#:   （增的是同一个结论的英文写法）；★ 理由：`doc` 改成英文后，若只认 `内部件`，
+#:   那 5 条**合格的英文首句**会被误报成「没有自证身份」✓
+INTERNAL_MARKS = ("内部件", "internal step", "Internal step", "internal helper")
 
 
 def lean_first(doc: str) -> str:
@@ -70,12 +74,12 @@ def judge(name: str, doc: str) -> list:
                 )
             )
 
-    if PIPELINE_FINGERPRINT in text and INTERNAL_MARK not in first:
+    if PIPELINE_FINGERPRINT in text and not any(m in first for m in INTERNAL_MARKS):
         problems.append(
             (
                 "首句未自证「内部件」",
-                "★ 它是 `%s` 管线的内部步骤，而 lean 首句里没有 `%s` ⇒ 模型会以为它是给自己用的"
-                % (PIPELINE_FINGERPRINT, INTERNAL_MARK),
+                "★ 它是 `%s` 管线的内部步骤，而 lean 首句里没有 %s 之一 ⇒ 模型会以为它是给自己用的"
+                % (PIPELINE_FINGERPRINT, "/".join("`%s`" % m for m in INTERNAL_MARKS)),
             )
         )
     return problems

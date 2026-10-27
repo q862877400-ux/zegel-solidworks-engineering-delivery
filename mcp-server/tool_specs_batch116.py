@@ -91,18 +91,25 @@ SPECS_BATCH116 = [
         function="feature_readback",
         inject="model",
         params=[
-            Param("feature_name", str, description="Feature name in the tree."),
+            Param("feature_name", str, description=(
+                                           "Feature name expected in the tree, spelled as this SolidWorks interface sho"
+                                           "ws it."
+                                       )),
             Param(
                 "do_rebuild",
                 bool,
                 default=True,
-                description="Rebuild before reading back.",
+                description="Whether to rebuild the model before reading it back. Defaults to true.",
             ),
         ],
         evidence=(
             "Read a feature back from the tree. ★ Criterion = the returned dict, not a guess."
         ),
-        doc="Read a feature back from the tree. ★ Criterion = the returned dict, not a guess.",
+        doc=(
+            "Read one feature back from the tree to check that it really exists. It rebuilds the model unless do_rebuil"
+            "d is false, then reports presence, rebuild success, the What's Wrong count and the last few feature names;"
+            " ok is true only when the feature is present, the rebuild worked and the What's Wrong count is 0."
+        ),
     ),
     ToolSpec(
         name="solidworks_render_material_list",
@@ -114,7 +121,10 @@ SPECS_BATCH116 = [
         evidence=(
             "List the render materials applied in the active document."
         ),
-        doc="List the render materials applied in the active document.",
+        doc=(
+            "List the render material objects applied in the active document. Read-only; an empty document returns an e"
+            "mpty list, and nothing is converted or applied."
+        ),
     ),
     # ── 草图尺寸 / 实体 ────────────────────────────────────────────
     ToolSpec(
@@ -131,13 +141,16 @@ SPECS_BATCH116 = [
             "y_mm": float(p["y_mm"]) / 1000.0,
         },
         params=[
-            Param("x_mm", float, description="Pick point X in MILLIMETRES."),
-            Param("y_mm", float, description="Pick point Y in MILLIMETRES."),
+            Param("x_mm", float, description="Pick point X in millimetres, where the dimension text is placed."),
+            Param("y_mm", float, description="Pick point Y in millimetres, where the dimension text is placed."),
         ],
         evidence=(
             "Add a horizontal dimension at the given pick point. ★ Needs a sketch open."
         ),
-        doc="Add a horizontal dimension at the given pick point. ★ Needs a sketch open.",
+        doc=(
+            "Add a horizontal dimension whose text is placed at the given pick point. Requires a sketch to be open, it "
+            "writes a display dimension into that sketch, and it does not save the document."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_dimension_vertical",
@@ -151,13 +164,16 @@ SPECS_BATCH116 = [
             "y_mm": float(p["y_mm"]) / 1000.0,
         },
         params=[
-            Param("x_mm", float, description="Pick point X in MILLIMETRES."),
-            Param("y_mm", float, description="Pick point Y in MILLIMETRES."),
+            Param("x_mm", float, description="Pick point X in millimetres, where the dimension text is placed."),
+            Param("y_mm", float, description="Pick point Y in millimetres, where the dimension text is placed."),
         ],
         evidence=(
             "Add a vertical dimension at the given pick point. ★ Needs a sketch open."
         ),
-        doc="Add a vertical dimension at the given pick point. ★ Needs a sketch open.",
+        doc=(
+            "Add a vertical dimension whose text is placed at the given pick point. Requires a sketch to be open, it wr"
+            "ites a display dimension into that sketch, and it does not save the document."
+        ),
     ),
     ToolSpec(
         name="solidworks_feature_revolve_cut",
@@ -171,19 +187,28 @@ SPECS_BATCH116 = [
         param_alias={"angle_deg": None},
         derived_args=lambda p: {"angle_rad": math.radians(float(p["angle_deg"]))},
         params=[
-            Param("sketch_name", str, description="Sketch that defines the profile."),
-            Param("angle_deg", float, description="Revolve angle in DEGREES."),
+            Param("sketch_name", str, description="Name of the sketch that defines the profile, selected with mark 0."),
+            Param("angle_deg", float, description=(
+                                          "Revolve angle in degrees; it is converted to radians once at this boundary."
+                                      )),
             Param(
                 "axis_sketch_name",
                 str,
                 default=None,
-                description="Sketch holding the axis (optional).",
+                description=(
+                    "Name of the sketch holding the revolve axis, selected with mark 4 or 16 before the profile. Defaul"
+                    "ts to unset, so no separate axis is selected."
+                ),
             ),
         ],
         evidence=(
             "Revolve cut from a sketch. ★ Angle is given in degrees; converted once at this boundary."
         ),
-        doc="Revolve cut from a sketch. ★ Angle is given in degrees; converted once at this boundary.",
+        doc=(
+            "Revolve a sketch profile as a cut and remove material around an axis. It selects the axis sketch before th"
+            "e profile because that order matters, writes a cut feature into the active part and does not save the docu"
+            "ment."
+        ),
     ),
     #: ⚠ 2026-10-18 未接：`sw_sketch.get_sketch_slots(sketch)` —— ★ 首参名是 `sketch`，
     #: 而 `register_capabilities.RESOLVERS` 的 21 个键里**没有** `sketch`（见该文件 L396
@@ -200,17 +225,27 @@ SPECS_BATCH116 = [
         inject="model",
         params=[
             Param(
-                "center_x_mm", float, description="Rotation centre X in MILLIMETRES."
+                "center_x_mm", float, description=(
+                                          "Rotation centre X in millimetres, converted to metres once at this boundary."
+                                      )
             ),
             Param(
-                "center_y_mm", float, description="Rotation centre Y in MILLIMETRES."
+                "center_y_mm", float, description=(
+                                          "Rotation centre Y in millimetres, converted to metres once at this boundary."
+                                      )
             ),
-            Param("angle_deg", float, description="Rotation angle in DEGREES."),
+            Param("angle_deg", float, description=(
+                                          "Rotation angle in degrees, converted to radians once at this boundary."
+                                      )),
         ],
         evidence=(
             "Rotate the selected sketch entities about a centre."
         ),
-        doc="Rotate the selected sketch entities about a centre.",
+        doc=(
+            "Rotate the selected sketch entities about a centre point. It writes the rotated geometry into the open ske"
+            "tch and does not save the document; the returned report compares the sketch bounding box and the sketch tr"
+            "ansform before and after."
+        ),
     ),
     # ── 曲面族 ───────────────────────────────────────────────────
     ToolSpec(
@@ -223,19 +258,25 @@ SPECS_BATCH116 = [
         pre_call=_select_faces_for(mark=0, count=1),
         params=[
             Param(
-                "thickness_mm", float, description="Offset thickness in MILLIMETRES."
+                "thickness_mm", float, description=(
+                                           "Offset distance in millimetres, converted to metres once at this boundary."
+                                       )
             ),
             Param(
                 "reverse",
                 bool,
                 default=False,
-                description="Reverse the offset direction.",
+                description="Whether to offset to the other side. Defaults to false.",
             ),
         ],
         evidence=(
             "Insert an offset surface from the selected face(s). ★ Selects one face itself via pre_call."
         ),
-        doc="Insert an offset surface from the selected face(s). ★ Selects one face itself via pre_call.",
+        doc=(
+            "Insert an offset surface at a given distance from a face that this tool selects itself. It writes a surfac"
+            "e feature into the active part and does not save the document, and the insert call returns nothing, so suc"
+            "cess shows only as a new feature in the tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_planar",
@@ -247,7 +288,11 @@ SPECS_BATCH116 = [
         evidence=(
             "Insert a planar surface from the selected closed sketch / edges."
         ),
-        doc="Insert a planar surface from the selected closed sketch / edges.",
+        doc=(
+            "Insert a planar surface from the closed boundary that is currently selected, such as a sketch or a loop of"
+            " edges. It writes a surface feature and does not save the document; select the closed boundary first, and "
+            "success needs both a non-false return and a new feature in the tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_replace_face",
@@ -259,7 +304,11 @@ SPECS_BATCH116 = [
         evidence=(
             "Replace a solid face with a surface face. ★ Select declaratively first."
         ),
-        doc="Replace a solid face with a surface face. ★ Select declaratively first.",
+        doc=(
+            "Replace a solid face with a surface face. It writes a replace-face feature and does not save the document;"
+            " select the face to replace with mark 1 and the replacement face with mark 2 first, and use solid faces ra"
+            "ther than surface bodies."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_untrim",
@@ -269,16 +318,24 @@ SPECS_BATCH116 = [
         inject="model",
         params=[
             Param(
-                "face_untrim_type", int, default=0, description="Face untrim type enum."
+                "face_untrim_type", int, default=0, description=(
+                                                        "Face untrim type: 0=automatic, 1=manual. Defaults to 0."
+                                                    )
             ),
             Param(
-                "edge_untrim_type", int, default=0, description="Edge untrim type enum."
+                "edge_untrim_type", int, default=0, description=(
+                                                        "Edge untrim type: 0=automatic, 1=manual. Defaults to 0."
+                                                    )
             ),
         ],
         evidence=(
             "Untrim a surface and report what happened."
         ),
-        doc="Untrim a surface and report what happened.",
+        doc=(
+            "Untrim a surface so the trimmed-away part of the face grows back. It writes an untrim feature and does not"
+            " save the document; it is valid only on surface parts and requires the face or edges to be preselected, an"
+            "d success shows as a new feature in the tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_flatten",
@@ -291,14 +348,24 @@ SPECS_BATCH116 = [
                 "accuracy_factor",
                 int,
                 default=4,
-                description="Flatten accuracy factor.",
+                description=(
+                    "Flatten accuracy factor from 1 (highest accuracy) to 10; the real-machine run used 4. Defaults to "
+                    "4."
+                ),
             ),
-            Param("should_use_tears", bool, default=False, description="Allow tears."),
+            Param("should_use_tears", bool, default=False, description=(
+                                                               "Whether to allow tears in the flattened result. Default"
+                                                               "s to false."
+                                                           )),
         ],
         evidence=(
             "Flatten a surface. ★ Criterion = the feature tree gained a feature."
         ),
-        doc="Flatten a surface. ★ Criterion = the feature tree gained a feature.",
+        doc=(
+            "Flatten a surface body into a flat surface feature. It writes a flatten feature and does not save the docu"
+            "ment; the tool selects the surface face with mark 1 and a vertex with mark 16 by itself, and it reports pr"
+            "econditions_held false when there is no surface body to flatten."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_sweep",
@@ -310,7 +377,11 @@ SPECS_BATCH116 = [
         evidence=(
             "Sweep a surface from the selected profile and path."
         ),
-        doc="Sweep a surface from the selected profile and path.",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: every entry point returns nothing and the tree stays unchanged"
+            ". It is meant to sweep a surface from a selected profile and path, but it writes no geometry into the part"
+            ", so do not use it and do not read a returned report as a built feature."
+        ),
     ),
     ToolSpec(
         name="solidworks_surface_revolved_ref",
@@ -319,14 +390,25 @@ SPECS_BATCH116 = [
         function="insert_revolved_ref_surface",
         inject="model",
         params=[
-            Param("angle_deg", float, description="Revolve angle in DEGREES."),
-            Param("rev_type", int, default=0, description="Revolve type enum."),
-            Param("reverse_dir", bool, default=False, description="Reverse direction."),
+            Param("angle_deg", float, description=(
+                                          "Revolve angle in degrees, converted to radians once here; with rev_type 1 it"
+                                          " is the total angle."
+                                      )),
+            Param("rev_type", int, default=0, description=(
+                                                  "Revolve type: 0=one direction, 1=mid-plane, 2=two directions. Defaul"
+                                                  "ts to 0."
+                                              )),
+            Param("reverse_dir", bool, default=False, description=(
+                                                          "Whether to revolve the other way. Defaults to false."
+                                                      )),
         ],
         evidence=(
             "Insert a revolved reference surface."
         ),
-        doc="Insert a revolved reference surface.",
+        doc=(
+            "Revolve a profile into a reference surface about a centreline. It writes a surface feature and does not sa"
+            "ve the document; select the profile before calling, and 3D sketches are not supported."
+        ),
     ),
     ToolSpec(
         name="solidworks_curve_through_points",
@@ -338,13 +420,19 @@ SPECS_BATCH116 = [
             Param(
                 "points_mm",
                 list,
-                description="Points in MILLIMETRES (list of triples).",
+                description=(
+                    "Points as a list of [x, y, z] triples in millimetres; the API coordinate unit is assumed to be met"
+                    "res, converted once here and echoed back in the report."
+                ),
             )
         ],
         evidence=(
             "Insert a curve through the given XYZ points."
         ),
-        doc="Insert a curve through the given XYZ points.",
+        doc=(
+            "Insert a curve through a list of XYZ points. It writes a curve feature into the active part and does not s"
+            "ave the document; success is judged by the three call returns together with a new feature in the tree."
+        ),
     ),
     # ── 特征 / 焊件 / 导出 ────────────────────────────────────────
     ToolSpec(
@@ -354,18 +442,22 @@ SPECS_BATCH116 = [
         function="create_loft_cut_report",
         inject="model",
         params=[
-            Param("closed", bool, default=False, description="Closed loft."),
+            Param("closed", bool, default=False, description="Whether to close the loft. Defaults to false."),
             Param(
                 "use_selected_profiles",
                 bool,
                 default=True,
-                description="Use the selected profiles.",
+                description="Whether to use the profiles that are already selected. Defaults to true.",
             ),
         ],
         evidence=(
             "Loft cut and report the outcome."
         ),
-        doc="Loft cut and report the outcome.",
+        doc=(
+            "Loft a cut through the selected sketch profiles. It writes a cut feature and does not save the document; p"
+            "rofiles must be selected first and in the order you want them used, and success needs a new feature whose "
+            "type name is Blend."
+        ),
     ),
     ToolSpec(
         name="solidworks_weld_symbol",
@@ -374,14 +466,24 @@ SPECS_BATCH116 = [
         function="insert_weld_symbol_report",
         inject="model",
         params=[
-            Param("face_index", int, default=0, description="Target face index."),
-            Param("top", bool, default=False, description="Place on top."),
-            Param("left", str, default="", description="Left-side text."),
+            Param("face_index", int, default=0, description=(
+                                                    "Index of the face to select before inserting the symbol. Defaults "
+                                                    "to 0."
+                                                )),
+            Param("top", bool, default=False, description=(
+                                                  "Whether to draw the symbol above the horizontal line instead of belo"
+                                                  "w it. Defaults to false."
+                                              )),
+            Param("left", str, default="", description="Text for the left side of the symbol. Defaults to empty."),
         ],
         evidence=(
             "Insert a weld symbol and report the outcome."
         ),
-        doc="Insert a weld symbol and report the outcome.",
+        doc=(
+            "Insert a weld symbol on a face of the active part. It selects the face at face_index first, writes an anno"
+            "tation and does not save the document, and success is judged by reading the symbol back rather than by the"
+            " returned flag."
+        ),
     ),
     ToolSpec(
         name="solidworks_assembly_explode_line_sketch",
@@ -393,6 +495,10 @@ SPECS_BATCH116 = [
         evidence=(
             "Insert an explode line sketch in an assembly and report the outcome."
         ),
-        doc="Insert an explode line sketch in an assembly and report the outcome.",
+        doc=(
+            "Insert or close an explode line sketch in the active assembly. It writes a sketch into the assembly and do"
+            "es not save it; the assembly needs an exploded view first, and success is judged by the feature tree and t"
+            "he active sketch rather than by the returned flag."
+        ),
     ),
 ]

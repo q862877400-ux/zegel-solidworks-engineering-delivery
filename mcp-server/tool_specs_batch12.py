@@ -64,23 +64,25 @@ SPECS_BATCH12 = [
             "Create a de-mold (manufacturing) control for a topology study. The caller must first select the pull-direc"
             "tion face/edge/plane, then choose the direction option."
         ),
-        doc="Create a de-mold (manufacturing) control for a topology study. "
-        "The caller must first select the pull-direction face/edge/plane, "
-        "then choose the direction option.",
+        doc=(
+            "Create a de-mold control on a topology study after you select the pull-direction face, edge or plane. It m"
+            "odifies the study only and never runs the solver; choose the direction option to match that selection."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description="Target study name; empty uses the active study. Defaults to empty.",
             ),
             Param(
                 "direction",
                 int,
                 default=0,
-                description="swsTopologyDemoldDirectionOption_e (from the factory reflection dump): "
-                "0=TwoDirectionMidPlane, 1=PullDirectionOnly, 2=Stamping.",
+                description=(
+                    "Pull direction option: 0=two-direction mid-plane, 1=pull direction only, 2=stamping. Defaults to 0"
+                    "."
+                ),
             ),
         ],
     ),
@@ -94,22 +96,26 @@ SPECS_BATCH12 = [
         evidence=(
             "Create a stress constraint for a topology study."
         ),
-        doc="Create a stress constraint for a topology study.",
+        doc=(
+            "Create a stress constraint on a topology study at a given stress value. It modifies the study only and nev"
+            "er runs the solver; comparator comes from the topology comparator enum."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description="Target study name; empty uses the active study. Defaults to empty.",
             ),
-            Param("value", float, description="Constraint value (stress)."),
+            Param("value", float, description="Constraint stress value."),
             Param(
                 "comparator",
                 int,
                 default=0,
-                description="swsTopologyStudyConstraintComparator_e (from the factory reflection "
-                "dump): 0=IsLessThan, 1=IsGreaterThan, 2=IsInBetween.",
+                description=(
+                    "Comparator from the topology constraint comparator enum: 0=is less than, 1=is greater than, 2=is i"
+                    "n between. Defaults to 0."
+                ),
             ),
         ],
     ),
@@ -123,25 +129,26 @@ SPECS_BATCH12 = [
         evidence=(
             "Create a symmetry control for a topology study. The caller must first select the symmetry plane(s)."
         ),
-        doc="Create a symmetry control for a topology study. The caller must first select the "
-        "symmetry plane(s).",
+        doc=(
+            "Create a symmetry control on a topology study after you select the symmetry plane. It modifies the study o"
+            "nly and never runs the solver; the type values follow the official example, whose per-value names are not "
+            "confirmed."
+        ),
         params=[
             Param(
                 "study_name",
                 str,
                 default="",
-                description="Target study; omit to use the active study. "
-                "Consumed by the resolver, NOT passed to the function.",
+                description="Target study name; empty uses the active study. Defaults to empty.",
             ),
             Param(
                 "symmetry_type",
                 int,
                 default=0,
-                description="⚠ Values 0/1/2 come from the OFFICIAL VBA example "
-                "(`Create_Topology_Study_Example_VBA.txt` uses SelectSymmetryType 0/1/2, "
-                "commented 'Define topology one-half symmetry control'). "
-                "The enum NAME was NOT found in the local reflection dump — so do not "
-                "assume per-value semantics beyond that.",
+                description=(
+                    "Symmetry type value: 0, 1 or 2 as used by the official example, whose per-value meaning is not con"
+                    "firmed. Defaults to 0."
+                ),
             ),
         ],
     ),

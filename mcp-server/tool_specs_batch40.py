@@ -68,28 +68,33 @@ SPECS_BATCH40 = [
                 "name",
                 str,
                 default=None,
-                description="Study name (omit for the default).",
+                description="Study name; omitting it keeps the SolidWorks default name. Defaults to no name.",
             ),
             Param(
                 "duration",
                 float,
                 default=4.0,
-                description="Study duration in SECONDS (★ not a length).",
+                description="Study duration in seconds, not a length. Defaults to 4.0.",
             ),
             Param(
                 "study_type",
                 int,
                 default=None,
-                description="Study type enum value (omit for the default).",
+                description=(
+                    "Motion Study type enum value; when omitted the SolidWorks default type is kept. Defaults to no val"
+                    "ue."
+                ),
             ),
         ],
         evidence=(
             "Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY document — the capability "
             "layer reports it if the active document is not one. ⚠ Does NOT save the document."
         ),
-        doc="Create a Motion Study on the active assembly and return it. ★ Needs an ASSEMBLY "
-        "document — the capability layer reports it if the active document is not one. "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Create a Motion Study on the active assembly and return it. Writes a study into the assembly and does not "
+            "save the document; the active document must be an assembly, and a non-assembly is reported rather than gue"
+            "ssed."
+        ),
     ),
     ToolSpec(
         name="solidworks_motion_collect_summary",
@@ -101,7 +106,11 @@ SPECS_BATCH40 = [
         evidence=(
             "Return a JSON-able summary of the assembly's motion studies. ★ Read-only."
         ),
-        doc="Return a JSON-able summary of the assembly's motion studies. ★ Read-only.",
+        doc=(
+            "Return a JSON-able summary of every motion study in the assembly: type, duration, motor count and result s"
+            "tatus. Read-only; it never modifies a study, and results_out_of_date true means the study must be calculat"
+            "ed again."
+        ),
     ),
     ToolSpec(
         name="solidworks_motion_validate_studies",
@@ -111,39 +120,44 @@ SPECS_BATCH40 = [
         inject="asm_model",
         params=[
             Param(
-                "study_name", str, default=None, description="Only validate this study."
+                "study_name", str, default=None, description=(
+                                                     "Only validate this study; omitting it validates every available s"
+                                                     "tudy. Defaults to no filter."
+                                                 )
             ),
             Param(
                 "expected_study_type",
                 int,
                 default=None,
-                description="Require this study type.",
+                description="Required study type enum value; omitting it accepts any type. Defaults to no requirement.",
             ),
             Param(
                 "minimum_duration_seconds",
                 float,
                 default=None,
-                description="Require at least this duration in SECONDS.",
+                description="Minimum study duration in seconds. Defaults to no requirement.",
             ),
             Param(
                 "minimum_motor_count",
                 int,
                 default=None,
-                description="Require at least this many motors.",
+                description="Minimum number of motors. Defaults to no requirement.",
             ),
             Param(
                 "require_results",
                 bool,
                 default=None,
-                description="Require computed results.",
+                description="Whether the study must have computed, non-stale results. Defaults to no requirement.",
             ),
         ],
         evidence=(
             "Validate the motion studies against the given requirements and return the result. ★ Read-only (★ it report"
             "s, it does not fix)."
         ),
-        doc="Validate the motion studies against the given requirements and return the result. "
-        "★ Read-only (★ it reports, it does not fix).",
+        doc=(
+            "Validate the motion studies against the given requirements and return the result. Read-only: it reports, i"
+            "t does not fix, and the returned asked key lists which requirements were actually applied."
+        ),
     ),
     ToolSpec(
         name="solidworks_motion_study_manager",
@@ -156,14 +170,19 @@ SPECS_BATCH40 = [
                 "load_type_library",
                 bool,
                 default=True,
-                description="Load the Motion type library first (★ needed on a fresh session).",
+                description=(
+                    "Whether to load the Motion type library first, which a fresh session needs. Defaults to true."
+                ),
             ),
         ],
         evidence=(
             "Return the assembly's motion study manager (★ the entry point for the rest). ★ Read-only."
         ),
-        doc="Return the assembly's motion study manager (★ the entry point for the rest). "
-        "★ Read-only.",
+        doc=(
+            "Return the Motion Study manager object of the active assembly, the entry point for the other motion tools."
+            " Read-only; loading the Motion type library first avoids members that behave like properties instead of me"
+            "thods."
+        ),
     ),
     ToolSpec(
         name="solidworks_motion_ensure_type_library",
@@ -176,7 +195,10 @@ SPECS_BATCH40 = [
                 "raise_on_error",
                 bool,
                 default=False,
-                description="Raise instead of reporting a boolean when loading fails.",
+                description=(
+                    "Whether to raise instead of returning false when the library cannot be found or loaded. Defaults t"
+                    "o false."
+                ),
             ),
         ],
         evidence=(
@@ -184,9 +206,11 @@ SPECS_BATCH40 = [
             " Motion is usable BEFORE asking for anything else. ★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 M"
             "otion 加载项就是那条的原因。"
         ),
-        doc="Check (and load) the Motion type library. ★ Zero-argument apart from the flag — "
-        "use it to find out whether Motion is usable BEFORE asking for anything else. "
-        "★ 动画导出（AVI）在 known-facts 里记为 stitched —— 缺 Motion 加载项就是那条的原因。",
+        doc=(
+            "Check whether the Motion Study type library is loaded, load it if needed, and return its path. Use it befo"
+            "re asking anything else from Motion: without swmotionstudy.tlb the manager members misbehave as properties"
+            " instead of methods."
+        ),
     ),
     ToolSpec(
         name="solidworks_motion_validate_summary",
@@ -198,41 +222,46 @@ SPECS_BATCH40 = [
             Param(
                 "summary",
                 dict,
-                description="A summary dict (★ as returned by solidworks_motion_collect_summary).",
+                description="Summary dict as returned by solidworks_motion_collect_summary.",
             ),
             Param(
-                "study_name", str, default=None, description="Only validate this study."
+                "study_name", str, default=None, description=(
+                                                     "Only validate this study; omitting it validates every available s"
+                                                     "tudy. Defaults to no filter."
+                                                 )
             ),
             Param(
                 "expected_study_type",
                 int,
                 default=None,
-                description="Require this study type.",
+                description="Required study type enum value; omitting it accepts any type. Defaults to no requirement.",
             ),
             Param(
                 "minimum_duration_seconds",
                 float,
                 default=None,
-                description="Require at least this duration in SECONDS.",
+                description="Minimum study duration in seconds. Defaults to no requirement.",
             ),
             Param(
                 "minimum_motor_count",
                 int,
                 default=None,
-                description="Require at least this many motors.",
+                description="Minimum number of motors. Defaults to no requirement.",
             ),
             Param(
                 "require_results",
                 bool,
                 default=None,
-                description="Require computed results.",
+                description="Whether the study must have computed, non-stale results. Defaults to no requirement.",
             ),
         ],
         evidence=(
             "Validate a motion-study summary dict (★ pure data — no SolidWorks call). ★ Useful to re-check a summary re"
             "corded earlier."
         ),
-        doc="Validate a motion-study summary dict (★ pure data — no SolidWorks call). "
-        "★ Useful to re-check a summary recorded earlier.",
+        doc=(
+            "Validate a motion-study summary dict against delivery requirements and return status, checks and issues. R"
+            "ead-only, pure data with no SolidWorks call; it re-checks a summary recorded earlier."
+        ),
     ),
 ]

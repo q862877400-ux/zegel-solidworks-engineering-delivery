@@ -37,13 +37,11 @@ SPECS_BATCH104 = [
             "★ 判据：★ 回的是一份 JSON 化的清单（★ 每个视图一行），★ 不靠返回值真有内容来断言。⚠ 只对**工程图**有效（零"
             "件/装配会失败，★ 不静默回空表）。"
         ),
-        doc="★ **列出工程图的全部视图**（★ 名字 / **比例 / 注释数 / 可见件数**）—— ★ 读侧。"
-        "★★ 与既有 `solidworks_drawing_list_views` 的区别（★ 逐字比对过，**不是重复**）："
-        "★ 那个只列**当前图纸**上的视图、且只给**名字 + 类型码**；"
-        "★ 这个列**整张工程图的所有视图**、并多给**比例 / 注释数 / 可见件数**三项读数 ⇒ "
-        "★ **范围与读数都更全** ✓"
-        "★ 判据：★ 回的是一份 JSON 化的清单（★ 每个视图一行），★ 不靠返回值真有内容来断言。"
-        "⚠ 只对**工程图**有效（零件/装配会失败，★ 不静默回空表）。",
+        doc=(
+            "List every view on the active drawing with its name, scale, annotation count and visible entity count. Rea"
+            "d-only, and it covers the whole drawing rather than only the current sheet; it works on drawings only, so "
+            "parts and assemblies fail instead of returning an empty list."
+        ),
     ),
     ToolSpec(
         name="solidworks_mass_property_object",
@@ -58,11 +56,11 @@ SPECS_BATCH104 = [
             "惯量时用它 ✓★ 与既有 `solidworks_part_mass_properties` 的区别：★ 那个给**算好的汇总**；★ 这个给**对象**（★"
             " 供进一步的逐项读取）✓⚠ 取不到时应报错（★ 不返回 `None` 让人以为属性全零）。"
         ),
-        doc="★ **取质量属性对象**（★ 读侧）。"
-        "★ 用途：★ 这是本仓质量属性那一族的**底层读数入口**，★ 需要逐项读密度/体积/惯量时用它 ✓"
-        "★ 与既有 `solidworks_part_mass_properties` 的区别：★ 那个给**算好的汇总**；"
-        "★ 这个给**对象**（★ 供进一步的逐项读取）✓"
-        "⚠ 取不到时应报错（★ 不返回 `None` 让人以为属性全零）。",
+        doc=(
+            "Read the mass property object of the active document for item-by-item density, volume and inertia reads. R"
+            "ead-only; use solidworks_part_mass_properties when you want the computed summary instead, and it throws wh"
+            "en the object cannot be read rather than returning nothing."
+        ),
     ),
     ToolSpec(
         name="solidworks_section_area_crosscheck",
@@ -78,12 +76,11 @@ SPECS_BATCH104 = [
             "判据工具** ✓⚠ 单位那件事本仓**尚未确证**（★ 见 `solidworks_section_properties` 的 `units_verified`）⇒ ★ 本"
             "工具**同样不声称单位** ✓"
         ),
-        doc="★ **截面面积交叉验证**（★ 读侧）：★ 把 `GetSectionProperties2` 读到的面积与 "
-        "`IFace2.GetArea()` 的读数**并排给出** ✓"
-        "★★ 为什么值得暴露：★ 本仓用它验过 **12/12 次完全相同** ⇒ ★ 它是"
-        "「截面属性那族读数可不可信」的**判据工具** ✓"
-        "⚠ 单位那件事本仓**尚未确证**（★ 见 `solidworks_section_properties` 的 `units_verified`）"
-        "⇒ ★ 本工具**同样不声称单位** ✓",
+        doc=(
+            "Measure the section area against the area of the selected face and report both readings. Read-only; the tw"
+            "o independent readings agreed in every real-machine run, but agreement does not verify the unit, so do not"
+            " assume one."
+        ),
     ),
     ToolSpec(
         name="solidworks_rib_params",
@@ -96,7 +93,7 @@ SPECS_BATCH104 = [
                 "feature_name",
                 str,
                 default="",
-                description="★ 筋特征名（★ 空串 = 让能力层自己挑；★ 名字不是坐标 ⇒ 规则 3 合规）。",
+                description="Rib feature name; empty lets the capability layer pick one. Defaults to empty.",
                 required=False,
             ),
         ],
@@ -105,9 +102,10 @@ SPECS_BATCH104 = [
             "**筋的参数 ⇒ ★ 建完回读是它最自然的用法 ✓★ 判据：★ 回的是**逐项参数读数**（★ 读不到就如实报，★ 不假装有值"
             "）✓"
         ),
-        doc="★ **读筋（Rib）特征的一组参数**（★ 读侧）。"
-        "★ 与既有 `solidworks_part_rib` 的关系：★ 那个**建**筋、这个**读**筋的参数 ⇒ "
-        "★ 建完回读是它最自然的用法 ✓"
-        "★ 判据：★ 回的是**逐项参数读数**（★ 读不到就如实报，★ 不假装有值）✓",
+        doc=(
+            "Read the parameters of a rib feature, such as thickness, type, extrusion direction and draft settings. Rea"
+            "d-only; readings that cannot be obtained are reported as such instead of being filled with guesses, and bo"
+            "th the thickness and the draft-angle units are recorded as unknown."
+        ),
     ),
 ]

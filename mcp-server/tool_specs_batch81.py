@@ -31,26 +31,29 @@ SPECS_BATCH81 = [
             Param(
                 "structure",
                 str,
-                description="Structured drawing evidence dict, normally produced by the drawing inspection path. "
-                             "Optional keys read here: `views`, `dimensions`, `notes`, `title_block`; each item may "
-                             "carry `box` ({left,bottom,right,top}, metres), `name`, `view`, `sheet`, `note_kind`, "
-                             "`owner_view`, `type`, `box_source` (native | ",
+                description=(
+                    "Structured drawing evidence dict, normally produced by the drawing inspection path; optional keys "
+                    "read here are views, dimensions, notes and title_block, and each item may carry box, name, view, s"
+                    "heet, note_kind, owner_view, type and box_source."
+                ),
             ),
             Param(
                 "padding_m",
                 float,
                 default=0.001,
-                description="Collision tolerance in METRES, applied to every edge comparison in _drawing_boxes_overlap "
-                             "(scripts/sw_review.py:73-85). ★ Keyword-only in the source. ★ It is a scalar margin, NOT "
-                             "a coordinate.",
+                description=(
+                    "Collision tolerance in metres applied to every edge comparison; it is a scalar margin, not a coord"
+                    "inate. Defaults to 0.001."
+                ),
             ),
             Param(
                 "preview_evidence",
                 str,
                 default="",
-                description="Optional list of BMP preview evidence dicts (`exists`, `likely_blank`). ★ Keyword-only in "
-                             "the source. Used only to set the `drawing-pixel-preview` check; it never decides "
-                             "pass/fail on its own.",
+                description=(
+                    "Optional list of BMP preview evidence dicts holding exists and likely_blank; it only sets the draw"
+                    "ing-pixel-preview check and never decides pass or fail on its own. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -61,12 +64,11 @@ SPECS_BATCH81 = [
             "险，不能替代 PDF/PNG 目视复核。」⇒ 返回里 `manual_review_required` / `retryable` 在 status != 'pass' 时为 "
             "true（scripts/sw_review.py:"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到（非 API 成员，无官方 **Signature**: 行；源码签名 "
-             "`review_drawing_layout(structure, *, padding_m=0.001, preview_evidence=None) -> dict`）`。★ "
-             "真源是**本仓** `scripts/sw_review.py` 的 `review_drawing_layout`（★ 它不是 SolidWorks API 成员，"
-             "故无官方页）—— 查不到（无官方 ## Remarks）。★ 函数 docstring 自述（scripts/sw_review.py:91）："
-             "「该规则只能依据 SolidWorks 返回的包围盒筛出风险，不能替代 PDF/PNG 目视复核。」⇒ 返回里 "
-             "`manual_review_required` / `retryable` 在 status != 'pass' 时为 true（scripts/sw_review.py:",
+        doc=(
+            "Check structured drawing evidence for layout collisions between views, dimensions, notes and the title blo"
+            "ck. Read-only rule scoring: it can only flag risks from SolidWorks bounding boxes, so it never replaces vi"
+            "sual PDF or PNG review. Returns status plus the manual_review_required and retryable flags."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_export_previews",
@@ -79,16 +81,20 @@ SPECS_BATCH81 = [
                 "output_dir",
                 str,
                 default="",
-                description="预览图输出目录。源码 sw_review.py:691 展开路径，:693 按 `{basename}_{view}.bmp` 命名。",
+                description="Directory that receives the preview images. Defaults to empty.",
             ),
-            Param("basename", str, default="review", description="文件名前缀。"),
+            Param("basename", str, default="review", description=(
+                                                         "File name prefix used for every exported image. Defaults to '"
+                                                         "review'."
+                                                     )),
             Param(
                 "views",
                 str,
                 default="",
-                description='要导出的视图名列表（★ 空串 = 用源码回落值 `("isometric", "front", "top", "right")` —— ★ '
-                             '不要把那句回落说明当成默认值）。元素与 `view_name` 同一套命名（源码 STANDARD_VIEWS）。★ '
-                             '是**名字**不是坐标 ⇒ 不违反规则 3。',
+                description=(
+                    "View names to export; an empty string falls back to isometric, front, top and right. Defaults to e"
+                    "mpty."
+                ),
             ),
         ],
         evidence=(
@@ -98,12 +104,10 @@ SPECS_BATCH81 = [
             "仓库自身既有模式，不是官方成员、不是第三方项目。所驱动的官方成员是 `IModelDoc2::SaveBMP`，其官方页存在且签"
             "名逐字为上面那一行（FileNameIn 须含完整路径 + .bmp；Width/Height <=0 时按窗口大小；True = 成"
         ),
-        doc="★ 官方签名（逐字，来自 SaveBMP.md）：`System.bool SaveBMP( System.string FileNameIn, System.int WidthIn, "
-             "System.int HeightIn )`。★ 本函数**本身不是 SolidWorks API 成员** —— scripts/sw_review.py:677-695 是纯 "
-             "Python 编排（`[save_preview(model, output_dir / f'{basename}_{view}.bmp', view) for view in views]`），"
-             "来源是本仓库自身既有模式，不是官方成员、不是第三方项目。所驱动的官方成员是 `IModelDoc2::SaveBMP`，"
-             "其官方页存在且签名逐字为上面那一行（FileNameIn 须含完整路径 + .bmp；Width/Height <=0 时按窗口大小；True = "
-             "成",
+        doc=(
+            "Export isometric, front, top and right preview BMP images of the active model for later visual review. Wri"
+            "tes one image per view into output_dir, named basename_view.bmp, and returns the list of written paths."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_write_report",
@@ -116,16 +120,20 @@ SPECS_BATCH81 = [
                 "report",
                 str,
                 default="",
-                description="结构化审查报告 dict（★ 形如 sw_review.build_review_report 的返回值：model / cad_spec / "
-                             "previews / expected_outputs / checks / review_notes / evaluation）。⚠ 纯数据，不是 COM "
-                             "对象。",
+                description=(
+                    "Structured review report dict of the form solidworks_build_review_report returns, holding model, c"
+                    "ad_spec, previews, expected_outputs, checks, review_notes and evaluation; it is plain data, not a "
+                    "COM object. Defaults to empty."
+                ),
             ),
             Param(
                 "output_path",
                 str,
                 default="",
-                description="JSON 报告的写出路径（支持 ~ 展开，函数内会 mkdir -p 父目录）。★ 是**文件路径**，"
-                             "不是裸坐标。",
+                description=(
+                    "JSON output path; the parent directory is created when missing and a leading tilde is expanded. De"
+                    "faults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -134,11 +142,10 @@ SPECS_BATCH81 = [
             "ue)` → `json.dump(report, file, ensure_ascii=False, indent=2)` → 返回路径字符串。★ 全程零 COM 调用，故不存"
             "在官方文档页；同理 docs/recon/member-to-example-index.md 里查不到该成员（无任何调用序可摘）。模块头只有 D"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。查不到 —— 该函数**不是 SolidWorks API 成员**。它是本仓库 "
-             "scripts/sw_review.py:1116-1127 的纯 Python 文件写出辅助：`_expand_path` → `mkdir(parents=True, "
-             "exist_ok=True)` → `json.dump(report, file, ensure_ascii=False, indent=2)` → 返回路径字符串。★ 全程零 COM "
-             "调用，故不存在官方文档页；同理 docs/recon/member-to-example-index.md 里查不到该成员（无任何调用序可摘）。"
-             "模块头只有 D",
+        doc=(
+            "Write a structured review report dict to a JSON file and return that path. Writes the file after creating "
+            "its parent directory; this is pure file handling with no SolidWorks call."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_write_summary",
@@ -151,14 +158,18 @@ SPECS_BATCH81 = [
                 "report",
                 str,
                 default="",
-                description="结构化审查报告 dict（读取 evaluation / checks / previews 键；缺键时按 "
-                             "unknown/0/空列表退化）。★ 不是 COM 对象，故无注入。",
+                description=(
+                    "Review report dict whose evaluation, checks and previews keys are read; missing keys fall back to "
+                    "unknown, zero or an empty list. Defaults to empty."
+                ),
             ),
             Param(
                 "output_path",
                 str,
                 default="",
-                description="Markdown 摘要输出路径（内部经 _expand_path 展开并自动建父目录）。",
+                description=(
+                    "Markdown summary output path; the parent directory is created when missing. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -169,12 +180,11 @@ SPECS_BATCH81 = [
             " Remarks。该函数自身不碰 COM；它消费的是 build_review_report（:924）/ evaluate_review_report（:979）产出的"
             "纯 dict。"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— write_markdown_summary 不是 SolidWorks API 成员："
-             "scripts/sw_review.py:1130 是本仓库自写的纯 Python 写文件函数（open() + str.join()），C:\\swapi\\types "
-             "下无同名成员页（已用 glob 核过 run_review / write_markdown_summary / write_re`。★ 真源是**本仓** "
-             "`scripts/sw_review.py` 的 `write_markdown_summary`（★ 它不是 SolidWorks API 成员，故无官方页）—— 不适用 "
-             "—— 无官方页可引，故无 Remarks。该函数自身不碰 COM；它消费的是 build_review_report（:924）/ "
-             "evaluate_review_report（:979）产出的纯 dict。",
+        doc=(
+            "Write a Markdown summary of a review report and return the summary file path. Writes the file after creati"
+            "ng its parent directory; it reads only the evaluation, checks and previews keys, so a missing key degrades"
+            " to unknown, zero or an empty list."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_run",
@@ -186,36 +196,36 @@ SPECS_BATCH81 = [
             Param(
                 "output_dir",
                 str,
-                description="第二个形参（★ **必填**：源码 `run_review(model, output_dir, …)` 无默认值）。"
-                             "预览图与报告的输出目录；函数内先经 _expand_path() 展开环境变量并 resolve()，再 "
-                             "mkdir(parents=True, exist_ok=True)。⚠ 它是**文件系统路径、不是裸坐标** ⇒ 规则 3 "
-                             "不适用（scripts/sw_review.py:1180-1186）。",
+                description=(
+                    "Output directory for the preview images and the reports; it is expanded and created when missing."
+                ),
             ),
             Param(
                 "basename",
                 str,
                 default="review",
-                description="第三个形参。输出文件名前缀；决定 {basename}_review_report.json / "
-                             "{basename}_review_summary.md / {basename}_{view}.bmp 的实际文件名（scripts/sw_review.py:"
-                             "1179,1194-1195）。",
+                description=(
+                    "Output file name prefix, which sets the actual names of the report JSON, the summary Markdown and "
+                    "each preview image. Defaults to 'review'."
+                ),
             ),
             Param(
                 "views",
                 str,
                 default="",
-                description="第四个形参。要导出的标准视图名列表；为空时回落到 ('isometric','front','top','right')"
-                             "（scripts/sw_review.py:944）。⚠ **先例问题**：mcp-server/tool_specs_batch15.py:20-25 "
-                             "已记录『tool_specs_batch*.py 里没有任何 list 型 Param 的先例』，并据此**故意不暴露** "
-                             "build_review_report 的同名参数 ⇒ 若本工具要暴露它，须先决定 list 怎么过 MCP "
-                             "边界并留下先例。",
+                description=(
+                    "Standard view names to export; an empty string falls back to isometric, front, top and right. Defa"
+                    "ults to empty."
+                ),
             ),
             Param(
                 "expected_outputs",
                 str,
                 default="",
-                description="第五个形参。期望存在的交付文件路径列表（sldprt/step/stl 等），逐个做存在性+体积检查；为 "
-                             "None 时 checks.expected_outputs_exist=None 并记一条 warn（scripts/sw_review.py:947,955,"
-                             "1042-1049）。⚠ 同上的 list 型先例问题（tool_specs_batch15.py:20-25）。",
+                description=(
+                    "Delivery file paths such as sldprt, step or stl to check for existence and size; when empty the ex"
+                    "istence check is skipped and a warning is recorded instead. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -224,11 +234,11 @@ SPECS_BATCH81 = [
             "的纯 Python 编排层（C:\\swapi\\types 下 566 个接口目录里既无 RunReview.md，全量 Select-String 也 0 命中；s"
             "cripts/sw_review.py:1247-1248 的 `if __name__ == '__main__': raise SystemExit(main())` 也表明它是脚"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 "
-             "`run_review`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ 该函数**不是 SolidWorks API "
-             "成员**，是本项目自身的纯 Python 编排层（C:\\swapi\\types 下 566 个接口目录里既无 RunReview.md，全量 "
-             "Select-String 也 0 命中；scripts/sw_review.py:1247-1248 的 `if __name__ == '__main__': raise "
-             "SystemExit(main())` 也表明它是脚",
+        doc=(
+            "Run the full self-review on the active model and write the report, summary and preview images. Writes revi"
+            "ew_report.json, the Markdown summary and one BMP per view into output_dir and returns the report plus its "
+            "path; it is an orchestration layer, not a SolidWorks member."
+        ),
     ),
     ToolSpec(
         name="solidworks_preflight_check_com_dependencies",
@@ -244,11 +254,11 @@ SPECS_BATCH81 = [
             ":25，检查项三元组在 :70-74，逐项判定 helper `_module_available` 在 :56-65）。★ 出处可指认（铁律 1）：该文"
             "件与上游 MIT 归档 C:\\swprojects\\sw-skill-fork"
         ),
-        doc="★ 官方签名（逐字，来自 sw_preflight.py）：`查不到（非 SolidWorks API 成员）`。★ 官方页查不到，"
-             "且**不该**查到：这是纯 Python 函数，不碰任何 SolidWorks API（无 COM 形参、无 sw_connect 调用），只有 "
-             "importlib.import_module + 一张三元组检查表。★ 真源是**本仓** scripts/sw_preflight.py:68-79（依赖项常量 "
-             "PIP_REQUIREMENTS 在 :25，检查项三元组在 :70-74，逐项判定 helper `_module_available` 在 :56-65）。★ "
-             "出处可指认（铁律 1）：该文件与上游 MIT 归档 C:\\swprojects\\sw-skill-fork",
+        doc=(
+            "Check that the Python COM dependencies this server needs are importable and report the missing package nam"
+            "es. Read-only and pure Python: it never touches SolidWorks and needs no open document, so run it first whe"
+            "n the server misbehaves."
+        ),
     ),
     ToolSpec(
         name="solidworks_mesh_configure_import_preferences",
@@ -261,33 +271,45 @@ SPECS_BATCH81 = [
                 "units",
                 str,
                 default="m",
-                description="网格文件单位；源码 SW_LENGTH_UNITS 表允许 mm/cm/m/meter/meters/inch/in/ft，其余抛 "
-                             "ValueError",
+                description=(
+                    "Mesh file length unit; allowed values are mm, cm, m, meter, meters, inch, in and ft, and any other"
+                    " value raises an error. Defaults to 'm'."
+                ),
             ),
             Param(
                 "model_type",
                 str,
                 default="graphics",
-                description="导入为哪种体；graphics(0)/surface(1)/solid(2)（源码 SW_MESH_MODEL_TYPES 表），"
-                             "高面数外观参考建议 graphics",
+                description=(
+                    "How to import the mesh: graphics (0) as a graphics body for high-face-count visual reference, surf"
+                    "ace (1) or solid (2). Defaults to 'graphics'."
+                ),
             ),
             Param(
                 "import_textures",
                 str,
                 default="true",
-                description="是否尝试导入纹理信息（swImportStlVrmlTextureInformation 开关）",
+                description=(
+                    "Whether to try importing texture information, given as the text 'true' or 'false'. Defaults to 'tr"
+                    "ue'."
+                ),
             ),
             Param(
                 "as_ps_mesh",
                 str,
                 default="true",
-                description="是否按图形/细分网格路径导入（swVrmlStlImportAsPSMesh 开关）",
+                description=(
+                    "Whether to import through the graphics or subdivided mesh path, given as the text 'true' or 'false"
+                    "'. Defaults to 'true'."
+                ),
             ),
             Param(
                 "segmented",
                 str,
                 default="false",
-                description="是否分段导入网格（swVrmlStlImportSegmented 开关）",
+                description=(
+                    "Whether to import the mesh in segments, given as the text 'true' or 'false'. Defaults to 'false'."
+                ),
             ),
         ],
         evidence=(
@@ -297,11 +319,11 @@ SPECS_BATCH81 = [
             "rPreferenceToggle（3 次）。主成员页的 Remarks 逐字两句：「This method is intended for user preferences of "
             "type integer.」+「This method is equivalent to interactively setting system options "
         ),
-        doc="★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( "
-             "System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 "
-             "ISldWorks 成员的批量包装：源码 sw_import_mesh_reference.py:133/147 调 SetUserPreferenceIntegerValue（3 "
-             "次）与 SetUserPreferenceToggle（3 次）。主成员页的 Remarks 逐字两句：「This method is intended for user "
-             "preferences of type integer.」+「This method is equivalent to interactively setting system options ",
+        doc=(
+            "Set the SolidWorks preferences used when importing OBJ, STL or VRML mesh files. Writes six user preference"
+            "s and returns an audit dict whose restore array lets solidworks_mesh_restore_import_preferences put the ol"
+            "d values back."
+        ),
     ),
     ToolSpec(
         name="solidworks_mesh_restore_import_preferences",
@@ -314,8 +336,10 @@ SPECS_BATCH81 = [
                 "report",
                 str,
                 default="required",
-                description="configure_mesh_import_preferences 返回的审计字典（取其 restore 数组：kind/preference/old）"
-                             "；★ 旧值为 null 的条目一律跳过不写回，写完再读一次给 match",
+                description=(
+                    "Audit dict returned by solidworks_mesh_configure_import_preferences, read for its restore array of"
+                    " kind, preference and old; there is no default, so it must be supplied."
+                ),
             ),
         ],
         evidence=(
@@ -325,12 +349,11 @@ SPECS_BATCH81 = [
             "preference, int(old)) 与 SetUserPreferenceToggle(preference, bool(old))，随后用 sw_preference_guard.read_p"
             "reference 读回并逐条比对。主成员页的 Returns 逐字「True if UserPreferenceValue is set, fa"
         ),
-        doc="★ 官方签名（逐字，来自 SetUserPreferenceIntegerValue.md）：`System.bool SetUserPreferenceIntegerValue( "
-             "System.int UserPreferenceValue, System.int Value )`。★ 本仓库函数**不是一个**官方成员，而是对两个 "
-             "ISldWorks 成员的批量还原包装：源码 sw_import_mesh_reference.py:189/191 按 kind 分别调 "
-             "SetUserPreferenceIntegerValue(preference, int(old)) 与 SetUserPreferenceToggle(preference, bool(old))，"
-             "随后用 sw_preference_guard.read_preference 读回并逐条比对。主成员页的 Returns 逐字「True if "
-             "UserPreferenceValue is set, fa",
+        doc=(
+            "Reset the mesh import preferences changed by the configure tool, then read them back to prove the restore."
+            " Writes the old values back and skips entries whose old value is null; each entry is read again so the res"
+            "ult carries a match flag."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_insert_chain_dimensions",
@@ -343,10 +366,11 @@ SPECS_BATCH81 = [
                 "selection",
                 str,
                 default="__current_selection__",
-                description="草图段声明式选择器，逗号分隔且**顺序即语义**（官方 InsertChainDimensions.md:23「The first "
-                             "element in Entities is the starting entity which is used to dimension the second element」"
-                             "）：合法值 `'__current_selection__'` 或 `'index:0,index:1,index:2'`。★ 不收坐标（规则 3）"
-                             "；源码 scripts/sw_sketch_dimensions.py:98-105 已实现该解析，越界与非 index: 前缀都会抛错。",
+                description=(
+                    "Sketch segment selector, comma separated and order sensitive: '__current_selection__' or a list su"
+                    "ch as 'index:0,index:1,index:2', where an out-of-range index raises an error. Defaults to '__curre"
+                    "nt_selection__'."
+                ),
             ),
         ],
         evidence=(
@@ -356,12 +380,11 @@ SPECS_BATCH81 = [
             "ties **少一个**（N 个实体 ⇒ N-1 个 IDisplayDimension）。调用序见 docs/recon/member-to-example-index.md:308"
             "1（2 个示例）；官方 C# 例（Insert_Chain_Dimensions_Example_CSharp.md:54-7"
         ),
-        doc="★ 官方签名（逐字，来自 InsertChainDimensions.md）：`System.object InsertChainDimensions( System.object "
-             "Entities )`。官方 Remarks（InsertChainDimensions.md:23-27）：Entities 是边/顶点/圆/中点等实体数组，"
-             "**第一个元素是起始实体**、依次向后标注；Entities 为 Nothing/null 时改用**预选中的实体**建链；★ "
-             "返回的尺寸数组比 Entities **少一个**（N 个实体 ⇒ N-1 个 IDisplayDimension）。调用序见 "
-             "docs/recon/member-to-example-index.md:3081（2 个示例）；官方 C# "
-             "例（Insert_Chain_Dimensions_Example_CSharp.md:54-7",
+        doc=(
+            "Insert a chain of dimensions along selected sketch segments, dimensioning each segment from the previous o"
+            "ne. Creates display dimensions in the active sketch; order is the semantics, the first selector is the sta"
+            "rting segment, and no coordinates are accepted."
+        ),
     ),
     ToolSpec(
         name="solidworks_feature_list_names",
@@ -374,8 +397,7 @@ SPECS_BATCH81 = [
                 "limit",
                 int,
                 default=400,
-                description="★ 最多回读多少个特征名（★ **它是个计数、不是长度** ⇒ 按规则 2 **不带 `_mm`**；源码 "
-                             "`scripts/sw_feature_readback.py:78` 默认 400）",
+                description="Maximum number of feature names to read back. Defaults to 400.",
             ),
         ],
         evidence=(
@@ -386,13 +408,11 @@ SPECS_BATCH81 = [
             ":FirstFeature` 的 `## Remarks` 逐字：「When traversing the FeatureManager design tree, your application sh"
             "ould use [[IFeature::GetTypeName2]] and [[IFeature::GetSpecificFeature2]] to identify "
         ),
-        doc="★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ "
-             "被包装成员的官方 `**Signature**:` 逐字如下：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· "
-             "`System.object GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2`。★ "
-             "真源是**本仓** `scripts/sw_feature_readback.py` 的 `feature_names`（★ 它不是 SolidWorks API 成员，"
-             "故无官方页）—— ★ 官方 `IModelDoc2::FirstFeature` 的 `## Remarks` 逐字：「When traversing the "
-             "FeatureManager design tree, your application should use [[IFeature::GetTypeName2]] and [[IFeature::"
-             "GetSpecificFeature2]] to identify ",
+        doc=(
+            "List the ordered feature names of the active document by walking the FeatureManager tree from the first fe"
+            "ature. Read-only; container nodes are filtered out so a name lookup does not falsely match a folder, and o"
+            "nly nodes with a type name are kept."
+        ),
     ),
     ToolSpec(
         name="solidworks_feature_present",
@@ -405,9 +425,10 @@ SPECS_BATCH81 = [
                 "feature_name",
                 str,
                 default="required",
-                description="★ 要在特征树里找的特征名（★ 中文 UI 下形如「抽壳1」/「筋1」/「圆顶1」；★ 源码 "
-                             "`scripts/sw_feature_readback.py:99` 无默认值 ⇒ 必填）。★ **它是一个名字、不是坐标** —— ★ "
-                             "空串直接回 False（`sw_feature_readback.py:101-102`）",
+                description=(
+                    "Feature name as it appears in the tree; there is no useful default, so pass the exact name, and an"
+                    " empty string returns false."
+                ),
             ),
         ],
         evidence=(
@@ -418,13 +439,10 @@ SPECS_BATCH81 = [
             "Name` 的 `## Remarks` 逐字：「Feature names can be seen in the FeatureManager design tree of any part or a"
             "ssembly.」以及「Any change to a feature name is **not visible to the user until a rebuild"
         ),
-        doc="★ 官方签名（逐字，来自 sw_feature_readback.py）：`查不到（本函数不是 API 成员，无签名可抄）。★ "
-             "间接触达的成员官方 `**Signature**:` 逐字：`System.object FirstFeature()`（IModelDoc2/FirstFeature）· "
-             "`System.object GetNextFeature()`（IFeature/GetNextFeature）· `System.string GetTypeName2(`。★ "
-             "真源是**本仓** `scripts/sw_feature_readback.py` 的 `feature_present`（★ 它不是 SolidWorks API 成员，"
-             "故无官方页）—— ★ 官方 `IFeature::Name` 的 `## Remarks` 逐字：「Feature names can be seen in the "
-             "FeatureManager design tree of any part or assembly.」以及「Any change to a feature name is **not visible "
-             "to the user until a rebuild",
+        doc=(
+            "Check whether a named feature really exists in the FeatureManager tree. Read-only; it walks the tree and c"
+            "ompares names instead of trusting a return value, and an empty name gives false."
+        ),
     ),
     ToolSpec(
         name="solidworks_feature_whats_wrong",
@@ -440,11 +458,10 @@ SPECS_BATCH81 = [
             "f items in the What's Wrong dialog」。明细成员页 C:\\swapi\\types\\IModelDocExtension\\GetWhatsWrong.md 的"
             " Signature 逐字 "
         ),
-        doc="★ 官方签名（逐字，来自 GetWhatsWrongCount.md）：`System.int GetWhatsWrongCount()`。★ "
-             "本函数**不是官方成员**，而是本仓库的只读判据助手（来源块 sw_feature_readback.py:29-38）。主成员页 C:"
-             "\\swapi\\types\\IModelDocExtension\\GetWhatsWrongCount.md 的 Signature 逐字 `System.int "
-             "GetWhatsWrongCount()`、Returns 逐字「Number of items in the What's Wrong dialog」。明细成员页 C:"
-             "\\swapi\\types\\IModelDocExtension\\GetWhatsWrong.md 的 Signature 逐字 ",
+        doc=(
+            "Report how many entries the What's Wrong dialog holds for the active document, where zero means no rebuild"
+            " problem. Read-only; when the count cannot be read the result says so instead of reporting zero."
+        ),
     ),
     ToolSpec(
         name="solidworks_misumi_suggest_part",
@@ -457,14 +474,13 @@ SPECS_BATCH81 = [
                 "keyword",
                 str,
                 default="",
-                description="型号或关键词（实测 SUS304 可查）。返回每条含 partNumber / brandCode / brandName / "
-                             "innerCode。",
+                description="Part number or keyword to search for, for example SUS304. Defaults to empty.",
             ),
             Param(
                 "count",
                 int,
                 default=10,
-                description="返回条数上限（数量，非长度，故不带 _mm）。",
+                description="Maximum number of suggestions to return. Defaults to 10.",
             ),
         ],
         evidence=(
@@ -474,12 +490,11 @@ SPECS_BATCH81 = [
             "实际契约见 sw_misumi.py 源码与 docs/research-misumi-api.md:233：GET https://api.cn.misumi.com.cn/api/v1/pa"
             "rtNumber/suggest?keyword=<kw>&count=<n>&field=@default,partNumberList.innerCode&applicationId=77"
         ),
-        doc="★ 官方签名（逐字，来自 sw_misumi.py）：`查不到（非 SolidWorks API 成员 —— 本函数是仓库自写的纯 Python "
-             "HTTP 辅助；C:\\swapi\\types 下无对应页面，glob C:\\swapi\\**\\*suggest* 零命中）`。★ 真源是**本仓** "
-             "`scripts/sw_misumi.py` 的 `suggest_part`（★ 它不是 SolidWorks API 成员，故无官方页）—— 无官方 Remarks（非 "
-             "SW API）。实际契约见 sw_misumi.py 源码与 docs/research-misumi-api.md:233：GET https://api.cn.misumi.com."
-             "cn/api/v1/partNumber/suggest?keyword=<kw>&count=<n>&field=@default,partNumberList."
-             "innerCode&applicationId=77",
+        doc=(
+            "Search the Misumi part-number suggest service by keyword and return candidate part numbers. Read-only HTTP"
+            " call to api.cn.misumi.com.cn with no SolidWorks involvement; each hit carries partNumber, brandCode, bran"
+            "dName and innerCode, and innerCode is the internal key for later specification lookups."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_pdf_text_layout",
@@ -492,24 +507,28 @@ SPECS_BATCH81 = [
                 "path",
                 str,
                 default="",
-                description="待检查的 PDF 绝对路径（须为 .pdf）。源码会先 _expand_path 归一化，再校验后缀 / 存在性 / 0 "
-                             "< size <= 256 MiB；任一不满足返回 error_code=DRAWING_PDF_INVALID。这是路径字符串，"
-                             "不是坐标。",
+                description=(
+                    "Absolute path of the PDF to inspect; it must exist and be at most 256 MiB, otherwise the result ca"
+                    "rries the error code DRAWING_PDF_INVALID. Defaults to empty."
+                ),
             ),
             Param(
                 "maximum_spans",
                 str,
                 default="20000",
-                description="安全上限：跨页累计提取的文字 span 数，超过即中止并报 DRAWING_PDF_TEXT_PARSE_FAILED。"
-                             "是计数（无量纲），按规则 2 不加 _mm。",
+                description=(
+                    "Safety cap on the text spans extracted across all pages, after which parsing stops with DRAWING_PD"
+                    "F_TEXT_PARSE_FAILED. Defaults to 20000."
+                ),
             ),
             Param(
                 "minimum_overlap_area_pt2",
                 float,
                 default=0.5,
-                description="判定两个文字包围盒「相交」的最小交叠面积，单位 pt²（PDF point 平方）。★ 是面积阈值、"
-                             "不是长度也不是角度 ⇒ 规则 2 的 _mm / _deg 都不适用，保留原名（其中的 pt 来自 point "
-                             "的面积单位，不是 point 坐标）。★ 它是判定阈值而非位置 ⇒ 不构成规则 3 的裸坐标。",
+                description=(
+                    "Smallest overlap area in square PDF points for two text boxes to count as intersecting. Defaults t"
+                    "o 0.5."
+                ),
             ),
         ],
         evidence=(
@@ -521,14 +540,11 @@ SPECS_BATCH81 = [
             "官方 PDF 导出的渲染文字，不是 COM 原生尺寸包围盒；扫描 PDF 或被轮廓化的字体可能没有可提取文字，此时必须继"
             "续使用 BMP/PNG 目视复核。」函数返回值自带两条 limitations 字段，逐字"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到 —— 本函数不是 SolidWorks API 成员，是本仓纯 Python "
-             "函数（第三方库 PyMuPDF/fitz），无官方签名可抄。源码逐字（scripts/sw_review.py:355）：def "
-             "inspect_pdf_text_layout(path, *, maximum_spans=20000, minimum_overlap_area_pt2=0.5):`。★ 真源是**本仓** "
-             "`scripts/sw_review.py` 的 `inspect_pdf_text_layout`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 "
-             "—— 非官方成员，无官方 Remarks。源码 docstring 逐字：「@brief 读取 SolidWorks PDF "
-             "矢量文字边界并筛查文字重叠。／该证据来自 SolidWorks 官方 PDF 导出的渲染文字，不是 COM 原生尺寸包围盒；"
-             "扫描 PDF 或被轮廓化的字体可能没有可提取文字，此时必须继续使用 BMP/PNG 目视复核。」函数返回值自带两条 "
-             "limitations 字段，逐字",
+        doc=(
+            "Inspect the vector text of a SolidWorks exported PDF and flag overlapping text boxes. Read-only; it reads "
+            "rendered text rather than COM dimension boxes, and a scanned or outlined PDF may hold no extractable text,"
+            " so keep BMP or PNG review as well."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_inspect_bmp",
@@ -541,15 +557,19 @@ SPECS_BATCH81 = [
                 "path",
                 str,
                 default="",
-                description="BMP 预览文件的绝对路径；内部经 _expand_path 展开环境变量与 ~ 后取 resolve()。文件不存在或 "
-                             "size<=0 时直接回读并返回，不抛。",
+                description=(
+                    "Absolute path of the BMP preview; a missing file or a size of zero is reported back without raisin"
+                    "g. Defaults to empty."
+                ),
             ),
             Param(
                 "sample_limit",
                 int,
                 default=200000,
-                description="字节采样上限，仅在按像素网格解析失败（无 samples）走文件头尾兜底分支时用来限制读取字节数。"
-                             "是一个计数不是长度，故不带 _mm。",
+                description=(
+                    "Byte sampling cap used only by the header fallback branch when the pixel grid cannot be parsed. De"
+                    "faults to 200000."
+                ),
             ),
         ],
         evidence=(
@@ -559,11 +579,10 @@ SPECS_BATCH81 = [
             "块在 :593、只覆盖 set_standard_view 之后，不覆盖本函数。返回值判据：unique_sample_values（<8 判空白）、dar"
             "k_pixel_ratio（<"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 该函数不是 SolidWorks API 成员，是纯 Python "
-             "文件检查（open() + int.from_bytes 手工解析 BI_RGB BMP 头与像素网格），不碰 COM ⇒ 官方页无从查起。来源："
-             "本仓 D:\\AI\\SW\\scripts\\sw_review.py:465 自身，辅助 _file_info(:326) / _read_bmp_size(:336)；"
-             "模块最近的「── 来源 ──」块在 :593、只覆盖 set_standard_view 之后，不覆盖本函数。返回值判据："
-             "unique_sample_values（<8 判空白）、dark_pixel_ratio（<",
+        doc=(
+            "Check one exported BMP preview for blank content, a tiny file or a failed export. Read-only file inspectio"
+            "n with no COM call; it is a lightweight check and does not replace human or visual model judgement."
+        ),
     ),
     ToolSpec(
         name="solidworks_view_zoom_to_fit",
@@ -578,11 +597,10 @@ SPECS_BATCH81 = [
             "cExtension\\ViewZoomToSheet.md 与 IView\\*PolyLine* 的交叉引用；带/不带前导 I 的目录都查了，Test-Path 全 F"
             "alse）⇒ 不编签名。唯一官方证据：① C:\\swapi\\types\\IModelDocExtension\\ViewZoomToSheet.md:4"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 铁律 5：C:\\swapi\\types\\IModelDoc2\\ 下无 "
-             "ViewZoomtofit2.md（Get-ChildItem -Recurse -Filter '*oomtofit' 全 types 零命中；内容检索 ViewZoomtofit "
-             "只命中 IModelDocExtension\\ViewZoomToSheet.md 与 IView\\*PolyLine* 的交叉引用；带/不带前导 I "
-             "的目录都查了，Test-Path 全 False）⇒ 不编签名。唯一官方证据：① C:"
-             "\\swapi\\types\\IModelDocExtension\\ViewZoomToSheet.md:4",
+        doc=(
+            "Zoom the active view to fit the window and refresh the graphics area. Modifies only the view, not the mode"
+            "l, and takes no parameters."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_collect_geometry_measurements",
@@ -598,12 +616,11 @@ SPECS_BATCH81 = [
             "ard_view`；按铁律 5 如实报「该函数无来源块」，不借用邻居的。函数 docstring 自述依据是 'SolidWorks API GetP"
             "artBox(True) + B-Rep cylindrical faces'（sw_review.py:846）⇒ 主成员取 `IPartDoc.GetPar"
         ),
-        doc="★ 官方签名（逐字，来自 GetPartBox.md）：`**Signature**: `System.object GetPartBox( System.bool "
-             "NoConversion )``。★ 重要前提：**本函数本身不是一个官方成员**，"
-             "它是能力层对多个官方成员的**聚合**（scripts/sw_review.py:835-921）。它自己**没有 `# ── 来源 ──` 块** —— "
-             "全文件只有一处来源块（sw_review.py:593），属于 `set_standard_view`；按铁律 5 如实报「该函数无来源块」，"
-             "不借用邻居的。函数 docstring 自述依据是 'SolidWorks API GetPartBox(True) + B-Rep cylindrical "
-             "faces'（sw_review.py:846）⇒ 主成员取 `IPartDoc.GetPar",
+        doc=(
+            "Collect manufacturing geometry evidence from the part B-Rep: envelope box, hole walls and cylindrical face"
+            "s. Read-only; faces whose sense flag is true are recorded as internal hole walls, while outer faces stay i"
+            "n cylindrical_faces and are not treated as hole-diameter evidence."
+        ),
     ),
     ToolSpec(
         name="solidworks_review_evaluate_report",
@@ -616,8 +633,10 @@ SPECS_BATCH81 = [
                 "report",
                 str,
                 default="",
-                description="结构化审查报告字典（★ 原样由 solidworks_build_review_report 的返回体或此前写出的 "
-                             "review_report.json 回读而来）。★ 本函数是纯数据规则评分，不碰 SolidWorks。",
+                description=(
+                    "Structured review report as returned by solidworks_build_review_report or read back from a review_"
+                    "report.json; it is scored as plain data. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -627,10 +646,10 @@ SPECS_BATCH81 = [
             "` 取值、整数加减（`score -= penalty`）、字符串字面量与一个内嵌闭包 `add_issue(code, severity, message, rec"
             "ommen"
         ),
-        doc="★ 官方签名（逐字，来自 sw_review.py）：`查不到`。★ 真源是**本仓** `scripts/sw_review.py` 的 "
-             "`evaluate_review_report`（★ 它不是 SolidWorks API 成员，故无官方页）—— 查不到 —— ★ **本函数不是 "
-             "SolidWorks API 成员**，是本项目自写的纯 Python 规则评分器（scripts/sw_review.py:979-1115）。"
-             "逐行读过函数体：只做 `report.get(...)` 取值、整数加减（`score -= penalty`）、字符串字面量与一个内嵌闭包 "
-             "`add_issue(code, severity, message, recommen",
+        doc=(
+            "Validate a structured review report with rule-based penalties and list the issues found. Read-only rule en"
+            "gine on plain data with no SolidWorks call; it returns status, score, issues, recommendations and a manual"
+            "_review_required flag."
+        ),
     ),
 ]

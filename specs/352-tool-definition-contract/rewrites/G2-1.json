@@ -1,0 +1,133 @@
+{
+ "tools": {
+  "solidworks_review_drawing_layout": {
+   "doc": "Check structured drawing evidence for layout collisions between views, dimensions, notes and the title block. Read-only rule scoring: it can only flag risks from SolidWorks bounding boxes, so it never replaces visual PDF or PNG review. Returns status plus the manual_review_required and retryable flags.",
+   "params": {
+    "structure": "Structured drawing evidence dict, normally produced by the drawing inspection path; optional keys read here are views, dimensions, notes and title_block, and each item may carry box, name, view, sheet, note_kind, owner_view, type and box_source.",
+    "padding_m": "Collision tolerance in metres applied to every edge comparison; it is a scalar margin, not a coordinate. Defaults to 0.001.",
+    "preview_evidence": "Optional list of BMP preview evidence dicts holding exists and likely_blank; it only sets the drawing-pixel-preview check and never decides pass or fail on its own. Defaults to empty."
+   }
+  },
+  "solidworks_review_export_previews": {
+   "doc": "Export isometric, front, top and right preview BMP images of the active model for later visual review. Writes one image per view into output_dir, named basename_view.bmp, and returns the list of written paths.",
+   "params": {
+    "output_dir": "Directory that receives the preview images. Defaults to empty.",
+    "basename": "File name prefix used for every exported image. Defaults to 'review'.",
+    "views": "View names to export; an empty string falls back to isometric, front, top and right. Defaults to empty."
+   }
+  },
+  "solidworks_review_write_report": {
+   "doc": "Write a structured review report dict to a JSON file and return that path. Writes the file after creating its parent directory; this is pure file handling with no SolidWorks call.",
+   "params": {
+    "report": "Structured review report dict of the form solidworks_build_review_report returns, holding model, cad_spec, previews, expected_outputs, checks, review_notes and evaluation; it is plain data, not a COM object. Defaults to empty.",
+    "output_path": "JSON output path; the parent directory is created when missing and a leading tilde is expanded. Defaults to empty."
+   }
+  },
+  "solidworks_review_write_summary": {
+   "doc": "Write a Markdown summary of a review report and return the summary file path. Writes the file after creating its parent directory; it reads only the evaluation, checks and previews keys, so a missing key degrades to unknown, zero or an empty list.",
+   "params": {
+    "report": "Review report dict whose evaluation, checks and previews keys are read; missing keys fall back to unknown, zero or an empty list. Defaults to empty.",
+    "output_path": "Markdown summary output path; the parent directory is created when missing. Defaults to empty."
+   }
+  },
+  "solidworks_review_run": {
+   "doc": "Run the full self-review on the active model and write the report, summary and preview images. Writes review_report.json, the Markdown summary and one BMP per view into output_dir and returns the report plus its path; it is an orchestration layer, not a SolidWorks member.",
+   "params": {
+    "output_dir": "Output directory for the preview images and the reports; it is expanded and created when missing.",
+    "basename": "Output file name prefix, which sets the actual names of the report JSON, the summary Markdown and each preview image. Defaults to 'review'.",
+    "views": "Standard view names to export; an empty string falls back to isometric, front, top and right. Defaults to empty.",
+    "expected_outputs": "Delivery file paths such as sldprt, step or stl to check for existence and size; when empty the existence check is skipped and a warning is recorded instead. Defaults to empty."
+   }
+  },
+  "solidworks_preflight_check_com_dependencies": {
+   "doc": "Check that the Python COM dependencies this server needs are importable and report the missing package names. Read-only and pure Python: it never touches SolidWorks and needs no open document, so run it first when the server misbehaves.",
+   "params": {}
+  },
+  "solidworks_mesh_configure_import_preferences": {
+   "doc": "Set the SolidWorks preferences used when importing OBJ, STL or VRML mesh files. Writes six user preferences and returns an audit dict whose restore array lets solidworks_mesh_restore_import_preferences put the old values back.",
+   "params": {
+    "units": "Mesh file length unit; allowed values are mm, cm, m, meter, meters, inch, in and ft, and any other value raises an error. Defaults to 'm'.",
+    "model_type": "How to import the mesh: graphics (0) as a graphics body for high-face-count visual reference, surface (1) or solid (2). Defaults to 'graphics'.",
+    "import_textures": "Whether to try importing texture information, given as the text 'true' or 'false'. Defaults to 'true'.",
+    "as_ps_mesh": "Whether to import through the graphics or subdivided mesh path, given as the text 'true' or 'false'. Defaults to 'true'.",
+    "segmented": "Whether to import the mesh in segments, given as the text 'true' or 'false'. Defaults to 'false'."
+   }
+  },
+  "solidworks_mesh_restore_import_preferences": {
+   "doc": "Reset the mesh import preferences changed by the configure tool, then read them back to prove the restore. Writes the old values back and skips entries whose old value is null; each entry is read again so the result carries a match flag.",
+   "params": {
+    "report": "Audit dict returned by solidworks_mesh_configure_import_preferences, read for its restore array of kind, preference and old; there is no default, so it must be supplied."
+   }
+  },
+  "solidworks_sketch_insert_chain_dimensions": {
+   "doc": "Insert a chain of dimensions along selected sketch segments, dimensioning each segment from the previous one. Creates display dimensions in the active sketch; order is the semantics, the first selector is the starting segment, and no coordinates are accepted.",
+   "params": {
+    "selection": "Sketch segment selector, comma separated and order sensitive: '__current_selection__' or a list such as 'index:0,index:1,index:2', where an out-of-range index raises an error. Defaults to '__current_selection__'."
+   }
+  },
+  "solidworks_feature_list_names": {
+   "doc": "List the ordered feature names of the active document by walking the FeatureManager tree from the first feature. Read-only; container nodes are filtered out so a name lookup does not falsely match a folder, and only nodes with a type name are kept.",
+   "params": {
+    "limit": "Maximum number of feature names to read back. Defaults to 400."
+   }
+  },
+  "solidworks_feature_present": {
+   "doc": "Check whether a named feature really exists in the FeatureManager tree. Read-only; it walks the tree and compares names instead of trusting a return value, and an empty name gives false.",
+   "params": {
+    "feature_name": "Feature name as it appears in the tree; there is no useful default, so pass the exact name, and an empty string returns false."
+   }
+  },
+  "solidworks_feature_whats_wrong": {
+   "doc": "Report how many entries the What's Wrong dialog holds for the active document, where zero means no rebuild problem. Read-only; when the count cannot be read the result says so instead of reporting zero.",
+   "params": {}
+  },
+  "solidworks_misumi_suggest_part": {
+   "doc": "Search the Misumi part-number suggest service by keyword and return candidate part numbers. Read-only HTTP call to api.cn.misumi.com.cn with no SolidWorks involvement; each hit carries partNumber, brandCode, brandName and innerCode, and innerCode is the internal key for later specification lookups.",
+   "params": {
+    "keyword": "Part number or keyword to search for, for example SUS304. Defaults to empty.",
+    "count": "Maximum number of suggestions to return. Defaults to 10."
+   }
+  },
+  "solidworks_review_pdf_text_layout": {
+   "doc": "Inspect the vector text of a SolidWorks exported PDF and flag overlapping text boxes. Read-only; it reads rendered text rather than COM dimension boxes, and a scanned or outlined PDF may hold no extractable text, so keep BMP or PNG review as well.",
+   "params": {
+    "path": "Absolute path of the PDF to inspect; it must exist and be at most 256 MiB, otherwise the result carries the error code DRAWING_PDF_INVALID. Defaults to empty.",
+    "maximum_spans": "Safety cap on the text spans extracted across all pages, after which parsing stops with DRAWING_PDF_TEXT_PARSE_FAILED. Defaults to 20000.",
+    "minimum_overlap_area_pt2": "Smallest overlap area in square PDF points for two text boxes to count as intersecting. Defaults to 0.5."
+   }
+  },
+  "solidworks_review_inspect_bmp": {
+   "doc": "Check one exported BMP preview for blank content, a tiny file or a failed export. Read-only file inspection with no COM call; it is a lightweight check and does not replace human or visual model judgement.",
+   "params": {
+    "path": "Absolute path of the BMP preview; a missing file or a size of zero is reported back without raising. Defaults to empty.",
+    "sample_limit": "Byte sampling cap used only by the header fallback branch when the pixel grid cannot be parsed. Defaults to 200000."
+   }
+  },
+  "solidworks_view_zoom_to_fit": {
+   "doc": "Zoom the active view to fit the window and refresh the graphics area. Modifies only the view, not the model, and takes no parameters.",
+   "params": {}
+  },
+  "solidworks_review_collect_geometry_measurements": {
+   "doc": "Collect manufacturing geometry evidence from the part B-Rep: envelope box, hole walls and cylindrical faces. Read-only; faces whose sense flag is true are recorded as internal hole walls, while outer faces stay in cylindrical_faces and are not treated as hole-diameter evidence.",
+   "params": {}
+  },
+  "solidworks_review_evaluate_report": {
+   "doc": "Validate a structured review report with rule-based penalties and list the issues found. Read-only rule engine on plain data with no SolidWorks call; it returns status, score, issues, recommendations and a manual_review_required flag.",
+   "params": {
+    "report": "Structured review report as returned by solidworks_build_review_report or read back from a review_report.json; it is scored as plain data. Defaults to empty."
+   }
+  },
+  "solidworks_gui_find_modals": {
+   "doc": "List the visible top-level dialog windows that belong to the SolidWorks process and would freeze COM calls. Read-only Win32 window scan, not a SolidWorks member; it ignores window class and titles, and returns hwnd, class, title and rect for each dialog.",
+   "params": {
+    "main_hwnd": "Main window handle to scan around; 0 lets the tool find the SolidWorks window itself. Defaults to 0."
+   }
+  },
+  "solidworks_gui_modal_report": {
+   "doc": "Report the current modal-dialog situation in a form that decides whether to click or to stop. Read-only scan; use it to judge whether an operation may continue, while solidworks_gui_find_modals only lists the handles.",
+   "params": {
+    "main_hwnd": "Main window handle to inspect; 0 lets the tool find the SolidWorks window itself. Defaults to 0."
+   }
+  }
+ }
+}

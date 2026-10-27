@@ -60,12 +60,15 @@ SPECS_BATCH93 = [
             Param(
                 "bend_feature_names",
                 str,
-                description=_BENDS + " ★★ **本参数在源码里是必填的**"
-                "（`create_unfold(model, bend_feature_names, *, face_index=0)` 无默认值）"
-                "⇒ ★ 要「留空」就显式传空串，★ **不要**给一个默认值 —— "
-                "那样调用方不传时会把**这段说明**当成特征名传下去。",
+                description=(
+                    "Comma separated bend feature names to select with mark 4; a real machine builds the unfold even wh"
+                    "en this is empty, but the argument has no default, so pass an empty string to leave it out."
+                ),
             ),
-            Param("face_index", int, default=0, description=_FACE_INDEX),
+            Param("face_index", int, default=0, description=(
+                                                    "Zero-based index of the face to keep fixed; face order is not guar"
+                                                    "anteed stable across rebuilds. Defaults to 0."
+                                                )),
         ],
         evidence=(
             "★ **插入展开特征**（官方 `IModelDoc2::InsertSheetMetalUnfold()`，**零参**）—— ★★ **真机建成 `展开1`**（202"
@@ -76,16 +79,11 @@ SPECS_BATCH93 = [
             "不报错**）⇒ ★ 那正是本仓第一轮「没建出来」的原因 ✓ ★ 判据（规则 6，全回读）：**特征树增量 + 平展型式个数 +"
             " 逐条 mark** —— ★ 它回 `void`，**只能靠回读** ✓"
         ),
-        doc="★ **插入展开特征**（官方 `IModelDoc2::InsertSheetMetalUnfold()`，**零参**）—— "
-        "★★ **真机建成 `展开1`**（2026-10-06 · SW 2026 SP4.1）✓ "
-        "★★ **选择契约（照官方示例，不是猜的）**：固定面 **mark 1** + 实体特征 **mark 4**；"
-        "★ 而**面不能按名字选**（事实 32）⇒ 面走 `IEntity.Select4` **再补 mark**"
-        "（★ `Select4` 没有 mark 形参 ⇒ 用 `ISelectionMgr::SetSelectedObjectMark`）✓ "
-        "★★ **一个必须知道的坑**：`SetSelectedObjectMark` 的第 3 参是 "
-        "`swSelectionMarkAction_e`，**要传 `swSelectionMarkSet`(0)** —— "
-        "传 `-1` 会**静默不生效**（返回 `false`、**不报错**）⇒ ★ 那正是本仓第一轮「没建出来」的原因 ✓ "
-        "★ 判据（规则 6，全回读）：**特征树增量 + 平展型式个数 + 逐条 mark** —— "
-        "★ 它回 `void`，**只能靠回读** ✓",
+        doc=(
+            "Insert an unfold feature so the sheet-metal part shows its flat pattern. Writes the feature and does not s"
+            "ave; a fixed face is picked by index with selection mark 1, and success is judged by the feature tree and "
+            "the flat-pattern count."
+        ),
     ),
     # ── ② 折叠（idx 155）—— ★ 真机建成 ────────────────────────────────────────────────
     ToolSpec(
@@ -95,14 +93,23 @@ SPECS_BATCH93 = [
         function="create_fold",
         inject="model",
         params=[
-            Param("bend_feature_names", str, default="", description=_BENDS),
-            Param("face_index", int, default=0, description=_FACE_INDEX),
+            Param("bend_feature_names", str, default="", description=(
+                                                             "Comma separated bend feature names to select with mark 4;"
+                                                             " leaving it empty still builds the feature on a real mach"
+                                                             "ine. Defaults to empty."
+                                                         )),
+            Param("face_index", int, default=0, description=(
+                                                    "Zero-based index of the face to keep fixed; face order is not guar"
+                                                    "anteed stable across rebuilds. Defaults to 0."
+                                                )),
             Param(
                 "unfold_feature_name",
                 str,
                 default="",
-                description="★ **官方示例在 Fold 之前先选已存在的 `Unfold1`**（**mark 0**）—— "
-                "★ 留空表示不选它（★ 本工具**不替调用方猜**，选不选都以回读为准）✓",
+                description=(
+                    "Name of an existing unfold feature to select with mark 0 before folding; empty means none is selec"
+                    "ted. Defaults to empty."
+                ),
             ),
         ],
         evidence=(
@@ -111,11 +118,11 @@ SPECS_BATCH93 = [
             "** —— ★ 本仓第一版把它放在调用前 ⇒ 会被选择函数开头的清选区**清掉**（★ 顺序错、静默失效）✓ ★ 其余同 `solid"
             "works_sheet_metal_create_unfold`（mark 表 / 判据 / 坑）✓"
         ),
-        doc="★ **插入折叠特征**（官方 `IModelDoc2::InsertSheetMetalFold()`，**零参**）—— "
-        "★★ **真机建成 `折叠1`**（`unfold → fold` 一条链，★ 与官方示例同形）✓ "
-        "★★ 选 `unfold_feature_name` 的那一步**必须在 `ClearSelection2` 之后** —— "
-        "★ 本仓第一版把它放在调用前 ⇒ 会被选择函数开头的清选区**清掉**（★ 顺序错、静默失效）✓ "
-        "★ 其余同 `solidworks_sheet_metal_create_unfold`（mark 表 / 判据 / 坑）✓",
+        doc=(
+            "Insert a fold feature to close a flat pattern back into its bent state. Writes the feature and does not sa"
+            "ve; the unfold feature is selected with mark 0 after the selection is cleared, and a fixed face is picked "
+            "by index with mark 1."
+        ),
     ),
     # ── ③ 折边（idx 173）—— ★★ 真机**失败** ⇒ 挂出来但**调用前就抛带原因的错误** ──────
     # ────────
@@ -129,105 +136,111 @@ SPECS_BATCH93 = [
             Param(
                 "edge_selector",
                 str,
-                description='**声明式选择器**（★ 规则 3）—— `"index:<n>"`（体上第 n 条边）或 '
-                '`"__current_selection__"`。★ 事实 32：**边不能按名字选** ⇒ 走 `Select4`。',
+                description=(
+                    "Declarative edge selector: 'index:<n>' for the n-th edge on the body, or '__current_selection__' t"
+                    "o reuse the selection; edges cannot be selected by name."
+                ),
             ),
             Param(
                 "hem_type",
                 str,
                 default="open",
-                description="`open`(0) · `closed`(1) · `teardrop`(2) · `rolled`(3) · **`double`(4)**"
-                " —— ★ 官方 `swHemTypes_e` **五个成员一个不漏**"
-                "（★ 别家把 Open/Closed 互换、还漏了 `double`）✓",
+                description=(
+                    "Hem shape: open (0), closed (1), teardrop (2), rolled (3) or double (4). Defaults to 'open'."
+                ),
             ),
             Param(
                 "position",
                 str,
                 default="outside",
-                description="`inside`(0) · `outside`(1) —— ★ 按**出厂反射**取 0/1"
-                "（★ 2026-10-08 spec 223：官方 md 写 1/2，**两源冲突**，"
-                "铁律 4 定「以出厂类型库为准」；⚠ 真机未复核）。",
+                description=(
+                    "Hem position, 'inside' or 'outside', where the numeric values 0 and 1 come from the factory type l"
+                    "ibrary. Defaults to 'outside'."
+                ),
             ),
             Param(
-                "reverse", bool, default=False, description="官方 `Reverse`：反转方向。"
+                "reverse", bool, default=False, description="Whether to reverse the direction. Defaults to false."
             ),
             Param(
                 "length_mm",
                 float,
                 default=0.01,
-                description="折边长度（**毫米**；官方 `DLength`）。",
+                description="Hem length in millimetres. Defaults to 0.01.",
             ),
             Param(
                 "gap_mm",
                 float,
                 default=0.01,
-                description="间隙（**毫米**；官方 `DGap`，只对开口折边有效）。",
+                description="Gap in millimetres, used only by the open hem. Defaults to 0.01.",
             ),
             Param(
                 "angle_deg",
                 float,
                 default=0.0,
-                description="折边角（**度**；官方 `DAngle`，只对泪滴/卷曲折边有效）。",
+                description="Hem angle in degrees, used only by teardrop and rolled hems. Defaults to 0.",
             ),
             Param(
                 "radius_mm",
                 float,
                 default=0.005,
-                description="折边半径（**毫米**；官方 `DRad`，只对泪滴/卷曲折边有效）。",
+                description="Hem radius in millimetres, used only by teardrop and rolled hems. Defaults to 0.005.",
             ),
             Param(
                 "miter_gap_mm",
                 float,
                 default=0.0011,
-                description="斜接间隙（**毫米**；官方 `DMiterGap`）。",
+                description="Mitre gap in millimetres. Defaults to 0.0011.",
             ),
             Param(
                 "use_default_relief",
                 bool,
                 default=False,
-                description="`True` = 用默认卸料槽（官方 `UseDefaultRelief`）。",
+                description="Whether to use the default relief cut. Defaults to false.",
             ),
             Param(
                 "relief",
                 str,
                 default="obround",
-                description="`rectangular`(1) · `tear`(2) · `obround`(3) · `none`(4) · `tear_bend`(5)。",
+                description=(
+                    "Relief shape: rectangular (1), tear (2), obround (3), none (4) or tear_bend (5). Defaults to 'obro"
+                    "und'."
+                ),
             ),
             Param(
                 "relief_tear",
                 str,
                 default="rip",
-                description="`rip`(1) · `extend`(2)。",
+                description="Tear relief style: rip (1) or extend (2). Defaults to 'rip'.",
             ),
             Param(
                 "use_relief_ratio",
                 bool,
                 default=True,
-                description="官方 `UseReliefRatio`。",
+                description="Whether the relief is sized by a ratio. Defaults to true.",
             ),
             Param(
                 "relief_ratio",
                 float,
                 default=1.0,
-                description="卸料槽比例（官方 `ReliefRatio`）。",
+                description="Relief ratio. Defaults to 1.",
             ),
             Param(
                 "relief_width_mm",
                 float,
                 default=0.0,
-                description="卸料槽宽（**毫米**）。",
+                description="Relief width in millimetres. Defaults to 0.",
             ),
             Param(
                 "relief_depth_mm",
                 float,
                 default=0.0,
-                description="卸料槽深（**毫米**）。",
+                description="Relief depth in millimetres. Defaults to 0.",
             ),
             Param(
                 "k_factor",
                 float,
                 default=0.5,
-                description="自定义折弯系数的 K 因子（官方示例用 0.5）。",
+                description="K factor of the custom bend allowance. Defaults to 0.5.",
             ),
         ],
         evidence=(
@@ -240,17 +253,10 @@ SPECS_BATCH93 = [
             "* —— ★ 这三处已做成**常量表 + 静态断言**（见 `tests/test_tool_specs_batch93.py`）✓ ⚠ **调用它会抛 `Runtime"
             "Error` 并写明原因**（`require_verified`）—— ★ 那不是缺陷，是**不让用户吃裸 COM 错误**的设计 ✓"
         ),
-        doc="★★★ **本工具在本机（SW 2026 SP4.1 + pywin32）建不出折边** —— "
-        "**五种形态全部回 `None`**：边选择（`index:0` / 最长边）× 长度口径（0.01 / 10.0）× "
-        "卸料槽（自定义 / 默认）× 板厚（0.002 箔片 / **2.0 真厚度**）⇒ ★ 按事实 53 **停止**、"
-        "**不当场继续凑形态** ✓ "
-        "★ 而**成员名与 16 参顺序、五个枚举值已逐条核对官方无误**；官方 `## Remarks` 的四步前置"
-        "（`CreateCustomBendAllowance` → 初始化 → 赋 `PCBA` → **再**选边）**已照做**，仍 `None` ✓ "
-        "★★ **它的价值在别处**（裁决书原话：「dp5 的发现**比实现本身更值**」）："
-        "别家调的 `InsertHemFeature2` 在官方全树**零命中**（真名 `InsertSheetMetalHem2`）、"
-        "且把 `Open=0`/`Closed=1` **正好互换**、**漏掉 `Double=4`** —— "
-        "★ 这三处已做成**常量表 + 静态断言**（见 `tests/test_tool_specs_batch93.py`）✓ "
-        "⚠ **调用它会抛 `RuntimeError` 并写明原因**（`require_verified`）—— "
-        "★ 那不是缺陷，是**不让用户吃裸 COM 错误**的设计 ✓",
+        doc=(
+            "Skip this tool, NOT USABLE on this machine: every hem shape returns nothing, so no hem is created. It woul"
+            "d write a hem feature on one selected edge and does not save the document, and calling it raises an error "
+            "naming the reason unless the unverified probe path is explicitly allowed."
+        ),
     ),
 ]

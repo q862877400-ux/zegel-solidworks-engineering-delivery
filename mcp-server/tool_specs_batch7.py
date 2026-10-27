@@ -46,8 +46,11 @@ SPECS_BATCH7 = [
             "Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as modi"
             "fied (view/selection state changes count)."
         ),
-        doc="Activate the model for preview/review (prepares the document for capture). ⚠ May mark the document as "
-             "modified (view/selection state changes count).",
+        doc=(
+            "Activate the document to review so preview capture does not photograph another active part or sub-assembly"
+            ". Modifies the active document state and may mark it as modified, because view and selection changes count"
+            "."
+        ),
         param_alias={},
         params=[],
     ),
@@ -61,8 +64,10 @@ SPECS_BATCH7 = [
             "Clear the selection so the preview does not show highlighted entities. ⚠ May mark the document as modified"
             " (view/selection state changes count)."
         ),
-        doc="Clear the selection so the preview does not show highlighted entities. ⚠ May mark the document as "
-             "modified (view/selection state changes count).",
+        doc=(
+            "Clear the current selection so the preview does not show highlighted entities. Modifies the view state and"
+            " may mark the document as modified, because selection changes count."
+        ),
         param_alias={},
         params=[],
     ),
@@ -76,15 +81,17 @@ SPECS_BATCH7 = [
             "Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified (vi"
             "ew/selection state changes count)."
         ),
-        doc="Refresh the graphics/scene graph, e.g. after an appearance change. ⚠ May mark the document as modified "
-             "(view/selection state changes count).",
+        doc=(
+            "Refresh the graphics scene graph so an appearance change becomes visible. Modifies the view state and may "
+            "mark the document as modified, because view changes count."
+        ),
         param_alias={},
         params=[
             Param(
                 "update",
                 bool,
                 default=True,
-                description="Whether to force a graphics update; default true.",
+                description="Whether to force a graphics update. Defaults to true.",
             ),
         ],
     ),

@@ -1,0 +1,163 @@
+{
+ "_group": "G1",
+ "_part": "2/3",
+ "tools": {
+  "solidworks_view_add_perspective": {
+   "doc": "Add perspective to the model view. It modifies the view only; it takes no arguments, returns nothing, and the reference documents no precondition for turning perspective on.",
+   "params": {}
+  },
+  "solidworks_view_remove_perspective": {
+   "doc": "Remove perspective from the model view. It modifies the view only; it takes no arguments, returns nothing, and the reference documents no precondition for turning perspective off.",
+   "params": {}
+  },
+  "solidworks_view_start_dynamics": {
+   "doc": "Start fast dynamic view changes so that following rotations redraw faster. It modifies how the view redraws only; use it at the beginning of dynamic view changes and pair it with the stop-dynamics call, which restores the previous display mode.",
+   "params": {}
+  },
+  "solidworks_view_stop_dynamics": {
+   "doc": "Stop dynamic view changes and restore the previous display mode. It modifies the view only; call it at the end of dynamic motion to return to the earlier display mode, then redraw the graphics area so the display is recalculated.",
+   "params": {}
+  },
+  "solidworks_view_get_next": {
+   "doc": "Get the next model view in the document, or nothing when the list of views ends. Read-only; walk the views by calling it repeatedly, and a null result means you have reached the end of the list.",
+   "params": {}
+  },
+  "solidworks_simulation_get_buckling_load_factors": {
+   "doc": "Get the buckling load factors of a solved buckling study. Read-only; it passes through what the results object returns, no reference page documents the exact result form, and the factor count comes back through an output argument rather than the return value.",
+   "params": {}
+  },
+  "solidworks_get_view_model_doc": {
+   "doc": "Get the document that owns the model view. Read-only; it takes no arguments and returns the document object behind the view rather than a name or a path.",
+   "params": {}
+  },
+  "solidworks_collect_view_evidence": {
+   "doc": "Read the state of the model view as one evidence record. Read-only; the record holds the window frame, display mode, HLR quality, scale, perspective flag, graphics-update and zebra-stripe flags, xor highlight, and whether a camera and an orientation are present.",
+   "params": {}
+  },
+  "solidworks_simulation_get_worst_jacobian_ratio": {
+   "doc": "Get the worst jacobian ratio of the mesh as a mesh-distortion reading. Read-only; it takes no arguments and returns a plain ratio, and no reference page documents a valid range for it.",
+   "params": {}
+  },
+  "solidworks_simulation_is_component_failed": {
+   "doc": "Report whether one component of the mesh failed meshing. Read-only; it passes the component name to the boolean member and returns that verdict, and no reference page documents what form the name must take.",
+   "params": {
+    "component_name": "Name of the component to check; the reference documents this parameter only as a string, with no format. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_trim": {
+   "doc": "Trim the selected sketch entities. It modifies the active sketch; how many segments you must select depends on the option, with closest taking exactly one and corner exactly two.",
+   "params": {
+    "selection": "Declarative selection of the sketch segment: 'index:<n>' for the n-th segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "option": "Trim flavour: closest takes one segment and corner takes two, and the other accepted values are two_entities, entity_point, entities, outside and inside. Defaults to 'closest'.",
+    "x_mm": "Trim point X in millimetres, used by the options that take a point. Defaults to 0.0.",
+    "y_mm": "Trim point Y in millimetres. Defaults to 0.0."
+   }
+  },
+  "solidworks_sketch_extend": {
+   "doc": "Extend the selected sketch entity to the nearest entity. It modifies the active sketch and needs the segment to extend already selected; the extend-to point is used by the flavours that take one.",
+   "params": {
+    "selection": "Declarative selection of the sketch segment: 'index:<n>' for the n-th segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "x_mm": "Extend-to X in millimetres. Defaults to 0.0.",
+    "y_mm": "Extend-to Y in millimetres. Defaults to 0.0."
+   }
+  },
+  "solidworks_sketch_offset": {
+   "doc": "Offset the selected sketch entities by a distance. It modifies the active sketch; the cap-end and construction options take the official enum values, and a chain selection follows the whole connected chain instead of the picked segment alone.",
+   "params": {
+    "selection": "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "offset_mm": "Offset distance in millimetres.",
+    "both_directions": "Whether to offset to both sides of the entities. Defaults to false.",
+    "chain": "Whether to select the whole chain of entities. Defaults to true.",
+    "cap_ends": "How to cap the ends of an open offset: none, arc or line. Defaults to 'none'.",
+    "make_construction": "Which result to make construction geometry: dont, orig, offs or both. Defaults to 'dont'.",
+    "add_dimensions": "Whether to add dimensions to the offset result. Defaults to false."
+   }
+  },
+  "solidworks_sketch_fillet": {
+   "doc": "Create a fillet between two intersecting sketch segments. It modifies the active sketch and needs exactly those two segments selected; the radius is given in millimetres.",
+   "params": {
+    "selection": "Declarative selection of the two segments: 'index:<n>' for a segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "radius_mm": "Fillet radius in millimetres.",
+    "constrained_corners": "Corner-constraint option passed straight to the reference call. Defaults to 0."
+   }
+  },
+  "solidworks_sketch_linear_pattern": {
+   "doc": "Create a linear sketch pattern of the selected entities. It modifies the active sketch; both counts are instance counts rather than coordinates, and both angles are given in degrees and converted once at the boundary.",
+   "params": {
+    "selection": "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "x_count": "Number of instances along X, a count and not a coordinate. Defaults to 2.",
+    "y_count": "Number of instances along Y, a count and not a coordinate. Defaults to 1.",
+    "spacing_x_mm": "Spacing along X in millimetres. Defaults to 10.0.",
+    "spacing_y_mm": "Spacing along Y in millimetres. Defaults to 0.0.",
+    "angle_x_deg": "Pattern angle about X in degrees, converted once at the boundary. Defaults to 0.0.",
+    "angle_y_deg": "Pattern angle about Y in degrees. Defaults to 0.0.",
+    "delete_instances": "Instance numbers to skip, as a comma list such as '2,3'. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_circular_pattern": {
+   "doc": "Create a circular sketch pattern of the selected entities. It modifies the active sketch; the instances follow an arc that you define by radius and angle, and skipped instance numbers are left out of the pattern.",
+   "params": {
+    "selection": "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment of the current sketch, several as a comma list, or '__current_selection__' to reuse the current selection.",
+    "arc_radius_mm": "Radius of the arc the instances follow, in millimetres. Defaults to 20.0.",
+    "arc_angle_deg": "Angle of the arc the instances follow, in degrees. Defaults to 360.0.",
+    "pattern_num": "Number of instances. Defaults to 4.",
+    "pattern_spacing_deg": "Spacing between instances, in degrees. Defaults to 0.0.",
+    "pattern_rotate": "Whether to rotate the instances as they are patterned. Defaults to true.",
+    "delete_instances": "Instance numbers to skip, as a comma list. Defaults to empty."
+   }
+  },
+  "solidworks_sketch_add_arc": {
+   "doc": "Draw an arc in the active sketch from a centre, a start point and an end point. It modifies the sketch; the coordinates are millimetres from the sketch origin in the sketch plane, which is the documented exception to naming geometry for selection.",
+   "params": {
+    "center_x_mm": "Centre X in millimetres, measured from the sketch origin.",
+    "center_y_mm": "Centre Y in millimetres, measured from the sketch origin.",
+    "start_x_mm": "Arc start X in millimetres.",
+    "start_y_mm": "Arc start Y in millimetres.",
+    "end_x_mm": "Arc end X in millimetres.",
+    "end_y_mm": "Arc end Y in millimetres.",
+    "direction": "Arc direction as the reference parameter takes it, clockwise or counter-clockwise. Defaults to 1."
+   }
+  },
+  "solidworks_sketch_add_ellipse": {
+   "doc": "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point. It modifies the sketch; it draws the full ellipse and never an elliptical arc, and the coordinates are millimetres in the sketch plane.",
+   "params": {
+    "center_x_mm": "Ellipse centre X in millimetres.",
+    "center_y_mm": "Ellipse centre Y in millimetres.",
+    "major_x_mm": "Major-axis point X in millimetres.",
+    "major_y_mm": "Major-axis point Y in millimetres.",
+    "minor_x_mm": "Minor-axis point X in millimetres.",
+    "minor_y_mm": "Minor-axis point Y in millimetres.",
+    "z_mm": "Sketch plane Z in millimetres. Defaults to 0.0."
+   }
+  },
+  "solidworks_sketch_add_polygon": {
+   "doc": "Draw a regular polygon in the active sketch, sized by its inscribed-circle radius. It modifies the sketch; the coordinates are millimetres from the sketch origin, and the side count must be at least three.",
+   "params": {
+    "center_x_mm": "Polygon centre X in millimetres.",
+    "center_y_mm": "Polygon centre Y in millimetres.",
+    "radius_mm": "Inscribed-circle radius in millimetres.",
+    "sides": "Number of sides, at least 3. Defaults to 6."
+   }
+  },
+  "solidworks_sketch_add_slot": {
+   "doc": "Draw a straight slot in the active sketch from two centre points plus a radius. It modifies the sketch; the coordinates are millimetres from the sketch origin, and the radius is half the slot width.",
+   "params": {
+    "start_x_mm": "Slot start X in millimetres.",
+    "start_y_mm": "Slot start Y in millimetres.",
+    "end_x_mm": "Slot end X in millimetres.",
+    "end_y_mm": "Slot end Y in millimetres.",
+    "radius_mm": "Slot radius, which is half the slot width, in millimetres."
+   }
+  },
+  "solidworks_sketch_add_centerline": {
+   "doc": "Draw a centreline in the active sketch. It modifies the sketch; a centreline can act as the axis of a revolve, so this call is a prerequisite for revolve features and not only a construction line, and the coordinates are millimetres from the sketch origin.",
+   "params": {
+    "start_x_mm": "Centreline start X in millimetres.",
+    "start_y_mm": "Centreline start Y in millimetres.",
+    "end_x_mm": "Centreline end X in millimetres.",
+    "end_y_mm": "Centreline end Y in millimetres.",
+    "z_mm": "Sketch plane Z in millimetres. Defaults to 0.0."
+   }
+  }
+ }
+}

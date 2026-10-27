@@ -78,21 +78,22 @@ _BATCH75: list[ToolSpec] = [
             Param(
                 "part_path",
                 str,
-                description="★ **已存盘模型**的完整路径，且**含 `.sldprt`/`.sldasm`**"
-                "（官方 Remarks 逐字要求）。",
+                description="Full path of an already saved model file ending in .sldprt or .sldasm.",
             ),
             Param(
                 "view_name",
                 str,
-                description="视图方向名，★ **传英文名即可**（如 `*Front`/`*Top`/`*Isometric`）"
-                "—— ★ 底层会**自动改用本机本地化名**（`*前视` 等，事实 494）。",
+                description=(
+                    "View orientation such as *Front, *Top or *Isometric; English names are resolved to the local names"
+                    ". Defaults to *Front."
+                ),
             ),
-            Param("x_mm", float, description="视图中心 X（**毫米**，默认 140）。"),
-            Param("y_mm", float, description="视图中心 Y（**毫米**，默认 120）。"),
+            Param("x_mm", float, description="X of the view centre in millimetres. Defaults to 140."),
+            Param("y_mm", float, description="Y of the view centre in millimetres. Defaults to 120."),
             Param(
                 "scale",
                 float,
-                description="视图比例（`1/scale`）；★ `0` = 不设、用图纸默认。",
+                description="View scale written as 1/scale, where 0 leaves the sheet default. Defaults to 0.",
             ),
         ],
         evidence=(
@@ -103,14 +104,11 @@ _BATCH75: list[ToolSpec] = [
             "代理没有那个成员」**—— 是**成员名拼错**：代码写 `CreateFirstAngleViews2`，官方真名 **`Create1stAngleViews2"
             "`**（`1st` 非 `First`）⇒ ★ 已在 `drawing_workflow.py` 修正。该限制**未**挂成工具。"
         ),
-        doc="★ **投影/模型视图**：`CreateDrawViewFromModelView3`（经 `add_view`）。"
-        "★★ **真机证据**：本工具**经工具层**实测返回真实视图对象（`CDispatch`）、"
-        "★ 且**正是靠本地化名回退**建成（`*Front` 失败 → `*前视` 成功；known-facts 494）。"
-        "⚠ **另一条与本工具无关的**（★ 2026-10-04 接手轮更正）："
-        "`create_standard_views_with_projection`（三视图布局那条路）此前在本机返回 "
-        "`blocked / DRAWING_PROJECTION_API_UNAVAILABLE`，而**真因不是「本机 COM 代理没有那个成员」**"
-        "—— 是**成员名拼错**：代码写 `CreateFirstAngleViews2`，官方真名 **`Create1stAngleViews2`**"
-        "（`1st` 非 `First`）⇒ ★ 已在 `drawing_workflow.py` 修正。该限制**未**挂成工具。",
+        doc=(
+            "Insert a projected or model view of a saved part into the active drawing. It writes a view and does not sa"
+            "ve the document; the model must already be saved with a path ending in .sldprt or .sldasm, and English vie"
+            "w names such as *Front are resolved to this machine's localized name."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_create_section_view",
@@ -119,18 +117,19 @@ _BATCH75: list[ToolSpec] = [
         function="create_section_view",
         inject="drawing_model",
         params=[
-            Param("x_mm", float, description="剖视图放置位置 X（**毫米**）。"),
-            Param("y_mm", float, description="剖视图放置位置 Y（**毫米**）。"),
+            Param("x_mm", float, description="X where the section view is placed, in millimetres."),
+            Param("y_mm", float, description="Y where the section view is placed, in millimetres."),
         ],
         evidence=(
             "★ **剖面视图**：`CreateSectionViewAt5`。★★ **前置（官方 Remarks 逐字）：调用前必须先选好剖面线** ⇒ 本工具*"
             "*不代选**，先回读选区计数并在返回值里给 `preconditions_held`。⚠ 真机该格**前置未成立**（选区为空）⇒ ★ **不"
             "能**据此判「剖面视图不成」（事实 496）。"
         ),
-        doc="★ **剖面视图**：`CreateSectionViewAt5`。"
-        "★★ **前置（官方 Remarks 逐字）：调用前必须先选好剖面线** ⇒ 本工具**不代选**，"
-        "先回读选区计数并在返回值里给 `preconditions_held`。"
-        "⚠ 真机该格**前置未成立**（选区为空）⇒ ★ **不能**据此判「剖面视图不成」（事实 496）。",
+        doc=(
+            "Insert a section view at the given position on the active drawing. It writes a view and does not save the "
+            "document; a section line must already be selected because this tool selects nothing, and it reports precon"
+            "ditions_held so an empty selection is not read as a failure of the call."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_create_detail_view",
@@ -139,19 +138,18 @@ _BATCH75: list[ToolSpec] = [
         function="create_detail_view",
         inject="drawing_model",
         params=[
-            Param("x_mm", float, description="局部视图放置位置 X（**毫米**）。"),
-            Param("y_mm", float, description="局部视图放置位置 Y（**毫米**）。"),
+            Param("x_mm", float, description="X where the detail view is placed, in millimetres."),
+            Param("y_mm", float, description="Y where the detail view is placed, in millimetres."),
             Param(
                 "scale",
                 float,
-                description="比例**分子**（分母固定 1.0）⇒ `2.0` 表示 **2:1**。",
+                description="Numerator of the detail view scale with the denominator fixed at 1, so 2.0 means 2:1.",
             ),
-            Param("label", str, description="标签文字（留空用 SolidWorks 默认）。"),
+            Param("label", str, description="Label text for the detail view; empty uses the SolidWorks default."),
             Param(
                 "shape_intensity",
                 int,
-                description="锯齿轮廓强度 1(最强)–5(最弱)；"
-                "★ 仅当 `jagged_outline=True` 且 `no_outline=False` 时有效。",
+                description="Sawtooth outline intensity from 1 (strongest) to 5 (weakest).",
             ),
         ],
         evidence=(
@@ -159,9 +157,11 @@ _BATCH75: list[ToolSpec] = [
             "N 的 V3 格）。★ 前置：图上要有**局部圆（草图圆）**（官方例子的调用序：`ActivateView` → `CreateCircle` → 才"
             "调）。"
         ),
-        doc="★ **局部视图**：`CreateDetailViewAt4`（官方 **12 参**）。"
-        "★ 真机证据：视图数 **1→2**、返回非 None（证据 JSON 的 V3 格）。"
-        "★ 前置：图上要有**局部圆（草图圆）**（官方例子的调用序：`ActivateView` → `CreateCircle` → 才调）。",
+        doc=(
+            "Insert a detail view at the given position on the active drawing. It writes a view and does not save the d"
+            "ocument; the drawing needs a detail circle, a sketch circle, in the source view first, and scale is the nu"
+            "merator with the denominator fixed at 1."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_set_sheet_format",
@@ -170,7 +170,7 @@ _BATCH75: list[ToolSpec] = [
         function="set_sheet_format",
         inject="drawing_model",
         params=[
-            Param("format_path", str, description="图纸格式文件路径（`.slddrt`）。"),
+            Param("format_path", str, description="Path of the sheet format file ending in .slddrt."),
         ],
         evidence=(
             "★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。★★ **为什么不"
@@ -182,16 +182,11 @@ _BATCH75: list[ToolSpec] = [
             "逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影（★ 现已在能力层里补上）。★ 判据：`SetTemplateName` 回"
             " `None` **且** `GetTemplateName` 回读等于新路径。"
         ),
-        doc="★ **图纸格式/模板**：**`ISheet.SetTemplateName(String NameIn)`**（官方 **`void`、未废弃**）。"
-        "★★ **为什么不是 `SetupSheet6`**（★ 本 doc 原先写的是它，2026-10-03 更正）："
-        "`ISheet.SetTemplateName` 才是**换图框**的成员；`SetupSheet6` 是用来**新建/重置图纸**的"
-        "（17 参）—— ★ 两者不是一件事。"
-        "★★★ **而真机踩过一个坑**：能力层原先是 `sheet = GetCurrentSheet(); sheet.SetTemplateName(p)`"
-        "（**直接属性访问**）⇒ 经工具层报 **`com_error: 找不到成员`**；"
-        "★ 定点诊断（`output/_diag_sheetfmt.json`）证明**同一个成员、同一个对象**用 `get_com_member` "
-        "就成功（返回 `None` = `void` 成功）⇒ ★ 是**通道**问题、不是名字问题（known-facts 499）。"
-        "★ 官方 Remarks 逐字：调完要 `ForceRebuild3` 才刷新第一角/第三角投影（★ 现已在能力层里补上）。"
-        "★ 判据：`SetTemplateName` 回 `None` **且** `GetTemplateName` 回读等于新路径。",
+        doc=(
+            "Set the sheet format, that is the drawing frame, of the active drawing from a format file. It writes the n"
+            "ew format and does not save the document; it rebuilds afterwards so the first-angle or third-angle project"
+            "ion refreshes, and success is the read-back path matching the requested one."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_add_note",
@@ -200,12 +195,12 @@ _BATCH75: list[ToolSpec] = [
         function="add_drawing_note",
         inject="drawing_model",
         params=[
-            Param("x_mm", float, description="注释位置 X（**毫米**）。"),
-            Param("y_mm", float, description="注释位置 Y（**毫米**）。"),
+            Param("x_mm", float, description="X where the note is placed, in millimetres."),
+            Param("y_mm", float, description="Y where the note is placed, in millimetres."),
             Param(
                 "text",
                 str,
-                description="注释文字。★ 用符号时要写成 `<*库名-符号名*>`（官方 Remarks 逐字）。",
+                description="Note text; symbols must be written in the <*library-symbol*> form.",
             ),
         ],
         evidence=(
@@ -213,9 +208,11 @@ _BATCH75: list[ToolSpec] = [
             " 的 A4 格）。★ 官方 Remarks 逐字：**引线附着点来自调用前做的选择**；**没有选中时**无引线、自由放置、在原点"
             "。"
         ),
-        doc="★ **注释/文字**：`InsertNote`。"
-        "★ 真机证据：两格（选中 / 不选）都返回非 None，判据是注解读数增量（证据 JSON 的 A4 格）。"
-        "★ 官方 Remarks 逐字：**引线附着点来自调用前做的选择**；**没有选中时**无引线、自由放置、在原点。",
+        doc=(
+            "Insert a text note at the given position on the active drawing. It writes a note and does not save the doc"
+            "ument; the leader attachment point comes from whatever is selected before the call, and with nothing selec"
+            "ted the note is free-standing at the origin."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_create_hole_table",
@@ -227,28 +224,32 @@ _BATCH75: list[ToolSpec] = [
             Param(
                 "view_name",
                 str,
-                description="承载孔表的视图名（★ 孔表挂在 **`IView`** 上）。",
+                description="Name of the drawing view that carries the hole table.",
             ),
             Param(
                 "x_mm",
                 float,
-                description="表放置位置 X（**毫米**；官方该参数单位是**米**，边界换算一次）。",
+                description=(
+                    "X where the table is placed, in millimetres; the API takes metres, so it is converted here."
+                ),
             ),
-            Param("y_mm", float, description="表放置位置 Y（**毫米**）。"),
+            Param("y_mm", float, description="Y where the table is placed, in millimetres."),
             Param(
                 "anchor_type",
                 int,
-                description="★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**"
-                "（官方 Parameters 逐字）。",
+                description="Anchor type, one of the swBOMConfigurationAnchorType_e values.",
             ),
-            Param("start_value", str, description="起始编号（官方例子用 `A`）。"),
+            Param("start_value", str, description="First item number in the table, for example A."),
             Param(
                 "template",
                 str,
-                description="孔表模板（`.sldholtbt`；官方 Remarks：在 `install_dir\\lang\\<language>`）。",
+                description=(
+                    "Hole table template file ending in .sldholtbt, found under the language folder of the install dire"
+                    "ctory."
+                ),
             ),
-            Param("tag_order", int, description="标签顺序（官方 8 参，例子用 1）。"),
-            Param("tag_type", int, description="标签类型（官方 9 参，例子用 1）。"),
+            Param("tag_order", int, description="Tag order value; the official example uses 1."),
+            Param("tag_type", int, description="Tag type value; the official example uses 1."),
         ],
         evidence=(
             "★ **孔表**：**`IView.InsertHoleTable3`（9 参、未废弃）**。★★ **本工具改过实现**（2026-10-03 真机 e2e 实测"
@@ -259,14 +260,11 @@ _BATCH75: list[ToolSpec] = [
             "held` 如实给出（★ 前置不成立时**不能**判「孔表不成」）。★ 真机证据：`output/drawing-batch-evidence.json` "
             "的 A6 格（`GetTableAnnotationCount` 增量、前置成立）。"
         ),
-        doc="★ **孔表**：**`IView.InsertHoleTable3`（9 参、未废弃）**。"
-        "★★ **本工具改过实现**（2026-10-03 真机 e2e 实测的教训）：原先把 `InsertTableAnnotation` 当孔表入口 —— "
-        "★ 而官方签名逐字是 `InsertTableAnnotation(X, Y, AnchorType, Rows, Columns)`，"
-        '**它没有任何参数说"这是孔表"** ⇒ ★ **它建的是通用表，建不出孔表**（e2e 实测：注解数 72→72）。'
-        "★★★ **前置（官方 Remarks 的 mark 表，逐字）**：基准原点**顶点 mark 1** · 孔**边与面 mark 2** · "
-        "X 向参考 mark 4 · Y 向参考 mark 8 ⇒ ★ 本工具**不代选**，先回读选区里 mark 1/2 各几个，"
-        "`preconditions_held` 如实给出（★ 前置不成立时**不能**判「孔表不成」）。"
-        "★ 真机证据：`output/drawing-batch-evidence.json` 的 A6 格（`GetTableAnnotationCount` 增量、前置成立）。",
+        doc=(
+            "Insert a hole table on a drawing view. It writes a table and does not save the document; the base-origin v"
+            "ertex must be selected with mark 1 and the hole edges or faces with mark 2 first, because this tool select"
+            "s nothing, and it reports preconditions_held."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_create_revision_table",
@@ -275,23 +273,26 @@ _BATCH75: list[ToolSpec] = [
         function="create_revision_table",
         inject="drawing_model",
         params=[
-            Param("x_mm", float, description="表放置位置 X（**毫米**）。"),
-            Param("y_mm", float, description="表放置位置 Y（**毫米**）。"),
+            Param("x_mm", float, description="X where the table is placed, in millimetres."),
+            Param("y_mm", float, description="Y where the table is placed, in millimetres."),
             Param(
                 "anchor_type",
                 int,
-                description="★ 锚点类型，取值见 **`swBOMConfigurationAnchorType_e`**。",
+                description="Anchor type, one of the swBOMConfigurationAnchorType_e values.",
             ),
             Param(
                 "template",
                 str,
-                description="模板路径（`.sldrevtbt`）；★ 官方 Remarks：模板与表**必须同型**。",
+                description=(
+                    "Revision table template path ending in .sldrevtbt; the template and the table must be the same typ"
+                    "e."
+                ),
             ),
-            Param("shape", int, description="表形状（官方 6 参）。"),
+            Param("shape", int, description="Table shape value."),
             Param(
                 "auto_update_zoom_cells",
                 bool,
-                description="是否自动更新缩放单元格（官方 7 参）。",
+                description="Whether to update the zoom cells automatically.",
             ),
         ],
         evidence=(
@@ -300,11 +301,11 @@ _BATCH75: list[ToolSpec] = [
             "二次调用「回 null」是契约、不是失败**（★ 返回值里有 `raw_is_none` 供按契约解释）。★ 真机证据：`output/draw"
             "ing-batch-evidence.json` 的 A7 格（两格都返回非 None）。 ★ 别名: pdm, pdm_operations, revision, vault"
         ),
-        doc="★ **修订表**：**`ISheet.InsertRevisionTable2`（7 参、未废弃）**。"
-        '★★ 同孔表：`InsertTableAnnotation` **建不出修订表**（它没有"表类型"参数）⇒ 走**真入口**。'
-        "★★ 官方 Returns 逐字：**已有修订表时回 `null`** ⇒ ★ **第二次调用「回 null」是契约、不是失败**"
-        "（★ 返回值里有 `raw_is_none` 供按契约解释）。"
-        "★ 真机证据：`output/drawing-batch-evidence.json` 的 A7 格（两格都返回非 None）。 ★ 别名: pdm, pdm_operations, revision, vault",
+        doc=(
+            "Insert a revision table on the active drawing sheet. It writes a table and does not save the document; the"
+            " template and the table must be the same type, and a null return means a revision table already exists, wh"
+            "ich is the documented result rather than a failure."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_insert_center_marks",
@@ -316,7 +317,7 @@ _BATCH75: list[ToolSpec] = [
             Param(
                 "requirements",
                 list,
-                description="要插中心标记的视图/要求列表（**原样透传**给能力层）。",
+                description="List of views or centre-mark requirements, passed unchanged to the capability layer.",
             ),
         ],
         evidence=(
@@ -324,10 +325,11 @@ _BATCH75: list[ToolSpec] = [
             "都**不成**，且其中**一格前置是成立的**（证据 JSON 的 A8 格）⇒ ★ 本工具走的是**批量**那条路，★ **尚未单独真"
             "机验证** ⇒ ★ 如实标注，**不许**当成「已验证」。"
         ),
-        doc="★ **中心符号线**（批量）：`AutoInsertCenterMarks2`。"
-        "⚠⚠ **真机阴性已知**：单点入口 `InsertCenterMark3` 两格都**不成**，"
-        "且其中**一格前置是成立的**（证据 JSON 的 A8 格）⇒ ★ 本工具走的是**批量**那条路，"
-        "★ **尚未单独真机验证** ⇒ ★ 如实标注，**不许**当成「已验证」。",
+        doc=(
+            "Insert centre marks on drawing views through the batch entry point. It writes marks and does not save the "
+            "document, it passes the requirements list straight to the capability layer, and this batch path has not ye"
+            "t been verified on its own on this machine."
+        ),
     ),
 ]
 

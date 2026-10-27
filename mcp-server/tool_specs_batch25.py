@@ -80,16 +80,21 @@ SPECS_BATCH25 = [
                 "top_level_only",
                 bool,
                 default=True,
-                description="True = only top-level components; False = also descend into "
-                "sub-assemblies.",
+                description=(
+                    "Whether to list top-level components only; false also descends into sub-assemblies. Defaults to tr"
+                    "ue."
+                ),
             ),
         ],
         evidence=(
             "List the components of the ACTIVE assembly: for each one its name, file path, whether it is suppressed and"
             " whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations"
         ),
-        doc="List the components of the ACTIVE assembly: for each one its name, file path, "
-        "whether it is suppressed and whether it is visible. ★ Reading only. ★ 别名: batch, list, operation, operations",
+        doc=(
+            "List the components of the active assembly with name, file path, suppression state and visibility. Read-on"
+            "ly; it reports top-level components only unless top_level_only is false, which also descends into sub-asse"
+            "mblies."
+        ),
     ),
     ToolSpec(
         name="solidworks_assembly_list_mates",
@@ -102,9 +107,10 @@ SPECS_BATCH25 = [
             "List the MateGroup and mate features of the active assembly (name, type, tree depth). ★ Use it to check th"
             "at real mates were actually written into the feature tree — it does NOT report degrees of freedom."
         ),
-        doc="List the MateGroup and mate features of the active assembly (name, type, tree depth). "
-        "★ Use it to check that real mates were actually written into the feature tree — "
-        "it does NOT report degrees of freedom.",
+        doc=(
+            "List the mate group and its mate features with name, type and tree depth. Read-only; use it to check that "
+            "real mates were written into the feature tree, and note that it does not report degrees of freedom."
+        ),
     ),
     ToolSpec(
         name="solidworks_assembly_check_interference",
@@ -119,10 +125,10 @@ SPECS_BATCH25 = [
             "nd per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK failed — do not read it as '"
             "no interference'. ★ Reading only (it runs the detector, it does not change the model)."
         ),
-        doc="Run interference detection on the ACTIVE assembly and return an auditable report: `status` (pass when "
-             "nothing interferes / warn when something does / blocked when the check itself failed), "
-             "`interference_count`, and per-interference `volume` + `component_count`. ⚠ `blocked` means the CHECK "
-             "failed — do not read it as 'no interference'. ★ Reading only (it runs the detector, it does not change "
-             "the model).",
+        doc=(
+            "Run interference detection on the active assembly and return an auditable report. Read-only, it runs the d"
+            "etector but changes no geometry; status is pass when nothing interferes, warn when something does, and blo"
+            "cked when the check itself failed, which must not be read as no interference."
+        ),
     ),
 ]

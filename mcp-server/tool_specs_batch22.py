@@ -127,30 +127,40 @@ SPECS_BATCH22 = [
         param_alias=dict(_consumed("depth_mm")),
         derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
-            Param("sketch_name", str, description=_SKETCH),
+            Param("sketch_name", str, description=(
+                                          "Name of an existing sketch such as Sketch1; create it first with solidworks_"
+                                          "sketch_start, the sketch add tools and solidworks_sketch_end."
+                                      )),
             Param(
                 "depth_mm",
                 float,
-                description="Extrusion depth in MILLIMETRES (must be > 0). "
-                "★ Converted to the metres that "
-                "IFeatureManager.FeatureExtrusion3 expects — the "
-                "conversion happens here, exactly once.",
+                description=(
+                    "Extrusion depth in millimetres, which must be greater than 0; converted to metres once at this bou"
+                    "ndary."
+                ),
             ),
-            Param("direction", bool, default=True, description=_DIR),
+            Param("direction", bool, default=True, description=(
+                                                       "Whether to extrude along the sketch normal; false reverses it. "
+                                                       "Defaults to true."
+                                                   )),
             Param(
                 "merge",
                 bool,
                 default=True,
-                description="True = merge the result into the body; False = keep it as a new body.",
+                description=(
+                    "Whether to merge the result into the existing body; false keeps it as a new body. Defaults to true"
+                    "."
+                ),
             ),
         ],
         evidence=(
             "Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the repo that turns a sket"
             "ch into a solid body. ★ depth_mm is in MILLIMETRES and is converted to metres at this boundary."
         ),
-        doc="Extrude a sketch into a solid BOSS (adds material). ★ This is the first tool in the "
-        "repo that turns a sketch into a solid body. ★ depth_mm is in MILLIMETRES and is "
-        "converted to metres at this boundary.",
+        doc=(
+            "Create a solid boss by extruding an existing sketch. Writes a boss feature, adds material and does not sav"
+            "e the document; the sketch is selected for you and must already exist in the feature tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_extrude_cut",
@@ -164,20 +174,27 @@ SPECS_BATCH22 = [
         param_alias=dict(_consumed("depth_mm")),
         derived_args=lambda p: _m_of_mm(p, "depth_mm"),
         params=[
-            Param("sketch_name", str, description=_SKETCH),
+            Param("sketch_name", str, description=(
+                                          "Name of an existing sketch such as Sketch1; create it first with solidworks_"
+                                          "sketch_start, the sketch add tools and solidworks_sketch_end."
+                                      )),
             Param(
                 "depth_mm",
                 float,
-                description="Cut depth in MILLIMETRES. ★ 0 means "
-                "**through all** (完全贯穿). ★ Converted to metres "
-                "at this boundary.",
+                description=(
+                    "Cut depth in millimetres; 0 means through all, and the value is converted to metres at this bounda"
+                    "ry."
+                ),
             ),
-            Param("direction", bool, default=True, description=_DIR),
+            Param("direction", bool, default=True, description=(
+                                                       "Whether to extrude along the sketch normal; false reverses it. "
+                                                       "Defaults to true."
+                                                   )),
             Param(
                 "flip",
                 bool,
                 default=False,
-                description="True = flip the cut direction.",
+                description="Whether to flip the cut direction. Defaults to false.",
             ),
         ],
         evidence=(
@@ -185,9 +202,10 @@ SPECS_BATCH22 = [
             "for a cut is FeatureCut4, not FeatureExtrusion3 with flip=True — the capability layer already handles that"
             "."
         ),
-        doc="Extrude a sketch as a CUT (removes material). ★ depth_mm = 0 means through-all. "
-        "⚠ The correct entry point for a cut is FeatureCut4, not FeatureExtrusion3 with "
-        "flip=True — the capability layer already handles that.",
+        doc=(
+            "Create a cut by extruding an existing sketch into or through the part. Writes a cut feature, removes mater"
+            "ial and does not save the document; a depth of 0 means through all."
+        ),
     ),
     ToolSpec(
         name="solidworks_extrude_midplane",
@@ -213,12 +231,17 @@ SPECS_BATCH22 = [
         param_alias=dict(_consumed("total_depth_mm")),
         derived_args=lambda p: _m_of_mm(p, "total_depth_mm"),
         params=[
-            Param("sketch_name", str, description=_SKETCH),
+            Param("sketch_name", str, description=(
+                                          "Name of an existing sketch such as Sketch1; create it first with solidworks_"
+                                          "sketch_start, the sketch add tools and solidworks_sketch_end."
+                                      )),
             Param(
                 "total_depth_mm",
                 float,
-                description="TOTAL depth in MILLIMETRES — each side gets half "
-                "(total_depth_mm / 2). ★ Converted to metres at this boundary.",
+                description=(
+                    "Total depth in millimetres, split equally so each side gets half of it; converted to metres at thi"
+                    "s boundary."
+                ),
             ),
         ],
         evidence=(
@@ -226,8 +249,9 @@ SPECS_BATCH22 = [
             ". ★ The value is in MILLIMETRES and is converted to the metres that IFeatureManager.FeatureExtrusion3 expe"
             "cts — the conversion happens here, once."
         ),
-        doc="Extrude a sketch symmetrically about its plane. ⚠ The parameter is the TOTAL depth, "
-        "not the per-side depth. ★ The value is in MILLIMETRES and is converted to the metres "
-        "that IFeatureManager.FeatureExtrusion3 expects — the conversion happens here, once.",
+        doc=(
+            "Create a boss by extruding a sketch symmetrically about its plane. Writes a boss feature and does not save"
+            " the document; total_depth_mm is split equally, so each side gets half of it."
+        ),
     ),
 ]

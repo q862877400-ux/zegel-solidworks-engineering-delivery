@@ -1,0 +1,141 @@
+{
+ "tools": {
+  "solidworks_gui_assert_no_modal": {
+   "doc": "Check that no modal dialog is open and raise if one is, so it cannot swallow the next input. Read-only, and it neither clicks nor closes anything; call it before every action.",
+   "params": {
+    "main_hwnd": "Main window handle to inspect; 0 lets the tool find the SolidWorks window itself. Defaults to 0.",
+    "where": "Text written into the error message to say which action found the dialog. Defaults to empty."
+   }
+  },
+  "solidworks_gui_close_modals": {
+   "doc": "Close every modal dialog and report how many were closed after verifying that each window really disappeared. Modifies the desktop, not the model: a hanging window never consumes its messages, so a message is posted first and real input events are the fallback.",
+   "params": {
+    "main_hwnd": "Main window handle to inspect; 0 lets the tool find the SolidWorks window itself. Defaults to 0.",
+    "rounds": "Maximum number of scan, click and verify rounds. Defaults to 1."
+   }
+  },
+  "solidworks_gui_focus_state": {
+   "doc": "Report whether the wanted window is really in the foreground. Read-only state check through the Win32 foreground window, so use it before an action instead of assuming the window took focus.",
+   "params": {
+    "want": "Window handle that is expected to be in the foreground."
+   }
+  },
+  "solidworks_gui_ensure_focus": {
+   "doc": "Set a window as the foreground window, then read the foreground window back to confirm it really happened. Modifies desktop focus only, not the model, and reports failure instead of assuming success.",
+   "params": {
+    "hwnd": "Window handle to put in the foreground.",
+    "retries": "Number of focus attempts. Defaults to 5.",
+    "settle_seconds": "Seconds to wait between attempts. Defaults to 0.2."
+   }
+  },
+  "solidworks_gui_assert_focus": {
+   "doc": "Check that the wanted window has focus, repair it when it does not, and raise when the repair fails. Call it before every action; a silent continue would drop every later keystroke with no visible sign.",
+   "params": {
+    "hwnd": "Window handle that should be in the foreground.",
+    "where": "Text written into the error message to say which action found the wrong focus. Defaults to empty."
+   }
+  },
+  "solidworks_surface_runtime_available": {
+   "doc": "Report whether one IModeler surface method is proven usable on this machine, where unmeasured methods return false. Read-only lookup in this repo's measured runtime table, not a live SolidWorks call.",
+   "params": {
+    "method": "Member name to look up, for example CreateCylindricalSurface or its numbered variant."
+   }
+  },
+  "solidworks_motion_create_study": {
+   "doc": "Create a Motion Study on the active assembly and return it. Writes a study into the assembly and does not save the document; the active document must be an assembly, and a non-assembly is reported rather than guessed.",
+   "params": {
+    "name": "Study name; omitting it keeps the SolidWorks default name. Defaults to no name.",
+    "duration": "Study duration in seconds, not a length. Defaults to 4.0.",
+    "study_type": "Motion Study type enum value; when omitted the SolidWorks default type is kept. Defaults to no value."
+   }
+  },
+  "solidworks_motion_collect_summary": {
+   "doc": "Return a JSON-able summary of every motion study in the assembly: type, duration, motor count and result status. Read-only; it never modifies a study, and results_out_of_date true means the study must be calculated again.",
+   "params": {}
+  },
+  "solidworks_motion_validate_studies": {
+   "doc": "Validate the motion studies against the given requirements and return the result. Read-only: it reports, it does not fix, and the returned asked key lists which requirements were actually applied.",
+   "params": {
+    "study_name": "Only validate this study; omitting it validates every available study. Defaults to no filter.",
+    "expected_study_type": "Required study type enum value; omitting it accepts any type. Defaults to no requirement.",
+    "minimum_duration_seconds": "Minimum study duration in seconds. Defaults to no requirement.",
+    "minimum_motor_count": "Minimum number of motors. Defaults to no requirement.",
+    "require_results": "Whether the study must have computed, non-stale results. Defaults to no requirement."
+   }
+  },
+  "solidworks_motion_study_manager": {
+   "doc": "Return the Motion Study manager object of the active assembly, the entry point for the other motion tools. Read-only; loading the Motion type library first avoids members that behave like properties instead of methods.",
+   "params": {
+    "load_type_library": "Whether to load the Motion type library first, which a fresh session needs. Defaults to true."
+   }
+  },
+  "solidworks_motion_ensure_type_library": {
+   "doc": "Check whether the Motion Study type library is loaded, load it if needed, and return its path. Use it before asking anything else from Motion: without swmotionstudy.tlb the manager members misbehave as properties instead of methods.",
+   "params": {
+    "raise_on_error": "Whether to raise instead of returning false when the library cannot be found or loaded. Defaults to false."
+   }
+  },
+  "solidworks_motion_validate_summary": {
+   "doc": "Validate a motion-study summary dict against delivery requirements and return status, checks and issues. Read-only, pure data with no SolidWorks call; it re-checks a summary recorded earlier.",
+   "params": {
+    "summary": "Summary dict as returned by solidworks_motion_collect_summary.",
+    "study_name": "Only validate this study; omitting it validates every available study. Defaults to no filter.",
+    "expected_study_type": "Required study type enum value; omitting it accepts any type. Defaults to no requirement.",
+    "minimum_duration_seconds": "Minimum study duration in seconds. Defaults to no requirement.",
+    "minimum_motor_count": "Minimum number of motors. Defaults to no requirement.",
+    "require_results": "Whether the study must have computed, non-stale results. Defaults to no requirement."
+   }
+  },
+  "solidworks_chamfer": {
+   "doc": "Chamfer the selected edges of the active part with a distance and angle pair. Writes a chamfer feature and does not save the document; the edge comes from the selection argument because the API acts on the current selection only.",
+   "params": {
+    "selection": "Declarative edge selection: '__current_selection__' to keep what is already selected, or 'index:<n>' for the n-th edge on the body, counted from 0.",
+    "distance_mm": "Chamfer distance in millimetres.",
+    "angle_deg": "Chamfer angle in degrees. Defaults to 45."
+   }
+  },
+  "solidworks_fillet": {
+   "doc": "Round the selected edges of the active part with a fillet radius. Writes a fillet feature and does not save the document; the edge comes from the selection argument because the API acts on the current selection only.",
+   "params": {
+    "selection": "Declarative edge selection: '__current_selection__' to keep what is already selected, or 'index:<n>' for the n-th edge on the body, counted from 0.",
+    "radius_mm": "Fillet radius in millimetres."
+   }
+  },
+  "solidworks_feature_suppress": {
+   "doc": "Suppress one named feature of the active document. Writes the suppression into the model and does not save; the feature is selected by name first and an empty selection raises instead of silently doing nothing.",
+   "params": {
+    "feature_name": "Feature name exactly as it appears in the FeatureManager tree, for example the boss-extrude entry."
+   }
+  },
+  "solidworks_feature_unsuppress": {
+   "doc": "Unsuppress one named feature of the active document. Writes the model back to its unsuppressed state and does not save; it uses the same selection contract and refusal guard as solidworks_feature_suppress.",
+   "params": {
+    "feature_name": "Feature name exactly as it appears in the FeatureManager tree."
+   }
+  },
+  "solidworks_feature_delete": {
+   "doc": "Delete one named feature of the active document. Writes the deletion into the model and does not save; the call returns nothing, so success shows as the feature disappearing from the tree, and an empty selection is refused.",
+   "params": {
+    "feature_name": "Feature name exactly as it appears in the FeatureManager tree, for example the boss-extrude entry."
+   }
+  },
+  "solidworks_costing_include_body": {
+   "doc": "Set whether one body counts in the cost calculation, addressed by name. Writes the inclusion flag on the costing body and does not save; it is not yet verified on a real machine, so list the body names first with solidworks_costing_list_bodies.",
+   "params": {
+    "body_name": "Name of the body as listed by solidworks_costing_list_bodies; it is a name, not a coordinate.",
+    "include": "Whether the body counts in the cost calculation, where true includes it and false excludes it. Defaults to true."
+   }
+  },
+  "solidworks_costing_set_method": {
+   "doc": "Set the value of one costing method by name. Writes to the costing model and is not yet verified on a real machine; the integer value has no published meaning, so it is passed through unchanged.",
+   "params": {
+    "method_name": "Costing method name to set.",
+    "method": "Integer method value; the allowed values are undocumented, so the tool passes it through without interpreting it."
+   }
+  },
+  "solidworks_costing_update_cost_for_all_bodies": {
+   "doc": "Update the cost of every body in the active part after a material, template or inclusion change. Writes the refreshed cost figures and is not yet verified on a real machine; it takes no arguments, so call it once those earlier settings are in place.",
+   "params": {}
+  }
+ }
+}

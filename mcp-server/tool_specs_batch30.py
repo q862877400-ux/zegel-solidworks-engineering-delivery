@@ -89,54 +89,82 @@ SPECS_BATCH30 = [
         "solidworks_topology_collect_numbers",
         "Read Topology Study Numbers (Results, Plots, Material-Mass Plot)",
         "collect_topology_numbers",
-        "Read the topology study's numbers as a JSON-able dict: results presence, plot count, "
-        "plot names, max available steps, and ★ `material_mass_plot` — the CORE criterion of "
-        "this capability (the material-mass plot appearing in GetPlotNames). ★ Read-only.",
-        [Param("study_name", str, default="", description=_STUDY)],
+        (
+                            "Read a solved topology study's result numbers, including the plot names and the material-m"
+                            "ass plot. Read-only; a study that has not been solved reports no results instead of raisin"
+                            "g."
+                        ),
+        [Param("study_name", str, default="", description=(
+                                                  "Name of an existing study; empty means the first study in the docume"
+                                                  "nt. Defaults to empty."
+                                              ))],
     ),
     _spec(
         "solidworks_topology_list_constraints",
         "List Which Topology Constraints/Controls Already Exist",
         "topology_constraints_report",
-        "Report which constraints and controls already exist on the topology study as "
-        "BOOLEANS plus a count (never COM objects). ⚠ This is the READ-BACK the set_* tools "
-        "use — a kind is `true` only when it was actually retrieved. ★ Read-only.",
-        [Param("study_name", str, default="", description=_STUDY)],
+        (
+                            "Report which constraints and controls already exist on a topology study, as booleans plus "
+                            "a count. Read-only, and it never returns COM objects; a kind counts as present only when i"
+                            "t was actually retrieved."
+                        ),
+        [Param("study_name", str, default="", description=(
+                                                  "Name of an existing study; empty means the first study in the docume"
+                                                  "nt. Defaults to empty."
+                                              ))],
     ),
     _spec(
         "solidworks_topology_manager_report",
         "Read the Topology Study Manager (as a JSON report)",
         "topology_manager_report",
-        "Return a JSON-able report about the topology study manager: whether it exists, its "
-        "object type, and which constraint/control kinds are retrievable. "
-        "★ The COM object itself is never returned.",
-        [Param("study_name", str, default="", description=_STUDY)],
+        (
+                            "Report whether the topology study manager exists, what object type it is and which constra"
+                            "int kinds are retrievable. Read-only, and the COM object itself is never returned."
+                        ),
+        [Param("study_name", str, default="", description=(
+                                                  "Name of an existing study; empty means the first study in the docume"
+                                                  "nt. Defaults to empty."
+                                              ))],
     ),
     _spec(
         "solidworks_topology_options_report",
         "Read the Topology Study Options (as a JSON report)",
         "topology_options_report",
-        "Return a JSON-able report about the topology study options: whether the options "
-        "object exists and its type. ★ The COM object itself is never returned.",
-        [Param("study_name", str, default="", description=_STUDY)],
+        (
+                            "Report whether the topology study options object exists and what type it is. Read-only, an"
+                            "d the COM object itself is never returned."
+                        ),
+        [Param("study_name", str, default="", description=(
+                                                  "Name of an existing study; empty means the first study in the docume"
+                                                  "nt. Defaults to empty."
+                                              ))],
     ),
     _spec(
         "solidworks_topology_set_goal",
         "Set the Topology Study Goal (read-back confirmed)",
         "set_topology_goal_report",
-        "Set the topology study goal and return a READ-BACK report comparing the number of "
-        "retrievable constraints/controls before and after. "
-        "★ `ok` means no exception AND the count did not decrease — never the return object. "
-        "⚠ Sets parameters only; it does NOT run the solver.",
+        (
+                            "Set the topology study goal and report the retrievable constraint count before and after. "
+                            "It modifies study parameters only and never runs the solver; ok means the call did not rai"
+                            "se and the count did not drop."
+                        ),
         [
-            Param("study_name", str, default="", description=_STUDY),
-            Param("goal_type", int, default=0, description=_GOAL),
+            Param("study_name", str, default="", description=(
+                                                     "Name of an existing study; empty means the first study in the doc"
+                                                     "ument. Defaults to empty."
+                                                 )),
+            Param("goal_type", int, default=0, description=(
+                                                   "Topology goal type enum; the numeric values are not published in th"
+                                                   "e local sources. Defaults to 0."
+                                               )),
             Param(
                 "mass_reduce_percent",
                 float,
                 default=0.0,
-                description="Target mass reduction in percent (e.g. 75 means -75%). "
-                "★ 0.0 is a legitimate value (keep the document default).",
+                description=(
+                    "Target mass reduction in percent, where 75 means a 75 percent reduction; defaults to 0.0, which ke"
+                    "eps the document default."
+                ),
             ),
         ],
     ),
@@ -144,15 +172,14 @@ SPECS_BATCH30 = [
         "solidworks_topology_set_iteration_options",
         "Set the Topology Iteration Options (read-back confirmed)",
         "set_topology_iteration_options_report",
-        "Set the topology iteration options and return a READ-BACK report comparing the "
-        "retrievable constraint/control count before and after. "
-        "★ `ok` means no exception AND the count did not decrease. "
-        "⚠ Sets parameters only; it does NOT run the solver. "
-        "⚠⚠ The option VALUES are intentionally NOT exposed: their enums "
-        "(swsTopologyIterationOption_e and the count's valid range) are not verified in this "
-        "repo — the capability layer itself says to look them up in the reflection dump. "
-        "★ Exposing an invented sentinel would be worse than not exposing the argument, so the "
-        "tool only carries `study_name` and reproduces the capability layer's own defaults.",
-        [Param("study_name", str, default="", description=_STUDY)],
+        (
+                            "Set the topology iteration options and report the retrievable constraint count before and "
+                            "after. It modifies study parameters only and never runs the solver; the option values stay"
+                            " at the capability layer defaults because their enum is not verified here."
+                        ),
+        [Param("study_name", str, default="", description=(
+                                                  "Name of an existing study; empty means the first study in the docume"
+                                                  "nt. Defaults to empty."
+                                              ))],
     ),
 ]

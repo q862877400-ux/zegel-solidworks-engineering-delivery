@@ -45,60 +45,64 @@ SPECS_BATCH96 = [
                 "view_name",
                 str,
                 default="",
-                description="要操作的**视图名** —— ★ 留空 = 用当前图纸上的**第一个**视图。",
+                description="View to operate on; empty uses the first view on the current sheet. Defaults to empty.",
             ),
             Param(
                 "source",
                 str,
                 default="entire_model",
-                description="官方 `Option`（`swImportModelItemsSource_e`）：`entire_model`(0) · "
-                "`selected_feature`(1) · `selected_component`(2) · `assembly_only`(3)。",
+                description=(
+                    "Official import source: entire_model (0), selected_feature (1), selected_component (2), assembly_o"
+                    "nly (3). Defaults to entire_model."
+                ),
             ),
             Param(
                 "types",
                 str,
                 default="",
-                description="官方 `Types`（`swInsertAnnotation_e` 的**位掩码**）—— 收**逗号分隔的类型名**"
-                "（可省 `swInsert` 前缀，如 `Dimensions,Planes`）。"
-                "★ 官方逐字：**只在两个 `insert_all_*` 都是 `False` 时才有意义**。",
+                description=(
+                    "Comma-separated annotation type names, optionally without the swInsert prefix, combined into a bit"
+                    " mask; it matters only when both insert_all flags are false. Defaults to empty."
+                ),
             ),
             Param(
                 "all_views",
                 bool,
                 default=False,
-                description="官方 `AllViews`：`True` 插到**所有视图**（★ 官方示例走的就是这一路）；"
-                "`False` 只插**当前选中的视图** —— ⚠ 那时**视图必须留在选区里**"
-                "（★ 真机踩过：清掉选区 ⇒ 回空数组）✓",
+                description=(
+                    "True inserts into every view, false only into the current selection, which must then still be sele"
+                    "cted. Defaults to false."
+                ),
             ),
             Param(
                 "duplicate_dims",
                 bool,
                 default=False,
-                description="官方 `DuplicateDims`：`True` = **消除重复尺寸**。",
+                description="True removes duplicate dimensions. Defaults to false.",
             ),
             Param(
                 "hidden_feature_dims",
                 bool,
                 default=False,
-                description="官方 `HiddenFeatureDims`：`True` 连**隐藏特征**的尺寸也插。",
+                description="True also inserts dimensions of hidden features. Defaults to false.",
             ),
             Param(
                 "use_placement_in_sketch",
                 bool,
                 default=False,
-                description="官方 `UsePlacementInSketch`：`True` 按**草图里的摆放**插尺寸。",
+                description="True places dimensions as they were placed in the sketch. Defaults to false.",
             ),
             Param(
                 "insert_all_annotations",
                 bool,
                 default=False,
-                description="官方 `InsertAllAnnotations`：`True` 插**全部标注**（忽略 `Types`）。",
+                description="True inserts every annotation and ignores types. Defaults to false.",
             ),
             Param(
                 "insert_all_reference_geometry",
                 bool,
                 default=False,
-                description="官方 `InsertAllReferenceGeometry`：`True` 插**全部参考几何**（忽略 `Types`）。",
+                description="True inserts every piece of reference geometry and ignores types. Defaults to false.",
             ),
         ],
         evidence=(
@@ -111,16 +115,11 @@ SPECS_BATCH96 = [
             "的是 **COM 标注对象数组**（**过不了 JSON 边界**）⇒ 判据是 **`IView::GetAnnotationCount()` 的前后回读**（★ "
             "本模块既有 `_sum_over_views` + `_delta`）—— ★ **不拿返回数组长度当唯一判据** ✓"
         ),
-        doc="★ **把模型标注插进工程图视图**（官方 `IDrawingDoc::InsertModelAnnotations4`，**8 参**）—— "
-        "★★ **状态：`stitched`**（真机只验到**可达 + 回读可用**，★ **没能产出非空插入**）—— "
-        "原因**已查明且如实**：我们的零件是**纯坐标画出来的**（**一个尺寸都没有**），"
-        "★ 而本仓的 `add_horizontal_dimension` 等助手**需要先选中实体**才建得出尺寸"
-        "（官方 `AddDimension2` 摘要逐字「for **selected entities**」）⇒ ★ 那份夹具里"
-        "**根本没有可插的东西** ✓ —— ★ 这是**数据相关**的失败，**不是**后端到不了。"
-        "★ 调用序**照官方示例**：选中视图（`DRAWINGVIEW`）⇒ **`ActivateView`**"
-        "（★ 这一步签名里看不出来）⇒（`AllViews=True` 时）清选区 ⇒ 调它 ✓ "
-        "★★ **判据（规则 6）**：它回的是 **COM 标注对象数组**（**过不了 JSON 边界**）⇒ "
-        "判据是 **`IView::GetAnnotationCount()` 的前后回读**"
-        "（★ 本模块既有 `_sum_over_views` + `_delta`）—— ★ **不拿返回数组长度当唯一判据** ✓",
+        doc=(
+            "Insert the model annotations of the referenced model into a drawing view. Creates drawing annotations and "
+            "does not save the document; the result is judged by the annotation count read before and after, and no non"
+            "-empty insert has been observed through this tool yet because the part used for testing carried no dimensi"
+            "ons at all."
+        ),
     ),
 ]

@@ -82,8 +82,10 @@ SPECS_BATCH19 = [
             ", which takes a drawing_path, opens the file itself and writes previews + a report. Raises if the active d"
             "ocument is not a drawing (GetType() != 3)."
         ),
-        doc="Sheet overview of the active drawing: how many sheets, their names, and which one is "
-        "current. " + _CURRENT_ONLY,
+        doc=(
+            "List the sheets of the active drawing: how many there are, their names and which one is current. Read-only"
+            " and active-document only, so no path is needed; it raises when the active document is not a drawing."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_get_current_sheet",
@@ -103,10 +105,11 @@ SPECS_BATCH19 = [
             "nce from solidworks_inspect_drawing, which takes a drawing_path, opens the file itself and writes previews"
             " + a report. Raises if the active document is not a drawing (GetType() != 3)."
         ),
-        doc="Read the current sheet: paper size (name + code), WIDTH/HEIGHT IN MILLIMETRES, scale, "
-        "projection angle and sheet-format name. ⚠ The API returns width/height in METRES; this "
-        "tool converts once, at the boundary, and reports millimetres. "
-        + _CURRENT_ONLY,
+        doc=(
+            "Read the current sheet of the active drawing: paper size, width and height, scale and sheet-format name. R"
+            "ead-only; width and height are reported in millimetres although the underlying call returns metres, and th"
+            "e conversion happens once here."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_list_views",
@@ -126,8 +129,9 @@ SPECS_BATCH19 = [
             " drawing_path, opens the file itself and writes previews + a report. Raises if the active document is not "
             "a drawing (GetType() != 3)."
         ),
-        doc="List the views on the CURRENT SHEET: name + type code. ⚠ The sheet itself is NOT "
-        "reported as a view — the raw API returns it as a pseudo-view (Type == 1) and that is "
-        "filtered out here. " + _CURRENT_ONLY,
+        doc=(
+            "List the views on the current sheet with each name and type code. Read-only and active-document only; the "
+            "sheet itself is filtered out because the raw call returns it as a pseudo-view with type 1."
+        ),
     ),
 ]

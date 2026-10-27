@@ -63,20 +63,26 @@ SPECS_BATCH56 = [
             Param(
                 "x_mm",
                 float,
-                description="尺寸文字的 X（**毫米** —— ★ 官方 API 吃米，换算只在本工具边界做一次）",
+                description=(
+                    "X of the dimension text in millimetres; the official call takes metres and the conversion happens "
+                    "once here."
+                ),
             ),
-            Param("y_mm", float, description="尺寸文字的 Y（**毫米**）"),
+            Param("y_mm", float, description="Y of the dimension text in millimetres."),
             Param(
                 "selector",
                 str,
                 default="__current_selection__",
-                description="先选中要标注的实体：`__current_selection__`（用现有选区）或 `index:<n>`",
+                description=(
+                    "Which entity to dimension: __current_selection__ for the existing selection, or index:<n> for the "
+                    "n-th entity of the kind below. Defaults to __current_selection__."
+                ),
             ),
             Param(
                 "kind",
                 str,
                 default="EDGE",
-                description="实体种类：EDGE / FACE / VERTEX",
+                description="Entity kind to select: EDGE, FACE or VERTEX. Defaults to EDGE.",
             ),
         ],
         evidence=(
@@ -88,15 +94,10 @@ SPECS_BATCH56 = [
             "53 停止隔离；★ 官方另注「**only use on visible documents**」且尺寸**按位置**放置（★ 位置不落在可见模型上时"
             "可能建不出来）。"
         ),
-        doc="★ **给已选中的实体加一个显示尺寸**（官方 `IModelDoc2.AddDimension2`，**3 参**）。"
-        "★★ **单位**：官方原话是 “Dimension text location in **meters**” ⇒ ★ 本工具对外收"
-        "**毫米**并在此换算。"
-        "★★ **前置**：官方 Remarks 明写「Before calling this method, you must **select the entities**」"
-        "⇒ ★ 本工具**先用声明式选择器选中**（★ 选不中就**不开工**并说明原因）。"
-        "★ 真机证据：纯盒体上 **8/8 个边对**都建出了尺寸"
-        "（`output/dimension-edge-pairs-evidence.json`）。"
-        "⚠★ **已知限制（未隔离）**：同一个包装在**板 + 凸台**的模型上失败 —— "
-        "★ 连试 3 次后按事实 53 停止隔离；★ 官方另注「**only use on visible documents**」"
-        "且尺寸**按位置**放置（★ 位置不落在可见模型上时可能建不出来）。",
+        doc=(
+            "Add one display dimension at the given text position to an entity chosen by a declarative selector. Create"
+            "s a dimension in the active part; the position is given in millimetres and converted to metres, it works o"
+            "nly on visible documents, and it is verified on a plain box but fails on a plate with a boss."
+        ),
     ),
 ]

@@ -66,20 +66,20 @@ _BATCH72: list[ToolSpec] = [
             Param(
                 "angle_deg",
                 float,
-                description="旋**角**（**度**；★ 只在边界换算成弧度一次，规则 2）。"
-                "★ `rev_type=1`（MidPlane）时它是**全角**。",
+                description="Revolve angle in degrees, converted once; for the mid-plane type it is the total angle.",
             ),
             Param(
                 "rev_type",
                 int,
-                description="官方 `RevType`：0=One direction · 1=MidPlane · "
-                "2=Two direction（取其它值本工具会显式拒绝）。",
+                description=(
+                    "Revolve type: 0=one direction, 1=mid-plane, 2=two directions; any other value is rejected."
+                ),
             ),
-            Param("reverse_dir", bool, description="反向（官方 `ReverseDir`）。"),
+            Param("reverse_dir", bool, description="Whether to reverse the revolve direction."),
             Param(
                 "angle2_deg",
                 float,
-                description="第二向的角（**度**；★ **只对 `rev_type=2` 有意义**）。",
+                description="Second-direction angle in degrees, meaningful only when rev_type is 2.",
             ),
         ],
         evidence=(
@@ -89,13 +89,11 @@ _BATCH72: list[ToolSpec] = [
             "ByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。★ 官方另注「does not support **3D sketch"
             "es**」。★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。"
         ),
-        doc="★ **旋转曲面**：`IFeatureManager.InsertRevolvedRefSurface(…)` → `IFeature`。"
-        "★ 官方逐字「Creates a revolved reference surface by revolving a profile around a "
-        "centerline.」——与实体版 `revolve_boss` 同形，★ 只是产出**曲面**。"
-        "⚠ **调用前要选好轮廓**（官方 Remarks 逐字：Make the selections using "
-        "`IModelDocExtension::SelectByID2` before calling）；★ 官方**没给 mark** ⇒ 本工具不假定 mark。"
-        "★ 官方另注「does not support **3D sketches**」。"
-        "★ 真机建成：树新增 `曲面-旋转1` · 曲面体 0→1。",
+        doc=(
+            "Create a revolved reference surface by revolving the selected profile about a centerline. It writes a surf"
+            "ace feature into the active part; select the profile before calling, 3D sketches are not supported, and no"
+            " selection mark is assumed."
+        ),
     ),
     ToolSpec(
         name="solidworks_hole_wizard",
@@ -108,14 +106,15 @@ _BATCH72: list[ToolSpec] = [
             Param(
                 "selection",
                 str,
-                description="**声明式面选择器**（`+x/-x/+y/-y/+z/-z`）——"
-                "★ 规则 3：**不收裸坐标**。★ 工具内部把它解析成面上一点，"
-                "再从那里发一条射线取孔位。★ 只对**轴对齐**的实体可靠。",
+                description=(
+                    "Declarative face selector: +x, -x, +y, -y, +z or -z, resolved to a point and a ray; reliable only "
+                    "on axis-aligned bodies."
+                ),
             ),
             Param(
                 "size",
                 str,
-                description='**规格串**（如 `"M8"`）—— ★ 真机实测：空串或纯数字**全回 None**。',
+                description="Fastener size string such as M8; an empty string or a bare number returns nothing.",
             ),
         ],
         evidence=(
@@ -123,10 +122,11 @@ _BATCH72: list[ToolSpec] = [
             "树增量**（★ 真机新增 `异型孔向导`）。★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`"
             "）选出来；② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。"
         ),
-        doc="★ **孔向导 / 异型孔**：`IFeatureManager.HoleWizard5`（★ 官方 24+ 参，本工具已把前置配好）。"
-        "★ 判据 = **特征树增量**（★ 真机新增 `异型孔向导`）。"
-        "★ 三个前置缺一不可（已知事实 483）：① 孔位用 `SelectByRay`（`Mark=0`）选出来；"
-        "② `SSize` 要**规格串**；③ `FastenerTypeIndex` 要与 standard 匹配。",
+        doc=(
+            "Create a hole-wizard hole on an axis-aligned face named by a direction selector and a size string. It writ"
+            "es a hole feature into the active part; the size must be a standard string such as M8, because an empty st"
+            "ring or a bare number returns nothing."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_fully_defined_status",
@@ -141,11 +141,10 @@ _BATCH72: list[ToolSpec] = [
             "*、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。⚠ **官方没给取值表** ⇒ 本工具**如实回原始 int**，★ *"
             "*不把它解释成「欠定义/完全定义」**（★ 铁律 5：查不到就说查不到）。"
         ),
-        doc="★ **草图完全定义状态**：`ISketch.GetConstrainedStatus()` → `System.int`（官方零参数、只读）。"
-        "⚠ **前置**：**必须有一个正在编辑的草图**（关掉的草图取不到 `ISketch`）⇒ 没有就**抛**，不静默。"
-        "★ 真机：欠定义矩形回 **2**、对 4 段加 `sgFIXED` 后回 **3** ⇒ 读数**有区分度**。"
-        "⚠ **官方没给取值表** ⇒ 本工具**如实回原始 int**，★ **不把它解释成「欠定义/完全定义」**"
-        "（★ 铁律 5：查不到就说查不到）。",
+        doc=(
+            "Read the constrained-status integer of the sketch being edited. Read-only; it raises when no sketch is bei"
+            "ng edited, and this repository does not interpret the value, so treat the number as raw and unlabelled."
+        ),
     ),
 ]
 

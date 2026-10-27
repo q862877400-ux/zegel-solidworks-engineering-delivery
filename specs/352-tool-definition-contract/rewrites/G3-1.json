@@ -1,0 +1,115 @@
+{
+ "tools": {
+  "solidworks_assembly_create_exploded_view": {
+   "doc": "Create an explode view of the active assembly configuration from the current mate conditions. It writes one view into the document and does not save it; call it repeatedly to add several views to the same configuration. Read solidworks_assembly_get_exploded_view_count back to prove the create happened, because a perfect result often needs user interaction.",
+   "params": {}
+  },
+  "solidworks_assembly_auto_explode": {
+   "doc": "Create one exploded view automatically for the current configuration. It creates only one view per configuration, so use solidworks_assembly_create_exploded_view when you need more. It writes the view into the assembly and does not save the document.",
+   "params": {}
+  },
+  "solidworks_assembly_view_explode": {
+   "doc": "Explode the selected exploded view in the display without changing any geometry. Pair it with solidworks_assembly_view_collapse to toggle the display back; it changes no geometry and does not save the document.",
+   "params": {}
+  },
+  "solidworks_assembly_view_collapse": {
+   "doc": "Collapse the displayed exploded view back to its assembled position without changing geometry. Pair it with solidworks_assembly_view_explode to toggle the display; it changes no geometry and does not save the document.",
+   "params": {}
+  },
+  "solidworks_assembly_show_exploded": {
+   "doc": "Display one named exploded view in the exploded or collapsed position. It changes only the display, changes no geometry and does not save the document; take the view name from solidworks_assembly_get_exploded_view_names.",
+   "params": {
+    "show_it": "Whether to show the view exploded: true shows it exploded and false shows it collapsed.",
+    "explode_view_name": "Name of the exploded view to show, taken from solidworks_assembly_get_exploded_view_names."
+   }
+  },
+  "solidworks_assembly_get_exploded_view_names": {
+   "doc": "List the exploded-view names of one configuration as strings. Read-only; a missing result comes back as an empty list, never as one nameless view.",
+   "params": {
+    "configuration_name": "Configuration name to inspect; this takes a configuration name, not an index."
+   }
+  },
+  "solidworks_assembly_get_exploded_view_count": {
+   "doc": "Get the number of exploded views in one configuration as an integer. Read-only; it is the read-back that proves a create really happened.",
+   "params": {
+    "configuration_name": "Configuration name to inspect; this takes a configuration name, not an index."
+   }
+  },
+  "solidworks_assembly_exploded_view_configuration": {
+   "doc": "Get the configuration name behind an exploded view by passing the argument through unchanged. Read-only; the official parameter has no documented meaning, so supply the value the official page requires and read the echoed string without interpreting it.",
+   "params": {
+    "arg": "Passed through unchanged; the official page documents no meaning for it, so do not read it as an index or as a name."
+   }
+  },
+  "solidworks_assembly_edit_explode_parameters": {
+   "doc": "Open the explode-parameter editing step of the active assembly. It takes no arguments and modifies the explode parameters; whether it raises an interactive dialog is not determined, so drive it through the repo dialog guard.",
+   "params": {}
+  },
+  "solidworks_macro_run": {
+   "doc": "Run a macro procedure from a project file inside the running SolidWorks session. Returns ok, return_value, error_code and error_name, where error_name maps the code through the run-macro error enum; whatever the macro does to the document happens here, and this tool does not save the document. On failure check file_exists first, because a bogus path is the commonest cause and reports error_code 28.",
+   "params": {
+    "file_path": "Absolute path of the macro project file, for example a .swp or .swb file.",
+    "module_name": "Module name inside the macro; for a VBA .swp this is the VBA module name, and VSTA .swb semantics are not determined.",
+    "procedure_name": "Procedure name to run, for example main.",
+    "options": "Run-macro option: 0=swRunMacroDefault, 1=swRunMacroUnloadAfterRun. Defaults to 0."
+   }
+  },
+  "solidworks_macro_normalize_model_family": {
+   "doc": "Map a concrete model name onto one of the prompt families this repo uses (gpt, kimi, claude, generic). Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure string function with no SolidWorks call and no COM.",
+   "params": {
+    "model_name": "Model name exactly as written by the caller, for example gpt-4o or claude-3.5-sonnet."
+   }
+  },
+  "solidworks_macro_build_prompt": {
+   "doc": "Build the prompt that asks a model to write SolidWorks VBA for user_request. Internal step of the sw_macro_guard generate_macro_with_guard pipeline, not meant to be called on its own; it is a pure string function and never calls SolidWorks.",
+   "params": {
+    "user_request": "What the user wants the macro to do, in natural language.",
+    "model_name": "Model name mapped onto a prompt family by solidworks_macro_normalize_model_family; empty means the generic family. Defaults to empty.",
+    "strict": "Whether to emit the strict variant of the prompt. Defaults to true."
+   }
+  },
+  "solidworks_macro_extract_vba_code": {
+   "doc": "Pull the VBA source out of a model reply that mixes prose and code fences. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure text handling, no SolidWorks call. Feed the result to solidworks_macro_validate_vba_code before anything runs.",
+   "params": {
+    "text": "Raw model output, which may contain prose and Markdown code fences around the code."
+   }
+  },
+  "solidworks_macro_validate_vba_code": {
+   "doc": "Check a VBA macro against the minimum this repo requires before it is handed to SolidWorks. Pure static pre-flight that runs no code and calls no SolidWorks; it reports the issues it finds, so a non-empty issue list means the macro is not ready to run.",
+   "params": {
+    "code": "VBA source to check."
+   }
+  },
+  "solidworks_macro_select_template": {
+   "doc": "Choose the local VBA template whose keywords match user_request. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure function, and the template bodies live in this repo under the MIT licence.",
+   "params": {
+    "user_request": "The user's request text, matched against template keywords."
+   }
+  },
+  "solidworks_macro_fallback_template": {
+   "doc": "Return the local fallback VBA template for user_request, used when model generation fails. Internal step of the sw_macro_guard generate_macro_with_guard pipeline; pure function with no SolidWorks call and no network access.",
+   "params": {
+    "user_request": "The user's request text, used to pick the closest template."
+   }
+  },
+  "solidworks_macro_write_file": {
+   "doc": "Write VBA source to a local file so a human or an agent can load it into SolidWorks. Writes the file, creates its parent directory when missing and resolves the path; it does not run the macro, so use solidworks_macro_run to execute it.",
+   "params": {
+    "code": "VBA source to write.",
+    "output_path": "Absolute path to write; a resource path, not a geometry coordinate."
+   }
+  },
+  "solidworks_costing_evidence": {
+   "doc": "Return the Costing overview of the active part: the body count and whether a cost analysis exists. Read-only; it fails with a reason when the Costing manager or its defaults cannot be read.",
+   "params": {}
+  },
+  "solidworks_costing_read_analysis": {
+   "doc": "Read every readable field of the part cost analysis as a dict. Read-only; use it to discover the valid cost-method names, and expect an error when the part has no cost analysis yet.",
+   "params": {}
+  },
+  "solidworks_costing_body_count": {
+   "doc": "Return how many bodies Costing sees for the active part. Read-only; cost is computed per body.",
+   "params": {}
+  }
+ }
+}

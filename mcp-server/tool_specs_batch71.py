@@ -74,10 +74,10 @@ _BATCH71: list[ToolSpec] = [
             Param(
                 "points_mm",
                 list,
-                description="点的列表，每项 `[x, y, z]`（**毫米**，至少 2 个）。"
-                '★ 官方 X/Y/Z 只说 "value for the point"、**没给单位** ⇒ '
-                "本工具按 SolidWorks API 惯例当作**米**、在边界换算一次"
-                "（规则 2），★ 并把该假设写进返回值。",
+                description=(
+                    "Points as [x, y, z] triples in millimetres; the API coordinate unit is assumed to be metres, conve"
+                    "rted once here and echoed back in the report."
+                ),
             ),
         ],
         evidence=(
@@ -85,10 +85,11 @@ _BATCH71: list[ToolSpec] = [
             " **三步式**，★ 别只调中间那个）。★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。★ "
             "判据 = `Point`/`End` 的返回值 **且** 特征树增量。"
         ),
-        doc="★ 通过参考点的曲线：`InsertCurveFileBegin()` → `InsertCurveFilePoint(X,Y,Z)`×N → "
-        "`InsertCurveFileEnd()`（★ **三步式**，★ 别只调中间那个）。"
-        "★ 真机建成：树新增 `曲线1`（★ 顺带验证了「按米换算」这个假设是对的）。"
-        "★ 判据 = `Point`/`End` 的返回值 **且** 特征树增量。",
+        doc=(
+            "Insert a curve through a list of XYZ points using the begin, point, end call sequence. It writes a curve f"
+            "eature and does not save the document; all three calls run, and success needs both their returns and a new"
+            " feature in the tree."
+        ),
     ),
 ]
 

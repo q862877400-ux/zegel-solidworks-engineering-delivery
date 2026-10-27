@@ -43,13 +43,17 @@ SPECS_BATCH66 = [
         inject="model",
         param_alias={"option": "option", "x_mm": "x", "y_mm": "y"},
         params=[
-            Param("selection", str, description="Declarative selection." + _SEL),
+            Param("selection", str, description=(
+                                        "Declarative selection of the sketch segment: 'index:<n>' for the n-th segment "
+                                        "of the current sketch, several as a comma list, or '__current_selection__' to "
+                                        "reuse the current selection."
+                                    )),
             Param(
                 "option",
                 str,
                 description=(
-                    "Trim flavour: closest (1 segment) | corner (2 segments) | "
-                    "two_entities | entity_point | entities | outside | inside."
+                    "Trim flavour: closest takes one segment and corner takes two, and the other accepted values are tw"
+                    "o_entities, entity_point, entities, outside and inside. Defaults to 'closest'."
                 ),
                 required=False,
                 default="closest",
@@ -57,14 +61,14 @@ SPECS_BATCH66 = [
             Param(
                 "x_mm",
                 float,
-                description="Trim-point X, mm (used by some options).",
+                description="Trim point X in millimetres, used by the options that take a point. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "y_mm",
                 float,
-                description="Trim-point Y, mm.",
+                description="Trim point Y in millimetres. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
@@ -74,8 +78,8 @@ SPECS_BATCH66 = [
             "marks: closest = exactly one, corner = exactly two)."
         ),
         doc=(
-            "Trim the selected sketch entities. ⚠ How many segments must be selected DEPENDS on "
-            "the option (official Remarks: closest = exactly one, corner = exactly two)."
+            "Trim the selected sketch entities. It modifies the active sketch; how many segments you must select depend"
+            "s on the option, with closest taking exactly one and corner exactly two."
         ),
     ),
     ToolSpec(
@@ -86,18 +90,22 @@ SPECS_BATCH66 = [
         inject="model",
         param_alias={"x_mm": "x", "y_mm": "y"},
         params=[
-            Param("selection", str, description="Declarative selection." + _SEL),
+            Param("selection", str, description=(
+                                        "Declarative selection of the sketch segment: 'index:<n>' for the n-th segment "
+                                        "of the current sketch, several as a comma list, or '__current_selection__' to "
+                                        "reuse the current selection."
+                                    )),
             Param(
                 "x_mm",
                 float,
-                description="Extend-to X, mm.",
+                description="Extend-to X in millimetres. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "y_mm",
                 float,
-                description="Extend-to Y, mm.",
+                description="Extend-to Y in millimetres. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
@@ -105,7 +113,10 @@ SPECS_BATCH66 = [
         evidence=(
             "Extend the selected sketch entity to the nearest entity."
         ),
-        doc="Extend the selected sketch entity to the nearest entity.",
+        doc=(
+            "Extend the selected sketch entity to the nearest entity. It modifies the active sketch and needs the segme"
+            "nt to extend already selected; the extend-to point is used by the flavours that take one."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_offset",
@@ -122,40 +133,44 @@ SPECS_BATCH66 = [
             "add_dimensions": "add_dimensions",
         },
         params=[
-            Param("selection", str, description="Declarative selection." + _SEL),
-            Param("offset_mm", float, description="Offset distance, mm."),
+            Param("selection", str, description=(
+                                        "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment"
+                                        " of the current sketch, several as a comma list, or '__current_selection__' to"
+                                        " reuse the current selection."
+                                    )),
+            Param("offset_mm", float, description="Offset distance in millimetres."),
             Param(
                 "both_directions",
                 bool,
-                description="Offset to both sides.",
+                description="Whether to offset to both sides of the entities. Defaults to false.",
                 required=False,
                 default=False,
             ),
             Param(
                 "chain",
                 bool,
-                description="Select the whole chain.",
+                description="Whether to select the whole chain of entities. Defaults to true.",
                 required=False,
                 default=True,
             ),
             Param(
                 "cap_ends",
                 str,
-                description="Cap ends: none | arc | line.",
+                description="How to cap the ends of an open offset: none, arc or line. Defaults to 'none'.",
                 required=False,
                 default="none",
             ),
             Param(
                 "make_construction",
                 str,
-                description="Make construction: dont | orig | offs | both.",
+                description="Which result to make construction geometry: dont, orig, offs or both. Defaults to 'dont'.",
                 required=False,
                 default="dont",
             ),
             Param(
                 "add_dimensions",
                 bool,
-                description="Add dimensions to the offset.",
+                description="Whether to add dimensions to the offset result. Defaults to false.",
                 required=False,
                 default=False,
             ),
@@ -164,8 +179,11 @@ SPECS_BATCH66 = [
             "Offset the selected sketch entities (official swSkOffsetCapEndType_e / swSkOffsetMakeConstructionType_e va"
             "lues are used verbatim)."
         ),
-        doc="Offset the selected sketch entities (official swSkOffsetCapEndType_e / "
-        "swSkOffsetMakeConstructionType_e values are used verbatim).",
+        doc=(
+            "Offset the selected sketch entities by a distance. It modifies the active sketch; the cap-end and construc"
+            "tion options take the official enum values, and a chain selection follows the whole connected chain instea"
+            "d of the picked segment alone."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_fillet",
@@ -181,13 +199,16 @@ SPECS_BATCH66 = [
             Param(
                 "selection",
                 str,
-                description="Declarative selection of the TWO segments." + _SEL,
+                description=(
+                    "Declarative selection of the two segments: 'index:<n>' for a segment of the current sketch, severa"
+                    "l as a comma list, or '__current_selection__' to reuse the current selection."
+                ),
             ),
-            Param("radius_mm", float, description="Fillet radius, mm."),
+            Param("radius_mm", float, description="Fillet radius in millimetres."),
             Param(
                 "constrained_corners",
                 int,
-                description="Official ConstrainedCorners (int).",
+                description="Corner-constraint option passed straight to the reference call. Defaults to 0.",
                 required=False,
                 default=0,
             ),
@@ -195,7 +216,10 @@ SPECS_BATCH66 = [
         evidence=(
             "Create a SKETCH fillet on two selected, intersecting sketch segments."
         ),
-        doc="Create a SKETCH fillet on two selected, intersecting sketch segments.",
+        doc=(
+            "Create a fillet between two intersecting sketch segments. It modifies the active sketch and needs exactly "
+            "those two segments selected; the radius is given in millimetres."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_linear_pattern",
@@ -213,53 +237,57 @@ SPECS_BATCH66 = [
             "delete_instances": "delete_instances",
         },
         params=[
-            Param("selection", str, description="Declarative selection." + _SEL),
+            Param("selection", str, description=(
+                                        "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment"
+                                        " of the current sketch, several as a comma list, or '__current_selection__' to"
+                                        " reuse the current selection."
+                                    )),
             Param(
                 "x_count",
                 int,
-                description="Instances along X (★ 份数，不是坐标).",
+                description="Number of instances along X, a count and not a coordinate. Defaults to 2.",
                 required=False,
                 default=2,
             ),
             Param(
                 "y_count",
                 int,
-                description="Instances along Y (★ 份数，不是坐标).",
+                description="Number of instances along Y, a count and not a coordinate. Defaults to 1.",
                 required=False,
                 default=1,
             ),
             Param(
                 "spacing_x_mm",
                 float,
-                description="Spacing X, mm.",
+                description="Spacing along X in millimetres. Defaults to 10.0.",
                 required=False,
                 default=10.0,
             ),
             Param(
                 "spacing_y_mm",
                 float,
-                description="Spacing Y, mm.",
+                description="Spacing along Y in millimetres. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "angle_x_deg",
                 float,
-                description="Angle X, DEGREES (converted once at the boundary).",
+                description="Pattern angle about X in degrees, converted once at the boundary. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "angle_y_deg",
                 float,
-                description="Angle Y, DEGREES.",
+                description="Pattern angle about Y in degrees. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "delete_instances",
                 str,
-                description="Instance numbers to skip, e.g. '2,3'.",
+                description="Instance numbers to skip, as a comma list such as '2,3'. Defaults to empty.",
                 required=False,
                 default="",
             ),
@@ -267,7 +295,11 @@ SPECS_BATCH66 = [
         evidence=(
             "Create a LINEAR sketch pattern of the selected entities (official 12-arg call)."
         ),
-        doc="Create a LINEAR sketch pattern of the selected entities (official 12-arg call).",
+        doc=(
+            "Create a linear sketch pattern of the selected entities. It modifies the active sketch; both counts are in"
+            "stance counts rather than coordinates, and both angles are given in degrees and converted once at the boun"
+            "dary."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_circular_pattern",
@@ -284,46 +316,50 @@ SPECS_BATCH66 = [
             "delete_instances": "delete_instances",
         },
         params=[
-            Param("selection", str, description="Declarative selection." + _SEL),
+            Param("selection", str, description=(
+                                        "Declarative selection of the sketch entities: 'index:<n>' for the n-th segment"
+                                        " of the current sketch, several as a comma list, or '__current_selection__' to"
+                                        " reuse the current selection."
+                                    )),
             Param(
                 "arc_radius_mm",
                 float,
-                description="Pattern arc radius, mm.",
+                description="Radius of the arc the instances follow, in millimetres. Defaults to 20.0.",
                 required=False,
                 default=20.0,
             ),
             Param(
                 "arc_angle_deg",
                 float,
-                description="Pattern arc angle, DEGREES.",
+                description="Angle of the arc the instances follow, in degrees. Defaults to 360.0.",
                 required=False,
                 default=360.0,
             ),
             Param(
                 "pattern_num",
                 int,
-                description="Number of instances.",
+                description="Number of instances. Defaults to 4.",
                 required=False,
                 default=4,
             ),
             Param(
                 "pattern_spacing_deg",
                 float,
-                description="Spacing, DEGREES.",
+                description="Spacing between instances, in degrees. Defaults to 0.0.",
                 required=False,
                 default=0.0,
             ),
             Param(
                 "pattern_rotate",
                 bool,
-                description="Rotate the instances.",
+                description="Whether to rotate the instances as they are patterned. Defaults to true.",
                 required=False,
                 default=True,
             ),
             Param(
                 "delete_instances",
                 str,
-                description="Instance numbers to skip.",
+                description="Instance numbers to skip, as a comma list. Defaults to empty.",
                 required=False,
                 default="",
             ),
@@ -331,6 +367,9 @@ SPECS_BATCH66 = [
         evidence=(
             "Create a CIRCULAR sketch pattern of the selected entities (official 9-arg call)."
         ),
-        doc="Create a CIRCULAR sketch pattern of the selected entities (official 9-arg call).",
+        doc=(
+            "Create a circular sketch pattern of the selected entities. It modifies the active sketch; the instances fo"
+            "llow an arc that you define by radius and angle, and skipped instance numbers are left out of the pattern."
+        ),
     ),
 ]

@@ -1,0 +1,120 @@
+{
+ "tools": {
+  "solidworks_selection_suspend_list": {
+   "doc": "Set the current selection list aside so a new empty list can be built. It returns 1 when the set-aside list was not empty and 0 when it was empty, and it modifies the selection list because the existing contents are kept aside while the new list starts empty, so fill it with the AddSelectionList tools before using it.",
+   "params": {}
+  },
+  "solidworks_selection_set_object_mark": {
+   "doc": "Set the mark value of the selected item at one index so later calls can tell its role. Modifies the selection marks of the current selection list; positions are one-based and range from 1 to the number of selected objects.",
+   "params": {
+    "index": "One-based position of the item in the current selection list, documented to run from 1 to the selected object count; defaults to 0.",
+    "mark": "Mark value to write onto that item; defaults to 0.",
+    "action": "Mark action code handed to the official setter; defaults to 0."
+   }
+  },
+  "solidworks_selection_enable": {
+   "doc": "Enable or disable interactive selection for the active document and report whether selection is then enabled. Modifies a document-level switch: with selection off every selection-based tool stops working, so set it back to true when the work is done.",
+   "params": {
+    "enabled": "True allows selection, false disables it for the whole document; defaults to false."
+   }
+  },
+  "solidworks_selection_enable_contour": {
+   "doc": "Enable or disable contour selection so regions bounded by open or closed sketch contours can be picked. Modifies a document-level switch; turn it off again straight after the pick, because it changes what later selections return.",
+   "params": {
+    "enabled": "True allows picking regions bounded by sketch contours, false disables it; defaults to false."
+   }
+  },
+  "solidworks_selection_is_coord_sys_element_selected": {
+   "doc": "Report whether the selected item at one index is a coordinate system element. Read-only; give the one-based position in the current selection list plus a mark filter, and it returns true only when that item is a coordinate system element.",
+   "params": {
+    "index": "One-based position of the item in the current selection list; defaults to 0.",
+    "mark": "Mark filter: -1 selects regardless of mark, 0 only selections without a mark, any other value the selections carrying that mark; defaults to 0."
+   }
+  },
+  "solidworks_selection_is_in_edit_target": {
+   "doc": "Report whether the selected item belongs to the model that is the current edit target. Read-only; it returns true when that item belongs to the model being edited in place and false when it does not, and it reads the current selection list, so an empty list answers nothing.",
+   "params": {
+    "index": "One-based position of the item in the current selection list; defaults to 0.",
+    "mark": "Mark filter: -1 selects regardless of mark, 0 only selections without a mark, any other value the selections carrying that mark; defaults to 0."
+   }
+  },
+  "solidworks_selection_collect_evidence": {
+   "doc": "Read back the current selection list as structured evidence of what a previous selection step left behind. Read-only; it wraps the selection-count and selected-object readers and changes nothing in the model.",
+   "params": {}
+  },
+  "solidworks_assembly_apply_component_transform_x": {
+   "doc": "Move and rotate the active assembly component by rewriting its transform, then solve the assembly. Writes the component placement and does not save the document; the transform is stated relative to the root component and the rotation turns about the local X axis.",
+   "params": {
+    "tx_mm": "X translation in millimetres, converted once to the metres the source takes; defaults to empty.",
+    "ty_mm": "Y translation in millimetres, converted once to metres; defaults to empty.",
+    "tz_mm": "Z translation in millimetres, converted once to metres; defaults to empty.",
+    "angle_deg": "Rotation about the local X axis in degrees, converted once to radians; defaults to 0.0, which is a pure translation."
+   }
+  },
+  "solidworks_assembly_external_reference_count": {
+   "doc": "Count the external file references of a component. Read-only; it returns the count only, because reading the references themselves needs a call with many output arguments this backend cannot fill, so an increase from zero is the usable answer.",
+   "params": {}
+  },
+  "solidworks_costing_set_default_lot_size": {
+   "doc": "Set the default lot size Costing uses for single-body and multibody cases. Modifies the Costing defaults of the active document; the official member is a property and no available source documents what the integers mean, so both values are passed through unchanged.",
+   "params": {
+    "single_body": "Default lot size for single-body cases, as an integer count whose meaning is undocumented; defaults to 0.",
+    "multibody": "Default lot size for multibody cases, as an integer count whose meaning is undocumented; defaults to 0."
+   }
+  },
+  "solidworks_costing_set_default_material": {
+   "doc": "Set the default material for one Costing category. Modifies the Costing defaults of the active document; neither the meaning of the integer category nor the accepted material names are documented in any available source, so both arguments are passed through unchanged.",
+   "params": {
+    "category": "Category as an integer enum value written as text; no source documents the value, so it is passed through unchanged. Defaults to empty.",
+    "material_name": "Material name inside the material library, as a plain string. Defaults to empty."
+   }
+  },
+  "solidworks_costing_set_default_manufacturing_method": {
+   "doc": "Set the default manufacturing method for one Costing category. Modifies the Costing defaults of the active document; neither the category value nor the manufacturing method value is documented in any available source, so both are passed through unchanged.",
+   "params": {
+    "category": "Category as an integer enum value written as text; no source documents the value, so it is passed through unchanged. Defaults to empty.",
+    "method": "Manufacturing method as an integer enum value written as text; the value table is documented in no available source. Defaults to empty."
+   }
+  },
+  "solidworks_selection_deselect": {
+   "doc": "Remove one entity from the current selection list, returning 1 when it was deselected and 0 when it was not. Modifies the selection list; the position is one-based within the list the selection manager currently reports.",
+   "params": {
+    "item": "One-based position of the entity in the current selection list, the official position argument; defaults to 0.",
+    "mark": "Mark filter: -1 selects regardless of mark, 0 only selections without a mark, any other value the selections carrying that mark; defaults to 0."
+   }
+  },
+  "solidworks_sketch_add_3point_rectangle": {
+   "doc": "Draw a corner rectangle at any angle from three points in the open sketch. Creates sketch geometry in millimetres measured from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call solidworks_sketch_end.",
+   "params": {
+    "x1_mm": "X of the first corner in millimetres, from the sketch origin.",
+    "y1_mm": "Y of the first corner in millimetres.",
+    "x2_mm": "X of the second corner in millimetres.",
+    "y2_mm": "Y of the second corner in millimetres.",
+    "x3_mm": "X of the third point in millimetres, which sets the rectangle angle and height.",
+    "y3_mm": "Y of the third point in millimetres."
+   }
+  },
+  "solidworks_sketch_add_3point_center_rectangle": {
+   "doc": "Draw a centre rectangle from its centre point, one corner and one more point. Creates sketch geometry in millimetres from the sketch origin; the first point is the centre, and the sketch must be open, so start it with solidworks_sketch_start and finish with solidworks_sketch_end.",
+   "params": {
+    "center_x_mm": "X of the rectangle centre in millimetres, from the sketch origin.",
+    "center_y_mm": "Y of the rectangle centre in millimetres.",
+    "x2_mm": "X of a corner in millimetres.",
+    "y2_mm": "Y of that corner in millimetres.",
+    "x3_mm": "X of the third point in millimetres, which sets the rectangle height.",
+    "y3_mm": "Y of the third point in millimetres."
+   }
+  },
+  "solidworks_sketch_add_parallelogram": {
+   "doc": "Draw a parallelogram from one corner and the ends of its two adjacent edges. Creates sketch geometry in millimetres from the sketch origin; start the sketch first with solidworks_sketch_start, draw, then call solidworks_sketch_end.",
+   "params": {
+    "x1_mm": "X of the corner in millimetres, from the sketch origin.",
+    "y1_mm": "Y of the corner in millimetres.",
+    "x2_mm": "X of the end of the first adjacent edge in millimetres.",
+    "y2_mm": "Y of the end of the first adjacent edge in millimetres.",
+    "x3_mm": "X of the end of the second adjacent edge in millimetres.",
+    "y3_mm": "Y of the end of the second adjacent edge in millimetres."
+   }
+  }
+ }
+}

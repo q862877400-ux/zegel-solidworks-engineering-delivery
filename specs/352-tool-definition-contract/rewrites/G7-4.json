@@ -1,0 +1,132 @@
+{
+ "tools": {
+  "solidworks_mold_core_cavity_split": {
+   "doc": "Split the mold into core and cavity solids along the parting surface. Creates the tooling-split feature and returns its name; it raises when SolidWorks returns nothing, which usually means no parting surface exists yet, and a value of 0.0 means the document default.",
+   "params": {
+    "scale": "First numeric argument; by position it is a scale factor, but its meaning is unverified and 0.0 means the document default. Defaults to 0.0.",
+    "thickness": "Second numeric argument; by position it is a wall thickness, but its meaning is unverified. Defaults to 0.0, which means the document default.",
+    "flip": "Boolean argument at the third position, taken as a direction reversal but unverified; defaults to false.",
+    "offset": "Fourth argument, by position an offset, unverified. Defaults to 0.0, which means the document default."
+   }
+  },
+  "solidworks_mold_parting_surface": {
+   "doc": "Insert the mold parting surface so the tooling split has a surface to cut along. Creates a parting-surface feature and returns its name; it raises when SolidWorks returns nothing, which usually means the parting line does not exist yet or no face is selected, and most of the eight arguments have no documented meaning.",
+   "params": {
+    "surface_type": "Surface type enum value passed through by position without documented meaning; defaults to 0.",
+    "flip": "Whether to reverse the surface direction; the meaning is unverified. Defaults to false.",
+    "use_trim": "Whether the surface is trimmed; the meaning is unverified. Defaults to false.",
+    "distance": "Distance value whose name suggests a length, though its position and unit are unverified. Defaults to 0.0, meaning the default.",
+    "angle": "Angle value whose name suggests an angle, though its unit is unverified. Defaults to 0.0, meaning the default.",
+    "option": "Option enum value passed through by position without documented meaning; defaults to 0.",
+    "tolerance": "Tolerance value whose unit is unverified. Defaults to 0.0, meaning the default.",
+    "alternate": "Whether to use the alternate direction; the meaning is unverified. Defaults to false."
+   }
+  },
+  "solidworks_mold_undercut_detect": {
+   "doc": "Detect mold undercuts along a pull direction and paint the faces that form them. Modifies the display colors of the faces and returns nothing, because the detection result is not in the return value; an all-zero pull direction is rejected before the call since it would fall back to a draft direction the part may not have.",
+   "params": {
+    "col_undercut": "Color reference value for the faces that are invisible from the pull direction and form an undercut; defaults to 0.",
+    "col_base": "Color reference value for the faces that do not form undercuts; defaults to 0.",
+    "b_coord_input": "True uses dx, dy and dz as the pull direction, false uses the draft direction already defined in the model and can raise a modal dialog when the part has none. Defaults to true.",
+    "dx": "X component of the pull direction, used only when b_coord_input is true; defaults to 0.0.",
+    "dy": "Y component of the pull direction, used only when b_coord_input is true; defaults to 0.0.",
+    "dz": "Z component of the pull direction; defaults to 1.0, so the default pull direction runs along Z."
+   }
+  },
+  "solidworks_simulation_apply_distributed_mass": {
+   "doc": "Add a distributed mass load to the selected faces of a static simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and the study should have a unique name because a duplicate study name makes the count read back as nothing.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body.",
+    "mass": "Mass value, expressed in whatever unit the units argument selects.",
+    "units": "Official unit enum for the mass value, passed through as an integer; defaults to 0."
+   }
+  },
+  "solidworks_simulation_apply_force": {
+   "doc": "Add a force or moment load to the selected faces of a static simulation study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one rather than from the return value, and force_type picks which kind of load is added.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body.",
+    "force_type": "Official load-kind enum passed through as an integer; defaults to 1."
+   }
+  },
+  "solidworks_simulation_apply_remote_load": {
+   "doc": "Add a remote load with a location, a direction and a magnitude to the selected faces of a static study. Creates one load in the study and does not save the document; the ok flag comes from the load count rising by exactly one, and the load type and location unit enums are passed through as integers with no documented value table.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "selection": "Declarative face selection the load applies to: '__current_selection__' for the current selection or 'index:<n>' for the n-th face on the body.",
+    "load_type": "Official load type enum passed through as an integer; the value table is documented in no available source.",
+    "units": "Official location unit enum passed through as an integer; the value table is documented in no available source.",
+    "dx": "X component of the load direction.",
+    "dy": "Y component of the load direction.",
+    "dz": "Z component of the load direction."
+   }
+  },
+  "solidworks_circular_pattern": {
+   "doc": "Create a circular pattern of one feature about an axis. Writes a pattern feature into the active part and does not save the document; count counts the instances including the seed, and the total angle is spread over equal spacing when that is enabled.",
+   "params": {
+    "feature_name": "Name of the feature to pattern, as it appears in the feature tree.",
+    "axis_name": "Name of the axis to revolve around.",
+    "angle_deg": "Total pattern angle in degrees.",
+    "count": "Number of instances including the seed feature.",
+    "equal_spacing": "Whether the instances are spaced equally across the angle. Defaults to true."
+   }
+  },
+  "solidworks_revolve_boss": {
+   "doc": "Revolve a profile sketch into a solid boss about an axis. Creates a boss feature in the active part and does not save the document; the axis has to enter the selection set before the profile, and an omitted axis name means an axis must already be selected.",
+   "params": {
+    "sketch_name": "Name of the profile sketch exactly as it appears in the feature tree.",
+    "angle_deg": "Revolve angle in degrees, converted once to radians.",
+    "axis_sketch_name": "Name of the axis sketch to revolve about; empty selects no axis, so one must already be selected in the model. Defaults to empty."
+   }
+  },
+  "solidworks_drawing_create_three_standard_views": {
+   "doc": "Create the three standard views of a saved model on the active drawing. Creates drawing views and does not save the document; projection picks first or third angle and no scale is passed, so view scale follows the drawing document setting, and the model must already be saved because the call takes its path.",
+   "params": {
+    "part_path": "Full path of the model the views are drawn from, extension included; an unsaved document has no path, so save it first. Defaults to '...'.",
+    "projection": "Projection: first_angle calls the first-angle member, third_angle calls the third-angle member, and any other value raises a value error. Defaults to first_angle."
+   }
+  },
+  "solidworks_costing_defaults": {
+   "doc": "Read the Costing defaults object of the active document. Read-only; it hands back the defaults object itself rather than individual fields, and the costing interfaces have no official documentation pages, so no field semantics are claimed here.",
+   "params": {}
+  },
+  "solidworks_part_loft": {
+   "doc": "Create a loft from an ordered list of profile sketches. Creates a loft feature in the active part and does not save the document; the sketches are selected in the order given because that order defines the loft, and the volume this tool reports is not a reliable reading.",
+   "params": {
+    "profile_sketches": "Profile sketch names in the order the loft should run through them, at least two, each selected with mark 1. Defaults to unset.",
+    "closed": "Whether the loft closes back on itself into a ring, which needs a closed guide curve when there are fewer than three profiles. Defaults to false.",
+    "use_selected_profiles": "Whether to loft the profiles already selected with mark 1, where the order decides the result. Defaults to true."
+   }
+  },
+  "solidworks_simulation_apply_rigid_connector": {
+   "doc": "Add a rigid connector between two bodies of a simulation study, building both entity arrays itself. Creates one load in the study and does not save the document; on a single-body part it reports success while creating nothing, so point the two body indices at different bodies.",
+   "params": {
+    "study_name": "Name of an existing simulation study; empty means the first study in the document. Defaults to empty.",
+    "source_indices": "Zero-based indices of the entities on the source side, as a list.",
+    "target_indices": "Zero-based indices of the entities on the target side, as a list.",
+    "kind": "Entity kind used on both sides: FACE, EDGE or VERTEX. Defaults to FACE.",
+    "source_body_index": "Zero-based index of the body the source entities come from; it must differ from the target body index. Defaults to 0.",
+    "target_body_index": "Zero-based index of the body the target entities come from. Defaults to 0."
+   }
+  },
+  "solidworks_drawing_insert_model_items": {
+   "doc": "Insert the model annotations of the referenced model into a drawing view. Creates drawing annotations and does not save the document; the result is judged by the annotation count read before and after, and no non-empty insert has been observed through this tool yet because the part used for testing carried no dimensions at all.",
+   "params": {
+    "view_name": "View to operate on; empty uses the first view on the current sheet. Defaults to empty.",
+    "source": "Official import source: entire_model (0), selected_feature (1), selected_component (2), assembly_only (3). Defaults to entire_model.",
+    "types": "Comma-separated annotation type names, optionally without the swInsert prefix, combined into a bit mask; it matters only when both insert_all flags are false. Defaults to empty.",
+    "all_views": "True inserts into every view, false only into the current selection, which must then still be selected. Defaults to false.",
+    "duplicate_dims": "True removes duplicate dimensions. Defaults to false.",
+    "hidden_feature_dims": "True also inserts dimensions of hidden features. Defaults to false.",
+    "use_placement_in_sketch": "True places dimensions as they were placed in the sketch. Defaults to false.",
+    "insert_all_annotations": "True inserts every annotation and ignores types. Defaults to false.",
+    "insert_all_reference_geometry": "True inserts every piece of reference geometry and ignores types. Defaults to false."
+   }
+  },
+  "solidworks_pdm_evidence_report": {
+   "doc": "Report the PDM-adjacent evidence of a document: custom properties, configurations and references. Read-only; it is not SolidWorks PDM Professional, which needs a PDM licence, and it reports a field it cannot read instead of filling in a value.",
+   "params": {}
+  }
+ }
+}

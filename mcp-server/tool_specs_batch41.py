@@ -76,14 +76,16 @@ SPECS_BATCH41 = [
                 "index",
                 dict,
                 default=None,
-                description="A pre-loaded index (omit to load the local one).",
+                description="A pre-loaded index; defaults to null, which loads the local index.",
             )
         ],
         evidence=(
             "List the Toolbox standards available in the local index. ★ Pure data — no SolidWorks call."
         ),
-        doc="List the Toolbox standards available in the local index. ★ Pure data — no "
-        "SolidWorks call.",
+        doc=(
+            "List the Toolbox standards in the local index with the part count of each. Read-only pure data with no Sol"
+            "idWorks call, so it needs no open document and cannot affect the model."
+        ),
     ),
     ToolSpec(
         name="solidworks_toolbox_load_index",
@@ -96,13 +98,17 @@ SPECS_BATCH41 = [
                 "path",
                 str,
                 default=None,
-                description="Index path (omit for the default local index).",
+                description="Path of the index file; defaults to null, which uses the default local index.",
             )
         ],
         evidence=(
             "Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call."
         ),
-        doc="Load the Toolbox index as a JSON-able dict. ★ Pure data — no SolidWorks call.",
+        doc=(
+            "Load the Toolbox index as a dictionary that can be passed straight to the other Toolbox tools. Read-only p"
+            "ure data with no SolidWorks call. A missing file is reported as an error instead of coming back as an empt"
+            "y index."
+        ),
     ),
     ToolSpec(
         name="solidworks_toolbox_search",
@@ -111,14 +117,24 @@ SPECS_BATCH41 = [
         function="search",
         inject=None,
         params=[
-            Param("keyword", str, description="Search keyword."),
-            Param("standard", str, default="", description=_STD),
-            Param("category", str, default="", description="Optional category filter."),
+            Param("keyword", str, description="Search keyword, matched against part names only."),
+            Param("standard", str, default="", description=(
+                                                   "Toolbox standard name to restrict the search to; empty means every "
+                                                   "standard. Defaults to empty."
+                                               )),
+            Param("category", str, default="", description=(
+                                                   "Category to restrict the search to; empty means no category filter."
+                                                   " Defaults to empty."
+                                               )),
         ],
         evidence=(
             "Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call."
         ),
-        doc="Search the Toolbox index by keyword. ★ Pure data — no SolidWorks call.",
+        doc=(
+            "Search the Toolbox index for parts by keyword, standard and category. Read-only pure data with no SolidWor"
+            "ks call. The keyword matches part names only and is not spelling-corrected, and sizes are not in those nam"
+            "es, so query a name such as hex head rather than a diameter."
+        ),
     ),
     ToolSpec(
         name="solidworks_toolbox_part_path",
@@ -127,25 +143,28 @@ SPECS_BATCH41 = [
         function="part_path",
         inject=None,
         params=[
-            Param("standard", str, description=_STD),
+            Param("standard", str, description="Toolbox standard that contains the part."),
             Param(
                 "part_name",
                 str,
-                description="Part name inside that standard (★ see the search tool).",
+                description="Part name inside that standard.",
             ),
             Param(
                 "index",
                 dict,
                 default=None,
-                description="A pre-loaded index (optional).",
+                description="A pre-loaded index; defaults to null, which loads the local index.",
             ),
         ],
         evidence=(
             "Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. ★ An unknown name fails wi"
             "th what is available instead of returning nothing."
         ),
-        doc="Resolve a Toolbox part name to its file path. ★ Pure data — no SolidWorks call. "
-        "★ An unknown name fails with what is available instead of returning nothing.",
+        doc=(
+            "Resolve one Toolbox part name to its full file path, ready for an assembly insert. Read-only pure data wit"
+            "h no SolidWorks call. An unknown name fails and lists what is available instead of returning a guessed pat"
+            "h, because a guessed path inserts silently wrong."
+        ),
     ),
     #: ── 草图编辑（★ 空条目 `sketch_chamfer` / `sketch_edit_ops` 的填实）──
     ToolSpec(
@@ -156,19 +175,24 @@ SPECS_BATCH41 = [
         inject="model",
         params=[
             Param(
-                "chamfer_type", int, default=0, description="Chamfer type enum value."
+                "chamfer_type", int, default=0, description=(
+                                                    "Sketch chamfer type; only 2, the equal-distance type, was observed"
+                                                    " to build. Defaults to 0."
+                                                )
             ),
-            Param("distance_mm", float, description="Chamfer distance in MILLIMETRES."),
+            Param("distance_mm", float, description="Chamfer distance in millimetres."),
         ],
         evidence=(
             "Create a chamfer on the selected sketch entities. ★ Needs entities selected first (★ rule 3: select declar"
             "atively, do not pass coordinates). ⚠ The backend limit in known-facts 47 applies to the *feature* chamfer;"
             " this is the sketch one — the layer reports what actually happened."
         ),
-        doc="Create a chamfer on the selected sketch entities. ★ Needs entities selected first "
-        "(★ rule 3: select declaratively, do not pass coordinates). "
-        "⚠ The backend limit in known-facts 47 applies to the *feature* chamfer; this is the "
-        "sketch one — the layer reports what actually happened.",
+        doc=(
+            "Create a chamfer between exactly two selected sketch segments at one distance. Writes a new segment into t"
+            "he active sketch, and nothing happens unless both segments are already selected. Only the equal-distance c"
+            "hamfer type was observed to build, and the tool can return no object even when the chamfer was built, beca"
+            "use reading that object is what fails."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_mirror",
@@ -181,8 +205,11 @@ SPECS_BATCH41 = [
             "Mirror the selected sketch entities about the selected centerline. ★ The criterion is that the sketch enti"
             "ty count changes."
         ),
-        doc="Mirror the selected sketch entities about the selected centerline. "
-        "★ The criterion is that the sketch entity count changes.",
+        doc=(
+            "Mirror the selected sketch segments about the selected centerline into new sketch entities. Writes new seg"
+            "ments into the active sketch. Segments to mirror are selected with mark 1 and the centerline with mark 2, "
+            "and the tool reports whether the entity count really changed instead of claiming success."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_convert_entities",
@@ -191,16 +218,25 @@ SPECS_BATCH41 = [
         function="convert_entities",
         inject="model",
         params=[
-            Param("chain", bool, default=True, description="Select the whole chain."),
+            Param("chain", bool, default=True, description=(
+                                                   "Whether to convert the whole chain of adjacent geometry instead of "
+                                                   "only the selected items. Defaults to true."
+                                               )),
             Param(
-                "inner_loops", bool, default=False, description="Include inner loops."
+                "inner_loops", bool, default=False, description=(
+                                                        "Whether to convert the inner loops of the selected faces as we"
+                                                        "ll. Defaults to false."
+                                                    )
             ),
         ],
         evidence=(
             "Convert the selected model edges into the active sketch. ★ The criterion is that the sketch entity count c"
             "hanges."
         ),
-        doc="Convert the selected model edges into the active sketch. ★ The criterion is that the "
-        "sketch entity count changes.",
+        doc=(
+            "Convert the selected model edges into entities of the active sketch. Writes new sketch entities, so you mu"
+            "st be in sketch edit mode with the edges already selected. The result reports whether the sketch entity co"
+            "unt really changed."
+        ),
     ),
 ]

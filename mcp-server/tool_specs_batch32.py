@@ -89,18 +89,23 @@ SPECS_BATCH32 = [
         inject="model",
         param_alias={"thickness_mm": "thickness_mm"},
         params=[
-            Param("thickness_mm", float, description=_THICK),
-            Param("feature_name", str, default="", description=_FEAT),
+            Param("thickness_mm", float, description="Wall thickness in millimetres, following the document unit."),
+            Param("feature_name", str, default="", description=(
+                                                       "Expected feature name used by the read-back; defaults to empty,"
+                                                       " which falls back to the default shell name, and a wrong name r"
+                                                       "eports the feature as absent."
+                                                   )),
         ],
         evidence=(
             "Hollow the part with a wall thickness and return a READ-BACK report: whether the feature is in the tree, w"
             "hether EditRebuild3 succeeded, and the What's Wrong item count (★ rule 6 — feature creation must not succe"
             "ed silently). ⚠ Does NOT save the document."
         ),
-        doc="Hollow the part with a wall thickness and return a READ-BACK report: whether the "
-        "feature is in the tree, whether EditRebuild3 succeeded, and the What's Wrong item "
-        "count (★ rule 6 — feature creation must not succeed silently). "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Hollow the part with a wall thickness and report the feature, rebuild and error read-back. It writes a fea"
+            "ture into the active part and does not save it; an empty feature_name falls back to the default shell name"
+            ", and a wrong name reports the feature as absent."
+        ),
     ),
     ToolSpec(
         name="solidworks_part_rib",
@@ -110,22 +115,30 @@ SPECS_BATCH32 = [
         inject="model",
         param_alias={"thickness_mm": "thickness_mm"},
         params=[
-            Param("sketch_name", str, description=_SKETCH),
-            Param("thickness_mm", float, description=_THICK),
-            Param("feature_name", str, default="", description=_FEAT),
+            Param("sketch_name", str, description=(
+                                          "Name of an existing sketch used as the rib profile; the sketch must already "
+                                          "be in the tree."
+                                      )),
+            Param("thickness_mm", float, description="Rib wall thickness in millimetres, following the document unit."),
+            Param("feature_name", str, default="", description=(
+                                                       "Expected feature name used by the read-back; defaults to empty,"
+                                                       " which falls back to the default rib name."
+                                                   )),
             Param(
                 "direction",
                 bool,
                 default=True,
-                description="Rib direction flag (official InsertRib arg 4).",
+                description="Rib direction flag passed to the official call; defaults to true.",
             ),
         ],
         evidence=(
             "Create a rib from an existing sketch and return a READ-BACK report (feature in tree + rebuild + What's Wro"
             "ng count). ★ Rule 6. ⚠ Does NOT save the document."
         ),
-        doc="Create a rib from an existing sketch and return a READ-BACK report (feature in "
-        "tree + rebuild + What's Wrong count). ★ Rule 6. ⚠ Does NOT save the document.",
+        doc=(
+            "Create a rib from an existing sketch and report the feature, rebuild and error read-back. It writes a feat"
+            "ure into the active part and does not save it; the sketch must already exist in the tree."
+        ),
     ),
     ToolSpec(
         name="solidworks_part_insert_dome",
@@ -135,16 +148,19 @@ SPECS_BATCH32 = [
         inject="model",
         param_alias={"height_mm": "height_mm"},
         params=[
-            Param("height_mm", float, description=_HEIGHT),
-            Param("feature_name", str, default="", description=_FEAT),
+            Param("height_mm", float, description="Dome height in millimetres."),
+            Param("feature_name", str, default="", description=(
+                                                       "Expected feature name used by the read-back; defaults to empty,"
+                                                       " which falls back to the default dome name."
+                                                   )),
             Param(
                 "reverse",
                 bool,
                 default=False,
-                description="Reverse the dome direction.",
+                description="Whether to reverse the dome direction; defaults to false.",
             ),
             Param(
-                "elliptic", bool, default=False, description="Make the dome elliptical."
+                "elliptic", bool, default=False, description="Whether to make the dome elliptical; defaults to false."
             ),
             #: ★★ 2026-10-07（接手轮 · 规格 216 T-216-06b）**新增 `face_index`** ——
             #: ★ 起因：★ 官方 Remarks 要求"先选一个面 + **mark=1**"，★ 而注入解析器**会
@@ -157,8 +173,9 @@ SPECS_BATCH32 = [
                 "face_index",
                 int,
                 default=0,
-                description="★ 第几个面（从 0 起）。★ 声明式序号 —— 不信坐标（规则 3）。"
-                "越界或选不中会**响亮报错**，不会静默变成「圆顶建不出来」。",
+                description=(
+                    "Zero-based index of the face to dome; defaults to 0, and an index that cannot be selected raises."
+                ),
             ),
         ],
         evidence=(
@@ -167,10 +184,11 @@ SPECS_BATCH32 = [
             "pre-select anything, and a pre-selection would be cleared anyway. ★ Read-back confirmed (rule 6); does NOT"
             " save the document."
         ),
-        doc="★ Add a dome on the face at `face_index` (0-based) and return a READ-BACK report. "
-        "★★ The tool selects that face itself with **selection mark 1** (the official Remarks "
-        "require it) — so the caller does NOT need to pre-select anything, and a pre-selection "
-        "would be cleared anyway. ★ Read-back confirmed (rule 6); does NOT save the document.",
+        doc=(
+            "Add a dome on the face at face_index and report the feature, rebuild and error read-back. It writes a feat"
+            "ure into the active part, selects that face itself with mark 1, and does not save it; an out-of-range inde"
+            "x raises instead of failing quietly."
+        ),
     ),
     ToolSpec(
         name="solidworks_part_insert_composite_curve",
@@ -179,7 +197,10 @@ SPECS_BATCH32 = [
         function="insert_composite_curve_report",
         inject="model",
         params=[
-            Param("feature_name", str, default="", description=_FEAT),
+            Param("feature_name", str, default="", description=(
+                                                       "Expected feature name used by the read-back; defaults to empty,"
+                                                       " which falls back to the default composite-curve name."
+                                                   )),
         ],
         evidence=(
             "Join the selected entities into a composite curve and return a READ-BACK report (★ rule 6). The capability"
@@ -187,10 +208,10 @@ SPECS_BATCH32 = [
             "back on top. ⚠ The official Remarks require the entities to be selected with mark = 1 first. ⚠ Does NOT sa"
             "ve the document."
         ),
-        doc="Join the selected entities into a composite curve and return a READ-BACK report "
-        "(★ rule 6). The capability layer already raises when the official call returns "
-        "False — this adds the tree/rebuild/What's Wrong read-back on top. "
-        "⚠ The official Remarks require the entities to be selected with mark = 1 first. "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Join the selected entities into a composite curve and report the feature, rebuild and error read-back. It "
+            "writes a feature into the active part and does not save it; the entities must already be selected with mar"
+            "k 1."
+        ),
     ),
 ]

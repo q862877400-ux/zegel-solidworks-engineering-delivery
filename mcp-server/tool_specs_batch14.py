@@ -53,7 +53,10 @@ SPECS_BATCH14 = [
         evidence=(
             "Get the currently active 3D view (the official member is IModelDoc.ActiveView)."
         ),
-        doc="Get the currently active 3D view (the official member is IModelDoc.ActiveView).",
+        doc=(
+            "Get the currently active three-dimensional model view. Read-only; it reads the view of the active document"
+            " and changes nothing, so it is the handle that later view operations address."
+        ),
         params=[],
     ),
     ToolSpec(
@@ -76,27 +79,25 @@ SPECS_BATCH14 = [
             " promised stable by the official API — do not treat body_index as a persistent reference across rebuilds. "
             "★ 别名: body, edge, edges, entit, vertex, vertices"
         ),
-        doc="List the entities of one body **with geometry** (kind EDGE, FACE, or VERTEX). "
-        "★ 每条带可 JSON 化的读数：EDGE ⇒ 两个端点 + **自己算的**边长（★ 官方 `IEdge` "
-        "**没有**长度成员）· FACE ⇒ `IFace2.GetArea()` · VERTEX ⇒ `IVertex.GetPoint()`。"
-        "★★ 同时回 **欧拉校验 `V−E+F=2`**（★ 本仓既有判据，不需新 API）✓ "
-        "⚠ Index order is NOT promised stable by the official API — do not treat "
-        "body_index as a persistent reference across rebuilds. ★ 别名: body, edge, edges, entit, vertex, vertices",
+        doc=(
+            "List the edges, faces or vertices of one solid body with their geometry readings. Read-only. An edge repor"
+            "ts its two end points and a computed length, a face reports its area, a vertex reports its point, and the "
+            "reply also carries the V minus E plus F check. The index order is not promised stable, so never use it as "
+            "a reference across rebuilds."
+        ),
         params=[
             Param(
                 "kind",
                 str,
-                description="Entity kind. Valid values (from sw_selection_spec.ENTITY_KINDS): "
-                '"EDGE", "FACE", or "VERTEX". '
-                "★ VERTEX uses the official IBody2.GetVertices() (0 args); "
-                "★ a 20×20×10 box returns FACE=6 · EDGE=12 · VERTEX=8, "
-                "so Euler's V−E+F=2 holds.",
+                description="Entity kind to list: EDGE, FACE or VERTEX.",
             ),
             Param(
                 "body_index",
                 int,
                 default=0,
-                description="Zero-based solid-body index. ⚠ Not a persistent reference.",
+                description=(
+                    "Zero-based index of the solid body, not a persistent reference across rebuilds. Defaults to 0."
+                ),
             ),
         ],
     ),

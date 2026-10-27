@@ -54,14 +54,16 @@ SPECS_BATCH43 = [
             Param(
                 "view_name",
                 str,
-                description="A view name (★ see solidworks_drawing_list_views).",
+                description="Name of the drawing view, as listed by solidworks_drawing_list_views.",
             )
         ],
         evidence=(
             "Get one view's scale by name. ★ An unknown name fails with the list of valid names. ★ Read-only."
         ),
-        doc="Get one view's scale by name. ★ An unknown name fails with the list of valid names. "
-        "★ Read-only.",
+        doc=(
+            "Get the scale of one drawing view by its name. Read-only. An unknown name fails and lists the valid view n"
+            "ames, so a failed call still tells you what to pass next."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_view_set_scale",
@@ -73,21 +75,23 @@ SPECS_BATCH43 = [
             Param(
                 "view_name",
                 str,
-                description="A view name (★ see solidworks_drawing_list_views).",
+                description="Name of the drawing view, as listed by solidworks_drawing_list_views.",
             ),
             Param(
                 "scale",
                 float,
-                description="The new view scale (★ not a length, not an angle).",
+                description="New view scale, which is neither a length nor an angle.",
             ),
         ],
         evidence=(
             "Set one view's scale and return before/after. ★ The criterion is that the READ-BACK scale actually changed"
             " (rule 6 — never a silent success). ⚠ Does NOT save the document."
         ),
-        doc="Set one view's scale and return before/after. ★ The criterion is that the READ-BACK "
-        "scale actually changed (rule 6 — never a silent success). "
-        "⚠ Does NOT save the document.",
+        doc=(
+            "Set the scale of one drawing view and return the scale before and after. Modifies the view scale and does "
+            "not save the document. The criterion is that the read-back scale really changed, so a returned call is not"
+            " proof on its own."
+        ),
     ),
     ToolSpec(
         name="solidworks_drawing_collect_view_evidence",
@@ -99,7 +103,9 @@ SPECS_BATCH43 = [
         evidence=(
             "Collect the capability layer's per-view evidence for every view on the drawing. ★ Read-only."
         ),
-        doc="Collect the capability layer's per-view evidence for every view on the drawing. "
-        "★ Read-only.",
+        doc=(
+            "Collect the per-view evidence that the capability layer records for every view on the drawing. Read-only, "
+            "so it reports what each view holds and changes nothing."
+        ),
     ),
 ]

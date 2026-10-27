@@ -59,22 +59,31 @@ SPECS_BATCH39 = [
             Param(
                 "equation",
                 str,
-                description='The equation text, e.g. \'"D2@Sketch1" = 2 * "D1@Sketch1"\'.',
+                description=(
+                    "Equation text as written in the user interface, with dimension names in double quotes, for example"
+                    " \"D2@Sketch1\" = 2 * \"D1@Sketch1\"."
+                ),
             ),
-            Param("index", int, default=-1, description="-1 = append at the end."),
+            Param("index", int, default=-1, description=(
+                                                "Zero-based position to insert at, where -1 appends at the end. Default"
+                                                "s to -1."
+                                            )),
             Param(
                 "solve",
                 bool,
                 default=True,
-                description="Solve the equations after adding.",
+                description="Whether to solve the equations immediately after adding. Defaults to true.",
             ),
         ],
         evidence=(
             "Add a global equation. ★ Verify by reading the equations back (the criterion the existing smoke uses). ⚠ D"
             "oes NOT save the document."
         ),
-        doc="Add a global equation. ★ Verify by reading the equations back (the criterion the "
-        "existing smoke uses). ⚠ Does NOT save the document.",
+        doc=(
+            "Add one global equation to the active document. It writes an equation and does not save the document; it t"
+            "hrows instead of succeeding silently when the string is empty or the call returns -1, and the index of the"
+            " new equation comes back in the report."
+        ),
     ),
     ToolSpec(
         name="solidworks_equation_list",
@@ -86,7 +95,10 @@ SPECS_BATCH39 = [
         evidence=(
             "Return the document's global equations as a list. ★ Read-only."
         ),
-        doc="Return the document's global equations as a list. ★ Read-only.",
+        doc=(
+            "List every global equation in the active document. Read-only; it reads the equation count and then each eq"
+            "uation by index, and it changes nothing in the model."
+        ),
     ),
     ToolSpec(
         name="solidworks_equation_evaluate",
@@ -98,7 +110,10 @@ SPECS_BATCH39 = [
         evidence=(
             "Solve the global equations and return the result. ⚠ Does NOT save the document."
         ),
-        doc="Solve the global equations and return the result. ⚠ Does NOT save the document.",
+        doc=(
+            "Solve all global equations and return the result. It re-evaluates the equations in the active document and"
+            " does not save it; use solidworks_equation_list when you only need the equation text."
+        ),
     ),
     ToolSpec(
         name="solidworks_equation_delete",
@@ -110,13 +125,16 @@ SPECS_BATCH39 = [
             Param(
                 "index",
                 int,
-                description="Zero-based equation index (★ see the list tool).",
+                description="Zero-based index of the equation to delete, as listed by solidworks_equation_list.",
             )
         ],
         evidence=(
             "Delete one global equation by index. ⚠ Does NOT save the document."
         ),
-        doc="Delete one global equation by index. ⚠ Does NOT save the document.",
+        doc=(
+            "Delete one global equation by its zero-based index. It writes the deletion into the active document and do"
+            "es not save it; read solidworks_equation_list first so the index points at the equation you mean."
+        ),
     ),
     #: ── 螺旋（★ 空条目 `helix_and_spiral` 的填实）───────────────────────
     ToolSpec(
@@ -126,27 +144,31 @@ SPECS_BATCH39 = [
         function="insert_helix",
         inject="model",
         params=[
-            Param("height_mm", float, description="Helix height in MILLIMETRES."),
+            Param("height_mm", float, description=(
+                                          "Helix height in millimetres; the API takes metres, so it is converted here."
+                                      )),
             Param(
                 "pitch_mm",
                 float,
                 default=0.0,
-                description="Pitch in MILLIMETRES. ⚠ 0.0 = leave it to the document default.",
+                description="Pitch in millimetres; 0 leaves it to the document default. Defaults to 0.",
             ),
             Param(
                 "revolution",
                 float,
                 default=0.0,
-                description="Number of revolutions (★ not a length, not an angle). "
-                "⚠ 0.0 = leave it to the document default.",
+                description="Number of revolutions; 0 leaves it to the document default. Defaults to 0.",
             ),
         ],
         evidence=(
             "Insert a helix/spiral. ★ Needs the document state the official API requires (a circular sketch to revolve "
             "about) — the capability layer reports it if not."
         ),
-        doc="Insert a helix/spiral. ★ Needs the document state the official API requires "
-        "(a circular sketch to revolve about) — the capability layer reports it if not.",
+        doc=(
+            "Insert a fixed-pitch helix or spiral as a curve feature. It writes the feature and does not save the docum"
+            "ent; it throws when the call returns nothing, which usually means the defining circle was not selected bef"
+            "ore calling."
+        ),
     ),
     #: ── 形位公差（★ 空条目 `gtol_insert` 的填实）────────────────────────
     ToolSpec(
@@ -160,7 +182,10 @@ SPECS_BATCH39 = [
             "Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns an"
             " object and the feature tree changes. ⚠ Does NOT save the document."
         ),
-        doc="Insert a GTol annotation (★ zero-argument: IModelDoc2.InsertGtol()). ★ The criterion is that it returns "
-             "an object and the feature tree changes. ⚠ Does NOT save the document.",
+        doc=(
+            "Insert an empty geometric tolerance symbol. It writes an annotation and does not save the document; the le"
+            "ader attaches to whatever is selected before the call, and with no selection the symbol sits at the origin"
+            " without a leader."
+        ),
     ),
 ]

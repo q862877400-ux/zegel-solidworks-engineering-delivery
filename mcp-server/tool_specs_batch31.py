@@ -85,13 +85,17 @@ SPECS_BATCH31 = [
         param_alias={"element_size_mm": "element_size"},
         derived_args=_derive_model,
         params=[
-            Param("element_size_mm", float, description=_SIZE),
+            Param("element_size_mm", float, description=(
+                                                "Global element size in millimetres, the value you would pass to solidw"
+                                                "orks_simulation_create_mesh."
+                                            )),
             Param(
                 "memory_budget_gb",
                 float,
-                description="★ 允许这次求解用掉的内存上限（**GB**）。省略 = 默认"
-                "「物理内存的一半，且不超过 16 GB」。★ 依据官方 FFEPlus 规则"
-                "「每 2,000,000 自由度需 1 GB RAM」。",
+                description=(
+                    "Memory limit in gigabytes for the coming solve; omit it to use half the physical memory capped at "
+                    "16 GB."
+                ),
             ),
         ],
         evidence=(
@@ -102,14 +106,10 @@ SPECS_BATCH31 = [
             "内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；★ `ok` 为 false 时**不要建网"
             "格、更不要跑求解**。★ It does NOT create a mesh and does NOT run the solver."
         ),
-        doc="Decide whether a global element size is sane for the ACTIVE part BEFORE meshing, "
-        "and return `{ok, element_size, max_dim, volume_mm3, est_elements, est_dof, "
-        "est_ram_gb, memory_budget_gb, reason}`. ★ Call this before "
-        "solidworks_simulation_create_mesh. ★★ **判据是双侧的**："
-        "① 单元尺寸**大于零件最大边** ⇒ 网格退化 ⇒ 后续求解会弹模态框挂住会话；"
-        "② 单元尺寸**小得离谱** ⇒ 按包围盒估的求解内存超过 `memory_budget_gb` "
-        "⇒ **会把整机内存吃光**（★ 真机事故：0.0049 mm ⇒ 求解进程 38.5 GB / 整机 63.8 GB ⇒ 卡死）；"
-        "★ `ok` 为 false 时**不要建网格、更不要跑求解**。"
-        "★ It does NOT create a mesh and does NOT run the solver.",
+        doc=(
+            "Check whether a global element size in millimetres is sane for the active part before meshing. Read-only, "
+            "so it neither meshes nor solves. It refuses a size larger than the part, and a size whose estimated solve "
+            "memory exceeds memory_budget_gb, so stop when ok is false."
+        ),
     ),
 ]

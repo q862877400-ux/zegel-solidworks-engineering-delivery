@@ -74,20 +74,20 @@ SPECS_BATCH16 = [
         evidence=(
             "Add a sketch geometric relation to the current selection."
         ),
-        doc="Add a sketch geometric relation to the current selection.",
+        doc=(
+            "Add one geometric relation such as sgHORIZONTAL or sgCOINCIDENT to the current sketch selection. Modifies "
+            "the active sketch; the sg prefix is optional and matching ignores case, and sgEQUAL or sgMIDPOINT do not e"
+            "xist and are rejected."
+        ),
         params=[
             Param(
                 "relation_type",
                 str,
-                description="Relation name. Valid values (each verified against the official "
-                "IModelDoc2::SketchAddConstraints Remarks list, C:/swapi/types/"
-                "IModelDoc2/SketchAddConstraints.md): "
-                "sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, "
-                "sgPERPENDICULAR, sgTANGENT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, "
-                "sgATMIDDLE, sgCOINCIDENT. "
-                "The 'sg' prefix is optional and matching is case-insensitive. "
-                "Legacy names sgEQUAL / sgMIDPOINT do NOT exist in the official list "
-                "and are rejected with a pointer to sgSAMELENGTH / sgATMIDDLE.",
+                description=(
+                    "Relation name: sgFIXED, sgHORIZONTAL, sgVERTICAL, sgCOLINEAR, sgPARALLEL, sgPERPENDICULAR, sgTANGE"
+                    "NT, sgCONCENTRIC, sgSAMELENGTH, sgSYMMETRIC, sgATMIDDLE or sgCOINCIDENT, where the sg prefix is op"
+                    "tional and matching ignores case."
+                ),
             ),
         ],
     ),
@@ -100,14 +100,20 @@ SPECS_BATCH16 = [
         evidence=(
             "Mirror an existing feature about a plane."
         ),
-        doc="Mirror an existing feature about a plane.",
+        doc=(
+            "Mirror an existing feature about a named plane. Creates a mirrored feature in the active part; both names "
+            "must match the feature tree exactly, and plane names follow the SolidWorks UI language, so on a localised "
+            "install they are not the English names."
+        ),
         params=[
-            Param("feature_name", str, description="Name of the feature to mirror."),
+            Param("feature_name", str, description="Name of the feature to mirror, as it appears in the feature tree."),
             Param(
                 "mirror_plane_name",
                 str,
-                description="Name of the mirror plane (plane names follow the SolidWorks UI "
-                "language, e.g. 「Front Plane」/「前视基准面」).",
+                description=(
+                    "Name of the mirror plane in the language of the SolidWorks UI, which on a localised install is not"
+                    " the English name."
+                ),
             ),
         ],
     ),

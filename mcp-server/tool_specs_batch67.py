@@ -62,17 +62,20 @@ _BATCH67: list[ToolSpec] = [
             "end_y_mm": "end_y_mm",
         },
         params=[
-            Param("start_x_mm", float, description="起点的 X（毫米）。"),
-            Param("start_y_mm", float, description="起点的 Y（毫米）。"),
-            Param("end_x_mm", float, description="终点的 X（毫米）。"),
-            Param("end_y_mm", float, description="终点的 Y（毫米）。"),
+            Param("start_x_mm", float, description="Start point X in millimetres."),
+            Param("start_y_mm", float, description="Start point Y in millimetres."),
+            Param("end_x_mm", float, description="End point X in millimetres."),
+            Param("end_y_mm", float, description="End point Y in millimetres."),
         ],
         evidence=(
             "★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。★ 判据 = `ModelToSketchTransform"
             ".ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。"
         ),
-        doc="★ 移动实体：`IModelDoc2.SketchModifyTranslate`（★ 改的是**草图坐标系**）。"
-        "★ 判据 = `ModelToSketchTransform.ArrayData` 的平移分量变化（★ 真机 5mm 严格对应）。",
+        doc=(
+            "Move the active sketch by the vector from a start point to an end point. Writes the sketch transform and d"
+            "oes not save the document; the result carries a geometry read-back, so do not read it as a bare success fl"
+            "ag."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_rotate_entities",
@@ -86,20 +89,22 @@ _BATCH67: list[ToolSpec] = [
             "angle_deg": "angle_deg",
         },
         params=[
-            Param("center_x_mm", float, description="旋转中心的 X（毫米）。"),
-            Param("center_y_mm", float, description="旋转中心的 Y（毫米）。"),
+            Param("center_x_mm", float, description="Centre X in millimetres."),
+            Param("center_y_mm", float, description="Centre Y in millimetres."),
             Param(
                 "angle_deg",
                 float,
-                description="旋转角（**度**；★ 只在边界换算成弧度一次）。",
+                description="Rotation angle in degrees, converted to radians once at this boundary.",
             ),
         ],
         evidence=(
             "★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。★ 真机验证：30° ⇒ 3×3 旋转矩阵首行"
             "变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。"
         ),
-        doc="★ 旋转实体：`IModelDoc2.SketchModifyRotate`（★ 改的是**草图坐标系**）。"
-        "★ 真机验证：30° ⇒ 3×3 旋转矩阵首行变成 `[0.866025, -0.500001, 0]`（cos30°/sin30°）。",
+        doc=(
+            "Rotate the active sketch about a centre point by an angle. Writes the sketch transform and does not save t"
+            "he document; the angle is given in degrees and converted to radians once at this boundary."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_scale_entities",
@@ -112,15 +117,20 @@ _BATCH67: list[ToolSpec] = [
             Param(
                 "factor",
                 float,
-                description="缩放比例（★ 必须 > 0；★ 它**不是长度**，故不带 `_mm`）。",
+                description=(
+                    "Scale factor, which must be greater than 0; it is a ratio, not a length, so it carries no unit suf"
+                    "fix."
+                ),
             ),
         ],
         evidence=(
             "★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。★ 真机验证：1.5 ⇒ 草"
             "图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。"
         ),
-        doc="★ 缩放实体比例：`IModelDoc2.SketchModifyScale` —— ★ **本批唯一有 bool 返回值**的成员。"
-        "★ 真机验证：1.5 ⇒ 草图 bbox 从 ±20/±10 变成 ±30/±15（**正好 ×1.5**）。",
+        doc=(
+            "Apply a scale factor to the active sketch. Writes the sketch geometry and does not save the document; ok i"
+            "s true only when the call returns non-false and the geometry read-back changes as well."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_stretch_entities",
@@ -136,22 +146,25 @@ _BATCH67: list[ToolSpec] = [
             "keep_relations": "keep_relations",
         },
         params=[
-            Param("base_x_mm", float, description="基点 X（毫米）。"),
-            Param("base_y_mm", float, description="基点 Y（毫米）。"),
-            Param("dest_x_mm", float, description="拉伸终点 X（毫米）。"),
-            Param("dest_y_mm", float, description="拉伸终点 Y（毫米）。"),
+            Param("base_x_mm", float, description="Base point X in millimetres."),
+            Param("base_y_mm", float, description="Base point Y in millimetres."),
+            Param("dest_x_mm", float, description="Destination point X in millimetres."),
+            Param("dest_y_mm", float, description="Destination point Y in millimetres."),
             Param(
                 "keep_relations",
                 bool,
-                description="保留草图几何关系（★ 布尔是**标志**，不是长度）。",
+                description="Whether to keep the sketch relations while stretching.",
             ),
         ],
         evidence=(
             "★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。⚠ 官方说明「"
             "Stretch the **selected** entities」⇒ ★ **要求先选中实体**。"
         ),
-        doc="★ 伸展实体：**`IModelDocExtension.Stretch`**（★ 入口在 **Extension** 上，不是 `IModelDoc2`）。"
-        "⚠ 官方说明「Stretch the **selected** entities」⇒ ★ **要求先选中实体**。",
+        doc=(
+            "Apply a stretch from a base point to a destination point on the sketch. Writes the sketch geometry and doe"
+            "s not save the document; it selects the active sketch segments for you, because the official call only act"
+            "s on a selection."
+        ),
     ),
     ToolSpec(
         name="solidworks_sketch_flip_entities",
@@ -164,17 +177,20 @@ _BATCH67: list[ToolSpec] = [
             Param(
                 "axis_flag",
                 int,
-                description="轴标志（★ 官方 swapi 与 CHM **都未给取值表** ⇒ "
-                "原样透传，语义不下断言）。",
+                description=(
+                    "Axis flag passed through as an integer; the official sources document no value table for it."
+                ),
             ),
         ],
         evidence=(
             "★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0"
             ",0]` 变成 **`[-1,0,0]`**（X 符号翻转）。⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。"
         ),
-        doc="★ 镜像/翻转：`IModelDoc2.SketchModifyFlip(AxisFlag)`。"
-        "★ 真机验证：`axis_flag=1` ⇒ 3×3 旋转矩阵首行从 `[1,0,0]` 变成 **`[-1,0,0]`**（X 符号翻转）。"
-        "⚠ `AxisFlag` 的取值表**官方未给** ⇒ 按铁律 5 原样透传、不猜语义。",
+        doc=(
+            "Mirror the active sketch about an axis selected by axis_flag. Writes the sketch geometry and does not save"
+            " the document; the axis_flag value table is documented in neither official source, so it is passed through"
+            " as an integer without interpretation."
+        ),
     ),
 ]
 

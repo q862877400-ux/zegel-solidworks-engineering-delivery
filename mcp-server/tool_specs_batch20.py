@@ -83,11 +83,14 @@ SPECS_BATCH20 = [
             Param(
                 "name",
                 str,
-                description='Custom property name (e.g. "零件号" / "PartNo"). '
-                "⚠ Property names follow the UI language and are "
-                "case-sensitive as stored.",
+                description=(
+                    "Exact custom property name as stored; names follow the UI language and are case sensitive."
+                ),
             ),
-            Param("config_name", str, default="", description=_CONFIG),
+            Param("config_name", str, default="", description=(
+                                                      "Configuration to read from; empty reads the default configuratio"
+                                                      "n. Defaults to empty."
+                                                  )),
         ],
         evidence=(
             "Read ONE file custom property: its value, its type (swCustomInfoType_e) and whether it is editable. ★ Read"
@@ -95,8 +98,10 @@ SPECS_BATCH20 = [
             "under pywin32 (they raise a type-mismatch error), so these tools use the single-return Get(name); that sha"
             "pe is verified on a real machine."
         ),
-        doc="Read ONE file custom property: its value, its type (swCustomInfoType_e) and whether "
-        "it is editable. " + _WHY,
+        doc=(
+            "Read one file custom property value together with its type and whether it is editable. Read-only; writing "
+            "is a different tool, and property names follow the UI language and are case sensitive."
+        ),
     ),
     ToolSpec(
         name="solidworks_custom_property_list",
@@ -108,14 +113,19 @@ SPECS_BATCH20 = [
         #:  个实参 ⇒
         #: `TypeError: … missing 1 required positional argument: 'model'`。同族 `solidwo
         #: rks_part_bounding_box` 写着 `inject='model'` ✓
-        params=[Param("config_name", str, default="", description=_CONFIG)],
+        params=[Param("config_name", str, default="", description=(
+                                                          "Configuration to read from; empty reads the default configur"
+                                                          "ation. Defaults to empty."
+                                                      ))],
         evidence=(
             "Read ALL file custom properties of the active document: every name with its value and type, plus how many "
             "were read. ★ Reading only — writing is solidworks_set_custom_properties. The API's by-ref getters (Get2..G"
             "et6) do NOT work under pywin32 (they raise a type-mismatch error), so these tools use the single-return Ge"
             "t(name); that shape is verified on a real machine."
         ),
-        doc="Read ALL file custom properties of the active document: every name with its value and "
-        "type, plus how many were read. " + _WHY,
+        doc=(
+            "Read every file custom property of the active document with its value and type. Read-only; writing is a di"
+            "fferent tool, and the reply also says how many properties were read."
+        ),
     ),
 ]

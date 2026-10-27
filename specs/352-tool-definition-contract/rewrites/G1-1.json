@@ -1,0 +1,117 @@
+{
+ "_group": "G1",
+ "_part": "1/3",
+ "tools": {
+  "solidworks_simulation_collect_mesh_evidence": {
+   "doc": "Read mesh quality readings from the mesh object of a simulation study. Read-only; it returns element and node counts, mesh and mesher types, quality, mesh state, the mesh-failed flag, element sizes, growth and aspect ratios, jacobian points, mesh control and loop counts, the failed component count and the worst jacobian ratio, and it raises when no mesh object is available.",
+   "params": {}
+  },
+  "solidworks_simulation_set_registered_study_option": {
+   "doc": "Set one registered solver option on a simulation study by family and option name. Writes the option through the study options object; an unknown family or option name raises an error that lists the valid entries, so list the registered setters first.",
+   "params": {
+    "family": "Option family name, one of the nine registered families such as 'ICWStaticStudyOptions' or 'ICWFrequencyStudyOptions'; an unregistered name raises. Defaults to empty.",
+    "name": "Setter name that exists in that family's registry entry, for example 'ComputeFreeBodyForce2'; a misspelling raises and lists the entries that family does register. Defaults to empty.",
+    "value": "The value as text, converted to the registered type (int, bool, float or string) before it is set. Defaults to empty."
+   }
+  },
+  "solidworks_view_activate": {
+   "doc": "Activate the active model view of the open document. It takes no arguments, returns nothing, modifies only which view is active, and the reference documents no preconditions or other semantics for it.",
+   "params": {}
+  },
+  "solidworks_view_redraw": {
+   "doc": "Refresh the graphics window or one rectangular region of it. It modifies no model geometry and only forces a repaint; pass a region to redraw that part, leave it empty to redraw the whole window, and it reports success after the call.",
+   "params": {
+    "scope_or_none": "Region to redraw as the four integers giving its boundary; the reference does not document the object form, and an empty value redraws the entire graphics window. Defaults to empty."
+   }
+  },
+  "solidworks_view_initialize_shading": {
+   "doc": "Start shading for the current window before using OpenGL shading. It modifies the window shading state only, takes no arguments and returns nothing; call it when you use OpenGL shading and are unsure whether shading has already been used for that window.",
+   "params": {}
+  },
+  "solidworks_view_get_frame": {
+   "doc": "Read the document window frame: left, top, width and height. Read-only; it also returns the window state, the reference gives no unit for these readings, and it documents no preconditions for reading them.",
+   "params": {}
+  },
+  "solidworks_simulation_activate_plot": {
+   "doc": "Activate one result plot of a solved simulation study. It modifies which plot is active in the results object and needs a study that has already produced results.",
+   "params": {
+    "plot_name": "Name of the result plot to activate, as the results object names it. Defaults to empty."
+   }
+  },
+  "solidworks_simulation_delete_plot": {
+   "doc": "Delete one result plot from the results of a solved simulation study. It deletes the named plot from the results object and needs a study that has already produced results.",
+   "params": {
+    "plot_name": "Name of the result plot to delete, as the results object names it. Defaults to empty."
+   }
+  },
+  "solidworks_view_set_frame": {
+   "doc": "Set the document window frame: left, top, width and height. It modifies the window layout only and does not set the window state; the reference documents no value ranges, no DPI handling and no precondition for it.",
+   "params": {
+    "left_px": "Left position of the document window in the client area, in pixels. Defaults to 0.",
+    "top_px": "Top position of the document window in the client area, in pixels. Defaults to 0.",
+    "width_px": "Width of the document window in the client area, in pixels. Defaults to 0.",
+    "height_px": "Height of the document window in the client area, in pixels. Defaults to 0."
+   }
+  },
+  "solidworks_view_get_display_mode": {
+   "doc": "Read the display mode of the model view as an swViewDisplayMode code. Read-only; the value is an enum code and not a length or an angle, and the reference documents no preconditions for reading it.",
+   "params": {}
+  },
+  "solidworks_view_set_display_mode": {
+   "doc": "Set the display mode of the model view from an swViewDisplayMode code. It modifies how the model is drawn rather than the model itself; the enum has 13 members running from 1 to 13.",
+   "params": {
+    "mode": "Display mode code from swViewDisplayMode, whose 13 members run from 1 to 13, for example 5 for shaded with edges. Defaults to 0."
+   }
+  },
+  "solidworks_view_get_scale": {
+   "doc": "Read the scale factor of the model view. Read-only; it reads the scale member that the reference marks as superseded by Scale2, and it documents no preconditions for reading it.",
+   "params": {}
+  },
+  "solidworks_view_set_scale": {
+   "doc": "Set the scale factor of the model view as an absolute ratio, not a multiplier. It modifies the view only, so to zoom by a factor read the current scale first, multiply it yourself and write the result back; the zoom-by-factor tool already does that multiplication.",
+   "params": {
+    "scale": "New absolute scale factor of the view, a plain ratio with no unit. Defaults to 0.0."
+   }
+  },
+  "solidworks_view_zoom_by_factor": {
+   "doc": "Zoom the model view in or out by a multiplier. It modifies the view only; the factor must lie strictly between 0 and 2, values above 1 zoom in and values below 1 zoom out, and the reference defines no behaviour outside that range.",
+   "params": {
+    "factor": "Zoom multiplier, strictly between 0 and 2: above 1 zooms in and below 1 zooms out. Defaults to 0.0."
+   }
+  },
+  "solidworks_view_translate_view": {
+   "doc": "Move the graphics area by a pan vector relative to the graphics-area axes rather than the model triad. It modifies the view only; both offsets are millimetres here and are converted once to the metres the reference expects.",
+   "params": {
+    "dx_mm": "Pan offset along the graphics-area X axis, in millimetres. Defaults to 0.0.",
+    "dy_mm": "Pan offset along the graphics-area Y axis, in millimetres; the reference words this axis differently from the X axis. Defaults to 0.0."
+   }
+  },
+  "solidworks_view_rotate_about_center": {
+   "doc": "Rotate the model view about the screen X and Y axes. It modifies the view only; the reference documents no preconditions and states no unit for either angle, and this tool passes both through as degrees.",
+   "params": {
+    "x_angle_deg": "Rotation about the screen X axis, treated as degrees; the reference states no unit. Defaults to 0.0.",
+    "y_angle_deg": "Rotation about the screen Y axis, treated as degrees; the reference states no unit. Defaults to 0.0."
+   }
+  },
+  "solidworks_view_roll_view": {
+   "doc": "Rotate the model view about the line of sight, that is roll it, by an angle. It modifies the view only; the reference states no unit and no range, and this tool treats the angle as degrees, matching the reference example that passes 90.",
+   "params": {
+    "angle_deg": "Roll angle about the line of sight, treated as degrees; the reference states no unit and no range. Defaults to 0.0."
+   }
+  },
+  "solidworks_view_get_camera": {
+   "doc": "Read the camera of the model view. Read-only; it returns the camera object, and a null result means the camera view for this model is turned off.",
+   "params": {}
+  },
+  "solidworks_view_set_camera_by_name": {
+   "doc": "Set the model view to a named camera while the model is in camera view mode. It modifies the view only; the name is a camera feature name, and the call reports false when that camera does not exist.",
+   "params": {
+    "name": "Feature name of the camera that should set the view; cameras are features, so their names come from the document's camera list. Defaults to empty."
+   }
+  },
+  "solidworks_view_has_perspective": {
+   "doc": "Report whether the model view currently has perspective turned on. Read-only, takes no arguments, and returns true only while perspective viewing is enabled.",
+   "params": {}
+  }
+ }
+}

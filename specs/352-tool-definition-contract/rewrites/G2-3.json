@@ -1,0 +1,136 @@
+{
+ "tools": {
+  "solidworks_motion_calculate_and_play": {
+   "doc": "Compute one motion study, then optionally play the animation back. Writes the computed results into the study and does not save; the returned value is Calculate's boolean, which has lied before, so check the outcome with solidworks_motion_collect_summary as well.",
+   "params": {
+    "play": "Whether to play the animation after a successful calculation; false only calculates. Defaults to true.",
+    "motion_study_name": "Motion study name; when empty a single study is used, none raises an error and more than one raises asking you to name it. Defaults to empty."
+   }
+  },
+  "solidworks_motion_export_avi": {
+   "doc": "Export one motion study animation to a file and report whether the file really appeared with a non-zero size. Writes the file, whose parent directory must already exist; duration and frame rate come from the SolidWorks defaults because the parameter object cannot cross this boundary.",
+   "params": {
+    "file_path": "Output file path including the extension; .bmp and .tga are also accepted by the same member, and the parent directory must already exist.",
+    "motion_study_name": "Motion study name; an empty value follows the same single-study rule as solidworks_motion_calculate_and_play. Defaults to empty."
+   }
+  },
+  "solidworks_surface_create_extruded": {
+   "doc": "Create a surface extrude feature from an existing sketch of the active part. Writes a surface feature and does not save; success is judged by the feature tree growing, because the call returns nothing.",
+   "params": {
+    "depth_mm": "Extrude depth in millimetres; the conversion to metres happens once at this boundary.",
+    "sketch_name": "Name of the sketch to extrude; empty uses the current sketch. Defaults to empty.",
+    "through_all": "Whether to extrude through all geometry instead of the given depth; this mode is not verified and the feature tree did not change on a real machine. Defaults to false."
+   }
+  },
+  "solidworks_surface_knit": {
+   "doc": "Join the selected surfaces of the active part into one surface body. Writes a knit feature and does not save; the selected faces need selection mark 1, and success means the feature tree grew and the body count dropped.",
+   "params": {
+    "knit_tolerance_mm": "Knit tolerance in millimetres; the valid range is 0.0001 to 0.1. Defaults to 0.0001.",
+    "try_to_form_solid": "Whether to turn the knitted surface into a solid when possible. Defaults to false."
+   }
+  },
+  "solidworks_surface_extend": {
+   "doc": "Extend a surface of the active part by a distance along or beyond its own shape. Writes an extend feature and does not save; success is judged by the feature tree growing, because the call returns nothing.",
+   "params": {
+    "distance_mm": "Extension distance in millimetres; zero is rejected.",
+    "extend_linear": "Whether to extend linearly instead of following the same curved surface. Defaults to true.",
+    "end_condition": "Extension end condition, where 0 uses the given distance and 1 extends to a selected point, which is not verified. Defaults to 0."
+   }
+  },
+  "solidworks_surface_fill": {
+   "doc": "Create a surface patch over a closed boundary of the active part. Writes a fill surface feature and does not save; boundary edges must be selected with mark 1, and success needs both a returned feature and a bigger feature tree.",
+   "params": {
+    "resolutions": "Surface resolution, one of 1, 2 or 3, where a higher value gives a better quality patch. Defaults to 2.",
+    "options": "Bitmask of swFeatureFillSurfaceOptions_e flags. Defaults to 1, which is the optimize-surface flag.",
+    "selection": "Declarative selection of the boundary edge loop to fill; leaving it empty picks the highest loop automatically. Defaults to empty."
+   }
+  },
+  "solidworks_activate_model_for_preview": {
+   "doc": "Activate the document to review so preview capture does not photograph another active part or sub-assembly. Modifies the active document state and may mark it as modified, because view and selection changes count.",
+   "params": {}
+  },
+  "solidworks_clear_selection_for_preview": {
+   "doc": "Clear the current selection so the preview does not show highlighted entities. Modifies the view state and may mark the document as modified, because selection changes count.",
+   "params": {}
+  },
+  "solidworks_refresh_scene_graph": {
+   "doc": "Refresh the graphics scene graph so an appearance change becomes visible. Modifies the view state and may mark the document as modified, because view changes count.",
+   "params": {
+    "update": "Whether to force a graphics update. Defaults to true."
+   }
+  },
+  "solidworks_drawing_list_sheets": {
+   "doc": "List the sheets of the active drawing: how many there are, their names and which one is current. Read-only and active-document only, so no path is needed; it raises when the active document is not a drawing.",
+   "params": {}
+  },
+  "solidworks_drawing_get_current_sheet": {
+   "doc": "Read the current sheet of the active drawing: paper size, width and height, scale and sheet-format name. Read-only; width and height are reported in millimetres although the underlying call returns metres, and the conversion happens once here.",
+   "params": {}
+  },
+  "solidworks_drawing_list_views": {
+   "doc": "List the views on the current sheet with each name and type code. Read-only and active-document only; the sheet itself is filtered out because the raw call returns it as a pseudo-view with type 1.",
+   "params": {}
+  },
+  "solidworks_sheet_metal_create_unfold": {
+   "doc": "Insert an unfold feature so the sheet-metal part shows its flat pattern. Writes the feature and does not save; a fixed face is picked by index with selection mark 1, and success is judged by the feature tree and the flat-pattern count.",
+   "params": {
+    "bend_feature_names": "Comma separated bend feature names to select with mark 4; a real machine builds the unfold even when this is empty, but the argument has no default, so pass an empty string to leave it out.",
+    "face_index": "Zero-based index of the face to keep fixed; face order is not guaranteed stable across rebuilds. Defaults to 0."
+   }
+  },
+  "solidworks_sheet_metal_create_fold": {
+   "doc": "Insert a fold feature to close a flat pattern back into its bent state. Writes the feature and does not save; the unfold feature is selected with mark 0 after the selection is cleared, and a fixed face is picked by index with mark 1.",
+   "params": {
+    "bend_feature_names": "Comma separated bend feature names to select with mark 4; leaving it empty still builds the feature on a real machine. Defaults to empty.",
+    "face_index": "Zero-based index of the face to keep fixed; face order is not guaranteed stable across rebuilds. Defaults to 0.",
+    "unfold_feature_name": "Name of an existing unfold feature to select with mark 0 before folding; empty means none is selected. Defaults to empty."
+   }
+  },
+  "solidworks_sheet_metal_create_hem": {
+   "doc": "Skip this tool, NOT USABLE on this machine: every hem shape returns nothing, so no hem is created. It would write a hem feature on one selected edge and does not save the document, and calling it raises an error naming the reason unless the unverified probe path is explicitly allowed.",
+   "params": {
+    "edge_selector": "Declarative edge selector: 'index:<n>' for the n-th edge on the body, or '__current_selection__' to reuse the selection; edges cannot be selected by name.",
+    "hem_type": "Hem shape: open (0), closed (1), teardrop (2), rolled (3) or double (4). Defaults to 'open'.",
+    "position": "Hem position, 'inside' or 'outside', where the numeric values 0 and 1 come from the factory type library. Defaults to 'outside'.",
+    "reverse": "Whether to reverse the direction. Defaults to false.",
+    "length_mm": "Hem length in millimetres. Defaults to 0.01.",
+    "gap_mm": "Gap in millimetres, used only by the open hem. Defaults to 0.01.",
+    "angle_deg": "Hem angle in degrees, used only by teardrop and rolled hems. Defaults to 0.",
+    "radius_mm": "Hem radius in millimetres, used only by teardrop and rolled hems. Defaults to 0.005.",
+    "miter_gap_mm": "Mitre gap in millimetres. Defaults to 0.0011.",
+    "use_default_relief": "Whether to use the default relief cut. Defaults to false.",
+    "relief": "Relief shape: rectangular (1), tear (2), obround (3), none (4) or tear_bend (5). Defaults to 'obround'.",
+    "relief_tear": "Tear relief style: rip (1) or extend (2). Defaults to 'rip'.",
+    "use_relief_ratio": "Whether the relief is sized by a ratio. Defaults to true.",
+    "relief_ratio": "Relief ratio. Defaults to 1.",
+    "relief_width_mm": "Relief width in millimetres. Defaults to 0.",
+    "relief_depth_mm": "Relief depth in millimetres. Defaults to 0.",
+    "k_factor": "K factor of the custom bend allowance. Defaults to 0.5."
+   }
+  },
+  "solidworks_drawing_sheets_summary": {
+   "doc": "Return a per-sheet summary of the active drawing, including sheet names and view counts. Read-only; it answers several sheet questions in one call so the caller does not need two round trips.",
+   "params": {}
+  },
+  "solidworks_drawing_current_sheet_info": {
+   "doc": "Return information about the sheet currently being edited as a dict. Read-only; use it when only the current sheet matters, and solidworks_drawing_list_sheets when every sheet is wanted.",
+   "params": {}
+  },
+  "solidworks_sheet_metal_iter_features": {
+   "doc": "List the sheet-metal features of the active part by walking the feature tree in order. Read-only; use solidworks_weldment_iter_features instead for weldment features, which are a different family.",
+   "params": {}
+  },
+  "solidworks_topology_constraints_report": {
+   "doc": "Report the constraints and controls already built in a topology study, one entry per constraint with its parameters. Read-only and JSON-able; it needs a topology study object, and the list variant reports booleans instead.",
+   "params": {}
+  },
+  "solidworks_part_wrap": {
+   "doc": "Create a wrap feature from a selected sketch and face, embossing, debossing or scribing the profile onto the surface. Writes the feature and does not save; the sketch must be a 2D sketch with mark 4 and the face needs mark 1, and only the emboss type is confirmed on a real machine.",
+   "params": {
+    "wrap_type": "Wrap type: 'emboss' to raise the profile, 'deboss' for the engraved variant or 'scribe' for a score line; only emboss is confirmed on a real machine, and the other values still build an emboss type name. Defaults to 'emboss'.",
+    "thickness_mm": "Wrap thickness in millimetres. Defaults to 1.",
+    "reverse": "Whether to reverse the wrap direction. Defaults to false."
+   }
+  }
+ }
+}

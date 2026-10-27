@@ -42,12 +42,16 @@ SPECS_BATCH50 = [
                 "wrap_type",
                 str,
                 default="emboss",
-                description="包覆类型：emboss（凸起）/ deboss（凹陷，官方名 Engrave）/ scribe（划痕）。"
-                "⚠ **真机实测：传 deboss/scribe 建出来的类型名仍是 `Emboss`** "
-                "⇒ ★ 只有 `emboss` 被真机证实过",
+                description=(
+                    "Wrap type: 'emboss' to raise the profile, 'deboss' for the engraved variant or 'scribe' for a scor"
+                    "e line; only emboss is confirmed on a real machine, and the other values still build an emboss typ"
+                    "e name. Defaults to 'emboss'."
+                ),
             ),
-            Param("thickness_mm", float, default=1.0, description="厚度（**毫米**）"),
-            Param("reverse", bool, default=False, description="反向"),
+            Param("thickness_mm", float, default=1.0, description="Wrap thickness in millimetres. Defaults to 1."),
+            Param("reverse", bool, default=False, description=(
+                                                      "Whether to reverse the wrap direction. Defaults to false."
+                                                  )),
         ],
         evidence=(
             "★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 `IFeatureManager.InsertWrapFeature2`"
@@ -57,14 +61,10 @@ SPECS_BATCH50 = [
             "的**（★ 所以「树 diff」不是可靠判据）。⚠ **未验**：`Type` 传非 emboss 时**类型名不变**（★ 参数被静默忽略）"
             "· `Method` / `MeshFactor`（第 4/5 参）**取值表没查到**（用 0）。"
         ),
-        doc="★ **对已选中的「草图（mark=4）+ 面（mark=1）」建包覆特征** —— 走官方 "
-        "`IFeatureManager.InsertWrapFeature2`（**5 参**）。"
-        "★ 官方要求：★ **草图 mark = 4**（★ 且**必须是 2D 草图**，官方原话 「3D sketches are invalid」）· "
-        "★ **面 mark = 1** · ★ 拔模方向 mark = 2（仅 Emboss/Engrave 用）。"
-        "★★ 判据 = **读返回对象的 `Name` 与 `GetTypeName2`** —— ★ 真机：返回 `包覆1` · "
-        "类型名 **`Emboss`**；⚠ 而 `feature_names()` 的**前后 diff 是空的**"
-        "（★ 所以「树 diff」不是可靠判据）。"
-        "⚠ **未验**：`Type` 传非 emboss 时**类型名不变**（★ 参数被静默忽略）· "
-        "`Method` / `MeshFactor`（第 4/5 参）**取值表没查到**（用 0）。",
+        doc=(
+            "Create a wrap feature from a selected sketch and face, embossing, debossing or scribing the profile onto t"
+            "he surface. Writes the feature and does not save; the sketch must be a 2D sketch with mark 4 and the face "
+            "needs mark 1, and only the emboss type is confirmed on a real machine."
+        ),
     ),
 ]
