@@ -132,5 +132,11 @@
 | **B7** | 读取类 / 文档属性 / 导出 / 视图 | ~70 | 待核 |
 | **B8** | 编排与门面工具（无 COM 成员，`claim_evidence` 用 `impl`） | ~60 | 待核 |
 
-★ 每批的收工判据（三条都成立才勾）：① 该批全部工具有台账且 `claim` 与 `doc` 首句一致；
-② 成员覆盖 0 条 `member-uncited`；③ 查不到的成员逐条记账（`documented=false` + `gap`）。
+★ 每批的收工判据（四条都成立才勾）：
+① 该批全部工具有台账且 `claim` 与 `doc` 首句一致；
+② 成员覆盖 0 条 `member-uncited`；
+③ 查不到的成员逐条记账（`documented=false` + `gap`）；
+④ ★ **新 builder 的「Use when…」项**：实测 **0/543** 条描述写了「何时用」
+   （`check-mcp-schema --tool` 每条都会警告「description 只说了做什么，没写何时用」）
+   ⇒ 读官方页确认语义后，把「何时用」补进 `doc`（自然语言检索才命中），
+   并让台账 `claim` 与新首句保持一致。

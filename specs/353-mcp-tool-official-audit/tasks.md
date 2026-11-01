@@ -32,7 +32,8 @@
 - [ ] **T-353-14** B6 仿真/拓扑/成本（★ 79 处查不到页在这里，逐条记账）
 - [ ] **T-353-15** B7 读取/属性/导出/视图
 - [ ] **T-353-16** B8 编排与门面（无 COM 成员，`claim_evidence.kind=impl`）
-  - 每批验收：该批 `no-record` 归零；`member-uncited` 0；查不到的成员有 `documented:false` + `gap`
+  - 每批验收：该批 `no-record` 归零；`member-uncited` 0；查不到的成员有 `documented:false` + `gap`；
+    ★ 并补上「Use when…」（实测 0/543，新 builder 的警告项），改完 `claim` 与 `doc` 首句同步
 
 ## P3 · 收口
 
