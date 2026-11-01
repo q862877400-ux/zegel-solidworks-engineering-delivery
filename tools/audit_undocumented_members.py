@@ -40,6 +40,9 @@ ROOT = Path(__file__).resolve().parents[1]
 LEDGER = ROOT / "docs" / "tool-official-claims"
 sys.path.insert(0, str(ROOT / "scripts"))
 
+sys.path.insert(0, str(ROOT / "tools"))
+from gen_tool_official_claims import official_description  # noqa: E402 - 首句口径只有一处
+
 from check_tool_official_claims import (  # noqa: E402 - 索引与读页只有一处实现
     HTML_DOC_ROOTS,
     SWAPI_TYPES,
@@ -68,24 +71,6 @@ def html_description(text: str) -> str:
     return ""
 
 
-def md_description(text: str, iface: str, member: str) -> str:
-    """⇒ markdown 官方页里 `# <接口>.<成员>` 之后的第一段说明。
-
-    :param text: 页面文本。
-    :param iface: 接口名。
-    :param member: 成员名。
-    """
-    lines = text.splitlines()
-    marker = "# %s.%s" % (iface, member)
-    for i, line in enumerate(lines):
-        if line.strip() == marker:
-            for nxt in lines[i + 1 :]:
-                if nxt.strip() and not nxt.startswith(("**Signature**", "## ")):
-                    return nxt.strip()
-            break
-    return ""
-
-
 def probe(member: str, want_iface: str, idx: dict) -> tuple[str, dict | None, list[str]]:
     """⇒ `(结论, 可升级的证据, 只找到签名的页)`。
 
@@ -95,6 +80,9 @@ def probe(member: str, want_iface: str, idx: dict) -> tuple[str, dict | None, li
     :param want_iface: 台账里登记的接口（用来在多个同名页里挑对的那个）。
     :param idx: `member_index()` 的返回。
     """
+    override = PROJECT_FACT_OVERRIDES.get(member)
+    if override and override[0].lower() != (want_iface or "").lower():
+        want_iface = override[0]
     cands = idx.get(member) or []
     same = [c for c in cands if want_iface and c[0].lower() == want_iface.lower()]
     distinct = {c[0].lower() for c in cands}
@@ -115,7 +103,7 @@ def probe(member: str, want_iface: str, idx: dict) -> tuple[str, dict | None, li
         if text is None:
             continue
         if path.lower().endswith((".md",)):
-            anchor = md_description(text, iface, member)
+            anchor = official_description(text, iface, member)
         else:
             anchor = html_description(text)
         if anchor:
@@ -126,6 +114,24 @@ def probe(member: str, want_iface: str, idx: dict) -> tuple[str, dict | None, li
 
 
 REFLECT_DIRS = (ROOT / "_raw" / "reflect", ROOT / "_raw" / "reflect_sldworks", ROOT / "_raw" / "topo-reflect")
+
+#: ★★ **本仓已经查证过的归属**（先查项目文件这一步的产物）。
+#:   来源不是印象，是 `docs/known-facts.md` 的事实条目 —— 逐条带出处，
+#:   只在「台账登记的接口与这里不一致」时用来**纠错**，不用来猜新成员。
+PROJECT_FACT_OVERRIDES: dict[str, tuple[str, str]] = {
+    # 事实 112：真机 `IFeatureManager.GetPartingLinesCount` 等全 AttributeError；
+    #   反射/swapi 给出的真实宿主如下（从 FeatureManager/model 上读永远是 None）。
+    "GetPartingLinesCount": ("IPartingLineFeatureData", "known-facts 112"),
+    "GetPartingSurfacesCount": ("IToolingSplitFeatureData", "known-facts 112"),
+    "GetCavitySurfacesCount": ("IToolingSplitFeatureData", "known-facts 112"),
+    "GetCoreSurfacesCount": ("IToolingSplitFeatureData", "known-facts 112"),
+    "PartingType": ("IPartingSurfaceFeatureData", "known-facts 112"),
+    "CoreCavitySplit": ("IPartingLineFeatureData", "known-facts 112"),
+    # 事实 897 附近：`GetModelDoc` 的宿主是 `IView`（曾作为"假命中"的例子记下来）
+    "GetModelDoc": ("IView", "known-facts 895"),
+    # 视图变换矩阵在 `IModelView`（`docs/family-coverage.md` 的 `IModelView.Xform`）
+    "Xform": ("IModelView", "family-coverage / IModelView.Xform"),
+}
 
 
 def reflection_evidence(member: str, want_iface: str = "") -> str:
@@ -183,6 +189,8 @@ def gap_text(member: str, want_iface: str, verdict: str, sig_only: list[str]) ->
     """
     roots = ["C:\\swapi\\types"] + [str(r) for r in HTML_DOC_ROOTS]
     head = "%s 在 %s 上无描述页" % (member, want_iface or "（未登记接口）")
+    if member in PROJECT_FACT_OVERRIDES:
+        head += "；本仓已查证真实宿主为 %s（%s）" % PROJECT_FACT_OVERRIDES[member]
     if verdict == "signature-only":
         tail = "；只有签名页、无散文说明：" + "；".join(sig_only[:3])
     else:

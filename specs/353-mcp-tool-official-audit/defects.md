@@ -25,3 +25,17 @@
 | 18 | `solidworks_sketch_spline` | 首句承诺「creating a new sketch when none is active」，实现**没有**任何建草图的动作：它只取 model.SketchManager 直接 CreateSpline2，并在回 None 时抛错，错误信息逐字要求「是否**已有活动草图**（官方 Remarks 要求）」—— 即它**依赖**活动草图，而不是自动建一个。 | scripts/sw_part.py:sketch_spline 函数体只做 flat 拼点（/1000 换算）+ VARIANT + `get_com_member(model, "SketchManager").CreateSpline2(data, False)`，无 InsertSketch/建草图调用；失败分支逐字「② 是否**已有活动草图**（官方 Remarks 要求）」。官方 C:/swapi/types/ISketch | review-g5 |
 | 19 | `solidworks_topology_constraints_report` | 首句承诺「one entry per constraint with its parameters」，实现回的是**每类约束的存在与否布尔 + 计数**，没有任何一条「按约束逐条 + 带参数」的条目：topology_constraints_report → _kinds_summary 只产出 kinds(布尔) / taken_count / total / errors。 | scripts/sw_topology.py:_kinds_summary 逐字 `kinds = {k: (v is not None) …}` + `"taken_count": sum(…)` + `"total": len(kinds)`；topology_constraints_report 只把 study.Name 与 **_kinds_summary(study) 拼起来。没有把 COM 约束对象序列化成参数（list_ | review-g5 |
 | 20 | `solidworks_weldment_read_property_manager` | 首句说读「active PropertyManager page 的制造属性」，而工具 `inject="manager"` 注入的是**Simulation 的载荷与夹具管理器**（ICWStudy.LoadsAndRestraintsManager），不是 PropertyManager 页、也不是 ICustomPropertyManager；read_property_manager 却对它调 ICustomPropertyManager.GetNames/Get6  | mcp-server/tool_specs_batch35.py:148 `inject="manager"`；mcp-server/register_capabilities.py:474 `"manager": resolve_manager`，而 resolve_manager 的 docstring 逐字「按 `study_name` 解析**载荷与夹具管理器**（`ICWStudy.LoadsAndRestraintsMana | review-g5 |
+
+## 附 · P3 官网补查后新增/确认的「成员不存在或宿主错」清单
+
+逐条另见 `member-gaps.md`（25 个成员）。这里只列**会真出错**的：
+
+| 工具 | 现象 | 证据 |
+|---|---|---|
+| `solidworks_mold_evidence` | 从 `IFeatureManager` / `IModelDoc2` 读 6 个分型成员，真机全 `AttributeError` ⇒ 永远全 None | known-facts 112（真机两种取法都试）；真实宿主：`IPartingLineFeatureData` / `IToolingSplitFeatureData` / `IPartingSurfaceFeatureData` |
+| `solidworks_assembly_add_mate_checked` / `_parallel_mate` | 用 `IMate2.Name` 改名 —— 该接口**没有** `Name`（出厂类型库核对），异常被 try/except 吞掉 | `_raw/reflect/iface_sldworks.txt` 的 `## IMate2` 段 |
+| `solidworks_add_sketch_relation` | 先试 `ISketch.GetConstrainedStatus2` —— 该接口只有 `GetConstrainedStatus` | 同文件 `## ISketch` 段 |
+| `solidworks_sketch_end` | 试 `ISketch.Name` / `ISketch.GetFeature` —— 两个都不存在 | 同上 |
+| `solidworks_feature_revolve_cut` | 试 `IFeature.GetSketch` —— 不存在（死分支） | `## IFeature` 段 |
+| `solidworks_drawing_collect_view_evidence` | 从 `IView` 取 `Xform` —— 真身在 `IModelView` | 反射 `## IModelView` 段 + `docs/family-coverage.md` |
+| `solidworks_surface_midsurface_create` | 试名探测 `GetSurfaceBodies` / `GetSurfaceBodyCount` —— 两套官方源 + 反射都没有 | `specs/202` recon 已记 |

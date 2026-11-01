@@ -75,7 +75,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "CostingDefaults 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:292: Object get_CostingDefaults()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CostingDefaults 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:292: Object get_CostingDefaults()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -179,7 +179,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "CostingTemplateName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:32: String get_CostingTemplateName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CostingTemplateName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:32: String get_CostingTemplateName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
@@ -187,7 +187,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "CurrencyCode 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:34: String get_CurrencyCode()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CurrencyCode 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:34: String get_CurrencyCode()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
@@ -195,7 +195,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "CurrencyName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:35: String get_CurrencyName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CurrencyName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:35: String get_CurrencyName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
@@ -203,7 +203,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "CurrencySeparator 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:36: String get_CurrencySeparator()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CurrencySeparator 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:36: String get_CurrencySeparator()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -231,7 +231,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "LotSizeForMultibody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:267: Int32 get_LotSizeForMultibody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "LotSizeForMultibody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:267: Int32 get_LotSizeForMultibody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
@@ -239,7 +239,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "LotSizeForSingleBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:268: Int32 get_LotSizeForSingleBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "LotSizeForSingleBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:268: Int32 get_LotSizeForSingleBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -324,7 +324,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "LotSize 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:38: Int32 get_LotSize()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "LotSize 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:38: Int32 get_LotSize()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -352,7 +352,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "MarkUpPercent 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:39: Double get_MarkUpPercent()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "MarkUpPercent 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:39: Double get_MarkUpPercent()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
@@ -360,7 +360,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "MarkUpType 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:40: Int32 get_MarkUpType()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "MarkUpType 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:40: Int32 get_MarkUpType()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -959,7 +959,7 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "ICosmosWorks",
@@ -2341,7 +2341,7 @@
      "interface": "",
      "member": "Name",
      "documented": false,
-     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -2367,25 +2367,25 @@
      "interface": "",
      "member": "GetCostAnalysis",
      "documented": false,
-     "gap": "GetCostAnalysis 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "GetCostAnalysis 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
      "member": "GetName",
      "documented": false,
-     "gap": "GetName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:246: String GetName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "GetName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:246: String GetName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
      "member": "GetSWBody",
      "documented": false,
-     "gap": "GetSWBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:247: Object GetSWBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "GetSWBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:247: Object GetSWBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "",
      "member": "Name",
      "documented": false,
-     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     }
    ],
    "allowed_non_com": [],
@@ -3125,7 +3125,7 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "ICosmosWorks",
@@ -3179,7 +3179,7 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "ICosmosWorks",
@@ -3209,7 +3209,7 @@
      "interface": "ICWStudyManager",
      "member": "CreateNewStudy2",
      "documented": false,
-     "gap": "CreateNewStudy2 在 ICWStudyManager 上无描述页；只有签名页、无散文说明：C:\\cworks_en\\api\\SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~CreateNewStudy2.html（ICWStudyManager）；出厂类型库有签名（无描述）：iface_cosworks.txt:2597: CWStudy CreateNewStudy2(String, Int32, Int32&)。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CreateNewStudy2 在 ICWStudyManager 上无描述页；只有签名页、无散文说明：C:\\cworks_en\\api\\SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~CreateNewStudy2.html（ICWStudyManager）；出厂类型库有签名（无描述）：iface_cosworks.txt:2597: CWStudy CreateNewStudy2(String, Int32, Int32&)。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "ICWStudyManager",
@@ -3263,7 +3263,7 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "ICosmosWorks",

@@ -2605,7 +2605,7 @@
      "interface": "IFeature",
      "member": "GetSketch",
      "documented": false,
-     "gap": "GetSketch 在 IFeature 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
+     "gap": "GetSketch 在 IFeature 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks；★ 官网 help.solidworks.com 2026-11-01 亦无此页（对照页正常，已排除限流）"
     },
     {
      "interface": "IEntity",
