@@ -1,0 +1,1035 @@
+{
+ "batch": "B7",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_document_dependencies",
+   "impl": "scripts/sw_document_data.py:document_dependencies",
+   "claim": "List the external references of a document as name and path records.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/GetDocumentDependencies2.md",
+    "anchor": "Gets all of the model dependencies for a document."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetDocumentDependencies2",
+     "path": "C:/swapi/types/ISldWorks/GetDocumentDependencies2.md",
+     "anchor": "Gets all of the model dependencies for a document."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISldWorks.GetDocumentDependencies2 的官方 Description 与首句共享词干 document"
+   }
+  },
+  {
+   "tool": "solidworks_export_active",
+   "impl": "mcp-server/server.py:solidworks_export_active",
+   "claim": "Export the active SolidWorks document to STEP, STL, IGES, Parasolid, PDF, or DXF.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/Extension.md",
+    "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "GetExportFileData",
+     "path": "C:/swapi/types/ISldWorks/GetExportFileData.md",
+     "anchor": "Gets the data interface for the specified file type to which to export one or more drawing sheets."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetNames",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SaveAs3",
+     "path": "C:/swapi/types/IModelDoc2/SaveAs3.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SaveAs]]."
+    },
+    {
+     "interface": "IExportPdfData",
+     "member": "SetSheets",
+     "path": "C:/swapi/types/IExportPdfData/SetSheets.md",
+     "anchor": "Sets the drawing [[sheets]] to export."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.Extension 的官方 Description 与首句共享词干 document"
+   }
+  },
+  {
+   "tool": "solidworks_export_assembly_bom",
+   "impl": "mcp-server/server.py:solidworks_export_assembly_bom",
+   "claim": "Export a component/property BOM CSV; the result always requires native BOM review.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/GetPathName.md",
+    "anchor": "Gets the full path name for this component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.GetPathName 的官方 Description 与首句共享词干 component"
+   }
+  },
+  {
+   "tool": "solidworks_export_bmp",
+   "impl": "scripts/sw_export.py:export_bmp_report",
+   "claim": "Export a BMP image of the active document to output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SaveBMP.md",
+    "anchor": "Saves the current view as a bitmap (BMP) file."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SaveBMP",
+     "path": "C:/swapi/types/IModelDoc2/SaveBMP.md",
+     "anchor": "Saves the current view as a bitmap (BMP) file."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SaveBMP 的官方 Description 与首句共享词干 bmp/file"
+   }
+  },
+  {
+   "tool": "solidworks_export_flat_pattern_dxf",
+   "impl": "scripts/sw_export.py:export_flat_pattern_dxf",
+   "claim": "Export the sheet-metal flat pattern of the active part to a DXF file for cutting.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IPartDoc/ExportToDWG2.md",
+    "anchor": "Saves various aspects of a part (sheet metal, faces, loops, and annotation views) to one or more DXF/DWG files, preserving the specified file name."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "ExportToDWG2",
+     "path": "C:/swapi/types/IPartDoc/ExportToDWG2.md",
+     "anchor": "Saves various aspects of a part (sheet metal, faces, loops, and annotation views) to one or more DXF/DWG files, preserving the specified file name."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IPartDoc.ExportToDWG2 的官方 Description 与首句共享词干 dxf/file/part"
+   }
+  },
+  {
+   "tool": "solidworks_export_iges",
+   "impl": "scripts/sw_export.py:export_iges_report",
+   "claim": "Export the active document to an IGES file at output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_export.py",
+    "anchor": "def export_iges_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_export_parasolid",
+   "impl": "scripts/sw_export.py:export_parasolid_report",
+   "claim": "Export the active document to a Parasolid file at output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_export.py",
+    "anchor": "def export_parasolid_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_export_step",
+   "impl": "scripts/sw_export.py:export_step_report",
+   "claim": "Export the active document to a STEP file at output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_export.py",
+    "anchor": "def export_step_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_export_stl",
+   "impl": "scripts/sw_export.py:export_stl_report",
+   "claim": "Export the active document to an STL mesh at output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_export.py",
+    "anchor": "def export_stl_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_feature_readback",
+   "impl": "scripts/sw_feature_readback.py:feature_readback",
+   "claim": "Read one feature back from the tree to check that it really exists.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetWhatsWrong",
+     "path": "C:/swapi/types/IModelDocExtension/GetWhatsWrong.md",
+     "anchor": "Gets the What's Wrong dialog information for this model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetWhatsWrongCount",
+     "path": "C:/swapi/types/IModelDocExtension/GetWhatsWrongCount.md",
+     "anchor": "Gets the number of items in the What's Wrong dialog."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_get_active_view",
+   "impl": "scripts/sw_view.py:get_active_view",
+   "claim": "Get the currently active three-dimensional model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/ActiveView.md",
+    "anchor": "Gets the current active model view in read-only mode."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ActiveView",
+     "path": "C:/swapi/types/IModelDoc2/ActiveView.md",
+     "anchor": "Gets the current active model view in read-only mode."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.ActiveView 的官方 Description 与首句共享词干 active/model/view"
+   }
+  },
+  {
+   "tool": "solidworks_get_costing_manager",
+   "impl": "scripts/sw_costing.py:get_costing_manager",
+   "claim": "Get the Costing manager object of the active document, which every other cost call is built on.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/Extension.md",
+    "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetCostingManager",
+     "path": "C:/swapi/types/IModelDocExtension/GetCostingManager.md",
+     "anchor": "Gets the entry-point interface to the SOLIDWORKS Costing API and gets the CostingManager."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.Extension 的官方 Description 与首句共享词干 document/object/which"
+   }
+  },
+  {
+   "tool": "solidworks_mass_property_object",
+   "impl": "scripts/sw_mass_property.py:mass_property_object",
+   "claim": "Read the mass property object of the active document for item-by-item density, volume and inertia reads.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/Extension.md",
+    "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.Extension 的官方 Description 与首句共享词干 document/object"
+   }
+  },
+  {
+   "tool": "solidworks_read_document_units",
+   "impl": "scripts/sw_units.py:read_units_report",
+   "claim": "Read the length unit of the active document and compare it with the system default.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/GetUserPreferenceInteger.md",
+    "anchor": "Sets document default user preference values. This method is intended for user preferences of type integer."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IDisplayDimension",
+     "member": "GetUnits",
+     "path": "C:/swapi/types/IDisplayDimension/GetUnits.md",
+     "anchor": "Gets the units used by this display dimension."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetUserPreferenceInteger",
+     "path": "C:/swapi/types/IModelDocExtension/GetUserPreferenceInteger.md",
+     "anchor": "Sets document default user preference values. This method is intended for user preferences of type integer."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetUserPreferenceIntegerValue",
+     "path": "C:/swapi/types/IModelDoc2/GetUserPreferenceIntegerValue.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::GetUserPreferenceInteger]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDocExtension.GetUserPreferenceInteger 的官方 Description 与首句共享词干 default/document"
+   }
+  },
+  {
+   "tool": "solidworks_read_sensors",
+   "impl": "scripts/sw_sensor.py:read_sensors_report",
+   "claim": "List the sensors in the active document and read their current values.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISensor/GetSensorValue.md",
+    "anchor": "Gets the value and units of this sensor."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISensor",
+     "member": "GetSensorValue",
+     "path": "C:/swapi/types/ISensor/GetSensorValue.md",
+     "anchor": "Gets the value and units of this sensor."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "ISensor",
+     "member": "SensorType",
+     "path": "C:/swapi/types/ISensor/SensorType.md",
+     "anchor": "Gets the type of this sensor."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISensor.GetSensorValue 的官方 Description 与首句共享词干 sensor"
+   }
+  },
+  {
+   "tool": "solidworks_view_activate",
+   "impl": "scripts/sw_view.py:activate_view",
+   "claim": "Activate the active model view of the open document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAnnotationView/Activate.md",
+    "anchor": "Activates this annotation view."
+   },
+   "members": [
+    {
+     "interface": "IAnnotationView",
+     "member": "Activate",
+     "path": "C:/swapi/types/IAnnotationView/Activate.md",
+     "anchor": "Activates this annotation view."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAnnotationView.Activate 的官方 Description 与首句共享词干 view"
+   }
+  },
+  {
+   "tool": "solidworks_view_add_perspective",
+   "impl": "scripts/sw_view.py:add_perspective",
+   "claim": "Add perspective to the model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/AddPerspective.md",
+    "anchor": "Adds perspective to the model view."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "AddPerspective",
+     "path": "C:/swapi/types/IModelView/AddPerspective.md",
+     "anchor": "Adds perspective to the model view."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.AddPerspective 的官方 Description 与首句共享词干 model/perspective/view"
+   }
+  },
+  {
+   "tool": "solidworks_view_get_camera",
+   "impl": "scripts/sw_view.py:get_view_camera",
+   "claim": "Read the camera of the model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/Camera.md",
+    "anchor": "Gets or sets the camera."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "Camera",
+     "path": "C:/swapi/types/IModelView/Camera.md",
+     "anchor": "Gets or sets the camera."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.Camera 的官方 Description 与首句共享词干 camera"
+   }
+  },
+  {
+   "tool": "solidworks_view_get_frame",
+   "impl": "scripts/sw_view.py:get_view_frame",
+   "claim": "Read the document window frame: left, top, width and height.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/FrameHeight.md",
+    "anchor": "Get or sets the height of the frame of the document window that contains the model view in the SOLIDWORKS client area."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "FrameHeight",
+     "path": "C:/swapi/types/IModelView/FrameHeight.md",
+     "anchor": "Get or sets the height of the frame of the document window that contains the model view in the SOLIDWORKS client area."
+    },
+    {
+     "interface": "IModelView",
+     "member": "FrameLeft",
+     "path": "C:/swapi/types/IModelView/FrameLeft.md",
+     "anchor": "Gets or sets the left position of the frame of the document window that contains the model view in the SOLIDWORKS client area."
+    },
+    {
+     "interface": "IModelView",
+     "member": "FrameState",
+     "path": "C:/swapi/types/IModelView/FrameState.md",
+     "anchor": "Gets or sets the window state (minimum, maximum, or normal) for the frame of the document window that contains the model view in the SOLIDWORKS client area."
+    },
+    {
+     "interface": "IModelView",
+     "member": "FrameTop",
+     "path": "C:/swapi/types/IModelView/FrameTop.md",
+     "anchor": "Gets or sets the top position of the frame of the document window that contains the model view in the SOLIDWORKS client area."
+    },
+    {
+     "interface": "IModelView",
+     "member": "FrameWidth",
+     "path": "C:/swapi/types/IModelView/FrameWidth.md",
+     "anchor": "Gets or sets the width of the frame of the document window that contains the model view in the SOLIDWORKS client area."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.FrameHeight 的官方 Description 与首句共享词干 document/frame/height/window"
+   }
+  },
+  {
+   "tool": "solidworks_view_get_scale",
+   "impl": "scripts/sw_view.py:get_view_scale",
+   "claim": "Read the scale factor of the model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFaceHatch/Scale.md",
+    "anchor": "Obsolete. Superseded by [[IFaceHatch::Scale2]]."
+   },
+   "members": [
+    {
+     "interface": "IFaceHatch",
+     "member": "Scale",
+     "path": "C:/swapi/types/IFaceHatch/Scale.md",
+     "anchor": "Obsolete. Superseded by [[IFaceHatch::Scale2]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFaceHatch.Scale 的官方 Description 与首句共享词干 scale"
+   }
+  },
+  {
+   "tool": "solidworks_view_has_perspective",
+   "impl": "scripts/sw_view.py:has_perspective",
+   "claim": "Report whether the model view currently has perspective turned on.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/HasPerspective.md",
+    "anchor": "Determines if the model view currently has perspective."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "HasPerspective",
+     "path": "C:/swapi/types/IModelView/HasPerspective.md",
+     "anchor": "Determines if the model view currently has perspective."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.HasPerspective 的官方 Description 与首句共享词干 currently/has/model/perspective"
+   }
+  },
+  {
+   "tool": "solidworks_view_initialize_shading",
+   "impl": "scripts/sw_view.py:initialize_shading",
+   "claim": "Start shading for the current window before using OpenGL shading.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/InitializeShading.md",
+    "anchor": "Sets up the model view for OpenGL shading."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "InitializeShading",
+     "path": "C:/swapi/types/IModelView/InitializeShading.md",
+     "anchor": "Sets up the model view for OpenGL shading."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.InitializeShading 的官方 Description 与首句共享词干 opengl/shad"
+   }
+  },
+  {
+   "tool": "solidworks_view_remove_perspective",
+   "impl": "scripts/sw_view.py:remove_perspective",
+   "claim": "Remove perspective from the model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/RemovePerspective.md",
+    "anchor": "Removes perspective from the model view."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "RemovePerspective",
+     "path": "C:/swapi/types/IModelView/RemovePerspective.md",
+     "anchor": "Removes perspective from the model view."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.RemovePerspective 的官方 Description 与首句共享词干 model/perspective/view"
+   }
+  },
+  {
+   "tool": "solidworks_view_roll_view",
+   "impl": "scripts/sw_view.py:roll_view",
+   "claim": "Rotate the model view about the line of sight, that is roll it, by an angle.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/RollBy.md",
+    "anchor": "Rolls the model view about the line of sight by the specified angle."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "RollBy",
+     "path": "C:/swapi/types/IModelView/RollBy.md",
+     "anchor": "Rolls the model view about the line of sight by the specified angle."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.RollBy 的官方 Description 与首句共享词干 about/angle/line/model"
+   }
+  },
+  {
+   "tool": "solidworks_view_rotate_about_center",
+   "impl": "scripts/sw_view.py:rotate_about_center",
+   "claim": "Rotate the model view about the screen X and Y axes.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/RotateAboutCenter.md",
+    "anchor": "Rotates the model view about the screen X and Y axes."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "RotateAboutCenter",
+     "path": "C:/swapi/types/IModelView/RotateAboutCenter.md",
+     "anchor": "Rotates the model view about the screen X and Y axes."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.RotateAboutCenter 的官方 Description 与首句共享词干 about/axes/model/screen"
+   }
+  },
+  {
+   "tool": "solidworks_view_set_camera_by_name",
+   "impl": "scripts/sw_view.py:set_view_camera_by_name",
+   "claim": "Set the model view to a named camera while the model is in camera view mode.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/SetCameraByName.md",
+    "anchor": "Sets the model view to that of the specified camera, if in camera view mode."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "SetCameraByName",
+     "path": "C:/swapi/types/IModelView/SetCameraByName.md",
+     "anchor": "Sets the model view to that of the specified camera, if in camera view mode."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.SetCameraByName 的官方 Description 与首句共享词干 camera/mode/model/view"
+   }
+  },
+  {
+   "tool": "solidworks_view_set_display_mode",
+   "impl": "scripts/sw_view.py:set_display_mode",
+   "claim": "Set the display mode of the model view from an swViewDisplayMode code.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_view.py",
+    "anchor": "def set_display_mode("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_view_set_frame",
+   "impl": "scripts/sw_view.py:set_view_frame",
+   "claim": "Set the document window frame: left, top, width and height.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_view.py",
+    "anchor": "def set_view_frame("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_view_set_scale",
+   "impl": "scripts/sw_view.py:set_view_scale",
+   "claim": "Set the scale factor of the model view as an absolute ratio, not a multiplier.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_view.py",
+    "anchor": "def set_view_scale("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_view_start_dynamics",
+   "impl": "scripts/sw_view.py:start_dynamics",
+   "claim": "Start fast dynamic view changes so that following rotations redraw faster.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/StartDynamics.md",
+    "anchor": "Provides faster rotation of model views."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "StartDynamics",
+     "path": "C:/swapi/types/IModelView/StartDynamics.md",
+     "anchor": "Provides faster rotation of model views."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.StartDynamics 的官方 Description 与首句共享词干 faster/rotation/view"
+   }
+  },
+  {
+   "tool": "solidworks_view_stop_dynamics",
+   "impl": "scripts/sw_view.py:stop_dynamics",
+   "claim": "Stop dynamic view changes and restore the previous display mode.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/StopDynamics.md",
+    "anchor": "Ends dynamic model view motion."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "StopDynamics",
+     "path": "C:/swapi/types/IModelView/StopDynamics.md",
+     "anchor": "Ends dynamic model view motion."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.StopDynamics 的官方 Description 与首句共享词干 dynamic/view"
+   }
+  },
+  {
+   "tool": "solidworks_view_translate_view",
+   "impl": "scripts/sw_view.py:translate_view",
+   "claim": "Move the graphics area by a pan vector relative to the graphics-area axes rather than the model triad.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/TranslateBy.md",
+    "anchor": "Translates the model view in the screen."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "TranslateBy",
+     "path": "C:/swapi/types/IModelView/TranslateBy.md",
+     "anchor": "Translates the model view in the screen."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.TranslateBy 的官方 Description 与首句共享词干 model"
+   }
+  },
+  {
+   "tool": "solidworks_view_zoom_by_factor",
+   "impl": "scripts/sw_view.py:zoom_view",
+   "claim": "Zoom the model view in or out by a multiplier.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/ZoomByFactor.md",
+    "anchor": "Modifies the zoom factor for the model view."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "ZoomByFactor",
+     "path": "C:/swapi/types/IModelView/ZoomByFactor.md",
+     "anchor": "Modifies the zoom factor for the model view."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.ZoomByFactor 的官方 Description 与首句共享词干 model/view/zoom"
+   }
+  },
+  {
+   "tool": "solidworks_view_zoom_to_fit",
+   "impl": "scripts/sw_review.py:zoom_to_fit",
+   "claim": "Zoom the active view to fit the window and refresh the graphics area.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/ActiveView.md",
+    "anchor": "Gets the current active model view in read-only mode."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ActiveView",
+     "path": "C:/swapi/types/IModelDoc2/ActiveView.md",
+     "anchor": "Gets the current active model view in read-only mode."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GraphicsRedraw",
+     "path": "C:/swapi/types/IModelDoc2/GraphicsRedraw.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::GraphicsRedraw2]]."
+    },
+    {
+     "interface": "",
+     "member": "ViewZoomtofit2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.ActiveView 的官方 Description 与首句共享词干 active/view"
+   }
+  }
+ ]
+}

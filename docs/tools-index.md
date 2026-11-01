@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 696 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 697 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 7 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 89 | — |
+| （未归入上面任何一类） | 其他 | 90 | — |
 
 ## 探针（282 个）
 
@@ -821,7 +821,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（89 个）
+## 其他（90 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -830,6 +830,7 @@
 | `aggregate_audit_vs_official.py` | ★ 批量抽 bunny 那 30 路对比稿的**结构与计数**，找规律（★ 业主指令：等对比稿到齐后批量总结） |
 | `annotate_obsolete_form.py` | ★ 给废弃命中补一维标注「方法 ↔ 属性」（★ 任务书阶段 2 要的那一类 · 轮 135 · 第二版） |
 | `apply_dsh_sw_preset.py` | ★ 把生成好的 preset 块**安全地**追加进 DSH 活配置（★ 校验不过就自动回滚） |
+| `apply_tool_official_claims.py` | 按批把「官方依据台账草稿」落成**台账记录**（自动核验档），并挑出需要人读的条目 |
 | `arity_negative_case.py` | @brief **故意写错**的 arity 负例 —— 给 `scripts/audit_call_arity.py` 当"应该抓住"的输入 |
 | `backfill_source_blocks.py` | 给早于 §十八 的 .py 补来源块（dry-run 先看，--write 才落盘） |
 | `bunny_toolspec_pipeline.py` | ★ Bunny 扇出 → ToolSpec 批次 的**五步管线驱动**（collect → backfill → gate → remaining → build） |

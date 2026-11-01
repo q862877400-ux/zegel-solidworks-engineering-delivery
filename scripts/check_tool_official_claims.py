@@ -524,12 +524,15 @@ def scan(ledger_dir: Path = LEDGER_DIR) -> tuple[list[dict], dict]:
     import register_capabilities as rc  # noqa: PLC0415
 
     specs = {s.name: s for s in rc.all_specs()}
-    #: ★ 45 个手写工具没有 ToolSpec —— 用真握手那份清单补上名字（`tools/mcp_tools_list.py`）
+    #: ★ 45 个手写工具没有 ToolSpec —— 用真握手那份清单补上名字**与描述**
+    #:   （否则它们的 `doc` 取到空串 ⇒ 全部误判 claim-mismatch）✓
     try:
         from mcp_tools_list import tools_list  # noqa: PLC0415
 
-        wire_names = {t["name"] for t in tools_list()}
+        wire = {t["name"]: str(t.get("description") or "") for t in tools_list()}
+        wire_names = set(wire)
     except Exception:  # noqa: BLE001 - 握手失败不该让静态门禁崩，但必须显式说明
+        wire = {}
         wire_names = set(specs)
 
     records, broken = load_ledger(ledger_dir)
@@ -553,7 +556,7 @@ def scan(ledger_dir: Path = LEDGER_DIR) -> tuple[list[dict], dict]:
             rows.append({"tool": name, "code": "no-record", "why": "没有官方依据台账"})
             continue
         spec = specs.get(name)
-        doc = str(getattr(spec, "doc", "") or "") if spec is not None else ""
+        doc = str(getattr(spec, "doc", "") or "") if spec is not None else wire.get(name, "")
         for code, why in judge_record(rec, doc, known, func_index, adv):
             rows.append({"tool": name, "code": code, "why": why})
     stats = {
@@ -561,6 +564,11 @@ def scan(ledger_dir: Path = LEDGER_DIR) -> tuple[list[dict], dict]:
         "records": len(records),
         "official_tree": known is not None,
         "members_indexed": len(known or ()),
+        #: ★ 自动档与人读档分开计数：`verified.level="auto"` 是**机器核的**（成员提取 +
+        #:   官方页原文抄取 + 词干重叠门槛），不能与「人读了页」混成一个数 ✓
+        "auto_records": sum(
+            1 for r in records.values() if str((r.get("verified") or {}).get("level") or "") == "auto"
+        ),
         "advisories": adv,
     }
     return rows, stats
@@ -644,11 +652,13 @@ def main(argv=None) -> int:
     done = stats["checked"] - sum(1 for r in rows if r["code"] == "no-record")
     if args.report:
         print(
-            "★ 看了 %d 个工具 · 有台账 %d · **已核 %d/%d**（%.1f%%）· 违规合计 %d（基线 %d；本次新增 %d）"
+            "★ 看了 %d 个工具 · 有台账 %d · **已核 %d/%d**（%.1f%%；其中人工 %d · 自动 %d）· "
+            "违规合计 %d（基线 %d；本次新增 %d）"
             % (
                 stats["checked"], stats["records"], done, stats["checked"],
-                100.0 * done / max(1, stats["checked"]), len(rows),
-                int(baseline.get("count", 0)), len(new_rows),
+                100.0 * done / max(1, stats["checked"]),
+                stats["records"] - int(stats.get("auto_records", 0)), int(stats.get("auto_records", 0)),
+                len(rows), int(baseline.get("count", 0)), len(new_rows),
             )
         )
         if not stats["official_tree"]:
@@ -657,7 +667,11 @@ def main(argv=None) -> int:
             print("   %-22s %d" % (code, n))
         adv = stats.get("advisories") or []
         if adv:
-            print("   （建议，不进判据）%-13s %d 条 —— 台账多登记的成员，核验人确认后保留" % ("member-extra", len(adv)))
+            by_code: dict = {}
+            for a in adv:
+                by_code[a.get("code", "?")] = by_code.get(a.get("code", "?"), 0) + 1
+            for code, n in sorted(by_code.items(), key=lambda kv: -kv[1]):
+                print("   （建议，不进判据）%-20s %d 条" % (code, n))
         for r in new_rows[:40]:
             print("   [%s] %s —— %s" % (r["code"], r["tool"], r["why"][:110]))
         return 1 if new_rows else 0

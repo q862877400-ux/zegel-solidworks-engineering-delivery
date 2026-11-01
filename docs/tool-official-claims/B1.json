@@ -1,0 +1,1234 @@
+{
+ "batch": "B1",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_chamfer",
+   "impl": "scripts/sw_part.py:chamfer",
+   "claim": "Chamfer the selected edges of the active part with a distance and angle pair.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertFeatureChamfer.md",
+    "anchor": "Inserts a chamfer."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFeatureChamfer",
+     "path": "C:/swapi/types/IFeatureManager/InsertFeatureChamfer.md",
+     "anchor": "Inserts a chamfer."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertFeatureChamfer 的官方 Description 与首句共享词干 chamfer"
+   }
+  },
+  {
+   "tool": "solidworks_dome_params",
+   "impl": "scripts/sw_feature_readback.py:dome_params",
+   "claim": "Read the height, ellipticity, direction and face count of one dome feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+    "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.FeatureByName 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_boss",
+   "impl": "scripts/sw_part.py:extrude_boss",
+   "claim": "Create a solid boss by extruding an existing sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+    "anchor": "Creates an extruded feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureExtrusion3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+     "anchor": "Creates an extruded feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.FeatureExtrusion3 的官方 Description 与首句共享词干 extrud"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_cut",
+   "impl": "scripts/sw_part.py:extrude_cut",
+   "claim": "Create a cut by extruding an existing sketch into or through the part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+    "anchor": "Creates a cut extrude feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureCut4",
+     "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+     "anchor": "Creates a cut extrude feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.FeatureCut4 的官方 Description 与首句共享词干 cut"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_depth",
+   "impl": "scripts/sw_feature_readback.py:extrude_depth",
+   "claim": "Read the depth of one extrude feature together with the unit that value is expressed in.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IExtrudeFeatureData2/GetDepth.md",
+    "anchor": "Gets the depth of the extrusion feature in the forward or reverse direction."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IExtrudeFeatureData2",
+     "member": "GetDepth",
+     "path": "C:/swapi/types/IExtrudeFeatureData2/GetDepth.md",
+     "anchor": "Gets the depth of the extrusion feature in the forward or reverse direction."
+    },
+    {
+     "interface": "IExtrudeFeatureData2",
+     "member": "GetEndCondition",
+     "path": "C:/swapi/types/IExtrudeFeatureData2/GetEndCondition.md",
+     "anchor": "Gets the type of end condition of this extrusion feature for forward or reverse direction."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IExtrudeFeatureData2.GetDepth 的官方 Description 与首句共享词干 depth/feature"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_midplane",
+   "impl": "scripts/sw_part.py:extrude_midplane",
+   "claim": "Create a boss by extruding a sketch symmetrically about its plane.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+    "anchor": "Creates an extruded feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureExtrusion3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+     "anchor": "Creates an extruded feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.FeatureExtrusion3 的官方 Description 与首句共享词干 extrud"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_params",
+   "impl": "scripts/sw_feature_readback.py:extrude_params",
+   "claim": "Read the end condition, draft angle, contour count and both-direction flags of one extrude feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IExtrudeFeatureData2/GetContoursCount.md",
+    "anchor": "Gets the number of selected contours for this extrude feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IExtrudeFeatureData2",
+     "member": "GetContoursCount",
+     "path": "C:/swapi/types/IExtrudeFeatureData2/GetContoursCount.md",
+     "anchor": "Gets the number of selected contours for this extrude feature."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IExtrudeFeatureData2.GetContoursCount 的官方 Description 与首句共享词干 contour/extrude/feature"
+   }
+  },
+  {
+   "tool": "solidworks_fillet",
+   "impl": "scripts/sw_part.py:fillet",
+   "claim": "Round the selected edges of the active part with a fillet radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureFillet3.md",
+    "anchor": "Creates a fillet feature for selected edges and control point references."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureFillet3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureFillet3.md",
+     "anchor": "Creates a fillet feature for selected edges and control point references."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.FeatureFillet3 的官方 Description 与首句共享词干 edge/fillet/select"
+   }
+  },
+  {
+   "tool": "solidworks_fillet_params",
+   "impl": "scripts/sw_feature_readback.py:fillet_params",
+   "claim": "Read the default radius, type, edge count and flags of one simple fillet feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 feature/type"
+   }
+  },
+  {
+   "tool": "solidworks_hole_blind_by_selection",
+   "impl": "scripts/sw_hole_features.py:create_blind_hole_at_selection_report",
+   "claim": "Create a blind circular hole of one depth at the point that a declarative selection marks.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_hole_features.py",
+    "anchor": "def create_blind_hole_at_selection_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_hole_counterbore_by_selection",
+   "impl": "scripts/sw_hole_features.py:create_counterbore_hole_at_selection_report",
+   "claim": "Create a counterbore hole at the point that a declarative selection marks.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_hole_features.py",
+    "anchor": "def create_counterbore_hole_at_selection_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_hole_countersink_by_selection",
+   "impl": "scripts/sw_hole_features.py:create_countersink_hole_at_selection_report",
+   "claim": "Create a countersink hole at the point that a declarative selection marks.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_hole_features.py",
+    "anchor": "def create_countersink_hole_at_selection_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_hole_params",
+   "impl": "scripts/sw_feature_readback.py:hole_params",
+   "claim": "Read the size, standard, type and end condition of one hole wizard feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IWizardHoleFeatureData2/GetSketchPointCount.md",
+    "anchor": "Gets the number of center-hole sketch points in this Hole Wizard feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IWizardHoleFeatureData2",
+     "member": "GetSketchPointCount",
+     "path": "C:/swapi/types/IWizardHoleFeatureData2/GetSketchPointCount.md",
+     "anchor": "Gets the number of center-hole sketch points in this Hole Wizard feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IWizardHoleFeatureData2.GetSketchPointCount 的官方 Description 与首句共享词干 feature/hole/wizard"
+   }
+  },
+  {
+   "tool": "solidworks_hole_pattern",
+   "impl": "scripts/sw_hole_features.py:hole_pattern_report",
+   "claim": "Create one hole per explicit position in the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+    "anchor": "Gets the next feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 part"
+   }
+  },
+  {
+   "tool": "solidworks_hole_standards",
+   "impl": "scripts/sw_hole_features.py:list_hole_standards",
+   "claim": "List the Hole Wizard standards available for one hole type, as id and name pairs.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IHoleStandardsData/GetHoleStandards.md",
+    "anchor": "Gets Hole Wizard standards."
+   },
+   "members": [
+    {
+     "interface": "IHoleStandardsData",
+     "member": "GetHoleStandards",
+     "path": "C:/swapi/types/IHoleStandardsData/GetHoleStandards.md",
+     "anchor": "Gets Hole Wizard standards."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "GetHoleStandardsData",
+     "path": "C:/swapi/types/ISldWorks/GetHoleStandardsData.md",
+     "anchor": "Gets the hole standards for the specified hole type."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IHoleStandardsData.GetHoleStandards 的官方 Description 与首句共享词干 hole/standard/wizard"
+   }
+  },
+  {
+   "tool": "solidworks_hole_through_by_selection",
+   "impl": "scripts/sw_hole_features.py:create_through_hole_at_selection_report",
+   "claim": "Create a fully through circular hole at the point that a declarative selection marks.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_hole_features.py",
+    "anchor": "def create_through_hole_at_selection_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_hole_wizard",
+   "impl": "scripts/sw_hole_features.py:create_hole_wizard_at_selection_report",
+   "claim": "Create a hole-wizard hole on an axis-aligned face named by a direction selector and a size string.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+    "anchor": "Creates customized holes of various kinds."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "HoleWizard5",
+     "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+     "anchor": "Creates customized holes of various kinds."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectByRay",
+     "path": "C:/swapi/types/IModelDoc2/SelectByRay.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SelectByRay]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.HoleWizard5 的官方 Description 与首句共享词干 hole"
+   }
+  },
+  {
+   "tool": "solidworks_hole_wizard_at_point",
+   "impl": "scripts/sw_hole_features.py:create_hole_wizard_at_point_report",
+   "claim": "Create a Hole Wizard hole at an explicit point and read the hole parameters back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+    "anchor": "Creates customized holes of various kinds."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "HoleWizard5",
+     "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+     "anchor": "Creates customized holes of various kinds."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectByRay",
+     "path": "C:/swapi/types/IModelDoc2/SelectByRay.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SelectByRay]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.HoleWizard5 的官方 Description 与首句共享词干 hole"
+   }
+  },
+  {
+   "tool": "solidworks_loft_params",
+   "impl": "scripts/sw_feature_readback.py:loft_params",
+   "claim": "Read the profile count, guide count, tangency types, draft angle and closed flag of one loft feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 feature/type"
+   }
+  },
+  {
+   "tool": "solidworks_mirror_feature",
+   "impl": "scripts/sw_part.py:mirror_feature",
+   "claim": "Mirror an existing feature about a named plane.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMirrorFeature2.md",
+    "anchor": "Mirrors selected features, faces, bodies, and structure systems about a selected plane or planar face."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMirrorFeature2",
+     "path": "C:/swapi/types/IFeatureManager/InsertMirrorFeature2.md",
+     "anchor": "Mirrors selected features, faces, bodies, and structure systems about a selected plane or planar face."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMirrorFeature2 的官方 Description 与首句共享词干 about/mirror/plane"
+   }
+  },
+  {
+   "tool": "solidworks_pattern_params",
+   "impl": "scripts/sw_feature_readback.py:pattern_params",
+   "claim": "Read the instance counts, spacings and flags of one linear pattern feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+    "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.FeatureByName 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_revolve_boss",
+   "impl": "scripts/sw_part.py:revolve_boss",
+   "claim": "Revolve a profile sketch into a solid boss about an axis.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+    "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureRevolve2",
+     "path": "C:/swapi/types/IFeatureManager/FeatureRevolve2.md",
+     "anchor": "Creates a base-, boss-, or cut-revolve feature."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketch.GetSketchSegments 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_revolve_cut",
+   "impl": "scripts/sw_part.py:revolve_cut",
+   "claim": "Revolve a profile sketch into a cut feature around an axis, removing material from the part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+    "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureRevolve2",
+     "path": "C:/swapi/types/IFeatureManager/FeatureRevolve2.md",
+     "anchor": "Creates a base-, boss-, or cut-revolve feature."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.FeatureByName 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_revolve_params",
+   "impl": "scripts/sw_feature_readback.py:revolve_params",
+   "claim": "Read the angle, axis type, direction, thin-feature flag and contour count of one revolve feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 feature/type"
+   }
+  },
+  {
+   "tool": "solidworks_rib_params",
+   "impl": "scripts/sw_feature_readback.py:rib_params",
+   "claim": "Read the parameters of a rib feature, such as thickness, type, extrusion direction and draft settings.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 feature/type"
+   }
+  },
+  {
+   "tool": "solidworks_scale_feature",
+   "impl": "scripts/sw_part.py:insert_scale",
+   "claim": "Create a scale feature that scales the body by the given factors.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertScale.md",
+    "anchor": "Applies the specified scaling to either the current model or a selected graphic body."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertScale",
+     "path": "C:/swapi/types/IFeatureManager/InsertScale.md",
+     "anchor": "Applies the specified scaling to either the current model or a selected graphic body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertScale 的官方 Description 与首句共享词干 body/scal"
+   }
+  },
+  {
+   "tool": "solidworks_sweep_params",
+   "impl": "scripts/sw_feature_readback.py:sweep_params",
+   "claim": "Read the type, thin-feature flags, twist angles, path type and guide count of one sweep feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 feature/type"
+   }
+  },
+  {
+   "tool": "solidworks_sweep_surface",
+   "impl": "scripts/sw_surface_features.py:sweep_surface_report",
+   "claim": "Create a swept surface from a profile and a path, and report the new feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertSweepSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertSweepSurface2.md",
+     "anchor": "Obsolete. Superseded by [[IFeatureManager::InsertSweepSurface3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+   }
+  }
+ ]
+}

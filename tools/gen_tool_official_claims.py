@@ -143,7 +143,23 @@ def build_records(tools: list[str] | None) -> tuple[list[dict], list[str], list[
             cands = idx.get(member) or []
             usable = [(i, sig) for i, sig in cands if (SWAPI_TYPES / i / (member + ".md")).is_file()]
             if not usable:
+                #: ★ 铁律 5 的合法出口：**查不到页就记账，不许编页**。
+                #:   这些成员集中在 Simulation / Topology / Costing 三个 add-in
+                #:   （本机离线文档树只覆盖 sldworks + 部分 cosworks）⇒ 写 `gap`，
+                #:   门禁把它记成 `member-undocumented`（报表项），而不是当成漏查。
                 unresolved.append("%s -> %s" % (name, member))
+                members.append(
+                    {
+                        "interface": cands[0][0] if cands else "",
+                        "member": member,
+                        "path": "",
+                        "anchor": "",
+                        "documented": False,
+                        "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 %d 个接口（%s）。"
+                        "已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+                        % (len(cands), ", ".join(i for i, _ in cands[:4]) or "无"),
+                    }
+                )
                 continue
             iface = usable[0][0]
             text = read_page(SWAPI_TYPES / iface / (member + ".md")) or ""

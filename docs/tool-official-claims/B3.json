@@ -1,0 +1,1053 @@
+{
+ "batch": "B3",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_add_coincident_mate",
+   "impl": "mcp-server/server.py:solidworks_add_coincident_mate",
+   "claim": "Add a coincident mate between named planes/features inside two assembly components.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "Select2",
+     "path": "C:/swapi/types/IAnnotation/Select2.md",
+     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 assembly/component"
+   }
+  },
+  {
+   "tool": "solidworks_add_component",
+   "impl": "mcp-server/server.py:solidworks_add_component",
+   "claim": "Add an existing part/subassembly to the active assembly, optionally fixing it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "IsSuppressed",
+     "path": "C:/swapi/types/IComponent2/IsSuppressed.md",
+     "anchor": "Gets whether this component is suppressed."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Select4",
+     "path": "C:/swapi/types/IComponent2/Select4.md",
+     "anchor": "Selects this component."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "SetSuppression2",
+     "path": "C:/swapi/types/IComponent2/SetSuppression2.md",
+     "anchor": "Sets the suppression state of this component."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "Visible",
+     "path": "C:/swapi/types/IAnnotation/Visible.md",
+     "anchor": "Gets or sets the visibility state of this annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 active/assembly"
+   }
+  },
+  {
+   "tool": "solidworks_add_concentric_mate",
+   "impl": "mcp-server/server.py:solidworks_add_concentric_mate",
+   "claim": "Add a concentric mate between two components by locating matching cylinder faces.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 component"
+   }
+  },
+  {
+   "tool": "solidworks_add_distance_mate",
+   "impl": "mcp-server/server.py:solidworks_add_distance_mate",
+   "claim": "Add a distance mate between named planes/features inside two assembly components.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IDesignTable",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
+     "anchor": "Gets the design table title."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "Select2",
+     "path": "C:/swapi/types/IAnnotation/Select2.md",
+     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 assembly/component"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_apply_component_transform_x",
+   "impl": "scripts/sw_assembly.py:apply_component_transform_x",
+   "claim": "Move and rotate the active assembly component by rewriting its transform, then solve the assembly.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/SetTransformAndSolve3.md",
+    "anchor": "Sets the transform and solves for the mates for this component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "SetTransformAndSolve3",
+     "path": "C:/swapi/types/IComponent2/SetTransformAndSolve3.md",
+     "anchor": "Sets the transform and solves for the mates for this component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.SetTransformAndSolve3 的官方 Description 与首句共享词干 component/transform"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_auto_explode",
+   "impl": "scripts/sw_assembly_doc.py:auto_explode",
+   "claim": "Create one exploded view automatically for the current configuration.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def auto_explode("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_check_interference",
+   "impl": "scripts/sw_assembly.py:get_interference_detection",
+   "claim": "Run interference detection on the active assembly and return an auditable report.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IInterferenceDetectionMgr/Done.md",
+    "anchor": "Stops the interference detection."
+   },
+   "members": [
+    {
+     "interface": "IInterferenceDetectionMgr",
+     "member": "Done",
+     "path": "C:/swapi/types/IInterferenceDetectionMgr/Done.md",
+     "anchor": "Stops the interference detection."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponentCount",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponentCount.md",
+     "anchor": "Gets the number of components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IInterferenceDetectionMgr",
+     "member": "GetInterferenceCount",
+     "path": "C:/swapi/types/IInterferenceDetectionMgr/GetInterferenceCount.md",
+     "anchor": "Calculates and gets the number of interferences."
+    },
+    {
+     "interface": "IInterferenceDetectionMgr",
+     "member": "GetInterferences",
+     "path": "C:/swapi/types/IInterferenceDetectionMgr/GetInterferences.md",
+     "anchor": "Calculates and gets the interferences."
+    },
+    {
+     "interface": "IInterference",
+     "member": "Volume",
+     "path": "C:/swapi/types/IInterference/Volume.md",
+     "anchor": "Gets the volume of the interference."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IInterferenceDetectionMgr.Done 的官方 Description 与首句共享词干 detection/interference"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_component_pattern_report",
+   "impl": "scripts/sw_assembly.py:iter_feature_tree",
+   "claim": "List the assembly feature tree node by node, including any component-pattern nodes.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_create_exploded_view",
+   "impl": "scripts/sw_assembly_doc.py:create_exploded_view",
+   "claim": "Create an explode view of the active assembly configuration from the current mate conditions.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def create_exploded_view("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_dissolve",
+   "impl": "scripts/sw_assembly_doc.py:dissolve_assembly",
+   "claim": "Delete the selected subassembly by dissolving it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_edit_explode_parameters",
+   "impl": "scripts/sw_assembly_doc.py:edit_explode_parameters",
+   "claim": "Open the explode-parameter editing step of the active assembly.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def edit_explode_parameters("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_exit_edit_part_in_context",
+   "impl": "scripts/sw_assembly_doc.py:exit_edit_part_in_context",
+   "claim": "Leave the in-context part editing state and return to the assembly.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/EditAssembly.md",
+    "anchor": "Switches back to the assembly document for editing."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "EditAssembly",
+     "path": "C:/swapi/types/IAssemblyDoc/EditAssembly.md",
+     "anchor": "Switches back to the assembly document for editing."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.EditAssembly 的官方 Description 与首句共享词干 assembly/edit"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_explode_line_sketch",
+   "impl": "scripts/sw_assembly_doc.py:insert_explode_line_sketch_report",
+   "claim": "Insert or close an explode line sketch in the active assembly.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/InsertExplodeLineSketch.md",
+    "anchor": "Inserts or closes an explode line sketch in an exploded view."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "InsertExplodeLineSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertExplodeLineSketch.md",
+     "anchor": "Inserts or closes an explode line sketch in an exploded view."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.InsertExplodeLineSketch 的官方 Description 与首句共享词干 explode/insert/line/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_exploded_view_configuration",
+   "impl": "scripts/sw_assembly_doc.py:get_exploded_view_configuration_name",
+   "claim": "Get the configuration name behind an exploded view by passing the argument through unchanged.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def get_exploded_view_configuration_name("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_external_reference_count",
+   "impl": "scripts/sw_assembly_doc.py:list_external_file_references_count",
+   "claim": "Count the external file references of a component.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/ListExternalFileReferencesCount.md",
+    "anchor": "Gets the number of external references on the component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "ListExternalFileReferencesCount",
+     "path": "C:/swapi/types/IComponent2/ListExternalFileReferencesCount.md",
+     "anchor": "Gets the number of external references on the component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.ListExternalFileReferencesCount 的官方 Description 与首句共享词干 component/external/referenc"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_get_exploded_view_count",
+   "impl": "scripts/sw_assembly_doc.py:get_exploded_view_count",
+   "claim": "Get the number of exploded views in one configuration as an integer.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def get_exploded_view_count("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_get_exploded_view_names",
+   "impl": "scripts/sw_assembly_doc.py:get_exploded_view_names",
+   "claim": "List the exploded-view names of one configuration as strings.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def get_exploded_view_names("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_iter_feature_tree",
+   "impl": "scripts/sw_assembly.py:iter_feature_tree",
+   "claim": "List the active assembly feature tree node by node, covering components, features and mates.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 component/feature"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_list_components",
+   "impl": "scripts/sw_assembly.py:get_components",
+   "claim": "List the components of the active assembly with name, file path, suppression state and visibility.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "IsSuppressed",
+     "path": "C:/swapi/types/IComponent2/IsSuppressed.md",
+     "anchor": "Gets whether this component is suppressed."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "Visible",
+     "path": "C:/swapi/types/IAnnotation/Visible.md",
+     "anchor": "Gets or sets the visibility state of this annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 active/assembly/component"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_list_mates",
+   "impl": "scripts/sw_assembly.py:collect_mate_feature_summary",
+   "claim": "List the mate group and its mate features with name, type and tree depth.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+    "anchor": "Gets the type of feature."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 type"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_replace_component",
+   "impl": "scripts/sw_assembly.py:replace_component",
+   "claim": "Replace one selected assembly component with another part file and reattach its mates.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/ReplaceComponents2.md",
+    "anchor": "Replaces one or more selected components with another model."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "ReplaceComponents2",
+     "path": "C:/swapi/types/IAssemblyDoc/ReplaceComponents2.md",
+     "anchor": "Replaces one or more selected components with another model."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.ReplaceComponents2 的官方 Description 与首句共享词干 another/component/select"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_sequence_report",
+   "impl": "scripts/sw_delivery.py:collect_assembly_bom",
+   "claim": "Report the assembly components as ordered rows that read like an assembly instruction sheet.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetExcludeFromBOM2",
+     "path": "C:/swapi/types/IComponent2/GetExcludeFromBOM2.md",
+     "anchor": "Gets whether this component is excluded from the bills of materials (BOMs) in the specified configurations."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetModelDoc2",
+     "path": "C:/swapi/types/IComponent2/GetModelDoc2.md",
+     "anchor": "Gets the model document for this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "ReferencedConfiguration",
+     "path": "C:/swapi/types/IComponent2/ReferencedConfiguration.md",
+     "anchor": "Gets or sets the active configuration used by this component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 assembly/component"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_show_exploded",
+   "impl": "scripts/sw_assembly_doc.py:show_exploded",
+   "claim": "Display one named exploded view in the exploded or collapsed position.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def show_exploded("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_suppress_component",
+   "impl": "scripts/sw_assembly.py:suppress_component",
+   "claim": "Suppress one component of the active assembly by its feature-tree name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditSuppress2.md",
+    "anchor": "Suppresses the selected feature, the selected component, or the owning feature of the selected face."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "EditSuppress2",
+     "path": "C:/swapi/types/IModelDoc2/EditSuppress2.md",
+     "anchor": "Suppresses the selected feature, the selected component, or the owning feature of the selected face."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.EditSuppress2 的官方 Description 与首句共享词干 component"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_unsuppress_component",
+   "impl": "scripts/sw_assembly.py:unsuppress_component",
+   "claim": "Unsuppress one component of the active assembly by its feature-tree name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditUnsuppress2.md",
+    "anchor": "Unsuppresses the selected feature or component."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "EditUnsuppress2",
+     "path": "C:/swapi/types/IModelDoc2/EditUnsuppress2.md",
+     "anchor": "Unsuppresses the selected feature or component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.EditUnsuppress2 的官方 Description 与首句共享词干 component"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_view_collapse",
+   "impl": "scripts/sw_assembly_doc.py:view_collapse_assembly",
+   "claim": "Collapse the displayed exploded view back to its assembled position without changing geometry.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def view_collapse_assembly("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_view_explode",
+   "impl": "scripts/sw_assembly_doc.py:view_explode_assembly",
+   "claim": "Explode the selected exploded view in the display without changing any geometry.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly_doc.py",
+    "anchor": "def view_explode_assembly("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  }
+ ]
+}

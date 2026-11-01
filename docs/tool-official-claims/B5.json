@@ -1,0 +1,2113 @@
+{
+ "batch": "B5",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_mold_core_cavity_split",
+   "impl": "scripts/sw_mold.py:insert_core_cavity_solids",
+   "claim": "Split the mold into core and cavity solids along the parting surface.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMoldCoreCavitySolids.md",
+    "anchor": "Creates a core/cavity solid feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMoldCoreCavitySolids",
+     "path": "C:/swapi/types/IFeatureManager/InsertMoldCoreCavitySolids.md",
+     "anchor": "Creates a core/cavity solid feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMoldCoreCavitySolids 的官方 Description 与首句共享词干 cavity/core/solid"
+   }
+  },
+  {
+   "tool": "solidworks_mold_draft_analysis",
+   "impl": "scripts/sw_mold.py:mold_draft_analysis",
+   "claim": "Run mold draft analysis at one draft angle and return the official return code unchanged.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/MoldDraftAnalysis.md",
+    "anchor": "Performs a mold draft analysis."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "MoldDraftAnalysis",
+     "path": "C:/swapi/types/IModelDoc2/MoldDraftAnalysis.md",
+     "anchor": "Performs a mold draft analysis."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.MoldDraftAnalysis 的官方 Description 与首句共享词干 analysi/draft/mold"
+   }
+  },
+  {
+   "tool": "solidworks_mold_evidence",
+   "impl": "scripts/sw_mold.py:mold_evidence",
+   "claim": "Read the mold state of the active part, which this machine cannot actually read.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+    "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.FeatureManager 的官方 Description 与首句共享词干 which"
+   }
+  },
+  {
+   "tool": "solidworks_mold_parting_line",
+   "impl": "scripts/sw_mold.py:insert_parting_line",
+   "claim": "Insert a mold parting line from the draft-direction reference that is already selected.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingLine.md",
+    "anchor": "Inserts a mold parting line feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMoldPartingLine",
+     "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingLine.md",
+     "anchor": "Inserts a mold parting line feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMoldPartingLine 的官方 Description 与首句共享词干 insert/line/mold/part"
+   }
+  },
+  {
+   "tool": "solidworks_mold_parting_surface",
+   "impl": "scripts/sw_mold.py:insert_parting_surface",
+   "claim": "Insert the mold parting surface so the tooling split has a surface to cut along.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingSurface.md",
+    "anchor": "Inserts a mold parting surface feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMoldPartingSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingSurface.md",
+     "anchor": "Inserts a mold parting surface feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMoldPartingSurface 的官方 Description 与首句共享词干 insert/mold/part/surface"
+   }
+  },
+  {
+   "tool": "solidworks_mold_shut_off_surface",
+   "impl": "scripts/sw_mold.py:insert_shut_off_surface",
+   "claim": "Create shut-off surfaces over holes so the mold can separate.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMoldShutOffSurface.md",
+    "anchor": "Inserts the mold shut-off surface feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMoldShutOffSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertMoldShutOffSurface.md",
+     "anchor": "Inserts the mold shut-off surface feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMoldShutOffSurface 的官方 Description 与首句共享词干 mold/shut-off"
+   }
+  },
+  {
+   "tool": "solidworks_mold_undercut_detect",
+   "impl": "scripts/sw_mold.py:mold_undercut_detect",
+   "claim": "Detect mold undercuts along a pull direction and paint the faces that form them.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/MoldUndercutDetect2.md",
+    "anchor": "Detects trapped, also called undercut, areas in a model that cannot be ejected from the mold."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "MoldUndercutDetect2",
+     "path": "C:/swapi/types/IFeatureManager/MoldUndercutDetect2.md",
+     "anchor": "Detects trapped, also called undercut, areas in a model that cannot be ejected from the mold."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.MoldUndercutDetect2 的官方 Description 与首句共享词干 detect/mold/undercut"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_base_flange",
+   "impl": "scripts/sw_sheet_metal.py:create_base_flange",
+   "claim": "Create a native base flange from a sketch, given thickness, bend radius and depth in millimetres.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBaseFlangeFeatureData/Initialize.md",
+    "anchor": "Initializes a newly created sheet metal base flange feature with the specified data."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateCustomBendAllowance",
+     "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
+     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetErrorCode",
+     "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+    },
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "Initialize",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/Initialize.md",
+     "anchor": "Initializes a newly created sheet metal base flange feature with the specified data."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBaseFlangeFeatureData.Initialize 的官方 Description 与首句共享词干 base/flange"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_draft",
+   "impl": "scripts/sw_sheet_metal.py:create_draft",
+   "claim": "Create a native face draft on one selected face, untested on this machine.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMultiFaceDraft.md",
+    "anchor": "Inserts a multiface draft feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMultiFaceDraft",
+     "path": "C:/swapi/types/IFeatureManager/InsertMultiFaceDraft.md",
+     "anchor": "Inserts a multiface draft feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertMultiFaceDraft 的官方 Description 与首句共享词干 draft"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_fold",
+   "impl": "scripts/sw_sheet_metal.py:create_fold",
+   "claim": "Insert a fold feature to close a flat pattern back into its bent state.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalFold.md",
+    "anchor": "Inserts a fold feature at the selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertSheetMetalFold",
+     "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalFold.md",
+     "anchor": "Inserts a fold feature at the selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertSheetMetalFold 的官方 Description 与首句共享词干 feature/fold/insert"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_gusset",
+   "impl": "scripts/sw_sheet_metal.py:create_gusset",
+   "claim": "Skip this tool, NOT USABLE on this machine: ISMGussetFeatureData needs process-internal pointers and creates no feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+    "anchor": "Creates a feature data object of the specified type."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetErrorCode",
+     "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.CreateDefinition 的官方 Description 与首句共享词干 creat/feature"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_hem",
+   "impl": "scripts/sw_sheet_metal.py:create_hem",
+   "claim": "Skip this tool, NOT USABLE on this machine: every hem shape returns nothing, so no hem is created.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
+    "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateCustomBendAllowance",
+     "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
+     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertSheetMetalHem2",
+     "path": "C:/swapi/types/IFeatureManager/InsertSheetMetalHem2.md",
+     "anchor": "Inserts a hem of the specified relief type at the selected edges of the current sheet metal part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "Type",
+     "path": "C:/swapi/types/IBodyFolder/Type.md",
+     "anchor": "Gets the type of body folder."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.CreateCustomBendAllowance 的官方 Description 与首句共享词干 creat"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_one_bend",
+   "impl": "scripts/sw_sheet_metal.py:create_one_bend",
+   "claim": "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+    "anchor": "Clears the selection list."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetErrorCode",
+     "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.ClearSelection2 的官方 Description 与首句共享词干 selection"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_unfold",
+   "impl": "scripts/sw_sheet_metal.py:create_unfold",
+   "claim": "Insert an unfold feature so the sheet-metal part shows its flat pattern.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalUnfold.md",
+    "anchor": "Inserts an unfold feature at the selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertSheetMetalUnfold",
+     "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalUnfold.md",
+     "anchor": "Inserts an unfold feature at the selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertSheetMetalUnfold 的官方 Description 与首句共享词干 feature/insert/unfold"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_evidence",
+   "impl": "scripts/sw_sheet_metal.py:sheet_metal_evidence",
+   "claim": "Read the sheet-metal evidence of the active part: feature list, base flange parameters and per-body flags.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBaseFlangeFeatureData/D1EndConditionDistance.md",
+    "anchor": "Gets or sets the Direction 1 end condition distance for this base flange feature."
+   },
+   "members": [
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "BendRadius",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/BendRadius.md",
+     "anchor": "Gets or sets the bend radius of this bend flange feature."
+    },
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "D1EndConditionDistance",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/D1EndConditionDistance.md",
+     "anchor": "Gets or sets the Direction 1 end condition distance for this base flange feature."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "GetCustomBendAllowance",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/GetCustomBendAllowance.md",
+     "anchor": "Gets the custom bend allowance object associated with this sheet metal base flange feature."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "IsSheetMetal",
+     "path": "C:/swapi/types/IBody2/IsSheetMetal.md",
+     "anchor": "Gets whether this body was created by a sheet metal feature."
+    },
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "KFactor",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/KFactor.md",
+     "anchor": "Gets or sets the K-factor for this base-flange feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IBaseFlangeFeatureData",
+     "member": "Thickness",
+     "path": "C:/swapi/types/IBaseFlangeFeatureData/Thickness.md",
+     "anchor": "Gets or sets the thickness for this base flange feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBaseFlangeFeatureData.D1EndConditionDistance 的官方 Description 与首句共享词干 base/feature/flange"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_insert_closed_corner",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:insert_sheet_metal_closed_corner",
+   "claim": "Insert a closed corner on the sheet-metal corners and report the tree, face-count and volume change.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalClosedCorner.md",
+    "anchor": "Inserts a sheet metal closed corner into this model document."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertSheetMetalClosedCorner",
+     "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalClosedCorner.md",
+     "anchor": "Inserts a sheet metal closed corner into this model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertSheetMetalClosedCorner 的官方 Description 与首句共享词干 clos/corner/insert"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_insert_miter_flange",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:insert_sheet_metal_miter_flange",
+   "claim": "Insert a sheet-metal miter flange and report the new feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertSheetMetalMiterFlange.md",
+    "anchor": "Inserts a meter flange in a sheet metal part."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertSheetMetalMiterFlange",
+     "path": "C:/swapi/types/IFeatureManager/InsertSheetMetalMiterFlange.md",
+     "anchor": "Inserts a meter flange in a sheet metal part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertSheetMetalMiterFlange 的官方 Description 与首句共享词干 flange/insert"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_iter_features",
+   "impl": "scripts/sw_sheet_metal.py:iter_features",
+   "claim": "List the sheet-metal features of the active part by walking the feature tree in order.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+    "anchor": "Gets the next feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 feature/part"
+   }
+  },
+  {
+   "tool": "solidworks_surface_create_extruded",
+   "impl": "scripts/sw_surface_features.py:create_extruded_surface_report",
+   "claim": "Create a surface extrude feature from an existing sketch of the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+    "anchor": "Gets the next feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureExtruRefSurface3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureExtruRefSurface3.md",
+     "anchor": "Inserts an extruded surface."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 feature/part"
+   }
+  },
+  {
+   "tool": "solidworks_surface_cut",
+   "impl": "scripts/sw_surface_features.py:cut_surface_report",
+   "claim": "Create a surface-cut feature that cuts solids with a preselected surface or plane.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertCutSurface.md",
+    "anchor": "Inserts a surface-cut feature using the preselected surface or plane."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertCutSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertCutSurface.md",
+     "anchor": "Inserts a surface-cut feature using the preselected surface or plane."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertCutSurface 的官方 Description 与首句共享词干 feature/plane/preselect/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_extend",
+   "impl": "scripts/sw_surface_features.py:insert_extend_surface_report",
+   "claim": "Extend a surface of the active part by a distance along or beyond its own shape.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertExtendSurface.md",
+    "anchor": "Extends a surface along the selected faces or edges."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertExtendSurface",
+     "path": "C:/swapi/types/IModelDoc2/InsertExtendSurface.md",
+     "anchor": "Extends a surface along the selected faces or edges."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertExtendSurface 的官方 Description 与首句共享词干 along/extend/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_fill",
+   "impl": "scripts/sw_surface_features.py:insert_fill_surface_report",
+   "claim": "Create a surface patch over a closed boundary of the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+    "anchor": "Gets the next feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetEdges",
+     "path": "C:/swapi/types/IBody2/GetEdges.md",
+     "anchor": "Gets the edges for this body."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetEndVertex",
+     "path": "C:/swapi/types/IEdge/GetEndVertex.md",
+     "anchor": "Gets the ending vertex for this edge."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IVertex",
+     "member": "GetPoint",
+     "path": "C:/swapi/types/IVertex/GetPoint.md",
+     "anchor": "Gets the point corresponding to this vertex."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetStartVertex",
+     "path": "C:/swapi/types/IEdge/GetStartVertex.md",
+     "anchor": "Gets the starting vertex for this edge."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFillSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertFillSurface2.md",
+     "anchor": "Inserts a fill-surface feature in the model."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 part"
+   }
+  },
+  {
+   "tool": "solidworks_surface_flatten",
+   "impl": "scripts/sw_feature_entry_ops.py:create_flatten_surface",
+   "claim": "Flatten a surface body into a flat surface feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetEdges",
+     "path": "C:/swapi/types/IBody2/GetEdges.md",
+     "anchor": "Gets the edges for this body."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFlattenSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertFlattenSurface2.md",
+     "anchor": "Inserts a surface-flatten feature in the model."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_surface_knit",
+   "impl": "scripts/sw_surface_features.py:knit_surfaces_report",
+   "claim": "Join the selected surfaces of the active part into one surface body.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertSewRefSurface.md",
+    "anchor": "Creates a surface by knitting the selected surfaces together."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertSewRefSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertSewRefSurface.md",
+     "anchor": "Creates a surface by knitting the selected surfaces together."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertSewRefSurface 的官方 Description 与首句共享词干 select/surfac/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_offset",
+   "impl": "scripts/sw_surface_edit_ops.py:insert_offset_surface",
+   "claim": "Insert an offset surface at a given distance from a face that this tool selects itself.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertOffsetSurface.md",
+    "anchor": "Inserts an offset surface."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertOffsetSurface",
+     "path": "C:/swapi/types/IModelDoc2/InsertOffsetSurface.md",
+     "anchor": "Inserts an offset surface."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertOffsetSurface 的官方 Description 与首句共享词干 insert/offset/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_planar",
+   "impl": "scripts/sw_surface_edit_ops.py:insert_planar_surface",
+   "claim": "Insert a planar surface from the closed boundary that is currently selected, such as a sketch or a loop of edges.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertPlanarRefSurface.md",
+    "anchor": "Inserts a planar reference surface."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertPlanarRefSurface",
+     "path": "C:/swapi/types/IModelDoc2/InsertPlanarRefSurface.md",
+     "anchor": "Inserts a planar reference surface."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertPlanarRefSurface 的官方 Description 与首句共享词干 insert/planar/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_replace_face",
+   "impl": "scripts/sw_surface_edit_ops.py:insert_replace_face",
+   "claim": "Replace a solid face with a surface face.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertFeatureReplaceFace.md",
+    "anchor": "Creates a Replace Face feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertFeatureReplaceFace",
+     "path": "C:/swapi/types/IModelDoc2/InsertFeatureReplaceFace.md",
+     "anchor": "Creates a Replace Face feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertFeatureReplaceFace 的官方 Description 与首句共享词干 face/replace"
+   }
+  },
+  {
+   "tool": "solidworks_surface_revolved_ref",
+   "impl": "scripts/sw_surface_ref_ops.py:insert_revolved_ref_surface",
+   "claim": "Revolve a profile into a reference surface about a centreline.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertRevolvedRefSurface.md",
+    "anchor": "Creates a revolved reference surface by revolving a profile around a centerline."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertRevolvedRefSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertRevolvedRefSurface.md",
+     "anchor": "Creates a revolved reference surface by revolving a profile around a centerline."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertRevolvedRefSurface 的官方 Description 与首句共享词干 profile/reference/surface"
+   }
+  },
+  {
+   "tool": "solidworks_surface_runtime_available",
+   "impl": "scripts/sw_surface.py:runtime_available",
+   "claim": "Report whether one IModeler surface method is proven usable on this machine, where unmeasured methods return false.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_surface.py",
+    "anchor": "def runtime_available("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_surface_sweep",
+   "impl": "scripts/sw_sweep.py:create_sweep_surface_report",
+   "claim": "Skip this tool, NOT USABLE on this machine: every entry point returns nothing and the tree stays unchanged.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+    "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+   },
+   "members": [
+    {
+     "interface": "IAdvancedHoleFeatureData",
+     "member": "AccessSelections",
+     "path": "C:/swapi/types/IAdvancedHoleFeatureData/AccessSelections.md",
+     "anchor": "Gains access to the selections used to define the Advanced Hole feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.FeatureManager 的官方 Description 与首句共享词干 tree"
+   }
+  },
+  {
+   "tool": "solidworks_surface_untrim",
+   "impl": "scripts/sw_surface_features.py:untrim_surface_report",
+   "claim": "Untrim a surface so the trimmed-away part of the face grows back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+    "anchor": "Gets the next feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertUntrimSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertUntrimSurface2.md",
+     "anchor": "Extends a surface along its natural boundaries or fills interior surface holes, optionally trimming outside these boundaries or holes."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 part"
+   }
+  },
+  {
+   "tool": "solidworks_weld_fillet_bead_report",
+   "impl": "scripts/sw_weld_bead.py:insert_fillet_bead_report",
+   "claim": "Insert a fillet weld bead and report whether the feature tree grew.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertFilletBeadFeature2.md",
+    "anchor": "Inserts a fillet weld bead feature and also fills the gap between the pre-selected part bodies, if any."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFilletBeadFeature2",
+     "path": "C:/swapi/types/IFeatureManager/InsertFilletBeadFeature2.md",
+     "anchor": "Inserts a fillet weld bead feature and also fills the gap between the pre-selected part bodies, if any."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertFilletBeadFeature2 的官方 Description 与首句共享词干 bead/feature/fillet/insert"
+   }
+  },
+  {
+   "tool": "solidworks_weld_symbol",
+   "impl": "scripts/sw_weldment.py:insert_weld_symbol_report",
+   "claim": "Insert a weld symbol on a face of the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertWeldSymbol3.md",
+    "anchor": "Inserts a weld symbol into the model."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertWeldSymbol3",
+     "path": "C:/swapi/types/IModelDoc2/InsertWeldSymbol3.md",
+     "anchor": "Inserts a weld symbol into the model."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IDatumTag",
+     "member": "SetText",
+     "path": "C:/swapi/types/IDatumTag/SetText.md",
+     "anchor": "Sets the text of this datum tag."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertWeldSymbol3 的官方 Description 与首句共享词干 insert/symbol/weld"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_create_cut_list",
+   "impl": "scripts/sw_weldment.py:create_cut_list",
+   "claim": "Skip this tool, NOT USABLE on this machine: the cut-list insert member resolves to None on this backend.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+    "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentCutList2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertWeldmentCutList2 的官方 Description 与首句共享词干 insert"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_create_profile_center_mate",
+   "impl": "scripts/sw_weldment.py:create_profile_center_mate",
+   "claim": "Skip this tool, NOT USABLE on this machine: the mate data is created but the mate call returns None.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_weldment.py",
+    "anchor": "def create_profile_center_mate("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_create_structural_member",
+   "impl": "scripts/sw_weldment.py:create_structural_member_from_sketch",
+   "claim": "Create a structural member along a path sketch with a weldment profile, then read the feature tree back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertStructuralWeldment5.md",
+    "anchor": "Inserts a structural weldment feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateStructuralMemberGroup",
+     "path": "C:/swapi/types/IFeatureManager/CreateStructuralMemberGroup.md",
+     "anchor": "Creates a weldment structural-member group."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertStructuralWeldment5",
+     "path": "C:/swapi/types/IFeatureManager/InsertStructuralWeldment5.md",
+     "anchor": "Inserts a structural weldment feature."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentFeature",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentFeature.md",
+     "anchor": "Inserts a weldment feature."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertStructuralWeldment5 的官方 Description 与首句共享词干 feature/structural/weldment"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_create_sub_weld_folder",
+   "impl": "scripts/sw_weldment.py:create_sub_weld_folder",
+   "claim": "Create a weldment sub-folder in the feature tree of the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertSubWeldFolder2.md",
+    "anchor": "Creates a sub weld folder feature containing the specified weldment bodies."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertSubWeldFolder2",
+     "path": "C:/swapi/types/IFeatureManager/InsertSubWeldFolder2.md",
+     "anchor": "Creates a sub weld folder feature containing the specified weldment bodies."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertSubWeldFolder2 的官方 Description 与首句共享词干 feature/weldment"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_create_weldment_profile",
+   "impl": "scripts/sw_weldment.py:create_weldment_profile",
+   "claim": "Create a weldment profile file from a declaratively selected sketch and save it as .sldlfp.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "IConfigurationManager",
+     "member": "ActiveConfiguration",
+     "path": "C:/swapi/types/IConfigurationManager/ActiveConfiguration.md",
+     "anchor": "Gets the active configuration."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Add3",
+     "path": "C:/swapi/types/ICustomPropertyManager/Add3.md",
+     "anchor": "Adds a custom property to a configuration or model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ConfigurationManager",
+     "path": "C:/swapi/types/IModelDoc2/ConfigurationManager.md",
+     "anchor": "Gets the [[IConfigurationManager]] object, which allows access to a configuration in a model."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Save3",
+     "path": "C:/swapi/types/IModelDoc2/Save3.md",
+     "anchor": "Saves the current document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SaveAs",
+     "path": "C:/swapi/types/IModelDoc2/SaveAs.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SaveAs]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_export_cut_list_csv",
+   "impl": "scripts/sw_weldment.py:export_cut_list_csv",
+   "claim": "Export a cut-list evidence dict to a UTF-8 CSV file and return the path.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_weldment.py",
+    "anchor": "def export_cut_list_csv("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_gusset_create",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:insert_weldment_gusset",
+   "claim": "Insert a weldment gusset between two faces you select with mark 1, and report the new feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertGussetFeature3.md",
+    "anchor": "Inserts a gusset feature for pre-selected faces of a weldment."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertGussetFeature3",
+     "path": "C:/swapi/types/IFeatureManager/InsertGussetFeature3.md",
+     "anchor": "Inserts a gusset feature for pre-selected faces of a weldment."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertGussetFeature3 的官方 Description 与首句共享词干 face/feature/gusset/insert"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_insert_end_cap",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:insert_weldment_end_cap",
+   "claim": "Insert a weldment end cap on the end faces you select first, and report the new feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertEndCapFeature3.md",
+    "anchor": "Inserts an end cap feature for one or more pre-selected open ends of a structural member."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+    },
+    {
+     "interface": "IAttribute",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
+     "anchor": "Gets the definition of this attribute."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertEndCapFeature3",
+     "path": "C:/swapi/types/IFeatureManager/InsertEndCapFeature3.md",
+     "anchor": "Inserts an end cap feature for one or more pre-selected open ends of a structural member."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertEndCapFeature3 的官方 Description 与首句共享词干 cap/end/feature/insert"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_iter_features",
+   "impl": "scripts/sw_weldment.py:iter_features_recursive",
+   "claim": "Walk the weldment feature folders and list the cut list folders with their sub-features.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+    "anchor": "Gets the first feature in this component."
+   },
+   "members": [
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_read_property_manager",
+   "impl": "scripts/sw_weldment.py:read_property_manager",
+   "claim": "Read the manufacturing properties of the active PropertyManager page as a dict.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+    "anchor": "Gets the names of the custom properties."
+   },
+   "members": [
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "GetNames",
+     "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ICustomPropertyManager.GetNames 的官方 Description 与首句共享词干 properti"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_trim",
+   "impl": "scripts/sw_weldment.py:insert_weldment_trim_report",
+   "claim": "Skip this tool, NOT USABLE on this machine: trimming or extending weldment bodies adds no feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertWeldmentTrimFeature2.md",
+    "anchor": "Inserts a weldment trim feature for the specified weldment bodies or faces."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
+     "anchor": "Gets the first feature in this component."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentTrimFeature2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentTrimFeature2.md",
+     "anchor": "Inserts a weldment trim feature for the specified weldment bodies or faces."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertWeldmentTrimFeature2 的官方 Description 与首句共享词干 bodi/feature/weldment"
+   }
+  }
+ ]
+}

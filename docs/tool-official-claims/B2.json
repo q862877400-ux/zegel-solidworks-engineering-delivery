@@ -1,0 +1,1614 @@
+{
+ "batch": "B2",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_count_sketch_relations",
+   "impl": "scripts/sw_sketch_dimensions.py:count_sketch_relations",
+   "claim": "Count the geometric relations in the active sketch, optionally restricted by relation type.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchPath/GetRelationsCount.md",
+    "anchor": "Gets the number of sketch relations in this sketch path."
+   },
+   "members": [
+    {
+     "interface": "ISketchPath",
+     "member": "GetRelationsCount",
+     "path": "C:/swapi/types/ISketchPath/GetRelationsCount.md",
+     "anchor": "Gets the number of sketch relations in this sketch path."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchPath.GetRelationsCount 的官方 Description 与首句共享词干 relation/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_delete_sketch_relation",
+   "impl": "scripts/sw_sketch_dimensions.py:delete_sketch_relation",
+   "claim": "Delete one geometric relation from the active sketch by its index.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchRelationManager/DeleteRelation.md",
+    "anchor": "Deletes the specified logical sketch relation in sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketchRelationManager",
+     "member": "DeleteRelation",
+     "path": "C:/swapi/types/ISketchRelationManager/DeleteRelation.md",
+     "anchor": "Deletes the specified logical sketch relation in sketch."
+    },
+    {
+     "interface": "ISketchPath",
+     "member": "GetRelations",
+     "path": "C:/swapi/types/ISketchPath/GetRelations.md",
+     "anchor": "Gets the sketch relations for this sketch path."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchRelationManager.DeleteRelation 的官方 Description 与首句共享词干 relation/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_3point_center_rectangle",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_3point_center_rectangle",
+   "claim": "Draw a centre rectangle from its centre point, one corner and one more point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/Create3PointCenterRectangle.md",
+    "anchor": "Creates a 3-point center rectangle at any angle."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "Create3PointCenterRectangle",
+     "path": "C:/swapi/types/ISketchManager/Create3PointCenterRectangle.md",
+     "anchor": "Creates a 3-point center rectangle at any angle."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.Create3PointCenterRectangle 的官方 Description 与首句共享词干 point/rectangle"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_3point_rectangle",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_3point_corner_rectangle",
+   "claim": "Draw a corner rectangle at any angle from three points in the open sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/Create3PointCornerRectangle.md",
+    "anchor": "Creates a 3-point corner rectangle at any angle."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "Create3PointCornerRectangle",
+     "path": "C:/swapi/types/ISketchManager/Create3PointCornerRectangle.md",
+     "anchor": "Creates a 3-point corner rectangle at any angle."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.Create3PointCornerRectangle 的官方 Description 与首句共享词干 angle/corner/point/rectangle"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_arc",
+   "impl": "scripts/sw_part.py:sketch_arc",
+   "claim": "Draw an arc in the active sketch from a centre, a start point and an end point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateArc",
+     "path": "C:/swapi/types/IModelDoc2/CreateArc.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateArc2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_centerline",
+   "impl": "scripts/sw_part.py:sketch_centerline",
+   "claim": "Draw a centreline in the active sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateCenterLine",
+     "path": "C:/swapi/types/IModelDoc2/CreateCenterLine.md",
+     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateCenterLine]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_circle",
+   "impl": "scripts/sw_part.py:sketch_circle",
+   "claim": "Draw a circle in the open sketch from a centre and a radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateCircleByRadius",
+     "path": "C:/swapi/types/IModelDoc2/CreateCircleByRadius.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateCircleByRadius2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_conic",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_conic",
+   "claim": "Draw a conic curve from its focus, its apex and two points that set its ends.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateConic.md",
+    "anchor": "Creates a conic curve in the active sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateConic",
+     "path": "C:/swapi/types/ISketchManager/CreateConic.md",
+     "anchor": "Creates a conic curve in the active sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateConic 的官方 Description 与首句共享词干 conic/curve"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_ellipse",
+   "impl": "scripts/sw_part.py:sketch_ellipse",
+   "claim": "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateEllipse",
+     "path": "C:/swapi/types/IModelDoc2/CreateEllipse.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateEllipse2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_line",
+   "impl": "scripts/sw_part.py:sketch_line",
+   "claim": "Draw a straight line in the open sketch from one point to another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateLine",
+     "path": "C:/swapi/types/IModelDoc2/CreateLine.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateLine2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_parabola",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_parabola",
+   "claim": "Draw a parabola from its focus, its apex and two points that set its ends.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
+    "anchor": "Creates a parabola in the active sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateParabola",
+     "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
+     "anchor": "Creates a parabola in the active sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateParabola 的官方 Description 与首句共享词干 parabola"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_parallelogram",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_parallelogram",
+   "claim": "Draw a parallelogram from one corner and the ends of its two adjacent edges.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateParallelogram.md",
+    "anchor": "Creates a parallelogram."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateParallelogram",
+     "path": "C:/swapi/types/ISketchManager/CreateParallelogram.md",
+     "anchor": "Creates a parallelogram."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateParallelogram 的官方 Description 与首句共享词干 parallelogram"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_partial_ellipse",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_elliptical_arc",
+   "claim": "Draw a partial ellipse from its centre, a point on each axis and the arc start and end.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateEllipticalArc.md",
+    "anchor": "Creates a partial ellipse given a center point, two points that specify the major and minor axis, and two points that define the elliptical start and end points."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateEllipticalArc",
+     "path": "C:/swapi/types/ISketchManager/CreateEllipticalArc.md",
+     "anchor": "Creates a partial ellipse given a center point, two points that specify the major and minor axis, and two points that define the elliptical start and end points."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateEllipticalArc 的官方 Description 与首句共享词干 axis/ellipse/end/partial"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_perimeter_circle",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_perimeter_circle",
+   "claim": "Draw a circle that passes through three points in the open sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/PerimeterCircle.md",
+    "anchor": "Draws a 3-point perimeter arc."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "PerimeterCircle",
+     "path": "C:/swapi/types/ISketchManager/PerimeterCircle.md",
+     "anchor": "Draws a 3-point perimeter arc."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.PerimeterCircle 的官方 Description 与首句共享词干 draw/point"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_polygon",
+   "impl": "scripts/sw_part.py:sketch_polygon",
+   "claim": "Draw a regular polygon in the active sketch, sized by its inscribed-circle radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreatePolygon.md",
+    "anchor": "Creates a polygon in the active sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreatePolygon",
+     "path": "C:/swapi/types/ISketchManager/CreatePolygon.md",
+     "anchor": "Creates a polygon in the active sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreatePolygon 的官方 Description 与首句共享词干 active/polygon/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_rectangle",
+   "impl": "scripts/sw_part.py:sketch_corner_rectangle",
+   "claim": "Draw a rectangle in the open sketch from two opposite corners.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCornerRectangle.md",
+    "anchor": "Creates a corner rectangle."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCornerRectangle",
+     "path": "C:/swapi/types/ISketchManager/CreateCornerRectangle.md",
+     "anchor": "Creates a corner rectangle."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateCornerRectangle 的官方 Description 与首句共享词干 corner/rectangle"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_slot",
+   "impl": "scripts/sw_part.py:sketch_slot",
+   "claim": "Draw a straight slot in the active sketch from two centre points plus a radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateSketchSlot.md",
+    "anchor": "Creates a sketch slot."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateSketchSlot",
+     "path": "C:/swapi/types/ISketchManager/CreateSketchSlot.md",
+     "anchor": "Creates a sketch slot."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateSketchSlot 的官方 Description 与首句共享词干 sketch/slot"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_tangent_arc",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_tangent_arc",
+   "claim": "Draw an arc tangent to the last sketch segment, through one point and ending at another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateTangentArc",
+     "path": "C:/swapi/types/IModelDoc2/CreateTangentArc.md",
+     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateTangentArc2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_apply_relations",
+   "impl": "scripts/sw_sketch_relations.py:apply_sketch_relations",
+   "claim": "Apply a list of sketch relations at once to the segments named by index.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/RelationManager.md",
+    "anchor": "Gets the sketch relation manager."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "AddRelation",
+     "path": "C:/swapi/types/IModelDoc2/AddRelation.md",
+     "anchor": "Obsolete. Superseded by [[IEquationMgr::Add]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISketch",
+     "member": "RelationManager",
+     "path": "C:/swapi/types/ISketch/RelationManager.md",
+     "anchor": "Gets the sketch relation manager."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchAddConstraints",
+     "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
+     "anchor": "Adds the specified constraint to the selected entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketch.RelationManager 的官方 Description 与首句共享词干 relation/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_by_name",
+   "impl": "scripts/sw_sketch.py:sketch_by_name",
+   "claim": "Get a sketch object from its sketch feature name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+    "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IAssemblyDoc.FeatureByName 的官方 Description 与首句共享词干 feature/object"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_circular_pattern",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_circular_pattern",
+   "claim": "Create a circular sketch pattern of the selected entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateCircularSketchStepAndRepeat",
+     "path": "C:/swapi/types/IModelDoc2/CreateCircularSketchStepAndRepeat.md",
+     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateCircularSketchStepAndRepeat]]."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_convert_entities",
+   "impl": "scripts/sw_sketch_edit.py:convert_entities",
+   "claim": "Convert the selected model edges into entities of the active sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/SketchUseEdge3.md",
+    "anchor": "Creates sketch entities on a sketch plane by projecting selected edges, loops, faces, curves, and external sketch contours."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "SketchUseEdge3",
+     "path": "C:/swapi/types/ISketchManager/SketchUseEdge3.md",
+     "anchor": "Creates sketch entities on a sketch plane by projecting selected edges, loops, faces, curves, and external sketch contours."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.SketchUseEdge3 的官方 Description 与首句共享词干 edge/entiti/select/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_count_arcs",
+   "impl": "scripts/sw_sketch.py:count_arcs",
+   "claim": "Count the arcs in a sketch, where a full circle counts as one arc.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_sketch.py",
+    "anchor": "def count_arcs("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_count_lines",
+   "impl": "scripts/sw_sketch.py:count_lines",
+   "claim": "Count the straight lines in a sketch.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_sketch.py",
+    "anchor": "def count_lines("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_count_segments",
+   "impl": "scripts/sw_sketch.py:count_segments",
+   "claim": "Count every geometry segment in a sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+    "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+   },
+   "members": [
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketch.GetSketchSegments 的官方 Description 与首句共享词干 segment/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_create_chamfer",
+   "impl": "scripts/sw_sketch_edit.py:create_sketch_chamfer",
+   "claim": "Create a chamfer between exactly two selected sketch segments at one distance.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateChamfer.md",
+    "anchor": "Creates a chamfer between two selected sketch entities."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateChamfer",
+     "path": "C:/swapi/types/ISketchManager/CreateChamfer.md",
+     "anchor": "Creates a chamfer between two selected sketch entities."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetActiveSketch2",
+     "path": "C:/swapi/types/IModelDoc2/GetActiveSketch2.md",
+     "anchor": "Obsolete. Superseded by [[SketchManager::ActiveSketch]]."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateChamfer 的官方 Description 与首句共享词干 between/chamfer/select/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_dimension_horizontal",
+   "impl": "scripts/sw_sketch_dimensions.py:add_horizontal_dimension",
+   "claim": "Add a horizontal dimension whose text is placed at the given pick point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/AddHorizontalDimension2.md",
+    "anchor": "Creates a horizontal dimension for the currently selected entities at the specified location."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "AddHorizontalDimension2",
+     "path": "C:/swapi/types/IModelDoc2/AddHorizontalDimension2.md",
+     "anchor": "Creates a horizontal dimension for the currently selected entities at the specified location."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.AddHorizontalDimension2 的官方 Description 与首句共享词干 dimension/horizontal"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_dimension_vertical",
+   "impl": "scripts/sw_sketch_dimensions.py:add_vertical_dimension",
+   "claim": "Add a vertical dimension whose text is placed at the given pick point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/AddVerticalDimension2.md",
+    "anchor": "Creates a vertical dimension for the currently selected entities at the specified location."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "AddVerticalDimension2",
+     "path": "C:/swapi/types/IModelDoc2/AddVerticalDimension2.md",
+     "anchor": "Creates a vertical dimension for the currently selected entities at the specified location."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.AddVerticalDimension2 的官方 Description 与首句共享词干 dimension/vertical"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_extend",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_extend",
+   "claim": "Extend the selected sketch entity to the nearest entity.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/SketchExtend.md",
+    "anchor": "Adds to the length of the selected sketch entity (i.e., line, centerline, or arc) to meet the nearest sketch entity."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "SketchExtend",
+     "path": "C:/swapi/types/ISketchManager/SketchExtend.md",
+     "anchor": "Adds to the length of the selected sketch entity (i.e., line, centerline, or arc) to meet the nearest sketch entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.SketchExtend 的官方 Description 与首句共享词干 entity/nearest/select/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_fillet",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_fillet",
+   "claim": "Create a fillet between two intersecting sketch segments.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateFillet.md",
+    "anchor": "Creates a sketch fillet using the selected sketch entities."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateFillet",
+     "path": "C:/swapi/types/ISketchManager/CreateFillet.md",
+     "anchor": "Creates a sketch fillet using the selected sketch entities."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketchManager.CreateFillet 的官方 Description 与首句共享词干 fillet/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_flip_entities",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_flip",
+   "claim": "Mirror the active sketch about an axis selected by axis_flag.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchModifyFlip.md",
+    "anchor": "Flips the the active or selected sketch about the specified coordinate system axis."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchModifyFlip",
+     "path": "C:/swapi/types/IModelDoc2/SketchModifyFlip.md",
+     "anchor": "Flips the the active or selected sketch about the specified coordinate system axis."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchModifyFlip 的官方 Description 与首句共享词干 about/active/axis/select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_insert_chain_dimensions",
+   "impl": "scripts/sw_sketch_dimensions.py:insert_chain_dimensions",
+   "claim": "Insert a chain of dimensions along selected sketch segments, dimensioning each segment from the previous one.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/InsertChainDimensions.md",
+    "anchor": "Chains dimensions for the specified entities in this drawing or sketch."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "InsertChainDimensions",
+     "path": "C:/swapi/types/IModelDocExtension/InsertChainDimensions.md",
+     "anchor": "Chains dimensions for the specified entities in this drawing or sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDocExtension.InsertChainDimensions 的官方 Description 与首句共享词干 chain/dimension/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_is_3d",
+   "impl": "scripts/sw_sketch.py:is_3d_sketch",
+   "claim": "Report whether a sketch is a 3D sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/Is3D.md",
+    "anchor": "Gets whether this sketch is 2D or 3D."
+   },
+   "members": [
+    {
+     "interface": "ISketch",
+     "member": "Is3D",
+     "path": "C:/swapi/types/ISketch/Is3D.md",
+     "anchor": "Gets whether this sketch is 2D or 3D."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketch.Is3D 的官方 Description 与首句共享词干 sketch/whether"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_linear_pattern",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_linear_pattern",
+   "claim": "Create a linear sketch pattern of the selected entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "CreateLinearSketchStepAndRepeat",
+     "path": "C:/swapi/types/IModelDoc2/CreateLinearSketchStepAndRepeat.md",
+     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateLinearSketchStepAndRepeat]]."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_mirror",
+   "impl": "scripts/sw_sketch_edit.py:sketch_mirror",
+   "claim": "Mirror the selected sketch segments about the selected centerline into new sketch entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchMirror.md",
+    "anchor": "Creates new entities that are mirror images of the selected entities."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchMirror",
+     "path": "C:/swapi/types/IModelDoc2/SketchMirror.md",
+     "anchor": "Creates new entities that are mirror images of the selected entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchMirror 的官方 Description 与首句共享词干 entiti/mirror/new/select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_move_entities",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_move",
+   "claim": "Move the active sketch by the vector from a start point to an end point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchModifyTranslate.md",
+    "anchor": "Translates the coordinate system of the active or selected sketch."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchModifyTranslate",
+     "path": "C:/swapi/types/IModelDoc2/SketchModifyTranslate.md",
+     "anchor": "Translates the coordinate system of the active or selected sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchModifyTranslate 的官方 Description 与首句共享词干 active/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_offset",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_offset",
+   "claim": "Offset the selected sketch entities by a distance.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchOffset2",
+     "path": "C:/swapi/types/IModelDoc2/SketchOffset2.md",
+     "anchor": "Obsolete. Superseded by [[ISketchManager::SketchOffset]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_rotate",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_rotate",
+   "claim": "Rotate the selected sketch entities about a centre point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
+    "anchor": "Rotates the coordinate system of the active or selected sketch."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchModifyRotate",
+     "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
+     "anchor": "Rotates the coordinate system of the active or selected sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchModifyRotate 的官方 Description 与首句共享词干 select/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_rotate_entities",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_rotate",
+   "claim": "Rotate the active sketch about a centre point by an angle.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
+    "anchor": "Rotates the coordinate system of the active or selected sketch."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchModifyRotate",
+     "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
+     "anchor": "Rotates the coordinate system of the active or selected sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchModifyRotate 的官方 Description 与首句共享词干 active/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_scale_entities",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_scale",
+   "claim": "Apply a scale factor to the active sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchModifyScale.md",
+    "anchor": "Scales the active or selected sketch."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchModifyScale",
+     "path": "C:/swapi/types/IModelDoc2/SketchModifyScale.md",
+     "anchor": "Scales the active or selected sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchModifyScale 的官方 Description 与首句共享词干 active/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_select_segment",
+   "impl": "scripts/sw_sketch_edit_ops.py:select_sketch_segment",
+   "claim": "Select one sketch segment by its position in the active sketch so later sketch commands act on it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+    "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Select4",
+     "path": "C:/swapi/types/IComponent2/Select4.md",
+     "anchor": "Selects this component."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISketch.GetSketchSegments 的官方 Description 与首句共享词干 segment/sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_set_blanked",
+   "impl": "scripts/sw_sketch.py:set_sketch_blanked",
+   "claim": "Hide or show the sketches named by the current selection.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+    "anchor": "Clears the selection list."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "Visible",
+     "path": "C:/swapi/types/IAnnotation/Visible.md",
+     "anchor": "Gets or sets the visibility state of this annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.ClearSelection2 的官方 Description 与首句共享词干 selection"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_set_construction_geometry",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_set_construction_geometry",
+   "claim": "Set or clear construction geometry on the selected sketch segments.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/CreateConstructionGeometry.md",
+    "anchor": "Sets the selected sketch segments to be construction geometry instead of sketch geometry."
+   },
+   "members": [
+    {
+     "interface": "ISketchSegment",
+     "member": "ConstructionGeometry",
+     "path": "C:/swapi/types/ISketchSegment/ConstructionGeometry.md",
+     "anchor": "Gets or sets whether this sketch segment is construction geometry, for example, a centerline for a feature revolve operation."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "CreateConstructionGeometry",
+     "path": "C:/swapi/types/IDrawingDoc/CreateConstructionGeometry.md",
+     "anchor": "Sets the selected sketch segments to be construction geometry instead of sketch geometry."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Select4",
+     "path": "C:/swapi/types/IComponent2/Select4.md",
+     "anchor": "Selects this component."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.CreateConstructionGeometry 的官方 Description 与首句共享词干 construction/geometry/segment/select"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_spline",
+   "impl": "scripts/sw_part.py:sketch_spline",
+   "claim": "Draw a spline through the given points in the active 2D sketch, creating a new sketch when none is active.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_stretch_entities",
+   "impl": "scripts/sw_sketch_modify_ops.py:sketch_stretch",
+   "claim": "Apply a stretch from a base point to a destination point on the sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/Stretch.md",
+    "anchor": "Stretch the selected entities."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "Stretch",
+     "path": "C:/swapi/types/IModelDocExtension/Stretch.md",
+     "anchor": "Stretch the selected entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDocExtension.Stretch 的官方 Description 与首句共享词干 stretch"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_trim",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_trim",
+   "claim": "Trim the selected sketch entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchTrim",
+     "path": "C:/swapi/types/IModelDoc2/SketchTrim.md",
+     "anchor": "Obsolete. Superseded by [[ISketchManager::SketchExtend]] and [[ISketchManager::SketchTrim]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  }
+ ]
+}

@@ -1,0 +1,1054 @@
+{
+ "batch": "B4",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_drawing_add_note",
+   "impl": "scripts/sw_drawing_expose.py:add_drawing_note",
+   "claim": "Insert a text note at the given position on the active drawing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def add_drawing_note("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_collect_view_evidence",
+   "impl": "scripts/sw_drawing_view.py:collect_view_evidence_report",
+   "claim": "Collect the per-view evidence that the capability layer records for every view on the drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/EnableGraphicsUpdate.md",
+    "anchor": "Gets or sets whether or not to refresh the model view."
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "DisplayZebraStripes",
+     "path": "C:/swapi/types/IModelView/DisplayZebraStripes.md",
+     "anchor": "Gets or sets the zebra-line display state."
+    },
+    {
+     "interface": "IModelView",
+     "member": "EnableGraphicsUpdate",
+     "path": "C:/swapi/types/IModelView/EnableGraphicsUpdate.md",
+     "anchor": "Gets or sets whether or not to refresh the model view."
+    },
+    {
+     "interface": "IModelView",
+     "member": "HlrQuality",
+     "path": "C:/swapi/types/IModelView/HlrQuality.md",
+     "anchor": "Gets or sets the hidden-line removal quality property of this model view."
+    },
+    {
+     "interface": "IFillPatternFeatureData",
+     "member": "Rotation",
+     "path": "C:/swapi/types/IFillPatternFeatureData/Rotation.md",
+     "anchor": "Gets or sets the counterclockwise rotation of the seed instance of this fill pattern feature."
+    },
+    {
+     "interface": "",
+     "member": "Xform",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IModelView",
+     "member": "XorHighlight",
+     "path": "C:/swapi/types/IModelView/XorHighlight.md",
+     "anchor": "Gets or sets the Xor highlight state."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelView.EnableGraphicsUpdate 的官方 Description 与首句共享词干 view"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_auxiliary_view",
+   "impl": "scripts/sw_drawing_create_missing.py:create_auxiliary_view",
+   "claim": "Create an auxiliary drawing view from the edge that is already selected in a drawing view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/CreateAuxiliaryViewAt2.md",
+    "anchor": "Creates an auxiliary view based on a selected edge in a drawing view."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "CreateAuxiliaryViewAt2",
+     "path": "C:/swapi/types/IDrawingDoc/CreateAuxiliaryViewAt2.md",
+     "anchor": "Creates an auxiliary view based on a selected edge in a drawing view."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.CreateAuxiliaryViewAt2 的官方 Description 与首句共享词干 auxiliary/draw/edge/select"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_broken_view",
+   "impl": "scripts/sw_drawing_create_missing.py:insert_break_lines",
+   "claim": "Create a break in one drawing view between two break-line positions.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/InsertBreak3.md",
+    "anchor": "Inserts the specified type of break at the specified location in this drawing view."
+   },
+   "members": [
+    {
+     "interface": "IView",
+     "member": "InsertBreak3",
+     "path": "C:/swapi/types/IView/InsertBreak3.md",
+     "anchor": "Inserts the specified type of break at the specified location in this drawing view."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IView.InsertBreak3 的官方 Description 与首句共享词干 break/draw/view"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_detail_view",
+   "impl": "scripts/sw_drawing_expose.py:create_detail_view",
+   "claim": "Insert a detail view at the given position on the active drawing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def create_detail_view("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_projected_view",
+   "impl": "scripts/sw_drawing_expose.py:create_projected_view",
+   "claim": "Insert a projected or model view of a saved part into the active drawing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def create_projected_view("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_revision_table",
+   "impl": "scripts/sw_drawing_expose.py:create_revision_table",
+   "claim": "Insert a revision table on the active drawing sheet.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def create_revision_table("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_three_standard_views",
+   "impl": "scripts/sw_drawing_expose.py:create_three_standard_views",
+   "claim": "Create the three standard views of a saved model on the active drawing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def create_three_standard_views("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_current_sheet_info",
+   "impl": "scripts/sw_drawing_query.py:current_sheet_info",
+   "claim": "Return information about the sheet currently being edited as a dict.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+    "anchor": "Gets the currently active drawing sheet."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "ISheet",
+     "member": "GetProperties2",
+     "path": "C:/swapi/types/ISheet/GetProperties2.md",
+     "anchor": "Gets the properties for this sheet."
+    },
+    {
+     "interface": "ISheet",
+     "member": "GetSheetFormatName",
+     "path": "C:/swapi/types/ISheet/GetSheetFormatName.md",
+     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetCurrentSheet 的官方 Description 与首句共享词干 currently/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_current_sheet_name",
+   "impl": "scripts/sw_drawing_query.py:current_sheet_name",
+   "claim": "Return the name of the sheet currently being edited.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+    "anchor": "Gets the currently active drawing sheet."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetCurrentSheet 的官方 Description 与首句共享词干 currently/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_get_current_sheet",
+   "impl": "scripts/sw_drawing_query.py:current_sheet_info",
+   "claim": "Read the current sheet of the active drawing: paper size, width and height, scale and sheet-format name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+    "anchor": "Gets the currently active drawing sheet."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "ISheet",
+     "member": "GetProperties2",
+     "path": "C:/swapi/types/ISheet/GetProperties2.md",
+     "anchor": "Gets the properties for this sheet."
+    },
+    {
+     "interface": "ISheet",
+     "member": "GetSheetFormatName",
+     "path": "C:/swapi/types/ISheet/GetSheetFormatName.md",
+     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetCurrentSheet 的官方 Description 与首句共享词干 active/draw/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_balloons",
+   "impl": "scripts/sw_drawing_create_missing.py:auto_insert_balloons",
+   "claim": "Insert BOM balloons into the views or sheet you selected first and report the note-count increase.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/AutoBalloon5.md",
+    "anchor": "Automatically inserts BOM balloons in selected drawing views."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "AutoBalloon5",
+     "path": "C:/swapi/types/IDrawingDoc/AutoBalloon5.md",
+     "anchor": "Automatically inserts BOM balloons in selected drawing views."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "CreateAutoBalloonOptions",
+     "path": "C:/swapi/types/IDrawingDoc/CreateAutoBalloonOptions.md",
+     "anchor": "Creates an object that stores auto balloon options."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.AutoBalloon5 的官方 Description 与首句共享词干 balloon/bom/insert/select"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_center_lines",
+   "impl": "scripts/sw_drawing_create_missing.py:insert_center_lines",
+   "claim": "Skip this tool, NOT USABLE on this machine: a selected view entity produced no centre line.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+    "anchor": "Gets the number of selected objects."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IView",
+     "member": "GetVisibleEntities2",
+     "path": "C:/swapi/types/IView/GetVisibleEntities2.md",
+     "anchor": "Gets the visible entities of the specified type for the specified component in this drawing view."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "InsertCenterLine2",
+     "path": "C:/swapi/types/IDrawingDoc/InsertCenterLine2.md",
+     "anchor": "Inserts a centerline on the selected entities."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Select4",
+     "path": "C:/swapi/types/IComponent2/Select4.md",
+     "anchor": "Selects this component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_center_marks",
+   "impl": "scripts/sw_drawing_expose.py:insert_center_marks",
+   "claim": "Insert centre marks on drawing views through the batch entry point.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def insert_center_marks("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_datum_tag",
+   "impl": "scripts/sw_drawing_create_missing.py:insert_datum_tag",
+   "claim": "Insert a datum tag symbol at the location that is already selected.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/InsertDatumTag2.md",
+    "anchor": "Inserts a datum tag symbol at a selected location."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "InsertDatumTag2",
+     "path": "C:/swapi/types/IModelDoc2/InsertDatumTag2.md",
+     "anchor": "Inserts a datum tag symbol at a selected location."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDoc2.InsertDatumTag2 的官方 Description 与首句共享词干 datum/insert/location/select"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_model_items",
+   "impl": "scripts/sw_drawing_create_missing.py:insert_model_annotations",
+   "claim": "Insert the model annotations of the referenced model into a drawing view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations4.md",
+    "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "ActivateView",
+     "path": "C:/swapi/types/IDrawingDoc/ActivateView.md",
+     "anchor": "Activates the specified drawing view."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "InsertModelAnnotations4",
+     "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations4.md",
+     "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.InsertModelAnnotations4 的官方 Description 与首句共享词干 annotation/draw/insert/model"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_insert_surface_finish_symbol",
+   "impl": "scripts/sw_drawing_create_missing.py:insert_surface_finish_symbol",
+   "claim": "Insert a surface finish symbol into the active drawing at the last selection.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/InsertSurfaceFinishSymbol3.md",
+    "anchor": "Creates a surface-finish symbol based on the last selection."
+   },
+   "members": [
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "InsertSurfaceFinishSymbol3",
+     "path": "C:/swapi/types/IModelDocExtension/InsertSurfaceFinishSymbol3.md",
+     "anchor": "Creates a surface-finish symbol based on the last selection."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IModelDocExtension.InsertSurfaceFinishSymbol3 的官方 Description 与首句共享词干 last/selection/symbol"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_list_sheets",
+   "impl": "scripts/sw_drawing_query.py:sheets_summary",
+   "claim": "List the sheets of the active drawing: how many there are, their names and which one is current.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+    "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetCount",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
+     "anchor": "Gets the number of drawing sheets in this drawing."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetNames",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetSheetNames 的官方 Description 与首句共享词干 draw/list/name/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_list_views",
+   "impl": "scripts/sw_drawing_query.py:list_views",
+   "claim": "List the views on the current sheet with each name and type code.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
+    "anchor": "Gets the first drawing [[view]] on the current sheet."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetFirstView",
+     "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
+     "anchor": "Gets the first drawing [[view]] on the current sheet."
+    },
+    {
+     "interface": "IView",
+     "member": "GetName2",
+     "path": "C:/swapi/types/IView/GetName2.md",
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IView",
+     "member": "GetNextView",
+     "path": "C:/swapi/types/IView/GetNextView.md",
+     "anchor": "Gets the next drawing view in the drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "Type",
+     "path": "C:/swapi/types/IBodyFolder/Type.md",
+     "anchor": "Gets the type of body folder."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetFirstView 的官方 Description 与首句共享词干 current/sheet/view"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_list_views_report",
+   "impl": "scripts/sw_drawing_view.py:list_drawing_views_report",
+   "claim": "List every view on the active drawing with its name, scale, annotation count and visible entity count.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_view.py",
+    "anchor": "def list_drawing_views_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_set_sheet_format",
+   "impl": "scripts/sw_drawing_expose.py:set_sheet_format",
+   "claim": "Set the sheet format, that is the drawing frame, of the active drawing from a format file.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_expose.py",
+    "anchor": "def set_sheet_format("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_set_sheet_scale",
+   "impl": "scripts/sw_drawing_query.py:set_sheet_scale_report",
+   "claim": "Set a drawing sheet scale and read it back.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_query.py",
+    "anchor": "def set_sheet_scale_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_sheet_count",
+   "impl": "scripts/sw_drawing_query.py:sheet_count",
+   "claim": "Return the number of sheets in the active drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
+    "anchor": "Gets the number of drawing sheets in this drawing."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetCount",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
+     "anchor": "Gets the number of drawing sheets in this drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetSheetCount 的官方 Description 与首句共享词干 draw/number/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_sheet_names",
+   "impl": "scripts/sw_drawing_query.py:sheet_names",
+   "claim": "Return the names of every sheet in the active drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+    "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetNames",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetSheetNames 的官方 Description 与首句共享词干 draw/name/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_sheet_scale",
+   "impl": "scripts/sw_drawing_query.py:get_sheet_scale_report",
+   "claim": "Read the scale of a drawing sheet and return it as a ratio such as 1:5.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_query.py",
+    "anchor": "def get_sheet_scale_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_sheets_summary",
+   "impl": "scripts/sw_drawing_query.py:sheets_summary",
+   "claim": "Return a per-sheet summary of the active drawing, including sheet names and view counts.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+    "anchor": "Gets the currently active drawing sheet."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetCount",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
+     "anchor": "Gets the number of drawing sheets in this drawing."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetNames",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IDrawingDoc.GetCurrentSheet 的官方 Description 与首句共享词干 active/draw/sheet"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_view_annotations",
+   "impl": "scripts/sw_drawing_query.py:view_annotations_report",
+   "claim": "Read the annotations, display dimensions and arc counts of every view on the active drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/GetName2.md",
+    "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+   },
+   "members": [
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetAnnotationCount",
+     "path": "C:/swapi/types/IModelDocExtension/GetAnnotationCount.md",
+     "anchor": "Gets the number of annotations on this part."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetAnnotations",
+     "path": "C:/swapi/types/IModelDocExtension/GetAnnotations.md",
+     "anchor": "Gets the annotations on this part."
+    },
+    {
+     "interface": "IDatumTag",
+     "member": "GetArcCount",
+     "path": "C:/swapi/types/IDatumTag/GetArcCount.md",
+     "anchor": "Gets the number of arc items in this datum tag."
+    },
+    {
+     "interface": "IMacroFeatureData",
+     "member": "GetDisplayDimensions",
+     "path": "C:/swapi/types/IMacroFeatureData/GetDisplayDimensions.md",
+     "anchor": "Gets the display dimensions for this macro feature."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetFirstView",
+     "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
+     "anchor": "Gets the first drawing [[view]] on the current sheet."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "IView",
+     "member": "GetName2",
+     "path": "C:/swapi/types/IView/GetName2.md",
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IView",
+     "member": "GetNextView",
+     "path": "C:/swapi/types/IView/GetNextView.md",
+     "anchor": "Gets the next drawing view in the drawing."
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetType",
+     "path": "C:/swapi/types/IAnnotation/GetType.md",
+     "anchor": "Gets the type of the annotation."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "Type",
+     "path": "C:/swapi/types/IBodyFolder/Type.md",
+     "anchor": "Gets the type of body folder."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IView.GetName2 的官方 Description 与首句共享词干 display/draw/view"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_view_scale",
+   "impl": "scripts/sw_drawing_view.py:get_view_scale_report",
+   "claim": "Get the scale of one drawing view by its name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/ScaleDecimal.md",
+    "anchor": "Gets or sets the scale of the drawing view, returning the results in decimal format."
+   },
+   "members": [
+    {
+     "interface": "IFaceHatch",
+     "member": "Scale",
+     "path": "C:/swapi/types/IFaceHatch/Scale.md",
+     "anchor": "Obsolete. Superseded by [[IFaceHatch::Scale2]]."
+    },
+    {
+     "interface": "IView",
+     "member": "ScaleDecimal",
+     "path": "C:/swapi/types/IView/ScaleDecimal.md",
+     "anchor": "Gets or sets the scale of the drawing view, returning the results in decimal format."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IView.ScaleDecimal 的官方 Description 与首句共享词干 draw/scale/view"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_view_set_scale",
+   "impl": "scripts/sw_drawing_view.py:set_view_scale_report",
+   "claim": "Set the scale of one drawing view and return the scale before and after.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/UseSheetScale.md",
+    "anchor": "Gets or sets whether the scale of the drawing view is the same as the scale of the drawing sheet on which this view is located."
+   },
+   "members": [
+    {
+     "interface": "IView",
+     "member": "UseSheetScale",
+     "path": "C:/swapi/types/IView/UseSheetScale.md",
+     "anchor": "Gets or sets whether the scale of the drawing view is the same as the scale of the drawing sheet on which this view is located."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IView.UseSheetScale 的官方 Description 与首句共享词干 draw/scale/view"
+   }
+  },
+  {
+   "tool": "solidworks_insert_center_of_mass",
+   "impl": "scripts/sw_ref_geometry.py:insert_center_of_mass",
+   "claim": "Insert a center-of-mass feature into the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertCenterOfMass.md",
+    "anchor": "Inserts a Center of Mass feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertCenterOfMass",
+     "path": "C:/swapi/types/IFeatureManager/InsertCenterOfMass.md",
+     "anchor": "Inserts a Center of Mass feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IFeatureManager.InsertCenterOfMass 的官方 Description 与首句共享词干 feature/insert"
+   }
+  }
+ ]
+}

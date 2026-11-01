@@ -1,0 +1,2867 @@
+{
+ "batch": "B6",
+ "note": "自动核验档（verified.level=auto）：成员与锚点由实现提取 + 官方页原文抄取；首句须与成员官方描述有词干重叠。★ 语义仍需人复核的条目见 output/claims-needs-review.json",
+ "records": [
+  {
+   "tool": "solidworks_costing_assign_custom_cost",
+   "impl": "scripts/sw_costing.py:assign_custom_cost",
+   "claim": "Assign a custom cost to one cost body of the part.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def assign_custom_cost("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_body_count",
+   "impl": "scripts/sw_costing.py:get_body_count_report",
+   "claim": "Return how many bodies Costing sees for the active part.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def get_body_count_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_default_template",
+   "impl": "scripts/sw_costing.py:get_default_template_report",
+   "claim": "Return the default Costing template name for a category.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def get_default_template_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_defaults",
+   "impl": "scripts/sw_costing.py:get_costing_defaults",
+   "claim": "Read the Costing defaults object of the active document.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def get_costing_defaults("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CostingDefaults",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_evidence",
+   "impl": "scripts/sw_costing.py:collect_costing_evidence_report",
+   "claim": "Return the Costing overview of the active part: the body count and whether a cost analysis exists.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def collect_costing_evidence_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_include_body",
+   "impl": "scripts/sw_costing.py:include_body",
+   "claim": "Set whether one body counts in the cost calculation, addressed by name.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def include_body("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_list_bodies",
+   "impl": "scripts/sw_costing.py:list_cost_bodies_report",
+   "claim": "List the Costing body names of the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 body/name"
+   }
+  },
+  {
+   "tool": "solidworks_costing_list_templates",
+   "impl": "scripts/sw_costing.py:list_costing_templates_report",
+   "claim": "List the Costing template names available for a category.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def list_costing_templates_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_method_value",
+   "impl": "scripts/sw_costing.py:get_costing_method_report",
+   "claim": "Return the current value of one cost method.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def get_costing_method_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_read_analysis",
+   "impl": "scripts/sw_costing.py:read_cost_analysis_report",
+   "claim": "Read every readable field of the part cost analysis as a dict.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def read_cost_analysis_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CostingTemplateName",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CurrencyCode",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CurrencyName",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CurrencySeparator",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_read_body",
+   "impl": "scripts/sw_costing.py:read_cost_body_report",
+   "claim": "Read the cost data of one Costing body by name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "GetCostAnalysis",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IAnnotation",
+     "member": "GetName",
+     "path": "C:/swapi/types/IAnnotation/GetName.md",
+     "anchor": "Gets the name of this annotation."
+    },
+    {
+     "interface": "",
+     "member": "GetSWBody",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 body/name"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_default_lot_size",
+   "impl": "scripts/sw_costing.py:set_default_lot_size",
+   "claim": "Set the default lot size Costing uses for single-body and multibody cases.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_default_lot_size("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "LotSizeForMultibody",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "LotSizeForSingleBody",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_default_manufacturing_method",
+   "impl": "scripts/sw_costing.py:set_default_manufacturing_method",
+   "claim": "Set the default manufacturing method for one Costing category.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_default_manufacturing_method("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_default_material",
+   "impl": "scripts/sw_costing.py:set_default_material",
+   "claim": "Set the default material for one Costing category.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_default_material("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_default_template",
+   "impl": "scripts/sw_costing.py:set_default_template",
+   "claim": "Set the default costing template name for a costing category.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_default_template("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_lot_size",
+   "impl": "scripts/sw_costing.py:set_lot_size",
+   "claim": "Set the lot size of the part cost analysis.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_lot_size("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "LotSize",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_markup",
+   "impl": "scripts/sw_costing.py:set_markup",
+   "claim": "Set the markup type and the markup percentage of the part cost analysis.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_markup("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "MarkUpPercent",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MarkUpType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_set_method",
+   "impl": "scripts/sw_costing.py:set_costing_method",
+   "claim": "Set the value of one costing method by name.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def set_costing_method("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_costing_update_cost_for_all_bodies",
+   "impl": "scripts/sw_costing.py:update_cost_for_all_bodies",
+   "claim": "Update the cost of every body in the active part after a material, template or inclusion change.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_costing.py",
+    "anchor": "def update_cost_for_all_bodies("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_activate_plot",
+   "impl": "scripts/sw_simulation_results.py:activate_plot",
+   "claim": "Activate one result plot of a solved simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def activate_plot("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_centrifugal_force",
+   "impl": "scripts/sw_simulation_loads.py:apply_centrifugal_force_report",
+   "claim": "Apply a centrifugal force to the selected entity of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_convection",
+   "impl": "scripts/sw_simulation_loads.py:apply_convection_report",
+   "claim": "Apply a convection load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_distributed_mass",
+   "impl": "scripts/sw_simulation_loads.py:apply_distributed_mass_report",
+   "claim": "Add a distributed mass load to the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_elastic_connector",
+   "impl": "scripts/sw_simulation_loads.py:apply_elastic_connector_report",
+   "claim": "Add an elastic connector between the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_force",
+   "impl": "scripts/sw_simulation_loads.py:apply_force_report",
+   "claim": "Add a force or moment load to the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_gravity",
+   "impl": "scripts/sw_simulation_loads.py:apply_gravity_report",
+   "claim": "Apply a gravity load to the selected entity of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_heat_flux",
+   "impl": "scripts/sw_simulation_loads.py:apply_heat_flux_report",
+   "claim": "Apply a heat flux load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_heat_power",
+   "impl": "scripts/sw_simulation_loads.py:apply_heat_power_report",
+   "claim": "Apply a heat power load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_pressure",
+   "impl": "scripts/sw_simulation_loads.py:apply_pressure_report",
+   "claim": "Apply a pressure load to the selected faces of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_radiation",
+   "impl": "scripts/sw_simulation_loads.py:apply_radiation_report",
+   "claim": "Apply a radiation load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_remote_load",
+   "impl": "scripts/sw_simulation_loads.py:apply_remote_load_report",
+   "claim": "Add a remote load with a location, a direction and a magnitude to the selected faces of a static study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_temperature",
+   "impl": "scripts/sw_simulation_loads.py:apply_temperature_report",
+   "claim": "Apply a temperature load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_torque",
+   "impl": "scripts/sw_simulation_loads.py:apply_torque_report",
+   "claim": "Apply a torque load to the selected faces of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+    "anchor": "Gets the selected object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISelectionMgr.GetSelectedObject6 的官方 Description 与首句共享词干 select"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_collect_evidence",
+   "impl": "scripts/sw_simulation.py:collect_study_evidence",
+   "claim": "Read every simulation study in the active document into an audit summary.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+    "anchor": "Gets the currently active document."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "ActiveDoc",
+     "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+     "anchor": "Gets the currently active document."
+    },
+    {
+     "interface": "",
+     "member": "ActiveStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "AnalysisType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IDocumentSpecification",
+     "member": "ConfigurationName",
+     "path": "C:/swapi/types/IDocumentSpecification/ConfigurationName.md",
+     "anchor": "Gets or sets the name of the configuration to load when opening a model document."
+    },
+    {
+     "interface": "",
+     "member": "CosmosWorks",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBalloonStack",
+     "member": "Count",
+     "path": "C:/swapi/types/IBalloonStack/Count.md",
+     "anchor": "Gets the number of stacked notes in this balloon stack, excluding the master balloon."
+    },
+    {
+     "interface": "",
+     "member": "EntityCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GetLoadsAndRestraints",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GetStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "LoadsAndRestraintsManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MeshType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "IPropertyManagerPageCheckbox",
+     "member": "State",
+     "path": "C:/swapi/types/IPropertyManagerPageCheckbox/State.md",
+     "anchor": "Gets or sets the state of this check box."
+    },
+    {
+     "interface": "",
+     "member": "StudyCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "StudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "Type",
+     "path": "C:/swapi/types/IBodyFolder/Type.md",
+     "anchor": "Gets the type of body folder."
+    },
+    {
+     "interface": "",
+     "member": "VersionNumber",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISldWorks.ActiveDoc 的官方 Description 与首句共享词干 active/document"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_collect_mesh_evidence",
+   "impl": "scripts/sw_simulation_results.py:collect_mesh_evidence",
+   "claim": "Read mesh quality readings from the mesh object of a simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def collect_mesh_evidence("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "ElementCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "ElementSize",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GetNoOfFailedComponents",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GrowthRatio",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "IsMeshFailed",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "JacobianPoints",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MaxAspectRatio",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MaxElementSize",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MeshControlCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MeshState",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MeshType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MesherType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "MinElementSize",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "NodeCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "NumberOfLoops",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Quality",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_configure_buckling_solver",
+   "impl": "scripts/sw_simulation_study_options.py:configure_buckling_solver_report",
+   "claim": "Set buckling solver options on the simulation study and report what was applied.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def configure_buckling_solver_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_configure_frequency_solver",
+   "impl": "scripts/sw_simulation_study_options.py:configure_frequency_solver_report",
+   "claim": "Set frequency solver options on the simulation study and report what was applied.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def configure_frequency_solver_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_configure_static_solver",
+   "impl": "scripts/sw_simulation_study_options.py:configure_static_solver_report",
+   "claim": "Set static solver options on the simulation study and report what was applied.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def configure_static_solver_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_mesh",
+   "impl": "scripts/sw_simulation.py:create_mesh_report",
+   "claim": "Mesh a simulation study and report the read-back result.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def create_mesh_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CreateMesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "ElementCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Mesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_mesh_for_control",
+   "impl": "scripts/sw_simulation_study.py:create_mesh_for_control",
+   "claim": "Mesh a simulation study using a named mesh control.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study.py",
+    "anchor": "def create_mesh_for_control("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_mesh_safely",
+   "impl": "scripts/sw_simulation.py:create_mesh_safely",
+   "claim": "Mesh a study behind an element-size gate and a pre-solve memory gate.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def create_mesh_safely("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "ElementCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Mesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_study",
+   "impl": "scripts/sw_simulation.py:create_study_report",
+   "claim": "Create a static simulation study with a given name and report which entry point ran.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CreateNewStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateNewStudy2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateNewStudy3",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 name"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_study_by_type",
+   "impl": "scripts/sw_simulation.py:create_static_study",
+   "claim": "Create a simulation study of the given analysis type and mesh type and report which entry point ran.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def create_static_study("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CreateNewStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateNewStudy2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateNewStudy3",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "StudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_default_element_size_and_tolerance",
+   "impl": "scripts/sw_simulation.py:default_element_size_and_tolerance",
+   "claim": "Get the element size and tolerance the study suggests for meshing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def default_element_size_and_tolerance("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "GetDefaultElementSizeAndTolerance",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Mesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_default_solve_memory_budget_gb",
+   "impl": "scripts/sw_simulation.py:default_solve_memory_budget_gb",
+   "claim": "Get the default solve memory budget in gigabytes used by the pre-solve gate.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def default_solve_memory_budget_gb("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_delete_plot",
+   "impl": "scripts/sw_simulation_results.py:delete_plot",
+   "claim": "Delete one result plot from the results of a solved simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def delete_plot("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_ensure_addin",
+   "impl": "scripts/sw_simulation.py:ensure_simulation_addin",
+   "claim": "Load the SolidWorks Simulation add-in and return its add-in object.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+    "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetAddInObject",
+     "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+     "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "LoadAddIn",
+     "path": "C:/swapi/types/ISldWorks/LoadAddIn.md",
+     "anchor": "Loads the specified add-in in SOLIDWORKS."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISldWorks.GetAddInObject 的官方 Description 与首句共享词干 add-in/object/solidwork"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_find_study",
+   "impl": "scripts/sw_simulation.py:find_study",
+   "claim": "Find one simulation study by its exact name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 name"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_generate_report",
+   "impl": "scripts/sw_simulation_study.py:generate_report",
+   "claim": "Generate a report for a simulation study into a file.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study.py",
+    "anchor": "def generate_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_buckling_load_factors",
+   "impl": "scripts/sw_simulation_results.py:get_buckling_load_factors",
+   "claim": "Get the buckling load factors of a solved buckling study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def get_buckling_load_factors("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_edge_weld_connector",
+   "impl": "scripts/sw_simulation_loads.py:get_edge_weld_connector",
+   "claim": "Get one edge weld connector of a simulation study by index.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "def get_edge_weld_connector("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_loads_manager",
+   "impl": "scripts/sw_simulation_study.py:get_loads_manager_of",
+   "claim": "Get the loads and restraints manager of a simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study.py",
+    "anchor": "def get_loads_manager_of("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "LoadsAndRestraintsManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_results",
+   "impl": "scripts/sw_simulation_study.py:get_results_of",
+   "claim": "Get the results object of a simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study.py",
+    "anchor": "def get_results_of("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "Results",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_study_manager",
+   "impl": "scripts/sw_simulation.py:get_study_manager",
+   "claim": "Get the Simulation study manager of the active document as a COM object.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+    "anchor": "Gets the currently active document."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "ActiveDoc",
+     "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+     "anchor": "Gets the currently active document."
+    },
+    {
+     "interface": "",
+     "member": "StudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISldWorks.ActiveDoc 的官方 Description 与首句共享词干 active/document"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_worst_jacobian_ratio",
+   "impl": "scripts/sw_simulation_results.py:get_worst_jacobian_ratio",
+   "claim": "Get the worst jacobian ratio of the mesh as a mesh-distortion reading.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def get_worst_jacobian_ratio("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_is_component_failed",
+   "impl": "scripts/sw_simulation_results.py:is_component_failed",
+   "claim": "Report whether one component of the mesh failed meshing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_results.py",
+    "anchor": "def is_component_failed("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_list_setter_summary",
+   "impl": "scripts/sw_simulation_study_options.py:list_setter_summary",
+   "claim": "Return the catalogue of simulation study-option setters per family with their names and counts.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def list_setter_summary("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_list_studies",
+   "impl": "scripts/sw_simulation.py:list_studies",
+   "claim": "List every simulation study in the active document as index and name pairs.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/Name.md",
+    "anchor": "Gets or sets the name of the selected body."
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "GetStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "",
+     "member": "StudyCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 name"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_mesh_settings_report",
+   "impl": "scripts/sw_simulation.py:mesh_settings_report",
+   "claim": "Read the mesh settings that decide the size of a study's mesh.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def mesh_settings_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "Mesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_mesh_size",
+   "impl": "scripts/sw_simulation.py:mesh_size_report",
+   "claim": "Read the suggested element size and tolerance for a simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def mesh_size_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "GetDefaultElementSizeAndTolerance",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Mesh",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_set_material",
+   "impl": "scripts/sw_simulation.py:set_material",
+   "claim": "Assign a material from a named library to the active part and return the material name read back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IPartDoc/GetMaterialPropertyName2.md",
+    "anchor": "Gets the names of the material database and the material for the specified configuration."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "GetMaterialPropertyName2",
+     "path": "C:/swapi/types/IPartDoc/GetMaterialPropertyName2.md",
+     "anchor": "Gets the names of the material database and the material for the specified configuration."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "SetMaterialPropertyName2",
+     "path": "C:/swapi/types/IPartDoc/SetMaterialPropertyName2.md",
+     "anchor": "Sets the name of the material property for the specified configuration."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 IPartDoc.GetMaterialPropertyName2 的官方 Description 与首句共享词干 material/name"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_set_registered_study_option",
+   "impl": "scripts/sw_simulation_study_options.py:set_option",
+   "claim": "Set one registered solver option on a simulation study by family and option name.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def set_option("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_set_study_option",
+   "impl": "scripts/sw_simulation_study_options.py:set_study_option_report",
+   "claim": "Set one registered simulation study option by family and name and return a report of the result.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def set_study_option_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_set_study_options",
+   "impl": "scripts/sw_simulation_study_options.py:set_study_options_report",
+   "claim": "Set several registered simulation study options at once and return the read-back values.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_study_options.py",
+    "anchor": "def set_study_options_report("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_solve_memory_preflight",
+   "impl": "scripts/sw_simulation.py:solve_memory_preflight",
+   "claim": "Check whether a solve would fit in memory before running the solver.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def solve_memory_preflight("
+   },
+   "members": [],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_solver_type",
+   "impl": "scripts/sw_simulation.py:static_solver_type_report",
+   "claim": "Read which solver a static study will use, for example FFEPlus or a direct solver.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "def static_solver_type_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "SolverType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_collect_numbers",
+   "impl": "scripts/sw_topology.py:collect_topology_numbers",
+   "claim": "Read a solved topology study's result numbers, including the plot names and the material-mass plot.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICosmosMotionStudyResults/GetPlotCount.md",
+    "anchor": "Gets the number of plots."
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "GetMaximumAvailableSteps",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "ICosmosMotionStudyResults",
+     "member": "GetPlotCount",
+     "path": "C:/swapi/types/ICosmosMotionStudyResults/GetPlotCount.md",
+     "anchor": "Gets the number of plots."
+    },
+    {
+     "interface": "",
+     "member": "GetPlotNames",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "Results",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ICosmosMotionStudyResults.GetPlotCount 的官方 Description 与首句共享词干 number/plot"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_demold_control",
+   "impl": "scripts/sw_topology.py:create_demold_control",
+   "claim": "Create a de-mold control on a topology study after you select the pull-direction face, edge or plane.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_demold_control("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateDemoldControl",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SelectDemoldDirection",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_factor_of_safety_constraint",
+   "impl": "scripts/sw_topology.py:create_factor_of_safety_constraint",
+   "claim": "Create a factor-of-safety constraint on a topology study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_factor_of_safety_constraint("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateFactorOfSafetyConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetValue",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_mass_constraint",
+   "impl": "scripts/sw_topology.py:create_mass_constraint",
+   "claim": "Create a mass constraint on a topology study as a target mass-reduction percentage.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_mass_constraint("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateMassConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetMassPreference",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetValue",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_preserved_region",
+   "impl": "scripts/sw_topology.py:create_preserved_region",
+   "claim": "Create a preserved region on a topology study for material that must not be removed.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_preserved_region("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreatePreservedRegionControl",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetIncludeRegionDepth2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_stress_constraint",
+   "impl": "scripts/sw_topology.py:create_stress_constraint",
+   "claim": "Create a stress constraint on a topology study at a given stress value.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_stress_constraint("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateStressConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetComparator",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetValue",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_study",
+   "impl": "scripts/sw_topology.py:create_topology_study",
+   "claim": "Create a topology optimization study of analysis type 13 on the active part.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_topology_study("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CreateNewStudy2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateNewStudy3",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "StudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_symmetry_control",
+   "impl": "scripts/sw_topology.py:create_symmetry_control",
+   "claim": "Create a symmetry control on a topology study after you select the symmetry plane.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_symmetry_control("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateSymmetryControl",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SelectSymmetryType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_create_thickness_control",
+   "impl": "scripts/sw_topology.py:create_thickness_control",
+   "claim": "Create a thickness control on a topology study with a minimum and a maximum thickness.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def create_thickness_control("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "BeginEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateThicknessControl",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "EndEdit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetIncludeMaxMemberThickness2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetIncludeMinMemberThickness2",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetMaxMemberThickness",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetMinimumMemberThickness",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "TopologyStudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_evidence",
+   "impl": "scripts/sw_topology.py:collect_topology_evidence",
+   "claim": "Read the topology studies on the active document with their names, analysis types and existing constraints.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+    "anchor": "Gets the currently active document."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "ActiveDoc",
+     "path": "C:/swapi/types/ISldWorks/ActiveDoc.md",
+     "anchor": "Gets the currently active document."
+    },
+    {
+     "interface": "",
+     "member": "AnalysisType",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GetStudy",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IBody2",
+     "member": "Name",
+     "path": "C:/swapi/types/IBody2/Name.md",
+     "anchor": "Gets or sets the name of the selected body."
+    },
+    {
+     "interface": "",
+     "member": "StudyCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "StudyManager",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "成员 ISldWorks.ActiveDoc 的官方 Description 与首句共享词干 active/document"
+   }
+  },
+  {
+   "tool": "solidworks_topology_set_goal",
+   "impl": "scripts/sw_topology.py:set_topology_goal_report",
+   "claim": "Set the topology study goal and report the retrievable constraint count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def set_topology_goal_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "CreateFactorOfSafetyConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateGoal",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "CreateMassConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "GetMassConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "RemoveConstraint",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetMassPreference",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetValue",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_topology_set_iteration_options",
+   "impl": "scripts/sw_topology.py:set_topology_iteration_options_report",
+   "claim": "Set the topology iteration options and report the retrievable constraint count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_topology.py",
+    "anchor": "def set_topology_iteration_options_report("
+   },
+   "members": [
+    {
+     "interface": "",
+     "member": "SetConvergenceCheck",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetIterationLimit",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "",
+     "member": "SetIterationOption",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "auto-pipeline",
+    "at": "2026-11-01",
+    "method": "official-page anchor + 词干重叠门槛",
+    "level": "auto",
+    "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  }
+ ]
+}
