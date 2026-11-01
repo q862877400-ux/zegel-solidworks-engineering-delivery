@@ -1,0 +1,130 @@
+{
+ "batch": "P0-pilot",
+ "note": "试点：4 个拉伸/槽工具，逐条读官方页后填 claim 证据；P=试运行，不改工具名与实现",
+ "records": [
+  {
+   "tool": "solidworks_extrude_boss",
+   "impl": "scripts/sw_part.py:extrude_boss",
+   "claim": "Create a solid boss by extruding an existing sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+    "anchor": "Creates an extruded feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureExtrusion3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+     "anchor": "Creates an extruded feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "lead",
+    "at": "2026-11-01",
+    "method": "read official page + repo runtime evidence",
+    "notes": "FeatureExtrusion3 adds material (boss); FeatureCut4 is the cut sibling — 官方页各自的 Description 逐字区分。前置（先选中草图）见官方 Remarks: Call IModelDocExtension::SelectByID2 to select…"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_cut",
+   "impl": "scripts/sw_part.py:extrude_cut",
+   "claim": "Create a cut by extruding an existing sketch into or through the part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+    "anchor": "Creates a cut extrude feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureCut4",
+     "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+     "anchor": "Creates a cut extrude feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "lead",
+    "at": "2026-11-01",
+    "method": "read official page + repo runtime evidence",
+    "notes": "D1 = Depth of extrusion for the first end in meters；T1 用 swEndConditions_e（0 Blind / 1 ThroughAll）——实现传 0/1 与此一致。"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_midplane",
+   "impl": "scripts/sw_part.py:extrude_midplane",
+   "claim": "Create a boss by extruding a sketch symmetrically about its plane.",
+   "claim_evidence": {
+    "kind": "runtime",
+    "path": "tools/capture_feature_build_evidence.py",
+    "anchor": "总深 10 ⇒ 每侧 5"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureExtrusion3",
+     "path": "C:/swapi/types/IFeatureManager/FeatureExtrusion3.md",
+     "anchor": "Creates an extruded feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "lead",
+    "at": "2026-11-01",
+    "method": "read official page + repo runtime evidence",
+    "notes": "API 语义（中面终止条件）见官方 C:/swapi/enums/swEndConditions_e.md 的 swEndCondMidPlane = 6；「每侧一半」是**真机包围盒**证据（本锚点），官方页未写该结论。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_slot",
+   "impl": "scripts/sw_part.py:sketch_slot",
+   "claim": "Draw a straight slot in the active sketch from two centre points plus a radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateSketchSlot.md",
+    "anchor": "**Width**: Width of sketch slot"
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateSketchSlot",
+     "path": "C:/swapi/types/ISketchManager/CreateSketchSlot.md",
+     "anchor": "Creates a sketch slot."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "lead",
+    "at": "2026-11-01",
+    "method": "read official page + repo runtime evidence",
+    "notes": "Width 是槽宽；实现传 2*radius ⇒ 与「radius 是槽宽一半」的对外契约一致。SlotLengthType 用 swSketchSlotLengthType_e(0=CenterCenter)、SlotCreationType 用 swSketchSlotCreationType_e(0=line)。"
+   }
+  }
+ ]
+}

@@ -1043,6 +1043,49 @@ def _run_tool_contract_gate() -> dict[str, object]:
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
+# 仓库:   本项目自身（把「不许凭记忆改工具」接成发布前硬门禁）
+# 文件:   `scripts/check_tool_official_claims.py`（本门禁的实现）
+#         `tools/gen_tool_official_claims.py`（台账草稿生成器）
+#         `docs/tool-official-claims/*.json`（台账，按批分文件）
+#         `tests/test_tool_official_claims_gate.py`（双侧负例 + 反例自检）
+#         `specs/353-mcp-tool-official-audit/spec.md` §二（判据）
+# 定位:   新增 `_run_tool_official_claims_gate`：**硬门禁** ——
+#         ★ 业主 2026-11-01：「修改的时候**不能根据记忆和印象，必须去 SolidWorks
+#           官方 API 文档**对照着自己的文档确认这个工具到底是干什么的」＋
+#           「这个要求**必须落成机械门禁**」⇒ 把「我查过官方页」从自述变成
+#           **可核对的文件 + 逐字锚点** ✓
+#         ★ 与上一道「工具定义契约门禁」的分工：那道判**形态**（句子像不像成品），
+#           本道判**出处**（这句话有没有官方依据、成员有没有漏查）✓
+# 官方依据: `C:\swapi\types\<接口>\<成员>.md` 的 front-matter（`type:`/`member:`）
+#         与 Description/Parameters/Remarks 原文；锚点逐字比对口径见门禁 `normalize()`
+# 许可:   本仓库 MIT。无第三方代码引入。
+# 覆盖:   后续同级定义
+# ─────────────────────────────────────────────────────────────────────────
+def _run_tool_official_claims_gate() -> dict[str, object]:
+    """@brief 跑工具官方依据台账门禁（`scripts/check_tool_official_claims.py`）。"""
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_tool_official_claims.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=600,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "工具官方依据台账门禁无法执行: %s" % exc}
+    #: ★ 退出码 2 = **无法判定**（注册表没加载全 / 基线读不出）——那**不能算过**
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
+# ── 来源 ─────────────────────────────────────────────────────────────
 # 仓库:   本项目自身（把交付报告数字新鲜度接进发布前检查）+ Python 标准库 `subprocess`
 # 文件:   `scripts/check_report_freshness.py`（本门禁的实现）
 # 定位:   新增 `_run_report_freshness_gate`：**硬门禁** ——
@@ -2876,6 +2919,20 @@ def run_release_check() -> dict[str, object]:
             "specs/352-tool-definition-contract/spec.md §二）：\n"
             + str(tool_contract.get("output", ""))
         )
+    # ⚑ **官方依据台账门禁**（硬门禁，2026-11-01 接进；★ 规格 353 §二）：
+    #   ★★ 业主原话：「修改的时候不能根据记忆和印象，必须去 SolidWorks 官方 API 文档
+    #      对照着自己的文档确认这个工具到底是干什么的」⇒ 每个工具必须有
+    #      「实现里调了哪些官方成员（逐字锚点）+ 模型可见首句的出处」的台账 ✓
+    #   ★ 上一道判「描述形态」，本道判「描述出处」；两道都绿才算「看一遍就能调对且没编」✓
+    tool_official = _run_tool_official_claims_gate()
+    if tool_official.get("status") == "fail":
+        raise AssertionError(
+            "工具官方依据台账门禁未通过（★ 有工具的说明没有官方出处 / 有成员没登记 / "
+            "锚点在官方页里逐字找不到；★ 判据与写台账的方法见 "
+            "specs/353-mcp-tool-official-audit/spec.md §二 与 "
+            "docs/tool-official-claims/README.md）：\n"
+            + str(tool_official.get("output", ""))
+        )
     # ⚑ **可达性门禁**（硬门禁，2026-10-03 轮 579 接进）：前三道「名字」门禁判的是
     #   「**存在 / 属于哪个接口**」，而**本道判「在本机调不调得动」** ——
     #   依据一份**每条带真机证据**的 deny 名单（事实 456 的 `IMathUtility` 族 ·
@@ -3530,6 +3587,7 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-26（规格 352）★ **第七次**同一课：工具定义契约门禁
         #:   ★ 也必须**两处同时加**（★ 元门禁在守）✓
         "tool_contract": tool_contract,
+        "tool_official_claims": tool_official,
         #: ★ 2026-10-03（轮 579）★ **元门禁当场抓到我没加这一行** ——
         #: `check_gate_wiring.py` 报「`unreachable` **没进返回体** ⇒ 静默跳过与没跑等价
         #: 」⚠
@@ -3733,6 +3791,7 @@ def run_release_check() -> dict[str, object]:
         "lean_first_line": lean_first,
         #: ★ 2026-10-26（规格 352）★ 工具定义契约门禁的**第二处**（★ 元门禁要的）✓
         "tool_contract": tool_contract,
+        "tool_official_claims": tool_official,
         #: ★ 2026-10-03（轮 579）★ 元门禁要的**第二处**：★ 登记表**必须覆盖每一个调用点*
         #: * ⚠
         "unreachable": unreachable,

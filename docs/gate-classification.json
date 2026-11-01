@@ -20,6 +20,16 @@
   ],
   "classification": [
     {
+      "gate": "check_tool_official_claims.py",
+      "runner": "_run_tool_official_claims_gate",
+      "kind": "release_static",
+      "reason": "**硬门禁**（规格 353，2026-11-01 业主指令）：判每个 MCP 工具的**官方依据台账** —— ① 实现里调用的每个 COM 成员都登记了官方页与**逐字锚点**（`C:\\swapi\\types\\<接口>\\<成员>.md`）；② 台账 `claim` **逐字等于**工具 `doc` 首句（台账说的 = 模型看到的）；③ 锚点归一化后必须在所指文件里逐字存在（治**伪造引文**）；④ 页 front-matter 的 `type`/`member` 必须与登记一致（治**指错页**）；⑤ 官方页确实查不到时**只许写 gap 记账、不许编页**（铁律 5）。★★ 动因：前两道工具门禁只判**形态**（名字存在 / 句子合规），**语义有没有官方出处此前没有任何机器判据**，全靠「我记得我查过」——而业主 2026-11-01 明说「不能根据记忆和印象」。★ 反例自证：`tests/test_tool_official_claims_gate.py`（7 条真实错法必须全部被拒）。",
+      "environment": "offline-static",
+      "owner": "executing-agent",
+      "runs_in": "release_check",
+      "note": "迁移期用 `docs/tool-official-claims-baseline.json` 承载**待核工具清单**（只许降）；已有台账的记录一律硬判。"
+    },
+    {
       "gate": "check_member_owner_interface.py",
       "runner": "",
       "kind": "diagnostic",

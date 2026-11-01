@@ -151,3 +151,7 @@ commit-messages/
 
 # pyscn 缓存（★ 可重建，不入库）
 .pyscn/
+
+# 台账草稿（生成器产物，可随时重建；门禁不读 _ 前缀）
+docs/tool-official-claims/_*.json
+
