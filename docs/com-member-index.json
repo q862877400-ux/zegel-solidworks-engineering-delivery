@@ -40,6 +40,13 @@
       "interface": "InterferenceDetectionMgr"
     }
   ],
+  "GetSystemValue2": [
+    {
+      "module": "scripts/release_check.py",
+      "function": "_run_dimension_units_gate",
+      "interface": "Dimension"
+    }
+  ],
   "AddRelation": [
     {
       "module": "scripts/sketch_relations.py",
@@ -132,6 +139,16 @@
       "module": "scripts/sw_assembly_doc.py",
       "function": "list_external_file_references_count",
       "interface": "Component2"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "external_references",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "external_references",
+      "interface": "ModelDoc2"
     }
   ],
   "CreateExplodedView": [
@@ -641,6 +658,26 @@
       "interface": "PartDoc"
     },
     {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_bodies_of",
+      "interface": "Component2"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_bodies_of",
+      "interface": "PartDoc"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "dump_part",
+      "interface": "PartDoc"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "dump_part",
+      "interface": "Component2"
+    },
+    {
       "module": "scripts/sw_sheet_metal_weld_entry.py",
       "function": "create_midsurface",
       "interface": "PartDoc"
@@ -803,6 +840,70 @@
       "module": "scripts/sw_measure.py",
       "function": "measure_selection_report",
       "interface": "ModelDocExtension"
+    }
+  ],
+  "GetCenterPoint2": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_call",
+      "interface": "SketchArc"
+    }
+  ],
+  "Type": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "sketch_detail",
+      "interface": "SketchPoint"
+    }
+  ],
+  "GetDepth": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_param_with_unit",
+      "interface": "ExtrudeFeatureData2"
+    }
+  ],
+  "GetFirstDisplayDimension": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_mate_detail",
+      "interface": "Feature"
+    },
+    {
+      "module": "scripts/sw_sketch_dimensions.py",
+      "function": "count_sketch_dimensions",
+      "interface": "Feature"
+    }
+  ],
+  "GetDimension2": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_mate_detail",
+      "interface": "DisplayDimension"
+    },
+    {
+      "module": "scripts/sw_units.py",
+      "function": "dimension_reading",
+      "interface": "DisplayDimension"
+    }
+  ],
+  "Type2": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "_view_detail",
+      "interface": "DisplayDimension"
+    }
+  ],
+  "ListExternalFileReferences2": [
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "external_references",
+      "interface": "ModelDocExtension"
+    },
+    {
+      "module": "scripts/sw_model_snapshot.py",
+      "function": "external_references",
+      "interface": "ModelDoc2"
     }
   ],
   "MoldDraftAnalysis": [
@@ -1266,13 +1367,6 @@
       "interface": "SketchRelationManager"
     }
   ],
-  "GetFirstDisplayDimension": [
-    {
-      "module": "scripts/sw_sketch_dimensions.py",
-      "function": "count_sketch_dimensions",
-      "interface": "Feature"
-    }
-  ],
   "GetNext2": [
     {
       "module": "scripts/sw_sketch_dimensions.py",
@@ -1534,6 +1628,13 @@
       "module": "scripts/sw_units.py",
       "function": "read_units_report",
       "interface": "ModelDocExtension"
+    }
+  ],
+  "GetRelationType": [
+    {
+      "module": "scripts/sw_units.py",
+      "function": "dimension_reading",
+      "interface": "SketchRelation"
     }
   ],
   "GetSplitMember": [

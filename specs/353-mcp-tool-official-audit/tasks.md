@@ -17,10 +17,10 @@
 
 ## P1 · 接线（Lead）
 
-- [ ] **T-353-06** `release_check.py` 加 `_run_tool_official_claims_gate`（硬门禁）+ 返回体
-- [ ] **T-353-07** `docs/gate-classification.json` 登记 `hard`
+- [x] **T-353-06** `release_check.py` 加 `_run_tool_official_claims_gate`（硬门禁）+ 返回体
+- [x] **T-353-07** `docs/gate-classification.json` 登记 `hard`
   - 验收：`python -B scripts/check_gate_wiring.py` rc=0；`release_check` rc=0
-- [ ] **T-353-08** 台账格式说明 `docs/tool-official-claims/README.md`（写者照抄）
+- [x] **T-353-08** 台账格式说明 `docs/tool-official-claims/README.md`（写者照抄）
 
 ## P2 · 批次核验（每批一个写者，8 批）
 

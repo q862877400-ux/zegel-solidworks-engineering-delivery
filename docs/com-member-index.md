@@ -15,14 +15,15 @@
 | COM 成员 | 本仓封装（模块::函数） |
 |---|---|
 | `Component2.Select4` | `scripts/sw_assembly_doc.py::edit_part_in_context` … |
+| `PartDoc.GetBodies2` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
 | `FeatureManager.FeatureBossThicken` | `scripts/sw_feature_entry_ops.py::thicken_surface` … |
 | `SketchManager.ActiveSketch` | `scripts/sw_sketch.py::active_sketch` … |
 | `Modeler.Create` | `scripts/sw_export.py::get_mass_property_override_options` … |
-| `PartDoc.GetBodies2` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
 | `ModelDocExtension.GetBox` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
 | `Sketch.GetConstrainedStatus` | `scripts/engineering/acceptance/e1_sketch.py::collect_sketch_constraint` … |
 | `HoleStandardsData.GetFastenerTable` | `scripts/sw_connect.py::out_dispatch` … |
 | `HoleStandardsData.GetHoleStandards` | `scripts/audit_call_arity.py::load_signatures` … |
+| `Component2.ListExternalFileReferencesCount` | `scripts/sw_assembly_doc.py::list_external_file_references_count` … |
 | `ModelDoc2.ActiveView` | `scripts/sw_review.py::set_standard_view` … |
 | `Gtol.AddFrame` | `scripts/sw_gtol.py::add_gtol_frame` … |
 | `CustomPropertyManager.Count` | `scripts/sw_custom_property.py::custom_property_count` … |
@@ -32,6 +33,8 @@
 | `SldWorks.GetAddInObject` | `scripts/sw_costing.py::get_costing_manager` … |
 | `Face2.GetArea` | `scripts/sw_mass_property.py::section_properties` … |
 | `Body2.GetBodyBox` | `scripts/sw_feature_readback.py::solid_body_extent_mm` … |
+| `DisplayDimension.GetDimension2` | `scripts/sw_model_snapshot.py::_mate_detail` … |
+| `Feature.GetFirstDisplayDimension` | `scripts/sw_model_snapshot.py::_mate_detail` … |
 | `SldWorks.GetHoleStandardsData` | `scripts/sw_hole_features.py::_hole_standards_data` … |
 | `SldWorks.GetProcessID` | `scripts/sw_connect.py::solidworks_process_id` … |
 | `Body2.GetVertices` | `scripts/sw_selection_spec.py::entities_on_body` … |
@@ -46,6 +49,7 @@
 | `FeatureManager.InsertRib` | `scripts/sw_part.py::rib` … |
 | `FeatureManager.InsertRuledSurfaceFromEdge2` | `scripts/sw_surface_edit_ops.py::insert_ruled_surface` … |
 | `Surface.IsCylinder` | `scripts/sw_feature_entry_ops.py::find_cylindrical_face` … |
+| `ModelDocExtension.ListExternalFileReferences2` | `scripts/sw_model_snapshot.py::external_references` … |
 | `ModelDoc2.MoldDraftAnalysis` | `scripts/sw_mold.py::mold_draft_analysis` … |
 | `Sketch.RelationManager` | `scripts/sw_sketch_dimensions.py::_relations` … |
 | `ModelDocExtension.SaveAs` | `scripts/sw_export.py::export_to_pdf` … |
@@ -100,8 +104,10 @@
 | `SketchManager.FullyDefineSketch` | `scripts/sw_sketch_dimensions.py::fully_define_sketch` |
 | `CustomPropertyManager.Get6` | `scripts/sw_custom_property.py::_read_value_via_get6` |
 | `ModelDoc2.GetActiveConfiguration` | `scripts/sw_fingerprint.py::read` |
+| `SketchArc.GetCenterPoint2` | `scripts/sw_model_snapshot.py::_call` |
 | `AssemblyDoc.GetComponents` | `scripts/sw_simulation_loads.py::apply_pin_connector_report` |
 | `View.GetDatumTagCount` | `scripts/sw_drawing_create_missing.py::insert_datum_tag` |
+| `ExtrudeFeatureData2.GetDepth` | `scripts/sw_model_snapshot.py::_param_with_unit` |
 | `ModelDocExtension.GetDisplayStateSetting` | `scripts/sw_fingerprint.py::read` |
 | `SldWorks.GetDocuments` | `scripts/sw_connect.py::open_doc_count` |
 | `ModelDoc2.GetEquationMgr` | `scripts/sw_equation.py::_manager` |
@@ -110,7 +116,6 @@
 | `HoleStandardsData.GetFastenerTableTypes` | `scripts/sw_hole_features.py::list_fastener_table_types` |
 | `HoleStandardsData.GetFastenerTypes` | `scripts/sw_hole_features.py::list_fastener_types` |
 | `FeatureManager.GetFeatureCount` | `scripts/sw_sensor.py::_iter_features` |
-| `Feature.GetFirstDisplayDimension` | `scripts/sw_sketch_dimensions.py::count_sketch_dimensions` |
 | `Gtol.GetFrame` | `scripts/sw_gtol.py::add_gtol_indicator` |
 | `InterferenceDetectionMgr.GetInterferenceCount` | `scripts/engineering/acceptance/e4_assembly.py::judge_assembly_interference` |
 | `InterferenceDetectionMgr.GetInterferences` | `scripts/sw_assembly.py::get_interference_detection` |
@@ -126,6 +131,7 @@
 | `FeatureManager.GetPartingLinesCount` | `scripts/sw_mold.py::mold_evidence` |
 | `Sheet.GetProperties` | `scripts/sw_drawing_query.py::get_sheet_scale_report` |
 | `Sheet.GetProperties2` | `scripts/sw_drawing_query.py::current_sheet_info` |
+| `SketchRelation.GetRelationType` | `scripts/sw_units.py::dimension_reading` |
 | `SketchRelationManager.GetRelationsCount` | `scripts/sw_sketch_dimensions.py::count_sketch_relations` |
 | `View.GetSFSymbolCount` | `scripts/sw_drawing_create_missing.py::insert_surface_finish_symbol` |
 | `ModelDoc2.GetSaveFlag` | `scripts/sw_session.py::open_documents` |
@@ -135,6 +141,7 @@
 | `DrawingDoc.GetSheetNames` | `scripts/sw_drawing_query.py::sheet_names` |
 | `ModelDoc2.GetSldWorks` | `scripts/sw_units.py::read_units_report` |
 | `StructureSystemMemberFeatureData.GetSplitMember` | `scripts/sw_weldment.py::configure_split_member` |
+| `Dimension.GetSystemValue2` | `scripts/release_check.py::_run_dimension_units_gate` |
 | `ModelDoc2.GetUnits` | `scripts/sw_units.py::read_units_report` |
 | `ModelDocExtension.GetUserPreferenceInteger` | `scripts/sw_units.py::read_units_report` |
 | `SldWorks.GetUserPreferenceIntegerValue` | `scripts/sw_units.py::read_units_report` |
@@ -171,7 +178,6 @@
 | `DrawingDoc.InsertTableAnnotation` | `scripts/sw_drawing_expose.py::create_hole_table` |
 | `FeatureManager.InsertWeldmentCutList` | `scripts/sw_weldment.py::create_cut_list` |
 | `FeatureManager.InsertWrapFeature2` | `scripts/sw_wrap.py::create_wrap_report` |
-| `Component2.ListExternalFileReferencesCount` | `scripts/sw_assembly_doc.py::list_external_file_references_count` |
 | `FeatureManager.MoldUndercutDetect` | `scripts/sw_mold.py::mold_undercut_detect` |
 | `ModelDocExtension.NeedsRebuild2` | `scripts/sw_session.py::needs_rebuild_status` |
 | `SldWorks.NewDocument` | `scripts/sw_connect.py::open_document` |
@@ -196,6 +202,8 @@
 | `SweepFeatureData.SweepType` | `scripts/sw_sweep.py::create_sweep_surface_report` |
 | `Dimension.SystemValue` | `scripts/sw_document_data.py::_dimension_value_mm` |
 | `Modeler.ThickenSheet` | `scripts/sw_feature_entry_ops.py::thicken_surface` |
+| `SketchPoint.Type` | `scripts/sw_model_snapshot.py::sketch_detail` |
+| `DisplayDimension.Type2` | `scripts/sw_model_snapshot.py::_view_detail` |
 | `AssemblyDoc.ViewCollapseAssembly` | `scripts/sw_assembly_doc.py::view_collapse_assembly` |
 | `AssemblyDoc.ViewExplodeAssembly` | `scripts/sw_assembly_doc.py::view_explode_assembly` |
 

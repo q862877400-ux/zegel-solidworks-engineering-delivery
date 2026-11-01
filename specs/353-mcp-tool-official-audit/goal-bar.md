@@ -2,8 +2,8 @@
 
 > ★ 进度只看上面那一行；其余段落是上下文，不是判据。
 
-**阶段：**★ **P0 完成 · P1 接线中** —— 门禁已落地（10 条判据 + 7 条反例自检）· 台账 **4/543** 已核 ·
-基线待核 **539** · 当前动作 = **T-353-06**（接进 `release_check`）
+**阶段：**★ **P0/P1 完成 · P2 批次待启** —— 门禁已接线（硬门禁 · 10 条判据 · 7 条反例自检）·
+台账 **4/543** 已核 · 基线待核 **539** · 当前动作 = **T-353-09**（B1 实体特征批）
 
 ---
 
@@ -46,6 +46,7 @@
 
 ## 下一个动作（只写一条）
 
-★ **T-353-06**：把门禁接进 `release_check.py`（硬门禁）+ `docs/gate-classification.json`，
-然后跑 `check_gate_wiring` 与 `release_check`。
-→ 验收：`python -B scripts/check_gate_wiring.py` rc=0 · `python -B scripts/release_check.py` rc=0
+★ **T-353-09**：开 B1 实体特征批（拉伸/旋转/孔/圆角倒角 ~60 工具）——
+按 `docs/tool-official-claims/README.md` 的 5 步，逐工具读官方页、填 `claim_evidence`，
+落 `docs/tool-official-claims/B1.json`。
+→ 验收：该批 `no-record` 归零 · `member-uncited` 0 · 查不到的成员有 `documented:false` + `gap`
